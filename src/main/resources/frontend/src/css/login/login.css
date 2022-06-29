@@ -79,19 +79,19 @@ input, button, span{
     text-align: left;
 }
 
-#loginContents #loginContent #loginForm #loginSessionDiv #login_session_btn.active{
+#loginContents #loginContent #loginForm #loginSessionDiv #loginSessionBtn.active{
     width:21px;
     vertical-align: bottom;
-    content: url("../../images/login/login_session_active.png");
+    content: url("../../images/login/loginSessionActive.png");
 }
 
-#loginContents #loginContent #loginForm #loginSessionDiv #login_session_btn:not(.active){
+#loginContents #loginContent #loginForm #loginSessionDiv #loginSessionBtn:not(.active){
     width:21px;
     vertical-align: bottom;
 }
 
 
-#loginContents #loginContent #loginForm #loginSessionDiv #login_session_span{
+#loginContents #loginContent #loginForm #loginSessionDiv #loginSessionSpan{
     margin-left: 10px;
     font-weight: 400;
     font-size: 16px;
@@ -116,7 +116,7 @@ input, button, span{
     float: right;
     width: 50%;
     height: 100%;
-    background-image: url("../../images/login/login_background.jpg");
+    background-image: url("../../images/login/loginBackground.jpg");
     background-size: cover;
 }
 

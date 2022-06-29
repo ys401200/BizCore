@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import Logo from "../../images/main/topLogo.png";
-import login_intro from "../../images/login/login_introduce.png";
-import login_session from "../../images/login/login_session.png";
+import loginIntro from "../../images/login/loginIntroduce.png";
+import loginSession from "../../images/login/loginSession.png";
 import "../../css/login/login.css";
 
 class Login extends Component {
@@ -9,20 +9,20 @@ class Login extends Component {
         super(props);
 
         this.state = {
-            is_session_active: "unActive"
+            isSessionActive: "unActive"
         }
 
-        this.session_click = this.session_click.bind(this);
+        this.sessionClick = this.sessionClick.bind(this);
     }
 
-    session_click = (e) => {
+    sessionClick = (e) => {
         if(e.target.className === "unActive"){
             this.setState({
-                is_session_active: "active"
+                isSessionActive: "active"
             });
         }else{
             this.setState({
-                is_session_active: "unActive"
+                isSessionActive: "unActive"
             });
         }
     }
@@ -41,8 +41,8 @@ class Login extends Component {
                             <input type="password" id="pw" name="pw" placeholder="비밀번호" />
                         </div>
                         <div id="loginSessionDiv">
-                            <img src={login_session} class={this.state.is_session_active} id="login_session_btn" onClick={this.session_click}/>
-                            <span id="login_session_span">로그인 상태 유지</span>
+                            <img src={loginSession} class={this.state.isSessionActive} id="loginSessionBtn" onClick={this.sessionClick}/>
+                            <span id="loginSessionSpan">로그인 상태 유지</span>
                         </div>
                         <div id="loginBtns">
                             <button type="submit" id="loginBtn">로그인</button>
@@ -55,7 +55,7 @@ class Login extends Component {
                         <span id="loginIntroSpan_2">Biz Core</span>
                     </div>
                     <div id="loginIntroImgDiv">
-                        <img src={login_intro} id="loginIntroImg" />
+                        <img src={loginIntro} id="loginIntroImg" />
                     </div>
                 </div>
             </div>
