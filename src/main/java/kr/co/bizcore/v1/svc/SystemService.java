@@ -27,7 +27,7 @@ public class SystemService extends Svc {
     // 클라이언트가 접속한 서버 url을 입력받아서 compId를 반환하는 메서드
     public String findCompIdFromConnUrl(String server) {
         List<ConnUrl> urls = null;
-        String compId = null, result = null, t = null;
+        String result = null, t = null;
         ConnUrl each = null;
         int x = 0;
 

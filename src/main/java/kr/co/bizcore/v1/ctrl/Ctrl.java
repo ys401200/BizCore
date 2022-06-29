@@ -5,6 +5,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 
 import kr.co.bizcore.v1.svc.SystemService;
+import kr.co.bizcore.v1.svc.UserService;
+import kr.co.bizcore.v1.util.Utility;
 
 @Controller
 public abstract class Ctrl {
@@ -15,9 +17,9 @@ public abstract class Ctrl {
     @Autowired
     protected SystemService systemService;
 
-    // AES 암호화 메서드
-    protected String encAes(String message, String alg, String key) {
-        return message;
-    } // End of encAes()
+    @Autowired
+    protected UserService userService;
+
+    private Utility util = Utility.getInstance();
 
 }

@@ -2,10 +2,14 @@ package kr.co.bizcore.v1.ctrl;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import kr.co.bizcore.v1.domain.User;
+import kr.co.bizcore.v1.svc.UserService;
 
 @RestController
 @RequestMapping("/api")
@@ -27,7 +31,41 @@ public class ApiCtrl extends Ctrl {
     public String user(HttpServletRequest request, HttpServletResponse response) {
 
         return null;
-    }
+    } // End of user()
+
+    @RequestMapping(value = "/user/login", method = RequestMethod.POST)
+    public String userLogin(HttpServletRequest request) {
+        String userId = null, pw = null, userNo = null, compId = null, formData = null, result = null;
+        HttpSession session = null;
+        User user = null;
+
+        session = request.getSession();
+        if (session != null)
+            compId = (String) session.getAttribute("compId"); // 세션에 저장된 compId를 가져옴
+        if (compId == null)
+            compId = (String) request.getAttribute("compId"); // 세션에서 compId 확인 불가시 request에서 한 번 더 시도함
+
+        if (compId == null) { // compId 확인이 안 되는 경우
+            result = "{\"result\":\"failure\",\"msg\":\"Company ID isn't verified\"}";
+        } else {
+            userId = request.getParameter("userId");
+            pw = request.getParameter("pw");
+            if (userId == null || pw == null) {
+                result = "{\"result\":\"failure\",\"msg\":\"User ID and/or Password ware empty\"}";
+            } else {
+                userNo = systemService.verifyLogin(compId, userId, pw);
+                if (userNo == null)
+                    result = "{\"result\":\"failure\",\"msg\":\"User ID and/or Password ware mismatch\"}";
+                else {
+                    user = userService.getBasicUserInfo(userNo);
+                    result = "{\"result\":\"ok\",\"data\":" + user.toJson() + "}";
+                }
+                session.setAttribute("userNo", userNo);
+            }
+        }
+
+        return result;
+    } // End of userLogin()
 
     @RequestMapping("/customer")
     public String customer(HttpServletRequest request, HttpServletResponse response) {

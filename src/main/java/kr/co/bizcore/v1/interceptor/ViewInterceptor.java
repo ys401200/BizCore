@@ -8,17 +8,23 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import kr.co.bizcore.v1.svc.SystemService;
+import kr.co.bizcore.v1.util.Utility;
 
 @Component
 public class ViewInterceptor implements HandlerInterceptor {
 
     @Autowired
-    SystemService systemService;
+    private SystemService systemService;
+
+    private Utility util = Utility.getInstance();
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
         String server = request.getServerName();
+        // for Dev
+        if (util.debug())
+            server = "vtek.co.kr";
         String compId = systemService.findCompIdFromConnUrl(server);
         if (compId != null)
             request.setAttribute("compId", compId);
