@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import AppRouter from './router/appRouter';
-import BodyTop from "./top/bodyTop";
-import BodyContents from './bodyContents/bodyContents';
+import Login from './user/login/login';
 
 class App extends Component{
   constructor(props){
@@ -11,8 +10,7 @@ class App extends Component{
   render(){
     return (
       <>
-        <BodyTop />
-        <BodyContents />
+        <Login />
         <AppRouter />
       </>
     )
