@@ -52,4 +52,9 @@ public class SystemService extends Svc {
         return result;
     } // End oif findCompIdFromConnUrl()
 
+    // 로그인 검증 메서드
+    public String verifyLogin(String compId, String userId, String pw) {
+        return systemMapper.verifyLogin(compId, userId, pw);
+    } // End of verifyLogin()
+
 }
