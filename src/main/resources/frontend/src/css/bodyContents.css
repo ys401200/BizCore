@@ -1,0 +1,26 @@
+@charset "UTF-8";
+
+#bodyContents #sideContents{
+	float: left;
+	width: 13%;
+}
+
+#bodyContents #bodyContent{
+	width: auto;
+	overflow-y: auto;
+	max-height: calc(100% - 130px);
+	padding: 2% 0;
+}
+
+#bodyContents #bodyContent::-webkit-scrollbar{
+	width: 0.1px;
+}
+
+#bodyContents #bodyContent::-webkit-scrollbar-thumb{
+	height: 30%;
+    background-color: #EDEDF4;
+}
+
+#bodyContents #bodyContent::-webkit-scrollbar-track{
+	background-color: #EDEDF4;
+}

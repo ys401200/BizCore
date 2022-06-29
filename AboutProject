@@ -1,0 +1,13 @@
+Date : 2022. 6. 28
+
+Project : BizCore Renewal (Spring -> Spring Boot with React)
+
+Version : 1.0 
+
+Page Structure : Partial SPA
+
+URI : Full REST (Don't show ".do" , "#" and etc..)
+
+CharacterSet : UTF-8
+
+AJAX Response Data : Full JSON with Encryption (AES & RSA)
