@@ -5,6 +5,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 
 import kr.co.bizcore.v1.svc.SystemService;
+import kr.co.bizcore.v1.svc.UserService;
+import kr.co.bizcore.v1.util.Utility;
 
 @Controller
 public abstract class Ctrl {
@@ -14,5 +16,10 @@ public abstract class Ctrl {
 
     @Autowired
     protected SystemService systemService;
+
+    @Autowired
+    protected UserService userService;
+
+    protected Utility util = Utility.getInstance();
 
 }
