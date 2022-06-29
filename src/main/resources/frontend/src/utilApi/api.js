@@ -11,8 +11,8 @@ const request = (options) => {
     options = Object.assign({}, defaults, options);
 
     return fetch(options.url, options)
-    .then(response => 
-        response.json().then(json => {
+    .then((response) => 
+        decAes(response).json().then(json => {
             if(!response.ok) {
                 return Promise.reject(json);
             }
@@ -21,10 +21,16 @@ const request = (options) => {
     );
 };
 
-export function mainNoticeList(){
+export const mainNoticeList = () =>{
     return request({
         url: API_BASE_URL + "/api/user",
         method: 'GET'
     });
 }
+
+const decAes = (message) => {    
+    return null;
+}
+
+
 
