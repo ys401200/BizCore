@@ -15,4 +15,9 @@ public abstract class Ctrl {
     @Autowired
     protected SystemService systemService;
 
+    // AES 암호화 메서드
+    protected String encAes(String message, String alg, String key) {
+        return message;
+    } // End of encAes()
+
 }
