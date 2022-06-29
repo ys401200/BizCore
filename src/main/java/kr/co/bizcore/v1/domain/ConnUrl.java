@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class ConnUrl {
 
-    private String connAddrl;
+    private String connAddr;
     private String compId;
 
 }

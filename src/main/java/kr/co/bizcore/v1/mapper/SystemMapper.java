@@ -11,6 +11,6 @@ public interface SystemMapper {
     @Select("SELECT now()")
     public String test();
 
-    @Select("select conn_addr, comp_id from bizsys.company_url")
+    @Select("select conn_addr AS connAddr, comp_id AS compId from bizsys.company_url")
     public List<ConnUrl> getConnUrl();
 }
