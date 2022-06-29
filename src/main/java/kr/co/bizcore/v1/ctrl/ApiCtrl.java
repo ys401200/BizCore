@@ -63,6 +63,8 @@ public class ApiCtrl extends Ctrl {
                 session.setAttribute("userNo", userNo);
             }
         }
+        // AES 암호화
+        result = util.encAes(result);
 
         return result;
     } // End of userLogin()

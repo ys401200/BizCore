@@ -36,7 +36,7 @@ public class Utility {
     } // End of setDebugMode()
 
     // AES 암호화 메서드
-    protected String encAes(String message) {
+    public String encAes(String message) {
         return message;
     } // End of encAes()
 

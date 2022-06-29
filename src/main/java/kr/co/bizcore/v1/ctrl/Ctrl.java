@@ -20,6 +20,6 @@ public abstract class Ctrl {
     @Autowired
     protected UserService userService;
 
-    private Utility util = Utility.getInstance();
+    protected Utility util = Utility.getInstance();
 
 }
