@@ -4,7 +4,12 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+
+## 서버 설정
 application.yml
+
+## 파일 아카이브
+src/main/resources/archive/**/*
 
 ### STS ###
 .apt_generated

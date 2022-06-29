@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import kr.co.bizcore.v1.domain.User;
-import kr.co.bizcore.v1.svc.UserService;
 
 @RestController
 @RequestMapping("/api")
@@ -47,7 +46,8 @@ public class ApiCtrl extends Ctrl {
 
         if (compId == null) { // compId 확인이 안 되는 경우
             result = "{\"result\":\"failure\",\"msg\":\"Company ID isn't verified\"}";
-        } else {
+        } else { // compId 확인이 되는 경우
+            session.setAttribute("compId", compId); // session에 compId 저장
             userId = request.getParameter("userId");
             pw = request.getParameter("pw");
             if (userId == null || pw == null) {
