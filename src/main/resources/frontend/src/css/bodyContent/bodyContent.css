@@ -1,0 +1,403 @@
+@charset "UTF-8";
+
+/* 메인 공지사항 시작*/
+#bodyContent #bodyNotice{
+	float:left;
+	width: 47%;
+	height: 478px;
+	margin-left: 2%;
+	margin-bottom: 2%;
+	background: #FFFFFF;
+	overflow: auto;
+	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
+} 
+
+#bodyContent #bodyNotice hr{
+	float: left;
+	border-top: 0;
+	border-left : thick solid #E45050;
+	border-right: 0;
+	border-bottom: 0;
+ 	height : 44px;
+ 	width: 4px;
+ 	margin: 0;
+}
+
+#bodyContent #bodyNotice span{
+	font-weight: 500;
+	font-size: 16px;
+	margin-left: 18px;
+	line-height: 3;
+	color: #332E85;
+}
+
+#bodyContent #bodyNotice #noticeTableDiv{
+	margin-top: 15px;
+	width: auto;
+	padding: 10px 10px;
+}
+
+#bodyContent #bodyNotice #noticeTableDiv table{
+	width: 100%;
+	margin: 0 auto;
+	border-collapse: collapse;
+}
+
+#bodyContent #bodyNotice #noticeTableDiv table thead tr th{
+	color: #332E85;
+	border: 1px solid #D9D9D9;
+	height: 38px;
+	font-weight: 500;
+}
+
+#bodyContent #bodyNotice #noticeTableDiv table tbody tr td{
+	text-align: center;
+	border: 1px solid #D9D9D9;	
+	height: 38px;
+}
+
+#bodyContent #bodyNotice #noticeTableDiv table thead tr #notiTitle{
+	text-align: left;
+	padding: 0 20px;
+}
+
+#bodyContent #bodyNotice #noticeTableDiv table tbody tr #notiTitle{
+	text-align: left;
+	padding: 0 20px;
+}
+/* 메인 공지사항 끝 */
+
+/* 메인 일정관리 시작*/
+#bodyContent #bodySched{
+	float:left;
+	width: 47%;
+	height: 478px;
+	margin-left: 2%;
+	margin-bottom: 2%;
+	background: #FFFFFF;
+	overflow: auto;
+	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
+} 
+
+#bodyContent #bodySched hr{
+	float: left;
+	border-top: 0;
+	border-left : thick solid #E45050;
+	border-right: 0;
+	border-bottom: 0;
+ 	height : 44px;
+ 	width: 4px;
+ 	margin: 0;
+}
+
+#bodyContent #bodySched span{
+	font-weight: 500;
+	font-size: 16px;
+	margin-left: 18px;
+	line-height: 3;
+	color: #332E85;
+}
+
+#bodyContent #bodySched #schedTableDiv{
+	margin-top: 15px;
+	width: auto;
+	padding: 10px 10px;
+}
+
+#bodyContent #bodySched #schedTableDiv table{
+	width: 100%;
+	margin: 0 auto;
+	border-collapse: collapse;
+}
+
+#bodyContent #bodySched #schedTableDiv table thead tr th{
+	color: #332E85;
+	border: 1px solid #D9D9D9;
+	height: 38px;
+	font-weight: 500;
+}
+
+#bodyContent #bodySched #schedTableDiv table tbody tr td{
+	text-align: center;
+	border: 1px solid #D9D9D9;	
+	height: 38px;
+}
+
+#bodyContent #bodySched #schedTableDiv table thead tr #schedTitle{
+	text-align: left;
+	padding: 0 20px;
+}
+
+#bodyContent #bodySched #schedTableDiv table tbody tr #schedTitle{
+	text-align: left;
+	padding: 0 20px;
+}
+/* 메인 일정관리 끝 */
+
+/* 메인 나의문서 시작 */
+#bodyContent #bodyMyDoc{
+	float:left;
+	width: 47%;
+	height: 478px;
+	margin-left: 2%;
+	margin-bottom: 2%;
+	background: #FFFFFF;
+	overflow: auto;
+	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
+} 
+
+#bodyContent #bodyMyDoc hr{
+	float: left;
+	border-top: 0;
+	border-left : thick solid #E45050;
+	border-right: 0;
+	border-bottom: 0;
+ 	height : 44px;
+ 	width: 4px;
+ 	margin: 0;
+}
+
+#bodyContent #bodyMyDoc span{
+	font-weight: 500;
+	font-size: 16px;
+	margin-left: 18px;
+	line-height: 3;
+	color: #332E85;
+}
+
+#bodyContent #bodyMyDoc #myDocTableDiv{
+	margin-top: 15px;
+	width: auto;
+	padding: 10px 10px;
+}
+
+#bodyContent #bodyMyDoc #myDocTableDiv table{
+	width: 100%;
+	margin: 0 auto;
+	border-collapse: collapse;
+}
+
+#bodyContent #bodyMyDoc #myDocTableDiv table thead tr th{
+	color: #332E85;
+	border: 1px solid #D9D9D9;
+	height: 38px;
+	font-weight: 500;
+}
+
+#bodyContent #bodyMyDoc #myDocTableDiv table tbody tr td{
+	text-align: center;
+	border: 1px solid #D9D9D9;	
+	height: 38px;
+}
+
+#bodyContent #bodyMyDoc #myDocTableDiv table thead tr #myDocTitle{
+	text-align: left;
+	padding: 0 20px;
+}
+
+#bodyContent #bodyMyDoc #myDocTableDiv table tbody tr #myDocTitle{
+	text-align: left;
+	padding: 0 20px;
+}
+/* 메인 나의 문서함 끝 */
+
+/* 메인 결재함 시작 */
+#bodyContent #bodyDocList{
+	float:left;
+	width: 47%;
+	height: 478px;
+	margin-left: 2%;
+	margin-bottom: 2%;
+	background: #FFFFFF;
+	overflow: auto;
+	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
+} 
+
+#bodyContent #bodyDocList hr{
+	float: left;
+	border-top: 0;
+	border-left : thick solid #E45050;
+	border-right: 0;
+	border-bottom: 0;
+ 	height : 44px;
+ 	width: 4px;
+ 	margin: 0;
+}
+
+#bodyContent #bodyDocList span{
+	font-weight: 500;
+	font-size: 16px;
+	margin-left: 18px;
+	line-height: 3;
+	color: #332E85;
+}
+
+#bodyContent #bodyDocList #docListTableDiv{
+	margin-top: 15px;
+	width: auto;
+	padding: 10px 10px;
+}
+
+#bodyContent #bodyDocList #docListTableDiv table{
+	width: 100%;
+	margin: 0 auto;
+	border-collapse: collapse;
+}
+
+#bodyContent #bodyDocList #docListTableDiv table thead tr th{
+	color: #332E85;
+	border: 1px solid #D9D9D9;
+	height: 38px;
+	font-weight: 500;
+}
+
+#bodyContent #bodyDocList #docListTableDiv table tbody tr td{
+	text-align: center;
+	border: 1px solid #D9D9D9;	
+	height: 38px;
+}
+
+#bodyContent #bodyDocList #docListTableDiv table thead tr #docListTitle{
+	text-align: left;
+	padding: 0 20px;
+}
+
+#bodyContent #bodyDocList #docListTableDiv table tbody tr #docListTitle{
+	text-align: left;
+	padding: 0 20px;
+}
+/* 메인 결재함 끝 */
+
+/* 메인 근태조회 시작 */
+#bodyContent #bodyAtt{
+	float:left;
+	width: 47%;
+	height: 478px;
+	margin-left: 2%;
+	margin-bottom: 2%;
+	background: #FFFFFF;
+	overflow: auto;
+	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
+} 
+
+#bodyContent #bodyAtt hr{
+	float: left;
+	border-top: 0;
+	border-left : thick solid #E45050;
+	border-right: 0;
+	border-bottom: 0;
+ 	height : 44px;
+ 	width: 4px;
+ 	margin: 0;
+}
+
+#bodyContent #bodyAtt span{
+	font-weight: 500;
+	font-size: 16px;
+	margin-left: 18px;
+	line-height: 3;
+	color: #332E85;
+}
+
+#bodyContent #bodyAtt #attTableDiv{
+	margin-top: 15px;
+	width: auto;
+	padding: 10px 10px;
+}
+
+#bodyContent #bodyAtt #attTableDiv table{
+	width: 100%;
+	margin: 0 auto;
+	border-collapse: collapse;
+}
+
+#bodyContent #bodyAtt #attTableDiv table thead tr th{
+	color: #332E85;
+	border: 1px solid #D9D9D9;
+	height: 38px;
+	font-weight: 500;
+}
+
+#bodyContent #bodyAtt #attTableDiv table tbody tr td{
+	text-align: center;
+	border: 1px solid #D9D9D9;	
+	height: 38px;
+}
+
+#bodyContent #bodyAtt #attTableDiv table thead tr #attTitle{
+	text-align: left;
+	padding: 0 20px;
+}
+
+#bodyContent #bodyAtt #attTableDiv table tbody tr #attTitle{
+	text-align: left;
+	padding: 0 20px;
+}
+/* 메인 근태조회 끝 */
+
+/* 메인 계약조회 시작 */
+#bodyContent #bodyCont{
+	float:left;
+	width: 96%;
+	height: 478px;
+	margin-left: 2%;
+	margin-bottom: 2%;
+	background: #FFFFFF;
+	overflow: auto;
+	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
+} 
+
+#bodyContent #bodyCont hr{
+	float: left;
+	border-top: 0;
+	border-left : thick solid #E45050;
+	border-right: 0;
+	border-bottom: 0;
+ 	height : 44px;
+ 	width: 4px;
+ 	margin: 0;
+}
+
+#bodyContent #bodyCont span{
+	font-weight: 500;
+	font-size: 16px;
+	margin-left: 18px;
+	line-height: 3;
+	color: #332E85;
+}
+
+#bodyContent #bodyCont #contTableDiv{
+	margin-top: 15px;
+	width: auto;
+	padding: 10px 10px;
+}
+
+#bodyContent #bodyCont #contTableDiv table{
+	width: 100%;
+	margin: 0 auto;
+	border-collapse: collapse;
+}
+
+#bodyContent #bodyCont #contTableDiv table thead tr th{
+	color: #332E85;
+	border: 1px solid #D9D9D9;
+	height: 38px;
+	font-weight: 500;
+}
+
+#bodyContent #bodyCont #contTableDiv table tbody tr td{
+	text-align: center;
+	border: 1px solid #D9D9D9;	
+	height: 38px;
+}
+
+#bodyContent #bodyCont #contTableDiv table thead tr #contTitle{
+	text-align: left;
+	padding: 0 20px;
+}
+
+#bodyContent #bodyCont #contTableDiv table tbody tr #contTitle{
+	text-align: left;
+	padding: 0 20px;
+}
+/* 메인 계약조회 끝 */

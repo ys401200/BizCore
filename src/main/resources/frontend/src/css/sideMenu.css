@@ -1,0 +1,206 @@
+@charset "UTF-8";
+
+#sideMenu{
+	background-color: #302D81;
+	box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+	height: 100%;
+}
+
+#sideMenu ul{
+	display: block;
+	max-height: calc(100% - 80px);
+	overflow-y: auto;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+#sideMenu ul::-webkit-scrollbar{
+	width: 0.1px;
+}
+
+#sideMenu ul::-webkit-scrollbar-thumb{
+	height: 30%;
+    background-color: #302D81;
+}
+
+#sideMenu ul::-webkit-scrollbar-track{
+	background-color: #302D81;
+}
+
+#sideMenu ul li{
+	line-height: 60px;
+}
+
+#sideMenu ul li a{
+	display: block;
+	color: #ffffff;
+	text-decoration: none;
+}
+
+#sideMenu ul:not(#panel) li a:hover{
+	background-color: #EDEDF4;
+}
+
+#sideMenu ul li a:hover #mainHomeIcon{
+	content: url("../images/main/icons/mainHomeIcon_hover.png");
+}
+
+#sideMenu ul li a:hover #mainNoticeIcon{
+	content: url("../images/main/icons/mainNoticeIcon_hover.png");
+}
+
+#sideMenu ul li a:hover #mainSchedIcon{
+	content: url("../images/main/icons/mainSchedIcon_hover.png");
+}
+
+#sideMenu ul li a:hover #mainSalesIcon{
+	content: url("../images/main/icons/mainSalesIcon_hover.png");
+}
+
+#sideMenu ul li a:hover #mainSoppIcon{
+	content: url("../images/main/icons/mainSoppIcon_hover.png");
+}
+
+#sideMenu ul li a:hover #mainSoppList2Icon{
+	content: url("../images/main/icons/mainSoppList2Icon_hover.png");
+}
+
+#sideMenu ul li a:hover #mainPpsIcon{
+	content: url("../images/main/icons/mainPpsIcon_hover.png");
+}
+
+#sideMenu ul li a:hover #mainContIcon{
+	content: url("../images/main/icons/mainContIcon_hover.png");
+}
+
+#sideMenu ul li a:hover #mainTechIcon{
+	content: url("../images/main/icons/mainTechIcon_hover.png");
+}
+
+#sideMenu ul li a:hover #mainBoardFileIcon{
+	content: url("../images/main/icons/mainBoardFileIcon_hover.png");
+}
+
+#sideMenu ul li a:hover #mainManualIcon{
+	content: url("../images/main/icons/mainManualIcon_hover.png");
+}
+
+#sideMenu ul li a:hover #mainSettingIcon{
+	content: url("../images/main/icons/mainSettingIcon_hover.png");
+}
+
+#sideMenu ul li a:hover #mainLogOutIcon{
+	content: url("../images/main/icons/mainLogOutIcon_hover.png");
+}
+
+#sideMenu ul li a:hover span{
+	color: #302D81;
+}
+
+#sideMenu ul li a img{
+	width: 26px;
+	height: 27px;
+	margin-left: 25px;
+	vertical-align: sub;
+}
+
+#sideMenu ul li a span:not(#slideSpan){
+	margin-left: 18px;
+	font-weight: 500;
+	font-size: 16px;
+}
+
+#sideMenu ul li a #slideSpan{
+	/* display: none; */
+	float: right;
+	margin-right: 18px;
+	font-weight: 500;
+	font-size: 30px;
+}
+
+#sideMenu ul li a.active #slideSpan{
+	font-size: 40px;
+}
+
+#sideMenu ul li #panel{
+	display: none;
+	list-style: none;
+	background-color: #302D81;
+	overflow: hidden;
+}
+
+#sideMenu ul li #panel li{
+	width: auto;
+	height: 50px;
+	line-height: 55px;
+}
+
+#sideMenu ul li #panel li a{
+	display: block;
+	padding: 0 25%;
+	text-decoration: none;
+	font-weight: 500;
+	font-size: 16px;
+	color: #ffffff;
+	width: 100%;
+
+}
+
+#sideMenu ul li #panel li a:hover{
+	color: #302D81;
+}
+
+#sideMenu ul li .panelActive{ animation: 0.6s ease-in-out panelActive; }
+
+@keyframes panelActive {
+    0%{
+        opacity: 0;
+    }
+    100%{
+        opacity: 1;
+    }
+}
+
+#sideMenu ul li .panelUnactive{ animation: 0.5s ease-in-out panelUnactive; }
+
+@keyframes panelUnactive {
+    0%{
+        transform: translateX(0px);
+        opacity: 1;
+    }
+    100%{
+        transform: translateX(-30px);
+        opacity: 0;
+    }
+}
+
+#sideMenu .ulActive{
+	display: block;
+	animation: 0.6s ease-in-out ulActive; 
+}
+
+@keyframes ulActive {
+    0%{
+        opacity: 0;
+    }
+    100%{
+        opacity: 1;
+    }
+}
+
+#sideMenu .ulUnactive{ 
+	display: none;
+	animation: 0.5s ease-in-out ulUnactive; 
+}
+
+@keyframes ulUnactive {
+    0%{
+        transform: translateX(0px);
+        opacity: 1;
+    }
+    100%{
+        transform: translateX(-30px);
+        opacity: 0;
+    }
+}
