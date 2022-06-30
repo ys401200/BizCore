@@ -4,6 +4,7 @@ import java.net.InetAddress;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import kr.co.bizcore.v1.svc.SystemService;
 
 @Component

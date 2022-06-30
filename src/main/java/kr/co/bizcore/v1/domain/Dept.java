@@ -5,6 +5,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class Dept {
+public class Dept implements Domain {
+
+    @Override
+    public String toJson() {
+        return null;
+    }
 
 }

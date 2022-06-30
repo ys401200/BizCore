@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class User {
+public class User implements Domain {
     private int userNo;
     private String compId;
     private String userId;

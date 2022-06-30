@@ -5,9 +5,14 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ConnUrl {
+public class ConnUrl implements Domain {
 
     private String connAddr;
     private String compId;
+
+    @Override
+    public String toJson() {
+        return null;
+    }
 
 }
