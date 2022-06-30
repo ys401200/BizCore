@@ -11,3 +11,36 @@ URI : Full REST (Don't show ".do" , "#" and etc..)
 CharacterSet : UTF-8
 
 AJAX Response Data : Full JSON with Encryption (AES & RSA)
+
+
+
+
+
+############# application.yml
+
+server:
+  port: 80
+  servlet:
+    context-path: /
+  error:
+    whitelabel:
+      enabled: true
+
+spring:
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://bizdb:13306/swcore?allowPublicKeyRetrieval=true&amp;useSSL=false&amp;allowMultiQueries=true&amp;serverTimezone=UTC
+    hikari:
+      username: 
+      password: 
+      maximum-pool-size: 50
+  mvc:
+    view:
+      prefix: /WEB-INF/view/
+      suffix: .jsp
+#  autoconfigure:
+#    exclude: org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
+
+mybatis:
+  type-aliases-package: kr.co.bizcore.v1.domain
+  mapper-locations: classpath:mapper/*.xml

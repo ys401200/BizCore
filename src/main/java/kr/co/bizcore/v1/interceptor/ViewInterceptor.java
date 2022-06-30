@@ -16,7 +16,8 @@ public class ViewInterceptor implements HandlerInterceptor {
     @Autowired
     private SystemService systemService;
 
-    private Utility util = Utility.getInstance();
+    @Autowired
+    private Utility util;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
