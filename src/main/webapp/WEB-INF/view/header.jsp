@@ -7,19 +7,20 @@
 <head>
 <meta charset="UTF-8">
 <link rel="stylesheet" type="text/css" href="/css/header.css" />
-<link rel="stylesheet" type="text/css" href="/css/loading.css">
-<link rel="stylesheet" type="text/css" href="/css/jquery-ui.css">
-<link rel="stylesheet" type="text/css" href="/css/jquery-ui.structure.css">
-<link rel="stylesheet" type="text/css" href="/css/jquery-ui.theme.css">
+<link rel="stylesheet" type="text/css" href="/css/loading.css" />
+<link rel="stylesheet" type="text/css" href="/css/jquery-ui.css" />
+<link rel="stylesheet" type="text/css" href="/css/jquery-ui.structure.css" />
+<link rel="stylesheet" type="text/css" href="/css/jquery-ui.theme.css" />
 
-<script src="/js/loading.js"></script>
 <script src="/js/jquery.min.js"></script>
 <script src="/js/jquery-ui.js"></script>
 <script type="text/javascript" src="/js/jquery.easing.js"></script>
+<script src="/js/loading.js"></script>
 
 <title>헤더</title>
 </head>
 <body>
+<div id="loadingDiv" style="width: 100%; height: 100%;"></div>
 <div id="header">
 	<div id="mainTopLogo">
 		<a href=""><img src="/images/main/topLogo.png" id="mainTopLogoImg" /></a>
@@ -28,10 +29,10 @@
 	</div>
 	<div id="mainTopMenu">
 		<ul>
-			<li><button type="button" data-keyword="work" onClick="bodyTopPageClick(this);">업무관리</button></li>
-			<li><button type="button" data-keyword="group" onClick="bodyTopPageClick(this);">그룹웨어</button></li>
-			<li><button type="button" data-keyword="acc" onClick="bodyTopPageClick(this);">회계관리</button></li>
-			<li><button type="button" data-keyword="manage" onClick="bodyTopPageClick(this);">경영정보</button></li>
+			<li><button type="button" data-keyword="business" onClick="bodyTopPageClick(this);">업무관리</button></li>
+			<li><button type="button" data-keyword="gw" onClick="bodyTopPageClick(this);">그룹웨어</button></li>
+			<li><button type="button" data-keyword="accounting" onClick="bodyTopPageClick(this);">회계관리</button></li>
+			<li><button type="button" data-keyword="mis" onClick="bodyTopPageClick(this);">경영정보</button></li>
 		</ul>
 	</div>
 </div>

@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
 <meta charset="UTF-8">
@@ -15,7 +16,9 @@
                 <img src="/images/main/topLogo.png" id="loginLogoImg" />
             </div>
             <div id="loginInput">
-                <input type="text" id="compId" name="compId" placeholder="회사 아이디" /><br />
+            	<c:if test="${requestScope.compId eq null}">
+	                <input type="text" id="compId" name="compId" placeholder="회사 아이디" /><br />
+            	</c:if>
                 <input type="text" id="userId" name="userId" placeholder="사용자 아이디" /><br />
                 <input type="password" id="pw" name="pw" placeholder="비밀번호" />
             </div>

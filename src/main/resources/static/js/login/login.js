@@ -19,11 +19,11 @@ function loginSubmit(){
 		cache: false,
 		contentType: false,
 		processData: false,
-		success:function(data){
-			
+		success:function(){
+			location.reload();
 		},
 		error:function(){
-			
+			alert("정보를 다시 확인하여주십시오.");
 		}
 	})
 }

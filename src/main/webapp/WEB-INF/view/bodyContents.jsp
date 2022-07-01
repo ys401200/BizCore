@@ -9,8 +9,6 @@
 <meta charset="UTF-8">
 <link rel="stylesheet" type="text/css" href="/css/bodyContents.css">
 
-<script src="/js/bodyContent.js"></script>
-
 <title>메인</title>
 </head>
 <body>
@@ -20,8 +18,10 @@
 		<jsp:include page="./sideMenu.jsp" />
 	</div>
 	<div id="bodyContent">
+		<div id="loadingDiv"></div>
 		<jsp:include page="./main/contentWork.jsp" />
 	</div>
 </div>
 </body>
+<script src="/js/bodyContent.js"></script>
 </html>

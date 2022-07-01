@@ -1,5 +1,16 @@
 $(document).ready(function(){
-	$("#sideMenu ul").not("#work, #panel").hide();
+	setTimeout(() => {
+		$("#loadingDiv").loading({
+			onStart: function(loading) {
+				loading.overlay.fadeIn(1000);
+		  	},
+		 	onStop: function(loading) {
+		    	loading.overlay.fadeOut(1000);
+		  	}
+		});
+	}, 70);
+	
+	$("#sideMenu ul").not("#business, #panel").hide();
 	
 	$("#sideMenu ul li a").find("#slideSpan").each(function(index, item){
 		if($(item).parent().next().attr("id") === "panel"){

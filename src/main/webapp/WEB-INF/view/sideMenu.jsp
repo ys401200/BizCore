@@ -11,7 +11,7 @@
 </head>
 <body>
 <div id="sideMenu">
-	<ul id="work">
+	<ul id="business">
 		<li>
 			<a href="">
 				<img src="/images/main/icons/mainHomeIcon.png" />
@@ -109,14 +109,14 @@
 			</a>
 		</li>
 		<li>
-			<a href="/user/logout.do">
+			<a href="/api/user/logout">
 				<img src="/images/main/icons/mainLogOutIcon.png" />
 				<span>로그아웃</span>
 			</a>
 		</li>
 	</ul>
 		
-	<ul id="group">
+	<ul id="gw">
 		<li>
 			<a href="#">
 				<img src="/images/main/icons/mainHomeIcon.png" />
@@ -126,7 +126,7 @@
 		</li>
 	</ul>
 	
-	<ul id="acc">
+	<ul id="accounting">
 		<li>
 			<a href="#">
 				<img src="/images/main/icons/mainHomeIcon.png" />
@@ -136,7 +136,7 @@
 		</li>
 	</ul>
 	
-	<ul id="manage">
+	<ul id="mis">
 		<li>
 			<a href="#">
 				<img src="/images/main/icons/mainHomeIcon.png" />
