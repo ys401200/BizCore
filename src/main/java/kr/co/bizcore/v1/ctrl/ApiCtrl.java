@@ -59,8 +59,10 @@ public class ApiCtrl extends Ctrl {
                 else {
                     user = userService.getBasicUserInfo(userNo);
                     result = "{\"result\":\"ok\",\"data\":" + user.toJson() + "}";
+                    systemService.setPermission(user);
+                    session.setAttribute("userNo", userNo);
+                    session.setAttribute("user", user);
                 }
-                session.setAttribute("userNo", userNo);
             }
         }
         // AES 암호화

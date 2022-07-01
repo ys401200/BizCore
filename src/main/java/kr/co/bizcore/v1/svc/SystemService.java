@@ -2,7 +2,11 @@ package kr.co.bizcore.v1.svc;
 
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Map;
+
 import kr.co.bizcore.v1.domain.ConnUrl;
+import kr.co.bizcore.v1.domain.Permission;
+import kr.co.bizcore.v1.domain.User;
 
 @Service
 public class SystemService extends Svc {
@@ -56,5 +60,32 @@ public class SystemService extends Svc {
     public String verifyLogin(String compId, String userId, String pw) {
         return systemMapper.verifyLogin(compId, userId, pw);
     } // End of verifyLogin()
+
+    // User 객체를 입력받고 권한을 설정하는 메서드
+    public void setPermission(User user) {
+        List<Map<String, String>> data = null;
+        Map<String, String> each = null;
+        String permission = null;
+        Permission result = null;
+        int x = 0, t = 0;
+
+        if (user == null)
+            return;
+        data = systemMapper.getUserPermission(user.getCompId(), user.getDeptId(), user.getUserNo());
+
+        if (data == null)
+            return;
+
+        result = new Permission();
+        for (x = 0; x < data.size(); x++) {
+            t = 0;
+            each = data.get(x);
+            permission = each.get("permission");
+            if (permission != null)
+                t = Integer.parseInt(permission);
+            result.setSubPermission(each.get("funcId"), each.get("subId"), t);
+        }
+        user.setPermission(result);
+    } // End of setPermission()
 
 }
