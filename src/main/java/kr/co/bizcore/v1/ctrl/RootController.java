@@ -28,7 +28,7 @@ public class RootController extends Ctrl {
         } else if (userNo == null && compId != null) {
             result = "bodyContents";
         } else {
-            result = "bodyContents";
+            result = "/login/login";
         }
 
         return result;

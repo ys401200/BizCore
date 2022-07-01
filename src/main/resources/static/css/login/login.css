@@ -1,0 +1,156 @@
+@charset "UTF-8";
+
+@font-face {font-family: 'Noto Sans KR';font-style: normal;font-weight: 100;src: url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Thin.woff2) format('woff2'),url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Thin.woff) format('woff'),url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Thin.otf) format('opentype');}
+@font-face {font-family: 'Noto Sans KR';font-style: normal;font-weight: 300;src: url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Light.woff2) format('woff2'),url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Light.woff) format('woff'),url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Light.otf) format('opentype');}
+@font-face {font-family: 'Noto Sans KR';font-style: normal;font-weight: 400;src: url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Regular.woff2) format('woff2'),url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Regular.woff) format('woff'),url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Regular.otf) format('opentype');}
+@font-face {font-family: 'Noto Sans KR';font-style: normal;font-weight: 500;src: url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Medium.woff2) format('woff2'),url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Medium.woff) format('woff'),url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Medium.otf) format('opentype');}
+@font-face {font-family: 'Noto Sans KR';font-style: normal;font-weight: 700;src: url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Bold.woff2) format('woff2'),url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Bold.woff) format('woff'),url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Bold.otf) format('opentype');}
+@font-face {font-family: 'Noto Sans KR';font-style: normal;font-weight: 900;src: url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Black.woff2) format('woff2'),url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Black.woff) format('woff'),url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Black.otf) format('opentype');}
+
+input, button, span{
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+#loginContents{
+	overflow: hidden;
+}
+
+#loginContents #loginContent{
+    float: left;
+    width: 50%;
+    height: 100%;
+    background-color: #ffffff;
+}
+
+#loginContents #loginContent #loginForm{
+    position: relative;
+    text-align: center;
+    top: 20%;
+}
+
+#loginContents #loginContent #loginForm #loginLogoImgDiv #loginLogoImg{
+    width: 218px;
+    height: 50px;
+}
+
+#loginContents #loginContent #loginForm #loginInput{
+    margin-top: 48px;
+}
+
+#loginContents #loginContent #loginForm #loginInput input:not(:last-child){
+    margin-bottom: 36px;
+    width: 520px;
+    height: 56px;
+    background: #F5F6F8;
+    border: 1px solid #C1C1C1;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 23px;
+    padding: 0 26px;
+}
+
+#loginContents #loginContent #loginForm #loginInput input:last-child{
+    margin-bottom: 19px;
+    width: 520px;
+    height: 56px;
+    background: #F5F6F8;
+    border: 1px solid #C1C1C1;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 23px;
+    padding: 0 26px;
+}
+
+#loginContents #loginContent #loginForm #loginInput input:not(:last-child):hover{
+    margin-bottom: 36px;
+    width: 520px;
+    height: 56px;
+    background: #F5F6F8;
+    border: 1px solid #5858B7;
+}
+
+#loginContents #loginContent #loginForm #loginInput input:last-child:hover{
+    margin-bottom: 19px;
+    width: 520px;
+    height: 56px;
+    background: #F5F6F8;
+    border: 1px solid #5858B7;
+}
+
+#loginContents #loginContent #loginForm #loginSessionDiv{
+    position: relative;
+    left: 26%;
+    text-align: left;
+}
+
+#loginContents #loginContent #loginForm #loginSessionDiv #loginSessionBtn.active{
+    width:21px;
+    vertical-align: bottom;
+    content: url("../../images/login/loginSessionActive.png");
+}
+
+#loginContents #loginContent #loginForm #loginSessionDiv #loginSessionBtn:not(.active){
+    width:21px;
+    vertical-align: bottom;
+}
+
+
+#loginContents #loginContent #loginForm #loginSessionDiv #loginSessionSpan{
+    margin-left: 10px;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 23px;
+    color: #5B5B5B;
+}
+
+#loginContents #loginContent #loginForm #loginBtns button{
+    width: 240px;
+    height: 54px;
+    margin-top: 73px;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 26px;
+    color: #ffffff;
+    background-color: #332D83;
+    cursor: pointer;
+    border: 0;
+}
+
+#loginContents #loginIntroduce{
+    float: right;
+    width: 50%;
+    height: 100%;
+    background-image: url("../../images/login/loginBackground.jpg");
+    background-size: cover;
+}
+
+#loginContents #loginIntroduce #loginSpans{
+    position: relative;
+    text-align: center;
+    top: 20%;
+}
+
+#loginContents #loginIntroduce #loginSpans #loginIntroSpan_1{
+    font-weight: 300;
+    font-size: 60px;
+    line-height: 70px;
+    color: #FFFFFF;
+}
+
+#loginContents #loginIntroduce #loginSpans #loginIntroSpan_2{
+    font-weight: 700;
+    font-size: 60px;
+    line-height: 70px;
+    color: #FFFFFF;
+}
+
+#loginContents #loginIntroduce #loginIntroImgDiv{
+    position: relative;
+    top: 20%;
+    left: 15%;
+}
+
+#loginContents #loginIntroduce #loginIntroImgDiv #loginIntroImg{
+    width: 766px;
+    height: 480px;
+}

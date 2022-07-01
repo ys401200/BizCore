@@ -2,14 +2,21 @@
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<link rel="stylesheet" type="text/css" href="/css/bodyTop.css" />
+<link rel="stylesheet" type="text/css" href="/css/header.css" />
+<link rel="stylesheet" type="text/css" href="/css/loading.css">
+<link rel="stylesheet" type="text/css" href="/css/jquery-ui.css">
+<link rel="stylesheet" type="text/css" href="/css/jquery-ui.structure.css">
+<link rel="stylesheet" type="text/css" href="/css/jquery-ui.theme.css">
+
+<script src="/js/loading.js"></script>
 <script src="/js/jquery.min.js"></script>
 <script src="/js/jquery-ui.js"></script>
+<script type="text/javascript" src="/js/jquery.easing.js"></script>
+
 <title>헤더</title>
 </head>
 <body>

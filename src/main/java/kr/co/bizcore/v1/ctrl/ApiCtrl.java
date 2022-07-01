@@ -40,14 +40,14 @@ public class ApiCtrl extends Ctrl {
 
         session = request.getSession();
         if (session != null)
-            compId = (String) session.getAttribute("compId"); // 세션에 저장된 compId를 가져옴
+            compId = (String) session.getAttribute("compId"); // �꽭�뀡�뿉 ���옣�맂 compId瑜� 媛��졇�샂
         if (compId == null)
-            compId = (String) request.getAttribute("compId"); // 세션에서 compId 확인 불가시 request에서 한 번 더 시도함
+            compId = (String) request.getAttribute("compId"); // �꽭�뀡�뿉�꽌 compId �솗�씤 遺덇��떆 request�뿉�꽌 �븳 踰� �뜑 �떆�룄�븿
 
-        if (compId == null) { // compId 확인이 안 되는 경우
+        if (compId == null) { // compId �솗�씤�씠 �븞 �릺�뒗 寃쎌슦
             result = "{\"result\":\"failure\",\"msg\":\"Company ID isn't verified\"}";
-        } else { // compId 확인이 되는 경우
-            session.setAttribute("compId", compId); // session에 compId 저장
+        } else { // compId �솗�씤�씠 �릺�뒗 寃쎌슦
+            session.setAttribute("compId", compId); // session�뿉 compId ���옣
             userId = request.getParameter("userId");
             pw = request.getParameter("pw");
             if (userId == null || pw == null) {
@@ -65,7 +65,7 @@ public class ApiCtrl extends Ctrl {
                 }
             }
         }
-        // AES 암호화
+        // AES �븫�샇�솕
         result = util.encAes(result);
 
         return result;
