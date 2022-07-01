@@ -22,11 +22,15 @@ public class ViewInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        String server = request.getServerName();
-        // for Dev
+        String server = null;
+        String compId = null;
+
+        server = request.getServerName();
+        compId = systemService.findCompIdFromConnUrl(server);
+
         if (util.debug())
-            server = "vtek.co.kr";
-        String compId = systemService.findCompIdFromConnUrl(server);
+            server = "vtek.co.kr"; // for Dev
+
         if (compId != null)
             request.setAttribute("compId", compId);
         return HandlerInterceptor.super.preHandle(request, response, handler);

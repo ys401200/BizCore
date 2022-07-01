@@ -1,11 +1,7 @@
 package kr.co.bizcore.v1.svc;
 
 import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import kr.co.bizcore.v1.domain.ConnUrl;
 
 @Service
@@ -20,7 +16,7 @@ public class SystemService extends Svc {
         List<ConnUrl> data = null;
         String result = null;
         data = systemMapper.getConnUrl();
-        System.out.println("[SystemService] ::::::::::::: size : " + data.size());
+
         for (ConnUrl each : data) {
             result = each.getConnAddr() + " / " + each.getCompId();
             System.out.println(result);
