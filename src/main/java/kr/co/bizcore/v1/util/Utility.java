@@ -1,6 +1,8 @@
 package kr.co.bizcore.v1.util;
 
 import java.net.InetAddress;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -78,5 +80,25 @@ public class Utility {
     public String encAes(String message) {
         return message;
     } // End of encAes()
+
+    public String encSHA256(String str) {
+        MessageDigest md = null;
+        try {
+            md = MessageDigest.getInstance("SHA-256");
+            md.update(str.getBytes());
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        return md == null ? null : bytesToHex(md.digest());
+    } // End of encSHA256()
+
+    private String bytesToHex(byte[] bytes) {
+        StringBuilder builder = new StringBuilder();
+        for (byte b : bytes) {
+            builder.append(String.format("%02x", b));
+        }
+        return builder.toString();
+    }
 
 }

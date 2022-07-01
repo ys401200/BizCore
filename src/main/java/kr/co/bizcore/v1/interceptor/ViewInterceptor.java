@@ -26,10 +26,11 @@ public class ViewInterceptor implements HandlerInterceptor {
         String compId = null;
 
         server = request.getServerName();
-        compId = systemService.findCompIdFromConnUrl(server);
 
         if (util.debug())
             server = "vtek.co.kr"; // for Dev
+
+        compId = systemService.findCompIdFromConnUrl(server);
 
         if (compId != null)
             request.setAttribute("compId", compId);

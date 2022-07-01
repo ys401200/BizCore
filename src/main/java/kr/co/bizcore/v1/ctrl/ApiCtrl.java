@@ -70,7 +70,7 @@ public class ApiCtrl extends Ctrl {
                 }
             }
         }
-        // Later, AES
+        // Later, AES applied
         result = util.encAes(result);
 
         return result;
