@@ -82,9 +82,7 @@ public class ApiCtrl extends Ctrl {
     @RequestMapping(value = "/user/logout", method = RequestMethod.GET)
     public RedirectView userLogout(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
-        session.removeAttribute("user");
-        session.removeAttribute("userId");
-        session.removeAttribute("userNo");
+        session.invalidate();
         return new RedirectView("/");
     } // End of userLogout()
 
