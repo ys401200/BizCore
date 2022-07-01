@@ -1,5 +1,7 @@
 package kr.co.bizcore.v1.ctrl;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -7,6 +9,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.view.RedirectView;
 
 import kr.co.bizcore.v1.domain.User;
 
@@ -75,6 +78,15 @@ public class ApiCtrl extends Ctrl {
 
         return result;
     } // End of userLogin()
+
+    @RequestMapping(value = "/user/logout", method = RequestMethod.GET)
+    public RedirectView userLogout(HttpServletRequest request, HttpServletResponse response) {
+        HttpSession session = request.getSession();
+        session.removeAttribute("user");
+        session.removeAttribute("userId");
+        session.removeAttribute("userNo");
+        return new RedirectView("/");
+    } // End of userLogout()
 
     @RequestMapping("/customer")
     public String customer(HttpServletRequest request, HttpServletResponse response) {
