@@ -59,13 +59,13 @@ public class ApiCtrl extends Ctrl {
             if (userId == null || pw == null) {
                 result = "{\"result\":\"failure\",\"msg\":\"User ID and/or Password ware empty\"}";
             } else {
-                userNo = systemService.verifyLogin(compId, userId, pw);
+                userNo = userService.verifyLogin(compId, userId, pw);
                 if (userNo == null)
                     result = "{\"result\":\"failure\",\"msg\":\"User ID and/or Password ware mismatch\"}";
                 else {
                     user = userService.getBasicUserInfo(userNo);
                     result = "{\"result\":\"ok\",\"data\":" + user.toJson() + "}";
-                    systemService.setPermission(user);
+                    userService.setPermission(user);
                     session.setAttribute("userNo", userNo);
                     session.setAttribute("user", user);
                 }

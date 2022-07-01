@@ -15,6 +15,7 @@ public class User implements Domain {
     private String userId;
     private String userName;
     private String deptId;
+
     @JsonIgnore
     private Permission permission;
 
@@ -29,6 +30,7 @@ public class User implements Domain {
         return result;
     } // End of toJson()
 
+    @JsonIgnore
     public String[] getAvailableFunc(int permission) {
         String[] result = {};
         if (this.permission != null)
@@ -36,6 +38,7 @@ public class User implements Domain {
         return result;
     }
 
+    @JsonIgnore
     public String[] getAvailableSub(String subId, int permission) {
         String[] result = {};
         if (this.permission != null)
