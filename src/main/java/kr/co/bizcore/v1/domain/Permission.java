@@ -1,5 +1,6 @@
 package kr.co.bizcore.v1.domain;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Permission {
@@ -45,5 +46,13 @@ public class Permission {
 
         return result;
     } // End of getSubPermission()
+
+    // 권한이 있는 funcId를 반환하는 메서드
+    public String[] getAvailableFunc(int permission) {
+        String[] result = {};
+        ArrayList<String> data = new ArrayList<>();
+
+        return result;
+    } // End of getAvailableFunc()
 
 } // End of Class === Permission

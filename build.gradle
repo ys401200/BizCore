@@ -37,7 +37,7 @@ dependencies {
 	testImplementation 'io.projectreactor:reactor-test'
 	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 	implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-jasper', version: '9.0.58'
-
+	implementation 'javax.servlet:jstl'
 }
 
 tasks.named('test') {
