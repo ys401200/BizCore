@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/", method = RequestMethod.GET)
 public class RootController extends Ctrl {
 
-    // 첫 화면 / 로그인 여부 및 compId 확인 여부에 따라 달리 나타나도록 함
+    // 泥� �솕硫� / 濡쒓렇�씤 �뿬遺� 諛� compId �솗�씤 �뿬遺��뿉 �뵲�씪 �떖由� �굹���굹�룄濡� �븿
     @RequestMapping("")
     public String root(HttpServletRequest request) {
         String compId = null, userNo = null;
@@ -22,21 +22,21 @@ public class RootController extends Ctrl {
         if (compId == null)
             request.getAttribute("compId");
 
-        if (compId != null && userNo != null) { // 로그인 되어 있는 경우
+        if (compId != null && userNo != null) { // 濡쒓렇�씤 �릺�뼱 �엳�뒗 寃쎌슦
 
             // CODE ====================================
 
-        } else if (userNo == null && compId != null) { // 로그인 되어 있지 않은 경우 / compId 확인됨
+        } else if (userNo == null && compId != null) { // 濡쒓렇�씤 �릺�뼱 �엳吏� �븡�� 寃쎌슦 / compId �솗�씤�맖
 
             // CODE ====================================
 
-        } else { // 로그인 되어 있지 않은 경우 / compId 확인 안됨
+        } else { // 濡쒓렇�씤 �릺�뼱 �엳吏� �븡�� 寃쎌슦 / compId �솗�씤 �븞�맖
 
             // CODE ====================================
 
         }
 
-        return null;
+        return "/bodyContents";
     }
 
 }
