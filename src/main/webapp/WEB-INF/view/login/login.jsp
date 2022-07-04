@@ -17,15 +17,16 @@
             </div>
             <div id="loginInput">
             	<c:if test="${requestScope.compId eq null}">
-	                <input type="text" id="compId" name="compId" placeholder="회사 아이디" /><br />
+	                <input type="text" id="compId" name="compId" placeholder="회사 아이디" onkeyup="elInputKeyUp(this, event)" /><br />
             	</c:if>
-                <input type="text" id="userId" name="userId" placeholder="사용자 아이디" /><br />
-                <input type="password" id="pw" name="pw" placeholder="비밀번호" />
+                <input type="text" id="userId" name="userId" placeholder="사용자 아이디" onkeyup="elInputKeyUp(this, event)" /><br />
+                <input type="password" id="pw" name="pw" placeholder="비밀번호" onkeyup="elInputKeyUp(this, event)" />
             </div>
             <div id="loginSessionDiv">
                 <img src="/images/login/loginSession.png" id="loginSessionBtn" onclick="loginSessionClick(this)"/>
                 <span id="loginSessionSpan">로그인 상태 유지</span>
             </div>
+            <div id="loginMsg"></div>
             <div id="loginBtns">
                 <button type="button" id="loginBtn" onclick="loginSubmit()">로그인</button>
             </div>
@@ -43,4 +44,5 @@
 </div>
 </body>
 <script src="/js/login/login.js"></script>
+<script src="/js/cipher.js"></script>
 </html>

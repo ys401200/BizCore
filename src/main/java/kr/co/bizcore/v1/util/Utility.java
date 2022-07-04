@@ -41,11 +41,11 @@ public class Utility {
     // 암호화
     // ===============================================================================
 
-    private String generateKey() {
+    public String generateKey() {
         return generateKey(32);
     } // End of generateKey()
 
-    private String generateKey(int length) {
+    public String generateKey(int length) {
         byte[] data = null, src = new byte[69];
         int x = 0;
         int t = 0;
@@ -93,12 +93,27 @@ public class Utility {
         return md == null ? null : bytesToHex(md.digest());
     } // End of encSHA256()
 
-    private String bytesToHex(byte[] bytes) {
+    public String bytesToHex(byte[] bytes) {
         StringBuilder builder = new StringBuilder();
         for (byte b : bytes) {
             builder.append(String.format("%02x", b));
         }
         return builder.toString();
-    }
+    } // End of bytesToHex()
+
+    public byte[] hexToByteArray(String hex) {
+        int x = 0;
+        byte[] bytes = null;
+        if (hex == null || hex.length() % 2 != 0) {
+            return new byte[] {};
+        }
+
+        bytes = new byte[hex.length() / 2];
+        for (x = 0; x < hex.length(); x += 2) {
+            byte value = (byte) Integer.parseInt(hex.substring(x, x + 2), 16);
+            bytes[(int) Math.floor(x / 2)] = value;
+        }
+        return bytes;
+    } // End of hexToByteArray()
 
 }

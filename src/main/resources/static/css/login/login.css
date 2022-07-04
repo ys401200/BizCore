@@ -103,10 +103,21 @@ input, button, span{
     color: #5B5B5B;
 }
 
+#loginContents #loginContent #loginForm #loginMsg{
+    text-align: center;
+    font-weight: 400;
+    font-size: 16px;
+    color: #8d90ff;
+    height: 50px;
+    box-sizing: border-box;
+    padding:17px;
+    text-overflow: ellipsis;
+}
+
 #loginContents #loginContent #loginForm #loginBtns button{
     width: 240px;
     height: 54px;
-    margin-top: 73px;
+    margin-top: 23px;
     font-weight: 400;
     font-size: 18px;
     line-height: 26px;

@@ -1,5 +1,10 @@
 package kr.co.bizcore.v1.ctrl;
 
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.PublicKey;
+import java.security.spec.RSAPublicKeySpec;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -33,6 +38,7 @@ public class ApiCtrl extends Ctrl {
         return null;
     } // End of user()
 
+    // Login process API
     @RequestMapping(value = "/user/login", method = RequestMethod.POST)
     public String userLogin(HttpServletRequest request) {
         String userId = null, pw = null, userNo = null, compId = null, formData = null, result = null;
@@ -52,8 +58,9 @@ public class ApiCtrl extends Ctrl {
 
         if (compId == null) { // compId NOT Verified, send failure message
             result = "{\"result\":\"failure\",\"msg\":\"Company ID isn't verified\"}";
-        } else { // compId verified, Verify user id & pw
+        } else { // When compId verified, decryption data and verify userId, pw.
             session.setAttribute("compId", compId); // Set attribute compId to session
+            formData = request.getParameter("data");
             userId = request.getParameter("userId");
             pw = request.getParameter("pw");
             if (userId == null || pw == null) {
@@ -77,12 +84,51 @@ public class ApiCtrl extends Ctrl {
         return result;
     } // End of userLogin()
 
+    // Logged out process API
     @RequestMapping(value = "/user/logout", method = RequestMethod.GET)
     public RedirectView userLogout(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
         session.invalidate();
         return new RedirectView("/");
     } // End of userLogout()
+
+    // RSA Public key request API
+    @RequestMapping(value = "/user/rsa", method = RequestMethod.GET)
+    public String userRsa(HttpServletRequest request, HttpServletResponse response) {
+        HttpSession session = null;
+        KeyPair keyPair = null;
+        PublicKey publicKey = null;
+        RSAPublicKeySpec publicSpec = null;
+        KeyFactory keyFactory = null;
+        String publicKeyModulus = null;
+        String publicKeyExponent = null;
+        String result = null;
+
+        session = request.getSession();
+        keyPair = (KeyPair) session.getAttribute("rsaKey");
+
+        if (keyPair == null) { // RSA 키 쌍이 없는 경우 새로 생성하도록 함
+            keyPair = userService.createRsaKeyPair();
+        }
+
+        if (keyPair == null) {
+            result = "{\"result\":\"failure\",\"msg\":\"Error occurred when create RSA key pair.\"}";
+        } else {
+            try {
+                publicKey = keyPair.getPublic();
+                keyFactory = KeyFactory.getInstance("RSA");
+                publicSpec = (RSAPublicKeySpec) keyFactory.getKeySpec(publicKey, RSAPublicKeySpec.class);
+                publicKeyModulus = publicSpec.getModulus().toString(16);
+                publicKeyExponent = publicSpec.getPublicExponent().toString(16);
+                result = "{\"result\":\"ok\",\"data\":{\"publicKeyModulus\":\"" + publicKeyModulus
+                        + "\",\"publicKeyExponent\":\"" + publicKeyExponent + "\"}}";
+            } catch (Exception e) {
+                result = "{\"result\":\"failure\",\"msg\":\"Error occurred when get RSA public key.\"}";
+                e.printStackTrace();
+            }
+        }
+        return result;
+    } // End of userRsa()
 
     @RequestMapping("/customer")
     public String customer(HttpServletRequest request, HttpServletResponse response) {

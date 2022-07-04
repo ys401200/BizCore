@@ -38,6 +38,8 @@ dependencies {
 	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 	implementation 'org.apache.tomcat.embed:tomcat-embed-jasper:9.0.58'
 	implementation 'javax.servlet:jstl'
+	implementation 'org.json:json:20220320'
+
 }
 
 tasks.named('test') {
