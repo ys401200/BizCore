@@ -13,7 +13,29 @@ cipher = { // 암호화 모듈
 	},
     "rsa" : {"public":{"modulus":undefined,
                     "exponent":undefined},
-            "private":undefined},
+            "private":undefined,
+			"getKey":()=>{
+				let url = apiServer + "/api/user/rsa";
+				$.ajax({
+					url: url,
+					method: "get",
+					dataType: "json",
+					cache: false,
+					success:(data) => {
+						let publicKeyExponent, publicKeyModulus;
+						if(data.result === "ok"){
+							publicKeyExponent = data.data.publicKeyExponent;
+							publicKeyModulus = data.data.publicKeyModulus;
+							cipher.rsa.public.modulus = publicKeyModulus;
+							cipher.rsa.public.exponent = publicKeyExponent;
+							sessionStorage.setItem("rsaModulus", publicKeyModulus);
+							sessionStorage.setItem("rsaExponent", publicKeyExponent);
+						}else{
+							msg.set(data.msg);
+						}
+					}
+				})
+			}},
     "aes" : {"alg":undefined,
             "key":undefined},
     "getAesKey" : () => {return message;}
@@ -42,7 +64,7 @@ document.onreadystatechange = init;
 function init(){
 	let el = [];
     if(document.readyState !== "complete")  return; // 로딩 완전 종료가 아니면 종료함
-	getRsaPublicKey();
+	cipher.rsa.getKey();
 	msg.cnt = document.getElementById("loginMsg");
 } // End of init()
 
@@ -76,16 +98,18 @@ function loginSessionClick(e){
 	}
 }
 
+// 로그인 시도 함수
 function loginSubmit(){
-	let t, data = {};
-	let url = apiServer + "/api/user/login";
+	let t, data = {}, url = apiServer + "/api/user/login";
 
-	// 값이 있는지 먼저 검증 / 값이 없는 엘리먼트가 있는 경우 포커스를 주고 종료함
+	// 임시변수 및  타겟 엘리먼트 설정
 	t = [];
 	t[0] = document.getElementById("compId");
 	t[1] = document.getElementById("userId");
 	t[2] = document.getElementById("pw");
 	t[3] = document.getElementById("loginSessionBtn");
+
+	// 값이 있는지 먼저 검증 / 값이 없는 엘리먼트가 있는 경우 포커스를 주고 종료함
 	if(t[0] !== undefined && t[0].value.length === 0){
 		msg.set("회사 ID를 입력하세요");
 		t[0].focus();
@@ -98,7 +122,7 @@ function loginSubmit(){
 		msg.set("비밀번호를 입력하세요");
 		t[2].focus();
 		return;
-	}
+	} // End of loginSubmit()
 
 	// 값을 가지고 와서 암호화함(compId는 암호화 제외)
 	if(t[0] !== undefined)	data.compId = t.value;

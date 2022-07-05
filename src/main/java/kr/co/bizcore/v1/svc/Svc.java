@@ -16,7 +16,4 @@ public abstract class Svc {
     @Autowired
     protected UserMapper userMapper;
 
-    @Autowired
-    protected Utility util;
-
 }
