@@ -1,14 +1,20 @@
 package kr.co.bizcore.v1.ctrl;
 
+import java.io.UnsupportedEncodingException;
 import java.security.KeyFactory;
 import java.security.KeyPair;
+import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
+import java.util.Base64;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.json.JSONObject;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,12 +45,23 @@ public class ApiCtrl extends Ctrl {
     } // End of user()
 
     // Login process API
-    @RequestMapping(value = "/user/login", method = RequestMethod.POST)
-    public String userLogin(HttpServletRequest request) {
-        String userId = null, pw = null, userNo = null, compId = null, formData = null, result = null;
+    @RequestMapping(value = "/user/login/*", method = RequestMethod.POST)
+    public String userLogin(HttpServletRequest request, @RequestBody String requestBody) {
+        String userId = null, pw = null, userNo = null, compId = null, result = null, uri = null, dec = null,
+                aesKey = null, aesIv = null;
+        String[] t = null;
+        JSONObject json = null;
         HttpSession session = null;
         User user = null;
 
+        // 경로에서 compId를 찾을 수 있도록 준비함
+        uri = request.getRequestURI();
+        if (uri.substring(0, 1).equals("/"))
+            uri = uri.substring(1);
+        if (uri.substring(uri.length() - 1).equals("/"))
+            uri = uri.substring(0, uri.length() - 1);
+
+        // session과 request에서 compId를 찾아봄
         session = request.getSession();
         if (session != null)
             compId = (String) session.getAttribute("compId"); // First, verify compId from session(it's login process
@@ -55,14 +72,20 @@ public class ApiCtrl extends Ctrl {
         if (compId == null)
             compId = (String) request.getParameter("compId"); // Third, verify compId from post parameter(it's post
                                                               // base, user inputed)
+        if (compId == null && t.length > 3)
+            compId = t[3];
 
         if (compId == null) { // compId NOT Verified, send failure message
             result = "{\"result\":\"failure\",\"msg\":\"Company ID isn't verified\"}";
         } else { // When compId verified, decryption data and verify userId, pw.
             session.setAttribute("compId", compId); // Set attribute compId to session
-            formData = request.getParameter("data");
-            userId = request.getParameter("userId");
-            pw = request.getParameter("pw");
+            aesKey = (String) session.getAttribute("aesKey");
+            aesIv = (String) session.getAttribute("aesIv");
+            dec = userService.decAes(requestBody, aesKey, aesIv);
+            json = new JSONObject(dec);
+
+            userId = json.getString("userId");
+            pw = json.getString("pw");
             if (userId == null || pw == null) {
                 result = "{\"result\":\"failure\",\"msg\":\"User ID and/or Password ware empty\"}";
             } else {
@@ -71,7 +94,7 @@ public class ApiCtrl extends Ctrl {
                     result = "{\"result\":\"failure\",\"msg\":\"User ID and/or Password ware mismatch\"}";
                 else {
                     user = userService.getBasicUserInfo(userNo);
-                    result = "{\"result\":\"ok\",\"data\":" + user.toJson() + "}";
+                    result = "{\"result\":\"ok\"}";
                     userService.setPermission(user);
                     session.setAttribute("userNo", userNo);
                     session.setAttribute("user", user);
@@ -79,7 +102,7 @@ public class ApiCtrl extends Ctrl {
             }
         }
         // Later, AES applied
-        result = util.encAes(result);
+        // result = userService.encAes256(result);
 
         return result;
     } // End of userLogin()
@@ -108,7 +131,8 @@ public class ApiCtrl extends Ctrl {
         keyPair = (KeyPair) session.getAttribute("rsaKey");
 
         if (keyPair == null) { // RSA 키 쌍이 없는 경우 새로 생성하도록 함
-            keyPair = userService.createRsaKeyPair();
+            keyPair = userService.genKeyPair();
+            session.setAttribute("rsaKey", keyPair);
         }
 
         if (keyPair == null) {
@@ -120,7 +144,8 @@ public class ApiCtrl extends Ctrl {
                 publicSpec = (RSAPublicKeySpec) keyFactory.getKeySpec(publicKey, RSAPublicKeySpec.class);
                 publicKeyModulus = publicSpec.getModulus().toString(16);
                 publicKeyExponent = publicSpec.getPublicExponent().toString(16);
-                result = "{\"result\":\"ok\",\"data\":{\"publicKeyModulus\":\"" + publicKeyModulus
+                result = "{\"result\":\"ok\",\"data\":{\"publicKeyModulus\":\""
+                        + publicKeyModulus
                         + "\",\"publicKeyExponent\":\"" + publicKeyExponent + "\"}}";
             } catch (Exception e) {
                 result = "{\"result\":\"failure\",\"msg\":\"Error occurred when get RSA public key.\"}";
@@ -129,6 +154,26 @@ public class ApiCtrl extends Ctrl {
         }
         return result;
     } // End of userRsa()
+
+    @RequestMapping(value = "/user/aes", method = RequestMethod.POST)
+    public String userAes(HttpServletRequest request, @RequestBody String requestBody)
+            throws UnsupportedEncodingException {
+        String aesKey = null, iv = null;
+        String[] t = null;
+        KeyPair keyPair = null;
+        HttpSession session = null;
+
+        session = request.getSession();
+        keyPair = (KeyPair) session.getAttribute("rsaKey");
+        t = requestBody.split("\n");
+        aesKey = userService.decRsa(t[0], keyPair);
+        aesKey += userService.decRsa(t[1], keyPair);
+        iv = userService.decRsa(t[4], keyPair);
+        iv += userService.decRsa(t[5], keyPair);
+        session.setAttribute("aesKey", aesKey);
+        session.setAttribute("aesIv", iv);
+        return "{\"result\":\"ok\"}";
+    }
 
     @RequestMapping("/customer")
     public String customer(HttpServletRequest request, HttpServletResponse response) {

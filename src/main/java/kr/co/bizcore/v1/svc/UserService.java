@@ -1,14 +1,8 @@
 package kr.co.bizcore.v1.svc;
 
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
 import java.util.List;
 import java.util.Map;
-import javax.crypto.Cipher;
 import org.springframework.stereotype.Service;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.co.bizcore.v1.domain.Permission;
 import kr.co.bizcore.v1.domain.User;
 
@@ -56,45 +50,4 @@ public class UserService extends Svc {
         }
         user.setPermission(result);
     } // End of setPermission()
-
-    // RSA 키 쌍을 만들고 전달하는 메서드
-    public KeyPair createRsaKeyPair() {
-        KeyPairGenerator generator = null;
-        KeyPair keyPair = null;
-
-        try {
-            generator = KeyPairGenerator.getInstance("RSA");
-            generator.initialize(1024);
-            keyPair = generator.genKeyPair();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        return keyPair;
-    } // End of createRsaKeyPair()
-
-    // RSA 인코딩된 데이터를 복호화하는 메서드
-    public Map<String, String> decRsa(String msg, KeyPair keyPair) {
-        Map<String, String> result = null;
-        Cipher cipher = null;
-        String str = null;
-        PrivateKey privateKey = null;
-        byte[] bytes = null;
-
-        if (msg == null || keyPair == null)
-            return result;
-        try {
-            cipher = Cipher.getInstance("RSA");
-            privateKey = keyPair.getPrivate();
-            cipher.init(Cipher.DECRYPT_MODE, privateKey);
-            bytes = util.hexToByteArray(msg);
-            bytes = cipher.doFinal(bytes);
-            str = new String(bytes);
-            result = new ObjectMapper().readValue(str, Map.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return result;
-    } // End of decRsa()
-
 }
