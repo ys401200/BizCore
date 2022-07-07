@@ -22,6 +22,8 @@
 		<jsp:include page="./main/contentWork.jsp" />
 	</div>
 </div>
+<div class="msg_cnt"></div>
 </body>
 <script src="/js/bodyContent.js"></script>
+<script src="/js/cipher.js"></script>
 </html>

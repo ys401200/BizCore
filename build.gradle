@@ -39,7 +39,7 @@ dependencies {
 	implementation 'org.apache.tomcat.embed:tomcat-embed-jasper:9.0.58'
 	implementation 'javax.servlet:jstl'
 	implementation 'org.json:json:20220320'
-
+	implementation 'org.bouncycastle:bcprov-jdk15on:1.70'
 }
 
 tasks.named('test') {

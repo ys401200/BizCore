@@ -3,9 +3,7 @@ package kr.co.bizcore.v1.ctrl;
 import java.io.UnsupportedEncodingException;
 import java.security.KeyFactory;
 import java.security.KeyPair;
-import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Base64;
 
@@ -50,6 +48,8 @@ public class ApiCtrl extends Ctrl {
         String userId = null, pw = null, userNo = null, compId = null, result = null, uri = null, dec = null,
                 aesKey = null, aesIv = null;
         String[] t = null;
+        byte[] bytes = null;
+        boolean keepStatus = false;
         JSONObject json = null;
         HttpSession session = null;
         User user = null;
@@ -81,11 +81,14 @@ public class ApiCtrl extends Ctrl {
             session.setAttribute("compId", compId); // Set attribute compId to session
             aesKey = (String) session.getAttribute("aesKey");
             aesIv = (String) session.getAttribute("aesIv");
-            dec = userService.decAes(requestBody, aesKey, aesIv);
+            //dec = userService.decAes(requestBody, aesKey, aesIv);
+            bytes = Base64.getDecoder().decode(requestBody.getBytes());
+            dec = new String(bytes);
             json = new JSONObject(dec);
 
             userId = json.getString("userId");
             pw = json.getString("pw");
+            keepStatus = json.getBoolean("keepStatus");
             if (userId == null || pw == null) {
                 result = "{\"result\":\"failure\",\"msg\":\"User ID and/or Password ware empty\"}";
             } else {

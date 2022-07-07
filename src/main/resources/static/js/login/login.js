@@ -108,12 +108,12 @@ msg = {
 		if(msg.cnt === undefined)	return;
 		if(message === undefined)	return;
 		if(msg.handler !== undefined)	window.clearTimeout(msg.handler);
-		msg.cnt.innerTEXT = message;
+		msg.cnt.innerText = message;
 		msg.handler = window.setTimeout(msg.clr, msg.time * 1000);
 	},
 	"clr" : () => {
 		msg.handler = undefined;
-		msg.cnt.innerTEXT = "";
+		msg.cnt.innerText = "";
 	}
 }
 
@@ -185,8 +185,10 @@ function loginSubmit(){
 
 	// 값을 가지고 와서 암호화함(compId는 암호화 제외)
 	data = {"userId":t[1].value, "pw":t[2].value, "keepStatus":document.getElementById("loginSessionBtn").className === "active"};
-	if(!(t[0] === undefined || t[0] === null))	apiServer = apiServer + t[0].value;
-	data = btoa(cipher.encAes(JSON.stringify(data)));
+	if(!(t[0] === undefined || t[0] === null))	url = url + t[0].value;
+	//data = cipher.encAes(JSON.stringify(data)); // 서버사이즈 AES 복호화에 문있음
+	data = btoa(JSON.stringify(data));
+	
 	
 	// 내용이 확인되고 암호화가 진행된 후 서버에 post를 시도함
 	$.ajax({
@@ -198,35 +200,16 @@ function loginSubmit(){
 		cache: false,
 		processData: false,
 		success:function(data){
-			//location.reload();
+			if(data.result === "ok"){
+				location.reload();
+			}else{
+				msg.set(data.msg);
+				document.getElementById("userId").focus();
+			}
+			
 		},
 		error:function(){
 			msg.set("정보를 다시 확인하여주십시오.");
 		}
 	})
 }
-
-// RSA 키를 받아오는 함수
-function getRsaPublicKey(){
-	let url = apiServer + "/api/user/rsa";
-
-	$.ajax({
-		url: url,
-		method: "get",
-		dataType: "json",
-		cache: false,
-		success:(data) => {
-			let publicKeyExponent, publicKeyModulus;
-			if(data.result === "ok"){
-				publicKeyExponent = data.data.publicKeyExponent;
-				publicKeyModulus = data.data.publicKeyModulus;
-				cipher.rsa.public.modulus = publicKeyModulus;
-				cipher.rsa.public.exponent = publicKeyExponent;
-				sessionStorage.setItem("rsaModulus", publicKeyModulus);
-				sessionStorage.setItem("rsaExponent", publicKeyExponent);
-			}else{
-				msg.set(data.msg);
-			}
-		}
-	})
-} // End of getRsaPublicKey()

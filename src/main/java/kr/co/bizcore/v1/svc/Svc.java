@@ -11,8 +11,9 @@ import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.Security;
 import java.util.Base64;
-
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -122,6 +123,30 @@ public abstract class Svc {
         Cipher cipher = null;
         SecretKeySpec keySpec = null;
         IvParameterSpec ivParamSpec = null;
+        byte[] decrypted = null;
+
+        Security.addProvider(new BouncyCastleProvider());
+
+        try {
+            cipher = Cipher.getInstance("AES/CBC/PKCS7Padding", "BC");
+            keySpec = new SecretKeySpec(key.getBytes(), "AES");
+            ivParamSpec = new IvParameterSpec(iv.getBytes());
+            cipher.init(Cipher.DECRYPT_MODE, keySpec, ivParamSpec);
+            decrypted = Base64.getDecoder().decode(text.getBytes("UTF-8"));
+            decrypted = cipher.doFinal(decrypted);
+            result = new String(decrypted, "UTF-8");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    } // End of dec()
+
+    public String decAesOgn(String text, String key, String iv) {
+        String result = null;
+        Cipher cipher = null;
+        SecretKeySpec keySpec = null;
+        IvParameterSpec ivParamSpec = null;
         byte[] decrypted1 = null, decrypted2 = null;
 
         try {
@@ -129,8 +154,7 @@ public abstract class Svc {
             keySpec = new SecretKeySpec(key.getBytes(), "AES");
             ivParamSpec = new IvParameterSpec(iv.getBytes());
             cipher.init(Cipher.DECRYPT_MODE, keySpec, ivParamSpec);
-            decrypted1 = Base64.getDecoder().decode(text);
-            result = bytesToHex(decrypted1);
+            decrypted1 = Base64.getDecoder().decode(text.getBytes("UTF-8"));
             decrypted2 = cipher.doFinal(decrypted1);
             result = new String(decrypted2, "UTF-8");
         } catch (Exception e) {
