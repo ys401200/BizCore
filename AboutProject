@@ -25,6 +25,7 @@ server:
   error:
     whitelabel:
       enabled: true
+  shutdown: graceful
 
 spring:
   datasource:
@@ -38,6 +39,8 @@ spring:
     view:
       prefix: /WEB-INF/view/
       suffix: .jsp
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
 #  autoconfigure:
 #    exclude: org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
 

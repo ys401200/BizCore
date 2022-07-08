@@ -128,11 +128,12 @@ public abstract class Svc {
         Security.addProvider(new BouncyCastleProvider());
 
         try {
-            cipher = Cipher.getInstance("AES/CBC/PKCS7Padding", "BC");
+            cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
             keySpec = new SecretKeySpec(key.getBytes(), "AES");
             ivParamSpec = new IvParameterSpec(iv.getBytes());
             cipher.init(Cipher.DECRYPT_MODE, keySpec, ivParamSpec);
-            decrypted = Base64.getDecoder().decode(text.getBytes("UTF-8"));
+            decrypted = Base64.getDecoder().decode(text.getBytes());
+            decrypted = hexToByteArray(new String(decrypted));
             decrypted = cipher.doFinal(decrypted);
             result = new String(decrypted, "UTF-8");
         } catch (Exception e) {
