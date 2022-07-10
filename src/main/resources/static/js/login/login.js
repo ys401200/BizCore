@@ -139,8 +139,8 @@ function elInputKeyUp(el, event){
 	if(el === target[0])		target[1].focus();
 	else if(el === target[1])	target[2].focus();
 	else if(el === target[2]){
-		if(target[0] !== undefined && target[0].value.length === 0)		target[0].focus();
-		else if(target[1] !== undefined && target[1].value.length === 0)	target[0].focus();
+		if(!(target[0] === undefined || target[0] === null) && target[0].value.length === 0)		target[0].focus();
+		else if(target[1] !== undefined && target[1].value.length === 0)	target[1].focus();
 		else loginSubmit();
 	}
 } // End of elInputKeyUp()
