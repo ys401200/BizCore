@@ -17,8 +17,6 @@ public class UserService extends Svc {
     // 로그인 검증 메서드
     public String verifyLogin(String compId, String userId, String pw) {
         String result = systemMapper.verifyLogin(compId, userId, pw);
-        System.out.println("[TEST] ::::: Login Verifier / compId : " + compId + " / userId : " + userId + "pw : " + pw);
-        System.out.println("[TEST] ::::: is logged in ? userNo! ::: " + result);
         return result;
     } // End of verifyLogin()
 
@@ -33,7 +31,6 @@ public class UserService extends Svc {
         if (user == null)
             return;
 
-        System.out.println("[TEST] :::::::::: User" + user.toJson());
         data = userMapper.getUserPermission(user.getCompId(), user.getDeptId(), user.getUserNo() + "");
 
         if (data == null)

@@ -123,32 +123,11 @@ public abstract class Svc {
         Cipher cipher = null;
         SecretKeySpec keySpec = null;
         IvParameterSpec ivParamSpec = null;
-        byte[] decrypted = null;
-
-        Security.addProvider(new BouncyCastleProvider());
-
-        try {
-            cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            keySpec = new SecretKeySpec(key.getBytes(), "AES");
-            ivParamSpec = new IvParameterSpec(iv.getBytes());
-            cipher.init(Cipher.DECRYPT_MODE, keySpec, ivParamSpec);
-            decrypted = Base64.getDecoder().decode(text.getBytes());
-            decrypted = hexToByteArray(new String(decrypted));
-            decrypted = cipher.doFinal(decrypted);
-            result = new String(decrypted, "UTF-8");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return result;
-    } // End of dec()
-
-    public String decAesOgn(String text, String key, String iv) {
-        String result = null;
-        Cipher cipher = null;
-        SecretKeySpec keySpec = null;
-        IvParameterSpec ivParamSpec = null;
         byte[] decrypted1 = null, decrypted2 = null;
+
+        System.out.println("[TEST] :::::::::: text ///" + text + "///");
+        System.out.println("[TEST] :::::::::: ket ///" + key + "///");
+        System.out.println("[TEST] :::::::::: iv ///" + iv + "///");
 
         try {
             cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");

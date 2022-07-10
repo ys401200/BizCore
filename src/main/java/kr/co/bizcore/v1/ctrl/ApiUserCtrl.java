@@ -4,7 +4,6 @@ import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.PublicKey;
 import java.security.spec.RSAPublicKeySpec;
-import java.util.Base64;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,7 +29,6 @@ public class ApiUserCtrl extends Ctrl{
         String userId = null, pw = null, userNo = null, compId = null, result = null, uri = null, dec = null,
                 aesKey = null, aesIv = null;
         String[] t = null;
-        byte[] bytes = null;
         boolean keepStatus = false;
         JSONObject json = null;
         HttpSession session = null;
@@ -63,9 +61,7 @@ public class ApiUserCtrl extends Ctrl{
             session.setAttribute("compId", compId); // Set attribute compId to session
             aesKey = (String) session.getAttribute("aesKey");
             aesIv = (String) session.getAttribute("aesIv");
-            //dec = userService.decAes(requestBody, aesKey, aesIv);
-            bytes = Base64.getDecoder().decode(requestBody.getBytes());
-            dec = new String(bytes);
+            dec = userService.decAes(requestBody, aesKey, aesIv);
             json = new JSONObject(dec);
 
             userId = json.getString("userId");
@@ -153,6 +149,8 @@ public class ApiUserCtrl extends Ctrl{
         t = requestBody.split("\n");
         aesKey = userService.decRsa(t[0], keyPair);
         aesKey += userService.decRsa(t[1], keyPair);
+        aesKey += userService.decRsa(t[2], keyPair);
+        aesKey += userService.decRsa(t[3], keyPair);
         iv = userService.decRsa(t[4], keyPair);
         iv += userService.decRsa(t[5], keyPair);
         session.setAttribute("aesKey", aesKey);

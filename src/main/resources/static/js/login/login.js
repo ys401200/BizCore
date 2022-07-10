@@ -186,8 +186,8 @@ function loginSubmit(){
 	// 값을 가지고 와서 암호화함(compId는 암호화 제외)
 	data = {"userId":t[1].value, "pw":t[2].value, "keepStatus":document.getElementById("loginSessionBtn").className === "active"};
 	if(!(t[0] === undefined || t[0] === null))	url = url + t[0].value;
-	//data = cipher.encAes(JSON.stringify(data)); // 서버사이즈 AES 복호화에 문있음
-	data = btoa(JSON.stringify(data));
+	data = cipher.encAes(JSON.stringify(data));
+	//data = btoa(JSON.stringify(data));
 	
 	
 	// 내용이 확인되고 암호화가 진행된 후 서버에 post를 시도함
