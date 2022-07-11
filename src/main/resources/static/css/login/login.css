@@ -22,10 +22,27 @@ input, button, span{
     background-color: #ffffff;
 }
 
+@media(max-width: 1500px){
+	#loginContents #loginContent #loginForm{
+	    left: 10% !important;
+	}
+}
+
 #loginContents #loginContent #loginForm{
     position: relative;
-    text-align: center;
+    left: 27%;
     top: 20%;
+}
+
+@media(max-width: 700px){
+	#loginContents #loginContent #loginForm #loginLogoImgDiv{
+		left: 5% !important;
+	}
+}
+
+#loginContents #loginContent #loginForm #loginLogoImgDiv{
+	position: relative;
+	left: 15%;
 }
 
 #loginContents #loginContent #loginForm #loginLogoImgDiv #loginLogoImg{
@@ -35,6 +52,12 @@ input, button, span{
 
 #loginContents #loginContent #loginForm #loginInput{
     margin-top: 48px;
+}
+
+@media(max-width: 1280px){
+	#loginContents #loginContent #loginForm #loginInput input:not(:last-child){
+	    width: 80% !important;
+	}
 }
 
 #loginContents #loginContent #loginForm #loginInput input:not(:last-child){
@@ -47,6 +70,12 @@ input, button, span{
     font-size: 16px;
     line-height: 23px;
     padding: 0 26px;
+}
+
+@media(max-width: 1280px){
+	#loginContents #loginContent #loginForm #loginInput input:last-child{
+	    width: 80% !important;
+	}
 }
 
 #loginContents #loginContent #loginForm #loginInput input:last-child{
@@ -78,8 +107,7 @@ input, button, span{
 }
 
 #loginContents #loginContent #loginForm #loginSessionDiv{
-    position: relative;
-    left: 26%;
+    width: 100%;
     text-align: left;
 }
 
@@ -87,6 +115,13 @@ input, button, span{
     width:21px;
     vertical-align: bottom;
     content: url("../../images/login/loginSessionActive.png");
+}
+
+@media(max-width:2100px){
+	#loginContents #loginContent #loginForm #loginSessionDiv #loginSessionBtn:not(.active){
+		position: relative;
+		left: 0 !important;
+	}
 }
 
 #loginContents #loginContent #loginForm #loginSessionDiv #loginSessionBtn:not(.active){
@@ -104,7 +139,7 @@ input, button, span{
 }
 
 #loginContents #loginContent #loginForm #loginMsg{
-    text-align: center;
+    margin-left: 15%;
     font-weight: 400;
     font-size: 16px;
     color: #8d90ff;
@@ -114,10 +149,17 @@ input, button, span{
     text-overflow: ellipsis;
 }
 
+@media(max-width: 700px){
+	#loginContents #loginContent #loginForm #loginBtns button{
+		margin-left: 0 !important;
+	}
+}
+
 #loginContents #loginContent #loginForm #loginBtns button{
     width: 240px;
     height: 54px;
     margin-top: 23px;
+    margin-left: 13%;
     font-weight: 400;
     font-size: 18px;
     line-height: 26px;
@@ -143,25 +185,25 @@ input, button, span{
 
 #loginContents #loginIntroduce #loginSpans #loginIntroSpan_1{
     font-weight: 300;
-    font-size: 60px;
+    font-size: calc(1em + 2.1vw);
     line-height: 70px;
     color: #FFFFFF;
 }
 
 #loginContents #loginIntroduce #loginSpans #loginIntroSpan_2{
     font-weight: 700;
-    font-size: 60px;
+    font-size: calc(1em + 2.1vw);
     line-height: 70px;
     color: #FFFFFF;
 }
 
 #loginContents #loginIntroduce #loginIntroImgDiv{
     position: relative;
+    text-align: center;
     top: 20%;
-    left: 15%;
 }
 
 #loginContents #loginIntroduce #loginIntroImgDiv #loginIntroImg{
-    width: 766px;
-    height: 480px;
+    width: 80%;
+    height: 60%;
 }
