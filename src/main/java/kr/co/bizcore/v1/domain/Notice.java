@@ -32,7 +32,7 @@ public class Notice implements Domain{
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        return null;
+        return result;
     } // End of toJson();
     
 }
