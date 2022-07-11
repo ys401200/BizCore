@@ -23,6 +23,33 @@ import kr.co.bizcore.v1.domain.User;
 @RequestMapping("/api/user")
 public class ApiUserCtrl extends Ctrl{
 
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public String user(HttpServletRequest request) {
+        String result = null, aesKey = null, aesIv = null;
+        User user = null;
+        HttpSession session = null;
+
+        session = request.getSession();
+        if(session == null){ // 유효한 세션이 있는지 검증
+            result = "{\"result\":\"failure\",\"msg\":\"Session is expired.\"}";
+        }else{ // 세션이 유효한 경우 user 객체를 가지고 옴
+            user = (User)session.getAttribute("user");
+            if(user == null){ // user객체가 있는지 검증
+                result = "{\"result\":\"failure\",\"msg\":\"login is expired.\"}";
+            }else{ //  user 객체를 json으로 변환하고 AES256으로 암호화 함
+                aesKey = (String)session.getAttribute("aesKey");
+                aesIv = (String)session.getAttribute("aesIv");
+                if(aesKey == null || aesIv == null){ // AES 암호화를 할 수 있는 키가 있는지 검증함
+                    result = "{\"result\":\"failure\",\"msg\":\"AES Key is invalid..\"}";
+                }else{
+                    result = userService.encAes(user.toJson(), aesKey, aesIv);
+                    result = "{\"result\":\"ok\",\"data\":\"" + result + "\"}";
+                }
+            }
+        }
+        return result;
+    } // End of api/user == get
+
     // Login process API
     @RequestMapping(value = "/login/*", method = RequestMethod.POST)
     public String userLogin(HttpServletRequest request, @RequestBody String requestBody) {
@@ -82,8 +109,6 @@ public class ApiUserCtrl extends Ctrl{
                 }
             }
         }
-        // Later, AES applied
-        // result = userService.encAes256(result);
 
         return result;
     } // End of userLogin()
