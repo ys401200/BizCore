@@ -117,6 +117,10 @@ $(document).ready(function(){
 			msg.cnt.innerText = "";
 		}
 	}
+
+	cipher.aes.key = sessionStorage.getItem("aesKey");
+	cipher.aes.iv = sessionStorage.getItem("aesIv");
+	msg.cnt = document.getElementsByClassName("msg_cnt")[0];
 	
 	setTimeout(() => {
 		$("#loadingDiv").loading({
