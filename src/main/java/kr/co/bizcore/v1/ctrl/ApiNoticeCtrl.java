@@ -24,8 +24,6 @@ public class ApiNoticeCtrl extends Ctrl{
  
   @Autowired
   private NoticeSvc noticeSvc;
-
-
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String get(HttpServletRequest request) {
         String result = null, data = null, aesKey = null, aesIv = null;

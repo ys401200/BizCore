@@ -3,15 +3,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>    
-
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<link rel="stylesheet" type="text/css" href="/css/main/contentWork.css" />
-<title>업무관리</title>
-</head>
-<body>
 <div id="bodyNotice">
 	<hr />
 	<span>공지사항</span>
@@ -379,5 +370,4 @@
 		</table>
 	</div>
 </div>
-</body>
-</html>
+

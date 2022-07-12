@@ -1,7 +1,6 @@
 let cipher, msg, apiServer;
 
 $(document).ready(function(){
-
 	apiServer = "";
 
 	cipher = { // 암호화 모듈

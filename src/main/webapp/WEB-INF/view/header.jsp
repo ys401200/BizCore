@@ -2,6 +2,11 @@
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<% 
+	String getPathName = (String)session.getAttribute("pathName");
+	request.setAttribute("getPathName", getPathName);
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,19 +16,22 @@
 <link rel="stylesheet" type="text/css" href="/css/jquery-ui.css" />
 <link rel="stylesheet" type="text/css" href="/css/jquery-ui.structure.css" />
 <link rel="stylesheet" type="text/css" href="/css/jquery-ui.theme.css" />
+<link rel="stylesheet" type="text/css" href="/css/bodyContents.css">
+<link rel="stylesheet" type="text/css" href="/css/<%= getPathName %>/<%= getPathName %>.css">
 
 <script src="/js/jquery.min.js"></script>
 <script src="/js/jquery-ui.js"></script>
 <script type="text/javascript" src="/js/jquery.easing.js"></script>
 <script src="/js/loading.js"></script>
+<script src="/js/<%= getPathName %>/<%= getPathName %>.js"></script>
 
-<title>헤더</title>
+<title>BizCore</title>
 </head>
 <body>
 <div id="loadingDiv" style="width: 100%; height: 100%;"></div>
 <div id="header">
 	<div id="mainTopLogo">
-		<a href=""><img src="/images/main/topLogo.png" id="mainTopLogoImg" /></a>
+		<a href="/"><img src="/images/main/topLogo.png" id="mainTopLogoImg" /></a>
 		<img src="/images/main/topEllipse.png" id="mainTopEllipseImg" />
 		<img src="/images/main/topVector.png" id="mainTopVectorImg" />
 	</div>
@@ -36,6 +44,5 @@
 		</ul>
 	</div>
 </div>
-</body>
 <script src="/js/header.js"></script>
-</html>
+

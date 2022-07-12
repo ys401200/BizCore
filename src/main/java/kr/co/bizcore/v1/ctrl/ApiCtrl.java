@@ -34,12 +34,6 @@ public class ApiCtrl extends Ctrl {
         return null;
     }
 
-    @RequestMapping("/schedule")
-    public String schedule(HttpServletRequest request, HttpServletResponse response) {
-
-        return null;
-    }
-
     @RequestMapping("/calendar")
     public String calendar(HttpServletRequest request, HttpServletResponse response) {
 

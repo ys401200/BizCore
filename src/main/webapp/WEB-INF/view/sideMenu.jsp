@@ -1,25 +1,16 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <link rel="stylesheet" type="text/css" href="/css/sideMenu.css" />
-
-<title>사이드메뉴</title>
-</head>
-<body>
 <div id="sideMenu">
 	<ul id="business">
 		<li>
-			<a href="">
+			<a href="/">
 				<img src="/images/main/icons/mainHomeIcon.png" />
 				<span>나의 업무 홈</span>
 			</a>
 		</li>
 		<li>
-			<a href="/notice/list.do">
+			<a href="/notice">
 				<img src="/images/main/icons/mainNoticeIcon.png" />
 				<span>공지사항</span>
 				<span id="slideSpan">+</span>
@@ -33,7 +24,7 @@
 			</a>
 		  	<ul id="panel">
 		  		<li><a href="#">- 캘린더</a></li>
-		  		<li><a href="#">- 일정조회</a></li>
+		  		<li><a href="/schedule">- 일정조회</a></li>
 		  		<li><a href="#">- 일정등록</a></li>
 		  		<li><a href="#">- 개인업무일지작성</a></li>
 		  		<li><a href="#">- 업무일지검토</a></li>
@@ -146,5 +137,3 @@
 		</li>
 	</ul>
 </div>
-</body>
-</html>
