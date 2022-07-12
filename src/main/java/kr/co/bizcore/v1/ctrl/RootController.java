@@ -58,7 +58,8 @@ public class RootController extends Ctrl {
             pathName = tempStrArr[0];
         }else if(tempStrArr.length > 1){
             tempStr = tempStrArr[1];
-            pathName = tempStr.substring(0, 1).toUpperCase();
+            pathName = tempStrArr[0];
+            pathName += tempStr.substring(0, 1).toUpperCase();
             pathName += tempStr.substring(1).toLowerCase();
         }
 
@@ -95,7 +96,8 @@ public class RootController extends Ctrl {
             pathName = tempStrArr[0];
         }else if(tempStrArr.length > 1){
             tempStr = tempStrArr[1];
-            pathName = tempStr.substring(0, 1).toUpperCase();
+            pathName = tempStrArr[0];
+            pathName += tempStr.substring(0, 1).toUpperCase();
             pathName += tempStr.substring(1).toLowerCase();
         }
 
@@ -132,7 +134,8 @@ public class RootController extends Ctrl {
             pathName = tempStrArr[0];
         }else if(tempStrArr.length > 1){
             tempStr = tempStrArr[1];
-            pathName = tempStr.substring(0, 1).toUpperCase();
+            pathName = tempStrArr[0];
+            pathName += tempStr.substring(0, 1).toUpperCase();
             pathName += tempStr.substring(1).toLowerCase();
         }
 
@@ -169,7 +172,8 @@ public class RootController extends Ctrl {
             pathName = tempStrArr[0];
         }else if(tempStrArr.length > 1){
             tempStr = tempStrArr[1];
-            pathName = tempStr.substring(0, 1).toUpperCase();
+            pathName = tempStrArr[0];
+            pathName += tempStr.substring(0, 1).toUpperCase();
             pathName += tempStr.substring(1).toLowerCase();
         }
 
@@ -206,7 +210,8 @@ public class RootController extends Ctrl {
             pathName = tempStrArr[0];
         }else if(tempStrArr.length > 1){
             tempStr = tempStrArr[1];
-            pathName = tempStr.substring(0, 1).toUpperCase();
+            pathName = tempStrArr[0];
+            pathName += tempStr.substring(0, 1).toUpperCase();
             pathName += tempStr.substring(1).toLowerCase();
         }
 
@@ -239,7 +244,8 @@ public class RootController extends Ctrl {
             pathName = tempStrArr[0];
         }else if(tempStrArr.length > 1){
             tempStr = tempStrArr[1];
-            pathName = tempStr.substring(0, 1).toUpperCase();
+            pathName = tempStrArr[0];
+            pathName += tempStr.substring(0, 1).toUpperCase();
             pathName += tempStr.substring(1).toLowerCase();
         }
 
