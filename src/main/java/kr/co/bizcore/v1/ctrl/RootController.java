@@ -36,7 +36,7 @@ public class RootController extends Ctrl {
         return result;
     } // End of root
 
-    @RequestMapping("/business/**/*")
+    @RequestMapping("/business/**")
     public String business(HttpServletRequest request) {
         HttpSession session = null;
         String result = null, uri = null, pathName = null, tempStr = null;
@@ -73,7 +73,7 @@ public class RootController extends Ctrl {
         return result;
     } // End of /business/**/*
 
-    @RequestMapping("/gw/**/*")
+    @RequestMapping("/gw/**")
     public String gw(HttpServletRequest request) {
         HttpSession session = null;
         String result = null, uri = null, pathName = null, tempStr = null;
@@ -110,7 +110,7 @@ public class RootController extends Ctrl {
         return result;
     } // End of /gw/**/*
 
-    @RequestMapping("/accounting/**/*")
+    @RequestMapping("/accounting/**")
     public String accounting(HttpServletRequest request) {
         HttpSession session = null;
         String result = null, uri = null, pathName = null, tempStr = null;
@@ -147,7 +147,7 @@ public class RootController extends Ctrl {
         return result;
     } // End of /accounting/**/*
 
-    @RequestMapping("/mis/**/*")
+    @RequestMapping("/mis/**")
     public String mis(HttpServletRequest request) {
         HttpSession session = null;
         String result = null, uri = null, pathName = null, tempStr = null;
