@@ -10,7 +10,7 @@
 			</a>
 		</li>
 		<li>
-			<a href="/notice">
+			<a href="/business/notice">
 				<img src="/images/main/icons/mainNoticeIcon.png" />
 				<span>공지사항</span>
 				<span id="slideSpan">+</span>
@@ -24,7 +24,7 @@
 			</a>
 		  	<ul id="panel">
 		  		<li><a href="#">- 캘린더</a></li>
-		  		<li><a href="/schedule">- 일정조회</a></li>
+		  		<li><a href="/business/schedule">- 일정조회</a></li>
 		  		<li><a href="#">- 일정등록</a></li>
 		  		<li><a href="#">- 개인업무일지작성</a></li>
 		  		<li><a href="#">- 업무일지검토</a></li>
