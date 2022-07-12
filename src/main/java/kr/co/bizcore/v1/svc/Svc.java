@@ -125,10 +125,6 @@ public abstract class Svc {
         IvParameterSpec ivParamSpec = null;
         byte[] decrypted1 = null, decrypted2 = null;
 
-        System.out.println("[TEST] :::::::::: text ///" + text + "///");
-        System.out.println("[TEST] :::::::::: ket ///" + key + "///");
-        System.out.println("[TEST] :::::::::: iv ///" + iv + "///");
-
         try {
             cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
             keySpec = new SecretKeySpec(key.getBytes(), "AES");

@@ -101,20 +101,28 @@ $(document).ready(function(){
 		} // End of getKey()
 	}
 
-	msg = {
+	msg = { // 메시징 유닛
 		"cnt" : undefined,
 		"handler" : undefined,
-		"time" : 5,
-		"set" : (message) => {
-			if(msg.cnt === undefined)	return;
+		"time" : 10,
+		"set" : (message, time) => {
+			let el, handler, html;
+			if(msg.cnt === undefined || msg.cnt === null)	return;
 			if(message === undefined)	return;
-			if(msg.handler !== undefined)	window.clearTimeout(msg.handler);
-			msg.cnt.innerText = message;
-			msg.handler = window.setTimeout(msg.clr, msg.time * 1000);
+			if(time === undefined)  time = msg.time;
+			el = document.createElement("div");
+			handler = window.setTimeout(()=>{
+				el.remove();
+			},time*1000);
+			html = "<div class=\"each_msg\"><div data-handler=\"" + handler + "\" onclick=\"msg.clr(this)\" class=\"cls_btn\">&#x2715;</div><div class=\"msg_content\">" + message + "</div></div>";
+			el.innerHTML = html;
+			msg.cnt.appendChild(el);
 		},
-		"clr" : () => {
-			msg.handler = undefined;
-			msg.cnt.innerText = "";
+		"clr" : (el) => {
+			let handler;
+			handler = el.dataset.handler*1;
+			window.clearTimeout(handler);
+			el.parentElement.remove();
 		}
 	}
 
