@@ -6,7 +6,7 @@ function init(){
 		$("#loadingDiv").hide();
 		$("#loadingDiv").loading("toggle");
 	}, 300);
-	
+	getNoticeList();
 } // End of init()
 
 
