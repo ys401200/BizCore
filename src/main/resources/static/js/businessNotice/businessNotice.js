@@ -61,4 +61,3 @@ function drawNoticeList(listjson) {
 	html = (header + body)
 	if (target !== undefined && target !== undefined) target.html(html);
 }; // End of drawNoticeList()
-

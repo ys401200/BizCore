@@ -11,5 +11,4 @@
 	</div>
 </div>
 <div class="msg_cnt"></div>
-<script src="/js/bodyContent.js"></script>
 <jsp:include page="./bottom.jsp"/>
