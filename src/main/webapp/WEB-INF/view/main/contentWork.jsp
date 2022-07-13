@@ -23,7 +23,8 @@
 				</tr>
 			</thead>
 			<tbody>
-				<c:choose>
+				<button type="button" id="modalOpenBtn">모달테스트</button>
+				<!-- <c:choose>
 					<c:when test="${empty noticelist}">
 						<tr>
 							<td colspan="4">데이터가 없습니다.</td>
@@ -39,7 +40,7 @@
 							</tr>
 						</c:forEach>
 					</c:otherwise>
-				</c:choose>
+				</c:choose> -->
 			</tbody>
 		</table>
 	</div>
@@ -65,7 +66,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<c:choose>
+				<!-- <c:choose>
 					<c:when test="${empty schedList}">
 						<tr>
 							<td colspan="4">데이터가 없습니다.</td>
@@ -84,7 +85,7 @@
 							</tr>
 						</c:forEach>
 					</c:otherwise>
-				</c:choose>
+				</c:choose> -->
 			</tbody>
 		</table>
 	</div>
@@ -110,7 +111,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<c:choose>
+				<!-- <c:choose>
 					<c:when test="${empty myList}">
 						<tr>
 							<td colspan="4">데이터가 없습니다.</td>
@@ -132,7 +133,7 @@
 							</tr>
 						</c:forEach>
 					</c:otherwise>
-				</c:choose>
+				</c:choose> -->
 			</tbody>
 		</table>
 	</div>
@@ -159,7 +160,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					<c:choose>
+					<!-- <c:choose>
 						<c:when test="${empty myDocList}">
 							<tr>
 								<td colspan="4">데이터가 없습니다.</td>
@@ -177,7 +178,7 @@
 								</c:if>
 							</c:forEach>
 						</c:otherwise>
-					</c:choose>
+					</c:choose> -->
 				</tbody>
 			</table>
 		</div>
@@ -205,7 +206,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					<c:choose>
+					<!-- <c:choose>
 						<c:when test="${empty myDocList}">
 							<tr>
 								<td colspan="4">데이터가 없습니다.</td>
@@ -223,7 +224,7 @@
 								</c:if>
 							</c:forEach>
 						</c:otherwise>
-					</c:choose>
+					</c:choose> -->
 				</tbody>
 			</table>
 		</div>
@@ -254,7 +255,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<c:choose>
+				<!-- <c:choose>
 					<c:when test="${empty attList}">
 						<tr>
 							<td colspan="6">데이터가 없습니다.</td>
@@ -308,7 +309,7 @@
 							</c:choose>
 						</c:forEach>
 					</c:otherwise>
-				</c:choose>
+				</c:choose> -->
 			</tbody>
 		</table>
 	</div>
@@ -342,7 +343,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<c:choose>
+				<!-- <c:choose>
 					<c:when test="${empty contList}">
 						<tr>
 							<td colspan="4">데이터가 없습니다.</td>
@@ -365,7 +366,7 @@
 							</tr>
 						</c:forEach>
 					</c:otherwise>
-				</c:choose>
+				</c:choose> -->
 			</tbody>
 		</table>
 	</div>

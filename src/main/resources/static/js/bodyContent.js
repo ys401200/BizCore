@@ -6,7 +6,6 @@ function init(){
 		$("#loadingDiv").hide();
 		$("#loadingDiv").loading("toggle");
 	}, 300);
-
 	
 	$("#sideMenu").find("ul:not(#panel) li a").click(function(){
 		if($(this).attr("class") !== "active"){
@@ -19,6 +18,23 @@ function init(){
 			$(this).find("#slideSpan").text("+");
 		}
 	});
+
+	$("#confirm").click(function(){
+		modalClose();
+	});
+
+	$("#modalOpenBtn").click(function(){        
+		$("#modal").css('display','flex').hide().fadeIn();
+	});
+
+	$("#close").click(function(){
+		modalClose();
+	});
+
+	function modalClose(){
+		$("#modal").fadeOut();
+	}
+
 	menuActive();
 	getNoticeList();
 } // End of init()

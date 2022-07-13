@@ -31,6 +31,7 @@
 <div id="loadingDiv" style="width: 100%; height: 100%;"></div>
 <div id="header">
 	<input type="hidden" id="pathName" value="${getPathName}" />
+	<jsp:include page="./modal/modal.jsp"/>
 	<div id="mainTopLogo">
 		<a href="/"><img src="/images/main/topLogo.png" id="mainTopLogoImg" /></a>
 		<img src="/images/main/topEllipse.png" id="mainTopEllipseImg" />
