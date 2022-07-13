@@ -8,11 +8,12 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import kr.co.bizcore.v1.domain.Notice;
+import kr.co.bizcore.v1.domain.SimpleNotice;
 
 public interface NoticeMapper {
     // 목록 가져오는 쿼리 
     @Select("SELECT no, writer, title, created, modified FROM bizcore.notice WHERE comp_id = #{compId} AND deleted IS NULL")
-    List<Notice> getNotice(String compId);
+    List<SimpleNotice> getNotice(String compId);
 
     // 공지사항 삭제하는 쿼리 
     @Update("UPDATE bizcore.notice SET deleted = NOW() WHERE comp_id = #{compId} AND no = #{notiNo}") 

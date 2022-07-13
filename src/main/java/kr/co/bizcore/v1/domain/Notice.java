@@ -10,16 +10,13 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class Notice implements Domain{
+public class Notice  extends SimpleNotice implements Domain {
 
-    private int no;
+   
     private String compId;
-    private int writer;
     private String writerName;
-    private String title;
     private String content;
-    private Date created;
-    private Date modified;
+    
 
     @Override
     public String toJson() {

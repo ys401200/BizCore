@@ -103,6 +103,7 @@ public class ApiNoticeCtrl extends Ctrl{
     HttpSession session = null;
     String compId = null;
     String result = null; 
+    String data = null;
     String notiNo = null;
     String uri = req.getRequestURI();
     String[] t = null;
@@ -128,7 +129,9 @@ public class ApiNoticeCtrl extends Ctrl{
             notice = noticeSvc.getNotice(compId, notiNo); // 삭제(update) 카운트를 실제 삭제 여부를 확인함
          
             if (notice != null) { // 처리됨
-             result =  notice.toJson();
+             data =  notice.toJson();
+
+             result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
             
             } else { // 처리 안됨
                 result = "{\"result\":\" failure\",\"msg\":\"Error occured when read.\"}";
