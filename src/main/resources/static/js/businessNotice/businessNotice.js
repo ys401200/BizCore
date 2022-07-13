@@ -1,13 +1,13 @@
-$(document).ready(init)
-
-// Initializing Page
-function init() {
+$(document).ready(() => {
+    init();
+    
 	setTimeout(() => {
 		$("#loadingDiv").hide();
 		$("#loadingDiv").loading("toggle");
 	}, 300);
+
 	getNoticeList();
-} // End of init()
+});
 
 // API 서버에서 공지사항 리스트를 가져오는 함수
 function getNoticeList() {

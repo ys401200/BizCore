@@ -1,7 +1,5 @@
 let cipher, msg, apiServer, modal;
 
-$(document).ready(init)
-
 function init(){
 	setTimeout(() => {
 		$("#loadingDiv").loading({
@@ -172,11 +170,6 @@ function init(){
 
 	menuActive();
 	getNoticeList();
-	
-	setTimeout(() => {
-		$("#loadingDiv").hide();
-		$("#loadingDiv").loading("toggle");
-	}, 300);
 }
 
 //페이징될 때 header, sideMenu active를 위한 함수
