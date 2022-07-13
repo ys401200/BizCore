@@ -19,25 +19,11 @@ function init(){
 			$(this).find("#slideSpan").text("+");
 		}
 	});
-	rootMenuActive();
-	readyTopPageActive();
 	menuActive();
 	getNoticeList();
 } // End of init()
 
 //페이징될 때 header, sideMenu active를 위한 함수
-function rootMenuActive(){
-	let i = null, pathName = null, fullStr = null, firstStr = null, lastStr = null, strLength = null, sideMenu = null, mainTopMenu = null;
-	
-	pathName = $("#pathName").val();
-	mainTopMenu = $("#mainTopMenu");
-
-	if(pathName === "root"){
-		mainTopMenu.find("ul li button").removeAttr("class");
-		mainTopMenu.find("ul li button[data-keyword='business']").attr("class", "active");
-	}
-}
-
 function menuActive(){
 	let i = null, pathName = null, fullStr = null, firstStr = null, lastStr = null, strLength = null, sideMenu = null, mainTopMenu = null;
 	
@@ -46,7 +32,15 @@ function menuActive(){
 	sideMenu = $("#sideMenu");
 	strLength = pathName.length;
 	i = 0;
-	if(pathName !== "root"){
+
+	if(pathName === "root"){
+		mainTopMenu.find("ul li button").removeAttr("class");
+		mainTopMenu.find("ul li button[data-keyword='business']").attr("class", "active");
+
+		readyTopPageActive();
+	}else{
+		readyTopPageActive();
+
 		while(i <= strLength){
 			fullStr = pathName.charAt(i);
 	
@@ -58,35 +52,11 @@ function menuActive(){
 				mainTopMenu.find("ul li button[data-keyword='"+firstStr+"']").attr("class", "active");
 
 				sideMenu.find("ul[id='"+firstStr+"']").attr("class", "active");
-				sideMenu.find("ul[id='"+firstStr+"'] li #panel li a[href='"+"/"+firstStr+"/"+lastStr+"']").parents("#panel").prev().attr("class", "active");
-				sideMenu.find("ul[id='"+firstStr+"'] li #panel li a[href='"+"/"+firstStr+"/"+lastStr+"']").parents("#panel").attr("class", "active");
-				sideMenu.find("ul[id='"+firstStr+"'] li #panel li a[href='"+"/"+firstStr+"/"+lastStr+"']").attr("class", "active");
-				// sideMenu.find("ul").not("#panel").find("li a").removeAttr("class");
-				// sideMenu.find("ul").not("#panel").find("li a #slideSpan").text("+");
-				// sideMenu.find("ul").not("#panel").find("li a #slideSpan").css("font-size", "");
-				// sideMenu.find("ul").not("#panel").find("li a #slideSpan").css("font-size", "30px");
-				// sideMenu.find("ul #panel").hide();
-	
-				// sideMenu.find("ul[id='"+firstStr+"']").attr("class", "active");
-				// sideMenu.find("ul[id='"+firstStr+"'] li a").next().attr("class", "active");
-				// sideMenu.find("ul[id='"+firstStr+"'] li #panel li a[href='"+"/"+firstStr+"/"+lastStr+"']").attr("class", "active");
-				// sideMenu.find("ul[id='"+firstStr+"'] li #panel li a[href='"+"/"+firstStr+"/"+lastStr+"'] #slideSpan").text("-");
-				// sideMenu.find("ul[id='"+firstStr+"'] li #panel li a[href='"+"/"+firstStr+"/"+lastStr+"'] #slideSpan").css("font-size", "");
-				// sideMenu.find("ul[id='"+firstStr+"'] li #panel li a[href='"+"/"+firstStr+"/"+lastStr+"'] #slideSpan").css("font-size", "47px");
-				// sideMenu.find("ul[id='"+firstStr+"']").show();
-				// sideMenu.find("ul[id='"+firstStr+"'] a.active").parent().prop("style", "background: linear-gradient(to bottom, #ffffff 95%, #302D81 5%); cursor: pointer;");
+				sideMenu.find("ul[id='"+firstStr+"']").find("a[href='"+"/"+firstStr+"/"+lastStr+"']").parents("#panel").prev().attr("class", "active");
+				sideMenu.find("ul[id='"+firstStr+"']").find("a[href='"+"/"+firstStr+"/"+lastStr+"']").parents("#panel").prev().find("#slideSpan").text("-");
+				sideMenu.find("ul[id='"+firstStr+"']").find("a[href='"+"/"+firstStr+"/"+lastStr+"']").parents("#panel").attr("class", "active");
+				sideMenu.find("ul[id='"+firstStr+"']").find("a[href='"+"/"+firstStr+"/"+lastStr+"']").attr("class", "active");
 				
-				// if(sideMenu.find("ul[id='"+firstStr+"'] a.active").parent().parent().attr("id") !== "panel"){
-				// 	sideMenu.find("ul[id='"+firstStr+"'] a.active").parent().parent().find("span").css("color", "");
-				// 	sideMenu.find("ul[id='"+firstStr+"'] a.active").parent().parent().find("span").css("color", "#302D81");
-				// 	sideMenu.find("ul[id='"+firstStr+"'] a.active").parent().parent().find("img").prop("src", $(this).find("img").prop("src").replace(".png", "_hover.png"));
-				// }else{
-				// 	sideMenu.find("ul[id='"+firstStr+"'] a.active").css("color", "");
-				// 	sideMenu.find("ul[id='"+firstStr+"'] a.active").css("color", "#302D81");
-				// }
-	
-				// sideMenu.find("ul[id='"+firstStr+"'] li #panel li a[href='"+"/"+firstStr+"/"+lastStr+"']").parents("#panel").show();
-	
 				break;
 			}
 	
@@ -95,6 +65,7 @@ function menuActive(){
 	}
 }
 
+//사이드 메뉴 클릭
 function bodyTopPageClick(e){
 	let id = $(e).attr("data-keyword");
 	
@@ -105,6 +76,7 @@ function bodyTopPageClick(e){
 	$("#sideMenu").find("#" + id).attr("class", "active");
 }
 
+//header active 여부에 따라 사이드메뉴 active 적용
 function readyTopPageActive(){
 	let sideMenu = null, mainTopMenu = null;
 
