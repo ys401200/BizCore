@@ -240,28 +240,6 @@ function readyTopPageActive(){
 	});
 }
 
-function getNoticeList(){
-	let url;
-
-	url = apiServer + "/api/notice";
-
-	$.ajax({
-		"url": url,
-		"method": "get",
-		"dataType":"json",
-		"cache": false,
-		success:(data) => {
-			let list;
-			if(data.result === "ok"){
-				list = cipher.decAes(data.data);
-				list = JSON.parse(list);
-			}else{
-				alert("?");
-			}
-		}
-	})
-} // End of getNoticeList()
-
 modal = {
 	"panel":undefined,
 	"cnt":undefined,
