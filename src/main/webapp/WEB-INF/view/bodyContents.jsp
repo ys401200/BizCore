@@ -11,4 +11,11 @@
 	</div>
 </div>
 <div class="msg_cnt"></div>
+<div class="modal_panel">
+	<div class="modal_wrap">
+		<div class="modal_title"></div>
+		<div class="modal_close"></div>
+		<div class="modal_content"></div>
+	</div>
+</div>
 <jsp:include page="./bottom.jsp"/>

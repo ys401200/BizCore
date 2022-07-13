@@ -1,4 +1,4 @@
-let cipher, msg, apiServer;
+let cipher, msg, apiServer, modal;
 
 $(document).ready(function(){
 	apiServer = "";
@@ -139,30 +139,14 @@ $(document).ready(function(){
 		  	}
 		});
 	}, 70);
-});
+}); // End of $(document).ready()
 
-function drawGridTable(container, data, header, border, innerPadding, rowClassName, cellClassName){
-	let html = "", x1, x2, x3, t, gridTemplateColumns, columnCount;
-
-	if(container === null || container === undefined)	return undefined;
-	if(data === null || data === undefined)	return undefined;
-	if(innerPadding === undefined || innerPadding === null)	innerPadding = "";
-	if(header !== undefined && header !== null)	columnCountmnCount = header.length;
-
-	if(border === undefined || border === unll)	border = {};
-	if(border.top === undefined || border.top === null)			border.top = "1px solid black";
-	if(border.bottom === undefined || border.bottom === null)	border.bottom = "1px solid black";
-	if(border.left === undefined || border.left === null)		border.left = "1px solid black";
-	if(border.right === undefined || border.right === null)		border.right = "1px solid black";
-	if(border.inner === undefined || border.inner === null)		border.inner = "1px solid black";
-
-	if(header !== null && header !== undefined){
-		html += "<div style=\"display:grid;border-top:" + (border.top) + ";border-left:" + (border.left) + "\" " + (rowClassName !== undefined ? ("\"class=\"" + rowClassName + "\"") : "") + ">";
-		for(x1 = 0 ; x1 < header.length ; x++){
-			html += ("<div style=\"border-left:" + (border-left) + ";padding:" + (innerPadding) + ";border-right:" + (header.length - 1 === x1 ? border.right : border.inner) + "\">");
-		}
-		html += "</div>";
+modal = {
+	"panel":undefined,
+	"cnt":undefined,
+	"show":()=>{modal.panel.style.display="flex";},
+	"clear":()=>{modal.cnt.innerHTML="";modal.panel.style.display="none";},
+	"alert":(title, content, yesJson, noJson)=>{
+		
 	}
-	//for()
-
-} // End of drawTable()
+}
