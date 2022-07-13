@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import kr.co.bizcore.v1.domain.Notice;
+import kr.co.bizcore.v1.domain.SimpleNotice;
 import kr.co.bizcore.v1.svc.NoticeSvc;
 
 
@@ -38,7 +39,7 @@ public class ApiNoticeCtrl extends Ctrl{
         if(compId == null)  compId = (String) request.getAttribute("compId");
 
         if(compId != null){
-            List<Notice> list = noticeSvc.getPostList(compId);
+            List<SimpleNotice> list = noticeSvc.getPostList(compId);
             if(list != null){
                 data = "[";
                 for(i = 0 ; i < list.size(); i++) {

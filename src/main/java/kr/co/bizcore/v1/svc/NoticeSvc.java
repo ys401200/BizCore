@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kr.co.bizcore.v1.domain.Notice;
+import kr.co.bizcore.v1.domain.SimpleNotice;
 import kr.co.bizcore.v1.mapper.NoticeMapper;
 
 @Service
@@ -14,7 +15,7 @@ public class NoticeSvc extends Svc{
     @Autowired
     private NoticeMapper noticeMapper; 
 
-    public List<Notice> getPostList(String compId) {
+    public List<SimpleNotice> getPostList(String compId) {
        return noticeMapper.getNotice(compId);
 
     }
