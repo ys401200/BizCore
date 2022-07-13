@@ -31,6 +31,21 @@ AJAX Response Data : Full JSON with Encryption (AES & RSA)
     json으로 변환허여 사용 : JSON.stringify(text)
 
 
+// SSL 인증서 설치
+
+1. pem 파일 변환 ( -> pkcs12)
+  openssl pkcs12 -export -in fullchain.pem -inkey privkey.pem
+  -out keystore.p12 -name tomcat -CAfile chain.pem -caname root
+
+2. keystore.p12 파일을 /src/main/resource 에 넣음
+
+3. application.yml 설정 추가 server.ssl.****
+server:
+  ssl:
+    key-store: classpath:keystore.p12
+    key-store-type: PKCS12
+    key-store-password: ***
+
 ############# application.yml
 
 server:

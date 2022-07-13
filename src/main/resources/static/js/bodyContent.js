@@ -25,7 +25,7 @@ function getNoticeList(){
 			if(data.result === "ok"){
 				list = cipher.decAes(data.data);
 				list = JSON.parse(list);
-				
+				console.log(list);
 			
 			}else{
 				alert("?");
