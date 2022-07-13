@@ -5,20 +5,19 @@
 	<ul id="business">
 		<li>
 			<a href="/">
-				<img src="/images/main/icons/mainHomeIcon.png" />
+				<img src="/images/main/icons/mainHomeIcon.png" id="mainHomeIcon"/>
 				<span>나의 업무 홈</span>
 			</a>
 		</li>
 		<li>
 			<a href="/business/notice">
-				<img src="/images/main/icons/mainNoticeIcon.png" />
+				<img src="/images/main/icons/mainNoticeIcon.png" id="mainNoticeIcon" />
 				<span>공지사항</span>
-				<span id="slideSpan">+</span>
 			</a>
 		</li>
 		<li>
 			<a href="#">
-				<img src="/images/main/icons/mainSchedIcon.png" />
+				<img src="/images/main/icons/mainSchedIcon.png" id="mainSchedIcon" />
 				<span>일정관리</span>
 				<span id="slideSpan">+</span>
 			</a>
@@ -32,7 +31,7 @@
 		</li>
 		<li>
 			<a href="#">
-				<img src="/images/main/icons/mainSalesIcon.png" />
+				<img src="/images/main/icons/mainSalesIcon.png" id="mainSalesIcon" />
 				<span>영업활동관리</span>
 				<span id="slideSpan">+</span>
 			</a>
@@ -43,7 +42,7 @@
 		</li>
 		<li>
 			<a href="#">
-				<img src="/images/main/icons/mainSoppIcon.png" />
+				<img src="/images/main/icons/mainSoppIcon.png"  id="mainSoppIcon"/>
 				<span>영업기회</span>
 				<span id="slideSpan">+</span>
 			</a>
@@ -56,7 +55,7 @@
 		</li>
 		<li>
 			<a href="#">
-				<img src="/images/main/icons/mainPpsIcon.png" />
+				<img src="/images/main/icons/mainPpsIcon.png" id="mainPpsIcon" />
 				<span>조달업무</span>
 				<span id="slideSpan">+</span>
 			</a>
@@ -68,7 +67,7 @@
 		</li>
 		<li>
 			<a href="#">
-				<img src="/images/main/icons/mainContIcon.png" />
+				<img src="/images/main/icons/mainContIcon.png" id="mainContIcon" />
 				<span>계약관리</span>
 				<span id="slideSpan">+</span>
 			</a>
@@ -81,7 +80,7 @@
 		</li>
 		<li>
 			<a href="#">
-				<img src="/images/main/icons/mainTechIcon.png" />
+				<img src="/images/main/icons/mainTechIcon.png" id="mainTechIcon" />
 				<span>기술지원업무</span>
 				<span id="slideSpan">+</span>
 			</a>
@@ -94,14 +93,13 @@
 		</li>
 		<li>
 			<a href="#">
-				<img src="/images/main/icons/mainBoardFileIcon.png" />
+				<img src="/images/main/icons/mainBoardFileIcon.png" id="mainBoardFileIcon" />
 				<span>자료실</span>
-				<span id="slideSpan">+</span>
 			</a>
 		</li>
 		<li>
 			<a href="/api/user/logout">
-				<img src="/images/main/icons/mainLogOutIcon.png" />
+				<img src="/images/main/icons/mainLogOutIcon.png" id="mainLogOutIcon" />
 				<span>로그아웃</span>
 			</a>
 		</li>
@@ -110,7 +108,7 @@
 	<ul id="gw">
 		<li>
 			<a href="#">
-				<img src="/images/main/icons/mainHomeIcon.png" />
+				<img src="/images/main/icons/mainHomeIcon.png" id="mainHomeIcon" />
 				<span>그룹웨어</span>
 				<span id="slideSpan">+</span>
 			</a>
@@ -120,7 +118,7 @@
 	<ul id="accounting">
 		<li>
 			<a href="#">
-				<img src="/images/main/icons/mainHomeIcon.png" />
+				<img src="/images/main/icons/mainHomeIcon.png" id="mainHomeIcon" />
 				<span>회계관리</span>
 				<span id="slideSpan">+</span>
 			</a>
@@ -130,7 +128,7 @@
 	<ul id="mis">
 		<li>
 			<a href="#">
-				<img src="/images/main/icons/mainHomeIcon.png" />
+				<img src="/images/main/icons/mainHomeIcon.png" id="mainHomeIcon" />
 				<span>경영정보</span>
 				<span id="slideSpan">+</span>
 			</a>
