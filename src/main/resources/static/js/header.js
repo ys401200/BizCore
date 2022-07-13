@@ -169,7 +169,6 @@ function init(){
 	}
 
 	menuActive();
-	getNoticeList();
 }
 
 //페이징될 때 header, sideMenu active를 위한 함수
