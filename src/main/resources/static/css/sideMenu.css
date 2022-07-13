@@ -163,11 +163,6 @@
 	color: #302D81;
 }
 
-#sideMenu ul li a:hover span:not(#slideSpan){
-	color: #302D81;
-}
-
-
 #sideMenu ul li a:hover span{
 	color: #302D81;
 }
@@ -189,7 +184,7 @@
 	float: right;
 	margin-right: 18px;
 	font-weight: 500;
-	font-size: 30px;
+	font-size: 40px;
 }
 
 #sideMenu ul li a:not(.active) #slideSpan{
