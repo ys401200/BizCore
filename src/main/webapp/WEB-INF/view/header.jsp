@@ -16,8 +16,8 @@
 <link rel="stylesheet" type="text/css" href="/css/jquery-ui.css" />
 <link rel="stylesheet" type="text/css" href="/css/jquery-ui.structure.css" />
 <link rel="stylesheet" type="text/css" href="/css/jquery-ui.theme.css" />
-<link rel="stylesheet" type="text/css" href="/css/bodyContents.css">
-<link rel="stylesheet" type="text/css" href="/css/<%= getPathName %>/<%= getPathName %>.css">
+<link rel="stylesheet" type="text/css" href="/css/bodyContents.css" />
+<link rel="stylesheet" type="text/css" href="/css/<%= getPathName %>/<%= getPathName %>.css" />
 
 <script src="/js/jquery.min.js"></script>
 <script src="/js/jquery-ui.js"></script>
