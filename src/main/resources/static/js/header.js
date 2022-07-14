@@ -135,6 +135,16 @@ function init(){
 			el.parentElement.remove();
 		}
 	}
+	
+	modal = {
+		"panel":undefined,
+		"cnt":undefined,
+		"show":()=>{modal.panel.style.display="flex";},
+		"clear":()=>{modal.cnt.innerHTML="";modal.panel.style.display="none";},
+		"alert":(title, content, yesJson, noJson)=>{
+			
+		}
+	}
 
 	cipher.aes.key = sessionStorage.getItem("aesKey");
 	cipher.aes.iv = sessionStorage.getItem("aesIv");
@@ -239,6 +249,7 @@ function readyTopPageActive(){
 	});
 }
 
+//기본 그리드
 function createGrid(gridContentId, headerArray, jsonData){
 	let setDate;
 	let gridHeaderHtml = "", gridbodyHtml = "";
@@ -302,6 +313,7 @@ function createGrid(gridContentId, headerArray, jsonData){
 	}
 }
 
+//날짜 포맷
 function dateFnc(dateTimeStr, type){
 	let result, year, month, day, hh, mm, ss, date;
 	date = new Date(dateTimeStr*1);
@@ -337,14 +349,4 @@ function dateFnc(dateTimeStr, type){
 	}
 
 	return result;
-}
-
-modal = {
-	"panel":undefined,
-	"cnt":undefined,
-	"show":()=>{modal.panel.style.display="flex";},
-	"clear":()=>{modal.cnt.innerHTML="";modal.panel.style.display="none";},
-	"alert":(title, content, yesJson, noJson)=>{
-		
-	}
 }
