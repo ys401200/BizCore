@@ -239,6 +239,30 @@ function readyTopPageActive(){
 	});
 }
 
+function createGrid(gridContentId, headerArray, jsonData){
+	let gridHtml = "";
+	let gridContent = $("#" + gridContentId);
+	let gridHeader = $("#gridHeader");
+	let datas = JSON.parse(jsonData);
+
+	for(let i = 0; i <= datas.length; i++){
+		gridHeader.append("<div id='gridHeaderItem'>"+headerArray[i]+"</div>");
+
+		if(i < headerArray.length-1){
+			gridHtml = "<div id='"+"gridContent_"+i+"'>";
+			
+			for(let key in datas[i]){
+				if(datas[i][key] !== null){
+					gridHtml += "<div id='gridContentItem'>"+datas[i][key]+"</div>";
+				}
+			}
+	
+			gridHtml += "</div>";
+			gridContent.append(gridHtml);
+		}
+	}
+}
+
 modal = {
 	"panel":undefined,
 	"cnt":undefined,

@@ -7,7 +7,7 @@
 	</div>
 	<div id="bodyContent">
 		<div id="loadingDiv"></div>
-		<jsp:include page="./main/contentWork.jsp" />
+		<jsp:include page="./main/contentBusiness.jsp" />
 	</div>
 </div>
 <div class="msg_cnt"></div>

@@ -6,43 +6,8 @@
 <div id="bodyNotice">
 	<hr />
 	<span>공지사항</span>
-	<div id="noticeTableDiv">
-		<table id="noticeTable" frame="void">
-			<colgroup>
-		        <col width="15%">
-		        <col width="55%">
-		        <col width="15%">
-		        <col width="15%">
-	    	</colgroup>
-			<thead>
-				<tr>
-					<th>번호</th>
-					<th id="notiTitle">제목</th>
-					<th>작성자</th>
-					<th>등록일</th>
-				</tr>
-			</thead>
-			<tbody>
-				<button type="button" id="modalOpenBtn">모달테스트</button>
-				<!-- <c:choose>
-					<c:when test="${empty noticelist}">
-						<tr>
-							<td colspan="4">데이터가 없습니다.</td>
-						</tr>
-					</c:when>
-					<c:otherwise>
-						<c:forEach var="row" items="${noticelist}">
-							<tr>
-								<td>${row.notiNo}</td>
-								<td id="notiTitle"><a href="${path}/notice/detail/${row.notiNo}">${row.notiTitle}</a></td>
-								<td>${row.userName}</td>
-								<td>${row.regDatetime}</td>
-							</tr>
-						</c:forEach>
-					</c:otherwise>
-				</c:choose> -->
-			</tbody>
-		</table>
+	<div id="gridNoticeList">
+		<div id="gridHeader"></div>
 	</div>
 </div>
 

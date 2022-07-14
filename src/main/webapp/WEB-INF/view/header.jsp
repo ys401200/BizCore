@@ -21,7 +21,7 @@
 
 <script src="/js/jquery.min.js"></script>
 <script src="/js/jquery-ui.js"></script>
-<script type="text/javascript" src="/js/jquery.easing.js"></script>
+<script src="/js/jquery.easing.js"></script>
 <script src="/js/loading.js"></script>
 <script src="/js/<%= getPathName %>/<%= getPathName %>.js"></script>
 
