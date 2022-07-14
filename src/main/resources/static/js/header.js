@@ -240,25 +240,31 @@ function readyTopPageActive(){
 }
 
 function createGrid(gridContentId, headerArray, jsonData){
-	let gridHtml = "";
-	let gridContent = $("#" + gridContentId);
-	let gridHeader = $("#gridHeader");
-	let datas = JSON.parse(jsonData);
+	let gridHeaderHtml = "", gridbodyHtml = "";
+	let gridContent = $("." + gridContentId);
+	
+	gridHeaderHtml = "<div class='gridHeader'>";
 
-	for(let i = 0; i <= datas.length; i++){
-		gridHeader.append("<div id='gridHeaderItem'>"+headerArray[i]+"</div>");
+	for(let i = 0; i < headerArray.length; i++){
+		gridHeaderHtml += "<div class='gridHeaderItem'>"+headerArray[i]+"</div>";
+	}
 
+	gridHeaderHtml += "</div>";
+
+	gridContent.append(gridHeaderHtml);
+
+	for(let i = 0; i <= jsonData.length; i++){
 		if(i < headerArray.length-1){
-			gridHtml = "<div id='"+"gridContent_"+i+"'>";
+			gridbodyHtml = "<div class='"+"gridContent_"+i+"'>";
 			
-			for(let key in datas[i]){
-				if(datas[i][key] !== null){
-					gridHtml += "<div id='gridContentItem'>"+datas[i][key]+"</div>";
+			for(let key in jsonData[i]){
+				if(jsonData[i][key] !== null){
+					gridbodyHtml += "<div class='gridContentItem'>"+jsonData[i][key]+"</div>";
 				}
 			}
 	
-			gridHtml += "</div>";
-			gridContent.append(gridHtml);
+			gridbodyHtml += "</div>";
+			gridContent.append(gridbodyHtml);
 		}
 	}
 }

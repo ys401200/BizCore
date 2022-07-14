@@ -6,9 +6,7 @@
 <div id="bodyNotice">
 	<hr />
 	<span>공지사항</span>
-	<div id="gridNoticeList">
-		<div id="gridHeader"></div>
-	</div>
+	<div class="gridNoticeList"></div>
 </div>
 
 <div id="bodySched">

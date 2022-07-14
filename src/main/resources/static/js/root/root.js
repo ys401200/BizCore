@@ -25,7 +25,8 @@ function getNoticeList() {
 			let listjson;
 			if (data.result === "ok") {
 				list = cipher.decAes(data.data);
-				createGrid("gridNoticeList", noticeHeaderArray, list);
+				let jsonData = JSON.parse(list);
+				createGrid("gridNoticeList", noticeHeaderArray, jsonData);
 			} else {
 				msg.set("등록된 공지사항이 없습니다");
 			}

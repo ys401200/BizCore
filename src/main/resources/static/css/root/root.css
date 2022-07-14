@@ -31,36 +31,36 @@
 	color: #332E85;
 }
 
-#bodyContent #bodyNotice #gridNoticeList{
+#bodyContent #bodyNotice .gridNoticeList{
 	display: grid; 
 	width:99%; 
 	margin: 0 auto;
 	border: 1px solid #000;
 }
 
-#bodyContent #bodyNotice #gridNoticeList #gridHeader{
+#bodyContent #bodyNotice .gridNoticeList .gridHeader{
 	display: grid; 
 	grid-template-columns: repeat(4, 1fr);
 	text-align: center;
 }
 
-#bodyContent #bodyNotice #gridNoticeList #gridHeader #gridHeaderItem{
+#bodyContent #bodyNotice .gridNoticeList .gridHeader .gridHeaderItem{
 	
 }
 
-#bodyContent #bodyNotice #gridNoticeList div[id^='gridContent_']{
+#bodyContent #bodyNotice .gridNoticeList div[class^='gridContent_']{
 	display: grid; 
 	grid-template-columns: repeat(4, 1fr);
 	text-align: center;
 }
 
-#bodyContent #bodyNotice #gridNoticeList div[id^='gridContent_']:hover{
+#bodyContent #bodyNotice .gridNoticeList div[class^='gridContent_']:hover{
 	background-color: antiquewhite;
 	cursor: pointer;
 }
 
 
-#bodyContent #bodyNotice #gridNoticeList div[id^='gridContent_'] #gridContentItem{
+#bodyContent #bodyNotice #gridNoticeList div[class^='gridContent_'] .gridContentItem{
 }
 
 /* 
