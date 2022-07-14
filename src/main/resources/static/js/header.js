@@ -240,13 +240,18 @@ function readyTopPageActive(){
 }
 
 function createGrid(gridContentId, headerArray, jsonData){
+	let setDate;
 	let gridHeaderHtml = "", gridbodyHtml = "";
 	let gridContent = $("." + gridContentId);
 	
-	gridHeaderHtml = "<div class='gridHeader'>";
+	gridHeaderHtml = "<div class='gridHeader grid_default_header_item'>";
 
 	for(let i = 0; i < headerArray.length; i++){
-		gridHeaderHtml += "<div class='gridHeaderItem'>"+headerArray[i]+"</div>";
+		if(headerArray[i].padding == true){
+			gridHeaderHtml += "<div class='gridHeaderItem grid_default_text_align_padding'>"+headerArray[i].title+"</div>";
+		}else{
+			gridHeaderHtml += "<div class='gridHeaderItem grid_default_text_align'>"+headerArray[i].title+"</div>";
+		}
 	}
 
 	gridHeaderHtml += "</div>";
@@ -255,18 +260,83 @@ function createGrid(gridContentId, headerArray, jsonData){
 
 	for(let i = 0; i <= jsonData.length; i++){
 		if(i < headerArray.length-1){
-			gridbodyHtml = "<div class='"+"gridContent_"+i+"'>";
+			gridbodyHtml = "<div class='"+"gridContent_"+i+" grid_default_body_item'>";
 			
 			for(let key in jsonData[i]){
-				if(jsonData[i][key] !== null){
+				if(key !== "created" && key !== "modified"){
 					gridbodyHtml += "<div class='gridContentItem'>"+jsonData[i][key]+"</div>";
+				}else if(key === "created" && jsonData[i].created !== null && jsonData[i].modified === null){
+					key = "created";
+					setDate = dateFnc(jsonData[i][key]);
+					gridbodyHtml += "<div class='gridContentItem'>"+setDate+"</div>";
+				}else if(key === "created" && jsonData[i].created === null && jsonData[i].modified !== null){
+					key = "modified";
+					setDate = dateFnc(jsonData[i][key]);
+					gridbodyHtml += "<div class='gridContentItem'>"+setDate+"</div>";
+				}else if(key === "created" && jsonData[i].created !== null && jsonData[i].modified !== null){
+					key = "modified";
+					setDate = dateFnc(jsonData[i][key]);
+					gridbodyHtml += "<div class='gridContentItem'>"+setDate+"</div>";
+				}else if(key === "created" && jsonData[i].created === null && jsonData[i].modified === null){
+					key = "modified";
+					gridbodyHtml += "<div class='gridContentItem'>데이터 없음</div>";
 				}
+				
 			}
 	
 			gridbodyHtml += "</div>";
 			gridContent.append(gridbodyHtml);
 		}
 	}
+
+	let gridContents = $("[class^=gridContent_");
+
+	for(let i = 0; i < headerArray.length; i++){
+		gridContents.each(function(index, item){
+			if(headerArray[i].padding == true){
+				$(item).find(".gridContentItem").eq(i).attr("class", "gridContentItem grid_default_text_align_padding");
+			}else{
+				$(item).find(".gridContentItem").eq(i).attr("class", "gridContentItem grid_default_text_align");
+			}
+		});
+	}
+}
+
+function dateFnc(dateTimeStr, type){
+	let result, year, month, day, hh, mm, ss, date;
+	date = new Date(dateTimeStr*1);
+	year = date.getFullYear();
+	month = (date.getMonth() + 1) < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+	day = (date.getDate()) < 10 ? "0" + date.getDate() : date.getDate();
+	hh = date.getHours();
+	mm = date.getMinutes();
+	ss = date.getSeconds();
+	
+	if(dateTimeStr === undefined || dateTimeStr === null){
+		return "";
+	}
+
+	if(type === undefined){
+		type = "yyyy-mm-dd";
+	}
+
+	if(type === "yyyy-mm-dd"){
+		result = year + "-" + month + "-" + day;
+	}else if(type === "yyyy-mm"){
+		result = year + "-" + month;
+	}else if(type === "mm-dd"){
+		result = month + "-" + day;
+	}else if(type === "yyyy-mm-dd HH:mm:ss"){
+		result = year + "-" + month + "-" + day + " " + hh + ":" + mm + ":" + ss;
+	}else if(type === "HH:mm:ss"){
+		result = hh + ":" + mm + ":" + ss;
+	}else if(type === "HH:mm"){
+		result = hh + ":" + mm;
+	}else if(type === "mm:ss"){
+		result = mm + ":" + ss;
+	}
+
+	return result;
 }
 
 modal = {
