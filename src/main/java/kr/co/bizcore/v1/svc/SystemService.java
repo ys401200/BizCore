@@ -2,11 +2,8 @@ package kr.co.bizcore.v1.svc;
 
 import org.springframework.stereotype.Service;
 import java.util.List;
-import java.util.Map;
 
 import kr.co.bizcore.v1.domain.ConnUrl;
-import kr.co.bizcore.v1.domain.Permission;
-import kr.co.bizcore.v1.domain.User;
 
 @Service
 public class SystemService extends Svc {
@@ -35,7 +32,13 @@ public class SystemService extends Svc {
         ConnUrl each = null;
         int x = 0;
 
-        urls = systemMapper.getConnUrl();
+        urls = (List<ConnUrl>)dataFactory.getData("ALL", "connUrl");
+        if(urls == null){
+            urls = systemMapper.getConnUrl();
+            dataFactory.setData("ALL", "connUrl", urls, 300);
+            System.out.println("[TEST] :::::::::: ConnUrl Data is Reset.");
+        }
+
         if (urls != null && urls.size() > 0)
             for (x = 0; x < urls.size(); x++) {
                 each = urls.get(x);

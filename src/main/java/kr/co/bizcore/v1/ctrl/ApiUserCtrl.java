@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 import java.io.UnsupportedEncodingException;
 
-import kr.co.bizcore.v1.domain.User;
+import kr.co.bizcore.v1.domain.SimpleUser;
 
 @RestController
 @RequestMapping("/api/user")
@@ -26,14 +26,14 @@ public class ApiUserCtrl extends Ctrl{
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String user(HttpServletRequest request) {
         String result = null, aesKey = null, aesIv = null;
-        User user = null;
+        SimpleUser user = null;
         HttpSession session = null;
 
         session = request.getSession();
         if(session == null){ // 유효한 세션이 있는지 검증
             result = "{\"result\":\"failure\",\"msg\":\"Session is expired.\"}";
         }else{ // 세션이 유효한 경우 user 객체를 가지고 옴
-            user = (User)session.getAttribute("user");
+            user = (SimpleUser)session.getAttribute("user");
             if(user == null){ // user객체가 있는지 검증
                 result = "{\"result\":\"failure\",\"msg\":\"login is expired.\"}";
             }else{ //  user 객체를 json으로 변환하고 AES256으로 암호화 함
@@ -59,7 +59,6 @@ public class ApiUserCtrl extends Ctrl{
         boolean keepStatus = false;
         JSONObject json = null;
         HttpSession session = null;
-        User user = null;
 
         // 경로에서 compId를 찾을 수 있도록 준비함
         uri = request.getRequestURI();
@@ -101,11 +100,8 @@ public class ApiUserCtrl extends Ctrl{
                 if (userNo == null)
                     result = "{\"result\":\"failure\",\"msg\":\"User ID and/or Password ware mismatch\"}";
                 else {
-                    user = userService.getBasicUserInfo(userNo);
-                    result = "{\"result\":\"ok\"}";
-                    userService.setPermission(user);
                     session.setAttribute("userNo", userNo);
-                    session.setAttribute("user", user);
+                    result = "{\"result\":\"ok\"}";
                 }
             }
         }

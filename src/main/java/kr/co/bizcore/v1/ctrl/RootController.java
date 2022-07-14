@@ -9,8 +9,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import kr.co.bizcore.v1.domain.User;
-
 @Controller
 @RequestMapping(value = "/", method = RequestMethod.GET)
 public class RootController extends Ctrl {
@@ -21,18 +19,18 @@ public class RootController extends Ctrl {
     @RequestMapping("")
     public String root(HttpServletRequest request) {
         HttpSession session = null;
-        String result = null;
+        String result = null, userNo = null;
 
         session = request.getSession();
         session.setAttribute("pathName", "root");
-        User user = (User) session.getAttribute("user");
+        userNo = (String) session.getAttribute("userNo");
 
-        if (user != null) {
+        if (userNo != null) {
             result = "bodyContents";
         } else {
             result = "/login/login";
         }
-
+        System.out.println("[TEST] ::::: login ? " + result + " / " + userNo);
         return result;
     } // End of root
 

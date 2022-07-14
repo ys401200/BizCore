@@ -1,16 +1,17 @@
 package kr.co.bizcore.v1.svc;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.stereotype.Service;
 import kr.co.bizcore.v1.domain.Permission;
-import kr.co.bizcore.v1.domain.User;
+import kr.co.bizcore.v1.domain.SimpleUser;
 
 @Service
 public class UserService extends Svc {
 
-    public User getBasicUserInfo(String userNo) {
-        User result = userMapper.getBasicUserInfo(userNo);
+    public SimpleUser getBasicUserInfo(String userNo, String compId) {
+        SimpleUser result = userMapper.getBasicUserInfo(userNo, compId);
         return result;
     } // End of getBasicUserInfo
 
@@ -20,31 +21,47 @@ public class UserService extends Svc {
         return result;
     } // End of verifyLogin()
 
-    // User 객체를 입력받고 권한을 설정하는 메서드
-    public void setPermission(User user) {
-        List<Map<String, String>> data = null;
-        Map<String, String> each = null;
-        String permission = null;
-        Permission result = null;
-        int x = 0, t = 0;
+    // 사번기준 사용자 정보가 있는 객체를 전달하는 메서드
+    public HashMap<String, SimpleUser> getUserMap(String compId){
+        HashMap<String, SimpleUser> userMap = null;
+        List<SimpleUser> userList = null;
+        List<Map<String, String>> deptInfo = null;
+        Map<String, String> deptEach = null;
+        SimpleUser each = null;
+        String userNo = null, deptId = null, funcId = null, subId, perm = null;
+        int x = 0;
 
-        if (user == null)
-            return;
+        userMap = (HashMap<String, SimpleUser>)dataFactory.getData(compId, "userMap");
+        if(userMap == null){
+            userList = userMapper.getAllUser(compId);
+            deptInfo = userMapper.getAllDeptInfo(compId);
+            if(userList != null && userList.size() > 0){
+                userMap = new HashMap<>();
+                
+                // user 정보가 담긴 list를 map으로 변환
+                for(x = 0 ; x < userList.size() ; x++){
+                    each = userList.get(x);
+                    userMap.put(each.getUserNo()+"", each);
+                }
 
-        data = userMapper.getUserPermission(user.getCompId(), user.getDeptId(), user.getUserNo() + "");
+                // 변환된 map에 각 사용자의 부서를 설정
+                for(x = 0 ; x < deptInfo.size() ; x++){
+                    deptEach = deptInfo.get(x);
+                    userNo = deptEach.get("userNo");
+                    deptId = deptEach.get("deptId");
+                    funcId = deptEach.get("funcId");
+                    subId = deptEach.get("subId");
+                    perm = deptEach.get("permission");
+                    each = userMap.get(userNo);
+                    if(each != null){
+                        each.setPermission(deptId, funcId, subId, perm);
+                    }
+                }
 
-        if (data == null)
-            return;
-
-        result = new Permission();
-        for (x = 0; x < data.size(); x++) {
-            t = 0;
-            each = data.get(x);
-            permission = each.get("permission");
-            if (permission != null)
-                t = Integer.parseInt(permission);
-            result.setSubPermission(each.get("funcId"), each.get("subId"), t);
+                // factory에 저장
+                dataFactory.setData(compId, "userMap", userMap, 300);
+            }
         }
-        user.setPermission(result);
-    } // End of setPermission()
+        return userMap;
+    } // End of getUserMap()
 }

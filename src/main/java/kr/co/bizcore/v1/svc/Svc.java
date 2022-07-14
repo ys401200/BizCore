@@ -3,6 +3,7 @@ package kr.co.bizcore.v1.svc;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import kr.co.bizcore.v1.mapper.DeptMapper;
 import kr.co.bizcore.v1.mapper.SystemMapper;
 import kr.co.bizcore.v1.mapper.UserMapper;
 
@@ -11,9 +12,9 @@ import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.security.Security;
 import java.util.Base64;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import java.util.HashMap;
+
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -26,6 +27,11 @@ public abstract class Svc {
 
     @Autowired
     protected UserMapper userMapper;
+
+    @Autowired
+    protected DeptMapper deptMapper;
+
+    protected DataFactory dataFactory = DataFactory.getFactory();
 
     public String generateKey() {
         return generateKey(32);
@@ -191,4 +197,64 @@ public abstract class Svc {
         return result;
     } // End of dec()
 
-}
+} // End of abstract Class === Svc
+
+class DataFactory{
+
+    private static HashMap<String, DataFactory> rootFactory = new HashMap<>();
+    private HashMap<String, DataSet> dataSet = null;
+    private static DataFactory instance = new DataFactory("ALL");
+    
+    private DataFactory(String compId){
+        dataSet = new HashMap<>();
+        rootFactory.put(compId, this);
+    }
+
+    public static DataFactory getFactory(){
+        return instance;
+    } // End of getFactory()
+
+    public void setData(String compId, String dataName, Object data, int lifeTime){
+        DataFactory factory = null;
+        DataSet set = null;
+        factory = rootFactory.get("compId");
+        if(factory == null && compId != null && compId.length() > 0){
+            factory = new DataFactory(compId);
+            set = factory.dataSet.get(dataName);
+            if(set == null){
+                set = new DataSet();
+                factory.dataSet.put(dataName, set);
+                set.setData(data);
+                set.setData(data);
+                if(lifeTime > 0)    set.setLifeTime(lifeTime);
+            }
+        }
+    } // End of setData()
+
+    public Object getData(String compId, String dataName){
+        Object result = null;
+        DataSet set = null;
+        DataFactory factory = null;
+
+        factory = rootFactory.get(compId);
+        if(factory != null){
+            set = factory.dataSet.get(dataName);
+            if(set != null) result = set.getData();
+        }
+        return result;
+    } // End of getData()
+} // End of Class === DataFactory
+
+class DataSet{
+    private int lifeTime = 60;
+    private long setTime;
+    private Object data;
+
+    public void setLifeTime(int second){lifeTime = second <= 0 ? 0 : second;}
+    public void timeSet(){setTime = System.currentTimeMillis();}
+    public void setData(Object data){this.data = data;setTime = System.currentTimeMillis();}
+
+    public Object getData(){
+        return System.currentTimeMillis() + lifeTime * 1000 < setTime ? null : data;
+    } // End of getData()
+} // End of Class === DataSet

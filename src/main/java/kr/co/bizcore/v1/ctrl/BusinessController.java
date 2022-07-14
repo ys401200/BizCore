@@ -6,7 +6,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import kr.co.bizcore.v1.domain.User;
+import kr.co.bizcore.v1.domain.SimpleUser;
 
 @Controller
 @RequestMapping("/business")
@@ -18,7 +18,7 @@ public class BusinessController {
         String[] tempStrArr = null;
 
         session = request.getSession();
-        User user = (User) session.getAttribute("user");
+        SimpleUser user = (SimpleUser) session.getAttribute("user");
         uri = request.getRequestURI();
 
         if (uri.substring(0, 1).equals("/"))
@@ -52,7 +52,7 @@ public class BusinessController {
         String[] tempStrArr = null;
 
         session = request.getSession();
-        User user = (User) session.getAttribute("user");
+        SimpleUser user = (SimpleUser) session.getAttribute("user");
         uri = request.getRequestURI();
 
         if (uri.substring(0, 1).equals("/"))
