@@ -10,13 +10,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class Notice  extends SimpleNotice implements Domain {
+public class Notice extends SimpleNotice {
 
-   
     private String compId;
     private String writerName;
     private String content;
-    
 
     @Override
     public String toJson() {
@@ -31,5 +29,5 @@ public class Notice  extends SimpleNotice implements Domain {
         }
         return result;
     } // End of toJson();
-    
+
 }

@@ -12,13 +12,11 @@ import lombok.Setter;
 @Setter
 public class SimpleNotice implements Domain {
     private int no;
-
     private int writer;
-
     private String title;
-
     private Date created;
     private Date modified;
+
     @Override
     public String toJson() {
         String result = null;

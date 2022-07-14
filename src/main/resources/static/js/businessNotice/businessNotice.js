@@ -60,12 +60,7 @@ function drawNoticeList(listjson) {
 		let created = listjson[i].created;
 		created = new Date(created);
 		created = (created.getYear() + 1900 + "년" + "\n") + (created.getMonth() + 1 + "월" + "\n") + (created.getDate() + "일");
-		body += ("<div>" + no + "</div>" + "<div><a onclick=\"" + getNoticeDetail(no) + "\"; return false;>\"" + title + "\"</a> </div>" + "<div>" + writer + "</div>" + "<div>" + created + "</div>");
-
- 
-
-
-
+		body += ("<div>" + no + "</div>" + "<div>\"" + title + "\" </div>" + "<div>" + writer + "</div>" + "<div>" + created + "</div>");
 
 		console.log("글 번호 값 확인 로그 :" + no);
 	}
@@ -82,12 +77,13 @@ function drawNoticeList(listjson) {
 }; // End of drawNoticeList()
 
 
+
+// 공지사항 상세 조회 함수 
 function getNoticeDetail(no) {
 	let url, target, data;
 
 	url = apiServer + "/api/notice/" + no;
-	target = $("#bodyContent");
-	console.log("온클릭 함수 적용 확인 "+no);
+	console.log("온클릭 함수 적용 확인 "+ no);
 	$.ajax({
 		"url": url,
 		"method": "get",
@@ -96,8 +92,8 @@ function getNoticeDetail(no) {
 		success: (result) => {
 
 			if (result.result === "ok") {
-				data = result.data;
-				target.html("확인!");
+				data = cipher.decAes(result.data);
+				console.log(data);
 			} else {
 				msg.set("공지사항 상세 조회 실패");
 			}
