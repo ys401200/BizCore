@@ -11,7 +11,24 @@ $(document).ready(() => {
 
 function getNoticeList() {
 	let url;
-	let noticeHeaderArray = ["번호", "제목", "작성자", "등록일"];
+	let noticeHeaderArray = [
+		{
+			"title" : "번호",
+			"padding" : false,
+		},
+		{
+			"title" : "제목",
+			"padding" : true,
+		},
+		{
+			"title" : "작성자",
+			"padding" : false,
+		},
+		{
+			"title" : "등록일",
+			"padding" : false,
+		}
+	];
 	
 	url = apiServer + "/api/notice";
 
@@ -22,7 +39,6 @@ function getNoticeList() {
 		"cache": false,
 		success: (data) => {
 			let list;
-			let listjson;
 			if (data.result === "ok") {
 				list = cipher.decAes(data.data);
 				let jsonData = JSON.parse(list);
