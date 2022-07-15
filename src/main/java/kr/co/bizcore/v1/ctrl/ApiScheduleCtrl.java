@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import kr.co.bizcore.v1.domain.SimpleUser;
+
 @RequestMapping("/api/schedule")
 @RestController
 public class ApiScheduleCtrl extends Ctrl {
@@ -16,8 +18,9 @@ public class ApiScheduleCtrl extends Ctrl {
     @RequestMapping(value = {"", "/**"}, method = RequestMethod.GET)
     public String get(HttpServletRequest request){
         String result = null;
-        String compId = null, userNo = null, yy = null, mm = null, uri = null, aesKey = null, aesIv = null, data = null;
+        String compId = null, userNo = null, yy = null, mm = null, uri = null, aesKey = null, aesIv = null, data = null, userIn = null, dept = null;
         String[] t = null;
+        SimpleUser user = null;
         HttpSession session = null;
         int year = -1, month = -1, maxYear = 0, minYear = 0;
         Calendar cal = Calendar.getInstance();
@@ -58,7 +61,15 @@ public class ApiScheduleCtrl extends Ctrl {
         }else{
             aesKey = (String)session.getAttribute("aesKey");
             aesIv = (String)session.getAttribute("aesIv");
-            data = null; // 서비스에서 데이터 받아오는 코드 작성 필요
+            user = (SimpleUser)userService.getUserMap(compId).get(userNo);
+            dept = user.getDeptIdSqlIn();
+            data = scheduleService.getScheduleList(compId, userNo, year, month, dept);
+            data = userService.encAes(data, aesKey, aesIv);
+            if(data != null){
+                result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
+            }else{
+                result = "{\"result\":\"failure\",\"msg\":\"Error occured.\"}";
+            }
         }
 
         return result;

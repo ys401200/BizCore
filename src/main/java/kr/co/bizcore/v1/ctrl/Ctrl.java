@@ -5,6 +5,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 
 import kr.co.bizcore.v1.svc.DeptService;
+import kr.co.bizcore.v1.svc.ScheduleSvc;
 import kr.co.bizcore.v1.svc.SystemService;
 import kr.co.bizcore.v1.svc.UserService;
 import kr.co.bizcore.v1.util.Utility;
@@ -23,6 +24,9 @@ public abstract class Ctrl {
 
     @Autowired
     protected DeptService deptService;
+
+    @Autowired
+    protected ScheduleSvc scheduleService;
 
     @Autowired
     protected Utility util;

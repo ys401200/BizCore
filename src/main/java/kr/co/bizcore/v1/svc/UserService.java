@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.stereotype.Service;
-import kr.co.bizcore.v1.domain.Permission;
 import kr.co.bizcore.v1.domain.SimpleUser;
 
 @Service
@@ -25,8 +24,8 @@ public class UserService extends Svc {
     public HashMap<String, SimpleUser> getUserMap(String compId){
         HashMap<String, SimpleUser> userMap = null;
         List<SimpleUser> userList = null;
-        List<Map<String, String>> deptInfo = null;
-        Map<String, String> deptEach = null;
+        List<Map<String, String>> deptInfo = null, permList = null;
+        Map<String, String> deptEach = null, permEach = null;
         SimpleUser each = null;
         String userNo = null, deptId = null, funcId = null, subId, perm = null;
         int x = 0;
@@ -35,6 +34,7 @@ public class UserService extends Svc {
         if(userMap == null){
             userList = userMapper.getAllUser(compId);
             deptInfo = userMapper.getAllDeptInfo(compId);
+            permList = userMapper.getAllPermission(compId);
             if(userList != null && userList.size() > 0){
                 userMap = new HashMap<>();
                 
@@ -49,12 +49,19 @@ public class UserService extends Svc {
                     deptEach = deptInfo.get(x);
                     userNo = deptEach.get("userNo");
                     deptId = deptEach.get("deptId");
-                    funcId = deptEach.get("funcId");
-                    subId = deptEach.get("subId");
-                    perm = deptEach.get("permission");
                     each = userMap.get(userNo);
                     if(each != null){
-                        each.setPermission(deptId, funcId, subId, perm);
+                        each.addDeptId(deptId);
+                    }
+                }
+
+                // 각 사용자의 권한을 설정
+                for(x = 0 ; x < permList.size() ; x++){
+                    permEach = permList.get(x);
+                    userNo = permEach.get("userNo");
+                    each = userMap.get(userNo);
+                    if(each != null){
+                        each.setPermission(permEach.get("deptId"), permEach.get("funcId"), permEach.get("subId"), permEach.get("permission"));
                     }
                 }
 
