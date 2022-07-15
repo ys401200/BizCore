@@ -146,6 +146,7 @@ function init(){
 	// 	}
 	// }
 
+	//모달
 	modal = {
 		"container": $(".modalContainer"),
 		"wrap": $(".modalContainer").find(".modalWrap"),
@@ -258,10 +259,14 @@ function readyTopPageActive(){
 }
 
 //기본 그리드
-function createGrid(gridContentId, headerArray, jsonData){
+function createGrid(gridContentId, getConetentType, headerArray, jsonData){
 	let setDate;
 	let gridHeaderHtml = "", gridbodyHtml = "";
 	let gridContent = $("." + gridContentId);
+
+	if(getConetentType == undefined){
+		getConetentType = "";
+	}
 	
 	gridHeaderHtml = "<div class='gridHeader grid_default_header_item'>";
 
@@ -279,7 +284,7 @@ function createGrid(gridContentId, headerArray, jsonData){
 
 	for(let i = 0; i <= jsonData.length; i++){
 		if(i < headerArray.length-1){
-			gridbodyHtml = "<div class='"+"gridContent_"+i+" grid_default_body_item' data-no='"+jsonData[i].no+"'>";
+			gridbodyHtml = "<div class='"+"gridContent_"+i+" grid_default_body_item' data-id='"+jsonData[i].no+"' data-type='"+getConetentType+"'>";
 			
 			for(let key in jsonData[i]){
 				if(key !== "created" && key !== "modified"){
@@ -365,5 +370,3 @@ function modalClose(){
 function modalClear(){
 	modal.clear();
 }
-
-

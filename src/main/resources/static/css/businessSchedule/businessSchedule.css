@@ -1,0 +1,21 @@
+@charset "UTF-8";
+.scheduleList{
+    width: 95%;
+    background: #FFFFFF;
+	overflow: auto;
+	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
+    padding: 15px;
+}
+.scheduleList .gridScheduleList{
+    display: grid; 
+	width: 99%; 
+	margin: 0 auto;
+}
+
+.scheduleList .gridScheduleList .gridHeader{
+    grid-template-columns: 10% 10% 15% 10% 10% 10% 10% 10% 15%;
+}
+
+.scheduleList .gridScheduleList div[class^='gridContent_']{
+	grid-template-columns: 10% 10% 15% 10% 10% 10% 10% 10% 15%;
+}

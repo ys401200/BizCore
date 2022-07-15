@@ -38,15 +38,15 @@ function getNoticeList() {
 		"dataType": "json",
 		"cache": false,
 		success: (data) => {
-			let list, id;
+			let list, id, type;
 			if (data.result === "ok") {
 				list = cipher.decAes(data.data);
 				let jsonData = JSON.parse(list);
 				id = "gridNoticeList";
-				createGrid(id, noticeHeaderArray, jsonData);
+				createGrid(id, type, noticeHeaderArray, jsonData);
 			} else {
 				msg.set("등록된 공지사항이 없습니다");
 			}
 		}
-	})
+	});
 }

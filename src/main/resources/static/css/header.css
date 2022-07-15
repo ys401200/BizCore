@@ -19,6 +19,68 @@ a{
 	color: #000;
 }
 
+/* 공통 class */
+.gridHeader{
+	display: grid; 
+}
+
+.gridHeader .gridHeaderItem:not(:last-child){
+	border-right: 1px solid #D9D9D9;
+}
+
+.gridHeader .gridHeaderItem:last-child{
+	border-right: 0;
+}
+
+[class^='gridContent_']{
+	display: grid; 
+}
+
+[class^='gridContent_']:hover{
+	background-color: #EDEDF4;
+	cursor: pointer;
+}
+
+[class^='gridContent_'] .gridContentItem:not(:last-child){
+	border-top: 1px solid #D9D9D9;
+	border-right: 1px solid #D9D9D9;
+}
+
+[class^='gridContent_'] .gridContentItem:last-child{
+	border-top: 1px solid #D9D9D9;
+	border-right: 0;
+}
+
+.grid_default_text_align{
+	display: flex;
+	align-items: center;
+    justify-content: center;
+	overflow: hidden;
+}
+
+.grid_default_text_align_padding{
+	display: flex;
+	align-items: center;
+    justify-content: left;
+	padding: 0 20px;
+	overflow: hidden;
+}
+
+.grid_default_header_item{
+	color: #332E85;
+	height: 38px;
+	font-weight: 500;
+}
+
+.grid_default_body_item{
+	font-weight: 400;
+	font-size: 15px;
+	line-height: 22px;
+	height: 38px;
+}
+
+/* 공통 class 끝*/
+
 #header{
 	position: relative;
 	width: 100%;
