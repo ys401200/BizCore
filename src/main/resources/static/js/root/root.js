@@ -38,11 +38,12 @@ function getNoticeList() {
 		"dataType": "json",
 		"cache": false,
 		success: (data) => {
-			let list;
+			let list, id;
 			if (data.result === "ok") {
 				list = cipher.decAes(data.data);
 				let jsonData = JSON.parse(list);
-				createGrid("gridNoticeList", noticeHeaderArray, jsonData);
+				id = "gridNoticeList";
+				createGrid(id, noticeHeaderArray, jsonData);
 			} else {
 				msg.set("등록된 공지사항이 없습니다");
 			}

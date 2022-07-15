@@ -136,14 +136,39 @@ function init(){
 		}
 	}
 	
-	modal = {
-		"panel":undefined,
-		"cnt":undefined,
-		"show":()=>{modal.panel.style.display="flex";},
-		"clear":()=>{modal.cnt.innerHTML="";modal.panel.style.display="none";},
-		"alert":(title, content, yesJson, noJson)=>{
+	// modal = {
+	// 	"panel":undefined,
+	// 	"cnt":undefined,
+	// 	"show":()=>{modal.panel.style.display="flex";},
+	// 	"clear":()=>{modal.cnt.innerHTML="";modal.panel.style.display="none";},
+	// 	"alert":(title, content, yesJson, noJson)=>{
 			
-		}
+	// 	}
+	// }
+
+	modal = {
+		"container": $(".modalContainer"),
+		"wrap": $(".modalContainer").find(".modalWrap"),
+		"head": $(".modalContainer").find(".modalWrap .modalHead"),
+		"headTitle": $(".modalContainer").find(".modalWrap").find(".modalHead .modalHeadTitle"),
+		"body": $(".modalContainer").find(".modalWrap .modalBody"),
+		"foot": $(".modalContainer").find(".modalWrap .modalFoot"),
+		"confirm": $(".modalContainer").find(".modalWrap .modalFoot .confirm"),
+		"close": $(".modalContainer").find(".modalWrap .modalFoot .close"),
+		"show": () => {
+			modal.clear();
+			modal.wrap.css('display','flex').hide().fadeIn();
+		},
+		"hide": () => {
+			modal.clear();
+			modal.wrap.fadeOut();
+		},
+		clear: () => {
+			modal.headTitle.text("");
+			modal.body.html("");
+			modal.confirm.text("확인");
+			modal.close.text("닫기");
+		},
 	}
 
 	cipher.aes.key = sessionStorage.getItem("aesKey");
@@ -161,22 +186,6 @@ function init(){
 			$(this).find("#slideSpan").text("+");
 		}
 	});
-
-	$("#confirm").click(function(){
-		modalClose();
-	});
-
-	$("#modalOpenBtn").click(function(){        
-		$("#modal").css('display','flex').hide().fadeIn();
-	});
-
-	$("#close").click(function(){
-		modalClose();
-	});
-
-	function modalClose(){
-		$("#modal").fadeOut();
-	}
 
 	menuActive();
 }
@@ -214,7 +223,6 @@ function menuActive(){
 				sideMenu.find("ul[id='"+firstStr+"']").find("a[href='"+"/"+firstStr+"/"+lastStr+"']").parents("#panel").prev().find("#slideSpan").text("-");
 				sideMenu.find("ul[id='"+firstStr+"']").find("a[href='"+"/"+firstStr+"/"+lastStr+"']").parents("#panel").attr("class", "active");
 				sideMenu.find("ul[id='"+firstStr+"']").find("a[href='"+"/"+firstStr+"/"+lastStr+"']").attr("class", "active");
-				
 				break;
 			}
 	
@@ -271,7 +279,7 @@ function createGrid(gridContentId, headerArray, jsonData){
 
 	for(let i = 0; i <= jsonData.length; i++){
 		if(i < headerArray.length-1){
-			gridbodyHtml = "<div class='"+"gridContent_"+i+" grid_default_body_item'>";
+			gridbodyHtml = "<div class='"+"gridContent_"+i+" grid_default_body_item' data-no='"+jsonData[i].no+"'>";
 			
 			for(let key in jsonData[i]){
 				if(key !== "created" && key !== "modified"){
@@ -292,7 +300,6 @@ function createGrid(gridContentId, headerArray, jsonData){
 					key = "modified";
 					gridbodyHtml += "<div class='gridContentItem'>데이터 없음</div>";
 				}
-				
 			}
 	
 			gridbodyHtml += "</div>";
@@ -350,3 +357,13 @@ function dateFnc(dateTimeStr, type){
 
 	return result;
 }
+
+function modalClose(){
+	modal.hide();
+}
+
+function modalClear(){
+	modal.clear();
+}
+
+
