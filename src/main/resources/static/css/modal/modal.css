@@ -33,16 +33,11 @@
 .modalBody{                
     width:100%;
     background-color:#ffffff; 
-}
-.modalBodyContent{              
-    width:100%;
-    padding:30px;             
-}
-.modalBodyContentBox{           
+    padding:30px;   
     word-break:break-word;    
     overflow-y:auto;          
     min-height:100px;         
-    max-height:200px;         
+    max-height:200px;
 }
 
 .modalFoot{                      
