@@ -8,6 +8,6 @@
 <title>404 ERROR!</title>
 </head>
 <body>
-	<img src="/images/errors/404_error.jpg"/>
+	<img src="/images/errors/404.jpg"/>
 </body>
 </html>

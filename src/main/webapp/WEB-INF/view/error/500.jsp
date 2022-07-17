@@ -8,6 +8,6 @@
 <title>500 ERROR!</title>
 </head>
 <body>
-	<img src="/images/errors/500_error.jpg"/>
+	<img src="/images/errors/500.jpg"/>
 </body>
 </html>
