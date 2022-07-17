@@ -12,7 +12,8 @@
 <div id="bodySched">
 	<hr />
 	<span>일정조회</span>
-	<div id="schedTableDiv">
+	<div class="gridScheduleList"></div>
+	<!-- <div id="schedTableDiv">
 		<table id="schedTable" frame="void">
 			<colgroup>
 		        <col width="15%">
@@ -29,7 +30,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<!-- <c:choose>
+				<c:choose>
 					<c:when test="${empty schedList}">
 						<tr>
 							<td colspan="4">데이터가 없습니다.</td>
@@ -48,10 +49,10 @@
 							</tr>
 						</c:forEach>
 					</c:otherwise>
-				</c:choose> -->
+				</c:choose>
 			</tbody>
 		</table>
-	</div>
+	</div> -->
 </div>
 
 <div id="bodyMyDoc">

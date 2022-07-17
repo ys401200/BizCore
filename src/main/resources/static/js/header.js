@@ -188,6 +188,10 @@ function init(){
 		}
 	});
 
+	$(".close").click(function(){
+		modalClose();
+	})
+
 	menuActive();
 }
 
@@ -259,64 +263,38 @@ function readyTopPageActive(){
 }
 
 //기본 그리드
-function createGrid(gridContentId, getConetentType, headerArray, jsonData){
-	let setDate;
-	let gridHeaderHtml = "", gridbodyHtml = "";
-	let gridContent = $("." + gridContentId);
-
-	if(getConetentType == undefined){
-		getConetentType = "";
-	}
+function createGrid(gridContainer, headerDataArray, dataArray, ids, fnc){
+	let gridHtml = "";
 	
-	gridHeaderHtml = "<div class='gridHeader grid_default_header_item'>";
-
-	for(let i = 0; i < headerArray.length; i++){
-		if(headerArray[i].padding == true){
-			gridHeaderHtml += "<div class='gridHeaderItem grid_default_text_align_padding'>"+headerArray[i].title+"</div>";
+	gridHtml = "<div class='gridHeader grid_default_header_item'>";
+	
+	for(let i = 0; i < headerDataArray.length; i++){
+		if(headerDataArray[i].padding == true){
+			gridHtml += "<div class='gridHeaderItem grid_default_text_align_padding'>"+headerDataArray[i].title+"</div>";
 		}else{
-			gridHeaderHtml += "<div class='gridHeaderItem grid_default_text_align'>"+headerArray[i].title+"</div>";
+			gridHtml += "<div class='gridHeaderItem grid_default_text_align'>"+headerDataArray[i].title+"</div>";
 		}
 	}
 
-	gridHeaderHtml += "</div>";
+	gridHtml += "</div>";
 
-	gridContent.append(gridHeaderHtml);
-
-	for(let i = 0; i <= jsonData.length; i++){
-		if(i < headerArray.length-1){
-			gridbodyHtml = "<div class='"+"gridContent_"+i+" grid_default_body_item' data-id='"+jsonData[i].no+"' data-type='"+getConetentType+"'>";
-			
-			for(let key in jsonData[i]){
-				if(key !== "created" && key !== "modified"){
-					gridbodyHtml += "<div class='gridContentItem'>"+jsonData[i][key]+"</div>";
-				}else if(key === "created" && jsonData[i].created !== null && jsonData[i].modified === null){
-					key = "created";
-					setDate = dateFnc(jsonData[i][key]);
-					gridbodyHtml += "<div class='gridContentItem'>"+setDate+"</div>";
-				}else if(key === "created" && jsonData[i].created === null && jsonData[i].modified !== null){
-					key = "modified";
-					setDate = dateFnc(jsonData[i][key]);
-					gridbodyHtml += "<div class='gridContentItem'>"+setDate+"</div>";
-				}else if(key === "created" && jsonData[i].created !== null && jsonData[i].modified !== null){
-					key = "modified";
-					setDate = dateFnc(jsonData[i][key]);
-					gridbodyHtml += "<div class='gridContentItem'>"+setDate+"</div>";
-				}else if(key === "created" && jsonData[i].created === null && jsonData[i].modified === null){
-					key = "modified";
-					gridbodyHtml += "<div class='gridContentItem'>데이터 없음</div>";
-				}
+	for(let i = 0; i < dataArray.length; i++){
+		gridHtml += "<div class='"+"gridContent_"+i+" grid_default_body_item' data-id='"+ids[i]+"' onclick='"+fnc+"'>";
+		for(let t = 0; t <= dataArray.length; t++){
+			if(dataArray[i][t] !== undefined){
+				gridHtml += "<div class='gridContentItem'>"+dataArray[i][t].setData+"</div>";
 			}
-	
-			gridbodyHtml += "</div>";
-			gridContent.append(gridbodyHtml);
 		}
+		gridHtml += "</div>";
 	}
+
+	gridContainer[0].innerHTML = gridHtml;
 
 	let gridContents = $("[class^=gridContent_");
 
-	for(let i = 0; i < headerArray.length; i++){
+	for(let i = 0; i < headerDataArray.length; i++){
 		gridContents.each(function(index, item){
-			if(headerArray[i].padding == true){
+			if(headerDataArray[i].padding == true){
 				$(item).find(".gridContentItem").eq(i).attr("class", "gridContentItem grid_default_text_align_padding");
 			}else{
 				$(item).find(".gridContentItem").eq(i).attr("class", "gridContentItem grid_default_text_align");
@@ -358,6 +336,26 @@ function dateFnc(dateTimeStr, type){
 		result = hh + ":" + mm;
 	}else if(type === "mm:ss"){
 		result = mm + ":" + ss;
+	}
+
+	return result;
+}
+
+function dateDis(created, modified){
+	let result;
+
+	if(created === undefined){
+		created = null;
+	}else if(modified === undefined){
+		modified = null;
+	}
+
+	if(created !== null && modified !== null){
+		result = modified;
+	}else if(created === null && modified !== null){
+		result = modified;
+	}else if(created !== null && modified === null){
+		result = created;
 	}
 
 	return result;

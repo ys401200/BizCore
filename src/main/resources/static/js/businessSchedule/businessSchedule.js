@@ -10,8 +10,10 @@ $(document).ready(() => {
 });
 
 function getScheduleList() {
-	let url;
-	let scheduleHeaderArray = [
+	let url, dataArray = [], headerArray, container;
+	
+	container = document.getElementsByClassName("gridScheduleList");
+	headerArray = [
 		{
 			"title" : "등록일",
 			"padding" : false,
@@ -59,12 +61,50 @@ function getScheduleList() {
 		"dataType": "json",
 		"cache": false,
 		success: (data) => {
-			let list, id, type;
+			let list, disDate, setDate, str, ids = [], fnc;
 			if (data.result === "ok") {
 				list = cipher.decAes(data.data);
 				let jsonData = JSON.parse(list);
-				id = "gridScheduleList";
-				createGrid(id, type, scheduleHeaderArray, jsonData);
+
+				for(let i = 0; i < jsonData.length; i++){
+					disDate = dateDis(jsonData[i].created, jsonData[i].modified);
+					setDate = dateFnc(disDate);
+
+					str = [
+						{
+							"setData": setDate,
+						},
+						{
+							"setData": jsonData[i].job,
+						},
+						{
+							"setData": jsonData[i].title,
+						},
+						{
+							"setData": jsonData[i].from,
+						},
+						{
+							"setData": jsonData[i].cust,
+						},
+						{
+							"setData": jsonData[i].user,
+						},
+						{
+							"setData": jsonData[i].no,
+						},
+						{
+							"setData": jsonData[i].sopp,
+						},
+						{
+							"setData": jsonData[i].detail,
+						}
+					];
+
+					fnc = "scheduleDetailView(this);";
+					ids.push(jsonData[i].no);
+					dataArray.push(str);
+				}
+				createGrid(container, headerArray, dataArray, fnc);
 			} else {
 				msg.set("등록된 일정이 없습니다");
 			}
