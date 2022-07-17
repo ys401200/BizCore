@@ -108,7 +108,7 @@ public class BusinessController {
 
         session.setAttribute("pathName",  pathName);
 
-        result = "/schedule/calendar";
+        result = "/schedule/schedule";
 
         return result;
     } // End of /business/**

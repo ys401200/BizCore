@@ -22,7 +22,7 @@
 				<span id="slideSpan">+</span>
 			</a>
 		  	<ul id="panel">
-		  		<li><a href="#">- 캘린더</a></li>
+		  		<li><a href="/business/calendar">- 캘린더</a></li>
 		  		<li><a href="/business/schedule">- 일정조회</a></li>
 		  		<li><a href="#">- 일정등록</a></li>
 		  		<li><a href="#">- 개인업무일지작성</a></li>
