@@ -13,46 +13,6 @@
 	<hr />
 	<span>일정조회</span>
 	<div class="gridScheduleList"></div>
-	<!-- <div id="schedTableDiv">
-		<table id="schedTable" frame="void">
-			<colgroup>
-		        <col width="15%">
-		        <col width="25%">
-		        <col width="30%">
-		        <col width="35%">
-	    	</colgroup>
-			<thead>
-				<tr>
-					<th>작성일자</th>
-					<th id="schedTitle">일정제목</th>
-					<th id="schedTitle">일정설명</th>
-					<th>일정</th>
-				</tr>
-			</thead>
-			<tbody>
-				<c:choose>
-					<c:when test="${empty schedList}">
-						<tr>
-							<td colspan="4">데이터가 없습니다.</td>
-						</tr>
-					</c:when>
-					<c:otherwise>
-						<c:forEach var="row" items="${schedList}">
-							<tr>
-								<td>
-									<fmt:parseDate value="${row.regDatetime}" var="regDatetime" pattern="yyyy-MM-dd HH:mm:ss"/>
-									<fmt:formatDate value="${regDatetime}" pattern="yyyy-MM-dd"/>
-								</td>
-								<td id="schedTitle">${row.schedTitle}</td>
-								<td id="schedTitle">${fn:substring(row.schedDesc, 0, 15)} ...</td>
-								<td>${row.schedFrom} ~ ${row.schedTo}</td>
-							</tr>
-						</c:forEach>
-					</c:otherwise>
-				</c:choose>
-			</tbody>
-		</table>
-	</div> -->
 </div>
 
 <div id="bodyMyDoc">

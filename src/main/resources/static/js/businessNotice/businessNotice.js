@@ -26,7 +26,7 @@ function getNoticeList() {
 			if (data.result === "ok") {
 				list = cipher.decAes(data.data);
 				listjson = JSON.parse(list);
-				drawNoticeList(listjson);
+				// drawNoticeList(listjson);
 
 			} else {
 				msg.set("등록된 공지사항이 없습니다");
@@ -99,9 +99,6 @@ function getNoticeDetail(no) {
 			}
 		}
 	})
-
-
-
 }
 
 
