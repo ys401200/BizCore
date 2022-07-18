@@ -368,3 +368,66 @@ function modalClose(){
 function modalClear(){
 	modal.clear();
 }
+
+// 페이징 만드는 함수
+function createPaging(container, max, eventListener, current, nextCount, forwardStep){
+	let x = 0, page, html = [];
+	if(container == undefined){
+		console.log("[createPaging] Paging container is Empty.");
+		return false;
+	}else if(!classType(container).includes("Element")){
+		console.log("[createPaging] Container is Not Html Element.");
+		return false;
+	}else if(isNaN(max) || max === "" || max < 1){
+		console.log("[createPaging] max value is abnormal.");
+		return false;
+	}else if(eventListener === undefined){
+		console.log("[createPaging] Click event listener unavailable.");
+		return false;
+	}
+
+	if(current === undefined)	current = 1;
+	if(nextCount === undefined)	nextCount = 3;
+	if(forwardStep === undefined)	forwardStep = 10;
+
+	html[1] = "<div class=\"paging_cell paging_cell_current\">" + current + "</div>";
+
+	for(page = current - 1 ; page >= current - nextCount && page > 0; page--){
+		html[1] = "<div class=\"paging_cell\" onclick=\"" + eventListener + "(" + page + ")\">" + page + "</div>" + html[1];
+	}
+
+	if(page === 1){
+		html[0] = "<div class=\"paging_cell\" onclick=\"" + eventListener + "(" + page + ")\">" + page + "</div>";
+	}else if(page > 1){
+		if(current - forwardStep > 1){
+			html[0] = "<div class=\"paging_cell\" onclick=\"" + eventListener + "(" + (current - forwardStep) + ")\">&laquo;</div>";
+		}
+		html[0] = "<div class=\"paging_cell\" onclick=\"" + eventListener + "(1)\">1</div>" + html[0];
+	}else{
+		html[0] = undefined;
+	}
+
+	for(page = current + 1 ; page <= (current + nextCount) && page <= max ; page++){
+		html[1] = html[1] + "<div class=\"paging_cell\" onclick=\"" + eventListener + "(" + page + ")\">" + page + "</div>";
+	}
+
+	if(page === max){
+		html[2] = "<div class=\"paging_cell\" onclick=\"" + eventListener + "(" + page + ")\">" + page + "</div>";
+	}else if(page < max){
+		if(current + forwardStep < max){
+			html[2] = "<div class=\"paging_cell\" onclick=\"" + eventListener + "(" + (current + forwardStep) + ")\">&raquo;</div>";
+		}
+		html[2] = html[2] + "<div class=\"paging_cell\" onclick=\"" + eventListener + "(" + max + ")\">" + max + "</div>";
+	}else	html[2] = undefined;
+
+	html[3] = html[1];
+	if(html[0] !== undefined)	html[3] = html[0] + "<div class=\"paging_cell_empty\">...</div>" + html[1];
+	if(html[2] != undefined)	html[3] = html[3] + "<div class=\"paging_cell_empty\">...</div>" + html[2];
+
+	return html[3];
+} // End of createPaging
+
+// 데이터 타입 확인 하수
+function classType(obj){
+	return obj == undefined ? obj : Object.prototype.toString.call(obj).slice(8, -1);
+} // End of classType()
