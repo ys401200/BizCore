@@ -50,9 +50,9 @@ function drawNoticeList() {
 	if (storage.currentPage === undefined) storage.currentPage = 1;
 	if (storage.articlePerPage === undefined) storage.articlePerPage = 20;
 
-	
+	pageContainer = document.getElementsByClassName("pageContainer");
 	container = $(".gridNoticeList");
-	
+
 
 	header = [
 		{
@@ -94,12 +94,42 @@ function drawNoticeList() {
 		fnc = "noticeDetailView(this)";
 		ids.push(jsonData[i].no);
 		data.push(str);
-	}
-
+	} 
+	// 페이징 처리하기 
+	let pageNation = createPaging(pageContainer[0], jsonData.length/20 +1, "pageMove");
+	pageContainer[0].innerHTML = pageNation;
+	//표 만들기 
 	createGrid(container, header, data, ids, fnc);
 }
 
 function noticeDetailView(event) {
-	modal.alert("확인");
+	// 선택한 그리드의 글 번호 받아오기 
+	let no = event.dataset.id; 
+	let url ;
+	url = apiServer + "/api/notice/" + no; 
+
+
+	$.ajax({
+		"url": url,
+		"method": "get",
+		"dataType": "json",
+		"cache": false,
+		success: (result) => {
+			let jsonData;
+			if (result.result === "ok") {
+				jsonData= cipher.decAes(result.data);
+				jsonData = JSON.parse(jsonData);
+				drawNoticeContent(jsonData);
+			} else {
+				modal.alert("공지사항 상세조회에 실패했습니다.");
+			}
+		}
+	})
+
+}
+
+function drawNoticeContent(jsonData) {
+	let content = jsonData.content; 
+	$(".noticeContent").html(content);
 
 }

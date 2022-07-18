@@ -37,8 +37,15 @@
 } 
 
 .gridNoticeList .gridHeader, .gridNoticeList .gridContent{
-    grid-template-columns: 20% 40% 20% 20%;
+    grid-template-columns: 10% 60% 10% 20%;
 }
 
+.noticeContent {
+	border : 2rem;
+	padding : 2rem;
+	font-size: 1.2rem;
+	margin-left : 6%;
+
+}
 
 
