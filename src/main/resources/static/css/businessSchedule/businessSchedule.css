@@ -19,7 +19,7 @@
  	margin: 0;
 }
 
-.scheduleContainer span{
+.scheduleContainer span:not(.calendarSpan){
 	font-weight: 500;
 	font-size: 16px;
 	margin-left: 18px;
@@ -52,4 +52,62 @@
 
 .scheduleContainer .gridScheduleList .gridContent{
 	grid-template-columns: 10% 10% 15% 10% 10% 10% 10% 10% 15%;
+}
+
+.scheduleContainer .calendarList{
+	padding: 1%;
+}
+
+.scheduleContainer .calendarList .calendarInfo{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: #EAEAEA;
+	border-top: 1px solid #BDBDBD;
+	border-left: 1px solid #BDBDBD;
+	border-right: 1px solid #BDBDBD;
+	height: 50px;
+	font-size: 1.2rem;
+	font-weight: 500;
+}
+
+.scheduleContainer table{
+	width: 100%;
+	margin: 0 auto;
+	border-collapse: collapse;
+	border-left: 1px solid #BDBDBD;
+	border-right: 1px solid #BDBDBD;
+}
+
+.scheduleContainer table thead tr th{
+	background-color: #EAEAEA;
+	border: 1px solid #BDBDBD;
+	height: 50px;
+}
+
+.scheduleContainer table thead tr th:first-child{
+	color:#FF0000;
+}
+
+.scheduleContainer table thead tr th:last-child{
+	color:#0100FF;
+}
+
+.scheduleContainer table tbody tr td.sun{
+	color:#FF0000;
+}
+
+.scheduleContainer table tbody tr td.sat{
+	color:#0100FF;
+}
+
+.scheduleContainer table tbody tr td{
+	height: 50px;
+	border: 1px solid #BDBDBD;
+}
+
+.scheduleContainer table tbody tr td:hover{
+	background-color: #332E85;
+	color: #ffffff;
+	cursor: pointer;
 }
