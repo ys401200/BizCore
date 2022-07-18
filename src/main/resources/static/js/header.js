@@ -145,6 +145,7 @@ function init(){
 		"headTitle": $(".modalContainer").find(".modalWrap").find(".modalHead .modalHeadTitle"),
 		"body": $(".modalContainer").find(".modalWrap .modalBody"),
 		"foot": $(".modalContainer").find(".modalWrap .modalFoot"),
+		"footBtns": $(".modalContainer").find(".modalWrap .modalFoot .modalBtns"),
 		"confirm": $(".modalContainer").find(".modalWrap .modalFoot .confirm"),
 		"close": $(".modalContainer").find(".modalWrap .modalFoot .close"),
 		"alert": (title, content) => {
@@ -167,6 +168,9 @@ function init(){
 		clear: () => {
 			modal.headTitle.text("");
 			modal.body.html("");
+			modal.confirm.show();
+			modal.close.show();
+			modal.footBtns.css("width", "49%");
 			modal.confirm.text("확인");
 			modal.close.text("닫기");
 		},
