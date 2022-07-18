@@ -6,8 +6,9 @@
 		<jsp:include page="../sideMenu.jsp" />
 	</div>
 	<div id="bodyContent">
-		<div id="loadingDiv"></div>
-		<jsp:include page="./contents/list.jsp" />
+		<div class="noticeContent"></div>
+		<div class="gridNoticeList"></div>
+		<div class="noticePaging"></div>
 	</div>
 </div>
 <div class="msg_cnt"></div>

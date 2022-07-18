@@ -293,8 +293,6 @@ function createGrid(gridContainer, headerDataArray, dataArray, ids, fnc){
 		gridHtml += "</div>";
 	}
 
-	console.log(gridContainer);
-
 	gridContainer.html(gridHtml);
 
 	let gridContents = $(".gridContent");

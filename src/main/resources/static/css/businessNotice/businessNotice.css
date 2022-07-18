@@ -27,3 +27,18 @@
 	line-height: 3;
 	color: #332E85;
 }
+
+
+
+.gridNoticeList{
+    display: grid; 
+	width: 99%; 
+	margin: 0 auto;
+} 
+
+.gridNoticeList .gridHeader, .gridNoticeList .gridContent{
+    grid-template-columns: 20% 40% 20% 20%;
+}
+
+
+
