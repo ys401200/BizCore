@@ -1,4 +1,4 @@
-let cipher, msg, apiServer, modal;
+let cipher, msg, apiServer, modal, storage;
 
 function init(){
 	setTimeout(() => {
@@ -13,6 +13,7 @@ function init(){
 	}, 70);
 
 	apiServer = "";
+	storage = {};
 
 	cipher = { // 암호화 모듈
 		"encRsa" : (message) => {
