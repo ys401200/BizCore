@@ -6,6 +6,8 @@ $(document).ready(() => {
 		$("#loadingDiv").loading("toggle");
 	}, 300);
 
+	$(".calendarList").hide();
+
 	getScheduleList();
 });
 
@@ -116,6 +118,23 @@ function getScheduleList() {
 	});
 }
 
-function testClick(page){
-	return false;
+function listChange(event){
+	let tableList = $(".gridScheduleList");
+	let calendarList = $(".calendarList");
+	let pageContainer = $(".pageContainer");
+
+	console.log($(event).data("type"));
+	if($(event).data("type") === "table"){
+		tableList.hide();
+		pageContainer.hide();
+		calendarList.show();
+		$(event).data("type", "calendar");
+		$(event).text("테이블로 표시");
+	}else{
+		tableList.show();
+		pageContainer.show();
+		calendarList.hide();
+		$(event).data("type", "table");
+		$(event).text("달력으로 표시");
+	}
 }
