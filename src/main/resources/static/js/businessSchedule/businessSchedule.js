@@ -10,9 +10,10 @@ $(document).ready(() => {
 });
 
 function getScheduleList() {
-	let url, dataArray = [], headerArray, container;
+	let url, dataArray = [], headerArray, container, pageContainer;
 	
-	container = document.getElementsByClassName("gridScheduleList");
+	pageContainer = document.getElementsByClassName("pageContainer");
+	container = $(".gridScheduleList");
 	headerArray = [
 		{
 			"title" : "등록일",
@@ -104,10 +105,17 @@ function getScheduleList() {
 					ids.push(jsonData[i].no);
 					dataArray.push(str);
 				}
-				createGrid(container, headerArray, dataArray, fnc);
+
+				var pageNation = createPaging(pageContainer[0], 50, "testClick");
+				pageContainer[0].innerHTML = pageNation;
+				createGrid(container, headerArray, dataArray, ids, fnc);
 			} else {
 				msg.set("등록된 일정이 없습니다");
 			}
 		}
 	});
+}
+
+function testClick(page){
+	return false;
 }
