@@ -12,6 +12,9 @@ function init(){
 		});
 	}, 70);
 
+	getUserMap();
+	getDeptMap();
+
 	apiServer = "";
 	storage = {};
 
@@ -436,3 +439,55 @@ function createPaging(container, max, eventListener, current, nextCount, forward
 function classType(obj){
 	return obj == undefined ? obj : Object.prototype.toString.call(obj).slice(8, -1);
 } // End of classType()
+
+// API 서버에서 직원 정보를 가져오는 함수
+function getUserMap(){
+	let url;
+
+	url = apiServer + "/api/user/map";
+
+	$.ajax({
+		"url": url,
+		"method": "get",
+		"dataType": "json",
+		"cache": false,
+		success: (data) => {
+			let list;
+
+			if (data.result === "ok") {
+				list = cipher.decAes(data.data);
+				list = JSON.parse(list);
+				storage.user = list;
+				console.log("[getUser] Success getting employee information.");
+			} else {
+				msg.set("직원 정보를 가져오지 못했습니다.");
+			}
+		}
+	})
+} // End of getNoticeList()
+
+// API 서버에서 직원 정보를 가져오는 함수
+function getDeptMap(){
+	let url;
+
+	url = apiServer + "/api/dept/map";
+
+	$.ajax({
+		"url": url,
+		"method": "get",
+		"dataType": "json",
+		"cache": false,
+		success: (data) => {
+			let list;
+
+			if (data.result === "ok") {
+				list = cipher.decAes(data.data);
+				list = JSON.parse(list);
+				storage.dept = list;
+				console.log("[getDeptMap] Success getting department information.");
+			} else {
+				msg.set("부서 정보를 가져오지 못했습니다.");
+			}
+		}
+	})
+} // End of getDeptMap()
