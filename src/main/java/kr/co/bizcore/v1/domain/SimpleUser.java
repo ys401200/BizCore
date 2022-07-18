@@ -67,6 +67,7 @@ public class SimpleUser implements Domain {
         return result;
     }
 
+    @JsonIgnore
     public String getDeptIdSqlIn(){
         String result = "";
         int x = 0;

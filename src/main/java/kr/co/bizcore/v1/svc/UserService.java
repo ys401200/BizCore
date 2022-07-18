@@ -71,4 +71,25 @@ public class UserService extends Svc {
         }
         return userMap;
     } // End of getUserMap()
+
+    public String getUserMapJson(String compId){
+        String result = "{";
+        HashMap<String, SimpleUser> map = null;
+        SimpleUser user = null;
+        Object[] keySet = null;
+        String userNo = null;
+        int x = 0;
+
+        map = getUserMap(compId);
+        keySet = map.keySet().toArray();
+        for(x = 0 ; x < keySet.length ; x++){
+            userNo = (String)keySet[x];
+            user = map.get(userNo);
+            if(x > 0)    result += ",";
+            result += "\"" + userNo + "\":";
+            result += user.toJson();
+        }
+        result += "}";
+        return result;
+    } // End of 
 }

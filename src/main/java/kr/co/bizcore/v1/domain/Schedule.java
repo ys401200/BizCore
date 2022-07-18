@@ -19,8 +19,11 @@ public class Schedule implements Domain{
     private int sopp;
     private String title;
     private String detail;
+    private String place;
     private Date from;
     private Date to;
+    private Date created;
+    private Date modified;
 
     @Override
     public String toJson() {
