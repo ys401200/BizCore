@@ -283,7 +283,7 @@ function createGrid(gridContainer, headerDataArray, dataArray, ids, fnc){
 	gridHtml += "</div>";
 
 	for(let i = 0; i < dataArray.length; i++){
-		gridHtml += "<div class='"+"gridContent_"+i+" grid_default_body_item' data-id='"+ids[i]+"' onclick='"+fnc+"'>";
+		gridHtml += "<div class='"+"gridContent grid_default_body_item' data-id='"+ids[i]+"' onclick='"+fnc+"'>";
 		for(let t = 0; t <= dataArray.length; t++){
 			if(dataArray[i][t] !== undefined){
 				gridHtml += "<div class='gridContentItem'>"+dataArray[i][t].setData+"</div>";
@@ -292,9 +292,9 @@ function createGrid(gridContainer, headerDataArray, dataArray, ids, fnc){
 		gridHtml += "</div>";
 	}
 
-	gridContainer[0].innerHTML = gridHtml;
+	gridContainer.innerHTML = gridHtml;
 
-	let gridContents = $("[class^=gridContent_");
+	let gridContents = $(".gridContent");
 
 	for(let i = 0; i < headerDataArray.length; i++){
 		gridContents.each(function(index, item){
