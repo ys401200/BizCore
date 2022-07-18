@@ -129,7 +129,20 @@ function noticeDetailView(event) {
 }
 
 function drawNoticeContent(jsonData) {
+	let title = jsonData.title;
 	let content = jsonData.content; 
-	$(".noticeContent").html(content);
+    let html=""; 
+	let headerDiv;
+	let contentDiv; 
 
+	headerDiv = "<div class='headerDiv' onclick='deleteNoticeContent()'>X</div>";
+    contentDiv= "<div class='contentDiv'>"+content+"</div>";
+	html += (headerDiv+contentDiv);
+	$(".noticeContent").html(html);
+
+}
+
+
+function deleteNoticeContent() {
+	$(".noticeContent").html("");
 }

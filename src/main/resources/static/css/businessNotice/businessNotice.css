@@ -43,8 +43,14 @@
 .noticeContent {
 	border : 2rem;
 	padding : 2rem;
-	font-size: 1.2rem;
-	margin-left : 6%;
+	font-size: 1.2rem; 
+}
+
+.noticeContent .headerDiv {
+	float : right; 
+	font-size: 1.6rem;
+	color: #332E85;
+    font-weight: 600;
 
 }
 
