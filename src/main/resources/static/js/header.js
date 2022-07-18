@@ -135,20 +135,11 @@ function init(){
 			el.parentElement.remove();
 		}
 	}
-	
-	// modal = {
-	// 	"panel":undefined,
-	// 	"cnt":undefined,
-	// 	"show":()=>{modal.panel.style.display="flex";},
-	// 	"clear":()=>{modal.cnt.innerHTML="";modal.panel.style.display="none";},
-	// 	"alert":(title, content, yesJson, noJson)=>{
-			
-	// 	}
-	// }
 
 	//모달
 	modal = {
 		"container": $(".modalContainer"),
+		"content": $(".modalContainer").find(".modal"),
 		"wrap": $(".modalContainer").find(".modalWrap"),
 		"head": $(".modalContainer").find(".modalWrap .modalHead"),
 		"headTitle": $(".modalContainer").find(".modalWrap").find(".modalHead .modalHeadTitle"),
@@ -156,6 +147,15 @@ function init(){
 		"foot": $(".modalContainer").find(".modalWrap .modalFoot"),
 		"confirm": $(".modalContainer").find(".modalWrap .modalFoot .confirm"),
 		"close": $(".modalContainer").find(".modalWrap .modalFoot .close"),
+		"alert": (title, content) => {
+			modal.show();
+			modal.content.css("width", "400px");
+			modal.headTitle.text(title);
+			modal.body.html(content);
+			modal.confirm.hide();
+			modal.close.text("확인");
+			modal.close.css("width", "100%");
+		},
 		"show": () => {
 			modal.clear();
 			modal.wrap.css('display','flex').hide().fadeIn();
@@ -190,7 +190,7 @@ function init(){
 
 	$(".close").click(function(){
 		modalClose();
-	})
+	});
 
 	menuActive();
 }

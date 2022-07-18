@@ -77,5 +77,5 @@ function getNoticeList() {
 }
 
 function noticeDetailView(event){
-	modal.show();
+	modal.alert("메세지창 입니다.", "내용입니다.");
 }
