@@ -293,8 +293,6 @@ function createGrid(gridContainer, headerDataArray, dataArray, ids, fnc){
 		gridHtml += "</div>";
 	}
 
-	console.log(gridContainer);
-
 	gridContainer.html(gridHtml);
 
 	let gridContents = $(".gridContent");
@@ -430,7 +428,7 @@ function createPaging(container, max, eventListener, current, nextCount, forward
 	html[3] = html[1];
 	if(html[0] !== undefined)	html[3] = html[0] + "<div class=\"paging_cell_empty\">...</div>" + html[1];
 	if(html[2] != undefined)	html[3] = html[3] + "<div class=\"paging_cell_empty\">...</div>" + html[2];
-
+	
 	return html[3];
 } // End of createPaging
 

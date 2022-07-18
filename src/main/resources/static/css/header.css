@@ -19,6 +19,10 @@ a{
 	color: #000;
 }
 
+button{
+	font-family: 'Noto Sans KR', sans-serif;
+}
+
 /* 공통 class */
 .gridHeader{
 	display: grid; 
@@ -170,7 +174,7 @@ a{
 #header #mainTopMenu ul li button{
 	width: 100%;
 	height: 100%;
-	font-weight: 600;
+	font-weight: 500;
 	font-size: 18px;
 	line-height: 75px;
 	color: #332E85;
@@ -181,7 +185,7 @@ a{
 #header #mainTopMenu ul li button.active{
 	width: 100%;
 	height: 100%;
-	font-weight: 600;
+	font-weight: 500;
 	font-size: 18px;
 	line-height: 75px;
 	color: #332E85;
@@ -193,7 +197,7 @@ a{
 #header #mainTopMenu ul li button:not(.active):hover{
 	width: 100%;
 	height: 100%;
-	font-weight: 600;
+	font-weight: 500;
 	font-size: 18px;
 	line-height: 75px;
 	color: #332E85;
