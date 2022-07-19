@@ -5,15 +5,13 @@ $(document).ready(() => {
 		$("#loadingDiv").hide();
 		$("#loadingDiv").loading("toggle");
 	}, 300);
-	getNoticeList();
+	getFileboxList();
 });
 
 // API 서버에서 공지사항 리스트를 가져오는 함수
-function getNoticeList() {
+function getFileboxList() {
 	let url;
-
-
-	url = apiServer + "/api/notice"
+	url = apiServer + "/api/filebox"
 	$.ajax({
 		"url": url,
 		"method": "get",
@@ -24,16 +22,16 @@ function getNoticeList() {
 			if (data.result === "ok") {
 				jsonData = cipher.decAes(data.data);
 				jsonData = JSON.parse(jsonData);
-				storage.noticeList = jsonData;
-				window.setTimeout(drawNoticeList, 200);
+				storage.fileboxList = jsonData;
+				window.setTimeout(drawFileboxList, 200);
 			} else {
-				msg.set("등록된 공지사항이 없습니다");
+				modal.alert("등록된 자료가 없습니다");
 			}
 		}
 	})
-} // End of getNoticeList()
+} // End of getFileboxList()
 
-function drawNoticeList() {
+function drawFileboxList() {
 	let container;
 	let jsonData;
 	let header = [];
@@ -42,11 +40,11 @@ function drawNoticeList() {
 	let disDate, setDate, str, fnc;
 	let totalNotice, currentPage, articlePerPage, max;
 	let lastPageNotice; 
-	if (storage.noticeList === undefined) {
-		msg.set("등록된 공지사항이 없습니다");
+	if (storage.fileboxList === undefined) {
+		modal.alert("등록된 자료가 없습니다");
 	}
 	else {
-		jsonData = storage.noticeList;
+		jsonData = storage.fileboxList;
 	}
 	if (storage.currentPage === undefined) storage.currentPage = 1;
 	if (storage.articlePerPage === undefined) storage.articlePerPage = 5;
@@ -107,7 +105,7 @@ function drawNoticeList() {
 			}
 		]
 
-		fnc = "noticeDetailView(this)";
+		fnc = "fileboxDetailView(this)";
 		ids.push(jsonData[i].no);
 		data.push(str);
 
@@ -120,25 +118,22 @@ function drawNoticeList() {
 	createGrid(container, header, data, ids, fnc);
 
 
-}// End of drawNoticeList()
+}// End of drawFileboxList()
 
 
 function pageMove(page) {
 	let selectedPage = parseInt(page);
 	storage.currentPage = selectedPage;
-	getNoticeList();
+	drawFileboxList();
 	
 }
 
 
 
-
-
-
-function noticeDetailView(event) {// 선택한 그리드의 글 번호 받아오기 
+function fileboxDetailView(event) {// 선택한 그리드의 글 번호 받아오기 
 	let no = event.dataset.id;
 	let url;
-	url = apiServer + "/api/notice/" + no;
+	url = apiServer + "/api/filebox/" + no;
 
 
 	$.ajax({
@@ -151,16 +146,16 @@ function noticeDetailView(event) {// 선택한 그리드의 글 번호 받아오
 			if (result.result === "ok") {
 				jsonData = cipher.decAes(result.data);
 				jsonData = JSON.parse(jsonData);
-				drawNoticeContent(jsonData);
+				drawFileboxContent(jsonData);
 			} else {
-				modal.alert("공지사항 상세조회에 실패했습니다.");
+				modal.alert("자료 상세조회에 실패했습니다.");
 			}
 		}
 	})
 
 } // End of noticeDetailView()
 
-function drawNoticeContent(jsonData) { // 공지사항 본문 보이게 하는 함수 
+function drawFileboxContent(jsonData) { // 공지사항 본문 보이게 하는 함수 
 	let title = jsonData.title;
 	let content = jsonData.content;
 	let html = "";
@@ -170,13 +165,13 @@ function drawNoticeContent(jsonData) { // 공지사항 본문 보이게 하는 �
 	headerDiv = "<div class='headerDiv' style='display:grid;grid-template-columns:80% 20%' onclick='deleteNoticeContent()'><div>" + title + "</div><div class='deleteButton'>X</div></div>";
 	contentDiv = "<div class='contentDiv' style='display:grid'>" + content + "</div>";
 	html += (headerDiv + contentDiv);
-	$(".noticeContent").html(html);
-	$(".noticeContent").show();
+	$(".fileboxContent").html(html);
+	$(".fileboxContent").show();
 
 
 }// End of drawNoticeContent()
 
 
 function deleteNoticeContent() { // 공지사항 본문 지우는 함수 
-	$(".noticeContent").hide();
+	$(".fileboxContent").hide();
 }

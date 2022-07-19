@@ -12,7 +12,6 @@ $(document).ready(() => {
 function getNoticeList() {
 	let url;
 
-
 	url = apiServer + "/api/notice"
 	$.ajax({
 		"url": url,
@@ -41,7 +40,7 @@ function drawNoticeList() {
 	let ids = [];
 	let disDate, setDate, str, fnc;
 	let totalNotice, currentPage, articlePerPage, max;
-	let lastPageNotice; 
+	let lastPageNotice;
 	if (storage.noticeList === undefined) {
 		msg.set("등록된 공지사항이 없습니다");
 	}
@@ -78,16 +77,16 @@ function drawNoticeList() {
 			"padding": false,
 		}
 	];
-   
-	lastPageNotice =currentPage*articlePerPage;
 
-	//마지막 페이지인 경우 게산 
-	if(currentPage==max && totalNotice%articlePerPage !==0){
-		lastPageNotice = (max-1)*articlePerPage + totalNotice%articlePerPage;
+	lastPageNotice = currentPage * articlePerPage;
+
+	//마지막 페이지인 경우 
+	if (currentPage == max && totalNotice % articlePerPage !== 0) {
+		lastPageNotice = ((max - 1) * articlePerPage) + (totalNotice % articlePerPage);
 	}
 
-	for (let i = (currentPage-1)*articlePerPage; i < lastPageNotice; i++) { 
-		
+	for (let i = (currentPage - 1) * articlePerPage; i < lastPageNotice; i++) {
+
 		disDate = dateDis(jsonData[i].created, jsonData[i].modified);
 		setDate = dateFnc(disDate);
 		let userName = storage.user[jsonData[i].writer].userName;
@@ -111,7 +110,7 @@ function drawNoticeList() {
 		ids.push(jsonData[i].no);
 		data.push(str);
 
-		
+
 	}
 
 	let pageNation = createPaging(pageContainer[0], max, "pageMove", currentPage);
@@ -126,13 +125,11 @@ function drawNoticeList() {
 function pageMove(page) {
 	let selectedPage = parseInt(page);
 	storage.currentPage = selectedPage;
-	getNoticeList();
-	
+	drawNoticeList();
+	$(".noticeContent").hide();
+
+
 }
-
-
-
-
 
 
 function noticeDetailView(event) {// 선택한 그리드의 글 번호 받아오기 
