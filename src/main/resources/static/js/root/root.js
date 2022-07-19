@@ -11,8 +11,9 @@ $(document).ready(() => {
 });
 
 function getNoticeList() {
-	let url, dataArray = [], headerArray, container;
+	let url, dataArray = [], headerArray, container, idName;
 	
+	idName = "bodyNotice";
 	container = $(".gridNoticeList");
 	headerArray = [
 		{
@@ -68,7 +69,7 @@ function getNoticeList() {
 					dataArray.push(str);
 				}
 				
-				createGrid(container, headerArray, dataArray, ids, fnc);
+				createGrid(container, headerArray, dataArray, ids, fnc, idName);
 			} else {
 				msg.set("등록된 공지사항이 없습니다");
 			}
@@ -82,8 +83,9 @@ function noticeDetailView(event){
 }
 
 function getScheduleList() {
-	let url, dataArray = [], headerArray, container;
+	let url, dataArray = [], headerArray, container, idName;
 	
+	idName = "bodySched";
 	container = $(".gridScheduleList");
 	headerArray = [
 		{
@@ -176,7 +178,7 @@ function getScheduleList() {
 					ids.push(jsonData[i].no);
 					dataArray.push(str);
 				}
-				createGrid(container, headerArray, dataArray, ids, fnc);
+				createGrid(container, headerArray, dataArray, ids, fnc, idName);
 			} else {
 				msg.set("등록된 일정이 없습니다");
 			}

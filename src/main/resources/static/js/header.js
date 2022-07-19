@@ -271,8 +271,8 @@ function readyTopPageActive(){
 }
 
 //기본 그리드
-function createGrid(gridContainer, headerDataArray, dataArray, ids, fnc){
-	let gridHtml = "";
+function createGrid(gridContainer, headerDataArray, dataArray, ids, fnc, idName){
+	let gridHtml = "", gridContents;
 	
 	gridHtml = "<div class='gridHeader grid_default_header_item'>";
 	
@@ -298,7 +298,13 @@ function createGrid(gridContainer, headerDataArray, dataArray, ids, fnc){
 
 	gridContainer.html(gridHtml);
 
-	let gridContents = $(".gridContent");
+	if(idName === undefined){
+		gridContents = $(".gridContent");
+	}else{
+		gridContents = $("#" + idName + " div .gridContent");
+	}
+
+	console.log(gridContents);
 
 	for(let i = 0; i < headerDataArray.length; i++){
 		gridContents.each(function(index, item){
