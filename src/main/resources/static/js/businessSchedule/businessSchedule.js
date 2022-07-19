@@ -152,12 +152,11 @@ function drawCalendar(container){
     // 만들어진 달력 날짜에 해당하는 일정이 있는 경우 담아두기
     for(x1 = 0 ; x1 <= (endDate.getTime() - startDate.getTime()) / 86400000 ; x1++){
         current = (startDate.getTime() + (86400000 * x1));
-		console.log(x1 + " / " + new Date(current));
         calArr[x1] = {};
         calArr[x1].date = new Date(current);
         calArr[x1].schedule = [];
         for(x2 = 0 ; x2 < storage.scheduleList.length ; x2++){
-            if(current + 86400000 >= storage.scheduleList[x2].from && current < storage.scheduleList[x2].to)    calArr[x1].schedule.push(x2);
+            if(current + 86400000 > storage.scheduleList[x2].from && current <= storage.scheduleList[x2].to)    calArr[x1].schedule.push(x2);
         }
     }
     
