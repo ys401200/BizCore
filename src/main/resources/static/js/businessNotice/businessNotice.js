@@ -12,22 +12,20 @@ $(document).ready(() => {
 function getNoticeList() {
 	let url;
 
-	url = apiServer + "/api/notice";
 
+	url = apiServer + "/api/notice"
 	$.ajax({
 		"url": url,
 		"method": "get",
 		"dataType": "json",
 		"cache": false,
 		success: (data) => {
-			let list;
-			let listjson;
-
+			let jsonData;
 			if (data.result === "ok") {
-				list = cipher.decAes(data.data);
-				listjson = JSON.parse(list);
-				// drawNoticeList(listjson);
-
+				jsonData = cipher.decAes(data.data);
+				jsonData = JSON.parse(jsonData);
+				storage.noticeList = jsonData;
+				drawNoticeList();
 			} else {
 				msg.set("등록된 공지사항이 없습니다");
 			}
@@ -35,73 +33,116 @@ function getNoticeList() {
 	})
 } // End of getNoticeList()
 
+function drawNoticeList() {
+	let container;
+	let jsonData;
+	let header =[];
+	let data = [];
+	let ids = [];
+	let disDate, setDate, str, fnc;
 
-// API 서버에서 가져온 공지사항의 리스트를 화면에 그리는 함수
-function drawNoticeList(listjson) {
-
-	let html, target, header, subHeader, body, footer, headerstyle, bodystyle;
-
-
-	target = $("#bodyContent");
-	headerstyle = "display:grid;grid-template-columns:85% 5% 5% 5%";
-	bodystyle = "display:grid;grid-template-columns:20% 40% 20% 20%";
-	header = "<div style=\"" + headerstyle + "\"><div>공지사항 조회</div><button>펼치기</button><button>초기화</button><button>검색</button></div>"
-	subHeader = "<div>show" + "<select><option value=\"" + 20 + "\">20</option><option value=\"" + 40 + "\">40</option></select>" + "entries</div>";
-	body = "<div style=\"" + bodystyle + "\"><div>번호</div><div>제목</div><div>작성자</div><div>등록일</div></div>";
-	body += "<div style=\"" + bodystyle + "\">";
-	footer = "<div>현재 # 건</div>"
-	html = "";
-
-	for (let i in listjson) {
-
-		let no = listjson[i].no
-		let title = listjson[i].title;
-		let writer = listjson[i].writer;
-		let created = listjson[i].created;
-		created = new Date(created);
-		created = (created.getYear() + 1900 + "년" + "\n") + (created.getMonth() + 1 + "월" + "\n") + (created.getDate() + "일");
-		body += ("<div>" + no + "</div>" + "<div>\"" + title + "\" </div>" + "<div>" + writer + "</div>" + "<div>" + created + "</div>");
-
-		console.log("글 번호 값 확인 로그 :" + no);
+	if (storage.noticeList === undefined) {
+		msg.set("등록된 공지사항이 없습니다");
 	}
+	else {
+		jsonData = storage.noticeList;
+	}
+	if (storage.currentPage === undefined) storage.currentPage = 1;
+	if (storage.articlePerPage === undefined) storage.articlePerPage = 20;
+
+	pageContainer = document.getElementsByClassName("pageContainer");
+	container = $(".gridNoticeList");
 
 
-	body += "</div>";
-	html = (header + subHeader + body + footer);
-	console.log(html);
-	if (target !== undefined && target !== null) target.html(html);
+	header = [
+		{
+			"title" : "번호",
+			"padding" : false,
+		},
+		{
+			"title" : "제목",
+			"padding" : true,
+		},
+		{
+			"title" : "작성자",
+			"padding" : false,
+		},
+		{
+			"title" : "등록일",
+			"padding" : false,
+		}
+	];
+
+	for (let i = 0; i < jsonData.length; i++) {
+		disDate = dateDis(jsonData[i].created, jsonData[i].modified);
+		setDate = dateFnc(disDate);
+		str = [
+			{
+				"setData": jsonData[i].no,
+			},
+			{
+				"setData": jsonData[i].title,
+			},
+			{
+				"setData": jsonData[i].writer,
+			},
+			{
+				"setData": setDate,
+			}
+		]
+
+		fnc = "noticeDetailView(this)";
+		ids.push(jsonData[i].no);
+		data.push(str);
+	} 
+	// 페이징 처리하기 
+	let pageNation = createPaging(pageContainer[0], jsonData.length/20 +1, "pageMove");
+	pageContainer[0].innerHTML = pageNation;
+	//표 만들기 
+	createGrid(container, header, data, ids, fnc);
+}
+
+function noticeDetailView(event) {
+	// 선택한 그리드의 글 번호 받아오기 
+	let no = event.dataset.id; 
+	let url ;
+	url = apiServer + "/api/notice/" + no; 
 
 
-
-
-}; // End of drawNoticeList()
-
-
-
-// 공지사항 상세 조회 함수 
-function getNoticeDetail(no) {
-	let url, target, data;
-
-	url = apiServer + "/api/notice/" + no;
-	console.log("온클릭 함수 적용 확인 "+ no);
 	$.ajax({
 		"url": url,
 		"method": "get",
 		"dataType": "json",
 		"cache": false,
 		success: (result) => {
-
+			let jsonData;
 			if (result.result === "ok") {
-				data = cipher.decAes(result.data);
-				console.log(data);
+				jsonData= cipher.decAes(result.data);
+				jsonData = JSON.parse(jsonData);
+				drawNoticeContent(jsonData);
 			} else {
-				msg.set("공지사항 상세 조회 실패");
+				modal.alert("공지사항 상세조회에 실패했습니다.");
 			}
 		}
 	})
+
+}
+
+function drawNoticeContent(jsonData) {
+	let title = jsonData.title;
+	let content = jsonData.content; 
+    let html=""; 
+	let headerDiv;
+	let contentDiv; 
+
+	headerDiv = "<div class='headerDiv' onclick='deleteNoticeContent()'>X</div>";
+    contentDiv= "<div class='contentDiv'>"+content+"</div>";
+	html += (headerDiv+contentDiv);
+	$(".noticeContent").html(html);
+
 }
 
 
-
-
-
+function deleteNoticeContent() {
+	$(".noticeContent").html("");
+}

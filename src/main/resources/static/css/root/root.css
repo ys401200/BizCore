@@ -42,49 +42,58 @@
     grid-template-columns: 15% 55% 15% 15%;
 }
 
-#bodyContent #bodyNotice .gridNoticeList div[class^='gridContent_']{
+#bodyContent #bodyNotice .gridNoticeList .gridContent{
 	grid-template-columns: 15% 55% 15% 15%;
 }
-
-/* 
-#bodyContent #bodyNotice #noticeTableDiv{
-	margin-top: 15px;
-	width: auto;
-	padding: 10px 10px;
-}
-
-#bodyContent #bodyNotice #noticeTableDiv table{
-	width: 100%;
-	margin: 0 auto;
-	border-collapse: collapse;
-}
-
-#bodyContent #bodyNotice #noticeTableDiv table thead tr th{
-	color: #332E85;
-	border: 1px solid #D9D9D9;
-	height: 38px;
-	font-weight: 500;
-}
-
-#bodyContent #bodyNotice #noticeTableDiv table tbody tr td{
-	text-align: center;
-	border: 1px solid #D9D9D9;	
-	height: 38px;
-}
-
-#bodyContent #bodyNotice #noticeTableDiv table thead tr #notiTitle{
-	text-align: left;
-	padding: 0 20px;
-}
-
-#bodyContent #bodyNotice #noticeTableDiv table tbody tr #notiTitle{
-	text-align: left;
-	padding: 0 20px;
-} */
 /* 메인 공지사항 끝 */
 
-/* 메인 일정관리 시작*/
 #bodyContent #bodySched{
+	float:left;
+	width: 47%;
+	height: 478px;
+	margin-left: 2%;
+	margin-bottom: 2%;
+	background: #FFFFFF;
+	overflow: auto;
+	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
+}
+
+#bodyContent #bodySched hr{
+	float: left;
+	border-top: 0;
+	border-left : thick solid #E45050;
+	border-right: 0;
+	border-bottom: 0;
+ 	height : 44px;
+ 	width: 4px;
+ 	margin: 0;
+}
+
+#bodyContent #bodySched span{
+	font-weight: 500;
+	font-size: 16px;
+	margin-left: 18px;
+	line-height: 3;
+	color: #332E85;
+}
+
+#bodyContent #bodySched .gridScheduleList{
+	display: grid; 
+	width:99%; 
+	margin: 0 auto;
+	margin-top: 15px;
+}
+
+#bodyContent #bodySched .gridScheduleList .gridHeader{
+    grid-template-columns: 10% 10% 15% 10% 10% 10% 10% 10% 15%;
+}
+
+#bodyContent #bodySched .gridScheduleList .gridContent{
+	grid-template-columns: 10% 10% 15% 10% 10% 10% 10% 10% 15%;
+}
+
+/* 메인 일정관리 시작*/
+/* #bodyContent #bodySched{
 	float:left;
 	width: 47%;
 	height: 478px;
@@ -147,7 +156,7 @@
 #bodyContent #bodySched #schedTableDiv table tbody tr #schedTitle{
 	text-align: left;
 	padding: 0 20px;
-}
+} */
 /* 메인 일정관리 끝 */
 
 /* 메인 나의문서 시작 */

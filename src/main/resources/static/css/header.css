@@ -19,6 +19,10 @@ a{
 	color: #000;
 }
 
+button{
+	font-family: 'Noto Sans KR', sans-serif;
+}
+
 /* 공통 class */
 .gridHeader{
 	display: grid; 
@@ -32,21 +36,21 @@ a{
 	border-right: 0;
 }
 
-[class^='gridContent_']{
+.gridContent{
 	display: grid; 
 }
 
-[class^='gridContent_']:hover{
+.gridContent:hover{
 	background-color: #EDEDF4;
 	cursor: pointer;
 }
 
-[class^='gridContent_'] .gridContentItem:not(:last-child){
+.gridContent .gridContentItem:not(:last-child){
 	border-top: 1px solid #D9D9D9;
 	border-right: 1px solid #D9D9D9;
 }
 
-[class^='gridContent_'] .gridContentItem:last-child{
+.gridContent .gridContentItem:last-child{
 	border-top: 1px solid #D9D9D9;
 	border-right: 0;
 }
@@ -81,6 +85,33 @@ a{
 
 /* 공통 class 끝*/
 
+/* 페이지네이션 */
+.pageContainer{
+	display: flex;
+	margin: 2% 2% 2% 0;
+	float: right;
+}
+
+.pageContainer .paging_cell, .pageContainer .paging_cell_empty{
+	width: 40px;
+	height: 35px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border: 1px solid #000;
+	border-color: #D9D9D9;
+	background-color: #EDEDF4;
+}
+
+.pageContainer .paging_cell:hover, .pageContainer .paging_cell_empty:hover{
+	color: #ffffff;
+	border-color: #302D81;
+	background-color: #302D81;
+	cursor: pointer;
+}
+
+/* 페이지네이션 끝 */
+
 #header{
 	position: relative;
 	width: 100%;
@@ -99,17 +130,17 @@ a{
 
 #header #mainTopLogo #mainTopLogoImg{
 	position: relative;
-	width: 151px;
+	width: auto;
 	height: 33px;
-	left: 26px;
+	left: 11%;
 	top: 22px;
 }
 
 #header #mainTopLogo #mainTopEllipseImg{
 	position: absolute;
-	width: 29px;
+	width: auto;
 	height: 29px;
-	left: 223px;
+	left: 10%;
 	top: 23px;
 }
 
@@ -117,7 +148,7 @@ a{
 	position: absolute;
 	width: 8px;
 	height: 15px;
-	left: 233px;
+	left: 10.45%;
 	top: 30px;
 }
 
@@ -143,7 +174,7 @@ a{
 #header #mainTopMenu ul li button{
 	width: 100%;
 	height: 100%;
-	font-weight: 600;
+	font-weight: 500;
 	font-size: 18px;
 	line-height: 75px;
 	color: #332E85;
@@ -154,7 +185,7 @@ a{
 #header #mainTopMenu ul li button.active{
 	width: 100%;
 	height: 100%;
-	font-weight: 600;
+	font-weight: 500;
 	font-size: 18px;
 	line-height: 75px;
 	color: #332E85;
@@ -166,7 +197,7 @@ a{
 #header #mainTopMenu ul li button:not(.active):hover{
 	width: 100%;
 	height: 100%;
-	font-weight: 600;
+	font-weight: 500;
 	font-size: 18px;
 	line-height: 75px;
 	color: #332E85;

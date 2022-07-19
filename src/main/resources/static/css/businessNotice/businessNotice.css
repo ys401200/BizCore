@@ -27,3 +27,31 @@
 	line-height: 3;
 	color: #332E85;
 }
+
+
+
+.gridNoticeList{
+    display: grid; 
+	width: 99%; 
+	margin: 0 auto;
+} 
+
+.gridNoticeList .gridHeader, .gridNoticeList .gridContent{
+    grid-template-columns: 10% 60% 10% 20%;
+}
+
+.noticeContent {
+	border : 2rem;
+	padding : 2rem;
+	font-size: 1.2rem; 
+}
+
+.noticeContent .headerDiv {
+	float : right; 
+	font-size: 1.6rem;
+	color: #332E85;
+    font-weight: 600;
+
+}
+
+

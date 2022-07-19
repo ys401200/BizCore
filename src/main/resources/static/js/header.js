@@ -287,7 +287,7 @@ function createGrid(gridContainer, headerDataArray, dataArray, ids, fnc){
 	gridHtml += "</div>";
 
 	for(let i = 0; i < dataArray.length; i++){
-		gridHtml += "<div class='"+"gridContent grid_default_body_item' data-id='"+ids[i]+"' onclick='"+fnc+"'>";
+		gridHtml += "<div class='gridContent grid_default_body_item' data-id='"+ids[i]+"' onclick='"+fnc+"'>";
 		for(let t = 0; t <= dataArray.length; t++){
 			if(dataArray[i][t] !== undefined){
 				gridHtml += "<div class='gridContentItem'>"+dataArray[i][t].setData+"</div>";
@@ -296,7 +296,7 @@ function createGrid(gridContainer, headerDataArray, dataArray, ids, fnc){
 		gridHtml += "</div>";
 	}
 
-	gridContainer.innerHTML = gridHtml;
+	gridContainer.html(gridHtml);
 
 	let gridContents = $(".gridContent");
 
@@ -431,7 +431,7 @@ function createPaging(container, max, eventListener, current, nextCount, forward
 	html[3] = html[1];
 	if(html[0] !== undefined)	html[3] = html[0] + "<div class=\"paging_cell_empty\">...</div>" + html[1];
 	if(html[2] != undefined)	html[3] = html[3] + "<div class=\"paging_cell_empty\">...</div>" + html[2];
-
+	
 	return html[3];
 } // End of createPaging
 
