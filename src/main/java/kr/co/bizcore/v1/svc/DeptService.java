@@ -23,10 +23,11 @@ public class DeptService extends Svc {
 
     public HashMap<String, Dept> deptMap(String compId){
         HashMap<String, Dept> result = null;
+        Dept root = null;
 
-        result = (HashMap)dataFactory.getData(compId, "deptMap");
+        root = (Dept)dataFactory.getData(compId, "rootDept");
         if(result == null && getAndProceedDeptInfo(compId)){
-            result = (HashMap)dataFactory.getData(compId, "deptMap");
+            result = (HashMap<String, Dept>)dataFactory.getData(compId, "rootDept");
         }
         return result;
     } // End of rootDept()
@@ -67,9 +68,8 @@ public class DeptService extends Svc {
             parent = deptMap.get(list1.get(x).getParent());
             if(parent != null)  parent.addChild(list1.get(x));
         }
-
-        dataFactory.setData(compId, "deptMap", deptMap, 30);
-        dataFactory.setData(compId, "rootDept", root, 30);
+        
+        dataFactory.setData(compId, "rootDept", root, 180);
         return true;
     } // End of getAndProceedDeptInfo()
 
@@ -80,8 +80,8 @@ public class DeptService extends Svc {
         Object[] keySet = null;
 
         root = rootDept(compId);
-        map = deptMap(compId);
-
+        map = root.getMap();
+        System.out.println("root : " + root.getDeptId() + " / map size : " + (map == null ? "null" : map.size()));
         result = "{";
         keySet = map.keySet().toArray();
         for(Object key : keySet){
