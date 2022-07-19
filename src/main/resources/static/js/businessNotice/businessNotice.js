@@ -25,7 +25,7 @@ function getNoticeList() {
 				jsonData = cipher.decAes(data.data);
 				jsonData = JSON.parse(jsonData);
 				storage.noticeList = jsonData;
-				drawNoticeList();
+				window.setTimeout(drawNoticeList, 200);
 			} else {
 				msg.set("등록된 공지사항이 없습니다");
 			}
@@ -36,11 +36,12 @@ function getNoticeList() {
 function drawNoticeList() {
 	let container;
 	let jsonData;
-	let header =[];
+	let header = [];
 	let data = [];
 	let ids = [];
 	let disDate, setDate, str, fnc;
-
+	let totalNotice, currentPage, articlePerPage, max;
+	let lastPageNotice; 
 	if (storage.noticeList === undefined) {
 		msg.set("등록된 공지사항이 없습니다");
 	}
@@ -48,7 +49,12 @@ function drawNoticeList() {
 		jsonData = storage.noticeList;
 	}
 	if (storage.currentPage === undefined) storage.currentPage = 1;
-	if (storage.articlePerPage === undefined) storage.articlePerPage = 20;
+	if (storage.articlePerPage === undefined) storage.articlePerPage = 5;
+
+	currentPage = storage.currentPage;
+	articlePerPage = storage.articlePerPage;
+	totalNotice = jsonData.length;
+	max = Math.ceil(totalNotice / articlePerPage);
 
 	pageContainer = document.getElementsByClassName("pageContainer");
 	container = $(".gridNoticeList");
@@ -56,26 +62,36 @@ function drawNoticeList() {
 
 	header = [
 		{
-			"title" : "번호",
-			"padding" : false,
+			"title": "번호",
+			"padding": false,
 		},
 		{
-			"title" : "제목",
-			"padding" : true,
+			"title": "제목",
+			"padding": true,
 		},
 		{
-			"title" : "작성자",
-			"padding" : false,
+			"title": "작성자",
+			"padding": false,
 		},
 		{
-			"title" : "등록일",
-			"padding" : false,
+			"title": "등록일",
+			"padding": false,
 		}
 	];
+   
+	lastPageNotice =currentPage*articlePerPage;
 
-	for (let i = 0; i < jsonData.length; i++) {
+	//마지막 페이지인 경우 게산 
+	if(currentPage==max && totalNotice%articlePerPage !==0){
+		lastPageNotice = (max-1)*articlePerPage + totalNotice%articlePerPage;
+	}
+
+	for (let i = (currentPage-1)*articlePerPage; i < lastPageNotice; i++) { 
+		
 		disDate = dateDis(jsonData[i].created, jsonData[i].modified);
 		setDate = dateFnc(disDate);
+		let userName = storage.user[jsonData[i].writer].userName;
+
 		str = [
 			{
 				"setData": jsonData[i].no,
@@ -84,7 +100,7 @@ function drawNoticeList() {
 				"setData": jsonData[i].title,
 			},
 			{
-				"setData": jsonData[i].writer,
+				"setData": userName,
 			},
 			{
 				"setData": setDate,
@@ -94,19 +110,35 @@ function drawNoticeList() {
 		fnc = "noticeDetailView(this)";
 		ids.push(jsonData[i].no);
 		data.push(str);
-	} 
-	// 페이징 처리하기 
-	let pageNation = createPaging(pageContainer[0], jsonData.length/20 +1, "pageMove");
+
+		
+	}
+
+	let pageNation = createPaging(pageContainer[0], max, "pageMove", currentPage);
 	pageContainer[0].innerHTML = pageNation;
 	//표 만들기 
 	createGrid(container, header, data, ids, fnc);
+
+
+}// End of drawNoticeList()
+
+
+function pageMove(page) {
+	let selectedPage = parseInt(page);
+	storage.currentPage = selectedPage;
+	getNoticeList();
+	
 }
 
-function noticeDetailView(event) {
-	// 선택한 그리드의 글 번호 받아오기 
-	let no = event.dataset.id; 
-	let url ;
-	url = apiServer + "/api/notice/" + no; 
+
+
+
+
+
+function noticeDetailView(event) {// 선택한 그리드의 글 번호 받아오기 
+	let no = event.dataset.id;
+	let url;
+	url = apiServer + "/api/notice/" + no;
 
 
 	$.ajax({
@@ -117,7 +149,7 @@ function noticeDetailView(event) {
 		success: (result) => {
 			let jsonData;
 			if (result.result === "ok") {
-				jsonData= cipher.decAes(result.data);
+				jsonData = cipher.decAes(result.data);
 				jsonData = JSON.parse(jsonData);
 				drawNoticeContent(jsonData);
 			} else {
@@ -126,23 +158,25 @@ function noticeDetailView(event) {
 		}
 	})
 
-}
+} // End of noticeDetailView()
 
-function drawNoticeContent(jsonData) {
+function drawNoticeContent(jsonData) { // 공지사항 본문 보이게 하는 함수 
 	let title = jsonData.title;
-	let content = jsonData.content; 
-    let html=""; 
+	let content = jsonData.content;
+	let html = "";
 	let headerDiv;
-	let contentDiv; 
+	let contentDiv;
 
-	headerDiv = "<div class='headerDiv' onclick='deleteNoticeContent()'>X</div>";
-    contentDiv= "<div class='contentDiv'>"+content+"</div>";
-	html += (headerDiv+contentDiv);
+	headerDiv = "<div class='headerDiv' style='display:grid;grid-template-columns:80% 20%' onclick='deleteNoticeContent()'><div>" + title + "</div><div class='deleteButton'>X</div></div>";
+	contentDiv = "<div class='contentDiv' style='display:grid'>" + content + "</div>";
+	html += (headerDiv + contentDiv);
 	$(".noticeContent").html(html);
+	$(".noticeContent").show();
 
-}
+
+}// End of drawNoticeContent()
 
 
-function deleteNoticeContent() {
-	$(".noticeContent").html("");
+function deleteNoticeContent() { // 공지사항 본문 지우는 함수 
+	$(".noticeContent").hide();
 }
