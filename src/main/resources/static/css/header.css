@@ -46,11 +46,13 @@ button{
 }
 
 .gridContent .gridContentItem:not(:last-child){
+	overflow: hidden;
 	border-top: 1px solid #D9D9D9;
 	border-right: 1px solid #D9D9D9;
 }
 
 .gridContent .gridContentItem:last-child{
+	overflow: hidden;
 	border-top: 1px solid #D9D9D9;
 	border-right: 0;
 }

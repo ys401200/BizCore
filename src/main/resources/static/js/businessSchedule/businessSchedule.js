@@ -119,7 +119,7 @@ function getScheduleList() {
 	});
 }
 
-function createCalendar(year, month){
+function createCalendar(year, month, type){
 	let date, day, nowDate, nowDay, last, lastDate, row, calendar, dNum, tdClass, calendarBody;
 
 	calendarBody = $(".calendarList table tbody");
@@ -129,13 +129,15 @@ function createCalendar(year, month){
 		year = date.getFullYear();
 		month = date.getMonth();
 		day = date.getDate();
-		nowDate = new Date(year, month, 1);
+	}
+	
+	if(type === "prev"){
+		nowDate = new Date(year, month-1, 1);
 		nowDay = nowDate.getDay();
 	}else{
 		nowDate = new Date(year, month, 1);
 		nowDay = nowDate.getDay();
 	}
-
 	
 	last = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
@@ -143,7 +145,12 @@ function createCalendar(year, month){
 		lastDate = last[1] = 29;
 	}
 
-	lastDate = last[month];
+	if(month == 12){
+		lastDate = last[month-1];
+	}else{
+		lastDate = last[month];
+	}
+
 	row = Math.ceil((nowDay + lastDate)/7);
 	dNum = 1;
 
@@ -178,21 +185,21 @@ function createCalendar(year, month){
 }
 
 function calendarNext(event){
-	let getYear, getMonth, setYear, setMonth;
+	let getYear, getMonth, setYear, setMonth, type;
 
 	getYear = $(".calendarYear");
 	getMonth = $(".calendarMonth");
 	setYear = parseInt(getYear.html());
 	setMonth = parseInt(getMonth.html());
-
+	type = "next";
+	
 	if(setMonth == 12){
 		setYear = setYear + 1;
 		setMonth = 0;
-		createCalendar(setYear, 1);
-	}else{
-		createCalendar(setYear, setMonth);
 	}
-
+	
+	createCalendar(setYear, setMonth, type);
+	
 	setMonth = setMonth + 1;
 
 	getYear.html(setYear);
@@ -206,16 +213,16 @@ function calendarPrev(event){
 	getMonth = $(".calendarMonth");
 	setYear = parseInt(getYear.html());
 	setMonth = parseInt(getMonth.html());
-	
+	type = "prev";
+
 	if(setMonth == 1){
 		setYear = setYear - 1;
 		setMonth = 13;
-		createCalendar(setYear, 12);
-	}else{
-		createCalendar(setYear, setMonth);
 	}
 
 	setMonth = setMonth - 1;
+	
+	createCalendar(setYear, setMonth, type);
 	
 	getYear.html(setYear);
 	getMonth.html(setMonth);
@@ -226,7 +233,6 @@ function listChange(event){
 	let calendarList = $(".calendarList");
 	let pageContainer = $(".pageContainer");
 
-	console.log($(event).data("type"));
 	if($(event).data("type") === "table"){
 		tableList.hide();
 		pageContainer.hide();
