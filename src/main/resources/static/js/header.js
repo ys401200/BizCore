@@ -12,11 +12,11 @@ function init(){
 		});
 	}, 70);
 
-	getUserMap();
-	getDeptMap();
-
 	apiServer = "";
 	storage = {};
+
+	getUserMap();
+	getDeptMap();
 
 	cipher = { // 암호화 모듈
 		"encRsa" : (message) => {
