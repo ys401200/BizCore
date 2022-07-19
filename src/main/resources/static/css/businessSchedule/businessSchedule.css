@@ -71,43 +71,85 @@
 	font-weight: 500;
 }
 
-.scheduleContainer table{
-	width: 100%;
+.calendar_container{
+	display : grid;
+	grid-template-columns: repeat(7, 1fr);
 	margin: 0 auto;
-	border-collapse: collapse;
 	border-left: 1px solid #BDBDBD;
-	border-right: 1px solid #BDBDBD;
 }
 
-.scheduleContainer table thead tr th{
+.calendar_container .calendar_header{
 	background-color: #EAEAEA;
-	border: 1px solid #BDBDBD;
-	height: 50px;
+	border-right: 1px solid #BDBDBD;
+	border-top: 1px solid #BDBDBD;
+	border-bottom: 1px solid #BDBDBD;
+	padding: 15px 0;
+	text-align:center;
 }
 
-.scheduleContainer table thead tr th:first-child{
+.calendar_container > *:nth-child(1){
 	color:#FF0000;
 }
 
-.scheduleContainer table thead tr th:last-child{
+.calendar_container > *:nth-child(7){
 	color:#0100FF;
 }
 
-.scheduleContainer table tbody tr td.sun{
-	color:#FF0000;
+.calendar_container > * > .calendar_date{
+	color:#444444;
 }
 
-.scheduleContainer table tbody tr td.sat{
-	color:#0100FF;
+.calendar_container > *:nth-child(7n + 1) > .calendar_date{
+	color:#ff0000;
 }
 
-.scheduleContainer table tbody tr td{
-	height: 50px;
-	border: 1px solid #BDBDBD;
+.calendar_container > *:nth-child(7n) > .calendar_date{
+	color:#0100ff;
 }
 
-.scheduleContainer table tbody tr td:hover{
+.calendar_container > .calendar_cell{
+	border-right: 1px solid #BDBDBD;
+	border-bottom: 1px solid #BDBDBD;
+	cursor: pointer;
+	position:relative;
+	overflow: hidden;
+}
+
+.calendar_container > .calendar_cell > .calendar_date{
+	font-size:1rem;
+	z-index: 1;
+}
+
+.calendar_container > .calendar_cell:hover{
 	background-color: #332E85;
 	color: #ffffff;
-	cursor: pointer;
+}
+
+.calendar_container > .calendar_cell > .calendar_item{
+	font-size:0.7rem;
+	white-space: nowrap;
+  	overflow: hidden;
+  	text-overflow: ellipsis;
+	z-index: 2;
+	height:1.2rem;
+	padding-left:0.7rem;
+	padding-right:0.7rem;
+	background-color:rgb(202, 227, 158);
+	border-radius: 0.7rem;
+	margin-top:0.2rem;
+	margin-bottom:0.2rem;
+}
+
+.calendar_container > .calendar_cell > .calendar_item_empty{
+	background-color:initial;
+	border:initial;;
+}
+
+.calendar_container > .calendar_cell > .calendar_item_left{
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+}
+.calendar_container > .calendar_cell > .calendar_item_right{
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
 }
