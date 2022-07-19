@@ -1,6 +1,7 @@
 package kr.co.bizcore.v1.domain;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -116,6 +117,22 @@ public class Dept implements Domain {
 
         return result;
     } // End of getAllEmployeeNoSqlIn()
+
+    public HashMap<String, Dept> getMap(){
+        HashMap<String, Dept> result = new HashMap<>();
+        Dept dept = null;
+        int x = 0;
+
+        result.put(this.getDeptId(), this);
+        if(this.children != null){
+            for(x = 0 ; x < children.size() ; x++){
+                dept = children.get(x);
+                result.put(dept.getDeptId(), dept);
+            }
+        }
+
+        return result;
+    } // End of getMap()
 
     @Override
     public String toJson() {
