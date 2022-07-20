@@ -72,10 +72,12 @@ public class SystemService extends Svc {
         list = commonMapper.getCustomerList(compId);
 
         if(list != null && list.size() > 0){
-            if(result == null)  result = "{";
-            else                result += ",";
-            each = list.get(x);
-            result += ("\"" + each.getNo() + ":" + each);
+            for(x = 0 ; x < list.size() ; x++){
+                if(result == null)  result = "{";
+                else                result += ",";
+                each = list.get(x);
+                result += ("\"" + each.getNo() + "\":" + each.toJson());  
+            }
         }
         result += "}";
 
