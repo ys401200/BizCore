@@ -12,7 +12,7 @@ public interface CommonMapper {
     @Select("SELECT custno AS no, custname AS name, custvatno AS businessRegistrationNumber, custbossname AS ceoName FROM swcore.swc_cust WHERE compno = (SELECT compno FROM swcore.swc_company WHERE compid = #{compId})")
     public List<SimpleCustomer> getCustomerList(String compId);
 
-    @Select("SELECT comname, comaddress, comphone, comfax, comboss FROM swcore.swc_cominfo WHERE compno = (SELECT compno FROM swcore.swc_company WHERE compid = #{compId|) limit 1")
+    @Select("SELECT comname, comaddress, comphone, comfax, comboss FROM swcore.swc_cominfo WHERE compno = (SELECT compno FROM swcore.swc_company WHERE compid = #{compId) limit 1")
     public Map<String, String> getCompanyInfo(String compId);
     
 }
