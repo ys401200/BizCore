@@ -17,6 +17,8 @@ function init(){
 
 	getUserMap();
 	getDeptMap();
+	getBasicInfo();
+	getCustomer();
 
 	cipher = { // 암호화 모듈
 		"encRsa" : (message) => {
@@ -463,7 +465,7 @@ function getUserMap(){
 				list = cipher.decAes(data.data);
 				list = JSON.parse(list);
 				storage.user = list;
-				console.log("[getUser] Success getting employee information.");
+				console.log("[getUserMap] Success getting employee information.");
 			} else {
 				msg.set("직원 정보를 가져오지 못했습니다.");
 			}
@@ -496,3 +498,56 @@ function getDeptMap(){
 		}
 	})
 } // End of getDeptMap()
+
+// API 서버에서 고객사 정보를 가져오는 함수
+function getCustomer(){
+	let url;
+
+	url = apiServer + "/api/system/customer";
+
+	$.ajax({
+		"url": url,
+		"method": "get",
+		"dataType": "json",
+		"cache": false,
+		success: (data) => {
+			let list;
+
+			if (data.result === "ok") {
+				list = cipher.decAes(data.data);
+				list = JSON.parse(list);
+				storage.customer = list;
+				console.log("[getCustomer] Success getting customer information.");
+			} else {
+				msg.set("고객 정보를 가져오지 못했습니다.");
+			}
+		}
+	})
+} // End of getCustomer()
+
+// API 서버에서 회사 및 사용자 사번을 정보를 가져오는 함수
+function getBasicInfo(){
+	let url;
+
+	url = apiServer + "/api/system/basic";
+
+	$.ajax({
+		"url": url,
+		"method": "get",
+		"dataType": "json",
+		"cache": false,
+		success: (data) => {
+			let list;
+
+			if (data.result === "ok") {
+				list = cipher.decAes(data.data);
+				list = JSON.parse(list);
+				storage.company = list.company;
+				storage.my = list.my;
+				console.log("[getBasicInfo] Success getting basic information.");
+			} else {
+				msg.set("기본 정보를 가져오지 못했습니다.");
+			}
+		}
+	})
+} // End of getBasicInfo()

@@ -9,6 +9,8 @@ import kr.co.bizcore.v1.domain.SimpleUser;
 @Service
 public class UserService extends Svc {
 
+    public UserService(){super();}
+
     public SimpleUser getBasicUserInfo(String userNo, String compId) {
         SimpleUser result = userMapper.getBasicUserInfo(userNo, compId);
         return result;

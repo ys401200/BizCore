@@ -2,8 +2,11 @@ package kr.co.bizcore.v1.svc;
 
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Map;
 
 import kr.co.bizcore.v1.domain.ConnUrl;
+import kr.co.bizcore.v1.domain.SimpleCustomer;
+import kr.co.bizcore.v1.domain.SimpleUser;
 
 @Service
 public class SystemService extends Svc {
@@ -58,5 +61,49 @@ public class SystemService extends Svc {
 
         return result;
     } // End oif findCompIdFromConnUrl()
+
+    // 고객사 정보를 전달하는 메서드
+    public String getCustomers(String compId){
+        String result = null;
+        SimpleCustomer each = null;
+        List<SimpleCustomer> list = null;
+        int x = 0;
+
+        list = commonMapper.getCustomerList(compId);
+
+        if(list != null && list.size() > 0){
+            if(result == null)  result = "{";
+            else                result += ",";
+            each = list.get(x);
+            result += ("\"" + each.getNo() + ":" + each);
+        }
+        result += "}";
+
+        return result;
+    } // End of  getCustomers()
+
+    public String getBasicInfo(String compId, String userNo){
+        String result = null;
+        String[] data = new String[5];
+        Map<String, String> map = null;
+
+        map = commonMapper.getCompanyInfo(compId);
+
+        if(map != null){
+            data[0] = map.get("comname");
+            data[1] = map.get("comaddress");
+            data[2] = map.get("comnamephone");
+            data[3] = map.get("comfax");
+            data[4] = map.get("comboss");
+            result = "{\"my\":" + userNo + ",";
+            result += ("\"company\":{");
+            result += ("\"name\":\"" + data[0] + "\",");
+            result += ("\"address\":\"" + data[1] + "\",");
+            result += ("\"phone\":\"" + data[2] + "\",");
+            result += ("\"fax\":\"" + data[3] + "\",");
+            result += ("\"ceo\":\"" + data[4] + "\"}}");
+        }
+        return result;
+    } // End of getBasicInfo
 
 }

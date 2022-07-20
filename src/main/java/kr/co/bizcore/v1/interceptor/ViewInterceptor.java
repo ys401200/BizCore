@@ -9,16 +9,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import kr.co.bizcore.v1.svc.SystemService;
-import kr.co.bizcore.v1.util.Utility;
 
 @Component
 public class ViewInterceptor implements HandlerInterceptor {
 
     @Autowired
     private SystemService systemService;
-
-    @Autowired
-    private Utility util;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
@@ -32,7 +28,7 @@ public class ViewInterceptor implements HandlerInterceptor {
         uri = request.getRequestURI();
         userNo = (String)request.getSession().getAttribute("userNo");
         
-        if (util.debug())
+        if (systemService.debug())
             server = "vtek.co.kr"; // for Dev
 
         compId = systemService.findCompIdFromConnUrl(server);

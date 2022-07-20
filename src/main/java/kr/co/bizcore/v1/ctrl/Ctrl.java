@@ -8,7 +8,6 @@ import kr.co.bizcore.v1.svc.DeptService;
 import kr.co.bizcore.v1.svc.ScheduleSvc;
 import kr.co.bizcore.v1.svc.SystemService;
 import kr.co.bizcore.v1.svc.UserService;
-import kr.co.bizcore.v1.util.Utility;
 
 @Controller
 public abstract class Ctrl {
@@ -27,8 +26,5 @@ public abstract class Ctrl {
 
     @Autowired
     protected ScheduleSvc scheduleService;
-
-    @Autowired
-    protected Utility util;
 
 }

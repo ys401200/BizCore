@@ -3,11 +3,13 @@ package kr.co.bizcore.v1.svc;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import kr.co.bizcore.v1.mapper.CommonMapper;
 import kr.co.bizcore.v1.mapper.DeptMapper;
 import kr.co.bizcore.v1.mapper.ScheduleMapper;
 import kr.co.bizcore.v1.mapper.SystemMapper;
 import kr.co.bizcore.v1.mapper.UserMapper;
 
+import java.net.InetAddress;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
@@ -23,6 +25,9 @@ import javax.crypto.spec.SecretKeySpec;
 @Service
 public abstract class Svc {
 
+    private static boolean DEBUG;
+    private static String SERVER_ADDRESS = "192.168.1.72";
+
     @Autowired
     protected SystemMapper systemMapper;
 
@@ -35,11 +40,60 @@ public abstract class Svc {
     @Autowired
     protected ScheduleMapper scheduleMapper;
 
+    @Autowired
+    protected CommonMapper commonMapper;
+
     protected DataFactory dataFactory = DataFactory.getFactory();
+
+    public Svc(){setDebugMode();}
 
     public String generateKey() {
         return generateKey(32);
     } // End of generateKey()
+
+    public boolean debug() {
+        return DEBUG;
+    }
+
+    // ip주소 확인, 디버깅모드 확인
+    protected void setDebugMode() {
+        String ip = null;
+        try {
+            ip = InetAddress.getLocalHost().getHostAddress();
+            DEBUG = (SERVER_ADDRESS != ip);
+        } catch (Exception e) {
+        }
+
+    } // End of setDebugMode()
+
+    public String createRandomFileName(){return createRandomFileName(64);}
+
+    // 랜덤 파일명 생성 함수
+    private String createRandomFileName(int length){
+        byte[] result = null;
+        byte[] data = null;
+        byte chr = 0;
+        int x = 0, y = 0;
+
+        result = new byte[length];
+        data = new byte[62];
+
+        chr = 'a';
+        while( chr <= 'z')    data[x++] = chr++;
+
+        chr = 'A';
+        while( chr <= 'Z')    data[x++] = chr++;
+
+        chr = '0';
+        while( chr <= '9')    data[x++] = chr++;
+
+        for(x = 0 ; x < result.length ; x++){
+            y = (int)(Math.random() * data.length);
+            result[x] = data[y];
+        }
+
+        return new String(result);
+    } // End of createRandomFileName()
 
     public String generateKey(int length) {
         byte[] data = null, src = new byte[69];
