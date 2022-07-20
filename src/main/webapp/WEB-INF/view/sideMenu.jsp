@@ -91,7 +91,7 @@
 		  	</ul>
 		</li>
 		<li>
-			<a href="#">
+			<a href="/business/filebox">
 				<img src="/images/main/icons/mainBoardFileIcon.png" id="mainBoardFileIcon" />
 				<span>자료실</span>
 			</a>

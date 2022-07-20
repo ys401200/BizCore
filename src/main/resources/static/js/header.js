@@ -182,6 +182,86 @@ function init(){
 		},
 	}
 
+	dragAndDrop = {
+		"dragStart": (e) => {
+			e.dataTransfer.setData("text", e.target.id);
+		},
+
+		"dragEnd": (e) => {
+			$(e.target).prev().css("background-color", "");
+		},
+
+		"dragEnter": (e) => {
+			$(e.target).css("background-color", "#EAEAEA");
+		},
+
+		"dragLeave": (e) => {
+			$(e.target).css("background-color", "");
+		},
+
+		"dragOver": (e) => {
+			$(e.target).css("background-color", "#EAEAEA");
+			e.preventDefault();
+		},
+
+		"dragDrop": (e) => {
+			$(e.target).after($("#" + e.dataTransfer.getData("text")));
+			e.preventDefault();
+		},
+
+		"gridDragStart": (e) => {
+			e.dataTransfer.setData("text", e.target.id);
+		},
+
+		"gridDragEnd": (e) => {
+			$(e.target).prev().css("background-color", "");
+		},
+
+		"gridDragEnter": (e) => {
+			$(e.target).parent().css("background-color", "#EAEAEA");
+		},
+
+		"gridDragLeave": (e) => {
+			$(e.target).parent().css("background-color", "");
+		},
+
+		"gridDragOver": (e) => {
+			$(e.target).parent().css("background-color", "#EAEAEA");
+			e.preventDefault();
+		},
+
+		"gridDrop": (e) => {
+			$(e.target).parent().after($("#" + e.dataTransfer.getData("text")));
+			e.preventDefault();
+		},
+
+		"fileDragEnter": (e) => {
+			e.stopPropagation();
+			e.preventDefault();
+			toggleClass("dragenter");
+		},
+
+		"fileDragLeave": (e) => {
+			e.stopPropagation();
+			e.preventDefault();
+			toggleClass("dragleave");
+		},
+
+		"fileDragOver": (e) => {
+			e.stopPropagation();
+			e.preventDefault();
+			toggleClass("dragover");
+		},
+
+		"fileDrop": (e) => {
+			e.preventDefault();
+			let files = e.dataTransfer && e.dataTransfer.files;
+
+			toggleClass("drop");
+			showFile(files);
+		},
+	},
+
 	cipher.aes.key = sessionStorage.getItem("aesKey");
 	cipher.aes.iv = sessionStorage.getItem("aesIv");
 	msg.cnt = document.getElementsByClassName("msg_cnt")[0];
@@ -198,10 +278,11 @@ function init(){
 		}
 	});
 
+	
 	$(".close").click(function(){
 		modalClose();
 	});
-
+	
 	menuActive();
 }
 
@@ -274,8 +355,14 @@ function readyTopPageActive(){
 
 //기본 그리드
 function createGrid(gridContainer, headerDataArray, dataArray, ids, fnc, idName){
-	let gridHtml = "", gridContents;
+	let gridHtml = "", gridContents, idStr;
 	
+	if(idName === undefined){
+		idStr = "gridContent";
+	}else{
+		idStr = idName;
+	}
+
 	gridHtml = "<div class='gridHeader grid_default_header_item'>";
 	
 	for(let i = 0; i < headerDataArray.length; i++){
@@ -288,8 +375,8 @@ function createGrid(gridContainer, headerDataArray, dataArray, ids, fnc, idName)
 
 	gridHtml += "</div>";
 	for(let i = 0; i < dataArray.length; i++){
-		gridHtml += "<div class='gridContent grid_default_body_item' data-id='"+ids[i]+"' onclick='"+fnc+"'>";
-		for(let t = 0; t < dataArray[i].length; t++){
+		gridHtml += "<div id='"+idStr+"_grid_"+i+"' class='gridContent grid_default_body_item' data-id='"+ids[i]+"' onclick='"+fnc+"' draggable='true' ondragstart='dragAndDrop.gridDragStart(event)' ondragenter='dragAndDrop.gridDragEnter(event)' ondragend='dragAndDrop.gridDragEnd(event)' ondragleave='dragAndDrop.gridDragLeave(event)' ondrop='dragAndDrop.gridDrop(event)' ondragover='dragAndDrop.gridDragOver(event)'>";
+		for(let t = 0; t <= dataArray[i].length; t++){
 			if(dataArray[i][t] !== undefined){
 				gridHtml += "<div class='gridContentItem'>"+dataArray[i][t].setData+"</div>";
 			}
@@ -304,8 +391,6 @@ function createGrid(gridContainer, headerDataArray, dataArray, ids, fnc, idName)
 	}else{
 		gridContents = $("#" + idName + " div .gridContent");
 	}
-
-	console.log(gridContents);
 
 	for(let i = 0; i < headerDataArray.length; i++){
 		gridContents.each(function(index, item){
@@ -551,3 +636,25 @@ function getBasicInfo(){
 		}
 	})
 } // End of getBasicInfo()
+
+function toggleClass(className){
+	let list = ["dragenter", "dragleave", "dragover", "drop"];
+	let dropZone = $(".dropZone");
+
+	for(let i = 0; i < list.length; i++){
+		if(className === list[i]){
+			dropZone.addClass("dropZone_" + list[i]);
+		}else{
+			dropZone.removeClass("dropZone_" + list[i]);
+		}
+	}
+}
+
+function showFile(files){
+	let dropZone = $(".dropZone");
+	dropZone.innerHTML = "";
+
+	for(let i = 0; i < files.length; i++){
+		dropZone.html("<p>" + files[i].name + "</p>");
+	}
+}
