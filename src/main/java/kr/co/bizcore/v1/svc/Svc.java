@@ -1,6 +1,7 @@
 package kr.co.bizcore.v1.svc;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import kr.co.bizcore.v1.mapper.CommonMapper;
@@ -8,8 +9,8 @@ import kr.co.bizcore.v1.mapper.DeptMapper;
 import kr.co.bizcore.v1.mapper.ScheduleMapper;
 import kr.co.bizcore.v1.mapper.SystemMapper;
 import kr.co.bizcore.v1.mapper.UserMapper;
+import kr.co.bizcore.v1.util.UploadedFileStorage;
 
-import java.net.InetAddress;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
@@ -24,9 +25,9 @@ import javax.crypto.spec.SecretKeySpec;
 
 @Service
 public abstract class Svc {
-
-    private static boolean DEBUG;
-    private static String SERVER_ADDRESS = "192.168.1.72";
+    
+    @Autowired
+    protected UploadedFileStorage fileStorage;
 
     @Autowired
     protected SystemMapper systemMapper;
@@ -43,28 +44,15 @@ public abstract class Svc {
     @Autowired
     protected CommonMapper commonMapper;
 
+    public static boolean DEBUG;
+
     protected DataFactory dataFactory = DataFactory.getFactory();
 
-    public Svc(){setDebugMode();}
+    public boolean debug(){return DEBUG;}
 
     public String generateKey() {
         return generateKey(32);
     } // End of generateKey()
-
-    public boolean debug() {
-        return DEBUG;
-    }
-
-    // ip주소 확인, 디버깅모드 확인
-    protected void setDebugMode() {
-        String ip = null;
-        try {
-            ip = InetAddress.getLocalHost().getHostAddress();
-            DEBUG = (SERVER_ADDRESS != ip);
-        } catch (Exception e) {
-        }
-
-    } // End of setDebugMode()
 
     public String createRandomFileName(){return createRandomFileName(64);}
 
@@ -180,7 +168,7 @@ public abstract class Svc {
         }
 
         return result;
-    } // End of enc()
+    } // End of encAes()
 
     public String decAes(String text, String key, String iv) {
         String result = null;
@@ -202,7 +190,29 @@ public abstract class Svc {
         }
 
         return result;
-    } // End of dec()
+    } // End of decAes()
+
+    public byte[] decAesBinary(String text, String key, String iv) {
+        byte[] result = null;
+        Cipher cipher = null;
+        SecretKeySpec keySpec = null;
+        IvParameterSpec ivParamSpec = null;
+        byte[] decrypted = null;
+
+        try {
+            cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            keySpec = new SecretKeySpec(key.getBytes(), "AES");
+            ivParamSpec = new IvParameterSpec(iv.getBytes());
+            cipher.init(Cipher.DECRYPT_MODE, keySpec, ivParamSpec);
+            decrypted = Base64.getDecoder().decode(text.getBytes("UTF-8"));
+            decrypted = cipher.doFinal(decrypted);
+            result = decrypted;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    } // End of decAes()
 
     public KeyPair genKeyPair() {
         KeyPair result = null;
@@ -234,7 +244,7 @@ public abstract class Svc {
         }
 
         return result;
-    } // End of enc()
+    } // End of encRsa()
 
     public String decRsa(String text, KeyPair key) {
         String result = null;
@@ -253,7 +263,7 @@ public abstract class Svc {
         }
 
         return result;
-    } // End of dec()
+    } // End of decRsa()
 
 } // End of abstract Class === Svc
 

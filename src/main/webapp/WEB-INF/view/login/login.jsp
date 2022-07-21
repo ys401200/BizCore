@@ -5,6 +5,7 @@
 <head>
 <meta charset="UTF-8">
 <link rel="stylesheet" type="text/css" href="/css/login/login.css" />
+<link rel="icon" href="/favicon" type="image/x-icon">
 <script src="/js/jquery.min.js"></script>
 <title>로그인</title>
 </head>

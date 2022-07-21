@@ -2,9 +2,9 @@ package kr.co.bizcore.v1.interceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -15,6 +15,9 @@ public class ViewInterceptor implements HandlerInterceptor {
 
     @Autowired
     private SystemService systemService;
+
+    @Value("bizcore.server.debug")
+    private String debug;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
@@ -27,7 +30,7 @@ public class ViewInterceptor implements HandlerInterceptor {
         server = request.getServerName();
         uri = request.getRequestURI();
         userNo = (String)request.getSession().getAttribute("userNo");
-        
+
         if (systemService.debug())
             server = "vtek.co.kr"; // for Dev
 

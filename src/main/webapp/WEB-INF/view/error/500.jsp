@@ -3,6 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <link rel="icon" href="/favicon" type="image/x-icon">
 <meta charset="UTF-8">
 <link rel="stylesheet" type="text/css" href="/css/error/error.css" />
 <title>500 ERROR!</title>

@@ -6,7 +6,6 @@ import java.util.Map;
 
 import kr.co.bizcore.v1.domain.ConnUrl;
 import kr.co.bizcore.v1.domain.SimpleCustomer;
-import kr.co.bizcore.v1.domain.SimpleUser;
 
 @Service
 public class SystemService extends Svc {
@@ -39,7 +38,6 @@ public class SystemService extends Svc {
         if(urls == null){
             urls = systemMapper.getConnUrl();
             dataFactory.setData("ALL", "connUrl", urls, 300);
-            System.out.println("[TEST] :::::::::: ConnUrl Data is Reset.");
         }
 
         if (urls != null && urls.size() > 0)

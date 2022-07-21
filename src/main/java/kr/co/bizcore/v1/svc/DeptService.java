@@ -81,7 +81,6 @@ public class DeptService extends Svc {
 
         root = rootDept(compId);
         map = root.getMap();
-        System.out.println("root : " + root.getDeptId() + " / map size : " + (map == null ? "null" : map.size()));
         result = "{";
         keySet = map.keySet().toArray();
         for(Object key : keySet){

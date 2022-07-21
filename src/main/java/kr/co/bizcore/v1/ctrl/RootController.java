@@ -1,13 +1,20 @@
 package kr.co.bizcore.v1.ctrl;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.FileInputStream;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "/", method = RequestMethod.GET)
@@ -15,7 +22,7 @@ public class RootController extends Ctrl {
     private static final String VIEW_PATH = null;
     private static final String VIEW_ERROR_PATH = "/error/";
 
-	// 泥� �솕硫� / 濡쒓렇�씤 �뿬遺� 諛� compId �솗�씤 �뿬遺��뿉 �뵲�씪 �떖由� �굹���굹�룄濡� �븿
+	// 로그인 여부에 따 다ㄴ 페이지를 보여줌
     @RequestMapping("")
     public String root(HttpServletRequest request) {
         HttpSession session = null;
@@ -30,7 +37,6 @@ public class RootController extends Ctrl {
         } else {
             result = "/login/login";
         }
-        System.out.println("[TEST] ::::: login ? " + result + " / " + userNo);
         return result;
     } // End of root
 
@@ -49,5 +55,24 @@ public class RootController extends Ctrl {
             }
         }
         return "error";
+    }
+
+    @RequestMapping(value = "/favicon", produces = MediaType.IMAGE_PNG_VALUE)
+    public @ResponseBody byte[] favicon(HttpServletRequest request) throws IOException{
+        byte[] result = null;
+        FileInputStream reader = null;
+        String compId = null;
+        HttpSession session = null;
+        String faviconPath = null;
+
+        session = request.getSession();
+        compId = (String)session.getAttribute("compId");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
+        if(compId == null)  compId = "vtek";
+        faviconPath = System.getProperty("user.dir") + "/src/main/resources/static/favicon/" + compId + ".png";
+        reader = new FileInputStream(faviconPath);
+        result = reader.readAllBytes();
+        
+        return result;
     }
 }
