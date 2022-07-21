@@ -5,9 +5,12 @@ import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import kr.co.bizcore.v1.domain.Article;
 import kr.co.bizcore.v1.domain.SimpleArticle;
 
+@Service
 public class BoardService extends Svc{
 
     public String getFileboxArticalList(String compId){
