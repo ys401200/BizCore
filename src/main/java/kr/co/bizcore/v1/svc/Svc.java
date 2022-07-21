@@ -1,9 +1,9 @@
 package kr.co.bizcore.v1.svc;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import kr.co.bizcore.v1.mapper.BoardMapper;
 import kr.co.bizcore.v1.mapper.CommonMapper;
 import kr.co.bizcore.v1.mapper.DeptMapper;
 import kr.co.bizcore.v1.mapper.ScheduleMapper;
@@ -17,6 +17,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.Calendar;
 import java.util.HashMap;
 
 import javax.crypto.Cipher;
@@ -44,6 +45,9 @@ public abstract class Svc {
     @Autowired
     protected CommonMapper commonMapper;
 
+    @Autowired
+    protected BoardMapper boardMapper;
+
     public static boolean DEBUG;
 
     protected DataFactory dataFactory = DataFactory.getFactory();
@@ -54,7 +58,18 @@ public abstract class Svc {
         return generateKey(32);
     } // End of generateKey()
 
-    public String createRandomFileName(){return createRandomFileName(64);}
+    public String createRandomFileName(){
+        Calendar cal = Calendar.getInstance();
+        String date = null;
+        int x = 0, y = 0, z = 0;
+        x = cal.get(Calendar.YEAR);
+        y = cal.get(Calendar.MONTH) + 1;
+        z = cal.get(Calendar.DATE);
+        date = "" + x;
+        date += (y < 10 ? "0" + y : y);
+        date += (z < 10 ? "0" + z : z);
+        return date + "_" + createRandomFileName(64);
+    }
 
     // 랜덤 파일명 생성 함수
     private String createRandomFileName(int length){
@@ -264,6 +279,13 @@ public abstract class Svc {
 
         return result;
     } // End of decRsa()
+
+    public int strToInt(String str){
+        int result = -1;
+        try{result = str != null ? Integer.parseInt(str) : -1;
+        }catch(NumberFormatException e){e.printStackTrace();}
+        return result;
+    }
 
 } // End of abstract Class === Svc
 

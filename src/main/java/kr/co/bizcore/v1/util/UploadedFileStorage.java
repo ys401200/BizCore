@@ -25,6 +25,13 @@ public class UploadedFileStorage {
             }
         }
         return result;
+    } // End of saveAttachedFile()
+
+    public String getFileStoragePath(String compId){
+        String result = PATH;
+        if (!result.substring(result.length() - 1).equals("/"))  result = result + "/";
+        result += compId;
+        return result;
     }
     
 }

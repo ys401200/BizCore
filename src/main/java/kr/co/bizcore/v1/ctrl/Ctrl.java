@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 
+import kr.co.bizcore.v1.svc.BoardService;
 import kr.co.bizcore.v1.svc.DeptService;
 import kr.co.bizcore.v1.svc.ScheduleSvc;
 import kr.co.bizcore.v1.svc.SystemService;
@@ -26,5 +27,8 @@ public abstract class Ctrl {
 
     @Autowired
     protected ScheduleSvc scheduleService;
+
+    @Autowired
+    protected BoardService boardService;
 
 }

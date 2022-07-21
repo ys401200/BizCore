@@ -33,7 +33,6 @@ public class ViewConfig implements WebMvcConfigurer {
 
     @Bean
     public UploadedFileStorage getFileStorage(){
-        System.out.println("[TEST] :::::::::: File Uploaded Path : " + fileUploadedPath);
         return new UploadedFileStorage(fileUploadedPath);
     }
 

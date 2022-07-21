@@ -122,9 +122,7 @@ public class ApiUserCtrl extends Ctrl{
         if(compId == null)  compId = (String)request.getAttribute("compId");
 
         if(compId == null){
-
-        }else if(userNo == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Session Expired and/or Not logged in.\"}";            
+            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
         }else if(aesKey == null || aesIv == null){
             result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
         }else{
