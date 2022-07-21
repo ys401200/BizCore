@@ -28,38 +28,54 @@
 	color: #332E85;
 }
 
+div {
+	margin-bottom : 1.5%;
+}
+
 .fileboxList {
 	display: grid;
-	width: 99%;
-	margin: 0 auto;
-}
-
-.fileboxList .gridHeader,
-.fileboxList .gridContent {
-	grid-template-columns: 10% 60% 10% 20%;
-}
-
-.fileboxContent {
-	border: 2rem;
-	padding: 2rem;
-	display : none;
-	background-color : #EDEDF4;
-}
-
-.fileboxContent .headerDiv {
-	font-size: 1.4rem;
+	margin-left: 2%;
+	margin-right: 2%;
+	font-weight: 500;
+	font-size: 16px;
 	color: #332E85;
-	font-weight: 600;
 	
-
 }
 
-.fileboxContent .headerDiv .deleteButton {
+.fileboxList .labelClass {
+	text-align : center;
+	background-color : #EDEDF4;
+	width :95%;
+	
+}
+
+.buttonDiv {
 	text-align : right;
-	font-weight: 800;
 }
 
-.fileboxContent .contentDiv, .fileboxContent .headerDiv {
-	margin-left : 1.5rem;
-	margin-right :1.5rem;
+.buttonDiv button {
+	margin-right: 0.5rem;
+	height : 2rem;
+	width : 4rem;
+	border : none;
+	background-color: #332E85;
+	border-radius: 10px;
+	color: #ffffff;
+	cursor: pointer;
 }
+
+
+
+
+
+.buttonDiv button:hover{
+	color: #ffffff;
+	border-color: #302D81;
+	cursor: pointer;
+
+}
+
+.contentDiv {
+	height : 400px;
+}
+
