@@ -140,6 +140,7 @@ public class ApiBoardCtrl extends Ctrl{
         byte[] fileData = null;
         String[] t = null;
 
+        session = request.getSession();
         compId = (String)session.getAttribute("compId");
         aesKey = (String)session.getAttribute("aesKey");
         aesIv = (String)session.getAttribute("aesIv");
