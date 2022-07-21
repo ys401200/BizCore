@@ -24,38 +24,92 @@ function drawFileForm() {
     target.html(html);  
 
     fileInput = document.getElementsByClassName('fileClass');
-    fileInput[0].addEventListener('change',fileSubmit);
+    fileInput[0].addEventListener('change',getInputTag);
 }
-
-
 
 
 
 //파일 db에 파일 올리는 함수 // 제일 최근에 올린 파일을 게시글에 첨부? 
-function fileSubmit() {
+function getInputTag() {
 
-let fileData, file, fileEl, reader, binarydata = null;
+let fileInput, input , file  =  null;
+
+	fileInput = document.getElementsByClassName('fileClass');
+    input = fileInput[0];
+    if(input !== undefined && input !== null) file = input.files[0];
+    getfileBinary(file); 
+        
+} //End of getInputTag(); 
 
 
-	  let fileInput = document.getElementsByClassName('fileClass');
-        fileEl = fileInput[0];
-        if(fileEl !== undefined && fileEl !== null) file = fileEl.files[0];
+function getfileBinary(file) {
+let reader;
 
-        if(file !== undefined && file !== null) {
+if(file !== undefined && file !== null) {
             reader = new FileReader();
-            
-            reader.onload = (e) => {
-            fileData = e.target.result;
-            console.log(fileData);
-    
-              
-            }
-            
-            binarydata = console.log(reader.readAsBinaryString(file));
-          
 
+            reader.onload = (e) => {
+                let fileData = e.target.result;
+                let fullData = (file.name + "\r\n" + fileData); // 파일 제목과 파일 내용 
+                console.log(fullData);
+                submitFile(fullData)
+            }
+
+           reader.readAsBinaryString(file);
         }
-}
+
+}//End of getfileBinary(file); 
+
+
+function submitFile(fullData){
+    let url , target ;
+    target = $(".attachedFileName");
+	url = apiServer + "/api/board/filebox";
+
+	$.ajax({
+		"url": url,
+		"method": "post",
+		"data" : fullData,
+        "contentType" : "text/plain",
+        "dataType" : "json",
+		"cache": false,
+		success: (result) => {
+			if (result.result === "ok") {
+				target.html(result.data.title); 
+				
+			} else {
+				modal.alert("파일 업로드를 실패했습니다.");
+			}
+		}
+	})
+
+target.drawFileForm
+
+}// End of submitFile(fileData); 
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
