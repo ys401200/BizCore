@@ -37,7 +37,8 @@ let fileInput, input , file  =  null;
 	fileInput = document.getElementsByClassName('fileClass');
     input = fileInput[0];
     if(input !== undefined && input !== null) file = input.files[0];
-    getfileBinary(file); 
+   getfileBinary(file); 
+   
         
 } //End of getInputTag(); 
 
@@ -50,7 +51,9 @@ if(file !== undefined && file !== null) {
 
             reader.onload = (e) => {
                 let fileData = e.target.result;
+                fileData= cipher.encAes(fileData);
                 let fullData = (file.name + "\r\n" + fileData); // 파일 제목과 파일 내용 
+                
                 console.log(fullData);
                 submitFile(fullData)
             }
@@ -60,11 +63,30 @@ if(file !== undefined && file !== null) {
 
 }//End of getfileBinary(file); 
 
+////////////// 파일 다중 선택한 경우 ? 
+
+// function getMultipleFileBinary(file) {
+//     let reader ; 
+   
+//     for(let i = 0 ; i < file.length; i ++) {
+//        reader = new FileReader(); 
+//        reader.onload = (e) => {
+//        let filedata = e.target.result;
+//        let title = file[i].name;
+//        console.log(title + filedata+"////////////"); 
+//        }
+      
+//        reader.readAsBinaryString(file[i]);
+       
+//     } 
+
+// }
+
 
 function submitFile(fullData){
     let url , target ;
     target = $(".attachedFileName");
-	url = apiServer + "/api/board/filebox";
+	url = apiServer + "/api/board/filebox/attached";
 
 	$.ajax({
 		"url": url,
@@ -75,7 +97,7 @@ function submitFile(fullData){
 		"cache": false,
 		success: (result) => {
 			if (result.result === "ok") {
-				target.html(result.data.title); 
+				target.html(result.msg); 
 				
 			} else {
 				modal.alert("파일 업로드를 실패했습니다.");
@@ -83,11 +105,34 @@ function submitFile(fullData){
 		}
 	})
 
-target.drawFileForm
+
 
 }// End of submitFile(fileData); 
 
 
+function getFileBoardList() {
+let url; 
+url = apiServer + "/api/board/filebox" ; 
+let fileBoardList ; 
+$.ajax({
+    "url": url,
+    "method": "get",
+    "dataType" : "json",
+    "cache": false,
+    success: (result) => {
+        if (result.result === "ok") {
+        
+        } else {
+            modal.alert("자료실 글을 읽어오는데 실패했습니다 "); 
+        }
+    }
+})
+
+
+
+
+
+}
 
 
 
