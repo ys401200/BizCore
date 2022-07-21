@@ -20,39 +20,39 @@ function getScheduleList() {
 	headerArray = [
 		{
 			"title" : "등록일",
-			"padding" : false,
+			"align" : "center",
 		},
 		{
 			"title" : "일정구분",
-			"padding" : false,
+			"align" : "center",
 		},
 		{
 			"title" : "일정제목",
-			"padding" : true,
+			"align" : "left",
 		},
 		{
 			"title" : "일정",
-			"padding" : false,
+			"align" : "center",
 		},
 		{
 			"title" : "고객사",
-			"padding" : false,
+			"align" : "center",
 		},
 		{
 			"title" : "담당자",
-			"padding" : true,
+			"align" : "left",
 		},
 		{
 			"title" : "장소",
-			"padding" : false,
+			"align" : "center",
 		},
 		{
 			"title" : "활동형태",
-			"padding" : false,
+			"align" : "center",
 		},
 		{
 			"title" : "일정설명",
-			"padding" : true,
+			"align" : "left",
 		}
 		
 	];

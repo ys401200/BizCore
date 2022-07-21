@@ -7,7 +7,12 @@
 		<jsp:include page="../sideMenu.jsp" />
 	</div>
 	<div id="bodyContent">
-		<jsp:include page="./contents/list.jsp" />
+        <div class="contContainer">
+            <hr />
+            <span>계약조회</span>
+            <div class="gridContList"></div>
+            <div class="pageContainer"></div>
+        </div>
 	</div>
 </div>
 <div class="msg_cnt"></div>

@@ -8,6 +8,10 @@ $(document).ready(() => {
 
 	getNoticeList();
 	getScheduleList();
+
+	setTimeout(() => {
+		enableDragSort("gridNoticeList");
+	}, 300);
 });
 
 function getNoticeList() {
@@ -18,19 +22,19 @@ function getNoticeList() {
 	headerArray = [
 		{
 			"title" : "번호",
-			"padding" : false,
+			"align" : "center",
 		},
 		{
 			"title" : "제목",
-			"padding" : true,
+			"align" : "left",
 		},
 		{
 			"title" : "작성자",
-			"padding" : false,
+			"align" : "center",
 		},
 		{
 			"title" : "등록일",
-			"padding" : false,
+			"align" : "center",
 		}
 	];
 
@@ -46,7 +50,7 @@ function getNoticeList() {
 			if (data.result === "ok") {
 				list = cipher.decAes(data.data);
 				let jsonData = JSON.parse(list);
-				for(let i = 0; i < jsonData.length; i++){
+				for(let i = 0; i < 8; i++){
 					disDate = dateDis(jsonData[i].created, jsonData[i].modified);
 					setDate = dateFnc(disDate);
 					str = [
@@ -90,39 +94,39 @@ function getScheduleList() {
 	headerArray = [
 		{
 			"title" : "등록일",
-			"padding" : false,
+			"align" : "center",
 		},
 		{
 			"title" : "일정구분",
-			"padding" : false,
+			"align" : "center",
 		},
 		{
 			"title" : "일정제목",
-			"padding" : true,
+			"align" : "left",
 		},
 		{
 			"title" : "일정",
-			"padding" : false,
+			"align" : "center",
 		},
 		{
 			"title" : "고객사",
-			"padding" : false,
+			"align" : "center",
 		},
 		{
 			"title" : "담당자",
-			"padding" : true,
+			"align" : "left",
 		},
 		{
 			"title" : "장소",
-			"padding" : false,
+			"align" : "center",
 		},
 		{
 			"title" : "활동형태",
-			"padding" : false,
+			"align" : "center",
 		},
 		{
 			"title" : "일정설명",
-			"padding" : true,
+			"align" : "left",
 		}
 		
 	];
@@ -140,7 +144,7 @@ function getScheduleList() {
 				list = cipher.decAes(data.data);
 				let jsonData = JSON.parse(list);
 
-				for(let i = 0; i < jsonData.length; i++){
+				for(let i = 0; i < 8; i++){
 					disDate = dateDis(jsonData[i].created, jsonData[i].modified);
 					setDate = dateFnc(disDate);
 

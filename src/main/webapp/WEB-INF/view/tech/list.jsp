@@ -7,7 +7,12 @@
 		<jsp:include page="../sideMenu.jsp" />
 	</div>
 	<div id="bodyContent">
-		<jsp:include page="./contents/list.jsp" />
+        <div class="techContainer">
+            <hr />
+            <span>기술지원조회</span>
+            <div class="gridTechList"></div>
+            <div class="pageContainer"></div>
+        </div>
 	</div>
 </div>
 <div class="msg_cnt"></div>

@@ -2,7 +2,10 @@
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>    
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>   
+<style>
+
+</style> 
 <div id="bodyNotice">
 	<hr />
 	<span>공지사항</span>
@@ -16,7 +19,6 @@
 </div>
 
 <div id="bodyMyDoc">
-	<hr />
 	<span>나의 문서함</span>
 	<div id="myDocTableDiv">
 		<table id="myDocTable" frame="void">

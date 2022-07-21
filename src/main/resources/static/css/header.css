@@ -57,17 +57,25 @@ button{
 	border-right: 0;
 }
 
-.grid_default_text_align{
+.grid_default_text_align_center{
 	display: flex;
 	align-items: center;
     justify-content: center;
 	overflow: hidden;
 }
 
-.grid_default_text_align_padding{
+.grid_default_text_align_left{
 	display: flex;
 	align-items: center;
     justify-content: left;
+	padding: 0 20px;
+	overflow: hidden;
+}
+
+.grid_default_text_align_right{
+	display: flex;
+	align-items: center;
+    justify-content: right;
 	padding: 0 20px;
 	overflow: hidden;
 }
@@ -83,6 +91,12 @@ button{
 	font-size: 15px;
 	line-height: 22px;
 	height: 38px;
+}
+
+.dragActive {
+	background: transparent;
+	color: transparent;
+	border: 1px solid #332E85;
 }
 
 /* 공통 class 끝*/

@@ -13,7 +13,9 @@ function init(){
 	}, 70);
 
 	apiServer = "";
-	storage = {};
+	storage = {
+		"drag": {x: 0, y: 0}
+	};
 
 	getUserMap();
 	getDeptMap();
@@ -183,57 +185,57 @@ function init(){
 	}
 
 	dragAndDrop = {
-		"dragStart": (e) => {
-			e.dataTransfer.setData("text", e.target.id);
-		},
+		// "dragStart": (e) => {
+		// 	e.dataTransfer.setData("text", e.target.id);
+		// },
 
-		"dragEnd": (e) => {
-			$(e.target).prev().css("background-color", "");
-		},
+		// "dragEnd": (e) => {
+		// 	$(e.target).prev().css("background-color", "");
+		// },
 
-		"dragEnter": (e) => {
-			$(e.target).css("background-color", "#EAEAEA");
-		},
+		// "dragEnter": (e) => {
+		// 	$(e.target).css("background-color", "#EAEAEA");
+		// },
 
-		"dragLeave": (e) => {
-			$(e.target).css("background-color", "");
-		},
+		// "dragLeave": (e) => {
+		// 	$(e.target).css("background-color", "");
+		// },
 
-		"dragOver": (e) => {
-			$(e.target).css("background-color", "#EAEAEA");
-			e.preventDefault();
-		},
+		// "dragOver": (e) => {
+		// 	$(e.target).css("background-color", "#EAEAEA");
+		// 	e.preventDefault();
+		// },
 
-		"dragDrop": (e) => {
-			$(e.target).after($("#" + e.dataTransfer.getData("text")));
-			e.preventDefault();
-		},
+		// "dragDrop": (e) => {
+		// 	$(e.target).after($("#" + e.dataTransfer.getData("text")));
+		// 	e.preventDefault();
+		// },
 
-		"gridDragStart": (e) => {
-			e.dataTransfer.setData("text", e.target.id);
-		},
+		// "gridDragStart": (e) => {
+		// 	e.dataTransfer.setData("text", e.target.id);
+		// },
 
-		"gridDragEnd": (e) => {
-			$(e.target).prev().css("background-color", "");
-		},
+		// "gridDragEnd": (e) => {
+		// 	$(e.target).prev().css("background-color", "");
+		// },
 
-		"gridDragEnter": (e) => {
-			$(e.target).parent().css("background-color", "#EAEAEA");
-		},
+		// "gridDragEnter": (e) => {
+		// 	$(e.target).parent().css("background-color", "#EAEAEA");
+		// },
 
-		"gridDragLeave": (e) => {
-			$(e.target).parent().css("background-color", "");
-		},
+		// "gridDragLeave": (e) => {
+		// 	$(e.target).parent().css("background-color", "");
+		// },
 
-		"gridDragOver": (e) => {
-			$(e.target).parent().css("background-color", "#EAEAEA");
-			e.preventDefault();
-		},
+		// "gridDragOver": (e) => {
+		// 	$(e.target).parent().css("background-color", "#EAEAEA");
+		// 	e.preventDefault();
+		// },
 
-		"gridDrop": (e) => {
-			$(e.target).parent().after($("#" + e.dataTransfer.getData("text")));
-			e.preventDefault();
-		},
+		// "gridDrop": (e) => {
+		// 	$(e.target).parent().after($("#" + e.dataTransfer.getData("text")));
+		// 	e.preventDefault();
+		// },
 
 		"fileDragEnter": (e) => {
 			e.stopPropagation();
@@ -366,16 +368,18 @@ function createGrid(gridContainer, headerDataArray, dataArray, ids, fnc, idName)
 	gridHtml = "<div class='gridHeader grid_default_header_item'>";
 	
 	for(let i = 0; i < headerDataArray.length; i++){
-		if(headerDataArray[i].padding == true){
-			gridHtml += "<div class='gridHeaderItem grid_default_text_align_padding'>"+headerDataArray[i].title+"</div>";
+		if(headerDataArray[i].align === "center"){
+			gridHtml += "<div class='gridHeaderItem grid_default_text_align_center'>"+headerDataArray[i].title+"</div>";
+		}else if(headerDataArray[i].align === "left"){
+			gridHtml += "<div class='gridHeaderItem grid_default_text_align_left'>"+headerDataArray[i].title+"</div>";
 		}else{
-			gridHtml += "<div class='gridHeaderItem grid_default_text_align'>"+headerDataArray[i].title+"</div>";
+			gridHtml += "<div class='gridHeaderItem grid_default_text_align_right'>"+headerDataArray[i].title+"</div>";
 		}
 	}
 
 	gridHtml += "</div>";
 	for(let i = 0; i < dataArray.length; i++){
-		gridHtml += "<div id='"+idStr+"_grid_"+i+"' class='gridContent grid_default_body_item' data-id='"+ids[i]+"' onclick='"+fnc+"' draggable='true' ondragstart='dragAndDrop.gridDragStart(event)' ondragenter='dragAndDrop.gridDragEnter(event)' ondragend='dragAndDrop.gridDragEnd(event)' ondragleave='dragAndDrop.gridDragLeave(event)' ondrop='dragAndDrop.gridDrop(event)' ondragover='dragAndDrop.gridDragOver(event)'>";
+		gridHtml += "<div id='"+idStr+"_grid_"+i+"' class='gridContent grid_default_body_item' data-drag=\"true\" data-id='"+ids[i]+"' onclick='"+fnc+"'>";
 		for(let t = 0; t <= dataArray[i].length; t++){
 			if(dataArray[i][t] !== undefined){
 				gridHtml += "<div class='gridContentItem'>"+dataArray[i][t].setData+"</div>";
@@ -394,10 +398,12 @@ function createGrid(gridContainer, headerDataArray, dataArray, ids, fnc, idName)
 
 	for(let i = 0; i < headerDataArray.length; i++){
 		gridContents.each(function(index, item){
-			if(headerDataArray[i].padding == true){
-				$(item).find(".gridContentItem").eq(i).attr("class", "gridContentItem grid_default_text_align_padding");
+			if(headerDataArray[i].align === "center"){
+				$(item).find(".gridContentItem").eq(i).attr("class", "gridContentItem grid_default_text_align_center");
+			}else if(headerDataArray[i].align === "left"){
+				$(item).find(".gridContentItem").eq(i).attr("class", "gridContentItem grid_default_text_align_left");
 			}else{
-				$(item).find(".gridContentItem").eq(i).attr("class", "gridContentItem grid_default_text_align");
+				$(item).find(".gridContentItem").eq(i).attr("class", "gridContentItem grid_default_text_align_right");
 			}
 		});
 	}
@@ -657,4 +663,83 @@ function showFile(files){
 	for(let i = 0; i < files.length; i++){
 		dropZone.html("<p>" + files[i].name + "</p>");
 	}
+}
+
+function enableDragSort(listClass) {
+	let sortableLists = document.getElementsByClassName(listClass);
+	Array.prototype.map.call(sortableLists, (list) => {enableDragList(list)});
+}
+  
+function enableDragList(list) {
+	Array.prototype.map.call(list.children, (item) => {enableDragItem(item)});
+}
+
+function enableDragItem(item) {
+	item.setAttribute('draggable', true);
+	item.ondrag = handleDrag;
+	item.ondragend = handleDrop;
+}
+
+function handleDrag(item) {
+	let selectedItem, tempEl, currentEl, x, t;
+
+	currentEl = item.target;
+	tempEl = currentEl;
+	while(true){
+		if(tempEl === document.body) break;
+		if(tempEl.dataset.drag === "true"){
+			selectedItem = tempEl;
+			break;
+		}else tempEl = tempEl.parentElement;
+	}
+
+	if(selectedItem === undefined) return;
+
+	list = selectedItem.parentNode;
+	x = item.clientX;
+	y = item.clientY + (Math.floor(selectedItem.clientHeight)/2);
+
+	selectedItem.classList.add('dragActive');
+	let swapItem = document.elementFromPoint(x, y) === null ? selectedItem : document.elementFromPoint(x, y);
+
+	tempEl = swapItem;
+
+	while(true){
+		if(tempEl === document.body) break;
+		if(tempEl.dataset.drag === "true"){
+			swapItem = tempEl;
+			break
+		}else tempEl = tempEl.parentElement;
+	}
+
+	list.insertBefore(selectedItem, swapItem);
+}
+function handleDrop(item) {
+	item.target.classList.remove('dragActive');
+}
+
+function paging(total, currentPage, articlePerPage){
+	let lastPage, result = [], max;
+
+	if (currentPage === undefined) {
+		storage.currentPage = 1;
+		currentPage = storage.currentPage;
+	}
+	
+	if (articlePerPage === undefined) {
+		storage.articlePerPage = 5;
+		articlePerPage = storage.articlePerPage;
+	}
+
+	max = Math.ceil(total / articlePerPage);
+
+	lastPage = currentPage * articlePerPage;
+
+	if (currentPage == max && total % articlePerPage !== 0) {
+		lastPage = ((max - 1) * articlePerPage) + (total % articlePerPage);
+	}
+
+	result.push(currentPage, articlePerPage, lastPage, max);
+
+	return result;
 }

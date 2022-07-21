@@ -104,61 +104,26 @@ function submitFile(fullData){
 			}
 		}
 	})
-
-
-
 }// End of submitFile(fileData); 
 
-
 function getFileBoardList() {
-let url; 
-url = apiServer + "/api/board/filebox" ; 
-let fileBoardList ; 
-$.ajax({
-    "url": url,
-    "method": "get",
-    "dataType" : "json",
-    "cache": false,
-    success: (result) => {
-        if (result.result === "ok") {
-        
-        } else {
-            modal.alert("자료실 글을 읽어오는데 실패했습니다 "); 
-        }
-    }
-})
-
-
-
-
-
+	let url; 
+	url = apiServer + "/api/board/filebox" ; 
+	let fileBoardList ; 
+	$.ajax({
+		"url": url,
+		"method": "get",
+		"dataType" : "json",
+		"cache": false,
+		success: (result) => {
+			if (result.result === "ok") {
+			
+			} else {
+				modal.alert("자료실 글을 읽어오는데 실패했습니다 "); 
+			}
+		}
+	});
 }
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // function getAttachedFileNames() {
 // let target = $(".attachedFileName");
@@ -264,7 +229,54 @@ $.ajax({
 // 			"padding": false,
 // 		}
 // 	];
-   
+//} // End of getFileboxList()
+
+function drawFileboxList() {
+	let container;
+	let jsonData;
+	let header = [];
+	let data = [];
+	let ids = [];
+	let disDate, setDate, str, fnc;
+	let totalNotice, currentPage, articlePerPage, max;
+	let lastPageNotice; 
+	if (storage.fileboxList === undefined) {
+		modal.alert("등록된 자료가 없습니다");
+	}
+	else {
+		jsonData = storage.fileboxList;
+	}
+	if (storage.currentPage === undefined) storage.currentPage = 1;
+	if (storage.articlePerPage === undefined) storage.articlePerPage = 5;
+
+	currentPage = storage.currentPage;
+	articlePerPage = storage.articlePerPage;
+	totalNotice = jsonData.length;
+	max = Math.ceil(totalNotice / articlePerPage);
+
+	pageContainer = document.getElementsByClassName("pageContainer");
+	container = $(".gridNoticeList");
+
+
+	header = [
+		{
+			"title": "번호",
+			"align": "center",
+		},
+		{
+			"title": "제목",
+			"align": "left",
+		},
+		{
+			"title": "작성자",
+			"align": "center",
+		},
+		{
+			"title": "등록일",
+			"align": "center",
+		}
+	];
+}
 // 	lastPageNotice =currentPage*articlePerPage;
 
 // 	//마지막 페이지인 경우 게산 

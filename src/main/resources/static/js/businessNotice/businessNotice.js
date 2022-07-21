@@ -33,27 +33,16 @@ function getNoticeList() {
 } // End of getNoticeList()
 
 function drawNoticeList() {
-	let container;
-	let jsonData;
-	let header = [];
-	let data = [];
-	let ids = [];
-	let disDate, setDate, str, fnc;
-	let totalNotice, currentPage, articlePerPage, max;
-	let lastPageNotice;
+	let container, result, jsonData, header = [], data = [], ids = [], disDate, setDate, str, fnc;
+	
 	if (storage.noticeList === undefined) {
 		msg.set("등록된 공지사항이 없습니다");
 	}
 	else {
 		jsonData = storage.noticeList;
 	}
-	if (storage.currentPage === undefined) storage.currentPage = 1;
-	if (storage.articlePerPage === undefined) storage.articlePerPage = 5;
 
-	currentPage = storage.currentPage;
-	articlePerPage = storage.articlePerPage;
-	totalNotice = jsonData.length;
-	max = Math.ceil(totalNotice / articlePerPage);
+	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 
 	pageContainer = document.getElementsByClassName("pageContainer");
 	container = $(".gridNoticeList");
@@ -62,31 +51,23 @@ function drawNoticeList() {
 	header = [
 		{
 			"title": "번호",
-			"padding": false,
+			"align": "center",
 		},
 		{
 			"title": "제목",
-			"padding": true,
+			"align": "left",
 		},
 		{
 			"title": "작성자",
-			"padding": false,
+			"align": "center",
 		},
 		{
 			"title": "등록일",
-			"padding": false,
+			"align": "center",
 		}
 	];
 
-	lastPageNotice = currentPage * articlePerPage;
-
-	//마지막 페이지인 경우 
-	if (currentPage == max && totalNotice % articlePerPage !== 0) {
-		lastPageNotice = ((max - 1) * articlePerPage) + (totalNotice % articlePerPage);
-	}
-
-	for (let i = (currentPage - 1) * articlePerPage; i < lastPageNotice; i++) {
-
+	for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
 		disDate = dateDis(jsonData[i].created, jsonData[i].modified);
 		setDate = dateFnc(disDate);
 		let userName = storage.user[jsonData[i].writer].userName;
@@ -109,16 +90,12 @@ function drawNoticeList() {
 		fnc = "noticeDetailView(this)";
 		ids.push(jsonData[i].no);
 		data.push(str);
-
-
 	}
 
-	let pageNation = createPaging(pageContainer[0], max, "pageMove", currentPage);
+	let pageNation = createPaging(pageContainer[0], result[3], "pageMove", result[0]);
 	pageContainer[0].innerHTML = pageNation;
 	//표 만들기 
 	createGrid(container, header, data, ids, fnc);
-
-
 }// End of drawNoticeList()
 
 
@@ -126,9 +103,6 @@ function pageMove(page) {
 	let selectedPage = parseInt(page);
 	storage.currentPage = selectedPage;
 	drawNoticeList();
-	$(".noticeContent").hide();
-
-
 }
 
 

@@ -21,7 +21,6 @@
 <link rel="stylesheet" type="text/css" href="/css/<%= getPathName %>/<%= getPathName %>.css" />
 
 <script src="/js/jquery.min.js"></script>
-<script src="/js/jquery-ui.js"></script>
 <script src="/js/jquery.easing.js"></script>
 <script src="/js/loading.js"></script>
 <script src="/js/<%= getPathName %>/<%= getPathName %>.js"></script>
