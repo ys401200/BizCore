@@ -63,6 +63,8 @@ public class BoardService extends Svc{
             if(!file.createNewFile())   return false;
             stream = new FileOutputStream(file, false);
             stream.write(fileData);
+            stream.flush();
+            stream.close();
         } catch (Exception e) {e.printStackTrace();}
 
         return true;
