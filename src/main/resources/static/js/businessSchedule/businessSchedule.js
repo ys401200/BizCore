@@ -8,16 +8,52 @@ $(document).ready(() => {
 
 	$(".calendarList").hide();
 
-	//createCalendar();
 	getScheduleList();
 });
 
 function getScheduleList() {
-	let url, dataArray = [], headerArray, container, pageContainer;
+	let url;
 	
+	url = apiServer + "/api/schedule";
+
+	$.ajax({
+		"url": url,
+		"method": "get",
+		"dataType": "json",
+		"cache": false,
+		success: (data) => {
+			let jsonData;
+			if (data.result === "ok") {
+				jsonData = cipher.decAes(data.data);
+				jsonData = JSON.parse(jsonData);
+				storage.scheduleList = jsonData;
+				window.setTimeout(drawScheduleList, 200);
+				drawCalendar(document.getElementsByClassName("calendar_container")[0]);
+			} else {
+				msg.set("등록된 일정이 없습니다");
+			}
+		}
+	});
+} // End of getScheduleList()
+
+function drawScheduleList() {
+	let container, result, jsonData, header = [], data = [], ids = [], disDate, setDate, str, fnc;
+	
+	if (storage.scheduleList === undefined) {
+		msg.set("등록된 일정이 없습니다");
+	}
+	else {
+		jsonData = storage.scheduleList;
+	}
+
+	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+
+	console.log(result);
+
 	pageContainer = document.getElementsByClassName("pageContainer");
 	container = $(".gridScheduleList");
-	headerArray = [
+
+	header = [
 		{
 			"title" : "등록일",
 			"align" : "center",
@@ -56,70 +92,52 @@ function getScheduleList() {
 		}
 		
 	];
-	
-	url = apiServer + "/api/schedule";
 
-	$.ajax({
-		"url": url,
-		"method": "get",
-		"dataType": "json",
-		"cache": false,
-		success: (data) => {
-			let list, disDate, setDate, str, ids = [], fnc;
-			if (data.result === "ok") {
-				list = cipher.decAes(data.data);
-				let jsonData = JSON.parse(list);
-				storage.scheduleList = jsonData;
+	for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+		disDate = dateDis(jsonData[i].created, jsonData[i].modified);
+		setDate = dateFnc(disDate);
+		let userName = storage.user[jsonData[i].user].userName;
 
-				for(let i = 0; i < jsonData.length; i++){
-					disDate = dateDis(jsonData[i].created, jsonData[i].modified);
-					setDate = dateFnc(disDate);
-
-					str = [
-						{
-							"setData": setDate,
-						},
-						{
-							"setData": jsonData[i].job,
-						},
-						{
-							"setData": jsonData[i].title,
-						},
-						{
-							"setData": jsonData[i].from,
-						},
-						{
-							"setData": jsonData[i].cust,
-						},
-						{
-							"setData": jsonData[i].user,
-						},
-						{
-							"setData": jsonData[i].no,
-						},
-						{
-							"setData": jsonData[i].sopp,
-						},
-						{
-							"setData": jsonData[i].detail,
-						}
-					];
-
-					fnc = "scheduleDetailView(this);";
-					ids.push(jsonData[i].no);
-					dataArray.push(str);
-				}
-
-				var pageNation = createPaging(pageContainer[0], 50, "testClick");
-				pageContainer[0].innerHTML = pageNation;
-				createGrid(container, headerArray, dataArray, ids, fnc);
-				drawCalendar(document.getElementsByClassName("calendar_container")[0]);
-			} else {
-				msg.set("등록된 일정이 없습니다");
+		str = [
+			{
+				"setData": setDate,
+			},
+			{
+				"setData": jsonData[i].job,
+			},
+			{
+				"setData": jsonData[i].title,
+			},
+			{
+				"setData": jsonData[i].from,
+			},
+			{
+				"setData": jsonData[i].cust,
+			},
+			{
+				"setData": userName,
+			},
+			{
+				"setData": jsonData[i].no,
+			},
+			{
+				"setData": jsonData[i].sopp,
+			},
+			{
+				"setData": jsonData[i].detail,
 			}
-		}
-	});
-} // End of getScheduleList()
+		];
+
+		fnc = "scheduleDetailView(this);";
+		ids.push(jsonData[i].no);
+		data.push(str);
+	}
+
+	let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawScheduleList", result[0]);
+	console.log(pageNation);
+	pageContainer[0].innerHTML = pageNation;
+	createGrid(container, header, data, ids, fnc);
+}// End of drawNoticeList()
 
 // 일정 캘린더를 만드는 함수
 function drawCalendar(container){
@@ -365,4 +383,19 @@ function listChange(event){
 		$(event).data("type", "table");
 		$(event).text("달력으로 표시");
 	}
+}
+
+function insertScheduleForm(){
+	let html = "";
+
+	html = "<form class='defaultForm' id='insertScheduleForm'>";
+	html += "<div class='formDefaultTitle'><span>testTitle<span></div>";
+	html += "<div class='formDefaultContent'><input type='text' value='testContent'></div>";
+	html += "</form>";
+	
+	modal.show();
+	modal.headTitle.text("일정 등록");
+	modal.confirm.text("등록");
+	modal.close.text("취소");
+	modal.body.html(html);
 }
