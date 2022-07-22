@@ -82,6 +82,7 @@ public class ApiBoardCtrl extends Ctrl{
             article.setWriter(boardService.strToInt(userNo));
             article.setTitle(json.getString("title"));
             article.setContent(json.getString("content"));
+            result = "{\"result\":\"ok\",\"msg\":\"success file upload and add article.\"}";
         }
         
         return result;
