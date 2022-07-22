@@ -1,6 +1,8 @@
 package kr.co.bizcore.v1.svc;
 
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -105,5 +107,29 @@ public class SystemService extends Svc {
         }
         return result;
     } // End of getBasicInfo
+
+
+    public String getCommonCode(String compId){
+        String result = null;
+        List<HashMap<String, String>> list = null;
+        HashMap<String, String> each = null;
+        String code = null;
+        String name = null;
+        int x = 0;
+
+        list = commonMapper.getCommonCode(compId);
+        if(list != null){
+            result = "{";
+            for(x = 0 ; x < list.size() ; x++){
+                each = list.get(x);
+                code = each.get("code");
+                name = each.get("name");
+                if(x > 0)    result += ","; 
+                result += ("\"" + code + "\":\"" + name + "\"");
+            }
+        }
+        result += "}";
+        return result;
+    } // End of getCommonCode()
 
 }

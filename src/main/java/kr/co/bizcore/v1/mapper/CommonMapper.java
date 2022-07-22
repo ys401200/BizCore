@@ -1,5 +1,6 @@
 package kr.co.bizcore.v1.mapper;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,5 +15,7 @@ public interface CommonMapper {
 
     @Select("SELECT comname, comaddress, comphone, comfax, comboss FROM swcore.swc_cominfo WHERE compno = (SELECT compno FROM swcore.swc_company WHERE compid = #{compId}) limit 1")
     public Map<String, String> getCompanyInfo(String compId);
-    
+
+    @Select("SELECT codeno AS code, desc03 AS name FROM swcore.swc_code WHERE desc03 IS NOT NULL AND compno = (SELECT compno FROM swcore.swc_company WHERE compid = #{compId})")
+    public List<HashMap<String, String>> getCommonCode(String compId);    
 }

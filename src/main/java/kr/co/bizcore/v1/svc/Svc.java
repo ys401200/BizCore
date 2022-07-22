@@ -7,6 +7,7 @@ import kr.co.bizcore.v1.mapper.BoardMapper;
 import kr.co.bizcore.v1.mapper.CommonMapper;
 import kr.co.bizcore.v1.mapper.DeptMapper;
 import kr.co.bizcore.v1.mapper.ScheduleMapper;
+import kr.co.bizcore.v1.mapper.SoppMapper;
 import kr.co.bizcore.v1.mapper.SystemMapper;
 import kr.co.bizcore.v1.mapper.UserMapper;
 import kr.co.bizcore.v1.util.UploadedFileStorage;
@@ -47,6 +48,9 @@ public abstract class Svc {
 
     @Autowired
     protected BoardMapper boardMapper;
+
+    @Autowired
+    protected SoppMapper soppMapper;
 
     public static boolean DEBUG;
 

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import kr.co.bizcore.v1.svc.BoardService;
 import kr.co.bizcore.v1.svc.DeptService;
 import kr.co.bizcore.v1.svc.ScheduleSvc;
+import kr.co.bizcore.v1.svc.SoppService;
 import kr.co.bizcore.v1.svc.SystemService;
 import kr.co.bizcore.v1.svc.UserService;
 
@@ -30,5 +31,8 @@ public abstract class Ctrl {
 
     @Autowired
     protected BoardService boardService;
+
+    @Autowired
+    protected SoppService soppService;
 
 }
