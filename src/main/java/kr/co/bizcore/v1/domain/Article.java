@@ -20,6 +20,14 @@ public class Article extends SimpleArticle{
     private String related;
     private ArrayList<AttachedFile> attached;
 
+    public int addAttachedFile(AttachedFile file){
+        int result = -1;
+        if(file == null)    return result;
+        if(attached == null)    attached = new ArrayList<>();
+        attached.add(file);
+        return result;
+    }
+
     public Article(){}
 
     @Override

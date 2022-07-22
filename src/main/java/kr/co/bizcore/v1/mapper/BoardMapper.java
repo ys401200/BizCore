@@ -6,12 +6,19 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
 
 import kr.co.bizcore.v1.domain.Article;
+import kr.co.bizcore.v1.domain.AttachedFile;
 import kr.co.bizcore.v1.domain.SimpleArticle;
 
 public interface BoardMapper {
 
     @Select("SELECT no, writer, title, IFNULL(modified, created) AS created FROM filebox WHERE deleted IS NULL AND comp_id = #{compId} ORDER BY no")
     public List<SimpleArticle> getFileboxList(String compId);
+
+    @Select("SELECT no, writer, title, content, created, modified FROM filebox WHERE no = #{no} AND comp_id = #{compId} AND deleted IS NULL")
+    public Article getFileboxArticle(int no, String compId);
+
+    @Select("SELECT idx, article_no AS articleNo, ogn_name AS ognName, created, modified, size, removed FROM filebox_attached WHERE article_no = #{articleNo} AND comp_id = #{compId}")
+    public List<AttachedFile> getAttachedFileList(int articleNo, String compId);
 
     @Select("SELECT filebox_next_no(#{compId})")
     public int getNewFileboxNo(String compId);    

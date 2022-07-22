@@ -2,18 +2,20 @@ package kr.co.bizcore.v1.svc;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import kr.co.bizcore.v1.domain.Article;
+import kr.co.bizcore.v1.domain.AttachedFile;
 import kr.co.bizcore.v1.domain.SimpleArticle;
 
 @Service
 public class BoardService extends Svc{
 
-    public String getFileboxArticalList(String compId){
+    public String getFileboxArticleList(String compId){
         String result = null;
         List<SimpleArticle> list = null;
         SimpleArticle each = null; 
@@ -33,7 +35,21 @@ public class BoardService extends Svc{
         }
 
         return result;
-    } // End of getFileboxArticalList(()
+    } // End of getFileboxArticalList()
+
+    public Article getFileboxArticle(String compId, int articleNo){
+        Article result = null;
+        List<AttachedFile> fileList = null;
+        int x = 0;
+
+        result = boardMapper.getFileboxArticle(articleNo, compId);
+        fileList = boardMapper.getAttachedFileList(articleNo, compId);
+
+        if(result != null && fileList != null){
+            for(x = 0 ; x < fileList.size() ; x++)  result.addAttachedFile(fileList.get(x));
+        }
+        return result;
+    }
 
     public boolean saveAttachedFile(String compId, String name, byte[] fileData){
         String path = fileStorage.getFileStoragePath(compId) + "/temp";
@@ -52,7 +68,7 @@ public class BoardService extends Svc{
         return true;
     } // End of saveAttachedFile()
 
-    public void postNewArticle(String compId, Article article, HashMap<String, String> attached){
+    public void postNewArticle(String compId, Article article, List<Object> files, HashMap<String, String> attached){
         String ognName = null;
         String savedName = null;
         String path = null;
@@ -60,14 +76,17 @@ public class BoardService extends Svc{
         Long size = 0L;
         Object[] keyset = null;
 
-        article.setNo(boardMapper.getNewFileboxNo(compId));
-        boardMapper.insertNewFileboxArticle(compId, article);
-        path = fileStorage.getFileStoragePath(compId);
+        // 신규 게시글 DB에 저장
+        article.setNo(boardMapper.getNewFileboxNo(compId)); // 글 번호 지정
+        boardMapper.insertNewFileboxArticle(compId, article); // DB 저장
+        path = fileStorage.getFileStoragePath(compId); // company id 에 해당하는 경로 가져오기
         if(attached != null){
-            keyset = attached.keySet().toArray();
-            for(Object key : keyset){
-                ognName = (String)key;
-                savedName = attached.get(key);
+
+            // 저장된 파일에 대해 map에서 제거하고 DB저장, 파일을 temp에서 attached로 이동
+            for(Object each : files){
+                ognName = (String)each;
+                savedName = attached.get(ognName);
+                attached.remove(ognName);
                 tempFile = new File(path + "/temp/" + savedName);
                 targetFile = new File(path + "/attached/" + savedName);
                 if(tempFile.exists()){
@@ -77,8 +96,15 @@ public class BoardService extends Svc{
                     }
                 }
             }
+
+            // map에서 제거되지 않은, 즉, 업로드 후 삭제처리한 파일들에 대한 정리
+            keyset = attached.keySet().toArray();
+            for(Object key : keyset){
+                savedName = attached.get(key);
+                tempFile = new File(path + "/temp/" + savedName);
+                tempFile.delete();
+            }
         }
-        
     } // End of postNewArticle()
     
 }

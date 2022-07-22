@@ -99,7 +99,7 @@ function drawNoticeList() {
 }// End of drawNoticeList()
 
 
-function pageMove(page) {
+function pageMove(page, handler) {
 	let selectedPage = parseInt(page);
 	storage.currentPage = selectedPage;
 	drawNoticeList();

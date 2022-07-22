@@ -1,6 +1,7 @@
 package kr.co.bizcore.v1.ctrl;
 
 import java.util.HashMap;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -38,7 +39,7 @@ public class ApiBoardCtrl extends Ctrl{
         }else if(aesKey == null || aesIv == null){
             result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
         }else{
-            result = boardService.getFileboxArticalList(compId);
+            result = boardService.getFileboxArticleList(compId);
             result = boardService.encAes(result, aesKey, aesIv);
             result = "{\"result\":\"ok\",\"data\":\"" + result + "\"}";
         }
@@ -53,12 +54,14 @@ public class ApiBoardCtrl extends Ctrl{
         String aesKey = null;
         String aesIv = null;
         String compId = null;
+        List<Object> files = null;
         Article article = null;
         JSONObject json = null;
         HttpSession session = null;
         HashMap<String, String> attached = null;
         String data = null;
 
+        session = request.getSession();
         compId = (String)session.getAttribute("compId");
         userNo = (String)session.getAttribute("userNo");
         aesKey = (String)session.getAttribute("aesKey");
@@ -75,6 +78,7 @@ public class ApiBoardCtrl extends Ctrl{
             data = boardService.decAes(requestBody, aesKey, aesIv);
             json = new JSONObject(data);
             article = new Article();
+            files = json.getJSONArray("files").toList();
             article.setWriter(boardService.strToInt(userNo));
             article.setTitle(json.getString("title"));
             article.setContent(json.getString("content"));
@@ -106,7 +110,18 @@ public class ApiBoardCtrl extends Ctrl{
         String result = null;
         String uri = null;
         String[] t = null;
+        String aesKey = null;
+        String aesIv = null;
+        String compId = null;
+        String articleNo = null;
+        Article article = null;
         HttpSession session = null;
+
+        session = request.getSession();
+        compId = (String)session.getAttribute("compId");
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
         
         uri = request.getRequestURI();
         if (uri.substring(0, 1).equals("/"))
@@ -117,8 +132,20 @@ public class ApiBoardCtrl extends Ctrl{
 
         if(t.length >= 4 || t[3].equals("attached")){ // 첨부파일 모드
 
-        }else{ // 자료실 게시글 번호 모드
-
+        }else if(t.length >= 4){ // 자료실 게시글 번호 모드
+            articleNo = t[3];
+            if(compId == null){
+                result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+            }else if(aesKey == null || aesIv == null){
+                result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
+            }else if(articleNo == null){
+                result = "{\"result\":\"failure\",\"msg\":\"Article number is Not verified.\"}";
+            }else{
+                article = boardService.getFileboxArticle(compId, boardService.strToInt(articleNo));
+                result = article.toJson();
+                result = boardService.encAes(result, aesKey, aesIv);
+                result = "{\"result\":\"ok\",\"data\":\"" + result + "\"}";
+            }
         }
         
         return result;
@@ -192,6 +219,7 @@ public class ApiBoardCtrl extends Ctrl{
         String[] t = null;
         HttpSession session = null;
         
+        session = request.getSession();
         uri = request.getRequestURI();
         if (uri.substring(0, 1).equals("/"))
             uri = uri.substring(1);
@@ -215,6 +243,7 @@ public class ApiBoardCtrl extends Ctrl{
         String[] t = null;
         HttpSession session = null;
         
+        session = request.getSession();
         uri = request.getRequestURI();
         if (uri.substring(0, 1).equals("/"))
             uri = uri.substring(1);
