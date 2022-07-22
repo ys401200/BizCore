@@ -90,6 +90,7 @@ public class ApiBoardCtrl extends Ctrl{
         return result;
     } // End of fileBoxGet()
 
+    
     @RequestMapping(value="/filebox", method=RequestMethod.DELETE)
     public String fileboxDelete(HttpServletRequest request) {
         String result = null;
