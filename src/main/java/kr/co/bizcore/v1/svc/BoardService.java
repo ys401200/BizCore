@@ -1,7 +1,10 @@
 package kr.co.bizcore.v1.svc;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -70,13 +73,17 @@ public class BoardService extends Svc{
         return true;
     } // End of saveAttachedFile()
 
-    public void postNewArticle(String compId, Article article, List<Object> files, HashMap<String, String> attached){
+    public int postNewArticle(String compId, Article article, List<Object> files, HashMap<String, String> attached){
         String ognName = null;
         String savedName = null;
         String path = null;
         File tempFile = null, targetFile = null;
         Long size = 0L;
         Object[] keyset = null;
+        int result = 0, read = 0;
+        FileInputStream fin = null;
+        FileOutputStream fout = null;
+        byte[] buffer = new byte[1024];
 
         // 신규 게시글 DB에 저장
         article.setNo(boardMapper.getNewFileboxNo(compId)); // 글 번호 지정
@@ -91,10 +98,23 @@ public class BoardService extends Svc{
                 attached.remove(ognName);
                 tempFile = new File(path + "/temp/" + savedName);
                 targetFile = new File(path + "/attached/" + savedName);
-                if(tempFile.exists()){
-                    if(tempFile.renameTo(targetFile)){
-                        size = targetFile.length();
-                        boardMapper.addFileboxAttachedFile(compId, article.getNo(), ognName, savedName, size);
+                if(tempFile.exists()){ //파일이 존재하는지 먼저 검증
+                    if(tempFile.renameTo(targetFile)){ // 1차 : renameTo()로 간단히 이동 시도
+                        result++;
+                    }else{  // 실패시 2차 시도 : 파일 읽어서 이동 후 임시 파일 삭제
+                        try {
+                            fin = new FileInputStream(tempFile);
+                            fout = new FileOutputStream(targetFile);
+                            read = 0;
+                            while((read = fin.read(buffer, 0, buffer.length)) != -1){
+                                fout.write(buffer, 0, read);
+                            }
+                            fin.close();
+                            fout.flush();
+                            fout.close();
+                            tempFile.delete();
+                            result++;
+                        } catch (Exception e) {e.printStackTrace();}
                     }
                 }
             }
@@ -107,6 +127,7 @@ public class BoardService extends Svc{
                 tempFile.delete();
             }
         }
+        return result;
     } // End of postNewArticle()
     
 }

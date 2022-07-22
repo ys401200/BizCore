@@ -60,6 +60,7 @@ public class ApiBoardCtrl extends Ctrl{
         HttpSession session = null;
         HashMap<String, String> attached = null;
         String data = null;
+        int count = 0;
 
         session = request.getSession();
         compId = (String)session.getAttribute("compId");
@@ -82,7 +83,8 @@ public class ApiBoardCtrl extends Ctrl{
             article.setWriter(boardService.strToInt(userNo));
             article.setTitle(json.getString("title"));
             article.setContent(json.getString("content"));
-            result = "{\"result\":\"ok\",\"msg\":\"success file upload and add article.\"}";
+            count = boardService.postNewArticle(compId, article, files, attached);
+            result = "{\"result\":\"ok\",\"msg\":\"success file upload and add article. file count : " + count + "\"}";
         }
         
         return result;
