@@ -54,6 +54,9 @@ public class ViewConfig implements WebMvcConfigurer {
         // DEBUG 모드 세팅
         Svc.DEBUG = debug.equals("true");
 
+        // 시간 교정이 필요한 경우 그 교정값을 설정함
+        systemService.timeCorrection();
+
         // 파일 저장공간 확인 및 기초 디렉토리 확인/생성
         compIdList = systemService.getCompanyList();
         rootPath = fileUploadedPath;

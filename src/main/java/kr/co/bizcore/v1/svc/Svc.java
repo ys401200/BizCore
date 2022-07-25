@@ -54,6 +54,8 @@ public abstract class Svc {
 
     public static boolean DEBUG;
 
+    protected long timeCorrect;
+
     protected DataFactory dataFactory = DataFactory.getFactory();
 
     public boolean debug(){return DEBUG;}
