@@ -19,7 +19,7 @@ public class SimpleSopp implements Domain{
     private int endUser;
     private int employee;
     private long expectedSales;
-    private String progress;
+    private String status;
     private Date created;
     private Date modified; 
 

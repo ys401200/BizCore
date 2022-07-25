@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import kr.co.bizcore.v1.domain.SimpleSopp;
+import kr.co.bizcore.v1.domain.Sopp;
 
 @Service
 public class SoppService extends Svc {
@@ -27,4 +28,7 @@ public class SoppService extends Svc {
         return result;
     } // End of getSoppList()
     
+    public Sopp getSopp(int soppNo, String compId){
+        return soppMapper.getSopp(soppNo, compId);
+    }
 }
