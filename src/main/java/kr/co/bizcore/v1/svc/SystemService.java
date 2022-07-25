@@ -179,4 +179,13 @@ public class SystemService extends Svc {
         return result;
     } // End of getCommonCode2()
 
+    public void timeCorrection(){
+        long t = 0L,  server = 0L, db = 0L;
+        server = System.currentTimeMillis() / 1000;
+        db = systemMapper.getCurrentTimeFromDB();
+        t = (db - server) / 60;
+        t = t * 60000;
+        timeCorrect = t;
+    } // End of timeCorrection()
+
 }
