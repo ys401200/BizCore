@@ -1,28 +1,28 @@
-let cipher, msg, apiServer, modal, storage;
+let cipher, msg, apiServer, modal, storage;	
 
 function init(){
 	setTimeout(() => {
 		$("#loadingDiv").loading({
 			onStart: function(loading) {
 				loading.overlay.fadeIn(1000);
-		  	},
-		 	onStop: function(loading) {
-		    	loading.overlay.fadeOut(1000);
-		  	}
+			},
+			onStop: function(loading) {
+				loading.overlay.fadeOut(1000);
+			}
 		});
 	}, 70);
-
+	
 	apiServer = "";
 	storage = {
 		"drag": {x: 0, y: 0}
 	};
-
+	
 	getUserMap();
 	getDeptMap();
 	getBasicInfo();
 	getCustomer();
 	getCommonCode();
-
+		
 	cipher = { // 암호화 모듈
 		"encRsa" : (message) => {
 					let result, rsa;
@@ -171,6 +171,9 @@ function init(){
 		},
 		"show": () => {
 			modal.clear();
+			setTimeout(() => {
+				setTiny();
+			},100);
 			modal.wrap.css('display','flex').hide().fadeIn();
 		},
 		"hide": () => {
@@ -268,6 +271,27 @@ function init(){
 		},
 	},
 
+	crud = {
+		"defaultAjax": (url, method, data, successFnc, errorFnc) => {
+			$.ajax({
+				url: url,
+				method: method,
+				data: data,
+				dataType: "json",
+				success: () => {
+					if(successFnc !== undefined){
+						successFnc();
+					}
+				},
+				error: () => {
+					if(errorFnc !== undefined){
+						errorFnc();
+					}
+				}
+			})
+		}
+	}
+
 	cipher.aes.key = sessionStorage.getItem("aesKey");
 	cipher.aes.iv = sessionStorage.getItem("aesIv");
 	msg.cnt = document.getElementsByClassName("msg_cnt")[0];
@@ -290,6 +314,7 @@ function init(){
 	});
 	
 	menuActive();
+	setTiny();
 }
 
 //페이징될 때 header, sideMenu active를 위한 함수
@@ -679,6 +704,7 @@ function getCommonCode(){
 	})
 } // End of getDeptMap()
 
+//파일 dropzone class 변경
 function toggleClass(className){
 	let list = ["dragenter", "dragleave", "dragover", "drop"];
 	let dropZone = $(".dropZone");
@@ -692,6 +718,7 @@ function toggleClass(className){
 	}
 }
 
+//파일 drag show 샘플
 function showFile(files){
 	let dropZone = $(".dropZone");
 	dropZone.innerHTML = "";
@@ -701,21 +728,25 @@ function showFile(files){
 	}
 }
 
+//drag 최상위 부모 클래스 전달
 function enableDragSort(listClass) {
 	let sortableLists = document.getElementsByClassName(listClass);
 	Array.prototype.map.call(sortableLists, (list) => {enableDragList(list)});
 }
   
+//drag 자식 클래스 전달
 function enableDragList(list) {
 	Array.prototype.map.call(list.children, (item) => {enableDragItem(item)});
 }
 
+//자식 클래스 draggable, ondrag, ondragend 기능 적용
 function enableDragItem(item) {
 	item.setAttribute('draggable', true);
 	item.ondrag = handleDrag;
 	item.ondragend = handleDrop;
 }
 
+//drag 기능
 function handleDrag(item) {
 	let selectedItem, tempEl, currentEl, x, t;
 
@@ -750,10 +781,13 @@ function handleDrag(item) {
 
 	list.insertBefore(selectedItem, swapItem);
 }
+
+//drop 기능
 function handleDrop(item) {
 	item.target.classList.remove('dragActive');
 }
 
+//페이지네이션에 필요한 계산 공통함수
 function paging(total, currentPage, articlePerPage){
 	let lastPage, result = [], max;
 
@@ -778,4 +812,30 @@ function paging(total, currentPage, articlePerPage){
 	result.push(currentPage, articlePerPage, lastPage, max);
 
 	return result;
+}
+
+//tinyMCE
+function setTiny(){
+	var plugins = [
+		"advlist", "autolink", "lists", "link", "image", "charmap", "print", "preview", "anchor",
+		"searchreplace", "visualblocks", "code", "fullscreen", "insertdatetime", "media", "table",
+		"paste", "code", "help", "wordcount", "save"
+	];
+	
+	var edit_toolbar = 'formatselect fontselect fontsizeselect |'
+		   + ' forecolor backcolor |'
+		   + ' bold italic underline strikethrough |'
+		   + ' alignjustify alignleft aligncenter alignright |'
+		   + ' bullist numlist |'
+		   + ' table tabledelete |'
+		   + ' link image';
+	
+	tinymce.init({
+		language: "ko_KR",
+		menubar: false,
+		plugins: plugins,
+		toolbar: edit_toolbar,
+		selector: 'textarea',
+		height : "200",
+	});
 }

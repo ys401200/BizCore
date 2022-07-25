@@ -24,6 +24,7 @@
 <script src="/js/jquery.easing.js"></script>
 <script src="/js/loading.js"></script>
 <script src="/js/<%= getPathName %>/<%= getPathName %>.js"></script>
+<script src="https://cdn.tiny.cloud/1/kh4eirod6bgv8u2sxlaeikxy5hxfogh0edhzloljxh6zf046/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
 
 <title>BizCore</title>
 </head>
