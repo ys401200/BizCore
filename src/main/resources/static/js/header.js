@@ -314,7 +314,9 @@ function init(){
 	});
 	
 	menuActive();
-	setTiny();
+	setTimeout(() => {
+		setTiny();
+	}, 100);
 }
 
 //페이징될 때 header, sideMenu active를 위한 함수
@@ -816,13 +818,13 @@ function paging(total, currentPage, articlePerPage){
 
 //tinyMCE
 function setTiny(){
-	var plugins = [
+	let plugins = [
 		"advlist", "autolink", "lists", "link", "image", "charmap", "print", "preview", "anchor",
 		"searchreplace", "visualblocks", "code", "fullscreen", "insertdatetime", "media", "table",
 		"paste", "code", "help", "wordcount", "save"
 	];
 	
-	var edit_toolbar = 'formatselect fontselect fontsizeselect |'
+	let edit_toolbar = 'formatselect fontselect fontsizeselect |'
 		   + ' forecolor backcolor |'
 		   + ' bold italic underline strikethrough |'
 		   + ' alignjustify alignleft aligncenter alignright |'
