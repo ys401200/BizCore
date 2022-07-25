@@ -52,6 +52,8 @@ public abstract class Svc {
     @Autowired
     protected SoppMapper soppMapper;
 
+    public static String fileStoragePath;
+
     public static boolean DEBUG;
 
     protected long timeCorrect;
