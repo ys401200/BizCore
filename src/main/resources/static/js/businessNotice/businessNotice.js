@@ -12,7 +12,7 @@ $(document).ready(() => {
 function getNoticeList() {
 	let url;
 
-	url = apiServer + "/api/notice"
+	url = apiServer + "/api/notice";
 	$.ajax({
 		"url": url,
 		"method": "get",
@@ -46,7 +46,6 @@ function drawNoticeList() {
 
 	pageContainer = document.getElementsByClassName("pageContainer");
 	container = $(".gridNoticeList");
-
 
 	header = [
 		{
@@ -92,25 +91,16 @@ function drawNoticeList() {
 		data.push(str);
 	}
 
-	let pageNation = createPaging(pageContainer[0], result[3], "pageMove", result[0]);
+	let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawNoticeList", result[0]);
 	pageContainer[0].innerHTML = pageNation;
 	//표 만들기 
 	createGrid(container, header, data, ids, fnc);
 }// End of drawNoticeList()
 
-
-function pageMove(page, handler) {
-	let selectedPage = parseInt(page);
-	storage.currentPage = selectedPage;
-	drawNoticeList();
-}
-
-
 function noticeDetailView(event) {// 선택한 그리드의 글 번호 받아오기 
 	let no = event.dataset.id;
 	let url;
 	url = apiServer + "/api/notice/" + no;
-
 
 	$.ajax({
 		"url": url,

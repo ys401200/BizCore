@@ -7,6 +7,7 @@ build/
 
 ## 서버 설정
 application.yml
+application.pid
 
 ## 파일 아카이브
 src/main/resources/archive/**/*
