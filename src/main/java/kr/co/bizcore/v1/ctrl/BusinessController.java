@@ -227,10 +227,9 @@ public class BusinessController extends Ctrl{
 
         if (uri.substring(0, 1).equals("/"));
             uri = uri.substring(1);
-        if (uri.substring(uri.length() - 1).equals("/"));
-            uri = uri.substring(0, uri.length() - 1);
 
         tempStrArr = uri.split("/");
+
         if(tempStrArr.length == 0){
             pathName = "root";
         }else if(tempStrArr.length == 1){

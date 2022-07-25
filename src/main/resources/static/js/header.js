@@ -13,9 +13,7 @@ function init(){
 	}, 70);
 	
 	apiServer = "";
-	storage = {
-		"drag": {x: 0, y: 0}
-	};
+	storage = {};
 	
 	getUserMap();
 	getDeptMap();
@@ -814,6 +812,17 @@ function paging(total, currentPage, articlePerPage){
 	result.push(currentPage, articlePerPage, lastPage, max);
 
 	return result;
+}
+
+function inputTextKeyup(custNo){
+	let text, jsonData;
+
+	jsonData = storage.customer;
+	console.log(jsonData);
+
+	for(let i = 0; i < jsonData.length; i++){
+		console.log(jsonData[])
+	}
 }
 
 //tinyMCE
