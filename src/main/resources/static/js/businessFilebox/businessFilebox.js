@@ -15,8 +15,8 @@ function drawFileForm() {
 	target = $(".fileboxList");
 
 	html = "<div style='display:grid;grid-template-columns:10% 90%'><label class='labelClass'>제목</label><input type='text' class='titleClass'/></div>" +
-		"<div style='display:grid;grid-template-columns:10% 90%' class='contentDiv'><label class='labelClass'>내용</label><textarea style='resize : none;'  class='contentClass' ></textarea></div>" +
-		"<div style='display:grid;grid-template-columns:10% 90%'><label class='labelClass'>첨부파일</label><input type='file' multiple class='fileClass'/></div>" +
+		"<div style='display:grid;grid-template-columns:10% 90%' class='contentDiv'><label class='labelClass'>내용</label><textarea style='resize : none;'  class='contentClass' id='contentClass' ></textarea></div>" +
+		"<div style='display:grid;grid-template-columns:10% 5% 85%'><label class='labelClass'>첨부파일</label><label for='fileClass' id='fileClassLabel'>첨부파일</label><input type='file' multiple class='fileClass' id='fileClass'/></div>" +
 		"<div class='attachedFileName'></div>" +
 		"<div class='buttonDiv'><button type='button' class='uploadFileBoard' onclick='uploadFileBoard()'>등록</button><button type='button'>취소</button></div>";
 
@@ -98,7 +98,7 @@ function submitFile(fullData) {
 
 	fullDataSplit = fullData.split("\r\n");
 	title = fullDataSplit[0];
-
+    fullData = cipher.encAes(fullData); 
 	$.ajax({
 		"url": url,
 		"method": "post",
@@ -129,38 +129,23 @@ function drawTempFileList(title) {
 	html = target.html();
 	titleSplit = title.split(".");
 	format = titleSplit[1];
+	console.log(format);
 
-	if (format === 'xls' || format === 'xlsx') {
-		//img = "<img src='/images/xls.jpg'/>";
+	if (format === 'avi' || format === 'doc' || format === 'gif' || format === 'iso' || format === 'jpg' || format === 'pdf'
+		|| format === 'png' || format === 'ppt' || format === 'pptx' || format === 'ps' || format === 'psd' || format === 'rar'
+		|| format === 'txt' || format === 'xlsx' || format === 'zip') {
+		img = format;
 	}
-	else if (format === 'hwp') {
-		//img = "<img src='/images/hwp.jpg'/>";
-	}
-	else if (format === 'pdf') {
-		//img = "<img src='/images/pdf.jpg'/>";
-	}
-	else if (format === 'jpg' || format === 'jpeg' || format === 'png' || format === 'bmp') {
-		//	img = "<img src='/images/image.jpg'/>";
-	}
-	else if (format === 'txt') {
-		//img = "<img src='/images/text.jpg'/>";
-	}
-	else if (format === 'ppt') {
-		//img = "<img src='/images/ppt.jpg'/>";
-	}
-	else if (format === 'zip') {
-		//img ="<img src='/images/zip.jpg'/>";
+	else {
+		img = "default";
 	}
 
-	html += ("<div style='display:grid;grid-template-columns: 10% 45% 45%' class='eachFileDiv'>" + img + "<div>" + title + "</div><button type='button' class='fileDelete' onclick='deleteParentDiv(this)'>×</button></div>");
+	html += ("<div style='display:grid;grid-template-columns: 10% 45% 45%' class='eachFileDiv'><img src='../../images/icons/" + img + ".png'><div>" + title + "</div><button type='button' class='fileDelete' onclick='deleteParentDiv(this)'>×</button></div>");
 
 	target.html(html);
 
 
 } // End of drawTempFileList(title);
-
-
-
 
 
 
@@ -177,46 +162,52 @@ function deleteParentDiv(obj) {
 
 // 자료실 글 insert 하는 함수 
 function uploadFileBoard() {
-	let url, title, content ,data;
+	let url, title, content, data;
 	let fileDivs = [];
 	title = $(".titleClass").val();
-	content = $(".contentClass").val();
+
+
+//에디터에 입력된 내용 가져오는 것 
+	content = tinyMCE.get("contentClass").getContent();
+
 
 	if (title === null || title === "" || title === undefined) {
 		modal.alert("알림", "제목을 입력하세요");
 
 	} else if (content === null || content === "" || content === undefined) {
 		modal.alert("알림", "내용을 입력하세요");
+
 	}
 
 
-	 gettempFileListArr(fileDivs);
+
+	gettempFileListArr(fileDivs);
 
 	url = apiServer + "/api/board/filebox";
 
 
-    data = {
-			"title": title,
-			"content": content,
-			"files": fileDivs
-		};
-		data=JSON.stringify(data)
-		data = cipher.encAes(data);
-		///////////// JSON
-//JSON.stringify(data) application/json          data text/plain 
+	data = {
+		"title": title,
+		"content": content,
+		"files": fileDivs
+	};
+	data = JSON.stringify(data)
+	data = cipher.encAes(data);
+	///////////// JSON
+	//JSON.stringify(data) application/json          data text/plain 
 	$.ajax({
 
 		"url": url,
 		"method": "post",
 		"data": data,
-		"contentType" : "application/json " ,
+		"contentType": "application/json ",
 		"dataType": "json",
 		"cache": false,
 		success: (result) => {
 			if (result.result === "ok") {
-				modal.alert("알림","자료실 글을 등록하는데 성공 했습니다 ");
+				modal.alert("알림", "자료실 글을 등록하는데 성공 했습니다 ");
 			} else {
-				modal.alert("알림","자료실 글을 등록하는데 실패했습니다 ");
+				modal.alert("알림", "자료실 글을 등록하는데 실패했습니다 ");
 			}
 		}
 	})

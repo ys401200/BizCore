@@ -75,9 +75,7 @@ div {
 
 }
 
-.contentDiv {
-	height : 400px;
-}
+
 
 .fileDelete {
 	width: 1.5rem;
@@ -86,6 +84,33 @@ div {
 	border-radius: 10px;
 	color:  #332E85;
 	background-color:#EDEDF4;
+	text-align : left;
 	
 }
 
+.attachedFileName  div {
+	width : 90%;
+	float : right;
+}
+
+
+.fileClass {
+	display : none;
+}
+
+#fileClassLabel {
+	color: #EDEDF4; 
+	background-color:#332E85;
+	text-align : center;
+	border-radius: 10px;
+}
+
+
+.imgFileDiv {
+	vertical-align: middle;
+}
+
+
+.eachFileDiv {
+	margin : 0;
+}
