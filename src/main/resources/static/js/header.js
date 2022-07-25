@@ -21,6 +21,7 @@ function init(){
 	getDeptMap();
 	getBasicInfo();
 	getCustomer();
+	getCommonCode();
 
 	cipher = { // 암호화 모듈
 		"encRsa" : (message) => {
@@ -642,6 +643,32 @@ function getBasicInfo(){
 		}
 	})
 } // End of getBasicInfo()
+
+// API 서버에서 코드 정보를 가져오는 함수
+function getCommonCode(){
+	let url;
+
+	url = apiServer + "/api/system/code";
+
+	$.ajax({
+		"url": url,
+		"method": "get",
+		"dataType": "json",
+		"cache": false,
+		success: (data) => {
+			let list;
+
+			if (data.result === "ok") {
+				list = cipher.decAes(data.data);
+				list = JSON.parse(list);
+				storage.code = list;
+				console.log("[getCommonCode] Success getting Common code list.");
+			} else {
+				msg.set("코드 정보를 가져오지 못했습니다.");
+			}
+		}
+	})
+} // End of getDeptMap()
 
 function toggleClass(className){
 	let list = ["dragenter", "dragleave", "dragover", "drop"];

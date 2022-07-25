@@ -2,10 +2,12 @@ package kr.co.bizcore.v1.svc;
 
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import kr.co.bizcore.v1.domain.CommonCode;
 import kr.co.bizcore.v1.domain.ConnUrl;
 import kr.co.bizcore.v1.domain.SimpleCustomer;
 
@@ -108,28 +110,73 @@ public class SystemService extends Svc {
         return result;
     } // End of getBasicInfo
 
+    public List<String> getCompanyList(){
+        return commonMapper.companyList();
+    }
+
 
     public String getCommonCode(String compId){
         String result = null;
-        List<HashMap<String, String>> list = null;
-        HashMap<String, String> each = null;
-        String code = null;
-        String name = null;
-        int x = 0;
+        List<HashMap<String, String>> list1 = null, list2 = null, list3 = null;
+        ArrayList<CommonCode> root = null, children = null;
+        CommonCode code1 = null, code2 = null, code3 = null;
+        HashMap<String, String> map1 = null, map2 = null, map3 = null;
+        String[] arr1 = null, arr2 = null, arr3 = null;
+        int x = 0, y = 0, z = 0;
 
-        list = commonMapper.getCommonCode(compId);
-        if(list != null){
+        root = new ArrayList<>();
+        children = new ArrayList<>();
+
+        list1 = commonMapper.getCommonCodeLevel1(compId);
+        if(list1 != null && list1.size() > 0) for(x = 0 ; x < list1.size() ; x++){ //if * for / Level : 1
+            map1 = list1.get(x);
+            arr1 = new String[3];
+            arr1[0] = map1.get("a");
+            arr1[1] = map1.get("b");
+            arr1[2] = map1.get("c");
+            code1 = new CommonCode(arr1);
+            //root.add(code1);
+            list2 = commonMapper.getCommonCodeLevel2(code1.getChildSelector(), compId);
+            if(list2 != null && list2.size() > 0) for(y = 0 ; y < list2.size() ; y++){ //if * for / Level : 2
+                map2 = list2.get(y);
+                arr2 = new String[3];
+                arr2[0] = map2.get("a");
+                arr2[1] = map2.get("b");
+                arr2[2] = map2.get("c");
+                code2 = new CommonCode(arr2);
+                //code1.addChildren(code2);
+                root.add(code2);
+                list3 = commonMapper.getCommonCodeLevel3(code2.getChildSelector(), compId);
+                if(list3 != null && list3.size() > 0) for(z = 0 ; z < list3.size() ; z++){ //if * for / Level : 3
+                    map3 = list3.get(z);
+                    arr3 = new String[3];
+                    arr3[0] = map3.get("a");
+                    arr3[1] = map3.get("b");
+                    arr3[2] = map3.get("c");
+                    code3 = new CommonCode(arr3);
+                    code2.addChildren(code3);
+                }  // END /if * for / Level : 3   
+            }  // END / if * for / Level : 2
+        }  // END / if * for / Level : 1
+        // 3계계 코드 체계에 대한 데이터 가져오기 끝
+
+        if(root != null && root.size() > 0) {
             result = "{";
-            for(x = 0 ; x < list.size() ; x++){
-                each = list.get(x);
-                code = each.get("code");
-                name = each.get("name");
-                if(x > 0)    result += ","; 
-                result += ("\"" + code + "\":\"" + name + "\"");
+            for(x = 0 ; x < root.size() ; x++){
+                children = root.get(x).getChildren();
+                if(x > 0)   result += ",";
+                result += ("\"" + root.get(x).getDesc() + "\":{");
+                if(children != null && children.size() > 0) for(y = 0 ; y < children.size() ; y++){
+                    if(y > 0)   result += ",";
+                    result += ("\"" + children.get(y).getValue() + "\":\"" + children.get(y).getDesc() + "\"");
+                }
+                result += "}";
+                //result += root.get(x).toString();
             }
+            result += "}";
         }
-        result += "}";
+
         return result;
-    } // End of getCommonCode()
+    } // End of getCommonCode2()
 
 }
