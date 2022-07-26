@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import kr.co.bizcore.v1.mapper.BoardMapper;
 import kr.co.bizcore.v1.mapper.CommonMapper;
 import kr.co.bizcore.v1.mapper.DeptMapper;
+import kr.co.bizcore.v1.mapper.SalesMapper;
 import kr.co.bizcore.v1.mapper.ScheduleMapper;
 import kr.co.bizcore.v1.mapper.SoppMapper;
 import kr.co.bizcore.v1.mapper.SystemMapper;
@@ -51,6 +52,9 @@ public abstract class Svc {
 
     @Autowired
     protected SoppMapper soppMapper;
+
+    @Autowired
+    protected SalesMapper salesMapper;
 
     public static String fileStoragePath;
 

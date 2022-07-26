@@ -1,55 +1,53 @@
 package kr.co.bizcore.v1.ctrl;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import kr.co.bizcore.v1.domain.Sopp;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 @RestController
-@RequestMapping("/api/sopp")
-public class ApiSoppCtrl extends Ctrl{
+@RequestMapping("/api/sales")
+public class ApiSalesCtrl extends Ctrl{
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public String apiSopp(HttpServletRequest request){
-        String result = null;
-        String compId = null;
-        String aesKey = null;
-        String aesIv = null;
+    public String apiSalesGet(HttpServletRequest request){
+        String result = null, data = null, aesKey = null, aesIv = null, compId = null;
         HttpSession session = null;
+        String list = null;
 
         session = request.getSession();
-        compId = (String)session.getAttribute("compId");
-        aesKey = (String)session.getAttribute("aesKey");
-        aesIv = (String)session.getAttribute("aesIv");
-        if(compId == null)  compId = (String)request.getAttribute("compId");
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        compId = (String) session.getAttribute("compId");
+        if (compId == null)
+            compId = (String) request.getAttribute("compId");
 
-        if(compId == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
-        }else if(aesKey == null || aesIv == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
-        }else{
-            result = soppService.getSoppList(compId);
-            result = soppService.encAes(result, aesKey, aesIv);
-            result = "{\"result\":\"ok\",\"data\":\"" + result + "\"}";
-        }
-
+        if (compId == null) {
+            result = "{\"result\":\"failure\",\"msg\":\"Company ID is not verified.\"}";
+        } else
+            list = salesService.getSalesList(compId);
+            if (list == null) {
+                result = "{\"result\":\"failure\",\"msg\":\"list is empty\"}";
+            } else {
+                list = salesService.encAes(list, aesKey, aesIv);
+                result = "{\"result\":\"ok\",\"data\":\"" + list + "\"}";
+            }
         return result;
-    } // End of apiSopp
+    }
+
     @RequestMapping(value = "/*", method = RequestMethod.GET)
-    public String apiSoppNumber(HttpServletRequest request){
+    public String apiSalesNumberGet(HttpServletRequest request){
         String result = null;
         String compId = null;
         String aesKey = null;
         String aesIv = null;
         String uri = null;
         String numberStr = null;
+        String data = null;
         String[] t = null;
         int number = -1;
-        Sopp sopp = null;
         HttpSession session = null;
 
         uri = request.getRequestURI();
@@ -77,16 +75,17 @@ public class ApiSoppCtrl extends Ctrl{
         }else if(aesKey == null || aesIv == null){
             result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
         }else{
-            sopp = soppService.getSopp(number, compId);
-            if(sopp == null){
-                result = "{\"result\":\"failure\",\"msg\":\"Sopp not exist.\"}";
+            data = salesService.getSales(number, compId);
+            if(data == null){
+                result = "{\"result\":\"failure\",\"msg\":\"Sales not exist.\"}";
             }else{
-                result = sopp.toJson();
-                result = soppService.encAes(result, aesKey, aesIv);
-                result = "{\"result\":\"ok\",\"data\":\"" + result + "\"}";
+                data = soppService.encAes(data, aesKey, aesIv);
+                result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
             }
         }
 
         return result;
-    } // End of apiSoppNumber()
+    }
+
+    
 }
