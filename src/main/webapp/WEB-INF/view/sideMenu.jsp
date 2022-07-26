@@ -23,7 +23,6 @@
 			</a>
 		  	<ul id="panel">
 		  		<li><a href="/business/schedule">- 일정조회</a></li>
-		  		<li><a href="#">- 일정등록</a></li>
 		  		<li><a href="#">- 개인업무일지작성</a></li>
 		  		<li><a href="#">- 업무일지검토</a></li>
 		  	</ul>
@@ -47,9 +46,7 @@
 			</a>
 			<ul id="panel">
 		  		<li><a href="/business/sopp">- 영업기회조회</a></li>
-		  		<li><a href="#">- 영업기회등록</a></li>
 		  		<li><a href="/business/est">- 견적관리</a></li>
-		  		<li><a href="#">- 견적작성</a></li>
 		  	</ul>
 		</li>
 		<li>
@@ -85,7 +82,6 @@
 			</a>
 			<ul id="panel">
 		  		<li><a href="/business/tech">- 기술지원조회</a></li>
-		  		<li><a href="#">- 기술지원등록</a></li>
 		  		<li><a href="#">- 유지보수계약관리</a></li>
 		  		<li><a href="#">- 유지보수매입관리</a></li>
 		  	</ul>

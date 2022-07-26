@@ -10,11 +10,45 @@ $(document).ready(() => {
 });
 
 function getContList() {
-	let url, dataArray = [], headerArray, container, pageContainer;
+	let url;
 	
+	url = apiServer + "/api/cont";
+
+	$.ajax({
+		"url": url,
+		"method": "get",
+		"dataType": "json",
+		"cache": false,
+		success: (data) => {
+			let jsonData;
+			if (data.result === "ok") {
+				jsonData = cipher.decAes(data.data);
+				jsonData = JSON.parse(jsonData);
+				storage.contList = jsonData;
+				window.setTimeout(drawContList, 200);
+			} else {
+				msg.set("등록된 계약이 없습니다");
+			}
+		}
+	});
+} // End of getScheduleList()
+
+function drawContList() {
+	let container, result, jsonData, header = [], data = [], ids = [], disDate, setDate, str, fnc;
+	
+	if (storage.contList === undefined) {
+		msg.set("등록된 계약이 없습니다");
+	}
+	else {
+		jsonData = storage.contList;
+	}
+
+	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+
 	pageContainer = document.getElementsByClassName("pageContainer");
-	container = $(".gridContList");
-	headerArray = [
+	container = $(".gridSalesList");
+
+	header = [
 		{
 			"title" : "등록일",
 			"align" : "center",
@@ -64,76 +98,58 @@ function getContList() {
 			"align" : "center",
 		}
 		
+		
 	];
-	
-	url = apiServer + "/api/schedule";
 
-	$.ajax({
-		"url": url,
-		"method": "get",
-		"dataType": "json",
-		"cache": false,
-		success: (data) => {
-			let list, disDate, setDate, str, ids = [], fnc;
-			if (data.result === "ok") {
-				list = cipher.decAes(data.data);
-				let jsonData = JSON.parse(list);
-				storage.scheduleList = jsonData;
+	for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+		disDate = dateDis(jsonData[i].created, jsonData[i].modified);
+		setDate = dateFnc(disDate);
 
-				for(let i = 0; i < jsonData.length; i++){
-					disDate = dateDis(jsonData[i].created, jsonData[i].modified);
-					setDate = dateFnc(disDate);
-
-					str = [
-						{
-							"setData": setDate,
-						},
-						{
-							"setData": jsonData[i].job,
-						},
-						{
-							"setData": jsonData[i].title,
-						},
-						{
-							"setData": jsonData[i].from,
-						},
-						{
-							"setData": jsonData[i].cust,
-						},
-						{
-							"setData": jsonData[i].user,
-						},
-						{
-							"setData": jsonData[i].no,
-						},
-						{
-							"setData": jsonData[i].sopp,
-						},
-						{
-							"setData": jsonData[i].detail,
-						},
-                        {
-							"setData": jsonData[i].no,
-						},
-                        {
-							"setData": jsonData[i].no,
-						},
-                        {
-							"setData": jsonData[i].no,
-						}
-					];
-
-					fnc = "contDetailView(this);";
-					ids.push(jsonData[i].no);
-					dataArray.push(str);
-				}
-
-				var pageNation = createPaging(pageContainer[0], 50, "testClick");
-				pageContainer[0].innerHTML = pageNation;
-				createGrid(container, headerArray, dataArray, ids, fnc);
-			} else {
-				msg.set("등록된 데이터가 없습니다");
+		str = [
+			{
+				"setData": setDate,
+			},
+			{
+				"setData": jsonData[i].job,
+			},
+			{
+				"setData": jsonData[i].title,
+			},
+			{
+				"setData": jsonData[i].from,
+			},
+			{
+				"setData": jsonData[i].cust,
+			},
+			{
+				"setData": jsonData[i].user,
+			},
+			{
+				"setData": jsonData[i].no,
+			},
+			{
+				"setData": jsonData[i].sopp,
+			},
+			{
+				"setData": jsonData[i].detail,
+			},
+			{
+				"setData": jsonData[i].no,
+			},
+			{
+				"setData": jsonData[i].no,
+			},
+			{
+				"setData": jsonData[i].no,
 			}
-		}
-	});
-} // End of getScheduleList()
+		];
+
+		fnc = "scheduleDetailView(this);";
+		ids.push(jsonData[i].no);
+		data.push(str);
+	}
+
+	let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawContList", result[0]);
+	pageContainer[0].innerHTML = pageNation;
+	createGrid(container, header, data, ids, fnc);
+}// End of drawNoticeList()
