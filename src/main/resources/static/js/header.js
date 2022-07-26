@@ -169,9 +169,12 @@ function init(){
 		},
 		"show": () => {
 			modal.clear();
+
 			setTimeout(() => {
 				setTiny();
+				inputDataList();
 			},100);
+
 			modal.wrap.css('display','flex').hide().fadeIn();
 		},
 		"hide": () => {
@@ -312,6 +315,7 @@ function init(){
 	});
 	
 	menuActive();
+
 	setTimeout(() => {
 		setTiny();
 	}, 100);
@@ -814,15 +818,64 @@ function paging(total, currentPage, articlePerPage){
 	return result;
 }
 
-function inputTextKeyup(custNo){
-	let text, jsonData;
+// function inputClick(e){
+// 	let ele, auto;
 
-	jsonData = storage.customer;
-	console.log(jsonData);
+// 	ele = $(e);
+// 	auto = ele.parents("div").find("#autoDiv");
 
-	for(let i = 0; i < jsonData.length; i++){
-		console.log(jsonData[])
-	}
+// 	if(ele.attr("type") === "text" && ele.data("keyup") !== "" && ele.data("keyup") !== undefined){
+// 		auto.remove();
+// 		ele.after("<datalist id='autoDiv'></datalist>");
+// 	}
+// }
+
+// function inputTextKeyup(e){
+// 	let text, jsonData, auto, ele, dataKey;
+
+// 	ele = $(e);
+// 	text = ele.val();
+// 	auto = ele.parents("div").find("#autoDiv");
+// 	dataKey = ele.data("keyup");
+// 	auto.html("");
+	
+// 	jsonData = storage[dataKey];
+
+// 	for(let key in jsonData){
+// 		if(ele.val() !== ""){
+// 			if(jsonData[key].name.indexOf(text) > -1){
+// 				auto.append("<option value='"+jsonData[key].name+"'></option>");
+// 			}
+// 			auto.show();
+// 		}else{
+// 			auto.html("");
+// 			auto.hide();
+// 		}
+// 	}
+// }
+
+function inputDataList(){
+	setTimeout(() => {
+		let input, jsonData;
+
+		input = $("input[type='text']");
+
+		input.each((index, item) => {
+			let dataKey = $(item).data("keyup");
+			if(storage[dataKey] !== undefined){
+
+				if($(item).data("keyup") !== undefined){
+					jsonData = storage[dataKey];
+					$(item).attr("list", "autoComplete_" + index);
+					$(item).after("<datalist id='autoComplete_" + index + "'></datalist>");
+					
+					for(let key in jsonData){
+						$(item).parents("div").find("#autoComplete_" + index).append("<option value='" + jsonData[key].name + "'></option>");
+					}
+				}
+			}
+		});
+	}, 700);
 }
 
 //tinyMCE

@@ -382,38 +382,38 @@ function listChange(event){
 	}
 }
 
-// function insertScheduleForm(){
-// 	let html = "";
+function insertScheduleForm(){
+	let html = "";
 
-// 	html = "<form class='defaultForm' id='insertScheduleForm'>";
-// 	html += "<div class='formDefaultTitle'><span>일정일자<span></div>";
-// 	html += "<div class='formDefaultContent'><input type='text'></div>";
-// 	html += "<div class='formDefaultTitle'><span>장소<span></div>";
-// 	html += "<div class='formDefaultContent'><input type='text'></div>";
-// 	html += "<div class='formDefaultTitle'><span>계약관련<span></div>";
-// 	html += "<div class='formDefaultContent'><input type='text'></div>";
-// 	html += "<div class='formDefaultTitle'><span>영업기회<span></div>";
-// 	html += "<div class='formDefaultContent'><input type='text'></div>";
-// 	html += "<div class='formDefaultTitle'><span>담당자<span></div>";
-// 	html += "<div class='formDefaultContent'><input type='text'></div>";
-// 	html += "<div class='formDefaultTitle'><span>매출처<span></div>";
-// 	html += "<div class='formDefaultContent'><input type='text'></div>";
-// 	html += "<div class='formDefaultTitle'><span>엔드유저<span></div>";
-// 	html += "<div class='formDefaultContent'><input type='text'></div>";
-// 	html += "<div class='formDefaultTitle'><span>일정구분<span></div>";
-// 	html += "<div class='formDefaultContent'><input type='text'></div>";
-// 	html += "<div class='formDefaultTitle'><span>활동형태<span></div>";
-// 	html += "<div class='formDefaultContent'><input type='text'></div>";
-// 	html += "<div class='formDefaultTitle'><span>제목<span></div>";
-// 	html += "<div class='formDefaultContent'><input type='text'></div>";
-// 	html += "<div class='formDefaultTitle'><span>내용<span></div>";
-// 	html += "<div class='formDefaultContent'><textarea></textarea></div>";
-// 	html += "</form>";
+	html = "<form class='defaultForm' id='insertScheduleForm'>";
+	html += "<div class='formDefaultTitle'><span>일정일자<span></div>";
+	html += "<div class='formDefaultContent'><input type='text' data-keyup='customer'></div>";
+	html += "<div class='formDefaultTitle'><span>장소<span></div>";
+	html += "<div class='formDefaultContent'><input type='text'></div>";
+	html += "<div class='formDefaultTitle'><span>계약관련<span></div>";
+	html += "<div class='formDefaultContent'><input type='text'></div>";
+	html += "<div class='formDefaultTitle'><span>영업기회<span></div>";
+	html += "<div class='formDefaultContent'><input type='text'></div>";
+	html += "<div class='formDefaultTitle'><span>담당자<span></div>";
+	html += "<div class='formDefaultContent'><input type='text'></div>";
+	html += "<div class='formDefaultTitle'><span>매출처<span></div>";
+	html += "<div class='formDefaultContent'><input type='text'></div>";
+	html += "<div class='formDefaultTitle'><span>엔드유저<span></div>";
+	html += "<div class='formDefaultContent'><input type='text'></div>";
+	html += "<div class='formDefaultTitle'><span>일정구분<span></div>";
+	html += "<div class='formDefaultContent'><input type='text'></div>";
+	html += "<div class='formDefaultTitle'><span>활동형태<span></div>";
+	html += "<div class='formDefaultContent'><input type='text'></div>";
+	html += "<div class='formDefaultTitle'><span>제목<span></div>";
+	html += "<div class='formDefaultContent'><input type='text'></div>";
+	html += "<div class='formDefaultTitle'><span>내용<span></div>";
+	html += "<div class='formDefaultContent'><textarea></textarea></div>";
+	html += "</form>";
 	
-// 	modal.show();
-// 	modal.headTitle.text("일정 등록");
-// 	modal.content.css("width", "800px");
-// 	modal.body.html(html);
-// 	modal.confirm.text("등록");
-// 	modal.close.text("취소");
-// }
+	modal.show();
+	modal.headTitle.text("일정 등록");
+	modal.content.css("width", "800px");
+	modal.body.html(html);
+	modal.confirm.text("등록");
+	modal.close.text("취소");
+}
