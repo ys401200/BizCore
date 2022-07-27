@@ -10,6 +10,7 @@ import java.util.Map;
 import kr.co.bizcore.v1.domain.CommonCode;
 import kr.co.bizcore.v1.domain.ConnUrl;
 import kr.co.bizcore.v1.domain.SimpleCustomer;
+import kr.co.bizcore.v1.domain.User;
 
 @Service
 public class SystemService extends Svc {
@@ -187,5 +188,27 @@ public class SystemService extends Svc {
         t = t * 60000;
         timeCorrect = t;
     } // End of timeCorrection()
+
+    public String getMyInfo(String userNo, String pw, String compId){
+        String result = null;
+        User my = null;
+
+        my = userMapper.getMy(userNo, pw, compId);
+        if(my != null)  result = my.toJson();
+
+        return result;
+    }
+
+    public boolean modifyPassword(String old, String neww, String userNo, String compId){
+        int x = 0;
+        x = userMapper.modifyMyPw(compId, userNo, old, neww);
+        return x > 0;
+    }
+
+    public boolean modifyMyInfo(String compId, String userNo, String email, String phone){
+        int x = 0;
+        x = userMapper.modifyMyInfo(phone, email, userNo, compId);
+        return x > 0;
+    }
 
 }

@@ -2,6 +2,9 @@ package kr.co.bizcore.v1.ctrl;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.json.JSONObject;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,130 +44,104 @@ public class ApiCtrl extends Ctrl {
         return result;
     } // End of dept
 
-    @RequestMapping(value = "/dept", method = RequestMethod.POST)
-    public String deptPost() {
+    @RequestMapping(value = "/my", method = RequestMethod.GET)
+    public String myGet(HttpServletRequest request) {
+        String result = null, aesKey = null, aesIv = null, compId = null, userNo, uri = null, pw = null;
+        HttpSession session = null;
 
-        return null;
+        session = request.getSession();
+        userNo = (String)session.getAttribute("userNo");
+        compId = (String)session.getAttribute("compId");
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
+        uri = request.getRequestURI();
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+        }else if(uri.length() <= 8){
+            result = "{\"result\":\"failure\",\"msg\":\"Need Pssword.\"}";
+        }else if(aesIv == null || aesKey == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Not found AES key.\"}";
+        }else{
+            pw = uri.substring(8);
+            pw = userService.decAes(pw, aesKey, aesIv);
+            result = systemService.getMyInfo(userNo, pw, compId);
+            if(result == null){
+                result = "{\"result\":\"failure\",\"msg\":\"Invalid password.\"}";
+            }else{
+                result = systemService.encAes(result, aesKey, aesIv);
+                result = "{\"result\":\"ok\",\"data\":\"" + result + "\"}";
+            }
+        }
+
+        return result;
     } // End of dept
 
-    @RequestMapping("/customer")
-    public String customer(HttpServletRequest request, HttpServletResponse response) {
+    // 개인정보 수정
+    @RequestMapping(value = "/my", method = RequestMethod.POST)
+    public String myPost(HttpServletRequest request, @RequestBody String requestBody) {
+        String result = null, aesKey = null, aesIv = null, compId = null, userNo, phone = null, email, str = null;
+        JSONObject json = null;
+        HttpSession session = null;
 
-        return null;
-    }
+        session = request.getSession();
+        userNo = (String)session.getAttribute("userNo");
+        compId = (String)session.getAttribute("compId");
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
 
-    @RequestMapping("/product")
-    public String product(HttpServletRequest request, HttpServletResponse response) {
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+        }else if(aesIv == null || aesKey == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Not found AES key.\"}";
+        }else{
+            str = systemService.decAes(requestBody, aesKey, aesIv);
+            json = new JSONObject(str);
+            email = json.getString("email");
+            phone = json.getString("phone");
+            if(systemService.modifyMyInfo(compId, userNo, email, phone)){
+                result = "{\"result\":\"ok\"}";
+            }else{
+                result = "{\"result\":\"failure\"}";
+            }
+        }
 
-        return null;
-    }
+        return result;
+    } // End of myPost()
 
-    @RequestMapping("/calendar")
-    public String calendar(HttpServletRequest request, HttpServletResponse response) {
+    // 비번 변경
+    @RequestMapping(value = "/my", method = RequestMethod.PUT)
+    public String myPut(HttpServletRequest request, @RequestBody String requestBody) {
+        String result = null, aesKey = null, aesIv = null, compId = null, userNo, pwOld = null, pwNew, str = null;
+        JSONObject json = null;
+        HttpSession session = null;
 
-        return null;
-    }
+        session = request.getSession();
+        userNo = (String)session.getAttribute("userNo");
+        compId = (String)session.getAttribute("compId");
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
 
-    @RequestMapping("/sales")
-    public String sales(HttpServletRequest request, HttpServletResponse response) {
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+        }else if(aesIv == null || aesKey == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Not found AES key.\"}";
+        }else{
+            str = systemService.decAes(requestBody, aesKey, aesIv);
+            json = new JSONObject(str);
+            pwOld = json.getString("old");
+            pwNew = json.getString("new");
+            if(systemService.modifyPassword(pwOld, pwNew, userNo, compId)){
+                result = "{\"result\":\"ok\"}";
+            }else{
+                result = "{\"result\":\"failure\",\"msg\":\"Invalid Password\"}";
+            }
+        }
 
-        return null;
-    }
-
-    @RequestMapping("/contract")
-    public String contract(HttpServletRequest request, HttpServletResponse response) {
-
-        return null;
-    }
-
-    @RequestMapping("/support")
-    public String support(HttpServletRequest request, HttpServletResponse response) {
-
-        return null;
-    }
-
-    @RequestMapping("/procure")
-    public String procure(HttpServletRequest request, HttpServletResponse response) {
-
-        return null;
-    }
-
-    @RequestMapping("/filebox")
-    public String filebox(HttpServletRequest request, HttpServletResponse response) {
-
-        return null;
-    }
-
-    @RequestMapping("/hr")
-    public String hr(HttpServletRequest request, HttpServletResponse response) {
-
-        return null;
-    }
-
-    @RequestMapping("/appr")
-    public String appr(HttpServletRequest request, HttpServletResponse response) {
-
-        return null;
-    }
-
-    @RequestMapping("/form")
-    public String form(HttpServletRequest request, HttpServletResponse response) {
-
-        return null;
-    }
-
-    @RequestMapping("/docbox")
-    public String docbox(HttpServletRequest request, HttpServletResponse response) {
-
-        return null;
-    }
-
-    @RequestMapping("/bankacc")
-    public String bankacc(HttpServletRequest request, HttpServletResponse response) {
-
-        return null;
-    }
-
-    @RequestMapping("/card")
-    public String card(HttpServletRequest request, HttpServletResponse response) {
-
-        return null;
-    }
-
-    @RequestMapping("/common")
-    public String common(HttpServletRequest request, HttpServletResponse response) {
-
-        return null;
-    }
-
-    @RequestMapping("/my")
-    public String my(HttpServletRequest request, HttpServletResponse response) {
-
-        return null;
-    }
-
-    @RequestMapping("/vacation")
-    public String vacation(HttpServletRequest request, HttpServletResponse response) {
-
-        return null;
-    }
-
-    @RequestMapping("/accslip")
-    public String accslip(HttpServletRequest request, HttpServletResponse response) {
-
-        return null;
-    }
-
-    @RequestMapping("/workreport")
-    public String workreport(HttpServletRequest request, HttpServletResponse response) {
-
-        return null;
-    }
-
-    @RequestMapping("/bbs")
-    public String bbs(HttpServletRequest request, HttpServletResponse response) {
-
-        return null;
-    }
+        return result;
+    } // End of myPut()
 
 }
