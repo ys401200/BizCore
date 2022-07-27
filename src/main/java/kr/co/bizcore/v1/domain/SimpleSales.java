@@ -12,13 +12,13 @@ import lombok.Setter;
 public class SimpleSales implements Domain{
 
     private int no;
-    private String title;
-    private Date from;
-    private Date to;
-    private int sopp;
-    private int user;
-    private int customer;
-    private int endUser;
+    private String title; //제목
+    private Date from; //활동일 from
+    private Date to; //활동일 to
+    private int sopp; //영업기회
+    private int user; //담당자
+    private int customer; //매출처
+    private int endUser; //엔드유저
     private Date created;
     private Date modified;
 
