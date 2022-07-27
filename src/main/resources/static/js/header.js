@@ -279,9 +279,12 @@ function init(){
 				method: method,
 				data: data,
 				dataType: "json",
-				success: () => {
+				success: (result) => {
 					if(successFnc !== undefined){
-						successFnc();
+						let jsonData;
+						jsonData = cipher.decAes(result.data);
+						jsonData = JSON.parse(jsonData);
+						successFnc(jsonData);
 					}
 				},
 				error: () => {
@@ -289,7 +292,7 @@ function init(){
 						errorFnc();
 					}
 				}
-			})
+			});
 		}
 	}
 
@@ -854,6 +857,7 @@ function paging(total, currentPage, articlePerPage){
 // 	}
 // }
 
+//자동완성
 function inputDataList(){
 	setTimeout(() => {
 		let input, jsonData;
@@ -862,8 +866,8 @@ function inputDataList(){
 
 		input.each((index, item) => {
 			let dataKey = $(item).data("keyup");
+			
 			if(storage[dataKey] !== undefined){
-
 				if($(item).data("keyup") !== undefined){
 					jsonData = storage[dataKey];
 					$(item).attr("list", "autoComplete_" + index);
@@ -876,6 +880,17 @@ function inputDataList(){
 			}
 		});
 	}, 700);
+}
+
+//숫자 포맷
+function numberFormat(num){
+	if(num !== undefined){
+		let setNumber;
+		setNumber = parseInt(num).toLocaleString("en-US");
+		return setNumber;
+	}else{
+		return "format undefined";
+	}
 }
 
 //tinyMCE

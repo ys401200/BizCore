@@ -122,7 +122,7 @@ function drawSalesList() {
 			}
 		];
 
-		fnc = "scheduleDetailView(this);";
+		fnc = "salesDetailView(this);";
 		ids.push(jsonData[i].no);
 		data.push(str);
 	}
@@ -131,3 +131,80 @@ function drawSalesList() {
 	pageContainer[0].innerHTML = pageNation;
 	createGrid(container, header, data, ids, fnc);
 }// End of drawNoticeList()
+
+function salesDetailView(e){
+	let id, url, method, data;
+
+	id = $(e).data("id");
+	url = "/api/sales/" + id;
+	method = "get";
+	data = "";
+
+	crud.defaultAjax(url, method, data, salesSuccess, salesError);
+}
+
+function salesSuccess(result){
+	let html = "", disDate, from, place, userName, customer, endUser, title, detail;
+
+	place = (result.place === null || result.place === "") ? "데이터 없음" : result.place;
+	userName = (result.user == 0 || result.user === null) ? "데이터 없음" : storage.user[result.user].userName;
+	customer = (result.customer == 0 || result.customer === null) ? "데이터 없음 " : storage.customer[result.customer].name;
+	endUser = (result.endUser == 0 || result.endUser === null) ? "데이터 없음" : storage.user[result.endUser].userName;
+	title = (result.title === null || result.title === "") ? "제목 없음" : result.title;
+	detail = (result.detail === null || result.detail === "") ? "내용 없음" : result.detail;
+
+	disDate = dateDis(result.from);
+	from = dateFnc(disDate);
+	 
+	html = "<table class='defaultTable'>";
+	html += "<tr>";
+	html += "<th>활동일</th>";
+	html += "<td>" + from + "</td>";
+	html += "</tr>";
+	html += "<tr>";
+	html += "<th>장소</th>";
+	html += "<td>" + place + "</td>";
+	html += "</tr>";
+	html += "<tr>";
+	html += "<th>활동형태</th>";
+	html += "<td>" + result.type + "</td>";
+	html += "</tr>";
+	html += "<tr>";
+	html += "<th>담당자</th>";
+	html += "<td>" + userName + "</td>";
+	html += "</tr>";
+	html += "<tr>";
+	html += "<th>영업기회</th>";
+	html += "<td>" + result.sopp + "</td>";
+	html += "</tr>";
+	html += "<tr>";
+	html += "<th>매출처</th>";
+	html += "<td>" + customer + "</td>";
+	html += "</tr>";
+	html += "<tr>";
+	html += "<th>엔드유저</th>";
+	html += "<td>" + endUser + "</td>";
+	html += "</tr>";
+	html += "<tr>";
+	html += "<th>제목</th>";
+	html += "<td>" + title + "</td>";
+	html += "</tr>";
+	html += "<tr>";
+	html += "<th>내용</th>";
+	html += "<td>" + detail + "</td>";
+	html += "</tr>";
+	html += "<tr>";
+	html += "</table>";
+
+	modal.show();
+	modal.headTitle.text("상세보기");
+	modal.content.css("width", "800px");
+	modal.body.html(html);
+	modal.confirm.hide();
+	modal.close.text("취소");
+	modal.close.css("width", "100%");
+}
+
+function salesError(){
+	alert("에러");
+}
