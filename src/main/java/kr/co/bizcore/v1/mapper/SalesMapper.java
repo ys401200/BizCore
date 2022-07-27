@@ -11,7 +11,7 @@ import kr.co.bizcore.v1.domain.SimpleSales;
 public interface SalesMapper {
     
     @Select("SELECT salesno AS no, salestitle AS title, salesfrdatetime AS \"from\", salestodatetime AS \"to\", soppno AS sopp, userno AS user, custno AS customer, ptncno AS endUser, regdatetime AS created, moddatetime AS modified, " +
-            "salesdesc AS detail, salesplace AS place, salestype AS type, salescheck AS chk, schedType" +
+            "salesdesc AS detail, salesplace AS place, salestype AS type, salescheck AS chk, schedType " +
             "FROM swcore.swc_sales WHERE attrib NOT LIKE 'XXX%' AND salesno = #{no} AND compno = (SELECT compno FROM swcore.swc_company WHERE compid = #{compId}) ORDER BY created DESC")
     public Sales getSales(@Param("no") int no, @Param("compId") String compId);
 
