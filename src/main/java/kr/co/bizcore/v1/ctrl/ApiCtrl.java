@@ -44,7 +44,7 @@ public class ApiCtrl extends Ctrl {
         return result;
     } // End of dept
 
-    @RequestMapping(value = "/my", method = RequestMethod.GET)
+    @RequestMapping(value = "/my/*", method = RequestMethod.GET)
     public String myGet(HttpServletRequest request) {
         String result = null, aesKey = null, aesIv = null, compId = null, userNo, uri = null, pw = null;
         HttpSession session = null;
