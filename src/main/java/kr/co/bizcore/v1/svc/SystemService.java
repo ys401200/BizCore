@@ -161,6 +161,9 @@ public class SystemService extends Svc {
         }  // END / if * for / Level : 1
         // 3계계 코드 체계에 대한 데이터 가져오기 끝
 
+        // 토드/값이 아닌 코드번호/값 으로 세팅된 코드들에 대한 땜빵코드 / 아래 for(x) 하단의 코드에서 기존 json 에 값 추가코드 작성함
+        list3 = commonMapper.getEtcCode(compId);
+
         if(root != null && root.size() > 0) {
             result = "{";
             for(x = 0 ; x < root.size() ; x++){
@@ -174,7 +177,19 @@ public class SystemService extends Svc {
                 result += "}";
                 //result += root.get(x).toString();
             }
-            result += "}";
+
+            // 땜빵코드 시작
+            if(list3 == null || list3.size() == 0)   result += "}";
+            else{
+                result += ",\"etc\":{";
+                for(z = 0 ; z < list3.size() ; z++){
+                    map3 = list3.get(z);
+                    if(z > 0)   result += ",";
+                    result += ("\"" + map3.get("no") + "\":\"" + map3.get("value") + "\"");
+                }
+                result += "}}";
+            }
+            //땜빵코드 종료
         }
 
         return result;

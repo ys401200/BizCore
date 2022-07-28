@@ -16,7 +16,7 @@ public class ViewInterceptor implements HandlerInterceptor {
     @Autowired
     private SystemService systemService;
 
-    @Value("bizcore.server.debug")
+    @Value("${bizcore.server.debug}")
     private String debug;
 
     @Override
@@ -31,11 +31,9 @@ public class ViewInterceptor implements HandlerInterceptor {
         uri = request.getRequestURI();
         userNo = (String)request.getSession().getAttribute("userNo");
 
-        if (systemService.debug())
-            server = "vtek.co.kr"; // for Dev
-
-        compId = systemService.findCompIdFromConnUrl(server);
-
+        if (debug.equals("true"))   compId = "vtek"; // for Dev
+        else    compId = systemService.findCompIdFromConnUrl(server);
+        System.out.println("[TEST] :::::::::: DEBUG ? " + debug + " / compId :" + compId);
         if (compId != null)
             request.setAttribute("compId", compId);
 

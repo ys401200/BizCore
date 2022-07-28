@@ -39,4 +39,7 @@ public interface CommonMapper {
 
     @Select("SELECT compid FROM swcore.swc_company WHERE compno NOT IN (100001, 100003)")
     public List<String> companyList();
+
+    @Select("SELECT CAST(codeno AS char) AS no, desc03 AS value FROM swcore.swc_code WHERE attrib NOT LIKE 'XXX%' AND desc03 IS NOT NULL AND compno = (SELECT compno FROM swcore.swc_company WHERE compid = #{compId})")
+    public List<HashMap<String, String>> getEtcCode(String compId);
 }
