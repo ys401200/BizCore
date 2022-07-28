@@ -11,15 +11,15 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SimpleSopp implements Domain{
-    private int no;
-    private int soppType;
-    private int contType;
-    private String title;
-    private int customer;
-    private int endUser;
-    private int employee;
-    private long expectedSales;
-    private String status;
+    private int no; //번호
+    private int soppType; //판매방식
+    private int contType; //계약구분
+    private String title; //영업기회명
+    private int customer; //매출처
+    private int endUser; //엔드유저
+    private int employee; //담당자
+    private long expectedSales; //예상매출액
+    private String status; //진행단계
     private Date created;
     private Date modified; 
 

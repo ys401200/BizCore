@@ -4,6 +4,12 @@
 <div id="sideMenu">
 	<ul id="business">
 		<li>
+			<a href="/mypage">
+				<img src="/images/main/icons/mainHomeIcon.png" id="mainHomeIcon"/>
+				<span>마이 페이지</span>
+			</a>
+		</li>
+		<li>
 			<a href="/">
 				<img src="/images/main/icons/mainHomeIcon.png" id="mainHomeIcon"/>
 				<span>나의 업무 홈</span>
