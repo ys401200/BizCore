@@ -2,14 +2,20 @@ package kr.co.bizcore.v1.svc;
 
 import java.util.List;
 
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 
 import kr.co.bizcore.v1.domain.SimpleSopp;
 import kr.co.bizcore.v1.domain.Sopp;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class SoppService extends Svc {
 
+    private static final Logger logger = LoggerFactory.getLogger(SoppService.class);
+    
     public String getSoppList(String compId){
         String result = null;
         List<SimpleSopp> list = null;

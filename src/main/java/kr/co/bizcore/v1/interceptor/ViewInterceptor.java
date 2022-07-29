@@ -3,15 +3,21 @@ package kr.co.bizcore.v1.interceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import kr.co.bizcore.v1.svc.SystemService;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
+@Slf4j
 public class ViewInterceptor implements HandlerInterceptor {
+
+    private static final Logger logger = LoggerFactory.getLogger(ViewInterceptor.class);
 
     @Autowired
     private SystemService systemService;
@@ -33,7 +39,7 @@ public class ViewInterceptor implements HandlerInterceptor {
 
         if (debug.equals("true"))   compId = "vtek"; // for Dev
         else    compId = systemService.findCompIdFromConnUrl(server);
-        System.out.println("[TEST] :::::::::: DEBUG ? " + debug + " / compId :" + compId);
+
         if (compId != null)
             request.setAttribute("compId", compId);
 

@@ -9,6 +9,8 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -16,9 +18,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Controller
 @RequestMapping(value = "/", method = RequestMethod.GET)
+@Slf4j
 public class RootController extends Ctrl {
+
+    private static final Logger logger = LoggerFactory.getLogger(RootController.class);
     private static final String VIEW_PATH = null;
     private static final String VIEW_ERROR_PATH = "/error/";
 

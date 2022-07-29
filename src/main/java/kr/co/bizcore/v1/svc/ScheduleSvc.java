@@ -2,12 +2,18 @@ package kr.co.bizcore.v1.svc;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import kr.co.bizcore.v1.domain.Schedule;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class ScheduleSvc extends Svc{
+
+    private static final Logger logger = LoggerFactory.getLogger(ScheduleSvc.class);
 
     public String getScheduleList(String compId, String userNo, int year, int month, String deptIn){
         String result = null, dept;

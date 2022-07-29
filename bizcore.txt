@@ -1,0 +1,45 @@
+[INFO ] 14:44:39.250 kr.co.bizcore.v1.BizCoreApplication - Starting BizCoreApplication using Java 17.0.3 on Beoung-ilui-MacBookPro.local with PID 3731 (/Users/jbi/Desktop/bizCore/BizCore/bin/main started by jbi in /Users/jbi/Desktop/bizCore/BizCore)
+[INFO ] 14:44:39.251 kr.co.bizcore.v1.BizCoreApplication - No active profile set, falling back to 1 default profile: "default"
+[INFO ] 14:44:39.282 o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+[INFO ] 14:44:39.282 o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+[INFO ] 14:44:39.945 o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 80 (http)
+[INFO ] 14:44:39.950 o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-80"]
+[INFO ] 14:44:39.951 o.a.catalina.core.StandardService - Starting service [Tomcat]
+[INFO ] 14:44:39.951 o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.64]
+[INFO ] 14:44:40.069 org.apache.jasper.servlet.TldScanner - At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+[INFO ] 14:44:40.074 o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+[INFO ] 14:44:40.074 o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 792 ms
+[INFO ] 14:44:40.299 com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+[INFO ] 14:44:40.436 com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+[INFO ] 14:44:40.622 o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+[INFO ] 14:44:40.629 o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-80"]
+[INFO ] 14:44:40.640 o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 80 (http) with context path ''
+[INFO ] 14:44:40.647 kr.co.bizcore.v1.BizCoreApplication - Started BizCoreApplication in 1.609 seconds (JVM running for 1.812)
+[INFO ] 14:44:52.395 o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+[INFO ] 14:44:52.395 o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+[INFO ] 14:44:52.396 o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+[INFO ] 14:45:20.934 o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+[INFO ] 14:45:20.936 o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+[INFO ] 14:45:20.951 com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+[INFO ] 14:45:20.985 com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+[INFO ] 15:11:01.654 kr.co.bizcore.v1.BizCoreApplication - Starting BizCoreApplication using Java 17.0.3 on Beoung-ilui-MacBookPro.local with PID 4498 (/Users/jbi/Desktop/bizCore/BizCore/bin/main started by jbi in /Users/jbi/Desktop/bizCore/BizCore)
+[INFO ] 15:11:01.654 kr.co.bizcore.v1.BizCoreApplication - No active profile set, falling back to 1 default profile: "default"
+[INFO ] 15:11:01.684 o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+[INFO ] 15:11:01.684 o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+[INFO ] 15:11:02.326 o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 80 (http)
+[INFO ] 15:11:02.335 o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-80"]
+[INFO ] 15:11:02.336 o.a.catalina.core.StandardService - Starting service [Tomcat]
+[INFO ] 15:11:02.336 o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.64]
+[INFO ] 15:11:02.446 org.apache.jasper.servlet.TldScanner - At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+[INFO ] 15:11:02.451 o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+[INFO ] 15:11:02.451 o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 767 ms
+[INFO ] 15:11:02.677 com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+[INFO ] 15:11:02.828 com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+[INFO ] 15:11:03.019 o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+[INFO ] 15:11:03.026 o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-80"]
+[INFO ] 15:11:03.039 o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 80 (http) with context path ''
+[INFO ] 15:11:03.046 kr.co.bizcore.v1.BizCoreApplication - Started BizCoreApplication in 1.612 seconds (JVM running for 1.814)
+[INFO ] 15:11:06.570 o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+[INFO ] 15:11:06.575 o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+[INFO ] 15:11:06.592 com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+[INFO ] 15:11:06.625 com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.

@@ -3,6 +3,7 @@ package kr.co.bizcore.v1;
 import java.io.File;
 import java.util.List;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -10,13 +11,18 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import ch.qos.logback.classic.Logger;
 import kr.co.bizcore.v1.interceptor.ViewInterceptor;
 import kr.co.bizcore.v1.svc.Svc;
 import kr.co.bizcore.v1.svc.SystemService;
 import kr.co.bizcore.v1.util.UploadedFileStorage;
+import lombok.extern.slf4j.Slf4j;
 
 @Configuration
+@Slf4j
 public class ViewConfig implements WebMvcConfigurer {
+
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ViewConfig.class);
 
     @Autowired
     private SystemService systemService;

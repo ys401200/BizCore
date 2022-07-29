@@ -1,15 +1,23 @@
 package kr.co.bizcore.v1.ctrl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/api/sales")
+@Slf4j
 public class ApiSalesCtrl extends Ctrl{
+
+    private static final Logger logger = LoggerFactory.getLogger(ApiSalesCtrl.class);
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String apiSalesGet(HttpServletRequest request){
@@ -37,30 +45,17 @@ public class ApiSalesCtrl extends Ctrl{
         return result;
     }
 
-    @RequestMapping(value = "/*", method = RequestMethod.GET)
-    public String apiSalesNumberGet(HttpServletRequest request){
+    @RequestMapping(value = "/{no}", method = RequestMethod.GET)
+    public String apiSalesNumberGet(HttpServletRequest request, @PathVariable String no){
         String result = null;
         String compId = null;
         String aesKey = null;
         String aesIv = null;
-        String uri = null;
-        String numberStr = null;
         String data = null;
-        String[] t = null;
         int number = -1;
         HttpSession session = null;
 
-        uri = request.getRequestURI();
-        if (uri.substring(0, 1).equals("/"))
-            uri = uri.substring(1);
-        if (uri.substring(uri.length() - 1).equals("/"))
-            uri = uri.substring(0, uri.length() - 1);
-        t = uri.split("/");
-
-        if(t.length >= 3){
-            numberStr = t[2];
-            number = numberStr != null ? systemService.strToInt(numberStr) : -1;
-        }
+        number = salesService.strToInt(no);
 
         session = request.getSession();
         compId = (String)session.getAttribute("compId");

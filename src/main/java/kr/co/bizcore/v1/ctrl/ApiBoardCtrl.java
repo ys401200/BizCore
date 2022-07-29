@@ -7,18 +7,24 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import kr.co.bizcore.v1.domain.Article;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.web.bind.annotation.RequestMethod;
 
 
 @RestController
 @RequestMapping("/api/board")
+@Slf4j
 public class ApiBoardCtrl extends Ctrl{
+
+    private static final Logger logger = LoggerFactory.getLogger(ApiBoardCtrl.class);
 
     @RequestMapping(value="/filebox", method=RequestMethod.GET)
     public String fileboxGet(HttpServletRequest request) {

@@ -3,14 +3,21 @@ package kr.co.bizcore.v1.ctrl;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import kr.co.bizcore.v1.domain.SimpleUser;
+import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @RequestMapping("/business")
+@Slf4j
 public class BusinessController extends Ctrl{
+
+    private static final Logger logger = LoggerFactory.getLogger(BusinessController.class);
+
     @RequestMapping("/notice")
     public String notice(HttpServletRequest request) {
         HttpSession session = null;

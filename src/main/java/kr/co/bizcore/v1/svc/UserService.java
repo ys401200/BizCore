@@ -3,12 +3,17 @@ package kr.co.bizcore.v1.svc;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import kr.co.bizcore.v1.domain.SimpleUser;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class UserService extends Svc {
 
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(UserService.class);
     public UserService(){super();}
 
     public SimpleUser getBasicUserInfo(String userNo, String compId) {

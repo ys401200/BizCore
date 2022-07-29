@@ -5,15 +5,21 @@ import java.util.Calendar;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import kr.co.bizcore.v1.domain.SimpleUser;
+import lombok.extern.slf4j.Slf4j;
 
 @RequestMapping("/api/schedule")
 @RestController
+@Slf4j
 public class ApiScheduleCtrl extends Ctrl {
+
+    private static final Logger logger = LoggerFactory.getLogger(AccountingController.class);
 
     @RequestMapping(value = {"", "/**"}, method = RequestMethod.GET)
     public String get(HttpServletRequest request){

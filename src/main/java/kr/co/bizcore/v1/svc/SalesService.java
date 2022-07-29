@@ -2,13 +2,19 @@ package kr.co.bizcore.v1.svc;
 
 import java.util.List;
 
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 
 import kr.co.bizcore.v1.domain.Sales;
 import kr.co.bizcore.v1.domain.SimpleSales;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class SalesService extends Svc{
+
+    private static final Logger logger = LoggerFactory.getLogger(SalesService.class);
 
     public String getSalesList(String compId){
         String result = null;

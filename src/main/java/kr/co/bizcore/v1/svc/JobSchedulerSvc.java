@@ -2,11 +2,19 @@ package kr.co.bizcore.v1.svc;
 
 import java.util.Calendar;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import lombok.extern.slf4j.Slf4j;
+
+
 @Component
+@Slf4j
 public class JobSchedulerSvc extends Svc{
+
+    private static final Logger logger = LoggerFactory.getLogger(JobSchedulerSvc.class);
     private static int lastWorkDate;
     private static int lastWorktime;
 

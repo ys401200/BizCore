@@ -6,7 +6,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -15,10 +18,14 @@ import org.springframework.web.bind.annotation.RestController;
 import kr.co.bizcore.v1.domain.Notice;
 import kr.co.bizcore.v1.domain.SimpleNotice;
 import kr.co.bizcore.v1.svc.NoticeSvc;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("api/notice")
+@Slf4j
 public class ApiNoticeCtrl extends Ctrl {
+
+    private static final Logger logger = LoggerFactory.getLogger(ApiNoticeCtrl.class);
 
     @Autowired
     private NoticeSvc noticeSvc;
@@ -64,28 +71,21 @@ public class ApiNoticeCtrl extends Ctrl {
         return result;
     } // End of /api/notice === get
 
-    @RequestMapping(value = "/*", method = RequestMethod.DELETE)
-    public String delete(HttpServletRequest req) {
+    @RequestMapping(value = "/{no}", method = RequestMethod.DELETE)
+    public String delete(HttpServletRequest req, @PathVariable String no) {
 
         HttpSession session = null;
         String compId = null;
         String result = null;
-        String notiNo = null;
         String userNo = null;
         String uri = req.getRequestURI();
         String[] t = null;
         int num = 0;
-        if (uri.substring(0, 1).equals("/"))
-            uri = uri.substring(1);
-        if (uri.substring(uri.length() - 1).equals("/"))
-            uri = uri.substring(0, uri.length() - 1);
-        t = uri.split("/");
 
         // 글 번호 확인
-        if (t.length < 3) { // 글 번호 확인 안됨
+        if (no == null) { // 글 번호 확인 안됨
             result = "{\"result\":\" failure\",\"msg\":\"notiNo is not exist\"}";
         } else { // 글 번호 확인 됨
-            notiNo = t[2];
             session = req.getSession();
 
             userNo = (String) session.getAttribute("userNo");
@@ -98,7 +98,7 @@ public class ApiNoticeCtrl extends Ctrl {
             } else if (userNo == null) {
                 result = "{\"result\":\"failure\",\"msg\":\"Session expired and/or Not logged in.\"}";
             } else { // 회사코드 확인 됨
-                num = noticeSvc.delete(compId, notiNo); // 삭제(update) 카운트를 실제 삭제 여부를 확인함
+                num = noticeSvc.delete(compId, no); // 삭제(update) 카운트를 실제 삭제 여부를 확인함
                 if (num > 0) { // 처리됨
                     result = "{\"result\":\"ok\"}";
                 } else { // 처리 안됨
@@ -109,29 +109,20 @@ public class ApiNoticeCtrl extends Ctrl {
         return result;
     } // End of /api/notice/* === delete
 
-    @RequestMapping(value = "/*", method = RequestMethod.GET)
-    public String getDetail(HttpServletRequest req) {
+    @RequestMapping(value = "/{no}", method = RequestMethod.GET)
+    public String getDetail(HttpServletRequest req, @PathVariable String no) {
         HttpSession session = null;
         String compId = null;
         String result = null;
-        String notiNo = null;
         String userNo = null;
-        String uri = req.getRequestURI();
-        String[] t = null;
         Notice notice = null;
         String data = null;
         String aesKey, aesIv = null;
 
-        if (uri.substring(0, 1).equals("/"))
-            uri = uri.substring(1);
-        if (uri.substring(uri.length() - 1).equals("/"))
-            uri = uri.substring(0, uri.length() - 1);
-        t = uri.split("/");
 
-        if (t.length < 3) { // 글 번호 확인 안됨
+        if (no == null) { // 글 번호 확인 안됨
             result = "{\"result\":\"failure\",\"msg\":\"notiNo is not exist\"}";
         } else { // 글 번호 확인 됨
-            notiNo = t[2];
             session = req.getSession();
             compId = (String) session.getAttribute("compId");
             aesKey = (String) session.getAttribute("aesKey");
@@ -145,7 +136,7 @@ public class ApiNoticeCtrl extends Ctrl {
             } else if (userNo == null) {
                 result = "{\"result\":\"failure\",\"msg\":\"Session expired and/or Not logged in.\"}";
             } else { // 회사코드 확인 됨
-                notice = noticeSvc.getNotice(compId, notiNo); // 삭제(update) 카운트를 실제 삭제 여부를 확인함
+                notice = noticeSvc.getNotice(compId, no); // 삭제(update) 카운트를 실제 삭제 여부를 확인함
 
                 if (notice != null) { // 처리됨
                     data = notice.toJson();
@@ -160,7 +151,7 @@ public class ApiNoticeCtrl extends Ctrl {
         return result;
     }
 
-    @RequestMapping(value = "/*", method = RequestMethod.POST)
+    @RequestMapping(value = "/", method = RequestMethod.POST)
     public String insert(HttpServletRequest req, @RequestBody String requestBody) {
 
         String compId = null;
@@ -212,17 +203,14 @@ public class ApiNoticeCtrl extends Ctrl {
      * @param data
      * @return
      */
-    @RequestMapping(value = "/*", method = RequestMethod.PUT)
-    public String update(HttpServletRequest req, @RequestBody String requestBody) {
+    @RequestMapping(value = "/{no}", method = RequestMethod.PUT)
+    public String update(HttpServletRequest req, @RequestBody String requestBody, @PathVariable String no) {
         String title = null;
         String content = null;
         String compId = null;
-        String notiNo = null;
         String result = null;
         HttpSession session = null;
         String data = null, aesKey = null, aesIv = null;
-        String uri = req.getRequestURI();
-        String[] t = null;
         JSONObject json = null;
 
         session = req.getSession();
@@ -231,21 +219,13 @@ public class ApiNoticeCtrl extends Ctrl {
             compId = (String) req.getAttribute("compId");
         }
 
-        if (uri.substring(0, 1).equals("/"))
-            uri = uri.substring(1);
-        if (uri.substring(uri.length() - 1).equals("/"))
-            uri = uri.substring(0, uri.length() - 1);
-        t = uri.split("/");
-
         aesKey = (String) session.getAttribute("aesKey");
         aesIv = (String) session.getAttribute("aesIv");
         data = noticeSvc.decAes(requestBody, aesKey, aesIv);
         json = new JSONObject(data);
 
-        if (t.length < 3)
+        if (no == null)
             result = "{\"result\":\" failure\",\"msg\":\"notiNo is not exist\"}";
-        else
-            notiNo = t[2];
 
         if (json.getString("title") != null)
             title = json.getString("title");
@@ -257,7 +237,7 @@ public class ApiNoticeCtrl extends Ctrl {
         else
             result = "{\"result\":\" failure\",\"msg\":\"content is not exist\"}";
 
-        if (noticeSvc.updateNotice(title, content, compId, notiNo) > 0) {
+        if (noticeSvc.updateNotice(title, content, compId, no) > 0) {
             result = "{\"result\":\" ok\"}";
         }
 

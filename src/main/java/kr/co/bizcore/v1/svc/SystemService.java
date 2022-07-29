@@ -1,5 +1,6 @@
 package kr.co.bizcore.v1.svc;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -11,9 +12,13 @@ import kr.co.bizcore.v1.domain.CommonCode;
 import kr.co.bizcore.v1.domain.ConnUrl;
 import kr.co.bizcore.v1.domain.SimpleCustomer;
 import kr.co.bizcore.v1.domain.User;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class SystemService extends Svc {
+
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SystemService.class);
 
     public String test() {
         String result = systemMapper.test();
