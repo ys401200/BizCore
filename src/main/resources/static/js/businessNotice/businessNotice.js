@@ -10,26 +10,12 @@ $(document).ready(() => {
 
 // API 서버에서 공지사항 리스트를 가져오는 함수
 function getNoticeList() {
-	let url;
-
-	url = apiServer + "/api/notice";
-	$.ajax({
-		"url": url,
-		"method": "get",
-		"dataType": "json",
-		"cache": false,
-		success: (data) => {
-			let jsonData;
-			if (data.result === "ok") {
-				jsonData = cipher.decAes(data.data);
-				jsonData = JSON.parse(jsonData);
-				storage.noticeList = jsonData;
-				window.setTimeout(drawNoticeList, 200);
-			} else {
-				msg.set("등록된 공지사항이 없습니다");
-			}
-		}
-	})
+	let url, method, data; 
+	url = "/api/notice";
+	method ="get"
+	data= "";
+	crud.defaultAjax(url, method, data, noticeSuccessList, noticeErrorList);
+	
 } // End of getNoticeList()
 
 function drawNoticeList() {
@@ -93,7 +79,6 @@ function drawNoticeList() {
 
 	let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawNoticeList", result[0]);
 	pageContainer[0].innerHTML = pageNation;
-	//표 만들기 
 	createGrid(container, header, data, ids, fnc);
 }// End of drawNoticeList()
 
@@ -140,4 +125,14 @@ function drawNoticeContent(jsonData) { // 공지사항 본문 보이게 하는 �
 
 function deleteNoticeContent() { // 공지사항 본문 지우는 함수 
 	$(".noticeContent").hide();
+}
+
+
+function noticeSuccessList(result){
+	storage.noticeList = result;
+	window.setTimeout(drawNoticeList, 200);
+}
+
+function noticeErrorList(){
+	alert("에러");
 }
