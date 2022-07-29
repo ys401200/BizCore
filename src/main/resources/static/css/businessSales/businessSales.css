@@ -33,10 +33,7 @@
 	margin: 0 auto;
 }
 
-.salesContainer .gridSalesList .gridHeader{
-    grid-template-columns: 10% 10% 15% 10% 10% 10% 10% 10% 15%;
-}
-
+.salesContainer .gridSalesList .gridHeader,
 .salesContainer .gridSalesList .gridContent{
-	grid-template-columns: 10% 10% 15% 10% 10% 10% 10% 10% 15%;
+    grid-template-columns: 7% 44% 7% 7% 7% 7% 7% 7% 7%;
 }

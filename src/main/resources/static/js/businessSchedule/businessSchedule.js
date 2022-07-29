@@ -12,28 +12,13 @@ $(document).ready(() => {
 });
 
 function getScheduleList() {
-	let url;
-	
-	url = apiServer + "/api/schedule";
+	let url, method, data;
 
-	$.ajax({
-		"url": url,
-		"method": "get",
-		"dataType": "json",
-		"cache": false,
-		success: (data) => {
-			let jsonData;
-			if (data.result === "ok") {
-				jsonData = cipher.decAes(data.data);
-				jsonData = JSON.parse(jsonData);
-				storage.scheduleList = jsonData;
-				window.setTimeout(drawScheduleList, 200);
-				drawCalendar(document.getElementsByClassName("calendar_container")[0]);
-			} else {
-				msg.set("등록된 일정이 없습니다");
-			}
-		}
-	});
+	url = "/api/schedule";
+	method = "get";
+	data = "";
+
+	crud.defaultAjax(url, method, data, scheduleSuccessList, scheduleErrorList);
 } // End of getScheduleList()
 
 function drawScheduleList() {
@@ -380,6 +365,16 @@ function listChange(event){
 		$(event).data("type", "table");
 		$(event).text("달력으로 표시");
 	}
+}
+
+function scheduleSuccessList(result){
+	storage.scheduleList = result;
+	window.setTimeout(drawScheduleList, 200);
+	drawCalendar(document.getElementsByClassName("calendar_container")[0]);
+}
+
+function scheduleErrorList(){
+	alert("에러");
 }
 
 function insertScheduleForm(){

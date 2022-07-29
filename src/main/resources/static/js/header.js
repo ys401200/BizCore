@@ -280,11 +280,28 @@ function init(){
 				data: data,
 				dataType: "json",
 				success: (result) => {
-					if(successFnc !== undefined){
-						let jsonData;
-						jsonData = cipher.decAes(result.data);
-						jsonData = JSON.parse(jsonData);
-						successFnc(jsonData);
+					if(result.result === "ok"){
+						if(successFnc !== undefined){
+							let jsonData, temp;
+							jsonData = cipher.decAes(result.data);
+							jsonData = JSON.parse(jsonData);
+
+							if(localStorage.getItem("searchList")){
+								let searchCategory, searchText;
+								searchCategory = localStorage.getItem("searchCategory");
+								searchText = localStorage.getItem("searchText");
+
+								for(let i = 0; i < jsonData.length; i++){
+									if(jsonData[i][searchCategory].toString() === searchText){
+										temp = jsonData[i];
+									}
+								}
+
+								storage.searchList = temp;
+							}
+							
+							successFnc(jsonData);
+						}
 					}
 				},
 				error: () => {
@@ -891,6 +908,31 @@ function numberFormat(num){
 	}else{
 		return "format undefined";
 	}
+}
+
+function listSearch(){
+	let gridParentContent, gridContentItem, input, storageItem;
+
+	input = $(document).find("#testSearch");
+	gridContentItem = $(document).find(".gridContentItem");
+	storageItem = storage.soppList;
+
+	console.log(storageItem);
+	for(let i = 0; i < storageItem.length; i++){
+		console.log(storageItem[i].title);
+	}
+
+	for(let key in storageItem){
+		storageItem[1].each((index, item) => {
+			console.log(index);
+			console.log(item);
+		});
+	}
+
+	storage.soppList[0].each((index, item) => {
+		console.log(index);
+		console.log(item);
+	});
 }
 
 //tinyMCE
