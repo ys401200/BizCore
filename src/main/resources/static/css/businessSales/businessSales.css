@@ -1,4 +1,65 @@
 @charset "UTF-8";
+.salesSearchContainer{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-left: 2%;
+	margin-bottom: 2%;
+	max-width: 1782px;
+	height: 100px;
+	background: #FFFFFF;
+	overflow: auto;
+	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
+}
+
+.salesSearchContainer .salesSearchSelect{
+	margin-right: 1%;
+}
+
+.salesSearchContainer .salesSearchSelect select{
+	color: #332E85;
+	padding: 5px;
+	font-size: 1.2rem;
+	font-weight: 500;
+	border: 0;
+	background-color: #EDEDF4;
+}
+
+.salesSearchContainer .salesSearchSelect select:hover{
+	border: 1px solid#332E85;
+}
+
+.salesSearchContainer .salesSearchText{
+	margin-right: 1%;
+}
+
+.salesSearchContainer .salesSearchText input{
+	padding: 5px;
+	font-size: 1.2rem;
+	font-weight: 500;
+	width: 500px;
+	border: 0;
+	background-color: #EDEDF4;
+}
+
+.salesSearchContainer .salesSearchText input:hover{
+	border: 1px solid#332E85;
+}
+
+.salesSearchContainer .salesSearchBtn button{
+	color: #ffffff;
+	padding: 5px;
+	font-size: 1.2rem;
+	font-weight: 500;
+	width: 100px;
+	border: 0;
+	background-color: #332E85;
+}
+
+.salesSearchContainer .salesSearchBtn button:hover{
+	cursor: pointer;
+}
+
 .salesContainer{
     position: relative;
     left: 2%;

@@ -7,6 +7,20 @@
 		<jsp:include page="../sideMenu.jsp" />
 	</div>
 	<div id="bodyContent">
+        <div class="salesSearchContainer">
+            <div class="salesSearchSelect">
+                <select id="salesSearchCategory">
+                    <option value="no">번호</option>
+                    <option value="title">영업활동명</option>
+                </select>
+            </div>
+            <div class="salesSearchText">
+                <input type="text" id="salesSearchValue">
+            </div>
+            <div class="salesSearchBtn">
+                <button type="button" onclick="salesSearchList();">검색</button>
+            </div>
+        </div>
         <div class="salesContainer">
             <hr />
             <span>영업활동조회</span>

@@ -282,25 +282,31 @@ function init(){
 				success: (result) => {
 					if(result.result === "ok"){
 						if(successFnc !== undefined){
-							let jsonData, temp;
+							let jsonData;
 							jsonData = cipher.decAes(result.data);
 							jsonData = JSON.parse(jsonData);
 
 							if(localStorage.getItem("searchList")){
-								let searchCategory, searchText;
+								let searchCategory, searchText, temp = [], resultArray = [];
 								searchCategory = localStorage.getItem("searchCategory");
 								searchText = localStorage.getItem("searchText");
 
 								for(let i = 0; i < jsonData.length; i++){
-									if(jsonData[i][searchCategory].toString() === searchText){
-										temp = jsonData[i];
+									temp.push(jsonData[i]);
+								}
+
+								for(let t = 0; t < temp.length; t++){
+									if(temp[t][searchCategory].toString().indexOf(searchText) > -1){
+										resultArray.push(temp[t]);
 									}
 								}
 
-								storage.searchList = temp;
+								successFnc(resultArray);
+							}else{
+								successFnc(jsonData);
 							}
-							
-							successFnc(jsonData);
+
+							localStorage.clear();
 						}
 					}
 				},

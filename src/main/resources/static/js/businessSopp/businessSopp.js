@@ -17,7 +17,7 @@ function getSoppList() {
 	data = "";
 
 	crud.defaultAjax(url, method, data, soppSuccessList, soppErrorList);
-} // End of getScheduleList()
+}
 
 function soppSearchList(){
 	let searchCategory, searchText, url, method, data;
@@ -92,7 +92,6 @@ function drawSoppList() {
 			"title" : "등록일",
 			"align" : "center",
 		}
-		
 	];
 
 	for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
@@ -151,7 +150,7 @@ function drawSoppList() {
 	let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawSoppList", result[0]);
 	pageContainer[0].innerHTML = pageNation;
 	createGrid(container, header, data, ids, fnc);
-}// End of drawNoticeList()
+}
 
 
 function soppDetailView(e){

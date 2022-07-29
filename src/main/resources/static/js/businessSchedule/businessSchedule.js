@@ -21,6 +21,23 @@ function getScheduleList() {
 	crud.defaultAjax(url, method, data, scheduleSuccessList, scheduleErrorList);
 } // End of getScheduleList()
 
+function scheduleSearchList(){
+	let searchCategory, searchText, url, method, data;
+
+	url = "/api/schedule";
+	method = "get";
+	data = "";
+
+	searchCategory = $(document).find("#scheduleSearchCategory").val();
+	searchText = $(document).find("#scheduleSearchValue").val();
+	
+	localStorage.setItem("searchList", true);
+	localStorage.setItem("searchCategory", searchCategory);
+	localStorage.setItem("searchText", searchText);
+
+	crud.defaultAjax(url, method, data, scheduleSuccessList, scheduleErrorList);
+}
+
 function drawScheduleList() {
 	let container, result, jsonData, header = [], data = [], ids = [], disDate, setDate, str, fnc;
 	
@@ -38,7 +55,7 @@ function drawScheduleList() {
 
 	header = [
 		{
-			"title" : "등록일",
+			"title" : "번호",
 			"align" : "center",
 		},
 		{
@@ -54,12 +71,12 @@ function drawScheduleList() {
 			"align" : "center",
 		},
 		{
-			"title" : "고객사",
+			"title" : "매출처",
 			"align" : "center",
 		},
 		{
 			"title" : "담당자",
-			"align" : "left",
+			"align" : "center",
 		},
 		{
 			"title" : "장소",
@@ -72,42 +89,63 @@ function drawScheduleList() {
 		{
 			"title" : "일정설명",
 			"align" : "left",
+		},
+		{
+			"title" : "등록일",
+			"align" : "center",
 		}
 		
 	];
 
 	for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+		let job, title, customer, userName, fromDate, fromSetDate, toDate, toSetDate, place, detail;
+
 		disDate = dateDis(jsonData[i].created, jsonData[i].modified);
 		setDate = dateFnc(disDate);
-		let userName = storage.user[jsonData[i].user].userName;
+
+		job = (jsonData[i].job === null || jsonData[i].job === "") ? "없음" : jsonData[i].job;
+		title = (jsonData[i].title === null || jsonData[i].title === "") ? "제목 없음" : jsonData[i].title;
+		customer = (jsonData[i].cust == 0 || jsonData[i].cust === null) ? "없음" : storage.customer[jsonData[i].cust].name;
+		userName = (jsonData[i].user == 0 || jsonData[i].user === null) ? "없음" : storage.user[jsonData[i].user].userName;
+		place = (jsonData[i].place === null || jsonData[i].place === "") ? "없음" : jsonData[i].place;
+		detail = (jsonData[i].detail === null || jsonData[i].detail === "") ? "내용 없음" : jsonData[i].detail;
+		
+		fromDate = dateDis(jsonData[i].from);
+		fromSetDate = dateFnc(fromDate);
+		
+		toDate = dateDis(jsonData[i].to);
+		toSetDate = dateFnc(toDate);
 
 		str = [
 			{
-				"setData": setDate,
+				"setData": jsonData[i].no,
 			},
 			{
-				"setData": jsonData[i].job,
+				"setData": job,
 			},
 			{
-				"setData": jsonData[i].title,
+				"setData": title,
 			},
 			{
-				"setData": jsonData[i].from,
+				"setData": fromSetDate + " ~ " + toSetDate,
 			},
 			{
-				"setData": jsonData[i].cust,
+				"setData": customer,
 			},
 			{
 				"setData": userName,
 			},
 			{
-				"setData": jsonData[i].no,
+				"setData": place,
 			},
 			{
 				"setData": jsonData[i].sopp,
 			},
 			{
-				"setData": jsonData[i].detail,
+				"setData": detail,
+			},
+			{
+				"setData": setDate,
 			}
 		];
 
@@ -367,6 +405,17 @@ function listChange(event){
 	}
 }
 
+function scheduleDetailView(e){
+	let id, url, method, data;
+
+	id = $(e).data("id");
+	url = "/api/schedule/" + id;
+	method = "get";
+	data = "";
+
+	crud.defaultAjax(url, method, data, scheduleSuccessView, scheduleErrorView);
+}
+
 function scheduleSuccessList(result){
 	storage.scheduleList = result;
 	window.setTimeout(drawScheduleList, 200);
@@ -377,38 +426,77 @@ function scheduleErrorList(){
 	alert("에러");
 }
 
-function insertScheduleForm(){
-	let html = "";
+function scheduleSuccessView(result){
+	let job, title, customer, userName, fromDate, fromSetDate, toDate, toSetDate, place, detail;
 
-	html = "<form class='defaultForm' id='insertScheduleForm'>";
-	html += "<div class='formDefaultTitle'><span>일정일자<span></div>";
-	html += "<div class='formDefaultContent'><input type='text' data-keyup='customer'></div>";
-	html += "<div class='formDefaultTitle'><span>장소<span></div>";
-	html += "<div class='formDefaultContent'><input type='text'></div>";
-	html += "<div class='formDefaultTitle'><span>계약관련<span></div>";
-	html += "<div class='formDefaultContent'><input type='text'></div>";
-	html += "<div class='formDefaultTitle'><span>영업기회<span></div>";
-	html += "<div class='formDefaultContent'><input type='text'></div>";
-	html += "<div class='formDefaultTitle'><span>담당자<span></div>";
-	html += "<div class='formDefaultContent'><input type='text'></div>";
-	html += "<div class='formDefaultTitle'><span>매출처<span></div>";
-	html += "<div class='formDefaultContent'><input type='text'></div>";
-	html += "<div class='formDefaultTitle'><span>엔드유저<span></div>";
-	html += "<div class='formDefaultContent'><input type='text'></div>";
-	html += "<div class='formDefaultTitle'><span>일정구분<span></div>";
-	html += "<div class='formDefaultContent'><input type='text'></div>";
-	html += "<div class='formDefaultTitle'><span>활동형태<span></div>";
-	html += "<div class='formDefaultContent'><input type='text'></div>";
-	html += "<div class='formDefaultTitle'><span>제목<span></div>";
-	html += "<div class='formDefaultContent'><input type='text'></div>";
-	html += "<div class='formDefaultTitle'><span>내용<span></div>";
-	html += "<div class='formDefaultContent'><textarea></textarea></div>";
-	html += "</form>";
+	disDate = dateDis(result.created, result.modified);
+	setDate = dateFnc(disDate);
+
+	job = (result.job === null || result.job === "") ? "없음" : result.job;
+	title = (result.title === null || result.title === "") ? "제목 없음" : result.title;
+	customer = (result.cust == 0 || result.cust === null) ? "없음" : storage.customer[result.cust].name;
+	userName = (result.user == 0 || result.user === null) ? "없음" : storage.user[result.user].userName;
+	place = (result.place === null || result.place === "") ? "없음" : result.place;
+	detail = (result.detail === null || result.detail === "") ? "내용 없음" : result.detail;
+
+	fromDate = dateDis(result.from);
+	fromSetDate = dateFnc(fromDate);
 	
+	toDate = dateDis(result.to);
+	toSetDate = dateFnc(toDate);
+
+	html = "<table class='defaultTable'>";
+	html += "<tr>";
+	html += "<th>번호</th>";
+	html += "<td>" + result.no + "</td>";
+	html += "</tr>";
+	html += "<tr>";
+	html += "<th>일정구분</th>";
+	html += "<td>" + job + "</td>";
+	html += "</tr>";
+	html += "<tr>";
+	html += "<th>일정제목</th>";
+	html += "<td>" + title + "</td>";
+	html += "</tr>";
+	html += "<tr>";
+	html += "<th>일정</th>";
+	html += "<td>" + fromSetDate + " ~ " + toSetDate + "</td>";
+	html += "</tr>";
+	html += "<tr>";
+	html += "<th>매출처</th>";
+	html += "<td>" + customer + "</td>";
+	html += "</tr>";
+	html += "<tr>";
+	html += "<th>담당자</th>";
+	html += "<td>" + userName + "</td>";
+	html += "</tr>";
+	html += "<tr>";
+	html += "<th>장소</th>";
+	html += "<td>" + place + "</td>";
+	html += "</tr>";
+	html += "<tr>";
+	html += "<th>활동형태</th>";
+	html += "<td>" + result.sopp + "</td>";
+	html += "</tr>";
+	html += "<tr>";
+	html += "<th>일정설명</th>";
+	html += "<td>" + detail + "</td>";
+	html += "</tr>";
+	html += "<tr>";
+	html += "<th>등록일</th>";
+	html += "<td>" + setDate + "</td>";
+	html += "</tr>";
+	html += "</table>";
+
 	modal.show();
-	modal.headTitle.text("일정 등록");
+	modal.headTitle.text("상세보기");
 	modal.content.css("width", "800px");
 	modal.body.html(html);
-	modal.confirm.text("등록");
+	modal.confirm.hide();
 	modal.close.text("취소");
+	modal.close.css("width", "100%");
+}
+
+function scheduleErrorView(){
+	alert("에러");
 }
