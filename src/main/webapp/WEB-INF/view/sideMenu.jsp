@@ -114,9 +114,9 @@
 				<span id="slideSpan">+</span>
 			</a>
 			<ul id="panel">
-				<li><a href="#">- 나의문서함</a></li>
+				<li><a href="gw/mylist">- 나의문서함</a></li>
 				<li><a href="#">- 나의결재함</a></li>
-				<li><a href="#">- 결재 등록/처리</a></li>
+				<li><a href="gw/write">- 결재 등록/처리</a></li>
 			</ul>
 		</li>
 		<li>
