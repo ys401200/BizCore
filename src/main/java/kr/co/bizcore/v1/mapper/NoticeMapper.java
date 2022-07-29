@@ -20,7 +20,7 @@ public interface NoticeMapper {
     int delete(@Param("compId") String compId, @Param("notiNo") String notiNo);
 
     // 본문 가져오는 쿼리 
-    @Select("SELECT a.no, a.comp_id AS compId, a.writer, b.username AS writerName, a.title, a.content, a.created, a.modified FROM bizcore.notice a, swcore.swc_user b WHERE comp_id = #{compId} and no = #{notiNo} AND a.writer = b.userno AND deleted IS NULL")
+    @Select("SELECT a.no, a.comp_id AS compId, a.writer, b.username AS writerName, a.title, a.content, a.created, a.modified FROM bizcore.notice a, swc_user b WHERE comp_id = #{compId} and no = #{notiNo} AND a.writer = b.userno AND deleted IS NULL")
     Notice getSelectedNotice(@Param("compId")String compId, @Param("notiNo") String notiNo); 
 
     // 공지사항 추가하는 쿼리 
@@ -49,5 +49,5 @@ UPDATE bizcore.notice SET deleted = NOW() WHERE comp_id = 회사코드 AND no = 
 SELECT no, writer, title, created, modified FROM bizcore.notice WHERE comp_id = '' AND deleted IS NULL; 
 
 -- 본문 가져오는 쿼리
-SELECT a.no, a.comp_id AS compId, a.writer, b.username AS writerName, a.title, a.content, a.created, a.modified FROM bizcore.notice a, swcore.swc_user b WHERE comp_id = '' and no = ????? AND a.writer = b.userno AND deleted IS NULL; 
+SELECT a.no, a.comp_id AS compId, a.writer, b.username AS writerName, a.title, a.content, a.created, a.modified FROM bizcore.notice a, swc_user b WHERE comp_id = '' and no = ????? AND a.writer = b.userno AND deleted IS NULL; 
 */

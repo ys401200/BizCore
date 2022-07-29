@@ -18,7 +18,7 @@ public interface SystemMapper {
     public List<ConnUrl> getConnUrl();
 
     // 濡쒓렇�씤 寃�利� 荑쇰━
-    @Select("SELECT userno FROM swcore.swc_user WHERE compno = (SELECT compno FROM swcore.swc_company WHERE compid = #{compId}) AND userid = #{userId} AND userpasswd  = password(#{pw})")
+    @Select("SELECT userno FROM swc_user WHERE compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND userid = #{userId} AND userpasswd  = password(#{pw})")
     public String verifyLogin(@Param("compId") String compId, @Param("userId") String userId, @Param("pw") String pw);
 
     @Select("SELECT UNIX_TIMESTAMP(NOW())")
