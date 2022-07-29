@@ -4,23 +4,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import lombok.extern.slf4j.Slf4j;
-
 import javax.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/api")
-@Slf4j
 public class ApiCtrl extends Ctrl {
-
-    private static final Logger logger = LoggerFactory.getLogger(ApiCtrl.class);
 
     @RequestMapping(value = "/dept", method = RequestMethod.GET)
     public String dept(HttpServletRequest request) {
@@ -108,11 +101,9 @@ public class ApiCtrl extends Ctrl {
             json = new JSONObject(str);
             email = json.getString("email");
             phone = json.getString("phone");
-            if(systemService.modifyMyInfo(compId, userNo, email, phone)){
-                result = "{\"result\":\"ok\"}";
-            }else{
-                result = "{\"result\":\"failure\"}";
-            }
+            systemService.modifyMyInfo(compId, userNo, email, phone);
+            result = "{\"result\":\"ok\"}";
+           
         }
 
         return result;
@@ -141,11 +132,12 @@ public class ApiCtrl extends Ctrl {
             json = new JSONObject(str);
             pwOld = json.getString("old");
             pwNew = json.getString("new");
-            if(systemService.modifyPassword(pwOld, pwNew, userNo, compId)){
-                result = "{\"result\":\"ok\"}";
-            }else{
-                result = "{\"result\":\"failure\",\"msg\":\"Invalid Password\"}";
-            }
+            systemService.modifyPassword(pwOld, pwNew, userNo, compId);
+            result = "{\"result\":\"ok\"}";
+
+
+
+
         }
 
         return result;

@@ -35,10 +35,10 @@ public interface UserMapper {
     public User getMy(@Param("no") String userNo, @Param("pw") String pw, @Param("compId") String compId);
 
     // 마이페이지 / 내 정보 수정
-    @Select("UPDATE swc_user SET usertel = #{phone}, useremail = #{email} WHERE userno = #{no} AND compid = (SELECT compno FROM swc_company WHERE compid = #{compId})")
-    public int modifyMyInfo(@Param("phone") String phone, @Param("email") String email, @Param("no") String userNo, @Param("compId") String compId);
+    @Select("UPDATE swcore.swc_user SET usertel = #{phone}, useremail = #{email} WHERE userno = #{no} AND compNo = (SELECT compno FROM swcore.swc_company WHERE compid = #{compId})")
+    public void modifyMyInfo(@Param("phone") String phone, @Param("email") String email, @Param("no") String userNo, @Param("compId") String compId);
 
     // 마이페이지 / 비번 수정
-    @Select("UPDATE swc_user SET userpasswd = PASSWORD(#{new}) WHERE userno = #{new} AND userpasswd = PASSWORD(#{old}) AND compid = (SELECT compno FROM swc_company WHERE compid = #{compId}")
-    public int modifyMyPw(@Param("compId") String compId, @Param("no") String userNo, @Param("old") String old, @Param("new") String neww);
+    @Select("UPDATE swcore.swc_user SET userpasswd = PASSWORD(#{new}) WHERE userno = #{no} AND userpasswd = PASSWORD(#{old}) AND compNo = (SELECT compno FROM swcore.swc_company WHERE compid = #{compId})")
+    public void modifyMyPw(@Param("compId") String compId, @Param("no") String userNo, @Param("old") String old, @Param("new") String neww);
 }

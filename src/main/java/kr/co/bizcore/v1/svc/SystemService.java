@@ -1,6 +1,5 @@
 package kr.co.bizcore.v1.svc;
 
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -12,13 +11,9 @@ import kr.co.bizcore.v1.domain.CommonCode;
 import kr.co.bizcore.v1.domain.ConnUrl;
 import kr.co.bizcore.v1.domain.SimpleCustomer;
 import kr.co.bizcore.v1.domain.User;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
-@Slf4j
 public class SystemService extends Svc {
-
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SystemService.class);
 
     public String test() {
         String result = systemMapper.test();
@@ -219,16 +214,17 @@ public class SystemService extends Svc {
         return result;
     }
 
-    public boolean modifyPassword(String old, String neww, String userNo, String compId){
-        int x = 0;
-        x = userMapper.modifyMyPw(compId, userNo, old, neww);
-        return x > 0;
+    public void modifyPassword(String old, String neww, String userNo, String compId){
+     
+        userMapper.modifyMyPw(compId, userNo, old, neww);
+     
     }
 
-    public boolean modifyMyInfo(String compId, String userNo, String email, String phone){
-        int x = 0;
-        x = userMapper.modifyMyInfo(phone, email, userNo, compId);
-        return x > 0;
+    public void modifyMyInfo(String compId, String userNo, String email, String phone){
+       
+       userMapper.modifyMyInfo(phone, email, userNo, compId);
+        
     }
+
 
 }
