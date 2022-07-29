@@ -10,28 +10,14 @@ $(document).ready(() => {
 });
 
 function getSalesList() {
-	let url;
-	
-	url = apiServer + "/api/sales";
+	let url, method, data;
 
-	$.ajax({
-		"url": url,
-		"method": "get",
-		"dataType": "json",
-		"cache": false,
-		success: (data) => {
-			let jsonData;
-			if (data.result === "ok") {
-				jsonData = cipher.decAes(data.data);
-				jsonData = JSON.parse(jsonData);
-				storage.salesList = jsonData;
-				window.setTimeout(drawSalesList, 200);
-			} else {
-				msg.set("등록된 영업활동이 없습니다");
-			}
-		}
-	});
-} // End of getScheduleList()
+	url = "/api/sales";
+	method = "get";
+	data = "";
+
+	crud.defaultAjax(url, method, data, salesSuccessList, salesErrorList);
+} // End of getSalesList()
 
 function drawSalesList() {
 	let container, result, jsonData, header = [], data = [], ids = [], disDate, setDate, str, fnc;
@@ -50,7 +36,7 @@ function drawSalesList() {
 
 	header = [
 		{
-			"title" : "등록일",
+			"title" : "번호",
 			"align" : "center",
 		},
 		{
@@ -75,50 +61,62 @@ function drawSalesList() {
 		},
 		{
 			"title" : "매출처",
-			"align" : "left",
+			"align" : "center",
 		},
 		{
 			"title" : "엔드유저",
-			"align" : "left",
+			"align" : "center",
 		},
 		{
-			"title" : "영업설명",
-			"align" : "left",
+			"title" : "등록일",
+			"align" : "center",
 		}
 		
 	];
 
 	for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+		let fromDate, toDate, fromSetDate, toSetDate, user, customer, endUser;
+
 		disDate = dateDis(jsonData[i].created, jsonData[i].modified);
 		setDate = dateFnc(disDate);
 
+		fromDate = dateDis(jsonData[i].from);
+		fromSetDate = dateFnc(fromDate);
+
+		toDate = dateDis(jsonData[i].to);
+		toSetDate = dateFnc(toDate);
+
+		user = (jsonData[i].user == 0 || jsonData[i].user === null) ? "없음" : storage.user[jsonData[i].user].userName;
+		customer = (jsonData[i].customer == 0 || jsonData[i].customer === null) ? "없음" : storage.customer[jsonData[i].customer].name;
+		endUser = (jsonData[i].endUser == 0 || jsonData[i].endUser === null) ? "없음" : storage.user[jsonData[i].endUser].userName;
+
 		str = [
 			{
-				"setData": setDate,
-			},
-			{
-				"setData": jsonData[i].job,
+				"setData": jsonData[i].no,
 			},
 			{
 				"setData": jsonData[i].title,
 			},
 			{
-				"setData": jsonData[i].from,
+				"setData": fromSetDate,
 			},
 			{
-				"setData": jsonData[i].cust,
-			},
-			{
-				"setData": jsonData[i].user,
-			},
-			{
-				"setData": jsonData[i].no,
+				"setData": toSetDate,
 			},
 			{
 				"setData": jsonData[i].sopp,
 			},
 			{
-				"setData": jsonData[i].detail,
+				"setData": user,
+			},
+			{
+				"setData": customer,
+			},
+			{
+				"setData": endUser,
+			},
+			{
+				"setData": setDate,
 			}
 		];
 
@@ -132,6 +130,15 @@ function drawSalesList() {
 	createGrid(container, header, data, ids, fnc);
 }// End of drawNoticeList()
 
+function salesSuccessList(result){
+	storage.salesList = result;
+	window.setTimeout(drawSalesList, 200);
+}
+
+function salesErrorList(){
+	alert("에러");
+}
+
 function salesDetailView(e){
 	let id, url, method, data;
 
@@ -140,10 +147,10 @@ function salesDetailView(e){
 	method = "get";
 	data = "";
 
-	crud.defaultAjax(url, method, data, salesSuccess, salesError);
+	crud.defaultAjax(url, method, data, salesSuccessView, salesErrorView);
 }
 
-function salesSuccess(result){
+function salesSuccessView(result){
 	let html = "", disDate, from, place, userName, customer, endUser, title, detail;
 
 	place = (result.place === null || result.place === "") ? "데이터 없음" : result.place;
@@ -205,6 +212,6 @@ function salesSuccess(result){
 	modal.close.css("width", "100%");
 }
 
-function salesError(){
+function salesErrorView(){
 	alert("에러");
 }

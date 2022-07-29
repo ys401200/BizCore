@@ -10,28 +10,31 @@ $(document).ready(() => {
 });
 
 function getSoppList() {
-	let url;
-	
-	url = apiServer + "/api/sopp";
+	let url, method, data;
 
-	$.ajax({
-		"url": url,
-		"method": "get",
-		"dataType": "json",
-		"cache": false,
-		success: (data) => {
-			let jsonData;
-			if (data.result === "ok") {
-				jsonData = cipher.decAes(data.data);
-				jsonData = JSON.parse(jsonData);
-				storage.soppList = jsonData;
-				window.setTimeout(drawSoppList, 200);
-			} else {
-				msg.set("등록된 영업기회가 없습니다");
-			}
-		}
-	});
+	url = "/api/sopp";
+	method = "get";
+	data = "";
+
+	crud.defaultAjax(url, method, data, soppSuccessList, soppErrorList);
 } // End of getScheduleList()
+
+function soppSearchList(){
+	let searchCategory, searchText, url, method, data;
+
+	url = "/api/sopp";
+	method = "get";
+	data = "";
+
+	searchCategory = $(document).find("#soppSearchCategory").val();
+	searchText = $(document).find("#soppSearchValue").val();
+	
+	localStorage.setItem("searchList", true);
+	localStorage.setItem("searchCategory", searchCategory);
+	localStorage.setItem("searchText", searchText);
+
+	crud.defaultAjax(url, method, data, soppSuccessList, soppErrorList);
+}
 
 function drawSoppList() {
 	let container, result, jsonData, header = [], data = [], ids = [], disDate, setDate, str, fnc;
@@ -50,7 +53,7 @@ function drawSoppList() {
 
 	header = [
 		{
-			"title" : "등록일",
+			"title" : "번호",
 			"align" : "center",
 		},
 		{
@@ -67,14 +70,14 @@ function drawSoppList() {
 		},
 		{
 			"title" : "매출처",
-			"align" : "left",
+			"align" : "center",
 		},
 		{
 			"title" : "엔드유저",
-			"align" : "left",
+			"align" : "center",
 		},
 		{
-			"title" : "담당사원",
+			"title" : "담당자",
 			"align" : "center",
 		},
 		{
@@ -86,46 +89,57 @@ function drawSoppList() {
 			"align" : "center",
 		},
         {
-			"title" : "매출예정일",
+			"title" : "등록일",
 			"align" : "center",
 		}
 		
 	];
 
 	for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+		let soppType, contType, title, customer, endUser, employee, expectedSales, status;
+		
 		disDate = dateDis(jsonData[i].created, jsonData[i].modified);
 		setDate = dateFnc(disDate);
 
+		soppType = (jsonData[i].soppType === null || jsonData[i].soppType === "") ? "없음" : storage.code.etc[jsonData[i].soppType];
+		contType = (jsonData[i].contType === null || jsonData[i].contType === "") ? "없음" : storage.code.etc[jsonData[i].contType];
+		title = (jsonData[i].title === null || jsonData[i].title === "") ? "제목 없음" : jsonData[i].title;
+		customer = (jsonData[i].customer === null || jsonData[i].customer == 0) ? "없음" : storage.customer[jsonData[i].customer].name;
+		endUser = (jsonData[i].endUser === null || jsonData[i].endUser == 0) ? "없음" : storage.customer[jsonData[i].endUser].name;
+		employee = (jsonData[i].employee === null || jsonData[i].employee == 0) ? "없음" : storage.user[jsonData[i].employee].userName;
+		expectedSales = (jsonData[i].expectedSales === null || jsonData[i].expectedSales == 0) ? 0 : numberFormat(jsonData[i].expectedSales);
+		status = (jsonData[i].status === null || jsonData[i].status === "") ? "없음" : storage.code.etc[jsonData[i].status];
+ 
 		str = [
 			{
+				"setData": jsonData[i].no,
+			},
+			{
+				"setData": soppType,
+			},
+			{
+				"setData": contType,
+			},
+			{
+				"setData": title,
+			},
+			{
+				"setData": customer,
+			},
+			{
+				"setData": endUser,
+			},
+			{
+				"setData": employee,
+			},
+			{
+				"setData": expectedSales,
+			},
+			{
+				"setData": status,
+			},
+			{
 				"setData": setDate,
-			},
-			{
-				"setData": jsonData[i].job,
-			},
-			{
-				"setData": jsonData[i].title,
-			},
-			{
-				"setData": jsonData[i].from,
-			},
-			{
-				"setData": jsonData[i].cust,
-			},
-			{
-				"setData": jsonData[i].user,
-			},
-			{
-				"setData": jsonData[i].no,
-			},
-			{
-				"setData": jsonData[i].sopp,
-			},
-			{
-				"setData": jsonData[i].detail,
-			},
-			{
-				"setData": jsonData[i].no,
 			}
 		];
 
@@ -148,10 +162,19 @@ function soppDetailView(e){
 	method = "get";
 	data = "";
 
-	crud.defaultAjax(url, method, data, soppSuccess, soppError);
+	crud.defaultAjax(url, method, data, soppSuccessView, soppErrorView);
 }
 
-function soppSuccess(result){
+function soppSuccessList(result){
+	storage.soppList = result;
+	window.setTimeout(drawSoppList, 200);
+}
+
+function soppErrorList(){
+	alert("에러");
+}
+
+function soppSuccessView(result){
 	let html = "", title, userName, customer, customerUser, endUser, progress, disDate, expectedSales, detail;
 
 	title = (result.title === null || result.title === "") ? "제목 없음" : result.title;
@@ -226,6 +249,6 @@ function soppSuccess(result){
 	modal.close.css("width", "100%");
 }
 
-function soppError(){
+function soppErrorView(){
 	alert("에러");
 }
