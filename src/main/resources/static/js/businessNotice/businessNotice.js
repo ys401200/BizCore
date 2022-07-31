@@ -18,6 +18,23 @@ function getNoticeList() {
 	
 } // End of getNoticeList()
 
+function noticeSearchList(){
+	let searchCategory, searchText, url, method, data;
+
+	url = "/api/notice";
+	method = "get";
+	data = "";
+
+	searchCategory = $(document).find("#noticeSearchCategory").val();
+	searchText = $(document).find("#noticeSearchValue").val();
+	
+	localStorage.setItem("searchList", true);
+	localStorage.setItem("searchCategory", searchCategory);
+	localStorage.setItem("searchText", searchText);
+
+	crud.defaultAjax(url, method, data, noticeSuccessList, noticeErrorList);
+}
+
 function drawNoticeList() {
 	let container, result, jsonData, header = [], data = [], ids = [], disDate, setDate, str, fnc;
 	

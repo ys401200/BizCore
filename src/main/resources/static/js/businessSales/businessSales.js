@@ -19,6 +19,23 @@ function getSalesList() {
 	crud.defaultAjax(url, method, data, salesSuccessList, salesErrorList);
 } // End of getSalesList()
 
+function salesSearchList(){
+	let searchCategory, searchText, url, method, data;
+
+	url = "/api/sales";
+	method = "get";
+	data = "";
+
+	searchCategory = $(document).find("#salesSearchCategory").val();
+	searchText = $(document).find("#salesSearchValue").val();
+	
+	localStorage.setItem("searchList", true);
+	localStorage.setItem("searchCategory", searchCategory);
+	localStorage.setItem("searchText", searchText);
+
+	crud.defaultAjax(url, method, data, salesSuccessList, salesErrorList);
+}
+
 function drawSalesList() {
 	let container, result, jsonData, header = [], data = [], ids = [], disDate, setDate, str, fnc;
 	
@@ -104,7 +121,7 @@ function drawSalesList() {
 				"setData": toSetDate,
 			},
 			{
-				"setData": jsonData[i].sopp,
+				"setData": jsonData[i].sales,
 			},
 			{
 				"setData": user,
@@ -182,7 +199,7 @@ function salesSuccessView(result){
 	html += "</tr>";
 	html += "<tr>";
 	html += "<th>영업기회</th>";
-	html += "<td>" + result.sopp + "</td>";
+	html += "<td>" + result.sales + "</td>";
 	html += "</tr>";
 	html += "<tr>";
 	html += "<th>매출처</th>";

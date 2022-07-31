@@ -1,4 +1,65 @@
 @charset "UTF-8";
+.scheduleSearchContainer{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-left: 2%;
+	margin-bottom: 2%;
+	max-width: 1782px;
+	height: 100px;
+	background: #FFFFFF;
+	overflow: auto;
+	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
+}
+
+.scheduleSearchContainer .scheduleSearchSelect{
+	margin-right: 1%;
+}
+
+.scheduleSearchContainer .scheduleSearchSelect select{
+	color: #332E85;
+	padding: 5px;
+	font-size: 1.2rem;
+	font-weight: 500;
+	border: 0;
+	background-color: #EDEDF4;
+}
+
+.scheduleSearchContainer .scheduleSearchSelect select:hover{
+	border: 1px solid#332E85;
+}
+
+.scheduleSearchContainer .scheduleSearchText{
+	margin-right: 1%;
+}
+
+.scheduleSearchContainer .scheduleSearchText input{
+	padding: 5px;
+	font-size: 1.2rem;
+	font-weight: 500;
+	width: 500px;
+	border: 0;
+	background-color: #EDEDF4;
+}
+
+.scheduleSearchContainer .scheduleSearchText input:hover{
+	border: 1px solid#332E85;
+}
+
+.scheduleSearchContainer .scheduleSearchBtn button{
+	color: #ffffff;
+	padding: 5px;
+	font-size: 1.2rem;
+	font-weight: 500;
+	width: 100px;
+	border: 0;
+	background-color: #332E85;
+}
+
+.scheduleSearchContainer .scheduleSearchBtn button:hover{
+	cursor: pointer;
+}
+
 .scheduleContainer{
     position: relative;
     left: 2%;
@@ -59,12 +120,9 @@
 	margin: 0 auto;
 }
 
-.scheduleContainer .gridScheduleList .gridHeader{
-    grid-template-columns: 10% 10% 15% 10% 10% 10% 10% 10% 15%;
-}
-
+.scheduleContainer .gridScheduleList .gridHeader,
 .scheduleContainer .gridScheduleList .gridContent{
-	grid-template-columns: 10% 10% 15% 10% 10% 10% 10% 10% 15%;
+    grid-template-columns: 7% 5% 20% 11% 7% 7% 5% 7% 24% 7%;
 }
 
 .scheduleContainer .calendarList{
