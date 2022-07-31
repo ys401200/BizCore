@@ -14,17 +14,17 @@ public class SimpleUser implements Domain {
 
     @Getter
     @Setter
-    private int userNo;
+    protected int userNo;
     @Getter
     @Setter
-    private String compId;
+    protected String compId;
     @Getter
     @Setter
-    private String userId;
+    protected String userId;
     @Getter
     @Setter
-    private String userName;
-    private ArrayList<String> deptId;
+    protected String userName;
+    protected ArrayList<String> deptId;
 
     public void setDeptId(String[] ids){
         if(deptId == null)  deptId = new ArrayList<>();

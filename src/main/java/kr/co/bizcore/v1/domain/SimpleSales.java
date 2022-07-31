@@ -11,16 +11,16 @@ import lombok.Setter;
 @Getter @Setter
 public class SimpleSales implements Domain{
 
-    private int no;
-    private String title; //제목
-    private Date from; //활동일 from
-    private Date to; //활동일 to
-    private int sopp; //영업기회
-    private int user; //담당자
-    private int customer; //매출처
-    private int endUser; //엔드유저
-    private Date created;
-    private Date modified;
+    protected int no;
+    protected String title; //제목
+    protected Date from; //활동일 from
+    protected Date to; //활동일 to
+    protected int sopp; //영업기회
+    protected int user; //담당자
+    protected int customer; //매출처
+    protected int endUser; //엔드유저
+    protected Date created;
+    protected Date modified;
 
     @Override
     public String toJson() {

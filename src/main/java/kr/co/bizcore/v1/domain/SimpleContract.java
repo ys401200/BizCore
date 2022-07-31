@@ -11,17 +11,17 @@ import lombok.Setter;
 @Setter @Getter
 public class SimpleContract implements Domain {
     
-    private int no;
-    private int salesType;
-    private int contractType;
-    private String title;
-    private int buyer;
-    private long contractAmount;
-    private int profit;
-    private int employee;
-    private Date maintenanceStart;
-    private Date maintenanceEnd;
-    private Date saleDate;
+    protected int no;
+    protected int salesType;
+    protected int contractType;
+    protected String title;
+    protected int buyer;
+    protected long contractAmount;
+    protected int profit;
+    protected int employee;
+    protected Date freeMaintenanceStart;
+    protected Date freeMaintenanceEnd;
+    protected Date saleDate;
 
     @Override
     public String toJson() {

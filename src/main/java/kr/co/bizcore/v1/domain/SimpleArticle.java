@@ -12,10 +12,10 @@ import lombok.Setter;
 @Setter
 public class SimpleArticle implements Domain{
     
-    private int no;
-    private int writer;
-    private String title;
-    private Date created;
+    protected int no;
+    protected int writer;
+    protected String title;
+    protected Date created;
 
     @Override
     public String toJson() {

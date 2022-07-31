@@ -11,17 +11,17 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SimpleSopp implements Domain{
-    private int no; //번호
-    private int soppType; //판매방식
-    private int contType; //계약구분
-    private String title; //영업기회명
-    private int customer; //매출처
-    private int endUser; //엔드유저
-    private int employee; //담당자
-    private long expectedSales; //예상매출액
-    private String status; //진행단계
-    private Date created;
-    private Date modified; 
+    protected int no; //번호
+    protected int soppType; //판매방식
+    protected int contType; //계약구분
+    protected String title; //영업기회명
+    protected int customer; //매출처
+    protected int endUser; //엔드유저
+    protected int employee; //담당자
+    protected long expectedSales; //예상매출액
+    protected String status; //진행단계
+    protected Date created;
+    protected Date modified; 
 
     @Override
     public String toJson() {

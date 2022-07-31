@@ -10,10 +10,10 @@ import lombok.Setter;
 @Setter
 public class SimpleCustomer implements Domain{
 
-    private int no;
-    private String name;
-    private String businessRegistrationNumber;
-    private String ceoName;
+    protected int no;
+    protected String name;
+    protected String businessRegistrationNumber;
+    protected String ceoName;
 
     @Override
     public String toJson() {
