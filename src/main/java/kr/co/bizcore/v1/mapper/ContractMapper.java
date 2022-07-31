@@ -52,7 +52,8 @@ public interface ContractMapper {
             "   freemaintedate, " +
             "   contorddate, " +
             "   regdatetime, " +
-            "   attrib" +
+            "   attrib, " +
+            "   compno" +
             ") VALUES( " +
             "   #{cnt.salesType}, " +
             "   #{cnt.contractType}, " +
@@ -83,8 +84,8 @@ public interface ContractMapper {
             "   #{cnt.maintenanceEnd}, " + 
             "   #{cnt.saleDate}, " +
             "   NOW(), " +
-            "   10000" +
-            ") WHERE compno = (SELECT compno FROM swcore.swc_company WHERE compid = #{compId})")
+            "   10000, " +
+            "   (SELECT compno FROM swc_company WHERE compid = #{compId}))")
     public void addContract(@Param("compId") String compId, @Param("cnt") Contract contract);
 
     @Update("UPDATE swc_cont SET " +
