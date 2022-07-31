@@ -15,8 +15,9 @@ src/main/resources/archive/**/*
 ## 테스트 클래스
 Test.java
 
-## ㅣㅐㅎ
+## 로그
 bizcore.txt
+bizcore*.txt
 
 ### STS ###
 .apt_generated
