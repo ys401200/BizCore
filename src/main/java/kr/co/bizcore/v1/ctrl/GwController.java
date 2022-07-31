@@ -3,15 +3,21 @@ package kr.co.bizcore.v1.ctrl;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import kr.co.bizcore.v1.domain.SimpleUser;
+import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @RequestMapping("/gw")
+@Slf4j
 public class GwController {
+
+    private static final Logger logger = LoggerFactory.getLogger(GwController.class);
 
     @RequestMapping(value = "/mylist", method = RequestMethod.GET)
     public String mylist(HttpServletRequest request) {
