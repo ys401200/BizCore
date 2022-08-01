@@ -35,7 +35,6 @@ public class ApiScheduleCtrl extends Ctrl {
         maxYear = minYear + 10;
         session = request.getSession();
 
-
         // 날짜가 있는 경우 이를 받음
         uri = request.getRequestURI();
         if(uri.substring(0, 1).equals("/")) uri = uri.substring(1);
