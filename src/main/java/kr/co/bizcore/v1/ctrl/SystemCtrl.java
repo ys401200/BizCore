@@ -2,6 +2,7 @@ package kr.co.bizcore.v1.ctrl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,5 +20,14 @@ public class SystemCtrl extends Ctrl {
     public String connUrl() {
         return systemService.getConnUrl();
     } // End of connUrl()
+
+    @GetMapping("/test")
+    public String test(){
+        String result = null;
+
+        result = testService.test2();
+
+        return result;
+    } // End of test()
 
 }

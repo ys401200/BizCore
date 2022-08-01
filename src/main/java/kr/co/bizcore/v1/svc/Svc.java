@@ -1,5 +1,6 @@
 package kr.co.bizcore.v1.svc;
 
+import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,7 @@ import kr.co.bizcore.v1.mapper.SalesMapper;
 import kr.co.bizcore.v1.mapper.ScheduleMapper;
 import kr.co.bizcore.v1.mapper.SoppMapper;
 import kr.co.bizcore.v1.mapper.SystemMapper;
+import kr.co.bizcore.v1.mapper.TestMapper;
 import kr.co.bizcore.v1.mapper.UserMapper;
 import kr.co.bizcore.v1.util.UploadedFileStorage;
 
@@ -59,6 +61,12 @@ public abstract class Svc {
 
     @Autowired
     protected ProcureMapper procureMapper;
+
+    @Autowired 
+    protected TestMapper testMapper;
+
+    @Autowired
+    protected SqlSessionTemplate sqlSession;
 
     public static String fileStoragePath;
 

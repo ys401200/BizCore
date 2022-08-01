@@ -11,6 +11,7 @@ import kr.co.bizcore.v1.svc.SalesService;
 import kr.co.bizcore.v1.svc.ScheduleSvc;
 import kr.co.bizcore.v1.svc.SoppService;
 import kr.co.bizcore.v1.svc.SystemService;
+import kr.co.bizcore.v1.svc.TestService;
 import kr.co.bizcore.v1.svc.UserService;
 
 @Controller
@@ -42,6 +43,9 @@ public abstract class Ctrl {
 
     @Autowired
     protected ProcureService procureService;
+
+    @Autowired
+    protected TestService testService;
 
     public int strToInt(String str){
         int result = -1;
