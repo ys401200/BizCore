@@ -42,6 +42,20 @@ public abstract class Ctrl {
 
     @Autowired
     protected ProcureService procureService;
+
+    public int strToInt(String str){
+        int result = -1;
+        try{result = str != null ? Integer.parseInt(str) : -1;
+        }catch(NumberFormatException e){e.printStackTrace();}
+        return result;
+    }
+
+    public long strToLong(String str){
+        long result = -1;
+        try{result = str != null ? Long.parseLong(str) : -1;
+        }catch(NumberFormatException e){e.printStackTrace();}
+        return result;
+    }
     
 
 }

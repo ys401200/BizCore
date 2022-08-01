@@ -41,5 +41,23 @@ public class ProcureService extends Svc{
 
         return result;
     } // End of getProcure()
+
+    public boolean addProcure(Procure procure, String compId){
+        int count = -1;
+        count = procureMapper.addProcure(procure, compId);
+        return count > 0;
+    } // End of addProcure()
+
+    public boolean modifyProcure(Procure procure, String compId){
+        int count = -1;
+        count = procureMapper.modifyProcure(procure, compId);
+        return count > 0;
+    } // End of modifyProcure()
+
+    public boolean removeProcure(String no, String compId){
+        int count = -1;
+        count = procureMapper.removeProcure(no, compId);
+        return count > 0;
+    } // End of removeProcure()
     
 }

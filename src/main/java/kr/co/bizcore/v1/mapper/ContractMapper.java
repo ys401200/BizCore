@@ -121,5 +121,8 @@ public interface ContractMapper {
                 "       contorddate = #{cnt.saleDate} " +
                 "WHERE contno = #{cnt.no} AND attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swcore.swc_company WHERE compid = #{compId})")
     public void modifyContract(@Param("compId") String compId, @Param("cnt") Contract contract);
+
+    @Update("UPDATE swc_cont SET attrib = 'XXXXX' WHERE contno = #{no} AND compno = (SELECT compno FROM swcore.swc_company WHERE compid = #{compId})")
+    public void removeContract(@Param("no") String no, @Param("compId") String compId);
 }
 
