@@ -24,6 +24,7 @@
         <div class="soppContainer">
             <hr />
             <span>영업기회조회</span>
+            <button type="button" onclick="soppInsertForm();">등록</button>
             <div class="gridSoppList"></div>
             <div class="pageContainer"></div>
         </div>

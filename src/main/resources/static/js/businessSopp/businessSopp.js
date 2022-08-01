@@ -165,7 +165,10 @@ function soppDetailView(e){
 
 function soppSuccessList(result){
 	storage.soppList = result;
-	window.setTimeout(drawSoppList, 200);
+
+	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined){
+		window.setTimeout(drawSoppList, 500);
+	}
 }
 
 function soppErrorList(){
@@ -190,63 +193,120 @@ function soppSuccessView(result){
 	html = "<table class='defaultTable'>";
 	html += "<tr>";
 	html += "<th>영업기회명</th>";
-	html += "<td>" + result.title + "</td>";
+	html += "<td><input type='text' value='" + title + "' disabled='true'>" + "</td>";
 	html += "</tr>";
 	html += "<tr>";
 	html += "<th>담당자</th>";
-	html += "<td>" + userName + "</td>";
+	html += "<td><input type='text' value='" + userName + "' data-keyup='user' disabled='true'>" + "</td>";
 	html += "</tr>";
 	html += "<tr>";
 	html += "<th>매출처</th>";
-	html += "<td>" + customer + "</td>";
+	html += "<td><input type='text' value='" + customer + "' data-keyup='customer' disabled='true'>" + "</td>";
 	html += "</tr>";
 	html += "<tr>";
 	html += "<th>매출처 담당자</th>";
-	html += "<td>" + customerUser + "</td>";
+	html += "<td><input type='text' value='" + customerUser + "' data-keyup='user' disabled='true'>" + "</td>";
 	html += "</tr>";
 	html += "<tr>";
 	html += "<th>엔드유저</th>";
-	html += "<td>" + endUser + "</td>";
+	html += "<td><input type='text' value='" + endUser + "' data-keyup='customer' disabled='true'>" + "</td>";
 	html += "</tr>";
 	html += "<tr>";
 	html += "<th>진행단계</th>";
-	html += "<td>" + result.status + "</td>";
+	html += "<td><input type='text' value='" + result.status + "' disabled='true'>" + "</td>";
 	html += "</tr>";
 	html += "<tr>";
 	html += "<th>가능성</th>";
-	html += "<td>" + progress + "</td>";
+	html += "<td><input type='text' value='" + progress + "' disabled='true'>" + "</td>";
 	html += "</tr>";
 	html += "<tr>";
 	html += "<th>계약구분</th>";
-	html += "<td>" + result.contType + "</td>";
+	html += "<td><input type='text' value='" + result.contType + "' disabled='true'>" + "</td>";
 	html += "</tr>";
 	html += "<tr>";
 	html += "<th>매출예정일</th>";
-	html += "<td>" + targetDate + "</td>";
+	html += "<td><input type='text' value='" + targetDate + "' disabled='true'>" + "</td>";
 	html += "</tr>";
 	html += "<tr>";
 	html += "<th>판매방식</th>";
-	html += "<td>" + result.soppType + "</td>";
+	html += "<td><input type='text' value='" + result.soppType + "' disabled='true'>" + "</td>";
 	html += "</tr>";
 	html += "<tr>";
 	html += "<th>예상매출</th>";
-	html += "<td>" + expectedSales + "</td>";
+	html += "<td><input type='text' value='" + expectedSales + "' disabled='true' onkeyup='inputNumberFormat(this)'>" + "</td>";
 	html += "</tr>";
 	html += "<tr>";
 	html += "<th>내용</th>";
-	html += "<td>" + detail + "</td>";
+	html += "<td><textarea id='detail'>" + detail + "</textarea></td>";
 	html += "</tr>";
 	html += "</table>";
 
 	modal.show();
 	modal.headTitle.text("상세보기");
+	modal.content.css("width", "");
 	modal.content.css("width", "800px");
 	modal.body.html(html);
-	modal.confirm.hide();
+	modal.confirm.text("수정");
 	modal.close.text("취소");
-	modal.close.css("width", "100%");
+	modal.confirm.attr("onclick", "soppUpdateForm();");
+	
+	setTimeout(() => {
+		tinymce.activeEditor.mode.set("readonly");
+	}, 300);
 }
 
 function soppErrorView(){
 	alert("에러");
+}
+
+function soppInsertForm(){
+	let html;
+
+	html = "<form class='defaultForm'>";
+	html += "<div class='formDefaultTitle'>영업기회</div>";
+	html += "<div class='formDefaultContent'><input type='text'></div>";
+	html += "<div class='formDefaultTitle'>담당사원</div>";
+	html += "<div class='formDefaultContent'><input type='text' data-keyup='user'></div>";
+	html += "<div class='formDefaultTitle'>매출처</div>";
+	html += "<div class='formDefaultContent'><input type='text' data-keyup='customer'></div>";
+	html += "<div class='formDefaultTitle'>매출처 담당자</div>";
+	html += "<div class='formDefaultContent'><input type='text' data-keyup='user'></div>";
+	html += "<div class='formDefaultTitle'>엔드유저</div>";
+	html += "<div class='formDefaultContent'><input type='text' data-keyup='customer'></div>";
+	html += "<div class='formDefaultTitle'>진행단계</div>";
+	html += "<div class='formDefaultContent'><input type='text'></div>";
+	html += "<div class='formDefaultTitle'>가능성</div>";
+	html += "<div class='formDefaultContent'><input type='text'></div>";
+	html += "<div class='formDefaultTitle'>계약구분</div>";
+	html += "<div class='formDefaultContent'><input type='text'></div>";
+	html += "<div class='formDefaultTitle'>매출예정일</div>";
+	html += "<div class='formDefaultContent'><input type='text'></div>";
+	html += "<div class='formDefaultTitle'>판매방식</div>";
+	html += "<div class='formDefaultContent'><input type='text'></div>";
+	html += "<div class='formDefaultTitle'>예상매출</div>";
+	html += "<div class='formDefaultContent'><input type='text'></div>";
+	html += "<div class='formDefaultTitle'>내용</div>";
+	html += "<div class='formDefaultContent'><textarea></textarea></div>";
+	html += "</form>";
+
+	modal.show();
+	modal.headTitle.text("영업기회등록");
+	modal.content.css("width", "800px");
+	modal.body.html(html);
+	modal.confirm.text("등록");
+	modal.confirm.attr("onclick", "soppInsert();");
+	modal.close.text("취소");
+}
+
+function soppInsert(){
+	location.reload();
+}
+
+function soppUpdateForm(){
+	let defaultTable;
+
+	defaultTable = $(document).find(".defaultTable");
+
+	defaultTable.find("input").prop("disabled", false);
+	tinymce.activeEditor.mode.set("design");
 }

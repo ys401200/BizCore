@@ -183,7 +183,7 @@ function init(){
 		},
 		clear: () => {
 			modal.headTitle.text("");
-			modal.body.html("");
+			modal.body.empty();
 			modal.confirm.show();
 			modal.close.show();
 			modal.footBtns.css("width", "49%");
@@ -577,7 +577,7 @@ function getUserMap(){
 				msg.set("직원 정보를 가져오지 못했습니다.");
 			}
 		}
-	})
+	});
 } // End of getUserMap()
 
 // API 서버에서 직원 정보를 가져오는 함수
@@ -848,7 +848,11 @@ function inputDataList(){
 					$(item).after("<datalist id='autoComplete_" + index + "'></datalist>");
 					
 					for(let key in jsonData){
-						$(item).parents("div").find("#autoComplete_" + index).append("<option value='" + jsonData[key].name + "'></option>");
+						if($(item).data("keyup") === "user"){
+							$(item).parents("div").find("#autoComplete_" + index).append("<option value='" + jsonData[key].userName + "'></option>");
+						}else if($(item).data("keyup") === "customer"){
+							$(item).parents("div").find("#autoComplete_" + index).append("<option value='" + jsonData[key].name + "'></option>");
+						}
 					}
 				}
 			}
@@ -867,6 +871,14 @@ function numberFormat(num){
 	}
 }
 
+function inputNumberFormat(e){
+	let value = $(e).val().replaceAll(",", "");
+
+	if(value !== undefined){
+		$(e).val(parseInt(value).toLocaleString("en-US"));
+	}
+}
+
 //tinyMCE
 function setTiny(){
 	let plugins = [
@@ -882,8 +894,8 @@ function setTiny(){
 		   + ' bullist numlist |'
 		   + ' table tabledelete |'
 		   + ' link image';
-	
-	tinymce.init({
+
+	tinymce.destroy().init({
 		language: "ko_KR",
 		menubar: false,
 		plugins: plugins,

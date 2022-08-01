@@ -173,6 +173,20 @@ button, select, input{
 }
 /* 폼 레이아웃 끝 */
 
+/* 테이블 레이아웃 */
+.defaultTable input{
+	border: 1px solid #C1C1C1;
+	border-radius: 5px;
+	background-color: #F5F6F8;
+	padding: 0 10px;
+	width: 100%;
+}
+
+.defaultTable textarea{
+	width: 100%;
+}
+/* 테이블 레이아웃 끝 */
+
 #header{
 	position: relative;
 	width: 100%;
