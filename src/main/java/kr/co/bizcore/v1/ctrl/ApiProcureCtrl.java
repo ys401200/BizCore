@@ -18,7 +18,7 @@ import kr.co.bizcore.v1.domain.Procure;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping("/a[i/procure")
+@RequestMapping("/api/procure")
 @Slf4j
 public class ApiProcureCtrl extends Ctrl{
 
