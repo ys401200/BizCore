@@ -24,7 +24,7 @@ public class ApiScheduleCtrl extends Ctrl {
     @RequestMapping(value = {"", "/**"}, method = RequestMethod.GET)
     public String get(HttpServletRequest request){
         String result = null;
-        String compId = null, userNo = null, yy = null, mm = null, uri = null, aesKey = null, aesIv = null, data = null, userIn = null, dept = null;
+        String compId = null, userNo = null, yy = null, mm = null, uri = null, aesKey = null, aesIv = null, data = null, dept = null;
         String[] t = null;
         SimpleUser user = null;
         HttpSession session = null;
