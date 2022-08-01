@@ -21,10 +21,10 @@ public class ScheduleSvc extends Svc{
         int x = 0;
 
         list = scheduleMapper.getSchedule(compId, year + "-" + month + "-1", deptIn);
-        if(list != null && list.size() > 0){
+        if(list != null){
+            result = "[";
             for(x = 0 ; x < list.size() ; x++){
-                if(x == 0)  result = "[";
-                else    result += ",";
+                if(x > 0)   result += ",";
                 result += list.get(x).toJson();
             }
             result += "]";
