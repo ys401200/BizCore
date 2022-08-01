@@ -17,7 +17,7 @@ function getSalesList() {
 	data = "";
 
 	crud.defaultAjax(url, method, data, salesSuccessList, salesErrorList);
-} // End of getSalesList()
+}
 
 function salesSearchList(){
 	let searchCategory, searchText, url, method, data;

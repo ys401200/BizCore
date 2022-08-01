@@ -7,6 +7,20 @@
 		<jsp:include page="../sideMenu.jsp" />
 	</div>
 	<div id="bodyContent">
+        <div class="contSearchContainer">
+            <div class="contSearchSelect">
+                <select id="contSearchCategory">
+                    <option value="no">번호</option>
+                    <option value="title">영업기회명</option>
+                </select>
+            </div>
+            <div class="contSearchText">
+                <input type="text" id="contSearchValue">
+            </div>
+            <div class="contSearchBtn">
+                <button type="button" onclick="contSearchList();">검색</button>
+            </div>
+        </div>
         <div class="contContainer">
             <hr />
             <span>계약조회</span>

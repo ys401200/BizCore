@@ -193,58 +193,6 @@ function init(){
 	}
 
 	dragAndDrop = {
-		// "dragStart": (e) => {
-		// 	e.dataTransfer.setData("text", e.target.id);
-		// },
-
-		// "dragEnd": (e) => {
-		// 	$(e.target).prev().css("background-color", "");
-		// },
-
-		// "dragEnter": (e) => {
-		// 	$(e.target).css("background-color", "#EAEAEA");
-		// },
-
-		// "dragLeave": (e) => {
-		// 	$(e.target).css("background-color", "");
-		// },
-
-		// "dragOver": (e) => {
-		// 	$(e.target).css("background-color", "#EAEAEA");
-		// 	e.preventDefault();
-		// },
-
-		// "dragDrop": (e) => {
-		// 	$(e.target).after($("#" + e.dataTransfer.getData("text")));
-		// 	e.preventDefault();
-		// },
-
-		// "gridDragStart": (e) => {
-		// 	e.dataTransfer.setData("text", e.target.id);
-		// },
-
-		// "gridDragEnd": (e) => {
-		// 	$(e.target).prev().css("background-color", "");
-		// },
-
-		// "gridDragEnter": (e) => {
-		// 	$(e.target).parent().css("background-color", "#EAEAEA");
-		// },
-
-		// "gridDragLeave": (e) => {
-		// 	$(e.target).parent().css("background-color", "");
-		// },
-
-		// "gridDragOver": (e) => {
-		// 	$(e.target).parent().css("background-color", "#EAEAEA");
-		// 	e.preventDefault();
-		// },
-
-		// "gridDrop": (e) => {
-		// 	$(e.target).parent().after($("#" + e.dataTransfer.getData("text")));
-		// 	e.preventDefault();
-		// },
-
 		"fileDragEnter": (e) => {
 			e.stopPropagation();
 			e.preventDefault();
@@ -322,9 +270,12 @@ function init(){
 	cipher.aes.key = sessionStorage.getItem("aesKey");
 	cipher.aes.iv = sessionStorage.getItem("aesIv");
 	msg.cnt = document.getElementsByClassName("msg_cnt")[0];
-
+	
 	$("#sideMenu").find("ul:not(#panel) li a").click(function(){
 		if($(this).attr("class") !== "active"){
+			$("#sideMenu").find("ul:not(#panel) li a").removeAttr("class");
+			$("#sideMenu").find("ul:not(#panel) li a").next().removeAttr("class");
+			$("#sideMenu").find("ul:not(#panel) li a").find("#slideSpan").text("+");
 			$(this).next().attr("class", "active");
 			$(this).find("#slideSpan").text("-");
 			$(this).attr("class", "active");
@@ -914,31 +865,6 @@ function numberFormat(num){
 	}else{
 		return "format undefined";
 	}
-}
-
-function listSearch(){
-	let gridParentContent, gridContentItem, input, storageItem;
-
-	input = $(document).find("#testSearch");
-	gridContentItem = $(document).find(".gridContentItem");
-	storageItem = storage.soppList;
-
-	console.log(storageItem);
-	for(let i = 0; i < storageItem.length; i++){
-		console.log(storageItem[i].title);
-	}
-
-	for(let key in storageItem){
-		storageItem[1].each((index, item) => {
-			console.log(index);
-			console.log(item);
-		});
-	}
-
-	storage.soppList[0].each((index, item) => {
-		console.log(index);
-		console.log(item);
-	});
 }
 
 //tinyMCE

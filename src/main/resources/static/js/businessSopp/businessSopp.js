@@ -152,7 +152,6 @@ function drawSoppList() {
 	createGrid(container, header, data, ids, fnc);
 }
 
-
 function soppDetailView(e){
 	let id, url, method, data;
 
