@@ -16,7 +16,10 @@
 					<div class="writeFormInfo"></div>
 					<div class="writeFormInput"></div>
 					<div class="writeFormData"></div>
+					<div class="insertedData"></div>
+					<div class="buttonField"></div>
 				</div>
+				
 
                 </div>
 				

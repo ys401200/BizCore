@@ -48,26 +48,40 @@ margin : 3rem;
 }
 
 .writeForm {
-    margin : 3rem;
-	border: 1px solid black;
-   
+margin: 5em;
+   font-size: 16px;
+   padding : 2em;
+   border: 1px solid black;
+  
 }
+
+
+
 .writeFormTitle {
-	margin : 3rem;
+	height :5%;
 	text-align: center;
 	font-weight: 500;
     font-size: 3rem;
 }
 
+
+
+
+
+
 .writeFormInfo {
-	margin : 3rem;
+	height : 20%;
 	margin-right : 70%;
 	display : grid ;
 	grid-template-columns:50% 50% ; 
 }
 
-.writeFormInput,.writeFormData {
-	margin : 3rem;
+
+
+
+
+.writeFormInput {
+	height : 30%;
 	
 }
 
@@ -81,7 +95,27 @@ margin : 3rem;
 
 
 
-.itemTitle {
-	display: inline;
+.writeFormData  {
+	height : 10%;
+	text-align: center;
+}
+.writeFormData input {
+	width :80%;
+}
+
+
+.insertedData {
+	height : 30% ;
+	border : 1px solid gray;
+}
+
+.insertedData div {
+text-align: center;
+}
+
+.buttonField {
+	padding : 1em;
+	height: 5%;
+	text-align: right;
 }
 

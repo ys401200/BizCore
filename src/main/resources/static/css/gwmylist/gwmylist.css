@@ -7,7 +7,7 @@
 	background: #FFFFFF;
 	overflow: auto;
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
-    display: inline-block;
+	display: inline-block;
 }
 
 .mylistContainer hr {
@@ -22,9 +22,139 @@
 }
 
 .mylistContainer span {
+
 	font-weight: 500;
 	font-size: 16px;
 	margin-left: 18px;
 	line-height: 3;
 	color: #332E85;
+}
+
+
+
+.subContainer {
+	display: grid;
+	grid-template-columns: 60% 40%;
+}
+.mylistdiv {
+	margin-left: 10%;
+	font-size: 16px;
+	width: 210mm;
+	height: 297mm;
+	padding: 3em;
+	border: 1px solid black;
+}
+
+.title {
+	font-size: 2em;
+	text-align: center;
+}
+
+.infoDiv {
+
+	display: grid;
+	grid-template-columns: 10% 30%;
+}
+
+.outlineNone {
+	border: none;
+}
+
+
+.info,
+.insertedContent,
+.insertedData,
+.list_comment {
+	margin-top: 2em;
+}
+
+.list_comment {
+	text-align: center;
+}
+
+
+
+
+.infoTitle,
+.infoTitlelast {
+	border-top: 1px solid black;
+	border-left: 1px solid black;
+	border-right: 1px solid black;
+	background-color: rgb(208, 206, 206);
+	text-align: center;
+
+}
+
+.infoContent {
+	border-top: 1px solid black;
+	border-right: 1px solid black;
+}
+
+.infoTitlelast,
+.infoContentlast {
+	border: 1px solid black;
+
+}
+
+.infoContentlast {
+	border-left: none;
+}
+
+.contentDiv {
+	display: grid;
+	grid-template-columns: 10% 90%;
+}
+
+.detailDiv {
+
+	display: grid;
+	grid-template-columns: 10% 25% 30% 5% 10% 20%;
+	text-align: center;
+	font-size: 0.5em;
+
+}
+
+.detailcontentDiv {
+	display: grid;
+	grid-template-columns: 10% 25% 30% 5% 10% 20%;
+	text-align: center;
+	font-size: 0.5em;
+}
+
+
+.datailTitle {
+	border-left: 1px solid black;
+	border-top: 1px solid black;
+	border-bottom: 1px solid black;
+	background-color: rgb(208, 206, 206);
+}
+
+.datailTitlelast {
+	border: 1px solid black;
+	
+	background-color: rgb(208, 206, 206);
+}
+
+
+.detailcontentlast {
+	border-left: 1px solid black;
+	border-right: 1px solid black;
+	border-bottom: 1px solid black;
+
+}
+
+.detailcontent {
+	border-left: 1px solid black;
+	border-bottom: 1px solid black;
+}
+
+
+.mylistbtn {
+	margin-left : 2em;
+	margin-right : 2em;
+
+}
+
+.comentbtn {
+	text-align: right;
 }

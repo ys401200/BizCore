@@ -9,7 +9,20 @@
 			<div class="mylistContainer">
 				<hr />
 				<span>나의 문서함</span>
-				<div class="mylistdiv"></div>
+				<div class="subContainer">
+				<div class="mylistdiv">
+					<div class="list_header">
+						<div class="title"></div>
+						<div class="info"></div>
+					</div>
+					<div class="list_content">
+						<div class="insertedContent"></div>
+						<div class="insertedData"></div>
+					</div>
+					<div class="list_comment">-이하 여백-</div>
+				</div>
+				<div class="mylistbtn"></div>
+			</div>
 				
 			</div>
 		</div>
