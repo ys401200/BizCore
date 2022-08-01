@@ -70,8 +70,8 @@ public class ApiScheduleCtrl extends Ctrl {
             user = (SimpleUser)userService.getUserMap(compId).get(userNo);
             dept = user.getDeptIdSqlIn();
             data = scheduleService.getScheduleList(compId, userNo, year, month, dept);
-            data = userService.encAes(data, aesKey, aesIv);
             if(data != null){
+                data = userService.encAes(data, aesKey, aesIv);
                 result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
             }else{
                 result = "{\"result\":\"failure\",\"msg\":\"Error occured.\"}";

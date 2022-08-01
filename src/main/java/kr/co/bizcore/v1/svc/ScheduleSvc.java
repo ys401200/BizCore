@@ -21,7 +21,7 @@ public class ScheduleSvc extends Svc{
         int x = 0;
 
         list = scheduleMapper.getSchedule(compId, year + "-" + month + "-1", deptIn);
-        if(list != null){
+        if(list != null && list.size() > 0){
             for(x = 0 ; x < list.size() ; x++){
                 if(x == 0)  result = "[";
                 else    result += ",";

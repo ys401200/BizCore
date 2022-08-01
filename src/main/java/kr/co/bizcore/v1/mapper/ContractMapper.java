@@ -86,7 +86,7 @@ public interface ContractMapper {
             "   NOW(), " +
             "   10000, " +
             "   (SELECT compno FROM swc_company WHERE compid = #{compId}))")
-    public void addContract(@Param("compId") String compId, @Param("cnt") Contract contract);
+    public int addContract(@Param("compId") String compId, @Param("cnt") Contract contract);
 
     @Update("UPDATE swc_cont SET " +
                 "       conttype = #{cnt.salesType}, " + 
@@ -120,9 +120,9 @@ public interface ContractMapper {
                 "       freemaintedate = #{cnt.maintenanceEnd}, " +
                 "       contorddate = #{cnt.saleDate} " +
                 "WHERE contno = #{cnt.no} AND attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swcore.swc_company WHERE compid = #{compId})")
-    public void modifyContract(@Param("compId") String compId, @Param("cnt") Contract contract);
+    public int modifyContract(@Param("compId") String compId, @Param("cnt") Contract contract);
 
     @Update("UPDATE swc_cont SET attrib = 'XXXXX' WHERE contno = #{no} AND compno = (SELECT compno FROM swcore.swc_company WHERE compid = #{compId})")
-    public void removeContract(@Param("no") String no, @Param("compId") String compId);
+    public int removeContract(@Param("no") String no, @Param("compId") String compId);
 }
 
