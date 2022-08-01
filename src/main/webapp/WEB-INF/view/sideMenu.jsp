@@ -28,9 +28,9 @@
 				<span id="slideSpan">+</span>
 			</a>
 		  	<ul id="panel">
-		  		<li><a href="/business/schedule">- 일정조회</a></li>
-		  		<li><a href="#">- 개인업무일지작성</a></li>
-		  		<li><a href="#">- 업무일지검토</a></li>
+		  		<li><a href="/business/schedule">일정조회</a></li>
+		  		<li><a href="#">개인업무일지작성</a></li>
+		  		<li><a href="#">업무일지검토</a></li>
 		  	</ul>
 		</li>
 		<li>
@@ -40,8 +40,8 @@
 				<span id="slideSpan">+</span>
 			</a>
 			<ul id="panel">
-		  		<li><a href="/business/sales">- 영업활동조회</a></li>
-		  		<li><a href="#">- 영업활동등록</a></li>
+		  		<li><a href="/business/sales">영업활동조회</a></li>
+		  		<li><a href="#">영업활동등록</a></li>
 		  	</ul>
 		</li>
 		<li>
@@ -51,8 +51,8 @@
 				<span id="slideSpan">+</span>
 			</a>
 			<ul id="panel">
-		  		<li><a href="/business/sopp">- 영업기회조회</a></li>
-		  		<li><a href="/business/est">- 견적관리</a></li>
+		  		<li><a href="/business/sopp">영업기회조회</a></li>
+		  		<li><a href="/business/est">견적관리</a></li>
 		  	</ul>
 		</li>
 		<li>
@@ -62,9 +62,9 @@
 				<span id="slideSpan">+</span>
 			</a>
 			<ul id="panel">
-		  		<li><a href="#">- 조달업무할당</a></li>
-		  		<li><a href="#">- 조달진행상황</a></li>
-		  		<li><a href="#">- 조달계약관리</a></li>
+		  		<li><a href="#">조달업무할당</a></li>
+		  		<li><a href="#">조달진행상황</a></li>
+		  		<li><a href="#">조달계약관리</a></li>
 		  	</ul>
 		</li>
 		<li>
@@ -75,9 +75,9 @@
 			</a>
 			<ul id="panel">
 		  		<li><a href="/business/cont">- 계약조회</a></li>
-		  		<li><a href="#">- 계약등록</a></li>
-		  		<li><a href="#">- 업체정보조회</a></li>
-		  		<li><a href="#">- 매입/매출 자료등록</a></li>
+		  		<li><a href="#">계약등록</a></li>
+		  		<li><a href="#">업체정보조회</a></li>
+		  		<li><a href="#">매입/매출 자료등록</a></li>
 		  	</ul>
 		</li>
 		<li>
@@ -87,9 +87,9 @@
 				<span id="slideSpan">+</span>
 			</a>
 			<ul id="panel">
-		  		<li><a href="/business/tech">- 기술지원조회</a></li>
-		  		<li><a href="#">- 유지보수계약관리</a></li>
-		  		<li><a href="#">- 유지보수매입관리</a></li>
+		  		<li><a href="/business/tech">기술지원조회</a></li>
+		  		<li><a href="#">유지보수계약관리</a></li>
+		  		<li><a href="#">유지보수매입관리</a></li>
 		  	</ul>
 		</li>
 		<li>

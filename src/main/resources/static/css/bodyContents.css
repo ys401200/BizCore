@@ -13,8 +13,14 @@
 
 #bodyContents #bodyContent{
 	float: right;
-	width: 87%;
+	width: calc(100% - 235px);
 	overflow-y: auto;
-	max-height: calc(100% - 130px);
-	padding: 2% 0;
+	max-height: calc(100% - 94px);
+	padding: 1% 0;
+}
+
+@media all and (min-width:1920px){
+	#bodyContents #sideContents{
+		width:235px;
+	}
 }

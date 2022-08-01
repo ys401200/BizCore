@@ -30,7 +30,7 @@
 }
 
 #sideMenu ul li{
-	line-height: 60px;
+	line-height: 58px;
 }
 
 #sideMenu ul li a{
@@ -52,7 +52,8 @@
 }
 
 #sideMenu ul li #panel a.active{
-	color: #302D81;
+	color: #fff;
+	background-color:#171460;
 }
 
 #sideMenu ul li a:hover #mainHomeIcon{
@@ -168,8 +169,8 @@
 }
 
 #sideMenu ul li a img{
-	width: 26px;
-	height: 27px;
+	width: 22px;
+	/* height: 27px; */
 	margin-left: 25px;
 	vertical-align: sub;
 }
@@ -177,21 +178,23 @@
 #sideMenu ul li a span:not(#slideSpan){
 	margin-left: 18px;
 	font-weight: 500;
-	font-size: 16px;
+	font-size: 14px;
 }
 
 #sideMenu ul li a.active #slideSpan{
 	float: right;
 	margin-right: 18px;
-	font-weight: 500;
-	font-size: 40px;
+	font-weight: 400;
+	font-size: 32px;
+	opacity: 0.8;
 }
 
 #sideMenu ul li a:not(.active) #slideSpan{
 	float: right;
 	margin-right: 18px;
-	font-weight: 500;
-	font-size: 30px;
+	font-weight: 400;
+	font-size: 20px;
+	opacity: 0.8;
 }
 
 #sideMenu ul li #panel{
@@ -204,6 +207,8 @@
 	width: auto;
 	height: 50px;
 	line-height: 55px;
+	background-color: #25226F;
+	border-bottom: 1.5px solid #302D81;
 }
 
 #sideMenu ul li #panel li a{
@@ -211,12 +216,13 @@
 	padding: 0 25%;
 	text-decoration: none;
 	font-weight: 500;
-	font-size: 16px;
+	font-size: 14px;
 	color: #ffffff;
 }
 
 #sideMenu ul li #panel li a:hover{
-	color: #302D81;
+	color: #fff;
+	background-color: #171460;
 }
 
 #sideMenu ul:not(#panel).active{
@@ -278,5 +284,9 @@
         transform: translateX(-30px);
         opacity: 0;
     }
+}
+
+@media all and (max-width:) and (min-width:){
+
 }
 

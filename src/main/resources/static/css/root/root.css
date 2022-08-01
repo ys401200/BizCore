@@ -3,9 +3,9 @@
 /* 메인 공지사항 시작*/
 #bodyContent #bodyNotice{
 	float:left;
-	width: 47%;
+	width: 48%;
 	height: 478px;
-	margin-left: 2%;
+	margin-left: 1.5%;
 	margin-bottom: 2%;
 	background: #FFFFFF;
 	overflow: auto;
@@ -32,8 +32,8 @@
 }
 
 #bodyContent #bodyNotice .gridNoticeList{
-	display: grid; 
-	width:99%; 
+	display: grid;
+	width:99%;
 	margin: 0 auto;
 	margin-top: 15px;
 }
@@ -49,9 +49,9 @@
 
 #bodyContent #bodySched{
 	float:left;
-	width: 47%;
+	width: 48%;
 	height: 478px;
-	margin-left: 2%;
+	margin-left: 1.5%;
 	margin-bottom: 2%;
 	background: #FFFFFF;
 	overflow: auto;
@@ -162,9 +162,9 @@
 /* 메인 나의문서 시작 */
 #bodyContent #bodyMyDoc{
 	float:left;
-	width: 47%;
+	width: 48%;
 	height: 478px;
-	margin-left: 2%;
+	margin-left: 1.5%;
 	margin-bottom: 2%;
 	background: #FFFFFF;
 	overflow: auto;
