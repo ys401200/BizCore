@@ -84,7 +84,7 @@ public class ApiContractCtrl extends Ctrl{
                 contract.setCipOfPartner(json.getInt("cipOfPartner"));
                 contract.setCipOfSupplier(json.getInt("cipOfSupplier"));
                 contract.setContractAmount(json.getLong("contractAmount"));
-                contract.setContractType(json.getInt("contractType"));
+                contract.setContractType(json.getString("contractType"));
                 contract.setCustomer(json.getInt("customer"));
                 contract.setDelivered(json.getLong("delivered"));
                 contract.setDetail(json.getString("detail"));
@@ -151,7 +151,7 @@ public class ApiContractCtrl extends Ctrl{
                 contract.setCipOfPartner(json.getInt("cipOfPartner"));
                 contract.setCipOfSupplier(json.getInt("cipOfSupplier"));
                 contract.setContractAmount(json.getLong("contractAmount"));
-                contract.setContractType(json.getInt("contractType"));
+                contract.setContractType(json.getString("contractType"));
                 contract.setCustomer(json.getInt("customer"));
                 contract.setDelivered(json.getLong("delivered"));
                 contract.setDetail(json.getString("detail"));
