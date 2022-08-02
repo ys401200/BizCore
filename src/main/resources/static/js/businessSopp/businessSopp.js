@@ -167,7 +167,7 @@ function soppSuccessList(result){
 	storage.soppList = result;
 
 	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined){
-		window.setTimeout(drawSoppList, 500);
+		window.setTimeout(drawSoppList, 600);
 	}
 }
 
@@ -176,79 +176,89 @@ function soppErrorList(){
 }
 
 function soppSuccessView(result){
-	let html = "", title, userName, customer, customerUser, endUser, progress, disDate, expectedSales, detail;
+	let html, title, userName, customer, customerUser, endUser, status, progress, contType, soppType, disDate, expectedSales, detail, dataArray;
 
 	title = (result.title === null || result.title === "") ? "제목 없음" : result.title;
 	userName = (result.employee == 0 || result.employee === null) ? "데이터 없음" : storage.user[result.employee].userName;
 	customer = (result.customer == 0 || result.customer === null) ? "데이터 없음 " : storage.customer[result.customer].name;
 	customerUser = (result.picOfCustomer == 0 || result.picOfCustomer === null) ? "데이터 없음" : storage.user[result.picOfCustomer].userName;
 	endUser = (result.endUser == 0 || result.endUser === null) ? "데이터 없음" : storage.customer[result.endUser].name;
+	status = (result.status === null || result.status === "") ? "데이터 없음" : storage.code.etc[result.status];
 	progress = (result.progress === null || result.progress === "") ? "데이터 없음" : result.progress + "%";
+	contType = (result.contType === null || result.contType === "") ? "데이터 없음" : storage.code.etc[result.contType];
+	soppType = (result.soppType === null || result.soppType === "") ? "데이터 없음" : storage.code.etc[result.soppType];
 	expectedSales = (result.expectedSales === null || result.expectedSales === "") ? "데이터 없음" : numberFormat(result.expectedSales);
 	detail = (result.detail === null || result.detail === "") ? "내용 없음" : result.detail;
 	
 	disDate = dateDis(result.targetDate);
 	targetDate = dateFnc(disDate);
 
-	html = "<table class='defaultTable'>";
-	html += "<tr>";
-	html += "<th>영업기회명</th>";
-	html += "<td><input type='text' value='" + title + "' disabled='true'>" + "</td>";
-	html += "</tr>";
-	html += "<tr>";
-	html += "<th>담당자</th>";
-	html += "<td><input type='text' value='" + userName + "' data-keyup='user' disabled='true'>" + "</td>";
-	html += "</tr>";
-	html += "<tr>";
-	html += "<th>매출처</th>";
-	html += "<td><input type='text' value='" + customer + "' data-keyup='customer' disabled='true'>" + "</td>";
-	html += "</tr>";
-	html += "<tr>";
-	html += "<th>매출처 담당자</th>";
-	html += "<td><input type='text' value='" + customerUser + "' data-keyup='user' disabled='true'>" + "</td>";
-	html += "</tr>";
-	html += "<tr>";
-	html += "<th>엔드유저</th>";
-	html += "<td><input type='text' value='" + endUser + "' data-keyup='customer' disabled='true'>" + "</td>";
-	html += "</tr>";
-	html += "<tr>";
-	html += "<th>진행단계</th>";
-	html += "<td><input type='text' value='" + result.status + "' disabled='true'>" + "</td>";
-	html += "</tr>";
-	html += "<tr>";
-	html += "<th>가능성</th>";
-	html += "<td><input type='text' value='" + progress + "' disabled='true'>" + "</td>";
-	html += "</tr>";
-	html += "<tr>";
-	html += "<th>계약구분</th>";
-	html += "<td><input type='text' value='" + result.contType + "' disabled='true'>" + "</td>";
-	html += "</tr>";
-	html += "<tr>";
-	html += "<th>매출예정일</th>";
-	html += "<td><input type='text' value='" + targetDate + "' disabled='true'>" + "</td>";
-	html += "</tr>";
-	html += "<tr>";
-	html += "<th>판매방식</th>";
-	html += "<td><input type='text' value='" + result.soppType + "' disabled='true'>" + "</td>";
-	html += "</tr>";
-	html += "<tr>";
-	html += "<th>예상매출</th>";
-	html += "<td><input type='text' value='" + expectedSales + "' disabled='true' onkeyup='inputNumberFormat(this)'>" + "</td>";
-	html += "</tr>";
-	html += "<tr>";
-	html += "<th>내용</th>";
-	html += "<td><textarea id='detail'>" + detail + "</textarea></td>";
-	html += "</tr>";
-	html += "</table>";
+	dataArray = [
+		{
+			"title": "영업기회명",
+			"value": title,
+		},
+		{
+			"title": "담당자",
+			"value": userName,
+			"dataKeyup": "user",
+		},
+		{
+			"title": "매출처",
+			"value": customer,
+			"dataKeyup": "customer",
+		},
+		{
+			"title": "매출처 담당자",
+			"value": customerUser,
+			"dataKeyup": "user",
+		},
+		{
+			"title": "엔드유저",
+			"value": endUser,
+			"dataKeyup": "customer",
+		},
+		{
+			"title": "진행단계",
+			"value": status,
+		},
+		{
+			"title": "가능성",
+			"value": progress,
+		},
+		{
+			"title": "계약구분",
+			"value": contType,
+		},
+		{
+			"title": "매출예정일",
+			"value": targetDate,
+		},
+		{
+			"title": "판매방식",
+			"value": soppType,
+		},
+		{
+			"title": "예상매출",
+			"value": expectedSales,
+			"keyup": "inputNumberFormat(this)",
+		},
+		{
+			"title": "내용",
+			"value": detail,
+			"type": "textarea",
+		},
+	];
+
+	html = createCrudForm(dataArray);
 
 	modal.show();
 	modal.headTitle.text("상세보기");
-	modal.content.css("width", "");
 	modal.content.css("width", "800px");
 	modal.body.html(html);
 	modal.confirm.text("수정");
 	modal.close.text("취소");
-	modal.confirm.attr("onclick", "soppUpdateForm();");
+	modal.confirm.attr("onclick", "soppUpdateForm(" + result.no + ");");
 	
 	setTimeout(() => {
 		tinymce.activeEditor.mode.set("readonly");
@@ -260,53 +270,98 @@ function soppErrorView(){
 }
 
 function soppInsertForm(){
-	let html;
+	let html, dataArray;
 
-	html = "<form class='defaultForm'>";
-	html += "<div class='formDefaultTitle'>영업기회</div>";
-	html += "<div class='formDefaultContent'><input type='text'></div>";
-	html += "<div class='formDefaultTitle'>담당사원</div>";
-	html += "<div class='formDefaultContent'><input type='text' data-keyup='user'></div>";
-	html += "<div class='formDefaultTitle'>매출처</div>";
-	html += "<div class='formDefaultContent'><input type='text' data-keyup='customer'></div>";
-	html += "<div class='formDefaultTitle'>매출처 담당자</div>";
-	html += "<div class='formDefaultContent'><input type='text' data-keyup='user'></div>";
-	html += "<div class='formDefaultTitle'>엔드유저</div>";
-	html += "<div class='formDefaultContent'><input type='text' data-keyup='customer'></div>";
-	html += "<div class='formDefaultTitle'>진행단계</div>";
-	html += "<div class='formDefaultContent'><input type='text'></div>";
-	html += "<div class='formDefaultTitle'>가능성</div>";
-	html += "<div class='formDefaultContent'><input type='text'></div>";
-	html += "<div class='formDefaultTitle'>계약구분</div>";
-	html += "<div class='formDefaultContent'><input type='text'></div>";
-	html += "<div class='formDefaultTitle'>매출예정일</div>";
-	html += "<div class='formDefaultContent'><input type='text'></div>";
-	html += "<div class='formDefaultTitle'>판매방식</div>";
-	html += "<div class='formDefaultContent'><input type='text'></div>";
-	html += "<div class='formDefaultTitle'>예상매출</div>";
-	html += "<div class='formDefaultContent'><input type='text'></div>";
-	html += "<div class='formDefaultTitle'>내용</div>";
-	html += "<div class='formDefaultContent'><textarea></textarea></div>";
-	html += "</form>";
+	dataArray = [
+		{
+			"title": "영업기회",
+			"disabled": false,
+		},
+		{
+			"title": "담당자",
+			"dataKeyup": "user",
+			"disabled": false,
+		},
+		{
+			"title": "매출처",
+			"dataKeyup": "customer",
+			"disabled": false,
+		},
+		{
+			"title": "매출처 담당자",
+			"dataKeyup": "user",
+			"disabled": false,
+		},
+		{
+			"title": "엔드유저",
+			"dataKeyup": "customer",
+			"disabled": false,
+		},
+		{
+			"title": "진행단계",
+			"disabled": false,
+		},
+		{
+			"title": "가능성",
+			"disabled": false,
+		},
+		{
+			"title": "계약구분",
+			"disabled": false,
+		},
+		{
+			"title": "매출예정일",
+			"disabled": false,
+		},
+		{
+			"title": "판매방식",
+			"disabled": false,
+		},
+		{
+			"title": "예상매출",
+			"disabled": false,
+			"keyup": "inputNumberFormat(this)",
+		},
+		{
+			"title": "내용",
+			"type": "textarea",
+		},
+	];
+
+	html = createCrudForm(dataArray);
 
 	modal.show();
 	modal.headTitle.text("영업기회등록");
 	modal.content.css("width", "800px");
 	modal.body.html(html);
 	modal.confirm.text("등록");
-	modal.confirm.attr("onclick", "soppInsert();");
 	modal.close.text("취소");
+	modal.confirm.attr("onclick", "soppInsert();");
+}
+
+function soppUpdateForm(no){
+	let defaultFormContainer;
+
+	defaultFormContainer = $(document).find(".defaultFormContainer");
+
+	defaultFormContainer.find("input").prop("disabled", false);
+	tinymce.activeEditor.mode.set("design");
+
+	modal.confirm.text("수정완료");
+	modal.close.text("삭제");
+	modal.confirm.attr("onclick", "soppUpdate(" + no + ")");
+	modal.close.attr("onclick", "soppDelete(" + no + ")");
 }
 
 function soppInsert(){
 	location.reload();
 }
 
-function soppUpdateForm(){
-	let defaultTable;
 
-	defaultTable = $(document).find(".defaultTable");
+function soppUpdate(){
+	location.reload();
+}
 
-	defaultTable.find("input").prop("disabled", false);
-	tinymce.activeEditor.mode.set("design");
+function soppDelete(){
+	location.reload();
 }

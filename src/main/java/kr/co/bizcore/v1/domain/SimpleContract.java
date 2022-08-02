@@ -11,17 +11,17 @@ import lombok.Setter;
 @Setter @Getter
 public class SimpleContract implements Domain {
     
-    protected int no;
-    protected int salesType;
-    protected String contractType;
-    protected String title;
-    protected int buyer;
-    protected long contractAmount;
-    protected int profit;
-    protected int employee;
-    protected Date startOfFreeMaintenance;
-    protected Date endOfFreeMaintenance;
-    protected Date saleDate;
+    protected int no; //번호
+    protected int salesType; //판매방식
+    protected String contractType; //계약방식
+    protected String title; //계약명
+    protected int endUser; //엔드유저
+    protected long contractAmount; //계약금액
+    protected int profit; //매출이익
+    protected int employee; //담당자
+    protected Date startOfFreeMaintenance; //무상유지보수일자 시작일
+    protected Date endOfFreeMaintenance; //무상유지보수일자 종료일
+    protected Date saleDate; //발주일자? 판매일자?
 
     @Override
     public String toJson() {

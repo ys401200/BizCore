@@ -149,7 +149,10 @@ function drawSalesList() {
 
 function salesSuccessList(result){
 	storage.salesList = result;
-	window.setTimeout(drawSalesList, 200);
+	
+	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined){
+		window.setTimeout(drawSalesList, 600);
+	}
 }
 
 function salesErrorList(){
@@ -162,15 +165,15 @@ function salesDetailView(e){
 	id = $(e).data("id");
 	url = "/api/sales/" + id;
 	method = "get";
-	data = "";
 
 	crud.defaultAjax(url, method, data, salesSuccessView, salesErrorView);
 }
 
 function salesSuccessView(result){
-	let html = "", disDate, from, place, userName, customer, endUser, title, detail;
+	let html, disDate, from, place, type, userName, customer, endUser, title, detail, dataArray;
 
 	place = (result.place === null || result.place === "") ? "데이터 없음" : result.place;
+	type = (result.type === null || result.type === "") ? "데이터 없음" : storage.code.etc[result.type];
 	userName = (result.user == 0 || result.user === null) ? "데이터 없음" : storage.user[result.user].userName;
 	customer = (result.customer == 0 || result.customer === null) ? "데이터 없음 " : storage.customer[result.customer].name;
 	endUser = (result.endUser == 0 || result.endUser === null) ? "데이터 없음" : storage.user[result.endUser].userName;
@@ -179,56 +182,141 @@ function salesSuccessView(result){
 
 	disDate = dateDis(result.from);
 	from = dateFnc(disDate);
-	 
-	html = "<table class='defaultTable'>";
-	html += "<tr>";
-	html += "<th>활동일</th>";
-	html += "<td>" + from + "</td>";
-	html += "</tr>";
-	html += "<tr>";
-	html += "<th>장소</th>";
-	html += "<td>" + place + "</td>";
-	html += "</tr>";
-	html += "<tr>";
-	html += "<th>활동형태</th>";
-	html += "<td>" + result.type + "</td>";
-	html += "</tr>";
-	html += "<tr>";
-	html += "<th>담당자</th>";
-	html += "<td>" + userName + "</td>";
-	html += "</tr>";
-	html += "<tr>";
-	html += "<th>영업기회</th>";
-	html += "<td>" + result.sales + "</td>";
-	html += "</tr>";
-	html += "<tr>";
-	html += "<th>매출처</th>";
-	html += "<td>" + customer + "</td>";
-	html += "</tr>";
-	html += "<tr>";
-	html += "<th>엔드유저</th>";
-	html += "<td>" + endUser + "</td>";
-	html += "</tr>";
-	html += "<tr>";
-	html += "<th>제목</th>";
-	html += "<td>" + title + "</td>";
-	html += "</tr>";
-	html += "<tr>";
-	html += "<th>내용</th>";
-	html += "<td>" + detail + "</td>";
-	html += "</tr>";
-	html += "<tr>";
-	html += "</table>";
+
+	dataArray = [
+		{
+			"title": "활동일",
+			"value": from,
+		},
+		{
+			"title": "장소",
+			"value": place,
+		},
+		{
+			"title": "활동형태",
+			"value": type,
+		},
+		{
+			"title": "담당자",
+			"value": userName,
+		},
+		{
+			"title": "영업기회",
+			"value": result.sales,
+		},
+		{
+			"title": "매출처",
+			"value": customer,
+		},
+		{
+			"title": "엔드유저",
+			"value": endUser,
+		},
+		{
+			"title": "제목",
+			"value": title,
+		},
+		{
+			"title": "내용",
+			"value": detail,
+			"type": "textarea",
+		}
+	];
+
+	html = createCrudForm(dataArray);
 
 	modal.show();
 	modal.headTitle.text("상세보기");
 	modal.content.css("width", "800px");
 	modal.body.html(html);
-	modal.confirm.hide();
+	modal.confirm.text("수정");
 	modal.close.text("취소");
-	modal.close.css("width", "100%");
+	modal.confirm.attr("onclick", "salesUpdateForm(" + result.no + ");");
+
+	setTimeout(() => {
+		tinymce.activeEditor.mode.set("readonly");
+	}, 300);
 }
 
 function salesErrorView(){
 	alert("에러");
+}
+
+function salesInsertForm(){
+	let html, dataArray;
+
+	dataArray = [
+		{
+			"title": "활동일",
+			"disabled": false,
+		},
+		{
+			"title": "장소",
+			"disabled": false,
+		},
+		{
+			"title": "활동형태",
+			"disabled": false,
+		},
+		{
+			"title": "담당자",
+			"disabled": false,
+		},
+		{
+			"title": "영업기회",
+			"disabled": false,
+		},
+		{
+			"title": "매출처",
+			"disabled": false,
+		},
+		{
+			"title": "엔드유저",
+			"disabled": false,
+		},
+		{
+			"title": "제목",
+			"disabled": false,
+		},
+		{
+			"title": "내용",
+			"type": "textarea",
+		}
+	];
+
+	html = createCrudForm(dataArray);
+
+	modal.show();
+	modal.headTitle.text("영업기회등록");
+	modal.content.css("width", "800px");
+	modal.body.html(html);
+	modal.confirm.text("등록");
+	modal.close.text("취소");
+	modal.confirm.attr("onclick", "salesInsert();");
+}
+
+function salesUpdateForm(no){
+	let defaultFormContainer;
+
+	defaultFormContainer = $(document).find(".defaultFormContainer");
+
+	defaultFormContainer.find("input").prop("disabled", false);
+	tinymce.activeEditor.mode.set("design");
+
+	modal.confirm.text("수정완료");
+	modal.close.text("삭제");
+	modal.confirm.attr("onclick", "salesUpdate(" + no + ")");
+	modal.close.attr("onclick", "salesDelete(" + no + ")");
+}
+
+function salesInsert(){
+	location.reload();
+}
+
+function salesUpdate(){
+	location.reload();
+}
+
+function salesDelete(){
+	location.reload();
 }

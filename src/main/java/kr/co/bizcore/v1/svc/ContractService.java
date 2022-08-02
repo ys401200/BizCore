@@ -35,7 +35,7 @@ public class ContractService extends Svc{
         return result;
     } // End of getProcureList()
 
-    public String getContract(String no, String compId){
+    public String getContract(int no, String compId){
         String result = null;
         Contract each = null;
 

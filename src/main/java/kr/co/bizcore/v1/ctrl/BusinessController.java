@@ -188,7 +188,7 @@ public class BusinessController extends Ctrl{
         return result;
     } // End of /business/**
 
-    @RequestMapping("/cont")
+    @RequestMapping("/contract")
     public String cont(HttpServletRequest request) {
         HttpSession session = null;
         String result = null, uri = null, pathName = null, tempStr = null;
@@ -217,7 +217,7 @@ public class BusinessController extends Ctrl{
 
         session.setAttribute("pathName",  pathName);
 
-        result = "/cont/list";
+        result = "/contract/list";
 
         return result;
     } // End of /business/**

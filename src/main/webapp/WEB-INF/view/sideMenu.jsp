@@ -41,7 +41,6 @@
 			</a>
 			<ul id="panel">
 		  		<li><a href="/business/sales">영업활동조회</a></li>
-		  		<li><a href="#">영업활동등록</a></li>
 		  	</ul>
 		</li>
 		<li>
@@ -74,8 +73,7 @@
 				<span id="slideSpan">+</span>
 			</a>
 			<ul id="panel">
-		  		<li><a href="/business/cont">- 계약조회</a></li>
-		  		<li><a href="#">계약등록</a></li>
+		  		<li><a href="/business/contract">계약조회</a></li>
 		  		<li><a href="#">업체정보조회</a></li>
 		  		<li><a href="#">매입/매출 자료등록</a></li>
 		  	</ul>

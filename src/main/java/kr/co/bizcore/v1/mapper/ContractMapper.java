@@ -12,15 +12,15 @@ import kr.co.bizcore.v1.domain.SimpleContract;
 
 public interface ContractMapper {
     
-    @Select("SELECT contno AS no, conttype AS salesType, cntrctmth AS contractType, conttitle AS title, buyrno AS buyer, contamt AS contractAmount, net_profit AS profit, userno AS employee, freemaintsdate AS freeMaintenanceStart, freemaintedate as freeMaintenanceEnd, contorddate AS saleDate FROM swc_cont WHERE attrib NOT like 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) ORDER BY regdatetime DESC")
+    @Select("SELECT contno AS no, conttype AS salesType, cntrctmth AS contractType, conttitle AS title, buyrno AS endUser, contamt AS contractAmount, net_profit AS profit, userno AS employee, freemaintsdate AS freeMaintenanceStart, freemaintedate as freeMaintenanceEnd, contorddate AS saleDate FROM swc_cont WHERE attrib NOT like 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) ORDER BY regdatetime DESC")
     public List<SimpleContract> getList(String compId);
 
-    @Select("ELECT contno AS no, conttype AS salesType, cntrctmth AS contractType, conttitle AS title, buyrno AS buyer, contamt AS contractAmount, net_profit AS profit, userno AS employee, soppno AS sopp, excontno AS prvCont, " +
-            "seconduserno AS employee2, custno AS customer, custmemberno AS cipOfCustomer, contdesc AS detail, buyrmemberno AS cipOfBuyer, ptncno AS partner, ptncmemberno AS cipOfPartner, supplyno AS supplier, " +
+    @Select("SELECT contno AS no, conttype AS salesType, cntrctmth AS contractType, conttitle AS title, buyrno AS endUser, contamt AS contractAmount, net_profit AS profit, userno AS employee, soppno AS sopp, excontno AS prvCont, " +
+            "seconduserno AS employee2, custno AS customer, custmemberno AS cipOfCustomer, contdesc AS detail, buyrmemberno AS cipOfendUser, ptncno AS partner, ptncmemberno AS cipOfPartner, supplyno AS supplier, " +
             "supplymemberno AS cipOfSupplier, supplydate AS supplied, delivdate AS delivered, vatyn AS taxInclude, paymaintsdate AS startOfPaidMaintenance, paymaintedate AS endOfPaidMaintenance, contarea AS area, " +
             "businesstype AS typeOfBusiness, regdatetime AS created, moddatetime AS modified, freemaintsdate AS startOfFreeMaintenance, freemaintedate as endOfFreeMaintenance, contorddate AS saleDate " +
             "FROM swc_cont WHERE contno = #{no} AND attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) ORDER BY regdatetime DESC")
-    public Contract getContract(@Param("no") String no, @Param("compId") String compId);
+    public Contract getContract(@Param("no") int no, @Param("compId") String compId);
 
     @Insert("INSERT INTO swc_cont( " +
             "   conttype, " + 
@@ -58,7 +58,7 @@ public interface ContractMapper {
             "   #{cnt.salesType}, " +
             "   #{cnt.contractType}, " +
             "   #{cnt.title}, " +
-            "   #{cnt.buyer}, " +
+            "   #{cnt.endUser}, " +
             "   #{cnt.contractAmount}, " +
             "   #{cnt.profit}, " +
             "   #{cnt.employee}, " + 
@@ -68,7 +68,7 @@ public interface ContractMapper {
             "   #{cnt.customer}, " +
             "   #{cnt.cipOfCustomer}, " +
             "   #{cnt.detail}, " +
-            "   #{cnt.cipOfBuyer}, " +
+            "   #{cnt.cipOfendUser}, " +
             "   #{cnt.partner}, " +
             "   #{cnt.cipOfPartner}, " +
             "   #{cnt.supplier}, " +
@@ -92,7 +92,7 @@ public interface ContractMapper {
                 "       conttype = #{cnt.salesType}, " + 
                 "       cntrctmth = #{cnt.contractType}, " +
                 "       conttitle = #{cnt.title}, " +
-                "       buyrno = #{cnt.buyer}, " +
+                "       buyrno = #{cnt.endUser}, " +
                 "       contamt = #{cnt.contractAmount}, " + 
                 "       net_profit = #{cnt.profit}, " +
                 "       userno = #{cnt.employee}, " +
@@ -102,7 +102,7 @@ public interface ContractMapper {
                 "       custno = #{cnt.customer}, " +
                 "       custmemberno = #{cnt.cipOfCustomer}, " +
                 "       contdesc = #{cnt.detail}, " +
-                "       buyrmemberno = #{cnt.cipOfBuyer}, " +
+                "       buyrmemberno = #{cnt.cipOfendUser}, " +
                 "       ptncno = #{cnt.partner}, " +
                 "       ptncmemberno = #{cnt.cipOfPartner}, " +
                 "       supplyno = #{cnt.supplier}, " +

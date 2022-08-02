@@ -183,7 +183,7 @@ function init(){
 		},
 		clear: () => {
 			modal.headTitle.text("");
-			modal.body.empty();
+			modal.body.html("");
 			modal.confirm.show();
 			modal.close.show();
 			modal.footBtns.css("width", "49%");
@@ -577,7 +577,7 @@ function getUserMap(){
 				msg.set("직원 정보를 가져오지 못했습니다.");
 			}
 		}
-	});
+	})
 } // End of getUserMap()
 
 // API 서버에서 직원 정보를 가져오는 함수
@@ -849,9 +849,9 @@ function inputDataList(){
 					
 					for(let key in jsonData){
 						if($(item).data("keyup") === "user"){
-							$(item).parents("div").find("#autoComplete_" + index).append("<option value='" + jsonData[key].userName + "'></option>");
+							$(item).parents("div").find("#autoComplete_" + index).append("<option data-value='" + key + "' value='" + jsonData[key].userName + "'></option>");
 						}else if($(item).data("keyup") === "customer"){
-							$(item).parents("div").find("#autoComplete_" + index).append("<option value='" + jsonData[key].name + "'></option>");
+							$(item).parents("div").find("#autoComplete_" + index).append("<option data-value='" + key + "' value='" + jsonData[key].name + "'></option>");
 						}
 					}
 				}
@@ -871,12 +871,57 @@ function numberFormat(num){
 	}
 }
 
+//input text keyup 숫자포맷
 function inputNumberFormat(e){
-	let value = $(e).val().replaceAll(",", "");
+	let value;
+	value = $(e).val().replaceAll(",", "");
 
-	if(value !== undefined){
-		$(e).val(parseInt(value).toLocaleString("en-US"));
+	$(e).val(parseInt(value).toLocaleString("en-US"));	
+}
+
+//임시 crud 폼
+function createCrudForm(data){
+	let html = "";
+
+	html = "<div class='defaultFormContainer'>";
+
+	for(let i = 0; i < data.length; i++){
+		let dataTitle = (data[i].title === undefined) ? "" : data[i].title;
+		let dataValue = (data[i].value === undefined) ? "" : data[i].value;
+		let dataDisabled = (data[i].disabled === undefined) ? true : data[i].disabled;
+		let dataType = (data[i].type === undefined) ? "text" : data[i].type;
+		let dataKeyup = (data[i].dataKeyup === undefined) ? "" : data[i].dataKeyup;
+		let dataKeyupEvent = (data[i].keyup === undefined) ? "" : data[i].keyup;
+		let elementId = (data[i].elementId === undefined) ? "" : data[i].elementId;
+		let elementName = (data[i].elementName === undefined) ? "" : data[i].elementName;
+
+		html += "<div class='defaultFormLine'>";
+		html += "<div class='defaultFormSpanDiv'>";
+		html += "<span class='defaultFormSpan'>" + dataTitle + "</span>";
+		html += "</div>";
+		html += "<div class='defaultFormContent'>";
+
+		if(dataType === "text"){
+			if(dataDisabled == true){
+				html += "<input type='text' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "' data-keyup='" + dataKeyup + "' onkeyup='" + dataKeyupEvent + "' disabled='" + dataDisabled + "'>";
+			}else{
+				html += "<input type='text' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "' data-keyup='" + dataKeyup + "' onkeyup='" + dataKeyupEvent + "'>";
+			}
+		}else if(dataType === "textarea"){
+			html += "<textarea>" + dataValue + "</textarea>";
+		}else if(dataType === "radio"){
+			for(let t = 0; t < data[i].radioValue.length; t++){
+				html += "<input type='radio' id='" + elementId + "' name='" + elementName + "' value='" + data[i].radioValue[t].key + "'>" + data[i].radioValue[t].value + " ";
+			}
+		}
+		
+		html += "</div>";
+		html += "</div>";
 	}
+
+	html += "</div>";
+
+	return html;
 }
 
 //tinyMCE
@@ -894,8 +939,8 @@ function setTiny(){
 		   + ' bullist numlist |'
 		   + ' table tabledelete |'
 		   + ' link image';
-
-	tinymce.destroy().init({
+	
+	tinymce.init({
 		language: "ko_KR",
 		menubar: false,
 		plugins: plugins,

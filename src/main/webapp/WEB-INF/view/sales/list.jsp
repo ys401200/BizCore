@@ -24,6 +24,7 @@
         <div class="salesContainer">
             <hr />
             <span>영업활동조회</span>
+            <button type="button" onclick="salesInsertForm()">등록</button>
             <div class="gridSalesList"></div>
             <div class="pageContainer"></div>
         </div>

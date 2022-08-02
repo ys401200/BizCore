@@ -8,22 +8,22 @@ import lombok.Setter;
 @Setter @Getter
 public class Contract extends SimpleContract{
 
-    private int sopp;
+    private int sopp; //영업기회
     private int prvCont;
-    private int employee2;
-    private int customer;
-    private int cipOfCustomer;
-    private String detail;
-    private int cipOfBuyer;
+    private int employee2; //(부)담당사원
+    private int customer; //매출처
+    private int cipOfCustomer; //매출처 담당자
+    private String detail; //내용
+    private int cipOfendUser; //엔드유저 담당자
     private int partner;
     private int cipOfPartner;
     private int supplier;
     private int cipOfSupplier;
     private Date supplied;
-    private Date delivered;
-    private boolean taxInclude;
-    private Date startOfPaidMaintenance;
-    private Date endOfPaidMaintenance;
+    private Date delivered; //검수일자
+    private boolean taxInclude; //vat 포함여부
+    private Date startOfPaidMaintenance; //유상유지보수일자 시작일
+    private Date endOfPaidMaintenance; //유상유지보수일자 종료일
     private String area;
     private String typeOfBusiness;
     private Date created;
