@@ -53,7 +53,7 @@
 .infoDiv {
 
 	display: grid;
-	grid-template-columns: 10% 30%;
+	grid-template-columns: 15% 30%;
 }
 
 .outlineNone {
@@ -82,16 +82,19 @@
 	border-right: 1px solid black;
 	background-color: rgb(208, 206, 206);
 	text-align: center;
+	padding : 0.5em;
 
 }
 
 .infoContent {
+	padding : 0.5em;
 	border-top: 1px solid black;
 	border-right: 1px solid black;
 }
 
 .infoTitlelast,
 .infoContentlast {
+	padding : 0.5em;
 	border: 1px solid black;
 
 }
@@ -102,13 +105,13 @@
 
 .contentDiv {
 	display: grid;
-	grid-template-columns: 10% 90%;
+	grid-template-columns: 15% 85%;
 }
 
 .detailDiv {
 
 	display: grid;
-	grid-template-columns: 10% 25% 30% 5% 10% 20%;
+	grid-template-columns: 10% 20% 20% 10% 5% 10% 10% 15% ;
 	text-align: center;
 	font-size: 0.5em;
 
@@ -116,7 +119,7 @@
 
 .detailcontentDiv {
 	display: grid;
-	grid-template-columns: 10% 25% 30% 5% 10% 20%;
+	grid-template-columns: 10% 20% 20% 10% 5% 10% 10% 15% ;
 	text-align: center;
 	font-size: 0.5em;
 }
@@ -131,12 +134,12 @@
 
 .datailTitlelast {
 	border: 1px solid black;
-	
 	background-color: rgb(208, 206, 206);
 }
 
 
 .detailcontentlast {
+	
 	border-left: 1px solid black;
 	border-right: 1px solid black;
 	border-bottom: 1px solid black;
@@ -155,6 +158,19 @@
 
 }
 
-.comentbtn {
+.mylistbtn textarea {
+	width: 100%;
+	height: 10%;
+}
+
+.commentbtn {
 	text-align: right;
+}
+
+
+.totalLine {
+	display: grid;
+	text-align: center;
+	grid-template-columns: 75% 10% 15%;
+	font-size: 0.5em;
 }
