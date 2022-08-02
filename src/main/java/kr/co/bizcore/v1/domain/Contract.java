@@ -19,16 +19,35 @@ public class Contract extends SimpleContract{
     private int cipOfPartner;
     private int supplier;
     private int cipOfSupplier;
-    private Date sullpied;
+    private Date supplied;
     private Date delivered;
     private boolean taxInclude;
-    private Date startPaidMaintenence;
-    private Date endPaidMaintenence;
+    private Date startOfPaidMaintenance;
+    private Date endOfPaidMaintenance;
     private String area;
     private String typeOfBusiness;
     private Date created;
     private Date modified;
 
     public void setTaxInclude(String yn){taxInclude = yn != null && yn.equals("Y");}
+    public void setTaxInclude(boolean yn){taxInclude = yn;}
+    public void setStartOfPaidMaintenance(Date e){startOfPaidMaintenance = e;}
+    public void setStartOfPaidMaintenance(long e){startOfPaidMaintenance = new Date(e);}
+    public void setEndOfPaidMaintenance(Date e){endOfPaidMaintenance = e;}
+    public void setEndOfPaidMaintenance(long e){endOfPaidMaintenance = new Date(e);}
+    public void setSupplied(Date e){supplied = e;}
+    public void setSupplied(long e){supplied = new Date(e);}
+    public void setDelivered(Date e){delivered = e;}
+    public void setDelivered(long e){delivered = new Date(e);}
+    public void setCreated(Date e){created = e;}
+    public void setCreated(long e){created = new Date(e);}
+    public void setModified(Date e){modified = e;}
+    public void setModified(long e){modified = new Date(e);}
+    public void setStartOfFreeMaintenance(Date e){startOfFreeMaintenance = e;}
+    public void setStartOfFreeMaintenance(long e){startOfFreeMaintenance = new Date(e);}
+    public void setEndOfFreeMaintenance(Date e){endOfFreeMaintenance = e;}
+    public void setEndOfFreeMaintenance(long e){endOfFreeMaintenance = new Date(e);}
+    public void setSaleDate(long e){saleDate = new Date(e);}
+    public void setSaleDate(Date e){saleDate = e;}
     
 }

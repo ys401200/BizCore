@@ -19,8 +19,8 @@ public class SimpleContract implements Domain {
     protected long contractAmount;
     protected int profit;
     protected int employee;
-    protected Date freeMaintenanceStart;
-    protected Date freeMaintenanceEnd;
+    protected Date startOfFreeMaintenance;
+    protected Date endOfFreeMaintenance;
     protected Date saleDate;
 
     @Override

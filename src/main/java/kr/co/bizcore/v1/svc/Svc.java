@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import kr.co.bizcore.v1.mapper.BoardMapper;
 import kr.co.bizcore.v1.mapper.CommonMapper;
+import kr.co.bizcore.v1.mapper.ContractMapper;
 import kr.co.bizcore.v1.mapper.DeptMapper;
 import kr.co.bizcore.v1.mapper.ProcureMapper;
 import kr.co.bizcore.v1.mapper.SalesMapper;
@@ -61,6 +62,9 @@ public abstract class Svc {
 
     @Autowired
     protected ProcureMapper procureMapper;
+
+    @Autowired
+    protected ContractMapper contractMapper;
 
     @Autowired 
     protected TestMapper testMapper;

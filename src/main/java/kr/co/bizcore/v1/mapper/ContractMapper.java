@@ -13,12 +13,12 @@ import kr.co.bizcore.v1.domain.SimpleContract;
 public interface ContractMapper {
     
     @Select("SELECT contno AS no, conttype AS salesType, cntrctmth AS contractType, conttitle AS title, buyrno AS buyer, contamt AS contractAmount, net_profit AS profit, userno AS employee, freemaintsdate AS freeMaintenanceStart, freemaintedate as freeMaintenanceEnd, contorddate AS saleDate FROM swc_cont WHERE attrib NOT like 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) ORDER BY regdatetime DESC")
-    public List<SimpleContract> getContractList(String compId);
+    public List<SimpleContract> getList(String compId);
 
     @Select("ELECT contno AS no, conttype AS salesType, cntrctmth AS contractType, conttitle AS title, buyrno AS buyer, contamt AS contractAmount, net_profit AS profit, userno AS employee, soppno AS sopp, excontno AS prvCont, " +
             "seconduserno AS employee2, custno AS customer, custmemberno AS cipOfCustomer, contdesc AS detail, buyrmemberno AS cipOfBuyer, ptncno AS partner, ptncmemberno AS cipOfPartner, supplyno AS supplier, " +
             "supplymemberno AS cipOfSupplier, supplydate AS supplied, delivdate AS delivered, vatyn AS taxInclude, paymaintsdate AS startOfPaidMaintenance, paymaintedate AS endOfPaidMaintenance, contarea AS area, " +
-            "businesstype AS typeOfBusiness, regdatetime AS created, moddatetime AS modified, freemaintsdate AS maintenanceStart, freemaintedate as maintenanceEnd, contorddate AS saleDate " +
+            "businesstype AS typeOfBusiness, regdatetime AS created, moddatetime AS modified, freemaintsdate AS startOfFreeMaintenance, freemaintedate as endOfFreeMaintenance, contorddate AS saleDate " +
             "FROM swc_cont WHERE contno = #{no} AND attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) ORDER BY regdatetime DESC")
     public Contract getContract(@Param("no") String no, @Param("compId") String compId);
 
@@ -116,8 +116,8 @@ public interface ContractMapper {
                 "       businesstype = #{cnt.typeOfBusiness}, " +
                 "       moddatetime = NOW(), " +
                 "       moddatetime = #{cnt.modified}, " +
-                "       freemaintsdate = #{cnt.maintenanceStart}, " +
-                "       freemaintedate = #{cnt.maintenanceEnd}, " +
+                "       freemaintsdate = #{cnt.startOfFreeMaintenance}, " +
+                "       freemaintedate = #{cnt.endOfFreeMaintenance}, " +
                 "       contorddate = #{cnt.saleDate} " +
                 "WHERE contno = #{cnt.no} AND attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swcore.swc_company WHERE compid = #{compId})")
     public int modifyContract(@Param("compId") String compId, @Param("cnt") Contract contract);
