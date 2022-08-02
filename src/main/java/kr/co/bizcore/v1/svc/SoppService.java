@@ -38,7 +38,7 @@ public class SoppService extends Svc {
         return result;
     } // End of getSoppList()
     
-    public Sopp getSopp(int soppNo, String compId){
+    public Sopp getSopp(String soppNo, String compId){
         return soppMapper.getSopp(soppNo, compId);
     }
 
@@ -84,4 +84,22 @@ public class SoppService extends Svc {
 
         return result.toJson();
     } // End of getEstimate()
+
+    public boolean addSopp(Sopp sopp, String compId){
+        int x = -1;
+        x = soppMapper.addSopp(sopp, compId);
+        return x > 0;
+    }
+
+    public boolean modifySopp(Sopp sopp, String compId){
+        int x = -1;
+        x = soppMapper.modifySopp(sopp, compId);
+        return x > 0;
+    }
+
+    public boolean removeSopp(String no, String compId){
+        int x = -1;
+        x = soppMapper.removeSopp(no, compId);
+        return x > 0;
+    }
 }
