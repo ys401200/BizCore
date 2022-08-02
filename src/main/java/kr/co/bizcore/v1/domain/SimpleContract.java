@@ -13,7 +13,7 @@ public class SimpleContract implements Domain {
     
     protected int no;
     protected int salesType;
-    protected int contractType;
+    protected String contractType;
     protected String title;
     protected int buyer;
     protected long contractAmount;
