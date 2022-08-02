@@ -287,7 +287,7 @@ function salesInsertForm(){
 	html = createCrudForm(dataArray);
 
 	modal.show();
-	modal.headTitle.text("영업기회등록");
+	modal.headTitle.text("영업활동등록");
 	modal.content.css("width", "800px");
 	modal.body.html(html);
 	modal.confirm.text("등록");

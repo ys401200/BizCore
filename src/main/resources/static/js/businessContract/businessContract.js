@@ -240,6 +240,147 @@ function contractSuccessView(result){
 		{
 			"title": "계약번호",
 			"value": result.no,
+			"elementId": "no",
+
+		},
+		{
+			"title": "영업기회",
+			"value": result.sopp,
+			"elementId": "sopp",
+		},
+		{
+			"title": "담당자",
+			"value": employee,
+			"dataKeyup": "user",
+			"elementId": "employee",
+		},
+		{
+			"title": "판매방식",
+			"value": salesType,
+			"elementId": "salesType",
+		},
+		{
+			"title": "매출처",
+			"value": customer,
+			"dataKeyup": "customer",
+			"elementId": "customer",
+		},
+		{
+			"title": "매출처 담당자",
+			"value": cipOfCustomer,
+			"dataKeyup": "user",
+			"elementId": "cipOfCustomer",
+		},
+		{
+			"title": "엔드유저",
+			"value": endUser,
+			"dataKeyup": "customer",
+			"elementId": "endUser",
+		},
+		{
+			"title": "엔드유저 담당자",
+			"value": cipOfendUser,
+			"dataKeyup": "user",
+			"elementId": "cipOfendUser",
+		},
+		{
+			"title": "발주일자",
+			"value": saleDate,
+			"elementId": "saleDate",
+		},
+		{
+			"title": "검수일자",
+			"value": delivered,
+			"elementId": "delivered",
+		},
+		{
+			"title": "(부)담당자",
+			"value": employee2,
+			"elementId": "employee2",
+		},
+		{
+			"title": "유지보수일자 시작일",
+			"value": startOfPaidMaintenance,
+			"elementId": "startOfPaidMaintenance",
+		},
+		{
+			"title": "유지보수일자 종료일",
+			"value": endOfPaidMaintenance,
+			"elementId": "endOfPaidMaintenance",
+		},
+		{
+			"title": "계약금액",
+			"value": contractAmount,
+			"elementId": "contractAmount",
+			"keyup": "inputNumberFormat(this);",
+		},
+		{
+			"title": "VAT 포함여부",
+			"value": taxInclude,
+			"elementId": "taxInclude",
+		},
+		{
+			"title": "매출이익",
+			"value": profit,
+			"elementId": "profit",
+			"keyup": "inputNumberFormat(this);",
+		},
+		{
+			"title": "내용",
+			"value": detail,
+			"type": "textarea",
+			"elementId": "detail",
+		},
+	];
+
+	html = createCrudForm(dataArray);
+
+	
+	modal.show();
+	modal.headTitle.text("상세보기");
+	modal.content.css("width", "800px");
+	modal.body.html(html);
+	modal.confirm.text("수정");
+	modal.close.text("취소");
+	modal.confirm.attr("onclick", "contractUpdateForm(" + result.no + ");");
+	
+	setTimeout(() => {
+		tinymce.activeEditor.mode.set("readonly");
+		$(document).find("[name='contractType'][value='" + result.contractType + "']").prop("checked" ,true);
+	}, 300);
+}
+
+function contractErrorView(){
+	alert("에러");
+}
+
+function contractInsertForm(){
+	let html, dataArray;
+
+	dataArray = [
+		{
+			"title": "등록구분",
+			"radioValue": [
+				{
+					"key": "10247",
+					"value": "판매계약",
+				},
+				{
+					"key": "10248",
+					"value": "유지보수",
+				},
+			],
+			"type": "radio",
+			"elementName": "contractType",
+		},
+		{
+			"title": "계약명",
+			"value": title,
+			"elementId": "title",
+		},
+		{
+			"title": "계약번호",
+			"value": result.no,
 			"dataKeyup": "user",
 			"elementId": "no",
 
@@ -330,23 +471,41 @@ function contractSuccessView(result){
 		},
 	];
 
+
 	html = createCrudForm(dataArray);
 
-	
 	modal.show();
-	modal.headTitle.text("상세보기");
+	modal.headTitle.text("계약등록");
 	modal.content.css("width", "800px");
 	modal.body.html(html);
-	modal.confirm.text("수정");
+	modal.confirm.text("등록");
 	modal.close.text("취소");
-	modal.confirm.attr("onclick", "contractUpdateForm(" + result.no + ");");
-	
-	setTimeout(() => {
-		tinymce.activeEditor.mode.set("readonly");
-		$(document).find("[name='contractType'][value='" + result.contractType + "']").prop("checked" ,true);
-	}, 300);
+	modal.confirm.attr("onclick", "contractInsert();");
 }
 
-function contractErrorView(){
-	alert("에러");
+function contractUpdateForm(no){
+	let defaultFormContainer;
+
+	defaultFormContainer = $(document).find(".defaultFormContainer");
+
+	defaultFormContainer.find("input").prop("disabled", false);
+	tinymce.activeEditor.mode.set("design");
+
+	modal.confirm.text("수정완료");
+	modal.close.text("삭제");
+	modal.confirm.attr("onclick", "contractUpdate(" + no + ")");
+	modal.close.attr("onclick", "contractDelete(" + no + ")");
+}
+
+function contractInsert(){
+	location.reload();
+}
+
+
+function contractUpdate(){
+	location.reload();
+}
+
+function contractDelete(){
+	location.reload();
 }
