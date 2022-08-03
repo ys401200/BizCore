@@ -227,6 +227,7 @@ function init(){
 				method: method,
 				data: data,
 				dataType: "json",
+				contentType: "text/plain",
 				success: (result) => {
 					if(result.result === "ok"){
 						if(successFnc !== undefined){

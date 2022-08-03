@@ -581,6 +581,9 @@ function contractInsert(){
 		"detail": detail
 	}
 
+	data = JSON.stringify(data);
+	data = cipher.encAes(data);
+
 	crud.defaultAjax(url, method, data, contractSuccessInsert, contractErrorInsert);
 }
 
