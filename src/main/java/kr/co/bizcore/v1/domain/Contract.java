@@ -22,8 +22,6 @@ public class Contract extends SimpleContract{
     private Date supplied;
     private Date delivered; //검수일자
     private boolean taxInclude; //vat 포함여부
-    private Date startOfPaidMaintenance; //유상유지보수일자 시작일
-    private Date endOfPaidMaintenance; //유상유지보수일자 종료일
     private String area;
     private String typeOfBusiness;
     private Date created;

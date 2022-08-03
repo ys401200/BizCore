@@ -152,6 +152,8 @@ function salesSuccessList(result){
 	
 	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined){
 		window.setTimeout(drawSalesList, 600);
+	}else{
+		window.setTimeout(drawSalesList, 200);
 	}
 }
 
@@ -199,6 +201,7 @@ function salesSuccessView(result){
 		{
 			"title": "담당자",
 			"value": userName,
+			"dataKeyup": "user",
 		},
 		{
 			"title": "영업기회",
@@ -207,10 +210,12 @@ function salesSuccessView(result){
 		{
 			"title": "매출처",
 			"value": customer,
+			"dataKeyup": "customer",
 		},
 		{
 			"title": "엔드유저",
 			"value": endUser,
+			"dataKeyup": "customer",
 		},
 		{
 			"title": "제목",
@@ -261,6 +266,7 @@ function salesInsertForm(){
 		{
 			"title": "담당자",
 			"disabled": false,
+			"dataKeyup": "user",
 		},
 		{
 			"title": "영업기회",
@@ -269,10 +275,12 @@ function salesInsertForm(){
 		{
 			"title": "매출처",
 			"disabled": false,
+			"dataKeyup": "customer",
 		},
 		{
 			"title": "엔드유저",
 			"disabled": false,
+			"dataKeyup": "customer",
 		},
 		{
 			"title": "제목",

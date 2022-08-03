@@ -836,23 +836,46 @@ function inputDataList(){
 	setTimeout(() => {
 		let input, jsonData;
 
-		input = $("input[type='text']");
+		input = $(document).find("input[type='text']");
 
 		input.each((index, item) => {
 			let dataKey = $(item).data("keyup");
 			
-			if(storage[dataKey] !== undefined){
-				if($(item).data("keyup") !== undefined){
+			if($(item).data("keyup") !== undefined){
+				$(item).attr("list", "_" + $(item).attr("id"));
+				$(item).after("<datalist id='_" + $(item).attr("id") + "'></datalist>");
+
+				if(storage[dataKey] !== undefined){
 					jsonData = storage[dataKey];
-					$(item).attr("list", "autoComplete_" + index);
-					$(item).after("<datalist id='autoComplete_" + index + "'></datalist>");
 					
 					for(let key in jsonData){
 						if($(item).data("keyup") === "user"){
-							$(item).parents("div").find("#autoComplete_" + index).append("<option data-value='" + key + "' value='" + jsonData[key].userName + "'></option>");
+							$(item).parents("div").find("datalist#_" + $(item).attr("id")).append("<option data-value='" + key + "' value='" + jsonData[key].userName + "'></option>");
 						}else if($(item).data("keyup") === "customer"){
-							$(item).parents("div").find("#autoComplete_" + index).append("<option data-value='" + key + "' value='" + jsonData[key].name + "'></option>");
+							$(item).parents("div").find("datalist#_" + $(item).attr("id")).append("<option data-value='" + key + "' value='" + jsonData[key].name + "'></option>");
 						}
+					}
+				}else{
+					if($(item).data("keyup") === "sopp"){
+						$.ajax({
+							url: "/api/sopp",
+							method: "get",
+							dataType: "json",
+							success:(result) => {
+								if(result.result === "ok"){
+									let resultJson;
+									resultJson = cipher.decAes(result.data);
+									resultJson = JSON.parse(resultJson);
+									
+									for(let i = 0; i < resultJson.length; i++){
+										$(item).parents("div").find("datalist#_" + $(item).attr("id")).append("<option data-value='" + resultJson[i].no + "' value='" + resultJson[i].title + "'></option>");
+									}
+								}
+							},
+							error:() => {
+								msg.set("sopp 에러입니다.");
+							}
+						});
 					}
 				}
 			}
@@ -911,7 +934,17 @@ function createCrudForm(data){
 			html += "<textarea>" + dataValue + "</textarea>";
 		}else if(dataType === "radio"){
 			for(let t = 0; t < data[i].radioValue.length; t++){
-				html += "<input type='radio' id='" + elementId + "' name='" + elementName + "' value='" + data[i].radioValue[t].key + "'>" + data[i].radioValue[t].value + " ";
+				if(dataDisabled == true){
+					html += "<input type='radio' id='" + elementId + "' name='" + elementName + "' value='" + data[i].radioValue[t].key + "' disabled='" + dataDisabled + "'><label>" + data[i].radioValue[t].value + "</label>" + " ";
+				}else{
+					html += "<input type='radio' id='" + elementId + "' name='" + elementName + "' value='" + data[i].radioValue[t].key + "'><label>" + data[i].radioValue[t].value + "</label>" + " ";
+				}
+			}
+		}else if(dataType === "date"){
+			if(dataDisabled == true){
+				html += "<input type='date' max='9999-12-31' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "' data-keyup='" + dataKeyup + "' onkeyup='" + dataKeyupEvent + "' disabled='" + dataDisabled + "'>";
+			}else{
+				html += "<input type='date' max='9999-12-31' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "' data-keyup='" + dataKeyup + "' onkeyup='" + dataKeyupEvent + "'>";
 			}
 		}
 		
@@ -948,4 +981,18 @@ function setTiny(){
 		selector: 'textarea',
 		height : "200",
 	});
+}
+
+function dataListFormat(id, value){
+	let result;
+
+	result = $(document).find("datalist#_" + id + " option[value='" + value + "']").data("value");
+
+	if(result === undefined){
+		msg.set("찾고자하는 데이터를 정확히 입력해주십시오.\n다시 확인해주십시오.");
+		$(document).find("#" + id).focus();
+		return false;
+	}else{
+		return result;
+	}
 }

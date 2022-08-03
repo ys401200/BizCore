@@ -99,7 +99,7 @@ function drawContractList() {
 	];
 
 	for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
-		let salesType, contractType, title, endUser, contractAmount, profit, employee, startOfFreeMaintenance, endOfFreeMaintenance, saleDate;
+		let salesType, contractType, title, endUser, contractAmount, profit, employee, startMaintenance, endMaintenance, saleDate;
 		
 		salesType = (jsonData[i].salesType === null || jsonData[i].salesType === "") ? "없음" : storage.code.etc[jsonData[i].salesType];
 		contractType = (jsonData[i].contractType === null || jsonData[i].contractType === "") ? "없음" : storage.code.etc[jsonData[i].contractType];
@@ -109,11 +109,19 @@ function drawContractList() {
 		profit = (jsonData[i].profit == 0 || jsonData[i].profit === null) ? 0 : numberFormat(jsonData[i].profit);
 		employee = (jsonData[i].employee === null || jsonData[i].employee == 0) ? "없음" : storage.user[jsonData[i].employee].userName;
 		
-		disDate = dateDis(jsonData[i].startOfFreeMaintenance);
-		startOfFreeMaintenance = dateFnc(disDate);
-
-		disDate = dateDis(jsonData[i].endOfFreeMaintenance);
-		endOfFreeMaintenance = dateFnc(disDate);
+		if(contractType === "유지보수"){
+			disDate = dateDis(jsonData[i].startOfPaidMaintenance);
+			startMaintenance = dateFnc(disDate);
+	
+			disDate = dateDis(jsonData[i].endOfPaidMaintenance);
+			endMaintenance = dateFnc(disDate);
+		}else{
+			disDate = dateDis(jsonData[i].startOfFreeMaintenance);
+			startMaintenance = dateFnc(disDate);
+	
+			disDate = dateDis(jsonData[i].endOfFreeMaintenance);
+			endMaintenance = dateFnc(disDate);
+		}
 
 		disDate = dateDis(jsonData[i].saleDate);
 		saleDate = dateFnc(disDate);
@@ -144,10 +152,10 @@ function drawContractList() {
 				"setData": employee,
 			},
 			{
-				"setData": startOfFreeMaintenance,
+				"setData": startMaintenance,
 			},
 			{
-				"setData": endOfFreeMaintenance,
+				"setData": endMaintenance,
 			},
 			{
 				"setData": saleDate,
@@ -187,7 +195,7 @@ function contractErrorList(){
 }
 
 function contractSuccessView(result){
-	let html, title, employee, salesType, customer, cipOfCustomer, endUser, cipOfendUser, saleDate, delivered, employee2, startOfPaidMaintenance, endOfPaidMaintenance, contractAmount, taxInclude, profit, detail, disDate, dataArray;
+	let html, title, sopp = [], employee, salesType, customer, cipOfCustomer, endUser, cipOfendUser, saleDate, delivered, employee2, startOfPaidMaintenance, endOfPaidMaintenance, contractAmount, taxInclude, profit, detail, disDate, dataArray;
 
 	title = (result.title === null || result.title === "") ? "제목 없음" : result.title;
 	employee = (result.employee == 0 || result.employee === null) ? "데이터 없음" : storage.user[result.employee].userName;
@@ -212,142 +220,161 @@ function contractSuccessView(result){
 	endOfPaidMaintenance = dateFnc(disDate);
 	
 	contractAmount = (result.contractAmount == 0 || result.contractAmount === null) ? 0 : numberFormat(result.contractAmount);
-	taxInclude = (result.title === null || result.title === "") ? "데이터 없음" : result.taxInclude;
+	taxInclude = (result.taxInclude === null || result.taxInclude === "") ? "데이터 없음" : result.taxInclude;
+	taxInclude = (taxInclude == true) ? "Y" : "N";
 	profit = (result.profit == 0 || result.profit === null) ? 0 : numberFormat(result.profit);
 	detail = (result.detail === null || result.detail === "") ? "내용 없음" : result.detail;
 
-	dataArray = [
-		{
-			"title": "등록구분",
-			"radioValue": [
+	$.ajax({
+		url: "/api/sopp/" + result.sopp,
+		method: "get",
+		dataType: "json",
+		success:(resultData) => {
+			let resultJson;
+			resultJson = cipher.decAes(resultData.data);
+			resultJson = JSON.parse(resultJson);
+
+			dataArray = [
 				{
-					"key": "10247",
-					"value": "판매계약",
+					"title": "등록구분",
+					"radioValue": [
+						{
+							"key": "10247",
+							"value": "판매계약",
+						},
+						{
+							"key": "10248",
+							"value": "유지보수",
+						},
+					],
+					"type": "radio",
+					"elementName": "contractType",
 				},
 				{
-					"key": "10248",
-					"value": "유지보수",
+					"title": "계약명",
+					"value": title,
+					"elementId": "title",
 				},
-			],
-			"type": "radio",
-			"elementName": "contractType",
+				{
+					"title": "계약번호",
+					"value": result.no,
+					"elementId": "no",
+				},
+				{
+					"title": "영업기회",
+					"value": resultJson.title,
+					"elementId": "sopp",
+					"dataKeyup": "sopp",
+				},
+				{
+					"title": "담당자",
+					"value": employee,
+					"dataKeyup": "user",
+					"elementId": "employee",
+				},
+				{
+					"title": "판매방식",
+					"value": salesType,
+					"elementId": "salesType",
+				},
+				{
+					"title": "매출처",
+					"value": customer,
+					"dataKeyup": "customer",
+					"elementId": "customer",
+				},
+				{
+					"title": "매출처 담당자",
+					"value": cipOfCustomer,
+					"dataKeyup": "user",
+					"elementId": "cipOfCustomer",
+				},
+				{
+					"title": "엔드유저",
+					"value": endUser,
+					"dataKeyup": "customer",
+					"elementId": "endUser",
+				},
+				{
+					"title": "엔드유저 담당자",
+					"value": cipOfendUser,
+					"dataKeyup": "user",
+					"elementId": "cipOfendUser",
+				},
+				{
+					"title": "발주일자",
+					"value": saleDate,
+					"elementId": "saleDate",
+					"type": "date",
+				},
+				{
+					"title": "검수일자",
+					"value": delivered,
+					"elementId": "delivered",
+					"type": "date",
+				},
+				{
+					"title": "(부)담당자",
+					"value": employee2,
+					"elementId": "employee2",
+				},
+				{
+					"title": "유지보수일자 시작일",
+					"value": startOfPaidMaintenance,
+					"elementId": "startOfPaidMaintenance",
+					"type": "date",
+				},
+				{
+					"title": "유지보수일자 종료일",
+					"value": endOfPaidMaintenance,
+					"elementId": "endOfPaidMaintenance",
+					"type": "date",
+				},
+				{
+					"title": "계약금액",
+					"value": contractAmount,
+					"elementId": "contractAmount",
+					"keyup": "inputNumberFormat(this);",
+				},
+				{
+					"title": "VAT 포함여부",
+					"value": taxInclude,
+					"elementId": "taxInclude",
+				},
+				{
+					"title": "매출이익",
+					"value": profit,
+					"elementId": "profit",
+					"keyup": "inputNumberFormat(this);",
+				},
+				{
+					"title": "내용",
+					"value": detail,
+					"type": "textarea",
+					"elementId": "detail",
+				},
+			];
+		
+			html = createCrudForm(dataArray);
+			
+			modal.show();
+			modal.headTitle.text("상세보기");
+			modal.content.css("width", "1200px");
+			modal.body.html(html);
+			modal.body.css("max-height", "800px");
+			modal.confirm.text("수정");
+			modal.close.text("취소");
+			modal.confirm.attr("onclick", "contractUpdateForm(" + result.no + ");");
+			
+			setTimeout(() => {
+				tinymce.activeEditor.mode.set("readonly");
+				$(document).find("[name='contractType'][value='" + result.contractType + "']").prop("checked" ,true);
+			}, 300);
 		},
-		{
-			"title": "계약명",
-			"value": title,
-			"elementId": "title",
-		},
-		{
-			"title": "계약번호",
-			"value": result.no,
-			"elementId": "no",
-
-		},
-		{
-			"title": "영업기회",
-			"value": result.sopp,
-			"elementId": "sopp",
-		},
-		{
-			"title": "담당자",
-			"value": employee,
-			"dataKeyup": "user",
-			"elementId": "employee",
-		},
-		{
-			"title": "판매방식",
-			"value": salesType,
-			"elementId": "salesType",
-		},
-		{
-			"title": "매출처",
-			"value": customer,
-			"dataKeyup": "customer",
-			"elementId": "customer",
-		},
-		{
-			"title": "매출처 담당자",
-			"value": cipOfCustomer,
-			"dataKeyup": "user",
-			"elementId": "cipOfCustomer",
-		},
-		{
-			"title": "엔드유저",
-			"value": endUser,
-			"dataKeyup": "customer",
-			"elementId": "endUser",
-		},
-		{
-			"title": "엔드유저 담당자",
-			"value": cipOfendUser,
-			"dataKeyup": "user",
-			"elementId": "cipOfendUser",
-		},
-		{
-			"title": "발주일자",
-			"value": saleDate,
-			"elementId": "saleDate",
-		},
-		{
-			"title": "검수일자",
-			"value": delivered,
-			"elementId": "delivered",
-		},
-		{
-			"title": "(부)담당자",
-			"value": employee2,
-			"elementId": "employee2",
-		},
-		{
-			"title": "유지보수일자 시작일",
-			"value": startOfPaidMaintenance,
-			"elementId": "startOfPaidMaintenance",
-		},
-		{
-			"title": "유지보수일자 종료일",
-			"value": endOfPaidMaintenance,
-			"elementId": "endOfPaidMaintenance",
-		},
-		{
-			"title": "계약금액",
-			"value": contractAmount,
-			"elementId": "contractAmount",
-			"keyup": "inputNumberFormat(this);",
-		},
-		{
-			"title": "VAT 포함여부",
-			"value": taxInclude,
-			"elementId": "taxInclude",
-		},
-		{
-			"title": "매출이익",
-			"value": profit,
-			"elementId": "profit",
-			"keyup": "inputNumberFormat(this);",
-		},
-		{
-			"title": "내용",
-			"value": detail,
-			"type": "textarea",
-			"elementId": "detail",
-		},
-	];
-
-	html = createCrudForm(dataArray);
-
-	
-	modal.show();
-	modal.headTitle.text("상세보기");
-	modal.content.css("width", "800px");
-	modal.body.html(html);
-	modal.confirm.text("수정");
-	modal.close.text("취소");
-	modal.confirm.attr("onclick", "contractUpdateForm(" + result.no + ");");
-	
-	setTimeout(() => {
-		tinymce.activeEditor.mode.set("readonly");
-		$(document).find("[name='contractType'][value='" + result.contractType + "']").prop("checked" ,true);
-	}, 300);
+		error:() => {
+			msg.set("영업기회를 찾을 수 없습니다.");
+		}
+	});
 }
 
 function contractErrorView(){
@@ -372,100 +399,104 @@ function contractInsertForm(){
 			],
 			"type": "radio",
 			"elementName": "contractType",
+			"disabled": false,
 		},
 		{
 			"title": "계약명",
-			"value": title,
 			"elementId": "title",
-		},
-		{
-			"title": "계약번호",
-			"value": result.no,
-			"dataKeyup": "user",
-			"elementId": "no",
-
+			"disabled": false,
 		},
 		{
 			"title": "영업기회",
-			"value": result.sopp,
-			"dataKeyup": "customer",
 			"elementId": "sopp",
+			"dataKeyup": "sopp",
+			"disabled": false,
 		},
 		{
 			"title": "담당자",
-			"value": employee,
 			"dataKeyup": "user",
 			"elementId": "employee",
+			"disabled": false,
+			"dataKeyup": "user",
 		},
 		{
 			"title": "판매방식",
-			"value": salesType,
-			"dataKeyup": "customer",
 			"elementId": "salesType",
+			"disabled": false,
 		},
 		{
 			"title": "매출처",
-			"value": customer,
 			"elementId": "customer",
+			"disabled": false,
+			"dataKeyup": "customer",
 		},
 		{
 			"title": "매출처 담당자",
-			"value": cipOfCustomer,
 			"elementId": "cipOfCustomer",
+			"disabled": false,
+			"dataKeyup": "user",
 		},
 		{
 			"title": "엔드유저",
-			"value": endUser,
 			"elementId": "endUser",
+			"disabled": false,
+			"dataKeyup": "customer",
 		},
 		{
 			"title": "엔드유저 담당자",
-			"value": cipOfendUser,
 			"elementId": "cipOfendUser",
+			"disabled": false,
+			"dataKeyup": "user",
 		},
 		{
 			"title": "발주일자",
-			"value": saleDate,
 			"elementId": "saleDate",
+			"disabled": false,
+			"type": "date",
 		},
 		{
 			"title": "검수일자",
-			"value": delivered,
 			"elementId": "delivered",
+			"disabled": false,
+			"type": "date",
 		},
 		{
 			"title": "(부)담당자",
-			"value": employee2,
 			"elementId": "employee2",
+			"disabled": false,
+			"dataKeyup": "user",
 		},
 		{
 			"title": "유지보수일자 시작일",
-			"value": startOfPaidMaintenance,
 			"elementId": "startOfPaidMaintenance",
+			"disabled": false,
+			"type": "date",
 		},
 		{
 			"title": "유지보수일자 종료일",
-			"value": endOfPaidMaintenance,
 			"elementId": "endOfPaidMaintenance",
+			"disabled": false,
+			"type": "date",
 		},
 		{
 			"title": "계약금액",
-			"value": contractAmount,
 			"elementId": "contractAmount",
+			"disabled": false,
+			"keyup": "inputNumberFormat(this);",
 		},
 		{
 			"title": "VAT 포함여부",
-			"value": taxInclude,
 			"elementId": "taxInclude",
+			"disabled": false,
 		},
 		{
 			"title": "매출이익",
-			"value": profit,
 			"elementId": "profit",
+			"disabled": false,
+			"keyup": "inputNumberFormat(this);",
 		},
 		{
 			"title": "내용",
-			"value": detail,
 			"type": "textarea",
 			"elementId": "detail",
 		},
@@ -476,8 +507,9 @@ function contractInsertForm(){
 
 	modal.show();
 	modal.headTitle.text("계약등록");
-	modal.content.css("width", "800px");
+	modal.content.css("width", "1200px");
 	modal.body.html(html);
+	modal.body.css("max-height", "800px");
 	modal.confirm.text("등록");
 	modal.close.text("취소");
 	modal.confirm.attr("onclick", "contractInsert();");
@@ -498,14 +530,149 @@ function contractUpdateForm(no){
 }
 
 function contractInsert(){
+	let contractType, title, sopp, employee, salesType, customer, cipOfCustomer, endUser, cipOfendUser, saleDate, delivered, employee2, startOfPaidMaintenance, endOfPaidMaintenance, contractAmount, taxInclude, profit, detail, url, method, data;
+
+	contractType = $(document).find("[name='" + contractType + "']").val();
+	title = $(document).find("#" + title).val();
+	sopp = $(document).find("#sopp");
+	sopp = dataListFormat(sopp.attr("id"), sopp.val());
+	employee = $(document).find("#employee");
+	employee = dataListFormat(employee.attr("id"), employee.val());
+	salesType = $(document).find("#salesType").val();
+	customer = $(document).find("#customer");
+	customer = dataListFormat(customer.attr("id"), customer.val());
+	cipOfCustomer = $(document).find("#cipOfCustomer");
+	cipOfCustomer = dataListFormat(cipOfCustomer.attr("id"), cipOfCustomer.val());
+	endUser = $(document).find("#endUser");
+	endUser = dataListFormat(endUser.attr("id"), endUser.val());
+	cipOfendUser = $(document).find("#cipOfendUser");
+	cipOfendUser = dataListFormat(cipOfendUser.attr("id"), cipOfendUser.val());
+	saleDate = $(document).find("#saleDate").val();
+	delivered = $(document).find("#delivered").val();
+	employee2 = $(document).find("#employee2");
+	employee2 = dataListFormat(employee2.attr("id"), employee2.val());
+	startOfPaidMaintenance = $(document).find("#startOfPaidMaintenance").val();
+	endOfPaidMaintenance = $(document).find("#endOfPaidMaintenance").val();
+	contractAmount = $(document).find("#contractAmount").val().replaceAll(",", "");
+	taxInclude = $(document).find("#taxInclude").val();
+	profit = $(document).find("#profit").val().replaceAll(",", "");
+	detail = tinymce.activeEditor.getContent();
+
+	url = "/api/contract";
+	method = "post";
+	data = {
+		"contractType": contractType,
+		"title": title,
+		"sopp": sopp,
+		"employee": employee,
+		"salesType": salesType,
+		"customer": customer,
+		"cipOfCustomer": cipOfCustomer,
+		"endUser": endUser,
+		"cipOfendUser": cipOfendUser,
+		"saleDate": saleDate,
+		"delivered": delivered,
+		"employee2": employee2,
+		"startOfPaidMaintenance": startOfPaidMaintenance,
+		"endOfPaidMaintenance": endOfPaidMaintenance,
+		"contractAmount": contractAmount,
+		"taxInclude": taxInclude,
+		"profit": profit,
+		"detail": detail
+	}
+
+	crud.defaultAjax(url, method, data, contractSuccessInsert, contractErrorInsert);
+}
+
+function contractSuccessInsert(){
+	alert("등록완료");
 	location.reload();
 }
 
+function contractErrorInsert(){
+	alert("등록에러");
+}
 
-function contractUpdate(){
+function contractUpdate(no){
+	let contractType, title, sopp, employee, salesType, customer, cipOfCustomer, endUser, cipOfendUser, saleDate, delivered, employee2, startOfPaidMaintenance, endOfPaidMaintenance, contractAmount, taxInclude, profit, detail, url, method, data;
+
+	contractType = $(document).find("[name='" + contractType + "']").val();
+	title = $(document).find("#" + title).val();
+	sopp = $(document).find("#sopp");
+	sopp = dataListFormat(sopp.attr("id"), sopp.val());
+	employee = $(document).find("#employee");
+	employee = dataListFormat(employee.attr("id"), employee.val());
+	salesType = $(document).find("#salesType").val();
+	customer = $(document).find("#customer");
+	customer = dataListFormat(customer.attr("id"), customer.val());
+	cipOfCustomer = $(document).find("#cipOfCustomer");
+	cipOfCustomer = dataListFormat(cipOfCustomer.attr("id"), cipOfCustomer.val());
+	endUser = $(document).find("#endUser");
+	endUser = dataListFormat(endUser.attr("id"), endUser.val());
+	cipOfendUser = $(document).find("#cipOfendUser");
+	cipOfendUser = dataListFormat(cipOfendUser.attr("id"), cipOfendUser.val());
+	saleDate = $(document).find("#saleDate").val();
+	delivered = $(document).find("#delivered").val();
+	employee2 = $(document).find("#employee2");
+	employee2 = dataListFormat(employee2.attr("id"), employee2.val());
+	startOfPaidMaintenance = $(document).find("#startOfPaidMaintenance").val();
+	endOfPaidMaintenance = $(document).find("#endOfPaidMaintenance").val();
+	contractAmount = $(document).find("#contractAmount").val().replaceAll(",", "");
+	taxInclude = $(document).find("#taxInclude").val();
+	profit = $(document).find("#profit").val().replaceAll(",", "");
+	detail = tinymce.activeEditor.getContent();
+
+	url = "/api/contract/" + no;
+	method = "put";
+	data = {
+		"contractType": contractType,
+		"title": title,
+		"sopp": sopp,
+		"employee": employee,
+		"salesType": salesType,
+		"customer": customer,
+		"cipOfCustomer": cipOfCustomer,
+		"endUser": endUser,
+		"cipOfendUser": cipOfendUser,
+		"saleDate": saleDate,
+		"delivered": delivered,
+		"employee2": employee2,
+		"startOfPaidMaintenance": startOfPaidMaintenance,
+		"endOfPaidMaintenance": endOfPaidMaintenance,
+		"contractAmount": contractAmount,
+		"taxInclude": taxInclude,
+		"profit": profit,
+		"detail": detail
+	}
+
+	crud.defaultAjax(url, method, data, contractSuccessUpdate, contractErrorUpdate);
+}
+
+function contractSuccessUpdate(){
+	alert("수정완료");
 	location.reload();
 }
 
-function contractDelete(){
+function contractErrorUpdate(){
+	alert("수정에러");
+}
+
+function contractDelete(no){
+	if(confirm("정말로 삭제하시겠습니까??")){
+		url = "/api/contract/" + no;
+		method = "delete";
+	
+		crud.defaultAjax(url, method, data, contractSuccessDelete, contractErrorDelete);
+	}else{
+		return false;
+	}
+}
+
+function contractSuccessDelete(){
+	alert("삭제완료");
 	location.reload();
+}
+
+function contractErrorDelete(){
+	alert("삭제에러");
 }

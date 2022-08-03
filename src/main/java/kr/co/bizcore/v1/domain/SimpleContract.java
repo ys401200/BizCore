@@ -21,6 +21,8 @@ public class SimpleContract implements Domain {
     protected int employee; //담당자
     protected Date startOfFreeMaintenance; //무상유지보수일자 시작일
     protected Date endOfFreeMaintenance; //무상유지보수일자 종료일
+    protected Date startOfPaidMaintenance; //유상유지보수일자 시작일
+    protected Date endOfPaidMaintenance; //유상유지보수일자 종료일
     protected Date saleDate; //발주일자? 판매일자?
 
     @Override
@@ -34,5 +36,4 @@ public class SimpleContract implements Domain {
         }
         return result;
     }
-    
 }
