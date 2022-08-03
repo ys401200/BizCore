@@ -45,8 +45,8 @@ public class ApiScheduleCtrl extends Ctrl {
         if(t.length >= 4){
             yy = t[2];
             mm = t[3];
-            year = convertStrToInt(yy);
-            month = convertStrToInt(mm);
+            year = strToInt(yy);
+            month = strToInt(mm);
         }
 
         if(year < minYear || year > maxYear || month < 1 || month > 12){
@@ -79,14 +79,6 @@ public class ApiScheduleCtrl extends Ctrl {
 
         return result;
     }
-
-    private int convertStrToInt(String number){
-        int result = -1;
-        if(number != null)  try{
-            result = Integer.parseInt(number);
-        }catch(NumberFormatException e){}
-        return result;
-    } // End of convertStrToInt()
 
 
     

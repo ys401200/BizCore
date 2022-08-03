@@ -3,10 +3,16 @@ package kr.co.bizcore.v1.ctrl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import kr.co.bizcore.v1.domain.Sales;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpServletRequest;
@@ -52,10 +58,7 @@ public class ApiSalesCtrl extends Ctrl{
         String aesKey = null;
         String aesIv = null;
         String data = null;
-        int number = -1;
         HttpSession session = null;
-
-        number = salesService.strToInt(no);
 
         session = request.getSession();
         compId = (String)session.getAttribute("compId");
@@ -65,12 +68,10 @@ public class ApiSalesCtrl extends Ctrl{
 
         if(compId == null){
             result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
-        }else if(number < 0){
-            result = "{\"result\":\"failure\",\"msg\":\"Sopp number is invalid.\"}";
         }else if(aesKey == null || aesIv == null){
             result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
         }else{
-            data = salesService.getSales(number, compId);
+            data = salesService.getSales(no, compId);
             if(data == null){
                 result = "{\"result\":\"failure\",\"msg\":\"Sales not exist.\"}";
             }else{
@@ -79,6 +80,95 @@ public class ApiSalesCtrl extends Ctrl{
             }
         }
 
+        return result;
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    public String apiSalesPost(HttpServletRequest request, @RequestBody String requestBody){
+        String result = null;
+        String compId = null;
+        String aesKey = null;
+        String aesIv = null;
+        String json = null;
+        ObjectMapper mapper = null;
+        Sales sales = null;
+        HttpSession session = null;
+
+        mapper = new ObjectMapper();
+        session = request.getSession();
+        compId = (String)session.getAttribute("compId");
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
+        }else{
+            json = salesService.decAes(requestBody, aesKey, aesIv);
+            try {
+                sales = mapper.readValue(json, Sales.class);
+                if(salesService.addSales(sales, compId))    result = "{\"result\":\"ok\"}";
+                else                                        result = "{\"result\":\"failure\",\"msg\":\"An error occurred.\"}";
+            } catch (Exception e) {
+                result = "{\"result\":\"failure\",\"msg\":\"Data is wrong.\"}";
+            }
+        }
+        return result;
+    }
+
+    @RequestMapping(value = "/{no}", method = RequestMethod.PUT)
+    public String apiSalesNumberPut(HttpServletRequest request, @PathVariable String no, @RequestBody String requestBody){
+        String result = null;
+        String compId = null;
+        String aesKey = null;
+        String aesIv = null;
+        String json = null;
+        ObjectMapper mapper = null;
+        Sales sales = null;
+        HttpSession session = null;
+
+        mapper = new ObjectMapper();
+        session = request.getSession();
+        compId = (String)session.getAttribute("compId");
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
+        }else{
+            json = salesService.decAes(requestBody, aesKey, aesIv);
+            try {
+                sales = mapper.readValue(json, Sales.class);
+                if(salesService.modifySales(no, sales, compId)) result = "{\"result\":\"ok\"}";
+                else                                            result = "{\"result\":\"failure\",\"msg\":\"An error occurred.\"}";
+            } catch (Exception e) {
+                result = "{\"result\":\"failure\",\"msg\":\"Data is wrong.\"}";
+            }
+        }
+        return result;
+    }
+
+    @RequestMapping(value = "/{no}", method = RequestMethod.DELETE)
+    public String apiSalesNumberPut(HttpServletRequest request, @PathVariable String no){
+        String result = null;
+        String compId = null;
+        HttpSession session = null;
+
+        session = request.getSession();
+        compId = (String)session.getAttribute("compId");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+        }else{
+            if(salesService.removeSales(no, compId))    result = "{\"result\":\"ok\"}";
+            else                                        result = "{\"result\":\"failure\",\"msg\":\"An error occurred.\"}";
+        }
         return result;
     }
 

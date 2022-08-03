@@ -33,10 +33,28 @@ public class SalesService extends Svc{
         return result;
     } // End of getSalesList()
 
-    public String getSales(int salesNo, String compId){
+    public String getSales(String salesNo, String compId){
         Sales sales = null;
         sales = salesMapper.getSales(salesNo, compId);
         return sales == null ? null : sales.toJson();
     } // End of getSales();
+
+    public boolean addSales(Sales sales, String compId){
+        int x = -1;
+        x = salesMapper.addSales(sales, compId);
+        return x > 0;
+    }
+
+    public boolean modifySales(String no, Sales sales, String compId){
+        int x = -1;
+        x = salesMapper.modifySales(no, sales, compId);
+        return x > 0;
+    }
+
+    public boolean removeSales(String no, String compId){
+        int x = -1;
+        x = salesMapper.removeSales(no, compId);
+        return x > 0;
+    }
     
 }
