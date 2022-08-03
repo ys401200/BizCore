@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import kr.co.bizcore.v1.domain.Contract;
 import lombok.extern.slf4j.Slf4j;
 
@@ -92,6 +96,7 @@ public class ApiContractCtrl extends Ctrl{
         String aesKey = null;
         String aesIv = null;
         String data = null;
+        ObjectMapper mapper = null;
         JSONObject json = null;
         Contract contract = null;
         HttpSession session = null;
@@ -111,9 +116,18 @@ public class ApiContractCtrl extends Ctrl{
             if(data == null){
                 result = "{\"result\":\"failure\",\"msg\":\"Decryption fail.\"}";
             }else{
-                contract = new Contract();
-                json = new JSONObject(data);
+                try {
+                    mapper = new ObjectMapper();
+                    contract = mapper.readValue(data, Contract.class);
+                    if(contractService.addContract(contract, compId))  result = "{\"result\":\"ok\"}";
+                    else                                               result = "{\"result\":\"failure\",\"msg\":\"An error occurred\"}";
+                } catch (Exception e) {
+                    result = "{\"result\":\"failure\",\"msg\":\"An error occurred\"}";
+                    e.printStackTrace();
+                }
 
+                /*
+                json = new JSONObject(data);
                 contract.setArea(json.getString("area"));
                 contract.setEndUser(json.getInt("endUser"));
                 contract.setCipOfendUser(json.getInt("cipOfendUser"));
@@ -142,9 +156,9 @@ public class ApiContractCtrl extends Ctrl{
                 contract.setTaxInclude(json.getBoolean("taxInclude"));
                 contract.setTitle(json.getString("title"));
                 contract.setTypeOfBusiness(json.getString("typeOfBusiness"));
-
-                if(contractService.addContract(contract, compId))  result = "{\"result\":\"ok\"}";
-                else                                               result = "{\"result\":\"failure\",\"msg\":\"An error occurred\"}";
+                */
+                //if(contractService.addContract(contract, compId))  result = "{\"result\":\"ok\"}";
+                //else                                               result = "{\"result\":\"failure\",\"msg\":\"An error occurred\"}";
             }
         }
 
