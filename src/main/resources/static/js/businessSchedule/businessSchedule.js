@@ -12,21 +12,23 @@ $(document).ready(() => {
 });
 
 function getScheduleList() {
-	let url, method, data;
+	let url, method, data, type;
 
 	url = "/api/schedule";
 	method = "get";
 	data = "";
+	type = "list";
 
-	crud.defaultAjax(url, method, data, scheduleSuccessList, scheduleErrorList);
+	crud.defaultAjax(url, method, data, type, scheduleSuccessList, scheduleErrorList);
 } // End of getScheduleList()
 
 function scheduleSearchList(){
-	let searchCategory, searchText, url, method, data;
+	let searchCategory, searchText, url, method, data, type;
 
 	url = "/api/schedule";
 	method = "get";
 	data = "";
+	type = "list";
 
 	searchCategory = $(document).find("#scheduleSearchCategory").val();
 	searchText = $(document).find("#scheduleSearchValue").val();
@@ -35,7 +37,7 @@ function scheduleSearchList(){
 	localStorage.setItem("searchCategory", searchCategory);
 	localStorage.setItem("searchText", searchText);
 
-	crud.defaultAjax(url, method, data, scheduleSuccessList, scheduleErrorList);
+	crud.defaultAjax(url, method, data, type, scheduleSuccessList, scheduleErrorList);
 }
 
 function drawScheduleList() {
@@ -406,14 +408,15 @@ function listChange(event){
 }
 
 function scheduleDetailView(e){
-	let id, url, method, data;
+	let id, url, method, data, type;
 
 	id = $(e).data("id");
 	url = "/api/schedule/" + id;
 	method = "get";
 	data = "";
+	type = "detail";
 
-	crud.defaultAjax(url, method, data, scheduleSuccessView, scheduleErrorView);
+	crud.defaultAjax(url, method, data, type, scheduleSuccessView, scheduleErrorView);
 }
 
 function scheduleSuccessList(result){

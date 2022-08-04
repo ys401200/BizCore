@@ -10,21 +10,23 @@ $(document).ready(() => {
 });
 
 function getSalesList() {
-	let url, method, data;
+	let url, method, data, type;
 
 	url = "/api/sales";
 	method = "get";
 	data = "";
+	type = "list";
 
-	crud.defaultAjax(url, method, data, salesSuccessList, salesErrorList);
+	crud.defaultAjax(url, method, data, type, salesSuccessList, salesErrorList);
 }
 
 function salesSearchList(){
-	let searchCategory, searchText, url, method, data;
+	let searchCategory, searchText, url, method, data, type;
 
 	url = "/api/sales";
 	method = "get";
 	data = "";
+	type = "list";
 
 	searchCategory = $(document).find("#salesSearchCategory").val();
 	searchText = $(document).find("#salesSearchValue").val();
@@ -33,7 +35,7 @@ function salesSearchList(){
 	localStorage.setItem("searchCategory", searchCategory);
 	localStorage.setItem("searchText", searchText);
 
-	crud.defaultAjax(url, method, data, salesSuccessList, salesErrorList);
+	crud.defaultAjax(url, method, data, type, salesSuccessList, salesErrorList);
 }
 
 function drawSalesList() {
@@ -162,14 +164,15 @@ function salesErrorList(){
 }
 
 function salesDetailView(e){
-	let id, url, method, data;
+	let id, url, method, data, type;
 
 	id = $(e).data("id");
 	url = "/api/sales/" + id;
 	method = "get";
+	type = " detail";
 
-	crud.defaultAjax(url, method, data, salesSuccessView, salesErrorView);
-}
+	crud.defaultAjax(url, method, data, type, salesSuccessView, salesErrorView);
+} 
 
 function salesSuccessView(result){
 	let html, disDate, from, place, type, userName, customer, endUser, title, detail, dataArray;
