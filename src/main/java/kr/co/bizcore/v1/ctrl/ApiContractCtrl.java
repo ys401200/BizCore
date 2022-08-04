@@ -120,13 +120,6 @@ public class ApiContractCtrl extends Ctrl{
                     mapper = new ObjectMapper();
                     contract = mapper.readValue(data, Contract.class);
                     contract.setCreated(null);
-                    if(contract.getDelivered().getTime() == 0) contract.setDelivered(null);
-                    if(contract.getEndOfFreeMaintenance().getTime() == 0) contract.setEndOfFreeMaintenance(null);
-                    if(contract.getEndOfPaidMaintenance().getTime() == 0) contract.setEndOfPaidMaintenance(null);
-                    if(contract.getSaleDate().getTime() == 0) contract.setSaleDate(null);
-                    if(contract.getStartOfFreeMaintenance().getTime() == 0) contract.setStartOfFreeMaintenance(null);
-                    if(contract.getStartOfPaidMaintenance().getTime() == 0) contract.setStartOfPaidMaintenance(null);
-                    if(contract.getSupplied().getTime() == 0) contract.setSupplied(null);
                     if(contractService.addContract(contract, compId))  result = "{\"result\":\"ok\"}";
                     else                                               result = "{\"result\":\"failure\",\"msg\":\"An error occurred\"}";
                 } catch (Exception e) {
