@@ -107,18 +107,17 @@ public interface ContractMapper {
                 "       ptncmemberno = #{cnt.cipOfPartner}, " +
                 "       supplyno = #{cnt.supplier}, " +
                 "       supplymemberno = #{cnt.cipOfSupplier}, " +
-                "       supplydate = #{cnt.supplied}, " +
-                "       delivdate =#{cnt. delivered}, " +
+                "       supplydate = #{cnt.supplied, jdbcYype=TIMESTAMP}, " +
+                "       delivdate =#{cnt. delivered, jdbcYype=TIMESTAMP}, " +
                 "       vatyn = IF(#{cnt.taxInclude},'Y','N'), " +
-                "       paymaintsdate = #{cnt.startOfPaidMaintenance}, " +
-                "       paymaintedate = #{cnt.endOfPaidMaintenance}, " +
+                "       paymaintsdate = #{cnt.startOfPaidMaintenance, jdbcYype=TIMESTAMP}, " +
+                "       paymaintedate = #{cnt.endOfPaidMaintenance, jdbcYype=TIMESTAMP}, " +
                 "       contarea = #{cnt.area}, " +
                 "       businesstype = #{cnt.typeOfBusiness}, " +
                 "       moddatetime = NOW(), " +
-                "       moddatetime = #{cnt.modified}, " +
-                "       freemaintsdate = #{cnt.startOfFreeMaintenance}, " +
-                "       freemaintedate = #{cnt.endOfFreeMaintenance}, " +
-                "       contorddate = #{cnt.saleDate} " +
+                "       freemaintsdate = #{cnt.startOfFreeMaintenance, jdbcYype=TIMESTAMP}, " +
+                "       freemaintedate = #{cnt.endOfFreeMaintenance, jdbcYype=TIMESTAMP}, " +
+                "       contorddate = #{cnt.saleDate, jdbcYype=TIMESTAMP} " +
                 "WHERE contno = #{cnt.no} AND attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swcore.swc_company WHERE compid = #{compId})")
     public int modifyContract(@Param("compId") String compId, @Param("cnt") Contract contract);
 
