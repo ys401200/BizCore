@@ -1,15 +1,11 @@
 package kr.co.bizcore.v1.domain;
 
 import java.util.Date;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class Procure implements Domain{
+public class Procure extends Domain{
 
     private int no;
     private String buyerCode;
@@ -32,17 +28,5 @@ public class Procure implements Domain{
     private int sopp;
     private Date created;
     private Date modified;
-
-    @Override
-    public String toJson() {
-        ObjectMapper mapper = new ObjectMapper();
-        String result = null;
-        try {
-            result = mapper.writeValueAsString(this);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
     
 }

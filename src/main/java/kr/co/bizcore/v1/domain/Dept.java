@@ -11,7 +11,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class Dept implements Domain {
+public class Dept extends Domain {
 
     private int id;
     private String deptName;

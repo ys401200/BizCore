@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Setter @Getter
-public class SimpleEstimate implements Domain{
+public class SimpleEstimate extends Domain{
 
     protected int no;
     protected Date date;

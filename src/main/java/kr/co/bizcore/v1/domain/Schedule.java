@@ -1,16 +1,12 @@
 package kr.co.bizcore.v1.domain;
 
 import java.util.Date;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class Schedule implements Domain{
+public class Schedule extends Domain{
 
     private String job;
     private int no;
@@ -24,19 +20,5 @@ public class Schedule implements Domain{
     private Date to;
     private Date created;
     private Date modified;
-
-    @Override
-    public String toJson() {
-        String result = null;
-        ObjectMapper mapper = null;
-
-        try {
-            mapper = new ObjectMapper();
-            result = mapper.writeValueAsString(this);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
     
 }

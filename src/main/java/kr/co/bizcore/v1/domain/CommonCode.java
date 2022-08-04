@@ -2,10 +2,7 @@ package kr.co.bizcore.v1.domain;
 
 import java.util.ArrayList;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-public class CommonCode implements Domain{
+public class CommonCode extends Domain{
 
     private String desc;
     private String value;

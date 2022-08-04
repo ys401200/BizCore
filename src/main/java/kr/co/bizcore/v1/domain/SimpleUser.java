@@ -4,13 +4,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import lombok.Getter;
 import lombok.Setter;
 
-public class SimpleUser implements Domain {
+public class SimpleUser extends Domain {
 
     @Getter
     @Setter
@@ -25,6 +22,8 @@ public class SimpleUser implements Domain {
     @Setter
     protected String userName;
     protected ArrayList<String> deptId;
+    @JsonIgnore
+    private ArrayList<Permission> permission;
 
     public void setDeptId(String[] ids){
         if(deptId == null)  deptId = new ArrayList<>();
@@ -77,20 +76,6 @@ public class SimpleUser implements Domain {
         }
         return result;
     }
-
-    @JsonIgnore
-    private ArrayList<Permission> permission;
-
-    public String toJson() {
-        ObjectMapper mapper = new ObjectMapper();
-        String result = null;
-        try {
-            result = mapper.writeValueAsString(this);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return result;
-    } // End of toJson()
 
     @JsonIgnore
     public String[] getAvailableFunc(String deptId, int permission) {
