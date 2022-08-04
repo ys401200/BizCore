@@ -10,20 +10,22 @@ $(document).ready(() => {
 
 // API 서버에서 공지사항 리스트를 가져오는 함수
 function getNoticeList() {
-	let url, method, data; 
+	let url, method, data, type; 
 	url = "/api/notice";
 	method ="get"
-	data= "";
-	crud.defaultAjax(url, method, data, noticeSuccessList, noticeErrorList);
+	data = "";
+	type = "list";
+	crud.defaultAjax(url, method, data, type, noticeSuccessList, noticeErrorList);
 	
 } // End of getNoticeList()
 
 function noticeSearchList(){
-	let searchCategory, searchText, url, method, data;
+	let searchCategory, searchText, url, method, data, type;
 
 	url = "/api/notice";
 	method = "get";
 	data = "";
+	type = "list";
 
 	searchCategory = $(document).find("#noticeSearchCategory").val();
 	searchText = $(document).find("#noticeSearchValue").val();
@@ -32,7 +34,7 @@ function noticeSearchList(){
 	localStorage.setItem("searchCategory", searchCategory);
 	localStorage.setItem("searchText", searchText);
 
-	crud.defaultAjax(url, method, data, noticeSuccessList, noticeErrorList);
+	crud.defaultAjax(url, method, data, type, noticeSuccessList, noticeErrorList);
 }
 
 function drawNoticeList() {

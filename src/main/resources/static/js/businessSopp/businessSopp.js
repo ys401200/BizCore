@@ -10,21 +10,23 @@ $(document).ready(() => {
 });
 
 function getSoppList() {
-	let url, method, data;
+	let url, method, data, type;
 
 	url = "/api/sopp";
 	method = "get";
 	data = "";
+	type = "list";
 
-	crud.defaultAjax(url, method, data, soppSuccessList, soppErrorList);
+	crud.defaultAjax(url, method, data, type, soppSuccessList, soppErrorList);
 }
 
 function soppSearchList(){
-	let searchCategory, searchText, url, method, data;
+	let searchCategory, searchText, url, method, data, type;
 
 	url = "/api/sopp";
 	method = "get";
 	data = "";
+	type = "list";
 
 	searchCategory = $(document).find("#soppSearchCategory").val();
 	searchText = $(document).find("#soppSearchValue").val();
@@ -33,7 +35,7 @@ function soppSearchList(){
 	localStorage.setItem("searchCategory", searchCategory);
 	localStorage.setItem("searchText", searchText);
 
-	crud.defaultAjax(url, method, data, soppSuccessList, soppErrorList);
+	crud.defaultAjax(url, method, data, type, soppSuccessList, soppErrorList);
 }
 
 function drawSoppList() {
@@ -153,14 +155,15 @@ function drawSoppList() {
 }
 
 function soppDetailView(e){
-	let id, url, method, data;
+	let id, url, method, data, type;
 
 	id = $(e).data("id");
 	url = "/api/sopp/" + id;
 	method = "get";
 	data = "";
+	type = "detail";
 
-	crud.defaultAjax(url, method, data, soppSuccessView, soppErrorView);
+	crud.defaultAjax(url, method, data, type, soppSuccessView, soppErrorView);
 }
 
 function soppSuccessList(result){
