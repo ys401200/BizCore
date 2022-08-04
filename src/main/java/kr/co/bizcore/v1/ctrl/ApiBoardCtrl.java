@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import kr.co.bizcore.v1.domain.Article;
 import lombok.extern.slf4j.Slf4j;
 
@@ -62,7 +64,7 @@ public class ApiBoardCtrl extends Ctrl{
         String compId = null;
         List<Object> files = null;
         Article article = null;
-        JSONObject json = null;
+        ObjectMapper mapper = null;
         HttpSession session = null;
         HashMap<String, String> attached = null;
         String data = null;
@@ -83,14 +85,15 @@ public class ApiBoardCtrl extends Ctrl{
             result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
         }else{
             data = boardService.decAes(requestBody, aesKey, aesIv);
-            json = new JSONObject(data);
-            article = new Article();
-            files = json.getJSONArray("files").toList();
-            article.setWriter(boardService.strToInt(userNo));
-            article.setTitle(json.getString("title"));
-            article.setContent(json.getString("content"));
-            count = boardService.postNewArticle(compId, article, files, attached);
-            result = "{\"result\":\"ok\",\"msg\":\"success file upload and add article. file count : " + count + "\"}";
+            try {
+                mapper = new ObjectMapper();
+                article = mapper.readValue(data, Article.class);
+                count = boardService.postNewArticle(compId, article, files, attached);
+                result = "{\"result\":\"ok\",\"msg\":\"success file upload and add article. file count : " + count + "\"}";
+            } catch (Exception e) {
+                result = "{\"result\":\"failure\",\"msg\":\"An error occurred\"}";
+                e.printStackTrace();
+            }
         }
         
         return result;

@@ -107,17 +107,17 @@ public interface ContractMapper {
                 "       ptncmemberno = #{cnt.cipOfPartner}, " +
                 "       supplyno = #{cnt.supplier}, " +
                 "       supplymemberno = #{cnt.cipOfSupplier}, " +
-                "       supplydate = #{cnt.supplied, jdbcYype=TIMESTAMP}, " +
-                "       delivdate =#{cnt. delivered, jdbcYype=TIMESTAMP}, " +
+                "       supplydate = #{cnt.supplied, jdbcType=TIMESTAMP}, " +
+                "       delivdate =#{cnt. delivered, jdbcType=TIMESTAMP}, " +
                 "       vatyn = IF(#{cnt.taxInclude},'Y','N'), " +
-                "       paymaintsdate = #{cnt.startOfPaidMaintenance, jdbcYype=TIMESTAMP}, " +
-                "       paymaintedate = #{cnt.endOfPaidMaintenance, jdbcYype=TIMESTAMP}, " +
+                "       paymaintsdate = #{cnt.startOfPaidMaintenance, jdbcType=TIMESTAMP}, " +
+                "       paymaintedate = #{cnt.endOfPaidMaintenance, jdbcType=TIMESTAMP}, " +
                 "       contarea = #{cnt.area}, " +
                 "       businesstype = #{cnt.typeOfBusiness}, " +
                 "       moddatetime = NOW(), " +
-                "       freemaintsdate = #{cnt.startOfFreeMaintenance, jdbcYype=TIMESTAMP}, " +
-                "       freemaintedate = #{cnt.endOfFreeMaintenance, jdbcYype=TIMESTAMP}, " +
-                "       contorddate = #{cnt.saleDate, jdbcYype=TIMESTAMP} " +
+                "       freemaintsdate = #{cnt.startOfFreeMaintenance, jdbcType=TIMESTAMP}, " +
+                "       freemaintedate = #{cnt.endOfFreeMaintenance, jdbcType=TIMESTAMP}, " +
+                "       contorddate = #{cnt.saleDate, jdbcType=TIMESTAMP} " +
                 "WHERE contno = #{cnt.no} AND attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swcore.swc_company WHERE compid = #{compId})")
     public int modifyContract(@Param("compId") String compId, @Param("cnt") Contract contract);
 

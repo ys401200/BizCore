@@ -8,6 +8,7 @@ import kr.co.bizcore.v1.mapper.BoardMapper;
 import kr.co.bizcore.v1.mapper.CommonMapper;
 import kr.co.bizcore.v1.mapper.ContractMapper;
 import kr.co.bizcore.v1.mapper.DeptMapper;
+import kr.co.bizcore.v1.mapper.GwFormMapper;
 import kr.co.bizcore.v1.mapper.ProcureMapper;
 import kr.co.bizcore.v1.mapper.SalesMapper;
 import kr.co.bizcore.v1.mapper.ScheduleMapper;
@@ -68,6 +69,8 @@ public abstract class Svc {
 
     @Autowired 
     protected TestMapper testMapper;
+    @Autowired
+    protected GwFormMapper gwFormMapper;
 
     @Autowired
     protected SqlSessionTemplate sqlSession;
