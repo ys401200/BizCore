@@ -46,7 +46,8 @@
 }
 
 .title {
-	font-size: 2em;
+	font-size: 2.5em;
+	font-weight: 500;
 	text-align: center;
 }
 
@@ -57,7 +58,8 @@
 }
 
 .outlineNone {
-	border: none;
+	border: none; 
+	width : 90%;
 }
 
 
@@ -83,6 +85,7 @@
 	background-color: rgb(208, 206, 206);
 	text-align: center;
 	padding : 0.5em;
+	font-weight: 500;
 
 }
 
@@ -109,11 +112,10 @@
 }
 
 .detailDiv {
-
 	display: grid;
 	grid-template-columns: 10% 20% 20% 10% 5% 10% 10% 15% ;
 	text-align: center;
-	font-size: 0.5em;
+	
 
 }
 
@@ -173,4 +175,14 @@
 	text-align: center;
 	grid-template-columns: 75% 10% 15%;
 	font-size: 0.5em;
+}
+
+
+.btnDiv {
+	text-align: right;
+}
+
+.outlineNonedata{
+	border: none; 
+	width : 90%;
 }

@@ -6,443 +6,164 @@ $(document).ready(() => {
 		$("#loadingDiv").loading("toggle");
 	}, 300);
 
+	drawCommonList();
+	//drawhrForm();
+	//addedHoursform();
+	//selectForm();
+	//drawCoeForm()
 
-	selectForm();
-	
 });
 
 
-function selectForm() {
 
-	let json = {
-		"form": '지출결의서',
-
-		"data": {
-			"no": 2958,
-			"writer": 10028,
-			"title": "안드로이드/iOS/모듈 개발",
-			"sopp": 10005197,
-			"customer": 104742,
-			"content": "<div>문서내용</div>",
-			"amount": 8250000,
-			"created": 16999999999,
-			"Modified": 16999999999,
-		},
-
-		"detail": [{
-			"date": 169999999999,
-			"customer": "(주)엑스아이커뮤니케이션즈",
-			"product": "웹용 REST API 서버 모듈",
-			"price": 7500000,
-			"quantity": 1,
-			"tax": 750000,
-			"total": 8250000,
-			"remark": "웹용 REST API 개발건",
-		},
-		{
-			"date": 1223231434,
-			"customer": "(주)테스트 회사",
-			"product": "테스트 항목",
-			"price": 6890099,
-			"quantity": 4,
-			"tax": 445367677,
-			"total": 6777657,
-			"remark": "테스트 개발건",
-		}
-
-		]
-
-	};
-
-	let json2 = {
-		"form": '휴일근무',
-		"attendId": 2958,
-		"userNo": 10028,
-		"attType": 4,
-		"attStatus": 5,
-		"attStart": "2022-03-13 09:00:00.000",
-		"attEnd": "2022-03-13 18:00:00.000",
-		"attDesc": "<p>틸론 버그 지원 : 특정 계정 N:M 할당 VD 접속 불가 지원<br />&nbsp;<br />&gt;&gt; 해당 VD 문제로 추측, 해당 VD 삭제 후 정상 동작 확인</p>",
-		"regDate": "2022-03-16 08:53:28.000",
-		"modDate": "2022-03-16 20:20:53.000",
-		"attrib": 100001
-	}
-
-	let json3 = {
-		"form": "재직증명서",
-
-		"data": {
-			"no": 2958,
-			"writer": 10028,
-			"created": 2202 - 08 - 02,
-		},
-
-		"detail": {
-			"name": '김주연',
-			"idCardNumber": "880924-1111666",
-			"address": '경기도 용인시 수지구 디지털벨리로',
-			"org": '기술지원팀',
-			"position": '부장',
-			"joindate": '2015-03-02',
-			"leavedate": '2021-11-01',
-			"purpose": '학교 제출용'
-		}
-
-
-	};
-
-	
-
-	if (json.form == '지출결의서') {
-		drawCommonmylist(json);
-		drawEachList(json);
-	} else (alert("뭐"));
-
-
-	// if (json2.form == '휴일근무') {
-	// 	drawHrform(json2);
-	// }
-
-
-	// if (json3.form == '재직증명서') {
-	// 	coeForm(json3);
-	// }
-
-
-}
-
-// 지출결의서 1 
-function drawCommonmylist(json) {
-
-	let testData = [
-		{
-			title: '번호',
-			content: json.data.no
-
-		}, {
-			title: '작성자',
-			content: json.data.writer
-		}, {
-			title: '작성일',
-			content: json.data.created
-
-		},
-		{
-			title: '영업기회',
-			content: json.data.sopp
-		}, {
-			title: '거래처',
-			content: json.data.customer
-
-		},
-		{
-			title: '제목',
-			content: json.data.title
-		}, {
-			title: '내용',
-			content: json.data.content
-
-		}
-	];
-
+///////////////////////////////////////////////////////////////////////////지출결의서에 필요한 함수 ///////////////////////////////////// 
+function drawCommonList() {
 	let title = $(".title");
-	let formName = json.form;
-	title.html(formName);
+	title.html("지출결의서");
+	let reportForm = 'expenditure_resolution';
+	let infoTarget = $(".info");
+
+	let infoTitle = ['번호', '작성자', '작성일', '영업기회', '거래처'];
+	let infoTitleng = ['no', 'writer', 'regdate', 'sopp', 'customer']
+
+	drawBasicDocInfoTablenone(infoTitle, reportForm, infoTitleng, infoTarget);
+
+	let contentTarget = $(".insertedContent")
+
+	drawBasicDocContentTablenone(reportForm, contentTarget);
+
+	let detailTarget = $(".insertedData");
+
+	let insertedDataTitle = ['거래일자', '거래처', '항목', '단가', '수량', '부가세액', '금액', '적요'];
+
+	let btnhtml = "<div class='btnDiv'><button class='insertbtn' onclick='insertData()'>추가</button><button class='deletebtn' onclick='deleteData()'>삭제</button></div>"
 
 
-	let contentHtml = "";
-	let info = $(".info");
-	let insertedContent = $(".insertedContent");
-
-	drawBasicDocInfoTable('지출결의서', info, 0, 5, testData);
-
-	contentHtml += "<div class='contentDiv'><div class='infoTitle'>" + testData[5].title + "</div><div class='infoContent'><input id='doc_Form_" + formName + " +" + testData[5].title + "' class='outlineNone' type='text' readonly value='" + testData[5].content + "'/></div></div>"
-	contentHtml += "<div class='contentDiv'><div class='infoTitlelast'>" + testData[6].title + "</div><div class='infoContentlast'><input id='doc_Form_" + formName + " +" + testData[6].title + "'class='outlineNone' type='text' readonly value='" + testData[6].content + "'/></div></div>"
-
-	insertedContent.html(contentHtml);
+	let dataTitlehtml = "<div class='detailDiv'>";
 
 
-	let target = $(".mylistbtn");
-	target.length;
+	for (let i = 0; i < insertedDataTitle.length; i++) {
+		if (i < insertedDataTitle.length - 1) {
+			dataTitlehtml += "<div class='datailTitle'>" + insertedDataTitle[i] + "</div>"
 
-	alert(target.length);
-	let comment = "<div>완료 / 반려의견</div><textarea></textarea><button class='commentbtn' type='button'>등록</button>"
-	target.html(comment);
-
-
-}  // End of drawCommonmylist(); 
-
-//지출결의서 2 
-function drawEachList(json) {
-	let formName = json.form;
-
-	let lowTestData = [
-		{
-			title: '거래일자',
-			content: json.detail.date
-
-		}, {
-			title: '거래처',
-			content: json.detail.customer
-
-		}, {
-			title: '항목',
-			content: json.detail.product
-
-		}, {
-			title: '단가',
-			content: json.detail.price
-		},
-		{
-			title: '수량',
-			content: json.detail.quantity
-
-		}, {
-			title: '부가세액',
-			content: json.detail.tax
-
-		},
-		{
-			title: '금액',
-			content: json.detail.total
-
-		}, {
-			title: '적요',
-			content: json.detail.remark
-
-		}
-	];
-
-
-	let insertedData = $(".insertedData");
-	let detailTitleHtml = "<div class='detailDiv'>";
-
-
-
-
-
-	for (let i = 0; i < lowTestData.length; i++) {
-
-		if (i == lowTestData.length - 1) {
-			detailTitleHtml += "<div class='datailTitlelast'>" + lowTestData[i].title + "</div>";
 		} else {
-			detailTitleHtml += "<div class='datailTitle'>" + lowTestData[i].title + "</div>";
+			dataTitlehtml += "<div class='datailTitlelast'>" + insertedDataTitle[i] + "</div>"
+
 		}
 	}
-	detailTitleHtml += "</div>";
+	dataTitlehtml += "</div>";
+	btnhtml += dataTitlehtml;
+	detailTarget.html(btnhtml);
+}
 
 
+//입력 데이터 만드는 함수 
+function insertData() {
+	let countlow = 0;
+	let target = $(".insertedDataList");
+	let dataNoneForm = "<div class='detailcontentDiv'>";
+	let title = ['data', 'customer', 'product', 'price', 'quantity', 'tax', 'total', 'remark'];
+	let reportForm = 'expenditure_resolution';
 
-	for (let t = 0; t < json.detail.length; t++) {
-		let lowTestData2 = [
-			{
-				title: '거래일자',
-				content: json.detail[t].date
-
-			}, {
-				title: '거래처',
-				content: json.detail[t].customer
-
-			}, {
-				title: '항목',
-				content: json.detail[t].product
-
-			}, {
-				title: '단가',
-				content: json.detail[t].price
-
-			}, {
-				title: '수량',
-				content: json.detail[t].quantity
-
-			}, {
-				title: '부가세액',
-				content: json.detail[t].tax
-
-			}, {
-				title: '금액',
-				content: json.detail[t].total
-
-			}, {
-				title: '적요',
-				content: json.detail[t].remark
-
-			}
-		];
-
-		let html = "<div class='detailcontentDiv'>";
-
-
-		let detailTitles = [];
-
-		for (let t = 0; t < lowTestData2.length; t++) {
-			detailTitles.push(lowTestData2[t].title);
-		}
-
-		for (let i = 0; i < lowTestData2.length; i++) {
-
-			if (i == lowTestData2.length - 1) {
-				html += "<div class='detailcontentlast' id='doc_Form_" + formName + "+" + detailTitles[i] + t + "'>" + lowTestData2[i].content + "</div>";
+	for (let i = 0; i < title.length; i++) {
+		countlow = $(".detailcontentDiv").length
+		if (i < title.length - 1) {
+			if (i == 0) {
+				dataNoneForm += "<div id='child' class ='countRow detailcontent'><input type='date'class='outlineNonedata' id='doc_Form_" + reportForm + '_' + title[i] + "_" + countlow + "'/></div>"
 			} else {
-				html += "<div class='detailcontent' id='doc_Form_" + formName + "+" + detailTitles[i] + t + "'>" + lowTestData2[i].content + "</div>";
+				dataNoneForm += "<div id='child' class ='countRow detailcontent'><input type='text'class='outlineNonedata' onkeyup='keyUpFunction(this)' id='doc_Form_" + reportForm + '_' + title[i] + "_" + countlow + "'/></div>"
+			}
+		} else
+			dataNoneForm += "<div id='child' class ='countRow detailcontentlast'><input type='text'class='outlineNonedata' onkeyup='keyUpFunction(this)' id='doc_Form_" + reportForm + '_' + title[i] + "_" + countlow + "'/></div>"
+
+	}
+
+	// 크기상 21개까지만 데이터 추가 가능 
+	dataNoneForm += "</div>"
+	if ($(".detailcontentDiv").length < 21) {
+		target.append(dataNoneForm);
+	}
+
+}
+
+function deleteData() {
+	let target = $(".insertedDataList");
+	target.children(':last').remove();
+}
+
+
+function keyUpFunction(obj) {
+	let idString = obj.id;
+	let idArr = idString.split('_');
+	let quantityhtml = "";
+	let taxhtml = "";
+	let pricehtml = "";
+	let totalhtml = "";
+	//가격에 키업 된 경우 
+	if (idArr[4] == 'price') {
+		for (let i = 0; i < idArr.length; i++) {
+			if (i == 4) {
+				quantityhtml += 'quantity_'
+				taxhtml += 'tax_'
+				totalhtml += 'total_'
+			} else if (i == idArr.length - 1) {
+				quantityhtml += idArr[i];
+				taxhtml += idArr[i];
+				totalhtml += idArr[i];
+			} else {
+				quantityhtml += idArr[i] + '_';
+				taxhtml += idArr[i] + '_';
+				totalhtml += idArr[i] + '_';
 			}
 		}
-		html += "</div>";
+		$("#" + quantityhtml + "").val(0);
 
-		detailTitleHtml += html;
+		let priceVal = $("#" + idString + "").val(); // 단가 
+		let quantityVal = $("#" + quantityhtml + "").val(); // 
 
+		$("#" + totalhtml + "").val(quantityVal * priceVal * 1.1); // 금액 
+		$("#" + taxhtml + "").val(quantityVal * priceVal * 0.1); // 부가세 
 	}
-	let totalLine = "<div class='totalLine'><div class='detailcontent'>합계</div><div id='doc_Form_expenditureResolution_" + '총합계' + "' class='detailcontent'>" + json.data.amount + "</div><div class='detailcontentlast'></div></div>"
-	detailTitleHtml += totalLine;
-	insertedData.html(detailTitleHtml);
 
+	//수량에 키업된 경우 
+	if (idArr[4] == 'quantity') {
+		for (let i = 0; i < idArr.length; i++) {
+			if (i == 4) {
+				taxhtml += 'tax_'
+				pricehtml += 'price_'
+				totalhtml += 'total_'
+			} else if (i == idArr.length - 1) {
+				taxhtml += idArr[i];
+				pricehtml += idArr[i];
+				totalhtml += idArr[i];
+			} else {
+				taxhtml += idArr[i] + '_';
+				pricehtml += idArr[i] + '_';
+				totalhtml += idArr[i] + '_';
 
-} // End of drawEachList(); 
+			}
+			let quantityVal = $("#" + idString + "").val(); // 수량 
+			let priceVal = $("#" + pricehtml + "").val(); // 단가
 
-
-
-function drawHrform(json) { // 연차 월차 휴일근무 연장근무 경조휴가 
-
-	let title = $(".title");
-	let formName = json.form;
-	title.html(formName);
-
-
-	let testData = [
-		{
-			title: '문서번호',
-			content: json.attendId
-
-		}, {
-			title: '작성자',
-			content: json.userNo
-		}, {
-			title: '작성일',
-			content: json.regDate
-		},
-		{
-			title: '종류',
-			content: json.attType
-		}, {
-			title: '기간',
-			content: json.attStart + "  -  " + json.attEnd
-		},
-		{
-			title: '사유',
-			content: json.attDesc
-		}
-	];
-
-
-	let info = $(".info");
-	drawBasicDocInfoTable(formName, info, 0, 3, testData);
-
-
-	let insertedContent = $(".insertedContent");
-	drawTitleContentTable(formName, insertedContent, 3, 6, testData);
-
-	let target = $(".mylistbtn");
-	target.length;
-	let comment = "<div>완료 / 반려의견</div><textarea></textarea><button class='commentbtn' type='button'>등록</button>"
-	target.html(comment);
-
-
-
-
-}
-
-
-
-//재직증명서 
-function coeForm(json) {
-	let title = $(".title");
-	let formName = json.form
-	title.html(formName);
-
-
-
-	let testData = [
-		{
-			title: '문서번호',
-			content: json.data.no
-
-		},
-		{
-			title: '기안자',
-			content: json.data.writer
-
-		},
-		{
-			title: '기안일',
-			content: json.data.created
-
-		},
-		{
-			title: '성명',
-			content: json.detail.name
-
-		}, {
-			title: '주민등록번호',
-			content: json.detail.idCardNumber
-		}, {
-			title: '주소',
-			content: json.detail.address
-
-		}, {
-			title: '소속',
-			content: json.detail.org
-
-		}, {
-			title: '직위',
-			content: json.detail.position
-
-		}, {
-			title: '재직기간',
-			content: json.detail.joindate + "  -  " + json.detail.leavedate
+			$("#" + totalhtml + "").val(quantityVal * priceVal * 1.1); // 금액 
+			$("#" + taxhtml + "").val(quantityVal * priceVal * 0.1); // 부가세 
 
 		}
-
-	];
-
-	let target = $(".info");
-	drawBasicDocInfoTable(formName, target, 0, 3, testData);
-	let insertedContent = $(".insertedContent");
-	drawTitleContentTable(formName, insertedContent, 3, 9, testData);
-
-	let comment = $(".list_comment");
-	comment.html('위와 같이 재직하고 있음을 증명합니다');
-
-
-}
-
-
-
-
-
-
-
-
-
-
-
-// 기본 정보 테이블
-
-
-
-function drawBasicDocInfoTable(formType, target, start, end, testData) {
-
-
-	let ids = [];
-	for (let i = start; i < end; i++) {
-		ids.push(testData[i].title);
 	}
+
+} ///////////////////////////////////////////// //    지출결의서용 함수 ///////////////////////////////////////////////////////////////////////////////////////
+
+
+// ******** 비어있는 테이블 만드는 함수 ********** // 
+function drawBasicDocInfoTablenone(title, reportForm, titleeng, target) {
+
 
 	let infoHtml = "";
-	for (let i = start; i < end; i++) {
-		if (i < end - 1) {
-			infoHtml += "<div class='infoDiv'><div class='infoTitle'>" + testData[i].title + "</div><div class='infoContent'><input  id='doc_Form_" + formType + '_' + ids[i] + "' class='outlineNone' type='text' readonly value='" + testData[i].content + "'/></div></div>";
-		} else if (i == end - 1) {
-			infoHtml += "<div class='infoDiv'><div class='infoTitlelast'>" + testData[i].title + "</div><div class='infoContentlast'><input  id='doc_Form_" + formType + '_' + ids[i] + "' class='outlineNone' type='text' readonly value='" + testData[i].content + "'/></div></div>";
+	for (let i = 0; i < title.length; i++) {
+		if (i < title.length - 1) {
+			infoHtml += "<div class='infoDiv'><div class='infoTitle'>" + title[i] + "</div><div class='infoContent'><input  id='doc_Form_" + reportForm + '_' + titleeng[i] + "' class='outlineNone' type='text' /></div></div>";
+		} else if (i == title.length - 1) {
+			infoHtml += "<div class='infoDiv'><div class='infoTitlelast'>" + title[i] + "</div><div class='infoContentlast'><input  id='doc_Form_" + reportForm + '_' + titleeng[i] + "' class='outlineNone' type='text'/></div></div>";
 		}
 
 	}
@@ -451,47 +172,111 @@ function drawBasicDocInfoTable(formType, target, start, end, testData) {
 }
 
 
-// 제목 내용 종류 기간 등 가로 테이블 
+//******** 제목 내용 입력 form 만드는 함수 ******** 
+function drawBasicDocContentTablenone(reportForm, target) {
 
-function drawTitleContentTable(formType, target, start, end, testData) {
-	let html = "";
-
-	let ids = [];
-
-	for (let i = start; i < end; i++) {
-		ids.push(testData[i].title);
-	}
-
-	for (let i = start; i < end; i++) {
-		if (i < end - 1) {
-			html += "<div class='contentDiv'><div class='infoTitle'>" + testData[i].title + "</div><div class='infoContent' id='doc_Form_" + formType + '_' + ids[i] + "' >" + testData[i].content + "</div></div>";
-		} else if (i == end - 1) {
-			html += "<div class='contentDiv'><div class='infoTitlelast'>" + testData[i].title + "</div><div class='infoContentlast' id='doc_Form_" + formType + '_' + ids[i] + "'> " + testData[i].content + "</div></div>";
+	let infoHtml = "";
+	for (let i = 0; i < 2; i++) {
+		if (i < 1) {
+			infoHtml += "<div class='contentDiv'><div class='infoTitle'>제목</div><div class='infoContent'><input  id='doc_Form_" + reportForm + "_title' class='outlineNone' type='text' /></div></div>";
+		} else if (i == 1) {
+			infoHtml += "<div class='contentDiv'><div class='infoTitlelast'>내용</div><div class='infoContentlast'><textarea  id='doc_Form_" + reportForm + "_content' class='outlineNone' ></textarea></div></div>";
 		}
 	}
-	target.html(html);
+	target.html(infoHtml);
+
+}
+
+//////휴가원 만드는 함수 /////// 
+
+function drawhrForm() {
+	let title = $(".title");
+	title.html("휴가원");
+	let reportForm = 'leaveApplication';
+	let infoTitle = ['문서번호', '작성자', '작성일'];
+	let infoTitleeng = ['no', 'writer', 'regdate'];
+	let infoTarget = $(".info");
+	let insertedContentTarget = $(".insertedData");
+	let dateFormTarget = $(".insertedContent");
+	let dataTitle = ['휴가 종류', '휴가 기간', '휴가 사유'];
+	let dataTitleeng = ['leaveTitle', 'leaveLength', 'leaveCause'];
+	drawBasicDocInfoTablenone(infoTitle, reportForm, infoTitleeng, infoTarget);
+	drawDateForm(dataTitle, reportForm, dataTitleeng, dateFormTarget)
+	drawBasicDocContentTablenone(reportForm, insertedContentTarget);
+
 }
 
 
+function drawDateForm(dataTitle, reportForm, dataTitleeng, dateFormTarget) {
+
+	let infoHtml = "";
+	for (let i = 0; i < dataTitle.length; i++) {
+		if (i < dataTitle.length - 1) {
+			infoHtml += "<div class='contentDiv'><div class='infoTitle'>" + dataTitle[i] + "</div><div class='infoContent'><input  id='doc_Form_" + reportForm + '_' + dataTitleeng[i] + "' class='outlineNone' type='text' /></div></div>";
+		} else if (i == dataTitle.length - 1) {
+			infoHtml += "<div class='contentDiv'><div class='infoTitlelast'>" + dataTitle[i] + "</div><div class='infoContentlast'><input  id='doc_Form_" + reportForm + '_' + dataTitleeng[i] + "' class='outlineNone' type='text' /></div></div>";
+		}
+	}
+	dateFormTarget.html(infoHtml);
+
+} ////////////////////////////////////// 휴가원 만드는 함수 끝 ///////////////////////////// 
 
 
+//////////////////////////////// 연장근로 만드는 함수 ////////////////////////////////////// 
+function addedHoursform() {
+	let title = $(".title");
+	title.html("연장 근무");
+	let reportForm = 'addedHours';
+	let infoTitle = ['문서번호', '작성자', '작성일'];
+	let infoTitleeng = ['no', 'writer', 'regdate'];
+	let infoTarget = $(".info");
+	let insertedContentTarget = $(".insertedData");
+	let dateFormTarget = $(".insertedContent");
+	let dataTitle = ['근무 종류', '근무 기간', '근무 사유'];
+	let dataTitleeng = ['addedHoursTitle', 'addedHoursLength', 'addedHoursCause'];
+	drawBasicDocInfoTablenone(infoTitle, reportForm, infoTitleeng, infoTarget);
+	drawBasicDocDataTable(dataTitle, reportForm, dataTitleeng, dateFormTarget)
+	drawBasicDocContentTablenone(reportForm, insertedContentTarget);
+
+}
+
+function drawBasicDocDataTable(dataTitle, reportForm, dataTitleeng, dateFormTarget) {
+
+	let infoHtml = "";
+	for (let i = 0; i < dataTitle.length; i++) {
+		if (i < dataTitle.length - 1) {
+			infoHtml += "<div class='contentDiv'><div class='infoTitle'>" + dataTitle[i] + "</div><div class='infoContent'><input  id='doc_Form_" + reportForm + '_' + dataTitleeng[i] + "' class='outlineNone' type='text' /></div></div>";
+		} else if (i == dataTitle.length - 1) {
+			infoHtml += "<div class='contentDiv'><div class='infoTitlelast'>" + dataTitle[i] + "</div><div class='infoContentlast'><input  id='doc_Form_" + reportForm + '_' + dataTitleeng[i] + "' class='outlineNone' type='text' /></div></div>";
+		}
+	}
+	dateFormTarget.html(infoHtml);
+
+}
 
 
+//////////////////////////////////////////// 재직증명서 만드는 함수 /////////////////////////////////////////////
 
 
+function drawCoeForm() {
+	let title = $(".title");
+	title.html("재직증명서");
+	let reportForm = 'coe';
+	let infoTitle = ['문서번호', '기안자', '기안일'];
+	let infoTitleeng = ['no', 'writer', 'regdate'];
+	let infoTarget = $(".info");
+	let dateFormTarget = $(".insertedContent");
+	let dataTitle = ['성명', '주민번호', '주소', '소속', '직위', '재직기간'];
+	let dataTitleeng = ['name', 'idNum', 'address', 'org', 'position', 'employLength'];
+	drawBasicDocInfoTablenone(infoTitle, reportForm, infoTitleeng, infoTarget);
+	drawBasicDocDataTable(dataTitle, reportForm, dataTitleeng, dateFormTarget);
+	dateFormTarget.append("<p>위와 같이 재직하고 있음을 증명합니다</p>")
+	let today = new Date();
+	let year = today.getFullYear();
+	let month = today.getMonth() + 1;
+	let date = today.getDate();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+	$(".list_comment").html( year + '년' + month + '월' + date +"일");
+}
 
 

@@ -106,26 +106,45 @@
 		
 	<ul id="gw">
 		<li>
+		
 			<a href="#">
 				<img src="/images/main/icons/mainHomeIcon.png" id="mainHomeIcon" />
-				<span>전자결재</span>
+				<span>결재하기</span>
 				<span id="slideSpan">+</span>
 			</a>
 			<ul id="panel">
-				<li><a href="gw/mylist">- 나의문서함</a></li>
-				<li><a href="#">- 나의결재함</a></li>
-				<li><a href="gw/write">- 결재 등록/처리</a></li>
+				<li><a href="gw/mylist">- 결재 대기 문서</a></li>
+				<li><a href="#">- 결재 수신 문서</a></li>
+				<li><a href="gw/write">- 참조/열람대기문서</a></li>
+				<li><a href="#">- 결재 예정 문서</a></li>
 			</ul>
 		</li>
 		<li>
 			<a href="#">
 				<img src="/images/main/icons/mainHomeIcon.png" id="mainHomeIcon" />
-				<span>인사업무</span>
+				<span>개인문서함</span>
 				<span id="slideSpan">+</span>
 			</a>
 			<ul id="panel">
-				<li><a href="#">- 근태신청조회/관리</a></li>
-				<li><a href="#">- 근태등록</a></li>
+				<li><a href="gw/mylist">- 기안 문서함</a></li>
+				<li><a href="#">- 임시 저장함</a></li>
+				<li><a href="gw/write">- 결재 문서함</a></li>
+				<li><a href="#">- 참조/열람 문서함</a></li>
+				<li><a href="#">- 수신 문서함</a></li>
+				<li><a href="#">- 발송 문서함</a></li>
+			</ul>
+		</li>
+		<li>
+			<a href="#">
+				<img src="/images/main/icons/mainHomeIcon.png" id="mainHomeIcon" />
+				<span>부서문서함</span>
+				<span id="slideSpan">+</span>
+			</a>
+			<ul id="panel">
+				<li><a href="#">- 기안 완료함</a></li>
+				<li><a href="#">- 부서 참조함</a></li>
+				<li><a href="#">- 부서 수신함</a></li>
+				<li><a href="#">- 공문 발송함</a></li>
 			</ul>
 		</li>
 	</ul>

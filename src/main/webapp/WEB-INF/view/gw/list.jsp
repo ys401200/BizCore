@@ -18,6 +18,7 @@
 					<div class="list_content">
 						<div class="insertedContent"></div>
 						<div class="insertedData"></div>
+						<div class="insertedDataList"></div>
 					</div>
 					<div class="list_comment">-이하 여백-</div>
 				</div>
