@@ -59,7 +59,7 @@ public class ContractService extends Svc{
 
     public boolean removeContract(String no, String compId){
         int count = -1;
-        count = procureMapper.removeProcure(no, compId);
+        count = contractMapper.removeContract(no, compId);
         return count > 0;
     } // End of removeProcure()
     

@@ -12,7 +12,7 @@ import kr.co.bizcore.v1.domain.SimpleContract;
 
 public interface ContractMapper {
     
-    @Select("SELECT contno AS no, conttype AS salesType, cntrctmth AS contractType, conttitle AS title, buyrno AS endUser, contamt AS contractAmount, net_profit AS profit, userno AS employee, freemaintsdate AS freeMaintenanceStart, freemaintedate as freeMaintenanceEnd, contorddate AS saleDate FROM swc_cont WHERE attrib NOT like 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) ORDER BY regdatetime DESC")
+    @Select("SELECT contno AS no, conttype AS salesType, cntrctmth AS contractType, conttitle AS title, buyrno AS endUser, contamt AS contractAmount, net_profit AS profit, userno AS employee, freemaintsdate AS startOfFreeMaintenance, freemaintedate as endOfFreeMaintenance, paymaintSdate as startOfPaidMaintenance, paymaintEdate as endOfPaidMaintenance, contorddate AS saleDate FROM swc_cont WHERE attrib NOT like 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) ORDER BY regdatetime DESC")
     public List<SimpleContract> getList(String compId);
 
     @Select("SELECT contno AS no, conttype AS salesType, cntrctmth AS contractType, conttitle AS title, buyrno AS endUser, contamt AS contractAmount, net_profit AS profit, userno AS employee, soppno AS sopp, excontno AS prvCont, " +
@@ -80,8 +80,8 @@ public interface ContractMapper {
             "   #{cnt.endOfPaidMaintenance}, " +
             "   #{cnt.area}, " +
             "   #{cnt.typeOfBusiness}, " +
-            "   #{cnt.maintenanceStart}," + 
-            "   #{cnt.maintenanceEnd}, " + 
+            "   #{cnt.startOfFreeMaintenance}," + 
+            "   #{cnt.endOfFreeMaintenance}, " + 
             "   #{cnt.saleDate}, " +
             "   NOW(), " +
             "   10000, " +

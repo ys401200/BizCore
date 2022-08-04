@@ -175,6 +175,7 @@ public class ApiContractCtrl extends Ctrl{
         JSONObject json = null;
         Contract contract = null;
         HttpSession session = null;
+        ObjectMapper mapper = null;
 
         session = request.getSession();
         compId = (String)session.getAttribute("compId");
@@ -191,41 +192,50 @@ public class ApiContractCtrl extends Ctrl{
             if(data == null){
                 result = "{\"result\":\"failure\",\"msg\":\"Decryption fail.\"}";
             }else{
-                contract = new Contract();
-                json = new JSONObject(data);
+                try {
+                    mapper = new ObjectMapper();
+                    contract = mapper.readValue(data, Contract.class);
+                    if(contractService.addContract(contract, compId))  result = "{\"result\":\"ok\"}";
+                    else                                               result = "{\"result\":\"failure\",\"msg\":\"An error occurred\"}";
+                } catch (Exception e) {
+                    result = "{\"result\":\"failure\",\"msg\":\"An error occurred\"}";
+                    e.printStackTrace();
+                }
+                // contract = new Contract();
+                // json = new JSONObject(data);
 
-                contract.setNo(strToInt(no));
-                contract.setArea(json.getString("area"));
-                contract.setEndUser(json.getInt("endUser"));
-                contract.setCipOfendUser(json.getInt("cipOfendUser"));
-                contract.setCipOfCustomer(json.getInt("cipOfCustomer"));
-                contract.setCipOfPartner(json.getInt("cipOfPartner"));
-                contract.setCipOfSupplier(json.getInt("cipOfSupplier"));
-                contract.setContractAmount(json.getLong("contractAmount"));
-                contract.setContractType(json.getString("contractType"));
-                contract.setCustomer(json.getInt("customer"));
-                contract.setDelivered(json.getLong("delivered"));
-                contract.setDetail(json.getString("detail"));
-                contract.setEmployee(json.getInt("employee"));
-                contract.setEmployee2(json.getInt("employee2"));
-                contract.setEndOfPaidMaintenance(json.getLong("endOfPaidMaintenence"));
-                contract.setEndOfFreeMaintenance(json.getLong("endOfFreeMaintenence"));
-                contract.setPartner(json.getInt("partner"));
-                contract.setProfit(json.getInt("profit"));
-                contract.setPrvCont(json.getInt("prvCont"));
-                contract.setSaleDate(json.getLong("saleDate"));
-                contract.setSalesType(json.getInt("salesType"));
-                contract.setSopp(json.getInt("sopp"));
-                contract.setStartOfFreeMaintenance(json.getLong("startOfFreeMaintenance"));
-                contract.setStartOfPaidMaintenance(json.getLong("startOfPaidMaintenance"));
-                contract.setSupplied(json.getLong("supplied"));
-                contract.setSupplier(json.getInt("supplier"));
-                contract.setTaxInclude(json.getBoolean("taxInclude"));
-                contract.setTitle(json.getString("title"));
-                contract.setTypeOfBusiness(json.getString("typeOfBusiness"));
+                // contract.setNo(strToInt(no));
+                // contract.setArea(json.getString("area"));
+                // contract.setEndUser(json.getInt("endUser"));
+                // contract.setCipOfendUser(json.getInt("cipOfendUser"));
+                // contract.setCipOfCustomer(json.getInt("cipOfCustomer"));
+                // contract.setCipOfPartner(json.getInt("cipOfPartner"));
+                // contract.setCipOfSupplier(json.getInt("cipOfSupplier"));
+                // contract.setContractAmount(json.getLong("contractAmount"));
+                // contract.setContractType(json.getString("contractType"));
+                // contract.setCustomer(json.getInt("customer"));
+                // contract.setDelivered(json.getLong("delivered"));
+                // contract.setDetail(json.getString("detail"));
+                // contract.setEmployee(json.getInt("employee"));
+                // contract.setEmployee2(json.getInt("employee2"));
+                // contract.setEndOfPaidMaintenance(json.getLong("endOfPaidMaintenence"));
+                // contract.setEndOfFreeMaintenance(json.getLong("endOfFreeMaintenence"));
+                // contract.setPartner(json.getInt("partner"));
+                // contract.setProfit(json.getInt("profit"));
+                // contract.setPrvCont(json.getInt("prvCont"));
+                // contract.setSaleDate(json.getLong("saleDate"));
+                // contract.setSalesType(json.getInt("salesType"));
+                // contract.setSopp(json.getInt("sopp"));
+                // contract.setStartOfFreeMaintenance(json.getLong("startOfFreeMaintenance"));
+                // contract.setStartOfPaidMaintenance(json.getLong("startOfPaidMaintenance"));
+                // contract.setSupplied(json.getLong("supplied"));
+                // contract.setSupplier(json.getInt("supplier"));
+                // contract.setTaxInclude(json.getBoolean("taxInclude"));
+                // contract.setTitle(json.getString("title"));
+                // contract.setTypeOfBusiness(json.getString("typeOfBusiness"));
 
-                if(contractService.addContract(contract, compId))   result = "{\"result\":\"ok\"}";
-                else                                                result = "{\"result\":\"failure\",\"msg\":\"An error occurred\"}";
+                // if(contractService.addContract(contract, compId))   result = "{\"result\":\"ok\"}";
+                // else                                                result = "{\"result\":\"failure\",\"msg\":\"An error occurred\"}";
             }
         }
 

@@ -221,7 +221,7 @@ function init(){
 	},
 
 	crud = {
-		"defaultAjax": (url, method, data, successFnc, errorFnc) => {
+		"defaultAjax": (url, method, data, type, successFnc, errorFnc) => {
 			$.ajax({
 				url: url,
 				method: method,
@@ -231,31 +231,41 @@ function init(){
 				success: (result) => {
 					if(result.result === "ok"){
 						if(successFnc !== undefined){
-							let jsonData;
-							jsonData = cipher.decAes(result.data);
-							jsonData = JSON.parse(jsonData);
-
-							if(localStorage.getItem("searchList")){
-								let searchCategory, searchText, temp = [], resultArray = [];
-								searchCategory = localStorage.getItem("searchCategory");
-								searchText = localStorage.getItem("searchText");
-
-								for(let i = 0; i < jsonData.length; i++){
-									temp.push(jsonData[i]);
-								}
-
-								for(let t = 0; t < temp.length; t++){
-									if(temp[t][searchCategory].toString().indexOf(searchText) > -1){
-										resultArray.push(temp[t]);
+							if(type === "list"){
+								let jsonData;
+								jsonData = cipher.decAes(result.data);
+								jsonData = JSON.parse(jsonData);
+	
+								if(localStorage.getItem("searchList")){
+									let searchCategory, searchText, temp = [], resultArray = [];
+									searchCategory = localStorage.getItem("searchCategory");
+									searchText = localStorage.getItem("searchText");
+	
+									for(let i = 0; i < jsonData.length; i++){
+										temp.push(jsonData[i]);
 									}
+	
+									for(let t = 0; t < temp.length; t++){
+										if(temp[t][searchCategory].toString().indexOf(searchText) > -1){
+											resultArray.push(temp[t]);
+										}
+									}
+	
+									successFnc(resultArray);
+								}else{
+									successFnc(jsonData);
 								}
+	
+								localStorage.clear();
+							}else if(type === "detail"){
+								let jsonData;
+								jsonData = cipher.decAes(result.data);
+								jsonData = JSON.parse(jsonData);
 
-								successFnc(resultArray);
-							}else{
 								successFnc(jsonData);
+							}else{
+								successFnc();
 							}
-
-							localStorage.clear();
 						}
 					}
 				},
@@ -874,7 +884,7 @@ function inputDataList(){
 								}
 							},
 							error:() => {
-								msg.set("sopp 에러입니다.");
+								msg.set("sopp 에러");
 							}
 						});
 					}
@@ -918,6 +928,7 @@ function createCrudForm(data){
 		let dataKeyupEvent = (data[i].keyup === undefined) ? "" : data[i].keyup;
 		let elementId = (data[i].elementId === undefined) ? "" : data[i].elementId;
 		let elementName = (data[i].elementName === undefined) ? "" : data[i].elementName;
+		let dataClickEvent = (data[i].onClick === undefined) ? "" : data[i].onClick;
 
 		html += "<div class='defaultFormLine'>";
 		html += "<div class='defaultFormSpanDiv'>";
@@ -927,18 +938,18 @@ function createCrudForm(data){
 
 		if(dataType === "text"){
 			if(dataDisabled == true){
-				html += "<input type='text' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "' data-keyup='" + dataKeyup + "' onkeyup='" + dataKeyupEvent + "' disabled='" + dataDisabled + "'>";
+				html += "<input type='text' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "' data-keyup='" + dataKeyup + "' onclick='" + dataClickEvent + "' onkeyup='" + dataKeyupEvent + "' disabled='" + dataDisabled + "'>";
 			}else{
-				html += "<input type='text' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "' data-keyup='" + dataKeyup + "' onkeyup='" + dataKeyupEvent + "'>";
+				html += "<input type='text' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "' data-keyup='" + dataKeyup + "' onclick='" + dataClickEvent + "' onkeyup='" + dataKeyupEvent + "'>";
 			}
 		}else if(dataType === "textarea"){
 			html += "<textarea>" + dataValue + "</textarea>";
 		}else if(dataType === "radio"){
 			for(let t = 0; t < data[i].radioValue.length; t++){
 				if(dataDisabled == true){
-					html += "<input type='radio' id='" + elementId + "' name='" + elementName + "' value='" + data[i].radioValue[t].key + "' disabled='" + dataDisabled + "'><label>" + data[i].radioValue[t].value + "</label>" + " ";
+					html += "<input type='radio' id='" + elementId + "' name='" + elementName + "' value='" + data[i].radioValue[t].key + "' disabled='" + dataDisabled + "' onclick='" + dataClickEvent + "'><label>" + data[i].radioValue[t].value + "</label>" + " ";
 				}else{
-					html += "<input type='radio' id='" + elementId + "' name='" + elementName + "' value='" + data[i].radioValue[t].key + "'><label>" + data[i].radioValue[t].value + "</label>" + " ";
+					html += "<input type='radio' id='" + elementId + "' name='" + elementName + "' value='" + data[i].radioValue[t].key + "' onclick='" + dataClickEvent + "'><label>" + data[i].radioValue[t].value + "</label>" + " ";
 				}
 			}
 		}else if(dataType === "date"){
@@ -947,6 +958,17 @@ function createCrudForm(data){
 			}else{
 				html += "<input type='date' max='9999-12-31' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "' data-keyup='" + dataKeyup + "' onkeyup='" + dataKeyupEvent + "'>";
 			}
+		}else if(dataType === "select"){
+			if(dataDisabled == true){
+				html += "<select id='" + elementId + "' name='" + elementName + "' disabled='" + dataDisabled + "'>";
+			}else{
+				html += "<select id='" + elementId + "' name='" + elementName + "'>";
+			}
+			for(let t = 0; t < data[i].selectValue.length; t++){
+				html += "<option value='" + data[i].selectValue[t].key + "'>" + data[i].selectValue[t].value + "</option>";
+			}
+
+			html += "</select>";
 		}
 		
 		html += "</div>";

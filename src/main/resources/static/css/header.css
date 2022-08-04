@@ -169,8 +169,9 @@ button, select, input{
 }
 
 .defaultFormContainer .defaultFormLine .defaultFormContent input[type='text'],
-.defaultFormContainer .defaultFormLine .defaultFormContent input[type='date']{
-	width: 100%;
+.defaultFormContainer .defaultFormLine .defaultFormContent input[type='date'],
+.defaultFormContainer .defaultFormLine .defaultFormContent select{
+	width: -webkit-fill-available;
 	height: 40px;
 	padding: 0 10px;
 	font-size: 1.1rem;
@@ -181,11 +182,12 @@ button, select, input{
 }
 
 .defaultFormContainer .defaultFormLine .defaultFormContent input[type='text']:hover,
-.defaultFormContainer .defaultFormLine .defaultFormContent input[type='date']:hover{
+.defaultFormContainer .defaultFormLine .defaultFormContent input[type='date']:hover,
+.defaultFormContainer .defaultFormLine .defaultFormContent select:hover{
 	border: 1px solid#302D81;
 }
-/* crud 폼 끝 */
 
+/* crud 폼 끝 */
 #header{
 	position: relative;
 	width: 100%;

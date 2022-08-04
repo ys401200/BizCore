@@ -11,7 +11,7 @@
             <div class="contractSearchSelect">
                 <select id="contractSearchCategory">
                     <option value="no">번호</option>
-                    <option value="title">영업기회명</option>
+                    <option value="title">계약명</option>
                 </select>
             </div>
             <div class="contractSearchText">
