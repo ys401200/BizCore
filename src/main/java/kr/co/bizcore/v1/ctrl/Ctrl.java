@@ -64,6 +64,14 @@ public abstract class Ctrl {
         }catch(NumberFormatException e){e.printStackTrace();}
         return result;
     }
+
+    protected String encAes(String data, String aesKey, String aesIv){
+        return systemService.encAes(data, aesKey, aesIv);
+    }
+
+    protected String decAes(String data, String aesKey, String aesIv){
+        return systemService.decAes(data, aesKey, aesIv);
+    }
     
 
 }
