@@ -75,7 +75,7 @@ public class ApiSalesCtrl extends Ctrl{
             if(data == null){
                 result = "{\"result\":\"failure\",\"msg\":\"Sales not exist.\"}";
             }else{
-                data = soppService.encAes(data, aesKey, aesIv);
+                data = salesService.encAes(data, aesKey, aesIv);
                 result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
             }
         }
