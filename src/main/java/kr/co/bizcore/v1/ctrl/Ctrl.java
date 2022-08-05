@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import kr.co.bizcore.v1.svc.BoardService;
 import kr.co.bizcore.v1.svc.ContractService;
 import kr.co.bizcore.v1.svc.DeptService;
+import kr.co.bizcore.v1.svc.GwService;
 import kr.co.bizcore.v1.svc.ProcureService;
 import kr.co.bizcore.v1.svc.SalesService;
 import kr.co.bizcore.v1.svc.ScheduleSvc;
@@ -47,6 +48,9 @@ public abstract class Ctrl {
 
     @Autowired
     protected ContractService contractService;
+
+    @Autowired
+    protected GwService gwService;
 
     @Autowired
     protected TestService testService;
