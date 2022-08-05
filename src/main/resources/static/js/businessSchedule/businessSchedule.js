@@ -413,7 +413,6 @@ function scheduleDetailView(e){
 	id = $(e).data("id");
 	url = "/api/schedule/" + id;
 	method = "get";
-	data = "";
 	type = "detail";
 
 	crud.defaultAjax(url, method, data, type, scheduleSuccessView, scheduleErrorView);
@@ -421,8 +420,14 @@ function scheduleDetailView(e){
 
 function scheduleSuccessList(result){
 	storage.scheduleList = result;
-	window.setTimeout(drawScheduleList, 200);
-	drawCalendar(document.getElementsByClassName("calendar_container")[0]);
+
+	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined){
+		window.setTimeout(drawScheduleList, 600);
+		window.setTimeout(drawCalendar(document.getElementsByClassName("calendar_container")[0]), 600);
+	}else{
+		window.setTimeout(drawScheduleList, 200);
+		window.setTimeout(drawCalendar(document.getElementsByClassName("calendar_container")[0]), 200);
+	}
 }
 
 function scheduleErrorList(){

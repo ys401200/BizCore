@@ -163,7 +163,7 @@ public class ApiContractCtrl extends Ctrl{
                 try {
                     mapper = new ObjectMapper();
                     contract = mapper.readValue(data, Contract.class);
-                    if(contractService.addContract(contract, compId))  result = "{\"result\":\"ok\"}";
+                    if(contractService.modifyContract(contract, compId))  result = "{\"result\":\"ok\"}";
                     else                                               result = "{\"result\":\"failure\",\"msg\":\"An error occurred\"}";
                 } catch (Exception e) {
                     result = "{\"result\":\"failure\",\"msg\":\"An error occurred\"}";

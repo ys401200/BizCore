@@ -39,7 +39,7 @@ function contractSearchList(){
 }
 
 function drawContractList() {
-	let contractContainer, result, jsonData, header = [], data = [], ids = [], disDate, setDate, str, fnc;
+	let contractContainer, result, jsonData, header = [], data = [], ids = [], disDate, str, fnc;
 	
 	if (storage.contractList === undefined) {
 		msg.set("등록된 계약 없습니다");
@@ -655,10 +655,13 @@ function contractInsert(){
 	startOfPaidMaintenance = $(document).find("#startOfPaidMaintenance").val();
 	endOfPaidMaintenance = $(document).find("#endOfPaidMaintenance").val();
 
-	startOfFreeMaintenance = new Date(startOfFreeMaintenance).getTime();
-	endOfFreeMaintenance = new Date(endOfFreeMaintenance).getTime();
-	startOfPaidMaintenance = new Date(startOfPaidMaintenance).getTime();
-	endOfPaidMaintenance = new Date(endOfPaidMaintenance).getTime();
+	if(contractType === "10247"){
+		startOfFreeMaintenance = new Date(startOfFreeMaintenance).getTime();
+		endOfFreeMaintenance = new Date(endOfFreeMaintenance).getTime();
+	}else{
+		startOfPaidMaintenance = new Date(startOfPaidMaintenance).getTime();
+		endOfPaidMaintenance = new Date(endOfPaidMaintenance).getTime();
+	}
 	
 	contractAmount = $(document).find("#contractAmount").val().replaceAll(",", "");
 	taxInclude = $(document).find("#taxInclude").val();
@@ -692,9 +695,7 @@ function contractInsert(){
 	type = "insert";
 
 	data = JSON.stringify(data);
-	console.log(data);
 	data = cipher.encAes(data);
-
 
 	crud.defaultAjax(url, method, data, type, contractSuccessInsert, contractErrorInsert);
 }
@@ -737,10 +738,13 @@ function contractUpdate(no){
 	startOfPaidMaintenance = $(document).find("#startOfPaidMaintenance").val();
 	endOfPaidMaintenance = $(document).find("#endOfPaidMaintenance").val();
 
-	startOfFreeMaintenance = new Date(startOfFreeMaintenance).getTime();
-	endOfFreeMaintenance = new Date(endOfFreeMaintenance).getTime();
-	startOfPaidMaintenance = new Date(startOfPaidMaintenance).getTime();
-	endOfPaidMaintenance = new Date(endOfPaidMaintenance).getTime();
+	if(contractType === "10247"){
+		startOfFreeMaintenance = new Date(startOfFreeMaintenance).getTime();
+		endOfFreeMaintenance = new Date(endOfFreeMaintenance).getTime();
+	}else{
+		startOfPaidMaintenance = new Date(startOfPaidMaintenance).getTime();
+		endOfPaidMaintenance = new Date(endOfPaidMaintenance).getTime();
+	}
 
 	contractAmount = $(document).find("#contractAmount").val().replaceAll(",", "");
 	taxInclude = $(document).find("#taxInclude").val();
