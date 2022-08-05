@@ -1,6 +1,8 @@
 package kr.co.bizcore.v1.svc;
 
 import org.mybatis.spring.SqlSessionTemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,12 +19,16 @@ import kr.co.bizcore.v1.mapper.SystemMapper;
 import kr.co.bizcore.v1.mapper.TestMapper;
 import kr.co.bizcore.v1.mapper.UserMapper;
 import kr.co.bizcore.v1.util.UploadedFileStorage;
+import lombok.extern.slf4j.Slf4j;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -32,7 +38,10 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 @Service
+@Slf4j
 public abstract class Svc {
+
+    private static final Logger logger = LoggerFactory.getLogger(Svc.class);
     
     @Autowired
     protected UploadedFileStorage fileStorage;
@@ -315,6 +324,32 @@ public abstract class Svc {
         int result = -1;
         try{result = str != null ? Integer.parseInt(str) : -1;
         }catch(NumberFormatException e){e.printStackTrace();}
+        return result;
+    }
+
+    public int executeSqlQuery(String sql){
+        int result = -1;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+
+        if(sql == null) return result;
+        logger.info("[Svc.executeSqlQuery] Running custom SQL query . . .");
+        logger.debug("[Svc.executeSqlQuery] SQL Query : " + sql);
+
+        try {
+            conn = sqlSession.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            result = pstmt.executeUpdate();
+            logger.debug("[Svc.executeSqlQuery] Updated rows : " + result);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            logger.info("[Svc.executeSqlQuery] Failure Custom SQL Query : " + sql);
+        }finally{
+            try {
+                if(pstmt != null)   pstmt.close();
+                if(conn != null)    conn.close();
+            } catch (SQLException e) {logger.info("[Svc.executeSqlQuery] Connection Object close fail. ");e.printStackTrace();}
+        }
         return result;
     }
 
