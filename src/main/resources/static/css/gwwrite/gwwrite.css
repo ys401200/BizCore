@@ -1,5 +1,89 @@
 @charset "UTF-8";
 
+.formSearchContainer{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 2%;
+	height : 20%;
+	background: #FFFFFF;
+	overflow: auto;
+	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
+}
+
+.formSearchContainer .formSearchText input{
+	padding: 5px;
+	font-size: 1.2rem;
+	font-weight: 500;
+	border: 0;
+	background-color: #EDEDF4;
+}
+
+.formSearchContainer .formSearchText input:hover{
+	border: 1px solid#332E85;
+}
+
+.formSearchContainer .formSearchBtn button{
+	color: #ffffff;
+	padding: 5px;
+	font-size: 1.2rem;
+	font-weight: 400;
+	border: 0;
+	background-color: #332E85;
+}
+
+.formSearchContainer .formSearchBtn button:hover{
+	cursor: pointer;
+}
+
+.lineSearchContainer{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 2%;
+	height : 20%;
+	background: #FFFFFF;
+	overflow: auto;
+	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
+}
+
+.lineSearchContainer .lineSearchText input{
+	padding: 5px;
+	font-size: 1.2rem;
+	font-weight: 500;
+	border: 0;
+	background-color: #EDEDF4;
+}
+
+.lineSearchContainer .lineSearchText input:hover{
+	border: 1px solid#332E85;
+}
+
+.lineSearchContainer .lineSearchBtn button{
+	color: #ffffff;
+	padding: 5px;
+	font-size: 1.2rem;
+	font-weight: 400;
+	border: 0;
+	background-color: #332E85;
+}
+
+.lineSearchContainer .lineSearchBtn button:hover{
+	cursor: pointer;
+}
+
+
+
+.formListDiv , .lineListDiv {
+	height : 67%;
+	margin: 2%;
+	justify-content : space-around; 
+	background-color:  #FFFFFF;
+	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
+	overflow: auto;
+}
+
+
 .mywriteContainer {
 	position: relative;
 	left: 2%;
@@ -96,3 +180,7 @@ input[type=radio]:checked + *   {
 }
 
 
+
+.formSearchValue , lineSearchValue {
+	;
+}

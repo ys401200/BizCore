@@ -14,6 +14,12 @@
 							<div class='selector'><label for='select_1'>1.결재 양식 선택</label><input type='radio'
 									name='radio' id='select_1' class='form' checked>
 								<div class='formDetail'>
+
+                                    <div class='formSearchContainer'> <div class='formSearchText'> <input type='text' id='formSearchValue'></div><div class='formSearchBtn'><button type='button' onclick='formSearchList();'>검색</button></div></div>
+                                    <div class="formListDiv"></div>
+
+
+
 								</div>
 								<div class='selectedForm'></div>
 							</div>
@@ -21,7 +27,11 @@
 									id='select_2' class='approvalLine'>
 								<div class='approvalLineDetail'>
 									
-									<div>결재선 리스트</div>
+
+									<div class='lineSearchContainer'> <div class='lineSearchText'> <input type='text' id='lineSearchValue'></div><div class='lineSearchBtn'><button type='button' onclick='lineSearchList();'>검색</button></div></div>
+
+									<div class="lineListDiv"></div>
+
 								</div>
 								<div class='selectedLine'></div>
 							</div>
