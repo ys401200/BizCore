@@ -1,7 +1,5 @@
 package kr.co.bizcore.v1.domain;
 
-import java.util.Date;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,9 +14,6 @@ public class DocForm extends Domain{
     private String desc;
     private String form;
     private String defaultJson;
-    private Date created;
-    private Date modified;
-    private Date deleted;
     private String remark;
     
 }

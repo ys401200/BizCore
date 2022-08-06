@@ -23,5 +23,10 @@ public class Sopp extends SimpleSopp{
     private Date remarkDate;
     private String businessType;
     private String priority;
+
+    public void setStartOfMaintenance(Date v){startOfMaintenance = v;}
+    public void setStartOfMaintenance(long v){startOfMaintenance = new Date(v);}
+    public void setEndOfMaintenance(Date v){endOfMaintenance = v;}
+    public void setEndOfMaintenance(long v){endOfMaintenance = new Date(v);}
     
 }

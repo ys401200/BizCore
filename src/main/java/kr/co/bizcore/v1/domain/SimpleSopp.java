@@ -16,7 +16,5 @@ public class SimpleSopp extends Domain{
     protected int employee; //담당자
     protected long expectedSales; //예상매출액
     protected String status; //진행단계
-    protected Date created;
-    protected Date modified; 
     
 }

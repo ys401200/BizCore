@@ -18,7 +18,10 @@ public class Schedule extends Domain{
     private String place;
     private Date from;
     private Date to;
-    private Date created;
-    private Date modified;
+
+    public void setFrom(Date v){from = v;}
+    public void setFrom(long v){from = new Date(v);}
+    public void setTo(Date v){to = v;}
+    public void setTo(long v){to = new Date(v);}
     
 }

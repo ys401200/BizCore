@@ -23,10 +23,13 @@ public class Procure extends Domain{
     private int modQty;
     private long modAmount; 
     private Date contractDate;
-    private Date DeliveryDate;
+    private Date deliveryDate;
     private String deliveryPlace;
     private int sopp;
-    private Date created;
-    private Date modified;
+
+    public void setContractDate(Date v){contractDate = v;}
+    public void setContractDate(long v){contractDate = new Date(v);}
+    public void setDeliveryDate(Date v){deliveryDate = v;}
+    public void setDeliveryDate(long v){deliveryDate = new Date(v);}
     
 }

@@ -22,4 +22,13 @@ public class SimpleContract extends Domain {
     protected Date endOfPaidMaintenance; //유상유지보수일자 종료일
     protected Date saleDate; //발주일자? 판매일자?
 
+    public void setStartOfFreeMaintenance(Date v){startOfFreeMaintenance = v;}
+    public void setStartOfFreeMaintenance(long v){startOfFreeMaintenance = new Date(v);}
+    public void setEndOfFreeMaintenance(Date v){endOfFreeMaintenance = v;}
+    public void setEndOfFreeMaintenance(long v){endOfFreeMaintenance = new Date(v);}
+    public void setStartOfPaidMaintenance(Date v){startOfPaidMaintenance = v;}
+    public void setStartOfPaidMaintenance(long v){startOfPaidMaintenance = new Date(v);}
+    public void setEndOfPaidMaintenance(Date v){endOfPaidMaintenance = v;}
+    public void setEndOfPaidMaintenance(long v){endOfPaidMaintenance = new Date(v);}
+
 }

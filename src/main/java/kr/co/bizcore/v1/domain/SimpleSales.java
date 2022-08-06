@@ -15,7 +15,10 @@ public class SimpleSales extends Domain{
     protected int user; //담당자
     protected int customer; //매출처
     protected int endUser; //엔드유저
-    protected Date created;
-    protected Date modified;
+
+    public void setFrom(Date v){from = v;}
+    public void setFrom(long v){from = new Date(v);}
+    public void setTo(Date v){to = v;}
+    public void setTo(long v){to = new Date(v);}
     
 }

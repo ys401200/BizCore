@@ -1,7 +1,5 @@
 package kr.co.bizcore.v1.domain;
 
-import java.util.Date;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,8 +20,6 @@ public class EstimateItem extends Domain{
     private int discount;
     private long total;
     private String remark;
-    private Date created;
-    private Date modified;
 
     public String toString(){return toJson();}
     

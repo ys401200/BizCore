@@ -1,9 +1,6 @@
 package kr.co.bizcore.v1.domain;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Date;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,8 +11,6 @@ public class Estimate extends SimpleEstimate{
     protected int ver;
     protected int sopp;
     protected int discount;
-    protected Date created;
-    protected Date modified;
 
     protected String company;
     protected String ceo;

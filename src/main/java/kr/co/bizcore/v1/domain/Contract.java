@@ -1,10 +1,6 @@
 package kr.co.bizcore.v1.domain;
 
 import java.util.Date;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,17 +18,11 @@ public class Contract extends SimpleContract{
     private int cipOfPartner;
     private int supplier;
     private int cipOfSupplier;
-    @JsonInclude(Include.NON_NULL)
     private Date supplied;
-    @JsonInclude(Include.NON_NULL)
     private Date delivered; //검수일자
     private boolean taxInclude; //vat 포함여부
     private String area;
     private String typeOfBusiness;
-    @JsonInclude(Include.NON_NULL)
-    private Date created;
-    @JsonInclude(Include.NON_NULL)
-    private Date modified;
 
     public void setTaxInclude(String yn){taxInclude = yn != null && yn.equals("Y");}
     public void setTaxInclude(boolean yn){taxInclude = yn;}
