@@ -14,7 +14,7 @@ public interface SystemMapper {
     public String test();
 
     // �젒�냽二쇱냼 湲곕컲, compId瑜� �솗�씤�븯湲� �쐞�븳 荑쇰━
-    @Select("SELECT conn_addr AS connAddr, comp_id AS compId FROM bizsys.company_url")
+    @Select("SELECT connAddr, compId FROM bizsys.company_url")
     public List<ConnUrl> getConnUrl();
 
     // 濡쒓렇�씤 寃�利� 荑쇰━
