@@ -33,11 +33,21 @@ input[type="radio"] {
 }
 
 .selector {
-  margin: 2rem;
+  margin: 4rem;
   font-size: 1rem;
   font-weight: 500;
   color: gray;
 }
+
+
+.selector label:hover {
+ cursor: pointer;
+}
+.selector .forSelect_1 {
+  color: #332e85;
+  font-size: 1.5rem;
+} 
+
 .selector .formDetail,
 .selector .lineDetail {
   margin: 2rem;
@@ -45,6 +55,7 @@ input[type="radio"] {
   display: grid;
   grid-template-columns: 50% 50%;
   background-color: #ededf4;
+  border-radius: 5px;
 }
 
 .selector .formDetail .formLeft,
@@ -53,6 +64,7 @@ input[type="radio"] {
 .selector .lineDetail .lineRight {
   margin: 1rem;
   background-color: #ffffff;
+  border-radius: 5px;
 }
 
 .selector .formDetail .formLeft,
@@ -93,8 +105,8 @@ input[type="radio"] {
   margin: 0.5rem;
   background-color: #ededf4;
   text-align: center;
-  display: flex;
-  flex-direction: column;
+  /* display: flex;
+  flex-direction: column; */
   overflow: auto;
   border-radius: 3px;
 }
@@ -120,9 +132,10 @@ input[type="radio"] {
 }
 
 .selector .reportInsertForm {
+  color : black;
   margin-left: 25%;
-  width: 210mm;
-  height: 297mm;
+  width: 245mm;
+  height: 350mm;
   overflow: auto;
   border: 1px solid black;
 }

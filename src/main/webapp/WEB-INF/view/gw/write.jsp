@@ -32,6 +32,7 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                 <div class="formListDiv"></div>
               </div>
               <div class="formRight">
+                <input type="hidden" class="formNumHidden"/>
                 <div class="formPreview">미리보기</div>
                 <button
                   type="button"
