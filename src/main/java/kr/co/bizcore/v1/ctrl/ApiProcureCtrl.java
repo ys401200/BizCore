@@ -104,6 +104,33 @@ public class ApiProcureCtrl extends Ctrl{
         return result;
     } // End of apiProcurePost()
 
+    @RequestMapping(value = "/{no}", method = RequestMethod.GET)
+    public String apiProcureNumberGet(HttpServletRequest request, @PathVariable String no){
+        String result = null, aesKey = null, aesIv = null, compId = null;
+        HttpSession session = null;
+        Procure procure = null;
+        String data = null;
+
+        session = request.getSession();
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        compId = (String) session.getAttribute("compId");
+        if (compId == null)
+            compId = (String) request.getAttribute("compId");
+
+        if (compId == null) {
+            result = "{\"result\":\"failure\",\"msg\":\"Company ID is not verified.\"}";
+        } else
+            procure = procureService.getProcure(no, compId);
+            if (procure == null) {
+                result = "{\"result\":\"failure\",\"msg\":\"list is empty\"}";
+            } else {
+                data = salesService.encAes(procure.toJson(), aesKey, aesIv);
+                result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
+            }
+        return result;
+    } // End of apiProcureGet
+
     @RequestMapping(value = "/{no}", method = RequestMethod.PUT)
     public String apiProcureNumberPut(HttpServletRequest request, @RequestBody String requestBody, @PathVariable String no){
         String result = null;

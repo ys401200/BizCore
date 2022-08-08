@@ -182,9 +182,9 @@ public abstract class Domain {
             column = new HashMap<>();
             fieldMap.put("Procure", column);
             column.put("buyerCode","buyerCode");
-            column.put("buyerCode","buyerName");
-            column.put("buyerCode","buyerArea");
-            column.put("buyerCode","buyerAreaCode");
+            column.put("buyerName","buyerName");
+            column.put("buyerArea","buyerArea");
+            column.put("buyerAreaCode","buyerAreaCode");
             column.put("requestNo","reqno");
             column.put("requestItemCode","reqitemcode");
             column.put("requestItem","reqItem");
@@ -386,6 +386,8 @@ public abstract class Domain {
             field.setAccessible(true);
             fieldName = fieldMap.get(field.getName()) != null ? fieldMap.get(field.getName()) : field.getName();
             
+            if(fieldName.equals("no"))  continue;
+
             try{
                 v = field.get(this);
                 if(v == null)   continue;

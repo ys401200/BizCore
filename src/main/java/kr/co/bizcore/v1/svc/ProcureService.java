@@ -32,25 +32,31 @@ public class ProcureService extends Svc{
         return result;
     } // End of getProcureList()
 
-    public String getProcure(int no, String compId){
-        String result = null;
-        Procure each = null;
-
-        each = procureMapper.getProcure(no, compId);
-        result = each == null ? null : each.toJson();
-
+    public Procure getProcure(String no, String compId){
+        Procure result = null;
+        result = procureMapper.getProcure(no, compId);
         return result;
     } // End of getProcure()
 
     public boolean addProcure(Procure procure, String compId){
         int count = -1;
-        count = procureMapper.addProcure(procure, compId);
+        String sql = null;
+        sql = procure.createInsertQuery(null, compId);
+        if(sql != null) count = executeSqlQuery(sql);
         return count > 0;
     } // End of addProcure()
 
-    public boolean modifyProcure(Procure procure, String compId){
+    public boolean modifyProcure(String no, Procure procure, String compId){
         int count = -1;
-        count = procureMapper.modifyProcure(procure, compId);
+        String sql = null;
+        Procure ogn = null;
+
+        ogn = getProcure(no, compId);
+        sql = ogn.createUpdateQuery(procure, null);
+        if(sql != null){
+            sql = sql + " WHERE ppsid = " + no + " AND compno = (SELECT compno FROM swc_company WHERE compid = '" + compId + "')";
+            count = executeSqlQuery(sql);
+        }
         return count > 0;
     } // End of modifyProcure()
 
