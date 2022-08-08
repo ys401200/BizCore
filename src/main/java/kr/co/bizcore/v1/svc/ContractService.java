@@ -54,7 +54,7 @@ public class ContractService extends Svc{
         ogn = getContract(strToInt(no), compId);
         sql = ogn.createUpdateQuery(contract, null);
         if(sql != null){
-            sql = sql + " WHERE compno = (SELECT compno FROM swc_company WHERE compid = '" + compId + "')";
+            sql = sql + " WHERE contno = " + no + " AND compno = (SELECT compno FROM swc_company WHERE compid = '" + compId + "')";
             count = executeSqlQuery(sql);
         }
         return count > 0;
