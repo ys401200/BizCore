@@ -186,8 +186,48 @@ button, select, input{
 .defaultFormContainer .defaultFormLine .defaultFormContent select:hover{
 	border: 1px solid#302D81;
 }
-
 /* crud 폼 끝 */
+
+.tabs {
+	display: flex;
+	background-color: #ffffff;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+	width: 100%;
+	margin: 0 auto;
+}
+
+.tabItem {
+	width: 100%;
+	height: 50px;
+	border-bottom: 3px solid #302D81;
+	background-color: #f8f8f8;
+	line-height: 50px;
+	font-size: 16px;
+	color: #302D81;
+	display: block;
+	float: left;
+	text-align: center;
+	font-weight: 500;
+	transition: all 0.2s ease;
+}
+
+.tabItem:hover {
+	opacity: 0.75;
+}
+
+input[name="tabItem"] {
+	display: none;
+}
+
+.tabContent:not(#contentAll) {
+	display: none;
+}
+
+.tabs input:checked + .tabItem {
+	background-color: #302D81;
+	color: #fff;
+}
+
 #header{
 	position: relative;
 	width: 100%;
@@ -207,7 +247,7 @@ button, select, input{
 #header #mainTopLogo #mainTopLogoImg{
 	position: relative;
 	width: 130px;
-	heigh:auto;
+	height:auto;
 	left: 9%;
 	top: 24px;
 }

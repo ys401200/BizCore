@@ -914,7 +914,7 @@ function inputNumberFormat(e){
 function createCrudForm(data){
 	let html = "";
 
-	html = "<div class='defaultFormContainer'>";
+	html = "<div class='defaultFormContainer tabContent' id='contentAll'>";
 
 	for(let i = 0; i < data.length; i++){
 		let dataTitle = (data[i].title === undefined) ? "" : data[i].title;
@@ -1015,4 +1015,35 @@ function dataListFormat(id, value){
 	}else{
 		return result;
 	}
+}
+
+// crud tab 클릭 함수
+function tabItemClick(e){
+	$(document).find(".tabs input:radio").each((index, item) => {
+		$(document).find("#" + $(item).data("content-id")).hide();
+	});
+
+	setTimeout(() => {
+		if($(e).data("content-id") === "contentAll"){
+			modal.confirm.text("수정");
+			modal.close.text("취소");
+		}else if($(e).data("content-id") === "contentIo"){
+			modal.confirm.text("분할추가");
+			modal.close.text("추가");
+		}
+
+		if($(e).data("first-fnc") === undefined){
+			modal.confirm.attr("onclick", "");
+		}else{
+			modal.confirm.attr("onclick", $(e).data("first-fnc"));
+		}
+
+		if($(e).data("second-fnc") === undefined){
+			modal.close.attr("onclick", "");
+		}else{
+			modal.close.attr("onclick", $(e).data("second-fnc"));
+		}
+
+		$(document).find("#" + $(e).data("content-id")).show();
+	}, 100);
 }

@@ -321,12 +321,27 @@ function soppSuccessView(result){
 		},
 	];
 
-	html = createCrudForm(dataArray);
+	html = "<div class='tabs'>";
+	html += "<input type='radio' id='tabAll' name='tabItem' data-content-id='contentAll' data-first-fnc='soppUpdateForm(" + result.no + ");' data-second-fnc='modal.hide();' onclick='tabItemClick(this)' checked>";
+	html += "<label class='tabItem' for='tabAll'>기본정보</label>";
+	html += "<input type='radio' id='tabIo' name='tabItem' data-content-id='contentIo' onclick='tabItemClick(this)'>";
+	html += "<label class='tabItem' for='tabIo'>매입매출내역</label>";
+	html += "<input type='radio' id='tabEst' name='tabItem' data-content-id='contentEst' onclick='tabItemClick(this)'>";
+	html += "<label class='tabItem' for='tabEst'>견적내역</label>";
+	html += "<input type='radio' id='tabFile' name='tabItem' data-content-id='contentFile' onclick='tabItemClick(this)'>";
+	html += "<label class='tabItem' for='tabFile'>파일첨부</label>";
+	html += "<input type='radio' id='tabTech' name='tabItem' data-content-id='contentTech' onclick='tabItemClick(this)'>";
+	html += "<label class='tabItem' for='tabTech'>기술지원내역</label>";
+	html += "<input type='radio' id='tabSales' name='tabItem' data-content-id='contentSales' onclick='tabItemClick(this)'>";
+	html += "<label class='tabItem' for='tabSales'>영업활동내역</label>";
+	html += "</div><br/>";
+	html += createCrudForm(dataArray);
 
 	modal.show();
 	modal.headTitle.text("상세보기");
 	modal.content.css("width", "1200px");
 	modal.body.html(html);
+	modal.body.css("height", "800px");
 	modal.body.css("max-height", "800px");
 	modal.confirm.text("수정");
 	modal.close.text("취소");
@@ -635,4 +650,143 @@ function soppSuccessDelete(){
 
 function soppErrorDelete(){
 	alert("삭제에러");
+}
+
+function createIoList(){
+	let html = "", dataArray;
+
+	html = "<div class='ioList'>";
+
+	html += "<div class='ioFirstFormTitle'>";
+	html += "<div class='ioFirstTitleItem'>구분(매입/매출)</div>";
+	html += "<div class='ioFirstTitleItem'>거래일자</div>";
+	html += "<div class='ioFirstTitleItem'>분할횟수</div>";
+	html += "<div class='ioFirstTitleItem'>단위(개월)</div>";
+	html += "<div class='ioFirstTitleItem'>계약금액</div>";
+	html += "<div class='ioFirstTitleItem'>거래처(매입/매출처)</div>";
+	html += "<div class='ioFirstTitleItem'>항목</div>";
+	html += "</div>";
+
+	html += "<div class='ioFirstFormContent'>";
+	html += "<div class='ioFirstContentItem'>";
+	html += "<select>"
+	html += "<option value='매입'>매입</option>";
+	html += "<option value='매출'>매출</option>";
+	html += "</select>";
+	html += "</div>"
+	html += "<div class='ioFirstContentItem'>";
+	html += "<input type='date' />";
+	html += "</div>";
+	html += "<div class='ioFirstContentItem'>";
+	html += "<input type='text' />";
+	html += "</div>";
+	html += "<div class='ioFirstContentItem'>";
+	html += "<input type='text' />";
+	html += "</div>";
+	html += "<div class='ioFirstContentItem'>";
+	html += "<input type='text' />";
+	html += "</div>";
+	html += "<div class='ioFirstContentItem'>";
+	html += "<input type='text' />";
+	html += "</div>";
+	html += "<div class='ioFirstContentItem'>";
+	html += "<div>";
+	html += "<select>";
+	html += "<option value='항목선택'>항목선택</option>";
+	html += "<option value='직접입력'>직접입력</option>";
+	html += "</select>";
+	html += "</div>";
+	html += "<div>";
+	html += "<input type='text' />";
+	html += "</div>";
+	html += "</div>";
+	html += "</div>";
+
+	html += "<div class='ioSecondFormTitle'>";
+	html += "<div class='ioSecondTitleItem'>단가</div>";
+	html += "<div class='ioSecondTitleItem'>수량</div>";
+	html += "<div class='ioSecondTitleItem'>공급가</div>";
+	html += "<div class='ioSecondTitleItem'>부가세</div>";
+	html += "<div class='ioSecondTitleItem'>합계금액</div>";
+	html += "<div class='ioSecondTitleItem'>승인번호</div>";
+	html += "<div class='ioSecondTitleItem'>적요</div>";
+	html += "</div>";
+
+	html += "<div class='ioSecondFormContent'>";
+	html += "<div class='ioSecondContentItem'>";
+	html += "<input type='text' />";
+	html += "</div>"
+	html += "<div class='ioSecondContentItem'>";
+	html += "<input type='text' />";
+	html += "</div>";
+	html += "<div class='ioSecondContentItem'>";
+	html += "<input type='text' />";
+	html += "</div>";
+	html += "<div class='ioSecondContentItem'>";
+	html += "<input type='text' />";
+	html += "</div>";
+	html += "<div class='ioSecondContentItem'>";
+	html += "<input type='text' />";
+	html += "</div>";
+	html += "<div class='ioSecondContentItem'>";
+	html += "<input type='text' />";
+	html += "</div>";
+	html += "<div class='ioSecondContentItem'>";
+	html += "<input type='text' />";
+	html += "</div>";
+	html += "</div>";
+
+	html += "<div class='ioThirdFormTitle'>";
+	html += "<div class='ioThirdTitleItem'>구분(등록/수정일)</div>";
+	html += "<div class='ioThirdTitleItem'>거래처(매입/매출처)</div>";
+	html += "<div class='ioThirdTitleItem'>항목</div>";
+	html += "<div class='ioThirdTitleItem'>단가</div>";
+	html += "<div class='ioThirdTitleItem'>수량</div>";
+	html += "<div class='ioThirdTitleItem'>부가세액</div>";
+	html += "<div class='ioThirdTitleItem'>공급가액</div>";
+	html += "<div class='ioThirdTitleItem'>금액</div>";
+	html += "<div class='ioThirdTitleItem'>비고</div>";
+	html += "<div class='ioThirdTitleItem'>승인번호</div>";
+	html += "<div class='ioThirdTitleItem'>수정</div>";
+	html += "<div class='ioThirdTitleItem'>삭제</div>";
+	html += "</div>";
+
+	html += "<div class='ioThirdFormContent'>";
+	html += "<div class='ioThirdContentItem'>";
+	html += "<select>"
+	html += "<option value='매입'>매입</option>";
+	html += "<option value='매출'>매출</option>";
+	html += "</select>";
+	html += "</div>"
+	html += "<div class='ioThirdContentItem'>";
+	html += "<input type='date' />";
+	html += "</div>";
+	html += "<div class='ioThirdContentItem'>";
+	html += "<input type='text' />";
+	html += "</div>";
+	html += "<div class='ioThirdContentItem'>";
+	html += "<input type='text' />";
+	html += "</div>";
+	html += "<div class='ioThirdContentItem'>";
+	html += "<input type='text' />";
+	html += "</div>";
+	html += "<div class='ioThirdContentItem'>";
+	html += "<input type='text' />";
+	html += "</div>";
+	html += "<div class='ioThirdContentItem'>";
+	html += "<div>";
+	html += "<select>";
+	html += "<option value='항목선택'>항목선택</option>";
+	html += "<option value='직접입력'>직접입력</option>";
+	html += "</select>";
+	html += "</div>";
+	html += "<div>";
+	html += "<input type='text' />";
+	html += "</div>";
+	html += "</div>";
+	html += "</div>";
+
+	html += "</div>";
+
+	return html;
 }
