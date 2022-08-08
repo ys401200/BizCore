@@ -1,186 +1,128 @@
 @charset "UTF-8";
 
-.formSearchContainer{
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	margin: 2%;
-	height : 20%;
-	background: #FFFFFF;
-	overflow: auto;
-	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
-}
-
-.formSearchContainer .formSearchText input{
-	padding: 5px;
-	font-size: 1.2rem;
-	font-weight: 500;
-	border: 0;
-	background-color: #EDEDF4;
-}
-
-.formSearchContainer .formSearchText input:hover{
-	border: 1px solid#332E85;
-}
-
-.formSearchContainer .formSearchBtn button{
-	color: #ffffff;
-	padding: 5px;
-	font-size: 1.2rem;
-	font-weight: 400;
-	border: 0;
-	background-color: #332E85;
-}
-
-.formSearchContainer .formSearchBtn button:hover{
-	cursor: pointer;
-}
-
-.lineSearchContainer{
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	margin: 2%;
-	height : 20%;
-	background: #FFFFFF;
-	overflow: auto;
-	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
-}
-
-.lineSearchContainer .lineSearchText input{
-	padding: 5px;
-	font-size: 1.2rem;
-	font-weight: 500;
-	border: 0;
-	background-color: #EDEDF4;
-}
-
-.lineSearchContainer .lineSearchText input:hover{
-	border: 1px solid#332E85;
-}
-
-.lineSearchContainer .lineSearchBtn button{
-	color: #ffffff;
-	padding: 5px;
-	font-size: 1.2rem;
-	font-weight: 400;
-	border: 0;
-	background-color: #332E85;
-}
-
-.lineSearchContainer .lineSearchBtn button:hover{
-	cursor: pointer;
-}
-
-
-
-.formListDiv , .lineListDiv {
-	height : 67%;
-	margin: 2%;
-	justify-content : space-around; 
-	background-color:  #FFFFFF;
-	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
-	overflow: auto;
-}
-
-
 .mywriteContainer {
-	position: relative;
-	left: 2%;
-	width: 96%;
-	background: #FFFFFF;
-	overflow: auto;
-	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
-	display: inline-block;
+  position: relative;
+  left: 2%;
+  width: 96%;
+  background: #ffffff;
+  box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
+  display: inline-block;
 }
 
 .mywriteContainer hr {
-	float: left;
-	border-top: 0;
-	border-left: thick solid #E45050;
-	border-right: 0;
-	border-bottom: 0;
-	height: 44px;
-	width: 4px;
-	margin: 0;
+  float: left;
+  border-top: 0;
+  border-left: thick solid #e45050;
+  border-right: 0;
+  border-bottom: 0;
+  height: 44px;
+  width: 4px;
+  margin: 0;
 }
 
 .mywriteContainer span {
-
-	font-weight: 500;
-	font-size: 16px;
-	margin-left: 18px;
-	line-height: 3;
-	color: #332E85;
+  font-weight: 500;
+  font-size: 16px;
+  margin-left: 18px;
+  line-height: 3;
+  color: #332e85;
 }
 
-.ContentDiv {
-	display: grid;
-	grid-template-columns: 30% 70%;
-}
-
-.ContentDiv .selectFormDiv,
-.ContentDiv .showSelectedFromDiv {
-	padding: 4em;
-}
-
-.ContentDiv .selectFormDiv{
-	color: #332E85;
-	font-weight: 500;
-	font-size: 18px;
-
-}
-.ContentDiv .selectFormDiv .div {
-	color: #332E85;
-	font-weight: 500;
-	font-size: 18px;
-	margin-left: 3rem;
-	
-}
-
-
-.ContentDiv .showSeletedFormDiv {
-	margin-left: 25%;
-	margin-right: 25%;
-	width: 210mm;
-	height: 297mm;
-	border: 1px solid black;
-
+input[type="radio"] {
+  display: none;
 }
 
 .selector {
-	margin-top : 4rem;
+  margin: 2rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: gray;
+}
+.selector .formDetail,
+.selector .lineDetail {
+  margin: 2rem;
+  height: 18rem;
+  display: grid;
+  grid-template-columns: 50% 50%;
+  background-color: #ededf4;
 }
 
-
-input[type=radio] + * , input[type=radio]{
-	display : none;
+.selector .formDetail .formLeft,
+.selector .formDetail .formRight,
+.selector .lineDetail .lineLeft,
+.selector .lineDetail .lineRight {
+  margin: 1rem;
+  background-color: #ffffff;
 }
 
-input[type=radio]:checked + *   {
-	display : inline-block;
+.selector .formDetail .formLeft,
+.selector .lineDetail .lineLeft {
+  display: flex;
+  flex-direction: column;
 }
 
-.formDetail , .approvalLineDetail{
-	width: 40rem;
-	height: 20rem;
-	background-color:#EDEDF4; 
-	
+.selector .formDetail .formLeft .searchDiv,
+.selector .lineDetail .lineLeft .searchDiv {
+  margin-top: 0.5rem;
+  display: flex;
+  background-color: #ffffff;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
 }
 
-
-.serchDiv {
-	margin: 1em;
-	text-align : center;
+.selector .formDetail .formLeft .searchDiv input,
+.selector .lineDetail .lineLeft .searchDiv input {
+  background-color: #ededf4;
+  border: none;
+  border-radius: 3px;
+  margin-right: 1rem;
 }
 
-.formlist , .linelist {
-	overflow: auto;
-	margin: 1em;
+.selector .formDetail .formLeft .searchDiv button,
+.selector .lineDetail .lineLeft .searchDiv button {
+  border: none;
+  background-color: #332e85;
+  font-weight: 300;
+  color: #ffffff;
+  border-radius: 3px;
 }
 
+.selector .formDetail .formLeft .formListDiv,
+.selector .lineDetail .lineLeft .lineListDiv {
+  margin: 0.5rem;
+  background-color: #ededf4;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  border-radius: 3px;
+}
 
+.selector .formDetail .formLeft .formListDiv button,
+.selector .lineDetail .lineLeft .lineListDiv button {
+  margin: 0.5rem;
+  border: none;
+  color: #ffffff;
+  background-color: #332e85;
+  border-radius: 3px;
+}
 
-.formSearchValue , lineSearchValue {
-	;
+.selector .formDetail .formLeft .formListDiv button:hover,
+.selector .lineDetail .lineLeft .lineListDiv button:hover {
+  cursor: pointer;
+}
+
+.selector .formDetail .formRight {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.selector .reportInsertForm {
+  margin-left: 25%;
+  width: 210mm;
+  height: 297mm;
+  overflow: auto;
+  border: 1px solid black;
 }

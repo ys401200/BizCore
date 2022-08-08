@@ -1,102 +1,108 @@
 $(document).ready(() => {
     init();
-
+  
     setTimeout(() => {
-        $("#loadingDiv").hide();
-        $("#loadingDiv").loading("toggle");
+      $("#loadingDiv").hide();
+      $("#loadingDiv").loading("toggle");
     }, 300);
-   
+  
     getformList();
-
-});
-
-
-
-function getformList() {
+  });
+  
+  function getformList() {
     let url = "/api/gw/form";
-    let formlist;
-
+  
     $.ajax({
-        url: url,
-        type: "get",
-        dataType: "json",
-        success: (result) => {
-            if (result.result == 'ok') {
-                let jsondata;
-                jsondata = cipher.decAes(result.data)
-                jsondata = JSON.parse(jsondata);
-                storage.formList = jsondata;
-                drawFormList()
-            }
+      url: url,
+      type: "get",
+      dataType: "json",
+      success: (result) => {
+        if (result.result == "ok") {
+          let jsondata;
+          jsondata = cipher.decAes(result.data);
+          jsondata = JSON.parse(jsondata);
+          storage.formList = jsondata;
+          drawFormList();
+        } else {
+          alert("에러");
         }
-    })
-
-
-
-
-}
-
-
-
-
-function drawFormList() {
+      },
+    });
+  
+    $(".lineDetail").hide();
+    $(".reportInsertForm").hide();
+  }
+  
+  function drawFormList() {
     let data = storage.formList;
-    let titles= new Array();
+    let titles = new Array();
     let nums = new Array();
-    let target=$(".formListDiv"); 
-    let targetHtml =""; 
-
-
+    let target = $(".formListDiv");
+    let targetHtml = "";
+  
     for (let i = 0; i < data.length; i++) {
       titles.push(data[i].title);
       nums.push(data[i].no);
-    } 
-
-
-    for(let i = 0 ; i <titles.length; i++) {
-        targetHtml += "<button type='button' id='doc_form'+"+nums[i]+">"+titles[i]+"</button>";
     }
-
+  
+    for (let i = 0; i < titles.length; i++) {
+      targetHtml +=
+        "<button  onclick='setSelectedFormName(" +
+        i +
+        ")' type='button' class='formtypebtn' id='doc_form_" +
+        nums[i] +
+        "'>" +
+        titles[i] +
+        "</button>";
+    }
+  
     target.html(targetHtml);
-
-
-    
-   
-
-
-   
-
-
-}
-
-
-
-
-
-
-// 받아온 작성 양식 form을 오른쪽에 그리는 함수 
-function drawSelectedForm() {
-
-    let drawTarget = $(".showSeletedFormDiv");
-    // 선택된 양식 이름
-    let selectedform = $(".selectedForm").html();
-
-    // ajax ~ 
-    drawTarget.html(selectedform);
-
-
-}
-
-
-// function drawForm() {
-
-//     let formDetail = $(".formDetail");
-//     let detailhtml = "<div class='formSearchContainer'> <div class='formSearchText'> <input type='text' id='formSearchValue'></div><div class='formSearchBtn'><button type='button' onclick='formSearchList();'>검색</button></div></div>"
-
-
-//     formDetail.html(detailhtml);
-//     let approvalLineDetail = $(".approvalLineDetail");
-//     let linehtml = "<div class='lineSearchContainer'> <div class='lineSearchText'> <input type='text' id='lineSearchValue'></div><div class='lineSearchBtn'><button type='button' onclick='lineSearchList();'>검색</button></div></div>"
-//     approvalLineDetail.html(linehtml);
-
-// }
+  }
+  
+  function selectChangeEvent(num) {
+    let targetArr = [1, 2, 3, 4];
+    for (let i = 1; i < targetArr.length + 1; i++) {
+      if (i == num) {
+        $(".forSelect_" + i + "").css("color", "#332E85");
+        if (i == 1) {
+          $(".formDetail").show();
+          $(".lineDetail").hide();
+          $(".reportInsertForm").hide();
+        } else if (i == 2) {
+          $(".lineDetail").show();
+          $(".formDetail").hide();
+          $(".reportInsertForm").hide();
+        } else if (i == 3) {
+          $(".reportInsertForm").show();
+          $(".lineDetail").hide();
+          $(".formDetail").hide();
+        }
+      } else {
+        $(".forSelect_" + i + "").css("color", "gray");
+      }
+    }
+  }
+  
+  function setSelectedFormName(num) {
+    let data = storage.formList;
+    let title = data[num].title;
+    let target = $(".formPreview");
+    target.html(title);
+  }
+  
+  function selectForm() {
+    let target = $(".formPreview");
+    let selectedForm = target.html();
+    let target2 = $(".forSelect_1");
+    let html = target2.html();
+    let arr = html.split("\n");
+    html = arr[0];
+    html += "\n" + " > " + selectedForm;
+    target2.html(html);
+    $(".lineDetail").show();
+    $(".formDetail").hide();
+  
+    console.log(storage.formList[0].form);
+    $(".reportInsertForm").html(storage.formList[0].form);
+  }
+  
