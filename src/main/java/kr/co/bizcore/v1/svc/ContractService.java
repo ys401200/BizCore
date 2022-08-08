@@ -2,13 +2,10 @@ package kr.co.bizcore.v1.svc;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
 import kr.co.bizcore.v1.domain.Contract;
 import kr.co.bizcore.v1.domain.SimpleContract;
 import lombok.extern.slf4j.Slf4j;
-
 import java.util.List;
-
 import org.slf4j.Logger;
 
 @Service
@@ -35,25 +32,31 @@ public class ContractService extends Svc{
         return result;
     } // End of getProcureList()
 
-    public String getContract(int no, String compId){
-        String result = null;
-        Contract each = null;
-
-        each = contractMapper.getContract(no, compId);
-        result = each == null ? null : each.toJson();
-
+    public Contract getContract(int no, String compId){
+        Contract result = null;
+        result = contractMapper.getContract(no, compId);
         return result;
-    } // End of getProcure()
+    } // End of getContract()
 
     public boolean addContract(Contract contract, String compId){
         int count = -1;
-        count = contractMapper.addContract(compId, contract);
+        String sql = null;
+        sql = contract.createInsertQuery(null, compId);
+        count = executeSqlQuery(sql);
         return count > 0;
     } // End of addProcure()
 
-    public boolean modifyContract(Contract contract, String compId){
+    public boolean modifyContract(String no, Contract contract, String compId){
         int count = -1;
-        count = contractMapper.modifyContract(compId, contract);
+        String sql = null;
+        Contract ogn = null;
+
+        ogn = getContract(strToInt(no), compId);
+        sql = ogn.createUpdateQuery(contract, null);
+        if(sql != null){
+            sql = sql + " WHERE compno = (SELECT compno FROM swc_company WHERE compid = '" + compId + "')";
+            count = executeSqlQuery(sql);
+        }
         return count > 0;
     } // End of modifyProcure()
 

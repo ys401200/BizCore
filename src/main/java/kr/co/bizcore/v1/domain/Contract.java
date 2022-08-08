@@ -20,12 +20,12 @@ public class Contract extends SimpleContract{
     private int cipOfSupplier;
     private Date supplied;
     private Date delivered; //검수일자
-    private boolean taxInclude; //vat 포함여부
+    private String taxInclude; //vat 포함여부
     private String area;
     private String typeOfBusiness;
 
-    public void setTaxInclude(String yn){taxInclude = yn != null && yn.equals("Y");}
-    public void setTaxInclude(boolean yn){taxInclude = yn;}
+    public void setTaxInclude(String yn){taxInclude = yn;}
+    public void setTaxInclude(boolean yn){taxInclude = yn ? "Y" : "N";}
     public void setStartOfPaidMaintenance(Date e){startOfPaidMaintenance = e;}
     public void setStartOfPaidMaintenance(long e){startOfPaidMaintenance = new Date(e);}
     public void setEndOfPaidMaintenance(Date e){endOfPaidMaintenance = e;}

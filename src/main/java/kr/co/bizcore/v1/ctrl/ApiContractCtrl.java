@@ -60,6 +60,7 @@ public class ApiContractCtrl extends Ctrl{
         String aesIv = null;
         String data = null;
         int number = -1;
+        Contract contract = null;
         HttpSession session = null;
 
         number = salesService.strToInt(no);
@@ -77,11 +78,11 @@ public class ApiContractCtrl extends Ctrl{
         }else if(aesKey == null || aesIv == null){
             result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
         }else{
-            data = contractService.getContract(number, compId);
-            if(data == null){
+            contract = contractService.getContract(number, compId);
+            if(contract == null){
                 result = "{\"result\":\"failure\",\"msg\":\"Sales not exist.\"}";
             }else{
-                data = contractService.encAes(data, aesKey, aesIv);
+                data = contractService.encAes(contract.toJson(), aesKey, aesIv);
                 result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
             }
         }
@@ -163,47 +164,12 @@ public class ApiContractCtrl extends Ctrl{
                 try {
                     mapper = new ObjectMapper();
                     contract = mapper.readValue(data, Contract.class);
-                    if(contractService.modifyContract(contract, compId))  result = "{\"result\":\"ok\"}";
+                    if(contractService.modifyContract(no, contract, compId))  result = "{\"result\":\"ok\"}";
                     else                                               result = "{\"result\":\"failure\",\"msg\":\"An error occurred\"}";
                 } catch (Exception e) {
                     result = "{\"result\":\"failure\",\"msg\":\"An error occurred\"}";
                     e.printStackTrace();
                 }
-                // contract = new Contract();
-                // json = new JSONObject(data);
-
-                // contract.setNo(strToInt(no));
-                // contract.setArea(json.getString("area"));
-                // contract.setEndUser(json.getInt("endUser"));
-                // contract.setCipOfendUser(json.getInt("cipOfendUser"));
-                // contract.setCipOfCustomer(json.getInt("cipOfCustomer"));
-                // contract.setCipOfPartner(json.getInt("cipOfPartner"));
-                // contract.setCipOfSupplier(json.getInt("cipOfSupplier"));
-                // contract.setContractAmount(json.getLong("contractAmount"));
-                // contract.setContractType(json.getString("contractType"));
-                // contract.setCustomer(json.getInt("customer"));
-                // contract.setDelivered(json.getLong("delivered"));
-                // contract.setDetail(json.getString("detail"));
-                // contract.setEmployee(json.getInt("employee"));
-                // contract.setEmployee2(json.getInt("employee2"));
-                // contract.setEndOfPaidMaintenance(json.getLong("endOfPaidMaintenence"));
-                // contract.setEndOfFreeMaintenance(json.getLong("endOfFreeMaintenence"));
-                // contract.setPartner(json.getInt("partner"));
-                // contract.setProfit(json.getInt("profit"));
-                // contract.setPrvCont(json.getInt("prvCont"));
-                // contract.setSaleDate(json.getLong("saleDate"));
-                // contract.setSalesType(json.getInt("salesType"));
-                // contract.setSopp(json.getInt("sopp"));
-                // contract.setStartOfFreeMaintenance(json.getLong("startOfFreeMaintenance"));
-                // contract.setStartOfPaidMaintenance(json.getLong("startOfPaidMaintenance"));
-                // contract.setSupplied(json.getLong("supplied"));
-                // contract.setSupplier(json.getInt("supplier"));
-                // contract.setTaxInclude(json.getBoolean("taxInclude"));
-                // contract.setTitle(json.getString("title"));
-                // contract.setTypeOfBusiness(json.getString("typeOfBusiness"));
-
-                // if(contractService.addContract(contract, compId))   result = "{\"result\":\"ok\"}";
-                // else                                                result = "{\"result\":\"failure\",\"msg\":\"An error occurred\"}";
             }
         }
 

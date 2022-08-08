@@ -6,20 +6,20 @@ import lombok.Setter;
 @Setter @Getter
 public class EstimateItem extends Domain{
 
-    private int no;
-    private String kind;
-    private String title;
-    private int customer;
-    private int productNo;
-    private String productName;
-    private String productSpec;
-    private int qty;
-    private int price;
-    private int tax;
-    private long amount;
-    private int discount;
-    private long total;
-    private String remark;
+    protected int no;
+    protected String kind;
+    protected String title;
+    protected int customer;
+    protected int productNo;
+    protected String productName;
+    protected String productSpec;
+    protected int qty;
+    protected int price;
+    protected int tax;
+    protected long amount;
+    protected int discount;
+    protected long total;
+    protected String remark;
 
     public String toString(){return toJson();}
     
