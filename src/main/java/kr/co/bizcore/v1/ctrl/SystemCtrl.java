@@ -13,8 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 import kr.co.bizcore.v1.domain.Contract;
 import kr.co.bizcore.v1.domain.Estimate;
 import kr.co.bizcore.v1.domain.Procure;
+import kr.co.bizcore.v1.domain.Sales;
+import kr.co.bizcore.v1.domain.Sopp;
 import kr.co.bizcore.v1.svc.ContractService;
 import kr.co.bizcore.v1.svc.ProcureService;
+import kr.co.bizcore.v1.svc.SalesService;
+import kr.co.bizcore.v1.svc.SoppService;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
@@ -25,7 +29,7 @@ public class SystemCtrl extends Ctrl {
     private static final Logger logger = LoggerFactory.getLogger(SystemCtrl.class);
 
     @Autowired
-    private ProcureService svc;
+    private SoppService svc;
 
     @RequestMapping(value = "/connUrl", method = RequestMethod.GET)
     public String connUrl() {
@@ -36,9 +40,9 @@ public class SystemCtrl extends Ctrl {
     public String test(){
         String result = null;
 
-        Procure e1 = null, e2 = null;
-        e1 = svc.getProcure(78 + "", "vtek");
-        e2 = svc.getProcure(77 + "", "vtek");
+        Sopp e1 = null, e2 = null;
+        e1 = svc.getSopp(10005608 + "", "vtek");
+        e2 = svc.getSopp(10005606 + "", "vtek");
 
         
 

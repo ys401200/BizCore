@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import kr.co.bizcore.v1.domain.Estimate;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
@@ -49,6 +50,7 @@ public class ApiEstimateCtrl extends Ctrl {
     public String apiEstimateNumberGet(HttpServletRequest request, @PathVariable String no){
         String result = null, aesKey = null, aesIv = null, compId = null;
         HttpSession session = null;
+        Estimate estimate = null;
         String list = null;
 
         session = request.getSession();
@@ -61,11 +63,11 @@ public class ApiEstimateCtrl extends Ctrl {
         if (compId == null) {
             result = "{\"result\":\"failure\",\"msg\":\"Company ID is not verified.\"}";
         } else
-            list = soppService.getEstimate(no, compId);
-            if (list == null) {
+            estimate = soppService.getEstimate(no, compId);
+            if (estimate == null) {
                 result = "{\"result\":\"failure\",\"msg\":\"Not exist\"}";
             } else {
-                list = soppService.encAes(list, aesKey, aesIv);
+                list = soppService.encAes(estimate.toJson(), aesKey, aesIv);
                 result = "{\"result\":\"ok\",\"data\":\"" + list + "\"}";
             }
         return result;
