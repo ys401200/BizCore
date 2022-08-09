@@ -80,14 +80,15 @@ public abstract class Domain {
             tableMap = new HashMap<>();
 
             // 클래스명으로 테이블명을 찾을 수 있도록 미리 세팅함
-            tableMap.put("AttachedFile", "bizcore.filebox_attached"); //
-            tableMap.put("Contract", "swc_cont"); //
-            tableMap.put("Estimate", "swc_est"); //
-            tableMap.put("EstimateItem", "swc_estitems"); //
-            tableMap.put("Notice", "bizcore.notice"); //
+            tableMap.put("AttachedFile", "bizcore.filebox_attached");
+            tableMap.put("Contract", "swc_cont");
+            tableMap.put("Estimate", "swc_est");
+            tableMap.put("EstimateItem", "swc_estitems");
+            tableMap.put("Notice", "bizcore.notice");
             tableMap.put("Procure", "swc_pps");
             tableMap.put("Sales", "swc_sales");
             tableMap.put("Sopp", "swc_sopp");
+            tableMap.put("TradeDetail", "swc_soppdata01");
         }
         return tableMap;
     }
@@ -237,6 +238,28 @@ public abstract class Domain {
             column.put("source","soppsource");
             column.put("remark","sopp2desc");
             column.put("businessType","businessType");
+
+            column = new HashMap<>();
+            fieldMap.put("TradeDetail", column);
+            column.put("sopp","soppno");
+            column.put("writer","userno");
+            column.put("category","catno");
+            column.put("product","productno");
+            column.put("customer","salescustno");
+            column.put("vatSerial","vatserial");
+            column.put("title","datatitle");
+            column.put("desc","datadesc");
+            column.put("type","datatype");
+            column.put("quantity","dataquanty");
+            column.put("amount","dataamt");
+            column.put("discount","datadiscount");
+            column.put("netPrice","datanetprice");
+            column.put("tax","datavat");
+            column.put("total","datatotal");
+            column.put("remark","dataremark");
+            column.put("endVataDate","endvatadate");
+            column.put("created","regdatetime");
+            column.put("modified","moddatetime");
         }
 
         return fieldMap;
@@ -377,9 +400,13 @@ public abstract class Domain {
             comp[0] = "compNo";
             comp[1] = "(SELECT compno FROM swc_company WHERE compid = '" + compId + "')";
         }
-
-        str1 = comp[0];
-        str2 = comp[1];
+        if(compId != null){
+            str1 = comp[0];
+            str2 = comp[1];
+        }else{
+            str1 = "";
+            str2 = "";
+        }
 
         for(x = 0 ; x < targetFields.length ; x++){
             field = targetFields[x];
@@ -433,7 +460,13 @@ public abstract class Domain {
             }catch(Exception e){e.printStackTrace();}
         }
 
-        if(!str1.equals("") && !str2.equals(""))    result = "INSERT INTO " + table + "(" + str1 + ") VALUES(" + str2 + ")";
+        if(!str1.equals("") && !str2.equals("")){
+            if(compId == null){
+                str1 = str1.substring(1);
+                str2 = str2.substring(1);
+            }
+            result = "INSERT INTO " + table + "(" + str1 + ") VALUES(" + str2 + ")";
+        }
 
         return result;
     }
