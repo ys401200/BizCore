@@ -188,6 +188,7 @@ button, select, input{
 }
 /* crud 폼 끝 */
 
+/* tab 시작 */
 .tabs {
 	display: flex;
 	background-color: #ffffff;
@@ -219,14 +220,46 @@ input[name="tabItem"] {
 	display: none;
 }
 
-.tabContent:not(#contentAll) {
-	display: none;
-}
-
 .tabs input:checked + .tabItem {
 	background-color: #302D81;
 	color: #fff;
 }
+
+.tradeList input,
+.tradeList select{
+	width: 95%;
+}
+
+.tradeList .tradeFirstTitle,
+.tradeList .tradeFirstFormContent,
+.tradeList .tradeSecondFormTitle,
+.tradeList .tradeSecondFormContent,
+.tradeList .tradeThirdFormTitle
+{
+	display: grid;
+	grid-template-columns: repeat(7, 1fr);
+}
+
+.tradeList .tradeFirstTitle .tradeFirstTitleItem,
+.tradeList .tradeFirstFormContent .tradeFirstContentItem,
+.tradeList .tradeSecondFormTitle .tradeSecondTitleItem,
+.tradeList .tradeSecondFormContent .tradeSecondContentItem,
+.tradeList .tradeThirdFormTitle .tradeThirdTitleItem{
+	padding: 10px;
+	border: 1px solid #000;
+}
+
+.tabEstList{
+    display: grid; 
+	width: 99%; 
+	margin: 0 auto;
+}
+
+.tabEstList .gridHeader,
+.tabEstList .gridContent{
+    grid-template-columns: 7% 7% 7% 14% 7% 11% 11% 11% 18%;
+}
+/* tab 끝 */
 
 #header{
 	position: relative;
