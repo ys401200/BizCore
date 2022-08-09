@@ -87,13 +87,20 @@ public class SoppService extends Svc {
 
     public boolean addSopp(Sopp sopp, String compId){
         int x = -1;
-        x = soppMapper.addSopp(sopp, compId);
+        String sql = null;
+        sql = sopp.createInsertQuery(null, compId);
+        x = executeSqlQuery(sql);
         return x > 0;
     }
 
-    public boolean modifySopp(Sopp sopp, String compId){
+    public boolean modifySopp(String no, Sopp sopp, String compId){
         int x = -1;
-        x = soppMapper.modifySopp(sopp, compId);
+        Sopp ogn = null;
+        String sql = null;
+        ogn = getSopp(no, compId);
+        sql = ogn.createUpdateQuery(sopp, null);
+        sql = sql + " WHERE soppno = " + no + " AND compno = (SELECT compno FROM swc_company WHERE compid = '" + compId + "')";
+        x = executeSqlQuery(sql);
         return x > 0;
     }
 
