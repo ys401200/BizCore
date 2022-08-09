@@ -28,12 +28,24 @@
   color: #332e85;
 }
 
+
+.ContentDiv {
+  display: grid;
+  grid-template-columns: 50% 50%;
+}
+
+.ContentDiv .rightContentDiv {
+  padding: 3rem;
+}
+
+
+
 input[type="radio"] {
   display: none;
 }
 
 .selector {
-  margin: 4rem;
+  margin: 3rem;
   font-size: 1rem;
   font-weight: 500;
   color: gray;
@@ -41,15 +53,15 @@ input[type="radio"] {
 
 
 .selector label:hover {
- cursor: pointer;
+  cursor: pointer;
 }
+
 .selector .forSelect_1 {
   color: #332e85;
   font-size: 1.5rem;
-} 
+}
 
-.selector .formDetail,
-.selector .lineDetail {
+.selector .formDetail {
   margin: 2rem;
   height: 18rem;
   display: grid;
@@ -58,23 +70,20 @@ input[type="radio"] {
   border-radius: 5px;
 }
 
+
 .selector .formDetail .formLeft,
-.selector .formDetail .formRight,
-.selector .lineDetail .lineLeft,
-.selector .lineDetail .lineRight {
+.selector .formDetail .formRight {
   margin: 1rem;
   background-color: #ffffff;
   border-radius: 5px;
 }
 
-.selector .formDetail .formLeft,
-.selector .lineDetail .lineLeft {
+.selector .formDetail .formLeft {
   display: flex;
   flex-direction: column;
 }
 
-.selector .formDetail .formLeft .searchDiv,
-.selector .lineDetail .lineLeft .searchDiv {
+.selector .formDetail .formLeft .searchDiv {
   margin-top: 0.5rem;
   display: flex;
   background-color: #ffffff;
@@ -83,16 +92,14 @@ input[type="radio"] {
   border-radius: 3px;
 }
 
-.selector .formDetail .formLeft .searchDiv input,
-.selector .lineDetail .lineLeft .searchDiv input {
+.selector .formDetail .formLeft .searchDiv input {
   background-color: #ededf4;
   border: none;
   border-radius: 3px;
   margin-right: 1rem;
 }
 
-.selector .formDetail .formLeft .searchDiv button,
-.selector .lineDetail .lineLeft .searchDiv button {
+.selector .formDetail .formLeft .searchDiv button {
   border: none;
   background-color: #332e85;
   font-weight: 300;
@@ -100,8 +107,7 @@ input[type="radio"] {
   border-radius: 3px;
 }
 
-.selector .formDetail .formLeft .formListDiv,
-.selector .lineDetail .lineLeft .lineListDiv {
+.selector .formDetail .formLeft .formListDiv {
   margin: 0.5rem;
   background-color: #ededf4;
   text-align: center;
@@ -111,8 +117,7 @@ input[type="radio"] {
   border-radius: 3px;
 }
 
-.selector .formDetail .formLeft .formListDiv button,
-.selector .lineDetail .lineLeft .lineListDiv button {
+.selector .formDetail .formLeft .formListDiv button {
   margin: 0.5rem;
   border: none;
   color: #ffffff;
@@ -120,8 +125,7 @@ input[type="radio"] {
   border-radius: 3px;
 }
 
-.selector .formDetail .formLeft .formListDiv button:hover,
-.selector .lineDetail .lineLeft .lineListDiv button:hover {
+.selector .formDetail .formLeft .formListDiv button:hover {
   cursor: pointer;
 }
 
@@ -131,11 +135,68 @@ input[type="radio"] {
   justify-content: center;
 }
 
-.selector .reportInsertForm {
+
+.selector .lineDetail {
   color : black;
+  margin: 2rem;
+  height: 18rem;
+  display: grid;
+  grid-template-columns: 30% 20% 50%;
+  background-color: #ededf4;
+  border-radius: 5px;
+}
+
+
+.selector .lineDetail .innerDetail {
+  padding: 1rem;
+  margin: 1rem;
+  background-color: #ffffff;
+  border-radius: 5px;
+  overflow: auto;
+}
+
+
+
+.selector .lineDetail #lineCenter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.selectEachLine {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+
+}
+
+
+
+.selector .lineDetail #lineRight {
+  display: block
+}
+
+.selector .lineDetail #lineRight div {
+  background-color: #ededf4;
+  overflow: auto;
+  margin: 1rem;
+}
+
+.lineDataContainer {
+  display:grid;
+  grid-template-columns: 55% 15% 15% 15%;
+}
+
+.lineDataContainer button {
+  height : 2rem;
+  text-align: center;
+}
+
+.selector .reportInsertForm {
+  color: black;
   margin-left: 25%;
-  width: 245mm;
-  height: 350mm;
   overflow: auto;
   border: 1px solid black;
 }

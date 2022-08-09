@@ -11,7 +11,13 @@ uri="http://java.sun.com/jsp/jstl/core" %>
       <hr />
       <span>새 결재 진행</span>
       <div class="ContentDiv">
-        <div class="selectFormDiv">
+        <div class="leftContentDiv">
+
+
+
+
+
+
           <div class="selector">
             <label
               onclick="selectChangeEvent(1)"
@@ -45,6 +51,13 @@ uri="http://java.sun.com/jsp/jstl/core" %>
             </div>
           </div>
 
+
+
+
+
+
+
+
           <div class="selector">
             <label
               onclick="selectChangeEvent(2)"
@@ -58,20 +71,33 @@ uri="http://java.sun.com/jsp/jstl/core" %>
               class="approvalLine"
             />
             <div class="lineDetail">
-              <div class="lineLeft">
-                <div class="searchDiv">
-                  <input type="text" class="lineFormText" /><button
-                    type="button"
-                    class="lineFormbtn"
-                  >
-                    검색
-                  </button>
-                </div>
-                <div class="lineListDiv"></div>
-              </div>
-              <div class="lineRight"></div>
+            <div class="innerDetail" id="lineLeft"></div>
+            <div class="innerDetail" id="lineCenter">
+              <button onclick="check(this.value)" value="examine">검토 ></button>
+              <button onclick="check(this.value)" value="agree" >합의 ></button>
+              <button onclick="check(this.value)" value="approval">결재 ></button>
+              <button onclick="check(this.value)" value="conduct">수신 ></button>
+              <button onclick="check(this.value)" value="read">열람 ></button>
+              <button onclick="check(this.value)" value="refer">참조 ></button>
+            </div>
+            <div class="innerDetail" id="lineRight">
+              <label for="examine">검토 ></label><div class="typeContainer" id="examine"></div>
+              <label for="agree">합의 ></label><div class="typeContainer" id="agree"></div>
+              <label for="approval">결재 ></label><div class="typeContainer" id="approval"></div> 
+              <label for="conduct">수신 ></label><div class="typeContainer" id="conduct"></div>
+              <label for="read">열람 ></label><div class="typeContainer" id="read"></div>
+              <label for="refer">참조 ></label><div class="typeContainer" id="refer"></div>
+            </div>
             </div>
           </div>
+
+          
+
+
+
+
+
+
 
           <div class="selector">
             <label
@@ -85,8 +111,13 @@ uri="http://java.sun.com/jsp/jstl/core" %>
               id="select_3"
               class="insertForm"
             />
-            <div class="reportInsertForm"></div>
+            
           </div>
+
+
+
+
+
 
           <div class="selector">
             <label
@@ -97,7 +128,18 @@ uri="http://java.sun.com/jsp/jstl/core" %>
             ><input type="radio" name="radio" id="select_4" class="sendForm" />
             <div></div>
           </div>
+
+
+
         </div>
+
+
+
+        <div class="rightContentDiv">
+          <div class="reportInsertForm"></div>
+        </div>
+
+
       </div>
     </div>
   </div>
