@@ -14,6 +14,7 @@ import kr.co.bizcore.v1.svc.ScheduleSvc;
 import kr.co.bizcore.v1.svc.SoppService;
 import kr.co.bizcore.v1.svc.SystemService;
 import kr.co.bizcore.v1.svc.TestService;
+import kr.co.bizcore.v1.svc.TradeService;
 import kr.co.bizcore.v1.svc.UserService;
 
 @Controller
@@ -51,6 +52,9 @@ public abstract class Ctrl {
 
     @Autowired
     protected GwService gwService;
+
+    @Autowired
+    protected TradeService tradeService;
 
     @Autowired
     protected TestService testService;

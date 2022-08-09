@@ -17,6 +17,7 @@ import kr.co.bizcore.v1.mapper.ScheduleMapper;
 import kr.co.bizcore.v1.mapper.SoppMapper;
 import kr.co.bizcore.v1.mapper.SystemMapper;
 import kr.co.bizcore.v1.mapper.TestMapper;
+import kr.co.bizcore.v1.mapper.TradeMapper;
 import kr.co.bizcore.v1.mapper.UserMapper;
 import kr.co.bizcore.v1.util.UploadedFileStorage;
 import lombok.extern.slf4j.Slf4j;
@@ -78,8 +79,12 @@ public abstract class Svc {
 
     @Autowired 
     protected TestMapper testMapper;
+
     @Autowired
     protected GwFormMapper gwFormMapper;
+
+    @Autowired
+    protected TradeMapper tradeMapper;
 
     @Autowired
     protected SqlSessionTemplate sqlSession;

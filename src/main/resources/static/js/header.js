@@ -181,7 +181,7 @@ function init(){
 			modal.clear();
 			modal.wrap.fadeOut();
 		},
-		clear: () => {
+		"clear": () => {
 			modal.headTitle.text("");
 			modal.body.html("");
 			modal.confirm.show();
@@ -190,6 +190,21 @@ function init(){
 			modal.confirm.text("확인");
 			modal.close.text("닫기");
 		},
+		"tabs": {
+			"content": {
+				"hide": (notId) => {
+					$(document).find(".tabs input:radio").each((index, item) => {
+						if(notId === undefined){
+							console.log($(document).find("#" + $(item).data("content-id")));
+							$(document).find("#" + $(item).data("content-id")).hide();
+						}else{
+							console.log($(document).find("#" + $(item).data("content-id")));
+							$(document).find("#" + $(item).data("content-id")).not("#" + notId).hide();
+						}
+					});
+				}
+			}
+		}
 	}
 
 	dragAndDrop = {
@@ -376,6 +391,9 @@ function readyTopPageActive(){
 //기본 그리드
 function createGrid(gridContainer, headerDataArray, dataArray, ids, fnc, idName){
 	let gridHtml = "", gridContents, idStr;
+
+	ids = (ids === undefined) ? 0 : ids;
+	fnc = (fnc === undefined) ? "" : fnc;
 	
 	if(idName === undefined){
 		idStr = "gridContent";
@@ -690,7 +708,7 @@ function getCommonCode(){
 				msg.set("코드 정보를 가져오지 못했습니다.");
 			}
 		}
-	})
+	});
 } // End of getDeptMap()
 
 //파일 dropzone class 변경
@@ -914,7 +932,7 @@ function inputNumberFormat(e){
 function createCrudForm(data){
 	let html = "";
 
-	html = "<div class='defaultFormContainer tabContent' id='contentAll'>";
+	html = "<div class='defaultFormContainer tabContent' id='tabContentAll'>";
 
 	for(let i = 0; i < data.length; i++){
 		let dataTitle = (data[i].title === undefined) ? "" : data[i].title;
@@ -1019,17 +1037,25 @@ function dataListFormat(id, value){
 
 // crud tab 클릭 함수
 function tabItemClick(e){
-	$(document).find(".tabs input:radio").each((index, item) => {
-		$(document).find("#" + $(item).data("content-id")).hide();
-	});
-
 	setTimeout(() => {
-		if($(e).data("content-id") === "contentAll"){
+		modal.tabs.content.hide();
+
+		if($(e).data("content-id") === "tabContentAll"){
+			modal.confirm.show();
+			modal.close.show();
+			modal.content.css("width", "50%");
 			modal.confirm.text("수정");
 			modal.close.text("취소");
-		}else if($(e).data("content-id") === "contentIo"){
+		}else if($(e).data("content-id") === "tabTradeList"){
+			modal.confirm.show();
+			modal.close.show();
+			modal.content.css("width", "90%");
 			modal.confirm.text("분할추가");
 			modal.close.text("추가");
+		}else{
+			modal.content.css("width", "50%");
+			modal.confirm.hide();
+			modal.close.hide();
 		}
 
 		if($(e).data("first-fnc") === undefined){
@@ -1045,5 +1071,5 @@ function tabItemClick(e){
 		}
 
 		$(document).find("#" + $(e).data("content-id")).show();
-	}, 100);
+	}, 300);
 }

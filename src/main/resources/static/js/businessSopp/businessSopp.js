@@ -110,7 +110,7 @@ function drawSoppList() {
 		employee = (jsonData[i].employee === null || jsonData[i].employee == 0) ? "없음" : storage.user[jsonData[i].employee].userName;
 		expectedSales = (jsonData[i].expectedSales === null || jsonData[i].expectedSales == 0) ? 0 : numberFormat(jsonData[i].expectedSales);
 		status = (jsonData[i].status === null || jsonData[i].status === "") ? "없음" : storage.code.etc[jsonData[i].status];
- 
+  
 		str = [
 			{
 				"setData": jsonData[i].no,
@@ -322,11 +322,11 @@ function soppSuccessView(result){
 	];
 
 	html = "<div class='tabs'>";
-	html += "<input type='radio' id='tabAll' name='tabItem' data-content-id='contentAll' data-first-fnc='soppUpdateForm(" + result.no + ");' data-second-fnc='modal.hide();' onclick='tabItemClick(this)' checked>";
+	html += "<input type='radio' id='tabAll' name='tabItem' data-content-id='tabContentAll' data-first-fnc='soppUpdateForm(" + result.no + ");' data-second-fnc='modal.hide();' onclick='tabItemClick(this)' checked>";
 	html += "<label class='tabItem' for='tabAll'>기본정보</label>";
-	html += "<input type='radio' id='tabIo' name='tabItem' data-content-id='contentIo' onclick='tabItemClick(this)'>";
-	html += "<label class='tabItem' for='tabIo'>매입매출내역</label>";
-	html += "<input type='radio' id='tabEst' name='tabItem' data-content-id='contentEst' onclick='tabItemClick(this)'>";
+	html += "<input type='radio' id='tabTrade' name='tabItem' data-content-id='tabTradeList' onclick='tabItemClick(this)'>";
+	html += "<label class='tabItem' for='tabTrade'>매입매출내역</label>";
+	html += "<input type='radio' id='tabEst' name='tabItem' data-content-id='tabEstList' onclick='tabItemClick(this)'>";
 	html += "<label class='tabItem' for='tabEst'>견적내역</label>";
 	html += "<input type='radio' id='tabFile' name='tabItem' data-content-id='contentFile' onclick='tabItemClick(this)'>";
 	html += "<label class='tabItem' for='tabFile'>파일첨부</label>";
@@ -336,10 +336,12 @@ function soppSuccessView(result){
 	html += "<label class='tabItem' for='tabSales'>영업활동내역</label>";
 	html += "</div><br/>";
 	html += createCrudForm(dataArray);
+	html += createTabTradeList();
+	createTabEstList();
 
 	modal.show();
 	modal.headTitle.text("상세보기");
-	modal.content.css("width", "1200px");
+	modal.content.css("width", "50%");
 	modal.body.html(html);
 	modal.body.css("height", "800px");
 	modal.body.css("max-height", "800px");
@@ -353,6 +355,7 @@ function soppSuccessView(result){
 		$(document).find("#status option[value='" + result.status + "']").prop("selected" ,true);
 		$(document).find("#contType option[value='" + result.contType + "']").prop("selected" ,true);
 		$(document).find("#soppType option[value='" + result.soppType + "']").prop("selected" ,true);
+		modal.tabs.content.hide("tabContentAll");
 	}, 300);
 }
 
@@ -497,7 +500,7 @@ function soppInsertForm(){
 
 	modal.show();
 	modal.headTitle.text("영업기회등록");
-	modal.content.css("width", "1200px");
+	modal.content.css("width", "50%");
 	modal.body.html(html);
 	modal.body.css("max-height", "800px");
 	modal.confirm.text("등록");
@@ -511,7 +514,7 @@ function soppUpdateForm(no){
 
 	defaultFormContainer = $(document).find(".defaultFormContainer");
 
-	defaultFormContainer.find("input, select").prop("disabled", false);
+	defaultFormContainer.find("input, select").prop("disabled", false); 
 	tinymce.activeEditor.mode.set("design");
 
 	modal.confirm.text("수정완료");
@@ -652,44 +655,44 @@ function soppErrorDelete(){
 	alert("삭제에러");
 }
 
-function createIoList(){
-	let html = "", dataArray;
+function createTabTradeList(){
+	let html = "";
 
-	html = "<div class='ioList'>";
+	html = "<div class='tradeList' id='tabTradeList'>";
 
-	html += "<div class='ioFirstFormTitle'>";
-	html += "<div class='ioFirstTitleItem'>구분(매입/매출)</div>";
-	html += "<div class='ioFirstTitleItem'>거래일자</div>";
-	html += "<div class='ioFirstTitleItem'>분할횟수</div>";
-	html += "<div class='ioFirstTitleItem'>단위(개월)</div>";
-	html += "<div class='ioFirstTitleItem'>계약금액</div>";
-	html += "<div class='ioFirstTitleItem'>거래처(매입/매출처)</div>";
-	html += "<div class='ioFirstTitleItem'>항목</div>";
+	html += "<div class='tradeFirstTitle'>";
+	html += "<div class='tradeFirstTitleItem'>구분(매입/매출)</div>";
+	html += "<div class='tradeFirstTitleItem'>거래일자</div>";
+	html += "<div class='tradeFirstTitleItem'>분할횟수</div>";
+	html += "<div class='tradeFirstTitleItem'>단위(개월)</div>";
+	html += "<div class='tradeFirstTitleItem'>계약금액</div>";
+	html += "<div class='tradeFirstTitleItem'>거래처(매입/매출처)</div>";
+	html += "<div class='tradeFirstTitleItem'>항목</div>";
 	html += "</div>";
 
-	html += "<div class='ioFirstFormContent'>";
-	html += "<div class='ioFirstContentItem'>";
+	html += "<div class='tradeFirstFormContent'>";
+	html += "<div class='tradeFirstContentItem'>";
 	html += "<select>"
 	html += "<option value='매입'>매입</option>";
 	html += "<option value='매출'>매출</option>";
 	html += "</select>";
 	html += "</div>"
-	html += "<div class='ioFirstContentItem'>";
+	html += "<div class='tradeFirstContentItem'>";
 	html += "<input type='date' />";
 	html += "</div>";
-	html += "<div class='ioFirstContentItem'>";
+	html += "<div class='tradeFirstContentItem'>";
 	html += "<input type='text' />";
 	html += "</div>";
-	html += "<div class='ioFirstContentItem'>";
+	html += "<div class='tradeFirstContentItem'>";
 	html += "<input type='text' />";
 	html += "</div>";
-	html += "<div class='ioFirstContentItem'>";
+	html += "<div class='tradeFirstContentItem'>";
 	html += "<input type='text' />";
 	html += "</div>";
-	html += "<div class='ioFirstContentItem'>";
+	html += "<div class='tradeFirstContentItem'>";
 	html += "<input type='text' />";
 	html += "</div>";
-	html += "<div class='ioFirstContentItem'>";
+	html += "<div class='tradeFirstContentItem'>";
 	html += "<div>";
 	html += "<select>";
 	html += "<option value='항목선택'>항목선택</option>";
@@ -702,91 +705,268 @@ function createIoList(){
 	html += "</div>";
 	html += "</div>";
 
-	html += "<div class='ioSecondFormTitle'>";
-	html += "<div class='ioSecondTitleItem'>단가</div>";
-	html += "<div class='ioSecondTitleItem'>수량</div>";
-	html += "<div class='ioSecondTitleItem'>공급가</div>";
-	html += "<div class='ioSecondTitleItem'>부가세</div>";
-	html += "<div class='ioSecondTitleItem'>합계금액</div>";
-	html += "<div class='ioSecondTitleItem'>승인번호</div>";
-	html += "<div class='ioSecondTitleItem'>적요</div>";
+	html += "<div class='tradeSecondFormTitle'>";
+	html += "<div class='tradeSecondTitleItem'>단가</div>";
+	html += "<div class='tradeSecondTitleItem'>수량</div>";
+	html += "<div class='tradeSecondTitleItem'>공급가</div>";
+	html += "<div class='tradeSecondTitleItem'>부가세</div>";
+	html += "<div class='tradeSecondTitleItem'>합계금액</div>";
+	html += "<div class='tradeSecondTitleItem'>승인번호</div>";
+	html += "<div class='tradeSecondTitleItem'>적요</div>";
 	html += "</div>";
 
-	html += "<div class='ioSecondFormContent'>";
-	html += "<div class='ioSecondContentItem'>";
+	html += "<div class='tradeSecondFormContent'>";
+	html += "<div class='tradeSecondContentItem'>";
 	html += "<input type='text' />";
 	html += "</div>"
-	html += "<div class='ioSecondContentItem'>";
+	html += "<div class='tradeSecondContentItem'>";
 	html += "<input type='text' />";
 	html += "</div>";
-	html += "<div class='ioSecondContentItem'>";
+	html += "<div class='tradeSecondContentItem'>";
 	html += "<input type='text' />";
 	html += "</div>";
-	html += "<div class='ioSecondContentItem'>";
+	html += "<div class='tradeSecondContentItem'>";
 	html += "<input type='text' />";
 	html += "</div>";
-	html += "<div class='ioSecondContentItem'>";
+	html += "<div class='tradeSecondContentItem'>";
 	html += "<input type='text' />";
 	html += "</div>";
-	html += "<div class='ioSecondContentItem'>";
+	html += "<div class='tradeSecondContentItem'>";
 	html += "<input type='text' />";
 	html += "</div>";
-	html += "<div class='ioSecondContentItem'>";
+	html += "<div class='tradeSecondContentItem'>";
 	html += "<input type='text' />";
 	html += "</div>";
 	html += "</div>";
 
-	html += "<div class='ioThirdFormTitle'>";
-	html += "<div class='ioThirdTitleItem'>구분(등록/수정일)</div>";
-	html += "<div class='ioThirdTitleItem'>거래처(매입/매출처)</div>";
-	html += "<div class='ioThirdTitleItem'>항목</div>";
-	html += "<div class='ioThirdTitleItem'>단가</div>";
-	html += "<div class='ioThirdTitleItem'>수량</div>";
-	html += "<div class='ioThirdTitleItem'>부가세액</div>";
-	html += "<div class='ioThirdTitleItem'>공급가액</div>";
-	html += "<div class='ioThirdTitleItem'>금액</div>";
-	html += "<div class='ioThirdTitleItem'>비고</div>";
-	html += "<div class='ioThirdTitleItem'>승인번호</div>";
-	html += "<div class='ioThirdTitleItem'>수정</div>";
-	html += "<div class='ioThirdTitleItem'>삭제</div>";
+	html += "<div class='tradeThirdFormTitle'>";
+	html += "<div class='tradeThirdTitleItem'>구분(등록/수정일)</div>";
+	html += "<div class='tradeThirdTitleItem'>거래처(매입/매출처)</div>";
+	html += "<div class='tradeThirdTitleItem'>항목</div>";
+	html += "<div class='tradeThirdTitleItem'>단가</div>";
+	html += "<div class='tradeThirdTitleItem'>수량</div>";
+	html += "<div class='tradeThirdTitleItem'>부가세액</div>";
+	html += "<div class='tradeThirdTitleItem'>공급가액</div>";
+	html += "<div class='tradeThirdTitleItem'>금액</div>";
+	html += "<div class='tradeThirdTitleItem'>비고</div>";
+	html += "<div class='tradeThirdTitleItem'>승인번호</div>";
+	html += "<div class='tradeThirdTitleItem'>수정</div>";
+	html += "<div class='tradeThirdTitleItem'>삭제</div>";
 	html += "</div>";
+	html += "<div class='tradeThirdFormContent'>";
 
-	html += "<div class='ioThirdFormContent'>";
-	html += "<div class='ioThirdContentItem'>";
-	html += "<select>"
-	html += "<option value='매입'>매입</option>";
-	html += "<option value='매출'>매출</option>";
-	html += "</select>";
-	html += "</div>"
-	html += "<div class='ioThirdContentItem'>";
-	html += "<input type='date' />";
+	// $.ajax({
+	// 	url: "/api/trade",
+	// 	method: "get",
+	// 	async: false,
+	// 	dataType: "json",
+	// 	contentType: "text/plan",
+	// 	success:(result) => {
+	// 		if(result.result === "ok"){
+	// 			let jsonData;
+	// 			jsonData = cipher.decAes(result.data);
+	// 			jsonData = JSON.parse(jsonData);
+
+	// 			html += "<div class='tradThirdContentItem'>";
+	
+	// 			for(let i = 0; i < jsonData.length; i++){
+	// 				html += "<div class='tradeThirdContentList'>";
+	// 				html += "<div>" + jsonData[i].no + "</div>";
+	// 				html += "</div>";
+	// 			}
+	
+	// 			html += "</div>";
+	// 		}
+	// 	}
+	// });
+
 	html += "</div>";
-	html += "<div class='ioThirdContentItem'>";
-	html += "<input type='text' />";
+	html += "<div class='tradeThirdContentCal_1'>";
 	html += "</div>";
-	html += "<div class='ioThirdContentItem'>";
-	html += "<input type='text' />";
-	html += "</div>";
-	html += "<div class='ioThirdContentItem'>";
-	html += "<input type='text' />";
-	html += "</div>";
-	html += "<div class='ioThirdContentItem'>";
-	html += "<input type='text' />";
-	html += "</div>";
-	html += "<div class='ioThirdContentItem'>";
-	html += "<div>";
-	html += "<select>";
-	html += "<option value='항목선택'>항목선택</option>";
-	html += "<option value='직접입력'>직접입력</option>";
-	html += "</select>";
-	html += "</div>";
-	html += "<div>";
-	html += "<input type='text' />";
-	html += "</div>";
+	html += "<div class='tradeThirdContentCal_2'>";
 	html += "</div>";
 	html += "</div>";
 
 	html += "</div>";
 
 	return html;
+}
+
+function createTabEstList(){
+	let html = "", container, header = [], data = [], str;
+
+	html = "<div class='tabEstList'>";
+	html += "</div>";
+	
+	header = [
+		{
+			"title" : "견적일자",
+			"align" : "center",
+		},
+		{
+			"title" : "작성자",
+			"align" : "center",
+		},
+		{
+			"title" : "견적번호",
+			"align" : "center",
+		},
+		{
+			"title" : "견적명",
+			"align" : "left",
+		},
+		{
+			"title" : "거래처",
+			"align" : "center",
+		},
+		{
+			"title" : "공급가합계",
+			"align" : "right",
+		},
+		{
+			"title" : "부가세합계",
+			"align" : "right",
+		},
+		{
+			"title" : "금액",
+			"align" : "right",
+		},
+		{
+			"title" : "적요",
+			"align" : "left",
+		},
+	]
+	
+	setTimeout(() => {
+		modal.body.append(html);
+		container = $(document).find(".tabEstList");
+	}, 100);
+
+	str = [
+		{
+			"setData": "test1",
+		},
+		{
+			"setData": "test2",
+		},
+		{
+			"setData": "test3",
+		},
+		{
+			"setData": "test4",
+		},
+		{
+			"setData": "test5",
+		},
+		{
+			"setData": "test6",
+		},
+		{
+			"setData": "test7",
+		},
+		{
+			"setData": "test8",
+		},
+		{
+			"setData": "test9",
+		}
+	];
+
+	data.push(str);
+
+	setTimeout(() => {
+		createGrid(container, header, data);
+	}, 100);
+}
+
+function createTabTechList(){
+	let html = "";
+
+	html = "<div class='tabTechist'>";
+	html += "<div class='tabTechHeader'>";
+	html += "<div>견적일자</div>";
+	html += "<div>작성자</div>";
+	html += "<div>견적번호</div>";
+	html += "<div>견적명</div>";
+	html += "<div>거래처</div>";
+	html += "<div>공급가합계</div>";
+	html += "<div>부가세합계</div>";
+	html += "<div>금액</div>";
+	html += "<div>적요</div>";
+	html += "</div>";
+
+	$.ajax({
+		url: "/api/tech",
+		method: "get",
+		async: false,
+		dataType: "json",
+		contentType: "text/plan",
+		success:(result) => {
+			if(result.result === "ok"){
+				let jsonData;
+				jsonData = cipher.decAes(result.data);
+				jsonData = JSON.parse(jsonData);
+
+				html += "<div class='tabTechBody'>";
+	
+				for(let i = 0; i < jsonData.length; i++){
+					html += "<div>" + jsonData[i].no + "</div>";
+				}
+	
+				html += "</div>";
+			}
+		}
+	});
+
+	html += "</div>";
+
+	setTimeout(() => {
+		modal.body.append(html);
+	}, 100);
+}
+
+function createTabSalesList(){
+	let html = "";
+
+	html = "<div class='tabSalesist'>";
+	html += "<div class='tabSalesHeader'>";
+	html += "<div>견적일자</div>";
+	html += "<div>작성자</div>";
+	html += "<div>견적번호</div>";
+	html += "<div>견적명</div>";
+	html += "<div>거래처</div>";
+	html += "<div>공급가합계</div>";
+	html += "<div>부가세합계</div>";
+	html += "<div>금액</div>";
+	html += "<div>적요</div>";
+	html += "</div>";
+
+	$.ajax({
+		url: "/api/sales",
+		method: "get",
+		async: false,
+		dataType: "json",
+		contentType: "text/plan",
+		success:(result) => {
+			if(result.result === "ok"){
+				let jsonData;
+				jsonData = cipher.decAes(result.data);
+				jsonData = JSON.parse(jsonData);
+
+				html += "<div class='tabSalesBody'>";
+	
+				for(let i = 0; i < jsonData.length; i++){
+					html += "<div>" + jsonData[i].no + "</div>";
+				}
+	
+				html += "</div>";
+			}
+		}
+	});
+
+	html += "</div>";
+
+	setTimeout(() => {
+		modal.body.append(html);
+	}, 100);
 }
