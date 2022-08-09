@@ -220,7 +220,7 @@ public abstract class Domain {
             column.put("contType","cntrctMth");
             column.put("title","sopptitle");
             column.put("customer","buyrno");
-            column.put("enduser","custNo");
+            column.put("endUser","custNo");
             column.put("employee","userNo");
             column.put("expectedSales","sopptargetamt");
             column.put("status","soppstatus");

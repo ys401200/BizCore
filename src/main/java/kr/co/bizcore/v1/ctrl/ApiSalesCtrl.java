@@ -58,6 +58,7 @@ public class ApiSalesCtrl extends Ctrl{
         String aesKey = null;
         String aesIv = null;
         String data = null;
+        Sales sales = null;
         HttpSession session = null;
 
         session = request.getSession();
@@ -71,11 +72,11 @@ public class ApiSalesCtrl extends Ctrl{
         }else if(aesKey == null || aesIv == null){
             result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
         }else{
-            data = salesService.getSales(no, compId);
-            if(data == null){
+            sales = salesService.getSales(no, compId);
+            if(sales == null){
                 result = "{\"result\":\"failure\",\"msg\":\"Sales not exist.\"}";
             }else{
-                data = salesService.encAes(data, aesKey, aesIv);
+                data = salesService.encAes(sales.toJson(), aesKey, aesIv);
                 result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
             }
         }

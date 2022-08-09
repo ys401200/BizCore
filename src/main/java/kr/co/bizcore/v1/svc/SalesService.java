@@ -33,21 +33,29 @@ public class SalesService extends Svc{
         return result;
     } // End of getSalesList()
 
-    public String getSales(String salesNo, String compId){
+    public Sales getSales(String salesNo, String compId){
         Sales sales = null;
         sales = salesMapper.getSales(salesNo, compId);
-        return sales == null ? null : sales.toJson();
+        return sales;
     } // End of getSales();
 
     public boolean addSales(Sales sales, String compId){
         int x = -1;
-        x = salesMapper.addSales(sales, compId);
+        String sql = null;
+        sql = sales.createInsertQuery(null, compId);
+        x = executeSqlQuery(sql);
         return x > 0;
     }
 
     public boolean modifySales(String no, Sales sales, String compId){
         int x = -1;
-        x = salesMapper.modifySales(no, sales, compId);
+        Sales ogn = null;
+        String sql = null;
+
+        ogn = getSales(no, compId);
+        sql = ogn.createUpdateQuery(sales, null);
+        sql = sql + " WHERE salesno = " + no + " AND compno = (SELECT compno FROM swc_company WHERE compid = '" + compId + "')";
+        x = executeSqlQuery(sql);
         return x > 0;
     }
 
