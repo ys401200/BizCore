@@ -253,19 +253,16 @@ function downClick(obj) {
     numArr.push(idArr[1]);
   }
  
- 
-
-  for (let i = 0; i < numArr.length; i++) { //순서 바꾸기 
-    if (obj.value == numArr[i] && i !=numArr.length-1) {
-      let tem = numArr[i];
+  for (let i = numArr.length - 1; i >= 0; i--) { //순서 바꾸기 
+    if (obj.value == numArr[i] && i != numArr.length-1) {
+      console.log("Current index : " + i + " / current value : " + numArr[i] + " / numArr's length : " + numArr.length);
+      let temp = numArr[i];
       numArr[i] = numArr[i + 1];
-      numArr[i + 1] = tem;
+      numArr[i + 1] = temp;
     }
   }
- 
 
-
-
+  ///??????????? 
 
   let data = new Array();
 
