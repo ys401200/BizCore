@@ -60,7 +60,7 @@ public class SoppService extends Svc {
         return result;
     } // End of getEstimateList()
 
-    public String getEstimate(String no, String compId){
+    public Estimate getEstimate(String no, String compId){
         Estimate result = null;
         HashMap<String, String> info = null;
         List<EstimateItem> items = null;
@@ -82,7 +82,7 @@ public class SoppService extends Svc {
             if(items != null)   for(x = 0 ; x < items.size() ; x++) result.addItem(items.get(x));
         }
 
-        return result.toJson();
+        return result;
     } // End of getEstimate()
 
     public boolean addSopp(Sopp sopp, String compId){
@@ -109,4 +109,5 @@ public class SoppService extends Svc {
         x = soppMapper.removeSopp(no, compId);
         return x > 0;
     }
+
 }
