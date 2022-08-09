@@ -252,14 +252,20 @@ function downClick(obj) {
     let idArr = id.split("_");
     numArr.push(idArr[1]);
   }
+ 
+ 
 
   for (let i = 0; i < numArr.length; i++) { //순서 바꾸기 
-    if (obj.value == numArr[i] && i != 0) {
-      let temp = numArr[i];
+    if (obj.value == numArr[i] && i !=numArr.length-1) {
+      let tem = numArr[i];
       numArr[i] = numArr[i + 1];
-      numArr[i + 1] = temp;
+      numArr[i + 1] = tem;
     }
   }
+ 
+
+
+
 
   let data = new Array();
 
