@@ -1,5 +1,8 @@
 @charset "UTF-8";
 
+
+
+
 .mywriteContainer {
   position: relative;
   left: 2%;
@@ -35,12 +38,14 @@
 }
 
 .ContentDiv .rightContentDiv {
-  padding: 3rem;
+  margin: 3rem;
+  border: 1px solid gray;
+  overflow: auto;
 }
 
 
 
-input[type="radio"] {
+.form {
   display: none;
 }
 
@@ -137,7 +142,11 @@ input[type="radio"] {
 
 
 .selector .lineDetail {
-  color : black;
+  display: block;
+}
+
+.selector .lineDetail .lineTop {
+  color: black;
   margin: 2rem;
   height: 18rem;
   display: grid;
@@ -146,6 +155,18 @@ input[type="radio"] {
   border-radius: 5px;
 }
 
+.selector .lineDetail #lineBottom {
+  margin: 2rem;
+}
+
+.selector .lineDetail #lineBottom button {
+  float: right;
+  border: none;
+  color: #ffffff;
+  background-color: #332e85;
+  border-radius: 3px;
+  font-weight: 400;
+}
 
 .selector .lineDetail .innerDetail {
   padding: 1rem;
@@ -164,6 +185,16 @@ input[type="radio"] {
   justify-content: space-around;
 }
 
+.selector .lineDetail #lineCenter button {
+  margin: 0.5rem;
+  border: none;
+  color: #ffffff;
+  background-color: #332e85;
+  border-radius: 3px;
+  text-align: center;
+  font-weight: 400;
+}
+
 .selectEachLine {
   display: flex;
   flex-direction: row;
@@ -178,6 +209,9 @@ input[type="radio"] {
   display: block
 }
 
+
+
+
 .selector .lineDetail #lineRight div {
   background-color: #ededf4;
   overflow: auto;
@@ -185,13 +219,21 @@ input[type="radio"] {
 }
 
 .lineDataContainer {
-  display:grid;
+  display: grid;
   grid-template-columns: 55% 15% 15% 15%;
 }
 
 .lineDataContainer button {
-  height : 2rem;
+  font-size: 0.5rem;
+  width: 1.5rem;
+  margin: 0.2rem;
+  border: none;
+  color: #ffffff;
+  background-color: #332e85;
+  border-radius: 3px;
   text-align: center;
+  
+
 }
 
 .selector .reportInsertForm {
@@ -199,4 +241,37 @@ input[type="radio"] {
   margin-left: 25%;
   overflow: auto;
   border: 1px solid black;
+}
+
+.lineGrid {
+  margin : 1rem;
+  display: grid;
+  margin-top: 0;
+  grid-template-columns: 5% 19% 19% 19% 19% 19%;
+}
+
+.lineSet {
+  display: block;
+
+}
+
+.lineTitle{
+  background-color: rgb(208, 206, 206);
+  text-align: center;
+  border :1px solid black; 
+}
+
+.lineUserName, .gap {
+border-top : 1px solid black;
+border-right : 1px solid black;
+text-align: center;
+}
+
+
+
+.linedate {
+  text-align: center;
+  border-top : 1px solid black;
+  border-right : 1px solid black;
+  border-bottom : 1px solid black;
 }
