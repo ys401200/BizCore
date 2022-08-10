@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 
+import kr.co.bizcore.v1.svc.AccountingService;
 import kr.co.bizcore.v1.svc.BoardService;
 import kr.co.bizcore.v1.svc.ContractService;
 import kr.co.bizcore.v1.svc.DeptService;
@@ -55,6 +56,9 @@ public abstract class Ctrl {
 
     @Autowired
     protected TradeService tradeService;
+
+    @Autowired
+    protected AccountingService accService;
 
     @Autowired
     protected TestService testService;

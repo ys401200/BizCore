@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import kr.co.bizcore.v1.mapper.AccountingMapper;
 import kr.co.bizcore.v1.mapper.BoardMapper;
 import kr.co.bizcore.v1.mapper.CommonMapper;
 import kr.co.bizcore.v1.mapper.ContractMapper;
@@ -85,6 +86,9 @@ public abstract class Svc {
 
     @Autowired
     protected TradeMapper tradeMapper;
+
+    @Autowired
+    protected AccountingMapper accMapper;
 
     @Autowired
     protected SqlSessionTemplate sqlSession;
