@@ -6,6 +6,7 @@ import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
 
+@Getter
 @Setter
 public class Sopp extends SimpleSopp{
 
@@ -24,25 +25,14 @@ public class Sopp extends SimpleSopp{
     private String businessType;
     private String priority;
 
-    public int getContract(){return contract;}
-    public String getPicOfCustomer(){return picOfCustomer;}
-    public int getPtnc(){return ptnc;}
-    public int getPicOfBuyer(){return picOfBuyer;}
-    public String getDetail(){return detail;}
-    public int getProgress(){return progress;}
-    public int getSource(){return source;}
-    public String getRemark(){return remark;}
-    public Date getRemarkDate(){return remarkDate;}
-    public String getBusinessType(){return businessType;}
-    public String getPriority(){return priority;}
 
     public void setStartOfMaintenance(Date v){startOfMaintenance = v;}
-    public void setStartOfMaintenance(long v){startOfMaintenance = new Date(v);}
+    //public void setStartOfMaintenance(long v){startOfMaintenance = new Date(v);}
     public void setEndOfMaintenance(Date v){endOfMaintenance = v;}
-    public void setEndOfMaintenance(long v){endOfMaintenance = new Date(v);}
+    //public void setEndOfMaintenance(long v){endOfMaintenance = new Date(v);}
     public String getStartOfMaintenance(){return cvtDateToStr(startOfMaintenance);}
     public String getEndOfMaintenance(){return cvtDateToStr(endOfMaintenance);}
-    public void setTargetDate(Date v){targetDate = v;}
+    //public void setTargetDate(Date v){targetDate = v;}
     public String getTargetDate(){return cvtDateToStr(targetDate);}
 
     private String cvtDateToStr(Date d){

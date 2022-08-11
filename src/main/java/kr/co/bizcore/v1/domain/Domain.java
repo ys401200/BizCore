@@ -345,9 +345,15 @@ public abstract class Domain {
                         else                result += ", ";
                         result += (column + "=" + v2);
                     } else if (field.getType().getName().equals(Date.class.getName())) {
-                        if(result == null)  result = "";
-                        else                result += ", ";
-                        result += (column + "=" + "'" + (new java.sql.Timestamp(((Date)v2).getTime())) + "'");
+                        if(table.equals("swc_sopp") && (column.equals("sopptargetdate") || column.equals("maintenance_s") || column.equals("maintenance_e"))){
+                            if(result == null)  result = "";
+                            else                result += ", ";
+                            result += (column + "=" + "'" + (new java.sql.Timestamp(((Date)v2).getTime())).toString().substring(0, 10) + "'");
+                        }else{
+                            if(result == null)  result = "";
+                            else                result += ", ";
+                            result += (column + "=" + "'" + (new java.sql.Timestamp(((Date)v2).getTime())) + "'");
+                        }
                     } else if (field.getType().getName().equals(java.sql.Date.class.getName())) {
                         if(result == null)  result = "";
                         else                result += ", ";
@@ -444,6 +450,13 @@ public abstract class Domain {
                     str1 += ("," + fieldName);
                     str2 += ("," + (byte)v);
                 } else if (field.getType().getName().equals(Date.class.getName())) {
+                    if(className.equals("Sopp")&& (fieldName.equals("sopptargetdate") || fieldName.equals("maintenance_s") || fieldName.equals("maintenance_e"))){
+                        str1 += ("," + fieldName);
+                        str2 += (",'" +  new java.sql.Timestamp(((Date)v).getTime()).toString().substring(0, 10) + "'");
+                    }else{
+                        str1 += ("," + fieldName);
+                        str2 += (",'" +  new java.sql.Timestamp(((Date)v).getTime()) + "'");
+                    }
                     str1 += ("," + fieldName);
                     str2 += (",'" +  new java.sql.Timestamp(((Date)v).getTime()) + "'");
                 } else if (field.getType().getName().equals(java.sql.Date.class.getName())) {
