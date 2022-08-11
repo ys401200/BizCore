@@ -6,25 +6,20 @@
 			<jsp:include page="../sideMenu.jsp" />
 		</div>
 		<div id="bodyContent">
-			<div class="mylistContainer">
+			<div class="container">
 				<hr />
-				<span>나의 문서함</span>
-				<div class="subContainer">
-				<div class="mylistdiv">
-					<div class="list_header">
-						<div class="title"></div>
-						<div class="info"></div>
-					</div>
-					<div class="list_content">
-						<div class="insertedContent"></div>
-						<div class="insertedData"></div>
-						<div class="insertedDataList"></div>
-					</div>
-					<div class="list_comment">-이하 여백-</div>
-				</div>
-				<div class="mylistbtn"></div>
-			</div>
+				<span>결재 대기 문서</span>
 				
+				<div class="subContainer">
+					<div class="listPageDiv">
+						<div class="listDiv"></div>
+						<div class="pageContainer"></div>
+					</div>
+					<div class="tableFormDiv">
+						<div class="table"></div>
+						<div class="form"></div>
+					</div>
+				</div>
 			</div>
 		</div>
 
