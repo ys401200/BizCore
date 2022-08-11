@@ -195,10 +195,8 @@ function init(){
 				"hide": (notId) => {
 					$(document).find(".tabs input:radio").each((index, item) => {
 						if(notId === undefined){
-							console.log($(document).find("#" + $(item).data("content-id")));
 							$(document).find("#" + $(item).data("content-id")).hide();
 						}else{
-							console.log($(document).find("#" + $(item).data("content-id")));
 							$(document).find("#" + $(item).data("content-id")).not("#" + notId).hide();
 						}
 					});
@@ -929,10 +927,10 @@ function inputNumberFormat(e){
 }
 
 //임시 crud 폼
-function createCrudForm(data){
+function detailViewFormModal(data){
 	let html = "";
 
-	html = "<div class='defaultFormContainer tabContent' id='tabContentAll'>";
+	html = "<div class='defaultFormContainer'>";
 
 	for(let i = 0; i < data.length; i++){
 		let dataTitle = (data[i].title === undefined) ? "" : data[i].title;
@@ -987,6 +985,28 @@ function createCrudForm(data){
 		}
 		
 		html += "</div>";
+		html += "</div>";
+	}
+
+	html += "</div>";
+
+	return html;
+}
+
+function detailViewForm(data){
+	let html = "";
+
+	html = "<div class='detailViewContainer tabContent' id='tabContentAll'>";
+
+	for(let i = 0; i < data.length; i++){
+		let dataTitle = (data[i].title === undefined) ? "" : data[i].title;
+		let dataValue = (data[i].value === undefined) ? "" : data[i].value;
+
+		html += "<div class='detailViewForm'>";
+		html += "<div class='detailViewFormSpanDiv'>";
+		html += "<span class='detailViewFormSpan'>" + dataTitle + ": </span>";
+		html += "</div>";
+		html += "<div class='detailViewFormContent'>" + dataValue + "</div>";
 		html += "</div>";
 	}
 
@@ -1053,7 +1073,7 @@ function tabItemClick(e){
 			modal.confirm.text("분할추가");
 			modal.close.text("추가");
 		}else{
-			modal.content.css("width", "50%");
+			modal.content.css("width", "80%");
 			modal.confirm.hide();
 			modal.close.hide();
 		}
@@ -1072,4 +1092,320 @@ function tabItemClick(e){
 
 		$(document).find("#" + $(e).data("content-id")).show();
 	}, 300);
+}
+
+function createTabTradeList(){
+	let html = "";
+
+	html = "<div class='tradeList' id='tabTradeList'>";
+
+	html += "<div class='tradeFirstTitle'>";
+	html += "<div class='tradeFirstTitleItem'>구분(매입/매출)</div>";
+	html += "<div class='tradeFirstTitleItem'>거래일자</div>";
+	html += "<div class='tradeFirstTitleItem'>분할횟수</div>";
+	html += "<div class='tradeFirstTitleItem'>단위(개월)</div>";
+	html += "<div class='tradeFirstTitleItem'>계약금액</div>";
+	html += "<div class='tradeFirstTitleItem'>거래처(매입/매출처)</div>";
+	html += "<div class='tradeFirstTitleItem'>항목</div>";
+	html += "</div>";
+
+	html += "<div class='tradeFirstFormContent'>";
+	html += "<div class='tradeFirstContentItem'>";
+	html += "<select>"
+	html += "<option value='매입'>매입</option>";
+	html += "<option value='매출'>매출</option>";
+	html += "</select>";
+	html += "</div>"
+	html += "<div class='tradeFirstContentItem'>";
+	html += "<input type='date' />";
+	html += "</div>";
+	html += "<div class='tradeFirstContentItem'>";
+	html += "<input type='text' />";
+	html += "</div>";
+	html += "<div class='tradeFirstContentItem'>";
+	html += "<input type='text' />";
+	html += "</div>";
+	html += "<div class='tradeFirstContentItem'>";
+	html += "<input type='text' />";
+	html += "</div>";
+	html += "<div class='tradeFirstContentItem'>";
+	html += "<input type='text' />";
+	html += "</div>";
+	html += "<div class='tradeFirstContentItem'>";
+	html += "<div>";
+	html += "<select>";
+	html += "<option value='항목선택'>항목선택</option>";
+	html += "<option value='직접입력'>직접입력</option>";
+	html += "</select>";
+	html += "</div>";
+	html += "<div>";
+	html += "<input type='text' />";
+	html += "</div>";
+	html += "</div>";
+	html += "</div>";
+
+	html += "<div class='tradeSecondFormTitle'>";
+	html += "<div class='tradeSecondTitleItem'>단가</div>";
+	html += "<div class='tradeSecondTitleItem'>수량</div>";
+	html += "<div class='tradeSecondTitleItem'>공급가</div>";
+	html += "<div class='tradeSecondTitleItem'>부가세</div>";
+	html += "<div class='tradeSecondTitleItem'>합계금액</div>";
+	html += "<div class='tradeSecondTitleItem'>승인번호</div>";
+	html += "<div class='tradeSecondTitleItem'>적요</div>";
+	html += "</div>";
+
+	html += "<div class='tradeSecondFormContent'>";
+	html += "<div class='tradeSecondContentItem'>";
+	html += "<input type='text' />";
+	html += "</div>"
+	html += "<div class='tradeSecondContentItem'>";
+	html += "<input type='text' />";
+	html += "</div>";
+	html += "<div class='tradeSecondContentItem'>";
+	html += "<input type='text' />";
+	html += "</div>";
+	html += "<div class='tradeSecondContentItem'>";
+	html += "<input type='text' />";
+	html += "</div>";
+	html += "<div class='tradeSecondContentItem'>";
+	html += "<input type='text' />";
+	html += "</div>";
+	html += "<div class='tradeSecondContentItem'>";
+	html += "<input type='text' />";
+	html += "</div>";
+	html += "<div class='tradeSecondContentItem'>";
+	html += "<input type='text' />";
+	html += "</div>";
+	html += "</div>";
+
+	html += "<div class='tradeThirdFormTitle'>";
+	html += "<div class='tradeThirdTitleItem'>구분(등록/수정일)</div>";
+	html += "<div class='tradeThirdTitleItem'>거래처(매입/매출처)</div>";
+	html += "<div class='tradeThirdTitleItem'>항목</div>";
+	html += "<div class='tradeThirdTitleItem'>단가</div>";
+	html += "<div class='tradeThirdTitleItem'>수량</div>";
+	html += "<div class='tradeThirdTitleItem'>부가세액</div>";
+	html += "<div class='tradeThirdTitleItem'>공급가액</div>";
+	html += "<div class='tradeThirdTitleItem'>금액</div>";
+	html += "<div class='tradeThirdTitleItem'>비고</div>";
+	html += "<div class='tradeThirdTitleItem'>승인번호</div>";
+	html += "<div class='tradeThirdTitleItem'>수정</div>";
+	html += "<div class='tradeThirdTitleItem'>삭제</div>";
+	html += "</div>";
+	html += "<div class='tradeThirdFormContent'>";
+
+	// $.ajax({
+	// 	url: "/api/trade",
+	// 	method: "get",
+	// 	async: false,
+	// 	dataType: "json",
+	// 	contentType: "text/plan",
+	// 	success:(result) => {
+	// 		if(result.result === "ok"){
+	// 			let jsonData;
+	// 			jsonData = cipher.decAes(result.data);
+	// 			jsonData = JSON.parse(jsonData);
+
+	// 			html += "<div class='tradThirdContentItem'>";
+	
+	// 			for(let i = 0; i < jsonData.length; i++){
+	// 				html += "<div class='tradeThirdContentList'>";
+	// 				html += "<div>" + jsonData[i].no + "</div>";
+	// 				html += "</div>";
+	// 			}
+	
+	// 			html += "</div>";
+	// 		}
+	// 	}
+	// });
+
+	html += "</div>";
+	html += "<div class='tradeThirdContentCal_1'>";
+	html += "</div>";
+	html += "<div class='tradeThirdContentCal_2'>";
+	html += "</div>";
+	html += "</div>";
+
+	html += "</div>";
+
+	return html;
+}
+
+function createTabEstList(){
+	let html = "", container, header = [], data = [], str, detailContainer;
+
+	detailContainer = $(document).find(".detailContainer");
+
+	html = "<div class='tabEstList' id='tabEstList'>";
+	html += "</div>";
+	
+	header = [
+		{
+			"title" : "견적일자",
+			"align" : "center",
+		},
+		{
+			"title" : "작성자",
+			"align" : "center",
+		},
+		{
+			"title" : "견적번호",
+			"align" : "center",
+		},
+		{
+			"title" : "견적명",
+			"align" : "left",
+		},
+		{
+			"title" : "거래처",
+			"align" : "center",
+		},
+		{
+			"title" : "공급가합계",
+			"align" : "right",
+		},
+		{
+			"title" : "부가세합계",
+			"align" : "right",
+		},
+		{
+			"title" : "금액",
+			"align" : "right",
+		},
+		{
+			"title" : "적요",
+			"align" : "left",
+		},
+	]
+	
+	detailContainer.find(".detailContent").append(html);
+	container = detailContainer.find(".detailContent .tabEstList");
+
+	str = [
+		{
+			"setData": "test1",
+		},
+		{
+			"setData": "test2",
+		},
+		{
+			"setData": "test3",
+		},
+		{
+			"setData": "test4",
+		},
+		{
+			"setData": "test5",
+		},
+		{
+			"setData": "test6",
+		},
+		{
+			"setData": "test7",
+		},
+		{
+			"setData": "test8",
+		},
+		{
+			"setData": "test9",
+		}
+	];
+
+	data.push(str);
+
+	setTimeout(() => {
+		createGrid(container, header, data);
+	}, 100);
+}
+
+function createTabTechList(){
+	let html = "";
+
+	html = "<div class='tabTechist'>";
+	html += "<div class='tabTechHeader'>";
+	html += "<div>견적일자</div>";
+	html += "<div>작성자</div>";
+	html += "<div>견적번호</div>";
+	html += "<div>견적명</div>";
+	html += "<div>거래처</div>";
+	html += "<div>공급가합계</div>";
+	html += "<div>부가세합계</div>";
+	html += "<div>금액</div>";
+	html += "<div>적요</div>";
+	html += "</div>";
+
+	$.ajax({
+		url: "/api/tech",
+		method: "get",
+		async: false,
+		dataType: "json",
+		contentType: "text/plan",
+		success:(result) => {
+			if(result.result === "ok"){
+				let jsonData;
+				jsonData = cipher.decAes(result.data);
+				jsonData = JSON.parse(jsonData);
+
+				html += "<div class='tabTechBody'>";
+	
+				for(let i = 0; i < jsonData.length; i++){
+					html += "<div>" + jsonData[i].no + "</div>";
+				}
+	
+				html += "</div>";
+			}
+		}
+	});
+
+	html += "</div>";
+
+	setTimeout(() => {
+		modal.body.append(html);
+	}, 100);
+}
+
+function createTabSalesList(){
+	let html = "";
+
+	html = "<div class='tabSalesist'>";
+	html += "<div class='tabSalesHeader'>";
+	html += "<div>견적일자</div>";
+	html += "<div>작성자</div>";
+	html += "<div>견적번호</div>";
+	html += "<div>견적명</div>";
+	html += "<div>거래처</div>";
+	html += "<div>공급가합계</div>";
+	html += "<div>부가세합계</div>";
+	html += "<div>금액</div>";
+	html += "<div>적요</div>";
+	html += "</div>";
+
+	$.ajax({
+		url: "/api/sales",
+		method: "get",
+		async: false,
+		dataType: "json",
+		contentType: "text/plan",
+		success:(result) => {
+			if(result.result === "ok"){
+				let jsonData;
+				jsonData = cipher.decAes(result.data);
+				jsonData = JSON.parse(jsonData);
+
+				html += "<div class='tabSalesBody'>";
+	
+				for(let i = 0; i < jsonData.length; i++){
+					html += "<div>" + jsonData[i].no + "</div>";
+				}
+	
+				html += "</div>";
+			}
+		}
+	});
+
+	html += "</div>";
+
+	setTimeout(() => {
+		modal.body.append(html);
+	}, 100);
 }
