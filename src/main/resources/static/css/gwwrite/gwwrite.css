@@ -241,13 +241,21 @@
   margin-left: 25%;
   overflow: auto;
   border: 1px solid black;
+ 
 }
 
+
+.lineGridContainer {
+  margin: 1rem;
+  margin-top:0;
+  display: flex;
+  flex-direction: row;
+  align-items: right;
+
+}
 .lineGrid {
-  margin : 1rem;
-  display: grid;
-  margin-top: 0;
-  grid-template-columns: 5% 19% 19% 19% 19% 19%;
+  display: flex;
+  flex-direction: row;
 }
 
 .lineSet {
@@ -259,6 +267,9 @@
   background-color: rgb(208, 206, 206);
   text-align: center;
   border :1px solid black; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .lineUserName, .gap {
@@ -268,10 +279,20 @@ text-align: center;
 }
 
 
-
 .linedate {
   text-align: center;
   border-top : 1px solid black;
   border-right : 1px solid black;
+  border-bottom : 1px solid black;
+}
+
+.lineUserNameLast , .gapLast {
+  border-top : 1px solid black;  
+  text-align: center;
+} 
+
+.linedateLast {
+  text-align: center;
+  border-top : 1px solid black;
   border-bottom : 1px solid black;
 }

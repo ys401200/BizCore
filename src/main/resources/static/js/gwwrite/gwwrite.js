@@ -306,7 +306,11 @@ function createLine() {
   let lineTarget = $(".infoline")[0].children[1];
   lineTarget = $("#" + lineTarget.id);
   lineTarget.html("");
-  let testHtml = "";
+  lineTarget.css("display","block");
+
+
+  let testHtml = "<div class='lineGridContainer'>";
+  let testHtml2 = "<div class='lineGridContainer'>";
   let target = $(".typeContainer");
   let titleArr = ["검토", "합의", "결재", "수신", "열람", "참조"];
 
@@ -316,27 +320,44 @@ function createLine() {
 
 
   for (let i = 0; i < target.length; i++) {
-
-    if (target[i].children.length != 0) {
+    if (target[i].children.length != 0 && i < 3) {
       testHtml += "<div class='lineGrid'><div class='lineTitle'>" + titleArr[i] + "</div>"
-
-      for (let j = 0; j < target[i].children.length; j++) {
-        let id = target[i].children[j].id;
-        id = id.split('_');
-        id = id[1];
-        testHtml += "<div class='lineSet'><div class='lineUserName'>" + storage.user[data[id]].userName + "</div><div class='gap'>서명</div><div class='linedate'>/</div></div>"
-      }
-      testHtml += "</div>"
+    } else if (target[i].children.length != 0 && i== 3) {
+      testHtml2 += "<div class='lineGrid'><div class='lineTitle'>" + titleArr[i] + "</div>"
     }
+
+    for (let j = 0; j < target[i].children.length; j++) {
+      let id = target[i].children[j].id;
+      id = id.split('_');
+      id = id[1];
+      if (i < 2 && j < target[i].children.length-1) {
+        testHtml += "<div class='lineSet'><div class='lineUserName'>" + storage.user[data[id]].userName + "</div><div class='gap'>서명</div><div class='linedate'>/</div></div>"
+      } else if (i < 2 && j == target[i].children.length-1) {
+        testHtml += "<div class='lineSet'><div class='lineUserNameLast'>" + storage.user[data[id]].userName + "</div><div class='gapLast'>서명</div><div class='linedateLast'>/</div></div>"
+      }else if ( i ==2) {
+        testHtml += "<div class='lineSet'><div class='lineUserName'>" + storage.user[data[id]].userName + "</div><div class='gap'>서명</div><div class='linedate'>/</div></div>"
+      } else if (i ==3 ) {
+        testHtml2 += "<div class='lineSet'><div class='lineUserName'>" + storage.user[data[id]].userName + "</div><div class='gap'>서명</div><div class='linedate'>/</div></div>"
+      }
+
+    }
+
+    if (target[i].children.length != 0 && i < 3) {
+      testHtml += "</div>";
+    } else if (target[i].children.length != 0 && i ==3) {
+      testHtml2 += "</div>";
+    }
+
+
   }
 
+  testHtml += "</div>";
+  testHtml2 += "</div>";
+
+
+  testHtml += testHtml2;
   lineTarget.html(testHtml);
-
 }
-
-
-
-
 
 
 
