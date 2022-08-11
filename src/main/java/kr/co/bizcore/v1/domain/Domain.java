@@ -457,8 +457,6 @@ public abstract class Domain {
                         str1 += ("," + fieldName);
                         str2 += (",'" +  new java.sql.Timestamp(((Date)v).getTime()) + "'");
                     }
-                    str1 += ("," + fieldName);
-                    str2 += (",'" +  new java.sql.Timestamp(((Date)v).getTime()) + "'");
                 } else if (field.getType().getName().equals(java.sql.Date.class.getName())) {
                     str1 += ("," + fieldName);
                     str2 += (",'" +  java.sql.Date.class.cast(v) + "'");
