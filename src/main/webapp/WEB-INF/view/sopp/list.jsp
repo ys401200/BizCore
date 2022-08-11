@@ -21,6 +21,12 @@
                 <button type="button" onclick="soppSearchList();">검색</button>
             </div>
         </div>
+        <div class="detailContainer">
+            <hr />
+            <span class="detailMainSpan"></span>
+            <div class="detailBtns"></div>
+            <div class="detailContent"></div>
+        </div>
         <div class="soppContainer">
             <hr />
             <span>영업기회조회</span>

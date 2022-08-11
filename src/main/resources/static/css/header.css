@@ -186,6 +186,33 @@ button, select, input{
 .defaultFormContainer .defaultFormLine .defaultFormContent select:hover{
 	border: 1px solid#302D81;
 }
+
+.detailViewContainer{
+	width: 100%;
+}
+
+.detailViewContainer .detailViewForm{
+	width: 100%;
+	margin: 0 auto;
+}
+
+.detailViewContainer .detailViewForm .detailViewFormSpanDiv{
+	float:left;
+	width:10%;
+	height:50px;
+}
+
+.detailViewContainer .detailViewForm .detailViewFormSpanDiv span{
+	color: #302D81;
+	font-size: 1rem;
+	font-weight: 500;
+}
+
+.detailViewContainer .detailViewForm .detailViewFormContent{
+	float:right;
+	width:90%;
+	height:50px;
+}
 /* crud 폼 끝 */
 
 /* tab 시작 */
@@ -220,6 +247,12 @@ input[name="tabItem"] {
 	display: none;
 }
 
+.tabContent{
+	height: 100%;
+	max-height: 300px;
+	overflow-y: auto;
+}
+
 .tabs input:checked + .tabItem {
 	background-color: #302D81;
 	color: #fff;
@@ -231,13 +264,27 @@ input[name="tabItem"] {
 }
 
 .tradeList .tradeFirstTitle,
+.tradeList .tradeSecondFormTitle{
+	display: grid;
+	grid-template-columns: repeat(7, 1fr);
+	color: #302D81;
+	font-weight: 500;
+}
+
 .tradeList .tradeFirstFormContent,
-.tradeList .tradeSecondFormTitle,
-.tradeList .tradeSecondFormContent,
-.tradeList .tradeThirdFormTitle
+.tradeList .tradeSecondFormContent
 {
 	display: grid;
 	grid-template-columns: repeat(7, 1fr);
+}
+
+.tradeList .tradeThirdFormTitle
+{
+	display: grid;
+	padding-top: 20px;
+	grid-template-columns: repeat(12, 1fr);
+	color: #302D81;
+	font-weight: 500;
 }
 
 .tradeList .tradeFirstTitle .tradeFirstTitleItem,
@@ -246,17 +293,12 @@ input[name="tabItem"] {
 .tradeList .tradeSecondFormContent .tradeSecondContentItem,
 .tradeList .tradeThirdFormTitle .tradeThirdTitleItem{
 	padding: 10px;
-	border: 1px solid #000;
-}
-
-.tabEstList{
-    display: grid; 
-	width: 99%; 
-	margin: 0 auto;
+	border: 1px solid #D9D9D9;
 }
 
 .tabEstList .gridHeader,
 .tabEstList .gridContent{
+	display: grid;
     grid-template-columns: 7% 7% 7% 14% 7% 11% 11% 11% 18%;
 }
 /* tab 끝 */

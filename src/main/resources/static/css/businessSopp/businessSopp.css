@@ -4,7 +4,7 @@
 	align-items: center;
 	justify-content: center;
 	margin-left: 2%;
-	margin-bottom: 2%;
+	margin-bottom: 1%;
 	max-width: 1782px;
 	height: 100px;
 	background: #FFFFFF;
@@ -60,7 +60,50 @@
 	cursor: pointer;
 }
 
+.detailContainer{
+	display: none;
+	margin-left: 2%;
+	max-width: 1782px;
+	background: #FFFFFF;
+	overflow: auto;
+	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
+}
+
+.detailContainer .detailContent{
+	padding: 15px;
+}
+
+.detailContainer hr{
+	float: left;
+	border-top: 0;
+	border-left : thick solid #E45050;
+	border-right: 0;
+	border-bottom: 0;
+ 	height : 44px;
+ 	width: 4px;
+ 	margin: 0;
+}
+
+.detailContainer .detailMainSpan{
+	font-weight: 500;
+	font-size: 16px;
+	margin-left: 18px;
+	line-height: 3;
+	color: #332E85;
+	float: left;
+}
+
+.detailContainer .detailBtns{
+	float: right;
+	padding-top: 10px;
+}
+
+.detailContainer .detailBtns button{
+	margin-right: 10px;
+}
+
 .soppContainer{
+	margin-top: 1%;
 	margin-left: 2%;
 	max-width: 1782px;
 	background: #FFFFFF;
