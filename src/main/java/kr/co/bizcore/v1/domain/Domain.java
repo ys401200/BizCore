@@ -450,7 +450,7 @@ public abstract class Domain {
                     str1 += ("," + fieldName);
                     str2 += ("," + (byte)v);
                 } else if (field.getType().getName().equals(Date.class.getName())) {
-                    if(className.equals("Sopp")&& (fieldName.equals("sopptargetdate") || fieldName.equals("maintenance_s") || fieldName.equals("maintenance_e"))){
+                    if(className.equals("Sopp") && (fieldName.equals("sopptargetdate") || fieldName.equals("maintenance_s") || fieldName.equals("maintenance_e"))){
                         str1 += ("," + fieldName);
                         str2 += (",'" +  new java.sql.Timestamp(((Date)v).getTime()).toString().substring(0, 10) + "'");
                     }else{
