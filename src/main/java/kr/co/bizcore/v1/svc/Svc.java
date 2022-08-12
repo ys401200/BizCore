@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.bizcore.v1.mapper.AccountingMapper;
 import kr.co.bizcore.v1.mapper.BoardMapper;
@@ -39,6 +40,7 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+@Transactional(readOnly = false)
 @Service
 @Slf4j
 public abstract class Svc {
@@ -346,18 +348,22 @@ public abstract class Svc {
         logger.debug("[Svc.executeSqlQuery] SQL Query : " + sql);
 
         try {
+            //sqlSession.commit(false);
             conn = sqlSession.getConnection();
             pstmt = conn.prepareStatement(sql);
             result = pstmt.executeUpdate();
+            //if(result > 0)  conn.commit();
+            //sqlSession.commit();
             logger.debug("[Svc.executeSqlQuery] Updated rows : " + result);
         } catch (SQLException e) {
             e.printStackTrace();
             logger.info("[Svc.executeSqlQuery] Failure Custom SQL Query : " + sql);
+            //try {conn.rollback();} catch (SQLException e1) {e1.printStackTrace();}
         }finally{
-            try {
-                if(pstmt != null)   pstmt.close();
-                if(conn != null)    conn.close();
-            } catch (SQLException e) {logger.info("[Svc.executeSqlQuery] Connection Object close fail. ");e.printStackTrace();}
+            //try {
+                //if(pstmt != null)   pstmt.close();
+                //if(conn != null)    conn.close();
+            //} catch (SQLException e) {logger.info("[Svc.executeSqlQuery] Connection Object close fail. ");e.printStackTrace();}
         }
         return result;
     }
