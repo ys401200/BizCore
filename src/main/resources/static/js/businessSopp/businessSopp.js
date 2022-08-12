@@ -160,7 +160,6 @@ function soppDetailView(e){
 	id = $(e).data("id");
 	url = "/api/sopp/" + id;
 	method = "get";
-	data = "";
 	type = "detail";
 
 	crud.defaultAjax(url, method, data, type, soppSuccessView, soppErrorView);
@@ -171,6 +170,8 @@ function soppSuccessList(result){
 
 	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined){
 		window.setTimeout(drawSoppList, 600);
+	}else{
+		window.setTimeout(drawSoppList, 200);
 	}
 }
 
@@ -184,17 +185,17 @@ function soppSuccessView(result){
 	detailContainer = $(document).find(".detailContainer");
 	detailContainer.hide();
 
-	title = (result.title === null || result.title === "") ? "제목 없음" : result.title;
-	userName = (result.employee == 0 || result.employee === null) ? "데이터 없음" : storage.user[result.employee].userName;
-	customer = (result.customer == 0 || result.customer === null) ? "데이터 없음 " : storage.customer[result.customer].name;
-	customerUser = (result.picOfCustomer == 0 || result.picOfCustomer === null) ? "데이터 없음" : storage.user[result.picOfCustomer].userName;
-	endUser = (result.endUser == 0 || result.endUser === null) ? "데이터 없음" : storage.customer[result.endUser].name;
-	status = (result.status === null || result.status === "") ? "없음" : storage.code.etc[result.status];
-	progress = (result.progress === null || result.progress === "") ? "데이터 없음" : result.progress + "%";
-	contType = (result.contType === null || result.contType === "") ? "없음" : storage.code.etc[result.contType];
-	soppType = (result.soppType === null || result.soppType === "") ? "데이터 없음" : storage.code.etc[result.soppType];
-	expectedSales = (result.expectedSales === null || result.expectedSales === "") ? "데이터 없음" : numberFormat(result.expectedSales);
-	detail = (result.detail === null || result.detail === "") ? "내용 없음" : result.detail;
+	title = (result.title === null || result.title === "" || result.title === undefined) ? "제목 없음" : result.title;
+	userName = (result.employee == 0 || result.employee === null || result.employee === undefined) ? "데이터 없음" : storage.user[result.employee].userName;
+	customer = (result.customer == 0 || result.customer === null || result.customer === undefined) ? "데이터 없음 " : storage.customer[result.customer].name;
+	customerUser = (result.picOfCustomer == 0 || result.picOfCustomer === null || result.picOfCustomer === undefined) ? "데이터 없음" : storage.user[result.picOfCustomer].userName;
+	endUser = (result.endUser == 0 || result.endUser === null || result.endUser === undefined) ? "데이터 없음" : storage.customer[result.endUser].name;
+	status = (result.status === null || result.status === "" || result.status === undefined) ? "없음" : storage.code.etc[result.status];
+	progress = (result.progress === null || result.progress === "" || result.progress === undefined) ? "데이터 없음" : result.progress + "%";
+	contType = (result.contType === null || result.contType === "" || result.contType === undefined) ? "없음" : storage.code.etc[result.contType];
+	soppType = (result.soppType === null || result.soppType === "" || result.soppType === undefined) ? "데이터 없음" : storage.code.etc[result.soppType];
+	expectedSales = (result.expectedSales === null || result.expectedSales === "" || result.expectedSales === undefined) ? "데이터 없음" : numberFormat(result.expectedSales);
+	detail = (result.detail === null || result.detail === "" || result.detail === undefined) ? "내용 없음" : result.detail;
 	
 	disDate = dateDis(result.targetDate);
 	targetDate = dateFnc(disDate);
@@ -268,6 +269,7 @@ function soppSuccessView(result){
 	html += createTabTradeList();
 	detailContainer.find("span").text(title);
 	detailContainer.find(".detailContent").html(html);
+	detailContainer.find(".detailBtns").html("");
 	detailContainer.find(".detailBtns").append("<button type='button' onclick='soppUpdateForm(" + JSON.stringify(result) + ");'>수정</button><button type='button' onclick='soppDelete(" + result.no + ");'>삭제</button><button type='button'>닫기</button>");
 	createTabEstList();
 
@@ -435,17 +437,17 @@ function soppInsertForm(){
 function soppUpdateForm(result){
 	let html, title, userName, customer, customerUser, endUser, progress, disDate, expectedSales, detail, dataArray;
 
-	title = (result.title === null || result.title === "") ? "제목 없음" : result.title;
-	userName = (result.employee == 0 || result.employee === null) ? "데이터 없음" : storage.user[result.employee].userName;
-	customer = (result.customer == 0 || result.customer === null) ? "데이터 없음 " : storage.customer[result.customer].name;
-	customerUser = (result.picOfCustomer == 0 || result.picOfCustomer === null) ? "데이터 없음" : storage.user[result.picOfCustomer].userName;
-	endUser = (result.endUser == 0 || result.endUser === null) ? "데이터 없음" : storage.customer[result.endUser].name;
-	status = (result.status === null || result.status === "") ? "없음" : storage.code.etc[result.status];
-	progress = (result.progress === null || result.progress === "") ? "데이터 없음" : result.progress + "%";
-	contType = (result.contType === null || result.contType === "") ? "없음" : storage.code.etc[result.contType];
-	soppType = (result.soppType === null || result.soppType === "") ? "데이터 없음" : storage.code.etc[result.soppType];
-	expectedSales = (result.expectedSales === null || result.expectedSales === "") ? "데이터 없음" : numberFormat(result.expectedSales);
-	detail = (result.detail === null || result.detail === "") ? "내용 없음" : result.detail;
+	title = (result.title === null || result.title === "" || result.title === undefined) ? "제목 없음" : result.title;
+	userName = (result.employee == 0 || result.employee === null || result.employee === undefined) ? "데이터 없음" : storage.user[result.employee].userName;
+	customer = (result.customer == 0 || result.customer === null || result.customer === undefined) ? "데이터 없음 " : storage.customer[result.customer].name;
+	customerUser = (result.picOfCustomer == 0 || result.picOfCustomer === null || result.picOfCustomer === undefined) ? "데이터 없음" : storage.user[result.picOfCustomer].userName;
+	endUser = (result.endUser == 0 || result.endUser === null || result.endUser === undefined) ? "데이터 없음" : storage.customer[result.endUser].name;
+	status = (result.status === null || result.status === "" || result.status === undefined) ? "없음" : storage.code.etc[result.status];
+	progress = (result.progress === null || result.progress === "" || result.progress === undefined) ? "데이터 없음" : result.progress;
+	contType = (result.contType === null || result.contType === "" || result.contType === undefined) ? "없음" : storage.code.etc[result.contType];
+	soppType = (result.soppType === null || result.soppType === "" || result.soppType === undefined) ? "데이터 없음" : storage.code.etc[result.soppType];
+	expectedSales = (result.expectedSales === null || result.expectedSales === "" || result.expectedSales === undefined) ? "데이터 없음" : numberFormat(result.expectedSales);
+	detail = (result.detail === null || result.detail === "" || result.detail === undefined) ? "내용 없음" : result.detail;
 	
 	disDate = dateDis(result.targetDate);
 	targetDate = dateFnc(disDate);
@@ -716,7 +718,6 @@ function soppDelete(no){
 	if(confirm("정말로 삭제하시겠습니까??")){
 		url = "/api/sopp/" + no;
 		method = "delete";
-		data = "";
 		type = "delete";
 	
 		crud.defaultAjax(url, method, data, type, soppSuccessDelete, soppErrorDelete);

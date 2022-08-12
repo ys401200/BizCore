@@ -31,7 +31,7 @@ public interface SoppMapper {
             "AND soppno = #{soppNo} AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId})")
     public Sopp getSopp(@Param("soppNo") String soppNo, @Param("compId") String compId);
 
-    @Update("UPDATE swc_sopp SET attrib = 'XXXXX' WHERE soppno = #{e.no} AND compno = (SELECT compno FROM swcore.swc_company WHERE compid = #{compId})")
+    @Update("UPDATE swc_sopp SET attrib = 'XXXXX' WHERE soppno = #{no} AND compno = (SELECT compno FROM swcore.swc_company WHERE compid = #{compId})")
     public int removeSopp(@Param("no") String no, @Param("compId") String compId);
 
     @Select("SELECT a.estno AS no, estid AS id, esttitle AS title, estdesc AS remark, custno AS customer, userno AS writer, estamount AS amount, estvat AS tax, esttotal AS total, estdate AS date FROM swc_est a, (SELECT estid AS id, MAX(estver) AS ver FROM swc_est WHERE estid IS NOT NULL AND attrib NOT LIKE 'XXX%' GROUP BY estid) b WHERE a.estid = b.id AND a.estver = b.ver AND a.compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) ORDER BY estno DESC")
@@ -45,7 +45,4 @@ public interface SoppMapper {
 
     @Select("SELECT estitemno no, itemkinds kind, itemtitle title, custno customer, productNo, productName, productSpec, productqty qty, productnetprice price, productvat tax, productamount amount, productdis discount, producttotal total, productremark remark, regdate created, moddate modified FROM swc_estitems WHERE estid = #{id} AND estver = #{ver}")
     public List<EstimateItem> getEstimateItems(@Param("id") String id, @Param("ver") int ver);
-
-
-    
 }

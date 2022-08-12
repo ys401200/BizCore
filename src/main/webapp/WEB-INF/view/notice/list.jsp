@@ -19,9 +19,16 @@
                 <button type="button" onclick="noticeSearchList();">검색</button>
             </div>
         </div>
+        <div class="detailContainer">
+            <hr />
+            <span class="detailMainSpan"></span>
+            <div class="detailBtns"></div>
+            <div class="detailContent"></div>
+        </div>
 		<div class="noticeContainer">
 			<hr />
 			<span>공지사항 </span>
+            <button type="button" onclick="noticeInsertForm();">등록</button>
 			<div class="noticeContent"></div>
 			<div class="gridNoticeList"></div>
 			<div class="pageContainer"></div>

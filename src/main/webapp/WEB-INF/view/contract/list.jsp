@@ -21,6 +21,12 @@
                 <button type="button" onclick="contractSearchList();">검색</button>
             </div>
         </div>
+        <div class="detailContainer">
+            <hr />
+            <span class="detailMainSpan"></span>
+            <div class="detailBtns"></div>
+            <div class="detailContent"></div>
+        </div>
         <div class="contractContainer">
             <hr />
             <span>계약조회</span>

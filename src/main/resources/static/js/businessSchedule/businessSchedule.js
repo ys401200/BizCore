@@ -12,9 +12,17 @@ $(document).ready(() => {
 });
 
 function getScheduleList() {
-	let url, method, data, type;
+	let url, method, data, type, scheduleType, scheduleRange;
 
-	url = "/api/schedule";
+	scheduleType = $(document).find("#scheduleType").val();
+	scheduleRange = $(document).find("#scheduleRange").val();
+
+	if(scheduleType === undefined || scheduleRange === undefined){
+		url = "/api/schedule";
+	}else{
+		url = "/api/schedule/" + scheduleType + "/" + scheduleRange;
+	}
+
 	method = "get";
 	data = "";
 	type = "list";
@@ -23,9 +31,17 @@ function getScheduleList() {
 } // End of getScheduleList()
 
 function scheduleSearchList(){
-	let searchCategory, searchText, url, method, data, type;
+	let searchCategory, searchText, url, method, data, type, scheduleType, scheduleRange;
 
-	url = "/api/schedule";
+	scheduleType = $(document).find("#scheduleType").val();
+	scheduleRange = $(document).find("#scheduleRange").val();
+
+	if(scheduleType === undefined || scheduleRange === undefined){
+		url = "/api/schedule";
+	}else{
+		url = "/api/schedule" + scheduleType + "/" + scheduleRange;
+	}
+	
 	method = "get";
 	data = "";
 	type = "list";
@@ -160,6 +176,7 @@ function drawScheduleList() {
 	pageContainer[0].innerHTML = pageNation;
 	createGrid(container, header, data, ids, fnc);
 }// End of drawNoticeList()
+
 
 // 일정 캘린더를 만드는 함수
 function drawCalendar(container){
@@ -506,5 +523,32 @@ function scheduleSuccessView(result){
 }
 
 function scheduleErrorView(){
+	alert("에러");
+}
+
+function scheduleSelectChange(){
+	let url, method, data, type, scheduleType, scheduleRange;
+
+	scheduleType = $(document).find("#scheduleType").val();
+	scheduleRange = $(document).find("#scheduleRange").val();
+	url = "/api/schedule" + scheduleType + "/" + scheduleRange;
+	method = "get";
+	data = "";
+	type = "list";
+
+	crud.defaultAjax(url, method, data, type, scheduleSelectSuccess, scheduleSelectError);
+}
+
+function scheduleSelectSuccess(result){
+	storage.scheduleList = result;
+
+	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined){
+		window.setTimeout(drawScheduleList, 600);
+	}else{
+		window.setTimeout(drawScheduleList, 200);
+	}
+}
+
+function scheduleSelectError(){
 	alert("에러");
 }

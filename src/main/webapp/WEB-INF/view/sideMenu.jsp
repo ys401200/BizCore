@@ -33,7 +33,7 @@
 		  		<li><a href="#">업무일지검토</a></li>
 		  	</ul>
 		</li>
-		<li>
+		<!-- <li>
 			<a href="#">
 				<img src="/images/main/icons/mainSalesIcon.png" id="mainSalesIcon" />
 				<span>영업활동관리</span>
@@ -42,7 +42,7 @@
 			<ul id="panel">
 		  		<li><a href="/business/sales">영업활동조회</a></li>
 		  	</ul>
-		</li>
+		</li> -->
 		<li>
 			<a href="#">
 				<img src="/images/main/icons/mainSoppIcon.png"  id="mainSoppIcon"/>
@@ -78,7 +78,7 @@
 		  		<li><a href="#">매입/매출 자료등록</a></li>
 		  	</ul>
 		</li>
-		<li>
+		<!-- <li>
 			<a href="#">
 				<img src="/images/main/icons/mainTechIcon.png" id="mainTechIcon" />
 				<span>기술지원업무</span>
@@ -89,7 +89,7 @@
 		  		<li><a href="#">유지보수계약관리</a></li>
 		  		<li><a href="#">유지보수매입관리</a></li>
 		  	</ul>
-		</li>
+		</li> -->
 		<li>
 			<a href="/business/filebox">
 				<img src="/images/main/icons/mainBoardFileIcon.png" id="mainBoardFileIcon" />

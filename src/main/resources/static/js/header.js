@@ -245,11 +245,10 @@ function init(){
 					if(result.result === "ok"){
 						if(successFnc !== undefined){
 							let jsonData;
-							jsonData = cipher.decAes(result.data);
-							jsonData = JSON.parse(jsonData);
-
+							
 							if(type === "list"){
-
+								jsonData = cipher.decAes(result.data);
+								jsonData = JSON.parse(jsonData);
 								if(localStorage.getItem("searchList")){
 									let searchCategory, searchText, temp = [], resultArray = [];
 									searchCategory = localStorage.getItem("searchCategory");
@@ -272,6 +271,8 @@ function init(){
 	
 								localStorage.clear();
 							}else if(type === "detail"){
+								jsonData = cipher.decAes(result.data);
+								jsonData = JSON.parse(jsonData);
 								successFnc(jsonData);
 							}else{
 								successFnc();

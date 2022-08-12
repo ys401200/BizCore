@@ -101,57 +101,240 @@ function drawNoticeList() {
 	createGrid(container, header, data, ids, fnc);
 }// End of drawNoticeList()
 
-function noticeDetailView(event) {// 선택한 그리드의 글 번호 받아오기 
-	let no = event.dataset.id;
-	let url;
-	url = apiServer + "/api/notice/" + no;
+function noticeDetailView(e) {// 선택한 그리드의 글 번호 받아오기 
+	let id, url, method, data, type;
 
-	$.ajax({
-		"url": url,
-		"method": "get",
-		"dataType": "json",
-		"cache": false,
-		success: (result) => {
-			let jsonData;
-			if (result.result === "ok") {
-				jsonData = cipher.decAes(result.data);
-				jsonData = JSON.parse(jsonData);
-				drawNoticeContent(jsonData);
-			} else {
-				modal.alert("공지사항 상세조회에 실패했습니다.");
-			}
-		}
-	})
+	id = $(e).data("id");
+	url = "/api/notice/" + id;
+	method = "get";
+	data = "";
+	type = "detail";
 
+	crud.defaultAjax(url, method, data, type, noticeSuccessView, noticeErrorView);
 } // End of noticeDetailView()
-
-function drawNoticeContent(jsonData) { // 공지사항 본문 보이게 하는 함수 
-	let title = jsonData.title;
-	let content = jsonData.content;
-	let html = "";
-	let headerDiv;
-	let contentDiv;
-
-	headerDiv = "<div class='headerDiv' style='display:grid;grid-template-columns:80% 20%' onclick='deleteNoticeContent()'><div>" + title + "</div><div class='deleteButton'>X</div></div>";
-	contentDiv = "<div class='contentDiv' style='display:grid'>" + content + "</div>";
-	html += (headerDiv + contentDiv);
-	$(".noticeContent").html(html);
-	$(".noticeContent").show();
-
-
-}// End of drawNoticeContent()
-
-
-function deleteNoticeContent() { // 공지사항 본문 지우는 함수 
-	$(".noticeContent").hide();
-}
-
 
 function noticeSuccessList(result){
 	storage.noticeList = result;
-	window.setTimeout(drawNoticeList, 200);
+
+	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined){
+		window.setTimeout(drawNoticeList, 600);
+	}else{
+		window.setTimeout(drawNoticeList, 200);
+	}
 }
 
 function noticeErrorList(){
 	alert("에러");
+}
+
+function noticeSuccessView(result){
+	let html, title, content, writer, dataArray, disDate, setDate, detailContainer;
+
+	detailContainer = $(document).find(".detailContainer");
+	detailContainer.hide();
+
+	title = (result.title === null || result.title === "") ? "제목 없음" : result.title;
+	content = (result.content === null || result.content === "") ? "내용 없음" : result.content;
+	writer = (result.writer == 0 || result.writer === null) ? "데이터 없음" : storage.user[result.writer].userName;
+	disDate = dateDis(result.created, result.modified);
+	setDate = dateFnc(disDate);
+
+	dataArray = [
+		{
+			"title": "번호",
+			"value": result.no,
+		},
+		{
+			"title": "제목",
+			"value": title,
+		},
+		{
+			"title": "내용",
+			"value": content,
+			"type": "textarea",
+		},
+		{
+			"title": "작성자",
+			"value": writer,
+		},
+		{
+			"title": "등록일",
+			"value": setDate,
+		},
+	];
+
+	html += detailViewForm(dataArray);
+	detailContainer.find("span").text(title);
+	detailContainer.find(".detailContent").html(html);
+	detailContainer.find(".detailBtns").append("<button type='button' onclick='noticeUpdateForm(" + JSON.stringify(result) + ");'>수정</button><button type='button' onclick='noticeDelete(" + result.no + ");'>삭제</button><button type='button'>닫기</button>");
+	detailContainer.show();
+}
+
+function noticeErrorView(){
+	alert("에러");
+}
+
+function noticeInsertForm(){
+	let html, dataArray;
+
+	dataArray = [
+		{
+			"title": "제목",
+			"elementId": "title",
+			"disabled": false,
+		},
+		{
+			"title": "내용",
+			"elementId": "content",
+			"type": "textarea",
+		},
+		{
+			"title": "담당자",
+			"elementId": "writer",
+			"dataKeyup": "user",
+			"disabled": false,
+		},
+	];
+
+	html = detailViewFormModal(dataArray);
+
+	modal.show();
+	modal.headTitle.text("공지사항등록");
+	modal.content.css("width", "50%");
+	modal.body.html(html);
+	modal.body.css("max-height", "800px");
+	modal.confirm.text("등록");
+	modal.close.text("취소");
+	modal.confirm.attr("onclick", "noticeInsert();");
+	modal.close.attr("onclick", "modal.hide();");
+}
+
+function noticeUpdateForm(result){
+	let html, title, content, writer, detail, dataArray;
+
+	title = (result.title === null || result.title === "") ? "제목 없음" : result.title;
+	content = (result.content === null || result.content === "") ? "내용 없음" : result.content;
+	writer = (result.writer == 0 || result.writer === null) ? "데이터 없음" : storage.user[result.writer].userName;
+
+	dataArray = [
+		{
+			"title": "제목",
+			"elementId": "title",
+			"value": title,
+			"disabled": false,
+		},
+		{
+			"title": "내용",
+			"elementId": "detail",
+			"value": detail,
+			"type": "textarea",
+		},
+		{
+			"title": "담당자",
+			"elementId": "writer",
+			"dataKeyup": "customer",
+			"value": writer,
+			"disabled": false,
+		},
+	];
+
+	html = detailViewFormModal(dataArray);
+
+	modal.show();
+	modal.headTitle.text(title);
+	modal.content.css("width", "50%");
+	modal.body.html(html);
+	modal.body.css("max-height", "800px");
+	modal.confirm.text("수정완료");
+	modal.close.text("취소");
+	modal.confirm.attr("onclick", "noticeUpdate(" + result.no + ");");
+	modal.close.attr("onclick", "modal.hide();");
+}
+
+function noticeInsert(){
+	let title, content, writer;
+
+	title = $(document).find("#title").val();
+	content = tinymce.activeEditor.getContent();
+	writer = $(document).find("#writer");
+	writer = dataListFormat(writer.attr("id"), writer.val());
+
+	url = "/api/notice";
+	method = "post";
+	data = {
+		"title": title,
+		"content": content,
+		"writer": writer,
+	}
+	type = "insert";
+
+	data = JSON.stringify(data);
+	data = cipher.encAes(data);
+
+	crud.defaultAjax(url, method, data, type, noticeSuccessInsert, noticeErrorInsert);
+}
+
+function noticeSuccessInsert(){
+	alert("등록완료");
+	location.reload();
+}
+
+function noticeErrorInsert(){
+	alert("등록에러");
+}
+
+function noticeUpdate(no){
+	let title, content, writer;
+
+	title = $(document).find("#title").val();
+	content = tinymce.activeEditor.getContent();
+	writer = $(document).find("#writer");
+	writer = dataListFormat(writer.attr("id"), writer.val());
+
+	url = "/api/notice/" + no;
+	method = "put";
+	data = {
+		"title": title,
+		"content": content,
+		"writer": writer,
+	}
+	type = "update";
+
+	data = JSON.stringify(data);
+	data = cipher.encAes(data);
+
+	crud.defaultAjax(url, method, data, type, noticeSuccessUpdate, noticeErrorUpdate);
+}
+
+function noticeSuccessUpdate(){
+	alert("수정완료");
+	location.reload();
+}
+
+function noticeErrorUpdate(){
+	alert("수정에러");
+}
+
+function noticeDelete(no){
+	let url, method, data, type;
+
+	if(confirm("정말로 삭제하시겠습니까??")){
+		url = "/api/notice/" + no;
+		method = "delete";
+		data = "";
+		type = "delete";
+	
+		crud.defaultAjax(url, method, data, type, noticeSuccessDelete, noticeErrorDelete);
+	}else{
+		return false;
+	}
+}
+
+function noticeSuccessDelete(){
+	alert("삭제완료");
+	location.reload();
+}
+
+function noticeErrorDelete(){
+	alert("삭제에러");
 }

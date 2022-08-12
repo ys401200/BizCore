@@ -115,7 +115,7 @@ public abstract class Domain {
             column.put("customer","custno");
             column.put("cipOfCustomer","custmemberno");
             column.put("detail","contdesc");
-            column.put("cipOfBuyer","buyrmemberno");
+            column.put("cipOfendUser","buyrmemberno");
             column.put("partner","ptncno");
             column.put("cipOfPartner","ptncmemberno");
             column.put("supplier","supplyno");
@@ -129,8 +129,8 @@ public abstract class Domain {
             column.put("typeOfBusiness","businesstype");
             column.put("created","regdatetime");
             column.put("modified","moddatetime");
-            column.put("maintenanceStart","freemaintsdate");
-            column.put("maintenanceEnd","freemaintedate");
+            column.put("startOfFreeMaintenance","freemaintsdate");
+            column.put("endOfFreeMaintenance","freemaintedate");
             column.put("saleDate","contorddate");
 
             column = new HashMap<>();
