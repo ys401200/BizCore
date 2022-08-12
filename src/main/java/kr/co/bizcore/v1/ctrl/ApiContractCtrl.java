@@ -50,7 +50,7 @@ public class ApiContractCtrl extends Ctrl{
                 result = "{\"result\":\"ok\",\"data\":\"" + list + "\"}";
             }
         return result;
-    } // End of apiProcureGet
+    } 
 
     @RequestMapping(value = "/{no}", method = RequestMethod.GET)
     public String getDetail(HttpServletRequest request, @PathVariable String no){
