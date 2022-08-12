@@ -3,11 +3,15 @@ package kr.co.bizcore.v1;
 import java.io.File;
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -48,6 +52,11 @@ public class ViewConfig implements WebMvcConfigurer {
     @Bean
     public UploadedFileStorage getFileStorage(){
         return new UploadedFileStorage(fileUploadedPath);
+    }
+
+    @Bean
+    public PlatformTransactionManager txMng(@Autowired DataSource ds) throws Exception{
+        return new DataSourceTransactionManager(ds);
     }
 
     private void appInitialize(){
