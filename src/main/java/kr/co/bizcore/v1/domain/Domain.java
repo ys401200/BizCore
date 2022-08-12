@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -269,6 +270,7 @@ public abstract class Domain {
 
     public String toJson() {
         ObjectMapper mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(Include.NON_NULL);
         String result = null;
         try {result = mapper.writeValueAsString(this);} catch (JsonProcessingException e) {e.printStackTrace();}
         return result;
