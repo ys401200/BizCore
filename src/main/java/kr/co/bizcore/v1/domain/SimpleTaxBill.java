@@ -38,8 +38,8 @@ public class SimpleTaxBill extends Domain{
         result += ("\"sn\":\"" + sn + "\",");
         result += ("\"amount\":" + amount + ",");
         result += ("\"tax\":" + tax + ",");
-        result += ("\"product\":\"" + product == null ? "null" : product + "\",");
-        result += ("\"remark\":\"" + remark == null ? "null" : remark + "\",");
+        result += ("\"product\":" + (product == null ? "null" : "\"" + product + "\"") + ",");
+        result += ("\"remark\":" + (remark == null ? "null" : "\"" + remark + "\"") + ",");
         result += ("\"created\":" + (created == null ? "null" : created.getTime()) + ",");
         result += ("\"modified\":" + (modified == null ? "null" : modified.getTime()) + "}");
         return result;
