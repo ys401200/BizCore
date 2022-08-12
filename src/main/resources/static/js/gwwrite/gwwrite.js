@@ -23,7 +23,6 @@ function getformList() {
         jsondata = JSON.parse(jsondata);
         storage.formList = jsondata;
         drawFormList();
-        drawOrganizationChart();
       } else {
         alert("에러");
       }
@@ -37,10 +36,6 @@ function getformList() {
   previewWidth = previewWidth.clientWidth;
   let target = $(".reportInsertForm");
   target.css("height", Math.ceil(previewWidth / 210 * 297));
-
-
-
-
 
 }
 
@@ -68,6 +63,20 @@ function drawFormList() {
   }
 
   target.html(targetHtml);
+
+  let orgChartTarget = $("#lineLeft");
+  let userData = new Array();
+
+  let x;
+  for (x in storage.user) userData.push(x);
+
+  let innerHtml = "";
+
+  for (let i = 0; i < userData.length; i++) {
+    innerHtml += "<div><input class='testClass' type ='checkbox' id='cb" + i + "' name='userNames' value='" + data[i] + "'><label for='cb'>" + storage.user[userData[i]].userName + "</label></div>"
+    orgChartTarget.html(innerHtml);
+  }
+
 }
 
 function selectChangeEvent(num) {
@@ -76,8 +85,6 @@ function selectChangeEvent(num) {
   let html = target2.html();
   let arr = html.split("\n");
 
-
-  // 양식이 선택 되었을 때 
   if (arr.length > 1) {
     let targetArr = [1, 2, 3, 4];
     for (let i = 1; i < targetArr.length + 1; i++) {
@@ -93,7 +100,8 @@ function selectChangeEvent(num) {
           $(".formDetail").hide();
 
         } else if (i == 3) {
-
+          $(".inputs").attr("readonly", false);
+          $(".inputs").css("border", "1px solid black");
           $(".lineDetail").hide();
           $(".formDetail").hide();
         }
@@ -119,14 +127,14 @@ function setSelectedFormName(num) {
 }
 
 
-// 결재양식 선택에서 양식 선택 버튼 눌렀을 때 이벤트 함수 
+// 결재양식 선택에서 양식 선택 버튼 눌렀을 때 함수 
 function selectForm() {
   let preview = $(".formPreview").html();
   let forSelect1 = $(".forSelect_1");
   let forSelect2 = $(".forSelect_2");
   let html = forSelect1.html();
 
-  if (preview != '미리보기') {
+  if (preview != ' ') {
     let arr = html.split("\n");
     let hidden = $(".formNumHidden");
     html = arr[0];
@@ -146,23 +154,6 @@ function selectForm() {
 }
 
 
-function drawOrganizationChart() {
-  let orgChartTarget = $("#lineLeft");
-  let data = new Array();
-
-  let x;
-  for (x in storage.user) data.push(x);
-
-  let innerHtml = "";
-
-  for (let i = 0; i < data.length; i++) {
-    innerHtml += "<div><input class='testClass' type ='checkbox' id='cb" + i + "' name='userNames' value='" + data[i] + "'><label for='cb'>" + storage.user[data[i]].userName + "</label></div>"
-    orgChartTarget.html(innerHtml);
-  }
-
-
-
-}
 
 // 조직도에서 이름 선택하고 결재타입 선택한 경우 
 function check(name) {
@@ -171,15 +162,12 @@ function check(name) {
   let html = target.html();
   let selectHtml = "";
 
-
-  //사번 데이터만 가져옴 
   let data = new Array();
   let x;
   for (x in storage.user) data.push(x);
 
   for (let i = 0; i < inputLength.length; i++) {
     if ($("#cb" + i).prop('checked')) {
-      // 중복 입력 불가
       if (document.getElementById("linedata" + i) == null)
         selectHtml += "<div class='lineDataContainer' id='lineContainer_" + i + "'><label id='linedata" + i + "'>" + storage.user[data[i]].userName + "</label><button value='" + i + "' onclick='upClick(this)'>▲</button><button  value='" + i + "' onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
     }
@@ -187,43 +175,11 @@ function check(name) {
   }
   html += selectHtml;
   target.html(html)
-  // 결재타입 선택 후 체크 박스 모두 해제 
+
   $(".testClass").prop('checked', false);
 }
 
 
-
-
-
-
-
-
-// function upDown(obj, el) {
-//   let parent;
-//   parent = obj.parentElement;
-//   parent = parent.parentElement;
-//   let target = $("#" + parent.id);
-//   let list = parent.children;
-
-//   for (let i = 0; i < list.length; i++)   if (list[i] === el) break;
-//   target = list[i + ];
-//   if (target === undefined) target = null;
-//   if (n > 0) parent.insertBefore(target, el);
-//   else if (i > 0 && n < 0) parent.insertBefore(target, el);
-
-//   console.log(list);
-
-
-//   // let data = new Array();
-//   // let x;
-//   // for (x in storage.user) data.push(x);
-//   // let selectHtml = "";
-//   // for (let i = 0; i < numArr.length; i++) {
-//   //   selectHtml += "<div class='lineDataContainer' id='lineContainer_" + list[i] + "'><label id='linedata" + numArr[i] + "'>" + storage.user[data[numArr[i]]].userName + "</label><button value='" + numArr[i] + "' onclick='upDown(this, -1)'>▲</button><button  value='" + numArr[i] + "'onclick='upDown(this, 1)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
-//   // }
-
-//   // target.html(selectHtml);
-// }
 
 function upClick(obj) {
   let parent;
@@ -306,7 +262,7 @@ function createLine() {
   let lineTarget = $(".infoline")[0].children[1];
   lineTarget = $("#" + lineTarget.id);
   lineTarget.html("");
-  lineTarget.css("display","block");
+  lineTarget.css("display", "block");
 
 
   let testHtml = "<div class='lineGridContainer'>";
@@ -322,7 +278,7 @@ function createLine() {
   for (let i = 0; i < target.length; i++) {
     if (target[i].children.length != 0 && i < 3) {
       testHtml += "<div class='lineGrid'><div class='lineTitle'>" + titleArr[i] + "</div>"
-    } else if (target[i].children.length != 0 && i== 3) {
+    } else if (target[i].children.length != 0 && i == 3) {
       testHtml2 += "<div class='lineGrid'><div class='lineTitle'>" + titleArr[i] + "</div>"
     }
 
@@ -330,13 +286,13 @@ function createLine() {
       let id = target[i].children[j].id;
       id = id.split('_');
       id = id[1];
-      if (i < 2 && j < target[i].children.length-1) {
+      if (i < 2 && j < target[i].children.length - 1) {
         testHtml += "<div class='lineSet'><div class='lineUserName'>" + storage.user[data[id]].userName + "</div><div class='gap'>서명</div><div class='linedate'>/</div></div>"
-      } else if (i < 2 && j == target[i].children.length-1) {
+      } else if (i < 2 && j == target[i].children.length - 1) {
         testHtml += "<div class='lineSet'><div class='lineUserNameLast'>" + storage.user[data[id]].userName + "</div><div class='gapLast'>서명</div><div class='linedateLast'>/</div></div>"
-      }else if ( i ==2) {
+      } else if (i == 2) {
         testHtml += "<div class='lineSet'><div class='lineUserName'>" + storage.user[data[id]].userName + "</div><div class='gap'>서명</div><div class='linedate'>/</div></div>"
-      } else if (i ==3 ) {
+      } else if (i == 3) {
         testHtml2 += "<div class='lineSet'><div class='lineUserName'>" + storage.user[data[id]].userName + "</div><div class='gap'>서명</div><div class='linedate'>/</div></div>"
       }
 
@@ -344,7 +300,7 @@ function createLine() {
 
     if (target[i].children.length != 0 && i < 3) {
       testHtml += "</div>";
-    } else if (target[i].children.length != 0 && i ==3) {
+    } else if (target[i].children.length != 0 && i == 3) {
       testHtml2 += "</div>";
     }
 
@@ -365,5 +321,31 @@ function createLine() {
 
 
 
+// function upDown(obj, el) {
+//   let parent;
+//   parent = obj.parentElement;
+//   parent = parent.parentElement;
+//   let target = $("#" + parent.id);
+//   let list = parent.children;
+
+//   for (let i = 0; i < list.length; i++)   if (list[i] === el) break;
+//   target = list[i + ];
+//   if (target === undefined) target = null;
+//   if (n > 0) parent.insertBefore(target, el);
+//   else if (i > 0 && n < 0) parent.insertBefore(target, el);
+
+//   console.log(list);
+
+
+//   // let data = new Array();
+//   // let x;
+//   // for (x in storage.user) data.push(x);
+//   // let selectHtml = "";
+//   // for (let i = 0; i < numArr.length; i++) {
+//   //   selectHtml += "<div class='lineDataContainer' id='lineContainer_" + list[i] + "'><label id='linedata" + numArr[i] + "'>" + storage.user[data[numArr[i]]].userName + "</label><button value='" + numArr[i] + "' onclick='upDown(this, -1)'>▲</button><button  value='" + numArr[i] + "'onclick='upDown(this, 1)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
+//   // }
+
+//   // target.html(selectHtml);
+// }
 
 

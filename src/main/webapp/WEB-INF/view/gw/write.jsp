@@ -31,7 +31,7 @@
                   </div>
                   <div class="formRight">
                     <input type="hidden" class="formNumHidden" />
-                    <div class="formPreview">미리보기</div>
+                    <div class="formPreview"> </div>
                     <button type="button" class="formSelectbtn" onclick="selectForm()">
                       선택
                     </button>
@@ -61,17 +61,17 @@
                       <button onclick="check(this.value)" value="refer">참조 ></button>
                     </div>
                     <div class="innerDetail" id="lineRight">
-                      <label for="examine">검토 ></label>
+                      <label for="examine"> 검토 </label>
                       <div class="typeContainer" id="examine"></div>
-                      <label for="agree">합의 ></label>
+                      <label for="agree"> 합의 </label>
                       <div class="typeContainer" id="agree"></div>
-                      <label for="approval">결재 ></label>
+                      <label for="approval"> 결재 </label>
                       <div class="typeContainer" id="approval"></div>
-                      <label for="conduct">수신 ></label>
+                      <label for="conduct"> 수신 </label>
                       <div class="typeContainer" id="conduct"></div>
-                      <label for="read">열람 ></label>
+                      <label for="read"> 열람 </label>
                       <div class="typeContainer" id="read"></div>
-                      <label for="refer">참조 ></label>
+                      <label for="refer"> 참조 </label>
                       <div class="typeContainer" id="refer"></div>
                     </div>
 

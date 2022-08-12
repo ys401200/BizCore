@@ -1,5 +1,13 @@
 @charset "UTF-8";
 
+
+button {
+	margin: 0.25rem;
+	border: none;
+	color: #ffffff;
+	background-color: #332e85;
+	border-radius: 3px;
+}
 .container {
 	position: relative;
 	left: 2%;
@@ -43,14 +51,14 @@
 
 }
 
-.form,
-.table {
+.forForm,
+.forTable {
 	border: 1px solid black;
 }
 
-.form {
+.forForm {
 overflow: auto;}
-.table {
+.forTable {
 	border-bottom: 0;
 }
 

@@ -16,8 +16,9 @@
 						<div class="pageContainer"></div>
 					</div>
 					<div class="tableFormDiv">
-						<div class="table"></div>
-						<div class="form"></div>
+						<div class="forButtons"></div>
+						<div class="forTable"> 결재선 , 열람, 참조 정보 </div>
+						<div class="forForm">상세 양식 조회 </div>
 					</div>
 				</div>
 			</div>
