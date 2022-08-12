@@ -3,6 +3,8 @@ package kr.co.bizcore.v1.domain;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,14 +28,14 @@ public class Sopp extends SimpleSopp{
     private String priority;
 
 
-    public void setStartOfMaintenance(Date v){startOfMaintenance = v;}
+    //public void setStartOfMaintenance(Date v){startOfMaintenance = v;}
     //public void setStartOfMaintenance(long v){startOfMaintenance = new Date(v);}
-    public void setEndOfMaintenance(Date v){endOfMaintenance = v;}
+    //public void setEndOfMaintenance(Date v){endOfMaintenance = v;}
     //public void setEndOfMaintenance(long v){endOfMaintenance = new Date(v);}
-    public String getStartOfMaintenance(){return cvtDateToStr(startOfMaintenance);}
-    public String getEndOfMaintenance(){return cvtDateToStr(endOfMaintenance);}
+    //public String getStartOfMaintenance(){return cvtDateToStr(startOfMaintenance);}
+    //public String getEndOfMaintenance(){return cvtDateToStr(endOfMaintenance);}
     //public void setTargetDate(Date v){targetDate = v;}
-    public String getTargetDate(){return cvtDateToStr(targetDate);}
+    //public String getTargetDate(){return cvtDateToStr(targetDate);}
 
     private String cvtDateToStr(Date d){
         SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
