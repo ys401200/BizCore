@@ -270,7 +270,7 @@ function soppSuccessView(result){
 	detailContainer.find("span").text(title);
 	detailContainer.find(".detailContent").html(html);
 	detailContainer.find(".detailBtns").html("");
-	detailContainer.find(".detailBtns").append("<button type='button' onclick='soppUpdateForm(" + JSON.stringify(result) + ");'>수정</button><button type='button' onclick='soppDelete(" + result.no + ");'>삭제</button><button type='button'>닫기</button>");
+	detailContainer.find(".detailBtns").append("<button type='button' onclick='soppUpdateForm(" + JSON.stringify(result) + ");'>수정</button><button type='button' onclick='soppDelete(" + result.no + ");'>삭제</button><button type='button' onclick='detailContainerHide();'>닫기</button>");
 	createTabEstList();
 
 	detailContainer.show();

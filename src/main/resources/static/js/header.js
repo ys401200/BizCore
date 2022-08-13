@@ -1048,9 +1048,7 @@ function dataListFormat(id, value){
 	result = $(document).find("datalist#_" + id + " option[value='" + value + "']").data("value");
 
 	if(result === undefined){
-		msg.set("찾고자하는 데이터를 정확히 입력해주십시오.\n다시 확인해주십시오.");
-		$(document).find("#" + id).focus();
-		return false;
+		return "";
 	}else{
 		return result;
 	}
@@ -1409,4 +1407,8 @@ function createTabSalesList(){
 	setTimeout(() => {
 		modal.body.append(html);
 	}, 100);
+}
+
+function detailContainerHide(){
+	$(document).find(".detailContainer").hide();
 }
