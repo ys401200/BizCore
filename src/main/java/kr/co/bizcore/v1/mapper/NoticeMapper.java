@@ -24,7 +24,7 @@ public interface NoticeMapper {
     Notice getSelectedNotice(@Param("compId")String compId, @Param("notiNo") String notiNo); 
 
     // 공지사항 추가하는 쿼리 
-    @Insert ("INSERT INTO bizcore.notice(no, compid, writer, title, content) VALUES(notice_next_no(#{compId}), #{compId} , #{writer}, #{title}, #{content})")
+    @Insert ("INSERT INTO bizcore.notice(no, compid, writer, title, content) VALUES(bizcore.notice_next_no(#{compId}), #{compId} , #{writer}, #{title}, #{content})")
     int insert(@Param("compId") String compId, @Param("writer")String writer, @Param("title")String title, @Param("content")String content);
 
     // 공지사항 수정하는 쿼리 
