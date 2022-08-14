@@ -180,7 +180,7 @@ function soppErrorList(){
 }
 
 function soppSuccessView(result){
-	let html, title, userName, customer, customerUser, endUser, status, progress, disDate, expectedSales, detail, dataArray, detailContainer;
+	let html, title, userName, customer, customerUser, endUser, status, progress, contType, disDate, expectedSales, detail, dataArray, detailContainer;
 
 	detailContainer = $(document).find(".detailContainer");
 	detailContainer.hide();
@@ -301,7 +301,6 @@ function soppInsertForm(){
 			"title": "담당자",
 			"elementId": "employee",
 			"dataKeyup": "user",
-			"disabled": false,
 		},
 		{
 			"title": "매출처",
@@ -432,6 +431,12 @@ function soppInsertForm(){
 	modal.close.text("취소");
 	modal.confirm.attr("onclick", "soppInsert();");
 	modal.close.attr("onclick", "modal.hide();");
+
+	setTimeout(() => {
+		let my = storage.my;
+
+		$(document).find("#employee").val(storage.user[my].userName);
+	}, 100);
 }
 
 function soppUpdateForm(result){
@@ -464,7 +469,6 @@ function soppUpdateForm(result){
 			"elementId": "employee",
 			"dataKeyup": "user",
 			"value": userName,
-			"disabled": false,
 		},
 		{
 			"title": "매출처",
@@ -605,7 +609,7 @@ function soppUpdateForm(result){
 }
 
 function soppInsert(){
-	let title, employee, customer, picOfCustomer, endUser, status, progress, contType, targetDate, soppType, expectedSales, detail;
+	let title, employee, customer, picOfCustomer, endUser, status, progress, contType, targetDate, soppType, expectedSales, detail, data;
 
 	title = $(document).find("#title").val();
 	employee = $(document).find("#employee");

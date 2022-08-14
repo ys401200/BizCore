@@ -128,14 +128,14 @@ function noticeErrorList(){
 }
 
 function noticeSuccessView(result){
-	let html, title, content, writer, dataArray, disDate, setDate, detailContainer;
+	let html = "", title, content, writer, dataArray, disDate, setDate, detailContainer;
 
 	detailContainer = $(document).find(".detailContainer");
 	detailContainer.hide();
 
-	title = (result.title === null || result.title === "") ? "제목 없음" : result.title;
-	content = (result.content === null || result.content === "") ? "내용 없음" : result.content;
-	writer = (result.writer == 0 || result.writer === null) ? "데이터 없음" : storage.user[result.writer].userName;
+	title = (result.title === null || result.title === "" || result.title === undefined) ? "제목 없음" : result.title;
+	content = (result.content === null || result.content === "" || result.content === undefined) ? "내용 없음" : result.content;
+	writer = (result.writer == 0 || result.writer === null || result.writer === undefined) ? "데이터 없음" : storage.user[result.writer].userName;
 	disDate = dateDis(result.created, result.modified);
 	setDate = dateFnc(disDate);
 
@@ -166,6 +166,7 @@ function noticeSuccessView(result){
 	html += detailViewForm(dataArray);
 	detailContainer.find("span").text(title);
 	detailContainer.find(".detailContent").html(html);
+	detailContainer.find(".detailBtns").html("");
 	detailContainer.find(".detailBtns").append("<button type='button' onclick='noticeUpdateForm(" + JSON.stringify(result) + ");'>수정</button><button type='button' onclick='noticeDelete(" + result.no + ");'>삭제</button><button type='button'>닫기</button>");
 	detailContainer.show();
 }
@@ -179,6 +180,11 @@ function noticeInsertForm(){
 
 	dataArray = [
 		{
+			"title": "담당자",
+			"elementId": "writer",
+			"dataKeyup": "user",
+		},
+		{
 			"title": "제목",
 			"elementId": "title",
 			"disabled": false,
@@ -187,12 +193,6 @@ function noticeInsertForm(){
 			"title": "내용",
 			"elementId": "content",
 			"type": "textarea",
-		},
-		{
-			"title": "담당자",
-			"elementId": "writer",
-			"dataKeyup": "user",
-			"disabled": false,
 		},
 	];
 
@@ -207,6 +207,13 @@ function noticeInsertForm(){
 	modal.close.text("취소");
 	modal.confirm.attr("onclick", "noticeInsert();");
 	modal.close.attr("onclick", "modal.hide();");
+
+	setTimeout(() => {
+		let my;
+		my = storage.my;
+
+		$(document).find("#writer").val(storage.user[my].userName);
+	}, 100);
 }
 
 function noticeUpdateForm(result){
@@ -218,6 +225,11 @@ function noticeUpdateForm(result){
 
 	dataArray = [
 		{
+			"title": "담당자",
+			"elementId": "writer",
+			"value": writer,
+		},
+		{
 			"title": "제목",
 			"elementId": "title",
 			"value": title,
@@ -225,16 +237,9 @@ function noticeUpdateForm(result){
 		},
 		{
 			"title": "내용",
-			"elementId": "detail",
-			"value": detail,
+			"elementId": "content",
+			"value": content,
 			"type": "textarea",
-		},
-		{
-			"title": "담당자",
-			"elementId": "writer",
-			"dataKeyup": "customer",
-			"value": writer,
-			"disabled": false,
 		},
 	];
 
@@ -252,7 +257,7 @@ function noticeUpdateForm(result){
 }
 
 function noticeInsert(){
-	let title, content, writer;
+	let title, content, writer, data;
 
 	title = $(document).find("#title").val();
 	content = tinymce.activeEditor.getContent();
@@ -264,7 +269,7 @@ function noticeInsert(){
 	data = {
 		"title": title,
 		"content": content,
-		"writer": writer,
+		"writer": writer
 	}
 	type = "insert";
 

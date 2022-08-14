@@ -87,7 +87,7 @@
 	color: #332E85;
 }
 
-.scheduleContainer .scheduleRange{
+/* .scheduleContainer .scheduleRange{
 	margin-top: 5px;
 	margin-right: 5px;
 	float: right;
@@ -135,7 +135,7 @@
 	font-weight: 500;
 	color: #ffffff;
 	cursor: pointer;
-}
+} */
 
 .scheduleContainer .gridScheduleList{
     display: grid; 
@@ -215,7 +215,7 @@
 }
 
 .calendar_container > .calendar_cell:hover{
-	background-color: #332E85;
+	background-color: #EDEDF4;
 	color: #ffffff;
 }
 

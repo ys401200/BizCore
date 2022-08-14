@@ -121,12 +121,21 @@ function drawScheduleList() {
 		disDate = dateDis(jsonData[i].created, jsonData[i].modified);
 		setDate = dateFnc(disDate);
 
-		job = (jsonData[i].job === null || jsonData[i].job === "") ? "없음" : jsonData[i].job;
-		title = (jsonData[i].title === null || jsonData[i].title === "") ? "제목 없음" : jsonData[i].title;
-		customer = (jsonData[i].cust == 0 || jsonData[i].cust === null) ? "없음" : storage.customer[jsonData[i].cust].name;
-		userName = (jsonData[i].user == 0 || jsonData[i].user === null) ? "없음" : storage.user[jsonData[i].user].userName;
-		place = (jsonData[i].place === null || jsonData[i].place === "") ? "없음" : jsonData[i].place;
-		detail = (jsonData[i].detail === null || jsonData[i].detail === "") ? "내용 없음" : jsonData[i].detail;
+		job = (jsonData[i].job === null || jsonData[i].job === "" || jsonData[i].job === undefined) ? "없음" : jsonData[i].job;
+
+		if(job === "sales"){
+			job = "영업일정";
+		}else if(job === "tech"){
+			job = "기술지원";
+		}else{
+			job = "기타일정";
+		}
+
+		title = (jsonData[i].title === null || jsonData[i].title === "" || jsonData[i].title === undefined) ? "제목 없음" : jsonData[i].title;
+		customer = (jsonData[i].cust == 0 || jsonData[i].cust === null || jsonData[i].cust === undefined) ? "없음" : storage.customer[jsonData[i].cust].name;
+		userName = (jsonData[i].user == 0 || jsonData[i].user === null || jsonData[i].user === undefined) ? "없음" : storage.user[jsonData[i].user].userName;
+		place = (jsonData[i].place === null || jsonData[i].place === "" || jsonData[i].place === undefined) ? "없음" : jsonData[i].place;
+		detail = (jsonData[i].detail === null || jsonData[i].detail === "" || jsonData[i].detail === undefined) ? "내용 없음" : jsonData[i].detail;
 		
 		fromDate = dateDis(jsonData[i].from);
 		fromSetDate = dateFnc(fromDate);
@@ -186,6 +195,9 @@ function drawCalendar(container){
     tempDate = [];
     if(storage.currentYear === undefined)   storage.currentYear = (new Date()).getFullYear();
     if(storage.currentMonth === undefined)  storage.currentMonth = (new Date()).getMonth() + 1;
+
+	$(document).find(".calendarYear").text(storage.currentYear);
+	$(document).find(".calendarMonth").text(storage.currentMonth);
 
     startDate = new Date(storage.currentYear, storage.currentMonth - 1 , 1);
     endDate = new Date(storage.currentYear, storage.currentMonth - 1 , 28);
@@ -294,71 +306,71 @@ function drawCalendar(container){
     return true;
 } // End of drawCalendar()
 
-// ==============================================
-function createCalendar(year, month, type){
-	let date, day, nowDate, nowDay, last, lastDate, row, calendar, dNum, tdClass, calendarBody;
+//
+// function createCalendar(year, month, type){
+// 	let date, day, nowDate, nowDay, last, lastDate, row, calendar, dNum, tdClass, calendarBody;
 
-	calendarBody = $(".calendarList table tbody");
+// 	calendarBody = $(".calendarList table tbody");
 
-	if(year === undefined || month === undefined){
-		date = new Date();
-		year = date.getFullYear();
-		month = date.getMonth();
-		day = date.getDate();
-	}
+// 	if(year === undefined || month === undefined){
+// 		date = new Date();
+// 		year = date.getFullYear();
+// 		month = date.getMonth();
+// 		day = date.getDate();
+// 	}
 	
-	if(type === "prev"){
-		nowDate = new Date(year, month-1, 1);
-		nowDay = nowDate.getDay();
-	}else{
-		nowDate = new Date(year, month, 1);
-		nowDay = nowDate.getDay();
-	}
+// 	if(type === "prev"){
+// 		nowDate = new Date(year, month-1, 1);
+// 		nowDay = nowDate.getDay();
+// 	}else{
+// 		nowDate = new Date(year, month, 1);
+// 		nowDay = nowDate.getDay();
+// 	}
 	
-	last = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+// 	last = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
-	if(year % 4 && year % 100 != 0 || year % 400 == 0){
-		lastDate = last[1] = 29;
-	}
+// 	if(year % 4 && year % 100 != 0 || year % 400 == 0){
+// 		lastDate = last[1] = 29;
+// 	}
 
-	if(month == 12){
-		lastDate = last[month-1];
-	}else{
-		lastDate = last[month];
-	}
+// 	if(month == 12){
+// 		lastDate = last[month-1];
+// 	}else{
+// 		lastDate = last[month];
+// 	}
 
-	row = Math.ceil((nowDay + lastDate)/7);
-	dNum = 1;
+// 	row = Math.ceil((nowDay + lastDate)/7);
+// 	dNum = 1;
 
-	for(let i = 1; i <= row; i++){
-		calendar += "<tr>";
-		for(let k = 1; k <= 7; k++){
-			if(i == 1 && k <= nowDay || dNum > lastDate){
-				calendar += "<td>&nbsp;</td>";
-			}else{
-				tdClass = "";
+// 	for(let i = 1; i <= row; i++){
+// 		calendar += "<tr>";
+// 		for(let k = 1; k <= 7; k++){
+// 			if(i == 1 && k <= nowDay || dNum > lastDate){
+// 				calendar += "<td>&nbsp;</td>";
+// 			}else{
+// 				tdClass = "";
 
-				if(dNum == day){
-					tdClass = "today";
-				}else{
-					tdClass = "";
-				}
+// 				if(dNum == day){
+// 					tdClass = "today";
+// 				}else{
+// 					tdClass = "";
+// 				}
 
-				if(k == 1){
-					tdClass += "sun";
-				}else if(k == 7){
-					tdClass += "sat";
-				}
+// 				if(k == 1){
+// 					tdClass += "sun";
+// 				}else if(k == 7){
+// 					tdClass += "sat";
+// 				}
 
-				calendar += "<td class='"+tdClass+"'>" + "<strong class='date'>" + dNum + "</strong></td>";
-				dNum++;
-			}
-		}
-		calendar += "</tr>";
-	}
+// 				calendar += "<td class='"+tdClass+"'>" + "<strong class='date'>" + dNum + "</strong></td>";
+// 				dNum++;
+// 			}
+// 		}
+// 		calendar += "</tr>";
+// 	}
 
-	calendarBody.html(calendar);
-}
+// 	calendarBody.html(calendar);
+// }
 
 function calendarNext(event){
 	let getYear, getMonth, setYear, setMonth, type;
@@ -374,12 +386,15 @@ function calendarNext(event){
 		setMonth = 0;
 	}
 	
-	createCalendar(setYear, setMonth, type);
-	
 	setMonth = setMonth + 1;
 
 	getYear.html(setYear);
 	getMonth.html(setMonth);
+
+	storage.currentYear = setYear;
+	storage.currentMonth = setMonth;
+
+	scheduleCalendarAjax();
 }
 
 function calendarPrev(event){
@@ -398,10 +413,38 @@ function calendarPrev(event){
 
 	setMonth = setMonth - 1;
 	
-	createCalendar(setYear, setMonth, type);
-	
 	getYear.html(setYear);
 	getMonth.html(setMonth);
+
+	storage.currentYear = setYear;
+	storage.currentMonth = setMonth;
+
+	scheduleCalendarAjax();
+}
+
+function scheduleCalendarAjax(){
+	let url, method, scheduleType, scheduleRange;
+
+	scheduleType = $(document).find("#scheduleType").val();
+	scheduleRange = $(document).find("#scheduleRange").val();
+
+	if(scheduleType === undefined || scheduleRange === undefined){
+		url = "/api/schedule";
+	}else{
+		url = "/api/schedule" + scheduleType + "/" + scheduleRange + "/" + storage.currentYear + storage.currentMonth;
+	}
+
+	method = "get",
+
+	$.ajax({
+		url: url,
+		method: method,
+		dataType: "json",
+		success:(result) => {
+			storage.scheduleList = result;
+			window.setTimeout(drawCalendar(document.getElementsByClassName("calendar_container")[0]), 200);
+		}
+	});
 }
 
 function listChange(event){
