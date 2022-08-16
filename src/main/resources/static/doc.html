@@ -158,6 +158,32 @@ cipher = { // 암호화 모듈
     } // End of getKey()
 }
 
+// API 서버에서 양식(form) 정보를 가져오는 함수
+function getForms(){
+	let url;
+
+	url = apiServer + "/api/gw/form";
+
+	$.ajax({
+		"url": url,
+		"method": "get",
+		"dataType": "json",
+		"cache": false,
+		success: (data) => {
+			let list;
+
+			if (data.result === "ok") {
+				list = cipher.decAes(data.data);
+				list = JSON.parse(list);
+				storage.form = list;
+				console.log("[getForms] Success getting employee information.");
+			} else {
+				msg.set("양식 정보를 가져오지 못했습니다.");
+			}
+		}
+	})
+} // End of getUserMap()
+
 // API 서버에서 직원 정보를 가져오는 함수
 function getUserMap(){
 	let url;
@@ -244,6 +270,7 @@ function init(){
         getCustomer();
         getDeptMap();
         getUserMap();
+        getForms();
     },1000);
     storage.status = {"1":"임시저장","2":"검토요청","3":"반려","4":"검토완료","5":"완료"}
 } // End of init()
@@ -295,7 +322,7 @@ function getDocData(docNo){
 //문서 목록을 화면에 그리는 함수
 function drawDocList(){
     let html, x, doc, cnt;
-    if(storage.customer == undefined || storage.user == undefined || storage.dept == undefined){
+    if(storage.customer == undefined || storage.user == undefined || storage.dept == undefined || storage.form == undefined){
         window.setTimeout(drawDocList, 100);
         return;
     }
