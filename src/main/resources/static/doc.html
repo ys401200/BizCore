@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <style>
+        html, body{font-size:10px;padding:0;margin:0;overflow:hidden;height:100%;width:100%;}
+        body{display: flex;justify-content: center;align-items: center;}
+        .wrap{
+            width:1280px;
+            height:800px;
+            display:grid;
+            grid-template-columns: 3fr 2fr 5fr;
+            grid-template-rows: 1fr 1fr 2fr 2fr;
+            gap: 1rem;
+            border:1px solid #eeeeee;
+            overflow: hidden;
+        }
+        .wrap > * {
+            border: 1px solid #bbbbbb;
+            overflow-x: hidden;
+            overflow-y: scroll;
+        }
+        .wrap > div:nth-child(1){
+            grid-column-start: 1;
+            grid-column-end: 2;
+            grid-row-start: 1;
+            grid-row-end: 5;
+        }
+        .wrap > div:nth-child(5){
+            grid-column-start: 3;
+            grid-column-end: 4;
+            grid-row-start: 1;
+            grid-row-end: 5;
+        }
+        .hidden_chk{display:none;}
+        .hidden_chk:checked + label{
+            background-color:#f3dcdc
+        }
+        .list_item{
+            display:grid;
+            border:1px solid #aaaadd;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+        }
+        .list_item:hover{background-color:#e8e8fc}
+        .list_item > div{text-align:center;}
+        .list_item > div:nth-child(6){grid-column-start: 1;grid-column-end: 6;}
+
+    </style>
+</head>
+<body onload="init()">
+    <div class="wrap">
+        <div class="app_list"></div>
+        <div class="app_files"></div>
+        <div class="app_line"></div>
+        <div class="app_data"></div>
+        <div class="app_forms"></div>
+        <div class="app_preview"></div>
+    </div>
+<script src="js/jquery.min.js"></script>
+<script>
+let docList, docInfo, _server = "/system/doc";
+
+// 초기화 함수
+function init(){
+    getList();
+} // End of init()
+
+// 서버에서 문서 목록을 가져오는 함수
+function getList(){
+    $.ajax({
+        url: _server,
+        method: "get",
+        success: (result) => {
+            let tt = result.replace(/\n+/g,"");
+            tt = tt.replace(/\t+/g,"");
+            tt = JSON.parse(tt);
+            if(tt.result === "ok"){
+                docList = tt.data;
+                drawDocList();
+            }else{
+                console.log("[ERROR] Failure parse.");
+            }
+        },
+        error: () => {
+            console.log("[ERROR] Failure getting document information.");
+        }
+    });
+} // End of getList()
+
+// 개별 문서 정보를 가져오는 함수
+function getDocData(docNo){
+    $.ajax({
+        url: _server + "/" + docNo,
+        method: "get",
+        success: (result) => {
+            let tt = result.replace(/\n+/g,"");
+            tt = tt.replace(/\t+/g,"");
+            tt = JSON.parse(tt);
+            if(tt.result === "ok"){
+                docInfo = {"files":tt.files, "appData":tt.appData, "docData":tt.docData};
+                console.log(docInfo);
+            }else{
+                console.log("[ERROR] Failure parse.");
+            }
+        },
+        error: () => {
+            console.log("[ERROR] Failure getting document information.");
+        }
+    });
+} // End of getDocData()
+
+//문서 목록을 화면에 그리는 함수
+function drawDocList(){
+    let html, x, doc, cnt;
+    cnt = document.getElementsByClassName("app_list")[0];
+    html = "";
+    for(x in docList){
+        doc = docList[x];
+        html += ("<input type=\"checkbox\" id=\"chk" + doc.no + "\" class=\"hidden_chk\" />");
+        html += ("<label class=\"list_item\" for=\"chk" + doc.no + "\" data-no=\"" + doc.no + "\" onclick=\"clickedItem(this)\">");
+        html += ("<div>" + doc.no + "</div>")
+        html += ("<div>" + (new Date(doc.created)).toLocaleString().substring(2,13).replaceAll(" ","") + "</div>")
+        html += ("<div>" + doc.customer + "</div>")
+        html += ("<div>" + doc.form + "</div>")
+        html += ("<div>" + doc.type + "</div>")
+        html += ("<div>" + doc.title + "</div>")
+        html += ("<div>" + doc.writer + "</div>")
+        html += ("<div>" + doc.status + "</div>")
+        html += "</label>";
+    }
+
+    cnt.innerHTML = html;
+} // End of drawDocList()
+
+// 리스트 아이템이 클릭되면 실행되는 함수
+function clickedItem(el){
+    let docNo;
+    docNo = el.dataset.no;
+    getDocData(docNo);
+} // End of clickedItem()
+
+</script>
+</body>
+
+</html>
