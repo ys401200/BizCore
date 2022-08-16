@@ -30,14 +30,13 @@ public class BoardService extends Svc{
         list = boardMapper.getFileboxList(compId);
 
         if(list != null && list.size() > 0){
-            result = "{";
+            result = "[";
             for(x = 0 ; x < list.size() ; x++){
                 each = list.get(x);
                 if(x > 0)   result += ",";
-                result += ("\"" + each.getNo() + "\":");
                 result += each.toJson();
             }
-            result += "}";
+            result += "]";
         }
 
         return result;
