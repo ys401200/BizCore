@@ -371,8 +371,27 @@
 
 
 
-        function drawClickedDetail() {
-            let file
+        function drawClickedDetail(info) {
+            let fileTarget = $(".app_files");
+            let lineTarget = $(".app_line");
+            let dataTarget = $(".app_data");
+            let files, appData, docData = new Array();
+            let filesHtml, appDataHtml, docDataHtml = "";
+            //docInfo = { "files": tt.files, "appData": tt.appData, "docData": tt.docData };
+
+            console.log(info);
+
+            let lineTitles = ["customer","price","product","quantity","remark","subTotal","tax"];
+            let dataTitles = ["app","approved","comment","issued","request","status","writer"];
+   for(let j = 0 ; j < dataTitles.length ; j++) {
+    
+   }
+            for(let i = 0 ; i <info.appData.length; i++) {
+                
+            }
+
+
+
 
         }
     </script>
