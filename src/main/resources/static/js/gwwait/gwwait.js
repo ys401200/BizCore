@@ -60,22 +60,39 @@ function drawNoticeList() {
 	container = $(".listDiv");
 
 	header = [
+
 		{
-			"title": "기안일",
+			"title": "문서번호",
+			"align": "center",
+		},
+		{
+			"title": "문서종류",
+			"align": "center",
+		},
+		{
+			"title": "거래처",
 			"align": "center",
 		},
 		{
 			"title": "제목",
-			"align": "left",
+			"align": "center",
+		},
+		{
+			"title": "금액",
+			"align": "center",
 		},
 		{
 			"title": "기안자",
 			"align": "center",
 		},
 		{
-			"title": "상태",
+			"title": "진행상태",
 			"align": "center",
-		}
+		},
+		{
+			"title": "<input type='checkbox' class='thisAllcheck'>",
+			"align": "center",
+		},
 	];
 
 	for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
@@ -84,9 +101,7 @@ function drawNoticeList() {
 		let userName = storage.user[jsonData[i].writer].userName;
 
 		str = [
-			{
-				"setData": jsonData[i].no,
-			},
+
 			{
 				"setData": jsonData[i].title,
 			},
@@ -95,6 +110,21 @@ function drawNoticeList() {
 			},
 			{
 				"setData": setDate,
+			},
+			{
+				"setData": setDate,
+			},
+			{
+				"setData": setDate,
+			},
+			{
+				"setData": setDate,
+			},
+			{
+				"setData": setDate,
+			},
+			{
+				"setData": "<input type='checkbox' class='thisCheck' data-id='" + jsonData[i].no + "'>",
 			}
 		]
 
@@ -106,6 +136,17 @@ function drawNoticeList() {
 	let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawNoticeList", result[0]);
 	pageContainer[0].innerHTML = pageNation;
 	createGrid(container, header, data, ids, fnc);
+
+ 
+   // 전체선택 전체 해제  
+	$(".thisAllcheck").click(function () {
+		if ($(".thisAllcheck").prop("checked")) {
+			$(":checkbox").prop("checked", true);
+		} else {
+			$(":checkbox").prop("checked", false);
+		}
+
+	});
 }// End of drawNoticeList()
 
 function noticeDetailView(event) {// 선택한 그리드의 글 번호 받아오기 
@@ -141,127 +182,3 @@ function noticeErrorList() {
 	alert("에러");
 }
 
-
-
-function drawButtons() {
-
-	let buttonsTarget = $(".forButtouns");
-	let buttonsHtml = "<button>상신취소</button><button>인쇄</button>";
-
-	buttonsTarget.html(buttonsHtml);
-
-
-
-}
-
-
-
-
-
-function drawCommonmylist() {
-
-   let json = {
-      "form": '지출결의서',
-
-      "data": {
-         "no": 2958,
-         "writer": 10028,
-         "title": "안드로이드/iOS/모듈 개발",
-         "sopp": 10005197,
-         "customer": 104742,
-         "content": "<div>문서내용</div>",
-         "amount": 8250000,
-         "created": 16999999999,
-         "Modified": 16999999999,
-      },
-
-      "detail": [{
-         "date": 169999999999,
-         "customer": "(주)엑스아이커뮤니케이션즈",
-         "product": "웹용 REST API 서버 모듈",
-         "price": 7500000,
-         "quantity": 1,
-         "tax": 750000,
-         "total": 8250000,
-         "remark": "웹용 REST API 개발건",
-      },
-      {
-         "date": 1223231434,
-         "customer": "(주)테스트 회사",
-         "product": "테스트 항목",
-         "price": 6890099,
-         "quantity": 4,
-         "tax": 445367677,
-         "total": 6777657,
-         "remark": "테스트 개발건",
-      }
-
-      ]
-
-
-	};
-
-
-
-
-
-
-
-	   let testData = [
-	      {
-	         title: '번호',
-	         content: json.data.no
-	
-	      }, {
-	         title: '작성자',
-	         content: json.data.writer
-	      }, {
-	         title: '작성일',
-	         content: json.data.created
-	
-	      },
-	      {
-	         title: '영업기회',
-	         content: json.data.sopp
-	      }, {
-	         title: '거래처',
-	         content: json.data.customer
-	
-	      },
-	      {
-	         title: '제목',
-	         content: json.data.title
-	      }, {
-	         title: '내용',
-	         content: json.data.content
-	
-	      }
-	   ];
-	
-	   let title = $(".title");
-	   let formName = json.form;
-	   title.html(formName);
-	
-	
-	   let contentHtml = "";
-	   let info = $(".info");
-	   let insertedContent = $(".insertedContent");
-	
-	   drawBasicDocInfoTable('지출결의서', info, 0, 5, testData);
-	
-	   contentHtml += "<div class='contentDiv'><div class='infoTitle'>" + testData[5].title + "</div><div class='infoContent'><input id='doc_Form_" + formName + "_" + testData[5].title + "' class='outlineNone' type='text' readonly value='" + testData[5].content + "'/></div></div>"
-	   contentHtml += "<div class='contentDiv'><div class='infoTitlelast'>" + testData[6].title + "</div><div class='infoContentlast'><input id='doc_Form_" + formName + "_" + testData[6].title + "'class='outlineNone' type='text' readonly value='" + testData[6].content + "'/></div></div>"
-	
-	   insertedContent.html(contentHtml);
-	
-	
-	   let target = $(".forForm");
-	   target.length;
-	
-	   
-	   let comment = "<div>완료 / 반려의견</div><textarea></textarea><button class='commentbtn' type='button'>등록</button>"
-	   target.html(comment);
-	
-	
-	}  // End of drawCommonmylist(); 
-	

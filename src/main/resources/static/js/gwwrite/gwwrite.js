@@ -43,11 +43,14 @@ function drawFormList() {
   let data = storage.formList;
   let titles = new Array();
   let nums = new Array();
+  let ids = new Array();
+
   let target = $(".formListDiv");
   let targetHtml = "";
 
   for (let i = 0; i < data.length; i++) {
     titles.push(data[i].title);
+    ids.push(data[i].id);
     nums.push(data[i].no);
   }
 
@@ -92,18 +95,26 @@ function selectChangeEvent(num) {
         $(".forSelect_" + i + "").css("color", "#332E85");
         $(".forSelect_" + i + "").css("font-size", "1.5rem");
         if (i == 1) {
+          $(".inputs").attr("readonly", true);
+          $(".inputs").css("border", "none");
           $(".formDetail").show();
           $(".lineDetail").hide();
+          $(".ContentDiv").style("grid-template-columns", "50% 50%");
 
         } else if (i == 2) {
+          $(".inputs").attr("readonly", true);
+          $(".inputs").css("border", "none");
           $(".lineDetail").show();
           $(".formDetail").hide();
-
+          $(".ContentDiv").css("grid-template-columns", "50% 50%");
         } else if (i == 3) {
           $(".inputs").attr("readonly", false);
-          $(".inputs").css("border", "1px solid black");
           $(".lineDetail").hide();
           $(".formDetail").hide();
+          $(".ContentDiv").css("grid-template-columns", "20% 60%");
+
+
+
         }
       } else {
         $(".forSelect_" + i + "").css("color", "gray");
@@ -147,6 +158,14 @@ function selectForm() {
     $(".lineDetail").show();
     $(".formDetail").hide();
     $(".reportInsertForm").html(storage.formList[hidden.val()].form);
+
+
+    //작성자 작성일 자동 입력
+    let my = storage.my;
+    let writer = storage.user[my].userName;
+    let formId = storage.formList[hidden.val()].id;
+    $("#" + formId + "_writer").val(writer);
+    $("#" + formId + "_regdate").val(new Date().getFullYear() + "년" + (new Date().getMonth() + 1) + "월" + new Date().getDate() + "일");
     $(".testClass").prop('checked', false);
     $(".typeContainer").html("");
 

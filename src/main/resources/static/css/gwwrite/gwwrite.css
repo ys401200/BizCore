@@ -136,7 +136,7 @@
 }
 
 .selector .formDetail .formRight {
-  color : black;
+  color: black;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -252,8 +252,8 @@
 
 
 .lineGridContainer {
-  margin: 1rem;
-  margin-top: 0;
+  margin-bottom: 5%;
+  height: 45%;
   display: flex;
   align-items: right;
   justify-content: right;
@@ -266,7 +266,8 @@
 }
 
 .lineSet {
-  display: block;
+  display: grid;
+  grid-template-rows: 30%40%30%;
 
 }
 

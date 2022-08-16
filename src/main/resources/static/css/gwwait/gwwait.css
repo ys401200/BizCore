@@ -1,5 +1,67 @@
 @charset "UTF-8";
 
+.waitSearchContainer {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-left: 2%;
+	margin-bottom: 2%;
+	max-width: 1782px;
+	height: 100px;
+	background: #FFFFFF;
+	overflow: auto;
+	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
+}
+
+.waitSearchContainer .waitSearchSelect {
+	margin-right: 1%;
+}
+
+.waitSearchContainer .waitSearchSelect select {
+	color: #332E85;
+	padding: 5px;
+	font-size: 1.2rem;
+	font-weight: 500;
+	border: 0;
+	background-color: #EDEDF4;
+}
+
+.waitSearchContainer .waitSearchSelect select:hover {
+	border: 1px solid#332E85;
+}
+
+.waitSearchContainer .waitSearchText {
+	margin-right: 1%;
+}
+
+.waitSearchContainer .waitSearchText input {
+	padding: 5px;
+	font-size: 1.2rem;
+	font-weight: 500;
+	width: 500px;
+	border: 0;
+	background-color: #EDEDF4;
+}
+
+.waitSearchContainer .waitSearchText input:hover {
+	border: 1px solid#332E85;
+}
+
+.waitSearchContainer .waitSearchBtn button {
+	color: #ffffff;
+	padding: 5px;
+	font-size: 1.2rem;
+	font-weight: 500;
+	width: 100px;
+	border: 0;
+	background-color: #332E85;
+}
+
+.waitSearchContainer .waitSearchBtn button:hover {
+	cursor: pointer;
+}
+
+
 
 button {
 	margin: 0.25rem;
@@ -8,6 +70,7 @@ button {
 	background-color: #332e85;
 	border-radius: 3px;
 }
+
 .container {
 	position: relative;
 	left: 2%;
@@ -42,7 +105,7 @@ button {
 .subContainer {
 	background-color: white;
 	display: grid;
-	grid-template-columns: 50% 50%;
+	/* grid-template-columns: 50% 50%; */
 }
 
 
@@ -57,21 +120,28 @@ button {
 }
 
 .forForm {
-overflow: auto;}
+	overflow: auto;
+}
+
 .forTable {
 	border-bottom: 0;
 }
 
 
-
-
 .listDiv {
 	display: grid;
-	width: 99%;
+	width: 95%;
 	margin: 3rem
 }
 
 .listDiv .gridHeader,
 .listDiv .gridContent {
-	grid-template-columns: 10% 60% 10% 20%;
+	grid-template-columns: 10% 10% 20% 20% 10% 10% 10% 10%;
+}
+
+.listPageDiv .batchBtn {
+	text-align: right;
+	font-size: 2rem;
+	font-weight: 500;
+	margin: 2% 2% 2% 0%;
 }
