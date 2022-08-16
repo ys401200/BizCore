@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+    <meta charset="UTF-8">
     <style>
         html, body{font-size:10px;padding:0;margin:0;overflow:hidden;height:100%;width:100%;}
         body{display: flex;justify-content: center;align-items: center;}
@@ -25,7 +26,7 @@
             grid-row-start: 1;
             grid-row-end: 5;
         }
-        .wrap > div:nth-child(5){
+        .wrap > div:nth-child(6){
             grid-column-start: 3;
             grid-column-end: 4;
             grid-row-start: 1;
@@ -56,12 +57,195 @@
         <div class="app_preview"></div>
     </div>
 <script src="js/jquery.min.js"></script>
+<script src="js/cipher.js"></script>
 <script>
-let docList, docInfo, _server = "/system/doc";
+let docList, docInfo, _server = "/system/doc", apiServer = "", storage = {}, cipher;
+
+cipher = { // 암호화 모듈
+    "encRsa" : (message) => {
+                let result, rsa;
+                if(message === undefined || message === null)	return message;
+                rsa = new RSAKey();
+                rsa.setPublic(cipher.rsa.public.modulus, cipher.rsa.public.exponent);
+                return btoa(rsa.encrypt(message));
+    },
+    "encAes":(message)=>{
+        let cp, result;
+        cp = CryptoJS.AES.encrypt(message, CryptoJS.enc.Utf8.parse(cipher.aes.key), {
+            "iv": CryptoJS.enc.Utf8.parse(cipher.aes.iv),
+            "padding": CryptoJS.pad.Pkcs7,
+            "mode": CryptoJS.mode.CBC
+        });
+        result = cp.toString();
+        return result;
+    },
+    "decAes":(message)=>{
+        let cp, result;
+        cp = CryptoJS.AES.decrypt(message, CryptoJS.enc.Utf8.parse(cipher.aes.key), {
+            iv: CryptoJS.enc.Utf8.parse(cipher.aes.iv),
+            padding: CryptoJS.pad.Pkcs7,
+            mode: CryptoJS.mode.CBC
+        });
+        result = cp.toString(CryptoJS.enc.Utf8);
+        return result;
+    },
+    "rsa" : {"public":{"modulus":undefined,
+                    "exponent":undefined},
+            "private":undefined,
+            "getKey":()=>{
+                let url = apiServer + "/api/user/rsa";
+                $.ajax({
+                    url: url,
+                    method: "get",
+                    dataType: "json",
+                    cache: false,
+                    success:(data) => {
+                        let publicKeyExponent, publicKeyModulus, aesKey, aesIv, url = apiServer + "/api/user/aes";
+                        if(data.result === "ok"){
+                            aesKey = [cipher.genKey(8), cipher.genKey(8), cipher.genKey(8), cipher.genKey(8)];
+                            aesIv = [cipher.genKey(8), cipher.genKey(8)];
+                            cipher.aes.key = aesKey[0] + aesKey[1] + aesKey[2] + aesKey[3];
+                            cipher.aes.iv = aesIv[0] + aesIv[1];
+                            publicKeyExponent = data.data.publicKeyExponent;
+                            publicKeyModulus = data.data.publicKeyModulus;
+                            cipher.rsa.public.modulus = publicKeyModulus;
+                            cipher.rsa.public.exponent = publicKeyExponent;
+                            sessionStorage.setItem("rsaModulus", publicKeyModulus);
+                            sessionStorage.setItem("rsaExponent", publicKeyExponent);
+                            sessionStorage.setItem("aesKey", cipher.aes.key);
+                            sessionStorage.setItem("aesIv", cipher.aes.iv);
+                            $.ajax({
+                                "url": url,
+                                "method": "post",
+                                data: cipher.encRsa(aesKey[0]) + "\n" + cipher.encRsa(aesKey[1]) + "\n" + cipher.encRsa(aesKey[2]) + "\n" + cipher.encRsa(aesKey[3]) + "\n"+ cipher.encRsa(aesIv[0]) + "\n" + cipher.encRsa(aesIv[1]),
+                                contentType:"text/plain",
+                                "cache": false,
+                                success:(data) => {
+                                }
+                            })
+                        }else{
+                            msg.set(data.msg);
+                        }
+                    }
+                })
+            }},
+    "aes" : {"iv":undefined,
+            "key":undefined},
+    "genKey" : (length)=>{
+        let x, t, result = "", src = [];
+        if(isNaN(length) || length < 8)	length = 32;
+        for(x = 0 ; x < 69 ; x++){
+            if (x < 10)
+                src[x] = (x + 48);
+            else if (x < 36)
+                src[x] = (x + 55);
+            else if (x < 62)
+                src[x] = (x + 61);
+            else if (x == 63)
+                src[x] = 33;
+            else if (x == 64)
+                src[x] = 43;
+            else if (x == 65)
+                src[x] = 126;
+            else
+                src[x] = (x - 31);
+        }
+        for (x = 0; x < length; x++) {
+            t = Math.floor((Math.random() * src.length));
+            result += String.fromCharCode(src[t])
+        }
+        return result;
+    } // End of getKey()
+}
+
+// API 서버에서 직원 정보를 가져오는 함수
+function getUserMap(){
+	let url;
+
+	url = apiServer + "/api/user/map";
+
+	$.ajax({
+		"url": url,
+		"method": "get",
+		"dataType": "json",
+		"cache": false,
+		success: (data) => {
+			let list;
+
+			if (data.result === "ok") {
+				list = cipher.decAes(data.data);
+				list = JSON.parse(list);
+				storage.user = list;
+				console.log("[getUserMap] Success getting employee information.");
+			} else {
+				msg.set("직원 정보를 가져오지 못했습니다.");
+			}
+		}
+	})
+} // End of getUserMap()
+
+// API 서버에서 직원 정보를 가져오는 함수
+function getDeptMap(){
+	let url;
+
+	url = apiServer + "/api/dept/map";
+
+	$.ajax({
+		"url": url,
+		"method": "get",
+		"dataType": "json",
+		"cache": false,
+		success: (data) => {
+			let list;
+
+			if (data.result === "ok") {
+				list = cipher.decAes(data.data);
+				list = JSON.parse(list);
+				storage.dept = list;
+				console.log("[getDeptMap] Success getting department information.");
+			} else {
+				msg.set("부서 정보를 가져오지 못했습니다.");
+			}
+		}
+	})
+} // End of getDeptMap()
+
+// API 서버에서 고객사 정보를 가져오는 함수
+function getCustomer(){
+	let url;
+
+	url = apiServer + "/api/system/customer";
+
+	$.ajax({
+		"url": url,
+		"method": "get",
+		"dataType": "json",
+		"cache": false,
+		success: (data) => {
+			let list;
+
+			if (data.result === "ok") {
+				list = cipher.decAes(data.data);
+				list = JSON.parse(list);
+				storage.customer = list;
+				console.log("[getCustomer] Success getting customer information.");
+			} else {
+				msg.set("고객 정보를 가져오지 못했습니다.");
+			}
+		}
+	})
+} // End of getCustomer()
 
 // 초기화 함수
 function init(){
     getList();
+    cipher.rsa.getKey()
+    window.setTimeout(()=>{
+        getCustomer();
+        getDeptMap();
+        getUserMap();
+    },1000);
+    storage.status = {"1":"임시저장","2":"검토요청","3":"반려","4":"검토완료","5":"완료"}
 } // End of init()
 
 // 서버에서 문서 목록을 가져오는 함수
@@ -111,6 +295,10 @@ function getDocData(docNo){
 //문서 목록을 화면에 그리는 함수
 function drawDocList(){
     let html, x, doc, cnt;
+    if(storage.customer == undefined || storage.user == undefined || storage.dept == undefined){
+        window.setTimeout(drawDocList, 100);
+        return;
+    }
     cnt = document.getElementsByClassName("app_list")[0];
     html = "";
     for(x in docList){
@@ -119,12 +307,12 @@ function drawDocList(){
         html += ("<label class=\"list_item\" for=\"chk" + doc.no + "\" data-no=\"" + doc.no + "\" onclick=\"clickedItem(this)\">");
         html += ("<div>" + doc.no + "</div>")
         html += ("<div>" + (new Date(doc.created)).toLocaleString().substring(2,13).replaceAll(" ","") + "</div>")
-        html += ("<div>" + doc.customer + "</div>")
+        html += ("<div>" + (storage.customer[doc.customer] != null ? storage.customer[doc.customer].name : doc.customer) + "</div>")
         html += ("<div>" + doc.form + "</div>")
         html += ("<div>" + doc.type + "</div>")
         html += ("<div>" + doc.title + "</div>")
-        html += ("<div>" + doc.writer + "</div>")
-        html += ("<div>" + doc.status + "</div>")
+        html += ("<div>" + (storage.user[doc.writer].userName) + "</div>")
+        html += ("<div>" + (storage.status[doc.status]) + "</div>")
         html += "</label>";
     }
 
