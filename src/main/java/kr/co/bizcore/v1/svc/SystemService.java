@@ -226,5 +226,28 @@ public class SystemService extends Svc {
         
     }
 
+    // 고객사 담당자 정보를 전달하는 메서드
+    public String cipInfo(String compId){
+        String result = null;
+        int x = 0;
+        List<HashMap<String, String>> list = null;
+        HashMap<String, String> each = null;
+
+        list = commonMapper.getCipInfo();
+        if(list != null && list.size() > 0) for(x = 0 ; x < list.size() ; x++){
+            each = list.get(x);
+            if(result == null)  result = "{";
+            else                result += ",";
+            result += ("\"" + each.get("no") + "\":{");
+            result += ("\"name\":\"" + each.get("name") + "\",");
+            result += ("\"rank\":\"" + each.get("rank") + "\",");
+            result += ("\"customer\":\"" + each.get("cust") + "\"}");
+        }
+        if(result != null)  result += "}";
+
+        return result;
+
+    }
+
 
 }

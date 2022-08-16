@@ -42,4 +42,7 @@ public interface CommonMapper {
 
     @Select("SELECT CAST(codeno AS char) AS no, desc03 AS value FROM swc_code WHERE attrib NOT LIKE 'XXX%' AND desc03 IS NOT NULL AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId})")
     public List<HashMap<String, String>> getEtcCode(String compId);
+
+    @Select("SELECT CAST(custdata03no AS char) AS no, custmname AS name, CAST(custno AS char) AS cust, custmrank AS rank FROM swcore.swc_custdata03 WHERE attrib NOT LIKE 'XXX%'")
+    public List<HashMap<String, String>> getCipInfo();
 }
