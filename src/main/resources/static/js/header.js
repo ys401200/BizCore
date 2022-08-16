@@ -983,6 +983,8 @@ function detailViewFormModal(data){
 			}
 
 			html += "</select>";
+		}else if(dataType === "file"){
+			html += "<input type='file' id='" + elementId + "' name='" + elementName + "' onchange='fileChange();' multiple>";
 		}
 		
 		html += "</div>";

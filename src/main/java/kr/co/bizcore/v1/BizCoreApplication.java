@@ -23,5 +23,4 @@ public class BizCoreApplication extends SpringBootServletInitializer{
 		app.addListeners(new ApplicationPidFileWriter());
 		app.run(args);
 	}
-
 }

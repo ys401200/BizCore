@@ -170,6 +170,7 @@ button, select, input{
 
 .defaultFormContainer .defaultFormLine .defaultFormContent input[type='text'],
 .defaultFormContainer .defaultFormLine .defaultFormContent input[type='date'],
+.defaultFormContainer .defaultFormLine .defaultFormContent input[type='file'],
 .defaultFormContainer .defaultFormLine .defaultFormContent select{
 	width: -webkit-fill-available;
 	height: 40px;
@@ -183,6 +184,7 @@ button, select, input{
 
 .defaultFormContainer .defaultFormLine .defaultFormContent input[type='text']:hover,
 .defaultFormContainer .defaultFormLine .defaultFormContent input[type='date']:hover,
+.defaultFormContainer .defaultFormLine .defaultFormContent input[type='file']:hover,
 .defaultFormContainer .defaultFormLine .defaultFormContent select:hover{
 	border: 1px solid#302D81;
 }
