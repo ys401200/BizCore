@@ -4,6 +4,7 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +22,6 @@ import kr.co.bizcore.v1.mapper.SystemMapper;
 import kr.co.bizcore.v1.mapper.TestMapper;
 import kr.co.bizcore.v1.mapper.TradeMapper;
 import kr.co.bizcore.v1.mapper.UserMapper;
-import kr.co.bizcore.v1.util.UploadedFileStorage;
 import lombok.extern.slf4j.Slf4j;
 
 import java.security.KeyPair;
@@ -46,9 +46,6 @@ import javax.crypto.spec.SecretKeySpec;
 public abstract class Svc {
 
     private static final Logger logger = LoggerFactory.getLogger(Svc.class);
-    
-    @Autowired
-    protected UploadedFileStorage fileStorage;
 
     @Autowired
     protected SystemMapper systemMapper;
@@ -95,6 +92,7 @@ public abstract class Svc {
     @Autowired
     protected SqlSessionTemplate sqlSession;
 
+    @Value("${bizcore.storage.uploadedfile}")
     public static String fileStoragePath;
 
     public static boolean DEBUG;

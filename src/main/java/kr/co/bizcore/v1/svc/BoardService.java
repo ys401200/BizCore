@@ -61,7 +61,7 @@ public class BoardService extends Svc{
         File file = null;
         FileOutputStream stream = null;
 
-        path = this.fileStorage.getFileStoragePath(compId) + s + compId + s + "temp";
+        path = this.fileStoragePath + s + compId + s + "temp";
         
         file = new File(path + s + name);
         if(file.exists())   return false;
@@ -80,7 +80,7 @@ public class BoardService extends Svc{
     public int postNewArticle(String compId, Article article, List<Object> files, HashMap<String, String> attached){
         String ognName = null;
         String savedName = null;
-        String path = null;
+        String path = null, s = File.separator;
         File tempFile = null, targetFile = null;
         Long size = 0L;
         Object[] keyset = null;
@@ -92,7 +92,7 @@ public class BoardService extends Svc{
         // 신규 게시글 DB에 저장
         article.setNo(boardMapper.getNewFileboxNo(compId)); // 글 번호 지정
         boardMapper.insertNewFileboxArticle(compId, article); // DB 저장
-        path = fileStorage.getFileStoragePath(compId); // company id 에 해당하는 경로 가져오기
+        path = fileStoragePath + s + compId; // company id 에 해당하는 경로 가져오기
         if(attached != null){
 
             // 저장된 파일에 대해 map에서 제거하고 DB저장, 파일을 temp에서 attached로 이동

@@ -19,7 +19,6 @@ import ch.qos.logback.classic.Logger;
 import kr.co.bizcore.v1.interceptor.ViewInterceptor;
 import kr.co.bizcore.v1.svc.Svc;
 import kr.co.bizcore.v1.svc.SystemService;
-import kr.co.bizcore.v1.util.UploadedFileStorage;
 import lombok.extern.slf4j.Slf4j;
 
 @Configuration
@@ -32,7 +31,7 @@ public class ViewConfig implements WebMvcConfigurer {
     private SystemService systemService;
 
     @Value("${bizcore.storage.uploadedfile}")
-    private String fileUploadedPath;
+    private String fileSavePath;
 
     @Value("${bizcore.server.debug}")
     private String debug;
@@ -50,11 +49,6 @@ public class ViewConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public UploadedFileStorage getFileStorage(){
-        return new UploadedFileStorage(fileUploadedPath);
-    }
-
-    @Bean
     public PlatformTransactionManager txMng(@Autowired DataSource ds) throws Exception{
         return new DataSourceTransactionManager(ds);
     }
@@ -66,8 +60,6 @@ public class ViewConfig implements WebMvcConfigurer {
         File root = null, attached = null, temp = null, directAccess = null;
         int x = 0;
 
-        Svc.fileStoragePath = fileUploadedPath;
-
         // DEBUG 모드 세팅
         Svc.DEBUG = debug.equals("true");
 
@@ -76,7 +68,7 @@ public class ViewConfig implements WebMvcConfigurer {
 
         // 파일 저장공간 확인 및 기초 디렉토리 확인/생성
         compIdList = systemService.getCompanyList();
-        rootPath = fileUploadedPath;
+        rootPath = fileSavePath;
         if(rootPath.substring(rootPath.length() - 1).equals("/"))   rootPath = rootPath.substring(0, rootPath.length() - 1);
         try{
             if(compIdList != null && compIdList.size() > 0) for(x = 0 ; x < compIdList.size() ; x++){
