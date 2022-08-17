@@ -2,6 +2,10 @@ package kr.co.bizcore.v1.svc;
 
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -248,6 +252,22 @@ public class SystemService extends Svc {
         return result;
 
     }
+
+    // 첨부파일 등을 임시로 저장하는 메서드
+    public boolean saveAtteachedToTemp(String compId, String fileName, byte[] fileData){
+        boolean result = false;
+        String s = File.separator, compDir = fileStoragePath + s + compId;
+        File target = null;
+        FileOutputStream fos = null;
+
+        target = new File(compDir + s + "temp" + s + fileName);
+        try {
+            fos = new FileOutputStream(target);
+            fos.write(fileData);
+        } catch (IOException e) {e.printStackTrace();}
+
+        return result;
+    } // End of saveAtteachedToTemp()
 
 
 }
