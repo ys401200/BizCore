@@ -92,7 +92,6 @@ public abstract class Svc {
     @Autowired
     protected SqlSessionTemplate sqlSession;
 
-    @Value("${bizcore.storage.uploadedfile}")
     public static String fileStoragePath;
 
     public static boolean DEBUG;

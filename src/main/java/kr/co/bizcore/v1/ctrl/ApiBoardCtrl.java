@@ -69,6 +69,7 @@ public class ApiBoardCtrl extends Ctrl{
         HashMap<String, String> attached = null;
         String data = null;
         int count = 0;
+        JSONObject json = null;
 
         session = request.getSession();
         compId = (String)session.getAttribute("compId");
@@ -85,9 +86,16 @@ public class ApiBoardCtrl extends Ctrl{
             result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
         }else{
             data = boardService.decAes(requestBody, aesKey, aesIv);
+            json = new JSONObject(data);
+            article = new Article();
+            files = json.getJSONArray("files").toList();
+            article.setWriter(boardService.strToInt(userNo));
+            article.setTitle(json.getString("title"));
+            article.setContent(json.getString("content"));
+
             try {
-                mapper = new ObjectMapper();
-                article = mapper.readValue(data, Article.class);
+                // mapper = new ObjectMapper();
+                //article = mapper.readValue(data, Article.class);
                 count = boardService.postNewArticle(compId, article, files, attached);
                 result = "{\"result\":\"ok\",\"msg\":\"success file upload and add article. file count : " + count + "\"}";
             } catch (Exception e) {

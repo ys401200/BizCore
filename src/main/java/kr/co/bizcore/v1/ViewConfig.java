@@ -59,6 +59,7 @@ public class ViewConfig implements WebMvcConfigurer {
         List<String> compIdList = null;
         File root = null, attached = null, temp = null, directAccess = null;
         int x = 0;
+        Svc.fileStoragePath = fileSavePath;
 
         // DEBUG 모드 세팅
         Svc.DEBUG = debug.equals("true");
