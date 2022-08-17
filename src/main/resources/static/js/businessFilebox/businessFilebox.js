@@ -347,11 +347,10 @@ function fileChange(){
 		let reader = new FileReader();
 
 		reader.onload = (e) => {
-			
 			let fileData = e.target.result;
 			fileData = cipher.encAes(fileData);
 			let fullData = (attached[i].name + "\r\n" + fileData); // 파일 제목과 파일 내용 
-			fullData = cipher.encAes(fullData); 
+			// fullData = cipher.encAes(fullData); 
 			
 			url = "/api/board/filebox/attached";
 			method = "post";
