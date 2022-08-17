@@ -1,12 +1,16 @@
 package kr.co.bizcore.v1.domain;
 
 import java.util.ArrayList;
+
+import javax.xml.bind.annotation.XmlElement;
+
 import lombok.Getter;
 import lombok.Setter;
 
 @Setter @Getter
 public class Estimate extends SimpleEstimate{
 
+    @XmlElement(nillable=true)
     protected String type;
     protected int ver;
     protected int sopp;

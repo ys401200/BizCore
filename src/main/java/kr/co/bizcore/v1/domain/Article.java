@@ -2,6 +2,8 @@ package kr.co.bizcore.v1.domain;
 
 import java.util.ArrayList;
 
+import javax.xml.bind.annotation.XmlElement;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,7 +11,9 @@ import lombok.Setter;
 @Setter
 public class Article extends SimpleArticle{
 
+    @XmlElement(nillable=true)
     private String content;
+    @XmlElement(nillable=true)
     private String related;
     private ArrayList<AttachedFile> attached;
 

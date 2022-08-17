@@ -1,6 +1,9 @@
 package kr.co.bizcore.v1.domain;
 
 import java.util.Date;
+
+import javax.xml.bind.annotation.XmlElement;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,6 +18,7 @@ public class SimpleSopp extends Domain{
     protected int endUser; //엔드유저
     protected int employee; //담당자
     protected long expectedSales; //예상매출액
+    @XmlElement(nillable=true)
     protected String status; //진행단계
     
 }
