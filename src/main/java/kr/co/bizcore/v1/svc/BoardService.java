@@ -57,11 +57,13 @@ public class BoardService extends Svc{
     }
 
     public boolean saveAttachedFile(String compId, String name, byte[] fileData){
-        String path = fileStoragePath + "/" + compId + "/temp";
+        String s = File.separator, path = null;
         File file = null;
         FileOutputStream stream = null;
+
+        path = this.fileStorage.getFileStoragePath(compId) + s + compId + s + "temp";
         
-        file = new File(path + "/" + name);
+        file = new File(path + s + name);
         if(file.exists())   return false;
 
         try {
