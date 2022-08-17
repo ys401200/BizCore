@@ -206,7 +206,7 @@ public class TestService extends Svc{
                 xTax = rs.getLong(6);
                 xTotal = rs.getLong(7);
                 xRemark = rs.getString(8);
-                xDt = rs.getDate(9) == null ? -1 : rs.getDate(9).getTime() + rs.getTime(9).getTime();
+                xDt = rs.getDate(9) == null ? -1 : rs.getDate(9).getTime();
 
                 if(result == null)  result = "[";
                 else                result += ",";

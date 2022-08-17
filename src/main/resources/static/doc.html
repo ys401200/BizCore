@@ -77,6 +77,31 @@
             grid-column-start: 1;
             grid-column-end: 6;
         }
+
+
+
+        .app_line,
+        .app_files,
+        .app_data,
+        .app_forms {
+            font-size: 16px;
+        }
+
+
+        .detailContentDiv {
+            margin-left: 1em;
+            margin-right: 1em;
+            display: grid;
+            grid-template-columns: 20% 20% 20% 10% 10% 10% 10%;
+        }
+
+
+
+        .detailcontentlast {
+            border-left: 1px solid black;
+            border-right: 1px solid black;
+            border-bottom: 1px solid black;
+        }
     </style>
 </head>
 
@@ -160,7 +185,7 @@
                                     }
                                 })
                             } else {
-                                msg.set(data.msg);
+                                //  msg.set(data.msg);
                             }
                         }
                     })
@@ -197,6 +222,44 @@
             } // End of getKey()
         }
 
+
+
+
+
+
+
+        function getForms() {
+            let url;
+
+            url = apiServer + "/api/gw/form";
+
+            $.ajax({
+                "url": url,
+                "method": "get",
+                "dataType": "json",
+                "cache": false,
+                success: (data) => {
+                    let list;
+                    if (data.result === "ok") {
+                        list = cipher.decAes(data.data);
+                        list = JSON.parse(list);
+                        storage.form = list;
+                        console.log("[getForms] Success getting employee information.");
+                    } else {
+                        //  msg.set("양식 정보를 가져오지 못했습니다.");
+                    }
+                }
+            })
+        } // End of getUserMap()
+
+
+
+
+
+
+
+
+
         // API 서버에서 직원 정보를 가져오는 함수
         function getUserMap() {
             let url;
@@ -217,7 +280,7 @@
                         storage.user = list;
                         console.log("[getUserMap] Success getting employee information.");
                     } else {
-                        msg.set("직원 정보를 가져오지 못했습니다.");
+                        //  msg.set("직원 정보를 가져오지 못했습니다.");
                     }
                 }
             })
@@ -243,7 +306,7 @@
                         storage.dept = list;
                         console.log("[getDeptMap] Success getting department information.");
                     } else {
-                        msg.set("부서 정보를 가져오지 못했습니다.");
+                        //  msg.set("부서 정보를 가져오지 못했습니다.");
                     }
                 }
             })
@@ -269,7 +332,7 @@
                         storage.customer = list;
                         console.log("[getCustomer] Success getting customer information.");
                     } else {
-                        msg.set("고객 정보를 가져오지 못했습니다.");
+                        // msg.set("고객 정보를 가져오지 못했습니다.");
                     }
                 }
             })
@@ -283,8 +346,10 @@
                 getCustomer();
                 getDeptMap();
                 getUserMap();
+                getForms();
             }, 1000);
-            storage.status = { "1": "임시저장", "2": "검토요청", "3": "반려", "4": "검토완료", "5": "완료" }
+            storage.appStatus = { "1": "임시저장", "2": "검토요청", "3": "반려", "4": "검토완료", "5": "완료" }
+            storage.status = { "1": "작성중", "2": "진행중", "3": "완료" }
         } // End of init()
         function lineUp(str) { let x, r = 0; for (x in str) r += str[x].charCodeAt(); return r; }
         // 서버에서 문서 목록을 가져오는 함수
@@ -298,6 +363,7 @@
                     tt = JSON.parse(tt);
                     if (tt.result === "ok") {
                         docList = tt.data;
+                        storage.docList = docList;
                         drawDocList();
                     } else {
                         console.log("[ERROR] Failure parse.");
@@ -320,7 +386,8 @@
                     tt = JSON.parse(tt);
                     if (tt.result === "ok") {
                         docInfo = { "files": tt.files, "appData": tt.appData, "docData": tt.docData };
-                        drawClickedDetail(docInfo);
+                        storage.docInfo = docInfo;
+                        drawClickedDetail(docInfo, docNo);
                     } else {
                         console.log("[ERROR] Failure parse.");
                     }
@@ -351,7 +418,7 @@
                 html += ("<div>" + doc.type + "</div>")
                 html += ("<div>" + doc.title + "</div>")
                 html += ("<div>" + (storage.user[doc.writer].userName) + "</div>")
-                html += ("<div>" + (storage.status[doc.status]) + "</div>")
+                html += ("<div>" + (doc.status + " : " + storage.status[doc.status]) + "</div>")
                 html += "</label>";
             }
 
@@ -363,37 +430,268 @@
             let docNo;
             docNo = el.dataset.no;
             getDocData(docNo);
+
         } // End of clickedItem()
 
 
-
-
-
-
-
-        function drawClickedDetail(info) {
+        function drawClickedDetail(info, no) {
             let fileTarget = $(".app_files");
-            let lineTarget = $(".app_line");
+            let appTarget = $(".app_line");
             let dataTarget = $(".app_data");
             let files, appData, docData = new Array();
-            let filesHtml, appDataHtml, docDataHtml = "";
+            let filesHtml = "";
+            let appDataHtml = "";
+            let docDataHtml = "";
             //docInfo = { "files": tt.files, "appData": tt.appData, "docData": tt.docData };
 
-            console.log(info);
 
-            let lineTitles = ["customer","price","product","quantity","remark","subTotal","tax"];
-            let dataTitles = ["app","approved","comment","issued","request","status","writer"];
-   for(let j = 0 ; j < dataTitles.length ; j++) {
-    
-   }
-            for(let i = 0 ; i <info.appData.length; i++) {
-                
+
+            let dataTitles = ["customer", "price", "product", "quantity", "remark", "subTotal", "tax"];
+            let appTitles = ["app", "approved", "comment", "issued", "request", "status", "writer"];
+
+
+
+            for (let i = 0; i < info.appData.length; i++) {
+                appDataHtml += "<div>" + "app_" + info.appData[i].app + "</div>";
+                appDataHtml += "<div>" + "approved_" + info.appData[i].approved + "</div>";
+                appDataHtml += "<div>" + "comment_" + info.appData[i].comment + "</div>";
+                appDataHtml += "<div>" + "issued_" + info.appData[i].issued + "</div>";
+                appDataHtml += "<div>" + "request_" + info.appData[i].request + "</div>";
+                appDataHtml += "<div>" + "status_" + info.appData[i].status + "</div>";
+                appDataHtml += "<div>" + "writer_" + info.appData[i].writer + "</div>";
+            }
+
+            appTarget.html(appDataHtml);
+
+
+            filesHtml += "<div>" + "filename_" + files + "</div>";
+
+
+            fileTarget.html(filesHtml);
+            console.log(info.docData);
+            for (let i = 0; i < info.docData.length; i++) {
+                docDataHtml += "<div>" + i + "데이터 -------------"
+                for (let j = 0; j < dataTitles.length; j++) {
+
+                    docDataHtml += "<div>" + info.docData[i][dataTitles[j]] + "</div>";
+                }
+            }
+
+            docDataHtml += "</div>"
+            dataTarget.html(docDataHtml);
+
+
+            let target = $(".app_preview");
+
+            let typeHtml = "";
+
+
+            for (let i = 0; i < info.appData.length; i++) {
+                for (let j = 0; j < appTitles.length; j++) {
+                    info.appData[i][appTitles[j]];
+                }
+            }
+
+
+            for (let i = 0; i < storage.docList.length; i++) {
+                if (storage.docList[i].no == no) {
+                    if (storage.docList[i].type == "TRS" || storage.docList[i].type == "BUY") {
+                        target.html(storage.form[0].form);
+                        let id = storage.form[0].id;
+
+
+                        ////// info title content 출력하기 
+                        let docListTitle = Object.keys(storage.docList[i]);
+                        for (let k = 0; k < Object.keys(storage.docList[i]).length; k++) {
+                            for (let j = 0; j < docListTitle.length; j++) {
+                                console.log(docListTitle[j]);
+                                $("#" + id + "_" + docListTitle[j]).val(storage.docList[i][docListTitle[j]]);
+                            }
+                        }
+
+
+                        // 결재선 출력하기 
+
+                        $("#" + id + "_line").html(
+                            "<input type='text' id='" + id + "_app'>" +
+                            "<input type='text' id='" + id + "_approved'>" +
+                            "<input type='text' id='" + id + "_comment'>" +
+                            "<input type='text' id='" + id + "_status'>");
+
+                        for (let i = 0; i < info.appData.length; i++) {
+                            for (let j = 0; j < appTitles.length; j++) {
+
+                                if (info.appData[i][appTitles[j]] != null) {
+                                    $("#" + id + "_" + appTitles[j]).val(info.appData[i][appTitles[j]]);
+                                }
+                            }
+                        }
+
+
+
+
+                        // 상세데이터 출력 
+
+                        let dataHtml = ""
+                        alert(Object.keys(info.docData).length);
+
+                        for (let q = 0; q < Object.keys(info.docData).length; q++) {
+                            dataHtml += "<div class='detailContentDiv'>"
+                            for (let j = 0; j < dataTitles.length; j++) {
+                                if (j == (dataTitles.length - 1)) {
+                                    dataHtml += "<div id='child' class='countRow detailcontentlast'><input class='inputs' type='text' value='" + info.docData[q][dataTitles[j]] + "' id='" + id + "_" + dataTitles[j] + q + "'></div>";
+                                } else {
+                                    dataHtml += "<div id='child' class='countRow detailcontent'><input class='inputs' type='text' value='" + info.docData[q][dataTitles[j]] + "' id='" + id + "_" + dataTitles[j] + q + "'></div>";
+                                }
+
+                            } dataHtml += "</div>"
+                        }
+
+
+
+
+                        $(".insertedDataList").html(dataHtml);
+
+
+
+
+
+                    } else if (storage.docList[i].type == "COST" || storage.docList[i].type == "CREDIT" ||
+                        storage.docList[i].type == "PAY" || storage.docList[i].type == "TAX") {
+                        target.html(storage.form[1].form)
+                        let id = storage.form[1].id;
+                        // doclist data 출력하기 
+
+                        let docListTitle = Object.keys(storage.docList[i]);
+                        for (let k = 0; k < Object.keys(storage.docList[i]).length; k++) {
+                            for (let j = 0; j < docListTitle.length; j++) {
+                                console.log(docListTitle[j]);
+                                $("#" + id + "_" + docListTitle[j]).val(storage.docList[i][docListTitle[j]]);
+                            }
+                        }
+
+
+                        /// app data 출력하기 
+
+                        $("#" + id + "_line").html(
+                            "<input type='text' id='" + id + "_app'>" +
+                            "<input type='text' id='" + id + "_approved'>" +
+                            "<input type='text' id='" + id + "_comment'>" +
+                            "<input type='text' id='" + id + "_status'>");
+
+                        for (let i = 0; i < info.appData.length; i++) {
+                            for (let j = 0; j < appTitles.length; j++) {
+
+                                if (info.appData[i][appTitles[j]] != null) {
+                                    $("#" + id + "_" + appTitles[j]).val(info.appData[i][appTitles[j]]);
+                                }
+                            }
+                        }
+
+
+
+
+
+
+
+
+                    } else if (storage.docList[i].type == "PUR") {
+                        target.html(storage.form[2].form)
+                        let id = storage.form[2].id;
+                        // doclist data 출력하기 
+
+                        let docListTitle = Object.keys(storage.docList[i]);
+                        for (let k = 0; k < Object.keys(storage.docList[i]).length; k++) {
+                            for (let j = 0; j < docListTitle.length; j++) {
+
+                                $("#" + id + "_" + docListTitle[j]).val(storage.docList[i][docListTitle[j]]);
+                            }
+                        }
+
+
+                        /// app data 출력하기 
+
+                        $("#" + id + "_line").html(
+                            "<input type='text' id='" + id + "_app'>" +
+                            "<input type='text' id='" + id + "_approved'>" +
+                            "<input type='text' id='" + id + "_comment'>" +
+                            "<input type='text' id='" + id + "_request'>" +
+                            "<input type='text' id='" + id + "_status'>");
+
+                        for (let i = 0; i < info.appData.length; i++) {
+                            for (let j = 0; j < appTitles.length; j++) {
+
+                                if (info.appData[i][appTitles[j]] != null) {
+                                    $("#" + id + "_" + appTitles[j]).val(info.appData[i][appTitles[j]]);
+                                }
+                            }
+                        }
+
+
+
+
+
+
+                    } else if (storage.docList[i].type == "DIP") {
+                        target.html(storage.form[3].form)
+                        let id = storage.form[3].id;
+                        // doclist data 출력하기 
+
+                        let docListTitle = Object.keys(storage.docList[i]);
+                        for (let k = 0; k < Object.keys(storage.docList[i]).length; k++) {
+                            for (let j = 0; j < docListTitle.length; j++) {
+                                $("#" + id + "_" + docListTitle[j]).val(storage.docList[i][docListTitle[j]]);
+                            }
+                        }
+
+
+                        /// app data 출력하기 
+
+                        $("#" + id + "_line").html(
+                            "<input type='text' id='" + id + "_app'>" +
+                            "<input type='text' id='" + id + "_approved'>" +
+                            "<input type='text' id='" + id + "_comment'>" +
+                            "<input type='text' id='" + id + "_status'>");
+
+                        for (let i = 0; i < info.appData.length; i++) {
+                            for (let j = 0; j < appTitles.length; j++) {
+
+                                if (info.appData[i][appTitles[j]] != null) {
+                                    $("#" + id + "_" + appTitles[j]).val(info.appData[i][appTitles[j]]);
+                                }
+                            }
+                        }
+
+
+
+
+
+
+
+                    }
+
+
+                }
+
             }
 
 
 
-
         }
+
+            // for (let i = 0; i < storage.form.length; i++) {
+            //     typeHtml += "<button type='button' value='" + i + "' onclick='drawForm(this.value)'>" + storage.form[i].id + "</button>"
+            // }
+
+            // typeFormList.html(typeHtml);
+
+
+
+
+
+
+
+
     </script>
 </body>
 
