@@ -253,7 +253,7 @@ public class TestService extends Svc{
                 fileName = rs.getString(1);
                 if(result == null)  result = "[";
                 else                result += ",";
-                result += fileName;
+                result += ("\"" + fileName + "\"");
             }
             if(result != null)  result += "]";
         }catch(Exception e){e.printStackTrace();}
