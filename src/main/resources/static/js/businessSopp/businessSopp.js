@@ -188,7 +188,7 @@ function soppSuccessView(result){
 	title = (result.title === null || result.title === "" || result.title === undefined) ? "제목 없음" : result.title;
 	userName = (result.employee == 0 || result.employee === null || result.employee === undefined) ? "데이터 없음" : storage.user[result.employee].userName;
 	customer = (result.customer == 0 || result.customer === null || result.customer === undefined) ? "데이터 없음 " : storage.customer[result.customer].name;
-	customerUser = (result.picOfCustomer == 0 || result.picOfCustomer === null || result.picOfCustomer === undefined) ? "데이터 없음" : storage.user[result.picOfCustomer].userName;
+	customerUser = (result.picOfCustomer == 0 || result.picOfCustomer === null || result.picOfCustomer === undefined) ? "데이터 없음" : result.picOfCustomer;
 	endUser = (result.endUser == 0 || result.endUser === null || result.endUser === undefined) ? "데이터 없음" : storage.customer[result.endUser].name;
 	status = (result.status === null || result.status === "" || result.status === undefined) ? "없음" : storage.code.etc[result.status];
 	progress = (result.progress === null || result.progress === "" || result.progress === undefined) ? "데이터 없음" : result.progress + "%";
@@ -306,13 +306,14 @@ function soppInsertForm(){
 			"title": "매출처",
 			"elementId": "customer",
 			"dataKeyup": "customer",
+			"userId": "picOfCustomer",
+			"onChange": "customerChange(this);",
 			"disabled": false,
 		},
 		{
 			"title": "매출처 담당자",
-			"dataKeyup": "user",
+			"dataKeyup": "customerUser",
 			"elementId": "picOfCustomer",
-			"disabled": false,
 		},
 		{
 			"title": "엔드유저",
@@ -474,6 +475,8 @@ function soppUpdateForm(result){
 			"title": "매출처",
 			"elementId": "customer",
 			"dataKeyup": "customer",
+			"userId": "picOfCustomer",
+			"onChange": "customerChange(this);",
 			"value": customer,
 			"disabled": false,
 		},
@@ -482,7 +485,6 @@ function soppUpdateForm(result){
 			"dataKeyup": "user",
 			"elementId": "picOfCustomer",
 			"value": customerUser,
-			"disabled": false,
 		},
 		{
 			"title": "엔드유저",
@@ -616,8 +618,7 @@ function soppInsert(){
 	employee = dataListFormat(employee.attr("id"), employee.val());
 	customer = $(document).find("#customer");
 	customer = dataListFormat(customer.attr("id"), customer.val());
-	picOfCustomer = $(document).find("#picOfCustomer");
-	picOfCustomer = dataListFormat(picOfCustomer.attr("id"), picOfCustomer.val());
+	picOfCustomer = customer
 	endUser = $(document).find("#endUser");
 	endUser = dataListFormat(endUser.attr("id"), endUser.val());
 	status = $(document).find("#status").val();
@@ -670,7 +671,7 @@ function soppUpdate(no){
 	employee = dataListFormat(employee.attr("id"), employee.val());
 	customer = $(document).find("#customer");
 	customer = dataListFormat(customer.attr("id"), customer.val());
-	picOfCustomer = $(document).find("#picOfCustomer");
+	picOfCustomer = customer
 	picOfCustomer = dataListFormat(picOfCustomer.attr("id"), picOfCustomer.val());
 	endUser = $(document).find("#endUser");
 	endUser = dataListFormat(endUser.attr("id"), endUser.val());

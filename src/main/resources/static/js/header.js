@@ -942,7 +942,9 @@ function detailViewFormModal(data){
 		let dataKeyupEvent = (data[i].keyup === undefined) ? "" : data[i].keyup;
 		let elementId = (data[i].elementId === undefined) ? "" : data[i].elementId;
 		let elementName = (data[i].elementName === undefined) ? "" : data[i].elementName;
+		let dataChangeEvent = (data[i].onChange === undefined) ? "" : data[i].onChange;
 		let dataClickEvent = (data[i].onClick === undefined) ? "" : data[i].onClick;
+		let userId = (data[i].userId === undefined) ? "" : data[i].userId;
 
 		html += "<div class='defaultFormLine'>";
 		html += "<div class='defaultFormSpanDiv'>";
@@ -952,9 +954,9 @@ function detailViewFormModal(data){
 
 		if(dataType === "text"){
 			if(dataDisabled == true){
-				html += "<input type='text' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "' data-keyup='" + dataKeyup + "' onclick='" + dataClickEvent + "' onkeyup='" + dataKeyupEvent + "' disabled='" + dataDisabled + "'>";
+				html += "<input type='text' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "' data-keyup='" + dataKeyup + "' data-user-id='" + userId + "' onchange='" + dataChangeEvent + "' onclick='" + dataClickEvent + "' onkeyup='" + dataKeyupEvent + "' disabled='" + dataDisabled + "'>";
 			}else{
-				html += "<input type='text' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "' data-keyup='" + dataKeyup + "' onclick='" + dataClickEvent + "' onkeyup='" + dataKeyupEvent + "'>";
+				html += "<input type='text' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "' data-keyup='" + dataKeyup + "' data-user-id='" + userId + "' onchange='" + dataChangeEvent + "' onclick='" + dataClickEvent + "' onkeyup='" + dataKeyupEvent + "'>";
 			}
 		}else if(dataType === "textarea"){
 			html += "<textarea>" + dataValue + "</textarea>";
@@ -968,9 +970,9 @@ function detailViewFormModal(data){
 			}
 		}else if(dataType === "date"){
 			if(dataDisabled == true){
-				html += "<input type='date' max='9999-12-31' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "' data-keyup='" + dataKeyup + "' onkeyup='" + dataKeyupEvent + "' disabled='" + dataDisabled + "'>";
+				html += "<input type='date' max='9999-12-31' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "' disabled='" + dataDisabled + "'>";
 			}else{
-				html += "<input type='date' max='9999-12-31' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "' data-keyup='" + dataKeyup + "' onkeyup='" + dataKeyupEvent + "'>";
+				html += "<input type='date' max='9999-12-31' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "'>";
 			}
 		}else if(dataType === "select"){
 			if(dataDisabled == true){
@@ -1413,4 +1415,11 @@ function createTabSalesList(){
 
 function detailContainerHide(){
 	$(document).find(".detailContainer").hide();
+}
+
+function customerChange(e){
+	let getCustNumber;
+	getCustNumber = dataListFormat("customer", $(e).val());
+
+	$(document).find("#" + $(e).data("user-id")).val(storage.customer[getCustNumber].ceoName);
 }
