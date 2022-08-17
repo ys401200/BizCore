@@ -3,6 +3,8 @@ package kr.co.bizcore.v1.domain;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.xml.bind.annotation.XmlElement;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.Getter;
@@ -13,18 +15,27 @@ import lombok.Setter;
 public class Sopp extends SimpleSopp{
 
     private int contract;
+    @XmlElement(nillable=true)
     private String picOfCustomer; //매출처 담당자
     private int ptnc;
     private int picOfBuyer;
+    @XmlElement(nillable=true)
     private String detail; //내용
+    @XmlElement(nillable=true)
     private Date targetDate; //예상매출예정일
+    @XmlElement(nillable=true)
     private Date startOfMaintenance;
+    @XmlElement(nillable=true)
     private Date endOfMaintenance;
     private int progress; //가능성
     private int source;
+    @XmlElement(nillable=true)
     private String remark;
+    @XmlElement(nillable=true)
     private Date remarkDate;
+    @XmlElement(nillable=true)
     private String businessType;
+    @XmlElement(nillable=true)
     private String priority;
 
 

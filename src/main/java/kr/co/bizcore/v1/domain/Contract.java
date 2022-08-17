@@ -1,6 +1,9 @@
 package kr.co.bizcore.v1.domain;
 
 import java.util.Date;
+
+import javax.xml.bind.annotation.XmlElement;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,10 +21,15 @@ public class Contract extends SimpleContract{
     private int cipOfPartner;
     private int supplier;
     private int cipOfSupplier;
+    @XmlElement(nillable=true)
     private Date supplied;
+    @XmlElement(nillable=true)
     private Date delivered; //검수일자
+    @XmlElement(nillable=true)
     private String taxInclude; //vat 포함여부
+    @XmlElement(nillable=true)
     private String area;
+    @XmlElement(nillable=true)
     private String typeOfBusiness;
 
     public void setTaxInclude(String yn){taxInclude = yn;}

@@ -2,6 +2,8 @@ package kr.co.bizcore.v1.domain;
 
 import java.util.Date;
 
+import javax.xml.bind.annotation.XmlElement;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,13 +12,19 @@ public class SimpleTaxBill extends Domain{
     
     protected int no;
     protected boolean type;
+    @XmlElement(nillable=true)
     protected Date issueDate;
+    @XmlElement(nillable=true)
     protected Date tradeDate;
+    @XmlElement(nillable=true)
     protected String regNo;
+    @XmlElement(nillable=true)
     protected String sn;
     protected long amount;
     protected long tax;
+    @XmlElement(nillable=true)
     protected String product;
+    @XmlElement(nillable=true)
     protected String remark;
 
     public void setType(boolean t){type=t;}

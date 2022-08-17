@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import javax.xml.bind.annotation.XmlElement;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -26,9 +26,12 @@ public abstract class Domain {
     @JsonIgnore
     private static HashMap<String, String> tableMap;
 
+    @XmlElement(nillable=true)
     protected Date created;
+    @XmlElement(nillable=true)
     protected Date modified;
     @JsonIgnore
+    @XmlElement(nillable=true)
     protected Date deleted;
 
     public Date getCreated(){return created;}
@@ -40,7 +43,7 @@ public abstract class Domain {
     public void setCreated(long v){created = new Date(v);}
     public void setModified(long v){modified = new Date(v);}
     public void setDeleted(long v){deleted = new Date(v);}
-
+    
     // === P R I V A T E _ M E T H O D ===
 
     // 입력된 객체와 비교하여 값이 다른 필드를 리턴하는 메서드  
@@ -53,7 +56,7 @@ public abstract class Domain {
                 
         // 입력된 객체가 널이거나 클래스가 다르면 종료함
         if(!getClass().getName().equals(target.getClass().getName()))   return null;
-
+        
         for(Field field : fields){
             field.setAccessible(true);
             fieldName = field.getName();
