@@ -183,13 +183,13 @@ public class TestService extends Svc{
 
     public String docData(String docNo){
         String result = null;
-        String sql1 = "SELECT custname AS customer, productname AS product, productnetprice AS price, productqty AS qty, productamount AS subtotal, productvat AS tax, producttotal AS total, productremark AS remark FROM swcore.swc_businessdocdata WHERE attrib NOT LIKE 'XXX%' AND docno = ?";
+        String sql1 = "SELECT custname AS customer, productname AS product, productnetprice AS price, productqty AS qty, productamount AS subtotal, productvat AS tax, producttotal AS total, productremark AS remark, productDate AS dt FROM swcore.swc_businessdocdata WHERE attrib NOT LIKE 'XXX%' AND docno = ?";
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         String xCustomer = null, xProduct = null, xRemark = null;
         int xQty = -1;
-        long xPrice = -1, xSubtotal = -1, xTax = -1, xTotal = -1;
+        long xPrice = -1, xSubtotal = -1, xTax = -1, xTotal = -1, xDt = -1;
 
         try{
             conn = sqlSession.getConnection();
@@ -206,6 +206,7 @@ public class TestService extends Svc{
                 xTax = rs.getLong(6);
                 xTotal = rs.getLong(7);
                 xRemark = rs.getString(8);
+                xDt = rs.getDate(9) == null ? -1 : rs.getDate(9).getTime() + rs.getTime(9).getTime();
 
                 if(result == null)  result = "[";
                 else                result += ",";
@@ -217,6 +218,7 @@ public class TestService extends Svc{
                 result += ("\"subTotal\":" + xSubtotal + ",");
                 result += ("\"tax\":" + xTax + ",");
                 result += ("\"total\":" + xTotal + ",");
+                result += ("\"date\":" + xDt + ",");
                 result += ("\"remark\":" + (xRemark == null ? "null" : "\"" + xRemark + "\"") + "}");
 
 
@@ -228,6 +230,7 @@ public class TestService extends Svc{
                 xSubtotal = -1;
                 xTax = -1;
                 xTotal = -1;
+                xDt = -1;
             }
             if(result != null)  result += "]";
         }catch(Exception e){e.printStackTrace();}
@@ -299,6 +302,14 @@ public class TestService extends Svc{
             }
             if(result != null)  result += "]";
         }catch(Exception e){e.printStackTrace();}
+
+        return result;
+    }
+
+    public String testDate(){
+        String result = null;
+        //Contract cnt = 
+
 
         return result;
     }
