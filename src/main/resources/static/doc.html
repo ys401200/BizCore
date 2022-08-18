@@ -92,13 +92,76 @@
             margin-left: 1em;
             margin-right: 1em;
             display: grid;
-            grid-template-columns: 20% 20% 20% 10% 10% 10% 10%;
+            grid-template-columns: 10% 15% 15% 10% 5% 10% 10% 10% 15%;
         }
 
 
 
         .detailcontentlast {
             border-left: 1px solid black;
+            border-right: 1px solid black;
+            border-bottom: 1px solid black;
+        }
+
+
+
+        .lineDivContainer {
+            display: grid;
+            grid-template-columns: 33% 33% 33%;
+            margin: 0 1em;
+        }
+
+        .lineDiv {
+            display: grid;
+            grid-template-columns: 30% 70%;
+
+        }
+
+        .lineDiv input {
+            border: none;
+            width: 85%;
+        }
+
+        .lineDiv .lineDivContentfirst,
+        .lineDiv .lineDivContentfirstw {
+            border: 1px solid black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgb(208, 206, 206);
+        }
+
+
+
+        .lineDiv .lineDivContent {
+            border-top: 1px solid black;
+            border-right: 1px solid black;
+        }
+
+        .lineDiv .lineDivContentw {
+            border-top: 1px solid black;
+
+        }
+
+        .lineDiv .lineDivContentlast {
+            border-top: 1px solid black;
+            border-right: 1px solid black;
+            border-bottom: 1px solid black;
+        }
+
+        .lineDiv .lineDivContentlastw {
+            border-top: 1px solid black;
+            border-bottom: 1px solid black;
+        }
+
+
+        .appDivContent {
+            border-top: 1px solid black;
+            border-right: 1px solid black;
+        }
+
+        .appDivContentlast {
+            border-top: 1px solid black;
             border-right: 1px solid black;
             border-bottom: 1px solid black;
         }
@@ -348,7 +411,7 @@
                 getUserMap();
                 getForms();
             }, 1000);
-            storage.appStatus = { "1": "임시저장", "2": "검토요청", "3": "반려", "4": "검토완료", "5": "완료" }
+            storage.appStatus = { "1": "임시저장", "2": "검토요청", "3": "반려", "4": "승인요청", "5": "완료" }
             storage.status = { "1": "작성중", "2": "진행중", "3": "완료" }
         } // End of init()
         function lineUp(str) { let x, r = 0; for (x in str) r += str[x].charCodeAt(); return r; }
@@ -444,21 +507,16 @@
             let docDataHtml = "";
             //docInfo = { "files": tt.files, "appData": tt.appData, "docData": tt.docData };
 
-
-
-            let dataTitles = ["customer", "price", "product", "quantity", "remark", "subTotal", "tax"];
-            let appTitles = ["app", "approved", "comment", "issued", "request", "status", "writer"];
-
-
+            let dataTitles = ["date", "customer", "product", "price", "quantity", "subTotal", "tax", "total", "remark"];
+            let appTitles = ["app", "approved", "comment", "request", "status"];
 
             for (let i = 0; i < info.appData.length; i++) {
                 appDataHtml += "<div>" + "app_" + info.appData[i].app + "</div>";
                 appDataHtml += "<div>" + "approved_" + info.appData[i].approved + "</div>";
                 appDataHtml += "<div>" + "comment_" + info.appData[i].comment + "</div>";
-                appDataHtml += "<div>" + "issued_" + info.appData[i].issued + "</div>";
                 appDataHtml += "<div>" + "request_" + info.appData[i].request + "</div>";
-                appDataHtml += "<div>" + "status_" + info.appData[i].status + "</div>";
                 appDataHtml += "<div>" + "writer_" + info.appData[i].writer + "</div>";
+                appDataHtml += "<div>" + "status_" + info.appData[i].status + "</div>";
             }
 
             appTarget.html(appDataHtml);
@@ -468,11 +526,10 @@
 
 
             fileTarget.html(filesHtml);
-            console.log(info.docData);
+
             for (let i = 0; i < info.docData.length; i++) {
                 docDataHtml += "<div>" + i + "데이터 -------------"
                 for (let j = 0; j < dataTitles.length; j++) {
-
                     docDataHtml += "<div>" + info.docData[i][dataTitles[j]] + "</div>";
                 }
             }
@@ -492,56 +549,411 @@
                 }
             }
 
-
             for (let i = 0; i < storage.docList.length; i++) {
                 if (storage.docList[i].no == no) {
+
+
+
+                    /// 결재 타입이 지출품의서인 경우 
                     if (storage.docList[i].type == "TRS" || storage.docList[i].type == "BUY") {
                         target.html(storage.form[0].form);
+                        if (storage.docList[i].type == "TRS") {
+                            $("#TRS").attr("checked", true);
+                        } else {
+                            $("#BUY").attr("checked", true);
+                        }
                         let id = storage.form[0].id;
-
 
                         ////// info title content 출력하기 
                         let docListTitle = Object.keys(storage.docList[i]);
+
                         for (let k = 0; k < Object.keys(storage.docList[i]).length; k++) {
                             for (let j = 0; j < docListTitle.length; j++) {
-                                console.log(docListTitle[j]);
-                                $("#" + id + "_" + docListTitle[j]).val(storage.docList[i][docListTitle[j]]);
+                                if (docListTitle[j] == "writer") {
+                                    let num = storage.docList[i][docListTitle[j]];
+                                    let name = storage.user[num].userName;
+                                    $("#" + id + "_" + docListTitle[j]).val(name);
+                                }
+                                else if (docListTitle[j] == "created") {
+                                    let created = new Date(storage.docList[i][docListTitle[j]]);
+                                    let year = created.getFullYear();
+                                    let month = created.getMonth() + 1;
+                                    let date = created.getDate();
+                                    $("#" + id + "_" + docListTitle[j]).val(year + "년" + month + "월" + date + "일");
+                                } else {
+                                    $("#" + id + "_" + docListTitle[j]).val(storage.docList[i][docListTitle[j]]);
+                                }
                             }
+
                         }
 
 
-                        // 결재선 출력하기 
-
                         $("#" + id + "_line").html(
-                            "<input type='text' id='" + id + "_app'>" +
-                            "<input type='text' id='" + id + "_approved'>" +
-                            "<input type='text' id='" + id + "_comment'>" +
-                            "<input type='text' id='" + id + "_status'>");
+
+                            "<div class='lineDivContainer'><div class='lineDiv'><div class='lineDivContentfirstw'><div>작 성</div></div>" +
+                            "<div><div class='lineDivContentw'><input class='inputs' type='text' id='" + id + "_writer' value='" + $("#" + id + '_writer').val() + "'></div>" +
+                            "<div class='lineDivContentw'><input class='inputs' type='text' id='" + id + "_writer_approved'></div>" +
+                            "<div class='lineDivContentw'><input class='inputs' type='text' id='" + id + "_writer_comment'></div>" +
+                            "<div class='lineDivContentlastw'><input class='inputs' type='text' id='" + id + "_writer_status'></div></div></div>" +
+
+                            "<div class='lineDiv'><div class='lineDivContentfirst'><div >결 재</div></div>" +
+                            "<div><div class='appDivContent'><input class='inputs' type='text' id='" + id + "_app'></div>" +
+                            "<div class='appDivContent'><input class='inputs' type='text' id='" + id + "_approved'></div>" +
+                            "<div class='appDivContent'><input class='inputs' type='text' id='" + id + "_comment'></div>" +
+                            "<div class='appDivContentlast'><input class='inputs' type='text' id='" + id + "_status'></div></div></div></div>");
+
 
                         for (let i = 0; i < info.appData.length; i++) {
                             for (let j = 0; j < appTitles.length; j++) {
 
                                 if (info.appData[i][appTitles[j]] != null) {
-                                    $("#" + id + "_" + appTitles[j]).val(info.appData[i][appTitles[j]]);
+                                    if (appTitles[j] == 'app') {
+                                        let app = storage.user[info.appData[i][appTitles[j]]].userName;
+                                        $("#" + id + "_" + appTitles[j]).val(app);
+                                    } else if (appTitles[j] == 'status') {
+                                        let status = storage.appStatus[info.appData[i][appTitles[j]]];
+                                        if (status == '승인요청' || status == '임시저장') {
+                                            $("#" + id + "_" + "writer_" + appTitles[j]).val(status);
+                                        } else if (status == '반려') {
+                                            let request = $("#" + id + "_" + request).val();
+                                            request = storage.user[request].userName;
+                                            //본인반려 
+                                            if (request == $("#" + id + "_" + writer).val()) {
+                                                let status = $("#" + id + "_" + appTitles[j]).val();
+                                                $("#" + id + "_writer_" + appTitles[j]).val(status);
+                                                $("#" + id + "_" + appTitles[j]).val("");
+                                                $("#" + id + "_app").val('이승우');
+                                                let approved = $("#" + id + "_approved").val();
+                                                $("#" + id + "_writer_approved").val();
+                                                $("#" + id + "_approved").val("");
+                                            } else if (request == '이승우') {
+                                                $("#" + id + "_app").val('이승우');
+
+                                            }
+
+                                        } else {
+                                            $("#" + id + "_" + appTitles[j]).val(status);
+                                        }
+
+
+                                    } else if (appTitles[j] == 'approved') {
+                                        let approved = new Date(info.appData[i][appTitles[j]]);
+                                        let year = approved.getFullYear();
+                                        let month = approved.getMonth() + 1;
+                                        let date = approved.getDate();
+
+                                        $("#" + id + "_" + appTitles[j]).val(year + "년" + month + "월" + date + "일");
+
+                                    }
+
+
+                                    else {
+                                        $("#" + id + "_" + appTitles[j]).val(info.appData[i][appTitles[j]]);
+                                    }
+
                                 }
                             }
                         }
 
 
-
-
-                        // 상세데이터 출력 
-
                         let dataHtml = ""
-                        alert(Object.keys(info.docData).length);
+
 
                         for (let q = 0; q < Object.keys(info.docData).length; q++) {
                             dataHtml += "<div class='detailContentDiv'>"
                             for (let j = 0; j < dataTitles.length; j++) {
                                 if (j == (dataTitles.length - 1)) {
-                                    dataHtml += "<div id='child' class='countRow detailcontentlast'><input class='inputs' type='text' value='" + info.docData[q][dataTitles[j]] + "' id='" + id + "_" + dataTitles[j] + q + "'></div>";
+                                    dataHtml += "<div id='child' class='countRow detailcontentlast'><input class='inputs' type='text' value='" + info.docData[q][dataTitles[j]] + "' id='" + id + "_" + dataTitles[j] + "_" + q + "'></div>";
+                                } else if (dataTitles[j] == 'date') {
+                                    let date = getYmd(info.docData[q][dataTitles[j]]);
+                                    dataHtml += "<div id='child' class='countRow detailcontent'><input class='inputs' type='date' value='" + date + "' id='" + id + "_" + dataTitles[j] + "_" + q + "'></div>";
                                 } else {
-                                    dataHtml += "<div id='child' class='countRow detailcontent'><input class='inputs' type='text' value='" + info.docData[q][dataTitles[j]] + "' id='" + id + "_" + dataTitles[j] + q + "'></div>";
+                                    dataHtml += "<div id='child' class='countRow detailcontent'><input class='inputs' type='text' value='" + info.docData[q][dataTitles[j]] + "' id='" + id + "_" + dataTitles[j] + "_" + q + "'></div>";
+                                }
+                            } dataHtml += "</div>"
+                        }
+
+
+
+
+                        $(".insertedDataList").html(dataHtml);
+
+
+
+                        // 결재타입이 지출결의서인 경우 
+                    } else if (storage.docList[i].type == "COST" || storage.docList[i].type == "CREDIT" ||
+                        storage.docList[i].type == "PAY" || storage.docList[i].type == "TAX") {
+
+
+                        target.html(storage.form[1].form)
+
+                        if (storage.docList[i].type == "COST") {
+                            $("#COST").attr("checked", true);
+                        } else if (storage.docList[i].type == "CREDIT") {
+                            $("#CREDIT").attr("checked", true);
+                        } else if (storage.docList[i].type == "PAY") {
+                            $("#PAY").attr("checked", true);
+                        } else {
+                            $("#TAX").attr("checked", true);
+                        }
+                        let id = storage.form[1].id;
+
+
+                        ////// info title content 출력하기 
+                        let docListTitle = Object.keys(storage.docList[i]);
+
+                        for (let k = 0; k < Object.keys(storage.docList[i]).length; k++) {
+                            for (let j = 0; j < docListTitle.length; j++) {
+                                if (docListTitle[j] == "writer") {
+                                    let num = storage.docList[i][docListTitle[j]];
+                                    let name = storage.user[num].userName;
+                                    $("#" + id + "_" + docListTitle[j]).val(name);
+                                }
+                                else if (docListTitle[j] == "created") {
+
+                                    let date = getYmd(storage.docList[i][docListTitle[j]]);
+
+                                    $("#" + id + "_" + docListTitle[j]).val(date);
+                                } else {
+                                    $("#" + id + "_" + docListTitle[j]).val(storage.docList[i][docListTitle[j]]);
+                                }
+                            }
+
+                        }
+
+
+                        if ($("#" + id + "_writer").val() == '구민주') {
+                            $("#" + id + "_line").html(
+                                "<div class='lineDivContainer'><div class='lineDiv'><div class='lineDivContentfirstw'><div>작 성</div></div>" +
+                                "<div><div class='lineDivContentw'><input class='inputs' type='text' id='" + id + "_writer' value='" + $("#" + id + '_writer').val() + "'></div>" +
+                                "<div class='lineDivContentw'><input class='inputs' type='text' id='" + id + "_writer_approved'></div>" +
+                                "<div class='lineDivContentw'><input class='inputs' type='text' id='" + id + "_writer_comment'></div>" +
+                                "<div class='lineDivContentlastw'><input class='inputs' type='text' id='" + id + "_writer_status'></div></div></div>" +
+
+                                "<div class='lineDiv'><div class='lineDivContentfirst'><div >결 재</div></div>" +
+                                "<div><div class='lineDivContent'><input class='inputs' type='text' id='" + id + "_app'></div>" +
+                                "<div class='lineDivContent'><input class='inputs' type='text' id='" + id + "_approved'></div>" +
+                                "<div class='lineDivContent'><input class='inputs' type='text' id='" + id + "_comment'></div>" +
+                                "<div class='lineDivContentlast'><input class='inputs' type='text' id='" + id + "_status'></div></div></div></div>");
+                        } else {
+
+                            $("#" + id + "_line").html(
+
+
+                                "<div class='lineDivContainer'><div class='lineDiv'><div class='lineDivContentfirstw'><div>작 성</div></div>" +
+                                "<div><div class='lineDivContentw'><input class='inputs' type='text' id='" + id + "_writer' value='" + $("#" + id + '_writer').val() + "'></div>" +
+                                "<div class='lineDivContentw'><input class='inputs' type='text' id='" + id + "_writer_approved'></div>" +
+                                "<div class='lineDivContentw'><input class='inputs' type='text' id='" + id + "_writer_comment'></div>" +
+                                "<div class='lineDivContentlastw'><input class='inputs' type='text' id='" + id + "_writer_status'></div></div></div>" +
+                                "<div class='lineDiv'><div class='lineDivContentfirst'><div >검 토</div></div>" +
+                                "<div><div class='lineDivContentw'><input type='text' id='" + id + "_examine_app' value='구민주'></div>" +
+                                "<div class='lineDivContentw'><input type='text' id='" + id + "_examine_Approved'></div>" +
+                                "<div class='lineDivContentw'><input type='text' id='" + id + "_examine_comment'></div>" +
+                                "<div class='lineDivContentlastw'><input type='text' id='" + id + "_examine_status'></div></div></div>" +
+                                "<div class='lineDiv'><div class='lineDivContentfirst'><div >결 재</div></div>" +
+                                "<div><div class='appDivContent'><input class='inputs' type='text' id='" + id + "_app'></div>" +
+                                "<div class='appDivContent'><input class='inputs' type='text' id='" + id + "_approved'></div>" +
+                                "<div class='appDivContent'><input class='inputs' type='text' id='" + id + "_comment'></div>" +
+                                "<div class='appDivContentlast'><input class='inputs' type='text' id='" + id + "_status'></div></div></div></div>"
+
+
+
+
+
+                                // "<div class='lineDiv'><div class='lineDivContentfirst'><div >검토</div></div>" +
+                                // "<div><div class='lineDivContent'><input type='text' id='" + id + "_examine_app' value='구민주'></div>" +
+                                // "<div class='lineDivContent'><input type='text' id='" + id + "_examine_approved'></div>" +
+                                // "<div class='lineDivContent'><input type='text' id='" + id + "_examine_comment'></div>" +
+                                // "<div class='lineDivContentlast'><input type='text' id='" + id + "_examine_status'></div></div></div>" +
+
+
+                                // "<div class='lineDiv'><div class='lineDivContentfirst'><div >결재</div></div>" +
+                                // "<div><div class='lineDivContent'><input type='text' id='" + id + "_app'></div>" +
+                                // "<div class='lineDivContent'><input type='text' id='" + id + "_approved'></div>" +
+                                // "<div class='lineDivContent'><input type='text' id='" + id + "_comment'></div>" +
+                                // "<div class='lineDivContentlast'><input type='text' id='" + id + "_status'></div></div></div>"
+                            );
+                        }
+
+
+
+
+                        for (let i = 0; i < info.appData.length; i++) {
+                            for (let j = 0; j < appTitles.length; j++) {
+
+                                if (info.appData[i][appTitles[j]] != null) {
+                                    if (appTitles[j] == 'app') {
+                                        let app = storage.user[info.appData[i][appTitles[j]]].userName;
+                                        $("#" + id + "_" + appTitles[j]).val(app);
+                                    } else if (appTitles[j] == 'status') {
+                                        let status = storage.appStatus[info.appData[i][appTitles[j]]];
+                                        if (status == "승인요청") {
+                                            $("#" + id + "_examine_" + appTitles[j]).val(status);
+                                        } else if (status == "완료") {
+                                            $("#" + id + "_" + appTitles[j]).val(status);
+                                            $("#" + id + "_writer_" + appTitles[j]).val('검토요청');
+                                            $("#" + id + "_examine_" + appTitles[j]).val('검토완료');
+
+
+                                        } else if (status == '반려') {
+                                            let request = storage.user[info.appData[i].request].userName
+                                            if (request == $("#" + id + "_writer").val()) {
+                                                alert("작성자 반려");
+                                                $("#" + id + "_app").val('이승우')
+                                                $("#" + id + "_writer_" + appTitles[j]).val(status);
+                                                let approved = $("#" + id + "_approved").val();
+                                                $("#" + id + "_writer_approved").val(approved);
+                                                $("#" + id + "_approved").val("");
+
+                                            } else if (request == '구민주') {
+                                                alert("구민주 반려");
+                                                $("#" + id + "_app").val('이승우')
+                                                $("#" + id + "_writer_" + appTitles[j]).val('검토요청');
+                                                $("#" + id + "_examine_status").val(status);
+                                                let approved = $("#" + id + "_approved").val();
+                                                $("#" + id + "_examine_approved").val(approved);
+                                                $("#" + id + "_approved").val("");
+                                                let comment = $("#" + id + "_comment").val();
+                                                $("#" + id + "_examine_comment").val(comment);
+                                                $("#" + id + "_comment").val("");
+
+                                            } else {
+                                                alert("대표님 반려")
+                                                $("#" + id + "_app").val('이승우')
+                                                $("#" + id + "_examine_status").val('검토완료');
+                                                $("#" + id + "_writer_" + appTitles[j]).val('검토요청');
+                                                $("#" + id + "_" + appTitles[j]).val(status);
+                                            }
+
+                                        } else if (status == '임시저장' || status == '검토요청') {
+                                            $("#" + id + "_writer_" + appTitles[j]).val(status);
+                                        }
+
+
+                                    } else if (appTitles[j] == 'approved') {
+                                        let approved = new Date(info.appData[i][appTitles[j]]);
+                                        let year = approved.getFullYear();
+                                        let month = approved.getMonth() + 1;
+                                        let date = approved.getDate();
+
+                                        $("#" + id + "_" + appTitles[j]).val(year + "년" + month + "월" + date + "일");
+
+                                    } else {
+                                        $("#" + id + "_" + appTitles[j]).val(info.appData[i][appTitles[j]]);
+                                    }
+
+                                }
+                            }
+
+                        }
+
+
+                        let dataHtml = ""
+
+
+                        for (let q = 0; q < Object.keys(info.docData).length; q++) {
+                            dataHtml += "<div class='detailContentDiv'>"
+                            for (let j = 0; j < dataTitles.length; j++) {
+                                if (j == (dataTitles.length - 1)) {
+                                    dataHtml += "<div id='child' class='countRow detailcontentlast'><input class='inputs' type='text' value='" + info.docData[q][dataTitles[j]] + "' id='" + id + "_" + dataTitles[j] + "_" + q + "'></div>";
+                                } else if (dataTitles[j] == 'date') {
+                                    let date = getYmd(info.docData[q][dataTitles[j]]);
+                                    dataHtml += "<div id='child' class='countRow detailcontent'><input class='inputs' type='text' value='" + date + "' id='" + id + "_" + dataTitles[j] + "_" + q + "'></div>";
+                                } else {
+                                    dataHtml += "<div id='child' class='countRow detailcontent'><input class='inputs' type='text' value='" + info.docData[q][dataTitles[j]] + "' id='" + id + "_" + dataTitles[j] + "_" + q + "'></div>";
+                                }
+
+                            } dataHtml += "</div>"
+                        }
+
+                        $(".insertedDataList").html(dataHtml);
+
+
+
+
+
+                        // 결재타입이 발주서인 경우 
+                    } else if (storage.docList[i].type == "PUR") {
+                        target.html(storage.form[2].form)
+                        let id = storage.form[2].id;
+
+                        ////// info title content 출력하기 
+                        let docListTitle = Object.keys(storage.docList[i]);
+
+                        for (let k = 0; k < Object.keys(storage.docList[i]).length; k++) {
+                            for (let j = 0; j < docListTitle.length; j++) {
+                                if (docListTitle[j] == "writer") {
+                                    let num = storage.docList[i][docListTitle[j]];
+                                    let name = storage.user[num].userName;
+                                    $("#" + id + "_" + docListTitle[j]).val(name);
+                                }
+                                else if (docListTitle[j] == "created") {
+                                    let created = new Date(storage.docList[i][docListTitle[j]]);
+                                    let year = created.getFullYear();
+                                    let month = created.getMonth() + 1;
+                                    let date = created.getDate();
+                                    $("#" + id + "_" + docListTitle[j]).val(year + "년" + month + "월" + date + "일");
+                                } else {
+                                    $("#" + id + "_" + docListTitle[j]).val(storage.docList[i][docListTitle[j]]);
+                                }
+                            }
+
+                        }
+
+
+
+                        $("#" + id + "_line").html(
+                            "<div class='lineDiv'><div class='lineDivContentfirst'><div >결재</div></div>" +
+                            "<div><div class='lineDivContent'><input type='text' id='" + id + "_app'></div>" +
+                            "<div class='lineDivContent'><input type='text' id='" + id + "_approved'></div>" +
+                            "<div class='lineDivContent'><input type='text' id='" + id + "_comment'></div>" +
+                            "<div class='lineDivContentlast'><input type='text' id='" + id + "_status'></div></div></div>");
+
+
+
+                        for (let i = 0; i < info.appData.length; i++) {
+                            for (let j = 0; j < appTitles.length; j++) {
+
+                                if (info.appData[i][appTitles[j]] != null) {
+                                    if (appTitles[j] == 'app') {
+                                        let app = storage.user[info.appData[i][appTitles[j]]].userName;
+                                        $("#" + id + "_" + appTitles[j]).val(app);
+                                    } else if (appTitles[j] == 'status') {
+                                        let status = storage.appStatus[info.appData[i][appTitles[j]]];
+                                        $("#" + id + "_" + appTitles[j]).val(status);
+                                    } else if (appTitles[j] == 'approved') {
+                                        let approved = new Date(info.appData[i][appTitles[j]]);
+                                        let year = approved.getFullYear();
+                                        let month = approved.getMonth() + 1;
+                                        let date = approved.getDate();
+
+                                        $("#" + id + "_" + appTitles[j]).val(year + "년" + month + "월" + date + "일");
+
+                                    } else {
+                                        $("#" + id + "_" + appTitles[j]).val(info.appData[i][appTitles[j]]);
+                                    }
+
+                                }
+                            }
+
+                        }
+
+
+                        let dataHtml = ""
+
+
+                        for (let q = 0; q < Object.keys(info.docData).length; q++) {
+                            dataHtml += "<div class='detailContentDiv'>"
+                            for (let j = 0; j < dataTitles.length; j++) {
+                                if (j == (dataTitles.length - 1)) {
+                                    dataHtml += "<div id='child' class='countRow detailcontentlast'><input class='inputs' type='text' value='" + info.docData[q][dataTitles[j]] + "' id='" + id + "_" + dataTitles[j] + "_" + q + "'></div>";
+                                } else if (dataTitles[j] == 'date') {
+                                    let date = getYmd(info.docData[q][dataTitles[j]]);
+
+
+                                    dataHtml += "<div id='child' class='countRow detailcontent'><input class='inputs' type='text' value='" + date + "' id='" + id + "_" + dataTitles[j] + "_" + q + "'></div>";
+                                } else {
+                                    dataHtml += "<div id='child' class='countRow detailcontent'><input class='inputs' type='text' value='" + info.docData[q][dataTitles[j]] + "' id='" + id + "_" + dataTitles[j] + "_" + q + "'></div>";
                                 }
 
                             } dataHtml += "</div>"
@@ -556,117 +968,94 @@
 
 
 
-                    } else if (storage.docList[i].type == "COST" || storage.docList[i].type == "CREDIT" ||
-                        storage.docList[i].type == "PAY" || storage.docList[i].type == "TAX") {
-                        target.html(storage.form[1].form)
-                        let id = storage.form[1].id;
-                        // doclist data 출력하기 
 
-                        let docListTitle = Object.keys(storage.docList[i]);
-                        for (let k = 0; k < Object.keys(storage.docList[i]).length; k++) {
-                            for (let j = 0; j < docListTitle.length; j++) {
-                                console.log(docListTitle[j]);
-                                $("#" + id + "_" + docListTitle[j]).val(storage.docList[i][docListTitle[j]]);
-                            }
-                        }
-
-
-                        /// app data 출력하기 
-
-                        $("#" + id + "_line").html(
-                            "<input type='text' id='" + id + "_app'>" +
-                            "<input type='text' id='" + id + "_approved'>" +
-                            "<input type='text' id='" + id + "_comment'>" +
-                            "<input type='text' id='" + id + "_status'>");
-
-                        for (let i = 0; i < info.appData.length; i++) {
-                            for (let j = 0; j < appTitles.length; j++) {
-
-                                if (info.appData[i][appTitles[j]] != null) {
-                                    $("#" + id + "_" + appTitles[j]).val(info.appData[i][appTitles[j]]);
-                                }
-                            }
-                        }
-
-
-
-
-
-
-
-
-                    } else if (storage.docList[i].type == "PUR") {
-                        target.html(storage.form[2].form)
-                        let id = storage.form[2].id;
-                        // doclist data 출력하기 
-
-                        let docListTitle = Object.keys(storage.docList[i]);
-                        for (let k = 0; k < Object.keys(storage.docList[i]).length; k++) {
-                            for (let j = 0; j < docListTitle.length; j++) {
-
-                                $("#" + id + "_" + docListTitle[j]).val(storage.docList[i][docListTitle[j]]);
-                            }
-                        }
-
-
-                        /// app data 출력하기 
-
-                        $("#" + id + "_line").html(
-                            "<input type='text' id='" + id + "_app'>" +
-                            "<input type='text' id='" + id + "_approved'>" +
-                            "<input type='text' id='" + id + "_comment'>" +
-                            "<input type='text' id='" + id + "_request'>" +
-                            "<input type='text' id='" + id + "_status'>");
-
-                        for (let i = 0; i < info.appData.length; i++) {
-                            for (let j = 0; j < appTitles.length; j++) {
-
-                                if (info.appData[i][appTitles[j]] != null) {
-                                    $("#" + id + "_" + appTitles[j]).val(info.appData[i][appTitles[j]]);
-                                }
-                            }
-                        }
-
-
-
-
-
-
+                        // 결재타입이 공문서인 경우 
                     } else if (storage.docList[i].type == "DIP") {
                         target.html(storage.form[3].form)
                         let id = storage.form[3].id;
-                        // doclist data 출력하기 
 
+
+
+                        ////// info title content 출력하기 
                         let docListTitle = Object.keys(storage.docList[i]);
+
                         for (let k = 0; k < Object.keys(storage.docList[i]).length; k++) {
                             for (let j = 0; j < docListTitle.length; j++) {
-                                $("#" + id + "_" + docListTitle[j]).val(storage.docList[i][docListTitle[j]]);
+                                if (docListTitle[j] == "writer") {
+                                    let num = storage.docList[i][docListTitle[j]];
+                                    let name = storage.user[num].userName;
+                                    $("#" + id + "_" + docListTitle[j]).val(name);
+                                }
+                                else if (docListTitle[j] == "created") {
+                                    let created = new Date(storage.docList[i][docListTitle[j]]);
+                                    let year = created.getFullYear();
+                                    let month = created.getMonth() + 1;
+                                    let date = created.getDate();
+                                    $("#" + id + "_" + docListTitle[j]).val(year + "년" + month + "월" + date + "일");
+                                } else {
+                                    $("#" + id + "_" + docListTitle[j]).val(storage.docList[i][docListTitle[j]]);
+                                }
                             }
+
                         }
 
-
-                        /// app data 출력하기 
-
                         $("#" + id + "_line").html(
-                            "<input type='text' id='" + id + "_app'>" +
-                            "<input type='text' id='" + id + "_approved'>" +
-                            "<input type='text' id='" + id + "_comment'>" +
-                            "<input type='text' id='" + id + "_status'>");
+                            "<div class='lineDiv'><div class='lineDivContentfirst'><div >결재</div></div>" +
+                            "<div><div class='lineDivContent'><input type='text' id='" + id + "_app'></div>" +
+                            "<div class='lineDivContent'><input type='text' id='" + id + "_approved'></div>" +
+                            "<div class='lineDivContent'><input type='text' id='" + id + "_comment'></div>" +
+                            "<div class='lineDivContentlast'><input type='text' id='" + id + "_status'></div></div></div>");
+
+
 
                         for (let i = 0; i < info.appData.length; i++) {
                             for (let j = 0; j < appTitles.length; j++) {
 
                                 if (info.appData[i][appTitles[j]] != null) {
-                                    $("#" + id + "_" + appTitles[j]).val(info.appData[i][appTitles[j]]);
+                                    if (appTitles[j] == 'app') {
+                                        let app = storage.user[info.appData[i][appTitles[j]]].userName;
+                                        $("#" + id + "_" + appTitles[j]).val(app);
+                                    } else if (appTitles[j] == 'status') {
+                                        let status = storage.appStatus[info.appData[i][appTitles[j]]];
+                                        $("#" + id + "_" + appTitles[j]).val(status);
+
+                                    } else if (appTitles[j] == 'approved') {
+                                        let approved = new Date(info.appData[i][appTitles[j]]);
+                                        let year = approved.getFullYear();
+                                        let month = approved.getMonth() + 1;
+                                        let date = approved.getDate();
+
+                                        $("#" + id + "_" + appTitles[j]).val(year + "년" + month + "월" + date + "일");
+
+                                    }
+
+
+                                    else {
+                                        $("#" + id + "_" + appTitles[j]).val(info.appData[i][appTitles[j]]);
+                                    }
+
                                 }
                             }
                         }
+                        let dataHtml = ""
 
 
+                        for (let q = 0; q < Object.keys(info.docData).length; q++) {
+                            dataHtml += "<div class='detailContentDiv'>"
+                            for (let j = 0; j < dataTitles.length; j++) {
+                                if (j == (dataTitles.length - 1)) {
+                                    dataHtml += "<div id='child' class='countRow detailcontentlast'><input class='inputs' type='text' value='" + info.docData[q][dataTitles[j]] + "' id='" + id + "_" + dataTitles[j] + "_" + q + "'></div>";
+                                } else if (dataTitles[j] == 'date') {
+                                    let date = getYmd(info.docData[q][dataTitles[j]]);
 
+                                    dataHtml += "<div id='child' class='countRow detailcontent'><input class='inputs' type='text' value='" + date + "' id='" + id + "_" + dataTitles[j] + "_" + q + "'></div>";
+                                } else {
+                                    dataHtml += "<div id='child' class='countRow detailcontent'><input class='inputs' type='text' value='" + info.docData[q][dataTitles[j]] + "' id='" + id + "_" + dataTitles[j] + "_" + q + "'></div>";
+                                }
 
-
-
+                            } dataHtml += "</div>"
+                        }
+                        $(".insertedDataList").html(dataHtml);
 
                     }
 
@@ -675,21 +1064,14 @@
 
             }
 
-
-
         }
 
-            // for (let i = 0; i < storage.form.length; i++) {
-            //     typeHtml += "<button type='button' value='" + i + "' onclick='drawForm(this.value)'>" + storage.form[i].id + "</button>"
-            // }
-
-            // typeFormList.html(typeHtml);
 
 
-
-
-
-
+        function getYmd(date) {
+            let d = new Date(date);
+            return d.getFullYear() + "-" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "-" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString());
+        }
 
 
     </script>
