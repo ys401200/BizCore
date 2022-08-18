@@ -17,10 +17,10 @@ public interface BoardMapper {
     public List<SimpleArticle> getFileboxList(String compId);
 
     @Select("SELECT no, writer, title, content, created, modified FROM bizcore.filebox WHERE no = #{no} AND compId = #{compId} AND deleted IS NULL")
-    public Article getFileboxArticle(int no, String compId);
+    public Article getFileboxArticle(@Param("no") int no, @Param("compId") String compId);
 
-    @Select("SELECT idx, articleNo, ognName, created, modified, size, removed FROM bizcore.filebox_attached WHERE articleNo = #{articleNo} AND compId = #{compId} AND deleted IS NULL")
-    public List<AttachedFile> getAttachedFileList(int articleNo, String compId);
+    @Select("SELECT idx, articleNo, ognName, created, modified, size, removed FROM bizcore.filebox_attached WHERE articleNo = #{no} AND compId = #{compId} AND deleted IS NULL")
+    public List<AttachedFile> getAttachedFileList(@Param("no") int articleNo, @Param("compId") String compId);
 
     @Select("SELECT bizcore.filebox_next_no(#{compId})")
     public int getNewFileboxNo(String compId);    
