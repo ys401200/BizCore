@@ -165,6 +165,12 @@
             border-right: 1px solid black;
             border-bottom: 1px solid black;
         }
+
+
+        .insertbtn,
+        .deletebtn {
+            display: none;
+        }
     </style>
 </head>
 
@@ -248,7 +254,7 @@
                                     }
                                 })
                             } else {
-                                //  msg.set(data.msg);
+                                msg.set(data.msg);
                             }
                         }
                     })
@@ -309,7 +315,7 @@
                         storage.form = list;
                         console.log("[getForms] Success getting employee information.");
                     } else {
-                        //  msg.set("양식 정보를 가져오지 못했습니다.");
+                        msg.set("양식 정보를 가져오지 못했습니다.");
                     }
                 }
             })
@@ -343,7 +349,7 @@
                         storage.user = list;
                         console.log("[getUserMap] Success getting employee information.");
                     } else {
-                        //  msg.set("직원 정보를 가져오지 못했습니다.");
+                        msg.set("직원 정보를 가져오지 못했습니다.");
                     }
                 }
             })
@@ -369,7 +375,7 @@
                         storage.dept = list;
                         console.log("[getDeptMap] Success getting department information.");
                     } else {
-                        //  msg.set("부서 정보를 가져오지 못했습니다.");
+                        msg.set("부서 정보를 가져오지 못했습니다.");
                     }
                 }
             })
@@ -395,7 +401,7 @@
                         storage.customer = list;
                         console.log("[getCustomer] Success getting customer information.");
                     } else {
-                        // msg.set("고객 정보를 가져오지 못했습니다.");
+                        msg.set("고객 정보를 가져오지 못했습니다.");
                     }
                 }
             })
@@ -498,6 +504,7 @@
 
 
         function drawClickedDetail(info, no) {
+            
             let fileTarget = $(".app_files");
             let appTarget = $(".app_line");
             let dataTarget = $(".app_data");
@@ -521,8 +528,7 @@
 
             appTarget.html(appDataHtml);
 
-
-            filesHtml += "<div>" + "filename_" + files + "</div>";
+            filesHtml += "<div>" + "filename_" + info.files + "</div>";
 
 
             fileTarget.html(filesHtml);
@@ -615,24 +621,28 @@
                                         if (status == '승인요청' || status == '임시저장') {
                                             $("#" + id + "_" + "writer_" + appTitles[j]).val(status);
                                         } else if (status == '반려') {
-                                            let request = $("#" + id + "_" + request).val();
+                                            let request = info.appData[i].request;
                                             request = storage.user[request].userName;
                                             //본인반려 
-                                            if (request == $("#" + id + "_" + writer).val()) {
-                                                let status = $("#" + id + "_" + appTitles[j]).val();
+                                            if (request == $("#" + id + "_writer").val()) {
+
+
                                                 $("#" + id + "_writer_" + appTitles[j]).val(status);
                                                 $("#" + id + "_" + appTitles[j]).val("");
                                                 $("#" + id + "_app").val('이승우');
+
                                                 let approved = $("#" + id + "_approved").val();
-                                                $("#" + id + "_writer_approved").val();
+                                                $("#" + id + "_writer_approved").val(approved);
                                                 $("#" + id + "_approved").val("");
                                             } else if (request == '이승우') {
                                                 $("#" + id + "_app").val('이승우');
-
+                                                $("#" + id + "_" + appTitles[j]).val(status);
+                                                $("#" + id + "_writer_" + appTitles[j]).val('승인요청');
                                             }
 
                                         } else {
                                             $("#" + id + "_" + appTitles[j]).val(status);
+                                            $("#" + id + "_writer_" + appTitles[j]).val('승인요청');
                                         }
 
 
@@ -903,12 +913,18 @@
 
 
                         $("#" + id + "_line").html(
-                            "<div class='lineDiv'><div class='lineDivContentfirst'><div >결재</div></div>" +
-                            "<div><div class='lineDivContent'><input type='text' id='" + id + "_app'></div>" +
-                            "<div class='lineDivContent'><input type='text' id='" + id + "_approved'></div>" +
-                            "<div class='lineDivContent'><input type='text' id='" + id + "_comment'></div>" +
-                            "<div class='lineDivContentlast'><input type='text' id='" + id + "_status'></div></div></div>");
 
+                            "<div class='lineDivContainer'><div class='lineDiv'><div class='lineDivContentfirstw'><div>작 성</div></div>" +
+                            "<div><div class='lineDivContentw'><input class='inputs' type='text' id='" + id + "_writer' value='" + $("#" + id + '_writer').val() + "'></div>" +
+                            "<div class='lineDivContentw'><input class='inputs' type='text' id='" + id + "_writer_approved'></div>" +
+                            "<div class='lineDivContentw'><input class='inputs' type='text' id='" + id + "_writer_comment'></div>" +
+                            "<div class='lineDivContentlastw'><input class='inputs' type='text' id='" + id + "_writer_status'></div></div></div>" +
+
+                            "<div class='lineDiv'><div class='lineDivContentfirst'><div >결 재</div></div>" +
+                            "<div><div class='appDivContent'><input class='inputs' type='text' id='" + id + "_app'></div>" +
+                            "<div class='appDivContent'><input class='inputs' type='text' id='" + id + "_approved'></div>" +
+                            "<div class='appDivContent'><input class='inputs' type='text' id='" + id + "_comment'></div>" +
+                            "<div class='appDivContentlast'><input class='inputs' type='text' id='" + id + "_status'></div></div></div></div>");
 
 
                         for (let i = 0; i < info.appData.length; i++) {
@@ -920,7 +936,34 @@
                                         $("#" + id + "_" + appTitles[j]).val(app);
                                     } else if (appTitles[j] == 'status') {
                                         let status = storage.appStatus[info.appData[i][appTitles[j]]];
-                                        $("#" + id + "_" + appTitles[j]).val(status);
+                                        if (status == '승인요청' || status == '임시저장') {
+                                            $("#" + id + "_" + "writer_" + appTitles[j]).val(status);
+                                        } else if (status == '반려') {
+                                            let request = info.appData[i].request;
+                                            request = storage.user[request].userName;
+                                            //본인반려 
+                                            if (request == $("#" + id + "_writer").val()) {
+
+
+                                                $("#" + id + "_writer_" + appTitles[j]).val(status);
+                                                $("#" + id + "_" + appTitles[j]).val("");
+                                                $("#" + id + "_app").val('이승우');
+
+                                                let approved = $("#" + id + "_approved").val();
+                                                $("#" + id + "_writer_approved").val(approved);
+                                                $("#" + id + "_approved").val("");
+                                            } else if (request == '이승우') {
+                                                $("#" + id + "_app").val('이승우');
+                                                $("#" + id + "_" + appTitles[j]).val(status);
+                                                $("#" + id + "_writer_" + appTitles[j]).val('승인요청');
+                                            }
+
+                                        } else {
+                                            $("#" + id + "_" + appTitles[j]).val(status);
+                                            $("#" + id + "_writer_" + appTitles[j]).val('승인요청');
+                                        }
+
+
                                     } else if (appTitles[j] == 'approved') {
                                         let approved = new Date(info.appData[i][appTitles[j]]);
                                         let year = approved.getFullYear();
@@ -929,15 +972,16 @@
 
                                         $("#" + id + "_" + appTitles[j]).val(year + "년" + month + "월" + date + "일");
 
-                                    } else {
+                                    }
+
+
+                                    else {
                                         $("#" + id + "_" + appTitles[j]).val(info.appData[i][appTitles[j]]);
                                     }
 
                                 }
                             }
-
                         }
-
 
                         let dataHtml = ""
 
@@ -1000,12 +1044,18 @@
                         }
 
                         $("#" + id + "_line").html(
-                            "<div class='lineDiv'><div class='lineDivContentfirst'><div >결재</div></div>" +
-                            "<div><div class='lineDivContent'><input type='text' id='" + id + "_app'></div>" +
-                            "<div class='lineDivContent'><input type='text' id='" + id + "_approved'></div>" +
-                            "<div class='lineDivContent'><input type='text' id='" + id + "_comment'></div>" +
-                            "<div class='lineDivContentlast'><input type='text' id='" + id + "_status'></div></div></div>");
 
+                            "<div class='lineDivContainer'><div class='lineDiv'><div class='lineDivContentfirstw'><div>작 성</div></div>" +
+                            "<div><div class='lineDivContentw'><input class='inputs' type='text' id='" + id + "_writer' value='" + $("#" + id + '_writer').val() + "'></div>" +
+                            "<div class='lineDivContentw'><input class='inputs' type='text' id='" + id + "_writer_approved'></div>" +
+                            "<div class='lineDivContentw'><input class='inputs' type='text' id='" + id + "_writer_comment'></div>" +
+                            "<div class='lineDivContentlastw'><input class='inputs' type='text' id='" + id + "_writer_status'></div></div></div>" +
+
+                            "<div class='lineDiv'><div class='lineDivContentfirst'><div >결 재</div></div>" +
+                            "<div><div class='appDivContent'><input class='inputs' type='text' id='" + id + "_app'></div>" +
+                            "<div class='appDivContent'><input class='inputs' type='text' id='" + id + "_approved'></div>" +
+                            "<div class='appDivContent'><input class='inputs' type='text' id='" + id + "_comment'></div>" +
+                            "<div class='appDivContentlast'><input class='inputs' type='text' id='" + id + "_status'></div></div></div></div>");
 
 
                         for (let i = 0; i < info.appData.length; i++) {
@@ -1017,7 +1067,31 @@
                                         $("#" + id + "_" + appTitles[j]).val(app);
                                     } else if (appTitles[j] == 'status') {
                                         let status = storage.appStatus[info.appData[i][appTitles[j]]];
-                                        $("#" + id + "_" + appTitles[j]).val(status);
+                                        if (status == '승인요청' || status == '임시저장') {
+                                            $("#" + id + "_" + "writer_" + appTitles[j]).val(status);
+                                        } else if (status == '반려') {
+                                            let request = info.appData[i].request;
+                                            request = storage.user[request].userName;
+                                            //본인반려 
+                                            if (request == $("#" + id + "_writer").val()) {
+                                                $("#" + id + "_writer_" + appTitles[j]).val(status);
+                                                $("#" + id + "_" + appTitles[j]).val("");
+                                                $("#" + id + "_app").val('이승우');
+
+                                                let approved = $("#" + id + "_approved").val();
+                                                $("#" + id + "_writer_approved").val(approved);
+                                                $("#" + id + "_approved").val("");
+                                            } else if (request == '이승우') {
+                                                $("#" + id + "_app").val('이승우');
+                                                $("#" + id + "_" + appTitles[j]).val(status);
+                                                $("#" + id + "_writer_" + appTitles[j]).val('승인요청');
+                                            }
+
+                                        } else {
+                                            $("#" + id + "_" + appTitles[j]).val(status);
+                                            $("#" + id + "_writer_" + appTitles[j]).val('승인요청');
+                                        }
+
 
                                     } else if (appTitles[j] == 'approved') {
                                         let approved = new Date(info.appData[i][appTitles[j]]);
@@ -1063,7 +1137,7 @@
                 }
 
             }
-
+            $(".inputs").attr("readonly", true);
         }
 
 
