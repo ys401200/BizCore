@@ -40,8 +40,8 @@ public interface BoardMapper {
     @Update("UPDATE bizcore.filebox SET modified = NOW(), title = #{article.title}, content = #{article.content} WHERE no = #{article.no} AND compid = #{compId}")
     public void updateFileboxArticle(@Param("article") Article article, @Param("compId") String compId);
 
-    @Select("SELECT savedname FROM bizcore.filebox_attached WHERE compid = #{compId} AND articleno = #{no} AND ognname = #{fileName} AND delete is not NULL")
-    public String getFileboxSavedFileName(@Param("") String compId, @Param("no") String no, @Param("fileName") String fileName);
+    @Select("SELECT savedname FROM bizcore.filebox_attached WHERE compid = #{compId} AND articleno = #{no} AND ognname = #{fileName} AND deleted is NULL")
+    public String getFileboxSavedFileName(@Param("compId") String compId, @Param("no") String no, @Param("fileName") String fileName);
 
     @Insert("INSERT INTO bizcore.filebox_attached(articleno, compid, ognname, savedname, created, size) VALUES(#{attachedFile.articleNo}, #{compId}, #{attachedFile.ognName}, #{attachedFile.savedName}, now(), #{attachedFile.size})")
     public void addAttachedFile(@Param("compId") String compId, @Param("attachedFile") AttachedFile attachedFile);

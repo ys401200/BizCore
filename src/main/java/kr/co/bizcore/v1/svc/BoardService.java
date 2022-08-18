@@ -270,7 +270,13 @@ public class BoardService extends Svc{
 
         path = fileStoragePath + s + compId; // company id 에 해당하는 경로 가져오기
         savedName = boardMapper.getFileboxSavedFileName(compId, no, fileName);
+        
+        logger.debug("sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss: " + savedName);
+
         if(savedName == null)   return result;
+
+        logger.debug("sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss: " + path + s + "attached" + s + savedName);
+
 
         file = new File(path + s + "attached" + s + savedName);
         if(!file.exists())  return result;

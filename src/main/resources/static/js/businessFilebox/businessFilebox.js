@@ -87,7 +87,7 @@ function fileBoxDetailView(e) {// 선택한 그리드의 글 번호 받아오기
 	let id, url, method, data, type;
 
 	id = $(e).data("id");
-	url = "/api/filebox/" + id;
+	url = "/api/board/filebox/" + id;
 	method = "get";
 	data = "";
 	type = "detail";
@@ -110,7 +110,8 @@ function fileBoxErrorList(){
 }
 
 function fileBoxSuccessView(result){
-	let html = "", title, content, writer, dataArray, disDate, setDate, detailContainer;
+	console.log(result);
+	let html = "", title, content, writer, dataArray, disDate, setDate, detailContainer, downloadApiPath;
 
 	detailContainer = $(document).find(".detailContainer");
 	detailContainer.hide();
@@ -146,10 +147,18 @@ function fileBoxSuccessView(result){
 	];
 
 	html += detailViewForm(dataArray);
+	html += "<div><span>첨부파일</span></div>";
+
+	downloadApiPath = "/api/board/filebox/" + result.no + "/";
+
+	for(let i = 0; i < result.attached.length; i++){
+		html += "<div><div><a href='" + downloadApiPath + encodeURI(result.attached[i].ognName) + "'>" + result.attached[i].ognName + "</a></div><div>";
+	}
+
 	detailContainer.find("span").text(title);
 	detailContainer.find(".detailContent").html(html);
 	detailContainer.find(".detailBtns").html("");
-	detailContainer.find(".detailBtns").append("<button type='button' onclick='fileBoxUpdateForm(" + JSON.stringify(result) + ");'>수정</button><button type='button' onclick='fileBoxDelete(" + result.no + ");'>삭제</button><button type='button'>닫기</button>");
+	detailContainer.find(".detailBtns").append("<button type='button' onclick='fileBoxUpdateForm(" + JSON.stringify(result) + ");'>수정</button><button type='button' onclick='fileBoxDelete(" + result.no + ");'>삭제</button><button type='button' onclick='detailContainerHide();'>닫기</button>");
 	detailContainer.show();
 }
 
@@ -339,12 +348,13 @@ function fileBoxErrorDelete(){
 }
 
 function fileChange(){
-	let url, method, data, type, attached, divHeight, fileData, fullData;
+	let url, method, data, type, attached, fullData, fileData, fileDatas = [], getFileDatas = [];
 	attached = $(document).find("[name='attached[]']")[0].files;
 	$(document).find("#attached").after("<div class='filePreview'></div>");
 
 	for(let i = 0; i < attached.length; i++){
 		let reader = new FileReader();
+		let temp;
 
 		reader.onload = (e) => {
 			fileData = e.target.result;
@@ -358,13 +368,42 @@ function fileChange(){
 			
 			crud.defaultAjax(url, method, data, type, submitFileSuccess, submitFileError);
 		}
-
+		
 		reader.readAsBinaryString(attached[i]);
-
-		$(document).find(".filePreview").append("<div>" + (i+1) + ". " + attached[i].name + "</div>");
-		divHeight = $(document).find(".filePreview").innerHeight();
-		$(document).find("#attached").parent().parent().next().css("padding-top", divHeight);
+		
+		temp = attached[i].name;
+		fileDatas.push(temp);
 	}
+
+	$(document).find(".filePreview").html("");
+	
+	if(localStorage.getItem("fileDatas") == null || localStorage.getItem("fileDatas") == undefined){
+		console.log("실행1");
+		localStorage.setItem("fileDatas", JSON.stringify(fileDatas));
+		
+		for(let i = 0; i < fileDatas.length; i++){
+			$(document).find(".filePreview").append("<div style='padding-bottom: 4%;'><span style='float:left; display: block; width: 95%;'>" + (i+1) + ". " + fileDatas[i] + "</span><button type='button' style='float:right; width: 5%;' data-index='" + i + "' onclick='fileViewDelete(this);'>삭제</button></div>");
+		}
+	}else{
+		console.log("실행2");
+		getFileDatas = JSON.parse(localStorage.getItem("fileDatas"));
+		
+		for(let i = 0; i < fileDatas.length; i++){
+			getFileDatas.push(fileDatas[i]);
+		}
+
+		console.log(getFileDatas.length);
+
+		for(let i = 0; i < getFileDatas.length; i++){
+			$(document).find(".filePreview").append("<div style='padding-bottom: 4%;'><span style='float:left; display: block; width: 95%;'>" + (i+1) + ". " + getFileDatas[i] + "</span><button type='button' style='float:right; width: 5%;' data-index='" + i + "' onclick='fileViewDelete(this);'>삭제</button></div>");
+		}
+		
+		localStorage.setItem("fileDatas", JSON.stringify(getFileDatas));
+	}
+
+
+	// divHeight = $(document).find(".filePreview").innerHeight();
+	// $(document).find("#attached").parent().parent().next().css("padding-top", divHeight);
 }
 
 function submitFileSuccess(){
@@ -372,5 +411,13 @@ function submitFileSuccess(){
 }
 
 function submitFileError(){
-	alert("파일을 올리는 도중 에러가 생겼습니다.\n다시 시도해주세요.")
+	alert("파일을 올리는 도중 에러가 생겼습니다.\n다시 시도해주세요.");
+}
+
+function fileViewDelete(e){
+	let getFileDatas;
+	getFileDatas = JSON.parse(localStorage.getItem("fileDatas"));
+
+	$(e).parent().remove();
+	console.log(getFileDatas);
 }
