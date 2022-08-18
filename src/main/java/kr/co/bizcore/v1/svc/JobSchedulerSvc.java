@@ -1,5 +1,6 @@
 package kr.co.bizcore.v1.svc;
 
+import java.io.File;
 import java.util.Calendar;
 
 import org.slf4j.Logger;
@@ -29,9 +30,39 @@ public class JobSchedulerSvc extends Svc{
         lastWorktime = getTime();
         System.out.println("[Scheduler] Schedule Job Start : " + getDate() + " " + getTime());
 
+        // 임시파일 정리
+        cleanTempFiles();
 
         // 스케줄 작업
     } // End of scheduleJob()
+
+    // 임시 폴더의 파일들을 정리하는 메서드
+    private void cleanTempFiles(){
+        long time = System.currentTimeMillis() - (60000 * 30);
+        File root = null;
+        int x = 0;
+
+        logger.debug("[Job Scheduler] Start clean temp files");
+
+        root = new File(this.fileStoragePath);
+        for(File comp : root.listFiles()){
+            if(comp.isDirectory()){
+                for(File child : comp.listFiles()){
+                    if(child.isDirectory() && child.getName().equals("temp")){
+                        for(File temp : child.listFiles()){
+                            if(temp.lastModified() < time){
+                                logger.debug("[Job Scheduler] Delete temp file : " + temp.getName());
+                                if(temp.delete())   x++;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        logger.debug("[Job Scheduler] Deleted temp files : " + x);
+
+    }
 
     private int getDate(){
         int result = 0;
