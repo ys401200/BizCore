@@ -1,14 +1,20 @@
 package kr.co.bizcore.v1.ctrl;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.websocket.server.PathParam;
 
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import kr.co.bizcore.v1.domain.Article;
+import kr.co.bizcore.v1.domain.AttachedFile;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,6 +35,7 @@ public class ApiBoardCtrl extends Ctrl{
 
     private static final Logger logger = LoggerFactory.getLogger(ApiBoardCtrl.class);
 
+    // 자료실 목록
     @RequestMapping(value="/filebox", method=RequestMethod.GET)
     public String fileboxGet(HttpServletRequest request) {
         String result = null;
@@ -55,6 +63,7 @@ public class ApiBoardCtrl extends Ctrl{
         return result;
     } // End of fileBoxGet()
 
+    // 자료실 게시글 신규
     @RequestMapping(value="/filebox", method=RequestMethod.POST)
     public String fileboxPost(HttpServletRequest request, @RequestBody String requestBody) {
         String result = null;
@@ -64,7 +73,6 @@ public class ApiBoardCtrl extends Ctrl{
         String compId = null;
         List<Object> files = null;
         Article article = null;
-        ObjectMapper mapper = null;
         HttpSession session = null;
         HashMap<String, String> attached = null;
         String data = null;
@@ -93,44 +101,38 @@ public class ApiBoardCtrl extends Ctrl{
             article.setTitle(json.getString("title"));
             article.setContent(json.getString("content"));
 
-            try {
-                // mapper = new ObjectMapper();
-                //article = mapper.readValue(data, Article.class);
-                count = boardService.postNewArticle(compId, article, files, attached);
-                result = "{\"result\":\"ok\",\"msg\":\"success file upload and add article. file count : " + count + "\"}";
-            } catch (Exception e) {
-                result = "{\"result\":\"failure\",\"msg\":\"An error occurred\"}";
-                e.printStackTrace();
-            }
+            count = boardService.postNewArticle(compId, article, files, attached);
+            result = "{\"result\":\"ok\",\"msg\":\"success file upload and add article. file count : " + count + "\"}";
         }
         
         return result;
     } // End of fileBoxGet()
 
-    
-    @RequestMapping(value="/filebox", method=RequestMethod.DELETE)
-    public String fileboxDelete(HttpServletRequest request) {
+    // 게시글 삭제 / 첨부된 파일에 대한 디스크 및 DB삭제 처리 수행
+    @RequestMapping(value="/filebox/{no}", method=RequestMethod.DELETE)
+    public String fileboxDelete(HttpServletRequest request, @PathVariable String no) {
         String result = null;
+        HttpSession session = null;
+        String compId = null;
+
+        session = request.getSession();
+        compId = (String)session.getAttribute("compId");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
         
-        
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+        }else{
+            boardService.deleteFileboxArticle(no, compId);
+            result = "{\"result\":\"ok\"}";
+        }
         
         return result;
-    } // End of fileBoxGet()
+    } // End of fileboxDelete()
 
-    @RequestMapping(value="/filebox", method=RequestMethod.PUT)
-    public String fileboxPut(HttpServletRequest request, @RequestBody String requestBody) {
+    // 게시글 조회
+    @RequestMapping(value="/filebox/{no}", method=RequestMethod.GET)
+    public String fileboxOptionGet(HttpServletRequest request, @PathVariable String no) {
         String result = null;
-        
-        
-        
-        return result;
-    } // End of fileBoxGet()
-
-    @RequestMapping(value="/filebox/**", method=RequestMethod.GET)
-    public String fileboxOptionGet(HttpServletRequest request) {
-        String result = null;
-        String uri = null;
-        String[] t = null;
         String aesKey = null;
         String aesIv = null;
         String compId = null;
@@ -144,38 +146,24 @@ public class ApiBoardCtrl extends Ctrl{
         aesIv = (String)session.getAttribute("aesIv");
         if(compId == null)  compId = (String)request.getAttribute("compId");
         
-        uri = request.getRequestURI();
-        if (uri.substring(0, 1).equals("/"))
-            uri = uri.substring(1);
-        if (uri.substring(uri.length() - 1).equals("/"))
-            uri = uri.substring(0, uri.length() - 1);
-        t = uri.split("/");
-
-        if(t.length >= 4 || t[3].equals("attached")){ // 첨부파일 모드
-
-        }else if(t.length >= 4){ // 자료실 게시글 번호 모드
-            articleNo = t[3];
-            if(compId == null){
-                result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
-            }else if(aesKey == null || aesIv == null){
-                result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
-            }else if(articleNo == null){
-                result = "{\"result\":\"failure\",\"msg\":\"Article number is Not verified.\"}";
-            }else{
-                article = boardService.getFileboxArticle(compId, boardService.strToInt(articleNo));
-                result = article.toJson();
-                result = boardService.encAes(result, aesKey, aesIv);
-                result = "{\"result\":\"ok\",\"data\":\"" + result + "\"}";
-            }
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
+        }else{
+            article = boardService.getFileboxArticle(compId, boardService.strToInt(no));
+            result = article.toJson();
+            result = boardService.encAes(result, aesKey, aesIv);
+            result = "{\"result\":\"ok\",\"data\":\"" + result + "\"}";
         }
-        
+    
         return result;
-    } // End of fileBox
+    } // End of fileboxOptionGet()
 
-    @RequestMapping(value="/filebox/**", method=RequestMethod.POST)
-    public String fileboxOptionPost(HttpServletRequest request, @RequestBody String requestBody) {
+    // 게시글 파일 첨부 / 편집 중 사전 업로드 후 attached에 저장된 파일명을 기준으로 임시폴더에서 첨부폴더로 사후 이동
+    @RequestMapping(value="/filebox/attached", method=RequestMethod.POST)
+    public String fileboxAttachedPost(HttpServletRequest request, @RequestBody String requestBody) {
         String result = null;
-        String uri = null;
         String name = null;
         String savedName = null;
         String file = null;
@@ -194,91 +182,115 @@ public class ApiBoardCtrl extends Ctrl{
         aesIv = (String)session.getAttribute("aesIv");
         attached = (HashMap<String, String>)session.getAttribute("attached");
         if(compId == null)  compId = (String)request.getAttribute("compId");
-        
-        uri = request.getRequestURI();
-        if (uri.substring(0, 1).equals("/"))
-            uri = uri.substring(1);
-        if (uri.substring(uri.length() - 1).equals("/"))
-            uri = uri.substring(0, uri.length() - 1);
-        t = uri.split("/");
 
-        if(t.length >= 4 || t[3].equals("attached")){ // ================= 첨부파일 모드
-
-            if(compId == null){
-                result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
-            }else if(aesKey == null || aesIv == null){
-                result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
-            }else{
-                data = requestBody.split("\r\n");
-                if(data != null && data.length >= 2){
-                    name = data[0];
-                    file = data[1];
-                    fileData = boardService.decAesBinary(file, aesKey, aesIv);
-                    savedName = systemService.createRandomFileName();
-                    if(boardService.saveAttachedFile(compId, savedName, fileData)){
-                        if(attached == null){
-                            attached = new HashMap<>();
-                            session.setAttribute("attached", attached);
-                        }
-                        attached.put(name, savedName);
-                        result = "{\"result\":\"ok\",\"msg\":\"" + savedName + "\"}";
-                    }else   result = "{\"result\":\"failure\",\"msg\":\"Error occured when file saved.\"}";
-                }
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
+        }else{
+            data = requestBody.split("\r\n");
+            if(data != null && data.length >= 2){
+                name = data[0];
+                file = data[1];
+                fileData = boardService.decAesBinary(file, aesKey, aesIv);
+                savedName = systemService.createRandomFileName();
+                if(boardService.saveAttachedFile(compId, savedName, fileData)){
+                    if(attached == null){
+                        attached = new HashMap<>();
+                        session.setAttribute("attached", attached);
+                    }
+                    attached.put(name, savedName);
+                    result = "{\"result\":\"ok\",\"msg\":\"" + savedName + "\"}";
+                }else   result = "{\"result\":\"failure\",\"msg\":\"Error occured when file saved.\"}";
             }
-
-        }else{ // ====================== 자료실 게시글 번호 모드
-
         }
-        
-        return result;
-    } // End of fileBox
 
-    @RequestMapping(value="/filebox/**", method=RequestMethod.PUT)
-    public String fileboxOptionPut(HttpServletRequest request, @RequestBody String requestBody) {
+        return result;
+    } // End of fileboxAttachedPost()
+
+    // 게시글 수정 / addFiles에 사전 추가된 파일명 목록을, removeFiles에 기존 파일 중 삭제 목록을 담도록 함
+    @RequestMapping(value="/filebox/{no}", method=RequestMethod.PUT)
+    public String fileboxOptionPut(HttpServletRequest request, @RequestBody String requestBody, @PathVariable String no) {
         String result = null;
-        String uri = null;
-        String[] t = null;
+        String aesKey = null;
+        String aesIv = null;
+        String compId = null;
+        String data = null;
+        JSONObject json = null;
+        Article article = null;
+        List<Object> removeFiles = null;
+        List<Object> addFiles = null;
         HttpSession session = null;
+        HashMap<String, String> attached = null;
         
         session = request.getSession();
-        uri = request.getRequestURI();
-        if (uri.substring(0, 1).equals("/"))
-            uri = uri.substring(1);
-        if (uri.substring(uri.length() - 1).equals("/"))
-            uri = uri.substring(0, uri.length() - 1);
-        t = uri.split("/");
+        compId = (String)session.getAttribute("compId");
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        attached = (HashMap<String, String>)session.getAttribute("attached");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
 
-        if(t.length >= 4 || t[3].equals("attached")){ // 첨부파일 모드
-
-        }else{ // 자료실 게시글 번호 모드
-
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
+        }else{
+            data = boardService.decAes(requestBody, aesKey, aesIv);
+            json = new JSONObject(data);
+            article = new Article();
+            addFiles = json.getJSONArray("addFiles").toList();
+            removeFiles = json.getJSONArray("removeFiles").toList();
+            article.setNo(strToInt(no));
+            article.setTitle(json.getString("title"));
+            article.setContent(json.getString("content"));
+            boardService.updateFileboxArticle(compId, article, addFiles, removeFiles, attached);
+            result = "{\"result\":\"ok\"}";
         }
+
         
         return result;
     } // End of fileBox
     
-    @RequestMapping(value="/filebox/**", method=RequestMethod.DELETE)
-    public String fileboxOptionDelete(HttpServletRequest request) {
-        String result = null;
-        String uri = null;
-        String[] t = null;
+    // 첨부된 파일 다운로드 / /filebox/글번호/첨부파일명 / 첨부파일명은 uri 인코딩 되어 있을 것
+    @RequestMapping(value="/filebox/{no}/{fileName}", method=RequestMethod.GET)
+    public void fileboxAttachedDownload(HttpServletRequest request, HttpServletResponse response, @PathVariable String no, @PathVariable String fileName) {
         HttpSession session = null;
+        ServletOutputStream out = null;
+        String compId = null;
+        byte[] data = null;
         
         session = request.getSession();
-        uri = request.getRequestURI();
-        if (uri.substring(0, 1).equals("/"))
-            uri = uri.substring(1);
-        if (uri.substring(uri.length() - 1).equals("/"))
-            uri = uri.substring(0, uri.length() - 1);
-        t = uri.split("/");
+        compId = (String)session.getAttribute("compId");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
 
-        if(t.length >= 4 || t[3].equals("attached")){ // 첨부파일 모드
+        if(compId == null){
+            response.setStatus(404);
+        }else{
+            data = boardService.getFileboxAttachedFile(no, fileName, compId);
+            if(data == null){
+                response.setStatus(404);
+            }else{
+                try {
+                    out = response.getOutputStream();
+                    if(out.isReady()){
+                        response.setContentType("Content-type: application/x-msdownload; charset=euc-kr");
+                        response.setHeader("Content-Disposition", "attachment;filename="+new String(fileName.getBytes("euc-kr"),"8859_1"));
+                        response.setHeader("Content-Transfer-Encoding", "binary;");
+                        response.setHeader("Pragma", "no-cache;");
+                        response.setHeader("Expires", "-1;");
+                        response.setContentLength(data.length); //파일크기를 브라우저에 알려준다.
 
-        }else{ // 자료실 게시글 번호 모드
-
+                        out.write(data);
+                        out.flush();
+                    }else{
+                        response.setStatus(500);
+                    }
+                } catch (IOException e) {
+                    response.setStatus(500);
+                }
+            }
         }
-        
-        return result;
+
     } // End of fileBox
 }
 

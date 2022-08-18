@@ -3,6 +3,7 @@ package kr.co.bizcore.v1.svc;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -100,8 +101,8 @@ public class BoardService extends Svc{
                 ognName = (String)each;
                 savedName = attached.get(ognName);
                 attached.remove(ognName);
-                tempFile = new File(path + "/temp/" + savedName);
-                targetFile = new File(path + "/attached/" + savedName);
+                tempFile = new File(path + s + "temp" + s + savedName);
+                targetFile = new File(path + s + "attached" + s + savedName);
                 if(tempFile.exists()){ //파일이 존재하는지 먼저 검증
                     if(tempFile.renameTo(targetFile)){ // 1차 : renameTo()로 간단히 이동 시도
                         result++;
@@ -133,5 +134,127 @@ public class BoardService extends Svc{
         }
         return result;
     } // End of postNewArticle()
+
+    // 자료실 게시글 삭제
+    public boolean deleteFileboxArticle(String no, String compId){
+        boolean result = false;
+        List<AttachedFile> fileList = null;
+        AttachedFile eachItem = null;
+        String path = null, s = File.separator;
+        int x = 0;
+        File eachFile = null;
+
+        path = fileStoragePath + s + compId; // company id 에 해당하는 경로 가져오기
+        fileList = boardMapper.getAttachedFileList(strToInt(no), compId);
+        for(x = 0 ; x < fileList.size() ; x++){
+            eachItem = fileList.get(x);
+            eachFile = new File(path + s + "attached" + s + eachItem.getSavedName());
+            if(eachFile.exists())   eachFile.delete();
+            boardMapper.deleteFileboxAttachedFile(no, compId, eachItem.getSavedName());
+        }
+        boardMapper.deleteFileboxArticle(no, compId);
+        result = true;
+        return result;
+    }
+
+    // 자료실 게시글 업데이트
+    public void updateFileboxArticle(String compId, Article article, List<Object> addFiles, List<Object> removeFiles, HashMap<String, String> attached){
+        String ognName = null;
+        String savedName = null;
+        String path = null, s = File.separator;
+        File tempFile = null, targetFile = null;
+        Long size = 0L;
+        List<AttachedFile> fileList = null;
+        AttachedFile eachFile = null;
+        Object[] keyset = null;
+        int result = 0, read = 0, x = 0;
+        FileInputStream fin = null;
+        FileOutputStream fout = null;
+        byte[] buffer = new byte[1024];
+
+        // 게시글 DB 업데이트
+        boardMapper.updateFileboxArticle(article, compId);
+        path = fileStoragePath + s + compId; // company id 에 해당하는 경로 가져오기
+
+        // 삭제 파일 처리
+        if(removeFiles != null && removeFiles.size() > 0){
+            fileList = boardMapper.getAttachedFileList(article.getNo(), compId); // 기존 첨부된파일을 가지고 옴
+            if(fileList != null && fileList.size() > 0) for(x = 0 ; x < fileList.size() ; x++){
+                savedName = fileList.get(x).getSavedName();
+                for(Object obj : removeFiles){
+                    if(savedName.equals(obj)){
+                        targetFile = new File(path + s + fileList.get(x).getSavedName());
+                        if(targetFile.exists()) targetFile.delete();
+                        boardMapper.deleteFileboxAttachedFile(article.getNo() + "", compId, savedName);
+                    }
+                }
+            }
+        }
+        
+        // 첨부 파일 처리
+        if(attached != null){
+
+            // 저장된 파일에 대해 map에서 제거하고 DB저장, 파일을 temp에서 attached로 이동
+            for(Object each : addFiles){
+                ognName = (String)each;
+                savedName = attached.get(ognName);
+                attached.remove(ognName);
+                tempFile = new File(path + s + "temp" + s + savedName);
+                targetFile = new File(path + s + "attached" + s + savedName);
+                if(tempFile.exists()){ //파일이 존재하는지 먼저 검증
+                    if(tempFile.renameTo(targetFile)){ // 1차 : renameTo()로 간단히 이동 시도
+                        result++;
+                    }else{  // 실패시 2차 시도 : 파일 읽어서 이동 후 임시 파일 삭제
+                        try {
+                            fin = new FileInputStream(tempFile);
+                            fout = new FileOutputStream(targetFile);
+                            read = 0;
+                            while((read = fin.read(buffer, 0, buffer.length)) != -1){
+                                fout.write(buffer, 0, read);
+                            }
+                            fin.close();
+                            fout.flush();
+                            fout.close();
+                            tempFile.delete();
+                            result++;
+                        } catch (Exception e) {e.printStackTrace();}
+                    }
+                }
+            }
+
+            // map에서 제거되지 않은, 즉, 업로드 후 삭제처리한 파일들에 대한 정리
+            keyset = attached.keySet().toArray();
+            for(Object key : keyset){
+                savedName = attached.get(key);
+                tempFile = new File(path + s + "temp" + s + savedName);
+                tempFile.delete();
+            }
+        }
+    } // End of updateFileboxArticle()
+
+    // 첨부파일 다운로드 처리 메서드
+    public byte[] getFileboxAttachedFile(String no, String fileName, String compId){
+        byte[] result = null;
+        String path = null, s = File.separator, savedName = null;
+        File file = null;
+        FileInputStream fis = null;
+
+        path = fileStoragePath + s + compId; // company id 에 해당하는 경로 가져오기
+        savedName = boardMapper.getFileboxSavedFileName(compId, no, fileName);
+        if(savedName == null)   return result;
+
+        file = new File(path + s + "attached" + s + savedName);
+        if(!file.exists())  return result;
+
+        try{
+            fis = new FileInputStream(file);
+            result = fis.readAllBytes();
+            fis.close();
+        }catch(IOException e){e.printStackTrace();}finally{
+            try{if(fis != null) fis.close();}catch(IOException e){e.printStackTrace();}
+        }
+
+        return result;
+    }
     
 }
