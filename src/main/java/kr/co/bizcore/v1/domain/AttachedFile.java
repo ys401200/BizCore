@@ -9,7 +9,9 @@ import lombok.Setter;
 @Setter
 public class AttachedFile extends Domain{
 
+    @JsonIgnore
     private int idx;
+    @JsonIgnore
     private int articalNo;
     private String ognName;
     @JsonIgnore
