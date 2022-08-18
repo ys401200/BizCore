@@ -271,34 +271,19 @@ public class ApiBoardCtrl extends Ctrl{
                 response.setStatus(404);
             }else{
                 try {
-                    out = response.getOutputStream();
-
+                    response.reset();
                     response.setContentType("Content-type: application/x-msdownload; charset=euc-kr");
                     response.setHeader("Content-Disposition", "attachment;filename="+new String(fileName.getBytes("euc-kr"),"8859_1"));
                     response.setHeader("Content-Transfer-Encoding", "binary;");
                     response.setHeader("Pragma", "no-cache;");
                     response.setHeader("Expires", "-1;");
                     response.setContentLength(data.length); //파일크기를 브라우저에 알려준다.
-
+                    
+                    out = response.getOutputStream();
                     out.write(data);
                     out.flush();
-                    // if(out.isReady()){
-                    //     response.setContentType("Content-type: application/x-msdownload; charset=euc-kr");
-                    //     response.setHeader("Content-Disposition", "attachment;filename="+new String(fileName.getBytes("euc-kr"),"8859_1"));
-                    //     response.setHeader("Content-Transfer-Encoding", "binary;");
-                    //     response.setHeader("Pragma", "no-cache;");
-                    //     response.setHeader("Expires", "-1;");
-                    //     response.setContentLength(data.length); //파일크기를 브라우저에 알려준다.
-
-                    //     out.write(data);
-                    //     out.flush();
-                    // }else{
-                    //     response.setStatus(500);
-                    //     logger.debug("1111111111111111111111111111111111111111111111111111111111111111111111111");
-                    // }
                 } catch (IOException e) {
                     response.setStatus(500);
-                    logger.debug("2222222222222222222222222222222222222222222222222222222222222222222222222222222222");
                 }
             }
         }

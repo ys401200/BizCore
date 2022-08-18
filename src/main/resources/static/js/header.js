@@ -1423,3 +1423,16 @@ function customerChange(e){
 
 	$(document).find("#" + $(e).data("user-id")).val(storage.customer[getCustNumber].ceoName);
 }
+
+function sizeToStr(s){
+    let result, t, r;
+    r = 1024;
+    if(s === undefined || s === null || isNaN(s) || s === "")   return s;
+    if(s < r) return s + "b";
+    s = Math.floor(s / 102.4) / 10;
+    if(s < r) return s + "kb";
+    s = Math.floor(s / 102.4) / 10;
+    if(s < r) return s + "mb";
+    s = Math.floor(s / 102.4) / 10;
+    return s + "gb";
+}

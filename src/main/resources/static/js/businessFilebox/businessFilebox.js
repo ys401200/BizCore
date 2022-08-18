@@ -147,12 +147,16 @@ function fileBoxSuccessView(result){
 	];
 
 	html += detailViewForm(dataArray);
-	html += "<div><span>첨부파일</span></div>";
-
-	downloadApiPath = "/api/board/filebox/" + result.no + "/";
-
-	for(let i = 0; i < result.attached.length; i++){
-		html += "<div><div><a href='" + downloadApiPath + encodeURI(result.attached[i].ognName) + "'>" + result.attached[i].ognName + "</a></div><div>";
+	
+	if(result.attached !== undefined){
+		if(result.attached.length > 0){
+			html += "<div><span>첨부파일</span></div>";
+			downloadApiPath = "/api/board/filebox/" + result.no + "/";
+		
+			for(let i = 0; i < result.attached.length; i++){
+				html += "<div><div><a href='" + downloadApiPath + encodeURI(result.attached[i].ognName) + "'>" + result.attached[i].ognName + "</a></div><div>";
+			}
+		}
 	}
 
 	detailContainer.find("span").text(title);
@@ -360,6 +364,7 @@ function fileChange(){
 			fileData = e.target.result;
 			fileData = cipher.encAes(fileData);
 			fullData = (attached[i].name + "\r\n" + fileData);
+			fullData = cipher.encAes(fullData);
 			
 			url = "/api/board/filebox/attached";
 			method = "post";
@@ -369,7 +374,7 @@ function fileChange(){
 			crud.defaultAjax(url, method, data, type, submitFileSuccess, submitFileError);
 		}
 		
-		reader.readAsBinaryString(attached[i]);
+		reader.readAsDataURL(attached[i]);
 		
 		temp = attached[i].name;
 		fileDatas.push(temp);
