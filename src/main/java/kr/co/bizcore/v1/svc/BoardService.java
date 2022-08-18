@@ -85,6 +85,7 @@ public class BoardService extends Svc{
         File tempFile = null, targetFile = null;
         Long size = 0L;
         Object[] keyset = null;
+        AttachedFile attachedFile = null;
         int result = 0, read = 0;
         FileInputStream fin = null;
         FileOutputStream fout = null;
@@ -106,6 +107,13 @@ public class BoardService extends Svc{
                 if(tempFile.exists()){ //파일이 존재하는지 먼저 검증
                     if(tempFile.renameTo(targetFile)){ // 1차 : renameTo()로 간단히 이동 시도
                         result++;
+
+                        attachedFile = new AttachedFile();
+                        attachedFile.setArticalNo(article.getNo());
+                        attachedFile.setOgnName(ognName);
+                        attachedFile.setSavedName(savedName);
+                        attachedFile.setSize(targetFile.length());
+                        boardMapper.addAttachedFile(compId, attachedFile);
                     }else{  // 실패시 2차 시도 : 파일 읽어서 이동 후 임시 파일 삭제
                         try {
                             fin = new FileInputStream(tempFile);
@@ -119,6 +127,13 @@ public class BoardService extends Svc{
                             fout.close();
                             tempFile.delete();
                             result++;
+
+                            attachedFile = new AttachedFile();
+                            attachedFile.setArticalNo(article.getNo());
+                            attachedFile.setOgnName(ognName);
+                            attachedFile.setSavedName(savedName);
+                            attachedFile.setSize(targetFile.length());
+                            boardMapper.addAttachedFile(compId, attachedFile);
                         } catch (Exception e) {e.printStackTrace();}
                     }
                 }
@@ -204,6 +219,13 @@ public class BoardService extends Svc{
                 if(tempFile.exists()){ //파일이 존재하는지 먼저 검증
                     if(tempFile.renameTo(targetFile)){ // 1차 : renameTo()로 간단히 이동 시도
                         result++;
+
+                        eachFile = new AttachedFile();
+                        eachFile.setArticalNo(article.getNo());
+                        eachFile.setOgnName(ognName);
+                        eachFile.setSavedName(savedName);
+                        eachFile.setSize(targetFile.length());
+                        boardMapper.addAttachedFile(compId, eachFile);
                     }else{  // 실패시 2차 시도 : 파일 읽어서 이동 후 임시 파일 삭제
                         try {
                             fin = new FileInputStream(tempFile);
@@ -217,6 +239,13 @@ public class BoardService extends Svc{
                             fout.close();
                             tempFile.delete();
                             result++;
+
+                            eachFile = new AttachedFile();
+                            eachFile.setArticalNo(article.getNo());
+                            eachFile.setOgnName(ognName);
+                            eachFile.setSavedName(savedName);
+                            eachFile.setSize(targetFile.length());
+                            boardMapper.addAttachedFile(compId, eachFile);
                         } catch (Exception e) {e.printStackTrace();}
                     }
                 }
