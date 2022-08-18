@@ -12,7 +12,7 @@ public class AttachedFile extends Domain{
     @JsonIgnore
     private int idx;
     @JsonIgnore
-    private int articalNo;
+    private int articleNo;
     private String ognName;
     @JsonIgnore
     private String savedName;

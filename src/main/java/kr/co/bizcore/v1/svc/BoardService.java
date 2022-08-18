@@ -109,7 +109,7 @@ public class BoardService extends Svc{
                         result++;
 
                         attachedFile = new AttachedFile();
-                        attachedFile.setArticalNo(article.getNo());
+                        attachedFile.setArticleNo(article.getNo());
                         attachedFile.setOgnName(ognName);
                         attachedFile.setSavedName(savedName);
                         attachedFile.setSize(targetFile.length());
@@ -129,7 +129,7 @@ public class BoardService extends Svc{
                             result++;
 
                             attachedFile = new AttachedFile();
-                            attachedFile.setArticalNo(article.getNo());
+                            attachedFile.setArticleNo(article.getNo());
                             attachedFile.setOgnName(ognName);
                             attachedFile.setSavedName(savedName);
                             attachedFile.setSize(targetFile.length());
@@ -221,7 +221,7 @@ public class BoardService extends Svc{
                         result++;
 
                         eachFile = new AttachedFile();
-                        eachFile.setArticalNo(article.getNo());
+                        eachFile.setArticleNo(article.getNo());
                         eachFile.setOgnName(ognName);
                         eachFile.setSavedName(savedName);
                         eachFile.setSize(targetFile.length());
@@ -241,7 +241,7 @@ public class BoardService extends Svc{
                             result++;
 
                             eachFile = new AttachedFile();
-                            eachFile.setArticalNo(article.getNo());
+                            eachFile.setArticleNo(article.getNo());
                             eachFile.setOgnName(ognName);
                             eachFile.setSavedName(savedName);
                             eachFile.setSize(targetFile.length());
