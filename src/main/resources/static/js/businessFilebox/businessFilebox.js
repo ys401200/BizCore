@@ -1,3 +1,5 @@
+let fileDataArray = [];
+
 $(document).ready(() => {
 	init();
 
@@ -214,6 +216,7 @@ function fileBoxInsertForm(){
 		my = storage.my;
 
 		$(document).find("#writer").val(storage.user[my].userName);
+		$(document).find("#attached").after("<div class='filePreview'></div>");
 	}, 100);
 }
 
@@ -255,20 +258,17 @@ function fileBoxUpdateForm(result){
 	modal.close.text("취소");
 	modal.confirm.attr("onclick", "fileBoxUpdate(" + result.no + ");");
 	modal.close.attr("onclick", "modal.hide();");
+
+	$(document).find("#attached").after("<div class='filePreview'></div>");
 }
 
 function fileBoxInsert(){
-	let title, content, writer, attached, fileDatas = [], data;
+	let title, content, writer, attached, data;
 
-	attached = $(document).find("[name='attached[]']")[0].files;
 	title = $(document).find("#title").val();
 	content = tinymce.activeEditor.getContent();
 	writer = $(document).find("#writer");
 	writer = dataListFormat(writer.attr("id"), writer.val());
-	
-	for(let i = 0; i < attached.length; i++){
-		fileDatas.push(attached[i].name);
-	}
 	
 	url = "/api/board/filebox";
 	method = "post";
@@ -276,7 +276,7 @@ function fileBoxInsert(){
 		"title": title,
 		"content": content,
 		"writer": writer,
-		"files": fileDatas,
+		"files": fileDataArray,
 	}
 	type = "insert";
 
@@ -352,19 +352,19 @@ function fileBoxErrorDelete(){
 }
 
 function fileChange(){
-	let url, method, data, type, attached, fullData, fileData, fileDatas = [], getFileDatas = [];
+	let url, method, data, type, attached, fileDatas = [], html = "";
 	attached = $(document).find("[name='attached[]']")[0].files;
-	$(document).find("#attached").after("<div class='filePreview'></div>");
-
+	
 	for(let i = 0; i < attached.length; i++){
 		let reader = new FileReader();
-		let temp;
+		let temp = [], fileName;
+
+		fileName = attached[i].name;
 
 		reader.onload = (e) => {
-			fileData = e.target.result;
+			let fileData = e.target.result;
 			fileData = cipher.encAes(fileData);
-			fullData = (attached[i].name + "\r\n" + fileData);
-			fullData = cipher.encAes(fullData);
+			let fullData = (fileName + "\r\n" + fileData);
 			
 			url = "/api/board/filebox/attached";
 			method = "post";
@@ -373,39 +373,25 @@ function fileChange(){
 			
 			crud.defaultAjax(url, method, data, type, submitFileSuccess, submitFileError);
 		}
-		
-		reader.readAsDataURL(attached[i]);
+
+		reader.readAsBinaryString(attached[i]);
 		
 		temp = attached[i].name;
 		fileDatas.push(temp);
 	}
 
-	$(document).find(".filePreview").html("");
-	
-	if(localStorage.getItem("fileDatas") == null || localStorage.getItem("fileDatas") == undefined){
-		console.log("실행1");
-		localStorage.setItem("fileDatas", JSON.stringify(fileDatas));
-		
-		for(let i = 0; i < fileDatas.length; i++){
-			$(document).find(".filePreview").append("<div style='padding-bottom: 4%;'><span style='float:left; display: block; width: 95%;'>" + (i+1) + ". " + fileDatas[i] + "</span><button type='button' style='float:right; width: 5%;' data-index='" + i + "' onclick='fileViewDelete(this);'>삭제</button></div>");
-		}
-	}else{
-		console.log("실행2");
-		getFileDatas = JSON.parse(localStorage.getItem("fileDatas"));
-		
-		for(let i = 0; i < fileDatas.length; i++){
-			getFileDatas.push(fileDatas[i]);
-		}
+	$(document).find(".filePreview").html(html);
 
-		console.log(getFileDatas.length);
-
-		for(let i = 0; i < getFileDatas.length; i++){
-			$(document).find(".filePreview").append("<div style='padding-bottom: 4%;'><span style='float:left; display: block; width: 95%;'>" + (i+1) + ". " + getFileDatas[i] + "</span><button type='button' style='float:right; width: 5%;' data-index='" + i + "' onclick='fileViewDelete(this);'>삭제</button></div>");
-		}
-		
-		localStorage.setItem("fileDatas", JSON.stringify(getFileDatas));
+	for(let i = 0; i < fileDatas.length; i++){
+		fileDataArray.push(fileDatas[i]);
 	}
 
+	if(fileDataArray.length > 0){
+		for(let i = 0; i < fileDataArray.length; i++){
+			html += "<div style='padding-bottom: 4%;'><span style='float:left; display: block; width: 95%;'>" + fileDataArray[i] + "</span><button type='button' id='fileDataDelete' style='float:right; width: 5%;' data-index='" + i + "' onclick='fileViewDelete(this);'>삭제</button></div>";
+			$(document).find(".filePreview").html(html);
+		}
+	}
 
 	// divHeight = $(document).find(".filePreview").innerHeight();
 	// $(document).find("#attached").parent().parent().next().css("padding-top", divHeight);
@@ -420,9 +406,10 @@ function submitFileError(){
 }
 
 function fileViewDelete(e){
-	let getFileDatas;
-	getFileDatas = JSON.parse(localStorage.getItem("fileDatas"));
-
+	fileDataArray.splice($(e).data("index"), 1);
 	$(e).parent().remove();
-	console.log(getFileDatas);
+
+	$(document).find(".filePreview div button").each((index, item) => {
+		$(item).attr("data-index", index);		
+	});
 }
