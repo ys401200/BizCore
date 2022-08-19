@@ -104,7 +104,6 @@
         }
 
 
-
         .lineDivContainer {
             display: grid;
             grid-template-columns: 33% 33% 33%;
@@ -113,13 +112,15 @@
 
         .lineDiv {
             display: grid;
-            grid-template-columns: 30% 70%;
+            grid-template-columns: 15% 85%;
+            text-align: center;
 
         }
 
         .lineDiv input {
             border: none;
             width: 85%;
+            text-align: center;
         }
 
         .lineDiv .lineDivContentfirst,
@@ -166,10 +167,14 @@
             border-bottom: 1px solid black;
         }
 
+        .lineDivContentnone,
+        .lineDivContentwnone {
+            border: none;
 
-        .insertbtn,
-        .deletebtn {
-            display: none;
+        }
+
+        .appDivContentnone {
+            border-right: 1px solid black;
         }
     </style>
 </head>
@@ -254,7 +259,7 @@
                                     }
                                 })
                             } else {
-                                msg.set(data.msg);
+                              //  msg.set(data.msg);
                             }
                         }
                     })
@@ -315,7 +320,7 @@
                         storage.form = list;
                         console.log("[getForms] Success getting employee information.");
                     } else {
-                        msg.set("양식 정보를 가져오지 못했습니다.");
+                       // msg.set("양식 정보를 가져오지 못했습니다.");
                     }
                 }
             })
@@ -349,7 +354,7 @@
                         storage.user = list;
                         console.log("[getUserMap] Success getting employee information.");
                     } else {
-                        msg.set("직원 정보를 가져오지 못했습니다.");
+                     //   msg.set("직원 정보를 가져오지 못했습니다.");
                     }
                 }
             })
@@ -375,7 +380,7 @@
                         storage.dept = list;
                         console.log("[getDeptMap] Success getting department information.");
                     } else {
-                        msg.set("부서 정보를 가져오지 못했습니다.");
+                      //  msg.set("부서 정보를 가져오지 못했습니다.");
                     }
                 }
             })
@@ -401,7 +406,7 @@
                         storage.customer = list;
                         console.log("[getCustomer] Success getting customer information.");
                     } else {
-                        msg.set("고객 정보를 가져오지 못했습니다.");
+                     //   msg.set("고객 정보를 가져오지 못했습니다.");
                     }
                 }
             })
@@ -504,7 +509,7 @@
 
 
         function drawClickedDetail(info, no) {
-            
+
             let fileTarget = $(".app_files");
             let appTarget = $(".app_line");
             let dataTarget = $(".app_data");
@@ -533,7 +538,7 @@
 
             fileTarget.html(filesHtml);
 
-            for (let i = 0; i < info.docData.length; i++) {
+            if (info.docData != null) for (let i = 0; i < info.docData.length; i++) {
                 docDataHtml += "<div>" + i + "데이터 -------------"
                 for (let j = 0; j < dataTitles.length; j++) {
                     docDataHtml += "<div>" + info.docData[i][dataTitles[j]] + "</div>";
@@ -581,13 +586,20 @@
                                     $("#" + id + "_" + docListTitle[j]).val(name);
                                 }
                                 else if (docListTitle[j] == "created") {
-                                    let created = new Date(storage.docList[i][docListTitle[j]]);
-                                    let year = created.getFullYear();
-                                    let month = created.getMonth() + 1;
-                                    let date = created.getDate();
-                                    $("#" + id + "_" + docListTitle[j]).val(year + "년" + month + "월" + date + "일");
-                                } else {
+                                    let date = getYmd(storage.docList[i][docListTitle[j]]);
+                                    $("#" + id + "_" + docListTitle[j]).val(date);
+
+                                } else if (docListTitle[j] == "content") {
                                     $("#" + id + "_" + docListTitle[j]).val(storage.docList[i][docListTitle[j]]);
+                                    $("#" + id + "_" + docListTitle[j]).html(storage.docList[i][docListTitle[j]]);
+
+                                } else {
+                                    if (storage.docList[i][docListTitle[j]] == 0) {
+                                        $("#" + id + "_" + docListTitle[j]).val("");
+                                    } else {
+                                        $("#" + id + "_" + docListTitle[j]).val(storage.docList[i][docListTitle[j]]);
+                                    }
+
                                 }
                             }
 
@@ -596,17 +608,17 @@
 
                         $("#" + id + "_line").html(
 
-                            "<div class='lineDivContainer'><div class='lineDiv'><div class='lineDivContentfirstw'><div>작 성</div></div>" +
-                            "<div><div class='lineDivContentw'><input class='inputs' type='text' id='" + id + "_writer' value='" + $("#" + id + '_writer').val() + "'></div>" +
-                            "<div class='lineDivContentw'><input class='inputs' type='text' id='" + id + "_writer_approved'></div>" +
-                            "<div class='lineDivContentw'><input class='inputs' type='text' id='" + id + "_writer_comment'></div>" +
-                            "<div class='lineDivContentlastw'><input class='inputs' type='text' id='" + id + "_writer_status'></div></div></div>" +
+                            "<div class='lineDivContainer'><div></div><div class='lineDiv'><div class='lineDivContentfirstw'><div>작 성</div></div>" +
+                            "<div><div class='lineDivContentw'><input class='inputsAuto' type='text' id='" + id + "_writerposition' ></div>" +
+                            "<div class='lineDivContentw'><input class='inputsAuto' type='text' id='" + id + "_writer_status'></div>" +
+                            "<div class='lineDivContentwnone'><input class='inputsAuto' type='text' id='" + id + "_writer' value='" + $("#" + id + '_writer').val() + "'></div>" +
+                            "<div class='lineDivContentlastw'><input class='inputsAuto' type='text' id='" + id + "_writer_approved' value='" + $("#" + id + '_created').val() + "'></div></div></div>" +
 
                             "<div class='lineDiv'><div class='lineDivContentfirst'><div >결 재</div></div>" +
-                            "<div><div class='appDivContent'><input class='inputs' type='text' id='" + id + "_app'></div>" +
-                            "<div class='appDivContent'><input class='inputs' type='text' id='" + id + "_approved'></div>" +
-                            "<div class='appDivContent'><input class='inputs' type='text' id='" + id + "_comment'></div>" +
-                            "<div class='appDivContentlast'><input class='inputs' type='text' id='" + id + "_status'></div></div></div></div>");
+                            "<div><div class='appDivContent'><input class='inputsAuto' type='text' id='" + id + "_apppositon' value='대표'></div>" +
+                            "<div class='appDivContent'><input class='inputsAuto' type='text' id='" + id + "_status'></div>" +
+                            "<div class='appDivContentnone'><input class='inputsAuto' type='text' id='" + id + "_app'></div>" +
+                            "<div class='appDivContentlast'><input class='inputsAuto' type='text' id='" + id + "_approved'></div></div></div></div>");
 
 
                         for (let i = 0; i < info.appData.length; i++) {
@@ -645,14 +657,10 @@
                                             $("#" + id + "_writer_" + appTitles[j]).val('승인요청');
                                         }
 
-
                                     } else if (appTitles[j] == 'approved') {
-                                        let approved = new Date(info.appData[i][appTitles[j]]);
-                                        let year = approved.getFullYear();
-                                        let month = approved.getMonth() + 1;
-                                        let date = approved.getDate();
+                                        let date = getYmd(info.appData[i][appTitles[j]]);
 
-                                        $("#" + id + "_" + appTitles[j]).val(year + "년" + month + "월" + date + "일");
+                                        $("#" + id + "_" + appTitles[j]).val(date);
 
                                     }
 
@@ -669,18 +677,18 @@
                         let dataHtml = ""
 
 
-                        for (let q = 0; q < Object.keys(info.docData).length; q++) {
-                            dataHtml += "<div class='detailContentDiv'>"
+                        if (info.docData != null) for (let q = 0; q < Object.keys(info.docData).length; q++) {
+                            dataHtml += "<div class='detailcontentDiv'>"
                             for (let j = 0; j < dataTitles.length; j++) {
                                 if (j == (dataTitles.length - 1)) {
                                     dataHtml += "<div id='child' class='countRow detailcontentlast'><input class='inputs' type='text' value='" + info.docData[q][dataTitles[j]] + "' id='" + id + "_" + dataTitles[j] + "_" + q + "'></div>";
                                 } else if (dataTitles[j] == 'date') {
-                                    let date = getYmd(info.docData[q][dataTitles[j]]);
+                                    let date = getYmdHyphen(info.docData[q][dataTitles[j]]);
                                     dataHtml += "<div id='child' class='countRow detailcontent'><input class='inputs' type='date' value='" + date + "' id='" + id + "_" + dataTitles[j] + "_" + q + "'></div>";
                                 } else {
                                     dataHtml += "<div id='child' class='countRow detailcontent'><input class='inputs' type='text' value='" + info.docData[q][dataTitles[j]] + "' id='" + id + "_" + dataTitles[j] + "_" + q + "'></div>";
                                 }
-                            } dataHtml += "</div>"
+                            } dataHtml += "<input type='checkbox' id='detailDataList_"+q+"'></div>"
                         }
 
 
@@ -725,7 +733,11 @@
 
                                     $("#" + id + "_" + docListTitle[j]).val(date);
                                 } else {
-                                    $("#" + id + "_" + docListTitle[j]).val(storage.docList[i][docListTitle[j]]);
+                                    if (storage.docList[i][docListTitle[j]] == 0) {
+                                        $("#" + id + "_" + docListTitle[j]).val("");
+                                    } else {
+                                        $("#" + id + "_" + docListTitle[j]).val(storage.docList[i][docListTitle[j]]);
+                                    }
                                 }
                             }
 
@@ -734,54 +746,40 @@
 
                         if ($("#" + id + "_writer").val() == '구민주') {
                             $("#" + id + "_line").html(
-                                "<div class='lineDivContainer'><div class='lineDiv'><div class='lineDivContentfirstw'><div>작 성</div></div>" +
-                                "<div><div class='lineDivContentw'><input class='inputs' type='text' id='" + id + "_writer' value='" + $("#" + id + '_writer').val() + "'></div>" +
-                                "<div class='lineDivContentw'><input class='inputs' type='text' id='" + id + "_writer_approved'></div>" +
-                                "<div class='lineDivContentw'><input class='inputs' type='text' id='" + id + "_writer_comment'></div>" +
-                                "<div class='lineDivContentlastw'><input class='inputs' type='text' id='" + id + "_writer_status'></div></div></div>" +
+                                "<div class='lineDivContainer'><div></div><div class='lineDiv'><div class='lineDivContentfirstw'><div>작 성</div></div>" +
+                                "<div><div class='lineDivContentw'><input class='inputsAuto' type='text' id='" + id + "_writerposition' value='과장'></div>" +
+                                "<div class='lineDivContentw'><input class='inputsAuto' type='text' id='" + id + "_writer_status'></div>" +
+                                "<div class='lineDivContentwnone'><input class='inputsAuto' type='text' id='" + id + "_writer'value='" + $("#" + id + '_writer').val() + "'></div>" +
+                                "<div class='lineDivContentlastw'><input class='inputsAuto' type='text' id='" + id + "_writer_approved'value='" + $("#" + id + '_created').val() + "'></div></div></div>" +
 
                                 "<div class='lineDiv'><div class='lineDivContentfirst'><div >결 재</div></div>" +
-                                "<div><div class='lineDivContent'><input class='inputs' type='text' id='" + id + "_app'></div>" +
-                                "<div class='lineDivContent'><input class='inputs' type='text' id='" + id + "_approved'></div>" +
-                                "<div class='lineDivContent'><input class='inputs' type='text' id='" + id + "_comment'></div>" +
-                                "<div class='lineDivContentlast'><input class='inputs' type='text' id='" + id + "_status'></div></div></div></div>");
+                                "<div><div class='lineDivContent'><input class='inputsAuto' type='text' id='" + id + "_apppositoin' value='대표'></div>" +
+                                "<div class='lineDivContent'><input class='inputsAuto' type='text' id='" + id + "_status'></div>" +
+                                "<div class='appDivContentnone'><input class='inputsAuto' type='text' id='" + id + "_app'></div>" +
+                                "<div class='lineDivContentlast'><input class='inputsAuto' type='text' id='" + id + "_approved'></div></div></div></div>");
                         } else {
 
                             $("#" + id + "_line").html(
 
 
                                 "<div class='lineDivContainer'><div class='lineDiv'><div class='lineDivContentfirstw'><div>작 성</div></div>" +
-                                "<div><div class='lineDivContentw'><input class='inputs' type='text' id='" + id + "_writer' value='" + $("#" + id + '_writer').val() + "'></div>" +
-                                "<div class='lineDivContentw'><input class='inputs' type='text' id='" + id + "_writer_approved'></div>" +
-                                "<div class='lineDivContentw'><input class='inputs' type='text' id='" + id + "_writer_comment'></div>" +
-                                "<div class='lineDivContentlastw'><input class='inputs' type='text' id='" + id + "_writer_status'></div></div></div>" +
+                                "<div><div class='lineDivContentw'><input class='inputsAuto' type='text' id='" + id + "_writerposition' ></div>" +
+                                "<div class='lineDivContentw'><input class='inputsAuto' type='text' id='" + id + "_writer_status'></div>" +
+                                "<div class='lineDivContentwnone'><input class='inputsAuto' type='text' id='" + id + "_writer' value='" + $("#" + id + '_writer').val() + "'></div>" +
+                                "<div class='lineDivContentlastw'><input class='inputsAuto' type='text' id='" + id + "_writer_approved' value='" + $("#" + id + '_created').val() + "'></div></div></div>" +
+
                                 "<div class='lineDiv'><div class='lineDivContentfirst'><div >검 토</div></div>" +
-                                "<div><div class='lineDivContentw'><input type='text' id='" + id + "_examine_app' value='구민주'></div>" +
-                                "<div class='lineDivContentw'><input type='text' id='" + id + "_examine_Approved'></div>" +
-                                "<div class='lineDivContentw'><input type='text' id='" + id + "_examine_comment'></div>" +
-                                "<div class='lineDivContentlastw'><input type='text' id='" + id + "_examine_status'></div></div></div>" +
+                                "<div><div class='lineDivContentw'><input type='text' class='inputsAuto' id='" + id + "_examine_appposition' value='과장'></div>" +
+                                "<div class='lineDivContentw'><input type='text' class='inputsAuto' id='" + id + "_examine_status'></div>" +
+                                "<div class='lineDivContentwnone'><input type='text' class='inputsAuto' id='" + id + "_examine_app' value='구민주'></div>" +
+                                "<div class='lineDivContentlastw'><input type='text'  class='inputsAuto' id='" + id + "_examine_approved'></div></div></div>" +
+
                                 "<div class='lineDiv'><div class='lineDivContentfirst'><div >결 재</div></div>" +
-                                "<div><div class='appDivContent'><input class='inputs' type='text' id='" + id + "_app'></div>" +
-                                "<div class='appDivContent'><input class='inputs' type='text' id='" + id + "_approved'></div>" +
-                                "<div class='appDivContent'><input class='inputs' type='text' id='" + id + "_comment'></div>" +
-                                "<div class='appDivContentlast'><input class='inputs' type='text' id='" + id + "_status'></div></div></div></div>"
+                                "<div><div class='appDivContent'><input class='inputsAuto' type='text' id='" + id + "_appposition' value ='대표'></div>" +
+                                "<div class='appDivContent'><input class='inputsAuto' type='text' id='" + id + "_status'></div>" +
+                                "<div class='appDivContentnone'><input class='inputsAuto' type='text' id='" + id + "_app'></div>" +
+                                "<div class='appDivContentlast'><input class='inputsAuto' type='text' id='" + id + "_approved'></div></div></div></div>"
 
-
-
-
-
-                                // "<div class='lineDiv'><div class='lineDivContentfirst'><div >검토</div></div>" +
-                                // "<div><div class='lineDivContent'><input type='text' id='" + id + "_examine_app' value='구민주'></div>" +
-                                // "<div class='lineDivContent'><input type='text' id='" + id + "_examine_approved'></div>" +
-                                // "<div class='lineDivContent'><input type='text' id='" + id + "_examine_comment'></div>" +
-                                // "<div class='lineDivContentlast'><input type='text' id='" + id + "_examine_status'></div></div></div>" +
-
-
-                                // "<div class='lineDiv'><div class='lineDivContentfirst'><div >결재</div></div>" +
-                                // "<div><div class='lineDivContent'><input type='text' id='" + id + "_app'></div>" +
-                                // "<div class='lineDivContent'><input type='text' id='" + id + "_approved'></div>" +
-                                // "<div class='lineDivContent'><input type='text' id='" + id + "_comment'></div>" +
-                                // "<div class='lineDivContentlast'><input type='text' id='" + id + "_status'></div></div></div>"
                             );
                         }
 
@@ -841,12 +839,10 @@
 
 
                                     } else if (appTitles[j] == 'approved') {
-                                        let approved = new Date(info.appData[i][appTitles[j]]);
-                                        let year = approved.getFullYear();
-                                        let month = approved.getMonth() + 1;
-                                        let date = approved.getDate();
+                                        let date = getYmd(info.appData[i][appTitles[j]]);
 
-                                        $("#" + id + "_" + appTitles[j]).val(year + "년" + month + "월" + date + "일");
+
+                                        $("#" + id + "_" + appTitles[j]).val(date);
 
                                     } else {
                                         $("#" + id + "_" + appTitles[j]).val(info.appData[i][appTitles[j]]);
@@ -862,18 +858,18 @@
 
 
                         for (let q = 0; q < Object.keys(info.docData).length; q++) {
-                            dataHtml += "<div class='detailContentDiv'>"
+                            dataHtml += "<div class='detailcontentDiv'>"
                             for (let j = 0; j < dataTitles.length; j++) {
                                 if (j == (dataTitles.length - 1)) {
                                     dataHtml += "<div id='child' class='countRow detailcontentlast'><input class='inputs' type='text' value='" + info.docData[q][dataTitles[j]] + "' id='" + id + "_" + dataTitles[j] + "_" + q + "'></div>";
                                 } else if (dataTitles[j] == 'date') {
-                                    let date = getYmd(info.docData[q][dataTitles[j]]);
-                                    dataHtml += "<div id='child' class='countRow detailcontent'><input class='inputs' type='text' value='" + date + "' id='" + id + "_" + dataTitles[j] + "_" + q + "'></div>";
+                                    let date = getYmdHyphen(info.docData[q][dataTitles[j]]);
+                                    dataHtml += "<div id='child' class='countRow detailcontent'><input class='inputs' type='date' value='" + date + "' id='" + id + "_" + dataTitles[j] + "_" + q + "'></div>";
                                 } else {
                                     dataHtml += "<div id='child' class='countRow detailcontent'><input class='inputs' type='text' value='" + info.docData[q][dataTitles[j]] + "' id='" + id + "_" + dataTitles[j] + "_" + q + "'></div>";
                                 }
 
-                            } dataHtml += "</div>"
+                            } dataHtml += "<input type='checkbox' id='detailDataList_"+q+"'></div>"
                         }
 
                         $(".insertedDataList").html(dataHtml);
@@ -898,13 +894,15 @@
                                     $("#" + id + "_" + docListTitle[j]).val(name);
                                 }
                                 else if (docListTitle[j] == "created") {
-                                    let created = new Date(storage.docList[i][docListTitle[j]]);
-                                    let year = created.getFullYear();
-                                    let month = created.getMonth() + 1;
-                                    let date = created.getDate();
-                                    $("#" + id + "_" + docListTitle[j]).val(year + "년" + month + "월" + date + "일");
+                                    let date = getYmd(storage.docList[i][docListTitle[j]])
+
+                                    $("#" + id + "_" + docListTitle[j]).val(date);
                                 } else {
-                                    $("#" + id + "_" + docListTitle[j]).val(storage.docList[i][docListTitle[j]]);
+                                    if (storage.docList[i][docListTitle[j]] == 0) {
+                                        $("#" + id + "_" + docListTitle[j]).val("");
+                                    } else {
+                                        $("#" + id + "_" + docListTitle[j]).val(storage.docList[i][docListTitle[j]]);
+                                    }
                                 }
                             }
 
@@ -914,17 +912,18 @@
 
                         $("#" + id + "_line").html(
 
-                            "<div class='lineDivContainer'><div class='lineDiv'><div class='lineDivContentfirstw'><div>작 성</div></div>" +
-                            "<div><div class='lineDivContentw'><input class='inputs' type='text' id='" + id + "_writer' value='" + $("#" + id + '_writer').val() + "'></div>" +
-                            "<div class='lineDivContentw'><input class='inputs' type='text' id='" + id + "_writer_approved'></div>" +
-                            "<div class='lineDivContentw'><input class='inputs' type='text' id='" + id + "_writer_comment'></div>" +
-                            "<div class='lineDivContentlastw'><input class='inputs' type='text' id='" + id + "_writer_status'></div></div></div>" +
+
+                            "<div class='lineDivContainer'><div></div><div class='lineDiv'><div class='lineDivContentfirstw'><div>작 성</div></div>" +
+                            "<div><div class='lineDivContentw'><input class='inputs' type='text' id='" + id + "_writerposition' ></div>" +
+                            "<div class='lineDivContentw'><input class='inputs' type='text' id='" + id + "_writer_status'></div>" +
+                            "<div class='lineDivContentwnone'><input class='inputs' type='text' id='" + id + "_writer' value='" + $("#" + id + '_writer').val() + "'></div>" +
+                            "<div class='lineDivContentlastw'><input class='inputs' type='text' id='" + id + "_writer_approved' value='" + $("#" + id + '_created').val() + "'></div></div></div>" +
 
                             "<div class='lineDiv'><div class='lineDivContentfirst'><div >결 재</div></div>" +
-                            "<div><div class='appDivContent'><input class='inputs' type='text' id='" + id + "_app'></div>" +
-                            "<div class='appDivContent'><input class='inputs' type='text' id='" + id + "_approved'></div>" +
-                            "<div class='appDivContent'><input class='inputs' type='text' id='" + id + "_comment'></div>" +
-                            "<div class='appDivContentlast'><input class='inputs' type='text' id='" + id + "_status'></div></div></div></div>");
+                            "<div><div class='appDivContent'><input class='inputs' type='text' id='" + id + "_apppositon' value='대표'></div>" +
+                            "<div class='appDivContent'><input class='inputs' type='text' id='" + id + "_status'></div>" +
+                            "<div class='appDivContentnone'><input class='inputs' type='text' id='" + id + "_app'></div>" +
+                            "<div class='appDivContentlast'><input class='inputs' type='text' id='" + id + "_approved'></div></div></div></div>");
 
 
                         for (let i = 0; i < info.appData.length; i++) {
@@ -965,12 +964,10 @@
 
 
                                     } else if (appTitles[j] == 'approved') {
-                                        let approved = new Date(info.appData[i][appTitles[j]]);
-                                        let year = approved.getFullYear();
-                                        let month = approved.getMonth() + 1;
-                                        let date = approved.getDate();
+                                        let date = getYmd(info.appData[i][appTitles[j]]);
 
-                                        $("#" + id + "_" + appTitles[j]).val(year + "년" + month + "월" + date + "일");
+
+                                        $("#" + id + "_" + appTitles[j]).val(date);
 
                                     }
 
@@ -987,20 +984,20 @@
 
 
                         for (let q = 0; q < Object.keys(info.docData).length; q++) {
-                            dataHtml += "<div class='detailContentDiv'>"
+                            dataHtml += "<div class='detailcontentDiv'>"
                             for (let j = 0; j < dataTitles.length; j++) {
                                 if (j == (dataTitles.length - 1)) {
                                     dataHtml += "<div id='child' class='countRow detailcontentlast'><input class='inputs' type='text' value='" + info.docData[q][dataTitles[j]] + "' id='" + id + "_" + dataTitles[j] + "_" + q + "'></div>";
                                 } else if (dataTitles[j] == 'date') {
-                                    let date = getYmd(info.docData[q][dataTitles[j]]);
+                                    let date = getYmdHyphen(info.docData[q][dataTitles[j]]);
 
 
-                                    dataHtml += "<div id='child' class='countRow detailcontent'><input class='inputs' type='text' value='" + date + "' id='" + id + "_" + dataTitles[j] + "_" + q + "'></div>";
+                                    dataHtml += "<div id='child' class='countRow detailcontent'><input class='inputs' type='date' value='" + date + "' id='" + id + "_" + dataTitles[j] + "_" + q + "'></div>";
                                 } else {
                                     dataHtml += "<div id='child' class='countRow detailcontent'><input class='inputs' type='text' value='" + info.docData[q][dataTitles[j]] + "' id='" + id + "_" + dataTitles[j] + "_" + q + "'></div>";
                                 }
 
-                            } dataHtml += "</div>"
+                            } dataHtml += "<input type='checkbox' id='detailDataList_"+q+"'></div>"
                         }
 
 
@@ -1031,13 +1028,18 @@
                                     $("#" + id + "_" + docListTitle[j]).val(name);
                                 }
                                 else if (docListTitle[j] == "created") {
-                                    let created = new Date(storage.docList[i][docListTitle[j]]);
-                                    let year = created.getFullYear();
-                                    let month = created.getMonth() + 1;
-                                    let date = created.getDate();
-                                    $("#" + id + "_" + docListTitle[j]).val(year + "년" + month + "월" + date + "일");
+                                    let date = getYmd(storage.docList[i][docListTitle[j]]);
+                                    $("#" + id + "_" + docListTitle[j]).val(date);
                                 } else {
-                                    $("#" + id + "_" + docListTitle[j]).val(storage.docList[i][docListTitle[j]]);
+                                    if (storage.docList[i][docListTitle[j]] == 0) {
+                                        $("#" + id + "_" + docListTitle[j]).val("");
+                                    } else {
+                                        if (storage.docList[i][docListTitle[j]] == 0) {
+                                            $("#" + id + "_" + docListTitle[j]).val("");
+                                        } else {
+                                            $("#" + id + "_" + docListTitle[j]).val(storage.docList[i][docListTitle[j]]);
+                                        }
+                                    }
                                 }
                             }
 
@@ -1045,17 +1047,18 @@
 
                         $("#" + id + "_line").html(
 
-                            "<div class='lineDivContainer'><div class='lineDiv'><div class='lineDivContentfirstw'><div>작 성</div></div>" +
-                            "<div><div class='lineDivContentw'><input class='inputs' type='text' id='" + id + "_writer' value='" + $("#" + id + '_writer').val() + "'></div>" +
-                            "<div class='lineDivContentw'><input class='inputs' type='text' id='" + id + "_writer_approved'></div>" +
-                            "<div class='lineDivContentw'><input class='inputs' type='text' id='" + id + "_writer_comment'></div>" +
-                            "<div class='lineDivContentlastw'><input class='inputs' type='text' id='" + id + "_writer_status'></div></div></div>" +
+
+                            "<div class='lineDivContainer'><div></div><div class='lineDiv'><div class='lineDivContentfirstw'><div>작 성</div></div>" +
+                            "<div><div class='lineDivContentw'><input class='inputs' type='text' id='" + id + "_writerposition' ></div>" +
+                            "<div class='lineDivContentw'><input class='inputs' type='text' id='" + id + "_writer_status'></div>" +
+                            "<div class='lineDivContentwnone'><input class='inputs' type='text' id='" + id + "_writer' value='" + $("#" + id + '_writer').val() + "'></div>" +
+                            "<div class='lineDivContentlastw'><input class='inputs' type='text' id='" + id + "_writer_approved' value='" + $("#" + id + '_created').val() + "'></div></div></div>" +
 
                             "<div class='lineDiv'><div class='lineDivContentfirst'><div >결 재</div></div>" +
-                            "<div><div class='appDivContent'><input class='inputs' type='text' id='" + id + "_app'></div>" +
-                            "<div class='appDivContent'><input class='inputs' type='text' id='" + id + "_approved'></div>" +
-                            "<div class='appDivContent'><input class='inputs' type='text' id='" + id + "_comment'></div>" +
-                            "<div class='appDivContentlast'><input class='inputs' type='text' id='" + id + "_status'></div></div></div></div>");
+                            "<div><div class='appDivContent'><input class='inputs' type='text' id='" + id + "_apppositon' value='대표'></div>" +
+                            "<div class='appDivContent'><input class='inputs' type='text' id='" + id + "_status'></div>" +
+                            "<div class='appDivContentnone'><input class='inputs' type='text' id='" + id + "_app'></div>" +
+                            "<div class='appDivContentlast'><input class='inputs' type='text' id='" + id + "_approved'></div></div></div></div>");
 
 
                         for (let i = 0; i < info.appData.length; i++) {
@@ -1094,12 +1097,10 @@
 
 
                                     } else if (appTitles[j] == 'approved') {
-                                        let approved = new Date(info.appData[i][appTitles[j]]);
-                                        let year = approved.getFullYear();
-                                        let month = approved.getMonth() + 1;
-                                        let date = approved.getDate();
+                                        let date = getYmd(info.appData[i][appTitles[j]])
 
-                                        $("#" + id + "_" + appTitles[j]).val(year + "년" + month + "월" + date + "일");
+
+                                        $("#" + id + "_" + appTitles[j]).val(date);
 
                                     }
 
@@ -1114,20 +1115,20 @@
                         let dataHtml = ""
 
 
-                        for (let q = 0; q < Object.keys(info.docData).length; q++) {
-                            dataHtml += "<div class='detailContentDiv'>"
+                        if (info.docData != null) for (let q = 0; q < Object.keys(info.docData).length; q++) {
+                            dataHtml += "<div class='detailcontentDiv'>"
                             for (let j = 0; j < dataTitles.length; j++) {
                                 if (j == (dataTitles.length - 1)) {
                                     dataHtml += "<div id='child' class='countRow detailcontentlast'><input class='inputs' type='text' value='" + info.docData[q][dataTitles[j]] + "' id='" + id + "_" + dataTitles[j] + "_" + q + "'></div>";
                                 } else if (dataTitles[j] == 'date') {
-                                    let date = getYmd(info.docData[q][dataTitles[j]]);
+                                    let date = getYmdHyphen(info.docData[q][dataTitles[j]]);
 
-                                    dataHtml += "<div id='child' class='countRow detailcontent'><input class='inputs' type='text' value='" + date + "' id='" + id + "_" + dataTitles[j] + "_" + q + "'></div>";
+                                    dataHtml += "<div id='child' class='countRow detailcontent'><input class='inputs' type='date' value='" + date + "' id='" + id + "_" + dataTitles[j] + "_" + q + "'></div>";
                                 } else {
                                     dataHtml += "<div id='child' class='countRow detailcontent'><input class='inputs' type='text' value='" + info.docData[q][dataTitles[j]] + "' id='" + id + "_" + dataTitles[j] + "_" + q + "'></div>";
                                 }
 
-                            } dataHtml += "</div>"
+                            } dataHtml += "<input type='checkbox' id='detailDataList_"+q+"'></div>"
                         }
                         $(".insertedDataList").html(dataHtml);
 
@@ -1137,15 +1138,24 @@
                 }
 
             }
-            $(".inputs").attr("readonly", true);
+            $(".inputs").prop("readonly", true);
+        $(".inputsAuto").prop("readonly", true);
         }
 
 
 
         function getYmd(date) {
             let d = new Date(date);
+            return d.getFullYear() + "/" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "/" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString());
+        }
+
+        function getYmdHyphen(date) {
+            let d = new Date(date);
             return d.getFullYear() + "-" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "-" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString());
         }
+
+
+       
 
 
     </script>
