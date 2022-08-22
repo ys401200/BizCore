@@ -2,6 +2,8 @@ package kr.co.bizcore.v1.ctrl;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 
@@ -162,7 +164,7 @@ public class ApiBoardCtrl extends Ctrl{
 
     // 게시글 파일 첨부 / 편집 중 사전 업로드 후 attached에 저장된 파일명을 기준으로 임시폴더에서 첨부폴더로 사후 이동
     @RequestMapping(value="/filebox/attached", method=RequestMethod.POST)
-    public String fileboxAttachedPost(HttpServletRequest request, @RequestBody String requestBody) {
+    public String fileboxAttachedPost(HttpServletRequest request, @RequestBody String requestBody) throws UnsupportedEncodingException {
         String result = null;
         String name = null;
         String savedName = null;
@@ -173,8 +175,8 @@ public class ApiBoardCtrl extends Ctrl{
         HttpSession session = null;
         HashMap<String, String> attached = null;
         String[] data = null;
+        String t = null;
         byte[] fileData = null;
-        String[] t = null;
 
         session = request.getSession();
         compId = (String)session.getAttribute("compId");
@@ -192,7 +194,8 @@ public class ApiBoardCtrl extends Ctrl{
             if(data != null && data.length >= 2){
                 name = data[0];
                 file = data[1];
-                fileData = boardService.decAesBinary(file, aesKey, aesIv);
+                t = boardService.decAes(file, aesKey, aesIv);
+                fileData = Base64.getDecoder().decode(t);
                 savedName = systemService.createRandomFileName();
                 if(boardService.saveAttachedFile(compId, savedName, fileData)){
                     if(attached == null){

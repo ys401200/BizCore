@@ -362,8 +362,11 @@ function fileChange(){
 		fileName = attached[i].name;
 
 		reader.onload = (e) => {
-			let fileData = e.target.result;
-			fileData = cipher.encAes(fileData);
+			let binary, x, fData = e.target.result;
+            const bytes = new Uint8Array(fData);
+            binary = "";
+            for(x = 0 ; x < bytes.byteLength ; x++) binary += String.fromCharCode(bytes[x]);
+			fileData = cipher.encAes(btoa(binary));
 			let fullData = (fileName + "\r\n" + fileData);
 			
 			url = "/api/board/filebox/attached";
@@ -374,7 +377,7 @@ function fileChange(){
 			crud.defaultAjax(url, method, data, type, submitFileSuccess, submitFileError);
 		}
 
-		reader.readAsBinaryString(attached[i]);
+		reader.readAsArrayBuffer(attached[i]);
 		
 		temp = attached[i].name;
 		fileDatas.push(temp);
