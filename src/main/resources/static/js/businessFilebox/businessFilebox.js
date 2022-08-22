@@ -326,9 +326,6 @@ function fileBoxUpdate(no, removeDataArray){
 	writer = $(document).find("#writer");
 	writer = dataListFormat(writer.attr("id"), writer.val());
 
-	console.log(fileDataArray);
-	console.log(removeDataArray);
-
 	url = "/api/board/filebox/" + no;
 	method = "put";
 	data = {
