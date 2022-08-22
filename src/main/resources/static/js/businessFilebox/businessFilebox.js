@@ -1,4 +1,4 @@
-let fileDataArray = [];
+let fileDataArray = [], removeDataArray = [], updateDataArray = [];
 
 $(document).ready(() => {
 	init();
@@ -175,6 +175,8 @@ function fileBoxErrorView(){
 function fileBoxInsertForm(){
 	let html, dataArray;
 
+	fileDataArray = [];
+
 	dataArray = [
 		{
 			"title": "담당자",
@@ -221,18 +223,11 @@ function fileBoxInsertForm(){
 }
 
 function fileBoxUpdateForm(result){
-	let title, content, writer, dataArray, html = "", removeDataArray = [];
+	let title, content, writer, dataArray, html = "";
 
 	title = (result.title === null || result.title === "") ? "제목 없음" : result.title;
 	content = (result.content === null || result.content === "") ? "내용 없음" : result.content;
 	writer = (result.writer == 0 || result.writer === null) ? "데이터 없음" : storage.user[result.writer].userName;
-
-	fileDataArray = [];
-
-	for(let i = 0; i < result.attached.length; i++){
-		fileDataArray.push(result.attached[i].ognName);
-		removeDataArray.push(result.attached[i].ognName);
-	}
 
 	dataArray = [
 		{
@@ -270,16 +265,17 @@ function fileBoxUpdateForm(result){
 	modal.body.css("max-height", "800px");
 	modal.confirm.text("수정완료");
 	modal.close.text("취소");
-	modal.confirm.attr("onclick", "fileBoxUpdate(" + result.no + ", " + JSON.stringify(removeDataArray) + ");");
+	modal.confirm.attr("onclick", "fileBoxUpdate(" + result.no + ");");
 	modal.close.attr("onclick", "modal.hide();");
 
 	$(document).find("#attached").after("<div class='filePreview'></div>");
 
 	html = "";
 
-	if(fileDataArray.length > 0){
-		for(let i = 0; i < fileDataArray.length; i++){
-			html += "<div style='padding-bottom: 4%;'><span style='float:left; display: block; width: 95%;'>" + fileDataArray[i] + "</span><button type='button' id='fileDataDelete' style='float:right; width: 5%;' data-index='" + i + "' onclick='fileViewDelete(this);'>삭제</button></div>";
+	if(result.attached.length > 0){
+		for(let i = 0; i < result.attached.length; i++){
+			fileDataArray.push(result.attached[i].ognName);
+			html += "<div style='padding-bottom: 4%;'><span style='float:left; display: block; width: 95%;'>" + result.attached[i].ognName + "</span><button type='button' id='fileDataDelete' style='float:right; width: 5%;' data-index='" + i + "' onclick='fileViewDelete(this);'>삭제</button></div>";
 			$(document).find(".filePreview").html(html);
 		}
 	}
@@ -318,7 +314,7 @@ function fileBoxErrorInsert(){
 	alert("등록에러");
 }
 
-function fileBoxUpdate(no, removeDataArray){
+function fileBoxUpdate(no){
 	let title, content, writer;
 
 	title = $(document).find("#title").val();
@@ -332,7 +328,7 @@ function fileBoxUpdate(no, removeDataArray){
 		"title": title,
 		"content": content,
 		"writer": writer,
-		"addFiles": fileDataArray,
+		"addFiles": updateDataArray,
 		"removeFiles": removeDataArray,
 	}
 	type = "update";
@@ -391,7 +387,7 @@ function fileChange(){
             const bytes = new Uint8Array(fData);
             binary = "";
             for(x = 0 ; x < bytes.byteLength ; x++) binary += String.fromCharCode(bytes[x]);
-			fileData = cipher.encAes(btoa(binary));
+			let fileData = cipher.encAes(btoa(binary));
 			let fullData = (fileName + "\r\n" + fileData);
 			
 			url = "/api/board/filebox/attached";
@@ -406,6 +402,7 @@ function fileChange(){
 		
 		temp = attached[i].name;
 		fileDatas.push(temp);
+		updateDataArray.push(temp);
 	}
 
 	$(document).find(".filePreview").html(html);
@@ -435,6 +432,14 @@ function submitFileError(){
 
 function fileViewDelete(e){
 	fileDataArray.splice($(e).data("index"), 1);
+	
+	for(let i = 0; i < updateDataArray.length; i++){
+		if(updateDataArray[i] === $(e).prev().text()){
+			updateDataArray.splice(i, 1);
+		}
+	}
+
+	removeDataArray.push($(e).prev().text());
 	$(e).parent().remove();
 
 	$(document).find(".filePreview div button").each((index, item) => {
