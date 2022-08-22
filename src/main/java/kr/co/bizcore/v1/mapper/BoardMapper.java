@@ -19,7 +19,7 @@ public interface BoardMapper {
     @Select("SELECT no, writer, title, content, created, modified FROM bizcore.filebox WHERE no = #{no} AND compId = #{compId} AND deleted IS NULL")
     public Article getFileboxArticle(@Param("no") int no, @Param("compId") String compId);
 
-    @Select("SELECT idx, articleNo, ognName, created, modified, size, removed FROM bizcore.filebox_attached WHERE articleNo = #{no} AND compId = #{compId} AND deleted IS NULL")
+    @Select("SELECT idx, articleNo, savedName, ognName, created, modified, size, removed FROM bizcore.filebox_attached WHERE articleNo = #{no} AND compId = #{compId} AND deleted IS NULL")
     public List<AttachedFile> getAttachedFileList(@Param("no") int articleNo, @Param("compId") String compId);
 
     @Select("SELECT bizcore.filebox_next_no(#{compId})")
