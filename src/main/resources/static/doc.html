@@ -88,12 +88,12 @@
         }
 
 
-        .detailContentDiv {
+        /* .detailContentDiv {
             margin-left: 1em;
             margin-right: 1em;
             display: grid;
             grid-template-columns: 10% 15% 15% 10% 5% 10% 10% 10% 15%;
-        }
+        } */
 
 
 
@@ -259,7 +259,7 @@
                                     }
                                 })
                             } else {
-                              //  msg.set(data.msg);
+                                //  msg.set(data.msg);
                             }
                         }
                     })
@@ -320,7 +320,7 @@
                         storage.form = list;
                         console.log("[getForms] Success getting employee information.");
                     } else {
-                       // msg.set("양식 정보를 가져오지 못했습니다.");
+                        // msg.set("양식 정보를 가져오지 못했습니다.");
                     }
                 }
             })
@@ -354,7 +354,7 @@
                         storage.user = list;
                         console.log("[getUserMap] Success getting employee information.");
                     } else {
-                     //   msg.set("직원 정보를 가져오지 못했습니다.");
+                        //   msg.set("직원 정보를 가져오지 못했습니다.");
                     }
                 }
             })
@@ -380,7 +380,7 @@
                         storage.dept = list;
                         console.log("[getDeptMap] Success getting department information.");
                     } else {
-                      //  msg.set("부서 정보를 가져오지 못했습니다.");
+                        //  msg.set("부서 정보를 가져오지 못했습니다.");
                     }
                 }
             })
@@ -406,7 +406,7 @@
                         storage.customer = list;
                         console.log("[getCustomer] Success getting customer information.");
                     } else {
-                     //   msg.set("고객 정보를 가져오지 못했습니다.");
+                        //   msg.set("고객 정보를 가져오지 못했습니다.");
                     }
                 }
             })
@@ -565,7 +565,11 @@
 
 
 
-                    /// 결재 타입이 지출품의서인 경우 
+                    /////////////////////////////////////////////////// 결재 타입이 지출품의서인 경우 /////////////////////////////////////////////////////
+
+
+
+
                     if (storage.docList[i].type == "TRS" || storage.docList[i].type == "BUY") {
                         target.html(storage.form[0].form);
                         if (storage.docList[i].type == "TRS") {
@@ -681,14 +685,16 @@
                             dataHtml += "<div class='detailcontentDiv'>"
                             for (let j = 0; j < dataTitles.length; j++) {
                                 if (j == (dataTitles.length - 1)) {
-                                    dataHtml += "<div id='child' class='countRow detailcontentlast'><input class='inputs' type='text' value='" + info.docData[q][dataTitles[j]] + "' id='" + id + "_" + dataTitles[j] + "_" + q + "'></div>";
+                                    dataHtml += "<div class='detailcontentlast'><input type='text' onkeyup='this.dataset.detail=this.value' value='" + info.docData[q][dataTitles[j]] + "' class='inputs outlineNonedata " + id + "_" + dataTitles[j] + "'></div>";
                                 } else if (dataTitles[j] == 'date') {
                                     let date = getYmdHyphen(info.docData[q][dataTitles[j]]);
-                                    dataHtml += "<div id='child' class='countRow detailcontent'><input class='inputs' type='date' value='" + date + "' id='" + id + "_" + dataTitles[j] + "_" + q + "'></div>";
+                                    dataHtml += "<div class='detailcontent'><input class='inputs outlineNonedata " + id + "_" + dataTitles[j] + "' onchange='this.dataset.detail=this.value;' type='date' value='" + date + "' ></div>";
+                                } else if (dataTitles[j] == 'price' || dataTitles[j] == 'quantity' || dataTitles[j] == 'subTotal' || dataTitles[j] == 'tax' || dataTitles[j] == 'total') {
+                                    dataHtml += "<div class='detailcontent'><input class='inputs outlineNonedata " + id + "_" + dataTitles[j] + "' type='text' oninput='setNum(this)'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' value='" + (info.docData[q][dataTitles[j]]).toLocaleString() + "'></div>";
                                 } else {
-                                    dataHtml += "<div id='child' class='countRow detailcontent'><input class='inputs' type='text' value='" + info.docData[q][dataTitles[j]] + "' id='" + id + "_" + dataTitles[j] + "_" + q + "'></div>";
+                                    dataHtml += "<div class='detailcontent'><input class='inputs outlineNonedata " + id + "_" + dataTitles[j] + "' type='text'  onkeyup='this.dataset.detail=this.value' value='" + info.docData[q][dataTitles[j]] + "'></div>";
                                 }
-                            } dataHtml += "<input type='checkbox' id='detailDataList_"+q+"'></div>"
+                            } dataHtml += "<div class='detailcontentbox'><input type='checkbox' class='detailBox'></div></div>"
                         }
 
 
@@ -698,7 +704,18 @@
 
 
 
-                        // 결재타입이 지출결의서인 경우 
+
+
+
+
+
+
+
+
+                        ///////////////////////////////////////////////////결재타입이 지출결의서인 경우 ////////////////////////////////////////////////
+
+
+
                     } else if (storage.docList[i].type == "COST" || storage.docList[i].type == "CREDIT" ||
                         storage.docList[i].type == "PAY" || storage.docList[i].type == "TAX") {
 
@@ -717,27 +734,33 @@
                         let id = storage.form[1].id;
 
 
+
                         ////// info title content 출력하기 
                         let docListTitle = Object.keys(storage.docList[i]);
 
                         for (let k = 0; k < Object.keys(storage.docList[i]).length; k++) {
                             for (let j = 0; j < docListTitle.length; j++) {
+
                                 if (docListTitle[j] == "writer") {
                                     let num = storage.docList[i][docListTitle[j]];
                                     let name = storage.user[num].userName;
                                     $("#" + id + "_" + docListTitle[j]).val(name);
                                 }
                                 else if (docListTitle[j] == "created") {
-
                                     let date = getYmd(storage.docList[i][docListTitle[j]]);
-
                                     $("#" + id + "_" + docListTitle[j]).val(date);
+
+                                } else if (docListTitle[j] == "content") {
+                                    $("#" + id + "_" + docListTitle[j]).val(storage.docList[i][docListTitle[j]]);
+                                    $("#" + id + "_" + docListTitle[j]).html(storage.docList[i][docListTitle[j]]);
+
                                 } else {
                                     if (storage.docList[i][docListTitle[j]] == 0) {
                                         $("#" + id + "_" + docListTitle[j]).val("");
                                     } else {
                                         $("#" + id + "_" + docListTitle[j]).val(storage.docList[i][docListTitle[j]]);
                                     }
+
                                 }
                             }
 
@@ -857,24 +880,27 @@
                         let dataHtml = ""
 
 
-                        for (let q = 0; q < Object.keys(info.docData).length; q++) {
+
+                        if (info.docData != null) for (let q = 0; q < Object.keys(info.docData).length; q++) {
                             dataHtml += "<div class='detailcontentDiv'>"
                             for (let j = 0; j < dataTitles.length; j++) {
                                 if (j == (dataTitles.length - 1)) {
-                                    dataHtml += "<div id='child' class='countRow detailcontentlast'><input class='inputs' type='text' value='" + info.docData[q][dataTitles[j]] + "' id='" + id + "_" + dataTitles[j] + "_" + q + "'></div>";
+                                    dataHtml += "<div class='detailcontentlast'><input type='text' value='" + info.docData[q][dataTitles[j]] + "' onkeyup='this.dataset.detail=this.value' class='inputs outlineNonedata " + id + "_" + dataTitles[j] + "'></div>";
                                 } else if (dataTitles[j] == 'date') {
                                     let date = getYmdHyphen(info.docData[q][dataTitles[j]]);
-                                    dataHtml += "<div id='child' class='countRow detailcontent'><input class='inputs' type='date' value='" + date + "' id='" + id + "_" + dataTitles[j] + "_" + q + "'></div>";
+                                    dataHtml += "<div class='detailcontent'><input class='inputs outlineNonedata " + id + "_" + dataTitles[j] + "' onchange='this.dataset.detail=this.value;' type='date' value='" + date + "' ></div>";
+                                } else if (dataTitles[j] == 'price' || dataTitles[j] == 'quantity' || dataTitles[j] == 'subTotal' || dataTitles[j] == 'tax' || dataTitles[j] == 'total') {
+                                    dataHtml += "<div class='detailcontent'><input class='inputs outlineNonedata " + id + "_" + dataTitles[j] + "' type='text' oninput='setNum(this)'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' value='" + (info.docData[q][dataTitles[j]]).toLocaleString() + "'></div>";
                                 } else {
-                                    dataHtml += "<div id='child' class='countRow detailcontent'><input class='inputs' type='text' value='" + info.docData[q][dataTitles[j]] + "' id='" + id + "_" + dataTitles[j] + "_" + q + "'></div>";
+                                    dataHtml += "<div class='detailcontent'><input class='inputs outlineNonedata" + id + "_" + dataTitles[j] + "' type='text' onkeyup='this.dataset.detail=this.value' value='" + info.docData[q][dataTitles[j]] + "'></div>";
                                 }
-
-                            } dataHtml += "<input type='checkbox' id='detailDataList_"+q+"'></div>"
+                            } dataHtml += "<div class='detailcontentbox'><input type='checkbox' class='detailBox'></div></div>"
                         }
 
+
+
+
                         $(".insertedDataList").html(dataHtml);
-
-
 
 
 
@@ -979,33 +1005,33 @@
                                 }
                             }
                         }
-
                         let dataHtml = ""
 
 
-                        for (let q = 0; q < Object.keys(info.docData).length; q++) {
+
+
+
+
+                        if (info.docData != null) for (let q = 0; q < Object.keys(info.docData).length; q++) {
                             dataHtml += "<div class='detailcontentDiv'>"
                             for (let j = 0; j < dataTitles.length; j++) {
                                 if (j == (dataTitles.length - 1)) {
-                                    dataHtml += "<div id='child' class='countRow detailcontentlast'><input class='inputs' type='text' value='" + info.docData[q][dataTitles[j]] + "' id='" + id + "_" + dataTitles[j] + "_" + q + "'></div>";
+                                    dataHtml += "<div class='detailcontentlast'><input type='text' value='" + info.docData[q][dataTitles[j]] + "'  onkeyup='this.dataset.detail=this.value' class='inputs outlineNonedata " + id + "_" + dataTitles[j] + "'></div>";
                                 } else if (dataTitles[j] == 'date') {
                                     let date = getYmdHyphen(info.docData[q][dataTitles[j]]);
-
-
-                                    dataHtml += "<div id='child' class='countRow detailcontent'><input class='inputs' type='date' value='" + date + "' id='" + id + "_" + dataTitles[j] + "_" + q + "'></div>";
+                                    dataHtml += "<div class='detailcontent'><input class='inputs  outlineNonedata" + id + "_" + dataTitles[j] + "' onchange='this.dataset.detail=this.value;' type='date' value='" + date + "' ></div>";
+                                } else if (dataTitles[j] == 'price' || dataTitles[j] == 'quantity' || dataTitles[j] == 'subTotal' || dataTitles[j] == 'tax' || dataTitles[j] == 'total') {
+                                    dataHtml += "<div class='detailcontent'><input class='inputs  outlineNonedata" + id + "_" + dataTitles[j] + "' type='text' oninput='setNum(this)'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' value='" + (info.docData[q][dataTitles[j]]).toLocaleString() + "'></div>";
                                 } else {
-                                    dataHtml += "<div id='child' class='countRow detailcontent'><input class='inputs' type='text' value='" + info.docData[q][dataTitles[j]] + "' id='" + id + "_" + dataTitles[j] + "_" + q + "'></div>";
+                                    dataHtml += "<div class='detailcontent'><input class='inputs outlineNonedata " + id + "_" + dataTitles[j] + "' type='text' onkeyup='this.dataset.detail=this.value' value='" + info.docData[q][dataTitles[j]] + "'></div>";
                                 }
-
-                            } dataHtml += "<input type='checkbox' id='detailDataList_"+q+"'></div>"
+                            } dataHtml += "<div class='detailcontentbox'><input type='checkbox' class='detailBox'></div></div>"
                         }
 
 
 
 
                         $(".insertedDataList").html(dataHtml);
-
-
 
 
 
@@ -1115,21 +1141,26 @@
                         let dataHtml = ""
 
 
+
                         if (info.docData != null) for (let q = 0; q < Object.keys(info.docData).length; q++) {
                             dataHtml += "<div class='detailcontentDiv'>"
                             for (let j = 0; j < dataTitles.length; j++) {
                                 if (j == (dataTitles.length - 1)) {
-                                    dataHtml += "<div id='child' class='countRow detailcontentlast'><input class='inputs' type='text' value='" + info.docData[q][dataTitles[j]] + "' id='" + id + "_" + dataTitles[j] + "_" + q + "'></div>";
+                                    dataHtml += "<div class='detailcontentlast'><input type='text' value='" + info.docData[q][dataTitles[j]] + "' onkeyup='this.dataset.detail=this.value' class='inputs outlineNonedata" + id + "_" + dataTitles[j] + "'></div>";
                                 } else if (dataTitles[j] == 'date') {
                                     let date = getYmdHyphen(info.docData[q][dataTitles[j]]);
-
-                                    dataHtml += "<div id='child' class='countRow detailcontent'><input class='inputs' type='date' value='" + date + "' id='" + id + "_" + dataTitles[j] + "_" + q + "'></div>";
+                                    dataHtml += "<div class='detailcontent'><input class='inputs outlineNonedata" + id + "_" + dataTitles[j] + "' onchange='this.dataset.detail=this.value;' type='date' value='" + date + "' ></div>";
+                                } else if (dataTitles[j] == 'price' || dataTitles[j] == 'quantity' || dataTitles[j] == 'subTotal' || dataTitles[j] == 'tax' || dataTitles[j] == 'total') {
+                                    dataHtml += "<div class='detailcontent'><input class='inputs outlineNonedata" + id + "_" + dataTitles[j] + "' type='text' oninput='setNum(this)'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' value='" + (info.docData[q][dataTitles[j]]).toLocaleString() + "'></div>";
                                 } else {
-                                    dataHtml += "<div id='child' class='countRow detailcontent'><input class='inputs' type='text' value='" + info.docData[q][dataTitles[j]] + "' id='" + id + "_" + dataTitles[j] + "_" + q + "'></div>";
+                                    dataHtml += "<div class='detailcontent'><input class='inputs outlineNonedata" + id + "_" + dataTitles[j] + "' type='text'   onkeyup='this.dataset.detail=this.value' value='" + info.docData[q][dataTitles[j]] + "'></div>";
                                 }
-
-                            } dataHtml += "<input type='checkbox' id='detailDataList_"+q+"'></div>"
+                            } dataHtml += "<div class ='detailcontentbox'><input type='checkbox' class='detailBox'></div></div>"
                         }
+
+
+
+
                         $(".insertedDataList").html(dataHtml);
 
                     }
@@ -1139,7 +1170,9 @@
 
             }
             $(".inputs").prop("readonly", true);
-        $(".inputsAuto").prop("readonly", true);
+            $(".inputsAuto").prop("readonly", true);
+            $(".detailcontentbox").hide();
+            doDataSet();
         }
 
 
@@ -1155,8 +1188,15 @@
         }
 
 
-       
 
+        function doDataSet() {
+            let inputEl = document.getElementsByTagName("input");
+            for (let i = 0; i < inputEl.length; i++) {
+                inputEl[i].dataset.detail = inputEl[i].value;
+            }
+            let textAreaEl = document.getElementsByTagName("textarea");
+            textAreaEl[0].dataset.detail = textAreaEl[0].value;
+        }
 
     </script>
 </body>
