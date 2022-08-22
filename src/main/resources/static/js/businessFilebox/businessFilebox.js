@@ -112,7 +112,6 @@ function fileBoxErrorList(){
 }
 
 function fileBoxSuccessView(result){
-	console.log(result);
 	let html = "", title, content, writer, dataArray, disDate, setDate, detailContainer, downloadApiPath;
 
 	detailContainer = $(document).find(".detailContainer");
