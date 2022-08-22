@@ -197,7 +197,7 @@ public class BoardService extends Svc{
             if(fileList != null && fileList.size() > 0) for(x = 0 ; x < fileList.size() ; x++){
                 savedName = fileList.get(x).getSavedName();
                 for(Object obj : removeFiles){
-                    if(savedName.equals(obj)){
+                    if(savedName != null && savedName.equals(obj)){
                         targetFile = new File(path + s + fileList.get(x).getSavedName());
                         if(targetFile.exists()) targetFile.delete();
                         boardMapper.deleteFileboxAttachedFile(article.getNo() + "", compId, savedName);

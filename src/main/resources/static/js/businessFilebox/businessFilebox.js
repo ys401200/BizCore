@@ -221,17 +221,31 @@ function fileBoxInsertForm(){
 }
 
 function fileBoxUpdateForm(result){
-	let html, title, content, writer, detail, dataArray;
+	let title, content, writer, dataArray, html = "", removeDataArray = [];
 
 	title = (result.title === null || result.title === "") ? "제목 없음" : result.title;
 	content = (result.content === null || result.content === "") ? "내용 없음" : result.content;
 	writer = (result.writer == 0 || result.writer === null) ? "데이터 없음" : storage.user[result.writer].userName;
 
+	fileDataArray = [];
+
+	for(let i = 0; i < result.attached.length; i++){
+		fileDataArray.push(result.attached[i].ognName);
+		removeDataArray.push(result.attached[i].ognName);
+	}
+
 	dataArray = [
 		{
 			"title": "담당자",
 			"elementId": "writer",
+			"dataKeyup": "user",
 			"value": writer,
+		},
+		{
+			"title": "첨부파일",
+			"elementId": "attached",
+			"elementName": "attached[]",
+			"type": "file",
 		},
 		{
 			"title": "제목",
@@ -256,14 +270,23 @@ function fileBoxUpdateForm(result){
 	modal.body.css("max-height", "800px");
 	modal.confirm.text("수정완료");
 	modal.close.text("취소");
-	modal.confirm.attr("onclick", "fileBoxUpdate(" + result.no + ");");
+	modal.confirm.attr("onclick", "fileBoxUpdate(" + result.no + ", " + JSON.stringify(removeDataArray) + ");");
 	modal.close.attr("onclick", "modal.hide();");
 
 	$(document).find("#attached").after("<div class='filePreview'></div>");
+
+	html = "";
+
+	if(fileDataArray.length > 0){
+		for(let i = 0; i < fileDataArray.length; i++){
+			html += "<div style='padding-bottom: 4%;'><span style='float:left; display: block; width: 95%;'>" + fileDataArray[i] + "</span><button type='button' id='fileDataDelete' style='float:right; width: 5%;' data-index='" + i + "' onclick='fileViewDelete(this);'>삭제</button></div>";
+			$(document).find(".filePreview").html(html);
+		}
+	}
 }
 
 function fileBoxInsert(){
-	let title, content, writer, attached, data;
+	let title, content, writer, data;
 
 	title = $(document).find("#title").val();
 	content = tinymce.activeEditor.getContent();
@@ -295,7 +318,7 @@ function fileBoxErrorInsert(){
 	alert("등록에러");
 }
 
-function fileBoxUpdate(no){
+function fileBoxUpdate(no, removeDataArray){
 	let title, content, writer;
 
 	title = $(document).find("#title").val();
@@ -303,12 +326,17 @@ function fileBoxUpdate(no){
 	writer = $(document).find("#writer");
 	writer = dataListFormat(writer.attr("id"), writer.val());
 
-	url = "/api/fileBox/" + no;
+	console.log(fileDataArray);
+	console.log(removeDataArray);
+
+	url = "/api/board/filebox/" + no;
 	method = "put";
 	data = {
 		"title": title,
 		"content": content,
 		"writer": writer,
+		"addFiles": fileDataArray,
+		"removeFiles": removeDataArray,
 	}
 	type = "update";
 
@@ -331,7 +359,7 @@ function fileBoxDelete(no){
 	let url, method, data, type;
 
 	if(confirm("정말로 삭제하시겠습니까??")){
-		url = "/api/borad/fileBox/" + no;
+		url = "/api/board/filebox/" + no;
 		method = "delete";
 		data = "";
 		type = "delete";
