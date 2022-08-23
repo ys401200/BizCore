@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
-import kr.co.bizcore.v1.domain.Schedule;
+import kr.co.bizcore.v1.domain.Sched;
 
 public interface ScheduleMapper {
     
@@ -19,13 +19,13 @@ public interface ScheduleMapper {
         "UNION ALL " +
         "SELECT 'tech' AS job, techdno AS no, userno AS user, custno AS cust, soppno AS sopp, techdtitle as title, techddesc as detail, techdfrom AS \"from\", techdto AS \"to\", techdplace AS place, regdatetime AS created, modDatetime AS modified FROM swc_techd WHERE techdfrom < DATE_ADD(#{ymd}, INTERVAL 1 MONTH) AND techdto >= #{ymd} AND compno = (SELECT compno FROM swc_company WHERE compid =#{compId}) " +
     ") a WHERE a.user IN (SELECT user_no FROM bizcore.user_dept WHERE dept_id IN (#{deptIn})) ORDER BY a.from, a.user, a.job")
-    public List<Schedule> getSchedule(@Param("compId") String compId, @Param("ymd") String ym, @Param("deptIn") String deptIn);
+    public List<Sched> getSchedule(@Param("compId") String compId, @Param("ymd") String ym, @Param("deptIn") String deptIn);
 
     @Insert("")
-    public int addSchedule(@Param("e") Schedule schedule, @Param("compId") String compId);
+    public int addSchedule(@Param("e") Sched schedule, @Param("compId") String compId);
 
     @Update("")
-    public int modifySchedule(@Param("no") String no, @Param("e") Schedule schedule, @Param("compId") String compId);
+    public int modifySchedule(@Param("no") String no, @Param("e") Sched schedule, @Param("compId") String compId);
 
     @Update("")
     public int removeScheduleEtc(@Param("no") String no, @Param("compId") String compId);

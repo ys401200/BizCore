@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import kr.co.bizcore.v1.domain.Schedule;
+import kr.co.bizcore.v1.domain.Sched;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -17,7 +17,7 @@ public class ScheduleSvc extends Svc{
 
     public String getScheduleList(String compId, String userNo, int year, int month, String deptIn){
         String result = null, dept;
-        List<Schedule> list = null;
+        List<Sched> list = null;
         int x = 0;
 
         list = scheduleMapper.getSchedule(compId, year + "-" + month + "-1", deptIn);
