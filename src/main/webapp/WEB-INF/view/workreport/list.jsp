@@ -9,7 +9,7 @@
 	<div id="bodyContent">
 		<div class="workReportContainer">
             <hr />
-            <span>업무목록</span>
+            <span>개인업무일지</span>
             <div class="workReportContent"></div>
         </div>
 	</div>
