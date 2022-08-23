@@ -30,12 +30,12 @@ function getformList() {
   });
 
   $(".lineDetail").hide();
+  $(".insertedDetail").hide();
 
-
-  let previewWidth = document.getElementsByClassName("reportInsertForm")[0];
-  previewWidth = previewWidth.clientWidth;
-  let target = $(".reportInsertForm");
-  target.css("height", Math.ceil(previewWidth / 210 * 297));
+  // let previewWidth = document.getElementsByClassName("reportInsertForm")[0];
+  // previewWidth = previewWidth.clientWidth;
+  // let target = $(".reportInsertForm");
+  // target.css("height", Math.ceil(previewWidth / 210 * 297));
 
 }
 
@@ -54,16 +54,14 @@ function drawFormList() {
     nums.push(data[i].no);
   }
 
+
+  targetHtml += "<label for='selectForm'>결재 양식</label><select class='formSelector'>";
   for (let i = 0; i < titles.length; i++) {
-    targetHtml +=
-      "<button  onclick='setSelectedFormName(" +
-      i +
-      ")' type='button' class='formtypebtn' id='doc_form_" +
-      nums[i] +
-      "'>" +
-      titles[i] +
-      "</button>";
+    targetHtml += "<option value='" + nums[i] + "'>" + titles[i] + "</option>"
+
   }
+
+  targetHtml += "</select>"
 
   target.html(targetHtml);
 
@@ -82,95 +80,89 @@ function drawFormList() {
 
 }
 
-function selectChangeEvent(num) {
+// function selectChangeEvent(num) {
 
-  let target2 = $(".forSelect_1");
-  let html = target2.html();
-  let arr = html.split("\n");
+//   let target2 = $(".forSelect_1");
+//   let html = target2.html();
+//   let arr = html.split("\n");
 
-  if (arr.length > 1) {
-    let targetArr = [1, 2, 3, 4];
-    for (let i = 1; i < targetArr.length + 1; i++) {
-      if (i == num) {
-        $(".forSelect_" + i + "").css("color", "#332E85");
-        $(".forSelect_" + i + "").css("font-size", "1.5rem");
-        if (i == 1) {
-          $(".inputs").attr("readonly", true);
-          $(".inputs").css("border", "none");
-          $(".formDetail").show();
-          $(".lineDetail").hide();
-          $(".ContentDiv").style("grid-template-columns", "50% 50%");
-
-        } else if (i == 2) {
-          $(".inputs").attr("readonly", true);
-          $(".inputs").css("border", "none");
-          $(".lineDetail").show();
-          $(".formDetail").hide();
-          $(".ContentDiv").css("grid-template-columns", "50% 50%");
-        } else if (i == 3) {
-          $(".inputs").attr("readonly", false);
-          $(".lineDetail").hide();
-          $(".formDetail").hide();
-          $(".ContentDiv").css("grid-template-columns", "20% 60%");
-
-
-
-        }
-      } else {
-        $(".forSelect_" + i + "").css("color", "gray");
-        $(".forSelect_" + i + "").css("font-size", "1rem");
-      }
-    }
-  }
+//   if (arr.length > 1) {
+//     let targetArr = [1, 2, 3, 4];
+//     for (let i = 1; i < targetArr.length + 1; i++) {
+//       if (i == num) {
+//         if (i == 1) {
+//           $(".inputs").attr("readonly", true);
+//           $(".inputs").css("border", "none");
+//           $(".formDetail").show();
+//           $(".lineDetail").hide();
+//           $(".insertedDetail").hide();
+//         } else if (i == 2) {
+//           $(".inputs").attr("readonly", true);
+//           $(".inputs").css("border", "none");
+//           $(".lineDetail").show();
+//           $(".insertedDetail").hide();
+//           $(".formDetail").hide();
+//         } else if (i == 3) {
+//           $(".inputs").attr("readonly", false);
+//           $(".insertedDetail").show();
+//           $(".lineDetail").hide();
+//           $(".formDetail").hide();
+//         }
+//       }
+//     }
+//   }
 
 
 
 
-}
+// }
 
 function setSelectedFormName(num) {
-  let data = storage.formList;
-  let title = data[num].title;
   let hidden = $(".formNumHidden");
-  let target = $(".formPreview");
   hidden.val(num);
-  target.html(title);
 }
 
 
 // 결재양식 선택에서 양식 선택 버튼 눌렀을 때 함수 
 function selectForm() {
-  let preview = $(".formPreview").html();
+  let data = storage.formList;
+  let selectedForm = $(".formSelector").val();
+  let hidden = $(".formNumHidden");
+  hidden.val(selectedForm - 1);
+  selectedForm = data[selectedForm - 1].title;
   let forSelect1 = $(".forSelect_1");
-  let forSelect2 = $(".forSelect_2");
   let html = forSelect1.html();
 
-  if (preview != ' ') {
-    let arr = html.split("\n");
-    let hidden = $(".formNumHidden");
-    html = arr[0];
-    html += "\n" + " > " + preview;
-    forSelect1.html(html);
-    forSelect1.css("color", "gray");
-    forSelect1.css("font-size", "1rem");
-    forSelect2.css("color", "#332E85");
-    forSelect2.css("font-size", "1.5rem");
-    $(".lineDetail").show();
-    $(".formDetail").hide();
-    $(".reportInsertForm").html(storage.formList[hidden.val()].form);
+  let arr = html.split("\n");
+
+  html = arr[0];
+  html += "\n" + " > " + selectedForm;
+  forSelect1.html(html);
+
+  $(".lineDetail").show();
+
+  $(".reportInsertForm").html(storage.formList[hidden.val()].form);
+  $(".insertedDetail").show();
+  //작성자 작성일 자동 입력
+  let my = storage.my;
+  let writer = storage.user[my].userName;
+  let formId = storage.formList[hidden.val()].id;
+  $("#" + formId + "_writer").val(writer);
+  let date = getYmdHyphen();
+  $("#" + formId + "_created").val(date);
+  $(".testClass").prop('checked', false);
+  $(".typeContainer").html("")
 
 
-    //작성자 작성일 자동 입력
-    let my = storage.my;
-    let writer = storage.user[my].userName;
-    let formId = storage.formList[hidden.val()].id;
-    $("#" + formId + "_writer").val(writer);
-    $("#" + formId + "_regdate").val(new Date().getFullYear() + "년" + (new Date().getMonth() + 1) + "월" + new Date().getDate() + "일");
-    $(".testClass").prop('checked', false);
-    $(".typeContainer").html("");
-
-  }
 }
+
+
+function getYmdHyphen() {
+  let d = new Date();
+  return d.getFullYear() + "-" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "-" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString());
+}
+
+
 
 
 
@@ -286,6 +278,8 @@ function createLine() {
 
   let testHtml = "<div class='lineGridContainer'>";
   let testHtml2 = "<div class='lineGridContainer'>";
+  let readHtml = "";
+  let referHtml = "";
   let target = $(".typeContainer");
   let titleArr = ["검토", "합의", "결재", "수신", "열람", "참조"];
 
@@ -313,6 +307,10 @@ function createLine() {
         testHtml += "<div class='lineSet'><div class='lineUserName'>" + storage.user[data[id]].userName + "</div><div class='gap'>서명</div><div class='linedate'>/</div></div>"
       } else if (i == 3) {
         testHtml2 += "<div class='lineSet'><div class='lineUserName'>" + storage.user[data[id]].userName + "</div><div class='gap'>서명</div><div class='linedate'>/</div></div>"
+      } else if (i == 4) {
+        readHtml += "<div class='appendName'>" + storage.user[data[id]].userName + "</div>";
+      } else if (i == 5) {
+        referHtml += "<div class='appendName'>" + storage.user[data[id]].userName + "</div>";
       }
 
     }
@@ -332,39 +330,19 @@ function createLine() {
 
   testHtml += testHtml2;
   lineTarget.html(testHtml);
+
+
+  let readTarget = $(".readContainer").html();
+  readHtml = readTarget += readHtml;
+  $(".readContainer").html(readHtml);
+  let referTarget = $(".referContainer").html();
+  referHtml = referTarget += referHtml;
+  $(".referContainer").html(referHtml);
+
+
+
 }
 
 
-
-
-
-
-
-// function upDown(obj, el) {
-//   let parent;
-//   parent = obj.parentElement;
-//   parent = parent.parentElement;
-//   let target = $("#" + parent.id);
-//   let list = parent.children;
-
-//   for (let i = 0; i < list.length; i++)   if (list[i] === el) break;
-//   target = list[i + ];
-//   if (target === undefined) target = null;
-//   if (n > 0) parent.insertBefore(target, el);
-//   else if (i > 0 && n < 0) parent.insertBefore(target, el);
-
-//   console.log(list);
-
-
-//   // let data = new Array();
-//   // let x;
-//   // for (x in storage.user) data.push(x);
-//   // let selectHtml = "";
-//   // for (let i = 0; i < numArr.length; i++) {
-//   //   selectHtml += "<div class='lineDataContainer' id='lineContainer_" + list[i] + "'><label id='linedata" + numArr[i] + "'>" + storage.user[data[numArr[i]]].userName + "</label><button value='" + numArr[i] + "' onclick='upDown(this, -1)'>▲</button><button  value='" + numArr[i] + "'onclick='upDown(this, 1)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
-//   // }
-
-//   // target.html(selectHtml);
-// }
 
 
