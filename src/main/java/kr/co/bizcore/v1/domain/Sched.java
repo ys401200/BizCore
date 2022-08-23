@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class Schedule extends Domain{
+public class Sched extends Domain{
 
     @XmlElement(nillable=true)
     private String job;

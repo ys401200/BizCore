@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import kr.co.bizcore.v1.domain.Schedule;
+import kr.co.bizcore.v1.domain.Sched;
 import kr.co.bizcore.v1.domain.SimpleUser;
 import lombok.extern.slf4j.Slf4j;
 
@@ -93,7 +93,7 @@ public class ApiScheduleCtrl extends Ctrl {
         String aesIv = null;
         String json = null;
         ObjectMapper mapper = null;
-        Schedule schedule = null;
+        Sched schedule = null;
         HttpSession session = null;
 
         mapper = new ObjectMapper();
@@ -128,7 +128,7 @@ public class ApiScheduleCtrl extends Ctrl {
         String aesIv = null;
         String json = null;
         ObjectMapper mapper = null;
-        Schedule schedule = null;
+        Sched schedule = null;
         HttpSession session = null;
 
         mapper = new ObjectMapper();
