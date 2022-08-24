@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlElement;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public abstract class Domain {
+public abstract class Domain implements Comparable<Domain>{
 
     private static final Logger logger = LoggerFactory.getLogger(Domain.class);
 
@@ -78,7 +78,7 @@ public abstract class Domain {
         return result;
     } // End of findDefirrentFields()
 
-    private HashMap<String, String> getTableMap(){
+    protected HashMap<String, String> getTableMap(){
         // 비즈코어 1차 리뉴얼 단계에서 기존 DB의 테이블을 사용하기에 테이블명과 컬렴명에 대한 변환이 필요함. 이를 해결하기 위한 변수들
         if(tableMap == null){
             tableMap = new HashMap<>();
@@ -90,14 +90,13 @@ public abstract class Domain {
             tableMap.put("EstimateItem", "swc_estitems");
             tableMap.put("Notice", "bizcore.notice");
             tableMap.put("Procure", "swc_pps");
-            tableMap.put("Sales", "swc_sales");
             tableMap.put("Sopp", "swc_sopp");
             tableMap.put("TradeDetail", "swc_soppdata01");
         }
         return tableMap;
     }
 
-    private HashMap<String, HashMap<String, String>> getFieldMap(){
+    protected HashMap<String, HashMap<String, String>> getFieldMap(){
         HashMap<String, String> column = null;
 
         if(fieldMap == null){
@@ -206,20 +205,6 @@ public abstract class Domain {
             column.put("sopp","soppno");
 
             column = new HashMap<>();
-            fieldMap.put("Sales", column);
-            column.put("title","salestitle");
-            column.put("from","salesfrdatetime");
-            column.put("to","salestodatetime");
-            column.put("sopp","soppno");
-            column.put("user","userno");
-            column.put("customer","custno");
-            column.put("endUser","ptncno");
-            column.put("detail","salesdesc");
-            column.put("place","salesplace");
-            column.put("type","salestype");
-            column.put("chk","salescheck");
-
-            column = new HashMap<>();
             fieldMap.put("Sopp", column);
             column.put("soppType","sopptype");
             column.put("contType","cntrctMth");
@@ -264,6 +249,62 @@ public abstract class Domain {
             column.put("endVataDate","endvatadate");
             column.put("created","regdatetime");
             column.put("modified","moddatetime");
+
+            column = new HashMap<>();
+            fieldMap.put("Schedule", column);
+            column.put("no", "schedNo");
+            column.put("writer", "userNo");
+            column.put("sopp", "soppNo");
+            column.put("customer", "custNo");
+            column.put("from", "schedFrom");
+            column.put("to", "schedTo");
+            column.put("title", "schedTitle");
+            column.put("content", "schedDesc");
+            column.put("workReport", "schedCheck");
+            column.put("type", "schedType");
+            column.put("place", "schedPlace");
+            column.put("created","regdatetime");
+            column.put("modified","moddatetime");
+
+            column = new HashMap<>();
+            fieldMap.put("ScheduleSales", column);
+            column.put("no", "salesNo");
+            column.put("writer", "userNo");
+            column.put("sopp", "soppNo");
+            column.put("customer", "ptncNo");
+            column.put("from", "salesFrdatetime");
+            column.put("to", "salesTodatetime");
+            column.put("title", "salesTitle");
+            column.put("content", "salesDesc");
+            column.put("workReport", "salesCheck");
+            column.put("type", "salesType");
+            column.put("place", "salesPlace");
+            column.put("partner", "custNo");
+            column.put("created","regdatetime");
+            column.put("modified","moddatetime");
+
+            column = new HashMap<>();
+            fieldMap.put("ScheduleTech", column);
+            column.put("no", "techdNo");
+            column.put("writer", "userNo");
+            column.put("sopp", "soppNo");
+            column.put("customer", "endCustNo");
+            column.put("from", "techdFrom");
+            column.put("to", "techdTo");
+            column.put("title", "techdTitle");
+            column.put("content", "techdDesc");
+            column.put("workReport", "techdCheck");
+            column.put("type", "techdType");
+            column.put("place", "techdPlace");
+            column.put("partner", "custNo");
+            column.put("contract", "contNo");
+            column.put("contractMethod", "cntrctMth");
+            column.put("cipOfCustomer", "custmemberNo");
+            column.put("supportModel", "techdItemmodel");
+            column.put("supportVersion", "techdItemversion");
+            column.put("supportStep", "techdSteps");
+            column.put("created","regdatetime");
+            column.put("modified","moddatetime");
         }
 
         return fieldMap;
@@ -278,6 +319,15 @@ public abstract class Domain {
         try {result = mapper.writeValueAsString(this);} catch (JsonProcessingException e) {e.printStackTrace();}
         return result;
     } // End of toJson()
+
+    public int compareTo(Domain d){
+        if(created == null && d.created != null)            return -1;
+        else if(d.created == null && created != null)       return 1;
+        else if(created == null && d.created == null)       return 0;
+        else if(created.getTime() < d.created.getTime())    return -1;
+        else if(d.created.getTime() < created.getTime())   return 1;
+        else    return 0;
+    }
 
     public boolean equal(Object target){
         boolean result = false;
