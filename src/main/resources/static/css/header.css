@@ -107,7 +107,6 @@ button, select, input{
 	color: transparent;
 	border: 1px solid #332E85;
 }
-
 /* 공통 class 끝*/
 
 /* 페이지네이션 */
@@ -146,7 +145,6 @@ button, select, input{
 	border-color: #302D81;
 	background-color: #302D81;
 }
-
 /* 페이지네이션 끝 */
 
 /* crud 폼 */
@@ -194,8 +192,9 @@ button, select, input{
 .defaultFormContainer .defaultFormLine .defaultFormContent select:hover{
 	border: 1px solid#302D81;
 }
-/* 폼 레이아웃 끝 */
+/* crud 폼 끝 */
 
+/* detail */
 .detailViewContainer{
 	width: 100%;
 }
@@ -264,7 +263,7 @@ button, select, input{
 .detailContainer .detailBtns button{
 	margin-right: 10px;
 }
-/* crud 폼 끝 */
+/* detail 끝 */
 
 /* tab 시작 */
 .tabs {

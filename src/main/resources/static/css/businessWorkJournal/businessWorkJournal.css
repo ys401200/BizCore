@@ -61,32 +61,47 @@
 	border-left: 1px solid #000;
 	border-right: 1px solid #000;
 	border-bottom: 1px solid #000;
-}
-
-
-/* .workJournalContainer .workJournalContent .journalUserList{
-	display: grid;
-	grid-template-columns: 20% 10%;
-	text-align: center;
 	padding: 20px;
 }
 
-.workJournalContainer .workJournalContent .journalUserList > div{
+/* .workJournalContainer .workJournalContent .journalPreviewBody .journalBodyContent{
 	border: 1px solid #000;
 }
 
-.workJournalContainer .workJournalContent .journalPreview{
+.workJournalContainer .workJournalContent .journalPreviewBody .journalBodyContent .journalBodyContent_1{
 	display: grid;
-	text-align: center;
-	padding: 20px;
-	width: 85%;
+	grid-template-columns: repeat(2, 1fr);
 }
 
-.workJournalContainer .workJournalContent .journalPreview .journalPreviewSpan{
-	border: 1px solid #000;
+.workJournalContainer .workJournalContent .journalPreviewBody .journalBodyContent .journalBodyContent_2{
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
 }
 
-.workJournalContainer .workJournalContent .journalPreview .journalPreviewHtml{
+.workJournalContainer .workJournalContent .journalPreviewBody .journalBodyContent .journalBodyContent_3{
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+}
+
+.workJournalContainer .workJournalContent .journalPreviewBody .journalBodyContent .journalBodyContent_3 .journalBodyContent_3_last{
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+}
+
+.workJournalContainer .workJournalContent .journalPreviewBody .journalBodyContent .journalBodyContent_3 .journalBodyContent_3_this{
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+}
+
+.workJournalContainer .workJournalContent .journalPreviewBody .journalBodyContent .journalBodyContent_4{
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+}
+
+.workJournalContainer .workJournalContent .journalPreviewBody .journalBodyContent .journalBodyContent_1 > div,
+.workJournalContainer .workJournalContent .journalPreviewBody .journalBodyContent .journalBodyContent_2 > div,
+.workJournalContainer .workJournalContent .journalPreviewBody .journalBodyContent .journalBodyContent_3 .journalBodyContent_3_last > div,
+.workJournalContainer .workJournalContent .journalPreviewBody .journalBodyContent .journalBodyContent_3 .journalBodyContent_3_this > div,
+.workJournalContainer .workJournalContent .journalPreviewBody .journalBodyContent .journalBodyContent_4 > div{
 	border: 1px solid #000;
 } */
-
