@@ -30,7 +30,7 @@
 }
 
 #sideMenu ul li{
-	line-height: 58px;
+	line-height: 52px;
 }
 
 #sideMenu ul li a{
@@ -44,11 +44,12 @@
 }
 
 #sideMenu ul li a.active{
-	background-color: #EDEDF4;
+	background-color: #211e74;
+	border-left:4px solid #89ceff;
 }
 
 #sideMenu ul li a.active span{
-	color: #302D81;
+	color: #fff;
 }
 
 #sideMenu ul li #panel a.active{
@@ -162,6 +163,7 @@
 
 #sideMenu ul li a:hover span:not(#slideSpan){
 	color: #302D81;
+	font-weight: 600;
 }
 
 #sideMenu ul li a:hover span{
@@ -169,14 +171,14 @@
 }
 
 #sideMenu ul li a img{
-	width: 22px;
+	width: 20px;
 	/* height: 27px; */
-	margin-left: 25px;
+	margin-left: 15px;
 	vertical-align: sub;
 }
 
 #sideMenu ul li a span:not(#slideSpan){
-	margin-left: 18px;
+	margin-left: 10px;
 	font-weight: 500;
 	font-size: 14px;
 }
@@ -191,9 +193,9 @@
 
 #sideMenu ul li a:not(.active) #slideSpan{
 	float: right;
-	margin-right: 18px;
+	margin-right: 14px;
 	font-weight: 400;
-	font-size: 20px;
+	font-size: 17px;
 	opacity: 0.8;
 }
 
@@ -207,8 +209,9 @@
 	width: auto;
 	height: 50px;
 	line-height: 55px;
-	background-color: #25226F;
-	border-bottom: 1.5px solid #302D81;
+	background-color: #211e74;
+	/* border-bottom: 1.5px solid #302D81; */
+	border-left:4px solid #89ceff; 
 }
 
 #sideMenu ul li #panel li a{
@@ -216,7 +219,7 @@
 	padding: 0 25%;
 	text-decoration: none;
 	font-weight: 500;
-	font-size: 14px;
+	font-size: 13px;
 	color: #ffffff;
 }
 

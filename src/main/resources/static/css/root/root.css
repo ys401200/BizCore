@@ -1,99 +1,118 @@
 @charset "UTF-8";
 
+:root{
+	--bodyGridContentChild-margin: 0.3%;
+	--content-Margin-top:0.6%;
+	--content-title-font-size:15px;
+	--content-title-font-weight:bolder;
+	--content-title-hr:2px solid #E45050;
+	--content-title-hr-height:32px;
+	--content-title-line-height:40px;
+	--inContent-margin-top:6px;
+	--inContent-width:98%;
+}
+
 /* 메인 공지사항 시작*/
-#bodyContent #bodyNotice{
+#bodyContent #bodyGridContent #bodyNotice{
 	float:left;
-	width: 48%;
+	width: calc(50% - var(--bodyGridContentChild-margin));
 	height: 478px;
-	margin-left: 1.5%;
-	margin-bottom: 2%;
+	margin-right:var(--bodyGridContentChild-margin);
+	/*margin-left: 1.5%;
+	margin-bottom: 2%;*/
 	background: #FFFFFF;
 	overflow: auto;
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
 }
 
-#bodyContent #bodyNotice hr{
+#bodyContent #bodyGridContent #bodyNotice hr{
 	float: left;
 	border-top: 0;
 	border-left : thick solid #E45050;
 	border-right: 0;
 	border-bottom: 0;
- 	height : 44px;
- 	width: 4px;
+	border:var(--content-title-hr);
+	height:var(--content-title-hr-height);
  	margin: 0;
 }
 
-#bodyContent #bodyNotice span{
-	font-weight: 500;
-	font-size: 16px;
-	margin-left: 18px;
-	line-height: 3;
+#bodyContent #bodyGridContent #bodyNotice span{
+	font-weight: var(--content-title-font-weight);
+	font-size: var(--content-title-font-size);
+	margin-left: 15px;
+	line-height: var(--content-title-line-height);
 	color: #332E85;
 }
 
-#bodyContent #bodyNotice .gridNoticeList{
+#bodyContent #bodyGridContent #bodyNotice .gridNoticeList{
 	display: grid;
-	width:99%;
+	width:var(--inContent-width);
 	margin: 0 auto;
-	margin-top: 15px;
+	margin-top: var(--inContent-margin-top);
 }
 
-#bodyContent #bodyNotice .gridNoticeList .gridHeader{
+#bodyContent #bodyGridContent #bodyNotice .gridNoticeList .gridHeader{
     grid-template-columns: 15% 55% 15% 15%;
 }
 
-#bodyContent #bodyNotice .gridNoticeList .gridContent{
+#bodyContent #bodyGridContent #bodyNotice .gridNoticeList .gridContent{
 	grid-template-columns: 15% 55% 15% 15%;
 }
 /* 메인 공지사항 끝 */
 
-#bodyContent #bodySched{
+#bodyContent #bodyGridContent #bodySched{
 	float:left;
-	width: 48%;
+	width:calc(50% - var(--bodyGridContentChild-margin));
+	margin-left:var(--bodyGridContentChild-margin);
 	height: 478px;
-	margin-left: 1.5%;
-	margin-bottom: 2%;
+	/*margin-left: 1.5%;
+	margin-bottom: 2%;*/
 	background: #FFFFFF;
 	overflow: auto;
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
 }
 
-#bodyContent #bodySched hr{
+#bodyContent #bodyGridContent #bodySched hr{
 	float: left;
 	border-top: 0;
 	border-left : thick solid #E45050;
 	border-right: 0;
 	border-bottom: 0;
- 	height : 44px;
- 	width: 4px;
+ 	border : var(--content-title-hr);
+	height:var(--content-title-hr-height);
  	margin: 0;
 }
 
-#bodyContent #bodySched span{
-	font-weight: 500;
-	font-size: 16px;
+#bodyContent #bodyGridContent #bodySched span{
+	font-weight: var(--content-title-font-weight);
+	font-size: var(--content-title-font-size);
 	margin-left: 18px;
-	line-height: 3;
+	line-height: var(--content-title-line-height);
 	color: #332E85;
 }
 
-#bodyContent #bodySched .gridScheduleList{
+#bodyContent #bodyGridContent #bodySched .gridScheduleList{
 	display: grid; 
-	width:99%; 
+	width:var(--inContent-width); 
 	margin: 0 auto;
-	margin-top: 15px;
+	margin-top: 6px;
 }
 
-#bodyContent #bodySched .gridScheduleList .gridHeader{
+#bodyContent #bodyGridContent #bodySched .gridScheduleList .gridHeader{
     grid-template-columns: 10% 10% 15% 10% 10% 10% 10% 10% 15%;
+	font-size:14px;
+	border-bottom:2px solid #abb6d5;
+	/* background-color:#e9e9f2; */
 }
 
-#bodyContent #bodySched .gridScheduleList .gridContent{
+#bodyContent #bodyGridContent #bodySched .gridScheduleList .gridContent{
 	grid-template-columns: 10% 10% 15% 10% 10% 10% 10% 10% 15%;
 }
 
+.gridContent:nth-child(2n-1){background-color:#F7F7F9;}
+
 /* 메인 일정관리 시작*/
-/* #bodyContent #bodySched{
+/* #bodyContent #bodyGridContent #bodySched{
 	float:left;
 	width: 47%;
 	height: 478px;
@@ -104,7 +123,7 @@
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
 } 
 
-#bodyContent #bodySched hr{
+#bodyContent #bodyGridContent #bodySched hr{
 	float: left;
 	border-top: 0;
 	border-left : thick solid #E45050;
@@ -115,7 +134,7 @@
  	margin: 0;
 }
 
-#bodyContent #bodySched span{
+#bodyContent #bodyGridContent #bodySched span{
 	font-weight: 500;
 	font-size: 16px;
 	margin-left: 18px;
@@ -123,111 +142,113 @@
 	color: #332E85;
 }
 
-#bodyContent #bodySched #schedTableDiv{
+#bodyContent #bodyGridContent #bodySched #schedTableDiv{
 	margin-top: 15px;
 	width: auto;
 	padding: 10px 10px;
 }
 
-#bodyContent #bodySched #schedTableDiv table{
+#bodyContent #bodyGridContent #bodySched #schedTableDiv table{
 	width: 100%;
 	margin: 0 auto;
 	border-collapse: collapse;
 }
 
-#bodyContent #bodySched #schedTableDiv table thead tr th{
+#bodyContent #bodyGridContent #bodySched #schedTableDiv table thead tr th{
 	color: #332E85;
 	border: 1px solid #D9D9D9;
 	height: 38px;
 	font-weight: 500;
 }
 
-#bodyContent #bodySched #schedTableDiv table tbody tr td{
+#bodyContent #bodyGridContent #bodySched #schedTableDiv table tbody tr td{
 	text-align: center;
 	border: 1px solid #D9D9D9;	
 	height: 38px;
 }
 
-#bodyContent #bodySched #schedTableDiv table thead tr #schedTitle{
+#bodyContent #bodyGridContent #bodySched #schedTableDiv table thead tr #schedTitle{
 	text-align: left;
 	padding: 0 20px;
 }
 
-#bodyContent #bodySched #schedTableDiv table tbody tr #schedTitle{
+#bodyContent #bodyGridContent #bodySched #schedTableDiv table tbody tr #schedTitle{
 	text-align: left;
 	padding: 0 20px;
 } */
 /* 메인 일정관리 끝 */
 
 /* 메인 나의문서 시작 */
-#bodyContent #bodyMyDoc{
+#bodyContent #bodyGridContent #bodyMyDoc{
 	float:left;
-	width: 48%;
+	width: calc(50% - var(--bodyGridContentChild-margin));
+	margin-right: var(--bodyGridContentChild-margin);
+	margin-top:var(--content-Margin-top);
 	height: 478px;
-	margin-left: 1.5%;
-	margin-bottom: 2%;
+	/*margin-left: 1.5%;
+	margin-bottom: 2%;*/
 	background: #FFFFFF;
 	overflow: auto;
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
 } 
 
-#bodyContent #bodyMyDoc hr{
+#bodyContent #bodyGridContent #bodyMyDoc hr{
 	float: left;
 	border-top: 0;
 	border-left : thick solid #E45050;
 	border-right: 0;
 	border-bottom: 0;
- 	height : 44px;
- 	width: 4px;
+	border:var(--content-title-hr);
+ 	height : var(--content-title-hr-height);
  	margin: 0;
 }
 
-#bodyContent #bodyMyDoc span{
-	font-weight: 500;
-	font-size: 16px;
+#bodyContent #bodyGridContent #bodyMyDoc span{
+	font-weight: var(--content-title-font-weight);
+	font-size: var(--content-title-font-size);
 	margin-left: 18px;
-	line-height: 3;
+	line-height: var(--content-title-line-height);
 	color: #332E85;
 }
 
-#bodyContent #bodyMyDoc #myDocTableDiv{
-	margin-top: 15px;
+#bodyContent #bodyGridContent #bodyMyDoc #myDocTableDiv{
+	margin-top: var(--inContent-margin-top);
 	width: auto;
 	padding: 10px 10px;
 }
 
-#bodyContent #bodyMyDoc #myDocTableDiv table{
+#bodyContent #bodyGridContent #bodyMyDoc #myDocTableDiv table{
 	width: 100%;
 	margin: 0 auto;
 	border-collapse: collapse;
 }
 
-#bodyContent #bodyMyDoc #myDocTableDiv table thead tr th{
+#bodyContent #bodyGridContent #bodyMyDoc #myDocTableDiv table thead tr th{
 	color: #332E85;
 	border: 1px solid #D9D9D9;
 	height: 38px;
 	font-weight: 500;
 }
 
-#bodyContent #bodyMyDoc #myDocTableDiv table tbody tr td{
+#bodyContent #bodyGridContent #bodyMyDoc #myDocTableDiv table tbody tr td{
 	text-align: center;
 	border: 1px solid #D9D9D9;	
 	height: 38px;
 }
 
-#bodyContent #bodyMyDoc #myDocTableDiv table thead tr #myDocTitle{
+#bodyContent #bodyGridContent #bodyMyDoc #myDocTableDiv table thead tr #myDocTitle{
 	text-align: left;
 	padding: 0 20px;
 }
 
-#bodyContent #bodyMyDoc #myDocTableDiv table tbody tr #myDocTitle{
+#bodyContent #bodyGridContent #bodyMyDoc #myDocTableDiv table tbody tr #myDocTitle{
 	text-align: left;
 	padding: 0 20px;
 }
 /* 메인 나의 문서함 끝 */
 
 /* 메인 결재함 시작 */
-#bodyContent #bodyDocList{
+#bodyContent #bodyGridContent #bodyDocList{
 	float:left;
 	width: 47%;
 	height: 478px;
@@ -238,7 +259,7 @@
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
 } 
 
-#bodyContent #bodyDocList hr{
+#bodyContent #bodyGridContent #bodyDocList hr{
 	float: left;
 	border-top: 0;
 	border-left : thick solid #E45050;
@@ -249,179 +270,182 @@
  	margin: 0;
 }
 
-#bodyContent #bodyDocList span{
+#bodyContent #bodyGridContent #bodyDocList span{
 	font-weight: 500;
 	font-size: 16px;
 	margin-left: 18px;
-	line-height: 3;
+	line-height: var(--content-title-line-height);
 	color: #332E85;
 }
 
-#bodyContent #bodyDocList #docListTableDiv{
+#bodyContent #bodyGridContent #bodyDocList #docListTableDiv{
 	margin-top: 15px;
 	width: auto;
 	padding: 10px 10px;
 }
 
-#bodyContent #bodyDocList #docListTableDiv table{
+#bodyContent #bodyGridContent #bodyDocList #docListTableDiv table{
 	width: 100%;
 	margin: 0 auto;
 	border-collapse: collapse;
 }
 
-#bodyContent #bodyDocList #docListTableDiv table thead tr th{
+#bodyContent #bodyGridContent #bodyDocList #docListTableDiv table thead tr th{
 	color: #332E85;
 	border: 1px solid #D9D9D9;
 	height: 38px;
 	font-weight: 500;
 }
 
-#bodyContent #bodyDocList #docListTableDiv table tbody tr td{
+#bodyContent #bodyGridContent #bodyDocList #docListTableDiv table tbody tr td{
 	text-align: center;
 	border: 1px solid #D9D9D9;	
 	height: 38px;
 }
 
-#bodyContent #bodyDocList #docListTableDiv table thead tr #docListTitle{
+#bodyContent #bodyGridContent #bodyDocList #docListTableDiv table thead tr #docListTitle{
 	text-align: left;
 	padding: 0 20px;
 }
 
-#bodyContent #bodyDocList #docListTableDiv table tbody tr #docListTitle{
+#bodyContent #bodyGridContent #bodyDocList #docListTableDiv table tbody tr #docListTitle{
 	text-align: left;
 	padding: 0 20px;
 }
 /* 메인 결재함 끝 */
 
 /* 메인 근태조회 시작 */
-#bodyContent #bodyAtt{
+#bodyContent #bodyGridContent #bodyAtt{
 	float:left;
-	width: 47%;
+	width: calc(50% - var(--bodyGridContentChild-margin));
+	margin-left:var(--bodyGridContentChild-margin);
+	margin-top:var(--content-Margin-top);
 	height: 478px;
-	margin-left: 2%;
-	margin-bottom: 2%;
+	/*margin-left: 2%;
+	margin-bottom: 2%;*/
 	background: #FFFFFF;
 	overflow: auto;
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
 } 
 
-#bodyContent #bodyAtt hr{
+#bodyContent #bodyGridContent #bodyAtt hr{
 	float: left;
 	border-top: 0;
 	border-left : thick solid #E45050;
 	border-right: 0;
 	border-bottom: 0;
- 	height : 44px;
- 	width: 4px;
+	border:var(--content-title-hr);
+ 	height : var(--content-title-hr-height);
  	margin: 0;
 }
 
-#bodyContent #bodyAtt span{
-	font-weight: 500;
-	font-size: 16px;
+#bodyContent #bodyGridContent #bodyAtt span{
+	font-weight: var(--content-title-font-weight);
+	font-size: var(--content-title-font-size);
 	margin-left: 18px;
-	line-height: 3;
+	line-height: var(--content-title-line-height);
 	color: #332E85;
 }
 
-#bodyContent #bodyAtt #attTableDiv{
-	margin-top: 15px;
+#bodyContent #bodyGridContent #bodyAtt #attTableDiv{
+	margin-top: var(--inContent-margin-top);
 	width: auto;
 	padding: 10px 10px;
 }
 
-#bodyContent #bodyAtt #attTableDiv table{
+#bodyContent #bodyGridContent #bodyAtt #attTableDiv table{
 	width: 100%;
 	margin: 0 auto;
 	border-collapse: collapse;
 }
 
-#bodyContent #bodyAtt #attTableDiv table thead tr th{
+#bodyContent #bodyGridContent #bodyAtt #attTableDiv table thead tr th{
 	color: #332E85;
 	border: 1px solid #D9D9D9;
 	height: 38px;
 	font-weight: 500;
 }
 
-#bodyContent #bodyAtt #attTableDiv table tbody tr td{
+#bodyContent #bodyGridContent #bodyAtt #attTableDiv table tbody tr td{
 	text-align: center;
 	border: 1px solid #D9D9D9;	
 	height: 38px;
 }
 
-#bodyContent #bodyAtt #attTableDiv table thead tr #attTitle{
+#bodyContent #bodyGridContent #bodyAtt #attTableDiv table thead tr #attTitle{
 	text-align: left;
 	padding: 0 20px;
 }
 
-#bodyContent #bodyAtt #attTableDiv table tbody tr #attTitle{
+#bodyContent #bodyGridContent #bodyAtt #attTableDiv table tbody tr #attTitle{
 	text-align: left;
 	padding: 0 20px;
 }
 /* 메인 근태조회 끝 */
 
 /* 메인 계약조회 시작 */
-#bodyContent #bodyCont{
+#bodyContent #bodyGridContent #bodyCont{
 	float:left;
-	width: 96%;
+	width: 100%;
 	height: 478px;
-	margin-left: 2%;
-	margin-bottom: 2%;
+	margin-top: var(--content-Margin-top);
+	/*margin-left: 2%;
+	margin-bottom: 2%;*/
 	background: #FFFFFF;
 	overflow: auto;
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
 } 
 
-#bodyContent #bodyCont hr{
+#bodyContent #bodyGridContent #bodyCont hr{
 	float: left;
 	border-top: 0;
 	border-left : thick solid #E45050;
 	border-right: 0;
 	border-bottom: 0;
- 	height : 44px;
- 	width: 4px;
+	border:var(--content-title-hr);
+ 	height : var(--content-title-hr-height);
  	margin: 0;
 }
 
-#bodyContent #bodyCont span{
-	font-weight: 500;
-	font-size: 16px;
+#bodyContent #bodyGridContent #bodyCont span{
+	font-weight: var(--content-title-font-weight);
+	font-size: var(--content-title-font-size);
 	margin-left: 18px;
-	line-height: 3;
+	line-height: var(--content-title-line-height);
 	color: #332E85;
 }
 
-#bodyContent #bodyCont #contTableDiv{
-	margin-top: 15px;
+#bodyContent #bodyGridContent #bodyCont #contTableDiv{
+	margin-top: var(--inContent-margin-top);
 	width: auto;
 	padding: 10px 10px;
 }
 
-#bodyContent #bodyCont #contTableDiv table{
+#bodyContent #bodyGridContent #bodyCont #contTableDiv table{
 	width: 100%;
 	margin: 0 auto;
 	border-collapse: collapse;
 }
 
-#bodyContent #bodyCont #contTableDiv table thead tr th{
+#bodyContent #bodyGridContent #bodyCont #contTableDiv table thead tr th{
 	color: #332E85;
 	border: 1px solid #D9D9D9;
 	height: 38px;
 	font-weight: 500;
 }
 
-#bodyContent #bodyCont #contTableDiv table tbody tr td{
+#bodyContent #bodyGridContent #bodyCont #contTableDiv table tbody tr td{
 	text-align: center;
 	border: 1px solid #D9D9D9;	
 	height: 38px;
 }
 
-#bodyContent #bodyCont #contTableDiv table thead tr #contTitle{
+#bodyContent #bodyGridContent #bodyCont #contTableDiv table thead tr #contTitle{
 	text-align: left;
 	padding: 0 20px;
 }
 
-#bodyContent #bodyCont #contTableDiv table tbody tr #contTitle{
+#bodyContent #bodyGridContent #bodyCont #contTableDiv table tbody tr #contTitle{
 	text-align: left;
 	padding: 0 20px;
 }
