@@ -36,10 +36,10 @@ function getworkJournal(){
     html += "<div class='journalBody'>";
     html += "<div>일자: 8/22 ~ 8/26 </div>";
     html += "<div>담당: 이장희</div>";
-    html += "<div>지난주 진행사항</div>";
-    html += "<div>이번주 예정사항</div>";
     html += "</div>";
 
+    html += ""
+    
     html += "</div>";
 
     workJournalContent.html(html);
