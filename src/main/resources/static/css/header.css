@@ -68,6 +68,7 @@ button, select, input{
 .grid_default_text_align_center{
 	display: flex;
 	align-items: center;
+	justify-content: center;
 	overflow: hidden;
 	padding-left:13px;
 }
