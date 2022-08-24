@@ -225,6 +225,8 @@ public class ApiBoardCtrl extends Ctrl{
         List<Object> addFiles = null;
         HttpSession session = null;
         HashMap<String, String> attached = null;
+
+        logger.info("[ACCESS] /api/board/filebox :: PUT ::" + request.getRemoteAddr());
         
         session = request.getSession();
         compId = (String)session.getAttribute("compId");
@@ -246,6 +248,9 @@ public class ApiBoardCtrl extends Ctrl{
             article.setNo(strToInt(no));
             article.setTitle(json.getString("title"));
             article.setContent(json.getString("content"));
+
+            logger.info("[ACCESS] /api/board/filebox :: remove file count : " + removeFiles.size());
+            logger.info("[ACCESS] /api/board/filebox :: add file count : " + addFiles.size());
             boardService.updateFileboxArticle(compId, article, addFiles, removeFiles, attached);
             result = "{\"result\":\"ok\"}";
         }

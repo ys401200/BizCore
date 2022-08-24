@@ -188,18 +188,40 @@ public class BoardService extends Svc{
         byte[] buffer = new byte[1024];
 
         // 게시글 DB 업데이트
+        logger.info("[PROCEED MODIFIED ARTICLE to DB] :::::::::: ");
         boardMapper.updateFileboxArticle(article, compId);
-        path = fileStoragePath + s + compId; // company id 에 해당하는 경로 가져오기
+        path = fileStoragePath + s + compId + s + "attached"; // company id 에 해당하는 경로 가져오기
 
         // 삭제 파일 처리
+        logger.info("[PROCEED REMOVE FILE in BOARD/FILEBOX] ::::: START ::::::::::::::: : ");
         if(removeFiles != null && removeFiles.size() > 0){
+            logger.info("[PROCEED REMOVE FILE in BOARD/FILEBOX] ::::: STEP 1 ::::::::: getting info exist attached file info ");
             fileList = boardMapper.getAttachedFileList(article.getNo(), compId); // 기존 첨부된파일을 가지고 옴
             if(fileList != null && fileList.size() > 0) for(x = 0 ; x < fileList.size() ; x++){
+                logger.info("[PROCEED REMOVE FILE in BOARD/FILEBOX] ::::: STEP 2 ::::::::::::::: compare exist info and received info ");
                 savedName = fileList.get(x).getSavedName();
+                ognName = fileList.get(x).getOgnName();
                 for(Object obj : removeFiles){
-                    if(savedName != null && savedName.equals(obj)){
+                    logger.info("[PROCEED REMOVE FILE in BOARD/FILEBOX] ::::: STEP 3 ::::::::::::::: compare step by step /// requested name ::: " + obj.toString() + " /// original name" + ognName);
+                    if(ognName != null && ognName.equals(obj)){
                         targetFile = new File(path + s + fileList.get(x).getSavedName());
-                        if(targetFile.exists()) targetFile.delete();
+
+                        logger.info("[PROCEED REMOVE FILE in BOARD/FILEBOX] ::::: target file : " + targetFile);
+                        logger.info("[PROCEED REMOVE FILE in BOARD/FILEBOX] ::::: saved name : " + savedName);
+                        logger.info("[PROCEED REMOVE FILE in BOARD/FILEBOX] ::::: original name : " + ognName);
+                        logger.info("[PROCEED REMOVE FILE in BOARD/FILEBOX] ::::: file exist ? " + targetFile.exists());
+
+                        if(targetFile.exists()){
+
+                            logger.info("[PROCEED REMOVE FILE in BOARD/FILEBOX] ::::: trying to delete . . .");
+                            if(targetFile.delete()){
+                                logger.info("[PROCEED REMOVE FILE in BOARD/FILEBOX] ::::: delete success");
+                            }else{
+                                logger.info("[PROCEED REMOVE FILE in BOARD/FILEBOX] ::::: delete fail");
+                            }
+                        }
+
+                        logger.info("[PROCEED REMOVE FILE in BOARD/FILEBOX] ::::: update attached info in database . . .");
                         boardMapper.deleteFileboxAttachedFile(article.getNo() + "", compId, savedName);
                     }
                 }
