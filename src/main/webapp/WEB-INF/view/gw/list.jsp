@@ -26,8 +26,8 @@
 
 					<div class="subContainer">
 						<div class="listPageDiv">
-							<div class="listDiv"></div>
 							<div class="batchBtn"><button type="button">일괄 결재 </button></div>
+							<div class="listDiv"></div>
 							<div class="pageContainer"></div>
 						</div>
 					</div>

@@ -4,10 +4,8 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	margin-left: 2%;
-	margin-bottom: 2%;
-	max-width: 1782px;
-	height: 100px;
+	margin: 2%;
+	height: 5rem;
 	background: #FFFFFF;
 	overflow: auto;
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
@@ -101,47 +99,23 @@ button {
 	color: #332E85;
 }
 
-
-.subContainer {
-	background-color: white;
-	display: grid;
-	/* grid-template-columns: 50% 50%; */
+.subContainer .listPageDiv > div {
+	margin: 0 2%;
 }
 
 
-.tableFormDiv {
-	padding: 3rem;
-
-}
-
-.forForm,
-.forTable {
-	border: 1px solid black;
-}
-
-.forForm {
-	overflow: auto;
-}
-
-.forTable {
-	border-bottom: 0;
-}
-
-
-.listDiv {
-	display: grid;
-	width: 95%;
-	margin: 3rem
-}
 
 .listDiv .gridHeader,
 .listDiv .gridContent {
 	grid-template-columns: 10% 10% 20% 20% 10% 10% 10% 10%;
 }
 
-.listPageDiv .batchBtn {
+.subContainer .listPageDiv > div:first-of-type {
 	text-align: right;
-	font-size: 2rem;
+	font-size: 1rem;
 	font-weight: 500;
-	margin: 2% 2% 2% 0%;
+}
+
+.subContainer .listPageDiv > div:last-of-type {
+	margin-bottom: 2%;
 }

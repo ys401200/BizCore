@@ -10,6 +10,9 @@ $(document).ready(() => {
 });
 
 function getformList() {
+
+
+
   let url = "/api/gw/form";
 
   $.ajax({
@@ -29,13 +32,15 @@ function getformList() {
     },
   });
 
-  $(".lineDetail").hide();
+  $(".modal-wrap").hide()
   $(".insertedDetail").hide();
+  $(".createLineBtn").hide();
 
   // let previewWidth = document.getElementsByClassName("reportInsertForm")[0];
   // previewWidth = previewWidth.clientWidth;
   // let target = $(".reportInsertForm");
   // target.css("height", Math.ceil(previewWidth / 210 * 297));
+
 
 }
 
@@ -55,7 +60,7 @@ function drawFormList() {
   }
 
 
-  targetHtml += "<label for='selectForm'>결재 양식</label><select class='formSelector'>";
+  targetHtml += "<select class='formSelector'>";
   for (let i = 0; i < titles.length; i++) {
     targetHtml += "<option value='" + nums[i] + "'>" + titles[i] + "</option>"
 
@@ -64,19 +69,6 @@ function drawFormList() {
   targetHtml += "</select>"
 
   target.html(targetHtml);
-
-  let orgChartTarget = $("#lineLeft");
-  let userData = new Array();
-
-  let x;
-  for (x in storage.user) userData.push(x);
-
-  let innerHtml = "";
-
-  for (let i = 0; i < userData.length; i++) {
-    innerHtml += "<div><input class='testClass' type ='checkbox' id='cb" + i + "' name='userNames' value='" + data[i] + "'><label for='cb'>" + storage.user[userData[i]].userName + "</label></div>"
-    orgChartTarget.html(innerHtml);
-  }
 
 }
 
@@ -117,10 +109,7 @@ function drawFormList() {
 
 // }
 
-function setSelectedFormName(num) {
-  let hidden = $(".formNumHidden");
-  hidden.val(num);
-}
+
 
 
 // 결재양식 선택에서 양식 선택 버튼 눌렀을 때 함수 
@@ -140,7 +129,7 @@ function selectForm() {
   forSelect1.html(html);
 
   $(".lineDetail").show();
-
+  $(".createLineBtn").show();
   $(".reportInsertForm").html(storage.formList[hidden.val()].form);
   $(".insertedDetail").show();
   //작성자 작성일 자동 입력
@@ -148,25 +137,51 @@ function selectForm() {
   let writer = storage.user[my].userName;
   let formId = storage.formList[hidden.val()].id;
   $("#" + formId + "_writer").val(writer);
+  
   let date = getYmdHyphen();
   $("#" + formId + "_created").val(date);
   $(".testClass").prop('checked', false);
   $(".typeContainer").html("")
 
+}
+
+
+// 결재선 생성 버튼 눌렀을 때 모달 띄움 
+function showModal() {
+  let orgChartTarget = $("#lineLeft");
+  let userData = new Array();
+
+  let x;
+  for (x in storage.user) userData.push(x);
+
+  let innerHtml = "";
+  for (let i = 0; i < userData.length; i++) {
+    innerHtml += "<div><input class='testClass' type ='checkbox' id='cb" + i + "' name='userNames' value='" + userData[i] + "'><label for='cb'>" + storage.user[userData[i]].userName + "</label></div>"
+    orgChartTarget.html(innerHtml);
+  }
+
+  $(".modal-wrap").show();
 
 }
 
 
-function getYmdHyphen() {
-  let d = new Date();
-  return d.getFullYear() + "-" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "-" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString());
+
+// 결재선 모달 취소 생성 
+function closeGwModal(obj) {
+  if (obj.id == 'close') {
+    $(".modal-wrap").hide();
+  } else {
+    createLine();
+    $(".modal-wrap").hide();
+  }
 }
 
 
 
 
 
-// 조직도에서 이름 선택하고 결재타입 선택한 경우 
+
+////조직도에서 결재 타입 선택 함수 
 function check(name) {
   let inputLength = $(".testClass");
   let target = $("#" + name);
@@ -188,10 +203,15 @@ function check(name) {
   target.html(html)
 
   $(".testClass").prop('checked', false);
-}
+} //End of check(name) 
 
 
 
+
+
+
+
+//// 조직도 결재 순서 
 function upClick(obj) {
   let parent;
   parent = obj.parentElement;
@@ -199,14 +219,14 @@ function upClick(obj) {
   let target = $("#" + parent.id);
   let list = parent.children;
 
-  let numArr = new Array();// 원래 입력된 순서 배열에 넣음 
+  let numArr = new Array();
   for (let i = 0; i < list.length; i++) {
     let id = list[i].id;
     let idArr = id.split("_");
     numArr.push(idArr[1]);
   }
 
-  for (let i = 0; i < numArr.length; i++) { //순서 바꾸기 
+  for (let i = 0; i < numArr.length; i++) {
     if (obj.value == numArr[i] && i != 0) {
       let temp = numArr[i];
       numArr[i] = numArr[i - 1];
@@ -223,7 +243,7 @@ function upClick(obj) {
   }
 
   target.html(selectHtml);
-}
+}// End of upClick(obj); 
 
 
 function downClick(obj) {
@@ -233,14 +253,14 @@ function downClick(obj) {
   let target = $("#" + parent.id);
   let list = parent.children;
 
-  let numArr = new Array();// 원래 입력된 순서 배열에 넣음 
+  let numArr = new Array();
   for (let i = 0; i < list.length; i++) {
     let id = list[i].id;
     let idArr = id.split("_");
     numArr.push(idArr[1]);
   }
 
-  for (let i = numArr.length - 1; i >= 0; i--) { //순서 바꾸기 
+  for (let i = numArr.length - 1; i >= 0; i--) {
     if (obj.value == numArr[i] && i != numArr.length - 1) {
       let temp = numArr[i];
       numArr[i] = numArr[i + 1];
@@ -257,18 +277,26 @@ function downClick(obj) {
   }
 
   target.html(selectHtml);
-}
+} // End of downClick(obj) 
 
 
 function deleteClick(obj) {
   let parent;
   parent = obj.parentElement;
   parent.remove();
-}
+} // End of deleteClign(obj); 
 
 
 
+
+
+
+// 결재선 그리기 
 function createLine() {
+
+  let formTypeName = $(".formNumHidden").val();
+  let formId = storage.formList[formTypeName].id;
+
 
   let lineTarget = $(".infoline")[0].children[1];
   lineTarget = $("#" + lineTarget.id);
@@ -278,10 +306,12 @@ function createLine() {
 
   let testHtml = "<div class='lineGridContainer'>";
   let testHtml2 = "<div class='lineGridContainer'>";
-  let readHtml = "";
-  let referHtml = "";
+  let readHtml = "<div>열람</div>";
+  let referHtml = "<div>참조</div>";
   let target = $(".typeContainer");
   let titleArr = ["검토", "합의", "결재", "수신", "열람", "참조"];
+  let titleId = ["examine", "agree", "approval", "conduct", " read", "refer"]
+
 
   let data = new Array();
   let x;
@@ -299,18 +329,22 @@ function createLine() {
       let id = target[i].children[j].id;
       id = id.split('_');
       id = id[1];
+
+
+      /// class 이름 , css 수정 
+
       if (i < 2 && j < target[i].children.length - 1) {
-        testHtml += "<div class='lineSet'><div class='lineUserName'>" + storage.user[data[id]].userName + "</div><div class='gap'>서명</div><div class='linedate'>/</div></div>"
+        testHtml += "<div class='lineSet'><div class='twoBorder'>직급</div><div class='twoBorder " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div><div class='twoBorder " + formId + "_" + titleId[i] + "_status'>서명</div><div class='dateBorder " + formId + "_" + titleId[i] + "_approved'>/</div></div>"
       } else if (i < 2 && j == target[i].children.length - 1) {
-        testHtml += "<div class='lineSet'><div class='lineUserNameLast'>" + storage.user[data[id]].userName + "</div><div class='gapLast'>서명</div><div class='linedateLast'>/</div></div>"
+        testHtml += "<div class='lineSet'><div class='twoBorderLast'>직급</div><div class='twoBorderLast " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div><div class='twoBorderLast " + formId + "_" + titleId[i] + "_status'>서명</div><div class='dateBorderLast  " + formId + "_" + titleId[i] + "_approved'>/</div></div>"
       } else if (i == 2) {
-        testHtml += "<div class='lineSet'><div class='lineUserName'>" + storage.user[data[id]].userName + "</div><div class='gap'>서명</div><div class='linedate'>/</div></div>"
+        testHtml += "<div class='lineSet'><div class='twoBorder'>직급</div><div class='twoBorder " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div><div class='twoBorder " + formId + "_" + titleId[i] + "_status'>서명</div><div class='dateBorder " + formId + "_" + titleId[i] + "_approved'>/</div></div>"
       } else if (i == 3) {
-        testHtml2 += "<div class='lineSet'><div class='lineUserName'>" + storage.user[data[id]].userName + "</div><div class='gap'>서명</div><div class='linedate'>/</div></div>"
+        testHtml2 += "<div class='lineSet'><div class='twoBorder'>직급</div><div class='twoBorder " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div><div class='twoBorder " + formId + "_" + titleId[i] + "_status'>서명</div><div class='dateBorder " + formId + "_" + titleId[i] + "_approved'>/</div></div>"
       } else if (i == 4) {
-        readHtml += "<div class='appendName'>" + storage.user[data[id]].userName + "</div>";
+        readHtml += "<div class='appendName " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div>";
       } else if (i == 5) {
-        referHtml += "<div class='appendName'>" + storage.user[data[id]].userName + "</div>";
+        referHtml += "<div class='appendName " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div>";
       }
 
     }
@@ -332,17 +366,16 @@ function createLine() {
   lineTarget.html(testHtml);
 
 
-  let readTarget = $(".readContainer").html();
-  readHtml = readTarget += readHtml;
   $(".readContainer").html(readHtml);
-  let referTarget = $(".referContainer").html();
-  referHtml = referTarget += referHtml;
   $(".referContainer").html(referHtml);
 
 
+} // End of createLine(); 
 
+
+
+// 날짜 변환 함수 
+function getYmdHyphen() {
+  let d = new Date();
+  return d.getFullYear() + "-" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "-" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString());
 }
-
-
-
-

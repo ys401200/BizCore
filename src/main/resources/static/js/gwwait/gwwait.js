@@ -32,10 +32,6 @@ function waitDefault() {
 	let targetButtons = $(".forButtons");
 	targetButtons.css("height", Math.ceil(Math.ceil((previewWidth / 210 * 297) * 0.025)));
 
-
-
-
-
 	let buttonsHtml = "<button>상신취소</button><button>인쇄</button>";
 	targetButtons.html(buttonsHtml);
 	drawCommonmylist();
@@ -137,8 +133,8 @@ function drawNoticeList() {
 	pageContainer[0].innerHTML = pageNation;
 	createGrid(container, header, data, ids, fnc);
 
- 
-   // 전체선택 전체 해제  
+
+	// 전체선택 전체 해제  
 	$(".thisAllcheck").click(function () {
 		if ($(".thisAllcheck").prop("checked")) {
 			$(":checkbox").prop("checked", true);

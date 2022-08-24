@@ -1,8 +1,6 @@
 @charset "UTF-8";
 
 
-
-
 .mywriteContainer {
   position: relative;
   left: 2%;
@@ -24,14 +22,14 @@
   margin: 0;
 }
 
-.mywriteContainer span {
+.mywriteContainer span,
+.modal-title {
   font-weight: 500;
   font-size: 16px;
   margin-left: 18px;
   line-height: 3;
   color: #332e85;
 }
-
 
 .ContentDiv {
   display: flex;
@@ -40,56 +38,123 @@
   overflow: auto;
 }
 
-
-
 .ContentDiv .gwWriteBtns {
-  width: 15%;
+  width: 20%;
   display: flex;
-  justify-content: space-around;
+ 
+  
+}
+.ContentDiv .gwWriteBtns button{
   font-weight: 500;
-  font-size: 16px;
   color: #332e85;
+  font-size: 1rem;
+  border : none;
+  background-color: white;
+}
+.ContentDiv .gwWriteBtns button:hover{
+
+  font-weight: 600;
+  
 }
 
-/* 라디오 버튼 숨김  */
+
+/* 결재양식 선택 start ====================================================   */
 .form {
   display: none;
 }
 
 
-
-/* .selector .forSelect_1 {
-  color: #332e85;
-  font-size: 1.5rem;
-} */
-
 .selector {
   margin: 1rem 0;
+  width: 80%;
 }
 
 .selector>label {
   font-weight: 500;
 }
 
-.selector .formDetail {
-  display: flex;
-  width: 80%;
-  padding: 0.5rem;
-  border: 1px solid rgb(188, 185, 185);
-}
 
 .selector .formDetail {
-  display: flex;
-  padding: 0.5rem;
+  display: grid;
+  grid-template-columns: 10% 10% 5% 75%;
   border: 1px solid rgb(188, 185, 185);
+  text-align: center;
+}
+
+.selector .formDetail .formListDiv {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 
-
-
-.selector .formDetail select {
-  margin: 0 2rem;
+.selector .formDetail .filebtnContainer {
+  padding-left :1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
+
+.selector .formDetail .formListDiv .formSelector {
+  height: 80%;
+}
+
+.selector .formDetail button {
+  margin: 0.5em;
+}
+
+.selector .formDetail div:first-of-type {
+  background-color: rgb(208, 206, 206);
+  border-right: 1px solid rgb(188, 185, 185);
+  padding: 0.5em;
+  margin: 0;
+}
+
+/* End 결재양식 선택  ====================================================   */
+
+
+
+
+
+
+
+/* Start ======================== 결재선관련 ============================= */
+.createLineBtn {
+  font-weight: 500;
+  font-size: 16px;
+  color: #332e85;
+  background-color: white;
+  border: none;
+}
+
+.createLineBtn:hover{
+  font-weight: 600;
+
+}
+.modal-wrap {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+}
+
+.gwModal {
+  background-color: #EDEDF4;
+  width: 60%;
+  border-radius: 0.3em;
+}
+
+.close-wrap {
+  text-align: right;
+}
+
 
 .selector .lineDetail {
   display: block;
@@ -97,11 +162,9 @@
 
 .selector .lineDetail .lineTop {
   color: black;
-  width: 80%;
   height: 25rem;
   display: grid;
-  grid-template-columns: 30% 10% 60%;
-  border: 1px solid rgb(188, 185, 185);
+  grid-template-columns: 25% 15% 60%;
   overflow: auto;
 }
 
@@ -129,7 +192,6 @@
 }
 
 
-
 .selectEachLine {
   display: flex;
   flex-direction: row;
@@ -148,17 +210,27 @@
 }
 
 
-
-
 .lineDataContainer {
+  padding : 0 0.5em;
   display: grid;
-  grid-template-columns: 70% 10% 10% 10%;
+  grid-template-columns: 55% 15% 15% 15%;
 
 }
 
-.selector .insertedDetail {
-  width: 80%;
+.lineDataContainer button{
+ border :none;
+ background-color: white;
 }
+
+.lineDataContainer button:hover{
+  color :#EDEDF4;
+  font-weight: 800;
+ }
+
+/* End ======================== 결재선관련 ============================= */
+
+
+
 
 .selector .reportInsertForm {
   color: black;
@@ -170,39 +242,45 @@
 .selector .insertedDetail .fileInsertContainer,
 .selector .insertedDetail .readOfReferContainer {
   border: 1px solid rgb(188, 185, 185);
-  margin: 1rem 0;
+
 }
 
 .selector .insertedDetail .readOfReferContainer {
   display: grid;
-  grid-template-columns: 50%50%
+  grid-template-columns: 50% 50%;
+  margin: 1em 0;
 }
 
 
 
 .selector .insertedDetail .readOfReferContainer .readContainer,
 .selector .insertedDetail .readOfReferContainer .referContainer {
-  margin: 1rem;
   display: grid;
-  grid-template-columns: 10% 15% 15% 15% 15% 15% 15%;
+  grid-template-columns: 20% 16% 16% 16% 16% 16%;
 }
 
 
 .readContainer div:first-of-type,
 .referContainer div:first-of-type {
+  padding: 0.5em;
   background-color: rgb(208, 206, 206);
-  ;
-  border: 1px solid black;
   text-align: center;
+  border-right: 1px solid rgb(188, 185, 185);
+}
+
+.referContainer div:first-of-type {
+  border-left: 1px solid rgb(188, 185, 185);
 }
 
 
 .readContainer div:not(:first-of-type),
 .referContainer div:not(:first-of-type) {
-  border: 1px solid black;
-  border-left: none;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid rgb(188, 185, 185);
 }
+
 
 
 .lineGridContainer:first-of-type {
@@ -213,6 +291,7 @@
   justify-content: right;
 
 }
+
 .lineGridContainer:last-of-type {
   padding-top: 0.5rem;
   height: 45%;
@@ -232,7 +311,7 @@
 
 .lineSet {
   display: grid;
-  grid-template-rows: 30%40%30%;
+  grid-template-rows: 25% 25% 25% 25%;
 
 }
 
@@ -245,28 +324,25 @@
   justify-content: center;
 }
 
-.lineUserName,
-.gap {
+.twoBorder {
   border-top: 1px solid black;
   border-right: 1px solid black;
   text-align: center;
 }
 
+.twoBorderLast {
+  border-top: 1px solid black;
+  text-align: center;
+}
 
-.linedate {
+.dateBorder {
   text-align: center;
   border-top: 1px solid black;
   border-right: 1px solid black;
   border-bottom: 1px solid black;
 }
 
-.lineUserNameLast,
-.gapLast {
-  border-top: 1px solid black;
-  text-align: center;
-}
-
-.linedateLast {
+.dateBorderLast {
   text-align: center;
   border-top: 1px solid black;
   border-bottom: 1px solid black;
