@@ -4,7 +4,7 @@
 	align-items: center;
 	justify-content: center;
 	margin-left: 2%;
-	margin-bottom: 2%;
+	margin-bottom: 1%;
 	max-width: 1782px;
 	height: 100px;
 	background: #FFFFFF;
@@ -61,7 +61,8 @@
 }
 
 .scheduleContainer{
-    margin-left: 2%;
+    margin-top: 1%;
+	margin-left: 2%;
 	max-width: 1782px;
 	background: #FFFFFF;
 	overflow: auto;
@@ -216,7 +217,7 @@
 
 .calendar_container > .calendar_cell:hover{
 	background-color: #EDEDF4;
-	color: #ffffff;
+	/* color: #ffffff; */
 }
 
 .calendar_container > .calendar_cell > .calendar_item{
@@ -232,6 +233,10 @@
 	border-radius: 0.7rem;
 	margin-top:0.2rem;
 	margin-bottom:0.2rem;
+}
+
+.calendar_container > .calendar_cell > .calendar_item:hover{
+	color: #ffffff;
 }
 
 .calendar_container > .calendar_cell > .calendar_item_empty{

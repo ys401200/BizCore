@@ -287,7 +287,7 @@ function drawCalendar(container){
         t = tempDate.getFullYear();
         t += (tempDate.getMonth() < 9 ? "0" + (tempDate.getMonth() + 1) : tempDate.getMonth() + 1);
         t += (tempDate.getDate() < 10 ? "0" + tempDate.getDate() : tempDate.getDate()); // 셀에 저장해 둘 날짜 문자열 생성
-        html += "<div class=\"calendar_cell" + (storage.currentMonth === tempDate.getMonth() + 1 ? "" : " calendar_cell_blur") + "\" data-date=\"" + t + "\">"; // start row / 해당월이 아닌 날짜의 경우 calendar_cell_blue 클래스명을 셀에 추가 지정함
+        html += "<div class=\"calendar_cell" + (storage.currentMonth === tempDate.getMonth() + 1 ? "" : " calendar_cell_blur") + "\" data-date=\"" + t + "\" onclick='scheduleInsertForm();'>"; // start row / 해당월이 아닌 날짜의 경우 calendar_cell_blue 클래스명을 셀에 추가 지정함
         html += "<div class=\"calendar_date\">" + (calArr[x1].date.getDate()) + "</div>"; // 셀 안 최상단에 날짜 아이템을 추가함
         for(x2 = 0 ; x2 < slot ; x2++){
 			x3 = [];
@@ -298,13 +298,73 @@ function drawCalendar(container){
 				x3[1] = calArr[x1 + 1].slot[x2] === calArr[x1].slot[x2];
 			}
             t = calArr[x1].slot[x2] === undefined ? undefined : storage.scheduleList[calArr[x1].slot[x2]] ; //임시변수에 스케줄 아이템을 담아둠
-            html += "<div class=\"calendar_item" + (t === undefined ? " calendar_item_empty" : "") + (x3[0] ? " calendar_item_left" : "") + (x3[1] ? " calendar_item_right" : "") + "\"" + (t === undefined ? "" : " data-id=\"" + calArr[x1].slot[x2] + "\"") + ">" + (t === undefined ? "" : storage.user[t.user].userName + " : " + t.title) + "</div>";
+            html += "<div class=\"calendar_item" + (t === undefined ? " calendar_item_empty" : "") + (x3[0] ? " calendar_item_left" : "") + (x3[1] ? " calendar_item_right" : "") + "\"" + (t === undefined ? "" : " data-id=\"" + calArr[x1].slot[x2] + "\"") + " onclick='calendarItemDetail();'>" + (t === undefined ? "" : storage.user[t.user].userName + " : " + t.title) + "</div>";
         }
         html += "</div>";
     }
     container.innerHTML = html;
     return true;
 } // End of drawCalendar()
+
+function calendarItemDetail(){
+	let detailView, html = "", dataArray;
+
+	detailView = $(document).find(".detailContainer");
+	detailView.hide();
+
+	dataArray = [
+		{
+			"title": "일정시작일",
+			"value": "test 일정시작일",
+		},
+		{
+			"title": "일정종료일",
+			"value": "test 일정종료일",
+		},
+		{
+			"title": "장소",
+			"value": "test 장소",
+		},
+		{
+			"title": "계약",
+			"value": "test 계약",
+		},
+		{
+			"title": "영업기회",
+			"value": "test 영업기회",
+		},
+		{
+			"title": "담당자",
+			"value": "test 담당자",
+		},
+		{
+			"title": "매출처",
+			"value": "test 매출처",
+		},
+		{
+			"title": "엔드유저",
+			"value": "test 엔드유저",
+		},
+		{
+			"title": "활동형태",
+			"value": "test 활동형태",
+		},
+		{
+			"title": "제목",
+			"value": "test 제목",
+		},
+		{
+			"title": "내용",
+			"value": "test 내용",
+		}
+	];
+	
+	detailView.find(".detailMainSpan").text("테스트");
+	detailView.find(".detailBtns").html("<button type='button'>수정</button><button type='button'>삭제</button><button type='button'>닫기</button>");
+	html = detailViewForm(dataArray);
+	detailView.find(".detailContent").html(html);
+	detailView.show();
+}
 
 //
 // function createCalendar(year, month, type){
@@ -567,6 +627,514 @@ function scheduleSuccessView(result){
 
 function scheduleErrorView(){
 	alert("에러");
+}
+
+function scheduleInsertForm(){
+	let html, dataArray;
+
+	dataArray = [
+		{
+			"title": "일정선택",
+			"radioValue": [
+				{
+					"key": "radioSales",
+					"value": "영업일정",
+				},
+				{
+					"key": "radioTech",
+					"value": "기술일정",
+				},
+				{
+					"key": "radioOthers",
+					"value": "기타일정",
+				},
+			],
+			"type": "radio",
+			"elementName": "scheduleType",
+			"disabled": false,
+			"onClick": "scheduleRadioClick(this);",
+		},
+	];
+
+	html = detailViewFormModal(dataArray);
+
+	modal.show();
+	modal.headTitle.text("일정등록");
+	modal.content.css("width", "50%");
+	modal.body.html(html);
+	modal.body.css("max-height", "800px");
+	modal.confirm.text("등록");
+	modal.close.text("취소");
+	modal.confirm.attr("onclick", "scheduleInser();");
+	modal.close.attr("onclick", "modal.hide();");
+}
+
+function scheduleRadioClick(e){
+	let value, html, dataArray;
+	value = $(e).val();
+
+	if(value === "radioSales"){
+		dataArray = [
+			{
+				"title": "일정선택",
+				"radioValue": [
+					{
+						"key": "radioSales",
+						"value": "영업일정",
+					},
+					{
+						"key": "radioTech",
+						"value": "기술일정",
+					},
+					{
+						"key": "radioOthers",
+						"value": "기타일정",
+					},
+				],
+				"type": "radio",
+				"elementName": "scheduleType",
+				"disabled": false,
+				"onClick": "scheduleRadioClick(this);",
+			},
+			{
+				"title": "활동시작일",
+				"elementId": "from",
+				"type": "date",
+				"disabled": false,
+			},
+			{
+				"title": "활동종료일",
+				"elementId": "to",
+				"type": "date",
+				"disabled": false,
+			},
+			{
+				"title": "장소",
+				"elementId": "place",
+				"disabled": false,
+			},
+			{
+				"title": "활동형태",
+				"selectValue": [
+					{
+						"key": "10170",
+						"value": "회사방문",
+					},
+					{
+						"key": "10171",
+						"value": "기술지원",
+					},
+					{
+						"key": "10221",
+						"value": "제품설명",
+					},
+					{
+						"key": "10222",
+						"value": "시스템데모",
+					},
+					{
+						"key": "10223",
+						"value": "제품견적",
+					},
+					{
+						"key": "10224",
+						"value": "계약건 의사결정지원",
+					},
+					{
+						"key": "10225",
+						"value": "계약",
+					},
+					{
+						"key": "10226",
+						"value": "사후처리",
+					},
+					{
+						"key": "10227",
+						"value": "기타",
+					},
+					{
+						"key": "10228",
+						"value": "협력사요청",
+					},
+					{
+						"key": "10229",
+						"value": "협력사문의",
+					},
+					{
+						"key": "10230",
+						"value": "교육",
+					},
+					{
+						"key": "10231",
+						"value": "전화상담",
+					},
+					{
+						"key": "10232",
+						"value": "제조사업무협의",
+					},
+					{
+						"key": "10233",
+						"value": "외부출장",
+					},
+					{
+						"key": "10234",
+						"value": "제안설명회",
+					}
+				],
+				"type": "select",
+				"elementId": "type",
+				"disabled": false,
+			},
+			{
+				"title": "담당자",
+				"disabled": false,
+				"elementId": "user",
+				"dataKeyup": "user",
+			},
+			{
+				"title": "영업기회",
+				"elementId": "sopp",
+				"dataKeyup": "sopp",
+				"disabled": false,
+			},
+			{
+				"title": "매출처",
+				"disabled": false,
+				"elementId": "customer",
+				"dataKeyup": "customer",
+			},
+			{
+				"title": "엔드유저",
+				"disabled": false,
+				"elementId": "endUser",
+				"dataKeyup": "customer",
+			},
+			{
+				"title": "제목",
+				"elementId": "title",
+				"disabled": false,
+			},
+			{
+				"title": "내용",
+				"type": "textarea",
+			}
+		];
+	}else if(value === "radioTech"){
+		dataArray = [
+			{
+				"title": "일정선택",
+				"radioValue": [
+					{
+						"key": "radioSales",
+						"value": "영업일정",
+					},
+					{
+						"key": "radioTech",
+						"value": "기술일정",
+					},
+					{
+						"key": "radioOthers",
+						"value": "기타일정",
+					},
+				],
+				"type": "radio",
+				"elementName": "scheduleType",
+				"disabled": false,
+				"onClick": "scheduleRadioClick(this);",
+			},
+			{
+				"title": "등록구분",
+				"radioValue": [
+					{
+						"key": "NEW",
+						"value": "신규영업지원",
+					},
+					{
+						"key": "ING",
+						"value": "유지보수",
+					},
+				],
+				"type": "radio",
+				"elementName": "contractType",
+				"disabled": false,
+				"onClick": "techRadioClick(this);",
+			},
+			{
+				"title": "기술지원 요청명(*)",
+				"elementId": "techdTitle",
+				"disabled": false,
+			},
+			{
+				"title": "영업기회(*)",
+				"elementId": "sopp",
+				"dataKeyup": "sopp",
+				"disabled": false,
+			},
+			{
+				"title": "엔드유저(*)",
+				"elementId": "endUser",
+				"disabled": false,
+				"dataKeyup": "customer",
+			},
+			{
+				"title": "엔드유저 담당자",
+				"elementId": "cipOfendUser",
+				"disabled": false,
+				"dataKeyup": "user",
+			},
+			{
+				"title": "모델",
+				"disabled": false,
+			},
+			{
+				"title": "버전",
+				"disabled": false,
+			},
+			{
+				"title": "장소",
+				"disabled": false,
+			},
+			{
+				"title": "담당자(*)",
+				"dataKeyup": "user",
+				"elementId": "employee",
+				"dataKeyup": "user",
+			},
+			{
+				"title": "지원일자 시작일",
+				"disabled": false,
+				"type": "date",
+			},
+			{
+				"title": "지원일자 종료일",
+				"disabled": false,
+				"type": "date",
+			},
+			{
+				"title": "지원형태(*)",
+				"selectValue": [
+					{
+						"key": "",
+						"value": "선택",
+					},
+					{
+						"key": "10187",
+						"value": "전화상담",
+					},
+					{
+						"key": "10208",
+						"value": "현장방문",
+					},
+					{
+						"key": "10209",
+						"value": "원격지원",
+					}
+				],
+				"elementId": "salesType",
+				"type": "select",
+				"disabled": false,
+			},
+			{
+				"title": "지원단계(*)",
+				"selectValue": [
+					{
+						"key": "",
+						"value": "선택",
+					},
+					{
+						"key": "10213",
+						"value": "접수단계",
+					},
+					{
+						"key": "10214",
+						"value": "출동단계",
+					},
+					{
+						"key": "10215",
+						"value": "미계약에 따른 보류",
+					},
+					{
+						"key": "10253",
+						"value": "처리완료",
+					}
+				],
+				"elementId": "salesType",
+				"type": "select",
+				"disabled": false,
+			},
+			{
+				"title": "설명",
+				"type": "textarea",
+				"elementId": "detail",
+			},
+		];
+	}else{
+		dataArray = [
+			{
+				"title": "일정선택",
+				"radioValue": [
+					{
+						"key": "radioSales",
+						"value": "영업일정",
+					},
+					{
+						"key": "radioTech",
+						"value": "기술일정",
+					},
+					{
+						"key": "radioOthers",
+						"value": "기타일정",
+					},
+				],
+				"type": "radio",
+				"elementName": "scheduleType",
+				"disabled": false,
+				"onClick": "scheduleRadioClick(this);",
+			},
+			{
+				"title": "일정시작일",
+				"type": "date",
+				"disabled": false,
+			},
+			{
+				"title": "일정종료일",
+				"type": "date",
+				"disabled": false,
+			},
+			{
+				"title": "장소",
+				"disabled": false,
+			},
+			{
+				"title": "계약",
+				"disabled": false,
+			},
+			{
+				"title": "영업기회(*)",
+				"elementId": "sopp",
+				"dataKeyup": "sopp",
+				"disabled": false,
+			},
+			{
+				"title": "담당자(*)",
+				"dataKeyup": "user",
+				"elementId": "employee",
+				"dataKeyup": "user",
+			},
+			{
+				"title": "매출처",
+				"disabled": false,
+				"elementId": "customer",
+				"dataKeyup": "customer",
+			},
+			{
+				"title": "엔드유저",
+				"disabled": false,
+				"elementId": "endUser",
+				"dataKeyup": "customer",
+			},
+			{
+				"title": "일정구분",
+				"selectValue": [
+					{
+						"key": "",
+						"value": "기타일정",
+					},
+				],
+				"elementId": "salesType",
+				"type": "select",
+				"disabled": false,
+			},
+			{
+				"title": "활동형태",
+				"selectValue": [
+					{
+						"key": "10170",
+						"value": "회사방문",
+					},
+					{
+						"key": "10171",
+						"value": "기술지원",
+					},
+					{
+						"key": "10221",
+						"value": "제품설명",
+					},
+					{
+						"key": "10222",
+						"value": "시스템데모",
+					},
+					{
+						"key": "10223",
+						"value": "제품견적",
+					},
+					{
+						"key": "10224",
+						"value": "계약건 의사결정지원",
+					},
+					{
+						"key": "10225",
+						"value": "계약",
+					},
+					{
+						"key": "10226",
+						"value": "사후처리",
+					},
+					{
+						"key": "10227",
+						"value": "기타",
+					},
+					{
+						"key": "10228",
+						"value": "협력사요청",
+					},
+					{
+						"key": "10229",
+						"value": "협력사문의",
+					},
+					{
+						"key": "10230",
+						"value": "교육",
+					},
+					{
+						"key": "10231",
+						"value": "전화상담",
+					},
+					{
+						"key": "10232",
+						"value": "제조사업무협의",
+					},
+					{
+						"key": "10233",
+						"value": "외부출장",
+					},
+					{
+						"key": "10234",
+						"value": "제안설명회",
+					}
+				],
+				"type": "select",
+				"elementId": "type",
+				"disabled": false,
+			},
+			{
+				"title": "제목",
+				"elementId": "title",
+				"disabled": false,
+			},
+			{
+				"title": "내용",
+				"type": "textarea",
+			},
+		];
+	}
+
+	html = detailViewFormModal(dataArray);
+	modal.body.html(html);
+
+	setTimeout(() => {
+		$(document).find("[name='scheduleType'][value='" + value + "']").attr("checked", true);
+	}, 100);
 }
 
 function scheduleSelectChange(){

@@ -16,6 +16,12 @@
         <button type="button" onclick="scheduleSearchList();">검색</button>
     </div>
 </div>
+<div class="detailContainer">
+    <hr />
+    <span class="detailMainSpan"></span>
+    <div class="detailBtns"></div>
+    <div class="detailContent"></div>
+</div>
 <div class="scheduleContainer">
     <hr />
     <span>일정조회</span>
