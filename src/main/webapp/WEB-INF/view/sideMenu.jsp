@@ -73,7 +73,7 @@
 				<span id="slideSpan">+</span>
 			</a>
 			<ul id="panel">
-		  		<li><a href="/business/cont">계약조회</a></li>
+		  		<li><a href="/business/cont">- 계약조회</a></li>
 		  		<li><a href="#">계약등록</a></li>
 		  		<li><a href="#">업체정보조회</a></li>
 		  		<li><a href="#">매입/매출 자료등록</a></li>
@@ -107,34 +107,29 @@
 		
 	<ul id="gw">
 		<li>
-		
-			<a href="#">
-				<img src="/images/main/icons/mainHomeIcon.png" id="mainHomeIcon" />
-				<span>결재하기</span>
-				<span id="slideSpan">+</span>
+			<a href="gw/detail">
+				<img src="/images/main/icons/mainNoticeIcon.png" id="mainNoticeIcon" />
+				<span>전자결재 홈</span>
 			</a>
-			<ul id="panel">
-				<li><a href="gw/write">- 새 결재 진행</a></li>
-				<li><a href="gw/wait">- 결재 대기 문서</a></li>
-				<li><a href="gw/receive">- 결재 수신 문서</a></li>
-				<li><a href="gw/refer">- 참조/열람대기문서</a></li>
-				<li><a href="#">- 결재 예정 문서</a></li>
-			</ul>
+		</li>
+		<li>
+			<a href="gw/write">
+				<img src="/images/main/icons/mainNoticeIcon.png" id="mainNoticeIcon" />
+				<span>새 결재 진행</span>
+			</a>
 		</li>
 		<li>
 			<a href="#">
 				<img src="/images/main/icons/mainHomeIcon.png" id="mainHomeIcon" />
-				<span>개인문서함</span>
+				<span>진행 중 문서</span>
 				<span id="slideSpan">+</span>
 			</a>
 			<ul id="panel">
+				<li><a href="gw/wait">- 결재 대기 문서</a></li>
+				<li><a href="gw/wait">- 결재 예정 문서</a></li>
+				<li><a href="gw/wait">- 결재 수신 문서</a></li>
+				<li><a href="gw/wait">- 참조/열람대기문서</a></li>
 				
-				<li><a href="#">- 기안 문서함</a></li>
-				<li><a href="#">- 임시 저장함</a></li>
-				<li><a href="#">- 결재 문서함</a></li>
-				<li><a href="#">- 참조/열람 문서함</a></li>
-				<li><a href="#">- 수신 문서함</a></li>
-				<li><a href="#">- 발송 문서함</a></li>
 			</ul>
 		</li>
 		<li>
@@ -144,10 +139,11 @@
 				<span id="slideSpan">+</span>
 			</a>
 			<ul id="panel">
-				<li><a href="#">- 기안 완료함</a></li>
-				<li><a href="#">- 부서 참조함</a></li>
-				<li><a href="#">- 부서 수신함</a></li>
-				<li><a href="#">- 공문 발송함</a></li>
+				<li><a href="gw/wait">- 기안 문서함</a></li>
+				<li><a href="gw/wait">- 임시 저장함</a></li>
+				<li><a href="gw/wait">- 결재 문서함</a></li>
+				<li><a href="gw/wait">- 수신 문서함</a></li>
+				<li><a href="gw/wait">- 참조/열람 문서함</a></li>
 			</ul>
 		</li>
 		
@@ -161,8 +157,8 @@
 				<span id="slideSpan">+</span>
 			</a>
 			<ul id="panel">
-				<li><a href="#">전표조회</a></li>
-				<li><a href="#">전표등록</a></li>
+				<li><a href="#">- 전표조회</a></li>
+				<li><a href="#">- 전표등록</a></li>
 			</ul>
 		</li>
 		<li>
@@ -172,10 +168,10 @@
 				<span id="slideSpan">+</span>
 			</a>
 			<ul id="panel">
-				<li><a href="#">매입매출조회</a></li>
-				<li><a href="#">매입매출등록</a></li>
-				<li><a href="#">미지급현황</a></li>
-				<li><a href="#">미수금현황</a></li>
+				<li><a href="#">- 매입매출조회</a></li>
+				<li><a href="#">- 매입매출등록</a></li>
+				<li><a href="#">- 미지급현황</a></li>
+				<li><a href="#">- 미수금현황</a></li>
 			</ul>
 		</li>
 		<li>
@@ -185,11 +181,11 @@
 				<span id="slideSpan">+</span>
 			</a>
 			<ul id="panel">
-				<li><a href="#">자금현황조회</a></li>
-				<li><a href="#">계좌내역등록</a></li>
-				<li><a href="#">계좌내역조회</a></li>
-				<li><a href="#">카드내역등록</a></li>
-				<li><a href="#">카드내역조회</a></li>
+				<li><a href="#">- 자금현황조회</a></li>
+				<li><a href="#">- 계좌내역등록</a></li>
+				<li><a href="#">- 계좌내역조회</a></li>
+				<li><a href="#">- 카드내역등록</a></li>
+				<li><a href="#">- 카드내역조회</a></li>
 			</ul>
 		</li>
 		<li>
@@ -199,13 +195,13 @@
 				<span id="slideSpan">+</span>
 			</a>
 			<ul id="panel">
-				<li><a href="#">매입계산서조회</a></li>
-				<li><a href="#">매출계산서조회</a></li>
-				<li><a href="#">계산서등록</a></li>
-				<li><a href="#">계산서발행</a></li>
-				<li><a href="#">계산서연결현황</a></li>
-				<li><a href="#">거래처별매출원장</a></li>
-				<li><a href="#">거래처별매입원장</a></li>
+				<li><a href="#">- 매입계산서조회</a></li>
+				<li><a href="#">- 매출계산서조회</a></li>
+				<li><a href="#">- 계산서등록</a></li>
+				<li><a href="#">- 계산서발행</a></li>
+				<li><a href="#">- 계산서연결현황</a></li>
+				<li><a href="#">- 거래처별매출원장</a></li>
+				<li><a href="#">- 거래처별매입원장</a></li>
 			</ul>
 		</li>
 	</ul>
@@ -218,9 +214,9 @@
 				<span id="slideSpan">+</span>
 			</a>
 			<ul id="panel">
-				<li><a href="#">매입매출현황</a></li>
-				<li><a href="#">미지급현황</a></li>
-				<li><a href="#">미수금현황</a></li>
+				<li><a href="#">- 매입매출현황</a></li>
+				<li><a href="#">- 미지급현황</a></li>
+				<li><a href="#">- 미수금현황</a></li>
 			</ul>
 		</li>
 		<li>
@@ -230,8 +226,8 @@
 				<span id="slideSpan">+</span>
 			</a>
 			<ul id="panel">
-				<li><a href="#">입출금조회</a></li>
-				<li><a href="#">일자별자금일보</a></li>
+				<li><a href="#">- 입출금조회</a></li>
+				<li><a href="#">- 일자별자금일보</a></li>
 			</ul>
 		</li>
 		<li>
@@ -241,9 +237,9 @@
 				<span id="slideSpan">+</span>
 			</a>
 			<ul id="panel">
-				<li><a href="#">프로젝트진행조회</a></li>
-				<li><a href="#">프로젝트별수익분석</a></li>
-				<li><a href="#">계약별수익분석</a></li>
+				<li><a href="#">- 프로젝트진행조회</a></li>
+				<li><a href="#">- 프로젝트별수익분석</a></li>
+				<li><a href="#">- 계약별수익분석</a></li>
 			</ul>
 		</li>
 		<li>
@@ -253,8 +249,8 @@
 				<span id="slideSpan">+</span>
 			</a>
 			<ul id="panel">
-				<li><a href="#">근태현황조회</a></li>
-				<li><a href="#">개인별원가분석</a></li>
+				<li><a href="#">- 근태현황조회</a></li>
+				<li><a href="#">- 개인별원가분석</a></li>
 			</ul>
 		</li>
 		<li>
@@ -264,7 +260,7 @@
 				<span id="slideSpan">+</span>
 			</a>
 			<ul id="panel">
-				<li><a href="#">매출분석</a></li>
+				<li><a href="#">- 매출분석</a></li>
 			</ul>
 		</li>
 	</ul>
