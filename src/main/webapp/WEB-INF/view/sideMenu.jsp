@@ -107,49 +107,46 @@
 		
 	<ul id="gw">
 		<li>
-		
+			<a href="gw/home">
+				<img src="/images/main/icons/mainNoticeIcon.png" id="mainNoticeIcon" />
+				<span>전자결재 홈</span>
+			</a>
+		</li>
+		<li>
+			<a href="gw/write">
+				<img src="/images/main/icons/mainNoticeIcon.png" id="mainNoticeIcon" />
+				<span>새 결재 진행</span>
+			</a>
+		</li>
+		<li>
 			<a href="#">
 				<img src="/images/main/icons/mainHomeIcon.png" id="mainHomeIcon" />
-				<span>결재하기</span>
+				<span>진행 중 문서</span>
 				<span id="slideSpan">+</span>
 			</a>
 			<ul id="panel">
-				<li><a href="gw/write">- 새 결재 진행</a></li>
 				<li><a href="gw/wait">- 결재 대기 문서</a></li>
-				<li><a href="gw/receive">- 결재 수신 문서</a></li>
-				<li><a href="gw/refer">- 참조/열람대기문서</a></li>
-				<li><a href="#">- 결재 예정 문서</a></li>
-			</ul>
-		</li>
-		<li>
-			<a href="#">
-				<img src="/images/main/icons/mainHomeIcon.png" id="mainHomeIcon" />
-				<span>개인문서함</span>
-				<span id="slideSpan">+</span>
-			</a>
-			<ul id="panel">
+				<li><a href="gw/wait">- 결재 예정 문서</a></li>
+				<li><a href="gw/wait">- 결재 수신 문서</a></li>
+				<li><a href="gw/wait">- 참조/열람대기문서</a></li>
 				
-				<li><a href="#">- 기안 문서함</a></li>
-				<li><a href="#">- 임시 저장함</a></li>
-				<li><a href="#">- 결재 문서함</a></li>
-				<li><a href="#">- 참조/열람 문서함</a></li>
-				<li><a href="#">- 수신 문서함</a></li>
-				<li><a href="#">- 발송 문서함</a></li>
 			</ul>
 		</li>
 		<li>
 			<a href="#">
 				<img src="/images/main/icons/mainHomeIcon.png" id="mainHomeIcon" />
-				<span>부서문서함</span>
+				<span>문서함</span>
 				<span id="slideSpan">+</span>
 			</a>
 			<ul id="panel">
-				<li><a href="#">- 기안 완료함</a></li>
-				<li><a href="#">- 부서 참조함</a></li>
-				<li><a href="#">- 부서 수신함</a></li>
-				<li><a href="#">- 공문 발송함</a></li>
+				<li><a href="gw/wait">- 기안 문서함</a></li>
+				<li><a href="gw/wait">- 임시 저장함</a></li>
+				<li><a href="gw/wait">- 결재 문서함</a></li>
+				<li><a href="gw/wait">- 수신 문서함</a></li>
+				<li><a href="gw/wait">- 참조/열람 문서함</a></li>
 			</ul>
 		</li>
+		
 	</ul>
 	
 	<ul id="accounting">

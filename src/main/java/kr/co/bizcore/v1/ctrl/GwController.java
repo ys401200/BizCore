@@ -48,7 +48,7 @@ public class GwController {
 
         session.setAttribute("pathName", pathName);
 
-        result = "/gw/detail";
+        result = "/gw/list";
 
         return result;
     }

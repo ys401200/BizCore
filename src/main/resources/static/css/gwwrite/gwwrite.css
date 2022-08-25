@@ -41,7 +41,6 @@
 .ContentDiv .gwWriteBtns {
   width: 20%;
   display: flex;
- 
   
 }
 .ContentDiv .gwWriteBtns button{
@@ -81,6 +80,7 @@
   text-align: center;
 }
 
+
 .selector .formDetail .formListDiv {
   display: flex;
   align-items: center;
@@ -109,6 +109,38 @@
   border-right: 1px solid rgb(188, 185, 185);
   padding: 0.5em;
   margin: 0;
+}
+
+
+
+.selector .fileDetail {
+  display: grid;
+  grid-template-columns: 10% 90%;
+  border: 1px solid rgb(188, 185, 185);
+} 
+
+.selector .fileDetail >div:first-of-type {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(208, 206, 206);
+  border-right: 1px solid rgb(188, 185, 185);
+
+}
+
+.selector .fileDetail >div:last-of-type {
+  display: flex;
+  flex-direction: column;
+  padding : 0.5em;
+}
+
+
+
+.selector .fileDetail .filebtnContainer {
+  display : flex;
+  flex-direction: column;
+  align-items: left;
+  justify-content: left;
 }
 
 /* End 결재양식 선택  ====================================================   */

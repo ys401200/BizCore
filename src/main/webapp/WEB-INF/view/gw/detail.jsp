@@ -6,7 +6,12 @@
 				<jsp:include page="../sideMenu.jsp" />
 			</div>
 			<div id="bodyContent">
-				
+				<div class="container">
+					<hr />
+					<span></span>
+
+					
+				</div>
 			</div>
 		</div>
 		<div class="msg_cnt"></div>

@@ -18,9 +18,6 @@
 
 
 
-
-
-
             <div class="selector">
               <label onclick="selectChangeEvent(1)" class="forSelect_1" for="select_1">결재 양식 선택</label><input
                 type="radio" name="radio" id="select_1" class="form" />
@@ -30,7 +27,6 @@
                 <button type="button" class="formSelectbtn" onclick="selectForm()">
                   선택</button>
                 <input type="hidden" class="formNumHidden" />
-
               </div>
             </div>
 
@@ -42,7 +38,7 @@
 
 
             <div class="selector">
-              <label onclick="selectChangeEvent(2)" class="forSelect_2" for="select_2">결재선 선택</label><input type="radio"
+              <label onclick="selectChangeEvent(2)"  for="select_2">결재선 선택</label><input type="radio"
                 name="radio" id="select_2" class="form" /><button class="createLineBtn" onclick="showModal()">결재선
                 생성</button>
 
@@ -170,9 +166,12 @@
 
 
 
-                <div class="formDetail">
-                  <div>파일첨부</div><div class="filebtnContainer"><input type="file" /></div>
-                  <div class="insertedFileList"></div>
+                <div class="fileDetail">
+                  <div>파일첨부</div>
+                  <div class="filebtnContainer">
+                    <input type="file" class="gwFileInput" onchange="drawSelectedFileList(this)"/>
+                    <div class="insertedFileList"></div>
+                  </div>
                 </div>
               </div>
 

@@ -137,7 +137,7 @@ function selectForm() {
   let writer = storage.user[my].userName;
   let formId = storage.formList[hidden.val()].id;
   $("#" + formId + "_writer").val(writer);
-  
+
   let date = getYmdHyphen();
   $("#" + formId + "_created").val(date);
   $(".testClass").prop('checked', false);
@@ -378,4 +378,20 @@ function createLine() {
 function getYmdHyphen() {
   let d = new Date();
   return d.getFullYear() + "-" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "-" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString());
+}
+
+function drawSelectedFileList(obj) {
+  let fileName = obj.value.split("\\");
+  fileName = fileName[fileName.length - 1];
+  let fileListHtml = "";
+  let originFileList = $(".insertedFileList").html();
+  fileListHtml += "<div>" + fileName + "<button type='button' onclick='deleteFile(this)'>x</button></div></div>"
+  originFileList += fileListHtml;
+  $(".insertedFileList").html(originFileList);
+  $(".gwFileInput").val("");
+}
+
+function deleteFile(obj) {
+  $(".gwFileInput").val("");
+  obj.parentElement.remove();
 }
