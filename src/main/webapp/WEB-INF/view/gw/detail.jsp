@@ -8,11 +8,31 @@
 			<div id="bodyContent">
 				<div class="container">
 					<hr />
-					<span></span>
-
-					
+					<span>결재 대기 문서</span>
+					<div class="waitDiv"></div>
 				</div>
 			</div>
+
+
+			<div class="halfBodyContent">
+
+				<div class="halfContainer">
+					<hr />
+					<span>결재 예정 문서</span>
+					<div class="listDiv"></div>
+					<div class="pageContainer"></div>
+				</div>
+				<div class="halfContainer">
+					<hr />
+					<span>결재 수신 문서</span>
+					<div class="listDiv"></div>
+					<div class="pageContainer"></div>
+				</div>
+				
+
+			</div>
+
+
 		</div>
 		<div class="msg_cnt"></div>
 		<jsp:include page="../bottom.jsp" />

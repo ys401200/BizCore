@@ -99,7 +99,7 @@ button {
 	color: #332E85;
 }
 
-.subContainer .listPageDiv > div {
+.subContainer .listPageDiv>div {
 	margin: 0 2%;
 }
 
@@ -110,12 +110,73 @@ button {
 	grid-template-columns: 10% 10% 20% 20% 10% 10% 10% 10%;
 }
 
-.subContainer .listPageDiv > div:first-of-type {
+.subContainer .listPageDiv>div:first-of-type {
 	text-align: right;
 	font-size: 1rem;
 	font-weight: 500;
 }
 
-.subContainer .listPageDiv > div:last-of-type {
+.subContainer .listPageDiv>div:last-of-type {
 	margin-bottom: 2%;
+}
+
+.detailReport {
+	display: grid;
+	grid-template-columns: 60% 40%;
+}
+
+
+.detailReport .comment {
+	background-color: #EDEDF4;
+	margin: 1em;
+	border-radius: 3px;
+}
+
+.detailReport .comment .reportInfoTab {
+	padding : 1em;
+	text-align: center;
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+}
+
+.detailReport .comment .reportInfoTab>div {
+	padding : 0.5em;
+	cursor: pointer;
+	color:  #332E85;
+	background-color: white;
+	border-bottom: 2px solid  #332E85;
+}
+
+
+
+.detailReport .comment .reportInfoTab>div:first-of-type {
+	color: white;
+	background-color: #332E85;
+	border-bottom: none;
+}
+
+
+
+
+
+
+
+
+.examineLine {
+	background-color: white;
+	margin: 1em;
+	display: grid;
+	grid-template-columns: 15% 10% 25% 50%;
+}
+
+.examineLine>div {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid black;
+	border-left: none;
+}
+
+.examineLine>div:first-of-type {
+	border: 1px solid black;
 }
