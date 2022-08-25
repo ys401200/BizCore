@@ -40,13 +40,26 @@
 }
 
 #sideMenu ul:not(#panel) li a:hover{
-	background-color: #EDEDF4;
+	background-color: #19166a;
 }
 
 #sideMenu ul li a.active{
 	background-color: #211e74;
-	border-left:4px solid #89ceff;
 }
+
+#business>li>a.active{
+	border-left:3px solid #89ceff;
+}
+
+/* /그룹웨어 active 색상 시작/ */
+#gw li a.active{
+	border-left:3px solid #8989ff;
+}
+
+#sideMenu #gw li #panel li{
+	border-left:3px solid #8989ff;
+}
+/* /그룹웨어 active 색상 끝/ */
 
 #sideMenu ul li a.active span{
 	color: #fff;
@@ -57,7 +70,7 @@
 	background-color:#171460;
 }
 
-#sideMenu ul li a:hover #mainHomeIcon{
+/* #sideMenu ul li a:hover #mainHomeIcon{
 	content: url("/images/main/icons/mainHomeIcon_hover.png");
 }
 
@@ -159,15 +172,17 @@
 
 #sideMenu ul li a.active #mainLogOutIcon{
 	content: url("/images/main/icons/mainLogOutIcon_hover.png");
-}
+} */
 
 #sideMenu ul li a:hover span:not(#slideSpan){
-	color: #302D81;
-	font-weight: 600;
+	color: #fff;
+	font-weight: 500;
+	opacity:1;
 }
 
 #sideMenu ul li a:hover span{
-	color: #302D81;
+	color: #fff;
+	opacity:0.8;
 }
 
 #sideMenu ul li a img{
@@ -178,16 +193,16 @@
 }
 
 #sideMenu ul li a span:not(#slideSpan){
-	margin-left: 10px;
+	margin-left: 8px;
 	font-weight: 500;
 	font-size: 14px;
 }
 
 #sideMenu ul li a.active #slideSpan{
 	float: right;
-	margin-right: 18px;
+	margin-right: 15px;
 	font-weight: 400;
-	font-size: 32px;
+	font-size: 24px;
 	opacity: 0.8;
 }
 
@@ -211,12 +226,12 @@
 	line-height: 55px;
 	background-color: #211e74;
 	/* border-bottom: 1.5px solid #302D81; */
-	border-left:4px solid #89ceff; 
+	border-left:3px solid #89ceff; 
 }
 
 #sideMenu ul li #panel li a{
 	display: block;
-	padding: 0 25%;
+	padding: 0 0 0 25%;
 	text-decoration: none;
 	font-weight: 500;
 	font-size: 13px;

@@ -382,10 +382,10 @@ input[name="tabItem"] {
 
 #header #mainTopLogo #mainTopLogoImg{
 	position: relative;
-	width: 130px;
+	width: 110px;
 	height:auto;
 	left: 9%;
-	top: 24px;
+	top: 15px;
 }
 
 #header #mainTopLogo #mainTopEllipseImg{
