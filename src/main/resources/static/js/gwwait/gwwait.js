@@ -165,6 +165,17 @@ function drawNoticeList() {
 	});
 }// End of drawNoticeList()
 
+
+
+function noticeSuccessList(result) {
+	storage.noticeList = result;
+	window.setTimeout(drawNoticeList, 200);
+}
+
+function noticeErrorList() {
+	alert("에러");
+}
+
 function noticeDetailView(event) {// 선택한 그리드의 글 번호 받아오기 
 	// let no = event.dataset.id;
 	// let url;
@@ -200,43 +211,65 @@ function noticeDetailView(event) {// 선택한 그리드의 글 번호 받아오
 
 
 
-
-
-
-
 } // End of noticeDetailView()
 
 
 
-
+///글 제목 눌렀을때 상세 조회하는 페이지 그리기 
 function getDetailView(no) {
 
 	let testForm = storage.formList[0].form;
-	let detailHtml = "<div class='mainBtnDiv'><button type='button' onclick='showAppModal()'>결재하기</button><button type='button'>문서 수정</button></div><div class='detailReport'><div class='selectedReportview'></div><div class='comment'></div></div>"
+	let detailHtml = "<div class='mainBtnDiv'><button type='button' onclick='showAppModal()'>결재하기</button>" +
+		"<button type='button'>결재선 수정</button>" +
+		"<button type='button' onclick='toWriteMode();createConfirmBtn(this)'>문서 수정</button></div>" +
+		"<div class='detailReport'><div class='selectedReportview'></div><div class='comment'></div></div>"
+
+
 	$(".listPageDiv").html(detailHtml);
 	$(".selectedReportview").html(testForm);
 
 
+	let tabHtml = "<div class='reportInfoTab'>" +
+		"<label id='lineInfo' onclick='changeTab(this)'>결재정보</label><label id='changeInfo' onclick='changeTab(this)'>변경이력</label></div>" +
+		"<div class='tabDetail'></div>"
+	$(".comment").html(tabHtml);
+	toReadMode();
 	drawCommentLine();
 
 }
 
+// 탭 누를때마다의 이벤트 주기 
+function changeTab(obj) {
 
-function noticeSuccessList(result) {
-	storage.noticeList = result;
-	window.setTimeout(drawNoticeList, 200);
+	$(obj).css("background-color", "#332E85");
+	$(obj).css("color", "white");
+	$(obj).css("border", "none");
+
+	if (obj.id == 'lineInfo') {
+
+		$("#changeInfo").css("background-color", "white");
+		$("#changeInfo").css("color", "#332E85");
+		$("#changeInfo").css("border-bottom", "2px solid #332E85");
+		drawCommentLine();
+
+	} else if (obj.id = 'changeInfo') {
+		$("#lineInfo").css("background-color", "white");
+		$("#lineInfo").css("color", "#332E85");
+		$("#lineInfo").css("border-bottom", "2px solid #332E85");
+		drawChangeInfo();
+
+	}
 }
 
-function noticeErrorList() {
-	alert("에러");
-}
 
 
-
-
-
-
+// 결재정보 탭 눌렀을때 결재정보 그리는 함수 
 function drawCommentLine() {
+
+	let target = $(".tabDetail");
+
+	// 임시 데이터 ----------------------------------------------------
+
 	let examine = [{
 		"name": "이송현",
 		"status": "승인",
@@ -250,8 +283,6 @@ function drawCommentLine() {
 		"comment": "확인했습니다 인했습니다인했습니다인했습니다인했습니다인했습니다인했습니다인했습니다"
 	}]
 
-
-
 	let approval = [{
 		"name": "이승우",
 		"status": "",
@@ -259,76 +290,86 @@ function drawCommentLine() {
 		"comment": ""
 	}]
 
-	let target = $(".comment");
+	// 임시 데이터 ---------------------------------------------------- 
 
 
-	let examineHtml = "<div class='reportInfoTab'>" +
-		"<label id='lineInfo' onclick='changeTab(this)'>결재선</label><label id='reportInfo' onclick='changeTab(this)'>문서정보</label><label id='changeInfo' onclick='changeTab(this)'>변경이력</label></div>" +
-		"<div class='tabDetail'></div>"
-	target.html(examineHtml);
+	let detail = "<div class='tapLine'><div>타입</div><div>이름</div><div>상태</div><div>일자</div><div>의견</div></div>";
+	let lineDetailHtml = "";
+	let approvalDetailHtml = "";
 
 
-
-	let lineDetailHtml = ""
 	for (let i = 0; i < examine.length; i++) {
-		lineDetailHtml += "<div class='examineLine'><div>검토</div><div>" + examine[i].name + "</div><div>" + examine[i].status + "</div><div>" + examine[i].approved + "</div><div>" + examine[i].comment + "</div></div>";
+		lineDetailHtml += "<div class='tapLine examineLine'><div>검토</div><div>" + examine[i].name + "</div><div>" + examine[i].status + "</div><div>" + examine[i].approved + "</div><div>" + examine[i].comment + "</div></div>";
 	}
-
-
-
-	let approvalDetailHtml = ""
-
 	for (let i = 0; i < approval.length; i++) {
-		approvalDetailHtml += "<div class='approvalLine'><div>결재</div><div>" + approval[i].name + "</div><div>" + approval[i].status + "</div><div>" + approval[i].approved + "</div><div>" + approval[i].comment + "</div></div>";
+		approvalDetailHtml += "<div class='tapLine approvalLine'><div>결재</div><div>" + approval[i].name + "</div><div>" + approval[i].status + "</div><div>" + approval[i].approved + "</div><div>" + approval[i].comment + "</div></div>";
 	}
 
 	lineDetailHtml += approvalDetailHtml;
-
-	$(".tabDetail").html(lineDetailHtml);
-
-
+	detail += lineDetailHtml;
+	target.html(detail);
 
 }
 
 
+//  문서 정보 그리는 함수  
+function drawChangeInfo() {
+	let target = $(".tabDetail");
+	// 임시 데이터 ----------------------------------------------------
 
-function changeTab(obj) {
 
-	$(obj).css("background-color", "#332E85");
-	$(obj).css("color", "white");
-	$(obj).css("border", "none");
+	let changeData = [{
+		"type": "검토",
+		"name": "구민주",
+		"modifyDate": "22-08-18",
+		"modCause": " 거래처 수정 "
+	},
+	{
+		"type": "검토",
+		"name": "이송현",
+		"modifyDate": "22-08-19",
+		"modCause": "수량 수정 했습니다 테스트로 수정 했습니다  "
+	}]
 
-	if (obj.id == 'lineInfo') {
-		$("#reportInfo").css("background-color", "white");
-		$("#reportInfo").css("color", "#332E85");
-		$("#reportInfo").css("border-bottom", "2px solid #332E85");
-		$("#changeInfo").css("background-color", "white");
-		$("#changeInfo").css("color", "#332E85");
-		$("#changeInfo").css("border-bottom", "2px solid #332E85");
-	} else if (obj.id == 'reportInfo') {
-		$("#lineInfo").css("background-color", "white");
-		$("#lineInfo").css("color", "#332E85");
-		$("#lineInfo").css("border-bottom", "2px solid #332E85");
-		$("#changeInfo").css("background-color", "white");
-		$("#changeInfo").css("color", "#332E85");
-		$("#changeInfo").css("border-bottom", "2px solid #332E85");
-	} else if (obj.id = 'changeInfo') {
-		$("#lineInfo").css("background-color", "white");
-		$("#lineInfo").css("color", "#332E85");
-		$("#lineInfo").css("border-bottom", "2px solid #332E85");
-		$("#reportInfo").css("background-color", "white");
-		$("#reportInfo").css("color", "#332E85");
-		$("#reportInfo").css("border-bottom", "2px solid #332E85");
+	// 임시 데이터 ---------------------------------------------------- 
+
+	let detail = "<div class='tapLineB'><div>타입</div><div>이름</div><div>변경일자</div><div>변경내용</div></div>";
+	let changeHtml = "";
+
+
+	for (let i = 0; i < changeData.length; i++) {
+		changeHtml += "<div class='tapLineB changeDataLine'>" +
+			"<div class='changeType'>" + changeData[i].type + "</div><div class='changeName' >" + changeData[i].name + "</div><div class='changeDate'>" + changeData[i].modifyDate + "</div><div class='changeCause'>" + changeData[i].modCause + "</div>" +
+			"</div>"
 	}
+
+
+	detail += changeHtml;
+	target.html(detail);
+
 }
 
 
 
-
+// 결재하기 모달 함수
 function closeModal(obj) {
 	$(".modal-wrap").hide();
+	// 체크된 것 초기화 
+	$("input:radio[name='type']").prop("checked", false);
+
 }
 
 function showAppModal() {
 	$(".modal-wrap").show();
+	$("input:radio[name='type']").prop("checked", false);
+
+}
+
+
+function createConfirmBtn(obj) {
+	let div = document.getElementsByClassName("mainBtnDiv")
+	if (div[0].childElementCount < 4) {
+		$(".mainBtnDiv").append("<button type='button' onclick='toReadMode(); this.remove()' >수정완료 </button>");
+	}
+
 }

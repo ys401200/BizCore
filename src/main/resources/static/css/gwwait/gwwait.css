@@ -61,14 +61,6 @@
 
 
 
-button {
-	margin: 0.25rem;
-	border: none;
-	color: #ffffff;
-	background-color: #332e85;
-	border-radius: 3px;
-}
-
 .container {
 	position: relative;
 	left: 2%;
@@ -101,6 +93,21 @@ button {
 
 .subContainer .listPageDiv>div {
 	margin: 0 2%;
+}
+
+
+
+
+
+.mainBtnDiv button {
+	margin: 1em 1em 1em 0;
+	font-weight: 500;
+	font-size: 0.8em;
+	line-height: 2;
+	color: #332E85;
+	background-color: white;
+	border: none;
+	border-radius: 3px;
 }
 
 
@@ -140,7 +147,7 @@ button {
 	padding: 1em;
 	text-align: center;
 	display: grid;
-	grid-template-columns: repeat(3, 1fr);
+	grid-template-columns: repeat(2, 1fr);
 }
 
 .detailReport .comment .reportInfoTab input[type="radio"] {
@@ -163,28 +170,29 @@ button {
 }
 
 
-
-.examineLine,
-.approvalLine {
+.tapLine,
+.tapLineB {
 	background-color: white;
 	margin: 0.5em 1em;
 	display: grid;
 	grid-template-columns: 10% 15% 10% 25% 40%;
 }
 
-.examineLine>div,
-.approvalLine>div {
+.tapLineB {
+	grid-template-columns: 10% 15% 25% 50%;
+}
+
+.tapLine>div,
+.tapLineB>div {
 	padding: 0.5em;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	border: 2px solid #EDEDF4;
 	border-left: none;
 }
 
-.examineLine>div:first-of-type,
-.approvalLine>div:first-of-type {
-	border: 2px solid #EDEDF4;
+.tapLine:first-of-type>div,
+.tapLineB:first-of-type>div {
 	background-color: #332E85;
 	color: white;
 }
