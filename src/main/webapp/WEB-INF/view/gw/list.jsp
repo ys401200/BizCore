@@ -30,9 +30,42 @@
 							<div class="listDiv"></div>
 							<div class="pageContainer"></div>
 						</div>
+
+						<div class="modal-wrap">
+							<div class="setApprovalModal">
+								<div class="modal-title">결재하기</div>
+								<div class="modal-body">
+									<div class="labelContainer">
+										<label><input type="radio" name="type"/>승인</label>
+										<label><input type="radio" name="type" />반려</label>
+										<label><input type="radio" name="type" />협의요청</label>
+										<label><input type="radio" name="type" />보류</label>
+										<label><input type="radio" name="type" />선결</label>
+										<label><input type="radio" name="type" />후결</label>
+									</div>
+									<label>의견 <input type="text"/></label>
+
+
+
+
+								</div>
+								<div class="close-wrap">
+									<button id="quit" onclick="closeModal(this)">취소</button>
+
+									<button id="set" onclick="closeModal(this)">결재</button>
+
+								</div>
+
+
+							</div>
+
+
+
+						</div>
 					</div>
 				</div>
 			</div>
+		</div>
 
 		</div>
 		<div class="msg_cnt"></div>

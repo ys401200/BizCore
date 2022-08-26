@@ -7,6 +7,7 @@ $(document).ready(() => {
 	}, 300);
 
 	waitDefault();
+	$(".modal-wrap").hide();
 });
 
 
@@ -186,7 +187,7 @@ function noticeDetailView(event) {// 선택한 그리드의 글 번호 받아오
 	// 	}
 	// })
 	let searchDiv = $(".waitSearchContainer").hide();
-	let listDiv = $(".listPageDiv").hide();
+
 	let target = $(".container");
 	let no = event.dataset.id;
 
@@ -211,10 +212,8 @@ function noticeDetailView(event) {// 선택한 그리드의 글 번호 받아오
 function getDetailView(no) {
 
 	let testForm = storage.formList[0].form;
-	let detailHtml = "<div class='detailReport'><div class='selectedReportview'></div><div class='comment'></div></div>"
-	$(".container").html(detailHtml);
-
-
+	let detailHtml = "<div class='mainBtnDiv'><button type='button' onclick='showAppModal()'>결재하기</button><button type='button'>문서 수정</button></div><div class='detailReport'><div class='selectedReportview'></div><div class='comment'></div></div>"
+	$(".listPageDiv").html(detailHtml);
 	$(".selectedReportview").html(testForm);
 
 
@@ -238,36 +237,98 @@ function noticeErrorList() {
 
 
 function drawCommentLine() {
-	// let examine = [{
-	// 	"name": "구민주",
-	// 	"status": "결재",
-	// 	"approved": "2022-08-19",
-	// 	"comment": "확인했습니다"
-	// },
-	// {
-	// 	"name": "이송현",
-	// 	"status": "결재",
-	// 	"approved": "2022-08-19",
-	// 	"comment": "확인했습니다"
-	// }]
+	let examine = [{
+		"name": "이송현",
+		"status": "승인",
+		"approved": "2022-08-19",
+		"comment": "확인"
+	},
+	{
+		"name": "구민주",
+		"status": "승인",
+		"approved": "2022-08-19",
+		"comment": "확인했습니다 인했습니다인했습니다인했습니다인했습니다인했습니다인했습니다인했습니다"
+	}]
 
 
 
-	// let approval = [{
-	// 	"name": "이승우",
-	// 	"status": "결재",
-	// 	"approved": "2022-08-19",
-	// 	"comment": "확인했습니다"
-	// }]
+	let approval = [{
+		"name": "이승우",
+		"status": "",
+		"approved": "",
+		"comment": ""
+	}]
 
 	let target = $(".comment");
 
 
-	let examineHtml = "<div class='reportInfoTab'><div>결재선</div><div>문서정보</div><div>변경이력</div></div>";
+	let examineHtml = "<div class='reportInfoTab'>" +
+		"<label id='lineInfo' onclick='changeTab(this)'>결재선</label><label id='reportInfo' onclick='changeTab(this)'>문서정보</label><label id='changeInfo' onclick='changeTab(this)'>변경이력</label></div>" +
+		"<div class='tabDetail'></div>"
 	target.html(examineHtml);
-	// for (let i = 0; i < examine.length; i++) {
-	// 	examineHtml += "<div class='examineLine'><div>" + examine[i].name + "</div><div>" + examine[i].status + "</div><div>" + examine[i].approved + "</div><div>" + examine[i].comment + "</div></div>";
-	// 	target.html(examineHtml);
-	// }
 
+
+
+	let lineDetailHtml = ""
+	for (let i = 0; i < examine.length; i++) {
+		lineDetailHtml += "<div class='examineLine'><div>검토</div><div>" + examine[i].name + "</div><div>" + examine[i].status + "</div><div>" + examine[i].approved + "</div><div>" + examine[i].comment + "</div></div>";
+	}
+
+
+
+	let approvalDetailHtml = ""
+
+	for (let i = 0; i < approval.length; i++) {
+		approvalDetailHtml += "<div class='approvalLine'><div>결재</div><div>" + approval[i].name + "</div><div>" + approval[i].status + "</div><div>" + approval[i].approved + "</div><div>" + approval[i].comment + "</div></div>";
+	}
+
+	lineDetailHtml += approvalDetailHtml;
+
+	$(".tabDetail").html(lineDetailHtml);
+
+
+
+}
+
+
+
+function changeTab(obj) {
+
+	$(obj).css("background-color", "#332E85");
+	$(obj).css("color", "white");
+	$(obj).css("border", "none");
+
+	if (obj.id == 'lineInfo') {
+		$("#reportInfo").css("background-color", "white");
+		$("#reportInfo").css("color", "#332E85");
+		$("#reportInfo").css("border-bottom", "2px solid #332E85");
+		$("#changeInfo").css("background-color", "white");
+		$("#changeInfo").css("color", "#332E85");
+		$("#changeInfo").css("border-bottom", "2px solid #332E85");
+	} else if (obj.id == 'reportInfo') {
+		$("#lineInfo").css("background-color", "white");
+		$("#lineInfo").css("color", "#332E85");
+		$("#lineInfo").css("border-bottom", "2px solid #332E85");
+		$("#changeInfo").css("background-color", "white");
+		$("#changeInfo").css("color", "#332E85");
+		$("#changeInfo").css("border-bottom", "2px solid #332E85");
+	} else if (obj.id = 'changeInfo') {
+		$("#lineInfo").css("background-color", "white");
+		$("#lineInfo").css("color", "#332E85");
+		$("#lineInfo").css("border-bottom", "2px solid #332E85");
+		$("#reportInfo").css("background-color", "white");
+		$("#reportInfo").css("color", "#332E85");
+		$("#reportInfo").css("border-bottom", "2px solid #332E85");
+	}
+}
+
+
+
+
+function closeModal(obj) {
+	$(".modal-wrap").hide();
+}
+
+function showAppModal() {
+	$(".modal-wrap").show();
 }

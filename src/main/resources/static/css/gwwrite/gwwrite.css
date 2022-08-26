@@ -22,8 +22,7 @@
   margin: 0;
 }
 
-.mywriteContainer span,
-.modal-title {
+.mywriteContainer span {
   font-weight: 500;
   font-size: 16px;
   margin-left: 18px;
@@ -41,19 +40,21 @@
 .ContentDiv .gwWriteBtns {
   width: 20%;
   display: flex;
-  
+
 }
-.ContentDiv .gwWriteBtns button{
+
+.ContentDiv .gwWriteBtns button {
   font-weight: 500;
   color: #332e85;
   font-size: 1rem;
-  border : none;
+  border: none;
   background-color: white;
 }
-.ContentDiv .gwWriteBtns button:hover{
+
+.ContentDiv .gwWriteBtns button:hover {
 
   font-weight: 600;
-  
+
 }
 
 
@@ -89,7 +90,7 @@
 
 
 .selector .formDetail .filebtnContainer {
-  padding-left :1rem;
+  padding-left: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -117,9 +118,9 @@
   display: grid;
   grid-template-columns: 10% 90%;
   border: 1px solid rgb(188, 185, 185);
-} 
+}
 
-.selector .fileDetail >div:first-of-type {
+.selector .fileDetail>div:first-of-type {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -128,16 +129,16 @@
 
 }
 
-.selector .fileDetail >div:last-of-type {
+.selector .fileDetail>div:last-of-type {
   display: flex;
   flex-direction: column;
-  padding : 0.5em;
+  padding: 0.5em;
 }
 
 
 
 .selector .fileDetail .filebtnContainer {
-  display : flex;
+  display: flex;
   flex-direction: column;
   align-items: left;
   justify-content: left;
@@ -160,10 +161,11 @@
   border: none;
 }
 
-.createLineBtn:hover{
+.createLineBtn:hover {
   font-weight: 600;
 
 }
+
 .modal-wrap {
   position: fixed;
   top: 0;
@@ -177,8 +179,16 @@
 
 }
 
+.modal-title {
+  font-weight: 500;
+  font-size: 16px;
+  margin-left: 18px;
+  line-height: 3;
+  color: white;
+}
+
 .gwModal {
-  background-color: #EDEDF4;
+  background-color: #332e85;
   width: 60%;
   border-radius: 0.3em;
 }
@@ -210,11 +220,9 @@
   padding: 1rem;
   margin: 1rem;
   background-color: #ffffff;
-  border: 1px solid rgb(188, 185, 185);
   overflow: auto;
+  border-radius: 3px;
 }
-
-
 
 .selector .lineDetail #lineCenter {
   display: flex;
@@ -243,21 +251,21 @@
 
 
 .lineDataContainer {
-  padding : 0 0.5em;
+  padding: 0 0.5em;
   display: grid;
   grid-template-columns: 55% 15% 15% 15%;
 
 }
 
-.lineDataContainer button{
- border :none;
- background-color: white;
+.lineDataContainer button {
+  border: none;
+  background-color: white;
 }
 
-.lineDataContainer button:hover{
-  color :#EDEDF4;
+.lineDataContainer button:hover {
+  color: #EDEDF4;
   font-weight: 800;
- }
+}
 
 /* End ======================== 결재선관련 ============================= */
 

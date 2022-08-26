@@ -120,36 +120,43 @@ button {
 	margin-bottom: 2%;
 }
 
-.detailReport {
+.listPageDiv .detailReport {
 	display: grid;
 	grid-template-columns: 60% 40%;
 }
 
 
-.detailReport .comment {
+.listPageDiv .detailReport .selectedReportview {
+	border: 1px solid black;
+}
+
+.listPageDiv .detailReport .comment {
 	background-color: #EDEDF4;
-	margin: 1em;
+	margin: 0 1em;
 	border-radius: 3px;
 }
 
 .detailReport .comment .reportInfoTab {
-	padding : 1em;
+	padding: 1em;
 	text-align: center;
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
 }
 
-.detailReport .comment .reportInfoTab>div {
-	padding : 0.5em;
-	cursor: pointer;
-	color:  #332E85;
-	background-color: white;
-	border-bottom: 2px solid  #332E85;
+.detailReport .comment .reportInfoTab input[type="radio"] {
+	display: none;
 }
 
 
+.detailReport .comment .reportInfoTab>label {
+	padding: 0.5em;
+	cursor: pointer;
+	color: #332E85;
+	background-color: white;
+	border-bottom: 2px solid #332E85;
+}
 
-.detailReport .comment .reportInfoTab>div:first-of-type {
+.detailReport .comment .reportInfoTab>label:first-of-type {
 	color: white;
 	background-color: #332E85;
 	border-bottom: none;
@@ -157,26 +164,82 @@ button {
 
 
 
-
-
-
-
-
-.examineLine {
+.examineLine,
+.approvalLine {
 	background-color: white;
-	margin: 1em;
+	margin: 0.5em 1em;
 	display: grid;
-	grid-template-columns: 15% 10% 25% 50%;
+	grid-template-columns: 10% 15% 10% 25% 40%;
 }
 
-.examineLine>div {
+.examineLine>div,
+.approvalLine>div {
+	padding: 0.5em;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	border: 1px solid black;
+	border: 2px solid #EDEDF4;
 	border-left: none;
 }
 
-.examineLine>div:first-of-type {
-	border: 1px solid black;
+.examineLine>div:first-of-type,
+.approvalLine>div:first-of-type {
+	border: 2px solid #EDEDF4;
+	background-color: #332E85;
+	color: white;
+}
+
+.mainBtnDiv {
+	display: flex;
+	align-items: left;
+}
+
+.modal-wrap {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.12);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.modal-wrap .setApprovalModal {
+	background-color: #332e85;
+	width: 20%;
+	border-radius: 0.3em;
+}
+
+.modal-wrap .setApprovalModal .modal-title {
+	font-weight: 500;
+	font-size: 16px;
+	margin-left: 18px;
+	line-height: 3;
+	color: white;
+}
+
+
+.modal-wrap .setApprovalModal .modal-body {
+	padding: 1em;
+	background-color: white;
+}
+
+
+.modal-wrap .setApprovalModal .modal-body .labelContainer {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	margin-bottom: 1em;
+}
+
+
+.modal-wrap .setApprovalModal .modal-body input[type="text"] {
+	width: 95%;
+
+}
+
+
+.modal-wrap .setApprovalModal .close-wrap {
+	text-align: right;
 }
