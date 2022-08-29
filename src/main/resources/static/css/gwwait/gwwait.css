@@ -1,5 +1,6 @@
 @charset "UTF-8";
 
+
 .waitSearchContainer {
 	display: flex;
 	align-items: center;
@@ -91,15 +92,47 @@
 	color: #332E85;
 }
 
+
+.subContainer .batchBtn {
+	display: flex;
+	align-items: right;
+	justify-content: right;
+	padding-right: 2em;
+}
+
+
 .subContainer .listPageDiv>div {
 	margin: 0 2%;
+
+}
+
+/* 체크박스만 선택  */
+.subContainer .listPageDiv .listDiv div div:last-child {
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 
 
+/*-------------------------------- 상세조회 페이지 상단 버튼  */
 
+.mainBtnDiv {
+	display: flex;
+	align-items: left;
+	margin-bottom: 1em;
+}
 
 .mainBtnDiv button {
+	margin: 0 1em 1em 0;
+}
+
+.mainBtnDiv button:hover {
+	background-color: #EDEDF4;
+	;
+}
+
+/* .mainBtnDiv button {
 	margin: 1em 1em 1em 0;
 	font-weight: 500;
 	font-size: 0.8em;
@@ -108,7 +141,7 @@
 	background-color: white;
 	border: none;
 	border-radius: 3px;
-}
+} */
 
 
 
@@ -127,16 +160,74 @@
 	margin-bottom: 2%;
 }
 
+
+
 .listPageDiv .detailReport {
 	display: grid;
 	grid-template-columns: 60% 40%;
 }
 
 
-.listPageDiv .detailReport .selectedReportview {
+/* 첨부파일 목록 조회  */
+.listPageDiv .detailReport .selectedReportview .selectedFileField {
+	margin: 1em;
+	display: grid;
+	grid-template-columns: 10% 90%;
+
+}
+
+
+.listPageDiv .detailReport .selectedReportview .selectedFileField>div,
+.listPageDiv .detailReport .selectedReportview .selectedFileField label {
+	height: 5em;
 	border: 1px solid black;
 }
 
+.listPageDiv .detailReport .selectedReportview .selectedFileField label {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-right: none;
+	background-color:  rgb(208, 206, 206);
+}
+
+
+
+/*-------------------------------선택 결재문서양식 첨부파일 목록  조회 탭   */
+
+.listPageDiv .detailReport .selectedReportview {
+	border: 1px solid black;
+}
+/* 첨부파일 목록 조회  */
+.listPageDiv .detailReport .selectedReportview .selectedFileField {
+	margin: 1em;
+	display: grid;
+	grid-template-columns: 15% 85%;
+
+}
+
+.listPageDiv .detailReport .selectedReportview .selectedFileField>div,
+.listPageDiv .detailReport .selectedReportview .selectedFileField label {
+	height: 5em;
+	border: 1px solid black;
+}
+
+.listPageDiv .detailReport .selectedReportview .selectedFileField label {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-right: none;
+	background-color:  rgb(208, 206, 206);
+}
+
+
+
+
+
+
+
+
+/*-------------------------------- 결재정보 변경이력 탭  */
 .listPageDiv .detailReport .comment {
 	background-color: #EDEDF4;
 	margin: 0 1em;
@@ -197,10 +288,13 @@
 	color: white;
 }
 
-.mainBtnDiv {
-	display: flex;
-	align-items: left;
-}
+
+
+
+
+
+
+/*--------------------------------결재하기, 문서수정 모달 관련 */
 
 .modal-wrap {
 	position: fixed;
@@ -214,7 +308,8 @@
 	justify-content: center;
 }
 
-.modal-wrap .setApprovalModal ,.modal-wrap .setModifyModal {
+.modal-wrap .setApprovalModal,
+.modal-wrap .setModifyModal {
 	background-color: #332e85;
 	width: 20%;
 	border-radius: 0.3em;
@@ -242,7 +337,7 @@
 }
 
 
- .modal-body input[type="text"] {
+.modal-body input[type="text"] {
 	width: 95%;
 
 }
@@ -253,79 +348,101 @@
 }
 
 
-/* 결재선수정 모달 관련 css  */
+
+
+
+
+
+
+
+
+/*-------------------------------- 결재선 수정 모달 css  */
 .gwModal {
 	background-color: #332e85;
 	width: 60%;
 	border-radius: 0.3em;
-  }
-  
+}
+
 .lineDetail {
 	display: block;
-  }
-  
- .lineDetail .lineTop {
+}
+
+.lineDetail .lineTop {
 	color: black;
 	height: 25rem;
 	display: grid;
 	grid-template-columns: 25% 15% 60%;
 	overflow: auto;
-  }
-  
+}
+
 .lineDetail #lineBottom {
 	margin: 2rem;
 	text-align: right;
-  }
-  
-  
+}
+
+
 .lineDetail .innerDetail {
 	padding: 1rem;
 	margin: 1rem;
 	background-color: #ffffff;
 	overflow: auto;
 	border-radius: 3px;
-  }
-  
- .lineDetail #lineCenter {
+}
+
+.lineDetail #lineCenter {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: space-around;
-  }
-  
-  
-  .selectEachLine {
+}
+
+
+.selectEachLine {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 	justify-content: space-around;
-  }
-  
+}
+
 .lineDetail #lineRight {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
-  }
-  
+}
+
 .lineDetail #lineRight>label {
 	border: 1px solid rgb(188, 185, 185);
 	margin: 0.5rem;
-  }
-  
-  
-  .lineDataContainer {
+}
+
+
+.lineDataContainer {
 	padding: 0 0.5em;
 	display: grid;
 	grid-template-columns: 55% 15% 15% 15%;
-  
-  }
-  
-  .lineDataContainer button {
+
+}
+
+.lineDataContainer button {
 	border: none;
 	background-color: white;
-  }
-  
-  .lineDataContainer button:hover {
+}
+
+.lineDataContainer button:hover {
 	color: #EDEDF4;
 	font-weight: 800;
-  }
-  
+}
+
+
+
+
+
+
+
+
+/*-------------------------------- 헤더 float 설정 초기화   */
+button,
+select,
+input {
+	margin: 0;
+	float: none;
+}

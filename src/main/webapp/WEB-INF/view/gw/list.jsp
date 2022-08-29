@@ -25,8 +25,8 @@
 					<span>결재 대기 문서</span>
 
 					<div class="subContainer">
+						<div class="batchBtn"><button type="button">일괄 결재 </button></div>
 						<div class="listPageDiv">
-							<div class="batchBtn"><button type="button">일괄 결재 </button></div>
 							<div class="listDiv"></div>
 							<div class="pageContainer"></div>
 						</div>

@@ -177,10 +177,6 @@ function closeGwModal(obj) {
 }
 
 
-
-
-
-
 ////조직도에서 결재 타입 선택 함수 
 function check(name) {
   let inputLength = $(".testClass");
@@ -361,6 +357,7 @@ function createLine() {
   testHtml += "</div>";
   testHtml2 += "</div>";
 
+  let writerHtml = "<div class='lineSet'><div class='twoBorder'>직급</div><div class='twoBorder " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div><div class='twoBorder " + formId + "_" + titleId[i] + "_status'>서명</div><div class='dateBorder " + formId + "_" + titleId[i] + "_approved'>/</div></div>"
 
   testHtml += testHtml2;
   lineTarget.html(testHtml);

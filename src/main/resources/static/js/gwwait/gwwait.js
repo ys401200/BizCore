@@ -19,7 +19,7 @@ function waitDefault() {
 	method = "get"
 	data = "";
 	type = "list";
-	crud.defaultAjax(url, method, data, type, noticeSuccessList, noticeErrorList);
+	crud.defaultAjax(url, method, data, type, waitSuccessList, waitErrorList);
 	let url2 = "/api/gw/form";
 
 	$.ajax({
@@ -60,7 +60,7 @@ function waitDefault() {
 
 }
 
-function drawNoticeList() {
+function drawNoticeApproval() {
 	let container, result, jsonData, header = [], data = [], ids = [], disDate, setDate, str, fnc;
 
 	if (storage.noticeList === undefined) {
@@ -144,12 +144,12 @@ function drawNoticeList() {
 			}
 		]
 
-		fnc = "noticeDetailView(this)";
+		fnc = "waitDetailView(this)";
 		ids.push(jsonData[i].no);
 		data.push(str);
 	}
 
-	let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawNoticeList", result[0]);
+	let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawNoticeApproval", result[0]);
 	pageContainer[0].innerHTML = pageNation;
 	createGrid(container, header, data, ids, fnc);
 
@@ -163,53 +163,29 @@ function drawNoticeList() {
 		}
 
 	});
-}// End of drawNoticeList()
+}// End of drawNoticeApproval()
 
 
 
-function noticeSuccessList(result) {
+function waitSuccessList(result) {
 	storage.noticeList = result;
-	window.setTimeout(drawNoticeList, 200);
+	window.setTimeout(drawNoticeApproval, 200);
 }
 
-function noticeErrorList() {
+function waitErrorList() {
 	alert("에러");
 }
 
-function noticeDetailView(event) {// 선택한 그리드의 글 번호 받아오기 
-	// let no = event.dataset.id;
-	// let url;
-	// url = apiServer + "/api/notice/" + no;
+function waitDetailView(event) {// 선택한 그리드의 글 번호 받아오기 
 
-	// $.ajax({
-	// 	"url": url,
-	// 	"method": "get",
-	// 	"dataType": "json",
-	// 	"cache": false,
-	// 	success: (result) => {
-	// 		let jsonData;
-	// 		if (result.result === "ok") {
-	// 			jsonData = cipher.decAes(result.data);
-	// 			jsonData = JSON.parse(jsonData);
-	// 			drawNoticeContent(jsonData);
-	// 		} else {
-	// 			modal.alert("공지사항 상세조회에 실패했습니다.");
-	// 		}
-	// 	}
-	// })
 	let searchDiv = $(".waitSearchContainer").hide();
-
 	let target = $(".container");
 	let no = event.dataset.id;
-
 
 	// 전자결재 문서 번호를 가지고 상세 조회 그림  
 
 	target.html();
-
 	getDetailView(no);
-
-
 
 } // End of noticeDetailView()
 
@@ -226,8 +202,15 @@ function getDetailView(no) {
 
 
 	$(".listPageDiv").html(detailHtml);
-	$(".selectedReportview").html(testForm);
 
+
+
+	let selectedFileView = "<div class='selectedFileField'><label>첨부파일<input type='file'/></label><div></div></div>"
+	testForm += selectedFileView;
+	
+
+	$(".selectedReportview").html(testForm);
+	$(":file").css("display", "none");// 첨부파일 버튼 숨기기 
 
 	let tabHtml = "<div class='reportInfoTab'>" +
 		"<label id='lineInfo' onclick='changeTab(this)'>결재정보</label><label id='changeInfo' onclick='changeTab(this)'>변경이력</label></div>" +
@@ -263,7 +246,7 @@ function changeTab(obj) {
 
 
 
-// 결재정보 탭 눌렀을때 결재정보 그리는 함수 
+// 결재정보 그리는 함수 
 function drawCommentLine() {
 
 	let target = $(".tabDetail");
@@ -312,7 +295,7 @@ function drawCommentLine() {
 }
 
 
-//  문서 정보 그리는 함수  
+//  변경이력 그리는 함수 
 function drawChangeInfo() {
 	let target = $(".tabDetail");
 	// 임시 데이터 ----------------------------------------------------
@@ -362,7 +345,7 @@ function closeModal(obj) {
 		$(".modal-wrap").hide();
 		$("button[name='modConfirm']:last-child").remove();
 		toReadMode();
-	} else if (obj.parentElement.parentElement.className == 'gwModal' ) {
+	} else if (obj.parentElement.parentElement.className == 'gwModal') {
 		$(".modal-wrap").hide();
 	}
 
@@ -451,17 +434,17 @@ function showGwModal() {
 		"</div>" +
 		"</div>";
 	$(".modal-wrap").html(setGwModalHtml);
-	
+
 	let orgChartTarget = $("#lineLeft");
 	let userData = new Array();
-  
+
 	let x;
 	for (x in storage.user) userData.push(x);
-  
+
 	let innerHtml = "";
 	for (let i = 0; i < userData.length; i++) {
-	  innerHtml += "<div><input class='testClass' type ='checkbox' id='cb" + i + "' name='userNames' value='" + userData[i] + "'><label for='cb'>" + storage.user[userData[i]].userName + "</label></div>"
-	  orgChartTarget.html(innerHtml);
+		innerHtml += "<div><input class='testClass' type ='checkbox' id='cb" + i + "' name='userNames' value='" + userData[i] + "'><label for='cb'>" + storage.user[userData[i]].userName + "</label></div>"
+		orgChartTarget.html(innerHtml);
 	}
 	$(".modal-wrap").show();
 
@@ -474,120 +457,119 @@ function check(name) {
 	let target = $("#" + name);
 	let html = target.html();
 	let selectHtml = "";
-  
+
 	let data = new Array();
 	let x;
 	for (x in storage.user) data.push(x);
-  
+
 	for (let i = 0; i < inputLength.length; i++) {
-	  if ($("#cb" + i).prop('checked')) {
-		if (document.getElementById("linedata" + i) == null)
-		  selectHtml += "<div class='lineDataContainer' id='lineContainer_" + i + "'><label id='linedata" + i + "'>" + storage.user[data[i]].userName + "</label><button value='" + i + "' onclick='upClick(this)'>▲</button><button  value='" + i + "' onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
-	  }
-  
+		if ($("#cb" + i).prop('checked')) {
+			if (document.getElementById("linedata" + i) == null)
+				selectHtml += "<div class='lineDataContainer' id='lineContainer_" + i + "'><label id='linedata" + i + "'>" + storage.user[data[i]].userName + "</label><button value='" + i + "' onclick='upClick(this)'>▲</button><button  value='" + i + "' onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
+		}
+
 	}
 	html += selectHtml;
 	target.html(html)
-  
+
 	$(".testClass").prop('checked', false);
-  } //End of check(name) 
-  
-  
-  
-  
-  //// 조직도 결재 순서 
-  function upClick(obj) {
+} //End of check(name) 
+
+
+
+
+//// 조직도 결재 순서 
+function upClick(obj) {
 	let parent;
 	parent = obj.parentElement;
 	parent = parent.parentElement;
 	let target = $("#" + parent.id);
 	let list = parent.children;
-  
+
 	let numArr = new Array();
 	for (let i = 0; i < list.length; i++) {
-	  let id = list[i].id;
-	  let idArr = id.split("_");
-	  numArr.push(idArr[1]);
+		let id = list[i].id;
+		let idArr = id.split("_");
+		numArr.push(idArr[1]);
 	}
-  
+
 	for (let i = 0; i < numArr.length; i++) {
-	  if (obj.value == numArr[i] && i != 0) {
-		let temp = numArr[i];
-		numArr[i] = numArr[i - 1];
-		numArr[i - 1] = temp;
-	  }
+		if (obj.value == numArr[i] && i != 0) {
+			let temp = numArr[i];
+			numArr[i] = numArr[i - 1];
+			numArr[i - 1] = temp;
+		}
 	}
-  
+
 	let data = new Array();
 	let x;
 	for (x in storage.user) data.push(x);
 	let selectHtml = "";
 	for (let i = 0; i < numArr.length; i++) {
-	  selectHtml += "<div class='lineDataContainer' id='lineContainer_" + numArr[i] + "'><label id='linedata" + numArr[i] + "'>" + storage.user[data[numArr[i]]].userName + "</label><button value='" + numArr[i] + "' onclick='upClick(this)'>▲</button><button  value='" + numArr[i] + "'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
+		selectHtml += "<div class='lineDataContainer' id='lineContainer_" + numArr[i] + "'><label id='linedata" + numArr[i] + "'>" + storage.user[data[numArr[i]]].userName + "</label><button value='" + numArr[i] + "' onclick='upClick(this)'>▲</button><button  value='" + numArr[i] + "'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
 	}
-  
+
 	target.html(selectHtml);
-  }// End of upClick(obj); 
-  
-  
-  function downClick(obj) {
+}// End of upClick(obj); 
+
+
+function downClick(obj) {
 	let parent;
 	parent = obj.parentNode;
 	parent = parent.parentNode;
 	let target = $("#" + parent.id);
 	let list = parent.children;
-  
+
 	let numArr = new Array();
 	for (let i = 0; i < list.length; i++) {
-	  let id = list[i].id;
-	  let idArr = id.split("_");
-	  numArr.push(idArr[1]);
+		let id = list[i].id;
+		let idArr = id.split("_");
+		numArr.push(idArr[1]);
 	}
-  
+
 	for (let i = numArr.length - 1; i >= 0; i--) {
-	  if (obj.value == numArr[i] && i != numArr.length - 1) {
-		let temp = numArr[i];
-		numArr[i] = numArr[i + 1];
-		numArr[i + 1] = temp;
-	  }
+		if (obj.value == numArr[i] && i != numArr.length - 1) {
+			let temp = numArr[i];
+			numArr[i] = numArr[i + 1];
+			numArr[i + 1] = temp;
+		}
 	}
-  
+
 	let data = new Array();
 	let x;
 	for (x in storage.user) data.push(x);
 	let selectHtml = "";
 	for (let i = 0; i < numArr.length; i++) {
-	  selectHtml += "<div class='lineDataContainer' id='lineContainer_" + numArr[i] + "'><label id='linedata" + numArr[i] + "'>" + storage.user[data[numArr[i]]].userName + "</label><button value='" + numArr[i] + "' onclick='upClick(this)'>▲</button><button  value='" + numArr[i] + "'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
+		selectHtml += "<div class='lineDataContainer' id='lineContainer_" + numArr[i] + "'><label id='linedata" + numArr[i] + "'>" + storage.user[data[numArr[i]]].userName + "</label><button value='" + numArr[i] + "' onclick='upClick(this)'>▲</button><button  value='" + numArr[i] + "'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
 	}
-  
+
 	target.html(selectHtml);
-  } // End of downClick(obj) 
-  
-  
-  function deleteClick(obj) {
+} // End of downClick(obj) 
+
+
+function deleteClick(obj) {
 	let parent;
 	parent = obj.parentElement;
 	parent.remove();
-  } // End of deleteClign(obj); 
-  
-  
-  
-  
-  
-  
-  // 결재선 그리기 
-  function createLine() {
-  
+} // End of deleteClign(obj); 
+
+
+
+
+
+// 결재선 그리기 
+function createLine() {
+
 	let formTypeName = $(".formNumHidden").val();
 	let formId = storage.formList[formTypeName].id;
-  
-  
+
+
 	let lineTarget = $(".infoline")[0].children[1];
 	lineTarget = $("#" + lineTarget.id);
 	lineTarget.html("");
 	lineTarget.css("display", "block");
-  
-  
+
+
 	let testHtml = "<div class='lineGridContainer'>";
 	let testHtml2 = "<div class='lineGridContainer'>";
 	let readHtml = "<div>열람</div>";
@@ -595,69 +577,69 @@ function check(name) {
 	let target = $(".typeContainer");
 	let titleArr = ["검토", "합의", "결재", "수신", "열람", "참조"];
 	let titleId = ["examine", "agree", "approval", "conduct", " read", "refer"]
-  
-  
+
+
 	let data = new Array();
 	let x;
 	for (x in storage.user) data.push(x);
-  
-  
+
+
 	for (let i = 0; i < target.length; i++) {
-	  if (target[i].children.length != 0 && i < 3) {
-		testHtml += "<div class='lineGrid'><div class='lineTitle'>" + titleArr[i] + "</div>"
-	  } else if (target[i].children.length != 0 && i == 3) {
-		testHtml2 += "<div class='lineGrid'><div class='lineTitle'>" + titleArr[i] + "</div>"
-	  }
-  
-	  for (let j = 0; j < target[i].children.length; j++) {
-		let id = target[i].children[j].id;
-		id = id.split('_');
-		id = id[1];
-  
-  
-		/// class 이름 , css 수정 
-  
-		if (i < 2 && j < target[i].children.length - 1) {
-		  testHtml += "<div class='lineSet'><div class='twoBorder'>직급</div><div class='twoBorder " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div><div class='twoBorder " + formId + "_" + titleId[i] + "_status'>서명</div><div class='dateBorder " + formId + "_" + titleId[i] + "_approved'>/</div></div>"
-		} else if (i < 2 && j == target[i].children.length - 1) {
-		  testHtml += "<div class='lineSet'><div class='twoBorderLast'>직급</div><div class='twoBorderLast " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div><div class='twoBorderLast " + formId + "_" + titleId[i] + "_status'>서명</div><div class='dateBorderLast  " + formId + "_" + titleId[i] + "_approved'>/</div></div>"
-		} else if (i == 2) {
-		  testHtml += "<div class='lineSet'><div class='twoBorder'>직급</div><div class='twoBorder " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div><div class='twoBorder " + formId + "_" + titleId[i] + "_status'>서명</div><div class='dateBorder " + formId + "_" + titleId[i] + "_approved'>/</div></div>"
-		} else if (i == 3) {
-		  testHtml2 += "<div class='lineSet'><div class='twoBorder'>직급</div><div class='twoBorder " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div><div class='twoBorder " + formId + "_" + titleId[i] + "_status'>서명</div><div class='dateBorder " + formId + "_" + titleId[i] + "_approved'>/</div></div>"
-		} else if (i == 4) {
-		  readHtml += "<div class='appendName " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div>";
-		} else if (i == 5) {
-		  referHtml += "<div class='appendName " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div>";
+		if (target[i].children.length != 0 && i < 3) {
+			testHtml += "<div class='lineGrid'><div class='lineTitle'>" + titleArr[i] + "</div>"
+		} else if (target[i].children.length != 0 && i == 3) {
+			testHtml2 += "<div class='lineGrid'><div class='lineTitle'>" + titleArr[i] + "</div>"
 		}
-  
-	  }
-  
-	  if (target[i].children.length != 0 && i < 3) {
-		testHtml += "</div>";
-	  } else if (target[i].children.length != 0 && i == 3) {
-		testHtml2 += "</div>";
-	  }
-  
-  
+
+		for (let j = 0; j < target[i].children.length; j++) {
+			let id = target[i].children[j].id;
+			id = id.split('_');
+			id = id[1];
+
+
+			/// class 이름 , css 수정 
+
+			if (i < 2 && j < target[i].children.length - 1) {
+				testHtml += "<div class='lineSet'><div class='twoBorder'>직급</div><div class='twoBorder " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div><div class='twoBorder " + formId + "_" + titleId[i] + "_status'>서명</div><div class='dateBorder " + formId + "_" + titleId[i] + "_approved'>/</div></div>"
+			} else if (i < 2 && j == target[i].children.length - 1) {
+				testHtml += "<div class='lineSet'><div class='twoBorderLast'>직급</div><div class='twoBorderLast " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div><div class='twoBorderLast " + formId + "_" + titleId[i] + "_status'>서명</div><div class='dateBorderLast  " + formId + "_" + titleId[i] + "_approved'>/</div></div>"
+			} else if (i == 2) {
+				testHtml += "<div class='lineSet'><div class='twoBorder'>직급</div><div class='twoBorder " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div><div class='twoBorder " + formId + "_" + titleId[i] + "_status'>서명</div><div class='dateBorder " + formId + "_" + titleId[i] + "_approved'>/</div></div>"
+			} else if (i == 3) {
+				testHtml2 += "<div class='lineSet'><div class='twoBorder'>직급</div><div class='twoBorder " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div><div class='twoBorder " + formId + "_" + titleId[i] + "_status'>서명</div><div class='dateBorder " + formId + "_" + titleId[i] + "_approved'>/</div></div>"
+			} else if (i == 4) {
+				readHtml += "<div class='appendName " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div>";
+			} else if (i == 5) {
+				referHtml += "<div class='appendName " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div>";
+			}
+
+		}
+
+		if (target[i].children.length != 0 && i < 3) {
+			testHtml += "</div>";
+		} else if (target[i].children.length != 0 && i == 3) {
+			testHtml2 += "</div>";
+		}
+
+
 	}
-  
+
 	testHtml += "</div>";
 	testHtml2 += "</div>";
-  
-  
+
+
 	testHtml += testHtml2;
 	lineTarget.html(testHtml);
-  
-  
+
+
 	$(".readContainer").html(readHtml);
 	$(".referContainer").html(referHtml);
-  
-  
-  } // End of createLine(); 
-  
-  
-  
+
+
+} // End of createLine(); 
+
+
+
 
 
 

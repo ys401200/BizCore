@@ -387,3 +387,10 @@
   border-top: 1px solid black;
   border-bottom: 1px solid black;
 }
+
+
+/* float 설정 초기화  */
+button, select, input {
+  margin: 0;
+  float : none; 
+}
