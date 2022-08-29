@@ -3,9 +3,9 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	margin-left: 2%;
+	/* margin-left: 2%; */
 	margin-bottom: 1%;
-	max-width: 1782px;
+	/* max-width: 1782px; */
 	height: 100px;
 	background: #FFFFFF;
 	overflow: auto;
@@ -62,8 +62,8 @@
 
 .soppContainer{
 	margin-top: 1%;
-	margin-left: 2%;
-	max-width: 1782px;
+	/* margin-left: 2%;
+	max-width: 1782px; */
 	background: #FFFFFF;
 	overflow: auto;
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);

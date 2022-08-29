@@ -27,8 +27,8 @@ a{
 	color: #000;
 }
 
-button, select, input{
-	font-family: 'Noto Sans KR', sans-serif;
+button, select, input[type="text"]{
+	font-family: 'NanumSquareRound';
 	margin:1% 1% 0 0;
 	float:right;
 	padding:0.3% 0.8% 0.3% 0.8%;
