@@ -220,7 +220,7 @@ function getDetailView(no) {
 
 	let testForm = storage.formList[0].form;
 	let detailHtml = "<div class='mainBtnDiv'><button type='button' onclick='showAppModal()'>결재하기</button>" +
-		"<button type='button'>결재선 수정</button>" +
+		"<button type='button' onclick='showGwModal()'>결재선 수정</button>" +
 		"<button type='button' onclick='toWriteMode();createConfirmBtn(this)'>문서 수정</button></div>" +
 		"<div class='detailReport'><div class='selectedReportview'></div><div class='comment'></div></div>"
 
@@ -351,25 +351,347 @@ function drawChangeInfo() {
 
 
 
-// 결재하기 모달 함수
+
+// 모달별 버튼  
 function closeModal(obj) {
-	$(".modal-wrap").hide();
-	// 체크된 것 초기화 
-	$("input:radio[name='type']").prop("checked", false);
+
+	if (obj.parentElement.parentElement.className == 'setApprovalModal') {
+		$(".modal-wrap").hide();
+		// 체크된 것 초기화 
+		$("input:radio[name='type']").prop("checked", false);
+	} else if (obj.parentElement.parentElement.className == 'setModifyModal') {
+		$(".modal-wrap").hide();
+		$("button[name='modConfirm']:last-child").remove();
+		toReadMode();
+
+	} else if (obj.parentElement.parentElement.className == 'gwModal' ) {
+		$(".modal-wrap").hide();
+	}
 
 }
 
+
+//결재하기 모달 
 function showAppModal() {
-	$(".modal-wrap").show();
+	let setAppModalHtml = "<div class='setApprovalModal'>" +
+		"<div class='modal-title'>결재하기</div>" +
+		"<div class='modal-body'><div class='labelContainer'>" +
+		"<label><input type='radio' name='type'/>승인</label>" +
+		"<label><input type='radio' name='type' />반려</label>" +
+		"<label><input type='radio' name='type' />협의요청</label>" +
+		"<label><input type='radio' name='type' />보류</label>" +
+		"<label><input type='radio' name='type' />선결</label>" +
+		"<label><input type='radio' name='type' />후결</label></div>" +
+		"<label>의견 <input type='text'/></label></div>" +
+		"<div class='close-wrap'>" +
+		"<button id='quit' onclick='closeModal(this)'>취소</button>" +
+		"<button id='set' onclick='closeModal(this)'>결재</button></div></div>";
+	$(".modal-wrap").html(setAppModalHtml);
 	$("input:radio[name='type']").prop("checked", false);
+	$(".modal-wrap").show();
+
+	// $(".setApprovalModal").show();
+	// $(".setModifyModal").hide();
 
 }
 
 
+// 문서 수정 완료 모달 
+function showModifyModal() {
+	let setModifyModalHtml = "<div class='setModifyModal'>" +
+		"<div class='modal-title'>문서 수정하기 </div>" +
+		"<div class='modal-body'>" +
+		"<label>수정 내용<input type='text'/></label>" +
+		"</div>" +
+		"<div class='close-wrap'>" +
+		"<button  onclick='closeModal()'>취소</button>" +
+		"<button id='set' onclick='closeModal(this)'>수정</button>" +
+		"</div></div>";
+	$(".modal-wrap").html(setModifyModalHtml);
+	$(".modal-wrap").show();
+
+}
+
+
+
+//결재선 수정 모달 
+function showGwModal() {
+
+	let setGwModalHtml = "<div class='gwModal'>" +
+		"<div class='modal-title'>결재선 수정</div>" +
+		"<div class='lineDetail'>" +
+		"<div class='lineTop'>" +
+		"<div class='innerDetail' id='lineLeft'></div>" +
+		"<div class='innerDetail' id='lineCenter'>" +
+		"<button onclick='check(this.value)' value='examine'>검토 ></button>" +
+		"<button onclick='check(this.value)' value='agree'>합의 ></button>" +
+		"<button onclick='check(this.value)' value='approval'>결재 ></button>" +
+		" <button onclick='check(this.value)' value='conduct'>수신 ></button>" +
+		" <button onclick='check(this.value)' value='read'>열람 ></button>" +
+		"<button onclick='check(this.value)' value='refer'>참조 ></button></div>" +
+		"<div class='innerDetail' id='lineRight'>" +
+		" <label for='examine'> 검토" +
+		"<div class='typeContainer' id='examine'></div>" +
+		" </label>" +
+		"<label for='agree'> 합의" +
+		"<div class='typeContainer' id='agree'></div></label>" +
+		"<label for='approval'> 결재" +
+		"<div class='typeContainer' id='approval'></div></label>" +
+		"<label for='conduct'> 수신" +
+		"<div class='typeContainer' id='conduct'></div></label>" +
+		"<label for='read'> 열람" +
+		"<div class='typeContainer' id='read'></div></label>" +
+		"<label for='refer'> 참조" +
+		"<div class='typeContainer' id='refer'></div></label>" +
+		"</div>" +
+		"</div>" +
+		"</div>" +
+		"<div class='close-wrap'>" +
+		" <button id='close' onclick='closeModal(this)'>취소</button>" +
+		" <button id='create' onclick='closeGwModal(this)'>수정</button>" +
+		"</div>" +
+		"</div>" +
+		"</div>";
+	$(".modal-wrap").html(setGwModalHtml);
+	
+	let orgChartTarget = $("#lineLeft");
+	let userData = new Array();
+  
+	let x;
+	for (x in storage.user) userData.push(x);
+  
+	let innerHtml = "";
+	for (let i = 0; i < userData.length; i++) {
+	  innerHtml += "<div><input class='testClass' type ='checkbox' id='cb" + i + "' name='userNames' value='" + userData[i] + "'><label for='cb'>" + storage.user[userData[i]].userName + "</label></div>"
+	  orgChartTarget.html(innerHtml);
+	}
+	$(".modal-wrap").show();
+
+}
+
+
+
+
+
+
+
+
+function check(name) {
+	let inputLength = $(".testClass");
+	let target = $("#" + name);
+	let html = target.html();
+	let selectHtml = "";
+  
+	let data = new Array();
+	let x;
+	for (x in storage.user) data.push(x);
+  
+	for (let i = 0; i < inputLength.length; i++) {
+	  if ($("#cb" + i).prop('checked')) {
+		if (document.getElementById("linedata" + i) == null)
+		  selectHtml += "<div class='lineDataContainer' id='lineContainer_" + i + "'><label id='linedata" + i + "'>" + storage.user[data[i]].userName + "</label><button value='" + i + "' onclick='upClick(this)'>▲</button><button  value='" + i + "' onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
+	  }
+  
+	}
+	html += selectHtml;
+	target.html(html)
+  
+	$(".testClass").prop('checked', false);
+  } //End of check(name) 
+  
+  
+  
+  
+  
+  
+  
+  //// 조직도 결재 순서 
+  function upClick(obj) {
+	let parent;
+	parent = obj.parentElement;
+	parent = parent.parentElement;
+	let target = $("#" + parent.id);
+	let list = parent.children;
+  
+	let numArr = new Array();
+	for (let i = 0; i < list.length; i++) {
+	  let id = list[i].id;
+	  let idArr = id.split("_");
+	  numArr.push(idArr[1]);
+	}
+  
+	for (let i = 0; i < numArr.length; i++) {
+	  if (obj.value == numArr[i] && i != 0) {
+		let temp = numArr[i];
+		numArr[i] = numArr[i - 1];
+		numArr[i - 1] = temp;
+	  }
+	}
+  
+	let data = new Array();
+	let x;
+	for (x in storage.user) data.push(x);
+	let selectHtml = "";
+	for (let i = 0; i < numArr.length; i++) {
+	  selectHtml += "<div class='lineDataContainer' id='lineContainer_" + numArr[i] + "'><label id='linedata" + numArr[i] + "'>" + storage.user[data[numArr[i]]].userName + "</label><button value='" + numArr[i] + "' onclick='upClick(this)'>▲</button><button  value='" + numArr[i] + "'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
+	}
+  
+	target.html(selectHtml);
+  }// End of upClick(obj); 
+  
+  
+  function downClick(obj) {
+	let parent;
+	parent = obj.parentNode;
+	parent = parent.parentNode;
+	let target = $("#" + parent.id);
+	let list = parent.children;
+  
+	let numArr = new Array();
+	for (let i = 0; i < list.length; i++) {
+	  let id = list[i].id;
+	  let idArr = id.split("_");
+	  numArr.push(idArr[1]);
+	}
+  
+	for (let i = numArr.length - 1; i >= 0; i--) {
+	  if (obj.value == numArr[i] && i != numArr.length - 1) {
+		let temp = numArr[i];
+		numArr[i] = numArr[i + 1];
+		numArr[i + 1] = temp;
+	  }
+	}
+  
+	let data = new Array();
+	let x;
+	for (x in storage.user) data.push(x);
+	let selectHtml = "";
+	for (let i = 0; i < numArr.length; i++) {
+	  selectHtml += "<div class='lineDataContainer' id='lineContainer_" + numArr[i] + "'><label id='linedata" + numArr[i] + "'>" + storage.user[data[numArr[i]]].userName + "</label><button value='" + numArr[i] + "' onclick='upClick(this)'>▲</button><button  value='" + numArr[i] + "'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
+	}
+  
+	target.html(selectHtml);
+  } // End of downClick(obj) 
+  
+  
+  function deleteClick(obj) {
+	let parent;
+	parent = obj.parentElement;
+	parent.remove();
+  } // End of deleteClign(obj); 
+  
+  
+  
+  
+  
+  
+  // 결재선 그리기 
+  function createLine() {
+  
+	let formTypeName = $(".formNumHidden").val();
+	let formId = storage.formList[formTypeName].id;
+  
+  
+	let lineTarget = $(".infoline")[0].children[1];
+	lineTarget = $("#" + lineTarget.id);
+	lineTarget.html("");
+	lineTarget.css("display", "block");
+  
+  
+	let testHtml = "<div class='lineGridContainer'>";
+	let testHtml2 = "<div class='lineGridContainer'>";
+	let readHtml = "<div>열람</div>";
+	let referHtml = "<div>참조</div>";
+	let target = $(".typeContainer");
+	let titleArr = ["검토", "합의", "결재", "수신", "열람", "참조"];
+	let titleId = ["examine", "agree", "approval", "conduct", " read", "refer"]
+  
+  
+	let data = new Array();
+	let x;
+	for (x in storage.user) data.push(x);
+  
+  
+	for (let i = 0; i < target.length; i++) {
+	  if (target[i].children.length != 0 && i < 3) {
+		testHtml += "<div class='lineGrid'><div class='lineTitle'>" + titleArr[i] + "</div>"
+	  } else if (target[i].children.length != 0 && i == 3) {
+		testHtml2 += "<div class='lineGrid'><div class='lineTitle'>" + titleArr[i] + "</div>"
+	  }
+  
+	  for (let j = 0; j < target[i].children.length; j++) {
+		let id = target[i].children[j].id;
+		id = id.split('_');
+		id = id[1];
+  
+  
+		/// class 이름 , css 수정 
+  
+		if (i < 2 && j < target[i].children.length - 1) {
+		  testHtml += "<div class='lineSet'><div class='twoBorder'>직급</div><div class='twoBorder " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div><div class='twoBorder " + formId + "_" + titleId[i] + "_status'>서명</div><div class='dateBorder " + formId + "_" + titleId[i] + "_approved'>/</div></div>"
+		} else if (i < 2 && j == target[i].children.length - 1) {
+		  testHtml += "<div class='lineSet'><div class='twoBorderLast'>직급</div><div class='twoBorderLast " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div><div class='twoBorderLast " + formId + "_" + titleId[i] + "_status'>서명</div><div class='dateBorderLast  " + formId + "_" + titleId[i] + "_approved'>/</div></div>"
+		} else if (i == 2) {
+		  testHtml += "<div class='lineSet'><div class='twoBorder'>직급</div><div class='twoBorder " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div><div class='twoBorder " + formId + "_" + titleId[i] + "_status'>서명</div><div class='dateBorder " + formId + "_" + titleId[i] + "_approved'>/</div></div>"
+		} else if (i == 3) {
+		  testHtml2 += "<div class='lineSet'><div class='twoBorder'>직급</div><div class='twoBorder " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div><div class='twoBorder " + formId + "_" + titleId[i] + "_status'>서명</div><div class='dateBorder " + formId + "_" + titleId[i] + "_approved'>/</div></div>"
+		} else if (i == 4) {
+		  readHtml += "<div class='appendName " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div>";
+		} else if (i == 5) {
+		  referHtml += "<div class='appendName " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div>";
+		}
+  
+	  }
+  
+	  if (target[i].children.length != 0 && i < 3) {
+		testHtml += "</div>";
+	  } else if (target[i].children.length != 0 && i == 3) {
+		testHtml2 += "</div>";
+	  }
+  
+  
+	}
+  
+	testHtml += "</div>";
+	testHtml2 += "</div>";
+  
+  
+	testHtml += testHtml2;
+	lineTarget.html(testHtml);
+  
+  
+	$(".readContainer").html(readHtml);
+	$(".referContainer").html(referHtml);
+  
+  
+  } // End of createLine(); 
+  
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//문서 수정 버튼 누르면 수정 완료 버튼 생성 
 function createConfirmBtn(obj) {
 	let div = document.getElementsByClassName("mainBtnDiv")
 	if (div[0].childElementCount < 4) {
-		$(".mainBtnDiv").append("<button type='button' onclick='toReadMode(); this.remove()' >수정완료 </button>");
+		$(".mainBtnDiv").append("<button type='button'name='modConfirm' onclick='showModifyModal()' >수정완료 </button>");
 	}
 
 }

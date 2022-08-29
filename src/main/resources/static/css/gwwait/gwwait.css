@@ -214,13 +214,13 @@
 	justify-content: center;
 }
 
-.modal-wrap .setApprovalModal {
+.modal-wrap .setApprovalModal ,.modal-wrap .setModifyModal {
 	background-color: #332e85;
 	width: 20%;
 	border-radius: 0.3em;
 }
 
-.modal-wrap .setApprovalModal .modal-title {
+.modal-title {
 	font-weight: 500;
 	font-size: 16px;
 	margin-left: 18px;
@@ -229,7 +229,7 @@
 }
 
 
-.modal-wrap .setApprovalModal .modal-body {
+.modal-body {
 	padding: 1em;
 	background-color: white;
 }
@@ -242,12 +242,90 @@
 }
 
 
-.modal-wrap .setApprovalModal .modal-body input[type="text"] {
+ .modal-body input[type="text"] {
 	width: 95%;
 
 }
 
 
-.modal-wrap .setApprovalModal .close-wrap {
+.close-wrap {
 	text-align: right;
 }
+
+
+/* 결재선수정 모달 관련 css  */
+.gwModal {
+	background-color: #332e85;
+	width: 60%;
+	border-radius: 0.3em;
+  }
+  
+.lineDetail {
+	display: block;
+  }
+  
+ .lineDetail .lineTop {
+	color: black;
+	height: 25rem;
+	display: grid;
+	grid-template-columns: 25% 15% 60%;
+	overflow: auto;
+  }
+  
+.lineDetail #lineBottom {
+	margin: 2rem;
+	text-align: right;
+  }
+  
+  
+.lineDetail .innerDetail {
+	padding: 1rem;
+	margin: 1rem;
+	background-color: #ffffff;
+	overflow: auto;
+	border-radius: 3px;
+  }
+  
+ .lineDetail #lineCenter {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-around;
+  }
+  
+  
+  .selectEachLine {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-around;
+  }
+  
+.lineDetail #lineRight {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+  }
+  
+.lineDetail #lineRight>label {
+	border: 1px solid rgb(188, 185, 185);
+	margin: 0.5rem;
+  }
+  
+  
+  .lineDataContainer {
+	padding: 0 0.5em;
+	display: grid;
+	grid-template-columns: 55% 15% 15% 15%;
+  
+  }
+  
+  .lineDataContainer button {
+	border: none;
+	background-color: white;
+  }
+  
+  .lineDataContainer button:hover {
+	color: #EDEDF4;
+	font-weight: 800;
+  }
+  

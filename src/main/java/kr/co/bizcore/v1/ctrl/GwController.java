@@ -87,8 +87,6 @@ public class GwController {
         return result;
     }
 
-
-    
     @RequestMapping(value = "/detail", method = RequestMethod.GET)
     public String home(HttpServletRequest request) {
         HttpSession session = null;
@@ -123,5 +121,6 @@ public class GwController {
         return result;
     }
 
+   
 
 }

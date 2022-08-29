@@ -32,7 +32,7 @@
 						</div>
 
 						<div class="modal-wrap">
-							<div class="setApprovalModal">
+							<!-- <div class="setApprovalModal">
 								<div class="modal-title">결재하기</div>
 								<div class="modal-body">
 									<div class="labelContainer">
@@ -44,10 +44,7 @@
 										<label><input type="radio" name="type" />후결</label>
 									</div>
 									<label>의견 <input type="text"/></label>
-
-
-
-
+                                    
 								</div>
 								<div class="close-wrap">
 									<button id="quit" onclick="closeModal(this)">취소</button>
@@ -55,9 +52,20 @@
 									<button id="set" onclick="closeModal(this)">결재</button>
 
 								</div>
+							</div> -->
+							<!-- <div class="setModifyModal"> 
+								<div class="modal-title">문서 수정하기 </div>
+								<div class="modal-body">
+									<label>수정 내용<input type="text"/></label>
+								</div>
+								<div class="close-wrap">
+									<button id="quit" onclick="closeModal(this)">취소</button>
+									<button id="set" onclick="closeModal(this)">수정</button>
+								</div>
 
 
-							</div>
+
+							</div> -->
 
 
 
