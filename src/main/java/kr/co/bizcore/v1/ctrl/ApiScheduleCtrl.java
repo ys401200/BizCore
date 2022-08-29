@@ -33,6 +33,8 @@ public class ApiScheduleCtrl extends Ctrl {
 
     private static final Logger logger = LoggerFactory.getLogger(AccountingController.class);
 
+    // ============================== 캘린더 =============================================
+
     // 캘린더 정보 요청에 대한 처리 / 연월 정보 없음 / 현재 연월
     @GetMapping("/calendar/company/{scope}")
     public String apiScheduleCalendar(HttpServletRequest request, @PathVariable("scope") String scope){
@@ -91,6 +93,8 @@ public class ApiScheduleCtrl extends Ctrl {
         return result;
     } // End of apiScheduleCalendar()
 
+    // =========================================== 일정 Detail / 신규, 수정, 삭제, 조회 ====================================
+
     // 단일 일정에 대한 조회 요청
     @GetMapping("/{type:\\D+}/{no:\\d+}")
     public String apiScheduleTypeNoGet(HttpServletRequest request, @PathVariable String type, @PathVariable int no){
@@ -122,19 +126,75 @@ public class ApiScheduleCtrl extends Ctrl {
         return result;
     }
 
-    // 단일 일정에 대한 신규 요청
-    @PostMapping("/{type:\\D+}")
+    // 단일 일정에 대한 신규  요청
+    @PostMapping("")
     public String apiScheduleTypePost(HttpServletRequest request, @RequestBody String requestBody, @PathVariable String type, @PathVariable int no){
         String result = null;
+        String compId = null;
+        String aesKey = null;
+        String aesIv = null;
+        String json = null;
+        ObjectMapper mapper = null;
+        Schedule schedule = null;
+        HttpSession session = null;
 
+        mapper = new ObjectMapper();
+        session = request.getSession();
+        compId = (String)session.getAttribute("compId");
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
+        }else{
+            json = salesService.decAes(requestBody, aesKey, aesIv);
+            try {
+                schedule = mapper.readValue(json, Schedule.class);
+                if(scheduleService.addSchedule(compId, schedule) > 0)   result = "{\"result\":\"ok\"}";
+                else                                                    result = "{\"result\":\"failure\",\"msg\":\"An error occurred.\"}";
+            } catch (Exception e) {
+                result = "{\"result\":\"failure\",\"msg\":\"Data is wrong.\"}";
+            }
+        }
         return result;
     }
 
     // 단일 일정에 대한 수정 요청
-    @PutMapping("/{type:\\D+}/{no:\\d+}")
+    @PutMapping("")
     public String apiScheduleTypeNoPut(HttpServletRequest request, @RequestBody String requestBody, @PathVariable String type, @PathVariable int no){
         String result = null;
+        String compId = null;
+        String aesKey = null;
+        String aesIv = null;
+        String json = null;
+        ObjectMapper mapper = null;
+        Schedule schedule = null;
+        HttpSession session = null;
 
+        mapper = new ObjectMapper();
+        session = request.getSession();
+        compId = (String)session.getAttribute("compId");
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
+        }else{
+            json = salesService.decAes(requestBody, aesKey, aesIv);
+            try {
+                schedule = mapper.readValue(json, Schedule.class);
+                if(scheduleService.modifySchedule(compId, schedule) > 0)    result = "{\"result\":\"ok\"}";
+                else                                                        result = "{\"result\":\"failure\",\"msg\":\"An error occurred.\"}";
+            } catch (Exception e) {
+                result = "{\"result\":\"failure\",\"msg\":\"Data is wrong.\"}";
+            }
+        }
         return result;
     }
 
@@ -165,94 +225,6 @@ public class ApiScheduleCtrl extends Ctrl {
     }
 
 
-    @RequestMapping(value = "", method = RequestMethod.POST)
-    public String apiSchedulePost(HttpServletRequest request, @RequestBody String requestBody){
-        String result = null;
-        String compId = null;
-        String aesKey = null;
-        String aesIv = null;
-        String json = null;
-        ObjectMapper mapper = null;
-        Sched schedule = null;
-        HttpSession session = null;
-
-        mapper = new ObjectMapper();
-        session = request.getSession();
-        compId = (String)session.getAttribute("compId");
-        aesKey = (String)session.getAttribute("aesKey");
-        aesIv = (String)session.getAttribute("aesIv");
-        if(compId == null)  compId = (String)request.getAttribute("compId");
-
-        if(compId == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
-        }else if(aesKey == null || aesIv == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
-        }else{
-            json = salesService.decAes(requestBody, aesKey, aesIv);
-            try {
-                //schedule = mapper.readValue(json, Schedule.class);
-                //if(scheduleService.addSchedule(schedule, compId))   result = "{\"result\":\"ok\"}";
-                //else                                                result = "{\"result\":\"failure\",\"msg\":\"An error occurred.\"}";
-            } catch (Exception e) {
-                result = "{\"result\":\"failure\",\"msg\":\"Data is wrong.\"}";
-            }
-        }
-        return result;
-    }
-
-    @RequestMapping(value = "/{no}", method = RequestMethod.PUT)
-    public String apiSchedulePut(HttpServletRequest request, @RequestBody String requestBody, @PathVariable String no){
-        String result = null;
-        String compId = null;
-        String aesKey = null;
-        String aesIv = null;
-        String json = null;
-        ObjectMapper mapper = null;
-        Sched schedule = null;
-        HttpSession session = null;
-
-        mapper = new ObjectMapper();
-        session = request.getSession();
-        compId = (String)session.getAttribute("compId");
-        aesKey = (String)session.getAttribute("aesKey");
-        aesIv = (String)session.getAttribute("aesIv");
-        if(compId == null)  compId = (String)request.getAttribute("compId");
-
-        if(compId == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
-        }else if(aesKey == null || aesIv == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
-        }else{
-            json = salesService.decAes(requestBody, aesKey, aesIv);
-            try {
-                //schedule = mapper.readValue(json, Schedule.class);
-                //if(scheduleService.modifySchedule(no, schedule, compId))    result = "{\"result\":\"ok\"}";
-                //else                                                        result = "{\"result\":\"failure\",\"msg\":\"An error occurred.\"}";
-            } catch (Exception e) {
-                result = "{\"result\":\"failure\",\"msg\":\"Data is wrong.\"}";
-            }
-        }
-        return result;
-    }
-
-    @RequestMapping(value = "/{no}", method = RequestMethod.DELETE)
-    public String apiScheduleDelete(HttpServletRequest request, @PathVariable String no){
-        String result = null;
-        String compId = null;
-        HttpSession session = null;
-
-        session = request.getSession();
-        compId = (String)session.getAttribute("compId");
-        if(compId == null)  compId = (String)request.getAttribute("compId");
-
-        if(compId == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
-        }else{
-            //if(scheduleService.removeSchedule(no, compId))  result = "{\"result\":\"ok\"}";
-            //else                                            result = "{\"result\":\"failure\",\"msg\":\"An error occurred.\"}";
-        }
-        return result;
-    }
 
 
     
