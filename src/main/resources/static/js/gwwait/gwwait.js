@@ -354,7 +354,6 @@ function drawChangeInfo() {
 
 // 모달별 버튼  
 function closeModal(obj) {
-
 	if (obj.parentElement.parentElement.className == 'setApprovalModal') {
 		$(".modal-wrap").hide();
 		// 체크된 것 초기화 
@@ -363,7 +362,6 @@ function closeModal(obj) {
 		$(".modal-wrap").hide();
 		$("button[name='modConfirm']:last-child").remove();
 		toReadMode();
-
 	} else if (obj.parentElement.parentElement.className == 'gwModal' ) {
 		$(".modal-wrap").hide();
 	}
@@ -471,11 +469,6 @@ function showGwModal() {
 
 
 
-
-
-
-
-
 function check(name) {
 	let inputLength = $(".testClass");
 	let target = $("#" + name);
@@ -498,9 +491,6 @@ function check(name) {
   
 	$(".testClass").prop('checked', false);
   } //End of check(name) 
-  
-  
-  
   
   
   
