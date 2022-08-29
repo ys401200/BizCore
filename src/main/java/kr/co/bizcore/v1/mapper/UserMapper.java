@@ -11,8 +11,8 @@ import kr.co.bizcore.v1.domain.User;
 
 public interface UserMapper {
 
-    @Select("SELECT userno AS userNo, userid AS userId, userName AS userName FROM swc_user WHERE userno = #{userNo} AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}")
-    public SimpleUser getBasicUserInfo(String userNo, String compId);
+    @Select("SELECT userNo, userId, userName FROM swc_user WHERE userno = #{userNo} AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId})")
+    public SimpleUser getBasicUserInfo(@Param("userNo") String userNo, @Param("compId") String compId);
 
     @Select("SELECT func_id as funcId, sub_id AS subId, CAST(permission AS char(1)) AS permission FROM bizcore.permission WHERE comp_id = #{compId} AND user_no = #{userNo} AND dept = #{dept} AND func_id IN (SELECT 'A' UNION ALL SELECT func_id FROM bizsys.comp_permission WHERE comp_id = #{compId} AND permission = 1)")
     public List<Map<String, String>> getUserPermission(@Param("compId") String compId, @Param("dept") String dept,
@@ -41,4 +41,5 @@ public interface UserMapper {
     // 마이페이지 / 비번 수정
     @Select("UPDATE swcore.swc_user SET userpasswd = PASSWORD(#{new}) WHERE userno = #{no} AND userpasswd = PASSWORD(#{old}) AND compNo = (SELECT compno FROM swcore.swc_company WHERE compid = #{compId})")
     public void modifyMyPw(@Param("compId") String compId, @Param("no") String userNo, @Param("old") String old, @Param("new") String neww);
+
 }

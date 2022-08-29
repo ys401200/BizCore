@@ -1,5 +1,6 @@
 package kr.co.bizcore.v1.mapper;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
@@ -23,5 +24,14 @@ public interface SystemMapper {
 
     @Select("SELECT UNIX_TIMESTAMP(NOW())")
     public long getCurrentTimeFromDB();
+
+    @Select("SELECT WEEK(NOW())")
+    public int getCurrentWeek();
+
+    @Select("SELECT WEEK(#{date})")
+    public int getWeek(Date date);
+
+    @Select("SELECT WEEK(#{date})")
+    public int getWeekStr(String date);
 
 }

@@ -102,6 +102,18 @@ public abstract class Svc {
 
     public boolean debug(){return DEBUG;}
 
+    public int getCurrentWeek(){
+        int result = -1;
+        Integer w = null;
+
+        w = (Integer)dataFactory.getData("ALL", "currentWeek");
+        if(w == null){
+            w = systemMapper.getCurrentWeek();
+            dataFactory.setData("ALL", "currentWeek", w, 1800);
+        }
+        return result;
+    } // End of rootDept()
+
     public String generateKey() {
         return generateKey(32);
     } // End of generateKey()

@@ -98,5 +98,5 @@ public class UserService extends Svc {
         }
         result += "}";
         return result;
-    } // End of 
+    } // End of getUserMapJson()
 }

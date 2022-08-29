@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import kr.co.bizcore.v1.domain.Dept;
 import kr.co.bizcore.v1.domain.Schedule;
+import kr.co.bizcore.v1.domain.WorkReport;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -19,46 +20,7 @@ public class ScheduleSvc extends Svc{
 
     private static final Logger logger = LoggerFactory.getLogger(ScheduleSvc.class);
 
-    public String getScheduleListForCalendar(String compId, String scope, String deptIn, String userNo, int year, int month){
-        String result = null;
-        List<Schedule> list1 = null, list2 = null, list3 = null;
-        Date start = null, end = null;
-        int y = 0, m = 0, d = 0, x = 0;
-
-        start = new Date();
-        end = new Date();
-        calcStartAndEndDate(y, m, d, start, end);
-
-        if(scope.equals("dept")){
-            list1 = scheduleMapper.getScheduleListFromSalesWithDept(compId, start, end, deptIn);
-            list2 = scheduleMapper.getScheduleListFromTechdWithDept(compId, start, end, deptIn);
-            list3 = scheduleMapper.getScheduleListFromSchedWithDept(compId, start, end, deptIn);
-        }else if(scope.equals("personal")){
-            list1 = scheduleMapper.getScheduleListFromSalesWithUser(compId, start, end, userNo);
-            list2 = scheduleMapper.getScheduleListFromTechdWithUser(compId, start, end, userNo);
-            list3 = scheduleMapper.getScheduleListFromSchedWithUser(compId, start, end, userNo);
-        }else{
-            list1 = scheduleMapper.getScheduleListFromSched(compId, start, end);
-            list2 = scheduleMapper.getScheduleListFromSales(compId, start, end);
-            list3 = scheduleMapper.getScheduleListFromTechd(compId, start, end);    
-        }
-
-        list1.addAll(list2);
-        list1.addAll(list3);
-        Collections.sort(list1);
-
-        if(list1 != null){
-            result = "[";
-            for(x = 0 ; x < list1.size() ; x++){
-                if(x > 0)   result += ",";
-                result += list1.get(x).toJson();
-            }
-            result += "]";
-        }
-
-        return result;
-    } // End of getScheduleList()
-
+    // 단일 일정에 대한 조회 메서드
     public Schedule getSchedule(String compId, String type, String no){
         Schedule result = null;
         if(type.equals("sales")){
@@ -75,6 +37,7 @@ public class ScheduleSvc extends Svc{
         return result;
     }
 
+    // 단일 일정에 대한 삭제 메서드
     public int deleteSchedule(String compId, String type, String no){
         int result = -1;
         if(type.equals("sales"))        result = scheduleMapper.deleteSales(compId, no);
@@ -83,6 +46,7 @@ public class ScheduleSvc extends Svc{
         return result;
     }
 
+    // 단일 일정에 대한 추가 메서드
     public int addSchedule(String compId, Schedule schedule){
         int result = -1;
         String sql = schedule.createInsertQuery(null, compId);
@@ -90,6 +54,7 @@ public class ScheduleSvc extends Svc{
         return result;
     }
 
+    // 단일 일정에 대한 수정 메서드
     public int modifySchedule(String compId, Schedule schedule){
         int result = -1;
         Schedule sch = null;
@@ -107,6 +72,118 @@ public class ScheduleSvc extends Svc{
         result = executeSqlQuery(sql);
         return result;
     }
+
+    // ================================= F O R _ C A L E N D A R ===========================
+
+    // 캘린더에서 표시될 1개월치 일정을 전달하는 메서드
+    public String getScheduleListForCalendar(String compId, String scope, String deptIn, String userNo, int year, int month){
+        String result = null;
+        List<Schedule> list1 = null, list2 = null, list3 = null;
+        Date start = null, end = null;
+        int x = 0;
+
+        start = new Date();
+        end = new Date();
+        calcStartAndEndDate(year, month, 1, start, end);
+
+        logger.info("[ScheduleService.getScheduleListForCalendar] :::::::::::: start : " + start.getTime());
+        logger.info("[ScheduleService.getScheduleListForCalendar] :::::::::::: end : " + end.getTime());
+        logger.info("[ScheduleService.getScheduleListForCalendar] :::::::::::: deptIn : " + deptIn);
+
+        if(scope.equals("dept")){
+            
+            logger.info("[ScheduleService.getScheduleListForCalendar] :::::::::::: scope : dept");
+            list1 = scheduleMapper.getScheduleListFromSalesWithDept(compId, start, end, deptIn);
+            list2 = scheduleMapper.getScheduleListFromTechdWithDept(compId, start, end, deptIn);
+            list3 = scheduleMapper.getScheduleListFromSchedWithDept(compId, start, end, deptIn);
+        }else if(scope.equals("personal")){
+            logger.info("[ScheduleService.getScheduleListForCalendar] :::::::::::: scope : personal");
+            list1 = scheduleMapper.getScheduleListFromSalesWithUser(compId, start, end, userNo);
+            list2 = scheduleMapper.getScheduleListFromTechdWithUser(compId, start, end, userNo);
+            list3 = scheduleMapper.getScheduleListFromSchedWithUser(compId, start, end, userNo);
+        }else{
+            logger.info("[ScheduleService.getScheduleListForCalendar] :::::::::::: scope : company");
+            list1 = scheduleMapper.getScheduleListFromSched(compId, start, end);
+            list2 = scheduleMapper.getScheduleListFromSales(compId, start, end);
+            list3 = scheduleMapper.getScheduleListFromTechd(compId, start, end);    
+        }
+
+        logger.info("[ScheduleService.getScheduleListForCalendar] :::::::::::: list1 : " + list1.size() + " / list2 : " + list2.size() + " / list3 : " + list3.size());
+
+        list1.addAll(list2);
+        list1.addAll(list3);
+        Collections.sort(list1);
+
+        if(list1 != null){
+            result = "[";
+            for(x = 0 ; x < list1.size() ; x++){
+                if(x > 0)   result += ",";
+                result += list1.get(x).toJson();
+            }
+            result += "]";
+        }
+
+        return result;
+    } // End of getScheduleList()
+
+    // ===================================== F O R _ W O R K _ R E P O R T =============================
+
+    // 전달받은 날짜가 포함된 주의 일정을 전달하는 메서드
+    public String getWorkReport(String compId, int date){
+        String result = null;
+        int week = -1, year = -1, month = -1, dt = -1, day = -1, x = 0, y = 0;
+        String t = null;
+        List<WorkReport> reports = null;
+        WorkReport report = null;
+        List<Schedule> schedules = null;
+        Schedule schedule = null;
+        Date start = null, end = null;
+        Calendar cal = Calendar.getInstance();
+
+        year = date / 10000;
+        month = (date % 10000) / 100;
+        dt = date % 1000000;
+        t = year + "-" + month + "-" + dt;
+        week = year + systemMapper.getWeekStr(t);
+
+        cal.setTimeInMillis(0);
+        cal.set(year, month, dt);
+        day = (cal.get(Calendar.DAY_OF_WEEK) - 1) * 86400000;
+        start = new Date(cal.getTimeInMillis() - day);
+        end = new Date(start.getTime() + 86400000 * 7 - 1);
+
+        reports = scheduleMapper.getWorkReports(compId, week);
+
+        if(reports != null && reports.size() > 0)   for(x = 0 ; x < reports.size() ; x++){
+            report = reports.get(x);
+            schedules = scheduleMapper.getScheduleListForReport(compId, start, end, report.getWriter());
+            if(schedules != null && schedules.size() > 0){
+                Collections.sort(schedules);
+                for(y = 0 ; y < schedules.size() ; y++){
+                    schedule = schedules.get(y);
+                    report.addSchedule(schedule);
+                }
+            } 
+        }
+
+        if(reports != null){
+            result = "{\"week\":" + week + ",";
+            result += "\"start\":" + start.getTime() + ",";
+            result += "\"end\":" + end.getTime() + ",";
+            result += "\"workReports\":{";
+            for(x = 0 ; x < reports.size() ; x++){
+                report = reports.get(x);
+                if(x > 0)   result += ",";
+                result += ("\"" + report.getWriter() + "\":");
+                result += report.toJson();
+            }
+            result += "}}";
+        }
+
+        return result;
+    }
+
+
 
 
 

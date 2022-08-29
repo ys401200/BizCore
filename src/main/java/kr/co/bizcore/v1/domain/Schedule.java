@@ -45,8 +45,7 @@ public class Schedule extends Domain{
         result += ("\"to\":" + (to == null ? "null" : to.getTime()) + ",");
         result += ("\"report\":" + report + ",");
         result += ("\"type\":" + type + ",");
-        result += ("\"place\":" + place);
-        result += "}";
+        result += ("\"place\":\"" + place + "\"}");
         return result;
     }
 
@@ -62,7 +61,7 @@ public class Schedule extends Domain{
         result += ("\"to\":" + (to == null ? "null" : to.getTime()) + ",");
         result += ("\"report\":" + report + ",");
         result += ("\"type\":" + type + ",");
-        result += ("\"place\":" + place + ",");
+        result += ("\"place\":\"" + place + "\",");
         result += ("\"partner\":" + partner);
         result += "}";
         return result;
@@ -80,14 +79,14 @@ public class Schedule extends Domain{
         result += ("\"to\":" + (to == null ? "null" : to.getTime()) + ",");
         result += ("\"report\":" + report + ",");
         result += ("\"type\":" + type + ",");
-        result += ("\"place\":" + place + ",");
+        result += ("\"place\":\"" + place + "\",");
         result += ("\"partner\":" + partner) + ",";
         result += ("\"contract\":" + contract) + ",";
-        result += ("\"contractMethod\":" + (contractMethod == null ? "null" : contractMethod) + ",");
+        result += ("\"contractMethod\":" + (contractMethod == null ? "null" : "\"" + contractMethod + "\"") + ",");
         result += ("\"cipOfCustomer\":" + cipOfCustomer) + ",";
-        result += ("\"supportModel\":" + (supportModel == null ? "null" : supportModel) + ",");
-        result += ("\"supportVersion\":" + (supportVersion == null ? "null" : supportVersion) + ",");
-        result += ("\"supportStep\":" + (supportStep == null ? "null" : supportStep));
+        result += ("\"supportModel\":" + (supportModel == null ? "null" : "\"" + supportModel + "\"") + ",");
+        result += ("\"supportVersion\":" + (supportVersion == null ? "null" : "\"" + supportVersion + "\"") + ",");
+        result += ("\"supportStep\":" + (supportStep == null ? "null" : "\"" + supportStep + "\""));
         result += "}";
         return result;
     }
