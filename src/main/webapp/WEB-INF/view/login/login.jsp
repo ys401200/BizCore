@@ -36,7 +36,7 @@
     <div id="loginIntroduce">
         <div id="loginSpans">
             <span id="loginIntroSpan_1">Welcome to </span>
-            <span id="loginIntroSpan_2">Biz Core</span>
+            <span id="loginIntroSpan_2">BizCore</span>
         </div>
         <div id="loginIntroImgDiv">
             <img src="/images/login/loginIntroduce.png" id="loginIntroImg" />

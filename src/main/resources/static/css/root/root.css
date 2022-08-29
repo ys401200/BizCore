@@ -53,6 +53,7 @@
 
 #bodyContent #bodyGridContent #bodyNotice .gridNoticeList .gridHeader{
     grid-template-columns: 15% 55% 15% 15%;
+	border-bottom:1px solid #abb6d5;
 }
 
 #bodyContent #bodyGridContent #bodyNotice .gridNoticeList .gridContent{
@@ -101,7 +102,7 @@
 #bodyContent #bodyGridContent #bodySched .gridScheduleList .gridHeader{
     grid-template-columns: 10% 10% 15% 10% 10% 10% 10% 10% 15%;
 	font-size:14px;
-	border-bottom:2px solid #abb6d5;
+	border-bottom:1px solid #abb6d5;
 	/* background-color:#e9e9f2; */
 }
 

@@ -29,7 +29,9 @@ Loading.defaults = {
    * Message to be rendered on the overlay content
    * Has no effect if a custom overlay is defined
    */
-  message: "<img src='/images/main/loading_2.gif' />",
+
+  // message: "<img src='/images/main/loading_2.gif' />", 
+  message: "<img src='/images/main/loading3.gif' />", 
 
   /**
    * Theme to be applied on the loading element

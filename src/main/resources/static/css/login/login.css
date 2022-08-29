@@ -11,13 +11,16 @@ input, button, span{
     font-family: 'Noto Sans KR', sans-serif;
 }
 
+body{margin:0 auto;}
+
 #loginContents{
 	overflow: hidden;
 }
 
 #loginContents #loginContent{
-    float: left;
-    width: 50%;
+    /* float: left; */
+    float:right;
+    width: 55%;
     height: 100%;
     background-color: #ffffff;
 }
@@ -30,8 +33,11 @@ input, button, span{
 
 #loginContents #loginContent #loginForm{
     position: relative;
-    left: 27%;
-    top: 20%;
+    left: 50%;
+    top: 50%;
+    transform:translate(-50%,-64%);
+    display:inline-block;
+
 }
 
 @media(max-width: 700px){
@@ -42,7 +48,8 @@ input, button, span{
 
 #loginContents #loginContent #loginForm #loginLogoImgDiv{
 	position: relative;
-	left: 15%;
+	/* left: 15%; */
+    text-align: center;
 }
 
 #loginContents #loginContent #loginForm #loginLogoImgDiv #loginLogoImg{
@@ -139,13 +146,14 @@ input, button, span{
 }
 
 #loginContents #loginContent #loginForm #loginMsg{
-    margin-left: 15%;
+    /* margin-left: 15%; */
     font-weight: 400;
     font-size: 16px;
     color: #8d90ff;
     height: 50px;
     box-sizing: border-box;
-    padding:17px;
+    padding:12px 0 10px 0;
+    text-align:center;
     text-overflow: ellipsis;
 }
 
@@ -158,8 +166,10 @@ input, button, span{
 #loginContents #loginContent #loginForm #loginBtns button{
     width: 240px;
     height: 54px;
-    margin-top: 23px;
-    margin-left: 13%;
+    margin:0 auto;
+    display:inherit;
+    /* margin-top: 23px; */
+    /* margin-left: 13%; */
     font-weight: 400;
     font-size: 18px;
     line-height: 26px;
@@ -170,8 +180,9 @@ input, button, span{
 }
 
 #loginContents #loginIntroduce{
-    float: right;
-    width: 50%;
+    /* float: right; */
+    float:left;
+    width: 45%;
     height: 100%;
     background-image: url("../../images/login/loginBackground.jpg");
     background-size: cover;
@@ -180,7 +191,7 @@ input, button, span{
 #loginContents #loginIntroduce #loginSpans{
     position: relative;
     text-align: center;
-    top: 20%;
+    top: 23.5%;
 }
 
 #loginContents #loginIntroduce #loginSpans #loginIntroSpan_1{
@@ -200,10 +211,10 @@ input, button, span{
 #loginContents #loginIntroduce #loginIntroImgDiv{
     position: relative;
     text-align: center;
-    top: 20%;
+    top: 26%;
 }
 
 #loginContents #loginIntroduce #loginIntroImgDiv #loginIntroImg{
-    width: 80%;
-    height: 60%;
+    width: 73%;
+    /* height: 60%; */
 }
