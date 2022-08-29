@@ -37,6 +37,6 @@ public class WorkReport extends Domain{
         }
         result += "]}";
         return result;
-    }
+    } // End of toJson()
     
 }
