@@ -12,12 +12,11 @@ $(document).ready(() => {
 });
 
 function getScheduleList() {
-	let url, method, data, type, scheduleType, scheduleRange;
+	let url, method, data, type, scheduleRange;
 
-	scheduleType = $(document).find("#scheduleType").val();
 	scheduleRange = $(document).find("#scheduleRange").val();
 
-	if(scheduleType === undefined || scheduleRange === undefined){
+	if(scheduleRange === undefined){
 		url = "/api/schedule";
 	}else{
 		url = "/api/schedule/calendar/" + scheduleRange;
@@ -31,12 +30,11 @@ function getScheduleList() {
 } // End of getScheduleList()
 
 function scheduleSearchList(){
-	let searchCategory, searchText, url, method, data, type, scheduleType, scheduleRange;
+	let searchCategory, searchText, url, method, data, type, scheduleRange;
 
-	scheduleType = $(document).find("#scheduleType").val();
 	scheduleRange = $(document).find("#scheduleRange").val();
 
-	if(scheduleType === undefined || scheduleRange === undefined){
+	if(scheduleRange === undefined){
 		url = "/api/schedule";
 	}else{
 		url = "/api/schedule/calendar/" + scheduleRange;
@@ -108,18 +106,10 @@ function drawScheduleList() {
 			"title" : "일정설명",
 			"align" : "left",
 		},
-		{
-			"title" : "등록일",
-			"align" : "center",
-		}
-		
 	];
 
 	for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
-		let job, title, customer, userName, fromDate, fromSetDate, toDate, toSetDate, place, detail;
-
-		disDate = dateDis(jsonData[i].created, jsonData[i].modified);
-		setDate = dateFnc(disDate);
+		let job, title, customer, writer, fromDate, fromSetDate, toDate, toSetDate, place, content;
 
 		job = (jsonData[i].job === null || jsonData[i].job === "" || jsonData[i].job === undefined) ? "없음" : jsonData[i].job;
 
@@ -132,10 +122,10 @@ function drawScheduleList() {
 		}
 
 		title = (jsonData[i].title === null || jsonData[i].title === "" || jsonData[i].title === undefined) ? "제목 없음" : jsonData[i].title;
-		customer = (jsonData[i].cust == 0 || jsonData[i].cust === null || jsonData[i].cust === undefined) ? "없음" : storage.customer[jsonData[i].cust].name;
-		userName = (jsonData[i].user == 0 || jsonData[i].user === null || jsonData[i].user === undefined) ? "없음" : storage.user[jsonData[i].user].userName;
+		customer = (jsonData[i].customer == 0 || jsonData[i].customer === null || jsonData[i].customer === undefined) ? "없음" : storage.customer[jsonData[i].customer].name;
+		writer = (jsonData[i].writer == 0 || jsonData[i].writer === null || jsonData[i].writer === undefined) ? "없음" : storage.user[jsonData[i].writer].userName;
 		place = (jsonData[i].place === null || jsonData[i].place === "" || jsonData[i].place === undefined) ? "없음" : jsonData[i].place;
-		detail = (jsonData[i].detail === null || jsonData[i].detail === "" || jsonData[i].detail === undefined) ? "내용 없음" : jsonData[i].detail;
+		content = (jsonData[i].content === null || jsonData[i].content === "" || jsonData[i].content === undefined) ? "내용 없음" : jsonData[i].content;
 		
 		fromDate = dateDis(jsonData[i].from);
 		fromSetDate = dateFnc(fromDate);
@@ -160,7 +150,7 @@ function drawScheduleList() {
 				"setData": customer,
 			},
 			{
-				"setData": userName,
+				"setData": writer,
 			},
 			{
 				"setData": place,
@@ -169,11 +159,8 @@ function drawScheduleList() {
 				"setData": jsonData[i].sopp,
 			},
 			{
-				"setData": detail,
+				"setData": content,
 			},
-			{
-				"setData": setDate,
-			}
 		];
 
 		fnc = "scheduleDetailView(this);";
@@ -319,58 +306,212 @@ function scheduleDetailView(e){
 }
 
 function scheduleSuccessView(result){
-	let detailView, html = "", dataArray;
+	console.log(result.title);
+	let detailView, html = "", dataArray, job;
 
+	job = (result.job === null || result.job === "" || result.job === undefined) ? "" : result.job;
+	
 	detailView = $(document).find(".detailContainer");
 	detailView.hide();
-
-	dataArray = [
-		{
-			"title": "일정시작일",
-			"value": "test 일정시작일",
-		},
-		{
-			"title": "일정종료일",
-			"value": "test 일정종료일",
-		},
-		{
-			"title": "장소",
-			"value": "test 장소",
-		},
-		{
-			"title": "계약",
-			"value": "test 계약",
-		},
-		{
-			"title": "영업기회",
-			"value": "test 영업기회",
-		},
-		{
-			"title": "담당자",
-			"value": "test 담당자",
-		},
-		{
-			"title": "매출처",
-			"value": "test 매출처",
-		},
-		{
-			"title": "엔드유저",
-			"value": "test 엔드유저",
-		},
-		{
-			"title": "활동형태",
-			"value": "test 활동형태",
-		},
-		{
-			"title": "제목",
-			"value": "test 제목",
-		},
-		{
-			"title": "내용",
-			"value": "test 내용",
-		}
-	];
 	
+	if(job === "sales"){
+		let from, to, place, writer, sopp, customer, partner, title, content;
+		
+		disDate = dateDis(result.from);
+		from = dateFnc(disDate);
+
+		disDate = dateDis(result.to);
+		to = dateFnc(disDate);
+
+		place = (result.place === null || result.place === "" || result.place === undefined) ? "없음" : result.place;
+		
+		$.ajax({
+			url: "/api/sopp/" + result.sopp,
+			method: "get",
+			async: false,
+			dataType: "json",
+			success:(resultData) => {
+				sopp = (resultData.no == 0) ? "없음" : resultData.title;
+			}
+		});
+
+		writer = (result.writer === null || result.writer === "" || result.writer === undefined) ? "없음" : storage.user[result.writer].userName;
+		customer = (result.customer == 0 || result.customer === null || result.customer === undefined) ? "없음" : storage.customer[result.customer].name;
+		partner = (result.partner == 0 || result.partner === null || result.partner === undefined) ? "없음" : storage.customer[result.partner].name;
+		title = (result.title === null || result.title === "" || result.title === undefined) ? "제목 없음" : result.title;
+		content = (result.content === null || result.content === "" || result.content === undefined) ? "내용 없음" : result.content;
+
+		dataArray = [
+			{
+				"title": "일정시작일",
+				"value": from,
+			},
+			{
+				"title": "일정종료일",
+				"value": to,
+			},
+			{
+				"title": "장소",
+				"value": place,
+			},
+			{
+				"title": "담당자",
+				"value": writer,
+			},
+			{
+				"title": "영업기회",
+				"value": sopp,
+			},
+			{
+				"title": "매출처",
+				"value": customer,
+			},
+			{
+				"title": "엔드유저",
+				"value": partner,
+			},
+			{
+				"title": "제목",
+				"value": title,
+			},
+			{
+				"title": "내용",
+				"value": content,
+			}
+		];
+	}else if(job === "tech"){
+		let from, to, place, writer, sopp, customer, partner, title, content, supportModel, supportVersion;
+		
+		disDate = dateDis(result.from);
+		from = dateFnc(disDate);
+
+		disDate = dateDis(result.to);
+		to = dateFnc(disDate);
+
+		place = (result.place === null || result.place === "" || result.place === undefined) ? "없음" : result.place;
+		
+		$.ajax({
+			url: "/api/sopp/" + result.sopp,
+			method: "get",
+			async: false,
+			dataType: "json",
+			success:(resultData) => {
+				sopp = (resultData.no == 0) ? "없음" : resultData.title;
+			}
+		});
+
+		writer = (result.writer === null || result.writer === "" || result.writer === undefined) ? "없음" : storage.user[result.writer].userName;
+		customer = (result.customer == 0 || result.customer === null || result.customer === undefined) ? "없음" : storage.customer[result.customer].name;
+		partner = (result.partner == 0 || result.partner === null || result.partner === undefined) ? "없음" : storage.customer[result.partner].name;
+		title = (result.title === null || result.title === "" || result.title === undefined) ? "제목 없음" : result.title;
+		content = (result.content === null || result.content === "" || result.content === undefined) ? "내용 없음" : result.content;
+		supportModel = (result.supportModel === null || result.supportModel === "" || result.supportModel === undefined) ? "없음" : result.supportModel;
+		supportVersion = (result.supportVersion === null || result.supportVersion === "" || result.supportVersion === undefined) ? "없음" : result.supportVersion;
+
+		dataArray = [
+			{
+				"title": "기술요청명",
+				"value": title,
+			},
+			{
+				"title": "영업기회",
+				"value": sopp,
+			},
+			{
+				"title": "엔드유저",
+				"value": partner,
+			},
+			{
+				"title": "모델",
+				"value": supportModel,
+			},
+			{
+				"title": "버전",
+				"value": supportVersion,
+			},
+			{
+				"title": "장소",
+				"value": place,
+			},
+			{
+				"title": "담당자",
+				"value": writer,
+			},
+			{
+				"title": "지원시작일",
+				"value": from,
+			},
+			{
+				"title": "지원종료일",
+				"value": to,
+			},
+			{
+				"title": "내용",
+				"value": content,
+			}
+		];
+	}else{
+		let from, to, disDate, place, sopp, customer, writer, title, content;
+
+		disDate = dateDis(result.from);
+		from = dateFnc(disDate);
+
+		disDate = dateDis(result.to);
+		to = dateFnc(disDate);
+
+		place = (result.place === null || result.place === "" || result.place === undefined) ? "없음" : result.place;
+		
+		$.ajax({
+			url: "/api/sopp/" + result.sopp,
+			method: "get",
+			async: false,
+			dataType: "json",
+			success:(resultData) => {
+				sopp = (resultData.no == 0) ? "없음" : resultData.title;
+			}
+		});
+
+		writer = (result.writer === null || result.writer === "" || result.writer === undefined) ? "없음" : storage.user[result.writer].userName;
+		customer = (result.customer == 0 || result.customer === null || result.customer === undefined) ? "없음" : storage.customer[result.customer].name;
+		title = (result.title === null || result.title === "" || result.title === undefined) ? "제목 없음" : result.title;
+		content = (result.content === null || result.content === "" || result.content === undefined) ? "내용 없음" : result.content;
+
+		dataArray = [
+			{
+				"title": "일정시작일",
+				"value": from,
+			},
+			{
+				"title": "일정종료일",
+				"value": to,
+			},
+			{
+				"title": "장소",
+				"value": place,
+			},
+			{
+				"title": "영업기회",
+				"value": sopp,
+			},
+			{
+				"title": "담당자",
+				"value": writer,
+			},
+			{
+				"title": "매출처",
+				"value": customer,
+			},
+			{
+				"title": "제목",
+				"value": title,
+			},
+			{
+				"title": "내용",
+				"value": content,
+			}
+		];
+	}
+
 	detailView.find(".detailMainSpan").text("테스트");
 	detailView.find(".detailBtns").html("<button type='button' onclick='scheduleUpdateForm(" + JSON.stringify(result) + ")'>수정</button><button type='button' onclick='scheduleDelete(" + result.no + ")'>삭제</button><button type='button' onclick='detailContainerHide();'>닫기</button>");
 	html = detailViewForm(dataArray);
