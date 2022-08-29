@@ -422,8 +422,8 @@ function contractSuccessView(result){
 			html += "<input type='radio' id='tabSales' name='tabItem' data-content-id='contentSales' onclick='tabItemClick(this)'>";
 			html += "<label class='tabItem' for='tabSales'>영업활동내역</label>";
 			html += "</div><br/>";
-			html = detailViewForm(dataArray);
-			// html += createTabTradeList();
+			html += detailViewForm(dataArray);
+			html += createTabTradeList(result.sopp);
 			detailContainer.find("span").text(title);
 			detailContainer.find(".detailContent").html(html);
 			detailContainer.find(".detailBtns").html("");

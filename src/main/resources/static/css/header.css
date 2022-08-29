@@ -355,11 +355,36 @@ input[name="tabItem"] {
 	font-weight: 500;
 }
 
+.tradeList .tradeThirdFormContent .tradeThirdFormContentDiv
+{
+	display: grid;
+	grid-template-columns: repeat(12, 1fr);
+	color: #000;
+	font-weight: 500;
+}
+
+.tradeList .tradeThirdFormContent .tradeThirdFormContentTotal{
+	display: flow-root;
+	padding: 10px;
+	border: 1px solid #D9D9D9;
+	color: #000;
+	font-weight: 500;
+}
+
+.tradeList .tradeThirdFormContent .tradeThirdFormContentTotal > span:first-child{
+	float: left;
+}
+
+.tradeList .tradeThirdFormContent .tradeThirdFormContentTotal > span:last-child{
+	float: right;
+}
+
 .tradeList .tradeFirstTitle .tradeFirstTitleItem,
 .tradeList .tradeFirstFormContent .tradeFirstContentItem,
 .tradeList .tradeSecondFormTitle .tradeSecondTitleItem,
 .tradeList .tradeSecondFormContent .tradeSecondContentItem,
-.tradeList .tradeThirdFormTitle .tradeThirdTitleItem{
+.tradeList .tradeThirdFormTitle .tradeThirdTitleItem,
+.tradeList .tradeThirdFormContent .tradeThirdFormContentDiv .tradeThirdContentItem{
 	padding: 10px;
 	border: 1px solid #D9D9D9;
 }

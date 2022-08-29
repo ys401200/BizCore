@@ -20,7 +20,7 @@ function getScheduleList() {
 	if(scheduleType === undefined || scheduleRange === undefined){
 		url = "/api/schedule";
 	}else{
-		url = "/api/schedule/" + scheduleType + "/" + scheduleRange;
+		url = "/api/schedule/calendar/" + scheduleRange;
 	}
 
 	method = "get";
@@ -39,7 +39,7 @@ function scheduleSearchList(){
 	if(scheduleType === undefined || scheduleRange === undefined){
 		url = "/api/schedule";
 	}else{
-		url = "/api/schedule" + scheduleType + "/" + scheduleRange;
+		url = "/api/schedule/calendar/" + scheduleRange;
 	}
 	
 	method = "get";
@@ -287,7 +287,7 @@ function drawCalendar(container){
         t = tempDate.getFullYear();
         t += (tempDate.getMonth() < 9 ? "0" + (tempDate.getMonth() + 1) : tempDate.getMonth() + 1);
         t += (tempDate.getDate() < 10 ? "0" + tempDate.getDate() : tempDate.getDate()); // 셀에 저장해 둘 날짜 문자열 생성
-        html += "<div class=\"calendar_cell" + (storage.currentMonth === tempDate.getMonth() + 1 ? "" : " calendar_cell_blur") + "\" data-date=\"" + t + "\" onclick='scheduleInsertForm();'>"; // start row / 해당월이 아닌 날짜의 경우 calendar_cell_blue 클래스명을 셀에 추가 지정함
+        html += "<div class=\"calendar_cell" + (storage.currentMonth === tempDate.getMonth() + 1 ? "" : " calendar_cell_blur") + "\" data-date=\"" + t + "\" onclick='eventStop();scheduleInsertForm();'>"; // start row / 해당월이 아닌 날짜의 경우 calendar_cell_blue 클래스명을 셀에 추가 지정함
         html += "<div class=\"calendar_date\">" + (calArr[x1].date.getDate()) + "</div>"; // 셀 안 최상단에 날짜 아이템을 추가함
         for(x2 = 0 ; x2 < slot ; x2++){
 			x3 = [];
@@ -514,7 +514,7 @@ function scheduleCalendarAjax(){
 	if(scheduleType === undefined || scheduleRange === undefined){
 		url = "/api/schedule";
 	}else{
-		url = "/api/schedule" + scheduleType + "/" + scheduleRange + "/" + storage.currentYear + storage.currentMonth;
+		url = "/api/schedule" + scheduleRange + "/" + storage.currentYear + "/" + storage.currentMonth;
 	}
 
 	method = "get",
@@ -551,6 +551,7 @@ function listChange(event){
 }
 
 function scheduleSuccessList(result){
+	console.log("result : " + result);
 	storage.scheduleList = result;
 
 	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined){
@@ -1277,7 +1278,7 @@ function scheduleSelectChange(){
 
 	scheduleType = $(document).find("#scheduleType").val();
 	scheduleRange = $(document).find("#scheduleRange").val();
-	url = "/api/schedule" + scheduleType + "/" + scheduleRange;
+	url = "/api/schedule/calendar/" + scheduleRange;
 	method = "get";
 	data = "";
 	type = "list";
