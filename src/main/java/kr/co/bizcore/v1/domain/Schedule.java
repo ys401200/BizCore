@@ -20,7 +20,7 @@ public class Schedule extends Domain{
     private String content;
     private boolean report;
     private int type;
-    private int place;
+    private String place;
 
     // 영업 추가 필드들
     private int partner;
@@ -129,7 +129,7 @@ public class Schedule extends Domain{
             column.put("to", "salesTodatetime");
             column.put("title", "salesTitle");
             column.put("content", "salesDesc");
-            column.put("workReport", "salesCheck");
+            column.put("report", "salesCheck");
             column.put("type", "salesType");
             column.put("place", "salesPlace");
             column.put("partner", "custNo");
@@ -144,7 +144,7 @@ public class Schedule extends Domain{
             column.put("to", "techdTo");
             column.put("title", "techdTitle");
             column.put("content", "techdDesc");
-            column.put("workReport", "techdCheck");
+            column.put("report", "techdCheck");
             column.put("type", "techdType");
             column.put("place", "techdPlace");
             column.put("partner", "custNo");
@@ -165,7 +165,7 @@ public class Schedule extends Domain{
             column.put("to", "schedTo");
             column.put("title", "schedTitle");
             column.put("content", "schedDesc");
-            column.put("workReport", "schedCheck");
+            column.put("report", "schedCheck");
             column.put("type", "schedType");
             column.put("place", "schedPlace");
             column.put("created","regdatetime");

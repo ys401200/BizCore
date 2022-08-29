@@ -1,5 +1,6 @@
 package kr.co.bizcore.v1.mapper;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Insert;
@@ -36,11 +37,38 @@ public interface ScheduleMapper {
     public Schedule getScheduleFromTechd(@Param("compId") String compId, @Param("no") String no);
 
     @Select("SELECT 'schedule' AS job, schedNo AS no, userNo AS writer, soppNo AS sopp, custNo AS customer, schedFrom AS `from`, schedTo AS `to`, schedTitle AS title, schedDesc AS content, schedCheck AS workReport, schedType AS type, schedPlace AS place, regdatetime AS created, moddatetime AS modified FROM swc_sched WHERE attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND #{start} <= schedFrom AND #{end} >= schedFrom ORDER BY schedno DESC")
-    public List<Schedule> getScheduleListFromSched(@Param("compId") String compId, @Param("no") String no);
+    public List<Schedule> getScheduleListFromSched(@Param("compId") String compId, @Param("start") Date start, @Param("end") Date end);
 
     @Select("SELECT 'sales' AS job, salesNo AS no, userNo AS writer, soppNo AS sopp, ptncNo AS customer, salesFrdatetime AS `from`, salesTodatetime AS `to`, salesTitle AS title, salesDesc AS content, salesCheck AS workReport, salesType AS type, salesPlace AS place, custNo AS partner, regdatetime AS created, moddatetime AS modified FROM swc_sales WHERE attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND #{start} <= schedFrom AND #{end} >= schedFrom ORDER BY salesno DESC")
-    public List<Schedule> getScheduleListFromSales(@Param("compId") String compId, @Param("no") String no);
+    public List<Schedule> getScheduleListFromSales(@Param("compId") String compId, @Param("start") Date start, @Param("end") Date end);
 
     @Select("SELECT 'tech' AS job, techdNo AS no, userNo AS writer, soppNo AS sopp, endCustNo AS customer, techdFrom AS `from`, techdTo AS `to`, techdTitle AS title, techdDesc AS content, techdCheck AS workReport, techdType AS type, techdPlace AS place, custNo AS partner, contNo AS contract, cntrctMth AS contractMethod, custmemberNo AS cipOfCustomer, techdItemmodel AS supportModel, techdItemversion AS supportVersion, techdSteps AS supportStep, regdatetime AS created, moddatetime AS modified FROM swc_techd WHERE attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND #{start} <= schedFrom AND #{end} >= schedFrom ORDER BY techdno DESC")
-    public List<Schedule> getScheduleListFromTechd(@Param("compId") String compId, @Param("no") String no);
+    public List<Schedule> getScheduleListFromTechd(@Param("compId") String compId, @Param("start") Date start, @Param("end") Date end);
+
+    @Select("SELECT 'schedule' AS job, schedNo AS no, userNo AS writer, soppNo AS sopp, custNo AS customer, schedFrom AS `from`, schedTo AS `to`, schedTitle AS title, schedDesc AS content, schedCheck AS workReport, schedType AS type, schedPlace AS place, regdatetime AS created, moddatetime AS modified FROM swc_sched WHERE attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND #{start} <= schedFrom AND #{end} >= schedFrom AND userno IN (SELECT user_no FROM bizcore.user_dept WHERE dept_id IN (#{deptIn})) ORDER BY schedno DESC")
+    public List<Schedule> getScheduleListFromSchedWithDept(@Param("compId") String compId, @Param("start") Date start, @Param("end") Date end, @Param("deptIn") String deptIn);
+
+    @Select("SELECT 'sales' AS job, salesNo AS no, userNo AS writer, soppNo AS sopp, ptncNo AS customer, salesFrdatetime AS `from`, salesTodatetime AS `to`, salesTitle AS title, salesDesc AS content, salesCheck AS workReport, salesType AS type, salesPlace AS place, custNo AS partner, regdatetime AS created, moddatetime AS modified FROM swc_sales WHERE attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND #{start} <= schedFrom AND #{end} >= schedFrom AND userno IN (SELECT user_no FROM bizcore.user_dept WHERE dept_id IN (#{deptIn})) ORDER BY salesno DESC")
+    public List<Schedule> getScheduleListFromSalesWithDept(@Param("compId") String compId, @Param("start") Date start, @Param("end") Date end, @Param("deptIn") String deptIn);
+
+    @Select("SELECT 'tech' AS job, techdNo AS no, userNo AS writer, soppNo AS sopp, endCustNo AS customer, techdFrom AS `from`, techdTo AS `to`, techdTitle AS title, techdDesc AS content, techdCheck AS workReport, techdType AS type, techdPlace AS place, custNo AS partner, contNo AS contract, cntrctMth AS contractMethod, custmemberNo AS cipOfCustomer, techdItemmodel AS supportModel, techdItemversion AS supportVersion, techdSteps AS supportStep, regdatetime AS created, moddatetime AS modified FROM swc_techd WHERE attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND #{start} <= schedFrom AND #{end} >= schedFrom AND userno IN (SELECT user_no FROM bizcore.user_dept WHERE dept_id IN (#{deptIn})) ORDER BY techdno DESC")
+    public List<Schedule> getScheduleListFromTechdWithDept(@Param("compId") String compId, @Param("start") Date start, @Param("end") Date end, @Param("deptIn") String deptIn);
+
+    @Select("SELECT 'schedule' AS job, schedNo AS no, userNo AS writer, soppNo AS sopp, custNo AS customer, schedFrom AS `from`, schedTo AS `to`, schedTitle AS title, schedDesc AS content, schedCheck AS workReport, schedType AS type, schedPlace AS place, regdatetime AS created, moddatetime AS modified FROM swc_sched WHERE attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND #{start} <= schedFrom AND #{end} >= schedFrom AND userno = #{userNo} ORDER BY schedno DESC")
+    public List<Schedule> getScheduleListFromSchedWithUser(@Param("compId") String compId, @Param("start") Date start, @Param("end") Date end, @Param("userNo") String userNo);
+
+    @Select("SELECT 'sales' AS job, salesNo AS no, userNo AS writer, soppNo AS sopp, ptncNo AS customer, salesFrdatetime AS `from`, salesTodatetime AS `to`, salesTitle AS title, salesDesc AS content, salesCheck AS workReport, salesType AS type, salesPlace AS place, custNo AS partner, regdatetime AS created, moddatetime AS modified FROM swc_sales WHERE attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND #{start} <= schedFrom AND #{end} >= schedFrom AND userno = #{userNo} ORDER BY salesno DESC")
+    public List<Schedule> getScheduleListFromSalesWithUser(@Param("compId") String compId, @Param("start") Date start, @Param("end") Date end, @Param("userNo") String userNo);
+
+    @Select("SELECT 'tech' AS job, techdNo AS no, userNo AS writer, soppNo AS sopp, endCustNo AS customer, techdFrom AS `from`, techdTo AS `to`, techdTitle AS title, techdDesc AS content, techdCheck AS workReport, techdType AS type, techdPlace AS place, custNo AS partner, contNo AS contract, cntrctMth AS contractMethod, custmemberNo AS cipOfCustomer, techdItemmodel AS supportModel, techdItemversion AS supportVersion, techdSteps AS supportStep, regdatetime AS created, moddatetime AS modified FROM swc_techd WHERE attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND #{start} <= schedFrom AND #{end} >= schedFrom AND userno = #{userNo} ORDER BY techdno DESC")
+    public List<Schedule> getScheduleListFromTechdWithUser(@Param("compId") String compId, @Param("start") Date start, @Param("end") Date end, @Param("userNo") String userNo);
+
+    @Update("UPDATE swc_sched SET attrib = 'XXXXX' WHERE compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND schedno = #{no}")
+    public int deleteSched(@Param("compId") String compId, @Param("no") String no);
+
+    @Update("UPDATE swc_sales SET attrib = 'XXXXX' WHERE compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND saleno = #{no}")
+    public int deleteSales(@Param("compId") String compId, @Param("no") String no);
+
+    @Update("UPDATE swc_techd SET attrib = 'XXXXX' WHERE compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND techdno = #{no}")
+    public int deleteTechd(@Param("compId") String compId, @Param("no") String no);
 }

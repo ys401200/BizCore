@@ -359,7 +359,10 @@ public abstract class Domain implements Comparable<Domain>{
             field = targetFields[x];
             field.setAccessible(true);
             column = fieldMap.get(field.getName()) != null ? fieldMap.get(field.getName()) : field.getName();
-
+            
+            if(className.equals("Schedule")){
+                if(field.getName() != null && (field.getName().equals("no") || field.getName().equals("job") || fieldMap.get(field.getName()) == null))    continue; // Schedule 클래스에서 job는 테이블을 구분하기 위한 것이므로 생락함
+            }    
             if(column.equals("created") || column.equals("modified") || column.equals("deleted") || column.equals("no"))    continue;
             
             try{
@@ -465,8 +468,8 @@ public abstract class Domain implements Comparable<Domain>{
             str1 = comp[0];
             str2 = comp[1];
         }else{
-            str1 = "";
-            str2 = "";
+            str1 = "attrib,";
+            str2 = "100000,";
         }
 
         for(x = 0 ; x < targetFields.length ; x++){
@@ -475,6 +478,10 @@ public abstract class Domain implements Comparable<Domain>{
             fieldName = fieldMap.get(field.getName()) != null ? fieldMap.get(field.getName()) : field.getName();
             
             if(fieldName.equals("no"))  continue;
+
+            if(className.equals("Schedule")){
+                if(field.getName() != null && (field.getName().equals("no") || field.getName().equals("job") || fieldMap.get(field.getName()) == null))    continue; // Schedule 클래스에서 job는 테이블을 구분하기 위한 것이므로 생락함
+            }
 
             try{
                 v = field.get(this);
