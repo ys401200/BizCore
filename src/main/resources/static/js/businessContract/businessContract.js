@@ -205,8 +205,6 @@ function contractSuccessView(result){
 	detailContainer = $(document).find(".detailContainer");
 	detailContainer.hide();
 
-	console.log(result);
-
 	contractType = (result.contractType === null || result.contractType === "" || result.contractType === undefined) ? "데이터 없음" : storage.code.etc[result.contractType];
 	title = (result.title === null || result.title === "" || result.title === undefined) ? "제목 없음" : result.title;
 	employee = (result.employee == 0 || result.employee === null || result.employee === undefined) ? "데이터 없음" : storage.user[result.employee].userName;
@@ -415,8 +413,8 @@ function contractSuccessView(result){
 			html += "<label class='tabItem' for='tabAll'>기본정보</label>";
 			html += "<input type='radio' id='tabTrade' name ='tabItem' data-content-id='tabTradeList' onclick='tabItemClick(this)'>";
 			html += "<label class='tabItem' for='tabTrade'>매입매출내역</label>";
-			html += "<input type='radio' id='tabEst' name='tabItem' data-content-id='tabEstList' onclick='tabItemClick(this)'>";
-			html += "<label class='tabItem' for='tabEst'>견적내역</label>";
+			// html += "<input type='radio' id='tabEst' name='tabItem' data-content-id='tabEstList' onclick='tabItemClick(this)'>";
+			// html += "<label class='tabItem' for='tabEst'>견적내역</label>";
 			html += "<input type='radio' id='tabFile' name='tabItem' data-content-id='contentFile' onclick='tabItemClick(this)'>";
 			html += "<label class='tabItem' for='tabFile'>파일첨부</label>";
 			html += "<input type='radio' id='tabTech' name='tabItem' data-content-id='contentTech' onclick='tabItemClick(this)'>";
@@ -424,13 +422,14 @@ function contractSuccessView(result){
 			html += "<input type='radio' id='tabSales' name='tabItem' data-content-id='contentSales' onclick='tabItemClick(this)'>";
 			html += "<label class='tabItem' for='tabSales'>영업활동내역</label>";
 			html += "</div><br/>";
-			html += detailViewForm(dataArray);
-			html += createTabTradeList();
+			html = detailViewForm(dataArray);
+			// html += createTabTradeList();
 			detailContainer.find("span").text(title);
 			detailContainer.find(".detailContent").html(html);
 			detailContainer.find(".detailBtns").html("");
 			detailContainer.find(".detailBtns").append("<button type='button' onclick='contractUpdateForm(" + JSON.stringify(result) + ");'>수정</button><button type='button' onclick='contractDelete(" + result.no + ");'>삭제</button><button type='button' onclick='detailContainerHide();'>닫기</button>");
-			createTabEstList();
+			createTabSalesList(result.sopp);
+			// createTabEstList();
 
 			detailContainer.show();		
 			

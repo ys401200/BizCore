@@ -308,7 +308,6 @@ function init(){
 		}
 	});
 
-	
 	$(".close").click(function(){
 		modalClose();
 	});
@@ -998,6 +997,7 @@ function detailViewFormModal(data){
 	return html;
 }
 
+// 상세보기 임시 폼
 function detailViewForm(data){
 	let html = "";
 
@@ -1046,6 +1046,7 @@ function setTiny(){
 	});
 }
 
+// datalist
 function dataListFormat(id, value){
 	let result;
 
@@ -1060,43 +1061,14 @@ function dataListFormat(id, value){
 
 // crud tab 클릭 함수
 function tabItemClick(e){
-	setTimeout(() => {
-		modal.tabs.content.hide();
+	$(document).find(".tabs input:radio").each((index, item) => {
+		$(document).find("#" + $(item).data("content-id")).hide();
+	});
 
-		if($(e).data("content-id") === "tabContentAll"){
-			modal.confirm.show();
-			modal.close.show();
-			modal.content.css("width", "50%");
-			modal.confirm.text("수정");
-			modal.close.text("취소");
-		}else if($(e).data("content-id") === "tabTradeList"){
-			modal.confirm.show();
-			modal.close.show();
-			modal.content.css("width", "90%");
-			modal.confirm.text("분할추가");
-			modal.close.text("추가");
-		}else{
-			modal.content.css("width", "80%");
-			modal.confirm.hide();
-			modal.close.hide();
-		}
-
-		if($(e).data("first-fnc") === undefined){
-			modal.confirm.attr("onclick", "");
-		}else{
-			modal.confirm.attr("onclick", $(e).data("first-fnc"));
-		}
-
-		if($(e).data("second-fnc") === undefined){
-			modal.close.attr("onclick", "");
-		}else{
-			modal.close.attr("onclick", $(e).data("second-fnc"));
-		}
-
-		$(document).find("#" + $(e).data("content-id")).show();
-	}, 300);
+	$(document).find("#" + $(e).data("content-id")).show();
 }
 
+//매입매출내역 리스트
 function createTabTradeList(){
 	let html = "";
 
@@ -1234,6 +1206,7 @@ function createTabTradeList(){
 	return html;
 }
 
+//견적내역 리스트
 function createTabEstList(){
 	let html = "", container, header = [], data = [], str, detailContainer;
 
@@ -1321,6 +1294,7 @@ function createTabEstList(){
 	}, 100);
 }
 
+//기술지원내역 리스트(아직 구현 안됨);
 function createTabTechList(){
 	let html = "";
 
@@ -1367,24 +1341,33 @@ function createTabTechList(){
 	}, 100);
 }
 
-function createTabSalesList(){
-	let html = "";
+//영업활동내역 리스트(아직 구현 안됨);
+function createTabSalesList(no){
+	let html = "", container, header = [], data = [], str, detailContainer;
+	detailContainer = $(document).find(".detailContainer");
 
-	html = "<div class='tabSalesist'>";
-	html += "<div class='tabSalesHeader'>";
-	html += "<div>견적일자</div>";
-	html += "<div>작성자</div>";
-	html += "<div>견적번호</div>";
-	html += "<div>견적명</div>";
-	html += "<div>거래처</div>";
-	html += "<div>공급가합계</div>";
-	html += "<div>부가세합계</div>";
-	html += "<div>금액</div>";
-	html += "<div>적요</div>";
-	html += "</div>";
+	html = "<div class='tabSalesList' id='tabSalesList'></div>";
+	
+	header = [
+		{
+			"title" : "일자",
+			"align" : "center",
+		},
+		{
+			"title" : "활동형태",
+			"align" : "center",
+		},
+		{
+			"title" : "내용",
+			"align" : "left",
+		},
+	];
+	
+	detailContainer.find(".detailContent").append(html);
+	container = detailContainer.find(".detailContent .tabSalesList");
 
 	$.ajax({
-		url: "/api/sales",
+		url: "/api/sales/" + no,
 		method: "get",
 		async: false,
 		dataType: "json",
@@ -1394,29 +1377,39 @@ function createTabSalesList(){
 				let jsonData;
 				jsonData = cipher.decAes(result.data);
 				jsonData = JSON.parse(jsonData);
-
-				html += "<div class='tabSalesBody'>";
 	
 				for(let i = 0; i < jsonData.length; i++){
-					html += "<div>" + jsonData[i].no + "</div>";
+					str = [
+						{
+							"setData": jsonData[i].from + " ~ " + jsonData[i].to,
+						},
+						{
+							"setData": jsonData[i].type,
+						},
+						{
+							"setData": jsonData[i].detail,
+						},
+					];
+
+					fnc = "tabSalesDetailView(this);";
+					ids.push(jsonData[i].no);
+					data.push(str);
 				}
-	
-				html += "</div>";
+
+				console.log("실행");
+
+				createGrid(container, header, data, ids, fnc);
 			}
 		}
 	});
-
-	html += "</div>";
-
-	setTimeout(() => {
-		modal.body.append(html);
-	}, 100);
 }
 
+//상세보기 숨김
 function detailContainerHide(){
 	$(document).find(".detailContainer").hide();
 }
 
+//매출처 담당자 자동완성
 function customerChange(e){
 	let getCustNumber;
 	getCustNumber = dataListFormat("customer", $(e).val());
