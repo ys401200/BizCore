@@ -33,10 +33,10 @@ public class ApiScheduleCtrl extends Ctrl {
 
     private static final Logger logger = LoggerFactory.getLogger(AccountingController.class);
 
-    // ============================== 캘린더 =============================================
+    // ============================== 캘린더 ============================================= / 기간은 기본적으로 월단위
 
     // 캘린더 정보 요청에 대한 처리 / 연월 정보 없음 / 현재 연월
-    @GetMapping("/calendar/company/{scope}")
+    @GetMapping("/calendar/{scope}")
     public String apiScheduleCalendar(HttpServletRequest request, @PathVariable("scope") String scope){
         String result = null;
         int yy = 0, mm = 0;
@@ -202,13 +202,11 @@ public class ApiScheduleCtrl extends Ctrl {
     @DeleteMapping("/{type:\\D+}/{no:\\d+}")
     public String apiScheduleTypeNoDelete(HttpServletRequest request, @PathVariable String type, @PathVariable int no){
         String result = null;
-        String compId = null, aesKey = null, aesIv = null;
+        String compId = null;
         int count = -1;
         HttpSession session = null;
 
         session = request.getSession();
-        aesKey = (String)session.getAttribute("aesKey");
-        aesIv = (String)session.getAttribute("aesIv");
         compId = (String)session.getAttribute("compId");
         if(compId == null)  compId = (String)request.getAttribute("compId");
 
@@ -224,6 +222,68 @@ public class ApiScheduleCtrl extends Ctrl {
         return result;
     }
 
+    // ============================== 업무보고 ============================================= / 기간은 기본적으로 주단위
+
+    @GetMapping("/workreport")
+    public String apiScheduleReport(HttpServletRequest request){
+        int date = getCurrentDate();
+        return apiScheduleReportDeptDate(request, date);
+    }
+
+    @GetMapping("/workreport/company")
+    public String apiScheduleReportCompany(HttpServletRequest request){
+        int date = getCurrentDate();
+        return apiScheduleReportCompanyDate(request, date);
+    }
+
+    @GetMapping("/workreport/company/{date:\\d+}")
+    public String apiScheduleReportCompanyDate(HttpServletRequest request, @PathVariable("date") int date){
+        return getWorkReport(request, "company", date);
+    }
+
+    @GetMapping("/workreport/dept")
+    public String apiScheduleReportDept(HttpServletRequest request){
+        int date = getCurrentDate();
+        return apiScheduleReportDeptDate(request, date);
+    }
+
+    @GetMapping("/workreport/dept/{date:\\d+}")
+    public String apiScheduleReportDeptDate(HttpServletRequest request, @PathVariable("date") int date){
+        return getWorkReport(request, "dept", date);
+    }
+
+    public String getWorkReport(HttpServletRequest request, String scope, int date){
+        String result = null;
+        String compId = null, aesKey = null, aesIv = null, data = null;
+        HttpSession session = null;
+
+        session = request.getSession();
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        compId = (String)session.getAttribute("compId");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
+        }else{
+            
+        }
+
+
+        return result;
+    }
+
+    // ===================== P R I V A T E _ M E T H O D =========================
+    private int getCurrentDate(){
+        int result = 0;
+        Calendar cal = Calendar.getInstance();
+        result += (cal.get(Calendar.YEAR) * 10000);
+        result += ((cal.get(Calendar.MONTH) + 1) * 100);
+        result += cal.get(Calendar.DATE);
+        return result;
+    }    
 
 
 
