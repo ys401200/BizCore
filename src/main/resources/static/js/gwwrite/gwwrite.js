@@ -287,7 +287,7 @@ function deleteClick(obj) {
 
 
 
-// 결재선 그리기 
+// 결재선 그리기 + 작성자 추가 
 function createLine() {
 
   let formTypeName = $(".formNumHidden").val();
@@ -299,8 +299,9 @@ function createLine() {
   lineTarget.html("");
   lineTarget.css("display", "block");
 
-
-  let testHtml = "<div class='lineGridContainer'>";
+  let my = storage.my;
+  let today = getYmdSlash();
+  let testHtml = "<div class='lineGridContainer'><div class='lineTitle'>작성</div><div class='lineSet'><div class='twoBorderLast'>직급</div><div class='twoBorderLast'>" + storage.user[my].userName + "</div><div class='twoBorderLast'>서명</div><div class='dateBorderLast'>" + today + "</div></div>";
   let testHtml2 = "<div class='lineGridContainer'>";
   let readHtml = "<div>열람</div>";
   let referHtml = "<div>참조</div>";
@@ -357,9 +358,12 @@ function createLine() {
   testHtml += "</div>";
   testHtml2 += "</div>";
 
-  let writerHtml = "<div class='lineSet'><div class='twoBorder'>직급</div><div class='twoBorder " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div><div class='twoBorder " + formId + "_" + titleId[i] + "_status'>서명</div><div class='dateBorder " + formId + "_" + titleId[i] + "_approved'>/</div></div>"
+
 
   testHtml += testHtml2;
+
+
+
   lineTarget.html(testHtml);
 
 
@@ -375,6 +379,11 @@ function createLine() {
 function getYmdHyphen() {
   let d = new Date();
   return d.getFullYear() + "-" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "-" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString());
+}
+
+function getYmdSlash() {
+  let d = new Date();
+  return (d.getFullYear() % 100) + "/" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "/" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString());
 }
 
 function drawSelectedFileList(obj) {

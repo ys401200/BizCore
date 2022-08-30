@@ -332,6 +332,8 @@
 
 }
 
+
+
 .lineGridContainer:last-of-type {
   padding-top: 0.5rem;
   height: 45%;
@@ -350,8 +352,10 @@
 }
 
 .lineSet {
+  
   display: grid;
   grid-template-rows: 25% 25% 25% 25%;
+  width: 5em;
 
 }
 

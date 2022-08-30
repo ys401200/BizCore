@@ -6,8 +6,8 @@
 				<jsp:include page="../sideMenu.jsp" />
 			</div>
 			<div id="bodyContent">
-				<div class="waitSearchContainer">
-					<div class="waitSearchSelect">
+				<div class="searchContainer">
+					<div class="searchSelect">
 						<select>
 							<option value="no">문서번호</option>
 							<option value="type">문서종류</option>
@@ -17,59 +17,20 @@
 							<option value="status">진행상태</option>
 						</select>
 					</div>
-					<div class="waitSearchText"><input type="text" id="waitSearchValue"></div>
-					<div class="waitSearchBtn"><button type="button" onclick="waitSearchFunction()">검색</button></div>
+					<div class="searchText"><input type="text" id="searchValue"></div>
+					<div class="searchBtn"><button type="button" >검색</button></div>
 				</div>
 				<div class="container">
 					<hr />
-					<span>결재 대기 문서</span>
+					<span id="gwSubTabTitle">결재 대기 문서</span>
 
 					<div class="subContainer">
-						<div class="batchBtn"><button type="button">일괄 결재 </button></div>
 						<div class="listPageDiv">
+							<div class="batchBtn"><button type="button">일괄 결재 </button></div>
 							<div class="listDiv"></div>
 							<div class="pageContainer"></div>
 						</div>
-
-						<div class="modal-wrap">
-							<!-- <div class="setApprovalModal">
-								<div class="modal-title">결재하기</div>
-								<div class="modal-body">
-									<div class="labelContainer">
-										<label><input type="radio" name="type"/>승인</label>
-										<label><input type="radio" name="type" />반려</label>
-										<label><input type="radio" name="type" />협의요청</label>
-										<label><input type="radio" name="type" />보류</label>
-										<label><input type="radio" name="type" />선결</label>
-										<label><input type="radio" name="type" />후결</label>
-									</div>
-									<label>의견 <input type="text"/></label>
-                                    
-								</div>
-								<div class="close-wrap">
-									<button id="quit" onclick="closeModal(this)">취소</button>
-
-									<button id="set" onclick="closeModal(this)">결재</button>
-
-								</div>
-							</div> -->
-							<!-- <div class="setModifyModal"> 
-								<div class="modal-title">문서 수정하기 </div>
-								<div class="modal-body">
-									<label>수정 내용<input type="text"/></label>
-								</div>
-								<div class="close-wrap">
-									<button id="quit" onclick="closeModal(this)">취소</button>
-									<button id="set" onclick="closeModal(this)">수정</button>
-								</div>
-
-
-
-							</div> -->
-
-
-
-						</div>
+						<div class="modal-wrap"></div>
 					</div>
 				</div>
 			</div>

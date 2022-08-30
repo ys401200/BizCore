@@ -126,7 +126,7 @@
 			</a>
 			<ul id="panel">
 				<li><a href="/gw/wait">- 결재 대기 문서</a></li>
-				<li><a href="/gw/wait">- 결재 예정 문서</a></li>
+				<li><a href="/gw/due">- 결재 예정 문서</a></li>
 				<li><a href="/gw/wait">- 결재 수신 문서</a></li>
 				<li><a href="/gw/wait">- 참조/열람대기문서</a></li>
 				

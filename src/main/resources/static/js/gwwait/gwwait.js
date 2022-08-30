@@ -54,7 +54,7 @@ function waitDefault() {
 	// targetButtons.html(buttonsHtml);
 	// drawCommonmylist();
 
-	let searchDiv = $(".waitSearchContainer").show();
+	let searchDiv = $(".searchContainer").show();
 	let listDiv = $(".listPageDiv").show();
 
 
@@ -178,7 +178,7 @@ function waitErrorList() {
 
 function waitDetailView(event) {// 선택한 그리드의 글 번호 받아오기 
 
-	let searchDiv = $(".waitSearchContainer").hide();
+	 $(".searchContainer").hide();
 	let target = $(".container");
 	let no = event.dataset.id;
 
@@ -187,7 +187,7 @@ function waitDetailView(event) {// 선택한 그리드의 글 번호 받아오�
 	target.html();
 	getDetailView(no);
 
-} // End of noticeDetailView()
+} // End of noticeDetailView(); 
 
 
 
@@ -381,7 +381,7 @@ function showAppModal() {
 function showModifyModal() {
 	let setModifyModalHtml = "<div class='setModifyModal'>" +
 		"<div class='modal-title'>문서 수정하기 </div>" +
-		"<div class='modal-body'>" +
+		"<div class='modal-body'>" +s
 		"<label>수정 내용<input type='text'/></label>" +
 		"</div>" +
 		"<div class='close-wrap'>" +
