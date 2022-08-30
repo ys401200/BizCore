@@ -19,7 +19,7 @@ function getScheduleList() {
 	if(scheduleRange === undefined){
 		url = "/api/schedule";
 	}else{
-		url = "/api/schedule/calendar/" + scheduleRange;
+		url = "/api/schedule/calendar/" + scheduleRange + "/2022/07";
 	}
 
 	method = "get";
@@ -55,7 +55,7 @@ function scheduleSearchList(){
 }
 
 function drawScheduleList() {
-	let container, result, jsonData, header = [], data = [], ids = [], disDate, setDate, str, fnc;
+	let container, dataJob = [], result, jsonData, header = [], data = [], ids = [], str, fnc;
 	
 	if (storage.scheduleList === undefined) {
 		msg.set("등록된 일정이 없습니다");
@@ -107,6 +107,8 @@ function drawScheduleList() {
 			"align" : "left",
 		},
 	];
+
+	console.log(jsonData);
 
 	for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
 		let job, title, customer, writer, fromDate, fromSetDate, toDate, toSetDate, place, content;
@@ -165,14 +167,14 @@ function drawScheduleList() {
 
 		fnc = "scheduleDetailView(this);";
 		ids.push(jsonData[i].no);
+		dataJob.push(jsonData[i].job);
 		data.push(str);
 	}
 
 	let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawScheduleList", result[0]);
 	pageContainer[0].innerHTML = pageNation;
-	createGrid(container, header, data, ids, fnc);
+	createGrid(container, header, data, ids, dataJob, fnc);
 }// End of drawNoticeList()
-
 
 // 일정 캘린더를 만드는 함수
 function drawCalendar(container){
@@ -285,7 +287,7 @@ function drawCalendar(container){
 				x3[1] = calArr[x1 + 1].slot[x2] === calArr[x1].slot[x2];
 			}
             t = calArr[x1].slot[x2] === undefined ? undefined : storage.scheduleList[calArr[x1].slot[x2]] ; //임시변수에 스케줄 아이템을 담아둠
-            html += "<div class=\"calendar_item" + (t === undefined ? " calendar_item_empty" : "") + (x3[0] ? " calendar_item_left" : "") + (x3[1] ? " calendar_item_right" : "") + "\"" + (t === undefined ? "" : "") + " onclick='eventStop();scheduleSuccessView(this);'>" + (t === undefined ? "" : storage.user[t.user].userName + " : " + t.title) + "</div>";
+            html += "<div class=\"calendar_item" + (t === undefined ? " calendar_item_empty" : "") + (x3[0] ? " calendar_item_left" : "") + (x3[1] ? " calendar_item_right" : "") + "\"" + (t === undefined ? "" : "") + " onclick='eventStop();scheduleSuccessView(this);'>" + (t === undefined ? "" : "임시" + " : " + t.title) + "</div>";
         }
         html += "</div>";
     }
@@ -306,7 +308,6 @@ function scheduleDetailView(e){
 }
 
 function scheduleSuccessView(result){
-	console.log(result.title);
 	let detailView, html = "", dataArray, job;
 
 	job = (result.job === null || result.job === "" || result.job === undefined) ? "" : result.job;
@@ -692,7 +693,6 @@ function listChange(event){
 }
 
 function scheduleSuccessList(result){
-	console.log("result : " + result);
 	storage.scheduleList = result;
 
 	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined){
@@ -784,7 +784,10 @@ function scheduleErrorList(){
 // }
 
 function scheduleInsertForm(){
-	let html, dataArray;
+	let html, dataArray, myName, my;
+
+	my = storage.my;
+	myName = storage.user[my].userName;
 
 	dataArray = [
 		{
@@ -799,15 +802,65 @@ function scheduleInsertForm(){
 					"value": "기술일정",
 				},
 				{
-					"key": "etc",
+					"key": "schedule",
 					"value": "기타일정",
 				},
 			],
 			"type": "radio",
-			"elementName": "scheduleType",
+			"elementName": "job",
 			"disabled": false,
 			"onClick": "scheduleRadioClick(this);",
 		},
+		{
+			"title": "활동시작일",
+			"elementId": "from",
+			"type": "date",
+			"disabled": false,
+		},
+		{
+			"title": "활동종료일",
+			"elementId": "to",
+			"type": "date",
+			"disabled": false,
+		},
+		{
+			"title": "장소",
+			"elementId": "place",
+			"disabled": false,
+		},
+		{
+			"title": "담당자",
+			"elementId": "writer",
+			"value": myName,
+		},
+		{
+			"title": "영업기회",
+			"elementId": "sopp",
+			"dataKeyup": "sopp",
+			"disabled": false,
+		},
+		{
+			"title": "매출처",
+			"disabled": false,
+			"elementId": "customer",
+			"dataKeyup": "customer",
+		},
+		{
+			"title": "엔드유저",
+			"disabled": false,
+			"elementId": "partner",
+			"dataKeyup": "customer",
+		},
+		{
+			"title": "제목",
+			"elementId": "title",
+			"disabled": false,
+		},
+		{
+			"title": "내용",
+			"elementId": "content",
+			"type": "textarea",
+		}
 	];
 
 	html = detailViewFormModal(dataArray);
@@ -819,80 +872,18 @@ function scheduleInsertForm(){
 	modal.body.css("max-height", "800px");
 	modal.confirm.text("등록");
 	modal.close.text("취소");
-	modal.confirm.attr("onclick", "scheduleInser();");
+	modal.confirm.attr("onclick", "scheduleInsert();");
 	modal.close.attr("onclick", "modal.hide();");
-}
 
-function scheduleInser(){
-	let title, employee, customer, picOfCustomer, endUser, status, progress, contType, targetDate, soppType, expectedSales, detail, data;
-
-	title = $(document).find("#title").val();
-	employee = $(document).find("#employee");
-	employee = dataListFormat(employee.attr("id"), employee.val());
-	customer = $(document).find("#customer");
-	customer = dataListFormat(customer.attr("id"), customer.val());
-	picOfCustomer = customer
-	endUser = $(document).find("#endUser");
-	endUser = dataListFormat(endUser.attr("id"), endUser.val());
-	status = $(document).find("#status").val();
-	progress = $(document).find("#progress").val();
-	contType = $(document).find("#contType").val();
-	targetDate = $(document).find("#targetDate").val();
-	targetDate = new Date(targetDate).getTime();
-	soppType = $(document).find("#soppType").val();
-	expectedSales = $(document).find("#expectedSales").val().replaceAll(",", "");
-	detail = tinymce.activeEditor.getContent();
-
-	url = "/api/sopp";
-	method = "post";
-	data = {
-		"title": title,
-		"employee": employee,
-		"customer": customer,
-		"picOfCustomer": picOfCustomer,
-		"endUser": endUser,
-		"status": status,
-		"progress": progress,
-		"contType": contType,
-		"targetDate": targetDate,
-		"soppType": soppType,
-		"expectedSales": expectedSales,
-		"detail": detail,
-	}
-	type = "insert";
-
-	data = JSON.stringify(data);
-	data = cipher.encAes(data);
-
-	crud.defaultAjax(url, method, data, type, scheduleSuccessInsert, scheduleErrorInsert);
-}
-
-function scheduleSuccessInsert(){
-	alert("등록완료");
-	location.reload();
-}
-
-function scheduleErrorInsert(){
-	alert("에러");
+	setTimeout(() => {
+		$(document).find("[name='job'][value='sales']").attr("checked", true);
+	}, 100);
 }
 
 function scheduleUpdateForm(result){
-	let html, title, userName, customer, customerUser, endUser, progress, disDate, expectedSales, detail, dataArray;
+	let html, title, dataArray;
 
 	title = (result.title === null || result.title === "" || result.title === undefined) ? "제목 없음" : result.title;
-	userName = (result.employee == 0 || result.employee === null || result.employee === undefined) ? "데이터 없음" : storage.user[result.employee].userName;
-	customer = (result.customer == 0 || result.customer === null || result.customer === undefined) ? "데이터 없음 " : storage.customer[result.customer].name;
-	customerUser = (result.picOfCustomer == 0 || result.picOfCustomer === null || result.picOfCustomer === undefined) ? "데이터 없음" : storage.user[result.picOfCustomer].userName;
-	endUser = (result.endUser == 0 || result.endUser === null || result.endUser === undefined) ? "데이터 없음" : storage.customer[result.endUser].name;
-	status = (result.status === null || result.status === "" || result.status === undefined) ? "없음" : storage.code.etc[result.status];
-	progress = (result.progress === null || result.progress === "" || result.progress === undefined) ? "데이터 없음" : result.progress;
-	contType = (result.contType === null || result.contType === "" || result.contType === undefined) ? "없음" : storage.code.etc[result.contType];
-	soppType = (result.soppType === null || result.soppType === "" || result.soppType === undefined) ? "데이터 없음" : storage.code.etc[result.soppType];
-	expectedSales = (result.expectedSales === null || result.expectedSales === "" || result.expectedSales === undefined) ? "데이터 없음" : numberFormat(result.expectedSales);
-	detail = (result.detail === null || result.detail === "" || result.detail === undefined) ? "내용 없음" : result.detail;
-	
-	disDate = dateDis(result.targetDate);
-	targetDate = dateFnc(disDate);
 
 	dataArray = [
 		{
@@ -907,7 +898,7 @@ function scheduleUpdateForm(result){
 					"value": "기술일정",
 				},
 				{
-					"key": "etc",
+					"key": "schedule",
 					"value": "기타일정",
 				},
 			],
@@ -932,23 +923,37 @@ function scheduleUpdateForm(result){
 }
 
 function scheduleRadioClick(e, result){
-	let html, value, title, userName, customer, customerUser, endUser, progress, disDate, expectedSales, detail, dataArray;
-
-	title = (result.title === null || result.title === "" || result.title === undefined) ? "제목 없음" : result.title;
-	userName = (result.employee == 0 || result.employee === null || result.employee === undefined) ? "데이터 없음" : storage.user[result.employee].userName;
-	customer = (result.customer == 0 || result.customer === null || result.customer === undefined) ? "데이터 없음 " : storage.customer[result.customer].name;
-	customerUser = (result.picOfCustomer == 0 || result.picOfCustomer === null || result.picOfCustomer === undefined) ? "데이터 없음" : storage.user[result.picOfCustomer].userName;
-	endUser = (result.endUser == 0 || result.endUser === null || result.endUser === undefined) ? "데이터 없음" : storage.customer[result.endUser].name;
-	status = (result.status === null || result.status === "" || result.status === undefined) ? "없음" : storage.code.etc[result.status];
-	progress = (result.progress === null || result.progress === "" || result.progress === undefined) ? "데이터 없음" : result.progress;
-	contType = (result.contType === null || result.contType === "" || result.contType === undefined) ? "없음" : storage.code.etc[result.contType];
-	soppType = (result.soppType === null || result.soppType === "" || result.soppType === undefined) ? "데이터 없음" : storage.code.etc[result.soppType];
-	expectedSales = (result.expectedSales === null || result.expectedSales === "" || result.expectedSales === undefined) ? "데이터 없음" : numberFormat(result.expectedSales);
-	detail = (result.detail === null || result.detail === "" || result.detail === undefined) ? "내용 없음" : result.detail;
+	let html, dataArray, value = $(e).val();
 	
-	disDate = dateDis(result.targetDate);
-	targetDate = dateFnc(disDate);
-	value = $(e).val();
+	modal.hide();
+
+	if(result === undefined){
+		dataArray = scheduleRadioInsert(value);
+	}else{
+		dataArray = scheduleRadioUpdate(value, result);
+	}
+
+	html = detailViewFormModal(dataArray);
+	modal.show();
+	modal.headTitle.text("일정등록");
+	modal.content.css("width", "50%");
+	modal.body.html(html);
+	modal.body.css("max-height", "800px");
+	modal.confirm.text("등록");
+	modal.close.text("취소");
+	modal.confirm.attr("onclick", "scheduleInsert();");
+	modal.close.attr("onclick", "modal.hide();");
+
+	setTimeout(() => {
+		$(document).find("[name='job'][value='" + value + "']").attr("checked", true);
+	}, 100);
+}
+
+function scheduleRadioInsert(value){
+	let dataArray, myName, my;
+
+	my = storage.my;
+	myName = storage.user[my].userName;
 
 	if(value === "sales"){
 		dataArray = [
@@ -964,23 +969,23 @@ function scheduleRadioClick(e, result){
 						"value": "기술일정",
 					},
 					{
-						"key": "etc",
+						"key": "schedule",
 						"value": "기타일정",
 					},
 				],
 				"type": "radio",
-				"elementName": "scheduleType",
+				"elementName": "job",
 				"disabled": false,
 				"onClick": "scheduleRadioClick(this);",
 			},
 			{
-				"title": "활동시작일",
+				"title": "활동시작일(*)",
 				"elementId": "from",
 				"type": "date",
 				"disabled": false,
 			},
 			{
-				"title": "활동종료일",
+				"title": "활동종료일(*)",
 				"elementId": "to",
 				"type": "date",
 				"disabled": false,
@@ -991,82 +996,9 @@ function scheduleRadioClick(e, result){
 				"disabled": false,
 			},
 			{
-				"title": "활동형태",
-				"selectValue": [
-					{
-						"key": "10170",
-						"value": "회사방문",
-					},
-					{
-						"key": "10171",
-						"value": "기술지원",
-					},
-					{
-						"key": "10221",
-						"value": "제품설명",
-					},
-					{
-						"key": "10222",
-						"value": "시스템데모",
-					},
-					{
-						"key": "10223",
-						"value": "제품견적",
-					},
-					{
-						"key": "10224",
-						"value": "계약건 의사결정지원",
-					},
-					{
-						"key": "10225",
-						"value": "계약",
-					},
-					{
-						"key": "10226",
-						"value": "사후처리",
-					},
-					{
-						"key": "10227",
-						"value": "기타",
-					},
-					{
-						"key": "10228",
-						"value": "협력사요청",
-					},
-					{
-						"key": "10229",
-						"value": "협력사문의",
-					},
-					{
-						"key": "10230",
-						"value": "교육",
-					},
-					{
-						"key": "10231",
-						"value": "전화상담",
-					},
-					{
-						"key": "10232",
-						"value": "제조사업무협의",
-					},
-					{
-						"key": "10233",
-						"value": "외부출장",
-					},
-					{
-						"key": "10234",
-						"value": "제안설명회",
-					}
-				],
-				"type": "select",
-				"elementId": "type",
-				"disabled": false,
-			},
-			{
-				"title": "담당자",
-				"disabled": false,
-				"elementId": "user",
-				"dataKeyup": "user",
+				"title": "담당자(*)",
+				"elementId": "writer",
+				"value": myName,
 			},
 			{
 				"title": "영업기회",
@@ -1083,16 +1015,17 @@ function scheduleRadioClick(e, result){
 			{
 				"title": "엔드유저",
 				"disabled": false,
-				"elementId": "endUser",
+				"elementId": "partner",
 				"dataKeyup": "customer",
 			},
 			{
-				"title": "제목",
+				"title": "제목(*)",
 				"elementId": "title",
 				"disabled": false,
 			},
 			{
 				"title": "내용",
+				"elementId": "content",
 				"type": "textarea",
 			}
 		];
@@ -1110,35 +1043,18 @@ function scheduleRadioClick(e, result){
 						"value": "기술일정",
 					},
 					{
-						"key": "etc",
+						"key": "schedule",
 						"value": "기타일정",
 					},
 				],
 				"type": "radio",
-				"elementName": "scheduleType",
+				"elementName": "job",
 				"disabled": false,
 				"onClick": "scheduleRadioClick(this);",
 			},
 			{
-				"title": "등록구분",
-				"radioValue": [
-					{
-						"key": "NEW",
-						"value": "신규영업지원",
-					},
-					{
-						"key": "ING",
-						"value": "유지보수",
-					},
-				],
-				"type": "radio",
-				"elementName": "contractType",
-				"disabled": false,
-				"onClick": "techRadioClick(this);",
-			},
-			{
 				"title": "기술지원 요청명(*)",
-				"elementId": "techdTitle",
+				"elementId": "title",
 				"disabled": false,
 			},
 			{
@@ -1149,103 +1065,319 @@ function scheduleRadioClick(e, result){
 			},
 			{
 				"title": "엔드유저(*)",
-				"elementId": "endUser",
+				"elementId": "partner",
 				"disabled": false,
 				"dataKeyup": "customer",
 			},
 			{
-				"title": "엔드유저 담당자",
-				"elementId": "cipOfendUser",
-				"disabled": false,
-				"dataKeyup": "user",
-			},
-			{
 				"title": "모델",
+				"elementId": "supportModel",
 				"disabled": false,
 			},
 			{
 				"title": "버전",
+				"elementId": "supportVersion",
 				"disabled": false,
 			},
 			{
 				"title": "장소",
+				"elementId": "place",
 				"disabled": false,
 			},
 			{
 				"title": "담당자(*)",
 				"dataKeyup": "user",
-				"elementId": "employee",
-				"dataKeyup": "user",
+				"elementId": "writer",
+				"value": myName,
 			},
 			{
-				"title": "지원일자 시작일",
+				"title": "지원 시작일(*)",
+				"elementId": "from",
 				"disabled": false,
 				"type": "date",
 			},
 			{
-				"title": "지원일자 종료일",
+				"title": "지원 종료일(*)",
+				"elementId": "to",
 				"disabled": false,
 				"type": "date",
 			},
 			{
-				"title": "지원형태(*)",
-				"selectValue": [
-					{
-						"key": "",
-						"value": "선택",
-					},
-					{
-						"key": "10187",
-						"value": "전화상담",
-					},
-					{
-						"key": "10208",
-						"value": "현장방문",
-					},
-					{
-						"key": "10209",
-						"value": "원격지원",
-					}
-				],
-				"elementId": "salesType",
-				"type": "select",
-				"disabled": false,
-			},
-			{
-				"title": "지원단계(*)",
-				"selectValue": [
-					{
-						"key": "",
-						"value": "선택",
-					},
-					{
-						"key": "10213",
-						"value": "접수단계",
-					},
-					{
-						"key": "10214",
-						"value": "출동단계",
-					},
-					{
-						"key": "10215",
-						"value": "미계약에 따른 보류",
-					},
-					{
-						"key": "10253",
-						"value": "처리완료",
-					}
-				],
-				"elementId": "salesType",
-				"type": "select",
-				"disabled": false,
-			},
-			{
-				"title": "설명",
+				"title": "내용",
 				"type": "textarea",
-				"elementId": "detail",
+				"elementId": "content",
 			},
 		];
 	}else{
+		dataArray = [
+			{
+				"title": "일정선택",
+				"radioValue": [
+					{
+						"key": "sales",
+						"value": "영업일정",
+					},
+					{
+						"key": "tech",
+						"value": "기술일정",
+					},
+					{
+						"key": "schedule",
+						"value": "기타일정",
+					},
+				],
+				"type": "radio",
+				"elementName": "job",
+				"disabled": false,
+				"onClick": "scheduleRadioClick(this);",
+			},
+			{
+				"title": "일정시작일(*)",
+				"type": "date",
+				"elementId": "from",
+				"disabled": false,
+			},
+			{
+				"title": "일정종료일",
+				"type": "date",
+				"elementId": "to",
+				"disabled": false,
+			},
+			{
+				"title": "장소",
+				"elementId": "place",
+				"disabled": false,
+			},
+			{
+				"title": "영업기회",
+				"elementId": "sopp",
+				"dataKeyup": "sopp",
+				"disabled": false,
+			},
+			{
+				"title": "담당자(*)",
+				"elementId": "writer",
+				"dataKeyup": "user",
+				"value": myName,
+			},
+			{
+				"title": "매출처",
+				"disabled": false,
+				"elementId": "customer",
+				"dataKeyup": "customer",
+			},
+			{
+				"title": "제목(*)",
+				"elementId": "title",
+				"disabled": false,
+			},
+			{
+				"title": "내용",
+				"elementId": "content",
+				"type": "textarea",
+			},
+		];
+	}
+
+	return dataArray;
+}
+
+function scheduleInsert(){
+	let url, method, data, type, job;
+
+	job = $(document).find("[name='job']:checked").val();
+
+	url = "/api/schedule/" + job;
+	method = "post";
+	type = "insert";
+
+	if(job === "sales"){
+		if($(document).find("#from").val() === ""){
+			alert("활동시작일을 선택해주세요.");
+			return false;
+		}else if($(document).find("#to").val() === ""){
+			alert("활동종료일을 선택해주세요.");
+			return false;
+		}else if($(document).find("#title").val() === ""){
+			alert("제목을 입력해주세요.");
+			$(document).find("#title").focus();
+			return false;
+		}else{
+			let from, to, place, writer, sopp, customer, partner, title, content;
+
+			from = $(document).find("#from").val();
+			from = new Date(from).getTime();
+			to = $(document).find("#to").val();
+			to = new Date(to).getTime();
+			place = $(document).find("#place").val();
+			writer = $(document).find("#writer");
+			writer = dataListFormat(writer.attr("id"), writer.val());
+			sopp = $(document).find("#sopp");
+			sopp = dataListFormat(sopp.attr("id"), sopp.val());
+			customer = $(document).find("#customer");
+			customer = dataListFormat(customer.attr("id"), customer.val());
+			partner = $(document).find("#partner");
+			partner = dataListFormat(partner.attr("id"), partner.val());
+			title = $(document).find("#title").val();
+			content = tinymce.activeEditor.getContent();
+
+			data = {
+				"job": job,
+				"from": from,
+				"to": to,
+				"place": place,
+				"writer": writer,
+				"sopp": sopp,
+				"customer": customer,
+				"partner": partner,
+				"title": title,
+				"content": content,
+			};
+		}
+	}else if(job === "tech"){
+		if($(document).find("#title").val() === ""){
+			alert("기술요청명을 입력해주세요.");
+			$(document).find("#title").focus();
+			return false;
+		}else if($(document).find("#sopp").val() === ""){
+			alert("영업기회를 선택해주세요.");
+			$(document).find("#sopp").focus();
+			return false;
+		}else if($(document).find("#partner").val() === ""){
+			alert("엔드유저를 선택해주세요.");
+			$(document).find("#partner").focus();
+			return false;
+		}else if($(document).find("#from").val() === ""){
+			alert("지원시작일을 선택해주세요.");
+			return false;
+		}else if($(document).find("#to").val() === ""){
+			alert("지원종료일을 선택해주세요.");
+			$(document).find("#title").focus();
+			return false;
+		}else{
+			let from, to, place, writer, sopp, customer, partner, title, content, supportModel, supportVersion;
+
+			from = $(document).find("#from").val();
+			from = new Date(from).getTime();
+			to = $(document).find("#to").val();
+			to = new Date(to).getTime();
+			place = $(document).find("#place").val();
+			writer = $(document).find("#writer");
+			writer = dataListFormat(writer.attr("id"), writer.val());
+			sopp = $(document).find("#sopp");
+			sopp = dataListFormat(sopp.attr("id"), sopp.val());
+			customer = $(document).find("#customer");
+			customer = dataListFormat(customer.attr("id"), customer.val());
+			partner = $(document).find("#partner");
+			partner = dataListFormat(partner.attr("id"), partner.val());
+			title = $(document).find("#title").val();
+			content = tinymce.activeEditor.getContent();
+			supportModel = $(document).find("#supportModel").val();
+			supportVersion = $(document).find("#supportVersion").val();
+
+			data = {
+				"job": job,
+				"from": from,
+				"to": to,
+				"place": place,
+				"writer": writer,
+				"sopp": sopp,
+				"customer": customer,
+				"partner": partner,
+				"title": title,
+				"content": content,
+				"supportModel": supportModel,
+				"supportVersion": supportVersion,
+			};
+		}
+	}else{
+		if($(document).find("#from").val() === ""){
+			alert("일정시작일을 선택해주세요.");
+			return false;
+		}else if($(document).find("#to").val() === ""){
+			alert("일정종료일을 선택해주세요.");
+			return false;
+		}else if($(document).find("#title").val() === ""){
+			alert("제목을 입력해주세요.");
+			$(document).find("#title").focus();
+			return false;
+		}else{
+			let from, to, place, writer, sopp, customer, title, content;
+	
+			from = $(document).find("#from").val();
+			from = new Date(from).getTime();
+			to = $(document).find("#to").val();
+			to = new Date(to).getTime();
+			place = $(document).find("#place").val();
+			writer = $(document).find("#writer");
+			writer = dataListFormat(writer.attr("id"), writer.val());
+			sopp = $(document).find("#sopp");
+			sopp = dataListFormat(sopp.attr("id"), sopp.val());
+			customer = $(document).find("#customer");
+			customer = dataListFormat(customer.attr("id"), customer.val());
+			title = $(document).find("#title").val();
+			content = tinymce.activeEditor.getContent();
+	
+			data = {
+				"job": job,
+				"from": from,
+				"to": to,
+				"place": place,
+				"writer": writer,
+				"sopp": sopp,
+				"customer": customer,
+				"title": title,
+				"content": content,
+			};
+		}
+	}
+
+	data = JSON.stringify(data);
+	data = cipher.encAes(data);
+
+	crud.defaultAjax(url, method, data, type, scheduleSuccessInsert, scheduleErrorInsert);
+}
+
+function scheduleSuccessInsert(){
+	alert("등록완료");
+	location.reload();
+}
+
+function scheduleErrorInsert(){
+	alert("등록에러");
+
+}
+
+function scheduleRadioUpdate(value, result){
+	let dataArray; 
+
+	if(value === "sales"){
+		let from, to, place, writer, sopp, customer, partner, title, content;
+		
+		disDate = dateDis(result.from);
+		from = dateFnc(disDate);
+
+		disDate = dateDis(result.to);
+		to = dateFnc(disDate);
+
+		place = (result.place === null || result.place === "" || result.place === undefined) ? "" : result.place;
+		
+		$.ajax({
+			url: "/api/sopp/" + result.sopp,
+			method: "get",
+			async: false,
+			dataType: "json",
+			success:(resultData) => {
+				sopp = (resultData.no == 0) ? "" : resultData.title;
+			}
+		});
+
+		writer = (result.writer === null || result.writer === "" || result.writer === undefined) ? "" : storage.user[result.writer].userName;
+		customer = (result.customer == 0 || result.customer === null || result.customer === undefined) ? "" : storage.customer[result.customer].name;
+		partner = (result.partner == 0 || result.partner === null || result.partner === undefined) ? "" : storage.customer[result.partner].name;
+		title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
+		content = (result.content === null || result.content === "" || result.content === undefined) ? "" : result.content;
+
 		dataArray = [
 			{
 				"title": "일정선택",
@@ -1266,158 +1398,284 @@ function scheduleRadioClick(e, result){
 				"type": "radio",
 				"elementName": "scheduleType",
 				"disabled": false,
-				"onClick": "scheduleRadioClick(this);",
+				"onClick": "scheduleRadioClick(this, " + JSON.stringify(result) + ");",
 			},
 			{
-				"title": "일정시작일",
+				"title": "활동시작일",
+				"elementId": "from",
 				"type": "date",
 				"disabled": false,
+				"value": from,
 			},
 			{
-				"title": "일정종료일",
+				"title": "활동종료일",
+				"elementId": "to",
 				"type": "date",
 				"disabled": false,
+				"value": to,
 			},
 			{
 				"title": "장소",
+				"elementId": "place",
 				"disabled": false,
+				"value": place,
 			},
 			{
-				"title": "계약",
-				"disabled": false,
+				"title": "담당자",
+				"elementId": "writer",
+				"value": writer,				
 			},
 			{
-				"title": "영업기회(*)",
+				"title": "영업기회",
 				"elementId": "sopp",
 				"dataKeyup": "sopp",
 				"disabled": false,
-			},
-			{
-				"title": "담당자(*)",
-				"dataKeyup": "user",
-				"elementId": "employee",
-				"dataKeyup": "user",
+				"value": sopp,
 			},
 			{
 				"title": "매출처",
 				"disabled": false,
 				"elementId": "customer",
 				"dataKeyup": "customer",
+				"value": customer,
 			},
 			{
 				"title": "엔드유저",
 				"disabled": false,
-				"elementId": "endUser",
+				"elementId": "partner",
 				"dataKeyup": "customer",
-			},
-			{
-				"title": "일정구분",
-				"selectValue": [
-					{
-						"key": "",
-						"value": "기타일정",
-					},
-				],
-				"elementId": "salesType",
-				"type": "select",
-				"disabled": false,
-			},
-			{
-				"title": "활동형태",
-				"selectValue": [
-					{
-						"key": "10170",
-						"value": "회사방문",
-					},
-					{
-						"key": "10171",
-						"value": "기술지원",
-					},
-					{
-						"key": "10221",
-						"value": "제품설명",
-					},
-					{
-						"key": "10222",
-						"value": "시스템데모",
-					},
-					{
-						"key": "10223",
-						"value": "제품견적",
-					},
-					{
-						"key": "10224",
-						"value": "계약건 의사결정지원",
-					},
-					{
-						"key": "10225",
-						"value": "계약",
-					},
-					{
-						"key": "10226",
-						"value": "사후처리",
-					},
-					{
-						"key": "10227",
-						"value": "기타",
-					},
-					{
-						"key": "10228",
-						"value": "협력사요청",
-					},
-					{
-						"key": "10229",
-						"value": "협력사문의",
-					},
-					{
-						"key": "10230",
-						"value": "교육",
-					},
-					{
-						"key": "10231",
-						"value": "전화상담",
-					},
-					{
-						"key": "10232",
-						"value": "제조사업무협의",
-					},
-					{
-						"key": "10233",
-						"value": "외부출장",
-					},
-					{
-						"key": "10234",
-						"value": "제안설명회",
-					}
-				],
-				"type": "select",
-				"elementId": "type",
-				"disabled": false,
+				"value": partner,
 			},
 			{
 				"title": "제목",
 				"elementId": "title",
 				"disabled": false,
+				"value": title,
 			},
 			{
 				"title": "내용",
+				"type": "textarea",
+				"value": content,
+			}
+		];
+
+	}else if(value === "tech"){
+		let from, to, place, writer, sopp, partner, title, content, supportModel, supportVersion;
+		
+		disDate = dateDis(result.from);
+		from = dateFnc(disDate);
+
+		disDate = dateDis(result.to);
+		to = dateFnc(disDate);
+
+		place = (result.place === null || result.place === "" || result.place === undefined) ? "" : result.place;
+		
+		$.ajax({
+			url: "/api/sopp/" + result.sopp,
+			method: "get",
+			async: false,
+			dataType: "json",
+			success:(resultData) => {
+				sopp = (resultData.no == 0) ? "" : resultData.title;
+			}
+		});
+
+		writer = (result.writer === null || result.writer === "" || result.writer === undefined) ? "" : storage.user[result.writer].userName;
+		customer = (result.customer == 0 || result.customer === null || result.customer === undefined) ? "" : storage.customer[result.customer].name;
+		partner = (result.partner == 0 || result.partner === null || result.partner === undefined) ? "" : storage.customer[result.partner].name;
+		title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
+		content = (result.content === null || result.content === "" || result.content === undefined) ? "" : result.content;
+		supportModel = (result.supportModel === null || result.supportModel === "" || result.supportModel === undefined) ? "" : result.supportModel;
+		supportVersion = (result.supportVersion === null || result.supportVersion === "" || result.supportVersion === undefined) ? "" : result.supportVersion;
+
+		dataArray = [
+			{
+				"title": "일정선택",
+				"radioValue": [
+					{
+						"key": "sales",
+						"value": "영업일정",
+					},
+					{
+						"key": "tech",
+						"value": "기술일정",
+					},
+					{
+						"key": "etc",
+						"value": "기타일정",
+					},
+				],
+				"type": "radio",
+				"elementName": "scheduleType",
+				"disabled": false,
+				"onClick": "scheduleRadioClick(this, " + JSON.stringify(result) + ");",
+			},
+			{
+				"title": "기술지원 요청명(*)",
+				"elementId": "techdTitle",
+				"disabled": false,
+				"value": title,
+			},
+			{
+				"title": "영업기회(*)",
+				"elementId": "sopp",
+				"dataKeyup": "sopp",
+				"disabled": false,
+				"value": sopp,
+			},
+			{
+				"title": "엔드유저(*)",
+				"elementId": "partner",
+				"disabled": false,
+				"dataKeyup": "customer",
+				"value": partner,
+			},
+			{
+				"title": "모델",
+				"disabled": false,
+				"value": supportModel,
+			},
+			{
+				"title": "버전",
+				"disabled": false,
+				"value": supportVersion,
+			},
+			{
+				"title": "장소",
+				"disabled": false,
+				"value": place,
+			},
+			{
+				"title": "담당자(*)",
+				"dataKeyup": "user",
+				"elementId": "employee",
+				"value": writer,
+			},
+			{
+				"title": "지원일자 시작일",
+				"disabled": false,
+				"type": "date",
+				"value": from,
+			},
+			{
+				"title": "지원일자 종료일",
+				"disabled": false,
+				"type": "date",
+				"value": to,
+			},
+			{
+				"title": "내용",
+				"type": "textarea",
+				"elementId": "content",
+				"value": content,
+			},
+		];
+	}else{
+		let from, to, disDate, place, sopp, customer, writer, title, content;
+
+		disDate = dateDis(result.from);
+		from = dateFnc(disDate);
+
+		disDate = dateDis(result.to);
+		to = dateFnc(disDate);
+
+		place = (result.place === null || result.place === "" || result.place === undefined) ? "" : result.place;
+		
+		$.ajax({
+			url: "/api/sopp/" + result.sopp,
+			method: "get",
+			async: false,
+			dataType: "json",
+			success:(resultData) => {
+				sopp = (resultData.no == 0) ? "" : resultData.title;
+			}
+		});
+
+		writer = (result.writer === null || result.writer === "" || result.writer === undefined) ? "" : storage.user[result.writer].userName;
+		customer = (result.customer == 0 || result.customer === null || result.customer === undefined) ? "" : storage.customer[result.customer].name;
+		title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
+		content = (result.content === null || result.content === "" || result.content === undefined) ? "" : result.content;
+
+		dataArray = [
+			{
+				"title": "일정선택",
+				"radioValue": [
+					{
+						"key": "sales",
+						"value": "영업일정",
+					},
+					{
+						"key": "tech",
+						"value": "기술일정",
+					},
+					{
+						"key": "etc",
+						"value": "기타일정",
+					},
+				],
+				"type": "radio",
+				"elementName": "scheduleType",
+				"disabled": false,
+				"onClick": "scheduleRadioClick(this, " + JSON.stringify(result) + ");",
+			},
+			{
+				"title": "일정시작일",
+				"type": "date",
+				"disabled": false,
+				"value": from,
+			},
+			{
+				"title": "일정종료일",
+				"type": "date",
+				"disabled": false,
+				"value": to,
+			},
+			{
+				"title": "장소",
+				"disabled": false,
+				"value": place,
+			},
+			{
+				"title": "영업기회(*)",
+				"elementId": "sopp",
+				"dataKeyup": "sopp",
+				"disabled": false,
+				"value": sopp,
+			},
+			{
+				"title": "담당자(*)",
+				"elementId": "writer",
+				"dataKeyup": "user",
+				"value": writer,
+			},
+			{
+				"title": "매출처",
+				"disabled": false,
+				"elementId": "customer",
+				"dataKeyup": "customer",
+				"value": customer,
+			},
+			{
+				"title": "제목",
+				"elementId": "title",
+				"disabled": false,
+				"value": title,
+			},
+			{
+				"title": "내용",
+				"elementId": "content",
+				"value": content,
 				"type": "textarea",
 			},
 		];
 	}
 
-	html = detailViewFormModal(dataArray);
-	modal.body.html(html);
-
-	setTimeout(() => {
-		$(document).find("[name='scheduleType'][value='" + value + "']").attr("checked", true);
-	}, 100);
+	return dataArray;
 }
 
 function scheduleSelectChange(){
-	let url, method, data, type, scheduleType, scheduleRange;
+	let url, method, data, type, scheduleRange;
 
-	scheduleType = $(document).find("#scheduleType").val();
 	scheduleRange = $(document).find("#scheduleRange").val();
 	url = "/api/schedule/calendar/" + scheduleRange;
 	method = "get";

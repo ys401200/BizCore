@@ -32,12 +32,12 @@
         <option value="dept">부서별</option>
         <option value="personal">개인별</option>
     </select>
-    <select class="scheduleType" id="scheduleType" onchange="scheduleSelectChange();">
+    <!-- <select class="scheduleType" id="scheduleType" onchange="scheduleSelectChange();">
         <option value="all">전체</option>
         <option value="sales">영업활동</option>
         <option value="tech">기술지원</option>
         <option value="etc">기타</option>
-    </select>
+    </select> -->
     <jsp:include page="./calendar.jsp" />
     <div class="gridScheduleList"></div>
     <div class="pageContainer"></div>

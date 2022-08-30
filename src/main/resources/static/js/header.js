@@ -387,11 +387,12 @@ function readyTopPageActive(){
 }
 
 //기본 그리드
-function createGrid(gridContainer, headerDataArray, dataArray, ids, fnc, idName){
+function createGrid(gridContainer, headerDataArray, dataArray, ids, job, fnc, idName){
 	let gridHtml = "", gridContents, idStr;
 
 	ids = (ids === undefined) ? 0 : ids;
 	fnc = (fnc === undefined) ? "" : fnc;
+	job = (job === undefined) ? "" : job;
 	
 	if(idName === undefined){
 		idStr = "gridContent";
@@ -413,7 +414,7 @@ function createGrid(gridContainer, headerDataArray, dataArray, ids, fnc, idName)
 
 	gridHtml += "</div>";
 	for(let i = 0; i < dataArray.length; i++){
-		gridHtml += "<div id='"+idStr+"_grid_"+i+"' class='gridContent grid_default_body_item' data-drag=\"true\" data-id='"+ids[i]+"' onclick='"+fnc+"'>";
+		gridHtml += "<div id='"+idStr+"_grid_"+i+"' class='gridContent grid_default_body_item' data-drag=\"true\" data-id='"+ids[i]+"' data-job='"+job[i]+"' onclick='"+fnc+"'>";
 		for(let t = 0; t <= dataArray[i].length; t++){
 			if(dataArray[i][t] !== undefined){
 				gridHtml += "<div class='gridContentItem'>"+dataArray[i][t].setData+"</div>";

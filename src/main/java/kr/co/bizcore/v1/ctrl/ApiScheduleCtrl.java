@@ -124,8 +124,8 @@ public class ApiScheduleCtrl extends Ctrl {
     }
 
     // 단일 일정에 대한 신규  요청
-    @PostMapping("")
-    public String apiScheduleTypePost(HttpServletRequest request, @RequestBody String requestBody, @PathVariable String type, @PathVariable int no){
+    @PostMapping("{type:\\D+}")
+    public String apiScheduleTypePost(HttpServletRequest request, @RequestBody String requestBody, @PathVariable String type){
         String result = null;
         String compId = null;
         String aesKey = null;
@@ -160,7 +160,7 @@ public class ApiScheduleCtrl extends Ctrl {
     }
 
     // 단일 일정에 대한 수정 요청
-    @PutMapping("")
+    @PutMapping("/{type:\\D+}/{no:\\d+}")
     public String apiScheduleTypeNoPut(HttpServletRequest request, @RequestBody String requestBody, @PathVariable String type, @PathVariable int no){
         String result = null;
         String compId = null;

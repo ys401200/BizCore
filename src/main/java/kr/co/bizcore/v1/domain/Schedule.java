@@ -44,7 +44,7 @@ public class Schedule extends Domain{
         result += ("\"from\":" + (from == null ? "null" : from.getTime()) + ",");
         result += ("\"to\":" + (to == null ? "null" : to.getTime()) + ",");
         result += ("\"title\":" + (title == null ? "null" : "\"" + title + "\"") + ",");
-        result += ("\"content\":" + (content == null ? "null" : "\"" + content.replaceAll("\"", "\\u0022") + "\"") + ",");
+        result += ("\"content\":" + (content == null ? "null" : "\"" + content.replaceAll("\"", "\\u0022").replaceAll("\n", "<br />").replaceAll("\r", "").replaceAll("\t", "") + "\"") + ",");
         result += ("\"report\":" + report + ",");
         result += ("\"type\":" + type + ",");
         result += ("\"place\":\"" + place + "\"}");
@@ -62,7 +62,7 @@ public class Schedule extends Domain{
         result += ("\"from\":" + (from == null ? "null" : from.getTime()) + ",");
         result += ("\"to\":" + (to == null ? "null" : to.getTime()) + ",");
         result += ("\"title\":" + (title == null ? "null" : "\"" + title + "\"") + ",");
-        result += ("\"content\":" + (content == null ? "null" : "\"" + content.replaceAll("\"", "\\u0022") + "\"") + ",");
+        result += ("\"content\":" + (content == null ? "null" : "\"" + content.replaceAll("\"", "\\u0022").replaceAll("\n", "<br />").replaceAll("\r", "").replaceAll("\t", "") + "\"") + ",");
         result += ("\"report\":" + report + ",");
         result += ("\"type\":" + type + ",");
         result += ("\"place\":\"" + place + "\",");
@@ -82,7 +82,7 @@ public class Schedule extends Domain{
         result += ("\"from\":" + (from == null ? "null" : from.getTime()) + ",");
         result += ("\"to\":" + (to == null ? "null" : to.getTime()) + ",");
         result += ("\"title\":" + (title == null ? "null" : "\"" + title + "\"") + ",");
-        result += ("\"content\":" + (content == null ? "null" : "\"" + content.replaceAll("\"", "\\u0022") + "\"") + ",");
+        result += ("\"content\":" + (content == null ? "null" : "\"" + content.replaceAll("\"", "\\u0022").replaceAll("\n", "<br />").replaceAll("\r", "").replaceAll("\t", "") + "\"") + ",");
         result += ("\"report\":" + report + ",");
         result += ("\"type\":" + type + ",");
         result += ("\"place\":\"" + place + "\",");
