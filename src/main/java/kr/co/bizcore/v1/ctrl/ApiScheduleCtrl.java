@@ -5,6 +5,7 @@ import java.util.Calendar;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,17 +15,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import kr.co.bizcore.v1.domain.Dept;
-import kr.co.bizcore.v1.domain.Sched;
 import kr.co.bizcore.v1.domain.Schedule;
 import kr.co.bizcore.v1.domain.SimpleUser;
-import kr.co.bizcore.v1.domain.User;
-import kr.co.bizcore.v1.mapper.ScheduleMapper;
 import lombok.extern.slf4j.Slf4j;
 
 @RequestMapping("/api/schedule")
@@ -217,7 +212,7 @@ public class ApiScheduleCtrl extends Ctrl {
         }else{
             if(type.equals("sales") || type.equals("tech") || type.equals("schedule")){
                 count = scheduleService.deleteSchedule(compId, type, no + "");
-                if(count > 1)   result = "{\"result\":\"failure\",\"msg\":\"Error occured.\"}";
+                if(count > 1)   result = "{\"result\":\"ok\"}";
                 else            result = "{\"result\":\"failure\",\"msg\":\"Error occured.\"}";
             }else   result = "{\"result\":\"failure\",\"msg\":\"Schedule type mismatch..\"}";
         }
@@ -254,14 +249,60 @@ public class ApiScheduleCtrl extends Ctrl {
         return getWorkReport(request, "dept", date);
     }
 
-    public String getWorkReport(HttpServletRequest request, String scope, int date){
+    @GetMapping("/workreport/personal")
+    public String apiScheduleReportPersonal(HttpServletRequest request){
+        int date = getCurrentDate();
+        return apiScheduleReportPersonalDate(request, date);
+    }
+
+    @GetMapping("/workreport/personal/{date:\\d+}")
+    public String apiScheduleReportPersonalDate(HttpServletRequest request, @PathVariable("date") int date){
+        return getWorkReport(request, "personal", date);
+    }
+
+    private String getWorkReport(HttpServletRequest request, String scope, int date){
         String result = null;
-        String compId = null, aesKey = null, aesIv = null, data = null;
+        String compId = null, aesKey = null, aesIv = null, userNo = null, data = null;
         HttpSession session = null;
+        SimpleUser user = null;
 
         session = request.getSession();
         aesKey = (String)session.getAttribute("aesKey");
         aesIv = (String)session.getAttribute("aesIv");
+        userNo = (String)session.getAttribute("userNo");
+        compId = (String)session.getAttribute("compId");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
+
+        user = userService.getUserMap(compId).get(userNo);
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
+        }else{
+            data = scheduleService.getWorkReport(compId, scope, date, user);
+            if(data == null){
+                result = "{\"result\":\"failure\",\"msg\":\"Error occured.\"}";
+            }else{
+                data = encAes(data, aesKey, aesIv);
+                result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
+            }
+        }
+
+        return result;
+    }
+
+    @PostMapping("/workreport/personal/{date:\\d+}")
+    public String apiWorkreportPersonalDatePost(HttpServletRequest request, @PathVariable("date") int date, @RequestBody String requestBody){
+        String result = null;
+        String compId = null, aesKey = null, aesIv = null, userNo = null, data = null, currentWeek = null, nextWeek = null;
+        HttpSession session = null;
+        JSONObject json = null;
+
+        session = request.getSession();
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        userNo = (String)session.getAttribute("userNo");
         compId = (String)session.getAttribute("compId");
         if(compId == null)  compId = (String)request.getAttribute("compId");
 
@@ -270,8 +311,24 @@ public class ApiScheduleCtrl extends Ctrl {
         }else if(aesKey == null || aesIv == null){
             result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
         }else{
-            
+            data = decAes(requestBody, aesKey, aesIv);
+            json = new JSONObject(data);
+            currentWeek = json.getString("currentWeek");
+            nextWeek = json.getString("nextWeek");
+            if(scheduleService.addWorkReport(compId, userNo, date, currentWeek, nextWeek)){
+                result = "{\"result\":\"ok\"}";
+            }else{
+                result = "{\"result\":\"failure\",\"msg\":\"Error occured.\"}";
+            }
         }
+
+        return result;
+    }
+
+    @DeleteMapping("/workreport/personal/{date:\\d+}")
+    public String apiWorkreportPersonalDateDelete(HttpServletRequest request, @PathVariable("date") int date){
+        String result = null;
+
 
 
         return result;

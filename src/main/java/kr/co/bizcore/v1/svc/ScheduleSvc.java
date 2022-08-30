@@ -1,17 +1,25 @@
 package kr.co.bizcore.v1.svc;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ScheduledExecutorService;
 
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import kr.co.bizcore.v1.domain.Dept;
 import kr.co.bizcore.v1.domain.Schedule;
+import kr.co.bizcore.v1.domain.SimpleUser;
+import kr.co.bizcore.v1.domain.User;
 import kr.co.bizcore.v1.domain.WorkReport;
+import kr.co.bizcore.v1.mapper.ScheduleMapper;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -129,7 +137,7 @@ public class ScheduleSvc extends Svc{
     // ===================================== F O R _ W O R K _ R E P O R T =============================
 
     // 전달받은 날짜가 포함된 주의 일정을 전달하는 메서드
-    public String getWorkReport(String compId, int date){
+    public String getWorkReport(String compId, String scope, int date, SimpleUser user){
         String result = null;
         int week = -1, year = -1, month = -1, dt = -1, day = -1, x = 0, y = 0;
         String t = null;
@@ -142,7 +150,7 @@ public class ScheduleSvc extends Svc{
 
         year = date / 10000;
         month = (date % 10000) / 100;
-        dt = date % 1000000;
+        dt = date % 100;
         t = year + "-" + month + "-" + dt;
         week = year + systemMapper.getWeekStr(t);
 
@@ -152,33 +160,110 @@ public class ScheduleSvc extends Svc{
         start = new Date(cal.getTimeInMillis() - day);
         end = new Date(start.getTime() + 86400000 * 7 - 1);
 
-        reports = scheduleMapper.getWorkReports(compId, week);
+        if(scope.equals("company") || scope.equals("dept")){
+            if(scope.equals("dept"))    reports = scheduleMapper.getWorkReportsDept(compId, week, user.getDeptIdSqlIn());
+            else    reports = scheduleMapper.getWorkReportsCompany(compId, week);
 
-        if(reports != null && reports.size() > 0)   for(x = 0 ; x < reports.size() ; x++){
-            report = reports.get(x);
-            schedules = scheduleMapper.getScheduleListForReport(compId, start, end, report.getWriter());
-            if(schedules != null && schedules.size() > 0){
-                Collections.sort(schedules);
-                for(y = 0 ; y < schedules.size() ; y++){
-                    schedule = schedules.get(y);
-                    report.addSchedule(schedule);
-                }
-            } 
-        }
-
-        if(reports != null){
-            result = "{\"week\":" + week + ",";
-            result += "\"start\":" + start.getTime() + ",";
-            result += "\"end\":" + end.getTime() + ",";
-            result += "\"workReports\":{";
-            for(x = 0 ; x < reports.size() ; x++){
+            if(reports != null && reports.size() > 0)   for(x = 0 ; x < reports.size() ; x++){
                 report = reports.get(x);
-                if(x > 0)   result += ",";
-                result += ("\"" + report.getWriter() + "\":");
-                result += report.toJson();
+                schedules = scheduleMapper.getScheduleListForReport(compId, start, end, report.getWriter());
+                if(schedules != null && schedules.size() > 0){
+                    Collections.sort(schedules);
+                    for(y = 0 ; y < schedules.size() ; y++){
+                        schedule = schedules.get(y);
+                        report.addSchedule(schedule);
+                    }
+                } 
             }
-            result += "}}";
+    
+            if(reports != null){
+                result = "{\"week\":" + week + ",";
+                result += "\"start\":" + start.getTime() + ",";
+                result += "\"end\":" + end.getTime() + ",";
+                result += "\"workReports\":{";
+                for(x = 0 ; x < reports.size() ; x++){
+                    report = reports.get(x);
+                    if(x > 0)   result += ",";
+                    result += ("\"" + report.getWriter() + "\":");
+                    result += report.toJson();
+                }
+                result += "}}";
+            }
+        }else{
+            report = scheduleMapper.getWorkReportPersonal(compId, week, user.getUserNo() + "");
+
+            //현재 주차 데이터가 없을 경우 지난주의 "차주" 데이터를 가지고 오도록 함"
+            if(report != null){
+                result = "{\"week\":" + week + ",";
+                result += "\"start\":" + start.getTime() + ",";
+                result += "\"end\":" + end.getTime() + ",";
+                result += "\"workReport\":" + report.toJson();
+                result += "}";
+            }else{
+                week = systemMapper.getWeek(new Date(cal.getTimeInMillis() - 86400000 * 7));
+                report = scheduleMapper.getWorkReportPersonal(compId, week, user.getUserNo() + "");
+                result = "{\"week\":" + week + ",";
+                result += "\"start\":" + start.getTime() + ",";
+                result += "\"end\":" + end.getTime() + ",";
+                result += "\"workReport\":null,";
+                result += "\"previousWeek\":" + (report != null && report.getNextWeek() != null ? "\"" + report.getNextWeek() : "null" + "\"") + "}";
+            }
         }
+
+        return result;
+    } // End of getWorkReport()
+
+    // 개인의 주간업무보고를 추가하는 메서드
+    public boolean addWorkReport(String compId, String userNo, int date, String currentWeek, String nextWeek){
+        boolean result = false;
+        int week = -1, y = -1, m = -1, d = -1;
+        Date dt = null;
+        Calendar cal = Calendar.getInstance();
+        String sql = null, str1 = null, str2 = null;
+
+        y = date / 10000;
+        m = (date % 10000) / 100;
+        d = date % 100;
+        cal.setTimeInMillis(0);
+        cal.set(y, m - 1, d);
+        week = systemMapper.getWeek(new Date(cal.getTimeInMillis()));
+
+        sql = "INSERT INTO swc_sreport(";
+        str1 = "userno,compno,attrib,weeknum,regdate,prcomment,prcheck,thcomment,thcheck";
+        str2 = userNo + ",(SELECT compno FROM swc_company WHERE compid = '" + compId + "')," + week + ",11111,now()";
+
+        if(currentWeek == null){
+            str2 += (",'',0");
+        }else{
+            str2 += (",'" + currentWeek + "',1");
+        }
+
+        if(nextWeek == null){
+            str2 += (",'',0");
+        }else{
+            str2 += (",'" + nextWeek + "',1");
+        }
+
+        sql = sql + str1 + ") VALUES(" + str2 + ")";
+        deleteWorkReport(compId, userNo, date);
+        result = executeSqlQuery(sql) > 0;
+        return result;
+    }
+
+    // 주간 업무보고를 삭제하는 메서드
+    public boolean deleteWorkReport(String compId, String userNo, int date){
+        boolean result = false;
+        int week = -1, y = -1, m = -1, d = -1;
+        Date dt = null;
+        Calendar cal = Calendar.getInstance();
+
+        y = date / 10000;
+        m = (date % 10000) / 100;
+        d = date % 100;
+        cal.setTimeInMillis(0);
+        cal.set(y, m - 1, d);
+        week = systemMapper.getWeek(new Date(cal.getTimeInMillis()));
+        result = scheduleMapper.deleteWorkReport(compId, userNo, week) > 0;
 
         return result;
     }

@@ -34,7 +34,7 @@ public interface ScheduleMapper {
     @Select("SELECT  'sales' AS job, salesNo AS no, userNo AS writer, soppNo AS sopp, ptncNo AS customer, salesFrdatetime AS `from`, salesTodatetime AS `to`, salesTitle AS title, salesDesc AS content, salesCheck AS workReport, salesType AS type, salesPlace AS place, custNo AS partner, regdatetime AS created, moddatetime AS modified FROM swc_sales WHERE attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND salesno = #{no}")
     public Schedule getScheduleFromSales(@Param("compId") String compId, @Param("no") String no);
 
-    @Select("SELECT 'tech' AS job, techdNo AS no, userNo AS writer, soppNo AS sopp, endCustNo AS partner, techdFrom AS `from`, techdTo AS `to`, techdTitle AS title, techdDesc AS content, techdCheck AS workReport, techdType AS type, techdPlace AS place, custNo AS customer, contNo AS contract, cntrctMth AS contractMethod, custmemberNo AS cipOfCustomer, techdItemmodel AS supportModel, techdItemversion AS supportVersion, techdSteps AS supportStep, regdatetime AS created, moddatetime AS modified FROM swc_techd WHERE attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND techdno = #{no}")
+    @Select("SELECT 'tech' AS job, techdNo AS no, userNo AS writer, soppNo AS sopp, endCustNo AS customer, techdFrom AS `from`, techdTo AS `to`, techdTitle AS title, techdDesc AS content, techdCheck AS workReport, techdType AS type, techdPlace AS place, custNo AS partner, contNo AS contract, cntrctMth AS contractMethod, custmemberNo AS cipOfCustomer, techdItemmodel AS supportModel, techdItemversion AS supportVersion, techdSteps AS supportStep, regdatetime AS created, moddatetime AS modified FROM swc_techd WHERE attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND techdno = #{no}")
     public Schedule getScheduleFromTechd(@Param("compId") String compId, @Param("no") String no);
 
     @Select("SELECT 'schedule' AS job, schedNo AS no, userNo AS writer, soppNo AS sopp, custNo AS customer, schedFrom AS `from`, schedTo AS `to`, schedTitle AS title, schedDesc AS content, schedCheck AS workReport, schedType AS type, schedPlace AS place, regdatetime AS created, moddatetime AS modified FROM swc_sched WHERE attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND #{start} <= schedto AND #{end} > schedFrom ORDER BY schedno DESC")
@@ -77,7 +77,19 @@ public interface ScheduleMapper {
             "FROM swc_sreport a, " +
             "(SELECT MAX(sreportno) no, userno FROM swc_sreport WHERE weeknum = #{week} GROUP BY userno) b " +
             "WHERE a.attrib = 11111 AND a.userno = b.userno AND a.sreportno = b.no AND a.compno = (SELECT compno FROM swc_company WHERE compid = #{compId})")
-    public List<WorkReport> getWorkReports(@Param("compId") String compId, @Param("week") int week);
+    public List<WorkReport> getWorkReportsCompany(@Param("compId") String compId, @Param("week") int week);
+
+    @Select("SELECT a.userno AS writer, IF(a.prcheck=1,a.prcomment,NULL) AS content1, IF(a.thcheck=1,a.thcomment,NULL) AS content2 " +
+            "FROM swc_sreport a, " +
+            "(SELECT MAX(sreportno) no, userno FROM swc_sreport WHERE weeknum = #{week} GROUP BY userno) b " +
+            "WHERE a.attrib = 11111 AND a.userno = b.userno AND a.sreportno = b.no AND a.compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND a.userno IN (SELECT user_no FROM bizcore.user_dept WHERE dept_id IN (#{deptIn}))")
+    public List<WorkReport> getWorkReportsDept(@Param("compId") String compId, @Param("week") int week, @Param("deptIn") String deptIn);
+
+    @Select("SELECT a.userno AS writer, IF(a.prcheck=1,a.prcomment,NULL) AS currentWeek, IF(a.thcheck=1,a.thcomment,NULL) AS nextWeek " +
+            "FROM swc_sreport a, " +
+            "(SELECT MAX(sreportno) no, userno FROM swc_sreport WHERE weeknum = #{week} GROUP BY userno) b " +
+            "WHERE a.attrib = 11111 AND a.userno = b.userno AND a.sreportno = b.no AND a.compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND a.userno = #{userNo}")
+    public WorkReport getWorkReportPersonal(@Param("compId") String compId, @Param("week") int week, @Param("userNo") String userNo);
 
     @Select("SELECT 'schedule' AS job, schedFrom AS `from`, schedtitle AS title, schedDesc AS content FROM swc_sched WHERE schedCheck = 1 AND attrib NOT LIKE 'XXX%' AND userno = #{writer} AND schedfrom >= #{start} AND schedfrom <=#{end} AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) " +
             "UNION all " +
@@ -86,4 +98,6 @@ public interface ScheduleMapper {
             "SELECT 'tech' AS job, techdfrom AS `from`, techdtitle AS title, techddesc AS content FROM swc_techd WHERE techdcheck = 1 AND attrib NOT LIKE 'XXX%' AND userno = #{writer} AND techdfrom >= #{start} AND techdfrom <=#{end} AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId})")
     public List<Schedule> getScheduleListForReport(@Param("compId") String compId, @Param("start") Date start, @Param("end") Date end, @Param("writer") int writer);
 
+    @Update("UPDATE swc_sreport SET attrib = 'XXXXX' WHERE userno = #{userNo} AND weeknum = #{week} AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId})")
+    public int deleteWorkReport(@Param("compId") String compId, @Param("userNo") String userNo, @Param("week") int week);
 }
