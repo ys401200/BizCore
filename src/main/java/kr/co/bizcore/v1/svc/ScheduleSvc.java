@@ -152,26 +152,34 @@ public class ScheduleSvc extends Svc{
         month = (date % 10000) / 100;
         dt = date % 100;
         t = year + "-" + month + "-" + dt;
-        week = year + systemMapper.getWeekStr(t);
+        week = year * 100 + systemMapper.getWeekStr(t);
 
         cal.setTimeInMillis(0);
-        cal.set(year, month, dt);
+        cal.set(year, month - 1, dt);
         day = (cal.get(Calendar.DAY_OF_WEEK) - 1) * 86400000;
-        start = new Date(cal.getTimeInMillis() - day);
+        start = new Date(cal.getTimeInMillis() - day - 32400000);
         end = new Date(start.getTime() + 86400000 * 7 - 1);
 
         if(scope.equals("company") || scope.equals("dept")){
             if(scope.equals("dept"))    reports = scheduleMapper.getWorkReportsDept(compId, week, user.getDeptIdSqlIn());
             else    reports = scheduleMapper.getWorkReportsCompany(compId, week);
 
+            logger.info("\r\n[ScheduleService.getWorkReport] :::::: reports size : " + reports.size());
+            logger.info("\r\n[ScheduleService.getWorkReport] :::::: date : " + date);
+
             if(reports != null && reports.size() > 0)   for(x = 0 ; x < reports.size() ; x++){
                 report = reports.get(x);
+                logger.info("[ScheduleService.getWorkReport] :::::: start : " + start);
+                logger.info("[ScheduleService.getWorkReport] :::::: end : " + end);
+                logger.info("[ScheduleService.getWorkReport] :::::: employee : " + report.getWriter());
                 schedules = scheduleMapper.getScheduleListForReport(compId, start, end, report.getWriter());
+                logger.info("[ScheduleService.getWorkReport] :::::: schedule size : " + schedules.size());
                 if(schedules != null && schedules.size() > 0){
                     Collections.sort(schedules);
                     for(y = 0 ; y < schedules.size() ; y++){
                         schedule = schedules.get(y);
                         report.addSchedule(schedule);
+                        logger.info("[ScheduleService.getWorkReport] :::::: schedule : " + x + " / " + schedule.getTitle());
                     }
                 } 
             }
@@ -191,9 +199,18 @@ public class ScheduleSvc extends Svc{
             }
         }else{
             report = scheduleMapper.getWorkReportPersonal(compId, week, user.getUserNo() + "");
+            schedules = scheduleMapper.getScheduleListForReport(compId, start, end, user.getUserNo());
+            if(schedules != null)   Collections.sort(schedules);
 
             //현재 주차 데이터가 없을 경우 지난주의 "차주" 데이터를 가지고 오도록 함"
             if(report != null){
+                if(schedules != null && schedules.size() > 0){
+                    for(y = 0 ; y < schedules.size() ; y++){
+                        schedule = schedules.get(y);
+                        report.addSchedule(schedule);
+                    }
+                } 
+
                 result = "{\"week\":" + week + ",";
                 result += "\"start\":" + start.getTime() + ",";
                 result += "\"end\":" + end.getTime() + ",";
@@ -202,11 +219,16 @@ public class ScheduleSvc extends Svc{
             }else{
                 week = systemMapper.getWeek(new Date(cal.getTimeInMillis() - 86400000 * 7));
                 report = scheduleMapper.getWorkReportPersonal(compId, week, user.getUserNo() + "");
+                if(report == null)  report = new WorkReport();
+                for(y = 0 ; y < schedules.size() ; y++){
+                    schedule = schedules.get(y);
+                    report.addSchedule(schedule);
+                }
                 result = "{\"week\":" + week + ",";
                 result += "\"start\":" + start.getTime() + ",";
                 result += "\"end\":" + end.getTime() + ",";
                 result += "\"workReport\":null,";
-                result += "\"previousWeek\":" + (report != null && report.getNextWeek() != null ? "\"" + report.getNextWeek() : "null" + "\"") + "}";
+                result += "\"previousWeek\":" + report.toJson() + "}";
             }
         }
 
@@ -294,3 +316,5 @@ public class ScheduleSvc extends Svc{
     } // End of calcStartAndEndDate()
     
 }
+
+

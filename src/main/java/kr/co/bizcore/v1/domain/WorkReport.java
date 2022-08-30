@@ -21,9 +21,8 @@ public class WorkReport extends Domain{
         int x = 0;
         Schedule e = null;
         if(schedules.size() > 2)    Collections.sort(schedules);
-        result += ("\"writer\":" + writer + ",");
-        result += ("\"currentWeek\":\"" + currentWeek + "\",");
-        result += ("\"nextWeek\":\"" + nextWeek + "\",");
+        result += ("\"currentWeek\":" + (currentWeek == null ? "\"\"" : "\"" + currentWeek.replaceAll("\"", "\\u0022").replaceAll("\n", "").replaceAll("\r", "").replaceAll("\t", "") + "\"") + ",");
+        result += ("\"nextWeek\":" + (nextWeek == null ? "\"\"" : "\"" + nextWeek.replaceAll("\"", "\\u0022").replaceAll("\n", "").replaceAll("\r", "").replaceAll("\t", "") + "\"") + ",");
         result += "\"schedules\":[";
         for(x = 0 ; x < schedules.size() ; x++){
             e = schedules.get(x);
@@ -31,8 +30,8 @@ public class WorkReport extends Domain{
             else if(e.getJob().equals("tech"))  t = "@ ";
             else    t = "# ";
             if(x > 0)   result += ",";
-            result += ("\"{title\":\"" + t + e.getTitle() + "\",");
-            result += ("\"content\":\"" + e.getContent() + "\",");
+            result += ("{\"title\":\"" + t + e.getTitle() + "\",");
+            result += ("\"content\":" + ( e != null && e.getContent() != null ? "\"" + e.getContent().replaceAll("\"", "\\u0022").replaceAll("\n", "<br />").replaceAll("\r", "").replaceAll("\t", "") + "\"" : "\"\"") + ",");
             result += ("\"date\":" + (e.getFrom() != null ? e.getFrom().getTime() : null) + "}");
         }
         result += "]}";
