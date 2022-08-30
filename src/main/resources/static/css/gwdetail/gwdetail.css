@@ -1,3 +1,11 @@
+button {
+	float: none;
+	border: none;
+	background-color: rgba(0, 0, 0, 0);
+	color: #332E85;
+}
+
+
 .container {
 	position: relative;
 	left: 2%;
@@ -34,18 +42,24 @@
 .waitDiv {
 	overflow: auto;
 	display: grid;
-	grid-template-columns: repeat(6, 1fr);
+	grid-template-columns: repeat(5, 1fr);
 
 }
 
 .waitDiv .waitCard {
-	background-color: #EDEDF4;
+	border: 2px solid #EDEDF4;
 	border-radius: 3px;
 	margin: 1em;
 
 }
 
-.waitDiv .waitCard>div>div:first-of-type {
+.waitDiv .waitCard>div:first-of-type {
+	margin: 1em;
+	color: #332E85;
+	font-weight: 800;
+}
+
+.waitDiv .waitCard .subWaitCard>div>div:first-of-type {
 	color: #332E85;
 	font-weight: 500;
 }
@@ -54,19 +68,31 @@
 	line-height: 1;
 }
 
-.waitDiv .waitCard:hover {
 
-	background-color: rgba(0, 0, 0, 0.12);
-
-
-}
-
-.waitDiv .waitCard>div {
+.waitDiv .waitCard .subWaitCard>div {
 	display: grid;
-	grid-template-columns: 40% 60%;
+	grid-template-columns: 25% 75%;
 	margin: 1em;
-
+	font-size: 0.8em;
 }
+
+
+.waitDiv .waitCard>div:last-child {
+
+	border-top: 2px solid #EDEDF4;
+	padding: 0.5em;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.waitDiv .waitCard>div:last-child:hover {
+	background-color: #EDEDF4;
+}
+
+
+
+
 
 .etcDiv {
 	display: grid;

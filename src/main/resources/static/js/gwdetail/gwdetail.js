@@ -11,15 +11,29 @@ $(document).ready(() => {
 
 
 
+
+
 let waitList = [
 	{
-		"title": "조달 진천군",
+		"title": "예산 증액 관련 협조 요청",
 		"type": "외상매입금",
 		"writer": "구민주",
 		"created": "2202-07-18"
 	},
 	{
-		"title": "디자인 진흥원",
+		"title": "업무 기안 진행바랍니다",
+		"type": "발주서",
+		"writer": "구민주",
+		"created": "2202-06-18"
+	},
+	{
+		"title": "재가 바랍니다",
+		"type": "발주서",
+		"writer": "구민주",
+		"created": "2202-06-18"
+	},
+	{
+		"title": "그룹웨어 시스템 구매 예산 재가",
 		"type": "발주서",
 		"writer": "구민주",
 		"created": "2202-06-18"
@@ -29,27 +43,15 @@ let waitList = [
 		"type": "발주서",
 		"writer": "구민주",
 		"created": "2202-06-18"
-	}, 
-	{
-		"title": "디자인 진흥원",
-		"type": "발주서",
-		"writer": "구민주",
-		"created": "2202-06-18"
-	}, 
+	}
+	,
 	{
 		"title": "디자인 진흥원",
 		"type": "발주서",
 		"writer": "구민주",
 		"created": "2202-06-18"
 	}
-	, 
-	{
-		"title": "디자인 진흥원",
-		"type": "발주서",
-		"writer": "구민주",
-		"created": "2202-06-18"
-	}
-	
+
 ]
 
 
@@ -59,10 +61,10 @@ function drawGwDiv() {
 	let gwHtml = "";
 
 	for (let i = 0; i < waitList.length; i++) {
-		gwHtml += "<div class='waitCard'><div class='title'><div>제목</div><div>" + waitList[i].title + "</div></div>"+
-		"<div class='type'><div>결재타입</div><div>" + waitList[i].type + "</div></div>" +
+		gwHtml += "<div class='waitCard'><div>" + waitList[i].title + "</div>" +
+			"<div class='subWaitCard'><div class='type'><div>결재타입</div><div>" + waitList[i].type + "</div></div>" +
 			"<div class='writer'><div>기안자</div><div>" + waitList[i].writer + "</div></div>" +
-			"<div class='created'><div>작성일</div><div>" + waitList[i].created + "</div></div></div>";
+			"<div class='created'><div>작성일</div><div>" + waitList[i].created + "</div></div></div>" + "<div><button type='button'>결재하기</button></div></div>";
 	}
 
 	target.html(gwHtml);
@@ -82,7 +84,8 @@ function waitDefault() {
 	data = "";
 	type = "list";
 	crud.defaultAjax(url, method, data, type, noticeSuccessList, noticeErrorList);
-	
+
+
 }
 
 function drawNoticeList() {
@@ -167,7 +170,7 @@ function drawNoticeList() {
 		data.push(str);
 	}
 
-	
+
 	createGrid(container, header, data, ids, fnc);
 
 
