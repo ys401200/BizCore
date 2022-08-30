@@ -67,7 +67,7 @@ public interface ScheduleMapper {
     @Update("UPDATE swc_sched SET attrib = 'XXXXX' WHERE compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND schedno = #{no}")
     public int deleteSched(@Param("compId") String compId, @Param("no") String no);
 
-    @Update("UPDATE swc_sales SET attrib = 'XXXXX' WHERE compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND saleno = #{no}")
+    @Update("UPDATE swc_sales SET attrib = 'XXXXX' WHERE compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND salesno = #{no}")
     public int deleteSales(@Param("compId") String compId, @Param("no") String no);
 
     @Update("UPDATE swc_techd SET attrib = 'XXXXX' WHERE compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND techdno = #{no}")
