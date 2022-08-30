@@ -269,5 +269,60 @@ public class SystemService extends Svc {
         return result;
     } // End of saveAtteachedToTemp()
 
+    // 어플리케이션 초기화 시 파일 저장 디렉토리를 검증/생성하기 위한 디렉토리 이름을 가져오는 메서드
+    public List<String> getDefaultDirectories(){
+        return systemMapper.getDirectoryNames();
+    } // getDefaultDirectories()
+
+
+    // 각 고객시별 디스크 사용량을 확인하는 메서드
+    public HashMap<String, Long> checkUsedSpaceOnDisc(){
+        HashMap<String, Long> result = null;
+        String rootPath = fileStoragePath, s = File.separator, compId = null;
+        List<String> companies = getCompanyList();
+        Long size = 0L;
+        File dir = null;
+        int x = 0;
+
+        for(x = 0 ; x < companies.size() ; x++){
+            compId = companies.get(x);
+            dir = new File(rootPath + s + compId);
+            if(result == null)  result = new HashMap<>(); 
+            size = checkUsedSpace(dir);
+            result.put(compId, size);
+        }
+
+        return result;
+    } // End of checkUsedSpaceOnDisc
+
+    // 단일 고객시별 디스크 사용량을 확인하는 메서드
+    public long checkUsedSpaceOnDisc(String compId){
+        String rootPath = fileStoragePath, s = File.separator;
+        long size = 0;
+        File dir = null;
+
+        dir = new File(rootPath + s + compId);
+        size = checkUsedSpace(dir);
+
+        return size;
+    } // End of checkUsedSpaceOnDisc
+
+    private long checkUsedSpace(File file){
+        long size = 0;
+        int x = 0;
+        File[] dirs = null;
+        if(file == null || !file.exists()) return 0;
+        else if(file.isFile()) file.length();
+        else{
+            dirs = file.listFiles();
+            for(x = 0 ; x < dirs.length ; x++)  size += dirs[x].length();  
+        }
+        return size;
+    } // End of checkUsedSpace
+
+    // ========================================= 마이그레이션 전용 메서드 ====================================
+
+    
+
 
 }

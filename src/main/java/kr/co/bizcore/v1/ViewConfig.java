@@ -55,39 +55,35 @@ public class ViewConfig implements WebMvcConfigurer {
 
     private void appInitialize(){
 
-        String rootPath = null, compId = null;
+        String rootPath = null, compId = null, s = File.separator;
         List<String> compIdList = null;
-        File root = null, attached = null, temp = null, directAccess = null;
-        int x = 0;
+        List<String> dirs = null;
+        File root = null, each = null;
+        int x = 0, y = 0;
         Svc.fileStoragePath = fileSavePath;
-
-        // DEBUG 모드 세팅
-        Svc.DEBUG = debug.equals("true");
 
         // 시간 교정이 필요한 경우 그 교정값을 설정함
         systemService.timeCorrection();
 
         // 파일 저장공간 확인 및 기초 디렉토리 확인/생성
         compIdList = systemService.getCompanyList();
+        dirs = systemService.getDefaultDirectories();
         rootPath = fileSavePath;
-        if(rootPath.substring(rootPath.length() - 1).equals("/"))   rootPath = rootPath.substring(0, rootPath.length() - 1);
+
+        if(rootPath.substring(rootPath.length() - 1).equals(s))   rootPath = rootPath.substring(0, rootPath.length() - 1);
         try{
             if(compIdList != null && compIdList.size() > 0) for(x = 0 ; x < compIdList.size() ; x++){
                 compId = compIdList.get(x);
-                root = new File(rootPath + "/" + compId);
-                attached = new File(rootPath + "/" + compId + "/" + "attached");
-                temp = new File(rootPath + "/" + compId + "/" + "temp");
-                directAccess = new File(rootPath + "/" + compId + "/" + "directAccess");
-                if(!root.exists())          root.mkdir();
-                if(!attached.exists())      attached.mkdir();
-                if(!temp.exists())          temp.mkdir();
-                if(!directAccess.exists())  directAccess.mkdir();
+                root = new File(rootPath + s + compId);
+                if(dirs != null && dirs.size() > 0) for(y = 0 ; y < dirs.size() ; y++){
+                    each = new File(rootPath + s + compId + s + dirs.get(y));
+                    if(!each.exists())  each.mkdir();
+                }
             }
-            System.out.println("[App Initializer] Created Companies' directories.");
+            logger.info("[App Initializer] Created Companies' directories.");
         }catch(Exception e){
-            System.out.println("[FATAL] Companies' directory Can't created. Terminated.");
+            logger.info("[FATAL] Companies' directory Can't created.");
             e.printStackTrace();
-            System.exit(-1);
         }
 
     } // End of appInitialize()

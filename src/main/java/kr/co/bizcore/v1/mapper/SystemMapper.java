@@ -14,11 +14,11 @@ public interface SystemMapper {
     @Select("SELECT now()")
     public String test();
 
-    // �젒�냽二쇱냼 湲곕컲, compId瑜� �솗�씤�븯湲� �쐞�븳 荑쇰━
+    // 접속주소 기반 compId를 판단하기 위한 장보를 가져옴
     @Select("SELECT connAddr, compId FROM bizsys.company_url")
     public List<ConnUrl> getConnUrl();
 
-    // 濡쒓렇�씤 寃�利� 荑쇰━
+    // 로그인 검증
     @Select("SELECT userno FROM swc_user WHERE compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND userid = #{userId} AND userpasswd  = password(#{pw})")
     public String verifyLogin(@Param("compId") String compId, @Param("userId") String userId, @Param("pw") String pw);
 
@@ -33,5 +33,8 @@ public interface SystemMapper {
 
     @Select("SELECT WEEK(#{date})")
     public int getWeekStr(String date);
+
+    @Select("SELECT name FROM bizsys.directories")
+    public List<String> getDirectoryNames();
 
 }
