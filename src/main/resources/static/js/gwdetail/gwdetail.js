@@ -82,25 +82,7 @@ function waitDefault() {
 	data = "";
 	type = "list";
 	crud.defaultAjax(url, method, data, type, noticeSuccessList, noticeErrorList);
-
-
-
-	//오른쪽에 상세내용 출력 
-	let previewWidth = document.getElementsByClassName("forForm")[0];
-	previewWidth = previewWidth.clientWidth;
-	let targetForm = $(".forForm");
-	targetForm.css("height", Math.ceil(previewWidth / 210 * 297));
-	let targetTable = $(".forTable");
-	targetTable.css("height", Math.ceil(Math.ceil((previewWidth / 210 * 297) * 0.1)));
-	let targetButtons = $(".forButtons");
-	targetButtons.css("height", Math.ceil(Math.ceil((previewWidth / 210 * 297) * 0.025)));
-
-	let buttonsHtml = "<button>상신취소</button><button>인쇄</button>";
-	targetButtons.html(buttonsHtml);
-	drawCommonmylist();
-
-
-
+	
 }
 
 function drawNoticeList() {

@@ -127,8 +127,8 @@
 			<ul id="panel">
 				<li><a href="/gw/wait">- 결재 대기 문서</a></li>
 				<li><a href="/gw/due">- 결재 예정 문서</a></li>
-				<li><a href="/gw/wait">- 결재 수신 문서</a></li>
-				<li><a href="/gw/wait">- 참조/열람대기문서</a></li>
+				<li><a href="/gw/receive">- 결재 수신 문서</a></li>
+				<li><a href="/gw/refer">- 참조/열람대기문서</a></li>
 				
 			</ul>
 		</li>
@@ -139,11 +139,11 @@
 				<span id="slideSpan">+</span>
 			</a>
 			<ul id="panel">
-				<li><a href="/gw/wait">- 기안 문서함</a></li>
-				<li><a href="/gw/wait">- 임시 저장함</a></li>
-				<li><a href="/gw/wait">- 결재 문서함</a></li>
-				<li><a href="/gw/wait">- 수신 문서함</a></li>
-				<li><a href="/gw/wait">- 참조/열람 문서함</a></li>
+				<li><a href="#">- 기안 문서함</a></li>
+				<li><a href="#">- 임시 저장함</a></li>
+				<li><a href="#">- 결재 문서함</a></li>
+				<li><a href="#">- 수신 문서함</a></li>
+				<li><a href="#">- 참조/열람 문서함</a></li>
 			</ul>
 		</li>
 		

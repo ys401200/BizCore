@@ -6,6 +6,7 @@
 	overflow: auto;
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
 	display: inline-block;
+
 }
 
 .container hr,
@@ -33,16 +34,18 @@
 .waitDiv {
 	overflow: auto;
 	display: grid;
-	grid-template-columns: 20% 20% 20% 20% 20%;
+	grid-template-columns: repeat(6, 1fr);
+
 }
 
 .waitDiv .waitCard {
 	background-color: #EDEDF4;
-border-radius: 3px;
+	border-radius: 3px;
 	margin: 1em;
+
 }
 
-.waitDiv .waitCard >div>div:first-of-type{
+.waitDiv .waitCard>div>div:first-of-type {
 	color: #332E85;
 	font-weight: 500;
 }
@@ -52,8 +55,10 @@ border-radius: 3px;
 }
 
 .waitDiv .waitCard:hover {
-	border: 2px solid #332E85;
-	margin: 1em;
+
+	background-color: rgba(0, 0, 0, 0.12);
+
+
 }
 
 .waitDiv .waitCard>div {

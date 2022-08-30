@@ -1,97 +1,93 @@
-@charset "UTF-8";
-
-
 .searchContainer {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	margin: 2%;
-	height: 5rem;
-	background: #FFFFFF;
-	overflow: auto;
-	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 2%;
+    height: 5rem;
+    background: #FFFFFF;
+    overflow: auto;
+    box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
 }
 
 .searchContainer .searchSelect {
-	margin-right: 1%;
+    margin-right: 1%;
 }
 
 .searchContainer .searchSelect select {
-	color: #332E85;
-	padding: 5px;
-	font-size: 1.2rem;
-	font-weight: 500;
-	border: 0;
-	background-color: #EDEDF4;
+    color: #332E85;
+    padding: 5px;
+    font-size: 1.2rem;
+    font-weight: 500;
+    border: 0;
+    background-color: #EDEDF4;
 }
 
 .searchContainer .searchSelect select:hover {
-	border: 1px solid#332E85;
+    border: 1px solid#332E85;
 }
 
 .searchContainer .searchText {
-	margin-right: 1%;
+    margin-right: 1%;
 }
 
 .searchContainer .searchText input {
-	padding: 5px;
-	font-size: 1.2rem;
-	font-weight: 500;
-	width: 500px;
-	border: 0;
-	background-color: #EDEDF4;
+    padding: 5px;
+    font-size: 1.2rem;
+    font-weight: 500;
+    width: 500px;
+    border: 0;
+    background-color: #EDEDF4;
 }
 
 .searchContainer .searchText input:hover {
-	border: 1px solid#332E85;
+    border: 1px solid#332E85;
 }
 
 .searchContainer .searchBtn button {
-	color: #ffffff;
-	padding: 5px;
-	font-size: 1.2rem;
-	font-weight: 500;
-	width: 100px;
-	border: 0;
-	background-color: #332E85;
+    color: #ffffff;
+    padding: 5px;
+    font-size: 1.2rem;
+    font-weight: 500;
+    width: 100px;
+    border: 0;
+    background-color: #332E85;
 }
 
 .searchContainer .searchBtn button:hover {
-	cursor: pointer;
+    cursor: pointer;
 }
 
 
 
 .container {
-	position: relative;
-	left: 2%;
-	width: 96%;
-	background: #FFFFFF;
-	overflow: auto;
-	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
-	display: inline-block;
+    position: relative;
+    left: 2%;
+    width: 96%;
+    background: #FFFFFF;
+    overflow: auto;
+    box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
+    display: inline-block;
 }
 
 .container hr {
-	float: left;
-	border-top: 0;
-	border-left: thick solid #E45050;
-	border-right: 0;
-	border-bottom: 0;
-	height: 44px;
-	width: 4px;
-	margin: 0;
+    float: left;
+    border-top: 0;
+    border-left: thick solid #E45050;
+    border-right: 0;
+    border-bottom: 0;
+    height: 44px;
+    width: 4px;
+    margin: 0;
 }
 
 .container span {
 
-	font-weight: 500;
-	font-size: 16px;
-	margin-left: 18px;
-	line-height: 3;
-	color: #332E85;
+    font-weight: 500;
+    font-size: 16px;
+    margin-left: 18px;
+    line-height: 3;
+    color: #332E85;
 }
-
 
 .subContainer .batchBtn {
 	display: flex;
@@ -147,7 +143,7 @@
 
 .listDiv .gridHeader,
 .listDiv .gridContent {
-	grid-template-columns: 10% 10% 20% 20% 10% 10% 10% 10%;
+	grid-template-columns: 10% 10% 25% 25% 10% 10% 10% ;
 }
 
 .subContainer .listPageDiv>div:first-of-type {
@@ -223,6 +219,10 @@
 
 
 
+
+
+
+
 /*-------------------------------- 결재정보 변경이력 탭  */
 .listPageDiv .detailReport .comment {
 	background-color: #EDEDF4;
@@ -287,11 +287,6 @@
 
 
 
-
-
-
-/*--------------------------------결재하기, 문서수정 모달 관련 */
-
 .modal-wrap {
 	position: fixed;
 	top: 0;
@@ -302,143 +297,4 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-}
-
-.modal-wrap .setApprovalModal,
-.modal-wrap .setModifyModal {
-	background-color: #332e85;
-	width: 20%;
-	border-radius: 0.3em;
-}
-
-.modal-title {
-	font-weight: 500;
-	font-size: 16px;
-	margin-left: 18px;
-	line-height: 3;
-	color: white;
-}
-
-
-.modal-body {
-	padding: 1em;
-	background-color: white;
-}
-
-
-.modal-wrap .setApprovalModal .modal-body .labelContainer {
-	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	margin-bottom: 1em;
-}
-
-
-.modal-body input[type="text"] {
-	width: 95%;
-
-}
-
-
-.close-wrap {
-	text-align: right;
-}
-
-
-
-
-
-
-
-
-
-
-/*-------------------------------- 결재선 수정 모달 css  */
-.gwModal {
-	background-color: #332e85;
-	width: 60%;
-	border-radius: 0.3em;
-}
-
-.lineDetail {
-	display: block;
-}
-
-.lineDetail .lineTop {
-	color: black;
-	height: 25rem;
-	display: grid;
-	grid-template-columns: 25% 15% 60%;
-	overflow: auto;
-}
-
-.lineDetail #lineBottom {
-	margin: 2rem;
-	text-align: right;
-}
-
-
-.lineDetail .innerDetail {
-	padding: 1rem;
-	margin: 1rem;
-	background-color: #ffffff;
-	overflow: auto;
-	border-radius: 3px;
-}
-
-.lineDetail #lineCenter {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: space-around;
-}
-
-
-.selectEachLine {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: space-around;
-}
-
-.lineDetail #lineRight {
-	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-}
-
-.lineDetail #lineRight>label {
-	border: 1px solid rgb(188, 185, 185);
-	margin: 0.5rem;
-}
-
-
-.lineDataContainer {
-	padding: 0 0.5em;
-	display: grid;
-	grid-template-columns: 55% 15% 15% 15%;
-
-}
-
-.lineDataContainer button {
-	border: none;
-	background-color: white;
-}
-
-.lineDataContainer button:hover {
-	color: #EDEDF4;
-	font-weight: 800;
-}
-
-
-
-
-
-
-
-
-/*-------------------------------- 헤더 float 설정 초기화   */
-button,
-select,
-input {
-	margin: 0;
-	float: none;
 }

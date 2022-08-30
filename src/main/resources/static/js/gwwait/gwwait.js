@@ -7,12 +7,12 @@ $(document).ready(() => {
 	}, 300);
 
 	waitDefault();
-	$(".modal-wrap").hide();
+
 });
 
 
 function waitDefault() {
-
+	$(".modal-wrap").hide();
 
 	let url, method, data, type;
 	url = "/api/notice";
@@ -178,7 +178,7 @@ function waitErrorList() {
 
 function waitDetailView(event) {// 선택한 그리드의 글 번호 받아오기 
 
-	 $(".searchContainer").hide();
+	$(".searchContainer").hide();
 	let target = $(".container");
 	let no = event.dataset.id;
 
@@ -187,7 +187,7 @@ function waitDetailView(event) {// 선택한 그리드의 글 번호 받아오�
 	target.html();
 	getDetailView(no);
 
-} // End of noticeDetailView(); 
+} // End of noticeDetailView();
 
 
 
@@ -207,14 +207,14 @@ function getDetailView(no) {
 
 	let selectedFileView = "<div class='selectedFileField'><label>첨부파일<input type='file'/></label><div></div></div>"
 	testForm += selectedFileView;
-	
+
 
 	$(".selectedReportview").html(testForm);
 	$(":file").css("display", "none");// 첨부파일 버튼 숨기기 
 
 	let tabHtml = "<div class='reportInfoTab'>" +
 		"<label id='lineInfo' onclick='changeTab(this)'>결재정보</label><label id='changeInfo' onclick='changeTab(this)'>변경이력</label></div>" +
-		"<div class='tabDetail'></div>"
+		"<div id='tabDetail'></div><div id='tabDetail2'></div>"
 	$(".comment").html(tabHtml);
 	toReadMode();
 	drawCommentLine();
@@ -233,12 +233,16 @@ function changeTab(obj) {
 		$("#changeInfo").css("background-color", "white");
 		$("#changeInfo").css("color", "#332E85");
 		$("#changeInfo").css("border-bottom", "2px solid #332E85");
+		$("#tabDetail2").hide();
+		$("#tabDetail").show();
 		drawCommentLine();
 
 	} else if (obj.id = 'changeInfo') {
 		$("#lineInfo").css("background-color", "white");
 		$("#lineInfo").css("color", "#332E85");
 		$("#lineInfo").css("border-bottom", "2px solid #332E85");
+		$("#tabDetail").hide();
+		$("#tabDetail2").show();
 		drawChangeInfo();
 
 	}
@@ -249,7 +253,7 @@ function changeTab(obj) {
 // 결재정보 그리는 함수 
 function drawCommentLine() {
 
-	let target = $(".tabDetail");
+	let target = $("#tabDetail");
 
 	// 임시 데이터 ----------------------------------------------------
 
@@ -297,7 +301,7 @@ function drawCommentLine() {
 
 //  변경이력 그리는 함수 
 function drawChangeInfo() {
-	let target = $(".tabDetail");
+	let target = $("#tabDetail2");
 	// 임시 데이터 ----------------------------------------------------
 
 
@@ -337,17 +341,12 @@ function drawChangeInfo() {
 
 // 모달별 버튼  
 function closeModal(obj) {
-	if (obj.parentElement.parentElement.className == 'setApprovalModal') {
-		$(".modal-wrap").hide();
-		// 체크된 것 초기화 
-		$("input:radio[name='type']").prop("checked", false);
-	} else if (obj.parentElement.parentElement.className == 'setModifyModal') {
-		$(".modal-wrap").hide();
-		$("button[name='modConfirm']:last-child").remove();
-		toReadMode();
-	} else if (obj.parentElement.parentElement.className == 'gwModal') {
-		$(".modal-wrap").hide();
-	}
+
+	$(".modal-wrap").hide();
+
+	$("input:radio[name='type']").prop("checked", false);
+
+
 
 }
 
@@ -381,12 +380,12 @@ function showAppModal() {
 function showModifyModal() {
 	let setModifyModalHtml = "<div class='setModifyModal'>" +
 		"<div class='modal-title'>문서 수정하기 </div>" +
-		"<div class='modal-body'>" +s
-		"<label>수정 내용<input type='text'/></label>" +
+		"<div class='modal-body'>" +
+		"<label>수정 내용<input class='modifyComment' type='text'/></label>" +
 		"</div>" +
 		"<div class='close-wrap'>" +
-		"<button  onclick='closeModal()'>취소</button>" +
-		"<button id='set' onclick='closeModal(this)'>수정</button>" +
+		"<button  onclick='closeModal(this)'>취소</button>" +
+		"<button id='set' onclick='reportModify(this)'>수정</button>" +
 		"</div></div>";
 	$(".modal-wrap").html(setModifyModalHtml);
 	$(".modal-wrap").show();
@@ -568,8 +567,6 @@ function createLine() {
 	lineTarget = $("#" + lineTarget.id);
 	lineTarget.html("");
 	lineTarget.css("display", "block");
-
-
 	let testHtml = "<div class='lineGridContainer'>";
 	let testHtml2 = "<div class='lineGridContainer'>";
 	let readHtml = "<div>열람</div>";
@@ -639,31 +636,44 @@ function createLine() {
 } // End of createLine(); 
 
 
+// 문서 수정시 변경이력에 반영 
+function reportModify(obj) {
 
+	let comment = $(".modifyComment").val();
+	let modCommentHtml = "<div class='tapLineB changeDataLine'><div class='changeType'>" + "테스트" + "</div><div class='changeName' >" + storage.user[storage.my].userName + "</div><div class='changeDate'>" + getYmdHyphen() + "</div><div class='changeCause'>" + comment + "</div></div>";
+	let origin = $("#tabDetail2").html();
+	origin += modCommentHtml;
+	$("#tabDetail2").html(origin);
+	$(".modal-wrap").hide();
+	$("button[name='modConfirm']:last-child").remove();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	toReadMode();
+}
 
 
 
 //문서 수정 버튼 누르면 수정 완료 버튼 생성 
 function createConfirmBtn(obj) {
+	//변경이력 보이기 
+	$("#changeInfo").css("background-color", "#332E85");
+	$("#changeInfo").css("color", "white");
+	$("#changeInfo").css("border", "none");
+	$("#lineInfo").css("background-color", "white");
+	$("#lineInfo").css("color", "#332E85");
+	$("#lineInfo").css("border-bottom", "2px solid #332E85");
+	$("#tabDetail").hide();
+	$("#tabDetail2").show();
+	drawChangeInfo();
+
 	let div = document.getElementsByClassName("mainBtnDiv")
 	if (div[0].childElementCount < 4) {
 		$(".mainBtnDiv").append("<button type='button'name='modConfirm' onclick='showModifyModal()' >수정완료 </button>");
 	}
 
+}
+
+
+function getYmdHyphen() {
+	let d = new Date();
+	return (d.getFullYear() % 100) + "-" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "-" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString());
 }
