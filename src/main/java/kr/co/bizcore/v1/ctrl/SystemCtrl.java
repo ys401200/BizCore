@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import kr.co.bizcore.v1.domain.Schedule;
 import kr.co.bizcore.v1.domain.Sopp;
 import kr.co.bizcore.v1.domain.TradeDetail;
 import kr.co.bizcore.v1.svc.SoppService;
+import kr.co.bizcore.v1.svc.SystemService;
 import kr.co.bizcore.v1.svc.TestService;
 import kr.co.bizcore.v1.svc.TradeService;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +35,9 @@ public class SystemCtrl extends Ctrl {
 
     @Autowired
     private TestService tsvc;
+
+    @Autowired
+    private SystemService systemService;
 
     @RequestMapping(value = "/connUrl", method = RequestMethod.GET)
     public String connUrl() {
@@ -81,19 +86,30 @@ public class SystemCtrl extends Ctrl {
         return result;
     }
 
-    @GetMapping("/doc/{docNo}")
+    @GetMapping("/schedule/{docNo}")
     public String getDocData(HttpServletRequest request, HttpServletResponse response, @PathVariable String docNo){
-        String result = null, data1 = null, data2 = null, data3 = null;
+        String result = null, data = null;
+        Schedule sch = null, sch2 = null;
 
         response.setContentType("application/json;charset=utf-8");
+        sch = scheduleService.getSchedule("vtek", "schedule", docNo);
+        sch2 = scheduleService.getSchedule("vtek", "schedule", "10064972");
 
-        data1 = tsvc.docFile(docNo);
-        data2 = tsvc.docData(docNo);
-        data3 = tsvc.docApp(docNo);
+        logger.info("[TEST] :::::::::::::::::::::::::: schedule 1 : " + sch.toJson());
+        logger.info("[TEST] :::::::::::::::::::::::::: schedule 2 : " + sch.toJson());
 
-        result = "{\"result\":\"ok\",\"files\":" + (data1 == null ? "null" : data1) + ",\"docData\":" + (data2 == null ? "null" : data2) + ",\"appData\":" + (data3 == null ? "null" : data3) + "}";
+        result = "{\"result\":\"ok\",\"data\":" + (sch == null ? "null" : "\"" + sch.createUpdateQuery(sch2, null) + "\"") + "}";
+        
+        return result;
+    }
 
+    @GetMapping("/sopp/file")
+    public String saveSoppFile(HttpServletRequest request){
+        String result = null;
+        int count = -1;
 
+        count = systemService.soppFileDownloadAndSave();
+        result = "{\"count\":" + count + "}";
 
         return result;
     }

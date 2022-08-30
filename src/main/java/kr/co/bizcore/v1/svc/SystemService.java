@@ -1,11 +1,19 @@
 package kr.co.bizcore.v1.svc;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.sql.Blob;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,9 +23,13 @@ import kr.co.bizcore.v1.domain.CommonCode;
 import kr.co.bizcore.v1.domain.ConnUrl;
 import kr.co.bizcore.v1.domain.SimpleCustomer;
 import kr.co.bizcore.v1.domain.User;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class SystemService extends Svc {
+
+    private static final Logger logger = LoggerFactory.getLogger(SystemService.class);
 
     public String test() {
         String result = systemMapper.test();
@@ -320,9 +332,164 @@ public class SystemService extends Svc {
         return size;
     } // End of checkUsedSpace
 
-    // ========================================= 마이그레이션 전용 메서드 ====================================
+    // ========================================= 2022년 비즈코어 리뉴얼 파일 데이터 마이그레이션 전용 메서드 ====================================
 
-    
+    // SOPP 첨부파일 (DB => storage)
+    public int soppFileDownloadAndSave(){
+        String rootPath = fileStoragePath, path = null, s = File.separator;
+        File file = null;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        FileOutputStream fos = null;
+        InputStream isr = null;
+        Blob blob = null;
+        byte[] data = null;
+        String fileName = null, savedName = null;
+        String sql = "SELECT soppno AS sopp, filename AS name, filecontent AS content FROM swcore.swc_soppfiledata WHERE attrib NOT LIKE 'XXX%' AND soppno IN (SELECT DISTINCT soppno FROM swcore.swc_sopp WHERE compno = 100002 AND attrib NOT LIKE 'XXX%')";
+        int sopp = -1, count = 1;
+
+        path = rootPath + s + "vtek" + s + "sopp";
+
+        try{
+            conn = sqlSession.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+
+            while(rs.next()){
+                sopp = rs.getInt(1);
+                fileName = rs.getString(2);
+                savedName = createRandomFileName();
+                blob = rs.getBlob(3);
+                isr = blob.getBinaryStream();
+                data = isr.readAllBytes();
+                isr.close();
+                file = new File(path + s + sopp);
+                if(!file.exists())  file.mkdir();
+                file = new File(path + s + sopp + s + savedName);
+                fos = new FileOutputStream(file);
+                logger.info("[SystemService] Try save file data : " + count + " / " + fileName);
+                fos.write(data);
+                fos.close();
+                saveAttachedData("sopp", sopp, fileName, savedName, file.length());
+                count++;
+            }
+
+        }catch(SQLException | IOException e){e.printStackTrace();}
+        return count;
+    }
+
+    // 전자결재 첨부파일 (DB => storage)
+    public int appDocFileDownloadAndSave(){
+        String rootPath = fileStoragePath, path = null, s = File.separator;
+        File file = null;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        FileOutputStream fos = null;
+        InputStream isr = null;
+        Blob blob = null;
+        byte[] data = null;
+        String fileName = null, savedName = null;
+        String sql = "SELECT docno AS no, filename AS name, filecontent AS content FROM swcore.swc_businessfiledata WHERE attrib NOT LIKE 'XXX%' AND docno IN (SELECT docno FROM swcore.swc_businessdoc WHERE attrib NOT LIKE 'XXX%')";
+        int no = -1, count = 1;
+
+        path = rootPath + s + "vtek" + s + "appDoc";
+
+        try{
+            conn = sqlSession.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+
+            while(rs.next()){
+                no = rs.getInt(1);
+                fileName = rs.getString(2);
+                savedName = createRandomFileName();
+                blob = rs.getBlob(3);
+                isr = blob.getBinaryStream();
+                data = isr.readAllBytes();
+                isr.close();
+                file = new File(path + s + no);
+                if(!file.exists())  file.mkdir();
+                file = new File(path + s + no + s + savedName);
+                fos = new FileOutputStream(file);
+                logger.info("[SystemService] Try save file data : " + count + " / " + fileName);
+                fos.write(data);
+                fos.close();
+                saveAttachedData("appDoc", no, fileName, savedName, file.length());
+                count++;
+            }
+
+        }catch(SQLException | IOException e){e.printStackTrace();}
+        return count;
+    }
+
+    // 계약 첨부파일 (DB => storage)
+    public int contractFileDownloadAndSave(){
+        String rootPath = fileStoragePath, path = null, s = File.separator;
+        File file = null;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        FileOutputStream fos = null;
+        InputStream isr = null;
+        Blob blob = null;
+        byte[] data = null;
+        String fileName = null, savedName = null;
+        String sql = "SELECT contno AS no, filename AS name, filecontent AS content FROM swcore.swc_contfiledata WHERE contno IN (SELECT contno FROM swcore.swc_cont WHERE attrib NOT LIKE 'XXX%') AND attrib NOT LIKE 'XXX%'";
+        int no = -1, count = 1;
+
+        path = rootPath + s + "vtek" + s + "contract";
+
+        try{
+            conn = sqlSession.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+
+            while(rs.next()){
+                no = rs.getInt(1);
+                fileName = rs.getString(2);
+                savedName = createRandomFileName();
+                blob = rs.getBlob(3);
+                isr = blob.getBinaryStream();
+                data = isr.readAllBytes();
+                isr.close();
+                file = new File(path + s + no);
+                if(!file.exists())  file.mkdir();
+                file = new File(path + s + no + s + savedName);
+                fos = new FileOutputStream(file);
+                logger.info("[SystemService] Try save file data : " + count + " / " + fileName);
+                fos.write(data);
+                fos.close();
+                saveAttachedData("contrct", no, fileName, savedName, file.length());
+                count++;
+            }
+
+        }catch(SQLException | IOException e){e.printStackTrace();}
+        return count;
+    }
+
+    // DB에서 dtorage 장치로 이전된 파일에 데해 DB에 저장하는 메서드
+    private void saveAttachedData(String funcName, int no, String fileName, String savedName, long size){
+        String sql = "INSERT INTO bizcore.attached(compId, funcName, funcNo, fileName, savedName, `size`) VALUES('vtek', ?, ?, ?, ?, ?)";
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+
+        try{
+            conn = sqlSession.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1,funcName);
+            pstmt.setInt(2, no);
+            pstmt.setString(3, fileName);
+            pstmt.setString(4, savedName);
+            pstmt.setLong(5, size);
+            if(pstmt.executeUpdate() > 0)   logger.debug("[SystemService] DB File info insert success : " + fileName);
+            else logger.warn("[SystemService] DB File info insert fail : " + fileName);
+        }catch(SQLException e){e.printStackTrace();}
+
+    } // End of saveAttachedData()
+
+
 
 
 }

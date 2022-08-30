@@ -37,4 +37,7 @@ public interface SystemMapper {
     @Select("SELECT name FROM bizsys.directories")
     public List<String> getDirectoryNames();
 
+    @Select("SELECT savedName FROM bizcore.attached WHERE compId = #{compId} AND funcname = #{funcName} AND funcno = #{no} AND filename = #{fileName} AND removed = 0 AND deleted IS NULL")
+    public String getAttachedFileName(@Param("compId") String compId, @Param("funcName") String funcName, @Param("funcNo") int funcNo, @Param("fileName") String fileName);
+
 }
