@@ -1,14 +1,19 @@
 package kr.co.bizcore.v1.ctrl;
 
 import java.io.IOException;
+import java.util.Base64;
+import java.util.HashMap;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,27 +22,23 @@ import org.springframework.web.bind.annotation.RestController;
 public class ApiAttachedCtrl extends Ctrl{
 
     @GetMapping("/sopp/{no:\\d+}/{fileName}")
-    public void apiAttachedSoppGet(HttpServletRequest request, @PathVariable("no") int no, @PathVariable("fileName") String fileName){
-        String ognName = null;
-
+    public void apiAttachedSoppGet(HttpServletRequest request, HttpServletResponse response, @PathVariable("no") int no, @PathVariable("fileName") String fileName){
+        sendFileData(request, response, "sopp", no, fileName);
     }
 
     @GetMapping("/contract/{no:\\d+}/{fileName}")
     public void apiAttachedContractGet(HttpServletRequest request, HttpServletResponse response, @PathVariable("no") int no, @PathVariable("fileName") String fileName){
-        String ognName = null;
-        
+        sendFileData(request, response, "contract", no, fileName);
     }
 
     @GetMapping("/docapp/{no:\\d+}/{fileName}")
     public void apiAttachedDocappGet(HttpServletRequest request, HttpServletResponse response, @PathVariable("no") int no, @PathVariable("fileName") String fileName){
-        String ognName = null;
-        
+        sendFileData(request, response, "docApp", no, fileName);
     }
 
-    @GetMapping("/filebox/{no:\\d+}/{fileName}")
+    //@GetMapping("/filebox/{no:\\d+}/{fileName}")
     public void apiAttachedFileboxGet(HttpServletRequest request, HttpServletResponse response, @PathVariable("no") int no, @PathVariable("fileName") String fileName){
-        String ognName = null;
-        
+        sendFileData(request, response, "filebox", no, fileName);
     }
 
     private void sendFileData(HttpServletRequest request, HttpServletResponse response, String funcName, int funcNo, String fileName){
@@ -74,6 +75,108 @@ public class ApiAttachedCtrl extends Ctrl{
                 }
             }
         }
+    } // End of sendFileData()
+
+    @PostMapping("/sopp/{no:\\d+}")
+    public String apiAttachedSoppPost(HttpServletRequest request, @RequestBody String requestBody, @PathVariable int no){
+        return proceedAttachedData(request, requestBody, "sopp", no);
+    }
+
+    @PostMapping("/contract/{no:\\d+}")
+    public String apiAttachedContractPost(HttpServletRequest request, @RequestBody String requestBody, @PathVariable int no){
+        return proceedAttachedData(request, requestBody, "contract", no);
+    }
+
+    @PostMapping("/docapp/{no:\\d+}")
+    public String apiAttachedDocappPost(HttpServletRequest request, @RequestBody String requestBody, @PathVariable int no){
+        return proceedAttachedData(request, requestBody, "docApp", no);
+    }
+
+    //@GetMapping("/filebox/{no:\\d+}")
+    public String apiAttachedFileboxPost(HttpServletRequest request, @RequestBody String requestBody, @PathVariable int no){
+        return proceedAttachedData(request, requestBody, "filebox", no);
+    }
+
+    private String proceedAttachedData(HttpServletRequest request, String requestBody, String funcName, int funcNo){
+        String result = null;
+        String fileName = null;
+        String savedName = null;
+        String file = null;
+        String aesKey = null;
+        String aesIv = null;
+        String compId = null;
+        HttpSession session = null;
+        HashMap<String, String> attached = null;
+        String[] data = null;
+        String t = null;
+        byte[] fileData = null;
+
+        session = request.getSession();
+        compId = (String)session.getAttribute("compId");
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
+        }else{
+            data = requestBody.split("\r\n");
+            if(data != null && data.length >= 2){
+                fileName = data[0];
+                file = data[1];
+                t = decAes(file, aesKey, aesIv);
+                fileData = Base64.getDecoder().decode(t);
+                savedName = systemService.createRandomFileName();
+                if(attachedService.saveAttachedFile(compId, fileName, savedName, fileData, funcName, funcNo)){
+                    result = "{\"result\":\"ok\",\"msg\":\"" + savedName + "\"}";
+                }else   result = "{\"result\":\"failure\",\"msg\":\"Error occurred when file save.\"}";
+            }
+        }
+
+        return result;
+    }
+
+    @DeleteMapping("/sopp/{no:\\d+}/{fileName}")
+    public String apiAttachedSoppPost(HttpServletRequest request, @PathVariable("no") int no, @PathVariable("fileName") String fileName){
+        return deleteAttachedFile(request, "sopp", no, fileName);
+    }
+
+    @DeleteMapping("/contract/{no:\\d+}/{fileName}")
+    public String apiAttachedContractPost(HttpServletRequest request, @PathVariable("no") int no, @PathVariable("fileName") String fileName){
+        return deleteAttachedFile(request, "contract", no, fileName);
+    }
+
+    @DeleteMapping("/docapp/{no:\\d+}/{fileName}")
+    public String apiAttachedDocappPost(HttpServletRequest request, @PathVariable("no") int no, @PathVariable("fileName") String fileName){
+        return deleteAttachedFile(request, "docApp", no, fileName);
+    }
+
+    //@DeleteMapping("/filebox/{no:\\d+}/{fileName}")
+    public String apiAttachedFileboxPost(HttpServletRequest request, @PathVariable("no") int no, @PathVariable("fileName") String fileName){
+        return deleteAttachedFile(request, "filebox", no, fileName);
+    }
+
+    private String deleteAttachedFile(HttpServletRequest request, String FuncName, int no, String fileName) {
+        String result = null;
+        String compId = null;
+        HttpSession session = null;
+        int v = -1;
+
+        session = request.getSession();
+        compId = (String)session.getAttribute("compId");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+        }else{
+            v = attachedService.deleteAttachedFile(compId, FuncName, no, fileName);
+            if(v == 0)          result = "{\"result\":\"ok\"}";
+            else if( v == -1)   result = "{\"result\":\"failure\",\"msg\":\"An error occurred when file delete.\"}";
+            else    result = "{\"result\":\"failure\",\"msg\":\"File not found Or removed.\"}";
+        }
+        return result;
     }
     
 }

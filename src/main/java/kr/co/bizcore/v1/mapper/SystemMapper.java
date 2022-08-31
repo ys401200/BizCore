@@ -3,6 +3,7 @@ package kr.co.bizcore.v1.mapper;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
@@ -40,4 +41,6 @@ public interface SystemMapper {
     @Select("SELECT savedName FROM bizcore.attached WHERE compId = #{compId} AND funcname = #{funcName} AND funcno = #{no} AND filename = #{fileName} AND removed = 0 AND deleted IS NULL")
     public String getAttachedFileName(@Param("compId") String compId, @Param("funcName") String funcName, @Param("funcNo") int funcNo, @Param("fileName") String fileName);
 
+    @Insert("INSERT INTO bizcore.attached(compId,funcName,funcNo,fileName,savedName,`size`) VALUES(#{compId},#{funcName},#{funcNo},#{fileName},#{savedName},#{size})")
+    public int setAttachedFileData(@Param("compId") String compId,@Param("funcName") String funcName, @Param("funcNo") int funcNo, @Param("fileName") String fileName, @Param("savedName") String savedName, long size);
 }
