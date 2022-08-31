@@ -28,6 +28,15 @@
                   선택</button>
                 <input type="hidden" class="formNumHidden" />
               </div>
+              <div class="formDetail">
+                <div>열람권한</div>
+                <div>
+
+                  <label><input type="radio" name="authority" value="dept" />기안자 소속 부서 포함</label>
+                  <label><input type="radio" name="authority" value="none" checked />권한 설정 없음</label>
+
+                </div>
+              </div>
             </div>
 
 
@@ -38,8 +47,8 @@
 
 
             <div class="selector">
-              <label onclick="selectChangeEvent(2)"  for="select_2">결재선 선택</label><input type="radio"
-                name="radio" id="select_2" class="form" /><button class="createLineBtn" onclick="showModal()">결재선
+              <label onclick="selectChangeEvent(2)" for="select_2">결재선 선택</label><input type="radio" name="radio"
+                id="select_2" class="form" /><button class="createLineBtn" onclick="showModal()">결재선
                 생성</button>
 
 
@@ -169,7 +178,7 @@
                 <div class="fileDetail">
                   <div>파일첨부</div>
                   <div class="filebtnContainer">
-                    <input type="file" class="gwFileInput" onchange="drawSelectedFileList(this)"/>
+                    <input type="file" class="gwFileInput" onchange="drawSelectedFileList(this)" />
                     <div class="insertedFileList"></div>
                   </div>
                 </div>

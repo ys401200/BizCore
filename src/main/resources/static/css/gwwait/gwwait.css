@@ -188,7 +188,7 @@
 	align-items: center;
 	justify-content: center;
 	border-right: none;
-	background-color:  rgb(208, 206, 206);
+	background-color: rgb(208, 206, 206);
 }
 
 
@@ -198,6 +198,7 @@
 .listPageDiv .detailReport .selectedReportview {
 	border: 1px solid black;
 }
+
 /* 첨부파일 목록 조회  */
 .listPageDiv .detailReport .selectedReportview .selectedFileField {
 	margin: 1em;
@@ -217,7 +218,7 @@
 	align-items: center;
 	justify-content: center;
 	border-right: none;
-	background-color:  rgb(208, 206, 206);
+	background-color: rgb(208, 206, 206);
 }
 
 
@@ -266,7 +267,7 @@
 }
 
 .tapLineB {
-	grid-template-columns: 10% 15% 25% 50%;
+	grid-template-columns: 10% 15% 35% 40%;
 }
 
 .tapLine>div,
@@ -311,6 +312,16 @@
 	border-radius: 0.3em;
 }
 
+
+.modal-wrap .setModifyModal textarea,
+.modal-wrap .setApprovalModal textarea {
+	border: 1px solid black;
+	height: 5em;
+	overflow-y: scroll;
+	resize: none;
+
+}
+
 .modal-title {
 	font-weight: 500;
 	font-size: 16px;
@@ -340,7 +351,17 @@
 
 
 .close-wrap {
-	text-align: right;
+	display: flex;
+	align-items: center;
+	justify-content: space-around;
+	padding: 0.5em;
+	text-align: center;
+}
+
+
+.close-wrap>button {
+	padding: 0.3em;
+
 }
 
 

@@ -14,6 +14,16 @@ $(document).ready(() => {
 function waitDefault() {
 	$(".modal-wrap").hide();
 
+
+
+
+
+
+
+
+
+
+
 	let url, method, data, type;
 	url = "/api/notice";
 	method = "get"
@@ -40,22 +50,9 @@ function waitDefault() {
 	});
 
 
-	// //오른쪽에 상세내용 출력 
-	// let previewWidth = document.getElementsByClassName("forForm")[0];
-	// previewWidth = previewWidth.clientWidth;
-	// let targetForm = $(".forForm");
-	// targetForm.css("height", Math.ceil(previewWidth / 210 * 297));
-	// let targetTable = $(".forTable");
-	// targetTable.css("height", Math.ceil(Math.ceil((previewWidth / 210 * 297) * 0.1)));
-	// let targetButtons = $(".forButtons");
-	// targetButtons.css("height", Math.ceil(Math.ceil((previewWidth / 210 * 297) * 0.025)));
 
-	// let buttonsHtml = "<button>상신취소</button><button>인쇄</button>";
-	// targetButtons.html(buttonsHtml);
-	// drawCommonmylist();
-
-	let searchDiv = $(".searchContainer").show();
-	let listDiv = $(".listPageDiv").show();
+	$(".searchContainer").show();
+	$(".listPageDiv").show();
 
 
 }
@@ -152,6 +149,7 @@ function drawNoticeApproval() {
 	let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawNoticeApproval", result[0]);
 	pageContainer[0].innerHTML = pageNation;
 	createGrid(container, header, data, ids, fnc);
+	$(".gridContent").attr("onclick", "waitDetailView(this)");
 
 
 	// 전체선택 전체 해제  
@@ -308,13 +306,13 @@ function drawChangeInfo() {
 	let changeData = [{
 		"type": "검토",
 		"name": "구민주",
-		"modifyDate": "22-08-18",
+		"modifyDate": "22-08-18 10:34:46",
 		"modCause": " 거래처 수정 "
 	},
 	{
 		"type": "검토",
 		"name": "이송현",
-		"modifyDate": "22-08-19",
+		"modifyDate": "22-08-19 10:34:46",
 		"modCause": "수량 수정 했습니다 테스트로 수정 했습니다  "
 	}]
 
@@ -341,13 +339,8 @@ function drawChangeInfo() {
 
 // 모달별 버튼  
 function closeModal(obj) {
-
 	$(".modal-wrap").hide();
-
 	$("input:radio[name='type']").prop("checked", false);
-
-
-
 }
 
 
@@ -356,16 +349,17 @@ function showAppModal() {
 	let setAppModalHtml = "<div class='setApprovalModal'>" +
 		"<div class='modal-title'>결재하기</div>" +
 		"<div class='modal-body'><div class='labelContainer'>" +
-		"<label><input type='radio' name='type'/>승인</label>" +
-		"<label><input type='radio' name='type' />반려</label>" +
-		"<label><input type='radio' name='type' />협의요청</label>" +
-		"<label><input type='radio' name='type' />보류</label>" +
-		"<label><input type='radio' name='type' />선결</label>" +
-		"<label><input type='radio' name='type' />후결</label></div>" +
-		"<label>의견 <input type='text'/></label></div>" +
+		"<label><input type='radio' name='type' value='approve'/>승인</label>" +
+		"<label><input type='radio' name='type' value='reject'/>반려</label>" +
+		"<label><input type='radio' name='type' value ='consult';/>협의요청</label>" +
+		"<label><input type='radio' name='type' value='hold'/>보류</label>" +
+		"<label><input type='radio' name='type' value='prev'/>선결</label>" +
+		"<label><input type='radio' name='type'value='next'/>후결</label></div>" +
+		"<div></div>" +
+		"<label>의견 <textarea class='approvalComment'></textarea></label></div>" +
 		"<div class='close-wrap'>" +
 		"<button id='quit' onclick='closeModal(this)'>취소</button>" +
-		"<button id='set' onclick='closeModal(this)'>결재</button></div></div>";
+		"<button id='set' onclick='approveBtnEvent()'>결재</button></div></div>";
 	$(".modal-wrap").html(setAppModalHtml);
 	$("input:radio[name='type']").prop("checked", false);
 	$(".modal-wrap").show();
@@ -376,22 +370,13 @@ function showAppModal() {
 }
 
 
-// 문서 수정 완료 모달 
-function showModifyModal() {
-	let setModifyModalHtml = "<div class='setModifyModal'>" +
-		"<div class='modal-title'>문서 수정하기 </div>" +
-		"<div class='modal-body'>" +
-		"<label>수정 내용<input class='modifyComment' type='text'/></label>" +
-		"</div>" +
-		"<div class='close-wrap'>" +
-		"<button  onclick='closeModal(this)'>취소</button>" +
-		"<button id='set' onclick='reportModify(this)'>수정</button>" +
-		"</div></div>";
-	$(".modal-wrap").html(setModifyModalHtml);
-	$(".modal-wrap").show();
-
+// 결재 타입 값 받아서 결재하기 
+function approveBtnEvent() {
+	let selectVal = $(":radio[name='type']:checked").val();
+	alert(selectVal);
+	$(".modal-wrap").hide();
+	$("input:radio[name='type']").prop("checked", false);
 }
-
 
 
 //결재선 수정 모달 
@@ -636,9 +621,34 @@ function createLine() {
 } // End of createLine(); 
 
 
+// 문서 수정 완료 모달 
+function showModifyModal(obj) {
+	let setModifyModalHtml = "<div class='setModifyModal'>" +
+		"<div class='modal-title'>문서 수정하기 </div>" +
+		"<div class='modal-body'>" +
+		"<label>수정 내용<textarea class='modifyComment'></textarea></label>" +
+		"</div>" +
+		"<div class='close-wrap'>" +
+		"<button  onclick='closeModal(this)'>취소</button>" +
+		"<button id='set' onclick='reportModify(this)'>수정</button>" +
+		"</div></div>";
+	$(".modal-wrap").html(setModifyModalHtml);
+	$(".modal-wrap").show();
+
+
+}
+
+// 문서 수정 취소 함수 
+function quitModify() {
+	$("button[name='modConfirm']:last-child").remove();
+	$("button[name='modConfirm']:last-child").remove();
+	toReadMode();
+
+}
+
+
 // 문서 수정시 변경이력에 반영 
 function reportModify(obj) {
-
 	let comment = $(".modifyComment").val();
 	let modCommentHtml = "<div class='tapLineB changeDataLine'><div class='changeType'>" + "테스트" + "</div><div class='changeName' >" + storage.user[storage.my].userName + "</div><div class='changeDate'>" + getYmdHyphen() + "</div><div class='changeCause'>" + comment + "</div></div>";
 	let origin = $("#tabDetail2").html();
@@ -646,7 +656,7 @@ function reportModify(obj) {
 	$("#tabDetail2").html(origin);
 	$(".modal-wrap").hide();
 	$("button[name='modConfirm']:last-child").remove();
-
+	$("button[name='modConfirm']:last-child").remove();
 	toReadMode();
 }
 
@@ -667,7 +677,8 @@ function createConfirmBtn(obj) {
 
 	let div = document.getElementsByClassName("mainBtnDiv")
 	if (div[0].childElementCount < 4) {
-		$(".mainBtnDiv").append("<button type='button'name='modConfirm' onclick='showModifyModal()' >수정완료 </button>");
+		$(".mainBtnDiv").append("<button type='button'name='modConfirm' onclick='showModifyModal()' >수정완료 </button>" +
+			"<button type='button'name='modConfirm' onclick='quitModify()'>수정취소 </button>");
 	}
 
 }
@@ -675,5 +686,7 @@ function createConfirmBtn(obj) {
 
 function getYmdHyphen() {
 	let d = new Date();
-	return (d.getFullYear() % 100) + "-" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "-" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString());
+	return (d.getFullYear() % 100) + "-" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "-" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString()) + "&nbsp" + d.getHours().toString() + ":" + d.getMinutes().toString() + ":" + d.getSeconds().toString();
+
+
 }
