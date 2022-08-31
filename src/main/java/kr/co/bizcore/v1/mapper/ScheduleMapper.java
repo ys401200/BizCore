@@ -28,6 +28,7 @@ public interface ScheduleMapper {
     // =================================================================================================
     // ↓ 일정 통합 후 신규 작업 내용
 
+    // === 단일 일정 조회 ===
     @Select("SELECT 'schedule' AS job, schedNo AS no, userNo AS writer, soppNo AS sopp, custNo AS customer, schedFrom AS `from`, schedTo AS `to`, schedTitle AS title, schedDesc AS content, schedCheck AS workReport, schedType AS type, schedPlace AS place, regdatetime AS created, moddatetime AS modified FROM swc_sched WHERE attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND schedno = #{no}")
     public Schedule getScheduleFromSched(@Param("compId") String compId, @Param("no") String no);
 
@@ -37,6 +38,7 @@ public interface ScheduleMapper {
     @Select("SELECT 'tech' AS job, techdNo AS no, userNo AS writer, soppNo AS sopp, endCustNo AS customer, techdFrom AS `from`, techdTo AS `to`, techdTitle AS title, techdDesc AS content, techdCheck AS workReport, techdType AS type, techdPlace AS place, custNo AS partner, contNo AS contract, cntrctMth AS contractMethod, custmemberNo AS cipOfCustomer, techdItemmodel AS supportModel, techdItemversion AS supportVersion, techdSteps AS supportStep, regdatetime AS created, moddatetime AS modified FROM swc_techd WHERE attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND techdno = #{no}")
     public Schedule getScheduleFromTechd(@Param("compId") String compId, @Param("no") String no);
 
+    // === 일정 목록 조회 ===
     @Select("SELECT 'schedule' AS job, schedNo AS no, userNo AS writer, soppNo AS sopp, custNo AS customer, schedFrom AS `from`, schedTo AS `to`, schedTitle AS title, schedDesc AS content, schedCheck AS workReport, schedType AS type, schedPlace AS place, regdatetime AS created, moddatetime AS modified FROM swc_sched WHERE attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND #{start} <= schedto AND #{end} > schedFrom ORDER BY schedno DESC")
     public List<Schedule> getScheduleListFromSched(@Param("compId") String compId, @Param("start") Date start, @Param("end") Date end);
 
@@ -46,6 +48,7 @@ public interface ScheduleMapper {
     @Select("SELECT 'tech' AS job, techdNo AS no, userNo AS writer, soppNo AS sopp, endCustNo AS customer, techdFrom AS `from`, techdTo AS `to`, techdTitle AS title, techdDesc AS content, techdCheck AS workReport, techdType AS type, techdPlace AS place, custNo AS partner, contNo AS contract, cntrctMth AS contractMethod, custmemberNo AS cipOfCustomer, techdItemmodel AS supportModel, techdItemversion AS supportVersion, techdSteps AS supportStep, regdatetime AS created, moddatetime AS modified FROM swc_techd WHERE attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND #{start} <= techdto AND #{end} > techdfrom ORDER BY techdno DESC")
     public List<Schedule> getScheduleListFromTechd(@Param("compId") String compId, @Param("start") Date start, @Param("end") Date end);
 
+    // === 부서기준 일정 조회 ===
     @Select("SELECT 'schedule' AS job, schedNo AS no, userNo AS writer, soppNo AS sopp, custNo AS customer, schedFrom AS `from`, schedTo AS `to`, schedTitle AS title, schedDesc AS content, schedCheck AS workReport, schedType AS type, schedPlace AS place, regdatetime AS created, moddatetime AS modified FROM swc_sched WHERE attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND #{start} <= schedto AND #{end} > schedFrom AND userno IN (SELECT user_no FROM bizcore.user_dept WHERE dept_id IN (#{deptIn}) AND comp_id = #{compId}) ORDER BY schedno DESC")
     public List<Schedule> getScheduleListFromSchedWithDept(@Param("compId") String compId, @Param("start") Date start, @Param("end") Date end, @Param("deptIn") String deptIn);
 
@@ -55,6 +58,7 @@ public interface ScheduleMapper {
     @Select("SELECT 'tech' AS job, techdNo AS no, userNo AS writer, soppNo AS sopp, endCustNo AS customer, techdFrom AS `from`, techdTo AS `to`, techdTitle AS title, techdDesc AS content, techdCheck AS workReport, techdType AS type, techdPlace AS place, custNo AS partner, contNo AS contract, cntrctMth AS contractMethod, custmemberNo AS cipOfCustomer, techdItemmodel AS supportModel, techdItemversion AS supportVersion, techdSteps AS supportStep, regdatetime AS created, moddatetime AS modified FROM swc_techd WHERE attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND #{start} <= techdto AND #{end} > techdfrom AND userno IN (SELECT user_no FROM bizcore.user_dept WHERE dept_id IN (#{deptIn}) AND comp_id = #{compId}) ORDER BY techdno DESC")
     public List<Schedule> getScheduleListFromTechdWithDept(@Param("compId") String compId, @Param("start") Date start, @Param("end") Date end, @Param("deptIn") String deptIn);
 
+    // === 사용자 기준 일정 조회 ===
     @Select("SELECT 'schedule' AS job, schedNo AS no, userNo AS writer, soppNo AS sopp, custNo AS customer, schedFrom AS `from`, schedTo AS `to`, schedTitle AS title, schedDesc AS content, schedCheck AS workReport, schedType AS type, schedPlace AS place, regdatetime AS created, moddatetime AS modified FROM swc_sched WHERE attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND #{start} <= schedto AND #{end} > schedFrom AND userno = #{userNo} ORDER BY schedno DESC")
     public List<Schedule> getScheduleListFromSchedWithUser(@Param("compId") String compId, @Param("start") Date start, @Param("end") Date end, @Param("userNo") String userNo);
 
@@ -64,6 +68,17 @@ public interface ScheduleMapper {
     @Select("SELECT 'tech' AS job, techdNo AS no, userNo AS writer, soppNo AS sopp, endCustNo AS customer, techdFrom AS `from`, techdTo AS `to`, techdTitle AS title, techdDesc AS content, techdCheck AS workReport, techdType AS type, techdPlace AS place, custNo AS partner, contNo AS contract, cntrctMth AS contractMethod, custmemberNo AS cipOfCustomer, techdItemmodel AS supportModel, techdItemversion AS supportVersion, techdSteps AS supportStep, regdatetime AS created, moddatetime AS modified FROM swc_techd WHERE attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND #{start} <= techdto AND #{end} > techdfrom AND userno = #{userNo} ORDER BY techdno DESC")
     public List<Schedule> getScheduleListFromTechdWithUser(@Param("compId") String compId, @Param("start") Date start, @Param("end") Date end, @Param("userNo") String userNo);
 
+    // === SOPP 기준 일정 조회 ===
+    @Select("SELECT 'schedule' AS job, schedNo AS no, userNo AS writer, soppNo AS sopp, custNo AS customer, schedFrom AS `from`, schedTo AS `to`, schedTitle AS title, schedDesc AS content, schedCheck AS workReport, schedType AS type, schedPlace AS place, regdatetime AS created, moddatetime AS modified FROM swc_sched WHERE attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND soppno = #{soppNo} ORDER BY schedno DESC")
+    public List<Schedule> getScheduleListFromSchedWithSopp(@Param("compId") String compId, @Param("soppNo") String soppNo);
+
+    @Select("SELECT 'sales' AS job, salesNo AS no, userNo AS writer, soppNo AS sopp, ptncNo AS customer, salesFrdatetime AS `from`, salesTodatetime AS `to`, salesTitle AS title, salesDesc AS content, salesCheck AS workReport, salesType AS type, salesPlace AS place, custNo AS partner, regdatetime AS created, moddatetime AS modified FROM swc_sales WHERE attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND soppno = #{soppNo} ORDER BY salesno DESC")
+    public List<Schedule> getScheduleListFromSalesWithSopp(@Param("compId") String compId, @Param("soppNo") String soppNo);
+
+    @Select("SELECT 'tech' AS job, techdNo AS no, userNo AS writer, soppNo AS sopp, endCustNo AS customer, techdFrom AS `from`, techdTo AS `to`, techdTitle AS title, techdDesc AS content, techdCheck AS workReport, techdType AS type, techdPlace AS place, custNo AS partner, contNo AS contract, cntrctMth AS contractMethod, custmemberNo AS cipOfCustomer, techdItemmodel AS supportModel, techdItemversion AS supportVersion, techdSteps AS supportStep, regdatetime AS created, moddatetime AS modified FROM swc_techd WHERE attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND soppno = #{soppNo} ORDER BY techdno DESC")
+    public List<Schedule> getScheduleListFromTechdWithsopp(@Param("compId") String compId, @Param("soppNo") String soppNo);
+
+    // 일정삭제
     @Update("UPDATE swc_sched SET attrib = 'XXXXX' WHERE compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND schedno = #{no}")
     public int deleteSched(@Param("compId") String compId, @Param("no") String no);
 

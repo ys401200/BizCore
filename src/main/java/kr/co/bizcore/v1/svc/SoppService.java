@@ -1,5 +1,6 @@
 package kr.co.bizcore.v1.svc;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -9,9 +10,11 @@ import org.springframework.stereotype.Service;
 
 import kr.co.bizcore.v1.domain.Estimate;
 import kr.co.bizcore.v1.domain.EstimateItem;
+import kr.co.bizcore.v1.domain.Schedule;
 import kr.co.bizcore.v1.domain.SimpleEstimate;
 import kr.co.bizcore.v1.domain.SimpleSopp;
 import kr.co.bizcore.v1.domain.Sopp;
+import kr.co.bizcore.v1.domain.TradeDetail;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -38,8 +41,18 @@ public class SoppService extends Svc {
         return result;
     } // End of getSoppList()
     
-    public Sopp getSopp(String soppNo, String compId){
-        return soppMapper.getSopp(soppNo, compId);
+    public String getSopp(String soppNo, String compId){
+        Sopp result = null;
+        List<HashMap<String, String>> attached = systemMapper.getAttachedFileInfo(compId, "sopp", strToInt(soppNo));
+        List<Schedule> list1 = scheduleMapper.getScheduleListFromSchedWithSopp(compId, soppNo);
+        List<Schedule> list2 = scheduleMapper.getScheduleListFromSalesWithSopp(compId, soppNo);
+        List<Schedule> list3 = scheduleMapper.getScheduleListFromTechdWithsopp(compId, soppNo);
+        List<TradeDetail> list4 = tradeMapper.getTradeDetailList(soppNo);
+        list1.addAll(list2);
+        list1.addAll(list3);
+        Collections.sort(list1);
+        result = soppMapper.getSopp(soppNo, compId);
+        return result.toJson(attached, list1, list4);
     }
 
     public String getEstimateList(String compId){
@@ -97,7 +110,7 @@ public class SoppService extends Svc {
         int x = -1;
         Sopp ogn = null;
         String sql = null;
-        ogn = getSopp(no, compId);
+        ogn = soppMapper.getSopp(no, compId);
         sql = ogn.createUpdateQuery(sopp, null);
         sql = sql + " WHERE soppno = " + no + " AND compno = (SELECT compno FROM swc_company WHERE compid = '" + compId + "')";
         x = executeSqlQuery(sql);

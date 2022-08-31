@@ -47,13 +47,13 @@ public class ApiSoppCtrl extends Ctrl{
         return result;
     } // End of apiSopp
 
-    @RequestMapping(value = "/{no}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{no:\\d+}", method = RequestMethod.GET)
     public String apiSoppNumber(HttpServletRequest request, @PathVariable String no){
         String result = null;
         String compId = null;
         String aesKey = null;
         String aesIv = null;
-        Sopp sopp = null;
+        String sopp = null;
         HttpSession session = null;
 
         session = request.getSession();
@@ -71,8 +71,7 @@ public class ApiSoppCtrl extends Ctrl{
             if(sopp == null){
                 result = "{\"result\":\"failure\",\"msg\":\"Sopp not exist.\"}";
             }else{
-                result = sopp.toJson();
-                result = soppService.encAes(result, aesKey, aesIv);
+                result = soppService.encAes(sopp, aesKey, aesIv);
                 result = "{\"result\":\"ok\",\"data\":\"" + result + "\"}";
             }
         }

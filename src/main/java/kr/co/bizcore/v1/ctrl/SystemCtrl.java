@@ -49,8 +49,8 @@ public class SystemCtrl extends Ctrl {
         String result = null;
 
         Sopp e1 = null, e2 = null;
-        e1 = svc.getSopp(no, "vtek");
-        e2 = svc.getSopp(10005598 + "", "vtek");
+        //e1 = svc.getSopp(no, "vtek");
+        //e2 = svc.getSopp(10005598 + "", "vtek");
 
         
 

@@ -19,7 +19,7 @@ public class Schedule extends Domain{
     private String title;
     private String content;
     private boolean report;
-    private int type;
+    private String type;
     private String place;
 
     // 영업 추가 필드들
@@ -46,7 +46,7 @@ public class Schedule extends Domain{
         result += ("\"title\":" + (title == null ? "null" : "\"" + title + "\"") + ",");
         result += ("\"content\":" + (content == null ? "null" : "\"" + content.replaceAll("\"", "\\u0022").replaceAll("\n", "<br />").replaceAll("\r", "").replaceAll("\t", "") + "\"") + ",");
         result += ("\"report\":" + report + ",");
-        result += ("\"type\":" + type + ",");
+        result += ("\"type\":" + (type == null ? "null" : "\"" + type + "\"") + ",");
         result += ("\"place\":\"" + place + "\"}");
         return result;
     }
@@ -64,7 +64,7 @@ public class Schedule extends Domain{
         result += ("\"title\":" + (title == null ? "null" : "\"" + title + "\"") + ",");
         result += ("\"content\":" + (content == null ? "null" : "\"" + content.replaceAll("\"", "\\u0022").replaceAll("\n", "<br />").replaceAll("\r", "").replaceAll("\t", "") + "\"") + ",");
         result += ("\"report\":" + report + ",");
-        result += ("\"type\":" + type + ",");
+        result += ("\"type\":" + (type == null ? "null" : "\"" + type + "\"") + ",");
         result += ("\"place\":\"" + place + "\",");
         result += ("\"partner\":" + partner);
         result += "}";
@@ -84,7 +84,7 @@ public class Schedule extends Domain{
         result += ("\"title\":" + (title == null ? "null" : "\"" + title + "\"") + ",");
         result += ("\"content\":" + (content == null ? "null" : "\"" + content.replaceAll("\"", "\\u0022").replaceAll("\n", "<br />").replaceAll("\r", "").replaceAll("\t", "") + "\"") + ",");
         result += ("\"report\":" + report + ",");
-        result += ("\"type\":" + type + ",");
+        result += ("\"type\":" + (type == null ? "null" : "\"" + type + "\"") + ",");
         result += ("\"place\":\"" + place + "\",");
         result += ("\"partner\":" + partner) + ",";
         result += ("\"contract\":" + contract) + ",";

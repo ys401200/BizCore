@@ -2,10 +2,16 @@ package kr.co.bizcore.v1.domain;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import org.json.JSONObject;
+
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -38,19 +44,20 @@ public class Sopp extends SimpleSopp{
     @XmlElement(nillable=true)
     private String priority;
 
-
-    //public void setStartOfMaintenance(Date v){startOfMaintenance = v;}
-    //public void setStartOfMaintenance(long v){startOfMaintenance = new Date(v);}
-    //public void setEndOfMaintenance(Date v){endOfMaintenance = v;}
-    //public void setEndOfMaintenance(long v){endOfMaintenance = new Date(v);}
-    //public String getStartOfMaintenance(){return cvtDateToStr(startOfMaintenance);}
-    //public String getEndOfMaintenance(){return cvtDateToStr(endOfMaintenance);}
-    //public void setTargetDate(Date v){targetDate = v;}
-    //public String getTargetDate(){return cvtDateToStr(targetDate);}
-
-    private String cvtDateToStr(Date d){
-        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
-        return fmt.format(d);
-    }
+    public String toJson(List<HashMap<String, String>> fileData, List<Schedule> schedules, List<TradeDetail> trades) {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(Include.NON_NULL);
+        String result = null;
+        JSONObject json = null;
+        try {
+            result = mapper.writeValueAsString(this);
+            json = new JSONObject(result);
+            json.put("attached", fileData);
+            json.put("schedules", schedules);
+            json.put("trades", trades);
+        } catch (JsonProcessingException e) {e.printStackTrace();}
+        result = json.toString();
+        return result;
+    } // End of toJson()
     
 }
