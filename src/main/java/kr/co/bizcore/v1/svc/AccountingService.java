@@ -36,7 +36,7 @@ public class AccountingService extends Svc{
         
         bill = accMapper.getTaxBill(no, compId);
         
-        if(bill != null)  result += bill.toJson();
+        if(bill != null)  result = bill.toJson();
         return result;
     }
     
