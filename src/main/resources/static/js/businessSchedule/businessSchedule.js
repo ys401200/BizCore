@@ -1668,8 +1668,10 @@ function scheduleSelectSuccess(result){
 
 	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined){
 		window.setTimeout(drawScheduleList, 600);
+		window.setTimeout(drawCalendar(document.getElementsByClassName("calendar_container")[0]), 600);
 	}else{
 		window.setTimeout(drawScheduleList, 200);
+		window.setTimeout(drawCalendar(document.getElementsByClassName("calendar_container")[0]), 200);
 	}
 }
 
