@@ -53,7 +53,7 @@ public class ApiScheduleCtrl extends Ctrl {
     @GetMapping("/calendar/{scope:\\D+}/{year:\\d+}/{month:\\d+}")
     public String apiScheduleCalendar(HttpServletRequest request, @PathVariable("scope") String scope, @PathVariable("year") int year, @PathVariable("month") int month){
         String result = null;
-        String compId = null, yy = null, mm = null, aesKey = null, aesIv = null, data = null, userNo = null;
+        String compId = null, aesKey = null, aesIv = null, data = null, userNo = null;
         int maxYear = 0, minYear = 0;
         Calendar cal = Calendar.getInstance();
         HttpSession session = null;

@@ -309,7 +309,7 @@ public class ScheduleSvc extends Svc{
     private void calcStartAndEndDate(int y, int m, int d, Date start, Date end){
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(0);
-        cal.set(y, m, d, 0, 0, 0);
+        cal.set(y, m - 1, d, 0, 0, 0);
         start.setTime(cal.getTimeInMillis());
         cal.add(Calendar.MONTH, 1);
         end.setTime(cal.getTimeInMillis());
