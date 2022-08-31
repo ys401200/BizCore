@@ -64,7 +64,7 @@ button, select, input[type="text"]{
 .gridContent .gridContentItem:not(:last-child){
 	overflow: hidden;
 	border-top: 1px solid #E4E5E9;
-	/* border-right: 1px solid #D9D9D9; */
+	border-right: 1px solid #ededed;
 }
 
 .gridContent .gridContentItem:last-child{
@@ -100,7 +100,7 @@ button, select, input[type="text"]{
 }
 
 .grid_default_header_item{
-	color: #332E85;
+	/* color: #332E85; */
 	height: 38px;
 	font-weight: 500;
 }
@@ -250,20 +250,21 @@ button, select, input[type="text"]{
 
 .detailContainer hr{
 	float: left;
-	border-top: 0;
+	/* border-top: 0;
 	border-left : thick solid #E45050;
 	border-right: 0;
-	border-bottom: 0;
- 	height : 44px;
- 	width: 4px;
+	border-bottom: 0; */
+	border:2px solid #e45050;
+ 	height : 32px;
+ 	/* width: 4px; */
  	margin: 0;
 }
 
 .detailContainer .detailMainSpan{
-	font-weight: 500;
-	font-size: 16px;
-	margin-left: 18px;
-	line-height: 3;
+	font-weight: bolder;
+	font-size: 15px;
+	margin-left: 15px;
+	line-height: 40px;
 	color: #332E85;
 	float: left;
 }
@@ -471,7 +472,7 @@ input[name="tabItem"] {
 	width: 100%;
 	height: 100%;
 	font-weight: 500;
-	font-size: 14px;
+	font-size: 15px;
 	line-height: 63px;
 	color: #332E85;
 	border: 0;
@@ -482,7 +483,7 @@ input[name="tabItem"] {
 	width: 100%;
 	height: 100%;
 	font-weight: 500;
-	font-size: 14px;
+	font-size: 15px;
 	line-height: 63px;
 	color: #332E85;
 	border: 0;
@@ -494,7 +495,7 @@ input[name="tabItem"] {
 	width: 100%;
 	height: 100%;
 	font-weight: 500;
-	font-size: 14px;
+	font-size: 15px;
 	line-height: 63px;
 	color: #332E85;
 	border: 0;

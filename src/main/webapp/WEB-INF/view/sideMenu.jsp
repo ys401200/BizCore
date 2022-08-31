@@ -5,7 +5,7 @@
 	<ul id="business">
 		<li>
 			<a href="/mypage">
-				<img src="/images/main/icons/mainHomeIcon.png" id="mainHomeIcon"/>
+				<img src="/images/main/icons/mypage.png" id="mypage"/>
 				<span>마이 페이지</span>
 			</a>
 		</li>
@@ -108,42 +108,42 @@
 	<ul id="gw">
 		<li>
 			<a href="/gw/detail">
-				<img src="/images/main/icons/mainNoticeIcon.png" id="mainNoticeIcon" />
+				<img src="/images/main/icons/mainAccountHome.png" id="mainNoticeIcon" />
 				<span>전자결재 홈</span>
 			</a>
 		</li>
 		<li>
 			<a href="/gw/write">
-				<img src="/images/main/icons/mainNoticeIcon.png" id="mainNoticeIcon" />
+				<img src="/images/main/icons/mainNewAccount.png" id="mainNoticeIcon" />
 				<span>새 결재 진행</span>
 			</a>
 		</li>
 		<li>
 			<a href="#">
-				<img src="/images/main/icons/mainHomeIcon.png" id="mainHomeIcon" />
+				<img src="/images/main/icons/mainContIcon.png" id="mainHomeIcon" />
 				<span>진행 중 문서</span>
 				<span id="slideSpan">+</span>
 			</a>
 			<ul id="panel">
-				<li><a href="/gw/wait">- 결재 대기 문서</a></li>
-				<li><a href="/gw/due">- 결재 예정 문서</a></li>
-				<li><a href="/gw/receive">- 결재 수신 문서</a></li>
-				<li><a href="/gw/refer">- 참조/열람대기문서</a></li>
+				<li><a href="/gw/wait">결재 대기 문서</a></li>
+				<li><a href="/gw/wait">결재 예정 문서</a></li>
+				<li><a href="/gw/wait">결재 수신 문서</a></li>
+				<li><a href="/gw/wait">참조/열람대기문서</a></li>
 				
 			</ul>
 		</li>
 		<li>
 			<a href="#">
-				<img src="/images/main/icons/mainHomeIcon.png" id="mainHomeIcon" />
+				<img src="/images/main/icons/mainBoardFileIcon.png" id="mainHomeIcon" />
 				<span>문서함</span>
 				<span id="slideSpan">+</span>
 			</a>
 			<ul id="panel">
-				<li><a href="#">- 기안 문서함</a></li>
-				<li><a href="#">- 임시 저장함</a></li>
-				<li><a href="#">- 결재 문서함</a></li>
-				<li><a href="#">- 수신 문서함</a></li>
-				<li><a href="#">- 참조/열람 문서함</a></li>
+				<li><a href="/gw/wait">기안 문서함</a></li>
+				<li><a href="/gw/wait">임시 저장함</a></li>
+				<li><a href="/gw/wait">결재 문서함</a></li>
+				<li><a href="/gw/wait">수신 문서함</a></li>
+				<li><a href="/gw/wait">참조/열람 문서함</a></li>
 			</ul>
 		</li>
 		
@@ -168,10 +168,10 @@
 				<span id="slideSpan">+</span>
 			</a>
 			<ul id="panel">
-				<li><a href="#">- 매입매출조회</a></li>
-				<li><a href="#">- 매입매출등록</a></li>
-				<li><a href="#">- 미지급현황</a></li>
-				<li><a href="#">- 미수금현황</a></li>
+				<li><a href="#">매입매출조회</a></li>
+				<li><a href="#">매입매출등록</a></li>
+				<li><a href="#">미지급현황</a></li>
+				<li><a href="#">미수금현황</a></li>
 			</ul>
 		</li>
 		<li>
@@ -181,11 +181,11 @@
 				<span id="slideSpan">+</span>
 			</a>
 			<ul id="panel">
-				<li><a href="#">- 자금현황조회</a></li>
-				<li><a href="#">- 계좌내역등록</a></li>
-				<li><a href="#">- 계좌내역조회</a></li>
-				<li><a href="#">- 카드내역등록</a></li>
-				<li><a href="#">- 카드내역조회</a></li>
+				<li><a href="#">자금현황조회</a></li>
+				<li><a href="#">계좌내역등록</a></li>
+				<li><a href="#">계좌내역조회</a></li>
+				<li><a href="#">카드내역등록</a></li>
+				<li><a href="#">카드내역조회</a></li>
 			</ul>
 		</li>
 		<li>
@@ -195,13 +195,13 @@
 				<span id="slideSpan">+</span>
 			</a>
 			<ul id="panel">
-				<li><a href="#">- 매입계산서조회</a></li>
-				<li><a href="#">- 매출계산서조회</a></li>
-				<li><a href="#">- 계산서등록</a></li>
-				<li><a href="#">- 계산서발행</a></li>
-				<li><a href="#">- 계산서연결현황</a></li>
-				<li><a href="#">- 거래처별매출원장</a></li>
-				<li><a href="#">- 거래처별매입원장</a></li>
+				<li><a href="#">매입계산서조회</a></li>
+				<li><a href="#">매출계산서조회</a></li>
+				<li><a href="#">계산서등록</a></li>
+				<li><a href="#">계산서발행</a></li>
+				<li><a href="#">계산서연결현황</a></li>
+				<li><a href="#">거래처별매출원장</a></li>
+				<li><a href="#">거래처별매입원장</a></li>
 			</ul>
 		</li>
 	</ul>
