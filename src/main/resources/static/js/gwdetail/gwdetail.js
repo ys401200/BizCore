@@ -64,7 +64,7 @@ function drawGwDiv() {
 		gwHtml += "<div class='waitCard'><div>" + waitList[i].title + "</div>" +
 			"<div class='subWaitCard'><div class='type'><div>결재타입</div><div>" + waitList[i].type + "</div></div>" +
 			"<div class='writer'><div>기안자</div><div>" + waitList[i].writer + "</div></div>" +
-			"<div class='created'><div>작성일</div><div>" + waitList[i].created + "</div></div></div>" + "<div onclick='showWaitReport()'>결재하기</div></div>";
+			"<div class='created'><div>작성일</div><div>" + waitList[i].created + "</div></div></div></div>";
 	}
 
 	target.html(gwHtml);
@@ -221,6 +221,4 @@ function noticeErrorList() {
 
 
 
-function showWaitReport() {
-	
-} 
+function showWaitReport() {} 
