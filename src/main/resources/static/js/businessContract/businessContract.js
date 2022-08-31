@@ -39,7 +39,7 @@ function contractSearchList(){
 }
 
 function drawContractList() {
-	let contractContainer, result, jsonData, header = [], data = [], ids = [], disDate, str, fnc;
+	let contractContainer, result, job, jsonData, header = [], data = [], ids = [], disDate, str, fnc;
 	
 	if (storage.contractList === undefined) {
 		msg.set("등록된 계약 없습니다");
@@ -171,7 +171,7 @@ function drawContractList() {
 
 	let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawContractList", result[0]);
 	pageContainer[0].innerHTML = pageNation;
-	createGrid(contractContainer, header, data, ids, fnc);
+	createGrid(contractContainer, header, data, ids, job, fnc);
 }
 
 function contractDetailView(e){

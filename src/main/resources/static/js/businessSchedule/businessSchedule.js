@@ -16,12 +16,8 @@ function getScheduleList() {
 
 	scheduleRange = $(document).find("#scheduleRange").val();
 
-	if(scheduleRange === undefined){
-		url = "/api/schedule";
-	}else{
-		url = "/api/schedule/calendar/" + scheduleRange + "/2022/07";
-	}
-
+	
+	url = "/api/schedule/calendar/" + scheduleRange;
 	method = "get";
 	data = "";
 	type = "list";
@@ -34,12 +30,7 @@ function scheduleSearchList(){
 
 	scheduleRange = $(document).find("#scheduleRange").val();
 
-	if(scheduleRange === undefined){
-		url = "/api/schedule";
-	}else{
-		url = "/api/schedule/calendar/" + scheduleRange;
-	}
-	
+	url = "/api/schedule/calendar/" + scheduleRange;
 	method = "get";
 	data = "";
 	type = "list";
@@ -272,12 +263,26 @@ function drawCalendar(container){
 	html += "<div class=\"calendar_header\">토</div>";
 
     for(x1 = 0 ; x1 < calArr.length ; x1++){
-        tempDate = calArr[x1].date; // 해당 셀의 날짜 객체를 가져 옮
+		tempDate = calArr[x1].date; // 해당 셀의 날짜 객체를 가져 옮
         t = tempDate.getFullYear();
         t += (tempDate.getMonth() < 9 ? "0" + (tempDate.getMonth() + 1) : tempDate.getMonth() + 1);
         t += (tempDate.getDate() < 10 ? "0" + tempDate.getDate() : tempDate.getDate()); // 셀에 저장해 둘 날짜 문자열 생성
-        html += "<div class=\"calendar_cell" + (storage.currentMonth === tempDate.getMonth() + 1 ? "" : " calendar_cell_blur") + "\" data-date=\"" + t + "\" onclick='eventStop();scheduleInsertForm();'>"; // start row / 해당월이 아닌 날짜의 경우 calendar_cell_blue 클래스명을 셀에 추가 지정함
-        html += "<div class=\"calendar_date\">" + (calArr[x1].date.getDate()) + "</div>"; // 셀 안 최상단에 날짜 아이템을 추가함
+		let now, year, month, day;
+		year = tempDate.getFullYear();
+		month = tempDate.getMonth()+1;
+		day = tempDate.getDate();
+
+		if(month < 10){
+			month = "0" + month;
+		}
+
+		if(day < 10){
+			day = "0" + day;
+		}
+
+		now = year + "-" + month + "-" + day;
+        html += "<div class=\"calendar_cell" + (storage.currentMonth === tempDate.getMonth() + 1 ? "" : " calendar_cell_blur") + "\" data-date=\"" + t + "\">"; // start row / 해당월이 아닌 날짜의 경우 calendar_cell_blue 클래스명을 셀에 추가 지정함
+        html += "<div class=\"calendar_date\" onclick='eventStop();scheduleInsertForm(\"" + now + "\");'>" + (calArr[x1].date.getDate()) + "</div>"; // 셀 안 최상단에 날짜 아이템을 추가함
         for(x2 = 0 ; x2 < slot ; x2++){
 			x3 = [];
 			if(x1 > 0){ // 전일 데이터와 비교, 일정의 연속성에대해 확인함
@@ -287,7 +292,7 @@ function drawCalendar(container){
 				x3[1] = calArr[x1 + 1].slot[x2] === calArr[x1].slot[x2];
 			}
             t = calArr[x1].slot[x2] === undefined ? undefined : storage.scheduleList[calArr[x1].slot[x2]] ; //임시변수에 스케줄 아이템을 담아둠
-            html += "<div class=\"calendar_item" + (t === undefined ? " calendar_item_empty" : "") + (x3[0] ? " calendar_item_left" : "") + (x3[1] ? " calendar_item_right" : "") + "\"" + (t === undefined ? "" : "") + " onclick='eventStop();scheduleSuccessView(this);'>" + (t === undefined ? "" : "임시" + " : " + t.title) + "</div>";
+            html += "<div class=\"calendar_item" + (t === undefined ? " calendar_item_empty" : "") + (x3[0] ? " calendar_item_left" : "") + (x3[1] ? " calendar_item_right" : "") + "\"" + (t === undefined ? "" : "") + " data-id=" + (t === undefined ? '' : t.no) + " data-job=" + (t === undefined ? '' : t.job) + " onclick='" + (t === undefined ? 'eventStop();scheduleInsertForm("' + now + '");' : 'eventStop();scheduleDetailView(this);') + "'>" + (t === undefined ? "" : t.writer + " : " + t.title) + "</div>";
         }
         html += "</div>";
     }
@@ -562,6 +567,10 @@ function calendarNext(event){
 	getYear.html(setYear);
 	getMonth.html(setMonth);
 
+	if(setMonth < 10){
+		setMonth = "0" + setMonth;
+	}
+
 	storage.currentYear = setYear;
 	storage.currentMonth = setMonth;
 
@@ -587,6 +596,10 @@ function calendarPrev(event){
 	getYear.html(setYear);
 	getMonth.html(setMonth);
 
+	if(setMonth < 10){
+		setMonth = "0" + setMonth;
+	}
+
 	storage.currentYear = setYear;
 	storage.currentMonth = setMonth;
 
@@ -594,17 +607,10 @@ function calendarPrev(event){
 }
 
 function scheduleCalendarAjax(){
-	let url, method, scheduleType, scheduleRange;
+	let url, method, scheduleRange;
 
-	scheduleType = $(document).find("#scheduleType").val();
 	scheduleRange = $(document).find("#scheduleRange").val();
-
-	if(scheduleType === undefined || scheduleRange === undefined){
-		url = "/api/schedule";
-	}else{
-		url = "/api/schedule" + scheduleRange + "/" + storage.currentYear + "/" + storage.currentMonth;
-	}
-
+	url = "/api/schedule/calendar/" + scheduleRange + "/" + storage.currentYear + "/" + storage.currentMonth;
 	method = "get",
 
 	$.ajax({
@@ -612,7 +618,10 @@ function scheduleCalendarAjax(){
 		method: method,
 		dataType: "json",
 		success:(result) => {
-			storage.scheduleList = result;
+			let jsonData;
+			jsonData = cipher.decAes(result.data);
+			jsonData = JSON.parse(jsonData);
+			storage.scheduleList = jsonData;
 			window.setTimeout(drawCalendar(document.getElementsByClassName("calendar_container")[0]), 200);
 		}
 	});
@@ -641,7 +650,7 @@ function listChange(event){
 function scheduleSuccessList(result){
 	storage.scheduleList = result;
 
-	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined){
+	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined){
 		window.setTimeout(drawScheduleList, 600);
 		window.setTimeout(drawCalendar(document.getElementsByClassName("calendar_container")[0]), 600);
 	}else{
@@ -654,10 +663,10 @@ function scheduleErrorList(){
 	alert("에러");
 }
 
-function scheduleInsertForm(){
+function scheduleInsertForm(getDate){
 	let html, dataArray;
 
-	dataArray = scheduleRadioInsert("sales");
+	dataArray = scheduleRadioInsert("sales", getDate);
 
 	html = detailViewFormModal(dataArray);
 
@@ -701,7 +710,10 @@ function scheduleUpdateForm(result){
 }
 
 function scheduleRadioClick(e, result){
-	let html, dataArray, value = $(e).val();
+	let html, dataArray, tempFrom, tempTo, value = $(e).val();
+	
+	tempFrom = $(document).find("#from").val();
+	tempTo = $(document).find("#to").val();
 	
 	modal.hide();
 
@@ -735,14 +747,21 @@ function scheduleRadioClick(e, result){
 
 	setTimeout(() => {
 		$(document).find("[name='job'][value='" + value + "']").prop("checked", true);
+		$(document).find("#from").val(tempFrom);
+		$(document).find("#to").val(tempTo);
 	}, 100);
 }
 
-function scheduleRadioInsert(value){
-	let dataArray, myName, my;
+function scheduleRadioInsert(value, date){
+	let dataArray, myName, my, now;
 
 	my = storage.my;
 	myName = storage.user[my].userName;
+
+	if(date === undefined){
+		now = new Date();
+		date = now.toISOString().slice(0, 10);
+	}
 
 	if(value === "sales"){
 		dataArray = [
@@ -770,12 +789,14 @@ function scheduleRadioInsert(value){
 			{
 				"title": "활동시작일(*)",
 				"elementId": "from",
+				"value": date,
 				"type": "date",
 				"disabled": false,
 			},
 			{
 				"title": "활동종료일(*)",
 				"elementId": "to",
+				"value": date,
 				"type": "date",
 				"disabled": false,
 			},
@@ -882,12 +903,14 @@ function scheduleRadioInsert(value){
 			{
 				"title": "지원 시작일(*)",
 				"elementId": "from",
+				"value": date,
 				"disabled": false,
 				"type": "date",
 			},
 			{
 				"title": "지원 종료일(*)",
 				"elementId": "to",
+				"value": date,
 				"disabled": false,
 				"type": "date",
 			},
@@ -923,12 +946,14 @@ function scheduleRadioInsert(value){
 			{
 				"title": "일정시작일(*)",
 				"type": "date",
+				"value": date,
 				"elementId": "from",
 				"disabled": false,
 			},
 			{
 				"title": "일정종료일",
 				"type": "date",
+				"value": date,
 				"elementId": "to",
 				"disabled": false,
 			},
@@ -1641,7 +1666,7 @@ function scheduleSelectChange(){
 function scheduleSelectSuccess(result){
 	storage.scheduleList = result;
 
-	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined){
+	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined){
 		window.setTimeout(drawScheduleList, 600);
 	}else{
 		window.setTimeout(drawScheduleList, 200);

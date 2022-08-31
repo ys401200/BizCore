@@ -38,7 +38,7 @@ function noticeSearchList(){
 }
 
 function drawNoticeList() {
-	let container, result, jsonData, header = [], data = [], ids = [], disDate, setDate, str, fnc;
+	let container, result, jsonData, job, header = [], data = [], ids = [], disDate, setDate, str, fnc;
 	
 	if (storage.noticeList === undefined) {
 		msg.set("등록된 공지사항이 없습니다");
@@ -98,7 +98,7 @@ function drawNoticeList() {
 
 	let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawNoticeList", result[0]);
 	pageContainer[0].innerHTML = pageNation;
-	createGrid(container, header, data, ids, fnc);
+	createGrid(container, header, data, ids, job, fnc);
 }// End of drawNoticeList()
 
 function noticeDetailView(e) {// 선택한 그리드의 글 번호 받아오기 

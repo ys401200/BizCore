@@ -14,7 +14,7 @@ $(document).ready(() => {
 function getFileBoxList() {
 	let url, method, data, type; 
 	url = "/api/board/filebox";
-	method ="get"
+	method ="get";
 	data = "";
 	type = "list";
 	crud.defaultAjax(url, method, data, type, fileBoxSuccessList, fileBoxErrorList);
@@ -22,7 +22,7 @@ function getFileBoxList() {
 } // End of getFileBoxList()
 
 function drawFileBoxList() {
-	let container, result, jsonData, header = [], data = [], ids = [], disDate, setDate, str, fnc;
+	let container, result, jsonData, job, header = [], data = [], ids = [], disDate, setDate, str, fnc;
 	
 	if (storage.fileBoxList === undefined) {
 		msg.set("등록된 자료가 없습니다");
@@ -82,7 +82,7 @@ function drawFileBoxList() {
 
 	let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawFileBoxList", result[0]);
 	pageContainer[0].innerHTML = pageNation;
-	createGrid(container, header, data, ids, fnc);
+	createGrid(container, header, data, ids, job, fnc);
 }// End of drawFileBoxList()
 
 function fileBoxDetailView(e) {// 선택한 그리드의 글 번호 받아오기 

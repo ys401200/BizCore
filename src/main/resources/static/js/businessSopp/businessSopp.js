@@ -39,7 +39,7 @@ function soppSearchList(){
 }
 
 function drawSoppList() {
-	let container, result, jsonData, header = [], data = [], ids = [], disDate, setDate, str, fnc;
+	let container, result, job, jsonData, header = [], data = [], ids = [], disDate, setDate, str, fnc;
 	
 	if (storage.soppList === undefined) {
 		msg.set("등록된 영업기회가 없습니다");
@@ -151,7 +151,7 @@ function drawSoppList() {
 
 	let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawSoppList", result[0]);
 	pageContainer[0].innerHTML = pageNation;
-	createGrid(container, header, data, ids, fnc);
+	createGrid(container, header, data, ids, job, fnc);
 }
 
 function soppDetailView(e){
