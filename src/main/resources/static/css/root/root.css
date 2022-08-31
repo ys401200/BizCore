@@ -5,7 +5,7 @@
 	--content-Margin-top:0.6%;
 	--content-title-font-size:15px;
 	--content-title-font-weight:bolder;
-	--content-title-hr:2px solid #E45050;
+	--content-title-hr:2px solid #182f81;
 	--content-title-hr-height:32px;
 	--content-title-line-height:40px;
 	--inContent-margin-top:6px;
@@ -53,7 +53,7 @@
 
 #bodyContent #bodyGridContent #bodyNotice .gridNoticeList .gridHeader{
     grid-template-columns: 15% 55% 15% 15%;
-	border-bottom:1px solid #abb6d5;
+	border-bottom:1px solid #182f81;
 }
 
 #bodyContent #bodyGridContent #bodyNotice .gridNoticeList .gridContent{
@@ -89,7 +89,7 @@
 	font-size: var(--content-title-font-size);
 	margin-left: 18px;
 	line-height: var(--content-title-line-height);
-	color: #332E85;
+	color: #182f81;
 }
 
 #bodyContent #bodyGridContent #bodySched .gridScheduleList{
@@ -110,7 +110,7 @@
 	grid-template-columns: 10% 10% 15% 10% 10% 10% 10% 10% 15%;
 }
 
-.gridContent:nth-child(2n-1){background-color:#F7F7F9;}
+.gridContent:nth-child(2n-1){background-color:#f9f9fb;}
 
 /* 메인 일정관리 시작*/
 /* #bodyContent #bodyGridContent #bodySched{

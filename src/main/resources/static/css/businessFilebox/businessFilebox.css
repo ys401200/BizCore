@@ -72,20 +72,21 @@
 
 .fileBoxContainer hr {
 	float: left;
-	border-top: 0;
+	/* border-top: 0;
 	border-left: thick solid #E45050;
 	border-right: 0;
-	border-bottom: 0;
-	height: 44px;
-	width: 4px;
+	border-bottom: 0; */
+	border:2px solid #E45050;
+	height: 32px;
+	/* width: 4px; */
 	margin: 0;
 }
 
 .fileBoxContainer span {
-	font-weight: 500;
-	font-size: 16px;
-	margin-left: 18px;
-	line-height: 3;
+	font-weight: bolder;
+	font-size: 15px;
+	margin-left: 15px;
+	line-height: 40px;
 	color: #332E85;
 }
 

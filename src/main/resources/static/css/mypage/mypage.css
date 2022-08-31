@@ -12,21 +12,17 @@
 
 .mypageContainer hr {
 	float: left;
-	border-top: 0;
-	border-left: thick solid #E45050;
-	border-right: 0;
-	border-bottom: 0;
-	height: 44px;
-	width: 4px;
+	border:2px solid #182f81;
+	height: 32px;
 	margin: 0;
 }
 
 .mypageContainer span, .mypageContainer .mypagediv {
-	font-weight: 500;
-	font-size: 16px;
-	margin-left: 18px;
-	line-height: 3;
-	color: #332E85;
+	font-weight: bolder;
+	font-size: 15px;
+	margin-left: 15px;
+	line-height: 40px;
+	color: #182f81;
 }
 
 .mypagediv {
@@ -67,6 +63,10 @@
 	margin-top: 0.5rem;
 	margin-bottom: 0.5rem;
 	float:none;
+	padding:0.3% 0.8% 0.3% 0.8%;
+	background-color:#ededf4;
+	border:1px solid #6469e5;
+	border-radius: 5px;
 }
 
 
