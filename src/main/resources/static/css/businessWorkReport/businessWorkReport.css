@@ -26,19 +26,20 @@
 	color: #332E85;
 }
 
+.workReportContainer .workReportContent{
+	padding: 20px;
+}
+
 .workReportContainer .workReportContent .reportHeader,
 .workReportContainer .workReportContent .reportContent{
 	display: grid;
-	grid-template-columns: repeat(7, 1fr);
-}
-
-.workReportContainer .workReportContent .reportContent > div:first-child{
-	grid-row: span 5;
+	grid-template-columns: 10% 10% 10% 40% 10% 10% 10%;
 }
 
 .workReportContainer .workReportContent .reportHeader > div,
 .workReportContainer .workReportContent .reportContent > div{
+	border: 1px solid #000;
 	display: flex;
 	align-items: center;
-	justify-content: center;
+	padding: 10px;
 }

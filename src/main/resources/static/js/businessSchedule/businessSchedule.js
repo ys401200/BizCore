@@ -321,7 +321,7 @@ function scheduleSuccessView(result){
 	detailView.hide();
 	
 	if(job === "sales"){
-		let from, to, place, writer, sopp, customer, partner, title, content;
+		let from, to, place, writer, sopp, customer, partner, title, content, type;
 		
 		disDate = dateDis(result.from);
 		from = dateFnc(disDate);
@@ -338,7 +338,10 @@ function scheduleSuccessView(result){
 				async: false,
 				dataType: "json",
 				success:(resultData) => {
-					sopp = resultData.title;
+					let jsonData;
+					jsonData = cipher.decAes(resultData.data);
+					jsonData = JSON.parse(jsonData);
+					sopp = jsonData.title;
 				}
 			});
 		}else{
@@ -350,6 +353,7 @@ function scheduleSuccessView(result){
 		partner = (result.partner == 0 || result.partner === null || result.partner === undefined) ? "없음" : storage.customer[result.partner].name;
 		title = (result.title === null || result.title === "" || result.title === undefined) ? "제목 없음" : result.title;
 		content = (result.content === null || result.content === "" || result.content === undefined) ? "내용 없음" : result.content;
+		type = (result.type === null || result.type === "" || result.type === undefined) ? "없음" : storage.code.etc[result.type];
 
 		dataArray = [
 			{
@@ -363,6 +367,10 @@ function scheduleSuccessView(result){
 			{
 				"title": "장소",
 				"value": place,
+			},
+			{
+				"title": "활동형태",
+				"value": type,
 			},
 			{
 				"title": "담당자",
@@ -390,7 +398,7 @@ function scheduleSuccessView(result){
 			}
 		];
 	}else if(job === "tech"){
-		let from, to, place, writer, sopp, customer, partner, title, content, supportModel, supportVersion;
+		let from, to, place, writer, sopp, customer, partner, title, content, supportModel, supportVersion, cipOfCustomer, contractMethod, contract, supportStep, type;
 		
 		disDate = dateDis(result.from);
 		from = dateFnc(disDate);
@@ -407,7 +415,10 @@ function scheduleSuccessView(result){
 				async: false,
 				dataType: "json",
 				success:(resultData) => {
-					sopp = resultData.title;
+					let jsonData;
+					jsonData = cipher.decAes(resultData.data);
+					jsonData = JSON.parse(jsonData);
+					sopp = jsonData.title;
 				}
 			});
 		}else{
@@ -421,8 +432,34 @@ function scheduleSuccessView(result){
 		content = (result.content === null || result.content === "" || result.content === undefined) ? "내용 없음" : result.content;
 		supportModel = (result.supportModel === null || result.supportModel === "" || result.supportModel === undefined) ? "없음" : result.supportModel;
 		supportVersion = (result.supportVersion === null || result.supportVersion === "" || result.supportVersion === undefined) ? "없음" : result.supportVersion;
+		cipOfCustomer = (result.cipOfCustomer === null || result.cipOfCustomer == 0 || result.cipOfCustomer === undefined) ? "없음" : storage.user[result.cipOfCustomer].userName;
+		contractMethod = (result.contractMethod === null || result.contractMethod === "" || result.contractMethod === undefined) ? "없음" : storage.code.etc[result.contractMethod];
+		supportStep = (result.supportStep === "" || result.supportStep === null || result.supportStep === undefined) ? "없음" : storage.code.etc[result.supportStep];
+		type = (result.type === "" || result.type === null || result.type === undefined) ? "없음" : storage.code.etc[result.type];
+
+		if(result.contract > 0){
+			$.ajax({
+				url: "/api/contract/" + result.contract,
+				method: "get",
+				async: false,
+				dataType: "json",
+				success:(resultData) => {
+					let jsonData;
+					jsonData = cipher.decAes(resultData.data);
+					jsonData = JSON.parse(jsonData);
+					contract = jsonData.title;
+				}
+			});
+		}else{
+			contract = "없음";
+		}
+
 
 		dataArray = [
+			{
+				"title": "등록구분",
+				"value": contractMethod,
+			},
 			{
 				"title": "기술요청명",
 				"value": title,
@@ -430,6 +467,18 @@ function scheduleSuccessView(result){
 			{
 				"title": "영업기회",
 				"value": sopp,
+			},
+			{
+				"title": "계약",
+				"value": contract,
+			},
+			{
+				"title": "매출처",
+				"value": customer,
+			},
+			{
+				"title": "매출처 담당자",
+				"value": cipOfCustomer,
 			},
 			{
 				"title": "엔드유저",
@@ -442,6 +491,14 @@ function scheduleSuccessView(result){
 			{
 				"title": "버전",
 				"value": supportVersion,
+			},
+			{
+				"title": "단계",
+				"value": supportStep,
+			},
+			{
+				"title": "지원형태",
+				"value": type,
 			},
 			{
 				"title": "장소",
@@ -482,7 +539,10 @@ function scheduleSuccessView(result){
 				async: false,
 				dataType: "json",
 				success:(resultData) => {
-					sopp = resultData.title;
+					let jsonData;
+					jsonData = cipher.decAes(resultData.data);
+					jsonData = JSON.parse(jsonData);
+					sopp = jsonData.title;
 				}
 			});
 		}else{
@@ -548,14 +608,13 @@ function eventStop(){
 	event.cancelBubble = true;
 }
 
-function calendarNext(event){
-	let getYear, getMonth, setYear, setMonth, type;
+function calendarNext(){
+	let getYear, getMonth, setYear, setMonth;
 
 	getYear = $(".calendarYear");
 	getMonth = $(".calendarMonth");
 	setYear = parseInt(getYear.html());
 	setMonth = parseInt(getMonth.html());
-	type = "next";
 	
 	if(setMonth == 12){
 		setYear = setYear + 1;
@@ -577,7 +636,7 @@ function calendarNext(event){
 	scheduleCalendarAjax();
 }
 
-function calendarPrev(event){
+function calendarPrev(){
 	let getYear, getMonth, setYear, setMonth;
 
 	getYear = $(".calendarYear");
@@ -689,7 +748,7 @@ function scheduleUpdateForm(result){
 	let html, title, dataArray;
 
 	title = (result.title === null || result.title === "" || result.title === undefined) ? "제목 없음" : result.title;
-
+	
 	dataArray = scheduleRadioUpdate(result.job, result);
 
 	html = detailViewFormModal(dataArray);
@@ -706,6 +765,21 @@ function scheduleUpdateForm(result){
 
 	setTimeout(() => {
 		$(document).find("[name='job'][value='" + result.job + "']").prop("checked", true);
+
+		if(result.job === "sales"){
+			let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;
+
+			$(document).find("#type option[value='" + type + "']").prop("selected", true);
+		}else if(result.job === "tech"){
+			let contractMethod = (result.contractMethod === null || result.contractMethod === "" || result.contractMethod === undefined) ? "" : result.contractMethod;
+			let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;
+			let supportStep = (result.supportStep === null || result.supportStep === "" || result.supportStep === undefined) ? "" : result.supportStep;
+
+			$(document).find("[name='contractMethod'][value='" + contractMethod + "']").prop("checked", true);
+			$(document).find("#type option[value='" + type + "']").prop("selected", true);
+			$(document).find("#supportStep option[value='" + supportStep + "']").prop("selected", true);
+		}
+		
 	}, 100);
 }
 
@@ -806,6 +880,78 @@ function scheduleRadioInsert(value, date){
 				"disabled": false,
 			},
 			{
+				"title": "활동형태",
+				"selectValue": [
+					{
+						"key": "10170",
+						"value": "회사방문",
+					},
+					{
+						"key": "10171",
+						"value": "기술지원",
+					},
+					{
+						"key": "10221",
+						"value": "제품설명",
+					},
+					{
+						"key": "10222",
+						"value": "시스템데모",
+					},
+					{
+						"key": "10223",
+						"value": "제품견적",
+					},
+					{
+						"key": "10224",
+						"value": "계약건 의사결정지원",
+					},
+					{
+						"key": "10225",
+						"value": "계약",
+					},
+					{
+						"key": "10226",
+						"value": "사후처리",
+					},
+					{
+						"key": "10227",
+						"value": "기타",
+					},
+					{
+						"key": "10228",
+						"value": "협력사요청",
+					},
+					{
+						"key": "10229",
+						"value": "협력사문의",
+					},
+					{
+						"key": "10230",
+						"value": "교육",
+					},
+					{
+						"key": "10231",
+						"value": "전화상담",
+					},
+					{
+						"key": "10232",
+						"value": "제조사업무협의",
+					},
+					{
+						"key": "10233",
+						"value": "외부출장",
+					},
+					{
+						"key": "10234",
+						"value": "제안설명회",
+					}
+				],
+				"type": "select",
+				"elementId": "type",
+				"disabled": false,
+			},
+			{
 				"title": "담당자(*)",
 				"elementId": "writer",
 				"dataKeyup": "user",
@@ -864,6 +1010,22 @@ function scheduleRadioInsert(value, date){
 				"onClick": "scheduleRadioClick(this);",
 			},
 			{
+				"title": "등록구분",
+				"radioValue": [
+					{
+						"key": "10247",
+						"value": "신규영업지원",
+					},
+					{
+						"key": "10248",
+						"value": "유지보수",
+					},
+				],
+				"type": "radio",
+				"elementName": "contractMethod",
+				"disabled": false,
+			},
+			{
 				"title": "기술지원 요청명(*)",
 				"elementId": "title",
 				"disabled": false,
@@ -873,6 +1035,25 @@ function scheduleRadioInsert(value, date){
 				"elementId": "sopp",
 				"dataKeyup": "sopp",
 				"disabled": false,
+			},
+			{
+				"title": "계약",
+				"elementId": "contract",
+				"dataKeyup": "contract",
+				"disabled": false,
+			},
+			{
+				"title": "매출처",
+				"disabled": false,
+				"elementId": "customer",
+				"dataKeyup": "customer",
+				"userId": "cipOfCustomer",
+				"onChange": "customerChange(this);",
+			},
+			{
+				"title": "매출처 담당자",
+				"dataKeyup": "customerUser",
+				"elementId": "cipOfCustomer",
 			},
 			{
 				"title": "엔드유저(*)",
@@ -888,6 +1069,50 @@ function scheduleRadioInsert(value, date){
 			{
 				"title": "버전",
 				"elementId": "supportVersion",
+				"disabled": false,
+			},
+			{
+				"title": "단계",
+				"selectValue": [
+					{
+						"key": "10213",
+						"value": "접수단계",
+					},
+					{
+						"key": "10214",
+						"value": "출동단계",
+					},
+					{
+						"key": "10215",
+						"value": "미계약에 따른 보류",
+					},
+					{
+						"key": "10253",
+						"value": "처리완료",
+					}
+				],
+				"type": "select",
+				"elementId": "supportStep",
+				"disabled": false,
+			},
+			{
+				"title": "지원형태",
+				"selectValue": [
+					{
+						"key": "10187",
+						"value": "전화상담",
+					},
+					{
+						"key": "10208",
+						"value": "현장방문",
+					},
+					{
+						"key": "10209",
+						"value": "원격지원",
+					}
+				],
+				"type": "select",
+				"elementId": "type",
 				"disabled": false,
 			},
 			{
@@ -1018,7 +1243,7 @@ function scheduleInsert(){
 			$(document).find("#title").focus();
 			return false;
 		}else{
-			let from, to, place, writer, sopp, customer, partner, title, content;
+			let from, to, place, writer, sopp, customer, partner, title, content, type;
 
 			from = $(document).find("#from").val();
 			from = new Date(from).getTime();
@@ -1035,6 +1260,7 @@ function scheduleInsert(){
 			partner = dataListFormat(partner.attr("id"), partner.val());
 			title = $(document).find("#title").val();
 			content = tinymce.activeEditor.getContent();
+			type = $(document).find("#type").val();
 
 			data = {
 				"job": job,
@@ -1047,6 +1273,7 @@ function scheduleInsert(){
 				"partner": partner,
 				"title": title,
 				"content": content,
+				"type": type,
 			};
 		}
 	}else if(job === "tech"){
@@ -1070,7 +1297,7 @@ function scheduleInsert(){
 			$(document).find("#title").focus();
 			return false;
 		}else{
-			let from, to, place, writer, sopp, customer, partner, title, content, supportModel, supportVersion;
+			let from, to, place, writer, sopp, contract, contractMethod, customer, cipOfCustomer, partner, title, content, supportModel, supportVersion, supportStep, type;
 
 			from = $(document).find("#from").val();
 			from = new Date(from).getTime();
@@ -1089,6 +1316,13 @@ function scheduleInsert(){
 			content = tinymce.activeEditor.getContent();
 			supportModel = $(document).find("#supportModel").val();
 			supportVersion = $(document).find("#supportVersion").val();
+			contract = $(document).find("#contract");
+			contract = dataListFormat(contract.attr("id"), contract.val()); 
+			contractMethod = $(document).find("[name='contractMethod']").val();
+			cipOfCustomer = $(document).find("#cipOfCustomer");
+			cipOfCustomer = dataListFormat(cipOfCustomer.attr("id"), cipOfCustomer.val());
+			supportStep = $(document).find("#supportStep").val();
+			type = $(document).find("#type").val();
 
 			data = {
 				"job": job,
@@ -1103,6 +1337,11 @@ function scheduleInsert(){
 				"content": content,
 				"supportModel": supportModel,
 				"supportVersion": supportVersion,
+				"contract": contract,
+				"contractMethod": contractMethod,
+				"cipOfCustomer": cipOfCustomer,
+				"supportStep": supportStep,
+				"type": type,
 			};
 		}
 	}else{
@@ -1177,17 +1416,24 @@ function scheduleRadioUpdate(value, result){
 
 		place = (result.place === null || result.place === "" || result.place === undefined) ? "" : result.place;
 		
-		$.ajax({
-			url: "/api/sopp/" + result.sopp,
-			method: "get",
-			async: false,
-			dataType: "json",
-			success:(resultData) => {
-				sopp = (resultData.no == 0) ? "" : resultData.title;
-			}
-		});
+		if(result.sopp > 0){
+			$.ajax({
+				url: "/api/sopp/" + result.sopp,
+				method: "get",
+				async: false,
+				dataType: "json",
+				success:(resultData) => {
+					let jsonData;
+					jsonData = cipher.decAes(resultData.data);
+					jsonData = JSON.parse(jsonData);
+					sopp = jsonData.title;
+				}
+			});
+		}else{
+			sopp = 0;
+		}
 
-		writer = (result.writer === null || result.writer === "" || result.writer === undefined) ? "" : storage.user[result.writer].userName;
+		writer = (result.writer === null || result.writer == 0 || result.writer === undefined) ? "" : storage.user[result.writer].userName;
 		customer = (result.customer == 0 || result.customer === null || result.customer === undefined) ? "" : storage.customer[result.customer].name;
 		partner = (result.partner == 0 || result.partner === null || result.partner === undefined) ? "" : storage.customer[result.partner].name;
 		title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
@@ -1236,6 +1482,78 @@ function scheduleRadioUpdate(value, result){
 				"value": place,
 			},
 			{
+				"title": "활동형태",
+				"selectValue": [
+					{
+						"key": "10170",
+						"value": "회사방문",
+					},
+					{
+						"key": "10171",
+						"value": "기술지원",
+					},
+					{
+						"key": "10221",
+						"value": "제품설명",
+					},
+					{
+						"key": "10222",
+						"value": "시스템데모",
+					},
+					{
+						"key": "10223",
+						"value": "제품견적",
+					},
+					{
+						"key": "10224",
+						"value": "계약건 의사결정지원",
+					},
+					{
+						"key": "10225",
+						"value": "계약",
+					},
+					{
+						"key": "10226",
+						"value": "사후처리",
+					},
+					{
+						"key": "10227",
+						"value": "기타",
+					},
+					{
+						"key": "10228",
+						"value": "협력사요청",
+					},
+					{
+						"key": "10229",
+						"value": "협력사문의",
+					},
+					{
+						"key": "10230",
+						"value": "교육",
+					},
+					{
+						"key": "10231",
+						"value": "전화상담",
+					},
+					{
+						"key": "10232",
+						"value": "제조사업무협의",
+					},
+					{
+						"key": "10233",
+						"value": "외부출장",
+					},
+					{
+						"key": "10234",
+						"value": "제안설명회",
+					}
+				],
+				"type": "select",
+				"elementId": "type",
+				"disabled": false,
+			},
+			{
 				"title": "담당자",
 				"elementId": "writer",
 				"dataKeyup": "user",
@@ -1270,12 +1588,13 @@ function scheduleRadioUpdate(value, result){
 			},
 			{
 				"title": "내용",
+				"elementId": "content",
 				"type": "textarea",
 				"value": content,
 			}
 		];
 	}else if(value === "tech"){
-		let from, to, place, writer, sopp, partner, title, content, supportModel, supportVersion;
+		let from, to, place, writer, sopp, contract, contractMethod, customer, cipOfCustomer, partner, title, content, supportModel, supportVersion;
 		
 		disDate = dateDis(result.from);
 		from = dateFnc(disDate);
@@ -1285,15 +1604,22 @@ function scheduleRadioUpdate(value, result){
 
 		place = (result.place === null || result.place === "" || result.place === undefined) ? "" : result.place;
 		
-		$.ajax({
-			url: "/api/sopp/" + result.sopp,
-			method: "get",
-			async: false,
-			dataType: "json",
-			success:(resultData) => {
-				sopp = (resultData.no == 0) ? "" : resultData.title;
-			}
-		});
+		if(result.sopp > 0){
+			$.ajax({
+				url: "/api/sopp/" + result.sopp,
+				method: "get",
+				async: false,
+				dataType: "json",
+				success:(resultData) => {
+					let jsonData;
+					jsonData = cipher.decAes(resultData.data);
+					jsonData = JSON.parse(jsonData);
+					sopp = jsonData.title;
+				}
+			});
+		}else{
+			sopp = 0;
+		}
 
 		writer = (result.writer === null || result.writer === "" || result.writer === undefined) ? "" : storage.user[result.writer].userName;
 		customer = (result.customer == 0 || result.customer === null || result.customer === undefined) ? "" : storage.customer[result.customer].name;
@@ -1302,6 +1628,27 @@ function scheduleRadioUpdate(value, result){
 		content = (result.content === null || result.content === "" || result.content === undefined) ? "" : result.content;
 		supportModel = (result.supportModel === null || result.supportModel === "" || result.supportModel === undefined) ? "" : result.supportModel;
 		supportVersion = (result.supportVersion === null || result.supportVersion === "" || result.supportVersion === undefined) ? "" : result.supportVersion;
+		cipOfCustomer = (result.cipOfCustomer === null || result.cipOfCustomer === "" || result.cipOfCustomer === undefined) ? "" : storage.user[result.cipOfCustomer].userName;
+		contractMethod = (result.contractMethod === null || result.contractMethod === "" || result.contractMethod === undefined) ? "" : storage.code.etc[result.contractMethod];
+		supportStep = (result.supportStep === "" || result.supportStep === null || result.supportStep === undefined) ? "" : storage.code.etc[result.supportStep];
+		type = (result.type === "" || result.type === null || result.type === undefined) ? "" : storage.code.etc[result.type]; 
+
+		if(result.contract > 0){
+			$.ajax({
+				url: "/api/contract/" + result.contract,
+				method: "get",
+				async: false,
+				dataType: "json",
+				success:(resultData) => {
+					let jsonData;
+					jsonData = cipher.decAes(resultData.data);
+					jsonData = JSON.parse(jsonData);
+					contract = jsonData.title;
+				}
+			});
+		}else{
+			contract = "없음";
+		}
 
 		dataArray = [
 			{
@@ -1326,6 +1673,22 @@ function scheduleRadioUpdate(value, result){
 				"onClick": "scheduleRadioClick(this, " + JSON.stringify(result) + ");",
 			},
 			{
+				"title": "등록구분",
+				"radioValue": [
+					{
+						"key": "10247",
+						"value": "신규영업지원",
+					},
+					{
+						"key": "10248",
+						"value": "유지보수",
+					},
+				],
+				"type": "radio",
+				"elementName": "contractMethod",
+				"disabled": false,
+			},
+			{
 				"title": "기술지원 요청명(*)",
 				"elementId": "techdTitle",
 				"disabled": false,
@@ -1337,6 +1700,28 @@ function scheduleRadioUpdate(value, result){
 				"dataKeyup": "sopp",
 				"disabled": false,
 				"value": sopp,
+			},
+			{
+				"title": "계약",
+				"elementId": "contract",
+				"dataKeyup": "contract",
+				"disabled": false,
+				"value": contract,
+			},
+			{
+				"title": "매출처",
+				"disabled": false,
+				"elementId": "customer",
+				"dataKeyup": "customer",
+				"userId": "cipOfCustomer",
+				"onChange": "customerChange(this);",
+				"value": customer,
+			},
+			{
+				"title": "매출처 담당자",
+				"dataKeyup": "customerUser",
+				"elementId": "cipOfCustomer",
+				"value": cipOfCustomer,
 			},
 			{
 				"title": "엔드유저(*)",
@@ -1356,6 +1741,50 @@ function scheduleRadioUpdate(value, result){
 				"elementId": "supportVersion",
 				"disabled": false,
 				"value": supportVersion,
+			},
+			{
+				"title": "단계",
+				"selectValue": [
+					{
+						"key": "10213",
+						"value": "접수단계",
+					},
+					{
+						"key": "10214",
+						"value": "출동단계",
+					},
+					{
+						"key": "10215",
+						"value": "미계약에 따른 보류",
+					},
+					{
+						"key": "10253",
+						"value": "처리완료",
+					}
+				],
+				"type": "select",
+				"elementId": "supportStep",
+				"disabled": false,
+			},
+			{
+				"title": "지원형태",
+				"selectValue": [
+					{
+						"key": "10187",
+						"value": "전화상담",
+					},
+					{
+						"key": "10208",
+						"value": "현장방문",
+					},
+					{
+						"key": "10209",
+						"value": "원격지원",
+					}
+				],
+				"type": "select",
+				"elementId": "type",
+				"disabled": false,
 			},
 			{
 				"title": "장소",
@@ -1400,15 +1829,22 @@ function scheduleRadioUpdate(value, result){
 
 		place = (result.place === null || result.place === "" || result.place === undefined) ? "" : result.place;
 		
-		$.ajax({
-			url: "/api/sopp/" + result.sopp,
-			method: "get",
-			async: false,
-			dataType: "json",
-			success:(resultData) => {
-				sopp = (resultData.no == 0) ? "" : resultData.title;
-			}
-		});
+		if(result.sopp > 0){
+			$.ajax({
+				url: "/api/sopp/" + result.sopp,
+				method: "get",
+				async: false,
+				dataType: "json",
+				success:(resultData) => {
+					let jsonData;
+					jsonData = cipher.decAes(resultData.data);
+					jsonData = JSON.parse(jsonData);
+					sopp = jsonData.title;
+				}
+			});
+		}else{
+			sopp = 0;
+		}
 
 		writer = (result.writer === null || result.writer === "" || result.writer === undefined) ? "" : storage.user[result.writer].userName;
 		customer = (result.customer == 0 || result.customer === null || result.customer === undefined) ? "" : storage.customer[result.customer].name;
@@ -1516,7 +1952,7 @@ function scheduleUpdate(no){
 			$(document).find("#title").focus();
 			return false;
 		}else{
-			let from, to, place, writer, sopp, customer, partner, title, content;
+			let from, to, place, writer, sopp, customer, partner, title, content, type;
 
 			from = $(document).find("#from").val();
 			from = new Date(from).getTime();
@@ -1533,6 +1969,7 @@ function scheduleUpdate(no){
 			partner = dataListFormat(partner.attr("id"), partner.val());
 			title = $(document).find("#title").val();
 			content = tinymce.activeEditor.getContent();
+			type = $(document).find("#type").val();
 
 			data = {
 				"job": job,
@@ -1545,6 +1982,7 @@ function scheduleUpdate(no){
 				"partner": partner,
 				"title": title,
 				"content": content,
+				"type": type,
 			};
 		}
 	}else if(job === "tech"){
@@ -1640,6 +2078,7 @@ function scheduleUpdate(no){
 				"customer": customer,
 				"title": title,
 				"content": content,
+				"type": job,
 			};
 		}
 	}

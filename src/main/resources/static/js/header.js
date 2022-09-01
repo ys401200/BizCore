@@ -901,6 +901,26 @@ function inputDataList(){
 								msg.set("sopp 에러");
 							}
 						});
+					}else if($(item).data("keyup") === "contract"){
+						$.ajax({
+							url: "/api/contract",
+							method: "get",
+							dataType: "json",
+							success:(result) => {
+								if(result.result === "ok"){
+									let resultJson;
+									resultJson = cipher.decAes(result.data);
+									resultJson = JSON.parse(resultJson);
+									
+									for(let i = 0; i < resultJson.length; i++){
+										$(item).parents("div").find("datalist#_" + $(item).attr("id")).append("<option data-value='" + resultJson[i].no + "' value='" + resultJson[i].title + "'></option>");
+									}
+								}
+							},
+							error:() => {
+								msg.set("contract 에러");
+							}
+						});
 					}
 				}
 			}
@@ -1493,7 +1513,9 @@ function calWeekDay(date){
 
     week = new Date(date).getDay();
 
-    if(week == 1){
+    if(week == 0){
+        week = "일";
+    }else if(week == 1){
         week = "월";
     }else if(week == 2){
         week = "화";
@@ -1501,9 +1523,11 @@ function calWeekDay(date){
         week = "수";
     }else if(week == 4){
         week = "목";
-    }else{
+    }else if(week == 5){
         week = "금";
-    }
+    }else{
+		week = "토";
+	}
 
     return week;
 }

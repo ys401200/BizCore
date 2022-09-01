@@ -50,47 +50,61 @@ function drawWorkReportList() {
         },
     ];
 
-    html = "<div class='reportBtns'>";
-    html += "<button type='button'>이전</button>";
-    html += "<button type='button'>다음</button>";
-    html += "</div>";
-
-    html += "<div class='reportContents'>";
-    html += "<div class='reportHeader'>";
-
-    for(let i = 0; i < header.length; i++){
-        html += "<div>" + header[i].title + "</div>";
-    }
-
-    html += "</div>";
-    
     disDate = dateDis(jsonData.start);
     start = dateFnc(disDate);
 
     disDate = dateDis(jsonData.end);
     end = dateFnc(disDate);
 
-    html += "<div class='reportContent'>";
-    html += "<div style='grid-row: span 5'>" + jsonData.week + "</div>";
+    html = "<div class='reportBtns'>";
+    html += "<button type='button' data-date='" + (parseInt(start.replaceAll("-", "")) - 7) + "' onclick='workReportWeekBtn(this);'>이전</button>";
+    html += "<button type='button' data-date='" + (parseInt(start.replaceAll("-", "")) + 7) + "' onclick='workReportWeekBtn(this);'>다음</button>";
+    html += "</div>";
 
-    for(let i = 0; i < jsonData.workReport.schedules.length; i++){
-        week = calWeekDay(jsonData.workReport.schedules[i].date);
-        html += "<div>" + week + "</div>";
-        html += "<div>" + jsonData.workReport.schedules[i].title + "</div>";
-        html += "<div>" + jsonData.workReport.schedules[i].content + "</div>";
-        html += "<div>" + start + "</div>";
-        html += "<div>" + end + "</div>";
-        html += "<div><input type='checkbox'></div>"; 
+    html += "<div class='reportContents'>";
+    html += "<div class='reportHeader'>";
+
+    for(let i = 0; i < header.length; i++){
+        if(i == 2 || i == 3){
+            html += "<div style='justify-content: left;'>" + header[i].title + "</div>";
+        }else{
+            html += "<div style='justify-content: center;'>" + header[i].title + "</div>";
+        }
+    }
+
+    html += "</div>";
+    
+    html += "<div class='reportContent'>";
+    
+    if(jsonData.workReport !== null){
+        html += "<div style='grid-row: span " + jsonData.workReport.schedules.length + "; justify-content: center;'>" + jsonData.week + "</div>";
+        
+        for(let i = 0; i < jsonData.workReport.schedules.length; i++){
+            week = calWeekDay(jsonData.workReport.schedules[i].date);
+            html += "<div style='justify-content: center;'>" + week + "</div>";
+            html += "<div style='justify-content: left;'>" + jsonData.workReport.schedules[i].title + "</div>";
+            html += "<div style='justify-content: left;'>" + jsonData.workReport.schedules[i].content + "</div>";
+            html += "<div style='justify-content: center;'>" + start + "</div>";
+            html += "<div style='justify-content: center;'>" + end + "</div>";
+            html += "<div style='justify-content: center;'><input type='checkbox'></div>"; 
+        }
+        html += "<div style='justify-content: center;'>추가기재사항</div>";
+        html += "<div style='grid-column: span 5'>";
+        html += "<textarea style='width: -webkit-fill-available;'></textarea>";
+        html += "</div>";
+        html += "<div style='justify-content: center;'><input type='checkbox'></div>"; 
+    }else{
+        alert("데이터가 없습니다.");
     }
 
     html += "</div>";
     html += "</div>";
 
     workReportContent.html(html);
+    setTiny();
 }
 
 function workReportSuccessList(result){
-    console.log(result);
 	storage.workReportList = result;
 	
 	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined){
@@ -105,9 +119,11 @@ function workReportErrorList(){
 }
 
 function workReportWeekBtn(e){
-    let url, method, data, type;
+    let url, method, data, type, getDate;
 
-    url = "/api/workReport" + $(e).data("week");
+    getDate = $(e).data("date");
+
+    url = "/api/schedule/workreport/personal/" + getDate;
     method = "get";
     type = "list";
 
