@@ -305,6 +305,14 @@
 	border-radius: 0.3em;
 }
 
+
+.modal-wrap .setPreApprovalModal textarea {
+	border: 1px solid black;
+	height: 5em;
+	overflow-y: scroll;
+	resize: none;
+
+}
 .modal-title {
 	font-weight: 500;
 	font-size: 16px;
@@ -322,7 +330,7 @@
 
 .modal-wrap .setPreApprovalModal .modal-body .labelContainer {
 	display: grid;
-	grid-template-columns: repeat(3, 1fr);
+	grid-template-columns: repeat(2, 1fr);
 	margin-bottom: 1em;
 }
 

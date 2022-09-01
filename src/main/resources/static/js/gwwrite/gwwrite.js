@@ -12,6 +12,26 @@ $(document).ready(() => {
 function getformList() {
 
 
+  // $(".ContentDiv").html("<div class='gwWriteBtns'></div><div class='selector'>d</div><div class='selector'>d</div><div class='selector'>d</div>");
+
+  // $(".gwWriteBtns").html("<button type='button'>기안 하기</button> <button type='button' >임시 저장</button> <button type='button'>인쇄 미리보기</button>");
+
+  // // 기본설정
+  // $(".selector:first").html("<div>기본 설정</div><div class='formDetail'><div>결재양식</div><div class='formListDiv'></div><button type='button' class='formSelectbtn' onclick='selectForm()'>선택</button><input type='hidden' class='formNumHidden'/></div>"
+  //   + "<div class='formDetail'><div>열람권한</div><div><label><input type='radio' name='authority' value='dept' />기안자 소속 부서 포함</label><label><input type='radio' name='authority' value='none' checked />권한 설정 없음</label></div></div>");
+
+  // $(".selector:first").next().html("<div>결재선 <button class='createLineBtn' onclick='showModal()'>결재선생성</button></div><div class='modal-wrap'><div class='gwModal'></div></div>");
+
+
+  // let lastHtml = "<div>상세 입력</div><div class='insertedDetail'><div class='reportInsertForm'></div><div class='referContainer'><div>참조</div></div><div class='fileDetail'>";
+
+
+  // lastHtml += "<div>파일첨부</div><div class='filebtnContainer'><input type='file' class='gwFileInput' onchange='drawSelectedFileList(this)' /><div class='insertedFileList'></div></div></div></div>"
+
+
+  // $(".selector:first").next().next().html(lastHtml);
+
+
 
   let url = "/api/gw/form";
 
@@ -119,7 +139,7 @@ function selectForm() {
   let hidden = $(".formNumHidden");
   hidden.val(selectedForm - 1);
   selectedForm = data[selectedForm - 1].title;
- 
+
   $(".lineDetail").show();
   $(".createLineBtn").show();
   $(".reportInsertForm").html(storage.formList[hidden.val()].form);
@@ -330,7 +350,7 @@ function createLine() {
       } else if (i == 3) {
         testHtml2 += "<div class='lineSet'><div class='twoBorder'>직급</div><div class='twoBorder " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div><div class='twoBorder " + formId + "_" + titleId[i] + "_status'>서명</div><div class='dateBorder " + formId + "_" + titleId[i] + "_approved'>/</div></div>"
       } else if (i == 4) {
-        referHtml += "<div class='appendName " + formId + "_" + titleId[i] + "'>직급 "+ storage.user[data[id]].userName + "</div>";
+        referHtml += "<div class='appendName " + formId + "_" + titleId[i] + "'>직급 " + storage.user[data[id]].userName + "</div>";
       }
 
     }

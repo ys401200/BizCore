@@ -215,7 +215,7 @@ function drawChangeInfo() {
 
 
 function drawApproval() {
-    let container, result, jsonData, header = [], data = [], ids = [], disDate, setDate, str, fnc;
+    let container, result, jsonData, job, header = [], data = [], ids = [], disDate, setDate, str, fnc;
 
     if (storage.noticeList === undefined) {
         msg.set("등록된 공지사항이 없습니다");
@@ -224,7 +224,7 @@ function drawApproval() {
         jsonData = storage.noticeList;
     }
 
-    result = paging(jsonData.length, storage.currentPage, 10);
+    result = paging(jsonData.length, storage.currentPage, 5);
 
     pageContainer = document.getElementsByClassName("pageContainer");
     container = $(".listDiv");
@@ -300,7 +300,7 @@ function drawApproval() {
 
     let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawApproval", result[0]);
     pageContainer[0].innerHTML = pageNation;
-    createGrid(container, header, data, ids, fnc);
+    createGrid(container, header, data, ids, job, fnc);
 
 
     // 전체선택 전체 해제  
@@ -332,12 +332,8 @@ function showPreAppModal() {
         "<div class='modal-title'>선결재하기</div>" +
         "<div class='modal-body'><div class='labelContainer'>" +
         "<label><input type='radio' name='type' value ='approve'/>승인</label>" +
-        "<label><input type='radio' name='type' value='reject'/>반려</label>" +
-        "<label><input type='radio' name='type' value='consult'/>협의요청</label>" +
-        "<label><input type='radio' name='type' value='defer'/>보류</label>" +
-        "<label><input type='radio' name='type' value='pre'/>선결</label>" +
-        "<label><input type='radio' name='type'value='next' />후결</label></div>" +
-        "<label class>의견 <input class='preAppComment' type='text'/></label></div>" +
+        "<label><input type='radio' name='type' value='reject'/>반려</label></div>" +
+        "<label class>의견 <textarea class='preAppComment'></textarea></label>" +
         "<div class='close-wrap'>" +
         "<button id='quit' onclick='closeModal(this)'>취소</button>" +
         "<button id='set' onclick='closeModal(this)'>결재</button></div></div>";

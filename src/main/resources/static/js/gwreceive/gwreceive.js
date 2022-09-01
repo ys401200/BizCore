@@ -214,7 +214,7 @@ target.html(detail);
 
 
 function drawApproval() {
-let container, result, jsonData, header = [], data = [], ids = [], disDate, setDate, str, fnc;
+	let container, result, jsonData, job, header = [], data = [], ids = [], disDate, setDate, str, fnc;
 
 if (storage.noticeList === undefined) {
     msg.set("등록된 공지사항이 없습니다");
@@ -223,7 +223,7 @@ else {
     jsonData = storage.noticeList;
 }
 
-result = paging(jsonData.length, storage.currentPage, 10);
+result = paging(jsonData.length, storage.currentPage, 5);
 
 pageContainer = document.getElementsByClassName("pageContainer");
 container = $(".listDiv");
@@ -299,7 +299,7 @@ for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
 
 let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawApproval", result[0]);
 pageContainer[0].innerHTML = pageNation;
-createGrid(container, header, data, ids, fnc);
+createGrid(container, header, data, ids, job, fnc);
 
 
 // 전체선택 전체 해제  

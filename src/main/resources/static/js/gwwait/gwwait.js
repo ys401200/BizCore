@@ -67,7 +67,7 @@ function drawNoticeApproval() {
 		jsonData = storage.noticeList;
 	}
 
-	result = paging(jsonData.length, storage.currentPage, 10);
+	result = paging(jsonData.length, storage.currentPage, 5);
 
 	pageContainer = document.getElementsByClassName("pageContainer");
 	container = $(".listDiv");
@@ -350,12 +350,7 @@ function showAppModal() {
 		"<div class='modal-title'>결재하기</div>" +
 		"<div class='modal-body'><div class='labelContainer'>" +
 		"<label><input type='radio' name='type' value='approve'/>승인</label>" +
-		"<label><input type='radio' name='type' value='reject'/>반려</label>" +
-		"<label><input type='radio' name='type' value ='consult';/>협의요청</label>" +
-		"<label><input type='radio' name='type' value='hold'/>보류</label>" +
-		"<label><input type='radio' name='type' value='prev'/>선결</label>" +
-		"<label><input type='radio' name='type'value='next'/>후결</label></div>" +
-		"<div></div>" +
+		"<label><input type='radio' name='type' value='reject'/>반려</label></div>" +
 		"<label>의견 <textarea class='approvalComment'></textarea></label></div>" +
 		"<div class='close-wrap'>" +
 		"<button id='quit' onclick='closeModal(this)'>취소</button>" +

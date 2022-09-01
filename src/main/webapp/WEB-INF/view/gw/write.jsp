@@ -12,7 +12,7 @@
           <div class="ContentDiv">
             <div class="gwWriteBtns">
               <button type="button">기안 하기</button>
-              <button type="button">임시 저장</button>
+              <button type="button" onclick="">임시 저장</button>
               <button type="button">인쇄 미리보기</button>
             </div>
 

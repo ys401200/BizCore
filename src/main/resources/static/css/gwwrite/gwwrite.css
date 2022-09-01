@@ -109,8 +109,7 @@ input[type="text"] {
 
 
 .selector>div:first-child {
-  font-weight: bolder;
-  margin: 1em 0;
+  margin-bottom: 1em;
 }
 
 .selector .formDetail {
@@ -251,12 +250,14 @@ input[type="text"] {
 
 .gwModal {
   background-color: #332e85;
-  width: 60%;
+  width: 40%;
   border-radius: 0.3em;
 }
 
 .close-wrap {
   text-align: right;
+  margin: 1em;
+  margin-top: 0;
 }
 
 
@@ -268,7 +269,7 @@ input[type="text"] {
   color: black;
   height: 25rem;
   display: grid;
-  grid-template-columns: 25% 15% 60%;
+  grid-template-columns: 35% 15% 50%;
   overflow: auto;
 }
 
