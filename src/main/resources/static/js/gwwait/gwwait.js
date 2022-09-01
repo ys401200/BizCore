@@ -58,7 +58,7 @@ function waitDefault() {
 }
 
 function drawNoticeApproval() {
-	let container, result, jsonData, header = [], data = [], ids = [], disDate, setDate, str, fnc;
+	let container, result, jsonData, job, header = [], data = [], ids = [], disDate, setDate, str, fnc;
 
 	if (storage.noticeList === undefined) {
 		msg.set("등록된 공지사항이 없습니다");
@@ -148,8 +148,8 @@ function drawNoticeApproval() {
 
 	let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawNoticeApproval", result[0]);
 	pageContainer[0].innerHTML = pageNation;
-	createGrid(container, header, data, ids, fnc);
-	$(".gridContent").attr("onclick", "waitDetailView(this)");
+	createGrid(container, header, data, ids, job, fnc);
+
 
 
 	// 전체선택 전체 해제  

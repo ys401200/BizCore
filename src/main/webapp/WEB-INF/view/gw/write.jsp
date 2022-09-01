@@ -19,22 +19,18 @@
 
 
             <div class="selector">
-              <label onclick="selectChangeEvent(1)" class="forSelect_1" for="select_1">결재 양식 선택</label><input
-                type="radio" name="radio" id="select_1" class="form" />
+              <label >기본 설정<input type="radio" name="radio"  class="form" /></label>
               <div class="formDetail">
                 <div>결재양식</div>
                 <div class="formListDiv"></div>
-                <button type="button" class="formSelectbtn" onclick="selectForm()">
-                  선택</button>
+                <button type="button" class="formSelectbtn" onclick="selectForm()">선택</button>
                 <input type="hidden" class="formNumHidden" />
               </div>
               <div class="formDetail">
                 <div>열람권한</div>
                 <div>
-
                   <label><input type="radio" name="authority" value="dept" />기안자 소속 부서 포함</label>
                   <label><input type="radio" name="authority" value="none" checked />권한 설정 없음</label>
-
                 </div>
               </div>
             </div>
@@ -47,8 +43,7 @@
 
 
             <div class="selector">
-              <label onclick="selectChangeEvent(2)" for="select_2">결재선 선택</label><input type="radio" name="radio"
-                id="select_2" class="form" /><button class="createLineBtn" onclick="showModal()">결재선
+              <label>결재선<input type="radio" name="radio"class="form" /></label><button class="createLineBtn" onclick="showModal()">결재선
                 생성</button>
 
 
@@ -64,7 +59,7 @@
                         <button onclick="check(this.value)" value="agree">합의 ></button>
                         <button onclick="check(this.value)" value="approval">결재 ></button>
                         <button onclick="check(this.value)" value="conduct">수신 ></button>
-                        <button onclick="check(this.value)" value="read">열람 ></button>
+
                         <button onclick="check(this.value)" value="refer">참조 ></button>
                       </div>
                       <div class="innerDetail" id="lineRight">
@@ -79,9 +74,6 @@
                         </label>
                         <label for="conduct"> 수신
                           <div class="typeContainer" id="conduct"></div>
-                        </label>
-                        <label for="read"> 열람
-                          <div class="typeContainer" id="read"></div>
                         </label>
                         <label for="refer"> 참조
                           <div class="typeContainer" id="refer"></div>
@@ -154,26 +146,17 @@
 
 
             <div class="selector">
-              <label onclick="selectChangeEvent(3)" class="forSelect_3" for="select_3">양식 내용 입력</label><input
+              <label class="forSelect" for="select_3">상세 입력</label><input
                 type="radio" name="radio" id="select_3" class="form" />
               <div class="insertedDetail">
                 <div class="reportInsertForm"></div>
 
 
-                <div class="readOfReferContainer">
-
-                  <div class="readContainer">
-                    <div>열람</div>
-                  </div>
-                  <div class="referContainer">
-                    <div>참조</div>
-                  </div>
 
 
-
+                <div class="referContainer">
+                  <div>참조</div>
                 </div>
-
-
 
                 <div class="fileDetail">
                   <div>파일첨부</div>

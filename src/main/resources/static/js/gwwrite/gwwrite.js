@@ -119,15 +119,7 @@ function selectForm() {
   let hidden = $(".formNumHidden");
   hidden.val(selectedForm - 1);
   selectedForm = data[selectedForm - 1].title;
-  let forSelect1 = $(".forSelect_1");
-  let html = forSelect1.html();
-
-  let arr = html.split("\n");
-
-  html = arr[0];
-  html += "\n" + " > " + selectedForm;
-  forSelect1.html(html);
-
+ 
   $(".lineDetail").show();
   $(".createLineBtn").show();
   $(".reportInsertForm").html(storage.formList[hidden.val()].form);
@@ -298,13 +290,12 @@ function createLine() {
   lineTarget = $("#" + lineTarget.id);
   lineTarget.html("");
   lineTarget.css("display", "block");
-
   let my = storage.my;
   let today = getYmdSlash();
   let testHtml = "<div class='lineGridContainer'><div class='lineTitle'>작성</div><div class='lineSet'><div class='twoBorderLast'>직급</div><div class='twoBorderLast'>" + storage.user[my].userName + "</div><div class='twoBorderLast'>서명</div><div class='dateBorderLast'>" + today + "</div></div>";
   let testHtml2 = "<div class='lineGridContainer'>";
-  let readHtml = "<div>열람</div>";
   let referHtml = "<div>참조</div>";
+
   let target = $(".typeContainer");
   let titleArr = ["검토", "합의", "결재", "수신", "열람", "참조"];
   let titleId = ["examine", "agree", "approval", "conduct", " read", "refer"]
@@ -339,9 +330,7 @@ function createLine() {
       } else if (i == 3) {
         testHtml2 += "<div class='lineSet'><div class='twoBorder'>직급</div><div class='twoBorder " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div><div class='twoBorder " + formId + "_" + titleId[i] + "_status'>서명</div><div class='dateBorder " + formId + "_" + titleId[i] + "_approved'>/</div></div>"
       } else if (i == 4) {
-        readHtml += "<div class='appendName " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div>";
-      } else if (i == 5) {
-        referHtml += "<div class='appendName " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div>";
+        referHtml += "<div class='appendName " + formId + "_" + titleId[i] + "'>직급 "+ storage.user[data[id]].userName + "</div>";
       }
 
     }
@@ -366,9 +355,8 @@ function createLine() {
 
   lineTarget.html(testHtml);
 
-
-  $(".readContainer").html(readHtml);
   $(".referContainer").html(referHtml);
+
 
 
 } // End of createLine(); 

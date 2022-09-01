@@ -1,8 +1,15 @@
 @charset "UTF-8";
 
+#bodyContents #bodyContent {
+  float: right;
+  width: calc(100% - 185px);
+  overflow-y: auto;
+  max-height: calc(100% - 94px);
+  padding: 0.5% 0.5% 0 0.6%;
+  box-sizing: border-box;
+}
 
 
-button,
 select {
   font-family: 'NanumSquareRound';
   margin: 0;
@@ -69,23 +76,23 @@ input[type="text"] {
   overflow: auto;
 }
 
-.ContentDiv .gwWriteBtns {
-  width: 20%;
+/* .ContentDiv .gwWriteBtns {
   display: flex;
+  border-bottom: 1px solid #acc1d3;
 
-}
+} */
 
-.ContentDiv .gwWriteBtns button {
-  font-weight: 500;
-  color: #332e85;
-  font-size: 1rem;
+/* .ContentDiv .gwWriteBtns button {
+  font-weight: bolder;
+  color: #406c92;
+  font-size: 15px;
   border: none;
   background-color: white;
-}
+} */
 
 .ContentDiv .gwWriteBtns button:hover {
 
-  font-weight: 600;
+  transform: scale(1.01);
 
 }
 
@@ -97,28 +104,34 @@ input[type="text"] {
 
 
 .selector {
-  margin: 1rem 0;
   width: 80%;
+
 }
 
-.selector>label {
+.selector > label {
+  margin: 1em 0;
   font-weight: 500;
 }
+
+.selector .formDetail .formListDiv {
+  padding: 0 0.5em;
+}
+
 
 
 .selector .formDetail:first-of-type {
   display: grid;
-  grid-template-columns: 10% 10% 5% 75%;
+  grid-template-columns: 10% 8% 5% 79%;
   border: 1px solid rgb(188, 185, 185);
+  border-bottom: none;
   text-align: center;
-  margin: 1em 0;
 }
 
 .selector .formDetail:last-of-type {
   display: grid;
   grid-template-columns: 10% 90%;
   border: 1px solid rgb(188, 185, 185);
-  margin: 1em 0;
+ 
 }
 
 
@@ -134,22 +147,15 @@ input[type="text"] {
   display: flex;
   align-items: left;
   justify-content: left;
-
-  margin: 1em;
+  padding-left: 0.5em;
 
 }
-
-
-
-
 
 
 .selector .formDetail .formListDiv {
   display: flex;
   align-items: center;
-  justify-content: center;
 }
-
 
 .selector .formDetail .filebtnContainer {
   padding-left: 1rem;
@@ -157,7 +163,6 @@ input[type="text"] {
   align-items: center;
   justify-content: center;
 }
-
 
 .selector .formDetail .formListDiv .formSelector {
   height: 80%;
@@ -215,18 +220,14 @@ input[type="text"] {
 
 
 /* Start ======================== 결재선관련 ============================= */
-.createLineBtn {
-  font-weight: 500;
-  font-size: 16px;
-  color: #332e85;
+/* .createLineBtn {
+  font-weight: bolder;
+  font-size: 15px;
+  color: #406c92;
   background-color: white;
   border: none;
-}
+} */
 
-.createLineBtn:hover {
-  font-weight: 600;
-
-}
 
 .modal-wrap {
   position: fixed;
@@ -302,8 +303,8 @@ input[type="text"] {
 }
 
 .selector .lineDetail #lineRight {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  flex-direction: column;
 }
 
 .selector .lineDetail #lineRight>label {
@@ -341,24 +342,18 @@ input[type="text"] {
 
 }
 
-.selector .insertedDetail .fileInsertContainer,
-.selector .insertedDetail .readOfReferContainer {
+
+.selector .insertedDetail .fileInsertContainer {
   border: 1px solid rgb(188, 185, 185);
 
+
 }
 
-.selector .insertedDetail .readOfReferContainer {
+.selector .insertedDetail .referContainer {
   display: grid;
-  grid-template-columns: 50% 50%;
   margin: 1em 0;
-}
-
-
-
-.selector .insertedDetail .readOfReferContainer .readContainer,
-.selector .insertedDetail .readOfReferContainer .referContainer {
-  display: grid;
-  grid-template-columns: 20% 16% 16% 16% 16% 16%;
+  border: 1px solid rgb(188, 185, 185);
+  grid-template-columns: 10% 18% 18% 18% 18% 18%;
 }
 
 
