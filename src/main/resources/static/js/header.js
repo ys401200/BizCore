@@ -1484,3 +1484,26 @@ function sizeToStr(s){
     s = Math.floor(s / 102.4) / 10;
     return s + "gb";
 }
+
+function calWeekDay(date){
+    let disDate, week;
+
+    disDate = dateDis(date);
+    date = dateFnc(disDate);
+
+    week = new Date(date).getDay();
+
+    if(week == 1){
+        week = "월";
+    }else if(week == 2){
+        week = "화";
+    }else if(week == 3){
+        week = "수";
+    }else if(week == 4){
+        week = "목";
+    }else{
+        week = "금";
+    }
+
+    return week;
+}

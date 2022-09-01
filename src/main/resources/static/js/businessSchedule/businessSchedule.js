@@ -114,7 +114,7 @@ function drawScheduleList() {
 			}
 
 			title = (jsonData[i].title === null || jsonData[i].title === "" || jsonData[i].title === undefined) ? "제목 없음" : jsonData[i].title;
-			customer = (jsonData[i].customer == 100002 || jsonData[i].customer == 0 || jsonData[i].customer === null || jsonData[i].customer === undefined) ? "없음" : storage.customer[jsonData[i].customer].name;
+			customer = (jsonData[i].customer == 0 || jsonData[i].customer === null || jsonData[i].customer === undefined) ? "없음" : storage.customer[jsonData[i].customer].name;
 			writer = (jsonData[i].writer == 0 || jsonData[i].writer === null || jsonData[i].writer === undefined) ? "없음" : storage.user[jsonData[i].writer].userName;
 			place = (jsonData[i].place === null || jsonData[i].place === "" || jsonData[i].place === undefined) ? "없음" : jsonData[i].place;
 			content = (jsonData[i].content === null || jsonData[i].content === "" || jsonData[i].content === undefined) ? "내용 없음" : jsonData[i].content;
@@ -808,6 +808,7 @@ function scheduleRadioInsert(value, date){
 			{
 				"title": "담당자(*)",
 				"elementId": "writer",
+				"dataKeyup": "user",
 				"value": myName,
 			},
 			{
@@ -1237,6 +1238,7 @@ function scheduleRadioUpdate(value, result){
 			{
 				"title": "담당자",
 				"elementId": "writer",
+				"dataKeyup": "user",
 				"value": writer,				
 			},
 			{
@@ -1338,18 +1340,20 @@ function scheduleRadioUpdate(value, result){
 			},
 			{
 				"title": "엔드유저(*)",
-				"elementId": "partner",
+				"elementId": "customer",
 				"disabled": false,
 				"dataKeyup": "customer",
-				"value": partner,
+				"value": customer,
 			},
 			{
 				"title": "모델",
+				"elementId": "supportModel",
 				"disabled": false,
 				"value": supportModel,
 			},
 			{
 				"title": "버전",
+				"elementId": "supportVersion",
 				"disabled": false,
 				"value": supportVersion,
 			},
@@ -1361,17 +1365,19 @@ function scheduleRadioUpdate(value, result){
 			{
 				"title": "담당자(*)",
 				"dataKeyup": "user",
-				"elementId": "employee",
+				"elementId": "writer",
 				"value": writer,
 			},
 			{
 				"title": "지원일자 시작일",
+				"elementId": "from",
 				"disabled": false,
 				"type": "date",
 				"value": from,
 			},
 			{
 				"title": "지원일자 종료일",
+				"elementId": "to",
 				"disabled": false,
 				"type": "date",
 				"value": to,
@@ -1434,18 +1440,21 @@ function scheduleRadioUpdate(value, result){
 			{
 				"title": "일정시작일",
 				"type": "date",
+				"elementId": "from",
 				"disabled": false,
 				"value": from,
 			},
 			{
 				"title": "일정종료일",
 				"type": "date",
+				"elementId": "to",
 				"disabled": false,
 				"value": to,
 			},
 			{
 				"title": "장소",
 				"disabled": false,
+				"elementId": "place",
 				"value": place,
 			},
 			{
@@ -1586,8 +1595,7 @@ function scheduleUpdate(no){
 				"place": place,
 				"writer": writer,
 				"sopp": sopp,
-				"customer": customer,
-				"partner": partner,
+				"partner": customer,
 				"title": title,
 				"content": content,
 				"supportModel": supportModel,

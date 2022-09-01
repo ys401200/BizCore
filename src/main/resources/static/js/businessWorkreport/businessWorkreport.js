@@ -12,7 +12,7 @@ $(document).ready(() => {
 function getWorkReport() {
 	let url, method, data, type;
 
-	url = "/api/workreport";
+	url = "/api/schedule/workreport/personal/20220718";
 	method = "get";
 	data = "";
 	type = "list";
@@ -21,7 +21,7 @@ function getWorkReport() {
 }
 
 function drawWorkReportList() {
-	let workReportContent, jsonData, html = "", header;
+	let workReportContent, jsonData, html = "", header, disDate, start, end, week;
     jsonData = storage.workReportList;
 
 	workReportContent = $(".workReportContainer .workReportContent");
@@ -55,29 +55,42 @@ function drawWorkReportList() {
     html += "<button type='button'>다음</button>";
     html += "</div>";
 
-    html += "<div class='reportContent'>";
+    html += "<div class='reportContents'>";
+    html += "<div class='reportHeader'>";
 
     for(let i = 0; i < header.length; i++){
         html += "<div>" + header[i].title + "</div>";
     }
 
-    html += "<div>" + jsonData[i].data + "</div>";
+    html += "</div>";
+    
+    disDate = dateDis(jsonData.start);
+    start = dateFnc(disDate);
 
-    for(let i = 0; i < jsonData.length; i++){
-        html += "<div>" + jsonData[i].data + "</div>";
-        html += "<div>" + jsonData[i].data + "</div>";
-        html += "<div>" + jsonData[i].data + "</div>";
-        html += "<div>" + jsonData[i].data + "</div>";
-        html += "<div>" + jsonData[i].data + "</div>";
-        html += "<div><input type='checkbox'></div>";
+    disDate = dateDis(jsonData.end);
+    end = dateFnc(disDate);
+
+    html += "<div class='reportContent'>";
+    html += "<div style='grid-row: span 5'>" + jsonData.week + "</div>";
+
+    for(let i = 0; i < jsonData.workReport.schedules.length; i++){
+        week = calWeekDay(jsonData.workReport.schedules[i].date);
+        html += "<div>" + week + "</div>";
+        html += "<div>" + jsonData.workReport.schedules[i].title + "</div>";
+        html += "<div>" + jsonData.workReport.schedules[i].content + "</div>";
+        html += "<div>" + start + "</div>";
+        html += "<div>" + end + "</div>";
+        html += "<div><input type='checkbox'></div>"; 
     }
 
+    html += "</div>";
     html += "</div>";
 
     workReportContent.html(html);
 }
 
 function workReportSuccessList(result){
+    console.log(result);
 	storage.workReportList = result;
 	
 	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined){

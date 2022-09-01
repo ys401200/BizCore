@@ -25,3 +25,20 @@
 	line-height: 3;
 	color: #332E85;
 }
+
+.workReportContainer .workReportContent .reportHeader,
+.workReportContainer .workReportContent .reportContent{
+	display: grid;
+	grid-template-columns: repeat(7, 1fr);
+}
+
+.workReportContainer .workReportContent .reportContent > div:first-child{
+	grid-row: span 5;
+}
+
+.workReportContainer .workReportContent .reportHeader > div,
+.workReportContainer .workReportContent .reportContent > div{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
