@@ -106,6 +106,11 @@
 
 }
 
+.subContainer .listPageDiv .selectedReportview,
+.subContainer .listPageDiv .comment {
+	width: 80%;
+}
+
 /* 체크박스만 선택  */
 .subContainer .listPageDiv .listDiv div div:last-child {
 	display: flex;
@@ -161,7 +166,9 @@
 
 .listPageDiv .detailReport {
 	display: grid;
-	grid-template-columns: 60% 40%;
+	/* grid-template-rows: max-content; */
+	row-gap: 2em;
+	/* grid-template-columns: 60% 40%; */
 }
 
 
@@ -223,8 +230,9 @@
 
 /*-------------------------------- 결재정보 변경이력 탭  */
 .listPageDiv .detailReport .comment {
+	border: 1px solid black;
 	background-color: #EDEDF4;
-	margin: 0 1em;
+	/* margin: 0 1em; */
 	border-radius: 3px;
 }
 
@@ -281,11 +289,6 @@
 	background-color: #332E85;
 	color: white;
 }
-
-
-
-
-
 
 
 /*--------------------------------결재하기, 문서수정 모달 관련 */
@@ -360,14 +363,6 @@
 	padding: 0.3em;
 
 }
-
-
-
-
-
-
-
-
 
 
 /*-------------------------------- 결재선 수정 모달 css  */

@@ -6,7 +6,7 @@
                 <jsp:include page="../sideMenu.jsp" />
             </div>
             <div id="bodyContent">
-                <div class="mywriteContainer">
+                <div class="container">
                     <hr />
                     <span>기안 문서함</span>
                     <div class="contentDiv"></div>

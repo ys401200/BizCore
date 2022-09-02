@@ -14,16 +14,6 @@ $(document).ready(() => {
 function waitDefault() {
 	$(".modal-wrap").hide();
 
-
-
-
-
-
-
-
-
-
-
 	let url, method, data, type;
 	url = "/api/notice";
 	method = "get"

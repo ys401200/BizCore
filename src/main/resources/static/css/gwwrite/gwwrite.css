@@ -404,10 +404,15 @@ input[type="text"] {
 .lineGrid {
   display: flex;
   flex-direction: row;
+  margin-right: 0.3em;
+}
+
+.lineGridContainer:first-of-type .lineGrid:last-of-type,
+.lineGridContainer:last-of-type .lineGrid:last-of-type {
+  margin-right: 0;
 }
 
 .lineSet {
-
   display: grid;
   grid-template-rows: 25% 25% 25% 25%;
   width: 5em;
@@ -431,6 +436,7 @@ input[type="text"] {
 
 .twoBorderLast {
   border-top: 1px solid black;
+  border-right: 1px solid black;
   text-align: center;
 }
 

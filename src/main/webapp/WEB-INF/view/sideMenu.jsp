@@ -138,11 +138,11 @@
 					<span id="slideSpan">+</span>
 				</a>
 				<ul id="panel">
-					<li><a href="/gw/myDraft">기안 문서함</a></li>
-					<li><a href="/gw/myTemp">임시 저장함</a></li>
-					<li><a href="/gw/myApp">결재 문서함</a></li>
-					<li><a href="/gw/myReceive">수신 문서함</a></li>
-					<li><a href="/gw/myRefer">참조/열람 문서함</a></li>
+					<li><a href="/gw/box">기안 문서함</a></li>
+					<li><a href="#">임시 저장함</a></li>
+					<li><a href="#">결재 문서함</a></li>
+					<li><a href="#">수신 문서함</a></li>
+					<li><a href="#">참조/열람 문서함</a></li>
 				</ul>
 			</li>
 
