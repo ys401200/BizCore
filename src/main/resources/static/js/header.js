@@ -921,6 +921,26 @@ function inputDataList(){
 								msg.set("contract 에러");
 							}
 						});
+					}else if($(item).data("keyup") === "customerUser"){
+						$.ajax({
+							url: "/api/system/cip",
+							method: "get",
+							dataType: "json",
+							success:(result) => {
+								if(result.result === "ok"){
+									let resultJson;
+									resultJson = cipher.decAes(result.data);
+									resultJson = JSON.parse(resultJson);
+
+									for(let key in resultJson){
+										$(item).parents("div").find("datalist#_" + $(item).attr("id")).append("<option data-value='" + key + "' value='" + resultJson[key].name + "'></option>");
+									}
+								}
+							},
+							error:() => {
+								msg.set("contract 에러");
+							}
+						});
 					}
 				}
 			}
@@ -964,7 +984,7 @@ function detailViewFormModal(data){
 		let elementName = (data[i].elementName === undefined) ? "" : data[i].elementName;
 		let dataChangeEvent = (data[i].onChange === undefined) ? "" : data[i].onChange;
 		let dataClickEvent = (data[i].onClick === undefined) ? "" : data[i].onClick;
-		let userId = (data[i].userId === undefined) ? "" : data[i].userId;
+		// let userId = (data[i].userId === undefined) ? "" : data[i].userId;
 
 		html += "<div class='defaultFormLine'>";
 		html += "<div class='defaultFormSpanDiv'>";
@@ -974,18 +994,26 @@ function detailViewFormModal(data){
 
 		if(dataType === "text"){
 			if(dataDisabled == true){
-				html += "<input type='text' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "' data-keyup='" + dataKeyup + "' data-user-id='" + userId + "' onchange='" + dataChangeEvent + "' onclick='" + dataClickEvent + "' onkeyup='" + dataKeyupEvent + "' disabled='" + dataDisabled + "'>";
+				html += "<input type='text' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "' data-keyup='" + dataKeyup + "' onchange='" + dataChangeEvent + "' onclick='" + dataClickEvent + "' onkeyup='" + dataKeyupEvent + "' disabled='" + dataDisabled + "'>";
 			}else{
-				html += "<input type='text' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "' data-keyup='" + dataKeyup + "' data-user-id='" + userId + "' onchange='" + dataChangeEvent + "' onclick='" + dataClickEvent + "' onkeyup='" + dataKeyupEvent + "'>";
+				html += "<input type='text' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "' data-keyup='" + dataKeyup + "' onchange='" + dataChangeEvent + "' onclick='" + dataClickEvent + "' onkeyup='" + dataKeyupEvent + "'>";
 			}
 		}else if(dataType === "textarea"){
 			html += "<textarea>" + dataValue + "</textarea>";
 		}else if(dataType === "radio"){
 			for(let t = 0; t < data[i].radioValue.length; t++){
 				if(dataDisabled == true){
-					html += "<input type='radio' id='" + elementId + "' name='" + elementName + "' value='" + data[i].radioValue[t].key + "' disabled='" + dataDisabled + "' onclick='" + dataClickEvent + "'><label>" + data[i].radioValue[t].value + "</label>" + " ";
+					if(t == 0){
+						html += "<input type='radio' id='" + elementId + "' name='" + elementName + "' value='" + data[i].radioValue[t].key + "' disabled='" + dataDisabled + "' onclick='" + dataClickEvent + "' checked><label>" + data[i].radioValue[t].value + "</label>" + " ";
+					}else{
+						html += "<input type='radio' id='" + elementId + "' name='" + elementName + "' value='" + data[i].radioValue[t].key + "' disabled='" + dataDisabled + "' onclick='" + dataClickEvent + "'><label>" + data[i].radioValue[t].value + "</label>" + " ";
+					}
 				}else{
-					html += "<input type='radio' id='" + elementId + "' name='" + elementName + "' value='" + data[i].radioValue[t].key + "' onclick='" + dataClickEvent + "'><label>" + data[i].radioValue[t].value + "</label>" + " ";
+					if(t == 0){
+						html += "<input type='radio' id='" + elementId + "' name='" + elementName + "' value='" + data[i].radioValue[t].key + "' onclick='" + dataClickEvent + "' checked><label>" + data[i].radioValue[t].value + "</label>" + " ";
+					}else{
+						html += "<input type='radio' id='" + elementId + "' name='" + elementName + "' value='" + data[i].radioValue[t].key + "' onclick='" + dataClickEvent + "'><label>" + data[i].radioValue[t].value + "</label>" + " ";
+					}
 				}
 			}
 		}else if(dataType === "date"){
@@ -1485,12 +1513,12 @@ function detailContainerHide(){
 }
 
 //매출처 담당자 자동완성
-function customerChange(e){
-	let getCustNumber;
-	getCustNumber = dataListFormat("customer", $(e).val());
+// function customerChange(e){
+// 	let getCustNumber;
+// 	getCustNumber = dataListFormat("customer", $(e).val());
 
-	$(document).find("#" + $(e).data("user-id")).val(storage.customer[getCustNumber].ceoName);
-}
+// 	$(document).find("#" + $(e).data("user-id")).val(storage.customer[getCustNumber].ceoName);
+// }
 
 function sizeToStr(s){
     let result, t, r;

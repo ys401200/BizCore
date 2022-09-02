@@ -12,7 +12,7 @@ $(document).ready(() => {
 function getWorkReport() {
 	let url, method, data, type;
 
-	url = "/api/schedule/workreport/personal/20220718";
+	url = "/api/schedule/workreport/personal/20220714";
 	method = "get";
 	data = "";
 	type = "list";
@@ -21,7 +21,7 @@ function getWorkReport() {
 }
 
 function drawWorkReportList() {
-	let workReportContent, jsonData, html = "", header, disDate, start, end, week;
+	let workReportContent, jsonData, html = "", header, disDate, start, end, week, getLastDate, getNextDate;
     jsonData = storage.workReportList;
 
 	workReportContent = $(".workReportContainer .workReportContent");
@@ -56,9 +56,12 @@ function drawWorkReportList() {
     disDate = dateDis(jsonData.end);
     end = dateFnc(disDate);
 
+    getLastDate = calDays(start, "last");
+    getNextDate = calDays(start, "next");
+
     html = "<div class='reportBtns'>";
-    html += "<button type='button' data-date='" + (parseInt(start.replaceAll("-", "")) - 7) + "' onclick='workReportWeekBtn(this);'>이전</button>";
-    html += "<button type='button' data-date='" + (parseInt(start.replaceAll("-", "")) + 7) + "' onclick='workReportWeekBtn(this);'>다음</button>";
+    html += "<button type='button' data-date='" + getLastDate + "' onclick='workReportWeekBtn(this);'>이전</button>";
+    html += "<button type='button' data-date='" + getNextDate + "' onclick='workReportWeekBtn(this);'>다음</button>";
     html += "</div>";
 
     html += "<div class='reportContents'>";
@@ -104,6 +107,26 @@ function drawWorkReportList() {
     setTiny();
 }
 
+function calDays(date, type){
+    let getDate, year, month, day, resultDate;
+
+    getDate = new Date(date);
+
+    year = getDate.getFullYear();
+    month = getDate.getMonth();
+    day = getDate.getDate();
+
+    if(type === "last"){
+        resultDate = new Date(year, month, day - 8).toISOString().substring(0, 10).replaceAll("-", "");
+    }else{
+        resultDate = new Date(year, month, day + 8).toISOString().substring(0, 10).replaceAll("-", "");
+    }
+
+    console.log(resultDate);
+
+    return resultDate;
+}
+
 function workReportSuccessList(result){
 	storage.workReportList = result;
 	
@@ -124,6 +147,7 @@ function workReportWeekBtn(e){
     getDate = $(e).data("date");
 
     url = "/api/schedule/workreport/personal/" + getDate;
+    console.log(url);
     method = "get";
     type = "list";
 
