@@ -87,7 +87,7 @@ public class GwController {
         return result;
     }
 
-    @RequestMapping(value = "/detail", method = RequestMethod.GET)
+    @RequestMapping(value = "/home", method = RequestMethod.GET)
     public String home(HttpServletRequest request) {
         HttpSession session = null;
         String result = null, uri = null, pathName = null, tempStr = null;
@@ -116,7 +116,7 @@ public class GwController {
 
         session.setAttribute("pathName", pathName);
 
-        result = "/gw/detail";
+        result = "/gw/home";
 
         return result;
     }
@@ -188,8 +188,6 @@ public class GwController {
 
         return result;
     }
-
-
 
     @RequestMapping(value = "/refer", method = RequestMethod.GET)
     public String refer(HttpServletRequest request) {
