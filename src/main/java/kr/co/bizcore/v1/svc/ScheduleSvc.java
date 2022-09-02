@@ -1,25 +1,16 @@
 package kr.co.bizcore.v1.svc;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ScheduledExecutorService;
 
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import kr.co.bizcore.v1.domain.Dept;
 import kr.co.bizcore.v1.domain.Schedule;
 import kr.co.bizcore.v1.domain.SimpleUser;
-import kr.co.bizcore.v1.domain.User;
 import kr.co.bizcore.v1.domain.WorkReport;
-import kr.co.bizcore.v1.mapper.ScheduleMapper;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -67,7 +58,7 @@ public class ScheduleSvc extends Svc{
         int result = -1;
         Schedule sch = null;
         sch = getSchedule(compId, schedule.getJob(), schedule.getNo() + "");
-        String sql = schedule.createUpdateQuery(sch, null);
+        String sql = sch.createUpdateQuery(schedule, null);
         sql += " WHERE ";
         if(schedule.getJob().equals("sales")){
             sql += "salesno=";
@@ -151,7 +142,7 @@ public class ScheduleSvc extends Svc{
         year = date / 10000;
         month = (date % 10000) / 100;
         dt = date % 100;
-        t = year + "-" + month + "-" + dt;
+        t = year + "-" + month + "-" + dt;logger.info("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: date str : " + t);
         week = year * 100 + systemMapper.getWeekStr(t);
 
         cal.setTimeInMillis(0);
@@ -164,22 +155,14 @@ public class ScheduleSvc extends Svc{
             if(scope.equals("dept"))    reports = scheduleMapper.getWorkReportsDept(compId, week, user.getDeptIdSqlIn());
             else    reports = scheduleMapper.getWorkReportsCompany(compId, week);
 
-            logger.info("\r\n[ScheduleService.getWorkReport] :::::: reports size : " + reports.size());
-            logger.info("\r\n[ScheduleService.getWorkReport] :::::: date : " + date);
-
             if(reports != null && reports.size() > 0)   for(x = 0 ; x < reports.size() ; x++){
                 report = reports.get(x);
-                logger.info("[ScheduleService.getWorkReport] :::::: start : " + start);
-                logger.info("[ScheduleService.getWorkReport] :::::: end : " + end);
-                logger.info("[ScheduleService.getWorkReport] :::::: employee : " + report.getWriter());
                 schedules = scheduleMapper.getScheduleListForReport(compId, start, end, report.getWriter());
-                logger.info("[ScheduleService.getWorkReport] :::::: schedule size : " + schedules.size());
                 if(schedules != null && schedules.size() > 0){
                     Collections.sort(schedules);
                     for(y = 0 ; y < schedules.size() ; y++){
                         schedule = schedules.get(y);
                         report.addSchedule(schedule);
-                        logger.info("[ScheduleService.getWorkReport] :::::: schedule : " + x + " / " + schedule.getTitle());
                     }
                 } 
             }
@@ -202,6 +185,10 @@ public class ScheduleSvc extends Svc{
             schedules = scheduleMapper.getScheduleListForReport(compId, start, end, user.getUserNo());
             if(schedules != null)   Collections.sort(schedules);
 
+            logger.info("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: date : " + date);
+            logger.info("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: week : " + week);
+            logger.info("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: report exist : " + (report != null));
+
             //현재 주차 데이터가 없을 경우 지난주의 "차주" 데이터를 가지고 오도록 함"
             if(report != null){
                 if(schedules != null && schedules.size() > 0){
@@ -217,7 +204,7 @@ public class ScheduleSvc extends Svc{
                 result += "\"workReport\":" + report.toJson();
                 result += "}";
             }else{
-                week = systemMapper.getWeek(new Date(cal.getTimeInMillis() - 86400000 * 7));
+                week = year * 100 + systemMapper.getWeek(new Date(cal.getTimeInMillis() - 86400000 * 7));
                 report = scheduleMapper.getWorkReportPersonal(compId, week, user.getUserNo() + "");
                 if(report == null)  report = new WorkReport();
                 for(y = 0 ; y < schedules.size() ; y++){

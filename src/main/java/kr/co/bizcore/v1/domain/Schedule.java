@@ -18,7 +18,7 @@ public class Schedule extends Domain{
     private Date to;
     private String title;
     private String content;
-    private boolean report;
+    private boolean report = true;
     private String type;
     private String place;
 

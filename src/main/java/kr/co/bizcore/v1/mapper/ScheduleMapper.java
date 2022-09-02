@@ -100,7 +100,7 @@ public interface ScheduleMapper {
             "WHERE a.attrib = 11111 AND a.userno = b.userno AND a.sreportno = b.no AND a.compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND a.userno IN (SELECT user_no FROM bizcore.user_dept WHERE dept_id IN (#{deptIn}))")
     public List<WorkReport> getWorkReportsDept(@Param("compId") String compId, @Param("week") int week, @Param("deptIn") String deptIn);
 
-    @Select("SELECT a.userno AS writer, IF(a.prcheck=1,a.prcomment,'') AS currentWeek, IF(a.thcheck=1,a.thcomment,'') AS nextWeek " +
+    @Select("SELECT a.userno AS writer, a.prcheck AS currentWeekCheck, a.prcomment AS currentWeek, a.thcheck AS nextWeekCheck, a.thcomment AS nextWeek " +
             "FROM swc_sreport a, " +
             "(SELECT MAX(sreportno) no, userno FROM swc_sreport WHERE weeknum = #{week} GROUP BY userno) b " +
             "WHERE a.attrib = 11111 AND a.userno = b.userno AND a.sreportno = b.no AND a.compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND a.userno = #{userNo}")

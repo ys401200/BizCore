@@ -10,7 +10,9 @@ import lombok.Setter;
 public class WorkReport extends Domain{
 
     private int writer;
+    private boolean currentWeekCheck;
     private String currentWeek;
+    private boolean nextWeekCheck;
     private String nextWeek;
     private ArrayList<Schedule> schedules = new ArrayList<>();
 
@@ -21,7 +23,9 @@ public class WorkReport extends Domain{
         int x = 0;
         Schedule e = null;
         if(schedules.size() > 2)    Collections.sort(schedules);
+        result += ("\"currentWeekCheck\":" + currentWeekCheck + ",");
         result += ("\"currentWeek\":" + (currentWeek == null ? "\"\"" : "\"" + currentWeek.replaceAll("\"", "\\u0022").replaceAll("\n", "").replaceAll("\r", "").replaceAll("\t", "") + "\"") + ",");
+        result += ("\"nextWeekCheck\":" + nextWeekCheck + ",");
         result += ("\"nextWeek\":" + (nextWeek == null ? "\"\"" : "\"" + nextWeek.replaceAll("\"", "\\u0022").replaceAll("\n", "").replaceAll("\r", "").replaceAll("\t", "") + "\"") + ",");
         result += "\"schedules\":[";
         for(x = 0 ; x < schedules.size() ; x++){

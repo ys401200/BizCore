@@ -369,7 +369,7 @@ public abstract class Domain implements Comparable<Domain>{
                 v1 = field.get(this);
                 v2 = field.get(target);
 
-                if(!(v1 == null && v2 == null) && v1 != v2 && !v1.equals(v2)){
+                if(!(v1 == null && v2 == null) && ((v1 == null && v2 != null) || (v1 != null && v2 == null) || v1 != v2) && !v1.equals(v2)){
                     if (field.getType().getName().equals(String.class.getName())) {
                         if(result == null)  result = "";
                         else                result += ", ";

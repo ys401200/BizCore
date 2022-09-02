@@ -86,8 +86,26 @@ public class SystemCtrl extends Ctrl {
         return result;
     }
 
-    @GetMapping("/schedule/{docNo}")
+    @GetMapping("/doc/{docNo}")
     public String getDocData(HttpServletRequest request, HttpServletResponse response, @PathVariable String docNo){
+        String result = null, data1 = null, data2 = null, data3 = null;
+
+        response.setContentType("application/json;charset=utf-8");
+
+        data1 = tsvc.docFile(docNo);
+        data2 = tsvc.docData(docNo);
+        data3 = tsvc.docApp(docNo);
+
+        result = "{\"result\":\"ok\",\"files\":" + (data1 == null ? "null" : data1) + ",\"docData\":" + (data2 == null ? "null" : data2) + ",\"appData\":" + (data3 == null ? "null" : data3) + "}";
+
+
+
+        return result;
+    }
+    
+
+    @GetMapping("/schedule/{docNo}")
+    public String getScheduleData(HttpServletRequest request, HttpServletResponse response, @PathVariable String docNo){
         String result = null, data = null;
         Schedule sch = null, sch2 = null;
 

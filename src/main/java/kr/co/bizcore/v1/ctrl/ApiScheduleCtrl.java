@@ -186,9 +186,11 @@ public class ApiScheduleCtrl extends Ctrl {
             json = salesService.decAes(requestBody, aesKey, aesIv);
             try {
                 schedule = mapper.readValue(json, Schedule.class);
+                schedule.setNo(no);
                 if(scheduleService.modifySchedule(compId, schedule) > 0)    result = "{\"result\":\"ok\"}";
                 else                                                        result = "{\"result\":\"failure\",\"msg\":\"An error occurred.\"}";
             } catch (Exception e) {
+                e.printStackTrace();
                 result = "{\"result\":\"failure\",\"msg\":\"Data is wrong.\"}";
             }
         }
