@@ -242,7 +242,7 @@ public class SystemService extends Svc {
         
     }
 
-    // 고객사 담당자 정보를 전달하는 메서드
+    // 고객사 담당자 목록을 전달하는 메서드
     public String cipInfo(String compId){
         String result = null;
         int x = 0;
@@ -263,6 +263,11 @@ public class SystemService extends Svc {
 
         return result;
 
+    }
+
+    // 고객사 담당자 이름을 전달하는 메서드
+    public String cipInfo(String compId, String no){
+        return commonMapper.getCipInfo(no);
     }
 
     // 첨부파일 등을 임시로 저장하는 메서드
