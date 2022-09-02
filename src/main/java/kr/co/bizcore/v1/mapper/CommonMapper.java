@@ -46,6 +46,6 @@ public interface CommonMapper {
     @Select("SELECT CAST(custdata03no AS char) AS no, custmname AS name, CAST(custno AS char) AS cust, custmrank AS rank FROM swcore.swc_custdata03 WHERE attrib NOT LIKE 'XXX%'")
     public List<HashMap<String, String>> getCipInfo();
 
-    @Select("SELECT custmname FROM swcore.swc_custdata03 WHERE no = #{no} AND attrib NOT LIKE 'XXX%'")
+    @Select("SELECT custmname FROM swcore.swc_custdata03 WHERE custdata03no = #{no} AND attrib NOT LIKE 'XXX%'")
     public String getCipName(String no);
 }
