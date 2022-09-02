@@ -30,7 +30,6 @@
 .workJournalContainer .workJournalContent{
 	display: grid;
 	grid-template-columns: 10% 90%;
-	text-align: center;
 	padding: 20px;
 	margin-top:10px;
 }
@@ -63,7 +62,7 @@
 	background-color:#ecf3fb;
 }
 
-.workJournalContainer .workJournalContent .journalPreviewBody{
+.workJournalContainer .workJournalContent .journalPreviewBody_10021{
 	border-left: 1px solid #000;
 	border-right: 1px solid #000;
 	border-bottom: 1px solid #000;
