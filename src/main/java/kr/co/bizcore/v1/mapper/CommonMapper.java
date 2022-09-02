@@ -47,5 +47,5 @@ public interface CommonMapper {
     public List<HashMap<String, String>> getCipInfo();
 
     @Select("SELECT custmname FROM swcore.swc_custdata03 WHERE no = #{no} AND attrib NOT LIKE 'XXX%'")
-    public String getCipInfo(String no);
+    public String getCipName(String no);
 }
