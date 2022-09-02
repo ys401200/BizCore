@@ -432,7 +432,7 @@ function scheduleSuccessView(result){
 		content = (result.content === null || result.content === "" || result.content === undefined) ? "내용 없음" : result.content;
 		supportModel = (result.supportModel === null || result.supportModel === "" || result.supportModel === undefined) ? "없음" : result.supportModel;
 		supportVersion = (result.supportVersion === null || result.supportVersion === "" || result.supportVersion === undefined) ? "없음" : result.supportVersion;
-		cipOfCustomer = (result.cipOfCustomer === null || result.cipOfCustomer == 0 || result.cipOfCustomer === undefined) ? "없음" : storage.user[result.cipOfCustomer].userName;
+		cipOfCustomer = (result.cipOfCustomer === null || result.cipOfCustomer == 0 || result.cipOfCustomer === undefined) ? "없음" : result.cipOfCustomer;
 		contractMethod = (result.contractMethod === null || result.contractMethod === "" || result.contractMethod === undefined) ? "없음" : storage.code.etc[result.contractMethod];
 		supportStep = (result.supportStep === "" || result.supportStep === null || result.supportStep === undefined) ? "없음" : storage.code.etc[result.supportStep];
 		type = (result.type === "" || result.type === null || result.type === undefined) ? "없음" : storage.code.etc[result.type];
@@ -454,7 +454,20 @@ function scheduleSuccessView(result){
 			contract = "없음";
 		}
 
+		$.ajax({
+			url: "/api/system/cip/" + cipOfCustomer,
+			method: "get",
+			async: false,
+			dataType: "json",
+			success:(resultData) => {
+				let jsonData;
+				jsonData = cipher.decAes(resultData.data);
+				console.log(jsonData);
 
+				cipOfCustomer = jsonData;
+			}
+		});
+		
 		dataArray = [
 			{
 				"title": "등록구분",
@@ -474,7 +487,7 @@ function scheduleSuccessView(result){
 			},
 			{
 				"title": "매출처",
-				"value": customer,
+				"value": partner,
 			},
 			{
 				"title": "매출처 담당자",
@@ -482,7 +495,7 @@ function scheduleSuccessView(result){
 			},
 			{
 				"title": "엔드유저",
-				"value": partner,
+				"value": customer,
 			},
 			{
 				"title": "모델",
@@ -1045,19 +1058,18 @@ function scheduleRadioInsert(value, date){
 			{
 				"title": "매출처",
 				"disabled": false,
-				"elementId": "customer",
+				"elementId": "partner",
 				"dataKeyup": "customer",
-				"userId": "cipOfCustomer",
-				"onChange": "customerChange(this);",
 			},
 			{
 				"title": "매출처 담당자",
 				"dataKeyup": "customerUser",
 				"elementId": "cipOfCustomer",
+				"disabled": false,
 			},
 			{
 				"title": "엔드유저(*)",
-				"elementId": "partner",
+				"elementId": "customer",
 				"disabled": false,
 				"dataKeyup": "customer",
 			},
@@ -1318,7 +1330,7 @@ function scheduleInsert(){
 			supportVersion = $(document).find("#supportVersion").val();
 			contract = $(document).find("#contract");
 			contract = dataListFormat(contract.attr("id"), contract.val()); 
-			contractMethod = $(document).find("[name='contractMethod']").val();
+			contractMethod = $(document).find("[name='contractMethod']:checked").val();
 			cipOfCustomer = $(document).find("#cipOfCustomer");
 			cipOfCustomer = dataListFormat(cipOfCustomer.attr("id"), cipOfCustomer.val());
 			supportStep = $(document).find("#supportStep").val();
@@ -1628,7 +1640,7 @@ function scheduleRadioUpdate(value, result){
 		content = (result.content === null || result.content === "" || result.content === undefined) ? "" : result.content;
 		supportModel = (result.supportModel === null || result.supportModel === "" || result.supportModel === undefined) ? "" : result.supportModel;
 		supportVersion = (result.supportVersion === null || result.supportVersion === "" || result.supportVersion === undefined) ? "" : result.supportVersion;
-		cipOfCustomer = (result.cipOfCustomer === null || result.cipOfCustomer === "" || result.cipOfCustomer === undefined) ? "" : storage.user[result.cipOfCustomer].userName;
+		cipOfCustomer = (result.cipOfCustomer === null || result.cipOfCustomer === "" || result.cipOfCustomer === undefined) ? "" : result.cipOfCustomer;
 		contractMethod = (result.contractMethod === null || result.contractMethod === "" || result.contractMethod === undefined) ? "" : storage.code.etc[result.contractMethod];
 		supportStep = (result.supportStep === "" || result.supportStep === null || result.supportStep === undefined) ? "" : storage.code.etc[result.supportStep];
 		type = (result.type === "" || result.type === null || result.type === undefined) ? "" : storage.code.etc[result.type]; 
@@ -1649,6 +1661,20 @@ function scheduleRadioUpdate(value, result){
 		}else{
 			contract = "없음";
 		}
+
+		$.ajax({
+			url: "/api/system/cip/" + cipOfCustomer,
+			method: "get",
+			async: false,
+			dataType: "json",
+			success:(resultData) => {
+				let jsonData;
+				jsonData = cipher.decAes(resultData.data);
+				console.log(jsonData);
+
+				cipOfCustomer = jsonData;
+			}
+		});
 
 		dataArray = [
 			{
@@ -1711,16 +1737,15 @@ function scheduleRadioUpdate(value, result){
 			{
 				"title": "매출처",
 				"disabled": false,
-				"elementId": "customer",
+				"elementId": "partner",
 				"dataKeyup": "customer",
-				"userId": "cipOfCustomer",
-				"onChange": "customerChange(this);",
-				"value": customer,
+				"value": partner,
 			},
 			{
 				"title": "매출처 담당자",
 				"dataKeyup": "customerUser",
 				"elementId": "cipOfCustomer",
+				"disabled": false,
 				"value": cipOfCustomer,
 			},
 			{
@@ -1994,9 +2019,9 @@ function scheduleUpdate(no){
 			alert("영업기회를 선택해주세요.");
 			$(document).find("#sopp").focus();
 			return false;
-		}else if($(document).find("#partner").val() === ""){
+		}else if($(document).find("#customer").val() === ""){
 			alert("엔드유저를 선택해주세요.");
-			$(document).find("#partner").focus();
+			$(document).find("#customer").focus();
 			return false;
 		}else if($(document).find("#from").val() === ""){
 			alert("지원시작일을 선택해주세요.");
@@ -2033,7 +2058,8 @@ function scheduleUpdate(no){
 				"place": place,
 				"writer": writer,
 				"sopp": sopp,
-				"partner": customer,
+				"partner": partner,
+				"customer": customer,
 				"title": title,
 				"content": content,
 				"supportModel": supportModel,
