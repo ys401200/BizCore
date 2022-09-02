@@ -106,13 +106,22 @@ public interface ScheduleMapper {
             "WHERE a.attrib = 11111 AND a.userno = b.userno AND a.sreportno = b.no AND a.compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND a.userno = #{userNo}")
     public WorkReport getWorkReportPersonal(@Param("compId") String compId, @Param("week") int week, @Param("userNo") String userNo);
 
-    @Select("SELECT 'schedule' AS job, schedFrom AS `from`, schedtitle AS title, schedDesc AS content FROM swc_sched WHERE schedCheck = 1 AND attrib NOT LIKE 'XXX%' AND userno = #{writer} AND schedfrom < #{end} AND schedto >= #{start} AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) " +
+    @Select("SELECT 'schedule' AS job, schedno AS no, schedFrom AS `from`, schedtitle AS title, schedDesc AS content, schedCheck AS workReport FROM swc_sched WHERE schedCheck = 1 AND attrib NOT LIKE 'XXX%' AND userno = #{writer} AND schedfrom < #{end} AND schedto >= #{start} AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) " +
                 "UNION ALL " + 
-                "SELECT 'sales' AS job, salesfrdatetime AS `from`, salestitle AS title, salesdesc AS content FROM swc_sales WHERE salescheck = 1 AND attrib = 11111 AND userno = #{writer} AND salesfrdatetime < #{end} AND salestodatetime >= #{start} AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) " +
+                "SELECT 'sales' AS job, salesno AS no, salesfrdatetime AS `from`, salestitle AS title, salesdesc AS content, salesCheck AS workReport FROM swc_sales WHERE salescheck = 1 AND attrib = 11111 AND userno = #{writer} AND salesfrdatetime < #{end} AND salestodatetime >= #{start} AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) " +
                 "UNION ALL " + 
-                "SELECT 'tech' AS job, techdfrom AS `from`, techdtitle AS title, techddesc AS content FROM swc_techd WHERE techdcheck = 1 AND attrib = 11111 AND userno = #{writer} AND techdfrom < #{end} AND techdto >= #{start} AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId})")
+                "SELECT 'tech' AS job, techdno AS no, techdfrom AS `from`, techdtitle AS title, techddesc AS content, techdCheck AS workReport FROM swc_techd WHERE techdcheck = 1 AND attrib = 11111 AND userno = #{writer} AND techdfrom < #{end} AND techdto >= #{start} AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId})")
     public List<Schedule> getScheduleListForReport(@Param("compId") String compId, @Param("start") Date start, @Param("end") Date end, @Param("writer") int writer);
 
     @Update("UPDATE swc_sreport SET attrib = 'XXXXX' WHERE userno = #{userNo} AND weeknum = #{week} AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId})")
     public int deleteWorkReport(@Param("compId") String compId, @Param("userNo") String userNo, @Param("week") int week);
+
+    @Update("UPDATE swc_sched SET schedcheck = #{check} WHERE schedno = #{no} AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND userno = #{userNo}")
+    public int setWorkReportCheckStatusForSched(@Param("compId") String compId, @Param("no") String no, @Param("userNo") String userNo, @Param("check") int check);
+
+    @Update("UPDATE swc_sales SET salescheck = #{check} WHERE salesno = #{no} AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND userno = #{userNo}")
+    public int setWorkReportCheckStatusForSales(@Param("compId") String compId, @Param("no") String no, @Param("userNo") String userNo, @Param("check") int check);
+
+    @Update("UPDATE swc_techd SET techdcheck = #{check} WHERE techdno = #{no} AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND userno = #{userNo}")
+    public int setWorkReportCheckStatusForTechd(@Param("compId") String compId, @Param("no") String no, @Param("userNo") String userNo, @Param("check") int check);
 }

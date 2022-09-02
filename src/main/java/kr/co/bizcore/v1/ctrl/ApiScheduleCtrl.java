@@ -1,10 +1,12 @@
 package kr.co.bizcore.v1.ctrl;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -298,8 +300,13 @@ public class ApiScheduleCtrl extends Ctrl {
     public String apiWorkreportPersonalDatePost(HttpServletRequest request, @PathVariable("date") int date, @RequestBody String requestBody){
         String result = null;
         String compId = null, aesKey = null, aesIv = null, userNo = null, data = null, currentWeek = null, nextWeek = null;
+        boolean currentWeekCheck = false, nextWeekCheck = false;
         HttpSession session = null;
-        JSONObject json = null;
+        JSONObject json = null, schedule = null;;
+        JSONArray jarr = null;
+        String[] item = null;
+        ArrayList<String[]> checked = new ArrayList<>();
+        int x = 0;
 
         session = request.getSession();
         aesKey = (String)session.getAttribute("aesKey");
@@ -317,7 +324,20 @@ public class ApiScheduleCtrl extends Ctrl {
             json = new JSONObject(data);
             currentWeek = json.getString("currentWeek");
             nextWeek = json.getString("nextWeek");
-            if(scheduleService.addWorkReport(compId, userNo, date, currentWeek, nextWeek)){
+            currentWeekCheck = json.getBoolean("currentWeekCheck");
+            nextWeekCheck = json.getBoolean("nextWeekCheck");
+
+            jarr = json.getJSONArray("schedule");
+            if(jarr != null)    for(x = 0 ; x < jarr.length() ; x++){
+                schedule = jarr.getJSONObject(x);
+                item = new String[3];
+                item[0] = schedule.getString("job");
+                item[1] = schedule.getString("no");
+                item[2] = schedule.getBoolean("check") ? "1" : "0";
+                checked.add(item);
+            }
+
+            if(scheduleService.addWorkReport(compId, userNo, date, currentWeek, currentWeekCheck, nextWeek, nextWeekCheck, checked)){
                 result = "{\"result\":\"ok\"}";
             }else{
                 result = "{\"result\":\"failure\",\"msg\":\"Error occured.\"}";
@@ -350,3 +370,4 @@ public class ApiScheduleCtrl extends Ctrl {
 
     
 }
+

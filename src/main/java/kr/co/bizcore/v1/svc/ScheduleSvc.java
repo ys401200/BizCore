@@ -1,5 +1,6 @@
 package kr.co.bizcore.v1.svc;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -185,10 +186,6 @@ public class ScheduleSvc extends Svc{
             schedules = scheduleMapper.getScheduleListForReport(compId, start, end, user.getUserNo());
             if(schedules != null)   Collections.sort(schedules);
 
-            logger.info("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: date : " + date);
-            logger.info("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: week : " + week);
-            logger.info("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: report exist : " + (report != null));
-
             //현재 주차 데이터가 없을 경우 지난주의 "차주" 데이터를 가지고 오도록 함"
             if(report != null){
                 if(schedules != null && schedules.size() > 0){
@@ -223,39 +220,47 @@ public class ScheduleSvc extends Svc{
     } // End of getWorkReport()
 
     // 개인의 주간업무보고를 추가하는 메서드
-    public boolean addWorkReport(String compId, String userNo, int date, String currentWeek, String nextWeek){
+    public boolean addWorkReport(String compId, String userNo, int date, String currentWeek, boolean currentWeekCheck, String nextWeek, boolean nextWeekCheck, ArrayList<String[]> checked){
         boolean result = false;
-        int week = -1, y = -1, m = -1, d = -1;
-        Date dt = null;
+        int week = -1, y = -1, m = -1, d = -1, x = 0;
         Calendar cal = Calendar.getInstance();
         String sql = null, str1 = null, str2 = null;
+        String[] item = null;
 
         y = date / 10000;
         m = (date % 10000) / 100;
         d = date % 100;
         cal.setTimeInMillis(0);
         cal.set(y, m - 1, d);
-        week = systemMapper.getWeek(new Date(cal.getTimeInMillis()));
+        week = y * 100 + systemMapper.getWeek(new Date(cal.getTimeInMillis()));
 
         sql = "INSERT INTO swc_sreport(";
         str1 = "userno,compno,attrib,weeknum,regdate,prcomment,prcheck,thcomment,thcheck";
         str2 = userNo + ",(SELECT compno FROM swc_company WHERE compid = '" + compId + "')," + week + ",11111,now()";
 
         if(currentWeek == null){
-            str2 += (",'',0");
+            str2 += (",''," + (currentWeekCheck ? 1 : 0));
         }else{
-            str2 += (",'" + currentWeek + "',1");
+            str2 += (",'" + currentWeek + "'," + (currentWeekCheck ? 1 : 0));
         }
 
         if(nextWeek == null){
-            str2 += (",'',0");
+            str2 += (",''," + (nextWeekCheck ? 1 : 0));
         }else{
-            str2 += (",'" + nextWeek + "',1");
+            str2 += (",'" + nextWeek + "'," + (nextWeekCheck ? 1 : 0));
         }
 
         sql = sql + str1 + ") VALUES(" + str2 + ")";
         deleteWorkReport(compId, userNo, date);
         result = executeSqlQuery(sql) > 0;
+
+        if(checked != null) for(x = 0 ; x < checked.size() ; x++){
+            item = checked.get(x);
+            if(item[0].equals("sales"))     scheduleMapper.setWorkReportCheckStatusForSales(compId, item[1], userNo, strToInt(item[2]));
+            else if(item[0].equals("tech")) scheduleMapper.setWorkReportCheckStatusForTechd(compId, item[1], userNo, strToInt(item[2]));
+            else    scheduleMapper.setWorkReportCheckStatusForSched(compId, item[1], userNo, strToInt(item[2]));
+        }
+
         return result;
     }
 
