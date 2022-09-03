@@ -29,8 +29,6 @@ a{
 
 button, select, input[type="text"]{
 	font-family: 'NanumSquareRound';
-	margin:1% 1% 0 0;
-	float:right;
 	padding:0.3% 0.8% 0.3% 0.8%;
 	background-color:#ededf4;
 	border:0;

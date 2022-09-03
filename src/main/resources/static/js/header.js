@@ -1569,10 +1569,13 @@ function calDays(date, type){
     month = getDate.getMonth();
     day = getDate.getDate();
 
+	
     if(type === "last"){
-        resultDate = new Date(year, month, day - 8).toISOString().substring(0, 10).replaceAll("-", "");
+		day = day - 9;
+        resultDate = new Date(year, month, day).toISOString().substring(0, 10).replaceAll("-", "");
     }else{
-        resultDate = new Date(year, month, day + 8).toISOString().substring(0, 10).replaceAll("-", "");
+		day = day + 9;
+        resultDate = new Date(year, month, day).toISOString().substring(0, 10).replaceAll("-", "");
     }
 
     return resultDate;

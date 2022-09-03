@@ -60,8 +60,12 @@ function drawWorkReportList() {
     getNextDate = calDays(start, "next");
 
     html = "<div class='reportBtns'>";
+    html += "<div class='reportBtnPrev'>";
     html += "<button type='button' data-date='" + getLastDate + "' onclick='workReportWeekBtn(this);'>이전</button>";
+    html += "</div>";
+    html += "<div class='reportBtnNext'>";
     html += "<button type='button' data-date='" + getNextDate + "' onclick='workReportWeekBtn(this);'>다음</button>";
+    html += "</div>";
     html += "</div>";
 
     html += "<div class='reportContents'>";
