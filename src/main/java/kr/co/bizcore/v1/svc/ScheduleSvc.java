@@ -86,29 +86,19 @@ public class ScheduleSvc extends Svc{
         end = new Date();
         calcStartAndEndDate(year, month, 1, start, end);
 
-        logger.info("[ScheduleService.getScheduleListForCalendar] :::::::::::: start : " + start.getTime());
-        logger.info("[ScheduleService.getScheduleListForCalendar] :::::::::::: end : " + end.getTime());
-        logger.info("[ScheduleService.getScheduleListForCalendar] :::::::::::: deptIn : " + deptIn);
-
         if(scope.equals("dept")){
-            
-            logger.info("[ScheduleService.getScheduleListForCalendar] :::::::::::: scope : dept");
             list1 = scheduleMapper.getScheduleListFromSalesWithDept(compId, start, end, deptIn);
             list2 = scheduleMapper.getScheduleListFromTechdWithDept(compId, start, end, deptIn);
             list3 = scheduleMapper.getScheduleListFromSchedWithDept(compId, start, end, deptIn);
         }else if(scope.equals("personal")){
-            logger.info("[ScheduleService.getScheduleListForCalendar] :::::::::::: scope : personal");
             list1 = scheduleMapper.getScheduleListFromSalesWithUser(compId, start, end, userNo);
             list2 = scheduleMapper.getScheduleListFromTechdWithUser(compId, start, end, userNo);
             list3 = scheduleMapper.getScheduleListFromSchedWithUser(compId, start, end, userNo);
         }else{
-            logger.info("[ScheduleService.getScheduleListForCalendar] :::::::::::: scope : company");
             list1 = scheduleMapper.getScheduleListFromSched(compId, start, end);
             list2 = scheduleMapper.getScheduleListFromSales(compId, start, end);
             list3 = scheduleMapper.getScheduleListFromTechd(compId, start, end);    
         }
-
-        logger.info("[ScheduleService.getScheduleListForCalendar] :::::::::::: list1 : " + list1.size() + " / list2 : " + list2.size() + " / list3 : " + list3.size());
 
         list1.addAll(list2);
         list1.addAll(list3);
@@ -143,7 +133,7 @@ public class ScheduleSvc extends Svc{
         year = date / 10000;
         month = (date % 10000) / 100;
         dt = date % 100;
-        t = year + "-" + month + "-" + dt;logger.info("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: date str : " + t);
+        t = year + "-" + month + "-" + dt;
         week = year * 100 + systemMapper.getWeekStr(t);
 
         cal.setTimeInMillis(0);
@@ -283,9 +273,29 @@ public class ScheduleSvc extends Svc{
         return result;
     }
 
+    // SOPP 번호를 받아서 연관 일정을 전달하는 메서드
+    public String getScheduleRelatedSopp(String compId, int soppNo) {
+        String result = "[";
+        List<Schedule> list1 = null, list2 = null, list3 = null;
+        int x = 0;
 
+        //list1 = scheduleMapper.getScheduleFromSched(compId, soppNo);
+        //list2 = scheduleMapper.getScheduleListForSoppFromSales(compId, soppNo);
+        //list3 = scheduleMapper.getScheduleListForSoppFromTechd(compId, soppNo);
 
+        list1.addAll(list2);
+        list1.addAll(list3);
+        Collections.sort(list1);
 
+        result = "[";
+        for(x = 0 ; x < list1.size() ; x++){
+            if(x > 0)   result += ",";
+            result += list1.get(x).toJson();
+        }
+        result += "]";
+
+        return result;
+    }
 
 
 
@@ -302,6 +312,8 @@ public class ScheduleSvc extends Svc{
         cal.add(Calendar.MONTH, 1);
         end.setTime(cal.getTimeInMillis());
     } // End of calcStartAndEndDate()
+
+    
     
 }
 
