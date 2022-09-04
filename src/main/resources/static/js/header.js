@@ -1559,3 +1559,24 @@ function calWeekDay(date){
 
     return week;
 }
+
+function calDays(date, type){
+    let getDate, year, month, day, resultDate;
+
+    getDate = new Date(date);
+
+    year = getDate.getFullYear();
+    month = getDate.getMonth();
+    day = getDate.getDate();
+
+	
+    if(type === "last"){
+		day = day - 9;
+        resultDate = new Date(year, month, day).toISOString().substring(0, 10).replaceAll("-", "");
+    }else{
+		day = day + 9;
+        resultDate = new Date(year, month, day).toISOString().substring(0, 10).replaceAll("-", "");
+    }
+
+    return resultDate;
+}

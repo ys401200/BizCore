@@ -12,7 +12,7 @@ $(document).ready(() => {
 function getWorkReport() {
 	let url, method, data, type;
 
-	url = "/api/schedule/workreport/personal/20220714";
+	url = "/api/schedule/workreport/personal/";
 	method = "get";
 	data = "";
 	type = "list";
@@ -60,8 +60,12 @@ function drawWorkReportList() {
     getNextDate = calDays(start, "next");
 
     html = "<div class='reportBtns'>";
+    html += "<div class='reportBtnPrev'>";
     html += "<button type='button' data-date='" + getLastDate + "' onclick='workReportWeekBtn(this);'>이전</button>";
+    html += "</div>";
+    html += "<div class='reportBtnNext'>";
     html += "<button type='button' data-date='" + getNextDate + "' onclick='workReportWeekBtn(this);'>다음</button>";
+    html += "</div>";
     html += "</div>";
 
     html += "<div class='reportContents'>";
@@ -105,26 +109,6 @@ function drawWorkReportList() {
 
     workReportContent.html(html);
     setTiny();
-}
-
-function calDays(date, type){
-    let getDate, year, month, day, resultDate;
-
-    getDate = new Date(date);
-
-    year = getDate.getFullYear();
-    month = getDate.getMonth();
-    day = getDate.getDate();
-
-    if(type === "last"){
-        resultDate = new Date(year, month, day - 8).toISOString().substring(0, 10).replaceAll("-", "");
-    }else{
-        resultDate = new Date(year, month, day + 8).toISOString().substring(0, 10).replaceAll("-", "");
-    }
-
-    console.log(resultDate);
-
-    return resultDate;
 }
 
 function workReportSuccessList(result){

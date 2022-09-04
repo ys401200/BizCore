@@ -10,10 +10,9 @@
 		<div class="workJournalContainer">
             <hr />
             <span>업무일지검토</span>
-			<button type="button" id="borBtn" onclick="journalChangeBtn(this);">업무일지(차주)</button>
-			<button type="button" id="absBtn" onclick="journalChangeBtn(this);">업무일지(금주)</button>
+			<button type="button" data-change="bor" onclick="journalChangeBtn(this);">업무일지(차주)</button>
 			<button type="button" onclick="print_pdf();">일괄다운로드(PDF)</button>
-			<button type="button" onclick="solPdf();">개별다운로드(PDF)</button>
+			<button type="button" id="solPdf">개별다운로드(PDF)</button>
 			<button type="button" onclick="solPrint();">출력</button>
             <div class="workJournalContent"></div>
         </div>

@@ -30,6 +30,31 @@
 	padding: 20px;
 }
 
+.workReportContainer .workReportContent .reportBtns{
+	overflow: hidden;
+	margin-bottom: 20px;
+}
+
+.workReportContainer .workReportContent .reportBtns .reportBtnPrev{
+	width: 2%;
+	float: left;
+}
+
+.workReportContainer .workReportContent .reportBtns .reportBtnPrev > button{
+	width: 50px;
+	height: 50px;
+}
+
+.workReportContainer .workReportContent .reportBtns .reportBtnNext{
+	width: 3%;
+	float: right;
+}
+
+.workReportContainer .workReportContent .reportBtns .reportBtnNext > button{
+	width: 50px;
+	height: 50px;
+}
+
 .workReportContainer .workReportContent .reportHeader,
 .workReportContainer .workReportContent .reportContent{
 	display: grid;

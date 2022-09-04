@@ -140,6 +140,7 @@ function showModal() {
     " <button onclick='check(this.value)' value='conduct'>수신 ></button>" +
     "<button onclick='check(this.value)' value='refer'>참조 ></button></div>" +
     "<div class='innerDetail' id='lineRight'>" +
+    "<div><button type='button'>자주 쓰는 결재선</button><button type='button'></button></div> " +
     " <label for='examine'> 검토" +
     "<div class='typeContainer' id='examine'></div>" +
     "</label>" +
@@ -302,10 +303,10 @@ function createLine() {
   lineTarget.css("display", "block");
   let my = storage.my;
   let today = getYmdSlash();
-  let testHtml = "<div class='lineGridContainer'><div class='lineTitle'>작성</div><div class='lineSet'><div class='twoBorderLast'>직급</div><div class='twoBorderLast'>" + storage.user[my].userName + "</div><div class='twoBorderLast'>서명</div><div class='dateBorderLast'>" + today + "</div></div>";
+  let testHtml = "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작성</div><div class='lineSet'><div class='twoBorder'>직급</div><div class='twoBorder'>" + storage.user[my].userName + "</div><div class='twoBorder'>서명</div><div class='dateBorder'>" + today + "</div></div></div>";
   let testHtml2 = "<div class='lineGridContainer'>";
   let referHtml = "<div>참조</div>";
-  let target = $(".typeContainer");
+  let target = $(".typeContainer"); // 결재선 생성 모달에서 결재 타입 각각의 container 
   let titleArr = ["검토", "합의", "결재", "수신", "열람", "참조"];
   let titleId = ["examine", "agree", "approval", "conduct", " read", "refer"]
 
@@ -316,11 +317,13 @@ function createLine() {
 
 
   for (let i = 0; i < target.length; i++) {
-    if (target[i].children.length != 0 && i < 3) {
+    if (target[i].children.length != 0 && i < 3) { // 해당 결재 타입에 설정된 사람이 없지 않으면서 결재 타입이 검토 합의 결재인 경우 
       testHtml += "<div class='lineGrid'><div class='lineTitle'>" + titleArr[i] + "</div>"
-    } else if (target[i].children.length != 0 && i == 3) {
+    } else if (target[i].children.length != 0 && i == 3) { // 결재타입이 수신인 경우 
       testHtml2 += "<div class='lineGrid'><div class='lineTitle'>" + titleArr[i] + "</div>"
     }
+
+
 
     for (let j = 0; j < target[i].children.length; j++) {
       let id = target[i].children[j].id;
@@ -328,16 +331,27 @@ function createLine() {
       id = id[1];
 
       /// class 이름 , css 수정 
-      if (i < 2 && j < target[i].children.length - 1) {
-        testHtml += "<div class='lineSet'><div class='twoBorder " + formId + "_" + titleId[i] + "_position" + "'>직급</div><div class='twoBorder " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div><div class='twoBorder " + formId + "_" + titleId[i] + "_status'>서명</div><div class='dateBorder " + formId + "_" + titleId[i] + "_approved'>/</div></div>"
-      } else if (i < 2 && j == target[i].children.length - 1) {
-        testHtml += "<div class='lineSet'><div class='twoBorderLast " + formId + "_" + titleId[i] + "_position" + "'>직급</div><div class='twoBorderLast " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div><div class='twoBorderLast " + formId + "_" + titleId[i] + "_status'>서명</div><div class='dateBorderLast  " + formId + "_" + titleId[i] + "_approved'>/</div></div>"
-      } else if (i == 2) {
-        testHtml += "<div class='lineSet'><div class='twoBorder " + formId + "_" + titleId[i] + "_position" + "'>직급</div><div class='twoBorder " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div><div class='twoBorder " + formId + "_" + titleId[i] + "_status'>서명</div><div class='dateBorder " + formId + "_" + titleId[i] + "_approved'>/</div></div>"
-      } else if (i == 3) {
+
+      if (i == 3) {
         testHtml2 += "<div class='lineSet'><div class='twoBorder " + formId + "_" + titleId[i] + "_position" + "'>직급</div><div class='twoBorder " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div><div class='twoBorder " + formId + "_" + titleId[i] + "_status'>서명</div><div class='dateBorder " + formId + "_" + titleId[i] + "_approved'>/</div></div>"
-      } else if (i == 4) {
+      }
+
+      // else if (j == target[i].children.length - 1) {
+      //   testHtml += "<div class='lineSet'><div class='twoBorderLast " + formId + "_" + titleId[i] + "_position" + "'>직급</div><div class='twoBorderLast " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div><div class='twoBorderLast " + formId + "_" + titleId[i] + "_status'>서명</div><div class='dateBorderLast  " + formId + "_" + titleId[i] + "_approved'>/</div></div>"
+      // }
+
+      // else if (i == 2) {
+      //   testHtml += "<div class='lineSet'><div class='twoBorder " + formId + "_" + titleId[i] + "_position" + "'>직급</div><div class='twoBorder " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div><div class='twoBorder " + formId + "_" + titleId[i] + "_status'>서명</div><div class='dateBorder " + formId + "_" + titleId[i] + "_approved'>/</div></div>"
+      // } else if (i == 3) {
+      //   testHtml2 += "<div class='lineSet'><div class='twoBorder " + formId + "_" + titleId[i] + "_position" + "'>직급</div><div class='twoBorder " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div><div class='twoBorder " + formId + "_" + titleId[i] + "_status'>서명</div><div class='dateBorder " + formId + "_" + titleId[i] + "_approved'>/</div></div>"
+      // } 
+
+
+      else if (i == 4) {
         referHtml += "<div class='appendName " + formId + "_" + titleId[i] + "'>직급 " + storage.user[data[id]].userName + "</div>";
+      }
+      else {
+        testHtml += "<div class='lineSet'><div class='twoBorder " + formId + "_" + titleId[i] + "_position" + "'>직급</div><div class='twoBorder " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div><div class='twoBorder " + formId + "_" + titleId[i] + "_status'>서명</div><div class='dateBorder " + formId + "_" + titleId[i] + "_approved'>/</div></div>"
       }
 
     }

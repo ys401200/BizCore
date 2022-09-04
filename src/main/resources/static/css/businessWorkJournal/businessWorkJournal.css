@@ -30,44 +30,58 @@
 .workJournalContainer .workJournalContent{
 	display: grid;
 	grid-template-columns: 10% 90%;
-	text-align: center;
 	padding: 20px;
 	margin-top:10px;
 }
 
-.workJournalContainer .workJournalContent .journalUserHeader,
+.workJournalContainer .workJournalContent .journalUserHeader{
+	display: grid;
+	grid-template-columns: 75% 25%;
+	border-top: 1px solid #000;
+	border-left: 1px solid #000;
+}
 .workJournalContainer .workJournalContent .journalUserBody{
 	display: grid;
 	grid-template-columns: 75% 25%;
+	border-top: 1px solid #000;
+	border-right: 1px solid #000;
+	border-left: 1px solid #000;
 }
 
 .workJournalContainer .workJournalContent .journalUserHeader > div{
-	border-top: 1px solid #000;
-	border-left: 1px solid #000;
-	border-bottom: 1px solid #000;
 	background-color:#ecf3fb;
+	border-right: 1px solid #000;
 }
 
 .workJournalContainer .workJournalContent .journalUserBody > div{
-	border-left: 1px solid #000;
-	border-bottom: 1px solid #000;
 	display:flex;
 	justify-content: center;
+	border-bottom: 1px solid #000;
+}
+
+.workJournalContainer .workJournalContent .journalUserBody .userBodyFirst{
+	border-right: 1px solid #000;
+	display: flex;
+	align-items: center; 
+	justify-content: center;
+}
+
+.workJournalContainer .workJournalContent .journalUserBody .userBodyFirst:hover{
+	cursor: pointer;
+	background-color: #ecf3fb;
 }
 
 .workJournalContainer .workJournalContent .journalPreviewHeader{
 	border-top: 1px solid #000;
 	border-right: 1px solid #000;
-	border-bottom: 1px solid #000;
-	border-left: 1px solid #000;
 	background-color:#ecf3fb;
 }
 
-.workJournalContainer .workJournalContent .journalPreviewBody{
-	border-left: 1px solid #000;
+.workJournalContainer .workJournalContent .journalPreview{
+	padding: 20px;
+	border-top: 1px solid #000;
 	border-right: 1px solid #000;
 	border-bottom: 1px solid #000;
-	padding: 20px;
 }
 
 .workJournalContainer button, select, input[type="text"]{
