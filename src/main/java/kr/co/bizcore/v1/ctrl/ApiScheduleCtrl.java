@@ -333,7 +333,7 @@ public class ApiScheduleCtrl extends Ctrl {
                 item = new String[3];
                 item[0] = schedule.getString("job");
                 item[1] = schedule.getString("no");
-                item[2] = schedule.getBoolean("check") ? "1" : "0";
+                item[2] = schedule.getBoolean("reportß") ? "1" : "0";
                 checked.add(item);
             }
 

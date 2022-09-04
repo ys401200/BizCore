@@ -48,5 +48,6 @@ public interface SystemMapper {
     @Select("SELECT fileName, CAST(`size` AS CHAR) AS `size` FROM bizcore.attached WHERE compId = #{compId} AND funcName = #{funcName} AND funcNo = #{funcNo} AND deleted IS NULL")
     public List<HashMap<String, String>> getAttachedFileInfo(@Param("compId") String compId,@Param("funcName") String funcName, @Param("funcNo") int funcNo);
 
-
+    @Select("SELECT fileName, CAST(size as CHAR) AS size, cast(removed AS char) AS removed FROM bizcore.attached WHERE compid = #{compId} AND funcName = #{funcName} AND funcNo = #{no} AND deleted IS NULL")
+    public List<HashMap<String, String>> getAttachedFileList(@Param("compId") String compId, @Param("funcName") String funcName, @Param("no") int no);
 }

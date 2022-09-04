@@ -21,6 +21,52 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/attached")
 public class ApiAttachedCtrl extends Ctrl{
 
+    @GetMapping("/sopp/{no:\\d+}")
+    public void apiAttachedSoppListGet(HttpServletRequest request, HttpServletResponse response, @PathVariable("no") int no, @PathVariable("fileName") String fileName){
+        sendFileList(request, "sopp", no);
+    }
+
+    @GetMapping("/contract/{no:\\d+}")
+    public void apiAttachedContractListGet(HttpServletRequest request, HttpServletResponse response, @PathVariable("no") int no, @PathVariable("fileName") String fileName){
+        sendFileList(request, "sopp", no);
+    }
+
+    @GetMapping("/docapp/{no:\\d+}")
+    public void apiAttachedDocappListGet(HttpServletRequest request, HttpServletResponse response, @PathVariable("no") int no, @PathVariable("fileName") String fileName){
+        sendFileList(request, "sopp", no);
+    }
+
+    //@GetMapping("/filebox/{no:\\d+}/{fileName}")
+    public void apiAttachedFileboxListGet(HttpServletRequest request, HttpServletResponse response, @PathVariable("no") int no, @PathVariable("fileName") String fileName){
+        sendFileList(request, "sopp", no);
+    }
+
+    private String sendFileList(HttpServletRequest request, String funcName, int funcNo){
+        HttpSession session = null;
+        ServletOutputStream out = null;
+        String compId = null, result = null, data = null, aesKey = null, aesIv = null;
+        
+        session = request.getSession();
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        compId = (String)session.getAttribute("compId");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+        }else{
+            data = attachedService.getAttachedFileList(compId, funcName, funcNo);
+            if(data == null){
+                result = "{\"result\":\"failure\",\"msg\":\"An error occurred.\"}";
+            }else{
+                data = decAes(data, aesKey, aesIv);
+                result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
+            }
+        }
+
+        return result;
+    } // End of sendFileList()
+
     @GetMapping("/sopp/{no:\\d+}/{fileName}")
     public void apiAttachedSoppGet(HttpServletRequest request, HttpServletResponse response, @PathVariable("no") int no, @PathVariable("fileName") String fileName){
         sendFileData(request, response, "sopp", no, fileName);

@@ -9,6 +9,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,6 +106,26 @@ public class AttachedService extends Svc{
         if(!file.exists())      return -2;
         else if(file.delete())  return 0;
         else                    return -1;
+    }
+
+    public String getAttachedFileList(String compId, String funcName, int funcNo) {
+        String result = "[";
+        List<HashMap<String, String>> list = null;
+        HashMap<String, String> each = null;
+        int x = 0;
+
+        list = systemMapper.getAttachedFileList(compId, funcName, funcNo);
+        for(x = 0 ; x < list.size() ; x++){
+            each = list.get(x);
+            if(result == null)  result = "[";
+            else    result += ",";
+            result += ("{\"fileName\":\"" + each.get("fileName") + "\",");
+            result += ("\"size\":" + each.get("size") + ",");
+            result += ("\"removed\":" + !each.get("removed").equals("0") + "}");
+        }
+        result += "]";
+
+        return result;
     }
     
 }
