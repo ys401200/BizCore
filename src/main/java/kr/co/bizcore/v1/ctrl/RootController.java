@@ -70,13 +70,14 @@ public class RootController extends Ctrl {
         FileInputStream reader = null;
         String compId = null;
         HttpSession session = null;
-        String faviconPath = null;
+        String path = systemService.fileStoragePath, s = File.separator, faviconPath = null;
 
         session = request.getSession();
         compId = (String)session.getAttribute("compId");
         if(compId == null)  compId = (String)request.getAttribute("compId");
         if(compId == null)  compId = "vtek";
-        faviconPath = System.getProperty("user.dir") + "/src/main/resources/static/favicon/" + compId + ".png";
+
+        faviconPath = path + s + compId + s + "favicon.png";
         reader = new FileInputStream(faviconPath);
         result = reader.readAllBytes();
         
