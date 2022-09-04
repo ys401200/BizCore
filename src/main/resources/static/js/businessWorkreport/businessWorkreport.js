@@ -21,8 +21,13 @@ function getWorkReport() {
 }
 
 function drawWorkReportList() {
-	let workReportContent, jsonData, html = "", header, disDate, start, end, week, getLastDate, getNextDate;
-    jsonData = storage.workReportList;
+	let workReportContent, jsonData, html = "", header, disDate, start, end, week, getLastDate, getNextDate, nowDate;
+    
+    if(storage.workReportList.workReport === null){
+        jsonData = storage.workReportList.previousWeek;
+    }else{
+        jsonData = storage.workReportList.workReport;
+    }
 
 	workReportContent = $(".workReportContainer .workReportContent");
 
@@ -50,11 +55,10 @@ function drawWorkReportList() {
         },
     ];
 
-    disDate = dateDis(jsonData.start);
+    start = new Date(storage.workReportList.start);
+    start = new Date(start.getTime() + 86400000 * 7);
+    disDate = dateDis(start);
     start = dateFnc(disDate);
-
-    disDate = dateDis(jsonData.end);
-    end = dateFnc(disDate);
 
     getLastDate = calDays(start, "last");
     getNextDate = calDays(start, "next");
@@ -83,31 +87,54 @@ function drawWorkReportList() {
     
     html += "<div class='reportContent'>";
     
-    if(jsonData.workReport !== null){
-        html += "<div style='grid-row: span " + jsonData.workReport.schedules.length + "; justify-content: center;'>" + jsonData.week + "</div>";
-        
-        for(let i = 0; i < jsonData.workReport.schedules.length; i++){
-            week = calWeekDay(jsonData.workReport.schedules[i].date);
-            html += "<div style='justify-content: center;'>" + week + "</div>";
-            html += "<div style='justify-content: left;'>" + jsonData.workReport.schedules[i].title + "</div>";
-            html += "<div style='justify-content: left;'>" + jsonData.workReport.schedules[i].content + "</div>";
-            html += "<div style='justify-content: center;'>" + start + "</div>";
-            html += "<div style='justify-content: center;'>" + end + "</div>";
-            html += "<div style='justify-content: center;'><input type='checkbox'></div>"; 
+    let rowLength = 0;
+    for(let i = 0; i < jsonData.schedules.length; i++){
+        let date = new Date(jsonData.schedules[i].date);
+        let dateStart = new Date(storage.workReportList.start);
+        if(dateStart.getTime() + 86400000 * 7 < date.getTime()){
+            rowLength++;
         }
-        html += "<div style='justify-content: center;'>추가기재사항</div>";
-        html += "<div style='grid-column: span 5'>";
-        html += "<textarea style='width: -webkit-fill-available;'></textarea>";
-        html += "</div>";
-        html += "<div style='justify-content: center;'><input type='checkbox'></div>"; 
+    }
+
+    html += "<div style='grid-row: span " + rowLength + "; justify-content: center;'>" + storage.workReportList.week + "</div>";
+    
+    for(let i = 0; i < jsonData.schedules.length; i++){
+        let date = new Date(jsonData.schedules[i].date);
+        let dateStart = new Date(storage.workReportList.start);
+        if(dateStart.getTime() + 86400000 * 7 < date.getTime()){
+            week = calWeekDay(jsonData.schedules[i].date);
+            html += "<div style='justify-content: center;'>" + week + "</div>";
+            html += "<div style='justify-content: left;'>" + jsonData.schedules[i].title + "</div>";
+            html += "<div style='justify-content: left;'>" + jsonData.schedules[i].content + "</div>";
+            html += "<div style='justify-content: center;'>" + date.toISOString().substring(0, 10) + "</div>";
+            html += "<div style='justify-content: center;'>" + date.toISOString().substring(0, 10) + "</div>";
+            html += "<div style='justify-content: center;'><input type='checkbox' id='schedCheck' data-id='" + jsonData.schedules[i].no + "' data-job='" + jsonData.schedules[i].job + "' checked></div>"; 
+        }
+    }
+    html += "<div style='justify-content: center;'>추가기재사항</div>";
+    html += "<div style='grid-column: span 5'>";
+    html += "<textarea id='currentWeek' style='width: -webkit-fill-available;'>" + jsonData.previousWeek + "</textarea>";
+    html += "</div>";
+
+    if(jsonData.previousWeekCheck == true){
+        html += "<div style='justify-content: center;'><input type='checkbox' id='previousWeekCheck' checked></div>"; 
     }else{
-        alert("데이터가 없습니다.");
+        html += "<div style='justify-content: center;'><input type='checkbox' id='previousWeekCheck'></div>";
     }
 
     html += "</div>";
     html += "</div>";
 
     workReportContent.html(html);
+
+    nowDate = new Date();
+    nowDate = nowDate.toISOString().substring(0, 10).replaceAll("-", "");
+
+    if($("#reportInsertBtn").attr("onclick") === undefined){
+        $("#reportInsertBtn").attr("onclick", "reportInsert(" + nowDate + ")");
+    }
+
+    tinymce.remove();
     setTiny();
 }
 
@@ -129,11 +156,61 @@ function workReportWeekBtn(e){
     let url, method, data, type, getDate;
 
     getDate = $(e).data("date");
+    $("#reportInsertBtn").attr("onclick", "reportInsert(" + getDate + ")");
 
     url = "/api/schedule/workreport/personal/" + getDate;
-    console.log(url);
     method = "get";
     type = "list";
 
     crud.defaultAjax(url, method, data, type, workReportSuccessList, workReportErrorList);
+}
+
+function reportInsert(date){
+    let url, method, data, type, jsonData, dataArray = [];
+
+    if(storage.workReportList.workReport === null){
+        jsonData = storage.workReportList.previousWeek;
+    }else{
+        jsonData = storage.workReportList.workReport;
+    }
+
+    $("#schedCheck").each((index, item) => {
+        let temp = 
+            {
+                "no": $(item).data("id").toString(),
+                "job": $(item).data("job"),
+                "report": ($(item).is(":checked") == true) ? true : false,
+            };
+
+        dataArray.push(temp);
+    });
+
+    console.log(dataArray);
+
+    url = "/api/schedule/workreport/personal/" + date;
+    method = "post";
+    data = {
+        "currentWeek": jsonData.currentWeek,
+        "currentWeekCheck": jsonData.currentWeekCheck,
+        "previousWeek": tinymce.activeEditor.getContent(),
+        "previousWeekCheck": ($("#previousWeekCheck").is(":checked") == true) ? true : false,
+        "schedule": dataArray,
+    };
+    type = "insert";
+
+    console.log(data);
+
+    data = JSON.stringify(data);
+    data = cipher.encAes(data);
+
+    crud.defaultAjax(url, method, data, type, workReportSuccessInsert, workReportErrorInsert);
+}
+
+function workReportSuccessInsert(){
+    alert("등록완료");
+    location.reload();
+}
+
+function workReportErrorInsert(){
+    alert("에러");
 }

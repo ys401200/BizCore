@@ -1118,89 +1118,10 @@ function tabItemClick(e){
 }
 
 //매입매출내역 리스트
-function createTabTradeList(no){
+function createTabTradeList(result){
 	let html = "";
 
 	html = "<div class='tradeList' id='tabTradeList'>";
-
-	// html += "<div class='tradeFirstTitle'>";
-	// html += "<div class='tradeFirstTitleItem'>구분(매입/매출)</div>";
-	// html += "<div class='tradeFirstTitleItem'>거래일자</div>";
-	// html += "<div class='tradeFirstTitleItem'>분할횟수</div>";
-	// html += "<div class='tradeFirstTitleItem'>단위(개월)</div>";
-	// html += "<div class='tradeFirstTitleItem'>계약금액</div>";
-	// html += "<div class='tradeFirstTitleItem'>거래처(매입/매출처)</div>";
-	// html += "<div class='tradeFirstTitleItem'>항목</div>";
-	// html += "</div>";
-
-	// html += "<div class='tradeFirstFormContent'>";
-	// html += "<div class='tradeFirstContentItem'>";
-	// html += "<select>"
-	// html += "<option value='매입'>매입</option>";
-	// html += "<option value='매출'>매출</option>";
-	// html += "</select>";
-	// html += "</div>"
-	// html += "<div class='tradeFirstContentItem'>";
-	// html += "<input type='date' />";
-	// html += "</div>";
-	// html += "<div class='tradeFirstContentItem'>";
-	// html += "<input type='text' />";
-	// html += "</div>";
-	// html += "<div class='tradeFirstContentItem'>";
-	// html += "<input type='text' />";
-	// html += "</div>";
-	// html += "<div class='tradeFirstContentItem'>";
-	// html += "<input type='text' />";
-	// html += "</div>";
-	// html += "<div class='tradeFirstContentItem'>";
-	// html += "<input type='text' />";
-	// html += "</div>";
-	// html += "<div class='tradeFirstContentItem'>";
-	// html += "<div>";
-	// html += "<select>";
-	// html += "<option value='항목선택'>항목선택</option>";
-	// html += "<option value='직접입력'>직접입력</option>";
-	// html += "</select>";
-	// html += "</div>";
-	// html += "<div>";
-	// html += "<input type='text' />";
-	// html += "</div>";
-	// html += "</div>";
-	// html += "</div>";
-
-	// html += "<div class='tradeSecondFormTitle'>";
-	// html += "<div class='tradeSecondTitleItem'>단가</div>";
-	// html += "<div class='tradeSecondTitleItem'>수량</div>";
-	// html += "<div class='tradeSecondTitleItem'>공급가</div>";
-	// html += "<div class='tradeSecondTitleItem'>부가세</div>";
-	// html += "<div class='tradeSecondTitleItem'>합계금액</div>";
-	// html += "<div class='tradeSecondTitleItem'>승인번호</div>";
-	// html += "<div class='tradeSecondTitleItem'>적요</div>";
-	// html += "</div>";
-
-	// html += "<div class='tradeSecondFormContent'>";
-	// html += "<div class='tradeSecondContentItem'>";
-	// html += "<input type='text' />";
-	// html += "</div>"
-	// html += "<div class='tradeSecondContentItem'>";
-	// html += "<input type='text' />";
-	// html += "</div>";
-	// html += "<div class='tradeSecondContentItem'>";
-	// html += "<input type='text' />";
-	// html += "</div>";
-	// html += "<div class='tradeSecondContentItem'>";
-	// html += "<input type='text' />";
-	// html += "</div>";
-	// html += "<div class='tradeSecondContentItem'>";
-	// html += "<input type='text' />";
-	// html += "</div>";
-	// html += "<div class='tradeSecondContentItem'>";
-	// html += "<input type='text' />";
-	// html += "</div>";
-	// html += "<div class='tradeSecondContentItem'>";
-	// html += "<input type='text' />";
-	// html += "</div>";
-	// html += "</div>";
 
 	html += "<div class='tradeThirdFormTitle'>";
 	html += "<div class='tradeThirdTitleItem'>구분(등록/수정일)</div>";
@@ -1219,94 +1140,251 @@ function createTabTradeList(no){
 	
 	html += "<div class='tradeThirdFormContent'>";
 
-	$.ajax({
-		url: "/api/trade/" + no,
-		method: "get",
-		async: false,
-		dataType: "json",
-		success:function(result){
-			let jsonData, disDate, setDate, customer, product, netPrice, quantity, tax, amount, total, remark, vatSerial, calTotal = 0;
-			jsonData = cipher.decAes(result.data);
-			jsonData = JSON.parse(jsonData);
+	if(result.length > 0){
+		let disDate, setDate, customer, product, netPrice, quantity, tax, amount, total, remark, vatSerial, calTotal = 0;
 
-			html += "<div class='tradeThirdFormContentDiv'>";
+		html += "<div class='tradeThirdFormContentDiv'>";
+		
+		for(let i = 0; i < result.length; i++){
+			if(result[i].type === "1101"){
+				disDate = dateDis(result[i].created, result[i].modified);
+				setDate = dateFnc(disDate);
+				customer = (result[i].customer == 0 || result[i].customer === null || result[i].customer === undefined) ? "없음 " : storage.customer[result[i].customer].name;
+				product = (result[i].product === null || result[i].product == 0 || result[i].product === undefined) ? "없음" : "임시 항목";
+				netPrice = (result[i].netPrice == 0 || result[i].netPrice === null || result[i].netPrice === undefined) ? 0 : numberFormat(result[i].netPrice);
+				quantity = (result[i].quantity == 0 || result[i].quantity === null || result[i].quantity === undefined) ? 0 : result[i].quantity;
+				tax = (result[i].tax == 0 || result[i].tax === null || result[i].tax === undefined) ? 0 : numberFormat(result[i].tax);
+				amount = (result[i].amount == 0 || result[i].amount === null || result[i].amount === undefined) ? 0 : numberFormat(result[i].amount);
+				total = (result[i].total == 0 || result[i].total === null || result[i].total === undefined) ? 0 : numberFormat(result[i].total);
+				remark = (result[i].remark === null || result[i].remark === "" || result[i].remark === undefined) ? "비고 없음" : result[i].remark;
+				vatSerial = (result[i].vatSerial === null || result[i].vatSerial === "" || result[i].vatSerial === undefined) ? "없음" : result[i].vatSerial;
 
-			for(let i = 0; i < jsonData.length; i++){
-				if(jsonData[i].type === "1101"){
-					disDate = dateDis(jsonData[i].created, jsonData[i].modified);
-					setDate = dateFnc(disDate);
-					customer = (jsonData[i].customer == 0 || jsonData[i].customer === null || jsonData[i].customer === undefined) ? "없음 " : storage.customer[jsonData[i].customer].name;
-					product = (jsonData[i].product === null || jsonData[i].product == 0 || jsonData[i].product === undefined) ? "없음" : "임시 항목";
-					netPrice = (jsonData[i].netPrice == 0 || jsonData[i].netPrice === null || jsonData[i].netPrice === undefined) ? 0 : numberFormat(jsonData[i].netPrice);
-					quantity = (jsonData[i].quantity == 0 || jsonData[i].quantity === null || jsonData[i].quantity === undefined) ? 0 : jsonData[i].quantity;
-					tax = (jsonData[i].tax == 0 || jsonData[i].tax === null || jsonData[i].tax === undefined) ? 0 : numberFormat(jsonData[i].tax);
-					amount = (jsonData[i].amount == 0 || jsonData[i].amount === null || jsonData[i].amount === undefined) ? 0 : numberFormat(jsonData[i].amount);
-					total = (jsonData[i].total == 0 || jsonData[i].total === null || jsonData[i].total === undefined) ? 0 : numberFormat(jsonData[i].total);
-					remark = (jsonData[i].remark === null || jsonData[i].remark === "" || jsonData[i].remark === undefined) ? "비고 없음" : jsonData[i].remark;
-					vatSerial = (jsonData[i].vatSerial === null || jsonData[i].vatSerial === "" || jsonData[i].vatSerial === undefined) ? "없음" : jsonData[i].vatSerial;
-	
-					html += "<div class='tradeThirdContentItem'>" + setDate + "</div>";
-					html += "<div class='tradeThirdContentItem'>" + customer + "</div>";
-					html += "<div class='tradeThirdContentItem'>" + product + "</div>";
-					html += "<div class='tradeThirdContentItem'>" + netPrice + "</div>";
-					html += "<div class='tradeThirdContentItem'>" + quantity + "</div>";
-					html += "<div class='tradeThirdContentItem'>" + tax + "</div>";
-					html += "<div class='tradeThirdContentItem'>" + amount + "</div>";
-					html += "<div class='tradeThirdContentItem'>" + total + "</div>";
-					html += "<div class='tradeThirdContentItem'>" + remark + "</div>";
-					html += "<div class='tradeThirdContentItem'>" + vatSerial + "</div>";
-					html += "<div class='tradeThirdContentItem'>수정</div>";
-					html += "<div class='tradeThirdContentItem'>삭제</div>";
+				html += "<div class='tradeThirdContentItem'>" + setDate + "</div>";
+				html += "<div class='tradeThirdContentItem'>" + customer + "</div>";
+				html += "<div class='tradeThirdContentItem'>" + product + "</div>";
+				html += "<div class='tradeThirdContentItem'>" + netPrice + "</div>";
+				html += "<div class='tradeThirdContentItem'>" + quantity + "</div>";
+				html += "<div class='tradeThirdContentItem'>" + tax + "</div>";
+				html += "<div class='tradeThirdContentItem'>" + amount + "</div>";
+				html += "<div class='tradeThirdContentItem'>" + total + "</div>";
+				html += "<div class='tradeThirdContentItem'>" + remark + "</div>";
+				html += "<div class='tradeThirdContentItem'>" + vatSerial + "</div>";
+				html += "<div class='tradeThirdContentItem'>수정</div>";
+				html += "<div class='tradeThirdContentItem'>삭제</div>";
 
-					calTotal += parseInt(jsonData[i].total);
-				}
+				calTotal += parseInt(result[i].total);
 			}
-
-			html +="</div>";
-			html += "<div class='tradeThirdFormContentTotal'><span>매입합계</span><span>" + numberFormat(calTotal) + "</span></div>";
-			html += "<div class='tradeThirdFormContentDiv'>";
-
-			calTotal = 0;
-
-			for(let i = 0; i < jsonData.length; i++){
-				if(jsonData[i].type === "1102"){
-					disDate = dateDis(jsonData[i].created, jsonData[i].modified);
-					setDate = dateFnc(disDate);
-					customer = (jsonData[i].customer == 0 || jsonData[i].customer === null || jsonData[i].customer === undefined) ? "없음 " : storage.customer[jsonData[i].customer].name;
-					product = (jsonData[i].product === null || jsonData[i].product == 0 || jsonData[i].product === undefined) ? "없음" : "임시 항목";
-					netPrice = (jsonData[i].netPrice == 0 || jsonData[i].netPrice === null || jsonData[i].netPrice === undefined) ? 0 : numberFormat(jsonData[i].netPrice);
-					quantity = (jsonData[i].quantity == 0 || jsonData[i].quantity === null || jsonData[i].quantity === undefined) ? 0 : jsonData[i].quantity;
-					tax = (jsonData[i].tax == 0 || jsonData[i].tax === null || jsonData[i].tax === undefined) ? 0 : numberFormat(jsonData[i].tax);
-					amount = (jsonData[i].amount == 0 || jsonData[i].amount === null || jsonData[i].amount === undefined) ? 0 : numberFormat(jsonData[i].amount);
-					total = (jsonData[i].total == 0 || jsonData[i].total === null || jsonData[i].total === undefined) ? 0 : numberFormat(jsonData[i].total);
-					remark = (jsonData[i].remark === null || jsonData[i].remark === "" || jsonData[i].remark === undefined) ? "비고 없음" : jsonData[i].remark;
-					vatSerial = (jsonData[i].vatSerial === null || jsonData[i].vatSerial === "" || jsonData[i].vatSerial === undefined) ? "없음" : jsonData[i].vatSerial;
-	
-					html += "<div class='tradeThirdContentItem'>" + setDate + "</div>";
-					html += "<div class='tradeThirdContentItem'>" + customer + "</div>";
-					html += "<div class='tradeThirdContentItem'>" + product + "</div>";
-					html += "<div class='tradeThirdContentItem'>" + netPrice + "</div>";
-					html += "<div class='tradeThirdContentItem'>" + quantity + "</div>";
-					html += "<div class='tradeThirdContentItem'>" + tax + "</div>";
-					html += "<div class='tradeThirdContentItem'>" + amount + "</div>";
-					html += "<div class='tradeThirdContentItem'>" + total + "</div>";
-					html += "<div class='tradeThirdContentItem'>" + remark + "</div>";
-					html += "<div class='tradeThirdContentItem'>" + vatSerial + "</div>";
-					html += "<div class='tradeThirdContentItem'>수정</div>";
-					html += "<div class='tradeThirdContentItem'>삭제</div>";
-
-					calTotal += parseInt(jsonData[i].total);
-				}
-			}
-
-			html += "</div>";
-			html += "<div class='tradeThirdFormContentTotal'><span>매출합계</span><span>" + numberFormat(calTotal) + "</span></div>";
 		}
-	});
+
+		html +="</div>";
+		html += "<div class='tradeThirdFormContentTotal'><span>매입합계</span><span>" + numberFormat(calTotal) + "</span></div>";
+		html += "<div class='tradeThirdFormContentDiv'>";
+
+		calTotal = 0;
+
+		for(let i = 0; i < result.length; i++){
+			if(result[i].type === "1102"){
+				console.log(result[i].created);
+				disDate = dateDis(result[i].created, result[i].modified);
+				setDate = dateFnc(disDate);
+				customer = (result[i].customer == 0 || result[i].customer === null || result[i].customer === undefined) ? "없음 " : storage.customer[result[i].customer].name;
+				product = (result[i].product === null || result[i].product == 0 || result[i].product === undefined) ? "없음" : "임시 항목";
+				netPrice = (result[i].netPrice == 0 || result[i].netPrice === null || result[i].netPrice === undefined) ? 0 : numberFormat(result[i].netPrice);
+				quantity = (result[i].quantity == 0 || result[i].quantity === null || result[i].quantity === undefined) ? 0 : result[i].quantity;
+				tax = (result[i].tax == 0 || result[i].tax === null || result[i].tax === undefined) ? 0 : numberFormat(result[i].tax);
+				amount = (result[i].amount == 0 || result[i].amount === null || result[i].amount === undefined) ? 0 : numberFormat(result[i].amount);
+				total = (result[i].total == 0 || result[i].total === null || result[i].total === undefined) ? 0 : numberFormat(result[i].total);
+				remark = (result[i].remark === null || result[i].remark === "" || result[i].remark === undefined) ? "비고 없음" : result[i].remark;
+				vatSerial = (result[i].vatSerial === null || result[i].vatSerial === "" || result[i].vatSerial === undefined) ? "없음" : result[i].vatSerial;
+
+				html += "<div class='tradeThirdContentItem'>" + setDate + "</div>";
+				html += "<div class='tradeThirdContentItem'>" + customer + "</div>";
+				html += "<div class='tradeThirdContentItem'>" + product + "</div>";
+				html += "<div class='tradeThirdContentItem'>" + netPrice + "</div>";
+				html += "<div class='tradeThirdContentItem'>" + quantity + "</div>";
+				html += "<div class='tradeThirdContentItem'>" + tax + "</div>";
+				html += "<div class='tradeThirdContentItem'>" + amount + "</div>";
+				html += "<div class='tradeThirdContentItem'>" + total + "</div>";
+				html += "<div class='tradeThirdContentItem'>" + remark + "</div>";
+				html += "<div class='tradeThirdContentItem'>" + vatSerial + "</div>";
+				html += "<div class='tradeThirdContentItem'>수정</div>";
+				html += "<div class='tradeThirdContentItem'>삭제</div>";
+
+				calTotal += parseInt(result[i].total);
+			}
+		}
+
+		html += "</div>";
+		html += "<div class='tradeThirdFormContentTotal'><span>매출합계</span><span>" + numberFormat(calTotal) + "</span></div>";
+	}else{
+		html += "<div class='tradeThirdFormContentDiv'>";
+		html += "<div class='tradeThirdContentItem' style='grid-column: span 12; text-align:center;'>데이터가 없습니다.</div>";
+		html += "</div>";
+	}
 
 	html += "</div>";
 
 	return html;
+}
+
+function tradeInsertForm(){
+	let html = "";
+
+	html += "<div class='tradeList'>";
+	html += "<div class='tradeFirstTitle'>";
+	html += "<div class='tradeFirstTitleItem'>구분(매입/매출)</div>";
+	html += "<div class='tradeFirstTitleItem'>거래일자</div>";
+	html += "<div class='tradeFirstTitleItem'>분할횟수</div>";
+	html += "<div class='tradeFirstTitleItem'>단위(개월)</div>";
+	html += "<div class='tradeFirstTitleItem'>계약금액</div>";
+	html += "<div class='tradeFirstTitleItem'>거래처(매입/매출처)</div>";
+	html += "<div class='tradeFirstTitleItem'>항목</div>";
+	html += "</div>";
+
+	html += "<div class='tradeFirstFormContent'>";
+	html += "<div class='tradeFirstContentItem'>";
+	html += "<select>"
+	html += "<option value='매입'>매입</option>";
+	html += "<option value='매출'>매출</option>";
+	html += "</select>";
+	html += "</div>"
+	html += "<div class='tradeFirstContentItem'>";
+	html += "<input type='date' />";
+	html += "</div>";
+	html += "<div class='tradeFirstContentItem'>";
+	html += "<input type='text' />";
+	html += "</div>";
+	html += "<div class='tradeFirstContentItem'>";
+	html += "<input type='text' />";
+	html += "</div>";
+	html += "<div class='tradeFirstContentItem'>";
+	html += "<input type='text' />";
+	html += "</div>";
+	html += "<div class='tradeFirstContentItem'>";
+	html += "<input type='text' />";
+	html += "</div>";
+	html += "<div class='tradeFirstContentItem'>";
+	html += "<div>";
+	html += "<select>";
+	html += "<option value='항목선택'>항목선택</option>";
+	html += "<option value='직접입력'>직접입력</option>";
+	html += "</select>";
+	html += "</div>";
+	html += "<div>";
+	html += "<input type='text' />";
+	html += "</div>";
+	html += "</div>";
+	html += "</div>";
+
+	html += "<div class='tradeSecondFormTitle'>";
+	html += "<div class='tradeSecondTitleItem'>단가</div>";
+	html += "<div class='tradeSecondTitleItem'>수량</div>";
+	html += "<div class='tradeSecondTitleItem'>공급가</div>";
+	html += "<div class='tradeSecondTitleItem'>부가세</div>";
+	html += "<div class='tradeSecondTitleItem'>합계금액</div>";
+	html += "<div class='tradeSecondTitleItem'>승인번호</div>";
+	html += "<div class='tradeSecondTitleItem'>적요</div>";
+	html += "</div>";
+
+	html += "<div class='tradeSecondFormContent'>";
+	html += "<div class='tradeSecondContentItem'>";
+	html += "<input type='text' />";
+	html += "</div>"
+	html += "<div class='tradeSecondContentItem'>";
+	html += "<input type='text' />";
+	html += "</div>";
+	html += "<div class='tradeSecondContentItem'>";
+	html += "<input type='text' />";
+	html += "</div>";
+	html += "<div class='tradeSecondContentItem'>";
+	html += "<input type='text' />";
+	html += "</div>";
+	html += "<div class='tradeSecondContentItem'>";
+	html += "<input type='text' />";
+	html += "</div>";
+	html += "<div class='tradeSecondContentItem'>";
+	html += "<input type='text' />";
+	html += "</div>";
+	html += "<div class='tradeSecondContentItem'>";
+	html += "<input type='text' />";
+	html += "</div>";
+	html += "</div>";
+	html += "</div>";
+
+	modal.show();
+	modal.headTitle.text("매입매출등록");
+	modal.content.css("width", "90%");
+	modal.body.html(html);
+	modal.body.css("max-height", "800px");
+	modal.confirm.text("추가");
+	modal.close.text("취소");
+	modal.confirm.attr("onclick", "tradeInsert();");
+	modal.close.attr("onclick", "modal.hide();");
+}
+
+function createTabFileList(no, type){
+	let html = "", container, header = [], data = [], str, detailContainer;
+
+	detailContainer = $(document).find(".detailContainer");
+
+	html = "<div class='tabFileList' id='tabFileList'>";
+	html += "</div>";
+	
+	header = [
+		{
+			"title" : "일자",
+			"align" : "center",
+		},
+		{
+			"title" : "파일명",
+			"align" : "left",
+		},
+		{
+			"title" : "파일설명",
+			"align" : "left",
+		},
+		{
+			"title" : "다운로드",
+			"align" : "center",
+		},
+	]
+	
+	detailContainer.find(".detailContent").append(html);
+	container = detailContainer.find(".detailContent .tabFileList");
+
+	$.ajax({
+		url: "/api/attached/" + type + "/" + no,
+		method: "get",
+		dataType: "json",
+		success:(resultData) => {
+			let jsonData;
+			jsonData = cipher.decAes(resultData.data);
+			jsonData = JSON.parse(jsonData);
+
+			for(let i = 0; i < jsonData.length; i++){
+				str = [
+					{
+						"setData": "test1",
+					},
+					{
+						"setData": "test2",
+					},
+					{
+						"setData": "test3",
+					},
+					{
+						"setData": "test4",
+					},
+				];
+			}
+		
+			data.push(str);
+		
+			setTimeout(() => {
+				createGrid(container, header, data);
+			}, 100);
+		}
+	});
 }
 
 //견적내역 리스트
@@ -1398,55 +1476,72 @@ function createTabEstList(){
 }
 
 //기술지원내역 리스트(아직 구현 안됨);
-function createTabTechList(){
-	let html = "";
+function createTabTechList(result){
+	let html = "", container, header = [], data = [], str, detailContainer, ids, job, fnc;
 
-	html = "<div class='tabTechist'>";
-	html += "<div class='tabTechHeader'>";
-	html += "<div>견적일자</div>";
-	html += "<div>작성자</div>";
-	html += "<div>견적번호</div>";
-	html += "<div>견적명</div>";
-	html += "<div>거래처</div>";
-	html += "<div>공급가합계</div>";
-	html += "<div>부가세합계</div>";
-	html += "<div>금액</div>";
-	html += "<div>적요</div>";
-	html += "</div>";
+	detailContainer = $(document).find(".detailContainer");
 
-	$.ajax({
-		url: "/api/tech",
-		method: "get",
-		async: false,
-		dataType: "json",
-		contentType: "text/plan",
-		success:(result) => {
-			if(result.result === "ok"){
-				let jsonData;
-				jsonData = cipher.decAes(result.data);
-				jsonData = JSON.parse(jsonData);
-
-				html += "<div class='tabTechBody'>";
+	html = "<div class='tabTechList' id='tabTechList'></div>";
 	
-				for(let i = 0; i < jsonData.length; i++){
-					html += "<div>" + jsonData[i].no + "</div>";
-				}
+	header = [
+		{
+			"title" : "일자",
+			"align" : "center",
+		},
+		{
+			"title" : "지원형태",
+			"align" : "center",
+		},
+		{
+			"title" : "장소",
+			"align" : "center",
+		},
+		{
+			"title" : "담당자",
+			"align" : "center",
+		},
+		{
+			"title" : "비고",
+			"align" : "left",
+		},
+	]
 	
-				html += "</div>";
-			}
+	detailContainer.find(".detailContent").append(html);
+	container = detailContainer.find(".detailContent .tabTechList");
+
+	for(let i = 0; i < result.length; i++){
+		if(result[i].job === "tech"){
+			str = [
+				{
+					"setData": result[i].created,
+				},
+				{
+					"setData": storage.code.etc[result[i].type],
+				},
+				{
+					"setData": result[i].place,
+				},
+				{
+					"setData": storage.user[result[i].writer].userName,
+				},
+				{
+					"setData": result[i].content,
+				},
+			];
+			
+			data.push(str);
 		}
-	});
-
-	html += "</div>";
+	}
 
 	setTimeout(() => {
-		modal.body.append(html);
+		createGrid(container, header, data, ids, job, fnc);
 	}, 100);
 }
 
 //영업활동내역 리스트(아직 구현 안됨);
-function createTabSalesList(no){
-	let html = "", container, header = [], data = [], str, detailContainer;
+function createTabSalesList(result){
+	let html = "", container, header = [], data = [], str, detailContainer, ids, job, fnc;
+
 	detailContainer = $(document).find(".detailContainer");
 
 	html = "<div class='tabSalesList' id='tabSalesList'></div>";
@@ -1457,54 +1552,59 @@ function createTabSalesList(no){
 			"align" : "center",
 		},
 		{
-			"title" : "활동형태",
+			"title" : "활동종류",
 			"align" : "center",
 		},
 		{
-			"title" : "내용",
+			"title" : "제목",
 			"align" : "left",
 		},
-	];
+		{
+			"title" : "비고",
+			"align" : "left",
+		},
+		{
+			"title" : "담당자",
+			"align" : "center",
+		},
+		{
+			"title" : "장소",
+			"align" : "center",
+		},
+	]
 	
 	detailContainer.find(".detailContent").append(html);
 	container = detailContainer.find(".detailContent .tabSalesList");
 
-	$.ajax({
-		url: "/api/sales/" + no,
-		method: "get",
-		async: false,
-		dataType: "json",
-		contentType: "text/plan",
-		success:(result) => {
-			if(result.result === "ok"){
-				let jsonData;
-				jsonData = cipher.decAes(result.data);
-				jsonData = JSON.parse(jsonData);
-	
-				for(let i = 0; i < jsonData.length; i++){
-					str = [
-						{
-							"setData": jsonData[i].from + " ~ " + jsonData[i].to,
-						},
-						{
-							"setData": jsonData[i].type,
-						},
-						{
-							"setData": jsonData[i].detail,
-						},
-					];
-
-					fnc = "tabSalesDetailView(this);";
-					ids.push(jsonData[i].no);
-					data.push(str);
-				}
-
-				console.log("실행");
-
-				createGrid(container, header, data, ids, fnc);
-			}
+	for(let i = 0; i < result.length; i++){
+		if(result[i].job === "sales"){
+			str = [
+				{
+					"setData": result[i].created,
+				},
+				{
+					"setData": storage.code.etc[result[i].type],
+				},
+				{
+					"setData": result[i].title,
+				},
+				{
+					"setData": result[i].content,
+				},
+				{
+					"setData": storage.user[result[i].writer].userName,
+				},
+				{
+					"setData": result[i].place,
+				},
+			];
+			data.push(str);
 		}
-	});
+	}
+
+	setTimeout(() => {
+		createGrid(container, header, data, ids, job, fnc);
+	}, 100);
 }
 
 //상세보기 숨김
@@ -1568,13 +1668,12 @@ function calDays(date, type){
     year = getDate.getFullYear();
     month = getDate.getMonth();
     day = getDate.getDate();
-
 	
     if(type === "last"){
-		day = day - 9;
+		day = day - 6;
         resultDate = new Date(year, month, day).toISOString().substring(0, 10).replaceAll("-", "");
     }else{
-		day = day + 9;
+		day = day + 8;
         resultDate = new Date(year, month, day).toISOString().substring(0, 10).replaceAll("-", "");
     }
 

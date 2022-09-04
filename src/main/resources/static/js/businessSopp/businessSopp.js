@@ -180,6 +180,7 @@ function soppErrorList(){
 }
 
 function soppSuccessView(result){
+	console.log(result);
 	let html, title, userName, customer, picOfCustomer, endUser, status, progress, contType, disDate, expectedSales, detail, dataArray, detailContainer;
 
 	detailContainer = $(document).find(".detailContainer");
@@ -258,20 +259,24 @@ function soppSuccessView(result){
 	html += "<label class='tabItem' for='tabTrade'>매입매출내역</label>";
 	// html += "<input type='radio' id='tabEst' name='tabItem' data-content-id='tabEstList' onclick='tabItemClick(this)'>";
 	// html += "<label class='tabItem' for='tabEst'>견적내역</label>";
-	html += "<input type='radio' id='tabFile' name='tabItem' data-content-id='contentFile' onclick='tabItemClick(this)'>";
-	html += "<label class='tabItem' for='tabFile'>파일첨부</label>";
-	html += "<input type='radio' id='tabTech' name='tabItem' data-content-id='contentTech' onclick='tabItemClick(this)'>";
+	// html += "<input type='radio' id='tabFile' name='tabItem' data-content-id='tabFileList' onclick='tabItemClick(this)'>";
+	// html += "<label class='tabItem' for='tabFile'>파일첨부</label>";
+	html += "<input type='radio' id='tabTech' name='tabItem' data-content-id='tabTechList' onclick='tabItemClick(this)'>";
 	html += "<label class='tabItem' for='tabTech'>기술지원내역</label>";
-	html += "<input type='radio' id='tabSales' name='tabItem' data-content-id='contentSales' onclick='tabItemClick(this)'>";
+	html += "<input type='radio' id='tabSales' name='tabItem' data-content-id='tabSalesList' onclick='tabItemClick(this)'>";
 	html += "<label class='tabItem' for='tabSales'>영업활동내역</label>";
 	html += "</div><br/>";
 	html += detailViewForm(dataArray);
-	// html += createTabTradeList();
+	html += createTabTradeList(result.trades);
 	detailContainer.find("span").text(title);
 	detailContainer.find(".detailContent").html(html);
 	detailContainer.find(".detailBtns").html("");
+	// detailContainer.find(".detailBtns").append("<button type='button' onclick='tradeInsertForm();' style='width: 50%;'>매입매출등록</button><button type='button' onclick='soppUpdateForm(" + JSON.stringify(result) + ");'>수정</button><button type='button' onclick='soppDelete(" + result.no + ");'>삭제</button><button type='button' onclick='detailContainerHide();'>닫기</button>");
 	detailContainer.find(".detailBtns").append("<button type='button' onclick='soppUpdateForm(" + JSON.stringify(result) + ");'>수정</button><button type='button' onclick='soppDelete(" + result.no + ");'>삭제</button><button type='button' onclick='detailContainerHide();'>닫기</button>");
-	// createTabEstList();
+	// createTabEstList(result.no, "sopp");
+	// createTabFileList(result.no, "sopp");
+	createTabTechList(result.schedules);
+	createTabSalesList(result.schedules);
 
 	detailContainer.show();
 

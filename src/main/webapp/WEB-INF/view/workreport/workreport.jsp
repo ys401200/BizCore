@@ -10,6 +10,7 @@
 		<div class="workReportContainer">
             <hr />
             <span>개인업무일지</span>
+			<button type="button" id="reportInsertBtn">업무일지등록</button>
             <div class="workReportContent"></div>
         </div>
 	</div>

@@ -46,8 +46,10 @@ function drawWorkJournalList() {
 
     $(document).find("#absBtn").hide();
 
-    startDate = dateDis(storage.workJournalList.start);
-    startDate = dateFnc(startDate);
+    startDate = new Date(storage.workJournalList.start);
+    startDate = new Date(startDate.getTime() + 86400000 * 7);
+    disDate = dateDis(startDate);
+    startDate = dateFnc(disDate);
 
     endDate = dateDis(storage.workJournalList.end);
     endDate = dateFnc(endDate);
@@ -91,16 +93,20 @@ function drawWorkJournalList() {
     html += "</div>";
 
     html += "<div class='journalBodyContent_3' style='display: grid; grid-template-columns: repeat(2, 1fr);'>";
-    html += "<div class='journalBodyContent_3_last' style='display: grid; grid-template-columns: 10% 90%;'>";
+    html += "<div class='journalBodyContent_3_last' style='display: grid; grid-template-columns: 10% 90%; border: 1px solid #000; padding: 5px;'>";
 
-    for(let key in storage.prevWorkJournalList.workReports){
+    for(let key in storage.workJournalList.workReports){
         if(key === "10021"){
-            if(storage.prevWorkJournalList.workReports[key].schedules.length > 0){
-                for(let index in storage.prevWorkJournalList.workReports[key].schedules){
-                    let week = calWeekDay(storage.prevWorkJournalList.workReports[key].schedules[index].date);
+            if(storage.workJournalList.workReports[key].schedules.length > 0){
+                for(let index in storage.workJournalList.workReports[key].schedules){
+                    let date = new Date(storage.workJournalList.workReports[key].schedules[index].date);
+                    let dateStart = new Date(storage.workJournalList.start);
+                    if(dateStart.getTime() + 86400000 * 7 > date.getTime() && storage.workJournalList.workReports[key].schedules[index].report == true){
+                        let week = calWeekDay(storage.workJournalList.workReports[key].schedules[index].date);
 
-                    html += "<div style='border: 1px solid #000; text-align:center; display: flex; align-items: center; justify-content: center;'>" + week + "</div>";
-                    html += "<div style='border: 1px solid #000; padding-left: 10px;'><span style='font-weight: 600;'>" + storage.prevWorkJournalList.workReports[key].schedules[index].title + "</span><br /><span>" + storage.prevWorkJournalList.workReports[key].schedules[index].content + "<span></div>";
+                        html += "<div style='border: 1px solid #000; text-align:center; display: flex; align-items: center; justify-content: center; margin-bottom: 5px;'>" + week + "</div>";
+                        html += "<div style='border: 1px solid #000; padding-left: 10px; margin-bottom: 5px;'><span style='font-weight: 600;'>" + storage.workJournalList.workReports[key].schedules[index].title + "</span><br /><span>" + storage.workJournalList.workReports[key].schedules[index].content + "<span></div>";
+                    }
                 }
             }else{
                 html += "<div style='grid-column: span 2; font-weight: 600; border: 1px solid #000; display: flex; align-items: center; justify-content: center;'>지난주 데이터가 없습니다.</div>";
@@ -110,16 +116,20 @@ function drawWorkJournalList() {
     
     html += "</div>";
 
-    html += "<div class='journalBodyContent_3_this' style='display: grid; grid-template-columns: 10% 90%;'>";
+    html += "<div class='journalBodyContent_3_this' style='display: grid; grid-template-columns: 10% 90%; border: 1px solid #000; padding: 5px;'>";
 
     for(let key in storage.workJournalList.workReports){
         if(key === "10021"){
             if(storage.workJournalList.workReports[key].schedules.length > 0){
                 for(let index in storage.workJournalList.workReports[key].schedules){
-                    let week = calWeekDay(storage.workJournalList.workReports[key].schedules[index].date);
+                    let date = new Date(storage.workJournalList.workReports[key].schedules[index].date);
+                    let dateStart = new Date(storage.workJournalList.start);
+                    if(dateStart.getTime() + 86400000 * 7 < date.getTime() && storage.workJournalList.workReports[key].schedules[index].report == true){
+                        let week = calWeekDay(storage.workJournalList.workReports[key].schedules[index].date);
 
-                    html += "<div style='border: 1px solid #000; text-align:center; display: flex; align-items: center; justify-content: center;'>" + week + "</div>";
-                    html += "<div style='border: 1px solid #000; padding-left: 10px;'><span style='font-weight: 600;'>" + storage.workJournalList.workReports[key].schedules[index].title + "</span><br /><span>" + storage.workJournalList.workReports[key].schedules[index].content + "<span></div>";
+                        html += "<div style='border: 1px solid #000; text-align:center; display: flex; align-items: center; justify-content: center; margin-bottom: 5px;'>" + week + "</div>";
+                        html += "<div style='border: 1px solid #000; padding-left: 10px; margin-bottom: 5px;'><span style='font-weight: 600;'>" + storage.workJournalList.workReports[key].schedules[index].title + "</span><br /><span>" + storage.workJournalList.workReports[key].schedules[index].content + "<span></div>";
+                    }
                 }
             }else{
                 html += "<div style='grid-column: span 2; font-weight: 600; border: 1px solid #000; display: flex; align-items: center; justify-content: center;'>이번주 데이터가 없습니다.</div>";
@@ -153,7 +163,7 @@ function drawWorkJournalList() {
     html += "</div>";
 
     $("#solPdf").attr("onclick", "solPdf(10021)");
-
+    
     for(let setKey in storage.workJournalList.workReports){
         if(setKey !== "10021"){
             html += "<div class='journalPreviewBody_" + setKey + "' style='page-break-after: always; display: none;'>";
@@ -170,16 +180,20 @@ function drawWorkJournalList() {
             html += "</div>";
         
             html += "<div class='journalBodyContent_3' style='display: grid; grid-template-columns: repeat(2, 1fr);'>";
-            html += "<div class='journalBodyContent_3_last' style='display: grid; grid-template-columns: 10% 90%;'>";
+            html += "<div class='journalBodyContent_3_last' style='display: grid; grid-template-columns: 10% 90%; border: 1px solid #000; padding: 5px;'>";
         
-            for(let key in storage.prevWorkJournalList.workReports){
+            for(let key in storage.workJournalList.workReports){
                 if(key === setKey){
-                    if(storage.prevWorkJournalList.workReports[key].schedules.length > 0){
-                        for(let index in storage.prevWorkJournalList.workReports[key].schedules){
-                            let week = calWeekDay(storage.prevWorkJournalList.workReports[key].schedules[index].date);
-        
-                            html += "<div style='border: 1px solid #000; text-align:center; display: flex; align-items: center; justify-content: center;'>" + week + "</div>";
-                            html += "<div style='border: 1px solid #000; padding-left: 10px;'><span style='font-weight: 600;'>" + storage.prevWorkJournalList.workReports[key].schedules[index].title + "</span><br /><span>" + storage.prevWorkJournalList.workReports[key].schedules[index].content + "<span></div>";
+                    if(storage.workJournalList.workReports[key].schedules.length > 0){
+                        for(let index in storage.workJournalList.workReports[key].schedules){
+                            let date = new Date(storage.workJournalList.workReports[key].schedules[index].date);
+                            let dateStart = new Date(storage.workJournalList.start);
+                            if(dateStart.getTime() + 86400000 * 7 > date.getTime() && storage.workJournalList.workReports[key].schedules[index].report == true){
+                                let week = calWeekDay(storage.workJournalList.workReports[key].schedules[index].date);
+            
+                                html += "<div style='border: 1px solid #000; text-align:center; display: flex; align-items: center; justify-content: center; margin-bottom: 5px;'>" + week + "</div>";
+                                html += "<div style='border: 1px solid #000; padding-left: 10px; margin-bottom: 5px;'><span style='font-weight: 600;'>" + storage.workJournalList.workReports[key].schedules[index].title + "</span><br /><span>" + storage.workJournalList.workReports[key].schedules[index].content + "<span></div>";
+                            }
                         }
                     }else{
                         html += "<div style='grid-column: span 2; font-weight: 600; border: 1px solid #000; display: flex; align-items: center; justify-content: center;'>지난주 데이터가 없습니다.</div>";
@@ -188,16 +202,20 @@ function drawWorkJournalList() {
             }
             
             html += "</div>";
-            html += "<div class='journalBodyContent_3_this' style='display: grid; grid-template-columns: 10% 90%;'>";
+            html += "<div class='journalBodyContent_3_this' style='display: grid; grid-template-columns: 10% 90%; border: 1px solid #000; padding: 5px;'>";
 
             for(let key in storage.workJournalList.workReports){
                 if(key === setKey){
                     if(storage.workJournalList.workReports[key].schedules.length > 0){
                         for(let index in storage.workJournalList.workReports[key].schedules){
-                            let week = calWeekDay(storage.workJournalList.workReports[key].schedules[index].date);
-        
-                            html += "<div style='border: 1px solid #000; text-align:center; display: flex; align-items: center; justify-content: center;'>" + week + "</div>";
-                            html += "<div style='border: 1px solid #000; padding-left: 10px;'><span style='font-weight: 600;'>" + storage.workJournalList.workReports[key].schedules[index].title + "</span><br /><span>" + storage.workJournalList.workReports[key].schedules[index].content + "<span></div>";
+                            let date = new Date(storage.workJournalList.workReports[key].schedules[index].date);
+                            let dateStart = new Date(storage.workJournalList.start);
+                            if(dateStart.getTime() + 86400000 * 7 < date.getTime() && storage.workJournalList.workReports[key].schedules[index].report == true){
+                                let week = calWeekDay(storage.workJournalList.workReports[key].schedules[index].date);
+            
+                                html += "<div style='border: 1px solid #000; text-align:center; display: flex; align-items: center; justify-content: center; margin-bottom: 5px;'>" + week + "</div>";
+                                html += "<div style='border: 1px solid #000; padding-left: 10px; margin-bottom: 5px;'><span style='font-weight: 600;'>" + storage.workJournalList.workReports[key].schedules[index].title + "</span><br /><span>" + storage.workJournalList.workReports[key].schedules[index].content + "<span></div>";
+                            }
                         }
                     }else{
                         html += "<div style='grid-column: span 2; font-weight: 600; border: 1px solid #000; display: flex; align-items: center; justify-content: center;'>이번주 데이터가 없습니다.</div>";
