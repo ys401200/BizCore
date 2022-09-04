@@ -12,8 +12,8 @@ public class WorkReport extends Domain{
     private int writer;
     private boolean currentWeekCheck;
     private String currentWeek;
-    private boolean nextWeekCheck;
-    private String nextWeek;
+    private boolean previousWeekCheck;
+    private String previousWeek;
     private ArrayList<Schedule> schedules = new ArrayList<>();
 
     public void addSchedule(Schedule e){schedules.add(e);}
@@ -25,8 +25,8 @@ public class WorkReport extends Domain{
         if(schedules.size() > 2)    Collections.sort(schedules);
         result += ("\"currentWeekCheck\":" + currentWeekCheck + ",");
         result += ("\"currentWeek\":" + (currentWeek == null ? "\"\"" : "\"" + currentWeek.replaceAll("\"", "\\u0022").replaceAll("\n", "").replaceAll("\r", "").replaceAll("\t", "") + "\"") + ",");
-        result += ("\"nextWeekCheck\":" + nextWeekCheck + ",");
-        result += ("\"nextWeek\":" + (nextWeek == null ? "\"\"" : "\"" + nextWeek.replaceAll("\"", "\\u0022").replaceAll("\n", "").replaceAll("\r", "").replaceAll("\t", "") + "\"") + ",");
+        result += ("\"nextWeekCheck\":" + currentWeekCheck + ",");
+        result += ("\"nextWeek\":" + (currentWeek == null ? "\"\"" : "\"" + currentWeek.replaceAll("\"", "\\u0022").replaceAll("\n", "").replaceAll("\r", "").replaceAll("\t", "") + "\"") + ",");
         result += "\"schedules\":[";
         for(x = 0 ; x < schedules.size() ; x++){
             e = schedules.get(x);

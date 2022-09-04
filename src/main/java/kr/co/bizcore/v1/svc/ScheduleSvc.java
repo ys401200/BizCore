@@ -151,6 +151,7 @@ public class ScheduleSvc extends Svc{
         day = (cal.get(Calendar.DAY_OF_WEEK) - 1) * 86400000;
         start = new Date(cal.getTimeInMillis() - day - 32400000);
         end = new Date(start.getTime() + 86400000 * 7 - 1);
+        start = new Date(start.getTime() - 86400000 * 7);
 
         if(scope.equals("company") || scope.equals("dept")){
             if(scope.equals("dept"))    reports = scheduleMapper.getWorkReportsDept(compId, week, user.getDeptIdSqlIn());
