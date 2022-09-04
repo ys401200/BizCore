@@ -299,8 +299,8 @@ public class ApiScheduleCtrl extends Ctrl {
     @PostMapping("/workreport/personal/{date:\\d+}")
     public String apiWorkreportPersonalDatePost(HttpServletRequest request, @PathVariable("date") int date, @RequestBody String requestBody){
         String result = null;
-        String compId = null, aesKey = null, aesIv = null, userNo = null, data = null, currentWeek = null, nextWeek = null;
-        boolean currentWeekCheck = false, nextWeekCheck = false;
+        String compId = null, aesKey = null, aesIv = null, userNo = null, data = null, previousWeek = null, currentWeek = null;
+        boolean previousWeekCheck = false, currentWeekCheck = false;
         HttpSession session = null;
         JSONObject json = null, schedule = null;;
         JSONArray jarr = null;
@@ -323,9 +323,9 @@ public class ApiScheduleCtrl extends Ctrl {
             data = decAes(requestBody, aesKey, aesIv);
             json = new JSONObject(data);
             currentWeek = json.getString("currentWeek");
-            nextWeek = json.getString("nextWeek");
+            previousWeek = json.getString("previousWeek");
             currentWeekCheck = json.getBoolean("currentWeekCheck");
-            nextWeekCheck = json.getBoolean("nextWeekCheck");
+            previousWeekCheck = json.getBoolean("previousWeekCheck");
 
             jarr = json.getJSONArray("schedule");
             if(jarr != null)    for(x = 0 ; x < jarr.length() ; x++){
@@ -333,11 +333,11 @@ public class ApiScheduleCtrl extends Ctrl {
                 item = new String[3];
                 item[0] = schedule.getString("job");
                 item[1] = schedule.getString("no");
-                item[2] = schedule.getBoolean("reportß") ? "1" : "0";
+                item[2] = schedule.getBoolean("report") ? "1" : "0";
                 checked.add(item);
             }
 
-            if(scheduleService.addWorkReport(compId, userNo, date, currentWeek, currentWeekCheck, nextWeek, nextWeekCheck, checked)){
+            if(scheduleService.addWorkReport(compId, userNo, date, previousWeek, previousWeekCheck, currentWeek, currentWeekCheck, checked)){
                 result = "{\"result\":\"ok\"}";
             }else{
                 result = "{\"result\":\"failure\",\"msg\":\"Error occured.\"}";

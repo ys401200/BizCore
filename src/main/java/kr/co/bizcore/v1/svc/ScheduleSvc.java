@@ -211,7 +211,7 @@ public class ScheduleSvc extends Svc{
     } // End of getWorkReport()
 
     // 개인의 주간업무보고를 추가하는 메서드
-    public boolean addWorkReport(String compId, String userNo, int date, String currentWeek, boolean currentWeekCheck, String nextWeek, boolean nextWeekCheck, ArrayList<String[]> checked){
+    public boolean addWorkReport(String compId, String userNo, int date, String previousWeek, boolean previousWeekCheck, String currentWeek, boolean currentWeekCheck, ArrayList<String[]> checked){
         boolean result = false;
         int week = -1, y = -1, m = -1, d = -1, x = 0;
         Calendar cal = Calendar.getInstance();
@@ -229,16 +229,16 @@ public class ScheduleSvc extends Svc{
         str1 = "userno,compno,attrib,weeknum,regdate,prcomment,prcheck,thcomment,thcheck";
         str2 = userNo + ",(SELECT compno FROM swc_company WHERE compid = '" + compId + "')," + week + ",11111,now()";
 
+        if(previousWeek == null){
+            str2 += (",''," + (previousWeekCheck ? 1 : 0));
+        }else{
+            str2 += (",'" + previousWeek + "'," + (previousWeekCheck ? 1 : 0));
+        }
+
         if(currentWeek == null){
             str2 += (",''," + (currentWeekCheck ? 1 : 0));
         }else{
             str2 += (",'" + currentWeek + "'," + (currentWeekCheck ? 1 : 0));
-        }
-
-        if(nextWeek == null){
-            str2 += (",''," + (nextWeekCheck ? 1 : 0));
-        }else{
-            str2 += (",'" + nextWeek + "'," + (nextWeekCheck ? 1 : 0));
         }
 
         sql = sql + str1 + ") VALUES(" + str2 + ")";

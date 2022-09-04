@@ -35,6 +35,7 @@ public class WorkReport extends Domain{
             else    t = "# ";
             if(x > 0)   result += ",";
             result += ("{\"title\":\"" + t + e.getTitle() + "\",");
+            result += ("\"job\":\"" + t + e.getJob() + "\",");
             result += ("\"no\":" + e.getNo() + ",");
             result += ("\"report\":" + e.isReport() + ","); 
             result += ("\"content\":" + ( e != null && e.getContent() != null ? "\"" + e.getContent().replaceAll("\"", "\\u0022").replaceAll("\n", "<br />").replaceAll("\r", "").replaceAll("\t", "") + "\"" : "\"\"") + ",");
