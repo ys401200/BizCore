@@ -99,71 +99,69 @@ function drawScheduleList() {
 		},
 	];
 
-	setTimeout(() => {
-		for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
-			let job, title, customer, writer, fromDate, fromSetDate, toDate, toSetDate, place, content;
-			
-			job = (jsonData[i].job === null || jsonData[i].job === "" || jsonData[i].job === undefined) ? "없음" : jsonData[i].job;
-			
-			if(job === "sales"){
-				job = "영업일정";
-			}else if(job === "tech"){
-				job = "기술지원";
-			}else{
-				job = "기타일정";
-			}
-
-			title = (jsonData[i].title === null || jsonData[i].title === "" || jsonData[i].title === undefined) ? "제목 없음" : jsonData[i].title;
-			customer = (jsonData[i].customer == 0 || jsonData[i].customer === null || jsonData[i].customer === undefined) ? "없음" : storage.customer[jsonData[i].customer].name;
-			writer = (jsonData[i].writer == 0 || jsonData[i].writer === null || jsonData[i].writer === undefined) ? "없음" : storage.user[jsonData[i].writer].userName;
-			place = (jsonData[i].place === null || jsonData[i].place === "" || jsonData[i].place === undefined) ? "없음" : jsonData[i].place;
-			content = (jsonData[i].content === null || jsonData[i].content === "" || jsonData[i].content === undefined) ? "내용 없음" : jsonData[i].content;
-			
-			fromDate = dateDis(jsonData[i].from);
-			fromSetDate = dateFnc(fromDate);
-			
-			toDate = dateDis(jsonData[i].to);
-			toSetDate = dateFnc(toDate);
-	
-			str = [
-				{
-					"setData": jsonData[i].no,
-				},
-				{
-					"setData": job,
-				},
-				{
-					"setData": title,
-				},
-				{
-					"setData": fromSetDate + " ~ " + toSetDate,
-				},
-				{
-					"setData": customer,
-				},
-				{
-					"setData": writer,
-				},
-				{
-					"setData": place,
-				},
-				{
-					"setData": jsonData[i].sopp,
-				},
-				{
-					"setData": content,
-				},
-			];
-	
-			fnc = "scheduleDetailView(this);";
-			ids.push(jsonData[i].no);
-			dataJob.push(jsonData[i].job);
-			data.push(str);
+	for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+		let job, title, customer, writer, fromDate, fromSetDate, toDate, toSetDate, place, content;
+		
+		job = (jsonData[i].job === null || jsonData[i].job === "" || jsonData[i].job === undefined) ? "없음" : jsonData[i].job;
+		
+		if(job === "sales"){
+			job = "영업일정";
+		}else if(job === "tech"){
+			job = "기술지원";
+		}else{
+			job = "기타일정";
 		}
-		let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawScheduleList", result[0]);
-		pageContainer[0].innerHTML = pageNation;
-		createGrid(container, header, data, ids, dataJob, fnc);
-	}, 200);
+
+		title = (jsonData[i].title === null || jsonData[i].title === "" || jsonData[i].title === undefined) ? "제목 없음" : jsonData[i].title;
+		customer = (jsonData[i].customer == 0 || jsonData[i].customer === null || jsonData[i].customer === undefined) ? "없음" : storage.customer[jsonData[i].customer].name;
+		writer = (jsonData[i].writer == 0 || jsonData[i].writer === null || jsonData[i].writer === undefined) ? "없음" : storage.user[jsonData[i].writer].userName;
+		place = (jsonData[i].place === null || jsonData[i].place === "" || jsonData[i].place === undefined) ? "없음" : jsonData[i].place;
+		content = (jsonData[i].content === null || jsonData[i].content === "" || jsonData[i].content === undefined) ? "내용 없음" : jsonData[i].content;
+		
+		fromDate = dateDis(jsonData[i].from);
+		fromSetDate = dateFnc(fromDate);
+		
+		toDate = dateDis(jsonData[i].to);
+		toSetDate = dateFnc(toDate);
+
+		str = [
+			{
+				"setData": jsonData[i].no,
+			},
+			{
+				"setData": job,
+			},
+			{
+				"setData": title,
+			},
+			{
+				"setData": fromSetDate + " ~ " + toSetDate,
+			},
+			{
+				"setData": customer,
+			},
+			{
+				"setData": writer,
+			},
+			{
+				"setData": place,
+			},
+			{
+				"setData": jsonData[i].sopp,
+			},
+			{
+				"setData": content,
+			},
+		];
+
+		fnc = "scheduleDetailView(this);";
+		ids.push(jsonData[i].no);
+		dataJob.push(jsonData[i].job);
+		data.push(str);
+	}
+	let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawScheduleList", result[0]);
+	pageContainer[0].innerHTML = pageNation;
+	createGrid(container, header, data, ids, dataJob, fnc);
 
 }// End of drawNoticeList()
 
