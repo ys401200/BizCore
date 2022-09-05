@@ -24,9 +24,9 @@ public class WorkReport extends Domain{
         Schedule e = null;
         if(schedules.size() > 2)    Collections.sort(schedules);
         result += ("\"currentWeekCheck\":" + currentWeekCheck + ",");
-        result += ("\"currentWeek\":" + (currentWeek == null ? "\"\"" : "\"" + currentWeek.replaceAll("\"", "\\u0022").replaceAll("\n", "").replaceAll("\r", "").replaceAll("\t", "") + "\"") + ",");
+        result += ("\"currentWeek\":" + (currentWeek == null ? "\"\"" : "\"" + currentWeek.replaceAll("\"", "\\u0022").replaceAll("\n", "").replaceAll("\r", "").replaceAll("\t", "").replaceAll("\\\\", "\\u005c") + "\"") + ",");
         result += ("\"previousWeekCheck\":" + previousWeekCheck + ",");
-        result += ("\"previousWeek\":" + (previousWeek == null ? "\"\"" : "\"" + previousWeek.replaceAll("\"", "\\u0022").replaceAll("\n", "").replaceAll("\r", "").replaceAll("\t", "") + "\"") + ",");
+        result += ("\"previousWeek\":" + (previousWeek == null ? "\"\"" : "\"" + previousWeek.replaceAll("\"", "\\u0022").replaceAll("\n", "").replaceAll("\r", "").replaceAll("\t", "").replaceAll("\\\\", "\\u005c") + "\"") + ",");
         result += "\"schedules\":[";
         for(x = 0 ; x < schedules.size() ; x++){
             e = schedules.get(x);
@@ -38,7 +38,7 @@ public class WorkReport extends Domain{
             result += ("\"job\":\"" + e.getJob() + "\",");
             result += ("\"no\":" + e.getNo() + ",");
             result += ("\"report\":" + e.isReport() + ","); 
-            result += ("\"content\":" + ( e != null && e.getContent() != null ? "\"" + e.getContent().replaceAll("\"", "\\u0022").replaceAll("\n", "<br />").replaceAll("\r", "").replaceAll("\t", "") + "\"" : "\"\"") + ",");
+            result += ("\"content\":" + ( e != null && e.getContent() != null ? "\"" + e.getContent().replaceAll("\"", "\\u0022").replaceAll("\n", "<br />").replaceAll("\r", "").replaceAll("\t", "").replaceAll("\\\\", "\\u005c") + "\"" : "\"\"") + ",");
             result += ("\"date\":" + (e.getFrom() != null ? e.getFrom().getTime() : null) + "}");
         }
         result += "]}";
