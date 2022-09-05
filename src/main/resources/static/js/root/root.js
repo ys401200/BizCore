@@ -131,7 +131,7 @@ function getScheduleList() {
 		
 	];
 	
-	url = apiServer + "/api/schedule";
+	url = apiServer + "/api/schedule/calendar/dept";
 
 	$.ajax({
 		"url": url,

@@ -41,17 +41,17 @@ public class SoppService extends Svc {
         return result;
     } // End of getSoppList()
     
-    public String getSopp(String soppNo, String compId){
+    public String getSopp(int soppNo, String compId){
         Sopp result = null;
-        List<HashMap<String, String>> attached = systemMapper.getAttachedFileInfo(compId, "sopp", strToInt(soppNo));
-        List<Schedule> list1 = scheduleMapper.getScheduleListFromSchedWithSopp(compId, soppNo);
-        List<Schedule> list2 = scheduleMapper.getScheduleListFromSalesWithSopp(compId, soppNo);
-        List<Schedule> list3 = scheduleMapper.getScheduleListFromTechdWithsopp(compId, soppNo);
-        List<TradeDetail> list4 = tradeMapper.getTradeDetailList(soppNo);
+        List<HashMap<String, String>> attached = systemMapper.getAttachedFileInfo(compId, "sopp", soppNo);
+        List<Schedule> list1 = scheduleMapper.getScheduleListFromSchedWithSopp(compId, soppNo+"");
+        List<Schedule> list2 = scheduleMapper.getScheduleListFromSalesWithSopp(compId, soppNo+"");
+        List<Schedule> list3 = scheduleMapper.getScheduleListFromTechdWithsopp(compId, soppNo+"");
+        List<TradeDetail> list4 = tradeMapper.getTradeDetailList(soppNo+"");
         list1.addAll(list2);
         list1.addAll(list3);
         Collections.sort(list1);
-        result = soppMapper.getSopp(soppNo, compId);
+        result = soppMapper.getSopp(soppNo+"", compId);
         return result.toJson(attached, list1, list4);
     }
 

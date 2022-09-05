@@ -9,15 +9,17 @@
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>INFO</level>
         </filter>
-        <file>bizcore.txt</file>
+        <!-- <file>/srv/log/bizcore.txt</file> -->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- rollover daily -->
             <fileNamePattern>bizcore-%d{yyyy-MM-dd}.%i.txt</fileNamePattern>
+            <!-- <fileNamePattern>/srv/log/bizcore-%d{yyyy-MM-dd}.%i.txt</fileNamePattern> -->
             <timeBasedFileNamingAndTriggeringPolicy
                     class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <!-- or whenever the file size reaches 100MB -->
                 <maxFileSize>100MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>90</maxHistory>
         </rollingPolicy>
         <encoder>
             <pattern>[%-5level] %d{HH:mm:ss.SSS} %logger{36} - %msg%n</pattern>

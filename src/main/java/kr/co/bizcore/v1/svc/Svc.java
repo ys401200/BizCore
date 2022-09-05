@@ -423,6 +423,21 @@ class DataFactory{
         }
         return result;
     } // End of getData()
+
+    private int strToInt(String str){
+        int result = -1;
+        try{result = str != null ? Integer.parseInt(str) : -1;
+        }catch(NumberFormatException e){e.printStackTrace();}
+        return result;
+    }
+
+    private long strToLong(String str){
+        long result = -1;
+        try{result = str != null ? Long.parseLong(str) : -1;
+        }catch(NumberFormatException e){e.printStackTrace();}
+        return result;
+    }
+
 } // End of Class === DataFactory
 
 class DataSet{

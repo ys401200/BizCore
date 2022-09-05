@@ -59,25 +59,48 @@ public class ViewConfig implements WebMvcConfigurer {
         List<String> compIdList = null;
         List<String> dirs = null;
         File root = null, each = null;
+        long timeCorrection = 0L;
         int x = 0, y = 0;
         Svc.fileStoragePath = fileSavePath;
 
+        logger.info("[App Initializer] Start Initializing.");
+
         // 시간 교정이 필요한 경우 그 교정값을 설정함
-        systemService.timeCorrection();
+        timeCorrection = systemService.timeCorrection();
+        logger.info("[App Initializer] Set Time Correction : " + timeCorrection);
 
         // 파일 저장공간 확인 및 기초 디렉토리 확인/생성
         compIdList = systemService.getCompanyList();
         dirs = systemService.getDefaultDirectories();
         rootPath = fileSavePath;
+        logger.info("[App Initializer] Create Directories / Root : " + rootPath);
 
         if(rootPath.substring(rootPath.length() - 1).equals(s))   rootPath = rootPath.substring(0, rootPath.length() - 1);
         try{
             if(compIdList != null && compIdList.size() > 0) for(x = 0 ; x < compIdList.size() ; x++){
                 compId = compIdList.get(x);
                 root = new File(rootPath + s + compId);
+                if(root.exists()){
+                    logger.info("[App Initializer] Create Directories / Company root : " + compId + " : " + root.getAbsolutePath() + " / exist");
+                }else{
+                    if(root.mkdir()){
+                        logger.info("[App Initializer] Create Directories / Company root : " + compId + " : " + root.getAbsolutePath() + " / created");    
+                    }else{
+                        logger.info("[App Initializer] Create Directories / Company root : " + compId + " : " + root.getAbsolutePath() + " / create fail");
+                    }
+                }
+                logger.info("[App Initializer] Create Directories / Company root : " + compId + " : " + root.getAbsolutePath());
                 if(dirs != null && dirs.size() > 0) for(y = 0 ; y < dirs.size() ; y++){
                     each = new File(rootPath + s + compId + s + dirs.get(y));
-                    if(!each.exists())  each.mkdir();
+                    if(each.exists()){
+                        logger.info("[App Initializer] Create Directories / Company root : " + compId + " / " + dirs.get(y) + " : " + each.getAbsolutePath() + " / exist");
+                    }else{
+                        if(each.mkdir()){
+                            logger.info("[App Initializer] Create Directories / Company root : " + compId + " / " + dirs.get(y) + " : " + each.getAbsolutePath() + " / created");
+                        }else{
+                            logger.info("[App Initializer] Create Directories / Company root : " + compId + " / " + dirs.get(y) + " : " + each.getAbsolutePath() + " / create fail");
+                        }
+                    }
                 }
             }
             logger.info("[App Initializer] Created Companies' directories.");

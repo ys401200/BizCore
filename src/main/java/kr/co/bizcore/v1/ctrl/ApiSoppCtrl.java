@@ -48,7 +48,7 @@ public class ApiSoppCtrl extends Ctrl{
     } // End of apiSopp
 
     @RequestMapping(value = "/{no:\\d+}", method = RequestMethod.GET)
-    public String apiSoppNumber(HttpServletRequest request, @PathVariable String no){
+    public String apiSoppNumber(HttpServletRequest request, @PathVariable int no){
         String result = null;
         String compId = null;
         String aesKey = null;
@@ -78,6 +78,38 @@ public class ApiSoppCtrl extends Ctrl{
 
         return result;
     } // End of apiSoppNumber()
+
+    @RequestMapping(value = "/{no:\\d+}/schedule", method = RequestMethod.GET)
+    public String apiSoppNumberSchedule(HttpServletRequest request, @PathVariable int soppNo){
+        String result = null;
+        String compId = null;
+        String aesKey = null;
+        String aesIv = null;
+        String data = null;
+        HttpSession session = null;
+
+        session = request.getSession();
+        compId = (String)session.getAttribute("compId");
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
+        }else{
+            data = scheduleService.getScheduleRelatedSopp(compId, soppNo);
+            if(data == null){
+                result = "{\"result\":\"failure\",\"msg\":\"Sopp not exist.\"}";
+            }else{
+                data = soppService.encAes(data, aesKey, aesIv);
+                result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
+            }
+        }
+
+        return result;
+    } // End of apiSoppNumberSchedule()
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     public String apiSoppPost(HttpServletRequest request, @RequestBody String requestBody) {
