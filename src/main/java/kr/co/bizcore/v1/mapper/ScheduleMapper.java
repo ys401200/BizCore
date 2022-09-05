@@ -91,19 +91,19 @@ public interface ScheduleMapper {
     @Select("SELECT a.userno AS writer, a.prcheck AS previousWeekCheck ,a.prcomment AS previousWeek, a.thcheck AS currentWeekCheck, a.thcomment AS currentWeek " +
             "FROM swc_sreport a, " +
             "(SELECT MAX(sreportno) no, userno FROM swc_sreport WHERE weeknum = #{week} GROUP BY userno) b " +
-            "WHERE a.attrib = 11111 AND a.userno = b.userno AND a.sreportno = b.no AND a.compno = (SELECT compno FROM swc_company WHERE compid = #{compId})")
+            "WHERE a.attrib NOT LIKE 'XXX%' AND a.userno = b.userno AND a.sreportno = b.no AND a.compno = (SELECT compno FROM swc_company WHERE compid = #{compId})")
     public List<WorkReport> getWorkReportsCompany(@Param("compId") String compId, @Param("week") int week);
 
     @Select("SELECT a.userno AS writer, a.prcheck AS previousWeekCheck ,a.prcomment AS previousWeek, a.thcheck AS currentWeekCheck, a.thcomment AS currentWeek " +
             "FROM swc_sreport a, " +
             "(SELECT MAX(sreportno) no, userno FROM swc_sreport WHERE weeknum = #{week} GROUP BY userno) b " +
-            "WHERE a.attrib = 11111 AND a.userno = b.userno AND a.sreportno = b.no AND a.compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND a.userno IN (SELECT user_no FROM bizcore.user_dept WHERE dept_id IN (#{deptIn}))")
+            "WHERE a.attrib NOT LIKE 'XXX%' AND a.userno = b.userno AND a.sreportno = b.no AND a.compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND a.userno IN (SELECT user_no FROM bizcore.user_dept WHERE dept_id IN (#{deptIn}))")
     public List<WorkReport> getWorkReportsDept(@Param("compId") String compId, @Param("week") int week, @Param("deptIn") String deptIn);
 
     @Select("SELECT a.userno AS writer, a.prcheck AS previousWeekCheck, a.prcomment AS previousWeek, a.thcheck AS currentWeekCheck, a.thcomment AS currentWeek " +
             "FROM swc_sreport a, " +
             "(SELECT MAX(sreportno) no, userno FROM swc_sreport WHERE weeknum = #{week} GROUP BY userno) b " +
-            "WHERE a.attrib = 11111 AND a.userno = b.userno AND a.sreportno = b.no AND a.compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND a.userno = #{userNo}")
+            "WHERE a.attrib NOT LIKE 'XXX%' AND a.userno = b.userno AND a.sreportno = b.no AND a.compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND a.userno = #{userNo}")
     public WorkReport getWorkReportPersonal(@Param("compId") String compId, @Param("week") int week, @Param("userNo") String userNo);
 
     @Select("SELECT 'schedule' AS job, schedno AS no, schedFrom AS `from`, schedtitle AS title, schedDesc AS content, schedCheck AS workReport FROM swc_sched WHERE schedCheck = 1 AND attrib NOT LIKE 'XXX%' AND userno = #{writer} AND schedfrom < #{end} AND schedto >= #{start} AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) " +
