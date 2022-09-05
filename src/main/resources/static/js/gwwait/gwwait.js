@@ -247,15 +247,15 @@ function drawCommentLine() {
 
 	let examine = [{
 		"name": "이송현",
-		"status": "승인",
-		"approved": "2022-08-19",
-		"comment": "확인"
+		"status": "",
+		"approved": "",
+		"comment": ""
 	},
 	{
 		"name": "구민주",
-		"status": "승인",
-		"approved": "2022-08-19",
-		"comment": "확인했습니다 인했습니다인했습니다인했습니다인했습니다인했습니다인했습니다인했습니다"
+		"status": "",
+		"approved": "",
+		"comment": ""
 	}]
 
 	let approval = [{
@@ -303,7 +303,7 @@ function drawChangeInfo() {
 		"type": "검토",
 		"name": "이송현",
 		"modifyDate": "22-08-19 10:34:46",
-		"modCause": "수량 수정 했습니다 테스트로 수정 했습니다  "
+		"modCause": "수정 완 "
 	}]
 
 	// 임시 데이터 ---------------------------------------------------- 
@@ -325,8 +325,6 @@ function drawChangeInfo() {
 }
 
 
-
-
 // 모달별 버튼  
 function closeModal(obj) {
 	$(".modal-wrap").hide();
@@ -336,17 +334,30 @@ function closeModal(obj) {
 
 //결재하기 모달 
 function showAppModal() {
+
+	// 결재하기 누르면 결재정보 창으로 세팅되어서 추가하는 것 
+	$("#lineInfo").css("background-color", "#332E85");
+	$("#lineInfo").css("color", "white");
+	$("#lineInfo").css("border", "none");
+
+	$("#changeInfo").css("background-color", "white");
+	$("#changeInfo").css("color", "#332E85");
+	$("#changeInfo").css("border-bottom", "2px solid #332E85");
+	$("#tabDetail").show();
+	$("#tabDetail2").hide();
+
+
+
 	let setAppModalHtml = "<div class='setApprovalModal'>" +
 		"<div class='modal-title'>결재하기</div>" +
 		"<div class='modal-body'><div class='labelContainer'>" +
-		"<label><input type='radio' name='type' value='approve'/>승인</label>" +
-		"<label><input type='radio' name='type' value='reject'/>반려</label></div>" +
+		"<label><input type='radio' name='type'  value='approve' checked>승인</label>" +
+		"<label><input type='radio' name='type' value='reject'>반려</label></div>" +
 		"<label>의견 <textarea class='approvalComment'></textarea></label></div>" +
 		"<div class='close-wrap'>" +
 		"<button id='quit' onclick='closeModal(this)'>취소</button>" +
 		"<button id='set' onclick='approveBtnEvent()'>결재</button></div></div>";
 	$(".modal-wrap").html(setAppModalHtml);
-	$("input:radio[name='type']").prop("checked", false);
 	$(".modal-wrap").show();
 
 	// $(".setApprovalModal").show();
@@ -357,10 +368,14 @@ function showAppModal() {
 
 // 결재 타입 값 받아서 결재하기 
 function approveBtnEvent() {
+	// $("input:radio[name='type']").prop("checked", false);
 	let selectVal = $(":radio[name='type']:checked").val();
-	alert(selectVal);
+	let approvalComment = $(".approvalComment").val();
+	
+
+
+
 	$(".modal-wrap").hide();
-	$("input:radio[name='type']").prop("checked", false);
 }
 
 

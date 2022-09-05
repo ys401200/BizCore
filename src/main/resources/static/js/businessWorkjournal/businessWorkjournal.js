@@ -101,7 +101,7 @@ function drawWorkJournalList() {
                 for(let index in storage.workJournalList.workReports[key].schedules){
                     let date = new Date(storage.workJournalList.workReports[key].schedules[index].date);
                     let dateStart = new Date(storage.workJournalList.start);
-                    if(dateStart.getTime() + 86400000 * 7 > date.getTime() && storage.workJournalList.workReports[key].schedules[index].report == true){
+                    if(dateStart.getTime() + 86400000 * 7 > date.getTime() && storage.workJournalList.workReports[key].schedules[index].report){
                         let week = calWeekDay(storage.workJournalList.workReports[key].schedules[index].date);
 
                         html += "<div style='border: 1px solid #000; text-align:center; display: flex; align-items: center; justify-content: center; margin-bottom: 5px;'>" + week + "</div>";
@@ -124,7 +124,7 @@ function drawWorkJournalList() {
                 for(let index in storage.workJournalList.workReports[key].schedules){
                     let date = new Date(storage.workJournalList.workReports[key].schedules[index].date);
                     let dateStart = new Date(storage.workJournalList.start);
-                    if(dateStart.getTime() + 86400000 * 7 < date.getTime() && storage.workJournalList.workReports[key].schedules[index].report == true){
+                    if(dateStart.getTime() + 86400000 * 7 < date.getTime() && storage.workJournalList.workReports[key].schedules[index].report){
                         let week = calWeekDay(storage.workJournalList.workReports[key].schedules[index].date);
 
                         html += "<div style='border: 1px solid #000; text-align:center; display: flex; align-items: center; justify-content: center; margin-bottom: 5px;'>" + week + "</div>";
@@ -188,7 +188,7 @@ function drawWorkJournalList() {
                         for(let index in storage.workJournalList.workReports[key].schedules){
                             let date = new Date(storage.workJournalList.workReports[key].schedules[index].date);
                             let dateStart = new Date(storage.workJournalList.start);
-                            if(dateStart.getTime() + 86400000 * 7 > date.getTime() && storage.workJournalList.workReports[key].schedules[index].report == true){
+                            if(dateStart.getTime() + 86400000 * 7 > date.getTime() && storage.workJournalList.workReports[key].schedules[index].report){
                                 let week = calWeekDay(storage.workJournalList.workReports[key].schedules[index].date);
             
                                 html += "<div style='border: 1px solid #000; text-align:center; display: flex; align-items: center; justify-content: center; margin-bottom: 5px;'>" + week + "</div>";
@@ -210,7 +210,7 @@ function drawWorkJournalList() {
                         for(let index in storage.workJournalList.workReports[key].schedules){
                             let date = new Date(storage.workJournalList.workReports[key].schedules[index].date);
                             let dateStart = new Date(storage.workJournalList.start);
-                            if(dateStart.getTime() + 86400000 * 7 < date.getTime() && storage.workJournalList.workReports[key].schedules[index].report == true){
+                            if(dateStart.getTime() + 86400000 * 7 < date.getTime() && storage.workJournalList.workReports[key].schedules[index].report){
                                 let week = calWeekDay(storage.workJournalList.workReports[key].schedules[index].date);
             
                                 html += "<div style='border: 1px solid #000; text-align:center; display: flex; align-items: center; justify-content: center; margin-bottom: 5px;'>" + week + "</div>";

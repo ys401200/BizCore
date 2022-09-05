@@ -18,8 +18,8 @@
 	width: calc(50% - var(--bodyGridContentChild-margin));
 	height: 478px;
 	margin-right:var(--bodyGridContentChild-margin);
-	/*margin-left: 1.5%;
-	margin-bottom: 2%;*/
+	/* margin-left: 1.5%; */
+	margin-bottom: var(--bodyGridContentChild-margin);
 	background: #FFFFFF;
 	overflow: auto;
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
@@ -61,16 +61,17 @@
 }
 /* 메인 공지사항 끝 */
 
+/* 메인 schedule 일정 시작 */
 #bodyContent #bodyGridContent #bodySched{
 	float:left;
-	width:calc(50% - var(--bodyGridContentChild-margin));
-	margin-left:var(--bodyGridContentChild-margin);
+	width: calc(50% - var(--bodyGridContentChild-margin));
 	height: 478px;
-	/*margin-left: 1.5%;
-	margin-bottom: 2%;*/
+	margin-right:var(--bodyGridContentChild-margin);
+	/* margin-left: 1.5%; */
+	margin-bottom: var(--bodyGridContentChild-margin);
 	background: #FFFFFF;
 	overflow: auto;
-	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
+	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);;
 }
 
 #bodyContent #bodyGridContent #bodySched hr{
@@ -79,7 +80,7 @@
 	border-left : thick solid #E45050;
 	border-right: 0;
 	border-bottom: 0;
- 	border : var(--content-title-hr);
+	border:var(--content-title-hr);
 	height:var(--content-title-hr-height);
  	margin: 0;
 }
@@ -87,113 +88,140 @@
 #bodyContent #bodyGridContent #bodySched span{
 	font-weight: var(--content-title-font-weight);
 	font-size: var(--content-title-font-size);
-	margin-left: 18px;
+	margin-left: 15px;
 	line-height: var(--content-title-line-height);
-	color: #182f81;
+	color: #332E85;
 }
 
 #bodyContent #bodyGridContent #bodySched .gridScheduleList{
-	display: grid; 
-	width:var(--inContent-width); 
+	display: grid;
+	width:var(--inContent-width);
 	margin: 0 auto;
-	margin-top: 6px;
+	margin-top: var(--inContent-margin-top);
 }
 
 #bodyContent #bodyGridContent #bodySched .gridScheduleList .gridHeader{
-    grid-template-columns: 10% 10% 15% 10% 10% 10% 10% 10% 15%;
-	font-size:14px;
-	border-bottom:1px solid #abb6d5;
-	/* background-color:#e9e9f2; */
+	border-bottom:1px solid #182f81;
+    grid-template-columns: 10% 10% 16% 28% 12% 20%;
 }
 
 #bodyContent #bodyGridContent #bodySched .gridScheduleList .gridContent{
-	grid-template-columns: 10% 10% 15% 10% 10% 10% 10% 10% 15%;
+	grid-template-columns: 10% 10% 20% 22% 12% 22%;
 }
+/* 메인 schedule 일정 끝 */
 
-.gridContent:nth-child(2n-1){background-color:#f9f9fb;}
-
-/* 메인 일정관리 시작*/
-/* #bodyContent #bodyGridContent #bodySched{
+/* 메인 sales 일정 시작 */
+#bodyContent #bodyGridContent #bodySales{
 	float:left;
-	width: 47%;
+	width: calc(50% - var(--bodyGridContentChild-margin));
 	height: 478px;
-	margin-left: 2%;
-	margin-bottom: 2%;
+	margin-right:var(--bodyGridContentChild-margin);
+	/* margin-left: 1.5%; */
+	margin-bottom: var(--bodyGridContentChild-margin);
 	background: #FFFFFF;
 	overflow: auto;
-	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
-} 
+	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);;
+}
 
-#bodyContent #bodyGridContent #bodySched hr{
+#bodyContent #bodyGridContent #bodySales hr{
 	float: left;
 	border-top: 0;
 	border-left : thick solid #E45050;
 	border-right: 0;
 	border-bottom: 0;
- 	height : 44px;
- 	width: 4px;
+	border:var(--content-title-hr);
+	height:var(--content-title-hr-height);
  	margin: 0;
 }
 
-#bodyContent #bodyGridContent #bodySched span{
-	font-weight: 500;
-	font-size: 16px;
-	margin-left: 18px;
-	line-height: 3;
+#bodyContent #bodyGridContent #bodySales span{
+	font-weight: var(--content-title-font-weight);
+	font-size: var(--content-title-font-size);
+	margin-left: 15px;
+	line-height: var(--content-title-line-height);
 	color: #332E85;
 }
 
-#bodyContent #bodyGridContent #bodySched #schedTableDiv{
-	margin-top: 15px;
-	width: auto;
-	padding: 10px 10px;
-}
-
-#bodyContent #bodyGridContent #bodySched #schedTableDiv table{
-	width: 100%;
+#bodyContent #bodyGridContent #bodySales .gridSalesList{
+	display: grid;
+	width:var(--inContent-width);
 	margin: 0 auto;
-	border-collapse: collapse;
+	margin-top: var(--inContent-margin-top);
 }
 
-#bodyContent #bodyGridContent #bodySched #schedTableDiv table thead tr th{
-	color: #332E85;
-	border: 1px solid #D9D9D9;
-	height: 38px;
-	font-weight: 500;
+#bodyContent #bodyGridContent #bodySales .gridSalesList .gridHeader{
+	border-bottom:1px solid #182f81;
+    grid-template-columns: 10% 10% 16% 28% 12% 20%;
 }
 
-#bodyContent #bodyGridContent #bodySched #schedTableDiv table tbody tr td{
-	text-align: center;
-	border: 1px solid #D9D9D9;	
-	height: 38px;
+#bodyContent #bodyGridContent #bodySales .gridSalesList .gridContent{
+	grid-template-columns: 10% 10% 20% 22% 12% 22%;
 }
+/* 메인 sales 일정 끝 */
 
-#bodyContent #bodyGridContent #bodySched #schedTableDiv table thead tr #schedTitle{
-	text-align: left;
-	padding: 0 20px;
-}
-
-#bodyContent #bodyGridContent #bodySched #schedTableDiv table tbody tr #schedTitle{
-	text-align: left;
-	padding: 0 20px;
-} */
-/* 메인 일정관리 끝 */
-
-/* 메인 나의문서 시작 */
-#bodyContent #bodyGridContent #bodyMyDoc{
+/* 메인 tech 일정 시작 */
+#bodyContent #bodyGridContent #bodyTech{
 	float:left;
 	width: calc(50% - var(--bodyGridContentChild-margin));
-	margin-right: var(--bodyGridContentChild-margin);
-	margin-top:var(--content-Margin-top);
 	height: 478px;
-	/*margin-left: 1.5%;
-	margin-bottom: 2%;*/
+	margin-right:var(--bodyGridContentChild-margin);
+	/* margin-left: 1.5%; */
+	margin-bottom: var(--bodyGridContentChild-margin);
+	background: #FFFFFF;
+	overflow: auto;
+	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);;
+}
+
+#bodyContent #bodyGridContent #bodyTech hr{
+	float: left;
+	border-top: 0;
+	border-left : thick solid #E45050;
+	border-right: 0;
+	border-bottom: 0;
+	border:var(--content-title-hr);
+	height:var(--content-title-hr-height);
+ 	margin: 0;
+}
+
+#bodyContent #bodyGridContent #bodyTech span{
+	font-weight: var(--content-title-font-weight);
+	font-size: var(--content-title-font-size);
+	margin-left: 15px;
+	line-height: var(--content-title-line-height);
+	color: #332E85;
+}
+
+#bodyContent #bodyGridContent #bodyTech .gridTechList{
+	display: grid;
+	width:var(--inContent-width);
+	margin: 0 auto;
+	margin-top: var(--inContent-margin-top);
+}
+
+#bodyContent #bodyGridContent #bodyTech .gridTechList .gridHeader{
+	border-bottom:1px solid #182f81;
+    grid-template-columns: 10% 10% 16% 28% 12% 20%;
+}
+
+#bodyContent #bodyGridContent #bodyTech .gridTechList .gridContent{
+	grid-template-columns: 10% 10% 20% 22% 12% 22%;
+}
+/* 메인 tech 일정 끝 */
+
+/* 메인 영업기회 시작 */
+#bodyContent #bodyGridContent #bodySopp{
+	float:left;
+	width: 100%;
+	height: 478px;
+	/* margin-top: var(--content-Margin-top); */
+	/* margin-left: 2%; */
+	margin-bottom: var(--bodyGridContentChild-margin);
 	background: #FFFFFF;
 	overflow: auto;
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
 } 
 
-#bodyContent #bodyGridContent #bodyMyDoc hr{
+#bodyContent #bodyGridContent #bodySopp hr{
 	float: left;
 	border-top: 0;
 	border-left : thick solid #E45050;
@@ -204,7 +232,7 @@
  	margin: 0;
 }
 
-#bodyContent #bodyGridContent #bodyMyDoc span{
+#bodyContent #bodyGridContent #bodySopp span{
 	font-weight: var(--content-title-font-weight);
 	font-size: var(--content-title-font-size);
 	margin-left: 18px;
@@ -212,194 +240,37 @@
 	color: #332E85;
 }
 
-#bodyContent #bodyGridContent #bodyMyDoc #myDocTableDiv{
+#bodyContent #bodyGridContent #bodySopp .gridSoppList{
+	display: grid;
+	width:var(--inContent-width);
+	margin: 0 auto;
 	margin-top: var(--inContent-margin-top);
-	width: auto;
-	padding: 10px 10px;
 }
 
-#bodyContent #bodyGridContent #bodyMyDoc #myDocTableDiv table{
-	width: 100%;
-	margin: 0 auto;
-	border-collapse: collapse;
-	font-size: 14px;
-	border-bottom:1px solid #abb6d5;
+#bodyContent #bodyGridContent #bodySopp .gridSoppList .gridHeader{
+	border-bottom:1px solid #182f81;
+    grid-template-columns: 7% 7% 7% 37% 7% 7% 7% 7% 7% 7%;
 }
 
-#bodyContent #bodyGridContent #bodyMyDoc #myDocTableDiv table thead tr th{
-	color: #332E85;
-	/* border: 1px solid #D9D9D9; */
-	height: 38px;
-	font-weight: 500;
+#bodyContent #bodyGridContent #bodySopp .gridSoppList .gridContent{
+	grid-template-columns: 7% 7% 7% 37% 7% 7% 7% 7% 7% 7%;
 }
-
-#bodyContent #bodyGridContent #bodyMyDoc #myDocTableDiv table tbody tr td{
-	text-align: center;
-	border: 1px solid #D9D9D9;	
-	height: 38px;
-}
-
-#bodyContent #bodyGridContent #bodyMyDoc #myDocTableDiv table thead tr #myDocTitle{
-	text-align: left;
-	padding: 0 20px;
-}
-
-#bodyContent #bodyGridContent #bodyMyDoc #myDocTableDiv table tbody tr #myDocTitle{
-	text-align: left;
-	padding: 0 20px;
-}
-/* 메인 나의 문서함 끝 */
-
-/* 메인 결재함 시작 */
-#bodyContent #bodyGridContent #bodyDocList{
-	float:left;
-	width: 47%;
-	height: 478px;
-	margin-left: 2%;
-	margin-bottom: 2%;
-	background: #FFFFFF;
-	overflow: auto;
-	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
-} 
-
-#bodyContent #bodyGridContent #bodyDocList hr{
-	float: left;
-	border-top: 0;
-	border-left : thick solid #E45050;
-	border-right: 0;
-	border-bottom: 0;
- 	height : 44px;
- 	width: 4px;
- 	margin: 0;
-}
-
-#bodyContent #bodyGridContent #bodyDocList span{
-	font-weight: 500;
-	font-size: 16px;
-	margin-left: 18px;
-	line-height: var(--content-title-line-height);
-	color: #332E85;
-}
-
-#bodyContent #bodyGridContent #bodyDocList #docListTableDiv{
-	margin-top: 15px;
-	width: auto;
-	padding: 10px 10px;
-}
-
-#bodyContent #bodyGridContent #bodyDocList #docListTableDiv table{
-	width: 100%;
-	margin: 0 auto;
-	border-collapse: collapse;
-}
-
-#bodyContent #bodyGridContent #bodyDocList #docListTableDiv table thead tr th{
-	color: #332E85;
-	border: 1px solid #D9D9D9;
-	height: 38px;
-	font-weight: 500;
-}
-
-#bodyContent #bodyGridContent #bodyDocList #docListTableDiv table tbody tr td{
-	text-align: center;
-	border: 1px solid #D9D9D9;	
-	height: 38px;
-}
-
-#bodyContent #bodyGridContent #bodyDocList #docListTableDiv table thead tr #docListTitle{
-	text-align: left;
-	padding: 0 20px;
-}
-
-#bodyContent #bodyGridContent #bodyDocList #docListTableDiv table tbody tr #docListTitle{
-	text-align: left;
-	padding: 0 20px;
-}
-/* 메인 결재함 끝 */
-
-/* 메인 근태조회 시작 */
-#bodyContent #bodyGridContent #bodyAtt{
-	float:left;
-	width: calc(50% - var(--bodyGridContentChild-margin));
-	margin-left:var(--bodyGridContentChild-margin);
-	margin-top:var(--content-Margin-top);
-	height: 478px;
-	/*margin-left: 2%;
-	margin-bottom: 2%;*/
-	background: #FFFFFF;
-	overflow: auto;
-	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
-} 
-
-#bodyContent #bodyGridContent #bodyAtt hr{
-	float: left;
-	border-top: 0;
-	border-left : thick solid #E45050;
-	border-right: 0;
-	border-bottom: 0;
-	border:var(--content-title-hr);
- 	height : var(--content-title-hr-height);
- 	margin: 0;
-}
-
-#bodyContent #bodyGridContent #bodyAtt span{
-	font-weight: var(--content-title-font-weight);
-	font-size: var(--content-title-font-size);
-	margin-left: 18px;
-	line-height: var(--content-title-line-height);
-	color: #332E85;
-}
-
-#bodyContent #bodyGridContent #bodyAtt #attTableDiv{
-	margin-top: var(--inContent-margin-top);
-	width: auto;
-	padding: 10px 10px;
-}
-
-#bodyContent #bodyGridContent #bodyAtt #attTableDiv table{
-	width: 100%;
-	margin: 0 auto;
-	border-collapse: collapse;
-}
-
-#bodyContent #bodyGridContent #bodyAtt #attTableDiv table thead tr th{
-	color: #332E85;
-	border: 1px solid #D9D9D9;
-	height: 38px;
-	font-weight: 500;
-}
-
-#bodyContent #bodyGridContent #bodyAtt #attTableDiv table tbody tr td{
-	text-align: center;
-	border: 1px solid #D9D9D9;	
-	height: 38px;
-}
-
-#bodyContent #bodyGridContent #bodyAtt #attTableDiv table thead tr #attTitle{
-	text-align: left;
-	padding: 0 20px;
-}
-
-#bodyContent #bodyGridContent #bodyAtt #attTableDiv table tbody tr #attTitle{
-	text-align: left;
-	padding: 0 20px;
-}
-/* 메인 근태조회 끝 */
+/* 메인 영업기회 끝 */
 
 /* 메인 계약조회 시작 */
-#bodyContent #bodyGridContent #bodyCont{
+#bodyContent #bodyGridContent #bodyContract{
 	float:left;
 	width: 100%;
 	height: 478px;
-	margin-top: var(--content-Margin-top);
-	/*margin-left: 2%;
-	margin-bottom: 2%;*/
+	/* margin-top: var(--content-Margin-top); */
+	/* margin-left: 2%; */
+	margin-bottom: var(--bodyGridContentChild-margin);
 	background: #FFFFFF;
 	overflow: auto;
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
 } 
 
-#bodyContent #bodyGridContent #bodyCont hr{
+#bodyContent #bodyGridContent #bodyContract hr{
 	float: left;
 	border-top: 0;
 	border-left : thick solid #E45050;
@@ -410,7 +281,7 @@
  	margin: 0;
 }
 
-#bodyContent #bodyGridContent #bodyCont span{
+#bodyContent #bodyGridContent #bodyContract span{
 	font-weight: var(--content-title-font-weight);
 	font-size: var(--content-title-font-size);
 	margin-left: 18px;
@@ -418,41 +289,24 @@
 	color: #332E85;
 }
 
-#bodyContent #bodyGridContent #bodyCont #contTableDiv{
-	margin-top: var(--inContent-margin-top);
-	width: auto;
-	padding: 10px 10px;
-}
-
-#bodyContent #bodyGridContent #bodyCont #contTableDiv table{
-	width: 100%;
+#bodyContent #bodyGridContent #bodyContract .gridContractList{
+	display: grid;
+	width:var(--inContent-width);
 	margin: 0 auto;
-	border-collapse: collapse;
+	margin-top: var(--inContent-margin-top);
 }
 
-#bodyContent #bodyGridContent #bodyCont #contTableDiv table thead tr th{
-	color: #332E85;
-	border: 1px solid #D9D9D9;
-	height: 38px;
-	font-weight: 500;
+#bodyContent #bodyGridContent #bodyContract .gridContractList .gridHeader{
+	border-bottom:1px solid #182f81;
+    grid-template-columns: 7% 7% 7% 24% 12% 7% 7% 7% 7% 7% 7%;
 }
 
-#bodyContent #bodyGridContent #bodyCont #contTableDiv table tbody tr td{
-	text-align: center;
-	border: 1px solid #D9D9D9;	
-	height: 38px;
-}
-
-#bodyContent #bodyGridContent #bodyCont #contTableDiv table thead tr #contTitle{
-	text-align: left;
-	padding: 0 20px;
-}
-
-#bodyContent #bodyGridContent #bodyCont #contTableDiv table tbody tr #contTitle{
-	text-align: left;
-	padding: 0 20px;
+#bodyContent #bodyGridContent #bodyContract .gridContractList .gridContent{
+	grid-template-columns: 7% 7% 7% 24% 12% 7% 7% 7% 7% 7% 7%;
 }
 /* 메인 계약조회 끝 */
+
+.gridContent:nth-child(2n-1){background-color:#f9f9fb;}
 
 /* 메시징 컨테이너 시작 */
 .msg_cnt{

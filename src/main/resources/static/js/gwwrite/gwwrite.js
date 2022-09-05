@@ -128,6 +128,10 @@ function selectForm() {
 function showModal() {
 
 
+
+
+
+
   let setGwModalHtml = "<div class='gwModal'>" +
     "<div class='modal-title'>결재선 생성</div>" +
     "<div class='lineDetail'>" +
@@ -140,18 +144,18 @@ function showModal() {
     " <button onclick='check(this.value)' value='conduct'>수신 ></button>" +
     "<button onclick='check(this.value)' value='refer'>참조 ></button></div>" +
     "<div class='innerDetail' id='lineRight'>" +
-    "<div><button type='button'>자주 쓰는 결재선</button><button type='button'></button></div> " +
-    " <label for='examine'> 검토" +
+    "<div><select onchange='setSavedLine(this)'><option value=''>자주 쓰는 결재선</option><option value='basic'>대표</option><option value='middle'>구민주 과장-대표</option><</select></div>" +
+    "<div><div>검토</div>" +
     "<div class='typeContainer' id='examine'></div>" +
-    "</label>" +
-    "<label for='agree'> 합의" +
-    "<div class='typeContainer' id='agree'></div></label>" +
-    "<label for='approval'> 결재" +
-    "<div class='typeContainer' id='approval'></div></label>" +
-    "<label for='conduct'> 수신" +
-    "<div class='typeContainer' id='conduct'></div></label>" +
-    "<label for='refer'> 참조" +
-    "<div class='typeContainer' id='refer'></div></label>" +
+    "</div>" +
+    "<div><div>합의</div>" +
+    "<div class='typeContainer' id='agree'></div></div>" +
+    "<div><div>결재</div>" +
+    "<div class='typeContainer' id='approval'></div></div>" +
+    "<div><div>수신</div>" +
+    "<div class='typeContainer' id='conduct'></div></div>" +
+    "<div><div>참조</div>" +
+    "<div class='typeContainer' id='refer'></div></div>" +
     "</div>" +
     "</div>" +
     "</div>" +
@@ -201,6 +205,7 @@ function check(name) {
   let data = new Array();
   let x;
   for (x in storage.user) data.push(x);
+
 
   for (let i = 0; i < inputLength.length; i++) {
     if ($("#cb" + i).prop('checked')) {
@@ -432,3 +437,26 @@ function deleteFile(obj) {
 // let formId = "doc_Form_Consult_date"
 // $("."+formId)[0].dataset.detail; 
 
+
+// 자주쓰는 결재선 선택시 설정 
+function setSavedLine(obj) {
+  let val = obj.value;
+  if (val == 'middle') {
+    $("#examine").html("<div class='lineDataContainer' id='lineContainer_4'><label id='linedata4'>구민주</label><button value='4' onclick='upClick(this)'>▲</button><button  value='4'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>");
+    $("#approval").html("<div class='lineDataContainer' id='lineContainer_0'><label id='linedata0'>이승우</label><button value='0' onclick='upClick(this)'>▲</button><button  value='0'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>");
+    $("#agree").html("");
+    $("#conduct").html("");
+    $("#refer").html("");
+  } else if (val == 'basic') {
+    $("#approval").html("<div class='lineDataContainer' id='lineContainer_0'><label id='linedata0'>이승우</label><button value='0' onclick='upClick(this)'>▲</button><button  value='0'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>");
+    $("#agree").html("");
+    $("#examine").html("");
+    $("#conduct").html("");
+    $("#refer").html("");
+  }
+
+
+
+
+
+}

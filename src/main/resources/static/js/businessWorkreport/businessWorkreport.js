@@ -108,7 +108,12 @@ function drawWorkReportList() {
             html += "<div style='justify-content: left;'>" + jsonData.schedules[i].content + "</div>";
             html += "<div style='justify-content: center;'>" + date.toISOString().substring(0, 10) + "</div>";
             html += "<div style='justify-content: center;'>" + date.toISOString().substring(0, 10) + "</div>";
-            html += "<div style='justify-content: center;'><input type='checkbox' id='schedCheck' data-id='" + jsonData.schedules[i].no + "' data-job='" + jsonData.schedules[i].job + "' checked></div>"; 
+            
+            if(jsonData.schedules[i].report){
+                html += "<div style='justify-content: center;'><input class='schedCheck' type='checkbox' data-id='" + jsonData.schedules[i].no + "' data-job='" + jsonData.schedules[i].job + "' checked></div>"; 
+            }else{
+                html += "<div style='justify-content: center;'><input class='schedCheck' type='checkbox' data-id='" + jsonData.schedules[i].no + "' data-job='" + jsonData.schedules[i].job + "'></div>";
+            }
         }
     }
     html += "<div style='justify-content: center;'>추가기재사항</div>";
@@ -174,7 +179,7 @@ function reportInsert(date){
         jsonData = storage.workReportList.workReport;
     }
 
-    $("#schedCheck").each((index, item) => {
+    $(".schedCheck").each((index, item) => {
         let temp = 
             {
                 "no": $(item).data("id").toString(),
@@ -197,8 +202,6 @@ function reportInsert(date){
         "schedule": dataArray,
     };
     type = "insert";
-
-    console.log(data);
 
     data = JSON.stringify(data);
     data = cipher.encAes(data);
