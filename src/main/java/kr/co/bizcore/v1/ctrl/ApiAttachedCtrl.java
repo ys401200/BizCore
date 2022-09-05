@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,33 +19,37 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.extern.slf4j.Slf4j;
+
 @RestController
 @RequestMapping("/api/attached")
+@Slf4j
 public class ApiAttachedCtrl extends Ctrl{
 
+    private static final Logger logger = LoggerFactory.getLogger(ApiAttachedCtrl.class);
+
     @GetMapping("/sopp/{no:\\d+}")
-    public void apiAttachedSoppListGet(HttpServletRequest request, HttpServletResponse response, @PathVariable("no") int no, @PathVariable("fileName") String fileName){
-        sendFileList(request, "sopp", no);
+    public String apiAttachedSoppListGet(HttpServletRequest request, HttpServletResponse response, @PathVariable("no") int no){
+        return sendFileList(request, "sopp", no);
     }
 
     @GetMapping("/contract/{no:\\d+}")
-    public void apiAttachedContractListGet(HttpServletRequest request, HttpServletResponse response, @PathVariable("no") int no, @PathVariable("fileName") String fileName){
-        sendFileList(request, "sopp", no);
+    public String apiAttachedContractListGet(HttpServletRequest request, HttpServletResponse response, @PathVariable("no") int no){
+        return sendFileList(request, "sopp", no);
     }
 
     @GetMapping("/docapp/{no:\\d+}")
-    public void apiAttachedDocappListGet(HttpServletRequest request, HttpServletResponse response, @PathVariable("no") int no, @PathVariable("fileName") String fileName){
-        sendFileList(request, "sopp", no);
+    public String apiAttachedDocappListGet(HttpServletRequest request, HttpServletResponse response, @PathVariable("no") int no){
+        return sendFileList(request, "sopp", no);
     }
 
     //@GetMapping("/filebox/{no:\\d+}/{fileName}")
-    public void apiAttachedFileboxListGet(HttpServletRequest request, HttpServletResponse response, @PathVariable("no") int no, @PathVariable("fileName") String fileName){
-        sendFileList(request, "sopp", no);
+    public String apiAttachedFileboxListGet(HttpServletRequest request, HttpServletResponse response, @PathVariable("no") int no){
+        return sendFileList(request, "sopp", no);
     }
 
     private String sendFileList(HttpServletRequest request, String funcName, int funcNo){
         HttpSession session = null;
-        ServletOutputStream out = null;
         String compId = null, result = null, data = null, aesKey = null, aesIv = null;
         
         session = request.getSession();
@@ -53,14 +59,14 @@ public class ApiAttachedCtrl extends Ctrl{
         if(compId == null)  compId = (String)request.getAttribute("compId");
 
         if(compId == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";logger.info("::::::::::::::::::::::::: Step 1");
         }else{
-            data = attachedService.getAttachedFileList(compId, funcName, funcNo);
+            data = attachedService.getAttachedFileList(compId, funcName, funcNo);logger.info("::::::::::::::::::::::::: Step 2");
             if(data == null){
-                result = "{\"result\":\"failure\",\"msg\":\"An error occurred.\"}";
+                result = "{\"result\":\"failure\",\"msg\":\"An error occurred.\"}";logger.info("::::::::::::::::::::::::: Step 3");
             }else{
-                data = decAes(data, aesKey, aesIv);
-                result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
+                data = encAes(data, aesKey, aesIv);logger.info("::::::::::::::::::::::::: Step 4 : " + data);
+                result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";logger.info("::::::::::::::::::::::::: Step 5");
             }
         }
 
