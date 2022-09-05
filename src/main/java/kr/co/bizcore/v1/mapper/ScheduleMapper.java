@@ -108,9 +108,9 @@ public interface ScheduleMapper {
 
     @Select("SELECT 'schedule' AS job, schedno AS no, schedFrom AS `from`, schedtitle AS title, schedDesc AS content, schedCheck AS workReport FROM swc_sched WHERE schedCheck = 1 AND attrib NOT LIKE 'XXX%' AND userno = #{writer} AND schedfrom < #{end} AND schedto >= #{start} AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) " +
                 "UNION ALL " + 
-                "SELECT 'sales' AS job, salesno AS no, salesfrdatetime AS `from`, salestitle AS title, salesdesc AS content, salesCheck AS workReport FROM swc_sales WHERE salescheck = 1 AND attrib = 11111 AND userno = #{writer} AND salesfrdatetime < #{end} AND salestodatetime >= #{start} AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) " +
+                "SELECT 'sales' AS job, salesno AS no, salesfrdatetime AS `from`, salestitle AS title, salesdesc AS content, salesCheck AS workReport FROM swc_sales WHERE salescheck = 1 AND attrib NOT LIKE 'XXX%' AND userno = #{writer} AND salesfrdatetime < #{end} AND salestodatetime >= #{start} AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) " +
                 "UNION ALL " + 
-                "SELECT 'tech' AS job, techdno AS no, techdfrom AS `from`, techdtitle AS title, techddesc AS content, techdCheck AS workReport FROM swc_techd WHERE techdcheck = 1 AND attrib = 11111 AND userno = #{writer} AND techdfrom < #{end} AND techdto >= #{start} AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId})")
+                "SELECT 'tech' AS job, techdno AS no, techdfrom AS `from`, techdtitle AS title, techddesc AS content, techdCheck AS workReport FROM swc_techd WHERE techdcheck = 1 AND attrib NOT LIKE 'XXX%' AND userno = #{writer} AND techdfrom < #{end} AND techdto >= #{start} AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId})")
     public List<Schedule> getScheduleListForReport(@Param("compId") String compId, @Param("start") Date start, @Param("end") Date end, @Param("writer") int writer);
 
     @Update("UPDATE swc_sreport SET attrib = 'XXXXX' WHERE userno = #{userNo} AND weeknum = #{week} AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId})")
