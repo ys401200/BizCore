@@ -352,25 +352,16 @@ input[type="text"] {
 }
 
 
-
-
-
 .lineDataContainer {
-  padding: 0 0.5em;
   display: grid;
   grid-template-columns: 55% 15% 15% 15%;
-
+  padding: 0.2em 0.5em;
 }
 
 .lineDataContainer button {
-  border: none;
-  background-color: white;
+  margin: 0 0.2em;
 }
 
-.lineDataContainer button:hover {
-  color: #EDEDF4;
-  font-weight: 800;
-}
 
 /* End ======================== 결재선관련 ============================= */
 
@@ -492,5 +483,3 @@ input[type="text"] {
   border-top: 1px solid black;
   border-bottom: 1px solid black;
 }
-
-
