@@ -226,7 +226,7 @@ public class ScheduleSvc extends Svc{
         week = y * 100 + systemMapper.getWeek(new Date(cal.getTimeInMillis()));
 
         sql = "INSERT INTO swc_sreport(";
-        str1 = "userno,compno,attrib,weeknum,regdate,prcomment,prcheck,thcomment,thcheck";
+        str1 = "userno,compno,weeknum,attrib,regdate,prcomment,prcheck,thcomment,thcheck";
         str2 = userNo + ",(SELECT compno FROM swc_company WHERE compid = '" + compId + "')," + week + ",11111,now()";
 
         if(previousWeek == null){
