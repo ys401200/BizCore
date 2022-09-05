@@ -247,11 +247,11 @@ input[type="text"] {
   font-size: 16px;
   margin-left: 18px;
   line-height: 3;
-  color: white;
+
 }
 
 .gwModal {
-  background-color: #332e85;
+  background-color: white;
   width: 40%;
   border-radius: 0.3em;
 }
@@ -287,6 +287,7 @@ input[type="text"] {
   background-color: #ffffff;
   overflow: auto;
   border-radius: 3px;
+  border: 1px solid black;
 }
 
 .selector .lineDetail #lineCenter {
@@ -309,10 +310,49 @@ input[type="text"] {
   flex-direction: column;
 }
 
-.selector .lineDetail #lineRight>label {
+
+
+.selector .lineDetail #lineRight>div {
+
+  margin: 1em 0;
+}
+
+
+
+/* .selector .lineDetail #lineRight>label {
   border: 1px solid rgb(188, 185, 185);
   margin: 0.5rem;
+} */
+
+.selector .lineDetail #lineRight>div {
+  display: grid;
+  grid-template-columns: 30% 70%;
+
 }
+
+.selector .lineDetail #lineRight>div:first-of-type {
+  display: flex;
+  margin: 0;
+}
+
+
+
+
+.selector .lineDetail #lineRight>div>div:first-of-type {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid black;
+
+}
+
+.selector .lineDetail #lineRight>div>div:last-of-type {
+  border: 1px solid black;
+  border-left: none;
+}
+
+
+
 
 
 .lineDataContainer {
@@ -454,10 +494,3 @@ input[type="text"] {
 }
 
 
-/* float 설정 초기화  */
-button,
-select,
-input {
-  margin: 0;
-  float: none;
-}
