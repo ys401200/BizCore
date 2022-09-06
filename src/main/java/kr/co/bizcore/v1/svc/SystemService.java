@@ -21,6 +21,7 @@ import java.util.Map;
 
 import kr.co.bizcore.v1.domain.CommonCode;
 import kr.co.bizcore.v1.domain.ConnUrl;
+import kr.co.bizcore.v1.domain.Product;
 import kr.co.bizcore.v1.domain.SimpleCustomer;
 import kr.co.bizcore.v1.domain.User;
 import lombok.extern.slf4j.Slf4j;
@@ -338,6 +339,54 @@ public class SystemService extends Svc {
         return size;
     } // End of checkUsedSpace
 
+    public String getProductList(String compId){
+        String result = null;
+        List<Product> list = null;
+        int x = 0;
+
+        list = productMapper.getProductList(compId);
+        result = "[";
+        if(list != null && list.size() > 0) for(x = 0 ; x < list.size() ; x++){
+            if(x > 0)   result += ",";
+            result += list.get(x).toJson();
+        }
+        result = "]";
+
+        return result;
+    } // End of getProductList()
+
+    public Product getProduct(String compId, int no){
+        Product result = null;
+        result = productMapper.getProduct(compId, no);
+        return result;
+    } // End of getProduct()
+
+    public int addProduct(String compId, Product prod){
+        int result = -1;
+        String sql = null;
+        if(prod != null){
+            sql = prod.createInsertQuery(null, compId);
+            result = executeSqlQuery(sql);
+        }
+        return result;
+    } // End of addProduct()
+
+    public int modifyProduct(String compId, int no, Product prod){
+        int result = -1;
+        String sql = null;
+        Product ogn = null;
+        ogn = productMapper.getProduct(compId, no);
+        if(ogn != null && prod != null){
+            sql = ogn.createUpdateQuery(prod, null);
+            result = executeSqlQuery(sql);
+        }
+        return result;
+    } // End of modifyProduct()
+
+    public boolean removeProduct(String compId, int no){
+        return productMapper.removeProduct(compId, no) > 0;
+    } // End of removeProduct()
+
     // ========================================= 2022년 비즈코어 리뉴얼 파일 데이터 마이그레이션 전용 메서드 ====================================
 
     // SOPP 첨부파일 (DB => storage)
@@ -383,7 +432,7 @@ public class SystemService extends Svc {
 
         }catch(SQLException | IOException e){e.printStackTrace();}
         return count;
-    }
+    } // End of soppFileDownloadAndSave()
 
     // 전자결재 첨부파일 (DB => storage)
     public int appDocFileDownloadAndSave(){
@@ -428,7 +477,7 @@ public class SystemService extends Svc {
 
         }catch(SQLException | IOException e){e.printStackTrace();}
         return count;
-    }
+    } // End of appDocFileDownloadAndSave()
 
     // 계약 첨부파일 (DB => storage)
     public int contractFileDownloadAndSave(){
@@ -473,7 +522,9 @@ public class SystemService extends Svc {
 
         }catch(SQLException | IOException e){e.printStackTrace();}
         return count;
-    }
+    } // End of contractFileDownloadAndSave()
+
+    // ======================== P R I V A T E _ M E T H O D ===========================
 
     // DB에서 dtorage 장치로 이전된 파일에 데해 DB에 저장하는 메서드
     private void saveAttachedData(String funcName, int no, String fileName, String savedName, long size){
