@@ -1,8 +1,16 @@
 package kr.co.bizcore.v1.domain;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
+
+import org.json.JSONObject;
+
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -34,10 +42,6 @@ public class Contract extends SimpleContract{
 
     public void setTaxInclude(String yn){taxInclude = yn;}
     public void setTaxInclude(boolean yn){taxInclude = yn ? "Y" : "N";}
-    // public void setStartOfPaidMaintenance(Date e){startOfPaidMaintenance = e;}
-    // public void setStartOfPaidMaintenance(long e){startOfPaidMaintenance = new Date(e);}
-    // public void setEndOfPaidMaintenance(Date e){endOfPaidMaintenance = e;}
-    // public void setEndOfPaidMaintenance(long e){endOfPaidMaintenance = new Date(e);}
     public void setSupplied(Date e){supplied = e;}
     public void setSupplied(long e){supplied = new Date(e);}
     public void setDelivered(Date e){delivered = e;}
@@ -46,11 +50,24 @@ public class Contract extends SimpleContract{
     public void setCreated(long e){created = new Date(e);}
     public void setModified(Date e){modified = e;}
     public void setModified(long e){modified = new Date(e);}
-    // public void setStartOfFreeMaintenance(Date e){startOfFreeMaintenance = e;}
-    // public void setStartOfFreeMaintenance(long e){startOfFreeMaintenance = new Date(e);}
-    // public void setEndOfFreeMaintenance(Date e){endOfFreeMaintenance = e;}
-    // public void setEndOfFreeMaintenance(long e){endOfFreeMaintenance = new Date(e);}
     public void setSaleDate(long e){saleDate = new Date(e);}
     public void setSaleDate(Date e){saleDate = e;}
+
+    public String toJson(List<HashMap<String, String>> files, List<Schedule> schedules, List<TradeDetail> trades, List<TaxBill> bills) {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(Include.NON_NULL);
+        String result = null;
+        JSONObject json = null;
+        try {
+            result = mapper.writeValueAsString(this);
+            json = new JSONObject(result);
+            json.put("attached", files);
+            json.put("schedules", schedules);
+            json.put("trades", trades);
+            json.put("bills", trades);
+        } catch (JsonProcessingException e) {e.printStackTrace();}
+        result = json.toString();
+        return result;
+    } // End of toJson()
     
 }

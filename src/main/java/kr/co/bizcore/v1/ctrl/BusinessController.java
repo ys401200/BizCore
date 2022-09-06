@@ -18,7 +18,7 @@ public class BusinessController extends Ctrl{
 
     private static final Logger logger = LoggerFactory.getLogger(BusinessController.class);
 
-    @RequestMapping("/notice")
+    @RequestMapping(value={"/notice","/notice/{no:\\d+}"})
     public String notice(HttpServletRequest request) {
         HttpSession session = null;
         String result = null, uri = null, pathName = null, tempStr = null;

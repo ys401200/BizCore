@@ -3,8 +3,14 @@ package kr.co.bizcore.v1.svc;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import kr.co.bizcore.v1.domain.Contract;
+import kr.co.bizcore.v1.domain.Schedule;
 import kr.co.bizcore.v1.domain.SimpleContract;
+import kr.co.bizcore.v1.domain.TaxBill;
+import kr.co.bizcore.v1.domain.TradeDetail;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import org.slf4j.Logger;
 
@@ -32,9 +38,23 @@ public class ContractService extends Svc{
         return result;
     } // End of getProcureList()
 
-    public Contract getContract(int no, String compId){
-        Contract result = null;
-        result = contractMapper.getContract(no, compId);
+    public String getContract(int no, String compId){
+        String result = null;
+        List<HashMap<String, String>> files = null;
+        List<Schedule> schedule1 = null;
+        List<Schedule> schedule2 = null;
+        List<TradeDetail> trades = null;
+        List<TaxBill> bills = null;
+
+        files = systemMapper.getAttachedFileInfo(compId, "contract", no);
+        trades = tradeMapper.getTradeDetailForContract(no);
+        schedule1 = scheduleMapper.getScheduleListFromSchedWithContrct(compId, no);
+        schedule2 = scheduleMapper.getScheduleListFromTechdWithContrct(compId, no);
+        schedule1.addAll(schedule2);
+        Collections.sort(schedule1);
+        bills = accMapper.getTaxBillForContract(compId, no);
+        Contract cnt = contractMapper.getContract(no, compId);
+        result = cnt.toJson(files, schedule1, trades, bills);
         return result;
     } // End of getContract()
 
@@ -51,7 +71,7 @@ public class ContractService extends Svc{
         String sql = null;
         Contract ogn = null;
 
-        ogn = getContract(strToInt(no), compId);
+        ogn = contractMapper.getContract(strToInt(no), compId);
         sql = ogn.createUpdateQuery(contract, null);
         if(sql != null){
             sql = sql + " WHERE contno = " + no + " AND compno = (SELECT compno FROM swc_company WHERE compid = '" + compId + "')";

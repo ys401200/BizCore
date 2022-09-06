@@ -60,7 +60,6 @@ public class ApiContractCtrl extends Ctrl{
         String aesIv = null;
         String data = null;
         int number = -1;
-        Contract contract = null;
         HttpSession session = null;
 
         number = salesService.strToInt(no);
@@ -78,11 +77,11 @@ public class ApiContractCtrl extends Ctrl{
         }else if(aesKey == null || aesIv == null){
             result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
         }else{
-            contract = contractService.getContract(number, compId);
-            if(contract == null){
+            data = contractService.getContract(number, compId);
+            if(data == null){
                 result = "{\"result\":\"failure\",\"msg\":\"Sales not exist.\"}";
             }else{
-                data = contractService.encAes(contract.toJson(), aesKey, aesIv);
+                data = contractService.encAes(data, aesKey, aesIv);
                 result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
             }
         }
