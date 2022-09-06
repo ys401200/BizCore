@@ -151,7 +151,7 @@ public class ApiNoticeCtrl extends Ctrl {
         return result;
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     public String insert(HttpServletRequest req, @RequestBody String requestBody) {
 
         String compId = null;
@@ -189,9 +189,9 @@ public class ApiNoticeCtrl extends Ctrl {
         check = noticeSvc.insertNotice(compId, writer, title, content);
 
         if (check > 0) {// 공지사항 추가 성공
-            result = "{\"result\":\" success\"}";
+            result = "{\"result\":\"ok\"}";
         } else { // 공지사항 추가 실패
-            result = "{\"result\":\" failure\" ,\"msg\":\"Error occured when write.\"}";
+            result = "{\"result\":\"failure\" ,\"msg\":\"Error occured when write.\"}";
         }
 
         return result;
