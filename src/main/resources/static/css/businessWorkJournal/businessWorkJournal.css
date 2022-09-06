@@ -87,10 +87,19 @@
 
 .workJournalContainer button{
 	margin: 0.5% 0.5% 0 0;
-	box-shadow: 0px 1px 2px #bdbfc9;
+	box-shadow: 0px 1px 1px #bdbfc9;
+	color: #ebefff;
+	background-color:#182f81;
+	height:30px;
+	border-radius: 5px;
+	float: right;
+	padding:0 0.7%;
+}
+
+.workJournalContainer button:hover{
 	color: #182f81;
 	background-color:#ebefff;
-	height:30px;
+	box-shadow: 0px 1px 2px #bdbfc9;
 }
 
 .workJournalContainer button:nth-of-type(1){

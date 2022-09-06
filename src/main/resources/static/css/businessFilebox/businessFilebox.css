@@ -72,13 +72,8 @@
 
 .fileBoxContainer hr {
 	float: left;
-	/* border-top: 0;
-	border-left: thick solid #E45050;
-	border-right: 0;
-	border-bottom: 0; */
-	border:2px solid #E45050;
+	border:2px solid #182f81;
 	height: 32px;
-	/* width: 4px; */
 	margin: 0;
 }
 
@@ -87,7 +82,7 @@
 	font-size: 15px;
 	margin-left: 15px;
 	line-height: 40px;
-	color: #332E85;
+	color: #182f81;
 }
 
 .gridFileBoxList {
@@ -124,6 +119,23 @@
 .fileBoxContent .contentDiv, .fileBoxContent .headerDiv {
 	margin-left : 1.5rem;
 	margin-right :1.5rem;
+}
+
+.fileBoxContainer>button{
+	margin:1% 0.5% 20px 0;
+	box-shadow:0 1px 2px #bdbfc9;
+	background-color:#182f81;
+	padding:0 0.7%;
+	height:30px;
+	border-radius:5px;
+	float:right;
+	color:#ebefff;
+}
+
+.fileBoxContainer>button:hover{
+	color:#182f81;
+	background-color:#ebefff;
+	box-shadow:0 2px 2px #bdbfc9;
 }
 
 /* @charset "UTF-8";

@@ -29,13 +29,9 @@ a{
 
 button, select, input[type="text"]{
 	font-family: 'NanumSquareRound';
-	padding:0.3% 0.7%;
-	/* margin:1% 1% 0 0; */
-	float:right;
-	background-color:#ededf4;
+	/* padding:0.3% 0.7%; */
+	/* float:right; */
 	border:0;
-	color:#6469e3;
-	border-radius:5px;
 	cursor: pointer;
 }
 
@@ -100,7 +96,6 @@ button, select, input[type="text"]{
 }
 
 .grid_default_header_item{
-	/* color: #332E85; */
 	height: 38px;
 	font-weight: 500;
 }
@@ -155,10 +150,6 @@ button, select, input[type="text"]{
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	color: #332e85;
-	border: 1px solid #a5a2df;
-	/* border-color: #302D81; */
-	background-color: #ededf4;
 }
 /* 페이지네이션 끝 */
 

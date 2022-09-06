@@ -18,7 +18,7 @@
                 <input type="text" id="contractSearchValue">
             </div>
             <div class="contractSearchBtn">
-                <button type="button" onclick="contractSearchList();">검색</button>
+                <button type="button" onclick="contractSearchList();"><img src="../images/common/search.png" alt="search"/></button>
             </div>
         </div>
         <div class="detailContainer">

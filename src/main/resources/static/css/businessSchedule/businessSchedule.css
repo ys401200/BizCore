@@ -60,6 +60,8 @@
 	border: 0;
 	background-color: #182f81;
 	cursor: pointer;
+	border-radius: 5px;
+	box-shadow: 0 1px 2px #bdbfc9;
 }
 
 .scheduleSearchContainer .scheduleSearchBtn button img{
@@ -310,25 +312,41 @@
 .scheduleContainer button{
 	margin:1% 0.5% 0 0;
 	box-shadow:0px 1px 2px #bdbfc9;
-	color:#182f81;
-	background-color:#ebefff;
+	color:#ebefff;
+	background-color:#182f81;
 	padding:0 0.7%;
 	height:30px;
+	border-radius:5px;
+	float: right;
+}
+
+.scheduleContainer button:hover{
+	color:#182f81;
+	background-color:#ebefff;
+	box-shadow:0px 2px 2px #bdbfc9;
 }
 
 .scheduleContainer select{
 	height:30px;
-	color:#182f81;
+	color:#ebefff;
 	padding:0 8px;
 	border-radius: 5px;
-	background-color:#ebefff;
+	background-color:#182f81;
 	box-shadow: 0px 1px 2px #bdbfc9;
 	margin:1% 0.5% 0 0;
+	border-radius: 5px;
+	float:right;
+}
+
+.scheduleContainer select:hover{
+	color:#182f81;
+	background-color:#ebefff;
+	box-shadow:0px 2px 2px #bdbfc9;
 }
 
 .scheduleContainer .pageContainer{
 	box-sizing:border-box;
-	margin:12px 0.5% 20px 0.5%;
+	margin:20px 0.5% 20px 0.5%;
 }
 
 .scheduleCotainer .pageContainer .paging_cell_current{

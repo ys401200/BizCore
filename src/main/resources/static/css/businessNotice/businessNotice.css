@@ -62,6 +62,8 @@
 	border: 0;
 	background-color: #182f81;
 	cursor: pointer;
+	border-radius: 5px;
+	box-shadow: 0 1px 2px #bdbfc9;
 }
 
 .noticeSearchContainer .noticeSearchBtn button img{
@@ -142,8 +144,17 @@
 .noticeContainer button{
 	margin:1% 0.5% 0 0;
 	box-shadow:0px 1px 2px #bdbfc9;
+	padding:0.3% 0.7%;
+	background-color:#182f81;
+	color:#fff;
+	float:right;
+	border-radius: 5px;
+}
+
+.noticeContainer button:hover{
 	color:#182f81;
 	background-color:#ebefff;
+	box-shadow:0px 2px 2px #bdbfc9;
 }
 
 .noticeContainer .pageContainer .paging_cell_current{
@@ -154,5 +165,5 @@
 
 .noticeContainer .pageContainer{
 	box-sizing: border-box;
-	margin:12px 0.5% 20px 0.5%;
+	margin:20px 0.5% 20px 0.5%;
 }

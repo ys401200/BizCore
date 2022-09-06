@@ -14,15 +14,18 @@
 }
 
 .contractSearchContainer .contractSearchSelect{
-	margin-right: 1%;
+	margin:0 1% 0 0;
 }
 
 .contractSearchContainer .contractSearchSelect select{
-	color: #332E85;
-	padding: 5px;
-	font-size: 1.2rem;
+	color: #181f81;
+	padding:0 8px;
+	border-radius: 5px;
+	font-size: 0.9375rem;
 	font-weight: 500;
 	border: 0;
+	height:30px;
+	box-shadow: 0 1px 2px #b1b5c5;
 	background-color: #EDEDF4;
 }
 
@@ -31,7 +34,7 @@
 }
 
 .contractSearchContainer .contractSearchText{
-	margin-right: 1%;
+	margin: -0.35% 1% 0 0;
 }
 
 .contractSearchContainer .contractSearchText input{
@@ -40,7 +43,9 @@
 	font-weight: 500;
 	width: 500px;
 	border: 0;
-	background-color: #EDEDF4;
+	border-bottom:2px solid #c1cae9;
+	background-color: #fff;
+	border-radius: 0;
 }
 
 .contractSearchContainer .contractSearchText input:hover{
@@ -49,16 +54,18 @@
 
 .contractSearchContainer .contractSearchBtn button{
 	color: #ffffff;
-	padding: 5px;
-	font-size: 1.2rem;
-	font-weight: 500;
-	width: 100px;
+	padding: 0 14px;
+	display: flex; align-items: center;
+	cursor: pointer;
+	box-shadow: 0 1px 2px #bdbfc9;
 	border: 0;
-	background-color: #332E85;
+	height:30px;
+	border-radius: 5px;
+	background-color: #181f81;
 }
 
-.contractSearchContainer .contractSearchBtn button:hover{
-	cursor: pointer;
+.contractSearchContainer .contractSearchBtn button img{
+	width:18px;
 }
 
 .contractContainer{
@@ -72,13 +79,8 @@
 
 .contractContainer hr{
 	float: left;
-	/* border-top: 0;
-	border-left : thick solid #E45050;
-	border-right: 0;
-	border-bottom: 0; */
  	height : 32px;
-	border:2px solid #E45050;
- 	/* width: 4px; */
+	border:2px solid #181f81;
  	margin: 0;
 }
 
@@ -87,7 +89,35 @@
 	font-size: 15px;
 	margin-left: 15px;
 	line-height: 40px;
-	color: #332E85;
+	color: #181f81;
+}
+
+.contractContainer>button{
+	margin:1% 0.5% 14px 0;
+	box-shadow:0 1px 2px #bdbfc9;
+	color:#ebefff;
+	background-color:#181f81;
+	padding:0 0.7%;
+	height:30px;
+	border-radius:5px;
+	float:right;
+}
+
+.contractContainer>button:hover{
+	color:#181f81;
+	background-color: #ebefff;
+	box-shadow:0 2px 2px #bdbfc9;
+}
+
+.contractContainer .pageContainer .paging_cell_current{
+	color:#181f81;
+	border:1px solid #181f81;
+	background-color: #ebefff;
+}
+
+.contractContainer .pageContainer{
+	box-sizing: border-box;
+	margin:20px 0.5% 20px 0.5%;
 }
 
 .contractContainer .gridContractList{
@@ -96,7 +126,12 @@
 	margin: 0 auto;
 }
 
+.contractContainer .gridContractList .gridHeader{
+	border-bottom:1px solid #abb6d5;
+	color:#181f81;
+}
+
 .contractContainer .gridContractList .gridHeader,
 .contractContainer .gridContractList .gridContent{
-    grid-template-columns: 7% 7% 7% 24% 12% 7% 7% 7% 7% 7% 7%;
+    grid-template-columns: 7% 7% 7% 24% 12% 7% 7% 7% 7% 7% 1fr;
 }

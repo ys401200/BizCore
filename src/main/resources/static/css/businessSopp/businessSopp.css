@@ -54,20 +54,29 @@
 
 .soppSearchContainer .soppSearchBtn button{
 	color: #ebefff;
-	box-shadow: 0 1px 2px #bdbfc9;
+	box-shadow: 0 1px 1px #bdbfc9;
 	margin:1% 0.5% 0 0;
 	background-color:#182f81;
 	padding:0 14px;
 	height:30px;
+	border-radius: 5px;
 }
 
 .soppContainer button{
-	color: #182f81;
-	box-shadow: 0 1px 2px #bdbfc9;
-	margin:1% 0.5% 0 0;
-	background-color:#ebefff;
+	color: #ebefff;
+	box-shadow: 0 1px 1px #bdbfc9;
+	margin:1% 0.5% 14px 0;
+	background-color:#182f81;
 	padding:0 14px;
 	height:30px;
+	border-radius: 5px;
+	float:right;
+}
+
+.soppContainer button:hover{
+	color: #182f81;
+	box-shadow: 0 1px 2px #bdbfc9;
+	background-color:#ebefff;
 }
 
 .soppSearchContainer .soppSearchBtn button img{
@@ -119,7 +128,7 @@
 
 .soppContainer .pageContainer{
 	box-sizing: border-box;
-	margin:12px 0.5% 20px 0.5%;
+	margin:20px 0.5% 20px 0.5%;
 }
 
 .soppContainer .pageContainer .paging_cell_current{
