@@ -1,5 +1,3 @@
-let gridListLength = 8;
-
 $(document).ready(() => {
     init();
     
@@ -30,7 +28,7 @@ $(document).ready(() => {
 });
 
 function getNoticeList() {
-	let url, dataArray = [], headerArray, container, idName;
+	let url, dataArray = [], headerArray, container, idName, gridListLength = 8;
 	
 	idName = "bodyNotice";
 	container = $(".gridNoticeList");
@@ -98,7 +96,7 @@ function getNoticeList() {
 }
 
 function getScheduleList() {
-	let url, container, idName;
+	let url, container, idName, gridListLength = 8;
 	
 	idName = "bodySched";
 	container = $(".gridScheduleList");
@@ -201,7 +199,7 @@ function getScheduleList() {
 }
 
 function getSalesList() {
-	let url, container, idName;
+	let url, container, idName, gridListLength = 8;
 	
 	idName = "bodySales";
 	container = $(".gridSalesList");
@@ -301,7 +299,7 @@ function getSalesList() {
 }
 
 function getTechList() {
-	let url, container, idName;
+	let url, container, idName, gridListLength = 8;
 	
 	idName = "bodyTech";
 	container = $(".gridTechList");
@@ -401,7 +399,7 @@ function getTechList() {
 }
 
 function getSoppList() {
-	let url, container, idName;
+	let url, container, idName, gridListLength = 8;
 	
 	idName = "bodySopp";
 	container = $(".gridSoppList");
@@ -526,7 +524,7 @@ function getSoppList() {
 }
 
 function getContractList() {
-	let url, container, idName;
+	let url, container, idName, gridListLength = 8;
 	
 	idName = "bodyContract";
 	container = $(".gridContractList");
