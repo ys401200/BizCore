@@ -13,7 +13,7 @@
         <input type="text" id="scheduleSearchValue">
     </div>
     <div class="scheduleSearchBtn">
-        <button type="button" onclick="scheduleSearchList();">검색</button>
+        <button type="button" onclick="scheduleSearchList();"><img src="../images/common/search.png" alt="search"/></button>
     </div>
 </div>
 <div class="detailContainer">

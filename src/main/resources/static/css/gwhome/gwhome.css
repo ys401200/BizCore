@@ -16,7 +16,6 @@ button {
 	overflow: auto;
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
 	display: inline-block;
-
 }
 
 .container hr,
@@ -51,6 +50,7 @@ button {
 	border: 2px solid #EDEDF4;
 	border-radius: 3px;
 	margin: 1em;
+	cursor:pointer;
 }
 
 .waitDiv .waitCard>div:first-of-type {

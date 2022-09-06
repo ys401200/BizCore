@@ -16,7 +16,7 @@
                 <input type="text" id="noticeSearchValue">
             </div>
             <div class="noticeSearchBtn">
-                <button type="button" onclick="noticeSearchList();">검색</button>
+                <button type="button" onclick="noticeSearchList();"><img src="/images/common/search.png" alt="search"/></button>
             </div>
         </div>
         <div class="detailContainer">

@@ -7,33 +7,36 @@
 	/* margin-left: 2%; */
 	margin-bottom: 1%;
 	/* max-width: 1782px; */
-	height: 100px;
+	padding:2% 0;
+	height: 30px;
 	background: #FFFFFF;
 	overflow: auto;
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
 }
 
 .noticeSearchContainer .noticeSearchSelect{
-	margin:0.5% 1% 0 0;
+	margin:0 1% 0 0;
 }
 
 .noticeSearchContainer .noticeSearchSelect select{
-	color: #6d69e3;
-	padding: 8px;
+	color: #182f81;
+	padding: 0 8px;
 	border-radius:5px;
 	font-size:0.9375rem;
 	/* font-size: 1.2rem; */
 	font-weight: 500;
 	border: 0;
-	background-color: #EDEDF4;
+	height:30px;
+	background-color: #ebefff;
+	box-shadow: 0px 1px 2px #b1b5c5;
 }
 
-.noticeSearchContainer .noticeSearchSelect select:hover{
+/* .noticeSearchContainer .noticeSearchSelect select:hover{
 	border: 1px solid#332E85;
-}
+} */
 
 .noticeSearchContainer .noticeSearchText{
-	margin-right: 1%;
+	margin:-0.35% 1% 0 0;
 }
 
 .noticeSearchContainer .noticeSearchText input{
@@ -42,7 +45,7 @@
 	font-weight: 500;
 	width: 500px;
 	border: 0;
-	border-bottom:2px solid #bbbbe9;
+	border-bottom:2px solid #c1cae9;
 	background-color: #fff;
 	border-radius: 0;
 	
@@ -53,18 +56,21 @@
 }
 
 .noticeSearchContainer .noticeSearchBtn button{
-	color: #ffffff;
-	padding: 5px;
-	font-size: 1.2rem;
-	font-weight: 500;
-	width: 100px;
+	padding: 0 14px;
+	height:30px;
+	display:flex; align-items: center;
 	border: 0;
-	background-color: #332E85;
-}
-
-.noticeSearchContainer .noticeSearchBtn button:hover{
+	background-color: #182f81;
 	cursor: pointer;
 }
+
+.noticeSearchContainer .noticeSearchBtn button img{
+	width:18px;
+}
+
+/* .noticeSearchContainer .noticeSearchBtn button:hover{
+	cursor: pointer;
+} */
 
 .noticeContainer {
 	margin-top: 1%;
@@ -77,13 +83,8 @@
 
 .noticeContainer hr {
 	float: left;
-	/* border-top: 0;
-	border-left: thick solid #E45050;
-	border-right: 0;
-	border-bottom: 0; */
-	border:2px solid #E45050;
+	border:2px solid #182f81;
 	height: 32px;
-	/* width: 4px; */
 	margin: 0;
 }
 
@@ -92,7 +93,7 @@
 	font-size: 15px;
 	margin-left: 15px;
 	line-height: 40px;
-	color: #332E85;
+	color: #182f81;
 }
 
 /* .noticeContainer button {
@@ -126,8 +127,6 @@
 	font-size: 1.4rem;
 	color: #332E85;
 	font-weight: 600;
-	
-
 }
 
 .noticeContent .headerDiv .deleteButton {
@@ -138,4 +137,22 @@
 .noticeContent .contentDiv, .noticeContent .headerDiv {
 	margin-left : 1.5rem;
 	margin-right :1.5rem;
+}
+
+.noticeContainer button{
+	margin:1% 0.5% 0 0;
+	box-shadow:0px 1px 2px #bdbfc9;
+	color:#182f81;
+	background-color:#ebefff;
+}
+
+.noticeContainer .pageContainer .paging_cell_current{
+	color:#182f81;
+	border:1px solid #182f81;
+	background-color:#ebefff;
+}
+
+.noticeContainer .pageContainer{
+	box-sizing: border-box;
+	margin:12px 0.5% 20px 0.5%;
 }

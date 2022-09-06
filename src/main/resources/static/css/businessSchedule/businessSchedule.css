@@ -6,31 +6,36 @@
 	/* margin-left: 2%; */
 	margin-bottom: 1%;
 	/* max-width: 1782px; */
-	height: 100px;
+	padding:2% 0;
+	height: 30px;
 	background: #FFFFFF;
 	overflow: auto;
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
 }
 
 .scheduleSearchContainer .scheduleSearchSelect{
-	margin-right: 1%;
+	margin:0 1% 0 0;
 }
 
 .scheduleSearchContainer .scheduleSearchSelect select{
-	color: #332E85;
-	padding: 5px;
-	font-size: 1.2rem;
+	color: #182f81;
+	padding:0 8px;
+	border-radius:5px;
+	font-size:0.9375rem;
+	height:30px;
+	/* font-size: 1.2rem; */
 	font-weight: 500;
 	border: 0;
-	background-color: #EDEDF4;
+	background-color: #ebefff;
+	box-shadow: 0 1px 2px #b1b5c5;
 }
 
-.scheduleSearchContainer .scheduleSearchSelect select:hover{
+/* .scheduleSearchContainer .scheduleSearchSelect select:hover{
 	border: 1px solid#332E85;
-}
+} */
 
 .scheduleSearchContainer .scheduleSearchText{
-	margin-right: 1%;
+	margin: -0.35% 1% 0 0;
 }
 
 .scheduleSearchContainer .scheduleSearchText input{
@@ -39,7 +44,9 @@
 	font-weight: 500;
 	width: 500px;
 	border: 0;
-	background-color: #EDEDF4;
+	border-bottom:2px solid #c1cae9;
+	background-color: #fff;
+	border-radius: 0;
 }
 
 .scheduleSearchContainer .scheduleSearchText input:hover{
@@ -47,18 +54,21 @@
 }
 
 .scheduleSearchContainer .scheduleSearchBtn button{
-	color: #ffffff;
-	padding: 5px;
-	font-size: 1.2rem;
-	font-weight: 500;
-	width: 100px;
+	padding:0 14px;
+	height: 30px;
+	display:flex; align-items: center;
 	border: 0;
-	background-color: #332E85;
-}
-
-.scheduleSearchContainer .scheduleSearchBtn button:hover{
+	background-color: #182f81;
 	cursor: pointer;
 }
+
+.scheduleSearchContainer .scheduleSearchBtn button img{
+	width:18px;
+}
+
+/* .scheduleSearchContainer .scheduleSearchBtn button:hover{
+	cursor: pointer;
+} */
 
 .scheduleContainer{
     margin-top: 1%;
@@ -71,13 +81,8 @@
 
 .scheduleContainer hr{
 	float: left;
-	/* border-top: 0;
-	border-left : thick solid #E45050;
-	border-right: 0;
-	border-bottom: 0; */
-	border:2px solid #E45050;
+	border:2px solid #182f81;
  	height : 32px;
- 	/* width: 4px; */
  	margin: 0;
 }
 
@@ -150,6 +155,10 @@
     grid-template-columns: 7% 5% 23% 11% 7% 7% 5% 7% 28%;
 }
 
+.scheduleContainer .gridScheduleList .gridHeader{
+	border-bottom:1px solid #abb6d5;
+}
+
 .scheduleContainer .calendarList{
 	padding: 1%;
 }
@@ -158,37 +167,64 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	background-color: #EAEAEA;
-	border-top: 1px solid #BDBDBD;
-	border-left: 1px solid #BDBDBD;
-	border-right: 1px solid #BDBDBD;
+	/* background-color: #ebefff; */
 	height: 50px;
-	font-size: 1.2rem;
+	font-size: 1.1rem;
 	font-weight: 500;
+	margin-bottom:1rem;
+	/* margin:1.1rem 0 1rem 0;
+	border-radius:16px;
+	box-shadow: 0px 2px 2px #c9cfe3c9; */
+}
+
+.scheduleContainer .calendarList .calendarInfo button{
+	background-color:#637fef;
+	box-shadow:0px 1px 2px #bdbfc9;
+	margin:0;
+	color:#fff;
+	padding:0.3% 0.4%;
+	border-radius:7px;
+}
+
+.scheduleContainer .calendarList .calendarInfo button img{
+	width:10px;
+}
+
+.scheduleContainer .calendarList .calendarInfo .calendarYear{
+	margin-left:14px;
+}
+
+.scheduleContainer .calendarList .calendarInfo Span:last-of-type{
+	margin-right:14px;
 }
 
 .calendar_container{
 	display : grid;
 	grid-template-columns: repeat(7, 1fr);
 	margin: 0 auto;
-	border-left: 1px solid #BDBDBD;
+	/* border: 1px solid #c4c9db; */
+	border-radius:20px;
 }
 
 .calendar_container .calendar_header{
-	background-color: #EAEAEA;
-	border-right: 1px solid #BDBDBD;
-	border-top: 1px solid #BDBDBD;
-	border-bottom: 1px solid #BDBDBD;
+	background-color: #edf1ff;
+	/* border-right: 1px solid #BDBDBD; */
+	/* border-top: 1px solid #BDBDBD; */
+	border-bottom: 2px solid #929cc5;
 	padding: 15px 0;
 	text-align:center;
+	color:#182f81;
 }
 
 .calendar_container > *:nth-child(1){
 	color:#FF0000;
+	border-top-left-radius:10px;
 }
 
 .calendar_container > *:nth-child(7){
 	color:#0100FF;
+	border-right: 0;
+	border-top-right-radius: 10px;
 }
 
 .calendar_container > * > .calendar_date{
@@ -214,30 +250,46 @@
 .calendar_container > .calendar_cell > .calendar_date{
 	font-size:1rem;
 	z-index: 1;
+	margin:10px;
 }
 
 .calendar_container > .calendar_cell:hover{
-	background-color: #EDEDF4;
-	/* color: #ffffff; */
+	border:1px solid #637fef;
+	/* border:1px solid #6d82d3; */
+	box-sizing: border-box;
 }
 
+/* .calendar_container > .calendar_cell:hover .calendar_date{
+	color:#fff;
+} */
+
 .calendar_container > .calendar_cell > .calendar_item{
-	font-size:0.7rem;
+	font-size:0.8rem;
 	white-space: nowrap;
   	overflow: hidden;
   	text-overflow: ellipsis;
 	z-index: 2;
 	height:1.2rem;
-	padding-left:0.7rem;
-	padding-right:0.7rem;
-	background-color:rgb(202, 227, 158);
+	margin:0.4rem 0;
+	line-height:20px;
+	padding:0.05rem 0.7rem;
+	/* padding-left:0.7rem;
+	padding-right:0.7rem; */
+	background-color:rgb(251 211 209);
+	/* background-color:rgb(189 202 251); */
+	/* border: 1px solid #c2c9e7; */
 	border-radius: 0.7rem;
-	margin-top:0.2rem;
-	margin-bottom:0.2rem;
+	/* margin-top:0.2rem;
+	margin-bottom:0.2rem; */
 }
 
 .calendar_container > .calendar_cell > .calendar_item:hover{
 	color: #ffffff;
+	background-color:#637fef;
+}
+
+.calendar_container > .calendar_cell:nth-child(7n){
+	border-right:0;
 }
 
 .calendar_container > .calendar_cell > .calendar_item_empty{
@@ -253,3 +305,35 @@
 	border-top-right-radius: 0;
 	border-bottom-right-radius: 0;
 }
+
+/*일정조회 버튼 및 게시글 페이지 번호 시작*/
+.scheduleContainer button{
+	margin:1% 0.5% 0 0;
+	box-shadow:0px 1px 2px #bdbfc9;
+	color:#182f81;
+	background-color:#ebefff;
+	padding:0 0.7%;
+	height:30px;
+}
+
+.scheduleContainer select{
+	height:30px;
+	color:#182f81;
+	padding:0 8px;
+	border-radius: 5px;
+	background-color:#ebefff;
+	box-shadow: 0px 1px 2px #bdbfc9;
+	margin:1% 0.5% 0 0;
+}
+
+.scheduleContainer .pageContainer{
+	box-sizing:border-box;
+	margin:12px 0.5% 20px 0.5%;
+}
+
+.scheduleCotainer .pageContainer .paging_cell_current{
+	color:#182f81;
+	border:1px solid #182f81;
+	background-color:#ebefff;
+}
+/*일정조회 버튼 및 게시글 페이지 번호 끝*/

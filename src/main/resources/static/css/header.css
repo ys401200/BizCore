@@ -29,7 +29,9 @@ a{
 
 button, select, input[type="text"]{
 	font-family: 'NanumSquareRound';
-	padding:0.3% 0.8% 0.3% 0.8%;
+	padding:0.3% 0.7%;
+	/* margin:1% 1% 0 0; */
+	float:right;
 	background-color:#ededf4;
 	border:0;
 	color:#6469e3;
@@ -124,14 +126,14 @@ button, select, input[type="text"]{
 /* 페이지네이션 */
 .pageContainer{
 	display: flex;
-	margin: 2% 0.5% 2% 0;
+	/*margin: 2% 0.5% 2% 0;*/
 	float: right;
 	font-size:13px;
 }
 
 .pageContainer div:not(.paging_cell_current), .pageContainer .paging_cell_empty{
-	width: 30px;
-	height: 30px;
+	width: 28px;
+	height: 28px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -148,8 +150,8 @@ button, select, input[type="text"]{
 }
 
 .paging_cell_current{
-	width: 30px;
-	height: 30px;
+	width: 28px;
+	height: 28px;
 	display: flex;
 	justify-content: center;
 	align-items: center;

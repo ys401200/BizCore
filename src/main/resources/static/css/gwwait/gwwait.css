@@ -5,7 +5,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	margin: 2%;
+	/*margin: 2%;*/
 	height: 5rem;
 	background: #FFFFFF;
 	overflow: auto;
@@ -64,32 +64,28 @@
 
 .container {
 	position: relative;
-	left: 2%;
-	width: 96%;
+	width: 100%;
 	background: #FFFFFF;
 	overflow: auto;
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
 	display: inline-block;
+	margin-top:0.6%;
+	overflow: hidden;
 }
 
 .container hr {
 	float: left;
-	border-top: 0;
-	border-left: thick solid #E45050;
-	border-right: 0;
-	border-bottom: 0;
-	height: 44px;
-	width: 4px;
+	height: 32px;
+	border:2px solid #456e95;
 	margin: 0;
 }
 
 .container span {
-
-	font-weight: 500;
 	font-size: 16px;
-	margin-left: 18px;
-	line-height: 3;
-	color: #332E85;
+	margin-left: 15px;
+	line-height: 40px;
+	color: #456e95;
+	font-weight:bolder;
 }
 
 
@@ -102,8 +98,8 @@
 
 
 .subContainer .listPageDiv>div {
-	margin: 0 2%;
-
+	margin: 0 auto;
+	width:99%;
 }
 
 .subContainer .listPageDiv .selectedReportview,
@@ -158,11 +154,29 @@
 	font-weight: 500;
 }
 
-.subContainer .listPageDiv>div:last-of-type {
-	margin-bottom: 2%;
+.subContainer .listPageDiv>div:last-of-type{
+	display:inline-block;
+	margin:20px 0.5% 20px 0.5%;
+	width: auto;
 }
 
+.subContainer .listPageDiv>div:last-of-type div{
+	float:left;
+}
 
+.subContainer .listPageDiv>div:last-of-type .paging_cell_current{
+	background-color:#eaeff3;
+	border:1px solid #507698;
+}
+
+.subContainer .listPageDiv>div:last-of-type div:not(.paging_cell_current){
+	background-color:#fff;
+}
+
+.subContainer .listPageDiv>div:last-of-type div:hover{
+	background-color:#406c92;
+	border:1px solid #507698;
+}
 
 .listPageDiv .detailReport {
 	display: grid;
@@ -171,6 +185,11 @@
 	/* grid-template-columns: 60% 40%; */
 }
 
+.listDiv>div:first-child{border-bottom:1px solid #406c92;}
+
+.listDiv .grid_default_body_item:nth-chhild(2n-1){
+	background-color:rgba(234,239,243,0.4)
+}
 
 /* 첨부파일 목록 조회  */
 .listPageDiv .detailReport .selectedReportview .selectedFileField {
@@ -299,7 +318,7 @@
 	left: 0;
 	width: 100%;
 	height: 100%;
-	background: rgba(0, 0, 0, 0.12);
+	background: rgba(0, 0, 0, 0.38);
 	display: flex;
 	align-items: center;
 	justify-content: center;

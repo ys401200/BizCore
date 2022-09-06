@@ -18,7 +18,7 @@
                 <input type="text" id="soppSearchValue">
             </div>
             <div class="soppSearchBtn">
-                <button type="button" onclick="soppSearchList();">검색</button>
+                <button type="button" onclick="soppSearchList();"><img src="../images/common/search.png" alt=""/></button>
             </div>
         </div>
         <div class="detailContainer">
