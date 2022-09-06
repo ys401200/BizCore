@@ -33,7 +33,7 @@
 }
 
 .workReportContainer .workReportContent .reportBtns .reportBtnPrev{
-	width: 2%;
+	width: 50px;
 	float: left;
 }
 
@@ -52,8 +52,8 @@
 }
 
 .workReportContainer .workReportContent .reportBtns .reportBtnNext{
-	width: 3%;
-	float: right;
+	width: 50px;
+	float: left;
 }
 
 .workReportContainer .workReportContent .reportBtns .reportBtnNext > button{
@@ -68,6 +68,14 @@
 	color:#fff;
 	background-color:#182f81;
 	box-shadow:0px 1px 2px #bdbfc9;
+}
+
+.workReportContainer>button{
+	margin:1% 20px 0 0;
+	box-shadow:0 1px 2px #bdbfc9;
+	color:#182f81;
+	background-color:#ebefff;
+	padding:0.3% 0.7%;
 }
 
 .workReportContainer .workReportContent .reportHeader,

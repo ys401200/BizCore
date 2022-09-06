@@ -352,7 +352,7 @@ input[type="text"] {
   background-color: #ffffff;
   overflow: auto;
   border-radius: 3px;
-  border: 1px solid black;
+  /* border: 1px solid black; */
 }
 
 .selector .lineDetail .innerDetail>div{
@@ -436,15 +436,16 @@ input[type="text"] {
 
 .lineDataContainer {
   display: grid;
-  grid-template-columns: 55% 15% 15% 15%;
-  padding: 0.2em 0.5em;
+  grid-template-columns: 1fr 10% 10% 10%;
+  padding: 0.5em 0.5em;
+  border-bottom:1px solid #d8e1e9;
 }
 
 .lineDataContainer button {
   margin: 0 0.2em;
   padding: 0.5em 0.5em;
-  display: grid;
-  grid-template-columns: 1fr 8% 8% 8%;
+  /* display: grid;
+  grid-template-columns: 1fr 8% 8% 8%; */
   border-bottom:1px solid #cedfdd;
   font-size:14px;
   color:#212121;
@@ -453,12 +454,22 @@ input[type="text"] {
 
 .ContentDiv>div:nth-child(3) .lineDataContainer button {
   border: none;
-  height:20px;
+  height:18px;
   background-color:#eaeff3;
-  font-size:12px;
+  font-size:11px;
   font-weight:bolder;
+  width:75%;
 }
 
+ .typeContainer .lineDataContainer>label {
+  float:left;
+  width:70%;
+}
+
+.typeContainer .lineDataContainer>button {
+  float:left;
+  width:10%;
+}
 
 /*결재선 모달창 버튼*/
 .ContentDiv>div:nth-child(3) .gwModal #lineCenter button{
