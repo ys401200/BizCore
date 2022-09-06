@@ -127,11 +127,6 @@ function selectForm() {
 // 결재선 생성 버튼 눌렀을 때 모달 띄움 
 function showModal() {
 
-
-
-
-
-
   let setGwModalHtml = "<div class='gwModal'>" +
     "<div class='modal-title'>결재선 생성</div>" +
     "<div class='lineDetail'>" +
