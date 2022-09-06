@@ -225,20 +225,20 @@ public class ApiNoticeCtrl extends Ctrl {
         json = new JSONObject(data);
 
         if (no == null)
-            result = "{\"result\":\" failure\",\"msg\":\"notiNo is not exist\"}";
+            result = "{\"result\":\"failure\",\"msg\":\"notiNo is not exist\"}";
 
         if (json.getString("title") != null)
             title = json.getString("title");
         else
-            result = "{\"result\":\" failure\",\"msg\":\"title is not exist\"}";
+            result = "{\"result\":\"failure\",\"msg\":\"title is not exist\"}";
 
         if (json.getString("content") != null)
             content = json.getString("content");
         else
-            result = "{\"result\":\" failure\",\"msg\":\"content is not exist\"}";
+            result = "{\"result\":\"failure\",\"msg\":\"content is not exist\"}";
 
         if (noticeSvc.updateNotice(title, content, compId, no) > 0) {
-            result = "{\"result\":\" ok\"}";
+            result = "{\"result\":\"ok\"}";
         }
 
         return result;
