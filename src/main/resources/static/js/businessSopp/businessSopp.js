@@ -156,6 +156,7 @@ function drawSoppList() {
 
 function soppDetailView(e){
 	let id, url, method, data, type;
+	contentTopBtn("bodyContent");
 
 	id = $(e).data("id");
 	url = "/api/sopp/" + id;
@@ -259,7 +260,7 @@ function soppSuccessView(result){
 	html += "<label class='tabItem' for='tabTrade'>매입매출내역</label>";
 	// html += "<input type='radio' id='tabEst' name='tabItem' data-content-id='tabEstList' onclick='tabItemClick(this)'>";
 	// html += "<label class='tabItem' for='tabEst'>견적내역</label>";
-	html += "<input type='radio' id='tabFile' name='tabItem' data-content-id='tabFileList' onclick='tabItemClick(this)'>";
+	html += "<input type='radio' id='tabFile' name='tabItem' data-content-id='tabFileList' data-id='" + result.no + "' onclick='tabItemClick(this)'>";
 	html += "<label class='tabItem' for='tabFile'>파일첨부</label>";
 	html += "<input type='radio' id='tabTech' name='tabItem' data-content-id='tabTechList' onclick='tabItemClick(this)'>";
 	html += "<label class='tabItem' for='tabTech'>기술지원내역</label>";
@@ -438,26 +439,30 @@ function soppInsertForm(){
 	modal.close.attr("onclick", "modal.hide();");
 
 	setTimeout(() => {
-		let my = storage.my;
+		let my = storage.my, nowDate;
+		nowDate = new Date();
+		nowDate = nowDate.toISOString().substring(0, 10);
 
 		$(document).find("#employee").val(storage.user[my].userName);
+		$(document).find("#targetDate").val(nowDate);
 	}, 100);
 }
 
 function soppUpdateForm(result){
-	let html, title, userName, customer, picOfCustomer, endUser, progress, disDate, expectedSales, detail, dataArray;
+	let html, title, userName, customer, picOfCustomer, endUser, progress, disDate, expectedSales, detail, dataArray, contType, soppType, status;
 
-	title = (result.title === null || result.title === "" || result.title === undefined) ? "제목 없음" : result.title;
-	userName = (result.employee == 0 || result.employee === null || result.employee === undefined) ? "데이터 없음" : storage.user[result.employee].userName;
-	customer = (result.customer == 0 || result.customer === null || result.customer === undefined) ? "데이터 없음 " : storage.customer[result.customer].name;
-	picOfCustomer = (result.picOfCustomer == 0 || result.picOfCustomer === null || result.picOfCustomer === undefined) ? "데이터 없음" : result.picOfCustomer;
-	endUser = (result.endUser == 0 || result.endUser === null || result.endUser === undefined) ? "데이터 없음" : storage.customer[result.endUser].name;
-	status = (result.status === null || result.status === "" || result.status === undefined) ? "없음" : storage.code.etc[result.status];
-	progress = (result.progress === null || result.progress === "" || result.progress === undefined) ? "데이터 없음" : result.progress;
-	contType = (result.contType === null || result.contType === "" || result.contType === undefined) ? "없음" : storage.code.etc[result.contType];
-	soppType = (result.soppType === null || result.soppType === "" || result.soppType === undefined) ? "데이터 없음" : storage.code.etc[result.soppType];
-	expectedSales = (result.expectedSales === null || result.expectedSales === "" || result.expectedSales === undefined) ? "데이터 없음" : numberFormat(result.expectedSales);
-	detail = (result.detail === null || result.detail === "" || result.detail === undefined) ? "내용 없음" : result.detail;
+	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
+	userName = (result.employee == 0 || result.employee === null || result.employee === undefined) ? "" : storage.user[result.employee].userName;
+	customer = (result.customer == 0 || result.customer === null || result.customer === undefined) ? "" : storage.customer[result.customer].name;
+	picOfCustomer = (result.picOfCustomer == 0 || result.picOfCustomer === null || result.picOfCustomer === undefined) ? "" : result.picOfCustomer;
+	endUser = (result.endUser == 0 || result.endUser === null || result.endUser === undefined) ? "" : storage.customer[result.endUser].name;
+	status = (result.status === null || result.status === "" || result.status === undefined) ? "" : result.status;
+	progress = (result.progress === null || result.progress === "" || result.progress === undefined) ? "" : result.progress;
+	contType = (result.contType === null || result.contType === "" || result.contType === undefined) ? "" : result.contType;
+	console.log(contType);
+	soppType = (result.soppType === null || result.soppType === "" || result.soppType === undefined) ? "" : result.soppType;
+	expectedSales = (result.expectedSales === null || result.expectedSales === "" || result.expectedSales === undefined) ? "" : numberFormat(result.expectedSales);
+	detail = (result.detail === null || result.detail === "" || result.detail === undefined) ? "" : result.detail;
 	
 	disDate = dateDis(result.targetDate);
 	targetDate = dateFnc(disDate);
@@ -611,6 +616,20 @@ function soppUpdateForm(result){
 	modal.close.text("취소");
 	modal.confirm.attr("onclick", "soppUpdate(" + result.no + ");");
 	modal.close.attr("onclick", "modal.hide();");
+
+	setTimeout(() => {
+		$(document).find("#contType option[value='" + contType + "']").prop("selected", true);
+		$(document).find("#soppType option[value='" + soppType + "']").prop("selected", true);
+		$(document).find("#status option[value='" + status + "']").prop("selected", true);
+
+		if(targetDate === null || targetDate === "" || targetDate === undefined){
+			let nowDate;
+			nowDate = new Date();
+			nowDate = nowDate.toISOString().substring(0, 10);
+	
+			$(document).find("#targetDate").val(nowDate);
+		}
+	}, 100);
 }
 
 function soppInsert(){

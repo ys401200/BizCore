@@ -1,5 +1,3 @@
-let fileDataArray = [], removeDataArray = [], updateDataArray = [];
-
 $(document).ready(() => {
 	init();
 
@@ -87,6 +85,7 @@ function drawFileBoxList() {
 
 function fileBoxDetailView(e) {// 선택한 그리드의 글 번호 받아오기 
 	let id, url, method, data, type;
+	contentTopBtn("bodyContent");
 
 	id = $(e).data("id");
 	url = "/api/board/filebox/" + id;
@@ -369,79 +368,4 @@ function fileBoxSuccessDelete(){
 
 function fileBoxErrorDelete(){
 	alert("삭제에러");
-}
-
-function fileChange(){
-	let url, method, data, type, attached, fileDatas = [], html = "";
-	attached = $(document).find("[name='attached[]']")[0].files;
-	
-	for(let i = 0; i < attached.length; i++){
-		let reader = new FileReader();
-		let temp = [], fileName;
-
-		fileName = attached[i].name;
-
-		reader.onload = (e) => {
-			let binary, x, fData = e.target.result;
-            const bytes = new Uint8Array(fData);
-            binary = "";
-            for(x = 0 ; x < bytes.byteLength ; x++) binary += String.fromCharCode(bytes[x]);
-			let fileData = cipher.encAes(btoa(binary));
-			let fullData = (fileName + "\r\n" + fileData);
-			
-			url = "/api/board/filebox/attached";
-			method = "post";
-			data = fullData;
-			type = "insert";
-			
-			crud.defaultAjax(url, method, data, type, submitFileSuccess, submitFileError);
-		}
-
-		reader.readAsArrayBuffer(attached[i]);
-		
-		temp = attached[i].name;
-		fileDatas.push(temp);
-		updateDataArray.push(temp);
-	}
-
-	$(document).find(".filePreview").html(html);
-
-	for(let i = 0; i < fileDatas.length; i++){
-		fileDataArray.push(fileDatas[i]);
-	}
-
-	if(fileDataArray.length > 0){
-		for(let i = 0; i < fileDataArray.length; i++){
-			html += "<div style='padding-bottom: 4%;'><span style='float:left; display: block; width: 95%;'>" + fileDataArray[i] + "</span><button type='button' id='fileDataDelete' style='float:right; width: 5%;' data-index='" + i + "' onclick='fileViewDelete(this);'>삭제</button></div>";
-			$(document).find(".filePreview").html(html);
-		}
-	}
-
-	// divHeight = $(document).find(".filePreview").innerHeight();
-	// $(document).find("#attached").parent().parent().next().css("padding-top", divHeight);
-}
-
-function submitFileSuccess(){
-	return false;
-}
-
-function submitFileError(){
-	alert("파일을 올리는 도중 에러가 생겼습니다.\n다시 시도해주세요.");
-}
-
-function fileViewDelete(e){
-	fileDataArray.splice($(e).data("index"), 1);
-	
-	for(let i = 0; i < updateDataArray.length; i++){
-		if(updateDataArray[i] === $(e).prev().text()){
-			updateDataArray.splice(i, 1);
-		}
-	}
-
-	removeDataArray.push($(e).prev().text());
-	$(e).parent().remove();
-
-	$(document).find(".filePreview div button").each((index, item) => {
-		$(item).attr("data-index", index);		
-	});
 }

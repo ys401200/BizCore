@@ -176,6 +176,7 @@ function drawContractList() {
 
 function contractDetailView(e){
 	let id, url, method, data, type;
+	contentTopBtn("bodyContent");
 
 	id = $(e).data("id");
 	url = "/api/contract/" + id;
@@ -415,7 +416,7 @@ function contractSuccessView(result){
 			html += "<label class='tabItem' for='tabTrade'>매입매출내역</label>";
 			// html += "<input type='radio' id='tabEst' name='tabItem' data-content-id='tabEstList' onclick='tabItemClick(this)'>";
 			// html += "<label class='tabItem' for='tabEst'>견적내역</label>";
-			html += "<input type='radio' id='tabFile' name='tabItem' data-content-id='tabFileList' onclick='tabItemClick(this)'>";
+			html += "<input type='radio' id='tabFile' name='tabItem' data-content-id='tabFileList' data-id='" + result.no + "' onclick='tabItemClick(this)'>";
 			html += "<label class='tabItem' for='tabFile'>파일첨부</label>";
 			html += "<input type='radio' id='tabTech' name='tabItem' data-content-id='tabTechList' onclick='tabItemClick(this)'>";
 			html += "<label class='tabItem' for='tabTech'>기술지원내역</label>";
@@ -875,6 +876,7 @@ function contractUpdateForm(result){
 
 			setTimeout(() => {
 				$(document).find("[name='contractType'][value='" + contractType + "']").prop("checked", true);
+				$(document).find("#salesType option[value='" + salesType + "']").prop("selected", true);
 
 				if(contractType === "10247"){
 					$(document).find("#startOfPaidMaintenance").parents(".defaultFormLine").hide();

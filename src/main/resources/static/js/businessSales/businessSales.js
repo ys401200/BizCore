@@ -210,6 +210,7 @@ function salesErrorList(){
 
 function salesDetailView(e){
 	let id, url, method, data, type;
+	contentTopBtn("bodyContent");
 
 	id = $(e).data("id");
 	url = "/api/sales/" + id;

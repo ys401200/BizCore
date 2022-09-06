@@ -1,4 +1,4 @@
-let cipher, msg, apiServer, modal, storage;	
+let cipher, msg, apiServer, modal, storage, fileDataArray = [], removeDataArray = [], updateDataArray = [];
 
 function init(){
 	setTimeout(() => {
@@ -413,6 +413,7 @@ function createGrid(gridContainer, headerDataArray, dataArray, ids, job, fnc, id
 	}
 
 	gridHtml += "</div>";
+	
 	for(let i = 0; i < dataArray.length; i++){
 		gridHtml += "<div id='"+idStr+"_grid_"+i+"' class='gridContent grid_default_body_item' data-drag=\"true\" data-id='"+ids[i]+"' data-job='"+job[i]+"' onclick='"+fnc+"'>";
 		for(let t = 0; t <= dataArray[i].length; t++){
@@ -1124,7 +1125,7 @@ function tabItemClick(e){
 	if($(e).data("content-id") === "tabFileList"){
 		tempBtn.show();
 		tempBtn.text("파일등록");
-		tempBtn.attr("onclick", "tabFileInsertForm();");
+		tempBtn.attr("onclick", "tabFileInsertForm(" + $(e).data("id") + ");");
 		tempBtn.css("width", "50%");
 	}
 }
@@ -1364,7 +1365,7 @@ function createTabFileList(result, no, type){
 						"setData": "<a href='/api/attached/" + type + "/" + no + "/" + result[i].filename + "' onclick='return false;'>" + result[i].filename + "</a>",
 					},
 					{
-						"setData": "<button type='button' onclick='tabFileDelete('" + no + "');'>삭제</button>",
+						"setData": "<button type='button' onclick='tabFileDelete('/api/attached/'" + type + "/" + no + "/" + result[i].filename + "');'>삭제</button>",
 					},
 				];
 			}else{
@@ -1373,7 +1374,7 @@ function createTabFileList(result, no, type){
 						"setData": "<div style='text-decoration: line-through;'>" + result[i].filename + "</duv>",
 					},
 					{
-						"setData": "<button type='button' onclick='tabFileDelete('" + no + "');'>삭제</button>",
+						"setData": "<button type='button' disabled>삭제</button>",
 					},
 				];
 			}
@@ -1385,7 +1386,7 @@ function createTabFileList(result, no, type){
 				"setData": "<div>데이터가 없습니다.</div>",
 			},
 			{
-				"setData": "<button type='button' onclick='tabFileDelete('" + no + "');'>삭제</button>",
+				"setData": "<button type='button' disabled>삭제</button>",
 			},
 			
 		];
@@ -1397,8 +1398,170 @@ function createTabFileList(result, no, type){
 	}, 100);
 }
 
-function tabFileInsertForm(){
+function tabFileInsertForm(no){
+	let html, dataArray;
+
+	dataArray = [
+		{
+			"title": "담당자",
+			"elementId": "writer",
+			"dataKeyup": "user",
+		},
+		{
+			"title": "첨부파일",
+			"elementId": "attached",
+			"elementName": "attached[]",
+			"type": "file",
+		},
+	];
+
+	html = detailViewFormModal(dataArray);
+
+	modal.show();
+	modal.headTitle.text("자료 등록");
+	modal.content.css("width", "50%");
+	modal.body.html(html);
+	modal.body.css("max-height", "800px");
+	modal.confirm.text("등록");
+	modal.close.text("취소");
+	modal.confirm.attr("onclick", "tabFileInsert('/api/attached/sopp/" + no + "');");
+	modal.close.attr("onclick", "modal.hide();");
+
+	setTimeout(() => {
+		let my;
+		my = storage.my;
+
+		$(document).find("#writer").val(storage.user[my].userName);
+		$(document).find("#attached").after("<div class='filePreview'></div>");
+	}, 100);
+}
+
+function fileChange(){
+	let url, method, data, type, attached, fileDatas = [], html = "";
+	attached = $(document).find("[name='attached[]']")[0].files;
 	
+	for(let i = 0; i < attached.length; i++){
+		let reader = new FileReader();
+		let temp = [], fileName;
+
+		fileName = attached[i].name;
+
+		reader.onload = (e) => {
+			let binary, x, fData = e.target.result;
+            const bytes = new Uint8Array(fData);
+            binary = "";
+            for(x = 0 ; x < bytes.byteLength ; x++) binary += String.fromCharCode(bytes[x]);
+			let fileData = cipher.encAes(btoa(binary));
+			let fullData = (fileName + "\r\n" + fileData);
+			
+			url = "/api/board/filebox/attached";
+			method = "post";
+			data = fullData;
+			type = "insert";
+			
+			crud.defaultAjax(url, method, data, type, submitFileSuccess, submitFileError);
+		}
+
+		reader.readAsArrayBuffer(attached[i]);
+		
+		temp = attached[i].name;
+		fileDatas.push(temp);
+		updateDataArray.push(temp);
+	}
+
+	$(document).find(".filePreview").html(html);
+
+	for(let i = 0; i < fileDatas.length; i++){
+		fileDataArray.push(fileDatas[i]);
+	}
+
+	if(fileDataArray.length > 0){
+		for(let i = 0; i < fileDataArray.length; i++){
+			html += "<div style='padding-bottom: 4%;'><span style='float:left; display: block; width: 95%;'>" + fileDataArray[i] + "</span><button type='button' id='fileDataDelete' style='float:right; width: 5%;' data-index='" + i + "' onclick='fileViewDelete(this);'>삭제</button></div>";
+			$(document).find(".filePreview").html(html);
+		}
+	}
+
+	// divHeight = $(document).find(".filePreview").innerHeight();
+	// $(document).find("#attached").parent().parent().next().css("padding-top", divHeight);
+}
+
+function fileViewDelete(e){
+	fileDataArray.splice($(e).data("index"), 1);
+	
+	for(let i = 0; i < updateDataArray.length; i++){
+		if(updateDataArray[i] === $(e).prev().text()){
+			updateDataArray.splice(i, 1);
+		}
+	}
+
+	removeDataArray.push($(e).prev().text());
+	$(e).parent().remove();
+
+	$(document).find(".filePreview div button").each((index, item) => {
+		$(item).attr("data-index", index);		
+	});
+}
+
+function submitFileSuccess(){
+	return false;
+}
+
+function submitFileError(){
+	alert("파일을 올리는 도중 에러가 생겼습니다.\n다시 시도해주세요.");
+}
+
+function tabFileInsert(url){
+	let writer, data, method, type;
+
+	writer = $(document).find("#writer");
+	writer = dataListFormat(writer.attr("id"), writer.val());
+	
+	url = url;
+	method = "post";
+	data = {
+		"writer": writer,
+		"files": fileDataArray,
+	}
+	type = "insert";
+
+	data = JSON.stringify(data);
+	data = cipher.encAes(data);
+
+	crud.defaultAjax(url, method, data, type, tabFileSuccessInsert, tabFileErrorInsert);
+}
+
+function tabFileSuccessInsert(){
+	alert("등록완료");
+	location.reload();
+}
+
+function tabFileErrorInsert(){
+	alert("등록에러");
+}
+
+function tabFileDelete(url){
+	let method, data, type;
+
+	if(confirm("정말로 삭제하시겠습니까??")){
+		url = url;
+		method = "delete";
+		data = "";
+		type = "delete";
+	
+		crud.defaultAjax(url, method, data, type, tabFileSuccessDelete, tabFileErrorDelete);
+	}else{
+		return false;
+	}
+}
+
+function tabFileSuccessDelete(){
+	alert("삭제완료");
+	location.reload();
+}
+
+function tabFileErrorDelete(){
+	alert("삭제에러");
 }
 
 //견적내역 리스트
@@ -1692,4 +1855,10 @@ function calDays(date, type){
     }
 
     return resultDate;
+}
+
+function contentTopBtn(content){
+	$("#" + content).animate({
+		scrollTop: 0,
+	}, 100);
 }

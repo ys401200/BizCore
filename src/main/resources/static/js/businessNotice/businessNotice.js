@@ -103,6 +103,7 @@ function drawNoticeList() {
 
 function noticeDetailView(e) {// 선택한 그리드의 글 번호 받아오기 
 	let id, url, method, data, type;
+	contentTopBtn("bodyContent");
 
 	id = $(e).data("id");
 	url = "/api/notice/" + id;

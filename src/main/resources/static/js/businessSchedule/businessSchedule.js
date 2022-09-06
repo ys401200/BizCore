@@ -300,6 +300,7 @@ function drawCalendar(container){
 
 function scheduleDetailView(e){
 	let id, job, url, method, data, type;
+	contentTopBtn("bodyContent");
 
 	id = $(e).data("id");
 	job = $(e).data("job");
@@ -311,7 +312,7 @@ function scheduleDetailView(e){
 }
 
 function scheduleSuccessView(result){
-	let detailView, html = "", dataArray, job;
+	let detailView, html = "", dataArray, job, title;
 
 	job = (result.job === null || result.job === "" || result.job === undefined) ? "" : result.job;
 	
@@ -319,7 +320,7 @@ function scheduleSuccessView(result){
 	detailView.hide();
 	
 	if(job === "sales"){
-		let from, to, place, writer, sopp, customer, partner, title, content, type;
+		let from, to, place, writer, sopp, customer, partner, content, type;
 		
 		disDate = dateDis(result.from);
 		from = dateFnc(disDate);
@@ -396,7 +397,7 @@ function scheduleSuccessView(result){
 			}
 		];
 	}else if(job === "tech"){
-		let from, to, place, writer, sopp, customer, partner, title, content, supportModel, supportVersion, cipOfCustomer, contractMethod, contract, supportStep, type;
+		let from, to, place, writer, sopp, customer, partner, content, supportModel, supportVersion, cipOfCustomer, contractMethod, contract, supportStep, type;
 		
 		disDate = dateDis(result.from);
 		from = dateFnc(disDate);
@@ -533,7 +534,7 @@ function scheduleSuccessView(result){
 			}
 		];
 	}else{
-		let from, to, disDate, place, sopp, customer, writer, title, content;
+		let from, to, disDate, place, sopp, customer, writer, content;
 
 		disDate = dateDis(result.from);
 		from = dateFnc(disDate);
@@ -600,8 +601,8 @@ function scheduleSuccessView(result){
 			}
 		];
 	}
-
-	detailView.find(".detailMainSpan").text("테스트");
+	
+	detailView.find(".detailMainSpan").text(title);
 	detailView.find(".detailBtns").html("<button type='button' onclick='scheduleUpdateForm(" + JSON.stringify(result) + ")'>수정</button><button type='button' onclick='scheduleDelete(" + JSON.stringify(result) +")'>삭제</button><button type='button' onclick='detailContainerHide();'>닫기</button>");
 	html = detailViewForm(dataArray);
 	detailView.find(".detailContent").html(html);
@@ -1714,7 +1715,7 @@ function scheduleRadioUpdate(value, result){
 			},
 			{
 				"title": "기술지원 요청명(*)",
-				"elementId": "techdTitle",
+				"elementId": "title",
 				"disabled": false,
 				"value": title,
 			},
@@ -1811,6 +1812,7 @@ function scheduleRadioUpdate(value, result){
 			},
 			{
 				"title": "장소",
+				"elementId": "place",
 				"disabled": false,
 				"value": place,
 			},
@@ -2029,7 +2031,7 @@ function scheduleUpdate(no){
 			$(document).find("#title").focus();
 			return false;
 		}else{
-			let from, to, place, writer, sopp, customer, partner, title, content, supportModel, supportVersion;
+			let from, to, place, writer, sopp, contract, contractMethod, customer, cipOfCustomer, partner, title, content, supportModel, supportVersion, supportStep, type;
 
 			from = $(document).find("#from").val();
 			from = new Date(from).getTime();
@@ -2048,6 +2050,13 @@ function scheduleUpdate(no){
 			content = tinymce.activeEditor.getContent();
 			supportModel = $(document).find("#supportModel").val();
 			supportVersion = $(document).find("#supportVersion").val();
+			contract = $(document).find("#contract");
+			contract = dataListFormat(contract.attr("id"), contract.val()); 
+			contractMethod = $(document).find("[name='contractMethod']:checked").val();
+			cipOfCustomer = $(document).find("#cipOfCustomer");
+			cipOfCustomer = dataListFormat(cipOfCustomer.attr("id"), cipOfCustomer.val());
+			supportStep = $(document).find("#supportStep").val();
+			type = $(document).find("#type").val();
 
 			data = {
 				"job": job,
@@ -2056,12 +2065,17 @@ function scheduleUpdate(no){
 				"place": place,
 				"writer": writer,
 				"sopp": sopp,
-				"partner": partner,
 				"customer": customer,
+				"partner": partner,
 				"title": title,
 				"content": content,
 				"supportModel": supportModel,
 				"supportVersion": supportVersion,
+				"contract": contract,
+				"contractMethod": contractMethod,
+				"cipOfCustomer": cipOfCustomer,
+				"supportStep": supportStep,
+				"type": type,
 			};
 		}
 	}else{
