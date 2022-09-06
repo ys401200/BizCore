@@ -90,7 +90,7 @@ public interface TradeMapper {
             "	regdatetime AS created, " +
             "	moddatetime AS modified " +
             "FROM swc_soppdata01 " +
-            "WHERE attrib NOT LIKE 'XXX%' AND soppdatano = (SELECT soppno FROM swc_cont WHERE contno = #{contNo}")
+            "WHERE attrib NOT LIKE 'XXX%' AND soppdatano = (SELECT soppno FROM swc_cont WHERE contno = #{contNo})")
     public List<TradeDetail> getTradeDetailForContract(@Param("contNo") int no);
 
     @Update("UPDATE swc_soppdata01 SET attrib='XXXXX' WHERE soppdatano=#{no}")
