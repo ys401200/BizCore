@@ -18,7 +18,7 @@ public class Schedule extends Domain{
     private Date to;
     private String title;
     private String content;
-    private boolean report = true;
+    private boolean report;
     private String type;
     private String place;
 
@@ -33,6 +33,10 @@ public class Schedule extends Domain{
     private String supportVersion;
     private String supportStep;
 
+    //public Schedule(){super();report = true;}
+
+    //public void setWorkReport(int x){report=x==1;}
+
     // 기타 일정 json 추출
     private String jsonSchedule(){
         String result = "{";
@@ -44,7 +48,7 @@ public class Schedule extends Domain{
         result += ("\"from\":" + (from == null ? "null" : from.getTime()) + ",");
         result += ("\"to\":" + (to == null ? "null" : to.getTime()) + ",");
         result += ("\"title\":" + (title == null ? "null" : "\"" + title + "\"") + ",");
-        result += ("\"content\":" + (content == null ? "null" : "\"" + content.replaceAll("\"", "\\u0022").replaceAll("\n", "<br />").replaceAll("\r", "").replaceAll("\t", "") + "\"") + ",");
+        result += ("\"content\":" + (content == null ? "null" : "\"" + content.replaceAll("\"", "\\u0022").replaceAll("\n", "<br />").replaceAll("\r", "").replaceAll("\t", "").replaceAll("\\\\", "\\u005c") + "\"") + ",");
         result += ("\"report\":" + report + ",");
         result += ("\"type\":" + (type == null ? "null" : "\"" + type + "\"") + ",");
         result += ("\"place\":\"" + place + "\"}");
@@ -62,7 +66,7 @@ public class Schedule extends Domain{
         result += ("\"from\":" + (from == null ? "null" : from.getTime()) + ",");
         result += ("\"to\":" + (to == null ? "null" : to.getTime()) + ",");
         result += ("\"title\":" + (title == null ? "null" : "\"" + title + "\"") + ",");
-        result += ("\"content\":" + (content == null ? "null" : "\"" + content.replaceAll("\"", "\\u0022").replaceAll("\n", "<br />").replaceAll("\r", "").replaceAll("\t", "") + "\"") + ",");
+        result += ("\"content\":" + (content == null ? "null" : "\"" + content.replaceAll("\"", "\\u0022").replaceAll("\n", "<br />").replaceAll("\r", "").replaceAll("\t", "").replaceAll("\\\\", "\\u005c") + "\"") + ",");
         result += ("\"report\":" + report + ",");
         result += ("\"type\":" + (type == null ? "null" : "\"" + type + "\"") + ",");
         result += ("\"place\":\"" + place + "\",");
@@ -82,7 +86,7 @@ public class Schedule extends Domain{
         result += ("\"from\":" + (from == null ? "null" : from.getTime()) + ",");
         result += ("\"to\":" + (to == null ? "null" : to.getTime()) + ",");
         result += ("\"title\":" + (title == null ? "null" : "\"" + title + "\"") + ",");
-        result += ("\"content\":" + (content == null ? "null" : "\"" + content.replaceAll("\"", "\\u0022").replaceAll("\n", "<br />").replaceAll("\r", "").replaceAll("\t", "") + "\"") + ",");
+        result += ("\"content\":" + (content == null ? "null" : "\"" + content.replaceAll("\"", "\\u0022").replaceAll("\n", "<br />").replaceAll("\r", "").replaceAll("\t", "").replaceAll("\\\\", "\\u005c") + "\"") + ",");
         result += ("\"report\":" + report + ",");
         result += ("\"type\":" + (type == null ? "null" : "\"" + type + "\"") + ",");
         result += ("\"place\":\"" + place + "\",");
@@ -105,7 +109,7 @@ public class Schedule extends Domain{
         return result;
     }
 
-
+    
 
     // ==============================================================================
     // DB 작업을 위한 Domain 클래스에서 참조하는 테이블명, 컬럼명이 담깅 맵을 만드는 메서드 오버라이딩
