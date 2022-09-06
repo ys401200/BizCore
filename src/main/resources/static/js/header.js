@@ -1110,11 +1110,23 @@ function dataListFormat(id, value){
 
 // crud tab 클릭 함수
 function tabItemClick(e){
+	let tempBtn;
+	
+	tempBtn = $("#tempBtn");
+	tempBtn.hide();
+
 	$(document).find(".tabs input:radio").each((index, item) => {
 		$(document).find("#" + $(item).data("content-id")).hide();
 	});
 
 	$(document).find("#" + $(e).data("content-id")).show();
+
+	if($(e).data("content-id") === "tabFileList"){
+		tempBtn.show();
+		tempBtn.text("파일등록");
+		tempBtn.attr("onclick", "tabFileInsertForm();");
+		tempBtn.css("width", "50%");
+	}
 }
 
 //매입매출내역 리스트
@@ -1322,8 +1334,8 @@ function tradeInsertForm(){
 	modal.close.attr("onclick", "modal.hide();");
 }
 
-function createTabFileList(no, type){
-	let html = "", container, header = [], data = [], str, detailContainer;
+function createTabFileList(result, no, type){
+	let html = "", container, header = [], data = [], str, detailContainer, ids, job, fnc;
 
 	detailContainer = $(document).find(".detailContainer");
 
@@ -1332,59 +1344,61 @@ function createTabFileList(no, type){
 	
 	header = [
 		{
-			"title" : "일자",
-			"align" : "center",
-		},
-		{
 			"title" : "파일명",
-			"align" : "left",
-		},
-		{
-			"title" : "파일설명",
-			"align" : "left",
-		},
-		{
-			"title" : "다운로드",
 			"align" : "center",
 		},
-	]
+		{
+			"title" : "삭제",
+			"align" : "center",
+		},
+	];
 	
 	detailContainer.find(".detailContent").append(html);
 	container = detailContainer.find(".detailContent .tabFileList");
 
-	$.ajax({
-		url: "/api/attached/" + type + "/" + no,
-		method: "get",
-		dataType: "json",
-		success:(resultData) => {
-			let jsonData;
-			jsonData = cipher.decAes(resultData.data);
-			jsonData = JSON.parse(jsonData);
-
-			for(let i = 0; i < jsonData.length; i++){
+	if(result.length > 0){
+		for(let i = 0; i < result.length; i++){
+			if(result.removed){
 				str = [
 					{
-						"setData": "test1",
+						"setData": "<a href='/api/attached/" + type + "/" + no + "/" + result[i].filename + "' onclick='return false;'>" + result[i].filename + "</a>",
 					},
 					{
-						"setData": "test2",
+						"setData": "<button type='button' onclick='tabFileDelete('" + no + "');'>삭제</button>",
+					},
+				];
+			}else{
+				str = [
+					{
+						"setData": "<div style='text-decoration: line-through;'>" + result[i].filename + "</duv>",
 					},
 					{
-						"setData": "test3",
-					},
-					{
-						"setData": "test4",
+						"setData": "<button type='button' onclick='tabFileDelete('" + no + "');'>삭제</button>",
 					},
 				];
 			}
-		
 			data.push(str);
-		
-			setTimeout(() => {
-				createGrid(container, header, data);
-			}, 100);
 		}
-	});
+	}else{
+		str = [
+			{
+				"setData": "<div>데이터가 없습니다.</div>",
+			},
+			{
+				"setData": "<button type='button' onclick='tabFileDelete('" + no + "');'>삭제</button>",
+			},
+			
+		];
+		data.push(str);
+	}
+
+	setTimeout(() => {
+		createGrid(container, header, data, ids, job, fnc);
+	}, 100);
+}
+
+function tabFileInsertForm(){
+	
 }
 
 //견적내역 리스트

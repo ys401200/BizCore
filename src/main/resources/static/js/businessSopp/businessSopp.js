@@ -259,8 +259,8 @@ function soppSuccessView(result){
 	html += "<label class='tabItem' for='tabTrade'>매입매출내역</label>";
 	// html += "<input type='radio' id='tabEst' name='tabItem' data-content-id='tabEstList' onclick='tabItemClick(this)'>";
 	// html += "<label class='tabItem' for='tabEst'>견적내역</label>";
-	// html += "<input type='radio' id='tabFile' name='tabItem' data-content-id='tabFileList' onclick='tabItemClick(this)'>";
-	// html += "<label class='tabItem' for='tabFile'>파일첨부</label>";
+	html += "<input type='radio' id='tabFile' name='tabItem' data-content-id='tabFileList' onclick='tabItemClick(this)'>";
+	html += "<label class='tabItem' for='tabFile'>파일첨부</label>";
 	html += "<input type='radio' id='tabTech' name='tabItem' data-content-id='tabTechList' onclick='tabItemClick(this)'>";
 	html += "<label class='tabItem' for='tabTech'>기술지원내역</label>";
 	html += "<input type='radio' id='tabSales' name='tabItem' data-content-id='tabSalesList' onclick='tabItemClick(this)'>";
@@ -272,9 +272,9 @@ function soppSuccessView(result){
 	detailContainer.find(".detailContent").html(html);
 	detailContainer.find(".detailBtns").html("");
 	// detailContainer.find(".detailBtns").append("<button type='button' onclick='tradeInsertForm();' style='width: 50%;'>매입매출등록</button><button type='button' onclick='soppUpdateForm(" + JSON.stringify(result) + ");'>수정</button><button type='button' onclick='soppDelete(" + result.no + ");'>삭제</button><button type='button' onclick='detailContainerHide();'>닫기</button>");
-	detailContainer.find(".detailBtns").append("<button type='button' onclick='soppUpdateForm(" + JSON.stringify(result) + ");'>수정</button><button type='button' onclick='soppDelete(" + result.no + ");'>삭제</button><button type='button' onclick='detailContainerHide();'>닫기</button>");
+	detailContainer.find(".detailBtns").append("<button type='button' id='tempBtn' style='display: none;'></button><button type='button' onclick='soppUpdateForm(" + JSON.stringify(result) + ");'>수정</button><button type='button' onclick='soppDelete(" + result.no + ");'>삭제</button><button type='button' onclick='detailContainerHide();'>닫기</button>");
 	// createTabEstList(result.no, "sopp");
-	// createTabFileList(result.no, "sopp");
+	createTabFileList(result.attached, result.no, "sopp");
 	createTabTechList(result.schedules);
 	createTabSalesList(result.schedules);
 
