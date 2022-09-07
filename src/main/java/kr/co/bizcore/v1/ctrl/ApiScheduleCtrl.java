@@ -216,7 +216,7 @@ public class ApiScheduleCtrl extends Ctrl {
         }else{
             if(type.equals("sales") || type.equals("tech") || type.equals("schedule")){
                 count = scheduleService.deleteSchedule(compId, type, no + "");
-                if(count > 1)   result = "{\"result\":\"ok\"}";
+                if(count > 0)   result = "{\"result\":\"ok\"}";
                 else            result = "{\"result\":\"failure\",\"msg\":\"Error occured.\"}";
             }else   result = "{\"result\":\"failure\",\"msg\":\"Schedule type mismatch..\"}";
         }
@@ -350,8 +350,23 @@ public class ApiScheduleCtrl extends Ctrl {
     @DeleteMapping("/workreport/personal/{date:\\d+}")
     public String apiWorkreportPersonalDateDelete(HttpServletRequest request, @PathVariable("date") int date){
         String result = null;
+        HttpSession session = null;
+        String compId = null, userNo = null;
 
+        session = request.getSession();
+        compId = (String)session.getAttribute("compId");
+        userNo = (String)session.getAttribute("userNo");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
 
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+        }else{
+            if(scheduleService.deleteWorkReport(compId, userNo, date)){
+                result = "{\"result\":\"ok\"}";
+            }else{
+                result = "{\"result\":\"failure\",\"msg\":\"Error occured.\"}";
+            }
+        }
 
         return result;
     }
