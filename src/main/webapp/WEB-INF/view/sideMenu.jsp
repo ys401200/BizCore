@@ -107,7 +107,7 @@
 		<ul id="gw">
 			<li>
 				<a href="/gw/home">
-					<img src="/images/main/icons/mainAccountHome.png" id="mainNoticeIcon" />
+					<img src="/images/main/icons/mainAccountHome.ㄴpng" id="mainNoticeIcon" />
 					<span>전자결재 홈</span>
 				</a>
 			</li>

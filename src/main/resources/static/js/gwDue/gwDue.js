@@ -135,12 +135,12 @@ function drawCommentLine() {
 
     // 임시 데이터 ----------------------------------------------------
     let examine = [{
-        "name": "구민주",
+        "name": "이송현",
         "status": "",
         "approved": "",
         "comment": ""
     }, {
-        "name": "이송현",
+        "name": "구민주",
         "status": "",
         "approved": "",
         "comment": ""
