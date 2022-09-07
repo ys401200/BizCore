@@ -230,6 +230,7 @@ function init(){
 
 			toggleClass("drop");
 			showFile(files);
+			selectFile(files);
 		},
 	},
 
@@ -735,6 +736,15 @@ function showFile(files){
 	}
 }
 
+function selectFile(files){
+	let file;
+	file = document.getElementById("attached");
+
+	file.files = files;
+	showFile(file.files);
+	fileChange();
+}
+
 //drag 최상위 부모 클래스 전달
 function enableDragSort(listClass) {
 	let sortableLists = document.getElementsByClassName(listClass);
@@ -1111,23 +1121,11 @@ function dataListFormat(id, value){
 
 // crud tab 클릭 함수
 function tabItemClick(e){
-	let tempBtn;
-	
-	tempBtn = $("#tempBtn");
-	tempBtn.hide();
-
 	$(document).find(".tabs input:radio").each((index, item) => {
 		$(document).find("#" + $(item).data("content-id")).hide();
 	});
 
 	$(document).find("#" + $(e).data("content-id")).show();
-
-	if($(e).data("content-id") === "tabFileList"){
-		tempBtn.show();
-		tempBtn.text("파일등록");
-		tempBtn.attr("onclick", "tabFileInsertForm(" + $(e).data("id") + ");");
-		tempBtn.css("width", "50%");
-	}
 }
 
 //매입매출내역 리스트
@@ -1335,12 +1333,14 @@ function tradeInsertForm(){
 	modal.close.attr("onclick", "modal.hide();");
 }
 
-function createTabFileList(result, no, type){
+function createTabFileList(){
 	let html = "", container, header = [], data = [], str, detailContainer, ids, job, fnc;
 
 	detailContainer = $(document).find(".detailContainer");
 
 	html = "<div class='tabFileList' id='tabFileList'>";
+	html += "<input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attached[]' id='attached' multiple>";
+	html += "<div class='fileList'></div>";
 	html += "</div>";
 	
 	header = [
@@ -1355,26 +1355,26 @@ function createTabFileList(result, no, type){
 	];
 	
 	detailContainer.find(".detailContent").append(html);
-	container = detailContainer.find(".detailContent .tabFileList");
+	container = detailContainer.find(".detailContent .tabFileList .fileList");
 
-	if(result.length > 0){
-		for(let i = 0; i < result.length; i++){
-			if(result.removed){
+	if(storage.attchedList > 0){
+		for(let i = 0; i < storage.attchedList; i++){
+			if(storage.attchedList[i].removed){
 				str = [
 					{
-						"setData": "<a href='/api/attached/" + type + "/" + no + "/" + result[i].filename + "' onclick='return false;'>" + result[i].filename + "</a>",
+						"setData": "<div style='text-decoration: line-through;'>" + storage.attchedList[i].filename + "</div>",
 					},
 					{
-						"setData": "<button type='button' onclick='tabFileDelete('/api/attached/'" + type + "/" + no + "/" + result[i].filename + "');'>삭제</button>",
+						"setData": "<button type='button' disabled>삭제</button>",
 					},
 				];
 			}else{
 				str = [
 					{
-						"setData": "<div style='text-decoration: line-through;'>" + result[i].filename + "</duv>",
+						"setData": "<a href='/api/attached/" + storage.attchedType + "/" + storage.attchedNo + "/" + storage.attchedList[i].filename + "' onclick='return false;'>" + storage.attchedList[i].filename + "</a>",
 					},
 					{
-						"setData": "<button type='button' disabled>삭제</button>",
+						"setData": "<button type='button' onclick='tabFileDelete('/api/attached/'" + storage.attchedType + "/" + storage.attchedNo + "/" + storage.attchedList[i].filename + "');>삭제</button>",
 					},
 				];
 			}
@@ -1422,10 +1422,7 @@ function tabFileInsertForm(no){
 	modal.content.css("width", "50%");
 	modal.body.html(html);
 	modal.body.css("max-height", "800px");
-	modal.confirm.text("등록");
-	modal.close.text("취소");
-	modal.confirm.attr("onclick", "tabFileInsert('/api/attached/sopp/" + no + "');");
-	modal.close.attr("onclick", "modal.hide();");
+	modal.foot.hide();
 
 	setTimeout(() => {
 		let my;
@@ -1437,10 +1434,11 @@ function tabFileInsertForm(no){
 }
 
 function fileChange(){
-	let url, method, data, type, attached, fileDatas = [], html = "";
+	let method, data, type, attached, fileDatas = [], html = "";
 	attached = $(document).find("[name='attached[]']")[0].files;
-	
+
 	for(let i = 0; i < attached.length; i++){
+		let flag = storage.attachedFlag;
 		let reader = new FileReader();
 		let temp = [], fileName;
 
@@ -1453,8 +1451,10 @@ function fileChange(){
             for(x = 0 ; x < bytes.byteLength ; x++) binary += String.fromCharCode(bytes[x]);
 			let fileData = cipher.encAes(btoa(binary));
 			let fullData = (fileName + "\r\n" + fileData);
+
+			let url = (flag === undefined) ? "/api/board/filebox/attached" : "/api/attached/" + storage.attachedType + "/" + storage.attachedNo;
 			
-			url = "/api/board/filebox/attached";
+			url = url;
 			method = "post";
 			data = fullData;
 			type = "insert";
@@ -1467,6 +1467,13 @@ function fileChange(){
 		temp = attached[i].name;
 		fileDatas.push(temp);
 		updateDataArray.push(temp);
+
+		temp = {
+			"filename": attached[i].name,
+			"removed": attached[i].removed,
+		}
+
+		storage.attachedList.push(temp);
 	}
 
 	$(document).find(".filePreview").html(html);

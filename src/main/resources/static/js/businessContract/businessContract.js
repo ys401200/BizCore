@@ -428,7 +428,7 @@ function contractSuccessView(result){
 			detailContainer.find("span").text(title);
 			detailContainer.find(".detailContent").html(html);
 			detailContainer.find(".detailBtns").html("");
-			detailContainer.find(".detailBtns").append("<button type='button' id='tempBtn' style='display: none;'></button><button type='button' onclick='contractUpdateForm(" + JSON.stringify(result) + ");'>수정</button><button type='button' onclick='contractDelete(" + result.no + ");'>삭제</button><button type='button' onclick='detailContainerHide();'>닫기</button>");
+			detailContainer.find(".detailBtns").append("<button type='button' onclick='contractUpdateForm(" + JSON.stringify(result) + ");'>수정</button><button type='button' onclick='contractDelete(" + result.no + ");'>삭제</button><button type='button' onclick='detailContainerHide();'>닫기</button>");
 			// createTabFileList(result.no, "contract");
 			createTabFileList(result.attached, result.no, "contract");
 			createTabTechList(result.schedules);
