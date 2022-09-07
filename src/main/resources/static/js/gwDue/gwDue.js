@@ -224,7 +224,7 @@ function drawApproval() {
         jsonData = storage.noticeList;
     }
 
-    result = paging(jsonData.length, storage.currentPage, 5);
+    result = paging(jsonData.length, storage.currentPage, 14);
 
     pageContainer = document.getElementsByClassName("pageContainer");
     container = $(".listDiv");

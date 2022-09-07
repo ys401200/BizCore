@@ -868,9 +868,10 @@ last of type 이나 last child로 찾을 때 페이지 전환 될 때 마다 선
 
 /*-------------------------------- 결재선 수정 모달 css  */
 .gwModal {
-   background-color: #332e85;
-   width: 60%;
-   border-radius: 0.3em;
+  background-color: #456e95;
+  width: 60%;
+  border-radius: 0.3em;
+  padding:0.5em 0.5em 0.9em 0.5em;
 }
 
 .lineDetail {
@@ -915,8 +916,7 @@ last of type 이나 last child로 찾을 때 페이지 전환 될 때 마다 선
 }
 
 .lineDetail #lineRight {
-   display: grid;
-   grid-template-columns: repeat(3, 1fr);
+  display: block;
 }
 
 .lineDetail #lineRight>label {

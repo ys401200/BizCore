@@ -57,7 +57,7 @@ function drawNoticeApproval() {
 		jsonData = storage.noticeList;
 	}
 
-	result = paging(jsonData.length, storage.currentPage, 5);
+	result = paging(jsonData.length, storage.currentPage, 15);
 
 	pageContainer = document.getElementsByClassName("pageContainer");
 	container = $(".listDiv");
@@ -112,19 +112,19 @@ function drawNoticeApproval() {
 				"setData": userName,
 			},
 			{
-				"setData": setDate,
+				"setData": userName,
 			},
 			{
-				"setData": setDate,
+				"setData": userName,
 			},
 			{
-				"setData": setDate,
+				"setData": userName,
 			},
 			{
-				"setData": setDate,
+				"setData": userName,
 			},
 			{
-				"setData": setDate,
+				"setData": userName,
 			},
 			{
 				"setData": "<input type='checkbox' class='thisCheck' data-id='" + jsonData[i].no + "'>",
@@ -371,7 +371,7 @@ function approveBtnEvent() {
 	// $("input:radio[name='type']").prop("checked", false);
 	let selectVal = $(":radio[name='type']:checked").val();
 	let approvalComment = $(".approvalComment").val();
-	
+
 
 
 
@@ -392,22 +392,20 @@ function showGwModal() {
 		"<button onclick='check(this.value)' value='agree'>합의 ></button>" +
 		"<button onclick='check(this.value)' value='approval'>결재 ></button>" +
 		" <button onclick='check(this.value)' value='conduct'>수신 ></button>" +
-		" <button onclick='check(this.value)' value='read'>열람 ></button>" +
 		"<button onclick='check(this.value)' value='refer'>참조 ></button></div>" +
 		"<div class='innerDetail' id='lineRight'>" +
-		" <label for='examine'> 검토" +
+		"<div><select onchange='setSavedLine(this)'><option value=''>자주 쓰는 결재선</option><option value='basic'>대표</option><option value='middle'>구민주 과장-대표</option><</select></div>" +
+		"<div><div>검토</div>" +
 		"<div class='typeContainer' id='examine'></div>" +
-		" </label>" +
-		"<label for='agree'> 합의" +
-		"<div class='typeContainer' id='agree'></div></label>" +
-		"<label for='approval'> 결재" +
-		"<div class='typeContainer' id='approval'></div></label>" +
-		"<label for='conduct'> 수신" +
-		"<div class='typeContainer' id='conduct'></div></label>" +
-		"<label for='read'> 열람" +
-		"<div class='typeContainer' id='read'></div></label>" +
-		"<label for='refer'> 참조" +
-		"<div class='typeContainer' id='refer'></div></label>" +
+		"</div>" +
+		"<div><div>합의</div>" +
+		"<div class='typeContainer' id='agree'></div></div>" +
+		"<div><div>결재</div>" +
+		"<div class='typeContainer' id='approval'></div></div>" +
+		"<div><div>수신</div>" +
+		"<div class='typeContainer' id='conduct'></div></div>" +
+		"<div><div>참조</div>" +
+		"<div class='typeContainer' id='refer'></div></div>" +
 		"</div>" +
 		"</div>" +
 		"</div>" +
