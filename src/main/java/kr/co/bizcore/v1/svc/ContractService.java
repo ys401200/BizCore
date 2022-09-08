@@ -46,7 +46,7 @@ public class ContractService extends Svc{
         List<TradeDetail> trades = null;
         List<TaxBill> bills = null;
 
-        files = systemMapper.getAttachedFileInfo(compId, "contract", no);
+        files = systemMapper.getAttachedFileList(compId, "contract", no);
         trades = tradeMapper.getTradeDetailForContract(no);
         schedule1 = scheduleMapper.getScheduleListFromSchedWithContrct(compId, no);
         schedule2 = scheduleMapper.getScheduleListFromTechdWithContrct(compId, no);

@@ -117,8 +117,7 @@ public class AttachedService extends Svc{
         list = systemMapper.getAttachedFileList(compId, funcName, funcNo);
         for(x = 0 ; x < list.size() ; x++){
             each = list.get(x);
-            if(result == null)  result = "[";
-            else    result += ",";
+            if(x > 0)   result += ",";
             result += ("{\"fileName\":\"" + each.get("fileName") + "\",");
             result += ("\"size\":" + each.get("size") + ",");
             result += ("\"removed\":" + !each.get("removed").equals("0") + "}");

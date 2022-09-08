@@ -39,14 +39,14 @@ public interface SystemMapper {
     @Select("SELECT name FROM bizsys.directories")
     public List<String> getDirectoryNames();
 
-    @Select("SELECT savedName FROM bizcore.attached WHERE compId = #{compId} AND funcname = #{funcName} AND funcno = #{no} AND filename = #{fileName} AND removed = 0 AND deleted IS NULL")
+    @Select("SELECT savedName FROM bizcore.attached WHERE compId = #{compId} AND funcname = #{funcName} AND funcno = #{funcNo} AND filename = #{fileName} AND removed = 0 AND deleted IS NULL")
     public String getAttachedFileName(@Param("compId") String compId, @Param("funcName") String funcName, @Param("funcNo") int funcNo, @Param("fileName") String fileName);
 
     @Insert("INSERT INTO bizcore.attached(compId,funcName,funcNo,fileName,savedName,`size`) VALUES(#{compId},#{funcName},#{funcNo},#{fileName},#{savedName},#{size})")
-    public int setAttachedFileData(@Param("compId") String compId,@Param("funcName") String funcName, @Param("funcNo") int funcNo, @Param("fileName") String fileName, @Param("savedName") String savedName, long size);
+    public int setAttachedFileData(@Param("compId") String compId,@Param("funcName") String funcName, @Param("funcNo") int funcNo, @Param("fileName") String fileName, @Param("savedName") String savedName, @Param("size") long size);
 
-    @Select("SELECT fileName, CAST(`size` AS CHAR) AS `size` FROM bizcore.attached WHERE compId = #{compId} AND funcName = #{funcName} AND funcNo = #{funcNo} AND deleted IS NULL")
-    public List<HashMap<String, String>> getAttachedFileInfo(@Param("compId") String compId,@Param("funcName") String funcName, @Param("funcNo") int funcNo);
+    //@Select("SELECT fileName, CAST(`size` AS CHAR) AS `size` FROM bizcore.attached WHERE compId = #{compId} AND funcName = #{funcName} AND funcNo = #{funcNo} AND deleted IS NULL")
+    //public List<HashMap<String, String>> getAttachedFileInfo(@Param("compId") String compId,@Param("funcName") String funcName, @Param("funcNo") int funcNo);
 
     @Select("SELECT fileName, CAST(size as CHAR) AS size, cast(removed AS char) AS removed FROM bizcore.attached WHERE compid = #{compId} AND funcName = #{funcName} AND funcNo = #{no} AND deleted IS NULL")
     public List<HashMap<String, String>> getAttachedFileList(@Param("compId") String compId, @Param("funcName") String funcName, @Param("no") int no);
