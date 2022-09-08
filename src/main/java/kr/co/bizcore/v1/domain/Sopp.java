@@ -58,7 +58,7 @@ public class Sopp extends SimpleSopp{
             t1 = new HashMap<>();
             t1.put("fileName", each.get("fileName"));
             obj = each.get("size");
-            obj = Integer.parseInt((String)obj);
+            obj = Long.parseLong((String)obj);
             t1.put("size", obj);
             obj = each.get("removed");
             obj = obj == null ? false : obj.equals("1");
