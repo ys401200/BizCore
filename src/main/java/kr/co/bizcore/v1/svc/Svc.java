@@ -32,6 +32,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Base64;
 import java.util.Calendar;
@@ -325,6 +326,7 @@ public abstract class Svc {
         return result;
     } // End of encRsa()
 
+    // AES 디코딩 메서드
     public String decRsa(String text, KeyPair key) {
         String result = null;
         byte[] bytes = null;
@@ -344,13 +346,15 @@ public abstract class Svc {
         return result;
     } // End of decRsa()
 
+    // 문자 -> 숫자 변환 메서드
     public int strToInt(String str){
         int result = -1;
         try{result = str != null ? Integer.parseInt(str) : -1;
         }catch(NumberFormatException e){e.printStackTrace();}
         return result;
-    }
+    } // End of strToInt()
 
+    // 입력된 쿼리를 단순 실행하는 메서드 / 리턴값은 엡데이트된 row의 수
     public int executeSqlQuery(String sql){
         int result = -1;
         Connection conn = null;
@@ -361,25 +365,46 @@ public abstract class Svc {
         logger.debug("[Svc.executeSqlQuery] SQL Query : " + sql);
 
         try {
-            //sqlSession.commit(false);
             conn = sqlSession.getConnection();
             pstmt = conn.prepareStatement(sql);
             result = pstmt.executeUpdate();
-            //if(result > 0)  conn.commit();
-            //sqlSession.commit();
             logger.debug("[Svc.executeSqlQuery] Updated rows : " + result);
         } catch (SQLException e) {
             e.printStackTrace();
             logger.info("[Svc.executeSqlQuery] Failure Custom SQL Query : " + sql);
-            //try {conn.rollback();} catch (SQLException e1) {e1.printStackTrace();}
-        }finally{
-            //try {
-                //if(pstmt != null)   pstmt.close();
-                //if(conn != null)    conn.close();
-            //} catch (SQLException e) {logger.info("[Svc.executeSqlQuery] Connection Object close fail. ");e.printStackTrace();}
         }
+        
         return result;
-    }
+    } // End of executeSqlQuery()
+
+    // 지정한 테이블에서 다음 no 값을 확인해주는 메서드 / DB의 프로시저로 만들경우 모든 테이블에 대해 만들어야 하기에 이렇게 만들어 둠
+    public int getNextNumberFromDB(String compId, String tableName){
+        int result = -1;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        String sql = null;
+
+        if(compId == null || tableName == null){
+            logger.debug("[Svc.getNextNumberFromDB] input data is null ::: compId : " + compId + " / tableName : " + tableName);
+            return result;
+        }
+
+        sql = "SELECT IFNULL(MAX(IFNULL(no, 0)), 0) + 1 AS nextNo FROM " + tableName + " WHERE compid = '" + compId + "'";
+
+        try {
+            conn = sqlSession.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+            if(rs.next())   result = rs.getInt(1);
+            logger.debug("[Svc.getNextNumberFromDB] compId : " + compId + " / table : " + tableName + " / getNextNumber : " + result);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            logger.info("[Svc.getNextNumberFromDB] Fail to execute SQL Query : " + sql);
+        }
+
+        return result;
+    } // End of getNextNumberFromDB()
 
 } // End of abstract Class === Svc
 
