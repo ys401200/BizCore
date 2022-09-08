@@ -43,7 +43,7 @@ public interface SystemMapper {
     public String getAttachedFileName(@Param("compId") String compId, @Param("funcName") String funcName, @Param("funcNo") int funcNo, @Param("fileName") String fileName);
 
     @Insert("INSERT INTO bizcore.attached(compId,funcName,funcNo,fileName,savedName,`size`) VALUES(#{compId},#{funcName},#{funcNo},#{fileName},#{savedName},#{size})")
-    public int setAttachedFileData(@Param("compId") String compId,@Param("funcName") String funcName, @Param("funcNo") int funcNo, @Param("fileName") String fileName, @Param("savedName") String savedName, long size);
+    public int setAttachedFileData(@Param("compId") String compId,@Param("funcName") String funcName, @Param("funcNo") int funcNo, @Param("fileName") String fileName, @Param("savedName") String savedName, @Param("size") long size);
 
     @Select("SELECT fileName, CAST(`size` AS CHAR) AS `size` FROM bizcore.attached WHERE compId = #{compId} AND funcName = #{funcName} AND funcNo = #{funcNo} AND deleted IS NULL")
     public List<HashMap<String, String>> getAttachedFileInfo(@Param("compId") String compId,@Param("funcName") String funcName, @Param("funcNo") int funcNo);
