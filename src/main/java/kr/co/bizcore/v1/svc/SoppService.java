@@ -43,7 +43,7 @@ public class SoppService extends Svc {
     
     public String getSopp(int soppNo, String compId){
         Sopp result = null;
-        List<HashMap<String, String>> attached = systemMapper.getAttachedFileInfo(compId, "sopp", soppNo);
+        List<HashMap<String, String>> attached = systemMapper.getAttachedFileList(compId, "sopp", soppNo);
         List<Schedule> list1 = scheduleMapper.getScheduleListFromSchedWithSopp(compId, soppNo+"");
         List<Schedule> list2 = scheduleMapper.getScheduleListFromSalesWithSopp(compId, soppNo+"");
         List<Schedule> list3 = scheduleMapper.getScheduleListFromTechdWithsopp(compId, soppNo+"");
