@@ -1334,12 +1334,12 @@ function tradeInsertForm(){
 }
 
 function createTabFileList(){
-	let html = "", container, header = [], data = [], str, detailContainer, ids, job, fnc;
-
+	let html = "", container, header = [], data = [], str, detailContainer, ids, job, fnc, url;
+	
 	detailContainer = $(document).find(".detailContainer");
 
 	html = "<div class='tabFileList' id='tabFileList'>";
-	html += "<input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attached[]' id='attached' multiple>";
+	html += "<input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attached[]' id='attached' onchange='fileChange();' multiple>";
 	html += "<div class='fileList'></div>";
 	html += "</div>";
 	
@@ -1356,13 +1356,14 @@ function createTabFileList(){
 	
 	detailContainer.find(".detailContent").append(html);
 	container = detailContainer.find(".detailContent .tabFileList .fileList");
-
-	if(storage.attchedList > 0){
-		for(let i = 0; i < storage.attchedList; i++){
-			if(storage.attchedList[i].removed){
+	
+	if(storage.attachedList.length > 0){
+		for(let i = 0; i < storage.attachedList.length; i++){
+			url = "/api/attached/" + storage.attachedType + "/" + storage.attachedNo + "/" + storage.attachedList[i].fileName;
+			if(storage.attachedList[i].removed){
 				str = [
 					{
-						"setData": "<div style='text-decoration: line-through;'>" + storage.attchedList[i].filename + "</div>",
+						"setData": "<div style='text-decoration: line-through;'>" + storage.attachedList[i].fileName + "</div>",
 					},
 					{
 						"setData": "<button type='button' disabled>삭제</button>",
@@ -1371,10 +1372,10 @@ function createTabFileList(){
 			}else{
 				str = [
 					{
-						"setData": "<a href='/api/attached/" + storage.attchedType + "/" + storage.attchedNo + "/" + storage.attchedList[i].filename + "' onclick='return false;'>" + storage.attchedList[i].filename + "</a>",
+						"setData": "<a href='#' onclick='tabFileDownload(" + storage.attachedNo + ", \"" + storage.attachedType + "\", \"" + storage.attachedList[i].fileName + "\");'>" + storage.attachedList[i].fileName + "</a>",
 					},
 					{
-						"setData": "<button type='button' onclick='tabFileDelete('/api/attached/'" + storage.attchedType + "/" + storage.attchedNo + "/" + storage.attchedList[i].filename + "');>삭제</button>",
+						"setData": "<button type='button' onclick='tabFileDelete(" + storage.attachedNo + ", \"" + storage.attachedType + "\", \"" + storage.attachedList[i].fileName + "\");'>삭제</button>",
 					},
 				];
 			}
@@ -1434,11 +1435,11 @@ function tabFileInsertForm(no){
 }
 
 function fileChange(){
-	let method, data, type, attached, fileDatas = [], html = "";
+	let method, data, type, attached, fileDatas = [], html = "", flag;
 	attached = $(document).find("[name='attached[]']")[0].files;
+	flag = storage.attachedFlag;
 
 	for(let i = 0; i < attached.length; i++){
-		let flag = storage.attachedFlag;
 		let reader = new FileReader();
 		let temp = [], fileName;
 
@@ -1469,28 +1470,40 @@ function fileChange(){
 		updateDataArray.push(temp);
 
 		temp = {
-			"filename": attached[i].name,
+			"fileName": attached[i].name,
 			"removed": attached[i].removed,
 		}
 
 		storage.attachedList.push(temp);
 	}
 
-	$(document).find(".filePreview").html(html);
-
-	for(let i = 0; i < fileDatas.length; i++){
-		fileDataArray.push(fileDatas[i]);
-	}
-
-	if(fileDataArray.length > 0){
-		for(let i = 0; i < fileDataArray.length; i++){
-			html += "<div style='padding-bottom: 4%;'><span style='float:left; display: block; width: 95%;'>" + fileDataArray[i] + "</span><button type='button' id='fileDataDelete' style='float:right; width: 5%;' data-index='" + i + "' onclick='fileViewDelete(this);'>삭제</button></div>";
-			$(document).find(".filePreview").html(html);
+	if(flag){
+		tabFileItemListUpdate();
+	}else{
+		$(document).find(".filePreview").html(html);
+	
+		for(let i = 0; i < fileDatas.length; i++){
+			fileDataArray.push(fileDatas[i]);
+		}
+	
+		if(fileDataArray.length > 0){
+			for(let i = 0; i < fileDataArray.length; i++){
+				html += "<div style='padding-bottom: 4%;'><span style='float:left; display: block; width: 95%;'>" + fileDataArray[i] + "</span><button type='button' id='fileDataDelete' style='float:right; width: 5%;' data-index='" + i + "' onclick='fileViewDelete(this);'>삭제</button></div>";
+				$(document).find(".filePreview").html(html);
+			}
 		}
 	}
 
 	// divHeight = $(document).find(".filePreview").innerHeight();
 	// $(document).find("#attached").parent().parent().next().css("padding-top", divHeight);
+}
+
+function tabFileDownload(no, fileType, fileName){
+	$.ajax({
+		url: "/api/attached/" + fileType + "/" + no + "/" + fileName,
+		method: "get",
+		dataType: "json",
+	});
 }
 
 function fileViewDelete(e){
@@ -1547,11 +1560,11 @@ function tabFileErrorInsert(){
 	alert("등록에러");
 }
 
-function tabFileDelete(url){
+function tabFileDelete(no, fileType, fileName){
 	let method, data, type;
 
 	if(confirm("정말로 삭제하시겠습니까??")){
-		url = url;
+		url = "/api/attached/" + fileType + "/" + no + "/" + fileName;
 		method = "delete";
 		data = "";
 		type = "delete";
@@ -1562,13 +1575,81 @@ function tabFileDelete(url){
 	}
 }
 
-function tabFileSuccessDelete(){
-	alert("삭제완료");
-	location.reload();
+function tabFileSuccessDelete(result){
+	console.log(result);
+	tabFileItemListUpdate();
 }
 
 function tabFileErrorDelete(){
 	alert("삭제에러");
+}
+
+function tabFileItemListUpdate(){
+	let header, data = [], ids, job, fnc, content, html = "";
+	
+	header = [
+		{
+			"title" : "파일명",
+			"align" : "center",
+		},
+		{
+			"title" : "삭제",
+			"align" : "center",
+		},
+	];
+	
+	container = $(".detailContent .tabFileList .fileList");
+	
+	if(storage.attachedList.length > 0){
+		for(let i = 0; i < storage.attachedList.length; i++){
+			url = "/api/attached/" + storage.attachedType + "/" + storage.attachedNo + "/" + storage.attachedList[i].fileName;
+			if(storage.attachedList[i].removed){
+				str = [
+					{
+						"setData": "<div style='text-decoration: line-through;'>" + storage.attachedList[i].fileName + "</div>",
+					},
+					{
+						"setData": "<button type='button' disabled>삭제</button>",
+					},
+				];
+			}else{
+				str = [
+					{
+						"setData": storage.attachedList[i].fileName,
+					},
+					{
+						"setData": "<button type='button' onclick='tabFileDelete(" + storage.attachedNo + ", \"" + storage.attachedType + "\", \"" + storage.attachedList[i].fileName + "\");'>삭제</button>",
+					},
+				];
+			}
+			data.push(str);
+		}
+	}else{
+		str = [
+			{
+				"setData": "<div>데이터가 없습니다.</div>",
+			},
+			{
+				"setData": "<button type='button' disabled>삭제</button>",
+			},
+			
+		];
+		data.push(str);
+	}
+
+	setTimeout(() => {
+		createGrid(container, header, data, ids, job, fnc);
+	}, 100);
+
+	content = $(".tabFileList .fileList .gridContent");
+	content.html("");
+
+	for(let i = 0; i < storage.attachedList.length; i++){
+		html += "<div class='gridContentItem grid_default_text_align_center'>" + storage.attachedList[i].fileName + "</div>";
+		html += "<div class='gridContentItem grid_default_text_align_center' data-name='" + storage.attachedList[i].fileName + "'><button type='button' onclick='tabFileDelete('/api/attached/'" + storage.attchedType + "/" + storage.attchedNo + "/" + storage.attachedList[i].fileName + "');>삭제</button></div>";
+	}
+
+	content.html(html);
 }
 
 //견적내역 리스트
