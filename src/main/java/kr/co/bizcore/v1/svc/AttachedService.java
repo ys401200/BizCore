@@ -70,12 +70,21 @@ public class AttachedService extends Svc{
         return result;
     }
 
+    // 업로드된 파일을 저장하는 메서드. 동일 파일명이 존재하는 경우 기 존재 파일을 삭제처리 후 저장하도록 함
     public boolean saveAttachedFile(String compId, String fileName, String savedName, byte[] fileData, String funcName, int funcNo) {
         boolean result = false;
         FileOutputStream fos = null;
-        String path = null, s = File.separator;
+        String path = null, s = File.separator, existName = null;
         File file = null;
         int v = 0;
+
+        existName = systemMapper.getAttachedFileName(compId, funcName, funcNo, fileName);
+        if(existName != null){
+            path = fileStoragePath + s + compId + s + funcName + s + funcNo + s + existName;
+            file = new File(path);
+            if(file.exists())   file.delete();
+            systemMapper.deleteAttachedFile(compId, funcName, funcNo, fileName);
+        }
 
         try{
             path = fileStoragePath + s + compId + s + funcName + s + funcNo;
@@ -104,8 +113,10 @@ public class AttachedService extends Svc{
         path = rootPath + s + funcName + s + no + s + savedName;
         file = new File(path);
         if(!file.exists())      return -2;
-        else if(file.delete())  return 0;
-        else                    return -1;
+        else if(file.delete()){
+            systemMapper.deleteAttachedFile(compId, funcName, no, fileName);
+            return 0;
+        }else                    return -1;
     }
 
     public String getAttachedFileList(String compId, String funcName, int funcNo) {
