@@ -1,6 +1,7 @@
 package kr.co.bizcore.v1.domain;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -49,10 +50,26 @@ public class Sopp extends SimpleSopp{
         mapper.setSerializationInclusion(Include.NON_NULL);
         String result = null;
         JSONObject json = null;
+        Object obj = null;
+        HashMap<String, Object> t1 = null;
+        List<HashMap<String, Object>> t2 = new ArrayList<>();
+
+        if(fileData != null)    for(HashMap<String, String> each : fileData){
+            t1 = new HashMap<>();
+            t1.put("fileNme", each.get("fileName"));
+            obj = each.get("size");
+            obj = Integer.parseInt((String)obj);
+            t1.put("size", obj);
+            obj = each.get("removed");
+            obj = obj == null ? false : obj;
+            t1.put("removed", obj);
+            t2.add(t1);
+        }
+
         try {
             result = mapper.writeValueAsString(this);
             json = new JSONObject(result);
-            json.put("attached", fileData);
+            json.put("attached", t2);
             json.put("schedules", schedules);
             json.put("trades", trades);
         } catch (JsonProcessingException e) {e.printStackTrace();}
