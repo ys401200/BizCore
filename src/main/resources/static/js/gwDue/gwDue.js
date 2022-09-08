@@ -135,12 +135,12 @@ function drawCommentLine() {
 
     // 임시 데이터 ----------------------------------------------------
     let examine = [{
-        "name": "구민주",
+        "name": "이송현",
         "status": "",
         "approved": "",
         "comment": ""
     }, {
-        "name": "이송현",
+        "name": "구민주",
         "status": "",
         "approved": "",
         "comment": ""
@@ -224,7 +224,7 @@ function drawApproval() {
         jsonData = storage.noticeList;
     }
 
-    result = paging(jsonData.length, storage.currentPage, 5);
+    result = paging(jsonData.length, storage.currentPage, 14);
 
     pageContainer = document.getElementsByClassName("pageContainer");
     container = $(".listDiv");

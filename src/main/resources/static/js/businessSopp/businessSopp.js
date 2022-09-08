@@ -273,9 +273,15 @@ function soppSuccessView(result){
 	detailContainer.find(".detailContent").html(html);
 	detailContainer.find(".detailBtns").html("");
 	// detailContainer.find(".detailBtns").append("<button type='button' onclick='tradeInsertForm();' style='width: 50%;'>매입매출등록</button><button type='button' onclick='soppUpdateForm(" + JSON.stringify(result) + ");'>수정</button><button type='button' onclick='soppDelete(" + result.no + ");'>삭제</button><button type='button' onclick='detailContainerHide();'>닫기</button>");
-	detailContainer.find(".detailBtns").append("<button type='button' id='tempBtn' style='display: none;'></button><button type='button' onclick='soppUpdateForm(" + JSON.stringify(result) + ");'>수정</button><button type='button' onclick='soppDelete(" + result.no + ");'>삭제</button><button type='button' onclick='detailContainerHide();'>닫기</button>");
+	detailContainer.find(".detailBtns").append("<button type='button' onclick='soppUpdateForm(" + JSON.stringify(result) + ");'>수정</button><button type='button' onclick='soppDelete(" + result.no + ");'>삭제</button><button type='button' onclick='detailContainerHide();'>닫기</button>");
 	// createTabEstList(result.no, "sopp");
-	createTabFileList(result.attached, result.no, "sopp");
+
+	storage.attachedList = result.attached;
+	storage.attachedNo = result.no;
+	storage.attachedType = "sopp";
+	storage.attachedFlag = true;
+
+	createTabFileList();
 	createTabTechList(result.schedules);
 	createTabSalesList(result.schedules);
 

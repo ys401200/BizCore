@@ -451,7 +451,40 @@ function setSavedLine(obj) {
   }
 
 
+  let formId = "doc_Form_Consult"
 
 
 
+  function reportInsert(formId) {
+    let writer, created, sopp, infoCustomer, title, content;
+    let examine_position = new Array();
+    // let examine_position, examine, examine_staus, examine_approved = [];
+    // let approval_position, approval, approval_staus, approval_approved = [];
+    // let agree_position, agree, agree_staus, agree_approved = [];
+    // let receive_position, receive, receive_staus, receive_approved = [];
+    // let refer, files = [];
+
+    writer = $("#" + formId + '_writer');
+    created = $("#" + formId + '_created');
+    sopp = $("#" + formId + '_sopp');
+    infoCustomer = $("#" + formId + '_infoCustomer');
+    title = $("#" + formId + '_title');
+
+    for (let i = 0; i < $("." + formId + "_examine_position").length; i++) {
+      examine_position.push($("." + formId + "_examine_position").eq(i).html());
+    }
+
+
+
+
+
+    let url = "/api/gw/write";
+    let method = "post";
+    let data = {
+      "title": title,
+
+    }
+
+
+  }
 }

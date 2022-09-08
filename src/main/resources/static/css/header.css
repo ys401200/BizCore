@@ -116,6 +116,15 @@ button, select, input[type="text"]{
 	color: transparent;
 	border: 1px solid #332E85;
 }
+
+.dropZone {
+	width: 500px;
+	background-color: azure
+}
+
+.dropZone_dragenter, .dropZone_dragover {
+	border: 10px solid #302D81;
+}
 /* 공통 class 끝*/
 
 /* 페이지네이션 */
