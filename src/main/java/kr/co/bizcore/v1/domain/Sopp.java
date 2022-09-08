@@ -56,12 +56,12 @@ public class Sopp extends SimpleSopp{
 
         if(fileData != null)    for(HashMap<String, String> each : fileData){
             t1 = new HashMap<>();
-            t1.put("fileNme", each.get("fileName"));
+            t1.put("fileName", each.get("fileName"));
             obj = each.get("size");
             obj = Integer.parseInt((String)obj);
             t1.put("size", obj);
             obj = each.get("removed");
-            obj = obj == null ? false : obj;
+            obj = obj == null ? false : obj.equals("1");
             t1.put("removed", obj);
             t2.add(t1);
         }
