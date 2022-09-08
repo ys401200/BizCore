@@ -542,7 +542,7 @@ input[type="text"] {
 }
 
 
-
+/* 
 .lineGridContainer:first-of-type {
   padding-bottom: 0.5rem;
   height: 45%;
@@ -612,7 +612,7 @@ input[type="text"] {
   text-align: center;
   border-top: 1px solid black;
   border-bottom: 1px solid black;
-}
+} */
 
 
 /* float 설정 초기화  */

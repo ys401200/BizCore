@@ -104,9 +104,6 @@ function selectForm() {
   $(".insertedDetail").show();
 
 
-
-
-
   //작성자 작성일 자동 입력
   let my = storage.my;
   let writer = storage.user[my].userName;
@@ -117,7 +114,11 @@ function selectForm() {
   $("#" + formId + "_created").val(date);
   $(".testClass").prop('checked', false);
   $(".typeContainer").html("")
-
+  $(".inputsAuto").prop("disabled", "true");
+  $(".inputsAuto").css("text-align", "center")
+  $(".inputsAuto").eq(0).css("text-align", "left");
+  $(".inputsAuto").eq(1).css("text-align", "left");
+  $(".inputsAuto").eq(2).css("text-align", "left");
 
 }
 
@@ -186,6 +187,11 @@ function closeGwModal(obj) {
     $(".modal-wrap").hide();
   } else {
     createLine();
+    $(".inputsAuto").prop("disabled", "true");
+    $(".inputsAuto").css("text-align", "center")
+    $(".inputsAuto").eq(0).css("text-align", "left");
+    $(".inputsAuto").eq(1).css("text-align", "left");
+    $(".inputsAuto").eq(2).css("text-align", "left");
     $(".modal-wrap").hide();
   }
 }
@@ -303,7 +309,10 @@ function createLine() {
   lineTarget.css("display", "block");
   let my = storage.my;
   let today = getYmdSlash();
-  let testHtml = "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작성</div><div class='lineSet'><div class='twoBorder'>직급</div><div class='twoBorder'>" + storage.user[my].userName + "</div><div class='twoBorder'>서명</div><div class='dateBorder'>" + today + "</div></div></div>";
+  let testHtml = "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작성</div><div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto' value='직급'></div>" +
+    "<div class='twoBorder'><input type='text' class='inputsAuto' value='" + storage.user[my].userName + "'></div>" +
+    "<div class='twoBorder'><input type='text' class='inputsAuto' value='승인'></div>" +
+    "<div class='dateBorder'><input type='text' class='inputsAuto'value='" + getYmdSlash() + "'></div></div></div>";
   let testHtml2 = "<div class='lineGridContainer'>";
   let referHtml = "<div>참조</div>";
   let target = $(".typeContainer"); // 결재선 생성 모달에서 결재 타입 각각의 container 
@@ -330,10 +339,13 @@ function createLine() {
       id = id.split('_');
       id = id[1];
 
-      /// class 이름 , css 수정 
 
+      // 수신 
       if (i == 3) {
-        testHtml2 += "<div class='lineSet'><div class='twoBorder " + formId + "_" + titleId[i] + "_position" + "'>직급</div><div class='twoBorder " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div><div class='twoBorder " + formId + "_" + titleId[i] + "_status'>서명</div><div class='dateBorder " + formId + "_" + titleId[i] + "_approved'>/</div></div>"
+        testHtml2 += "<div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_position" + "' value='직급' data-detail='직급'/></div>" +
+          "<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "' value='" + storage.user[data[id]].userName + "' dataset.detail='" + storage.user[data[id]].userName + "'/></div>" +
+          "<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_status' value='' data-detail=''/></div>" +
+          "<div class='dateBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_approved" + "' value='' data-detail=''/></div></div>"
       }
 
       // else if (j == target[i].children.length - 1) {
@@ -346,12 +358,17 @@ function createLine() {
       //   testHtml2 += "<div class='lineSet'><div class='twoBorder " + formId + "_" + titleId[i] + "_position" + "'>직급</div><div class='twoBorder " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div><div class='twoBorder " + formId + "_" + titleId[i] + "_status'>서명</div><div class='dateBorder " + formId + "_" + titleId[i] + "_approved'>/</div></div>"
       // } 
 
-
+      // 참조 
       else if (i == 4) {
-        referHtml += "<div class='appendName " + formId + "_" + titleId[i] + "'>직급 " + storage.user[data[id]].userName + "</div>";
+        referHtml += "<div class='appendName " + formId + "_" + titleId[i] + "' data-detail='" + storage.user[data[id]].userName + "'>직급 " + storage.user[data[id]].userName + "</div>";
       }
+
+      // 검토 합의 결재 
       else {
-        testHtml += "<div class='lineSet'><div class='twoBorder " + formId + "_" + titleId[i] + "_position" + "'>직급</div><div class='twoBorder " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div><div class='twoBorder " + formId + "_" + titleId[i] + "_status'>서명</div><div class='dateBorder " + formId + "_" + titleId[i] + "_approved'>/</div></div>"
+        testHtml += "<div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_position" + "' value='직급' data-detail='직급'/></div>" +
+          "<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "' value='" + storage.user[data[id]].userName + "' dataset.detail='" + storage.user[data[id]].userName + "'/></div>" +
+          "<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_status' value='' data-detail=''/></div>" +
+          "<div class='dateBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_approved" + "' value='' data-detail=''/></div></div>"
       }
 
     }
@@ -470,21 +487,10 @@ function setSavedLine(obj) {
     infoCustomer = $("#" + formId + '_infoCustomer');
     title = $("#" + formId + '_title');
 
-    for (let i = 0; i < $("." + formId + "_examine_position").length; i++) {
-      examine_position.push($("." + formId + "_examine_position").eq(i).html());
+    for (let i = 0; i < $("." + formId + "_examine").length; i++) {
+      console.log($("." + formId + "_examine")[i].dataset.detail);
     }
 
-
-
-
-
-    let url = "/api/gw/write";
-    let method = "post";
-    let data = {
-      "title": title,
-
-    }
-
-
+    console.log($(".reportInsertForm").html());
   }
 }
