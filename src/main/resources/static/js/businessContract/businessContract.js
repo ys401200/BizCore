@@ -429,10 +429,16 @@ function contractSuccessView(result){
 			detailContainer.find(".detailContent").html(html);
 			detailContainer.find(".detailBtns").html("");
 			detailContainer.find(".detailBtns").append("<button type='button' onclick='contractUpdateForm(" + JSON.stringify(result) + ");'>수정</button><button type='button' onclick='contractDelete(" + result.no + ");'>삭제</button><button type='button' onclick='detailContainerHide();'>닫기</button>");
-			// createTabFileList(result.no, "contract");
-			createTabFileList(result.attached, result.no, "contract");
+			
+			storage.attachedList = result.attached;
+			storage.attachedNo = result.no;
+			storage.attachedType = "contract";
+			storage.attachedFlag = true;
+
+			createTabFileList();
 			createTabTechList(result.schedules);
-			createTabSalesList(result.schedules)
+			createTabSalesList(result.schedules);
+
 			// createTabEstList();
 
 			detailContainer.show();		

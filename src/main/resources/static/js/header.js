@@ -1195,7 +1195,6 @@ function createTabTradeList(result){
 
 		for(let i = 0; i < result.length; i++){
 			if(result[i].type === "1102"){
-				console.log(result[i].created);
 				disDate = dateDis(result[i].created, result[i].modified);
 				setDate = dateFnc(disDate);
 				customer = (result[i].customer == 0 || result[i].customer === null || result[i].customer === undefined) ? "없음 " : storage.customer[result[i].customer].name;
@@ -1372,10 +1371,10 @@ function createTabFileList(){
 			}else{
 				str = [
 					{
-						"setData": "<a href='#' onclick='tabFileDownload(" + storage.attachedNo + ", \"" + storage.attachedType + "\", \"" + storage.attachedList[i].fileName + "\");'>" + storage.attachedList[i].fileName + "</a>",
+						"setData": "<a href='/api/attached/" + storage.attachedNo + "/" + storage.attachedType + "/" + encodeURI(storage.attachedList[i].fileName) + "'>" + storage.attachedList[i].fileName + "</a>",
 					},
 					{
-						"setData": "<button type='button' onclick='tabFileDelete(" + storage.attachedNo + ", \"" + storage.attachedType + "\", \"" + storage.attachedList[i].fileName + "\");'>삭제</button>",
+						"setData": "<button type='button' onclick='tabFileDelete(" + storage.attachedNo + ", \"" + storage.attachedType + "\", \"" + storage.attachedList[i].fileName + "\", " + i + ");'>삭제</button>",
 					},
 				];
 			}
@@ -1437,6 +1436,11 @@ function tabFileInsertForm(no){
 function fileChange(){
 	let method, data, type, attached, fileDatas = [], html = "", flag;
 	attached = $(document).find("[name='attached[]']")[0].files;
+
+	if(storage.attachedList === undefined || storage.attachedList <= 0){
+		storage.attachedList = [];
+	}
+
 	flag = storage.attachedFlag;
 
 	for(let i = 0; i < attached.length; i++){
@@ -1499,6 +1503,7 @@ function fileChange(){
 }
 
 function tabFileDownload(no, fileType, fileName){
+	console.log("다운로드 실행");
 	$.ajax({
 		url: "/api/attached/" + fileType + "/" + no + "/" + fileName,
 		method: "get",
@@ -1560,10 +1565,11 @@ function tabFileErrorInsert(){
 	alert("등록에러");
 }
 
-function tabFileDelete(no, fileType, fileName){
+function tabFileDelete(no, fileType, fileName, index){
 	let method, data, type;
-
+	
 	if(confirm("정말로 삭제하시겠습니까??")){
+		storage.attachedList.splice(index, 1);
 		url = "/api/attached/" + fileType + "/" + no + "/" + fileName;
 		method = "delete";
 		data = "";
@@ -1575,8 +1581,7 @@ function tabFileDelete(no, fileType, fileName){
 	}
 }
 
-function tabFileSuccessDelete(result){
-	console.log(result);
+function tabFileSuccessDelete(){
 	tabFileItemListUpdate();
 }
 
@@ -1615,10 +1620,10 @@ function tabFileItemListUpdate(){
 			}else{
 				str = [
 					{
-						"setData": storage.attachedList[i].fileName,
+						"setData": "<a href='/api/attached/" + storage.attachedNo + "/" + storage.attachedType + "/" + encodeURI(storage.attachedList[i].fileName) + "'>" + storage.attachedList[i].fileName + "</a>",
 					},
 					{
-						"setData": "<button type='button' onclick='tabFileDelete(" + storage.attachedNo + ", \"" + storage.attachedType + "\", \"" + storage.attachedList[i].fileName + "\");'>삭제</button>",
+						"setData": "<button type='button' onclick='tabFileDelete(" + storage.attachedNo + ", \"" + storage.attachedType + "\", \"" + storage.attachedList[i].fileName + "\", " + i + ");'>삭제</button>",
 					},
 				];
 			}
