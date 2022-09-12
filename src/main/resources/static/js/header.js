@@ -1445,7 +1445,7 @@ function fileChange(){
 
 	for(let i = 0; i < attached.length; i++){
 		let reader = new FileReader();
-		let temp = [], fileName;
+		let temp, fileName, indexFlag = false;
 
 		fileName = attached[i].name;
 
@@ -1473,12 +1473,20 @@ function fileChange(){
 		fileDatas.push(temp);
 		updateDataArray.push(temp);
 
-		temp = {
-			"fileName": attached[i].name,
-			"removed": attached[i].removed,
+		for(let t = 0; t < storage.attachedList.length; t++){
+			if(storage.attachedList[t].fileName == temp){
+				indexFlag = true;
+			}
 		}
 
-		storage.attachedList.push(temp);
+		if(!indexFlag){
+			temp = {
+				"fileName": attached[i].name,
+				"removed": attached[i].removed,
+			}
+	
+			storage.attachedList.push(temp);
+		}
 	}
 
 	if(flag){
@@ -1569,11 +1577,9 @@ function tabFileDelete(no, fileType, fileName, index){
 	let method, data, type;
 	
 	if(confirm("정말로 삭제하시겠습니까??")){
-		storage.attachedList.splice(index, 1);
 		url = "/api/attached/" + fileType + "/" + no + "/" + fileName;
 		method = "delete";
-		data = "";
-		type = "delete";
+		type = "detail";
 	
 		crud.defaultAjax(url, method, data, type, tabFileSuccessDelete, tabFileErrorDelete);
 	}else{
@@ -1581,7 +1587,8 @@ function tabFileDelete(no, fileType, fileName, index){
 	}
 }
 
-function tabFileSuccessDelete(){
+function tabFileSuccessDelete(result){
+	storage.attachedList = result;
 	tabFileItemListUpdate();
 }
 

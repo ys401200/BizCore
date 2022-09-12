@@ -32,16 +32,16 @@
 					<li><a href="/business/workjournal">업무일지검토</a></li>
 				</ul>
 			</li>
-			<!-- <li>
-			<a href="#">
-				<img src="/images/main/icons/mainSalesIcon.png" id="mainSalesIcon" />
-				<span>영업활동관리</span>
-				<span id="slideSpan">+</span>
-			</a>
-			<ul id="panel">
-		  		<li><a href="/business/sales">영업활동조회</a></li>
-		  	</ul>
-		</li> -->
+			<li>
+				<a href="#">
+					<img src="/images/main/icons/mainSchedIcon.png" id="mainSalesIcon" />
+					<span>영업활동관리</span>
+					<span id="slideSpan">+</span>
+				</a>
+				<ul id="panel">
+					<li><a href="/business/sales">영업활동조회</a></li>
+				</ul>
+			</li>
 			<li>
 				<a href="#">
 					<img src="/images/main/icons/mainSoppIcon.png" id="mainSoppIcon" />
@@ -76,6 +76,16 @@
 					<!-- <li><a href="#">계약등록</a></li>
 		  		<li><a href="#">업체정보조회</a></li>
 		  		<li><a href="#">매입/매출 자료등록</a></li> -->
+				</ul>
+			</li>
+			<li>
+				<a href="#">
+					<img src="/images/main/icons/mainSchedIcon.png" id="mainSalesIcon" />
+					<span>기술지원관리</span>
+					<span id="slideSpan">+</span>
+				</a>
+				<ul id="panel">
+					<li><a href="/business/tech">기술지원조회</a></li>
 				</ul>
 			</li>
 			<!-- <li>

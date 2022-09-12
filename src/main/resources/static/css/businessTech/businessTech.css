@@ -1,42 +1,109 @@
 @charset "UTF-8";
-.techContainer{
-    position: relative;
-    left: 2%;
-    width:96%;
+
+.techSearchContainer{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	/* margin-left: 2%; */
+	margin-bottom: 1%;
+	/* max-width: 1782px; */
+	padding:2% 0;
+	height: 30px;
 	background: #FFFFFF;
 	overflow: auto;
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
 }
 
-.techContainer hr{
+.techSearchContainer .techSearchSelect{
+	margin:0 1% 0 0;
+}
+
+.techSearchContainer .techSearchSelect select{
+	color: #182f81;
+	padding:0 8px;
+	border-radius:5px;
+	font-size:0.9375rem;
+	height:30px;
+	/* font-size: 1.2rem; */
+	font-weight: 500;
+	border: 0;
+	background-color: #ebefff;
+	box-shadow: 0 1px 2px #b1b5c5;
+}
+
+/* .techSearchContainer .techSearchSelect select:hover{
+	border: 1px solid#332E85;
+} */
+
+.techSearchContainer .techSearchText{
+	margin: -0.35% 1% 0 0;
+}
+
+.techSearchContainer .techSearchText input{
+	padding: 5px;
+	font-size: 1.2rem;
+	font-weight: 500;
+	width: 500px;
+	border: 0;
+	border-bottom:2px solid #c1cae9;
+	background-color: #fff;
+	border-radius: 0;
+}
+
+.techSearchContainer .techSearchText input:hover{
+	border: 1px solid#332E85;
+}
+
+.techSearchContainer .techSearchBtn button{
+	padding:0 14px;
+	height: 30px;
+	display:flex; align-items: center;
+	border: 0;
+	background-color: #182f81;
+	cursor: pointer;
+	border-radius: 5px;
+	box-shadow: 0 1px 2px #bdbfc9;
+}
+
+.techSearchContainer .techSearchBtn button img{
+	width:18px;
+}
+
+.scheduleContainer{
+    margin-top: 1%;
+	/* margin-left: 2%;
+	max-width: 1782px; */
+	background: #FFFFFF;
+	overflow: auto;
+	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
+}
+
+.scheduleContainer hr{
 	float: left;
-	border-top: 0;
-	border-left : thick solid #E45050;
-	border-right: 0;
-	border-bottom: 0;
- 	height : 44px;
- 	width: 4px;
+	border:2px solid #182f81;
+ 	height : 32px;
  	margin: 0;
 }
 
-.techContainer span:not(.calendarSpan){
-	font-weight: 500;
-	font-size: 16px;
-	margin-left: 18px;
-	line-height: 3;
+.scheduleContainer span:not(.calendarSpan){
+	font-weight: bolder;
+	font-size: 15px;
+	margin-left: 15px;
+	line-height: 40px;
 	color: #332E85;
 }
 
-.techContainer .gridTechList{
+.scheduleContainer .gridScheduleList{
     display: grid; 
 	width: 99%; 
 	margin: 0 auto;
 }
 
-.techContainer .gridTechList .gridHeader{
-    grid-template-columns: 10% 10% 10% 15% 10% 10% 10% 10% 15%;
+.scheduleContainer .gridScheduleList .gridHeader,
+.scheduleContainer .gridScheduleList .gridContent{
+    grid-template-columns: 7% 5% 23% 11% 7% 7% 5% 7% 28%;
 }
 
-.techContainer .gridTechList .gridContent{
-	grid-template-columns: 10% 10% 10% 15% 10% 10% 10% 10% 15%;
+.scheduleContainer .gridScheduleList .gridHeader{
+	border-bottom:1px solid #abb6d5;
 }

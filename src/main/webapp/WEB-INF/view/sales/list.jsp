@@ -11,24 +11,30 @@
             <div class="salesSearchSelect">
                 <select id="salesSearchCategory">
                     <option value="no">번호</option>
-                    <option value="title">영업활동명</option>
+                    <option value="job">일정구분</option>
+                    <option value="title">일정제목</option>
+                    <option value="place">장소</option>
+                    <option value="detail">일정설명</option>
                 </select>
             </div>
             <div class="salesSearchText">
                 <input type="text" id="salesSearchValue">
             </div>
             <div class="salesSearchBtn">
-                <button type="button" onclick="salesSearchList();">검색</button>
+                <button type="button" onclick="salesSearchList();"><img src="/images/common/search.png" alt="search"/></button>
             </div>
         </div>
-        <div class="salesContainer">
+        <div class="detailContainer">
+            <hr />
+            <span class="detailMainSpan"></span>
+            <div class="detailBtns"></div>
+            <div class="detailContent"></div>
+        </div>
+        <div class="scheduleContainer">
             <hr />
             <span>영업활동조회</span>
-            <button type="button" onclick="salesInsertForm()">등록</button>
-            <div class="gridSalesList"></div>
+            <button type="button" class="scheduleInsertBtn" onclick="scheduleInsertForm();">등록</button>
+            <div class="gridScheduleList"></div>
             <div class="pageContainer"></div>
         </div>
-	</div>
-</div>
-<div class="msg_cnt"></div>
 <jsp:include page="../bottom.jsp"/>
