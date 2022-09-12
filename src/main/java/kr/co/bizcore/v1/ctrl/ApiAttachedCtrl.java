@@ -210,22 +210,28 @@ public class ApiAttachedCtrl extends Ctrl{
         return deleteAttachedFile(request, "filebox", no, fileName);
     }
 
-    private String deleteAttachedFile(HttpServletRequest request, String FuncName, int no, String fileName) {
-        String result = null;
-        String compId = null;
+    private String deleteAttachedFile(HttpServletRequest request, String funcName, int no, String fileName) {
+        String result = null, compId = null, data = null, aesIv = null, aesKey = null;
         HttpSession session = null;
         int v = -1;
 
         session = request.getSession();
         compId = (String)session.getAttribute("compId");
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
         if(compId == null)  compId = (String)request.getAttribute("compId");
 
         if(compId == null){
             result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
         }else{
-            v = attachedService.deleteAttachedFile(compId, FuncName, no, fileName);
-            if(v == 0)          result = "{\"result\":\"ok\"}";
-            else if( v == -1)   result = "{\"result\":\"failure\",\"msg\":\"An error occurred when file delete.\"}";
+            v = attachedService.deleteAttachedFile(compId, funcName, no, fileName);
+            if(v == 0){
+                data = attachedService.getAttachedFileList(compId, funcName, no);
+                data = encAes(data, aesKey, aesIv);
+                result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
+            }else if( v == -1)   result = "{\"result\":\"failure\",\"msg\":\"An error occurred when file delete.\"}";
             else    result = "{\"result\":\"failure\",\"msg\":\"File not found Or removed.\"}";
         }
         return result;
