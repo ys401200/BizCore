@@ -1,5 +1,6 @@
 package kr.co.bizcore.v1.domain;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -53,15 +54,31 @@ public class Contract extends SimpleContract{
     public void setSaleDate(long e){saleDate = new Date(e);}
     public void setSaleDate(Date e){saleDate = e;}
 
-    public String toJson(List<HashMap<String, String>> files, List<Schedule> schedules, List<TradeDetail> trades, List<TaxBill> bills) {
+    public String toJson(List<HashMap<String, String>> fileData, List<Schedule> schedules, List<TradeDetail> trades, List<TaxBill> bills) {
         ObjectMapper mapper = new ObjectMapper();
         mapper.setSerializationInclusion(Include.NON_NULL);
         String result = null;
         JSONObject json = null;
+        Object obj = null;
+        HashMap<String, Object> t1 = null;
+        List<HashMap<String, Object>> t2 = new ArrayList<>();
+
+        if(fileData != null)    for(HashMap<String, String> each : fileData){
+            t1 = new HashMap<>();
+            t1.put("fileName", each.get("fileName"));
+            obj = each.get("size");
+            obj = Long.parseLong((String)obj);
+            t1.put("size", obj);
+            obj = each.get("removed");
+            obj = obj == null ? false : obj.equals("1");
+            t1.put("removed", obj);
+            t2.add(t1);
+        }
+
         try {
             result = mapper.writeValueAsString(this);
             json = new JSONObject(result);
-            json.put("attached", files);
+            json.put("attached", fileData);
             json.put("schedules", schedules);
             json.put("trades", trades);
             json.put("bills", trades);
