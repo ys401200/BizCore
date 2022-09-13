@@ -1,5 +1,6 @@
 package kr.co.bizcore.v1.mapper;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,5 +42,9 @@ public interface UserMapper {
     // 마이페이지 / 비번 수정
     @Select("UPDATE swcore.swc_user SET userpasswd = PASSWORD(#{new}) WHERE userno = #{no} AND userpasswd = PASSWORD(#{old}) AND compNo = (SELECT compno FROM swcore.swc_company WHERE compid = #{compId})")
     public void modifyMyPw(@Param("compId") String compId, @Param("no") String userNo, @Param("old") String old, @Param("new") String neww);
+
+    // 직급 정보 가져오기
+    @Select("SELECT CAST(`level` AS CHAR) AS lv, nameKor, nameEng FROM bizcore.user_rank WHERE compId = #{compId} ORDER BY `level`")
+    public List<HashMap<String, String>> getUserRank(@Param("compId") String compId);
 
 }

@@ -79,6 +79,31 @@ public class UserService extends Svc {
         return userMap;
     } // End of getUserMap()
 
+    // 직급정보를 전달하는 메서드
+    public String getUserRank(String compId){
+        HashMap<String, String> each = null;
+        List<HashMap<String, String>> list = null;
+        String result = null;
+        int x = 0;
+
+        result = (String)dataFactory.getData(compId, "userRank");
+        if(result == null){
+            list = userMapper.getUserRank(compId);
+            result = "{";
+            for(x = 0 ; x < list.size() ; x++){
+                if(x > 0)   result += ",";
+                each = list.get(x);
+                result += ("\"" + each.get("lv") + "\":");
+                result += ("[\"" + each.get("nameKor") + "\",\"" + each.get("nameEng") + "\"]");
+            }
+            result += "}";
+            // factory에 저장
+            dataFactory.setData(compId, "userRank", result, 300);
+            
+        }
+        return result;
+    } // End of getUserMap()
+
     public String getUserMapJson(String compId){
         String result = "{";
         HashMap<String, SimpleUser> map = null;
