@@ -62,18 +62,18 @@
 	border-radius: 5px;
 }
 
-.soppContainer button{
+.soppContainer > button,
+.soppContainer > .detailBtns > button{
 	color: #ebefff;
 	box-shadow: 0 1px 1px #bdbfc9;
-	margin:1% 0.5% 14px 0;
 	background-color:#182f81;
 	padding:0 14px;
 	height:30px;
 	border-radius: 5px;
-	float:right;
 }
 
-.soppContainer button:hover{
+.soppContainer > button:hover,
+.soppContainer > .detailBtns > button:hover{
 	color: #182f81;
 	box-shadow: 0 1px 2px #bdbfc9;
 	background-color:#ebefff;
@@ -92,7 +92,7 @@
 	/* margin-left: 2%;
 	max-width: 1782px; */
 	background: #FFFFFF;
-	overflow: auto;
+	overflow: hidden;
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
 }
 

@@ -190,19 +190,6 @@ function init(){
 			modal.confirm.text("확인");
 			modal.close.text("닫기");
 		},
-		"tabs": {
-			"content": {
-				"hide": (notId) => {
-					$(document).find(".tabs input:radio").each((index, item) => {
-						if(notId === undefined){
-							$(document).find("#" + $(item).data("content-id")).hide();
-						}else{
-							$(document).find("#" + $(item).data("content-id")).not("#" + notId).hide();
-						}
-					});
-				}
-			}
-		}
 	}
 
 	dragAndDrop = {
@@ -986,67 +973,14 @@ function detailViewFormModal(data){
 
 	for(let i = 0; i < data.length; i++){
 		let dataTitle = (data[i].title === undefined) ? "" : data[i].title;
-		let dataValue = (data[i].value === undefined) ? "" : data[i].value;
-		let dataDisabled = (data[i].disabled === undefined) ? true : data[i].disabled;
-		let dataType = (data[i].type === undefined) ? "text" : data[i].type;
-		let dataKeyup = (data[i].dataKeyup === undefined) ? "" : data[i].dataKeyup;
-		let dataKeyupEvent = (data[i].keyup === undefined) ? "" : data[i].keyup;
-		let elementId = (data[i].elementId === undefined) ? "" : data[i].elementId;
-		let elementName = (data[i].elementName === undefined) ? "" : data[i].elementName;
-		let dataChangeEvent = (data[i].onChange === undefined) ? "" : data[i].onChange;
-		let dataClickEvent = (data[i].onClick === undefined) ? "" : data[i].onClick;
-		// let userId = (data[i].userId === undefined) ? "" : data[i].userId;
-
+		
 		html += "<div class='defaultFormLine'>";
 		html += "<div class='defaultFormSpanDiv'>";
 		html += "<span class='defaultFormSpan'>" + dataTitle + "</span>";
 		html += "</div>";
 		html += "<div class='defaultFormContent'>";
 
-		if(dataType === "text"){
-			if(dataDisabled == true){
-				html += "<input type='text' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "' data-keyup='" + dataKeyup + "' onchange='" + dataChangeEvent + "' onclick='" + dataClickEvent + "' onkeyup='" + dataKeyupEvent + "' disabled='" + dataDisabled + "'>";
-			}else{
-				html += "<input type='text' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "' data-keyup='" + dataKeyup + "' onchange='" + dataChangeEvent + "' onclick='" + dataClickEvent + "' onkeyup='" + dataKeyupEvent + "'>";
-			}
-		}else if(dataType === "textarea"){
-			html += "<textarea>" + dataValue + "</textarea>";
-		}else if(dataType === "radio"){
-			for(let t = 0; t < data[i].radioValue.length; t++){
-				if(dataDisabled == true){
-					if(t == 0){
-						html += "<input type='radio' id='" + elementId + "' name='" + elementName + "' value='" + data[i].radioValue[t].key + "' disabled='" + dataDisabled + "' onclick='" + dataClickEvent + "' checked><label>" + data[i].radioValue[t].value + "</label>" + " ";
-					}else{
-						html += "<input type='radio' id='" + elementId + "' name='" + elementName + "' value='" + data[i].radioValue[t].key + "' disabled='" + dataDisabled + "' onclick='" + dataClickEvent + "'><label>" + data[i].radioValue[t].value + "</label>" + " ";
-					}
-				}else{
-					if(t == 0){
-						html += "<input type='radio' id='" + elementId + "' name='" + elementName + "' value='" + data[i].radioValue[t].key + "' onclick='" + dataClickEvent + "' checked><label>" + data[i].radioValue[t].value + "</label>" + " ";
-					}else{
-						html += "<input type='radio' id='" + elementId + "' name='" + elementName + "' value='" + data[i].radioValue[t].key + "' onclick='" + dataClickEvent + "'><label>" + data[i].radioValue[t].value + "</label>" + " ";
-					}
-				}
-			}
-		}else if(dataType === "date"){
-			if(dataDisabled == true){
-				html += "<input type='date' max='9999-12-31' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "' disabled='" + dataDisabled + "'>";
-			}else{
-				html += "<input type='date' max='9999-12-31' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "'>";
-			}
-		}else if(dataType === "select"){
-			if(dataDisabled == true){
-				html += "<select id='" + elementId + "' name='" + elementName + "' disabled='" + dataDisabled + "'>";
-			}else{
-				html += "<select id='" + elementId + "' name='" + elementName + "'>";
-			}
-			for(let t = 0; t < data[i].selectValue.length; t++){
-				html += "<option value='" + data[i].selectValue[t].key + "'>" + data[i].selectValue[t].value + "</option>";
-			}
-
-			html += "</select>";
-		}else if(dataType === "file"){
-			html += "<input type='file' id='" + elementId + "' name='" + elementName + "' onchange='fileChange();' multiple>";
-		}
+		html += inputSet(data[i]);
 		
 		html += "</div>";
 		html += "</div>";
@@ -1059,25 +993,105 @@ function detailViewFormModal(data){
 
 // 상세보기 임시 폼
 function detailViewForm(data){
-	let html = "";
+	let html = "", detailContents, pageContainer, listInsertBtn, detailBtns;
+
+	pageContainer = $(".pageContainer");
+	detailContents = $(".detailContents");
+	listInsertBtn = $(".listInsertBtn");
+	detailBtns = $(".detailBtns");
+	listInsertBtn.hide();
+	pageContainer.hide();
+	pageContainer.prev().hide();
+	detailContents.hide();
+	detailBtns.hide();
 
 	html = "<div class='detailViewContainer tabContent' id='tabContentAll'>";
 
 	for(let i = 0; i < data.length; i++){
 		let dataTitle = (data[i].title === undefined) ? "" : data[i].title;
-		let dataValue = (data[i].value === undefined) ? "" : data[i].value;
+		let row = (data[i].row === undefined) ? 1 : data[i].row;
+		let col = (data[i].col === undefined) ? 1 : data[i].col;
 
-		html += "<div class='detailViewForm'>";
-		html += "<div class='detailViewFormSpanDiv'>";
-		html += "<span class='detailViewFormSpan'>" + dataTitle + ": </span>";
-		html += "</div>";
-		html += "<div class='detailViewFormContent'>" + dataValue + "</div>";
+		html += "<div class='detailViewFormSpan'>" + dataTitle + "</div>";
+		html += "<div class='detailViewContent' style='grid-row: span " + row + "; grid-column: span " + col + ";'>";
+		html += inputSet(data[i]);
 		html += "</div>";
 	}
 
 	html += "</div>";
 
 	return html;
+}
+
+
+function inputSet(data){
+	let html = "";
+	let dataValue = (data.value === undefined) ? "" : data.value;
+	let dataDisabled = (data.disabled === undefined) ? true : data.disabled;
+	let dataType = (data.type === undefined) ? "text" : data.type;
+	let dataKeyup = (data.dataKeyup === undefined) ? "" : data.dataKeyup;
+	let dataKeyupEvent = (data.keyup === undefined) ? "" : data.keyup;
+	let elementId = (data.elementId === undefined) ? "" : data.elementId;
+	let elementName = (data.elementName === undefined) ? "" : data.elementName;
+	let dataChangeEvent = (data.onChange === undefined) ? "" : data.onChange;
+	let dataClickEvent = (data.onClick === undefined) ? "" : data.onClick;
+
+	if(dataType === "text"){
+		if(dataDisabled == true){
+			html += "<input type='text' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "' data-keyup='" + dataKeyup + "' onchange='" + dataChangeEvent + "' onclick='" + dataClickEvent + "' onkeyup='" + dataKeyupEvent + "' disabled='" + dataDisabled + "'>";
+		}else{
+			html += "<input type='text' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "' data-keyup='" + dataKeyup + "' onchange='" + dataChangeEvent + "' onclick='" + dataClickEvent + "' onkeyup='" + dataKeyupEvent + "'>";
+		}
+	}else if(dataType === "textarea"){
+		html += "<textarea id='editorSet'>" + dataValue + "</textarea>";
+	}else if(dataType === "radio"){
+		for(let t = 0; t < data.radioValue.length; t++){
+			if(dataDisabled == true){
+				if(t == 0){
+					html += "<input type='radio' id='" + elementId + "' name='" + elementName + "' value='" + data.radioValue[t].key + "' disabled='" + dataDisabled + "' onclick='" + dataClickEvent + "' checked><label>" + data.radioValue[t].value + "</label>" + " ";
+				}else{
+					html += "<input type='radio' id='" + elementId + "' name='" + elementName + "' value='" + data.radioValue[t].key + "' disabled='" + dataDisabled + "' onclick='" + dataClickEvent + "'><label>" + data.radioValue[t].value + "</label>" + " ";
+				}
+			}else{
+				if(t == 0){
+					html += "<input type='radio' id='" + elementId + "' name='" + elementName + "' value='" + data.radioValue[t].key + "' onclick='" + dataClickEvent + "' checked><label>" + data.radioValue[t].value + "</label>" + " ";
+				}else{
+					html += "<input type='radio' id='" + elementId + "' name='" + elementName + "' value='" + data.radioValue[t].key + "' onclick='" + dataClickEvent + "'><label>" + data.radioValue[t].value + "</label>" + " ";
+				}
+			}
+		}
+	}else if(dataType === "date"){
+		if(dataDisabled == true){
+			html += "<input type='date' max='9999-12-31' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "' disabled='" + dataDisabled + "'>";
+		}else{
+			html += "<input type='date' max='9999-12-31' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "'>";
+		}
+	}else if(dataType === "select"){
+		if(dataDisabled == true){
+			html += "<select id='" + elementId + "' name='" + elementName + "' disabled='" + dataDisabled + "'>";
+		}else{
+			html += "<select id='" + elementId + "' name='" + elementName + "'>";
+		}
+		for(let t = 0; t < data.selectValue.length; t++){
+			html += "<option value='" + data.selectValue[t].key + "'>" + data.selectValue[t].value + "</option>";
+		}
+
+		html += "</select>";
+	}else if(dataType === "file"){
+		html += "<input type='file' id='" + elementId + "' name='" + elementName + "' onchange='fileChange();' multiple>";
+	}
+
+	return html;
+}
+
+function detailTabHide(notId){
+	$(".tabs input:radio").each((index, item) => {
+		if(notId === undefined){
+			$(document).find("#" + $(item).data("content-id")).hide();
+		}else{
+			$(document).find("#" + $(item).data("content-id")).not("#" + notId).hide();
+		}
+	});
 }
 
 //tinyMCE
@@ -1102,6 +1116,7 @@ function setTiny(){
 		plugins: plugins,
 		toolbar: edit_toolbar,
 		selector: 'textarea',
+		width: "100%",
 		height : "200",
 	});
 }
@@ -1333,9 +1348,9 @@ function tradeInsertForm(){
 }
 
 function createTabFileList(){
-	let html = "", container, header = [], data = [], str, detailContainer, ids, job, fnc, url;
+	let html = "", container, header = [], data = [], str, detailContents, ids, job, fnc, url;
 	
-	detailContainer = $(document).find(".detailContainer");
+	detailContents = $(".detailContents");
 
 	html = "<div class='tabFileList' id='tabFileList'>";
 	html += "<input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attached[]' id='attached' onchange='fileChange();' multiple>";
@@ -1353,8 +1368,8 @@ function createTabFileList(){
 		},
 	];
 	
-	detailContainer.find(".detailContent").append(html);
-	container = detailContainer.find(".detailContent .tabFileList .fileList");
+	detailContents.append(html);
+	container = detailContents.find(".tabFileList .fileList");
 	
 	if(storage.attachedList.length > 0){
 		for(let i = 0; i < storage.attachedList.length; i++){
@@ -1610,7 +1625,7 @@ function tabFileItemListUpdate(){
 		},
 	];
 	
-	container = $(".detailContent .tabFileList .fileList");
+	container = $(".detailContents .tabFileList .fileList");
 	
 	if(storage.attachedList.length > 0){
 		for(let i = 0; i < storage.attachedList.length; i++){
@@ -1666,9 +1681,9 @@ function tabFileItemListUpdate(){
 
 //견적내역 리스트
 function createTabEstList(){
-	let html = "", container, header = [], data = [], str, detailContainer;
+	let html = "", container, header = [], data = [], str, detailContents;
 
-	detailContainer = $(document).find(".detailContainer");
+	detailContents = $(".detailContents");
 
 	html = "<div class='tabEstList' id='tabEstList'>";
 	html += "</div>";
@@ -1712,8 +1727,8 @@ function createTabEstList(){
 		},
 	]
 	
-	detailContainer.find(".detailContent").append(html);
-	container = detailContainer.find(".detailContent .tabEstList");
+	detailContents.append(html);
+	container = detailContents.find(".tabEstList");
 
 	str = [
 		{
@@ -1752,11 +1767,11 @@ function createTabEstList(){
 	}, 100);
 }
 
-//기술지원내역 리스트(아직 구현 안됨);
+//기술지원내역 리스트
 function createTabTechList(result){
-	let html = "", container, header = [], data = [], str, detailContainer, ids, job, fnc;
+	let html = "", container, header = [], data = [], str, detailContents, ids, job, fnc;
 
-	detailContainer = $(document).find(".detailContainer");
+	detailContents = $(".detailContents");
 
 	html = "<div class='tabTechList' id='tabTechList'></div>";
 	
@@ -1783,8 +1798,8 @@ function createTabTechList(result){
 		},
 	]
 	
-	detailContainer.find(".detailContent").append(html);
-	container = detailContainer.find(".detailContent .tabTechList");
+	detailContents.append(html);
+	container = detailContents.find(".tabTechList");
 
 	for(let i = 0; i < result.length; i++){
 		if(result[i].job === "tech"){
@@ -1815,11 +1830,11 @@ function createTabTechList(result){
 	}, 100);
 }
 
-//영업활동내역 리스트(아직 구현 안됨);
+//영업활동내역 리스트
 function createTabSalesList(result){
-	let html = "", container, header = [], data = [], str, detailContainer, ids, job, fnc;
+	let html = "", container, header = [], data = [], str, detailContents, ids, job, fnc;
 
-	detailContainer = $(document).find(".detailContainer");
+	detailContents = $(".detailContents");
 
 	html = "<div class='tabSalesList' id='tabSalesList'></div>";
 	
@@ -1850,8 +1865,8 @@ function createTabSalesList(result){
 		},
 	]
 	
-	detailContainer.find(".detailContent").append(html);
-	container = detailContainer.find(".detailContent .tabSalesList");
+	detailContents.append(html);
+	container = detailContents.find(".tabSalesList");
 
 	for(let i = 0; i < result.length; i++){
 		if(result[i].job === "sales"){
@@ -1885,8 +1900,24 @@ function createTabSalesList(result){
 }
 
 //상세보기 숨김
-function detailContainerHide(){
-	$(document).find(".detailContainer").hide();
+function detailContainerHide(titleStr){
+	let detailContents, pageContainer, listInsertBtn, detailBtns;
+
+	pageContainer = $(".pageContainer");
+	detailContents = $(".detailContents");
+	listInsertBtn = $(".listInsertBtn");
+	detailBtns = $(".detailBtns");
+	listInsertBtn.show();
+	pageContainer.show();
+	pageContainer.prev().show();
+	detailContents.hide();
+	detailBtns.hide();
+
+	conTitleChange("containerTitle", titleStr);
+}
+
+function conTitleChange(contentId, str){
+	$("#" + contentId).text(str);
 }
 
 //매출처 담당자 자동완성

@@ -7,7 +7,7 @@
 		<jsp:include page="../sideMenu.jsp" />
 	</div>
 	<div id="bodyContent">
-        <div class="soppSearchContainer">
+        <!-- <div class="soppSearchContainer">
             <div class="soppSearchSelect">
                 <select id="soppSearchCategory">
                     <option value="no">번호</option>
@@ -26,11 +26,13 @@
             <span class="detailMainSpan"></span>
             <div class="detailBtns"></div>
             <div class="detailContent"></div>
-        </div>
+        </div> -->
         <div class="soppContainer">
             <hr />
-            <span>영업기회조회</span>
-            <button type="button" onclick="soppInsertForm();">등록</button>
+            <span id="containerTitle">영업기회조회</span>
+            <button type="button" class="listInsertBtn" onclick="soppInsertForm();">등록</button>
+            <div class="detailBtns"></div>
+            <div class="detailContents"></div>
             <div class="gridSoppList"></div>
             <div class="pageContainer"></div>
         </div>
