@@ -54,4 +54,8 @@ public interface SystemMapper {
 
     @Select("SELECT fileName, CAST(size as CHAR) AS size, cast(removed AS char) AS removed FROM bizcore.attached WHERE compid = #{compId} AND funcName = #{funcName} AND funcNo = #{no} AND deleted IS NULL")
     public List<HashMap<String, String>> getAttachedFileList(@Param("compId") String compId, @Param("funcName") String funcName, @Param("no") int no);
+
+    // 회사 고유의 aes 키 값을 가져오는 매퍼
+    @Select("SELECT aesKey, aesIv FROM bizsys.company_aes WHERE compId=#{compId}")
+    public HashMap<String, String> getCompanyAesKey(@Param("compId") String compId);
 }

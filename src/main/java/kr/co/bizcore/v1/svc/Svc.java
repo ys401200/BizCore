@@ -418,6 +418,28 @@ public abstract class Svc {
         return result;
     } // End of getNextNumberFromDB()
 
+    // 회사 고유 암호키를 전달하는 메서드
+    public String[] getAesKey(String compId){
+        String[] result = null;
+        HashMap<String, String> each = null;
+        String aesKey = null, aesIv = null;
+
+        result = (String[])dataFactory.getData(compId, "aesKey");
+        if(result == null){
+            each = systemMapper.getCompanyAesKey(compId);
+            if(each != null){
+                aesKey = each.get("aesKey");
+                aesIv = each.get("aesIv");
+                result = new String[2];
+                result[0] = aesKey;
+                result[1] = aesIv;
+                // factory에 저장
+                dataFactory.setData(compId, "userRank", result, 3600);
+            }
+        }
+        return result;
+    } // End of getAesKey()
+
 } // End of abstract Class === Svc
 
 class DataFactory{
