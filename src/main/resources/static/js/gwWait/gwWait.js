@@ -57,7 +57,7 @@ function drawNoticeApproval() {
 		jsonData = storage.noticeList;
 	}
 
-	result = paging(jsonData.length, storage.currentPage, 15);
+	result = paging(jsonData.length, storage.currentPage, 8);
 
 	pageContainer = document.getElementsByClassName("pageContainer");
 	container = $(".listDiv");
