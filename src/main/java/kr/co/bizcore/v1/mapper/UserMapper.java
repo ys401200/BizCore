@@ -12,7 +12,7 @@ import kr.co.bizcore.v1.domain.User;
 
 public interface UserMapper {
 
-    @Select("SELECT userNo, userId, userName FROM swc_user WHERE userno = #{userNo} AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId})")
+    @Select("SELECT userNo, userId, userName, gender, IF(deleted IS NULL, FALSE, TRUE) AS resign FROM bizcore.users WHERE userno = #{userNo} AND compid = #{compId}")
     public SimpleUser getBasicUserInfo(@Param("userNo") String userNo, @Param("compId") String compId);
 
     @Select("SELECT func_id as funcId, sub_id AS subId, CAST(permission AS char(1)) AS permission FROM bizcore.permission WHERE comp_id = #{compId} AND user_no = #{userNo} AND dept = #{dept} AND func_id IN (SELECT 'A' UNION ALL SELECT func_id FROM bizsys.comp_permission WHERE comp_id = #{compId} AND permission = 1)")

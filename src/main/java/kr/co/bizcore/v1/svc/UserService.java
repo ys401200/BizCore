@@ -1,5 +1,9 @@
 package kr.co.bizcore.v1.svc;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,9 +25,54 @@ public class UserService extends Svc {
         return result;
     } // End of getBasicUserInfo
 
-    // 로그인 검증 메서드
+    // 로그인 검증 메서드 / 이사하기 전
     public String verifyLogin(String compId, String userId, String pw) {
         String result = systemMapper.verifyLogin(compId, userId, pw);
+        return result;
+    } // End of verifyLogin()
+
+    // 로그인 검증 메서드 / 이사하는 과도기에 사용하는 메서드 / 비번 유혐 감지 후 기존비번인 경우 신규 비번으로 바꾸도록 함
+    public String verifyLoginTemp(String compId, String userId, String pw) {
+        String result = null;
+        String userNo = null, pwDB = null, pwCvt = null;
+        String sql1 = "SELECT no AS userNo, pw, PASSWORD(?) FROM bizcore.users WHERE userid = ? AND compId = ? AND deleted IS NULL";
+        String sql2 = "UPDATE bizcore.users SET pw = ? WHERE compId = ? AND no = ?";
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try{
+            conn = sqlSession.getConnection();logger.debug(":::::::::::::::::::::::::: [ STEP 1 ]");
+
+            // 비번유형에 대한 파악
+            pstmt = conn.prepareStatement(sql1);
+            pstmt.setString(1, pw);
+            pstmt.setString(2, userId);
+            pstmt.setString(3, compId);
+            rs = pstmt.executeQuery();logger.debug(":::::::::::::::::::::::::: [ STEP 2 ]");
+            if(!rs.next())  return result; // 결과가 없으면 종료함 / 로그인 x
+            userNo = rs.getString(1);logger.debug(":::::::::::::::::::::::::: [ STEP 3 ]");
+            pwDB = rs.getString(2);
+            pwCvt = rs.getString(3);
+            rs.close();
+            pstmt.close();logger.debug(":::::::::::::::::::::::::: [ STEP 4 ]");
+
+            if(pwDB.substring(0,1).equals("*")){ // 기존 비번 모드
+                if(!pwDB.equals(pwCvt)) return result; // 패스워드 불일치시 종료함 / 로그인 x
+                result = userNo;logger.debug(":::::::::::::::::::::::::: [ STEP 5 ]");
+
+                pstmt = conn.prepareStatement(sql2);
+                pstmt.setString(1, encSHA512(pw));
+                pstmt.setString(2, compId);
+                pstmt.setString(3, userNo);
+                pstmt.executeUpdate();
+            }else{ // 신규 비번 모드
+                pwCvt = encSHA512(pw);logger.debug(":::::::::::::::::::::::::: [ STEP 6 ]");
+                if(pwDB.equals(pwCvt))  result = userNo;
+            }
+            
+        }catch(SQLException e){e.printStackTrace();logger.debug(":::::::::::::::::::::::::: [ STEP 7 ]");}
+
         return result;
     } // End of verifyLogin()
 

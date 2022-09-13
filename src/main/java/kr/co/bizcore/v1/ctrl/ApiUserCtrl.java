@@ -102,7 +102,7 @@ public class ApiUserCtrl extends Ctrl{
             if (userId == null || pw == null) {
                 result = "{\"result\":\"failure\",\"msg\":\"User ID and/or Password ware empty\"}";
             } else {
-                userNo = userService.verifyLogin(compId, userId, pw);
+                userNo = userService.verifyLoginTemp(compId, userId, pw);
                 if (userNo == null)
                     result = "{\"result\":\"failure\",\"msg\":\"User ID and/or Password ware mismatch\"}";
                 else {
