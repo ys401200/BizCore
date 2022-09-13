@@ -199,14 +199,12 @@ function getDetailView(no) {
 
 	$(".selectedReportview").html(testForm);
 	$(":file").css("display", "none");// 첨부파일 버튼 숨기기 
-
 	let tabHtml = "<div class='reportInfoTab'>" +
 		"<label id='lineInfo' onclick='changeTab(this)'>결재정보</label><label id='changeInfo' onclick='changeTab(this)'>변경이력</label></div>" +
 		"<div id='tabDetail'></div><div id='tabDetail2'></div>"
 	$(".comment").html(tabHtml);
 	toReadMode();
 	drawCommentLine();
-
 }
 
 // 탭 누를때마다의 이벤트 주기 
@@ -287,7 +285,7 @@ function drawCommentLine() {
 }
 
 
-//  변경이력 그리는 함수 
+//  변경이력 그리는 함수 ajax로 변경 이력 받아옴 
 function drawChangeInfo() {
 	let target = $("#tabDetail2");
 	// 임시 데이터 ----------------------------------------------------
@@ -541,11 +539,8 @@ function deleteClick(obj) {
 
 // 결재선 그리기 
 function createLine() {
-
 	let formTypeName = $(".formNumHidden").val();
 	let formId = storage.formList[formTypeName].id;
-
-
 	let lineTarget = $(".infoline")[0].children[1];
 	lineTarget = $("#" + lineTarget.id);
 	lineTarget.html("");
@@ -578,7 +573,6 @@ function createLine() {
 
 
 			/// class 이름 , css 수정 
-
 			if (i < 2 && j < target[i].children.length - 1) {
 				testHtml += "<div class='lineSet'><div class='twoBorder'>직급</div><div class='twoBorder " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div><div class='twoBorder " + formId + "_" + titleId[i] + "_status'>서명</div><div class='dateBorder " + formId + "_" + titleId[i] + "_approved'>/</div></div>"
 			} else if (i < 2 && j == target[i].children.length - 1) {
@@ -685,6 +679,8 @@ function createConfirmBtn(obj) {
 function getYmdHyphen() {
 	let d = new Date();
 	return (d.getFullYear() % 100) + "-" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "-" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString()) + "&nbsp" + d.getHours().toString() + ":" + d.getMinutes().toString() + ":" + d.getSeconds().toString();
-
-
 }
+
+
+
+

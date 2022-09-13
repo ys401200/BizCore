@@ -343,7 +343,7 @@ function createLine() {
       // 수신 
       if (i == 3) {
         testHtml2 += "<div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_position" + "' value='직급' data-detail='직급'/></div>" +
-          "<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "' value='" + storage.user[data[id]].userName + "' dataset.detail='" + storage.user[data[id]].userName + "'/></div>" +
+          "<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "' value='" + storage.user[data[id]].userName + "' data-detail='" + storage.user[data[id]].userName + "'/></div>" +
           "<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_status' value='' data-detail=''/></div>" +
           "<div class='dateBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_approved" + "' value='' data-detail=''/></div></div>"
       }
@@ -366,7 +366,7 @@ function createLine() {
       // 검토 합의 결재 
       else {
         testHtml += "<div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_position" + "' value='직급' data-detail='직급'/></div>" +
-          "<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "' value='" + storage.user[data[id]].userName + "' dataset.detail='" + storage.user[data[id]].userName + "'/></div>" +
+          "<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "' value='" + storage.user[data[id]].userName + "' data-detail='" + storage.user[data[id]].userName + "'/></div>" +
           "<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_status' value='' data-detail=''/></div>" +
           "<div class='dateBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_approved" + "' value='' data-detail=''/></div></div>"
       }
@@ -467,30 +467,121 @@ function setSavedLine(obj) {
     $("#refer").html("");
   }
 
-
-  let formId = "doc_Form_Consult"
-
+}
 
 
-  function reportInsert(formId) {
-    let writer, created, sopp, infoCustomer, title, content;
-    let examine_position = new Array();
-    // let examine_position, examine, examine_staus, examine_approved = [];
-    // let approval_position, approval, approval_staus, approval_approved = [];
-    // let agree_position, agree, agree_staus, agree_approved = [];
-    // let receive_position, receive, receive_staus, receive_approved = [];
-    // let refer, files = [];
+let formId = "doc_Form_Consult"
 
-    writer = $("#" + formId + '_writer');
-    created = $("#" + formId + '_created');
-    sopp = $("#" + formId + '_sopp');
-    infoCustomer = $("#" + formId + '_infoCustomer');
-    title = $("#" + formId + '_title');
+function reportInsert(formId) {
+  let writer, created, sopp, infoCustomer, title, content;
+  let examine = new Array(); let examine_status = new Array(); let examine_approved = new Array();
+  let approval = new Array(); let approval_status = new Array(); let approval_approved = new Array();
+  let agree = new Array(); let agree_status = new Array(); let agree_approved = new Array();
+  let receive = new Array(); let receive_status = new Array(); let receive_approved = new Array();
+  let refer, files = new Array();
+  let date = new Array(); let customer = new Array(); let price = new Array();
+  let product = new Array(); let quantity = new Array();
+  let amount = new Array(); let tax = new Array();
+  let total = new Array(); let remark = new Array();
 
-    for (let i = 0; i < $("." + formId + "_examine").length; i++) {
-      console.log($("." + formId + "_examine")[i].dataset.detail);
+  writer = $("#" + formId + '_writer');
+  created = $("#" + formId + '_created');
+  sopp = $("#" + formId + '_sopp');
+  infoCustomer = $("#" + formId + '_infoCustomer');
+  title = $("#" + formId + '_title');
+
+
+
+  for (let i = 0; i < $("." + formId + "_examine").length; i++) {
+    examine.push($("." + formId + "_examine")[i].dataset.detail);
+    examine_status.push($("." + formId + "_examine_status")[i].dataset.detail);
+    examine_approved.push($("." + formId + "_examine_approved")[i].dataset.detail);
+  }
+  for (let i = 0; i < $("." + formId + "_approval").length; i++) {
+    approval.push($("." + formId + "_approval")[i].dataset.detail);
+    approval_status.push($("." + formId + "_approval_status")[i].dataset.detail);
+    approval_approved.push($("." + formId + "_approval_approved")[i].dataset.detail);
+  }
+
+  for (let i = 0; i < $("." + formId + "_agree").length; i++) {
+    agree.push($("." + formId + "_agree")[i].dataset.detail);
+    agree_status.push($("." + formId + "_agree_status")[i].dataset.detail);
+    agree_approved.push($("." + formId + "_agree_approved")[i].dataset.detail);
+  }
+  for (let i = 0; i < $("." + formId + "_receive").length; i++) {
+    receive.push($("." + formId + "_receive")[i].dataset.detail);
+    receive_status.push($("." + formId + "_receive_status")[i].dataset.detail);
+    receive_approved.push($("." + formId + "_receive_approved")[i].dataset.detail);
+  }
+
+  for (let i = 0; i < $(".detailcontentDiv").length; i++) {
+    date.push($("." + formId + "_date")[i].dataset.detail);
+    customer.push($("." + formId + "_customer")[i].dataset.detail);
+    price.push($("." + formId + "_price")[i].dataset.detail);
+    product.push($("." + formId + "_product")[i].dataset.detail);
+    quantity.push($("." + formId + "_quantity")[i].dataset.detail);
+    amount.push($("." + formId + "_amount")[i].dataset.detail);
+    tax.push($("." + formId + "_tax")[i].dataset.detail);
+    total.push($("." + formId + "_total")[i].dataset.detail);
+    remark.push($("." + formId + "_remark")[i].dataset.detail);
+  }
+
+
+  let url = "/app/doc";
+  let method = "post";
+  let data = {
+    "writer": writer,
+    "created": created,
+    "sopp": sopp,
+    "infoCustomer": infoCustomer,
+    "title": title,
+    "content": content,
+    "approvalData": {
+      "approval": approval,
+      "approval_status": approval_status,
+      "approval_approved": approval_approved
+    },
+    "examineData": {
+      "examine": examine,
+      "examine_status": examine_status,
+      "examine_approved": examine_approved
+    },
+    "agreeData": {
+      "agree": agree,
+      "agree_status": agree_status,
+      "agree_approved": agree_approved
+    },
+    "receiveData": {
+      "receive": receive,
+      "receive_status": receive_status,
+      "receive_approved": receive_approved
+    },
+    "detailData": {
+      "date": date,
+      "customer": customer,
+      "product": product,
+      "price": price,
+      "quantity": quantity,
+      "amount": amount,
+      "tax": tax,
+      "total": total,
+      "remark": remark
     }
 
-    console.log($(".reportInsertForm").html());
   }
+
+  console.log(data.detailData.customer);
+  let type = "insert";
+
+  //crud.defaultAjax(url, method, data, type, appSuccessInsert, appErrorInsert);
+
+}
+
+function appSuccessInsert() {
+  alert("등록완료");
+  location.reload();
+}
+
+function appErrorInsert() {
+  alert("등록에러");
 }
