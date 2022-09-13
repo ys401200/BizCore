@@ -206,6 +206,18 @@ public abstract class Svc {
         return md == null ? null : bytesToHex(md.digest());
     } // End of encSHA256()
 
+    public String encSHA512(String str) {
+        MessageDigest md = null;
+        try {
+            md = MessageDigest.getInstance("SHA-512");
+            md.update(str.getBytes());
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        return md == null ? null : bytesToHex(md.digest());
+    } // End of encSHA256()
+
     public String bytesToHex(byte[] bytes) {
         StringBuilder builder = new StringBuilder();
         for (byte b : bytes) {
