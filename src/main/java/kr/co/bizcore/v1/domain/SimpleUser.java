@@ -21,6 +21,12 @@ public class SimpleUser extends Domain {
     @Getter
     @Setter
     protected String userName;
+    @Getter
+    @Setter
+    protected int rank;
+    @Getter
+    @Setter
+    private boolean resign;
     protected ArrayList<String> deptId;
     @JsonIgnore
     private ArrayList<Permission> permission;

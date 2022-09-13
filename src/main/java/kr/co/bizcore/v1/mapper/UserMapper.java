@@ -22,7 +22,7 @@ public interface UserMapper {
     @Select("SELECT CAST(user_no AS CHAR) AS userNo, dept AS deptId, func_id as funcId, sub_id AS subId, CAST(permission AS char(1)) AS permission FROM bizcore.permission WHERE comp_id = #{compId} AND func_id IN (SELECT 'A' UNION ALL SELECT func_id FROM bizsys.comp_permission WHERE comp_id = #(compId} AND permission = 1)")
     public List<Map<String, String>> getAllUserPermission(String compId);
 
-    @Select("SELECT userno AS userNo, userid AS userId, userName AS userName FROM swc_user WHERE compno = (SELECT compno FROM swc_company WHERE compid =#{compId})")
+    @Select("SELECT no AS userNo, userId, userName, `rank`, IF(deleted IS NULL, FALSE, TRUE) AS resign FROM bizcore.users where deleted IS NULL AND compid = #{compId}")
     public List<SimpleUser> getAllUser(String compId);
 
     @Select("SELECT CAST(user_no AS CHAR) AS userNo, dept_id AS deptId FROM bizcore.user_dept WHERE comp_id = #{compId} ORDER BY user_no, priority")
