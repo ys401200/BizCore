@@ -475,6 +475,7 @@ function reportInsert() {
   content = $("#" + formId + "_content").val();
   readable = $('input[name=authority]:checked').val();
   appDoc = $(".reportInsertForm").html();
+  appDoc = appDoc.replaceAll("\n","").replaceAll("\r","").replaceAll("\t","").replaceAll("\"","\\\"");
   let my = storage.my;
   dept = storage.user[my].deptId[0];
 
@@ -501,7 +502,7 @@ function reportInsert() {
     "sopp": sopp,
     "dept": dept,
     "customer": infoCustomer,
-    "attached": storage.attachedList,
+    "attached": storage.attachedList===undefined?[]:storage.attachedList,
     "content": content,
     "appLine": appLine,
     "appDoc": appDoc,

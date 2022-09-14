@@ -143,7 +143,7 @@ public class ApiGwCtrl extends Ctrl{
         session = request.getSession();
         aesKey = (String) session.getAttribute("aesKey");
         aesIv = (String) session.getAttribute("aesIv");
-        userNo = (String) session.getAttribute("aesIv");
+        userNo = (String) session.getAttribute("userNo");
         compId = (String) session.getAttribute("compId");
         attached = (HashMap<String, String>)session.getAttribute("attached");
         if(compId == null)
