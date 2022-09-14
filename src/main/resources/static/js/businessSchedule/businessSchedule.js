@@ -312,301 +312,41 @@ function scheduleDetailView(e){
 }
 
 function scheduleSuccessView(result){
-	let detailView, html = "", dataArray, job, title;
+	let html, title, dataArray, notIdArray;
 
-	job = (result.job === null || result.job === "" || result.job === undefined) ? "" : result.job;
-	
-	detailView = $(document).find(".detailContainer");
-	detailView.hide();
-	
-	if(job === "sales"){
-		let from, to, place, writer, sopp, customer, partner, content, type;
-		
-		disDate = dateDis(result.from);
-		from = dateFnc(disDate);
+	title = (result.title === null || result.title === "" || result.title === undefined) ? "제목 없음" : result.title;
+	dataArray = scheduleRadioUpdate(result.job, result);
+	html = detailViewFormModal(dataArray);
 
-		disDate = dateDis(result.to);
-		to = dateFnc(disDate);
+	modal.show();
+	modal.headTitle.text(title);
+	modal.content.css("width", "50%");
+	modal.body.html(html);
+	modal.body.css("max-height", "800px");
+	modal.confirm.text("수정");
+	modal.close.text("취소");
+	notIdArray = ["writer"];
+	modal.confirm.attr("onclick", "enableDisabled(this, \"scheduleUpdate();\", \"" + notIdArray + "\");");
+	modal.close.attr("onclick", "modal.hide();");
 
-		place = (result.place === null || result.place === "" || result.place === undefined) ? "없음" : result.place;
+	setTimeout(() => {
+		$(document).find("[name='job'][value='" + result.job + "']").prop("checked", true);
 
-		if(result.sopp > 0){
-			$.ajax({
-				url: "/api/sopp/" + result.sopp,
-				method: "get",
-				async: false,
-				dataType: "json",
-				success:(resultData) => {
-					let jsonData;
-					jsonData = cipher.decAes(resultData.data);
-					jsonData = JSON.parse(jsonData);
-					sopp = jsonData.title;
-				}
-			});
-		}else{
-			sopp = "없음";
+		if(result.job === "sales"){
+			let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;
+
+			$(document).find("#type option[value='" + type + "']").prop("selected", true);
+		}else if(result.job === "tech"){
+			let contractMethod = (result.contractMethod === null || result.contractMethod === "" || result.contractMethod === undefined) ? "" : result.contractMethod;
+			let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;
+			let supportStep = (result.supportStep === null || result.supportStep === "" || result.supportStep === undefined) ? "" : result.supportStep;
+
+			$(document).find("[name='contractMethod'][value='" + contractMethod + "']").prop("checked", true);
+			$(document).find("#type option[value='" + type + "']").prop("selected", true);
+			$(document).find("#supportStep option[value='" + supportStep + "']").prop("selected", true);
 		}
-
-		writer = (result.writer === null || result.writer == 0 || result.writer === undefined) ? "없음" : storage.user[result.writer].userName;
-		customer = (result.customer == 0 || result.customer === null || result.customer === undefined) ? "없음" : storage.customer[result.customer].name;
-		partner = (result.partner == 0 || result.partner === null || result.partner === undefined) ? "없음" : storage.customer[result.partner].name;
-		title = (result.title === null || result.title === "" || result.title === undefined) ? "제목 없음" : result.title;
-		content = (result.content === null || result.content === "" || result.content === undefined) ? "내용 없음" : result.content;
-		type = (result.type === null || result.type === "" || result.type === undefined) ? "없음" : storage.code.etc[result.type];
-
-		dataArray = [
-			{
-				"title": "일정시작일",
-				"value": from,
-			},
-			{
-				"title": "일정종료일",
-				"value": to,
-			},
-			{
-				"title": "장소",
-				"value": place,
-			},
-			{
-				"title": "활동형태",
-				"value": type,
-			},
-			{
-				"title": "담당자",
-				"value": writer,
-			},
-			{
-				"title": "영업기회",
-				"value": sopp,
-			},
-			{
-				"title": "매출처",
-				"value": customer,
-			},
-			{
-				"title": "엔드유저",
-				"value": partner,
-			},
-			{
-				"title": "제목",
-				"value": title,
-			},
-			{
-				"title": "내용",
-				"value": content,
-			}
-		];
-	}else if(job === "tech"){
-		let from, to, place, writer, sopp, customer, partner, content, supportModel, supportVersion, cipOfCustomer, contractMethod, contract, supportStep, type;
 		
-		disDate = dateDis(result.from);
-		from = dateFnc(disDate);
-
-		disDate = dateDis(result.to);
-		to = dateFnc(disDate);
-
-		place = (result.place === null || result.place === "" || result.place === undefined) ? "없음" : result.place;
-		
-		if(result.sopp > 0){
-			$.ajax({
-				url: "/api/sopp/" + result.sopp,
-				method: "get",
-				async: false,
-				dataType: "json",
-				success:(resultData) => {
-					let jsonData;
-					jsonData = cipher.decAes(resultData.data);
-					jsonData = JSON.parse(jsonData);
-					sopp = jsonData.title;
-				}
-			});
-		}else{
-			sopp = "없음";
-		}
-
-		writer = (result.writer === null || result.writer == 0 || result.writer === undefined) ? "없음" : storage.user[result.writer].userName;
-		customer = (result.customer == 0 || result.customer === null || result.customer === undefined) ? "없음" : storage.customer[result.customer].name;
-		partner = (result.partner == 0 || result.partner === null || result.partner === undefined) ? "없음" : storage.customer[result.partner].name;
-		title = (result.title === null || result.title === "" || result.title === undefined) ? "제목 없음" : result.title;
-		content = (result.content === null || result.content === "" || result.content === undefined) ? "내용 없음" : result.content;
-		supportModel = (result.supportModel === null || result.supportModel === "" || result.supportModel === undefined) ? "없음" : result.supportModel;
-		supportVersion = (result.supportVersion === null || result.supportVersion === "" || result.supportVersion === undefined) ? "없음" : result.supportVersion;
-		cipOfCustomer = (result.cipOfCustomer === null || result.cipOfCustomer == 0 || result.cipOfCustomer === undefined) ? "없음" : result.cipOfCustomer;
-		contractMethod = (result.contractMethod === null || result.contractMethod === "" || result.contractMethod === undefined) ? "없음" : storage.code.etc[result.contractMethod];
-		supportStep = (result.supportStep === "" || result.supportStep === null || result.supportStep === undefined) ? "없음" : storage.code.etc[result.supportStep];
-		type = (result.type === "" || result.type === null || result.type === undefined) ? "없음" : storage.code.etc[result.type];
-
-		if(result.contract > 0){
-			$.ajax({
-				url: "/api/contract/" + result.contract,
-				method: "get",
-				async: false,
-				dataType: "json",
-				success:(resultData) => {
-					let jsonData;
-					jsonData = cipher.decAes(resultData.data);
-					jsonData = JSON.parse(jsonData);
-					contract = jsonData.title;
-				}
-			});
-		}else{
-			contract = "없음";
-		}
-
-		$.ajax({
-			url: "/api/system/cip/" + cipOfCustomer,
-			method: "get",
-			async: false,
-			dataType: "json",
-			success:(resultData) => {
-				let jsonData;
-				jsonData = cipher.decAes(resultData.data);
-				console.log(jsonData);
-
-				cipOfCustomer = jsonData;
-			}
-		});
-		
-		dataArray = [
-			{
-				"title": "등록구분",
-				"value": contractMethod,
-			},
-			{
-				"title": "기술요청명",
-				"value": title,
-			},
-			{
-				"title": "영업기회",
-				"value": sopp,
-			},
-			{
-				"title": "계약",
-				"value": contract,
-			},
-			{
-				"title": "매출처",
-				"value": partner,
-			},
-			{
-				"title": "매출처 담당자",
-				"value": cipOfCustomer,
-			},
-			{
-				"title": "엔드유저",
-				"value": customer,
-			},
-			{
-				"title": "모델",
-				"value": supportModel,
-			},
-			{
-				"title": "버전",
-				"value": supportVersion,
-			},
-			{
-				"title": "단계",
-				"value": supportStep,
-			},
-			{
-				"title": "지원형태",
-				"value": type,
-			},
-			{
-				"title": "장소",
-				"value": place,
-			},
-			{
-				"title": "담당자",
-				"value": writer,
-			},
-			{
-				"title": "지원시작일",
-				"value": from,
-			},
-			{
-				"title": "지원종료일",
-				"value": to,
-			},
-			{
-				"title": "내용",
-				"value": content,
-			}
-		];
-	}else{
-		let from, to, disDate, place, sopp, customer, writer, content;
-
-		disDate = dateDis(result.from);
-		from = dateFnc(disDate);
-
-		disDate = dateDis(result.to);
-		to = dateFnc(disDate);
-
-		place = (result.place === null || result.place === "" || result.place === undefined) ? "없음" : result.place;
-		
-		if(result.sopp > 0){
-			$.ajax({
-				url: "/api/sopp/" + result.sopp,
-				method: "get",
-				async: false,
-				dataType: "json",
-				success:(resultData) => {
-					let jsonData;
-					jsonData = cipher.decAes(resultData.data);
-					jsonData = JSON.parse(jsonData);
-					sopp = jsonData.title;
-				}
-			});
-		}else{
-			sopp = "없음";
-		}
-
-		writer = (result.writer === null || result.writer == 0 || result.writer === undefined) ? "없음" : storage.user[result.writer].userName;
-		customer = (result.customer == 0 || result.customer === null || result.customer === undefined) ? "없음" : storage.customer[result.customer].name;
-		title = (result.title === null || result.title === "" || result.title === undefined) ? "제목 없음" : result.title;
-		content = (result.content === null || result.content === "" || result.content === undefined) ? "내용 없음" : result.content;
-
-		dataArray = [
-			{
-				"title": "일정시작일",
-				"value": from,
-			},
-			{
-				"title": "일정종료일",
-				"value": to,
-			},
-			{
-				"title": "장소",
-				"value": place,
-			},
-			{
-				"title": "영업기회",
-				"value": sopp,
-			},
-			{
-				"title": "담당자",
-				"value": writer,
-			},
-			{
-				"title": "매출처",
-				"value": customer,
-			},
-			{
-				"title": "제목",
-				"value": title,
-			},
-			{
-				"title": "내용",
-				"value": content,
-			}
-		];
-	}
-	
-	detailView.find(".detailMainSpan").text(title);
-	detailView.find(".detailBtns").html("<button type='button' onclick='scheduleUpdateForm(" + JSON.stringify(result) + ")'>수정</button><button type='button' onclick='scheduleDelete(" + JSON.stringify(result) +")'>삭제</button><button type='button' onclick='detailContainerHide();'>닫기</button>");
-	html = detailViewForm(dataArray);
-	detailView.find(".detailContent").html(html);
-	detailView.show();
+	}, 100);
 }
 
 function scheduleErrorView(){
@@ -757,7 +497,7 @@ function scheduleInsertForm(getDate){
 }
 
 function scheduleUpdateForm(result){
-	let html, title, dataArray;
+	let html, title, dataArray, notIdArray;
 
 	title = (result.title === null || result.title === "" || result.title === undefined) ? "제목 없음" : result.title;
 	
@@ -770,9 +510,10 @@ function scheduleUpdateForm(result){
 	modal.content.css("width", "50%");
 	modal.body.html(html);
 	modal.body.css("max-height", "800px");
-	modal.confirm.text("수정완료");
+	modal.confirm.text("수정");
 	modal.close.text("취소");
-	modal.confirm.attr("onclick", "scheduleUpdate(" + result.no + ");");
+	notIdArray = ["writer"];
+	modal.confirm.attr("onclick", "enableDisabled(this, \"scheduleUpdate();\", \"" + notIdArray + "\");");
 	modal.close.attr("onclick", "modal.hide();");
 
 	setTimeout(() => {
@@ -796,7 +537,7 @@ function scheduleUpdateForm(result){
 }
 
 function scheduleRadioClick(e, result){
-	let html, dataArray, tempFrom, tempTo, value = $(e).val();
+	let html, dataArray, tempFrom, tempTo, value = $(e).val(), notIdArray;
 	
 	tempFrom = $(document).find("#from").val();
 	tempTo = $(document).find("#to").val();
@@ -825,9 +566,10 @@ function scheduleRadioClick(e, result){
 		modal.content.css("width", "50%");
 		modal.body.html(html);
 		modal.body.css("max-height", "800px");
-		modal.confirm.text("수정완료");
+		modal.confirm.text("수정");
 		modal.close.text("취소");
-		modal.confirm.attr("onclick", "scheduleUpdate(" + result.no + ");");
+		notIdArray = ["writer"];
+		modal.confirm.attr("onclick", "enableDisabled(this, \"scheduleUpdate();\", \"" + notIdArray + "\");");
 		modal.close.attr("onclick", "modal.hide();");
 	}
 
@@ -1469,27 +1211,23 @@ function scheduleRadioUpdate(value, result){
 				],
 				"type": "radio",
 				"elementName": "job",
-				"disabled": false,
 				"onClick": "scheduleRadioClick(this, " + JSON.stringify(result) + ");",
 			},
 			{
 				"title": "활동시작일",
 				"elementId": "from",
 				"type": "date",
-				"disabled": false,
 				"value": from,
 			},
 			{
 				"title": "활동종료일",
 				"elementId": "to",
 				"type": "date",
-				"disabled": false,
 				"value": to,
 			},
 			{
 				"title": "장소",
 				"elementId": "place",
-				"disabled": false,
 				"value": place,
 			},
 			{
@@ -1562,7 +1300,6 @@ function scheduleRadioUpdate(value, result){
 				],
 				"type": "select",
 				"elementId": "type",
-				"disabled": false,
 			},
 			{
 				"title": "담당자",
@@ -1574,19 +1311,16 @@ function scheduleRadioUpdate(value, result){
 				"title": "영업기회",
 				"elementId": "sopp",
 				"dataKeyup": "sopp",
-				"disabled": false,
 				"value": sopp,
 			},
 			{
 				"title": "매출처",
-				"disabled": false,
 				"elementId": "customer",
 				"dataKeyup": "customer",
 				"value": customer,
 			},
 			{
 				"title": "엔드유저",
-				"disabled": false,
 				"elementId": "partner",
 				"dataKeyup": "customer",
 				"value": partner,
@@ -1594,7 +1328,6 @@ function scheduleRadioUpdate(value, result){
 			{
 				"title": "제목",
 				"elementId": "title",
-				"disabled": false,
 				"value": title,
 			},
 			{
@@ -1694,7 +1427,6 @@ function scheduleRadioUpdate(value, result){
 				],
 				"type": "radio",
 				"elementName": "job",
-				"disabled": false,
 				"onClick": "scheduleRadioClick(this, " + JSON.stringify(result) + ");",
 			},
 			{
@@ -1711,31 +1443,26 @@ function scheduleRadioUpdate(value, result){
 				],
 				"type": "radio",
 				"elementName": "contractMethod",
-				"disabled": false,
 			},
 			{
 				"title": "기술지원 요청명(*)",
 				"elementId": "title",
-				"disabled": false,
 				"value": title,
 			},
 			{
 				"title": "영업기회(*)",
 				"elementId": "sopp",
 				"dataKeyup": "sopp",
-				"disabled": false,
 				"value": sopp,
 			},
 			{
 				"title": "계약",
 				"elementId": "contract",
 				"dataKeyup": "contract",
-				"disabled": false,
 				"value": contract,
 			},
 			{
 				"title": "매출처",
-				"disabled": false,
 				"elementId": "partner",
 				"dataKeyup": "customer",
 				"value": partner,
@@ -1744,26 +1471,22 @@ function scheduleRadioUpdate(value, result){
 				"title": "매출처 담당자",
 				"dataKeyup": "customerUser",
 				"elementId": "cipOfCustomer",
-				"disabled": false,
 				"value": cipOfCustomer,
 			},
 			{
 				"title": "엔드유저(*)",
 				"elementId": "customer",
-				"disabled": false,
 				"dataKeyup": "customer",
 				"value": customer,
 			},
 			{
 				"title": "모델",
 				"elementId": "supportModel",
-				"disabled": false,
 				"value": supportModel,
 			},
 			{
 				"title": "버전",
 				"elementId": "supportVersion",
-				"disabled": false,
 				"value": supportVersion,
 			},
 			{
@@ -1788,7 +1511,6 @@ function scheduleRadioUpdate(value, result){
 				],
 				"type": "select",
 				"elementId": "supportStep",
-				"disabled": false,
 			},
 			{
 				"title": "지원형태",
@@ -1808,12 +1530,10 @@ function scheduleRadioUpdate(value, result){
 				],
 				"type": "select",
 				"elementId": "type",
-				"disabled": false,
 			},
 			{
 				"title": "장소",
 				"elementId": "place",
-				"disabled": false,
 				"value": place,
 			},
 			{
@@ -1825,14 +1545,12 @@ function scheduleRadioUpdate(value, result){
 			{
 				"title": "지원일자 시작일",
 				"elementId": "from",
-				"disabled": false,
 				"type": "date",
 				"value": from,
 			},
 			{
 				"title": "지원일자 종료일",
 				"elementId": "to",
-				"disabled": false,
 				"type": "date",
 				"value": to,
 			},
@@ -1895,26 +1613,22 @@ function scheduleRadioUpdate(value, result){
 				],
 				"type": "radio",
 				"elementName": "job",
-				"disabled": false,
 				"onClick": "scheduleRadioClick(this, " + JSON.stringify(result) + ");",
 			},
 			{
 				"title": "일정시작일",
 				"type": "date",
 				"elementId": "from",
-				"disabled": false,
 				"value": from,
 			},
 			{
 				"title": "일정종료일",
 				"type": "date",
 				"elementId": "to",
-				"disabled": false,
 				"value": to,
 			},
 			{
 				"title": "장소",
-				"disabled": false,
 				"elementId": "place",
 				"value": place,
 			},
@@ -1922,7 +1636,6 @@ function scheduleRadioUpdate(value, result){
 				"title": "영업기회(*)",
 				"elementId": "sopp",
 				"dataKeyup": "sopp",
-				"disabled": false,
 				"value": sopp,
 			},
 			{
@@ -1933,7 +1646,6 @@ function scheduleRadioUpdate(value, result){
 			},
 			{
 				"title": "매출처",
-				"disabled": false,
 				"elementId": "customer",
 				"dataKeyup": "customer",
 				"value": customer,
@@ -1941,7 +1653,6 @@ function scheduleRadioUpdate(value, result){
 			{
 				"title": "제목",
 				"elementId": "title",
-				"disabled": false,
 				"value": title,
 			},
 			{

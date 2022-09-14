@@ -156,7 +156,6 @@ function drawSoppList() {
 
 function soppDetailView(e){
 	let id, url, method, data, type;
-	contentTopBtn("bodyContent");
 
 	id = $(e).data("id");
 	url = "/api/sopp/" + id;
@@ -329,9 +328,9 @@ function soppSuccessView(result){
 	];
 
 	html = "<div class='tabs'>";
-	html += "<input type='radio' id='tabAll' name='tabItem' data-content-id='tabContentAll' data-first-fnc='soppUpdateForm(" + result.no + ");' data-second-fnc='modal.hide();' onclick='tabItemClick(this)' checked>";
+	html += "<input type='radio' id='tabAll' name='tabItem' data-content-id='tabContentAll' onclick='tabItemClick(this)' checked>";
 	html += "<label class='tabItem' for='tabAll'>기본정보</label>";
-	html += "<input type='radio' id='tabTrade' name ='tabItem' data-content-id='tabTradeList' onclick='tabItemClick(this)'>";
+	html += "<input type='radio' id='tabTrade' name='tabItem' data-content-id='tabTradeList' onclick='tabItemClick(this)'>";
 	html += "<label class='tabItem' for='tabTrade'>매입매출내역</label>";
 	// html += "<input type='radio' id='tabEst' name='tabItem' data-content-id='tabEstList' onclick='tabItemClick(this)'>";
 	// html += "<label class='tabItem' for='tabEst'>견적내역</label>";
@@ -344,10 +343,11 @@ function soppSuccessView(result){
 	html += "</div><br/>";
 	html += detailViewForm(dataArray);
 	html += createTabTradeList(result.trades);
-	conTitleChange("containerTitle", title);
+	conTitleChange("containerTitle", "<a href='#' onclick='detailContainerHide(\"영업기회조회\");'>뒤로가기</a>");
 	$(".detailContents").html(html);
 	$(".detailBtns").html("");
-	$(".detailBtns").append("<button type='button' onclick='soppUpdateForm(" + JSON.stringify(result) + ");'>수정</button><button type='button' onclick='soppDelete(" + result.no + ");'>삭제</button><button type='button' onclick='detailContainerHide(\"영업기회조회\");'>닫기</button>");
+	notIdArray = ["employee"];
+	$(".detailBtns").append("<button type='button' onclick='enableDisabled(this, \"soppUpdate();\", \"" + notIdArray + "\");'>수정</button><button type='button' onclick='soppDelete(" + result.no + ");'>삭제</button>");
 	
 	storage.attachedList = result.attached;
 	storage.attachedNo = result.no;
@@ -368,7 +368,9 @@ function soppSuccessView(result){
 		$(document).find("#contType option[value='" + result.contType + "']").prop("selected" ,true);
 		$(document).find("#soppType option[value='" + result.soppType + "']").prop("selected" ,true);
 		setTiny();
-	}, 300);
+		tinymce.activeEditor.mode.set('readonly');
+		inputDataList();
+	}, 100);
 }
 
 function soppErrorView(){
@@ -529,189 +531,189 @@ function soppInsertForm(){
 	}, 100);
 }
 
-function soppUpdateForm(result){
-	// let html, title, userName, customer, picOfCustomer, endUser, progress, disDate, expectedSales, detail, dataArray, contType, soppType, status;
+// function soppUpdateForm(result){
+// 	let html, title, userName, customer, picOfCustomer, endUser, progress, disDate, expectedSales, detail, dataArray, contType, soppType, status;
 
-	// title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
-	// userName = (result.employee == 0 || result.employee === null || result.employee === undefined) ? "" : storage.user[result.employee].userName;
-	// customer = (result.customer == 0 || result.customer === null || result.customer === undefined) ? "" : storage.customer[result.customer].name;
-	// picOfCustomer = (result.picOfCustomer == 0 || result.picOfCustomer === null || result.picOfCustomer === undefined) ? "" : result.picOfCustomer;
-	// endUser = (result.endUser == 0 || result.endUser === null || result.endUser === undefined) ? "" : storage.customer[result.endUser].name;
-	// status = (result.status === null || result.status === "" || result.status === undefined) ? "" : result.status;
-	// progress = (result.progress === null || result.progress === "" || result.progress === undefined) ? "" : result.progress;
-	// contType = (result.contType === null || result.contType === "" || result.contType === undefined) ? "" : result.contType;
-	// console.log(contType);
-	// soppType = (result.soppType === null || result.soppType === "" || result.soppType === undefined) ? "" : result.soppType;
-	// expectedSales = (result.expectedSales === null || result.expectedSales === "" || result.expectedSales === undefined) ? "" : numberFormat(result.expectedSales);
-	// detail = (result.detail === null || result.detail === "" || result.detail === undefined) ? "" : result.detail;
+// 	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
+// 	userName = (result.employee == 0 || result.employee === null || result.employee === undefined) ? "" : storage.user[result.employee].userName;
+// 	customer = (result.customer == 0 || result.customer === null || result.customer === undefined) ? "" : storage.customer[result.customer].name;
+// 	picOfCustomer = (result.picOfCustomer == 0 || result.picOfCustomer === null || result.picOfCustomer === undefined) ? "" : result.picOfCustomer;
+// 	endUser = (result.endUser == 0 || result.endUser === null || result.endUser === undefined) ? "" : storage.customer[result.endUser].name;
+// 	status = (result.status === null || result.status === "" || result.status === undefined) ? "" : result.status;
+// 	progress = (result.progress === null || result.progress === "" || result.progress === undefined) ? "" : result.progress;
+// 	contType = (result.contType === null || result.contType === "" || result.contType === undefined) ? "" : result.contType;
+// 	console.log(contType);
+// 	soppType = (result.soppType === null || result.soppType === "" || result.soppType === undefined) ? "" : result.soppType;
+// 	expectedSales = (result.expectedSales === null || result.expectedSales === "" || result.expectedSales === undefined) ? "" : numberFormat(result.expectedSales);
+// 	detail = (result.detail === null || result.detail === "" || result.detail === undefined) ? "" : result.detail;
 	
-	// disDate = dateDis(result.targetDate);
-	// targetDate = dateFnc(disDate);
+// 	disDate = dateDis(result.targetDate);
+// 	targetDate = dateFnc(disDate);
 
-	// dataArray = [
-	// 	{
-	// 		"title": "담당자",
-	// 		"elementId": "employee",
-	// 		"dataKeyup": "user",
-	// 		"value": userName,
-	// 	},
-	// 	{
-	// 		"title": "매출처",
-	// 		"elementId": "customer",
-	// 		"dataKeyup": "customer",
-	// 		"value": customer,
-	// 		"disabled": false,
-	// 	},
-	// 	{
-	// 		"title": "매출처 담당자",
-	// 		"dataKeyup": "customerUser",
-	// 		"elementId": "picOfCustomer",
-	// 		"value": picOfCustomer,
-	// 		"disabled": false,
-	// 	},
-	// 	{
-	// 		"title": "엔드유저",
-	// 		"dataKeyup": "customer",
-	// 		"elementId": "endUser",
-	// 		"value": endUser,
-	// 		"disabled": false,
-	// 	},
-	// 	{
-	// 		"title": "진행단계",
-	// 		"selectValue": [
-	// 			{
-	// 				"key": "10178",
-	// 				"value": "영업정보파악",
-	// 			},
-	// 			{
-	// 				"key": "10179",
-	// 				"value": "초기접촉",
-	// 			},
-	// 			{
-	// 				"key": "10180",
-	// 				"value": "제안서제출 및 PT",
-	// 			},
-	// 			{
-	// 				"key": "10181",
-	// 				"value": "견적서제출",
-	// 			},
-	// 		],
-	// 		"type": "select",
-	// 		"disabled": false,
-	// 		"elementId": "status",
-	// 	},
-	// 	{
-	// 		"title": "가능성",
-	// 		"elementId": "progress",
-	// 		"value": progress,
-	// 		"disabled": false,
-	// 	},
-	// 	{
-	// 		"title": "계약구분",
-	// 		"selectValue": [
-	// 			{
-	// 				"key": "10247",
-	// 				"value": "판매계약",
-	// 			},
-	// 			{
-	// 				"key": "10248",
-	// 				"value": "유지보수",
-	// 			},
-	// 			{
-	// 				"key": "10254",
-	// 				"value": "임대계약",
-	// 			}
-	// 		],
-	// 		"type": "select",
-	// 		"elementId": "contType",
-	// 		"disabled": false,
-	// 	},
-	// 	{
-	// 		"title": "매출예정일",
-	// 		"type": "date",
-	// 		"elementId": "targetDate",
-	// 		"value": targetDate,
-	// 		"disabled": false,
-	// 	},
-	// 	{
-	// 		"title": "판매방식",
-	// 		"selectValue": [
-	// 			{
-	// 				"key": "10173",
-	// 				"value": "조달직판",
-	// 			},
-	// 			{
-	// 				"key": "10174",
-	// 				"value": "조달간판",
-	// 			},
-	// 			{
-	// 				"key": "10175",
-	// 				"value": "조달대행",
-	// 			},
-	// 			{
-	// 				"key": "10176",
-	// 				"value": "직접판매",
-	// 			},
-	// 			{
-	// 				"key": "10218",
-	// 				"value": "간접판매",
-	// 			},
-	// 			{
-	// 				"key": "10255",
-	// 				"value": "기타",
-	// 			}
-	// 		],
-	// 		"type": "select",
-	// 		"elementId": "soppType",
-	// 		"disabled": false,
-	// 	},
-	// 	{
-	// 		"title": "예상매출",
-	// 		"disabled": false,
-	// 		"elementId": "expectedSales",
-	// 		"value": expectedSales,
-	// 		"keyup": "inputNumberFormat(this)",
-	// 	},
-	// 	{
-	// 		"title": "영업기회명",
-	// 		"elementId": "title",
-	// 		"value": title,
-	// 		"disabled": false,
-	// 	},
-	// 	{
-	// 		"title": "내용",
-	// 		"elementId": "detail",
-	// 		"value": detail,
-	// 		"type": "textarea",
-	// 	},
-	// ];
+// 	dataArray = [
+// 		{
+// 			"title": "담당자",
+// 			"elementId": "employee",
+// 			"dataKeyup": "user",
+// 			"value": userName,
+// 		},
+// 		{
+// 			"title": "매출처",
+// 			"elementId": "customer",
+// 			"dataKeyup": "customer",
+// 			"value": customer,
+// 			"disabled": false,
+// 		},
+// 		{
+// 			"title": "매출처 담당자",
+// 			"dataKeyup": "customerUser",
+// 			"elementId": "picOfCustomer",
+// 			"value": picOfCustomer,
+// 			"disabled": false,
+// 		},
+// 		{
+// 			"title": "엔드유저",
+// 			"dataKeyup": "customer",
+// 			"elementId": "endUser",
+// 			"value": endUser,
+// 			"disabled": false,
+// 		},
+// 		{
+// 			"title": "진행단계",
+// 			"selectValue": [
+// 				{
+// 					"key": "10178",
+// 					"value": "영업정보파악",
+// 				},
+// 				{
+// 					"key": "10179",
+// 					"value": "초기접촉",
+// 				},
+// 				{
+// 					"key": "10180",
+// 					"value": "제안서제출 및 PT",
+// 				},
+// 				{
+// 					"key": "10181",
+// 					"value": "견적서제출",
+// 				},
+// 			],
+// 			"type": "select",
+// 			"disabled": false,
+// 			"elementId": "status",
+// 		},
+// 		{
+// 			"title": "가능성",
+// 			"elementId": "progress",
+// 			"value": progress,
+// 			"disabled": false,
+// 		},
+// 		{
+// 			"title": "계약구분",
+// 			"selectValue": [
+// 				{
+// 					"key": "10247",
+// 					"value": "판매계약",
+// 				},
+// 				{
+// 					"key": "10248",
+// 					"value": "유지보수",
+// 				},
+// 				{
+// 					"key": "10254",
+// 					"value": "임대계약",
+// 				}
+// 			],
+// 			"type": "select",
+// 			"elementId": "contType",
+// 			"disabled": false,
+// 		},
+// 		{
+// 			"title": "매출예정일",
+// 			"type": "date",
+// 			"elementId": "targetDate",
+// 			"value": targetDate,
+// 			"disabled": false,
+// 		},
+// 		{
+// 			"title": "판매방식",
+// 			"selectValue": [
+// 				{
+// 					"key": "10173",
+// 					"value": "조달직판",
+// 				},
+// 				{
+// 					"key": "10174",
+// 					"value": "조달간판",
+// 				},
+// 				{
+// 					"key": "10175",
+// 					"value": "조달대행",
+// 				},
+// 				{
+// 					"key": "10176",
+// 					"value": "직접판매",
+// 				},
+// 				{
+// 					"key": "10218",
+// 					"value": "간접판매",
+// 				},
+// 				{
+// 					"key": "10255",
+// 					"value": "기타",
+// 				}
+// 			],
+// 			"type": "select",
+// 			"elementId": "soppType",
+// 			"disabled": false,
+// 		},
+// 		{
+// 			"title": "예상매출",
+// 			"disabled": false,
+// 			"elementId": "expectedSales",
+// 			"value": expectedSales,
+// 			"keyup": "inputNumberFormat(this)",
+// 		},
+// 		{
+// 			"title": "영업기회명",
+// 			"elementId": "title",
+// 			"value": title,
+// 			"disabled": false,
+// 		},
+// 		{
+// 			"title": "내용",
+// 			"elementId": "detail",
+// 			"value": detail,
+// 			"type": "textarea",
+// 		},
+// 	];
 
-	// html = detailViewFormModal(dataArray);
+// 	html = detailViewFormModal(dataArray);
 
-	// modal.show();
-	// modal.headTitle.text(title);
-	// modal.content.css("width", "50%");
-	// modal.body.html(html);
-	// modal.body.css("max-height", "800px");
-	// modal.confirm.text("수정완료");
-	// modal.close.text("취소");
-	// modal.confirm.attr("onclick", "soppUpdate(" + result.no + ");");
-	// modal.close.attr("onclick", "modal.hide();");
+// 	modal.show();
+// 	modal.headTitle.text(title);
+// 	modal.content.css("width", "50%");
+// 	modal.body.html(html);
+// 	modal.body.css("max-height", "800px");
+// 	modal.confirm.text("수정완료");
+// 	modal.close.text("취소");
+// 	modal.confirm.attr("onclick", "soppUpdate(" + result.no + ");");
+// 	modal.close.attr("onclick", "modal.hide();");
 
-	// setTimeout(() => {
-	// 	$(document).find("#contType option[value='" + contType + "']").prop("selected", true);
-	// 	$(document).find("#soppType option[value='" + soppType + "']").prop("selected", true);
-	// 	$(document).find("#status option[value='" + status + "']").prop("selected", true);
+// 	setTimeout(() => {
+// 		$(document).find("#contType option[value='" + contType + "']").prop("selected", true);
+// 		$(document).find("#soppType option[value='" + soppType + "']").prop("selected", true);
+// 		$(document).find("#status option[value='" + status + "']").prop("selected", true);
 
-	// 	if(targetDate === null || targetDate === "" || targetDate === undefined){
-	// 		let nowDate;
-	// 		nowDate = new Date();
-	// 		nowDate = nowDate.toISOString().substring(0, 10);
+// 		if(targetDate === null || targetDate === "" || targetDate === undefined){
+// 			let nowDate;
+// 			nowDate = new Date();
+// 			nowDate = nowDate.toISOString().substring(0, 10);
 	
-	// 		$(document).find("#targetDate").val(nowDate);
-	// 	}
-	// }, 100);
-}
+// 			$(document).find("#targetDate").val(nowDate);
+// 		}
+// 	}, 100);
+// }
 
 function soppInsert(){
 	let title, employee, customer, picOfCustomer, endUser, status, progress, contType, targetDate, soppType, expectedSales, detail, data;
@@ -767,7 +769,7 @@ function soppErrorInsert(){
 	alert("등록에러");
 }
 
-function soppUpdate(no){
+function soppUpdate(){
 	let title, employee, customer, picOfCustomer, endUser, status, progress, contType, targetDate, soppType, expectedSales, detail;
 
 	title = $(document).find("#title").val();
@@ -775,12 +777,12 @@ function soppUpdate(no){
 	employee = dataListFormat(employee.attr("id"), employee.val());
 	customer = $(document).find("#customer");
 	customer = dataListFormat(customer.attr("id"), customer.val());
-	picOfCustomer = $(document).find("#picOfCustomer")
+	picOfCustomer = $(document).find("#picOfCustomer");
 	picOfCustomer = dataListFormat(picOfCustomer.attr("id"), picOfCustomer.val());
 	endUser = $(document).find("#endUser");
 	endUser = dataListFormat(endUser.attr("id"), endUser.val());
 	status = $(document).find("#status").val();
-	progress = $(document).find("#progress").val();
+	progress = $(document).find("#progress").val().replaceAll("%", "");
 	contType = $(document).find("#contType").val();
 	targetDate = $(document).find("#targetDate").val();
 	targetDate = new Date(targetDate).getTime();
@@ -788,7 +790,7 @@ function soppUpdate(no){
 	expectedSales = $(document).find("#expectedSales").val().replaceAll(",", "");
 	detail = tinymce.activeEditor.getContent();
 
-	url = "/api/sopp/" + no;
+	url = "/api/sopp/" + storage.attachedNo;
 	method = "put";
 	data = {
 		"title": title,

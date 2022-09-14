@@ -5,7 +5,7 @@
 		<jsp:include page="../sideMenu.jsp" />
 	</div>
 	<div id="bodyContent">
-		<div class="noticeSearchContainer">
+		<!-- <div class="noticeSearchContainer">
             <div class="noticeSearchSelect">
                 <select id="noticeSearchCategory">
                     <option value="no">번호</option>
@@ -24,7 +24,7 @@
             <span class="detailMainSpan"></span>
             <div class="detailBtns"></div>
             <div class="detailContent"></div>
-        </div>
+        </div> -->
 		<div class="noticeContainer">
 			<hr />
 			<span>공지사항 </span>

@@ -103,7 +103,8 @@ function drawNoticeList() {
 
 function noticeDetailView(e) {// 선택한 그리드의 글 번호 받아오기 
 	let id, url, method, data, type;
-	contentTopBtn("bodyContent");
+
+	storage.gridContent = $(e);
 
 	id = $(e).data("id");
 	url = "/api/notice/" + id;
@@ -129,10 +130,8 @@ function noticeErrorList(){
 }
 
 function noticeSuccessView(result){
-	let html = "", title, content, writer, dataArray, disDate, setDate, detailContainer;
-
-	detailContainer = $(document).find(".detailContainer");
-	detailContainer.hide();
+	storage.detailNoticeNo = result.no;
+	let html = "", title, content, writer, dataArray, disDate, setDate, notIdArray;
 
 	title = (result.title === null || result.title === "" || result.title === undefined) ? "제목 없음" : result.title;
 	content = (result.content === null || result.content === "" || result.content === undefined) ? "내용 없음" : result.content;
@@ -142,34 +141,43 @@ function noticeSuccessView(result){
 
 	dataArray = [
 		{
-			"title": "번호",
-			"value": result.no,
-		},
-		{
-			"title": "제목",
-			"value": title,
-		},
-		{
-			"title": "내용",
-			"value": content,
-			"type": "textarea",
-		},
-		{
-			"title": "작성자",
+			"title": "담당자",
+			"elementId": "writer",
+			"dataKeyup": "user",
 			"value": writer,
 		},
 		{
 			"title": "등록일",
 			"value": setDate,
+			"elementId": "created",
+			"type": "date",
+		},
+		{
+			"title": "제목",
+			"elementId": "title",
+			"value": title,
+			"col": 3,
+		},
+		{
+			"title": "내용",
+			"elementId": "content",
+			"value": content,
+			"type": "textarea",
+			"col": 3,
 		},
 	];
 
-	html += detailViewForm(dataArray);
-	detailContainer.find("span").text(title);
-	detailContainer.find(".detailContent").html(html);
-	detailContainer.find(".detailBtns").html("");
-	detailContainer.find(".detailBtns").append("<button type='button' onclick='noticeUpdateForm(" + JSON.stringify(result) + ");'>수정</button><button type='button' onclick='noticeDelete(" + result.no + ");'>삭제</button><button type='button' onclick='detailContainerHide();'>닫기</button>");
-	detailContainer.show();
+	html += detailBoardForm(dataArray);
+	detailBoardContainerHide();
+	storage.gridContent.after(html);
+	notIdArray = ["writer", "created"];
+	$(".detailBtns").html("<button type='button' onclick='enableDisabled(this, \"noticeUpdate();\", \"" + notIdArray + "\");'>수정</button><button type='button' onclick='noticeDelete(" + result.no + ");'>삭제</button><button type='button' onclick='detailBoardContainerHide();'>닫기</button>");
+
+	setTimeout(() => {
+		setTiny();
+		tinymce.activeEditor.mode.set('readonly');
+		inputDataList();
+	}, 100)
 }
 
 function noticeErrorView(){
@@ -217,45 +225,45 @@ function noticeInsertForm(){
 	}, 100);
 }
 
-function noticeUpdateForm(result){
-	let html, title, content, writer, detail, dataArray;
+// function noticeUpdateForm(result){
+// 	let html, title, content, writer, detail, dataArray;
 
-	title = (result.title === null || result.title === "") ? "제목 없음" : result.title;
-	content = (result.content === null || result.content === "") ? "내용 없음" : result.content;
-	writer = (result.writer == 0 || result.writer === null) ? "데이터 없음" : storage.user[result.writer].userName;
+// 	title = (result.title === null || result.title === "") ? "제목 없음" : result.title;
+// 	content = (result.content === null || result.content === "") ? "내용 없음" : result.content;
+// 	writer = (result.writer == 0 || result.writer === null) ? "데이터 없음" : storage.user[result.writer].userName;
 
-	dataArray = [
-		{
-			"title": "담당자",
-			"elementId": "writer",
-			"value": writer,
-		},
-		{
-			"title": "제목",
-			"elementId": "title",
-			"value": title,
-			"disabled": false,
-		},
-		{
-			"title": "내용",
-			"elementId": "content",
-			"value": content,
-			"type": "textarea",
-		},
-	];
+// 	dataArray = [
+// 		{
+// 			"title": "담당자",
+// 			"elementId": "writer",
+// 			"value": writer,
+// 		},
+// 		{
+// 			"title": "제목",
+// 			"elementId": "title",
+// 			"value": title,
+// 			"disabled": false,
+// 		},
+// 		{
+// 			"title": "내용",
+// 			"elementId": "content",
+// 			"value": content,
+// 			"type": "textarea",
+// 		},
+// 	];
 
-	html = detailViewFormModal(dataArray);
+// 	html = detailViewFormModal(dataArray);
 
-	modal.show();
-	modal.headTitle.text(title);
-	modal.content.css("width", "50%");
-	modal.body.html(html);
-	modal.body.css("max-height", "800px");
-	modal.confirm.text("수정완료");
-	modal.close.text("취소");
-	modal.confirm.attr("onclick", "noticeUpdate(" + result.no + ");");
-	modal.close.attr("onclick", "modal.hide();");
-}
+// 	modal.show();
+// 	modal.headTitle.text(title);
+// 	modal.content.css("width", "50%");
+// 	modal.body.html(html);
+// 	modal.body.css("max-height", "800px");
+// 	modal.confirm.text("수정완료");
+// 	modal.close.text("취소");
+// 	modal.confirm.attr("onclick", "noticeUpdate(" + result.no + ");");
+// 	modal.close.attr("onclick", "modal.hide();");
+// }
 
 function noticeInsert(){
 	let title, content, writer, data;
@@ -289,7 +297,7 @@ function noticeErrorInsert(){
 	alert("등록에러");
 }
 
-function noticeUpdate(no){
+function noticeUpdate(){
 	let title, content, writer;
 
 	title = $(document).find("#title").val();
@@ -297,7 +305,7 @@ function noticeUpdate(no){
 	writer = $(document).find("#writer");
 	writer = dataListFormat(writer.attr("id"), writer.val());
 
-	url = "/api/notice/" + no;
+	url = "/api/notice/" + storage.detailNoticeNo;
 	method = "put";
 	data = {
 		"title": title,

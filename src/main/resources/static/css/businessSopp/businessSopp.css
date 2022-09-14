@@ -62,8 +62,7 @@
 	border-radius: 5px;
 }
 
-.soppContainer > button,
-.soppContainer > .detailBtns > button{
+.soppContainer > button{
 	color: #ebefff;
 	box-shadow: 0 1px 1px #bdbfc9;
 	background-color:#182f81;
@@ -72,8 +71,7 @@
 	border-radius: 5px;
 }
 
-.soppContainer > button:hover,
-.soppContainer > .detailBtns > button:hover{
+.soppContainer > button:hover{
 	color: #182f81;
 	box-shadow: 0 1px 2px #bdbfc9;
 	background-color:#ebefff;
@@ -103,12 +101,20 @@
  	margin: 0;
 }
 
-.soppContainer span:not(.calendarSpan){
+.soppContainer > span:not(.calendarSpan){
 	font-weight: bolder;
 	font-size: 15px;
 	margin-left: 15px;
 	line-height: 40px;
 	color: #332E85;
+	float: left;
+}
+
+.soppContainer > button{
+	float: right;
+	margin-top: 5px;
+	margin-right: 5px;
+	margin-bottom: 10px;
 }
 
 .soppContainer .gridSoppList{

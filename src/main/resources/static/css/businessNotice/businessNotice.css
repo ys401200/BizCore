@@ -141,7 +141,7 @@
 	margin-right :1.5rem;
 }
 
-.noticeContainer button{
+.noticeContainer > button{
 	margin:1% 0.5% 0 0;
 	box-shadow:0px 1px 2px #bdbfc9;
 	padding:0.3% 0.7%;

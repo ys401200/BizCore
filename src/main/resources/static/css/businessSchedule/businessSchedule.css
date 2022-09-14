@@ -261,6 +261,7 @@
 	box-sizing: border-box;
 }
 
+
 /* .calendar_container > .calendar_cell:hover .calendar_date{
 	color:#fff;
 } */
@@ -288,6 +289,10 @@
 .calendar_container > .calendar_cell > .calendar_item:hover{
 	color: #ffffff;
 	background-color:#637fef;
+}
+
+.calendar_container > .calendar_cell > .calendar_item_empty:hover{
+	background-color:#ffffff;
 }
 
 .calendar_container > .calendar_cell:nth-child(7n){

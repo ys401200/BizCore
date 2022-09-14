@@ -142,6 +142,18 @@ function init(){
 			el.parentElement.remove();
 		}
 	}
+	
+	tiny = {
+		options: {
+			language: "ko_KR",
+			menubar: false,
+			plugins: ["advlist", "autolink", "lists", "link", "image", "charmap", "print", "preview", "anchor","searchreplace", "visualblocks", "code", "fullscreen", "insertdatetime", "media", "table","paste", "code", "help", "wordcount", "save"],
+			toolbar: "formatselect fontselect fontsizeselect | forecolor backcolor | bold italic underline strikethrough | alignjustify alignleft aligncenter alignright | bullist numlist | table tabledelete | link image",
+			selector: "textarea",
+			width: "100%",
+			height : "200",
+		}
+	}
 
 	//모달
 	modal = {
@@ -793,6 +805,7 @@ function handleDrop(item) {
 
 //페이지네이션에 필요한 계산 공통함수
 function paging(total, currentPage, articlePerPage){
+	let getArticle = calWindowLength();
 	let lastPage, result = [], max;
 
 	if (currentPage === undefined) {
@@ -801,7 +814,7 @@ function paging(total, currentPage, articlePerPage){
 	}
 	
 	if (articlePerPage === undefined) {
-		storage.articlePerPage = 5;
+		storage.articlePerPage = getArticle;
 		articlePerPage = storage.articlePerPage;
 	}
 
@@ -1023,6 +1036,31 @@ function detailViewForm(data){
 	return html;
 }
 
+function detailBoardForm(data){
+	let html = "";
+
+	html = "<div class='detailBoard'>";
+	html += "<div class='detailBtns'></div>"
+	html += "<div class='detailContents'>";
+	html += "<div class='detailBoardContainer'>";
+
+	for(let i = 0; i < data.length; i++){
+		let dataTitle = (data[i].title === undefined) ? "" : data[i].title;
+		let row = (data[i].row === undefined) ? 1 : data[i].row;
+		let col = (data[i].col === undefined) ? 1 : data[i].col;
+
+		html += "<div class='detailViewFormSpan'>" + dataTitle + "</div>";
+		html += "<div class='detailViewContent' style='grid-row: span " + row + "; grid-column: span " + col + ";'>";
+		html += inputSet(data[i]);
+		html += "</div>";
+	}
+	
+	html += "</div>";
+	html += "</div>";
+	html += "</div>";
+
+	return html;
+}
 
 function inputSet(data){
 	let html = "";
@@ -1096,29 +1134,8 @@ function detailTabHide(notId){
 
 //tinyMCE
 function setTiny(){
-	let plugins = [
-		"advlist", "autolink", "lists", "link", "image", "charmap", "print", "preview", "anchor",
-		"searchreplace", "visualblocks", "code", "fullscreen", "insertdatetime", "media", "table",
-		"paste", "code", "help", "wordcount", "save"
-	];
-	
-	let edit_toolbar = 'formatselect fontselect fontsizeselect |'
-		   + ' forecolor backcolor |'
-		   + ' bold italic underline strikethrough |'
-		   + ' alignjustify alignleft aligncenter alignright |'
-		   + ' bullist numlist |'
-		   + ' table tabledelete |'
-		   + ' link image';
-	
-	tinymce.init({
-		language: "ko_KR",
-		menubar: false,
-		plugins: plugins,
-		toolbar: edit_toolbar,
-		selector: 'textarea',
-		width: "100%",
-		height : "200",
-	});
+	tinymce.remove();
+	tinymce.init(tiny.options);
 }
 
 // datalist
@@ -1386,7 +1403,7 @@ function createTabFileList(){
 			}else{
 				str = [
 					{
-						"setData": "<a href='/api/attached/" + storage.attachedNo + "/" + storage.attachedType + "/" + encodeURI(storage.attachedList[i].fileName) + "'>" + storage.attachedList[i].fileName + "</a>",
+						"setData": "<a href='/api/attached/" + storage.attachedType + "/" + storage.attachedNo + "/" + encodeURI(storage.attachedList[i].fileName) + "'>" + storage.attachedList[i].fileName + "</a>",
 					},
 					{
 						"setData": "<button type='button' onclick='tabFileDelete(" + storage.attachedNo + ", \"" + storage.attachedType + "\", \"" + storage.attachedList[i].fileName + "\", " + i + ");'>삭제</button>",
@@ -1413,40 +1430,40 @@ function createTabFileList(){
 	}, 100);
 }
 
-function tabFileInsertForm(no){
-	let html, dataArray;
+// function tabFileInsertForm(){
+// 	let html, dataArray;
 
-	dataArray = [
-		{
-			"title": "담당자",
-			"elementId": "writer",
-			"dataKeyup": "user",
-		},
-		{
-			"title": "첨부파일",
-			"elementId": "attached",
-			"elementName": "attached[]",
-			"type": "file",
-		},
-	];
+// 	dataArray = [
+// 		{
+// 			"title": "담당자",
+// 			"elementId": "writer",
+// 			"dataKeyup": "user",
+// 		},
+// 		{
+// 			"title": "첨부파일",
+// 			"elementId": "attached",
+// 			"elementName": "attached[]",
+// 			"type": "file",
+// 		},
+// 	];
 
-	html = detailViewFormModal(dataArray);
+// 	html = detailViewFormModal(dataArray);
 
-	modal.show();
-	modal.headTitle.text("자료 등록");
-	modal.content.css("width", "50%");
-	modal.body.html(html);
-	modal.body.css("max-height", "800px");
-	modal.foot.hide();
+// 	modal.show();
+// 	modal.headTitle.text("자료 등록");
+// 	modal.content.css("width", "50%");
+// 	modal.body.html(html);
+// 	modal.body.css("max-height", "800px");
+// 	modal.foot.hide();
 
-	setTimeout(() => {
-		let my;
-		my = storage.my;
+// 	setTimeout(() => {
+// 		let my;
+// 		my = storage.my;
 
-		$(document).find("#writer").val(storage.user[my].userName);
-		$(document).find("#attached").after("<div class='filePreview'></div>");
-	}, 100);
-}
+// 		$(document).find("#writer").val(storage.user[my].userName);
+// 		$(document).find("#attached").after("<div class='filePreview'></div>");
+// 	}, 100);
+// }
 
 function fileChange(){
 	let method, data, type, attached, fileDatas = [], html = "", flag;
@@ -1526,7 +1543,6 @@ function fileChange(){
 }
 
 function tabFileDownload(no, fileType, fileName){
-	console.log("다운로드 실행");
 	$.ajax({
 		url: "/api/attached/" + fileType + "/" + no + "/" + fileName,
 		method: "get",
@@ -1588,7 +1604,7 @@ function tabFileErrorInsert(){
 	alert("등록에러");
 }
 
-function tabFileDelete(no, fileType, fileName, index){
+function tabFileDelete(no, fileType, fileName){
 	let method, data, type;
 	
 	if(confirm("정말로 삭제하시겠습니까??")){
@@ -1642,7 +1658,7 @@ function tabFileItemListUpdate(){
 			}else{
 				str = [
 					{
-						"setData": "<a href='/api/attached/" + storage.attachedNo + "/" + storage.attachedType + "/" + encodeURI(storage.attachedList[i].fileName) + "'>" + storage.attachedList[i].fileName + "</a>",
+						"setData": "<a href='/api/attached/" + storage.attachedType + "/" + storage.attachedNo + "/" + encodeURI(storage.attachedList[i].fileName) + "'>" + storage.attachedList[i].fileName + "</a>",
 					},
 					{
 						"setData": "<button type='button' onclick='tabFileDelete(" + storage.attachedNo + ", \"" + storage.attachedType + "\", \"" + storage.attachedList[i].fileName + "\", " + i + ");'>삭제</button>",
@@ -1900,7 +1916,7 @@ function createTabSalesList(result){
 }
 
 //상세보기 숨김
-function detailContainerHide(titleStr){
+function detailViewContainerHide(titleStr){
 	let detailContents, pageContainer, listInsertBtn, detailBtns;
 
 	pageContainer = $(".pageContainer");
@@ -1916,8 +1932,14 @@ function detailContainerHide(titleStr){
 	conTitleChange("containerTitle", titleStr);
 }
 
+function detailBoardContainerHide(){
+	$(".detailBoard").each((index, item) => {
+		$(item).hide();
+	});
+}
+
 function conTitleChange(contentId, str){
-	$("#" + contentId).text(str);
+	$("#" + contentId).html(str);
 }
 
 //매출처 담당자 자동완성
@@ -1992,4 +2014,26 @@ function contentTopBtn(content){
 	$("#" + content).animate({
 		scrollTop: 0,
 	}, 100);
+}
+
+function enableDisabled(e, clickStr, notIdArray){
+	$("input, select").each((index, item) => {
+		if(notIdArray.indexOf($(item).attr("id")) == -1){
+			$(item).prop("disabled", false);
+		}
+	});
+
+	tinymce.activeEditor.mode.set('design'); 
+
+	$(e).text("수정완료");
+	$(e).attr("onclick", clickStr);
+}
+
+function calWindowLength(){
+	let bodyContents, gridContent;
+
+	bodyContents = $("#bodyContents");
+	gridContent = $(".gridContent");
+
+	return parseInt((bodyContents.height() - 250) / 38);
 }
