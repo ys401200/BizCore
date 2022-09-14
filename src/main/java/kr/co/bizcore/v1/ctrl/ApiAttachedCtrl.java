@@ -139,12 +139,12 @@ public class ApiAttachedCtrl extends Ctrl{
         return proceedAttachedData(request, requestBody, "contract", no);
     }
 
-    @PostMapping("/docapp/{no:\\d+}")
+    @PostMapping("/docapp")
     public String apiAttachedDocappPost(HttpServletRequest request, @RequestBody String requestBody, @PathVariable int no){
         return proceedAttachedData(request, requestBody, "docapp", no);
     }
 
-    //@GetMapping("/filebox/{no:\\d+}")
+    //@GetMapping("/filebox")
     public String apiAttachedFileboxPost(HttpServletRequest request, @RequestBody String requestBody, @PathVariable int no){
         return proceedAttachedData(request, requestBody, "filebox", no);
     }
