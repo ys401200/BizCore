@@ -140,8 +140,8 @@ public class ApiAttachedCtrl extends Ctrl{
     }
 
     @PostMapping("/docapp")
-    public String apiAttachedDocappPost(HttpServletRequest request, @RequestBody String requestBody, @PathVariable int no){
-        return proceedAttachedData(request, requestBody, "docapp", no);
+    public String apiAttachedDocappPost(HttpServletRequest request, @RequestBody String requestBody){
+        return proceedAttachedData(request, requestBody, "docapp", 0);
     }
 
     //@GetMapping("/filebox")
@@ -190,6 +190,7 @@ public class ApiAttachedCtrl extends Ctrl{
                         session.setAttribute("attached", attached);
                     }
                     attached.put(fileName, savedName);
+                    result = "{\"result\":\"ok\",\"msg\":\"" + savedName + "\"}";
                 }else{
                     savedName = systemService.createRandomFileName();
                     if(attachedService.saveAttachedFile(compId, fileName, savedName, fileData, funcName, funcNo)){
