@@ -141,7 +141,7 @@ public class ApiAttachedCtrl extends Ctrl{
 
     @PostMapping("/docapp/{no:\\d+}")
     public String apiAttachedDocappPost(HttpServletRequest request, @RequestBody String requestBody, @PathVariable int no){
-        return proceedAttachedData(request, requestBody, "docApp", no);
+        return proceedAttachedData(request, requestBody, "docapp", no);
     }
 
     //@GetMapping("/filebox/{no:\\d+}")
@@ -167,6 +167,7 @@ public class ApiAttachedCtrl extends Ctrl{
         compId = (String)session.getAttribute("compId");
         aesKey = (String)session.getAttribute("aesKey");
         aesIv = (String)session.getAttribute("aesIv");
+        attached = (HashMap<String, String>)session.getAttribute("attached");
         if(compId == null)  compId = (String)request.getAttribute("compId");
 
         if(compId == null){
@@ -180,10 +181,21 @@ public class ApiAttachedCtrl extends Ctrl{
                 file = data[1];
                 t = decAes(file, aesKey, aesIv);
                 fileData = Base64.getDecoder().decode(t);
-                savedName = systemService.createRandomFileName();
-                if(attachedService.saveAttachedFile(compId, fileName, savedName, fileData, funcName, funcNo)){
-                    result = "{\"result\":\"ok\",\"msg\":\"" + savedName + "\"}";
-                }else   result = "{\"result\":\"failure\",\"msg\":\"Error occurred when file save.\"}";
+
+                // 임시파일 처리가 필요한 경우
+                if(funcName.equals("docapp") || funcName.equals("filebox")){
+                    savedName = attachedService.saveAttachedToTemp(compId, fileData);
+                    if(attached == null){
+                        attached = new HashMap<>();
+                        session.setAttribute("attached", attached);
+                    }
+                    attached.put(fileName, savedName);
+                }else{
+                    savedName = systemService.createRandomFileName();
+                    if(attachedService.saveAttachedFile(compId, fileName, savedName, fileData, funcName, funcNo)){
+                        result = "{\"result\":\"ok\",\"msg\":\"" + savedName + "\"}";
+                    }else   result = "{\"result\":\"failure\",\"msg\":\"Error occurred when file save.\"}";
+                }
             }
         }
 

@@ -103,6 +103,29 @@ public class AttachedService extends Svc{
         return result;
     }
 
+    // 업로드된 파일을 임시 저장하는 메서드. 전자결재와 자료실 등 본문이 저장되기 전 파일이 먼저 업로드되는 경우 사용
+    public String saveAttachedToTemp(String compId, byte[] fileData) {
+        FileOutputStream fos = null;
+        String path = null, s = File.separator, savedName = null;
+        File file = null;
+        int v = 0;
+
+        while(true){
+            savedName = createRandomFileName();
+            path = fileStoragePath + s + compId + s + "temp" + s + savedName;
+            file = new File(path);
+            if(!file.exists())  break;
+        }
+
+        try{
+            fos = new FileOutputStream(file);
+            fos.write(fileData);
+            fos.close();
+        }catch(IOException e){e.printStackTrace();}
+
+        return savedName;
+    }
+
     public int deleteAttachedFile(String compId, String funcName, int no, String fileName) {
         String rootPath = null, path = null, savedName = null, s = File.separator;
         File file = null;
