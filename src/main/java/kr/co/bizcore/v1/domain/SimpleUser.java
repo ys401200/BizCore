@@ -1,6 +1,7 @@
 package kr.co.bizcore.v1.domain;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -33,6 +34,8 @@ public class SimpleUser extends Domain {
     protected ArrayList<String> deptId;
     @JsonIgnore
     private ArrayList<Permission> permission;
+
+    public void setDeleted(Date date){deleted=date;setResign(date!=null);}
 
     public void setDeptId(String[] ids){
         if(deptId == null)  deptId = new ArrayList<>();

@@ -59,14 +59,14 @@ public class ApiAttachedCtrl extends Ctrl{
         if(compId == null)  compId = (String)request.getAttribute("compId");
 
         if(compId == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";logger.info("::::::::::::::::::::::::: Step 1");
+            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
         }else{
-            data = attachedService.getAttachedFileList(compId, funcName, funcNo);logger.info("::::::::::::::::::::::::: Step 2");
+            data = attachedService.getAttachedFileList(compId, funcName, funcNo);
             if(data == null){
-                result = "{\"result\":\"failure\",\"msg\":\"An error occurred.\"}";logger.info("::::::::::::::::::::::::: Step 3");
+                result = "{\"result\":\"failure\",\"msg\":\"An error occurred.\"}";
             }else{
-                data = encAes(data, aesKey, aesIv);logger.info("::::::::::::::::::::::::: Step 4 : " + data);
-                result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";logger.info("::::::::::::::::::::::::: Step 5");
+                data = encAes(data, aesKey, aesIv);
+                result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
             }
         }
 

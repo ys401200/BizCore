@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import kr.co.bizcore.v1.domain.User;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpSession;
@@ -90,6 +91,7 @@ public class ApiCtrl extends Ctrl {
     public String myPost(HttpServletRequest request, @RequestBody String requestBody) {
         String result = null, aesKey = null, aesIv = null, compId = null, userNo, phone = null, email, str = null;
         JSONObject json = null;
+        User user = null;
         HttpSession session = null;
 
         session = request.getSession();
@@ -106,11 +108,14 @@ public class ApiCtrl extends Ctrl {
         }else{
             str = systemService.decAes(requestBody, aesKey, aesIv);
             json = new JSONObject(str);
-            email = json.getString("email");
-            phone = json.getString("phone");
-            systemService.modifyMyInfo(compId, userNo, email, phone);
+            user = new User();
+            user.setNo(strToInt(userNo));
+            user.setEmail(json.getString("email"));
+            user.setAddress(json.getString("address"));
+            user.setHomePhone(json.getString("homePhone"));
+            user.setCellPhone(json.getString("cellPhone"));
+            systemService.modifyMyInfo(compId, user);
             result = "{\"result\":\"ok\"}";
-           
         }
 
         return result;
@@ -141,10 +146,6 @@ public class ApiCtrl extends Ctrl {
             pwNew = json.getString("new");
             systemService.modifyPassword(pwOld, pwNew, userNo, compId);
             result = "{\"result\":\"ok\"}";
-
-
-
-
         }
 
         return result;

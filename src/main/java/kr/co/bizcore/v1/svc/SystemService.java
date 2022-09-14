@@ -233,15 +233,11 @@ public class SystemService extends Svc {
     }
 
     public void modifyPassword(String old, String neww, String userNo, String compId){
-     
         userMapper.modifyMyPw(compId, userNo, old, neww);
-     
     }
 
-    public void modifyMyInfo(String compId, String userNo, String email, String phone){
-       
-       userMapper.modifyMyInfo(phone, email, userNo, compId);
-        
+    public void modifyMyInfo(String compId, User user){
+       userMapper.modifyMyInfo(user, compId);
     }
 
     // 고객사 담당자 목록을 전달하는 메서드
