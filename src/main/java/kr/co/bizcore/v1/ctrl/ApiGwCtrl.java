@@ -189,10 +189,7 @@ public class ApiGwCtrl extends Ctrl{
                 // 결재문서 처리 서비스로직으로 데이터 전달
                 docNo = gwService.addAppDoc(compId, dept, title, userNo, sopp, customer, readable, appDoc, files, attached, appLine);
 
-
-
-
-                result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
+                result = "{\"result\":\"ok\",\"data\":\"" + docNo + "\"}";
             }
         return result;
     } // End of apiGwAppDocNoPost()
