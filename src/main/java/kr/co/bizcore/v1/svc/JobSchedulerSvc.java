@@ -38,7 +38,7 @@ public class JobSchedulerSvc extends Svc{
 
     // 임시 폴더의 파일들을 정리하는 메서드
     private void cleanTempFiles(){
-        long time = System.currentTimeMillis() - (60000 * 30);
+        long time = System.currentTimeMillis() - (60000 * 180); // 180분, 3시간
         File root = null;
         int x = 0;
 
