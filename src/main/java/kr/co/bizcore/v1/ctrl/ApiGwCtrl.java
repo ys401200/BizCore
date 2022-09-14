@@ -1,5 +1,6 @@
 package kr.co.bizcore.v1.ctrl;
 
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -130,9 +131,10 @@ public class ApiGwCtrl extends Ctrl{
     public String apiGwAppDocPost(HttpServletRequest request, @RequestBody String requestBody){
         String result = null, aesKey = null, aesIv = null, compId = null, userNo = null;
         String title = null, sopp = null, customer = null, readable = null, appDoc = null, dept = null;
-        String[] attached = null, ts = null;
+        String[] files = null, ts = null;
         String[][] appLine = null;
         HttpSession session = null;
+        HashMap<String, String> attached = null;
         String data = null;
         JSONObject json = null;
         JSONArray jarr = null, tj = null;
@@ -143,6 +145,7 @@ public class ApiGwCtrl extends Ctrl{
         aesIv = (String) session.getAttribute("aesIv");
         userNo = (String) session.getAttribute("aesIv");
         compId = (String) session.getAttribute("compId");
+        attached = (HashMap<String, String>)session.getAttribute("attached");
         if(compId == null)
             compId = (String) request.getAttribute("compId");
 
@@ -166,8 +169,8 @@ public class ApiGwCtrl extends Ctrl{
                 // 첨부파일명에 대한 배열 전환 처리
                 jarr = json.getJSONArray("attached");
                 if(jarr != null && jarr.length() > 0){
-                    attached = new String[jarr.length()];
-                    for(x = 0 ; x < jarr.length() ; x++)    attached[x] = jarr.getString(x);
+                    files = new String[jarr.length()];
+                    for(x = 0 ; x < jarr.length() ; x++)    files[x] = jarr.getString(x);
                 }
 
                 // 결재선에 대한 2차원 배열 전환 처리
@@ -184,7 +187,7 @@ public class ApiGwCtrl extends Ctrl{
                 }
 
                 // 결재문서 처리 서비스로직으로 데이터 전달
-                docNo = gwService.addAppDoc(compId, dept, title, userNo, sopp, customer, readable, appDoc, attached, appLine);
+                docNo = gwService.addAppDoc(compId, dept, title, userNo, sopp, customer, readable, appDoc, files, attached, appLine);
 
 
 
