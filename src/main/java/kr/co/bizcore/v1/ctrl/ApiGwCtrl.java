@@ -5,6 +5,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -125,12 +126,17 @@ public class ApiGwCtrl extends Ctrl{
     } // End of apiGwAppDocNoGet()
 
     // 결재 문서 신규 등록
-    @PostMapping("/app/doc/{docNo:\\d+}")
-    public String apiGwAppDocNoPost(HttpServletRequest request, @RequestBody String requestBody){
+    @PostMapping("/app/doc")
+    public String apiGwAppDocPost(HttpServletRequest request, @RequestBody String requestBody){
         String result = null, aesKey = null, aesIv = null, compId = null, userNo = null;
+        String title = null, sopp = null, customer = null, readable = null, appDoc = null, dept = null;
+        String[] attached = null, ts = null;
+        String[][] appLine = null;
         HttpSession session = null;
         String data = null;
         JSONObject json = null;
+        JSONArray jarr = null, tj = null;
+        int docNo = -1, x = -1;
 
         session = request.getSession();
         aesKey = (String) session.getAttribute("aesKey");
@@ -150,8 +156,38 @@ public class ApiGwCtrl extends Ctrl{
                 result = "{\"result\":\"failure\",\"msg\":\"Data is wrong\"}";
             }else {
                 json = new JSONObject(data);
+                dept = json.getString("dept");
+                title = json.getString("title");
+                sopp = json.getString("sopp");
+                readable = json.getString("readable");
+                customer = json.getString("customer");
+                appDoc = json.getString("appDoc");
 
-                // ========== 결재문서 등록 코드 작성 필요 ==============================  
+                // 첨부파일명에 대한 배열 전환 처리
+                jarr = json.getJSONArray("attached");
+                if(jarr != null && jarr.length() > 0){
+                    attached = new String[jarr.length()];
+                    for(x = 0 ; x < jarr.length() ; x++)    attached[x] = jarr.getString(x);
+                }
+
+                // 결재선에 대한 2차원 배열 전환 처리
+                jarr = json.getJSONArray("appLine");
+                if(jarr != null && jarr.length() > 0){
+                    appLine = new String[jarr.length()][];
+                    for(x = 0 ; x < jarr.length() ; x++){
+                        tj = jarr.getJSONArray(x);
+                        ts = new String[2];
+                        ts[0] = tj.getString(0);
+                        ts[1] = tj.getString(1);
+                        appLine[x] = ts;
+                    }
+                }
+
+                // 결재문서 처리 서비스로직으로 데이터 전달
+                docNo = gwService.addAppDoc(compId, dept, title, userNo, sopp, customer, readable, appDoc, attached, appLine);
+
+
+
 
                 result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
             }
