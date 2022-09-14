@@ -35,12 +35,12 @@ public class ApiAttachedCtrl extends Ctrl{
 
     @GetMapping("/contract/{no:\\d+}")
     public String apiAttachedContractListGet(HttpServletRequest request, HttpServletResponse response, @PathVariable("no") int no){
-        return sendFileList(request, "sopp", no);
+        return sendFileList(request, "contract", no);
     }
 
     @GetMapping("/docapp/{no:\\d+}")
     public String apiAttachedDocappListGet(HttpServletRequest request, HttpServletResponse response, @PathVariable("no") int no){
-        return sendFileList(request, "sopp", no);
+        return sendFileList(request, "docapp", no);
     }
 
     //@GetMapping("/filebox/{no:\\d+}/{fileName}")
