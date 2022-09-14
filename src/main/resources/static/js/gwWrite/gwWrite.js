@@ -532,7 +532,6 @@ function reportInsert() {
 }
 
 
-
 function docFileChange() {
   let method, data, type, attached, fileDatas = [], html = "", flag;
   attached = $(document).find("[name='attached[]']")[0].files;

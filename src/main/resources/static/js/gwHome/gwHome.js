@@ -83,7 +83,7 @@ function drawGwDiv() {
 
 function waitDefault() {
 
-v
+
 	let url, method, data, type;
 	url = "/api/notice";
 	method = "get"
