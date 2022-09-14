@@ -90,8 +90,8 @@ public class GwService extends Svc{
         appData = "{\"sopp\":\"" + sopp + "\",\"customer\":\"" + customer + "\"}";
         if(appLine != null && appLine.length > 0)   for(x = 0 ; x < appLine.length ; x++){
             line = appLine[x];
-            if(x == 0)  gwMapper.addNewDocAppLine(compId, docNo, x, line[1], line[0], appDoc, appData);
-            else        gwMapper.addNewDocAppLine(compId, docNo, x, line[1], line[0], null, null);
+            if(x == 0)  gwMapper.addNewDocAppLine(compId, docNo, x*10+10, line[1], line[0], appDoc, appData);
+            else        gwMapper.addNewDocAppLine(compId, docNo, x*10+10, line[1], line[0], null, null);
         }        
         
         return result;
