@@ -310,7 +310,7 @@ function createLine() {
   lineTarget.css("display", "block");
   let my = storage.my;
   let today = getYmdSlash();
-  let testHtml = "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작성</div><div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto' value='직급'></div>" +
+  let testHtml = "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작성</div><div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto' value='" + storage.user[my].rank + "'></div>" +
     "<div class='twoBorder'><input type='text' class='inputsAuto' value='" + storage.user[my].userName + "'></div>" +
     "<div class='twoBorder'><input type='text' class='inputsAuto' value='승인'></div>" +
     "<div class='dateBorder'><input type='text' class='inputsAuto'value='" + getYmdSlash() + "'></div></div></div>";
@@ -343,30 +343,20 @@ function createLine() {
 
       // 수신 
       if (i == 3) {
-        testHtml2 += "<div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_position" + "' value='직급' data-detail='직급'/></div>" +
+        testHtml2 += "<div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_position" + "' value='" + storage.user[data[id]].rank + "' data-detail='" + storage.user[data[id]].rank + "'/></div>" +
           "<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "' value='" + storage.user[data[id]].userName + "' data-detail='" + storage.user[data[id]].userName + "'/></div>" +
           "<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_status' value='' data-detail=''/></div>" +
           "<div class='dateBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_approved" + "' value='' data-detail=''/></div></div>"
       }
 
-      // else if (j == target[i].children.length - 1) {
-      //   testHtml += "<div class='lineSet'><div class='twoBorderLast " + formId + "_" + titleId[i] + "_position" + "'>직급</div><div class='twoBorderLast " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div><div class='twoBorderLast " + formId + "_" + titleId[i] + "_status'>서명</div><div class='dateBorderLast  " + formId + "_" + titleId[i] + "_approved'>/</div></div>"
-      // }
-
-      // else if (i == 2) {
-      //   testHtml += "<div class='lineSet'><div class='twoBorder " + formId + "_" + titleId[i] + "_position" + "'>직급</div><div class='twoBorder " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div><div class='twoBorder " + formId + "_" + titleId[i] + "_status'>서명</div><div class='dateBorder " + formId + "_" + titleId[i] + "_approved'>/</div></div>"
-      // } else if (i == 3) {
-      //   testHtml2 += "<div class='lineSet'><div class='twoBorder " + formId + "_" + titleId[i] + "_position" + "'>직급</div><div class='twoBorder " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div><div class='twoBorder " + formId + "_" + titleId[i] + "_status'>서명</div><div class='dateBorder " + formId + "_" + titleId[i] + "_approved'>/</div></div>"
-      // } 
-
       // 참조 
       else if (i == 4) {
-        referHtml += "<div class='appendName " + formId + "_" + titleId[i] + "' data-detail='" + storage.user[data[id]].userName + "'>직급 " + storage.user[data[id]].userName + "</div>";
+        referHtml += "<div class='appendName " + formId + "_" + titleId[i] + "' data-detail='" + storage.user[data[id]].userName + "'>" + storage.user[data[id]].userName + "'</div>";
       }
 
       // 검토 합의 결재 
       else {
-        testHtml += "<div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_position" + "' value='직급' data-detail='직급'/></div>" +
+        testHtml += "<div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_position" + "' value='" + storage.user[data[id]].rank + "' data-detail='" + storage.user[data[id]].rank + "'/></div>" +
           "<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "' value='" + storage.user[data[id]].userName + "' data-detail='" + storage.user[data[id]].userName + "'/></div>" +
           "<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_status' value='' data-detail=''/></div>" +
           "<div class='dateBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_approved" + "' value='' data-detail=''/></div></div>"
@@ -512,7 +502,7 @@ function reportInsert() {
     "sopp": sopp,
     "dept": dept,
     "infoCustomer": infoCustomer,
-    "attached": fileDataArray,
+    "attached": storage.attachedList,
     "content": content,
     "appLine": appLine,
     "appDoc": appDoc,
@@ -551,14 +541,13 @@ function docFileChange() {
     storage.attachedList = [];
   }
 
-  flag = storage.attachedFlag;
 
   for (let i = 0; i < attached.length; i++) {
     let reader = new FileReader();
-    let temp, fileName, indexFlag = false;
+    let fileName;
 
     fileName = attached[i].name;
-
+    storage.attachedList.push(fileName);
     reader.onload = (e) => {
       let binary, x, fData = e.target.result;
       const bytes = new Uint8Array(fData);
@@ -567,8 +556,8 @@ function docFileChange() {
       let fileData = cipher.encAes(btoa(binary));
       let fullData = (fileName + "\r\n" + fileData);
 
-      //let url = (flag === undefined) ? "/api/board/filebox/attached" : "/api/attached/" + storage.attachedType + "/" + storage.attachedNo;
-      let url = "api/attached/docapp";
+      let url = "/api/attached/docapp"
+
       url = url;
       method = "post";
       data = fullData;
@@ -579,41 +568,7 @@ function docFileChange() {
 
     reader.readAsArrayBuffer(attached[i]);
 
-    temp = attached[i].name;
-    fileDatas.push(temp);
-    updateDataArray.push(temp);
-
-    for (let t = 0; t < storage.attachedList.length; t++) {
-      if (storage.attachedList[t].fileName == temp) {
-        indexFlag = true;
-      }
-    }
-
-    if (!indexFlag) {
-      temp = {
-        "fileName": attached[i].name,
-        "removed": attached[i].removed,
-      }
-
-      storage.attachedList.push(temp);
-    }
   }
 
-  if (flag) {
-    tabFileItemListUpdate();
-  } else {
-    $(document).find(".filePreview").html(html);
-
-    for (let i = 0; i < fileDatas.length; i++) {
-      fileDataArray.push(fileDatas[i]);
-    }
-
-    if (fileDataArray.length > 0) {
-      for (let i = 0; i < fileDataArray.length; i++) {
-        html += "<div style='padding-bottom: 4%;'><span style='float:left; display: block; width: 95%;'>" + fileDataArray[i] + "</span><button type='button' id='fileDataDelete' style='float:right; width: 5%;' data-index='" + i + "' onclick='fileViewDelete(this);'>삭제</button></div>";
-        $(document).find(".filePreview").html(html);
-      }
-    }
-  }
 
 }
