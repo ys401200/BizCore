@@ -180,8 +180,8 @@ public class ApiGwCtrl extends Ctrl{
                     for(x = 0 ; x < jarr.length() ; x++){
                         tj = jarr.getJSONArray(x);
                         ts = new String[2];
-                        ts[0] = tj.getString(0);
-                        ts[1] = tj.getString(1);
+                        ts[0] = tj.getInt(0)+"";
+                        ts[1] = tj.getInt(1)+"";
                         appLine[x] = ts;
                     }
                 }

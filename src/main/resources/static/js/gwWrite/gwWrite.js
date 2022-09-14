@@ -344,20 +344,20 @@ function createLine() {
       // 수신 
       if (i == 3) {
         testHtml2 += "<div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_position" + "' value='" + storage.user[data[id]].rank + "' data-detail='" + storage.user[data[id]].rank + "'/></div>" +
-          "<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "' value='" + storage.user[data[id]].userName + "' data-detail='" + storage.user[data[id]].userName + "'/></div>" +
+          "<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "' value='" + storage.user[data[id]].userName + "' data-detail='" + storage.user[data[id]].userNo + "'/></div>" +
           "<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_status' value='' data-detail=''/></div>" +
           "<div class='dateBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_approved" + "' value='' data-detail=''/></div></div>"
       }
 
       // 참조 
       else if (i == 4) {
-        referHtml += "<div class='appendName " + formId + "_" + titleId[i] + "' data-detail='" + storage.user[data[id]].userName + "'>" + storage.user[data[id]].userName + "'</div>";
+        referHtml += "<div class='appendName " + formId + "_" + titleId[i] + "' data-detail='" + storage.user[data[id]].userNo + "'>" + storage.user[data[id]].userName + "'</div>";
       }
 
       // 검토 합의 결재 
       else {
         testHtml += "<div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_position" + "' value='" + storage.user[data[id]].rank + "' data-detail='" + storage.user[data[id]].rank + "'/></div>" +
-          "<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "' value='" + storage.user[data[id]].userName + "' data-detail='" + storage.user[data[id]].userName + "'/></div>" +
+          "<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "' value='" + storage.user[data[id]].userName + "' data-detail='" + storage.user[data[id]].userNo + "'/></div>" +
           "<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_status' value='' data-detail=''/></div>" +
           "<div class='dateBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_approved" + "' value='' data-detail=''/></div></div>"
       }
@@ -468,7 +468,6 @@ function reportInsert() {
   let selectedFormNo = $(".formSelector").val();
   formId = storage.formList[selectedFormNo].id;
 
-  filedat
 
   sopp = $("#" + formId + '_sopp').val();
   infoCustomer = $("#" + formId + '_infoCustomer').val();
@@ -477,7 +476,7 @@ function reportInsert() {
   readable = $('input[name=authority]:checked').val();
   appDoc = $(".reportInsertForm").html();
   let my = storage.my;
-  dept = storage.user[my].deptId;
+  dept = storage.user[my].deptId[0];
 
 
   for (let i = 0; i < $("." + formId + "_examine").length; i++) {
@@ -501,7 +500,7 @@ function reportInsert() {
     "title": title,
     "sopp": sopp,
     "dept": dept,
-    "infoCustomer": infoCustomer,
+    "customer": infoCustomer,
     "attached": storage.attachedList,
     "content": content,
     "appLine": appLine,
@@ -515,7 +514,7 @@ function reportInsert() {
   data = cipher.encAes(data);
 
   $.ajax({
-    url: "api/gw/app/doc",
+    url: "/api/gw/app/doc",
     method: "post",
     data: data,
     dataType: "json",
