@@ -1,22 +1,23 @@
 button {
 	float: none;
 	border: none;
-	background-color:rgb(181 200 215);
+	background-color: rgb(181 200 215);
 	color: #274e70;
-	width:95%;
-	padding:2% 0 2% 0;
-	margin:0;
+	width: 95%;
+	padding: 2% 0 2% 0;
+	margin: 0;
 }
 
 .container {
 	position: relative;
 	/* left: 2%; */
 	width: 100%;
-	background: #FFFFFF; 
+	background: #FFFFFF;
 	overflow: auto;
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
 	display: inline-block;
 }
+
 .container hr,
 .halfContainer hr {
 	float: left;
@@ -24,7 +25,7 @@ button {
 	border-left: thick solid #E45050;
 	border-right: 0;
 	border-bottom: 0; */
-	border:2px solid #406c92;
+	border: 2px solid #406c92;
 	height: 32px;
 	/* width: 4px; */
 	margin: 0;
@@ -39,26 +40,36 @@ button {
 	color: #406c92;
 }
 
-.waitDiv {
+/* .waitDiv {
 	overflow: auto;
 	display: grid;
 	grid-template-columns: repeat(5, 1fr);
+} */
+
+
+.waitDiv {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	overflow-x: auto;
 }
 
 .waitDiv .waitCard {
+	width: 15em;
+	flex: 0 0 auto;
 	border: 2px solid #EDEDF4;
 	border-radius: 3px;
 	margin: 1em;
-	cursor:pointer;
+	cursor: pointer;
 }
 
 .waitDiv .waitCard>div:first-of-type {
 	margin: 1em;
 	color: #406c92;
 	font-weight: 800;
-	font-size:15px;
-	border-bottom:1px solid #acc1d3;
-	padding-bottom:10px;
+	font-size: 15px;
+	border-bottom: 1px solid #acc1d3;
+	padding-bottom: 10px;
 }
 
 .waitDiv .waitCard .subWaitCard>div>div:first-of-type {
@@ -71,12 +82,14 @@ button {
 	background-color: #eaeff3;
 	border-radius: 10px;
 	margin: 1em;
-	box-shadow:0px 3px 6px rgba(177, 190, 201, 0.65);
+	box-shadow: 0px 3px 6px rgba(177, 190, 201, 0.65);
 }
 
-.subWaitCard{font-size:14px;}
+.subWaitCard {
+	font-size: 14px;
+}
 
-.waitDiv .waitCard >div>div:first-of-type{
+.waitDiv .waitCard>div>div:first-of-type {
 	font-weight: 500;
 }
 
@@ -85,7 +98,6 @@ button {
 }
 
 .waitDiv .waitCard:hover {
-	/* border: 2px solid #332E85; */
 	margin: 1em;
 	transform: scale(1.01);
 }
@@ -93,37 +105,30 @@ button {
 .waitDiv .waitCard .subWaitCard>div {
 	display: grid;
 	margin: 1em;
-	/* font-size: 0.8em; */
 	grid-template-columns: 30% 70%;
 	margin: 1em;
 }
 
-.waitDiv .waitCard>.title{
+.waitDiv .waitCard>.title {
 	border-bottom: 2px solid #aac7e1;
-	padding-bottom:10px;
+	padding-bottom: 10px;
 	grid-template-columns: 100%;
-	font-weight:600;
-	font-size:0.9rem;
-	color:#406c92;
+	font-weight: 600;
+	font-size: 0.9rem;
+	color: #406c92;
 }
 
 .waitDiv .waitCard>.title div:first-of-type {
 	display: none;
 }
 
-
 .waitDiv .waitCard>div:last-child {
-	/* border-top: 2px solid #EDEDF4; */
-	/* padding: 0.5em; */
-	/* display: flex;
-	align-items: center;
-	justify-content: center; */
-	margin:2px 0 5px 0;
+	margin: 2px 0 5px 0;
 }
 
-.waitDiv .waitCard>div:hover button{
+.waitDiv .waitCard>div:hover button {
 	background-color: #406c92;
-	color:#fff;
+	color: #fff;
 }
 
 .etcDiv {
@@ -135,53 +140,41 @@ button {
 	height: 10em;
 }
 
-.halfBodyContent {
-	float: right;
-	width: calc(100% - 185px);
-	overflow-y: auto;
+/* .halfBodyContent {
 	max-height: 100%;
-	/* max-height: calc(100% - 94px); */
-	padding: 0.5% 0.5% 0 0.6%;
 	box-sizing: border-box;
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
 }
 
-
 .halfBodyContent>div:first-of-type {
 	position: relative;
-	/* left: 4%; */
-	width: 99.5%;
-	margin-right:0.8%;
 	background: #FFFFFF;
-	overflow: auto;
-	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
+	box-shadow: 0px 2px 14px rgb(0 0 0 / 12%);
 	display: inline-block;
 }
 
 .halfBodyContent>div:last-of-type {
 	position: relative;
-	width: 99.5%;
-	margin-left:0.8%;
 	background: #FFFFFF;
 	overflow: auto;
-	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
+	box-shadow: 0px 2px 14px rgb(0 0 0 / 12%);
 	display: inline-block;
-}
+} */
 
 .listDiv {
 	/* padding-right: 1em; */
-	margin:0.5% auto 0 auto;
-	width:98%;
+	margin: 0.5% auto 0 auto;
+	width: 98%;
 }
 
 .listDiv>div:first-of-type {
-	border-bottom:1px solid #406c92;
+	border-bottom: 1px solid #406c92;
 }
 
-.listDiv .grid_default_body_item:nth-child(2n-1){
+.listDiv .grid_default_body_item:nth-child(2n-1) {
 	/* background-color:#eaeff3; */
-	background-color:rgba(234, 239, 243, 0.4)
+	background-color: rgba(234, 239, 243, 0.4)
 }
 
 .listDiv .gridHeader,

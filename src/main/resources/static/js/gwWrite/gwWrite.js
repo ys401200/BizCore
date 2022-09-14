@@ -14,7 +14,7 @@ function getformList() {
 
   $(".ContentDiv").html("<div class='gwWriteBtns'></div><div class='selector'>d</div><div class='selector'>d</div><div class='selector'>d</div>");
 
-  $(".gwWriteBtns").html("<button type='button'>기안 하기</button> <button type='button' >임시 저장</button> <button type='button'>인쇄 미리보기</button>");
+  $(".gwWriteBtns").html("<button type='button' onclick='reportInsert()'>기안 하기</button> <button type='button' >임시 저장</button> <button type='button'>인쇄 미리보기</button>");
 
   // 기본설정
 
@@ -28,8 +28,8 @@ function getformList() {
   let lastHtml = "<div>상세 입력</div><div class='insertedDetail'><div class='reportInsertForm'></div><div class='referContainer'><div>참조</div></div><div class='fileDetail'>";
 
 
-  lastHtml += "<div>파일첨부</div><div class='filebtnContainer'><input type='file' class='gwFileInput' onchange='drawSelectedFileList(this)' /><div class='insertedFileList'></div></div></div></div>"
-
+  // lastHtml += "<div>파일첨부</div><div class='filebtnContainer'><input type='file' class='gwFileInput' onchange='drawSelectedFileList(this)' /><div class='insertedFileList'></div></div></div></div>"
+  lastHtml += "<div>파일첨부</div><div class='filebtnContainer'><input type='file' id='attached' name='attached[]' onchange='docFileChange()' /><div class='filePreview'></div></div></div></div>"
 
   $(".selector:first").next().next().html(lastHtml);
 
@@ -104,6 +104,8 @@ function selectForm() {
   $(".insertedDetail").show();
 
 
+
+
   //작성자 작성일 자동 입력
   let my = storage.my;
   let writer = storage.user[my].userName;
@@ -134,11 +136,11 @@ function showModal() {
     "<div class='lineTop'>" +
     "<div class='innerDetail' id='lineLeft'></div>" +
     "<div class='innerDetail' id='lineCenter'>" +
-    "<button onclick='check(this.value)' value='examine'>검토 ></button>" +
-    "<button onclick='check(this.value)' value='agree'>합의 ></button>" +
-    "<button onclick='check(this.value)' value='approval'>결재 ></button>" +
-    " <button onclick='check(this.value)' value='conduct'>수신 ></button>" +
-    "<button onclick='check(this.value)' value='refer'>참조 ></button></div>" +
+    "<button onclick='check(this.value)' value='examine'>검토 &gt;</button>" +
+    "<button onclick='check(this.value)' value='agree'>합의 &gt;</button>" +
+    "<button onclick='check(this.value)' value='approval'>결재 &gt;</button>" +
+    " <button onclick='check(this.value)' value='conduct'>수신 &gt;</button>" +
+    "<button onclick='check(this.value)' value='refer'>참조 &gt;</button></div>" +
     "<div class='innerDetail' id='lineRight'>" +
     "<div><select onchange='setSavedLine(this)'><option value=''>자주 쓰는 결재선</option><option value='basic'>대표</option><option value='middle'>구민주 과장-대표</option><</select></div>" +
     "<div><div>검토</div>" +
@@ -173,10 +175,9 @@ function showModal() {
 
   let innerHtml = "";
   for (let i = 0; i < userData.length; i++) {
-    innerHtml += "<div><input class='testClass' type ='checkbox' id='cb" + i + "' name='userNames' value='" + userData[i] + "'><label for='cb'>" + storage.user[userData[i]].userName + "</label></div>"
-    orgChartTarget.html(innerHtml);
+    innerHtml += "<div><input class='testClass' type ='checkbox' id='cb" + i + "' name='userNames' value='" + userData[i] + "'><label for='cb" + i + "'>" + storage.user[userData[i]].userName + "</label></div>"
   }
-
+  orgChartTarget.html(innerHtml);
   $(".modal-wrap").show();
 
 }
@@ -317,7 +318,7 @@ function createLine() {
   let referHtml = "<div>참조</div>";
   let target = $(".typeContainer"); // 결재선 생성 모달에서 결재 타입 각각의 container 
   let titleArr = ["검토", "합의", "결재", "수신", "열람", "참조"];
-  let titleId = ["examine", "agree", "approval", "conduct", " read", "refer"]
+  let titleId = ["examine", "agree", "approval", "conduct", "refer"]
 
 
   let data = new Array();
@@ -470,118 +471,149 @@ function setSavedLine(obj) {
 }
 
 
-let formId = "doc_Form_Consult"
 
-function reportInsert(formId) {
-  let writer, created, sopp, infoCustomer, title, content;
-  let examine = new Array(); let examine_status = new Array(); let examine_approved = new Array();
-  let approval = new Array(); let approval_status = new Array(); let approval_approved = new Array();
-  let agree = new Array(); let agree_status = new Array(); let agree_approved = new Array();
-  let receive = new Array(); let receive_status = new Array(); let receive_approved = new Array();
-  let refer, files = new Array();
-  let date = new Array(); let customer = new Array(); let price = new Array();
-  let product = new Array(); let quantity = new Array();
-  let amount = new Array(); let tax = new Array();
-  let total = new Array(); let remark = new Array();
+function reportInsert() {
+  let sopp, infoCustomer, title, content, readable, formId, appDoc, dept;
+  let appLine = [];
+  let selectedFormNo = $(".formSelector").val();
+  formId = storage.formList[selectedFormNo].id;
 
-  writer = $("#" + formId + '_writer');
-  created = $("#" + formId + '_created');
-  sopp = $("#" + formId + '_sopp');
-  infoCustomer = $("#" + formId + '_infoCustomer');
-  title = $("#" + formId + '_title');
+  filedat
 
+  sopp = $("#" + formId + '_sopp').val();
+  infoCustomer = $("#" + formId + '_infoCustomer').val();
+  title = $("#" + formId + '_title').val();
+  content = $("#" + formId + "_content").val();
+  readable = $('input[name=authority]:checked').val();
+  appDoc = $(".reportInsertForm").html();
+  let my = storage.my;
+  dept = storage.user[my].deptId;
 
 
   for (let i = 0; i < $("." + formId + "_examine").length; i++) {
-    examine.push($("." + formId + "_examine")[i].dataset.detail);
-    examine_status.push($("." + formId + "_examine_status")[i].dataset.detail);
-    examine_approved.push($("." + formId + "_examine_approved")[i].dataset.detail);
+    appLine.push([0, $("." + formId + "_examine")[i].dataset.detail]);
   }
   for (let i = 0; i < $("." + formId + "_approval").length; i++) {
-    approval.push($("." + formId + "_approval")[i].dataset.detail);
-    approval_status.push($("." + formId + "_approval_status")[i].dataset.detail);
-    approval_approved.push($("." + formId + "_approval_approved")[i].dataset.detail);
+    appLine.push([1, $("." + formId + "_approval")[i].dataset.detail]);
   }
-
   for (let i = 0; i < $("." + formId + "_agree").length; i++) {
-    agree.push($("." + formId + "_agree")[i].dataset.detail);
-    agree_status.push($("." + formId + "_agree_status")[i].dataset.detail);
-    agree_approved.push($("." + formId + "_agree_approved")[i].dataset.detail);
+    appLine.push([2, $("." + formId + "_agree")[i].dataset.detail]);
   }
   for (let i = 0; i < $("." + formId + "_receive").length; i++) {
-    receive.push($("." + formId + "_receive")[i].dataset.detail);
-    receive_status.push($("." + formId + "_receive_status")[i].dataset.detail);
-    receive_approved.push($("." + formId + "_receive_approved")[i].dataset.detail);
+    appLine.push([3, $("." + formId + "_receive")[i].dataset.detail]);
   }
-
-  for (let i = 0; i < $(".detailcontentDiv").length; i++) {
-    date.push($("." + formId + "_date")[i].dataset.detail);
-    customer.push($("." + formId + "_customer")[i].dataset.detail);
-    price.push($("." + formId + "_price")[i].dataset.detail);
-    product.push($("." + formId + "_product")[i].dataset.detail);
-    quantity.push($("." + formId + "_quantity")[i].dataset.detail);
-    amount.push($("." + formId + "_amount")[i].dataset.detail);
-    tax.push($("." + formId + "_tax")[i].dataset.detail);
-    total.push($("." + formId + "_total")[i].dataset.detail);
-    remark.push($("." + formId + "_remark")[i].dataset.detail);
+  for (let i = 0; i < $("." + formId + "_refer").length; i++) {
+    appLine.push([4, $("." + formId + "_refer")[i].dataset.detail]);
   }
 
 
-  let url = "/app/doc";
-  let method = "post";
   let data = {
-    "writer": writer,
-    "created": created,
-    "sopp": sopp,
-    "infoCustomer": infoCustomer,
     "title": title,
+    "sopp": sopp,
+    "dept": dept,
+    "infoCustomer": infoCustomer,
+    "attached": fileDataArray,
     "content": content,
-    "approvalData": {
-      "approval": approval,
-      "approval_status": approval_status,
-      "approval_approved": approval_approved
-    },
-    "examineData": {
-      "examine": examine,
-      "examine_status": examine_status,
-      "examine_approved": examine_approved
-    },
-    "agreeData": {
-      "agree": agree,
-      "agree_status": agree_status,
-      "agree_approved": agree_approved
-    },
-    "receiveData": {
-      "receive": receive,
-      "receive_status": receive_status,
-      "receive_approved": receive_approved
-    },
-    "detailData": {
-      "date": date,
-      "customer": customer,
-      "product": product,
-      "price": price,
-      "quantity": quantity,
-      "amount": amount,
-      "tax": tax,
-      "total": total,
-      "remark": remark
+    "appLine": appLine,
+    "appDoc": appDoc,
+    "formId": formId,
+    "readable": readable
+  }
+
+
+  data = JSON.stringify(data)
+  data = cipher.encAes(data);
+
+  $.ajax({
+    url: "api/gw/app/doc",
+    method: "post",
+    data: data,
+    dataType: "json",
+    contentType: "text/plain",
+    success: (result) => {
+      if (result.result === "ok") {
+        alert("등록완료");
+      } else {
+        alert(result.msg);
+      }
+    }
+  })
+
+}
+
+
+
+function docFileChange() {
+  let method, data, type, attached, fileDatas = [], html = "", flag;
+  attached = $(document).find("[name='attached[]']")[0].files;
+
+  if (storage.attachedList === undefined || storage.attachedList <= 0) {
+    storage.attachedList = [];
+  }
+
+  flag = storage.attachedFlag;
+
+  for (let i = 0; i < attached.length; i++) {
+    let reader = new FileReader();
+    let temp, fileName, indexFlag = false;
+
+    fileName = attached[i].name;
+
+    reader.onload = (e) => {
+      let binary, x, fData = e.target.result;
+      const bytes = new Uint8Array(fData);
+      binary = "";
+      for (x = 0; x < bytes.byteLength; x++) binary += String.fromCharCode(bytes[x]);
+      let fileData = cipher.encAes(btoa(binary));
+      let fullData = (fileName + "\r\n" + fileData);
+
+      //let url = (flag === undefined) ? "/api/board/filebox/attached" : "/api/attached/" + storage.attachedType + "/" + storage.attachedNo;
+      let url = "api/attached/docapp";
+      url = url;
+      method = "post";
+      data = fullData;
+      type = "insert";
+
+      crud.defaultAjax(url, method, data, type, submitFileSuccess, submitFileError);
     }
 
+    reader.readAsArrayBuffer(attached[i]);
+
+    temp = attached[i].name;
+    fileDatas.push(temp);
+    updateDataArray.push(temp);
+
+    for (let t = 0; t < storage.attachedList.length; t++) {
+      if (storage.attachedList[t].fileName == temp) {
+        indexFlag = true;
+      }
+    }
+
+    if (!indexFlag) {
+      temp = {
+        "fileName": attached[i].name,
+        "removed": attached[i].removed,
+      }
+
+      storage.attachedList.push(temp);
+    }
   }
 
-  console.log(data.detailData.customer);
-  let type = "insert";
+  if (flag) {
+    tabFileItemListUpdate();
+  } else {
+    $(document).find(".filePreview").html(html);
 
-  //crud.defaultAjax(url, method, data, type, appSuccessInsert, appErrorInsert);
+    for (let i = 0; i < fileDatas.length; i++) {
+      fileDataArray.push(fileDatas[i]);
+    }
 
-}
+    if (fileDataArray.length > 0) {
+      for (let i = 0; i < fileDataArray.length; i++) {
+        html += "<div style='padding-bottom: 4%;'><span style='float:left; display: block; width: 95%;'>" + fileDataArray[i] + "</span><button type='button' id='fileDataDelete' style='float:right; width: 5%;' data-index='" + i + "' onclick='fileViewDelete(this);'>삭제</button></div>";
+        $(document).find(".filePreview").html(html);
+      }
+    }
+  }
 
-function appSuccessInsert() {
-  alert("등록완료");
-  location.reload();
-}
-
-function appErrorInsert() {
-  alert("등록에러");
 }

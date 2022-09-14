@@ -109,6 +109,10 @@
 }
 
 
+/* .subContainer .listPageDiv .selectedReportview, .subContainer .listPageDiv .comment {
+    width: 80%;
+} */
+
 
 /*-------------------------------- 상세조회 페이지 상단 버튼  */
 
@@ -158,10 +162,9 @@
 
 
 .listPageDiv .detailReport {
-	display: grid;
-	grid-template-columns: 60% 40%;
+    display: grid;
+   grid-template-columns: 60% 40%;
 }
-
 
 /* 첨부파일 목록 조회  */
 .listPageDiv .detailReport .selectedReportview .selectedFileField {
@@ -217,16 +220,11 @@
 
 
 
-
-
-
-
-
 /*-------------------------------- 결재정보 변경이력 탭  */
 .listPageDiv .detailReport .comment {
 	background-color: #EDEDF4;
-	margin: 0 1em;
 	border-radius: 3px;
+	margin: 0 1em;
 }
 
 .detailReport .comment .reportInfoTab {
@@ -342,13 +340,6 @@
 .close-wrap {
 	text-align: right;
 }
- 
-
-
-
-
-
-
 
 
 

@@ -81,8 +81,10 @@ input[type="text"] {
   font-size: 14px;
   border: none;
   background-color: #eaeff3;
-  height:24px; padding:0 0.8em;
-  margin:0 5px; box-shadow:0px 1px 4px #c1c6cb;
+  height: 24px;
+  padding: 0 0.8em;
+  margin: 0 5px;
+  box-shadow: 0px 1px 4px #c1c6cb;
 }
 
 .ContentDiv .gwWriteBtns button:hover {
@@ -121,12 +123,14 @@ input[type="text"] {
   padding: 0 0.5em;
 } */
 
-.ContentDiv>div:nth-child(n+1):nth-child(-n+2){margin-bottom:20px;}
+.ContentDiv>div:nth-child(n+1):nth-child(-n+2) {
+  margin-bottom: 20px;
+}
 
 .selector>div:first-child {
   font-weight: bolder;
   margin: 1em 0;
-  font-size:15px;
+  font-size: 15px;
 }
 
 .selector .formDetail {
@@ -134,8 +138,10 @@ input[type="text"] {
   grid-template-columns: 10% 8% 7% 75%; */
   /* border: 1px solid #b7b6b6;
   border-right: none; */
-  height:35px; float:left; overflow:hidden;
-  line-height:35px;
+  height: 35px;
+  float: left;
+  overflow: hidden;
+  line-height: 35px;
   /* text-align: center; */
 }
 
@@ -143,8 +149,8 @@ input[type="text"] {
   /* display: grid;
   grid-template-columns: 10% 90%; */
   /* border: 1px solid rgb(188, 185, 185); */
-  float:left;
-  margin-left:20px;
+  float: left;
+  margin-left: 20px;
 }
 
 .selector .formDetail:last-of-type>div:first-of-type {
@@ -157,25 +163,28 @@ input[type="text"] {
   /* display: flex;
   align-items: center;
   justify-content: left; */
-  display:flex;
-  float:left;
+  display: flex;
+  float: left;
   padding-right: 1em;
-  font-size:14px;
+  font-size: 14px;
   /* position:relative; top:50%;
   transform:translateY(-50%); */
 }
 
-.formDetail div:nth-of-type(2){display:flex; align-items:center;}
+.formDetail div:nth-of-type(2) {
+  display: flex;
+  align-items: center;
+}
 
-.selector .formDetail:last-of-type>div:last-of-type>label input{
-  margin-right:5px;
+.selector .formDetail:last-of-type>div:last-of-type>label input {
+  margin-right: 5px;
 }
 
 .selector .formDetail .formListDiv {
   /* display: flex;
   align-items: center; */
-  height:30px;
-  float:left;
+  height: 30px;
+  float: left;
 }
 
 .selector .formDetail .filebtnContainer {
@@ -187,44 +196,46 @@ input[type="text"] {
 
 .selector .formDetail .formListDiv .formSelector {
   height: 80%;
-  background-color:#406c92;
-  color:#fff;
-  border:none;
-  position:relative;
-  top:50%; transform:translateY(-50%);
+  background-color: #406c92;
+  color: #fff;
+  border: none;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .selector .formDetail .formListDiv .formSelector option {
-  background-color:#eaeff3;
-  color:#212121;
+  background-color: #eaeff3;
+  color: #212121;
 }
 
 .selector .formDetail button {
-  margin: 0.5em 1em 0.5em 1em; float:left;
-  height:70%;
-  background-color:#eaeff3;
-  color:#406c92;
-  box-shadow:0px 1px 2px #c1c6cb;
-  padding:0 0.5em;
+  margin: 0.5em 1em 0.5em 1em;
+  float: left;
+  height: 70%;
+  background-color: #eaeff3;
+  color: #406c92;
+  box-shadow: 0px 1px 2px #c1c6cb;
+  padding: 0 0.5em;
 }
 
 .selector .formDetail button:hover {
-  color:#fff;
-  background-color:#406c92;
+  color: #fff;
+  background-color: #406c92;
 }
 
 .selector .formDetail div:first-of-type {
   margin: 0;
-  font-size:14px;
-  text-align:center;
-  float:left; 
-  line-height:35px;
-  padding:0 1em 0 0.6em;
+  font-size: 14px;
+  text-align: center;
+  float: left;
+  line-height: 35px;
+  padding: 0 1em 0 0.6em;
 }
 
-.selector .formDetail div:first-of-type span{
-  border-right:2px solid #b7c1c9;
-  height:17px;
+.selector .formDetail div:first-of-type span {
+  border-right: 2px solid #b7c1c9;
+  height: 17px;
 }
 
 .selector .fileDetail {
@@ -255,13 +266,13 @@ input[type="text"] {
   justify-content: left;
 }
 
-.ContentDiv>div:nth-child(3) button{
-  color:#456e95; 
-  background-color:#eaeff3;
-  padding:0 0.8em;
-  height:22px;
+.ContentDiv>div:nth-child(3) button {
+  color: #456e95;
+  background-color: #eaeff3;
+  padding: 0 0.8em;
+  height: 22px;
   box-shadow: 0px 1px 4px #c1c6cb;
-  margin-left:10px;
+  margin-left: 10px;
 }
 
 /* End 결재양식 선택  ====================================================   */
@@ -303,28 +314,15 @@ input[type="text"] {
 }
 
 .gwModal {
-  background-color: white;
-  width: 40%;
-  /*margin-left: 18px;
-  line-height: 3;*/
-  color: white;
-  padding:0.5em 0 0.5em 0.5em;
-}
-
-.gwModal {
-  /* background-color: #332e85;
-  width: 40%; */
   background-color: #456e95;
   width: 60%;
   border-radius: 0.3em;
-  padding:0.5em 0.5em 0.9em 0.5em;
+  padding: 0.5em 0.5em 0.9em 0.5em;
 }
 
 .close-wrap {
   text-align: right;
-  /* margin: 1em;
-  margin-top: 0; */
-  margin:0.3em 0.5em 0 0;
+  margin: 0.3em 0.5em 0 0;
 }
 
 
@@ -355,12 +353,12 @@ input[type="text"] {
   /* border: 1px solid black; */
 }
 
-.selector .lineDetail .innerDetail>div{
-  padding:3px 0;
+.selector .lineDetail .innerDetail>div {
+  padding: 3px 0;
 }
 
-.selector .lineDetail .innerDetail input{
-  margin-right:6px;
+.selector .lineDetail .innerDetail input {
+  margin-right: 6px;
 }
 
 .selector .lineDetail #lineCenter {
@@ -384,7 +382,6 @@ input[type="text"] {
 }
 
 .selector .lineDetail #lineRight>div {
-
   margin: 1em 0;
 }
 
@@ -419,26 +416,27 @@ input[type="text"] {
   border: 1px solid black;
   border-left: none;
 }
+
 .selector .lineDetail #lineRight>label {
   border: 1px solid rgb(185 196 205);
   margin: 0.5rem;
-  padding:0.5em 0.5em 0.5em 0.5em;
-  color:#385f80;
+  padding: 0.5em 0.5em 0.5em 0.5em;
+  color: #385f80;
   font-weight: bolder;
-  font-size:15px;
+  font-size: 15px;
 }
 
 /* #lineRight label .typeContainer {
   padding:5px 0;
 } */
 
-.typeContainer>div:first-child {padding-top:1em;}
+
 
 .lineDataContainer {
   display: grid;
   grid-template-columns: 1fr 10% 10% 10%;
   padding: 0.5em 0.5em;
-  border-bottom:1px solid #d8e1e9;
+  border-bottom: 1px solid #d8e1e9;
 }
 
 .lineDataContainer button {
@@ -446,50 +444,51 @@ input[type="text"] {
   padding: 0.5em 0.5em;
   /* display: grid;
   grid-template-columns: 1fr 8% 8% 8%; */
-  border-bottom:1px solid #cedfdd;
-  font-size:14px;
-  color:#212121;
+  border-bottom: 1px solid #cedfdd;
+  font-size: 14px;
+  color: #212121;
   font-weight: normal;
 }
 
 .ContentDiv>div:nth-child(3) .lineDataContainer button {
   border: none;
-  height:18px;
-  background-color:#eaeff3;
-  font-size:11px;
-  font-weight:bolder;
-  width:75%;
+  height: 18px;
+  background-color: #eaeff3;
+  font-size: 11px;
+  font-weight: bolder;
+  width: 75%;
 }
 
- .typeContainer .lineDataContainer>label {
-  float:left;
-  width:70%;
+.typeContainer .lineDataContainer>label {
+  float: left;
+  width: 70%;
 }
 
 .typeContainer .lineDataContainer>button {
-  float:left;
-  width:10%;
+  float: left;
+  width: 10%;
 }
 
 /*결재선 모달창 버튼*/
-.ContentDiv>div:nth-child(3) .gwModal #lineCenter button{
-  height:25px;
-  font-weight:bolder;
-  box-shadow:0px 2px 4px #a5b6c1;
+.ContentDiv>div:nth-child(3) .gwModal #lineCenter button {
+  height: 25px;
+  font-weight: bolder;
+  box-shadow: 0px 2px 4px #a5b6c1;
 }
 
-.ContentDiv>div:nth-child(3) .gwModal #lineCenter button:hover, .ContentDiv>div:nth-child(3) .lineDataContainer button:hover{
-  color:#fff;
+.ContentDiv>div:nth-child(3) .gwModal #lineCenter button:hover,
+.ContentDiv>div:nth-child(3) .lineDataContainer button:hover {
+  color: #fff;
   background-color: #61829e;
-  font-weight:normal;
+  font-weight: normal;
 }
 
-.ContentDiv>div:nth-child(3) .gwModal .close-wrap #close{
-  background-color:#93adc5;
-  color:#fff;
+.ContentDiv>div:nth-child(3) .gwModal .close-wrap #close {
+  background-color: #93adc5;
+  color: #fff;
 }
 
-.ContentDiv>div:nth-child(3) .gwModal .close-wrap button{
+.ContentDiv>div:nth-child(3) .gwModal .close-wrap button {
   box-shadow: none;
 }
 
@@ -625,18 +624,21 @@ input {
 
 /*스크롤*/
 ::-webkit-scrollbar {
-  width:0.4em;
+  width: 0.4em;
 }
-::-webkit-scrollbar-track{
-  background:rgb(157, 187, 209);
+
+::-webkit-scrollbar-track {
+  background: rgb(157, 187, 209);
   border-radius: 100vw;
-  margin-block:0.5em;
+  margin-block: 0.5em;
 }
-::-webkit-scrollbar-thumb{
+
+::-webkit-scrollbar-thumb {
   background: rgb(109, 143, 169);
-  border-radius:100vw;
-  border:0.1em solid rgb(157, 187, 209);
+  border-radius: 100vw;
+  border: 0.1em solid rgb(157, 187, 209);
 }
-::-webkit-scrollbar-thumb:hover{
-  background:rgb(81, 113, 137);
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(81, 113, 137);
 }

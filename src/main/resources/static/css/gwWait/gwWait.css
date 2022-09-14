@@ -1,6 +1,5 @@
 @charset "UTF-8";
 
-
 .searchContainer {
    display: flex;
    align-items: center;
@@ -107,10 +106,7 @@
    margin: 1em;
 }
 
-.subContainer .listPageDiv .selectedReportview,
-.subContainer .listPageDiv .comment {
-   width: 80%;
-}
+
 
 /* 체크박스만 선택  */
 .subContainer .listPageDiv .listDiv div div:last-child {
@@ -118,7 +114,6 @@
    align-items: center;
    justify-content: center;
 }
-
 
 
 /*-------------------------------- 상세조회 페이지 상단 버튼  */
@@ -134,28 +129,10 @@
 }
 
 
-
-/* .mainBtnDiv button {
-   margin: 1em 1em 1em 0;
-   font-weight: 500;
-   font-size: 0.8em;
-   line-height: 2;
-   color: #332E85;
-   background-color: white;
-   border: none;
-   border-radius: 3px;
-} */
-
-
-
 .listDiv .gridHeader,
 .listDiv .gridContent {
    grid-template-columns: 10% 10% 20% 20% 10% 10% 10% 10%;
 }
-
-
-/* 글 목록과 글 누르면 이동하는 상세조회 페이지가 jsp에 큰틀인 listPageDiv 를 공유해서 
-last of type 이나 last child로 찾을 때 페이지 전환 될 때 마다 선택되는 엘리먼트 달라질 수 있음 */
 
 
 .subContainer .listPageDiv .pageContainer {
@@ -179,7 +156,7 @@ last of type 이나 last child로 찾을 때 페이지 전환 될 때 마다 선
 
 .listPageDiv .detailReport {
    display: grid;
-   row-gap: 2em;
+   grid-template-columns: 60% 40%;
 }
 
 .listDiv>div:first-child {
@@ -248,9 +225,9 @@ last of type 이나 last child로 찾을 때 페이지 전환 될 때 마다 선
 
 /*-------------------------------- 결재정보 변경이력 탭  */
 .listPageDiv .detailReport .comment {
-   border: 1px solid black;
+
    background-color: #EDEDF4;
-   /* margin: 0 1em; */
+   margin: 0 1em;
    border-radius: 3px;
 }
 
@@ -325,7 +302,7 @@ last of type 이나 last child로 찾을 때 페이지 전환 될 때 마다 선
 
 .modal-wrap .setApprovalModal,
 .modal-wrap .setModifyModal {
-   background-color: #332e85;
+   background-color: #332E85;
    width: 20%;
    border-radius: 0.3em;
 }
@@ -337,6 +314,7 @@ last of type 이나 last child로 찾을 때 페이지 전환 될 때 마다 선
    height: 5em;
    overflow-y: scroll;
    resize: none;
+
 
 }
 
@@ -369,26 +347,22 @@ last of type 이나 last child로 찾을 때 페이지 전환 될 때 마다 선
 
 
 .close-wrap {
-   display: flex;
-   align-items: center;
-   justify-content: space-around;
-   padding: 0.5em;
-   text-align: center;
+   text-align: right;
 }
-
 
 .close-wrap>button {
-   padding: 0.3em;
-
+   margin: 0.3em 0.5em;
 }
+
+
 
 
 /*-------------------------------- 결재선 수정 모달 css  */
 .gwModal {
-  background-color: #456e95;
-  width: 60%;
-  border-radius: 0.3em;
-  padding:0.5em 0.5em 0.9em 0.5em;
+   background-color: #332E85;
+   width: 60%;
+   border-radius: 0.3em;
+   padding: 0.5em 0.5em 0.9em 0.5em;
 }
 
 .lineDetail {
@@ -432,31 +406,112 @@ last of type 이나 last child로 찾을 때 페이지 전환 될 때 마다 선
    justify-content: space-around;
 }
 
-.lineDetail .lineTop #lineRight {
-  display: block;
+.lineDetail #lineRight {
+   display: flex;
+   flex-direction: column;
 }
 
-.lineDetail .lineTop #lineRight>label {
+.lineDetail #lineRight>div {
+   margin: 1em 0;
+}
+
+/* .selector .lineDetail #lineRight>label {
    border: 1px solid rgb(188, 185, 185);
    margin: 0.5rem;
+ } */
+
+.lineDetail #lineRight>div {
+   display: grid;
+   grid-template-columns: 30% 70%;
+
 }
+
+.lineDetail #lineRight>div:first-of-type {
+   display: flex;
+   margin: 0;
+}
+
+
+
+
+.lineDetail #lineRight>div>div:first-of-type {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   border: 1px solid black;
+
+}
+
+.lineDetail #lineRight>div>div:last-of-type {
+   border: 1px solid black;
+   border-left: none;
+}
+
+.lineDetail #lineRight>label {
+   border: 1px solid rgb(185 196 205);
+   margin: 0.5rem;
+   padding: 0.5em 0.5em 0.5em 0.5em;
+   color: #385f80;
+   font-weight: bolder;
+   font-size: 15px;
+}
+
+/* #lineRight label .typeContainer {
+   padding:5px 0;
+ } */
+
 
 
 .lineDataContainer {
-   padding: 0 0.5em;
    display: grid;
-   grid-template-columns: 55% 15% 15% 15%;
+   grid-template-columns: 1fr 10% 10% 10%;
+   padding: 0.5em 0.5em;
+   border-bottom: 1px solid #d8e1e9;
+}
 
+.lineDataContainer button {
+   margin: 0 0.2em;
+   padding: 0.5em 0.5em;
+   /* display: grid;
+   grid-template-columns: 1fr 8% 8% 8%; */
+   border-bottom: 1px solid #cedfdd;
+   font-size: 14px;
+   color: #212121;
+   font-weight: normal;
 }
 
 .lineDataContainer button {
    border: none;
-   background-color: white;
+   height: 18px;
+   background-color: #eaeff3;
+   font-size: 11px;
+   font-weight: bolder;
+   width: 75%;
 }
 
+
+
+/*결재선 모달창 버튼*/
+.gwModal #lineCenter button {
+   height: 25px;
+   font-weight: bolder;
+   box-shadow: 0px 2px 4px #a5b6c1;
+}
+
+.gwModal #lineCenter button:hover,
 .lineDataContainer button:hover {
-   color: #EDEDF4;
-   font-weight: 800;
+   color: #fff;
+   background-color: #61829e;
+   font-weight: normal;
+}
+
+.gwModal .close-wrap #close {
+   background-color: #93adc5;
+   color: #fff;
+}
+
+.gwModal .close-wrap button {
+   box-shadow: none;
 }
 
 

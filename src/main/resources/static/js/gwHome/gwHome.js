@@ -11,8 +11,6 @@ $(document).ready(() => {
 
 
 
-
-
 let waitList = [
 	{
 		"title": "예산 증액 관련 협조 요청",
@@ -35,22 +33,30 @@ let waitList = [
 	{
 		"title": "그룹웨어 시스템 구매 예산 재가",
 		"type": "지출품의서",
-		"writer": "구민주",
+		"writer": "이송현",
 		"created": "2202-06-18"
 	},
 	{
 		"title": "디자인 진흥원",
 		"type": "발주서",
-		"writer": "구민주",
+		"writer": "이송현",
 		"created": "2202-06-18"
 	}
 	,
 	{
 		"title": "디자인 진흥원",
 		"type": "발주서",
-		"writer": "구민주",
+		"writer": "이송현",
 		"created": "2202-06-18"
 	}
+	,
+	{
+		"title": "22년 8월 경비 지출결의",
+		"type": "지출결의서",
+		"writer": "이송현",
+		"created": "2202-06-18"
+	}
+
 
 ]
 
@@ -77,7 +83,7 @@ function drawGwDiv() {
 
 function waitDefault() {
 
-
+v
 	let url, method, data, type;
 	url = "/api/notice";
 	method = "get"

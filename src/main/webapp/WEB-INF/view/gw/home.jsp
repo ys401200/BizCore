@@ -11,26 +11,27 @@
 					<span>결재 대기 문서</span>
 					<div class="waitDiv"></div>
 				</div>
-			</div>
-
-
-			<div class="halfBodyContent">
-
-				<div class="halfContainer">
+				<div class="container">
 					<hr />
 					<span>결재 예정 문서</span>
 					<div class="listDiv"></div>
 					<div class="pageContainer"></div>
 				</div>
-				<div class="halfContainer">
+				<div class="container">
 					<hr />
 					<span>결재 수신 문서</span>
 					<div class="listDiv"></div>
 					<div class="pageContainer"></div>
 				</div>
-				
-
+				<div class="container">
+					<hr />
+					<span>참조/열람 대기 문서</span>
+					<div class="listDiv"></div>
+					<div class="pageContainer"></div>
+				</div>
 			</div>
+
+
 
 
 		</div>

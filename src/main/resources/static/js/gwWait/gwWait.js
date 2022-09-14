@@ -613,6 +613,25 @@ function createLine() {
 } // End of createLine(); 
 
 
+function setSavedLine(obj) {
+	let val = obj.value;
+	if (val == 'middle') {
+	  $("#examine").html("<div class='lineDataContainer' id='lineContainer_4'><label id='linedata4'>구민주</label><button value='4' onclick='upClick(this)'>▲</button><button  value='4'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>");
+	  $("#approval").html("<div class='lineDataContainer' id='lineContainer_0'><label id='linedata0'>이승우</label><button value='0' onclick='upClick(this)'>▲</button><button  value='0'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>");
+	  $("#agree").html("");
+	  $("#conduct").html("");
+	  $("#refer").html("");
+	} else if (val == 'basic') {
+	  $("#approval").html("<div class='lineDataContainer' id='lineContainer_0'><label id='linedata0'>이승우</label><button value='0' onclick='upClick(this)'>▲</button><button  value='0'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>");
+	  $("#agree").html("");
+	  $("#examine").html("");
+	  $("#conduct").html("");
+	  $("#refer").html("");
+	}
+  
+  }
+
+
 // 문서 수정 완료 모달 
 function showModifyModal(obj) {
 	let setModifyModalHtml = "<div class='setModifyModal'>" +
