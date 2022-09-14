@@ -87,7 +87,7 @@ public class GwService extends Svc{
         }
 
         // 결재선에 대한 처리
-        appData = "{\"sopp\":" + sopp + ",\"customer\":" + customer + "}";
+        appData = "{\"sopp\":\"" + sopp + "\",\"customer\":\"" + customer + "\"}";
         if(appLine != null && appLine.length > 0)   for(x = 0 ; x < appLine.length ; x++){
             line = appLine[x];
             if(x == 0)  gwMapper.addNewDocAppLine(compId, docNo, x, line[1], line[0], appDoc, appData);
