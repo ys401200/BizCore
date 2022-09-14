@@ -182,7 +182,7 @@ public class ApiAttachedCtrl extends Ctrl{
                 t = decAes(file, aesKey, aesIv);
                 fileData = Base64.getDecoder().decode(t);
 
-                // 임시파일 처리가 필요한 경우
+                // 임시파일 처리가 필요한 경우 / 파일 선 첨부, 후 본문 게시 형태
                 if(funcName.equals("docapp") || funcName.equals("filebox")){
                     savedName = attachedService.saveAttachedToTemp(compId, fileData);
                     if(attached == null){
@@ -191,7 +191,7 @@ public class ApiAttachedCtrl extends Ctrl{
                     }
                     attached.put(fileName, savedName);
                     result = "{\"result\":\"ok\",\"msg\":\"" + savedName + "\"}";
-                }else{
+                }else{ // 임시파일 처리가 불필요한 경우 / 선 본문 게시 후 파일 첨부 형태
                     savedName = systemService.createRandomFileName();
                     if(attachedService.saveAttachedFile(compId, fileName, savedName, fileData, funcName, funcNo)){
                         result = "{\"result\":\"ok\",\"msg\":\"" + savedName + "\"}";
