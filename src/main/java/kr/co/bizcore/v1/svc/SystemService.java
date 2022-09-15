@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -296,6 +297,36 @@ public class SystemService extends Svc {
     }
 
     public void modifyMyInfo(String compId, String userNo, String email, String address, String homePhone, String cellPhone, Integer zipCode){
+        String temp = null, image = null, s = File.separator;
+        File tempFile = null, imageFile = null;
+        FileInputStream fin = null;
+        FileOutputStream fout = null;
+        byte[] buffer = new byte[1024];
+        int read = -1;
+
+        temp = fileStoragePath + s + compId + s + "temp" + s + userNo;
+        image = fileStoragePath + s + compId + s + "userPicture" + s + userNo;
+        tempFile = new File(temp);
+        if(tempFile.exists()){
+            imageFile = new File(image);
+            if(tempFile.renameTo(imageFile)){ // 1차 : renameTo()로 간단히 이동 시도
+                
+            }else{  // 실패시 2차 시도 : 파일 읽어서 이동 후 임시 파일 삭제
+                try {
+                    fin = new FileInputStream(tempFile);
+                    fout = new FileOutputStream(imageFile);
+                    read = 0;
+                    while((read = fin.read(buffer, 0, buffer.length)) != -1){
+                        fout.write(buffer, 0, read);
+                    }
+                    fin.close();
+                    fout.flush();
+                    fout.close();
+                    tempFile.delete();
+                } catch (Exception e) {e.printStackTrace();}
+            }
+        }
+
         userMapper.modifyMyInfo(compId, userNo, email, address, homePhone, cellPhone, zipCode);
     }
 
