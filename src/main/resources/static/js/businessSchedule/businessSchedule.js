@@ -102,7 +102,7 @@ function drawScheduleList() {
 	for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
 		let job, title, customer, writer, fromDate, fromSetDate, toDate, toSetDate, place, content;
 		
-		job = (jsonData[i].job === null || jsonData[i].job === "" || jsonData[i].job === undefined) ? "없음" : jsonData[i].job;
+		job = (jsonData[i].job === null || jsonData[i].job === "" || jsonData[i].job === undefined) ? "" : jsonData[i].job;
 		
 		if(job === "sales"){
 			job = "영업일정";
@@ -112,11 +112,11 @@ function drawScheduleList() {
 			job = "기타일정";
 		}
 
-		title = (jsonData[i].title === null || jsonData[i].title === "" || jsonData[i].title === undefined) ? "제목 없음" : jsonData[i].title;
-		customer = (jsonData[i].customer == 0 || jsonData[i].customer === null || jsonData[i].customer === undefined) ? "없음" : storage.customer[jsonData[i].customer].name;
-		writer = (jsonData[i].writer == 0 || jsonData[i].writer === null || jsonData[i].writer === undefined) ? "없음" : storage.user[jsonData[i].writer].userName;
-		place = (jsonData[i].place === null || jsonData[i].place === "" || jsonData[i].place === undefined) ? "없음" : jsonData[i].place;
-		content = (jsonData[i].content === null || jsonData[i].content === "" || jsonData[i].content === undefined) ? "내용 없음" : jsonData[i].content;
+		title = (jsonData[i].title === null || jsonData[i].title === "" || jsonData[i].title === undefined) ? "" : jsonData[i].title;
+		customer = (jsonData[i].customer == 0 || jsonData[i].customer === null || jsonData[i].customer === undefined) ? "" : storage.customer[jsonData[i].customer].name;
+		writer = (jsonData[i].writer == 0 || jsonData[i].writer === null || jsonData[i].writer === undefined) ? "" : storage.user[jsonData[i].writer].userName;
+		place = (jsonData[i].place === null || jsonData[i].place === "" || jsonData[i].place === undefined) ? "" : jsonData[i].place;
+		content = (jsonData[i].content === null || jsonData[i].content === "" || jsonData[i].content === undefined) ? "" : jsonData[i].content;
 		
 		fromDate = dateDis(jsonData[i].from);
 		fromSetDate = dateFnc(fromDate);
@@ -300,7 +300,6 @@ function drawCalendar(container){
 
 function scheduleDetailView(e){
 	let id, job, url, method, data, type;
-	contentTopBtn("bodyContent");
 
 	id = $(e).data("id");
 	job = $(e).data("job");
@@ -314,7 +313,7 @@ function scheduleDetailView(e){
 function scheduleSuccessView(result){
 	let html, title, dataArray, notIdArray;
 
-	title = (result.title === null || result.title === "" || result.title === undefined) ? "제목 없음" : result.title;
+	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
 	dataArray = scheduleRadioUpdate(result.job, result);
 	html = detailViewFormModal(dataArray);
 
@@ -324,10 +323,10 @@ function scheduleSuccessView(result){
 	modal.body.html(html);
 	modal.body.css("max-height", "800px");
 	modal.confirm.text("수정");
-	modal.close.text("취소");
+	modal.close.text("삭제");
 	notIdArray = ["writer"];
-	modal.confirm.attr("onclick", "enableDisabled(this, \"scheduleUpdate();\", \"" + notIdArray + "\");");
-	modal.close.attr("onclick", "modal.hide();");
+	modal.confirm.attr("onclick", "enableDisabled(this, \"scheduleUpdate(" + result.no + ");\", \"" + notIdArray + "\");");
+	modal.close.attr("onclick", "scheduleDelete(" + JSON.stringify(result) + ");");
 
 	setTimeout(() => {
 		$(document).find("[name='job'][value='" + result.job + "']").prop("checked", true);
@@ -345,7 +344,16 @@ function scheduleSuccessView(result){
 			$(document).find("#type option[value='" + type + "']").prop("selected", true);
 			$(document).find("#supportStep option[value='" + supportStep + "']").prop("selected", true);
 		}
-		
+
+		$("input[name='job']").each((index, item) => {
+			if(!$(item).is(":checked")){
+				$(item).hide();
+				$(item).next().hide();
+			}
+		});
+
+		setTiny();
+		tinymce.activeEditor.mode.set('readonly');
 	}, 100);
 }
 
@@ -496,58 +504,58 @@ function scheduleInsertForm(getDate){
 	}, 100);
 }
 
-function scheduleUpdateForm(result){
-	let html, title, dataArray, notIdArray;
+// function scheduleUpdateForm(result){
+// 	let html, title, dataArray, notIdArray;
 
-	title = (result.title === null || result.title === "" || result.title === undefined) ? "제목 없음" : result.title;
+// 	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
 	
-	dataArray = scheduleRadioUpdate(result.job, result);
+// 	dataArray = scheduleRadioUpdate(result.job, result);
 
-	html = detailViewFormModal(dataArray);
+// 	html = detailViewFormModal(dataArray);
 
-	modal.show();
-	modal.headTitle.text(title);
-	modal.content.css("width", "50%");
-	modal.body.html(html);
-	modal.body.css("max-height", "800px");
-	modal.confirm.text("수정");
-	modal.close.text("취소");
-	notIdArray = ["writer"];
-	modal.confirm.attr("onclick", "enableDisabled(this, \"scheduleUpdate();\", \"" + notIdArray + "\");");
-	modal.close.attr("onclick", "modal.hide();");
+// 	modal.show();
+// 	modal.headTitle.text(title);
+// 	modal.content.css("width", "50%");
+// 	modal.body.html(html);
+// 	modal.body.css("max-height", "800px");
+// 	modal.confirm.text("수정");
+// 	modal.close.text("취소");
+// 	notIdArray = ["writer"];
+// 	modal.confirm.attr("onclick", "enableDisabled(this, \"scheduleUpdate();\", \"" + notIdArray + "\");");
+// 	modal.close.attr("onclick", "modal.hide();");
 
-	setTimeout(() => {
-		$(document).find("[name='job'][value='" + result.job + "']").prop("checked", true);
+// 	setTimeout(() => {
+// 		$(document).find("[name='job'][value='" + result.job + "']").prop("checked", true);
 
-		if(result.job === "sales"){
-			let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;
+// 		if(result.job === "sales"){
+// 			let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;
 
-			$(document).find("#type option[value='" + type + "']").prop("selected", true);
-		}else if(result.job === "tech"){
-			let contractMethod = (result.contractMethod === null || result.contractMethod === "" || result.contractMethod === undefined) ? "" : result.contractMethod;
-			let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;
-			let supportStep = (result.supportStep === null || result.supportStep === "" || result.supportStep === undefined) ? "" : result.supportStep;
+// 			$(document).find("#type option[value='" + type + "']").prop("selected", true);
+// 		}else if(result.job === "tech"){
+// 			let contractMethod = (result.contractMethod === null || result.contractMethod === "" || result.contractMethod === undefined) ? "" : result.contractMethod;
+// 			let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;
+// 			let supportStep = (result.supportStep === null || result.supportStep === "" || result.supportStep === undefined) ? "" : result.supportStep;
 
-			$(document).find("[name='contractMethod'][value='" + contractMethod + "']").prop("checked", true);
-			$(document).find("#type option[value='" + type + "']").prop("selected", true);
-			$(document).find("#supportStep option[value='" + supportStep + "']").prop("selected", true);
-		}
+// 			$(document).find("[name='contractMethod'][value='" + contractMethod + "']").prop("checked", true);
+// 			$(document).find("#type option[value='" + type + "']").prop("selected", true);
+// 			$(document).find("#supportStep option[value='" + supportStep + "']").prop("selected", true);
+// 		}
 		
-	}, 100);
-}
+// 	}, 100);
+// }
 
 function scheduleRadioClick(e, result){
 	let html, dataArray, tempFrom, tempTo, value = $(e).val(), notIdArray;
 	
 	tempFrom = $(document).find("#from").val();
 	tempTo = $(document).find("#to").val();
-	
-	modal.hide();
 
+	modal.hide();
+	
 	if(result === undefined){
 		dataArray = scheduleRadioInsert(value);
 		html = detailViewFormModal(dataArray);
-
+		
 		modal.show();
 		modal.headTitle.text("일정등록");
 		modal.content.css("width", "50%");
@@ -569,8 +577,8 @@ function scheduleRadioClick(e, result){
 		modal.confirm.text("수정");
 		modal.close.text("취소");
 		notIdArray = ["writer"];
-		modal.confirm.attr("onclick", "enableDisabled(this, \"scheduleUpdate();\", \"" + notIdArray + "\");");
-		modal.close.attr("onclick", "modal.hide();");
+		modal.confirm.attr("onclick", "enableDisabled(this, \"scheduleUpdate(" + result.no + ");\", \"" + notIdArray + "\");");
+		modal.close.attr("onclick", "scheduleDelete(" + JSON.stringify(result) + ");");
 	}
 
 	setTimeout(() => {
@@ -611,6 +619,7 @@ function scheduleRadioInsert(value, date){
 				],
 				"type": "radio",
 				"elementName": "job",
+				"elementId": "job",
 				"disabled": false,
 				"onClick": "scheduleRadioClick(this);",
 			},
@@ -760,6 +769,7 @@ function scheduleRadioInsert(value, date){
 				],
 				"type": "radio",
 				"elementName": "job",
+				"elementId": "job",
 				"disabled": false,
 				"onClick": "scheduleRadioClick(this);",
 			},
@@ -777,6 +787,7 @@ function scheduleRadioInsert(value, date){
 				],
 				"type": "radio",
 				"elementName": "contractMethod",
+				"elementId": "contractMethod",
 				"disabled": false,
 			},
 			{
@@ -919,6 +930,7 @@ function scheduleRadioInsert(value, date){
 				],
 				"type": "radio",
 				"elementName": "job",
+				"elementId": "job",
 				"disabled": false,
 				"onClick": "scheduleRadioClick(this);",
 			},
@@ -1211,6 +1223,7 @@ function scheduleRadioUpdate(value, result){
 				],
 				"type": "radio",
 				"elementName": "job",
+				"elementId": "job",
 				"onClick": "scheduleRadioClick(this, " + JSON.stringify(result) + ");",
 			},
 			{
@@ -1391,22 +1404,23 @@ function scheduleRadioUpdate(value, result){
 				}
 			});
 		}else{
-			contract = "없음";
+			contract = "";
 		}
 
-		$.ajax({
-			url: "/api/system/cip/" + cipOfCustomer,
-			method: "get",
-			async: false,
-			dataType: "json",
-			success:(resultData) => {
-				let jsonData;
-				jsonData = cipher.decAes(resultData.data);
-				console.log(jsonData);
-
-				cipOfCustomer = jsonData;
-			}
-		});
+		if(cipOfCustomer !== ""){
+			$.ajax({
+				url: "/api/system/cip/" + cipOfCustomer,
+				method: "get",
+				async: false,
+				dataType: "json",
+				success:(resultData) => {
+					let jsonData;
+					jsonData = cipher.decAes(resultData.data);
+	
+					cipOfCustomer = jsonData;
+				}
+			});
+		}
 
 		dataArray = [
 			{
@@ -1427,6 +1441,7 @@ function scheduleRadioUpdate(value, result){
 				],
 				"type": "radio",
 				"elementName": "job",
+				"elementId": "job",
 				"onClick": "scheduleRadioClick(this, " + JSON.stringify(result) + ");",
 			},
 			{
@@ -1442,6 +1457,7 @@ function scheduleRadioUpdate(value, result){
 					},
 				],
 				"type": "radio",
+				"elementId": "contractMethod",
 				"elementName": "contractMethod",
 			},
 			{
@@ -1613,6 +1629,7 @@ function scheduleRadioUpdate(value, result){
 				],
 				"type": "radio",
 				"elementName": "job",
+				"elementId": "job",
 				"onClick": "scheduleRadioClick(this, " + JSON.stringify(result) + ");",
 			},
 			{

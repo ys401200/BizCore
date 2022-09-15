@@ -317,6 +317,12 @@ function init(){
 	setTimeout(() => {
 		setTiny();
 	}, 100);
+
+	$(document).mouseup((e) => {
+		if(modal.content.has(e.target).length === 0){
+			modal.hide();
+		}
+	})
 }
 
 //페이징될 때 header, sideMenu active를 위한 함수
@@ -1851,7 +1857,6 @@ function createTabSalesList(result){
 	let html = "", container, header = [], data = [], str, detailContents, ids, job, fnc;
 
 	detailContents = $(".detailContents");
-
 	html = "<div class='tabSalesList' id='tabSalesList'></div>";
 	
 	header = [
@@ -2036,4 +2041,29 @@ function calWindowLength(){
 	gridContent = $(".gridContent");
 
 	return parseInt((bodyContents.height() - 250) / 38);
+}
+
+function daumPostCode(){
+	let popupWidth, popupHeight;
+	popupWidth = 500;
+	popupHeight = 500;
+
+	new daum.Postcode({
+		theme: {
+			searchBgColor: "#0B65C8",
+			queryTextColor: "#FFFFFF"
+		},
+		animation: true,
+		pleaseReadGuide: true,
+		width: popupWidth,
+		height: popupHeight,
+        oncomplete: function(data) {
+			$("#postCode").val(data.zonecode);
+			$("#mainAddress").val(data.address + " " + data.buildingName);
+			$("#detailAddress").focus();
+        }
+    }).open({
+		left: Math.ceil((document.body.offsetWidth / 2) - (popupWidth / 2) + window.screenLeft),
+		top: Math.ceil((document.body.offsetHeight / 2) - (popupHeight / 2))
+	});
 }
