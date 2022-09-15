@@ -187,13 +187,18 @@ function closeGwModal(obj) {
   if (obj.id == 'close') {
     $(".modal-wrap").hide();
   } else {
-    createLine();
-    $(".inputsAuto").prop("disabled", "true");
-    $(".inputsAuto").css("text-align", "center")
-    $(".inputsAuto").eq(0).css("text-align", "left");
-    $(".inputsAuto").eq(1).css("text-align", "left");
-    $(".inputsAuto").eq(2).css("text-align", "left");
-    $(".modal-wrap").hide();
+    if ($("#approval").html() == '') {
+      alert("결재자를 설정하세요");
+    } else {
+      createLine();
+      $(".inputsAuto").prop("disabled", "true");
+      $(".inputsAuto").css("text-align", "center")
+      $(".inputsAuto").eq(0).css("text-align", "left");
+      $(".inputsAuto").eq(1).css("text-align", "left");
+      $(".inputsAuto").eq(2).css("text-align", "left");
+      $(".modal-wrap").hide();
+    }
+
   }
 }
 
@@ -398,41 +403,11 @@ function getYmdSlash() {
 
 
 
-let fileNamesArr = new Array();
 
 
-function drawSelectedFileList(obj) {
-
-  let fileName = obj.value.split("\\");
-  let fileListHtml = "";
 
 
-  fileName = fileName[fileName.length - 1];
-  fileNamesArr.push(fileName);
 
-  for (let i = 0; i < fileNamesArr.length; i++) {
-    fileListHtml += "<div >" + fileNamesArr[i] + "<button type='button' value='" + i + "' onclick='deleteFile(this)'>x</button></div></div>"
-  }
-
-
-  $(".insertedFileList").html(fileListHtml);
-  $(".gwFileInput").val(""); // 선택된 파일 초기화 
-}
-
-
-//arr splice 
-function deleteFile(obj) {
-
-  let fileNo = obj.value;
-  fileNamesArr.splice(fileNo, 1);
-  let fileListHtml = "";
-  for (let i = 0; i < fileNamesArr.length; i++) {
-    fileListHtml += "<div value='" + i + "'>" + fileNamesArr[i] + "<button type='button' onclick='deleteFile(this)'>x</button></div></div>"
-  }
-
-  $(".insertedFileList").html(fileListHtml);
-  $(".gwFileInput").val("");
-}
 
 
 
@@ -468,6 +443,7 @@ function reportInsert() {
   let selectedFormNo = $(".formSelector").val();
   formId = storage.formList[selectedFormNo].id;
 
+  let detailType = $("input[name='" + formId + "_RD']:checked").attr("id");
 
   sopp = $("#" + formId + '_sopp').val();
   infoCustomer = $("#" + formId + '_infoCustomer').val();
@@ -475,7 +451,7 @@ function reportInsert() {
   content = $("#" + formId + "_content").val();
   readable = $('input[name=authority]:checked').val();
   appDoc = $(".reportInsertForm").html();
-  appDoc = appDoc.replaceAll("\n","").replaceAll("\r","").replaceAll("\t","").replaceAll("\"","\\\"");
+  appDoc = appDoc.replaceAll("\n", "").replaceAll("\r", "").replaceAll("\t", "").replaceAll("\"", "\\\"");
   let my = storage.my;
   dept = storage.user[my].deptId[0];
 
@@ -502,7 +478,7 @@ function reportInsert() {
     "sopp": sopp,
     "dept": dept,
     "customer": infoCustomer,
-    "attached": storage.attachedList===undefined?[]:storage.attachedList,
+    "attached": storage.attachedList === undefined ? [] : storage.attachedList,
     "content": content,
     "appLine": appLine,
     "appDoc": appDoc,
@@ -514,26 +490,44 @@ function reportInsert() {
   data = JSON.stringify(data)
   data = cipher.encAes(data);
 
-  $.ajax({
-    url: "/api/gw/app/doc",
-    method: "post",
-    data: data,
-    dataType: "json",
-    contentType: "text/plain",
-    success: (result) => {
-      if (result.result === "ok") {
-        alert("등록완료");
-      } else {
-        alert(result.msg);
+
+  if (detailType == undefined) {
+    alert("결재문서 상세 타입을 선택하세요")
+  } else if (title == '') {
+    alert("제목을 입력하세요");
+  } else if ($("#" + formId + "_line").html() == '결재선') {
+    alert("결재선을 생성하세요");
+  } else {
+    $.ajax({
+      url: "/api/gw/app/doc",
+      method: "post",
+      data: data,
+      dataType: "json",
+      contentType: "text/plain",
+      success: (result) => {
+        if (result.result === "ok") {
+          alert("등록완료");
+        } else {
+          alert(result.msg);
+        }
       }
-    }
-  })
+    })
+  }
+
+
+
+
 
 }
 
 
+
+
+
+
+// 파일 첨부 버튼 누를 때 마다 반영 
 function docFileChange() {
-  let method, data, type, attached, fileDatas = [], html = "", flag;
+  let method, data, type, attached;
   attached = $(document).find("[name='attached[]']")[0].files;
 
   if (storage.attachedList === undefined || storage.attachedList <= 0) {
@@ -541,33 +535,55 @@ function docFileChange() {
   }
 
 
+  let fileDataArray = storage.attachedList;
   for (let i = 0; i < attached.length; i++) {
     let reader = new FileReader();
     let fileName;
 
     fileName = attached[i].name;
-    storage.attachedList.push(fileName);
-    reader.onload = (e) => {
-      let binary, x, fData = e.target.result;
-      const bytes = new Uint8Array(fData);
-      binary = "";
-      for (x = 0; x < bytes.byteLength; x++) binary += String.fromCharCode(bytes[x]);
-      let fileData = cipher.encAes(btoa(binary));
-      let fullData = (fileName + "\r\n" + fileData);
+    // 파일 중복 등록 제거 
+    if (!fileDataArray.includes(fileName)) {
+      storage.attachedList.push(fileName);
 
-      let url = "/api/attached/docapp"
+      reader.onload = (e) => {
+        let binary, x, fData = e.target.result;
+        const bytes = new Uint8Array(fData);
+        binary = "";
+        for (x = 0; x < bytes.byteLength; x++) binary += String.fromCharCode(bytes[x]);
+        let fileData = cipher.encAes(btoa(binary));
+        let fullData = (fileName + "\r\n" + fileData);
 
-      url = url;
-      method = "post";
-      data = fullData;
-      type = "insert";
+        let url = "/api/attached/docapp"
+        url = url;
+        method = "post";
+        data = fullData;
+        type = "insert";
 
-      crud.defaultAjax(url, method, data, type, submitFileSuccess, submitFileError);
+        crud.defaultAjax(url, method, data, type, submitFileSuccess, submitFileError);
+      }
+
+      reader.readAsArrayBuffer(attached[i]);
     }
-
-    reader.readAsArrayBuffer(attached[i]);
-
   }
 
 
+  let html = "";
+
+  for (let i = 0; i < fileDataArray.length; i++) {
+
+    html += "<div value='" + i + "'>" + fileDataArray[i] + "<button type='button' onclick='deleteFile(this)'>x</button></div></div>"
+    $(".filePreview").html(html);
+  }
+
+  // 파일목록 수정의 경우 추가해야함 
+
+
+
+}
+
+function deleteFile(obj) {
+  let index = obj.parentElement.value;
+  let arr = storage.attachedList;
+  arr.splice(index, 1);
+  obj.parentElement.remove();
 }
