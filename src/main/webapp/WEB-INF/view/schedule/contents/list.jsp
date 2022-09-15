@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<div class="scheduleSearchContainer">
+<!-- <div class="scheduleSearchContainer">
     <div class="scheduleSearchSelect">
         <select id="scheduleSearchCategory">
             <option value="no">번호</option>
@@ -21,24 +21,20 @@
     <span class="detailMainSpan"></span>
     <div class="detailBtns"></div>
     <div class="detailContent"></div>
-</div>
+</div> -->
 <div class="scheduleContainer">
     <hr />
-    <span>일정조회</span>
-    <button type="button" class="scheduleInsertBtn" onclick="scheduleInsertForm();">등록</button>
+    <span id="containerTitle">일정조회</span>
+    <button type="button" class="listInsertBtn" class="scheduleInsertBtn" onclick="scheduleInsertForm();">등록</button>
     <button type="button" class="listChangeBtn" data-type="table" onclick="listChange(this);">달력으로 표시</button>
     <select class="scheduleRange" id="scheduleRange" onchange="scheduleSelectChange();">
         <option value="company">회사별</option>
         <option value="dept">부서별</option>
         <option value="personal">개인별</option>
     </select>
-    <!-- <select class="scheduleType" id="scheduleType" onchange="scheduleSelectChange();">
-        <option value="all">전체</option>
-        <option value="sales">영업활동</option>
-        <option value="tech">기술지원</option>
-        <option value="etc">기타</option>
-    </select> -->
     <jsp:include page="./calendar.jsp" />
+    <div class="detailBtns"></div>
+    <div class="detailContents"></div>
     <div class="gridScheduleList"></div>
     <div class="pageContainer"></div>
 </div>

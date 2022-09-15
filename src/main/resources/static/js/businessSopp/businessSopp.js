@@ -102,14 +102,14 @@ function drawSoppList() {
 		disDate = dateDis(jsonData[i].created, jsonData[i].modified);
 		setDate = dateFnc(disDate);
 
-		soppType = (jsonData[i].soppType === null || jsonData[i].soppType === "") ? "없음" : storage.code.etc[jsonData[i].soppType];
-		contType = (jsonData[i].contType === null || jsonData[i].contType === "") ? "없음" : storage.code.etc[jsonData[i].contType];
-		title = (jsonData[i].title === null || jsonData[i].title === "") ? "제목 없음" : jsonData[i].title;
-		customer = (jsonData[i].customer === null || jsonData[i].customer == 0) ? "없음" : storage.customer[jsonData[i].customer].name;
-		endUser = (jsonData[i].endUser === null || jsonData[i].endUser == 0) ? "없음" : storage.customer[jsonData[i].endUser].name;
-		employee = (jsonData[i].employee === null || jsonData[i].employee == 0) ? "없음" : storage.user[jsonData[i].employee].userName;
+		soppType = (jsonData[i].soppType === null || jsonData[i].soppType === "") ? "" : storage.code.etc[jsonData[i].soppType];
+		contType = (jsonData[i].contType === null || jsonData[i].contType === "") ? "" : storage.code.etc[jsonData[i].contType];
+		title = (jsonData[i].title === null || jsonData[i].title === "") ? "" : jsonData[i].title;
+		customer = (jsonData[i].customer === null || jsonData[i].customer == 0) ? "" : storage.customer[jsonData[i].customer].name;
+		endUser = (jsonData[i].endUser === null || jsonData[i].endUser == 0) ? "" : storage.customer[jsonData[i].endUser].name;
+		employee = (jsonData[i].employee === null || jsonData[i].employee == 0) ? "" : storage.user[jsonData[i].employee].userName;
 		expectedSales = (jsonData[i].expectedSales === null || jsonData[i].expectedSales == 0) ? 0 : numberFormat(jsonData[i].expectedSales);
-		status = (jsonData[i].status === null || jsonData[i].status === "") ? "없음" : storage.code.etc[jsonData[i].status];
+		status = (jsonData[i].status === null || jsonData[i].status === "") ? "" : storage.code.etc[jsonData[i].status];
   
 		str = [
 			{
@@ -182,17 +182,17 @@ function soppErrorList(){
 function soppSuccessView(result){
 	let html, title, userName, customer, picOfCustomer, endUser, status, progress, contType, disDate, expectedSales, detail, dataArray;
 
-	title = (result.title === null || result.title === "" || result.title === undefined) ? "제목 없음" : result.title;
-	userName = (result.employee == 0 || result.employee === null || result.employee === undefined) ? "데이터 없음" : storage.user[result.employee].userName;
-	customer = (result.customer == 0 || result.customer === null || result.customer === undefined) ? "데이터 없음 " : storage.customer[result.customer].name;
-	picOfCustomer = (result.picOfCustomer == 0 || result.picOfCustomer === null || result.picOfCustomer === undefined) ? "데이터 없음" : result.picOfCustomer;
-	endUser = (result.endUser == 0 || result.endUser === null || result.endUser === undefined) ? "데이터 없음" : storage.customer[result.endUser].name;
-	status = (result.status === null || result.status === "" || result.status === undefined) ? "없음" : storage.code.etc[result.status];
-	progress = (result.progress === null || result.progress === "" || result.progress === undefined) ? "데이터 없음" : result.progress + "%";
-	contType = (result.contType === null || result.contType === "" || result.contType === undefined) ? "없음" : storage.code.etc[result.contType];
-	soppType = (result.soppType === null || result.soppType === "" || result.soppType === undefined) ? "데이터 없음" : storage.code.etc[result.soppType];
-	expectedSales = (result.expectedSales === null || result.expectedSales === "" || result.expectedSales === undefined) ? "데이터 없음" : numberFormat(result.expectedSales);
-	detail = (result.detail === null || result.detail === "" || result.detail === undefined) ? "내용 없음" : result.detail;
+	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
+	userName = (result.employee == 0 || result.employee === null || result.employee === undefined) ? "" : storage.user[result.employee].userName;
+	customer = (result.customer == 0 || result.customer === null || result.customer === undefined) ? "" : storage.customer[result.customer].name;
+	picOfCustomer = (result.picOfCustomer == 0 || result.picOfCustomer === null || result.picOfCustomer === undefined) ? "" : result.picOfCustomer;
+	endUser = (result.endUser == 0 || result.endUser === null || result.endUser === undefined) ? "" : storage.customer[result.endUser].name;
+	status = (result.status === null || result.status === "" || result.status === undefined) ? "" : storage.code.etc[result.status];
+	progress = (result.progress === null || result.progress === "" || result.progress === undefined) ? "" : result.progress + "%";
+	contType = (result.contType === null || result.contType === "" || result.contType === undefined) ? "" : storage.code.etc[result.contType];
+	soppType = (result.soppType === null || result.soppType === "" || result.soppType === undefined) ? "" : storage.code.etc[result.soppType];
+	expectedSales = (result.expectedSales === null || result.expectedSales === "" || result.expectedSales === undefined) ? "" : numberFormat(result.expectedSales);
+	detail = (result.detail === null || result.detail === "" || result.detail === undefined) ? "" : result.detail;
 	
 	disDate = dateDis(result.targetDate);
 	targetDate = dateFnc(disDate);
@@ -343,7 +343,7 @@ function soppSuccessView(result){
 	html += "</div><br/>";
 	html += detailViewForm(dataArray);
 	html += createTabTradeList(result.trades);
-	conTitleChange("containerTitle", "<a href='#' onclick='detailContainerHide(\"영업기회조회\");'>뒤로가기</a>");
+	conTitleChange("containerTitle", "<a href='#' onclick='detailViewContainerHide(\"영업기회조회\");'>뒤로가기</a>");
 	$(".detailContents").html(html);
 	$(".detailBtns").html("");
 	notIdArray = ["employee"];
@@ -530,190 +530,6 @@ function soppInsertForm(){
 		$(document).find("#targetDate").val(nowDate);
 	}, 100);
 }
-
-// function soppUpdateForm(result){
-// 	let html, title, userName, customer, picOfCustomer, endUser, progress, disDate, expectedSales, detail, dataArray, contType, soppType, status;
-
-// 	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
-// 	userName = (result.employee == 0 || result.employee === null || result.employee === undefined) ? "" : storage.user[result.employee].userName;
-// 	customer = (result.customer == 0 || result.customer === null || result.customer === undefined) ? "" : storage.customer[result.customer].name;
-// 	picOfCustomer = (result.picOfCustomer == 0 || result.picOfCustomer === null || result.picOfCustomer === undefined) ? "" : result.picOfCustomer;
-// 	endUser = (result.endUser == 0 || result.endUser === null || result.endUser === undefined) ? "" : storage.customer[result.endUser].name;
-// 	status = (result.status === null || result.status === "" || result.status === undefined) ? "" : result.status;
-// 	progress = (result.progress === null || result.progress === "" || result.progress === undefined) ? "" : result.progress;
-// 	contType = (result.contType === null || result.contType === "" || result.contType === undefined) ? "" : result.contType;
-// 	console.log(contType);
-// 	soppType = (result.soppType === null || result.soppType === "" || result.soppType === undefined) ? "" : result.soppType;
-// 	expectedSales = (result.expectedSales === null || result.expectedSales === "" || result.expectedSales === undefined) ? "" : numberFormat(result.expectedSales);
-// 	detail = (result.detail === null || result.detail === "" || result.detail === undefined) ? "" : result.detail;
-	
-// 	disDate = dateDis(result.targetDate);
-// 	targetDate = dateFnc(disDate);
-
-// 	dataArray = [
-// 		{
-// 			"title": "담당자",
-// 			"elementId": "employee",
-// 			"dataKeyup": "user",
-// 			"value": userName,
-// 		},
-// 		{
-// 			"title": "매출처",
-// 			"elementId": "customer",
-// 			"dataKeyup": "customer",
-// 			"value": customer,
-// 			"disabled": false,
-// 		},
-// 		{
-// 			"title": "매출처 담당자",
-// 			"dataKeyup": "customerUser",
-// 			"elementId": "picOfCustomer",
-// 			"value": picOfCustomer,
-// 			"disabled": false,
-// 		},
-// 		{
-// 			"title": "엔드유저",
-// 			"dataKeyup": "customer",
-// 			"elementId": "endUser",
-// 			"value": endUser,
-// 			"disabled": false,
-// 		},
-// 		{
-// 			"title": "진행단계",
-// 			"selectValue": [
-// 				{
-// 					"key": "10178",
-// 					"value": "영업정보파악",
-// 				},
-// 				{
-// 					"key": "10179",
-// 					"value": "초기접촉",
-// 				},
-// 				{
-// 					"key": "10180",
-// 					"value": "제안서제출 및 PT",
-// 				},
-// 				{
-// 					"key": "10181",
-// 					"value": "견적서제출",
-// 				},
-// 			],
-// 			"type": "select",
-// 			"disabled": false,
-// 			"elementId": "status",
-// 		},
-// 		{
-// 			"title": "가능성",
-// 			"elementId": "progress",
-// 			"value": progress,
-// 			"disabled": false,
-// 		},
-// 		{
-// 			"title": "계약구분",
-// 			"selectValue": [
-// 				{
-// 					"key": "10247",
-// 					"value": "판매계약",
-// 				},
-// 				{
-// 					"key": "10248",
-// 					"value": "유지보수",
-// 				},
-// 				{
-// 					"key": "10254",
-// 					"value": "임대계약",
-// 				}
-// 			],
-// 			"type": "select",
-// 			"elementId": "contType",
-// 			"disabled": false,
-// 		},
-// 		{
-// 			"title": "매출예정일",
-// 			"type": "date",
-// 			"elementId": "targetDate",
-// 			"value": targetDate,
-// 			"disabled": false,
-// 		},
-// 		{
-// 			"title": "판매방식",
-// 			"selectValue": [
-// 				{
-// 					"key": "10173",
-// 					"value": "조달직판",
-// 				},
-// 				{
-// 					"key": "10174",
-// 					"value": "조달간판",
-// 				},
-// 				{
-// 					"key": "10175",
-// 					"value": "조달대행",
-// 				},
-// 				{
-// 					"key": "10176",
-// 					"value": "직접판매",
-// 				},
-// 				{
-// 					"key": "10218",
-// 					"value": "간접판매",
-// 				},
-// 				{
-// 					"key": "10255",
-// 					"value": "기타",
-// 				}
-// 			],
-// 			"type": "select",
-// 			"elementId": "soppType",
-// 			"disabled": false,
-// 		},
-// 		{
-// 			"title": "예상매출",
-// 			"disabled": false,
-// 			"elementId": "expectedSales",
-// 			"value": expectedSales,
-// 			"keyup": "inputNumberFormat(this)",
-// 		},
-// 		{
-// 			"title": "영업기회명",
-// 			"elementId": "title",
-// 			"value": title,
-// 			"disabled": false,
-// 		},
-// 		{
-// 			"title": "내용",
-// 			"elementId": "detail",
-// 			"value": detail,
-// 			"type": "textarea",
-// 		},
-// 	];
-
-// 	html = detailViewFormModal(dataArray);
-
-// 	modal.show();
-// 	modal.headTitle.text(title);
-// 	modal.content.css("width", "50%");
-// 	modal.body.html(html);
-// 	modal.body.css("max-height", "800px");
-// 	modal.confirm.text("수정완료");
-// 	modal.close.text("취소");
-// 	modal.confirm.attr("onclick", "soppUpdate(" + result.no + ");");
-// 	modal.close.attr("onclick", "modal.hide();");
-
-// 	setTimeout(() => {
-// 		$(document).find("#contType option[value='" + contType + "']").prop("selected", true);
-// 		$(document).find("#soppType option[value='" + soppType + "']").prop("selected", true);
-// 		$(document).find("#status option[value='" + status + "']").prop("selected", true);
-
-// 		if(targetDate === null || targetDate === "" || targetDate === undefined){
-// 			let nowDate;
-// 			nowDate = new Date();
-// 			nowDate = nowDate.toISOString().substring(0, 10);
-	
-// 			$(document).find("#targetDate").val(nowDate);
-// 		}
-// 	}, 100);
-// }
 
 function soppInsert(){
 	let title, employee, customer, picOfCustomer, endUser, status, progress, contType, targetDate, soppType, expectedSales, detail, data;

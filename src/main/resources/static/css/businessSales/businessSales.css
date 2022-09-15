@@ -69,23 +69,21 @@
 	width:18px;
 }
 
-.scheduleContainer{
+.salesContainer{
     margin-top: 1%;
-	/* margin-left: 2%;
-	max-width: 1782px; */
 	background: #FFFFFF;
 	overflow: auto;
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
 }
 
-.scheduleContainer hr{
+.salesContainer hr{
 	float: left;
 	border:2px solid #182f81;
  	height : 32px;
  	margin: 0;
 }
 
-.scheduleContainer span:not(.calendarSpan){
+.salesContainer span:not(.calendarSpan){
 	font-weight: bolder;
 	font-size: 15px;
 	margin-left: 15px;
@@ -93,17 +91,28 @@
 	color: #332E85;
 }
 
-.scheduleContainer .gridScheduleList{
+.salesContainer .gridSalesList{
     display: grid; 
 	width: 99%; 
 	margin: 0 auto;
 }
 
-.scheduleContainer .gridScheduleList .gridHeader,
-.scheduleContainer .gridScheduleList .gridContent{
+.salesContainer .gridSalesList .gridHeader,
+.salesContainer .gridSalesList .gridContent{
     grid-template-columns: 7% 5% 23% 11% 7% 7% 5% 7% 28%;
 }
 
-.scheduleContainer .gridScheduleList .gridHeader{
+.salesContainer .gridSalesList .gridHeader{
 	border-bottom:1px solid #abb6d5;
+}
+
+.salesContainer > button{
+	margin:0.4% 0.5% 0 0;
+	box-shadow:0px 1px 2px #bdbfc9;
+	color:#ebefff;
+	background-color:#182f81;
+	padding:0 0.7%;
+	height:30px;
+	border-radius:5px;
+	float: right;
 }

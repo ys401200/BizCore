@@ -1012,12 +1012,23 @@ function detailViewFormModal(data){
 
 // 상세보기 임시 폼
 function detailViewForm(data){
-	let html = "", detailContents, pageContainer, listInsertBtn, detailBtns;
+	let html = "", detailContents, pageContainer, listInsertBtn, detailBtns, listChangeBtn, scheduleRange;
 
 	pageContainer = $(".pageContainer");
 	detailContents = $(".detailContents");
 	listInsertBtn = $(".listInsertBtn");
+	listChangeBtn = $(".listChangeBtn");
+	scheduleRange = $("#scheduleRange");
 	detailBtns = $(".detailBtns");
+
+	if(listChangeBtn !== undefined){
+		listChangeBtn.hide();
+	}
+
+	if(scheduleRange !== undefined){
+		scheduleRange.hide();
+	}
+
 	listInsertBtn.hide();
 	pageContainer.hide();
 	pageContainer.prev().hide();
@@ -1922,12 +1933,23 @@ function createTabSalesList(result){
 
 //상세보기 숨김
 function detailViewContainerHide(titleStr){
-	let detailContents, pageContainer, listInsertBtn, detailBtns;
+	let detailContents, pageContainer, listInsertBtn, detailBtns, listChangeBtn, scheduleRange;
 
 	pageContainer = $(".pageContainer");
 	detailContents = $(".detailContents");
 	listInsertBtn = $(".listInsertBtn");
+	listChangeBtn = $(".listChangeBtn");
+	scheduleRange = $("#scheduleRange");
 	detailBtns = $(".detailBtns");
+
+	if(listChangeBtn !== undefined){
+		listChangeBtn.show();
+	}
+
+	if(scheduleRange !== undefined){
+		scheduleRange.show();
+	}
+
 	listInsertBtn.show();
 	pageContainer.show();
 	pageContainer.prev().show();
@@ -2023,8 +2045,12 @@ function contentTopBtn(content){
 
 function enableDisabled(e, clickStr, notIdArray){
 	$("input, select").each((index, item) => {
-		if(notIdArray.indexOf($(item).attr("id")) == -1){
+		if($(item).attr("type") === "radio"){
 			$(item).prop("disabled", false);
+		}else{
+			if(notIdArray.indexOf($(item).attr("id")) == -1){
+				$(item).prop("disabled", false);
+			}
 		}
 	});
 
@@ -2040,7 +2066,7 @@ function calWindowLength(){
 	bodyContents = $("#bodyContents");
 	gridContent = $(".gridContent");
 
-	return parseInt((bodyContents.height() - 250) / 38);
+	return parseInt((bodyContents.height() - 300) / 38);
 }
 
 function daumPostCode(){

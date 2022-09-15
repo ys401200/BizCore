@@ -7,7 +7,7 @@
 		<jsp:include page="../sideMenu.jsp" />
 	</div>
 	<div id="bodyContent">
-        <div class="contractSearchContainer">
+        <!-- <div class="contractSearchContainer">
             <div class="contractSearchSelect">
                 <select id="contractSearchCategory">
                     <option value="no">번호</option>
@@ -26,11 +26,13 @@
             <span class="detailMainSpan"></span>
             <div class="detailBtns"></div>
             <div class="detailContent"></div>
-        </div>
+        </div> -->
         <div class="contractContainer">
             <hr />
-            <span>계약조회</span>
-            <button type="button" onclick="contractInsertForm();">등록</button>
+            <span id="containerTitle">계약조회</span>
+            <button type="button" class="listInsertBtn" onclick="contractInsertForm();">등록</button>
+            <div class="detailBtns"></div>
+            <div class="detailContents"></div>
             <div class="gridContractList"></div>
             <div class="pageContainer"></div>
         </div>

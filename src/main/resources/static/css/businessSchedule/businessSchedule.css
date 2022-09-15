@@ -96,56 +96,6 @@
 	color: #332E85;
 }
 
-/* .scheduleContainer .scheduleRange{
-	margin-top: 5px;
-	margin-right: 5px;
-	float: right;
-	background-color: #332E85;
-	border-radius: 10px;
-	height: 40px;
-	font-size: 1.2rem;
-	font-weight: 500;
-	color: #ffffff;
-}
-
-.scheduleContainer .scheduleType{
-	margin-top: 5px;
-	margin-right: 5px;
-	float: right;
-	background-color: #332E85;
-	border-radius: 10px;
-	height: 40px;
-	font-size: 1.2rem;
-	font-weight: 500;
-	color: #ffffff;
-}
-
-.scheduleContainer .listChangeBtn{
-	margin-top: 5px;
-	margin-right: 5px;
-	float: right;
-	background-color: #332E85;
-	border-radius: 10px;
-	height: 40px;
-	font-size: 1.2rem;
-	font-weight: 500;
-	color: #ffffff;
-	cursor: pointer;
-}
-
-.scheduleContainer .scheduleInsertBtn{
-	margin-top: 5px;
-	margin-right: 5px;
-	float: right;
-	background-color: #332E85;
-	border-radius: 10px;
-	height: 40px;
-	font-size: 1.2rem;
-	font-weight: 500;
-	color: #ffffff;
-	cursor: pointer;
-} */
-
 .scheduleContainer .gridScheduleList{
     display: grid; 
 	width: 99%; 
@@ -314,8 +264,9 @@
 }
 
 /*일정조회 버튼 및 게시글 페이지 번호 시작*/
-.scheduleContainer button{
-	margin:1% 0.5% 0 0;
+.scheduleContainer > button,
+.scheduleContainer > select{
+	margin:0.4% 0.5% 0 0;
 	box-shadow:0px 1px 2px #bdbfc9;
 	color:#ebefff;
 	background-color:#182f81;
@@ -325,38 +276,4 @@
 	float: right;
 }
 
-.scheduleContainer button:hover{
-	color:#182f81;
-	background-color:#ebefff;
-	box-shadow:0px 2px 2px #bdbfc9;
-}
-
-.scheduleContainer select{
-	height:30px;
-	color:#ebefff;
-	padding:0 8px;
-	border-radius: 5px;
-	background-color:#182f81;
-	box-shadow: 0px 1px 2px #bdbfc9;
-	margin:1% 0.5% 0 0;
-	border-radius: 5px;
-	float:right;
-}
-
-.scheduleContainer select:hover{
-	color:#182f81;
-	background-color:#ebefff;
-	box-shadow:0px 2px 2px #bdbfc9;
-}
-
-.scheduleContainer .pageContainer{
-	box-sizing:border-box;
-	margin:20px 0.5% 20px 0.5%;
-}
-
-.scheduleCotainer .pageContainer .paging_cell_current{
-	color:#182f81;
-	border:1px solid #182f81;
-	background-color:#ebefff;
-}
 /*일정조회 버튼 및 게시글 페이지 번호 끝*/

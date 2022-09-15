@@ -130,9 +130,10 @@ button, select, input[type="text"]{
 /* 페이지네이션 */
 .pageContainer{
 	display: flex;
-	/*margin: 2% 0.5% 2% 0;*/
 	float: right;
 	font-size:13px;
+	box-sizing:border-box;
+	margin:20px 0.5% 20px 0.5%;
 }
 
 .pageContainer div:not(.paging_cell_current), .pageContainer .paging_cell_empty{
@@ -147,6 +148,8 @@ button, select, input[type="text"]{
 }
 
 .pageContainer .paging_cell:hover, .pageContainer .paging_cell_empty:hover{
+	width: 28px;
+	height: 28px;
 	color: #ffffff;
 	border-color: #302D81;
 	background-color: #302D81;
@@ -159,6 +162,9 @@ button, select, input[type="text"]{
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	color:#182f81;
+	border:1px solid #182f81;
+	background-color:#ebefff;
 }
 /* 페이지네이션 끝 */
 
@@ -228,7 +234,8 @@ button, select, input[type="text"]{
 	padding: 10px;
 }
 
-.detailContents .detailViewContainer > div > input,
+.detailContents .detailViewContainer > div > input[type='text'],
+.detailContents .detailViewContainer > div > input[type='date'],
 .detailContents .detailViewContainer > div > select{
 	width: 100%;
 	height: 100%;

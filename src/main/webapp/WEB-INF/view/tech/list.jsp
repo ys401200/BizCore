@@ -7,7 +7,7 @@
 		<jsp:include page="../sideMenu.jsp" />
 	</div>
 	<div id="bodyContent">
-        <div class="techSearchContainer">
+        <!-- <div class="techSearchContainer">
             <div class="techSearchSelect">
                 <select id="techSearchCategory">
                     <option value="no">번호</option>
@@ -26,12 +26,14 @@
             <span class="detailMainSpan"></span>
             <div class="detailBtns"></div>
             <div class="detailContent"></div>
-        </div>
-        <div class="scheduleContainer">
+        </div> -->
+        <div class="techContainer">
             <hr />
-            <span>기술지원조회</span>
-            <button type="button" class="scheduleInsertBtn" onclick="scheduleInsertForm();">등록</button>
-            <div class="gridScheduleList"></div>
+            <span id="containerTitle">기술지원조회</span>
+            <button type="button" class="listInsertBtn" onclick="techInsertForm();">등록</button>
+            <div class="detailBtns"></div>
+            <div class="detailContents"></div>
+            <div class="gridTechList"></div>
             <div class="pageContainer"></div>
         </div>
 <jsp:include page="../bottom.jsp"/>

@@ -290,7 +290,7 @@ function drawCalendar(container){
 				x3[1] = calArr[x1 + 1].slot[x2] === calArr[x1].slot[x2];
 			}
             t = calArr[x1].slot[x2] === undefined ? undefined : storage.scheduleList[calArr[x1].slot[x2]] ; //임시변수에 스케줄 아이템을 담아둠
-            html += "<div class=\"calendar_item" + (t === undefined ? " calendar_item_empty" : "") + (x3[0] ? " calendar_item_left" : "") + (x3[1] ? " calendar_item_right" : "") + "\"" + (t === undefined ? "" : "") + " data-id=" + (t === undefined ? '' : t.no) + " data-job=" + (t === undefined ? '' : t.job) + " onclick='" + (t === undefined ? 'eventStop();scheduleInsertForm("' + now + '");' : 'eventStop();scheduleDetailView(this);') + "'>" + (t === undefined ? "" : t.writer + " : " + t.title) + "</div>";
+            html += "<div class=\"calendar_item" + (t === undefined ? " calendar_item_empty" : "") + (x3[0] ? " calendar_item_left" : "") + (x3[1] ? " calendar_item_right" : "") + "\"" + (t === undefined ? "" : "") + " data-id=" + (t === undefined ? '' : t.no) + " data-job=" + (t === undefined ? '' : t.job) + " onclick='" + (t === undefined ? 'eventStop();scheduleInsertForm("' + now + '");' : 'eventStop();calendarDetailView(this);') + "'>" + (t === undefined ? "" : t.writer + " : " + t.title) + "</div>";
         }
         html += "</div>";
     }
@@ -311,25 +311,21 @@ function scheduleDetailView(e){
 }
 
 function scheduleSuccessView(result){
-	let html, title, dataArray, notIdArray;
+	let html, dataArray, notIdArray;
 
-	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
 	dataArray = scheduleRadioUpdate(result.job, result);
-	html = detailViewFormModal(dataArray);
+	html = detailViewForm(dataArray);
 
-	modal.show();
-	modal.headTitle.text(title);
-	modal.content.css("width", "50%");
-	modal.body.html(html);
-	modal.body.css("max-height", "800px");
-	modal.confirm.text("수정");
-	modal.close.text("삭제");
-	notIdArray = ["writer"];
-	modal.confirm.attr("onclick", "enableDisabled(this, \"scheduleUpdate(" + result.no + ");\", \"" + notIdArray + "\");");
-	modal.close.attr("onclick", "scheduleDelete(" + JSON.stringify(result) + ");");
+	conTitleChange("containerTitle", "<a href='#' onclick='detailViewContainerHide(\"일정조회\");'>뒤로가기</a>");
+	$(".detailContents").html(html);
+	$(".detailBtns").html("");
+	notIdArray = ["employee"];
+	$(".detailBtns").append("<button type='button' onclick='enableDisabled(this, \"scheduleUpdate(" + result.no + ");\", \"" + notIdArray + "\");'>수정</button><button type='button' onclick='scheduleDelete(" + JSON.stringify(result) + ");'>삭제</button>");
+	$(".detailBtns").show();
+	$(".detailContents").show();
 
 	setTimeout(() => {
-		$(document).find("[name='job'][value='" + result.job + "']").prop("checked", true);
+		$(document).find("[name='job'][value='" + result.job + "']").prop("checked", true).removeAttr("onclick");
 
 		if(result.job === "sales"){
 			let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;
@@ -354,10 +350,74 @@ function scheduleSuccessView(result){
 
 		setTiny();
 		tinymce.activeEditor.mode.set('readonly');
+		inputDataList();
 	}, 100);
 }
 
 function scheduleErrorView(){
+	alert("에러");
+}
+
+function calendarDetailView(e){
+	let id, job, url, method, data, type;
+
+	id = $(e).data("id");
+	job = $(e).data("job");
+	url = "/api/schedule/" + job + "/" + id;
+	method = "get";
+	type = "detail";
+
+	crud.defaultAjax(url, method, data, type, calendarSuccessView, calendarErrorView);
+}
+
+function calendarSuccessView(result){
+	let html, title, dataArray, notIdArray;
+
+	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
+	dataArray = scheduleRadioUpdate(result.job, result);
+	html = detailViewFormModal(dataArray);
+
+	modal.show();
+	modal.headTitle.text(title);
+	modal.content.css("width", "50%");
+	modal.body.html(html);
+	modal.body.css("max-height", "800px");
+	modal.confirm.text("수정");
+	modal.close.text("삭제");
+	notIdArray = ["writer"];
+	modal.confirm.attr("onclick", "enableDisabled(this, \"scheduleUpdate(" + result.no + ");\", \"" + notIdArray + "\");");
+	modal.close.attr("onclick", "scheduleDelete(" + JSON.stringify(result) + ");");
+
+	setTimeout(() => {
+		$("[name='job']").show();
+		$(document).find("[name='job'][value='" + result.job + "']").prop("checked", true).removeAttr("onclick");
+
+		if(result.job === "sales"){
+			let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;
+			$(document).find("#type option[value='" + type + "']").prop("selected", true);
+		}else if(result.job === "tech"){
+			let contractMethod = (result.contractMethod === null || result.contractMethod === "" || result.contractMethod === undefined) ? "" : result.contractMethod;
+			let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;
+			let supportStep = (result.supportStep === null || result.supportStep === "" || result.supportStep === undefined) ? "" : result.supportStep;
+
+			$(document).find("[name='contractMethod'][value='" + contractMethod + "']").prop("checked", true);
+			$(document).find("#type option[value='" + type + "']").prop("selected", true);
+			$(document).find("#supportStep option[value='" + supportStep + "']").prop("selected", true);
+		}
+
+		$("input[name='job']").each((index, item) => {
+			if(!$(item).is(":checked")){
+				$(item).hide();
+				$(item).next().hide();
+			}
+		});
+
+		setTiny();
+		tinymce.activeEditor.mode.set('readonly');
+	}, 100);
+}
+
+function calendarErrorView(){
 	alert("에러");
 }
 
@@ -504,46 +564,6 @@ function scheduleInsertForm(getDate){
 	}, 100);
 }
 
-// function scheduleUpdateForm(result){
-// 	let html, title, dataArray, notIdArray;
-
-// 	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
-	
-// 	dataArray = scheduleRadioUpdate(result.job, result);
-
-// 	html = detailViewFormModal(dataArray);
-
-// 	modal.show();
-// 	modal.headTitle.text(title);
-// 	modal.content.css("width", "50%");
-// 	modal.body.html(html);
-// 	modal.body.css("max-height", "800px");
-// 	modal.confirm.text("수정");
-// 	modal.close.text("취소");
-// 	notIdArray = ["writer"];
-// 	modal.confirm.attr("onclick", "enableDisabled(this, \"scheduleUpdate();\", \"" + notIdArray + "\");");
-// 	modal.close.attr("onclick", "modal.hide();");
-
-// 	setTimeout(() => {
-// 		$(document).find("[name='job'][value='" + result.job + "']").prop("checked", true);
-
-// 		if(result.job === "sales"){
-// 			let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;
-
-// 			$(document).find("#type option[value='" + type + "']").prop("selected", true);
-// 		}else if(result.job === "tech"){
-// 			let contractMethod = (result.contractMethod === null || result.contractMethod === "" || result.contractMethod === undefined) ? "" : result.contractMethod;
-// 			let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;
-// 			let supportStep = (result.supportStep === null || result.supportStep === "" || result.supportStep === undefined) ? "" : result.supportStep;
-
-// 			$(document).find("[name='contractMethod'][value='" + contractMethod + "']").prop("checked", true);
-// 			$(document).find("#type option[value='" + type + "']").prop("selected", true);
-// 			$(document).find("#supportStep option[value='" + supportStep + "']").prop("selected", true);
-// 		}
-		
-// 	}, 100);
-// }
-
 function scheduleRadioClick(e, result){
 	let html, dataArray, tempFrom, tempTo, value = $(e).val(), notIdArray;
 	
@@ -575,7 +595,7 @@ function scheduleRadioClick(e, result){
 		modal.body.html(html);
 		modal.body.css("max-height", "800px");
 		modal.confirm.text("수정");
-		modal.close.text("취소");
+		modal.close.text("삭제");
 		notIdArray = ["writer"];
 		modal.confirm.attr("onclick", "enableDisabled(this, \"scheduleUpdate(" + result.no + ");\", \"" + notIdArray + "\");");
 		modal.close.attr("onclick", "scheduleDelete(" + JSON.stringify(result) + ");");
@@ -1339,15 +1359,22 @@ function scheduleRadioUpdate(value, result){
 				"value": partner,
 			},
 			{
+				"title": "",
+				"elementId": "",
+				"dataKeyup": "",
+			},
+			{
 				"title": "제목",
 				"elementId": "title",
 				"value": title,
+				"col": 3,
 			},
 			{
 				"title": "내용",
 				"elementId": "content",
 				"type": "textarea",
 				"value": content,
+				"col": 3,
 			}
 		];
 	}else if(value === "tech"){
@@ -1461,11 +1488,6 @@ function scheduleRadioUpdate(value, result){
 				"elementName": "contractMethod",
 			},
 			{
-				"title": "기술지원 요청명(*)",
-				"elementId": "title",
-				"value": title,
-			},
-			{
 				"title": "영업기회(*)",
 				"elementId": "sopp",
 				"dataKeyup": "sopp",
@@ -1571,10 +1593,22 @@ function scheduleRadioUpdate(value, result){
 				"value": to,
 			},
 			{
+				"title": "",
+				"elementId": "",
+				"dataKeyup": "",
+			},
+			{
+				"title": "기술지원 요청명(*)",
+				"elementId": "title",
+				"value": title,
+				"col": 3,
+			},
+			{
 				"title": "내용",
 				"type": "textarea",
 				"elementId": "content",
 				"value": content,
+				"col": 3,
 			},
 		];
 	}else{
@@ -1668,15 +1702,22 @@ function scheduleRadioUpdate(value, result){
 				"value": customer,
 			},
 			{
+				"title": "",
+				"elementId": "",
+				"dataKeyup": "",
+			},
+			{
 				"title": "제목",
 				"elementId": "title",
 				"value": title,
+				"col": 3,
 			},
 			{
 				"title": "내용",
 				"elementId": "content",
 				"value": content,
 				"type": "textarea",
+				"col": 3,
 			},
 		];
 	}
@@ -1914,69 +1955,3 @@ function scheduleSuccessDelete(){
 function scheduleErrorDelete(){
 	alert("에러");
 }
-
-//
-// function createCalendar(year, month, type){
-// 	let date, day, nowDate, nowDay, last, lastDate, row, calendar, dNum, tdClass, calendarBody;
-
-// 	calendarBody = $(".calendarList table tbody");
-
-// 	if(year === undefined || month === undefined){
-// 		date = new Date();
-// 		year = date.getFullYear();
-// 		month = date.getMonth();
-// 		day = date.getDate();
-// 	}
-	
-// 	if(type === "prev"){
-// 		nowDate = new Date(year, month-1, 1);
-// 		nowDay = nowDate.getDay();
-// 	}else{
-// 		nowDate = new Date(year, month, 1);
-// 		nowDay = nowDate.getDay();
-// 	}
-	
-// 	last = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-
-// 	if(year % 4 && year % 100 != 0 || year % 400 == 0){
-// 		lastDate = last[1] = 29;
-// 	}
-
-// 	if(month == 12){
-// 		lastDate = last[month-1];
-// 	}else{
-// 		lastDate = last[month];
-// 	}
-
-// 	row = Math.ceil((nowDay + lastDate)/7);
-// 	dNum = 1;
-
-// 	for(let i = 1; i <= row; i++){
-// 		calendar += "<tr>";
-// 		for(let k = 1; k <= 7; k++){
-// 			if(i == 1 && k <= nowDay || dNum > lastDate){
-// 				calendar += "<td>&nbsp;</td>";
-// 			}else{
-// 				tdClass = "";
-
-// 				if(dNum == day){
-// 					tdClass = "today";
-// 				}else{
-// 					tdClass = "";
-// 				}
-
-// 				if(k == 1){
-// 					tdClass += "sun";
-// 				}else if(k == 7){
-// 					tdClass += "sat";
-// 				}
-
-// 				calendar += "<td class='"+tdClass+"'>" + "<strong class='date'>" + dNum + "</strong></td>";
-// 				dNum++;
-// 			}
-// 		}
-// 		calendar += "</tr>";
-// 	}
-
-// 	calendarBody.html(calendar);
-// }
