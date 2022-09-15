@@ -88,9 +88,14 @@
 
 }
 
-.mypageContainer button {
-	float: none;
+
+.mypagediv .third {
+	display: grid;
+	grid-template-columns: 30% 70%;
+
 }
+
+
 
 
 
@@ -99,8 +104,4 @@
 	margin-left: 5rem;
 	margin-right: 5rem;
 	border-bottom: 1px solid #D9D9D9;
-}
-
-.mypageThirdDiv .div {
-	display: inline-block;
 }

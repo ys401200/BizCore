@@ -88,8 +88,8 @@ function drawMyPage(data) {
 		"<div><div>성별</div><input type='text' value='" + data.gender + "'disabled/></div>" +
 		"<div><div>등록 일자</div><input type='text' value='" + created + "'disabled/></div>" +
 		"<div><div>최근 수정 일자</div><input type='text' value='" + modified + "'disabled/></div>" +
-		"</div></div><div class='mainModBtnDiv'><button type='button' onclick='modifyInfoBtn()'>개인정보 수정</button>" +
-		"<button type='button' onclick='modifyPwBtn()'>비밀번호 수정</button></div>";
+		"</div></div><div class='mainModBtnDiv'><button type='button' class='modifybtn' onclick='modifyInfoBtn()'>개인정보 수정</button>" +
+		"<button type='button' class='modifybtn' onclick='modifyPwBtn()'>비밀번호 수정</button></div>";
 
 
 	let rightHtml = "<div><img id='preview'src='/api/my/image' width=80 heigh=100></div><div><input name='attached[]' type='file'class='modPhoto' onchange ='readURL(this)'/></div>";
@@ -104,10 +104,10 @@ function drawMyPage(data) {
 
 function modifyPwBtn(data) {
 	let target = $(".mypagediv");
-	let html = "<div style='display:grid;grid-template-columns:30% 70%' class='gridContainer'><div class='infoTitle'>현재 비밀번호</div><input type='password' id='oldpw' /></div>" +
-		"<div style='display:grid;grid-template-columns:30% 70%' class='gridContainer'><div class='infoTitle'>새 비밀번호</div><input type='password' id='newpw' /></div>" +
-		"<div style='display:grid;grid-template-columns:30% 70%' class='gridContainer'><div class='infoTitle'>새 비밀번호 확인</div><input type='password' id='newpwcheck' /></div>"
-		+ "<button type='button' class='modifybtn' onclick='modifypw()'>확인</button>"
+	let html = "<div class='gridContainer third'><div class='infoTitle'>현재 비밀번호</div><input type='password' id='oldpw' /></div>" +
+		"<div  class='gridContainer third'><div class='infoTitle'>새 비밀번호</div><input type='password' id='newpw' /></div>" +
+		"<div  class='gridContainer third'><div class='infoTitle'>새 비밀번호 확인</div><input type='password' id='newpwcheck' /></div>"
+		+ "<button type='button' class='modifybtn' onclick='modifypw()'>확인</button><button class='modifybtn' type='button' onclick='quitMod()'>취소</button>"
 	target.html(html);
 }
 
@@ -119,8 +119,8 @@ function modifypw() {
 	let oldpw = $("#oldpw").val();
 	let newpw = $("#newpw").val();
 	let newpwcheck = $("#newpwcheck").val();
-	// 최소 8 자, 최소 하나의 문자 및 하나의 숫자
-	// let pwCheck = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+	// 최소 8 자, 최소 한개의 영문자 최소 한 개의 숫자 
+	let pwCheck = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/
 
 	if (oldpw.length == 0) {
 		modal.alert("알림", "현재 비밀번호를 입력하세요");
@@ -132,10 +132,10 @@ function modifypw() {
 		return;
 	}
 
-	// if (!pwCheck.test(newpw)) {
-	// 	modal.alert("알림", "특수문자와 숫자를 포함한 최소 8자리 비밀번호를 입력하세요");
-	// 	return;
-	// }
+	if (!pwCheck.test(newpw)) {
+		modal.alert("알림", "영문자와 숫자를 포함한 최소 8자리를 입력하세요");
+		return;
+	}
 
 	if (newpw != newpwcheck) {
 		modal.alert("알림", "비밀번호 확인이 틀렸습니다");
@@ -173,7 +173,7 @@ function modifypw() {
 
 function modifyInfoBtn() {
 	let target = $(".mainModBtnDiv");
-	target.html("<button type='button' onclick='doMod()'>확인</button><button type='button' onclick='quitMod()'>취소</button>");
+	target.html("<button type='button' class='modifybtn'  onclick='doMod()'>확인</button><button class='modifybtn' type='button' onclick='quitMod()'>취소</button>");
 	$(".change").attr("disabled", false);
 	$(".change").css("border-bottom", "1px solid #6469e5");
 	$("#postCode").css("border-bottom", "1px solid #6469e5");
