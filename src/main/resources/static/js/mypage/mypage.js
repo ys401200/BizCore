@@ -26,7 +26,7 @@ function showCheckPwForm() {
 
 function checkPw() {
 	let insertedPw = $("#pwInput").val(); // 입력받은 비밀번호 
-	insertedPw = cipher.encAes(insertedPw);
+	insertedPw = encodeURI(cipher.encAes(insertedPw));
 	let url;
 
 	url = apiServer + "/api/my/" + insertedPw;
@@ -102,26 +102,6 @@ function drawMyPage(data) {
 }
 
 
-
-// function getMyImage() {
-// 	let url = "/api/my/image"
-// 	$.ajax({
-// 		"url": url,
-// 		"method": "get",
-
-// 		success: (result) => {
-// 			if () {
-
-// 			} else {
-
-// 			}
-// 		}
-// 	})
-
-
-// }
-
-
 function modifyPwBtn(data) {
 	let target = $(".mypagediv");
 	let html = "<div style='display:grid;grid-template-columns:30% 70%' class='gridContainer'><div class='infoTitle'>현재 비밀번호</div><input type='password' id='oldpw' /></div>" +
@@ -162,7 +142,6 @@ function modifypw() {
 		return;
 	}
 
-
 	let url = apiServer + "/api/my";
 
 	let data = {
@@ -183,9 +162,9 @@ function modifypw() {
 		success: (result) => {
 			if (result.result === "ok") {
 				modal.alert("알림", "비밀번호가 변경되었습니다");
-				window.setTimeout(function(){location.href="/mypage"},3000);
+				window.setTimeout(function () { location.href = "/mypage" }, 3000);
 			} else {
-				modal.alert("알림", "비밀번호 수정에 실패했습니다");
+				modal.alert("알림", "현재 비밀번호를 확인하세요");
 			}
 		}
 	})
@@ -275,8 +254,6 @@ function doMod() {
 
 
 }
-
-
 
 
 
