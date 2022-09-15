@@ -290,8 +290,9 @@ public class SystemService extends Svc {
         return result;
     }
 
-    public void modifyPassword(String old, String neww, String userNo, String compId){
-        userMapper.modifyMyPw(compId, userNo, old, neww);
+    public int modifyPassword(String old, String neww, String userNo, String compId){
+       return userMapper.modifyMyPw(compId, userNo, encSHA512(old), encSHA512(neww));
+        
     }
 
     public void modifyMyInfo(String compId, String userNo, String email, String address, String homePhone, String cellPhone, Integer zipCode){

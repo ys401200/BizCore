@@ -92,7 +92,7 @@ function drawMyPage(data) {
 		"<button type='button' onclick='modifyPwBtn()'>비밀번호 수정</button></div>";
 
 
-	let rightHtml = "<div><img id='preview'src='../../images/icons/png.png' width=80 heigh=100></div><div><input name='attached[]' type='file'class='modPhoto' onchange ='readURL(this)'/></div>";
+	let rightHtml = "<div><img id='preview'src='/api/my/image' width=80 heigh=100></div><div><input name='attached[]' type='file'class='modPhoto' onchange ='readURL(this)'/></div>";
 
 	target.html(html);
 	$(".forPhoto").html(rightHtml);
@@ -183,10 +183,9 @@ function modifypw() {
 		success: (result) => {
 			if (result.result === "ok") {
 				modal.alert("알림", "비밀번호가 변경되었습니다");
-				showCheckPwForm();
+				window.setTimeout(function(){location.href="/mypage"},3000);
 			} else {
 				modal.alert("알림", "비밀번호 수정에 실패했습니다");
-
 			}
 		}
 	})
@@ -315,7 +314,7 @@ function readURL(input) {
 			binary = "";
 			for (x = 0; x < bytes.byteLength; x++) binary += String.fromCharCode(bytes[x]);
 			let fileData = cipher.encAes(btoa(binary));
-			let fullData = (fileData);
+			let fullData = fileData;
 
 			let url = "/api/my/image"
 			url = url;
