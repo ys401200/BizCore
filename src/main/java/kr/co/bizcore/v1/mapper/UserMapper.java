@@ -37,8 +37,8 @@ public interface UserMapper {
     public User getMy(@Param("no") String userNo, @Param("pw") String pw, @Param("compId") String compId);
 
     // 마이페이지 / 내 정보 수정
-    @Select("UPDATE bizcore.users SET email=#{e.email}, address=#{e.address}, homePhone=#{e.homePhone}, cellPhone=#{e.cellPhone}, modified = now() WHERE compId = #{compId} AND no=#{e.no}")
-    public void modifyMyInfo(@Param("e") User user, @Param("compId") String compId);
+    @Select("UPDATE bizcore.users SET email=#{email}, address=#{address}, homePhone=#{homePhone}, cellPhone=#{cellPhone}, zipCode=#{zipCode}, modified = now() WHERE compId = #{compId} AND no=#{no}")
+    public void modifyMyInfo(@Param("compId") String compId, @Param("no") String userNo, @Param("email") String email, @Param("address") String address, @Param("homePhone") String homePhone, @Param("cellPhone") String cellPhone, @Param("zipCode") Integer zipCode);
 
     // 마이페이지 / 비번 수정
     @Update("UPDATE bizcore.users SET pw = #{new} WHERE no = #{no} AND pw = #{old} AND compid = #{compId}")

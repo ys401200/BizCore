@@ -224,10 +224,68 @@ public class SystemService extends Svc {
 
     public String getMyInfo(String userNo, String pw, String compId){
         String result = null;
-        User my = null;
+        String sql1 = "SELECT pw, PASSWORD(?) FROM bizcore.users WHERE compId=? AND no=? AND deleted IS NULL";
+        String sql2 = "SELECT userId, userName, rank, UNIX_TIMESTAMP(birthDay)*1000 AS birthDay, gender, email, address, zipCode, homePhone, cellPhone, UNIX_TIMESTAMP(created)*1000 AS created, UNIX_TIMESTAMP(modified)*1000 AS modified FROM bizcore.users WHERE no = ? AND compId = ? AND deleted IS NULL";
+        String pw1 = null, pw2 = null;
+        String userId = null, userName = null, email = null, address = null, homePhone = null, cellPhone = null;
+        Integer zipCode = -1, rank = null, gender = null;
+        Long birthDay = null, created = null, modified = null;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
 
-        my = userMapper.getMy(userNo, pw, compId);
-        if(my != null)  result = my.toJson();
+        // DB 컨버팅으로 인한 과도기 코드 작성 // 2022.9.14
+        //my = userMapper.getMy(userNo, pw, compId);
+        try{
+            conn = sqlSession.getConnection();
+            pstmt = conn.prepareStatement(sql1);
+            pstmt.setString(1, pw);
+            pstmt.setString(2, compId);
+            pstmt.setString(3, userNo);
+            rs = pstmt.executeQuery();
+
+            if(!rs.next())  return null;
+            pw1 = rs.getString(1);
+            pw2 = rs.getString(2);
+            rs.close();
+            pstmt.close();
+
+            if(!pw1.equals(pw2) && !encSHA512(pw).equals(pw1))  return null;
+            
+            pstmt = conn.prepareStatement(sql2);
+            pstmt.setString(1, userNo);
+            pstmt.setString(2, compId);
+            rs = pstmt.executeQuery();
+
+            if(!rs.next())  return null;
+            userId = rs.getString("userId");
+            userName = rs.getString("userName");
+            rank = rs.getInt("rank");
+            birthDay = rs.getLong("birthDay");
+            gender = rs.getInt("gender");
+            email = rs.getString("email");
+            address = rs.getString("address");
+            zipCode = rs.getInt("zipCode");
+            homePhone = rs.getString("homePhone");
+            cellPhone = rs.getString("cellPhone");
+            created = rs.getLong("created");
+            modified = rs.getLong("modified");
+
+            result = "{";
+            result += ("\"userId\":\"" + userId + "\",");
+            result += ("\"userName\":\"" + userName + "\",");
+            result += ("\"rank\":" + rank + ",");
+            result += ("\"birthDay\":" + birthDay + ",");
+            result += ("\"gender\":" + gender + ",");
+            result += ("\"email\":\"" + email + "\",");
+            result += ("\"address\":\"" + address + "\",");
+            result += ("\"zipCode\":" + zipCode + ",");
+            result += ("\"homePhone\":\"" + homePhone + "\",");
+            result += ("\"cellPhone\":\"" + cellPhone + "\",");
+            result += ("\"created\":" + created + ",");
+            result += ("\"modified\":" + modified);
+            result += "}";
+        }catch(SQLException e){e.printStackTrace();}
 
         return result;
     }
@@ -236,8 +294,8 @@ public class SystemService extends Svc {
         userMapper.modifyMyPw(compId, userNo, old, neww);
     }
 
-    public void modifyMyInfo(String compId, User user){
-       userMapper.modifyMyInfo(user, compId);
+    public void modifyMyInfo(String compId, String userNo, String email, String address, String homePhone, String cellPhone, Integer zipCode){
+        userMapper.modifyMyInfo(compId, userNo, email, address, homePhone, cellPhone, zipCode);
     }
 
     // 고객사 담당자 목록을 전달하는 메서드
@@ -541,6 +599,7 @@ public class SystemService extends Svc {
         }catch(SQLException e){e.printStackTrace();}
 
     } // End of saveAttachedData()
+
 
 
 

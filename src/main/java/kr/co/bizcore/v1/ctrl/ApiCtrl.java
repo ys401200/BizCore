@@ -1,11 +1,16 @@
 package kr.co.bizcore.v1.ctrl;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Base64;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -52,9 +57,9 @@ public class ApiCtrl extends Ctrl {
         return result;
     } // End of dept
 
-    @RequestMapping(value = "/my/*", method = RequestMethod.GET)
-    public String myGet(HttpServletRequest request) {
-        String result = null, aesKey = null, aesIv = null, compId = null, userNo, uri = null, pw = null;
+    @RequestMapping(value = "/my/{pw}", method = RequestMethod.GET)
+    public String myGet(HttpServletRequest request, @PathVariable String pw) {
+        String result = null, aesKey = null, aesIv = null, compId = null, userNo, uri = null;
         HttpSession session = null;
 
         session = request.getSession();
@@ -72,8 +77,7 @@ public class ApiCtrl extends Ctrl {
         }else if(aesIv == null || aesKey == null){
             result = "{\"result\":\"failure\",\"msg\":\"Not found AES key.\"}";
         }else{
-            pw = uri.substring(8);
-            pw = userService.decAes(pw, aesKey, aesIv);
+            pw = decAes(pw, aesKey, aesIv);
             result = systemService.getMyInfo(userNo, pw, compId);
             if(result == null){
                 result = "{\"result\":\"failure\",\"msg\":\"Invalid password.\"}";
@@ -89,9 +93,10 @@ public class ApiCtrl extends Ctrl {
     // 개인정보 수정
     @RequestMapping(value = "/my", method = RequestMethod.POST)
     public String myPost(HttpServletRequest request, @RequestBody String requestBody) {
-        String result = null, aesKey = null, aesIv = null, compId = null, userNo, phone = null, email, str = null;
+        String result = null, aesKey = null, aesIv = null, compId = null, userNo = null, data = null;
+        String email = null, address = null, homePhone = null, cellPhone = null;
+        Integer zipCode = -1;
         JSONObject json = null;
-        User user = null;
         HttpSession session = null;
 
         session = request.getSession();
@@ -106,20 +111,70 @@ public class ApiCtrl extends Ctrl {
         }else if(aesIv == null || aesKey == null){
             result = "{\"result\":\"failure\",\"msg\":\"Not found AES key.\"}";
         }else{
-            str = systemService.decAes(requestBody, aesKey, aesIv);
-            json = new JSONObject(str);
-            user = new User();
-            user.setNo(strToInt(userNo));
-            user.setEmail(json.getString("email"));
-            user.setAddress(json.getString("address"));
-            user.setHomePhone(json.getString("homePhone"));
-            user.setCellPhone(json.getString("cellPhone"));
-            systemService.modifyMyInfo(compId, user);
+            data = decAes(requestBody, aesKey, aesIv);
+            json = new JSONObject(data);
+            email = json.getString("email");
+            address = json.getString("address");
+            homePhone = json.getString("homePhone");
+            cellPhone = json.getString("cellPhone");
+            zipCode = json.getInt("zipCode");
+            systemService.modifyMyInfo(compId, userNo, email, address, homePhone, cellPhone, zipCode);
             result = "{\"result\":\"ok\"}";
         }
 
         return result;
     } // End of myPost()
+
+    // 개인정보 수정 중 사진 업로드시 임시저장
+    @RequestMapping(value = "/my/image", method = RequestMethod.POST)
+    public String myImagePost(HttpServletRequest request, @RequestBody String requestBody) {
+        String result = null, aesKey = null, aesIv = null, compId = null, userNo = null, data = null;
+        byte[] fileData = null;
+        HttpSession session = null;
+
+        session = request.getSession();
+        userNo = (String)session.getAttribute("userNo");
+        compId = (String)session.getAttribute("compId");
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+        }else if(aesIv == null || aesKey == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Not found AES key.\"}";
+        }else{
+            data = decAes(requestBody, aesKey, aesIv);
+            fileData = Base64.getDecoder().decode(data);
+            if(attachedService.saveMyImageToTemp(compId, userNo, fileData)) result = "{\"result\":\"ok\"}";
+            else    result = "{\"result\":\"failure\",\"msg\":\"An error occurred.\"}";
+        }
+
+        return result;
+    } // End of myImagePost()
+
+    @RequestMapping(value = "/my/image", method = RequestMethod.GET)
+    public void myImageGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String compId = null, userNo = null;
+        HttpSession session = null;
+        byte[] result = null;
+        OutputStream os = null;
+
+        session = request.getSession();
+        userNo = (String)session.getAttribute("userNo");
+        compId = (String)session.getAttribute("compId");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
+
+        if(compId == null){
+            response.setStatus(404);
+        }else{
+            result = attachedService.getUserImage(compId, userNo);
+            response.setContentType("image/png");
+            os = response.getOutputStream();
+            os.write(result);
+            os.flush();
+        }
+    } // End of myImageGet()
 
     // 비번 변경
     @RequestMapping(value = "/my", method = RequestMethod.PUT)

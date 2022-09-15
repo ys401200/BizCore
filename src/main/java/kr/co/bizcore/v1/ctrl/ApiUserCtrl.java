@@ -12,11 +12,15 @@ import javax.servlet.http.HttpSession;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
+
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
 import kr.co.bizcore.v1.domain.SimpleUser;
@@ -162,6 +166,28 @@ public class ApiUserCtrl extends Ctrl{
 
         return result;
     }
+
+    @RequestMapping(value = "/image/{no:\\d+}", method = RequestMethod.GET)
+    public void myImageGet(HttpServletRequest request, @PathVariable int no, HttpServletResponse response) throws IOException {
+        String compId = null;
+        HttpSession session = null;
+        byte[] result = null;
+        OutputStream os = null;
+
+        session = request.getSession();
+        compId = (String)session.getAttribute("compId");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
+
+        if(compId == null){
+            response.setStatus(404);
+        }else{
+            result = attachedService.getUserImage(compId, no+"");
+            response.setContentType("image/png");
+            os = response.getOutputStream();
+            os.write(result);
+            os.flush();
+        }
+    } // End of myImageGet()
 
     // Logged out process API
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
