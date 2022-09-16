@@ -166,7 +166,7 @@ public class GwService extends Svc{
                 due += ("\"created\":" + each.get("created") + ",");
                 due += ("\"form\":\"" + each.get("form") + "\",");
                 due += ("\"title\":\"" + each.get("title") + "\",");
-                wait += ("\"appType\":" + each.get("appType") + ",");
+                due += ("\"appType\":" + each.get("appType") + ",");
                 due += ("\"read\":" + t);
                 due += "}";
             }
@@ -194,7 +194,7 @@ public class GwService extends Svc{
                 refer += ("\"created\":" + each.get("created") + ",");
                 refer += ("\"form\":\"" + each.get("form") + "\",");
                 refer += ("\"title\":\"" + each.get("title") + "\",");
-                wait += ("\"appType\":" + each.get("appType") + ",");
+                refer += ("\"appType\":" + each.get("appType") + ",");
                 refer += ("\"read\":" + t);
                 refer += "}";
             }
