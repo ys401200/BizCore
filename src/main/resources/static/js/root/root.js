@@ -76,7 +76,7 @@ function getNoticeList() {
 							"setData": result[i].title,
 						},
 						{
-							"setData": result[i].writer,
+							"setData": storage.user[result[i].writer].userName,
 						},
 						{
 							"setData": setDate,
