@@ -85,7 +85,8 @@ function drawFileBoxList() {
 
 function fileBoxDetailView(e) {// 선택한 그리드의 글 번호 받아오기 
 	let id, url, method, data, type;
-	contentTopBtn("bodyContent");
+	storage.gridContent = $(e);
+	storage.attachedFlag = false;
 
 	id = $(e).data("id");
 	url = "/api/board/filebox/" + id;
@@ -111,59 +112,67 @@ function fileBoxErrorList(){
 }
 
 function fileBoxSuccessView(result){
-	let html = "", title, content, writer, dataArray, disDate, setDate, detailContainer, downloadApiPath;
+	let html = "", fileHtml = "", title, content, writer, dataArray, disDate, setDate, downloadApiPath, notIdArray;
 
-	detailContainer = $(document).find(".detailContainer");
-	detailContainer.hide();
-
-	title = (result.title === null || result.title === "" || result.title === undefined) ? "제목 없음" : result.title;
-	content = (result.content === null || result.content === "" || result.content === undefined) ? "내용 없음" : result.content;
-	writer = (result.writer == 0 || result.writer === null || result.writer === undefined) ? "데이터 없음" : storage.user[result.writer].userName;
+	storage.fileBoxNo = result.no;
+	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
+	content = (result.content === null || result.content === "" || result.content === undefined) ? "" : result.content;
+	writer = (result.writer == 0 || result.writer === null || result.writer === undefined) ? "" : storage.user[result.writer].userName;
 	disDate = dateDis(result.created, result.modified);
 	setDate = dateFnc(disDate);
 
 	dataArray = [
 		{
-			"title": "번호",
-			"value": result.no,
-		},
-		{
-			"title": "제목",
-			"value": title,
-		},
-		{
-			"title": "내용",
-			"value": content,
-			"type": "textarea",
-		},
-		{
 			"title": "작성자",
+			"elementId": "writer",
+			"dataKeyup": "user",
 			"value": writer,
 		},
 		{
 			"title": "등록일",
+			"element": "created",
 			"value": setDate,
+			"type": "date",
+		},
+		{
+			"title": "제목",
+			"elementId": "title",
+			"value": title,
+			"col": 3,
+		},
+		{
+			"title": "내용",
+			"elementId": "content",
+			"value": content,
+			"type": "textarea",
+			"col": 3,
 		},
 	];
 
-	html += detailViewForm(dataArray);
+	html += detailBoardForm(dataArray);
 	
 	if(result.attached !== undefined){
 		if(result.attached.length > 0){
-			html += "<div><span>첨부파일</span></div>";
-			downloadApiPath = "/api/board/filebox/" + result.no + "/";
+			fileHtml = "<div><span>첨부파일</span></div>";
+			downloadApiPath = "/api/board/filebox/" + storage.fileBoxNo + "/";
 		
 			for(let i = 0; i < result.attached.length; i++){
-				html += "<div><div><a href='" + downloadApiPath + encodeURI(result.attached[i].ognName) + "'>" + result.attached[i].ognName + "</a></div><div>";
+				fileHtml += "<div><div><a href='" + downloadApiPath + encodeURI(result.attached[i].ognName) + "'>" + result.attached[i].ognName + "</a></div><div>";
 			}
 		}
 	}
 
-	detailContainer.find("span").text(title);
-	detailContainer.find(".detailContent").html(html);
-	detailContainer.find(".detailBtns").html("");
-	detailContainer.find(".detailBtns").append("<button type='button' onclick='fileBoxUpdateForm(" + JSON.stringify(result) + ");'>수정</button><button type='button' onclick='fileBoxDelete(" + result.no + ");'>삭제</button><button type='button' onclick='detailContainerHide();'>닫기</button>");
-	detailContainer.show();
+	detailBoardContainerHide();
+	storage.gridContent.after(html);
+	notIdArray = ["writer", "created"];
+	$(".detailBtns").html("<button type='button' onclick='fileBoxUpdateForm(" + JSON.stringify(result) + ");'>수정</button><button type='button' onclick='fileBoxDelete(" + result.no + ");'>삭제</button><button type='button' onclick='detailBoardContainerHide();'>닫기</button>");
+	$(".detailContents").append(fileHtml);
+
+	setTimeout(() => {
+		setTiny();
+		tinymce.activeEditor.mode.set('readonly');
+		inputDataList();
+	}, 100)
 }
 
 function fileBoxErrorView(){
@@ -173,6 +182,7 @@ function fileBoxErrorView(){
 function fileBoxInsertForm(){
 	let html, dataArray;
 
+	storage.attachedFlag = false;
 	fileDataArray = [];
 
 	dataArray = [
@@ -223,9 +233,9 @@ function fileBoxInsertForm(){
 function fileBoxUpdateForm(result){
 	let title, content, writer, dataArray, html = "";
 
-	title = (result.title === null || result.title === "") ? "제목 없음" : result.title;
-	content = (result.content === null || result.content === "") ? "내용 없음" : result.content;
-	writer = (result.writer == 0 || result.writer === null) ? "데이터 없음" : storage.user[result.writer].userName;
+	title = (result.title === null || result.title === "") ? "" : result.title;
+	content = (result.content === null || result.content === "") ? "" : result.content;
+	writer = (result.writer == 0 || result.writer === null) ? "" : storage.user[result.writer].userName;
 
 	dataArray = [
 		{
@@ -312,7 +322,7 @@ function fileBoxErrorInsert(){
 	alert("등록에러");
 }
 
-function fileBoxUpdate(no){
+function fileBoxUpdate(){
 	let title, content, writer;
 
 	title = $(document).find("#title").val();
@@ -320,7 +330,7 @@ function fileBoxUpdate(no){
 	writer = $(document).find("#writer");
 	writer = dataListFormat(writer.attr("id"), writer.val());
 
-	url = "/api/board/filebox/" + no;
+	url = "/api/board/filebox/" + storage.fileBoxNo;
 	method = "put";
 	data = {
 		"title": title,

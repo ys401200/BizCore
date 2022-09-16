@@ -4,10 +4,11 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	margin-left: 2%;
+	/* margin-left: 2%; */
 	margin-bottom: 1%;
-	max-width: 1782px;
-	height: 100px;
+	/* max-width: 1782px; */
+	padding:2% 0;
+	height: 30px;
 	background: #FFFFFF;
 	overflow: auto;
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
@@ -62,9 +63,9 @@
 }
 
 .fileBoxContainer {
-	/* margin-top: 1%; */
-	/* margin-left: 2%;
-	max-width: 1782px; */
+	margin-top: 1%;
+	/* margin-left: 2%; */
+	/* max-width: 1782px; */
 	background: #FFFFFF;
 	overflow: auto;
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
@@ -107,8 +108,6 @@
 	font-size: 1.4rem;
 	color: #332E85;
 	font-weight: 600;
-	
-
 }
 
 .fileBoxContent .headerDiv .deleteButton {
@@ -121,136 +120,12 @@
 	margin-right :1.5rem;
 }
 
-.fileBoxContainer>button{
-	margin:1% 0.5% 20px 0;
-	box-shadow:0 1px 2px #bdbfc9;
+.fileBoxContainer > button{
+	margin:0.4% 0.5% 0 0;
+	box-shadow:0px 1px 2px #bdbfc9;
+	padding:0.3% 0.7%;
 	background-color:#182f81;
-	padding:0 0.7%;
-	height:30px;
-	border-radius:5px;
+	color:#fff;
 	float:right;
-	color:#ebefff;
+	border-radius: 5px;
 }
-
-.fileBoxContainer>button:hover{
-	color:#182f81;
-	background-color:#ebefff;
-	box-shadow:0 2px 2px #bdbfc9;
-}
-
-/* @charset "UTF-8";
-
-.fileboxContainer {
-	position: relative;
-	left: 2%;
-	width: 96%;
-	background: #FFFFFF;
-	overflow: auto;
-	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
-}
-
-.fileboxContainer hr {
-	float: left;
-	border-top: 0;
-	border-left: thick solid #E45050;
-	border-right: 0;
-	border-bottom: 0;
-	height: 44px;
-	width: 4px;
-	margin: 0;
-}
-
-.fileboxContainer span {
-	font-weight: 500;
-	font-size: 16px;
-	margin-left: 18px;
-	line-height: 3;
-	color: #332E85;
-}
-
-div {
-	margin-bottom : 1.5%;
-}
-
-.fileboxList {
-	display: grid;
-	margin-left: 2%;
-	margin-right: 2%;
-	font-weight: 500;
-	font-size: 16px;
-	color: #332E85;
-	
-}
-
-.fileboxList .labelClass {
-	text-align : center;
-	background-color : #EDEDF4;
-	width :95%;
-	
-}
-
-.buttonDiv {
-	text-align : right;
-}
-
-.buttonDiv button {
-	margin-right: 0.5rem;
-	height : 2rem;
-	width : 4rem;
-	border : none;
-	background-color: #332E85;
-	border-radius: 10px;
-	color: #ffffff;
-	cursor: pointer;
-}
-
-
-
-
-
-.buttonDiv button:hover{
-	color: #ffffff;
-	border-color: #302D81;
-	cursor: pointer;
-
-}
-
-
-
-.fileDelete {
-	width: 1.5rem;
-	height : 1.5rem;
-	border : none;
-	border-radius: 10px;
-	color:  #332E85;
-	background-color:#EDEDF4;
-	text-align : left;
-	
-}
-
-.attachedFileName  div {
-	width : 90%;
-	float : right;
-}
-
-
-.fileClass {
-	display : none;
-}
-
-#fileClassLabel {
-	color: #EDEDF4; 
-	background-color:#332E85;
-	text-align : center;
-	border-radius: 10px;
-}
-
-
-.imgFileDiv {
-	vertical-align: middle;
-}
-
-
-.eachFileDiv {
-	margin : 0;
-} */

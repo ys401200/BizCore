@@ -1506,7 +1506,7 @@ function fileChange(){
 			let fileData = cipher.encAes(btoa(binary));
 			let fullData = (fileName + "\r\n" + fileData);
 
-			let url = (flag === undefined) ? "/api/board/filebox/attached" : "/api/attached/" + storage.attachedType + "/" + storage.attachedNo;
+			let url = (flag == false) ? "/api/board/filebox/attached" : "/api/attached/" + storage.attachedType + "/" + storage.attachedNo;
 			
 			url = url;
 			method = "post";

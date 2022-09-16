@@ -133,15 +133,15 @@ function noticeSuccessView(result){
 	storage.detailNoticeNo = result.no;
 	let html = "", title, content, writer, dataArray, disDate, setDate, notIdArray;
 
-	title = (result.title === null || result.title === "" || result.title === undefined) ? "제목 없음" : result.title;
-	content = (result.content === null || result.content === "" || result.content === undefined) ? "내용 없음" : result.content;
-	writer = (result.writer == 0 || result.writer === null || result.writer === undefined) ? "데이터 없음" : storage.user[result.writer].userName;
+	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
+	content = (result.content === null || result.content === "" || result.content === undefined) ? "" : result.content;
+	writer = (result.writer == 0 || result.writer === null || result.writer === undefined) ? "" : storage.user[result.writer].userName;
 	disDate = dateDis(result.created, result.modified);
 	setDate = dateFnc(disDate);
 
 	dataArray = [
 		{
-			"title": "담당자",
+			"title": "작성자",
 			"elementId": "writer",
 			"dataKeyup": "user",
 			"value": writer,
@@ -224,46 +224,6 @@ function noticeInsertForm(){
 		$(document).find("#writer").val(storage.user[my].userName);
 	}, 100);
 }
-
-// function noticeUpdateForm(result){
-// 	let html, title, content, writer, detail, dataArray;
-
-// 	title = (result.title === null || result.title === "") ? "제목 없음" : result.title;
-// 	content = (result.content === null || result.content === "") ? "내용 없음" : result.content;
-// 	writer = (result.writer == 0 || result.writer === null) ? "데이터 없음" : storage.user[result.writer].userName;
-
-// 	dataArray = [
-// 		{
-// 			"title": "담당자",
-// 			"elementId": "writer",
-// 			"value": writer,
-// 		},
-// 		{
-// 			"title": "제목",
-// 			"elementId": "title",
-// 			"value": title,
-// 			"disabled": false,
-// 		},
-// 		{
-// 			"title": "내용",
-// 			"elementId": "content",
-// 			"value": content,
-// 			"type": "textarea",
-// 		},
-// 	];
-
-// 	html = detailViewFormModal(dataArray);
-
-// 	modal.show();
-// 	modal.headTitle.text(title);
-// 	modal.content.css("width", "50%");
-// 	modal.body.html(html);
-// 	modal.body.css("max-height", "800px");
-// 	modal.confirm.text("수정완료");
-// 	modal.close.text("취소");
-// 	modal.confirm.attr("onclick", "noticeUpdate(" + result.no + ");");
-// 	modal.close.attr("onclick", "modal.hide();");
-// }
 
 function noticeInsert(){
 	let title, content, writer, data;
