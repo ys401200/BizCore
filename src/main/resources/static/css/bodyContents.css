@@ -13,8 +13,6 @@
 }	
 
 #bodyContents #bodyContent{
-	display: grid;
-	grid-template-columns: 50% 15% 15% 20%;
 	width: calc(100% - 185px);
 	overflow-y: auto;
 	max-height: calc(100% - 94px);

@@ -12,6 +12,16 @@
 	--inContent-width:98%;
 }
 
+#bodyContents #bodyContent{
+	display: grid;
+	grid-template-columns: 50% 15% 15% 20%;
+	width: calc(100% - 185px);
+	overflow-y: auto;
+	max-height: calc(100% - 94px);
+	padding: 0.5% 0.5% 0 0.6%;
+	box-sizing:border-box;
+}
+
 /* 메인 차트 시작 */
 #bodyContent #bodyChart_1{
 	height: 478px;
