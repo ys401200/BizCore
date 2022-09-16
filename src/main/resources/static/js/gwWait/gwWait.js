@@ -14,31 +14,12 @@ function waitDefault() {
 	$(".modal-wrap").hide();
 
 	let url, method, data, type;
-	url = "/api/notice";
+	url = "/api/gw/app";
 	method = "get"
 	data = "";
 	type = "list";
 	crud.defaultAjax(url, method, data, type, waitSuccessList, waitErrorList);
-	let url2 = "/api/gw/form";
-
-	$.ajax({
-		url: url2,
-		type: "get",
-		dataType: "json",
-		success: (result) => {
-			if (result.result == "ok") {
-				let jsondata;
-				jsondata = cipher.decAes(result.data);
-				jsondata = JSON.parse(jsondata);
-				storage.formList = jsondata;
-
-			} else {
-				alert("에러");
-			}
-		},
-	});
-
-
+	 
 
 	$(".searchContainer").show();
 	$(".listPageDiv").show();
@@ -155,7 +136,7 @@ function drawNoticeApproval() {
 
 
 function waitSuccessList(result) {
-	storage.noticeList = result;
+	storage.waitList = result;
 	window.setTimeout(drawNoticeApproval, 200);
 }
 
@@ -265,27 +246,26 @@ function drawCommentLine() {
 
 	let refer = [{
 		"name": "김사원",
-		"status" :"조회",
-		"approved" : "2022-09-16",
-		"comment" : "" 
-	}] 
+		"status": "조회",
+		"approved": "2022-09-16",
+		"comment": ""
+	}]
 
-    
+
 
 	// 임시 데이터 ---------------------------------------------------- 
 
-	let detail1 = "<div class='tapLine'><div>타입</div><div>이름</div><div>상태</div><div>일자</div><div>의견</div></div>";
-	let lineDetailHtml
+	let detail1 = "<div class='tapLine tapLineTitle'><div>타입</div><div>이름</div><div>상태</div><div>일자</div><div>의견</div></div>";
+	let lineDetailHtml = "";
+	for (let i = 0; i < refer.length; i++) {
+		lineDetailHtml = "<div class='tapLine examineLine'><div>참조</div><div>" + refer[i].name + "</div><div>" + refer[i].status + "</div><div>" + refer[i].approved + "</div><div>" + refer[i].comment + "</div></div>";
 
+	}
+	detail1 += lineDetailHtml;
 
-
-	let detail2 = "<div class='tapLine'><div>타입</div><div>이름</div><div>상태</div><div>일자</div><div>의견</div></div>";
+	let detail2 = "<div class='tapLine tapLineTitle'><div>타입</div><div>이름</div><div>상태</div><div>일자</div><div>의견</div></div>";
 	let lineDetailHtml2 = "";
 	let approvalDetailHtml2 = "";
-
-
-   for (let i = 0 ; i < )
-
 
 
 	for (let i = 0; i < examine.length; i++) {
@@ -297,7 +277,16 @@ function drawCommentLine() {
 
 	lineDetailHtml2 += approvalDetailHtml2;
 	detail2 += lineDetailHtml2;
-	target.html(detail2);
+	detail1 += detail2;
+	let html = "<div class='readDiv'><div>열람 </div><div><label for='deptRd'><input type='radio' id='deptRd' name='rd' value='dept'/>작성자 소속 부서</label><label for='noneRd'><input type='radio' id='noneRd' name='rd' value='none'/>열람 설정 없음</label></div></div>"
+	detail1 += html;
+
+	target.html(detail1);
+
+
+
+
+
 
 }
 

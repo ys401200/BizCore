@@ -183,7 +183,7 @@
 
 
 .listPageDiv .detailReport .selectedReportview .selectedFileField {
-   margin: 1em 0 0 0 ;
+   margin: 1em 0 0 0;
    display: grid;
    grid-template-columns: 15% 85%;
 
@@ -262,12 +262,34 @@
    border-left: none;
 }
 
-.tapLine:first-of-type>div,
+.tapLineTitle>div,
 .tapLineB:first-of-type>div {
    background-color: #332E85;
    color: white;
 }
 
+.readDiv {
+   display: grid;
+   grid-template-columns: 10% 90%;
+   margin: 0.5em 1em;
+   background-color: white;
+
+}
+
+.readDiv>div {
+   padding: 0.5em;
+   display: grid;
+   grid-template-columns: 50% 50%;
+}
+
+.readDiv>div:first-of-type {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   background-color: #332E85;
+   color: white;
+
+}
 
 /*--------------------------------결재하기, 문서수정 모달 관련 */
 

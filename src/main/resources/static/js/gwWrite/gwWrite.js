@@ -567,3 +567,31 @@ function deleteFile(obj) {
   arr.splice(index, 1);
   obj.parentElement.remove();
 }
+
+
+
+
+// 입력된 총 합계 구하는 함수 
+function getTotalCount() {
+
+  let totalCount = Number(0);
+  for (let i = 0; i < $(".doc_Form_Consult_total").length; i++) {
+    totalCount += (Number($(".doc_Form_Consult_total")[i].dataset.detail.replace(",", "")));
+
+  }
+  return totalCount;
+}
+
+
+// 기안 시 금액이 입력되지 않은 공백 칸 제거 
+function deleteGap() {
+  for (let i = ($(".doc_Form_Consult_total").length - 1); i >= 0; i--) {
+
+    if ($(".doc_Form_Consult_total")[i].dataset.detail == "" || $(".doc_Form_Consult_total")[i].dataset.detail == undefined || $(".doc_Form_Consult_total")[i].dataset.detail == "null") {
+      $(".doc_Form_Consult_total")[i].parentElement.parentElement.remove();
+    }
+  }
+
+}
+
+

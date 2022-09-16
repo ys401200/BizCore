@@ -11,7 +11,7 @@ $(document).ready(() => {
 });
 
 
-
+// 참조 문서는 상세 조회가 가능하고 열람은 결재가 끝난 후에 참조/열람 문서함에서 열람 가능함 
 function referDefault() {
     $(".modal-wrap").hide();
     $(".batchBtn").hide();
@@ -87,13 +87,13 @@ function getDetailView(no) {
 
 
     let selectedFileView = "<div class='selectedFileField'><label>첨부파일</label><div><input type='file' onchange='setSelectedFiles()'/><div class='selectedFileDiv'></div></div></div>"
-  
+
 
 
     $(".seletedForm").html(testForm);
     $(".selectedFile").html(selectedFileView);
     $(":file").css("display", "none");// 첨부파일 버튼 숨기기 
-     
+
 
     let tabHtml = "<div class='reportInfoTab'>" +
         "<label id='lineInfo' onclick='changeTab(this)'>결재정보</label><label id='changeInfo' onclick='changeTab(this)'>변경이력</label></div>" +
@@ -103,6 +103,9 @@ function getDetailView(no) {
     drawCommentLine();
 
 }
+
+
+for(let i = 0 ; i < length; i++) {total + new  Number($(".doc_Form_Consult_total")[i].dataset.detail) }
 
 // 탭 누를때마다의 이벤트 주기 
 function changeTab(obj) {
