@@ -440,7 +440,7 @@ function reportInsert() {
   appDoc = appDoc.replaceAll("\n", "").replaceAll("\r", "").replaceAll("\t", "").replaceAll("\"", "\\\"");
   let my = storage.my;
   dept = storage.user[my].deptId[0];
-
+// 결재가 1번 
 
   for (let i = 0; i < $("." + formId + "_examine").length; i++) {
     appLine.push([0, $("." + formId + "_examine")[i].dataset.detail]);
