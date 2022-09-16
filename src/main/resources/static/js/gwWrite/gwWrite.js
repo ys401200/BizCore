@@ -405,13 +405,13 @@ function getYmdSlash() {
 // 자주쓰는 결재선 선택시 설정 
 function setSavedLine(obj) {
   let val = obj.value;
-  if (val == 'middle') {
+  if (val == 'middle') { // 구민주 검토 이승우 결재
     $("#examine").html("<div class='lineDataContainer' id='lineContainer_4'><label id='linedata4'>구민주</label><button value='4' onclick='upClick(this)'>▲</button><button  value='4'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>");
     $("#approval").html("<div class='lineDataContainer' id='lineContainer_0'><label id='linedata0'>이승우</label><button value='0' onclick='upClick(this)'>▲</button><button  value='0'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>");
     $("#agree").html("");
     $("#conduct").html("");
     $("#refer").html("");
-  } else if (val == 'basic') {
+  } else if (val == 'basic') { // 이승우 결재 
     $("#approval").html("<div class='lineDataContainer' id='lineContainer_0'><label id='linedata0'>이승우</label><button value='0' onclick='upClick(this)'>▲</button><button  value='0'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>");
     $("#agree").html("");
     $("#examine").html("");
@@ -583,7 +583,7 @@ function getTotalCount() {
 }
 
 
-// 기안 시 금액이 입력되지 않은 공백 칸 제거 
+// 기안 시 금액이 입력되지 않은 공백 칸 제거해서 폼 올리기 
 function deleteGap() {
   for (let i = ($(".doc_Form_Consult_total").length - 1); i >= 0; i--) {
 

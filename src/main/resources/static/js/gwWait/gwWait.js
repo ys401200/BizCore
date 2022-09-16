@@ -14,7 +14,7 @@ function waitDefault() {
 	$(".modal-wrap").hide();
 
 	let url, method, data, type;
-	url = "/api/gw/app";
+	url = "/api/gw/app/wait";
 	method = "get"
 	data = "";
 	type = "list";
@@ -30,11 +30,11 @@ function waitDefault() {
 function drawNoticeApproval() {
 	let container, result, jsonData, job, header = [], data = [], ids = [], disDate, setDate, str, fnc;
 
-	if (storage.noticeList === undefined) {
-		msg.set("등록된 공지사항이 없습니다");
+	if (storage.waitList === undefined) {
+		msg.set("등록된 문서가 없습니다");
 	}
 	else {
-		jsonData = storage.noticeList;
+		jsonData = storage.waitList;
 	}
 
 	result = paging(jsonData.length, storage.currentPage, 8);
