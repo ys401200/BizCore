@@ -482,7 +482,9 @@ function reportInsert() {
   data = cipher.encAes(data);
 
 
-  if (detailType == undefined) {
+  if ($(".createLineBtn").css("display") == "none") {
+    alert("결재 문서 양식을 선택하세요");
+  } else if (detailType == undefined) {
     alert("결재문서 상세 타입을 선택하세요")
   } else if (title == '') {
     alert("제목을 입력하세요");

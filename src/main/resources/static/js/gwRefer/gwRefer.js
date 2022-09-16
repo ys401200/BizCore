@@ -78,19 +78,22 @@ function getDetailView(no) {
 
     let testForm = storage.formList[0].form;
     let detailHtml = "<div class='mainBtnDiv'></div>" +
-        "<div class='detailReport'><div class='selectedReportview'></div><div class='comment'></div></div>"
+        "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div>"
 
 
     $(".listPageDiv").html(detailHtml);
 
 
 
-    let selectedFileView = "<div class='selectedFileField'><label>첨부파일<input type='file'/></label><div></div></div>"
-    testForm += selectedFileView;
+
+    let selectedFileView = "<div class='selectedFileField'><label>첨부파일</label><div><input type='file' onchange='setSelectedFiles()'/><div class='selectedFileDiv'></div></div></div>"
+  
 
 
-    $(".selectedReportview").html(testForm);
+    $(".seletedForm").html(testForm);
+    $(".selectedFile").html(selectedFileView);
     $(":file").css("display", "none");// 첨부파일 버튼 숨기기 
+     
 
     let tabHtml = "<div class='reportInfoTab'>" +
         "<label id='lineInfo' onclick='changeTab(this)'>결재정보</label><label id='changeInfo' onclick='changeTab(this)'>변경이력</label></div>" +

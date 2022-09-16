@@ -10,7 +10,6 @@ button {
 
 .container {
 	position: relative;
-	/* left: 2%; */
 	width: 100%;
 	background: #FFFFFF;
 	overflow: auto;
@@ -21,13 +20,8 @@ button {
 .container hr,
 .halfContainer hr {
 	float: left;
-	/* border-top: 0;
-	border-left: thick solid #E45050;
-	border-right: 0;
-	border-bottom: 0; */
 	border: 2px solid #406c92;
 	height: 32px;
-	/* width: 4px; */
 	margin: 0;
 }
 
@@ -58,9 +52,12 @@ button {
 	width: 15em;
 	flex: 0 0 auto;
 	border: 2px solid #EDEDF4;
-	border-radius: 3px;
 	margin: 1em;
 	cursor: pointer;
+	background-color: #eaeff3;
+	border-radius: 10px;
+	margin: 1em;
+	box-shadow: 0px 3px 6px rgba(177, 190, 201, 0.65);
 }
 
 .waitDiv .waitCard>div:first-of-type {
@@ -74,15 +71,8 @@ button {
 
 .waitDiv .waitCard .subWaitCard>div>div:first-of-type {
 	color: #406c92;
-	grid-template-columns: 20% 20% 20% 20% 20%;
-	/* padding:0 10px 5px 10px; */
-}
+	grid-template-columns: repeat(5,1fr);
 
-.waitDiv .waitCard {
-	background-color: #eaeff3;
-	border-radius: 10px;
-	margin: 1em;
-	box-shadow: 0px 3px 6px rgba(177, 190, 201, 0.65);
 }
 
 .subWaitCard {
