@@ -26,7 +26,7 @@ public interface GwMapper {
             "WHERE a.compId=b.compId AND a.docno = b.docno AND a.employee=#{userNo} AND a.approved IS NULL AND a.rejected IS NULL  AND a.apptype IN (0,1,4)")
     public List<HashMap<String, String>> getWaitAndDueDocNo(@Param("compId") String compId, @Param("userNo") String userNo);
 
-    @Select("SELECT CAST(a.no AS CHAR) AS no, a.docno AS docno, CAST(a.writer AS CHAR) AS writer, CAST(UNIX_TIMESTAMP(a.created)*1000 AS CHAR) AS created, c.title AS form, a.title AS title, CAST(UNIX_TIMESTAMP(b.`read`)*1000 AS CHAR) AS `read`, CAST(b.apptype AS CHAR) AS appType FROM bizcore.doc_app a, bizcore.doc_app_detail b, bizcore.doc_form c WHERE c.id=a.formid AND a.compid=#{compId} AND b.employee=#{userNo} AND a.docno=b.docno AND a.status=1 AND a.docno IN (#{sqlIn})")
+    @Select("SELECT CAST(a.no AS CHAR) AS no, a.docno AS docno, CAST(a.writer AS CHAR) AS writer, CAST(UNIX_TIMESTAMP(a.created)*1000 AS CHAR) AS created, c.title AS form, a.title AS title, CAST(UNIX_TIMESTAMP(b.`read`)*1000 AS CHAR) AS `read`, CAST(b.apptype AS CHAR) AS appType FROM bizcore.doc_app a, bizcore.doc_app_detail b, bizcore.doc_form c WHERE c.id=a.formid AND a.compid=#{compId} AND b.employee=#{userNo} AND a.docno=b.docno AND b.ordered > 0 AND a.status=1 AND a.docno IN (#{sqlIn})")
     public List<HashMap<String, String>> getWaitAndDueList(@Param("compId") String compId, @Param("userNo") String userNo, @Param("sqlIn") String sqlIn);
 
 }
