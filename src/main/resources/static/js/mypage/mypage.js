@@ -132,10 +132,10 @@ function modifypw() {
 		return;
 	}
 
-	if (!pwCheck.test(newpw)) {
-		modal.alert("알림", "영문자와 숫자를 포함한 최소 8자리를 입력하세요");
-		return;
-	}
+	// if (!pwCheck.test(newpw)) {
+	// 	modal.alert("알림", "영문자와 숫자를 포함한 최소 8자리를 입력하세요");
+	// 	return;
+	// }
 
 	if (newpw != newpwcheck) {
 		modal.alert("알림", "비밀번호 확인이 틀렸습니다");
@@ -162,7 +162,7 @@ function modifypw() {
 		success: (result) => {
 			if (result.result === "ok") {
 				modal.alert("알림", "비밀번호가 변경되었습니다");
-				window.setTimeout(function () { location.href = "/mypage" }, 3000);
+				window.setTimeout(function () { location.href = "/mypage" }, 2000);
 			} else {
 				modal.alert("알림", "현재 비밀번호를 확인하세요");
 			}

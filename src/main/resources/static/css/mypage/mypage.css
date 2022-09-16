@@ -28,7 +28,7 @@
 
 .mypagediv {
 	text-align: center;
-	margin: 4rem;
+	margin: 2rem;
 }
 
 
@@ -37,24 +37,27 @@
 	margin-right: 2rem;
 }
 
+.mypagediv .mypageFirstDiv {
+	height: 10em;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
 
 .mypagediv .mypageSecondDiv {
 	display: grid;
 	grid-template-columns: 20% 80%;
-
 }
-
 
 .mypagediv .mypageSecondDiv>div:last-child>div {
 	display: grid;
-	grid-template-columns: 30%70%
+	grid-template-columns: 50% 50%
 }
 
 .mypagediv .mypageSecondDiv>div:last-child .threeGrid {
 	display: grid;
-	grid-template-columns: 30% 30% 5% 35%;
+	grid-template-columns: 50% 30% 5% 15%;
 }
-
 
 .mypagediv input {
 	width: 25em;
@@ -91,13 +94,8 @@
 
 .mypagediv .third {
 	display: grid;
-	grid-template-columns: 30% 70%;
-
+	grid-template-columns: 50% 50%;
 }
-
-
-
-
 
 
 .gridContainer {

@@ -25,13 +25,17 @@ function getformList() {
   $(".selector:first").next().html("<div>결재선 <button class='createLineBtn' onclick='showModal()'>결재선생성</button></div><div class='modal-wrap'><div class='gwModal'></div></div>");
 
 
-  let lastHtml = "<div>상세 입력</div><div class='insertedDetail'><div class='reportInsertForm'></div><div class='referContainer'><div>참조</div></div><div class='fileDetail'>";
+  let lastHtml = "<div>상세 입력 </div><div class='insertedDetail'><div class='reportInsertForm'></div><div class='referContainer'><div>참조</div></div><div class='fileDetail'>";
 
 
   // lastHtml += "<div>파일첨부</div><div class='filebtnContainer'><input type='file' class='gwFileInput' onchange='drawSelectedFileList(this)' /><div class='insertedFileList'></div></div></div></div>"
   lastHtml += "<div>파일첨부</div><div class='filebtnContainer'><input type='file' id='attached' name='attached[]' onchange='docFileChange()' /><div class='filePreview'></div></div></div></div>"
 
   $(".selector:first").next().next().html(lastHtml);
+
+
+
+
 
 
   let url = "/api/gw/form";
@@ -102,9 +106,6 @@ function selectForm() {
   $(".createLineBtn").show();
   $(".reportInsertForm").html(data[selectedFormNo].form);
   $(".insertedDetail").show();
-
-
-
 
   //작성자 작성일 자동 입력
   let my = storage.my;
@@ -356,7 +357,7 @@ function createLine() {
 
       // 참조 
       else if (i == 4) {
-        referHtml += "<div class='appendName " + formId + "_" + titleId[i] + "' data-detail='" + storage.user[data[id]].userNo + "'>" + storage.user[data[id]].userName + "'</div>";
+        referHtml += "<div class='appendName " + formId + "_" + titleId[i] + "' data-detail='" + storage.user[data[id]].userNo + "'>" + storage.user[data[id]].userNo + storage.user[data[id]].userName + "</div>";
       }
 
       // 검토 합의 결재 
@@ -399,16 +400,6 @@ function getYmdSlash() {
   let d = new Date();
   return (d.getFullYear() % 100) + "/" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "/" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString());
 }
-
-
-
-
-
-
-
-
-
-
 
 
 //for(let i = 0 ; i < 3; i ++) {arr.push($(".doc_Form_Consult_date")[i].dataset.detail)}
@@ -513,10 +504,6 @@ function reportInsert() {
       }
     })
   }
-
-
-
-
 
 }
 

@@ -10,7 +10,6 @@ $(document).ready(() => {
 
 });
 
-
 function waitDefault() {
 	$(".modal-wrap").hide();
 
@@ -186,26 +185,27 @@ function getDetailView(no) {
 	let detailHtml = "<div class='mainBtnDiv'><button type='button' onclick='showAppModal()'>결재하기</button>" +
 		"<button type='button' onclick='showGwModal()'>결재선 수정</button>" +
 		"<button type='button' onclick='toWriteMode();createConfirmBtn(this)'>문서 수정</button></div>" +
-		"<div class='detailReport'><div class='selectedReportview'></div><div class='comment'></div></div>"
+		"<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div>"
 
 
 	$(".listPageDiv").html(detailHtml);
 
 
 
-	let selectedFileView = "<div class='selectedFileField'><label>첨부파일<input type='file'/></label><div></div></div>"
-	testForm += selectedFileView;
+	let selectedFileView = "<div class='selectedFileField'><label>첨부파일</label><div><input type='file' onchange='setSelectedFiles()'/><div class='selectedFileDiv'></div></div></div>"
 
 
-	$(".selectedReportview").html(testForm);
+
+	$(".seletedForm").html(testForm);
+	$(".selectedFile").html(selectedFileView);
 	$(":file").css("display", "none");// 첨부파일 버튼 숨기기 
 	let tabHtml = "<div class='reportInfoTab'>" +
-		"<label id='lineInfo' onclick='changeTab(this)'>결재정보</label><label id='changeInfo' onclick='changeTab(this)'>변경이력</label></div>" +
+		"<label id='lineInfo' onclick='changeTab(this)'>문서정보</label><label id='changeInfo' onclick='changeTab(this)'>변경이력</label></div>" +
 		"<div id='tabDetail'></div><div id='tabDetail2'></div>"
 	$(".comment").html(tabHtml);
 	toReadMode();
 	drawCommentLine();
-}
+} // 문서 정보에서 문서 상세 타입, 열람권한 설정 , 결재선 정보 , 변경이력에서 결재선 파일첨부 등등 수정한 경우 모두 기록되는 식 
 
 // 탭 누를때마다의 이벤트 주기 
 function changeTab(obj) {
@@ -236,7 +236,7 @@ function changeTab(obj) {
 
 
 
-// 결재정보 그리는 함수 
+// 정보 그리는 함수 
 function drawCommentLine() {
 
 	let target = $("#tabDetail");
@@ -381,16 +381,16 @@ function approveBtnEvent() {
 function showGwModal() {
 
 	let setGwModalHtml = "<div class='gwModal'>" +
-		"<div class='modal-title'>결재선 수정</div>" +
+		"<div class='modal-title'>결재선 생성</div>" +
 		"<div class='lineDetail'>" +
 		"<div class='lineTop'>" +
 		"<div class='innerDetail' id='lineLeft'></div>" +
 		"<div class='innerDetail' id='lineCenter'>" +
-		"<button onclick='check(this.value)' value='examine'>검토 ></button>" +
-		"<button onclick='check(this.value)' value='agree'>합의 ></button>" +
-		"<button onclick='check(this.value)' value='approval'>결재 ></button>" +
-		" <button onclick='check(this.value)' value='conduct'>수신 ></button>" +
-		"<button onclick='check(this.value)' value='refer'>참조 ></button></div>" +
+		"<button onclick='check(this.value)' value='examine'>검토 &gt;</button>" +
+		"<button onclick='check(this.value)' value='agree'>합의 &gt;</button>" +
+		"<button onclick='check(this.value)' value='approval'>결재 &gt;</button>" +
+		" <button onclick='check(this.value)' value='conduct'>수신 &gt;</button>" +
+		"<button onclick='check(this.value)' value='refer'>참조 &gt;</button></div>" +
 		"<div class='innerDetail' id='lineRight'>" +
 		"<div><select onchange='setSavedLine(this)'><option value=''>자주 쓰는 결재선</option><option value='basic'>대표</option><option value='middle'>구민주 과장-대표</option><</select></div>" +
 		"<div><div>검토</div>" +
@@ -408,8 +408,8 @@ function showGwModal() {
 		"</div>" +
 		"</div>" +
 		"<div class='close-wrap'>" +
-		" <button id='close' onclick='closeModal(this)'>취소</button>" +
-		" <button id='create' onclick='closeGwModal(this)'>수정</button>" +
+		" <button id='close' onclick='closeGwModal(this)'>취소</button>" +
+		" <button id='modify' onclick='closeGwModal(this)'>생성</button>" +
 		"</div>" +
 		"</div>" +
 		"</div>";
@@ -424,11 +424,22 @@ function showGwModal() {
 	let innerHtml = "";
 	for (let i = 0; i < userData.length; i++) {
 		innerHtml += "<div><input class='testClass' type ='checkbox' id='cb" + i + "' name='userNames' value='" + userData[i] + "'><label for='cb'>" + storage.user[userData[i]].userName + "</label></div>"
-		orgChartTarget.html(innerHtml);
+
 	}
+	orgChartTarget.html(innerHtml);
 	$(".modal-wrap").show();
 
 }
+
+function closeGwModal(obj) {
+	let id = obj.id;
+	if (id == "close") {
+		$(".modal-wrap").hide();
+	} else if (id == 'modify') {
+		$(".modal-wrap").hide();
+	}
+}
+
 
 
 
@@ -535,101 +546,23 @@ function deleteClick(obj) {
 
 
 
-
-
-// 결재선 그리기 
-function createLine() {
-	let formTypeName = $(".formNumHidden").val();
-	let formId = storage.formList[formTypeName].id;
-	let lineTarget = $(".infoline")[0].children[1];
-	lineTarget = $("#" + lineTarget.id);
-	lineTarget.html("");
-	lineTarget.css("display", "block");
-	let testHtml = "<div class='lineGridContainer'>";
-	let testHtml2 = "<div class='lineGridContainer'>";
-	let readHtml = "<div>열람</div>";
-	let referHtml = "<div>참조</div>";
-	let target = $(".typeContainer");
-	let titleArr = ["검토", "합의", "결재", "수신", "열람", "참조"];
-	let titleId = ["examine", "agree", "approval", "conduct", " read", "refer"]
-
-
-	let data = new Array();
-	let x;
-	for (x in storage.user) data.push(x);
-
-
-	for (let i = 0; i < target.length; i++) {
-		if (target[i].children.length != 0 && i < 3) {
-			testHtml += "<div class='lineGrid'><div class='lineTitle'>" + titleArr[i] + "</div>"
-		} else if (target[i].children.length != 0 && i == 3) {
-			testHtml2 += "<div class='lineGrid'><div class='lineTitle'>" + titleArr[i] + "</div>"
-		}
-
-		for (let j = 0; j < target[i].children.length; j++) {
-			let id = target[i].children[j].id;
-			id = id.split('_');
-			id = id[1];
-
-
-			/// class 이름 , css 수정 
-			if (i < 2 && j < target[i].children.length - 1) {
-				testHtml += "<div class='lineSet'><div class='twoBorder'>직급</div><div class='twoBorder " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div><div class='twoBorder " + formId + "_" + titleId[i] + "_status'>서명</div><div class='dateBorder " + formId + "_" + titleId[i] + "_approved'>/</div></div>"
-			} else if (i < 2 && j == target[i].children.length - 1) {
-				testHtml += "<div class='lineSet'><div class='twoBorderLast'>직급</div><div class='twoBorderLast " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div><div class='twoBorderLast " + formId + "_" + titleId[i] + "_status'>서명</div><div class='dateBorderLast  " + formId + "_" + titleId[i] + "_approved'>/</div></div>"
-			} else if (i == 2) {
-				testHtml += "<div class='lineSet'><div class='twoBorder'>직급</div><div class='twoBorder " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div><div class='twoBorder " + formId + "_" + titleId[i] + "_status'>서명</div><div class='dateBorder " + formId + "_" + titleId[i] + "_approved'>/</div></div>"
-			} else if (i == 3) {
-				testHtml2 += "<div class='lineSet'><div class='twoBorder'>직급</div><div class='twoBorder " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div><div class='twoBorder " + formId + "_" + titleId[i] + "_status'>서명</div><div class='dateBorder " + formId + "_" + titleId[i] + "_approved'>/</div></div>"
-			} else if (i == 4) {
-				readHtml += "<div class='appendName " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div>";
-			} else if (i == 5) {
-				referHtml += "<div class='appendName " + formId + "_" + titleId[i] + "'>" + storage.user[data[id]].userName + "</div>";
-			}
-
-		}
-
-		if (target[i].children.length != 0 && i < 3) {
-			testHtml += "</div>";
-		} else if (target[i].children.length != 0 && i == 3) {
-			testHtml2 += "</div>";
-		}
-
-
-	}
-
-	testHtml += "</div>";
-	testHtml2 += "</div>";
-
-
-	testHtml += testHtml2;
-	lineTarget.html(testHtml);
-
-
-	$(".readContainer").html(readHtml);
-	$(".referContainer").html(referHtml);
-
-
-} // End of createLine(); 
-
-
 function setSavedLine(obj) {
 	let val = obj.value;
 	if (val == 'middle') {
-	  $("#examine").html("<div class='lineDataContainer' id='lineContainer_4'><label id='linedata4'>구민주</label><button value='4' onclick='upClick(this)'>▲</button><button  value='4'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>");
-	  $("#approval").html("<div class='lineDataContainer' id='lineContainer_0'><label id='linedata0'>이승우</label><button value='0' onclick='upClick(this)'>▲</button><button  value='0'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>");
-	  $("#agree").html("");
-	  $("#conduct").html("");
-	  $("#refer").html("");
+		$("#examine").html("<div class='lineDataContainer' id='lineContainer_4'><label id='linedata4'>구민주</label><button value='4' onclick='upClick(this)'>▲</button><button  value='4'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>");
+		$("#approval").html("<div class='lineDataContainer' id='lineContainer_0'><label id='linedata0'>이승우</label><button value='0' onclick='upClick(this)'>▲</button><button  value='0'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>");
+		$("#agree").html("");
+		$("#conduct").html("");
+		$("#refer").html("");
 	} else if (val == 'basic') {
-	  $("#approval").html("<div class='lineDataContainer' id='lineContainer_0'><label id='linedata0'>이승우</label><button value='0' onclick='upClick(this)'>▲</button><button  value='0'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>");
-	  $("#agree").html("");
-	  $("#examine").html("");
-	  $("#conduct").html("");
-	  $("#refer").html("");
+		$("#approval").html("<div class='lineDataContainer' id='lineContainer_0'><label id='linedata0'>이승우</label><button value='0' onclick='upClick(this)'>▲</button><button  value='0'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>");
+		$("#agree").html("");
+		$("#examine").html("");
+		$("#conduct").html("")
+		$("#refer").html("");
 	}
-  
-  }
+
+}
 
 
 // 문서 수정 완료 모달 
@@ -654,6 +587,7 @@ function quitModify() {
 	$("button[name='modConfirm']:last-child").remove();
 	$("button[name='modConfirm']:last-child").remove();
 	toReadMode();
+	$(":file").css("display", "none");
 
 }
 
@@ -669,6 +603,7 @@ function reportModify(obj) {
 	$("button[name='modConfirm']:last-child").remove();
 	$("button[name='modConfirm']:last-child").remove();
 	toReadMode();
+	$(":file").css("display", "none");
 }
 
 
@@ -685,6 +620,7 @@ function createConfirmBtn(obj) {
 	$("#tabDetail").hide();
 	$("#tabDetail2").show();
 	drawChangeInfo();
+	$(":file").css("display", "inline");
 
 	let div = document.getElementsByClassName("mainBtnDiv")
 	if (div[0].childElementCount < 4) {

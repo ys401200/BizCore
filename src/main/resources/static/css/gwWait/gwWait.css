@@ -167,8 +167,17 @@
    background-color: rgba(234, 239, 243, 0.4)
 }
 
+.listPageDiv .detailReport .selectedReportview>div:first-child {
+   border: 1px solid black;
+
+}
+
+
+
+
+
 /* 첨부파일 목록 조회  */
-.listPageDiv .detailReport .selectedReportview .selectedFileField {
+/* .listPageDiv .detailReport .selectedReportview .selectedFileField {
    margin: 1em;
    display: grid;
    grid-template-columns: 10% 90%;
@@ -188,19 +197,18 @@
    justify-content: center;
    border-right: none;
    background-color: rgb(208, 206, 206);
-}
+} */
 
 
 
 /*-------------------------------선택 결재문서양식 첨부파일 목록  조회 탭   */
 
-.listPageDiv .detailReport .selectedReportview {
-   border: 1px solid black;
-}
 
 /* 첨부파일 목록 조회  */
+
+
 .listPageDiv .detailReport .selectedReportview .selectedFileField {
-   margin: 1em;
+   margin: 1em 0 0 0 ;
    display: grid;
    grid-template-columns: 15% 85%;
 
@@ -359,11 +367,12 @@
 
 /*-------------------------------- 결재선 수정 모달 css  */
 .gwModal {
-   background-color: #332E85;
+   background-color: #456e95;
    width: 60%;
    border-radius: 0.3em;
    padding: 0.5em 0.5em 0.9em 0.5em;
 }
+
 
 .lineDetail {
    display: block;
@@ -373,7 +382,7 @@
    color: black;
    height: 25rem;
    display: grid;
-   grid-template-columns: 25% 15% 60%;
+   grid-template-columns: 35% 15% 50%;
    overflow: auto;
 }
 
@@ -385,11 +394,22 @@
 
 .lineDetail .innerDetail {
    padding: 1rem;
-   margin: 1rem;
+   margin: 0.5rem;
    background-color: #ffffff;
    overflow: auto;
    border-radius: 3px;
 }
+
+
+.lineDetail .innerDetail>div {
+   padding: 3px 0;
+}
+
+.lineDetail .innerDetail input {
+   margin-right: 6px;
+}
+
+
 
 .lineDetail #lineCenter {
    display: flex;
@@ -484,18 +504,23 @@
    border: none;
    height: 18px;
    background-color: #eaeff3;
-   font-size: 11px;
+   font-size: 8px;
    font-weight: bolder;
    width: 75%;
+   border-radius: 3px;
+   color: #61829e;
 }
 
-
+.typeContainer .lineDataContainer>button {
+   float: left;
+}
 
 /*결재선 모달창 버튼*/
 .gwModal #lineCenter button {
    height: 25px;
    font-weight: bolder;
    box-shadow: 0px 2px 4px #a5b6c1;
+   color: #61829e;
 }
 
 .gwModal #lineCenter button:hover,
@@ -513,8 +538,6 @@
 .gwModal .close-wrap button {
    box-shadow: none;
 }
-
-
 
 
 
