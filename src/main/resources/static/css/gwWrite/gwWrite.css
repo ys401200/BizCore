@@ -278,11 +278,6 @@ input[type="text"] {
 /* End 결재양식 선택  ====================================================   */
 
 
-
-
-
-
-
 /* Start ======================== 결재선관련 ============================= */
 /* .createLineBtn {
   font-weight: bolder;
@@ -540,78 +535,6 @@ input[type="text"] {
   border-right: 1px solid rgb(188, 185, 185);
 }
 
-
-/* 
-.lineGridContainer:first-of-type {
-  padding-bottom: 0.5rem;
-  height: 45%;
-  display: flex;
-  align-items: right;
-  justify-content: right;
-
-}
-
-
-
-.lineGridContainer:last-of-type {
-  padding-top: 0.5rem;
-  height: 45%;
-  display: flex;
-  align-items: right;
-  justify-content: right;
-}
-
-.lineGrid {
-  display: flex;
-  flex-direction: row;
-  margin-right: 0.3em;
-}
-
-.lineGridContainer:first-of-type .lineGrid:last-of-type,
-.lineGridContainer:last-of-type .lineGrid:last-of-type {
-  margin-right: 0;
-}
-
-.lineSet {
-  display: grid;
-  grid-template-rows: 25% 25% 25% 25%;
-  width: 5em;
-
-}
-
-.lineTitle {
-  background-color: rgb(208, 206, 206);
-  text-align: center;
-  border: 1px solid black;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.twoBorder {
-  border-top: 1px solid black;
-  border-right: 1px solid black;
-  text-align: center;
-}
-
-.twoBorderLast {
-  border-top: 1px solid black;
-  border-right: 1px solid black;
-  text-align: center;
-}
-
-.dateBorder {
-  text-align: center;
-  border-top: 1px solid black;
-  border-right: 1px solid black;
-  border-bottom: 1px solid black;
-}
-
-.dateBorderLast {
-  text-align: center;
-  border-top: 1px solid black;
-  border-bottom: 1px solid black;
-} */
 
 
 /* float 설정 초기화  */

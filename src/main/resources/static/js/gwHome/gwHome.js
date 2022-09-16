@@ -5,11 +5,9 @@ $(document).ready(() => {
 		$("#loadingDiv").hide();
 		$("#loadingDiv").loading("toggle");
 	}, 300);
-	drawGwDiv();
+
 	waitDefault();
 });
-
-
 
 let waitList = [
 	{
@@ -62,8 +60,7 @@ let waitList = [
 
 
 
-function drawGwDiv() {
-	let target = $(".waitDiv");
+function drawGwDiv(target) {
 	let gwHtml = "";
 
 	for (let i = 0; i < waitList.length; i++) {
@@ -74,11 +71,7 @@ function drawGwDiv() {
 	}
 
 	target.html(gwHtml);
-
-
 }
-
-
 
 
 function waitDefault() {
@@ -91,8 +84,11 @@ function waitDefault() {
 	type = "list";
 	crud.defaultAjax(url, method, data, type, noticeSuccessList, noticeErrorList);
 
-
+	let target = $(".waitDiv");
+	drawGwDiv(target);
 }
+
+
 
 function drawNoticeList() {
 	let container, result, jsonData, header = [], data = [], ids = [], disDate, setDate, str, fnc;
@@ -227,4 +223,4 @@ function noticeErrorList() {
 
 
 
-function showWaitReport() {} 
+function showWaitReport() { } 

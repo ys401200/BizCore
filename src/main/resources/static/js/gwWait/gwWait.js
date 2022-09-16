@@ -236,7 +236,7 @@ function changeTab(obj) {
 
 
 
-// 정보 그리는 함수 
+// 문서 정보 그리는 함수 
 function drawCommentLine() {
 
 	let target = $("#tabDetail");
@@ -263,24 +263,41 @@ function drawCommentLine() {
 		"comment": ""
 	}]
 
+	let refer = [{
+		"name": "김사원",
+		"status" :"조회",
+		"approved" : "2022-09-16",
+		"comment" : "" 
+	}] 
+
+    
+
 	// 임시 데이터 ---------------------------------------------------- 
 
+	let detail1 = "<div class='tapLine'><div>타입</div><div>이름</div><div>상태</div><div>일자</div><div>의견</div></div>";
+	let lineDetailHtml
 
-	let detail = "<div class='tapLine'><div>타입</div><div>이름</div><div>상태</div><div>일자</div><div>의견</div></div>";
-	let lineDetailHtml = "";
-	let approvalDetailHtml = "";
+
+
+	let detail2 = "<div class='tapLine'><div>타입</div><div>이름</div><div>상태</div><div>일자</div><div>의견</div></div>";
+	let lineDetailHtml2 = "";
+	let approvalDetailHtml2 = "";
+
+
+   for (let i = 0 ; i < )
+
 
 
 	for (let i = 0; i < examine.length; i++) {
-		lineDetailHtml += "<div class='tapLine examineLine'><div>검토</div><div>" + examine[i].name + "</div><div>" + examine[i].status + "</div><div>" + examine[i].approved + "</div><div>" + examine[i].comment + "</div></div>";
+		lineDetailHtml2 += "<div class='tapLine examineLine'><div>검토</div><div>" + examine[i].name + "</div><div>" + examine[i].status + "</div><div>" + examine[i].approved + "</div><div>" + examine[i].comment + "</div></div>";
 	}
 	for (let i = 0; i < approval.length; i++) {
-		approvalDetailHtml += "<div class='tapLine approvalLine'><div>결재</div><div>" + approval[i].name + "</div><div>" + approval[i].status + "</div><div>" + approval[i].approved + "</div><div>" + approval[i].comment + "</div></div>";
+		approvalDetailHtml2 += "<div class='tapLine approvalLine'><div>결재</div><div>" + approval[i].name + "</div><div>" + approval[i].status + "</div><div>" + approval[i].approved + "</div><div>" + approval[i].comment + "</div></div>";
 	}
 
-	lineDetailHtml += approvalDetailHtml;
-	detail += lineDetailHtml;
-	target.html(detail);
+	lineDetailHtml2 += approvalDetailHtml2;
+	detail2 += lineDetailHtml2;
+	target.html(detail2);
 
 }
 

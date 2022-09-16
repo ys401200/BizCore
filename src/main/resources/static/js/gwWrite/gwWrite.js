@@ -450,14 +450,14 @@ function reportInsert() {
   for (let i = 0; i < $("." + formId + "_examine").length; i++) {
     appLine.push([0, $("." + formId + "_examine")[i].dataset.detail]);
   }
-  for (let i = 0; i < $("." + formId + "_approval").length; i++) {
-    appLine.push([1, $("." + formId + "_approval")[i].dataset.detail]);
-  }
   for (let i = 0; i < $("." + formId + "_agree").length; i++) {
-    appLine.push([2, $("." + formId + "_agree")[i].dataset.detail]);
+    appLine.push([1, $("." + formId + "_agree")[i].dataset.detail]);
   }
-  for (let i = 0; i < $("." + formId + "_receive").length; i++) {
-    appLine.push([3, $("." + formId + "_receive")[i].dataset.detail]);
+  for (let i = 0; i < $("." + formId + "_approval").length; i++) {
+    appLine.push([2, $("." + formId + "_approval")[i].dataset.detail]);
+  }
+  for (let i = 0; i < $("." + formId + "_conduct").length; i++) {
+    appLine.push([3, $("." + formId + "_conduct")[i].dataset.detail]);
   }
   for (let i = 0; i < $("." + formId + "_refer").length; i++) {
     appLine.push([4, $("." + formId + "_refer")[i].dataset.detail]);
@@ -509,11 +509,7 @@ function reportInsert() {
 
 }
 
-
-
-
-
-
+ㄴ
 // 파일 첨부 버튼 누를 때 마다 반영 
 function docFileChange() {
   let method, data, type, attached;
