@@ -73,26 +73,31 @@ public class ApiGwCtrl extends Ctrl{
     // 결재 대기 목록을 전달
     @GetMapping("/app/wait")
     public String apiGwAppWaitGet(HttpServletRequest request){
-        String result = null;
+        String result = null, compId = null, userNo = null, data = null, aesIv = null, aesKey = null;
+        HttpSession session = null;
 
+        session = request.getSession();
+        compId = (String)session.getAttribute("compId");
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        userNo = (String)session.getAttribute("userNo");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
+        }else{
+            data = gwService.getWaitAndDueDocList(compId, userNo);
+            if(data == null)    result = "{\"result\":\"failure\",\"msg\":\"An error occurred.\"}";
+            else{
+                data = encAes(data, aesKey, aesIv);
+                result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
+            }
+            
+        }
         return result;
     } // End of apiGwAppWaitGet()
-
-    // 결재 예정 목록을 전달
-    @GetMapping("/app/due")
-    public String apiGwAppDueGet(HttpServletRequest request){
-        String result = null;
-
-        return result;
-    } // End of apiGwAppDueGet()
-
-    // 결재 참조 목록을 전달
-    @GetMapping("/app/refer")
-    public String apiGwAppReferGet(HttpServletRequest request){
-        String result = null;
-
-        return result;
-    } // End of apiGwAppReferGet()
 
     // 결재 임시 목록을 전달
     @GetMapping("/app/temp")
@@ -101,14 +106,6 @@ public class ApiGwCtrl extends Ctrl{
 
         return result;
     } // End of apiGwAppTempGet()
-
-    // 결재 수신 목록을 전달
-    @GetMapping("/app/receive")
-    public String apiGwAppReceiveGet(HttpServletRequest request){
-        String result = null;
-
-        return result;
-    } // End of apiGwAppReceiveGet()
 
     // 내 결재 문서 목록을 전달
     @GetMapping("/app/mydraft")
@@ -130,7 +127,7 @@ public class ApiGwCtrl extends Ctrl{
     @PostMapping("/app/doc")
     public String apiGwAppDocPost(HttpServletRequest request, @RequestBody String requestBody){
         String result = null, aesKey = null, aesIv = null, compId = null, userNo = null;
-        String title = null, sopp = null, customer = null, readable = null, appDoc = null, dept = null;
+        String title = null, sopp = null, customer = null, readable = null, appDoc = null, dept = null, formId = null;
         String[] files = null, ts = null;
         String[][] appLine = null;
         HttpSession session = null;
@@ -163,6 +160,7 @@ public class ApiGwCtrl extends Ctrl{
                 title = json.getString("title");
                 sopp = json.getString("sopp");
                 readable = json.getString("readable");
+                formId = json.getString("formId");
                 customer = json.getString("customer");
                 appDoc = json.getString("appDoc");
 
@@ -187,7 +185,7 @@ public class ApiGwCtrl extends Ctrl{
                 }
 
                 // 결재문서 처리 서비스로직으로 데이터 전달
-                docNo = gwService.addAppDoc(compId, dept, title, userNo, sopp, customer, readable, appDoc, files, attached, appLine);
+                docNo = gwService.addAppDoc(compId, dept, title, userNo, sopp, customer, formId, readable, appDoc, files, attached, appLine);
 
                 result = "{\"result\":\"ok\",\"data\":\"" + docNo + "\"}";
             }
