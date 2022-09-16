@@ -6,7 +6,6 @@
 		<jsp:include page="./sideMenu.jsp" />
 	</div>
 	<div id="bodyContent">
-		<div id="loadingDiv"></div>
 		<jsp:include page="./main/contentBusiness.jsp" />
 	</div>
 </div>

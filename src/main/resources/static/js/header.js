@@ -2093,3 +2093,167 @@ function daumPostCode(){
 		top: Math.ceil((document.body.offsetHeight / 2) - (popupHeight / 2))
 	});
 }
+
+function addChart(){
+	addChart_1();
+	addChart_2();
+	addChart_3();
+	addChart_4();
+}
+
+function addChart_1(){
+	let chartContent_1;
+	chartContent_1 = document.getElementById('chartContent_1').getContext('2d');
+
+	new Chart(chartContent_1, {
+		type: "bar",
+		data: {
+			labels: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
+			datasets: [
+				{
+					label: "월별목표",
+					data: [149, 140, 120, 160, 135, 123, 118, 127, 163, 155, 134, 124],
+					backgroundColor: "#4374D9",
+					borderColor: "#4374D9",
+					borderWidth: 3,
+				},
+				{
+					label: "월별매출",
+					data: [125, 130, 138, 154, 124, 162, 144, 151, 137, 148, 129, 153],
+					backgroundColor: "#B7F0B1",
+					borderColor: "#B7F0B1",
+					borderWidth: 3,
+				},
+				{
+					type: "line",
+					label: "누적목표",
+					data: [149, 140, 120, 160, 135, 123, 118, 127, 163, 155, 134, 124],
+					fill: false,
+					lineTension: 0,
+					backgroundColor: "#A566FF",
+					borderColor: "#A566FF",
+				},
+				{
+					type: "line",
+					label: "누적매출",
+					data: [125, 130, 138, 154, 124, 162, 144, 151, 137, 148, 129, 153],
+					fill: false,
+					lineTension: 0,
+					backgroundColor: "#F15F5F",
+					borderColor: "#F15F5F",
+				},
+			],
+		},
+		options: {
+			scales: {
+				y: {
+					beginAtZero: true
+				}
+			}
+		},
+	});
+}
+
+function addChart_2(){
+	let chartContent_2, infoHtml = "";
+	chartContent_2 = document.getElementById('chartContent_2').getContext('2d');
+
+	new Chart(chartContent_2, {
+		type: "doughnut",
+		data: {
+			labels: ["달성률", "미달성률"],
+			datasets: [
+				{
+					data: [40, 60],
+					backgroundColor: [
+						"#4374D9",
+						"#F15F5F"
+					]
+				},
+			],
+		},
+		options: {
+			scales: {
+				y: {
+					beginAtZero: true
+				}
+			}
+		},
+	});
+
+	infoHtml = "<div>목표 1,060,000,000</div>";
+	infoHtml += "<div>매출 624,447,055</div>";
+	infoHtml += "<div>달성률 58.91%<div>";
+	infoHtml += "<hr />";
+	infoHtml += "<div>-435,552,945</div>";
+
+	$("#bodyChart_2 #chartContentInfo").html(infoHtml);
+}
+
+function addChart_3(){
+	let chartContent_3, infoHtml = "";
+	chartContent_3 = document.getElementById('chartContent_3').getContext('2d');
+
+	new Chart(chartContent_3, {
+		type: "doughnut",
+		data: {
+			labels: ["달성률", "미달성률"],
+			datasets: [
+				{
+					data: [70, 30],
+					backgroundColor: [
+						"#A566FF",
+						"#F15F5F"
+					]
+				},
+			],
+		},
+		options: {
+			scales: {
+				y: {
+					beginAtZero: true
+				}
+			}
+		},
+	});
+
+	infoHtml = "<div>목표 13,660,000,000</div>";
+	infoHtml += "<div>매출 8,045,953,735</div>";
+	infoHtml += "<div>달성률 58.90%<div>";
+	infoHtml += "<hr />";
+	infoHtml += "<div>-5,614,046,265</div>";
+
+	$("#bodyChart_3 .chartContentContainer #chartContentInfo").html(infoHtml);
+}
+
+function addChart_4(){
+	let chartContent_4;
+	chartContent_4 = document.getElementById('chartContent_4').getContext('2d');
+
+	new Chart(chartContent_4, {
+		type: "pie",
+		data: {
+			labels: ["조달직판", "조달간판", "조달대행", "직접판매", "간접판매", "기타"],
+			datasets: [
+				{
+					data: [310, 200, 110, 220, 100, 50],
+					backgroundColor: [
+						"#4374D9",
+						"#B7F0B1",
+						"#A566FF",
+						"#F15F5F",
+						"#F2CB61",
+						"#A6A6A6",
+					]
+				},
+			],
+		},
+		options: {
+			scales: {
+				y: {
+					beginAtZero: true
+				}
+			}
+		},
+	});
+}
