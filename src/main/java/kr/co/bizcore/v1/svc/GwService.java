@@ -3,6 +3,10 @@ package kr.co.bizcore.v1.svc;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -124,7 +128,7 @@ public class GwService extends Svc{
                 if(x > 0)   str += "','";
                 str += waitDocs.get(x);
             }
-            list = gwMapper.getWaitAndDueList(compId, userNo, str);
+            list = getAppDocList(compId, userNo, str);
             wait = "[";
             for(x = 0 ; x < list.size() ; x++){
                 each = list.get(x);
@@ -152,7 +156,7 @@ public class GwService extends Svc{
                 if(x > 0)   str += "','";
                 str += dueDocs.get(x);
             }
-            list = gwMapper.getWaitAndDueList(compId, userNo, str);
+            list = getAppDocList(compId, userNo, str);
             due = "[";
             for(x = 0 ; x < list.size() ; x++){
                 each = list.get(x);
@@ -180,7 +184,7 @@ public class GwService extends Svc{
                 if(x > 0)   str += "','";
                 str += referDocs.get(x);
             }
-            list = gwMapper.getWaitAndDueList(compId, userNo, str);
+            list = getAppDocList(compId, userNo, str);
             refer = "[";
             for(x = 0 ; x < list.size() ; x++){
                 each = list.get(x);
@@ -208,5 +212,36 @@ public class GwService extends Svc{
 
         return result;
     } // end of getWaitAndDueDicList()
+
+    private List<HashMap<String, String>> getAppDocList(String compId, String userNo, String sqlIn){
+        List<HashMap<String, String>> result = new ArrayList<>();
+        HashMap<String, String> each = null;
+        String sql = "SELECT CAST(a.no AS CHAR) AS no, a.docno AS docno, CAST(a.writer AS CHAR) AS writer, CAST(UNIX_TIMESTAMP(a.created)*1000 AS CHAR) AS created, c.title AS form, a.title AS title, CAST(UNIX_TIMESTAMP(b.`read`)*1000 AS CHAR) AS `read`, CAST(b.apptype AS CHAR) AS appType FROM bizcore.doc_app a, bizcore.doc_app_detail b, bizcore.doc_form c WHERE c.id=a.formid AND a.compid=? AND b.employee=? AND a.docno=b.docno AND b.ordered > 0 AND a.status=1 AND a.docno IN ('" + sqlIn + "')";
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try{
+            conn = sqlSession.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, compId);
+            pstmt.setString(2, userNo);
+            //pstmt.setString(3, sqlIn);
+            rs = pstmt.executeQuery();
+            if(rs.next()){
+                each = new HashMap<>();
+                each.put("no", rs.getString(1));
+                each.put("docno", rs.getString(2));
+                each.put("writer", rs.getString(3));
+                each.put("created", rs.getString(4));
+                each.put("form", rs.getString(5));
+                each.put("title", rs.getString(6));
+                each.put("read", rs.getString(7));
+                each.put("appType", rs.getString(8));
+                result.add(each);
+            }
+        }catch(SQLException e){e.printStackTrace();}
+        return result;
+    }
     
 }
