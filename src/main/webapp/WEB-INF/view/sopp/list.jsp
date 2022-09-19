@@ -7,31 +7,11 @@
 		<jsp:include page="../sideMenu.jsp" />
 	</div>
 	<div id="bodyContent">
-        <!-- <div class="soppSearchContainer">
-            <div class="soppSearchSelect">
-                <select id="soppSearchCategory">
-                    <option value="no">번호</option>
-                    <option value="title">영업기회명</option>
-                </select>
-            </div>
-            <div class="soppSearchText">
-                <input type="text" id="soppSearchValue">
-            </div>
-            <div class="soppSearchBtn">
-                <button type="button" onclick="soppSearchList();"><img src="../images/common/search.png" alt=""/></button>
-            </div>
-        </div>
-        <div class="detailContainer">
-            <hr />
-            <span class="detailMainSpan"></span>
-            <div class="detailBtns"></div>
-            <div class="detailContent"></div>
-        </div> -->
+        <div class="searchContainer"></div>
         <div class="soppContainer">
             <hr />
             <span id="containerTitle">영업기회조회</span>
             <button type="button" class="listInsertBtn" onclick="soppInsertForm();">등록</button>
-            <div class="searchContainer"></div>
             <div class="detailBtns"></div>
             <div class="detailContents"></div>
             <div class="gridSoppList"></div>

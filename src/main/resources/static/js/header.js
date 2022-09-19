@@ -2250,3 +2250,9 @@ function addChart_4(){
 		},
 	});
 }
+
+function searchKeyupFilter(data, key, value){
+	return data.filter((object) => {
+		return object[key] === value;
+	});
+}

@@ -39,7 +39,7 @@ function soppSearchList(){
 }
 
 function drawSoppList() {
-	let container, result, job, jsonData, header = [], data = [], ids = [], disDate, setDate, str, fnc;
+	let container, result, job, jsonData, header = [], data = [], ids = [], disDate, setDate, str, fnc, searchContainer, searchHtml = "";
 	
 	if (storage.soppList === undefined) {
 		msg.set("등록된 영업기회가 없습니다");
@@ -152,6 +152,13 @@ function drawSoppList() {
 	let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawSoppList", result[0]);
 	pageContainer[0].innerHTML = pageNation;
 	createGrid(container, header, data, ids, job, fnc);
+	
+	searchContainer = $(".searchContainer");
+	searchHtml = "<div class=\"searchInputContent\">";
+	searchHtml += "<input type=\"text\" id=\"searchAllInput\" style=\"border: 1px solid #000; width: 100%\">";
+	searchHtml += "<button type=\"button\" onclick=\"searchKeyup()\">검색</button>";
+	searchHtml += "</div>";
+	searchContainer.html(searchHtml);
 }
 
 function soppDetailView(e){
@@ -660,4 +667,15 @@ function soppSuccessDelete(){
 
 function soppErrorDelete(){
 	alert("삭제에러");
+}
+
+
+function searchKeyup(){
+	let filterValue, searchAllInput;
+	searchAllInput = $("#searchAllInput").val();
+	filterValue = searchKeyupFilter(storage.soppList, "title", searchAllInput);
+
+	storage.soppList.push(filterValue);
+
+	drawSoppList();
 }

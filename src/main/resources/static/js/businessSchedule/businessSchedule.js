@@ -25,26 +25,6 @@ function getScheduleList() {
 	crud.defaultAjax(url, method, data, type, scheduleSuccessList, scheduleErrorList);
 } // End of getScheduleList()
 
-function scheduleSearchList(){
-	let searchCategory, searchText, url, method, data, type, scheduleRange;
-
-	scheduleRange = $(document).find("#scheduleRange").val();
-
-	url = "/api/schedule/calendar/" + scheduleRange;
-	method = "get";
-	data = "";
-	type = "list";
-
-	searchCategory = $(document).find("#scheduleSearchCategory").val();
-	searchText = $(document).find("#scheduleSearchValue").val();
-	
-	localStorage.setItem("searchList", true);
-	localStorage.setItem("searchCategory", searchCategory);
-	localStorage.setItem("searchText", searchText);
-
-	crud.defaultAjax(url, method, data, type, scheduleSuccessList, scheduleErrorList);
-}
-
 function drawScheduleList() {
 	let container, dataJob = [], result, jsonData, header = [], data = [], ids = [], str, fnc;
 	
@@ -1980,14 +1960,12 @@ function calendarMore(e){
 		$(e).data("flag", false);
 	}
 
-	$(e).parents(".calendar_cell").children(".calendar_item").each((index, item) => {
-		console.log(index);
-		if(index > 0){
-			if($(item).not(".calendar_item_empty").css("display") === "none"){
-				$(item).not(".calendar_item_empty").css("display", "flex");
-			}else{
-				$(item).not(".calendar_item_empty").css("display", "none");
-			}
+	$(e).parents(".calendar_cell").children(".calendar_item").not(".calendar_item_empty").each((index, item) => {
+		console.log($(item).css("display"));
+		if($(item).css("display") === "none"){
+			$(item).css("display", "flex");
+		}else if($(item).css("display") === "flex"){
+			$(item).css("display", "none");
 		}
 	});
 }
