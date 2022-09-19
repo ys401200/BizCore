@@ -118,7 +118,84 @@ function selectForm() {
   $(".inputsAuto").eq(1).css("text-align", "left");
   $(".inputsAuto").eq(2).css("text-align", "left");
 
+
+
+  //영업기회 데이터 리스트 만들기  
+
+
+
+  $.ajax({
+    url: "/api/sopp",
+    type: "get",
+    dataType: "json",
+    success: (result) => {
+      if (result.result == "ok") {
+        let jsondata;
+        jsondata = cipher.decAes(result.data);
+        jsondata = JSON.parse(jsondata);
+        storage.soppList = jsondata;
+        setSoppList(formId);
+      } else {
+        alert("에러");
+      }
+    },
+  });
+
+
+  // 거래처 데이터 리스트 
+  let cusTarget = $(".infoContentlast")[0];
+  let html = cusTarget.innerHTML;
+  let x;
+  let dataListHtml = "";
+
+
+  // 거래처 데이터 리스트 만들기 
+  dataListHtml = "<datalist id='_infoCustomer'>"
+  for (x in storage.customer) {
+    dataListHtml += "<option data-value='" + x + "' value='" + storage.customer[x].name + "'></option> "
+  }
+  dataListHtml += "</datalist>"
+  html += dataListHtml;
+  cusTarget.innerHTML = html;
+  $("#" + formId + "_infoCustomer").attr("list", "_infoCustomer");
+
+
+
 }
+
+
+// 영업기회 데이터 리스트 가져오는 함수  
+function setSoppList(formId) {
+  let soppTarget = $(".infoContent")[3];
+  let soppHtml = soppTarget.innerHTML;
+  let soppListHtml = "";
+
+
+  soppListHtml = "<datalist id='_infoSopp'>"
+
+  for (let i = 0; i < storage.soppList.length; i++) {
+    soppListHtml += "<option data-value='" + storage.soppList[i].no + "' value='" + storage.soppList[i].title + "'></option> "
+  }
+
+  soppListHtml += "</datalist>"
+  soppHtml += soppListHtml;
+  soppTarget.innerHTML = soppHtml;
+  $("#" + formId + "_sopp").attr("list", "_infoSopp");
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -510,7 +587,7 @@ function reportInsert() {
 
 }
 
-ㄴ
+
 // 파일 첨부 버튼 누를 때 마다 반영 
 function docFileChange() {
   let method, data, type, attached;
