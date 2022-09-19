@@ -54,30 +54,30 @@ function drawWaitCard(waitList) {
 function drawNoticeList() {
 	let container, result, jsonData, header = [], data = [], ids = [], disDate, setDate, str, fnc;
 
-	if (storage.noticeList === undefined) {
+	if (storage.waitList === undefined) {
 		msg.set("등록된 공지사항이 없습니다");
 	}
 	else {
-		jsonData = storage.noticeList;
+		jsonData = storage.waitList.due; 
 	}
 
 	result = paging(jsonData.length, storage.currentPage, 5);
 
 	pageContainer = document.getElementsByClassName("pageContainer");
-	container = $(".listDiv");
+	container = $(".dueDiv");
 
 	header = [
 
 		{
-			"title": "문서번호",
+			"title": "번호",
+			"align": "center",
+		},
+        {
+			"title": "결재 타입",
 			"align": "center",
 		},
 		{
-			"title": "문서종류",
-			"align": "center",
-		},
-		{
-			"title": "거래처",
+			"title": "문서 종류",
 			"align": "center",
 		},
 		{
@@ -85,26 +85,45 @@ function drawNoticeList() {
 			"align": "center",
 		},
 		{
-			"title": "금액",
+			"title": "작성자",
 			"align": "center",
 		},
 		{
-			"title": "기안자",
+			"title": "작성일",
 			"align": "center",
 		},
-		{
-			"title": "진행상태",
-			"align": "center",
-		}
+		
+		
 	];
 
 	for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
 		disDate = dateDis(jsonData[i].created, jsonData[i].modified);
 		setDate = dateFnc(disDate);
 		let userName = storage.user[jsonData[i].writer].userName;
+		let appType = jsonData[i].appType;
+        if (appType == '0') {
+			appType = "검토";
+		} else if (appType == '1') {
+			appType = "합의";
 
-		str = [
+		} else if (appType == '2') {
+			appType = "결재";
+		} else if (appType == '3') {
+			appType = "수신";
+		} else {
+			appType = "참조";
 
+		}
+        str = [
+
+			{
+				"setData": jsonData[i].no,
+			},{
+				"setData": appType,
+			},
+			{
+				"setData": jsonData[i].form,
+			},
 			{
 				"setData": jsonData[i].title,
 			},
@@ -114,18 +133,10 @@ function drawNoticeList() {
 			{
 				"setData": setDate,
 			},
-			{
-				"setData": setDate,
-			},
-			{
-				"setData": setDate,
-			},
-			{
-				"setData": setDate,
-			},
-			{
-				"setData": setDate,
-			}
+			
+			// {
+			// 	"setData": "<input type='checkbox' class='thisCheck' data-id='" + jsonData[i].no + "'>",
+			// }
 		]
 
 		fnc = "noticeDetailView(this)";
