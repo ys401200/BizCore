@@ -1,5 +1,6 @@
 package kr.co.bizcore.v1.mapper;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
@@ -24,6 +25,10 @@ public interface AccountingMapper {
     "vattax AS tax, vatproductname AS product, vatremark AS remark, regdate AS created, modDate AS modified, RIGHT(vatStatus,1) AS status, " +
     "vatbuyercustno AS buyer, vatsellercustno AS seller, vatemail AS email, vatstandard AS standard, vatissuetype AS issueType " +
     "FROM swc_vat WHERE attrib NOT LIKE 'XXX%' AND contno = #{contNo} AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) ORDER BY issueDate desc")
-public List<TaxBill> getTaxBillForContract(@Param("compId") String compId, @Param("contNo") int no);
+    public List<TaxBill> getTaxBillForContract(@Param("compId") String compId, @Param("contNo") int no);
+
+    // 정해진 기간의 계산서 기준 매출액 조회 / 날짜 형식은 2012-10-10
+    @Select("SELECT CAST(SUM(a.v1) AS CHAR) AS sales, CAST(SUM(a.v2) AS CHAR) AS purchase FROM (SELECT IF(vattype='S',vatamount,0) AS v1, IF(vattype='B',vatamount,0) AS v2 FROM swc_vat WHERE attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND vatissuedate >= #{start} AND #{end} > vatissuedate) a")
+    public HashMap<String, String> getTotalAmountWithStartAndEndDate(@Param("compId") String compId, @Param("start") String start, @Param("end") String end);
 
 }
