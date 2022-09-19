@@ -13,6 +13,27 @@ $(document).ready(() => {
 function waitDefault() {
 	$(".modal-wrap").hide();
 
+
+
+            $.ajax({
+                "url": apiServer + "/api/gw/form",
+                "method": "get",
+                "dataType": "json",
+                "cache": false,
+                success: (data) => {
+                    let list;
+                    if (data.result === "ok") {
+                        list = cipher.decAes(data.data);
+                        list = JSON.parse(list);
+                        storage.formList = list;
+                        console.log("[getForms] Success getting employee information.");
+                    } else {
+                        // msg.set("양식 정보를 가져오지 못했습니다.");
+                    }
+                }
+            })
+
+
 	let url, method, data, type;
 	url = "/api/gw/app/wait";
 	method = "get"
@@ -34,7 +55,7 @@ function drawNoticeApproval() {
 		msg.set("등록된 문서가 없습니다");
 	}
 	else {
-		jsonData = storage.waitList;
+		jsonData = storage.waitList.wait;
 	}
 
 	result = paging(jsonData.length, storage.currentPage, 8);
@@ -45,15 +66,15 @@ function drawNoticeApproval() {
 	header = [
 
 		{
-			"title": "문서번호",
+			"title": "번호",
+			"align": "center",
+		},
+        {
+			"title": "결재 타입",
 			"align": "center",
 		},
 		{
-			"title": "문서종류",
-			"align": "center",
-		},
-		{
-			"title": "거래처",
+			"title": "문서 종류",
 			"align": "center",
 		},
 		{
@@ -61,30 +82,44 @@ function drawNoticeApproval() {
 			"align": "center",
 		},
 		{
-			"title": "금액",
+			"title": "작성자",
 			"align": "center",
 		},
 		{
-			"title": "기안자",
+			"title": "작성일",
 			"align": "center",
 		},
-		{
-			"title": "진행상태",
-			"align": "center",
-		},
-		{
-			"title": "<input type='checkbox' class='thisAllcheck'>",
-			"align": "center",
-		},
+		
+		
 	];
-
 	for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
 		disDate = dateDis(jsonData[i].created, jsonData[i].modified);
 		setDate = dateFnc(disDate);
 		let userName = storage.user[jsonData[i].writer].userName;
+		let appType = jsonData[i].appType;
+        if (appType == '0') {
+			appType = "검토";
+		} else if (appType == '1') {
+			appType = "합의";
 
-		str = [
+		} else if (appType == '2') {
+			appType = "결재";
+		} else if (appType == '3') {
+			appType = "수신";
+		} else {
+			appType = "참조";
 
+		}
+        str = [
+
+			{
+				"setData": jsonData[i].no,
+			},{
+				"setData": appType,
+			},
+			{
+				"setData": jsonData[i].form,
+			},
 			{
 				"setData": jsonData[i].title,
 			},
@@ -92,23 +127,12 @@ function drawNoticeApproval() {
 				"setData": userName,
 			},
 			{
-				"setData": userName,
+				"setData": setDate,
 			},
-			{
-				"setData": userName,
-			},
-			{
-				"setData": userName,
-			},
-			{
-				"setData": userName,
-			},
-			{
-				"setData": userName,
-			},
-			{
-				"setData": "<input type='checkbox' class='thisCheck' data-id='" + jsonData[i].no + "'>",
-			}
+			
+			// {
+			// 	"setData": "<input type='checkbox' class='thisCheck' data-id='" + jsonData[i].no + "'>",
+			// }
 		]
 
 		fnc = "waitDetailView(this)";

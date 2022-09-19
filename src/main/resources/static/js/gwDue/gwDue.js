@@ -19,29 +19,12 @@ function dueDefault() {
 
 
     let url, method, data, type;
-    url = "/api/notice";
+    url = "/api/gw/app/wait";
     method = "get"
     data = "";
     type = "list";
     crud.defaultAjax(url, method, data, type, successList, errorList);
-    let url2 = "/api/gw/form";
-
-    $.ajax({
-        url: url2,
-        type: "get",
-        dataType: "json",
-        success: (result) => {
-            if (result.result == "ok") {
-                let jsondata;
-                jsondata = cipher.decAes(result.data);
-                jsondata = JSON.parse(jsondata);
-                storage.formList = jsondata;
-
-            } else {
-                alert("에러");
-            }
-        },
-    });
+  
 
     $(".searchContainer").show();
     $(".listPageDiv").show();
@@ -49,9 +32,8 @@ function dueDefault() {
 }
 
 
-
 function successList(result) {
-    storage.noticeList = result;
+    storage.dueList = result;
     window.setTimeout(drawApproval, 200);
 }
 
@@ -219,11 +201,11 @@ function drawChangeInfo() {
 function drawApproval() {
     let container, result, jsonData, job, header = [], data = [], ids = [], disDate, setDate, str, fnc;
 
-    if (storage.noticeList === undefined) {
-        msg.set("등록된 공지사항이 없습니다");
+    if (storage.dueList === undefined) {
+        msg.set("결재 예정 문서가 없습니다");
     }
     else {
-        jsonData = storage.noticeList;
+        jsonData = storage.dueList.due;
     }
 
     result = paging(jsonData.length, storage.currentPage, 14);
@@ -233,68 +215,76 @@ function drawApproval() {
 
     header = [
 
-        {
-            "title": "문서번호",
-            "align": "center",
-        },
-        {
-            "title": "문서종류",
-            "align": "center",
-        },
-        {
-            "title": "거래처",
-            "align": "center",
-        },
-        {
-            "title": "제목",
-            "align": "center",
-        },
-        {
-            "title": "금액",
-            "align": "center",
-        },
-        {
-            "title": "기안자",
-            "align": "center",
-        },
-        {
-            "title": "진행상태",
-            "align": "center",
-        },
-
-    ];
+		{
+			"title": "번호",
+			"align": "center",
+		},{
+			"title": "결재 타입",
+			"align": "center",
+		},
+		{
+			"title": "문서종류",
+			"align": "center",
+		},
+		{
+			"title": "제목",
+			"align": "center",
+		},
+		{
+			"title": "작성자",
+			"align": "center",
+		},
+		{
+			"title": "작성일",
+			"align": "center",
+		},
+		
+		
+	];
 
     for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
         disDate = dateDis(jsonData[i].created, jsonData[i].modified);
         setDate = dateFnc(disDate);
         let userName = storage.user[jsonData[i].writer].userName;
+        let appType = jsonData[i].appType;
+        if (appType == '0') {
+			appType = "검토";
 
+		} else if (appType == '1') {
+			appType = "합의";
+
+		} else if (appType == '2') {
+			appType = "결재";
+		} else if (appType == '3') {
+			appType = "수신";
+		} else {
+			appType = "참조";
+
+		}
         str = [
 
-            {
-                "setData": jsonData[i].title,
-            },
-            {
-                "setData": userName,
-            },
-            {
-                "setData": setDate,
-            },
-            {
-                "setData": setDate,
-            },
-            {
-                "setData": setDate,
-            },
-            {
-                "setData": setDate,
-            },
-            {
-                "setData": setDate,
-            },
-
-        ]
-
+			{
+				"setData": jsonData[i].no,
+			},{
+				"setData": appType,
+			},
+			{
+				"setData": jsonData[i].form,
+			},
+			{
+				"setData": jsonData[i].title,
+			},
+			{
+				"setData": userName,
+			},
+			{
+				"setData": setDate,
+			},
+			
+			// {
+			// 	"setData": "<input type='checkbox' class='thisCheck' data-id='" + jsonData[i].no + "'>",
+			// }
+		]
         fnc = "detailView(this)";
         ids.push(jsonData[i].no);
         data.push(str);
@@ -305,15 +295,6 @@ function drawApproval() {
     createGrid(container, header, data, ids, job, fnc);
 
 
-    // 전체선택 전체 해제  
-    $(".thisAllcheck").click(function () {
-        if ($(".thisAllcheck").prop("checked")) {
-            $(":checkbox").prop("checked", true);
-        } else {
-            $(":checkbox").prop("checked", false);
-        }
-
-    });
 }// End of drawNoticeApproval()
 
 

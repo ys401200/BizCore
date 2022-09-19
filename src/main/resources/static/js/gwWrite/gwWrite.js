@@ -167,7 +167,13 @@ function showModal() {
   let userData = new Array();
 
   let x;
-  for (x in storage.user) userData.push(x);
+  let my = storage.my;
+  //나는 결재선에 노출 안 되게 함 
+  for (x in storage.user) {
+    if (x != my) {
+      userData.push(x);
+    }
+  }
 
   let innerHtml = "";
   for (let i = 0; i < userData.length; i++) {
@@ -440,7 +446,7 @@ function reportInsert() {
   appDoc = appDoc.replaceAll("\n", "").replaceAll("\r", "").replaceAll("\t", "").replaceAll("\"", "\\\"");
   let my = storage.my;
   dept = storage.user[my].deptId[0];
-// 결재가 1번 
+  // 결재가 1번 
 
   for (let i = 0; i < $("." + formId + "_examine").length; i++) {
     appLine.push([0, $("." + formId + "_examine")[i].dataset.detail]);
