@@ -160,7 +160,6 @@ function selectForm() {
   $("#" + formId + "_infoCustomer").attr("list", "_infoCustomer");
 
 
-
 }
 
 
@@ -183,16 +182,6 @@ function setSoppList(formId) {
   $("#" + formId + "_sopp").attr("list", "_infoSopp");
 
 }
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -507,6 +496,10 @@ function setSavedLine(obj) {
 
 
 function reportInsert() {
+
+
+  $("#_infoSopp").remove();
+  $("#_infoCustomer").remove();
   let sopp, infoCustomer, title, content, readable, formId, appDoc, dept;
   let appLine = [];
   let selectedFormNo = $(".formSelector").val();
@@ -656,11 +649,9 @@ function deleteFile(obj) {
 
 // 입력된 총 합계 구하는 함수 
 function getTotalCount() {
-
   let totalCount = Number(0);
   for (let i = 0; i < $(".doc_Form_Consult_total").length; i++) {
     totalCount += (Number($(".doc_Form_Consult_total")[i].dataset.detail.replace(",", "")));
-
   }
   return totalCount;
 }

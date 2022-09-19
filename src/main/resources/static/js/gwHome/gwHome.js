@@ -6,86 +6,47 @@ $(document).ready(() => {
 		$("#loadingDiv").loading("toggle");
 	}, 300);
 
-	waitDefault();
+	drawGwDiv();
 });
 
-let waitList = [
-	{
-		"title": "예산 증액 관련 협조 요청",
-		"type": "지출품의서",
-		"writer": "구민주",
-		"created": "2202-07-18"
-	},
-	{
-		"title": "업무 기안 진행바랍니다",
-		"type": "지출품의서",
-		"writer": "구민주",
-		"created": "2202-06-18"
-	},
-	{
-		"title": "재가 바랍니다",
-		"type": "발주서",
-		"writer": "구민주",
-		"created": "2202-06-18"
-	},
-	{
-		"title": "그룹웨어 시스템 구매 예산 재가",
-		"type": "지출품의서",
-		"writer": "이송현",
-		"created": "2202-06-18"
-	},
-	{
-		"title": "디자인 진흥원",
-		"type": "발주서",
-		"writer": "이송현",
-		"created": "2202-06-18"
-	}
-	,
-	{
-		"title": "디자인 진흥원",
-		"type": "발주서",
-		"writer": "이송현",
-		"created": "2202-06-18"
-	}
-	,
-	{
-		"title": "22년 8월 경비 지출결의",
-		"type": "지출결의서",
-		"writer": "이송현",
-		"created": "2202-06-18"
-	}
+function drawGwDiv() {
+
+	$.ajax({
+		"url": "/api/gw/app/wait",
+		"method": "get",
+		"dataType": "json",
+		"cache": false,
+		success: (data) => {
+			let list;
+			if (data.result === "ok") {
+				list = cipher.decAes(data.data);
+				list = JSON.parse(list);
+				storage.waitList = list;
+				let waitList = storage.waitList.wait;
+				drawWaitCard(waitList);
+			} else {
+				// msg.set("양식 정보를 가져오지 못했습니다.");
+			}
+		}
+	})
 
 
-]
-
-
-
-function drawGwDiv(target) {
-	let gwHtml = "";
-
-	for (let i = 0; i < waitList.length; i++) {
-		gwHtml += "<div class='waitCard'><div>" + waitList[i].title + "</div>" +
-			"<div class='subWaitCard'><div class='type'><div>결재타입</div><div>" + waitList[i].type + "</div></div>" +
-			"<div class='writer'><div>기안자</div><div>" + waitList[i].writer + "</div></div>" +
-			"<div class='created'><div>작성일</div><div>" + waitList[i].created + "</div></div></div></div>";
-	}
-
-	target.html(gwHtml);
 }
 
 
-function waitDefault() {
 
-
-	let url, method, data, type;
-	url = "/api/notice";
-	method = "get"
-	data = "";
-	type = "list";
-	crud.defaultAjax(url, method, data, type, noticeSuccessList, noticeErrorList);
-
+function drawWaitCard(waitList) {
 	let target = $(".waitDiv");
-	drawGwDiv(target);
+
+	let gwHtml = "";
+	for (let i = 0; i < waitList.length; i++) {
+		gwHtml += "<div class='waitCard' value='" + waitList[i].no + "'><div>" + waitList[i].title + "</div>" +
+			"<div class='subWaitCard'><div class='type'><div>결재타입</div><div>" + waitList[i].form + "</div></div>" +
+			"<div class='writer'><div>기안자</div><div>" + storage.user[waitList[i].writer].userName + "</div></div>" +
+			"<div class='created'><div>작성일</div><div>" + getYmdSlash(waitList[i].created) + "</div></div></div></div>";
+	}
+
+	target.html(gwHtml);
 }
 
 
@@ -221,6 +182,10 @@ function noticeErrorList() {
 }
 
 
+function showWaitReport() { }
 
 
-function showWaitReport() { } 
+function getYmdSlash() {
+	let d = new Date();
+	return (d.getFullYear() % 100) + "/" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "/" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString());
+}

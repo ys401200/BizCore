@@ -14,19 +14,19 @@
 				<div class="container">
 					<hr />
 					<span>결재 예정 문서</span>
-					<div class="listDiv"></div>
+					<div class="dueDiv"></div>
 					<div class="pageContainer"></div>
 				</div>
 				<div class="container">
 					<hr />
 					<span>결재 수신 문서</span>
-					<div class="listDiv"></div>
+					<div class="receiveDiv"></div>
 					<div class="pageContainer"></div>
 				</div>
 				<div class="container">
 					<hr />
 					<span>참조/열람 대기 문서</span>
-					<div class="listDiv"></div>
+					<div class="referFDiv"></div>
 					<div class="pageContainer"></div>
 				</div>
 			</div>
