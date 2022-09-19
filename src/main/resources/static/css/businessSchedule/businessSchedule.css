@@ -197,6 +197,20 @@
 	cursor: pointer;
 	position:relative;
 	overflow: hidden;
+	min-height: 120px;
+}
+
+.calendar_container > .calendar_cell > .calendar_span_empty{
+	text-align: right;
+	padding: 10px;
+}
+
+.calendar_container > .calendar_cell > .calendar_span_empty > span{
+    color: #8C8C8C;
+}
+
+.calendar_container > .calendar_cell > .calendar_span_empty > span:hover{
+	text-decoration: underline;
 }
 
 .calendar_container > .calendar_cell > .calendar_date{

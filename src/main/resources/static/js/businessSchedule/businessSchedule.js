@@ -290,8 +290,20 @@ function drawCalendar(container){
 				x3[1] = calArr[x1 + 1].slot[x2] === calArr[x1].slot[x2];
 			}
             t = calArr[x1].slot[x2] === undefined ? undefined : storage.scheduleList[calArr[x1].slot[x2]] ; //임시변수에 스케줄 아이템을 담아둠
-            html += "<div class=\"calendar_item" + (t === undefined ? " calendar_item_empty" : "") + (x3[0] ? " calendar_item_left" : "") + (x3[1] ? " calendar_item_right" : "") + "\"" + (t === undefined ? "" : "") + " data-id=" + (t === undefined ? '' : t.no) + " data-job=" + (t === undefined ? '' : t.job) + " onclick='" + (t === undefined ? 'eventStop();scheduleInsertForm("' + now + '");' : 'eventStop();calendarDetailView(this);') + "'>" + (t === undefined ? "" : t.writer + " : " + t.title) + "</div>";
+			
+			if(x2 > 2){
+				html += "<div class=\"calendar_item" + (t === undefined ? " calendar_item_empty" : "") + (x3[0] ? " calendar_item_left" : "") + (x3[1] ? " calendar_item_right" : "") + "\"" + (t === undefined ? "" : "") + " data-id=" + (t === undefined ? '' : t.no) + " data-job=" + (t === undefined ? '' : t.job) + " onclick='" + (t === undefined ? 'eventStop();scheduleInsertForm("' + now + '");' : 'eventStop();calendarDetailView(this);') + "' style='display:none;'>" + (t === undefined ? "" : storage.user[t.writer].userName + " : " + t.title) + "</div>";
+			}else{
+				html += "<div class=\"calendar_item" + (t === undefined ? " calendar_item_empty" : "") + (x3[0] ? " calendar_item_left" : "") + (x3[1] ? " calendar_item_right" : "") + "\"" + (t === undefined ? "" : "") + " data-id=" + (t === undefined ? '' : t.no) + " data-job=" + (t === undefined ? '' : t.job) + " onclick='" + (t === undefined ? 'eventStop();scheduleInsertForm("' + now + '");' : 'eventStop();calendarDetailView(this);') + "'>" + (t === undefined ? "" : storage.user[t.writer].userName + " : " + t.title) + "</div>";
+			}
+			
+			if(x2 == (slot-1)){
+				if(x2 > 1 && !x3[0] && !x3[1]){
+					html += "<div class=\"calendar_span_empty\" onclick=\"eventStop();scheduleInsertForm(" + now + ");\"><span data-flag=\"false\" onclick=\"eventStop();calendarMore(this);\">more →</span></div>";
+				}
+			}
         }
+
         html += "</div>";
     }
     container.innerHTML = html;
@@ -1954,4 +1966,24 @@ function scheduleSuccessDelete(){
 
 function scheduleErrorDelete(){
 	alert("에러");
+}
+
+function calendarMore(e){
+	if(!$(e).data("flag")){
+		$(e).text("← close");
+		$(e).data("flag", true);
+	}else{
+		$(e).text("more →");
+		$(e).data("flag", false);
+	}
+
+	$(e).parents(".calendar_cell").children(".calendar_item").each((index, item) => {
+		if(index > 0){
+			if($(item).css("display") === "none"){
+				$(item).css("display", "flex");
+			}else{
+				$(item).css("display", "none");
+			}
+		}
+	});
 }

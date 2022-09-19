@@ -31,6 +31,7 @@
             <hr />
             <span id="containerTitle">영업기회조회</span>
             <button type="button" class="listInsertBtn" onclick="soppInsertForm();">등록</button>
+            <div class="searchContainer"></div>
             <div class="detailBtns"></div>
             <div class="detailContents"></div>
             <div class="gridSoppList"></div>

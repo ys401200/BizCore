@@ -7,7 +7,7 @@
 	<hr />
 	<span>연간 계획대비 실적</span>
 	<div class="chartContentContainer">
-		<canvas id="chartContent_1" height="140"></canvas>	
+		<canvas id="chartContent_1"></canvas>
 	</div>
 </div>
 

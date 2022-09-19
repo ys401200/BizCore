@@ -14,7 +14,7 @@
 
 #bodyContents #bodyContent{
 	display: grid;
-	grid-template-columns: 50% 15% 15% 20%;
+	grid-template-columns: 45% 17% 17% 21%;
 }
 
 /* 메인 차트 시작 */
