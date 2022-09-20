@@ -1,6 +1,7 @@
 package kr.co.bizcore.v1.msg;
 
 public interface Msg {
+    public String idPwMisMatch = "0000/User ID or password mis match.";
     public String notLoggedin = "0001/Session expired or Not logged in.";
     public String compIdNotVerified = "0002/Company ID is Not verified.";
     public String aesKeyNotFound = "0003/Encryption key is not set.";

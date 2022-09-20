@@ -64,11 +64,12 @@ public class ApiUserCtrl extends Ctrl{
     @RequestMapping(value = "/login/*", method = RequestMethod.POST)
     public String userLogin(HttpServletRequest request, @RequestBody String requestBody) {
         String userId = null, pw = null, userNo = null, compId = null, result = null, uri = null, dec = null,
-                aesKey = null, aesIv = null;
+                aesKey = null, aesIv = null, lang = null;
         String[] t = null;
         boolean keepStatus = false;
         JSONObject json = null;
         HttpSession session = null;
+        lang = request.getHeader("");
 
         // 경로에서 compId를 찾을 수 있도록 준비함
         uri = request.getRequestURI();
