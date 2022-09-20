@@ -28,7 +28,7 @@ public interface AccountingMapper {
     public List<TaxBill> getTaxBillForContract(@Param("compId") String compId, @Param("contNo") int no);
 
     // 정해진 기간의 계산서 기준 매출액 조회 / 날짜 형식은 2012-10-10
-    @Select("SELECT CAST(SUM(a.v1) AS CHAR) AS sales, CAST(SUM(a.v2) AS CHAR) AS purchase FROM (SELECT IF(vattype='S',vatamount,0) AS v1, IF(vattype='B',vatamount,0) AS v2 FROM swc_vat WHERE attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND vatissuedate >= #{start} AND #{end} > vatissuedate) a")
-    public HashMap<String, String> getTotalAmountWithStartAndEndDate(@Param("compId") String compId, @Param("start") String start, @Param("end") String end);
+    @Select("SELECT CAST(m AS CHAR) AS m, CAST(SUM(v1) AS CHAR) AS v1, CAST(SUM(v2) AS CHAR) AS v2 FROM (SELECT CAST(MID(CAST(vatissuedate AS CHAR),6,2) AS int) AS m, IF(vattype='S',vatamount,0) AS v1, IF(vattype='B',vatamount,0) AS v2 FROM swc_vat WHERE attrib NOT LIKE 'XXX%' AND year(vatissuedate) = #{year} AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId})) a GROUP BY m")
+    public List<HashMap<String, String>> getSalesStatisticsWithYear(@Param("compId") String compId, @Param("year") int year);
 
 }

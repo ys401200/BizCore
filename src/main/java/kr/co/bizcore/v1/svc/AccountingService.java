@@ -1,5 +1,6 @@
 package kr.co.bizcore.v1.svc;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -41,76 +42,35 @@ public class AccountingService extends Svc{
         return result;
     }
 
-    public String getTradeAmount(String compId, int date){
+    public String getSalesStatisticsWithYear(String compId, int year){
         String result = null;
-        String start = null, end = null, dt = null, yearly = null, quarterly = null, monthly = null;
-        int x = 0, y = 0, z = 0;
+        int x = 0, y = 0;;
+        List<HashMap<String, String>> list = null;
+        ArrayList<String> t = null;
         HashMap<String, String> each = null;
         String sales = null, purchase = null;
 
-        // ========== 월간 금액 조회 ==========
-        x = date / 10000;
-        y = (date % 10000) / 100;
-        z = 1;
+        list = accMapper.getSalesStatisticsWithYear(compId, year);
+        t = new ArrayList<>();
+        if(list != null && list.size() > 0) while(x < list.size()){
+            each = list.get(x);
 
-        start = x + "-" + y + "-" + z;
-
-        if(y == 12){
-            x++;
-            y = 1;
-        }else   y++;
-
-        end = x + "-" + y + "-" + z;
-
-        each = accMapper.getTotalAmountWithStartAndEndDate(compId, start, end);
-        if(each != null){
-            sales = each.get("sales");
-            purchase = each.get("purchase");
+            // DB에서 가져온 값 중 특정월의 데이터가 없는 경우 베열의 인덱스가 틀어질 수 있으르모 월을 검증하고 불일치할 경우 0을 가지는 월을 추가하도록 함
+            y = strToInt(each.get("m")) - 1;
+            if(x == y){
+                t.add("{\"sales\":" + each.get("v1") + ",\"purchase\":" + each.get("v2") + "}");
+                x++;
+            }else{
+                t.add("{\"sales\":0,\"purchase\":0}");
+            }
         }
-        monthly = "{\"sales\":" + (sales == null ? 0 : sales) + ",\"purchase\":" + (purchase == null ? 0 : purchase) + ",\"start\":\"" + start + "\",\"end\":\"" + end + "\"}";
-
-        // ========== 분기 금액 조회 ==========
-        x = date / 10000;
-        y = (((date % 10000) / 100 - 1) / 3) * 3 + 1;
-        z = 1;
-        sales = null;
-        purchase = null;
-
-        start = x + "-" + y + "-" + z;
-
-        if(y == 10) y = 1;
-        else y = y + 3;
-
-        end = x + "-" + y + "-" + z;
-
-        each = accMapper.getTotalAmountWithStartAndEndDate(compId, start, end);
-        if(each != null){
-            sales = each.get("sales");
-            purchase = each.get("purchase");
+        
+        result = "[";
+        for(x = 0 ; x < t.size() ; x++){
+            if(x > 0)   result += ",";
+            result += t.get(x);
         }
-        quarterly = "{\"sales\":" + (sales == null ? 0 : sales) + ",\"purchase\":" + (purchase == null ? 0 : purchase) + ",\"start\":\"" + start + "\",\"end\":\"" + end + "\"}";
-
-        // ========== 연간 금액 조회 ==========
-        x = date / 10000;
-        y = 1;
-        z = 1;
-        sales = null;
-        purchase = null;
-
-        start = x + "-" + y + "-" + z;
-        x++;
-        end = x + "-" + y + "-" + z;
-
-        each = accMapper.getTotalAmountWithStartAndEndDate(compId, start, end);
-        if(each != null){
-            sales = each.get("sales");
-            purchase = each.get("purchase");
-        }
-        yearly = "{\"sales\":" + (sales == null ? 0 : sales) + ",\"purchase\":" + (purchase == null ? 0 : purchase) + ",\"start\":\"" + start + "\",\"end\":\"" + end + "\"}";
-
-        result = "{\"monthly\":" + monthly + ",";
-        result += ("\"quarterly\":" + quarterly + ",");
-        result += ("\"yearly\":" + yearly + "}");
+        result += "]";
 
         return result;
     } // End of getTradeAmount()
