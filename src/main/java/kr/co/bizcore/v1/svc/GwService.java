@@ -20,6 +20,7 @@ import kr.co.bizcore.v1.mapper.GwMapper;
 @Service
 public class GwService extends Svc{
 
+    // 양식 목록 전달
     public String getForms(){
         String result = null;
         List<DocForm> list = null;
@@ -36,6 +37,7 @@ public class GwService extends Svc{
         return result;
     }
 
+    // 해당 아이디를 가진 양식 본문 전달
     public String getForm(String docId){
         String result = null;
         DocForm form = null;
@@ -44,6 +46,7 @@ public class GwService extends Svc{
         return result;
     }
 
+    // 결재문서 상신 처리
     public int addAppDoc(String compId, String dept, String title, String userNo, String sopp, String customer, String formId, String readable, String appDoc, String[] files, HashMap<String, String> attached, String[][] appLine) {
         int result = -9999;
         int year = -1, x = -1, read = 0;
@@ -213,6 +216,45 @@ public class GwService extends Svc{
         return result;
     } // end of getWaitAndDueDicList()
 
+    // (작성자 입장에서) 결재 진행중인 문서의 목록을 가져오는 메서드
+    public String getProceedingDocList(String compId, String userNo){
+        String result = null, t = null;
+        List<HashMap<String, String>> list = null;
+        ArrayList<String> item = null;
+        HashMap<String, String> each = null;
+        int x = 0;
+
+        item = new ArrayList<>();
+        list = gwMapper.getProceedingDocList(compId, userNo);
+        if(list != null && list.size() > 0) for(x = 0 ; x < list.size() ; x++){
+            each = list.get(x);
+            t = "{\"no\":" + each.get("no") + ",";
+            t += ("\"docNo\":\"" + each.get("docNo") + "\",");
+            t += ("\"authority\":" + each.get("authority") + ",");
+            t += ("\"created\":" + each.get("created") + ",");
+            t += ("\"form\":\"" + each.get("form") + "\",");
+            t += ("\"title\":\"" + each.get("title") + "\",");
+            t += ("\"read\":" + each.get("read") + ",");
+            t += ("\"appType\":" + each.get("appType") + "}");
+            item.add(t);
+        }
+
+        result = "[";
+        for(x = 0 ; x < item.size() ; x++){
+            if(x > 0)   result += ",";
+            result += item.get(x);
+        }
+        result += "]";
+
+        return result;
+    }
+
+
+
+
+    // ========================================= P R I V A T E _ M E T H O D =========================================
+
+    // 결재 예정 및 대기 문서 목록을 DB에서 가져오는 메서드 //  sql
     private List<HashMap<String, String>> getAppDocList(String compId, String userNo, String sqlIn){
         List<HashMap<String, String>> result = new ArrayList<>();
         HashMap<String, String> each = null;

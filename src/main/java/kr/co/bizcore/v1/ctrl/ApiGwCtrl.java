@@ -110,8 +110,29 @@ public class ApiGwCtrl extends Ctrl{
     // 내 결재 문서 목록을 전달
     @GetMapping("/app/mydraft")
     public String apiGwAppMydraftGet(HttpServletRequest request){
-        String result = null;
+        String result = null, compId = null, userNo = null, data = null, aesIv = null, aesKey = null;
+        HttpSession session = null;
 
+        session = request.getSession();
+        compId = (String)session.getAttribute("compId");
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        userNo = (String)session.getAttribute("userNo");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
+        }else{
+            data = gwService.getProceedingDocList(compId, userNo);
+            if(data == null)    result = "{\"result\":\"failure\",\"msg\":\"An error occurred.\"}";
+            else{
+                data = encAes(data, aesKey, aesIv);
+                result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
+            }
+            
+        }
         return result;
     } // End of apiGwAppMydraftGet()
 
