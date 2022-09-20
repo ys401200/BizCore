@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import kr.co.bizcore.v1.domain.Article;
 import kr.co.bizcore.v1.domain.AttachedFile;
+import kr.co.bizcore.v1.msg.Msg;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -44,6 +45,8 @@ public class ApiBoardCtrl extends Ctrl{
         String compId = null;
         String aesKey = null;
         String aesIv = null;
+        String lang = null;
+        Msg msg = null;
         HttpSession session = null;
 
         session = request.getSession();
@@ -51,11 +54,13 @@ public class ApiBoardCtrl extends Ctrl{
         if(compId == null)  compId = (String)session.getAttribute("compId");
         aesKey = (String)session.getAttribute("aesKey");
         aesIv = (String)session.getAttribute("aesIv");
+        lang = (String)session.getAttribute("lang");
+        msg = getMsg(lang);
 
         if(compId == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
         }else if(aesKey == null || aesIv == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
         }else{
             result = boardService.getFileboxArticleList(compId);
             result = boardService.encAes(result, aesKey, aesIv);
@@ -73,6 +78,8 @@ public class ApiBoardCtrl extends Ctrl{
         String aesKey = null;
         String aesIv = null;
         String compId = null;
+        String lang = null;
+        Msg msg = null;
         List<Object> files = null;
         Article article = null;
         HttpSession session = null;
@@ -86,14 +93,16 @@ public class ApiBoardCtrl extends Ctrl{
         userNo = (String)session.getAttribute("userNo");
         aesKey = (String)session.getAttribute("aesKey");
         aesIv = (String)session.getAttribute("aesIv");
+        lang = (String)session.getAttribute("lang");
+        msg = getMsg(lang);
         attached = (HashMap<String, String>)session.getAttribute("attached");
         
         if(compId == null)  compId = (String)request.getAttribute("compId");
             
         if(compId == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
         }else if(aesKey == null || aesIv == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
         }else{
             data = boardService.decAes(requestBody, aesKey, aesIv);
             json = new JSONObject(data);
@@ -115,14 +124,17 @@ public class ApiBoardCtrl extends Ctrl{
     public String fileboxDelete(HttpServletRequest request, @PathVariable String no) {
         String result = null;
         HttpSession session = null;
-        String compId = null;
+        String compId = null, lang = null;
+        Msg msg = null;
 
         session = request.getSession();
+        lang = (String)session.getAttribute("lang");
+        msg = getMsg(lang);
         compId = (String)session.getAttribute("compId");
         if(compId == null)  compId = (String)request.getAttribute("compId");
         
         if(compId == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
         }else{
             boardService.deleteFileboxArticle(no, compId);
             result = "{\"result\":\"ok\"}";
@@ -138,7 +150,8 @@ public class ApiBoardCtrl extends Ctrl{
         String aesKey = null;
         String aesIv = null;
         String compId = null;
-        String articleNo = null;
+        String lang = null;
+        Msg msg = null;
         Article article = null;
         HttpSession session = null;
 
@@ -146,12 +159,14 @@ public class ApiBoardCtrl extends Ctrl{
         compId = (String)session.getAttribute("compId");
         aesKey = (String)session.getAttribute("aesKey");
         aesIv = (String)session.getAttribute("aesIv");
+        lang = (String)session.getAttribute("lang");
+        msg = getMsg(lang);
         if(compId == null)  compId = (String)request.getAttribute("compId");
         
         if(compId == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
         }else if(aesKey == null || aesIv == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
         }else{
             article = boardService.getFileboxArticle(compId, boardService.strToInt(no));
             result = article.toJson();
@@ -172,6 +187,8 @@ public class ApiBoardCtrl extends Ctrl{
         String aesKey = null;
         String aesIv = null;
         String compId = null;
+        String lang = null;
+        Msg msg = null;
         HttpSession session = null;
         HashMap<String, String> attached = null;
         String[] data = null;
@@ -182,13 +199,15 @@ public class ApiBoardCtrl extends Ctrl{
         compId = (String)session.getAttribute("compId");
         aesKey = (String)session.getAttribute("aesKey");
         aesIv = (String)session.getAttribute("aesIv");
+        lang = (String)session.getAttribute("lang");
+        msg = getMsg(lang);
         attached = (HashMap<String, String>)session.getAttribute("attached");
         if(compId == null)  compId = (String)request.getAttribute("compId");
 
         if(compId == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
         }else if(aesKey == null || aesIv == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
         }else{
             data = requestBody.split("\r\n");
             if(data != null && data.length >= 2){
@@ -204,7 +223,7 @@ public class ApiBoardCtrl extends Ctrl{
                     }
                     attached.put(name, savedName);
                     result = "{\"result\":\"ok\",\"msg\":\"" + savedName + "\"}";
-                }else   result = "{\"result\":\"failure\",\"msg\":\"Error occured when file saved.\"}";
+                }else   result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
             }
         }
 
@@ -219,6 +238,8 @@ public class ApiBoardCtrl extends Ctrl{
         String aesIv = null;
         String compId = null;
         String data = null;
+        String lang = null;
+        Msg msg = null;
         JSONObject json = null;
         Article article = null;
         List<Object> removeFiles = null;
@@ -232,13 +253,15 @@ public class ApiBoardCtrl extends Ctrl{
         compId = (String)session.getAttribute("compId");
         aesKey = (String)session.getAttribute("aesKey");
         aesIv = (String)session.getAttribute("aesIv");
+        lang = (String)session.getAttribute("lang");
+        msg = getMsg(lang);
         attached = (HashMap<String, String>)session.getAttribute("attached");
         if(compId == null)  compId = (String)request.getAttribute("compId");
 
         if(compId == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
         }else if(aesKey == null || aesIv == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
         }else{
             data = boardService.decAes(requestBody, aesKey, aesIv);
             json = new JSONObject(data);

@@ -51,12 +51,14 @@ public class ApiAttachedCtrl extends Ctrl{
 
     private String sendFileList(HttpServletRequest request, String funcName, int funcNo){
         HttpSession session = null;
-        String compId = null, result = null, data = null, aesKey = null, aesIv = null;
-        Msg msg = getMsg(request.getHeader("Content-Language"));
+        String compId = null, result = null, data = null, aesKey = null, aesIv = null, lang = null;
+        Msg msg = null;
         
         session = request.getSession();
         aesKey = (String)session.getAttribute("aesKey");
         aesIv = (String)session.getAttribute("aesIv");
+        lang = (String)session.getAttribute("lang");
+        msg = getMsg(lang);
         compId = (String)session.getAttribute("compId");
         if(compId == null)  compId = (String)request.getAttribute("compId");
 
@@ -159,8 +161,9 @@ public class ApiAttachedCtrl extends Ctrl{
         String aesKey = null;
         String aesIv = null;
         String compId = null;
+        String lang = null;
         HttpSession session = null;
-        Msg msg = getMsg(request.getHeader("Content-Language"));
+        Msg msg = null;
         HashMap<String, String> attached = null;
         String[] data = null;
         String t = null;
@@ -170,6 +173,8 @@ public class ApiAttachedCtrl extends Ctrl{
         compId = (String)session.getAttribute("compId");
         aesKey = (String)session.getAttribute("aesKey");
         aesIv = (String)session.getAttribute("aesIv");
+        lang = (String)session.getAttribute("lang");
+        msg = getMsg(lang);
         attached = (HashMap<String, String>)session.getAttribute("attached");
         if(compId == null)  compId = (String)request.getAttribute("compId");
 
@@ -227,15 +232,17 @@ public class ApiAttachedCtrl extends Ctrl{
     }
 
     private String deleteAttachedFile(HttpServletRequest request, String funcName, int no, String fileName) {
-        String result = null, compId = null, data = null, aesIv = null, aesKey = null;
+        String result = null, compId = null, data = null, aesIv = null, aesKey = null, lang = null;
         HttpSession session = null;
-        Msg msg = getMsg(request.getHeader("Content-Language"));
+        Msg msg = null;
         int v = -1;
 
         session = request.getSession();
         compId = (String)session.getAttribute("compId");
         aesKey = (String)session.getAttribute("aesKey");
         aesIv = (String)session.getAttribute("aesIv");
+        lang = (String)session.getAttribute("lang");
+        msg = getMsg(lang);
         if(compId == null)  compId = (String)request.getAttribute("compId");
 
         if(compId == null){

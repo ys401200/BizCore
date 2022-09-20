@@ -96,9 +96,9 @@ public abstract class Ctrl {
     }
 
     public Msg getMsg(String lang){
-        if(lang == null)    return msgEng;
-        if(lang.toLowerCase().equals("ko=kr"))  return msgKor;
-        return msgEng;
+        if(lang == null)    return msgKor;
+        if(lang.toLowerCase().equals("ko-kr"))  return msgKor;
+        return msgKor;
     }
     
 

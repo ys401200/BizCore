@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import kr.co.bizcore.v1.domain.User;
+import kr.co.bizcore.v1.msg.Msg;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpSession;
@@ -30,36 +31,37 @@ public class ApiCtrl extends Ctrl {
 
     @RequestMapping(value = "/dept", method = RequestMethod.GET)
     public String dept(HttpServletRequest request) {
-        String result = null, aesKey = null, aesIv = null, json = null, compId = null, userNo;
+        String result = null, aesKey = null, aesIv = null, json = null, compId = null, userNo = null, lang = null;
+        Msg msg = null;
         HttpSession session = null;
 
         session = request.getSession();
         userNo = (String) session.getAttribute("userNo");
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        lang = (String)session.getAttribute("lang");
+        msg = getMsg(lang);
         compId = (String) session.getAttribute("compId");
         if (compId == null) {
             compId = (String) request.getAttribute("compId");
         }
+
         if (compId == null) {
-            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
-        } else if (userNo == null) {
-            result = "{\"result\":\"failure\",\"msg\":\"Session expired or Not logged in.\"}";
-        } else {
-            aesKey = (String) session.getAttribute("aesKey");
-            aesIv = (String) session.getAttribute("aesIv");
-            if (aesKey == null || aesIv == null) {
-                result = "{\"result\":\"failure\",\"msg\":\"Not found AES key.\"}";
-            } else {
-                json = deptService.getDeptJson(compId);
-                json = deptService.encAes(json, aesKey, aesIv);
-                result = "{\"result\":\"ok\",\"data\":\"" + json + "\"}";
-            }
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        }else if (aesKey == null || aesIv == null) {
+                result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        }else{
+            json = deptService.getDeptJson(compId);
+            json = deptService.encAes(json, aesKey, aesIv);
+            result = "{\"result\":\"ok\",\"data\":\"" + json + "\"}";
         }
         return result;
     } // End of dept
 
     @RequestMapping(value = "/my/{pw}", method = RequestMethod.GET)
     public String myGet(HttpServletRequest request, @PathVariable String pw) {
-        String result = null, aesKey = null, aesIv = null, compId = null, userNo, uri = null;
+        String result = null, aesKey = null, aesIv = null, compId = null, userNo, lang = null;
+        Msg msg = null;
         HttpSession session = null;
 
         session = request.getSession();
@@ -67,21 +69,20 @@ public class ApiCtrl extends Ctrl {
         compId = (String) session.getAttribute("compId");
         aesKey = (String) session.getAttribute("aesKey");
         aesIv = (String) session.getAttribute("aesIv");
+        lang = (String)session.getAttribute("lang");
+        msg = getMsg(lang);
         if (compId == null)
             compId = (String) request.getAttribute("compId");
-        uri = request.getRequestURI();
 
         if (compId == null) {
-            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
-        } else if (uri.length() <= 8) {
-            result = "{\"result\":\"failure\",\"msg\":\"Need Pssword.\"}";
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
         } else if (aesIv == null || aesKey == null) {
-            result = "{\"result\":\"failure\",\"msg\":\"Not found AES key.\"}";
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
         } else {
             pw = decAes(pw, aesKey, aesIv);
             result = systemService.getMyInfo(userNo, pw, compId);
             if (result == null) {
-                result = "{\"result\":\"failure\",\"msg\":\"Invalid password.\"}";
+                result = "{\"result\":\"failure\",\"msg\":\"" + msg.idPwMisMatch + "\"}";
             } else {
                 result = systemService.encAes(result, aesKey, aesIv);
                 result = "{\"result\":\"ok\",\"data\":\"" + result + "\"}";
@@ -95,7 +96,8 @@ public class ApiCtrl extends Ctrl {
     @RequestMapping(value = "/my", method = RequestMethod.POST)
     public String myPost(HttpServletRequest request, @RequestBody String requestBody) {
         String result = null, aesKey = null, aesIv = null, compId = null, userNo = null, data = null;
-        String email = null, address = null, homePhone = null, cellPhone = null;
+        String email = null, address = null, homePhone = null, cellPhone = null, lang = null;
+        Msg msg = null;
         Integer zipCode = -1;
         JSONObject json = null;
         HttpSession session = null;
@@ -105,13 +107,15 @@ public class ApiCtrl extends Ctrl {
         compId = (String) session.getAttribute("compId");
         aesKey = (String) session.getAttribute("aesKey");
         aesIv = (String) session.getAttribute("aesIv");
+        lang = (String)session.getAttribute("lang");
+        msg = getMsg(lang);
         if (compId == null)
             compId = (String) request.getAttribute("compId");
 
         if (compId == null) {
-            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
         } else if (aesIv == null || aesKey == null) {
-            result = "{\"result\":\"failure\",\"msg\":\"Not found AES key.\"}";
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
         } else {
             data = decAes(requestBody, aesKey, aesIv);
             json = new JSONObject(data);
@@ -130,7 +134,8 @@ public class ApiCtrl extends Ctrl {
     // 개인정보 수정 중 사진 업로드시 임시저장
     @RequestMapping(value = "/my/image", method = RequestMethod.POST)
     public String myImagePost(HttpServletRequest request, @RequestBody String requestBody) {
-        String result = null, aesKey = null, aesIv = null, compId = null, userNo = null, data = null;
+        String result = null, aesKey = null, aesIv = null, compId = null, userNo = null, data = null, lang = null;
+        Msg msg = null;
         byte[] fileData = null;
         HttpSession session = null;
 
@@ -138,21 +143,23 @@ public class ApiCtrl extends Ctrl {
         userNo = (String) session.getAttribute("userNo");
         compId = (String) session.getAttribute("compId");
         aesKey = (String) session.getAttribute("aesKey");
+        lang = (String)session.getAttribute("lang");
+        msg = getMsg(lang);
         aesIv = (String) session.getAttribute("aesIv");
         if (compId == null)
             compId = (String) request.getAttribute("compId");
 
         if (compId == null) {
-            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
         } else if (aesIv == null || aesKey == null) {
-            result = "{\"result\":\"failure\",\"msg\":\"Not found AES key.\"}";
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
         } else {
             data = decAes(requestBody, aesKey, aesIv);
             fileData = Base64.getDecoder().decode(data);
             if (attachedService.saveMyImageToTemp(compId, userNo, fileData))
                 result = "{\"result\":\"ok\"}";
             else
-                result = "{\"result\":\"failure\",\"msg\":\"An error occurred.\"}";
+                result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
         }
 
         return result;
@@ -185,7 +192,8 @@ public class ApiCtrl extends Ctrl {
     // 비번 변경
     @RequestMapping(value = "/my", method = RequestMethod.PUT)
     public String myPut(HttpServletRequest request, @RequestBody String requestBody) {
-        String result = null, aesKey = null, aesIv = null, compId = null, userNo, pwOld = null, pwNew, str = null;
+        String result = null, aesKey = null, aesIv = null, compId = null, userNo, pwOld = null, pwNew, str = null, lang = null;
+        Msg msg = null;
         JSONObject json = null;
         HttpSession session = null;
 
@@ -194,13 +202,15 @@ public class ApiCtrl extends Ctrl {
         compId = (String) session.getAttribute("compId");
         aesKey = (String) session.getAttribute("aesKey");
         aesIv = (String) session.getAttribute("aesIv");
+        lang = (String)session.getAttribute("lang");
+        msg = getMsg(lang);
         if (compId == null)
             compId = (String) request.getAttribute("compId");
 
         if (compId == null) {
-            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
         } else if (aesIv == null || aesKey == null) {
-            result = "{\"result\":\"failure\",\"msg\":\"Not found AES key.\"}";
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
         } else {
             str = systemService.decAes(requestBody, aesKey, aesIv);
             json = new JSONObject(str);

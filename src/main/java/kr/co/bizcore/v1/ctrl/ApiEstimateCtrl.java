@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import kr.co.bizcore.v1.domain.Estimate;
+import kr.co.bizcore.v1.msg.Msg;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
@@ -24,21 +25,24 @@ public class ApiEstimateCtrl extends Ctrl {
     public String apiEstimateGet(HttpServletRequest request){
         String result = null, aesKey = null, aesIv = null, compId = null;
         HttpSession session = null;
-        String list = null;
+        String list = null, lang = null;
+        Msg msg = null;
 
         session = request.getSession();
         aesKey = (String) session.getAttribute("aesKey");
         aesIv = (String) session.getAttribute("aesIv");
+        lang = (String)session.getAttribute("lang");
+        msg = getMsg(lang);
         compId = (String) session.getAttribute("compId");
         if (compId == null)
             compId = (String) request.getAttribute("compId");
 
         if (compId == null) {
-            result = "{\"result\":\"failure\",\"msg\":\"Company ID is not verified.\"}";
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
         } else
             list = soppService.getEstimateList(compId);
             if (list == null) {
-                result = "{\"result\":\"failure\",\"msg\":\"list is empty\"}";
+                result = "{\"result\":\"failure\",\"msg\":\"" + msg.noResult + "\"}";
             } else {
                 list = soppService.encAes(list, aesKey, aesIv);
                 result = "{\"result\":\"ok\",\"data\":\"" + list + "\"}";
@@ -51,21 +55,24 @@ public class ApiEstimateCtrl extends Ctrl {
         String result = null, aesKey = null, aesIv = null, compId = null;
         HttpSession session = null;
         Estimate estimate = null;
-        String list = null;
+        String list = null, lang = null;
+        Msg msg = null;
 
         session = request.getSession();
         aesKey = (String) session.getAttribute("aesKey");
         aesIv = (String) session.getAttribute("aesIv");
+        lang = (String)session.getAttribute("lang");
+        msg = getMsg(lang);
         compId = (String) session.getAttribute("compId");
         if (compId == null)
             compId = (String) request.getAttribute("compId");
 
         if (compId == null) {
-            result = "{\"result\":\"failure\",\"msg\":\"Company ID is not verified.\"}";
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
         } else
             estimate = soppService.getEstimate(no, compId);
             if (estimate == null) {
-                result = "{\"result\":\"failure\",\"msg\":\"Not exist\"}";
+                result = "{\"result\":\"failure\",\"msg\":\"" + msg.noResult + "\"}";
             } else {
                 list = soppService.encAes(estimate.toJson(), aesKey, aesIv);
                 result = "{\"result\":\"ok\",\"data\":\"" + list + "\"}";

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import kr.co.bizcore.v1.msg.Msg;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
@@ -20,22 +21,23 @@ public class ApiDept extends Ctrl{
 
     @RequestMapping(value = "/map", method = RequestMethod.GET)
     public String deptMap(HttpServletRequest request) {
-        String result = null, userNo = null, aesKey = null, aesIv = null, map = null, compId = null;
+        String result = null, userNo = null, aesKey = null, aesIv = null, map = null, compId = null, lang = null;
+        Msg msg = null;
         
         HttpSession session = request.getSession();
 
         userNo = (String)session.getAttribute("userNo");
         aesKey = (String)session.getAttribute("aesKey");
         aesIv = (String)session.getAttribute("aesIv");
+        lang = (String)session.getAttribute("lang");
+        msg = getMsg(lang);
         compId = (String)session.getAttribute("compId");
         if(compId == null)  compId = (String)request.getAttribute("compId");
 
         if(compId == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
-        }else if(userNo == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Session Expired and/or Not logged in.\"}";            
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
         }else if(aesKey == null || aesIv == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
         }else{
             map = deptService.getDeptJson(compId);
             map = deptService.encAes(map, aesKey, aesIv);

@@ -2,6 +2,7 @@ package kr.co.bizcore.v1.interceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import kr.co.bizcore.v1.ctrl.Ctrl;
 import kr.co.bizcore.v1.msg.Msg;
 import kr.co.bizcore.v1.msg.MsgEng;
 import kr.co.bizcore.v1.msg.MsgKor;
@@ -36,8 +36,18 @@ public class ViewInterceptor implements HandlerInterceptor {
         String compId = null;
         String userNo = null;
         String uri = null;
-        String lang = request.getHeader("Content-Language");
-        Msg msg = (lang == null) ? new MsgEng() : lang.toLowerCase().equals("ko-kr") ? new MsgKor() : new MsgEng();
+        HttpSession session = request.getSession();
+        String lang1 = (String)session.getAttribute("lang");
+        String lang2 = request.getHeader("Accept-Language");
+
+        if(lang2 != null && lang2.toLowerCase().indexOf("ko-kr") >= 0)   lang2 = "ko-kr";
+
+        if(lang1 == null && lang2 != null){
+            session.setAttribute("lang", lang2.toLowerCase());
+            lang1 = lang2.toLowerCase();
+        }
+        
+        Msg msg = (lang1 == null) ? new MsgEng() : lang1.toLowerCase().equals("ko-kr") ? new MsgKor() : new MsgEng();
 
         server = request.getServerName();
         uri = request.getRequestURI();

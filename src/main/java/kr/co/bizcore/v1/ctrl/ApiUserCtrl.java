@@ -24,6 +24,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
 import kr.co.bizcore.v1.domain.SimpleUser;
+import kr.co.bizcore.v1.msg.Msg;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
@@ -66,10 +67,14 @@ public class ApiUserCtrl extends Ctrl{
         String userId = null, pw = null, userNo = null, compId = null, result = null, uri = null, dec = null,
                 aesKey = null, aesIv = null, lang = null;
         String[] t = null;
+        Msg msg = null;
         boolean keepStatus = false;
         JSONObject json = null;
         HttpSession session = null;
-        lang = request.getHeader("");
+
+        session = request.getSession();
+        lang = (String)session.getAttribute("lang");
+        msg = getMsg(lang);
 
         // 경로에서 compId를 찾을 수 있도록 준비함
         uri = request.getRequestURI();
@@ -93,7 +98,7 @@ public class ApiUserCtrl extends Ctrl{
             compId = t[3];
 
         if (compId == null) { // compId NOT Verified, send failure message
-            result = "{\"result\":\"failure\",\"msg\":\"Company ID isn't verified\"}";
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
         } else { // When compId verified, decryption data and verify userId, pw.
             session.setAttribute("compId", compId); // Set attribute compId to session
             aesKey = (String) session.getAttribute("aesKey");
@@ -105,11 +110,11 @@ public class ApiUserCtrl extends Ctrl{
             pw = json.getString("pw");
             keepStatus = json.getBoolean("keepStatus");
             if (userId == null || pw == null) {
-                result = "{\"result\":\"failure\",\"msg\":\"User ID and/or Password ware empty\"}";
+                result = "{\"result\":\"failure\",\"msg\":\"" + msg.idPwMisMatch + "\"}";
             } else {
                 userNo = userService.verifyLoginTemp(compId, userId, pw);
                 if (userNo == null)
-                    result = "{\"result\":\"failure\",\"msg\":\"User ID and/or Password ware mismatch\"}";
+                    result = "{\"result\":\"failure\",\"msg\":\"" + msg.idPwMisMatch + "\"}";
                 else {
                     session.setAttribute("userNo", userNo);
                     result = "{\"result\":\"ok\"}";

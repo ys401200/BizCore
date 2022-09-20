@@ -28,14 +28,17 @@ public class ApiAccountingCtrl extends Ctrl{
         String compId = null;
         String aesKey = null;
         String aesIv = null;
-        Msg msg = getMsg(request.getHeader("Content-Language"));
+        String lang = null;
+        Msg msg = null;
         HttpSession session = null;
 
         session = request.getSession();
-        compId = (String)session.getAttribute("compId");
-        if(compId == null)  compId = (String)session.getAttribute("compId");
         aesKey = (String)session.getAttribute("aesKey");
         aesIv = (String)session.getAttribute("aesIv");
+        compId = (String)session.getAttribute("compId");
+        lang = (String)session.getAttribute("lang");
+        msg = getMsg(lang);
+        if(compId == null)  compId = (String)session.getAttribute("compId");
 
         if(compId == null){
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
@@ -58,14 +61,16 @@ public class ApiAccountingCtrl extends Ctrl{
     @GetMapping("/statistics/sales/{date:\\d+}")
     public String apiAccStatistics(HttpServletRequest request, @PathVariable int date){
         String result = null;
-        String compId = null, aesKey = null, aesIv = null, data = null;
-        Msg msg = getMsg(request.getHeader("Content-Language"));
+        String compId = null, aesKey = null, aesIv = null, data = null, lang = null;
+        Msg msg = null;
         int y = -1, year;
         HttpSession session = null;
 
         session = request.getSession();
         aesKey = (String)session.getAttribute("aesKey");
         aesIv = (String)session.getAttribute("aesIv");
+        lang = (String)session.getAttribute("lang");
+        msg = getMsg(lang);
         compId = (String)session.getAttribute("compId");
         if(compId == null)  compId = (String)session.getAttribute("compId");
 
