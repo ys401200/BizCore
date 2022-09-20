@@ -45,7 +45,11 @@ function drawSoppList() {
 		msg.set("등록된 영업기회가 없습니다");
 	}
 	else {
-		jsonData = storage.soppList;
+		if(storage.searchDatas === undefined){
+			jsonData = storage.soppList;
+		}else{
+			jsonData = storage.searchDatas;
+		}
 	}
 
 	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
@@ -156,7 +160,7 @@ function drawSoppList() {
 	searchContainer = $(".searchContainer");
 	searchHtml = "<div class=\"searchInputContent\">";
 	searchHtml += "<input type=\"text\" id=\"searchAllInput\" style=\"border: 1px solid #000; width: 100%\">";
-	searchHtml += "<button type=\"button\" onclick=\"searchKeyup()\">검색</button>";
+	searchHtml += "<button type=\"button\" onclick=\"searchInputSuccess()\">검색</button>";
 	searchHtml += "</div>";
 	searchContainer.html(searchHtml);
 }
@@ -177,8 +181,10 @@ function soppSuccessList(result){
 
 	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined){
 		window.setTimeout(drawSoppList, 600);
+		window.setTimeout(addSearchList, 600);
 	}else{
-		window.setTimeout(drawSoppList, 200);
+		window.setTimeout(drawSoppList, 600);
+		window.setTimeout(addSearchList, 200);
 	}
 }
 
@@ -669,13 +675,37 @@ function soppErrorDelete(){
 	alert("삭제에러");
 }
 
-
-function searchKeyup(){
-	let filterValue, searchAllInput;
+function searchInputSuccess(){
+	let searchAllInput, dataArray = [];
 	searchAllInput = $("#searchAllInput").val();
-	filterValue = searchKeyupFilter(storage.soppList, "title", searchAllInput);
 
-	storage.soppList.push(filterValue);
+	for(let key in storage.searchList){
+		if(storage.searchList[key].indexOf(searchAllInput) > -1){
+			dataArray.push(storage.soppList[key]);
+		}
+	}
 
+	storage.searchDatas = dataArray;
 	drawSoppList();
+}
+
+function addSearchList(){
+	storage.searchList = [];
+
+	for(let i = 0; i < storage.soppList.length; i++){
+		let no, soppType, contType, title, customer, endUser, employee, expectedSales, status, disDate, setDate;
+		no = storage.soppList[i].no;
+		soppType = storage.code.etc[storage.soppList[i].soppType];
+		contType = storage.code.etc[storage.soppList[i].contType];
+		title = storage.soppList[i].title;
+		customer = (storage.soppList[i].customer === null || storage.soppList[i].customer == 0) ? "" : storage.customer[storage.soppList[i].customer].name;
+		endUser = (storage.soppList[i].endUser === null || storage.soppList[i].endUser == 0 || storage.soppList[i].endUser == 104571) ? "" : storage.customer[storage.soppList[i].endUser].name;
+		employee = (storage.soppList[i].employee === null || storage.soppList[i].employee == 0) ? "" : storage.user[storage.soppList[i].employee].userName;
+		expectedSales = storage.soppList[i].expectedSales;
+		status = storage.code.etc[storage.soppList[i].status];
+		disDate = dateDis(storage.soppList[i].created, storage.soppList[i].modified);
+		setDate = dateFnc(disDate);
+
+		storage.searchList.push(no + "/" + soppType + "/" + contType + "/" + title + "/" + customer + "/" + endUser + "/" + employee + "/" + expectedSales + "/" + status + "/" + setDate);
+	}
 }
