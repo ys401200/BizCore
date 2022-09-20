@@ -10,6 +10,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import kr.co.bizcore.v1.ctrl.Ctrl;
+import kr.co.bizcore.v1.msg.Msg;
+import kr.co.bizcore.v1.msg.MsgEng;
+import kr.co.bizcore.v1.msg.MsgKor;
 import kr.co.bizcore.v1.svc.SystemService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,6 +36,8 @@ public class ViewInterceptor implements HandlerInterceptor {
         String compId = null;
         String userNo = null;
         String uri = null;
+        String lang = request.getHeader("Content-Language");
+        Msg msg = (lang == null) ? new MsgEng() : lang.toLowerCase().equals("ko-kr") ? new MsgKor() : new MsgEng();
 
         server = request.getServerName();
         uri = request.getRequestURI();
@@ -47,7 +53,7 @@ public class ViewInterceptor implements HandlerInterceptor {
                         !(uri.length() >= 15 && uri.substring(0, 15).equals("/api/user/login")) &&
                         !(uri.length() >= 13 && uri.substring(0, 13).equals("/api/user/rsa")) &&
                         !(uri.length() >= 13 && uri.substring(0, 13).equals("/api/user/aes"))){
-            response.getWriter().print("{\"result\":\"failure\",\"msg\":\"Session is Expired and/or Not logged in.\"}");
+            response.getWriter().print("{\"result\":\"failure\",\"msg\":\"" + msg.notLoggedin + "\"}");
             return false;
         }else if(uri.length() >= 9 && uri.substring(0, 9).equals("/business") && userNo == null){
             response.sendRedirect("/");
