@@ -82,6 +82,7 @@ public class ApiUserCtrl extends Ctrl{
             uri = uri.substring(1);
         if (uri.substring(uri.length() - 1).equals("/"))
             uri = uri.substring(0, uri.length() - 1);
+        t = uri.split("/");
 
         // session과 request에서 compId를 찾아봄
         session = request.getSession();
