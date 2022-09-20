@@ -51,6 +51,7 @@ public class ApiAttachedCtrl extends Ctrl{
     private String sendFileList(HttpServletRequest request, String funcName, int funcNo){
         HttpSession session = null;
         String compId = null, result = null, data = null, aesKey = null, aesIv = null;
+        Msg msg = getMsg(request.getHeader("Content-Language"));
         
         session = request.getSession();
         aesKey = (String)session.getAttribute("aesKey");
@@ -59,11 +60,11 @@ public class ApiAttachedCtrl extends Ctrl{
         if(compId == null)  compId = (String)request.getAttribute("compId");
 
         if(compId == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
         }else{
             data = attachedService.getAttachedFileList(compId, funcName, funcNo);
             if(data == null){
-                result = "{\"result\":\"failure\",\"msg\":\"An error occurred.\"}";
+                result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
             }else{
                 data = encAes(data, aesKey, aesIv);
                 result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
@@ -158,6 +159,7 @@ public class ApiAttachedCtrl extends Ctrl{
         String aesIv = null;
         String compId = null;
         HttpSession session = null;
+        Msg msg = getMsg(request.getHeader("Content-Language"));
         HashMap<String, String> attached = null;
         String[] data = null;
         String t = null;
@@ -171,9 +173,9 @@ public class ApiAttachedCtrl extends Ctrl{
         if(compId == null)  compId = (String)request.getAttribute("compId");
 
         if(compId == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
         }else if(aesKey == null || aesIv == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
         }else{
             data = requestBody.split("\r\n");
             if(data != null && data.length >= 2){
@@ -195,7 +197,7 @@ public class ApiAttachedCtrl extends Ctrl{
                     savedName = systemService.createRandomFileName();
                     if(attachedService.saveAttachedFile(compId, fileName, savedName, fileData, funcName, funcNo)){
                         result = "{\"result\":\"ok\",\"msg\":\"" + savedName + "\"}";
-                    }else   result = "{\"result\":\"failure\",\"msg\":\"Error occurred when file save.\"}";
+                    }else   result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
                 }
             }
         }
@@ -226,6 +228,7 @@ public class ApiAttachedCtrl extends Ctrl{
     private String deleteAttachedFile(HttpServletRequest request, String funcName, int no, String fileName) {
         String result = null, compId = null, data = null, aesIv = null, aesKey = null;
         HttpSession session = null;
+        Msg msg = getMsg(request.getHeader("Content-Language"));
         int v = -1;
 
         session = request.getSession();
@@ -235,17 +238,17 @@ public class ApiAttachedCtrl extends Ctrl{
         if(compId == null)  compId = (String)request.getAttribute("compId");
 
         if(compId == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
         }else if(aesKey == null || aesIv == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
         }else{
             v = attachedService.deleteAttachedFile(compId, funcName, no, fileName);
             if(v == 0){
                 data = attachedService.getAttachedFileList(compId, funcName, no);
                 data = encAes(data, aesKey, aesIv);
                 result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
-            }else if( v == -1)   result = "{\"result\":\"failure\",\"msg\":\"An error occurred when file delete.\"}";
-            else    result = "{\"result\":\"failure\",\"msg\":\"File not found Or removed.\"}";
+            }else if( v == -1)   result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
+            else    result = "{\"result\":\"failure\",\"msg\":\"" + msg.fileNotFound + "\"}";
         }
         return result;
     }

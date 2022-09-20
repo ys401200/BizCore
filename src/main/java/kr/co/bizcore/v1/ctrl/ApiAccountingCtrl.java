@@ -27,6 +27,7 @@ public class ApiAccountingCtrl extends Ctrl{
         String compId = null;
         String aesKey = null;
         String aesIv = null;
+        Msg msg = getMsg(request.getHeader("Content-Language"));
         HttpSession session = null;
 
         session = request.getSession();
@@ -36,9 +37,9 @@ public class ApiAccountingCtrl extends Ctrl{
         aesIv = (String)session.getAttribute("aesIv");
 
         if(compId == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
         }else if(aesKey == null || aesIv == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
         }else if(option.equals("all") || option.equals("remain")){
             result = accService.getSimpleTaxBillList(compId, option.equals("all"));
             result = encAes(result, aesKey, aesIv);
@@ -57,6 +58,7 @@ public class ApiAccountingCtrl extends Ctrl{
     public String apiAccStatistics(HttpServletRequest request, @PathVariable int date){
         String result = null;
         String compId = null, aesKey = null, aesIv = null, data = null;
+        Msg msg = getMsg(request.getHeader("Content-Language"));
         int y = -1, year;
         HttpSession session = null;
 
@@ -70,11 +72,11 @@ public class ApiAccountingCtrl extends Ctrl{
         y = Calendar.getInstance().get(Calendar.YEAR);
         
         if(compId == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
         }else if(aesKey == null || aesIv == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
         }else if(y < year - 5 || y > year + 5){
-            result = "{\"result\":\"failure\",\"msg\":\"Wrong date format.\"}";
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.wrongDateFormat + "\"}";
         }else{
             data = accService.getSalesStatisticsWithYear(compId, year);
             data = encAes(data, aesKey, aesIv);
