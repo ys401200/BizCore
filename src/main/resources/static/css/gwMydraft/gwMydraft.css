@@ -4,7 +4,6 @@
    display: flex;
    align-items: center;
    justify-content: center;
-   /*margin: 2%;*/
    height: 5rem;
    background: #FFFFFF;
    overflow: auto;
@@ -130,22 +129,14 @@
    ;
 }
 
-/* .mainBtnDiv button {
-	margin: 1em 1em 1em 0;
-	font-weight: 500;
-	font-size: 0.8em;
-	line-height: 2;
-	color: #332E85;
-	background-color: white;
-	border: none;
-	border-radius: 3px;
-} */
 
-
+.grid_default_text_align_center {
+   padding-left: 0;
+}
 
 .listDiv .gridHeader,
 .listDiv .gridContent {
-   grid-template-columns: 10% 10% 10% 40%  10% 10% 10%;
+   grid-template-columns: 10% 10% 10% 40% 10% 10% 10%;
 }
 
 .subContainer .listPageDiv>div:first-of-type {
@@ -159,7 +150,6 @@
 }
 
 
-
 .listPageDiv .detailReport {
    display: grid;
    grid-template-columns: 60% 40%;
@@ -167,7 +157,6 @@
 
 .listPageDiv .detailReport .selectedReportview>div:first-child {
    border: 1px solid black;
-
 }
 
 
@@ -183,4 +172,3 @@
    border: 1px solid black;
 
 }
-

@@ -84,7 +84,7 @@ function drawMyDraft() {
         },
 
         {
-            "title": "현재 결재 순서 타입",
+            "title": "결재 타입",
             "align": "center",
         },
         {

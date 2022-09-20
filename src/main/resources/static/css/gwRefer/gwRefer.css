@@ -123,7 +123,7 @@
 	border-bottom: 1px solid #406c92;
 }
 
-.listDiv .grid_default_body_item:nth-chhild(2n-1) {
+.listDiv .grid_default_body_item:nth-child(2n-1) {
 	background-color: rgba(234, 239, 243, 0.4)
 }
 
@@ -146,8 +146,6 @@
 .subContainer .listPageDiv>div:last-of-type {
 	margin-bottom: 2%;
 }
-
-
 
 
 .mainBtnDiv {
