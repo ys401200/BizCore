@@ -70,6 +70,9 @@ function drawMyDraft() {
         {
             "title": "번호",
             "align": "center",
+        }, {
+            "title": "기안일",
+            "align": "center",
         },
         {
             "title": "문서양식",
@@ -79,6 +82,7 @@ function drawMyDraft() {
             "title": "제목",
             "align": "center",
         },
+
         {
             "title": "현재 결재 순서 타입",
             "align": "center",
@@ -88,7 +92,7 @@ function drawMyDraft() {
             "align": "center",
         },
         {
-            "title": "결재권자 조회",
+            "title": "조회",
             "align": "center",
         },
 
@@ -102,7 +106,7 @@ function drawMyDraft() {
         if (read == null) {
             read = "N";
         } else {
-            read = setDate
+            read = getYmdSlash(read);
         }
 
         let appType = jsonData[i].appType;
@@ -123,6 +127,8 @@ function drawMyDraft() {
 
             {
                 "setData": jsonData[i].no,
+            }, {
+                "setData": setDate,
             },
             {
                 "setData": jsonData[i].form,
@@ -130,6 +136,7 @@ function drawMyDraft() {
             {
                 "setData": jsonData[i].title,
             },
+
             {
                 "setData": appType,
             },
@@ -161,4 +168,10 @@ function drawMyDraft() {
         }
 
     });
+}
+
+
+function getYmdSlash(date) {
+    let d = new Date(date);
+    return (d.getFullYear() % 100) + "/" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "/" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString());
 }

@@ -391,10 +391,6 @@ function approveBtnEvent() {
 	// $("input:radio[name='type']").prop("checked", false);
 	let selectVal = $(":radio[name='type']:checked").val();
 	let approvalComment = $(".approvalComment").val();
-
-
-
-
 	$(".modal-wrap").hide();
 }
 
