@@ -706,6 +706,6 @@ function addSearchList(){
 		disDate = dateDis(storage.soppList[i].created, storage.soppList[i].modified);
 		setDate = dateFnc(disDate);
 
-		storage.searchList.push(no + "/" + soppType + "/" + contType + "/" + title + "/" + customer + "/" + endUser + "/" + employee + "/" + expectedSales + "/" + status + "/" + setDate);
+		storage.searchList.push(no + "#" + soppType + "#" + contType + "#" + title + "#" + customer + "#" + endUser + "#" + employee + "#" + expectedSales + "#" + status + "#" + setDate);
 	}
 }

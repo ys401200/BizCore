@@ -2337,28 +2337,28 @@ function addChart_4(){
 	});
 }
 
-function searchFilter(data, key, value){
-	return data.filter((object) => {
-		return object[key].toString().indexOf(value) > -1;
-	});
-}
+// function searchFilter(data, key, value){
+// 	return data.filter((object) => {
+// 		return object[key].toString().indexOf(value) > -1;
+// 	});
+// }
 
-function searchFilterAfter(keyArray, searchAllInput){
-	let filterValue, tempArray = [];
+// function searchFilterAfter(keyArray, searchAllInput){
+// 	let filterValue, tempArray = [];
 
-	for(let i = 0; i < keyArray.length; i++){
-		filterValue = searchFilter(storage.soppList, keyArray[i], searchAllInput);
-		if(filterValue.length > 0){
-			for(let t = 0; t < filterValue.length; t++){
-				tempArray.push(filterValue[t]);
-			}
-		}
-	}
+// 	for(let i = 0; i < keyArray.length; i++){
+// 		filterValue = searchFilter(storage.soppList, keyArray[i], searchAllInput);
+// 		if(filterValue.length > 0){
+// 			for(let t = 0; t < filterValue.length; t++){
+// 				tempArray.push(filterValue[t]);
+// 			}
+// 		}
+// 	}
 
-	if(tempArray.length < 1){
-		alert("검색 데이터가 없습니다.");
-		return false;
-	}else{
-		return tempArray;
-	}
-}
+// 	if(tempArray.length < 1){
+// 		alert("검색 데이터가 없습니다.");
+// 		return false;
+// 	}else{
+// 		return tempArray;
+// 	}
+// }
