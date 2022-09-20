@@ -13,8 +13,6 @@ $(document).ready(() => {
 function waitDefault() {
 	$(".modal-wrap").hide();
 
-
-
 	$.ajax({
 		"url": apiServer + "/api/gw/form",
 		"method": "get",
@@ -285,7 +283,7 @@ function drawCommentLine() {
 	let lineDetailHtml = "";
 
 
-	let html = "<div class='readDiv'><div>열람 </div><div><label for='deptRd'><input type='radio' id='deptRd' name='rd' value='dept'/>작성자 소속 부서</label><label for='noneRd'><input type='radio' id='noneRd' name='rd' value='none'/>열람 설정 없음</label></div></div>"
+	let html = "<div class='readDiv'><div>열람</div><div><label for='deptRd'><input type='radio' id='deptRd' name='rd' value='dept'/>작성자 소속 부서</label><label for='noneRd'><input type='radio' id='noneRd' name='rd' value='none'/>열람 설정 없음</label></div></div>"
 	for (let i = 0; i < examine.length; i++) {
 		lineDetailHtml += "<div class='tapLine examineLine'><div>검토</div><div>" + examine[i].name + "</div><div>" + examine[i].status + "</div><div>" + examine[i].approved + "</div><div>" + examine[i].comment + "</div></div>";
 	}
@@ -304,10 +302,6 @@ function drawCommentLine() {
 
 
 	target.html(html);
-
-
-
-
 
 
 }

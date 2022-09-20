@@ -18,13 +18,36 @@ function dueDefault() {
     $("#gwSubTabTitle").html("결재 예정 문서");
 
 
+    $.ajax({
+        "url": apiServer + "/api/gw/form",
+        "method": "get",
+        "dataType": "json",
+        "cache": false,
+        success: (data) => {
+            let list;
+            if (data.result === "ok") {
+                list = cipher.decAes(data.data);
+                list = JSON.parse(list);
+                storage.formList = list;
+                console.log("[getForms] Success getting employee information.");
+            } else {
+                // msg.set("양식 정보를 가져오지 못했습니다.");
+            }
+        }
+    })
+
+
+
+
+
+
     let url, method, data, type;
     url = "/api/gw/app/wait";
     method = "get"
     data = "";
     type = "list";
     crud.defaultAjax(url, method, data, type, successList, errorList);
-  
+
 
     $(".searchContainer").show();
     $(".listPageDiv").show();
@@ -61,20 +84,20 @@ function getDetailView(no) {
 
     let testForm = storage.formList[0].form;
     let detailHtml = "<div class='mainBtnDiv'><button type='button' onclick='showPreAppModal()'>선결재하기</button></div>" +
-    "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div>"
+        "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div>"
 
 
     $(".listPageDiv").html(detailHtml);
 
 
 
-   
-	let selectedFileView = "<div class='selectedFileField'><label>첨부파일</label><div><input type='file' onchange='setSelectedFiles()'/><div class='selectedFileDiv'></div></div></div>"
+
+    let selectedFileView = "<div class='selectedFileField'><label>첨부파일</label><div><input type='file' onchange='setSelectedFiles()'/><div class='selectedFileDiv'></div></div></div>"
 
 
 
-	$(".seletedForm").html(testForm);
-	$(".selectedFile").html(selectedFileView);
+    $(".seletedForm").html(testForm);
+    $(".selectedFile").html(selectedFileView);
     $(":file").css("display", "none");// 첨부파일 버튼 숨기기 
 
     let tabHtml = "<div class='reportInfoTab'>" +
@@ -215,32 +238,32 @@ function drawApproval() {
 
     header = [
 
-		{
-			"title": "번호",
-			"align": "center",
-		},{
-			"title": "결재 타입",
-			"align": "center",
-		},
-		{
-			"title": "문서종류",
-			"align": "center",
-		},
-		{
-			"title": "제목",
-			"align": "center",
-		},
-		{
-			"title": "작성자",
-			"align": "center",
-		},
-		{
-			"title": "작성일",
-			"align": "center",
-		},
-		
-		
-	];
+        {
+            "title": "번호",
+            "align": "center",
+        }, {
+            "title": "결재 타입",
+            "align": "center",
+        },
+        {
+            "title": "문서종류",
+            "align": "center",
+        },
+        {
+            "title": "제목",
+            "align": "center",
+        },
+        {
+            "title": "작성자",
+            "align": "center",
+        },
+        {
+            "title": "작성일",
+            "align": "center",
+        },
+
+
+    ];
 
     for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
         disDate = dateDis(jsonData[i].created, jsonData[i].modified);
@@ -248,43 +271,43 @@ function drawApproval() {
         let userName = storage.user[jsonData[i].writer].userName;
         let appType = jsonData[i].appType;
         if (appType == '0') {
-			appType = "검토";
+            appType = "검토";
 
-		} else if (appType == '1') {
-			appType = "합의";
+        } else if (appType == '1') {
+            appType = "합의";
 
-		} else if (appType == '2') {
-			appType = "결재";
-		} else if (appType == '3') {
-			appType = "수신";
-		} else {
-			appType = "참조";
+        } else if (appType == '2') {
+            appType = "결재";
+        } else if (appType == '3') {
+            appType = "수신";
+        } else {
+            appType = "참조";
 
-		}
+        }
         str = [
 
-			{
-				"setData": jsonData[i].no,
-			},{
-				"setData": appType,
-			},
-			{
-				"setData": jsonData[i].form,
-			},
-			{
-				"setData": jsonData[i].title,
-			},
-			{
-				"setData": userName,
-			},
-			{
-				"setData": setDate,
-			},
-			
-			// {
-			// 	"setData": "<input type='checkbox' class='thisCheck' data-id='" + jsonData[i].no + "'>",
-			// }
-		]
+            {
+                "setData": jsonData[i].no,
+            }, {
+                "setData": appType,
+            },
+            {
+                "setData": jsonData[i].form,
+            },
+            {
+                "setData": jsonData[i].title,
+            },
+            {
+                "setData": userName,
+            },
+            {
+                "setData": setDate,
+            },
+
+            // {
+            // 	"setData": "<input type='checkbox' class='thisCheck' data-id='" + jsonData[i].no + "'>",
+            // }
+        ]
         fnc = "detailView(this)";
         ids.push(jsonData[i].no);
         data.push(str);

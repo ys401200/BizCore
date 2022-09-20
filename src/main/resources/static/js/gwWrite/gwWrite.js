@@ -131,7 +131,7 @@ function selectForm() {
     dataType: "json",
     success: (result) => {
       if (result.result == "ok") {
-        let jsondata;s
+        let jsondata;
         jsondata = cipher.decAes(result.data);
         jsondata = JSON.parse(jsondata);
         storage.soppList = jsondata;

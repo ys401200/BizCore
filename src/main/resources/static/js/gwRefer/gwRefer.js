@@ -9,7 +9,7 @@ $(document).ready(() => {
     referDefault();
 
 });
-
+ㄴ
 
 // 참조 문서는 상세 조회가 가능하고 열람은 결재가 끝난 후에 참조/열람 문서함에서 열람 가능함 
 function referDefault() {
