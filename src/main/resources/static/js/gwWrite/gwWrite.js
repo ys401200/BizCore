@@ -184,11 +184,6 @@ function setSoppList(formId) {
 }
 
 
-
-
-
-
-
 // 결재선 생성 버튼 눌렀을 때 모달 띄움 
 function showModal() {
 
@@ -497,14 +492,13 @@ function setSavedLine(obj) {
 
 function reportInsert() {
 
-
   $("#_infoSopp").remove();
   $("#_infoCustomer").remove();
+
   let sopp, infoCustomer, title, content, readable, formId, appDoc, dept;
   let appLine = [];
   let selectedFormNo = $(".formSelector").val();
   formId = storage.formList[selectedFormNo].id;
-
   let detailType = $("input[name='" + formId + "_RD']:checked").attr("id");
 
   sopp = $("#" + formId + '_sopp').val();
@@ -552,10 +546,9 @@ function reportInsert() {
   data = JSON.stringify(data)
   data = cipher.encAes(data);
 
-
   if ($(".createLineBtn").css("display") == "none") {
     alert("결재 문서 양식을 선택하세요");
-  } else if (detailType == undefined) {
+  } else if (formId != "doc_Form_Pur" && detailType == undefined && formId != "doc_Form_Dip" && detailType == undefined) {
     alert("결재문서 상세 타입을 선택하세요")
   } else if (title == '') {
     alert("제목을 입력하세요");
@@ -632,7 +625,6 @@ function docFileChange() {
   }
 
   // 파일목록 수정의 경우 추가해야함 
-
 
 
 }

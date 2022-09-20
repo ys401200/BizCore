@@ -26,7 +26,7 @@
 				<div class="container">
 					<hr />
 					<span>참조/열람 대기 문서</span>
-					<div class="referFDiv"></div>
+					<div class="referDiv"></div>
 					<div class="pageContainer"></div>
 				</div>
 			</div>

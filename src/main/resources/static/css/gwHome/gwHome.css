@@ -41,14 +41,14 @@ button {
 } */
 
 
-.waitDiv {
+.container>div:first-of-type {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: nowrap;
 	overflow-x: auto;
 }
 
-.waitDiv .waitCard {
+.container>div:first-of-type .waitCard {
 	width: 15em;
 	flex: 0 0 auto;
 	border: 2px solid #EDEDF4;
@@ -60,7 +60,7 @@ button {
 	box-shadow: 0px 3px 6px rgba(177, 190, 201, 0.65);
 }
 
-.waitDiv .waitCard>div:first-of-type {
+.container>div:first-of-type .waitCard>div:first-of-type {
 	margin: 1em;
 	color: #406c92;
 	font-weight: 800;
@@ -69,9 +69,9 @@ button {
 	padding-bottom: 10px;
 }
 
-.waitDiv .waitCard .subWaitCard>div>div:first-of-type {
+.container>div:first-of-type.waitCard .subWaitCard>div>div:first-of-type {
 	color: #406c92;
-	grid-template-columns: repeat(5,1fr);
+	grid-template-columns: repeat(5, 1fr);
 
 }
 
@@ -79,27 +79,27 @@ button {
 	font-size: 14px;
 }
 
-.waitDiv .waitCard>div>div:first-of-type {
+.container>div:first-of-type .waitCard>div>div:first-of-type {
 	font-weight: 500;
 }
 
-.waitDiv .waitCard .title>div {
+.container>div:first-of-type .waitCard .title>div {
 	line-height: 1;
 }
 
-.waitDiv .waitCard:hover {
+.container>div:first-of-type .waitCard:hover {
 	margin: 1em;
 	transform: scale(1.01);
 }
 
-.waitDiv .waitCard .subWaitCard>div {
+.container>div:first-of-type .waitCard .subWaitCard>div {
 	display: grid;
 	margin: 1em;
 	grid-template-columns: 30% 70%;
 	margin: 1em;
 }
 
-.waitDiv .waitCard>.title {
+.container>div:first-of-type .waitCard>.title {
 	border-bottom: 2px solid #aac7e1;
 	padding-bottom: 10px;
 	grid-template-columns: 100%;
@@ -108,15 +108,15 @@ button {
 	color: #406c92;
 }
 
-.waitDiv .waitCard>.title div:first-of-type {
+.container>div:first-of-type .waitCard>.title div:first-of-type {
 	display: none;
 }
 
-.waitDiv .waitCard>div:last-child {
+.container>div:first-of-type .waitCard>div:last-child {
 	margin: 2px 0 5px 0;
 }
 
-.waitDiv .waitCard>div:hover button {
+.container>div:first-of-type .waitCard>div:hover button {
 	background-color: #406c92;
 	color: #fff;
 }

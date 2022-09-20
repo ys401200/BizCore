@@ -10,7 +10,6 @@ $(document).ready(() => {
 });
 
 function drawGwDiv() {
-
 	$.ajax({
 		"url": "/api/gw/app/wait",
 		"method": "get",
@@ -22,31 +21,36 @@ function drawGwDiv() {
 				list = cipher.decAes(data.data);
 				list = JSON.parse(list);
 				storage.waitList = list;
-				let waitList = storage.waitList.wait;
-				drawWaitCard(waitList);
+				let typeList = storage.waitList;
+				drawWaitCard(typeList);
 			} else {
 				// msg.set("양식 정보를 가져오지 못했습니다.");
 			}
 		}
 	})
-
-
 }
 
 
 
-function drawWaitCard(waitList) {
-	let target = $(".waitDiv");
+function drawWaitCard(typeList) {
 
-	let gwHtml = "";
-	for (let i = 0; i < waitList.length; i++) {
-		gwHtml += "<div class='waitCard' value='" + waitList[i].no + "'><div>" + waitList[i].title + "</div>" +
-			"<div class='subWaitCard'><div class='type'><div>결재타입</div><div>" + waitList[i].form + "</div></div>" +
-			"<div class='writer'><div>기안자</div><div>" + storage.user[waitList[i].writer].userName + "</div></div>" +
-			"<div class='created'><div>작성일</div><div>" + getYmdSlash(waitList[i].created) + "</div></div></div></div>";
+	let html = "";
+	let types = ["wait", "due", "receive", "refer"];
+	let targets = [".waitDiv", ".dueDiv", ".receiveDiv", ".referDiv"];
+	for (let j = 0; j < types.length; j++) {
+		for (let i = 0; i < typeList[types[j]].length; i++) {
+			html += "<div class='waitCard' value='" + typeList[types[j]][i].no + "'><div>" + typeList[types[j]][i].title + "</div>" +
+				"<div class='subWaitCard'><div class='type'><div>결재타입</div><div>" + typeList[types[j]][i].form + "</div></div>" +
+				"<div class='writer'><div>기안자</div><div>" + storage.user[typeList[types[j]][i].writer].userName + "</div></div>" +
+				"<div class='created'><div>작성일</div><div>" + getYmdSlash(typeList[types[j]][i].created) + "</div></div></div></div>";
+		}
+
+		$(targets[j]).html(html);
+		html = "";
 	}
 
-	target.html(gwHtml);
+
+
 }
 
 
@@ -58,7 +62,7 @@ function drawNoticeList() {
 		msg.set("등록된 공지사항이 없습니다");
 	}
 	else {
-		jsonData = storage.waitList.due; 
+		jsonData = storage.waitList.due;
 	}
 
 	result = paging(jsonData.length, storage.currentPage, 5);
@@ -72,7 +76,7 @@ function drawNoticeList() {
 			"title": "번호",
 			"align": "center",
 		},
-        {
+		{
 			"title": "결재 타입",
 			"align": "center",
 		},
@@ -92,8 +96,8 @@ function drawNoticeList() {
 			"title": "작성일",
 			"align": "center",
 		},
-		
-		
+
+
 	];
 
 	for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
@@ -101,11 +105,10 @@ function drawNoticeList() {
 		setDate = dateFnc(disDate);
 		let userName = storage.user[jsonData[i].writer].userName;
 		let appType = jsonData[i].appType;
-        if (appType == '0') {
+		if (appType == '0') {
 			appType = "검토";
 		} else if (appType == '1') {
 			appType = "합의";
-
 		} else if (appType == '2') {
 			appType = "결재";
 		} else if (appType == '3') {
@@ -114,11 +117,10 @@ function drawNoticeList() {
 			appType = "참조";
 
 		}
-        str = [
-
+		str = [
 			{
 				"setData": jsonData[i].no,
-			},{
+			}, {
 				"setData": appType,
 			},
 			{
@@ -133,7 +135,7 @@ function drawNoticeList() {
 			{
 				"setData": setDate,
 			},
-			
+
 			// {
 			// 	"setData": "<input type='checkbox' class='thisCheck' data-id='" + jsonData[i].no + "'>",
 			// }
@@ -192,11 +194,9 @@ function noticeErrorList() {
 	alert("에러");
 }
 
-
 function showWaitReport() { }
 
-
-function getYmdSlash() {
-	let d = new Date();
+function getYmdSlash(date) {
+	let d = new Date(date);
 	return (d.getFullYear() % 100) + "/" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "/" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString());
 }
