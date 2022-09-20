@@ -15,23 +15,23 @@ function waitDefault() {
 
 
 
-            $.ajax({
-                "url": apiServer + "/api/gw/form",
-                "method": "get",
-                "dataType": "json",
-                "cache": false,
-                success: (data) => {
-                    let list;
-                    if (data.result === "ok") {
-                        list = cipher.decAes(data.data);
-                        list = JSON.parse(list);
-                        storage.formList = list;
-                        console.log("[getForms] Success getting employee information.");
-                    } else {
-                        // msg.set("양식 정보를 가져오지 못했습니다.");
-                    }
-                }
-            })
+	$.ajax({
+		"url": apiServer + "/api/gw/form",
+		"method": "get",
+		"dataType": "json",
+		"cache": false,
+		success: (data) => {
+			let list;
+			if (data.result === "ok") {
+				list = cipher.decAes(data.data);
+				list = JSON.parse(list);
+				storage.formList = list;
+				console.log("[getForms] Success getting employee information.");
+			} else {
+				// msg.set("양식 정보를 가져오지 못했습니다.");
+			}
+		}
+	})
 
 
 	let url, method, data, type;
@@ -40,7 +40,7 @@ function waitDefault() {
 	data = "";
 	type = "list";
 	crud.defaultAjax(url, method, data, type, waitSuccessList, waitErrorList);
-	 
+
 
 	$(".searchContainer").show();
 	$(".listPageDiv").show();
@@ -69,7 +69,7 @@ function drawNoticeApproval() {
 			"title": "번호",
 			"align": "center",
 		},
-        {
+		{
 			"title": "결재 타입",
 			"align": "center",
 		},
@@ -89,15 +89,15 @@ function drawNoticeApproval() {
 			"title": "작성일",
 			"align": "center",
 		},
-		
-		
+
+
 	];
 	for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
 		disDate = dateDis(jsonData[i].created, jsonData[i].modified);
 		setDate = dateFnc(disDate);
 		let userName = storage.user[jsonData[i].writer].userName;
 		let appType = jsonData[i].appType;
-        if (appType == '0') {
+		if (appType == '0') {
 			appType = "검토";
 		} else if (appType == '1') {
 			appType = "합의";
@@ -110,11 +110,11 @@ function drawNoticeApproval() {
 			appType = "참조";
 
 		}
-        str = [
+		str = [
 
 			{
 				"setData": jsonData[i].no,
-			},{
+			}, {
 				"setData": appType,
 			},
 			{
@@ -129,7 +129,7 @@ function drawNoticeApproval() {
 			{
 				"setData": setDate,
 			},
-			
+
 			// {
 			// 	"setData": "<input type='checkbox' class='thisCheck' data-id='" + jsonData[i].no + "'>",
 			// }
@@ -279,33 +279,31 @@ function drawCommentLine() {
 
 	// 임시 데이터 ---------------------------------------------------- 
 
-	let detail1 = "<div class='tapLine tapLineTitle'><div>타입</div><div>이름</div><div>상태</div><div>일자</div><div>의견</div></div>";
+
+
+	let detail = "<div class='tapLine tapLineTitle'><div>타입</div><div>이름</div><div>상태</div><div>일자</div><div>의견</div></div>";
 	let lineDetailHtml = "";
-	for (let i = 0; i < refer.length; i++) {
-		lineDetailHtml = "<div class='tapLine examineLine'><div>참조</div><div>" + refer[i].name + "</div><div>" + refer[i].status + "</div><div>" + refer[i].approved + "</div><div>" + refer[i].comment + "</div></div>";
-
-	}
-	detail1 += lineDetailHtml;
-
-	let detail2 = "<div class='tapLine tapLineTitle'><div>타입</div><div>이름</div><div>상태</div><div>일자</div><div>의견</div></div>";
-	let lineDetailHtml2 = "";
-	let approvalDetailHtml2 = "";
 
 
+	let html = "<div class='readDiv'><div>열람 </div><div><label for='deptRd'><input type='radio' id='deptRd' name='rd' value='dept'/>작성자 소속 부서</label><label for='noneRd'><input type='radio' id='noneRd' name='rd' value='none'/>열람 설정 없음</label></div></div>"
 	for (let i = 0; i < examine.length; i++) {
-		lineDetailHtml2 += "<div class='tapLine examineLine'><div>검토</div><div>" + examine[i].name + "</div><div>" + examine[i].status + "</div><div>" + examine[i].approved + "</div><div>" + examine[i].comment + "</div></div>";
+		lineDetailHtml += "<div class='tapLine examineLine'><div>검토</div><div>" + examine[i].name + "</div><div>" + examine[i].status + "</div><div>" + examine[i].approved + "</div><div>" + examine[i].comment + "</div></div>";
 	}
 	for (let i = 0; i < approval.length; i++) {
-		approvalDetailHtml2 += "<div class='tapLine approvalLine'><div>결재</div><div>" + approval[i].name + "</div><div>" + approval[i].status + "</div><div>" + approval[i].approved + "</div><div>" + approval[i].comment + "</div></div>";
+		lineDetailHtml += "<div class='tapLine approvalLine'><div>결재</div><div>" + approval[i].name + "</div><div>" + approval[i].status + "</div><div>" + approval[i].approved + "</div><div>" + approval[i].comment + "</div></div>";
+	}
+	for (let i = 0; i < refer.length; i++) {
+		lineDetailHtml += "<div class='tapLine referLine'><div>참조</div><div>" + refer[i].name + "</div><div>" + refer[i].status + "</div><div>" + refer[i].approved + "</div><div>" + refer[i].comment + "</div></div>";
 	}
 
-	lineDetailHtml2 += approvalDetailHtml2;
-	detail2 += lineDetailHtml2;
-	detail1 += detail2;
-	let html = "<div class='readDiv'><div>열람 </div><div><label for='deptRd'><input type='radio' id='deptRd' name='rd' value='dept'/>작성자 소속 부서</label><label for='noneRd'><input type='radio' id='noneRd' name='rd' value='none'/>열람 설정 없음</label></div></div>"
-	detail1 += html;
+	detail += lineDetailHtml;
 
-	target.html(detail1);
+	html += detail;
+
+	$(".tabLine").children(0).css("padding", "5em");
+
+
+	target.html(html);
 
 
 

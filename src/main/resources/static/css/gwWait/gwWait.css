@@ -129,7 +129,7 @@
 
 .listDiv .gridHeader,
 .listDiv .gridContent {
-   grid-template-columns: 10% 10% 10% 50% 10% 10% ;
+   grid-template-columns: 10% 10% 10% 50% 10% 10%;
 }
 
 
@@ -240,6 +240,10 @@
    border-bottom: none;
 }
 
+.comment .tabDetail>div:last-of-type {
+   padding: 1em;
+}
+
 
 .tapLine,
 .tapLineB {
@@ -248,6 +252,7 @@
    display: grid;
    grid-template-columns: 10% 15% 10% 25% 40%;
 }
+
 
 .tapLineB {
    grid-template-columns: 10% 15% 35% 40%;

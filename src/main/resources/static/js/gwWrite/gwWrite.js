@@ -21,10 +21,10 @@ function getformList() {
   $(".selector:first").html("<div>기본 설정</div><div class='formDetail'><div>결재양식</div><div class='formListDiv'></div><button type='button' class='formSelectbtn' onclick='selectForm()'>선택</button><input type='hidden' class='formNumHidden'/></div>"
     + "<div class='formDetail'><div>열람권한</div><div><label><input type='radio' name='authority' value='dept' />기안자 소속 부서 포함</label><label><input type='radio' name='authority' value='none' checked />권한 설정 없음</label></div></div>");
 
-  $(".selector:first").next().html("<div>결재선 <button class='createLineBtn' onclick='showModal()'>결재선생성</button></div><div class='modal-wrap'><div class='gwModal'></div></div>");
+  $(".selector:first").next().html("<div>결재선 <div class='guide'> 결재 양식을 선택하면 결재선 생성을 할 수 있습니다.</div> <button class='createLineBtn' onclick='showModal()'>결재선생성</button></div><div class='modal-wrap'><div class='gwModal'></div></div>");
 
 
-  let lastHtml = "<div>상세 입력 </div><div class='insertedDetail'><div class='reportInsertForm'></div><div class='referContainer'><div>참조</div></div><div class='fileDetail'>";
+  let lastHtml = "<div>상세 입력 <div class='guide'> 결재 양식을 선택하면 상세 입력을 할 수 있습니다.</div></div><div class='insertedDetail'><div class='reportInsertForm'></div><div class='referContainer'><div>참조</div></div><div class='fileDetail'>";
 
 
   // lastHtml += "<div>파일첨부</div><div class='filebtnContainer'><input type='file' class='gwFileInput' onchange='drawSelectedFileList(this)' /><div class='insertedFileList'></div></div></div></div>"
@@ -97,6 +97,7 @@ function selectForm() {
   let selectedFormNo = $(".formSelector").val();
   selectedFormTitle = data[selectedFormNo].title;
 
+  $(".guide").remove();
   $(".lineDetail").show();
   $(".createLineBtn").show();
   $(".reportInsertForm").html(data[selectedFormNo].form);
@@ -130,7 +131,7 @@ function selectForm() {
     dataType: "json",
     success: (result) => {
       if (result.result == "ok") {
-        let jsondata;
+        let jsondata;s
         jsondata = cipher.decAes(result.data);
         jsondata = JSON.parse(jsondata);
         storage.soppList = jsondata;
