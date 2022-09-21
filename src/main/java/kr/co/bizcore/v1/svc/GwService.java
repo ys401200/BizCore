@@ -250,7 +250,7 @@ public class GwService extends Svc{
     }
 
     // 문서 관리번호를 입력받아서 결재 문서 정보, 본문, 결재선을 전달하는 메서드 / 오류메시지 : notFound / errorInAppLine / appDocContentIsEmpty / permissionDenied
-    public String getAppDocAndDetailInfo(String compId, String docNo, String dept, String userNo){
+    public String getAppDocAndDetailInfo(String compId, String docNo, String dept, String userNo, String aesKey, String aesIv){
         String result = null;
         String sql1 = "SELECT no, docNo, writer, formId, docbox, title, confirmNo, status, readable FROM bizcore.doc_app WHERE deleted IS NULL AND compId = ? AND docno = ?";
         String sql2 = "SELECT ordered, employee, appType, CAST(UNIX_TIMESTAMP(`read`)*1000 AS CHAR) AS `read`, isModify, CAST(UNIX_TIMESTAMP(approved)*1000 AS CHAR) AS approved, CAST(UNIX_TIMESTAMP(rejected)*1000 AS CHAR) AS rejected, comment, appData FROM bizcore.doc_app_detail WHERE compId = ? AND docNo = ? AND retrieved IS NULL ORDER BY ordered";
@@ -367,7 +367,7 @@ public class GwService extends Svc{
             result += ("\"status\":" + status + ",");
             result += ("\"readable\":\"" + (readable ? "dept" : "none") + "\",");
             result += ("\"appLine\":" + t + ",");
-            result += ("\"doc\":\"" + cvtJsonUnicode(doc) + "\"}");
+            result += ("\"doc\":\"" + encAes(doc, aesKey, aesIv) + "\"}");
             
         }catch(SQLException e){e.printStackTrace();}
 

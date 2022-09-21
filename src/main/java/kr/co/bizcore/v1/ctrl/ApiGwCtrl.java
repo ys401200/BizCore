@@ -149,7 +149,7 @@ public class ApiGwCtrl extends Ctrl{
         return result;
     } // End of apiGwAppMydraftGet()
 
-    // 결재 문서를 전달 / 오류메시지 : notFound / errorInAppLine / appDocContentIsEmpty / permissionDenied
+    // 결재 문서를 전달
     @GetMapping("/app/doc/{docNo}")
     public String apiGwAppDocNoGet(HttpServletRequest request, @PathVariable("docNo") String docNo){
         String result = null, compId = null, userNo = null, data = null, aesIv = null, aesKey = null, lang = null, dept = null;
@@ -170,7 +170,7 @@ public class ApiGwCtrl extends Ctrl{
         }else if(aesKey == null || aesIv == null){
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
         }else{
-            data = gwService.getAppDocAndDetailInfo(compId, docNo, dept, userNo);
+            data = gwService.getAppDocAndDetailInfo(compId, docNo, dept, userNo, aesKey, aesIv);
             if(data == null){
                 result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
             }else if(data.equals("notFound")){
@@ -262,6 +262,40 @@ public class ApiGwCtrl extends Ctrl{
         return result;
     } // End of apiGwAppDocNoPost()
 
+
+    // 결재 처리 요청
+    @PostMapping("/app/proceed/{docNo}/{ordered:\\d+}/{apptype:\\d+}")
+    public String apiGwAppProceedPost(HttpServletRequest request, @PathVariable("docNo") String docNo, @PathVariable("ordered") int ordered, @PathVariable("apptype") int appType){
+        String result = null, compId = null, userNo = null, data = null, aesIv = null, aesKey = null, lang = null;
+        HttpSession session = null;
+        Msg msg = null;
+
+        session = request.getSession();
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        userNo = (String)session.getAttribute("userNo");
+        lang = (String)session.getAttribute("lang");
+        msg = getMsg(lang);
+        compId = (String)session.getAttribute("compId");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        }else{
+            data = "";
+            if(data == null)    result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
+            else{
+                data = encAes(data, aesKey, aesIv);
+                result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
+            }
+            
+        }
+        return result;
+    } // End of apiGwAppCancelNoPost()
+
+
     // 결재 문서 수정 등록
     @PutMapping("/app/doc/{docNo:\\d+}")
     public String apiGwAppDocNoPut(HttpServletRequest request){
@@ -270,21 +304,6 @@ public class ApiGwCtrl extends Ctrl{
         return result;
     } // End of apiGwAppDocNoPut()
 
-    // 결재 문서 취소
-    @PostMapping("/app/cancel/{docNo:\\d+}")
-    public String apiGwAppCancelNoPost(HttpServletRequest request){
-        String result = null;
-
-        return result;
-    } // End of apiGwAppCancelNoPost()
-
-    // 결재 문서 반려
-    @PostMapping("/app/return/{docNo:\\d+}")
-    public String apiGwAppReturnNoPost(HttpServletRequest request){
-        String result = null;
-
-        return result;
-    } // End of apiGwAppReturnNoPost()
     
 }
 
