@@ -700,33 +700,28 @@ function addSearchList(){
 }
 
 function searchSubmit(){
-	let searchDatas = "", tempArray, dataArray, resultArray = [];
+	let tempArray, dataArray = [], resultArray, eachIndex = 0;
 
 	$(".searchMultiContent div").find("input, select").each((index, item) => {
 		if($(item).val() !== ""){
 			tempArray = searchDataFilter(storage.soppList, $(item).val(), "multi");
-
-			if(dataArray !== undefined){
-				for(let i = 0; i < dataArray.length; i++){
-					for(let t = i+1; t < tempArray.length; t++){
-						if(dataArray[i] === tempArray[t]){
-							temp.push(tempArray[t]);
-						}
-					}
-				}
-				dataArray = temp;
-			}else{
-				dataArray = tempArray;
+			
+			for(let i = 0; i < tempArray.length; i++){
+				dataArray.push(tempArray[i]);
 			}
+
+			eachIndex++;
 		}
 	});
 
-	// storage.searchDatas = searchDataFilter(storage.soppList, searchDatas);
+	resultArray = searchMultiFilter(eachIndex, dataArray, storage.soppList);
+	
+	storage.searchDatas = resultArray;
 
-	// if(storage.searchDatas.length == 0){
-	// 	alert("찾는 데이터가 없습니다.");
-	// 	return false;
-	// }
-
-	// drawSoppList();
+	if(storage.searchDatas.length == 0){
+		alert("찾는 데이터가 없습니다.");
+		return false;
+	}
+	
+	drawSoppList();
 }

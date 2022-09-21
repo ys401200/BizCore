@@ -2467,9 +2467,34 @@ function searchDataFilter(arrayList, searchDatas, type){
 	return dataArray;
 }
 
-function findDuplicates(array) {
-    let filtered = array.filter((item, index) => array.indexOf(item) !== index);
-    return [...new Set(filtered)]
+function searchMultiFilter(index, dataArray, arrayList){
+	let arr = [], tempResultArray = [], resultArray = [];
+
+	if(index > 1){
+		for(let i = 0; i < dataArray.length; i++){
+			if(arr[dataArray[i]]){
+				arr[dataArray[i]]++;
+			}else{
+				arr[dataArray[i]] = 1;
+			}
+		}
+	
+		for(let key in arr){
+			if(index == arr[key]){
+				tempResultArray.push(key);
+			}
+		}
+
+		for(let i = 0; i < tempResultArray.length; i++){
+			resultArray.push(arrayList[tempResultArray[i]]);
+		}
+	}else{
+		for(let i = 0; i < dataArray.length; i++){
+			resultArray.push(arrayList[dataArray[i]]);
+		}
+	}
+
+	return resultArray;
 }
 
 // function searchFilter(data, key, value){
