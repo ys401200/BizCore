@@ -12,13 +12,19 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import kr.co.bizcore.v1.domain.DocForm;
 import kr.co.bizcore.v1.mapper.GwMapper;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class GwService extends Svc{
+
+    private static final Logger logger = LoggerFactory.getLogger(GwService.class);
 
     // 양식 목록 전달
     public String getForms(){
@@ -119,6 +125,7 @@ public class GwService extends Svc{
         // 대기문서와 예정문서의 문서코드 분리
         for(x = 0 ; x < list.size() ; x++){
             each = list.get(x);
+            logger.debug("========================== GwService.getWaitAndDueDocList : STEP 1 : " + each.get("docno") + " / " + each.get("stat"));
             if(each.get("stat").equals("wait"))         waitDocs.add(each.get("docno"));
             else if(each.get("stat").equals("due"))     dueDocs.add(each.get("docno"));
             else if(each.get("stat").equals("refer"))   referDocs.add(each.get("docno"));
@@ -148,6 +155,7 @@ public class GwService extends Svc{
                 wait += ("\"appType\":" + each.get("appType") + ",");
                 wait += ("\"read\":" + t);
                 wait += "}";
+                logger.debug("========================== GwService.getWaitAndDueDocList : STEP 2 : " + each.get("docno"));
             }
             wait += "]";
         }
@@ -176,6 +184,7 @@ public class GwService extends Svc{
                 due += ("\"appType\":" + each.get("appType") + ",");
                 due += ("\"read\":" + t);
                 due += "}";
+                logger.debug("========================== GwService.getWaitAndDueDocList : STEP 3 : " + each.get("docno"));
             }
             due += "]";
         }
@@ -204,6 +213,7 @@ public class GwService extends Svc{
                 refer += ("\"appType\":" + each.get("appType") + ",");
                 refer += ("\"read\":" + t);
                 refer += "}";
+                logger.debug("========================== GwService.getWaitAndDueDocList : STEP 4 : " + each.get("docno"));
             }
             refer += "]";
         }
