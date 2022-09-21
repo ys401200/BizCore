@@ -39,7 +39,7 @@ function soppSearchList(){
 }
 
 function drawSoppList() {
-	let container, result, job, jsonData, header = [], data = [], ids = [], disDate, setDate, str, fnc, searchContainer, searchHtml = "";
+	let container, result, job, jsonData, header = [], data = [], ids = [], disDate, setDate, str, fnc;
 	
 	if (storage.soppList === undefined) {
 		msg.set("등록된 영업기회가 없습니다");
@@ -156,13 +156,6 @@ function drawSoppList() {
 	let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawSoppList", result[0]);
 	pageContainer[0].innerHTML = pageNation;
 	createGrid(container, header, data, ids, job, fnc);
-	
-	searchContainer = $(".searchContainer");
-	searchHtml = "<div class=\"searchInputContent\">";
-	searchHtml += "<input type=\"text\" id=\"searchAllInput\" style=\"border: 1px solid #000; width: 100%\">";
-	searchHtml += "<button type=\"button\" onclick=\"searchInputSuccess()\">검색</button>";
-	searchHtml += "</div>";
-	searchContainer.html(searchHtml);
 }
 
 function soppDetailView(e){
@@ -182,9 +175,11 @@ function soppSuccessList(result){
 	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined){
 		window.setTimeout(drawSoppList, 600);
 		window.setTimeout(addSearchList, 600);
+		window.setTimeout(searchContainerSet, 600);
 	}else{
-		window.setTimeout(drawSoppList, 600);
+		window.setTimeout(drawSoppList, 200);
 		window.setTimeout(addSearchList, 200);
+		window.setTimeout(searchContainerSet, 200);
 	}
 }
 
@@ -675,17 +670,11 @@ function soppErrorDelete(){
 	alert("삭제에러");
 }
 
-function searchInputSuccess(){
-	let searchAllInput, dataArray = [];
+function searchInputKeyup(){
+	let searchAllInput;
 	searchAllInput = $("#searchAllInput").val();
 
-	for(let key in storage.searchList){
-		if(storage.searchList[key].indexOf(searchAllInput) > -1){
-			dataArray.push(storage.soppList[key]);
-		}
-	}
-
-	storage.searchDatas = dataArray;
+	storage.searchDatas = searchDataFilter(storage.soppList, searchAllInput, "input");
 	drawSoppList();
 }
 
@@ -706,6 +695,38 @@ function addSearchList(){
 		disDate = dateDis(storage.soppList[i].created, storage.soppList[i].modified);
 		setDate = dateFnc(disDate);
 
-		storage.searchList.push(no + "#" + soppType + "#" + contType + "#" + title + "#" + customer + "#" + endUser + "#" + employee + "#" + expectedSales + "#" + status + "#" + setDate);
+		storage.searchList.push("#" + no + "#" + employee + "#" + customer + "#" + title + "#" + soppType + "#" + contType + "#" + status + "#" + endUser + "#" + expectedSales + "#" + setDate);
 	}
+}
+
+function searchSubmit(){
+	let searchDatas = "", tempArray, dataArray, resultArray = [];
+
+	$(".searchMultiContent div").find("input, select").each((index, item) => {
+		if($(item).val() !== ""){
+			tempArray = searchDataFilter(storage.soppList, $(item).val(), "multi");
+
+			if(dataArray !== undefined){
+				for(let i = 0; i < dataArray.length; i++){
+					for(let t = i+1; t < tempArray.length; t++){
+						if(dataArray[i] === tempArray[t]){
+							temp.push(tempArray[t]);
+						}
+					}
+				}
+				dataArray = temp;
+			}else{
+				dataArray = tempArray;
+			}
+		}
+	});
+
+	// storage.searchDatas = searchDataFilter(storage.soppList, searchDatas);
+
+	// if(storage.searchDatas.length == 0){
+	// 	alert("찾는 데이터가 없습니다.");
+	// 	return false;
+	// }
+
+	// drawSoppList();
 }

@@ -2337,6 +2337,141 @@ function addChart_4(){
 	});
 }
 
+function searchContainerSet(){
+	let searchContainer, searchChangeBtn, multiSearchBtn, searchInputContent, searchMultiContent, jsonData, html = "";
+	searchContainer = $(".searchContainer");
+	searchChangeBtn = $("#searchChangeBtn");
+	multiSearchBtn = $("#multiSearchBtn");
+	searchInputContent = $(".searchInputContent");
+	searchMultiContent = $(".searchMultiContent");
+
+	searchChangeBtn.hide();
+	multiSearchBtn.hide();
+	searchInputContent.hide();
+	searchMultiContent.hide();
+	
+	searchMultiContent.find("div input").each((index, item) => {
+		if($(item).data("type") !== undefined){
+			$(item).attr("list", "_" + $(item).attr("id"));
+			$(item).after("<datalist id=\"_" + $(item).attr("id") + "\"></datalist>");
+			
+			if($(item).data("type") === "user"){
+				jsonData = storage.user;
+				for(let key in jsonData){
+					$(item).next().append("<option data-value=\"" + key + "\" value=\"" + jsonData[key].userName + "\">");
+				}
+			}else if($(item).data("type") === "customer"){
+				jsonData = storage.customer;
+				for(let key in jsonData){
+					$(item).next().append("<option data-value=\"" + key + "\" value=\"" + jsonData[key].name + "\">");
+				}
+			}else if($(item).data("type") === "sopp"){
+				$.ajax({
+					url: "/api/sopp",
+					method: "get",
+					dataType: "json",
+					success: (result) => {
+						jsonData = cipher.decAes(result.data);
+						jsonData = JSON.parse(jsonData);
+						
+						for(let i = 0; i < jsonData.length; i++){
+							$(item).next().append("<option data-value='" + jsonData[i].no + "' value='" + jsonData[i].title + "'></option>");
+						}
+					}
+				})
+			}else if($(item).data("type") === "contract"){
+				$.ajax({
+					url: "/api/contract",
+					method: "get",
+					dataType: "json",
+					success: (result) => {
+						jsonData = cipher.decAes(result.data);
+						jsonData = JSON.parse(jsonData);
+						
+						for(let i = 0; i < jsonData.length; i++){
+							$(item).next().append("<option data-value='" + jsonData[i].no + "' value='" + jsonData[i].title + "'></option>");
+						}
+					}
+				})
+			}
+		}
+	});
+
+	searchContainer.show();
+}
+
+function searchAco(e){
+	let thisBtn, searchChangeBtn, multiSearchBtn, searchInputContent, searchMultiContent;
+	thisBtn = $(e);
+	searchChangeBtn = $("#searchChangeBtn");
+	multiSearchBtn = $("#multiSearchBtn");
+	searchInputContent = $(".searchInputContent");
+	searchMultiContent = $(".searchMultiContent");
+
+	if(!thisBtn.data("set")){
+		thisBtn.text("접기");
+		thisBtn.data("set", true);
+		searchChangeBtn.text("멀티");
+		searchChangeBtn.data("set", false);
+		searchChangeBtn.show();
+		searchInputContent.show();
+		multiSearchBtn.hide();
+		searchMultiContent.hide();
+	}else{
+		thisBtn.text("펼치기");
+		thisBtn.data("set", false);
+		searchChangeBtn.hide();
+		searchChangeBtn.text("멀티");
+		searchChangeBtn.data("set", false);
+		multiSearchBtn.hide();
+		searchInputContent.hide();
+		searchMultiContent.hide();
+	}
+}
+
+function searchChange(e){
+	let thisBtn, multiSearchBtn, searchInputContent, searchMultiContent;
+	thisBtn = $(e);
+	multiSearchBtn = $("#multiSearchBtn");
+	searchInputContent = $(".searchInputContent");
+	searchMultiContent = $(".searchMultiContent");
+
+	if(!thisBtn.data("set")){
+		thisBtn.text("텍스트");
+		thisBtn.data("set", true);
+		multiSearchBtn.show();
+		searchInputContent.hide();
+		searchMultiContent.show();
+	}else{
+		thisBtn.text("멀티");
+		thisBtn.data("set", false);
+		multiSearchBtn.hide();
+		searchInputContent.show();
+		searchMultiContent.hide();
+	}
+}
+
+function searchDataFilter(arrayList, searchDatas, type){
+	let dataArray = [];
+
+	for(let key in storage.searchList){
+		if(storage.searchList[key].indexOf(searchDatas) > -1){
+			if(type === "input"){
+				dataArray.push(arrayList[key]);
+			}else{
+				dataArray.push(key);
+			}
+		}
+	}
+
+	return dataArray;
+}
+
+function findDuplicates(array) {
+    let filtered = array.filter((item, index) => array.indexOf(item) !== index);
+    return [...new Set(filtered)]
+}
+
 // function searchFilter(data, key, value){
 // 	return data.filter((object) => {
 // 		return object[key].toString().indexOf(value) > -1;

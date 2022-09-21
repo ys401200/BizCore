@@ -1,65 +1,19 @@
 @charset "UTF-8";
-.soppSearchContainer{
+
+.searchContainer .searchMultiContent .searchTitle{
+	grid-column: span 2;
+}
+
+.searchContainer .searchMultiContent .searchCreated > .searchGridItem{
+	display: grid;
+	grid-template-columns: 45% 10% 45%;
+	text-align: center;
+}
+
+.searchContainer .searchMultiContent .searchCreated > .searchGridItem > span{
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	/* margin-left: 2%; */
-	margin-bottom: 1%;
-	/* max-width: 1782px; */
-	height: 30px;
-	padding:2% 0;
-	background: #FFFFFF;
-	overflow: auto;
-	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
-}
-
-.soppSearchContainer .soppSearchSelect{
-	margin-right: 1%;
-}
-
-.soppSearchContainer .soppSearchSelect select{
-	color: #182f81;
-	padding:0 8px;
-	border-radius: 5px;
-	font-size: 0.9375rem;
-	font-weight: 500;
-	border: 0;
-	height:30px;
-	box-shadow: 0px 1px 2px #b1b1c5;
-	background-color: #ebefff;
-}
-
-/* .soppSearchContainer .soppSearchSelect select:hover{
-	border: 1px solid#332E85;
-} */
-
-.soppSearchContainer .soppSearchText{
-	margin: -0.35% 1% 0 0;
-}
-
-.soppSearchContainer .soppSearchText input{
-	padding: 5px;
-	font-size: 1.2rem;
-	font-weight: 500;
-	width: 500px;
-	border: 0;
-	border-bottom:2px solid #c1cae9;
-	background-color: #fff;
-	border-radius: 0;
-}
-
-.soppSearchContainer .soppSearchText input:hover{
-	border: 1px solid#332E85;
-}
-
-.soppSearchContainer .soppSearchBtn button{
-	color: #ebefff;
-	box-shadow: 0 1px 1px #bdbfc9;
-	margin:1% 0.5% 0 0;
-	background-color:#182f81;
-	padding:0 14px;
-	height:30px;
-	border-radius: 5px;
 }
 
 .soppContainer > button{
@@ -69,6 +23,10 @@
 	padding:0 14px;
 	height:30px;
 	border-radius: 5px;
+	float: right;
+	margin-top: 5px;
+	margin-right: 5px;
+	margin-bottom: 10px;
 }
 
 .soppContainer > button:hover{
@@ -108,13 +66,6 @@
 	line-height: 40px;
 	color: #332E85;
 	float: left;
-}
-
-.soppContainer > button{
-	float: right;
-	margin-top: 5px;
-	margin-right: 5px;
-	margin-bottom: 10px;
 }
 
 .soppContainer .gridSoppList{

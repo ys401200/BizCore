@@ -289,64 +289,6 @@ button, select, input[type="text"]{
 	background-color:#ebefff;
 }
 
-/* .detailViewContainer .detailViewForm{
-	width: 100%;
-	margin: 0 auto;
-	overflow: hidden;
-}
-
-.detailViewContainer .detailViewForm .detailViewFormSpanDiv{
-	float:left;
-	padding:0 0.5% 16px 0;
-}
-
-.detailViewContainer .detailViewForm .detailViewFormSpanDiv span{
-	font-weight: 500;
-}
-
-.detailViewContainer .detailViewForm .detailViewFormContent{
-	float:left;
-}
-
-.detailContainer{
-	display: none;
-	background: #FFFFFF;
-	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
-}
-
-.detailContainer .detailContent{
-	padding: 15px;
-}
-
-.detailContainer hr{
-	float: left;
-	border:2px solid #e45050;
- 	height : 32px;
- 	margin: 0;
-}
-
-.detailContainer .detailMainSpan{
-	font-weight: bolder;
-	font-size: 15px;
-	margin-left: 15px;
-	line-height: 40px;
-	color: #332E85;
-	float: left;
-}
-
-.detailContainer .detailBtns{
-	float: right;
-	padding: 10px 1% 0 0;
-	display: flex;
-}
-
-.detailContainer .detailBtns button{
-	margin-left: 10px;
-	width:40px;
-	height:30px;
-} */
-/* detail 끝 */
-
 /* tab 시작 */
 .tabs {
 	display: flex;
@@ -502,6 +444,96 @@ input[name="tabItem"] {
 	margin: 0 auto;
 }
 /* 테이블 레이아웃 끝 */
+
+/* 각 페이지 검색 시작 */
+.searchContainer{
+	display: none;
+	background: #FFFFFF;
+	overflow: hidden;
+	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
+}
+
+.searchContainer > hr{
+	float: left;
+	border:2px solid #182f81;
+ 	height : 32px;
+ 	margin: 0;
+}
+
+.searchContainer .searchBtns{
+	display: flex;
+	align-items: center;
+	justify-content: right;
+}
+
+.searchContainer .searchBtns > button{
+	display: flex;
+	align-items: center;
+	justify-content: right;
+	color: #ebefff;
+    box-shadow: 0 1px 1px #bdbfc9;
+    background-color: #182f81;
+    padding: 0 14px;
+    height: 30px;
+    border-radius: 5px;
+    margin-top: 5px;
+    margin-right: 5px;
+    margin-bottom: 10px;
+}
+
+.searchContainer .searchBtns > button:hover{
+	color: #182f81;
+	box-shadow: 0 1px 2px #bdbfc9;
+	background-color:#ebefff;
+}
+
+.searchContainer .searchInputContent{
+	padding: 10px;
+}
+
+.searchContainer .searchInputContent > input{
+	width: -webkit-fill-available;
+    height: 40px;
+    padding: 0 10px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    border: 1px solid #C1C1C1;
+    border-radius: 5px;
+    background-color: #ffffff;
+}
+
+.searchContainer .searchMultiContent{
+	display: grid;
+	grid-template-columns: repeat(5, 1fr);
+	padding: 10px;
+}
+
+.searchContainer .searchMultiContent div{
+	padding-right: 10px;
+	padding-bottom: 10px;
+}
+
+.searchContainer .searchMultiContent div > input,
+.searchContainer .searchMultiContent div > select{
+	width: -webkit-fill-available;
+    height: 40px;
+    padding: 0 10px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    border: 1px solid #C1C1C1;
+    border-radius: 5px;
+    background-color: #ffffff;
+}
+
+.searchContainer > span{
+	font-weight: bolder;
+	font-size: 15px;
+	margin-left: 15px;
+	line-height: 40px;
+	color: #332E85;
+	float: left;
+}
+/* 각 페이지 검색 끝 */
 
 #header{
 	position: relative;
