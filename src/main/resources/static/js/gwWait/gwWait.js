@@ -257,22 +257,7 @@ function showReportDetail() {
 
 
 
-	// 결재선 사번 직급 다 한글로 바꾸기 
-
-
-
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 
