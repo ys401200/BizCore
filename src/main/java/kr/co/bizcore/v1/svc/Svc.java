@@ -444,6 +444,11 @@ public abstract class Svc {
         return result;
     } // End of getAesKey()
 
+    // 문자열을 입력받아서 JSON에서 사용할 수 없는 문자를 Unicode로 변경하는 메서드
+    public String cvtJsonUnicode(String str){
+        return str == null ? null : str.replaceAll("\"", "\\u0022").replaceAll("\r", "").replaceAll("\t", "").replaceAll("\\\\", "\\u005c");
+    } // End of cvtJsonUnicode()
+
 } // End of abstract Class === Svc
 
 class DataFactory{

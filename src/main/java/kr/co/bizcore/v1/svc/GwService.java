@@ -249,12 +249,137 @@ public class GwService extends Svc{
         return result;
     }
 
+    // 문서 관리번호를 입력받아서 결재 문서 정보, 본문, 결재선을 전달하는 메서드 / 오류메시지 : notFound / errorInAppLine / appDocContentIsEmpty / permissionDenied
+    public String getAppDocAndDetailInfo(String compId, String docNo, String dept, String userNo){
+        String result = null;
+        String sql1 = "SELECT no, docNo, writer, formId, docbox, title, confirmNo, status, readable FROM bizcore.doc_app WHERE deleted IS NULL AND compId = ? AND docno = ?";
+        String sql2 = "SELECT ordered, employee, appType, CAST(UNIX_TIMESTAMP(`read`)*1000 AS CHAR) AS `read`, isModify, CAST(UNIX_TIMESTAMP(approved)*1000 AS CHAR) AS approved, CAST(UNIX_TIMESTAMP(rejected)*1000 AS CHAR) AS rejected, comment, appData FROM bizcore.doc_app_detail WHERE compId = ? AND docNo = ? AND retrieved IS NULL ORDER BY ordered";
+        String sql3 = "SELECT doc FROM bizcore.doc_app_detail WHERE compId = ? AND ordered = (SELECT MAX(ordered) FROM bizcore.doc_app_detail WHERE compId = ? AND docNo = ? AND retrieved IS NULL AND (approved IS NOT NULL OR rejected IS NOT NULL)) AND docNo = ?";
+        String no = null, writer = null, formId = null, docbox = null, title = null, confirmNo = null, status = null;
+        String ordered = null, employee = null, appType = null, read = null, isModify = null, approved = null, rejected = null, comment = null, appData = null, t = null, doc = null;
+        boolean readable = false;
+        ArrayList<String> appLine = null;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        int x = 0;
+
+        try{
+            conn = sqlSession.getConnection();
+            pstmt = conn.prepareStatement(sql1);
+            pstmt.setString(1, compId);
+            pstmt.setString(2, docNo);
+            rs = pstmt.executeQuery();
+            if(!rs.next()){ // 결과가 없는 경우 / notFound 리턴메시지와 함께 종료하도록 함
+                return "notFound";
+            }else{
+                no = rs.getString("no");
+                writer = rs.getString("writer");
+                formId = rs.getString("formId");
+                docbox = rs.getString("docbox");
+                title = rs.getString("title");
+                confirmNo = rs.getString("confirmNo");
+                status = rs.getString("status");
+                t = rs.getString("readable");
+                // 권한 : 완결되지 않은 문서는 readable가 true인 경우 결재선의 인원과 부서원, false인 경우 결재선에 있는 인원만 읽기 가능 / 완결된 문서는 부서원들 읽기 가능
+                readable = t != null && t.equals("dept");
+            }
+            rs.close();
+            pstmt.close();
+            // ========== ↑ 문서 기본정보 읽기 완료 ==========
+
+            // ========== ↓ 결재선 정보 읽기 시작 ==========
+            pstmt = conn.prepareStatement(sql2);
+            pstmt.setString(1, compId);
+            pstmt.setString(2, docNo);
+            rs = pstmt.executeQuery();
+            while(rs.next()){
+                ordered = rs.getString("ordered");
+                employee = rs.getString("employee");
+                appType = rs.getString("appType");
+                read = rs.getString("read");
+                isModify = rs.getString("isModify");
+                approved = rs.getString("approved");
+                rejected = rs.getString("rejected");
+                comment = rs.getString("comment");
+                appData = rs.getString("appData");
+                t = "{\"ordered\":" + ordered + ",";
+                t += ("\"employee\":" + employee + ",");
+                t += ("\"appType\":" + appType + ",");
+                t += ("\"read\":" + read + ",");
+                t += ("\"isModify\":" + isModify.equals("1") + ",");
+                t += ("\"approved\":" + approved + ",");
+                t += ("\"rejected\":" + rejected + ",");
+                t += ("\"comment\":\"" + comment + "\",");
+                t += ("\"appData\":" + appData + "}");
+                if(appLine == null) appLine = new ArrayList<>();
+                appLine.add(t);
+            }
+            rs.close();
+            pstmt.close();
+            if(appLine == null){
+                return "errorInAppLine";
+            }
+            // ========== ↑ 결재선 정보 읽기 종료 ==========
+
+            // ========== ↓ 권한 검증 시작 ==========
+
+            // ============================================================================================
+            // ===================================================== 권한검증 코드 ============================================
+            // ============================================================================================
+
+            // ========== ↑ 권한 검증 종료 ==========
+
+            // ========== ↓ 결재 문서 읽기 시작 ==========
+            pstmt = conn.prepareStatement(sql3);
+            pstmt.setString(1, compId);
+            pstmt.setString(2, compId);
+            pstmt.setString(3, docNo);
+            pstmt.setString(4, docNo);
+            rs = pstmt.executeQuery();
+            if(!rs.next()){
+                return "appDocContentIsEmpty";
+            }else{
+                doc = rs.getString("doc");
+            }
+            rs.close();
+            pstmt.close();
+
+            // ========== ↑ 결재 문서 읽기 종료 ==========
+
+            // ========== ↓ 전체 데이터 병합 ==========
+            
+            // 결재선 정보 배열로 병합처리
+            t = "[";
+            for(x = 0 ; x < appLine.size() ; x++){
+                if(x > 0)   t += ",";
+                t += appLine.get(x);
+            }
+            t += "]";
+            
+            result = "{\"no\":" + no + ",";
+            result += ("\"docNo\":\"" + docNo + "\",");
+            result += ("\"writer\":" + writer + ",");
+            result += ("\"formId\":\"" + formId + "\",");
+            result += ("\"docbox\":\"" + docbox + "\",");
+            result += ("\"title\":\"" + title + "\",");
+            result += ("\"confirmNo\":\"" + confirmNo + "\",");
+            result += ("\"status\":" + status + ",");
+            result += ("\"readable\":\"" + (readable ? "dept" : "none") + "\",");
+            result += ("\"appLine\":" + t + ",");
+            result += ("\"doc\":\"" + cvtJsonUnicode(doc) + "\"}");
+            
+        }catch(SQLException e){e.printStackTrace();}
+
+        return result;
+    } // End of getAppDocAndDetailInfo()
+
 
 
 
     // ========================================= P R I V A T E _ M E T H O D =========================================
 
-    // 결재 예정 및 대기 문서 목록을 DB에서 가져오는 메서드 //  sql
+    // 결재 예정 및 대기 문서 목록을 DB에서 가져오는 메서드 //  아래 sqlIn 값을 매퍼에서 처리하지 못하기에 만등어넣음
     private List<HashMap<String, String>> getAppDocList(String compId, String userNo, String sqlIn){
         List<HashMap<String, String>> result = new ArrayList<>();
         HashMap<String, String> each = null;

@@ -149,10 +149,10 @@ public class ApiGwCtrl extends Ctrl{
         return result;
     } // End of apiGwAppMydraftGet()
 
-    // 결재 문서를 전달
-    @GetMapping("/app/doc/{docNo:\\d+}")
-    public String apiGwAppDocNoGet(HttpServletRequest request){
-        String result = null, compId = null, userNo = null, data = null, aesIv = null, aesKey = null, lang = null;
+    // 결재 문서를 전달 / 오류메시지 : notFound / errorInAppLine / appDocContentIsEmpty / permissionDenied
+    @GetMapping("/app/doc/{docNo}")
+    public String apiGwAppDocNoGet(HttpServletRequest request, @PathVariable("docNo") String docNo){
+        String result = null, compId = null, userNo = null, data = null, aesIv = null, aesKey = null, lang = null, dept = null;
         Msg msg = null;
         HttpSession session = null;
 
@@ -170,9 +170,18 @@ public class ApiGwCtrl extends Ctrl{
         }else if(aesKey == null || aesIv == null){
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
         }else{
-            data = gwService.getProceedingDocList(compId, userNo);
-            if(data == null)    result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
-            else{
+            data = gwService.getAppDocAndDetailInfo(compId, docNo, dept, userNo);
+            if(data == null){
+                result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
+            }else if(data.equals("notFound")){
+                result = "{\"result\":\"failure\",\"msg\":\"" + msg.docNotFound + "\"}";
+            }else if(data.equals("errorInAppLine")){
+                result = "{\"result\":\"failure\",\"msg\":\"" + msg.errorDocAppLine + "\"}";
+            }else if(data.equals("appDocContentIsEmpty")){
+                result = "{\"result\":\"failure\",\"msg\":\"" + msg.errorDocBody + "\"}";
+            }else if(data.equals("permissionDenied")){
+                result = "{\"result\":\"failure\",\"msg\":\"" + msg.permissionDenied+ "\"}";
+            }else{
                 data = encAes(data, aesKey, aesIv);
                 result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
             }
