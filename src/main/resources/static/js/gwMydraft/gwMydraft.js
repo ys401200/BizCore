@@ -64,7 +64,7 @@ function drawMyDraft() {
 
     pageContainer = document.getElementsByClassName("pageContainer");
     container = $(".listDiv");
-
+ss
     header = [
 
         {
@@ -80,7 +80,7 @@ function drawMyDraft() {
         },
         {
             "title": "제목",
-            "align": "center",
+            "align": "left",
         },
 
         {

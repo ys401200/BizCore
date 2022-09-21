@@ -251,7 +251,7 @@ function drawApproval() {
 		},
 		{
 			"title": "제목",
-			"align": "center",
+			"align": "left",
 		},
 		{
 			"title": "작성자",
