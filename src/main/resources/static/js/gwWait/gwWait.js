@@ -183,8 +183,7 @@ function waitDetailView(obj) {// 선택한 그리드의 글 번호 받아오기
 
 ///글 제목 눌렀을때 상세 조회하는 페이지 그리기 
 function getDetailView(no) {
-	// 글번호 no의 데이터 가져와서 상세조회 
-
+	// 글번호로 데이터 가져와서 storage에 담아서 전달함 
 	let testForm = storage.formList[0].form;
 	let detailHtml = "<div class='mainBtnDiv'><button type='button' onclick='showAppModal()'>결재하기</button>" +
 		"<button type='button' onclick='showGwModal()'>결재선 수정</button>" +

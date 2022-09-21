@@ -28,8 +28,8 @@
               <div class="formDetail">
                 <div>열람권한<span></span></div>
                 <div>
-                  <label><input type="radio" name="authority" value="dept" />기안자 소속 부서 포함</label>
-                  <label><input type="radio" name="authority" value="none" checked />권한 설정 없음</label>
+                  <label><input type="radio" name="authority" value="dept" checked/>기안자 소속 부서 포함</label>
+                  <label><input type="radio" name="authority" value="none" />권한 설정 없음</label>
                 </div>
               </div>
             </div>
