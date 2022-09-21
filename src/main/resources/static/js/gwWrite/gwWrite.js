@@ -108,9 +108,12 @@ function selectForm() {
   let writer = storage.user[my].userName;
   let formId = data[selectedFormNo].id;
   $("#" + formId + "_writer").val(writer);
+  $("#" + formId + "_writer").attr("data-detail", writer);
+
 
   let date = getYmdHyphen();
   $("#" + formId + "_created").val(date);
+  $("#" + formId + "_created").attr("data-detail", date);
   $(".testClass").prop('checked', false);
   $(".typeContainer").html("")
   $(".inputsAuto").prop("disabled", "true");
@@ -273,10 +276,18 @@ function check(name) {
   let html = target.html();
   let selectHtml = "";
 
-  let data = new Array();
-  let x;
-  for (x in storage.user) data.push(x);
 
+
+
+  let data = new Array();
+
+  let x;
+  let my = storage.my;
+  for (x in storage.user) {
+    if (x != my) {
+      data.push(x);
+    }
+  }
 
   for (let i = 0; i < inputLength.length; i++) {
     if ($("#cb" + i).prop('checked')) {

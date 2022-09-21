@@ -123,7 +123,7 @@ function drawNoticeApproval() {
 		str = [
 
 			{
-				"setData": jsonData[i].no,
+				"setData": jsonData[i].docNo,
 			}, {
 				"setData": appType,
 			},
@@ -167,11 +167,42 @@ function waitDetailView(obj) {// 선택한 그리드의 글 번호 받아오기
 	$(".searchContainer").hide();
 	let target = $(".container");
 	let no = obj.dataset.id;
+	let docNo;
 
-	// 전자결재 문서 번호를 가지고 상세 조회 그림  
+	let searchList = storage.waitList.wait;
 
-	// 글번호로 데이터 가져와서 storage에 담아서 전달함 
-	let testForm = storage.formList[0].form;
+	for (let i = 0; i < searchList.length; i++) {
+		if (searchList[i].no == no) { docNo = searchList[i].docNo }
+	}
+
+
+	$.ajax({
+		"url": apiServer + "/api/gw/app/doc/" + docNo,
+		"method": "get",
+		"dataType": "json",
+		"cache": false,
+		success: (data) => {
+			let detailData;
+			if (data.result === "ok") {
+				detailData = cipher.decAes(data.data);
+				detailData = JSON.parse(detailData);
+				detailData.doc = cipher.decAes(detailData.doc);
+				detailData.doc = detailData.doc.replaceAll("\\\"","\"");
+				storage.reportDetailData = detailData;
+				showReportDetail();
+			} else {
+				alert("문서 정보를 가져오는 데 실패했습니다");
+			}
+		}
+	})
+
+} // End of noticeDetailView();
+
+
+function showReportDetail() {
+	let testForm = storage.reportDetailData.doc; 
+
+
 	let detailHtml = "<div class='mainBtnDiv'><button type='button' onclick='showAppModal()'>결재하기</button>" +
 		"<button type='button' onclick='showGwModal()'>결재선 수정</button>" +
 		"<button type='button' onclick='toWriteMode();createConfirmBtn(this)'>문서 수정</button></div>" +
@@ -182,7 +213,7 @@ function waitDetailView(obj) {// 선택한 그리드의 글 번호 받아오기
 
 
 
-	let selectedFileView = "<div class='selectedFileField'><label>첨부파일</label><div><input type='file' onchange='setSelectedFiles()'/><div class='selectedFileDiv'></div></div></div>"
+	let selectedFileView = "<div class='selectedFileField'><label>첨부파일</label><div><div class='selectedFileDiv'><input class='inputFile' type='file' onchange='setSelectedFiles()'/></div></div></div>"
 
 
 
@@ -196,8 +227,19 @@ function waitDetailView(obj) {// 선택한 그리드의 글 번호 받아오기
 	toReadMode();
 	drawCommentLine();
 
+}
 
-} // End of noticeDetailView();
+
+
+
+
+
+
+
+
+
+
+
 
 
 // 탭 누를때마다의 이벤트 주기 
@@ -616,7 +658,6 @@ function createConfirmBtn(obj) {
 	$("#tabDetail").hide();
 	$("#tabDetail2").show();
 	drawChangeInfo();
-	$(":file").css("display", "inline");
 
 	let div = document.getElementsByClassName("mainBtnDiv")
 	if (div[0].childElementCount < 4) {
@@ -624,6 +665,8 @@ function createConfirmBtn(obj) {
 			"<button type='button'name='modConfirm' onclick='quitModify()'>수정취소 </button>");
 	}
 
+	getFileModArr();
+	$(":file").css("display", "inline");
 }
 
 

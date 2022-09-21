@@ -116,20 +116,12 @@
 
 /*-------------------------------- 상세조회 페이지 상단 버튼  */
 
-.mainBtnDiv {
-   display: flex;
-   align-items: left;
-   margin-bottom: 1em;
-}
 
-.mainBtnDiv button {
-   margin: 0 1em 1em 0;
-}
 
 
 .listDiv .gridHeader,
 .listDiv .gridContent {
-   grid-template-columns: 10% 10% 10% 50% 10% 10%;
+   grid-template-columns: 15% 15% 10% 50% 10% 10%;
 }
 
 
@@ -152,10 +144,6 @@
    border: 1px solid #507698;
 }
 
-.listPageDiv .detailReport {
-   display: grid;
-   grid-template-columns: 60% 40%;
-}
 
 .listDiv>div:first-child {
    border-bottom: 1px solid #406c92;
@@ -163,7 +151,30 @@
 
 .listDiv .grid_default_body_item:nth-chhild(2n-1) {
    background-color: rgba(234, 239, 243, 0.4)
+} 
+
+
+
+
+
+
+/* 상세조회 페이지 css Start ===============   */
+.subContainer .listPageDiv .mainBtnDiv {
+   display: flex;
+   align-items: left;
+   margin-bottom: 1em;
 }
+
+.subContainer .listPageDiv .mainBtnDiv button {
+   margin: 0 1em 1em 0;
+}
+
+.listPageDiv .detailReport {
+   display: grid;
+   grid-template-columns: 60% 40%;
+}
+
+
 
 .listPageDiv .detailReport .selectedReportview>div:first-child {
    border: 1px solid black;
@@ -195,12 +206,14 @@
 .listPageDiv .detailReport .selectedReportview .selectedFileField label {
    height: 5em;
    border: 1px solid black;
-   overflow: auto;
-}
-
-.listPageDiv .detailReport .selectedReportview .selectedFileField>div {
    display: flex;
    flex-direction: column;
+
+}
+
+
+.listPageDiv .detailReport .selectedReportview .selectedFileField>div>div {
+   overflow: auto;
 }
 
 .listPageDiv .detailReport .selectedReportview .selectedFileField label {
