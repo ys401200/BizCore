@@ -187,7 +187,9 @@ function waitDetailView(obj) {// 선택한 그리드의 글 번호 받아오기
 				detailData = cipher.decAes(data.data);
 				detailData = JSON.parse(detailData);
 				detailData.doc = cipher.decAes(detailData.doc);
+				console.log(detailData.doc);
 				detailData.doc = detailData.doc.replaceAll("\\\"", "\"");
+				console.log(detailData.doc);
 				storage.reportDetailData = detailData;
 				showReportDetail();
 			} else {
