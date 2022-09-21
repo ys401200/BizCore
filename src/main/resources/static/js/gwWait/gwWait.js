@@ -13,6 +13,8 @@ $(document).ready(() => {
 function waitDefault() {
 	$(".modal-wrap").hide();
 
+
+	// 등록된 formList 가져오는 ajax 
 	$.ajax({
 		"url": apiServer + "/api/gw/form",
 		"method": "get",
@@ -32,6 +34,7 @@ function waitDefault() {
 	})
 
 
+	// waitList 가져오는 ajax; 
 	let url, method, data, type;
 	url = "/api/gw/app/wait";
 	method = "get"
@@ -44,6 +47,15 @@ function waitDefault() {
 	$(".listPageDiv").show();
 
 
+}
+
+function waitSuccessList(result) {
+	storage.waitList = result;
+	window.setTimeout(drawNoticeApproval, 200);
+}
+
+function waitErrorList() {
+	alert("에러");
 }
 
 function drawNoticeApproval() {
@@ -77,7 +89,7 @@ function drawNoticeApproval() {
 		},
 		{
 			"title": "제목",
-			"align": "center",
+			"align": "left",
 		},
 		{
 			"title": "작성자",
@@ -144,46 +156,21 @@ function drawNoticeApproval() {
 
 
 
-	// 전체선택 전체 해제  
-	$(".thisAllcheck").click(function () {
-		if ($(".thisAllcheck").prop("checked")) {
-			$(":checkbox").prop("checked", true);
-		} else {
-			$(":checkbox").prop("checked", false);
-		}
 
-	});
 }// End of drawNoticeApproval()
 
 
 
-function waitSuccessList(result) {
-	storage.waitList = result;
-	window.setTimeout(drawNoticeApproval, 200);
-}
 
-function waitErrorList() {
-	alert("에러");
-}
-
-function waitDetailView(event) {// 선택한 그리드의 글 번호 받아오기 
+function waitDetailView(obj) {// 선택한 그리드의 글 번호 받아오기 
 
 	$(".searchContainer").hide();
 	let target = $(".container");
-	let no = event.dataset.id;
+	let no = obj.dataset.id;
 
 	// 전자결재 문서 번호를 가지고 상세 조회 그림  
 
-	target.html();
-	getDetailView(no);
-
-} // End of noticeDetailView();
-
-
-
-///글 제목 눌렀을때 상세 조회하는 페이지 그리기 
-function getDetailView(no) {
-
+	// 글번호로 데이터 가져와서 storage에 담아서 전달함 
 	let testForm = storage.formList[0].form;
 	let detailHtml = "<div class='mainBtnDiv'><button type='button' onclick='showAppModal()'>결재하기</button>" +
 		"<button type='button' onclick='showGwModal()'>결재선 수정</button>" +
@@ -208,7 +195,10 @@ function getDetailView(no) {
 	$(".comment").html(tabHtml);
 	toReadMode();
 	drawCommentLine();
-} // 문서 정보에서 문서 상세 타입, 열람권한 설정 , 결재선 정보 , 변경이력에서 결재선 파일첨부 등등 수정한 경우 모두 기록되는 식 
+
+
+} // End of noticeDetailView();
+
 
 // 탭 누를때마다의 이벤트 주기 
 function changeTab(obj) {
@@ -236,7 +226,6 @@ function changeTab(obj) {
 
 	}
 }
-
 
 
 // 문서 정보 그리는 함수 
@@ -300,7 +289,6 @@ function drawCommentLine() {
 
 	$(".tabLine").children(0).css("padding", "5em");
 
-
 	target.html(html);
 
 
@@ -338,7 +326,6 @@ function drawChangeInfo() {
 			"</div>"
 	}
 
-
 	detail += changeHtml;
 	target.html(detail);
 
@@ -366,8 +353,6 @@ function showAppModal() {
 	$("#tabDetail").show();
 	$("#tabDetail2").hide();
 
-
-
 	let setAppModalHtml = "<div class='setApprovalModal'>" +
 		"<div class='modal-title'>결재하기</div>" +
 		"<div class='modal-body'><div class='labelContainer'>" +
@@ -391,10 +376,6 @@ function approveBtnEvent() {
 	// $("input:radio[name='type']").prop("checked", false);
 	let selectVal = $(":radio[name='type']:checked").val();
 	let approvalComment = $(".approvalComment").val();
-
-
-
-
 	$(".modal-wrap").hide();
 }
 
@@ -462,9 +443,6 @@ function closeGwModal(obj) {
 	}
 }
 
-
-
-
 function check(name) {
 	let inputLength = $(".testClass");
 	let target = $("#" + name);
@@ -487,8 +465,6 @@ function check(name) {
 
 	$(".testClass").prop('checked', false);
 } //End of check(name) 
-
-
 
 
 //// 조직도 결재 순서 
@@ -565,8 +541,6 @@ function deleteClick(obj) {
 	parent = obj.parentElement;
 	parent.remove();
 } // End of deleteClign(obj); 
-
-
 
 function setSavedLine(obj) {
 	let val = obj.value;
@@ -659,5 +633,30 @@ function getYmdHyphen() {
 }
 
 
+
+// 파일 다운로드 
+function getFileArr() {
+	let target = $(".selectedFileDiv");
+
+	for (let i = 0; i < 8; i++) {
+		target.append("<div><a href='#'>첨부파일" + i + "</a></div>");
+	}
+
+}
+
+
+// 파일 수정 삭제 
+
+function getFileModArr() {
+	let target = $(".selectedFileDiv");
+
+	for (let i = 0; i < 8; i++) {
+		target.append("<div><div></div><button type='button' onclick='fileRemove(this)'>x</button></div>")
+	}
+}
+
+function fileRemove(obj) {
+	obj.parentElement.remove();
+}
 
 

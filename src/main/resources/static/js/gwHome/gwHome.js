@@ -49,9 +49,9 @@ function drawWaitCard(typeList) {
 		html = "";
 	}
 
-
-
 }
+
+
 
 
 
@@ -194,7 +194,7 @@ function noticeErrorList() {
 	alert("에러");
 }
 
-function showWaitReport() { }
+function showWaitReport() {}
 
 function getYmdSlash(date) {
 	let d = new Date(date);

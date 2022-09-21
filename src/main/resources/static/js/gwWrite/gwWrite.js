@@ -19,7 +19,7 @@ function getformList() {
   // 기본설정
 
   $(".selector:first").html("<div>기본 설정</div><div class='formDetail'><div>결재양식</div><div class='formListDiv'></div><button type='button' class='formSelectbtn' onclick='selectForm()'>선택</button><input type='hidden' class='formNumHidden'/></div>"
-    + "<div class='formDetail'><div>열람권한</div><div><label><input type='radio' name='authority' value='dept' />기안자 소속 부서 포함</label><label><input type='radio' name='authority' value='none' checked />권한 설정 없음</label></div></div>");
+    + "<div class='formDetail'><div>열람권한</div><div><label><input type='radio' name='authority' value='dept' checked  />기안자 소속 부서 포함</label><label><input type='radio' name='authority' value='none' />권한 설정 없음</label></div></div>");
 
   $(".selector:first").next().html("<div>결재선 <div class='guide'> 결재 양식을 선택하면 결재선 생성을 할 수 있습니다.</div> <button class='createLineBtn' onclick='showModal()'>결재선생성</button></div><div class='modal-wrap'><div class='gwModal'></div></div>");
 

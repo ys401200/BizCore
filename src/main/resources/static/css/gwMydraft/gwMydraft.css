@@ -1,168 +1,174 @@
+@charset "UTF-8";
+
 .searchContainer {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    /*margin: 2%;*/
-    height: 5rem;
-    background: #FFFFFF;
-    overflow: auto;
-    box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
- }
- 
- .searchContainer .searchSelect {
-    margin-right: 1%;
- }
- 
- .searchContainer .searchSelect select {
-    color: #332E85;
-    padding: 5px;
-    font-size: 1.2rem;
-    font-weight: 500;
-    border: 0;
-    background-color: #EDEDF4;
- }
- 
- .searchContainer .searchSelect select:hover {
-    border: 1px solid#332E85;
- }
- 
- .searchContainer .searchText {
-    margin-right: 1%;
- }
- 
- .searchContainer .searchText input {
-    padding: 5px;
-    font-size: 1.2rem;
-    font-weight: 500;
-    width: 500px;
-    border: 0;
-    background-color: #EDEDF4;
- }
- 
- .searchContainer .searchText input:hover {
-    border: 1px solid#332E85;
- }
- 
- .searchContainer .searchBtn button {
-    color: #ffffff;
-    padding: 5px;
-    font-size: 1.2rem;
-    font-weight: 500;
-    width: 100px;
-    border: 0;
-    background-color: #332E85;
- }
- 
- .searchContainer .searchBtn button:hover {
-    cursor: pointer;
- }
- 
- .container {
-    position: relative;
-    width: 100%;
-    background: #FFFFFF;
-    overflow: auto;
-    box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
-    display: inline-block;
-    margin-top: 0.6%;
-    overflow: hidden;
- }
- 
- .container hr {
-    float: left;
-    height: 32px;
-    border: 2px solid #456e95;
-    margin: 0;
- }
- 
- .container span {
-    font-size: 16px;
-    margin-left: 15px;
-    line-height: 40px;
-    color: #456e95;
-    font-weight: bolder;
- }
- 
- 
- .subContainer .batchBtn {
-    display: flex;
-    align-items: right;
-    justify-content: right;
-    padding-right: 2em;
- }
- 
- 
- .subContainer .listPageDiv>div {
-    margin: 0 auto;
-    width: 99%;
- }
- 
- .subContainer .listPageDiv>div:last-of-type {
-    width: auto;
-    margin: 1em;
- }
- 
- 
- 
- /* 체크박스만 선택  */
- .subContainer .listPageDiv .listDiv div div:last-child {
-    display: flex;
-    align-items: center;
-    justify-content: center;
- }
-
- 
-.mainBtnDiv {
-	display: flex;
-	align-items: left;
-	margin-bottom: 1em;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   height: 5rem;
+   background: #FFFFFF;
+   overflow: auto;
+   box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
 }
 
-.mainBtnDiv button {
-	margin: 0 1em 1em 0;
+.searchContainer .searchSelect {
+   margin-right: 1%;
 }
 
-.mainBtnDiv button:hover {
-	background-color: #EDEDF4;
-	;
+.searchContainer .searchSelect select {
+   color: #332E85;
+   padding: 5px;
+   font-size: 1.2rem;
+   font-weight: 500;
+   border: 0;
+   background-color: #EDEDF4;
 }
 
-/* .mainBtnDiv button {
-	margin: 1em 1em 1em 0;
-	font-weight: 500;
-	font-size: 0.8em;
-	line-height: 2;
-	color: #332E85;
-	background-color: white;
-	border: none;
-	border-radius: 3px;
-} */
-
-
-
-.listDiv .gridHeader,
-.listDiv .gridContent {
-	grid-template-columns: 10% 10% 50% 10%  10% 10% ;
+.searchContainer .searchSelect select:hover {
+   border: 1px solid#332E85;
 }
 
-.subContainer .listPageDiv>div:first-of-type {
-	text-align: right;
-	font-size: 1rem;
-	font-weight: 500;
+.searchContainer .searchText {
+   margin-right: 1%;
+}
+
+.searchContainer .searchText input {
+   padding: 5px;
+   font-size: 1.2rem;
+   font-weight: 500;
+   width: 500px;
+   border: 0;
+   background-color: #EDEDF4;
+}
+
+.searchContainer .searchText input:hover {
+   border: 1px solid#332E85;
+}
+
+.searchContainer .searchBtn button {
+   color: #ffffff;
+   padding: 5px;
+   font-size: 1.2rem;
+   font-weight: 500;
+   width: 100px;
+   border: 0;
+   background-color: #332E85;
+}
+
+.searchContainer .searchBtn button:hover {
+   cursor: pointer;
+}
+
+.container {
+   position: relative;
+   width: 100%;
+   background: #FFFFFF;
+   overflow: auto;
+   box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
+   display: inline-block;
+   margin-top: 0.6%;
+   overflow: hidden;
+}
+
+.container hr {
+   float: left;
+   height: 32px;
+   border: 2px solid #456e95;
+   margin: 0;
+}
+
+.container span {
+   font-size: 16px;
+   margin-left: 15px;
+   line-height: 40px;
+   color: #456e95;
+   font-weight: bolder;
+}
+
+
+.subContainer .batchBtn {
+   display: flex;
+   align-items: right;
+   justify-content: right;
+   padding-right: 2em;
+}
+
+
+.subContainer .listPageDiv>div {
+   margin: 0 auto;
+   width: 99%;
 }
 
 .subContainer .listPageDiv>div:last-of-type {
-	margin-bottom: 2%;
+   width: auto;
+   margin: 1em;
 }
 
+
+
+/* 체크박스만 선택  */
+.subContainer .listPageDiv .listDiv div div:last-child {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+}
+
+
+
+.mainBtnDiv {
+   display: flex;
+   align-items: left;
+   margin-bottom: 1em;
+}
+
+.mainBtnDiv button {
+   margin: 0 1em 1em 0;
+}
+
+.mainBtnDiv button:hover {
+   background-color: #EDEDF4;
+   ;
+}
+
+
+.grid_default_text_align_center {
+   padding-left: 0;
+}
+
+.listDiv .gridHeader,
+.listDiv .gridContent {
+   grid-template-columns: 10% 10% 10% 40% 10% 10% 10%;
+}
+
+.subContainer .listPageDiv>div:first-of-type {
+   text-align: right;
+   font-size: 1rem;
+   font-weight: 500;
+}
+
+.subContainer .listPageDiv>div:last-of-type {
+   margin-bottom: 2%;
+}
 
 
 .listPageDiv .detailReport {
-	display: grid;
-	grid-template-columns: 60% 40%;
+   display: grid;
+   grid-template-columns: 60% 40%;
 }
-.listPageDiv .detailReport .selectedReportview>div:first-child {
-	border: 1px solid black;
- 
- }
 
+.listPageDiv .detailReport .selectedReportview>div:first-child {
+   border: 1px solid black;
+}
+
+
+.listDiv>div:first-child {
+   border-bottom: 1px solid #406c92;
+}
+
+.listDiv .grid_default_body_item:nth-chhild(2n-1) {
+   background-color: rgba(234, 239, 243, 0.4)
+}
+
+.listPageDiv .detailReport .selectedReportview>div:first-child {
+   border: 1px solid black;
+
+}

@@ -176,6 +176,8 @@
 
 
 
+
+
 /*-------------------------------선택 결재문서양식 첨부파일 목록  조회 탭   */
 
 
@@ -193,6 +195,12 @@
 .listPageDiv .detailReport .selectedReportview .selectedFileField label {
    height: 5em;
    border: 1px solid black;
+   overflow: auto;
+}
+
+.listPageDiv .detailReport .selectedReportview .selectedFileField>div {
+   display: flex;
+   flex-direction: column;
 }
 
 .listPageDiv .detailReport .selectedReportview .selectedFileField label {
