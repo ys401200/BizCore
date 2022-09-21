@@ -8,12 +8,15 @@ public class MsgEng extends Msg{
         aesKeyNotFound = "0003/Encryption key is not set.";
         wrongDateFormat = "0004/Wrong date format.";
         fileNotFound = "0006/File not found or removed.";
-        permissionDenied = "0007/Permission denied";
+        permissionDenied = "0007/Permission denied.";
         noResult = "0008/Result is empty.";
         invalidCondition = "0009/Invalid query condition.";
         failDecrypt = "0010/Failed to decrypt the ciphertext.";
         formNotFound = "0011/The document form could not be found.";
-        dataIsWornFormat = "0012/The received data is in the wrong format";
+        dataIsWornFormat = "0012/The received data is in the wrong format.";
+        docNotFound = "0013/The requested document could not be found.";
+        errorDocAppLine = "0014/An error occurred while processing the requested document. [Approval line]";
+        errorDocBody = "0015/An error occurred while processing the requested document. [Body of document]";
         unknownError = "9999/An error occurred while processing your request.";
     }
 }

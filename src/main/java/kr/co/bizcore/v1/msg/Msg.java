@@ -14,4 +14,7 @@ public abstract class Msg {
     public String formNotFound;
     public String dataIsWornFormat;
     public String unknownError;
+    public String docNotFound;
+    public String errorDocAppLine;
+    public String errorDocBody;
 }
