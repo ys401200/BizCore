@@ -377,6 +377,8 @@ public class GwService extends Svc{
             
         }catch(SQLException e){e.printStackTrace();}
 
+        gwMapper.serDocReadTime(compId, userNo, docNo);
+
         return result;
     } // End of getAppDocAndDetailInfo()
 

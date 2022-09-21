@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 public interface GwMapper {
 
@@ -35,6 +36,6 @@ public interface GwMapper {
             "WHERE b.compId = d.compId AND b.docNo = d.docNo AND b.ordered = d.ordered AND b.docNo = a.docNo AND a.formId = c.id AND a.writer = #{userNo} ORDER BY created")
     public List<HashMap<String, String>> getProceedingDocList(@Param("compId") String compId, @Param("userNo") String userNo);
 
-
-
+    @Update("UPDATE bizcore.doc_app_detail SET `read` = NOW() WHERE compId = #{compId} AND docNo = #{docNo} AND employee = #{userNo} AND `read` IS NULL AND (ordered = (SELECT MIN(ordered) FROM bizcore.doc_app_detail WHERE compId = #{compId} AND docNo = #{docNo} AND approved IS NULL AND rejected IS NULL) OR appType = 4)")
+    public void serDocReadTime(@Param("compId") String compId, @Param("userNo") String userNo, @Param("docNo") String docNo);
 }
