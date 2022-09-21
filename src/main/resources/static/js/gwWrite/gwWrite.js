@@ -108,12 +108,9 @@ function selectForm() {
   let writer = storage.user[my].userName;
   let formId = data[selectedFormNo].id;
   $("#" + formId + "_writer").val(writer);
-  $("#" + formId + "_writer").attr("data-detail", writer);
-
 
   let date = getYmdHyphen();
   $("#" + formId + "_created").val(date);
-  $("#" + formId + "_created").attr("data-detail", date);
   $(".testClass").prop('checked', false);
   $(".typeContainer").html("")
   $(".inputsAuto").prop("disabled", "true");
@@ -276,18 +273,19 @@ function check(name) {
   let html = target.html();
   let selectHtml = "";
 
-
-
-
   let data = new Array();
-
-  let x;
+  let x; 
   let my = storage.my;
+  //나는 결재선에 노출 안 되게 함 
   for (x in storage.user) {
     if (x != my) {
       data.push(x);
     }
   }
+
+
+
+
 
   for (let i = 0; i < inputLength.length; i++) {
     if ($("#cb" + i).prop('checked')) {
@@ -327,8 +325,15 @@ function upClick(obj) {
   }
 
   let data = new Array();
-  let x;
-  for (x in storage.user) data.push(x);
+  let x; 
+  let my = storage.my;
+  //나는 결재선에 노출 안 되게 함 
+  for (x in storage.user) {
+    if (x != my) {
+      data.push(x);
+    }
+  }
+
   let selectHtml = "";
   for (let i = 0; i < numArr.length; i++) {
     selectHtml += "<div class='lineDataContainer' id='lineContainer_" + numArr[i] + "'><label id='linedata" + numArr[i] + "'>" + storage.user[data[numArr[i]]].userName + "</label><button value='" + numArr[i] + "' onclick='upClick(this)'>▲</button><button  value='" + numArr[i] + "'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
@@ -361,8 +366,15 @@ function downClick(obj) {
   }
 
   let data = new Array();
-  let x;
-  for (x in storage.user) data.push(x);
+  let x; 
+  let my = storage.my;
+  //나는 결재선에 노출 안 되게 함 
+  for (x in storage.user) {
+    if (x != my) {
+      data.push(x);
+    }
+  }
+
   let selectHtml = "";
   for (let i = 0; i < numArr.length; i++) {
     selectHtml += "<div class='lineDataContainer' id='lineContainer_" + numArr[i] + "'><label id='linedata" + numArr[i] + "'>" + storage.user[data[numArr[i]]].userName + "</label><button value='" + numArr[i] + "' onclick='upClick(this)'>▲</button><button  value='" + numArr[i] + "'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
@@ -402,9 +414,13 @@ function createLine() {
 
 
   let data = new Array();
-  let x;
-  for (x in storage.user) data.push(x);
-
+  let x; 
+  //나는 결재선에 노출 안 되게 함 
+  for (x in storage.user) {
+    if (x != my) {
+      data.push(x);
+    }
+  }
 
   for (let i = 0; i < target.length; i++) {
     if (target[i].children.length != 0 && i < 3) { // 해당 결재 타입에 설정된 사람이 없지 않으면서 결재 타입이 검토 합의 결재인 경우 

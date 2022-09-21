@@ -187,7 +187,7 @@ function waitDetailView(obj) {// 선택한 그리드의 글 번호 받아오기
 				detailData = cipher.decAes(data.data);
 				detailData = JSON.parse(detailData);
 				detailData.doc = cipher.decAes(detailData.doc);
-				detailData.doc = detailData.doc.replaceAll("\\\"","\"");
+				detailData.doc = detailData.doc.replaceAll("\\\"", "\"");
 				storage.reportDetailData = detailData;
 				showReportDetail();
 			} else {
@@ -200,7 +200,7 @@ function waitDetailView(obj) {// 선택한 그리드의 글 번호 받아오기
 
 
 function showReportDetail() {
-	let testForm = storage.reportDetailData.doc; 
+	let testForm = storage.reportDetailData.doc;
 
 
 	let detailHtml = "<div class='mainBtnDiv'><button type='button' onclick='showAppModal()'>결재하기</button>" +
@@ -224,8 +224,18 @@ function showReportDetail() {
 		"<label id='lineInfo' onclick='changeTab(this)'>문서정보</label><label id='changeInfo' onclick='changeTab(this)'>변경이력</label></div>" +
 		"<div id='tabDetail'></div><div id='tabDetail2'></div>"
 	$(".comment").html(tabHtml);
-	toReadMode();
+	// toReadMode();
 	drawCommentLine();
+
+	let target = $(".seletedForm")[0];
+	let inputsArr = target.getElementsByTagName("input");
+
+	for (let i = 0; i < inputsArr.length; i++) {
+		if (inputsArr[i].dataset.detail !== undefined) {
+			inputsArr[i].value = inputsArr[i].dataset.detail;
+		}
+
+	}
 
 }
 
