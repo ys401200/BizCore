@@ -224,7 +224,7 @@ function showReportDetail() {
 		"<label id='lineInfo' onclick='changeTab(this)'>문서정보</label><label id='changeInfo' onclick='changeTab(this)'>변경이력</label></div>" +
 		"<div id='tabDetail'></div><div id='tabDetail2'></div>"
 	$(".comment").html(tabHtml);
-	// toReadMode();
+	//toReadMode();
 	drawCommentLine();
 
 	let target = $(".seletedForm")[0];
@@ -236,6 +236,30 @@ function showReportDetail() {
 		}
 
 	}
+
+	let textAreaArr = target.getElementsByTagName("textarea")[0];
+	textAreaArr.value = textAreaArr.dataset.detail;
+
+	let formId = storage.reportDetailData.formId;
+
+	// 상세타입 체크하게 하기
+	let rd = $("input[name='" + formId + "_RD']");
+	for (let i = 0; i < rd.length; i++) {
+		if (rd[i].dataset.detail == "on") {
+			$("#" + rd[i].id).prop("checked", true);
+		}
+	}
+
+	$("." + formId + "_examine").val(storage.user[$("." + formId + "_examine").val()].userName);
+	$("." + formId + "_approval").val(storage.user[$("." + formId + "_approval").val()].userName);
+	$("." + formId + "_agree").val(storage.user[$("." + formId + "_agree").val()].userName);
+	$("." + formId + "_conduct").val(storage.user[$("." + formId + "_conduct").val()].userName);
+
+
+
+	// 결재선 사번 직급 다 한글로 바꾸기 
+
+
 
 }
 

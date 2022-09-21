@@ -108,9 +108,12 @@ function selectForm() {
   let writer = storage.user[my].userName;
   let formId = data[selectedFormNo].id;
   $("#" + formId + "_writer").val(writer);
+  $("#" + formId + "_writer").attr("data-detail", writer);
+
 
   let date = getYmdHyphen();
   $("#" + formId + "_created").val(date);
+  $("#" + formId + "_created").attr("data-detail", date);
   $(".testClass").prop('checked', false);
   $(".typeContainer").html("")
   $(".inputsAuto").prop("disabled", "true");
@@ -274,7 +277,7 @@ function check(name) {
   let selectHtml = "";
 
   let data = new Array();
-  let x; 
+  let x;
   let my = storage.my;
   //나는 결재선에 노출 안 되게 함 
   for (x in storage.user) {
@@ -325,7 +328,7 @@ function upClick(obj) {
   }
 
   let data = new Array();
-  let x; 
+  let x;
   let my = storage.my;
   //나는 결재선에 노출 안 되게 함 
   for (x in storage.user) {
@@ -366,7 +369,7 @@ function downClick(obj) {
   }
 
   let data = new Array();
-  let x; 
+  let x;
   let my = storage.my;
   //나는 결재선에 노출 안 되게 함 
   for (x in storage.user) {
@@ -414,7 +417,7 @@ function createLine() {
 
 
   let data = new Array();
-  let x; 
+  let x;
   //나는 결재선에 노출 안 되게 함 
   for (x in storage.user) {
     if (x != my) {
