@@ -405,7 +405,7 @@ public class GwService extends Svc{
             pstmt.setString(2, userNo);
             //pstmt.setString(3, sqlIn);
             rs = pstmt.executeQuery();
-            if(rs.next()){
+            while(rs.next()){
                 each = new HashMap<>();
                 each.put("no", rs.getString(1));
                 each.put("docno", rs.getString(2));
