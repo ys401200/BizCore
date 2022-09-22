@@ -279,7 +279,7 @@ public class GwService extends Svc{
         return result;
     }
 
-    // 문서 관리번호를 입력받아서 결재 문서 정보, 본문, 결재선을 전달하는 메서드 / 오류메시지 : notFound / errorInAppLine / appDocContentIsEmpty / permissionDenied
+    // 문서 관리번호를 입력받아서 결재 문서 정보, 본문, 결재선, 첨부파일 정보를 전달하는 메서드 / 오류메시지 : notFound / errorInAppLine / appDocContentIsEmpty / permissionDenied
     public String getAppDocAndDetailInfo(String compId, String docNo, String dept, String userNo, String aesKey, String aesIv){
         String result = null;
         String sql1 = "SELECT no, docNo, writer, formId, docbox, title, confirmNo, status, readable FROM bizcore.doc_app WHERE deleted IS NULL AND compId = ? AND docno = ?";
@@ -287,8 +287,10 @@ public class GwService extends Svc{
         String sql3 = "SELECT doc FROM bizcore.doc_app_detail WHERE compId = ? AND ordered = (SELECT MAX(ordered) FROM bizcore.doc_app_detail WHERE compId = ? AND docNo = ? AND retrieved IS NULL AND (approved IS NOT NULL OR rejected IS NOT NULL)) AND docNo = ?";
         String no = null, writer = null, formId = null, docbox = null, title = null, confirmNo = null;
         String ordered = null, employee = null, appType = null, read = null, isModify = null, approved = null, rejected = null, comment = null, appData = null, t = null, doc = null;
-        String docStatus = null, appCurrent = null;
+        String docStatus = null, appCurrent = null, files = null;
         HashSet<String> appBefore = new HashSet<>(), appNext = new HashSet<>(), appRead = new HashSet<>(), appReceiver = new HashSet<>(), appAll = new HashSet<>();  
+        List<HashMap<String, String>> fileList = null;
+        HashMap<String, String> file = null;
         boolean readable = false;
         ArrayList<String> appLine = null;
         Connection conn = null;
@@ -441,6 +443,20 @@ public class GwService extends Svc{
             
             // ========== ↑ 권한 검증 종료 ==========
 
+            // ========== ↓ 첨부파일 이름 가져오기 시작 ==========
+            files = "[";
+            fileList = systemMapper.getAttachedFileList(compId, "docapp", strToInt(no));
+            if(fileList != null && fileList.size() > 0) for(x = 0 ; x < fileList.size() ; x++){
+                file = fileList.get(x);
+                if(x > 0)   files += ",";
+                files += ("{\"fileName\":\"" + file.get("fileName") + "\",");
+                files += ("\"size\":" + file.get("size") + ",");
+                files += ("\"removed\":" + file.get("removed").equals("1") + "}");
+            }
+            files += "]";
+
+            // ========== ↓ 첨부파일 이름 가져오기 종료 ==========
+
             // ========== ↓ 결재 문서 읽기 시작 ==========
             pstmt = conn.prepareStatement(sql3);
             pstmt.setString(1, compId);
@@ -478,6 +494,7 @@ public class GwService extends Svc{
             result += ("\"status\":\"" + docStatus + "\",");
             result += ("\"readable\":\"" + (readable ? "dept" : "none") + "\",");
             result += ("\"appLine\":" + t + ",");
+            result += ("\"fileList\":" + files + ",");
             result += ("\"doc\":\"" + encAes(doc, aesKey, aesIv) + "\"}");
             
         }catch(SQLException e){e.printStackTrace();}
