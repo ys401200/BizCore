@@ -864,42 +864,6 @@ function paging(total, currentPage, articlePerPage){
 	return result;
 }
 
-// function inputClick(e){
-// 	let ele, auto;
-
-// 	ele = $(e);
-// 	auto = ele.parents("div").find("#autoDiv");
-
-// 	if(ele.attr("type") === "text" && ele.data("keyup") !== "" && ele.data("keyup") !== undefined){
-// 		auto.remove();
-// 		ele.after("<datalist id='autoDiv'></datalist>");
-// 	}
-// }
-
-// function inputTextKeyup(e){
-// 	let text, jsonData, auto, ele, dataKey;
-
-// 	ele = $(e);
-// 	text = ele.val();
-// 	auto = ele.parents("div").find("#autoDiv");
-// 	dataKey = ele.data("keyup");
-// 	auto.html("");
-	
-// 	jsonData = storage[dataKey];
-
-// 	for(let key in jsonData){
-// 		if(ele.val() !== ""){
-// 			if(jsonData[key].name.indexOf(text) > -1){
-// 				auto.append("<option value='"+jsonData[key].name+"'></option>");
-// 			}
-// 			auto.show();
-// 		}else{
-// 			auto.html("");
-// 			auto.hide();
-// 		}
-// 	}
-// }
-
 //자동완성
 function inputDataList(){
 	setTimeout(() => {
@@ -1474,41 +1438,6 @@ function createTabFileList(){
 	}, 100);
 }
 
-// function tabFileInsertForm(){
-// 	let html, dataArray;
-
-// 	dataArray = [
-// 		{
-// 			"title": "담당자",
-// 			"elementId": "writer",
-// 			"dataKeyup": "user",
-// 		},
-// 		{
-// 			"title": "첨부파일",
-// 			"elementId": "attached",
-// 			"elementName": "attached[]",
-// 			"type": "file",
-// 		},
-// 	];
-
-// 	html = detailViewFormModal(dataArray);
-
-// 	modal.show();
-// 	modal.headTitle.text("자료 등록");
-// 	modal.content.css("width", "50%");
-// 	modal.body.html(html);
-// 	modal.body.css("max-height", "800px");
-// 	modal.foot.hide();
-
-// 	setTimeout(() => {
-// 		let my;
-// 		my = storage.my;
-
-// 		$(document).find("#writer").val(storage.user[my].userName);
-// 		$(document).find("#attached").after("<div class='filePreview'></div>");
-// 	}, 100);
-// }
-
 function fileChange(){
 	let method, data, type, attached, fileDatas = [], html = "", flag;
 	attached = $(document).find("[name='attached[]']")[0].files;
@@ -1960,7 +1889,7 @@ function createTabSalesList(result){
 
 //상세보기 숨김
 function detailViewContainerHide(titleStr){
-	let detailContents, pageContainer, listInsertBtn, detailBtns, listChangeBtn, scheduleRange;
+	let detailContents, pageContainer, listInsertBtn, detailBtns, listChangeBtn, scheduleRange, searchContainer;
 
 	pageContainer = $(".pageContainer");
 	detailContents = $(".detailContents");
@@ -1968,6 +1897,7 @@ function detailViewContainerHide(titleStr){
 	listChangeBtn = $(".listChangeBtn");
 	scheduleRange = $("#scheduleRange");
 	detailBtns = $(".detailBtns");
+	searchContainer = $(".searchContainer");
 
 	if(listChangeBtn !== undefined){
 		listChangeBtn.show();
@@ -1982,6 +1912,7 @@ function detailViewContainerHide(titleStr){
 	pageContainer.prev().show();
 	detailContents.hide();
 	detailBtns.hide();
+	searchContainer.show();
 
 	conTitleChange("containerTitle", titleStr);
 }
@@ -1995,14 +1926,6 @@ function detailBoardContainerHide(){
 function conTitleChange(contentId, str){
 	$("#" + contentId).html(str);
 }
-
-//매출처 담당자 자동완성
-// function customerChange(e){
-// 	let getCustNumber;
-// 	getCustNumber = dataListFormat("customer", $(e).val());
-
-// 	$(document).find("#" + $(e).data("user-id")).val(storage.customer[getCustNumber].ceoName);
-// }
 
 function sizeToStr(s){
     let result, t, r;
@@ -2093,7 +2016,7 @@ function calWindowLength(){
 	bodyContents = $("#bodyContents");
 	gridContent = $(".gridContent");
 
-	return parseInt((bodyContents.height() - 300) / 38);
+	return parseInt((bodyContents.innerHeight() - 300) / 38);
 }
 
 function daumPostCode(){
@@ -2144,8 +2067,6 @@ function addChart_1(){
 function chartSuccess_1(result){
 	let chartContent_1, dataArray = [], t = 0;
 	chartContent_1 = document.getElementById('chartContent_1').getContext('2d');
-
-	console.log(result);
 
 	for(let i = 0; i < 12; i++){
 		if(result[i] === undefined){
@@ -2480,17 +2401,45 @@ function searchChange(e){
 
 function searchDataFilter(arrayList, searchDatas, type){
 	let dataArray = [];
-
-	for(let key in storage.searchList){
-		if(storage.searchList[key].indexOf(searchDatas) > -1){
-			if(type === "input"){
+	
+	if(type === "input"){
+		for(let key in storage.searchList){
+			if(storage.searchList[key].indexOf(searchDatas) > -1){
 				dataArray.push(arrayList[key]);
-			}else{
-				dataArray.push(key);
+			}
+		}
+	}else{
+		if(searchDatas.indexOf("#created") > -1){
+			let splitStr;
+			splitStr = searchDatas.split("#created");
+
+			for(let key in storage.searchList){
+				if(splitStr[0] <= storage.searchList[key].split("#created")[1]){
+					if(storage.searchList[key].split("#created")[1] <= splitStr[1]){
+						dataArray.push(key);
+					}
+				}
+			}
+		}else if(searchDatas.indexOf("#from") > -1){
+			let splitStr;
+			splitStr = searchDatas.split("#from");
+
+			for(let key in storage.searchList){
+				if(splitStr[0] <= storage.searchList[key].split("#from")[1]){
+					if(storage.searchList[key].split("#from")[1] <= splitStr[1]){
+						dataArray.push(key);
+					}
+				}
+			}
+		}else{
+			for(let key in storage.searchList){
+				if(storage.searchList[key].indexOf(searchDatas) > -1){
+					dataArray.push(key);
+				}
 			}
 		}
 	}
-
+		
 	return dataArray;
 }
 
@@ -2522,6 +2471,56 @@ function searchMultiFilter(index, dataArray, arrayList){
 	}
 
 	return resultArray;
+}
+
+function searchDateDefaultSet(e){
+	let thisDateInput = $(e), matchDateInput, thisDate, year, month, day;
+
+	if(thisDateInput.data("date-type") === "from"){
+		matchDateInput = thisDateInput.next().next();
+		let splitDate = thisDateInput.val().split("-");
+		thisDate = new Date(splitDate[0], parseInt(splitDate[1]-1), splitDate[2]);
+		splitDate = matchDateInput.val().split("-");
+		let matchDate = new Date(splitDate[0], parseInt(splitDate[1]-1), splitDate[2]);
+
+		if(matchDateInput.val() === ""){
+			thisDate.setDate(thisDate.getDate()+1);
+		}else if(thisDate.getTime() > matchDate.getTime()){
+			alert("시작일이 종료일보다 클 수 없습니다.");
+			thisDate.setDate(thisDate.getDate()+1);
+		}else{
+			return null;
+		}
+	}else{
+		matchDateInput = thisDateInput.prev().prev();
+		let splitDate = thisDateInput.val().split("-");
+		thisDate = new Date(splitDate[0], parseInt(splitDate[1]-1), splitDate[2]);
+		splitDate = matchDateInput.val().split("-");
+		let matchDate = new Date(splitDate[0], parseInt(splitDate[1]-1), splitDate[2]);
+
+		if(matchDateInput.val() === ""){
+			thisDate.setDate(thisDate.getDate()-1);
+		}else if(thisDate.getTime() < matchDate.getTime()){
+			alert("종료일이 시작일보다 작을 수 없습니다.");
+			thisDate.setDate(thisDate.getDate()-1);
+		}else{
+			return null;
+		}
+	}
+
+	year = thisDate.getFullYear();
+	month = thisDate.getMonth()+1;
+	day = thisDate.getDate();
+
+	if(month < 10){
+		month = "0" + month;
+	}
+	
+	if(day < 10){
+		day = "0" + day;
+	}
+
+	matchDateInput.val(year + "-" + month + "-" + day);	
 }
 
 // function searchFilter(data, key, value){

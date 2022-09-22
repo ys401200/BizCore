@@ -7,29 +7,61 @@
 		<jsp:include page="../sideMenu.jsp" />
 	</div>
 	<div id="bodyContent">
-        <!-- <div class="salesSearchContainer">
-            <div class="salesSearchSelect">
-                <select id="salesSearchCategory">
-                    <option value="no">번호</option>
-                    <option value="job">일정구분</option>
-                    <option value="title">일정제목</option>
-                    <option value="place">장소</option>
-                    <option value="detail">일정설명</option>
-                </select>
-            </div>
-            <div class="salesSearchText">
-                <input type="text" id="salesSearchValue">
-            </div>
-            <div class="salesSearchBtn">
-                <button type="button" onclick="salesSearchList();"><img src="/images/common/search.png" alt="search"/></button>
-            </div>
-        </div>
-        <div class="detailContainer">
-            <hr />
-            <span class="detailMainSpan"></span>
-            <div class="detailBtns"></div>
-            <div class="detailContent"></div>
-        </div> -->
+        <div class="searchContainer">
+			<hr />
+			<span>검색</span>
+			<div class="searchBtns">
+				<button type="button" data-set="false" onclick="searchAco(this);">펼치기</button>
+				<button type="button" id="searchChangeBtn" data-set="false" onclick="searchChange(this)">멀티</button>
+				<button type="button" id="multiSearchBtn" onclick="searchSubmit();">검색</button>
+			</div>
+			<div class="searchInputContent">
+				<input type="text" id="searchAllInput" onkeyup="searchInputKeyup();" placeholder="단어를 입력해주세요.">
+			</div>
+			<div class="searchMultiContent">
+				<div class="searchWriter">
+					<span>담당자</span>
+					<input type="text" data-type="user" id="searchWriter">
+				</div>
+				<div class="searchCustomer">
+					<span>거래처</span>
+					<input type="text" data-type="customer" id="searchCustomer">
+				</div>
+				<div class="searchType">
+					<span>활동형태</span>
+					<select id="searchType">
+						<option value="">선택</option>
+						<option value="회사방문">회사방문</option>
+						<option value="기술지원">기술지원</option>
+						<option value="전화상담">전화상담</option>
+						<option value="현장방문">현장방문</option>
+						<option value="원격지원">원격지원</option>
+						<option value="제품설명">제품설명</option>
+						<option value="시스템데모">시스템데모</option>
+						<option value="제품견적">제품견적</option>
+						<option value="계약전 의사결정지원">계약전 의사결정지원</option>
+						<option value="계약">계약</option>
+						<option value="사후처리">사후처리</option>
+						<option value="협력사요청">협력사요청</option>
+						<option value="협력사문의">협력사문의</option>
+						<option value="교육">교육</option>
+						<option value="전화상담">전화상담</option>
+						<option value="제조사업무협의">제조사업무협의</option>
+						<option value="외부출장">외부출장</option>
+						<option value="제안설명회">제안설명회</option>
+						<option value="기타">기타</option>
+					</select>
+				</div>
+				<div class="searchDate">
+					<span>일정시작일</span>
+					<div class="searchGridItem">
+						<input type="date" id="searchDateFrom" data-date-type="from" onchange="searchDateDefaultSet(this);">
+						<span>~</span>
+						<input type="date" id="searchDateTo" data-date-type="to" onchange="searchDateDefaultSet(this);">
+					</div>
+				</div>
+			</div>
+		</div>
         <div class="salesContainer">
             <hr />
             <span id="containerTitle">영업활동조회</span>

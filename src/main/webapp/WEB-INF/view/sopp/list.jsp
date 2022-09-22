@@ -33,7 +33,7 @@
                 </div>
                 <div class="searchSoppType">
                     <span>판매방식</span>
-                    <select id="searchCustomer">
+                    <select id="searchSoppType">
                         <option value="">선택</option>
                         <option value="조달직판">조달직판</option>
                         <option value="조달간판">조달간판</option>
@@ -54,7 +54,7 @@
                 </div>
                 <div class="searchStatus">
                     <span>진행단계</span>
-                    <select id="searchCustomer">
+                    <select id="searchStatus">
                         <option value="">선택</option>
                         <option value="영업정보파악">영업정보파악</option>
                         <option value="초기접촉">초기접촉</option>
@@ -65,9 +65,9 @@
                 <div class="searchCreated">
                     <span>등록일</span>
                     <div class="searchGridItem">
-                        <input type="date" id="searchCreatedFrom">
+                        <input type="date" id="searchCreatedFrom" data-date-type="from" onchange="searchDateDefaultSet(this);">
                         <span>~</span>
-                        <input type="date" id="searchCreatedTo">
+                        <input type="date" id="searchCreatedTo" data-date-type="to" onchange="searchDateDefaultSet(this);">
                     </div>
                 </div>
             </div>

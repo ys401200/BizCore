@@ -20,24 +20,6 @@ function getSoppList() {
 	crud.defaultAjax(url, method, data, type, soppSuccessList, soppErrorList);
 }
 
-function soppSearchList(){
-	let searchCategory, searchText, url, method, data, type;
-
-	url = "/api/sopp";
-	method = "get";
-	data = "";
-	type = "list";
-
-	searchCategory = $(document).find("#soppSearchCategory").val();
-	searchText = $(document).find("#soppSearchValue").val();
-	
-	localStorage.setItem("searchList", true);
-	localStorage.setItem("searchCategory", searchCategory);
-	localStorage.setItem("searchText", searchText);
-
-	crud.defaultAjax(url, method, data, type, soppSuccessList, soppErrorList);
-}
-
 function drawSoppList() {
 	let container, result, job, jsonData, header = [], data = [], ids = [], disDate, setDate, str, fnc;
 	
@@ -189,6 +171,7 @@ function soppErrorList(){
 
 function soppSuccessView(result){
 	let html, title, userName, customer, picOfCustomer, endUser, status, progress, contType, disDate, expectedSales, detail, dataArray;
+	$(".searchContainer").hide();
 
 	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
 	userName = (result.employee == 0 || result.employee === null || result.employee === undefined) ? "" : storage.user[result.employee].userName;
@@ -693,26 +676,35 @@ function addSearchList(){
 		expectedSales = storage.soppList[i].expectedSales;
 		status = storage.code.etc[storage.soppList[i].status];
 		disDate = dateDis(storage.soppList[i].created, storage.soppList[i].modified);
-		setDate = dateFnc(disDate);
-
-		storage.searchList.push("#" + no + "#" + employee + "#" + customer + "#" + title + "#" + soppType + "#" + contType + "#" + status + "#" + endUser + "#" + expectedSales + "#" + setDate);
+		setDate = parseInt(dateFnc(disDate).replaceAll("-", ""));
+		storage.searchList.push("#" + no + "#" + employee + "#" + customer + "#" + title + "#" + soppType + "#" + contType + "#" + status + "#" + endUser + "#" + expectedSales + "#created" + setDate);
 	}
 }
 
 function searchSubmit(){
-	let tempArray, dataArray = [], resultArray, eachIndex = 0;
+	let dataArray = [], resultArray, eachIndex = 0, searchEmployee, searchCustomer, searchTitle, searchSoppType, searchContType, searchStatus, searchCreatedFrom;
 
-	$(".searchMultiContent div").find("input, select").each((index, item) => {
-		if($(item).val() !== ""){
-			tempArray = searchDataFilter(storage.soppList, $(item).val(), "multi");
+	searchEmployee = $("#searchEmployee").val();
+	searchCustomer = $("#searchCustomer").val();
+	searchTitle = $("#searchTitle").val();
+	searchSoppType = $("#searchSoppType").val();
+	searchContType = $("#searchContType").val();
+	searchStatus = $("#searchStatus").val();
+	searchCreatedFrom = ($("#searchCreatedFrom").val() === "") ? "" : $("#searchCreatedFrom").val().replaceAll("-", "") + "#created" + $("#searchCreatedTo").val().replaceAll("-", "");
+	
+	let searchValues = [searchEmployee, searchCustomer, searchTitle, searchSoppType, searchContType, searchStatus, searchCreatedFrom];
+
+	for(let i = 0; i < searchValues.length; i++){
+		if(searchValues[i] !== ""){
+			let tempArray = searchDataFilter(storage.soppList, searchValues[i], "multi");
 			
-			for(let i = 0; i < tempArray.length; i++){
-				dataArray.push(tempArray[i]);
+			for(let t = 0; t < tempArray.length; t++){
+				dataArray.push(tempArray[t]);
 			}
 
 			eachIndex++;
 		}
-	});
+	}
 
 	resultArray = searchMultiFilter(eachIndex, dataArray, storage.soppList);
 	

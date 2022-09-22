@@ -18,6 +18,7 @@
 	max-height: calc(100% - 94px);
 	padding: 0.5% 0.5% 0 0.6%;
 	box-sizing:border-box;
+	height: 100%;
 }
 
 @media all and (min-width:1920px){

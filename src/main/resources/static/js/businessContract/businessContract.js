@@ -20,24 +20,6 @@ function getContractList() {
 	crud.defaultAjax(url, method, data, type, contractSuccessList, contractErrorList);
 }
 
-function contractSearchList(){
-	let searchCategory, searchText, url, method, data, type;
-
-	url = "/api/contract";
-	method = "get";
-	data = "";
-	type = "list";
-
-	searchCategory = $(document).find("#contractSearchCategory").val();
-	searchText = $(document).find("#contractSearchValue").val();
-	
-	localStorage.setItem("searchList", true);
-	localStorage.setItem("searchCategory", searchCategory);
-	localStorage.setItem("searchText", searchText);
-
-	crud.defaultAjax(url, method, data, type, contractSuccessList, contractErrorList);
-}
-
 function drawContractList() {
 	let contractContainer, result, job, jsonData, header = [], data = [], ids = [], disDate, str, fnc;
 	
@@ -45,7 +27,11 @@ function drawContractList() {
 		msg.set("등록된 계약 없습니다");
 	}
 	else {
-		jsonData = storage.contractList;
+		if(storage.searchDatas === undefined){
+			jsonData = storage.contractList;
+		}else{
+			jsonData = storage.searchDatas;
+		}
 	}
 
 	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
@@ -191,8 +177,12 @@ function contractSuccessList(result){
 	
 	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined){
 		window.setTimeout(drawContractList, 600);
+		window.setTimeout(addSearchList, 600);
+		window.setTimeout(searchContainerSet, 600);
 	}else{
 		window.setTimeout(drawContractList, 200);
+		window.setTimeout(addSearchList, 200);
+		window.setTimeout(searchContainerSet, 200);
 	}
 }
 
@@ -204,6 +194,8 @@ function contractSuccessView(result){
 	let notIdArray, sopp, html, contractType, title, employee, customer, salesType, cipOfCustomer, endUser, cipOfendUser, saleDate, delivered, employee2, startOfFreeMaintenance, endOfFreeMaintenance, startOfPaidMaintenance, endOfPaidMaintenance, contractAmount, taxInclude, profit, detail, disDate, dataArray;
 
 	storage.contractNo = result.no;
+
+	$("searchContainer").hide();
 
 	contractType = (result.contractType === null || result.contractType === "" || result.contractType === undefined) ? "" : storage.code.etc[result.contractType];
 	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
@@ -968,4 +960,69 @@ function contractRadioClick(e){
 		$("#startOfFreeMaintenance").val(null);
 		$("#endOfFreeMaintenance").val(null);
 	}
+}
+
+function searchInputKeyup(){
+	let searchAllInput;
+	searchAllInput = $("#searchAllInput").val();
+
+	storage.searchDatas = searchDataFilter(storage.contractList, searchAllInput, "input");
+	drawContractList();
+}
+
+function addSearchList(){
+	storage.searchList = [];
+
+	for(let i = 0; i < storage.contractList.length; i++){
+		let no, customer, endUser, title, contractType, writer, salesType, disDate, setDate;
+		no = storage.contractList[i].no;
+		soppType = storage.code.etc[storage.contractList[i].soppType];
+		contType = storage.code.etc[storage.contractList[i].contType];
+		title = storage.contractList[i].title;
+		customer = (storage.contractList[i].customer === null || storage.contractList[i].customer == 0) ? "" : storage.customer[storage.contractList[i].customer].name;
+		endUser = (storage.contractList[i].endUser === null || storage.contractList[i].endUser == 0 || storage.contractList[i].endUser == 104571) ? "" : storage.customer[storage.contractList[i].endUser].name;
+		employee = (storage.contractList[i].employee === null || storage.contractList[i].employee == 0) ? "" : storage.user[storage.contractList[i].employee].userName;
+		expectedSales = storage.contractList[i].expectedSales;
+		status = storage.code.etc[storage.contractList[i].status];
+		disDate = dateDis(storage.contractList[i].created, storage.contractList[i].modified);
+		setDate = parseInt(dateFnc(disDate).replaceAll("-", ""));
+		storage.searchList.push("#" + no + "#" + employee + "#" + customer + "#" + title + "#" + soppType + "#" + contType + "#" + status + "#" + endUser + "#" + expectedSales + "#created" + setDate);
+	}
+}
+
+function searchSubmit(){
+	let dataArray = [], resultArray, eachIndex = 0, searchEmployee, searchCustomer, searchTitle, searchSoppType, searchContType, searchStatus, searchCreatedFrom;
+
+	searchEmployee = $("#searchEmployee").val();
+	searchCustomer = $("#searchCustomer").val();
+	searchTitle = $("#searchTitle").val();
+	searchSoppType = $("#searchSoppType").val();
+	searchContType = $("#searchContType").val();
+	searchStatus = $("#searchStatus").val();
+	searchCreatedFrom = ($("#searchCreatedFrom").val() === "") ? "" : $("#searchCreatedFrom").val().replaceAll("-", "") + "#created" + $("#searchCreatedTo").val().replaceAll("-", "");
+	
+	let searchValues = [searchEmployee, searchCustomer, searchTitle, searchSoppType, searchContType, searchStatus, searchCreatedFrom];
+
+	for(let i = 0; i < searchValues.length; i++){
+		if(searchValues[i] !== ""){
+			let tempArray = searchDataFilter(storage.contractList, searchValues[i], "multi");
+			
+			for(let t = 0; t < tempArray.length; t++){
+				dataArray.push(tempArray[t]);
+			}
+
+			eachIndex++;
+		}
+	}
+
+	resultArray = searchMultiFilter(eachIndex, dataArray, storage.contractList);
+	
+	storage.searchDatas = resultArray;
+
+	if(storage.searchDatas.length == 0){
+		alert("찾는 데이터가 없습니다.");
+		return false;
+	}
+	
+	drawSoppList();
 }

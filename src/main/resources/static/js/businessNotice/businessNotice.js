@@ -19,24 +19,6 @@ function getNoticeList() {
 	
 } // End of getNoticeList()
 
-function noticeSearchList(){
-	let searchCategory, searchText, url, method, data, type;
-
-	url = "/api/notice";
-	method = "get";
-	data = "";
-	type = "list";
-
-	searchCategory = $(document).find("#noticeSearchCategory").val();
-	searchText = $(document).find("#noticeSearchValue").val();
-	
-	localStorage.setItem("searchList", true);
-	localStorage.setItem("searchCategory", searchCategory);
-	localStorage.setItem("searchText", searchText);
-
-	crud.defaultAjax(url, method, data, type, noticeSuccessList, noticeErrorList);
-}
-
 function drawNoticeList() {
 	let container, result, jsonData, job, header = [], data = [], ids = [], disDate, setDate, str, fnc;
 	
@@ -44,7 +26,11 @@ function drawNoticeList() {
 		msg.set("등록된 공지사항이 없습니다");
 	}
 	else {
-		jsonData = storage.noticeList;
+		if(storage.searchDatas === undefined){
+			jsonData = storage.noticeList;
+		}else{
+			jsonData = storage.searchDatas;
+		}
 	}
 
 	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
@@ -120,8 +106,12 @@ function noticeSuccessList(result){
 
 	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined){
 		window.setTimeout(drawNoticeList, 600);
+		window.setTimeout(addSearchList, 600);
+		window.setTimeout(searchContainerSet, 600);
 	}else{
 		window.setTimeout(drawNoticeList, 200);
+		window.setTimeout(addSearchList, 200);
+		window.setTimeout(searchContainerSet, 200);
 	}
 }
 
@@ -130,8 +120,8 @@ function noticeErrorList(){
 }
 
 function noticeSuccessView(result){
-	storage.detailNoticeNo = result.no;
 	let html = "", title, content, writer, dataArray, disDate, setDate, notIdArray;
+	storage.detailNoticeNo = result.no;
 
 	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
 	content = (result.content === null || result.content === "" || result.content === undefined) ? "" : result.content;
@@ -311,4 +301,59 @@ function noticeSuccessDelete(){
 
 function noticeErrorDelete(){
 	alert("삭제에러");
+}
+
+function searchInputKeyup(){
+	let searchAllInput;
+	searchAllInput = $("#searchAllInput").val();
+
+	storage.searchDatas = searchDataFilter(storage.noticeList, searchAllInput, "input");
+	drawNoticeList();
+}
+
+function addSearchList(){
+	storage.searchList = [];
+
+	for(let i = 0; i < storage.noticeList.length; i++){
+		let no, title, writer, disDate, setDate;
+		no = storage.noticeList[i].no;
+		title = storage.noticeList[i].title;
+		writer = (storage.noticeList[i].writer === null || storage.noticeList[i].writer == 0) ? "" : storage.user[storage.noticeList[i].writer].userName;
+		disDate = dateDis(storage.noticeList[i].created, storage.noticeList[i].modified);
+		setDate = parseInt(dateFnc(disDate).replaceAll("-", ""));
+		storage.searchList.push("#" + no + "#" + title + "#" + writer + "#created" + setDate);
+	}
+}
+
+function searchSubmit(){
+	let dataArray = [], resultArray, eachIndex = 0, searchTitle, searchCreatedFrom;
+
+	searchTitle = $("#searchTitle").val();
+	searchWriter = $("#searchWriter").val();
+	searchCreatedFrom = ($("#searchCreatedFrom").val() === "") ? "" : $("#searchCreatedFrom").val().replaceAll("-", "") + "#created" + $("#searchCreatedTo").val().replaceAll("-", "");
+	
+	let searchValues = [searchTitle, searchWriter, searchCreatedFrom];
+
+	for(let i = 0; i < searchValues.length; i++){
+		if(searchValues[i] !== ""){
+			let tempArray = searchDataFilter(storage.noticeList, searchValues[i], "multi");
+			
+			for(let t = 0; t < tempArray.length; t++){
+				dataArray.push(tempArray[t]);
+			}
+
+			eachIndex++;
+		}
+	}
+
+	resultArray = searchMultiFilter(eachIndex, dataArray, storage.noticeList);
+	
+	storage.searchDatas = resultArray;
+
+	if(storage.searchDatas.length == 0){
+		alert("찾는 데이터가 없습니다.");
+		return false;
+	}
+	
+	drawNoticeList();
 }

@@ -20,24 +20,6 @@ function getSalesList() {
 	crud.defaultAjax(url, method, data, type, salesSuccessList, salesErrorList);
 } // End of getSalesList()
 
-function salesSearchList(){
-	let searchCategory, searchText, url, method, data, type;
-
-	url = "/api/schedule/calendar/company";
-	method = "get";
-	data = "";
-	type = "list";
-
-	searchCategory = $(document).find("#salesSearchCategory").val();
-	searchText = $(document).find("#salesSearchValue").val();
-	
-	localStorage.setItem("searchList", true);
-	localStorage.setItem("searchCategory", searchCategory);
-	localStorage.setItem("searchText", searchText);
-
-	crud.defaultAjax(url, method, data, type, salesSuccessList, salesErrorList);
-}
-
 function drawSalesList() {
 	let container, dataJob = [], result, jsonData, header = [], data = [], ids = [], str, fnc;
 	
@@ -45,18 +27,12 @@ function drawSalesList() {
 		msg.set("등록된 일정이 없습니다");
 	}
 	else {
-		jsonData = storage.scheduleList;
-	}
-
-	storage.tempArray = [];
-
-	for(let i = 0; i < jsonData.length; i++){
-		if(jsonData[i].job === "sales"){
-			storage.tempArray.push(jsonData[i]);
+		if(storage.searchDatas === undefined){
+			jsonData = storage.scheduleList;
+		}else{
+			jsonData = storage.searchDatas;
 		}
 	}
-
-	jsonData = storage.tempArray;
 
 	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 
@@ -103,7 +79,7 @@ function drawSalesList() {
 	];
 
 	for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
-		let job, title, customer, writer, fromDate, fromSetDate, toDate, toSetDate, place, content;
+		let job, title, customer, writer, fromDate, fromSetDate, toDate, toSetDate, place, content, type;
 
 		job = (jsonData[i].job === null || jsonData[i].job === "" || jsonData[i].job === undefined) ? "" : "영업일정";
 		title = (jsonData[i].title === null || jsonData[i].title === "" || jsonData[i].title === undefined) ? "" : jsonData[i].title;
@@ -111,6 +87,7 @@ function drawSalesList() {
 		writer = (jsonData[i].writer == 0 || jsonData[i].writer === null || jsonData[i].writer === undefined) ? "" : storage.user[jsonData[i].writer].userName;
 		place = (jsonData[i].place === null || jsonData[i].place === "" || jsonData[i].place === undefined) ? "" : jsonData[i].place;
 		content = (jsonData[i].content === null || jsonData[i].content === "" || jsonData[i].content === undefined) ? "" : jsonData[i].content;
+		type = (jsonData[i].type === null || jsonData[i].type === "" || jsonData[i].type === undefined) ? "" : storage.code.etc[jsonData[i].type];
 		
 		fromDate = dateDis(jsonData[i].from);
 		fromSetDate = dateFnc(fromDate);
@@ -141,7 +118,7 @@ function drawSalesList() {
 				"setData": place,
 			},
 			{
-				"setData": jsonData[i].sopp,
+				"setData": type,
 			},
 			{
 				"setData": content,
@@ -174,6 +151,8 @@ function salesSuccessView(result){
 	let dataArray, from, to, place, writer, sopp, customer, partner, title, content;
 	
 	storage.salesNo = result.no;
+
+	$(".searchContainer").hide();
 
 	disDate = dateDis(result.from);
 	from = dateFnc(disDate);
@@ -370,12 +349,21 @@ function salesErrorView(){
 }
 
 function salesSuccessList(result){
-	storage.scheduleList = result;
+	storage.scheduleList = [];
+	for(let i = 0; i < result.length; i++){
+		if(result[i].job === "sales"){
+			storage.scheduleList.push(result[i]);
+		}
+	}
 
 	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined){
 		window.setTimeout(drawSalesList, 600);
+		window.setTimeout(addSearchList, 600);
+		window.setTimeout(searchContainerSet, 600);
 	}else{
 		window.setTimeout(drawSalesList, 200);
+		window.setTimeout(addSearchList, 200);
+		window.setTimeout(searchContainerSet, 200);
 	}
 }
 
@@ -688,29 +676,6 @@ function salesErrorUpdate(){
 	alert("에러");
 }
 
-function scheduleSelectChange(){
-	let url, method, data, type;
-
-	url = "/api/schedule/calendar/company";
-	method = "get";
-	data = "";
-	type = "list";
-
-	crud.defaultAjax(url, method, data, type, scheduleSelectSuccess, scheduleSelectError);
-}
-
-function scheduleSelectSuccess(result){
-	storage.scheduleList = result;
-
-	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined){
-		window.setTimeout(drawSalesList, 600);
-		window.setTimeout(drawCalendar(document.getElementsByClassName("calendar_container")[0]), 600);
-	}else{
-		window.setTimeout(drawSalesList, 200);
-		window.setTimeout(drawCalendar(document.getElementsByClassName("calendar_container")[0]), 200);
-	}
-}
-
 function scheduleSelectError(){
 	alert("에러");
 }
@@ -736,4 +701,66 @@ function salesSuccessDelete(){
 
 function salesErrorDelete(){
 	alert("에러");
+}
+
+function searchInputKeyup(){
+	let searchAllInput;
+	searchAllInput = $("#searchAllInput").val();
+
+	storage.searchDatas = searchDataFilter(storage.scheduleList, searchAllInput, "input");
+	drawSalesList();
+}
+
+function addSearchList(){
+	storage.searchList = [];
+
+	for(let i = 0; i < storage.scheduleList.length; i++){
+		let no, writer, customer, job, type, from, to, disDate;
+		no = storage.scheduleList[i].no;
+		writer = (storage.scheduleList[i].writer === null || storage.scheduleList[i].writer == 0) ? "" : storage.user[storage.scheduleList[i].writer].userName;
+		customer = (storage.scheduleList[i].customer === null || storage.scheduleList[i].customer == 0) ? "" : storage.customer[storage.scheduleList[i].customer].name;
+		title = storage.scheduleList[i].title;
+		job = "영업일정";
+		type = storage.code.etc[storage.scheduleList[i].type];
+		disDate = dateDis(storage.scheduleList[i].from);
+		from = parseInt(dateFnc(disDate).replaceAll("-", ""));
+		disDate = dateDis(storage.scheduleList[i].to);
+		to = parseInt(dateFnc(disDate).replaceAll("-", ""));
+		storage.searchList.push("#" + no + "#" + writer + "#" + customer + "#" + title + "#" + job + "#" + type + "#from" + from + "#to" + to);
+	}
+}
+
+function searchSubmit(){
+	let dataArray = [], resultArray, eachIndex = 0, searchWriter, searchCustomer, searchJob, searchType, searchDateFrom, searchDateTo, searchCreatedFrom;
+
+	searchWriter = $("#searchWriter").val();
+	searchCustomer = $("#searchCustomer").val();
+	searchJob = $("#searchJob").val();
+	searchType = $("#searchType").val();
+	searchDateFrom = ($("#searchDateFrom").val() === "") ? "" : $("#searchDateFrom").val().replaceAll("-", "") + "#from" + $("#searchDateTo").val().replaceAll("-", "");
+	
+	let searchValues = [searchWriter, searchCustomer, searchJob, searchType, searchDateFrom];
+
+	for(let i = 0; i < searchValues.length; i++){
+		if(searchValues[i] !== ""){
+			let tempArray = searchDataFilter(storage.scheduleList, searchValues[i], "multi");
+			
+			for(let t = 0; t < tempArray.length; t++){
+				dataArray.push(tempArray[t]);
+			}
+
+			eachIndex++;
+		}
+	}
+
+	resultArray = searchMultiFilter(eachIndex, dataArray, storage.scheduleList);
+	
+	storage.searchDatas = resultArray;
+
+	if(storage.searchDatas.length == 0){
+		alert("찾는 데이터가 없습니다.");
+		return false;
+	}
+	
+	drawSalesList();
 }

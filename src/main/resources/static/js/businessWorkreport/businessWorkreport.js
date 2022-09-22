@@ -117,7 +117,7 @@ function drawWorkReportList() {
         }
     }
     html += "<div style='justify-content: center;'>추가기재사항</div>";
-    html += "<div style='grid-column: span 5'>";
+    html += "<div style='grid-column: span 4'>";
     html += "<textarea id='currentWeek' style='width: -webkit-fill-available;'>" + jsonData.previousWeek + "</textarea>";
     html += "</div>";
 

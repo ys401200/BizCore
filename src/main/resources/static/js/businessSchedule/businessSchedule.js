@@ -32,7 +32,11 @@ function drawScheduleList() {
 		msg.set("등록된 일정이 없습니다");
 	}
 	else {
-		jsonData = storage.scheduleList;
+		if(storage.searchDatas === undefined){
+			jsonData = storage.scheduleList;
+		}else{
+			jsonData = storage.searchDatas;
+		}
 	}
 
 	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
@@ -80,7 +84,7 @@ function drawScheduleList() {
 	];
 
 	for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
-		let job, title, customer, writer, fromDate, fromSetDate, toDate, toSetDate, place, content;
+		let job, title, customer, writer, fromDate, fromSetDate, toDate, toSetDate, place, content, type;
 		
 		job = (jsonData[i].job === null || jsonData[i].job === "" || jsonData[i].job === undefined) ? "" : jsonData[i].job;
 		
@@ -97,6 +101,7 @@ function drawScheduleList() {
 		writer = (jsonData[i].writer == 0 || jsonData[i].writer === null || jsonData[i].writer === undefined) ? "" : storage.user[jsonData[i].writer].userName;
 		place = (jsonData[i].place === null || jsonData[i].place === "" || jsonData[i].place === undefined) ? "" : jsonData[i].place;
 		content = (jsonData[i].content === null || jsonData[i].content === "" || jsonData[i].content === undefined) ? "" : jsonData[i].content;
+		type = (jsonData[i].type === null || jsonData[i].type === "" || jsonData[i].type === undefined) ? "" : storage.code.etc[jsonData[i].type];
 		
 		fromDate = dateDis(jsonData[i].from);
 		fromSetDate = dateFnc(fromDate);
@@ -127,7 +132,7 @@ function drawScheduleList() {
 				"setData": place,
 			},
 			{
-				"setData": jsonData[i].sopp,
+				"setData": type,
 			},
 			{
 				"setData": content,
@@ -307,7 +312,7 @@ function scheduleDetailView(e){
 
 function scheduleSuccessView(result){
 	let html, dataArray, notIdArray;
-
+	$(".searchContainer").hide();
 	dataArray = scheduleRadioUpdate(result.job, result);
 	html = detailViewForm(dataArray);
 
@@ -512,12 +517,14 @@ function listChange(event){
 		calendarList.show();
 		$(event).data("type", "calendar");
 		$(event).text("테이블로 표시");
+		$(".searchContainer").hide();
 	}else{
 		tableList.show();
 		pageContainer.show();
 		calendarList.hide();
 		$(event).data("type", "table");
 		$(event).text("달력으로 표시");
+		$(".searchContainer").show();
 	}
 }
 
@@ -527,9 +534,13 @@ function scheduleSuccessList(result){
 	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined){
 		window.setTimeout(drawScheduleList, 600);
 		window.setTimeout(drawCalendar(document.getElementsByClassName("calendar_container")[0]), 600);
+		window.setTimeout(addSearchList, 600);
+		window.setTimeout(searchContainerSet, 600);
 	}else{
 		window.setTimeout(drawScheduleList, 200);
 		window.setTimeout(drawCalendar(document.getElementsByClassName("calendar_container")[0]), 200);
+		window.setTimeout(addSearchList, 200);
+		window.setTimeout(searchContainerSet, 200);
 	}
 }
 
@@ -1968,4 +1979,75 @@ function calendarMore(e){
 			$(item).css("display", "none");
 		}
 	});
+}
+
+function searchInputKeyup(){
+	let searchAllInput;
+	searchAllInput = $("#searchAllInput").val();
+
+	storage.searchDatas = searchDataFilter(storage.scheduleList, searchAllInput, "input");
+	drawScheduleList();
+}
+
+function addSearchList(){
+	storage.searchList = [];
+
+	for(let i = 0; i < storage.scheduleList.length; i++){
+		let no, writer, customer, job, type, from, to, disDate;
+		no = storage.scheduleList[i].no;
+		writer = (storage.scheduleList[i].writer === null || storage.scheduleList[i].writer == 0) ? "" : storage.user[storage.scheduleList[i].writer].userName;
+		customer = (storage.scheduleList[i].customer === null || storage.scheduleList[i].customer == 0) ? "" : storage.customer[storage.scheduleList[i].customer].name;
+		title = storage.scheduleList[i].title;
+		job = storage.scheduleList[i].job;
+		
+		if(job === "sales"){
+			job = "영업일정";
+		}else if(job === "tech"){
+			job = "기술지원";
+		}else{
+			job = "기타일정";
+		}
+
+		type = storage.code.etc[storage.scheduleList[i].type];
+		disDate = dateDis(storage.scheduleList[i].from);
+		from = parseInt(dateFnc(disDate).replaceAll("-", ""));
+		disDate = dateDis(storage.scheduleList[i].to);
+		to = parseInt(dateFnc(disDate).replaceAll("-", ""));
+		storage.searchList.push("#" + no + "#" + writer + "#" + customer + "#" + title + "#" + job + "#" + type + "#from" + from + "#to" + to);
+	}
+}
+
+function searchSubmit(){
+	let dataArray = [], resultArray, eachIndex = 0, searchWriter, searchCustomer, searchJob, searchType, searchDateFrom, searchDateTo, searchCreatedFrom;
+
+	searchWriter = $("#searchWriter").val();
+	searchCustomer = $("#searchCustomer").val();
+	searchJob = $("#searchJob").val();
+	searchType = $("#searchType").val();
+	searchDateFrom = ($("#searchDateFrom").val() === "") ? "" : $("#searchDateFrom").val().replaceAll("-", "") + "#from" + $("#searchDateTo").val().replaceAll("-", "");
+	
+	let searchValues = [searchWriter, searchCustomer, searchJob, searchType, searchDateFrom];
+
+	for(let i = 0; i < searchValues.length; i++){
+		if(searchValues[i] !== ""){
+			let tempArray = searchDataFilter(storage.scheduleList, searchValues[i], "multi");
+			
+			for(let t = 0; t < tempArray.length; t++){
+				dataArray.push(tempArray[t]);
+			}
+
+			eachIndex++;
+		}
+	}
+
+	resultArray = searchMultiFilter(eachIndex, dataArray, storage.scheduleList);
+	
+	storage.searchDatas = resultArray;
+
+	if(storage.searchDatas.length == 0){
+		alert("찾는 데이터가 없습니다.");
+		return false;
+	}
+	
+	drawScheduleList();
 }
