@@ -20,6 +20,7 @@ function init(){
 	getBasicInfo();
 	getCustomer();
 	getCommonCode();
+	getUserRank();
 		
 	cipher = { // 암호화 모듈
 		"encRsa" : (message) => {
@@ -690,6 +691,32 @@ function getBasicInfo(){
 		}
 	})
 } // End of getBasicInfo()
+
+// API 서버에서 회사 및 사용자 사번을 정보를 가져오는 함수
+function getUserRank(){
+	let url;
+
+	url = apiServer + "/api/user/rank";
+
+	$.ajax({
+		"url": url,
+		"method": "get",
+		"dataType": "json",
+		"cache": false,
+		success: (data) => {
+			let list;
+
+			if (data.result === "ok") {
+				list = cipher.decAes(data.data);
+				list = JSON.parse(list);
+				storage.userRank = list;
+				console.log("[getBasicInfo] Success getting rank information.");
+			} else {
+				msg.set("직급 정보를 가져오지 못했습니다.");
+			}
+		}
+	})
+} // End of getUserRank()
 
 // API 서버에서 코드 정보를 가져오는 함수
 function getCommonCode(){
