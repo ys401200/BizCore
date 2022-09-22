@@ -34,17 +34,53 @@ function waitDefault() {
 	})
 
 
-	// waitList 가져오는 ajax; 
-	let url, method, data, type;
-	url = "/api/gw/app/wait";
-	method = "get"
-	data = "";
-	type = "list";
-	crud.defaultAjax(url, method, data, type, waitSuccessList, waitErrorList);
 
 
-	$(".searchContainer").show();
-	$(".listPageDiv").show();
+
+
+
+	let checkHref = location.href;
+	checkHref = checkHref.split("//");
+	checkHref = checkHref[1];
+	let splitArr = checkHref.split("/");
+
+// 전자결재 홈 화면에서 들어오는 경우 , 상세조회 
+	if (splitArr.length > 3) {
+		$.ajax({
+			"url": apiServer + "/api/gw/app/doc/" + splitArr[3],
+			"method": "get",
+			"dataType": "json",
+			"cache": false,
+			success: (data) => {
+				let detailData;
+				if (data.result === "ok") {
+					detailData = cipher.decAes(data.data);
+					detailData = JSON.parse(detailData);
+					detailData.doc = cipher.decAes(detailData.doc);
+					detailData.doc = detailData.doc.replaceAll("\\\"", "\"");
+					storage.reportDetailData = detailData;
+					showReportDetail();
+				} else {
+					alert("문서 정보를 가져오는 데 실패했습니다");
+				}
+			}
+		})
+	} else {
+		// 리스트 보기 
+		let url, method, data, type;
+		url = "/api/gw/app/wait";
+		method = "get"
+		data = "";
+		type = "list";
+		crud.defaultAjax(url, method, data, type, waitSuccessList, waitErrorList);
+
+
+		$(".searchContainer").show();
+		$(".listPageDiv").show();
+	}
+
+
+
 
 
 }
@@ -162,6 +198,8 @@ function drawNoticeApproval() {
 
 
 
+
+
 function waitDetailView(obj) {// 선택한 그리드의 글 번호 받아오기 
 
 
@@ -206,7 +244,7 @@ function waitDetailView(obj) {// 선택한 그리드의 글 번호 받아오기
 
 /* 상세 화면 그리기 */
 function showReportDetail() {
-	$(".searchContainer").hide();
+
 
 	let testForm = storage.reportDetailData.doc;
 

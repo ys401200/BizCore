@@ -6,7 +6,7 @@
 				<jsp:include page="../sideMenu.jsp" />
 			</div>
 			<div id="bodyContent">
-				<div class="searchContainer">
+				<!-- <div class="searchContainer">
 					<div class="searchSelect">
 						<select>
 							<option value="no">문서번호</option>
@@ -19,7 +19,7 @@
 					</div>
 					<div class="searchText"><input type="text" id="searchValue"></div>
 					<div class="searchBtn"><button type="button" >검색</button></div>
-				</div>
+				</div> -->
 				<div class="container">
 					<hr />
 					<span id="gwSubTabTitle">결재 대기 문서</span>
