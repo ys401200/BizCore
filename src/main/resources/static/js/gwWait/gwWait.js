@@ -14,30 +14,6 @@ function waitDefault() {
 	$(".modal-wrap").hide();
 
 
-	// 등록된 formList 가져오는 ajax 
-	$.ajax({
-		"url": apiServer + "/api/gw/form",
-		"method": "get",
-		"dataType": "json",
-		"cache": false,
-		success: (data) => {
-			let list;
-			if (data.result === "ok") {
-				list = cipher.decAes(data.data);
-				list = JSON.parse(list);
-				storage.formList = list;
-				console.log("[getForms] Success getting employee information.");
-			} else {
-				// msg.set("양식 정보를 가져오지 못했습니다.");
-			}
-		}
-	})
-
-
-
-
-
-
 
 	let checkHref = location.href;
 	checkHref = checkHref.split("//");
@@ -75,13 +51,8 @@ function waitDefault() {
 		crud.defaultAjax(url, method, data, type, waitSuccessList, waitErrorList);
 
 
-		$(".searchContainer").show();
 		$(".listPageDiv").show();
 	}
-
-
-
-
 
 }
 
@@ -203,8 +174,6 @@ function drawNoticeApproval() {
 function waitDetailView(obj) {// 선택한 그리드의 글 번호 받아오기 
 
 
-
-	let target = $(".container");
 	let no = obj.dataset.id;
 	let docNo;
 
@@ -353,9 +322,7 @@ function drawCommentLine() {
 
 	let target = $("#tabDetail");
 
-	// 임시 데이터 ----------------------------------------------------
-
-
+	
 
 	let appLine = storage.reportDetailData.appLine;
 	let appLineArr = new Array();
@@ -773,10 +740,6 @@ function getYmdSlash(date) {
 }
 
 
-
-
-
-
 // 파일 다운로드 
 function getFileArr() {
 	let target = $(".selectedFileDiv");
@@ -789,7 +752,6 @@ function getFileArr() {
 
 
 // 파일 수정 삭제 
-
 function getFileModArr() {
 	let target = $(".selectedFileDiv");
 

@@ -14,26 +14,8 @@ $(document).ready(() => {
 // 참조 문서는 상세 조회가 가능하고 열람은 결재가 끝난 후에 참조/열람 문서함에서 열람 가능함 
 function referDefault() {
     $(".modal-wrap").hide();
-    $(".batchBtn").hide();
     $("#gwSubTabTitle").html("참조/열람 대기 문서");
 
-    $.ajax({
-        "url": apiServer + "/api/gw/form",
-        "method": "get",
-        "dataType": "json",
-        "cache": false,
-        success: (data) => {
-            let list;
-            if (data.result === "ok") {
-                list = cipher.decAes(data.data);
-                list = JSON.parse(list);
-                storage.formList = list;
-                console.log("[getForms] Success getting employee information.");
-            } else {
-                // msg.set("양식 정보를 가져오지 못했습니다.");
-            }
-        }
-    })
 
 
 
@@ -59,6 +41,120 @@ function successList(result) {
 function errorList() {
     alert("에러");
 }
+
+
+function drawApproval() {
+    let container, result, jsonData, job, header = [], data = [], ids = [], disDate, setDate, str, fnc;
+
+    if (storage.referList === undefined) {
+        msg.set("등록된 공지사항이 없습니다");
+    }
+    else {
+        jsonData = storage.referList.refer;
+    }
+
+    result = paging(jsonData.length, storage.currentPage, 5);
+
+    pageContainer = document.getElementsByClassName("pageContainer");
+    container = $(".listDiv");
+    header = [
+
+		{
+			"title": "번호",
+			"align": "center",
+		},
+        {
+			"title": "결재 타입",
+			"align": "center",
+		},
+		{
+			"title": "문서 종류",
+			"align": "center",
+		},
+		{
+			"title": "제목",
+			"align": "left",
+		},
+		{
+			"title": "작성자",
+			"align": "center",
+		},
+		{
+			"title": "작성일",
+			"align": "center",
+		},
+		
+		
+	];
+    for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+        disDate = dateDis(jsonData[i].created, jsonData[i].modified);
+        setDate = dateFnc(disDate);
+        let userName = storage.user[jsonData[i].writer].userName;
+        let appType = jsonData[i].appType;
+        if (appType == '0') {
+			appType = "검토";
+
+		} else if (appType == '1') {
+			appType = "합의";
+
+		} else if (appType == '2') {
+			appType = "결재";
+		} else if (appType == '3') {
+			appType = "수신";
+		} else {
+			appType = "참조";
+
+		}
+        str = [
+
+			{
+				"setData": jsonData[i].no,
+			},{
+				"setData": appType,
+			},
+			{
+				"setData": jsonData[i].form,
+			},
+			{
+				"setData": jsonData[i].title,
+			},
+			{
+				"setData": userName,
+			},
+			{
+				"setData": setDate,
+			},
+			
+			// {
+			// 	"setData": "<input type='checkbox' class='thisCheck' data-id='" + jsonData[i].no + "'>",
+			// }
+		]
+
+        fnc = "detailView(this)";
+        ids.push(jsonData[i].no);
+        data.push(str);
+    }
+
+    let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawApproval", result[0]);
+    pageContainer[0].innerHTML = pageNation;
+    createGrid(container, header, data, ids, job, fnc);
+
+
+    // 전체선택 전체 해제  
+    $(".thisAllcheck").click(function () {
+        if ($(".thisAllcheck").prop("checked")) {
+            $(":checkbox").prop("checked", true);
+        } else {
+            $(":checkbox").prop("checked", false);
+        }
+
+    });
+}// End of drawNoticeApproval()
+
+
+
+
+
 
 function detailView(event) {// 선택한 그리드의 글 번호 받아오기 
 
@@ -220,114 +316,6 @@ function drawChangeInfo() {
 
 }
 
-
-function drawApproval() {
-    let container, result, jsonData, job, header = [], data = [], ids = [], disDate, setDate, str, fnc;
-
-    if (storage.referList === undefined) {
-        msg.set("등록된 공지사항이 없습니다");
-    }
-    else {
-        jsonData = storage.referList.refer;
-    }
-
-    result = paging(jsonData.length, storage.currentPage, 5);
-
-    pageContainer = document.getElementsByClassName("pageContainer");
-    container = $(".listDiv");
-    header = [
-
-		{
-			"title": "번호",
-			"align": "center",
-		},
-        {
-			"title": "결재 타입",
-			"align": "center",
-		},
-		{
-			"title": "문서 종류",
-			"align": "center",
-		},
-		{
-			"title": "제목",
-			"align": "left",
-		},
-		{
-			"title": "작성자",
-			"align": "center",
-		},
-		{
-			"title": "작성일",
-			"align": "center",
-		},
-		
-		
-	];
-    for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
-        disDate = dateDis(jsonData[i].created, jsonData[i].modified);
-        setDate = dateFnc(disDate);
-        let userName = storage.user[jsonData[i].writer].userName;
-        let appType = jsonData[i].appType;
-        if (appType == '0') {
-			appType = "검토";
-
-		} else if (appType == '1') {
-			appType = "합의";
-
-		} else if (appType == '2') {
-			appType = "결재";
-		} else if (appType == '3') {
-			appType = "수신";
-		} else {
-			appType = "참조";
-
-		}
-        str = [
-
-			{
-				"setData": jsonData[i].no,
-			},{
-				"setData": appType,
-			},
-			{
-				"setData": jsonData[i].form,
-			},
-			{
-				"setData": jsonData[i].title,
-			},
-			{
-				"setData": userName,
-			},
-			{
-				"setData": setDate,
-			},
-			
-			// {
-			// 	"setData": "<input type='checkbox' class='thisCheck' data-id='" + jsonData[i].no + "'>",
-			// }
-		]
-
-        fnc = "detailView(this)";
-        ids.push(jsonData[i].no);
-        data.push(str);
-    }
-
-    let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawApproval", result[0]);
-    pageContainer[0].innerHTML = pageNation;
-    createGrid(container, header, data, ids, job, fnc);
-
-
-    // 전체선택 전체 해제  
-    $(".thisAllcheck").click(function () {
-        if ($(".thisAllcheck").prop("checked")) {
-            $(":checkbox").prop("checked", true);
-        } else {
-            $(":checkbox").prop("checked", false);
-        }
-
-    });
-}// End of drawNoticeApproval()
 
 
 
