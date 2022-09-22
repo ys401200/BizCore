@@ -261,14 +261,15 @@ public class GwService extends Svc{
         String sql1 = "SELECT no, docNo, writer, formId, docbox, title, confirmNo, status, readable FROM bizcore.doc_app WHERE deleted IS NULL AND compId = ? AND docno = ?";
         String sql2 = "SELECT ordered, employee, appType, CAST(UNIX_TIMESTAMP(`read`)*1000 AS CHAR) AS `read`, isModify, CAST(UNIX_TIMESTAMP(approved)*1000 AS CHAR) AS approved, CAST(UNIX_TIMESTAMP(rejected)*1000 AS CHAR) AS rejected, comment, appData FROM bizcore.doc_app_detail WHERE compId = ? AND docNo = ? AND retrieved IS NULL ORDER BY ordered";
         String sql3 = "SELECT doc FROM bizcore.doc_app_detail WHERE compId = ? AND ordered = (SELECT MAX(ordered) FROM bizcore.doc_app_detail WHERE compId = ? AND docNo = ? AND retrieved IS NULL AND (approved IS NOT NULL OR rejected IS NOT NULL)) AND docNo = ?";
-        String no = null, writer = null, formId = null, docbox = null, title = null, confirmNo = null, status = null;
+        String no = null, writer = null, formId = null, docbox = null, title = null, confirmNo = null;
         String ordered = null, employee = null, appType = null, read = null, isModify = null, approved = null, rejected = null, comment = null, appData = null, t = null, doc = null;
+        String docStatus = null, appBefore = "", appNext = "", appCurrent = null, receiver = "", appRead = "";
         boolean readable = false;
         ArrayList<String> appLine = null;
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
-        int x = 0;
+        int x = 0, status = -9999;
 
         try{
             conn = sqlSession.getConnection();
@@ -285,7 +286,7 @@ public class GwService extends Svc{
                 docbox = rs.getString("docbox");
                 title = rs.getString("title");
                 confirmNo = rs.getString("confirmNo");
-                status = rs.getString("status");
+                status = rs.getInt("status"); // 상태코드 / -3 : 반려 / -2 : 결재취소 / -1 : 회수 / 0 : 임시저장 / 1 : 진행중 / 2 : 수신대기 / 3 : 완료
                 t = rs.getString("readable");
                 // 권한 : 완결되지 않은 문서는 readable가 true인 경우 결재선의 인원과 부서원, false인 경우 결재선에 있는 인원만 읽기 가능 / 완결된 문서는 부서원들 읽기 가능
                 readable = t != null && t.equals("dept");
@@ -320,6 +321,17 @@ public class GwService extends Svc{
                 t += ("\"appData\":" + appData + "}");
                 if(appLine == null) appLine = new ArrayList<>();
                 appLine.add(t);
+
+                // 결재선에서 현재 결재선 담당과 이전, 이후를 저장함 / 권한 검증 및 문서상태 전달용
+                if(appType.equals("4")) appRead += ("," + employee);
+                else if(ordered.length() == 1 || approved != null || rejected != null){ // 작성자 또는 이미 결재한 사람
+                    appBefore += ("," + employee);
+                }else if(appCurrent == null && approved == null && rejected == null){ // 현재 결재 순번인 사람
+                    appCurrent = employee;
+                }else{ // 아직 결재 순서가 돌아오지 않은 사람
+                    if(appType.equals("3"))  receiver += ("," + employee);
+                    else appNext += ("," + employee);
+                }
             }
             rs.close();
             pstmt.close();
@@ -329,11 +341,62 @@ public class GwService extends Svc{
             // ========== ↑ 결재선 정보 읽기 종료 ==========
 
             // ========== ↓ 권한 검증 시작 ==========
+            // 상태코드 / -3 : 반려 / -2 : 결재취소 / -1 : 회수 / 0 : 임시저장 / 1 : 진행중 / 2 : 수신대기 / 3 : 완료
+            // 결재 취소 및 임시저장은 작성자만 읽기 가능, 반려는 작성자와 반려자 이전 결재선 인원만 읽기 가능,
+            // 회수/진행은 결재선에 존재하는 인원 중 수신자 제외 읽기 가능, 수신대기 및 완료는 젠체 읽기 가능
+            if(status == -2 && !writer.equals(userNo)){
+                return "permissionDenied";
+            }else{
+                docStatus = "canceled";
+            }
 
-            // ============================================================================================
-            // ===================================================== 권한검증 코드 ============================================
-            // ============================================================================================
+            if(status == 0 && !writer.equals(userNo)){
+                return "permissionDenied";
+            }else{
+                docStatus = "temp";
+            }
 
+            if(status == -3 && !(writer.equals(userNo) || appBefore.indexOf(userNo) >= 0)){
+                return "permissionDenied";
+            }else{
+                docStatus = "rejected";
+            }
+
+            if(status == 1){
+                if(appRead.indexOf(userNo) >= 0){
+                    docStatus = "read";
+                }else if(receiver != null && receiver.equals(userNo) && !writer.equals(userNo)){
+                    return "permissionDenied";    
+                }else if(writer.equals(userNo) || appBefore.indexOf(userNo) >= 0){
+                    docStatus = "proceed";
+                }else if(!writer.equals(userNo) && appCurrent.equals(userNo)){
+                    docStatus = "wait";
+                }else if(!writer.equals(userNo) && !appCurrent.equals(userNo) && appNext.indexOf(userNo) >= 0){
+                    docStatus = "due";
+                }else return "permissionDenied";
+            }
+
+            if(status == 2){
+                if(appRead.indexOf(userNo) >= 0){
+                    docStatus = "read";
+                }else if(receiver.equals(userNo)){
+                    docStatus = "wait";
+                }else if(writer.equals(userNo) || appBefore.indexOf(userNo) >= 0){
+                    docStatus = "proceed";
+                }else  return "permissionDenied";
+            }
+
+            if(status == 3){
+                if(appRead.indexOf(userNo) >= 0){
+                    docStatus = "read";
+                }else if(receiver.equals(userNo)){
+                    docStatus = "read";
+                }else if(writer.equals(userNo) || appBefore.indexOf(userNo) >= 0){
+                    docStatus = "read";
+                }else  return "permissionDenied";
+            }
+
+            
             // ========== ↑ 권한 검증 종료 ==========
 
             // ========== ↓ 결재 문서 읽기 시작 ==========
@@ -370,7 +433,7 @@ public class GwService extends Svc{
             result += ("\"docbox\":\"" + docbox + "\",");
             result += ("\"title\":\"" + title + "\",");
             result += ("\"confirmNo\":\"" + confirmNo + "\",");
-            result += ("\"status\":" + status + ",");
+            result += ("\"status\":\"" + docStatus + "\",");
             result += ("\"readable\":\"" + (readable ? "dept" : "none") + "\",");
             result += ("\"appLine\":" + t + ",");
             result += ("\"doc\":\"" + encAes(doc, aesKey, aesIv) + "\"}");
