@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -56,7 +57,7 @@ public class GwService extends Svc{
     public int addAppDoc(String compId, String dept, String title, String userNo, String sopp, String customer, String formId, String readable, String appDoc, String[] files, HashMap<String, String> attached, String[][] appLine) {
         int result = -9999;
         int year = -1, x = -1, read = 0;
-        String docNo = null, str = null, savedName = null, rootPath = fileStoragePath, s = File.separator, appData = null;;
+        String docNo = null, str = null, savedName = null, rootPath = fileStoragePath, s = File.separator, appData = null;
         String[] line = null;
         File source = null, target = null;
         Long size = 0L;
@@ -113,7 +114,7 @@ public class GwService extends Svc{
 
     // 결재 예정 및 대기 문서 목록을 가져오는 메서드
     public String getWaitAndDueDocList(String compId, String userNo){
-        String result = null, str = null, wait = "[]", due = "[]", refer = "[]", t = null;
+        String result = null, str = null, wait = "[]", due = "[]", refer = "[]", receive = "[]", t = null;
         List<HashMap<String, String>> list = null;
         HashMap<String, String> each = null;
         ArrayList<String> waitDocs = new ArrayList<>(), dueDocs = new ArrayList<>(), referDocs = new ArrayList<>();
@@ -213,11 +214,34 @@ public class GwService extends Svc{
             }
             refer += "]";
         }
+
+        // 수신 문서 가져오기
+        list = getReceivedDocList(compId, userNo);
+        if(list != null && list.size() > 0){
+            receive = "[";
+            for(x = 0 ; x < list.size() ; x++){
+                each = list.get(x);
+                if(x > 0)   refer += ",";
+                t = each.get("read");
+                t = t == null || t.equals("0") ? "null" : "\"" + t + "\"";
+                receive += "{";
+                receive += ("\"no\":" + each.get("no") + ",");
+                receive += ("\"docNo\":\"" + each.get("docno") + "\",");
+                receive += ("\"writer\":" + each.get("writer") + ",");
+                receive += ("\"created\":" + each.get("created") + ",");
+                receive += ("\"form\":\"" + each.get("form") + "\",");
+                receive += ("\"title\":\"" + each.get("title") + "\",");
+                receive += ("\"appType\":" + each.get("appType") + ",");
+                receive += ("\"read\":" + t);
+                receive += "}";
+            }
+            receive += "]";
+        }
         
         result = ("{\"wait\":" + wait + ",");
         result += ("\"due\":" + due + ",");
         result += ("\"refer\":" + refer + ",");
-        result += ("\"receive\":" + "[]" + "}");
+        result += ("\"receive\":" + receive + "}");
 
         return result;
     } // end of getWaitAndDueDicList()
@@ -263,7 +287,8 @@ public class GwService extends Svc{
         String sql3 = "SELECT doc FROM bizcore.doc_app_detail WHERE compId = ? AND ordered = (SELECT MAX(ordered) FROM bizcore.doc_app_detail WHERE compId = ? AND docNo = ? AND retrieved IS NULL AND (approved IS NOT NULL OR rejected IS NOT NULL)) AND docNo = ?";
         String no = null, writer = null, formId = null, docbox = null, title = null, confirmNo = null;
         String ordered = null, employee = null, appType = null, read = null, isModify = null, approved = null, rejected = null, comment = null, appData = null, t = null, doc = null;
-        String docStatus = null, appBefore = "", appNext = "", appCurrent = null, receiver = "", appRead = "";
+        String docStatus = null, appCurrent = null;
+        HashSet<String> appBefore = new HashSet<>(), appNext = new HashSet<>(), appRead = new HashSet<>(), appReceiver = new HashSet<>(), appAll = new HashSet<>();  
         boolean readable = false;
         ArrayList<String> appLine = null;
         Connection conn = null;
@@ -323,14 +348,15 @@ public class GwService extends Svc{
                 appLine.add(t);
 
                 // 결재선에서 현재 결재선 담당과 이전, 이후를 저장함 / 권한 검증 및 문서상태 전달용
-                if(appType.equals("4")) appRead += ("," + employee);
-                else if(ordered.length() == 1 || approved != null || rejected != null){ // 작성자 또는 이미 결재한 사람
-                    appBefore += ("," + employee);
+                appAll.add(employee);
+                if(appType.equals("4")) appRead.add(employee);
+                else if(appType.equals("3")) appReceiver.add(employee);
+                else if(!writer.equals(userNo) || approved != null || rejected != null){ // 작성자 외 이미 결재한 사람
+                    appBefore.add(employee);
                 }else if(appCurrent == null && approved == null && rejected == null){ // 현재 결재 순번인 사람
                     appCurrent = employee;
-                }else{ // 아직 결재 순서가 돌아오지 않은 사람
-                    if(appType.equals("3"))  receiver += ("," + employee);
-                    else appNext += ("," + employee);
+                }else if(appCurrent != null && approved == null && rejected == null){ // 아직 결재 순서가 돌아오지 않은 사람
+                    appNext.add(employee);
                 }
             }
             rs.close();
@@ -344,58 +370,39 @@ public class GwService extends Svc{
             // 상태코드 / -3 : 반려 / -2 : 결재취소 / -1 : 회수 / 0 : 임시저장 / 1 : 진행중 / 2 : 수신대기 / 3 : 완료
             // 결재 취소 및 임시저장은 작성자만 읽기 가능, 반려는 작성자와 반려자 이전 결재선 인원만 읽기 가능,
             // 회수/진행은 결재선에 존재하는 인원 중 수신자 제외 읽기 가능, 수신대기 및 완료는 젠체 읽기 가능
-            if(status == -2 && !writer.equals(userNo)){
-                return "permissionDenied";
-            }else{
-                docStatus = "canceled";
+            
+            if(!appAll.contains(userNo))    return "permissionDenied";
+
+            if(status == -3){
+                if(writer.equals(userNo) || appBefore.contains(userNo) || appRead.contains(userNo))   docStatus = "rejected";
+                else    return "permissionDenied";
             }
 
-            if(status == 0 && !writer.equals(userNo)){
-                return "permissionDenied";
-            }else{
-                docStatus = "temp";
+            if(status == -2){
+                if(writer.equals(userNo))   docStatus = "canceled";
+                else    return "permissionDenied";
             }
 
-            if(status == -3 && !(writer.equals(userNo) || appBefore.indexOf(userNo) >= 0)){
-                return "permissionDenied";
-            }else{
-                docStatus = "rejected";
+            if(status == 0){
+                if(writer.equals(userNo))   docStatus = "temp";
+                else    return "permissionDenied";
             }
 
             if(status == 1){
-                if(appRead.indexOf(userNo) >= 0){
-                    docStatus = "read";
-                }else if(receiver != null && receiver.equals(userNo) && !writer.equals(userNo)){
-                    return "permissionDenied";    
-                }else if(writer.equals(userNo) || appBefore.indexOf(userNo) >= 0){
-                    docStatus = "proceed";
-                }else if(!writer.equals(userNo) && appCurrent.equals(userNo)){
-                    docStatus = "wait";
-                }else if(!writer.equals(userNo) && !appCurrent.equals(userNo) && appNext.indexOf(userNo) >= 0){
-                    docStatus = "due";
-                }else return "permissionDenied";
+                if(writer.equals(userNo) || appBefore.contains(userNo) || appRead.contains(userNo))   docStatus = "proceed";
+                else if(appCurrent.equals("userNo"))    docStatus = "wait";
+                else if(appNext.contains(userNo))   docStatus = "due";
+                return "permissionDenied";
             }
-
             if(status == 2){
-                if(appRead.indexOf(userNo) >= 0){
-                    docStatus = "read";
-                }else if(receiver.equals(userNo)){
-                    docStatus = "wait";
-                }else if(writer.equals(userNo) || appBefore.indexOf(userNo) >= 0){
-                    docStatus = "proceed";
-                }else  return "permissionDenied";
+                if(writer.equals(userNo) || appBefore.contains(userNo) || appRead.contains(userNo))   docStatus = "proceed";
+                else if(appReceiver.contains(userNo))    docStatus = "wait";
+                else if(appNext.contains(userNo))   docStatus = "due";
+                return "permissionDenied";
             }
 
-            if(status == 3){
-                if(appRead.indexOf(userNo) >= 0){
-                    docStatus = "read";
-                }else if(receiver.equals(userNo)){
-                    docStatus = "read";
-                }else if(writer.equals(userNo) || appBefore.indexOf(userNo) >= 0){
-                    docStatus = "read";
-                }else  return "permissionDenied";
-            }
-
+            if(status == 3 && appAll.contains(userNo))  docStatus = "read";
+            else    return  "permissionDenied";
             
             // ========== ↑ 권한 검증 종료 ==========
 
@@ -465,6 +472,37 @@ public class GwService extends Svc{
             pstmt.setString(1, compId);
             pstmt.setString(2, userNo);
             //pstmt.setString(3, sqlIn);
+            rs = pstmt.executeQuery();
+            while(rs.next()){
+                each = new HashMap<>();
+                each.put("no", rs.getString(1));
+                each.put("docno", rs.getString(2));
+                each.put("writer", rs.getString(3));
+                each.put("created", rs.getString(4));
+                each.put("form", rs.getString(5));
+                each.put("title", rs.getString(6));
+                each.put("read", rs.getString(7));
+                each.put("appType", rs.getString(8));
+                result.add(each);
+            }
+        }catch(SQLException e){e.printStackTrace();}
+        return result;
+    }
+
+    // 수신 문서 목록을 전달하는 메서드
+    private List<HashMap<String, String>> getReceivedDocList(String compId, String userNo){
+        List<HashMap<String, String>> result = null;
+        HashMap<String, String> each = null;
+        String sql = "SELECT CAST(a.no AS CHAR) AS no, a.docno AS docno, CAST(a.writer AS CHAR) AS writer, CAST(UNIX_TIMESTAMP(a.created)*1000 AS CHAR) AS created, c.title AS form, a.title AS title, CAST(UNIX_TIMESTAMP(b.`read`)*1000 AS CHAR) AS `read`, CAST(b.apptype AS CHAR) AS appType FROM bizcore.doc_app a, bizcore.doc_app_detail b, bizcore.doc_form c WHERE a.docno = b.docno AND a.compId = b.compId AND a.formid = c.id AND a.status = 2 AND b.appType = 3 AND a.compId = ? AND b.employee = ? ORDER BY no";
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try{
+            conn = sqlSession.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, compId);
+            pstmt.setString(2, userNo);
             rs = pstmt.executeQuery();
             while(rs.next()){
                 each = new HashMap<>();

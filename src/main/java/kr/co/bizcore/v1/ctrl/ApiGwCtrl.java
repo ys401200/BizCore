@@ -109,14 +109,6 @@ public class ApiGwCtrl extends Ctrl{
         return result;
     } // End of apiGwAppWaitGet()
 
-    // 결재 임시 목록을 전달
-    @GetMapping("/app/temp")
-    public String apiGwAppTempGet(HttpServletRequest request){
-        String result = null;
-
-        return result;
-    } // End of apiGwAppTempGet()
-
     // 내 결재 문서 목록을 전달
     @GetMapping("/app/mydraft")
     public String apiGwAppMydraftGet(HttpServletRequest request){
