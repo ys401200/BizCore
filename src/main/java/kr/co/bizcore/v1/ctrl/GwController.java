@@ -121,7 +121,7 @@ public class GwController {
         return result;
     }
 
-    @RequestMapping(value = "/due", method = RequestMethod.GET)
+    @RequestMapping(value = {"/due","/due/{docNo}"}, method = RequestMethod.GET)
     public String due(HttpServletRequest request) {
         HttpSession session = null;
         String result = null, uri = null, pathName = null, tempStr = null;
