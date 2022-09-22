@@ -17,16 +17,45 @@ function dueDefault() {
     $("#gwSubTabTitle").html("결재 예정 문서");
 
 
+    let checkHref = location.href;
+    checkHref = checkHref.split("//");
+    checkHref = checkHref[1];
+    let splitArr = checkHref.split("/");
+
+    // 전자결재 홈 화면에서 들어오는 경우 , 상세조회 
+    if (splitArr.length > 3) {
+        $.ajax({
+            "url": apiServer + "/api/gw/app/doc/" + splitArr[3],
+            "method": "get",
+            "dataType": "json",
+            "cache": false,
+            success: (data) => {
+                let detailData;
+                if (data.result === "ok") {
+                    detailData = cipher.decAes(data.data);
+                    detailData = JSON.parse(detailData);
+                    detailData.doc = cipher.decAes(detailData.doc);
+                    detailData.doc = detailData.doc.replaceAll("\\\"", "\"");
+                    storage.reportDetailData = detailData;
+                    getDetailView();
+                } else {
+                    alert("문서 정보를 가져오는 데 실패했습니다");
+                }
+            }
+        })
+    } else {
+        let url, method, data, type;
+        url = "/api/gw/app/wait";
+        method = "get"
+        data = "";
+        type = "list";
+        crud.defaultAjax(url, method, data, type, successList, errorList);
+
+        $(".listPageDiv").show();
+    }
 
 
-    let url, method, data, type;
-    url = "/api/gw/app/wait";
-    method = "get"
-    data = "";
-    type = "list";
-    crud.defaultAjax(url, method, data, type, successList, errorList);
 
-    $(".listPageDiv").show();
 
 }
 
@@ -149,9 +178,6 @@ function detailView(obj) {// 선택한 그리드의 글 번호 받아오기
 
     let no = obj.dataset.id;
 
-
-
-
     $.ajax({
         "url": apiServer + "/api/gw/app/doc/" + no,
         "method": "get",
@@ -185,7 +211,7 @@ function getDetailView() {
     console.log(testForm);
 
     let detailHtml = "<div class='mainBtnDiv'><button type='button' onclick='showPreAppModal()'>결재하기</button></div>" +
-    	"<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div>"
+        "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div>"
 
 
     $(".listPageDiv").html(detailHtml);
@@ -202,8 +228,8 @@ function getDetailView() {
 
 
     let tabHtml = "<div class='reportInfoTab'>" +
-    	"<label id='lineInfo' onclick='changeTab(this)'>문서정보</label><label id='changeInfo' onclick='changeTab(this)'>변경이력</label></div>" +
-    	"<div id='tabDetail'></div><div id='tabDetail2'></div>"
+        "<label id='lineInfo' onclick='changeTab(this)'>문서정보</label><label id='changeInfo' onclick='changeTab(this)'>변경이력</label></div>" +
+        "<div id='tabDetail'></div><div id='tabDetail2'></div>"
     $(".comment").html(tabHtml);
 
 
@@ -215,9 +241,9 @@ function getDetailView() {
     let inputsArr = target.getElementsByTagName("input");
 
     for (let i = 0; i < inputsArr.length; i++) {
-    	if (inputsArr[i].dataset.detail !== undefined) {
-    		inputsArr[i].value = inputsArr[i].dataset.detail;
-    	}
+        if (inputsArr[i].dataset.detail !== undefined) {
+            inputsArr[i].value = inputsArr[i].dataset.detail;
+        }
     }
 
     let textAreaArr = target.getElementsByTagName("textarea")[0];
@@ -228,9 +254,9 @@ function getDetailView() {
     // 상세타입 체크하게 하기
     let rd = $("input[name='" + formId + "_RD']");
     for (let i = 0; i < rd.length; i++) {
-    	if (rd[i].dataset.detail == "on") {
-    		$("#" + rd[i].id).prop("checked", true);
-    	}
+        if (rd[i].dataset.detail == "on") {
+            $("#" + rd[i].id).prop("checked", true);
+        }
     }
     $("input[name='" + formId + "_RD']").prop("disabled", true);
 
@@ -239,13 +265,13 @@ function getDetailView() {
     // 이름 , 직급 한글로 설정하기 
     let subTitlesArr = ["_examine", "_approval", "_agree", "_conduct"];
     for (let i = 0; i < subTitlesArr.length; i++) {
-    	if ($("." + formId + subTitlesArr[i]).val() != undefined) {
-    		for (let j = 0; j < $("." + formId + subTitlesArr[i]).length; j++) {
-    			$("." + formId + subTitlesArr[i])[j].value = storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
-    			$("." + formId + subTitlesArr[i] + "_position")[j].value = storage.userRank[$("." + formId + subTitlesArr[i] + "_position")[j].value][0];
+        if ($("." + formId + subTitlesArr[i]).val() != undefined) {
+            for (let j = 0; j < $("." + formId + subTitlesArr[i]).length; j++) {
+                $("." + formId + subTitlesArr[i])[j].value = storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
+                $("." + formId + subTitlesArr[i] + "_position")[j].value = storage.userRank[$("." + formId + subTitlesArr[i] + "_position")[j].value][0];
 
-    		}
-    	}
+            }
+        }
     }
 
 
@@ -254,108 +280,108 @@ function getDetailView() {
 // 탭 누를때마다의 이벤트 주기 
 function changeTab(obj) {
 
-	$(obj).css("background-color", "#332E85");
-	$(obj).css("color", "white");
-	$(obj).css("border", "none");
+    $(obj).css("background-color", "#332E85");
+    $(obj).css("color", "white");
+    $(obj).css("border", "none");
 
-	if (obj.id == 'lineInfo') {
+    if (obj.id == 'lineInfo') {
 
-		$("#changeInfo").css("background-color", "white");
-		$("#changeInfo").css("color", "#332E85");
-		$("#changeInfo").css("border-bottom", "2px solid #332E85");
-		$("#tabDetail2").hide();
-		$("#tabDetail").show();
-		drawCommentLine();
+        $("#changeInfo").css("background-color", "white");
+        $("#changeInfo").css("color", "#332E85");
+        $("#changeInfo").css("border-bottom", "2px solid #332E85");
+        $("#tabDetail2").hide();
+        $("#tabDetail").show();
+        drawCommentLine();
 
-	} else if (obj.id = 'changeInfo') {
-		$("#lineInfo").css("background-color", "white");
-		$("#lineInfo").css("color", "#332E85");
-		$("#lineInfo").css("border-bottom", "2px solid #332E85");
-		$("#tabDetail").hide();
-		$("#tabDetail2").show();
-		drawChangeInfo();
+    } else if (obj.id = 'changeInfo') {
+        $("#lineInfo").css("background-color", "white");
+        $("#lineInfo").css("color", "#332E85");
+        $("#lineInfo").css("border-bottom", "2px solid #332E85");
+        $("#tabDetail").hide();
+        $("#tabDetail2").show();
+        drawChangeInfo();
 
-	}
+    }
 }
 
 
 // 문서 정보 그리는 함수 
 function drawCommentLine() {
 
-	let target = $("#tabDetail");
+    let target = $("#tabDetail");
 
-	let appLine = storage.reportDetailData.appLine;
-	let appLineArr = new Array();
-	let appTypeTitle = ["검토", "합의", "결재", "수신", "참조"]
-	for (let i = 1; i < appLine.length; i++) {
-		let date, status, comment;
+    let appLine = storage.reportDetailData.appLine;
+    let appLineArr = new Array();
+    let appTypeTitle = ["검토", "합의", "결재", "수신", "참조"]
+    for (let i = 1; i < appLine.length; i++) {
+        let date, status, comment;
 
-		if (appLine[i].approved == null && appLine[i].rejected == null) {
-			if (appLine[i].read != null) {
-				date = appLine[i].read;
-				date = getYmdSlash(date);
-				status = "조회";
-			} else if (appLine[i].read == null) {
-				date = "";
-				status = "";
-			}
+        if (appLine[i].approved == null && appLine[i].rejected == null) {
+            if (appLine[i].read != null) {
+                date = appLine[i].read;
+                date = getYmdSlash(date);
+                status = "조회";
+            } else if (appLine[i].read == null) {
+                date = "";
+                status = "";
+            }
 
-		} else if (appLine[i].approved != null) {
-			date = appLine[i].approved;
-			date = getYmdSlash(date);
-			status = "승인";
-		} else if (appLine[i].rejected != null) {
-			date = appLine[i].rejected;
-			date = getYmdSlash(date);
-			status = "반려";
-		}
+        } else if (appLine[i].approved != null) {
+            date = appLine[i].approved;
+            date = getYmdSlash(date);
+            status = "승인";
+        } else if (appLine[i].rejected != null) {
+            date = appLine[i].rejected;
+            date = getYmdSlash(date);
+            status = "반려";
+        }
 
-		if (appLine[i].comment == "null") {
-			comment = "";
-		} else {
-			comment = appLine[i].comment;
-		}
-
-
-		let data = {
-			"appType": appTypeTitle[appLine[i].appType],
-			"name": storage.user[appLine[i].employee].userName,
-			"status": status,
-			"date": date,
-			"comment": comment,
-		}
-
-		appLineArr.push(data);
-
-	}
+        if (appLine[i].comment == "null") {
+            comment = "";
+        } else {
+            comment = appLine[i].comment;
+        }
 
 
+        let data = {
+            "appType": appTypeTitle[appLine[i].appType],
+            "name": storage.user[appLine[i].employee].userName,
+            "status": status,
+            "date": date,
+            "comment": comment,
+        }
 
-	let html = "<div class='readDiv'><div>열람</div><div><label for='deptRd'><input type='radio' id='deptRd' name='rd' value='dept' disabled/>작성자 소속 부서</label><label for='noneRd'><input type='radio' id='noneRd' name='rd' value='none' disabled/>열람 설정 없음</label></div></div>"
-	let detail = "<div class='tapLine tapLineTitle'><div>타입</div><div>이름</div><div>상태</div><div>일자</div><div>의견</div></div>";
-	let lineDetailHtml = "";
+        appLineArr.push(data);
 
-
-	for (let i = 0; i < appLineArr.length; i++) {
-		lineDetailHtml += "<div class='tapLine examineLine'><div>" + appLineArr[i].appType + "</div><div>" + appLineArr[i].name + "</div><div>" + appLineArr[i].status + "</div><div>" + appLineArr[i].date + "</div><div>" + appLineArr[i].comment + "</div></div>";
-	}
-
-	detail += lineDetailHtml;
-
-	html += detail;
-
-	$(".tabLine").children(0).css("padding", "5em");
-
-	target.html(html);
+    }
 
 
-	// 열람 권한 체크하기 
-	let readable = storage.reportDetailData.readable;
-	if (readable == "dept") {
-		$("#deptRd").prop("checked", true);
-	} else if (readable == "none") {
-		$("#noneRd").prop("checked", true);
-	}
+
+    let html = "<div class='readDiv'><div>열람</div><div><label for='deptRd'><input type='radio' id='deptRd' name='rd' value='dept' disabled/>작성자 소속 부서</label><label for='noneRd'><input type='radio' id='noneRd' name='rd' value='none' disabled/>열람 설정 없음</label></div></div>"
+    let detail = "<div class='tapLine tapLineTitle'><div>타입</div><div>이름</div><div>상태</div><div>일자</div><div>의견</div></div>";
+    let lineDetailHtml = "";
+
+
+    for (let i = 0; i < appLineArr.length; i++) {
+        lineDetailHtml += "<div class='tapLine examineLine'><div>" + appLineArr[i].appType + "</div><div>" + appLineArr[i].name + "</div><div>" + appLineArr[i].status + "</div><div>" + appLineArr[i].date + "</div><div>" + appLineArr[i].comment + "</div></div>";
+    }
+
+    detail += lineDetailHtml;
+
+    html += detail;
+
+    $(".tabLine").children(0).css("padding", "5em");
+
+    target.html(html);
+
+
+    // 열람 권한 체크하기 
+    let readable = storage.reportDetailData.readable;
+    if (readable == "dept") {
+        $("#deptRd").prop("checked", true);
+    } else if (readable == "none") {
+        $("#noneRd").prop("checked", true);
+    }
 
 
 }
@@ -364,37 +390,37 @@ function drawCommentLine() {
 
 //  변경이력 그리는 함수 
 function drawChangeInfo() {
-	let target = $("#tabDetail2");
-	// 임시 데이터 ----------------------------------------------------
+    let target = $("#tabDetail2");
+    // 임시 데이터 ----------------------------------------------------
 
 
-	let changeData = [{
-		"type": "검토",
-		"name": "구민주",
-		"modifyDate": "22-08-18 10:34:46",
-		"modCause": " 거래처 수정 "
-	},
-	{
-		"type": "검토",
-		"name": "이송현",
-		"modifyDate": "22-08-19 10:34:46",
-		"modCause": "수정 완 "
-	}]
+    let changeData = [{
+        "type": "검토",
+        "name": "구민주",
+        "modifyDate": "22-08-18 10:34:46",
+        "modCause": " 거래처 수정 "
+    },
+    {
+        "type": "검토",
+        "name": "이송현",
+        "modifyDate": "22-08-19 10:34:46",
+        "modCause": "수정 완 "
+    }]
 
-	// 임시 데이터 ---------------------------------------------------- 
+    // 임시 데이터 ---------------------------------------------------- 
 
-	let detail = "<div class='tapLineB'><div>타입</div><div>이름</div><div>변경일자</div><div>변경내용</div></div>";
-	let changeHtml = "";
+    let detail = "<div class='tapLineB'><div>타입</div><div>이름</div><div>변경일자</div><div>변경내용</div></div>";
+    let changeHtml = "";
 
 
-	for (let i = 0; i < changeData.length; i++) {
-		changeHtml += "<div class='tapLineB changeDataLine'>" +
-			"<div class='changeType'>" + changeData[i].type + "</div><div class='changeName' >" + changeData[i].name + "</div><div class='changeDate'>" + changeData[i].modifyDate + "</div><div class='changeCause'>" + changeData[i].modCause + "</div>" +
-			"</div>"
-	}
+    for (let i = 0; i < changeData.length; i++) {
+        changeHtml += "<div class='tapLineB changeDataLine'>" +
+            "<div class='changeType'>" + changeData[i].type + "</div><div class='changeName' >" + changeData[i].name + "</div><div class='changeDate'>" + changeData[i].modifyDate + "</div><div class='changeCause'>" + changeData[i].modCause + "</div>" +
+            "</div>"
+    }
 
-	detail += changeHtml;
-	target.html(detail);
+    detail += changeHtml;
+    target.html(detail);
 
 }
 
