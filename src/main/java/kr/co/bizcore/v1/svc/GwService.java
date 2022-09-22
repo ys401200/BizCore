@@ -371,38 +371,73 @@ public class GwService extends Svc{
             // 결재 취소 및 임시저장은 작성자만 읽기 가능, 반려는 작성자와 반려자 이전 결재선 인원만 읽기 가능,
             // 회수/진행은 결재선에 존재하는 인원 중 수신자 제외 읽기 가능, 수신대기 및 완료는 젠체 읽기 가능
             
-            if(!appAll.contains(userNo))    return "permissionDenied";
-
-            if(status == -3){
-                if(writer.equals(userNo) || appBefore.contains(userNo) || appRead.contains(userNo))   docStatus = "rejected";
-                else    return "permissionDenied";
-            }
-
-            if(status == -2){
-                if(writer.equals(userNo))   docStatus = "canceled";
-                else    return "permissionDenied";
-            }
-
-            if(status == 0){
-                if(writer.equals(userNo))   docStatus = "temp";
-                else    return "permissionDenied";
-            }
-
-            if(status == 1){
-                if(writer.equals(userNo) || appBefore.contains(userNo) || appRead.contains(userNo))   docStatus = "proceed";
-                else if(appCurrent.equals("userNo"))    docStatus = "wait";
-                else if(appNext.contains(userNo))   docStatus = "due";
+            if(!appAll.contains(userNo)){
+                logger.info("==================== 결재문서 가져오기 : 결재선에 없음");
                 return "permissionDenied";
+            }else if(status == -3){
+                if(writer.equals(userNo) || appBefore.contains(userNo) || appRead.contains(userNo)){
+                    logger.info("==================== 결재문서 가져오기 : 반려");
+                    docStatus = "rejected";
+                }else{
+                    logger.info("==================== 결재문서 가져오기 : 반려 / 권한 없음");
+                    return "permissionDenied";
+                }
+            }else if(status == -2){
+                if(writer.equals(userNo)){
+                    logger.info("==================== 결재문서 가져오기 : 취소");
+                    docStatus = "canceled";
+                }   
+                else{
+                    logger.info("==================== 결재문서 가져오기 : 취소 / 권한없음");
+                    return "permissionDenied";
+                }
+            }else if(status == 0){
+                if(writer.equals(userNo)){
+                    logger.info("==================== 결재문서 가져오기 : 취소");
+                    docStatus = "temp";
+                }   
+                else{
+                    logger.info("==================== 결재문서 가져오기 : 권한없음");
+                    return "permissionDenied";
+                }
+            }else if(status == 1){
+                if(writer.equals(userNo) || appBefore.contains(userNo) || appRead.contains(userNo)){
+                    logger.info("==================== 결재문서 가져오기 : 진행 / 진행중");
+                    docStatus = "proceed";
+                }else if(appCurrent.equals("userNo")){
+                    logger.info("==================== 결재문서 가져오기 : 진행 : 결재순번");
+                    docStatus = "wait";
+                }else if(appNext.contains(userNo)){
+                    logger.info("==================== 결재문서 가져오기 : 진행 / 예정");
+                    docStatus = "due";
+                }else{
+                    logger.info("==================== 결재문서 가져오기 : 진행 / 권한없음");
+                    return "permissionDenied";
+                } 
+            }else if(status == 2){
+                if(writer.equals(userNo) || appBefore.contains(userNo) || appRead.contains(userNo)){
+                    logger.info("==================== 결재문서 가져오기 : 수신 : 진행중");
+                    docStatus = "proceed";
+                }else if(appReceiver.contains(userNo)){
+                    logger.info("==================== 결재문서 가져오기 : 수신 / 수신대기");
+                    docStatus = "wait";
+                }else if(appNext.contains(userNo)){
+                    logger.info("==================== 결재문서 가져오기 : 수신 / 예정");
+                    docStatus = "due";
+                }else{
+                    logger.info("==================== 결재문서 가져오기 : 수신 / 권한없음");
+                    return "permissionDenied";
+                }                   
+            }else if(status == 3){
+                if(appAll.contains(userNo)){
+                    logger.info("==================== 결재문서 가져오기 : 완료");
+                    docStatus = "read";
+                }else{
+                    logger.info("==================== 결재문서 가져오기 : 완료 / 권한없음 " + userNo);
+                    logger.info(appAll.toString());
+                    return  "permissionDenied";                
+                }
             }
-            if(status == 2){
-                if(writer.equals(userNo) || appBefore.contains(userNo) || appRead.contains(userNo))   docStatus = "proceed";
-                else if(appReceiver.contains(userNo))    docStatus = "wait";
-                else if(appNext.contains(userNo))   docStatus = "due";
-                return "permissionDenied";
-            }
-
-            if(status == 3 && appAll.contains(userNo))  docStatus = "read";
-            else    return  "permissionDenied";
             
             // ========== ↑ 권한 검증 종료 ==========
 
