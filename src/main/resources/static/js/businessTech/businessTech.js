@@ -422,12 +422,12 @@ function techSuccessList(result){
 
 	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined){
 		window.setTimeout(drawTechList, 600);
-		window.setTimeout(addSearchList, 600);
-		window.setTimeout(searchContainerSet, 600);
+		window.setTimeout(addSearchList, 800);
+		window.setTimeout(searchContainerSet, 800);
 	}else{
 		window.setTimeout(drawTechList, 200);
-		window.setTimeout(addSearchList, 200);
-		window.setTimeout(searchContainerSet, 200);
+		window.setTimeout(addSearchList, 400);
+		window.setTimeout(searchContainerSet, 400);
 	}
 }
 

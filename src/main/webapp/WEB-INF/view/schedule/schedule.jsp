@@ -13,6 +13,7 @@
 			<div class="searchBtns">
 				<button type="button" data-set="false" onclick="searchAco(this);">펼치기</button>
 				<button type="button" id="searchChangeBtn" data-set="false" onclick="searchChange(this)">멀티</button>
+				<button type="button" id="multiSearchResetBtn" onclick="searchReset();">초기화</button>
 				<button type="button" id="multiSearchBtn" onclick="searchSubmit();">검색</button>
 			</div>
 			<div class="searchInputContent">

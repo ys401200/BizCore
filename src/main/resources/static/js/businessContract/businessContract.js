@@ -974,34 +974,38 @@ function addSearchList(){
 	storage.searchList = [];
 
 	for(let i = 0; i < storage.contractList.length; i++){
-		let no, customer, endUser, title, contractType, writer, salesType, disDate, setDate;
+		let no, customer, endUser, title, contractType, employee, salesType, disDate, startOfFreeMaintenance, startOfPaidMaintenance, saleDate;
 		no = storage.contractList[i].no;
-		soppType = storage.code.etc[storage.contractList[i].soppType];
-		contType = storage.code.etc[storage.contractList[i].contType];
+		customer = (storage.contractList[i].customer === null || storage.contractList[i].customer == 0 || storage.contractList[i].customer === undefined) ? "" : storage.customer[storage.contractList[i].customer].name;
+		endUser = (storage.contractList[i].endUser === null || storage.contractList[i].endUser == 0 || storage.contractList[i].endUser === undefined) ? "" : storage.customer[storage.contractList[i].endUser].name;
 		title = storage.contractList[i].title;
-		customer = (storage.contractList[i].customer === null || storage.contractList[i].customer == 0) ? "" : storage.customer[storage.contractList[i].customer].name;
-		endUser = (storage.contractList[i].endUser === null || storage.contractList[i].endUser == 0 || storage.contractList[i].endUser == 104571) ? "" : storage.customer[storage.contractList[i].endUser].name;
+		contractType = storage.code.etc[storage.contractList[i].contractType];
+		salesType = storage.code.etc[storage.contractList[i].salesType];
 		employee = (storage.contractList[i].employee === null || storage.contractList[i].employee == 0) ? "" : storage.user[storage.contractList[i].employee].userName;
-		expectedSales = storage.contractList[i].expectedSales;
-		status = storage.code.etc[storage.contractList[i].status];
-		disDate = dateDis(storage.contractList[i].created, storage.contractList[i].modified);
-		setDate = parseInt(dateFnc(disDate).replaceAll("-", ""));
-		storage.searchList.push("#" + no + "#" + employee + "#" + customer + "#" + title + "#" + soppType + "#" + contType + "#" + status + "#" + endUser + "#" + expectedSales + "#created" + setDate);
+		disDate = dateDis(storage.contractList[i].startOfFreeMaintenance);
+		startOfFreeMaintenance = parseInt(dateFnc(disDate).replaceAll("-", ""));
+		disDate = dateDis(storage.contractList[i].startOfPaidMaintenance);
+		startOfPaidMaintenance = parseInt(dateFnc(disDate).replaceAll("-", ""));
+		disDate = dateDis(storage.contractList[i].saleDate);
+		saleDate = parseInt(dateFnc(disDate).replaceAll("-", ""));
+		storage.searchList.push("#" + no + "#" + customer + "#" + endUser + "#" + title + "#" + contractType + "#" + salesType + "#" + employee + "#startOfFreeMaintenance" + startOfFreeMaintenance + "#startOfPaidMaintenance" + startOfPaidMaintenance + "#saleDate" + saleDate);
 	}
 }
 
 function searchSubmit(){
-	let dataArray = [], resultArray, eachIndex = 0, searchEmployee, searchCustomer, searchTitle, searchSoppType, searchContType, searchStatus, searchCreatedFrom;
+	let dataArray = [], resultArray, eachIndex = 0, searchEmployee, searchCustomer, searchTitle, searchEndUser, searchSalesType, searchContractType, startOfFreeMaintenanceFrom, startOfPaidMaintenanceFrom, saleDateFrom;
 
 	searchEmployee = $("#searchEmployee").val();
 	searchCustomer = $("#searchCustomer").val();
+	searchEndUser = $("#searchEndUser").val();
 	searchTitle = $("#searchTitle").val();
-	searchSoppType = $("#searchSoppType").val();
-	searchContType = $("#searchContType").val();
-	searchStatus = $("#searchStatus").val();
-	searchCreatedFrom = ($("#searchCreatedFrom").val() === "") ? "" : $("#searchCreatedFrom").val().replaceAll("-", "") + "#created" + $("#searchCreatedTo").val().replaceAll("-", "");
+	searchSalesType = $("#searchSalesType").val();
+	searchContractType = $("#searchContractType").val();
+	startOfFreeMaintenanceFrom = ($("#startOfFreeMaintenanceFrom").val() === "") ? "" : $("#startOfFreeMaintenanceFrom").val().replaceAll("-", "") + "#startOfFreeMaintenance" + $("#startOfFreeMaintenanceTo").val().replaceAll("-", "");
+	startOfPaidMaintenanceFrom = ($("#startOfPaidMaintenanceFrom").val() === "") ? "" : $("#startOfPaidMaintenanceFrom").val().replaceAll("-", "") + "#startOfPaidMaintenance" + $("#startOfPaidMaintenanceTo").val().replaceAll("-", "");
+	saleDateFrom = ($("#saleDateFrom").val() === "") ? "" : $("#saleDateFrom").val().replaceAll("-", "") + "#saleDate" + $("#saleDateTo").val().replaceAll("-", "");
 	
-	let searchValues = [searchEmployee, searchCustomer, searchTitle, searchSoppType, searchContType, searchStatus, searchCreatedFrom];
+	let searchValues = [searchEmployee, searchCustomer, searchEndUser, searchTitle, searchSalesType, searchContractType, startOfFreeMaintenanceFrom, startOfPaidMaintenanceFrom, saleDateFrom];
 
 	for(let i = 0; i < searchValues.length; i++){
 		if(searchValues[i] !== ""){
@@ -1024,5 +1028,5 @@ function searchSubmit(){
 		return false;
 	}
 	
-	drawSoppList();
+	drawContractList();
 }

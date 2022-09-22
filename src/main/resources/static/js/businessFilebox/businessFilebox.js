@@ -26,7 +26,11 @@ function drawFileBoxList() {
 		msg.set("등록된 자료가 없습니다");
 	}
 	else {
-		jsonData = storage.fileBoxList;
+		if(storage.searchDatas === undefined){
+			jsonData = storage.fileBoxList;
+		}else{
+			jsonData = storage.searchDatas;
+		}
 	}
 	
 	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
@@ -102,8 +106,12 @@ function fileBoxSuccessList(result){
 
 	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined){
 		window.setTimeout(drawFileBoxList, 600);
+		window.setTimeout(addSearchList, 600);
+		window.setTimeout(searchContainerSet, 600);
 	}else{
 		window.setTimeout(drawFileBoxList, 200);
+		window.setTimeout(addSearchList, 200);
+		window.setTimeout(searchContainerSet, 200);
 	}
 }
 
@@ -378,4 +386,59 @@ function fileBoxSuccessDelete(){
 
 function fileBoxErrorDelete(){
 	alert("삭제에러");
+}
+
+function searchInputKeyup(){
+	let searchAllInput;
+	searchAllInput = $("#searchAllInput").val();
+
+	storage.searchDatas = searchDataFilter(storage.fileBoxList, searchAllInput, "input");
+	drawFileBoxList();
+}
+
+function addSearchList(){
+	storage.searchList = [];
+
+	for(let i = 0; i < storage.fileBoxList.length; i++){
+		let no, title, writer, disDate, setDate;
+		no = storage.fileBoxList[i].no;
+		title = storage.fileBoxList[i].title;
+		writer = (storage.fileBoxList[i].writer === null || storage.fileBoxList[i].writer == 0) ? "" : storage.user[storage.fileBoxList[i].writer].userName;
+		disDate = dateDis(storage.fileBoxList[i].created, storage.fileBoxList[i].modified);
+		setDate = parseInt(dateFnc(disDate).replaceAll("-", ""));
+		storage.searchList.push("#" + no + "#" + title + "#" + writer + "#created" + setDate);
+	}
+}
+
+function searchSubmit(){
+	let dataArray = [], resultArray, eachIndex = 0, searchTitle, searchCreatedFrom;
+
+	searchTitle = $("#searchTitle").val();
+	searchWriter = $("#searchWriter").val();
+	searchCreatedFrom = ($("#searchCreatedFrom").val() === "") ? "" : $("#searchCreatedFrom").val().replaceAll("-", "") + "#created" + $("#searchCreatedTo").val().replaceAll("-", "");
+	
+	let searchValues = [searchTitle, searchWriter, searchCreatedFrom];
+
+	for(let i = 0; i < searchValues.length; i++){
+		if(searchValues[i] !== ""){
+			let tempArray = searchDataFilter(storage.fileBoxList, searchValues[i], "multi");
+			
+			for(let t = 0; t < tempArray.length; t++){
+				dataArray.push(tempArray[t]);
+			}
+
+			eachIndex++;
+		}
+	}
+
+	resultArray = searchMultiFilter(eachIndex, dataArray, storage.fileBoxList);
+	
+	storage.searchDatas = resultArray;
+
+	if(storage.searchDatas.length == 0){
+		alert("찾는 데이터가 없습니다.");
+		return false;
+	}
+	
+	drawFileBoxList();
 }

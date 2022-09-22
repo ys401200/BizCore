@@ -2286,14 +2286,16 @@ function addChart_4(){
 }
 
 function searchContainerSet(){
-	let searchContainer, searchChangeBtn, multiSearchBtn, searchInputContent, searchMultiContent, jsonData, html = "";
+	let searchContainer, searchChangeBtn, multiSearchResetBtn, multiSearchBtn, searchInputContent, searchMultiContent, jsonData, html = "";
 	searchContainer = $(".searchContainer");
 	searchChangeBtn = $("#searchChangeBtn");
+	multiSearchResetBtn = $("#multiSearchResetBtn");
 	multiSearchBtn = $("#multiSearchBtn");
 	searchInputContent = $(".searchInputContent");
 	searchMultiContent = $(".searchMultiContent");
 
 	searchChangeBtn.hide();
+	multiSearchResetBtn.hide();
 	multiSearchBtn.hide();
 	searchInputContent.hide();
 	searchMultiContent.hide();
@@ -2349,9 +2351,10 @@ function searchContainerSet(){
 }
 
 function searchAco(e){
-	let thisBtn, searchChangeBtn, multiSearchBtn, searchInputContent, searchMultiContent;
+	let thisBtn, searchChangeBtn, multiSearchResetBtn, multiSearchBtn, searchInputContent, searchMultiContent;
 	thisBtn = $(e);
 	searchChangeBtn = $("#searchChangeBtn");
+	multiSearchResetBtn = $("#multiSearchResetBtn");
 	multiSearchBtn = $("#multiSearchBtn");
 	searchInputContent = $(".searchInputContent");
 	searchMultiContent = $(".searchMultiContent");
@@ -2365,6 +2368,7 @@ function searchAco(e){
 		searchInputContent.show();
 		multiSearchBtn.hide();
 		searchMultiContent.hide();
+		multiSearchResetBtn.hide();
 	}else{
 		thisBtn.text("펼치기");
 		thisBtn.data("set", false);
@@ -2374,12 +2378,14 @@ function searchAco(e){
 		multiSearchBtn.hide();
 		searchInputContent.hide();
 		searchMultiContent.hide();
+		multiSearchResetBtn.hide();
 	}
 }
 
 function searchChange(e){
-	let thisBtn, multiSearchBtn, searchInputContent, searchMultiContent;
+	let thisBtn, multiSearchResetBtn, multiSearchBtn, searchInputContent, searchMultiContent;
 	thisBtn = $(e);
+	multiSearchResetBtn = $("#multiSearchResetBtn");
 	multiSearchBtn = $("#multiSearchBtn");
 	searchInputContent = $(".searchInputContent");
 	searchMultiContent = $(".searchMultiContent");
@@ -2387,16 +2393,26 @@ function searchChange(e){
 	if(!thisBtn.data("set")){
 		thisBtn.text("텍스트");
 		thisBtn.data("set", true);
+		multiSearchResetBtn.show();
 		multiSearchBtn.show();
 		searchInputContent.hide();
 		searchMultiContent.show();
 	}else{
 		thisBtn.text("멀티");
 		thisBtn.data("set", false);
+		multiSearchResetBtn.hide();
 		multiSearchBtn.hide();
 		searchInputContent.show();
 		searchMultiContent.hide();
 	}
+}
+
+function searchReset(){
+	let searchMultiContent = $(".searchMultiContent");
+
+	searchMultiContent.find("div input, select").each((index, item) => {
+		$(item).val("");
+	});
 }
 
 function searchDataFilter(arrayList, searchDatas, type){
@@ -2427,6 +2443,39 @@ function searchDataFilter(arrayList, searchDatas, type){
 			for(let key in storage.searchList){
 				if(splitStr[0] <= storage.searchList[key].split("#from")[1]){
 					if(storage.searchList[key].split("#from")[1] <= splitStr[1]){
+						dataArray.push(key);
+					}
+				}
+			}
+		}else if(searchDatas.indexOf("#startOfFreeMaintenance") > -1){
+			let splitStr;
+			splitStr = searchDatas.split("#startOfFreeMaintenance");
+
+			for(let key in storage.searchList){
+				if(splitStr[0] <= storage.searchList[key].split("#startOfFreeMaintenance")[1]){
+					if(storage.searchList[key].split("#startOfFreeMaintenance")[1] <= splitStr[1]){
+						dataArray.push(key);
+					}
+				}
+			}
+		}else if(searchDatas.indexOf("#startOfPaidMaintenance") > -1){
+			let splitStr;
+			splitStr = searchDatas.split("#startOfPaidMaintenance");
+
+			for(let key in storage.searchList){
+				if(splitStr[0] <= storage.searchList[key].split("#startOfPaidMaintenance")[1]){
+					if(storage.searchList[key].split("#startOfPaidMaintenance")[1] <= splitStr[1]){
+						dataArray.push(key);
+					}
+				}
+			}
+		}else if(searchDatas.indexOf("#saleDate") > -1){
+			let splitStr;
+			splitStr = searchDatas.split("#saleDate");
+
+			for(let key in storage.searchList){
+				if(splitStr[0] <= storage.searchList[key].split("#saleDate")[1]){
+					if(storage.searchList[key].split("#saleDate")[1] <= splitStr[1]){
 						dataArray.push(key);
 					}
 				}

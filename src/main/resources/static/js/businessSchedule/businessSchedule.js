@@ -534,13 +534,13 @@ function scheduleSuccessList(result){
 	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined){
 		window.setTimeout(drawScheduleList, 600);
 		window.setTimeout(drawCalendar(document.getElementsByClassName("calendar_container")[0]), 600);
-		window.setTimeout(addSearchList, 600);
-		window.setTimeout(searchContainerSet, 600);
+		window.setTimeout(addSearchList, 800);
+		window.setTimeout(searchContainerSet, 800);
 	}else{
 		window.setTimeout(drawScheduleList, 200);
 		window.setTimeout(drawCalendar(document.getElementsByClassName("calendar_container")[0]), 200);
-		window.setTimeout(addSearchList, 200);
-		window.setTimeout(searchContainerSet, 200);
+		window.setTimeout(addSearchList, 400);
+		window.setTimeout(searchContainerSet, 400);
 	}
 }
 
