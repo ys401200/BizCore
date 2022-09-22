@@ -405,7 +405,7 @@ function createLine() {
   lineTarget.css("display", "block");
   let my = storage.my;
   let today = getYmdSlash();
-  let testHtml = "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작성</div><div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto' value='" + storage.user[my].rank + "'></div>" +
+  let testHtml = "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작성</div><div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto' value='" + storage.userRank[storage.user[my].rank][0] + "'></div>" +
     "<div class='twoBorder'><input type='text' class='inputsAuto' value='" + storage.user[my].userName + "'></div>" +
     "<div class='twoBorder'><input type='text' class='inputsAuto' value='승인'></div>" +
     "<div class='dateBorder'><input type='text' class='inputsAuto'value='" + getYmdSlash() + "'></div></div></div>";
@@ -442,7 +442,7 @@ function createLine() {
 
       // 수신 
       if (i == 3) {
-        testHtml2 += "<div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_position" + "' value='" + storage.user[data[id]].rank + "' data-detail='" + storage.user[data[id]].rank + "'/></div>" +
+        testHtml2 += "<div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_position" + "' value='" + storage.userRank[storage.user[data[id]].rank][0] + "' data-detail='" + storage.user[data[id]].rank + "'/></div>" +
           "<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "' value='" + storage.user[data[id]].userName + "' data-detail='" + storage.user[data[id]].userNo + "'/></div>" +
           "<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_status' value='' data-detail=''/></div>" +
           "<div class='dateBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_approved" + "' value='' data-detail=''/></div></div>"
@@ -450,12 +450,12 @@ function createLine() {
 
       // 참조 
       else if (i == 4) {
-        referHtml += "<div class='appendName " + formId + "_" + titleId[i] + "' data-detail='" + storage.user[data[id]].userNo + "'>" + storage.user[data[id]].userNo + storage.user[data[id]].userName + "</div>";
+        referHtml += "<div class='appendName " + formId + "_" + titleId[i] + "' data-detail='" + storage.user[data[id]].userNo + "'>" + storage.userRank[storage.user[data[id]].rank][0] + "&nbsp" + storage.user[data[id]].userName + "</div>";
       }
 
       // 검토 합의 결재 
       else {
-        testHtml += "<div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_position" + "' value='" + storage.user[data[id]].rank + "' data-detail='" + storage.user[data[id]].rank + "'/></div>" +
+        testHtml += "<div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_position" + "' value='" + storage.userRank[storage.user[data[id]].rank][0] + "' data-detail='" + storage.user[data[id]].rank + "'/></div>" +
           "<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "' value='" + storage.user[data[id]].userName + "' data-detail='" + storage.user[data[id]].userNo + "'/></div>" +
           "<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_status' value='' data-detail=''/></div>" +
           "<div class='dateBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_approved" + "' value='' data-detail=''/></div></div>"

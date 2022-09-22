@@ -164,7 +164,8 @@ function drawNoticeApproval() {
 
 function waitDetailView(obj) {// 선택한 그리드의 글 번호 받아오기 
 
-	$(".searchContainer").hide();
+
+
 	let target = $(".container");
 	let no = obj.dataset.id;
 	let docNo;
@@ -187,9 +188,7 @@ function waitDetailView(obj) {// 선택한 그리드의 글 번호 받아오기
 				detailData = cipher.decAes(data.data);
 				detailData = JSON.parse(detailData);
 				detailData.doc = cipher.decAes(detailData.doc);
-				console.log(detailData.doc);
 				detailData.doc = detailData.doc.replaceAll("\\\"", "\"");
-				console.log(detailData.doc);
 				storage.reportDetailData = detailData;
 				showReportDetail();
 			} else {
@@ -201,7 +200,14 @@ function waitDetailView(obj) {// 선택한 그리드의 글 번호 받아오기
 } // End of noticeDetailView();
 
 
+
+
+
+
+/* 상세 화면 그리기 */
 function showReportDetail() {
+	$(".searchContainer").hide();
+
 	let testForm = storage.reportDetailData.doc;
 
 
@@ -218,16 +224,22 @@ function showReportDetail() {
 	let selectedFileView = "<div class='selectedFileField'><label>첨부파일</label><div><div class='selectedFileDiv'><input class='inputFile' type='file' onchange='setSelectedFiles()'/></div></div></div>"
 
 
-
 	$(".seletedForm").html(testForm);
 	$(".selectedFile").html(selectedFileView);
 	$(":file").css("display", "none");// 첨부파일 버튼 숨기기 
+
+
+
 	let tabHtml = "<div class='reportInfoTab'>" +
 		"<label id='lineInfo' onclick='changeTab(this)'>문서정보</label><label id='changeInfo' onclick='changeTab(this)'>변경이력</label></div>" +
 		"<div id='tabDetail'></div><div id='tabDetail2'></div>"
 	$(".comment").html(tabHtml);
-	//toReadMode();
+
+
+	toReadMode();
 	drawCommentLine();
+
+
 
 	let target = $(".seletedForm")[0];
 	let inputsArr = target.getElementsByTagName("input");
@@ -236,7 +248,6 @@ function showReportDetail() {
 		if (inputsArr[i].dataset.detail !== undefined) {
 			inputsArr[i].value = inputsArr[i].dataset.detail;
 		}
-
 	}
 
 	let textAreaArr = target.getElementsByTagName("textarea")[0];
@@ -251,13 +262,21 @@ function showReportDetail() {
 			$("#" + rd[i].id).prop("checked", true);
 		}
 	}
-
-	$("." + formId + "_examine").val(storage.user[$("." + formId + "_examine").val()].userName);
-	$("." + formId + "_approval").val(storage.user[$("." + formId + "_approval").val()].userName);
-	$("." + formId + "_agree").val(storage.user[$("." + formId + "_agree").val()].userName);
-	$("." + formId + "_conduct").val(storage.user[$("." + formId + "_conduct").val()].userName);
+	$("input[name='" + formId + "_RD']").prop("disabled", true);
 
 
+
+	// 이름 , 직급 한글로 설정하기 
+	let subTitlesArr = ["_examine", "_approval", "_agree", "_conduct"];
+	for (let i = 0; i < subTitlesArr.length; i++) {
+		if ($("." + formId + subTitlesArr[i]).val() != undefined) {
+			for (let j = 0; j < $("." + formId + subTitlesArr[i]).length; j++) {
+				$("." + formId + subTitlesArr[i])[j].value = storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
+				$("." + formId + subTitlesArr[i] + "_position")[j].value = storage.userRank[$("." + formId + subTitlesArr[i] + "_position")[j].value][0];
+
+			}
+		}
+	}
 
 }
 
@@ -298,52 +317,62 @@ function drawCommentLine() {
 
 	// 임시 데이터 ----------------------------------------------------
 
-	let examine = [{
-		"name": "이송현",
-		"status": "",
-		"approved": "",
-		"comment": ""
-	},
-	{
-		"name": "구민주",
-		"status": "",
-		"approved": "",
-		"comment": ""
-	}]
-
-	let approval = [{
-		"name": "이승우",
-		"status": "",
-		"approved": "",
-		"comment": ""
-	}]
-
-	let refer = [{
-		"name": "김사원",
-		"status": "조회",
-		"approved": "2022-09-16",
-		"comment": ""
-	}]
 
 
+	let appLine = storage.reportDetailData.appLine;
+	let appLineArr = new Array();
+	let appTypeTitle = ["검토", "합의", "결재", "수신", "참조"]
+	for (let i = 1; i < appLine.length; i++) {
+		let date, status, comment;
 
-	// 임시 데이터 ---------------------------------------------------- 
+		if (appLine[i].approved == null && appLine[i].rejected == null) {
+			if (appLine[i].read != null) {
+				date = appLine[i].read;
+				date = getYmdSlash(date);
+				status = "조회";
+			} else if (appLine[i].read == null) {
+				date = "";
+				status = "";
+			}
+
+		} else if (appLine[i].approved != null) {
+			date = appLine[i].approved;
+			date = getYmdSlash(date);
+			status = "승인";
+		} else if (appLine[i].rejected != null) {
+			date = appLine[i].rejected;
+			date = getYmdSlash(date);
+			status = "반려";
+		}
+
+		if (appLine[i].comment == "null") {
+			comment = "";
+		} else {
+			comment = appLine[i].comment;
+		}
+
+
+		let data = {
+			"appType": appTypeTitle[appLine[i].appType],
+			"name": storage.user[appLine[i].employee].userName,
+			"status": status,
+			"date": date,
+			"comment": comment,
+		}
+
+		appLineArr.push(data);
+
+	}
 
 
 
+	let html = "<div class='readDiv'><div>열람</div><div><label for='deptRd'><input type='radio' id='deptRd' name='rd' value='dept' disabled/>작성자 소속 부서</label><label for='noneRd'><input type='radio' id='noneRd' name='rd' value='none' disabled/>열람 설정 없음</label></div></div>"
 	let detail = "<div class='tapLine tapLineTitle'><div>타입</div><div>이름</div><div>상태</div><div>일자</div><div>의견</div></div>";
 	let lineDetailHtml = "";
 
 
-	let html = "<div class='readDiv'><div>열람</div><div><label for='deptRd'><input type='radio' id='deptRd' name='rd' value='dept'/>작성자 소속 부서</label><label for='noneRd'><input type='radio' id='noneRd' name='rd' value='none'/>열람 설정 없음</label></div></div>"
-	for (let i = 0; i < examine.length; i++) {
-		lineDetailHtml += "<div class='tapLine examineLine'><div>검토</div><div>" + examine[i].name + "</div><div>" + examine[i].status + "</div><div>" + examine[i].approved + "</div><div>" + examine[i].comment + "</div></div>";
-	}
-	for (let i = 0; i < approval.length; i++) {
-		lineDetailHtml += "<div class='tapLine approvalLine'><div>결재</div><div>" + approval[i].name + "</div><div>" + approval[i].status + "</div><div>" + approval[i].approved + "</div><div>" + approval[i].comment + "</div></div>";
-	}
-	for (let i = 0; i < refer.length; i++) {
-		lineDetailHtml += "<div class='tapLine referLine'><div>참조</div><div>" + refer[i].name + "</div><div>" + refer[i].status + "</div><div>" + refer[i].approved + "</div><div>" + refer[i].comment + "</div></div>";
+	for (let i = 0; i < appLineArr.length; i++) {
+		lineDetailHtml += "<div class='tapLine examineLine'><div>" + appLineArr[i].appType + "</div><div>" + appLineArr[i].name + "</div><div>" + appLineArr[i].status + "</div><div>" + appLineArr[i].date + "</div><div>" + appLineArr[i].comment + "</div></div>";
 	}
 
 	detail += lineDetailHtml;
@@ -353,6 +382,15 @@ function drawCommentLine() {
 	$(".tabLine").children(0).css("padding", "5em");
 
 	target.html(html);
+
+
+	// 열람 권한 체크하기 
+	let readable = storage.reportDetailData.readable;
+	if (readable == "dept") {
+		$("#deptRd").prop("checked", true);
+	} else if (readable == "none") {
+		$("#noneRd").prop("checked", true);
+	}
 
 
 }
@@ -691,10 +729,13 @@ function createConfirmBtn(obj) {
 }
 
 
-function getYmdHyphen() {
-	let d = new Date();
-	return (d.getFullYear() % 100) + "-" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "-" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString()) + "&nbsp" + d.getHours().toString() + ":" + d.getMinutes().toString() + ":" + d.getSeconds().toString();
+function getYmdSlash(date) {
+	let d = new Date(date);
+	return (d.getFullYear() % 100) + "/" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "/" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString()) + "&nbsp" + (d.getHours() > 9 ? d.getHours().toString() : "0" + d.getHours().toString()) + ":" + (d.getMinutes() > 9 ? d.getMinutes().toString() : "0" + d.getMinutes().toString()) + ":" + (d.getSeconds() > 9 ? d.getSeconds().toString() : "0" + d.getSeconds().toString());
 }
+
+
+
 
 
 

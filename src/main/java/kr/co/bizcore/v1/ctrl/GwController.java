@@ -19,7 +19,7 @@ public class GwController {
 
     private static final Logger logger = LoggerFactory.getLogger(GwController.class);
 
-    @RequestMapping(value = "/wait", method = RequestMethod.GET)
+    @RequestMapping(value = {"/wait","/wait/{docNo}"}, method = RequestMethod.GET)
     public String mylist(HttpServletRequest request) {
         HttpSession session = null;
         String result = null, uri = null, pathName = null, tempStr = null;

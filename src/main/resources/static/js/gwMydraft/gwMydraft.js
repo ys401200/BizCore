@@ -64,7 +64,7 @@ function drawMyDraft() {
 
     pageContainer = document.getElementsByClassName("pageContainer");
     container = $(".listDiv");
-ss
+
     header = [
 
         {
