@@ -313,17 +313,23 @@ function init(){
 		modalClose();
 	});
 	
-	menuActive();
-
+	
 	setTimeout(() => {
 		setTiny();
+		menuActive();
 	}, 100);
-
+	
 	$(document).mouseup((e) => {
 		if(modal.content.has(e.target).length === 0){
 			modal.hide();
 		}
 	})
+
+	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined){
+		window.setTimeout(headerMyInfo, 1000);
+	}else{
+		window.setTimeout(headerMyInfo, 200);
+	}
 }
 
 //페이징될 때 header, sideMenu active를 위한 함수
@@ -2016,7 +2022,7 @@ function calWindowLength(){
 	bodyContents = $("#bodyContents");
 	gridContent = $(".gridContent");
 
-	return parseInt((bodyContents.innerHeight() - 320) / 38);
+	return parseInt((bodyContents.innerHeight() - 360) / 40);
 }
 
 function daumPostCode(){

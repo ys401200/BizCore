@@ -14,7 +14,6 @@ $(document).ready(() => {
 		window.setTimeout(getSoppList, 1000);
 		window.setTimeout(getContractList, 1000);
 		window.setTimeout(addChart, 1000);
-		window.setTimeout(headerMyInfo, 1000);
 	}else{
 		window.setTimeout(getNoticeList, 200);
 		window.setTimeout(getScheduleList, 200);
@@ -23,7 +22,6 @@ $(document).ready(() => {
 		window.setTimeout(getSoppList, 200);
 		window.setTimeout(getContractList, 200);
 		window.setTimeout(addChart, 200);
-		window.setTimeout(headerMyInfo, 200);
 	}
 
 	// setTimeout(() => {

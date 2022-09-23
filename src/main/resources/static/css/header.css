@@ -58,10 +58,10 @@ button, select, input[type="text"]{
 }
 
 .gridContent .gridContentItem:not(:last-child){
-	overflow: hidden;
 	border-top: 1px solid #E4E5E9;
 	border-right: 1px solid #ededed;
-	padding:1.5% 0;
+	padding-top: 1.5%;
+	padding-bottom: 1.5%;
 }
 
 .gridContent .gridContentItem:last-child{
@@ -76,15 +76,14 @@ button, select, input[type="text"]{
 	align-items: center;
 	justify-content: center;
 	overflow: hidden;
-	/* padding-left:13px; */
 	font-size:14px;
 }
 
 .grid_default_text_align_left{
 	display: flex;
 	align-items: center;
-    justify-content: center;
-	padding: 0 16px;
+    justify-content: left;
+	padding-left: 16px;
 	overflow: hidden;
 	font-size:14px;
 }
@@ -93,7 +92,7 @@ button, select, input[type="text"]{
 	display: flex;
 	align-items: center;
     justify-content: right;
-	padding: 0 20px;
+	padding-right: 16px;
 	overflow: hidden;
 }
 
@@ -547,6 +546,7 @@ input[name="tabItem"] {
 /* 각 페이지 검색 끝 */
 
 #header{
+	position: relative;
 	display: grid;
     grid-template-columns: 9% 80% 11%;
 	height: 56px;
