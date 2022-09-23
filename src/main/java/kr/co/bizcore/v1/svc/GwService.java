@@ -420,7 +420,7 @@ public class GwService extends Svc{
 
             // ========== ↓ 첨부파일 이름 가져오기 시작 ==========
             files = "[";
-            fileList = systemMapper.getAttachedFileList(compId, "docapp", strToInt(no));
+            fileList = systemMapper.getAttachedFileList(compId, "app앷", strToInt(no));
             if(fileList != null && fileList.size() > 0) for(x = 0 ; x < fileList.size() ; x++){
                 file = fileList.get(x);
                 if(x > 0)   files += ",";
