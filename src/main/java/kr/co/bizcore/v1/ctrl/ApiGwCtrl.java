@@ -256,8 +256,8 @@ public class ApiGwCtrl extends Ctrl{
 
 
     // 결재 처리 요청
-    @PostMapping("/app/proceed/{docNo}/{ordered:\\d+}/{apptype:\\d+}")
-    public String apiGwAppProceedPost(HttpServletRequest request, @PathVariable("docNo") String docNo, @PathVariable("ordered") int ordered, @PathVariable("apptype") int appType){
+    @PostMapping("/app/proceed/{docNo}/{ordered:\\d+}/{ask:\\^[0-1]{1}$}")
+    public String apiGwAppProceedPost(HttpServletRequest request, @PathVariable("docNo") String docNo, @PathVariable("ordered") int ordered, @PathVariable("ask") int ask){
         String result = null, compId = null, userNo = null, data = null, aesIv = null, aesKey = null, lang = null;
         HttpSession session = null;
         Msg msg = null;
@@ -284,7 +284,10 @@ public class ApiGwCtrl extends Ctrl{
             }
             
         }
-        return result;
+
+        logger.error("ApiGwCtrl.apiGwAppProceedPost() ========== docNo : " + docNo + " / ordered : " + ordered + " / ask : " + ask);
+
+        return "ABCDEFGH";
     } // End of apiGwAppCancelNoPost()
 
 

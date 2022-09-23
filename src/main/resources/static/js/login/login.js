@@ -124,6 +124,7 @@ function init(){
     if(document.readyState !== "complete")  return; // 로딩 완전 종료가 아니면 종료함
 	cipher.rsa.getKey();
 	msg.cnt = document.getElementById("loginMsg");
+	window.setTimeout(checkKeepToken,300);
 } // End of init()
 
 
@@ -153,9 +154,28 @@ function loginSessionClick(e){
 	}
 }
 
+// 로그인유지 정보가 있는지 확인하는 함수
+function checkKeepToken(){
+	let keepToken, url;
+	url = apiServer + "/api/user/keep";
+	keepToken = localStorage.getItem("keepToken");
+	if(keepToken === undefined || keepToken === null)	return;
+	$.ajax({
+		url: url,
+		method: "post",
+		data: keepToken,
+		dataType: "json",
+		contentType: "text/plain",
+		cache: false,
+		processData: false,
+		success:(data)=>{if(data.result === "ok")location.reload();},
+		error:()=>{msg.set("정보를 다시 확인하여주십시오.");}
+	});
+} // End of checkKeepToken()
+
 // 로그인 시도 함수
 function loginSubmit(){
-	let t, data = {}, url = apiServer + "/api/user/login/";
+	let t, data = {}, url = apiServer + "/api/user/login/", keepStatus;
 
 	// 임시변수 및  타겟 엘리먼트 설정
 	t = [];
@@ -163,6 +183,7 @@ function loginSubmit(){
 	t[1] = document.getElementById("userId");
 	t[2] = document.getElementById("pw");
 	t[3] = document.getElementById("loginSessionBtn");
+	keepStatus = document.getElementById("loginSessionBtn").className === "active";
 
 	// 값이 있는지 먼저 검증 / 값이 없는 엘리먼트가 있는 경우 포커스를 주고 종료함
 	if(!(t[0] === undefined || t[0] === null) && t[0].value.length === 0){
@@ -180,7 +201,7 @@ function loginSubmit(){
 	} // End of loginSubmit()
 
 	// 값을 가지고 와서 암호화함(compId는 암호화 제외)
-	data = {"userId":t[1].value, "pw":t[2].value, "keepStatus":document.getElementById("loginSessionBtn").className === "active"};
+	data = {"userId":t[1].value, "pw":t[2].value, "keepStatus":keepStatus};
 	if(!(t[0] === undefined || t[0] === null))	url = url + t[0].value;
 	data = cipher.encAes(JSON.stringify(data));
 	//data = btoa(JSON.stringify(data));
@@ -197,15 +218,16 @@ function loginSubmit(){
 		processData: false,
 		success:function(data){
 			if(data.result === "ok"){
+				if(document.getElementById("loginSessionBtn").className === "active" && data.data !== undefined)	localStorage.setItem("keepToken",data.data);
+				if(document.getElementById("loginSessionBtn").className === "")		localStorage.removeItem("keepToken");
 				location.reload();
 			}else{
 				msg.set(data.msg);
 				document.getElementById("userId").focus();
 			}
-			
 		},
 		error:function(){
 			msg.set("정보를 다시 확인하여주십시오.");
 		}
-	})
+	});
 }

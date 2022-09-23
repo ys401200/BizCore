@@ -632,6 +632,18 @@ public class SystemService extends Svc {
 
     } // End of saveAttachedData()
 
+    // keepToken을 받아서 로그인 유지 정보를 확인하는 메서드
+    public String getKeepLoginUser(String compId, String keepToken) {
+        String result = null;
+        long now = System.currentTimeMillis();
+        result = systemMapper.verifyLoginKeepToken(compId, keepToken, now);
+        return result;
+    }
+
+    public void removeKeepInfo(String compId, String userNo) {
+        systemMapper.deleteKeepTokenByUser(compId, userNo);
+    }
+
 
 
 

@@ -269,7 +269,7 @@ public abstract class Svc {
         return result;
     } // End of encAes()
 
-    public String decAes(String text, String key, String iv) {
+    public String decAes(String text, String aesKey, String aesIv) {
         String result = null;
         Cipher cipher = null;
         SecretKeySpec keySpec = null;
@@ -278,8 +278,8 @@ public abstract class Svc {
 
         try {
             cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            keySpec = new SecretKeySpec(key.getBytes(), "AES");
-            ivParamSpec = new IvParameterSpec(iv.getBytes());
+            keySpec = new SecretKeySpec(aesKey.getBytes(), "AES");
+            ivParamSpec = new IvParameterSpec(aesIv.getBytes());
             cipher.init(Cipher.DECRYPT_MODE, keySpec, ivParamSpec);
             decrypted1 = Base64.getDecoder().decode(text.getBytes("UTF-8"));
             decrypted2 = cipher.doFinal(decrypted1);
@@ -426,7 +426,7 @@ public abstract class Svc {
     } // End of getNextNumberFromDB()
 
     // 회사 고유 암호키를 전달하는 메서드
-    public String[] getAesKey(String compId){
+    public String[] getCompanyAesKey(String compId){
         String[] result = null;
         HashMap<String, String> each = null;
         String aesKey = null, aesIv = null;
@@ -441,7 +441,7 @@ public abstract class Svc {
                 result[0] = aesKey;
                 result[1] = aesIv;
                 // factory에 저장
-                dataFactory.setData(compId, "userRank", result, 3600);
+                dataFactory.setData(compId, "aesKey", result, 3600);
             }
         }
         return result;

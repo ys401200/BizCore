@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -64,11 +65,11 @@ public class ApiUserCtrl extends Ctrl{
     // Login process API
     @RequestMapping(value = "/login/*", method = RequestMethod.POST)
     public String userLogin(HttpServletRequest request, @RequestBody String requestBody) {
-        String userId = null, pw = null, userNo = null, compId = null, result = null, uri = null, dec = null,
-                aesKey = null, aesIv = null, lang = null;
+        String userId = null, pw = null, userNo = null, compId = null, result = null, uri = null;
+        String dec = null, aesKey = null, aesIv = null, lang = null, keepToken = null;
         String[] t = null;
         Msg msg = null;
-        boolean keepStatus = false;
+        boolean keep = false;
         JSONObject json = null;
         HttpSession session = null;
 
@@ -109,22 +110,66 @@ public class ApiUserCtrl extends Ctrl{
 
             userId = json.getString("userId");
             pw = json.getString("pw");
-            keepStatus = json.getBoolean("keepStatus");
+            keep = json.getBoolean("keepStatus");
             if (userId == null || pw == null) {
                 result = "{\"result\":\"failure\",\"msg\":\"" + msg.idPwMisMatch + "\"}";
             } else {
-                userNo = userService.verifyLoginTemp(compId, userId, pw);
+                t = userService.verifyLoginTemp(compId, userId, pw, keep);
+                userNo = t[0];
+                keepToken = t[1];
                 if (userNo == null)
                     result = "{\"result\":\"failure\",\"msg\":\"" + msg.idPwMisMatch + "\"}";
                 else {
                     session.setAttribute("userNo", userNo);
-                    result = "{\"result\":\"ok\"}";
+                    result = "{\"result\":\"ok\",\"data\":\"" + keepToken + "\"}";
+                    //로그인 상태 유지를 체크한 경우 세션의 유효시간을 연장하도록 함
+                    if(keep)    session.setMaxInactiveInterval(86400);
+                    else        session.setMaxInactiveInterval(3600);
                 }
             }
         }
 
         return result;
     } // End of userLogin()
+
+
+    // 로그인 상태 확인 메서드
+    @PostMapping("/keep")
+    public String apiUserKeepPost(HttpServletRequest request, @RequestBody String requestBody){
+        String result = null;
+        String compId = null, aesKey = null, aesIv = null, keepToken = null, userNo = null;
+        String[] data = null, aes = null;
+        HttpSession session = null;
+
+        session = request.getSession();
+        compId = (String)session.getAttribute("compId");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
+
+        if(requestBody == null) return "{\"result\":\"failure\"}";
+        
+        data = requestBody.split("=");
+        if(data == null || data.length != 2 || data[0] == null || data[1] == null || (compId != null && !data[0].equals(compId))) return "{\"result\":\"failure\"}";
+        compId = data[0];
+
+        aes = systemService.getCompanyAesKey(compId);
+        if(aes == null || aes[0] == null || aes[1] == null) return "{\"result\":\"failure\"}";
+        aesKey = aes[0];
+        aesIv = aes[1];
+
+        keepToken = data[1];
+        keepToken = decAes(keepToken, aesKey, aesIv);
+        if(keepToken == null) return "{\"result\":\"failure\"}";
+
+        userNo = systemService.getKeepLoginUser(compId, keepToken);
+        if(userNo == null)  result = "{\"result\":\"failure\"}";
+        else{
+            session.setAttribute("userNo", userNo);
+            result = "{\"result\":\"ok\"}";
+        }
+
+
+        return result;
+    }
 
     @RequestMapping(value = "/map", method = RequestMethod.GET)
     public String userMap(HttpServletRequest request) {
@@ -200,7 +245,14 @@ public class ApiUserCtrl extends Ctrl{
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public RedirectView userLogout(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
+        String compId = null, userNo = null;
+
+        userNo = (String)session.getAttribute("userNo");
+        compId = (String)session.getAttribute("compId");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
+
         session.invalidate();
+        if(userNo != null && compId != null)    systemService.removeKeepInfo(compId, userNo);
         return new RedirectView("/");
     } // End of userLogout()
 

@@ -62,6 +62,7 @@ public class ViewInterceptor implements HandlerInterceptor {
         if(uri.length() >= 4 && uri.substring(0, 4).equals("/api") && userNo == null &&
                         !(uri.length() >= 15 && uri.substring(0, 15).equals("/api/user/login")) &&
                         !(uri.length() >= 13 && uri.substring(0, 13).equals("/api/user/rsa")) &&
+                        !(uri.length() >= 14 && uri.substring(0, 14).equals("/api/user/keep")) &&
                         !(uri.length() >= 13 && uri.substring(0, 13).equals("/api/user/aes"))){
             response.getWriter().print("{\"result\":\"failure\",\"msg\":\"" + msg.notLoggedin + "\"}");
             return false;

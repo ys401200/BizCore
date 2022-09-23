@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -58,4 +59,25 @@ public interface SystemMapper {
     // 회사 고유의 aes 키 값을 가져오는 매퍼
     @Select("SELECT aesKey, aesIv FROM bizsys.company_aes WHERE compId=#{compId}")
     public HashMap<String, String> getCompanyAesKey(@Param("compId") String compId);
+
+    // 로그인 상태 유지를 확인하는 메서드
+    @Select("SELECT userNo FROM bizcore.keep_login WHERE compId = #{compId} AND keepToken = #{keepToken} AND expire > #{now}")
+    public String verifyLoginKeepToken(@Param("compId") String compId, @Param("keepToken") String keepToken, @Param("now") long now);
+
+    // 로그인 상태 유지 정보를 업데이트하는 메서드
+    @Update("UPDATE bizcore.keep_login SET expire = #{expire} WHERE compId = #{compId} AND keepToken = #{keepToken} AND userNo > #{userNo}")
+    public String extendLoginKeepToken(@Param("compId") String compId, @Param("userNo") String userNo, @Param("keepToken") String keepToken, @Param("expire") long expire);
+
+    // 로그인 유지 토큰을 저장하는 메서드
+    @Insert("INSERT INTO bizcore.keep_login(compId, userNo, keepToken, expire) VALUES(#{compId}, #{userNo}, #{keepToken}, #{expire})")
+    public void setKeepToken(@Param("compId") String compId, @Param("keepToken") String keepToken, @Param("userNo") String userNo, @Param("expire") long expire);
+
+    // 해당사용자의 로그인 유지 정보를 삭제하는 메서드
+    @Delete("DELETE FROM bizcore.keep_login WHERE compId = #{compId} AND userNo = #{userNo}")
+    public void deleteKeepTokenByUser(@Param("compId") String compId, @Param("userNo") String userNo);
+
+    // 만료된 로그인 유지 정보를 삭제하는 메서드
+    @Delete("DELETE FROM bizcore.keep_login WHERE expire < #{expire}")
+    public void deleteKeepToken(@Param("expire") long expire);
+
 }

@@ -30,8 +30,8 @@ public class JobSchedulerSvc extends Svc{
         lastWorktime = getTime();
         System.out.println("[Scheduler] Schedule Job Start : " + getDate() + " " + getTime());
 
-        // 임시파일 정리
-        cleanTempFiles();
+        cleanTempFiles(); // 임시파일 정리
+        cleanKeepLoginInfo(); // 만료된 로그인 유지정보 삭제
 
         // 스케줄 작업
     } // End of scheduleJob()
@@ -62,6 +62,11 @@ public class JobSchedulerSvc extends Svc{
 
         logger.debug("[Job Scheduler] Deleted temp files : " + x);
 
+    } // End of cleanTempFiles()
+
+    // 시간이 경과한 로그인 유지 정보를 정리하는 메서드
+    private void cleanKeepLoginInfo(){
+        systemMapper.deleteKeepToken(System.currentTimeMillis());
     }
 
     private int getDate(){
