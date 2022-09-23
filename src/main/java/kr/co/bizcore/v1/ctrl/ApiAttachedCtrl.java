@@ -41,7 +41,7 @@ public class ApiAttachedCtrl extends Ctrl{
 
     @GetMapping("/docapp/{no:\\d+}")
     public String apiAttachedDocappListGet(HttpServletRequest request, HttpServletResponse response, @PathVariable("no") int no){
-        return sendFileList(request, "docApp", no);
+        return sendFileList(request, "appDoc", no);
     }
 
     //@GetMapping("/filebox/{no:\\d+}/{fileName}")
@@ -89,7 +89,7 @@ public class ApiAttachedCtrl extends Ctrl{
 
     @GetMapping("/docapp/{no:\\d+}/{fileName}")
     public void apiAttachedDocappGet(HttpServletRequest request, HttpServletResponse response, @PathVariable("no") int no, @PathVariable("fileName") String fileName){
-        sendFileData(request, response, "docApp", no, fileName);
+        sendFileData(request, response, "appDoc", no, fileName);
     }
 
     //@GetMapping("/filebox/{no:\\d+}/{fileName}")
@@ -146,7 +146,7 @@ public class ApiAttachedCtrl extends Ctrl{
 
     @PostMapping("/docapp")
     public String apiAttachedDocappPost(HttpServletRequest request, @RequestBody String requestBody){
-        return proceedAttachedData(request, requestBody, "docApp", 0);
+        return proceedAttachedData(request, requestBody, "appDoc", 0);
     }
 
     //@GetMapping("/filebox")
@@ -192,7 +192,7 @@ public class ApiAttachedCtrl extends Ctrl{
                 fileData = Base64.getDecoder().decode(t);
 
                 // 임시파일 처리가 필요한 경우 / 파일 선 첨부, 후 본문 게시 형태
-                if(funcName.equals("docApp") || funcName.equals("filebox")){
+                if(funcName.equals("appDoc") || funcName.equals("filebox")){
                     savedName = attachedService.saveAttachedToTemp(compId, fileData);
                     if(attached == null){
                         attached = new HashMap<>();
@@ -210,7 +210,7 @@ public class ApiAttachedCtrl extends Ctrl{
         }
 
         return result;
-    } // 뚱 ㅐㄹ proceedAttachedData()
+    } // End of proceedAttachedData()
 
     @DeleteMapping("/sopp/{no:\\d+}/{fileName}")
     public String apiAttachedSoppPost(HttpServletRequest request, @PathVariable("no") int no, @PathVariable("fileName") String fileName){
@@ -224,7 +224,7 @@ public class ApiAttachedCtrl extends Ctrl{
 
     @DeleteMapping("/docapp/{no:\\d+}/{fileName}")
     public String apiAttachedDocappPost(HttpServletRequest request, @PathVariable("no") int no, @PathVariable("fileName") String fileName){
-        return deleteAttachedFile(request, "docApp", no, fileName);
+        return deleteAttachedFile(request, "appDoc", no, fileName);
     }
 
     //@DeleteMapping("/filebox/{no:\\d+}/{fileName}")

@@ -80,8 +80,8 @@ public class GwService extends Svc{
         if(files != null && attached != null)   for(x = 0 ; x < files.length ; x++){
             str = files[x];
             savedName = attached.get(str);
-            size = moveTempFile(compId, "docApp", no+"", savedName);
-            if(size > 0)    systemMapper.setAttachedFileData(compId, "docApp", no, str, savedName, size);
+            size = moveTempFile(compId, "appDoc", no+"", savedName);
+            if(size > 0)    systemMapper.setAttachedFileData(compId, "appDoc", no, str, savedName, size);
         }
 
         return no;
