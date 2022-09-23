@@ -107,7 +107,7 @@
 				</a>
 			</li>
 			<li>
-				<a href="/api/user/logout">
+				<a href="/api/user/logout" onclick="return confirm('로그아웃 하시겠습니까??');">
 					<img src="/images/main/icons/mainLogOutIcon.png" id="mainLogOutIcon" />
 					<span>로그아웃</span>
 				</a>

@@ -2016,7 +2016,7 @@ function calWindowLength(){
 	bodyContents = $("#bodyContents");
 	gridContent = $(".gridContent");
 
-	return parseInt((bodyContents.innerHeight() - 300) / 38);
+	return parseInt((bodyContents.innerHeight() - 320) / 38);
 }
 
 function daumPostCode(){
@@ -2138,7 +2138,7 @@ function chartSuccess_1(result){
 		  	},
 			tooltips: { 
 				callbacks: { 
-					label: function(tooltipItem, data) { //그래프 콤마
+					label: function(tooltipItem, data) {
 						return " " + tooltipItem.yLabel.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "원"; 
 						} 
 				 },
@@ -2572,28 +2572,14 @@ function searchDateDefaultSet(e){
 	matchDateInput.val(year + "-" + month + "-" + day);	
 }
 
-// function searchFilter(data, key, value){
-// 	return data.filter((object) => {
-// 		return object[key].toString().indexOf(value) > -1;
-// 	});
-// }
+function headerMyInfo(){
+	let mainInfo, html = "";
+	mainInfo = $("#mainInfo");
 
-// function searchFilterAfter(keyArray, searchAllInput){
-// 	let filterValue, tempArray = [];
+	html = "<img id=\"myInfoImage\" src=\"/api/my/image\" >";
+	html += "<span>" + storage.user[storage.my].userName + "</span>&nbsp;";
+	html += "<span>" + storage.userRank[storage.user[storage.my].rank][0] + "</span>";
+	html += "<a href=\"/api/user/logout\" onclick=\"return confirm('로그아웃 하시겠습니까??');\"><i class=\"fa-solid fa-door-open fa-xl\"></i></a>";
 
-// 	for(let i = 0; i < keyArray.length; i++){
-// 		filterValue = searchFilter(storage.soppList, keyArray[i], searchAllInput);
-// 		if(filterValue.length > 0){
-// 			for(let t = 0; t < filterValue.length; t++){
-// 				tempArray.push(filterValue[t]);
-// 			}
-// 		}
-// 	}
-
-// 	if(tempArray.length < 1){
-// 		alert("검색 데이터가 없습니다.");
-// 		return false;
-// 	}else{
-// 		return tempArray;
-// 	}
-// }
+	mainInfo.html(html);	
+}

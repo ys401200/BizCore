@@ -1,24 +1,16 @@
 @charset "UTF-8";
 
 #bodyContents{
-	width: 100%;
+	display: grid;
+    grid-template-columns: 9% 91%;
 	height: 100%;
 }
 
-#bodyContents #sideContents{
-	float: left;
-	/* width: 13%; */
-	width: 185px; /*  대문 틀어짐으로 인해 설정함. 아래 17라인하고 같이 맞춰줄 필요 있음 -병일-  */
-	height: 100%;
-}	
-
 #bodyContents #bodyContent{
-	width: calc(100% - 185px);
 	overflow-y: auto;
 	max-height: calc(100% - 56px);
 	padding: 0.5% 0.5% 0 0.6%;
 	box-sizing:border-box;
-	height: 100%;
 }
 
 @media all and (min-width:1920px){

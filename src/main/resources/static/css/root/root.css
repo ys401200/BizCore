@@ -1,7 +1,7 @@
 @charset "UTF-8";
 
 :root{
-	--bodyGridContentChild-margin: 0.3%;
+	--bodyGridContentChild-margin: 0.5%;
 	--content-Margin-top:0.6%;
 	--content-title-font-size:15px;
 	--content-title-font-weight:bolder;
@@ -21,10 +21,8 @@
 
 /* 메인 차트 시작 */
 #bodyContent #bodyChart_1{
-	height: 478px;
-	margin-bottom: var(--bodyGridContentChild-margin);
+	margin-bottom: var(--rootContainer-marginLeft);
 	background: #FFFFFF;
-	overflow: auto;
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
 }
 
@@ -49,10 +47,8 @@
 }
 
 #bodyContent #bodyChart_2{
-	height: 478px;
 	margin-bottom: var(--bodyGridContentChild-margin);
 	background: #FFFFFF;
-	overflow: auto;
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
 }
 
@@ -87,10 +83,8 @@
 }
 
 #bodyContent #bodyChart_3{
-	height: 478px;
 	margin-bottom: var(--bodyGridContentChild-margin);
 	background: #FFFFFF;
-	overflow: auto;
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
 }
 
@@ -125,10 +119,8 @@
 }
 
 #bodyContent #bodyChart_4{
-	height: 478px;
 	margin-bottom: var(--bodyGridContentChild-margin);
 	background: #FFFFFF;
-	overflow: auto;
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
 }
 
@@ -155,6 +147,7 @@
 .chartContentContainer{
 	padding-left: 10px;
 	padding-right: 10px;
+	padding-bottom: 10px;
 }
 
 .chartContentContainer > canvas{
@@ -165,7 +158,6 @@
 /* 메인 공지사항 시작*/
 #bodyContent #bodyNotice{
 	height: 478px;
-	/* margin-left: 1.5%; */
 	margin-bottom: var(--bodyGridContentChild-margin);
 	background: #FFFFFF;
 	overflow: auto;
@@ -213,7 +205,6 @@
 /* 메인 schedule 일정 시작 */
 #bodyContent #bodySched{
 	height: 478px;
-	/* margin-left: 1.5%; */
 	margin-bottom: var(--bodyGridContentChild-margin);
 	background: #FFFFFF;
 	overflow: auto;
@@ -261,7 +252,6 @@
 /* 메인 sales 일정 시작 */
 #bodyContent #bodySales{
 	height: 478px;
-	/* margin-left: 1.5%; */
 	margin-bottom: var(--bodyGridContentChild-margin);
 	background: #FFFFFF;
 	overflow: auto;
@@ -309,7 +299,6 @@
 /* 메인 tech 일정 시작 */
 #bodyContent #bodyTech{
 	height: 478px;
-	/* margin-left: 1.5%; */
 	margin-bottom: var(--bodyGridContentChild-margin);
 	background: #FFFFFF;
 	overflow: auto;
