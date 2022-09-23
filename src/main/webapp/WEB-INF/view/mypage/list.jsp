@@ -10,10 +10,8 @@
 				<hr />
 				<span>마이페이지</span>
 				<div class="mypagediv"></div>
-				
 			</div>
 		</div>
-
 	</div>
 	<div class="msg_cnt"></div>
 	<jsp:include page="../bottom.jsp" />

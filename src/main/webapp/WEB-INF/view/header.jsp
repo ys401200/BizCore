@@ -45,7 +45,7 @@
 	<div id="mainTopMenu">
 		<ul>
 			<li><button type="button" data-keyword="business" onClick="bodyTopPageClick(this);">업무관리</button></li>
-			<li><button type="button" data-keyword="gw" onClick="bodyTopPageClick(this);">그룹웨어</button></li>
+			<li><button type="button" data-keyword="gw" onClick="bodyTopPageClick(this);">전자결재</button></li>
 			<!-- <li><button type="button" data-keyword="accounting" onClick="bodyTopPageClick(this);">회계관리</button></li> -->
 			<!-- <li><button type="button" data-keyword="mis" onClick="bodyTopPageClick(this);">경영정보</button></li> -->
 		</ul>

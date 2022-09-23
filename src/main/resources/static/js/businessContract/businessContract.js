@@ -158,6 +158,13 @@ function drawContractList() {
 	let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawContractList", result[0]);
 	pageContainer[0].innerHTML = pageNation;
 	createGrid(contractContainer, header, data, ids, job, fnc);
+
+	let path = $(location).attr("pathname").split("/");
+
+	if(path[3] !== undefined){
+		let content = $(".gridContent[data-id=\"" + path[3] + "\"]");
+		contractDetailView(content);
+	}
 }
 
 function contractDetailView(e){

@@ -125,7 +125,7 @@ function drawSalesList() {
 			},
 		];
 
-		fnc = "salesDetailview(this);";
+		fnc = "salesDetailView(this);";
 		ids.push(jsonData[i].no);
 		dataJob.push(jsonData[i].job);
 		data.push(str);
@@ -133,9 +133,16 @@ function drawSalesList() {
 	let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawSalesList", result[0]);
 	pageContainer[0].innerHTML = pageNation;
 	createGrid(container, header, data, ids, dataJob, fnc);
+
+	let path = $(location).attr("pathname").split("/");
+
+	if(path[3] !== undefined){
+		let content = $(".gridContent[data-id=\"" + path[3] + "\"]");
+		salesDetailView(content);
+	}
 }
 
-function salesDetailview(e){
+function salesDetailView(e){
 	let id, url, method, data, type;
 	contentTopBtn("bodyContent");
 

@@ -148,6 +148,13 @@ function drawScheduleList() {
 	pageContainer[0].innerHTML = pageNation;
 	createGrid(container, header, data, ids, dataJob, fnc);
 
+	let path = $(location).attr("pathname").split("/");
+
+	if(path[3] !== undefined){
+		let content = $(".gridContent[data-id=\"" + path[3] + "\"]");
+		scheduleDetailView(content);
+	}
+
 }// End of drawNoticeList()
 
 // 일정 캘린더를 만드는 함수

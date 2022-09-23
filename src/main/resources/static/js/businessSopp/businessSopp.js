@@ -138,6 +138,13 @@ function drawSoppList() {
 	let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawSoppList", result[0]);
 	pageContainer[0].innerHTML = pageNation;
 	createGrid(container, header, data, ids, job, fnc);
+
+	let path = $(location).attr("pathname").split("/");
+
+	if(path[3] !== undefined){
+		let content = $(".gridContent[data-id=\"" + path[3] + "\"]");
+		soppDetailView(content);
+	}
 }
 
 function soppDetailView(e){

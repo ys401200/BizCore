@@ -9,16 +9,12 @@ $(document).ready(() => {
 	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined){
 		window.setTimeout(getNoticeList, 1000);
 		window.setTimeout(getScheduleList, 1000);
-		window.setTimeout(getSalesList, 1000);
-		window.setTimeout(getTechList, 1000);
 		window.setTimeout(getSoppList, 1000);
 		window.setTimeout(getContractList, 1000);
 		window.setTimeout(addChart, 1000);
 	}else{
 		window.setTimeout(getNoticeList, 200);
 		window.setTimeout(getScheduleList, 200);
-		window.setTimeout(getSalesList, 200);
-		window.setTimeout(getTechList, 200);
 		window.setTimeout(getSoppList, 200);
 		window.setTimeout(getContractList, 200);
 		window.setTimeout(addChart, 200);
@@ -30,29 +26,10 @@ $(document).ready(() => {
 });
 
 function getNoticeList() {
-	let url, dataArray = [], headerArray, container, idName, gridListLength = 8;
+	let url, container, idName, gridListLength = 8;
 	
 	idName = "bodyNotice";
 	container = $(".gridNoticeList");
-	headerArray = [
-		{
-			"title" : "번호",
-			"align" : "center",
-		},
-		{
-			"title" : "제목",
-			"align" : "left",
-		},
-		{
-			"title" : "작성자",
-			"align" : "center",
-		},
-		{
-			"title" : "등록일",
-			"align" : "center",
-		}
-	];
-
 	url = apiServer + "/api/notice";
 
 	$.ajax({
@@ -60,14 +37,39 @@ function getNoticeList() {
 		"method": "get",
 		"dataType": "json",
 		"cache": false,
-		success: (data) => {
-			let list, disDate, setDate, str, ids = [], job, fnc;
-			if (data.result === "ok") {
-				list = cipher.decAes(data.data);
-				let result = JSON.parse(list);
-				for(let i = 0; i < 8; i++){
+		success: (result) => {
+			let header, str, ids = [], fnc = "", dataJob, data = [], disDate, setDate;
+			if (result.result === "ok") {
+				result = cipher.decAes(result.data);
+				result = JSON.parse(result);
+
+				header = [
+					{
+						"title" : "번호",
+						"align" : "center",
+					},
+					{
+						"title" : "제목",
+						"align" : "left",
+					},
+					{
+						"title" : "작성자",
+						"align" : "center",
+					},
+					{
+						"title" : "등록일",
+						"align" : "center",
+					}
+				];
+
+				if(result.length < gridListLength){
+					gridListLength = result.length;
+				}
+			
+				for (let i = 0; i < gridListLength; i++) {
 					disDate = dateDis(result[i].created, result[i].modified);
 					setDate = dateFnc(disDate);
+
 					str = [
 						{
 							"setData": result[i].no,
@@ -83,18 +85,19 @@ function getNoticeList() {
 						}
 					];
 
-					fnc = "rootDetailView(\"notice\", " + result[i].no + ");";
+					fnc = "rootDetailView(\"notice\", this);";
 					ids.push(result[i].no);
-					dataArray.push(str);
+					data.push(str);
 				}
-				
-				createGrid(container, headerArray, dataArray, ids, job, fnc, idName);
+
+				if(data.length > 0){
+					createGrid(container, header, data, ids, dataJob, fnc, idName);
+				}
 			} else {
 				msg.set("등록된 공지사항이 없습니다");
 			}
 		}
 	});
-
 }
 
 function getScheduleList() {
@@ -102,7 +105,7 @@ function getScheduleList() {
 	
 	idName = "bodySched";
 	container = $(".gridScheduleList");
-	url = "/api/schedule/calendar/personal";
+	url = "/api/schedule/calendar/company";
 
 	$.ajax({
 		"url": url,
@@ -183,7 +186,7 @@ function getScheduleList() {
 							},
 						];
 
-						fnc = "scheduleDetailView(this);";
+						fnc = "rootDetailView(\"schedule\", this);";
 						ids.push(result[i].no);
 						dataJob.push(result[i].job);
 						data.push(str);
@@ -286,7 +289,7 @@ function getSalesList() {
 							},
 						];
 				
-						fnc = "scheduleDetailView(this);";
+						fnc = "rootDetailView(\"sales\", this);";
 						ids.push(result[i].no);
 						dataJob.push(result[i].job);
 						data.push(str);
@@ -386,7 +389,7 @@ function getTechList() {
 							},
 						];
 				
-						fnc = "scheduleDetailView(this);";
+						fnc = "rootDetailView(\"tech\", this);";
 						ids.push(result[i].no);
 						dataJob.push(result[i].job);
 						data.push(str);
@@ -513,7 +516,7 @@ function getSoppList() {
 						}
 					];
 
-					fnc = "soppDetailView(this);";
+					fnc = "rootDetailView(\"sopp\", this);";
 					ids.push(result[i].no);
 					data.push(str);
 				}
@@ -658,7 +661,7 @@ function getContractList() {
 						}
 					];
 
-					fnc = "contractDetailView(this);";
+					fnc = "rootDetailView(\"contract\", this);";
 					ids.push(result[i].no);
 					data.push(str);
 				}
@@ -670,6 +673,7 @@ function getContractList() {
 	});
 }
 
-function rootDetailView(page, no){
-	location.href = apiServer + "/business/" + page + "/" + no;
+function rootDetailView(page, e){
+	let id = $(e).data("id");
+	location.href = apiServer + "/business/" + page + "/" + id;
 }

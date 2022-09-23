@@ -52,7 +52,7 @@ public class BusinessController extends Ctrl{
         return result;
     } // End of /business/**
 
-    @RequestMapping("/schedule")
+    @RequestMapping(value={"/schedule","/schedule/{no:\\d+}"})
     public String schedule(HttpServletRequest request) {
         HttpSession session = null;
         String result = null, uri = null, pathName = null, tempStr = null;
@@ -86,7 +86,7 @@ public class BusinessController extends Ctrl{
         return result;
     } // End of /business/**
 
-    @RequestMapping("/sales")
+    @RequestMapping(value={"/sales","/sales/{no:\\d+}"})
     public String sales(HttpServletRequest request) {
         HttpSession session = null;
         String result = null, uri = null, pathName = null, tempStr = null;
@@ -120,7 +120,7 @@ public class BusinessController extends Ctrl{
         return result;
     } // End of /business/**
 
-    @RequestMapping("/sopp")
+    @RequestMapping(value={"/sopp","/sopp/{no:\\d+}"})
     public String sopp(HttpServletRequest request) {
         HttpSession session = null;
         String result = null, uri = null, pathName = null, tempStr = null;
@@ -188,7 +188,7 @@ public class BusinessController extends Ctrl{
         return result;
     } // End of /business/**
 
-    @RequestMapping("/contract")
+    @RequestMapping(value={"/contract","/contract/{no:\\d+}"})
     public String cont(HttpServletRequest request) {
         HttpSession session = null;
         String result = null, uri = null, pathName = null, tempStr = null;
@@ -222,7 +222,7 @@ public class BusinessController extends Ctrl{
         return result;
     } // End of /business/**
 
-    @RequestMapping("/tech")
+    @RequestMapping(value={"/tech","/tech/{no:\\d+}"})
     public String tech(HttpServletRequest request) {
         HttpSession session = null;
         String result = null, uri = null, pathName = null, tempStr = null;

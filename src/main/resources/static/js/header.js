@@ -326,7 +326,7 @@ function init(){
 	})
 
 	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined){
-		window.setTimeout(headerMyInfo, 1400);
+		window.setTimeout(headerMyInfo, 1500);
 	}else{
 		window.setTimeout(headerMyInfo, 200);
 	}
@@ -345,6 +345,11 @@ function menuActive(){
 	if(pathName === "root"){
 		mainTopMenu.find("ul li button").removeAttr("class");
 		mainTopMenu.find("ul li button[data-keyword='business']").attr("class", "active");
+
+		readyTopPageActive();
+	}else if(pathName === "mypage"){
+		mainTopMenu.find("ul li button").removeAttr("class");
+		mainTopMenu.find("ul li button").eq(0).attr("class", "active");
 
 		readyTopPageActive();
 	}else{
@@ -2582,9 +2587,14 @@ function headerMyInfo(){
 	let mainInfo, html = "";
 	mainInfo = $("#mainInfo");
 
-	html = "<img id=\"myInfoImage\" src=\"/api/my/image\" >";
+	html += "<i class=\"fa-regular fa-envelope fa-beat fa-2xl\" id=\"envelope\"></i>";
+	// html += "<i class=\"fa-solid fa-envelope fa-shake fa-2xl\" id=\"envelope\"></i>";
+	// html += "<i class=\"fa-regular fa-envelope-open fa-beat-fade fa-2xl\" id=\"envelope\"></i>";
+	html += "<img id=\"myInfoImage\" src=\"/api/my/image\" >";
+	html += "<a href=\"/mypage\">";
 	html += "<span>" + storage.user[storage.my].userName + "</span>&nbsp;";
 	html += "<span>" + storage.userRank[storage.user[storage.my].rank][0] + "</span>";
+	html += "</a>";
 	html += "<a href=\"/api/user/logout\" onclick=\"return confirm('로그아웃 하시겠습니까??');\"><i class=\"fa-solid fa-person-walking-arrow-right fa-xl\" id=\"logoutBtn\"></i></a>";
 
 	mainInfo.html(html);	

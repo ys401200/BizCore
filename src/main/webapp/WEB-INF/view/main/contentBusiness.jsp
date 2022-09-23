@@ -49,7 +49,7 @@
 	<div class="gridScheduleList"></div>
 </div>
 
-<div id="bodySales">
+<!-- <div id="bodySales">
 	<hr />
 	<span>영업활동</span>
 	<div class="gridSalesList"></div>
@@ -59,7 +59,7 @@
 	<hr />
 	<span>기술지원</span>
 	<div class="gridTechList"></div>
-</div>
+</div> -->
 
 <div id="bodySopp">
 	<hr />

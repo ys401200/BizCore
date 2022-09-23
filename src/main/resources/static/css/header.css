@@ -14,7 +14,6 @@
 
 @font-face {font-family: 'S-CoreDream-3Light'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-3Light.woff') format('woff'); font-weight: normal; font-style: normal;}
 
-
 html, body{
 	font-family:'NanumSquareRound', 'NanumGothicLight', 'NanumGothic', 'NanumGothicBold', 'NanumGothicExtraBold', 'Noto Sans KR', 'S-CoreDream-3Light';
 	background-color: #F7F7F9;
@@ -639,8 +638,13 @@ input[name="tabItem"] {
 	padding-right: 15px;
 }
 
+#header #mainInfo > i{
+	padding-bottom: 5px;
+}
+
 #header #mainInfo > #myInfoImage{
 	width: 6%;
+	padding-left: 20%;
 	padding-right: 15px;
     padding-bottom: 5px;
 }

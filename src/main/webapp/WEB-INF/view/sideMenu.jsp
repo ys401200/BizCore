@@ -2,12 +2,12 @@
 	<link rel="stylesheet" type="text/css" href="/css/sideMenu.css" />
 	<div id="sideMenu">
 		<ul id="business">
-			<li>
+			<!-- <li>
 				<a href="/mypage">
 					<img src="/images/main/icons/mypage.png" id="mypage" />
 					<span>마이 페이지</span>
 				</a>
-			</li>
+			</li> -->
 			<li>
 				<a href="/">
 					<img src="/images/main/icons/mainHomeIcon.png" id="mainHomeIcon" />
@@ -106,18 +106,18 @@
 					<span>자료실</span>
 				</a>
 			</li>
-			<li>
+			<!-- <li>
 				<a href="/api/user/logout" onclick="return confirm('로그아웃 하시겠습니까??');">
 					<img src="/images/main/icons/mainLogOutIcon.png" id="mainLogOutIcon" />
 					<span>로그아웃</span>
 				</a>
-			</li>
+			</li> -->
 		</ul>
 
 		<ul id="gw">
 			<li>
 				<a href="/gw/home">
-					<img src="/images/main/icons/mainAccountHome.ㄴpng" id="mainNoticeIcon" />
+					<img src="/images/main/icons/mainAccountHome.png" id="mainNoticeIcon" />
 					<span>전자결재 홈</span>
 				</a>
 			</li>
