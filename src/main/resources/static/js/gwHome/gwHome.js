@@ -24,7 +24,7 @@ function drawGwDiv() {
 				let typeList = storage.waitList;
 				drawWaitCard(typeList);
 			} else {
-				// msg.set("양식 정보를 가져오지 못했습니다.");
+				alert("양식 정보를 불러오지 못했습니다");
 			}
 		}
 	})
