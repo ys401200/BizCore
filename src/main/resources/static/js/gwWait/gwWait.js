@@ -20,7 +20,7 @@ function waitDefault() {
 	checkHref = checkHref[1];
 	let splitArr = checkHref.split("/");
 
-// 전자결재 홈 화면에서 들어오는 경우 , 상세조회 
+	// 전자결재 홈 화면에서 들어오는 경우 , 상세조회 
 	if (splitArr.length > 3) {
 		$.ajax({
 			"url": apiServer + "/api/gw/app/doc/" + splitArr[3],
@@ -245,6 +245,7 @@ function showReportDetail() {
 
 	toReadMode();
 	drawCommentLine();
+	getFileArr();
 
 
 
@@ -289,6 +290,34 @@ function showReportDetail() {
 
 
 
+// 파일 다운로드 
+function getFileArr() {
+	let fileList = storage.reportDetailData.fileList;
+	let no = storage.reportDetailData.no;
+	let target = $(".selectedFileDiv");
+	for (let i = 0; i < fileList.length; i++) {
+		target.append("<div><a href='/api/attached/docapp/" + no + "/" + encodeURI(fileList[i].fileName) + "'>" + fileList[i].fileName + "</a></div>");
+	}
+
+}
+
+// 파일 수정 삭제 
+function getFileModArr() {
+	let fileList = storage.reportDetailData.fileList;
+	let no = storage.reportDetailData.no;
+	let target = $(".selectedFileDiv");
+	target.html("");
+	for (let i = 0; i < fileList.length; i++) {
+		target.append("<div><div>" + fileList[i].fileName + "<button type='button' onclick='fileRemove(this)'>x</button></div></div>")
+	}
+}
+
+function fileRemove(obj) {
+	obj.parentElement.remove();
+}
+
+
+
 // 탭 누를때마다의 이벤트 주기 
 function changeTab(obj) {
 
@@ -321,9 +350,6 @@ function changeTab(obj) {
 function drawCommentLine() {
 
 	let target = $("#tabDetail");
-
-	
-
 	let appLine = storage.reportDetailData.appLine;
 	let appLineArr = new Array();
 	let appTypeTitle = ["검토", "합의", "결재", "수신", "참조"]
@@ -356,7 +382,6 @@ function drawCommentLine() {
 			comment = appLine[i].comment;
 		}
 
-
 		let data = {
 			"appType": appTypeTitle[appLine[i].appType],
 			"name": storage.user[appLine[i].employee].userName,
@@ -369,13 +394,9 @@ function drawCommentLine() {
 
 	}
 
-
-
 	let html = "<div class='readDiv'><div>열람</div><div><label for='deptRd'><input type='radio' id='deptRd' name='rd' value='dept' disabled/>작성자 소속 부서</label><label for='noneRd'><input type='radio' id='noneRd' name='rd' value='none' disabled/>열람 설정 없음</label></div></div>"
 	let detail = "<div class='tapLine tapLineTitle'><div>타입</div><div>이름</div><div>상태</div><div>일자</div><div>의견</div></div>";
 	let lineDetailHtml = "";
-
-
 	for (let i = 0; i < appLineArr.length; i++) {
 		lineDetailHtml += "<div class='tapLine examineLine'><div>" + appLineArr[i].appType + "</div><div>" + appLineArr[i].name + "</div><div>" + appLineArr[i].status + "</div><div>" + appLineArr[i].date + "</div><div>" + appLineArr[i].comment + "</div></div>";
 	}
@@ -690,7 +711,6 @@ function quitModify() {
 	$("button[name='modConfirm']:last-child").remove();
 	toReadMode();
 	$(":file").css("display", "none");
-
 }
 
 
@@ -740,28 +760,5 @@ function getYmdSlash(date) {
 }
 
 
-// 파일 다운로드 
-function getFileArr() {
-	let target = $(".selectedFileDiv");
-
-	for (let i = 0; i < 8; i++) {
-		target.append("<div><a href='#'>첨부파일" + i + "</a></div>");
-	}
-
-}
-
-
-// 파일 수정 삭제 
-function getFileModArr() {
-	let target = $(".selectedFileDiv");
-
-	for (let i = 0; i < 8; i++) {
-		target.append("<div><div></div><button type='button' onclick='fileRemove(this)'>x</button></div>")
-	}
-}
-
-function fileRemove(obj) {
-	obj.parentElement.remove();
-}
 
 

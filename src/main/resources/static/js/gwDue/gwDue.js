@@ -6,8 +6,6 @@ $(document).ready(() => {
         $("#loadingDiv").loading("toggle");
     }, 300);
 
-
-
     dueDefault();
 });
 
