@@ -164,9 +164,9 @@ public class ApiUserCtrl extends Ctrl{
         if(userNo == null)  result = "{\"result\":\"failure\"}";
         else{
             session.setAttribute("userNo", userNo);
+            session.setAttribute("compId", compId);
             result = "{\"result\":\"ok\"}";
         }
-
 
         return result;
     }
