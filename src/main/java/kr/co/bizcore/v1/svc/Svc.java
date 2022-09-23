@@ -494,7 +494,7 @@ public abstract class Svc {
             }
         }
 
-        // 파일 이동 시작
+        // 파일 이동 시도
         target = new File(dir + s + savedName);
         if(target.exists()){
             logger.error("Svc.moveTempFile() :::::::::: Target file already exists. File Move Terminated.");

@@ -74,25 +74,6 @@ public class AttachedService extends Svc{
         return result;
     }
 
-    // 사용 여부 확인 필요
-    public boolean saveAttachedFileToTemp(String compId, String savedName, byte[] fileData) {
-        boolean result = false;
-        FileOutputStream fos = null;
-        String path = null, s = File.separator;
-        File file = null;
-
-        path = fileStoragePath + s + compId + s + "temp" + s + savedName;
-        file = new File(path);
-
-        try{
-            fos = new FileOutputStream(file);
-            fos.write(fileData);
-            result = true;
-        }catch(IOException e){e.printStackTrace();}
-
-        return result;
-    }
-
     // 업로드된 파일을 저장하는 메서드. 동일 파일명이 존재하는 경우 기 존재 파일을 삭제처리 후 저장하도록 함
     public boolean saveAttachedFile(String compId, String fileName, String savedName, byte[] fileData, String funcName, int funcNo) {
         boolean result = false;

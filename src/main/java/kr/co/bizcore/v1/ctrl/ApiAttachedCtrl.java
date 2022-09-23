@@ -210,7 +210,7 @@ public class ApiAttachedCtrl extends Ctrl{
         }
 
         return result;
-    }
+    } // 뚱 ㅐㄹ proceedAttachedData()
 
     @DeleteMapping("/sopp/{no:\\d+}/{fileName}")
     public String apiAttachedSoppPost(HttpServletRequest request, @PathVariable("no") int no, @PathVariable("fileName") String fileName){

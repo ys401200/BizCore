@@ -76,7 +76,7 @@ public class GwService extends Svc{
             gwMapper.addNewDocAppLine(compId, docNo, x*10+10, line[1], line[0], null, null);        
         }
 
-        // 첨부파일에 대한 처리 / 파일이 이 이동된 후 서버 에러 발생시 관리가 되지 않는 파일이 발생하기 때문에 파일에 대한 처리는 항상 마지막에 수행하도록 함
+        // ========================= 첨부파일에 대한 처리 / 파일이 이 이동된 후 서버 에러 발생시 관리가 되지 않는 파일이 발생하기 때문에 파일에 대한 처리는 항상 마지막에 수행하도록 함
         if(files != null && attached != null)   for(x = 0 ; x < files.length ; x++){
             str = files[x];
             savedName = attached.get(str);
