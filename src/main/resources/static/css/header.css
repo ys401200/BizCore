@@ -548,7 +548,7 @@ input[name="tabItem"] {
 #header{
 	position: relative;
 	display: grid;
-    grid-template-columns: 9% 80% 11%;
+    grid-template-columns: 9% 60% 31%;
 	height: 56px;
 	box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
 	background: #FFFFFF;
@@ -639,18 +639,17 @@ input[name="tabItem"] {
 	padding-right: 15px;
 }
 
-#header #mainInfo > span{
-	font-weight: 500;
-    font-size: 15px;
-	color: #332E85;
-	padding-bottom: 5px;
+#header #mainInfo > #myInfoImage{
+	width: 6%;
+	padding-right: 15px;
+    padding-bottom: 5px;
 }
 
-
-#header #mainInfo > #myInfoImage{
-	width: 17%;
-	padding-right: 5px;
-    padding-bottom: 5px;
+#header #mainInfo > span{
+	font-weight: 600;
+    font-size: 1.1rem;
+	color: #000;
+	padding-bottom: 5px;
 }
 
 #header #mainInfo a{
@@ -659,6 +658,6 @@ input[name="tabItem"] {
 
 #header #mainInfo a > i{
 	padding-right: 5px;
-	padding-left: 5px;
+	padding-left: 15px;
 	padding-bottom: 5px;
 }

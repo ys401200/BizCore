@@ -61,7 +61,7 @@ function getNoticeList() {
 		"dataType": "json",
 		"cache": false,
 		success: (data) => {
-			let list, disDate, setDate, str, ids = [], fnc;
+			let list, disDate, setDate, str, ids = [], job, fnc;
 			if (data.result === "ok") {
 				list = cipher.decAes(data.data);
 				let result = JSON.parse(list);
@@ -83,12 +83,12 @@ function getNoticeList() {
 						}
 					];
 
-					fnc = "noticeDetailView(this);";
+					fnc = "rootDetailView(\"notice\", " + result[i].no + ");";
 					ids.push(result[i].no);
 					dataArray.push(str);
 				}
 				
-				createGrid(container, headerArray, dataArray, ids, fnc, idName);
+				createGrid(container, headerArray, dataArray, ids, job, fnc, idName);
 			} else {
 				msg.set("등록된 공지사항이 없습니다");
 			}
@@ -668,4 +668,8 @@ function getContractList() {
 			}
 		}
 	});
+}
+
+function rootDetailView(page, no){
+	location.href = apiServer + "/business/" + page + "/" + no;
 }

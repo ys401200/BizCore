@@ -326,7 +326,7 @@ function init(){
 	})
 
 	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined){
-		window.setTimeout(headerMyInfo, 1000);
+		window.setTimeout(headerMyInfo, 1400);
 	}else{
 		window.setTimeout(headerMyInfo, 200);
 	}
@@ -2585,7 +2585,15 @@ function headerMyInfo(){
 	html = "<img id=\"myInfoImage\" src=\"/api/my/image\" >";
 	html += "<span>" + storage.user[storage.my].userName + "</span>&nbsp;";
 	html += "<span>" + storage.userRank[storage.user[storage.my].rank][0] + "</span>";
-	html += "<a href=\"/api/user/logout\" onclick=\"return confirm('로그아웃 하시겠습니까??');\"><i class=\"fa-solid fa-door-open fa-xl\"></i></a>";
+	html += "<a href=\"/api/user/logout\" onclick=\"return confirm('로그아웃 하시겠습니까??');\"><i class=\"fa-solid fa-person-walking-arrow-right fa-xl\" id=\"logoutBtn\"></i></a>";
 
 	mainInfo.html(html);	
+	
+	$("#logoutBtn").hover((e) => {
+		$(e.target).removeAttr("class");
+		$(e.target).attr("class", "fa-solid fa-person-walking-arrow-right fa-bounce fa-xl");
+	}, () => {
+		$("#logoutBtn").removeAttr("class");
+		$("#logoutBtn").attr("class", "fa-solid fa-person-walking-arrow-right fa-xl");
+	});
 }
