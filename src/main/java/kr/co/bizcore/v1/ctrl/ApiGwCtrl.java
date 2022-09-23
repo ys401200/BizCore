@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.json.JSONArray;
@@ -256,10 +257,13 @@ public class ApiGwCtrl extends Ctrl{
 
 
     // 결재 처리 요청
-    @PostMapping("/app/proceed/{docNo}/{ordered:\\d+}/{ask:\\^[0-1]{1}$}")
-    public String apiGwAppProceedPost(HttpServletRequest request, @PathVariable("docNo") String docNo, @PathVariable("ordered") int ordered, @PathVariable("ask") int ask){
-        String result = null, compId = null, userNo = null, data = null, aesIv = null, aesKey = null, lang = null;
+    @PostMapping("/app/proceed/{docNo}/{ordered:\\d+}/{ask:\\d?}")
+    public String apiGwAppProceedPost(HttpServletRequest request, HttpServletResponse response, @RequestBody String requestBody, @PathVariable("docNo") String docNo, @PathVariable("ordered") int ordered, @PathVariable("ask") int ask){
+        String result = null, compId = null, userNo = null, data = null, aesIv = null, aesKey = null, lang = null, comment = null;
+        String[] files = null, appLine = null;
         HttpSession session = null;
+        JSONObject json = null;
+        JSONArray jarr = null;
         Msg msg = null;
 
         session = request.getSession();
@@ -275,8 +279,16 @@ public class ApiGwCtrl extends Ctrl{
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
         }else if(aesKey == null || aesIv == null){
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        }else if(!(ask == 0 || ask == 2)){
+            response.setStatus(404);
         }else{
-            data = "";
+            data = decAes(requestBody, aesKey, aesIv);
+            json = new JSONObject(data);
+            comment = json.getString("comment");
+            if(!json.isNull("files")){
+                jarr = json.getJSONArray("files");
+            }
+
             if(data == null)    result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
             else{
                 data = encAes(data, aesKey, aesIv);
