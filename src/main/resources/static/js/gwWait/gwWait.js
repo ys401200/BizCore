@@ -680,6 +680,61 @@ function closeGwModal(obj) {
 	}
 }
 
+
+// 현재 결재권 이전  + 새로 만든 결재정보 합침 
+function combineLineData() {
+	let appLine = storage.reportDetailData.appLine;
+	let originLine;
+	let my = storage.my;
+
+	let myApptype;
+	let myOrdered;
+	for (let i = 0; i < appLine.length; i++) {
+		if (appLine[i].employee == my) {
+			myOrdered = appLine[i].ordered;
+			myApptype = appLine[i].appType;
+			originLine = appLine.slice(0, i + 1);
+		}
+	}
+
+
+	let combineData = new Array();
+
+
+	// 기존 데이터 넣기 
+	for (let i = 0; i < appLine.length; i++) {
+		if (appLine[i].ordered <= Number(myOrdered)) {
+			combineData.push([appLine[i].appType, appLine[i].employee + ""]);
+		}
+	}
+
+	let target = $(".typeContainer");
+
+
+	for (let i = 0; i < target.length; i++) {
+
+		for (let j = 0; j < target[i].children.length; j++) {
+			let id = (target[i].children[j].id).split("_")[1];
+			combineData.push([i, id]);
+		}
+
+	}
+
+	// combineData로 새로운 결재선 그리기 originLine = 결재정보 
+	createdCombineLine(originLine);
+
+}
+
+
+function createdCombineLine(data) {
+
+	
+
+
+
+}
+
+
 function check(name) {
 	let inputLength = $(".testClass");
 	let target = $("#" + name);
@@ -705,7 +760,7 @@ function check(name) {
 			}
 		}
 	}
-	
+
 	html += selectHtml;
 	target.html(html)
 
@@ -737,10 +792,17 @@ function upClick(obj) {
 
 	let data = new Array();
 	let x;
-	for (x in storage.user) data.push(x);
+	let my = storage.my;
+	//나는 결재선에 노출 안 되게 함 
+	for (x in storage.user) {
+		if (x != my) {
+			data.push(x);
+		}
+	}
+
 	let selectHtml = "";
 	for (let i = 0; i < numArr.length; i++) {
-		selectHtml += "<div class='lineDataContainer' id='lineContainer_" + numArr[i] + "'><label id='linedata" + numArr[i] + "'>" + storage.user[data[numArr[i]]].userName + "</label><button value='" + numArr[i] + "' onclick='upClick(this)'>▲</button><button  value='" + numArr[i] + "'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
+		selectHtml += "<div class='lineDataContainer' id='lineContainer_" + numArr[i] + "'><label id='linedata" + numArr[i] + "'>" + storage.user[numArr[i]].userName + "</label><button value='" + numArr[i] + "' onclick='upClick(this)'>▲</button><button  value='" + numArr[i] + "'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
 	}
 
 	target.html(selectHtml);
@@ -771,10 +833,17 @@ function downClick(obj) {
 
 	let data = new Array();
 	let x;
-	for (x in storage.user) data.push(x);
+	let my = storage.my;
+	//나는 결재선에 노출 안 되게 함 
+	for (x in storage.user) {
+		if (x != my) {
+			data.push(x);
+		}
+	}
+
 	let selectHtml = "";
 	for (let i = 0; i < numArr.length; i++) {
-		selectHtml += "<div class='lineDataContainer' id='lineContainer_" + numArr[i] + "'><label id='linedata" + numArr[i] + "'>" + storage.user[data[numArr[i]]].userName + "</label><button value='" + numArr[i] + "' onclick='upClick(this)'>▲</button><button  value='" + numArr[i] + "'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
+		selectHtml += "<div class='lineDataContainer' id='lineContainer_" + numArr[i] + "'><label id='linedata" + numArr[i] + "'>" + storage.user[numArr[i]].userName + "</label><button value='" + numArr[i] + "' onclick='upClick(this)'>▲</button><button  value='" + numArr[i] + "'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
 	}
 
 	target.html(selectHtml);
