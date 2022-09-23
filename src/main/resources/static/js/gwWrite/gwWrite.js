@@ -242,7 +242,7 @@ function showModal() {
 
   let innerHtml = "";
   for (let i = 0; i < userData.length; i++) {
-    innerHtml += "<div><input class='testClass' type ='checkbox' id='cb" + i + "' name='userNames' value='" + userData[i] + "'><label for='cb" + i + "'>" + storage.user[userData[i]].userName + "</label></div>"
+    innerHtml += "<div><input class='testClass' type ='checkbox' id='cb" + userData[i] + "' name='userNames' value='" + userData[i] + "'><label for='cb" + userData[i] + "'>" + storage.user[userData[i]].userName + "</label></div>"
   }
   orgChartTarget.html(innerHtml);
   $(".modal-wrap").show();
@@ -289,11 +289,10 @@ function check(name) {
 
 
 
-
   for (let i = 0; i < inputLength.length; i++) {
-    if ($("#cb" + i).prop('checked')) {
-      if (document.getElementById("linedata" + i) == null)
-        selectHtml += "<div class='lineDataContainer' id='lineContainer_" + i + "'><label id='linedata" + i + "'>" + storage.user[data[i]].userName + "</label><button value='" + i + "' onclick='upClick(this)'>▲</button><button  value='" + i + "' onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
+    if ($("#cb" + data[i]).prop('checked')) {
+      if (document.getElementById("linedata" + data[i]) == null)
+        selectHtml += "<div class='lineDataContainer' id='lineContainer_" + data[i] + "'><label id='linedata_" + data[i] + "'>" + storage.user[data[i]].userName + "</label><button value='" + data[i] + "' onclick='upClick(this)'>▲</button><button  value='" + data[i] + "' onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
     }
 
   }
@@ -319,6 +318,8 @@ function upClick(obj) {
     numArr.push(idArr[1]);
   }
 
+  /// 사번 배열을 만든다 
+
   for (let i = 0; i < numArr.length; i++) {
     if (obj.value == numArr[i] && i != 0) {
       let temp = numArr[i];
@@ -326,6 +327,8 @@ function upClick(obj) {
       numArr[i - 1] = temp;
     }
   }
+
+  // 순서 바꾸는 것 
 
   let data = new Array();
   let x;
@@ -339,7 +342,7 @@ function upClick(obj) {
 
   let selectHtml = "";
   for (let i = 0; i < numArr.length; i++) {
-    selectHtml += "<div class='lineDataContainer' id='lineContainer_" + numArr[i] + "'><label id='linedata" + numArr[i] + "'>" + storage.user[data[numArr[i]]].userName + "</label><button value='" + numArr[i] + "' onclick='upClick(this)'>▲</button><button  value='" + numArr[i] + "'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
+    selectHtml += "<div class='lineDataContainer' id='lineContainer_" + numArr[i] + "'><label id='linedata" + numArr[i] + "'>" + storage.user[numArr[i]].userName + "</label><button value='" + numArr[i] + "' onclick='upClick(this)'>▲</button><button  value='" + numArr[i] + "'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
   }
 
   target.html(selectHtml);
@@ -380,7 +383,7 @@ function downClick(obj) {
 
   let selectHtml = "";
   for (let i = 0; i < numArr.length; i++) {
-    selectHtml += "<div class='lineDataContainer' id='lineContainer_" + numArr[i] + "'><label id='linedata" + numArr[i] + "'>" + storage.user[data[numArr[i]]].userName + "</label><button value='" + numArr[i] + "' onclick='upClick(this)'>▲</button><button  value='" + numArr[i] + "'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
+    selectHtml += "<div class='lineDataContainer' id='lineContainer_" + numArr[i] + "'><label id='linedata" + numArr[i] + "'>" + storage.user[numArr[i]].userName + "</label><button value='" + numArr[i] + "' onclick='upClick(this)'>▲</button><button  value='" + numArr[i] + "'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
   }
 
   target.html(selectHtml);
@@ -442,21 +445,21 @@ function createLine() {
 
       // 수신 
       if (i == 3) {
-        testHtml2 += "<div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_position" + "' value='" + storage.userRank[storage.user[data[id]].rank][0] + "' data-detail='" + storage.user[data[id]].rank + "'/></div>" +
-          "<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "' value='" + storage.user[data[id]].userName + "' data-detail='" + storage.user[data[id]].userNo + "'/></div>" +
+        testHtml2 += "<div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_position" + "' value='" + storage.userRank[storage.user[id].rank][0] + "' data-detail='" + storage.user[id].rank + "'/></div>" +
+          "<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "' value='" + storage.user[id].userName + "' data-detail='" + storage.user[id].userNo + "'/></div>" +
           "<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_status' value='' data-detail=''/></div>" +
           "<div class='dateBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_approved" + "' value='' data-detail=''/></div></div>"
       }
 
       // 참조 
       else if (i == 4) {
-        referHtml += "<div class='appendName " + formId + "_" + titleId[i] + "' data-detail='" + storage.user[data[id]].userNo + "'>" + storage.userRank[storage.user[data[id]].rank][0] + "&nbsp" + storage.user[data[id]].userName + "</div>";
+        referHtml += "<div class='appendName " + formId + "_" + titleId[i] + "' data-detail='" + storage.user[id].userNo + "'>" + storage.userRank[storage.user[id].rank][0] + "&nbsp" + storage.user[id].userName + "</div>";
       }
 
       // 검토 합의 결재 
       else {
-        testHtml += "<div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_position" + "' value='" + storage.userRank[storage.user[data[id]].rank][0] + "' data-detail='" + storage.user[data[id]].rank + "'/></div>" +
-          "<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "' value='" + storage.user[data[id]].userName + "' data-detail='" + storage.user[data[id]].userNo + "'/></div>" +
+        testHtml += "<div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_position" + "' value='" + storage.userRank[storage.user[id].rank][0] + "' data-detail='" + storage.user[id].rank + "'/></div>" +
+          "<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "' value='" + storage.user[id].userName + "' data-detail='" + storage.user[id].userNo + "'/></div>" +
           "<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_status' value='' data-detail=''/></div>" +
           "<div class='dateBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_approved" + "' value='' data-detail=''/></div></div>"
       }
@@ -504,13 +507,13 @@ function getYmdSlash() {
 function setSavedLine(obj) {
   let val = obj.value;
   if (val == 'middle') { // 구민주 검토 이승우 결재
-    $("#examine").html("<div class='lineDataContainer' id='lineContainer_4'><label id='linedata4'>구민주</label><button value='4' onclick='upClick(this)'>▲</button><button  value='4'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>");
-    $("#approval").html("<div class='lineDataContainer' id='lineContainer_0'><label id='linedata0'>이승우</label><button value='0' onclick='upClick(this)'>▲</button><button  value='0'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>");
+    $("#examine").html("<div class='lineDataContainer' id='lineContainer_10017'><label id='linedata_10017'>구민주</label><button value='10017' onclick='upClick(this)'>▲</button><button  value='10017'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>");
+    $("#approval").html("<div class='lineDataContainer' id='lineContainer_10002'><label id='linedata_10002'>이승우</label><button value='10002' onclick='upClick(this)'>▲</button><button  value='10002'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>");
     $("#agree").html("");
     $("#conduct").html("");
     $("#refer").html("");
   } else if (val == 'basic') { // 이승우 결재 
-    $("#approval").html("<div class='lineDataContainer' id='lineContainer_0'><label id='linedata0'>이승우</label><button value='0' onclick='upClick(this)'>▲</button><button  value='0'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>");
+    $("#approval").html("<div class='lineDataContainer' id='lineContainer_10002'><label id='linedata0'>이승우</label><button value='10002' onclick='upClick(this)'>▲</button><button  value='10002'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>");
     $("#agree").html("");
     $("#examine").html("");
     $("#conduct").html("");

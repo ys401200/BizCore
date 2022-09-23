@@ -502,8 +502,46 @@ function showAppModal() {
 function approveBtnEvent() {
 	// $("input:radio[name='type']").prop("checked", false);
 	let selectVal = $(":radio[name='type']:checked").val();
-	let approvalComment = $(".approvalComment").val();
+	let comment = $(".approvalComment").val();
 	$(".modal-wrap").hide();
+	let type;
+	let no = storage.reportDetailData.no;
+	let appLine = storage.reportDetailData.appLine;
+	let ordered;
+	for (let i = 0; i < appLine.length; i++) {
+		if (appLine[i].employee == storage.my) {
+			ordered = appLine[i].ordered;
+		}
+	}
+
+	selectVal === "approve" ? type = 2 : type = 0;
+
+	let data = {
+		"doc": null,
+		"comment": comment,
+		"files": null,
+		"appLine": null
+	}
+
+
+	$.ajax({
+		url: apiServer + "/api/gw/app/proceed/" + no + "/" + ordered + "/" + type,
+		method: "post",
+		dataType: "json",
+		data: data,
+		contentType: "text/plain",
+		cache: false,
+		success: (data) => {
+			if (data.result === "ok") {
+				alert("결재 완료");
+			} else {
+				alert("결재 실패");
+			}
+		}
+	})
+
+
+
 }
 
 
@@ -516,13 +554,13 @@ function showGwModal() {
 		"<div class='lineTop'>" +
 		"<div class='innerDetail' id='lineLeft'></div>" +
 		"<div class='innerDetail' id='lineCenter'>" +
-		"<button onclick='check(this.value)' value='examine'>검토 &gt;</button>" +
-		"<button onclick='check(this.value)' value='agree'>합의 &gt;</button>" +
-		"<button onclick='check(this.value)' value='approval'>결재 &gt;</button>" +
-		" <button onclick='check(this.value)' value='conduct'>수신 &gt;</button>" +
-		"<button onclick='check(this.value)' value='refer'>참조 &gt;</button></div>" +
+		"<button class='appTypeBtn'  onclick='check(this.value)' value='examine'>검토 &gt;</button>" +
+		"<button class='appTypeBtn'  onclick='check(this.value)' value='agree'>합의 &gt;</button>" +
+		"<button class='appTypeBtn'  onclick='check(this.value)' value='approval'>결재 &gt;</button>" +
+		"<button class='appTypeBtn'  onclick='check(this.value)' value='conduct'>수신 &gt;</button>" +
+		"<button class='appTypeBtn'  onclick='check(this.value)' value='refer'>참조 &gt;</button></div>" +
 		"<div class='innerDetail' id='lineRight'>" +
-		"<div><select onchange='setSavedLine(this)'><option value=''>자주 쓰는 결재선</option><option value='basic'>대표</option><option value='middle'>구민주 과장-대표</option><</select></div>" +
+		"<div></div>" +
 		"<div><div>검토</div>" +
 		"<div class='typeContainer' id='examine'></div>" +
 		"</div>" +
@@ -547,19 +585,88 @@ function showGwModal() {
 
 	let orgChartTarget = $("#lineLeft");
 	let userData = new Array();
-
 	let x;
-	for (x in storage.user) userData.push(x);
+	let my = storage.my;
+	//나는 결재선에 노출 안 되게 함 
+	for (x in storage.user) {
+		if (x != my) {
+			userData.push(x);
+		}
+	}
 
 	let innerHtml = "";
 	for (let i = 0; i < userData.length; i++) {
-		innerHtml += "<div><input class='testClass' type ='checkbox' id='cb" + i + "' name='userNames' value='" + userData[i] + "'><label for='cb'>" + storage.user[userData[i]].userName + "</label></div>"
-
+		innerHtml += "<div><input class='testClass' type ='checkbox' id='cb" + userData[i] + "' name='userNames' value='" + userData[i] + "'><label for='cb" + userData[i] + "'>" + storage.user[userData[i]].userName + "</label></div>"
 	}
 	orgChartTarget.html(innerHtml);
 	$(".modal-wrap").show();
+	setDefaultModalData();
 
 }
+
+
+function setDefaultModalData() {
+	let appLine = storage.reportDetailData.appLine;
+
+	let x;
+	let userData = new Array();
+	let my;
+	my = storage.my;
+	//나는 결재선에 노출 안 되게 함 
+	for (x in storage.user) {
+		if (x != my) {
+			userData.push(x);
+		}
+	}
+
+	let myTurn;
+	let myappType;
+	for (let i = 0; i < appLine.length; i++) {
+		if (appLine[i].employee == my) {
+			myTurn = appLine[i].ordered;
+			myappType = appLine[i].appType;
+		}
+	}
+
+
+	for (let i = 0 ; i <= Number(myappType); i++) {
+
+	}
+
+
+
+	let html = "";
+	let html1 = "";
+	let html2 = "";
+	let html3 = "";
+
+
+
+
+	// 내 이후의 결재선만 출력함 
+	for (let i = 1; i < appLine.length; i++) {
+		if (Number(appLine[i].ordered) > Number(myTurn)) {
+			if (appLine[i].appType == 0) {
+				html += "<div class='lineDataContainer' id='lineContainer_" + appLine[i].employee + "'><label id='linedata_" + appLine[i].employee + "'>" + storage.user[appLine[i].employee].userName + "</label><button value='" + i + "' onclick='upClick(this)'>▲</button><button  value='" + appLine[i].employee + "' onclick='downClick(this) '>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
+			} else if (appLine[i].appType == 1) {
+				html1 += "<div class='lineDataContainer' id='lineContainer_" + appLine[i].employee + "'><label id='linedata_" + appLine[i].employee + "'>" + storage.user[appLine[i].employee].userName + "</label><button value='" + i + "' onclick='upClick(this)'>▲</button><button  value='" + appLine[i].employee + "' onclick='downClick(this) '>▼</button><button onclick='deleteClick(this)'>✕</button></div>";
+			} else if (appLine[i].appType == 2) {
+				html2 += "<div class='lineDataContainer' id='lineContainer_" + appLine[i].employee + "'><label id='linedata_" + appLine[i].employee + "'>" + storage.user[appLine[i].employee].userName + "</label><button value='" + i + "' onclick='upClick(this)'>▲</button><button  value='" + appLine[i].employee + "' onclick='downClick(this) '>▼</button><button onclick='deleteClick(this)'>✕</button></div>";
+			} else if (appLine[i].appType == 3) {
+				html3 += "<div class='lineDataContainer' id='lineContainer_" + appLine[i].employee + "'><label id='linedata_" + appLine[i].employee + "'>" + storage.user[appLine[i].employee].userName + "</label><button value='" + i + "' onclick='upClick(this)'>▲</button><button  value='" + appLine[i].employee + "' onclick='downClick(this) '>▼</button><button onclick='deleteClick(this)'>✕</button></div>";
+			}
+			$(".typeContainer")[0].innerHTML = html;
+			$(".typeContainer")[1].innerHTML = html1;
+			$(".typeContainer")[2].innerHTML = html2;
+			$(".typeContainer")[3].innerHTML = html3;
+
+		}
+
+
+	}
+}
+
+
 
 function closeGwModal(obj) {
 	let id = obj.id;
@@ -576,23 +683,31 @@ function check(name) {
 	let html = target.html();
 	let selectHtml = "";
 
-	let data = new Array();
 	let x;
-	for (x in storage.user) data.push(x);
+	let userData = new Array();
+	let my;
+	my = storage.my;
+	//나는 결재선에 노출 안 되게 함 
+	for (x in storage.user) {
+		if (x != my) {
+			userData.push(x);
+		}
+	}
 
 	for (let i = 0; i < inputLength.length; i++) {
-		if ($("#cb" + i).prop('checked')) {
-			if (document.getElementById("linedata" + i) == null)
-				selectHtml += "<div class='lineDataContainer' id='lineContainer_" + i + "'><label id='linedata" + i + "'>" + storage.user[data[i]].userName + "</label><button value='" + i + "' onclick='upClick(this)'>▲</button><button  value='" + i + "' onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
-		}
 
+		if ($("#" + inputLength[i].id).prop('checked')) {
+			if (document.getElementById("linedata_" + inputLength[i].id) == null) {
+				selectHtml += "<div class='lineDataContainer' id='lineContainer_" + i + "'><label id='linedata" + i + "'></label><button value='" + i + "' onclick='upClick(this)'>▲</button><button  value='" + i + "' onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
+			}
+
+		}
 	}
 	html += selectHtml;
 	target.html(html)
 
 	$(".testClass").prop('checked', false);
 } //End of check(name) 
-
 
 //// 조직도 결재 순서 
 function upClick(obj) {
