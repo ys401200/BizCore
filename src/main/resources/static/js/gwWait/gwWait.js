@@ -524,6 +524,9 @@ function approveBtnEvent() {
 	}
 
 
+	data = JSON.stringify(data);
+	data = cipher.encAes(data);
+
 	$.ajax({
 		url: apiServer + "/api/gw/app/proceed/" + no + "/" + ordered + "/" + type,
 		method: "post",
@@ -562,8 +565,7 @@ function showGwModal() {
 		"<div class='innerDetail' id='lineRight'>" +
 		"<div></div>" +
 		"<div><div>검토</div>" +
-		"<div class='typeContainer' id='examine'></div>" +
-		"</div>" +
+		"<div class='typeContainer' id='examine'></div></div>" +
 		"<div><div>합의</div>" +
 		"<div class='typeContainer' id='agree'></div></div>" +
 		"<div><div>결재</div>" +
@@ -628,8 +630,14 @@ function setDefaultModalData() {
 		}
 	}
 
+	let btns = $(".appTypeBtn");
+	let containers = $(".typeContainer");
 
-	for (let i = 0 ; i <= Number(myappType); i++) {
+	for (let i = 0; i < btns.length; i++) {
+		if (i < myappType) {
+			$(".appTypeBtn")[i].remove();
+
+		}
 
 	}
 
