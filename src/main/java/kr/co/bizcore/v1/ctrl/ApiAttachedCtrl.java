@@ -41,7 +41,7 @@ public class ApiAttachedCtrl extends Ctrl{
 
     @GetMapping("/docapp/{no:\\d+}")
     public String apiAttachedDocappListGet(HttpServletRequest request, HttpServletResponse response, @PathVariable("no") int no){
-        return sendFileList(request, "docapp", no);
+        return sendFileList(request, "docApp", no);
     }
 
     //@GetMapping("/filebox/{no:\\d+}/{fileName}")
@@ -102,16 +102,17 @@ public class ApiAttachedCtrl extends Ctrl{
         ServletOutputStream out = null;
         String compId = null;
         byte[] data = null;
-        
+        logger.info("+++++++++++++++++++++ 파일 다운로드 " + funcName + " / " + funcNo + " / " + fileName);
         session = request.getSession();
         compId = (String)session.getAttribute("compId");
         if(compId == null)  compId = (String)request.getAttribute("compId");
-
+        logger.info("+++++++++++++++++++++ 파일 다운로드 : compId : " + compId);
         if(compId == null){
             response.setStatus(404);
         }else{
             data = attachedService.getAttachedFileData(compId, funcName, funcNo, fileName);
             if(data == null){
+                logger.info("+++++++++++++++++++++ 파일 다운로드 : data is null ? " + (data == null));
                 response.setStatus(404);
             }else{
                 try {
@@ -145,7 +146,7 @@ public class ApiAttachedCtrl extends Ctrl{
 
     @PostMapping("/docapp")
     public String apiAttachedDocappPost(HttpServletRequest request, @RequestBody String requestBody){
-        return proceedAttachedData(request, requestBody, "docapp", 0);
+        return proceedAttachedData(request, requestBody, "docApp", 0);
     }
 
     //@GetMapping("/filebox")
@@ -191,7 +192,7 @@ public class ApiAttachedCtrl extends Ctrl{
                 fileData = Base64.getDecoder().decode(t);
 
                 // 임시파일 처리가 필요한 경우 / 파일 선 첨부, 후 본문 게시 형태
-                if(funcName.equals("docapp") || funcName.equals("filebox")){
+                if(funcName.equals("docApp") || funcName.equals("filebox")){
                     savedName = attachedService.saveAttachedToTemp(compId, fileData);
                     if(attached == null){
                         attached = new HashMap<>();

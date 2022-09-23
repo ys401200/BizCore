@@ -26,6 +26,9 @@ import kr.co.bizcore.v1.mapper.TradeMapper;
 import kr.co.bizcore.v1.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
@@ -448,6 +451,78 @@ public abstract class Svc {
     public String cvtJsonUnicode(String str){
         return str == null ? null : str.replaceAll("\"", "\\u0022").replaceAll("\r", "").replaceAll("\t", "").replaceAll("\\\\", "\\u005c");
     } // End of cvtJsonUnicode()
+
+
+    // 임시파일을 지정한 폴더로 이동하는 메서드
+    protected long moveTempFile(String compId, String targetDir, String subDir, String savedName){
+        long result = -9999;
+        String str = null, rootPath = fileStoragePath, dir = null, s = File.separator, appData = null;
+        String[] line = null;
+        File source = null, target = null;
+        Long size = 0L;
+        FileInputStream fin = null;
+        FileOutputStream fout = null;
+        byte[] buffer = new byte[1024];
+        int read = -1;
+
+        rootPath = rootPath + s + compId;
+        dir = rootPath + s + targetDir;
+        target = new File(dir);
+        source = new File(rootPath + s + "temp" + s + savedName);
+
+        // 임시파일이 존재하는지 확인합니다. 이동할 임시파일이 존재하지 않으면 나머지 절차는 무의미합니다.
+        if(savedName == null || !source.exists()){
+            logger.error("Svc.moveTempFile() :::::::::: Not exist temp file. File Move Terminated.");
+            return -1;
+        }
+
+        // 파일이 저장될 타겟 디렉토리의 존재를 검증합니다. 이는 프로그램 시작 시, 이니셜라이저에서 자동 생성되어야만 합니다.
+        if(!target.exists()){
+            logger.error("Svc.moveTempFile() :::::::::: Not exist Target Directory. It Must be verify and create Web App Initializer. File Move Terminated.");
+            return -2;
+        }
+
+        // 타겟 디렉토리 외 서브디렉토리가 입력된 경우 존재하는지 확인하고 없으면 생성합니다. 이는 attached의 funcNo에 해당합니다.
+        if(subDir != null){
+            dir += (s + subDir);
+            target = new File(dir);
+            if(!target.exists()){
+                if(!target.mkdir()){
+                    logger.error("Svc.moveTempFile() :::::::::: Request file move to sub directory under target. But, It not exist and Fail to create. File Move Terminated.");
+                    return -3;
+                }
+            }
+        }
+
+        // 파일 이동 시작
+        target = new File(dir + s + savedName);
+        if(target.exists()){
+            logger.error("Svc.moveTempFile() :::::::::: Target file already exists. File Move Terminated.");
+            return -4;
+        }
+    
+        if(source.renameTo(target)){ // 1차 : renameTo()로 간단히 이동 시도
+            logger.info("Svc.moveTempFile() :::::::::: File move success. use File.renameTo()");
+            result = target.length();
+        }else{  // 실패시 2차 시도 : 파일 읽어서 이동 후 임시 파일 삭제
+            try {
+                fin = new FileInputStream(source);
+                fout = new FileOutputStream(target);
+                read = 0;
+                while((read = fin.read(buffer, 0, buffer.length)) != -1){
+                    fout.write(buffer, 0, read);
+                }
+                fin.close();
+                fout.flush();
+                fout.close();
+                source.delete();
+                logger.info("Svc.moveTempFile() :::::::::: File move success. Read temp file to buffer And write target file.");
+                result = target.length();
+            } catch (Exception e) {e.printStackTrace();}
+        }
+
+        return result;
+    } // End of moveTempFile()
 
 } // End of abstract Class === Svc
 

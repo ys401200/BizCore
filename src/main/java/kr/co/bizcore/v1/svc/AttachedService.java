@@ -37,12 +37,13 @@ public class AttachedService extends Svc{
 
         rootPath = fileStoragePath + s + compId;
         savedName = systemMapper.getAttachedFileName(compId, funcName, funcNo, fileName);
+        logger.info("+++++++++++++++++++++ 파일 다운로드 : savedName : " + savedName);
         if(savedName == null)   return result;
 
         path = rootPath + s + funcName + s + funcNo + s + savedName;
         file = new File(path);
+        logger.info("+++++++++++++++++++++ 파일 다운로드 : exist ? " + file.exists());
         if(!file.exists())  return result;
-
             try {
                 fis = new FileInputStream(file);
                 result = fis.readAllBytes();
@@ -73,6 +74,7 @@ public class AttachedService extends Svc{
         return result;
     }
 
+    // 사용 여부 확인 필요
     public boolean saveAttachedFileToTemp(String compId, String savedName, byte[] fileData) {
         boolean result = false;
         FileOutputStream fos = null;
