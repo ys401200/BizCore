@@ -552,7 +552,7 @@ function approveBtnEvent() {
 function showGwModal() {
 
 	let setGwModalHtml = "<div class='gwModal'>" +
-		"<div class='modal-title'>결재선 생성</div>" +
+		"<div class='modal-title'>결재선 수정(현재 결재단계 이후만 추가/삭제 가능)</div>" +
 		"<div class='lineDetail'>" +
 		"<div class='lineTop'>" +
 		"<div class='innerDetail' id='lineLeft'></div>" +
@@ -630,25 +630,20 @@ function setDefaultModalData() {
 		}
 	}
 
+	//내 결재 권한 이후만 수정할 수 있음 
 	let btns = $(".appTypeBtn");
-	let containers = $(".typeContainer");
-
-	for (let i = 0; i < btns.length; i++) {
+	console.log(myappType);
+	for (let i = btns.length - 1; i >= 0; i--) {
 		if (i < myappType) {
 			$(".appTypeBtn")[i].remove();
-
+			$(".typeContainer")[i].parentElement.remove();
 		}
-
 	}
-
-
 
 	let html = "";
 	let html1 = "";
 	let html2 = "";
 	let html3 = "";
-
-
 
 
 	// 내 이후의 결재선만 출력함 
@@ -703,14 +698,14 @@ function check(name) {
 	}
 
 	for (let i = 0; i < inputLength.length; i++) {
-
-		if ($("#" + inputLength[i].id).prop('checked')) {
-			if (document.getElementById("linedata_" + inputLength[i].id) == null) {
-				selectHtml += "<div class='lineDataContainer' id='lineContainer_" + i + "'><label id='linedata" + i + "'></label><button value='" + i + "' onclick='upClick(this)'>▲</button><button  value='" + i + "' onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
+		let id = (inputLength[i].id).substring(2, inputLength[i].id.length);
+		if ($("#cb" + id).prop('checked')) {
+			if (document.getElementById("linedata_" + id) == null) {
+				selectHtml += "<div class='lineDataContainer' id='lineContainer_" + id + "'><label id='linedata_" + id + "'>" + storage.user[id].userName + "</label><button value='" + id + "' onclick='upClick(this)'>▲</button><button  value='" + id + "' onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
 			}
-
 		}
 	}
+	
 	html += selectHtml;
 	target.html(html)
 
