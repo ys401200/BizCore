@@ -49,17 +49,19 @@
 
 .scheduleContainer .gridScheduleList{
     display: grid; 
-	width: 99%; 
+	width: 98%; 
 	margin: 0 auto;
+	padding-top:20px;
 }
 
 .scheduleContainer .gridScheduleList .gridHeader,
 .scheduleContainer .gridScheduleList .gridContent{
-    grid-template-columns: 7% 5% 23% 11% 7% 7% 5% 7% 28%;
+    grid-template-columns: 6% 5% 23% 12% 7% 6% 6% 7% 28%;
 }
 
 .scheduleContainer .gridScheduleList .gridHeader{
 	border-bottom:1px solid #abb6d5;
+	background-color:#f1f5ff;
 }
 
 .scheduleContainer .calendarList{

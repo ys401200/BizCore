@@ -61,12 +61,14 @@ button, select, input[type="text"]{
 	overflow: hidden;
 	border-top: 1px solid #E4E5E9;
 	border-right: 1px solid #ededed;
+	padding:1.5% 0;
 }
 
 .gridContent .gridContentItem:last-child{
 	overflow: hidden;
 	border-top: 1px solid #D9D9D9;
 	border-right: 0;
+	text-align: center;
 }
 
 .grid_default_text_align_center{
@@ -74,14 +76,14 @@ button, select, input[type="text"]{
 	align-items: center;
 	justify-content: center;
 	overflow: hidden;
-	padding-left:13px;
+	/* padding-left:13px; */
 	font-size:14px;
 }
 
 .grid_default_text_align_left{
 	display: flex;
 	align-items: center;
-    justify-content: left;
+    justify-content: center;
 	padding: 0 16px;
 	overflow: hidden;
 	font-size:14px;
@@ -104,7 +106,8 @@ button, select, input[type="text"]{
 	font-weight: 400;
 	font-size: 13px;
 	line-height: 22px;
-	height: 38px;
+	/* height: 38px; */
+	max-height: 150px;
 }
 
 .grid_default_body_item:nth-child(2n-1){
@@ -184,10 +187,10 @@ button, select, input[type="text"]{
 	width: 100%;
 }
 
-.defaultFormContainer .defaultFormLine .defaultFormSpanDiv span{
+/* .defaultFormContainer .defaultFormLine .defaultFormSpanDiv span{
 	font-size: 1.2rem;
 	font-weight: 600;
-}
+} */
 
 .defaultFormContainer .defaultFormLine .defaultFormContent{
 	width: 100%;
@@ -198,9 +201,9 @@ button, select, input[type="text"]{
 .defaultFormContainer .defaultFormLine .defaultFormContent input[type='file'],
 .defaultFormContainer .defaultFormLine .defaultFormContent select{
 	width: -webkit-fill-available;
-	height: 40px;
+	height: 36px;
 	padding: 0 10px;
-	font-size: 1.1rem;
+	font-size: 1rem;
 	font-weight: 500;
 	border: 1px solid #C1C1C1;
 	border-radius: 5px;
@@ -216,9 +219,9 @@ button, select, input[type="text"]{
 /* crud 폼 끝 */
 
 /* detail */
-.detailContents{
+/* .detailContents{
 	padding: 20px;
-}
+} */
 
 .detailContents .detailViewContainer{
 	width: 100%;
@@ -244,6 +247,7 @@ button, select, input[type="text"]{
 
 .detailBoard{
 	border: 1px solid #E4E5E9;
+	padding:20px;
 }
 
 .detailBoard .detailContents .detailBoardContainer{
@@ -256,37 +260,44 @@ button, select, input[type="text"]{
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	border: 1px solid #000;
+	/* border: 1px solid #7e7e7e; */
+	border-bottom:1px solid #7e7e7e;
+	border-right:1px solid #7e7e7e;
 	padding: 10px;
+	font-size:0.9rem;
 }
+
+.detailBoard .detailViewFormSpan{border-left:1px solid #7e7e7e;}
+.detailBoardContainer>div:nth-of-type(3){border-left: none;}
+.detailBoardContainer>div:nth-child(-n+4){border-top:1px solid #7e7e7e;}
 
 .detailBoard .detailContents .detailBoardContainer > div > input,
 .detailBoard .detailContents .detailBoardContainer > div > select{
 	width: 100%;
 	height: 100%;
-	font-size: 1.1rem;
+	font-size: 0.9rem;
 }
 
 .detailBtns{
 	float: right;
-	margin-top: 5px;
-	margin-right: 5px;
+	/* margin-top: 5px;
+	margin-right: 5px; */
 	margin-bottom: 10px;
 }
 
 .detailBtns > button{
 	color: #ebefff;
 	box-shadow: 0 1px 1px #bdbfc9;
-	background-color:#182f81;
-	padding:0 14px;
-	height:30px;
+	background-color:#2147b1;
+	padding:0 10px;
+	height:26px;
 	border-radius: 5px;
+	margin:0 0 5px 10px;
 }
 
 .detailBtns > button:hover{
-	color: #182f81;
 	box-shadow: 0 1px 2px #bdbfc9;
-	background-color:#ebefff;
+	background-color:#0e2b7e;
 }
 
 /* tab 시작 */

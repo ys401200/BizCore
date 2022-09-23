@@ -15,6 +15,8 @@
 #bodyContents #bodyContent{
 	display: grid;
 	grid-template-columns: 45% 17% 17% 21%;
+	column-gap:0.7%;
+	row-gap:1.2%;
 }
 
 /* 메인 차트 시작 */
@@ -77,8 +79,11 @@
 #bodyContent #bodyChart_2 .chartContentContainer #chartContentInfo{
 	text-align: right;
 	padding: 10px;
-	background-color: #4374D9;
-	color: #ffffff;
+	background-color: #eaedf3;
+	color: #253340;
+	font-size: 14px;
+	border-radius: 14px;
+	line-height:23px;
 }
 
 #bodyContent #bodyChart_3{
@@ -112,8 +117,11 @@
 #bodyContent #bodyChart_3 .chartContentContainer #chartContentInfo{
 	text-align: right;
 	padding: 10px;
-	background-color: #A566FF;
-	color: #ffffff;
+	background-color: #eaedf3;
+	color: #253340;
+	font-size: 14px;
+	line-height: 23px;
+	border-radius: 14px;
 }
 
 #bodyContent #bodyChart_4{
@@ -476,3 +484,25 @@
     margin: 0 20px 0 10px;
 }
 /* 메시징 컨테이너 끝 */
+
+/*스크롤*/
+::-webkit-scrollbar {
+	width: 0.6em;
+	height:0.6em;
+  }
+  
+  ::-webkit-scrollbar-track {
+	background: rgb(207 212 217);
+	border-radius: 100vw;
+	margin-block: 0.5em;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+	background: rgb(125 134 161);
+	border-radius: 100vw;
+	border: 0.1em solid rgb(207 212 217);
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+	background: rgb(100, 109, 137);
+  }

@@ -17,7 +17,7 @@
 }
 
 .noticeContainer {
-	margin-top: 1%;
+	/* margin-top: 1%; */
 	/* margin-left: 2%; */
 	/* max-width: 1782px; */
 	background: #FFFFFF;
@@ -84,18 +84,23 @@
 }
 
 .noticeContainer > button{
-	margin:0.4% 0.5% 0 0;
+	margin:0.7% 0.6% 0 0;
 	box-shadow:0px 1px 2px #bdbfc9;
-	padding:0.3% 0.7%;
-	background-color:#182f81;
+	padding:0.3% 0.6%;
+	background-color:#2147b1;
 	color:#fff;
 	float:right;
 	border-radius: 5px;
 }
 
+.noticeContainer > button:hover{
+	box-shadow: 0 1px 2px #bdbfc9;
+	background-color:#0e2b7e;
+}
+
 .noticeContainer .pageContainer .paging_cell_current{
-	color:#182f81;
-	border:1px solid #182f81;
+	color:#2147b1;
+	border:1px solid #2147b1;
 	background-color:#ebefff;
 }
 

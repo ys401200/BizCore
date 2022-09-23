@@ -2086,16 +2086,16 @@ function chartSuccess_1(result){
 				{
 					label: "월별목표",
 					data: [100000000, 1200000000, 1600000000, 1100000000, 1300000000, 180000000, 1400000000, 1500000000, 1700000000, 1900000000, 800000000, 600000000],
-					backgroundColor: "#4374D9",
-					borderColor: "#4374D9",
+					backgroundColor: "#5f46c6", //#4374D9
+					borderColor: "#5f46c6",
 					borderWidth: 3,
 					radius: 0,
 				},
 				{
 					label: "월별매출",
 					data: dataArray,
-					backgroundColor: "#B7F0B1",
-					borderColor: "#B7F0B1",
+					backgroundColor: "#76e3f1",//#B7F0B
+					borderColor: "#76e3f1",
 					borderWidth: 3,
 					radius: 0,
 				},
@@ -2187,10 +2187,10 @@ function chartSuccess_2(result){
 				{
 					data: [(calResult / 13380000000 * 100).toFixed(2), (100 - (calResult / 13380000000 * 100).toFixed(2))],
 					backgroundColor: [
-						"#4374D9",
-						"#F15F5F"
+						"#31cca2",
+						"#95c1e6"
 					],
-					radius: 0,
+					radius:0,
 					borderWidth: 1,
 				},
 			],
@@ -2229,8 +2229,8 @@ function addChart_3(){
 				{
 					data: [70, 30],
 					backgroundColor: [
-						"#A566FF",
-						"#F15F5F"
+						"#247de5",
+						"#f3db5f"
 					]
 				},
 			],
@@ -2265,12 +2265,12 @@ function addChart_4(){
 				{
 					data: [310, 200, 110, 220, 100, 50],
 					backgroundColor: [
-						"#4374D9",
-						"#B7F0B1",
-						"#A566FF",
-						"#F15F5F",
-						"#F2CB61",
-						"#A6A6A6",
+						"#29cea6",
+						"#2795f7",
+						"#f7d766",
+						"#ff5377",
+						"#7952e9",
+						"#d9d9d9",
 					]
 				},
 			],

@@ -41,11 +41,11 @@
 }
 
 #sideMenu ul:not(#panel) li a:hover{
-	background-color: #19166a;
+	background-color: #12338f;
 }
 
 #sideMenu ul li a.active{
-	background-color: #211e74;
+	background-color: #12338f;
 }
 
 /*업무관리 active 색상 시작*/
