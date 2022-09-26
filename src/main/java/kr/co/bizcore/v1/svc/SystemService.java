@@ -119,6 +119,7 @@ public class SystemService extends Svc {
             data[3] = map.get("comfax");
             data[4] = map.get("comboss");
             result = "{\"my\":" + userNo + ",";
+            result += ("\"widget\":[\"notice/0\"],");
             result += ("\"company\":{");
             result += ("\"name\":\"" + data[0] + "\",");
             result += ("\"address\":\"" + data[1] + "\",");
