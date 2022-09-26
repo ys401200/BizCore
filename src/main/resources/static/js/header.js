@@ -15,11 +15,11 @@ function init(){
 	apiServer = "";
 	storage = {};
 	
+	getCommonCode();
 	getUserMap();
 	getDeptMap();
 	getBasicInfo();
 	getCustomer();
-	getCommonCode();
 	getUserRank();
 		
 	cipher = { // 암호화 모듈
@@ -600,159 +600,216 @@ function classType(obj){
 
 // API 서버에서 직원 정보를 가져오는 함수
 function getUserMap(){
-	let url;
+	let url, userMapTime, userMapData;
 
 	url = apiServer + "/api/user/map";
-
-	$.ajax({
-		"url": url,
-		"method": "get",
-		"dataType": "json",
-		"cache": false,
-		success: (data) => {
-			let list;
-
-			if (data.result === "ok") {
-				list = cipher.decAes(data.data);
-				list = JSON.parse(list);
-				storage.user = list;
-				console.log("[getUserMap] Success getting employee information.");
-			} else {
-				msg.set("직원 정보를 가져오지 못했습니다.");
+	userMapTime = sessionStorage.getItem("userMapTime");
+	userMapTime = userMapTime == null ? 0 : userMapTime * 1;
+	if((new Date()).getTime() < userMapTime + 600000){
+		userMapData = sessionStorage.getItem("userMapData");
+		userMapData = JSON.parse(userMapData);
+		storage.user = userMapData;
+		console.log("[getUserMap] set user data from sessionStorage.");
+	}else{
+		$.ajax({
+			"url": url,
+			"method": "get",
+			"dataType": "json",
+			"cache": false,
+			success: (data) => {
+				let list;
+	
+				if (data.result === "ok") {
+					list = cipher.decAes(data.data);
+					sessionStorage.setItem("userMapData", list);
+					sessionStorage.setItem("userMapTime", (new Date()).getTime() + "");
+					list = JSON.parse(list);
+					storage.user = list;
+					console.log("[getUserMap] Success getting employee information.");
+				} else {
+					msg.set("직원 정보를 가져오지 못했습니다.");
+				}
 			}
-		}
-	})
+		})
+	}
 } // End of getUserMap()
 
 // API 서버에서 직원 정보를 가져오는 함수
 function getDeptMap(){
-	let url;
+	let url, deptMapData, deptMapTime;
 
 	url = apiServer + "/api/dept/map";
-
-	$.ajax({
-		"url": url,
-		"method": "get",
-		"dataType": "json",
-		"cache": false,
-		success: (data) => {
-			let list;
-
-			if (data.result === "ok") {
-				list = cipher.decAes(data.data);
-				list = JSON.parse(list);
-				storage.dept = list;
-				console.log("[getDeptMap] Success getting department information.");
-			} else {
-				msg.set("부서 정보를 가져오지 못했습니다.");
+	deptMapTime = sessionStorage.getItem("deptMapTime");
+	deptMapTime = deptMapTime == null ? 0 : deptMapTime * 1;
+	if((new Date()).getTime() < deptMapTime + 600000){
+		deptMapData = sessionStorage.getItem("deptMapData");
+		deptMapData = JSON.parse(deptMapData);
+		storage.dept = deptMapData;
+		console.log("[getUserMap] set dept data from sessionStorage.");
+	}else{
+		$.ajax({
+			"url": url,
+			"method": "get",
+			"dataType": "json",
+			"cache": false,
+			success: (data) => {
+				let list;
+				if (data.result === "ok") {
+					list = cipher.decAes(data.data);
+					sessionStorage.setItem("deptMapData", list);
+					sessionStorage.setItem("deptMapTime", (new Date()).getTime() + "");
+					list = JSON.parse(list);
+					storage.dept = list;
+					console.log("[getDeptMap] Success getting department information.");
+				} else {
+					msg.set("부서 정보를 가져오지 못했습니다.");
+				}
 			}
-		}
-	})
+		});
+	}
 } // End of getDeptMap()
 
 // API 서버에서 고객사 정보를 가져오는 함수
 function getCustomer(){
-	let url;
+	let url, customerTime, customerData;
 
 	url = apiServer + "/api/system/customer";
-
-	$.ajax({
-		"url": url,
-		"method": "get",
-		"dataType": "json",
-		"cache": false,
-		success: (data) => {
-			let list;
-
-			if (data.result === "ok") {
-				list = cipher.decAes(data.data);
-				list = JSON.parse(list);
-				storage.customer = list;
-				console.log("[getCustomer] Success getting customer information.");
-			} else {
-				msg.set("고객 정보를 가져오지 못했습니다.");
+	customerTime = sessionStorage.getItem("customerTime");
+	customerTime = customerTime == null ? 0 : customerTime * 1;
+	if((new Date()).getTime() < customerTime + 600000){
+		customerData = sessionStorage.getItem("customerData");
+		customerData = JSON.parse(customerData);
+		storage.customer = customerData;
+		console.log("[getUserMap] set customer data from sessionStorage.");
+	}else{
+		$.ajax({
+			"url": url,
+			"method": "get",
+			"dataType": "json",
+			"cache": false,
+			success: (data) => {
+				let list;	
+				if (data.result === "ok") {
+					list = cipher.decAes(data.data);
+					sessionStorage.setItem("customerData", list);
+					sessionStorage.setItem("customerTime", (new Date()).getTime() + "");
+					list = JSON.parse(list);
+					storage.customer = list;
+					console.log("[getCustomer] Success getting customer information.");
+				} else {
+					msg.set("고객 정보를 가져오지 못했습니다.");
+				}
 			}
-		}
-	})
+		})
+	}
 } // End of getCustomer()
 
 // API 서버에서 회사 및 사용자 사번을 정보를 가져오는 함수
 function getBasicInfo(){
-	let url;
+	let url, basicInfoTime, basicInfoData;
 
 	url = apiServer + "/api/system/basic";
-
-	$.ajax({
-		"url": url,
-		"method": "get",
-		"dataType": "json",
-		"cache": false,
-		success: (data) => {
-			let list;
-
-			if (data.result === "ok") {
-				list = cipher.decAes(data.data);
-				list = JSON.parse(list);
-				storage.company = list.company;
-				storage.my = list.my;
-				console.log("[getBasicInfo] Success getting basic information.");
-			} else {
-				msg.set("기본 정보를 가져오지 못했습니다.");
+	basicInfoTime = sessionStorage.getItem("basicInfoTime");
+	basicInfoTime = basicInfoTime == null ? 0 : basicInfoTime * 1;
+	if((new Date()).getTime() < basicInfoTime + 600000){
+		basicInfoData = sessionStorage.getItem("basicInfoData");
+		basicInfoData = JSON.parse(basicInfoData);
+		storage.company = basicInfoData.company;
+		storage.my = basicInfoData.my;
+		console.log("[getUserMap] set basic info from sessionStorage.");
+	}else{
+		$.ajax({
+			"url": url,
+			"method": "get",
+			"dataType": "json",
+			"cache": false,
+			success: (data) => {
+				let list;	
+				if (data.result === "ok") {
+					list = cipher.decAes(data.data);
+					sessionStorage.setItem("basicInfoData", list);
+					sessionStorage.setItem("basicInfoTime", (new Date()).getTime() + "");
+					list = JSON.parse(list);
+					storage.company = list.company;
+					storage.my = list.my;
+					console.log("[getBasicInfo] Success getting basic information.");
+				} else {
+					msg.set("기본 정보를 가져오지 못했습니다.");
+				}
 			}
-		}
-	})
+		});
+	}
 } // End of getBasicInfo()
 
 // API 서버에서 회사 및 사용자 사번을 정보를 가져오는 함수
 function getUserRank(){
-	let url;
+	let url, userRankTime, userRankData;
 
 	url = apiServer + "/api/user/rank";
-
-	$.ajax({
-		"url": url,
-		"method": "get",
-		"dataType": "json",
-		"cache": false,
-		success: (data) => {
-			let list;
-
-			if (data.result === "ok") {
-				list = cipher.decAes(data.data);
-				list = JSON.parse(list);
-				storage.userRank = list;
-				console.log("[getBasicInfo] Success getting rank information.");
-			} else {
-				msg.set("직급 정보를 가져오지 못했습니다.");
+	userRankTime = sessionStorage.getItem("userRankTime");
+	userRankTime = userRankTime == null ? 0 : userRankTime * 1;
+	if((new Date()).getTime() < userRankTime + 600000){
+		userRankData = sessionStorage.getItem("userRankData");
+		userRankData = JSON.parse(userRankData);
+		storage.userRank = userRankData;
+		console.log("[getUserMap] set rank info from sessionStorage.");
+	}else{
+		$.ajax({
+			"url": url,
+			"method": "get",
+			"dataType": "json",
+			"cache": false,
+			success: (data) => {
+				let list;	
+				if (data.result === "ok") {
+					list = cipher.decAes(data.data);
+					sessionStorage.setItem("userRankData", list);
+					sessionStorage.setItem("userRankTime", (new Date()).getTime() + "");
+					list = JSON.parse(list);
+					storage.userRank = list;
+					console.log("[getBasicInfo] Success getting rank information.");
+				} else {
+					msg.set("직급 정보를 가져오지 못했습니다.");
+				}
 			}
-		}
-	})
+		})
+	}
 } // End of getUserRank()
 
 // API 서버에서 코드 정보를 가져오는 함수
 function getCommonCode(){
-	let url;
+	let url, commonCodeTime, commonCodeData;
 
 	url = apiServer + "/api/system/code";
-
-	$.ajax({
-		"url": url,
-		"method": "get",
-		"dataType": "json",
-		"cache": false,
-		success: (data) => {
-			let list;
-
-			if (data.result === "ok") {
-				list = cipher.decAes(data.data);
-				list = JSON.parse(list);
-				storage.code = list;
-				console.log("[getCommonCode] Success getting Common code list.");
-			} else {
-				msg.set("코드 정보를 가져오지 못했습니다.");
+	commonCodeTime = sessionStorage.getItem("commonCodeTime");
+	commonCodeTime = commonCodeTime == null ? 0 : commonCodeTime * 1;
+	if((new Date()).getTime() < commonCodeTime + 600000){
+		commonCodeData = sessionStorage.getItem("commonCodeData");
+		commonCodeData = JSON.parse(commonCodeData);
+		storage.code = commonCodeData;
+		console.log("[getUserMap] set common code from sessionStorage.");
+	}else{
+		$.ajax({
+			"url": url,
+			"method": "get",
+			"dataType": "json",
+			"cache": false,
+			success: (data) => {
+				let list;	
+				if (data.result === "ok") {
+					list = cipher.decAes(data.data);
+					sessionStorage.setItem("commonCodeData", list);
+					sessionStorage.setItem("commonCodeTime", (new Date()).getTime() + "");
+					list = JSON.parse(list);
+					storage.code = list;
+					console.log("[getCommonCode] Success getting Common code list.");
+				} else {
+					msg.set("코드 정보를 가져오지 못했습니다.");
+				}
 			}
-		}
-	});
+		});
+	}
+	
 } // End of getDeptMap()
 
 //파일 dropzone class 변경

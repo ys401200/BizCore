@@ -233,14 +233,43 @@
 /*일정조회 버튼 및 게시글 페이지 번호 시작*/
 .scheduleContainer > button,
 .scheduleContainer > select{
-	margin:0.4% 0.5% 0 0;
+	margin:14px 0.5% 0 0;
 	box-shadow:0px 1px 2px #bdbfc9;
 	color:#ebefff;
-	background-color:#182f81;
+	background-color:#2147b1;
 	padding:0 0.7%;
 	height:30px;
 	border-radius:5px;
 	float: right;
+	font-size:13px;
 }
 
+.scheduleContainer > button:first-of-type{
+	margin-right:20px;
+}
+
+.searchContainer .searchBtns{
+	margin:8px 15px 0 0;
+}
+
+.searchContainer .searchInputContent{padding-top:0;}
+
 /*일정조회 버튼 및 게시글 페이지 번호 끝*/
+
+/*일정 조회 상세보기 표 시작*/
+/* .detailContents .detailViewContainer > div{
+	border-top:none;
+	border-right:none;
+	border-left:1px solid #000;
+	border-bottom:1px solid #000;
+}
+.detailContents .detailViewContainer > div:nth-child(4n),.detailContents .detailViewContainer > div:nth-child(18){
+	border-right:1px solid #000;
+}
+
+.detailContents .detailViewContainer > div:nth-child(-n+4){
+	border-top:1px solid #000;
+} */
+/*일정 조회 상세보기 표 끝*/
+
+.detailContents {display: none;}
