@@ -796,6 +796,7 @@ function getBasicInfo(){
 		basicInfoData = sessionStorage.getItem("basicInfoData");
 		basicInfoData = JSON.parse(basicInfoData);
 		storage.company = basicInfoData.company;
+		// storage.widget.set = basicInfoData.widget;
 		storage.my = basicInfoData.my;
 		console.log("[getUserMap] set basic info from sessionStorage.");
 	}else{
@@ -812,6 +813,7 @@ function getBasicInfo(){
 					sessionStorage.setItem("basicInfoTime", (new Date()).getTime() + "");
 					list = JSON.parse(list);
 					storage.company = list.company;
+					// storage.widget.set = list.widget;
 					storage.my = list.my;
 					console.log("[getBasicInfo] Success getting basic information.");
 				} else {
@@ -2752,14 +2754,11 @@ function plusBtnClick(e){
 
 	if(thisBtn.data("click") == false){
 		thisBtn.html("<i class=\"fa-solid fa-xmark\"></i>");
-		thisBtn.parent().css("bottom", "35%");
-		thisBtn.prev().fadeIn(400);
+		thisBtn.prev().children().fadeIn(400);
 		thisBtn.data("click", true);
 	}else{
 		thisBtn.html("<i class=\"fa-solid fa-ellipsis\"></i>");
-		thisBtn.prev().fadeOut(() => {
-			thisBtn.parent().css("bottom", "2%");
-		});
+		thisBtn.prev().children().fadeOut();
 		thisBtn.data("click", false);
 	}
 }

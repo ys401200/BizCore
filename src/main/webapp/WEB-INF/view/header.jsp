@@ -37,6 +37,7 @@
 <div id="loadingDiv" style="width: 100%; height: 100%;"></div>
 <div class="plusContentBtn">
 	<div class="plusItems">
+		<button type="button" class="plusWidgetItem"><i class="fa-solid fa-screwdriver-wrench"></i></button>
 		<button type="button" class="plusApplovalItem"><i class="fa-solid fa-gear"></i></button>
 		<button type="button" class="plusNotesItem"><i class="fa-solid fa-paper-plane"></i></button>
 		<button type="button" class="plusDeleteItem"><i class="fa-solid fa-trash-can"></i></button>
