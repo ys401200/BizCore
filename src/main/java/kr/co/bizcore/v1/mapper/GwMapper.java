@@ -24,18 +24,18 @@ public interface GwMapper {
 
     @Select("SELECT a.docno, IF(a.apptype=4,'refer',IF(a.ordered=b.ordered,'wait','due')) AS stat FROM bizcore.doc_app_detail a, " +
             "(SELECT compId, docno, MIN(ordered) AS ordered FROM bizcore.doc_app_detail WHERE approved IS NULL AND rejected IS NULL AND compId=#{compId} AND docno IN (SELECT docno FROM bizcore.doc_app WHERE status = 1 AND compid=#{compId}) GROUP BY docno, compId) b " +
-            "WHERE a.compId=b.compId AND a.docno = b.docno AND a.employee=#{userNo} AND a.approved IS NULL AND a.rejected IS NULL  AND a.apptype IN (0,2,4)")
+            "WHERE a.deleted IS NULL AND a.compId=b.compId AND a.docno = b.docno AND a.employee=#{userNo} AND a.approved IS NULL AND a.rejected IS NULL  AND a.apptype IN (0,2,4)")
     public List<HashMap<String, String>> getWaitAndDueDocNo(@Param("compId") String compId, @Param("userNo") String userNo);
 
-    @Select("SELECT CAST(a.no AS CHAR) AS no, a.docno AS docno, CAST(a.writer AS CHAR) AS writer, CAST(UNIX_TIMESTAMP(a.created)*1000 AS CHAR) AS created, c.title AS form, a.title AS title, CAST(UNIX_TIMESTAMP(b.`read`)*1000 AS CHAR) AS `read`, CAST(b.apptype AS CHAR) AS appType FROM bizcore.doc_app a, bizcore.doc_app_detail b, bizcore.doc_form c WHERE c.id=a.formid AND a.compid=#{compId} AND b.employee=#{userNo} AND a.docno=b.docno AND b.ordered > 0 AND a.status=1 AND a.docno IN (#{sqlIn})")
+    @Select("SELECT CAST(a.no AS CHAR) AS no, a.docno AS docno, CAST(a.writer AS CHAR) AS writer, CAST(UNIX_TIMESTAMP(a.created)*1000 AS CHAR) AS created, c.title AS form, a.title AS title, CAST(UNIX_TIMESTAMP(b.`read`)*1000 AS CHAR) AS `read`, CAST(b.apptype AS CHAR) AS appType FROM bizcore.doc_app a, bizcore.doc_app_detail b, bizcore.doc_form c WHERE b.deleted IS NULL AND c.id=a.formid AND a.compid=#{compId} AND b.employee=#{userNo} AND a.docno=b.docno AND b.ordered > 0 AND a.status=1 AND a.docno IN (#{sqlIn})")
     public List<HashMap<String, String>> getWaitAndDueList(@Param("compId") String compId, @Param("userNo") String userNo, @Param("sqlIn") String sqlIn);
 
     @Select("SELECT CAST(a.no AS CHAR) AS no, a.docNo, CAST(b.employee AS CHAR) AS authority, CAST(UNIX_TIMESTAMP(a.created)*1000 AS CHAR) AS created, c.title AS form, a.title AS title, CAST(UNIX_TIMESTAMP(b.`read`)*1000 AS CHAR) AS `read`, CAST(b.apptype AS CHAR) AS appType " +
             "FROM bizcore.doc_app a, bizcore.doc_app_detail b, bizcore.doc_form c, " +
             "(SELECT compId, docNo, MIN(ordered) AS ordered FROM bizcore.doc_app_detail WHERE approved IS NULL AND rejected IS NULL AND compId = #{compId} AND apptype < 4 GROUP BY docNo, compId) d " +
-            "WHERE b.compId = d.compId AND b.docNo = d.docNo AND b.ordered = d.ordered AND b.docNo = a.docNo AND a.formId = c.id AND a.writer = #{userNo} ORDER BY created")
+            "WHERE b.deleted IS NULL AND b.compId = d.compId AND b.docNo = d.docNo AND b.ordered = d.ordered AND b.docNo = a.docNo AND a.formId = c.id AND a.writer = #{userNo} ORDER BY created")
     public List<HashMap<String, String>> getProceedingDocList(@Param("compId") String compId, @Param("userNo") String userNo);
 
-    @Update("UPDATE bizcore.doc_app_detail SET `read` = NOW() WHERE compId = #{compId} AND docNo = #{docNo} AND employee = #{userNo} AND `read` IS NULL AND (ordered = (SELECT MIN(ordered) FROM bizcore.doc_app_detail WHERE compId = #{compId} AND docNo = #{docNo} AND approved IS NULL AND rejected IS NULL) OR appType = 4)")
+    @Update("UPDATE bizcore.doc_app_detail SET `read` = NOW() WHERE deleted IS NULL AND compId = #{compId} AND docNo = #{docNo} AND employee = #{userNo} AND `read` IS NULL AND (ordered = (SELECT MIN(ordered) FROM bizcore.doc_app_detail WHERE compId = #{compId} AND docNo = #{docNo} AND approved IS NULL AND rejected IS NULL) OR appType = 4)")
     public void serDocReadTime(@Param("compId") String compId, @Param("userNo") String userNo, @Param("docNo") String docNo);
 }

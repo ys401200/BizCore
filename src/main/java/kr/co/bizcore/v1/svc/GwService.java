@@ -259,7 +259,7 @@ public class GwService extends Svc{
         String result = null;
         String sql1 = "SELECT no, docNo, writer, formId, docbox, title, confirmNo, status, readable FROM bizcore.doc_app WHERE deleted IS NULL AND compId = ? AND docno = ?";
         String sql2 = "SELECT ordered, employee, appType, CAST(UNIX_TIMESTAMP(`read`)*1000 AS CHAR) AS `read`, isModify, CAST(UNIX_TIMESTAMP(approved)*1000 AS CHAR) AS approved, CAST(UNIX_TIMESTAMP(rejected)*1000 AS CHAR) AS rejected, comment, appData FROM bizcore.doc_app_detail WHERE compId = ? AND docNo = ? AND retrieved IS NULL ORDER BY ordered";
-        String sql3 = "SELECT doc FROM bizcore.doc_app_detail WHERE compId = ? AND ordered = (SELECT MAX(ordered) FROM bizcore.doc_app_detail WHERE compId = ? AND docNo = ? AND retrieved IS NULL AND (approved IS NOT NULL OR rejected IS NOT NULL)) AND docNo = ?";
+        String sql3 = "SELECT doc FROM bizcore.doc_app_detail WHERE deleted IS NULL AND compId = ? AND ordered = (SELECT MAX(ordered) FROM bizcore.doc_app_detail WHERE deleted IS NULL AND compId = ? AND docNo = ? AND retrieved IS NULL AND (approved IS NOT NULL OR rejected IS NOT NULL)) AND docNo = ?";
         String no = null, writer = null, formId = null, docbox = null, title = null, confirmNo = null;
         String ordered = null, employee = null, appType = null, read = null, isModify = null, approved = null, rejected = null, comment = null, appData = null, t = null, doc = null;
         String docStatus = null, appCurrent = null, files = null;
@@ -488,7 +488,7 @@ public class GwService extends Svc{
     private List<HashMap<String, String>> getAppDocList(String compId, String userNo, String sqlIn){
         List<HashMap<String, String>> result = new ArrayList<>();
         HashMap<String, String> each = null;
-        String sql = "SELECT CAST(a.no AS CHAR) AS no, a.docno AS docno, CAST(a.writer AS CHAR) AS writer, CAST(UNIX_TIMESTAMP(a.created)*1000 AS CHAR) AS created, c.title AS form, a.title AS title, CAST(UNIX_TIMESTAMP(b.`read`)*1000 AS CHAR) AS `read`, CAST(b.apptype AS CHAR) AS appType FROM bizcore.doc_app a, bizcore.doc_app_detail b, bizcore.doc_form c WHERE c.id=a.formid AND a.compid=? AND b.employee=? AND a.docno=b.docno AND b.ordered > 0 AND a.status=1 AND a.docno IN ('" + sqlIn + "')";
+        String sql = "SELECT CAST(a.no AS CHAR) AS no, a.docno AS docno, CAST(a.writer AS CHAR) AS writer, CAST(UNIX_TIMESTAMP(a.created)*1000 AS CHAR) AS created, c.title AS form, a.title AS title, CAST(UNIX_TIMESTAMP(b.`read`)*1000 AS CHAR) AS `read`, CAST(b.apptype AS CHAR) AS appType FROM bizcore.doc_app a, bizcore.doc_app_detail b, bizcore.doc_form c WHERE b.deleted IS NULL AND c.id=a.formid AND a.compid=? AND b.employee=? AND a.docno=b.docno AND b.ordered > 0 AND a.status=1 AND a.docno IN ('" + sqlIn + "')";
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -520,7 +520,7 @@ public class GwService extends Svc{
     private List<HashMap<String, String>> getReceivedDocList(String compId, String userNo){
         List<HashMap<String, String>> result = null;
         HashMap<String, String> each = null;
-        String sql = "SELECT CAST(a.no AS CHAR) AS no, a.docno AS docno, CAST(a.writer AS CHAR) AS writer, CAST(UNIX_TIMESTAMP(a.created)*1000 AS CHAR) AS created, c.title AS form, a.title AS title, CAST(UNIX_TIMESTAMP(b.`read`)*1000 AS CHAR) AS `read`, CAST(b.apptype AS CHAR) AS appType FROM bizcore.doc_app a, bizcore.doc_app_detail b, bizcore.doc_form c WHERE a.docno = b.docno AND a.compId = b.compId AND b.approved IS NULL AND b.rejected IS NULL AND a.formid = c.id AND a.status = 2 AND b.appType = 3 AND a.compId = ? AND b.employee = ? ORDER BY no";
+        String sql = "SELECT CAST(a.no AS CHAR) AS no, a.docno AS docno, CAST(a.writer AS CHAR) AS writer, CAST(UNIX_TIMESTAMP(a.created)*1000 AS CHAR) AS created, c.title AS form, a.title AS title, CAST(UNIX_TIMESTAMP(b.`read`)*1000 AS CHAR) AS `read`, CAST(b.apptype AS CHAR) AS appType FROM bizcore.doc_app a, bizcore.doc_app_detail b, bizcore.doc_form c WHERE b.deleted IS NULL AND a.docno = b.docno AND a.compId = b.compId AND b.approved IS NULL AND b.rejected IS NULL AND a.formid = c.id AND a.status = 2 AND b.appType = 3 AND a.compId = ? AND b.employee = ? ORDER BY no";
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
