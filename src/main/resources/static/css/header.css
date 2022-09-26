@@ -152,8 +152,8 @@ button, select, input[type="text"]{
 	width: 28px;
 	height: 28px;
 	color: #ffffff;
-	border-color: #302D81;
-	background-color: #302D81;
+	border-color: #2147b1;
+	background-color: #2147b1;
 	cursor: pointer;
 }
 
@@ -163,8 +163,8 @@ button, select, input[type="text"]{
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	color:#182f81;
-	border:1px solid #182f81;
+	color:#2147b1;
+	border:1px solid #2147b1;
 	background-color:#ebefff;
 }
 /* 페이지네이션 끝 */
@@ -217,9 +217,13 @@ button, select, input[type="text"]{
 /* crud 폼 끝 */
 
 /* detail */
-/* .detailContents{
+.detailContents{
 	padding: 20px;
-} */
+}
+
+.detailBoard .detailContents{
+	padding:0;
+}
 
 .detailContents .detailViewContainer{
 	width: 100%;
@@ -296,6 +300,10 @@ button, select, input[type="text"]{
 .detailBtns > button:hover{
 	box-shadow: 0 1px 2px #bdbfc9;
 	background-color:#0e2b7e;
+}
+
+.scheduleContainer .detailBtns{
+	margin:20px;
 }
 
 /* tab 시작 */
@@ -481,7 +489,7 @@ input[name="tabItem"] {
 	justify-content: right;
 	color: #ebefff;
     box-shadow: 0 1px 1px #bdbfc9;
-    background-color: #182f81;
+    background-color: #2147b1;
     padding: 0 14px;
     height: 30px;
     border-radius: 5px;
@@ -491,18 +499,17 @@ input[name="tabItem"] {
 }
 
 .searchContainer .searchBtns > button:hover{
-	color: #182f81;
 	box-shadow: 0 1px 2px #bdbfc9;
-	background-color:#ebefff;
+	background-color:#0e2b7e;
 }
 
 .searchContainer .searchInputContent{
-	padding: 10px;
+	padding: 20px;
 }
 
 .searchContainer .searchInputContent > input{
 	width: -webkit-fill-available;
-    height: 40px;
+    height: 34px;
     padding: 0 10px;
     font-size: 1.1rem;
     font-weight: 500;
@@ -525,7 +532,8 @@ input[name="tabItem"] {
 .searchContainer .searchMultiContent div > input,
 .searchContainer .searchMultiContent div > select{
 	width: -webkit-fill-available;
-    height: 40px;
+    height: 34px;
+	margin-top:10px;
     padding: 0 10px;
     font-size: 1.1rem;
     font-weight: 500;

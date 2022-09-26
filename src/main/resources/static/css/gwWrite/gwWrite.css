@@ -77,14 +77,15 @@ input[type="text"] {
 } */
 
 .ContentDiv .gwWriteBtns button {
-  color: #406c92;
+  color: #eaeff3;
   font-size: 14px;
   border: none;
-  background-color: #eaeff3;
-  height: 24px;
-  padding: 0 0.8em;
+  background-color:#406c92;
+  height: 26px;
+  padding: 0 0.7em;
   margin: 0 5px;
   box-shadow: 0px 1px 4px #c1c6cb;
+  border-radius: 5px;
 }
 
 .ContentDiv .gwWriteBtns button:hover {
@@ -104,7 +105,7 @@ input[type="text"] {
 
 .selector>div>.guide {
   font-weight: 100;
-  padding-left: 0.6em;
+  padding: 0.6em 0 0 0;
 }
 
 .ContentDiv>div:nth-child(n+1):nth-child(-n+2) {
@@ -121,13 +122,17 @@ input[type="text"] {
   height: 35px;
   float: left;
   overflow: hidden;
-  line-height: 35px;
+  /* line-height: 20px; */
+  display: flex; 
+  align-items: center;
+  margin-right:12px;
+  border:1px solid #c3c3c3; 
 }
 
-.selector .formDetail:last-of-type {
+/* .selector .formDetail:last-of-type {
   float: left;
   margin-left: 20px;
-}
+} */
 
 .selector .formDetail:last-of-type>div:first-of-type {
   display: flex;
@@ -142,11 +147,6 @@ input[type="text"] {
   padding-right: 1em;
   font-size: 14px;
 
-}
-
-.formDetail div:nth-of-type(2) {
-  display: flex;
-  align-items: center;
 }
 
 .selector .formDetail:last-of-type>div:last-of-type>label input {
@@ -167,9 +167,9 @@ input[type="text"] {
 
 .selector .formDetail .formListDiv .formSelector {
   height: 80%;
-  background-color: #406c92;
-  color: #fff;
-  border: none;
+  background-color:#eaeff3;
+  color: #406c92;
+  border: 1px solid #406c9263;
   position: relative;
   top: 50%;
   transform: translateY(-50%);
@@ -184,14 +184,15 @@ input[type="text"] {
   margin: 0.5em 1em 0.5em 1em;
   float: left;
   height: 70%;
-  background-color: #eaeff3;
-  color: #406c92;
+  background-color:#406c92;
+  color: #eaeff3;
   box-shadow: 0px 1px 2px #c1c6cb;
   padding: 0 0.5em;
+  border-radius: 4px;
 }
 
 .selector .formDetail button:hover {
-  color: #fff;
+  color: #eaeff3;
   background-color: #406c92;
 }
 
@@ -202,6 +203,9 @@ input[type="text"] {
   float: left;
   line-height: 35px;
   padding: 0 1em 0 0.6em;
+  border-right:1px solid #c3c3c3;
+  margin-right:10px;
+  background-color: #efefef;
 }
 
 .selector .formDetail div:first-of-type span {
@@ -238,12 +242,13 @@ input[type="text"] {
 }
 
 .ContentDiv>div:nth-child(3) button {
-  color: #456e95;
-  background-color: #eaeff3;
+  color:#eaeff3 ;
+  background-color: #456e95;
   padding: 0 0.8em;
-  height: 22px;
+  height: 24px;
   box-shadow: 0px 1px 4px #c1c6cb;
   margin-left: 10px;
+  border-radius:5px;
 }
 
 /* End 결재양식 선택  ====================================================   */
@@ -277,6 +282,7 @@ input[type="text"] {
   font-size: 16px;
   margin-left: 18px;
   line-height: 3;
+  color:#fff;
 }
 
 .gwModal {

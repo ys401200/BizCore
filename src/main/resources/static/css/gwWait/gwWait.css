@@ -230,7 +230,7 @@
 /*-------------------------------- 결재정보 변경이력 탭  */
 .listPageDiv .detailReport .comment {
 
-   background-color: #EDEDF4;
+   background-color: #edf0f3;
    margin: 0 1em;
    border-radius: 3px;
 }
@@ -240,6 +240,7 @@
    text-align: center;
    display: grid;
    grid-template-columns: repeat(2, 1fr);
+   font-size: 15px;
 }
 
 .detailReport .comment .reportInfoTab input[type="radio"] {
@@ -250,15 +251,15 @@
 .detailReport .comment .reportInfoTab>label {
    padding: 0.5em;
    cursor: pointer;
-   color: #332E85;
-   background-color: white;
-   border-bottom: 2px solid #332E85;
+   color: #212121;
+   background-color: transparent;
+   border-bottom: 2px solid #cbcbcb;
 }
 
 .detailReport .comment .reportInfoTab>label:first-of-type {
-   color: white;
-   background-color: #332E85;
-   border-bottom: none;
+   color: #212121;
+   background-color: transparent;
+   border-bottom: 2px solid #5298d5;
 }
 
 .comment .tabDetail>div:last-of-type {
@@ -299,7 +300,9 @@
    grid-template-columns: 10% 90%;
    margin: 0.5em 1em;
    background-color: white;
-
+   border-radius: 10px;
+   box-shadow: 0 2px 5px rgb(168 173 179 / 80%);
+   font-size:15px;
 }
 
 .readDiv>div {
@@ -312,8 +315,8 @@
    display: flex;
    align-items: center;
    justify-content: center;
-   background-color: #332E85;
-   color: white;
+   /* background-color: #332E85; */
+   /* color: white; */
 
 }
 

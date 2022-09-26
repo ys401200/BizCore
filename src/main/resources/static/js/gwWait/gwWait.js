@@ -321,23 +321,23 @@ function fileRemove(obj) {
 // 탭 누를때마다의 이벤트 주기 
 function changeTab(obj) {
 
-	$(obj).css("background-color", "#332E85");
-	$(obj).css("color", "white");
-	$(obj).css("border", "none");
+	$(obj).css("background-color", "transparent");
+	$(obj).css("color", "#212121");
+	$(obj).css("border-bottom", "2px solid #5298d5");
 
 	if (obj.id == 'lineInfo') {
 
-		$("#changeInfo").css("background-color", "white");
-		$("#changeInfo").css("color", "#332E85");
-		$("#changeInfo").css("border-bottom", "2px solid #332E85");
+		$("#changeInfo").css("background-color", "transparent");
+		$("#changeInfo").css("color", "#212121");
+		$("#changeInfo").css("border-bottom", "2px solid #cbcbcb");
 		$("#tabDetail2").hide();
 		$("#tabDetail").show();
 		drawCommentLine();
 
 	} else if (obj.id = 'changeInfo') {
-		$("#lineInfo").css("background-color", "white");
-		$("#lineInfo").css("color", "#332E85");
-		$("#lineInfo").css("border-bottom", "2px solid #332E85");
+		$("#lineInfo").css("background-color", "transparent");
+		$("#lineInfo").css("color", "#212121");
+		$("#lineInfo").css("border-bottom", "2px solid #cbcbcb");
 		$("#tabDetail").hide();
 		$("#tabDetail2").show();
 		drawChangeInfo();
