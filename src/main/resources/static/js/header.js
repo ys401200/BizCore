@@ -2664,3 +2664,21 @@ function headerMyInfo(){
 		$("#logoutBtn").attr("class", "fa-solid fa-person-walking-arrow-right fa-xl");
 	});
 }
+
+function plusBtnClick(e){
+	let thisBtn;
+	thisBtn = $(e);
+
+	if(thisBtn.data("click") == false){
+		thisBtn.html("<i class=\"fa-solid fa-xmark\"></i>");
+		thisBtn.parent().css("bottom", "35%");
+		thisBtn.prev().fadeIn(400);
+		thisBtn.data("click", true);
+	}else{
+		thisBtn.html("<i class=\"fa-solid fa-ellipsis\"></i>");
+		thisBtn.prev().fadeOut(() => {
+			thisBtn.parent().css("bottom", "2%");
+		});
+		thisBtn.data("click", false);
+	}
+}
