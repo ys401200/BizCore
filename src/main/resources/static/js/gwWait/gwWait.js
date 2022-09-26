@@ -221,14 +221,14 @@ function showReportDetail() {
 	let detailHtml = "<div class='mainBtnDiv'><button type='button' onclick='showAppModal()'>결재하기</button>" +
 		"<button type='button' onclick='showGwModal()'>결재선 수정</button>" +
 		"<button type='button' onclick='toWriteMode();createConfirmBtn(this)'>문서 수정</button></div>" +
-		"<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div>"
+		"<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>"
 
 
 	$(".listPageDiv").html(detailHtml);
 
 
 
-	let selectedFileView = "<div class='selectedFileField'><label>첨부파일</label><div><div class='selectedFileDiv'><input class='inputFile' type='file' onchange='setSelectedFiles()'/></div></div></div>"
+	let selectedFileView = "<label>첨부파일</label><div><div class='selectedFileDiv'><input class='inputFile' type='file' onchange='setSelectedFiles()'/></div></div>"
 
 
 	$(".seletedForm").html(testForm);
@@ -676,63 +676,156 @@ function closeGwModal(obj) {
 	if (id == "close") {
 		$(".modal-wrap").hide();
 	} else if (id == 'modify') {
+		let appLine = storage.reportDetailData.appLine;
+		let originLine;
+		let my = storage.my;
+
+		let myOrdered;
+		for (let i = 0; i < appLine.length; i++) {
+			if (appLine[i].employee == my) {
+				myOrdered = appLine[i].ordered;
+				originLine = appLine.slice(0, i + 1);
+			}
+		}
+
+
+		let combineData = [];
+
+
+		// 기존 데이터 넣기 
+		for (let i = 0; i < appLine.length; i++) {
+			if (appLine[i].ordered <= Number(myOrdered)) {
+				combineData.push([appLine[i].appType, appLine[i].employee + ""]);
+			}
+		}
+
+		let target = $(".typeContainer");
+
+
+		for (let i = 0; i < target.length; i++) {
+
+			for (let j = 0; j < target[i].children.length; j++) {
+				let id = (target[i].children[j].id).split("_")[1];
+				let targetId = target[i].id;
+				alert(targetId);
+				if (targetId == "examine") {
+					targetId = 0;
+
+				} else if (targetId == "agree") {
+					targetId = 1;
+				} else if (targetId == "approval") {
+					targetId = 2;
+					alert(targetId);
+				}
+				else if (targetId == "conduct") {
+					targetId = 3;
+				}
+				else if (targetId == "refer") {
+					targetId = 4;
+				}
+
+				combineData.push([targetId, id]);
+			}
+
+		}
+
+		storage.newAppLine = combineData;
+
 		$(".modal-wrap").hide();
+		createNewLine(originLine);
+
 	}
 }
 
 
-// 현재 결재권 이전  + 새로 만든 결재정보 합침 
-function combineLineData() {
-	let appLine = storage.reportDetailData.appLine;
-	let originLine;
-	let my = storage.my;
+function createNewLine(originLine) {
+	let formId = "doc_Form_Consult";
+	let lineTarget = $(".infoline")[0].children[1];
+	lineTarget = $("#" + lineTarget.id);
+	lineTarget.html("");
+	lineTarget.css("display", "block");
+	let newAppLine = storage.newAppLine;
+	let newCombine = [[], [], [], [], []];
 
-	let myApptype;
-	let myOrdered;
-	for (let i = 0; i < appLine.length; i++) {
-		if (appLine[i].employee == my) {
-			myOrdered = appLine[i].ordered;
-			myApptype = appLine[i].appType;
-			originLine = appLine.slice(0, i + 1);
+	for (let i = 0; i < newAppLine.length; i++) {
+		for (let j = 0; j < newCombine.length; j++) {
+			if (i > 0 && newAppLine[i][0] == j) {
+				newCombine[j].push(newAppLine[i][1]);
+			}
 		}
 	}
 
 
-	let combineData = new Array();
+	let testHtml = "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작성</div><div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto' value='" + storage.userRank[storage.user[storage.newAppLine[0][1]].rank][0] + "'></div>" +
+		"<div class='twoBorder'><input type='text' class='inputsAuto' value='" + storage.user[storage.newAppLine[0][1]].userName + "'></div>" +
+		"<div class='twoBorder'><input type='text' class='inputsAuto' value='승인'></div>" +
+		"<div class='dateBorder'><input type='text' class='inputsAuto'value='" + getYmdSlash() + "'></div></div></div>";
+	let testHtml2 = "<div class='lineGridContainer'>";
+	let referHtml = "";
+	let titleArr = ["검토", "합의", "결재", "수신", "참조"];
+	let titleId = ["examine", "agree", "approval", "conduct", "refer"]
+
+	for (let i = 0; i < newCombine.length; i++) {
+		if (newCombine[i].length != 0 && i < 3) { // 해당 결재 타입에 설정된 사람이 없지 않으면서 결재 타입이 검토 합의 결재인 경우 
+			testHtml += "<div class='lineGrid'><div class='lineTitle'>" + titleArr[i] + "</div>"
+		} else if (newCombine[i].length != 0 != 0 && i == 3) { // 결재타입이 수신인 경우 
+			testHtml2 += "<div class='lineGrid'><div class='lineTitle'>" + titleArr[i] + "</div>"
+		}
 
 
-	// 기존 데이터 넣기 
-	for (let i = 0; i < appLine.length; i++) {
-		if (appLine[i].ordered <= Number(myOrdered)) {
-			combineData.push([appLine[i].appType, appLine[i].employee + ""]);
+		for (let j = 0; j < newCombine[i].length; j++) {
+
+			// 수신 
+			if (i == 3) {
+				testHtml2 += "<div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_position" + "' value='" + storage.userRank[storage.user[newCombine[i][j]].rank][0] + "' data-detail='" + storage.user[newCombine[i][j]].rank + "'/></div>" +
+					"<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "' value='" + storage.user[newCombine[i][j]].userName + "' data-detail='" + storage.user[newCombine[i][j]].userNo + "'/></div>" +
+					"<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_status' value='' data-detail=''/></div>" +
+					"<div class='dateBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_approved" + "' value='' data-detail=''/></div></div>"
+			}
+
+			// 참조 
+			else if (i == 4) {
+				referHtml += "<div class='appendName " + formId + "_" + titleId[i] + "' data-detail='" + storage.user[newCombine[i][j]].userNo + "'>" + storage.userRank[newCombine[i][j]][0] + "&nbsp" + storage.user[newCombine[i][j]].userName + "</div>";
+			}
+
+			// 검토 합의 결재 
+			else {
+				testHtml += "<div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_position" + "' value='" + storage.userRank[storage.user[newCombine[i][j]].rank][0] + "' data-detail='" + storage.user[newCombine[i][j]].rank + "'/></div>" +
+					"<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "' value='" + storage.user[newCombine[i][j]].userName + "' data-detail='" + storage.user[newCombine[i][j]].userNo + "'/></div>" +
+					"<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_status' value='' data-detail=''/></div>" +
+					"<div class='dateBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_approved" + "' value='' data-detail=''/></div></div>"
+			}
+
+		}
+
+
+		if (newCombine[i].length != 0 && i < 3) {
+			testHtml += "</div>";
+		} else if (newCombine[i].length != 0 && i == 3) {
+			testHtml2 += "</div>";
 		}
 	}
 
-	let target = $(".typeContainer");
+	testHtml += "</div>";
+	testHtml2 += "</div>";
+
+	testHtml += testHtml2;
+	lineTarget.html(testHtml);
+
+	//$(".referContainer").html(referHtml);
 
 
-	for (let i = 0; i < target.length; i++) {
 
-		for (let j = 0; j < target[i].children.length; j++) {
-			let id = (target[i].children[j].id).split("_")[1];
-			combineData.push([i, id]);
-		}
-
-	}
-
-	// combineData로 새로운 결재선 그리기 originLine = 결재정보 
-	createdCombineLine(originLine);
 
 }
 
 
-function createdCombineLine(data) {
-
-	
 
 
 
-}
+
+
+
 
 
 function check(name) {
