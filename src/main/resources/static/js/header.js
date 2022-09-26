@@ -332,6 +332,87 @@ function init(){
 	}
 }
 
+// 위젯 관련 세팅 및 기본설정
+storage.widget = {};
+storage.widget.chart = [
+    {
+        "size":[2,1],
+        "type":"bar",
+        "period":"monthly",
+        "content":["sales/total","goal/total", "sales/cumulative", "goal/cumulative"]
+    },
+    {
+        "size":[1,1],
+        "type":"pie",
+        "period":"yearly",
+        "content":["sales/cumulative", "goal/cumulative"]
+    }
+];
+storage.widget.schedule = [
+    {
+        "size":[2,1],
+        "type":"list"
+    },
+    {
+        "size":[4,1],
+        "type":"calendar/weekly"
+    },
+    {
+        "size":[4,2],
+        "type":"calendar/monthly"
+    },
+    {
+        "size":[2,1],
+        "type":"calendar/yearly"
+    },
+    {
+        "size":[2,1],
+        "type":"calendar/daily"
+    }
+]
+storage.widget.docApp = [
+    {
+        "size":[4,1],
+        "type":"tile",
+        "content":"wait"
+    },
+    {
+        "size":[2,1],
+        "type":"list",
+        "content":"wait"
+    },
+    {
+        "size":[4,1],
+        "type":"tile",
+        "content":"mydraft"
+    },
+    {
+        "size":[2,1],
+        "type":"list",
+        "content":"due"
+    }
+]
+storage.widget.notice = [
+    {
+        "size":[2,1],
+    }
+];
+storage.widget.sopp = [
+    {
+        "size":[2,1],
+        "type":"list"
+    },
+    {
+        "size":[4,1],
+        "type":"tile"
+    }
+];
+storage.widget.set = [
+    "chart/0",
+    "notice/0",
+    "docApp/1"
+];
+
 //페이징될 때 header, sideMenu active를 위한 함수
 function menuActive(){
 	let i = null, pathName = null, fullStr = null, firstStr = null, lastStr = null, strLength = null, sideMenu = null, mainTopMenu = null;
