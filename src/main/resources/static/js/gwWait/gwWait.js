@@ -552,7 +552,7 @@ function approveBtnEvent() {
 function showGwModal() {
 
 	let setGwModalHtml = "<div class='gwModal'>" +
-		"<div class='modal-title'>결재선 수정(현재 결재단계 이후만 추가/삭제 가능)</div>" +
+		"<div class='modal-title'>결재선 수정( * 현재 결재 단계 이후만 추가/삭제 가능)</div>" +
 		"<div class='lineDetail'>" +
 		"<div class='lineTop'>" +
 		"<div class='innerDetail' id='lineLeft'></div>" +
@@ -733,6 +733,8 @@ function closeGwModal(obj) {
 
 		$(".modal-wrap").hide();
 		createNewLine(originLine);
+		$(".inputsAuto").css("background-color", "white");
+
 
 	}
 }
@@ -756,10 +758,10 @@ function createNewLine(originLine) {
 	}
 
 
-	let testHtml = "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작성</div><div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto' value='" + storage.userRank[storage.user[storage.newAppLine[0][1]].rank][0] + "'></div>" +
-		"<div class='twoBorder'><input type='text' class='inputsAuto' value='" + storage.user[storage.newAppLine[0][1]].userName + "'></div>" +
-		"<div class='twoBorder'><input type='text' class='inputsAuto' value='승인'></div>" +
-		"<div class='dateBorder'><input type='text' class='inputsAuto'value='" + getYmdSlash() + "'></div></div></div>";
+	let testHtml = "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작성</div><div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto' disabled value='" + storage.userRank[storage.user[storage.newAppLine[0][1]].rank][0] + "'></div>" +
+		"<div class='twoBorder'><input type='text' class='inputsAuto' disabled value='" + storage.user[storage.newAppLine[0][1]].userName + "'></div>" +
+		"<div class='twoBorder'><input type='text' class='inputsAuto' disabled value='승인'></div>" +
+		"<div class='dateBorder'><input type='text' class='inputsAuto' disabled value='" + getYmdSlashShort(storage.reportDetailData.appLine[0].read) + "'></div></div></div>";
 	let testHtml2 = "<div class='lineGridContainer'>";
 	let referHtml = "";
 	let titleArr = ["검토", "합의", "결재", "수신", "참조"];
@@ -777,10 +779,10 @@ function createNewLine(originLine) {
 
 			// 수신 
 			if (i == 3) {
-				testHtml2 += "<div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_position" + "' value='" + storage.userRank[storage.user[newCombine[i][j]].rank][0] + "' data-detail='" + storage.user[newCombine[i][j]].rank + "'/></div>" +
-					"<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "' value='" + storage.user[newCombine[i][j]].userName + "' data-detail='" + storage.user[newCombine[i][j]].userNo + "'/></div>" +
-					"<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_status' value='' data-detail=''/></div>" +
-					"<div class='dateBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_approved" + "' value='' data-detail=''/></div></div>"
+				testHtml2 += "<div class='lineSet'><div class='twoBorder'><input type='text' disabled class='inputsAuto " + formId + "_" + titleId[i] + "_position" + "' value='" + storage.userRank[storage.user[newCombine[i][j]].rank][0] + "' data-detail='" + storage.user[newCombine[i][j]].rank + "'/></div>" +
+					"<div class='twoBorder'><input type='text' disabled class='inputsAuto " + formId + "_" + titleId[i] + "' value='" + storage.user[newCombine[i][j]].userName + "' data-detail='" + storage.user[newCombine[i][j]].userNo + "'/></div>" +
+					"<div class='twoBorder'><input type='text'  disabled class='inputsAuto " + formId + "_" + titleId[i] + "_status' value='' data-detail=''/></div>" +
+					"<div class='dateBorder'><input type='text' disabled class='inputsAuto " + formId + "_" + titleId[i] + "_approved" + "' value='' data-detail=''/></div></div>"
 			}
 
 			// 참조 
@@ -790,10 +792,10 @@ function createNewLine(originLine) {
 
 			// 검토 합의 결재 
 			else {
-				testHtml += "<div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_position" + "' value='" + storage.userRank[storage.user[newCombine[i][j]].rank][0] + "' data-detail='" + storage.user[newCombine[i][j]].rank + "'/></div>" +
-					"<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "' value='" + storage.user[newCombine[i][j]].userName + "' data-detail='" + storage.user[newCombine[i][j]].userNo + "'/></div>" +
-					"<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_status' value='' data-detail=''/></div>" +
-					"<div class='dateBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_approved" + "' value='' data-detail=''/></div></div>"
+				testHtml += "<div class='lineSet'><div class='twoBorder'><input type='text' disabled class='inputsAuto " + formId + "_" + titleId[i] + "_position" + "' value='" + storage.userRank[storage.user[newCombine[i][j]].rank][0] + "' data-detail='" + storage.user[newCombine[i][j]].rank + "'/></div>" +
+					"<div class='twoBorder'><input type='text' disabled class='inputsAuto " + formId + "_" + titleId[i] + "' value='" + storage.user[newCombine[i][j]].userName + "' data-detail='" + storage.user[newCombine[i][j]].userNo + "'/></div>" +
+					"<div class='twoBorder'><input type='text'disabled class='inputsAuto " + formId + "_" + titleId[i] + "_status' value='' data-detail=''/></div>" +
+					"<div class='dateBorder'><input type='text' disabled  class='inputsAuto " + formId + "_" + titleId[i] + "_approved" + "' value='' data-detail=''/></div></div>"
 			}
 
 		}
@@ -1037,6 +1039,12 @@ function createConfirmBtn(obj) {
 function getYmdSlash(date) {
 	let d = new Date(date);
 	return (d.getFullYear() % 100) + "/" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "/" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString()) + "&nbsp" + (d.getHours() > 9 ? d.getHours().toString() : "0" + d.getHours().toString()) + ":" + (d.getMinutes() > 9 ? d.getMinutes().toString() : "0" + d.getMinutes().toString()) + ":" + (d.getSeconds() > 9 ? d.getSeconds().toString() : "0" + d.getSeconds().toString());
+}
+
+
+function getYmdSlashShort(date) {
+	let d = new Date(date);
+	return (d.getFullYear() % 100) + "/" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "/" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString());
 }
 
 

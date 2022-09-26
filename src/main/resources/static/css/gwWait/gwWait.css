@@ -114,6 +114,12 @@
 }
 
 
+
+.inputsAuto {
+   padding: 0.5% 0.7%;
+   text-align: center;
+}
+
 /*-------------------------------- 상세조회 페이지 상단 버튼  */
 
 
@@ -199,6 +205,11 @@
 .listPageDiv .detailReport .selectedReportview .referDiv>div,
 .listPageDiv .detailReport .selectedReportview .referDiv>label {
    border: 1px solid black;
+}
+
+.listPageDiv .detailReport .selectedReportview .referDiv>div {
+   display: grid;
+   grid-template-columns: repeat(5, 1fr);
 }
 
 .listPageDiv .detailReport .selectedReportview>div:last-of-type>div,
@@ -300,7 +311,7 @@
    background-color: white;
    border-radius: 10px;
    box-shadow: 0 2px 5px rgb(168 173 179 / 80%);
-   font-size:15px;
+   font-size: 15px;
 }
 
 .readDiv>div {
