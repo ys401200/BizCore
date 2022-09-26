@@ -262,10 +262,10 @@ public class GwService extends Svc{
         String sql3 = "SELECT doc FROM bizcore.doc_app_detail WHERE deleted IS NULL AND compId = ? AND ordered = (SELECT MAX(ordered) FROM bizcore.doc_app_detail WHERE deleted IS NULL AND compId = ? AND docNo = ? AND retrieved IS NULL AND (approved IS NOT NULL OR rejected IS NOT NULL)) AND docNo = ?";
         String no = null, writer = null, formId = null, docbox = null, title = null, confirmNo = null;
         String ordered = null, employee = null, appType = null, read = null, isModify = null, approved = null, rejected = null, comment = null, appData = null, t = null, doc = null;
-        String docStatus = null, appCurrent = null, files = null;
+        String docStatus = null, appCurrent = null, files = null, revisionHistory = null;
         HashSet<String> appBefore = new HashSet<>(), appNext = new HashSet<>(), appRead = new HashSet<>(), appReceiver = new HashSet<>(), appAll = new HashSet<>();  
-        List<HashMap<String, String>> fileList = null;
-        HashMap<String, String> file = null;
+        List<HashMap<String, String>> list = null;
+        HashMap<String, String> each = null;
         boolean readable = false;
         ArrayList<String> appLine = null;
         Connection conn = null;
@@ -420,17 +420,31 @@ public class GwService extends Svc{
 
             // ========== ↓ 첨부파일 이름 가져오기 시작 ==========
             files = "[";
-            fileList = systemMapper.getAttachedFileList(compId, "appDoc", strToInt(no));
-            if(fileList != null && fileList.size() > 0) for(x = 0 ; x < fileList.size() ; x++){
-                file = fileList.get(x);
+            list = systemMapper.getAttachedFileList(compId, "appDoc", strToInt(no));
+            if(list != null && list.size() > 0) for(x = 0 ; x < list.size() ; x++){
+                each = list.get(x);
                 if(x > 0)   files += ",";
-                files += ("{\"fileName\":\"" + file.get("fileName") + "\",");
-                files += ("\"size\":" + file.get("size") + ",");
-                files += ("\"removed\":" + file.get("removed").equals("1") + "}");
+                files += ("{\"fileName\":\"" + each.get("fileName") + "\",");
+                files += ("\"size\":" + each.get("size") + ",");
+                files += ("\"removed\":" + each.get("removed").equals("1") + "}");
             }
             files += "]";
 
-            // ========== ↓ 첨부파일 이름 가져오기 종료 ==========
+            // ========== ↑ 첨부파일 이름 가져오기 종료 ==========
+
+            // ========== ↓ 문서 수정이력 가져오기 시작 ==========
+            revisionHistory = "[";
+            list = gwMapper.getRevisionHistory(compId, docNo);
+            if(list != null && list.size() > 0) for(x = 0 ; x < list.size() ; x++){
+                each = list.get(x);
+                if(x > 0)   revisionHistory += ",";
+                revisionHistory += ("{\"employee\":" + each.get("employee") + ",");
+                revisionHistory += ("\"date\":" + each.get("created") + ",");
+                revisionHistory += ("\"content\":" + each.get("content") + "}");
+            }
+            revisionHistory += "]";
+
+            // ========== ↑ 문서 수정이력 가져오기 종료 ==========
 
             // ========== ↓ 결재 문서 읽기 시작 ==========
             pstmt = conn.prepareStatement(sql3);
@@ -469,12 +483,13 @@ public class GwService extends Svc{
             result += ("\"status\":\"" + docStatus + "\",");
             result += ("\"readable\":\"" + (readable ? "dept" : "none") + "\",");
             result += ("\"appLine\":" + t + ",");
+            result += ("\"revisionHistory\":" + revisionHistory + ",");
             result += ("\"fileList\":" + files + ",");
             result += ("\"doc\":\"" + encAes(doc, aesKey, aesIv) + "\"}");
             
         }catch(SQLException e){e.printStackTrace();}
 
-        gwMapper.serDocReadTime(compId, userNo, docNo);
+        gwMapper.setDocReadTime(compId, userNo, docNo);
 
         return result;
     } // End of getAppDocAndDetailInfo()
