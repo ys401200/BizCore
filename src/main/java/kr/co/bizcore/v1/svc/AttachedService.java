@@ -150,22 +150,6 @@ public class AttachedService extends Svc{
         return true;
     }
 
-    public int deleteAttachedFile(String compId, String funcName, int no, String fileName) {
-        String rootPath = null, path = null, savedName = null, s = File.separator;
-        File file = null;
-
-        rootPath = fileStoragePath + s + compId;
-        savedName = systemMapper.getAttachedFileName(compId, funcName, no, fileName);
-
-        path = rootPath + s + funcName + s + no + s + savedName;
-        file = new File(path);
-        if(!file.exists())      return -2;
-        else if(file.delete()){
-            systemMapper.deleteAttachedFile(compId, funcName, no, fileName);
-            return 0;
-        }else                    return -1;
-    }
-
     public String getAttachedFileList(String compId, String funcName, int funcNo) {
         String result = "[";
         List<HashMap<String, String>> list = null;

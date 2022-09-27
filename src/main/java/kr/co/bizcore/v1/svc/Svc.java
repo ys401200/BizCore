@@ -15,6 +15,7 @@ import kr.co.bizcore.v1.mapper.ContractMapper;
 import kr.co.bizcore.v1.mapper.DeptMapper;
 import kr.co.bizcore.v1.mapper.GwFormMapper;
 import kr.co.bizcore.v1.mapper.GwMapper;
+import kr.co.bizcore.v1.mapper.NotesMapper;
 import kr.co.bizcore.v1.mapper.ProcureMapper;
 import kr.co.bizcore.v1.mapper.ProductMapper;
 import kr.co.bizcore.v1.mapper.SalesMapper;
@@ -102,6 +103,12 @@ public abstract class Svc {
     protected GwMapper gwMapper;
 
     @Autowired
+    protected NotesMapper notesMapper;
+
+    @Autowired 
+    protected NotesService notes;
+
+    @Autowired
     protected SqlSessionTemplate sqlSession;
 
     public static String fileStoragePath;
@@ -113,6 +120,22 @@ public abstract class Svc {
     protected DataFactory dataFactory = DataFactory.getFactory();
 
     public boolean debug(){return DEBUG;}
+
+    public int deleteAttachedFile(String compId, String funcName, int no, String fileName) {
+        String rootPath = null, path = null, savedName = null, s = File.separator;
+        File file = null;
+
+        rootPath = fileStoragePath + s + compId;
+        savedName = systemMapper.getAttachedFileName(compId, funcName, no, fileName);
+
+        path = rootPath + s + funcName + s + no + s + savedName;
+        file = new File(path);
+        if(!file.exists())      return -2;
+        else if(file.delete()){
+            systemMapper.deleteAttachedFile(compId, funcName, no, fileName);
+            return 0;
+        }else                    return -1;
+    }
 
     public int getCurrentWeek(){
         int result = -1;

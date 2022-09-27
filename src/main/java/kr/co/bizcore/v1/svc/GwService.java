@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -562,5 +563,171 @@ public class GwService extends Svc{
         }catch(SQLException e){e.printStackTrace();}
         return result;
     }
+
+    // 결재문서 처리 메서드 / 데이터가 null이 아닌 경우 결재문서에 대한 수정 처리
+    public String askAppDoc(String compId, String docNo, int ordered, int ask, String comment, String doc,
+            String[][] appLine, String[] files, HashMap<String, String> attached, String appData, String userNo) {
+        String result = null, revision = null, savedName = null, fileName = null, t = null;
+        JSONObject json = null;
+        int writer = -9999, appType = -9999, no = -9999, x = -1, y = -1;
+        List<String> prvFiles = null, tFiles = null, newFiles = null;
+        HashMap<String, Integer> next = null;
+        long size = -1;
+        boolean find = false;
+
+        writer = gwMapper.getAppDocWriter(compId, docNo);
+        appType = gwMapper.getAppType(compId, docNo, ordered);
+        no = gwMapper.getSN(compId, docNo);
+
+        // 문서 반려 처리
+        if(ask == 0){
+            // 결배문서의 반려 처리에 대한 알림 입력
+            notes.sendNewNotes(compId, 0, writer, "결재문서가 반려되었습니다.", "{\"func\":\"docApp\",\"no\":\"" + docNo + "\"}");
+            gwMapper.setDocAppLineRejected(compId, docNo, ordered);
+            gwMapper.setDocAppRejected(compId, docNo);
+            result = "ok";
+        }
+
+        // 결재문서 승인 처리
+        if(ask == 1){
+
+            // 문서 수정여부 확인 / 수정이 이루어진 경우 수정 이력 반영 필요
+            if(doc != null || appLine != null || files != null){
+                json = new JSONObject();
+                
+                // 수정된 결재문서에 대한 처리
+                if(doc != null){
+                    json.put("doc", true);
+                    gwMapper.updateAppDocContent(compId, docNo, ordered, doc);
+                }else{
+                    json.put("doc", false);
+                }
+
+                // 수정된 결재선에 대한 처리
+                if(appLine != null){
+                    json.put("appLine", true);
+                    gwMapper.deleteAppLineSinceEditAppline(compId, docNo, ordered);
+                    
+                    // 현재 결제유형이 "결재"인 경우, 수정된 결재선에 결재자가 존재하는 경우 현재의 결재유형을 검토로 수정함
+                    if(appType == 2){
+                        for(x = 0 ; x < appLine.length ; x++){
+                            if(appLine[x][0].equals("2")){
+                                appType = 0;
+                                gwMapper.changeAppType(compId, docNo, ordered, appType);
+                                break;
+                            }
+                        }
+                    }
+
+                    // 변경된 결재선 DB 입력
+                    y = ((ordered / 10) + 1) * 10;
+                    for(x = 0 ; x < appLine.length ; x++, no = no + 10){
+                        gwMapper.addNewDocAppLine(compId, docNo, y, appLine[x][1], appLine[x][0], null, null);        
+                    }
+                }else{
+                    json.put("appLine", false);
+                } // 결재선의 수정에 대한 처리 종료
+
+                // 수정된 첨부파일에 대한 처리
+                if(files != null && attached != null){
+                    json.put("files", true);
+                    prvFiles = systemMapper.getAttachedList(compId, "docApp", no);
+                    newFiles = new ArrayList<>();
+                    for(x = 0 ; x < files.length ; x++) newFiles.add(files[x]);
+                    
+                    // 기존 파일을 제거하고 신규 파일로 대체된 경우의 처리
+                    tFiles = new ArrayList<>();
+                    for(x = 0 ; x < prvFiles.size() ; x++){
+                        for(y = 0 ; y < newFiles.size() ; y++){
+                            if(prvFiles.get(x).equals(newFiles.get(y))){
+                                fileName = newFiles.get(y);
+                                savedName = attached.get(savedName);
+                                if(savedName != null){
+                                    t = systemMapper.getAttachedFileName(compId, "docApp", no, fileName);
+                                    deleteAttachedFile(compId, "docApp", no, t);
+                                    size = moveTempFile(compId, "docApp", no+"", savedName);
+                                    if(size > 0){
+                                        systemMapper.setAttachedFileData(compId, "docApp", no, fileName, savedName, size);
+                                    }
+                                }
+                                tFiles.add(fileName);
+                            }
+                        }
+                    }
+
+                    // 기 처리된 파일 목록 제거
+                    for(x = 0 ; x < tFiles.size() ; x++){
+                        prvFiles.remove(tFiles.get(x));
+                        newFiles.remove(tFiles.get(x));
+                    }
+
+                    // 제거된 파일에 대한 처리
+                    tFiles = new ArrayList<>();
+                    for(x = 0 ; x < prvFiles.size() ; x++){
+                        find = false;
+                        for(y = 0 ; y < newFiles.size() ; y++){
+                            if(prvFiles.get(x).equals(newFiles.get(y))){
+                                find = true;
+                                break;
+                            }
+                        }
+                        if(!find)   tFiles.add(prvFiles.get(y));
+                    }
+                    for(x = 0 ; x < tFiles.size() ; x++){
+                        t = tFiles.get(x);
+                        deleteAttachedFile(compId, "docApp", no, t);
+                        prvFiles.remove(t);
+                    }
+
+                    // 추가된 파일에 대한 처리
+                    tFiles = new ArrayList<>();
+                    for(x = 0 ; x < newFiles.size() ; x++){
+                        find = false;
+                        for(y = 0 ; y < prvFiles.size() ; y++){
+                            if(newFiles.get(x).equals(prvFiles.get(y))){
+                                find = true;
+                                break;
+                            }
+                        }
+                        if(!find)   tFiles.add(newFiles.get(y));
+                    }
+                    for(x = 0 ; x < tFiles.size() ; x++){
+                        fileName = tFiles.get(x);
+                        savedName = attached.get(fileName);
+                        size = moveTempFile(compId, "docApp", no+"", savedName);
+                        if(size > 0)    systemMapper.setAttachedFileData(compId, "docApp", no, fileName, savedName, size);
+                    }
+
+                }else{
+                    json.put("files", false);
+                } // 첨부파일 수정에 대한 처리 종료
+                revision = json.toString();
+                gwMapper.setModifiedAppLine(compId, docNo, ordered);
+                gwMapper.addRevisionHistory(compId, docNo, ordered, userNo, revision);
+            } // 문서가 수정된 경우의 처리 종료
+
+            // 결재처리를 기록함
+            gwMapper.setProceedDocAppStatus(compId, docNo, ordered, comment, appData);
+
+            // 남아있는 결재 절차가 있는지 확인함
+            next = gwMapper.getNectAppData(compId, docNo, ordered);
+
+            if(next == null){ // 결재절차가 종료된 경우
+                notes.sendNewNotes(compId, 0, writer, "결재 완료 되었습니다.", "{\"func\":\"docApp\",\"no\":\"" + docNo + "\"}");
+                result = "ok";
+            }else{
+                x = next.get("employee");
+                y = next.get("appType");
+                if(y == 0)      t = "검토";
+                else if(y == 1) t = "합의";
+                else if(y == 2) t = "결재";
+                else            t = "수신";
+                notes.sendNewNotes(compId, 0, x, t + "할 문서가 있습니다.", "{\"func\":\"docApp\",\"no\":\"" + docNo + "\"}");
+                result = "ok";
+            }
+        }
+        
+        return result;
+    } // End of askAppDoc() // 결재 처리 종료
     
 }

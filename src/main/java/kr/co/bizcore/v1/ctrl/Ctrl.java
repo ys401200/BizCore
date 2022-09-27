@@ -13,6 +13,7 @@ import kr.co.bizcore.v1.svc.BoardService;
 import kr.co.bizcore.v1.svc.ContractService;
 import kr.co.bizcore.v1.svc.DeptService;
 import kr.co.bizcore.v1.svc.GwService;
+import kr.co.bizcore.v1.svc.NotesService;
 import kr.co.bizcore.v1.svc.ProcureService;
 import kr.co.bizcore.v1.svc.SalesService;
 import kr.co.bizcore.v1.svc.ScheduleSvc;
@@ -72,6 +73,9 @@ public abstract class Ctrl {
 
     @Autowired
     protected TestService testService;
+
+    @Autowired 
+    protected NotesService notes;
 
     public int strToInt(String str){
         int result = -1;
