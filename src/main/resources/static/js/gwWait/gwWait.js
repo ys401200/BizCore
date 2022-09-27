@@ -213,6 +213,10 @@ function waitDetailView(obj) {// 선택한 그리드의 글 번호 받아오기
 /* 상세 화면 그리기 */
 function showReportDetail() {
 
+
+
+
+
 	let formId = storage.reportDetailData.formId;
 	let testForm = storage.reportDetailData.doc;
 
@@ -227,7 +231,7 @@ function showReportDetail() {
 
 
 
-	let selectedFileView = "<label>첨부파일</label><div><div class='selectedFileDiv'><input class='inputFile' type='file' onchange='setSelectedFiles()'/></div></div>"
+	let selectedFileView = "<label>첨부파일</label><div><input class='inputFile' multiple name='attached[]'type='file' onchange='setSelectedFiles()'/><div class='selectedFileDiv'></div></div>"
 
 
 	$(".seletedForm").html(testForm);
@@ -308,34 +312,66 @@ function showReportDetail() {
 		}
 	}
 
+
+	storage.oriCbContainer = $("input[name='" + formId + "_RD']:checked").attr("id");
+	storage.oriInfo = $(".info").html();
+	storage.oriInsertedContent = $(".insertedContent").html();
+	storage.oriInsertedDataList = $(".insertedDataList").html();
 }
 
 
 
 // 파일 다운로드 
 function getFileArr() {
-	let fileList = storage.reportDetailData.fileList;
-	let no = storage.reportDetailData.no;
 	let target = $(".selectedFileDiv");
-	for (let i = 0; i < fileList.length; i++) {
-		target.append("<div><a href='/api/attached/docapp/" + no + "/" + encodeURI(fileList[i].fileName) + "'>" + fileList[i].fileName + "</a></div>");
+	let html = "";
+	if (storage.newFileData == undefined) {
+		let fileList = storage.reportDetailData.fileList;
+		let no = storage.reportDetailData.no;
+		for (let i = 0; i < fileList.length; i++) {
+			html += "<div><a href='/api/attached/docapp/" + no + "/" + encodeURI(fileList[i].fileName) + "'>" + fileList[i].fileName + "</a></div>";
+		}
+		target.html(html);
+	} else {
+		for (let i = 0; i < storage.newFileData.length; i++) {
+			html += "<div>" + storage.newFileData[i] + "</div>";
+		}
+		target.html(html);
 	}
+
 
 }
 
 // 파일 수정 삭제 
 function getFileModArr() {
-	let fileList = storage.reportDetailData.fileList;
-	let no = storage.reportDetailData.no;
 	let target = $(".selectedFileDiv");
-	target.html("");
-	for (let i = 0; i < fileList.length; i++) {
-		target.append("<div><div>" + fileList[i].fileName + "<button type='button' onclick='fileRemove(this)'>x</button></div></div>")
+	let html = ""
+	if (storage.newFileData == undefined) {
+		let fileList = storage.reportDetailData.fileList;
+
+		for (let i = 0; i < fileList.length; i++) {
+			html += "<div><div class='files' data-detail='" + fileList[i].fileName + "'>" + fileList[i].fileName + "<button type='button' onclick='fileRemove(this)'>x</button></div></div>";
+		}
+		target.html(html);
+	} else {
+		for (let i = 0; i < storage.newFileData.length; i++) {
+			html += "<div><div class='files' data-detail='" + storage.newFileData[i] + "'>" + storage.newFileData[i] + "<button type='button' onclick='fileRemove(this)'>x</button></div></div>";
+		}
+		target.html(html);
 	}
+
+
 }
 
 function fileRemove(obj) {
 	obj.parentElement.remove();
+
+	for (let i = 0; i < $(".files").length; i++) {
+		if (!storage.newFileData.includes($(".files")[i].dataset.detail)) {
+			storage.newFileData.push($(".files")[i].dataset.detail);
+		}
+	}
+
 }
 
 
@@ -354,7 +390,12 @@ function changeTab(obj) {
 		$("#changeInfo").css("border-bottom", "2px solid #cbcbcb");
 		$("#tabDetail2").hide();
 		$("#tabDetail").show();
-		drawCommentLine();
+		if (storage.newAppLine == undefined) {
+			drawCommentLine();
+		} else {
+			drawNewCommentLine();
+		}
+
 
 	} else if (obj.id = 'changeInfo') {
 		$("#lineInfo").css("background-color", "transparent");
@@ -362,6 +403,7 @@ function changeTab(obj) {
 		$("#lineInfo").css("border-bottom", "2px solid #cbcbcb");
 		$("#tabDetail").hide();
 		$("#tabDetail2").show();
+
 		drawChangeInfo();
 
 	}
@@ -444,11 +486,8 @@ function drawCommentLine() {
 }
 
 
-
 function drawNewCommentLine() {
 	let appTypeTitle = ["검토", "합의", "결재", "수신", "참조"];
-	let newLineDate = storage.newAppLine;
-	let myIndex = "";
 	let appLine = storage.reportDetailData.appLine;
 	let my = storage.my;
 	let originAppLine = [];
@@ -543,43 +582,6 @@ function drawNewCommentLine() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //  변경이력 그리는 함수 ajax로 변경 이력 받아옴 
 function drawChangeInfo() {
 	let target = $("#tabDetail2");
@@ -658,7 +660,8 @@ function showAppModal() {
 
 // 결재 타입 값 받아서 결재하기 
 function approveBtnEvent() {
-	// $("input:radio[name='type']").prop("checked", false);
+	let formId = storage.reportDetailData.formId;
+	let fileList = storage.reportDetailData.fileList;
 	let selectVal = $(":radio[name='type']:checked").val();
 	let comment = $(".approvalComment").val();
 	$(".modal-wrap").hide();
@@ -666,22 +669,39 @@ function approveBtnEvent() {
 	let no = storage.reportDetailData.no;
 	let appLine = storage.reportDetailData.appLine;
 	let ordered;
+
+
 	for (let i = 0; i < appLine.length; i++) {
 		if (appLine[i].employee == storage.my) {
 			ordered = appLine[i].ordered;
+			storage.newAppLine = storage.newAppLine.slice((i + 1), storage.newAppLine.length);
 		}
 	}
 
-	selectVal === "approve" ? type = 1 : type = 0;
 
-	let data = {
-		"doc": null,
-		"comment": comment,
-		"files": null,
-		"appLine": null
+
+
+
+	if (
+		storage.oriCbContainer == $("input[name='" + formId + "_RD']:checked").attr("id") &&
+		storage.oriInfo == $(".info").html() &&
+		storage.oriInsertedContent == $(".insertedContent").html() &&
+		storage.oriInsertedDataList == $(".insertedDataList").html()) {
+		storage.newDoc = null;
+	} else {
+		storage.newDoc = $(".seletedForm").html();
 	}
 
 
+	selectVal === "approve" ? type = 1 : type = 0;
+	let data = {
+		"doc": storage.newDoc,
+		"comment": comment,
+		"files": storage.newFileData,
+		"appLine": storage.newAppLine,
+	}
+
+	console.log(data);
 	data = JSON.stringify(data);
 	data = cipher.encAes(data);
 
@@ -897,7 +917,6 @@ function closeGwModal(obj) {
 		createNewLine(originLine);
 		$(".inputsAuto").css("background-color", "white");
 		drawNewCommentLine();
-		storage.approvalData.push(["appLine", combineData]);
 	}
 }
 
@@ -976,23 +995,10 @@ function createNewLine(originLine) {
 	testHtml += testHtml2;
 	lineTarget.html(testHtml);
 
-
-
 	$(".selectedRefer").html(referHtml);
 
 
-
-
 }
-
-
-
-
-
-
-
-
-
 
 function check(name) {
 	let inputLength = $(".testClass");
@@ -1134,69 +1140,44 @@ function setSavedLine(obj) {
 }
 
 
-// 문서 수정 완료 모달 
-// function showModifyModal(obj) {
-// 	let setModifyModalHtml = "<div class='setModifyModal'>" +
-// 		"<div class='modal-title'>문서 수정하기 </div>" +
-// 		"<div class='modal-body'>" +
-// 		"<label>수정 내용<textarea class='modifyComment'></textarea></label>" +
-// 		"</div>" +
-// 		"<div class='close-wrap'>" +
-// 		"<button  onclick='closeModal(this)'>취소</button>" +
-// 		"<button id='set' onclick='reportModify(this)'>수정</button>" +
-// 		"</div></div>";
-// 	$(".modal-wrap").html(setModifyModalHtml);
-// 	$(".modal-wrap").show();
-
-
-// }
-
 // 문서 수정 취소 함수 
 function quitModify() {
 	$("button[name='modConfirm']:last-child").remove();
 	$("button[name='modConfirm']:last-child").remove();
 	toReadMode();
 	$(":file").css("display", "none");
+
 }
 
 
 // 문서 수정시 변경이력에 반영 
 function reportModify(obj) {
-	// let comment = $(".modifyComment").val();
-	// // let modCommentHtml = "<div class='tapLineB changeDataLine'><div class='changeType'>" + "테스트" + "</div><div class='changeName' >" + storage.user[storage.my].userName + "</div><div class='changeDate'>" + getYmdSlash() + "</div><div class='changeCause'>" + comment + "</div></div>";
-	// // let origin = $("#tabDetail2").html();
-	// // origin += modCommentHtml;
-	// $("#tabDetail2").html(origin);
 	$(".modal-wrap").hide();
 	$("button[name='modConfirm']:last-child").remove();
 	$("button[name='modConfirm']:last-child").remove();
-	toReadMode();
-	$(":file").css("display", "none");
-}
 
+	$(":file").css("display", "none");
+	getFileArr();
+	toReadMode();
+
+}
 
 
 //문서 수정 버튼 누르면 수정 완료 버튼 생성 
 function createConfirmBtn(obj) {
-	// //변경이력 보이기 
-	// $("#changeInfo").css("background-color", "#332E85");
-	// $("#changeInfo").css("color", "white");
-	// $("#changeInfo").css("border", "none");
-	// $("#lineInfo").css("background-color", "white");
-	// $("#lineInfo").css("color", "#332E85");
-	// $("#lineInfo").css("border-bottom", "2px solid #332E85");
-	// $("#tabDetail").hide();
-	// $("#tabDetail2").show();
-	// drawChangeInfo();
-
 	let div = document.getElementsByClassName("mainBtnDiv")
 	if (div[0].childElementCount < 4) {
 		$(".mainBtnDiv").append("<button type='button'name='modConfirm' onclick='reportModify()' >수정완료 </button>" +
 			"<button type='button'name='modConfirm' onclick='quitModify()'>수정 초기화</button>");
 	}
-
-	getFileModArr();
 	$(":file").css("display", "inline");
+	getFileModArr();
+
+	storage.newFileData = [];
+	for (let i = 0; i < $(".files").length; i++) {
+		storage.newFileData.push($(".files")[i].dataset.detail);
+	}
+
 }
 
 
@@ -1214,3 +1195,79 @@ function getYmdSlashShort(date) {
 
 
 
+function setSelectedFiles() {
+	let method, data, type, attached;
+	attached = $(document).find("[name='attached[]']")[0].files;
+
+	if (storage.attachedList === undefined || storage.attachedList <= 0) {
+		storage.attachedList = [];
+	}
+
+
+	let fileDataArray = storage.attachedList;
+	for (let i = 0; i < attached.length; i++) {
+		let reader = new FileReader();
+		let fileName;
+
+		fileName = attached[i].name;
+
+		// 파일 중복 등록 제거 
+		if (!fileDataArray.includes(fileName)) {
+			storage.attachedList.push(fileName);
+
+			reader.onload = (e) => {
+				let binary, x, fData = e.target.result;
+				const bytes = new Uint8Array(fData);
+				binary = "";
+				for (x = 0; x < bytes.byteLength; x++) binary += String.fromCharCode(bytes[x]);
+				let fileData = cipher.encAes(btoa(binary));
+				let fullData = (fileName + "\r\n" + fileData);
+
+				let url = "/api/attached/docapp"
+				url = url;
+				method = "post";
+				data = fullData;
+				type = "insert";
+
+				crud.defaultAjax(url, method, data, type, submitFileSuccess, submitFileError);
+			}
+
+			reader.readAsArrayBuffer(attached[i]);
+		}
+	}
+
+
+
+	let html = "";
+
+	storage.newFileData = [];
+
+	for (let i = 0; i < $(".files").length; i++) {
+		if (!storage.newFileData.includes($(".files")[i].dataset.detail)) {
+			storage.newFileData.push($(".files")[i].dataset.detail);
+		}
+	}
+
+	for (let i = 0; i < fileDataArray.length; i++) {
+		if (!storage.newFileData.includes(fileDataArray[i])) {
+			html += "<div><div class='files' data-detail='" + fileDataArray[i] + "'>" + fileDataArray[i] + "<button type='button' onclick='fileRemove(this)'>x</button></div></div>";
+			$(".selectedFileDiv").append(html);
+		}
+	}
+
+
+	for (let i = 0; i < $(".files").length; i++) {
+		if (!storage.newFileData.includes($(".files")[i].dataset.detail)) {
+			storage.newFileData.push($(".files")[i].dataset.detail);
+		}
+	}
+
+
+
+
+
+
+
+
+
+}

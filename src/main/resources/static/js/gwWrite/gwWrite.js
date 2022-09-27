@@ -28,7 +28,7 @@ function getformList() {
 
 
   // lastHtml += "<div>파일첨부</div><div class='filebtnContainer'><input type='file' class='gwFileInput' onchange='drawSelectedFileList(this)' /><div class='insertedFileList'></div></div></div></div>"
-  lastHtml += "<div>파일첨부</div><div class='filebtnContainer'><input type='file' id='attached' name='attached[]' onchange='docFileChange()' /><div class='filePreview'></div></div></div></div>"
+  lastHtml += "<div>파일첨부</div><div class='filebtnContainer'><input type='file' multiple id='attached' name='attached[]' onchange='docFileChange()' /><div class='filePreview'></div></div></div></div>"
 
   $(".selector:first").next().next().html(lastHtml);
 
