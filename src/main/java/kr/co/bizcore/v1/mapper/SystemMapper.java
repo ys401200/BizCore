@@ -80,4 +80,8 @@ public interface SystemMapper {
     @Delete("DELETE FROM bizcore.keep_login WHERE expire < #{expire}")
     public void deleteKeepToken(@Param("expire") long expire);
 
+    // 첨부된 파일명을 받아오는 메서드
+    @Select("SELECT fileName FROM bizcore.attached WHERE compId = #{compId} AND funcName = #{funcName} AND funcNo = #{funcNo}")
+    public List<String> getAttachedList(@Param("compId") String compId, @Param("funcName") String funcName, @Param("funcNo") int no);
+
 }

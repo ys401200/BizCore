@@ -140,11 +140,27 @@ function drawSoppList() {
 	createGrid(container, header, data, ids, job, fnc);
 
 	let path = $(location).attr("pathname").split("/");
+	let menu = [
+		{
+			"keyword": "add",
+			"onclick": "soppInsertForm();"
+		},
+		{
+			"keyword": "notes",
+			"onclick": ""
+		},
+		{
+			"keyword": "set",
+			"onclick": ""
+		},
+	];
 
 	if(path[3] !== undefined){
 		let content = $(".gridContent[data-id=\"" + path[3] + "\"]");
 		soppDetailView(content);
 	}
+
+	plusMenuSelect(menu);
 }
 
 function soppDetailView(e){
@@ -343,9 +359,7 @@ function soppSuccessView(result){
 	html += createTabTradeList(result.trades);
 	conTitleChange("containerTitle", "<a href='#' onclick='detailViewContainerHide(\"영업기회조회\");'>뒤로가기</a>");
 	$(".detailContents").html(html);
-	$(".detailBtns").html("");
 	notIdArray = ["employee"];
-	$(".detailBtns").append("<button type='button' onclick='enableDisabled(this, \"soppUpdate();\", \"" + notIdArray + "\");'>수정</button><button type='button' onclick='soppDelete(" + result.no + ");'>삭제</button>");
 	
 	storage.attachedList = result.attached;
 	storage.attachedNo = result.no;
@@ -356,15 +370,31 @@ function soppSuccessView(result){
 	createTabTechList(result.schedules);
 	createTabSalesList(result.schedules);
 
-	$(".detailBtns").show();
 	$(".detailContents").show();
 	
 	detailTabHide("tabContentAll");
 
 	setTimeout(() => {
-		$(document).find("#status option[value='" + result.status + "']").prop("selected" ,true);
-		$(document).find("#contType option[value='" + result.contType + "']").prop("selected" ,true);
-		$(document).find("#soppType option[value='" + result.soppType + "']").prop("selected" ,true);
+		$("#status option[value='" + result.status + "']").prop("selected" ,true);
+		$("#contType option[value='" + result.contType + "']").prop("selected" ,true);
+		$("#soppType option[value='" + result.soppType + "']").prop("selected" ,true);
+
+		let menu = [
+			{
+				"keyword": "add",
+				"onclick": "soppInsertForm();"
+			},
+			{
+				"keyword": "edit",
+				"onclick": "enableDisabled(this, \"soppUpdate();\", \"" + notIdArray + "\");"
+			},
+			{
+				"keyword": "delete",
+				"onclick": "soppDelete(" + result.no + ");"
+			},
+		];
+
+		plusMenuSelect(menu);
 		setTiny();
 		tinymce.activeEditor.mode.set('readonly');
 		inputDataList();
@@ -524,30 +554,30 @@ function soppInsertForm(){
 		nowDate = new Date();
 		nowDate = nowDate.toISOString().substring(0, 10);
 
-		$(document).find("#employee").val(storage.user[my].userName);
-		$(document).find("#targetDate").val(nowDate);
+		$("#employee").val(storage.user[my].userName);
+		$("#targetDate").val(nowDate);
 	}, 100);
 }
 
 function soppInsert(){
 	let title, employee, customer, picOfCustomer, endUser, status, progress, contType, targetDate, soppType, expectedSales, detail, data;
 
-	title = $(document).find("#title").val();
-	employee = $(document).find("#employee");
+	title = $("#title").val();
+	employee = $("#employee");
 	employee = dataListFormat(employee.attr("id"), employee.val());
-	customer = $(document).find("#customer");
+	customer = $("#customer");
 	customer = dataListFormat(customer.attr("id"), customer.val());
-	picOfCustomer = $(document).find("#picOfCustomer");
+	picOfCustomer = $("#picOfCustomer");
 	picOfCustomer = dataListFormat(picOfCustomer.attr("id"), picOfCustomer.val());
-	endUser = $(document).find("#endUser");
+	endUser = $("#endUser");
 	endUser = dataListFormat(endUser.attr("id"), endUser.val());
-	status = $(document).find("#status").val();
-	progress = $(document).find("#progress").val();
-	contType = $(document).find("#contType").val();
-	targetDate = $(document).find("#targetDate").val();
+	status = $("#status").val();
+	progress = $("#progress").val();
+	contType = $("#contType").val();
+	targetDate = $("#targetDate").val();
 	targetDate = new Date(targetDate).getTime();
-	soppType = $(document).find("#soppType").val();
-	expectedSales = $(document).find("#expectedSales").val().replaceAll(",", "");
+	soppType = $("#soppType").val();
+	expectedSales = $("#expectedSales").val().replaceAll(",", "");
 	detail = tinymce.activeEditor.getContent();
 
 	url = "/api/sopp";
@@ -586,22 +616,22 @@ function soppErrorInsert(){
 function soppUpdate(){
 	let title, employee, customer, picOfCustomer, endUser, status, progress, contType, targetDate, soppType, expectedSales, detail;
 
-	title = $(document).find("#title").val();
-	employee = $(document).find("#employee");
+	title = $("#title").val();
+	employee = $("#employee");
 	employee = dataListFormat(employee.attr("id"), employee.val());
-	customer = $(document).find("#customer");
+	customer = $("#customer");
 	customer = dataListFormat(customer.attr("id"), customer.val());
-	picOfCustomer = $(document).find("#picOfCustomer");
+	picOfCustomer = $("#picOfCustomer");
 	picOfCustomer = dataListFormat(picOfCustomer.attr("id"), picOfCustomer.val());
-	endUser = $(document).find("#endUser");
+	endUser = $("#endUser");
 	endUser = dataListFormat(endUser.attr("id"), endUser.val());
-	status = $(document).find("#status").val();
-	progress = $(document).find("#progress").val().replaceAll("%", "");
-	contType = $(document).find("#contType").val();
-	targetDate = $(document).find("#targetDate").val();
+	status = $("#status").val();
+	progress = $("#progress").val().replaceAll("%", "");
+	contType = $("#contType").val();
+	targetDate = $("#targetDate").val();
 	targetDate = new Date(targetDate).getTime();
-	soppType = $(document).find("#soppType").val();
-	expectedSales = $(document).find("#expectedSales").val().replaceAll(",", "");
+	soppType = $("#soppType").val();
+	expectedSales = $("#expectedSales").val().replaceAll(",", "");
 	detail = tinymce.activeEditor.getContent();
 
 	url = "/api/sopp/" + storage.attachedNo;

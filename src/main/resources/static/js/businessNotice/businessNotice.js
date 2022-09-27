@@ -87,11 +87,27 @@ function drawNoticeList() {
 	createGrid(container, header, data, ids, job, fnc);
 
 	let path = $(location).attr("pathname").split("/");
+	let menu = [
+		{
+			"keyword": "add",
+			"onclick": "noticeInsertForm();"
+		},
+		{
+			"keyword": "notes",
+			"onclick": ""
+		},
+		{
+			"keyword": "set",
+			"onclick": ""
+		},
+	];
 
 	if(path[3] !== undefined){
 		let content = $(".gridContent[data-id=\"" + path[3] + "\"]");
 		noticeDetailView(content);
 	}
+
+	plusMenuSelect(menu);
 }// End of drawNoticeList()
 
 function noticeDetailView(e) {// 선택한 그리드의 글 번호 받아오기 
@@ -167,9 +183,25 @@ function noticeSuccessView(result){
 	detailBoardContainerHide();
 	storage.gridContent.after(html);
 	notIdArray = ["writer", "created"];
-	$(".detailBtns").html("<button type='button' onclick='enableDisabled(this, \"noticeUpdate();\", \"" + notIdArray + "\");'>수정</button><button type='button' onclick='noticeDelete(" + result.no + ");'>삭제</button><button type='button' onclick='detailBoardContainerHide();'>닫기</button>");
+	$(".detailBtns").html("<button type='button' onclick='detailBoardContainerHide();'><i class=\"fa-solid fa-xmark fa-xl\"></i></button>");
 
 	setTimeout(() => {
+		let menu = [
+			{
+				"keyword": "add",
+				"onclick": "noticeInsertForm();"
+			},
+			{
+				"keyword": "edit",
+				"onclick": "enableDisabled(this, \"noticeUpdate();\", \"" + notIdArray + "\");"
+			},
+			{
+				"keyword": "delete",
+				"onclick": "noticeDelete(" + result.no + ");"
+			},
+		];
+
+		plusMenuSelect(menu);
 		setTiny();
 		tinymce.activeEditor.mode.set('readonly');
 		inputDataList();
@@ -217,16 +249,16 @@ function noticeInsertForm(){
 		let my;
 		my = storage.my;
 
-		$(document).find("#writer").val(storage.user[my].userName);
+		$("#writer").val(storage.user[my].userName);
 	}, 100);
 }
 
 function noticeInsert(){
 	let title, content, writer, data;
 
-	title = $(document).find("#title").val();
+	title = $("#title").val();
 	content = tinymce.activeEditor.getContent();
-	writer = $(document).find("#writer");
+	writer = $("#writer");
 	writer = dataListFormat(writer.attr("id"), writer.val());
 
 	url = "/api/notice";
@@ -256,9 +288,9 @@ function noticeErrorInsert(){
 function noticeUpdate(){
 	let title, content, writer;
 
-	title = $(document).find("#title").val();
+	title = $("#title").val();
 	content = tinymce.activeEditor.getContent();
-	writer = $(document).find("#writer");
+	writer = $("#writer");
 	writer = dataListFormat(writer.attr("id"), writer.val());
 
 	url = "/api/notice/" + storage.detailNoticeNo;

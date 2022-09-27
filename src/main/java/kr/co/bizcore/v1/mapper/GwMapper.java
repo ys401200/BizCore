@@ -50,4 +50,56 @@ public interface GwMapper {
     // 결재문서의 변경 내역을 가져오는 메서드
     @Select("SELECT CAST(employee AS CHAR) AS employee, CAST(UNIX_TIMESTAMP(created)*1000 AS CHAR) AS created, content FROM bizcore.doc_app_revision WHERE compId = #{compId} AND docNo = #{docNo} ORDER BY created")
     public List<HashMap<String, String>> getRevisionHistory(@Param("compId") String compId, @Param("docNo") String docNo);
+
+    // 결재문서의 수정 이력을 등록하는 매서드
+    @Insert("INSERT INTO bizcore.doc_app_revision(compId, docNo, ordered, employee, content) VALUES(#{compId}, #{docNo}, #{ordered}, #{employee}, #{content})")
+    public int addRevisionHistory(@Param("compId") String compId, @Param("docNo") String docNo, @Param("ordered") int ordered, @Param("employee") int employee, @Param("content") String content);
+
+    // 문서번호를 입력받아서 작성자를 전달하느 메서드
+    @Select("SELECT writer FROM bizcore.doc_app WHERE deleted IS NULL AND compId = #{compId} AND docNo = #{docNo}")
+    public int getAppDocWriter(@Param("compId") String compId, @Param("docNo") String docNo);
+
+    // 결재선에 반려처리를 기록하는 메서드
+    @Update("UPDATE bizcore.doc_app_detail SET rejected = NOW() WHERE compId = #{compId} AND docNo = #{docNo} AND ordered = #{ordered}")
+    public int setDocAppLineRejected(@Param("compId") String compId, @Param("docNo") String docNo, @Param("ordered") int ordered);
+
+    // 결재문서를 반려처리하는 메서드
+    @Update("UPDATE bizcore.doc_app SET status = -3 WHERE compId = #{compId} AND docNo = #{docNo}")
+    public int setDocAppRejected(@Param("compId") String compId, @Param("docNo") String docNo);
+
+    // 문서 관리번호를 입력받아서 일련번호를 받아오는 메서드
+    @Select("SELECT no FROM bizcore.doc_app WHERE compId = #{compId} AND docNo = #{docNo}")
+    public int getSN(@Param("compId") String compId, @Param("docNo") String docNo);
+
+    // 결재처리시 본문이 수정된 경우 이를 반영하는 메서드
+    @Update("UPDATE bizcore.doc_app_detail SET doc = #{doc}, isModify = 1 WHERE compId = #{compId} AND docNo = #{docNo} AND ordered = #{ordered}")
+    public int updateAppDocContent(@Param("compId") String compId, @Param("docNo") String docNo, @Param("ordered") int ordered, @Param("doc") String doc);
+
+    // 결재처리시 수정되었음을 결재선에 세팅하는 메서드
+    @Update("UPDATE bizcore.doc_app_detail SET isModify = 1 WHERE compId = #{compId} AND docNo = #{docNo} AND ordered = #{ordered}")
+    public int setModifiedAppLine(@Param("compId") String compId, @Param("docNo") String docNo, @Param("ordered") int ordered);
+
+    // 결재처리시 결재선이 수정된 경우 수정자 이후의 결재선을 삭제처리하는 메서드
+    @Update("UPDATE bizcore.doc_app_detail SET deleted = NOW() WHERE compId = #{compId} AND docNo = #{docNo} AND ordered > #{ordered}")
+    public int deleteAppLineSinceEditAppline(@Param("compId") String compId, @Param("docNo") String docNo, @Param("ordered") int ordered);
+
+    // 현재 결재자의 결재 타입을 가져오는 메서드
+    @Select("SELECT appType FROM bizcore.doc_app_detail WHERE compId = #{compId} AND docNo = #{docNo} AND ordered = #{ordered}")
+    public int getAppType(@Param("compId") String compId, @Param("docNo") String docNo, @Param("ordered") int ordered);
+
+    // 결재처리시, 결재선 변경 중 현재 결재 타입을 변경처리하는 메서드
+    @Update("UPDATE bizcore.doc_app_detail SET appType = #{appType} WHERE compId = #{compId} AND docNo = #{docNo} AND ordered > #{ordered}")
+    public int changeAppType(@Param("compId") String compId, @Param("docNo") String docNo, @Param("ordered") int ordered, @Param("appType") int appType);
+
+    // 결재문서의 리비전 히스토리를 기록하는 메서드
+    @Insert("INSERT INTO bizcore.doc_app_revision(compId, docNo, ordered, employee, content) VALUES(#{compId}, #{docNo}, #{ordered}, #{employee}, #{content})")
+    public int addRevisionHistory2(@Param("compId") String compId, @Param("docNo") String docNo, @Param("ordered") int ordered, @Param("employee") String userNo , @Param("content") String revision);
+
+    // 결재선에 결재처리를 기록하는 메서드
+    @Update("UPDATE bizcore.doc_app_detail SET approved = NOW(), comment = #{comment}, appData = #{appData} WHERE deleted IS NULL AND compId = #{compId} AND docNo = #{docNo} AND ordered = #{ordered}")
+    public int setProceedDocAppStatus(@Param("compId") String compId, @Param("docNo") String docNo, @Param("ordered") int ordered, @Param("comment") String comment, @Param("appData") String appData);
+
+    // 다음 결재자 정보를 가져오는 메서드
+    @Select("SELECT employee, appType FROM bizcore.doc_app_detail WHERE deleted IS NULL AND appType < 4 AND compId = #{compId} AND docNo = #{docNo} AND ordered > (SELECT min(ordered) FROM bizcore.doc_app_detail WHERE deleted IS NULL AND appType < 4 AND compId = #{compId} AND docNo = #{docNo} AND ordered > #{ordered}")
+    public HashMap<String, Integer> getNextAppData(@Param("compId") String compId, @Param("docNo") String docNo, @Param("ordered") int ordered);
 }

@@ -37,14 +37,14 @@
 <div id="loadingDiv" style="width: 100%; height: 100%;"></div>
 <div class="plusContentBtn">
 	<div class="plusItems">
-		<button type="button" class="plusWidgetItem"><i class="fa-solid fa-screwdriver-wrench"></i></button>
-		<button type="button" class="plusApplovalItem"><i class="fa-solid fa-gear"></i></button>
-		<button type="button" class="plusNotesItem"><i class="fa-solid fa-paper-plane"></i></button>
-		<button type="button" class="plusDeleteItem"><i class="fa-solid fa-trash-can"></i></button>
-		<button type="button" class="plusEditItem"><i class="fa-solid fa-pen-to-square"></i></button>
-		<button type="button" class="plusAddItem"><i class="fa-solid fa-pencil"></i></button>
+		<button type="button" data-keyword="widget" data-status="false" class="plusWidgetItem"><i class="fa-solid fa-screwdriver-wrench fa-2xl"></i></button>
+		<button type="button" data-keyword="set" data-status="false" class="plusSetItem"><i class="fa-solid fa-gear fa-2xl"></i></button>
+		<button type="button" data-keyword="notes" data-status="false" class="plusNotesItem"><i class="fa-solid fa-paper-plane fa-2xl"></i></button>
+		<button type="button" data-keyword="delete" data-status="false" class="plusDeleteItem"><i class="fa-solid fa-trash-can fa-2xl"></i></button>
+		<button type="button" data-keyword="edit" data-status="false" class="plusEditItem"><i class="fa-solid fa-pen-to-square fa-2xl"></i></button>
+		<button type="button" data-keyword="add" data-status="false" class="plusAddItem"><i class="fa-solid fa-pencil fa-2xl"></i></button>
 	</div>
-	<button type="button" data-click="false" onclick="plusBtnClick(this);"><i class="fa-solid fa-ellipsis"></i></button>
+	<button type="button" id="plusBtn" data-click="false" onclick="plusBtnClick(this);"><i class="fa-solid fa-ellipsis"></i></button>
 </div>
 <jsp:include page="./modal/modal.jsp"/>
 <div id="header">

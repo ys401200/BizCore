@@ -379,15 +379,16 @@ function fileRemove(obj) {
 // 탭 누를때마다의 이벤트 주기 
 function changeTab(obj) {
 
-	$(obj).css("background-color", "transparent");
-	$(obj).css("color", "#212121");
-	$(obj).css("border-bottom", "2px solid #5298d5");
+	$(obj).css("background-color", "#62a6ad");
+	$(obj).css("color", "#fff");
+	$(obj).css("border-top-left", "14px");
+	//$(obj).css("border-bottom", "2px solid #5298d5");
 
 	if (obj.id == 'lineInfo') {
 
-		$("#changeInfo").css("background-color", "transparent");
-		$("#changeInfo").css("color", "#212121");
-		$("#changeInfo").css("border-bottom", "2px solid #cbcbcb");
+		$("#changeInfo").css("background-color", "#dddddd");
+		$("#changeInfo").css("color", "#5c5c5c");
+		$("#changeInfo").css("border-bottom-left-radius", "20px");
 		$("#tabDetail2").hide();
 		$("#tabDetail").show();
 		if (storage.newAppLine == undefined) {
@@ -398,9 +399,9 @@ function changeTab(obj) {
 
 
 	} else if (obj.id = 'changeInfo') {
-		$("#lineInfo").css("background-color", "transparent");
-		$("#lineInfo").css("color", "#212121");
-		$("#lineInfo").css("border-bottom", "2px solid #cbcbcb");
+		$("#lineInfo").css("background-color", "#dddddd");
+		$("#lineInfo").css("color", "#5c5c5c");
+		$("#lineInfo").css("border-bottom-right-radius", "20px");
 		$("#tabDetail").hide();
 		$("#tabDetail2").show();
 

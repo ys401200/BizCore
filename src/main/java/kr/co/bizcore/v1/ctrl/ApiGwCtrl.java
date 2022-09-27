@@ -1,5 +1,6 @@
 package kr.co.bizcore.v1.ctrl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -259,12 +260,16 @@ public class ApiGwCtrl extends Ctrl{
     // 결재 처리 요청
     @PostMapping("/app/proceed/{docNo}/{ordered:\\d+}/{ask:\\d?}")
     public String apiGwAppProceedPost(HttpServletRequest request, HttpServletResponse response, @RequestBody String requestBody, @PathVariable("docNo") String docNo, @PathVariable("ordered") int ordered, @PathVariable("ask") int ask){
-        String result = null, compId = null, userNo = null, data = null, aesIv = null, aesKey = null, lang = null, comment = null;
-        String[] files = null, appLine = null;
+        String result = null, compId = null, userNo = null, data = null, aesIv = null, aesKey = null, lang = null, comment = null, doc = null, appData = null;
+        String[] files = null, ts = null;
+        String[][] appLine = null;
         HttpSession session = null;
         JSONObject json = null;
-        JSONArray jarr = null;
+        JSONArray jarr = null, tj = null;
+        ArrayList<String> list = null;
+        HashMap<String, String> attached = null;
         Msg msg = null;
+        int x = 0;
 
         session = request.getSession();
         aesKey = (String)session.getAttribute("aesKey");
@@ -279,27 +284,54 @@ public class ApiGwCtrl extends Ctrl{
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
         }else if(aesKey == null || aesIv == null){
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
-        }else if(!(ask == 0 || ask == 2)){
+        }else if(ask > 1){
             response.setStatus(404);
         }else{
             data = decAes(requestBody, aesKey, aesIv);
             json = new JSONObject(data);
-            comment = json.getString("comment");
+
+            // 결재의견에 대한 처리
+            comment = json.isNull("comment") ? null : json.getString("comment");
+
+            // 첨부파일에 대한 처리
             if(!json.isNull("files")){
                 jarr = json.getJSONArray("files");
+                list = new ArrayList<>();
+                for(x = 0 ; x < jarr.length() ; x++)    list.add(jarr.getString(x));
+                list.toArray(files);
+                attached = (HashMap<String, String>)session.getAttribute("attached");
             }
 
-            if(data == null)    result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
-            else{
-                data = encAes(data, aesKey, aesIv);
-                result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
+            // 결재문서 본문에 대한 처리
+            doc = json.isNull("doc") ? null : json.getString("doc");
+
+            // 결재문서 부가데이터에 대한 처리
+            appData = json.isNull("appData") ? null : json.getString("appData");
+
+            // 결재선에 대한 처리
+            jarr = json.getJSONArray("appLine");
+            if(jarr != null && jarr.length() > 0){
+                appLine = new String[jarr.length()][];
+                for(x = 0 ; x < jarr.length() ; x++){
+                    tj = jarr.getJSONArray(x);
+                    ts = new String[2];
+                    ts[0] = tj.getInt(0)+"";
+                    ts[1] = tj.getInt(1)+"";
+                    appLine[x] = ts;
+                }
             }
+
+            // 결재문서 처리 요청에 대한 처리
+            data = gwService.askAppDoc(compId, docNo, ordered, ask, comment, doc, appLine, files, attached, appData, userNo);
+
+            if(data == null || !data.equals("ok"))    result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
+            else    result = "{\"result\":\"ok\"}";
             
         }
 
         logger.error("ApiGwCtrl.apiGwAppProceedPost() ========== docNo : " + docNo + " / ordered : " + ordered + " / ask : " + ask);
 
-        return "ABCDEFGH";
+        return result;
     } // End of apiGwAppCancelNoPost()
 
 
