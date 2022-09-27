@@ -90,7 +90,7 @@ public class ApiNoticeCtrl extends Ctrl {
             compId = (String) request.getAttribute("compId");
 
             
-        if (compId != null) {
+        if (compId == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
         }else if(aesKey == null || aesIv == null){
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
