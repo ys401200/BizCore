@@ -675,12 +675,17 @@ function approveBtnEvent() {
 	for (let i = 0; i < appLine.length; i++) {
 		if (appLine[i].employee == storage.my) {
 			ordered = appLine[i].ordered;
-			storage.newAppLine = storage.newAppLine.slice((i + 1), storage.newAppLine.length);
+			if (storage.newAppLine != undefined) {
+				storage.newAppLine = storage.newAppLine.slice((i + 1), storage.newAppLine.length);
+			} else {
+				storage.newAppLine = null;
+			}
+
 		}
 	}
 
 
-
+	storage.newFileData = null;
 
 
 	if (
