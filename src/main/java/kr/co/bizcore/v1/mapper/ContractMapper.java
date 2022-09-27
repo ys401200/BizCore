@@ -12,8 +12,16 @@ import kr.co.bizcore.v1.domain.SimpleContract;
 
 public interface ContractMapper {
     
+    //계약 전부
     @Select("SELECT contno AS no, conttype AS salesType, cntrctmth AS contractType, conttitle AS title, buyrno AS endUser, contamt AS contractAmount, net_profit AS profit, userno AS employee, freemaintsdate AS startOfFreeMaintenance, freemaintedate as endOfFreeMaintenance, paymaintSdate as startOfPaidMaintenance, paymaintEdate as endOfPaidMaintenance, contorddate AS saleDate FROM swc_cont WHERE attrib NOT like 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) ORDER BY regdatetime DESC")
     public List<SimpleContract> getList(String compId);
+
+    // 계약 일부
+    @Select("SELECT contno AS no, conttype AS salesType, cntrctmth AS contractType, conttitle AS title, buyrno AS endUser, contamt AS contractAmount, net_profit AS profit, userno AS employee, freemaintsdate AS startOfFreeMaintenance, freemaintedate as endOfFreeMaintenance, paymaintSdate as startOfPaidMaintenance, paymaintEdate as endOfPaidMaintenance, contorddate AS saleDate FROM swc_cont WHERE attrib NOT like 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) ORDER BY regdatetime DESC LIMIT #{start},#{end}")
+    public List<SimpleContract> getListWithStartAndEnd(@Param("compId") String compId, @Param("start") int start, @Param("end") int end);
+
+    @Select("SELECT count(*) AS ct FROM swc_cont WHERE attrib NOT like 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) ORDER BY regdatetime DESC")
+    public int getCount(String compId);
 
     @Select("SELECT contno AS no, conttype AS salesType, cntrctmth AS contractType, conttitle AS title, buyrno AS endUser, contamt AS contractAmount, net_profit AS profit, userno AS employee, soppno AS sopp, excontno AS prvCont, " +
             "seconduserno AS employee2, custno AS customer, custmemberno AS cipOfCustomer, contdesc AS detail, buyrmemberno AS cipOfendUser, ptncno AS partner, ptncmemberno AS cipOfPartner, supplyno AS supplier, " +

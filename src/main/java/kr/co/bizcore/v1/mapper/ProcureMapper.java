@@ -18,6 +18,14 @@ public interface ProcureMapper {
 
     @Select("SELECT ppsid AS no, buyerCode, buyerName, buyerArea, buyerAreaCode, reqno AS requestNo, reqitemcode AS requestItemCode, reqItem AS requestItem, itemnetprice AS itemNetPrice, itemQty, " +
             "itemUnit, itemAmount, contracttitle AS title, modQty, modAmount, contractDate, deliveryDate, deliveryPlace, soppno AS sopp, regdate AS created, moddate AS modified " +
+            "FROM swc_pps WHERE attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) ORDER BY contractdate DESC LIMIT #{start}, #{end}")
+    public List<Procure> getListWithStartAndEnd(@Param("compId") String compId, @Param("start") int start, @Param("end") int end);
+
+    @Select("SELECT count(*) FROM swc_pps WHERE attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId})")
+    public int getCount(@Param("compId") String compId);
+
+    @Select("SELECT ppsid AS no, buyerCode, buyerName, buyerArea, buyerAreaCode, reqno AS requestNo, reqitemcode AS requestItemCode, reqItem AS requestItem, itemnetprice AS itemNetPrice, itemQty, " +
+            "itemUnit, itemAmount, contracttitle AS title, modQty, modAmount, contractDate, deliveryDate, deliveryPlace, soppno AS sopp, regdate AS created, moddate AS modified " +
             "FROM swc_pps WHERE ppsid = #{no} AND attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) ORDER BY contractdate DESC")
     public Procure getProcure(@Param("no")String no, @Param("compId") String compId);
 

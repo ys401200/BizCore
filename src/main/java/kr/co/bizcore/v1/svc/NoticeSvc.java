@@ -23,7 +23,14 @@ public class NoticeSvc extends Svc{
 
     public List<SimpleNotice> getPostList(String compId) {
        return noticeMapper.getNotice(compId);
+    }
 
+    public List<SimpleNotice> getPostList(String compId, int start, int end) {
+        return noticeMapper.getNoticeWithStartAndEnd(compId, start, end);
+    }
+
+    public int getCountt(String compId) {
+        return noticeMapper.getNoticeCount(compId);
     }
 
     public int  delete(String compId, String notiNo) {

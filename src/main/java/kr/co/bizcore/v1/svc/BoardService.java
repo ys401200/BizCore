@@ -22,6 +22,7 @@ public class BoardService extends Svc{
 
     private static final Logger logger = LoggerFactory.getLogger(BoardService.class);
 
+    // 자료실 게시글 전체
     public String getFileboxArticleList(String compId){
         String result = null;
         List<SimpleArticle> list = null;
@@ -42,6 +43,34 @@ public class BoardService extends Svc{
 
         return result;
     } // End of getFileboxArticalList()
+
+    // 자료실 게시글 일부
+    public String getFileboxArticleList(String compId, int start, int end){
+        String result = null;
+        List<SimpleArticle> list = null;
+        SimpleArticle each = null; 
+        int x = 0;
+
+        list = boardMapper.getFileboxListWithStartEnd(compId, start, end);
+
+        if(list != null && list.size() > 0){
+            result = "[";
+            for(x = 0 ; x < list.size() ; x++){
+                each = list.get(x);
+                if(x > 0)   result += ",";
+                result += each.toJson();
+            }
+            result += "]";
+        }
+
+        return result;
+    } // End of getFileboxArticalList()
+
+
+    // 자료실 게시글 카운트
+    public int getFileboxArticleCount(String compId){
+        return boardMapper.getFileboxArticleCount(compId);
+    }
 
     public Article getFileboxArticle(String compId, int articleNo){
         Article result = null;

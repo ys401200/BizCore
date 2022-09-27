@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import kr.co.bizcore.v1.domain.Notice;
 import kr.co.bizcore.v1.domain.SimpleNotice;
+import kr.co.bizcore.v1.msg.Msg;
 import kr.co.bizcore.v1.svc.NoticeSvc;
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,9 +32,10 @@ public class ApiNoticeCtrl extends Ctrl {
     private NoticeSvc noticeSvc;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public String get(HttpServletRequest request) {
+    public String getAll(HttpServletRequest request) {
         String result = null, data = null, aesKey = null, aesIv = null, userNo = null, compId = null;
         HttpSession session = null;
+        Msg msg = null;
         List<SimpleNotice> list = null;
         int i = 0;
 
@@ -42,31 +44,73 @@ public class ApiNoticeCtrl extends Ctrl {
         aesIv = (String) session.getAttribute("aesIv");
         compId = (String) session.getAttribute("compId");
         userNo = (String) session.getAttribute("userNo");
+        msg = getMsg((String) session.getAttribute("lang"));
         if (compId == null)
             compId = (String) request.getAttribute("compId");
 
-        if (compId != null) {
-            if (userNo == null) {
-                result = "{\"result\":\"failure\",\"msg\":\"Session expired and/or Not logged in.\"}";
-            } else {
-                list = noticeSvc.getPostList(compId);
-                if (list != null) {
-                    data = "[";
-                    for (i = 0; i < list.size(); i++) {
-                        if (i > 0)
-                            data += ",";
-                        data += list.get(i).toJson();
-                    }
-                    data += "]";
-
-                } else {
-                    data = "[]";
+        if (compId == null) {
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        }else{
+            list = noticeSvc.getPostList(compId);
+            if (list != null) {
+                data = "[";
+                for (i = 0; i < list.size(); i++) {
+                    if (i > 0)
+                        data += ",";
+                    data += list.get(i).toJson();
                 }
-                data = noticeSvc.encAes(data, aesKey, aesIv);
-                result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
+                data += "]";
+            } else {
+                data = "[]";
             }
-        } else
-            result = "{\"result\":\"failure\",\"msg\":\"Company ID is not verified.\"}";
+            data = noticeSvc.encAes(data, aesKey, aesIv);
+            result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";            
+        }
+
+        return result;
+    } // End of /api/notice === get
+
+    @RequestMapping(value = "/{start:\\d+}/{end:\\d+}", method = RequestMethod.GET)
+    public String get(HttpServletRequest request, @PathVariable("start") int start, @PathVariable("end") int end) {
+        String result = null, data = null, aesKey = null, aesIv = null, userNo = null, compId = null;
+        HttpSession session = null;
+        Msg msg = null;
+        List<SimpleNotice> list = null;
+        int i = 0, count = -9999;
+
+        session = request.getSession();
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        compId = (String) session.getAttribute("compId");
+        userNo = (String) session.getAttribute("userNo");
+        msg = getMsg((String) session.getAttribute("lang"));
+        if (compId == null)
+            compId = (String) request.getAttribute("compId");
+
+            
+        if (compId != null) {
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        }else{
+            list = noticeSvc.getPostList(compId, start, end);
+            count = noticeSvc.getCountt(compId);
+            if (list != null) {
+                data = "[";
+                for (i = 0; i < list.size(); i++) {
+                    if (i > 0)
+                        data += ",";
+                    data += list.get(i).toJson();
+                }
+                data += "]";
+            } else {
+                data = "[]";
+            }
+            data = noticeSvc.encAes(data, aesKey, aesIv);
+            result = "{\"result\":\"ok\",\"data\":\"" + data + "\",\"count\":" + count + ",\"start\":" + start + ",\"end\":" + end + "}";
+        }
 
         return result;
     } // End of /api/notice === get

@@ -40,7 +40,7 @@ public class ApiBoardCtrl extends Ctrl{
 
     // 자료실 목록
     @RequestMapping(value="/filebox", method=RequestMethod.GET)
-    public String fileboxGet(HttpServletRequest request) {
+    public String fileboxAllGet(HttpServletRequest request) {
         String result = null;
         String compId = null;
         String aesKey = null;
@@ -65,6 +65,40 @@ public class ApiBoardCtrl extends Ctrl{
             result = boardService.getFileboxArticleList(compId);
             result = boardService.encAes(result, aesKey, aesIv);
             result = "{\"result\":\"ok\",\"data\":\"" + result + "\"}";
+        }
+        
+        return result;
+    } // End of fileBoxGet()
+
+    // 자료실 목록 / 전체
+    @RequestMapping(value="/filebox/{start:\\d+}/{end:\\d+}", method=RequestMethod.GET)
+    public String fileboxGet(HttpServletRequest request, @PathVariable("start") int start, @PathVariable("end") int end) {
+        String result = null;
+        String compId = null;
+        String aesKey = null;
+        String aesIv = null;
+        String lang = null;
+        Msg msg = null;
+        int count = -9999;
+        HttpSession session = null;
+
+        session = request.getSession();
+        compId = (String)session.getAttribute("compId");
+        if(compId == null)  compId = (String)session.getAttribute("compId");
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        lang = (String)session.getAttribute("lang");
+        msg = getMsg(lang);
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        }else{
+            count = boardService.getFileboxArticleCount(compId);
+            result = boardService.getFileboxArticleList(compId, start, end);
+            result = encAes(result, aesKey, aesIv);
+            result = "{\"result\":\"ok\",\"data\":\"" + result + "\",\"count\":" + count + ",\"start\":" + start + ",\"end\":" + end + "}";
         }
         
         return result;

@@ -20,6 +20,7 @@ public class ContractService extends Svc{
 
     private static final Logger logger = LoggerFactory.getLogger(ContractService.class);
     
+    // 계약 전부
     public String getContractList(String compId){
         String result = null;
         List<SimpleContract> list = null;
@@ -36,7 +37,31 @@ public class ContractService extends Svc{
         if(result != null)  result += "]";
 
         return result;
-    } // End of getProcureList()
+    } // End of getContractList()
+
+    // 계약 일부
+    public String getContractList(String compId, int start, int end){
+        String result = null;
+        List<SimpleContract> list = null;
+        SimpleContract each = null;
+        int x = 0;
+
+        list = contractMapper.getList(compId);
+        if(list != null && list.size() > 0) for(x = 0 ; x < list.size() ; x++){
+            each = list.get(x);
+            if(result == null)  result = "[";
+            if(x > 0)   result += ",";
+            result += each.toJson();
+        }
+        if(result != null)  result += "]";
+
+        return result;
+    } // End of getContractList()
+
+    // 계약 수량 가져오기
+    public int getContractCount(String compId){
+        return contractMapper.getCount(compId);
+    }
 
     public String getContract(int no, String compId){
         String result = null;

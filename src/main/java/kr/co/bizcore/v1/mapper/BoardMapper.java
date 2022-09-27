@@ -13,8 +13,17 @@ import kr.co.bizcore.v1.domain.SimpleArticle;
 
 public interface BoardMapper {
 
-    @Select("SELECT no, writer, title, IFNULL(modified, created) AS created FROM bizcore.filebox WHERE deleted IS NULL AND compId = #{compId} ORDER BY no")
+    // 자료실 게시글 전체
+    @Select("SELECT no, writer, title, IFNULL(modified, created) AS created FROM bizcore.filebox WHERE deleted IS NULL AND compId = #{compId} ORDER BY no DESC")
     public List<SimpleArticle> getFileboxList(String compId);
+
+    // 자료실 게시글 시작과 끝 번호 입력
+    @Select("SELECT no, writer, title, IFNULL(modified, created) AS created FROM bizcore.filebox WHERE deleted IS NULL AND compId = #{compId} ORDER BY no DESC LIMIT #{start}, #{end}")
+    public List<SimpleArticle> getFileboxListWithStartEnd(@Param("compId") String compId, @Param("start") int start, @Param("end") int end);
+
+    // 자료실 게시글 숫자 카운트
+    @Select("SELECT count(*) AS ct FROM bizcore.filebox WHERE deleted IS NULL AND compId = #{compId}")
+    public int getFileboxArticleCount(@Param("compId") String compId);
 
     @Select("SELECT no, writer, title, content, created, modified FROM bizcore.filebox WHERE no = #{no} AND compId = #{compId} AND deleted IS NULL")
     public Article getFileboxArticle(@Param("no") int no, @Param("compId") String compId);

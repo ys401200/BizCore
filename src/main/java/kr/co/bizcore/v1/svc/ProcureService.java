@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ProcureService extends Svc{
 
     private static final Logger logger = LoggerFactory.getLogger(ProcureService.class);
+
     public String getProcureList(String compId){
         String result = null;
         List<Procure> list = null;
@@ -31,6 +32,28 @@ public class ProcureService extends Svc{
 
         return result;
     } // End of getProcureList()
+
+    public String getProcureList(String compId, int start, int end){
+        String result = null;
+        List<Procure> list = null;
+        Procure each = null;
+        int x = 0;
+
+        list = procureMapper.getListWithStartAndEnd(compId, start, end);
+        if(list != null && list.size() > 0) for(x = 0 ; x < list.size() ; x++){
+            each = list.get(x);
+            if(result == null)  result = "[";
+            if(x > 0)   result += ",";
+            result += each.toJson();
+        }
+        if(result != null)  result += "]";
+
+        return result;
+    } // End of getProcureList()
+
+    public int getCount(String compId){
+        return procureMapper.getCount(compId);
+    }
 
     public Procure getProcure(String no, String compId){
         Procure result = null;

@@ -442,6 +442,26 @@ public class SystemService extends Svc {
         return result;
     } // End of getProductList()
 
+    public String getProductList(String compId, int start, int end){
+        String result = null;
+        List<Product> list = null;
+        int x = 0;
+
+        list = productMapper.getProductListWithStartAndEnd(compId, start, end);
+        result = "[";
+        if(list != null && list.size() > 0) for(x = 0 ; x < list.size() ; x++){
+            if(x > 0)   result += ",";
+            result += list.get(x).toJson();
+        }
+        result = "]";
+
+        return result;
+    } // End of getProductList()
+
+    public int getProductCount(String compId) {
+        return productMapper.getProductCount(compId);
+    }
+
     public Product getProduct(String compId, int no){
         Product result = null;
         result = productMapper.getProduct(compId, no);
@@ -644,9 +664,5 @@ public class SystemService extends Svc {
     public void removeKeepInfo(String compId, String userNo) {
         systemMapper.deleteKeepTokenByUser(compId, userNo);
     }
-
-
-
-
 
 }

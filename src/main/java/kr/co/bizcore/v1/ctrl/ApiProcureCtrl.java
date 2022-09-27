@@ -25,7 +25,7 @@ public class ApiProcureCtrl extends Ctrl{
     private static final Logger logger = LoggerFactory.getLogger(ApiProcureCtrl.class);
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public String apiProcureGet(HttpServletRequest request){
+    public String apiProcureAllGet(HttpServletRequest request){
         String result = null, aesKey = null, aesIv = null, compId = null;
         HttpSession session = null;
         String list = null;
@@ -46,6 +46,34 @@ public class ApiProcureCtrl extends Ctrl{
             } else {
                 list = salesService.encAes(list, aesKey, aesIv);
                 result = "{\"result\":\"ok\",\"data\":\"" + list + "\"}";
+            }
+        return result;
+    } // End of apiProcureGet
+
+    @RequestMapping(value = "/{start:\\d+}/{end:\\d+}", method = RequestMethod.GET)
+    public String apiProcureGet(HttpServletRequest request, @PathVariable("start") int start, @PathVariable("end") int end){
+        String result = null, aesKey = null, aesIv = null, compId = null;
+        HttpSession session = null;
+        String list = null;
+        int count = -9999;
+
+        session = request.getSession();
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        compId = (String) session.getAttribute("compId");
+        if (compId == null)
+            compId = (String) request.getAttribute("compId");
+
+        if (compId == null) {
+            result = "{\"result\":\"failure\",\"msg\":\"Company ID is not verified.\"}";
+        } else
+            list = procureService.getProcureList(compId, start, end);
+            count = procureService.getCount(compId);
+            if (list == null) {
+                result = "{\"result\":\"failure\",\"msg\":\"list is empty\"}";
+            } else {
+                list = salesService.encAes(list, aesKey, aesIv);
+                result = "{\"result\":\"ok\",\"data\":\"" + list + "\",\"count\":" + count + "\"start\":" + start + ",\"end\":" + end + "}";
             }
         return result;
     } // End of apiProcureGet
