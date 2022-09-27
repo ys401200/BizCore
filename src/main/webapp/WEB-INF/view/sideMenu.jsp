@@ -33,25 +33,25 @@
 				</ul>
 			</li>
 			<li>
-				<a href="#">
+				<a href="/business/sales">
 					<img src="/images/main/icons/mainSchedIcon.png" id="mainSalesIcon" />
 					<span>영업활동관리</span>
-					<span id="slideSpan">+</span>
+					<!-- <span id="slideSpan">+</span> -->
 				</a>
-				<ul id="panel">
+				<!-- <ul id="panel">
 					<li><a href="/business/sales">영업활동조회</a></li>
-				</ul>
+				</ul> -->
 			</li>
 			<li>
-				<a href="#">
+				<a href="/business/sopp">
 					<img src="/images/main/icons/mainSoppIcon.png" id="mainSoppIcon" />
 					<span>영업기회</span>
-					<span id="slideSpan">+</span>
+					<!-- <span id="slideSpan">+</span> -->
 				</a>
-				<ul id="panel">
+				<!-- <ul id="panel">
 					<li><a href="/business/sopp">영업기회조회</a></li>
-					<!-- <li><a href="/business/est">견적관리</a></li> -->
-				</ul>
+					<li><a href="/business/est">견적관리</a></li>
+				</ul> -->
 			</li>
 			<!-- <li>
 			<a href="#">
@@ -66,27 +66,27 @@
 		  	</ul>
 		</li> -->
 			<li>
-				<a href="#">
+				<a href="/business/contract">
 					<img src="/images/main/icons/mainContIcon.png" id="mainContIcon" />
 					<span>계약관리</span>
-					<span id="slideSpan">+</span>
+					<!-- <span id="slideSpan">+</span> -->
 				</a>
-				<ul id="panel">
+				<!-- <ul id="panel">
 					<li><a href="/business/contract">계약조회</a></li>
-					<!-- <li><a href="#">계약등록</a></li>
-		  		<li><a href="#">업체정보조회</a></li>
-		  		<li><a href="#">매입/매출 자료등록</a></li> -->
-				</ul>
+					<li><a href="#">계약등록</a></li>
+		  			<li><a href="#">업체정보조회</a></li>
+		  			<li><a href="#">매입/매출 자료등록</a></li>
+				</ul> -->
 			</li>
 			<li>
-				<a href="#">
+				<a href="/business/tech">
 					<img src="/images/main/icons/mainSchedIcon.png" id="mainSalesIcon" />
 					<span>기술지원관리</span>
-					<span id="slideSpan">+</span>
+					<!-- <span id="slideSpan">+</span> -->
 				</a>
-				<ul id="panel">
+				<!-- <ul id="panel">
 					<li><a href="/business/tech">기술지원조회</a></li>
-				</ul>
+				</ul> -->
 			</li>
 			<!-- <li>
 			<a href="#">
