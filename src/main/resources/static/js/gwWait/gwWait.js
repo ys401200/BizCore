@@ -33,7 +33,6 @@ function waitDefault() {
 					detailData.doc = cipher.decAes(detailData.doc);
 					detailData.doc = detailData.doc.replaceAll("\\\"", "\"");
 					storage.reportDetailData = detailData;
-					storage.approvalData = new Array();
 					showReportDetail();
 				} else {
 					alert("문서 정보를 가져오는 데 실패했습니다");
@@ -130,7 +129,8 @@ function drawNoticeApproval() {
 
 			{
 				"setData": jsonData[i].docNo,
-			}, {
+			},
+			{
 				"setData": appType,
 			},
 			{
@@ -146,9 +146,6 @@ function drawNoticeApproval() {
 				"setData": setDate,
 			},
 
-			// {
-			// 	"setData": "<input type='checkbox' class='thisCheck' data-id='" + jsonData[i].no + "'>",
-			// }
 		]
 
 		fnc = "waitDetailView(this)";
@@ -164,8 +161,6 @@ function drawNoticeApproval() {
 
 
 }// End of drawNoticeApproval()
-
-
 
 
 
@@ -325,16 +320,26 @@ function showReportDetail() {
 function getFileArr() {
 	let target = $(".selectedFileDiv");
 	let html = "";
+	let originFileList = [];
+	let no = storage.reportDetailData.no;
+	let fileList = storage.reportDetailData.fileList;
 	if (storage.newFileData == undefined) {
-		let fileList = storage.reportDetailData.fileList;
-		let no = storage.reportDetailData.no;
+
 		for (let i = 0; i < fileList.length; i++) {
 			html += "<div><a href='/api/attached/docapp/" + no + "/" + encodeURI(fileList[i].fileName) + "'>" + fileList[i].fileName + "</a></div>";
 		}
 		target.html(html);
 	} else {
 		for (let i = 0; i < storage.newFileData.length; i++) {
-			html += "<div>" + storage.newFileData[i] + "</div>";
+			for (let j = 0; j < fileList.length; j++) {
+				originFileList.push(fileList[j].fileName);
+			}
+			if (originFileList.includes(storage.newFileData[i])) {
+				html += "<div><a href='/api/attached/docapp/" + no + "/" + encodeURI(storage.newFileData[i]) + "'>" + storage.newFileData[i] + "</a></div>";
+			} else {
+				html += "<div style='color:navy'>" + storage.newFileData[i] + "</div>";
+			}
+
 		}
 		target.html(html);
 	}
@@ -364,14 +369,9 @@ function getFileModArr() {
 }
 
 function fileRemove(obj) {
+	let value = obj.parentElement.dataset.detail;
+	storage.newFileData = storage.newFileData.filter((element) => element != value);
 	obj.parentElement.remove();
-
-	for (let i = 0; i < $(".files").length; i++) {
-		if (!storage.newFileData.includes($(".files")[i].dataset.detail)) {
-			storage.newFileData.push($(".files")[i].dataset.detail);
-		}
-	}
-
 }
 
 
@@ -914,15 +914,15 @@ function closeGwModal(obj) {
 		storage.newAppLine = combineData;
 
 		$(".modal-wrap").hide();
-		createNewLine(originLine);
+		createNewLine();
 		$(".inputsAuto").css("background-color", "white");
 		drawNewCommentLine();
 	}
 }
 
 
-function createNewLine(originLine) {
-	let formId = "doc_Form_Consult";
+function createNewLine() {
+	let formId = storage.reportDetailData.formId;
 	let lineTarget = $(".infoline")[0].children[1];
 	lineTarget = $("#" + lineTarget.id);
 	lineTarget.html("");
@@ -1199,12 +1199,12 @@ function setSelectedFiles() {
 	let method, data, type, attached;
 	attached = $(document).find("[name='attached[]']")[0].files;
 
-	if (storage.attachedList === undefined || storage.attachedList <= 0) {
-		storage.attachedList = [];
+	if (storage.newFileData === undefined || storage.newFileData <= 0) {
+		storage.newFileData = [];
 	}
 
 
-	let fileDataArray = storage.attachedList;
+	let fileDataArray = storage.newFileData;
 	for (let i = 0; i < attached.length; i++) {
 		let reader = new FileReader();
 		let fileName;
@@ -1212,8 +1212,8 @@ function setSelectedFiles() {
 		fileName = attached[i].name;
 
 		// 파일 중복 등록 제거 
-		if (!fileDataArray.includes(fileName)) {
-			storage.attachedList.push(fileName);
+		if (!storage.newFileData.includes(fileName)) {
+			storage.newFileData.push(fileName);
 
 			reader.onload = (e) => {
 				let binary, x, fData = e.target.result;
@@ -1237,37 +1237,11 @@ function setSelectedFiles() {
 	}
 
 
-
 	let html = "";
 
-	storage.newFileData = [];
-
-	for (let i = 0; i < $(".files").length; i++) {
-		if (!storage.newFileData.includes($(".files")[i].dataset.detail)) {
-			storage.newFileData.push($(".files")[i].dataset.detail);
-		}
-	}
-
 	for (let i = 0; i < fileDataArray.length; i++) {
-		if (!storage.newFileData.includes(fileDataArray[i])) {
-			html += "<div><div class='files' data-detail='" + fileDataArray[i] + "'>" + fileDataArray[i] + "<button type='button' onclick='fileRemove(this)'>x</button></div></div>";
-			$(".selectedFileDiv").append(html);
-		}
+		html += "<div><div class='files' data-detail='" + fileDataArray[i] + "'>" + fileDataArray[i] + "<button type='button' onclick='fileRemove(this)'>x</button></div></div>";
 	}
-
-
-	for (let i = 0; i < $(".files").length; i++) {
-		if (!storage.newFileData.includes($(".files")[i].dataset.detail)) {
-			storage.newFileData.push($(".files")[i].dataset.detail);
-		}
-	}
-
-
-
-
-
-
-
-
+	$(".selectedFileDiv").html(html);
 
 }

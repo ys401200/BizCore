@@ -156,7 +156,7 @@ function selectForm() {
   // 거래처 데이터 리스트 만들기 
   dataListHtml = "<datalist id='_infoCustomer'>"
   for (x in storage.customer) {
-    dataListHtml += "<option data-value='" + x + "' value='" + storage.customer[x].name + "'></option> "
+    dataListHtml += "<option data-value='" + x + "' value='" + storage.customer[x].name + "'onclick='getCustomerValue(this.dataset.value)></option> "
   }
   dataListHtml += "</datalist>"
   html += dataListHtml;
@@ -177,7 +177,7 @@ function setSoppList(formId) {
   soppListHtml = "<datalist id='_infoSopp'>"
 
   for (let i = 0; i < storage.soppList.length; i++) {
-    soppListHtml += "<option data-value='" + storage.soppList[i].no + "' value='" + storage.soppList[i].title + "'></option> "
+    soppListHtml += "<option data-value='" + storage.soppList[i].no + "' value='" + storage.soppList[i].title + "' onclick='getAppValue(this.dataset.value)'></option> "
   }
 
   soppListHtml += "</datalist>"
@@ -186,6 +186,19 @@ function setSoppList(formId) {
   $("#" + formId + "_sopp").attr("list", "_infoSopp");
 
 }
+
+
+
+
+function getAppValue (val) {
+  storage.sopp=val; 
+}
+
+function getCustomerValue (val) {
+storage.customer=val; 
+}
+
+
 
 
 // 결재선 생성 버튼 눌렀을 때 모달 띄움 
@@ -598,6 +611,7 @@ function reportInsert() {
       success: (result) => {
         if (result.result === "ok") {
           alert("등록완료");
+          location.href = "/gw/mydraft";
         } else {
           alert(result.msg);
         }
@@ -666,7 +680,6 @@ function docFileChange() {
 function deleteFile(obj) {
   let value = obj.parentElement.dataset.detail;
   storage.attachedList = storage.attachedList.filter((element) => element != value);
-  console.log(storage.attachedList);
   obj.parentElement.remove();
 }
 

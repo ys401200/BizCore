@@ -75,7 +75,7 @@ function drawApproval() {
     let container, result, jsonData, job, header = [], data = [], ids = [], disDate, setDate, str, fnc;
 
     if (storage.dueList === undefined) {
-        msg.set("결재 예정 문서가 없습니다");
+       alert("결재 예정 문서가 없습니다");
     }
     else {
         jsonData = storage.dueList.due;
