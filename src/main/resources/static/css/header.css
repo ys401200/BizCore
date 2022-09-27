@@ -28,14 +28,14 @@ a{
 
 button, select, input[type="text"]{
 	font-family: 'NanumSquareRound';
-	/* padding:0.3% 0.7%; */
-	/* float:right; */
+	padding:0.3% 0.7%;
 	border:0;
 	cursor: pointer;
 }
 
 /* plus 버튼 시작 */
 .plusContentBtn{
+	z-index: 1;
 	width: 60px;
     position: fixed;
 	bottom: 50px;
@@ -43,23 +43,24 @@ button, select, input[type="text"]{
 }
 
 .plusContentBtn > button{
-	width: 60px;
-    height: 60px;
+	width: 65px;
+    height: 65px;
     background-color: #000;
     border-radius: 50%;
     color: #ffffff;
     font-size: 2rem;
-    line-height: 65px;
+    line-height: 70px;
     font-weight: 600;
 }
 
+.plusContentBtn .plusItems{
+	text-align: right;
+}
+
 .plusContentBtn .plusItems > button{
-	width: 60px;
-    height: 60px;
+	width: 50px;
+    height: 50px;
     border-radius: 50%;
-    font-size: 2rem;
-    line-height: 65px;
-    font-weight: 600;
 	margin-bottom: 10px;
 	display: none;
 }
@@ -69,7 +70,7 @@ button, select, input[type="text"]{
 	color: #ffffff;
 }
 
-.plusContentBtn .plusItems > .plusApplovalItem{
+.plusContentBtn .plusItems > .plusSetItem{
 	background-color: #5CD1E5;
 	color: #ffffff;
 }
@@ -191,7 +192,8 @@ button, select, input[type="text"]{
 /* 페이지네이션 */
 .pageContainer{
 	display: flex;
-	float: right;
+	align-items: center;
+	justify-content: center;
 	font-size:13px;
 	box-sizing:border-box;
 	margin:20px 0.5% 20px 0.5%;
@@ -550,7 +552,6 @@ input[name="tabItem"] {
 	color: #ebefff;
     box-shadow: 0 1px 1px #bdbfc9;
     background-color: #2147b1;
-    padding: 0 14px;
     height: 30px;
     border-radius: 5px;
     margin-top: 5px;

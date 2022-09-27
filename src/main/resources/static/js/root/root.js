@@ -6,6 +6,21 @@ $(document).ready(() => {
 		$("#loadingDiv").loading("toggle");
 	}, 300);
 
+	let menu = [
+		{
+			"keyword": "notes",
+			"onclick": ""
+		},
+		{
+			"keyword": "set",
+			"onclick": ""
+		},
+		{
+			"keyword": "widget",
+			"onclick": ""
+		},
+	];
+
 	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined){
 		window.setTimeout(getNoticeList, 1000);
 		window.setTimeout(getScheduleList, 1000);
@@ -20,9 +35,7 @@ $(document).ready(() => {
 		window.setTimeout(addChart, 200);
 	}
 
-	// setTimeout(() => {
-	// 	enableDragSort("gridNoticeList");
-	// }, 300);
+	plusMenuSelect(menu);
 });
 
 function getNoticeList() {

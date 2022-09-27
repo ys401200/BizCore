@@ -85,6 +85,23 @@ function drawFileBoxList() {
 	let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawFileBoxList", result[0]);
 	pageContainer[0].innerHTML = pageNation;
 	createGrid(container, header, data, ids, job, fnc);
+
+	let menu = [
+		{
+			"keyword": "add",
+			"onclick": "fileBoxInsertForm();"
+		},
+		{
+			"keyword": "notes",
+			"onclick": ""
+		},
+		{
+			"keyword": "set",
+			"onclick": ""
+		},
+	];
+
+	plusMenuSelect(menu);
 }// End of drawFileBoxList()
 
 function fileBoxDetailView(e) {// 선택한 그리드의 글 번호 받아오기 
@@ -173,10 +190,26 @@ function fileBoxSuccessView(result){
 	detailBoardContainerHide();
 	storage.gridContent.after(html);
 	notIdArray = ["writer", "created"];
-	$(".detailBtns").html("<button type='button' onclick='fileBoxUpdateForm(" + JSON.stringify(result) + ");'>수정</button><button type='button' onclick='fileBoxDelete(" + result.no + ");'>삭제</button><button type='button' onclick='detailBoardContainerHide();'>닫기</button>");
+	$(".detailBtns").html("<button type='button' onclick='detailBoardContainerHide();'><i class=\"fa-solid fa-xmark fa-xl\"></i></button>");
 	$(".detailContents").append(fileHtml);
 
 	setTimeout(() => {
+		let menu = [
+			{
+				"keyword": "add",
+				"onclick": "fileBoxInsertForm();"
+			},
+			{
+				"keyword": "edit",
+				"onclick": "fileBoxUpdateForm(" + JSON.stringify(result) + ");"
+			},
+			{
+				"keyword": "delete",
+				"onclick": "fileBoxDelete(" + result.no + ");"
+			},
+		];
+
+		plusMenuSelect(menu);
 		setTiny();
 		tinymce.activeEditor.mode.set('readonly');
 		inputDataList();

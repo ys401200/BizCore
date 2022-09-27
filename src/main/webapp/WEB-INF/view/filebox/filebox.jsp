@@ -7,17 +7,7 @@
 	</div>
 	<div id="bodyContent">
 		<div class="searchContainer">
-            <hr />
-            <span>검색</span>
-            <div class="searchBtns">
-                <button type="button" data-set="false" onclick="searchAco(this);">펼치기</button>
-                <button type="button" id="searchChangeBtn" data-set="false" onclick="searchChange(this)">멀티</button>
-				<button type="button" id="multiSearchResetBtn" onclick="searchReset();">초기화</button>
-                <button type="button" id="multiSearchBtn" onclick="searchSubmit();">검색</button>
-            </div>
-            <div class="searchInputContent">
-                <input type="text" id="searchAllInput" onkeyup="searchInputKeyup();" placeholder="단어를 입력해주세요.">
-            </div>
+            <jsp:include page="../listSearch.jsp" />
             <div class="searchMultiContent">
                 <div class="searchTitle">
                     <span>제목</span>
@@ -40,7 +30,6 @@
 		<div class="fileBoxContainer">
 			<hr />
 			<span>자료실</span>
-			<button type="button" onclick="fileBoxInsertForm();">등록</button>
 			<div class="fileBoxContent"></div>
 			<div class="gridFileBoxList"></div>
 			<div class="pageContainer"></div>

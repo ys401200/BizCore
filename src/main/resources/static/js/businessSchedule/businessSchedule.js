@@ -14,7 +14,7 @@ $(document).ready(() => {
 function getScheduleList() {
 	let url, method, data, type, scheduleRange;
 
-	scheduleRange = $(document).find("#scheduleRange").val();
+	scheduleRange = $("#scheduleRange").val();
 
 	
 	url = "/api/schedule/calendar/" + scheduleRange;
@@ -149,11 +149,27 @@ function drawScheduleList() {
 	createGrid(container, header, data, ids, dataJob, fnc);
 
 	let path = $(location).attr("pathname").split("/");
+	let menu = [
+		{
+			"keyword": "add",
+			"onclick": "scheduleInsertForm();"
+		},
+		{
+			"keyword": "notes",
+			"onclick": ""
+		},
+		{
+			"keyword": "set",
+			"onclick": ""
+		},
+	];
 
 	if(path[3] !== undefined){
 		let content = $(".gridContent[data-id=\"" + path[3] + "\"]");
 		scheduleDetailView(content);
 	}
+
+	plusMenuSelect(menu);
 
 }// End of drawNoticeList()
 
@@ -166,8 +182,8 @@ function drawCalendar(container){
     if(storage.currentYear === undefined)   storage.currentYear = (new Date()).getFullYear();
     if(storage.currentMonth === undefined)  storage.currentMonth = (new Date()).getMonth() + 1;
 
-	$(document).find(".calendarYear").text(storage.currentYear);
-	$(document).find(".calendarMonth").text(storage.currentMonth);
+	$(".calendarYear").text(storage.currentYear);
+	$(".calendarMonth").text(storage.currentMonth);
 
     startDate = new Date(storage.currentYear, storage.currentMonth - 1 , 1);
     endDate = new Date(storage.currentYear, storage.currentMonth - 1 , 28);
@@ -325,30 +341,41 @@ function scheduleSuccessView(result){
 
 	conTitleChange("containerTitle", "<a href='#' onclick='detailViewContainerHide(\"일정조회\");'>뒤로가기</a>");
 	$(".detailContents").html(html);
-	$(".detailBtns").html("");
 	notIdArray = ["employee"];
-	$(".detailBtns").append("<button type='button' onclick='enableDisabled(this, \"scheduleUpdate(" + result.no + ");\", \"" + notIdArray + "\");'>수정</button><button type='button' onclick='scheduleDelete(" + JSON.stringify(result) + ");'>삭제</button>");
-	$(".detailBtns").show();
 	$(".detailContents").show();
 
 	setTimeout(() => {
-		$(document).find("[name='job'][value='" + result.job + "']").prop("checked", true).removeAttr("onclick");
+		$("[name='job'][value='" + result.job + "']").prop("checked", true).removeAttr("onclick");
 
 		if(result.job === "sales"){
 			let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;
 
-			$(document).find("#type option[value='" + type + "']").prop("selected", true);
+			$("#type option[value='" + type + "']").prop("selected", true);
 		}else if(result.job === "tech"){
 			let contractMethod = (result.contractMethod === null || result.contractMethod === "" || result.contractMethod === undefined) ? "" : result.contractMethod;
 			let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;
 			let supportStep = (result.supportStep === null || result.supportStep === "" || result.supportStep === undefined) ? "" : result.supportStep;
 
-			$(document).find("[name='contractMethod'][value='" + contractMethod + "']").prop("checked", true);
-			$(document).find("#type option[value='" + type + "']").prop("selected", true);
-			$(document).find("#supportStep option[value='" + supportStep + "']").prop("selected", true);
+			$("[name='contractMethod'][value='" + contractMethod + "']").prop("checked", true);
+			$("#type option[value='" + type + "']").prop("selected", true);
+			$("#supportStep option[value='" + supportStep + "']").prop("selected", true);
 		}
 
 		let jobArray = $("input[name=\"job\"]");
+		let menu = [
+			{
+				"keyword": "add",
+				"onclick": "scheduleInsertForm();"
+			},
+			{
+				"keyword": "edit",
+				"onclick": "enableDisabled(this, \"scheduleUpdate(" + result.no + ");\", \"" + notIdArray + "\");"
+			},
+			{
+				"keyword": "delete",
+				"onclick": "scheduleDelete(" + JSON.stringify(result) + ");"
+			},
+		];
 
 		for(let i = 0; i < jobArray.length; i++){
 			if(!$(jobArray[i]).is(":checked")){
@@ -357,6 +384,7 @@ function scheduleSuccessView(result){
 			}
 		}
 
+		plusMenuSelect(menu);
 		setTiny();
 		tinymce.activeEditor.mode.set('readonly');
 		inputDataList();
@@ -398,19 +426,19 @@ function calendarSuccessView(result){
 	modal.close.attr("onclick", "scheduleDelete(" + JSON.stringify(result) + ");");
 
 	setTimeout(() => {
-		$(document).find("[name='job'][value='" + result.job + "']").prop("checked", true).removeAttr("onclick");
+		$("[name='job'][value='" + result.job + "']").prop("checked", true).removeAttr("onclick");
 
 		if(result.job === "sales"){
 			let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;
-			$(document).find("#type option[value='" + type + "']").prop("selected", true);
+			$("#type option[value='" + type + "']").prop("selected", true);
 		}else if(result.job === "tech"){
 			let contractMethod = (result.contractMethod === null || result.contractMethod === "" || result.contractMethod === undefined) ? "" : result.contractMethod;
 			let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;
 			let supportStep = (result.supportStep === null || result.supportStep === "" || result.supportStep === undefined) ? "" : result.supportStep;
 
-			$(document).find("[name='contractMethod'][value='" + contractMethod + "']").prop("checked", true);
-			$(document).find("#type option[value='" + type + "']").prop("selected", true);
-			$(document).find("#supportStep option[value='" + supportStep + "']").prop("selected", true);
+			$("[name='contractMethod'][value='" + contractMethod + "']").prop("checked", true);
+			$("#type option[value='" + type + "']").prop("selected", true);
+			$("#supportStep option[value='" + supportStep + "']").prop("selected", true);
 		}
 
 		let jobArray = $("input[name=\"job\"]");
@@ -498,7 +526,7 @@ function calendarPrev(){
 function scheduleCalendarAjax(){
 	let url, method, scheduleRange;
 
-	scheduleRange = $(document).find("#scheduleRange").val();
+	scheduleRange = $("#scheduleRange").val();
 	url = "/api/schedule/calendar/" + scheduleRange + "/" + storage.currentYear + "/" + storage.currentMonth;
 	method = "get",
 
@@ -526,14 +554,14 @@ function listChange(event){
 		pageContainer.hide();
 		calendarList.show();
 		$(event).data("type", "calendar");
-		$(event).text("테이블로 표시");
+		$(event).html("<i class=\"fa-solid fa-list-ol fa-xl\"></i>");
 		$(".searchContainer").hide();
 	}else{
 		tableList.show();
 		pageContainer.show();
 		calendarList.hide();
 		$(event).data("type", "table");
-		$(event).text("달력으로 표시");
+		$(event).html("<i class=\"fa-regular fa-calendar-check fa-xl\"></i>");
 		$(".searchContainer").show();
 	}
 }
@@ -576,15 +604,15 @@ function scheduleInsertForm(getDate){
 	modal.close.attr("onclick", "modal.hide();");
 
 	setTimeout(() => {
-		$(document).find("[name='job'][value='sales']").prop("checked", true);
+		$("[name='job'][value='sales']").prop("checked", true);
 	}, 100);
 }
 
 function scheduleRadioClick(e, result){
 	let html, dataArray, tempFrom, tempTo, value = $(e).val(), notIdArray;
 	
-	tempFrom = $(document).find("#from").val();
-	tempTo = $(document).find("#to").val();
+	tempFrom = $("#from").val();
+	tempTo = $("#to").val();
 
 	modal.hide();
 	
@@ -618,9 +646,9 @@ function scheduleRadioClick(e, result){
 	}
 
 	setTimeout(() => {
-		$(document).find("[name='job'][value='" + value + "']").prop("checked", true);
-		$(document).find("#from").val(tempFrom);
-		$(document).find("#to").val(tempTo);
+		$("[name='job'][value='" + value + "']").prop("checked", true);
+		$("#from").val(tempFrom);
+		$("#to").val(tempTo);
 	}, 100);
 }
 
@@ -1026,42 +1054,42 @@ function scheduleRadioInsert(value, date){
 function scheduleInsert(){
 	let url, method, data, type, job;
 
-	job = $(document).find("[name='job']:checked").val();
+	job = $("[name='job']:checked").val();
 
 	url = "/api/schedule/" + job;
 	method = "post";
 	type = "insert";
 
 	if(job === "sales"){
-		if($(document).find("#from").val() === ""){
+		if($("#from").val() === ""){
 			alert("활동시작일을 선택해주세요.");
 			return false;
-		}else if($(document).find("#to").val() === ""){
+		}else if($("#to").val() === ""){
 			alert("활동종료일을 선택해주세요.");
 			return false;
-		}else if($(document).find("#title").val() === ""){
+		}else if($("#title").val() === ""){
 			alert("제목을 입력해주세요.");
-			$(document).find("#title").focus();
+			$("#title").focus();
 			return false;
 		}else{
 			let from, to, place, writer, sopp, customer, partner, title, content, type;
 
-			from = $(document).find("#from").val();
+			from = $("#from").val();
 			from = new Date(from).getTime();
-			to = $(document).find("#to").val();
+			to = $("#to").val();
 			to = new Date(to).getTime();
-			place = $(document).find("#place").val();
-			writer = $(document).find("#writer");
+			place = $("#place").val();
+			writer = $("#writer");
 			writer = dataListFormat(writer.attr("id"), writer.val());
-			sopp = $(document).find("#sopp");
+			sopp = $("#sopp");
 			sopp = dataListFormat(sopp.attr("id"), sopp.val());
-			customer = $(document).find("#customer");
+			customer = $("#customer");
 			customer = dataListFormat(customer.attr("id"), customer.val());
-			partner = $(document).find("#partner");
+			partner = $("#partner");
 			partner = dataListFormat(partner.attr("id"), partner.val());
-			title = $(document).find("#title").val();
+			title = $("#title").val();
 			content = tinymce.activeEditor.getContent();
-			type = $(document).find("#type").val();
+			type = $("#type").val();
 
 			data = {
 				"job": job,
@@ -1078,52 +1106,52 @@ function scheduleInsert(){
 			};
 		}
 	}else if(job === "tech"){
-		if($(document).find("#title").val() === ""){
+		if($("#title").val() === ""){
 			alert("기술요청명을 입력해주세요.");
-			$(document).find("#title").focus();
+			$("#title").focus();
 			return false;
-		}else if($(document).find("#sopp").val() === ""){
+		}else if($("#sopp").val() === ""){
 			alert("영업기회를 선택해주세요.");
-			$(document).find("#sopp").focus();
+			$("#sopp").focus();
 			return false;
-		}else if($(document).find("#partner").val() === ""){
+		}else if($("#partner").val() === ""){
 			alert("엔드유저를 선택해주세요.");
-			$(document).find("#partner").focus();
+			$("#partner").focus();
 			return false;
-		}else if($(document).find("#from").val() === ""){
+		}else if($("#from").val() === ""){
 			alert("지원시작일을 선택해주세요.");
 			return false;
-		}else if($(document).find("#to").val() === ""){
+		}else if($("#to").val() === ""){
 			alert("지원종료일을 선택해주세요.");
-			$(document).find("#title").focus();
+			$("#title").focus();
 			return false;
 		}else{
 			let from, to, place, writer, sopp, contract, contractMethod, customer, cipOfCustomer, partner, title, content, supportModel, supportVersion, supportStep, type;
 
-			from = $(document).find("#from").val();
+			from = $("#from").val();
 			from = new Date(from).getTime();
-			to = $(document).find("#to").val();
+			to = $("#to").val();
 			to = new Date(to).getTime();
-			place = $(document).find("#place").val();
-			writer = $(document).find("#writer");
+			place = $("#place").val();
+			writer = $("#writer");
 			writer = dataListFormat(writer.attr("id"), writer.val());
-			sopp = $(document).find("#sopp");
+			sopp = $("#sopp");
 			sopp = dataListFormat(sopp.attr("id"), sopp.val());
-			customer = $(document).find("#customer");
+			customer = $("#customer");
 			customer = dataListFormat(customer.attr("id"), customer.val());
-			partner = $(document).find("#partner");
+			partner = $("#partner");
 			partner = dataListFormat(partner.attr("id"), partner.val());
-			title = $(document).find("#title").val();
+			title = $("#title").val();
 			content = tinymce.activeEditor.getContent();
-			supportModel = $(document).find("#supportModel").val();
-			supportVersion = $(document).find("#supportVersion").val();
-			contract = $(document).find("#contract");
+			supportModel = $("#supportModel").val();
+			supportVersion = $("#supportVersion").val();
+			contract = $("#contract");
 			contract = dataListFormat(contract.attr("id"), contract.val()); 
-			contractMethod = $(document).find("[name='contractMethod']:checked").val();
-			cipOfCustomer = $(document).find("#cipOfCustomer");
+			contractMethod = $("[name='contractMethod']:checked").val();
+			cipOfCustomer = $("#cipOfCustomer");
 			cipOfCustomer = dataListFormat(cipOfCustomer.attr("id"), cipOfCustomer.val());
-			supportStep = $(document).find("#supportStep").val();
-			type = $(document).find("#type").val();
+			supportStep = $("#supportStep").val();
+			type = $("#type").val();
 
 			data = {
 				"job": job,
@@ -1146,31 +1174,31 @@ function scheduleInsert(){
 			};
 		}
 	}else{
-		if($(document).find("#from").val() === ""){
+		if($("#from").val() === ""){
 			alert("일정시작일을 선택해주세요.");
 			return false;
-		}else if($(document).find("#to").val() === ""){
+		}else if($("#to").val() === ""){
 			alert("일정종료일을 선택해주세요.");
 			return false;
-		}else if($(document).find("#title").val() === ""){
+		}else if($("#title").val() === ""){
 			alert("제목을 입력해주세요.");
-			$(document).find("#title").focus();
+			$("#title").focus();
 			return false;
 		}else{
 			let from, to, place, writer, sopp, customer, title, content;
 	
-			from = $(document).find("#from").val();
+			from = $("#from").val();
 			from = new Date(from).getTime();
-			to = $(document).find("#to").val();
+			to = $("#to").val();
 			to = new Date(to).getTime();
-			place = $(document).find("#place").val();
-			writer = $(document).find("#writer");
+			place = $("#place").val();
+			writer = $("#writer");
 			writer = dataListFormat(writer.attr("id"), writer.val());
-			sopp = $(document).find("#sopp");
+			sopp = $("#sopp");
 			sopp = dataListFormat(sopp.attr("id"), sopp.val());
-			customer = $(document).find("#customer");
+			customer = $("#customer");
 			customer = dataListFormat(customer.attr("id"), customer.val());
-			title = $(document).find("#title").val();
+			title = $("#title").val();
 			content = tinymce.activeEditor.getContent();
 	
 			data = {
@@ -1738,42 +1766,42 @@ function scheduleRadioUpdate(value, result){
 function scheduleUpdate(no){
 	let url, method, data, type, job;
 
-	job = $(document).find("[name='job']:checked").val();
+	job = $("[name='job']:checked").val();
 
 	url = "/api/schedule/" + job + "/" + no;
 	method = "put";
 	type = "update";
 
 	if(job === "sales"){
-		if($(document).find("#from").val() === ""){
+		if($("#from").val() === ""){
 			alert("활동시작일을 선택해주세요.");
 			return false;
-		}else if($(document).find("#to").val() === ""){
+		}else if($("#to").val() === ""){
 			alert("활동종료일을 선택해주세요.");
 			return false;
-		}else if($(document).find("#title").val() === ""){
+		}else if($("#title").val() === ""){
 			alert("제목을 입력해주세요.");
-			$(document).find("#title").focus();
+			$("#title").focus();
 			return false;
 		}else{
 			let from, to, place, writer, sopp, customer, partner, title, content, type;
 
-			from = $(document).find("#from").val();
+			from = $("#from").val();
 			from = new Date(from).getTime();
-			to = $(document).find("#to").val();
+			to = $("#to").val();
 			to = new Date(to).getTime();
-			place = $(document).find("#place").val();
-			writer = $(document).find("#writer");
+			place = $("#place").val();
+			writer = $("#writer");
 			writer = dataListFormat(writer.attr("id"), writer.val());
-			sopp = $(document).find("#sopp");
+			sopp = $("#sopp");
 			sopp = dataListFormat(sopp.attr("id"), sopp.val());
-			customer = $(document).find("#customer");
+			customer = $("#customer");
 			customer = dataListFormat(customer.attr("id"), customer.val());
-			partner = $(document).find("#partner");
+			partner = $("#partner");
 			partner = dataListFormat(partner.attr("id"), partner.val());
-			title = $(document).find("#title").val();
+			title = $("#title").val();
 			content = tinymce.activeEditor.getContent();
-			type = $(document).find("#type").val();
+			type = $("#type").val();
 
 			data = {
 				"job": job,
@@ -1790,52 +1818,52 @@ function scheduleUpdate(no){
 			};
 		}
 	}else if(job === "tech"){
-		if($(document).find("#title").val() === ""){
+		if($("#title").val() === ""){
 			alert("기술요청명을 입력해주세요.");
-			$(document).find("#title").focus();
+			$("#title").focus();
 			return false;
-		}else if($(document).find("#sopp").val() === ""){
+		}else if($("#sopp").val() === ""){
 			alert("영업기회를 선택해주세요.");
-			$(document).find("#sopp").focus();
+			$("#sopp").focus();
 			return false;
-		}else if($(document).find("#customer").val() === ""){
+		}else if($("#customer").val() === ""){
 			alert("엔드유저를 선택해주세요.");
-			$(document).find("#customer").focus();
+			$("#customer").focus();
 			return false;
-		}else if($(document).find("#from").val() === ""){
+		}else if($("#from").val() === ""){
 			alert("지원시작일을 선택해주세요.");
 			return false;
-		}else if($(document).find("#to").val() === ""){
+		}else if($("#to").val() === ""){
 			alert("지원종료일을 선택해주세요.");
-			$(document).find("#title").focus();
+			$("#title").focus();
 			return false;
 		}else{
 			let from, to, place, writer, sopp, contract, contractMethod, customer, cipOfCustomer, partner, title, content, supportModel, supportVersion, supportStep, type;
 
-			from = $(document).find("#from").val();
+			from = $("#from").val();
 			from = new Date(from).getTime();
-			to = $(document).find("#to").val();
+			to = $("#to").val();
 			to = new Date(to).getTime();
-			place = $(document).find("#place").val();
-			writer = $(document).find("#writer");
+			place = $("#place").val();
+			writer = $("#writer");
 			writer = dataListFormat(writer.attr("id"), writer.val());
-			sopp = $(document).find("#sopp");
+			sopp = $("#sopp");
 			sopp = dataListFormat(sopp.attr("id"), sopp.val());
-			customer = $(document).find("#customer");
+			customer = $("#customer");
 			customer = dataListFormat(customer.attr("id"), customer.val());
-			partner = $(document).find("#partner");
+			partner = $("#partner");
 			partner = dataListFormat(partner.attr("id"), partner.val());
-			title = $(document).find("#title").val();
+			title = $("#title").val();
 			content = tinymce.activeEditor.getContent();
-			supportModel = $(document).find("#supportModel").val();
-			supportVersion = $(document).find("#supportVersion").val();
-			contract = $(document).find("#contract");
+			supportModel = $("#supportModel").val();
+			supportVersion = $("#supportVersion").val();
+			contract = $("#contract");
 			contract = dataListFormat(contract.attr("id"), contract.val()); 
-			contractMethod = $(document).find("[name='contractMethod']:checked").val();
-			cipOfCustomer = $(document).find("#cipOfCustomer");
+			contractMethod = $("[name='contractMethod']:checked").val();
+			cipOfCustomer = $("#cipOfCustomer");
 			cipOfCustomer = dataListFormat(cipOfCustomer.attr("id"), cipOfCustomer.val());
-			supportStep = $(document).find("#supportStep").val();
-			type = $(document).find("#type").val();
+			supportStep = $("#supportStep").val();
+			type = $("#type").val();
 
 			data = {
 				"job": job,
@@ -1858,31 +1886,31 @@ function scheduleUpdate(no){
 			};
 		}
 	}else{
-		if($(document).find("#from").val() === ""){
+		if($("#from").val() === ""){
 			alert("일정시작일을 선택해주세요.");
 			return false;
-		}else if($(document).find("#to").val() === ""){
+		}else if($("#to").val() === ""){
 			alert("일정종료일을 선택해주세요.");
 			return false;
-		}else if($(document).find("#title").val() === ""){
+		}else if($("#title").val() === ""){
 			alert("제목을 입력해주세요.");
-			$(document).find("#title").focus();
+			$("#title").focus();
 			return false;
 		}else{
 			let from, to, place, writer, sopp, customer, title, content;
 	
-			from = $(document).find("#from").val();
+			from = $("#from").val();
 			from = new Date(from).getTime();
-			to = $(document).find("#to").val();
+			to = $("#to").val();
 			to = new Date(to).getTime();
-			place = $(document).find("#place").val();
-			writer = $(document).find("#writer");
+			place = $("#place").val();
+			writer = $("#writer");
 			writer = dataListFormat(writer.attr("id"), writer.val());
-			sopp = $(document).find("#sopp");
+			sopp = $("#sopp");
 			sopp = dataListFormat(sopp.attr("id"), sopp.val());
-			customer = $(document).find("#customer");
+			customer = $("#customer");
 			customer = dataListFormat(customer.attr("id"), customer.val());
-			title = $(document).find("#title").val();
+			title = $("#title").val();
 			content = tinymce.activeEditor.getContent();
 	
 			data = {
@@ -1918,7 +1946,7 @@ function scheduleErrorUpdate(){
 function scheduleSelectChange(){
 	let url, method, data, type, scheduleRange;
 
-	scheduleRange = $(document).find("#scheduleRange").val();
+	scheduleRange = $("#scheduleRange").val();
 	url = "/api/schedule/calendar/" + scheduleRange;
 	method = "get";
 	data = "";

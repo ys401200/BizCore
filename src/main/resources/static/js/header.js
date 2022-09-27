@@ -1156,11 +1156,10 @@ function detailViewFormModal(data){
 
 // 상세보기 임시 폼
 function detailViewForm(data){
-	let html = "", detailContents, pageContainer, listInsertBtn, detailBtns, listChangeBtn, scheduleRange;
+	let html = "", detailContents, pageContainer, detailBtns, listChangeBtn, scheduleRange;
 
 	pageContainer = $(".pageContainer");
 	detailContents = $(".detailContents");
-	listInsertBtn = $(".listInsertBtn");
 	listChangeBtn = $(".listChangeBtn");
 	scheduleRange = $("#scheduleRange");
 	detailBtns = $(".detailBtns");
@@ -1173,7 +1172,6 @@ function detailViewForm(data){
 		scheduleRange.hide();
 	}
 
-	listInsertBtn.hide();
 	pageContainer.hide();
 	pageContainer.prev().hide();
 	detailContents.hide();
@@ -2044,11 +2042,10 @@ function createTabSalesList(result){
 
 //상세보기 숨김
 function detailViewContainerHide(titleStr){
-	let detailContents, pageContainer, listInsertBtn, detailBtns, listChangeBtn, scheduleRange, searchContainer;
+	let detailContents, pageContainer, detailBtns, listChangeBtn, scheduleRange, searchContainer;
 
 	pageContainer = $(".pageContainer");
 	detailContents = $(".detailContents");
-	listInsertBtn = $(".listInsertBtn");
 	listChangeBtn = $(".listChangeBtn");
 	scheduleRange = $("#scheduleRange");
 	detailBtns = $(".detailBtns");
@@ -2062,7 +2059,6 @@ function detailViewContainerHide(titleStr){
 		scheduleRange.show();
 	}
 
-	listInsertBtn.show();
 	pageContainer.show();
 	pageContainer.prev().show();
 	detailContents.hide();
@@ -2163,7 +2159,6 @@ function enableDisabled(e, clickStr, notIdArray){
 		}
 	}
 	
-	$(e).text("수정완료");
 	$(e).attr("onclick", clickStr);
 	tinymce.activeEditor.mode.set('design'); 
 }
@@ -2518,9 +2513,9 @@ function searchAco(e){
 	searchMultiContent = $(".searchMultiContent");
 
 	if(!thisBtn.data("set")){
-		thisBtn.text("접기");
+		thisBtn.html("<i class=\"fa-solid fa-minus fa-xl\"></i>");
 		thisBtn.data("set", true);
-		searchChangeBtn.text("멀티");
+		searchChangeBtn.html("<i class=\"fa-solid fa-list fa-xl\"></i>");
 		searchChangeBtn.data("set", false);
 		searchChangeBtn.show();
 		searchInputContent.show();
@@ -2528,10 +2523,10 @@ function searchAco(e){
 		searchMultiContent.hide();
 		multiSearchResetBtn.hide();
 	}else{
-		thisBtn.text("펼치기");
+		thisBtn.html("<i class=\"fa-solid fa-plus fa-xl\"></i>");
 		thisBtn.data("set", false);
 		searchChangeBtn.hide();
-		searchChangeBtn.text("멀티");
+		searchChangeBtn.html("<i class=\"fa-solid fa-list fa-xl\"></i>");
 		searchChangeBtn.data("set", false);
 		multiSearchBtn.hide();
 		searchInputContent.hide();
@@ -2549,14 +2544,14 @@ function searchChange(e){
 	searchMultiContent = $(".searchMultiContent");
 
 	if(!thisBtn.data("set")){
-		thisBtn.text("텍스트");
+		thisBtn.html("<i class=\"fa-solid fa-keyboard fa-xl\"></i>");
 		thisBtn.data("set", true);
 		multiSearchResetBtn.show();
 		multiSearchBtn.show();
 		searchInputContent.hide();
 		searchMultiContent.show();
 	}else{
-		thisBtn.text("멀티");
+		thisBtn.html("<i class=\"fa-solid fa-list fa-xl\"></i>");
 		thisBtn.data("set", false);
 		multiSearchResetBtn.hide();
 		multiSearchBtn.hide();
@@ -2761,11 +2756,27 @@ function plusBtnClick(e){
 
 	if(thisBtn.data("click") == false){
 		thisBtn.html("<i class=\"fa-solid fa-xmark\"></i>");
-		thisBtn.prev().children().fadeIn(400);
 		thisBtn.data("click", true);
+		thisBtn.prev().find("button[data-status=\"true\"]").fadeIn(400);
 	}else{
 		thisBtn.html("<i class=\"fa-solid fa-ellipsis\"></i>");
-		thisBtn.prev().children().fadeOut();
 		thisBtn.data("click", false);
+		thisBtn.prev().find("button[data-status=\"true\"]").fadeOut();
+	}
+}
+
+function plusMenuSelect(select){
+	let btnItems, plusBtn;
+	btnItems = $(".plusItems button");
+	plusBtn = $("#plusBtn");
+
+	plusBtn.data("click", true);
+	plusBtnClick(plusBtn);
+	btnItems.attr("data-status", false);
+	btnItems.attr("onclick", "");
+
+	for(let i = 0; i < select.length; i++){
+		$(".plusItems button[data-keyword=\"" + select[i].keyword + "\"]").attr("data-status", true);
+		$(".plusItems button[data-keyword=\"" + select[i].keyword + "\"]").attr("onclick", select[i].onclick);
 	}
 }

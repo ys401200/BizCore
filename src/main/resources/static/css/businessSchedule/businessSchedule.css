@@ -235,11 +235,9 @@
 	box-shadow:0px 1px 2px #bdbfc9;
 	color:#ebefff;
 	background-color:#2147b1;
-	padding:0 0.7%;
 	height:30px;
 	border-radius:5px;
 	float: right;
-	font-size:13px;
 }
 
 .scheduleContainer > button:first-of-type{

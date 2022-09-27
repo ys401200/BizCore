@@ -145,11 +145,27 @@ function drawTechList() {
 	createGrid(container, header, data, ids, dataJob, fnc);
 
 	let path = $(location).attr("pathname").split("/");
-
+	let menu = [
+		{
+			"keyword": "add",
+			"onclick": "techInsertForm();"
+		},
+		{
+			"keyword": "notes",
+			"onclick": ""
+		},
+		{
+			"keyword": "set",
+			"onclick": ""
+		},
+	];
+	
 	if(path[3] !== undefined){
 		let content = $(".gridContent[data-id=\"" + path[3] + "\"]");
 		techDetailView(content);
 	}
+
+	plusMenuSelect(menu);
 }
 
 function techDetailView(e){
@@ -390,25 +406,37 @@ function techSuccessView(result){
 	];
 	
 	html = detailViewForm(dataArray);
-	conTitleChange("containerTitle", "<a href='#' onclick='detailViewContainerHide(\"기술일정조회\");'>뒤로가기</a>");
+	conTitleChange("containerTitle", "<a href='#' onclick='detailViewContainerHide(\"기술지원조회\");'>뒤로가기</a>");
 	$(".detailContents").html(html);
-	$(".detailBtns").html("");
 	notIdArray = ["writer"];
-	$(".detailBtns").append("<button type='button' onclick='enableDisabled(this, \"techUpdate();\", \"" + notIdArray + "\");'>수정</button><button type='button' onclick='techDelete(" + JSON.stringify(result) + ");'>삭제</button>");
-	$(".detailBtns").show();
 	$(".detailContents").show();
 
 	setTimeout(() => {
-		$(document).find("[name='job'][value='tech']").prop("checked", true);
+		$("[name='job'][value='tech']").prop("checked", true);
+		let menu = [
+			{
+				"keyword": "add",
+				"onclick": "techInsertForm();"
+			},
+			{
+				"keyword": "edit",
+				"onclick": "enableDisabled(this, \"techUpdate();\", \"" + notIdArray + "\");"
+			},
+			{
+				"keyword": "delete",
+				"onclick": "techDelete(" + JSON.stringify(result) + ");"
+			},
+		];
 
 		let contractMethod = (result.contractMethod === null || result.contractMethod === "" || result.contractMethod === undefined) ? "" : result.contractMethod;
 		let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;
 		let supportStep = (result.supportStep === null || result.supportStep === "" || result.supportStep === undefined) ? "" : result.supportStep;
-
-		$(document).find("[name='contractMethod'][value='" + contractMethod + "']").prop("checked", true);
-		$(document).find("#type option[value='" + type + "']").prop("selected", true);
-		$(document).find("#supportStep option[value='" + supportStep + "']").prop("selected", true);
-
+		
+		$("[name='contractMethod'][value='" + contractMethod + "']").prop("checked", true);
+		$("#type option[value='" + type + "']").prop("selected", true);
+		$("#supportStep option[value='" + supportStep + "']").prop("selected", true);
+		
+		plusMenuSelect(menu);
 		setTiny();
 		tinymce.activeEditor.mode.set('readonly');
 		inputDataList();
@@ -614,65 +642,65 @@ function techInsertForm(){
 	modal.close.attr("onclick", "modal.hide();");
 
 	setTimeout(() => {
-		$(document).find("[name='job'][value='tech']").prop("checked", true);
+		$("[name='job'][value='tech']").prop("checked", true);
 	}, 300);
 }
 
 function techInsert(){
 	let url, method, data, type, job;
 
-	job = $(document).find("[name='job']:checked").val();
+	job = $("[name='job']:checked").val();
 
 	url = "/api/schedule/" + job;
 	method = "post";
 	type = "insert";
 
-	if($(document).find("#title").val() === ""){
+	if($("#title").val() === ""){
 		alert("기술요청명을 입력해주세요.");
-		$(document).find("#title").focus();
+		$("#title").focus();
 		return false;
-	}else if($(document).find("#sopp").val() === ""){
+	}else if($("#sopp").val() === ""){
 		alert("영업기회를 선택해주세요.");
-		$(document).find("#sopp").focus();
+		$("#sopp").focus();
 		return false;
-	}else if($(document).find("#partner").val() === ""){
+	}else if($("#partner").val() === ""){
 		alert("엔드유저를 선택해주세요.");
-		$(document).find("#partner").focus();
+		$("#partner").focus();
 		return false;
-	}else if($(document).find("#from").val() === ""){
+	}else if($("#from").val() === ""){
 		alert("지원시작일을 선택해주세요.");
 		return false;
-	}else if($(document).find("#to").val() === ""){
+	}else if($("#to").val() === ""){
 		alert("지원종료일을 선택해주세요.");
-		$(document).find("#title").focus();
+		$("#title").focus();
 		return false;
 	}else{
 		let from, to, place, writer, sopp, contract, contractMethod, customer, cipOfCustomer, partner, title, content, supportModel, supportVersion, supportStep, type;
 
-		from = $(document).find("#from").val();
+		from = $("#from").val();
 		from = new Date(from).getTime();
-		to = $(document).find("#to").val();
+		to = $("#to").val();
 		to = new Date(to).getTime();
-		place = $(document).find("#place").val();
-		writer = $(document).find("#writer");
+		place = $("#place").val();
+		writer = $("#writer");
 		writer = dataListFormat(writer.attr("id"), writer.val());
-		sopp = $(document).find("#sopp");
+		sopp = $("#sopp");
 		sopp = dataListFormat(sopp.attr("id"), sopp.val());
-		customer = $(document).find("#customer");
+		customer = $("#customer");
 		customer = dataListFormat(customer.attr("id"), customer.val());
-		partner = $(document).find("#partner");
+		partner = $("#partner");
 		partner = dataListFormat(partner.attr("id"), partner.val());
-		title = $(document).find("#title").val();
+		title = $("#title").val();
 		content = tinymce.activeEditor.getContent();
-		supportModel = $(document).find("#supportModel").val();
-		supportVersion = $(document).find("#supportVersion").val();
-		contract = $(document).find("#contract");
+		supportModel = $("#supportModel").val();
+		supportVersion = $("#supportVersion").val();
+		contract = $("#contract");
 		contract = dataListFormat(contract.attr("id"), contract.val()); 
-		contractMethod = $(document).find("[name='contractMethod']:checked").val();
-		cipOfCustomer = $(document).find("#cipOfCustomer");
+		contractMethod = $("[name='contractMethod']:checked").val();
+		cipOfCustomer = $("#cipOfCustomer");
 		cipOfCustomer = dataListFormat(cipOfCustomer.attr("id"), cipOfCustomer.val());
-		supportStep = $(document).find("#supportStep").val();
-		type = $(document).find("#type").val();
+		supportStep = $("#supportStep").val();
+		type = $("#type").val();
 
 		data = {
 			"job": job,
@@ -714,58 +742,58 @@ function techErrorInsert(){
 function techUpdate(){
 	let url, method, data, type, job;
 
-	job = $(document).find("[name='job']:checked").val();
+	job = $("[name='job']:checked").val();
 
 	url = "/api/schedule/" + job + "/" + storage.techNo;
 	method = "put";
 	type = "update";
 
-	if($(document).find("#title").val() === ""){
+	if($("#title").val() === ""){
 		alert("기술요청명을 입력해주세요.");
-		$(document).find("#title").focus();
+		$("#title").focus();
 		return false;
-	}else if($(document).find("#sopp").val() === ""){
+	}else if($("#sopp").val() === ""){
 		alert("영업기회를 선택해주세요.");
-		$(document).find("#sopp").focus();
+		$("#sopp").focus();
 		return false;
-	}else if($(document).find("#customer").val() === ""){
+	}else if($("#customer").val() === ""){
 		alert("엔드유저를 선택해주세요.");
-		$(document).find("#customer").focus();
+		$("#customer").focus();
 		return false;
-	}else if($(document).find("#from").val() === ""){
+	}else if($("#from").val() === ""){
 		alert("지원시작일을 선택해주세요.");
 		return false;
-	}else if($(document).find("#to").val() === ""){
+	}else if($("#to").val() === ""){
 		alert("지원종료일을 선택해주세요.");
-		$(document).find("#title").focus();
+		$("#title").focus();
 		return false;
 	}else{
 		let from, to, place, writer, sopp, contract, contractMethod, customer, cipOfCustomer, partner, title, content, supportModel, supportVersion, supportStep, type;
 
-		from = $(document).find("#from").val();
+		from = $("#from").val();
 		from = new Date(from).getTime();
-		to = $(document).find("#to").val();
+		to = $("#to").val();
 		to = new Date(to).getTime();
-		place = $(document).find("#place").val();
-		writer = $(document).find("#writer");
+		place = $("#place").val();
+		writer = $("#writer");
 		writer = dataListFormat(writer.attr("id"), writer.val());
-		sopp = $(document).find("#sopp");
+		sopp = $("#sopp");
 		sopp = dataListFormat(sopp.attr("id"), sopp.val());
-		customer = $(document).find("#customer");
+		customer = $("#customer");
 		customer = dataListFormat(customer.attr("id"), customer.val());
-		partner = $(document).find("#partner");
+		partner = $("#partner");
 		partner = dataListFormat(partner.attr("id"), partner.val());
-		title = $(document).find("#title").val();
+		title = $("#title").val();
 		content = tinymce.activeEditor.getContent();
-		supportModel = $(document).find("#supportModel").val();
-		supportVersion = $(document).find("#supportVersion").val();
-		contract = $(document).find("#contract");
+		supportModel = $("#supportModel").val();
+		supportVersion = $("#supportVersion").val();
+		contract = $("#contract");
 		contract = dataListFormat(contract.attr("id"), contract.val()); 
-		contractMethod = $(document).find("[name='contractMethod']:checked").val();
-		cipOfCustomer = $(document).find("#cipOfCustomer");
+		contractMethod = $("[name='contractMethod']:checked").val();
+		cipOfCustomer = $("#cipOfCustomer");
 		cipOfCustomer = dataListFormat(cipOfCustomer.attr("id"), cipOfCustomer.val());
-		supportStep = $(document).find("#supportStep").val();
-		type = $(document).find("#type").val();
+		supportStep = $("#supportStep").val();
+		type = $("#type").val();
 
 		data = {
 			"job": job,
