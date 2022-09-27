@@ -263,7 +263,7 @@ public class GwService extends Svc{
         String sql3 = "SELECT doc FROM bizcore.doc_app_detail WHERE deleted IS NULL AND compId = ? AND ordered = (SELECT MAX(ordered) FROM bizcore.doc_app_detail WHERE deleted IS NULL AND compId = ? AND docNo = ? AND retrieved IS NULL AND (approved IS NOT NULL OR rejected IS NOT NULL)) AND docNo = ?";
         String no = null, writer = null, formId = null, docbox = null, title = null, confirmNo = null;
         String ordered = null, employee = null, appType = null, read = null, isModify = null, approved = null, rejected = null, comment = null, appData = null, t = null, doc = null;
-        String docStatus = null, appCurrent = null, files = null, revisionHistory = null;
+        String docStatus = null, appCurrent = null, files = null, revisionHistory = null, customer = null, sopp = null;
         HashSet<String> appBefore = new HashSet<>(), appNext = new HashSet<>(), appRead = new HashSet<>(), appReceiver = new HashSet<>(), appAll = new HashSet<>();  
         List<HashMap<String, String>> list = null;
         HashMap<String, String> each = null;
@@ -272,6 +272,7 @@ public class GwService extends Svc{
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
+        JSONObject json = null;
         int x = 0, status = -9999;
 
         try{
@@ -313,6 +314,13 @@ public class GwService extends Svc{
                 rejected = rs.getString("rejected");
                 comment = rs.getString("comment");
                 appData = rs.getString("appData");
+
+                if(appData != null){
+                    json = new JSONObject(appData);
+                    customer = json.isNull("customer") ? null : json.getString("customer");
+                    sopp = json.isNull("sopp") ? null : json.getString("sopp");
+                }
+
                 t = "{\"ordered\":" + ordered + ",";
                 t += ("\"employee\":" + employee + ",");
                 t += ("\"appType\":" + appType + ",");
@@ -321,7 +329,8 @@ public class GwService extends Svc{
                 t += ("\"approved\":" + approved + ",");
                 t += ("\"rejected\":" + rejected + ",");
                 t += ("\"comment\":\"" + comment + "\",");
-                t += ("\"appData\":" + appData + "}");
+                t += ("\"customer\":" + customer + ",");
+                t += ("\"sopp\":" + sopp + "}");
                 if(appLine == null) appLine = new ArrayList<>();
                 appLine.add(t);
 
@@ -703,14 +712,14 @@ public class GwService extends Svc{
                 } // 첨부파일 수정에 대한 처리 종료
                 revision = json.toString();
                 gwMapper.setModifiedAppLine(compId, docNo, ordered);
-                gwMapper.addRevisionHistory(compId, docNo, ordered, userNo, revision);
+                gwMapper.addRevisionHistory2(compId, docNo, ordered, userNo, revision);
             } // 문서가 수정된 경우의 처리 종료
 
             // 결재처리를 기록함
             gwMapper.setProceedDocAppStatus(compId, docNo, ordered, comment, appData);
 
             // 남아있는 결재 절차가 있는지 확인함
-            next = gwMapper.getNectAppData(compId, docNo, ordered);
+            next = gwMapper.getNextAppData(compId, docNo, ordered);
 
             if(next == null){ // 결재절차가 종료된 경우
                 notes.sendNewNotes(compId, 0, writer, "결재 완료 되었습니다.", "{\"func\":\"docApp\",\"no\":\"" + docNo + "\"}");

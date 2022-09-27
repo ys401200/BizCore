@@ -93,7 +93,7 @@ public interface GwMapper {
 
     // 결재문서의 리비전 히스토리를 기록하는 메서드
     @Insert("INSERT INTO bizcore.doc_app_revision(compId, docNo, ordered, employee, content) VALUES(#{compId}, #{docNo}, #{ordered}, #{employee}, #{content})")
-    public int addRevisionHistory(@Param("compId") String compId, @Param("docNo") String docNo, @Param("ordered") int ordered, @Param("employee") String userNo , @Param("content") String revision);
+    public int addRevisionHistory2(@Param("compId") String compId, @Param("docNo") String docNo, @Param("ordered") int ordered, @Param("employee") String userNo , @Param("content") String revision);
 
     // 결재선에 결재처리를 기록하는 메서드
     @Update("UPDATE bizcore.doc_app_detail SET approved = NOW(), comment = #{comment}, appData = #{appData} WHERE deleted IS NULL AND compId = #{compId} AND docNo = #{docNo} AND ordered = #{ordered}")
@@ -101,5 +101,5 @@ public interface GwMapper {
 
     // 다음 결재자 정보를 가져오는 메서드
     @Select("SELECT employee, appType FROM bizcore.doc_app_detail WHERE deleted IS NULL AND appType < 4 AND compId = #{compId} AND docNo = #{docNo} AND ordered > (SELECT min(ordered) FROM bizcore.doc_app_detail WHERE deleted IS NULL AND appType < 4 AND compId = #{compId} AND docNo = #{docNo} AND ordered > #{ordered}")
-    public HashMap<String, Integer> getNectAppData(@Param("compId") String compId, @Param("docNo") String docNo, @Param("ordered") int ordered);
+    public HashMap<String, Integer> getNextAppData(@Param("compId") String compId, @Param("docNo") String docNo, @Param("ordered") int ordered);
 }
