@@ -1,4 +1,5 @@
 let cipher, msg, apiServer, modal, storage, fileDataArray = [], removeDataArray = [], updateDataArray = [];
+storage = {};
 
 function init(){
 	setTimeout(() => {
@@ -13,7 +14,6 @@ function init(){
 	}, 70);
 	
 	apiServer = "";
-	storage = {};
 	
 	getCommonCode();
 	getUserMap();
@@ -1134,17 +1134,19 @@ function detailViewFormModal(data){
 
 	for(let i = 0; i < data.length; i++){
 		let dataTitle = (data[i].title === undefined) ? "" : data[i].title;
-		
-		html += "<div class='defaultFormLine'>";
-		html += "<div class='defaultFormSpanDiv'>";
-		html += "<span class='defaultFormSpan'>" + dataTitle + "</span>";
-		html += "</div>";
-		html += "<div class='defaultFormContent'>";
 
-		html += inputSet(data[i]);
-		
-		html += "</div>";
-		html += "</div>";
+		if(dataTitle !== ""){
+			html += "<div class='defaultFormLine'>";
+			html += "<div class='defaultFormSpanDiv'>";
+			html += "<span class='defaultFormSpan'>" + dataTitle + "</span>";
+			html += "</div>";
+			html += "<div class='defaultFormContent'>";
+	
+			html += inputSet(data[i]);
+			
+			html += "</div>";
+			html += "</div>";
+		}
 	}
 
 	html += "</div>";
@@ -1276,6 +1278,8 @@ function inputSet(data){
 		html += "</select>";
 	}else if(dataType === "file"){
 		html += "<input type='file' id='" + elementId + "' name='" + elementName + "' onchange='fileChange();' multiple>";
+	}else if(dataType === ""){
+		html += "";
 	}
 
 	return html;
@@ -2062,8 +2066,10 @@ function detailViewContainerHide(titleStr){
 	pageContainer.show();
 	pageContainer.prev().show();
 	detailContents.hide();
+	detailContents.html("");
 	detailBtns.hide();
 	searchContainer.show();
+
 
 	conTitleChange("containerTitle", titleStr);
 }
@@ -2145,20 +2151,21 @@ function contentTopBtn(content){
 }
 
 function enableDisabled(e, clickStr, notIdArray){
-	$("input, select").each((index, item) => {
-		if($(item).attr("type") === "radio"){
-			$(item).prop("disabled", false);
+	let box = $("input, select");
+
+	for(let i = 0; i < box.length; i++){
+		if($(box[i]).attr("type") === "radio"){
+			$(box[i]).prop("disabled", false);
 		}else{
-			if(notIdArray.indexOf($(item).attr("id")) == -1){
-				$(item).prop("disabled", false);
+			if(notIdArray.indexOf($(box[i]).attr("id")) == -1){
+				$(box[i]).prop("disabled", false);
 			}
 		}
-	});
-
-	tinymce.activeEditor.mode.set('design'); 
-
+	}
+	
 	$(e).text("수정완료");
 	$(e).attr("onclick", clickStr);
+	tinymce.activeEditor.mode.set('design'); 
 }
 
 function calWindowLength(){

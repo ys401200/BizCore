@@ -318,7 +318,7 @@ function scheduleDetailView(e){
 }
 
 function scheduleSuccessView(result){
-	let html, dataArray, notIdArray;
+	let html, dataArray, notIdArray, jobArray;
 	$(".searchContainer").hide();
 	dataArray = scheduleRadioUpdate(result.job, result);
 	html = detailViewForm(dataArray);
@@ -348,12 +348,14 @@ function scheduleSuccessView(result){
 			$(document).find("#supportStep option[value='" + supportStep + "']").prop("selected", true);
 		}
 
-		$("input[name='job']").each((index, item) => {
-			if(!$(item).is(":checked")){
-				$(item).hide();
-				$(item).next().hide();
+		let jobArray = $("input[name=\"job\"]");
+
+		for(let i = 0; i < jobArray.length; i++){
+			if(!$(jobArray[i]).is(":checked")){
+				$(jobArray[i]).hide();
+				$(jobArray[i]).next().hide();
 			}
-		});
+		}
 
 		setTiny();
 		tinymce.activeEditor.mode.set('readonly');
@@ -396,7 +398,6 @@ function calendarSuccessView(result){
 	modal.close.attr("onclick", "scheduleDelete(" + JSON.stringify(result) + ");");
 
 	setTimeout(() => {
-		$("[name='job']").show();
 		$(document).find("[name='job'][value='" + result.job + "']").prop("checked", true).removeAttr("onclick");
 
 		if(result.job === "sales"){
@@ -412,12 +413,14 @@ function calendarSuccessView(result){
 			$(document).find("#supportStep option[value='" + supportStep + "']").prop("selected", true);
 		}
 
-		$("input[name='job']").each((index, item) => {
-			if(!$(item).is(":checked")){
-				$(item).hide();
-				$(item).next().hide();
+		let jobArray = $("input[name=\"job\"]");
+
+		for(let i = 0; i < jobArray.length; i++){
+			if(!$(jobArray[i]).is(":checked")){
+				$(jobArray[i]).hide();
+				$(jobArray[i]).next().hide();
 			}
-		});
+		}
 
 		setTiny();
 		tinymce.activeEditor.mode.set('readonly');
@@ -1372,9 +1375,7 @@ function scheduleRadioUpdate(value, result){
 				"value": partner,
 			},
 			{
-				"title": "",
-				"elementId": "",
-				"dataKeyup": "",
+				"type": "",
 			},
 			{
 				"title": "제목",
@@ -1606,9 +1607,7 @@ function scheduleRadioUpdate(value, result){
 				"value": to,
 			},
 			{
-				"title": "",
-				"elementId": "",
-				"dataKeyup": "",
+				"type": "",
 			},
 			{
 				"title": "기술지원 요청명(*)",
@@ -1715,9 +1714,7 @@ function scheduleRadioUpdate(value, result){
 				"value": customer,
 			},
 			{
-				"title": "",
-				"elementId": "",
-				"dataKeyup": "",
+				"type": "",
 			},
 			{
 				"title": "제목",

@@ -51,7 +51,6 @@
     display: grid; 
 	width: 98%; 
 	margin: 0 auto;
-	padding-top:20px;
 }
 
 .scheduleContainer .gridScheduleList .gridHeader,
@@ -61,7 +60,6 @@
 
 .scheduleContainer .gridScheduleList .gridHeader{
 	border-bottom:1px solid #abb6d5;
-	background-color:#f1f5ff;
 }
 
 .scheduleContainer .calendarList{
