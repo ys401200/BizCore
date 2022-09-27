@@ -654,7 +654,7 @@ function docFileChange() {
 
   for (let i = 0; i < fileDataArray.length; i++) {
 
-    html += "<div value='" + i + "'>" + fileDataArray[i] + "<button type='button' onclick='deleteFile(this)'>x</button></div></div>"
+    html += "<div data-detail='" + fileDataArray[i] + "'>" + fileDataArray[i] + "<button type='button' onclick='deleteFile(this)'>x</button></div></div>"
     $(".filePreview").html(html);
   }
 
@@ -664,9 +664,9 @@ function docFileChange() {
 }
 
 function deleteFile(obj) {
-  let index = obj.parentElement.value;
-  let arr = storage.attachedList;
-  arr.splice(index, 1);
+  let value = obj.parentElement.dataset.detail;
+  storage.attachedList = storage.attachedList.filter((element) => element != value);
+  console.log(storage.attachedList);
   obj.parentElement.remove();
 }
 

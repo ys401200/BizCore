@@ -231,7 +231,7 @@ function showReportDetail() {
 
 
 
-	let selectedFileView = "<label>첨부파일</label><div><input class='inputFile' multiple name='attached[]'type='file' onchange='setSelectedFiles()'/><div class='selectedFileDiv'></div></div>"
+	let selectedFileView = "<label>첨부파일</label><div><div><input class='inputFile' multiple name='attached[]'type='file' onchange='setSelectedFiles()'/></div><div class='selectedFileDiv'></div></div>"
 
 
 	$(".seletedForm").html(testForm);

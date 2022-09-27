@@ -221,7 +221,12 @@
 
 }
 
-.listPageDiv .detailReport .selectedReportview .selectedFileField>div>div {
+.listPageDiv .detailReport .selectedReportview .selectedFile>div>.inputFile {
+   margin: 0.5em 0;
+}
+
+
+.listPageDiv .detailReport .selectedReportview .selectedFile>div {
    overflow: auto;
 }
 
