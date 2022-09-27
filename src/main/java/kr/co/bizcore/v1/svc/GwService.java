@@ -319,6 +319,8 @@ public class GwService extends Svc{
                     json = new JSONObject(appData);
                     customer = json.isNull("customer") ? null : json.getString("customer");
                     sopp = json.isNull("sopp") ? null : json.getString("sopp");
+                    if(customer == null || customer.equals("")) customer = "0";
+                    if(sopp == null || sopp.equals("")) sopp = "0";
                 }
 
                 t = "{\"ordered\":" + ordered + ",";
