@@ -18,17 +18,10 @@ body{margin:0 auto;}
 }
 
 #loginContents #loginContent{
-    /* float: left; */
     float:right;
     width: 55%;
     height: 100%;
     background-color: #ffffff;
-}
-
-@media(max-width: 1500px){
-	#loginContents #loginContent #loginForm{
-	    left: 10% !important;
-	}
 }
 
 #loginContents #loginContent #loginForm{
@@ -37,85 +30,49 @@ body{margin:0 auto;}
     top: 50%;
     transform:translate(-50%,-64%);
     display:inline-block;
-
-}
-
-@media(max-width: 700px){
-	#loginContents #loginContent #loginForm #loginLogoImgDiv{
-		left: 5% !important;
-	}
 }
 
 #loginContents #loginContent #loginForm #loginLogoImgDiv{
 	position: relative;
-	/* left: 15%; */
     text-align: center;
 }
 
 #loginContents #loginContent #loginForm #loginLogoImgDiv #loginLogoImg{
-    width: 218px;
-    height: 50px;
+    width: 180px;
 }
 
 #loginContents #loginContent #loginForm #loginInput{
     margin-top: 48px;
 }
 
-@media(max-width: 1280px){
-	#loginContents #loginContent #loginForm #loginInput input:not(:last-child){
-	    width: 80% !important;
-	}
+#loginContents #loginContent #loginForm #loginInput input{
+    width:400px;
+    height: 52px;
+    border: 1px solid #BDBDBD;
+    background: #FAFAFA;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 23px;
+    padding: 0 16px;
+    border-radius: 8px;
 }
 
 #loginContents #loginContent #loginForm #loginInput input:not(:last-child){
-    margin-bottom: 36px;
-    width: 520px;
-    height: 56px;
-    background: #F5F6F8;
-    border: 1px solid #C1C1C1;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 23px;
-    padding: 0 26px;
-}
-
-@media(max-width: 1280px){
-	#loginContents #loginContent #loginForm #loginInput input:last-child{
-	    width: 80% !important;
-	}
-}
-
-#loginContents #loginContent #loginForm #loginInput input:last-child{
-    margin-bottom: 19px;
-    width: 520px;
-    height: 56px;
-    background: #F5F6F8;
-    border: 1px solid #C1C1C1;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 23px;
-    padding: 0 26px;
+    margin-bottom: 14px;
 }
 
 #loginContents #loginContent #loginForm #loginInput input:not(:last-child):hover{
-    margin-bottom: 36px;
-    width: 520px;
-    height: 56px;
-    background: #F5F6F8;
     border: 1px solid #5858B7;
 }
 
 #loginContents #loginContent #loginForm #loginInput input:last-child:hover{
-    margin-bottom: 19px;
-    width: 520px;
-    height: 56px;
-    background: #F5F6F8;
     border: 1px solid #5858B7;
 }
 
 #loginContents #loginContent #loginForm #loginSessionDiv{
     width: 100%;
     text-align: left;
+    margin:10px 0 36px 0;
 }
 
 #loginContents #loginContent #loginForm #loginSessionDiv #loginSessionBtn.active{
@@ -124,29 +81,19 @@ body{margin:0 auto;}
     content: url("../../images/login/loginSessionActive.png");
 }
 
-@media(max-width:2100px){
-	#loginContents #loginContent #loginForm #loginSessionDiv #loginSessionBtn:not(.active){
-		position: relative;
-		left: 0 !important;
-	}
-}
-
 #loginContents #loginContent #loginForm #loginSessionDiv #loginSessionBtn:not(.active){
     width:21px;
     vertical-align: bottom;
 }
 
-
 #loginContents #loginContent #loginForm #loginSessionDiv #loginSessionSpan{
-    margin-left: 10px;
-    font-weight: 400;
-    font-size: 16px;
+    font-weight: 300;
+    font-size: 14px;
     line-height: 23px;
-    color: #5B5B5B;
+    color: #9E9E9E;
 }
 
 #loginContents #loginContent #loginForm #loginMsg{
-    /* margin-left: 15%; */
     font-weight: 400;
     font-size: 16px;
     color: #8d90ff;
@@ -155,32 +102,25 @@ body{margin:0 auto;}
     padding:12px 0 10px 0;
     text-align:center;
     text-overflow: ellipsis;
-}
-
-@media(max-width: 700px){
-	#loginContents #loginContent #loginForm #loginBtns button{
-		margin-left: 0 !important;
-	}
+    display: none;
 }
 
 #loginContents #loginContent #loginForm #loginBtns button{
-    width: 240px;
-    height: 54px;
+    width: 100%;
+    height: 52px;
     margin:0 auto;
     display:inherit;
-    /* margin-top: 23px; */
-    /* margin-left: 13%; */
     font-weight: 400;
-    font-size: 18px;
+    font-size: 16px;
     line-height: 26px;
     color: #ffffff;
     background-color: #332D83;
     cursor: pointer;
     border: 0;
+    border-radius: 8px;
 }
 
 #loginContents #loginIntroduce{
-    /* float: right; */
     float:left;
     width: 45%;
     height: 100%;
@@ -196,14 +136,14 @@ body{margin:0 auto;}
 
 #loginContents #loginIntroduce #loginSpans #loginIntroSpan_1{
     font-weight: 300;
-    font-size: calc(1em + 2.1vw);
+    font-size: calc(1em + 2vw);
     line-height: 70px;
     color: #FFFFFF;
 }
 
 #loginContents #loginIntroduce #loginSpans #loginIntroSpan_2{
     font-weight: 700;
-    font-size: calc(1em + 2.1vw);
+    font-size: calc(1em + 2vw);
     line-height: 70px;
     color: #FFFFFF;
 }
@@ -216,5 +156,102 @@ body{margin:0 auto;}
 
 #loginContents #loginIntroduce #loginIntroImgDiv #loginIntroImg{
     width: 73%;
-    /* height: 60%; */
 }
+
+@media(max-width: 1439px){
+    #loginContents #loginIntroduce{display: none;}
+    #loginContents #loginContent{
+        width:100%;
+        background-image: url(../../images/login/loginBackground.jpg);
+        background-size: cover;
+    }
+    #loginContents #loginContent #loginForm{
+        transform: translate(-50%, -50%);
+        background-color:#fff;
+        padding:80px 40px;
+        border-radius:16px;
+    }
+
+    #loginContents #loginContent #loginForm #loginInput input{
+        margin-bottom: 0;
+        width:400px;
+    }
+
+    #loginContents #loginContent #loginForm #loginInput input:not(:last-child){
+        border-bottom:0;
+        border-top-right-radius: 8px;
+        border-top-left-radius: 8px;
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 0;
+        margin-bottom: 0;
+    }
+
+    #loginContents #loginContent #loginForm #loginInput input:last-child{
+        border-bottom-right-radius: 8px;
+        border-bottom-left-radius: 8px;
+        border-top-right-radius: 0;
+        border-top-left-radius: 0;
+        margin-bottom: 0;
+    }
+
+    #loginContents #loginContent #loginForm #loginInput input:not(:last-child):hover{
+        margin-bottom: 0;
+    }
+
+    #loginContents #loginContent #loginForm #loginMsg{display: none;}
+
+    #loginContents #loginContent #loginForm #loginSessionDiv{margin:8px 0 36px 0;}
+
+    #loginContents #loginContent #loginForm #loginSessionDiv #loginSessionSpan{
+        font-size: 14px;
+        margin-left:0;
+    }
+
+    #loginContents #loginContent #loginForm #loginBtns button{
+        width:400px;
+        border-radius: 8px;
+    }
+}
+/*화면크기 1439+ end*/
+
+@media(max-width: 600px){
+    #loginContent{padding:0 16px; box-sizing: border-box;}
+
+    #loginContents #loginContent #loginForm #loginLogoImgDiv #loginLogoImg{
+        width:170px; height:auto;
+    }
+
+    #loginContents #loginContent #loginForm{
+        width:70%;
+        padding:70px 30px;
+    }
+
+    #loginContents #loginContent #loginForm #loginInput{
+        margin-top:40px;
+    }
+
+    #loginContents #loginContent #loginForm #loginInput input{
+        width:100%;
+        height:48px;
+        font-size: 15px;
+    }
+
+    #loginContents #loginContent #loginForm #loginBtns button{
+        width:100%;
+        font-size: 16px;
+    }
+
+    #loginContents #loginIntroduce{display: none;}
+    #loginContents #loginContent{
+        width:100%;
+        background-image: url(../../images/login/loginBackground.jpg);
+        background-size: cover;
+    }
+    #loginContents #loginContent #loginForm{
+        transform: translate(-50%, -50%);
+        background-color:#fff;
+        padding:80px 40px;
+        border-radius:16px;
+    }
+}
+/*화면크기 600- end*/
