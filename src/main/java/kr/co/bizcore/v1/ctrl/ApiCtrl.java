@@ -79,6 +79,7 @@ public class ApiCtrl extends Ctrl {
         } else if (aesIv == null || aesKey == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
         } else {
+            pw = pw.replaceAll("\\*", "/");
             pw = decAes(pw, aesKey, aesIv);
             result = systemService.getMyInfo(userNo, pw, compId);
             if (result == null) {
