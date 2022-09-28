@@ -86,7 +86,34 @@ public class GwService extends Svc{
         }
 
         return no;
-    }
+    } // End of addAppDoc()
+
+    public String addAppTemp(String compId, String title, String userNo, String sopp, String customer, String formId, String readable, String appDoc, String appLine) {
+        int no = 0;
+        long t = 0;
+        String docNo = null, appData = null;
+        Calendar cal = Calendar.getInstance();
+
+        t = cal.get(Calendar.YEAR);System.out.println(t);
+        t = (t % 100);System.out.println(t);
+        t = (t * 100 + (cal.get(Calendar.MONTH) + 1));System.out.println(t);
+        t = (t * 100 + (cal.get(Calendar.DATE)));System.out.println(t);
+        t = (t * 100 + cal.get(Calendar.HOUR_OF_DAY));System.out.println(t);
+        t = (t * 100 + cal.get(Calendar.MINUTE));System.out.println(t);
+        t = (t + cal.get(Calendar.SECOND));
+
+        docNo = "temp_" + userNo + "_" + t;
+        no = getNextNumberFromDB(compId, "bizcore.doc_app");
+
+        // ========================= 문서 헤더정보 DB입력
+        if(gwMapper.addNewDocHeader(no, compId, docNo, userNo, "temp", title, formId, "temp") < 1)    return null; // 헤더정보 입력 실패
+
+        // ========================= 결재선에 대한 처리
+        appData = "{\"sopp\":" + (sopp == null ? sopp : "\"" + sopp + "\"") + ",\"customer\":" + (customer == null ? customer : "\"" + customer + "\"") + ",\"appLine\":" + (appLine == null ? appLine : "\"" + appLine + "\"") + "}";
+        gwMapper.addNewDocAppLineForSelf(compId, docNo, 0, userNo, "0", appDoc, appData);
+
+        return docNo;
+    } // End of addAppTemp()
 
     // 결재 예정 및 대기 문서 목록을 가져오는 메서드
     public String getWaitAndDueDocList(String compId, String userNo){
@@ -259,7 +286,7 @@ public class GwService extends Svc{
     // 문서 관리번호를 입력받아서 결재 문서 정보, 본문, 결재선, 첨부파일 정보를 전달하는 메서드 / 오류메시지 : notFound / errorInAppLine / appDocContentIsEmpty / permissionDenied
     public String getAppDocAndDetailInfo(String compId, String docNo, String dept, String userNo, String aesKey, String aesIv){
         String result = null;
-        String sql1 = "SELECT no, docNo, writer, formId, docbox, title, confirmNo, status, readable FROM bizcore.doc_app WHERE deleted IS NULL AND compId = ? AND docno = ?";
+        String sql1 = "SELECT no, docNo, writer, formId, docbox, title, confirmNo, status, readable FROM bizcore.doc_app WHERE deleted IS NULL AND readable <> 'temp' AND compId = ? AND docno = ?";
         String sql2 = "SELECT ordered, employee, appType, CAST(UNIX_TIMESTAMP(`read`)*1000 AS CHAR) AS `read`, isModify, CAST(UNIX_TIMESTAMP(approved)*1000 AS CHAR) AS approved, CAST(UNIX_TIMESTAMP(rejected)*1000 AS CHAR) AS rejected, comment FROM bizcore.doc_app_detail WHERE compId = ? AND docNo = ? AND retrieved IS NULL ORDER BY ordered";
         String sql3 = "SELECT doc, appData FROM bizcore.doc_app_detail WHERE deleted IS NULL AND compId = ? AND ordered = (SELECT MAX(ordered) FROM bizcore.doc_app_detail WHERE deleted IS NULL AND compId = ? AND docNo = ? AND retrieved IS NULL AND (approved IS NOT NULL OR rejected IS NOT NULL)) AND docNo = ?";
         String no = null, writer = null, formId = null, docbox = null, title = null, confirmNo = null;

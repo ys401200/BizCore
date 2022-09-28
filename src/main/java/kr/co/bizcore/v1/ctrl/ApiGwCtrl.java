@@ -256,6 +256,60 @@ public class ApiGwCtrl extends Ctrl{
         return result;
     } // End of apiGwAppDocNoPost()
 
+    // 결재 문서 임시저장
+    @PostMapping("/app/temp")
+    public String apiGwAppTempPost(HttpServletRequest request, @RequestBody String requestBody){
+        String result = null, aesKey = null, aesIv = null, compId = null, userNo = null;
+        String title = null, sopp = null, customer = null, readable = null, appDoc = null, dept = null, formId = null, appLine = null, docNo = null;
+        String[] files = null, ts = null;
+        HttpSession session = null;
+        HashMap<String, String> attached = null;
+        String data = null, lang = null;
+        Msg msg = null;
+        JSONObject json = null;
+        JSONArray jarr = null, tj = null;
+        int x = -1;
+
+        session = request.getSession();
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        userNo = (String) session.getAttribute("userNo");
+        lang = (String)session.getAttribute("lang");
+        msg = getMsg(lang);
+        compId = (String) session.getAttribute("compId");
+        if(compId == null)
+            compId = (String) request.getAttribute("compId");
+
+        if(compId == null) {
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        }else
+            data = decAes(requestBody, aesKey, aesIv);
+            if(data == null) {
+                result = "{\"result\":\"failure\",\"msg\":\"" + msg.dataIsWornFormat + "\"}";
+            }else {
+                json = new JSONObject(data);
+                dept = json.getString("dept");
+                title = json.getString("title");
+                sopp = json.getString("sopp");
+                readable = json.getString("readable");
+                formId = json.getString("formId");
+                customer = json.getString("customer");
+                appDoc = json.getString("appDoc");
+
+                // 결재선에 대한 2차원 배열 전환 처리
+                jarr = json.getJSONArray("appLine");
+                appLine = jarr.toString();
+
+                // 결재문서 처리 서비스로직으로 데이터 전달
+                docNo = gwService.addAppTemp(compId, title, userNo, sopp, customer, formId, readable, appDoc, appLine);
+
+                result = "{\"result\":\"ok\",\"data\":\"" + docNo + "\"}";
+            }
+        return result;
+    } // End of apiGwAppDocNoPost()
+
 
     // 결재 처리 요청
     @PostMapping("/app/proceed/{docNo}/{ordered:\\d+}/{ask:\\d?}")
