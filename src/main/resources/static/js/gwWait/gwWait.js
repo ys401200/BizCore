@@ -777,7 +777,7 @@ function approveBtnEvent() {
 	data = cipher.encAes(data);
 
 	$.ajax({
-		url: apiServer + "/api/gw/app/proceed/" + no + "/" + ordered + "/" + type,
+		url: apiServer + "/api/gw/app/proceed/" + storage.reportDetailData.docNo + "/" + ordered + "/" + type,
 		method: "post",
 		dataType: "json",
 		data: data,
