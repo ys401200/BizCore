@@ -274,23 +274,22 @@ function getDetailView() {
 // 탭 누를때마다의 이벤트 주기 
 function changeTab(obj) {
 
-    $(obj).css("background-color", "#332E85");
-    $(obj).css("color", "white");
-    $(obj).css("border", "none");
-
+    
+	$(obj).css("background-color", "#62a6ad");
+	$(obj).css("color", "#fff");
+	$(obj).css("border-top-left", "14px");
     if (obj.id == 'lineInfo') {
-
-        $("#changeInfo").css("background-color", "white");
-        $("#changeInfo").css("color", "#332E85");
-        $("#changeInfo").css("border-bottom", "2px solid #332E85");
+        $("#changeInfo").css("background-color", "#dddddd");
+		$("#changeInfo").css("color", "#5c5c5c");
+		$("#changeInfo").css("border-bottom-left-radius", "20px");
         $("#tabDetail2").hide();
         $("#tabDetail").show();
         drawCommentLine();
 
     } else if (obj.id = 'changeInfo') {
-        $("#lineInfo").css("background-color", "white");
-        $("#lineInfo").css("color", "#332E85");
-        $("#lineInfo").css("border-bottom", "2px solid #332E85");
+        $("#lineInfo").css("background-color", "#dddddd");
+		$("#lineInfo").css("color", "#5c5c5c");
+		$("#lineInfo").css("border-bottom-right-radius", "20px");
         $("#tabDetail").hide();
         $("#tabDetail2").show();
         drawChangeInfo();

@@ -322,7 +322,7 @@ function showReportDetail() {
 				jsondata = cipher.decAes(result.data);
 				jsondata = JSON.parse(jsondata);
 				storage.soppList = jsondata;
-				setSoppList(formId);
+				//setSoppList(formId);
 			} else {
 				alert("에러");
 			}
@@ -331,23 +331,23 @@ function showReportDetail() {
 
 
 
-	// 거래처 데이터 리스트 
-	let cusTarget = $(".infoContentlast")[0];
-	let html = $(".infoContentlast")[0].innerHTML;
-	let x;
-	let dataListHtml = "";
+	// // 거래처 데이터 리스트 
+	// let cusTarget = $(".infoContentlast")[0];
+	// let html = $(".infoContentlast")[0].innerHTML;
+	// let x;
+	// let dataListHtml = "";
 
 
-	// 거래처 데이터 리스트 만들기 
-	dataListHtml = "<datalist id='_infoCustomer'>"
-	for (x in storage.customer) {
-		dataListHtml += "<option data-value='" + x + "' value='" + storage.customer[x].name + "'></option> "
-	}
+	// // 거래처 데이터 리스트 만들기 
+	// dataListHtml = "<datalist id='_infoCustomer'>"
+	// for (x in storage.customer) {
+	// 	dataListHtml += "<option data-value='" + x + "' value='" + storage.customer[x].name + "'></option> "
+	// }
 
-	dataListHtml += "</datalist>"
-	html += dataListHtml;
-	$(".infoContentlast")[0].innerHTML = html;
-	$("#" + formId + "_infoCustomer").attr("list", "_infoCustomer");
+	// dataListHtml += "</datalist>"
+	// html += dataListHtml;
+	// $(".infoContentlast")[0].innerHTML = html;
+	// $("#" + formId + "_infoCustomer").attr("list", "_infoCustomer");
 
 
 }
@@ -358,24 +358,24 @@ function showReportDetail() {
 
 
 
-function setSoppList(formId) {
-	let soppTarget = $(".infoContent")[3];
-	let soppHtml = soppTarget.innerHTML;
-	let soppListHtml = "";
+// function setSoppList(formId) {
+// 	let soppTarget = $(".infoContent")[3];
+// 	let soppHtml = soppTarget.innerHTML;
+// 	let soppListHtml = "";
 
 
-	soppListHtml = "<datalist id='_infoSopp'>"
+// 	soppListHtml = "<datalist id='_infoSopp'>"
 
-	for (let i = 0; i < storage.soppList.length; i++) {
-		soppListHtml += "<option data-value='" + storage.soppList[i].no + "' value='" + storage.soppList[i].title + "'></option> "
-	}
+// 	for (let i = 0; i < storage.soppList.length; i++) {
+// 		soppListHtml += "<option data-value='" + storage.soppList[i].no + "' value='" + storage.soppList[i].title + "'></option> "
+// 	}
 
-	soppListHtml += "</datalist>"
-	soppHtml += soppListHtml;
-	soppTarget.innerHTML = soppHtml;
-	$("#" + formId + "_sopp").attr("list", "_infoSopp");
+// 	soppListHtml += "</datalist>"
+// 	soppHtml += soppListHtml;
+// 	soppTarget.innerHTML = soppHtml;
+// 	$("#" + formId + "_sopp").attr("list", "_infoSopp");
 
-}
+// }
 
 
 // 파일 다운로드 

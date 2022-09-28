@@ -188,19 +188,9 @@ function setSoppList(formId) {
 }
 
 
-function getSopp() {
-  let selectedFormNo = $(".formSelector").val();
-  let formId = storage.formList[selectedFormNo].id;
-  let slistid = "infoSopp";
-  let soppVal = $("#" + formId + "_sopp").val();
-  let soppResult = dataListFormat(slistid, soppVal);
-  storage.sopp = soppResult;
 
-  let clistid = "infoCustomer";
-  let customerVal = $("#" + formId + "_infoCustomer").val();
-  let customerResult = dataListFormat(clistid, customerVal);
-  storage.customer = customerResult;
-}
+
+
 
 
 
@@ -556,7 +546,17 @@ function reportInsert() {
   // sopp = $("#" + formId + '_sopp').val();
   // infoCustomer = $("#" + formId + '_infoCustomer').val();
 
-  getSopp();
+
+  let slistid = "infoSopp";
+  let soppVal = $("#" + formId + "_sopp").val();
+  let soppResult = dataListFormat(slistid, soppVal);
+  storage.sopp = soppResult;
+
+  let clistid = "infoCustomer";
+  let customerVal = $("#" + formId + "_infoCustomer").val();
+  let customerResult = dataListFormat(clistid, customerVal);
+  storage.infocustomer = customerResult;
+
 
   // storage.sopp == "" ? storage.sopp = null : storage.sopp = storage.sopp;
   // storage.customer == "" ? storage.customer = null : storage.customer = storage.customer;
@@ -591,7 +591,7 @@ function reportInsert() {
     "title": title,
     "sopp": storage.sopp,
     "dept": dept,
-    "customer": storage.customer,
+    "customer": storage.infocustomer,
     "attached": storage.attachedList === undefined ? [] : storage.attachedList,
     "content": content,
     "appLine": appLine,
@@ -620,7 +620,7 @@ function reportInsert() {
       contentType: "text/plain",
       success: (result) => {
         if (result.result === "ok") {
-          alert("등록완료");
+          console.log(storage.sopp);
           location.href = "/gw/mydraft";
         } else {
           alert(result.msg);

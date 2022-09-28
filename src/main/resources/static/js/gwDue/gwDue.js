@@ -205,7 +205,7 @@ function getDetailView() {
     console.log(testForm);
 
     let detailHtml = "<div class='mainBtnDiv'><button type='button' onclick='showPreAppModal()'>결재하기</button></div>" +
-        "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div>"
+    "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>"
 
 
     $(".listPageDiv").html(detailHtml);
@@ -229,6 +229,30 @@ function getDetailView() {
 
     toReadMode();
     drawCommentLine();
+
+    getFileArr();
+
+	let referArr = new Array();
+
+	for (let i = 0; i < storage.reportDetailData.appLine.length; i++) {
+		if (storage.reportDetailData.appLine[i].appType == '4') {
+			referArr.push(storage.reportDetailData.appLine[i]);
+		}
+	}
+
+
+
+	let referTarget = $(".selectedRefer");
+	let referHtml = "";
+	for (let i = 0; i < referArr.length; i++) {
+		let id = referArr[i].employee;
+		referHtml += "<div class='appendName " + formId + "_refer' data-detail='" + storage.user[id].userNo + "'>" + storage.userRank[storage.user[id].rank][0] + "&nbsp" + storage.user[id].userName + "</div>";
+
+	}
+
+	referTarget.html(referHtml);
+
+
 
 
     let target = $(".seletedForm")[0];
