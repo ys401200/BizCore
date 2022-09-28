@@ -5,9 +5,7 @@
 	<div id="sideContents">
 		<jsp:include page="./sideMenu.jsp" />
 	</div>
-	<div id="bodyContent">
-		<jsp:include page="./main/contentBusiness.jsp" />
-	</div>
+	<div id="widgetContainer"></div>
 </div>
 <div class="tooltip_cnt"></div>
 <div class="msg_cnt"></div>

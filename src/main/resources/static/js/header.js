@@ -336,22 +336,30 @@ function init(){
 storage.widget = {};
 storage.widget.chart = [
     {
-        "size":[2,1],
-        "type":"bar",
-        "period":"monthly",
-        "content":["sales/total","goal/total", "sales/cumulative", "goal/cumulative"]
+        "size":[3,2],
+		"title": "연간 계획대비 실적",
+		"info": false,
     },
     {
-        "size":[1,1],
-        "type":"pie",
-        "period":"yearly",
-        "content":["sales/cumulative", "goal/cumulative"]
+        "size":[1,2],
+		"title": "월간 계획대비 실적",
+		"info": true,
+    },
+	{
+        "size":[1,2],
+		"title": "누적 계획대비 실적",
+		"info": true,
+    },
+	{
+        "size":[1,2],
+		"title": "누적 판매방식 실적",
+		"info": false,
     }
 ];
 storage.widget.schedule = [
     {
-        "size":[2,1],
-        "type":"list"
+        "size":[3,2],
+		"title": "일정",
     },
     {
         "size":[4,1],
@@ -394,23 +402,32 @@ storage.widget.docApp = [
 ]
 storage.widget.notice = [
     {
-        "size":[2,1],
+        "size":[3,2],
+		"title": "공지사항",
     }
 ];
 storage.widget.sopp = [
     {
-        "size":[2,1],
-        "type":"list"
-    },
+        "size":[6,2],
+		"title": "영업기회",
+    }
+];
+
+storage.widget.contract = [
     {
-        "size":[4,1],
-        "type":"tile"
+        "size":[6,2],
+        "title": "계약",
     }
 ];
 storage.widget.set = [
     "chart/0",
+	"chart/1",
+	"chart/2",
+	"chart/3",
     "notice/0",
-    "docApp/1"
+	"schedule/0",
+	"sopp/0",
+	"contract/0"
 ];
 
 //페이징될 때 header, sideMenu active를 위한 함수
@@ -2194,247 +2211,6 @@ function daumPostCode(){
     }).open({
 		left: Math.ceil((document.body.offsetWidth / 2) - (popupWidth / 2) + window.screenLeft),
 		top: Math.ceil((document.body.offsetHeight / 2) - (popupHeight / 2))
-	});
-}
-
-function addChart(){
-	addChart_1();
-	addChart_2();
-	addChart_3();
-	addChart_4();
-}
-
-function addChart_1(){
-	let now, url, method, data, type;
-	
-	now = new Date();
-	now = now.toISOString().substring(0, 10).replaceAll("-", "");
-
-	url = "/api/accounting/statistics/sales/" + now;
-	method = "get";
-	type = "detail";
-
-	crud.defaultAjax(url, method, data, type, chartSuccess_1, chartError_1);
-}
-
-function chartSuccess_1(result){
-	let chartContent_1, dataArray = [], t = 0;
-	chartContent_1 = document.getElementById('chartContent_1').getContext('2d');
-
-	for(let i = 0; i < 12; i++){
-		if(result[i] === undefined){
-			dataArray.push(0);
-			t += 0
-		}else{
-			dataArray.push(result[i].sales);
-			t += result[i].sales;
-		}
-	}
-
-	new Chart(chartContent_1, {
-		type: "bar",
-		data: {
-			labels: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
-			datasets: [
-				{
-					label: "월별목표",
-					data: [100000000, 1200000000, 1600000000, 1100000000, 1300000000, 180000000, 1400000000, 1500000000, 1700000000, 1900000000, 800000000, 600000000],
-					backgroundColor: "#5f46c6", //#4374D9
-					borderColor: "#5f46c6",
-					borderWidth: 3,
-					radius: 0,
-				},
-				{
-					label: "월별매출",
-					data: dataArray,
-					backgroundColor: "#76e3f1",//#B7F0B
-					borderColor: "#76e3f1",
-					borderWidth: 3,
-					radius: 0,
-				},
-				// {
-				// 	type: "line",
-				// 	label: "누적목표",
-				// 	data: [100000000, 200000000, 1000000000, 580000000, 250000000, 930000000, 270000000, 360000000, 480000000, 310000000, 850000000, 730000000],
-				// 	fill: false,
-				// 	lineTension: 0,
-				// 	backgroundColor: "#A566FF",
-				// 	borderColor: "#A566FF",
-				// },
-				// {
-				// 	type: "line",
-				// 	label: "누적매출",
-				// 	data: dataArray,
-				// 	fill: false,
-				// 	lineTension: 0,
-				// 	backgroundColor: "#F15F5F",
-				// 	borderColor: "#F15F5F",
-				// },
-			],
-		},
-		options: {
-			scales: {
-			  	yAxes: [{
-					ticks: {
-						beginAtZero: true,
-						callback: function(value, index) {
-							if(value.toString().length > 8){
-								return (Math.floor(value / 100000000)).toLocaleString("ko-KR") + " (억원)";
-							}else if(value.toString().length > 4){
-								return (Math.floor(value / 10000)).toLocaleString("ko-KR") + " (만원)";
-							}else{
-								return value.toLocaleString("ko-KR"); 
-							}
-						}
-					},
-				}]
-		  	},
-			tooltips: { 
-				callbacks: { 
-					label: function(tooltipItem, data) {
-						return " " + tooltipItem.yLabel.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "원"; 
-						} 
-				 },
-			},
-		}
-	});
-
-	console.log("cal: " + t);
-	console.log("total: " + parseInt(100000000 + 1200000000 + 1600000000 + 1100000000 + 1300000000 + 180000000 + 1400000000 + 1500000000 + 1700000000 + 1900000000 + 800000000 + 600000000));
-}
-
-function chartError_1(){
-	alert("첫번째 차트에 에러가 있습니다.\n다시 확인해주세요.");
-}
-
-function addChart_2(){
-	let now, url, method, data, type;
-	
-	now = new Date();
-	now = now.toISOString().substring(0, 10).replaceAll("-", "");
-
-	url = "/api/accounting/statistics/sales/" + now;
-	method = "get";
-	type = "detail";
-
-	crud.defaultAjax(url, method, data, type, chartSuccess_2, chartError_2);
-}
-
-function chartSuccess_2(result){
-	let chartContent_2, infoHtml = "", calResult = 0;
-	chartContent_2 = document.getElementById('chartContent_2').getContext('2d');
-
-	for(let i = 0; i < result.length; i++){
-		if(result[i] === undefined){
-			calResult += 0;
-		}else{
-			calResult += result[i].sales
-		}
-	}
-
-	new Chart(chartContent_2, {
-		type: "doughnut",
-		data: {
-			labels: ["달성률", "미달성률"],
-			datasets: [
-				{
-					data: [(calResult / 13380000000 * 100).toFixed(2), (100 - (calResult / 13380000000 * 100).toFixed(2))],
-					backgroundColor: [
-						"#31cca2",
-						"#95c1e6"
-					],
-					radius:0,
-					borderWidth: 1,
-				},
-			],
-		},
-		options: {
-			scales: {
-				y: {
-					beginAtZero: true
-				}
-			},
-		},
-	});
-
-	infoHtml = "<div>목표 13,380,000,000</div>";
-	infoHtml += "<div>매출 " + parseInt(calResult).toLocaleString("en-US") + "</div>";
-	infoHtml += "<div>달성률 " + (calResult / 13380000000 * 100).toFixed(2) + "%<div>";
-	infoHtml += "<hr />";
-	infoHtml += "<div>-" + parseInt(13380000000 - calResult).toLocaleString("en-US") + "</div>";
-
-	$("#bodyChart_2 #chartContentInfo").html(infoHtml);
-}
-
-function chartError_2(){
-	alert("두번째 차트에 에러가 있습니다.\n다시 확인해주세요.");
-}
-
-function addChart_3(){
-	let chartContent_3, infoHtml = "";
-	chartContent_3 = document.getElementById('chartContent_3').getContext('2d');
-
-	new Chart(chartContent_3, {
-		type: "doughnut",
-		data: {
-			labels: ["달성률", "미달성률"],
-			datasets: [
-				{
-					data: [70, 30],
-					backgroundColor: [
-						"#247de5",
-						"#f3db5f"
-					]
-				},
-			],
-		},
-		options: {
-			scales: {
-				y: {
-					beginAtZero: true
-				}
-			}
-		},
-	});
-
-	infoHtml = "<div>목표 13,660,000,000</div>";
-	infoHtml += "<div>매출 8,045,953,735</div>";
-	infoHtml += "<div>달성률 58.90%<div>";
-	infoHtml += "<hr />";
-	infoHtml += "<div>-5,614,046,265</div>";
-
-	$("#bodyChart_3 .chartContentContainer #chartContentInfo").html(infoHtml);
-}
-
-function addChart_4(){
-	let chartContent_4;
-	chartContent_4 = document.getElementById('chartContent_4').getContext('2d');
-
-	new Chart(chartContent_4, {
-		type: "pie",
-		data: {
-			labels: ["조달직판", "조달간판", "조달대행", "직접판매", "간접판매", "기타"],
-			datasets: [
-				{
-					data: [310, 200, 110, 220, 100, 50],
-					backgroundColor: [
-						"#29cea6",
-						"#2795f7",
-						"#f7d766",
-						"#ff5377",
-						"#7952e9",
-						"#d9d9d9",
-					]
-				},
-			],
-		},
-		options: {
-			scales: {
-				y: {
-					beginAtZero: true
-				}
-			}
-		},
 	});
 }
 

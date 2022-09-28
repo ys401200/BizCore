@@ -12,33 +12,29 @@
 	--inContent-width:98%;
 }
 
-#bodyContents #bodyContent{
+#bodyContents #widgetContainer{
 	display: grid;
-	grid-template-columns: 45% 17% 17% 21%;
+	grid-template-columns: repeat(6, 1fr);
 	column-gap:0.7%;
 	row-gap:1.2%;
 }
 
-/* 메인 차트 시작 */
-#bodyContent #bodyChart_1{
+#widgetContainer > div{
 	margin-bottom: var(--rootContainer-marginLeft);
 	background: #FFFFFF;
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
+	height: 500px;
 }
 
-#bodyContent #bodyChart_1 > hr{
+#widgetContainer > div > hr{
 	float: left;
-	border-top: 0;
-	border-left : thick solid #E45050;
-	border-right: 0;
-	border-bottom: 0;
 	border:var(--content-title-hr);
 	height:var(--content-title-hr-height);
  	margin: 0;
 	background-color: #332E85;
 }
 
-#bodyContent #bodyChart_1 > span{
+#widgetContainer > div > span{
 	font-weight: var(--content-title-font-weight);
 	font-size: var(--content-title-font-size);
 	margin-left: 15px;
@@ -46,33 +42,8 @@
 	color: #332E85;
 }
 
-#bodyContent #bodyChart_2{
-	margin-bottom: var(--bodyGridContentChild-margin);
-	background: #FFFFFF;
-	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
-}
-
-#bodyContent #bodyChart_2 > hr{
-	float: left;
-	border-top: 0;
-	border-left : thick solid #E45050;
-	border-right: 0;
-	border-bottom: 0;
-	border:var(--content-title-hr);
-	height:var(--content-title-hr-height);
- 	margin: 0;
-	background-color: #332E85;
-}
-
-#bodyContent #bodyChart_2 > span{
-	font-weight: var(--content-title-font-weight);
-	font-size: var(--content-title-font-size);
-	margin-left: 15px;
-	line-height: var(--content-title-line-height);
-	color: #332E85;
-}
-
-#bodyContent #bodyChart_2 .chartContentContainer #chartContentInfo{
+.chart_1_info,
+.chart_2_info{
 	text-align: right;
 	padding: 10px;
 	background-color: #eaedf3;
@@ -82,175 +53,53 @@
 	line-height:23px;
 }
 
-#bodyContent #bodyChart_3{
-	margin-bottom: var(--bodyGridContentChild-margin);
-	background: #FFFFFF;
-	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
-}
-
-#bodyContent #bodyChart_3 > hr{
-	float: left;
-	border-top: 0;
-	border-left : thick solid #E45050;
-	border-right: 0;
-	border-bottom: 0;
-	border:var(--content-title-hr);
-	height:var(--content-title-hr-height);
- 	margin: 0;
-	background-color: #332E85;
-}
-
-#bodyContent #bodyChart_3 > span{
-	font-weight: var(--content-title-font-weight);
-	font-size: var(--content-title-font-size);
-	margin-left: 15px;
-	line-height: var(--content-title-line-height);
-	color: #332E85;
-}
-
-#bodyContent #bodyChart_3 .chartContentContainer #chartContentInfo{
-	text-align: right;
-	padding: 10px;
-	background-color: #eaedf3;
-	color: #253340;
-	font-size: 14px;
-	line-height: 23px;
-	border-radius: 14px;
-}
-
-#bodyContent #bodyChart_4{
-	margin-bottom: var(--bodyGridContentChild-margin);
-	background: #FFFFFF;
-	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
-}
-
-#bodyContent #bodyChart_4 > hr{
-	float: left;
-	border-top: 0;
-	border-left : thick solid #E45050;
-	border-right: 0;
-	border-bottom: 0;
-	border:var(--content-title-hr);
-	height:var(--content-title-hr-height);
- 	margin: 0;
-	background-color: #332E85;
-}
-
-#bodyContent #bodyChart_4 > span{
-	font-weight: var(--content-title-font-weight);
-	font-size: var(--content-title-font-size);
-	margin-left: 15px;
-	line-height: var(--content-title-line-height);
-	color: #332E85;
-}
-
-.chartContentContainer{
+.chart_container{
 	padding-left: 10px;
 	padding-right: 10px;
-	padding-bottom: 10px;
 }
 
-.chartContentContainer > canvas{
+.chart_container > canvas{
 	width: 98% !important;
 }
-/* 메인 차트 끝 */
 
 /* 메인 공지사항 시작*/
-#bodyContent #bodyNotice{
-	height: 478px;
-	margin-bottom: var(--bodyGridContentChild-margin);
-	background: #FFFFFF;
-	overflow: auto;
-	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
-	grid-column: span 2;
-}
-
-#bodyContent #bodyNotice > hr{
-	float: left;
-	border-top: 0;
-	border-left : thick solid #E45050;
-	border-right: 0;
-	border-bottom: 0;
-	border:var(--content-title-hr);
-	height:var(--content-title-hr-height);
- 	margin: 0;
-	background-color: #332E85;
-}
-
-#bodyContent #bodyNotice > span{
-	font-weight: var(--content-title-font-weight);
-	font-size: var(--content-title-font-size);
-	margin-left: 15px;
-	line-height: var(--content-title-line-height);
-	color: #332E85;
-}
-
-#bodyContent #bodyNotice .gridNoticeList{
+#notice_body .notice_container{
 	display: grid;
 	width:var(--inContent-width);
 	margin: 0 auto;
 	margin-top: var(--inContent-margin-top);
 }
 
-#bodyContent #bodyNotice .gridNoticeList .gridHeader{
+#notice_body .notice_container .gridHeader{
     grid-template-columns: 15% 55% 15% 15%;
 	border-bottom:1px solid #182f81;
 }
 
-#bodyContent #bodyNotice .gridNoticeList .gridContent{
+#notice_body .notice_container .gridContent{
 	grid-template-columns: 15% 55% 15% 15%;
 }
 /* 메인 공지사항 끝 */
 
 /* 메인 schedule 일정 시작 */
-#bodyContent #bodySched{
-	height: 478px;
-	margin-bottom: var(--bodyGridContentChild-margin);
-	background: #FFFFFF;
-	overflow: auto;
-	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
-	grid-column: span 2;
-}
-
-#bodyContent #bodySched > hr{
-	float: left;
-	border-top: 0;
-	border-left : thick solid #E45050;
-	border-right: 0;
-	border-bottom: 0;
-	border:var(--content-title-hr);
-	height:var(--content-title-hr-height);
- 	margin: 0;
-	background-color: #332E85;
-}
-
-#bodyContent #bodySched > span{
-	font-weight: var(--content-title-font-weight);
-	font-size: var(--content-title-font-size);
-	margin-left: 15px;
-	line-height: var(--content-title-line-height);
-	color: #332E85;
-}
-
-#bodyContent #bodySched .gridScheduleList{
+#schedule_body .schedule_container{
 	display: grid;
 	width:var(--inContent-width);
 	margin: 0 auto;
 	margin-top: var(--inContent-margin-top);
 }
 
-#bodyContent #bodySched .gridScheduleList .gridHeader{
+#schedule_body .schedule_container .gridHeader{
 	border-bottom:1px solid #182f81;
     grid-template-columns: 10% 10% 16% 28% 12% 20%;
 }
 
-#bodyContent #bodySched .gridScheduleList .gridContent{
+#schedule_body .schedule_container .gridContent{
 	grid-template-columns: 10% 10% 20% 22% 12% 22%;
 }
 /* 메인 schedule 일정 끝 */
 
 /* 메인 sales 일정 시작 */
-#bodyContent #bodySales{
+/* #bodySales{
 	height: 478px;
 	margin-bottom: var(--bodyGridContentChild-margin);
 	background: #FFFFFF;
@@ -259,7 +108,7 @@
 	grid-column: span 2;
 }
 
-#bodyContent #bodySales > hr{
+#bodySales > hr{
 	float: left;
 	border-top: 0;
 	border-left : thick solid #E45050;
@@ -271,7 +120,7 @@
 	background-color: #332E85;
 }
 
-#bodyContent #bodySales > span{
+#bodySales > span{
 	font-weight: var(--content-title-font-weight);
 	font-size: var(--content-title-font-size);
 	margin-left: 15px;
@@ -279,25 +128,25 @@
 	color: #332E85;
 }
 
-#bodyContent #bodySales .gridSalesList{
+#bodySales .gridSalesList{
 	display: grid;
 	width:var(--inContent-width);
 	margin: 0 auto;
 	margin-top: var(--inContent-margin-top);
 }
 
-#bodyContent #bodySales .gridSalesList .gridHeader{
+#bodySales .gridSalesList .gridHeader{
 	border-bottom:1px solid #182f81;
     grid-template-columns: 10% 10% 16% 28% 12% 20%;
 }
 
-#bodyContent #bodySales .gridSalesList .gridContent{
+#bodySales .gridSalesList .gridContent{
 	grid-template-columns: 10% 10% 20% 22% 12% 22%;
-}
+} */
 /* 메인 sales 일정 끝 */
 
 /* 메인 tech 일정 시작 */
-#bodyContent #bodyTech{
+/* #bodyTech{
 	height: 478px;
 	margin-bottom: var(--bodyGridContentChild-margin);
 	background: #FFFFFF;
@@ -306,7 +155,7 @@
 	grid-column: span 2;
 }
 
-#bodyContent #bodyTech > hr{
+#bodyTech > hr{
 	float: left;
 	border-top: 0;
 	border-left : thick solid #E45050;
@@ -318,7 +167,7 @@
 	background-color: #332E85;
 }
 
-#bodyContent #bodyTech > span{
+#bodyTech > span{
 	font-weight: var(--content-title-font-weight);
 	font-size: var(--content-title-font-size);
 	margin-left: 15px;
@@ -326,113 +175,55 @@
 	color: #332E85;
 }
 
-#bodyContent #bodyTech .gridTechList{
+#bodyTech .gridTechList{
 	display: grid;
 	width:var(--inContent-width);
 	margin: 0 auto;
 	margin-top: var(--inContent-margin-top);
 }
 
-#bodyContent #bodyTech .gridTechList .gridHeader{
+#bodyTech .gridTechList .gridHeader{
 	border-bottom:1px solid #182f81;
     grid-template-columns: 10% 10% 16% 28% 12% 20%;
 }
 
-#bodyContent #bodyTech .gridTechList .gridContent{
+#bodyTech .gridTechList .gridContent{
 	grid-template-columns: 10% 10% 20% 22% 12% 22%;
-}
+} */
 /* 메인 tech 일정 끝 */
 
 /* 메인 영업기회 시작 */
-#bodyContent #bodySopp{
-	height: 478px;
-	margin-bottom: var(--bodyGridContentChild-margin);
-	background: #FFFFFF;
-	overflow: auto;
-	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
-	grid-column: span 4;
-} 
-
-#bodyContent #bodySopp > hr{
-	float: left;
-	border-top: 0;
-	border-left : thick solid #E45050;
-	border-right: 0;
-	border-bottom: 0;
-	border:var(--content-title-hr);
-	height:var(--content-title-hr-height);
- 	margin: 0;
-	background-color: #332E85;
-}
-
-#bodyContent #bodySopp > span{
-	font-weight: var(--content-title-font-weight);
-	font-size: var(--content-title-font-size);
-	margin-left: 18px;
-	line-height: var(--content-title-line-height);
-	color: #332E85;
-}
-
-#bodyContent #bodySopp .gridSoppList{
+#sopp_body .sopp_container{
 	display: grid;
 	width:var(--inContent-width);
 	margin: 0 auto;
 	margin-top: var(--inContent-margin-top);
 }
 
-#bodyContent #bodySopp .gridSoppList .gridHeader{
+#sopp_body .sopp_container .gridHeader{
 	border-bottom:1px solid #182f81;
     grid-template-columns: 7% 7% 7% 37% 7% 7% 7% 7% 7% 7%;
 }
 
-#bodyContent #bodySopp .gridSoppList .gridContent{
+#sopp_body .sopp_container .gridContent{
 	grid-template-columns: 7% 7% 7% 37% 7% 7% 7% 7% 7% 7%;
 }
 /* 메인 영업기회 끝 */
 
 /* 메인 계약조회 시작 */
-#bodyContent #bodyContract{
-	height: 478px;
-	margin-bottom: var(--bodyGridContentChild-margin);
-	background: #FFFFFF;
-	overflow: auto;
-	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
-	grid-column: span 4;
-} 
-
-#bodyContent #bodyContract > hr{
-	float: left;
-	border-top: 0;
-	border-left : thick solid #E45050;
-	border-right: 0;
-	border-bottom: 0;
-	border:var(--content-title-hr);
-	height:var(--content-title-hr-height);
- 	margin: 0;
-	background-color: #332E85;
-}
-
-#bodyContent #bodyContract > span{
-	font-weight: var(--content-title-font-weight);
-	font-size: var(--content-title-font-size);
-	margin-left: 18px;
-	line-height: var(--content-title-line-height);
-	color: #332E85;
-}
-
-#bodyContent #bodyContract .gridContractList{
+#contract_body .contract_container{
 	display: grid;
 	width:var(--inContent-width);
 	margin: 0 auto;
 	margin-top: var(--inContent-margin-top);
 }
 
-#bodyContent #bodyContract .gridContractList .gridHeader{
+#contract_body .contract_container .gridHeader{
 	border-bottom:1px solid #182f81;
     grid-template-columns: 7% 7% 7% 24% 12% 7% 7% 7% 7% 7% 7%;
 }
 
-#bodyContent #bodyContract .gridContractList .gridContent{
+#contract_body .contract_container .gridContent{
 	grid-template-columns: 7% 7% 7% 24% 12% 7% 7% 7% 7% 7% 7%;
 }
 /* 메인 계약조회 끝 */
