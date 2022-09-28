@@ -312,8 +312,70 @@ function showReportDetail() {
 	storage.oriInfo = $(".info").html();
 	storage.oriInsertedContent = $(".insertedContent").html();
 	storage.oriInsertedDataList = $(".insertedDataList").html();
+	$.ajax({
+		url: "/api/sopp",
+		type: "get",
+		dataType: "json",
+		success: (result) => {
+			if (result.result == "ok") {
+				let jsondata;
+				jsondata = cipher.decAes(result.data);
+				jsondata = JSON.parse(jsondata);
+				storage.soppList = jsondata;
+				setSoppList(formId);
+			} else {
+				alert("에러");
+			}
+		},
+	});
+
+
+
+	// 거래처 데이터 리스트 
+	let cusTarget = $(".infoContentlast")[0];
+	let html = $(".infoContentlast")[0].innerHTML;
+	let x;
+	let dataListHtml = "";
+
+
+	// 거래처 데이터 리스트 만들기 
+	dataListHtml = "<datalist id='_infoCustomer'>"
+	for (x in storage.customer) {
+		dataListHtml += "<option data-value='" + x + "' value='" + storage.customer[x].name + "'></option> "
+	}
+
+	dataListHtml += "</datalist>"
+	html += dataListHtml;
+	$(".infoContentlast")[0].innerHTML = html;
+	$("#" + formId + "_infoCustomer").attr("list", "_infoCustomer");
+
+
 }
 
+
+// 영업기회 데이터 리스트 가져오는 함수  
+
+
+
+
+function setSoppList(formId) {
+	let soppTarget = $(".infoContent")[3];
+	let soppHtml = soppTarget.innerHTML;
+	let soppListHtml = "";
+
+
+	soppListHtml = "<datalist id='_infoSopp'>"
+
+	for (let i = 0; i < storage.soppList.length; i++) {
+		soppListHtml += "<option data-value='" + storage.soppList[i].no + "' value='" + storage.soppList[i].title + "'></option> "
+	}
+
+	soppListHtml += "</datalist>"
+	soppHtml += soppListHtml;
+	soppTarget.innerHTML = soppHtml;
+	$("#" + formId + "_sopp").attr("list", "_infoSopp");
+
+}
 
 
 // 파일 다운로드 
@@ -685,9 +747,6 @@ function approveBtnEvent() {
 	}
 
 
-	storage.newFileData = null;
-
-
 	if (
 		storage.oriCbContainer == $("input[name='" + formId + "_RD']:checked").attr("id") &&
 		storage.oriInfo == $(".info").html() &&
@@ -697,14 +756,20 @@ function approveBtnEvent() {
 	} else {
 		storage.newDoc = $(".seletedForm").html();
 	}
-
-
+	getSopp();
+	storage.sopp == "" ? storage.sopp = null : storage.sopp = storage.sopp;
+	storage.customer == "" ? storage.customer = null : storage.customer = storage.customer;
 	selectVal === "approve" ? type = 1 : type = 0;
+	storage.newFileData == undefined ? storage.newFileData = null : storage.newFileData = storage.newFileData;
+
+
 	let data = {
 		"doc": storage.newDoc,
 		"comment": comment,
 		"files": storage.newFileData,
 		"appLine": storage.newAppLine,
+		"sopp": storage.sopp,
+		"customer": storage.customer
 	}
 
 	console.log(data);
@@ -1251,3 +1316,18 @@ function setSelectedFiles() {
 	$(".selectedFileDiv").html(html);
 
 }
+
+
+
+function getSopp() {
+	let formId = storage.reportDetailData.formId;
+	let slistid = "infoSopp";
+	let soppVal = $("#" + formId + "_sopp").val();
+	let soppResult = dataListFormat(slistid, soppVal);
+	storage.sopp = soppResult;
+	let clistid = "infoCustomer";
+	let customerVal = $("#" + formId + "_infoCustomer").val();
+	let customerResult = dataListFormat(clistid, customerVal);
+	storage.customer = customerResult;
+}
+

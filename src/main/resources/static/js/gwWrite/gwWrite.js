@@ -147,8 +147,8 @@ function selectForm() {
 
 
   // 거래처 데이터 리스트 
-  let cusTarget = $(".infoContentlast")[0];
-  let html = cusTarget.innerHTML;
+
+  let html = $(".infoContentlast")[0].innerHTML;
   let x;
   let dataListHtml = "";
 
@@ -156,11 +156,11 @@ function selectForm() {
   // 거래처 데이터 리스트 만들기 
   dataListHtml = "<datalist id='_infoCustomer'>"
   for (x in storage.customer) {
-    dataListHtml += "<option data-value='" + x + "' value='" + storage.customer[x].name + "'onclick='getCustomerValue(this.dataset.value)></option> "
+    dataListHtml += "<option data-value='" + x + "' value='" + storage.customer[x].name + "'></option> "
   }
   dataListHtml += "</datalist>"
   html += dataListHtml;
-  cusTarget.innerHTML = html;
+  $(".infoContentlast")[0].innerHTML = html;
   $("#" + formId + "_infoCustomer").attr("list", "_infoCustomer");
 
 
@@ -177,7 +177,7 @@ function setSoppList(formId) {
   soppListHtml = "<datalist id='_infoSopp'>"
 
   for (let i = 0; i < storage.soppList.length; i++) {
-    soppListHtml += "<option data-value='" + storage.soppList[i].no + "' value='" + storage.soppList[i].title + "' onclick='getAppValue(this.dataset.value)'></option> "
+    soppListHtml += "<option data-value='" + storage.soppList[i].no + "' value='" + storage.soppList[i].title + "'></option> "
   }
 
   soppListHtml += "</datalist>"
@@ -188,15 +188,20 @@ function setSoppList(formId) {
 }
 
 
+function getSopp() {
+  let selectedFormNo = $(".formSelector").val();
+  let formId = storage.formList[selectedFormNo].id;
+  let slistid = "infoSopp";
+  let soppVal = $("#" + formId + "_sopp").val();
+  let soppResult = dataListFormat(slistid, soppVal);
+  storage.sopp = soppResult;
 
-
-function getAppValue (val) {
-  storage.sopp=val; 
+  let clistid = "infoCustomer";
+  let customerVal = $("#" + formId + "_infoCustomer").val();
+  let customerResult = dataListFormat(clistid, customerVal);
+  storage.customer = customerResult;
 }
 
-function getCustomerValue (val) {
-storage.customer=val; 
-}
 
 
 
@@ -548,8 +553,14 @@ function reportInsert() {
   formId = storage.formList[selectedFormNo].id;
   let detailType = $("input[name='" + formId + "_RD']:checked").attr("id");
 
-  sopp = $("#" + formId + '_sopp').val();
-  infoCustomer = $("#" + formId + '_infoCustomer').val();
+  // sopp = $("#" + formId + '_sopp').val();
+  // infoCustomer = $("#" + formId + '_infoCustomer').val();
+
+  getSopp();
+
+  // storage.sopp == "" ? storage.sopp = null : storage.sopp = storage.sopp;
+  // storage.customer == "" ? storage.customer = null : storage.customer = storage.customer;
+
   title = $("#" + formId + '_title').val();
   content = $("#" + formId + "_content").val();
   readable = $('input[name=authority]:checked').val();
@@ -578,9 +589,9 @@ function reportInsert() {
 
   let data = {
     "title": title,
-    "sopp": sopp,
+    "sopp": storage.sopp,
     "dept": dept,
-    "customer": infoCustomer,
+    "customer": storage.customer,
     "attached": storage.attachedList === undefined ? [] : storage.attachedList,
     "content": content,
     "appLine": appLine,
@@ -588,8 +599,7 @@ function reportInsert() {
     "formId": formId,
     "readable": readable
   }
-
-
+  console.log(data);
   data = JSON.stringify(data)
   data = cipher.encAes(data);
 
