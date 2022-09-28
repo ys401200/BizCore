@@ -26,7 +26,7 @@ function showCheckPwForm() {
 
 function checkPw() {
 	let insertedPw = $("#pwInput").val(); // 입력받은 비밀번호 
-	insertedPw = encodeURI(cipher.encAes(insertedPw));
+	insertedPw = cipher.encAes(insertedPw).replaceAll("/","*");
 	let url;
 
 	url = apiServer + "/api/my/" + insertedPw;
