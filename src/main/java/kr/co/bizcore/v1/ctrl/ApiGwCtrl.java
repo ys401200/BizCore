@@ -343,15 +343,6 @@ public class ApiGwCtrl extends Ctrl{
         return result;
     } // End of apiGwAppCancelNoPost()
 
-
-    // 결재 문서 수정 등록
-    @PutMapping("/app/doc/{docNo:\\d+}")
-    public String apiGwAppDocNoPut(HttpServletRequest request){
-        String result = null;
-
-        return result;
-    } // End of apiGwAppDocNoPut()
-
     
 }
 

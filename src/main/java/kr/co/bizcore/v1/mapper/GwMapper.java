@@ -36,10 +36,12 @@ public interface GwMapper {
     @Select("SELECT CAST(a.no AS CHAR) AS no, a.docno AS docno, CAST(a.writer AS CHAR) AS writer, CAST(UNIX_TIMESTAMP(a.created)*1000 AS CHAR) AS created, c.title AS form, a.title AS title, CAST(UNIX_TIMESTAMP(b.`read`)*1000 AS CHAR) AS `read`, CAST(b.apptype AS CHAR) AS appType FROM bizcore.doc_app a, bizcore.doc_app_detail b, bizcore.doc_form c WHERE b.deleted IS NULL AND c.id=a.formid AND a.compid=#{compId} AND b.employee=#{userNo} AND a.docno=b.docno AND b.ordered > 0 AND a.status=1 AND a.docno IN (#{sqlIn})")
     public List<HashMap<String, String>> getWaitAndDueList(@Param("compId") String compId, @Param("userNo") String userNo, @Param("sqlIn") String sqlIn);
 
-    // 진행 중 문서 목록을 가져오는 메서드
-    @Select("SELECT CAST(a.no AS CHAR) AS no, a.docNo, CAST(b.employee AS CHAR) AS authority, CAST(UNIX_TIMESTAMP(a.created)*1000 AS CHAR) AS created, c.title AS form, a.title AS title, CAST(UNIX_TIMESTAMP(b.`read`)*1000 AS CHAR) AS `read`, CAST(b.apptype AS CHAR) AS appType " +
+    // ==================== 진행 중 문서 목록을 가져오는 메서드 / mydraft에서 진행중으로 사용하던 메서드
+    @Select("SELECT CAST(a.no AS CHAR) AS no, a.docNo, CAST(b.employee AS CHAR) AS authority, CAST(UNIX_TIMESTAMP(a.created)*1000 AS CHAR) AS created, c.title AS form, a.title AS title, CAST(UNIX_TIMESTAMP(b.`read`)*1000 AS CHAR) AS `read`, CAST(b.apptype AS CHAR) AS appType, CAST(a.status AS CHAR) AS status " +
             "FROM bizcore.doc_app a, bizcore.doc_app_detail b, bizcore.doc_form c, " +
-            "(SELECT compId, docNo, MIN(ordered) AS ordered FROM bizcore.doc_app_detail WHERE approved IS NULL AND rejected IS NULL AND compId = #{compId} AND apptype < 4 GROUP BY docNo, compId) d " +
+            "(SELECT compId, docNo, MIN(ordered) AS ordered FROM bizcore.doc_app_detail WHERE approved IS NULL AND rejected IS NULL AND compId = #{compId} AND apptype < 4 AND docNo IN (SELECT docNo FROM bizcore.doc_app WHERE status IN (1,2) AND writer = #{userNo} AND deleted IS NULL) GROUP BY docNo, compId " +
+            "UNION ALL " +
+            "SELECT compId, docNo, MAX(ordered) AS ordered FROM bizcore.doc_app_detail WHERE (approved IS NOT NULL OR rejected IS NOT NULL) AND compId = #{compId} AND apptype < 4 AND docNo IN (SELECT docNo FROM bizcore.doc_app WHERE status IN (-3,-1,3) AND writer = #{userNo} AND deleted IS NULL) GROUP BY docNo, compId) d " +
             "WHERE b.deleted IS NULL AND b.compId = d.compId AND b.docNo = d.docNo AND b.ordered = d.ordered AND b.docNo = a.docNo AND a.formId = c.id AND a.writer = #{userNo} ORDER BY created")
     public List<HashMap<String, String>> getProceedingDocList(@Param("compId") String compId, @Param("userNo") String userNo);
 
@@ -98,4 +100,8 @@ public interface GwMapper {
     // 다음 결재자 정보를 가져오는 메서드
     @Select("SELECT employee, appType FROM bizcore.doc_app_detail WHERE deleted IS NULL AND appType < 4 AND compId = #{compId} AND docNo = #{docNo} AND ordered > (SELECT min(ordered) FROM bizcore.doc_app_detail WHERE deleted IS NULL AND appType < 4 AND compId = #{compId} AND docNo = #{docNo} AND ordered > #{ordered})")
     public HashMap<String, Integer> getNextAppData(@Param("compId") String compId, @Param("docNo") String docNo, @Param("ordered") int ordered);
+
+    // 결재절차가 완료된 경우 이를 헤더 테이블에 기록하믐 메서드
+    @Update("UPDATE bizcore.doc_app SET status = #{status}, confirmNo = docNo WHERE deleted IS NULL AND compId = #{compId} AND docNo = #{docNo}")
+    public int setCompleteStatus(@Param("compId") String compId, @Param("docNo") String docNo, @Param("status") int status);
 }

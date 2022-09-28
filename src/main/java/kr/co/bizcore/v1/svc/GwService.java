@@ -241,6 +241,7 @@ public class GwService extends Svc{
             t += ("\"form\":\"" + each.get("form") + "\",");
             t += ("\"title\":\"" + each.get("title") + "\",");
             t += ("\"read\":" + each.get("read") + ",");
+            t += ("\"status\":" + each.get("status") + ",");
             t += ("\"appType\":" + each.get("appType") + "}");
             item.add(t);
         }
@@ -522,7 +523,7 @@ public class GwService extends Svc{
         if(compId == null || docNo == null || ordered < 1 || ask < 0 || ask > 1 || userNo == null)  return null;
 
         // 작성자와 일련번호 확인
-        map = gwMapper.getAppDocWriterAndSN(compId, docNo);logger.error("======================= " + compId + " / " + docNo);
+        map = gwMapper.getAppDocWriterAndSN(compId, docNo);
         if(map == null)    return null;
         t = map.get("writer"); // 작성자
         writer = t == null ? -1 : strToInt(t);
@@ -675,6 +676,7 @@ public class GwService extends Svc{
 
             if(next == null){ // 결재절차가 종료된 경우
                 notes.sendNewNotes(compId, 0, writer, "결재 완료 되었습니다.", "{\"func\":\"docApp\",\"no\":\"" + docNo + "\"}");
+                gwMapper.setCompleteStatus(compId, docNo, 3);
                 result = "ok";
             }else{
                 x = next.get("employee");
@@ -682,7 +684,10 @@ public class GwService extends Svc{
                 if(y == 0)      t = "검토";
                 else if(y == 1) t = "합의";
                 else if(y == 2) t = "결재";
-                else            t = "수신";
+                else{
+                    t = "수신";
+                    gwMapper.setCompleteStatus(compId, docNo, 2);
+                }
                 notes.sendNewNotes(compId, 0, x, t + "할 문서가 있습니다.", "{\"func\":\"docApp\",\"no\":\"" + docNo + "\"}");
                 result = "ok";
             }
