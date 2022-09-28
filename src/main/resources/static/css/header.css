@@ -719,7 +719,7 @@ input[name="tabItem"] {
     padding-bottom: 5px;
 }
 
-#header #mainInfo > span{
+#header #mainInfo a > span{
 	font-weight: 600;
     font-size: 1.1rem;
 	color: #000;
