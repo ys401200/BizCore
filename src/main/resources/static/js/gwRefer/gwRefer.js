@@ -69,13 +69,13 @@ function errorList() {
 function drawApproval() {
     let container, result, jsonData, job, header = [], data = [], ids = [], disDate, setDate, str, fnc;
 
-    if (storage.referList === undefined) {
+    if (storage.referList.refer === undefined || storage.referList.refer.length == 0) {
         alert("참조/열람 대기 문서가 없습니다");
     }
     else {
         jsonData = storage.referList.refer;
-    }
 
+    
     result = paging(jsonData.length, storage.currentPage, 5);
 
     pageContainer = document.getElementsByClassName("pageContainer");
@@ -162,7 +162,7 @@ function drawApproval() {
     pageContainer[0].innerHTML = pageNation;
     createGrid(container, header, data, ids, job, fnc);
 
-
+}
 
 }// End of drawNoticeApproval()
 

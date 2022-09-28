@@ -14,7 +14,7 @@ function getformList() {
 
   $(".ContentDiv").html("<div class='gwWriteBtns'></div><div class='selector'>d</div><div class='selector'>d</div><div class='selector'>d</div>");
 
-  $(".gwWriteBtns").html("<button type='button' onclick='reportInsert()'>기안 하기</button> <button type='button' >임시 저장</button> <button type='button'>인쇄 미리보기</button>");
+  $(".gwWriteBtns").html("<button type='button' onclick='reportInsert()'>기안 하기</button> <button type='button' onclick='tempSave()'>임시 저장</button> <button type='button'>인쇄 미리보기</button>");
 
   // 기본설정
 
@@ -95,18 +95,19 @@ function drawFormList() {
 function selectForm() {
   let data = storage.formList;
   let selectedFormNo = $(".formSelector").val();
-  selectedFormTitle = data[selectedFormNo].title;
+  $(".formNumHidden").val(selectedFormNo);
+  selectedFormTitle = data[$(".formNumHidden").val()].title;
 
   $(".guide").remove();
   $(".lineDetail").show();
   $(".createLineBtn").show();
-  $(".reportInsertForm").html(data[selectedFormNo].form);
+  $(".reportInsertForm").html(data[$(".formNumHidden").val()].form);
   $(".insertedDetail").show();
 
   //작성자 작성일 자동 입력
   let my = storage.my;
   let writer = storage.user[my].userName;
-  let formId = data[selectedFormNo].id;
+  let formId = data[$(".formNumHidden").val()].id;
   $("#" + formId + "_writer").val(writer);
   $("#" + formId + "_writer").attr("data-detail", writer);
 
@@ -721,3 +722,68 @@ function deleteGap() {
 }
 
 
+
+
+function tempSave() {
+  let dept, title, sopp, readable, formId, customer, appDoc, appLine = [];
+  let my = storage.my;
+  dept = storage.user[my].deptId[0];
+  formId = storage.formList[$(".formNumHidden").val()].id;
+  title = $("#" + formId + "_title").val();
+  sopp = $("#" + formId + "_sopp").val();
+  customer = $("#" + formId + "_infoCustomer").val();
+  appDoc = $(".reportInsertForm").html();
+  readable = $('input[name=authority]:checked').val();
+
+  for (let i = 0; i < $("." + formId + "_examine").length; i++) {
+    appLine.push([0, $("." + formId + "_examine")[i].dataset.detail]);
+  }
+  for (let i = 0; i < $("." + formId + "_agree").length; i++) {
+    appLine.push([1, $("." + formId + "_agree")[i].dataset.detail]);
+  }
+  for (let i = 0; i < $("." + formId + "_approval").length; i++) {
+    appLine.push([2, $("." + formId + "_approval")[i].dataset.detail]);
+  }
+  for (let i = 0; i < $("." + formId + "_conduct").length; i++) {
+    appLine.push([3, $("." + formId + "_conduct")[i].dataset.detail]);
+  }
+  for (let i = 0; i < $("." + formId + "_refer").length; i++) {
+    appLine.push([4, $("." + formId + "_refer")[i].dataset.detail]);
+  }
+
+  if (appLine.length == 0) {
+    appLine = null;
+  }
+
+
+  let data = {
+    "dept": dept,
+    "title": title,
+    "sopp": sopp,
+    "readable": readable,
+    "formId": formId,
+    "customer": customer,
+    "appDoc": appDoc,
+    "appLine": appLine
+  }
+  console.log(data);
+  data = JSON.stringify(data)
+  data = cipher.encAes(data);
+
+  $.ajax({
+    url: "/api/gw/app/temp",
+    method: "post",
+    data: data,
+    dataType: "json",
+    contentType: "text/plain",
+    success: (result) => {
+      if (result.result === "ok") {
+        alert("임시 저장 되었습니다");
+      } else {
+        alert(result.msg);
+      }
+    }
+  })
+
+
+}

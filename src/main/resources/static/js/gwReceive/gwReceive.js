@@ -43,98 +43,98 @@ function errorList() {
 function drawApproval() {
     let container, result, jsonData, job, header = [], data = [], ids = [], disDate, setDate, str, fnc;
 
-    if (storage.referList === undefined) {
+    if (storage.receiveList.receive === undefined || storage.receiveList.receive.length == 0) {
         alert("결재 수신 문서가 없습니다");
     }
     else {
         jsonData = storage.receiveList.receive;
-    }
-
-    result = paging(jsonData.length, storage.currentPage, 5);
-
-    pageContainer = document.getElementsByClassName("pageContainer");
-    container = $(".listDiv");
-    header = [
-
-        {
-            "title": "번호",
-            "align": "center",
-        },
-        {
-            "title": "결재 타입",
-            "align": "center",
-        },
-        {
-            "title": "문서 종류",
-            "align": "center",
-        },
-        {
-            "title": "제목",
-            "align": "left",
-        },
-        {
-            "title": "작성자",
-            "align": "center",
-        },
-        {
-            "title": "작성일",
-            "align": "center",
-        },
 
 
-    ];
-    for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
-        disDate = dateDis(jsonData[i].created, jsonData[i].modified);
-        setDate = dateFnc(disDate);
-        let userName = storage.user[jsonData[i].writer].userName;
-        let appType = jsonData[i].appType;
-        if (appType == '0') {
-            appType = "검토";
+        result = paging(jsonData.length, storage.currentPage, 5);
 
-        } else if (appType == '1') {
-            appType = "합의";
+        pageContainer = document.getElementsByClassName("pageContainer");
+        container = $(".listDiv");
+        header = [
 
-        } else if (appType == '2') {
-            appType = "결재";
-        } else if (appType == '3') {
-            appType = "수신";
-        } else {
-            appType = "참조";
+            {
+                "title": "번호",
+                "align": "center",
+            },
+            {
+                "title": "결재 타입",
+                "align": "center",
+            },
+            {
+                "title": "문서 종류",
+                "align": "center",
+            },
+            {
+                "title": "제목",
+                "align": "left",
+            },
+            {
+                "title": "작성자",
+                "align": "center",
+            },
+            {
+                "title": "작성일",
+                "align": "center",
+            },
 
+
+        ];
+        for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+            disDate = dateDis(jsonData[i].created, jsonData[i].modified);
+            setDate = dateFnc(disDate);
+            let userName = storage.user[jsonData[i].writer].userName;
+            let appType = jsonData[i].appType;
+            if (appType == '0') {
+                appType = "검토";
+
+            } else if (appType == '1') {
+                appType = "합의";
+
+            } else if (appType == '2') {
+                appType = "결재";
+            } else if (appType == '3') {
+                appType = "수신";
+            } else {
+                appType = "참조";
+
+            }
+            str = [
+
+                {
+                    "setData": jsonData[i].docNo,
+                }, {
+                    "setData": appType,
+                },
+                {
+                    "setData": jsonData[i].form,
+                },
+                {
+                    "setData": jsonData[i].title,
+                },
+                {
+                    "setData": userName,
+                },
+                {
+                    "setData": setDate,
+                },
+
+
+            ]
+
+            fnc = "detailView(this)";
+            ids.push(jsonData[i].docNo);
+            data.push(str);
         }
-        str = [
 
-            {
-                "setData": jsonData[i].docNo,
-            }, {
-                "setData": appType,
-            },
-            {
-                "setData": jsonData[i].form,
-            },
-            {
-                "setData": jsonData[i].title,
-            },
-            {
-                "setData": userName,
-            },
-            {
-                "setData": setDate,
-            },
+        let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawApproval", result[0]);
+        pageContainer[0].innerHTML = pageNation;
+        createGrid(container, header, data, ids, job, fnc);
 
-
-        ]
-
-        fnc = "detailView(this)";
-        ids.push(jsonData[i].docNo);
-        data.push(str);
     }
-
-    let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawApproval", result[0]);
-    pageContainer[0].innerHTML = pageNation;
-    createGrid(container, header, data, ids, job, fnc);
-
-
 
 }// End of drawNoticeApproval()
 

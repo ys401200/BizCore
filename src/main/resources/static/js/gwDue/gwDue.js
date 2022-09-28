@@ -204,8 +204,8 @@ function getDetailView() {
 	let testForm = storage.reportDetailData.doc;
 
 
-    let detailHtml = "<div class='mainBtnDiv'><button type='button' onclick='showPreAppModal()'>결재하기</button></div>" +
-    "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>"
+    // "<div class='mainBtnDiv'><button type='button' onclick='showPreAppModal()'>결재하기</button></div>" + 
+    let detailHtml ="<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>"
 
 
     $(".listPageDiv").html(detailHtml);
