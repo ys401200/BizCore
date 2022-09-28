@@ -52,11 +52,7 @@ function dueDefault() {
         $(".listPageDiv").show();
     }
 
-
-
-
 }
-
 
 function successList(result) {
     storage.dueList = result;

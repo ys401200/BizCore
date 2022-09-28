@@ -19,7 +19,7 @@ public class GwController {
 
     private static final Logger logger = LoggerFactory.getLogger(GwController.class);
 
-    @RequestMapping(value = {"/wait","/wait/{docNo}"}, method = RequestMethod.GET)
+    @RequestMapping(value = { "/wait", "/wait/{docNo}" }, method = RequestMethod.GET)
     public String mylist(HttpServletRequest request) {
         HttpSession session = null;
         String result = null, uri = null, pathName = null, tempStr = null;
@@ -121,7 +121,7 @@ public class GwController {
         return result;
     }
 
-    @RequestMapping(value = {"/due","/due/{docNo}"}, method = RequestMethod.GET)
+    @RequestMapping(value = { "/due", "/due/{docNo}" }, method = RequestMethod.GET)
     public String due(HttpServletRequest request) {
         HttpSession session = null;
         String result = null, uri = null, pathName = null, tempStr = null;
@@ -155,7 +155,7 @@ public class GwController {
         return result;
     }
 
-    @RequestMapping(value = "/receive", method = RequestMethod.GET)
+    @RequestMapping(value = { "/receive", "/receive/{docNo}" }, method = RequestMethod.GET)
     public String receive(HttpServletRequest request) {
         HttpSession session = null;
         String result = null, uri = null, pathName = null, tempStr = null;
@@ -189,7 +189,7 @@ public class GwController {
         return result;
     }
 
-    @RequestMapping(value = "/refer", method = RequestMethod.GET)
+    @RequestMapping(value = { "/refer", "/refer/{docNo}" }, method = RequestMethod.GET)
     public String refer(HttpServletRequest request) {
         HttpSession session = null;
         String result = null, uri = null, pathName = null, tempStr = null;
@@ -223,7 +223,7 @@ public class GwController {
         return result;
     }
 
-    @RequestMapping(value = "/mydraft", method = RequestMethod.GET)
+    @RequestMapping(value = { "/mydraft", "/mydraft/{docNo}" }, method = RequestMethod.GET)
     public String myDraft(HttpServletRequest request) {
         HttpSession session = null;
         String result = null, uri = null, pathName = null, tempStr = null;

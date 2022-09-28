@@ -16,19 +16,42 @@ function referDefault() {
     $(".modal-wrap").hide();
     $("#gwSubTabTitle").html("참조/열람 대기 문서");
 
+    let checkHref = location.href;
+    checkHref = checkHref.split("//");
+    checkHref = checkHref[1];
+    let splitArr = checkHref.split("/");
 
 
+    if (splitArr.length > 3) {
+        $.ajax({
+            "url": apiServer + "/api/gw/app/doc/" + splitArr[3],
+            "method": "get",
+            "dataType": "json",
+            "cache": false,
+            success: (data) => {
+                let detailData;
+                if (data.result === "ok") {
+                    detailData = cipher.decAes(data.data);
+                    detailData = JSON.parse(detailData);
+                    detailData.doc = cipher.decAes(detailData.doc);
+                    detailData.doc = detailData.doc.replaceAll("\\\"", "\"");
+                    storage.reportDetailData = detailData;
+                    getDetailView();
+                } else {
+                    alert("문서 정보를 가져오는 데 실패했습니다");
+                }
+            }
+        })
+    } else {
+        let url, method, data, type;
+        url = "/api/gw/app/wait";
+        method = "get"
+        data = "";
+        type = "list";
+        crud.defaultAjax(url, method, data, type, successList, errorList);
 
-    let url, method, data, type;
-    url = "/api/gw/app/wait";
-    method = "get"
-    data = "";
-    type = "list";
-    crud.defaultAjax(url, method, data, type, successList, errorList);
-
-
-    $(".searchContainer").show();
-    $(".listPageDiv").show();
+        $(".listPageDiv").show();
+    }
 }
 
 
@@ -108,7 +131,7 @@ function drawApproval() {
         str = [
 
             {
-                "setData":jsonData[i].docNo,
+                "setData": jsonData[i].docNo,
             }, {
                 "setData": appType,
             },
@@ -150,7 +173,7 @@ function drawApproval() {
 
 function detailView(obj) {// 선택한 그리드의 글 번호 받아오기 
 
- 
+
     let no = obj.dataset.id;
 
     $.ajax({
