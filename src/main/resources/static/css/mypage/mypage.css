@@ -4,10 +4,13 @@
 	position: relative;
 	/* left: 2%; */
 	width: 100%;
-	background: #FFFFFF;
+	background: #352F8B;
 	overflow: auto;
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
 	display: inline-block;
+	background-image: url(../../images/mypage/mypagebg.png);
+	background-size: cover;
+	border-radius: 16px;
 }
 
 .mypageContainer hr {
@@ -15,58 +18,91 @@
 	border: 2px solid #182f81;
 	height: 32px;
 	margin: 0;
+	display: none;
 }
+
+.mypageContainer span{display: none;}
 
 .mypageContainer span,
 .mypageContainer .mypagediv {
-	font-weight: bolder;
+	font-weight: 400;
 	font-size: 15px;
-	margin-left: 15px;
+	/* margin-left: 15px; */
 	line-height: 40px;
-	color: #182f81;
+	color: #fff;
 }
 
 .mypagediv {
-	text-align: center;
-	margin: 2rem;
+	margin: 3.5rem 2rem;
 }
 
-
-.mypagediv label,
 .mypageContainer input {
-	margin-right: 2rem;
+	margin:0 1rem;
 }
 
 .mypagediv .mypageFirstDiv {
-	height: 10em;
+	height: 9em;
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	width:48%;
+	background-color:rgba(255, 255, 255, 0.3);
+	border:1px solid rgba(255, 255, 255, 0.45);
+	border-radius: 12px;
+	margin:0 auto;
+	box-shadow: 0px 4px 10px #2a2381;
 }
 
 .mypagediv .mypageSecondDiv {
 	display: grid;
-	grid-template-columns: 20% 80%;
+	grid-template-columns: 20% 1fr;
+	column-gap: 2%;
+}
+
+.mypageSecondDiv>div{
+	background-color:rgba(255, 255, 255, 0.3);
+	border:1px solid rgba(255, 255, 255, 0.45);
+	border-radius: 16px;
+	box-shadow: 0px 4px 10px #2a2381;
+	padding:30px 0;
+}
+
+.mypageSecondDiv>div:first-child{
+	height:60%;
+	position:relative;
+	top:50%;
+	transform: translateY(-50%);
+	text-align: center;
+}
+
+.mypageSecondDiv>div:first-child>div:first-child img{
+	padding:0.5rem;
+	border:1px solid rgba(255, 255, 255, 0.45);
+	border-radius: 100%;
+	margin-top:50px;
 }
 
 .mypagediv .mypageSecondDiv>div:last-child>div {
+	width:640px;
+	margin:0 auto;
 	display: grid;
-	grid-template-columns: 50% 50%
+	grid-template-columns: 24% 1fr;
 }
 
 .mypagediv .mypageSecondDiv>div:last-child .threeGrid {
 	display: grid;
-	grid-template-columns: 50% 30% 5% 15%;
+	grid-template-columns: 24% 1fr 5% 15%;
 }
 
 .mypagediv input {
 	width: 25em;
+	height:20px;
 	margin-top: 0.5rem;
 	margin-bottom: 0.5rem;
 	float: none;
 	padding: 0.3% 0.8% 0.3% 0.8%;
-	background-color: #ededf4;
-	border: 1px solid #6469e5;
+	background-color: #FAFAFA;
+	border: 1px solid #4545cec9;
 	border-radius: 5px;
 }
 
@@ -77,29 +113,42 @@
 	padding: 0;
 	border-radius: 0;
 	border: none;
-	background-color: white;
+	background-color: #FAFAFA;
+	border: 1px solid #4545cec9;
+	height:24px;
+	margin:8px 0;
+	border-radius: 5px;
+	padding-left:12px;
+	box-sizing: border-box;
 }
 
 
 .mypagediv .modifybtn {
 	float: right;
-	margin-top: 1rem;
-	margin-left: 0.5rem;
-	margin-bottom: 3rem;
-	height: 2rem;
-	width: 6rem;
-
+	margin-top: 2rem;
+	margin-left: 1rem;
+	margin-bottom: 2.4rem;
+	padding:0.4rem 1.5rem;
+	background-color:#352f8ba8;
+	color:#fff;
+	border-radius: 4px;
+	box-shadow: 0px 4px 8px #2a2381;
+	border:2px solid #5653ab;
 }
 
 
 .mypagediv .third {
+	width:640px;
+	margin:0 auto;
 	display: grid;
-	grid-template-columns: 50% 50%;
+	grid-template-columns: 20% 1fr;
+	line-height: 48px;
 }
 
-
-.gridContainer {
-	margin-left: 5rem;
-	margin-right: 5rem;
-	border-bottom: 1px solid #D9D9D9;
+.mypageFirstDiv button{
+	height:28px; 
+	padding:0 12px;
+	background-color:#352f8ba8;
+	color:#fff;
+	border-radius: 4px;
 }
