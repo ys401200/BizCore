@@ -506,75 +506,6 @@ public class GwService extends Svc{
         return result;
     } // End of getAppDocAndDetailInfo()
 
-
-
-
-    // ========================================= P R I V A T E _ M E T H O D =========================================
-
-    // 결재 예정 및 대기 문서 목록을 DB에서 가져오는 메서드 //  아래 sqlIn 값을 매퍼에서 처리하지 못하기에 만등어넣음
-    private List<HashMap<String, String>> getAppDocList(String compId, String userNo, String sqlIn){
-        List<HashMap<String, String>> result = new ArrayList<>();
-        HashMap<String, String> each = null;
-        String sql = "SELECT CAST(a.no AS CHAR) AS no, a.docno AS docno, CAST(a.writer AS CHAR) AS writer, CAST(UNIX_TIMESTAMP(a.created)*1000 AS CHAR) AS created, c.title AS form, a.title AS title, CAST(UNIX_TIMESTAMP(b.`read`)*1000 AS CHAR) AS `read`, CAST(b.apptype AS CHAR) AS appType FROM bizcore.doc_app a, bizcore.doc_app_detail b, bizcore.doc_form c WHERE b.deleted IS NULL AND c.id=a.formid AND a.compid=? AND b.employee=? AND a.docno=b.docno AND b.ordered > 0 AND a.status=1 AND a.docno IN ('" + sqlIn + "')";
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-
-        try{
-            conn = sqlSession.getConnection();
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, compId);
-            pstmt.setString(2, userNo);
-            //pstmt.setString(3, sqlIn);
-            rs = pstmt.executeQuery();
-            while(rs.next()){
-                each = new HashMap<>();
-                each.put("no", rs.getString(1));
-                each.put("docno", rs.getString(2));
-                each.put("writer", rs.getString(3));
-                each.put("created", rs.getString(4));
-                each.put("form", rs.getString(5));
-                each.put("title", rs.getString(6));
-                each.put("read", rs.getString(7));
-                each.put("appType", rs.getString(8));
-                result.add(each);
-            }
-        }catch(SQLException e){e.printStackTrace();}
-        return result;
-    }
-
-    // 수신 문서 목록을 전달하는 메서드
-    private List<HashMap<String, String>> getReceivedDocList(String compId, String userNo){
-        List<HashMap<String, String>> result = null;
-        HashMap<String, String> each = null;
-        String sql = "SELECT CAST(a.no AS CHAR) AS no, a.docno AS docno, CAST(a.writer AS CHAR) AS writer, CAST(UNIX_TIMESTAMP(a.created)*1000 AS CHAR) AS created, c.title AS form, a.title AS title, CAST(UNIX_TIMESTAMP(b.`read`)*1000 AS CHAR) AS `read`, CAST(b.apptype AS CHAR) AS appType FROM bizcore.doc_app a, bizcore.doc_app_detail b, bizcore.doc_form c WHERE b.deleted IS NULL AND a.docno = b.docno AND a.compId = b.compId AND b.approved IS NULL AND b.rejected IS NULL AND a.formid = c.id AND a.status = 2 AND b.appType = 3 AND a.compId = ? AND b.employee = ? ORDER BY no";
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-
-        try{
-            conn = sqlSession.getConnection();
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, compId);
-            pstmt.setString(2, userNo);
-            rs = pstmt.executeQuery();
-            while(rs.next()){
-                if(result == null)  result = new ArrayList<>();
-                each = new HashMap<>();
-                each.put("no", rs.getString(1));
-                each.put("docno", rs.getString(2));
-                each.put("writer", rs.getString(3));
-                each.put("created", rs.getString(4));
-                each.put("form", rs.getString(5));
-                each.put("title", rs.getString(6));
-                each.put("read", rs.getString(7));
-                each.put("appType", rs.getString(8));
-                result.add(each);
-            }
-        }catch(SQLException e){e.printStackTrace();}
-        return result;
-    }
-
     // 결재문서 처리 메서드 / 데이터가 null이 아닌 경우 결재문서에 대한 수정 처리
     public String askAppDoc(String compId, String docNo, int ordered, int ask, String comment, String doc,
             String[][] appLine, String[] files, HashMap<String, String> attached, String appData, String userNo) {
@@ -586,9 +517,18 @@ public class GwService extends Svc{
         long size = -1;
         boolean find = false;
 
-        writer = gwMapper.getAppDocWriter(compId, docNo);
-        appType = gwMapper.getAppType(compId, docNo, ordered);
-        no = gwMapper.getSN(compId, docNo);
+        // 작성자와 일련번호 확인
+        next = gwMapper.getAppDocWriterAndSN(compId, docNo);
+        writer = next.get("writer"); // 작성자
+        no = next.get("no"); // 일련번호
+
+        // 요청자에게 결재권한이 있는지, 승인 타입은 어떠한지 확인
+        next = gwMapper.getAppTypeAndEmployee(compId, docNo, ordered);
+        x = next.get("employee"); // 결재자 사번
+        appType = next.get("appType"); // 결재 유형
+
+        // 권한 확인
+        if(!userNo.equals((x+"")))  return "permissionDenied";
 
         // 문서 반려 처리
         if(ask == 0){
@@ -740,5 +680,74 @@ public class GwService extends Svc{
         
         return result;
     } // End of askAppDoc() // 결재 처리 종료
+
+
+
+
+    // ========================================= P R I V A T E _ M E T H O D =========================================
+
+    // 결재 예정 및 대기 문서 목록을 DB에서 가져오는 메서드 //  아래 sqlIn 값을 매퍼에서 처리하지 못하기에 만등어넣음
+    private List<HashMap<String, String>> getAppDocList(String compId, String userNo, String sqlIn){
+        List<HashMap<String, String>> result = new ArrayList<>();
+        HashMap<String, String> each = null;
+        String sql = "SELECT CAST(a.no AS CHAR) AS no, a.docno AS docno, CAST(a.writer AS CHAR) AS writer, CAST(UNIX_TIMESTAMP(a.created)*1000 AS CHAR) AS created, c.title AS form, a.title AS title, CAST(UNIX_TIMESTAMP(b.`read`)*1000 AS CHAR) AS `read`, CAST(b.apptype AS CHAR) AS appType FROM bizcore.doc_app a, bizcore.doc_app_detail b, bizcore.doc_form c WHERE b.deleted IS NULL AND c.id=a.formid AND a.compid=? AND b.employee=? AND a.docno=b.docno AND b.ordered > 0 AND a.status=1 AND a.docno IN ('" + sqlIn + "')";
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try{
+            conn = sqlSession.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, compId);
+            pstmt.setString(2, userNo);
+            //pstmt.setString(3, sqlIn);
+            rs = pstmt.executeQuery();
+            while(rs.next()){
+                each = new HashMap<>();
+                each.put("no", rs.getString(1));
+                each.put("docno", rs.getString(2));
+                each.put("writer", rs.getString(3));
+                each.put("created", rs.getString(4));
+                each.put("form", rs.getString(5));
+                each.put("title", rs.getString(6));
+                each.put("read", rs.getString(7));
+                each.put("appType", rs.getString(8));
+                result.add(each);
+            }
+        }catch(SQLException e){e.printStackTrace();}
+        return result;
+    }
+
+    // 수신 문서 목록을 전달하는 메서드
+    private List<HashMap<String, String>> getReceivedDocList(String compId, String userNo){
+        List<HashMap<String, String>> result = null;
+        HashMap<String, String> each = null;
+        String sql = "SELECT CAST(a.no AS CHAR) AS no, a.docno AS docno, CAST(a.writer AS CHAR) AS writer, CAST(UNIX_TIMESTAMP(a.created)*1000 AS CHAR) AS created, c.title AS form, a.title AS title, CAST(UNIX_TIMESTAMP(b.`read`)*1000 AS CHAR) AS `read`, CAST(b.apptype AS CHAR) AS appType FROM bizcore.doc_app a, bizcore.doc_app_detail b, bizcore.doc_form c WHERE b.deleted IS NULL AND a.docno = b.docno AND a.compId = b.compId AND b.approved IS NULL AND b.rejected IS NULL AND a.formid = c.id AND a.status = 2 AND b.appType = 3 AND a.compId = ? AND b.employee = ? ORDER BY no";
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try{
+            conn = sqlSession.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, compId);
+            pstmt.setString(2, userNo);
+            rs = pstmt.executeQuery();
+            while(rs.next()){
+                if(result == null)  result = new ArrayList<>();
+                each = new HashMap<>();
+                each.put("no", rs.getString(1));
+                each.put("docno", rs.getString(2));
+                each.put("writer", rs.getString(3));
+                each.put("created", rs.getString(4));
+                each.put("form", rs.getString(5));
+                each.put("title", rs.getString(6));
+                each.put("read", rs.getString(7));
+                each.put("appType", rs.getString(8));
+                result.add(each);
+            }
+        }catch(SQLException e){e.printStackTrace();}
+        return result;
+    }
     
 }

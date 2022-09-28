@@ -323,9 +323,14 @@ public class ApiGwCtrl extends Ctrl{
 
             // 결재문서 처리 요청에 대한 처리
             data = gwService.askAppDoc(compId, docNo, ordered, ask, comment, doc, appLine, files, attached, appData, userNo);
-
-            if(data == null || !data.equals("ok"))    result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
-            else    result = "{\"result\":\"ok\"}";
+            if(data.equals("ok")){
+                result = "{\"result\":\"ok\"}";
+            }else if(data.equals("permissionDenied")){
+                result = "{\"result\":\"failure\",\"msg\":\"" + msg.permissionDenied + "\"}";
+            }else{
+                result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
+            }
+            
             
         }
 
