@@ -201,19 +201,20 @@ function detailView(obj) {// 선택한 그리드의 글 번호 받아오기
 
 ///글 제목 눌렀을때 상세 조회하는 페이지 그리기 
 function getDetailView() {
-
+	let formId = storage.reportDetailData.formId;
     let testForm = storage.reportDetailData.doc;
     console.log(testForm);
 
     let detailHtml = "<div class='mainBtnDiv'><button type='button' onclick='showPreAppModal()'>결재하기</button></div>" +
-        "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div>"
+        "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>"
+
 
 
     $(".listPageDiv").html(detailHtml);
 
 
 
-    let selectedFileView = "<div class='selectedFileField'><label>첨부파일</label><div><div class='selectedFileDiv'><input class='inputFile' type='file' onchange='setSelectedFiles()'/></div></div></div>"
+    let selectedFileView = "<label>첨부파일</label><div><div><input class='inputFile' multiple name='attached[]'type='file' onchange='setSelectedFiles()'/></div><div class='selectedFileDiv'></div></div>"
 
 
     $(".seletedForm").html(testForm);
@@ -230,6 +231,31 @@ function getDetailView() {
 
     toReadMode();
     drawCommentLine();
+    getFileArr();
+
+
+
+    let referArr = new Array();
+
+    for (let i = 0; i < storage.reportDetailData.appLine.length; i++) {
+        if (storage.reportDetailData.appLine[i].appType == '4') {
+            referArr.push(storage.reportDetailData.appLine[i]);
+        }
+    }
+
+
+
+    let referTarget = $(".selectedRefer");
+    let referHtml = "";
+    for (let i = 0; i < referArr.length; i++) {
+        let id = referArr[i].employee;
+        referHtml += "<div class='appendName " + formId + "_refer' data-detail='" + storage.user[id].userNo + "'>" + storage.userRank[storage.user[id].rank][0] + "&nbsp" + storage.user[id].userName + "</div>";
+
+    }
+
+    referTarget.html(referHtml);
+
+
 
 
     let target = $(".seletedForm")[0];
@@ -244,7 +270,7 @@ function getDetailView() {
     let textAreaArr = target.getElementsByTagName("textarea")[0];
     textAreaArr.value = textAreaArr.dataset.detail;
 
-    let formId = storage.reportDetailData.formId;
+
 
     // 상세타입 체크하게 하기
     let rd = $("input[name='" + formId + "_RD']");
@@ -269,27 +295,48 @@ function getDetailView() {
         }
     }
 
+
+    storage.oriCbContainer = $("input[name='" + formId + "_RD']:checked").attr("id");
+    storage.oriInsertedContent = $(".insertedContent").html();
+    storage.oriInsertedDataList = $(".insertedDataList").html();
+    $.ajax({
+        url: "/api/sopp",
+        type: "get",
+        dataType: "json",
+        success: (result) => {
+            if (result.result == "ok") {
+                let jsondata;
+                jsondata = cipher.decAes(result.data);
+                jsondata = JSON.parse(jsondata);
+                storage.soppList = jsondata;
+                //setSoppList(formId);
+            } else {
+                alert("에러");
+            }
+        },
+    });
+
 }
 
 // 탭 누를때마다의 이벤트 주기 
 function changeTab(obj) {
 
-    
-	$(obj).css("background-color", "#62a6ad");
-	$(obj).css("color", "#fff");
-	$(obj).css("border-top-left", "14px");
+
+    $(obj).css("background-color", "#62a6ad");
+    $(obj).css("color", "#fff");
+    $(obj).css("border-top-left", "14px");
     if (obj.id == 'lineInfo') {
         $("#changeInfo").css("background-color", "#dddddd");
-		$("#changeInfo").css("color", "#5c5c5c");
-		$("#changeInfo").css("border-bottom-left-radius", "20px");
+        $("#changeInfo").css("color", "#5c5c5c");
+        $("#changeInfo").css("border-bottom-left-radius", "20px");
         $("#tabDetail2").hide();
         $("#tabDetail").show();
         drawCommentLine();
 
     } else if (obj.id = 'changeInfo') {
         $("#lineInfo").css("background-color", "#dddddd");
-		$("#lineInfo").css("color", "#5c5c5c");
-		$("#lineInfo").css("border-bottom-right-radius", "20px");
+        $("#lineInfo").css("color", "#5c5c5c");
+        $("#lineInfo").css("border-bottom-right-radius", "20px");
         $("#tabDetail").hide();
         $("#tabDetail2").show();
         drawChangeInfo();
@@ -425,4 +472,34 @@ function drawChangeInfo() {
 function getYmdSlash(date) {
     let d = new Date(date);
     return (d.getFullYear() % 100) + "/" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "/" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString());
+}
+
+function getFileArr() {
+    let target = $(".selectedFileDiv");
+    let html = "";
+    let originFileList = [];
+    let no = storage.reportDetailData.no;
+    let fileList = storage.reportDetailData.fileList;
+    if (storage.newFileData == undefined) {
+
+        for (let i = 0; i < fileList.length; i++) {
+            html += "<div><a href='/api/attached/docapp/" + no + "/" + encodeURI(fileList[i].fileName) + "'>" + fileList[i].fileName + "</a></div>";
+        }
+        target.html(html);
+    } else {
+        for (let i = 0; i < storage.newFileData.length; i++) {
+            for (let j = 0; j < fileList.length; j++) {
+                originFileList.push(fileList[j].fileName);
+            }
+            if (originFileList.includes(storage.newFileData[i])) {
+                html += "<div><a href='/api/attached/docapp/" + no + "/" + encodeURI(storage.newFileData[i]) + "'>" + storage.newFileData[i] + "</a></div>";
+            } else {
+                html += "<div style='color:navy'>" + storage.newFileData[i] + "</div>";
+            }
+
+        }
+        target.html(html);
+    }
+
+
 }

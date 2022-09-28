@@ -731,7 +731,7 @@ function approveBtnEvent() {
 	let no = storage.reportDetailData.no;
 	let appLine = storage.reportDetailData.appLine;
 	let ordered;
-
+    
 
 	for (let i = 0; i < appLine.length; i++) {
 		if (appLine[i].employee == storage.my) {
@@ -782,6 +782,7 @@ function approveBtnEvent() {
 		"appLine": storage.newAppLine,
 		"sopp": soppResult,
 		"customer": customerResult
+		"title" : 
 	}
 
 	console.log(data);
