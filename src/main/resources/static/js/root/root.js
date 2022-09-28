@@ -72,7 +72,7 @@ function gridWidget(){
 	}
 
 	widgetContainer.html(html);
-	
+
 	addChart();
 	getNoticeList();
 	getScheduleList();
@@ -450,49 +450,57 @@ function getScheduleList() {
 				if(result.length < gridListLength){
 					gridListLength = result.length;
 				}
+
+				console.log(gridListLength);
 			
 				for (let i = 0; i < gridListLength; i++) {
-					if(result[i].job === "schedule"){
-						let job, title, writer, fromDate, fromSetDate, toDate, toSetDate, content;
-						
-						job = (result[i].job === null || result[i].job === "" || result[i].job === undefined) ? "schedule" : "기타일정";
-				
-						title = (result[i].title === null || result[i].title === "" || result[i].title === undefined) ? "제목 없음" : result[i].title;
-						writer = (result[i].writer == 0 || result[i].writer === null || result[i].writer === undefined) ? "없음" : storage.user[result[i].writer].userName;
-						content = (result[i].content === null || result[i].content === "" || result[i].content === undefined) ? "내용 없음" : result[i].content;
-						
-						fromDate = dateDis(result[i].from);
-						fromSetDate = dateFnc(fromDate);
-						
-						toDate = dateDis(result[i].to);
-						toSetDate = dateFnc(toDate);
-				
-						str = [
-							{
-								"setData": result[i].no,
-							},
-							{
-								"setData": job,
-							},
-							{
-								"setData": title,
-							},
-							{
-								"setData": fromSetDate + " ~ " + toSetDate,
-							},
-							{
-								"setData": writer,
-							},
-							{
-								"setData": content,
-							},
-						];
+					let job, title, writer, fromDate, fromSetDate, toDate, toSetDate, content;
+					
+					job = (result[i].job === null || result[i].job === "" || result[i].job === undefined) ? "" : result[i].job;
 
-						fnc = "rootDetailView(\"schedule\", this);";
-						ids.push(result[i].no);
-						dataJob.push(result[i].job);
-						data.push(str);
+					if(job === "sales"){
+						job = "영업일정";
+					}else if(job === "tech"){
+						job = "기술지원";
+					}else{
+						job = "기타일정";
 					}
+
+					title = (result[i].title === null || result[i].title === "" || result[i].title === undefined) ? "제목 없음" : result[i].title;
+					writer = (result[i].writer == 0 || result[i].writer === null || result[i].writer === undefined) ? "없음" : storage.user[result[i].writer].userName;
+					content = (result[i].content === null || result[i].content === "" || result[i].content === undefined) ? "내용 없음" : result[i].content;
+					
+					fromDate = dateDis(result[i].from);
+					fromSetDate = dateFnc(fromDate);
+					
+					toDate = dateDis(result[i].to);
+					toSetDate = dateFnc(toDate);
+			
+					str = [
+						{
+							"setData": result[i].no,
+						},
+						{
+							"setData": job,
+						},
+						{
+							"setData": title,
+						},
+						{
+							"setData": fromSetDate + " ~ " + toSetDate,
+						},
+						{
+							"setData": writer,
+						},
+						{
+							"setData": content,
+						},
+					];
+
+					fnc = "rootDetailView(\"schedule\", this);";
+					ids.push(result[i].no);
+					dataJob.push(result[i].job);
+					data.push(str);
 				}
 
 				if(data.length > 0){
