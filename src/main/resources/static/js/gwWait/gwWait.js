@@ -216,7 +216,7 @@ function showReportDetail() {
 	let testForm = storage.reportDetailData.doc;
 
 
-	let detailHtml = "<div class='mainBtnDiv'><button type='button' onclick='showAppModal()'>결재하기</button>" +
+	let detailHtml = "<div class='mainBtnDiv'><button type='button' name='approvalBtn' onclick='showAppModal()'>결재하기</button>" +
 		"<button type='button' onclick='showGwModal()'>결재선 수정</button>" +
 		"<button type='button' onclick='toWriteMode();createConfirmBtn(this)'>문서 수정</button></div>" +
 		"<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>"
@@ -1263,6 +1263,10 @@ function createConfirmBtn(obj) {
 		storage.newFileData.push($(".files")[i].dataset.detail);
 	}
 
+	///결재하기 버튼 disabled  
+
+	$("button[name='approvalBtn']")[0].prop("disabled", true);
+	$("button[name='approvalBtn']")
 }
 
 

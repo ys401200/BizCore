@@ -189,14 +189,6 @@ function setSoppList(formId) {
 }
 
 
-
-
-
-
-
-
-
-
 // 결재선 생성 버튼 눌렀을 때 모달 띄움 
 function showModal() {
 
@@ -294,9 +286,6 @@ function check(name) {
       data.push(x);
     }
   }
-
-
-
 
   for (let i = 0; i < inputLength.length; i++) {
     if ($("#cb" + data[i]).prop('checked')) {
@@ -534,8 +523,6 @@ function setSavedLine(obj) {
 
 
 function reportInsert() {
-
-
 
   let title, content, readable, formId, appDoc, dept;
   let appLine = [];
