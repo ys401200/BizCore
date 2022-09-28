@@ -259,8 +259,8 @@ public class GwService extends Svc{
     public String getAppDocAndDetailInfo(String compId, String docNo, String dept, String userNo, String aesKey, String aesIv){
         String result = null;
         String sql1 = "SELECT no, docNo, writer, formId, docbox, title, confirmNo, status, readable FROM bizcore.doc_app WHERE deleted IS NULL AND compId = ? AND docno = ?";
-        String sql2 = "SELECT ordered, employee, appType, CAST(UNIX_TIMESTAMP(`read`)*1000 AS CHAR) AS `read`, isModify, CAST(UNIX_TIMESTAMP(approved)*1000 AS CHAR) AS approved, CAST(UNIX_TIMESTAMP(rejected)*1000 AS CHAR) AS rejected, comment, appData FROM bizcore.doc_app_detail WHERE compId = ? AND docNo = ? AND retrieved IS NULL ORDER BY ordered";
-        String sql3 = "SELECT doc FROM bizcore.doc_app_detail WHERE deleted IS NULL AND compId = ? AND ordered = (SELECT MAX(ordered) FROM bizcore.doc_app_detail WHERE deleted IS NULL AND compId = ? AND docNo = ? AND retrieved IS NULL AND (approved IS NOT NULL OR rejected IS NOT NULL)) AND docNo = ?";
+        String sql2 = "SELECT ordered, employee, appType, CAST(UNIX_TIMESTAMP(`read`)*1000 AS CHAR) AS `read`, isModify, CAST(UNIX_TIMESTAMP(approved)*1000 AS CHAR) AS approved, CAST(UNIX_TIMESTAMP(rejected)*1000 AS CHAR) AS rejected, comment FROM bizcore.doc_app_detail WHERE compId = ? AND docNo = ? AND retrieved IS NULL ORDER BY ordered";
+        String sql3 = "SELECT doc, appData FROM bizcore.doc_app_detail WHERE deleted IS NULL AND compId = ? AND ordered = (SELECT MAX(ordered) FROM bizcore.doc_app_detail WHERE deleted IS NULL AND compId = ? AND docNo = ? AND retrieved IS NULL AND (approved IS NOT NULL OR rejected IS NOT NULL)) AND docNo = ?";
         String no = null, writer = null, formId = null, docbox = null, title = null, confirmNo = null;
         String ordered = null, employee = null, appType = null, read = null, isModify = null, approved = null, rejected = null, comment = null, appData = null, t = null, doc = null;
         String docStatus = null, appCurrent = null, files = null, revisionHistory = null, customer = null, sopp = null;
@@ -313,15 +313,6 @@ public class GwService extends Svc{
                 approved = rs.getString("approved");
                 rejected = rs.getString("rejected");
                 comment = rs.getString("comment");
-                appData = rs.getString("appData");
-
-                if(appData != null){
-                    json = new JSONObject(appData);
-                    customer = json.isNull("customer") ? null : json.getString("customer");
-                    sopp = json.isNull("sopp") ? null : json.getString("sopp");
-                    if(customer == null || customer.equals("")) customer = "0";
-                    if(sopp == null || sopp.equals("")) sopp = "0";
-                }
 
                 t = "{\"ordered\":" + ordered + ",";
                 t += ("\"employee\":" + employee + ",");
@@ -330,9 +321,7 @@ public class GwService extends Svc{
                 t += ("\"isModify\":" + isModify.equals("1") + ",");
                 t += ("\"approved\":" + approved + ",");
                 t += ("\"rejected\":" + rejected + ",");
-                t += ("\"comment\":\"" + comment + "\",");
-                t += ("\"customer\":" + customer + ",");
-                t += ("\"sopp\":" + sopp + "}");
+                t += ("\"comment\":\"" + comment + "\"}");
                 if(appLine == null) appLine = new ArrayList<>();
                 appLine.add(t);
 
@@ -469,6 +458,13 @@ public class GwService extends Svc{
                 return "appDocContentIsEmpty";
             }else{
                 doc = rs.getString("doc");
+                appData = rs.getString("appData");
+
+                if(appData != null){
+                    json = new JSONObject(appData);
+                    customer = json.isNull("customer") ? null : json.getString("customer");
+                    sopp = json.isNull("sopp") ? null : json.getString("sopp");
+                }
             }
             rs.close();
             pstmt.close();
@@ -495,6 +491,8 @@ public class GwService extends Svc{
             result += ("\"status\":\"" + docStatus + "\",");
             result += ("\"readable\":\"" + (readable ? "dept" : "none") + "\",");
             result += ("\"appLine\":" + t + ",");
+            result += ("\"customer\":\"" + sopp + "\",");
+            result += ("\"sopp\":\"" + sopp + "\",");
             result += ("\"revisionHistory\":" + revisionHistory + ",");
             result += ("\"fileList\":" + files + ",");
             result += ("\"doc\":\"" + encAes(doc, aesKey, aesIv) + "\"}");
