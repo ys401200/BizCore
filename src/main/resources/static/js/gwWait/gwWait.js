@@ -67,7 +67,7 @@ function drawNoticeApproval() {
 	let container, result, jsonData, job, header = [], data = [], ids = [], disDate, setDate, str, fnc;
 
 	if (storage.waitList === undefined) {
-		msg.set("등록된 문서가 없습니다");
+		msg.set("결재 대기 문서가 없습니다");
 	}
 	else {
 		jsonData = storage.waitList.wait;
@@ -747,13 +747,13 @@ function approveBtnEvent() {
 
 	let slistid = "infoSopp";
 	let soppVal = $("#" + formId + "_sopp").val();
-	let soppResult = dataListFormat(slistid, soppVal);
+	let soppResult = dataListFormat(slistid, soppVal) + "";
 
 	let clistid = "infoCustomer";
 	let customerVal = $("#" + formId + "_infoCustomer").val();
-	let customerResult = dataListFormat(clistid, customerVal);
+	let customerResult = dataListFormat(clistid, customerVal) + "";
 
-	if (storage.reportDetailData.sopp == soppResult && storage.reportDetailData.customer == customerResult  &&
+	if (storage.reportDetailData.sopp == soppResult && storage.reportDetailData.customer == customerResult &&
 		storage.oriCbContainer == $("input[name='" + formId + "_RD']:checked").attr("id") &&
 		storage.oriInsertedContent == $(".insertedContent").html() &&
 		storage.oriInsertedDataList == $(".insertedDataList").html()) {
@@ -763,6 +763,13 @@ function approveBtnEvent() {
 	}
 
 
+	if (storage.reportDetailData.sopp = soppResult) {
+		soppResult = null;
+	}
+
+	if (storage.reportDetailData.customer == customerResult) {
+		customerResult = null;
+	}
 
 	selectVal === "approve" ? type = 1 : type = 0;
 	storage.newFileData == undefined ? storage.newFileData = null : storage.newFileData = storage.newFileData;
@@ -773,8 +780,8 @@ function approveBtnEvent() {
 		"comment": comment,
 		"files": storage.newFileData,
 		"appLine": storage.newAppLine,
-		"sopp": soppResult + "",
-		"customer": customerResult + ""
+		"sopp": soppResult,
+		"customer": customerResult
 	}
 
 	console.log(data);

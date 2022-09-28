@@ -623,6 +623,7 @@ function reportInsert() {
       contentType: "text/plain",
       success: (result) => {
         if (result.result === "ok") {
+          alert("기안 완료");
           location.href = "/gw/mydraft";
         } else {
           alert(result.msg);

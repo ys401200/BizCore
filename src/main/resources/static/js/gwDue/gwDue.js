@@ -150,9 +150,7 @@ function drawApproval() {
                 "setData": setDate,
             },
 
-            // {
-            // 	"setData": "<input type='checkbox' class='thisCheck' data-id='" + jsonData[i].no + "'>",
-            // }
+          
         ]
         fnc = "detailView(this)";
         ids.push(jsonData[i].docNo);
@@ -201,8 +199,10 @@ function detailView(obj) {// 선택한 그리드의 글 번호 받아오기
 function getDetailView() {
 
 
-    let testForm = storage.reportDetailData.doc;
-    console.log(testForm);
+
+	let formId = storage.reportDetailData.formId;
+	let testForm = storage.reportDetailData.doc;
+
 
     let detailHtml = "<div class='mainBtnDiv'><button type='button' onclick='showPreAppModal()'>결재하기</button></div>" +
     "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>"
@@ -212,7 +212,7 @@ function getDetailView() {
 
 
 
-    let selectedFileView = "<div class='selectedFileField'><label>첨부파일</label><div><div class='selectedFileDiv'><input class='inputFile' type='file' onchange='setSelectedFiles()'/></div></div></div>"
+    let selectedFileView = "<label>첨부파일</label><div><div><input class='inputFile' multiple name='attached[]'type='file' onchange='setSelectedFiles()'/></div><div class='selectedFileDiv'></div></div>"
 
 
     $(".seletedForm").html(testForm);
@@ -231,6 +231,8 @@ function getDetailView() {
     drawCommentLine();
 
     getFileArr();
+
+
 
 	let referArr = new Array();
 
@@ -255,42 +257,65 @@ function getDetailView() {
 
 
 
-    let target = $(".seletedForm")[0];
-    let inputsArr = target.getElementsByTagName("input");
+	let target = $(".seletedForm")[0];
+	let inputsArr = target.getElementsByTagName("input");
 
-    for (let i = 0; i < inputsArr.length; i++) {
-        if (inputsArr[i].dataset.detail !== undefined) {
-            inputsArr[i].value = inputsArr[i].dataset.detail;
-        }
-    }
+	for (let i = 0; i < inputsArr.length; i++) {
+		if (inputsArr[i].dataset.detail !== undefined) {
+			inputsArr[i].value = inputsArr[i].dataset.detail;
+		}
+	}
 
-    let textAreaArr = target.getElementsByTagName("textarea")[0];
-    textAreaArr.value = textAreaArr.dataset.detail;
-
-    let formId = storage.reportDetailData.formId;
-
-    // 상세타입 체크하게 하기
-    let rd = $("input[name='" + formId + "_RD']");
-    for (let i = 0; i < rd.length; i++) {
-        if (rd[i].dataset.detail == "on") {
-            $("#" + rd[i].id).prop("checked", true);
-        }
-    }
-    $("input[name='" + formId + "_RD']").prop("disabled", true);
+	let textAreaArr = target.getElementsByTagName("textarea")[0];
+	textAreaArr.value = textAreaArr.dataset.detail;
 
 
 
-    // 이름 , 직급 한글로 설정하기 
-    let subTitlesArr = ["_examine", "_approval", "_agree", "_conduct"];
-    for (let i = 0; i < subTitlesArr.length; i++) {
-        if ($("." + formId + subTitlesArr[i]).val() != undefined) {
-            for (let j = 0; j < $("." + formId + subTitlesArr[i]).length; j++) {
-                $("." + formId + subTitlesArr[i])[j].value = storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
-                $("." + formId + subTitlesArr[i] + "_position")[j].value = storage.userRank[$("." + formId + subTitlesArr[i] + "_position")[j].value][0];
+	// 상세타입 체크하게 하기
+	let rd = $("input[name='" + formId + "_RD']");
+	for (let i = 0; i < rd.length; i++) {
+		if (rd[i].dataset.detail == "on") {
+			$("#" + rd[i].id).prop("checked", true);
+		}
+	}
+	$("input[name='" + formId + "_RD']").prop("disabled", true);
 
-            }
-        }
-    }
+
+
+	// 이름 , 직급 한글로 설정하기 
+	let subTitlesArr = ["_examine", "_approval", "_agree", "_conduct"];
+	for (let i = 0; i < subTitlesArr.length; i++) {
+		if ($("." + formId + subTitlesArr[i]).val() != undefined) {
+			for (let j = 0; j < $("." + formId + subTitlesArr[i]).length; j++) {
+				$("." + formId + subTitlesArr[i])[j].value = storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
+				$("." + formId + subTitlesArr[i] + "_position")[j].value = storage.userRank[$("." + formId + subTitlesArr[i] + "_position")[j].value][0];
+
+			}
+		}
+	}
+
+
+	storage.oriCbContainer = $("input[name='" + formId + "_RD']:checked").attr("id");
+	storage.oriInsertedContent = $(".insertedContent").html();
+	storage.oriInsertedDataList = $(".insertedDataList").html();
+	$.ajax({
+		url: "/api/sopp",
+		type: "get",
+		dataType: "json",
+		success: (result) => {
+			if (result.result == "ok") {
+				let jsondata;
+				jsondata = cipher.decAes(result.data);
+				jsondata = JSON.parse(jsondata);
+				storage.soppList = jsondata;
+				//setSoppList(formId);
+			} else {
+				alert("에러");
+			}
+		},
+	});
+
+
 
 
 }
@@ -298,28 +323,35 @@ function getDetailView() {
 // 탭 누를때마다의 이벤트 주기 
 function changeTab(obj) {
 
-    $(obj).css("background-color", "#332E85");
-    $(obj).css("color", "white");
-    $(obj).css("border", "none");
+    $(obj).css("background-color", "#62a6ad");
+	$(obj).css("color", "#fff");
+	$(obj).css("border-top-left", "14px");
+	//$(obj).css("border-bottom", "2px solid #5298d5");
 
-    if (obj.id == 'lineInfo') {
+	if (obj.id == 'lineInfo') {
 
-        $("#changeInfo").css("background-color", "white");
-        $("#changeInfo").css("color", "#332E85");
-        $("#changeInfo").css("border-bottom", "2px solid #332E85");
-        $("#tabDetail2").hide();
-        $("#tabDetail").show();
-        drawCommentLine();
+		$("#changeInfo").css("background-color", "#dddddd");
+		$("#changeInfo").css("color", "#5c5c5c");
+		$("#changeInfo").css("border-bottom-left-radius", "20px");
+		$("#tabDetail2").hide();
+		$("#tabDetail").show();
+		if (storage.newAppLine == undefined) {
+			drawCommentLine();
+		} else {
+			drawNewCommentLine();
+		}
 
-    } else if (obj.id = 'changeInfo') {
-        $("#lineInfo").css("background-color", "white");
-        $("#lineInfo").css("color", "#332E85");
-        $("#lineInfo").css("border-bottom", "2px solid #332E85");
-        $("#tabDetail").hide();
-        $("#tabDetail2").show();
-        drawChangeInfo();
 
-    }
+	} else if (obj.id = 'changeInfo') {
+		$("#lineInfo").css("background-color", "#dddddd");
+		$("#lineInfo").css("color", "#5c5c5c");
+		$("#lineInfo").css("border-bottom-right-radius", "20px");
+		$("#tabDetail").hide();
+		$("#tabDetail2").show();
+
+		drawChangeInfo();
+
+	}
 }
 
 
@@ -510,4 +542,32 @@ function closeModal(obj) {
 function getYmdSlash() {
     let d = new Date();
     return (d.getFullYear() % 100) + "/" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "/" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString());
+}function getFileArr() {
+	let target = $(".selectedFileDiv");
+	let html = "";
+	let originFileList = [];
+	let no = storage.reportDetailData.no;
+	let fileList = storage.reportDetailData.fileList;
+	if (storage.newFileData == undefined) {
+
+		for (let i = 0; i < fileList.length; i++) {
+			html += "<div><a href='/api/attached/docapp/" + no + "/" + encodeURI(fileList[i].fileName) + "'>" + fileList[i].fileName + "</a></div>";
+		}
+		target.html(html);
+	} else {
+		for (let i = 0; i < storage.newFileData.length; i++) {
+			for (let j = 0; j < fileList.length; j++) {
+				originFileList.push(fileList[j].fileName);
+			}
+			if (originFileList.includes(storage.newFileData[i])) {
+				html += "<div><a href='/api/attached/docapp/" + no + "/" + encodeURI(storage.newFileData[i]) + "'>" + storage.newFileData[i] + "</a></div>";
+			} else {
+				html += "<div style='color:navy'>" + storage.newFileData[i] + "</div>";
+			}
+
+		}
+		target.html(html);
+	}
+
+
 }

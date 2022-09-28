@@ -298,6 +298,7 @@ public class ApiGwCtrl extends Ctrl{
                 jarr = json.getJSONArray("files");
                 list = new ArrayList<>();
                 for(x = 0 ; x < jarr.length() ; x++)    list.add(jarr.getString(x));
+                files = new String[0];
                 list.toArray(files);
                 attached = (HashMap<String, String>)session.getAttribute("attached");
             }
