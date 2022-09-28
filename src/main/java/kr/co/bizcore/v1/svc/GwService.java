@@ -514,18 +514,28 @@ public class GwService extends Svc{
         int writer = -9999, appType = -9999, no = -9999, x = -1, y = -1;
         List<String> prvFiles = null, tFiles = null, newFiles = null;
         HashMap<String, Integer> next = null;
+        HashMap<String, String> map = null;
         long size = -1;
         boolean find = false;
 
+        // 기본정보들이 갖추어져 있는지 먼저 검증
+        if(compId == null || docNo == null || ordered < 1 || ask < 0 || ask > 1 || userNo == null)  return null;
+
         // 작성자와 일련번호 확인
-        next = gwMapper.getAppDocWriterAndSN(compId, docNo);
-        writer = next.get("writer"); // 작성자
-        no = next.get("no"); // 일련번호
+        map = gwMapper.getAppDocWriterAndSN(compId, docNo);logger.error("======================= " + compId + " / " + docNo);
+        if(map == null)    return null;
+        t = map.get("writer"); // 작성자
+        writer = t == null ? -1 : strToInt(t);
+        t = map.get("no"); // 일련번호
+        no = t == null ? -1 : strToInt(t);
 
         // 요청자에게 결재권한이 있는지, 승인 타입은 어떠한지 확인
-        next = gwMapper.getAppTypeAndEmployee(compId, docNo, ordered);
-        x = next.get("employee"); // 결재자 사번
-        appType = next.get("appType"); // 결재 유형
+        map = gwMapper.getAppTypeAndEmployee(compId, docNo, ordered);
+        if(map == null)    return null;
+        t = map.get("employee"); // 결재자 사번
+        x = t == null ? -1 : strToInt(t);
+        t = map.get("appType"); // 결재 유형
+        appType = t == null ? -1 : strToInt(t);
 
         // 권한 확인
         if(!userNo.equals((x+"")))  return "permissionDenied";

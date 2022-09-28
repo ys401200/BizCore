@@ -56,8 +56,8 @@ public interface GwMapper {
     public int addRevisionHistory(@Param("compId") String compId, @Param("docNo") String docNo, @Param("ordered") int ordered, @Param("employee") int employee, @Param("content") String content);
 
     // 문서번호를 입력받아서 작성자와 일련번호를 전달하느 메서드
-    @Select("SELECT no, writer FROM bizcore.doc_app WHERE deleted IS NULL AND compId = #{compId} AND docNo = #{docNo}")
-    public HashMap<String, Integer> getAppDocWriterAndSN(@Param("compId") String compId, @Param("docNo") String docNo);
+    @Select("SELECT CAST(no AS CHAR) AS no, CAST(writer AS CHAR) AS writer FROM bizcore.doc_app WHERE deleted IS NULL AND compId = #{compId} AND docNo = #{docNo}")
+    public HashMap<String, String> getAppDocWriterAndSN(@Param("compId") String compId, @Param("docNo") String docNo);
 
     // 결재선에 반려처리를 기록하는 메서드
     @Update("UPDATE bizcore.doc_app_detail SET rejected = NOW() WHERE compId = #{compId} AND docNo = #{docNo} AND ordered = #{ordered}")
@@ -80,8 +80,8 @@ public interface GwMapper {
     public int deleteAppLineSinceEditAppline(@Param("compId") String compId, @Param("docNo") String docNo, @Param("ordered") int ordered);
 
     // ordered 기준, 요청자가 승인 권한이 있는지 여부 및 결재 타입을 가져오는 메서드
-    @Select("SELECT employee, appType FROM bizcore.doc_app_detail WHERE deleted IS NULL AND compId = #{compId} AND docNo = #{docNo} AND ordered = #{ordered}")
-    public HashMap<String, Integer> getAppTypeAndEmployee(@Param("compId") String compId, @Param("docNo") String docNo, @Param("ordered") int ordered);
+    @Select("SELECT CAST(employee AS CHAR) AS employee, CAST(appType AS CHAR) AS appType FROM bizcore.doc_app_detail WHERE deleted IS NULL AND compId = #{compId} AND docNo = #{docNo} AND ordered = #{ordered}")
+    public HashMap<String, String> getAppTypeAndEmployee(@Param("compId") String compId, @Param("docNo") String docNo, @Param("ordered") int ordered);
 
     // 결재처리시, 결재선 변경 중 현재 결재 타입을 변경처리하는 메서드
     @Update("UPDATE bizcore.doc_app_detail SET appType = #{appType} WHERE compId = #{compId} AND docNo = #{docNo} AND ordered > #{ordered}")
@@ -96,6 +96,6 @@ public interface GwMapper {
     public int setProceedDocAppStatus(@Param("compId") String compId, @Param("docNo") String docNo, @Param("ordered") int ordered, @Param("comment") String comment, @Param("appData") String appData);
 
     // 다음 결재자 정보를 가져오는 메서드
-    @Select("SELECT employee, appType FROM bizcore.doc_app_detail WHERE deleted IS NULL AND appType < 4 AND compId = #{compId} AND docNo = #{docNo} AND ordered > (SELECT min(ordered) FROM bizcore.doc_app_detail WHERE deleted IS NULL AND appType < 4 AND compId = #{compId} AND docNo = #{docNo} AND ordered > #{ordered}")
+    @Select("SELECT employee, appType FROM bizcore.doc_app_detail WHERE deleted IS NULL AND appType < 4 AND compId = #{compId} AND docNo = #{docNo} AND ordered > (SELECT min(ordered) FROM bizcore.doc_app_detail WHERE deleted IS NULL AND appType < 4 AND compId = #{compId} AND docNo = #{docNo} AND ordered > #{ordered})")
     public HashMap<String, Integer> getNextAppData(@Param("compId") String compId, @Param("docNo") String docNo, @Param("ordered") int ordered);
 }

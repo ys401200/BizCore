@@ -20,7 +20,7 @@ public interface NotesMapper {
 
     // 신규 메시지를 입력하는 메서드
     @Insert("INSERT INTO bizcore.notes(compId, no, writer, reader, message, related) VALUES(#{compId}, #{no}, #{writer}, #{reader}, #{msg}, #{related})")
-    public int addNewNotes(@Param("CompId") String compId, @Param("no") int no, @Param("writer") int writer, @Param("reader") int reader, @Param("msg") String msg, @Param("related") String related);
+    public int addNewNotes(@Param("compId") String compId, @Param("no") int no, @Param("writer") int writer, @Param("reader") int reader, @Param("msg") String msg, @Param("related") String related);
 
     // 특정 발신자의 신규 메시지를 가져오는 메서드
     @Select("SELECT CAST(writer AS CHAR) AS `writer`, CAST(UNIX_TIMESTAMP(sent)*1000 AS CHAR) AS sent, message FROM bizcore.notes WHERE deleted IS NULL AND `read` IS NULL AND compId = #{compId} AND writer = #{writer} AND reader = #{userNo} ORDER BY sent DESC")

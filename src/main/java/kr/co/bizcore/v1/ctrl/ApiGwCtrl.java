@@ -260,7 +260,7 @@ public class ApiGwCtrl extends Ctrl{
     // 결재 처리 요청
     @PostMapping("/app/proceed/{docNo}/{ordered:\\d+}/{ask:\\d?}")
     public String apiGwAppProceedPost(HttpServletRequest request, HttpServletResponse response, @RequestBody String requestBody, @PathVariable("docNo") String docNo, @PathVariable("ordered") int ordered, @PathVariable("ask") int ask){
-        String result = null, compId = null, userNo = null, data = null, aesIv = null, aesKey = null, lang = null, comment = null, doc = null, appData = null;
+        String result = null, compId = null, userNo = null, data = null, aesIv = null, aesKey = null, lang = null, comment = null, doc = null, appData = null, customer = null, sopp = null;
         String[] files = null, ts = null;
         String[][] appLine = null;
         HttpSession session = null;
@@ -306,18 +306,22 @@ public class ApiGwCtrl extends Ctrl{
             doc = json.isNull("doc") ? null : json.getString("doc");
 
             // 결재문서 부가데이터에 대한 처리
-            appData = json.isNull("appData") ? null : json.getString("appData");
+            sopp = json.isNull("sopp") ? null : json.getString("sopp") + "";
+            customer = json.isNull("customer") ? null : json.getInt("customer") + "";
+            appData = "{\"sopp\":" + ( sopp == null ? null : "\"" + sopp + "\"") + ",\"customer\":" + ( customer == null ? null : "\"" + customer + "\"") + "}";
 
             // 결재선에 대한 처리
-            jarr = json.getJSONArray("appLine");
-            if(jarr != null && jarr.length() > 0){
-                appLine = new String[jarr.length()][];
-                for(x = 0 ; x < jarr.length() ; x++){
-                    tj = jarr.getJSONArray(x);
-                    ts = new String[2];
-                    ts[0] = tj.getInt(0)+"";
-                    ts[1] = tj.getInt(1)+"";
-                    appLine[x] = ts;
+            if(!json.isNull("appLine")){
+                jarr = json.getJSONArray("appLine");
+                if(jarr != null && jarr.length() > 0){
+                    appLine = new String[jarr.length()][];
+                    for(x = 0 ; x < jarr.length() ; x++){
+                        tj = jarr.getJSONArray(x);
+                        ts = new String[2];
+                        ts[0] = tj.getInt(0)+"";
+                        ts[1] = tj.getInt(1)+"";
+                        appLine[x] = ts;
+                    }
                 }
             }
 
