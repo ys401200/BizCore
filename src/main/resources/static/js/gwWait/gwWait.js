@@ -753,7 +753,7 @@ function approveBtnEvent() {
 	let customerVal = $("#" + formId + "_infoCustomer").val();
 	let customerResult = dataListFormat(clistid, customerVal);
 
-	if (storage.reportDetailData.sopp === soppResult + "" && storage.reportDetailData.customer === customerResult + "" &&
+	if (storage.reportDetailData.sopp == soppResult && storage.reportDetailData.customer == customerResult  &&
 		storage.oriCbContainer == $("input[name='" + formId + "_RD']:checked").attr("id") &&
 		storage.oriInsertedContent == $(".insertedContent").html() &&
 		storage.oriInsertedDataList == $(".insertedDataList").html()) {
