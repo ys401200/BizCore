@@ -464,6 +464,8 @@ public class GwService extends Svc{
                     json = new JSONObject(appData);
                     customer = json.isNull("customer") ? null : json.getString("customer");
                     sopp = json.isNull("sopp") ? null : json.getString("sopp");
+                    if(customer == null || customer.equals("")) customer = "null";
+                    if(sopp == null || sopp.equals("")) sopp = "null";
                 }
             }
             rs.close();
@@ -491,8 +493,8 @@ public class GwService extends Svc{
             result += ("\"status\":\"" + docStatus + "\",");
             result += ("\"readable\":\"" + (readable ? "dept" : "none") + "\",");
             result += ("\"appLine\":" + t + ",");
-            result += ("\"customer\":\"" + sopp + "\",");
-            result += ("\"sopp\":\"" + sopp + "\",");
+            result += ("\"customer\":" + customer + ",");
+            result += ("\"sopp\":" + sopp + ",");
             result += ("\"revisionHistory\":" + revisionHistory + ",");
             result += ("\"fileList\":" + files + ",");
             result += ("\"doc\":\"" + encAes(doc, aesKey, aesIv) + "\"}");
