@@ -723,15 +723,13 @@ function showAppModal() {
 // 결재 타입 값 받아서 결재하기 
 function approveBtnEvent() {
 	let formId = storage.reportDetailData.formId;
-	let fileList = storage.reportDetailData.fileList;
 	let selectVal = $(":radio[name='type']:checked").val();
 	let comment = $(".approvalComment").val();
 	$(".modal-wrap").hide();
 	let type;
-	let no = storage.reportDetailData.no;
 	let appLine = storage.reportDetailData.appLine;
 	let ordered;
-    
+
 
 	for (let i = 0; i < appLine.length; i++) {
 		if (appLine[i].employee == storage.my) {
@@ -774,15 +772,18 @@ function approveBtnEvent() {
 	selectVal === "approve" ? type = 1 : type = 0;
 	storage.newFileData == undefined ? storage.newFileData = null : storage.newFileData = storage.newFileData;
 
-
+	let title = $("#" + formId + "_title").val();
+	if (storage.reportDetailData.title == title) {
+		title = null;
+	}
 	let data = {
 		"doc": storage.newDoc,
 		"comment": comment,
 		"files": storage.newFileData,
 		"appLine": storage.newAppLine,
 		"sopp": soppResult,
-		"customer": customerResult
-		"title" : 
+		"customer": customerResult,
+		"title": title
 	}
 
 	console.log(data);

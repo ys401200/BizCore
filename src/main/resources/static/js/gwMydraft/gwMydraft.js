@@ -88,11 +88,15 @@ function drawMyDraft() {
             "align": "center",
         },
         {
-            "title": "현재 결재권자",
+            "title": "결재권자",
             "align": "center",
         },
         {
             "title": "조회",
+            "align": "center",
+        },
+        {
+            "title": "상태",
             "align": "center",
         },
 
@@ -102,7 +106,7 @@ function drawMyDraft() {
         disDate = dateDis(jsonData[i].created, jsonData[i].modified);
         setDate = dateFnc(disDate);
         let read = jsonData[i].read;
-
+      let status ; 
         if (read == null) {
             read = "N";
         } else {
@@ -120,6 +124,16 @@ function drawMyDraft() {
             appType = "수신";
         } else {
             appType = "참조";
+        }
+
+        if (jsonData[i].status == 1) {
+            status = "진행 중";
+        } else if (jsonData[i].status == 2) {
+            status = "수신 대기 ";
+        } else if (jsonData[i].status == 3) {
+            status = "승인 완료";
+        } else if (jsonData[i].status == -3) {
+            status = "반려";
         }
 
         let authority = storage.user[jsonData[i].authority].userName;
@@ -145,7 +159,9 @@ function drawMyDraft() {
             },
             {
                 "setData": read,
-            },
+            }, {
+                "setData": status
+            }
 
         ]
 
@@ -201,7 +217,7 @@ function detailView(obj) {// 선택한 그리드의 글 번호 받아오기
 
 ///글 제목 눌렀을때 상세 조회하는 페이지 그리기 
 function getDetailView() {
-	let formId = storage.reportDetailData.formId;
+    let formId = storage.reportDetailData.formId;
     let testForm = storage.reportDetailData.doc;
     console.log(testForm);
 
