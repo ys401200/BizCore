@@ -309,7 +309,6 @@ function showReportDetail() {
 
 
 	storage.oriCbContainer = $("input[name='" + formId + "_RD']:checked").attr("id");
-	storage.oriInfo = $(".info").html();
 	storage.oriInsertedContent = $(".insertedContent").html();
 	storage.oriInsertedDataList = $(".insertedDataList").html();
 	$.ajax({
@@ -746,19 +745,25 @@ function approveBtnEvent() {
 		}
 	}
 
+	let slistid = "infoSopp";
+	let soppVal = $("#" + formId + "_sopp").val();
+	let soppResult = dataListFormat(slistid, soppVal);
 
-	if (
+	let clistid = "infoCustomer";
+	let customerVal = $("#" + formId + "_infoCustomer").val();
+	let customerResult = dataListFormat(clistid, customerVal);
+
+	if (storage.reportDetailData.sopp === soppResult + "" && storage.reportDetailData.customer === customerResult + "" &&
 		storage.oriCbContainer == $("input[name='" + formId + "_RD']:checked").attr("id") &&
-		storage.oriInfo == $(".info").html() &&
 		storage.oriInsertedContent == $(".insertedContent").html() &&
 		storage.oriInsertedDataList == $(".insertedDataList").html()) {
 		storage.newDoc = null;
 	} else {
 		storage.newDoc = $(".seletedForm").html();
 	}
-	getSopp();
-	storage.sopp == "" ? storage.sopp = null : storage.sopp = storage.sopp;
-	storage.customer == "" ? storage.customer = null : storage.customer = storage.customer;
+
+
+
 	selectVal === "approve" ? type = 1 : type = 0;
 	storage.newFileData == undefined ? storage.newFileData = null : storage.newFileData = storage.newFileData;
 
@@ -768,8 +773,8 @@ function approveBtnEvent() {
 		"comment": comment,
 		"files": storage.newFileData,
 		"appLine": storage.newAppLine,
-		"sopp": storage.sopp,
-		"customer": storage.customer
+		"sopp": soppResult + "",
+		"customer": customerResult + ""
 	}
 
 	console.log(data);

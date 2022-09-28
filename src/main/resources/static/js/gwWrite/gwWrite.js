@@ -534,10 +534,9 @@ function setSavedLine(obj) {
 
 function reportInsert() {
 
-  $("#_infoSopp").remove();
-  $("#_infoCustomer").remove();
 
-  let sopp, infoCustomer, title, content, readable, formId, appDoc, dept;
+
+  let title, content, readable, formId, appDoc, dept;
   let appLine = [];
   let selectedFormNo = $(".formSelector").val();
   formId = storage.formList[selectedFormNo].id;
@@ -550,16 +549,17 @@ function reportInsert() {
   let slistid = "infoSopp";
   let soppVal = $("#" + formId + "_sopp").val();
   let soppResult = dataListFormat(slistid, soppVal);
-  storage.sopp = soppResult;
+
+
 
   let clistid = "infoCustomer";
   let customerVal = $("#" + formId + "_infoCustomer").val();
   let customerResult = dataListFormat(clistid, customerVal);
-  storage.infocustomer = customerResult;
 
 
-  // storage.sopp == "" ? storage.sopp = null : storage.sopp = storage.sopp;
-  // storage.customer == "" ? storage.customer = null : storage.customer = storage.customer;
+
+  // $("#_infoSopp").remove();
+  // $("#_infoCustomer").remove();
 
   title = $("#" + formId + '_title').val();
   content = $("#" + formId + "_content").val();
@@ -589,9 +589,9 @@ function reportInsert() {
 
   let data = {
     "title": title,
-    "sopp": storage.sopp,
+    "sopp": soppResult + "",
     "dept": dept,
-    "customer": storage.infocustomer,
+    "customer": customerResult + "",
     "attached": storage.attachedList === undefined ? [] : storage.attachedList,
     "content": content,
     "appLine": appLine,
@@ -603,6 +603,8 @@ function reportInsert() {
   data = JSON.stringify(data)
   data = cipher.encAes(data);
 
+
+
   if ($(".createLineBtn").css("display") == "none") {
     alert("결재 문서 양식을 선택하세요");
   } else if (formId != "doc_Form_Pur" && detailType == undefined && formId != "doc_Form_Dip" && detailType == undefined) {
@@ -612,6 +614,7 @@ function reportInsert() {
   } else if ($("#" + formId + "_line").html() == '결재선') {
     alert("결재선을 생성하세요");
   } else {
+
     $.ajax({
       url: "/api/gw/app/doc",
       method: "post",
@@ -620,7 +623,6 @@ function reportInsert() {
       contentType: "text/plain",
       success: (result) => {
         if (result.result === "ok") {
-          console.log(storage.sopp);
           location.href = "/gw/mydraft";
         } else {
           alert(result.msg);
