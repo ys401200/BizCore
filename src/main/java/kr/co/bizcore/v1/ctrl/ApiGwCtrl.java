@@ -185,6 +185,33 @@ public class ApiGwCtrl extends Ctrl{
         return result;
     } // End of apiGwAppDocNoGet()
 
+    // 결재 문서를 회수 처리
+    @DeleteMapping("/app/doc/{docNo}")
+    public String apiGwAppDocNoDelete(HttpServletRequest request, @PathVariable("docNo") String docNo){
+        String result = null, compId = null, userNo = null, lang = null;
+        Msg msg = null;
+        HttpSession session = null;
+
+        session = request.getSession();
+        compId = (String)session.getAttribute("compId");
+        userNo = (String)session.getAttribute("userNo");
+        lang = (String)session.getAttribute("lang");
+        msg = getMsg(lang);
+        if(compId == null)  compId = (String)request.getAttribute("compId");
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        }else{
+            if(gwService.retrievedDoc(compId, userNo, docNo) > 0){
+                result = "{\"result\":\"ok\"}";
+            }else{
+                result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
+            }
+            
+        }
+        return result;
+    } // End of apiGwAppDocNoGet()
+
     // 결재 문서 신규 등록
     @PostMapping("/app/doc")
     public String apiGwAppDocPost(HttpServletRequest request, @RequestBody String requestBody){
