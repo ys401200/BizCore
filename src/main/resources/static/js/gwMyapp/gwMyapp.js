@@ -59,10 +59,6 @@ function drawNoticeApproval() {
 			"align": "center",
 		},
 		{
-			"title": "결재 타입",
-			"align": "center",
-		},
-		{
 			"title": "문서 종류",
 			"align": "center",
 		},
@@ -89,27 +85,21 @@ function drawNoticeApproval() {
 		disDate = dateDis(jsonData[i].created, jsonData[i].modified);
 		setDate = dateFnc(disDate);
 		let userName = storage.user[jsonData[i].writer].userName;
-		let appType = jsonData[i].appType;
-		if (appType == '0') {
-			appType = "검토";
-		} else if (appType == '1') {
-			appType = "합의";
-
-		} else if (appType == '2') {
-			appType = "결재";
-		} else if (appType == '3') {
-			appType = "수신";
-		} else {
-			appType = "참조";
-
+		let status;
+		if (jsonData[i].status == 1) {
+			status = "진행 중";
+		} else if (jsonData[i].status == 2) {
+			status = "수신 대기 ";
+		} else if (jsonData[i].status == 3) {
+			status = "승인 완료";
+		} else if (jsonData[i].status == -3) {
+			status = "반려";
 		}
+
 		str = [
 
 			{
 				"setData": jsonData[i].docNo,
-			},
-			{
-				"setData": appType,
 			},
 			{
 				"setData": jsonData[i].form,
@@ -122,8 +112,9 @@ function drawNoticeApproval() {
 			},
 			{
 				"setData": setDate,
-			}, {
-				"setData": jsonData[i].status
+			},
+			{
+				"setData": status
 			}
 
 		]
@@ -196,9 +187,8 @@ function showReportDetail() {
 	let testForm = storage.reportDetailData.doc;
 
 
-	let detailHtml = "<div class='mainBtnDiv'><button type='button' name='approvalBtn' onclick='showAppModal()'>결재하기</button>" +
-		"<button type='button' onclick='showGwModal()'>결재선 수정</button>" +
-		"<button type='button' onclick='toWriteMode();createConfirmBtn(this)'>문서 수정</button></div>" +
+	let detailHtml = "<div class='mainBtnDiv'><button type='button'>목록보기</button>" +
+		"<button type='button' onclick='toWriteMode();createConfirmBtn(this)'>결재 취소</button></div>" +
 		"<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>"
 
 
