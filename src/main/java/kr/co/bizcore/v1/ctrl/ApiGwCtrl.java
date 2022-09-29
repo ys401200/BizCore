@@ -189,7 +189,7 @@ public class ApiGwCtrl extends Ctrl{
     @PostMapping("/app/doc")
     public String apiGwAppDocPost(HttpServletRequest request, @RequestBody String requestBody){
         String result = null, aesKey = null, aesIv = null, compId = null, userNo = null;
-        String title = null, sopp = null, customer = null, readable = null, appDoc = null, dept = null, formId = null;
+        String title = null, sopp = null, customer = null, readable = null, appDoc = null, dept = null, formId = null, temp = null;
         String[] files = null, ts = null;
         String[][] appLine = null;
         HttpSession session = null;
@@ -223,6 +223,7 @@ public class ApiGwCtrl extends Ctrl{
                 json = new JSONObject(data);
                 dept = json.getString("dept");
                 title = json.getString("title");
+                temp = json.isNull("temp") ? null : json.getString("temp");
                 sopp = json.getString("sopp");
                 readable = json.getString("readable");
                 formId = json.getString("formId");
@@ -249,6 +250,9 @@ public class ApiGwCtrl extends Ctrl{
                     }
                 }
 
+                // 임시저장 문서로 기안한 경우 이를 삭제처리함
+                if(temp != null)    gwService.deleteTempDoc(compId, userNo, temp);
+
                 // 결재문서 처리 서비스로직으로 데이터 전달
                 docNo = gwService.addAppDoc(compId, dept, title, userNo, sopp, customer, formId, readable, appDoc, files, attached, appLine);
 
@@ -261,7 +265,7 @@ public class ApiGwCtrl extends Ctrl{
     @PostMapping("/app/temp")
     public String apiGwAppTempPost(HttpServletRequest request, @RequestBody String requestBody){
         String result = null, aesKey = null, aesIv = null, compId = null, userNo = null;
-        String title = null, sopp = null, customer = null, readable = null, appDoc = null, dept = null, formId = null, appLine = null, docNo = null, temp;
+        String title = null, sopp = null, customer = null, readable = null, appDoc = null, dept = null, formId = null, appLine = null, docNo = null, temp = null;
         String[] files = null, ts = null;
         HttpSession session = null;
         HashMap<String, String> attached = null;
@@ -292,6 +296,7 @@ public class ApiGwCtrl extends Ctrl{
             }else {
                 json = new JSONObject(data);
                 title = json.getString("title");
+                temp =  json.isNull("temp") ? null : json.getString("temp");
                 sopp = json.getString("sopp");
                 readable = json.getString("readable");
                 formId = json.getString("formId");
