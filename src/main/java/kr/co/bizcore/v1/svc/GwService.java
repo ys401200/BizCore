@@ -95,7 +95,7 @@ public class GwService extends Svc{
         String docNo = null, appData = null;
         Calendar cal = Calendar.getInstance();
 
-        appData = "{\"sopp\":" + (sopp == null ? sopp : "\"" + sopp + "\"") + ",\"customer\":" + (customer == null ? customer : "\"" + customer + "\"") + ",\"appLine\":" + (appLine == null ? appLine : "\"" + appLine + "\"") + "}";
+        appData = "{\"sopp\":" + (sopp == null ? sopp : "\"" + sopp + "\"") + ",\"customer\":" + (customer == null ? customer : "\"" + customer + "\"") + ",\"appLine\":" + appLine + "}";
 
         if(temp == null){ // 처음 저장되는 임시문서의 처리
             t = cal.get(Calendar.YEAR);System.out.println(t);
@@ -613,6 +613,19 @@ public class GwService extends Svc{
         HashMap<String, String> map = null;
         long size = -1;
         boolean find = false;
+
+        // =================================================================================================
+        logger.error("||||||||||||||||||||||||||||||||||| compId : " + compId);
+        logger.error("||||||||||||||||||||||||||||||||||| docNo : " + docNo);
+        logger.error("||||||||||||||||||||||||||||||||||| ordered : " + ordered);
+        logger.error("||||||||||||||||||||||||||||||||||| ask : " + ask);
+        logger.error("||||||||||||||||||||||||||||||||||| comment : " + comment);
+        logger.error("||||||||||||||||||||||||||||||||||| doc : " + (doc == null ? null : doc.substring(0,20) + " ~~~~"));
+        logger.error("||||||||||||||||||||||||||||||||||| appLine : " + appLine);
+        logger.error("||||||||||||||||||||||||||||||||||| files : " + files);
+        logger.error("||||||||||||||||||||||||||||||||||| attached : " + attached);
+        logger.error("||||||||||||||||||||||||||||||||||| appData : " + appData);
+        logger.error("||||||||||||||||||||||||||||||||||| userNo : " + userNo);
 
         // 기본정보들이 갖추어져 있는지 먼저 검증
         if(compId == null || docNo == null || ordered < 1 || ask < 0 || ask > 1 || userNo == null)  return null;
