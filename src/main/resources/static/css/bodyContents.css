@@ -1,9 +1,9 @@
 @charset "UTF-8";
 
 #bodyContents{
-	display: flex;
-	/* display: grid;
-    grid-template-columns: 9% 91%; */
+	/* display: flex; */
+	display: grid;
+    grid-template-columns: 9% 91%;
 	height: 100%;
 }
 
