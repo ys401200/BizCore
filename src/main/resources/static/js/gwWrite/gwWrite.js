@@ -14,7 +14,7 @@ function getformList() {
 
   $(".ContentDiv").html("<div class='gwWriteBtns'></div><div class='selector'>d</div><div class='selector'>d</div><div class='selector'>d</div>");
 
-  $(".gwWriteBtns").html("<button type='button' onclick='reportInsert()'>기안 하기</button> <button type='button' onclick='tempSave()'>임시 저장</button> <button type='button'>인쇄 미리보기</button>");
+  $(".gwWriteBtns").html("<button type='button' onclick='reportInsert()' class='writeBtn'>기안 하기</button> <button class='saveBtn' type='button' onclick='tempSave()' disabled>임시 저장</button> <button class='previewBtn' type='button' disabled>인쇄 미리보기</button>");
 
   // 기본설정
 
@@ -63,6 +63,8 @@ function getformList() {
 
 }
 
+
+
 function drawFormList() {
   let data = storage.formList;
   let titles = new Array();
@@ -90,6 +92,11 @@ function drawFormList() {
   target.html(targetHtml);
 
 }
+
+
+
+
+
 
 // 결재양식 선택에서 양식 선택 버튼 눌렀을 때 함수 
 function selectForm() {
@@ -123,7 +130,8 @@ function selectForm() {
   $(".inputsAuto").eq(1).css("text-align", "left");
   $(".inputsAuto").eq(2).css("text-align", "left");
 
-
+  $(".saveBtn").prop("disabled", false);
+  $(".previewBtn").prop("disabled", false);
 
   //영업기회 데이터 리스트 만들기  
 
@@ -712,6 +720,9 @@ function deleteGap() {
 
 
 function tempSave() {
+
+
+
   let dept, title, sopp, readable, formId, customer, appDoc, appLine = [];
   let my = storage.my;
   dept = storage.user[my].deptId[0];
@@ -753,24 +764,31 @@ function tempSave() {
     "appDoc": appDoc,
     "appLine": appLine
   }
-  console.log(data);
-  data = JSON.stringify(data)
-  data = cipher.encAes(data);
 
-  $.ajax({
-    url: "/api/gw/app/temp",
-    method: "post",
-    data: data,
-    dataType: "json",
-    contentType: "text/plain",
-    success: (result) => {
-      if (result.result === "ok") {
-        alert("임시 저장 되었습니다");
-      } else {
-        alert(result.msg);
+  if (title == "") {
+    alert("제목을 입력하세요");
+  } else {
+    data = JSON.stringify(data)
+    data = cipher.encAes(data);
+
+    $.ajax({
+      url: "/api/gw/app/temp",
+      method: "post",
+      data: data,
+      dataType: "json",
+      contentType: "text/plain",
+      success: (result) => {
+        if (result.result === "ok") {
+          alert("임시 저장 되었습니다");
+        } else {
+          alert(result.msg);
+        }
       }
-    }
-  })
+    })
+
+
+  }
+
 
 
 }
