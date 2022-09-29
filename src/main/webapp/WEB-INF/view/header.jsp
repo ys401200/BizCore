@@ -51,7 +51,7 @@
 	<div id="mainTopLogo">
 		<a href="/"><img src="/images/main/topLogo.png" id="mainTopLogoImg" /></a>
 		<img src="/images/main/topEllipse.png" id="mainTopEllipseImg" />
-		<img src="/images/main/topVector.png" id="mainTopVectorImg" />
+		<%-- <img src="/images/main/topVector.png" id="mainTopVectorImg" /> --%>
 	</div>
 	<div id="mainTopMenu">
 		<ul>

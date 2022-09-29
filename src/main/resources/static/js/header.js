@@ -2505,15 +2505,18 @@ function headerMyInfo(){
 	let mainInfo, html = "";
 	mainInfo = $("#mainInfo");
 
-	html += "<i class=\"fa-regular fa-envelope fa-beat fa-2xl\" id=\"envelope\"></i>";
+	html += "<img id=\"myInfoImageMessage\" src=\"../images/main/icons/message.png\" >";
+	// html += "<i class=\"fa-regular fa-envelope fa-beat fa-2xl\" id=\"envelope\"></i>";
 	// html += "<i class=\"fa-solid fa-envelope fa-shake fa-2xl\" id=\"envelope\"></i>";
 	// html += "<i class=\"fa-regular fa-envelope-open fa-beat-fade fa-2xl\" id=\"envelope\"></i>";
-	html += "<img id=\"myInfoImage\" src=\"/api/my/image\" >";
+	//html += "<img id=\"myInfoImage\" src=\"/api/my/image\" >";
+	html += "<img id=\"myInfoImageProfileMan\" src=\"../images/main/icons/profileMan.png\" >";
 	html += "<a href=\"/mypage\">";
 	html += "<span>" + storage.user[storage.my].userName + "</span>&nbsp;";
 	html += "<span>" + storage.userRank[storage.user[storage.my].rank][0] + "</span>";
 	html += "</a>";
-	html += "<a href=\"/api/user/logout\" onclick=\"return confirm('로그아웃 하시겠습니까??');\"><i class=\"fa-solid fa-person-walking-arrow-right fa-xl\" id=\"logoutBtn\"></i></a>";
+	html += "<a href=\"/api/user/logout\" onclick=\"return confirm('로그아웃 하시겠습니까??');\"><img id=\"myInfoImageLogout\" src=\"../images/main/icons/logout.png\" ></a>";
+	//html += "<a href=\"/api/user/logout\" onclick=\"return confirm('로그아웃 하시겠습니까??');\"><i class=\"fa-solid fa-person-walking-arrow-right fa-xl\" id=\"logoutBtn\"></i></a>";
 
 	mainInfo.html(html);	
 	

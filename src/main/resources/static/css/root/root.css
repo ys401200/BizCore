@@ -15,8 +15,8 @@
 #bodyContents #widgetContainer{
 	display: grid;
 	grid-template-columns: repeat(6, 1fr);
-	column-gap:0.7%;
-	row-gap:1.2%;
+	column-gap:10px;
+	row-gap:10px;
 }
 
 #widgetContainer > div{
