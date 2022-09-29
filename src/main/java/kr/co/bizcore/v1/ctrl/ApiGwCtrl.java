@@ -320,8 +320,6 @@ public class ApiGwCtrl extends Ctrl{
         Msg msg = null;
 
         session = request.getSession();
-        aesKey = (String) session.getAttribute("aesKey");
-        aesIv = (String) session.getAttribute("aesIv");
         userNo = (String) session.getAttribute("userNo");
         lang = (String)session.getAttribute("lang");
         msg = getMsg(lang);
@@ -331,8 +329,6 @@ public class ApiGwCtrl extends Ctrl{
 
         if(compId == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
-        }else if(aesKey == null || aesIv == null){
-            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
         }else{
             data = gwService.deleteTempDoc(compId, userNo, docNo);
             if(data != null)    result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
@@ -500,6 +496,7 @@ public class ApiGwCtrl extends Ctrl{
         String result = null, compId = null, userNo = null, data = null, aesIv = null, aesKey = null, lang = null;
         Msg msg = null;
         HttpSession session = null;
+
 
         session = request.getSession();
         compId = (String)session.getAttribute("compId");
