@@ -25,14 +25,14 @@
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
 }
 
-.noticeContainer hr {
+.noticeContainer > hr {
 	float: left;
 	border:2px solid #182f81;
 	height: 32px;
 	margin: 0;
 }
 
-.noticeContainer span {
+.noticeContainer > span {
 	font-weight: bolder;
 	font-size: 15px;
 	margin-left: 15px;

@@ -327,8 +327,10 @@ function init(){
 
 	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined){
 		window.setTimeout(headerMyInfo, 1500);
+		window.setTimeout(addNoteContainer, 1500);
 	}else{
 		window.setTimeout(headerMyInfo, 200);
+		window.setTimeout(addNoteContainer, 200);
 	}
 }
 
@@ -478,13 +480,21 @@ function menuActive(){
 
 //사이드 메뉴 클릭
 function bodyTopPageClick(e){
-	let id = $(e).attr("data-keyword");
+	let id = $(e).data("keyword");
 	
 	$("#mainTopMenu ul li button").removeAttr("class");
 	$(e).attr("class", "active");
 	
 	$("#sideMenu").find("ul").not("#panel").removeAttr("class");
 	$("#sideMenu").find("#" + id).attr("class", "active");
+
+	if(id === "business"){
+		$("#sideMenu").attr("style", "background-color: #2147b1;");
+	}else if(id === "gw"){
+		$("#sideMenu").attr("style", "background-color: #ff5377;");
+	}else if(id === "accounting"){
+		$("#sideMenu").attr("style", "background-color: #31cca2;");
+	}
 }
 
 //header active 여부에 따라 사이드메뉴 active 적용
@@ -2505,12 +2515,12 @@ function headerMyInfo(){
 	let mainInfo, html = "";
 	mainInfo = $("#mainInfo");
 
-	html += "<img id=\"myInfoImageMessage\" src=\"../images/main/icons/message.png\" >";
-	// html += "<i class=\"fa-regular fa-envelope fa-beat fa-2xl\" id=\"envelope\"></i>";
+	// html += "<img id=\"myInfoMessageImg\" src=\"../images/main/icons/message.png\" >";
+	html += "<a href=\"#\" onclick=\"msgContentIn();\"><img id=\"myInfoMessageImg\" src=\"../images/main/icons/message.png\"></a>";
 	// html += "<i class=\"fa-solid fa-envelope fa-shake fa-2xl\" id=\"envelope\"></i>";
 	// html += "<i class=\"fa-regular fa-envelope-open fa-beat-fade fa-2xl\" id=\"envelope\"></i>";
-	//html += "<img id=\"myInfoImage\" src=\"/api/my/image\" >";
-	html += "<img id=\"myInfoImageProfileMan\" src=\"../images/main/icons/profileMan.png\" >";
+	html += "<img id=\"myInfoImage\" src=\"/api/my/image\" >";
+	// html += "<img id=\"myInfoProfileManImg\" src=\"../images/main/icons/profileMan.png\" >";
 	html += "<a href=\"/mypage\">";
 	html += "<span>" + storage.user[storage.my].userName + "</span>&nbsp;";
 	html += "<span>" + storage.userRank[storage.user[storage.my].rank][0] + "</span>";
@@ -2557,5 +2567,180 @@ function plusMenuSelect(select){
 	for(let i = 0; i < select.length; i++){
 		$(".plusItems button[data-keyword=\"" + select[i].keyword + "\"]").attr("data-status", true);
 		$(".plusItems button[data-keyword=\"" + select[i].keyword + "\"]").attr("onclick", select[i].onclick);
+	}
+}
+
+function addNoteContainer(){
+	let bodyContents, noteHtml = "";
+	bodyContents = $("#bodyContents");
+
+	noteHtml = "<div class=\"noteContainer\">";
+	noteHtml += "<hr />";
+	noteHtml += "<span>쪽지</span>";
+	noteHtml += "<button type=\"button\" onclick=\"msgContentOut();\"><i class=\"fa-solid fa-xmark fa-xl\"></i></button>";
+	noteHtml += "<div class=\"noteContent\">"
+	noteHtml += "<div class=\"noteUserContent\">";
+	noteHtml += "<div class=\"noteUser\" data-writer=\"0\" onclick=\"noteChangeMsg(this);\">";
+	noteHtml += "<p>비전테크</p>";
+	noteHtml += "<span>수신할 문서가 있습니다.</span>";
+	noteHtml += "</div>";
+	noteHtml += "<div class=\"noteUser\" data-writer=\"10071\" onclick=\"noteChangeMsg(this);\">";
+	noteHtml += "<p>이장희</p>";
+	noteHtml += "<span>사</span>";
+	noteHtml += "</div>";
+	noteHtml += "</div>";
+	noteHtml += "<div class=\"noteMsgContent\"></div>";
+	noteHtml += "</div>";
+	noteHtml += "</div>";
+
+	bodyContents.append(noteHtml);
+}
+
+function noteChangeMsg(e){
+	let chat, noteMsgContent, msgHtml = "", no;
+	no = $(e).data("writer");
+	noteMsgContent = $(".noteMsgContent");
+
+	if(no == 0){
+		chat = [
+			{
+				"content": "결재 완료 되었습니다.",
+				"flag": "0",
+				"date": "2022-09-29 21:00:10",
+			},
+			{
+				"content": "결재문서가 반려되었습니다.",
+				"flag": "0",
+				"date": "2022-09-29 21:00:20",
+			},
+			{
+				"content": "결재할 문서가 있습니다.",
+				"flag": "0",
+				"date": "2022-09-29 21:00:30",
+			},
+			{
+				"content": "수신할 문서가 있습니다.",
+				"flag": "0",
+				"date": "2022-09-29 21:00:40",
+			},
+			{
+				"content": "결재 완료 되었습니다.",
+				"flag": "0",
+				"date": "2022-09-29 21:10:10",
+			},
+			{
+				"content": "결재문서가 반려되었습니다.",
+				"flag": "0",
+				"date": "2022-09-29 21:20:20",
+			},
+			{
+				"content": "결재할 문서가 있습니다.",
+				"flag": "0",
+				"date": "2022-09-29 21:30:30",
+			},
+			{
+				"content": "수신할 문서가 있습니다.",
+				"flag": "0",
+				"date": "2022-09-29 21:40:40",
+			},
+			{
+				"content": "결재할 문서가 있습니다.",
+				"flag": "0",
+				"date": "2022-09-29 21:50:30",
+			},
+			{
+				"content": "수신할 문서가 있습니다.",
+				"flag": "0",
+				"date": "2022-09-29 22:00:40",
+			},
+		]
+	}else{
+		chat = [
+			{
+				"content": "가",
+				"flag": "0",
+				"date": "2022-09-29 01:00:00",
+			},
+			{
+				"content": "나",
+				"flag": "1",
+				"date": "2022-09-29 01:01:00",
+			},
+			{
+				"content": "다",
+				"flag": "0",
+				"date": "2022-09-29 01:02:00",
+			},
+			{
+				"content": "라",
+				"flag": "1",
+				"date": "2022-09-29 01:03:00",
+			},
+			{
+				"content": "마",
+				"flag": "0",
+				"date": "2022-09-29 01:03:03",
+			},
+			{
+				"content": "바",
+				"flag": "1",
+				"date": "2022-09-29 01:04:00",
+			},
+			{
+				"content": "사",
+				"flag": "0",
+				"date": "2022-09-29 01:05:00",
+			},
+		];
+	}
+
+	msgHtml = "<div class=\"noteChat\">";
+
+	for(let i = 0; i < chat.length; i++){
+		if(chat[i].flag == 0){
+			msgHtml += "<div class=\"chatYou\">" + chat[i].content + "</div>";
+		}else{
+			msgHtml += "<div class=\"chatMe\">" + chat[i].content + "</div>";
+		}
+	}
+
+	msgHtml += "</div>";
+	msgHtml += "<div class=\"noteText\">";
+	msgHtml += "<textarea id=\"noteSubmitText\"></textarea>";
+	msgHtml += "</div>";
+
+	noteMsgContent.html(msgHtml);
+}
+
+function msgContentIn(){
+	let bodyContent, widgetContainer, noteContainer;
+	bodyContent = $("#bodyContent");
+	widgetContainer = $("#widgetContainer");
+	noteContainer = $(".noteContainer");
+
+	if(bodyContent !== undefined){
+		bodyContent.fadeOut();
+	}
+
+	if(widgetContainer !== undefined){
+		widgetContainer.fadeOut();
+	}
+
+	noteContainer.fadeIn(400);
+}
+
+function msgContentOut(){
+	let bodyContent, widgetContainer, noteContainer;
+	bodyContent = $("#bodyContent");
+	widgetContainer = $("#widgetContainer");
+	noteContainer = $(".noteContainer");
+	noteContainer.fadeOut();
+
+	if(bodyContent !== undefined){
+		bodyContent.fadeIn(400);
+	}
+
+	if(widgetContainer !== undefined){
+		widgetContainer.fadeIn(400);
 	}
 }

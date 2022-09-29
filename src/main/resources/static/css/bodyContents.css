@@ -1,10 +1,13 @@
 @charset "UTF-8";
 
 #bodyContents{
-	/* display: flex; */
 	display: grid;
-    grid-template-columns: 9% 91%;
+    grid-template-columns: 172px 1fr;
 	height: 100%;
+}
+
+#bodyContents #bodyContent{
+	padding: 8px 8px 0 8px;
 }
 
 #bodyContents #widgetContainer{
