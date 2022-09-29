@@ -269,6 +269,7 @@ function deleteTemp() {
         success: (result) => {
             if (result.result == "ok") {
                 alert("삭제 성공");
+                location.href = "/gw/mytemp";
             } else {
                 alert("에러");
             }

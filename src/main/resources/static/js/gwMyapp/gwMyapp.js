@@ -151,7 +151,7 @@ function waitDetailView(obj) {// 선택한 그리드의 글 번호 받아오기
 	let no = obj.dataset.id;
 	let docNo;
 
-	let searchList = storage.waitList.wait;
+	let searchList = storage.approvedList;
 
 	for (let i = 0; i < searchList.length; i++) {
 		if (searchList[i].no == no) { docNo = searchList[i].docNo }
@@ -285,9 +285,6 @@ function showReportDetail() {
 			}
 		}
 	}
-
-
-
 
 
 	storage.oriCbContainer = $("input[name='" + formId + "_RD']:checked").attr("id");

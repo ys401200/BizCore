@@ -533,24 +533,29 @@ function reportInsert() {
   formId = storage.formList[selectedFormNo].id;
   let detailType = $("input[name='" + formId + "_RD']:checked").attr("id");
 
-  // sopp = $("#" + formId + '_sopp').val();
-  // infoCustomer = $("#" + formId + '_infoCustomer').val();
 
 
-  let slistid = "infoSopp";
+
   let soppVal = $("#" + formId + "_sopp").val();
-  let soppResult = dataListFormat(slistid, soppVal);
-
-
-
-  let clistid = "infoCustomer";
   let customerVal = $("#" + formId + "_infoCustomer").val();
-  let customerResult = dataListFormat(clistid, customerVal);
+  let soppResult;
+  for (let x in storage.soppList) {
+    if (soppVal != "" || storage.soppList[x].title === soppVal) {
+      soppResult = storage.soppList[x].no + "";
+    } else {
+      soppResult = "";
+    }
+  }
+  let cusResult;
+  for (let x in storage.customer) {
+    if (customerVal != "" || storage.customer[x].title === customerVal) {
+      cusResult = storage.customer[x].no + "";
+    } else {
+      cusResult = "";
+    }
+  }
 
 
-
-  // $("#_infoSopp").remove();
-  // $("#_infoCustomer").remove();
 
   title = $("#" + formId + '_title').val();
   content = $("#" + formId + "_content").val();
@@ -559,7 +564,7 @@ function reportInsert() {
   appDoc = appDoc.replaceAll("\n", "").replaceAll("\r", "").replaceAll("\t", "").replaceAll("\"", "\\\"");
   let my = storage.my;
   dept = storage.user[my].deptId[0];
-  // 결재가 1번 
+
 
   for (let i = 0; i < $("." + formId + "_examine").length; i++) {
     appLine.push([0, $("." + formId + "_examine")[i].dataset.detail]);
@@ -582,7 +587,7 @@ function reportInsert() {
     "title": title,
     "sopp": soppResult + "",
     "dept": dept,
-    "customer": customerResult + "",
+    "customer": cusResult + "",
     "attached": storage.attachedList === undefined ? [] : storage.attachedList,
     "content": content,
     "appLine": appLine,
@@ -728,16 +733,26 @@ function tempSave() {
 
 
 
-
-  let slistid = "infoSopp";
   let soppVal = $("#" + formId + "_sopp").val();
-  let soppResult = dataListFormat(slistid, soppVal);
-
-
-
-  let clistid = "infoCustomer";
   let customerVal = $("#" + formId + "_infoCustomer").val();
-  let customerResult = dataListFormat(clistid, customerVal);
+  let soppResult;
+  for (let x in storage.soppList) {
+    if (soppVal != "" || storage.soppList[x].title === soppVal) {
+      soppResult = storage.soppList[x].no + "";
+    } else {
+      soppResult = "";
+    }
+  }
+  let cusResult;
+  for (let x in storage.customer) {
+    if (customerVal != "" || storage.customer[x].title === customerVal) {
+      cusResult = storage.customer[x].no + "";
+    } else {
+      cusResult = "";
+    }
+  }
+
+
 
 
   for (let i = 0; i < $("." + formId + "_examine").length; i++) {
@@ -764,10 +779,10 @@ function tempSave() {
   let data = {
     "dept": dept,
     "title": title,
-    "sopp": soppResult + "",
+    "sopp": soppResult,
     "readable": readable,
     "formId": formId,
-    "customer": customerResult + "",
+    "customer": cusResult,
     "appDoc": appDoc,
     "appLine": appLine
   }
@@ -787,6 +802,7 @@ function tempSave() {
       success: (result) => {
         if (result.result === "ok") {
           alert("임시 저장 되었습니다");
+          
         } else {
           alert(result.msg);
         }
