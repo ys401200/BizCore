@@ -897,6 +897,47 @@ public class GwService extends Svc{
         return result;
     } // End of getApprovedList()
 
+    // 결재문서를 회수처리하는 메서드
+    public int retrievedDoc(String compId, String userNo, String docNo) {
+        String result = null;
+        String sql1 = "SELECT COUNT(*) FROM bizcore.doc_app_detail WHERE deleted IS NULL AND ordered > 0 AND (approved IS NOT NULL OR rejected IS NOT NULL) AND compId = ? AND docNo = ?";
+        String sql2 = "UPDATE bizcore.doc_app SET status = -1 WHERE deleted IS NULL AND compId = ? AND docNo = ? AND writer = ?";
+        String sql3 = "UPDATE bizcore.doc_app_detail SET retrived = now() WHERE deleted IS NULL AND ordered = 0 AND compId = ? AND docNo = ? AND employee = ?";
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        int a = -1;
+
+        try{
+            conn = sqlSession.getConnection();
+
+            // 문서가 회수 가능한 상태인지 확인 / 결재/검토/합의/수신이 이루어 지지 않아야 함
+            pstmt = conn.prepareStatement(sql1);
+            pstmt.setString(1, compId);
+            pstmt.setString(2, docNo);
+            a = pstmt.executeUpdate();
+            pstmt.close();
+            if(a > 0)   return -1;
+
+            // 결재 문서 헤더 정보에 회수 상태를 기록함
+            pstmt = conn.prepareStatement(sql2);
+            pstmt.setString(1, compId);
+            pstmt.setString(2, docNo);
+            pstmt.setString(3, userNo);
+            a = pstmt.executeUpdate();
+            pstmt.close();
+            if(a < 1)   return -2;
+
+            // 결재문서 디테일 정보를 업데이트 함
+            pstmt = conn.prepareStatement(sql3);
+            pstmt.setString(1, compId);
+            pstmt.setString(2, docNo);
+            pstmt.setString(3, userNo);
+            a = pstmt.executeUpdate();
+            if(a < 1)   return -3;
+        }catch(SQLException e){e.printStackTrace();}
+        return a;
+    }
+
 
 
 

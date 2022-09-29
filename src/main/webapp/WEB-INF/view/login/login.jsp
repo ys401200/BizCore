@@ -3,7 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" name="viewport" content="width=device-width">
 <link rel="stylesheet" type="text/css" href="/css/login/login.css" />
 <link rel="icon" href="/favicon" type="image/x-icon">
 <script src="/js/jquery.min.js"></script>
