@@ -94,10 +94,6 @@ function drawFormList() {
 }
 
 
-
-
-
-
 // 결재양식 선택에서 양식 선택 버튼 눌렀을 때 함수 
 function selectForm() {
   let data = storage.formList;
@@ -133,9 +129,8 @@ function selectForm() {
   $(".saveBtn").prop("disabled", false);
   $(".previewBtn").prop("disabled", false);
 
+
   //영업기회 데이터 리스트 만들기  
-
-
 
   $.ajax({
     url: "/api/sopp",
@@ -728,10 +723,22 @@ function tempSave() {
   dept = storage.user[my].deptId[0];
   formId = storage.formList[$(".formNumHidden").val()].id;
   title = $("#" + formId + "_title").val();
-  sopp = $("#" + formId + "_sopp").val();
-  customer = $("#" + formId + "_infoCustomer").val();
   appDoc = $(".reportInsertForm").html();
   readable = $('input[name=authority]:checked').val();
+
+
+
+
+  let slistid = "infoSopp";
+  let soppVal = $("#" + formId + "_sopp").val();
+  let soppResult = dataListFormat(slistid, soppVal);
+
+
+
+  let clistid = "infoCustomer";
+  let customerVal = $("#" + formId + "_infoCustomer").val();
+  let customerResult = dataListFormat(clistid, customerVal);
+
 
   for (let i = 0; i < $("." + formId + "_examine").length; i++) {
     appLine.push([0, $("." + formId + "_examine")[i].dataset.detail]);
@@ -757,10 +764,10 @@ function tempSave() {
   let data = {
     "dept": dept,
     "title": title,
-    "sopp": sopp,
+    "sopp": soppResult + "",
     "readable": readable,
     "formId": formId,
-    "customer": customer,
+    "customer": customerResult + "",
     "appDoc": appDoc,
     "appLine": appLine
   }

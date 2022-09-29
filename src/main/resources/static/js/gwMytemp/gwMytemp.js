@@ -114,7 +114,7 @@ function detailView(obj) {// 선택한 그리드의 글 번호 받아오기
 
 
     let no = obj.dataset.id;
-    alert(no);
+
     $.ajax({
         "url": apiServer + "/api/gw/app/temp/" + no,
         "method": "get",

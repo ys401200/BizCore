@@ -11,7 +11,7 @@ $(document).ready(() => {
 
 
 function defaultMyDraft() {
-
+    $("#gwSubTabTitle").html("수신 문서함");
     let url, method, data, type;
     url = "/api/gw/app/received";
     method = "get"
@@ -23,7 +23,7 @@ function defaultMyDraft() {
 
 
 function successList(result) {
-    storage.myReceivedList = result;
+    storage.myReceiveList = result;
     window.setTimeout(drawMyDraft, 200);
 }
 
@@ -35,11 +35,11 @@ function errorList() {
 function drawMyDraft() {
     let container, result, jsonData, job, header = [], data = [], ids = [], disDate, setDate, str, fnc;
 
-    if (storage.myReceivedList === undefined) {
-        msg.set("수신 문서가 없습니다");
+    if (storage.myReceiveList === undefined || storage.myReceiveList.length == 0) {
+        alert("수신 문서가 없습니다");
     }
     else {
-        jsonData =  storage.myReceivedList;
+        jsonData = storage.myReceiveList;
     }
 
     result = paging(jsonData.length, storage.currentPage, 10);
@@ -88,7 +88,7 @@ function drawMyDraft() {
         disDate = dateDis(jsonData[i].created, jsonData[i].modified);
         setDate = dateFnc(disDate);
         let read = jsonData[i].read;
-      let status ; 
+        let status;
         if (read == null) {
             read = "N";
         } else {
