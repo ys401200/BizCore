@@ -127,7 +127,7 @@
 
 .listDiv .gridHeader,
 .listDiv .gridContent {
-    grid-template-columns: 15% 10% 10% 35% 10% 10% 10%;
+    grid-template-columns: 15% 10% 45% 10%  10% 10% ;
 }
 
 
