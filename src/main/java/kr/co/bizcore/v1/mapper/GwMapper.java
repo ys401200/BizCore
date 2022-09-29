@@ -119,6 +119,33 @@ public interface GwMapper {
 
     // 임시저장된 문서를 변경하는 메서드
     @Update("UPDATE bizcore.doc_app_detail SET isModify = 1, doc = #{doc}, appData = #{appData} WHERE deleted IS NULL AND copmpId = #{compId} AND employee = #{userNo} AND docNo = #{docNo}")
-    public void modifyTempDoc(@Param("compId") String compId, @Param("userNo") String userNo, @Param("docNo") String docNo, @Param("doc") String appDoc, @Param("appData") String appData);
+    public int modifyTempDoc(@Param("compId") String compId, @Param("userNo") String userNo, @Param("docNo") String docNo, @Param("doc") String appDoc, @Param("appData") String appData);
 
+    // 임시저장된 문서의 헤더정보 삭제처리
+    @Update("UPDATE bizcore.doc_app SET deleted = NOW() WHERE compId = #{compId} AND docNo = #{docNo} AND writer = #{userNo}")
+    public int deleteTempDocHeader(@Param("compId") String compId, @Param("userNo") String userNo, @Param("docNo") String docNo);
+
+    // 임시저장된 문서의 디테일 정보 삭제처리
+    @Update("UPDATE bizcore.doc_app_detail SET deleted = NOW() WHERE compId = #{compId} AND docNo = #{docNo} AND employee = #{userNo}")
+    public int deleteTempDocDetail(@Param("compId") String compId, @Param("userNo") String userNo, @Param("docNo") String docNo);
+
+    // 수신문서함의 목록을 전달하는 메서드
+    @Select("SELECT CAST(a.no AS CHAR) AS no, a.docNo, CAST(a.writer AS CHAR) AS writer, b.title AS form, a.title, a.confirmNo, CAST(a.status AS CHAR) AS status, CAST(UNIX_TIMESTAMP(a.created)*1000 AS CHAR) AS created, CAST(UNIX_TIMESTAMP(c.received)*1000 AS CHAR) AS processed " +
+            "FROM bizcore.doc_app a, bizcore.doc_form b, " +
+            "(SELECT docNo, IFNULL(approved, rejected) AS received FROM bizcore.doc_app_detail WHERE deleted IS NULL AND appType = 3 AND (rejected IS NOT NULL OR approved IS NOT NULL) AND compId = #{compId} AND employee = #{userNo}) c " +
+            "WHERE a.formId = b.id AND a.deleted IS NULL AND a.docNo = c.docNo AND a.compId = #{compId}")
+    public List<HashMap<String, String>> getReceivedList(@Param("compId") String compId, @Param("userNo") String userNo);
+
+    // 결재 문서함의 목록을 전달하는 메서드
+    @Select("SELECT CAST(a.no AS CHAR) AS no, a.docNo, CAST(a.writer AS CHAR) AS writer, b.title AS form, a.title, a.confirmNo, CAST(a.status AS CHAR) AS status, CAST(UNIX_TIMESTAMP(a.created)*1000 AS CHAR) AS created, CAST(UNIX_TIMESTAMP(c.received)*1000 AS CHAR) AS processed " +
+            "FROM bizcore.doc_app a, bizcore.doc_form b, " +
+            "(SELECT docNo, IFNULL(approved, rejected) AS received FROM bizcore.doc_app_detail WHERE deleted IS NULL AND ordered > 0 AND appType IN (0,1,2) AND (rejected IS NOT NULL OR approved IS NOT NULL) AND compId = #{compId} AND employee = #{userNo}) c " +
+            "WHERE a.deleted IS NULL AND a.docNo = c.docNo AND a.compId = #{compId}")
+    public List<HashMap<String, String>> getApprovedList(@Param("compId") String compId, @Param("userNo") String userNo);
+    
+    // 참조/열람 문서함 목록을 전달하는 메서드
+    @Select("SELECT CAST(a.no AS CHAR) AS no, a.docNo, CAST(a.writer AS CHAR) AS writer, b.title AS form, a.title, a.confirmNo, CAST(a.status AS CHAR) AS status, CAST(UNIX_TIMESTAMP(a.created)*1000 AS CHAR) AS created " +
+            "FROM bizcore.doc_app a, bizcore.doc_form b " +
+            "WHERE a.formId = b.id AND a.deleted IS NULL AND ((a.readable = 'dept' AND a.status IN (1,2)) OR a.status = 3) AND a.docbox = (SELECT dept_id FROM bizcore.user_dept WHERE comp_id = #{compId} AND user_no = #{userNo}) AND a.compId = #{compId}")
+    public List<HashMap<String,String>> getReferencesList(@Param("compId") String compId, @Param("userNo") String userNo);
 }

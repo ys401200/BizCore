@@ -170,6 +170,18 @@ public class GwService extends Svc{
         return result;
     }
 
+    // 임시 저장 문서를 삭제하는 메서드
+    public String deleteTempDoc(String compId, String userNo, String docNo) {
+        String result = null;
+        int a = 0, b = 0;
+
+        a = gwMapper.deleteTempDocHeader(compId, userNo, docNo);
+        b = gwMapper.deleteTempDocDetail(compId, userNo, docNo);
+        result = a * b > 0 ? "ok" : null;
+
+        return result;
+    }
+
     // 결재 예정 및 대기 문서 목록을 가져오는 메서드
     public String getWaitAndDueDocList(String compId, String userNo){
         String result = null, str = null, wait = "[]", due = "[]", refer = "[]", receive = "[]", t = null;
@@ -344,6 +356,7 @@ public class GwService extends Svc{
         String sql1 = "SELECT no, docNo, writer, formId, docbox, title, confirmNo, status, readable FROM bizcore.doc_app WHERE deleted IS NULL AND readable <> 'temp' AND compId = ? AND docno = ?";
         String sql2 = "SELECT ordered, employee, appType, CAST(UNIX_TIMESTAMP(`read`)*1000 AS CHAR) AS `read`, isModify, CAST(UNIX_TIMESTAMP(approved)*1000 AS CHAR) AS approved, CAST(UNIX_TIMESTAMP(rejected)*1000 AS CHAR) AS rejected, comment FROM bizcore.doc_app_detail WHERE compId = ? AND docNo = ? AND retrieved IS NULL ORDER BY ordered";
         String sql3 = "SELECT doc, appData FROM bizcore.doc_app_detail WHERE deleted IS NULL AND compId = ? AND ordered = (SELECT MAX(ordered) FROM bizcore.doc_app_detail WHERE deleted IS NULL AND compId = ? AND docNo = ? AND retrieved IS NULL AND (approved IS NOT NULL OR rejected IS NOT NULL)) AND docNo = ?";
+        String sql4 = "SELECT compId, docNo, CAST(employee AS CHAR) AS employee, CAST(UNIX_TIMESTAMP(created)*1000 AS CHAR) AS created, content FROM bizcore.doc_app_revision WHERE compId = ? AND docNo = ? ORDER BY created";
         String no = null, writer = null, formId = null, docbox = null, title = null, confirmNo = null;
         String ordered = null, employee = null, appType = null, read = null, isModify = null, approved = null, rejected = null, comment = null, appData = null, t = null, doc = null;
         String docStatus = null, appCurrent = null, files = null, revisionHistory = null, customer = null, sopp = null;
@@ -778,6 +791,91 @@ public class GwService extends Svc{
         return result;
     } // End of askAppDoc() // 결재 처리 종료
 
+    // 수신 문서함의 목록을 전달하는 메서드
+    public String getReceivedList(String compId, String userNo) {
+        String result = null;
+        List<HashMap<String, String>> list = null;
+        HashMap<String, String> each = null;
+        int x = 0;
+
+        list = gwMapper.getReceivedList(compId, userNo);
+        result = "[";
+        if(list != null && list.size() > 0) for(x = 0 ; x < list.size() ; x++){
+            each = list.get(x);
+            if(x > 0)   result += ",";
+            result += ("{\"no\":" + each.get("no") + ",");
+            result += ("\"docNo\":\"" + each.get("docNo") + "\",");
+            result += ("\"writer\":" + each.get("writer") + ",");
+            result += ("\"form\":\"" + each.get("form") + "\",");
+            result += ("\"title\":\"" + each.get("title") + "\",");
+            result += ("\"confirmNo\":\"" + each.get("confirmNo") + "\",");
+            result += ("\"status\":" + each.get("status") + ",");
+            result += ("\"created\":" + each.get("created") + ",");
+            result += ("\"processed\":\"" + each.get("processed") + "\"}");
+
+        }
+        result += "]";
+
+        return result;
+    } // End of getReceivedList()
+
+    // 결재 문서함의 목록을 전달하는 메서드
+    public String getApprovedList(String compId, String userNo) {
+        String result = null;
+        List<HashMap<String, String>> list = null;
+        HashMap<String, String> each = null;
+        int x = 0;
+
+        list = gwMapper.getApprovedList(compId, userNo);
+        result = "[";
+        if(list != null && list.size() > 0) for(x = 0 ; x < list.size() ; x++){
+            each = list.get(x);
+            if(x > 0)   result += ",";
+            result += ("{\"no\":" + each.get("no") + ",");
+            result += ("\"docNo\":\"" + each.get("docNo") + "\",");
+            result += ("\"writer\":" + each.get("writer") + ",");
+            result += ("\"form\":\"" + each.get("form") + "\",");
+            result += ("\"title\":\"" + each.get("title") + "\",");
+            result += ("\"confirmNo\":\"" + each.get("confirmNo") + "\",");
+            result += ("\"status\":" + each.get("status") + ",");
+            result += ("\"created\":" + each.get("created") + ",");
+            result += ("\"processed\":\"" + each.get("processed") + "\"}");
+
+        }
+        result += "]";
+
+        return result;
+    } // End of getApprovedList()
+
+
+    // 참조/열람 문서함의 목록을 전달하는 메서드
+    public String getReferencesList(String compId, String userNo) {
+        String result = null;
+        List<HashMap<String, String>> list = null;
+        HashMap<String, String> each = null;
+        int x = 0;
+
+        list = gwMapper.getReferencesList(compId, userNo);
+        result = "[";
+        if(list != null && list.size() > 0) for(x = 0 ; x < list.size() ; x++){
+            each = list.get(x);
+            if(x > 0)   result += ",";
+            result += ("{\"no\":" + each.get("no") + ",");
+            result += ("\"docNo\":\"" + each.get("docNo") + "\",");
+            result += ("\"writer\":" + each.get("writer") + ",");
+            result += ("\"form\":\"" + each.get("form") + "\",");
+            result += ("\"title\":\"" + each.get("title") + "\",");
+            result += ("\"confirmNo\":\"" + each.get("confirmNo") + "\",");
+            result += ("\"status\":" + each.get("status") + ",");
+            result += ("\"created\":" + each.get("created") + ",");
+            result += ("\"processed\":\"" + each.get("processed") + "\"}");
+
+        }
+        result += "]";
+
+        return result;
+    } // End of getApprovedList()
+
 
 
 
@@ -846,7 +944,5 @@ public class GwService extends Svc{
         }catch(SQLException e){e.printStackTrace();}
         return result;
     }
-
-    
     
 }
