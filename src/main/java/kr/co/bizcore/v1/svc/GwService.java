@@ -67,7 +67,7 @@ public class GwService extends Svc{
         no = getNextNumberFromDB(compId, "bizcore.doc_app");
 
         // ========================= 문서 헤더정보 DB입력
-        if(gwMapper.addNewDocHeader(no, compId, docNo, userNo, dept, title, formId, readable) < 1)    return -10; // 헤더정보 입력 실패
+        if(gwMapper.addNewDocHeader(no, compId, docNo, userNo, dept, title, formId, 1, readable) < 1)    return -10; // 헤더정보 입력 실패
 
         // ========================= 결재선에 대한 처리
         appData = "{\"sopp\":" + (sopp == null ? sopp : "\"" + sopp + "\"") + ",\"customer\":" + (customer == null ? customer : "\"" + customer + "\"") + "}";
@@ -88,32 +88,87 @@ public class GwService extends Svc{
         return no;
     } // End of addAppDoc()
 
-    public String addAppTemp(String compId, String title, String userNo, String sopp, String customer, String formId, String readable, String appDoc, String appLine) {
+    public String addAppTemp(String compId, String title, String userNo, String sopp, String customer, String formId, String readable, String appDoc, String appLine, String temp) {
+        String result = null;
         int no = 0;
         long t = 0;
         String docNo = null, appData = null;
         Calendar cal = Calendar.getInstance();
 
-        t = cal.get(Calendar.YEAR);System.out.println(t);
-        t = (t % 100);System.out.println(t);
-        t = (t * 100 + (cal.get(Calendar.MONTH) + 1));System.out.println(t);
-        t = (t * 100 + (cal.get(Calendar.DATE)));System.out.println(t);
-        t = (t * 100 + cal.get(Calendar.HOUR_OF_DAY));System.out.println(t);
-        t = (t * 100 + cal.get(Calendar.MINUTE));System.out.println(t);
-        t = (t + cal.get(Calendar.SECOND));
-
-        docNo = "temp_" + userNo + "_" + t;
-        no = getNextNumberFromDB(compId, "bizcore.doc_app");
-
-        // ========================= 문서 헤더정보 DB입력
-        if(gwMapper.addNewDocHeader(no, compId, docNo, userNo, "temp", title, formId, "temp") < 1)    return null; // 헤더정보 입력 실패
-
-        // ========================= 결재선에 대한 처리
         appData = "{\"sopp\":" + (sopp == null ? sopp : "\"" + sopp + "\"") + ",\"customer\":" + (customer == null ? customer : "\"" + customer + "\"") + ",\"appLine\":" + (appLine == null ? appLine : "\"" + appLine + "\"") + "}";
-        gwMapper.addNewDocAppLineForSelf(compId, docNo, 0, userNo, "0", appDoc, appData);
 
-        return docNo;
+        if(temp == null){ // 처음 저장되는 임시문서의 처리
+            t = cal.get(Calendar.YEAR);System.out.println(t);
+            t = (t % 100);System.out.println(t);
+            t = (t * 100 + (cal.get(Calendar.MONTH) + 1));System.out.println(t);
+            t = (t * 100 + (cal.get(Calendar.DATE)));System.out.println(t);
+            t = (t * 100 + cal.get(Calendar.HOUR_OF_DAY));System.out.println(t);
+            t = (t * 100 + cal.get(Calendar.MINUTE));System.out.println(t);
+            t = (t * 100 + cal.get(Calendar.SECOND));
+
+            docNo = "temp_" + userNo + "_" + t;
+            no = getNextNumberFromDB(compId, "bizcore.doc_app");
+
+            // ========================= 문서 헤더정보 DB입력
+            if(gwMapper.addNewDocHeader(no, compId, docNo, userNo, "temp", title, formId, 0, "temp") < 1)    return null; // 헤더정보 입력 실패
+
+            // ========================= 결재선에 대한 처리
+            gwMapper.addNewDocAppLineForSelf(compId, docNo, 0, userNo, "0", appDoc, appData);
+            result = docNo;
+        }else{ // 기 저장된 임시문서를 수정하는 경우
+            if(title != null)   gwMapper.changeTitle(compId, docNo, title);
+            gwMapper.modifyTempDoc(compId, userNo, temp, appDoc, appData);
+            result = docNo;
+        }
+
+        return result;
     } // End of addAppTemp()
+
+    // 임시 저장된 문서를 전달
+     public String getTempDoc(String compId, String userNo, String docNo, String aesKey, String aesIv){
+        String result = null, title = null, doc = null, appData = null, customer = null, sopp = null, appLine = null;
+        HashMap<String, String> map = null;
+        JSONObject json = null;
+
+        map = gwMapper.getTempDoc(compId, userNo, docNo);
+        if(map == null) return result;
+        title = map.get("title");
+        doc = map.get("doc");
+        appData = map.get("appData");
+        json = new JSONObject(appData);
+        sopp = json.isNull("sopp") ? null : json.getString("sopp");
+        customer = json.isNull("customer") ? null : json.getString("customer");
+        appLine = json.isNull("appLine") ? null : json.getJSONArray("appLine").toString();
+
+        result = "{\"docNo\":\"" + docNo + "\",";
+        result += ("\"title\":\"" + title + "\",");
+        result += ("\"sopp\":" + sopp + ",");
+        result += ("\"customer\":" + customer + ",");
+        result += ("\"appLine\":" + appLine + ",");
+        result += ("\"doc\":\"" + encAes(doc, aesKey, aesIv) + "\"}");
+        return result;
+     }
+
+     public String getTempDocList(String compId, String userNo) {
+        String result = null;
+        List<HashMap<String, String>> list = null;
+        HashMap<String, String> each = null;
+        int x = -1;
+
+        list = gwMapper.getTempDocList(compId, userNo);
+        result = "[";
+        if(list != null || list.size() > 0) for(x = 0 ; x < list.size() ; x++){
+            each = list.get(x);
+            if(x > 0)   result += ",";
+            result += ("{\"docNo\":\"" + each.get("docNo") + "\",");
+            result += ("\"created\":" + each.get("created") + ",");
+            result += ("\"form\":\"" + each.get("form") + "\",");
+            result += ("\"title\":\"" + each.get("title") + "\"}");
+        }
+        result += "]";
+
+        return result;
+    }
 
     // 결재 예정 및 대기 문서 목록을 가져오는 메서드
     public String getWaitAndDueDocList(String compId, String userNo){
@@ -791,5 +846,7 @@ public class GwService extends Svc{
         }catch(SQLException e){e.printStackTrace();}
         return result;
     }
+
+    
     
 }

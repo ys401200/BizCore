@@ -15,8 +15,8 @@ public interface GwMapper {
     public String getNextDocNo(@Param("compId") String compId, @Param("like") String likeStr);
     
     // 신규 기안 문서의 헤더 정보를 입력하는 메서드
-    @Insert("INSERT INTO bizcore.doc_app(no, compId, docno, writer, dept, docbox, title, formId, readable, status, created) VALUES(#{no}, #{compId}, #{docNo}, #{writer}, #{dept}, #{dept}, #{title}, #{formId}, #{readable}, 1, NOW())")
-    public int addNewDocHeader(@Param("no") int no, @Param("compId") String compId, @Param("docNo") String docno, @Param("writer") String writer, @Param("dept") String dept, @Param("title") String title, @Param("formId") String formId, @Param("readable") String readabde);
+    @Insert("INSERT INTO bizcore.doc_app(no, compId, docno, writer, dept, docbox, title, formId, readable, status, created) VALUES(#{no}, #{compId}, #{docNo}, #{writer}, #{dept}, #{dept}, #{title}, #{formId}, #{readable}, #{status}, NOW())")
+    public int addNewDocHeader(@Param("no") int no, @Param("compId") String compId, @Param("docNo") String docno, @Param("writer") String writer, @Param("dept") String dept, @Param("title") String title, @Param("formId") String formId, @Param("status") int status, @Param("readable") String readabde);
 
     // 신규 기안문서의 결재선과 문서 본문을 저장하는 메서드
     @Insert("INSERT INTO bizcore.doc_app_detail(compId, docNo, ordered, employee, appType, doc, appData) VALUES(#{compId}, #{docNo}, #{ordered}, #{employee}, #{appType}, #{doc}, #{appData})")
@@ -104,4 +104,21 @@ public interface GwMapper {
     // 결재절차가 완료된 경우 이를 헤더 테이블에 기록하믐 메서드
     @Update("UPDATE bizcore.doc_app SET status = #{status}, confirmNo = docNo WHERE deleted IS NULL AND compId = #{compId} AND docNo = #{docNo}")
     public int setCompleteStatus(@Param("compId") String compId, @Param("docNo") String docNo, @Param("status") int status);
+
+    // 결제 또는 임시저장된 문서의 제목을 변경하느 메서드
+    @Update("UPDATE bizcore.doc_app SET title = #{title} WHERE deleted IS NULL AND copmpId = #{compId} AND docNo = #{docNo}")
+    public int changeTitle(@Param("compId") String compId, @Param("docNo") String docNo, @Param("title") String title);
+
+    // 임시저장된 문서의 목록을 가져오는 메서드
+    @Select("SELECT a.docNo, CAST(UNIX_TIMESTAMP(a.created)*1000 AS CHAR) AS created, b.title AS form, a.title AS title FROM bizcore.doc_app a, bizcore.doc_form b WHERE b.id=a.formid AND a.deleted IS NULL AND a.readable = 'temp' AND a.compId = #{compId} AND a.writer = #{userNo}")
+    public List<HashMap<String, String>> getTempDocList(@Param("compId") String compId, @Param("userNo") String userNo);
+
+    // 저장된 임시문서를 전달하는 메서드
+    @Select("SELECT a.docNo, a.title, b.doc, b.appData FROM bizcore.doc_app a, bizcore.doc_app_detail b WHERE a.compId = b.compId AND a.docNo = b.docNo AND a.deleted IS NULL AND b.deleted IS NULL AND a.readable = 'temp' AND a.compId = #{compId} AND a.writer = #{userNo} AND a.docNo = #{docNo}")
+    public HashMap<String, String> getTempDoc(@Param("compId") String compId, @Param("userNo") String userNo, @Param("docNo") String docNo);
+
+    // 임시저장된 문서를 변경하는 메서드
+    @Update("UPDATE bizcore.doc_app_detail SET isModify = 1, doc = #{doc}, appData = #{appData} WHERE deleted IS NULL AND copmpId = #{compId} AND employee = #{userNo} AND docNo = #{docNo}")
+    public void modifyTempDoc(@Param("compId") String compId, @Param("userNo") String userNo, @Param("docNo") String docNo, @Param("doc") String appDoc, @Param("appData") String appData);
+
 }
