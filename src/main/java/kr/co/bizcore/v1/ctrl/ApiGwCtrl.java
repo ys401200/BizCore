@@ -557,6 +557,39 @@ public class ApiGwCtrl extends Ctrl{
         }
         return result;
     } // End of apiGwAppReceivedGet()
+
+
+    // 참조/열란 문서함의 목록을 전달하는 메서드
+    @GetMapping("/app/references")
+    public String apiGwAppReferencesGet(HttpServletRequest request){
+        String result = null, compId = null, userNo = null, data = null, aesIv = null, aesKey = null, lang = null;
+        Msg msg = null;
+        HttpSession session = null;
+
+        session = request.getSession();
+        compId = (String)session.getAttribute("compId");
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        userNo = (String)session.getAttribute("userNo");
+        lang = (String)session.getAttribute("lang");
+        msg = getMsg(lang);
+        if(compId == null)  compId = (String)request.getAttribute("compId");
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        }else{
+            data = gwService.getReferencesList(compId, userNo);
+            if(data == null)    result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
+            else{
+                data = encAes(data, aesKey, aesIv);
+                result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
+            }
+            
+        }
+        return result;
+    } // End of apiGwAppReceivedGet()
     
 }
 

@@ -144,8 +144,10 @@ public interface GwMapper {
     public List<HashMap<String, String>> getApprovedList(@Param("compId") String compId, @Param("userNo") String userNo);
     
     // 참조/열람 문서함 목록을 전달하는 메서드
-    @Select("SELECT CAST(a.no AS CHAR) AS no, a.docNo, CAST(a.writer AS CHAR) AS writer, b.title AS form, a.title, a.confirmNo, CAST(a.status AS CHAR) AS status, CAST(UNIX_TIMESTAMP(a.created)*1000 AS CHAR) AS created " +
-            "FROM bizcore.doc_app a, bizcore.doc_form b " +
+    @Select("SELECT CAST(a.no AS CHAR) AS no, a.docNo, CAST(a.writer AS CHAR) AS writer, b.title AS form, a.title, a.confirmNo, CAST(a.status AS CHAR) AS status, CAST(UNIX_TIMESTAMP(a.created)*1000 AS CHAR) AS created, IF(status=3,c.approved,NULL) AS processed " +
+            "FROM bizcore.doc_form b, bizcore.doc_app a " +
+            "LEFT OUTER JOIN (SELECT a.docNo, a.approved FROM bizcore.doc_app_detail a, (SELECT docNo, MAX(ordered) AS o FROM bizcore.doc_app_detail WHERE deleted IS NULL AND ordered > 0 AND approved IS NOT NULL AND compId = #{compId} GROUP BY docNo) b WHERE a.docNo = b.docNo AND a.ordered = b.o AND a.compId = #{compId}) c " +
+            "ON a.docNo = c.docNo " +
             "WHERE a.formId = b.id AND a.deleted IS NULL AND ((a.readable = 'dept' AND a.status IN (1,2)) OR a.status = 3) AND a.docbox = (SELECT dept_id FROM bizcore.user_dept WHERE comp_id = #{compId} AND user_no = #{userNo}) AND a.compId = #{compId}")
     public List<HashMap<String,String>> getReferencesList(@Param("compId") String compId, @Param("userNo") String userNo);
 }

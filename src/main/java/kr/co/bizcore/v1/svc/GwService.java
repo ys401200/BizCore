@@ -142,8 +142,8 @@ public class GwService extends Svc{
 
         result = "{\"docNo\":\"" + docNo + "\",";
         result += ("\"title\":\"" + title + "\",");
-        result += ("\"sopp\":" + sopp + ",");
-        result += ("\"customer\":" + customer + ",");
+        result += ("\"sopp\":" + (sopp == null || !sopp.equals("") ? sopp : "\"\"") + ",");
+        result += ("\"customer\":" + (customer == null || !customer.equals("") ? customer : "\"\"") + ",");
         result += ("\"appLine\":" + appLine + ",");
         result += ("\"doc\":\"" + encAes(doc, aesKey, aesIv) + "\"}");
         return result;
