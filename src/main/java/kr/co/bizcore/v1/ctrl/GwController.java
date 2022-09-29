@@ -325,7 +325,7 @@ public class GwController {
         return result;
     }
 
-    @RequestMapping(value = "/myreceive", method = RequestMethod.GET)
+    @RequestMapping(value = {"/myreceive" ,"/my/{docNo}" }, method = RequestMethod.GET)
     public String myreceive(HttpServletRequest request) {
         HttpSession session = null;
         String result = null, uri = null, pathName = null, tempStr = null;
