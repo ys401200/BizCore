@@ -331,7 +331,7 @@ public class ApiGwCtrl extends Ctrl{
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
         }else{
             data = gwService.deleteTempDoc(compId, userNo, docNo);
-            if(data != null)    result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+            if(data != null)    result = "{\"result\":\"ok\"}";
             else    result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
         }
             
