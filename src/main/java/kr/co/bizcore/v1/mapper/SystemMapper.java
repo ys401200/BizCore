@@ -84,4 +84,7 @@ public interface SystemMapper {
     @Select("SELECT fileName FROM bizcore.attached WHERE compId = #{compId} AND funcName = #{funcName} AND funcNo = #{funcNo}")
     public List<String> getAttachedList(@Param("compId") String compId, @Param("funcName") String funcName, @Param("funcNo") int no);
 
+    // 부서코드 기준 부서명 가져오기
+    @Select("SELECT org_title FROM swcore.swc_organiz WHERE org_code = #{deptId} AND compNo = (SELECT compno FROM swc_company WHERE compid = #{compId})")
+    public String getDeptName(@Param("compId") String compId, @Param("deptId") String deptId);
 }

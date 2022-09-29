@@ -605,7 +605,7 @@ public class GwService extends Svc{
     // 결재문서 처리 메서드 / 데이터가 null이 아닌 경우 결재문서에 대한 수정 처리
     public String askAppDoc(String compId, String docNo, int ordered, int ask, String comment, String doc,
             String[][] appLine, String[] files, HashMap<String, String> attached, String appData, String userNo) {
-        String result = null, revision = null, savedName = null, fileName = null, t = null;
+        String result = null, revision = null, savedName = null, fileName = null, dept = null, t = null;
         JSONObject json = null;
         int writer = -9999, appType = -9999, no = -9999, x = -1, y = -1;
         List<String> prvFiles = null, tFiles = null, newFiles = null;
@@ -630,9 +630,10 @@ public class GwService extends Svc{
         // 기본정보들이 갖추어져 있는지 먼저 검증
         if(compId == null || docNo == null || ordered < 1 || ask < 0 || ask > 1 || userNo == null)  return null;
 
-        // 작성자와 일련번호 확인
+        // 작성자와 부서코드, 일련번호 확인
         map = gwMapper.getAppDocWriterAndSN(compId, docNo);
         if(map == null)    return null;
+        dept = map.get("dept"); // 문서의 부서코드
         t = map.get("writer"); // 작성자
         writer = t == null ? -1 : strToInt(t);
         t = map.get("no"); // 일련번호
@@ -693,6 +694,7 @@ public class GwService extends Svc{
                     y = ((ordered / 10) + 1) * 10;
                     for(x = 0 ; x < appLine.length ; x++, no = no + 10){
                         gwMapper.addNewDocAppLine(compId, docNo, y, appLine[x][1], appLine[x][0], null, null);        
+                        y = y + 10;
                     }
                 }else{
                     json.put("appLine", false);
@@ -780,15 +782,19 @@ public class GwService extends Svc{
             gwMapper.setProceedDocAppStatus(compId, docNo, ordered, comment, appData);
 
             // 남아있는 결재 절차가 있는지 확인함
-            next = gwMapper.getNextAppData(compId, docNo, ordered);
+            map = gwMapper.getNextAppData(compId, docNo, ordered);
 
-            if(next == null){ // 결재절차가 종료된 경우
+            logger.error("||||||||||||||||||||||||||||||||||| Next Exist ? : " + (map != null));
+
+            if(map == null){ // 결재절차가 종료된 경우
                 notes.sendNewNotes(compId, 0, writer, "결재 완료 되었습니다.", "{\"func\":\"docApp\",\"no\":\"" + docNo + "\"}");
                 gwMapper.setCompleteStatus(compId, docNo, 3);
                 result = "ok";
             }else{
-                x = next.get("employee");
-                y = next.get("appType");
+                t = map.get("employee");
+                x = (t == null ? 0 : strToInt(t));
+                t = map.get("appType");
+                y = (t == null ? 0 : strToInt(t));
                 if(y == 0)      t = "검토";
                 else if(y == 1) t = "합의";
                 else if(y == 2) t = "결재";
@@ -796,6 +802,8 @@ public class GwService extends Svc{
                     t = "수신";
                     gwMapper.setCompleteStatus(compId, docNo, 2);
                 }
+                logger.error("||||||||||||||||||||||||||||||||||| Next : " + x + " / " + t);
+
                 notes.sendNewNotes(compId, 0, x, t + "할 문서가 있습니다.", "{\"func\":\"docApp\",\"no\":\"" + docNo + "\"}");
                 result = "ok";
             }
