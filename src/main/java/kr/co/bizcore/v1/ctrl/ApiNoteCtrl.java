@@ -46,8 +46,8 @@ public class ApiNoteCtrl extends Ctrl{
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
         }else{
             data = notes.getNewCount(compId, userNo);
-            data = encAes(data, aesKey, aesIv);
-            result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
+            data = data == null ? null : encAes(data, aesKey, aesIv);
+            result = "{\"result\":\"ok\",\"data\":" + (data == null ? "null" : "\"" + data + "\"") + "\"}";
         }
 
         return result;
@@ -74,8 +74,8 @@ public class ApiNoteCtrl extends Ctrl{
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
         }else{
             data = notes.getMessage(compId, userNo, partner, time);
-            data = encAes(data, aesKey, aesIv);
-            result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
+            data = data == null ? null : encAes(data, aesKey, aesIv);
+            result = "{\"result\":\"ok\",\"data\":" + (data == null ? "null" : "\"" + data + "\"") + "}";
         }
 
         return result;
@@ -102,8 +102,8 @@ public class ApiNoteCtrl extends Ctrl{
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
         }else{
             data = notes.getNewMessage(compId, userNo, partner);
-            data = encAes(data, aesKey, aesIv);
-            result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
+            data = data == null ? null : encAes(data, aesKey, aesIv);
+            result = "{\"result\":\"ok\",\"data\":" + (data == null ? "null" : "\"" + data + "\"") + "}";
         }
 
         return result;

@@ -22,11 +22,11 @@ public interface NotesMapper {
     public List<HashMap<String, String>> getMessage(@Param("compId") String compId, @Param("writer") int writer , @Param("reader") String userNo, @Param("time") Date time);
 
     // 특정 발신자와의 신규 대화를 가져오는
-    @Select("SELECT CAST(UNIX_TIMESTAMP(sent)*1000 AS CHAR) AS sent, message, related FROM bizcore.notes WHERE deleted IS NULL AND `read` IS NULL AND compId = #{compId} AND writer = #{writer} AND reader = #{reader} AND ORDER BY sent desc")
+    @Select("SELECT CAST(UNIX_TIMESTAMP(sent)*1000 AS CHAR) AS sent, message, related FROM bizcore.notes WHERE deleted IS NULL AND `read` IS NULL AND compId = #{compId} AND writer = #{writer} AND reader = #{reader} ORDER BY sent desc")
     public List<HashMap<String, String>> getNewMessage(@Param("compId") String compId, @Param("writer") int writer , @Param("reader") String userNo);
 
     // 특정 발신자의 메시지에 대해 읽음 상태를 기록하는 메서드
-    @Update("UPDATE bizcore.notes SET `read` = #{time} WHERE deleted IS NULL AND `read` IS NULL AND compId = #{compId} AND reader = #{userNo} AND writer = #{writer}")
+    @Update("UPDATE bizcore.notes SET `read` = #{time} WHERE deleted IS NULL AND `read` IS NULL AND compId = #{compId} AND reader = #{reader} AND writer = #{writer}")
     public int setReadStatus(@Param("compId") String compId, @Param("writer") int writer , @Param("reader") String userNo, @Param("time") Date time);
 
 
