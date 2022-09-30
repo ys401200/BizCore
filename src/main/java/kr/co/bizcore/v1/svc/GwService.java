@@ -660,8 +660,8 @@ public class GwService extends Svc{
                 // 수정된 결재문서에 대한 처리
                 if(doc != null){
                     json.put("doc", true);
-                    gwMapper.updateAppDocContent(compId, docNo, ordered, doc);
-                }else{
+                }else{ // 본뭉 ㅣ수정되지 않은 경우 이전 본문을 가지고 오도록 함
+                    doc = gwMapper.getPrvPrcDoc(compId, docNo, ordered);
                     json.put("doc", false);
                 }
 
@@ -741,6 +741,9 @@ public class GwService extends Svc{
                 gwMapper.setModifiedAppLine(compId, docNo, ordered);
                 gwMapper.addRevisionHistory2(compId, docNo, ordered, userNo, revision);
             } // 문서가 수정된 경우의 처리 종료
+
+            // 결재문서 본문 입력처리
+            gwMapper.updateAppDocContent(compId, docNo, ordered, doc);
 
             // 결재처리를 기록함
             gwMapper.setProceedDocAppStatus(compId, docNo, ordered, comment, appData);
