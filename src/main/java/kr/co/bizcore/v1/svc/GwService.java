@@ -615,17 +615,8 @@ public class GwService extends Svc{
         boolean find = false;
 
         // =================================================================================================
-        logger.error("||||||||||||||||||||||||||||||||||| compId : " + compId);
-        logger.error("||||||||||||||||||||||||||||||||||| docNo : " + docNo);
-        logger.error("||||||||||||||||||||||||||||||||||| ordered : " + ordered);
-        logger.error("||||||||||||||||||||||||||||||||||| ask : " + ask);
-        logger.error("||||||||||||||||||||||||||||||||||| comment : " + comment);
-        logger.error("||||||||||||||||||||||||||||||||||| doc : " + (doc == null ? null : doc.substring(0,20) + " ~~~~"));
-        logger.error("||||||||||||||||||||||||||||||||||| appLine : " + appLine);
-        logger.error("||||||||||||||||||||||||||||||||||| files : " + files);
-        logger.error("||||||||||||||||||||||||||||||||||| attached : " + attached);
-        logger.error("||||||||||||||||||||||||||||||||||| appData : " + appData);
-        logger.error("||||||||||||||||||||||||||||||||||| userNo : " + userNo);
+        logger.error("||||||||||||||||||||||||||||||||||| files : " + (files == null ? files : files.length));
+        logger.error("||||||||||||||||||||||||||||||||||| attached : " + (attached == null ? attached : attached.size()));
 
         // 기본정보들이 갖추어져 있는지 먼저 검증
         if(compId == null || docNo == null || ordered < 1 || ask < 0 || ask > 1 || userNo == null)  return null;
@@ -700,79 +691,44 @@ public class GwService extends Svc{
                     json.put("appLine", false);
                 } // 결재선의 수정에 대한 처리 종료
 
-                // 수정된 첨부파일에 대한 처리
-                if(files != null && attached != null){
+                // ============== 수정된 첨부파일에 대한 처리 =======================
+                if(files != null){
                     json.put("files", true);
                     prvFiles = systemMapper.getAttachedList(compId, "docApp", no);
                     newFiles = new ArrayList<>();
                     for(x = 0 ; x < files.length ; x++) newFiles.add(files[x]);
-                    
-                    // 기존 파일을 제거하고 신규 파일로 대체된 경우의 처리
-                    tFiles = new ArrayList<>();
-                    for(x = 0 ; x < prvFiles.size() ; x++){
-                        for(y = 0 ; y < newFiles.size() ; y++){
-                            if(prvFiles.get(x).equals(newFiles.get(y))){
-                                fileName = newFiles.get(y);
-                                savedName = attached.get(savedName);
-                                if(savedName != null){
-                                    t = systemMapper.getAttachedFileName(compId, "docApp", no, fileName);
-                                    deleteAttachedFile(compId, "docApp", no, t);
-                                    size = moveTempFile(compId, "docApp", no+"", savedName);
-                                    if(size > 0){
-                                        systemMapper.setAttachedFileData(compId, "docApp", no, fileName, savedName, size);
-                                    }
+
+                    // attached에 대한 처리 / 신규 첨부와 교체 첨부
+                    if(attached != null){
+                        Object[] arr = attached.keySet().toArray();
+                        for(Object o : arr){
+                            fileName = (String)o;
+                            savedName = attached.get(fileName);
+                            if(newFiles.contains(fileName)){
+                                if(prvFiles.contains(fileName)){ // === 교체첨부인 경우 기존의 첨부를 제함
+                                    deleteAttachedFile(compId, "docApp", no, fileName);
                                 }
-                                tFiles.add(fileName);
+                                size = moveTempFile(compId, "docApp", no+"", savedName);
+                                if(size > 0){
+                                    systemMapper.setAttachedFileData(compId, "docApp", no, fileName, savedName, size);
+                                }
+                                attached.remove(fileName);
+                                prvFiles.remove(fileName);
+                                newFiles.remove(fileName); // 처리된 파일에 대해 목록에서 제거
                             }
                         }
                     }
 
-                    // 기 처리된 파일 목록 제거
-                    for(x = 0 ; x < tFiles.size() ; x++){
-                        prvFiles.remove(tFiles.get(x));
-                        newFiles.remove(tFiles.get(x));
-                    }
-
-                    // 제거된 파일에 대한 처리
-                    tFiles = new ArrayList<>();
-                    for(x = 0 ; x < prvFiles.size() ; x++){
-                        find = false;
-                        for(y = 0 ; y < newFiles.size() ; y++){
-                            if(prvFiles.get(x).equals(newFiles.get(y))){
-                                find = true;
-                                break;
-                            }
-                        }
-                        if(!find)   tFiles.add(prvFiles.get(y));
-                    }
-                    for(x = 0 ; x < tFiles.size() ; x++){
-                        t = tFiles.get(x);
-                        deleteAttachedFile(compId, "docApp", no, t);
-                        prvFiles.remove(t);
-                    }
-
-                    // 추가된 파일에 대한 처리
-                    tFiles = new ArrayList<>();
-                    for(x = 0 ; x < newFiles.size() ; x++){
-                        find = false;
-                        for(y = 0 ; y < prvFiles.size() ; y++){
-                            if(newFiles.get(x).equals(prvFiles.get(y))){
-                                find = true;
-                                break;
-                            }
-                        }
-                        if(!find)   tFiles.add(newFiles.get(y));
-                    }
-                    for(x = 0 ; x < tFiles.size() ; x++){
-                        fileName = tFiles.get(x);
-                        savedName = attached.get(fileName);
-                        size = moveTempFile(compId, "docApp", no+"", savedName);
-                        if(size > 0)    systemMapper.setAttachedFileData(compId, "docApp", no, fileName, savedName, size);
+                    // 기 첨부의 삭제 == 신규 및 교체에서 처리하고 남은 목록을 기준으로, 기 첨부된 파일 중 삭제된 목록이 있는 경우 이를 제거하도록 함
+                    if(prvFiles.size() > 0) for(x = 0 ; x < prvFiles.size() ; x++){
+                        fileName = prvFiles.get(x);
+                        if(!newFiles.contains(fileName))    deleteAttachedFile(compId, "docApp", no, fileName);
                     }
 
                 }else{
                     json.put("files", false);
-                } // 첨부파일 수정에 대한 처리 종료
+                } // =================== 첨부파일 수정에 대한 처리 종료 ===================================
+
                 revision = json.toString();
                 gwMapper.setModifiedAppLine(compId, docNo, ordered);
                 gwMapper.addRevisionHistory2(compId, docNo, ordered, userNo, revision);
@@ -783,8 +739,6 @@ public class GwService extends Svc{
 
             // 남아있는 결재 절차가 있는지 확인함
             map = gwMapper.getNextAppData(compId, docNo, ordered);
-
-            logger.error("||||||||||||||||||||||||||||||||||| Next Exist ? : " + (map != null));
 
             if(map == null){ // 결재절차가 종료된 경우
                 notes.sendNewNotes(compId, 0, writer, "결재 완료 되었습니다.", "{\"func\":\"docApp\",\"no\":\"" + docNo + "\"}");
@@ -802,8 +756,6 @@ public class GwService extends Svc{
                     t = "수신";
                     gwMapper.setCompleteStatus(compId, docNo, 2);
                 }
-                logger.error("||||||||||||||||||||||||||||||||||| Next : " + x + " / " + t);
-
                 notes.sendNewNotes(compId, 0, x, t + "할 문서가 있습니다.", "{\"func\":\"docApp\",\"no\":\"" + docNo + "\"}");
                 result = "ok";
             }
