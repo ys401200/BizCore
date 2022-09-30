@@ -474,10 +474,10 @@ public class ApiGwCtrl extends Ctrl{
             // 첨부파일에 대한 처리
             if(!json.isNull("files")){
                 jarr = json.getJSONArray("files");
-                list = new ArrayList<>();
-                for(x = 0 ; x < jarr.length() ; x++)    list.add(jarr.getString(x));
-                files = new String[0];
-                list.toArray(files);
+                files = new String[jarr.length()];
+                for(x = 0 ; x < jarr.length() ; x++){
+                    files[x] = jarr.getString(x);
+                }
                 attached = (HashMap<String, String>)session.getAttribute("attached");
             }
 

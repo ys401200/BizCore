@@ -694,23 +694,31 @@ public class GwService extends Svc{
                 // ============== 수정된 첨부파일에 대한 처리 =======================
                 if(files != null){
                     json.put("files", true);
-                    prvFiles = systemMapper.getAttachedList(compId, "docApp", no);
+                    prvFiles = systemMapper.getAttachedList(compId, "appDoc", no);
                     newFiles = new ArrayList<>();
                     for(x = 0 ; x < files.length ; x++) newFiles.add(files[x]);
 
+                    // ============ D = E = B = U = G ================
+                    logger.error("||||||||||||||| Exist files |||||||||||||||");
+                    for(x = 0 ; x < prvFiles.size() ; x++) logger.error("|||||||||  " + prvFiles.get(x)); 
+                    logger.error("||||||||||||||| New files |||||||||||||||");
+                    for(x = 0 ; x < newFiles.size() ; x++) logger.error("|||||||||  " + newFiles.get(x)); 
+
                     // attached에 대한 처리 / 신규 첨부와 교체 첨부
                     if(attached != null){
+                        logger.error("||||||||||||||| Start New and Exist files |||||||||||||||");
                         Object[] arr = attached.keySet().toArray();
                         for(Object o : arr){
                             fileName = (String)o;
                             savedName = attached.get(fileName);
                             if(newFiles.contains(fileName)){
                                 if(prvFiles.contains(fileName)){ // === 교체첨부인 경우 기존의 첨부를 제함
-                                    deleteAttachedFile(compId, "docApp", no, fileName);
-                                }
-                                size = moveTempFile(compId, "docApp", no+"", savedName);
+                                    logger.error("||||||||||||||| " + fileName + " : change");
+                                    deleteAttachedFile(compId, "appDoc", no, fileName);
+                                }else   logger.error("||||||||||||||| " + fileName + " : new");
+                                size = moveTempFile(compId, "appDoc", no+"", savedName);
                                 if(size > 0){
-                                    systemMapper.setAttachedFileData(compId, "docApp", no, fileName, savedName, size);
+                                    systemMapper.setAttachedFileData(compId, "appDoc", no, fileName, savedName, size);
                                 }
                                 attached.remove(fileName);
                                 prvFiles.remove(fileName);
@@ -722,7 +730,7 @@ public class GwService extends Svc{
                     // 기 첨부의 삭제 == 신규 및 교체에서 처리하고 남은 목록을 기준으로, 기 첨부된 파일 중 삭제된 목록이 있는 경우 이를 제거하도록 함
                     if(prvFiles.size() > 0) for(x = 0 ; x < prvFiles.size() ; x++){
                         fileName = prvFiles.get(x);
-                        if(!newFiles.contains(fileName))    deleteAttachedFile(compId, "docApp", no, fileName);
+                        if(!newFiles.contains(fileName))    deleteAttachedFile(compId, "appDoc", no, fileName);
                     }
 
                 }else{
