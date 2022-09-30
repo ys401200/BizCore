@@ -2527,7 +2527,10 @@ function headerMyInfo(){
 	mainInfo = $("#mainInfo");
 
 	// html += "<img id=\"myInfoMessageImg\" src=\"../images/main/icons/message.png\" >";
-	html += "<a href=\"#\" onclick=\"msgContentIn();\"><img id=\"myInfoMessageImg\" src=\"../images/main/icons/message.png\"></a>";
+	html += "<a href=\"#\" onclick=\"msgContentIn();\" id=\"infoMessageImg\">";
+	html += myNoteList();
+	html += "<img id=\"myInfoMessageImg\" src=\"../images/main/icons/message.png\">";
+	html += "</a>";
 	// html += "<i class=\"fa-solid fa-envelope fa-shake fa-2xl\" id=\"envelope\"></i>";
 	// html += "<i class=\"fa-regular fa-envelope-open fa-beat-fade fa-2xl\" id=\"envelope\"></i>";
 	html += "<img id=\"myInfoImage\" src=\"/api/my/image\" >";
@@ -2539,7 +2542,7 @@ function headerMyInfo(){
 	html += "<a href=\"/api/user/logout\" onclick=\"return confirm('로그아웃 하시겠습니까??');\"><img id=\"myInfoImageLogout\" src=\"../images/main/icons/logout.png\" ></a>";
 	//html += "<a href=\"/api/user/logout\" onclick=\"return confirm('로그아웃 하시겠습니까??');\"><i class=\"fa-solid fa-person-walking-arrow-right fa-xl\" id=\"logoutBtn\"></i></a>";
 
-	mainInfo.html(html);	
+	mainInfo.html(html);
 	
 	$("#logoutBtn").hover((e) => {
 		$(e.target).removeAttr("class");
@@ -2548,6 +2551,71 @@ function headerMyInfo(){
 		$("#logoutBtn").removeAttr("class");
 		$("#logoutBtn").attr("class", "fa-solid fa-person-walking-arrow-right fa-xl");
 	});
+
+	$("#infoMessageImg").mouseenter(() => {
+		$(".myNoteList").show();
+	});
+
+	$("#infoMessageImg").mouseleave(() => {
+		$(".myNoteList").hide();
+	});
+}
+
+function myNoteList(){
+	let html = "", temp;
+
+	temp = [
+		{
+			"compId": "vtek",
+			"no": "1",
+			"writer": "10071",
+			"reader": "10077",
+			"message": "결재할 문서가 있습니다.",
+		},
+		{
+			"compId": "vtek",
+			"no": "2",
+			"writer": "10044",
+			"reader": "10077",
+			"message": "결재 문서가 반려되었습니다.",
+		},
+		{
+			"compId": "vtek",
+			"no": "3",
+			"writer": "10077",
+			"reader": "10044",
+			"message": "결재할 문서가 있습니다.",
+		},
+		{
+			"compId": "vtek",
+			"no": "4",
+			"writer": "10077",
+			"reader": "10044",
+			"message": "수신할 문서가 있습니다.",
+		},
+		{
+			"compId": "vtek",
+			"no": "5",
+			"writer": "10071",
+			"reader": "10044",
+			"message": "결재할 문서가 있습니다.",
+		},
+	];
+
+	html = "<div class=\"myNoteList\">";
+
+	for(let i = 0; i < temp.length; i++){
+		if(temp[i].writer == storage.my || temp[i].reader == storage.my){
+			html += "<div class=\"myNoteListItem\">";
+			html += "<p>" + storage.user[temp[i].writer].userName + "</p>";
+			html += "<span>" + temp[i].message + "</span>";
+			html += "</div>";
+		}
+	}
+
+	html += "</div>";
+
+	return html;
 }
 
 function plusBtnClick(e){
@@ -2596,7 +2664,7 @@ function addNoteContainer(){
 	noteHtml += "<span>수신할 문서가 있습니다.</span>";
 	noteHtml += "</div>";
 	noteHtml += "<div class=\"noteUser\" data-writer=\"10071\" onclick=\"noteChangeMsg(this);\">";
-	noteHtml += "<p>이장희</p>";
+	noteHtml += "<p>조병일</p>";
 	noteHtml += "<span>사</span>";
 	noteHtml += "</div>";
 	noteHtml += "</div>";
@@ -2710,8 +2778,10 @@ function noteChangeMsg(e){
 	for(let i = 0; i < chat.length; i++){
 		if(chat[i].flag == 0){
 			msgHtml += "<div class=\"chatYou\">" + chat[i].content + "</div>";
+			msgHtml += "<div class=\"chatYouDate\">" + chat[i].date + "</div>";
 		}else{
 			msgHtml += "<div class=\"chatMe\">" + chat[i].content + "</div>";
+			msgHtml += "<div class=\"chatMeDate\">" + chat[i].date + "</div>";
 		}
 	}
 
@@ -2730,14 +2800,14 @@ function msgContentIn(){
 	noteContainer = $(".noteContainer");
 
 	if(bodyContent !== undefined){
-		bodyContent.fadeOut();
+		bodyContent.hide();
 	}
 
 	if(widgetContainer !== undefined){
-		widgetContainer.fadeOut();
+		widgetContainer.hide();
 	}
 
-	noteContainer.fadeIn(400);
+	noteContainer.show();
 }
 
 function msgContentOut(){
@@ -2745,13 +2815,13 @@ function msgContentOut(){
 	bodyContent = $("#bodyContent");
 	widgetContainer = $("#widgetContainer");
 	noteContainer = $(".noteContainer");
-	noteContainer.fadeOut();
+	noteContainer.hide();
 
 	if(bodyContent !== undefined){
-		bodyContent.fadeIn(400);
+		bodyContent.show();
 	}
 
 	if(widgetContainer !== undefined){
-		widgetContainer.fadeIn(400);
+		widgetContainer.show();
 	}
 }

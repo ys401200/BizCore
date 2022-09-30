@@ -39,7 +39,6 @@
 	<div class="plusItems">
 		<button type="button" data-keyword="widget" data-status="false" class="plusWidgetItem"><i class="fa-solid fa-screwdriver-wrench fa-2xl"></i></button>
 		<button type="button" data-keyword="set" data-status="false" class="plusSetItem"><i class="fa-solid fa-gear fa-2xl"></i></button>
-		<button type="button" data-keyword="notes" data-status="false" class="plusNotesItem"><i class="fa-solid fa-paper-plane fa-2xl"></i></button>
 		<button type="button" data-keyword="delete" data-status="false" class="plusDeleteItem"><i class="fa-solid fa-trash-can fa-2xl"></i></button>
 		<button type="button" data-keyword="edit" data-status="false" class="plusEditItem"><i class="fa-solid fa-pen-to-square fa-2xl"></i></button>
 		<button type="button" data-keyword="add" data-status="false" class="plusAddItem"><i class="fa-solid fa-pencil fa-2xl"></i></button>
