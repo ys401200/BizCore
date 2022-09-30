@@ -357,10 +357,10 @@ function setAppLineData() {
         for (let j = 0; j < appLineContainer[i].length; j++) {
             if (appLineContainer[i][j].approved != null) {
                 $("." + formId + appTypeTitles[i] + "_status")[j].value = "승인";
-                $("." + formId + appTypeTitles[i] + "_approved")[j].value = getYmdSlash(appLineContainer[i][j].approved);
+                $("." + formId + appTypeTitles[i] + "_approved")[j].value = getYmdShortSlash(appLineContainer[i][j].approved);
             } else if (appLineContainer[i][j].rejected != null) {
                 $("." + formId + appTypeTitles[i] + "_status")[j].value = "반려";
-                $("." + formId + appTypeTitles[i] + "_approved")[j].value = getYmdSlash(appLineContainer[i][j].rejected);
+                $("." + formId + appTypeTitles[i] + "_approved")[j].value = getYmdShortSlash(appLineContainer[i][j].rejected);
             }
         }
     }
@@ -484,28 +484,32 @@ function drawChangeInfo() {
     let target = $("#tabDetail2");
 
 
-    let changeData = [{
-        "type": "검토",
-        "name": "구민주",
-        "modifyDate": "22-08-18 10:34:46",
-        "modCause": " 거래처 수정 "
-    },
-    {
-        "type": "검토",
-        "name": "이송현",
-        "modifyDate": "22-08-19 10:34:46",
-        "modCause": "수정 완 "
-    }]
+
+    let revisionData = storage.reportDetailData.revisionHistory;
+    let changeData = new Array();
+
+    for (let i = 0; i < revisionData.length; i++) {
+        let data = {
+            "type": revisionData[i].employee,
+            "name": revisionData[i].employee,
+            "modifyDate": revisionData[i].date,
+            "modCause": revisionData[i].content
+        }
+        changeData.push(data);
+    }
 
 
     let detail = "<div class='tapLineB'><div>타입</div><div>이름</div><div>변경일자</div><div>변경내용</div></div>";
     let changeHtml = "";
 
-
-    for (let i = 0; i < changeData.length; i++) {
-        changeHtml += "<div class='tapLineB changeDataLine'>" +
-            "<div class='changeType'>" + changeData[i].type + "</div><div class='changeName' >" + changeData[i].name + "</div><div class='changeDate'>" + changeData[i].modifyDate + "</div><div class='changeCause'>" + changeData[i].modCause + "</div>" +
-            "</div>"
+    if (changeData.length == 0) {
+        changeHtml += "<div>변경 이력이 없습니다</div>";
+    } else {
+        for (let i = 0; i < changeData.length; i++) {
+            changeHtml += "<div class='tapLineB changeDataLine'>" +
+                "<div class='changeType'>" + changeData[i].type + "</div><div class='changeName' >" + changeData[i].name + "</div><div class='changeDate'>" + changeData[i].modifyDate + "</div><div class='changeCause'>" + changeData[i].modCause + "</div>" +
+                "</div>"
+        }
     }
 
     detail += changeHtml;
@@ -514,14 +518,17 @@ function drawChangeInfo() {
 }
 
 
-
-
-
-
 function getYmdSlash(date) {
-    let d = new Date(date);
-    return (d.getFullYear() % 100) + "/" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "/" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString());
+	let d = new Date(date);
+	return (d.getFullYear() % 100) + "/" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "/" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString()) + "&nbsp" + (d.getHours() > 9 ? d.getHours().toString() : "0" + d.getHours().toString()) + ":" + (d.getMinutes() > 9 ? d.getMinutes().toString() : "0" + d.getMinutes().toString()) + ":" + (d.getSeconds() > 9 ? d.getSeconds().toString() : "0" + d.getSeconds().toString());
 }
+
+function getYmdShortSlash(date) {
+	let d = new Date(date);
+	return (d.getFullYear() % 100) + "/" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "/" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString());
+}
+
+
 
 function getFileArr() {
     let target = $(".selectedFileDiv");

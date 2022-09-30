@@ -75,94 +75,94 @@ function drawApproval() {
     else {
         jsonData = storage.referList.refer;
 
-    
-    result = paging(jsonData.length, storage.currentPage, 5);
 
-    pageContainer = document.getElementsByClassName("pageContainer");
-    container = $(".listDiv");
-    header = [
+        result = paging(jsonData.length, storage.currentPage, 5);
 
-        {
-            "title": "번호",
-            "align": "center",
-        },
-        {
-            "title": "결재 타입",
-            "align": "center",
-        },
-        {
-            "title": "문서 종류",
-            "align": "center",
-        },
-        {
-            "title": "제목",
-            "align": "left",
-        },
-        {
-            "title": "작성자",
-            "align": "center",
-        },
-        {
-            "title": "작성일",
-            "align": "center",
-        },
+        pageContainer = document.getElementsByClassName("pageContainer");
+        container = $(".listDiv");
+        header = [
+
+            {
+                "title": "번호",
+                "align": "center",
+            },
+            {
+                "title": "결재 타입",
+                "align": "center",
+            },
+            {
+                "title": "문서 종류",
+                "align": "center",
+            },
+            {
+                "title": "제목",
+                "align": "left",
+            },
+            {
+                "title": "작성자",
+                "align": "center",
+            },
+            {
+                "title": "작성일",
+                "align": "center",
+            },
 
 
-    ];
-    for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
-        disDate = dateDis(jsonData[i].created, jsonData[i].modified);
-        setDate = dateFnc(disDate);
-        let userName = storage.user[jsonData[i].writer].userName;
-        let appType = jsonData[i].appType;
-        if (appType == '0') {
-            appType = "검토";
+        ];
+        for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+            disDate = dateDis(jsonData[i].created, jsonData[i].modified);
+            setDate = dateFnc(disDate);
+            let userName = storage.user[jsonData[i].writer].userName;
+            let appType = jsonData[i].appType;
+            if (appType == '0') {
+                appType = "검토";
 
-        } else if (appType == '1') {
-            appType = "합의";
+            } else if (appType == '1') {
+                appType = "합의";
 
-        } else if (appType == '2') {
-            appType = "결재";
-        } else if (appType == '3') {
-            appType = "수신";
-        } else {
-            appType = "참조";
+            } else if (appType == '2') {
+                appType = "결재";
+            } else if (appType == '3') {
+                appType = "수신";
+            } else {
+                appType = "참조";
 
+            }
+            str = [
+
+                {
+                    "setData": jsonData[i].docNo,
+                }, {
+                    "setData": appType,
+                },
+                {
+                    "setData": jsonData[i].form,
+                },
+                {
+                    "setData": jsonData[i].title,
+                },
+                {
+                    "setData": userName,
+                },
+                {
+                    "setData": setDate,
+                },
+
+                // {
+                // 	"setData": "<input type='checkbox' class='thisCheck' data-id='" + jsonData[i].no + "'>",
+                // }
+            ]
+
+            fnc = "detailView(this)";
+            ids.push(jsonData[i].docNo);
+            data.push(str);
         }
-        str = [
 
-            {
-                "setData": jsonData[i].docNo,
-            }, {
-                "setData": appType,
-            },
-            {
-                "setData": jsonData[i].form,
-            },
-            {
-                "setData": jsonData[i].title,
-            },
-            {
-                "setData": userName,
-            },
-            {
-                "setData": setDate,
-            },
+        let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawApproval", result[0]);
+        pageContainer[0].innerHTML = pageNation;
+        createGrid(container, header, data, ids, job, fnc);
 
-            // {
-            // 	"setData": "<input type='checkbox' class='thisCheck' data-id='" + jsonData[i].no + "'>",
-            // }
-        ]
-
-        fnc = "detailView(this)";
-        ids.push(jsonData[i].docNo);
-        data.push(str);
     }
-
-    let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawApproval", result[0]);
-    pageContainer[0].innerHTML = pageNation;
-    createGrid(container, header, data, ids, job, fnc);
-
-}
 
 }// End of drawNoticeApproval()
 
@@ -292,8 +292,46 @@ function getDetailView() {
             }
         }
     }
+    setAppLineData();
+}
+
+function setAppLineData() {
+    let appLine = storage.reportDetailData.appLine;
+    let formId = storage.reportDetailData.formId;
+    let appLineContainer = new Array();
+    appLineContainer = [[], [], [], [], []];
+
+    for (let i = 1; i < appLine.length; i++) {
+        for (let j = 0; j < appLineContainer.length; j++) {
+            if (appLine[i].appType == j) {
+                appLineContainer[j].push(appLine[i]);
+            }
+        }
+    }
+
+    let appTypeTitles = ["_examine", "_agree", "_approval", "_conduct", "_refer"];
+
+    for (let i = 0; i < appLineContainer.length; i++) {
+        for (let j = 0; j < appLineContainer[i].length; j++) {
+            if (appLineContainer[i][j].approved != null) {
+                $("." + formId + appTypeTitles[i] + "_status")[j].value = "승인";
+                $("." + formId + appTypeTitles[i] + "_approved")[j].value = getYmdSlash(appLineContainer[i][j].approved);
+            } else if (appLineContainer[i][j].rejected != null) {
+                $("." + formId + appTypeTitles[i] + "_status")[j].value = "반려";
+                $("." + formId + appTypeTitles[i] + "_approved")[j].value = getYmdSlash(appLineContainer[i][j].rejected);
+            }
+        }
+    }
 
 }
+
+
+
+
+
+
+
+
 
 // 탭 누를때마다의 이벤트 주기 
 function changeTab(obj) {
@@ -417,32 +455,34 @@ function drawCommentLine() {
 //  변경이력 그리는 함수 
 function drawChangeInfo() {
     let target = $("#tabDetail2");
-    // 임시 데이터 ----------------------------------------------------
 
 
-    let changeData = [{
-        "type": "검토",
-        "name": "구민주",
-        "modifyDate": "22-08-18 10:34:46",
-        "modCause": " 거래처 수정 "
-    },
-    {
-        "type": "검토",
-        "name": "이송현",
-        "modifyDate": "22-08-19 10:34:46",
-        "modCause": "수정 완 "
-    }]
 
-    // 임시 데이터 ---------------------------------------------------- 
+    let revisionData = storage.reportDetailData.revisionHistory;
+    let changeData = new Array();
+
+    for (let i = 0; i < revisionData.length; i++) {
+        let data = {
+            "type": revisionData[i].employee,
+            "name": revisionData[i].employee,
+            "modifyDate": revisionData[i].date,
+            "modCause": revisionData[i].content
+        }
+        changeData.push(data);
+    }
+
 
     let detail = "<div class='tapLineB'><div>타입</div><div>이름</div><div>변경일자</div><div>변경내용</div></div>";
     let changeHtml = "";
 
-
-    for (let i = 0; i < changeData.length; i++) {
-        changeHtml += "<div class='tapLineB changeDataLine'>" +
-            "<div class='changeType'>" + changeData[i].type + "</div><div class='changeName' >" + changeData[i].name + "</div><div class='changeDate'>" + changeData[i].modifyDate + "</div><div class='changeCause'>" + changeData[i].modCause + "</div>" +
-            "</div>"
+    if (changeData.length == 0) {
+        changeHtml += "<div>변경 이력이 없습니다</div>";
+    } else {
+        for (let i = 0; i < changeData.length; i++) {
+            changeHtml += "<div class='tapLineB changeDataLine'>" +
+                "<div class='changeType'>" + changeData[i].type + "</div><div class='changeName' >" + changeData[i].name + "</div><div class='changeDate'>" + changeData[i].modifyDate + "</div><div class='changeCause'>" + changeData[i].modCause + "</div>" +
+                "</div>"
+        }
     }
 
     detail += changeHtml;
@@ -485,7 +525,7 @@ function getFileArr() {
 
 
 
-function getYmdSlash() {
-    let d = new Date();
-    return (d.getFullYear() % 100) + "/" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "/" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString());
+function getYmdSlash(date) {
+    let d = new Date(date);
+    return (d.getFullYear() % 100) + "/" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "/" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString()) + "&nbsp" + (d.getHours() > 9 ? d.getHours().toString() : "0" + d.getHours().toString()) + ":" + (d.getMinutes() > 9 ? d.getMinutes().toString() : "0" + d.getMinutes().toString()) + ":" + (d.getSeconds() > 9 ? d.getSeconds().toString() : "0" + d.getSeconds().toString());
 }

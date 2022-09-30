@@ -71,7 +71,7 @@ function drawApproval() {
     let container, result, jsonData, job, header = [], data = [], ids = [], disDate, setDate, str, fnc;
 
     if (storage.dueList === undefined) {
-       alert("결재 예정 문서가 없습니다");
+        alert("결재 예정 문서가 없습니다");
     }
     else {
         jsonData = storage.dueList.due;
@@ -150,7 +150,7 @@ function drawApproval() {
                 "setData": setDate,
             },
 
-          
+
         ]
         fnc = "detailView(this)";
         ids.push(jsonData[i].docNo);
@@ -200,12 +200,12 @@ function getDetailView() {
 
 
 
-	let formId = storage.reportDetailData.formId;
-	let testForm = storage.reportDetailData.doc;
+    let formId = storage.reportDetailData.formId;
+    let testForm = storage.reportDetailData.doc;
 
 
     // "<div class='mainBtnDiv'><button type='button' onclick='showPreAppModal()'>결재하기</button></div>" + 
-    let detailHtml ="<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>"
+    let detailHtml = "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>"
 
 
     $(".listPageDiv").html(detailHtml);
@@ -234,124 +234,172 @@ function getDetailView() {
 
 
 
-	let referArr = new Array();
+    let referArr = new Array();
 
-	for (let i = 0; i < storage.reportDetailData.appLine.length; i++) {
-		if (storage.reportDetailData.appLine[i].appType == '4') {
-			referArr.push(storage.reportDetailData.appLine[i]);
-		}
-	}
-
-
-
-	let referTarget = $(".selectedRefer");
-	let referHtml = "";
-	for (let i = 0; i < referArr.length; i++) {
-		let id = referArr[i].employee;
-		referHtml += "<div class='appendName " + formId + "_refer' data-detail='" + storage.user[id].userNo + "'>" + storage.userRank[storage.user[id].rank][0] + "&nbsp" + storage.user[id].userName + "</div>";
-
-	}
-
-	referTarget.html(referHtml);
+    for (let i = 0; i < storage.reportDetailData.appLine.length; i++) {
+        if (storage.reportDetailData.appLine[i].appType == '4') {
+            referArr.push(storage.reportDetailData.appLine[i]);
+        }
+    }
 
 
 
+    let referTarget = $(".selectedRefer");
+    let referHtml = "";
+    for (let i = 0; i < referArr.length; i++) {
+        let id = referArr[i].employee;
+        referHtml += "<div class='appendName " + formId + "_refer' data-detail='" + storage.user[id].userNo + "'>" + storage.userRank[storage.user[id].rank][0] + "&nbsp" + storage.user[id].userName + "</div>";
 
-	let target = $(".seletedForm")[0];
-	let inputsArr = target.getElementsByTagName("input");
+    }
 
-	for (let i = 0; i < inputsArr.length; i++) {
-		if (inputsArr[i].dataset.detail !== undefined) {
-			inputsArr[i].value = inputsArr[i].dataset.detail;
-		}
-	}
-
-	let textAreaArr = target.getElementsByTagName("textarea")[0];
-	textAreaArr.value = textAreaArr.dataset.detail;
+    referTarget.html(referHtml);
 
 
 
-	// 상세타입 체크하게 하기
-	let rd = $("input[name='" + formId + "_RD']");
-	for (let i = 0; i < rd.length; i++) {
-		if (rd[i].dataset.detail == "on") {
-			$("#" + rd[i].id).prop("checked", true);
-		}
-	}
-	$("input[name='" + formId + "_RD']").prop("disabled", true);
+
+    let target = $(".seletedForm")[0];
+    let inputsArr = target.getElementsByTagName("input");
+
+    for (let i = 0; i < inputsArr.length; i++) {
+        if (inputsArr[i].dataset.detail !== undefined) {
+            inputsArr[i].value = inputsArr[i].dataset.detail;
+        }
+    }
+
+    let textAreaArr = target.getElementsByTagName("textarea")[0];
+    textAreaArr.value = textAreaArr.dataset.detail;
 
 
 
-	// 이름 , 직급 한글로 설정하기 
-	let subTitlesArr = ["_examine", "_approval", "_agree", "_conduct"];
-	for (let i = 0; i < subTitlesArr.length; i++) {
-		if ($("." + formId + subTitlesArr[i]).val() != undefined) {
-			for (let j = 0; j < $("." + formId + subTitlesArr[i]).length; j++) {
-				$("." + formId + subTitlesArr[i])[j].value = storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
-				$("." + formId + subTitlesArr[i] + "_position")[j].value = storage.userRank[$("." + formId + subTitlesArr[i] + "_position")[j].value][0];
-
-			}
-		}
-	}
+    // 상세타입 체크하게 하기
+    let rd = $("input[name='" + formId + "_RD']");
+    for (let i = 0; i < rd.length; i++) {
+        if (rd[i].dataset.detail == "on") {
+            $("#" + rd[i].id).prop("checked", true);
+        }
+    }
+    $("input[name='" + formId + "_RD']").prop("disabled", true);
 
 
-	storage.oriCbContainer = $("input[name='" + formId + "_RD']:checked").attr("id");
-	storage.oriInsertedContent = $(".insertedContent").html();
-	storage.oriInsertedDataList = $(".insertedDataList").html();
-	$.ajax({
-		url: "/api/sopp",
-		type: "get",
-		dataType: "json",
-		success: (result) => {
-			if (result.result == "ok") {
-				let jsondata;
-				jsondata = cipher.decAes(result.data);
-				jsondata = JSON.parse(jsondata);
-				storage.soppList = jsondata;
-				//setSoppList(formId);
-			} else {
-				alert("에러");
-			}
-		},
-	});
+
+    // 이름 , 직급 한글로 설정하기 
+    let subTitlesArr = ["_examine", "_approval", "_agree", "_conduct"];
+    for (let i = 0; i < subTitlesArr.length; i++) {
+        if ($("." + formId + subTitlesArr[i]).val() != undefined) {
+            for (let j = 0; j < $("." + formId + subTitlesArr[i]).length; j++) {
+                $("." + formId + subTitlesArr[i])[j].value = storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
+                $("." + formId + subTitlesArr[i] + "_position")[j].value = storage.userRank[$("." + formId + subTitlesArr[i] + "_position")[j].value][0];
+
+            }
+        }
+    }
 
 
+    storage.oriCbContainer = $("input[name='" + formId + "_RD']:checked").attr("id");
+    storage.oriInsertedContent = $(".insertedContent").html();
+    storage.oriInsertedDataList = $(".insertedDataList").html();
+    $.ajax({
+        url: "/api/sopp",
+        type: "get",
+        dataType: "json",
+        success: (result) => {
+            if (result.result == "ok") {
+                let jsondata;
+                jsondata = cipher.decAes(result.data);
+                jsondata = JSON.parse(jsondata);
+                storage.soppList = jsondata;
+                //setSoppList(formId);
+            } else {
+                alert("에러");
+            }
+        },
+    });
+
+    setAppLineData();
 
 
 }
+
+
+// 결재선정보 체크 
+function setAppLineData() {
+    let appLine = storage.reportDetailData.appLine;
+    let formId = storage.reportDetailData.formId;
+    let appLineContainer = new Array();
+    appLineContainer = [[], [], [], [], []];
+
+    for (let i = 1; i < appLine.length; i++) {
+        for (let j = 0; j < appLineContainer.length; j++) {
+            if (appLine[i].appType == j) {
+                appLineContainer[j].push(appLine[i]);
+            }
+        }
+    }
+
+    let appTypeTitles = ["_examine", "_agree", "_approval", "_conduct", "_refer"];
+
+    for (let i = 0; i < appLineContainer.length; i++) {
+        for (let j = 0; j < appLineContainer[i].length; j++) {
+            if (appLineContainer[i][j].approved != null) {
+                $("." + formId + appTypeTitles[i] + "_status")[j].value = "승인";
+                $("." + formId + appTypeTitles[i] + "_approved")[j].value = getYmdSlash(appLineContainer[i][j].approved);
+            } else if (appLineContainer[i][j].rejected != null) {
+                $("." + formId + appTypeTitles[i] + "_status")[j].value = "반려";
+                $("." + formId + appTypeTitles[i] + "_approved")[j].value = getYmdSlash(appLineContainer[i][j].rejected);
+            }
+        }
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // 탭 누를때마다의 이벤트 주기 
 function changeTab(obj) {
 
     $(obj).css("background-color", "#62a6ad");
-	$(obj).css("color", "#fff");
-	$(obj).css("border-top-left", "14px");
-	//$(obj).css("border-bottom", "2px solid #5298d5");
+    $(obj).css("color", "#fff");
+    $(obj).css("border-top-left", "14px");
+    //$(obj).css("border-bottom", "2px solid #5298d5");
 
-	if (obj.id == 'lineInfo') {
+    if (obj.id == 'lineInfo') {
 
-		$("#changeInfo").css("background-color", "#dddddd");
-		$("#changeInfo").css("color", "#5c5c5c");
-		$("#changeInfo").css("border-bottom-left-radius", "20px");
-		$("#tabDetail2").hide();
-		$("#tabDetail").show();
-		if (storage.newAppLine == undefined) {
-			drawCommentLine();
-		} else {
-			drawNewCommentLine();
-		}
+        $("#changeInfo").css("background-color", "#dddddd");
+        $("#changeInfo").css("color", "#5c5c5c");
+        $("#changeInfo").css("border-bottom-left-radius", "20px");
+        $("#tabDetail2").hide();
+        $("#tabDetail").show();
+        if (storage.newAppLine == undefined) {
+            drawCommentLine();
+        } else {
+            drawNewCommentLine();
+        }
 
 
-	} else if (obj.id = 'changeInfo') {
-		$("#lineInfo").css("background-color", "#dddddd");
-		$("#lineInfo").css("color", "#5c5c5c");
-		$("#lineInfo").css("border-bottom-right-radius", "20px");
-		$("#tabDetail").hide();
-		$("#tabDetail2").show();
+    } else if (obj.id = 'changeInfo') {
+        $("#lineInfo").css("background-color", "#dddddd");
+        $("#lineInfo").css("color", "#5c5c5c");
+        $("#lineInfo").css("border-bottom-right-radius", "20px");
+        $("#tabDetail").hide();
+        $("#tabDetail2").show();
 
-		drawChangeInfo();
+        drawChangeInfo();
 
-	}
+    }
 }
 
 
@@ -441,39 +489,40 @@ function drawCommentLine() {
 //  변경이력 그리는 함수 
 function drawChangeInfo() {
     let target = $("#tabDetail2");
-    // 임시 데이터 ----------------------------------------------------
 
 
-    let changeData = [{
-        "type": "검토",
-        "name": "구민주",
-        "modifyDate": "22-08-18 10:34:46",
-        "modCause": " 거래처 수정 "
-    },
-    {
-        "type": "검토",
-        "name": "이송현",
-        "modifyDate": "22-08-19 10:34:46",
-        "modCause": "수정 완 "
-    }]
 
-    // 임시 데이터 ---------------------------------------------------- 
+    let revisionData = storage.reportDetailData.revisionHistory;
+    let changeData = new Array();
+
+    for (let i = 0; i < revisionData.length; i++) {
+        let data = {
+            "type": revisionData[i].employee,
+            "name": revisionData[i].employee,
+            "modifyDate": revisionData[i].date,
+            "modCause": revisionData[i].content
+        }
+        changeData.push(data);
+    }
+
 
     let detail = "<div class='tapLineB'><div>타입</div><div>이름</div><div>변경일자</div><div>변경내용</div></div>";
     let changeHtml = "";
 
-
-    for (let i = 0; i < changeData.length; i++) {
-        changeHtml += "<div class='tapLineB changeDataLine'>" +
-            "<div class='changeType'>" + changeData[i].type + "</div><div class='changeName' >" + changeData[i].name + "</div><div class='changeDate'>" + changeData[i].modifyDate + "</div><div class='changeCause'>" + changeData[i].modCause + "</div>" +
-            "</div>"
+    if (changeData.length == 0) {
+        changeHtml += "<div>변경 이력이 없습니다</div>";
+    } else {
+        for (let i = 0; i < changeData.length; i++) {
+            changeHtml += "<div class='tapLineB changeDataLine'>" +
+                "<div class='changeType'>" + changeData[i].type + "</div><div class='changeName' >" + changeData[i].name + "</div><div class='changeDate'>" + changeData[i].modifyDate + "</div><div class='changeCause'>" + changeData[i].modCause + "</div>" +
+                "</div>"
+        }
     }
 
     detail += changeHtml;
     target.html(detail);
 
 }
-
 
 
 
@@ -542,32 +591,32 @@ function closeModal(obj) {
 function getYmdSlash() {
     let d = new Date();
     return (d.getFullYear() % 100) + "/" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "/" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString());
-}function getFileArr() {
-	let target = $(".selectedFileDiv");
-	let html = "";
-	let originFileList = [];
-	let no = storage.reportDetailData.no;
-	let fileList = storage.reportDetailData.fileList;
-	if (storage.newFileData == undefined) {
+} function getFileArr() {
+    let target = $(".selectedFileDiv");
+    let html = "";
+    let originFileList = [];
+    let no = storage.reportDetailData.no;
+    let fileList = storage.reportDetailData.fileList;
+    if (storage.newFileData == undefined) {
 
-		for (let i = 0; i < fileList.length; i++) {
-			html += "<div><a href='/api/attached/docapp/" + no + "/" + encodeURI(fileList[i].fileName) + "'>" + fileList[i].fileName + "</a></div>";
-		}
-		target.html(html);
-	} else {
-		for (let i = 0; i < storage.newFileData.length; i++) {
-			for (let j = 0; j < fileList.length; j++) {
-				originFileList.push(fileList[j].fileName);
-			}
-			if (originFileList.includes(storage.newFileData[i])) {
-				html += "<div><a href='/api/attached/docapp/" + no + "/" + encodeURI(storage.newFileData[i]) + "'>" + storage.newFileData[i] + "</a></div>";
-			} else {
-				html += "<div style='color:navy'>" + storage.newFileData[i] + "</div>";
-			}
+        for (let i = 0; i < fileList.length; i++) {
+            html += "<div><a href='/api/attached/docapp/" + no + "/" + encodeURI(fileList[i].fileName) + "'>" + fileList[i].fileName + "</a></div>";
+        }
+        target.html(html);
+    } else {
+        for (let i = 0; i < storage.newFileData.length; i++) {
+            for (let j = 0; j < fileList.length; j++) {
+                originFileList.push(fileList[j].fileName);
+            }
+            if (originFileList.includes(storage.newFileData[i])) {
+                html += "<div><a href='/api/attached/docapp/" + no + "/" + encodeURI(storage.newFileData[i]) + "'>" + storage.newFileData[i] + "</a></div>";
+            } else {
+                html += "<div style='color:navy'>" + storage.newFileData[i] + "</div>";
+            }
 
-		}
-		target.html(html);
-	}
+        }
+        target.html(html);
+    }
 
 
 }

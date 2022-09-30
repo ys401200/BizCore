@@ -651,40 +651,41 @@ function drawNewCommentLine() {
 
 //  변경이력 그리는 함수 ajax로 변경 이력 받아옴 
 function drawChangeInfo() {
-	let target = $("#tabDetail2");
-	// 임시 데이터 ----------------------------------------------------
+    let target = $("#tabDetail2");
 
 
-	let changeData = [{
-		"type": "검토",
-		"name": "구민주",
-		"modifyDate": "22-08-18 10:34:46",
-		"modCause": " 거래처 수정 "
-	},
-	{
-		"type": "검토",
-		"name": "이송현",
-		"modifyDate": "22-08-19 10:34:46",
-		"modCause": "수정 완 "
-	}]
 
-	// 임시 데이터 ---------------------------------------------------- 
+    let revisionData = storage.reportDetailData.revisionHistory;
+    let changeData = new Array();
 
-	let detail = "<div class='tapLineB'><div>타입</div><div>이름</div><div>변경일자</div><div>변경내용</div></div>";
-	let changeHtml = "";
+    for (let i = 0; i < revisionData.length; i++) {
+        let data = {
+            "type": revisionData[i].employee,
+            "name": revisionData[i].employee,
+            "modifyDate": revisionData[i].date,
+            "modCause": revisionData[i].content
+        }
+        changeData.push(data);
+    }
 
 
-	for (let i = 0; i < changeData.length; i++) {
-		changeHtml += "<div class='tapLineB changeDataLine'>" +
-			"<div class='changeType'>" + changeData[i].type + "</div><div class='changeName' >" + changeData[i].name + "</div><div class='changeDate'>" + changeData[i].modifyDate + "</div><div class='changeCause'>" + changeData[i].modCause + "</div>" +
-			"</div>"
-	}
+    let detail = "<div class='tapLineB'><div>타입</div><div>이름</div><div>변경일자</div><div>변경내용</div></div>";
+    let changeHtml = "";
 
-	detail += changeHtml;
-	target.html(detail);
+    if (changeData.length == 0) {
+        changeHtml += "<div>변경 이력이 없습니다</div>";
+    } else {
+        for (let i = 0; i < changeData.length; i++) {
+            changeHtml += "<div class='tapLineB changeDataLine'>" +
+                "<div class='changeType'>" + changeData[i].type + "</div><div class='changeName' >" + changeData[i].name + "</div><div class='changeDate'>" + changeData[i].modifyDate + "</div><div class='changeCause'>" + changeData[i].modCause + "</div>" +
+                "</div>"
+        }
+    }
+
+    detail += changeHtml;
+    target.html(detail);
 
 }
-
 
 // 모달별 버튼  
 function closeModal(obj) {
@@ -730,7 +731,7 @@ function approveBtnEvent() {
 	let formId = storage.reportDetailData.formId;
 	let selectVal = $(":radio[name='type']:checked").val();
 	let comment = $(".approvalComment").val();
-	comment = comment.replaceAll("\n","<br />");
+	comment = comment.replaceAll("\n", "<br />");
 	$(".modal-wrap").hide();
 	let type;
 	let appLine = storage.reportDetailData.appLine;
@@ -779,6 +780,13 @@ function approveBtnEvent() {
 	}
 
 
+	if (storage.reportDetailData.sopp == soppResult) {
+		soppResult = null;
+	}
+	if (storage.reportDetailData.customer == cusResult) {
+		cusResult = null;
+	}
+
 	selectVal === "approve" ? type = 1 : type = 0;
 	storage.newFileData == undefined ? storage.newFileData = null : storage.newFileData = storage.newFileData;
 
@@ -810,7 +818,7 @@ function approveBtnEvent() {
 		success: (data) => {
 			if (data.result === "ok") {
 				alert("결재 완료");
-				location.href = "/gw/myapp";
+				//location.href = "/gw/myapp";
 			} else {
 				alert("결재 실패");
 			}
