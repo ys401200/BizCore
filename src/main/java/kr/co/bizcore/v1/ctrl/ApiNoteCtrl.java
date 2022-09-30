@@ -47,7 +47,7 @@ public class ApiNoteCtrl extends Ctrl{
         }else{
             data = notes.getNewCount(compId, userNo);
             data = data == null ? null : encAes(data, aesKey, aesIv);
-            result = "{\"result\":\"ok\",\"data\":" + (data == null ? "null" : "\"" + data + "\"") + "\"}";
+            result = "{\"result\":\"ok\",\"data\":" + (data == null ? "null" : "\"" + data + "\"") + "}";
         }
 
         return result;
@@ -67,7 +67,7 @@ public class ApiNoteCtrl extends Ctrl{
         compId = (String)session.getAttribute("compId");
         if(compId == null)  compId = (String)request.getAttribute("compId");
         msg = getMsg((String)session.getAttribute("lang"));
-
+        
         if(compId == null){
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
         }else if(aesKey == null || aesIv == null){
@@ -95,7 +95,7 @@ public class ApiNoteCtrl extends Ctrl{
         compId = (String)session.getAttribute("compId");
         if(compId == null)  compId = (String)request.getAttribute("compId");
         msg = getMsg((String)session.getAttribute("lang"));
-
+        
         if(compId == null){
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
         }else if(aesKey == null || aesIv == null){
