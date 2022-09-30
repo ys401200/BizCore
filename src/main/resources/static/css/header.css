@@ -717,12 +717,14 @@ input[name="tabItem"] {
 
 #header #mainInfo > a > #myInfoMessageImg{
 	width:28px;
+	padding-bottom: 10px;
 }
 
 #header #mainInfo > #myInfoImage{
 	width: 35px;
 	padding-right: 4px;
 	padding-left: 100px;
+	padding-bottom: 5px;
 }
 
 #header #mainInfo a > span{
@@ -733,6 +735,7 @@ input[name="tabItem"] {
 
 #header #mainInfo a > #myInfoImageLogout{
 	padding-left: 16px;
+	padding-bottom: 5px;
 }
 
 #header #mainInfo a{
@@ -833,22 +836,32 @@ input[name="tabItem"] {
     background-color: #29cea6;
 	color: #ffffff;
 	width: 60%;
-    margin: 0 auto 10px;
+	margin-left: 10px;
 	border-radius: 5px;
     border: 1px solid #999;
 	padding-left: 5px;
 	height: 50px;
-	margin-bottom: 30px;
 }
 
 .noteContainer .noteMsgContent .noteChat > .chatYou::after{
 	content: '';
     position: absolute;
-    border-top: 10px solid #29cea6;
-    border-right: 5px solid transparent;
-    border-left: 5px solid transparent;
-    bottom: -9px;
-    left: 5px;
+    border-top: 10px solid transparent;
+    border-right: 15px solid #29cea6;
+    border-bottom: 10px solid transparent;
+	left: -15px;
+}
+
+.noteContainer .noteMsgContent .noteChat >.chatYouDate{
+	display: flex;
+    align-items: center;
+    justify-content: left;
+    width: 60%;
+	font-size: 0.8rem;
+    font-weight: 600;
+	margin-left: 15px;
+	margin-bottom: 15px;
+
 }
 
 .noteContainer .noteMsgContent .noteChat > .chatMe{
@@ -861,22 +874,32 @@ input[name="tabItem"] {
     background: #182f81;
 	color: #ffffff;
 	width: 60%;
-    margin: 0 auto 10px;
+	margin-right: 10px;
 	border-radius: 5px;
 	border: 1px solid #999;
 	padding-right: 5px;
 	height: 50px;
-	margin-bottom: 30px;
 }
 
 .noteContainer .noteMsgContent .noteChat > .chatMe::after{
 	content: '';
     position: absolute;
-    border-top: 10px solid #182f81;
-    border-right: 5px solid transparent;
-    border-left: 5px solid transparent;
-    bottom: -9px;
-    right: 5px;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 15px solid #182f81;
+	right: -15px;
+}
+
+.noteContainer .noteMsgContent .noteChat >.chatMeDate{
+	display: flex;
+    align-items: center;
+    justify-content: right;
+	float: right;
+    width: 60%;
+	font-size: 0.8rem;
+    font-weight: 600;
+	margin-right: 15px;
+	margin-bottom: 15px;
 }
 
 .noteContainer .noteMsgContent .noteText{
@@ -893,4 +916,43 @@ input[name="tabItem"] {
 	height: 100%;
 	font-size: 1.2rem;
 	font-weight: 600;
+	resize: none;
+	border-radius: 10px;
+}
+
+.myNoteList{
+	border: 1px solid #182f81;
+	overflow-y: auto;
+	position: absolute;
+    top: 55px;
+    right: 250px;
+    background-color: #ffffff;
+	display: none;
+}
+
+.myNoteList::after{
+	content: '';
+    position: fixed;
+    border-right: 10px solid transparent;
+    border-left: 10px solid transparent;
+    border-bottom: 15px solid #182f81;
+	top: 40px;
+    right: 268px;
+}
+
+.myNoteList .myNoteListItem{
+	border-bottom: 1px solid #ffffff;
+	padding: 10px;
+	background-color: #182f81;
+	color: #ffffff;
+}
+
+.myNoteList .myNoteListItem:hover{
+	background-color: #ffffff;
+	color: #182f81;
+	cursor: pointer;
+}
+
+.myNoteList .myNoteListItem > p{
+	margin: 0;
 }
