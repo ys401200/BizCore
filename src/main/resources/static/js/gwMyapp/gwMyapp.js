@@ -120,7 +120,7 @@ function drawNoticeApproval() {
 		]
 
 		fnc = "waitDetailView(this)";
-		ids.push(jsonData[i].no);
+		ids.push(jsonData[i].docNo);
 		data.push(str);
 	}
 
@@ -140,17 +140,11 @@ function waitDetailView(obj) {// 선택한 그리드의 글 번호 받아오기
 
 
 	let no = obj.dataset.id;
-	let docNo;
-
-	let searchList = storage.approvedList;
-
-	for (let i = 0; i < searchList.length; i++) {
-		if (searchList[i].no == no) { docNo = searchList[i].docNo }
-	}
+	
 
 
 	$.ajax({
-		"url": apiServer + "/api/gw/app/doc/" + docNo,
+		"url": apiServer + "/api/gw/app/doc/" + no,
 		"method": "get",
 		"dataType": "json",
 		"cache": false,

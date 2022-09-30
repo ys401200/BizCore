@@ -106,7 +106,7 @@ function drawMyDraft() {
         disDate = dateDis(jsonData[i].created, jsonData[i].modified);
         setDate = dateFnc(disDate);
         let read = jsonData[i].read;
-      let status ; 
+        let status;
         if (read == null) {
             read = "N";
         } else {
@@ -315,6 +315,8 @@ function getDetailView() {
     storage.oriCbContainer = $("input[name='" + formId + "_RD']:checked").attr("id");
     storage.oriInsertedContent = $(".insertedContent").html();
     storage.oriInsertedDataList = $(".insertedDataList").html();
+
+    //영업기회 리스트 가져오기 
     $.ajax({
         url: "/api/sopp",
         type: "get",
@@ -331,8 +333,41 @@ function getDetailView() {
             }
         },
     });
+    setAppLineData();
+}
+
+
+function setAppLineData() {
+    let appLine = storage.reportDetailData.appLine;
+    let formId = storage.reportDetailData.formId;
+    let appLineContainer = new Array();
+    appLineContainer = [[], [], [], [], []];
+
+    for (let i = 1; i < appLine.length; i++) {
+        for (let j = 0; j < appLineContainer.length; j++) {
+            if (appLine[i].appType == j) {
+                appLineContainer[j].push(appLine[i]);
+            }
+        }
+    }
+
+    let appTypeTitles = ["_examine", "_agree", "_approval", "_conduct", "_refer"];
+
+    for (let i = 0; i < appLineContainer.length; i++) {
+        for (let j = 0; j < appLineContainer[i].length; j++) {
+            if (appLineContainer[i][j].approved != null) {
+                $("." + formId + appTypeTitles[i] + "_status")[j].value = "승인";
+                $("." + formId + appTypeTitles[i] + "_approved")[j].value = getYmdSlash(appLineContainer[i][j].approved);
+            } else if (appLineContainer[i][j].rejected != null) {
+                $("." + formId + appTypeTitles[i] + "_status")[j].value = "반려";
+                $("." + formId + appTypeTitles[i] + "_approved")[j].value = getYmdSlash(appLineContainer[i][j].rejected);
+            }
+        }
+    }
 
 }
+
+
 
 // 탭 누를때마다의 이벤트 주기 
 function changeTab(obj) {

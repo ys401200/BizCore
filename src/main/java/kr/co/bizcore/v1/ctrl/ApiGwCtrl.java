@@ -27,13 +27,13 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/api/gw")
 @Slf4j
-public class ApiGwCtrl extends Ctrl{
+public class ApiGwCtrl extends Ctrl {
 
     private static final Logger logger = LoggerFactory.getLogger(ApiGwCtrl.class);
 
     // 결재문서 양식의 리스트를 전달
     @GetMapping("/form")
-    public String apiGwFormGet(HttpServletRequest request){
+    public String apiGwFormGet(HttpServletRequest request) {
         String result = null, data = null, aesKey = null, aesIv = null;
         HttpSession session = null;
         String forms = null, lang = null;
@@ -43,12 +43,13 @@ public class ApiGwCtrl extends Ctrl{
         session = request.getSession();
         aesKey = (String) session.getAttribute("aesKey");
         aesIv = (String) session.getAttribute("aesIv");
-        lang = (String)session.getAttribute("lang");
+        lang = (String) session.getAttribute("lang");
         msg = getMsg(lang);
 
         forms = gwService.getForms();
-        if (forms == null)  result = "{\"result\":\"failure\",\"msg\":\"" + msg.formNotFound + "\"}";
-        else{
+        if (forms == null)
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.formNotFound + "\"}";
+        else {
             data = encAes(forms, aesKey, aesIv);
             result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
         }
@@ -58,7 +59,7 @@ public class ApiGwCtrl extends Ctrl{
 
     // 해당 ID를 가진 결재문서양식을 전달
     @GetMapping("/form/{id}")
-    public String apiGwFormGet(HttpServletRequest request, @PathVariable String formId){
+    public String apiGwFormGet(HttpServletRequest request, @PathVariable String formId) {
         String result = null, data = null, aesKey = null, aesIv = null;
         HttpSession session = null;
         Msg msg = null;
@@ -67,12 +68,13 @@ public class ApiGwCtrl extends Ctrl{
         session = request.getSession();
         aesKey = (String) session.getAttribute("aesKey");
         aesIv = (String) session.getAttribute("aesIv");
-        lang = (String)session.getAttribute("lang");
+        lang = (String) session.getAttribute("lang");
         msg = getMsg(lang);
 
         form = gwService.getForm(formId);
-        if (form == null)  result = "{\"result\":\"failure\",\"msg\":\"" + msg.formNotFound + "\"}";
-        else{
+        if (form == null)
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.formNotFound + "\"}";
+        else {
             data = encAes(form, aesKey, aesIv);
             result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
         }
@@ -82,141 +84,149 @@ public class ApiGwCtrl extends Ctrl{
 
     // 결재 대기 목록을 전달
     @GetMapping("/app/wait")
-    public String apiGwAppWaitGet(HttpServletRequest request){
+    public String apiGwAppWaitGet(HttpServletRequest request) {
         String result = null, compId = null, userNo = null, data = null, aesIv = null, aesKey = null, lang = null;
         Msg msg = null;
         HttpSession session = null;
 
         session = request.getSession();
-        compId = (String)session.getAttribute("compId");
-        aesKey = (String)session.getAttribute("aesKey");
-        aesIv = (String)session.getAttribute("aesIv");
-        userNo = (String)session.getAttribute("userNo");
-        lang = (String)session.getAttribute("lang");
+        compId = (String) session.getAttribute("compId");
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        userNo = (String) session.getAttribute("userNo");
+        lang = (String) session.getAttribute("lang");
         msg = getMsg(lang);
-        if(compId == null)  compId = (String)request.getAttribute("compId");
+        if (compId == null)
+            compId = (String) request.getAttribute("compId");
 
-        if(compId == null){
+        if (compId == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
-        }else if(aesKey == null || aesIv == null){
+        } else if (aesKey == null || aesIv == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
-        }else{
+        } else {
             data = gwService.getWaitAndDueDocList(compId, userNo);
-            if(data == null)    result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
-            else{
+            if (data == null)
+                result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
+            else {
                 data = encAes(data, aesKey, aesIv);
                 result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
             }
-            
+
         }
         return result;
     } // End of apiGwAppWaitGet()
 
     // 내 결재 문서 목록을 전달
     @GetMapping("/app/mydraft")
-    public String apiGwAppMydraftGet(HttpServletRequest request){
+    public String apiGwAppMydraftGet(HttpServletRequest request) {
         String result = null, compId = null, userNo = null, data = null, aesIv = null, aesKey = null, lang = null;
         HttpSession session = null;
         Msg msg = null;
 
         session = request.getSession();
-        compId = (String)session.getAttribute("compId");
-        aesKey = (String)session.getAttribute("aesKey");
-        aesIv = (String)session.getAttribute("aesIv");
-        userNo = (String)session.getAttribute("userNo");
-        lang = (String)session.getAttribute("lang");
+        compId = (String) session.getAttribute("compId");
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        userNo = (String) session.getAttribute("userNo");
+        lang = (String) session.getAttribute("lang");
         msg = getMsg(lang);
-        if(compId == null)  compId = (String)request.getAttribute("compId");
+        if (compId == null)
+            compId = (String) request.getAttribute("compId");
 
-        if(compId == null){
+        if (compId == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
-        }else if(aesKey == null || aesIv == null){
+        } else if (aesKey == null || aesIv == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
-        }else{
+        } else {
             data = gwService.getProceedingDocList(compId, userNo);
-            if(data == null)    result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
-            else{
+            if (data == null)
+                result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
+            else {
                 data = encAes(data, aesKey, aesIv);
                 result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
             }
-            
+
         }
         return result;
     } // End of apiGwAppMydraftGet()
 
     // 결재 문서를 전달
     @GetMapping("/app/doc/{docNo}")
-    public String apiGwAppDocNoGet(HttpServletRequest request, @PathVariable("docNo") String docNo){
-        String result = null, compId = null, userNo = null, data = null, aesIv = null, aesKey = null, lang = null, dept = null;
+    public String apiGwAppDocNoGet(HttpServletRequest request, @PathVariable("docNo") String docNo) {
+        String result = null, compId = null, userNo = null, data = null, aesIv = null, aesKey = null, lang = null,
+                dept = null;
         Msg msg = null;
         HttpSession session = null;
 
         session = request.getSession();
-        compId = (String)session.getAttribute("compId");
-        aesKey = (String)session.getAttribute("aesKey");
-        aesIv = (String)session.getAttribute("aesIv");
-        userNo = (String)session.getAttribute("userNo");
-        lang = (String)session.getAttribute("lang");
+        compId = (String) session.getAttribute("compId");
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        userNo = (String) session.getAttribute("userNo");
+        lang = (String) session.getAttribute("lang");
         msg = getMsg(lang);
-        if(compId == null)  compId = (String)request.getAttribute("compId");
+        if (compId == null)
+            compId = (String) request.getAttribute("compId");
 
-        if(compId == null){
+        if (compId == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
-        }else if(aesKey == null || aesIv == null){
+        } else if (aesKey == null || aesIv == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
-        }else{
+        } else {
             data = gwService.getAppDocAndDetailInfo(compId, docNo, dept, userNo, aesKey, aesIv);
-            if(data == null){
+            if (data == null) {
                 result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
-            }else if(data.equals("notFound")){
+            } else if (data.equals("notFound")) {
                 result = "{\"result\":\"failure\",\"msg\":\"" + msg.docNotFound + "\"}";
-            }else if(data.equals("errorInAppLine")){
+            } else if (data.equals("errorInAppLine")) {
                 result = "{\"result\":\"failure\",\"msg\":\"" + msg.errorDocAppLine + "\"}";
-            }else if(data.equals("appDocContentIsEmpty")){
+            } else if (data.equals("appDocContentIsEmpty")) {
                 result = "{\"result\":\"failure\",\"msg\":\"" + msg.errorDocBody + "\"}";
-            }else if(data.equals("permissionDenied")){
-                result = "{\"result\":\"failure\",\"msg\":\"" + msg.permissionDenied+ "\"}";
-            }else{
+            } else if (data.equals("permissionDenied")) {
+                result = "{\"result\":\"failure\",\"msg\":\"" + msg.permissionDenied + "\"}";
+            } else {
                 data = encAes(data, aesKey, aesIv);
                 result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
             }
-            
+
         }
         return result;
     } // End of apiGwAppDocNoGet()
 
     // 결재 문서를 회수 처리
     @DeleteMapping("/app/doc/{docNo}")
-    public String apiGwAppDocNoDelete(HttpServletRequest request, @PathVariable("docNo") String docNo){
+    public String apiGwAppDocNoDelete(HttpServletRequest request, @PathVariable("docNo") String docNo) {
         String result = null, compId = null, userNo = null, lang = null;
         Msg msg = null;
         HttpSession session = null;
 
         session = request.getSession();
-        compId = (String)session.getAttribute("compId");
-        userNo = (String)session.getAttribute("userNo");
-        lang = (String)session.getAttribute("lang");
+        compId = (String) session.getAttribute("compId");
+        userNo = (String) session.getAttribute("userNo");
+        lang = (String) session.getAttribute("lang");
         msg = getMsg(lang);
-        if(compId == null)  compId = (String)request.getAttribute("compId");
+        if (compId == null)
+            compId = (String) request.getAttribute("compId");
 
-        if(compId == null){
+        if (compId == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
-        }else{
-            if(gwService.retrievedDoc(compId, userNo, docNo) > 0){
+        } else {
+            if (gwService.retrievedDoc(compId, userNo, docNo) > 0) {
                 result = "{\"result\":\"ok\"}";
-            }else{
+            } else {
                 result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
             }
-            
+
         }
         return result;
     } // End of apiGwAppDocNoGet()
 
     // 결재 문서 신규 등록
     @PostMapping("/app/doc")
-    public String apiGwAppDocPost(HttpServletRequest request, @RequestBody String requestBody){
+    public String apiGwAppDocPost(HttpServletRequest request, @RequestBody String requestBody) {
         String result = null, aesKey = null, aesIv = null, compId = null, userNo = null;
-        String title = null, sopp = null, customer = null, readable = null, appDoc = null, dept = null, formId = null, temp = null;
+        String title = null, sopp = null, customer = null, readable = null, appDoc = null, dept = null, formId = null,
+                temp = null;
         String[] files = null, ts = null;
         String[][] appLine = null;
         HttpSession session = null;
@@ -231,68 +241,72 @@ public class ApiGwCtrl extends Ctrl{
         aesKey = (String) session.getAttribute("aesKey");
         aesIv = (String) session.getAttribute("aesIv");
         userNo = (String) session.getAttribute("userNo");
-        lang = (String)session.getAttribute("lang");
+        lang = (String) session.getAttribute("lang");
         msg = getMsg(lang);
         compId = (String) session.getAttribute("compId");
-        attached = (HashMap<String, String>)session.getAttribute("attached");
-        if(compId == null)
+        attached = (HashMap<String, String>) session.getAttribute("attached");
+        if (compId == null)
             compId = (String) request.getAttribute("compId");
 
-        if(compId == null) {
+        if (compId == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
-        }else if(aesKey == null || aesIv == null){
+        } else if (aesKey == null || aesIv == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
-        }else
+        } else
             data = decAes(requestBody, aesKey, aesIv);
-            if(data == null) {
-                result = "{\"result\":\"failure\",\"msg\":\"" + msg.dataIsWornFormat + "\"}";
-            }else {
-                json = new JSONObject(data);
-                dept = json.getString("dept");
-                title = json.getString("title");
-                temp = json.isNull("temp") ? null : json.getString("temp");
-                sopp = json.getString("sopp");
-                readable = json.getString("readable");
-                formId = json.getString("formId");
-                customer = json.getString("customer");
-                appDoc = json.getString("appDoc");
+        if (data == null) {
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.dataIsWornFormat + "\"}";
+        } else {
+            json = new JSONObject(data);
+            dept = json.getString("dept");
+            title = json.getString("title");
+            temp = json.isNull("temp") ? null : json.getString("temp");
+            sopp = json.getString("sopp");
+            readable = json.getString("readable");
+            formId = json.getString("formId");
+            customer = json.getString("customer");
+            appDoc = json.getString("appDoc");
 
-                // 첨부파일명에 대한 배열 전환 처리
-                jarr = json.getJSONArray("attached");
-                if(jarr != null && jarr.length() > 0){
-                    files = new String[jarr.length()];
-                    for(x = 0 ; x < jarr.length() ; x++)    files[x] = jarr.getString(x);
-                }
-
-                // 결재선에 대한 2차원 배열 전환 처리
-                jarr = json.getJSONArray("appLine");
-                if(jarr != null && jarr.length() > 0){
-                    appLine = new String[jarr.length()][];
-                    for(x = 0 ; x < jarr.length() ; x++){
-                        tj = jarr.getJSONArray(x);
-                        ts = new String[2];
-                        ts[0] = tj.getInt(0)+"";
-                        ts[1] = tj.getInt(1)+"";
-                        appLine[x] = ts;
-                    }
-                }
-
-                // 임시저장 문서로 기안한 경우 이를 삭제처리함
-                if(temp != null)    gwService.deleteTempDoc(compId, userNo, temp);
-
-                // 결재문서 처리 서비스로직으로 데이터 전달
-                docNo = gwService.addAppDoc(compId, dept, title, userNo, sopp, customer, formId, readable, appDoc, files, attached, appLine);
-
-                result = "{\"result\":\"ok\",\"data\":\"" + docNo + "\"}";
+            // 첨부파일명에 대한 배열 전환 처리
+            jarr = json.getJSONArray("attached");
+            if (jarr != null && jarr.length() > 0) {
+                files = new String[jarr.length()];
+                for (x = 0; x < jarr.length(); x++)
+                    files[x] = jarr.getString(x);
             }
+
+            // 결재선에 대한 2차원 배열 전환 처리
+            jarr = json.getJSONArray("appLine");
+            if (jarr != null && jarr.length() > 0) {
+                appLine = new String[jarr.length()][];
+                for (x = 0; x < jarr.length(); x++) {
+                    tj = jarr.getJSONArray(x);
+                    ts = new String[2];
+                    ts[0] = tj.getInt(0) + "";
+                    ts[1] = tj.getInt(1) + "";
+                    appLine[x] = ts;
+                }
+            }
+
+            // 임시저장 문서로 기안한 경우 이를 삭제처리함
+            if (temp != null)
+                gwService.deleteTempDoc(compId, userNo, temp);
+
+            // 결재문서 처리 서비스로직으로 데이터 전달
+            docNo = gwService.addAppDoc(compId, dept, title, userNo, sopp, customer, formId, readable, appDoc, files,
+                    attached, appLine);
+
+            result = "{\"result\":\"ok\",\"data\":\"" + docNo + "\"}";
+        }
         return result;
     } // End of apiGwAppDocNoPost()
 
     // 결재 문서 임시저장
     @PostMapping("/app/temp")
-    public String apiGwAppTempPost(HttpServletRequest request, @RequestBody String requestBody){
+    public String apiGwAppTempPost(HttpServletRequest request, @RequestBody String requestBody) {
         String result = null, aesKey = null, aesIv = null, compId = null, userNo = null;
-        String title = null, sopp = null, customer = null, readable = null, appDoc = null, dept = null, formId = null, appLine = null, docNo = null, temp = null;
+        String title = null, sopp = null, customer = null, readable = null, appDoc = null, dept = null, formId = null,
+                appLine = null, docNo = null, temp = null;
         String[] files = null, ts = null;
         HttpSession session = null;
         HashMap<String, String> attached = null;
@@ -306,46 +320,47 @@ public class ApiGwCtrl extends Ctrl{
         aesKey = (String) session.getAttribute("aesKey");
         aesIv = (String) session.getAttribute("aesIv");
         userNo = (String) session.getAttribute("userNo");
-        lang = (String)session.getAttribute("lang");
+        lang = (String) session.getAttribute("lang");
         msg = getMsg(lang);
         compId = (String) session.getAttribute("compId");
-        if(compId == null)
+        if (compId == null)
             compId = (String) request.getAttribute("compId");
 
-        if(compId == null) {
+        if (compId == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
-        }else if(aesKey == null || aesIv == null){
+        } else if (aesKey == null || aesIv == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
-        }else
+        } else
             data = decAes(requestBody, aesKey, aesIv);
-            if(data == null) {
-                result = "{\"result\":\"failure\",\"msg\":\"" + msg.dataIsWornFormat + "\"}";
-            }else {
-                json = new JSONObject(data);
-                title = json.getString("title");
-                temp =  json.isNull("temp") ? null : json.getString("temp");
-                sopp = json.getString("sopp");
-                readable = json.getString("readable");
-                formId = json.getString("formId");
-                customer = json.getString("customer");
-                appDoc = json.getString("appDoc");
-                temp = json.isNull("temp") ? null : json.getString("temp");
-                if(!json.isNull("appLine")){
-                    jarr = json.getJSONArray("appLine");
-                    appLine = jarr.toString();
-                }
-
-                // 결재문서 처리 서비스로직으로 데이터 전달
-                docNo = gwService.addAppTemp(compId, title, userNo, sopp, customer, formId, readable, appDoc, appLine, temp);
-
-                result = "{\"result\":\"ok\",\"data\":\"" + docNo + "\"}";
+        if (data == null) {
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.dataIsWornFormat + "\"}";
+        } else {
+            json = new JSONObject(data);
+            title = json.getString("title");
+            temp = json.isNull("temp") ? null : json.getString("temp");
+            sopp = json.getString("sopp");
+            readable = json.getString("readable");
+            formId = json.getString("formId");
+            customer = json.getString("customer");
+            appDoc = json.getString("appDoc");
+            temp = json.isNull("temp") ? null : json.getString("temp");
+            if (!json.isNull("appLine")) {
+                jarr = json.getJSONArray("appLine");
+                appLine = jarr.toString();
             }
+
+            // 결재문서 처리 서비스로직으로 데이터 전달
+            docNo = gwService.addAppTemp(compId, title, userNo, sopp, customer, formId, readable, appDoc, appLine,
+                    temp);
+
+            result = "{\"result\":\"ok\",\"data\":\"" + docNo + "\"}";
+        }
         return result;
     } // End of apiGwAppDocNoPost()
 
     // 임시저장 문서 삭제
     @DeleteMapping("/app/temp/{docNo}")
-    public String apiGwAppTempDelete(HttpServletRequest request, @PathVariable String docNo){
+    public String apiGwAppTempDelete(HttpServletRequest request, @PathVariable String docNo) {
         String result = null, aesKey = null, aesIv = null, compId = null, userNo = null;
         HttpSession session = null;
         String lang = null, data = null;
@@ -353,92 +368,100 @@ public class ApiGwCtrl extends Ctrl{
 
         session = request.getSession();
         userNo = (String) session.getAttribute("userNo");
-        lang = (String)session.getAttribute("lang");
+        lang = (String) session.getAttribute("lang");
         msg = getMsg(lang);
         compId = (String) session.getAttribute("compId");
-        if(compId == null)
+        if (compId == null)
             compId = (String) request.getAttribute("compId");
 
-        if(compId == null) {
+        if (compId == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
-        }else{
+        } else {
             data = gwService.deleteTempDoc(compId, userNo, docNo);
-            if(data != null)    result = "{\"result\":\"ok\"}";
-            else    result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
+            if (data != null)
+                result = "{\"result\":\"ok\"}";
+            else
+                result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
         }
-            
+
         return result;
     } // End of apiGwAppDocNoPost()
 
     // 임시 저장 문서 목록을 전달
     @GetMapping("/app/temp")
-    public String apiGwAppTempGet(HttpServletRequest request){
+    public String apiGwAppTempGet(HttpServletRequest request) {
         String result = null, compId = null, userNo = null, data = null, aesIv = null, aesKey = null, lang = null;
         Msg msg = null;
         HttpSession session = null;
 
         session = request.getSession();
-        compId = (String)session.getAttribute("compId");
-        aesKey = (String)session.getAttribute("aesKey");
-        aesIv = (String)session.getAttribute("aesIv");
-        userNo = (String)session.getAttribute("userNo");
-        lang = (String)session.getAttribute("lang");
+        compId = (String) session.getAttribute("compId");
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        userNo = (String) session.getAttribute("userNo");
+        lang = (String) session.getAttribute("lang");
         msg = getMsg(lang);
-        if(compId == null)  compId = (String)request.getAttribute("compId");
+        if (compId == null)
+            compId = (String) request.getAttribute("compId");
 
-        if(compId == null){
+        if (compId == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
-        }else if(aesKey == null || aesIv == null){
+        } else if (aesKey == null || aesIv == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
-        }else{
+        } else {
             data = gwService.getTempDocList(compId, userNo);
-            if(data == null)    result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
-            else{
+            if (data == null)
+                result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
+            else {
                 data = encAes(data, aesKey, aesIv);
                 result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
             }
-            
+
         }
         return result;
     } // End of apiGwAppWaitGet()
 
     // 임시 저장 문서를 전달
     @GetMapping("/app/temp/{docNo}")
-    public String apiGwAppTempDocnoGet(HttpServletRequest request, @PathVariable("docNo") String docNo){
+    public String apiGwAppTempDocnoGet(HttpServletRequest request, @PathVariable("docNo") String docNo) {
         String result = null, compId = null, userNo = null, data = null, aesIv = null, aesKey = null, lang = null;
         Msg msg = null;
         HttpSession session = null;
 
         session = request.getSession();
-        compId = (String)session.getAttribute("compId");
-        aesKey = (String)session.getAttribute("aesKey");
-        aesIv = (String)session.getAttribute("aesIv");
-        userNo = (String)session.getAttribute("userNo");
-        lang = (String)session.getAttribute("lang");
+        compId = (String) session.getAttribute("compId");
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        userNo = (String) session.getAttribute("userNo");
+        lang = (String) session.getAttribute("lang");
         msg = getMsg(lang);
-        if(compId == null)  compId = (String)request.getAttribute("compId");
+        if (compId == null)
+            compId = (String) request.getAttribute("compId");
 
-        if(compId == null){
+        if (compId == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
-        }else if(aesKey == null || aesIv == null){
+        } else if (aesKey == null || aesIv == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
-        }else{
+        } else {
             data = gwService.getTempDoc(compId, userNo, docNo, aesKey, aesIv);
-            if(data == null)    result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
-            else{
+            if (data == null)
+                result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
+            else {
                 data = encAes(data, aesKey, aesIv);
                 result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
             }
-            
+
         }
         return result;
     } // End of apiGwAppWaitGet()
 
-
     // 결재 처리 요청
     @PostMapping("/app/proceed/{docNo}/{ordered:\\d+}/{ask:\\d?}")
-    public String apiGwAppProceedPost(HttpServletRequest request, HttpServletResponse response, @RequestBody String requestBody, @PathVariable("docNo") String docNo, @PathVariable("ordered") int ordered, @PathVariable("ask") int ask){
-        String result = null, compId = null, userNo = null, data = null, aesIv = null, aesKey = null, lang = null, comment = null, doc = null, appData = null, customer = null, sopp = null;
+    public String apiGwAppProceedPost(HttpServletRequest request, HttpServletResponse response,
+            @RequestBody String requestBody, @PathVariable("docNo") String docNo, @PathVariable("ordered") int ordered,
+            @PathVariable("ask") int ask) {
+        String result = null, compId = null, userNo = null, data = null, aesIv = null, aesKey = null, lang = null,
+                comment = null, doc = null, appData = null, customer = null, sopp = null;
         String[] files = null, ts = null;
         String[][] appLine = null;
         HttpSession session = null;
@@ -450,21 +473,22 @@ public class ApiGwCtrl extends Ctrl{
         int x = 0;
 
         session = request.getSession();
-        aesKey = (String)session.getAttribute("aesKey");
-        aesIv = (String)session.getAttribute("aesIv");
-        userNo = (String)session.getAttribute("userNo");
-        lang = (String)session.getAttribute("lang");
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        userNo = (String) session.getAttribute("userNo");
+        lang = (String) session.getAttribute("lang");
         msg = getMsg(lang);
-        compId = (String)session.getAttribute("compId");
-        if(compId == null)  compId = (String)request.getAttribute("compId");
+        compId = (String) session.getAttribute("compId");
+        if (compId == null)
+            compId = (String) request.getAttribute("compId");
 
-        if(compId == null){
+        if (compId == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
-        }else if(aesKey == null || aesIv == null){
+        } else if (aesKey == null || aesIv == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
-        }else if(ask > 1){
+        } else if (ask > 1) {
             response.setStatus(404);
-        }else{
+        } else {
             data = decAes(requestBody, aesKey, aesIv);
             json = new JSONObject(data);
 
@@ -472,13 +496,13 @@ public class ApiGwCtrl extends Ctrl{
             comment = json.isNull("comment") ? null : json.getString("comment");
 
             // 첨부파일에 대한 처리
-            if(!json.isNull("files")){
+            if (!json.isNull("files")) {
                 jarr = json.getJSONArray("files");
                 files = new String[jarr.length()];
-                for(x = 0 ; x < jarr.length() ; x++){
+                for (x = 0; x < jarr.length(); x++) {
                     files[x] = jarr.getString(x);
                 }
-                attached = (HashMap<String, String>)session.getAttribute("attached");
+                attached = (HashMap<String, String>) session.getAttribute("attached");
             }
 
             // 결재문서 본문에 대한 처리
@@ -486,139 +510,144 @@ public class ApiGwCtrl extends Ctrl{
 
             // 결재문서 부가데이터에 대한 처리
             sopp = json.isNull("sopp") ? null : json.getString("sopp") + "";
-            customer = json.isNull("customer") ? null : json.getInt("customer") + "";
-            appData = "{\"sopp\":" + ( sopp == null ? null : "\"" + sopp + "\"") + ",\"customer\":" + ( customer == null ? null : "\"" + customer + "\"") + "}";
+            customer = json.isNull("customer") ? null : json.getString("customer") + "";
+            appData = "{\"sopp\":" + (sopp == null ? null : "\"" + sopp + "\"") + ",\"customer\":"
+                    + (customer == null ? null : "\"" + customer + "\"") + "}";
 
             // 결재선에 대한 처리
-            if(!json.isNull("appLine")){
+            if (!json.isNull("appLine")) {
                 jarr = json.getJSONArray("appLine");
-                if(jarr != null && jarr.length() > 0){
+                if (jarr != null && jarr.length() > 0) {
                     appLine = new String[jarr.length()][];
-                    for(x = 0 ; x < jarr.length() ; x++){
+                    for (x = 0; x < jarr.length(); x++) {
                         tj = jarr.getJSONArray(x);
                         ts = new String[2];
-                        ts[0] = tj.getInt(0)+"";
-                        ts[1] = tj.getInt(1)+"";
+                        ts[0] = tj.getInt(0) + "";
+                        ts[1] = tj.getInt(1) + "";
                         appLine[x] = ts;
                     }
                 }
             }
 
             // 결재문서 처리 요청에 대한 처리
-            data = gwService.askAppDoc(compId, docNo, ordered, ask, comment, doc, appLine, files, attached, appData, userNo);
-            if(data.equals("ok")){
+            data = gwService.askAppDoc(compId, docNo, ordered, ask, comment, doc, appLine, files, attached, appData,
+                    userNo);
+            if (data.equals("ok")) {
                 result = "{\"result\":\"ok\"}";
-            }else if(data.equals("permissionDenied")){
+            } else if (data.equals("permissionDenied")) {
                 result = "{\"result\":\"failure\",\"msg\":\"" + msg.permissionDenied + "\"}";
-            }else{
+            } else {
                 result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
             }
-            
-            
+
         }
 
-        logger.error("ApiGwCtrl.apiGwAppProceedPost() ========== docNo : " + docNo + " / ordered : " + ordered + " / ask : " + ask);
+        logger.error("ApiGwCtrl.apiGwAppProceedPost() ========== docNo : " + docNo + " / ordered : " + ordered
+                + " / ask : " + ask);
 
         return result;
     } // End of apiGwAppCancelNoPost()
 
     // 수신 문서함의 목록을 전달하는 메서드
     @GetMapping("/app/received")
-    public String apiGwAppReceivedGet(HttpServletRequest request){
+    public String apiGwAppReceivedGet(HttpServletRequest request) {
         String result = null, compId = null, userNo = null, data = null, aesIv = null, aesKey = null, lang = null;
         Msg msg = null;
         HttpSession session = null;
 
-
         session = request.getSession();
-        compId = (String)session.getAttribute("compId");
-        aesKey = (String)session.getAttribute("aesKey");
-        aesIv = (String)session.getAttribute("aesIv");
-        userNo = (String)session.getAttribute("userNo");
-        lang = (String)session.getAttribute("lang");
+        compId = (String) session.getAttribute("compId");
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        userNo = (String) session.getAttribute("userNo");
+        lang = (String) session.getAttribute("lang");
         msg = getMsg(lang);
-        if(compId == null)  compId = (String)request.getAttribute("compId");
+        if (compId == null)
+            compId = (String) request.getAttribute("compId");
 
-        if(compId == null){
+        if (compId == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
-        }else if(aesKey == null || aesIv == null){
+        } else if (aesKey == null || aesIv == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
-        }else{
+        } else {
             data = gwService.getReceivedList(compId, userNo);
-            if(data == null)    result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
-            else{
+            if (data == null)
+                result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
+            else {
                 data = encAes(data, aesKey, aesIv);
                 result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
             }
-            
+
         }
         return result;
     } // End of apiGwAppReceivedGet()
 
     // 결재 문서함의 목록을 전달하는 메서드
     @GetMapping("/app/approved")
-    public String apiGwAppApprovedGet(HttpServletRequest request){
+    public String apiGwAppApprovedGet(HttpServletRequest request) {
         String result = null, compId = null, userNo = null, data = null, aesIv = null, aesKey = null, lang = null;
         Msg msg = null;
         HttpSession session = null;
 
         session = request.getSession();
-        compId = (String)session.getAttribute("compId");
-        aesKey = (String)session.getAttribute("aesKey");
-        aesIv = (String)session.getAttribute("aesIv");
-        userNo = (String)session.getAttribute("userNo");
-        lang = (String)session.getAttribute("lang");
+        compId = (String) session.getAttribute("compId");
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        userNo = (String) session.getAttribute("userNo");
+        lang = (String) session.getAttribute("lang");
         msg = getMsg(lang);
-        if(compId == null)  compId = (String)request.getAttribute("compId");
+        if (compId == null)
+            compId = (String) request.getAttribute("compId");
 
-        if(compId == null){
+        if (compId == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
-        }else if(aesKey == null || aesIv == null){
+        } else if (aesKey == null || aesIv == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
-        }else{
+        } else {
             data = gwService.getApprovedList(compId, userNo);
-            if(data == null)    result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
-            else{
+            if (data == null)
+                result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
+            else {
                 data = encAes(data, aesKey, aesIv);
                 result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
             }
-            
+
         }
         return result;
     } // End of apiGwAppReceivedGet()
-
 
     // 참조/열란 문서함의 목록을 전달하는 메서드
     @GetMapping("/app/references")
-    public String apiGwAppReferencesGet(HttpServletRequest request){
+    public String apiGwAppReferencesGet(HttpServletRequest request) {
         String result = null, compId = null, userNo = null, data = null, aesIv = null, aesKey = null, lang = null;
         Msg msg = null;
         HttpSession session = null;
 
         session = request.getSession();
-        compId = (String)session.getAttribute("compId");
-        aesKey = (String)session.getAttribute("aesKey");
-        aesIv = (String)session.getAttribute("aesIv");
-        userNo = (String)session.getAttribute("userNo");
-        lang = (String)session.getAttribute("lang");
+        compId = (String) session.getAttribute("compId");
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        userNo = (String) session.getAttribute("userNo");
+        lang = (String) session.getAttribute("lang");
         msg = getMsg(lang);
-        if(compId == null)  compId = (String)request.getAttribute("compId");
+        if (compId == null)
+            compId = (String) request.getAttribute("compId");
 
-        if(compId == null){
+        if (compId == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
-        }else if(aesKey == null || aesIv == null){
+        } else if (aesKey == null || aesIv == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
-        }else{
+        } else {
             data = gwService.getReferencesList(compId, userNo);
-            if(data == null)    result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
-            else{
+            if (data == null)
+                result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
+            else {
                 data = encAes(data, aesKey, aesIv);
                 result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
             }
-            
+
         }
         return result;
     } // End of apiGwAppReceivedGet()
-    
-}
 
+}

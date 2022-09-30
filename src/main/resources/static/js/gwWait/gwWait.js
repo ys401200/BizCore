@@ -569,7 +569,7 @@ function drawNewCommentLine() {
 
 
 
-	for (let i = 0; i < originAppLine.length; i++) {
+	for (let i = 1; i < originAppLine.length; i++) {
 		let date, status, comment;
 
 		if (appLine[i].approved == null && appLine[i].rejected == null) {
@@ -725,11 +725,12 @@ function showAppModal() {
 }
 
 
-// 결재 타입 값 받아서 결재하기 
+//결재하기 버튼
 function approveBtnEvent() {
 	let formId = storage.reportDetailData.formId;
 	let selectVal = $(":radio[name='type']:checked").val();
 	let comment = $(".approvalComment").val();
+	comment = comment.replaceAll("\n", "<br />");
 	$(".modal-wrap").hide();
 	let type;
 	let appLine = storage.reportDetailData.appLine;
@@ -748,15 +749,27 @@ function approveBtnEvent() {
 		}
 	}
 
-	let slistid = "infoSopp";
 	let soppVal = $("#" + formId + "_sopp").val();
-	let soppResult = dataListFormat(slistid, soppVal) + "";
-
-	let clistid = "infoCustomer";
 	let customerVal = $("#" + formId + "_infoCustomer").val();
-	let customerResult = dataListFormat(clistid, customerVal) + "";
+	let soppResult;
+	for (let x in storage.soppList) {
+		if (soppVal != "" || storage.soppList[x].title === soppVal) {
+			soppResult = storage.soppList[x].no + "";
+		} else {
+			soppResult = null;
+		}
+	}
+	let cusResult;
+	for (let x in storage.customer) {
+		if (customerVal != "" || storage.customer[x].title === customerVal) {
+			cusResult = storage.customer[x].no + "";
+		} else {
+			cusResult = "";
+		}
+	}
 
-	if (storage.reportDetailData.sopp == soppResult && storage.reportDetailData.customer == customerResult &&
+
+	if (storage.reportDetailData.sopp == soppResult && storage.reportDetailData.customer == cusResult &&
 		storage.oriCbContainer == $("input[name='" + formId + "_RD']:checked").attr("id") &&
 		storage.oriInsertedContent == $(".insertedContent").html() &&
 		storage.oriInsertedDataList == $(".insertedDataList").html()) {
@@ -765,14 +778,6 @@ function approveBtnEvent() {
 		storage.newDoc = $(".seletedForm").html();
 	}
 
-
-	if (storage.reportDetailData.sopp = soppResult) {
-		soppResult = null;
-	}
-
-	if (storage.reportDetailData.customer == customerResult) {
-		customerResult = null;
-	}
 
 	selectVal === "approve" ? type = 1 : type = 0;
 	storage.newFileData == undefined ? storage.newFileData = null : storage.newFileData = storage.newFileData;
@@ -787,7 +792,7 @@ function approveBtnEvent() {
 		"files": storage.newFileData,
 		"appLine": storage.newAppLine,
 		"sopp": soppResult,
-		"customer": customerResult,
+		"customer": cusResult,
 		"title": title
 	}
 
