@@ -123,15 +123,14 @@ function init(){
 		"cnt" : undefined,
 		"handler" : undefined,
 		"time" : 10,
+		"fadeout":300,
 		"set" : (message, time) => {
-			let el, handler, html;
+			let handler, html;
+			const el = document.createElement("div");
 			if(msg.cnt === undefined || msg.cnt === null)	return;
 			if(message === undefined)	return;
 			if(time === undefined)  time = msg.time;
-			el = document.createElement("div");
-			handler = window.setTimeout(()=>{
-				el.remove();
-			},time*1000);
+			handler = window.setTimeout(()=>{$(el).fadeOut(msg.fadeout);},time*1000);
 			html = "<div class=\"each_msg\"><div data-handler=\"" + handler + "\" onclick=\"msg.clr(this)\" class=\"cls_btn\">&#x2715;</div><div class=\"msg_content\">" + message + "</div></div>";
 			el.innerHTML = html;
 			msg.cnt.appendChild(el);
@@ -140,7 +139,7 @@ function init(){
 			let handler;
 			handler = el.dataset.handler*1;
 			window.clearTimeout(handler);
-			el.parentElement.remove();
+			$(el.parentElement).fadeOut(msg.fadeout);
 		}
 	}
 	
