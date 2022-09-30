@@ -135,7 +135,7 @@ public class ApiNoteCtrl extends Ctrl{
             data = decAes(requestBody, aesKey, aesIv);
             json = new JSONObject(data);
             message = json.getString("msg");
-            related = json.getJSONObject("related").toString();
+            related = json.isNull("related") ? null : json.getJSONObject("related").toString();
             notes.sendNewNotes(compId, partner, strToInt(userNo), message, related);            
             result = "{\"result\":\"ok\"}";
         }
