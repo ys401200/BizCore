@@ -189,11 +189,6 @@ function setSoppList(formId) {
   soppTarget.innerHTML = soppHtml;
   $("#" + formId + "_sopp").attr("list", "_infoSopp");
 
-}
-
-
-// 결재선 생성 버튼 눌렀을 때 모달 띄움 
-function showModal() {
 
   let setGwModalHtml = "<div class='gwModal'>" +
     "<div class='modal-title'>결재선 생성</div>" +
@@ -207,7 +202,7 @@ function showModal() {
     " <button onclick='check(this.value)' value='conduct'>수신 &gt;</button>" +
     "<button onclick='check(this.value)' value='refer'>참조 &gt;</button></div>" +
     "<div class='innerDetail' id='lineRight'>" +
-    "<div><select onchange='setSavedLine(this)'><option value=''>자주 쓰는 결재선</option><option value='basic'>대표</option><option value='middle'>구민주 과장-대표</option><</select></div>" +
+    "<div><select name='saveLineSelect' ><option value=''>자주 쓰는 결재선</option><option value='basic'>대표</option><option value='middle'>구민주 과장-대표</option><</select><button type='button' onclick='setSavedLine()'>불러오기</button><button type='button'>삭제하기</button><button type='button'>저장하기</button></div>" +
     "<div><div>검토</div>" +
     "<div class='typeContainer' id='examine'></div>" +
     "</div>" +
@@ -249,6 +244,13 @@ function showModal() {
     innerHtml += "<div><input class='testClass' type ='checkbox' id='cb" + userData[i] + "' name='userNames' value='" + userData[i] + "'><label for='cb" + userData[i] + "'>" + storage.user[userData[i]].userName + "</label></div>"
   }
   orgChartTarget.html(innerHtml);
+  $(".modal-wrap").hide();
+}
+
+
+// 결재선 생성 버튼 눌렀을 때 모달 띄움 
+function showModal() {
+
   $(".modal-wrap").show();
 
 }
@@ -400,7 +402,7 @@ function deleteClick(obj) {
 
 // 결재선 그리기 + 작성자 추가 
 function createLine() {
-
+  $("select[name='saveLineSelect']")[0].value = "";
   let selectedFormNo = $(".formSelector").val();
   let formId = storage.formList[selectedFormNo].id;
   let lineTarget = $(".infoline")[0].children[1];
@@ -411,8 +413,8 @@ function createLine() {
   let today = getYmdSlash();
   let testHtml = "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작성</div><div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto' value='" + storage.userRank[storage.user[my].rank][0] + "'></div>" +
     "<div class='twoBorder'><input type='text' class='inputsAuto' value='" + storage.user[my].userName + "'></div>" +
-    "<div class='twoBorder'><input type='text' class='inputsAuto' value='승인'></div>" +
-    "<div class='dateBorder'><input type='text' class='inputsAuto'value='" + getYmdSlash() + "'></div></div></div>";
+    "<div class='twoBorder'><input type='text' class='inputsAuto' value=''></div>" +
+    "<div class='dateBorder'><input type='text' class='inputsAuto'value=''></div></div></div>";
   let testHtml2 = "<div class='lineGridContainer'>";
   let referHtml = "<div>참조</div>";
   let target = $(".typeContainer"); // 결재선 생성 모달에서 결재 타입 각각의 container 
@@ -505,8 +507,8 @@ function getYmdSlash() {
 
 
 // 자주쓰는 결재선 선택시 설정 
-function setSavedLine(obj) {
-  let val = obj.value;
+function setSavedLine() {
+  let val = $("select[name='saveLineSelect']")[0].value;
   if (val == 'middle') { // 구민주 검토 이승우 결재
     $("#examine").html("<div class='lineDataContainer' id='lineContainer_10017'><label id='linedata_10017'>구민주</label><button value='10017' onclick='upClick(this)'>▲</button><button  value='10017'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>");
     $("#approval").html("<div class='lineDataContainer' id='lineContainer_10002'><label id='linedata_10002'>이승우</label><button value='10002' onclick='upClick(this)'>▲</button><button  value='10002'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>");
@@ -802,7 +804,7 @@ function tempSave() {
       success: (result) => {
         if (result.result === "ok") {
           alert("임시 저장 되었습니다");
-          
+
         } else {
           alert(result.msg);
         }

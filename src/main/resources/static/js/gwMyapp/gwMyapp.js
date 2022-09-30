@@ -174,9 +174,6 @@ function waitDetailView(obj) {// 선택한 그리드의 글 번호 받아오기
 function showReportDetail() {
 
 
-
-
-
 	let formId = storage.reportDetailData.formId;
 	let testForm = storage.reportDetailData.doc;
 
@@ -295,48 +292,10 @@ function showReportDetail() {
 	});
 
 
+	setAppLineData();
 
 }
 
-
-
-//결재정보 추가 
-// function setOriginLineData() {s
-// 	let originLineData = storage.reportDetailData.appLine;
-// 	let appTitle = ["examine", "agree", "approval", "conduct"];
-// 	let appContainer = [[], [], [], [], []];
-
-// 	for (let i = 0; i < originLineData.length; i++) {
-// 		if (originLineData[i] == 0) {
-// 			appContainer[0].push(originLineData[i]);
-// 		} else if (originLineData[i] == 1) {
-// 			appContainer[1].push(originLineData[i]);
-// 		} else if (originLineData[i] == 2) {
-// 			appContainer[2].push(originLineData[i]);
-// 		} else if (originLineData[i] == 3) {
-// 			appContainer[3].push(originLineData[i]);
-// 		} else if (originLineData[i] == 4) {
-// 			appContainer[4].push(originLineData[i]);
-// 		}
-// 	}
-
-
-
-// 	for (let i = 1; i < originLineData.length; i++) {
-// 		for (let j = 0; j < appTitle.length; j++) {
-// 			if (originLineData[i].appType == j) {
-// 				if (originLineData[i].approved != null) {
-
-// 				}
-
-
-// 			}
-// 		}
-
-
-// 	}
-
-// }
 
 
 
@@ -374,32 +333,6 @@ function getFileArr() {
 
 }
 
-// 문서 수정시 첨부파일목록 수정 
-function getFileModArr() {
-	let target = $(".selectedFileDiv");
-	let html = ""
-	if (storage.newFileData == undefined || storage.newFileData.length == 0) {
-		let fileList = storage.reportDetailData.fileList;
-
-		for (let i = 0; i < fileList.length; i++) {
-			html += "<div><div class='files' data-detail='" + fileList[i].fileName + "'>" + fileList[i].fileName + "<button type='button' onclick='fileRemove(this)'>x</button></div></div>";
-		}
-		target.html(html);
-	} else {
-		for (let i = 0; i < storage.newFileData.length; i++) {
-			html += "<div><div class='files' data-detail='" + storage.newFileData[i] + "'>" + storage.newFileData[i] + "<button type='button' onclick='fileRemove(this)'>x</button></div></div>";
-		}
-		target.html(html);
-	}
-
-
-}
-
-function fileRemove(obj) {
-	let value = obj.parentElement.dataset.detail;
-	storage.newFileData = storage.newFileData.filter((element) => element != value);
-	obj.parentElement.remove();
-}
 
 
 
@@ -514,461 +447,57 @@ function drawCommentLine() {
 }
 
 
-function drawNewCommentLine() {
-	let appTypeTitle = ["검토", "합의", "결재", "수신", "참조"];
-	let appLine = storage.reportDetailData.appLine;
-	let my = storage.my;
-	let originAppLine = [];
-	let appLineArr = [];
 
-	for (let i = 0; i < appLine.length; i++) {
-		if (appLine[i].employee == my) {
-			originAppLine = appLine.slice(0, (i + 1));
-			myIndex = i;
-		}
-	}
-
-
-
-	for (let i = 0; i < originAppLine.length; i++) {
-		let date, status, comment;
-
-		if (appLine[i].approved == null && appLine[i].rejected == null) {
-			if (appLine[i].read != null) {
-				date = appLine[i].read;
-				date = getYmdSlash(date);
-				status = "조회";
-			} else if (appLine[i].read == null) {
-				date = "";
-				status = "";
-			}
-
-		} else if (appLine[i].approved != null) {
-			date = appLine[i].approved;
-			date = getYmdSlash(date);
-			status = "승인";
-		} else if (appLine[i].rejected != null) {
-			date = appLine[i].rejected;
-			date = getYmdSlash(date);
-			status = "반려";
-		}
-
-		if (appLine[i].comment == "null") {
-			comment = "";
-		} else {
-			comment = appLine[i].comment;
-		}
-
-		let data = {
-			"appType": appTypeTitle[appLine[i].appType],
-			"name": storage.user[appLine[i].employee].userName,
-			"status": status,
-			"date": date,
-			"comment": comment,
-		}
-
-		appLineArr.push(data);
-
-	}
-	let newData = storage.newAppLine;
-
-
-
-	for (let i = originAppLine.length; i < newData.length; i++) {
-		let data = {
-			"appType": appTypeTitle[newData[i][0]],
-			"name": storage.user[newData[i][1]].userName,
-			"status": "",
-			"date": "",
-			"comment": "",
-		}
-		appLineArr.push(data);
-	}
-
-	console.log(appLineArr);
-
-	let html = "<div class='readDiv'><div>열람</div><div><label for='deptRd'><input type='radio' id='deptRd' name='rd' value='dept' disabled/>작성자 소속 부서</label><label for='noneRd'><input type='radio' id='noneRd' name='rd' value='none' disabled/>열람 설정 없음</label></div></div>"
-	let detail = "<div class='tapLine tapLineTitle'><div>타입</div><div>이름</div><div>상태</div><div>일자</div><div>의견</div></div>";
-	let lineDetailHtml = "";
-	for (let i = 0; i < appLineArr.length; i++) {
-		lineDetailHtml += "<div class='tapLine examineLine'><div>" + appLineArr[i].appType + "</div><div>" + appLineArr[i].name + "</div><div>" + appLineArr[i].status + "</div><div>" + appLineArr[i].date + "</div><div>" + appLineArr[i].comment + "</div></div>";
-	}
-	detail += lineDetailHtml;
-	html += detail;
-	// 열람 권한 체크하기 
-
-	$("#tabDetail").html(html);
-	let readable = storage.reportDetailData.readable;
-	if (readable == "dept") {
-		$("#deptRd").prop("checked", true);
-	} else if (readable == "none") {
-		$("#noneRd").prop("checked", true);
-	}
-
-
-}
 
 
 //  변경이력 그리는 함수 
 function drawChangeInfo() {
-    let target = $("#tabDetail2");
+	let target = $("#tabDetail2");
 
-
-
-    let revisionData = storage.reportDetailData.revisionHistory;
-    let changeData = new Array();
-
-    for (let i = 0; i < revisionData.length; i++) {
-        let data = {
-            "type": revisionData[i].employee,
-            "name": revisionData[i].employee,
-            "modifyDate": revisionData[i].date,
-            "modCause": revisionData[i].content
-        }
-        changeData.push(data);
-    }
-
-
-    let detail = "<div class='tapLineB'><div>타입</div><div>이름</div><div>변경일자</div><div>변경내용</div></div>";
-    let changeHtml = "";
-
-    if (changeData.length == 0) {
-        changeHtml += "<div>변경 이력이 없습니다</div>";
-    } else {
-        for (let i = 0; i < changeData.length; i++) {
-            changeHtml += "<div class='tapLineB changeDataLine'>" +
-                "<div class='changeType'>" + changeData[i].type + "</div><div class='changeName' >" + changeData[i].name + "</div><div class='changeDate'>" + changeData[i].modifyDate + "</div><div class='changeCause'>" + changeData[i].modCause + "</div>" +
-                "</div>"
-        }
-    }
-
-    detail += changeHtml;
-    target.html(detail);
-
-}
-
-// 모달별 버튼  
-function closeModal(obj) {
-	$(".modal-wrap").hide();
-	$("input:radio[name='type']").prop("checked", false);
-}
-
-
-//결재하기 모달 
-function showAppModal() {
-
-	// 결재하기 누르면 결재정보 창으로 세팅되어서 추가하는 것 
-	$("#lineInfo").css("background-color", "#332E85");
-	$("#lineInfo").css("color", "white");
-	$("#lineInfo").css("border", "none");
-
-	$("#changeInfo").css("background-color", "white");
-	$("#changeInfo").css("color", "#332E85");
-	$("#changeInfo").css("border-bottom", "2px solid #332E85");
-	$("#tabDetail").show();
-	$("#tabDetail2").hide();
-
-	let setAppModalHtml = "<div class='setApprovalModal'>" +
-		"<div class='modal-title'>결재하기</div>" +
-		"<div class='modal-body'><div class='labelContainer'>" +
-		"<label><input type='radio' name='type'  value='approve' checked>승인</label>" +
-		"<label><input type='radio' name='type' value='reject'>반려</label></div>" +
-		"<label>의견 <textarea class='approvalComment'></textarea></label></div>" +
-		"<div class='close-wrap'>" +
-		"<button id='quit' onclick='closeModal(this)'>취소</button>" +
-		"<button id='set' onclick='approveBtnEvent()'>결재</button></div></div>";
-	$(".modal-wrap").html(setAppModalHtml);
-	$(".modal-wrap").show();
-
-	// $(".setApprovalModal").show();
-	// $(".setModifyModal").hide();
-
-}
-
-
-// 결재 타입 값 받아서 결재하기 
-function approveBtnEvent() {
-	let formId = storage.reportDetailData.formId;
-	let selectVal = $(":radio[name='type']:checked").val();
-	let comment = $(".approvalComment").val();
-	$(".modal-wrap").hide();
-	let type;
-	let appLine = storage.reportDetailData.appLine;
-	let ordered;
-
-
-	for (let i = 0; i < appLine.length; i++) {
-		if (appLine[i].employee == storage.my) {
-			ordered = appLine[i].ordered;
-			if (storage.newAppLine != undefined) {
-				storage.newAppLine = storage.newAppLine.slice((i + 1), storage.newAppLine.length);
-			} else {
-				storage.newAppLine = null;
+	let revisionData = storage.reportDetailData.revisionHistory;
+	let changeData = new Array();
+	if (revisionData.length > 0) {
+		for (let i = 0; i < revisionData.length; i++) {
+			let modCause = "";
+			if (revisionData[i].content.doc == true) {
+				modCause += "문서 수정 "
+			}
+			if (revisionData[i].content.files == true) {
+				modCause += "첨부 파일 수정 "
+			} if (revisionData[i].content.content == true) {
+				modCause += "결재선 수정 "
 			}
 
+			revisionData[i].content.date
+			revisionData[i].content.content
+
+
+			let data = {
+				"type": "",
+				"name": storage.user[revisionData[i].employee].userName,
+				"modifyDate": getYmdSlash(revisionData[i].date),
+				"modCause": modCause
+			}
+			changeData.push(data);
 		}
 	}
 
-	let slistid = "infoSopp";
-	let soppVal = $("#" + formId + "_sopp").val();
-	let soppResult = dataListFormat(slistid, soppVal) + "";
+	let detail = "<div class='tapLineB'><div>타입</div><div>이름</div><div>변경일자</div><div>변경내용</div></div>";
+	let changeHtml = "";
 
-	let clistid = "infoCustomer";
-	let customerVal = $("#" + formId + "_infoCustomer").val();
-	let customerResult = dataListFormat(clistid, customerVal) + "";
-
-	if (storage.reportDetailData.sopp == soppResult && storage.reportDetailData.customer == customerResult &&
-		storage.oriCbContainer == $("input[name='" + formId + "_RD']:checked").attr("id") &&
-		storage.oriInsertedContent == $(".insertedContent").html() &&
-		storage.oriInsertedDataList == $(".insertedDataList").html()) {
-		storage.newDoc = null;
+	if (changeData.length == 0) {
+		changeHtml += "<div>변경 이력이 없습니다</div>";
 	} else {
-		storage.newDoc = $(".seletedForm").html();
-	}
-
-
-	if (storage.reportDetailData.sopp = soppResult) {
-		soppResult = null;
-	}
-
-	if (storage.reportDetailData.customer == customerResult) {
-		customerResult = null;
-	}
-
-	selectVal === "approve" ? type = 1 : type = 0;
-	storage.newFileData == undefined ? storage.newFileData = null : storage.newFileData = storage.newFileData;
-
-	let title = $("#" + formId + "_title").val();
-	if (storage.reportDetailData.title == title) {
-		title = null;
-	}
-	let data = {
-		"doc": storage.newDoc,
-		"comment": comment,
-		"files": storage.newFileData,
-		"appLine": storage.newAppLine,
-		"sopp": soppResult,
-		"customer": customerResult,
-		"title": title
-	}
-
-	console.log(data);
-	data = JSON.stringify(data);
-	data = cipher.encAes(data);
-
-	$.ajax({
-		url: apiServer + "/api/gw/app/proceed/" + storage.reportDetailData.docNo + "/" + ordered + "/" + type,
-		method: "post",
-		dataType: "json",
-		data: data,
-		contentType: "text/plain",
-		cache: false,
-		success: (data) => {
-			if (data.result === "ok") {
-				alert("결재 완료");
-			} else {
-				alert("결재 실패");
-			}
-		}
-	})
-
-
-
-}
-
-
-//결재선 수정 모달 
-function showGwModal() {
-
-	let setGwModalHtml = "<div class='gwModal'>" +
-		"<div class='modal-title'>결재선 수정( * 현재 결재 단계 이후만 추가/삭제 가능)</div>" +
-		"<div class='lineDetail'>" +
-		"<div class='lineTop'>" +
-		"<div class='innerDetail' id='lineLeft'></div>" +
-		"<div class='innerDetail' id='lineCenter'>" +
-		"<button class='appTypeBtn'  onclick='check(this.value)' value='examine'>검토 &gt;</button>" +
-		"<button class='appTypeBtn'  onclick='check(this.value)' value='agree'>합의 &gt;</button>" +
-		"<button class='appTypeBtn'  onclick='check(this.value)' value='approval'>결재 &gt;</button>" +
-		"<button class='appTypeBtn'  onclick='check(this.value)' value='conduct'>수신 &gt;</button>" +
-		"<button class='appTypeBtn'  onclick='check(this.value)' value='refer'>참조 &gt;</button></div>" +
-		"<div class='innerDetail' id='lineRight'>" +
-		"<div></div>" +
-		"<div><div>검토</div>" +
-		"<div class='typeContainer' id='examine'></div></div>" +
-		"<div><div>합의</div>" +
-		"<div class='typeContainer' id='agree'></div></div>" +
-		"<div><div>결재</div>" +
-		"<div class='typeContainer' id='approval'></div></div>" +
-		"<div><div>수신</div>" +
-		"<div class='typeContainer' id='conduct'></div></div>" +
-		"<div><div>참조</div>" +
-		"<div class='typeContainer' id='refer'></div></div>" +
-		"</div>" +
-		"</div>" +
-		"</div>" +
-		"<div class='close-wrap'>" +
-		" <button id='close' onclick='closeGwModal(this)'>취소</button>" +
-		" <button id='modify' onclick='closeGwModal(this)'>생성</button>" +
-		"</div>" +
-		"</div>" +
-		"</div>";
-	$(".modal-wrap").html(setGwModalHtml);
-
-	let orgChartTarget = $("#lineLeft");
-	let userData = new Array();
-	let x;
-	let my = storage.my;
-	//나는 결재선에 노출 안 되게 함 
-	for (x in storage.user) {
-		if (x != my) {
-			userData.push(x);
+		for (let i = 0; i < changeData.length; i++) {
+			changeHtml += "<div class='tapLineB changeDataLine'>" +
+				"<div class='changeType'>" + changeData[i].type + "</div><div class='changeName' >" + changeData[i].name + "</div><div class='changeDate'>" + changeData[i].modifyDate + "</div><div class='changeCause'>" + changeData[i].modCause + "</div>" +
+				"</div>"
 		}
 	}
 
-	let innerHtml = "";
-	for (let i = 0; i < userData.length; i++) {
-		innerHtml += "<div><input class='testClass' type ='checkbox' id='cb" + userData[i] + "' name='userNames' value='" + userData[i] + "'><label for='cb" + userData[i] + "'>" + storage.user[userData[i]].userName + "</label></div>"
-	}
-	orgChartTarget.html(innerHtml);
-	$(".modal-wrap").show();
-	setDefaultModalData();
+	detail += changeHtml;
+	target.html(detail);
 
-}
-
-
-function setDefaultModalData() {
-	let appLine = storage.reportDetailData.appLine;
-
-	let x;
-	let userData = new Array();
-	let my;
-	my = storage.my;
-	//나는 결재선에 노출 안 되게 함 
-	for (x in storage.user) {
-		if (x != my) {
-			userData.push(x);
-		}
-	}
-
-	let myTurn;
-	let myappType;
-	for (let i = 0; i < appLine.length; i++) {
-		if (appLine[i].employee == my) {
-			myTurn = appLine[i].ordered;
-			myappType = appLine[i].appType;
-		}
-	}
-
-	//내 결재 권한 이후만 수정할 수 있음 
-	let btns = $(".appTypeBtn");
-	console.log(myappType);
-	for (let i = btns.length - 1; i >= 0; i--) {
-		if (i < myappType) {
-			$(".appTypeBtn")[i].remove();
-			$(".typeContainer")[i].parentElement.remove();
-		}
-	}
-
-	let html = "";
-	let html1 = "";
-	let html2 = "";
-	let html3 = "";
-	let html4 = "";
-
-
-	// 내 이후의 결재선만 출력함 
-	for (let i = 1; i < appLine.length; i++) {
-		if (Number(appLine[i].ordered) > Number(myTurn)) {
-			if (appLine[i].appType == 0) {
-				html += "<div class='lineDataContainer' id='lineContainer_" + appLine[i].employee + "'><label id='linedata_" + appLine[i].employee + "'>" + storage.user[appLine[i].employee].userName + "</label><button value='" + i + "' onclick='upClick(this)'>▲</button><button  value='" + appLine[i].employee + "' onclick='downClick(this) '>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
-			} else if (appLine[i].appType == 1) {
-				html1 += "<div class='lineDataContainer' id='lineContainer_" + appLine[i].employee + "'><label id='linedata_" + appLine[i].employee + "'>" + storage.user[appLine[i].employee].userName + "</label><button value='" + i + "' onclick='upClick(this)'>▲</button><button  value='" + appLine[i].employee + "' onclick='downClick(this) '>▼</button><button onclick='deleteClick(this)'>✕</button></div>";
-			} else if (appLine[i].appType == 2) {
-				html2 += "<div class='lineDataContainer' id='lineContainer_" + appLine[i].employee + "'><label id='linedata_" + appLine[i].employee + "'>" + storage.user[appLine[i].employee].userName + "</label><button value='" + i + "' onclick='upClick(this)'>▲</button><button  value='" + appLine[i].employee + "' onclick='downClick(this) '>▼</button><button onclick='deleteClick(this)'>✕</button></div>";
-			} else if (appLine[i].appType == 3) {
-				html3 += "<div class='lineDataContainer' id='lineContainer_" + appLine[i].employee + "'><label id='linedata_" + appLine[i].employee + "'>" + storage.user[appLine[i].employee].userName + "</label><button value='" + i + "' onclick='upClick(this)'>▲</button><button  value='" + appLine[i].employee + "' onclick='downClick(this) '>▼</button><button onclick='deleteClick(this)'>✕</button></div>";
-			} else if (appLine[i].appType == 4) {
-				html4 += "<div class='lineDataContainer' id='lineContainer_" + appLine[i].employee + "'><label id='linedata_" + appLine[i].employee + "'>" + storage.user[appLine[i].employee].userName + "</label><button value='" + i + "' onclick='upClick(this)'>▲</button><button  value='" + appLine[i].employee + "' onclick='downClick(this) '>▼</button><button onclick='deleteClick(this)'>✕</button></div>";
-			}
-			$(".typeContainer")[0].innerHTML = html;
-			$(".typeContainer")[1].innerHTML = html1;
-			$(".typeContainer")[2].innerHTML = html2;
-			$(".typeContainer")[3].innerHTML = html3;
-			$(".typeContainer")[4].innerHTML = html4;
-
-		}
-
-
-	}
-}
-
-
-
-function closeGwModal(obj) {
-	let id = obj.id;
-	if (id == "close") {
-		$(".modal-wrap").hide();
-	} else if (id == 'modify') {
-		let appLine = storage.reportDetailData.appLine;
-		let originLine;
-		let my = storage.my;
-
-		let myOrdered;
-		for (let i = 0; i < appLine.length; i++) {
-			if (appLine[i].employee == my) {
-				myOrdered = appLine[i].ordered;
-				originLine = appLine.slice(0, i + 1);
-			}
-		}
-
-
-		let combineData = [];
-
-
-		// 기존 데이터 넣기 
-		for (let i = 0; i < appLine.length; i++) {
-			if (appLine[i].ordered <= Number(myOrdered)) {
-				combineData.push([appLine[i].appType, appLine[i].employee + ""]);
-			}
-		}
-
-		let target = $(".typeContainer");
-
-
-		for (let i = 0; i < target.length; i++) {
-
-			for (let j = 0; j < target[i].children.length; j++) {
-				let id = (target[i].children[j].id).split("_")[1];
-				let targetId = target[i].id;
-
-				if (targetId == "examine") {
-					targetId = 0;
-
-				} else if (targetId == "agree") {
-					targetId = 1;
-				} else if (targetId == "approval") {
-					targetId = 2;
-
-				}
-				else if (targetId == "conduct") {
-					targetId = 3;
-				}
-				else if (targetId == "refer") {
-					targetId = 4;
-				}
-
-				combineData.push([targetId, id]);
-			}
-
-		}
-
-		storage.newAppLine = combineData;
-
-		$(".modal-wrap").hide();
-		createNewLine();
-		$(".inputsAuto").css("background-color", "white");
-		drawNewCommentLine();
-	}
 }
 
 
@@ -1051,126 +580,7 @@ function createNewLine() {
 
 }
 
-function check(name) {
-	let inputLength = $(".testClass");
-	let target = $("#" + name);
-	let html = target.html();
-	let selectHtml = "";
 
-	let x;
-	let userData = new Array();
-	let my;
-	my = storage.my;
-	//나는 결재선에 노출 안 되게 함 
-	for (x in storage.user) {
-		if (x != my) {
-			userData.push(x);
-		}
-	}
-
-	for (let i = 0; i < inputLength.length; i++) {
-		let id = (inputLength[i].id).substring(2, inputLength[i].id.length);
-		if ($("#cb" + id).prop('checked')) {
-			if (document.getElementById("linedata_" + id) == null) {
-				selectHtml += "<div class='lineDataContainer' id='lineContainer_" + id + "'><label id='linedata_" + id + "'>" + storage.user[id].userName + "</label><button value='" + id + "' onclick='upClick(this)'>▲</button><button  value='" + id + "' onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
-			}
-		}
-	}
-
-	html += selectHtml;
-	target.html(html)
-
-	$(".testClass").prop('checked', false);
-} //End of check(name) 
-
-//// 조직도 결재 순서 
-function upClick(obj) {
-	let parent;
-	parent = obj.parentElement;
-	parent = parent.parentElement;
-	let target = $("#" + parent.id);
-	let list = parent.children;
-
-	let numArr = new Array();
-	for (let i = 0; i < list.length; i++) {
-		let id = list[i].id;
-		let idArr = id.split("_");
-		numArr.push(idArr[1]);
-	}
-
-	for (let i = 0; i < numArr.length; i++) {
-		if (obj.value == numArr[i] && i != 0) {
-			let temp = numArr[i];
-			numArr[i] = numArr[i - 1];
-			numArr[i - 1] = temp;
-		}
-	}
-
-	let data = new Array();
-	let x;
-	let my = storage.my;
-	//나는 결재선에 노출 안 되게 함 
-	for (x in storage.user) {
-		if (x != my) {
-			data.push(x);
-		}
-	}
-
-	let selectHtml = "";
-	for (let i = 0; i < numArr.length; i++) {
-		selectHtml += "<div class='lineDataContainer' id='lineContainer_" + numArr[i] + "'><label id='linedata" + numArr[i] + "'>" + storage.user[numArr[i]].userName + "</label><button value='" + numArr[i] + "' onclick='upClick(this)'>▲</button><button  value='" + numArr[i] + "'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
-	}
-
-	target.html(selectHtml);
-}// End of upClick(obj); 
-
-
-function downClick(obj) {
-	let parent;
-	parent = obj.parentNode;
-	parent = parent.parentNode;
-	let target = $("#" + parent.id);
-	let list = parent.children;
-
-	let numArr = new Array();
-	for (let i = 0; i < list.length; i++) {
-		let id = list[i].id;
-		let idArr = id.split("_");
-		numArr.push(idArr[1]);
-	}
-
-	for (let i = numArr.length - 1; i >= 0; i--) {
-		if (obj.value == numArr[i] && i != numArr.length - 1) {
-			let temp = numArr[i];
-			numArr[i] = numArr[i + 1];
-			numArr[i + 1] = temp;
-		}
-	}
-
-	let data = new Array();
-	let x;
-	let my = storage.my;
-	//나는 결재선에 노출 안 되게 함 
-	for (x in storage.user) {
-		if (x != my) {
-			data.push(x);
-		}
-	}
-
-	let selectHtml = "";
-	for (let i = 0; i < numArr.length; i++) {
-		selectHtml += "<div class='lineDataContainer' id='lineContainer_" + numArr[i] + "'><label id='linedata" + numArr[i] + "'>" + storage.user[numArr[i]].userName + "</label><button value='" + numArr[i] + "' onclick='upClick(this)'>▲</button><button  value='" + numArr[i] + "'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
-	}
-
-	target.html(selectHtml);
-} // End of downClick(obj) 
-
-
-function deleteClick(obj) {
-	let parent;
-	parent = obj.parentElement;
-	parent.remove();
-} // End of deleteClign(obj); 
 
 function setSavedLine(obj) {
 	let val = obj.value;
@@ -1192,98 +602,38 @@ function setSavedLine(obj) {
 
 
 // 문서 수정 취소 함수 
-function quitModify() {
 
+function setAppLineData() {
+	let appLine = storage.reportDetailData.appLine;
 	let formId = storage.reportDetailData.formId;
-	$("button[name='modConfirm']:last-child").remove();
-	$("button[name='modConfirm']:last-child").remove();
+	let appLineContainer = new Array();
+	appLineContainer = [[], [], [], [], []];
 
-	toReadMode();
-	$(":file").css("display", "none");
-	$("button[name='approvalBtn']")[0].disabled = false;
-	$(".info").html(storage.oriInfoData);
-	$("#" + storage.oriCbContainer).prop("checked", true);
-	$(".insertedContent").html(storage.oriInsertedContent);
-	$(".insertedDataList").html(storage.oriInsertedDataList);
-	let target = $(".seletedForm")[0];
-	let inputsArr = target.getElementsByTagName("input");
-
-	for (let i = 0; i < inputsArr.length; i++) {
-		if (inputsArr[i].dataset.detail !== undefined) {
-			inputsArr[i].value = inputsArr[i].dataset.detail;
-		}
-	}
-
-	let textAreaArr = target.getElementsByTagName("textarea")[0];
-	textAreaArr.value = textAreaArr.dataset.detail;
-
-
-	// 이름 , 직급 한글로 설정하기 
-	let subTitlesArr = ["_examine", "_approval", "_agree", "_conduct"];
-	for (let i = 0; i < subTitlesArr.length; i++) {
-		if ($("." + formId + subTitlesArr[i]).val() != undefined) {
-			for (let j = 0; j < $("." + formId + subTitlesArr[i]).length; j++) {
-				$("." + formId + subTitlesArr[i])[j].value = storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
-				$("." + formId + subTitlesArr[i] + "_position")[j].value = storage.userRank[$("." + formId + subTitlesArr[i] + "_position")[j].value][0];
-
+	for (let i = 1; i < appLine.length; i++) {
+		for (let j = 0; j < appLineContainer.length; j++) {
+			if (appLine[i].appType == j) {
+				appLineContainer[j].push(appLine[i]);
 			}
 		}
 	}
 
+	let appTypeTitles = ["_examine", "_agree", "_approval", "_conduct", "_refer"];
 
-	let fileTarget = $(".selectedFileDiv");
-	let html = "";
-	let no = storage.reportDetailData.no;
-	let fileList = storage.reportDetailData.fileList;
-
-	for (let i = 0; i < fileList.length; i++) {
-		html += "<div><a href='/api/attached/docapp/" + no + "/" + encodeURI(fileList[i].fileName) + "'>" + fileList[i].fileName + "</a></div>";
+	for (let i = 0; i < appLineContainer.length; i++) {
+		for (let j = 0; j < appLineContainer[i].length; j++) {
+			if (appLineContainer[i][j].approved != null) {
+				$("." + formId + appTypeTitles[i] + "_status")[j].value = "승인";
+				$("." + formId + appTypeTitles[i] + "_approved")[j].value = getYmdShortSlash(appLineContainer[i][j].approved);
+			} else if (appLineContainer[i][j].rejected != null) {
+				$("." + formId + appTypeTitles[i] + "_status")[j].value = "반려";
+				$("." + formId + appTypeTitles[i] + "_approved")[j].value = getYmdShortSlash(appLineContainer[i][j].rejected);
+			}
+		}
 	}
-
-	fileTarget.html(html);
-
-
-
-
 
 }
 
 
-// 문서 수정시 변경이력에 반영 
-function reportModify(obj) {
-	$(".modal-wrap").hide();
-	$("button[name='modConfirm']:last-child").remove();
-	$("button[name='modConfirm']:last-child").remove();
-
-	$(":file").css("display", "none");
-	getFileArr();
-	toReadMode();
-	$("button[name='approvalBtn']")[0].disabled = false;
-
-
-}
-
-
-//문서 수정 버튼 누르면 수정 완료 버튼 생성 
-function createConfirmBtn(obj) {
-	let div = document.getElementsByClassName("mainBtnDiv")
-	if (div[0].childElementCount < 4) {
-		$(".mainBtnDiv").append("<button type='button'name='modConfirm' onclick='reportModify()' >수정완료 </button>" +
-			"<button type='button'name='modConfirm' onclick='quitModify()'>문서 수정 초기화</button>");
-	}
-	$(":file").css("display", "inline");
-	getFileModArr();
-
-	storage.newFileData = [];
-	for (let i = 0; i < $(".files").length; i++) {
-		storage.newFileData.push($(".files")[i].dataset.detail);
-	}
-
-	///결재하기 버튼 disabled  
-
-	$("button[name='approvalBtn']")[0].disabled = true;
-
-}
 
 function getYmdSlash(date) {
 	let d = new Date(date);
@@ -1365,4 +715,34 @@ function getSopp() {
 }
 
 
+
+function setAppLineData() {
+	let appLine = storage.reportDetailData.appLine;
+	let formId = storage.reportDetailData.formId;
+	let appLineContainer = new Array();
+	appLineContainer = [[], [], [], [], []];
+
+	for (let i = 1; i < appLine.length; i++) {
+		for (let j = 0; j < appLineContainer.length; j++) {
+			if (appLine[i].appType == j) {
+				appLineContainer[j].push(appLine[i]);
+			}
+		}
+	}
+
+	let appTypeTitles = ["_examine", "_agree", "_approval", "_conduct", "_refer"];
+
+	for (let i = 0; i < appLineContainer.length; i++) {
+		for (let j = 0; j < appLineContainer[i].length; j++) {
+			if (appLineContainer[i][j].approved != null) {
+				$("." + formId + appTypeTitles[i] + "_status")[j].value = "승인";
+				$("." + formId + appTypeTitles[i] + "_approved")[j].value = getYmdSlashShort(appLineContainer[i][j].approved);
+			} else if (appLineContainer[i][j].rejected != null) {
+				$("." + formId + appTypeTitles[i] + "_status")[j].value = "반려";
+				$("." + formId + appTypeTitles[i] + "_approved")[j].value = getYmdSlashShort(appLineContainer[i][j].rejected);
+			}
+		}
+	}
+
+}
 

@@ -13,7 +13,7 @@ $(document).ready(() => {
 function defaultMyDraft() {
     $("#gwSubTabTitle").html("참조/열람 문서함");
     let url, method, data, type;
-    url = "/api/gw/app/approved";
+    url = "/api/gw/app/references";
     method = "get"
     data = "";
     type = "list";
@@ -23,8 +23,8 @@ function defaultMyDraft() {
 
 
 function successList(result) {
-    storage.myApprovedList = result;
-    window.setTimeout(drawMyDraft, 200);
+    storage.myReferList = result;
+    window.setTimeout(drawMyRefer, 200);
 }
 
 function errorList() {
@@ -32,14 +32,14 @@ function errorList() {
 }
 
 
-function drawMyDraft() {
+function drawMyRefer() {
     let container, result, jsonData, job, header = [], data = [], ids = [], disDate, setDate, str, fnc;
 
-    if (storage.myApprovedList === undefined || storage.myApprovedList.length == 0) {
+    if (storage.myReferList === undefined || storage.myReferList.length == 0) {
         alert("참조/열람 문서가 없습니다");
     }
     else {
-        jsonData = storage.myApprovedList;
+        jsonData = storage.myReferList;
     }
 
     result = paging(jsonData.length, storage.currentPage, 10);
@@ -63,14 +63,13 @@ function drawMyDraft() {
         {
             "title": "제목",
             "align": "left",
+        }, {
+            "title": "작성자",
+            "align": "center",
         },
 
         {
             "title": "결재 타입",
-            "align": "center",
-        },
-        {
-            "title": "결재권자",
             "align": "center",
         },
         {
@@ -118,7 +117,6 @@ function drawMyDraft() {
             status = "반려";
         }
 
-        let authority = storage.user[jsonData[i].authority].userName;
         str = [
 
             {
@@ -132,12 +130,12 @@ function drawMyDraft() {
             {
                 "setData": jsonData[i].title,
             },
+            {
+                "setData": jsonData[i].writer,
+            },
 
             {
                 "setData": appType,
-            },
-            {
-                "setData": authority,
             },
             {
                 "setData": read,
@@ -203,7 +201,7 @@ function getDetailView() {
     let testForm = storage.reportDetailData.doc;
     console.log(testForm);
 
-    let detailHtml = "<div class='mainBtnDiv'><button type='button' onclick='showPreAppModal()'>결재하기</button></div>" +
+    let detailHtml = "<div class='mainBtnDiv'><button type='button'>목록보기</button></div>" +
         "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>"
 
 
@@ -313,6 +311,8 @@ function getDetailView() {
             }
         },
     });
+
+    setAppLineData();
 
 }
 
@@ -429,32 +429,34 @@ function drawCommentLine() {
 //  변경이력 그리는 함수 
 function drawChangeInfo() {
     let target = $("#tabDetail2");
-    // 임시 데이터 ----------------------------------------------------
 
 
-    let changeData = [{
-        "type": "검토",
-        "name": "구민주",
-        "modifyDate": "22-08-18 10:34:46",
-        "modCause": " 거래처 수정 "
-    },
-    {
-        "type": "검토",
-        "name": "이송현",
-        "modifyDate": "22-08-19 10:34:46",
-        "modCause": "수정 완 "
-    }]
 
-    // 임시 데이터 ---------------------------------------------------- 
+    let revisionData = storage.reportDetailData.revisionHistory;
+    let changeData = new Array();
+
+    for (let i = 0; i < revisionData.length; i++) {
+        let data = {
+            "type": revisionData[i].employee,
+            "name": revisionData[i].employee,
+            "modifyDate": revisionData[i].date,
+            "modCause": revisionData[i].content
+        }
+        changeData.push(data);
+    }
+
 
     let detail = "<div class='tapLineB'><div>타입</div><div>이름</div><div>변경일자</div><div>변경내용</div></div>";
     let changeHtml = "";
 
-
-    for (let i = 0; i < changeData.length; i++) {
-        changeHtml += "<div class='tapLineB changeDataLine'>" +
-            "<div class='changeType'>" + changeData[i].type + "</div><div class='changeName' >" + changeData[i].name + "</div><div class='changeDate'>" + changeData[i].modifyDate + "</div><div class='changeCause'>" + changeData[i].modCause + "</div>" +
-            "</div>"
+    if (changeData.length == 0) {
+        changeHtml += "<div>변경 이력이 없습니다</div>";
+    } else {
+        for (let i = 0; i < changeData.length; i++) {
+            changeHtml += "<div class='tapLineB changeDataLine'>" +
+                "<div class='changeType'>" + changeData[i].type + "</div><div class='changeName' >" + changeData[i].name + "</div><div class='changeDate'>" + changeData[i].modifyDate + "</div><div class='changeCause'>" + changeData[i].modCause + "</div>" +
+                "</div>"
+        }
     }
 
     detail += changeHtml;
@@ -501,3 +503,39 @@ function getFileArr() {
 
 
 }
+
+
+function setAppLineData() {
+    let appLine = storage.reportDetailData.appLine;
+    let formId = storage.reportDetailData.formId;
+    let appLineContainer = new Array();
+    appLineContainer = [[], [], [], [], []];
+
+    for (let i = 1; i < appLine.length; i++) {
+        for (let j = 0; j < appLineContainer.length; j++) {
+            if (appLine[i].appType == j) {
+                appLineContainer[j].push(appLine[i]);
+            }
+        }
+    }
+
+    let appTypeTitles = ["_examine", "_agree", "_approval", "_conduct", "_refer"];
+
+    for (let i = 0; i < appLineContainer.length; i++) {
+        for (let j = 0; j < appLineContainer[i].length; j++) {
+            if (appLineContainer[i][j].approved != null) {
+                $("." + formId + appTypeTitles[i] + "_status")[j].value = "승인";
+                $("." + formId + appTypeTitles[i] + "_approved")[j].value = getYmdShortSlash(appLineContainer[i][j].approved);
+            } else if (appLineContainer[i][j].rejected != null) {
+                $("." + formId + appTypeTitles[i] + "_status")[j].value = "반려";
+                $("." + formId + appTypeTitles[i] + "_approved")[j].value = getYmdShortSlash(appLineContainer[i][j].rejected);
+            }
+        }
+    }
+
+}
+function getYmdShortSlash(date) {
+	let d = new Date(date);
+	return (d.getFullYear() % 100) + "/" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "/" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString());
+}
+
