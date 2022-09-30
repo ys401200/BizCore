@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -108,7 +109,7 @@ public class ApiNoteCtrl extends Ctrl{
         return result;
     } // End of getNewMessage()
 
-    @GetMapping("/{partner:\\d+}")
+    @PostMapping("/{partner:\\d+}")
     public String sendNewMessage(HttpServletRequest request, @PathVariable("partner") int partner, @RequestBody String requestBody){
         String result = null, compId = null, data = null, aesKey = null, aesIv = null, userNo = null;
         HttpSession session = null;
