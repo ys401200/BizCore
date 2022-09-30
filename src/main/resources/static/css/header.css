@@ -764,21 +764,6 @@ input[name="tabItem"] {
 	display: none;
 }
 
-.noteContainer > hr {
-	float: left;
-	border:2px solid #182f81;
-	height: 32px;
-	margin: 0;
-}
-
-.noteContainer > span {
-	font-weight: bolder;
-	font-size: 15px;
-	margin-left: 15px;
-	line-height: 40px;
-	color: #182f81;
-}
-
 .noteContainer button{
 	float: right;
 }
@@ -920,6 +905,17 @@ input[name="tabItem"] {
 	border-radius: 10px;
 }
 
+.noteContainer .noteMsgContent .noteText > button{
+	display: flex;
+    align-items: center;
+    justify-content: right;
+    height: 100%;
+    background-color: #182f81;
+    color: #ededed;
+    margin-left: 10px;
+	border-radius: 10px;
+}
+
 .myNoteList{
 	border: 1px solid #182f81;
 	overflow-y: auto;
@@ -928,6 +924,7 @@ input[name="tabItem"] {
     right: 250px;
     background-color: #ffffff;
 	display: none;
+	z-index: 1;
 }
 
 .myNoteList::after{

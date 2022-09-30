@@ -2788,9 +2788,11 @@ function noteChangeMsg(e){
 	msgHtml += "</div>";
 	msgHtml += "<div class=\"noteText\">";
 	msgHtml += "<textarea id=\"noteSubmitText\"></textarea>";
+	msgHtml += "<button type=\"button\" onclick=\"noteSubmit();\">전송</button>"
 	msgHtml += "</div>";
 
 	noteMsgContent.html(msgHtml);
+	$(".noteChat").scrollTop($(".noteChat")[0].scrollHeight);
 }
 
 function msgContentIn(){
@@ -2824,4 +2826,29 @@ function msgContentOut(){
 	if(widgetContainer !== undefined){
 		widgetContainer.show();
 	}
+}
+
+function noteSubmit(){
+	let noteSubmitText, data;
+	noteSubmitText = $("#noteSubmitText");
+
+	data = {
+		"msg": noteSubmitText.val(),
+		"related": null,
+	};
+
+	data = JSON.stringify(data);
+	data = cipher.encAes(data);
+
+	$.ajax({
+		url: "/api/note/10071",
+		method: "post",
+		data: data,
+		dataType: "json",
+		contentType: "text/plain",
+		success: (result) => {
+			msg.set("전송되었습니다.");
+			noteSubmitText.val("");
+		}
+	})
 }

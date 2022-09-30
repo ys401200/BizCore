@@ -14,14 +14,6 @@ $(document).ready(() => {
 
 	let menu = [
 		{
-			"keyword": "notes",
-			"onclick": ""
-		},
-		{
-			"keyword": "set",
-			"onclick": ""
-		},
-		{
 			"keyword": "widget",
 			"onclick": ""
 		},

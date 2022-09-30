@@ -112,6 +112,17 @@
 					<span>로그아웃</span>
 				</a>
 			</li> -->
+			<li>
+				<a href="#">
+					<img src="/images/main/icons/mainSchedIcon.png" id="mainSchedIcon" />
+					<span>설정</span>
+					<span id="slideSpan">+</span>
+				</a>
+				<ul id="panel">
+					<li><a href="/business/schedule">고객사설정</a></li>
+					<li><a href="/business/workjournal">영업목표설정</a></li>
+				</ul>
+			</li>
 		</ul>
 
 		<ul id="gw">
