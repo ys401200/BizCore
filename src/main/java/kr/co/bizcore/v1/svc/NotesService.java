@@ -4,10 +4,17 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class NotesService extends Svc{
+
+    private static final Logger logger = LoggerFactory.getLogger(NotesService.class);
 
     // 신규 메시지 카운트
     public String getNewCount(String compId, String userNo){
@@ -35,8 +42,12 @@ public class NotesService extends Svc{
         HashMap<String, String> each = null;
         String t = null;
         int x = 0;
-
+        logger.error("||||||||||||||||||||||||||||||||||||||||||||||||| compId : " + compId);
+        logger.error("||||||||||||||||||||||||||||||||||||||||||||||||| userNo : " + userNo);
+        logger.error("||||||||||||||||||||||||||||||||||||||||||||||||| writer : " + writer);
+        logger.error("||||||||||||||||||||||||||||||||||||||||||||||||| time : " + (new Date(time)));
         list = notesMapper.getMessage(compId, writer, userNo, new Date(time));
+        logger.error("||||||||||||||||||||||||||||||||||||||||||||||||| Size of list : " + list.size());
         if(list.size() > 0){
             result = "[";
             for(x = 0 ; x < list.size() ; x++){
@@ -45,7 +56,7 @@ public class NotesService extends Svc{
                 result += ("{\"writer\":" + each.get("writer") + ",");
                 result += ("\"sent\":" + each.get("sent") + ",");
                 result += ("\"read\":" + each.get("read") + ",");
-                result += ("\"msg\":" + each.get("message") + ",");
+                result += ("\"msg\":\"" + each.get("message") + "\",");
                 result += ("\"related\":" + each.get("read") + "}");
             }
             result += "]";

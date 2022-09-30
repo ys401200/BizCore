@@ -18,7 +18,7 @@ public interface NotesMapper {
     public List<HashMap<String, String>> getNewCount(@Param("compId") String compId, @Param("userNo") String userNo);
 
     // 특정 발신자와의 대화를 가져오는
-    @Select("SELECT CAST(writer AS CHAR) AS writer, CAST(UNIX_TIMESTAMP(sent)*1000 AS CHAR) AS sent, CAST(UNIX_TIMESTAMP(`read`)*1000 AS CHAR) AS `read`, message, related FROM bizcore.notes WHERE deleted IS NULL AND UNIX_TIMESTAMP(sent)*1000 < #{time} AND compId = #{compId} AND ((writer = #{writer} AND reader = #{reader}) OR (reader = #{writer} AND writer = #{reader})) ORDER BY sent DESC LIMIT 100")
+    @Select("SELECT CAST(writer AS CHAR) AS writer, CAST(UNIX_TIMESTAMP(sent)*1000 AS CHAR) AS sent, CAST(UNIX_TIMESTAMP(`read`)*1000 AS CHAR) AS `read`, message, related FROM bizcore.notes WHERE deleted IS NULL AND sent < #{time} AND compId = #{compId} AND ((writer = #{writer} AND reader = #{reader}) OR (reader = #{writer} AND writer = #{reader})) ORDER BY sent DESC LIMIT 100")
     public List<HashMap<String, String>> getMessage(@Param("compId") String compId, @Param("writer") int writer , @Param("reader") String userNo, @Param("time") Date time);
 
     // 특정 발신자와의 신규 대화를 가져오는
