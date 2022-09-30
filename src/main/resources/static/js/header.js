@@ -432,6 +432,18 @@ storage.widget.set = [
 	"contract/0"
 ];
 
+// 기초 데이터가 세팅되어 있는지 확인하는 함수
+function isInit(){
+	if(storage.code === undefined) 		return false;
+	if(storage.company === undefined)	return false;
+	if(storage.customer === undefined) 	return false;
+	if(storage.dept === undefined) 		return false;
+	if(storage.user === undefined) 		return false;
+	if(storage.userRank === undefined) 	return false;
+	if(storage.my === undefined) 		return false;
+	return true;
+} // End of isInit()()
+
 //페이징될 때 header, sideMenu active를 위한 함수
 function menuActive(){
 	let i = null, pathName = null, fullStr = null, firstStr = null, lastStr = null, strLength = null, sideMenu = null, mainTopMenu = null;
