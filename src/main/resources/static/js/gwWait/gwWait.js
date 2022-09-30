@@ -730,7 +730,7 @@ function approveBtnEvent() {
 	let formId = storage.reportDetailData.formId;
 	let selectVal = $(":radio[name='type']:checked").val();
 	let comment = $(".approvalComment").val();
-	comment = comment.replaceAll("\n", "<br />");
+	comment = comment.replaceAll("\n","<br />");
 	$(".modal-wrap").hide();
 	let type;
 	let appLine = storage.reportDetailData.appLine;
@@ -756,7 +756,7 @@ function approveBtnEvent() {
 		if (soppVal != "" || storage.soppList[x].title === soppVal) {
 			soppResult = storage.soppList[x].no + "";
 		} else {
-			soppResult = null;
+			soppResult = "";
 		}
 	}
 	let cusResult;

@@ -482,7 +482,6 @@ function drawCommentLine() {
 //  변경이력 그리는 함수 
 function drawChangeInfo() {
     let target = $("#tabDetail2");
-    // 임시 데이터 ----------------------------------------------------
 
 
     let changeData = [{
@@ -498,7 +497,6 @@ function drawChangeInfo() {
         "modCause": "수정 완 "
     }]
 
-    // 임시 데이터 ---------------------------------------------------- 
 
     let detail = "<div class='tapLineB'><div>타입</div><div>이름</div><div>변경일자</div><div>변경내용</div></div>";
     let changeHtml = "";
