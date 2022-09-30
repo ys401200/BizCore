@@ -51,7 +51,7 @@ public class ApiNoteCtrl extends Ctrl{
         }
 
         return result;
-    } // End of get()
+    } //  End of get()
 
     @GetMapping("/{partner:\\d+}/{time:\\d+}")
     public String getMessage(HttpServletRequest request, @PathVariable("partner") int partner, @PathVariable("time") long time){
