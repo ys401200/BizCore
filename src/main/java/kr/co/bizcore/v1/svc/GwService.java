@@ -293,7 +293,7 @@ public class GwService extends Svc{
             receive = "[";
             for(x = 0 ; x < list.size() ; x++){
                 each = list.get(x);
-                if(x > 0)   refer += ",";
+                if(x > 0)   receive += ",";
                 t = each.get("read");
                 t = t == null || t.equals("0") ? "null" : "\"" + t + "\"";
                 receive += "{";
