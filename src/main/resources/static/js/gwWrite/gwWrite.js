@@ -11,7 +11,6 @@ $(document).ready(() => {
 
 function getformList() {
 
-
   $(".ContentDiv").html("<div class='gwWriteBtns'></div><div class='selector'>d</div><div class='selector'>d</div><div class='selector'>d</div>");
 
   $(".gwWriteBtns").html("<button type='button' onclick='reportInsert()' class='writeBtn'>기안 하기</button> <button class='saveBtn' type='button' onclick='tempSave()' disabled>임시 저장</button>");
@@ -55,7 +54,34 @@ function getformList() {
   $(".modal-wrap").hide()
   $(".insertedDetail").hide();
   $(".createLineBtn").hide();
+  alert("체크");
 
+  let checkHref = location.href;
+  checkHref = checkHref.split("//");
+  checkHref = checkHref[1];
+  let splitArr = checkHref.split("/");
+
+  if (splitArr.length > 3) {
+    $.ajax({
+      "url": apiServer + "/api/gw/app/temp/" + splitArr[3],
+      "method": "get",
+      "dataType": "json",
+      "cache": false,
+      success: (data) => {
+        let detailData;
+        if (data.result === "ok") {
+          detailData = cipher.decAes(data.data);
+          detailData = JSON.parse(detailData);
+          detailData.doc = cipher.decAes(detailData.doc);
+          detailData.doc = detailData.doc.replaceAll("\\\"", "\"");
+          storage.reportDetailData = detailData;
+          setTempReport();
+        } else {
+          alert("임시 저장 문서 정보를 가져오는 데 실패했습니다");
+        }
+      }
+    })
+  }
   // let previewWidth = document.getElementsByClassName("reportInsertForm")[0];
   // previewWidth = previewWidth.clientWidth;
   // let target = $(".reportInsertForm");
@@ -65,7 +91,123 @@ function getformList() {
 
 
 
+function setTempReport() {
+
+  if (storage.reportDetailData != undefined) {
+    let formId = storage.reportDetailData.formId;
+    $(".guide").remove();
+    $(".lineDetail").show();
+    $(".createLineBtn").show();
+    $(".reportInsertForm").html(storage.reportDetailData.doc);
+    $(".insertedDetail").show();
+
+    //작성자 작성일 자동 입력
+    $(".testClass").prop('checked', false);
+    $(".typeContainer").html("")
+    $(".inputsAuto").prop("disabled", "true");
+    $(".inputsAuto").css("text-align", "center")
+    $(".inputsAuto").eq(0).css("text-align", "left");
+    $(".inputsAuto").eq(1).css("text-align", "left");
+    $(".inputsAuto").eq(2).css("text-align", "left");
+
+    $(".saveBtn").prop("disabled", false);
+    $(".previewBtn").prop("disabled", false);
+
+
+    //영업기회 데이터 리스트 만들기  
+
+    $.ajax({
+      url: "/api/sopp",
+      type: "get",
+      dataType: "json",
+      success: (result) => {
+        if (result.result == "ok") {
+          let jsondata;
+          jsondata = cipher.decAes(result.data);
+          jsondata = JSON.parse(jsondata);
+          storage.soppList = jsondata;
+          setSoppList(formId);
+        } else {
+          alert("에러");
+        }
+      },
+    });
+
+
+    // 거래처 데이터 리스트 
+
+    let html = $(".infoContentlast")[0].innerHTML;
+    let x;
+    let dataListHtml = "";
+
+
+    // 거래처 데이터 리스트 만들기 
+    dataListHtml = "<datalist id='_infoCustomer'>"
+    for (x in storage.customer) {
+      dataListHtml += "<option data-value='" + x + "' value='" + storage.customer[x].name + "'></option> "
+    }
+    dataListHtml += "</datalist>"
+    html += dataListHtml;
+    $(".infoContentlast")[0].innerHTML = html;
+    $("#" + formId + "_infoCustomer").attr("list", "_infoCustomer");
+
+    let target = $(".reportInsertForm")[0];
+    let inputsArr = target.getElementsByTagName("input");
+
+    for (let i = 0; i < inputsArr.length; i++) {
+      if (inputsArr[i].dataset.detail !== undefined) {
+        inputsArr[i].value = inputsArr[i].dataset.detail;
+      }
+    }
+
+    let textAreaArr = target.getElementsByTagName("textarea")[0];
+    textAreaArr.value = textAreaArr.dataset.detail;
+
+    // 이름 , 직급 한글로 설정하기 
+    let subTitlesArr = ["_examine", "_approval", "_agree", "_conduct"];
+    for (let i = 0; i < subTitlesArr.length; i++) {
+      if ($("." + formId + subTitlesArr[i]).val() != undefined) {
+        for (let j = 0; j < $("." + formId + subTitlesArr[i]).length; j++) {
+
+          $("." + formId + subTitlesArr[i])[j].value = storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
+          $("." + formId + subTitlesArr[i] + "_position")[j].value = storage.userRank[$("." + formId + subTitlesArr[i] + "_position")[j].value][0];
+
+        }
+      }
+    }
+
+    // 상세타입 체크하게 하기
+    let rd = $("input[name='" + formId + "_RD']");
+    for (let i = 0; i < rd.length; i++) {
+      if (rd[i].dataset.detail == "on") {
+        $("#" + rd[i].id).prop("checked", true);
+      }
+    }
+    $("input[name='" + formId + "_RD']").prop("disabled", true);
+
+
+  }
+
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
 function drawFormList() {
+
   let data = storage.formList;
   let titles = new Array();
   let nums = new Array();
@@ -412,7 +554,7 @@ function createLine() {
   let my = storage.my;
   let today = getYmdSlash();
   let testHtml = "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작성</div><div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto' value='" + storage.userRank[storage.user[my].rank][0] + "'></div>" +
-    "<div class='twoBorder'><input type='text' class='inputsAuto "  + formId + "_writer' value='" + storage.user[my].userName + "'></div>" +
+    "<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_writer' value='" + storage.user[my].userName + "'></div>" +
     "<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_writer_status' value=''></div>" +
     "<div class='dateBorder'><input type='text' class='inputsAuto " + formId + "_writer_approved''value=''></div></div></div>";
   let testHtml2 = "<div class='lineGridContainer'>";
@@ -558,7 +700,6 @@ function reportInsert() {
   }
 
 
-
   title = $("#" + formId + '_title').val();
   content = $("#" + formId + "_content").val();
   readable = $('input[name=authority]:checked').val();
@@ -566,6 +707,13 @@ function reportInsert() {
   appDoc = appDoc.replaceAll("\n", "").replaceAll("\r", "").replaceAll("\t", "").replaceAll("\"", "\\\"");
   let my = storage.my;
   dept = storage.user[my].deptId[0];
+
+  let temp;
+  if (storage.reportDetailData != undefined) {
+    temp = storage.reportDetailData.docNo;
+  } else {
+    temp = null;
+  }
 
 
   for (let i = 0; i < $("." + formId + "_examine").length; i++) {
@@ -595,7 +743,8 @@ function reportInsert() {
     "appLine": appLine,
     "appDoc": appDoc,
     "formId": formId,
-    "readable": readable
+    "readable": readable,
+    "temp": temp
   }
   console.log(data);
   data = JSON.stringify(data)
@@ -725,10 +874,15 @@ function tempSave() {
 
 
 
-  let dept, title, sopp, readable, formId, customer, appDoc, appLine = [];
+  let dept, title, readable, formId, appDoc, appLine = [];
   let my = storage.my;
   dept = storage.user[my].deptId[0];
-  formId = storage.formList[$(".formNumHidden").val()].id;
+  if ($(".formNumHidden").val() == "") {
+    formId = storage.reportDetailData.formId
+  } else {
+    formId = storage.formList[$(".formNumHidden").val()].id;
+  }
+
   title = $("#" + formId + "_title").val();
   appDoc = $(".reportInsertForm").html();
   readable = $('input[name=authority]:checked').val();
@@ -752,6 +906,12 @@ function tempSave() {
     } else {
       cusResult = "";
     }
+  }
+  let temp;
+  if (storage.reportDetailData != undefined) {
+    temp = storage.reportDetailData.docNo;
+  } else {
+    temp = null;
   }
 
 
@@ -786,7 +946,8 @@ function tempSave() {
     "formId": formId,
     "customer": cusResult,
     "appDoc": appDoc,
-    "appLine": appLine
+    "appLine": appLine,
+    "temp": temp
   }
 
   if (title == "") {

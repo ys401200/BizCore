@@ -53,7 +53,7 @@ public class GwController {
         return result;
     }
 
-    @RequestMapping(value = "/write", method = RequestMethod.GET)
+    @RequestMapping(value = { "/write", "/write/{docNo}" }, method = RequestMethod.GET)
     public String write(HttpServletRequest request) {
         HttpSession session = null;
         String result = null, uri = null, pathName = null, tempStr = null;
@@ -325,7 +325,7 @@ public class GwController {
         return result;
     }
 
-    @RequestMapping(value = {"/myreceive" ,"/myreceive/{docNo}" }, method = RequestMethod.GET)
+    @RequestMapping(value = { "/myreceive", "/myreceive/{docNo}" }, method = RequestMethod.GET)
     public String myreceive(HttpServletRequest request) {
         HttpSession session = null;
         String result = null, uri = null, pathName = null, tempStr = null;
@@ -359,7 +359,7 @@ public class GwController {
         return result;
     }
 
-    @RequestMapping(value = {"/myrefer" ,"/myrefer/{docNo}" }, method = RequestMethod.GET)
+    @RequestMapping(value = { "/myrefer", "/myrefer/{docNo}" }, method = RequestMethod.GET)
     public String myrefer(HttpServletRequest request) {
         HttpSession session = null;
         String result = null, uri = null, pathName = null, tempStr = null;
