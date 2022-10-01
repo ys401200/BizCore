@@ -878,7 +878,7 @@ function tempSave() {
   let my = storage.my;
   dept = storage.user[my].deptId[0];
   if ($(".formNumHidden").val() == "") {
-    formId = storage.reportDetailData.formId
+    formId = storage.reportDetailData.formId;
   } else {
     formId = storage.formList[$(".formNumHidden").val()].id;
   }
@@ -949,7 +949,7 @@ function tempSave() {
     "appLine": appLine,
     "temp": temp
   }
-
+  console.log(data);
   if (title == "") {
     alert("제목을 입력하세요");
   } else {
