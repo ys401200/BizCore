@@ -116,6 +116,8 @@ function drawMyDraft() {
             status = "승인 완료";
         } else if (jsonData[i].status == -3) {
             status = "반려";
+        } else if (jsonData[i].status == -1) {
+            status = "회수";
         }
 
         let authority = storage.user[jsonData[i].authority].userName;
