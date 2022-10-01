@@ -148,7 +148,7 @@ public interface GwMapper {
     public List<HashMap<String, String>> getApprovedList(@Param("compId") String compId, @Param("userNo") String userNo);
     
     // 참조/열람 문서함 목록을 전달하는 메서드
-    @Select("SELECT CAST(a.no AS CHAR) AS no, a.docNo, CAST(a.writer AS CHAR) AS writer, b.title AS form, a.title, a.confirmNo, CAST(a.status AS CHAR) AS status, CAST(UNIX_TIMESTAMP(a.created)*1000 AS CHAR) AS created, IF(status=3,c.approved,NULL) AS processed " +
+    @Select("SELECT CAST(a.no AS CHAR) AS no, a.docNo, CAST(a.writer AS CHAR) AS writer, b.title AS form, a.title, a.confirmNo, CAST(a.status AS CHAR) AS status, CAST(UNIX_TIMESTAMP(a.created)*1000 AS CHAR) AS created, IF(status=3,CAST(UNIX_TIMESTAMP(c.approved)*1000 AS CHAR),NULL) AS processed " +
             "FROM bizcore.doc_form b, bizcore.doc_app a " +
             "LEFT OUTER JOIN (SELECT a.docNo, a.approved FROM bizcore.doc_app_detail a, (SELECT docNo, MAX(ordered) AS o FROM bizcore.doc_app_detail WHERE deleted IS NULL AND ordered > 0 AND approved IS NOT NULL AND compId = #{compId} GROUP BY docNo) b WHERE a.docNo = b.docNo AND a.ordered = b.o AND a.compId = #{compId}) c " +
             "ON a.docNo = c.docNo " +
