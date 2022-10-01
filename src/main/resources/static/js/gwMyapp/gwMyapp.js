@@ -609,6 +609,16 @@ function setAppLineData() {
 	let appLineContainer = new Array();
 	appLineContainer = [[], [], [], [], []];
 
+	
+    if (appLine[0].approved != null) {
+        $("." + formId + "_writer_status").val("승인");
+        $("." + formId + "_writer_approved").val(getYmdShortSlash(appLine[0].approved));
+    } else if (appLine[0].rejected != null) {
+        $("." + formId + "_writer_status").val("회수");
+        $("." + formId + "_writer_approved").val(getYmdShortSlash(appLine[0].rejected));
+
+    }
+
 	for (let i = 1; i < appLine.length; i++) {
 		for (let j = 0; j < appLineContainer.length; j++) {
 			if (appLine[i].appType == j) {

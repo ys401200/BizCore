@@ -25,7 +25,7 @@ function defaultMyDraft() {
                 storage.formList = list;
                 console.log("[getForms] Success getting employee information.");
             } else {
-                // msg.set("양식 정보를 가져오지 못했습니다.");
+                msg.set("양식 정보를 가져오지 못했습니다.");
             }
         }
     })
@@ -343,6 +343,16 @@ function setAppLineData() {
     let appLineContainer = new Array();
     appLineContainer = [[], [], [], [], []];
 
+
+    if (appLine[0].approved != null) {
+        $("." + formId + "_writer_status").val("승인");
+        $("." + formId + "_writer_approved").val(getYmdShortSlash(appLine[0].approved));
+    } else if (appLine[0].rejected != null) {
+        $("." + formId + "_writer_status").val("회수");
+        $("." + formId + "_writer_approved").val(getYmdShortSlash(appLine[0].rejected));
+
+    }
+
     for (let i = 1; i < appLine.length; i++) {
         for (let j = 0; j < appLineContainer.length; j++) {
             if (appLine[i].appType == j) {
@@ -519,13 +529,13 @@ function drawChangeInfo() {
 
 
 function getYmdSlash(date) {
-	let d = new Date(date);
-	return (d.getFullYear() % 100) + "/" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "/" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString()) + "&nbsp" + (d.getHours() > 9 ? d.getHours().toString() : "0" + d.getHours().toString()) + ":" + (d.getMinutes() > 9 ? d.getMinutes().toString() : "0" + d.getMinutes().toString()) + ":" + (d.getSeconds() > 9 ? d.getSeconds().toString() : "0" + d.getSeconds().toString());
+    let d = new Date(date);
+    return (d.getFullYear() % 100) + "/" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "/" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString()) + "&nbsp" + (d.getHours() > 9 ? d.getHours().toString() : "0" + d.getHours().toString()) + ":" + (d.getMinutes() > 9 ? d.getMinutes().toString() : "0" + d.getMinutes().toString()) + ":" + (d.getSeconds() > 9 ? d.getSeconds().toString() : "0" + d.getSeconds().toString());
 }
 
 function getYmdShortSlash(date) {
-	let d = new Date(date);
-	return (d.getFullYear() % 100) + "/" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "/" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString());
+    let d = new Date(date);
+    return (d.getFullYear() % 100) + "/" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "/" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString());
 }
 
 

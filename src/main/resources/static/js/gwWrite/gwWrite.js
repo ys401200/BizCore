@@ -14,7 +14,7 @@ function getformList() {
 
   $(".ContentDiv").html("<div class='gwWriteBtns'></div><div class='selector'>d</div><div class='selector'>d</div><div class='selector'>d</div>");
 
-  $(".gwWriteBtns").html("<button type='button' onclick='reportInsert()' class='writeBtn'>기안 하기</button> <button class='saveBtn' type='button' onclick='tempSave()' disabled>임시 저장</button> <button class='previewBtn' type='button' disabled>인쇄 미리보기</button>");
+  $(".gwWriteBtns").html("<button type='button' onclick='reportInsert()' class='writeBtn'>기안 하기</button> <button class='saveBtn' type='button' onclick='tempSave()' disabled>임시 저장</button>");
 
   // 기본설정
 
@@ -412,9 +412,9 @@ function createLine() {
   let my = storage.my;
   let today = getYmdSlash();
   let testHtml = "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작성</div><div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto' value='" + storage.userRank[storage.user[my].rank][0] + "'></div>" +
-    "<div class='twoBorder'><input type='text' class='inputsAuto' value='" + storage.user[my].userName + "'></div>" +
-    "<div class='twoBorder'><input type='text' class='inputsAuto' value=''></div>" +
-    "<div class='dateBorder'><input type='text' class='inputsAuto'value=''></div></div></div>";
+    "<div class='twoBorder'><input type='text' class='inputsAuto "  + formId + "_writer' value='" + storage.user[my].userName + "'></div>" +
+    "<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_writer_status' value=''></div>" +
+    "<div class='dateBorder'><input type='text' class='inputsAuto " + formId + "_writer_approved''value=''></div></div></div>";
   let testHtml2 = "<div class='lineGridContainer'>";
   let referHtml = "<div>참조</div>";
   let target = $(".typeContainer"); // 결재선 생성 모달에서 결재 타입 각각의 container 
