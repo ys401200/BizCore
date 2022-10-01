@@ -2852,3 +2852,133 @@ function noteSubmit(){
 		}
 	})
 }
+
+// 부서트리를 만드는 함수
+function setDeptTree(){
+	let x, y, dept, arr = [], prv, count = 0;
+	if(storage.dept === undefined)  return;
+
+	// 최상위 부서를 찾고 이를 이를 인스턴스화 하고 map에 세팅함
+	dept = storage.dept.root === undefined ? null : storage.dept.root;
+	dept = storage.dept.dept[dept] === undefined ? null : storage.dept.dept[dept];
+	if(dept === null)   return;
+	
+	// storage.dept에 최상위 부서 세팅
+	storage.dept.tree = new Department(dept);
+	storage.dept.tree.root = true;
+	
+	// 하위부서 추가 전 준비
+	for(x in storage.dept.dept){
+		if(x !== undefined && x !== storage.dept.root) arr.push(x);
+	}
+	
+	// 하위부서 추가
+	x = 0;
+	while(arr.length > 0){
+		x += 1;
+		x = x < arr.length ? x : 0;
+		dept = arr[x];
+		if(prv === dept){
+			console.log("처리안됨 : " + prv);
+			break; // 무한루프 방지
+		}
+		prv = dept;
+		dept = new Department(storage.dept.dept[arr[x]]);
+		if(storage.dept.tree.addDept(dept)) arr.splice(x,1);
+	}
+
+	// 부서원 추가
+	for(x in storage.user){
+		if(x === undefined || storage.user[x] === undefined)    continue;
+		dept = storage.user[x].deptId;
+		for(y in dept)  if(storage.dept.tree.addEmployee(dept[y], x))    break;
+	}
+} // End of setDeptTree()
+
+class Department{
+	constructor(e){
+		this.no = (e.id === undefined || e.id === null) ? null : e.id;
+		this.name = (e.deptName === undefined || e.deptName === null) ? null : e.deptName;
+		this.id = (e.deptId === undefined || e.deptId === null) ? null : e.deptId;
+		this.parent = (e.id === undefined || e.id === null) ? null : e.parent;
+		this.color = (e.colorCode === undefined || e.colorCode === null) ? null : e.colorCode;
+		this.employee = [];
+		this.head = null;
+		this.docManager = null;
+		this.children = [];
+		this.root = false;
+	}
+
+	// 하위부서 추가
+	addDept(e){
+		let x;
+		if (!(e instanceof Department)) return false;
+		if(this.id === e.parent){
+			this.children.push(e);
+			return true;
+		}else for(x = 0 ; x < this.children.length ; x++)    if(this.children[x].addDept(e)) return true;
+		return false;
+	} // End of addDept()
+
+	// 부서아이디를 통한 부서 찾기
+	getDept(id){
+		let child = null, x;
+		if(this.children.length === undefined || this.children.length === 0)    return null;
+		else for(x = 0 ; x < this.children.length ; x++){
+			child = this.children[x].getDept(id);
+			if(child !== null)  return child;
+		}
+		return null;
+	} // End of getDept()
+
+	// 하위 부서 아이디를 전무 찾는 메서드
+	getChildrenId(arr){
+		let x;
+		if(arr === undefined)   arr = [];
+		else    arr.push(this.id);
+		for(x = 0 ; x < this.children.length ; x++) this.children.getChildrenId(arr);
+		return arr;
+	} // End of getChildrenId()
+
+	// 소속 부서를 찾아서 직원을 추가하는 함수
+	addEmployee(id, no){
+		let x;
+		if(id === undefined || no === undefined)   return;
+		console.log("input / id : " + id + ", no : " + no + " / dept + " + this.id);
+		if(this.id === id){
+			this.employee.push(no);
+			return true;
+		}
+		for(x = 0 ; x < this.children.length ; x++) if(this.children[x].addEmployee(id, no))    return true;
+		return false;
+	} // End of getChildrenId()
+
+	// 조직도 그리기 태그문자열 생성/전달
+	getHtml(empSelectable, deptSelectable){
+		let x, y, html, padding;
+		empSelectable = empSelectable === undefined || empSelectable !== true ? false : empSelectable;
+		deptSelectable = deptSelectable === undefined || deptSelectable !== true ? false : deptSelectable;
+		padding = "1rem";
+
+		html = "<input type=\"checkbox\" class=\"dept-tree\" style=\"display:none\" id=\"dept-tree-" + this.id + "\" />";
+		html == ("<label for=\"dEpt-tRee-" + this.id + "\"><img src=\"/images/common/corporate.png\">" + this.name + "</label>");
+		if(deptSelectable)  html += ("<input type=\"checkbox\" class=\"dept-tree-select\" data-select=\"dept:" + this.id + "\" />");
+		html += ("<div class=class=\"dept-tree-cnt\" style=\"padding-left:" + padding + "\">");
+
+		for(x = 0 ; x < this.employee ; x++){
+			y = this.employee[x];
+			if(y === undefined) continue;
+			if(storage.user[y] === undefined || storage.user[y].resign) continue;
+			html += ("<div><img src=\"/api/user/image/" + y + "\" style=\"width:20px;height:20px;\"> " + storage.user[y].userName + " " + storage.userRank[storage.user[y].rank][0]);
+			if(empSelectable)   html += ("<input type=\"checkbox\" class=\"dept-tree-select\" data-select=\"emp:" + y + "\" />");
+			html == ("</div>");
+		}
+
+		for(x = 0 ; x < this.children.length ; x++){
+			y = this.children[x];
+			html += y.getHtml(empSelectable, deptSelectable);
+		}
+
+		html += ("</div>");
+	} // End of getHtml()
+} // End of class === Department

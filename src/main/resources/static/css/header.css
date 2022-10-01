@@ -953,3 +953,6 @@ input[name="tabItem"] {
 .myNoteList .myNoteListItem > p{
 	margin: 0;
 }
+
+.dept-tree + label + div{display:none;}
+.dept-tree:checked + label + div{display:block;}

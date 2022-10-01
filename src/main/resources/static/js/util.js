@@ -39,7 +39,7 @@ util = {
         return true;
     }, // End of util.grid()
     "type":(obj) => {
-        return obg == undefined ? obj : Object.prototype.toString.call(ttt).slice(8, -1);
+        return obj == undefined ? obj : Object.prototype.toString.call(obj).slice(8, -1);
     }, // End of util.classType()
     "":undefined,
     "":undefined
