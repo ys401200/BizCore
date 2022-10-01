@@ -846,9 +846,10 @@ public class GwService extends Svc{
         String result = null;
         String sql1 = "SELECT COUNT(*) FROM bizcore.doc_app_detail WHERE deleted IS NULL AND ordered > 0 AND (approved IS NOT NULL OR rejected IS NOT NULL) AND compId = ? AND docNo = ?";
         String sql2 = "UPDATE bizcore.doc_app SET status = -1 WHERE deleted IS NULL AND compId = ? AND docNo = ? AND writer = ?";
-        String sql3 = "UPDATE bizcore.doc_app_detail SET retrived = now() WHERE deleted IS NULL AND ordered = 0 AND compId = ? AND docNo = ? AND employee = ?";
+        String sql3 = "UPDATE bizcore.doc_app_detail SET retrieved = now() WHERE deleted IS NULL AND ordered = 0 AND compId = ? AND docNo = ? AND employee = ?";
         Connection conn = null;
         PreparedStatement pstmt = null;
+        ResultSet rs = null; 
         int a = -1;
 
         try{
@@ -858,9 +859,12 @@ public class GwService extends Svc{
             pstmt = conn.prepareStatement(sql1);
             pstmt.setString(1, compId);
             pstmt.setString(2, docNo);
-            a = pstmt.executeUpdate();
+            rs = pstmt.executeQuery();
+            if(rs.next())    a = rs.getInt(1); 
+            rs.close();
             pstmt.close();
-            if(a > 0)   return -1;
+            if(a < 0)   return -9999;
+            else if(a > 0)   return -1;
 
             // 결재 문서 헤더 정보에 회수 상태를 기록함
             pstmt = conn.prepareStatement(sql2);

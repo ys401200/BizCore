@@ -193,7 +193,7 @@ function getDetailView() {
     let testForm = storage.reportDetailData.doc;
     console.log(testForm);
 
-    let detailHtml = "<div class='mainBtnDiv'><button type='button' onclick='showList()'>목록보기</button><button type='button' '>회수</button></div>" +
+    let detailHtml = "<div class='mainBtnDiv'><button type='button' onclick='showList()'>목록보기</button><button type='button' onclick='returnReport()'>회수</button></div>" +
         "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>"
 
 
@@ -539,7 +539,30 @@ function drawChangeInfo() {
 }
 
 
+function returnReport() {
 
+    if (storage.reportDetailData.appLine[1].approved == null && storage.reportDetailData.appLine[1].rejected == null) {
+        let docNo = storage.reportDetailData.docNo;
+        $.ajax({
+            url: "/api/gw/app/doc/" + docNo,
+            type: "delete",
+            dataType: "json",
+            success: (result) => {
+                if (result.result == "ok") {
+                    alert("회수 성공");
+                } else {
+                    alert("에러");
+                }
+            },
+        });
+
+    } else {
+        alert("결재된 문서는 회수할 수 없습니다");
+    }
+
+
+
+}
 
 //날짜함수
 function getYmdSlash(date) {

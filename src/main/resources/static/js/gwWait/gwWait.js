@@ -757,7 +757,7 @@ function approveBtnEvent() {
 		if (soppVal != "" || storage.soppList[x].title === soppVal) {
 			soppResult = storage.soppList[x].no + "";
 		} else {
-			soppResult = "";
+			soppResult = null;
 		}
 	}
 	let cusResult;
@@ -765,7 +765,7 @@ function approveBtnEvent() {
 		if (customerVal != "" || storage.customer[x].title === customerVal) {
 			cusResult = storage.customer[x].no + "";
 		} else {
-			cusResult = "";
+			cusResult = null;
 		}
 	}
 
@@ -781,10 +781,10 @@ function approveBtnEvent() {
 
 
 	if (storage.reportDetailData.sopp == soppResult) {
-		soppResult = null;
+		soppResult = "";
 	}
 	if (storage.reportDetailData.customer == cusResult) {
-		cusResult = null;
+		cusResult = "";
 	}
 
 	selectVal === "approve" ? type = 1 : type = 0;
@@ -1460,7 +1460,7 @@ function setAppLineData() {
 }
 
 function getYmdShortSlash(date) {
-    let d = new Date(date);
-    return (d.getFullYear() % 100) + "/" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "/" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString());
+	let d = new Date(date);
+	return (d.getFullYear() % 100) + "/" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "/" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString());
 }
 

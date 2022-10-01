@@ -67,11 +67,6 @@ function drawMyRefer() {
             "title": "작성자",
             "align": "center",
         },
-
-        {
-            "title": "결재 타입",
-            "align": "center",
-        },
         {
             "title": "조회",
             "align": "center",
@@ -103,8 +98,10 @@ function drawMyRefer() {
             appType = "결재";
         } else if (appType == '3') {
             appType = "수신";
-        } else {
+        } else if (appType == '4') {
             appType = "참조";
+        } else {
+            appType = "열람";
         }
 
         if (jsonData[i].status == 1) {
@@ -131,11 +128,7 @@ function drawMyRefer() {
                 "setData": jsonData[i].title,
             },
             {
-                "setData": jsonData[i].writer,
-            },
-
-            {
-                "setData": appType,
+                "setData": storage.user[jsonData[i].writer].userName,
             },
             {
                 "setData": read,
