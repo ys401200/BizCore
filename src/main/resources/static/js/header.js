@@ -2936,7 +2936,7 @@ class Department{
 		let x;
 		if(arr === undefined)   arr = [];
 		else    arr.push(this.id);
-		for(x = 0 ; x < this.children.length ; x++) this.children.getChildrenId(arr);
+		for(x = 0 ; x < this.children.length ; x++) this.children[x].getChildrenId(arr);
 		return arr;
 	} // End of getChildrenId()
 
@@ -2961,17 +2961,17 @@ class Department{
 		padding = "1rem";
 
 		html = "<input type=\"checkbox\" class=\"dept-tree\" style=\"display:none\" id=\"dept-tree-" + this.id + "\" />";
-		html == ("<label for=\"dEpt-tRee-" + this.id + "\"><img src=\"/images/common/corporate.png\">" + this.name + "</label>");
+		html += ("<label for=\"dept-tree-" + this.id + "\"><img src=\"/images/common/corporate.png\" style=\"width:20px;height:20px;\">" + this.name + "</label>");
 		if(deptSelectable)  html += ("<input type=\"checkbox\" class=\"dept-tree-select\" data-select=\"dept:" + this.id + "\" />");
 		html += ("<div class=class=\"dept-tree-cnt\" style=\"padding-left:" + padding + "\">");
 
-		for(x = 0 ; x < this.employee ; x++){
-			y = this.employee[x];
+		for(x = 0 ; x < this.employee.length ; x++){
+			y = this.employee[x];console.log(y);
 			if(y === undefined) continue;
 			if(storage.user[y] === undefined || storage.user[y].resign) continue;
 			html += ("<div><img src=\"/api/user/image/" + y + "\" style=\"width:20px;height:20px;\"> " + storage.user[y].userName + " " + storage.userRank[storage.user[y].rank][0]);
 			if(empSelectable)   html += ("<input type=\"checkbox\" class=\"dept-tree-select\" data-select=\"emp:" + y + "\" />");
-			html == ("</div>");
+			html += ("</div>");
 		}
 
 		for(x = 0 ; x < this.children.length ; x++){
@@ -2980,5 +2980,6 @@ class Department{
 		}
 
 		html += ("</div>");
+		return html;
 	} // End of getHtml()
 } // End of class === Department
