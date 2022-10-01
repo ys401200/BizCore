@@ -45,6 +45,7 @@
 	<button type="button" id="plusBtn" data-click="false" onclick="plusBtnClick(this);"><i class="fa-solid fa-ellipsis"></i></button>
 </div>
 <jsp:include page="./modal/modal.jsp"/>
+<jsp:include page="./note/note.jsp"/>
 <div id="header">
 	<div id="mainTopLogo">
 		<a href="/"><img src="/images/main/topLogo.png" id="mainTopLogoImg" /></a>

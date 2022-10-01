@@ -1,0 +1,263 @@
+.noteWrap{
+    max-width: 100%;
+    background-color:rgba(0,0,0,.3); 
+    justify-content:right; 
+    align-items:center;     
+    position:fixed;         
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;        
+    display: none;       
+    padding-right: 200px;
+    z-index: 99;
+}
+
+.note{
+    background-color:#fff;
+    box-shadow: 0 5px 12px 1px rgb(0 0 0 / 16%); 
+    width: 40%;
+    height: 80%;
+}
+
+.noteHead{
+    padding:0 20px;
+    height:50px;  
+    color: #ffffff;
+    background-color:#2147b1;
+}
+
+.noteHead .noteHeadTitle{
+    float: left;
+    line-height: 50px;
+}
+
+.noteHead .xClose{
+    margin: 0;
+    line-height: 50px;
+    float: right;
+    font-size:1rem;
+    cursor: pointer;
+}
+
+.noteBody{        
+    background-color: #ffffff;
+    word-break: break-word;
+    overflow-y: auto;
+    font-size: 15px;    
+}
+
+.noteUserUl{
+    list-style: none; 
+    margin:0;
+    padding: 0;
+    background-color: #ffffff;
+}
+
+.noteUserLi{
+    padding: 10px;
+    border-bottom: 1px solid #ededed;
+}
+
+.noteUserLi:hover{
+    cursor: pointer;
+    background-color: #2147b1;
+    color: #fff;
+}
+
+#noteUserContent{
+    border-bottom: 1px solid #ededed;
+}
+
+.noteUserContentItem{
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    border-bottom: 1px solid #ededed;
+    padding: 10px;
+}
+
+.noteUserContentItem:hover{
+    cursor: pointer;
+    background-color: #2147b1;
+    color: #fff;
+}
+
+#noteUserContent.active{ 
+	display: block;
+	animation: 0.6s ease-in-out noteUserLiActive; 
+}
+
+@keyframes noteUserLiActive{
+    0%{
+        opacity: 0;
+    }
+    100%{
+        opacity: 1;
+    }
+}
+
+#noteUserContent:not(.active){ 
+	display: none;
+	animation: 0.5s ease-in-out noteUserLiUnActive; 
+}
+
+@keyframes noteUserLiUnActive{
+    0%{
+        transform: translateX(0px);
+        opacity: 1;
+    }
+    100%{
+        transform: translateX(-30px);
+        opacity: 0;
+    }
+}
+
+.accIcon {
+    float: right;
+    display: flex;
+    margin-top: -6px;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.noteMainContainer{
+    display: none;
+}
+
+.noteMainContent{
+	height: 500px;
+	padding-top: 10px;
+	padding-left: 10px;
+	padding-right: 10px;
+	overflow-y: auto;
+}
+
+.noteMainContent > .chatYou{
+	display: flex;
+	align-items: center;
+	justify-content: left;
+	float: left;
+    position: relative;
+    background-color: #29cea6;
+	color: #ffffff;
+	width: 60%;
+	margin-left: 10px;
+	border-radius: 5px;
+    border: 1px solid #999;
+	padding-left: 5px;
+	height: 50px;
+}
+
+.noteMainContent > .chatYou::after{
+	content: '';
+    position: absolute;
+    border-top: 10px solid transparent;
+    border-right: 15px solid #29cea6;
+    border-bottom: 10px solid transparent;
+	left: -15px;
+}
+
+.noteMainContent >.chatYouDate{
+	display: flex;
+    align-items: center;
+    justify-content: left;
+    width: 60%;
+	font-size: 0.8rem;
+    font-weight: 600;
+	margin-left: 15px;
+	margin-bottom: 15px;
+
+}
+
+.noteMainContent > .chatMe{
+	display: flex;
+	align-items: center;
+	justify-content: right;
+	text-align: right;
+	float: right;
+    position: relative;
+    background: #182f81;
+	color: #ffffff;
+	width: 60%;
+	margin-right: 10px;
+	border-radius: 5px;
+	border: 1px solid #999;
+	padding-right: 5px;
+	height: 50px;
+}
+
+.noteMainContent > .chatMe::after{
+	content: '';
+    position: absolute;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 15px solid #182f81;
+	right: -15px;
+}
+
+.noteMainContent >.chatMeDate{
+	display: flex;
+    align-items: center;
+    justify-content: right;
+	float: right;
+    width: 60%;
+	font-size: 0.8rem;
+    font-weight: 600;
+	margin-right: 15px;
+	margin-bottom: 15px;
+}
+
+.noteText{
+	display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top: 1px solid #000;
+    height: 170px;
+	padding: 10px;
+}
+
+.noteText > textarea{
+	width: 100%;
+	height: 100%;
+	font-size: 1.2rem;
+	font-weight: 600;
+	resize: none;
+	border-radius: 10px;
+}
+
+.noteText > button{
+	display: flex;
+    align-items: center;
+    justify-content: right;
+    height: 100%;
+    background-color: #182f81;
+    color: #ededed;
+    margin-left: 10px;
+	border-radius: 10px;
+}
+
+/*스크롤*/
+::-webkit-scrollbar {
+    width: 0.6em;
+    height:0.6em;
+}
+
+::-webkit-scrollbar-track {
+    background: rgb(207 212 217);
+    border-radius: 100vw;
+    margin-block: 0.5em;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgb(125 134 161);
+    border-radius: 100vw;
+    border: 0.1em solid rgb(207 212 217);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgb(100, 109, 137);
+}
+/*스크롤 끝*/

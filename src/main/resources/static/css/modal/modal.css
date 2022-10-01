@@ -118,23 +118,23 @@
 
 /*스크롤*/
 ::-webkit-scrollbar {
-	width: 0.6em;
-	height:0.6em;
-  }
-  
-  ::-webkit-scrollbar-track {
-	background: rgb(207 212 217);
-	border-radius: 100vw;
-	margin-block: 0.5em;
-  }
-  
-  ::-webkit-scrollbar-thumb {
-	background: rgb(125 134 161);
-	border-radius: 100vw;
-	border: 0.1em solid rgb(207 212 217);
-  }
-  
-  ::-webkit-scrollbar-thumb:hover {
-	background: rgb(100, 109, 137);
-  }
-  /*스크롤 끝*/
+    width: 0.6em;
+    height:0.6em;
+}
+
+::-webkit-scrollbar-track {
+    background: rgb(207 212 217);
+    border-radius: 100vw;
+    margin-block: 0.5em;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgb(125 134 161);
+    border-radius: 100vw;
+    border: 0.1em solid rgb(207 212 217);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgb(100, 109, 137);
+}
+/*스크롤 끝*/

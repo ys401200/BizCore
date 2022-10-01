@@ -2527,7 +2527,7 @@ function headerMyInfo(){
 	mainInfo = $("#mainInfo");
 
 	// html += "<img id=\"myInfoMessageImg\" src=\"../images/main/icons/message.png\" >";
-	html += "<a href=\"#\" onclick=\"msgContentIn();\" id=\"infoMessageImg\">";
+	html += "<a href=\"#\" onclick=\"noteContentShow();\" id=\"infoMessageImg\">";
 	html += myNoteList();
 	html += "<img id=\"myInfoMessageImg\" src=\"../images/main/icons/message.png\">";
 	html += "</a>";
@@ -2650,29 +2650,54 @@ function plusMenuSelect(select){
 }
 
 function addNoteContainer(){
-	let bodyContents, noteHtml = "";
-	bodyContents = $("#bodyContents");
+	let noteBody, noteHtml = "";
+	setDeptTree();
 
-	noteHtml = "<div class=\"noteContainer\">";
-	noteHtml += "<hr />";
-	noteHtml += "<span>쪽지</span>";
-	noteHtml += "<button type=\"button\" onclick=\"msgContentOut();\"><i class=\"fa-solid fa-xmark fa-xl\"></i></button>";
-	noteHtml += "<div class=\"noteContent\">"
-	noteHtml += "<div class=\"noteUserContent\">";
-	noteHtml += "<div class=\"noteUser\" data-writer=\"0\" onclick=\"noteChangeMsg(this);\">";
-	noteHtml += "<p>비전테크</p>";
-	noteHtml += "<span>수신할 문서가 있습니다.</span>";
-	noteHtml += "</div>";
-	noteHtml += "<div class=\"noteUser\" data-writer=\"10071\" onclick=\"noteChangeMsg(this);\">";
-	noteHtml += "<p>조병일</p>";
-	noteHtml += "<span>사</span>";
-	noteHtml += "</div>";
-	noteHtml += "</div>";
-	noteHtml += "<div class=\"noteMsgContent\"></div>";
-	noteHtml += "</div>";
-	noteHtml += "</div>";
+	noteBody = $(".noteBody");
 
-	bodyContents.append(noteHtml);
+	noteHtml += "<div class=\"noteUserContainer\">";
+	noteHtml += "<div class=\"noteUserAccoordion\">";
+	noteHtml += storage.dept.tree.getHtml();
+
+	// noteHtml += "<ul class=\"noteUserUl\">";
+
+	// noteHtml += "<li class=\"noteUserLi\" data-active=\"false\" onclick=\"changeAccIcon(this);\">";
+	// noteHtml += "<h4 class=\"noteUserLiTitle\">기술팀 <span class=\"accIcon\">+</span></h4>";
+	// noteHtml += "</li>";
+
+	// noteHtml += "<div id=\"noteUserContent\" name=\"noteUserContent\">";
+	// noteHtml += "<div class=\"noteUserContentItem\">이대용</div>";
+	// noteHtml += "<div class=\"noteUserContentItem\">조용희</div>";
+	// noteHtml += "</div>";
+
+	// noteHtml += "<li class=\"noteUserLi\" data-active=\"false\" onclick=\"changeAccIcon(this);\">";
+	// noteHtml += "<h4 class=\"noteUserLiTitle\">영업팀 <span class=\"accIcon\">+</span></h4>";
+	// noteHtml += "</li>";
+
+	// noteHtml += "<div id=\"noteUserContent\" name=\"noteUserContent\">";
+	// noteHtml += "<div class=\"noteUserContentItem\">하종성</div>";
+	// noteHtml += "<div class=\"noteUserContentItem\">전용훈</div>";
+	// noteHtml += "<div class=\"noteUserContentItem\">도윤석</div>";
+	// noteHtml += "</div>";
+
+	// noteHtml += "<li class=\"noteUserLi\" data-active=\"false\" onclick=\"changeAccIcon(this);\">";
+	// noteHtml += "<h4 class=\"noteUserLiTitle\">개발팀 <span class=\"accIcon\">+</span></h4>";
+	// noteHtml += "</li>";
+
+	// noteHtml += "<div id=\"noteUserContent\" name=\"noteUserContent\">";
+	// noteHtml += "<div class=\"noteUserContentItem\" data-no=\"10071\" onclick=\"noteUserItemClick(this);\">조병일</div>";
+	// noteHtml += "<div class=\"noteUserContentItem\" data-no=\"10077\" onclick=\"noteUserItemClick(this);\">이송현</div>";
+	// noteHtml += "<div class=\"noteUserContentItem\" data-no=\"10044\" onclick=\"noteUserItemClick(this);\">이장희</div>";
+	// noteHtml += "</div>";
+
+	// noteHtml += "</ul>";
+
+	noteHtml += "</div>";
+	noteHtml += "</div>";
+	
+	// noteHtml += "<div class=\"noteMainContainer\"></div>";
+
+	noteBody.html(noteHtml);
 }
 
 function noteChangeMsg(e){
@@ -2795,21 +2820,10 @@ function noteChangeMsg(e){
 	$(".noteChat").scrollTop($(".noteChat")[0].scrollHeight);
 }
 
-function msgContentIn(){
-	let bodyContent, widgetContainer, noteContainer;
-	bodyContent = $("#bodyContent");
-	widgetContainer = $("#widgetContainer");
-	noteContainer = $(".noteContainer");
-
-	if(bodyContent !== undefined){
-		bodyContent.hide();
-	}
-
-	if(widgetContainer !== undefined){
-		widgetContainer.hide();
-	}
-
-	noteContainer.show();
+function noteContentShow(){
+	let noteWrap;
+	noteWrap = $(".noteContainer").find(".noteWrap");
+	noteWrap.css('display','flex').hide().fadeIn();
 }
 
 function msgContentOut(){
@@ -2850,7 +2864,7 @@ function noteSubmit(){
 			msg.set("전송되었습니다.");
 			noteSubmitText.val("");
 		}
-	})
+	});
 }
 
 // 부서트리를 만드는 함수
@@ -2953,23 +2967,84 @@ class Department{
 		return false;
 	} // End of getChildrenId()
 
-	// 조직도 그리기 태그문자열 생성/전달
+	// 조직도 그리기 태그문자열 생성/전달(원본 데이터임 삭제X)
+	// getHtml(empSelectable, deptSelectable){
+	// 	let x, y, html, padding;
+	// 	empSelectable = empSelectable === undefined || empSelectable !== true ? false : empSelectable;
+	// 	deptSelectable = deptSelectable === undefined || deptSelectable !== true ? false : deptSelectable;
+	// 	padding = "1rem";
+
+	// 	html = "<input type=\"checkbox\" class=\"dept-tree\" style=\"display:none\" id=\"dept-tree-" + this.id + "\" />";
+	// 	html += ("<label for=\"dept-tree-" + this.id + "\"><img src=\"/images/common/corporate.png\" style=\"width:20px;height:20px;\">" + this.name + "</label>");
+	// 	if(deptSelectable)  html += ("<input type=\"checkbox\" class=\"dept-tree-select\" data-select=\"dept:" + this.id + "\" />");
+	// 	html += ("<div class=class=\"dept-tree-cnt\" style=\"padding-left:" + padding + "\">");
+
+	// 	for(x = 0 ; x < this.employee.length ; x++){
+	// 		y = this.employee[x];console.log(y);
+	// 		if(y === undefined) continue;
+	// 		if(storage.user[y] === undefined || storage.user[y].resign) continue;
+	// 		html += ("<div><img src=\"/api/user/image/" + y + "\" style=\"width:20px;height:20px;\"> " + storage.user[y].userName + " " + storage.userRank[storage.user[y].rank][0]);
+	// 		if(empSelectable)   html += ("<input type=\"checkbox\" class=\"dept-tree-select\" data-select=\"emp:" + y + "\" />");
+	// 		html += ("</div>");
+	// 	}
+
+	// 	for(x = 0 ; x < this.children.length ; x++){
+	// 		y = this.children[x];
+	// 		html += y.getHtml(empSelectable, deptSelectable);
+	// 	}
+
+	// 	html += ("</div>");
+	// 	return html;
+	// } // End of getHtml()
+
 	getHtml(empSelectable, deptSelectable){
 		let x, y, html, padding;
 		empSelectable = empSelectable === undefined || empSelectable !== true ? false : empSelectable;
 		deptSelectable = deptSelectable === undefined || deptSelectable !== true ? false : deptSelectable;
 		padding = "1rem";
+		
+		// noteHtml += "<ul class=\"noteUserUl\">";
 
+		// noteHtml += "<li class=\"noteUserLi\" data-active=\"false\" onclick=\"changeAccIcon(this);\">";
+		// noteHtml += "<h4 class=\"noteUserLiTitle\">기술팀 <span class=\"accIcon\">+</span></h4>";
+		// noteHtml += "</li>";
+
+		// noteHtml += "<div id=\"noteUserContent\" name=\"noteUserContent\">";
+		// noteHtml += "<div class=\"noteUserContentItem\">이대용</div>";
+		// noteHtml += "<div class=\"noteUserContentItem\">조용희</div>";
+		// noteHtml += "</div>";
+
+		// noteHtml += "<li class=\"noteUserLi\" data-active=\"false\" onclick=\"changeAccIcon(this);\">";
+		// noteHtml += "<h4 class=\"noteUserLiTitle\">영업팀 <span class=\"accIcon\">+</span></h4>";
+		// noteHtml += "</li>";
+
+		// noteHtml += "<div id=\"noteUserContent\" name=\"noteUserContent\">";
+		// noteHtml += "<div class=\"noteUserContentItem\">하종성</div>";
+		// noteHtml += "<div class=\"noteUserContentItem\">전용훈</div>";
+		// noteHtml += "<div class=\"noteUserContentItem\">도윤석</div>";
+		// noteHtml += "</div>";
+
+		// noteHtml += "<li class=\"noteUserLi\" data-active=\"false\" onclick=\"changeAccIcon(this);\">";
+		// noteHtml += "<h4 class=\"noteUserLiTitle\">개발팀 <span class=\"accIcon\">+</span></h4>";
+		// noteHtml += "</li>";
+
+		// noteHtml += "<div id=\"noteUserContent\" name=\"noteUserContent\">";
+		// noteHtml += "<div class=\"noteUserContentItem\" data-no=\"10071\" onclick=\"noteUserItemClick(this);\">조병일</div>";
+		// noteHtml += "<div class=\"noteUserContentItem\" data-no=\"10077\" onclick=\"noteUserItemClick(this);\">이송현</div>";
+		// noteHtml += "<div class=\"noteUserContentItem\" data-no=\"10044\" onclick=\"noteUserItemClick(this);\">이장희</div>";
+		// noteHtml += "</div>";
+
+		// noteHtml += "</ul>";
 		html = "<input type=\"checkbox\" class=\"dept-tree\" style=\"display:none\" id=\"dept-tree-" + this.id + "\" />";
 		html += ("<label for=\"dept-tree-" + this.id + "\"><img src=\"/images/common/corporate.png\" style=\"width:20px;height:20px;\">" + this.name + "</label>");
 		if(deptSelectable)  html += ("<input type=\"checkbox\" class=\"dept-tree-select\" data-select=\"dept:" + this.id + "\" />");
-		html += ("<div class=class=\"dept-tree-cnt\" style=\"padding-left:" + padding + "\">");
+		html += ("<div class=\"dept-tree-cnt\" style=\"padding-left:" + padding + "\">");
 
 		for(x = 0 ; x < this.employee.length ; x++){
 			y = this.employee[x];console.log(y);
 			if(y === undefined) continue;
 			if(storage.user[y] === undefined || storage.user[y].resign) continue;
-			html += ("<div><img src=\"/api/user/image/" + y + "\" style=\"width:20px;height:20px;\"> " + storage.user[y].userName + " " + storage.userRank[storage.user[y].rank][0]);
+			html += ("<div class=\"noteUserContentItem\"><img src=\"/api/user/image/" + y + "\" style=\"width:20px;height:20px;\"> " + storage.user[y].userName + " " + storage.userRank[storage.user[y].rank][0]);
 			if(empSelectable)   html += ("<input type=\"checkbox\" class=\"dept-tree-select\" data-select=\"emp:" + y + "\" />");
 			html += ("</div>");
 		}
@@ -2983,3 +3058,82 @@ class Department{
 		return html;
 	} // End of getHtml()
 } // End of class === Department
+
+function changeAccIcon(e){
+	let thisLi, thisContent, thisAccIcon, noteUserContent, noteUserLi, accIcon;
+	thisLi = $(e);
+	thisAccIcon = thisLi.find(".accIcon");
+	thisContent = thisLi.next();
+	noteUserContent = $("[name=\"noteUserContent\"]");
+	noteUserLi = $(".noteUserLi");
+	accIcon = $(".noteUserLi .accIcon");
+
+	if(thisLi.data("active")){
+		thisLi.data("active", false);
+		thisAccIcon.text("+");
+		thisContent.removeClass("active");
+	}else{
+		noteUserLi.data("active", false);
+		accIcon.text("+");
+
+		for(let i = 0; i < noteUserContent.length; i++){
+			$(noteUserContent[i]).removeClass("active");
+		}
+
+		thisLi.data("active", true);
+		thisAccIcon.text("-");
+		thisContent.attr("class", "active");
+	}
+}
+
+function noteUserItemClick(e){
+	let thisItem, nowLongDate;
+	thisItem = $(e)
+	nowLongDate = new Date().getTime();
+	$.ajax({
+		url: "/api/note/" + thisItem.data("no") + "/" + nowLongDate,
+		method: "get",
+		dataType: "json",
+		contentType: "text/plain",
+		success: (result) => {
+			let noteUserContainer, html = "", noteMainContainer;
+			result = cipher.decAes(result.data);
+			result = JSON.parse(result);
+			noteUserContainer = $(".noteUserContainer");
+			noteMainContainer = $(".noteMainContainer");
+			noteUserContainer.hide();
+
+			$(".noteContainer").find(".noteHeadTitle").text(thisItem.text());
+
+			html = "<div class=\"noteMainContent\">";
+
+			for(let i = 0; i < result.length; i++){
+				let disDate, setDate;
+				disDate = dateDis(result[i].related);
+				setDate = dateFnc(disDate);
+
+				if(result[i].writer == thisItem.data("no")){
+					html += "<div class=\"chatYou\">" + result[i].msg + "</div>";
+					html += "<div class=\"chatYouDate\">" + setDate + "</div>";
+				}else{
+					html += "<div class=\"chatMe\">" + result[i].msg + "</div>";
+					html += "<div class=\"chatMeDate\">" + setDate + "</div>";
+				}
+			}
+
+			html += "</div>";
+			html += "<div class=\"noteMainText\">";
+			html += "<textarea id=\"noteSubmitText\"></textarea>";
+			html += "<button type=\"button\" onclick=\"noteSubmit();\">전송</button>"
+			html += "</div>";
+
+			noteMainContainer.html(html);
+
+			setTimeout(() => {
+				noteMainContainer.show();
+			}, 1000);
+
+			$(".noteMainContent").scrollTop($(".noteMainContent")[0].scrollHeight);
+		}
+	});
+}
