@@ -446,68 +446,51 @@ public class GwService extends Svc{
             // 회수/진행은 결재선에 존재하는 인원 중 수신자 제외 읽기 가능, 수신대기 및 완료는 젠체 읽기 가능
             
             if(!appAll.contains(userNo)){
-                logger.info("==================== 결재문서 가져오기 : 결재선에 없음");
                 return "permissionDenied";
             }else if(status == -3){
                 if(writer.equals(userNo) || appBefore.contains(userNo) || appRead.contains(userNo)){
-                    logger.info("==================== 결재문서 가져오기 : 반려");
                     docStatus = "rejected";
                 }else{
-                    logger.info("==================== 결재문서 가져오기 : 반려 / 권한 없음");
                     return "permissionDenied";
                 }
             }else if(status == -2){
                 if(writer.equals(userNo)){
-                    logger.info("==================== 결재문서 가져오기 : 취소");
                     docStatus = "canceled";
                 }   
                 else{
-                    logger.info("==================== 결재문서 가져오기 : 취소 / 권한없음");
                     return "permissionDenied";
                 }
             }else if(status == 0){
                 if(writer.equals(userNo)){
-                    logger.info("==================== 결재문서 가져오기 : 취소");
                     docStatus = "temp";
                 }   
                 else{
-                    logger.info("==================== 결재문서 가져오기 : 권한없음");
                     return "permissionDenied";
                 }
             }else if(status == 1){
                 if(writer.equals(userNo) || appBefore.contains(userNo) || appRead.contains(userNo)){
-                    logger.info("==================== 결재문서 가져오기 : 진행 / 진행중");
                     docStatus = "proceed";
                 }else if(appCurrent.equals("userNo")){
-                    logger.info("==================== 결재문서 가져오기 : 진행 : 결재순번");
                     docStatus = "wait";
                 }else if(appNext.contains(userNo)){
-                    logger.info("==================== 결재문서 가져오기 : 진행 / 예정");
                     docStatus = "due";
                 }else{
-                    logger.info("==================== 결재문서 가져오기 : 진행 / 권한없음");
                     return "permissionDenied";
                 } 
             }else if(status == 2){
                 if(writer.equals(userNo) || appBefore.contains(userNo) || appRead.contains(userNo)){
-                    logger.info("==================== 결재문서 가져오기 : 수신 : 진행중");
                     docStatus = "proceed";
                 }else if(appReceiver.contains(userNo)){
-                    logger.info("==================== 결재문서 가져오기 : 수신 / 수신대기");
                     docStatus = "wait";
                 }else if(appNext.contains(userNo)){
-                    logger.info("==================== 결재문서 가져오기 : 수신 / 예정");
                     docStatus = "due";
                 }else{
-                    logger.info("==================== 결재문서 가져오기 : 수신 / 권한없음");
                     return "permissionDenied";
                 }                   
             }else if(status == 3){
                 if(appAll.contains(userNo)){
-                    logger.info("==================== 결재문서 가져오기 : 완료");
                     docStatus = "read";
                 }else{
-                    logger.info("==================== 결재문서 가져오기 : 완료 / 권한없음 " + userNo);
                     logger.info(appAll.toString());
                     return  "permissionDenied";                
                 }
@@ -603,8 +586,7 @@ public class GwService extends Svc{
     } // End of getAppDocAndDetailInfo()
 
     // 결재문서 처리 메서드 / 데이터가 null이 아닌 경우 결재문서에 대한 수정 처리
-    public String askAppDoc(String compId, String docNo, int ordered, int ask, String comment, String doc,
-            String[][] appLine, String[] files, HashMap<String, String> attached, String appData, String userNo) {
+    public String askAppDoc(String compId, String docNo, int ordered, int ask, String comment, String title, String doc, String[][] appLine, String[] files, HashMap<String, String> attached, String appData, String userNo) {
         String result = null, revision = null, savedName = null, fileName = null, dept = null, t = null;
         JSONObject json = null;
         int writer = -9999, appType = -9999, no = -9999, x = -1, y = -1;
@@ -614,9 +596,7 @@ public class GwService extends Svc{
         long size = -1;
         boolean find = false;
 
-        // =================================================================================================
-        logger.error("||||||||||||||||||||||||||||||||||| files : " + (files == null ? files : files.length));
-        logger.error("||||||||||||||||||||||||||||||||||| attached : " + (attached == null ? attached : attached.size()));
+        logger.info("GwService.askAppDoc() : 결재 처리 시작 : " + userNo + " : " + docNo + " : " + ordered);
 
         // 기본정보들이 갖추어져 있는지 먼저 검증
         if(compId == null || docNo == null || ordered < 1 || ask < 0 || ask > 1 || userNo == null)  return null;
@@ -654,14 +634,20 @@ public class GwService extends Svc{
         if(ask == 1){
 
             // 문서 수정여부 확인 / 수정이 이루어진 경우 수정 이력 반영 필요
-            if(doc != null || appLine != null || files != null){
+            if(title != null || doc != null || appLine != null || files != null){
                 json = new JSONObject();
+
+                // 수정된 제목에 대한 처리
+                if(title != null){
+                    json.put("title", true);
+                }else{ // 본뭉
+                    json.put("title", false);
+                }
                 
                 // 수정된 결재문서에 대한 처리
                 if(doc != null){
                     json.put("doc", true);
-                }else{ // 본뭉 ㅣ수정되지 않은 경우 이전 본문을 가지고 오도록 함
-                    doc = gwMapper.getPrvPrcDoc(compId, docNo, ordered);
+                }else{ // 본뭉
                     json.put("doc", false);
                 }
 
@@ -698,24 +684,16 @@ public class GwService extends Svc{
                     newFiles = new ArrayList<>();
                     for(x = 0 ; x < files.length ; x++) newFiles.add(files[x]);
 
-                    // ============ D = E = B = U = G ================
-                    logger.error("||||||||||||||| Exist files |||||||||||||||");
-                    for(x = 0 ; x < prvFiles.size() ; x++) logger.error("|||||||||  " + prvFiles.get(x)); 
-                    logger.error("||||||||||||||| New files |||||||||||||||");
-                    for(x = 0 ; x < newFiles.size() ; x++) logger.error("|||||||||  " + newFiles.get(x)); 
-
                     // attached에 대한 처리 / 신규 첨부와 교체 첨부
                     if(attached != null){
-                        logger.error("||||||||||||||| Start New and Exist files |||||||||||||||");
                         Object[] arr = attached.keySet().toArray();
                         for(Object o : arr){
                             fileName = (String)o;
                             savedName = attached.get(fileName);
                             if(newFiles.contains(fileName)){
                                 if(prvFiles.contains(fileName)){ // === 교체첨부인 경우 기존의 첨부를 제함
-                                    logger.error("||||||||||||||| " + fileName + " : change");
                                     deleteAttachedFile(compId, "appDoc", no, fileName);
-                                }else   logger.error("||||||||||||||| " + fileName + " : new");
+                                }
                                 size = moveTempFile(compId, "appDoc", no+"", savedName);
                                 if(size > 0){
                                     systemMapper.setAttachedFileData(compId, "appDoc", no, fileName, savedName, size);
@@ -742,7 +720,8 @@ public class GwService extends Svc{
                 gwMapper.addRevisionHistory2(compId, docNo, ordered, userNo, revision);
             } // 문서가 수정된 경우의 처리 종료
 
-            // 결재문서 본문 입력처리
+            // 결재문서 본문 입력처리 / 문서 본문은 수정되지 않은 경우 이전 결재처리 단계의 본문을 그대로 가지고 오도록 함
+            if(doc == null || doc.equals(""))   doc = gwMapper.getPrvPrcDoc(compId, docNo, ordered);
             gwMapper.updateAppDocContent(compId, docNo, ordered, doc);
 
             // 결재처리를 기록함

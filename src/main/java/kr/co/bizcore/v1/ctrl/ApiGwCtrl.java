@@ -460,8 +460,7 @@ public class ApiGwCtrl extends Ctrl {
     public String apiGwAppProceedPost(HttpServletRequest request, HttpServletResponse response,
             @RequestBody String requestBody, @PathVariable("docNo") String docNo, @PathVariable("ordered") int ordered,
             @PathVariable("ask") int ask) {
-        String result = null, compId = null, userNo = null, data = null, aesIv = null, aesKey = null, lang = null,
-                comment = null, doc = null, appData = null, customer = null, sopp = null;
+        String result = null, compId = null, userNo = null, data = null, aesIv = null, aesKey = null, lang = null, title = null, comment = null, doc = null, appData = null, customer = null, sopp = null;
         String[] files = null, ts = null;
         String[][] appLine = null;
         HttpSession session = null;
@@ -494,6 +493,9 @@ public class ApiGwCtrl extends Ctrl {
 
             // 결재의견에 대한 처리
             comment = json.isNull("comment") ? null : json.getString("comment");
+
+            // 결재 문서 제목에 대한 처리
+            title = json.isNull("title") ? null : json.getString("title");
 
             // 첨부파일에 대한 처리
             if (!json.isNull("files")) {
@@ -530,7 +532,7 @@ public class ApiGwCtrl extends Ctrl {
             }
 
             // 결재문서 처리 요청에 대한 처리
-            data = gwService.askAppDoc(compId, docNo, ordered, ask, comment, doc, appLine, files, attached, appData,
+            data = gwService.askAppDoc(compId, docNo, ordered, ask, comment, title, doc, appLine, files, attached, appData,
                     userNo);
             if (data.equals("ok")) {
                 result = "{\"result\":\"ok\"}";

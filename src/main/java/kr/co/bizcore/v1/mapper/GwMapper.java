@@ -98,7 +98,7 @@ public interface GwMapper {
     public int setProceedDocAppStatus(@Param("compId") String compId, @Param("docNo") String docNo, @Param("ordered") int ordered, @Param("comment") String comment, @Param("appData") String appData);
 
     // 이전 결재절차의 본문을 가져오는 메서드
-    @Select("SELECT doc FROM bizcore.doc_app_detail WHERE deleted IS NULL AND compId = #{compId} AND docNo = #{docN}o AND ordered = (SELECT MAX(ordered) FROM bizcore.doc_app_detail WHERE deleted IS NULL AND compId = #{compId} AND docNo = #{docNo} AND ordered < #{ordered})")
+    @Select("SELECT doc FROM bizcore.doc_app_detail WHERE deleted IS NULL AND compId = #{compId} AND docNo = #{docNo} AND ordered = (SELECT MAX(ordered) FROM bizcore.doc_app_detail WHERE deleted IS NULL AND compId = #{compId} AND docNo = #{docNo} AND ordered < #{ordered})")
     public String getPrvPrcDoc(@Param("compId") String compId, @Param("docNo") String docNo, @Param("ordered") int ordered);
 
     // 다음 결재자 정보를 가져오는 메서드
