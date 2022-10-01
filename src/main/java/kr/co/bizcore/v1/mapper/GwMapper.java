@@ -110,7 +110,7 @@ public interface GwMapper {
     public int setCompleteStatus(@Param("compId") String compId, @Param("docNo") String docNo, @Param("status") int status);
 
     // 결제 또는 임시저장된 문서의 제목을 변경하느 메서드
-    @Update("UPDATE bizcore.doc_app SET title = #{title} WHERE deleted IS NULL AND copmpId = #{compId} AND docNo = #{docNo}")
+    @Update("UPDATE bizcore.doc_app SET title = #{title} WHERE deleted IS NULL AND compId = #{compId} AND docNo = #{docNo}")
     public int changeTitle(@Param("compId") String compId, @Param("docNo") String docNo, @Param("title") String title);
 
     // 임시저장된 문서의 목록을 가져오는 메서드
@@ -122,7 +122,7 @@ public interface GwMapper {
     public HashMap<String, String> getTempDoc(@Param("compId") String compId, @Param("userNo") String userNo, @Param("docNo") String docNo);
 
     // 임시저장된 문서를 변경하는 메서드
-    @Update("UPDATE bizcore.doc_app_detail SET isModify = 1, doc = #{doc}, appData = #{appData} WHERE deleted IS NULL AND copmpId = #{compId} AND employee = #{userNo} AND docNo = #{docNo}")
+    @Update("UPDATE bizcore.doc_app_detail SET isModify = 1, doc = #{doc}, appData = #{appData} WHERE deleted IS NULL AND compId = #{compId} AND employee = #{userNo} AND docNo = #{docNo}")
     public int modifyTempDoc(@Param("compId") String compId, @Param("userNo") String userNo, @Param("docNo") String docNo, @Param("doc") String appDoc, @Param("appData") String appData);
 
     // 임시저장된 문서의 헤더정보 삭제처리
