@@ -126,13 +126,14 @@ public class GwService extends Svc{
 
     // 임시 저장된 문서를 전달
      public String getTempDoc(String compId, String userNo, String docNo, String aesKey, String aesIv){
-        String result = null, title = null, doc = null, appData = null, customer = null, sopp = null, appLine = null;
+        String result = null, title = null, doc = null, appData = null, customer = null, sopp = null, appLine = null, formId = null;
         HashMap<String, String> map = null;
         JSONObject json = null;
 
         map = gwMapper.getTempDoc(compId, userNo, docNo);
         if(map == null) return result;
         title = map.get("title");
+        formId = map.get("formId");
         doc = map.get("doc");
         appData = map.get("appData");
         json = new JSONObject(appData);
@@ -142,6 +143,7 @@ public class GwService extends Svc{
 
         result = "{\"docNo\":\"" + docNo + "\",";
         result += ("\"title\":\"" + title + "\",");
+        result += ("\"formId\":\"" + formId + "\",");
         result += ("\"sopp\":" + (sopp == null || !sopp.equals("") ? sopp : "\"\"") + ",");
         result += ("\"customer\":" + (customer == null || !customer.equals("") ? customer : "\"\"") + ",");
         result += ("\"appLine\":" + appLine + ",");

@@ -118,7 +118,7 @@ public interface GwMapper {
     public List<HashMap<String, String>> getTempDocList(@Param("compId") String compId, @Param("userNo") String userNo);
 
     // 저장된 임시문서를 전달하는 메서드
-    @Select("SELECT a.docNo, a.title, b.doc, b.appData FROM bizcore.doc_app a, bizcore.doc_app_detail b WHERE a.compId = b.compId AND a.docNo = b.docNo AND a.deleted IS NULL AND b.deleted IS NULL AND a.readable = 'temp' AND a.compId = #{compId} AND a.writer = #{userNo} AND a.docNo = #{docNo}")
+    @Select("SELECT a.docNo, a.title, a.formId, b.doc, b.appData FROM bizcore.doc_app a, bizcore.doc_app_detail b WHERE a.compId = b.compId AND a.docNo = b.docNo AND a.deleted IS NULL AND b.deleted IS NULL AND a.readable = 'temp' AND a.compId = #{compId} AND a.writer = #{userNo} AND a.docNo = #{docNo}")
     public HashMap<String, String> getTempDoc(@Param("compId") String compId, @Param("userNo") String userNo, @Param("docNo") String docNo);
 
     // 임시저장된 문서를 변경하는 메서드
