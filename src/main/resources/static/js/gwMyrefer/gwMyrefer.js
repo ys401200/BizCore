@@ -201,7 +201,7 @@ function getDetailView() {
     let testForm = storage.reportDetailData.doc;
     console.log(testForm);
 
-    let detailHtml = "<div class='mainBtnDiv'><button type='button'>목록보기</button></div>" +
+    let detailHtml = "<div class='mainBtnDiv'><button type='button' onclick='showList()'>목록보기</button></div>" +
         "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>"
 
 
@@ -314,6 +314,12 @@ function getDetailView() {
 
     setAppLineData();
 
+}
+
+
+
+function showList() {
+    location.href = "/gw/myrefer";
 }
 
 // 탭 누를때마다의 이벤트 주기 
@@ -466,14 +472,6 @@ function drawChangeInfo() {
 
 
 
-
-
-
-function getYmdSlash(date) {
-    let d = new Date(date);
-    return (d.getFullYear() % 100) + "/" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "/" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString());
-}
-
 function getFileArr() {
     let target = $(".selectedFileDiv");
     let html = "";
@@ -511,7 +509,7 @@ function setAppLineData() {
     let appLineContainer = new Array();
     appLineContainer = [[], [], [], [], []];
 
-    
+
     if (appLine[0].approved != null) {
         $("." + formId + "_writer_status").val("승인");
         $("." + formId + "_writer_approved").val(getYmdShortSlash(appLine[0].approved));
@@ -545,7 +543,12 @@ function setAppLineData() {
 
 }
 function getYmdShortSlash(date) {
-	let d = new Date(date);
-	return (d.getFullYear() % 100) + "/" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "/" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString());
+    let d = new Date(date);
+    return (d.getFullYear() % 100) + "/" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "/" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString());
+}
+
+function getYmdSlash(date) {
+    let d = new Date(date);
+    return (d.getFullYear() % 100) + "/" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "/" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString()) + "&nbsp" + (d.getHours() > 9 ? d.getHours().toString() : "0" + d.getHours().toString()) + ":" + (d.getMinutes() > 9 ? d.getMinutes().toString() : "0" + d.getMinutes().toString()) + ":" + (d.getSeconds() > 9 ? d.getSeconds().toString() : "0" + d.getSeconds().toString());
 }
 

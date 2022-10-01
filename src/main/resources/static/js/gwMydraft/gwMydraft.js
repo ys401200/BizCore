@@ -12,23 +12,6 @@ $(document).ready(() => {
 
 function defaultMyDraft() {
 
-    $.ajax({
-        "url": apiServer + "/api/gw/form",
-        "method": "get",
-        "dataType": "json",
-        "cache": false,
-        success: (data) => {
-            let list;
-            if (data.result === "ok") {
-                list = cipher.decAes(data.data);
-                list = JSON.parse(list);
-                storage.formList = list;
-                console.log("[getForms] Success getting employee information.");
-            } else {
-                msg.set("양식 정보를 가져오지 못했습니다.");
-            }
-        }
-    })
 
     let url, method, data, type;
     url = "/api/gw/app/mydraft";
@@ -39,22 +22,21 @@ function defaultMyDraft() {
 
 }
 
-
 function successList(result) {
     storage.myDraftList = result;
     window.setTimeout(drawMyDraft, 200);
 }
 
 function errorList() {
-    alert("에러");
+    msg.set("에러");
 }
 
 
 function drawMyDraft() {
     let container, result, jsonData, job, header = [], data = [], ids = [], disDate, setDate, str, fnc;
 
-    if (storage.myDraftList === undefined) {
-        msg.set("등록된 공지사항이 없습니다");
+    if (storage.myDraftList === undefined || storage.myDraftList.length == 0) {
+        msg.set("기안한 문서가 없습니다");
     }
     else {
         jsonData = storage.myDraftList;
@@ -174,16 +156,6 @@ function drawMyDraft() {
     pageContainer[0].innerHTML = pageNation;
     createGrid(container, header, data, ids, job, fnc);
 
-
-    // 전체선택 전체 해제  
-    $(".thisAllcheck").click(function () {
-        if ($(".thisAllcheck").prop("checked")) {
-            $(":checkbox").prop("checked", true);
-        } else {
-            $(":checkbox").prop("checked", false);
-        }
-
-    });
 }
 
 function detailView(obj) {// 선택한 그리드의 글 번호 받아오기 
@@ -206,7 +178,7 @@ function detailView(obj) {// 선택한 그리드의 글 번호 받아오기
                 storage.reportDetailData = detailData;
                 getDetailView();
             } else {
-                alert("문서 정보를 가져오는 데 실패했습니다");
+                msg.set("알림", "문서 정보를 가져오는데 실패했습니다");
             }
         }
     })
@@ -221,7 +193,7 @@ function getDetailView() {
     let testForm = storage.reportDetailData.doc;
     console.log(testForm);
 
-    let detailHtml = "<div class='mainBtnDiv'><button type='button' '>목록보기</button><button type='button' '>회수</button></div>" +
+    let detailHtml = "<div class='mainBtnDiv'><button type='button' onclick='showList()'>목록보기</button><button type='button' '>회수</button></div>" +
         "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>"
 
 
@@ -327,7 +299,6 @@ function getDetailView() {
                 jsondata = cipher.decAes(result.data);
                 jsondata = JSON.parse(jsondata);
                 storage.soppList = jsondata;
-                //setSoppList(formId);
             } else {
                 alert("에러");
             }
@@ -337,6 +308,13 @@ function getDetailView() {
 }
 
 
+// 목록보기 
+function showList() {
+    location.href = "/gw/mydraft";
+}
+
+
+//결재선 정보 
 function setAppLineData() {
     let appLine = storage.reportDetailData.appLine;
     let formId = storage.reportDetailData.formId;
@@ -376,6 +354,39 @@ function setAppLineData() {
     }
 
 }
+
+
+//파일 정보 
+function getFileArr() {
+    let target = $(".selectedFileDiv");
+    let html = "";
+    let originFileList = [];
+    let no = storage.reportDetailData.no;
+    let fileList = storage.reportDetailData.fileList;
+    if (storage.newFileData == undefined) {
+
+        for (let i = 0; i < fileList.length; i++) {
+            html += "<div><a href='/api/attached/docapp/" + no + "/" + encodeURI(fileList[i].fileName) + "'>" + fileList[i].fileName + "</a></div>";
+        }
+        target.html(html);
+    } else {
+        for (let i = 0; i < storage.newFileData.length; i++) {
+            for (let j = 0; j < fileList.length; j++) {
+                originFileList.push(fileList[j].fileName);
+            }
+            if (originFileList.includes(storage.newFileData[i])) {
+                html += "<div><a href='/api/attached/docapp/" + no + "/" + encodeURI(storage.newFileData[i]) + "'>" + storage.newFileData[i] + "</a></div>";
+            } else {
+                html += "<div style='color:navy'>" + storage.newFileData[i] + "</div>";
+            }
+
+        }
+        target.html(html);
+    }
+
+
+}
+
 
 
 
@@ -528,6 +539,9 @@ function drawChangeInfo() {
 }
 
 
+
+
+//날짜함수
 function getYmdSlash(date) {
     let d = new Date(date);
     return (d.getFullYear() % 100) + "/" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "/" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString()) + "&nbsp" + (d.getHours() > 9 ? d.getHours().toString() : "0" + d.getHours().toString()) + ":" + (d.getMinutes() > 9 ? d.getMinutes().toString() : "0" + d.getMinutes().toString()) + ":" + (d.getSeconds() > 9 ? d.getSeconds().toString() : "0" + d.getSeconds().toString());
@@ -538,34 +552,3 @@ function getYmdShortSlash(date) {
     return (d.getFullYear() % 100) + "/" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "/" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString());
 }
 
-
-
-function getFileArr() {
-    let target = $(".selectedFileDiv");
-    let html = "";
-    let originFileList = [];
-    let no = storage.reportDetailData.no;
-    let fileList = storage.reportDetailData.fileList;
-    if (storage.newFileData == undefined) {
-
-        for (let i = 0; i < fileList.length; i++) {
-            html += "<div><a href='/api/attached/docapp/" + no + "/" + encodeURI(fileList[i].fileName) + "'>" + fileList[i].fileName + "</a></div>";
-        }
-        target.html(html);
-    } else {
-        for (let i = 0; i < storage.newFileData.length; i++) {
-            for (let j = 0; j < fileList.length; j++) {
-                originFileList.push(fileList[j].fileName);
-            }
-            if (originFileList.includes(storage.newFileData[i])) {
-                html += "<div><a href='/api/attached/docapp/" + no + "/" + encodeURI(storage.newFileData[i]) + "'>" + storage.newFileData[i] + "</a></div>";
-            } else {
-                html += "<div style='color:navy'>" + storage.newFileData[i] + "</div>";
-            }
-
-        }
-        target.html(html);
-    }
-
-
-}

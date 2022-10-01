@@ -332,7 +332,7 @@ function showReportDetail() {
 			}
 		},
 	});
-
+	setAppLineData();
 
 
 }
@@ -651,39 +651,39 @@ function drawNewCommentLine() {
 
 //  변경이력 그리는 함수 ajax로 변경 이력 받아옴 
 function drawChangeInfo() {
-    let target = $("#tabDetail2");
+	let target = $("#tabDetail2");
 
 
 
-    let revisionData = storage.reportDetailData.revisionHistory;
-    let changeData = new Array();
+	let revisionData = storage.reportDetailData.revisionHistory;
+	let changeData = new Array();
 
-    for (let i = 0; i < revisionData.length; i++) {
-        let data = {
-            "type": revisionData[i].employee,
-            "name": revisionData[i].employee,
-            "modifyDate": revisionData[i].date,
-            "modCause": revisionData[i].content
-        }
-        changeData.push(data);
-    }
+	for (let i = 0; i < revisionData.length; i++) {
+		let data = {
+			"type": revisionData[i].employee,
+			"name": revisionData[i].employee,
+			"modifyDate": revisionData[i].date,
+			"modCause": revisionData[i].content
+		}
+		changeData.push(data);
+	}
 
 
-    let detail = "<div class='tapLineB'><div>타입</div><div>이름</div><div>변경일자</div><div>변경내용</div></div>";
-    let changeHtml = "";
+	let detail = "<div class='tapLineB'><div>타입</div><div>이름</div><div>변경일자</div><div>변경내용</div></div>";
+	let changeHtml = "";
 
-    if (changeData.length == 0) {
-        changeHtml += "<div>변경 이력이 없습니다</div>";
-    } else {
-        for (let i = 0; i < changeData.length; i++) {
-            changeHtml += "<div class='tapLineB changeDataLine'>" +
-                "<div class='changeType'>" + changeData[i].type + "</div><div class='changeName' >" + changeData[i].name + "</div><div class='changeDate'>" + changeData[i].modifyDate + "</div><div class='changeCause'>" + changeData[i].modCause + "</div>" +
-                "</div>"
-        }
-    }
+	if (changeData.length == 0) {
+		changeHtml += "<div>변경 이력이 없습니다</div>";
+	} else {
+		for (let i = 0; i < changeData.length; i++) {
+			changeHtml += "<div class='tapLineB changeDataLine'>" +
+				"<div class='changeType'>" + changeData[i].type + "</div><div class='changeName' >" + changeData[i].name + "</div><div class='changeDate'>" + changeData[i].modifyDate + "</div><div class='changeCause'>" + changeData[i].modCause + "</div>" +
+				"</div>"
+		}
+	}
 
-    detail += changeHtml;
-    target.html(detail);
+	detail += changeHtml;
+	target.html(detail);
 
 }
 
@@ -1418,4 +1418,49 @@ function getSopp() {
 }
 
 
+
+function setAppLineData() {
+	let appLine = storage.reportDetailData.appLine;
+	let formId = storage.reportDetailData.formId;
+	let appLineContainer = new Array();
+	appLineContainer = [[], [], [], [], []];
+
+
+	if (appLine[0].approved != null) {
+		$("." + formId + "_writer_status").val("승인");
+		$("." + formId + "_writer_approved").val(getYmdShortSlash(appLine[0].approved));
+	} else if (appLine[0].rejected != null) {
+		$("." + formId + "_writer_status").val("회수");
+		$("." + formId + "_writer_approved").val(getYmdShortSlash(appLine[0].rejected));
+
+	}
+
+	for (let i = 1; i < appLine.length; i++) {
+		for (let j = 0; j < appLineContainer.length; j++) {
+			if (appLine[i].appType == j) {
+				appLineContainer[j].push(appLine[i]);
+			}
+		}
+	}
+
+	let appTypeTitles = ["_examine", "_agree", "_approval", "_conduct", "_refer"];
+
+	for (let i = 0; i < appLineContainer.length; i++) {
+		for (let j = 0; j < appLineContainer[i].length; j++) {
+			if (appLineContainer[i][j].approved != null) {
+				$("." + formId + appTypeTitles[i] + "_status")[j].value = "승인";
+				$("." + formId + appTypeTitles[i] + "_approved")[j].value = getYmdShortSlash(appLineContainer[i][j].approved);
+			} else if (appLineContainer[i][j].rejected != null) {
+				$("." + formId + appTypeTitles[i] + "_status")[j].value = "반려";
+				$("." + formId + appTypeTitles[i] + "_approved")[j].value = getYmdShortSlash(appLineContainer[i][j].rejected);
+			}
+		}
+	}
+
+}
+
+function getYmdShortSlash(date) {
+    let d = new Date(date);
+    return (d.getFullYear() % 100) + "/" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "/" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString());
+}
 

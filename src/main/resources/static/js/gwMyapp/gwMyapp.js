@@ -178,7 +178,7 @@ function showReportDetail() {
 	let testForm = storage.reportDetailData.doc;
 
 
-	let detailHtml = "<div class='mainBtnDiv'><button type='button'>목록보기</button>" +
+	let detailHtml = "<div class='mainBtnDiv'><button type='button' onclick='showList()'>목록보기</button>" +
 		"<button type='button' onclick='toWriteMode();createConfirmBtn(this)'>결재 취소</button></div>" +
 		"<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>"
 
@@ -298,6 +298,9 @@ function showReportDetail() {
 
 
 
+function showList() {
+	location.href = "/gw/myapp";
+}
 
 
 
@@ -464,7 +467,7 @@ function drawChangeInfo() {
 			}
 			if (revisionData[i].content.files == true) {
 				modCause += "첨부 파일 수정 "
-			} if (revisionData[i].content.content == true) {
+			} if (revisionData[i].content.appLine == true) {
 				modCause += "결재선 수정 "
 			}
 
@@ -609,15 +612,15 @@ function setAppLineData() {
 	let appLineContainer = new Array();
 	appLineContainer = [[], [], [], [], []];
 
-	
-    if (appLine[0].approved != null) {
-        $("." + formId + "_writer_status").val("승인");
-        $("." + formId + "_writer_approved").val(getYmdShortSlash(appLine[0].approved));
-    } else if (appLine[0].rejected != null) {
-        $("." + formId + "_writer_status").val("회수");
-        $("." + formId + "_writer_approved").val(getYmdShortSlash(appLine[0].rejected));
 
-    }
+	if (appLine[0].approved != null) {
+		$("." + formId + "_writer_status").val("승인");
+		$("." + formId + "_writer_approved").val(getYmdShortSlash(appLine[0].approved));
+	} else if (appLine[0].rejected != null) {
+		$("." + formId + "_writer_status").val("회수");
+		$("." + formId + "_writer_approved").val(getYmdShortSlash(appLine[0].rejected));
+
+	}
 
 	for (let i = 1; i < appLine.length; i++) {
 		for (let j = 0; j < appLineContainer.length; j++) {
@@ -756,3 +759,47 @@ function setAppLineData() {
 
 }
 
+function setAppLineData() {
+	let appLine = storage.reportDetailData.appLine;
+	let formId = storage.reportDetailData.formId;
+	let appLineContainer = new Array();
+	appLineContainer = [[], [], [], [], []];
+
+
+	if (appLine[0].approved != null) {
+		$("." + formId + "_writer_status").val("승인");
+		$("." + formId + "_writer_approved").val(getYmdShortSlash(appLine[0].approved));
+	} else if (appLine[0].rejected != null) {
+		$("." + formId + "_writer_status").val("회수");
+		$("." + formId + "_writer_approved").val(getYmdShortSlash(appLine[0].rejected));
+
+	}
+
+	for (let i = 1; i < appLine.length; i++) {
+		for (let j = 0; j < appLineContainer.length; j++) {
+			if (appLine[i].appType == j) {
+				appLineContainer[j].push(appLine[i]);
+			}
+		}
+	}
+
+	let appTypeTitles = ["_examine", "_agree", "_approval", "_conduct", "_refer"];
+
+	for (let i = 0; i < appLineContainer.length; i++) {
+		for (let j = 0; j < appLineContainer[i].length; j++) {
+			if (appLineContainer[i][j].approved != null) {
+				$("." + formId + appTypeTitles[i] + "_status")[j].value = "승인";
+				$("." + formId + appTypeTitles[i] + "_approved")[j].value = getYmdShortSlash(appLineContainer[i][j].approved);
+			} else if (appLineContainer[i][j].rejected != null) {
+				$("." + formId + appTypeTitles[i] + "_status")[j].value = "반려";
+				$("." + formId + appTypeTitles[i] + "_approved")[j].value = getYmdShortSlash(appLineContainer[i][j].rejected);
+			}
+		}
+	}
+
+}
+
+function getYmdShortSlash(date) {
+	let d = new Date(date);
+	return (d.getFullYear() % 100) + "/" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "/" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString());
+}
