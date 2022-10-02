@@ -10,27 +10,36 @@ $(document).ready(() => {
 });
 
 function getformList() {
+  $(".noteContainer").hide();
+  $(".ContentDiv").html(
+    "<div class='gwWriteBtns'></div><div class='selector'>d</div><div class='selector'>d</div><div class='selector'>d</div>"
+  );
 
-  $(".ContentDiv").html("<div class='gwWriteBtns'></div><div class='selector'>d</div><div class='selector'>d</div><div class='selector'>d</div>");
-
-  $(".gwWriteBtns").html("<button type='button' onclick='reportInsert()' class='writeBtn'>기안 하기</button> <button class='saveBtn' type='button' onclick='tempSave()' disabled>임시 저장</button>");
+  $(".gwWriteBtns").html(
+    "<button type='button' onclick='reportInsert()' class='writeBtn'>기안 하기</button> <button class='saveBtn' type='button' onclick='tempSave()' disabled>임시 저장</button>"
+  );
 
   // 기본설정
 
-  $(".selector:first").html("<div>기본 설정</div><div class='formDetail'><div>결재양식</div><div class='formListDiv'></div><button type='button' class='formSelectbtn' onclick='selectForm()'>선택</button><input type='hidden' class='formNumHidden'/></div>"
-    + "<div class='formDetail'><div>열람권한</div><div><label><input type='radio' name='authority' value='dept' checked  />기안자 소속 부서 포함</label><label><input type='radio' name='authority' value='none' />권한 설정 없음</label></div></div>");
+  $(".selector:first").html(
+    "<div>기본 설정</div><div class='formDetail'><div>결재양식</div><div class='formListDiv'></div><button type='button' class='formSelectbtn' onclick='selectForm()'>선택</button><input type='hidden' class='formNumHidden'/></div>" +
+      "<div class='formDetail'><div>열람권한</div><div><label><input type='radio' name='authority' value='dept' checked  />기안자 소속 부서 포함</label><label><input type='radio' name='authority' value='none' />권한 설정 없음</label></div></div>"
+  );
 
-  $(".selector:first").next().html("<div>결재선 <div class='guide'> 결재 양식을 선택하면 결재선 생성을 할 수 있습니다.</div> <button class='createLineBtn' onclick='showModal()'>결재선생성</button></div><div class='modal-wrap'><div class='gwModal'></div></div>");
+  $(".selector:first")
+    .next()
+    .html(
+      "<div>결재선 <div class='guide'> 결재 양식을 선택하면 결재선 생성을 할 수 있습니다.</div> <button class='createLineBtn' onclick='showModal()'>결재선생성</button></div><div class='modal-wrap'><div class='gwModal'></div></div>"
+    );
 
-
-  let lastHtml = "<div>상세 입력 <div class='guide'> 결재 양식을 선택하면 상세 입력을 할 수 있습니다.</div></div><div class='insertedDetail'><div class='reportInsertForm'></div><div class='referContainer'><div>참조</div></div><div class='fileDetail'>";
-
+  let lastHtml =
+    "<div>상세 입력 <div class='guide'> 결재 양식을 선택하면 상세 입력을 할 수 있습니다.</div></div><div class='insertedDetail'><div class='reportInsertForm'></div><div class='referContainer'><div>참조</div></div><div class='fileDetail'>";
 
   // lastHtml += "<div>파일첨부</div><div class='filebtnContainer'><input type='file' class='gwFileInput' onchange='drawSelectedFileList(this)' /><div class='insertedFileList'></div></div></div></div>"
-  lastHtml += "<div>파일첨부</div><div class='filebtnContainer'><input type='file' multiple id='attached' name='attached[]' onchange='docFileChange()' /><div class='filePreview'></div></div></div></div>"
+  lastHtml +=
+    "<div>파일첨부</div><div class='filebtnContainer'><input type='file' multiple id='attached' name='attached[]' onchange='docFileChange()' /><div class='filePreview'></div></div></div></div>";
 
   $(".selector:first").next().next().html(lastHtml);
-
 
   let url = "/api/gw/form";
 
@@ -51,7 +60,7 @@ function getformList() {
     },
   });
 
-  $(".modal-wrap").hide()
+  $(".modal-wrap").hide();
   $(".insertedDetail").hide();
   $(".createLineBtn").hide();
   alert("체크");
@@ -63,36 +72,32 @@ function getformList() {
 
   if (splitArr.length > 3) {
     $.ajax({
-      "url": apiServer + "/api/gw/app/temp/" + splitArr[3],
-      "method": "get",
-      "dataType": "json",
-      "cache": false,
+      url: apiServer + "/api/gw/app/temp/" + splitArr[3],
+      method: "get",
+      dataType: "json",
+      cache: false,
       success: (data) => {
         let detailData;
         if (data.result === "ok") {
           detailData = cipher.decAes(data.data);
           detailData = JSON.parse(detailData);
           detailData.doc = cipher.decAes(detailData.doc);
-          detailData.doc = detailData.doc.replaceAll("\\\"", "\"");
+          detailData.doc = detailData.doc.replaceAll('\\"', '"');
           storage.reportDetailData = detailData;
           setTempReport();
         } else {
           alert("임시 저장 문서 정보를 가져오는 데 실패했습니다");
         }
-      }
-    })
+      },
+    });
   }
   // let previewWidth = document.getElementsByClassName("reportInsertForm")[0];
   // previewWidth = previewWidth.clientWidth;
   // let target = $(".reportInsertForm");
   // target.css("height", Math.ceil(previewWidth / 210 * 297));
-
 }
 
-
-
 function setTempReport() {
-
   if (storage.reportDetailData != undefined) {
     let formId = storage.reportDetailData.formId;
     $(".guide").remove();
@@ -102,10 +107,10 @@ function setTempReport() {
     $(".insertedDetail").show();
 
     //작성자 작성일 자동 입력
-    $(".testClass").prop('checked', false);
-    $(".typeContainer").html("")
+    $(".testClass").prop("checked", false);
+    $(".typeContainer").html("");
     $(".inputsAuto").prop("disabled", "true");
-    $(".inputsAuto").css("text-align", "center")
+    $(".inputsAuto").css("text-align", "center");
     $(".inputsAuto").eq(0).css("text-align", "left");
     $(".inputsAuto").eq(1).css("text-align", "left");
     $(".inputsAuto").eq(2).css("text-align", "left");
@@ -113,8 +118,7 @@ function setTempReport() {
     $(".saveBtn").prop("disabled", false);
     $(".previewBtn").prop("disabled", false);
 
-
-    //영업기회 데이터 리스트 만들기  
+    //영업기회 데이터 리스트 만들기
 
     $.ajax({
       url: "/api/sopp",
@@ -133,20 +137,23 @@ function setTempReport() {
       },
     });
 
-
-    // 거래처 데이터 리스트 
+    // 거래처 데이터 리스트
 
     let html = $(".infoContentlast")[0].innerHTML;
     let x;
     let dataListHtml = "";
 
-
-    // 거래처 데이터 리스트 만들기 
-    dataListHtml = "<datalist id='_infoCustomer'>"
+    // 거래처 데이터 리스트 만들기
+    dataListHtml = "<datalist id='_infoCustomer'>";
     for (x in storage.customer) {
-      dataListHtml += "<option data-value='" + x + "' value='" + storage.customer[x].name + "'></option> "
+      dataListHtml +=
+        "<option data-value='" +
+        x +
+        "' value='" +
+        storage.customer[x].name +
+        "'></option> ";
     }
-    dataListHtml += "</datalist>"
+    dataListHtml += "</datalist>";
     html += dataListHtml;
     $(".infoContentlast")[0].innerHTML = html;
     $("#" + formId + "_infoCustomer").attr("list", "_infoCustomer");
@@ -163,15 +170,17 @@ function setTempReport() {
     let textAreaArr = target.getElementsByTagName("textarea")[0];
     textAreaArr.value = textAreaArr.dataset.detail;
 
-    // 이름 , 직급 한글로 설정하기 
+    // 이름 , 직급 한글로 설정하기
     let subTitlesArr = ["_examine", "_approval", "_agree", "_conduct"];
     for (let i = 0; i < subTitlesArr.length; i++) {
       if ($("." + formId + subTitlesArr[i]).val() != undefined) {
         for (let j = 0; j < $("." + formId + subTitlesArr[i]).length; j++) {
-
-          $("." + formId + subTitlesArr[i])[j].value = storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
-          $("." + formId + subTitlesArr[i] + "_position")[j].value = storage.userRank[$("." + formId + subTitlesArr[i] + "_position")[j].value][0];
-
+          $("." + formId + subTitlesArr[i])[j].value =
+            storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
+          $("." + formId + subTitlesArr[i] + "_position")[j].value =
+            storage.userRank[
+              $("." + formId + subTitlesArr[i] + "_position")[j].value
+            ][0];
         }
       }
     }
@@ -184,30 +193,10 @@ function setTempReport() {
       }
     }
     $("input[name='" + formId + "_RD']").prop("disabled", true);
-
-
   }
-
-
-
-
-
-
-
-
 }
 
-
-
-
-
-
-
-
-
-
 function drawFormList() {
-
   let data = storage.formList;
   let titles = new Array();
   let nums = new Array();
@@ -225,18 +214,15 @@ function drawFormList() {
 
   targetHtml += "<select class='formSelector'>";
   for (let i = 0; i < titles.length; i++) {
-    targetHtml += "<option value='" + nums[i] + "'>" + titles[i] + "</option>"
-
+    targetHtml += "<option value='" + nums[i] + "'>" + titles[i] + "</option>";
   }
 
-  targetHtml += "</select>"
+  targetHtml += "</select>";
 
   target.html(targetHtml);
-
 }
 
-
-// 결재양식 선택에서 양식 선택 버튼 눌렀을 때 함수 
+// 결재양식 선택에서 양식 선택 버튼 눌렀을 때 함수
 function selectForm() {
   let data = storage.formList;
   let selectedFormNo = $(".formSelector").val();
@@ -256,14 +242,13 @@ function selectForm() {
   $("#" + formId + "_writer").val(writer);
   $("#" + formId + "_writer").attr("data-detail", writer);
 
-
   let date = getYmdHyphen();
   $("#" + formId + "_created").val(date);
   $("#" + formId + "_created").attr("data-detail", date);
-  $(".testClass").prop('checked', false);
-  $(".typeContainer").html("")
+  $(".testClass").prop("checked", false);
+  $(".typeContainer").html("");
   $(".inputsAuto").prop("disabled", "true");
-  $(".inputsAuto").css("text-align", "center")
+  $(".inputsAuto").css("text-align", "center");
   $(".inputsAuto").eq(0).css("text-align", "left");
   $(".inputsAuto").eq(1).css("text-align", "left");
   $(".inputsAuto").eq(2).css("text-align", "left");
@@ -271,8 +256,7 @@ function selectForm() {
   $(".saveBtn").prop("disabled", false);
   $(".previewBtn").prop("disabled", false);
 
-
-  //영업기회 데이터 리스트 만들기  
+  //영업기회 데이터 리스트 만들기
 
   $.ajax({
     url: "/api/sopp",
@@ -291,48 +275,52 @@ function selectForm() {
     },
   });
 
-
-  // 거래처 데이터 리스트 
+  // 거래처 데이터 리스트
 
   let html = $(".infoContentlast")[0].innerHTML;
   let x;
   let dataListHtml = "";
 
-
-  // 거래처 데이터 리스트 만들기 
-  dataListHtml = "<datalist id='_infoCustomer'>"
+  // 거래처 데이터 리스트 만들기
+  dataListHtml = "<datalist id='_infoCustomer'>";
   for (x in storage.customer) {
-    dataListHtml += "<option data-value='" + x + "' value='" + storage.customer[x].name + "'></option> "
+    dataListHtml +=
+      "<option data-value='" +
+      x +
+      "' value='" +
+      storage.customer[x].name +
+      "'></option> ";
   }
-  dataListHtml += "</datalist>"
+  dataListHtml += "</datalist>";
   html += dataListHtml;
   $(".infoContentlast")[0].innerHTML = html;
   $("#" + formId + "_infoCustomer").attr("list", "_infoCustomer");
-
-
 }
 
-
-// 영업기회 데이터 리스트 가져오는 함수  
+// 영업기회 데이터 리스트 가져오는 함수
 function setSoppList(formId) {
   let soppTarget = $(".infoContent")[3];
   let soppHtml = soppTarget.innerHTML;
   let soppListHtml = "";
 
-
-  soppListHtml = "<datalist id='_infoSopp'>"
+  soppListHtml = "<datalist id='_infoSopp'>";
 
   for (let i = 0; i < storage.soppList.length; i++) {
-    soppListHtml += "<option data-value='" + storage.soppList[i].no + "' value='" + storage.soppList[i].title + "'></option> "
+    soppListHtml +=
+      "<option data-value='" +
+      storage.soppList[i].no +
+      "' value='" +
+      storage.soppList[i].title +
+      "'></option> ";
   }
 
-  soppListHtml += "</datalist>"
+  soppListHtml += "</datalist>";
   soppHtml += soppListHtml;
   soppTarget.innerHTML = soppHtml;
   $("#" + formId + "_sopp").attr("list", "_infoSopp");
 
-
-  let setGwModalHtml = "<div class='gwModal'>" +
+  let setGwModalHtml =
+    "<div class='gwModal'>" +
     "<div class='modal-title'>결재선 생성</div>" +
     "<div class='lineDetail'>" +
     "<div class='lineTop'>" +
@@ -367,14 +355,12 @@ function setSoppList(formId) {
     "</div>";
   $(".modal-wrap").html(setGwModalHtml);
 
-
-
   let orgChartTarget = $("#lineLeft");
   let userData = new Array();
 
   let x;
   let my = storage.my;
-  //나는 결재선에 노출 안 되게 함 
+  //나는 결재선에 노출 안 되게 함
   for (x in storage.user) {
     if (x != my) {
       userData.push(x);
@@ -383,72 +369,92 @@ function setSoppList(formId) {
 
   let innerHtml = "";
   for (let i = 0; i < userData.length; i++) {
-    innerHtml += "<div><input class='testClass' type ='checkbox' id='cb" + userData[i] + "' name='userNames' value='" + userData[i] + "'><label for='cb" + userData[i] + "'>" + storage.user[userData[i]].userName + "</label></div>"
+    innerHtml +=
+      "<div><input class='testClass' type ='checkbox' id='cb" +
+      userData[i] +
+      "' name='userNames' value='" +
+      userData[i] +
+      "'><label for='cb" +
+      userData[i] +
+      "'>" +
+      storage.user[userData[i]].userName +
+      "</label></div>";
   }
   orgChartTarget.html(innerHtml);
   $(".modal-wrap").hide();
 }
 
-
-// 결재선 생성 버튼 눌렀을 때 모달 띄움 
+// 결재선 생성 버튼 눌렀을 때 모달 띄움
 function showModal() {
-
   $(".modal-wrap").show();
-
 }
 
-// 결재선 모달 취소 생성 
+// 결재선 모달 취소 생성
 function closeGwModal(obj) {
-  if (obj.id == 'close') {
+  if (obj.id == "close") {
     $(".modal-wrap").hide();
   } else {
-    if ($("#approval").html() == '') {
+    if ($("#approval").html() == "") {
       alert("결재자를 설정하세요");
     } else {
       createLine();
       $(".inputsAuto").prop("disabled", "true");
-      $(".inputsAuto").css("text-align", "center")
+      $(".inputsAuto").css("text-align", "center");
       $(".inputsAuto").eq(0).css("text-align", "left");
       $(".inputsAuto").eq(1).css("text-align", "left");
       $(".inputsAuto").eq(2).css("text-align", "left");
       $(".modal-wrap").hide();
     }
-
   }
 }
 
-////조직도에서 결재 타입 선택 함수 
+////조직도에서 결재 타입 선택 함수
 function check(name) {
   let inputLength = $(".testClass");
   let target = $("#" + name);
+
   let html = target.html();
-  let selectHtml = "";
 
-  let data = new Array();
-  let x;
-  let my = storage.my;
-  //나는 결재선에 노출 안 되게 함 
-  for (x in storage.user) {
-    if (x != my) {
-      data.push(x);
-    }
-  }
+  if (name == "approval" && html != "") {
+    alert("결재자는 한 명만 선택할 수 있습니다");
+  } else {
+    let selectHtml = "";
 
-  for (let i = 0; i < inputLength.length; i++) {
-    if ($("#cb" + data[i]).prop('checked')) {
-      if (document.getElementById("linedata" + data[i]) == null)
-        selectHtml += "<div class='lineDataContainer' id='lineContainer_" + data[i] + "'><label id='linedata_" + data[i] + "'>" + storage.user[data[i]].userName + "</label><button value='" + data[i] + "' onclick='upClick(this)'>▲</button><button  value='" + data[i] + "' onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
+    let data = new Array();
+    let x;
+    let my = storage.my;
+    //나는 결재선에 노출 안 되게 함
+    for (x in storage.user) {
+      if (x != my) {
+        data.push(x);
+      }
     }
 
+    for (let i = 0; i < inputLength.length; i++) {
+      if ($("#cb" + data[i]).prop("checked")) {
+        if (document.getElementById("linedata" + data[i]) == null)
+          selectHtml +=
+            "<div class='lineDataContainer' id='lineContainer_" +
+            data[i] +
+            "'><label id='linedata_" +
+            data[i] +
+            "'>" +
+            storage.user[data[i]].userName +
+            "</label><button value='" +
+            data[i] +
+            "' onclick='upClick(this)'>▲</button><button  value='" +
+            data[i] +
+            "' onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>";
+      }
+    }
+    html += selectHtml;
+    target.html(html);
+
+    $(".testClass").prop("checked", false);
   }
-  html += selectHtml;
-  target.html(html)
+} //End of check(name)
 
-  $(".testClass").prop('checked', false);
-} //End of check(name) 
-
-
-//// 조직도 결재 순서 
+//// 조직도 결재 순서
 function upClick(obj) {
   let parent;
   parent = obj.parentElement;
@@ -463,7 +469,7 @@ function upClick(obj) {
     numArr.push(idArr[1]);
   }
 
-  /// 사번 배열을 만든다 
+  /// 사번 배열을 만든다
 
   for (let i = 0; i < numArr.length; i++) {
     if (obj.value == numArr[i] && i != 0) {
@@ -473,12 +479,12 @@ function upClick(obj) {
     }
   }
 
-  // 순서 바꾸는 것 
+  // 순서 바꾸는 것
 
   let data = new Array();
   let x;
   let my = storage.my;
-  //나는 결재선에 노출 안 되게 함 
+  //나는 결재선에 노출 안 되게 함
   for (x in storage.user) {
     if (x != my) {
       data.push(x);
@@ -487,12 +493,22 @@ function upClick(obj) {
 
   let selectHtml = "";
   for (let i = 0; i < numArr.length; i++) {
-    selectHtml += "<div class='lineDataContainer' id='lineContainer_" + numArr[i] + "'><label id='linedata" + numArr[i] + "'>" + storage.user[numArr[i]].userName + "</label><button value='" + numArr[i] + "' onclick='upClick(this)'>▲</button><button  value='" + numArr[i] + "'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
+    selectHtml +=
+      "<div class='lineDataContainer' id='lineContainer_" +
+      numArr[i] +
+      "'><label id='linedata" +
+      numArr[i] +
+      "'>" +
+      storage.user[numArr[i]].userName +
+      "</label><button value='" +
+      numArr[i] +
+      "' onclick='upClick(this)'>▲</button><button  value='" +
+      numArr[i] +
+      "'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>";
   }
 
   target.html(selectHtml);
-}// End of upClick(obj); 
-
+} // End of upClick(obj);
 
 function downClick(obj) {
   let parent;
@@ -519,7 +535,7 @@ function downClick(obj) {
   let data = new Array();
   let x;
   let my = storage.my;
-  //나는 결재선에 노출 안 되게 함 
+  //나는 결재선에 노출 안 되게 함
   for (x in storage.user) {
     if (x != my) {
       data.push(x);
@@ -528,21 +544,30 @@ function downClick(obj) {
 
   let selectHtml = "";
   for (let i = 0; i < numArr.length; i++) {
-    selectHtml += "<div class='lineDataContainer' id='lineContainer_" + numArr[i] + "'><label id='linedata" + numArr[i] + "'>" + storage.user[numArr[i]].userName + "</label><button value='" + numArr[i] + "' onclick='upClick(this)'>▲</button><button  value='" + numArr[i] + "'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
+    selectHtml +=
+      "<div class='lineDataContainer' id='lineContainer_" +
+      numArr[i] +
+      "'><label id='linedata" +
+      numArr[i] +
+      "'>" +
+      storage.user[numArr[i]].userName +
+      "</label><button value='" +
+      numArr[i] +
+      "' onclick='upClick(this)'>▲</button><button  value='" +
+      numArr[i] +
+      "'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>";
   }
 
   target.html(selectHtml);
-} // End of downClick(obj) 
-
+} // End of downClick(obj)
 
 function deleteClick(obj) {
   let parent;
   parent = obj.parentElement;
   parent.remove();
-} // End of deleteClign(obj); 
+} // End of deleteClign(obj);
 
-
-// 결재선 그리기 + 작성자 추가 
+// 결재선 그리기 + 작성자 추가
 function createLine() {
   $("select[name='saveLineSelect']")[0].value = "";
   let selectedFormNo = $(".formSelector").val();
@@ -553,20 +578,30 @@ function createLine() {
   lineTarget.css("display", "block");
   let my = storage.my;
   let today = getYmdSlash();
-  let testHtml = "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작성</div><div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto' value='" + storage.userRank[storage.user[my].rank][0] + "'></div>" +
-    "<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_writer' value='" + storage.user[my].userName + "'></div>" +
-    "<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_writer_status' value=''></div>" +
-    "<div class='dateBorder'><input type='text' class='inputsAuto " + formId + "_writer_approved''value=''></div></div></div>";
+  let testHtml =
+    "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작성</div><div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto' value='" +
+    storage.userRank[storage.user[my].rank][0] +
+    "'></div>" +
+    "<div class='twoBorder'><input type='text' class='inputsAuto " +
+    formId +
+    "_writer' value='" +
+    storage.user[my].userName +
+    "'></div>" +
+    "<div class='twoBorder'><input type='text' class='inputsAuto " +
+    formId +
+    "_writer_status' value=''></div>" +
+    "<div class='dateBorder'><input type='text' class='inputsAuto " +
+    formId +
+    "_writer_approved''value=''></div></div></div>";
   let testHtml2 = "<div class='lineGridContainer'>";
   let referHtml = "<div>참조</div>";
-  let target = $(".typeContainer"); // 결재선 생성 모달에서 결재 타입 각각의 container 
+  let target = $(".typeContainer"); // 결재선 생성 모달에서 결재 타입 각각의 container
   let titleArr = ["검토", "합의", "결재", "수신", "열람", "참조"];
-  let titleId = ["examine", "agree", "approval", "conduct", "refer"]
-
+  let titleId = ["examine", "agree", "approval", "conduct", "refer"];
 
   let data = new Array();
   let x;
-  //나는 결재선에 노출 안 되게 함 
+  //나는 결재선에 노출 안 되게 함
   for (x in storage.user) {
     if (x != my) {
       data.push(x);
@@ -574,41 +609,110 @@ function createLine() {
   }
 
   for (let i = 0; i < target.length; i++) {
-    if (target[i].children.length != 0 && i < 3) { // 해당 결재 타입에 설정된 사람이 없지 않으면서 결재 타입이 검토 합의 결재인 경우 
-      testHtml += "<div class='lineGrid'><div class='lineTitle'>" + titleArr[i] + "</div>"
-    } else if (target[i].children.length != 0 && i == 3) { // 결재타입이 수신인 경우 
-      testHtml2 += "<div class='lineGrid'><div class='lineTitle'>" + titleArr[i] + "</div>"
+    if (target[i].children.length != 0 && i < 3) {
+      // 해당 결재 타입에 설정된 사람이 없지 않으면서 결재 타입이 검토 합의 결재인 경우
+      testHtml +=
+        "<div class='lineGrid'><div class='lineTitle'>" +
+        titleArr[i] +
+        "</div>";
+    } else if (target[i].children.length != 0 && i == 3) {
+      // 결재타입이 수신인 경우
+      testHtml2 +=
+        "<div class='lineGrid'><div class='lineTitle'>" +
+        titleArr[i] +
+        "</div>";
     }
-
-
 
     for (let j = 0; j < target[i].children.length; j++) {
       let id = target[i].children[j].id;
-      id = id.split('_');
+      id = id.split("_");
       id = id[1];
 
-
-      // 수신 
+      // 수신
       if (i == 3) {
-        testHtml2 += "<div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_position" + "' value='" + storage.userRank[storage.user[id].rank][0] + "' data-detail='" + storage.user[id].rank + "'/></div>" +
-          "<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "' value='" + storage.user[id].userName + "' data-detail='" + storage.user[id].userNo + "'/></div>" +
-          "<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_status' value='' data-detail=''/></div>" +
-          "<div class='dateBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_approved" + "' value='' data-detail=''/></div></div>"
+        testHtml2 +=
+          "<div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto " +
+          formId +
+          "_" +
+          titleId[i] +
+          "_position" +
+          "' value='" +
+          storage.userRank[storage.user[id].rank][0] +
+          "' data-detail='" +
+          storage.user[id].rank +
+          "'/></div>" +
+          "<div class='twoBorder'><input type='text' class='inputsAuto " +
+          formId +
+          "_" +
+          titleId[i] +
+          "' value='" +
+          storage.user[id].userName +
+          "' data-detail='" +
+          storage.user[id].userNo +
+          "'/></div>" +
+          "<div class='twoBorder'><input type='text' class='inputsAuto " +
+          formId +
+          "_" +
+          titleId[i] +
+          "_status' value='' data-detail=''/></div>" +
+          "<div class='dateBorder'><input type='text' class='inputsAuto " +
+          formId +
+          "_" +
+          titleId[i] +
+          "_approved" +
+          "' value='' data-detail=''/></div></div>";
       }
 
-      // 참조 
+      // 참조
       else if (i == 4) {
-        referHtml += "<div class='appendName " + formId + "_" + titleId[i] + "' data-detail='" + storage.user[id].userNo + "'>" + storage.userRank[storage.user[id].rank][0] + "&nbsp" + storage.user[id].userName + "</div>";
+        referHtml +=
+          "<div class='appendName " +
+          formId +
+          "_" +
+          titleId[i] +
+          "' data-detail='" +
+          storage.user[id].userNo +
+          "'>" +
+          storage.userRank[storage.user[id].rank][0] +
+          "&nbsp" +
+          storage.user[id].userName +
+          "</div>";
       }
 
-      // 검토 합의 결재 
+      // 검토 합의 결재
       else {
-        testHtml += "<div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_position" + "' value='" + storage.userRank[storage.user[id].rank][0] + "' data-detail='" + storage.user[id].rank + "'/></div>" +
-          "<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "' value='" + storage.user[id].userName + "' data-detail='" + storage.user[id].userNo + "'/></div>" +
-          "<div class='twoBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_status' value='' data-detail=''/></div>" +
-          "<div class='dateBorder'><input type='text' class='inputsAuto " + formId + "_" + titleId[i] + "_approved" + "' value='' data-detail=''/></div></div>"
+        testHtml +=
+          "<div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto " +
+          formId +
+          "_" +
+          titleId[i] +
+          "_position" +
+          "' value='" +
+          storage.userRank[storage.user[id].rank][0] +
+          "' data-detail='" +
+          storage.user[id].rank +
+          "'/></div>" +
+          "<div class='twoBorder'><input type='text' class='inputsAuto " +
+          formId +
+          "_" +
+          titleId[i] +
+          "' value='" +
+          storage.user[id].userName +
+          "' data-detail='" +
+          storage.user[id].userNo +
+          "'/></div>" +
+          "<div class='twoBorder'><input type='text' class='inputsAuto " +
+          formId +
+          "_" +
+          titleId[i] +
+          "_status' value='' data-detail=''/></div>" +
+          "<div class='dateBorder'><input type='text' class='inputsAuto " +
+          formId +
+          "_" +
+          titleId[i] +
+          "_approved" +
+          "' value='' data-detail=''/></div></div>";
       }
-
     }
 
     if (target[i].children.length != 0 && i < 3) {
@@ -616,7 +720,6 @@ function createLine() {
     } else if (target[i].children.length != 0 && i == 3) {
       testHtml2 += "</div>";
     }
-
   }
 
   testHtml += "</div>";
@@ -626,59 +729,71 @@ function createLine() {
   lineTarget.html(testHtml);
 
   $(".referContainer").html(referHtml);
+} // End of createLine();
 
-} // End of createLine(); 
-
-
-
-// 날짜 변환 함수 
+// 날짜 변환 함수
 function getYmdHyphen() {
   let d = new Date();
-  return d.getFullYear() + "-" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "-" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString());
+  return (
+    d.getFullYear() +
+    "-" +
+    (d.getMonth() + 1 > 9
+      ? (d.getMonth() + 1).toString()
+      : "0" + (d.getMonth() + 1)) +
+    "-" +
+    (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
+  );
 }
 
 function getYmdSlash() {
   let d = new Date();
-  return (d.getFullYear() % 100) + "/" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "/" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString());
+  return (
+    (d.getFullYear() % 100) +
+    "/" +
+    (d.getMonth() + 1 > 9
+      ? (d.getMonth() + 1).toString()
+      : "0" + (d.getMonth() + 1)) +
+    "/" +
+    (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
+  );
 }
-
 
 //for(let i = 0 ; i < 3; i ++) {arr.push($(".doc_Form_Consult_date")[i].dataset.detail)}
 // let formId = "doc_Form_Consult_date"
-// $("."+formId)[0].dataset.detail; 
+// $("."+formId)[0].dataset.detail;
 
-
-// 자주쓰는 결재선 선택시 설정 
+// 자주쓰는 결재선 선택시 설정
 function setSavedLine() {
   let val = $("select[name='saveLineSelect']")[0].value;
-  if (val == 'middle') { // 구민주 검토 이승우 결재
-    $("#examine").html("<div class='lineDataContainer' id='lineContainer_10017'><label id='linedata_10017'>구민주</label><button value='10017' onclick='upClick(this)'>▲</button><button  value='10017'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>");
-    $("#approval").html("<div class='lineDataContainer' id='lineContainer_10002'><label id='linedata_10002'>이승우</label><button value='10002' onclick='upClick(this)'>▲</button><button  value='10002'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>");
+  if (val == "middle") {
+    // 구민주 검토 이승우 결재
+    $("#examine").html(
+      "<div class='lineDataContainer' id='lineContainer_10017'><label id='linedata_10017'>구민주</label><button value='10017' onclick='upClick(this)'>▲</button><button  value='10017'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
+    );
+    $("#approval").html(
+      "<div class='lineDataContainer' id='lineContainer_10002'><label id='linedata_10002'>이승우</label><button value='10002' onclick='upClick(this)'>▲</button><button  value='10002'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
+    );
     $("#agree").html("");
     $("#conduct").html("");
     $("#refer").html("");
-  } else if (val == 'basic') { // 이승우 결재 
-    $("#approval").html("<div class='lineDataContainer' id='lineContainer_10002'><label id='linedata0'>이승우</label><button value='10002' onclick='upClick(this)'>▲</button><button  value='10002'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>");
+  } else if (val == "basic") {
+    // 이승우 결재
+    $("#approval").html(
+      "<div class='lineDataContainer' id='lineContainer_10002'><label id='linedata0'>이승우</label><button value='10002' onclick='upClick(this)'>▲</button><button  value='10002'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
+    );
     $("#agree").html("");
     $("#examine").html("");
     $("#conduct").html("");
     $("#refer").html("");
   }
-
 }
 
-
-
 function reportInsert() {
-
   let title, content, readable, formId, appDoc, dept;
   let appLine = [];
   let selectedFormNo = $(".formSelector").val();
   formId = storage.formList[selectedFormNo].id;
   let detailType = $("input[name='" + formId + "_RD']:checked").attr("id");
-
-
-
 
   let soppVal = $("#" + formId + "_sopp").val();
   let customerVal = $("#" + formId + "_infoCustomer").val();
@@ -699,12 +814,15 @@ function reportInsert() {
     }
   }
 
-
-  title = $("#" + formId + '_title').val();
+  title = $("#" + formId + "_title").val();
   content = $("#" + formId + "_content").val();
-  readable = $('input[name=authority]:checked').val();
+  readable = $("input[name=authority]:checked").val();
   appDoc = $(".reportInsertForm").html();
-  appDoc = appDoc.replaceAll("\n", "").replaceAll("\r", "").replaceAll("\t", "").replaceAll("\"", "\\\"");
+  appDoc = appDoc
+    .replaceAll("\n", "")
+    .replaceAll("\r", "")
+    .replaceAll("\t", "")
+    .replaceAll('"', '\\"');
   let my = storage.my;
   dept = storage.user[my].deptId[0];
 
@@ -714,7 +832,6 @@ function reportInsert() {
   } else {
     temp = null;
   }
-
 
   for (let i = 0; i < $("." + formId + "_examine").length; i++) {
     appLine.push([0, $("." + formId + "_examine")[i].dataset.detail]);
@@ -732,36 +849,37 @@ function reportInsert() {
     appLine.push([4, $("." + formId + "_refer")[i].dataset.detail]);
   }
 
-
   let data = {
-    "title": title,
-    "sopp": soppResult + "",
-    "dept": dept,
-    "customer": cusResult + "",
-    "attached": storage.attachedList === undefined ? [] : storage.attachedList,
-    "content": content,
-    "appLine": appLine,
-    "appDoc": appDoc,
-    "formId": formId,
-    "readable": readable,
-    "temp": temp
-  }
+    title: title,
+    sopp: soppResult + "",
+    dept: dept,
+    customer: cusResult + "",
+    attached: storage.attachedList === undefined ? [] : storage.attachedList,
+    content: content,
+    appLine: appLine,
+    appDoc: appDoc,
+    formId: formId,
+    readable: readable,
+    temp: temp,
+  };
   console.log(data);
-  data = JSON.stringify(data)
+  data = JSON.stringify(data);
   data = cipher.encAes(data);
-
-
 
   if ($(".createLineBtn").css("display") == "none") {
     alert("결재 문서 양식을 선택하세요");
-  } else if (formId != "doc_Form_Pur" && detailType == undefined && formId != "doc_Form_Dip" && detailType == undefined) {
-    alert("결재문서 상세 타입을 선택하세요")
-  } else if (title == '') {
+  } else if (
+    formId != "doc_Form_Pur" &&
+    detailType == undefined &&
+    formId != "doc_Form_Dip" &&
+    detailType == undefined
+  ) {
+    alert("결재문서 상세 타입을 선택하세요");
+  } else if (title == "") {
     alert("제목을 입력하세요");
-  } else if ($("#" + formId + "_line").html() == '결재선') {
+  } else if ($("#" + formId + "_line").html() == "결재선") {
     alert("결재선을 생성하세요");
   } else {
-
     $.ajax({
       url: "/api/gw/app/doc",
       method: "post",
@@ -775,14 +893,12 @@ function reportInsert() {
         } else {
           alert(result.msg);
         }
-      }
-    })
+      },
+    });
   }
-
 }
 
-
-// 파일 첨부 버튼 누를 때 마다 반영 
+// 파일 첨부 버튼 누를 때 마다 반영
 function docFileChange() {
   let method, data, type, attached;
   attached = $(document).find("[name='attached[]']")[0].files;
@@ -791,90 +907,101 @@ function docFileChange() {
     storage.attachedList = [];
   }
 
-
   let fileDataArray = storage.attachedList;
   for (let i = 0; i < attached.length; i++) {
     let reader = new FileReader();
     let fileName;
 
     fileName = attached[i].name;
-    // 파일 중복 등록 제거 
+    // 파일 중복 등록 제거
     if (!fileDataArray.includes(fileName)) {
       storage.attachedList.push(fileName);
 
       reader.onload = (e) => {
-        let binary, x, fData = e.target.result;
+        let binary,
+          x,
+          fData = e.target.result;
         const bytes = new Uint8Array(fData);
         binary = "";
-        for (x = 0; x < bytes.byteLength; x++) binary += String.fromCharCode(bytes[x]);
+        for (x = 0; x < bytes.byteLength; x++)
+          binary += String.fromCharCode(bytes[x]);
         let fileData = cipher.encAes(btoa(binary));
-        let fullData = (fileName + "\r\n" + fileData);
+        let fullData = fileName + "\r\n" + fileData;
 
-        let url = "/api/attached/docapp"
+        let url = "/api/attached/docapp";
         url = url;
         method = "post";
         data = fullData;
         type = "insert";
 
-        crud.defaultAjax(url, method, data, type, submitFileSuccess, submitFileError);
-      }
+        crud.defaultAjax(
+          url,
+          method,
+          data,
+          type,
+          submitFileSuccess,
+          submitFileError
+        );
+      };
 
       reader.readAsArrayBuffer(attached[i]);
     }
   }
 
-
   let html = "";
 
   for (let i = 0; i < fileDataArray.length; i++) {
-
-    html += "<div data-detail='" + fileDataArray[i] + "'>" + fileDataArray[i] + "<button type='button' onclick='deleteFile(this)'>x</button></div></div>"
+    html +=
+      "<div data-detail='" +
+      fileDataArray[i] +
+      "'>" +
+      fileDataArray[i] +
+      "<button type='button' onclick='deleteFile(this)'>x</button></div></div>";
     $(".filePreview").html(html);
   }
 
-  // 파일목록 수정의 경우 추가해야함 
-
-
+  // 파일목록 수정의 경우 추가해야함
 }
 
 function deleteFile(obj) {
   let value = obj.parentElement.dataset.detail;
-  storage.attachedList = storage.attachedList.filter((element) => element != value);
+  storage.attachedList = storage.attachedList.filter(
+    (element) => element != value
+  );
   obj.parentElement.remove();
 }
 
-
-
-
-// 입력된 총 합계 구하는 함수 
+// 입력된 총 합계 구하는 함수
 function getTotalCount() {
   let totalCount = Number(0);
   for (let i = 0; i < $(".doc_Form_Consult_total").length; i++) {
-    totalCount += (Number($(".doc_Form_Consult_total")[i].dataset.detail.replace(",", "")));
+    totalCount += Number(
+      $(".doc_Form_Consult_total")[i].dataset.detail.replace(",", "")
+    );
   }
   return totalCount;
 }
 
-
-// 기안 시 금액이 입력되지 않은 공백 칸 제거해서 폼 올리기 
+// 기안 시 금액이 입력되지 않은 공백 칸 제거해서 폼 올리기
 function deleteGap() {
-  for (let i = ($(".doc_Form_Consult_total").length - 1); i >= 0; i--) {
-
-    if ($(".doc_Form_Consult_total")[i].dataset.detail == "" || $(".doc_Form_Consult_total")[i].dataset.detail == undefined || $(".doc_Form_Consult_total")[i].dataset.detail == "null") {
+  for (let i = $(".doc_Form_Consult_total").length - 1; i >= 0; i--) {
+    if (
+      $(".doc_Form_Consult_total")[i].dataset.detail == "" ||
+      $(".doc_Form_Consult_total")[i].dataset.detail == undefined ||
+      $(".doc_Form_Consult_total")[i].dataset.detail == "null"
+    ) {
       $(".doc_Form_Consult_total")[i].parentElement.parentElement.remove();
     }
   }
-
 }
 
-
-
-
 function tempSave() {
-
-
-
-  let dept, title, readable, formId, appDoc, appLine = [];
+  let dept,
+    title,
+    readable,
+    formId,
+    appDoc,
+    appLine = [];
   let my = storage.my;
   dept = storage.user[my].deptId[0];
   if ($(".formNumHidden").val() == "") {
@@ -885,9 +1012,7 @@ function tempSave() {
 
   title = $("#" + formId + "_title").val();
   appDoc = $(".reportInsertForm").html();
-  readable = $('input[name=authority]:checked').val();
-
-
+  readable = $("input[name=authority]:checked").val();
 
   let soppVal = $("#" + formId + "_sopp").val();
   let customerVal = $("#" + formId + "_infoCustomer").val();
@@ -913,9 +1038,6 @@ function tempSave() {
   } else {
     temp = null;
   }
-
-
-
 
   for (let i = 0; i < $("." + formId + "_examine").length; i++) {
     appLine.push([0, $("." + formId + "_examine")[i].dataset.detail]);
@@ -937,23 +1059,22 @@ function tempSave() {
     appLine = null;
   }
 
-
   let data = {
-    "dept": dept,
-    "title": title,
-    "sopp": soppResult,
-    "readable": readable,
-    "formId": formId,
-    "customer": cusResult,
-    "appDoc": appDoc,
-    "appLine": appLine,
-    "temp": temp
-  }
+    dept: dept,
+    title: title,
+    sopp: soppResult,
+    readable: readable,
+    formId: formId,
+    customer: cusResult,
+    appDoc: appDoc,
+    appLine: appLine,
+    temp: temp,
+  };
   console.log(data);
   if (title == "") {
     alert("제목을 입력하세요");
   } else {
-    data = JSON.stringify(data)
+    data = JSON.stringify(data);
     data = cipher.encAes(data);
 
     $.ajax({
@@ -965,16 +1086,10 @@ function tempSave() {
       success: (result) => {
         if (result.result === "ok") {
           alert("임시 저장 되었습니다");
-
         } else {
           alert(result.msg);
         }
-      }
-    })
-
-
+      },
+    });
   }
-
-
-
 }
