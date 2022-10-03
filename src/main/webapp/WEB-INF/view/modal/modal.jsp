@@ -6,7 +6,7 @@
 		<div class="modal">
 			<div class="modalHead">
 				<span class="modalHeadTitle">모달 제목</span>
-				<span class="xClose" onclick="modal.xClose();">X</span>
+				<span class="xClose" onclick="modal.xClose();"><i class="fa-solid fa-xmark"></i></span>
 			</div>
 			<div class="modalBody">
 				<p>모달 내용칸</p>

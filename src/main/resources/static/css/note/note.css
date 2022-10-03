@@ -44,6 +44,7 @@
     background-color: #ffffff;
     word-break: break-word;
     overflow-y: auto;
+    height: 100%;
     font-size: 15px;    
 }
 

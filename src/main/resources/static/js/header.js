@@ -167,6 +167,12 @@ function init(){
 		"footBtns": $(".modalContainer").find(".modalWrap .modalFoot .modalBtns"),
 		"confirm": $(".modalContainer").find(".modalWrap .modalFoot .confirm"),
 		"close": $(".modalContainer").find(".modalWrap .modalFoot .close"),
+		"noteContainer": $(".noteContainer"),
+		"noteContent": $(".noteContainer").find(".note"),
+		"noteNoteWrap": $(".noteContainer").find(".noteWrap"),
+		"noteHead": $(".noteContainer").find(".noteWrap .noteHead"),
+		"noteHeadTitle": $(".noteContainer").find(".noteWrap").find(".noteHead .noteHeadTitle"),
+		"noteBody": $(".noteContainer").find(".noteWrap .noteBody"),
 		"xClose": () => {
 			modal.hide();
 		},
@@ -201,6 +207,8 @@ function init(){
 			modal.footBtns.css("width", "49%");
 			modal.confirm.text("확인");
 			modal.close.text("닫기");
+			modal.noteHeadTitle.text("");
+			modal.noteBody.html("");
 		},
 	}
 
@@ -319,7 +327,7 @@ function init(){
 	}, 100);
 	
 	$(document).mouseup((e) => {
-		if(modal.content.has(e.target).length === 0){
+		if(modal.content.has(e.target).length === 0 || modal.noteContent.has(e.target).length === 0){
 			modal.hide();
 		}
 	})
@@ -3001,7 +3009,7 @@ class Department{
 		let x, y, html, padding;
 		empSelectable = empSelectable === undefined || empSelectable !== true ? false : empSelectable;
 		deptSelectable = deptSelectable === undefined || deptSelectable !== true ? false : deptSelectable;
-		padding = "1rem";
+		padding = "0";
 		
 		// noteHtml += "<ul class=\"noteUserUl\">";
 
@@ -3035,17 +3043,15 @@ class Department{
 		// noteHtml += "</div>";
 
 		// noteHtml += "</ul>";
-		html = "<input type=\"checkbox\" class=\"dept-tree\" style=\"display:none\" id=\"dept-tree-" + this.id + "\" />";
-		html += ("<label for=\"dept-tree-" + this.id + "\"><img src=\"/images/common/corporate.png\" style=\"width:20px;height:20px;\">" + this.name + "</label>");
-		if(deptSelectable)  html += ("<input type=\"checkbox\" class=\"dept-tree-select\" data-select=\"dept:" + this.id + "\" />");
-		html += ("<div class=\"dept-tree-cnt\" style=\"padding-left:" + padding + "\">");
+		html = "<ul class=\"noteUserUl\">";
+		html += ("<li class=\"noteUserLi\" data-active=\"false\" onclick=\"changeAccIcon(this);\"><h4 class=\"noteUserLiTitle\">" + this.name + "<span class=\"accIcon\">+</span></h4></li>");
+		html += ("<div id=\"noteUserContent\" name=\"noteUserContent\">");
 
 		for(x = 0 ; x < this.employee.length ; x++){
 			y = this.employee[x];console.log(y);
 			if(y === undefined) continue;
 			if(storage.user[y] === undefined || storage.user[y].resign) continue;
 			html += ("<div class=\"noteUserContentItem\"><img src=\"/api/user/image/" + y + "\" style=\"width:20px;height:20px;\"> " + storage.user[y].userName + " " + storage.userRank[storage.user[y].rank][0]);
-			if(empSelectable)   html += ("<input type=\"checkbox\" class=\"dept-tree-select\" data-select=\"emp:" + y + "\" />");
 			html += ("</div>");
 		}
 
@@ -3073,13 +3079,6 @@ function changeAccIcon(e){
 		thisAccIcon.text("+");
 		thisContent.removeClass("active");
 	}else{
-		noteUserLi.data("active", false);
-		accIcon.text("+");
-
-		for(let i = 0; i < noteUserContent.length; i++){
-			$(noteUserContent[i]).removeClass("active");
-		}
-
 		thisLi.data("active", true);
 		thisAccIcon.text("-");
 		thisContent.attr("class", "active");
