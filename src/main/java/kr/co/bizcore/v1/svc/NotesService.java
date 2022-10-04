@@ -42,12 +42,7 @@ public class NotesService extends Svc{
         HashMap<String, String> each = null;
         String t = null;
         int x = 0;
-        logger.error("||||||||||||||||||||||||||||||||||||||||||||||||| compId : " + compId);
-        logger.error("||||||||||||||||||||||||||||||||||||||||||||||||| userNo : " + userNo);
-        logger.error("||||||||||||||||||||||||||||||||||||||||||||||||| writer : " + writer);
-        logger.error("||||||||||||||||||||||||||||||||||||||||||||||||| time : " + (new Date(time)));
         list = notesMapper.getMessage(compId, writer, userNo, new Date(time));
-        logger.error("||||||||||||||||||||||||||||||||||||||||||||||||| Size of list : " + list.size());
         if(list.size() > 0){
             result = "[";
             for(x = 0 ; x < list.size() ; x++){
