@@ -22,7 +22,7 @@ public interface NotesMapper {
     public List<HashMap<String, String>> getMessage(@Param("compId") String compId, @Param("writer") int writer , @Param("reader") String userNo, @Param("time") Date time);
 
     // 특정 발신자와의 신규 대화를 가져오는
-    @Select("SELECT CAST(UNIX_TIMESTAMP(sent)*1000 AS CHAR) AS sent, message, related FROM bizcore.notes WHERE deleted IS NULL AND compId = #{compId} AND ((writer = #{writer} AND reader = #{reader}) OR (writer = #{reader} AND reader = #{writer})) AND sent > (SELECT MAX(`read`) FROM bizcore.notes WHERE deleted IS NULL AND compId = #{compId} AND writer = #{writer} AND reader = #{reader}) ORDER BY sent desc")
+    @Select("SELECT SELECT CAST(a.writer AS CHAR) AS writer, CAST(UNIX_TIMESTAMP(sent)*1000 AS CHAR) AS sent, message, related FROM bizcore.notes a WHERE a.deleted IS NULL AND a.compId = #{compId} AND ((a.writer = #{writer} AND a.reader = #{reader}) OR (a.writer = #{reader} AND a.reader = #{writer})) AND a.no > (SELECT MAX(b.no) no FROM (SELECT IFNULL(MAX(`read`),'1900-1-1'), no FROM bizcore.notes WHERE deleted IS NULL AND compId = #{compId} AND writer = #{writer} AND reader = #{reader}) b) ORDER BY no DESC")
     public List<HashMap<String, String>> getNewMessage(@Param("compId") String compId, @Param("writer") int writer , @Param("reader") String userNo);
 
     // 특정 발신자의 메시지에 대해 읽음 상태를 기록하는 메서드
