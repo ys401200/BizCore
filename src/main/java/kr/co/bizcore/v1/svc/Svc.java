@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import kr.co.bizcore.v1.domain.Dept;
 import kr.co.bizcore.v1.mapper.AccountingMapper;
 import kr.co.bizcore.v1.mapper.BoardMapper;
 import kr.co.bizcore.v1.mapper.CommonMapper;
@@ -42,6 +43,8 @@ import java.sql.SQLException;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
@@ -147,7 +150,7 @@ public abstract class Svc {
             dataFactory.setData("ALL", "currentWeek", w, 1800);
         }
         return result;
-    } // End of rootDept()
+    } // End of getCurrentWeek()
 
     public String generateKey() {
         return generateKey(32);
@@ -546,6 +549,72 @@ public abstract class Svc {
 
         return result;
     } // End of moveTempFile()
+
+
+     // 최상위 부서를 가져오는 메서드
+    public Dept rootDept(String compId){
+        Dept result = null;
+
+        result = (Dept)dataFactory.getData(compId, "rootDept");
+        if(result == null && getAndProceedDeptInfo(compId)){
+            result = (Dept)dataFactory.getData(compId, "rootDept");
+        }
+        return result;
+    } // End of rootDept()
+
+    // 전베 부서가 담긴 맵을 가져오는 메서드
+    public HashMap<String, Dept> deptMap(String compId){
+        HashMap<String, Dept> result = null;
+        Dept root = null;
+
+        root = (Dept)dataFactory.getData(compId, "rootDept");
+        if(result == null && getAndProceedDeptInfo(compId)){
+            result = (HashMap<String, Dept>)dataFactory.getData(compId, "rootDept");
+        }
+        return result;
+    } // End of rootDept()
+
+    // 부서 처리용 프라이빗 메서드
+    private boolean getAndProceedDeptInfo(String compId){
+        List<Dept> list1 = null;
+        List<Map<String, String>> list2 = null;
+        Map<String, String> each = null;
+        HashMap<String, Dept> deptMap = null;
+        Dept root = null, parent = null, dept = null;
+        String deptId = null, userNo = null;
+        int x = 0;
+
+        deptMap = new HashMap<>();
+        list1 = deptMapper.getAllDept(compId);
+        list2 = userMapper.getAllDeptInfo(compId);
+
+        // Find of Root Dept AND Create Map
+        for(x = 0 ; x < list1.size() ; x++){
+            if(list1.get(x).getParent() == null || list1.get(x).getParent().trim().length() == 0){
+                root = list1.get(x);
+            }
+            deptMap.put(list1.get(x).getDeptId(), list1.get(x));
+        }
+
+        // set employee number into dept
+        for(x = 0 ; x < list2.size() ; x++){
+            each = list2.get(x);
+            userNo = each.get("userNo");
+            deptId = each.get("deptId");
+            dept = deptMap.get(deptId);
+            if(dept != null)    dept.addEmployee(userNo);
+        }
+
+        // set child
+        for(x = 0 ; x < list1.size() ; x++){
+            if(list1.get(x).equals(root))    continue;
+            parent = deptMap.get(list1.get(x).getParent());
+            if(parent != null)  parent.addChild(list1.get(x));
+        }
+        
+        dataFactory.setData(compId, "rootDept", root, 180);
+        return true;
+    } // End of getAndProceedDeptInfo()
 
 } // End of abstract Class === Svc
 

@@ -22,6 +22,7 @@ import java.util.Map;
 
 import kr.co.bizcore.v1.domain.CommonCode;
 import kr.co.bizcore.v1.domain.ConnUrl;
+import kr.co.bizcore.v1.domain.Dept;
 import kr.co.bizcore.v1.domain.Product;
 import kr.co.bizcore.v1.domain.SimpleCustomer;
 import kr.co.bizcore.v1.domain.User;
@@ -493,6 +494,150 @@ public class SystemService extends Svc {
     public boolean removeProduct(String compId, int no){
         return productMapper.removeProduct(compId, no) > 0;
     } // End of removeProduct()
+
+    // 영업목표 가져오는 메서드
+    public String getSalesGoals(String compId, String userNo, int year){
+        String result = null, empNo = null, t1 = null, t2 = null;
+        String sql1 = "SELECT SUM(goal) FROM bizcore.sales_goals WHERE deleted IS NULL AND compId = ? AND `year` = ? AND `month` = ?"; // 회사 전체 합계 가져오는 쿼리
+        String sql2 = "SELECT userNo, `month`, goal FROM bizcore.sales_goals WHERE deleted IS NULL AND compId = ? AND year = ? AND userNo IN (SELECT DISTINCT user_no FROM bizcore.user_dept WHERE dept_id IN (WITH RECURSIVE CTE AS(SELECT org_code AS id, org_mcode AS parent FROM swcore.swc_organiz WHERE org_code IN (SELECT dept_id FROM bizcore.user_dept WHERE comp_id = ? AND user_no = ?) AND compno = (SELECT compno FROM swc_company WHERE compid = ?) UNION ALL SELECT org_code AS id, org_mcode AS parent FROM swcore.swc_organiz a INNER JOIN CTE ON a.org_mcode = CTE.id) SELECT id FROM CTE)) ORDER BY userNo, `month`";
+        long[] company = new long[12], larr = null;
+        ArrayList<long[]> dept = new ArrayList<>();
+        ArrayList<String> emps = new ArrayList<>();
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        int x = 0, y = 0;
+        
+
+        try{
+            conn = sqlSession.getConnection();
+
+            // 회사 전체 목표금액 가져오기
+            for(x = 1 ; x <= 12 ; x++){
+                pstmt = conn.prepareStatement(sql1);
+                pstmt.setString(1, compId);
+                pstmt.setInt(2, year);
+                pstmt.setInt(3, x);
+                rs = pstmt.executeQuery();
+                if(rs.next())   company[x - 1] = rs.getLong(1);
+                rs.close();
+                pstmt.close();   
+            }
+
+            // 소속 부서원들의 목표금액 가져오기
+            pstmt = conn.prepareStatement(sql2);
+            pstmt.setString(1, compId);
+            pstmt.setInt(2, year);
+            pstmt.setString(3, compId);
+            pstmt.setString(4, userNo);
+            pstmt.setString(5, compId);
+            rs = pstmt.executeQuery();
+            while(rs.next()){
+                if(empNo == null || !rs.getString("userNo").equals(empNo)){
+                    larr = new long[12];
+                    dept.add(larr);
+                    empNo = rs.getString("userNo");
+                    emps.add(empNo);
+                }
+                larr[rs.getInt("month") - 1] = rs.getLong("goal");
+            }
+            rs.close();
+            pstmt.close();            
+            
+        }catch(SQLException e){e.printStackTrace();}
+
+        // 회사 전체 목표 금액
+        t1 = "[";
+        for(x = 0 ; x < 12 ; x++){
+            if(x > 0)   t1 += ",";
+            t1 += company[x];
+        }
+        t1 += "]";
+
+        t2 = "{";
+        for(x = 0 ; x < dept.size() ; x++){
+            larr = dept.get(x);
+            empNo = emps.get(x);
+            if(x > 0)   t2 += ",";
+            t2 += ("\"" + empNo + "\":[");
+            for(y = 0 ; y < larr.length ; y++){
+                if(y > 0)   t2 += ",";
+                t2 += larr[y];
+            }
+            t2 += "]";
+        }
+        if(!t2.equals("{"))  t2 += ",";
+        result = t2 + "\"all\":" + t1 + "}";
+        return result;
+    } // End of getSalesGoals()
+
+    // 영업목표를 설정하는 메서드 / 소속 부서원들만 수정 가능
+    public String setSalesGoal(String compId, String userNo, int year, int empNo, long[] goals){
+        String result = null;
+        String sql1 = "SELECT count(*) FROM (SELECT DISTINCT user_no FROM bizcore.user_dept WHERE dept_id IN (WITH RECURSIVE CTE AS(SELECT org_code AS id, org_mcode AS parent FROM swcore.swc_organiz WHERE org_code IN (SELECT dept_id FROM bizcore.user_dept WHERE comp_id = :? AND user_no = ?) AND compno = (SELECT compno FROM swc_company WHERE compid = ?) UNION ALL SELECT org_code AS id, org_mcode AS parent FROM swcore.swc_organiz a INNER JOIN CTE ON a.org_mcode = CTE.id) SELECT id FROM CTE)"; // 권한검증 쿼리
+        String sql2 = "SELECT month FROM bizcore.sales_goals WHERE deleted IS NULL AND compId = ? AND userNo = ? AND `year` = ?";
+        String sql3 = "UPDATE bizcore.sales_goals SET goal = ?, modified = NOW() WHERE deleted IS NULL compId = ? AND userNo = ? AND `year` = ? AND `month` = ?";
+        String sql4 = "INSERT INTO bizcore.sales_goals(compId, userNo, `year`, `month`, goal) VALUES(?, ?, ?, ?, ?)";
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        boolean[] barr = null;
+        int x = 0, y = 0;
+
+        // 데이터 검증
+        if(goals == null || goals.length < 12)  return result;
+
+        try{
+            conn = sqlSession.getConnection();
+
+            // 권한 검증
+            pstmt = conn.prepareStatement(sql1);
+            pstmt.setString(1, compId);
+            pstmt.setString(2, userNo);
+            pstmt.setString(3, compId);
+            rs = pstmt.executeQuery();
+            if(rs.next())   x = rs.getInt(1);
+            else            x = -1;
+            rs.close();
+            pstmt.close();
+            if(x < 1)   return "permissionDenied";
+
+            // 기존자료 검색
+            barr = new boolean[12];
+            pstmt = conn.prepareStatement(sql2);
+            pstmt.setString(1, compId);
+            pstmt.setString(2, userNo);
+            pstmt.setInt(3, year);
+            rs = pstmt.executeQuery();
+            while(rs.next())    barr[rs.getInt(1) - 1] = true;
+            rs.close();
+            pstmt.close();
+
+            // 업데이트 또는 인서트 실행
+            for(x = 0 ; x < barr.length ; x++){
+                if(barr[x]){ // 기존 데이터 업데이트
+                    pstmt = conn.prepareStatement(sql3);
+                    pstmt.setLong(1, goals[x]);
+                    pstmt.setString(2, compId);
+                    pstmt.setString(3, userNo);
+                    pstmt.setInt(4, year);
+                    pstmt.setInt(5, x + 1);
+                    y += pstmt.executeUpdate();
+                }else{ // 신규 입력
+                    pstmt = conn.prepareStatement(sql3);
+                    pstmt.setString(1, compId);
+                    pstmt.setString(2, userNo);
+                    pstmt.setInt(3, year);
+                    pstmt.setInt(4, x + 1);
+                    pstmt.setLong(5, goals[x]);
+                    y += pstmt.executeUpdate();
+                }
+            }            
+            
+        }catch(SQLException e){e.printStackTrace();}
+        if(y == 12) result = "ok";
+        return result;
+    }
 
     // ========================================= 2022년 비즈코어 리뉴얼 파일 데이터 마이그레이션 전용 메서드 ====================================
 
