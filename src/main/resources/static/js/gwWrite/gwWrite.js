@@ -10,7 +10,7 @@ $(document).ready(() => {
 });
 
 function getformList() {
-  $(".noteContainer").hide();
+ 
   $(".ContentDiv").html(
     "<div class='gwWriteBtns'></div><div class='selector'>d</div><div class='selector'>d</div><div class='selector'>d</div>"
   );

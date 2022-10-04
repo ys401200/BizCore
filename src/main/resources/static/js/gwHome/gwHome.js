@@ -10,7 +10,7 @@ $(document).ready(() => {
 });
 
 function drawGwDiv() {
-  $(".noteContainer").hide();
+ 
   $.ajax({
     url: "/api/gw/app/wait",
     method: "get",

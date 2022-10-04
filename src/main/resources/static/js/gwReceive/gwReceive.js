@@ -11,7 +11,7 @@ $(document).ready(() => {
 
 // 참조 문서는 상세 조회가 가능하고 열람은 결재가 끝난 후에 참조/열람 문서함에서 열람 가능함
 function referDefault() {
-  $(".noteContainer").hide();
+  
   $(".modal-wrap").hide();
   $("#gwSubTabTitle").html("결재 수신 문서");
 
@@ -172,7 +172,7 @@ function getDetailView() {
   console.log(testForm);
 
   let detailHtml =
-    "<div class='mainBtnDiv'><button>목록보기</button><button onclick='showAppModal()'>결재하기</button></div>" +
+    "<div class='mainBtnDiv'><button onclick='showList()'>목록보기</button><button type='button'onclick='showAppModal()'>결재하기</button></div>" +
     "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
   $(".listPageDiv").html(detailHtml);
 
@@ -226,12 +226,20 @@ function getDetailView() {
           storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
         $("." + formId + subTitlesArr[i] + "_position")[j].value =
           storage.userRank[
-            $("." + formId + subTitlesArr[i] + "_position")[j].value
+          $("." + formId + subTitlesArr[i] + "_position")[j].value
           ][0];
       }
     }
   }
-  setAppLineData();
+ 
+  storage.oriCbContainer = $("input[name='" + formId + "_RD']:checked").attr(
+    "id"
+  );
+  storage.oriInsertedContent = $(".insertedContent").html();
+  storage.oriInsertedDataList = $(".insertedDataList").html();
+  storage.oriInfoData = $(".info").html();
+ setAppLineData();
+
 }
 
 // 탭 누를때마다의 이벤트 주기
@@ -261,6 +269,11 @@ function changeTab(obj) {
 
     drawChangeInfo();
   }
+}
+
+
+function showList() {
+  location.href = "/gw/receive";
 }
 
 // 문서 정보 그리는 함수
@@ -522,8 +535,7 @@ function approveBtnEvent() {
   if (
     storage.reportDetailData.sopp == soppResult &&
     storage.reportDetailData.customer == cusResult &&
-    storage.oriCbContainer ==
-      $("input[name='" + formId + "_RD']:checked").attr("id") &&
+    storage.oriCbContainer == $("input[name='" + formId + "_RD']:checked").attr("id") &&
     storage.oriInsertedContent == $(".insertedContent").html() &&
     storage.oriInsertedDataList == $(".insertedDataList").html()
   ) {
