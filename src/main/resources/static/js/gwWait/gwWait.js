@@ -11,7 +11,7 @@ $(document).ready(() => {
 
 function waitDefault() {
   $(".modal-wrap").hide();
-  
+
 
   let checkHref = location.href;
   checkHref = checkHref.split("//");
@@ -771,7 +771,7 @@ function approveBtnEvent() {
     storage.reportDetailData.sopp == soppResult &&
     storage.reportDetailData.customer == cusResult &&
     storage.oriCbContainer ==
-   $("input[name='" + formId + "_RD']:checked").attr("id") &&
+    $("input[name='" + formId + "_RD']:checked").attr("id") &&
     storage.oriInsertedContent == $(".insertedContent").html() &&
     storage.oriInsertedDataList == $(".insertedDataList").html()
   ) {
@@ -788,19 +788,29 @@ function approveBtnEvent() {
   }
 
   selectVal === "approve" ? (type = 1) : (type = 0);
-  storage.newFileData == undefined
-    ? (storage.newFileData = null)
-    : (storage.newFileData = storage.newFileData);
+  storage.newFileData == undefined || storage.newFileData.length == 0 ? (storage.newFileData = null) : (storage.newFileData = storage.newFileData);
 
   let title = $("#" + formId + "_title").val();
   if (storage.reportDetailData.title == title) {
     title = null;
   }
+
+  let appDoc;
+  if (storage.newAppLine != undefined || storage.newAppLine.length > 0) {
+    appDoc = $(".seletedForm").html();
+  } else {
+    storage.newAppLine = null;
+    appDoc = null;
+  }
+
+
+
   let data = {
     doc: storage.newDoc,
     comment: comment,
     files: storage.newFileData,
     appLine: storage.newAppLine,
+    appDoc: appDoc,
     sopp: soppResult,
     customer: cusResult,
     title: title,
@@ -1268,16 +1278,6 @@ function check(name) {
   } else {
     let selectHtml = "";
 
-    let x;
-    let userData = new Array();
-    let my;
-    my = storage.my;
-    //나는 결재선에 노출 안 되게 함
-    for (x in storage.user) {
-      if (x != my) {
-        userData.push(x);
-      }
-    }
 
     for (let i = 0; i < inputLength.length; i++) {
       let id = inputLength[i].id.substring(2, inputLength[i].id.length);
@@ -1512,7 +1512,7 @@ function reportModify(obj) {
 //문서 수정 버튼 누르면 수정 완료 버튼 생성
 function createConfirmBtn(obj) {
   let div = document.getElementsByClassName("mainBtnDiv");
-  if (div[0].childElementCount < 4) {
+  if (div[0].childElementCount < 5) {
     $(".mainBtnDiv").append(
       "<button type='button'name='modConfirm' onclick='reportModify()' >수정완료 </button>" +
       "<button type='button'name='modConfirm' onclick='quitModify()'>문서 수정 초기화</button>"

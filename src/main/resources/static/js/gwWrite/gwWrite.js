@@ -10,7 +10,7 @@ $(document).ready(() => {
 });
 
 function getformList() {
- 
+
   $(".ContentDiv").html(
     "<div class='gwWriteBtns'></div><div class='selector'>d</div><div class='selector'>d</div><div class='selector'>d</div>"
   );
@@ -319,6 +319,73 @@ function setSoppList(formId) {
   soppTarget.innerHTML = soppHtml;
   $("#" + formId + "_sopp").attr("list", "_infoSopp");
 
+  // let setGwModalHtml =
+  //   "<div class='gwModal'>" +
+  //   "<div class='modal-title'>결재선 생성</div>" +
+  //   "<div class='lineDetail'>" +
+  //   "<div class='lineTop'>" +
+  //   "<div class='innerDetail' id='lineLeft'></div>" +
+  //   "<div class='innerDetail' id='lineCenter'>" +
+  //   "<button onclick='check(this.value)' value='examine'>검토 &gt;</button>" +
+  //   "<button onclick='check(this.value)' value='agree'>합의 &gt;</button>" +
+  //   "<button onclick='check(this.value)' value='approval'>결재 &gt;</button>" +
+  //   " <button onclick='check(this.value)' value='conduct'>수신 &gt;</button>" +
+  //   "<button onclick='check(this.value)' value='refer'>참조 &gt;</button></div>" +
+  //   "<div class='innerDetail' id='lineRight'>" +
+  //   "<div><select name='saveLineSelect' ><option value=''>자주 쓰는 결재선</option><option value='basic'>대표</option><option value='middle'>구민주 과장-대표</option><</select><button type='button' onclick='setSavedLine()'>불러오기</button><button type='button'>삭제하기</button><button type='button'>저장하기</button></div>" +
+  //   "<div><div>검토</div>" +
+  //   "<div class='typeContainer' id='examine'></div>" +
+  //   "</div>" +
+  //   "<div><div>합의</div>" +
+  //   "<div class='typeContainer' id='agree'></div></div>" +
+  //   "<div><div>결재</div>" +
+  //   "<div class='typeContainer' id='approval'></div></div>" +
+  //   "<div><div>수신</div>" +
+  //   "<div class='typeContainer' id='conduct'></div></div>" +
+  //   "<div><div>참조</div>" +
+  //   "<div class='typeContainer' id='refer'></div></div>" +
+  //   "</div>" +
+  //   "</div>" +
+  //   "</div>" +
+  //   "<div class='close-wrap'>" +
+  //   " <button id='close' onclick='closeGwModal(this)'>취소</button>" +
+  //   " <button id='create' onclick='closeGwModal(this)'>생성</button>" +
+  //   "</div>" +
+  //   "</div>" +
+  //   "</div>";
+  // $(".modal-wrap").html(setGwModalHtml);
+
+  // let orgChartTarget = $("#lineLeft");
+  // let userData = new Array();
+
+  // let x;
+  // let my = storage.my;
+  // //나는 결재선에 노출 안 되게 함
+  // for (x in storage.user) {
+  //   if (x != my && storage.user[x].resign != true) {
+  //     userData.push(x);
+  //   }
+  // }
+
+  // let innerHtml = "";
+  // for (let i = 0; i < userData.length; i++) {
+  //   innerHtml +=
+  //     "<div><input class='testClass' type ='checkbox' id='cb" +
+  //     userData[i] +
+  //     "' name='userNames' value='" +
+  //     userData[i] +
+  //     "'><label for='cb" +
+  //     userData[i] +
+  //     "'>" +
+  //     storage.user[userData[i]].userName +
+  //     "</label></div>";
+  // }
+  // orgChartTarget.html(innerHtml);
+  // $(".modal-wrap").hide();
+}
+
+// 결재선 생성 버튼 눌렀을 때 모달 띄움
+function showModal() {
   let setGwModalHtml =
     "<div class='gwModal'>" +
     "<div class='modal-title'>결재선 생성</div>" +
@@ -381,11 +448,7 @@ function setSoppList(formId) {
       "</label></div>";
   }
   orgChartTarget.html(innerHtml);
-  $(".modal-wrap").hide();
-}
 
-// 결재선 생성 버튼 눌렀을 때 모달 띄움
-function showModal() {
   $(".modal-wrap").show();
 }
 
@@ -410,6 +473,7 @@ function closeGwModal(obj) {
 
 ////조직도에서 결재 타입 선택 함수
 function check(name) {
+
   let inputLength = $(".testClass");
   let target = $("#" + name);
 
@@ -420,31 +484,42 @@ function check(name) {
   } else {
     let selectHtml = "";
 
-    let data = new Array();
     let x;
     let my = storage.my;
-    //나는 결재선에 노출 안 되게 함
+
+    let data = new Array();
+    // 본인 
     for (x in storage.user) {
-      if (x != my && storage.user[x].resign != true) {
+      if (x != my && storage.user[x].resign == false) {
         data.push(x);
       }
     }
 
+
+
+
+
+
+
+
+
     for (let i = 0; i < inputLength.length; i++) {
       if ($("#cb" + data[i]).prop("checked")) {
-        if (document.getElementById("linedata" + data[i]) == null)
+        let id = inputLength[i].id.substring(2, inputLength[i].id.length);
+        if (document.getElementById("linedata_" + id) == null) {
           selectHtml +=
             "<div class='lineDataContainer' id='lineContainer_" +
-            data[i] +
+            id +
             "'><label id='linedata_" +
-            data[i] +
+            id +
             "'>" +
-            storage.user[data[i]].userName +
+            storage.user[id].userName +
             "</label><button value='" +
-            data[i] +
+            id +
             "' onclick='upClick(this)'>▲</button><button  value='" +
-            data[i] +
+            id +
             "' onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>";
+        }
       }
     }
     html += selectHtml;
