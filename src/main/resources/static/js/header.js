@@ -2875,26 +2875,6 @@ function noteSubmit(no){
 			if(result.result === "ok"){
 				msg.set("전송되었습니다.");
 				noteSubmitText.val("");
-				
-				$.ajax({
-					url: "/api/note/" + no,
-					method: "get",
-					dataType: "json",
-					contentType: "text/plain",
-					success: (resultData) => {
-						if(resultData.result === "ok"){
-							resultData = cipher.decAes(resultData.data);
-							resultData = JSON.parse(resultData);
-							let disDate = dateDis(resultData[0].sent);
-							let setDate = dateFnc(disDate, "HH:mm:ss");
-							
-							noteMainContent.append("<div class=\"chatMe\">" + resultData[0].msg + "</div>");
-							noteMainContent.append("<div class=\"chatMeDate\">" + setDate + "</div>");
-
-							noteMainContent.scrollTop(noteMainContent[0].scrollHeight);
-						}
-					}
-				});
 			}else{
 				msg.set("전송되지 못했습니다\n다시 시도해주세요.");
 			}
@@ -3043,5 +3023,5 @@ function noteLiveUpdate(){
 		});
 	}
 
-	timer = setTimeout("noteLiveUpdate()", 1000);
+	timer = setTimeout("noteLiveUpdate()", 2000);
 }
