@@ -352,7 +352,7 @@ function init(){
 		window.setTimeout(headerMyInfo, 200);
 		window.setTimeout(addNoteContainer, 200);
 	}
-	
+
 	noteLiveUpdate();
 }
 
@@ -2852,13 +2852,13 @@ function noteContentShow(){
 	addNoteContainer();
 }
 
-function noteSubmit(no){
+function noteSubmit(){
 	let noteSubmitText, data, noteMainContent, html;
 	noteMainContent = $(".noteMainContent");
 	noteSubmitText = $("#noteSubmitText");
 
 	data = {
-		"msg": noteSubmitText.val(),
+		"msg": noteSubmitText.val().replaceAll("\n", "<br />"),
 		"related": null,
 	};
 
@@ -2866,7 +2866,7 @@ function noteSubmit(no){
 	data = cipher.encAes(data);
 
 	$.ajax({
-		url: "/api/note/" + no,
+		url: "/api/note/" + storage.noteContentNo,
 		method: "post",
 		data: data,
 		dataType: "json",
@@ -2877,7 +2877,7 @@ function noteSubmit(no){
 				nowDate = dateDis(nowDate);
 				nowDate = dateFnc(nowDate, "HH:mm:ss");
 				msg.set("전송되었습니다.");
-				html = "<div class=\"chatMe\">" + noteSubmitText.val() + "</div>";
+				html = "<div class=\"chatMe\">" + noteSubmitText.val().replaceAll("\n", "<br />") + "</div>";
 				html += "<div class=\"chatMeDate\">" + nowDate + "</div>";
 				noteMainContent.append(html);
 				noteSubmitText.val("");
@@ -2943,21 +2943,28 @@ function noteUserItemClick(e){
 						disDate = dateDis(result[i].sent);
 						setDate = dateFnc(disDate, "HH:mm:ss");
 					}
-	
-					if(result[i].writer == storage.noteContentNo){
-						html += "<div class=\"chatYouInfo\"><img src=\"/api/user/image/" + storage.noteContentNo + "\"><span>" + storage.user[storage.noteContentNo].userName + " " + storage.userRank[storage.user[storage.noteContentNo].rank][0] + "</span></div>";
+					
+					if(result[i].writer > 0){
+						if(result[i].writer == storage.noteContentNo){
+							html += "<div class=\"chatYouInfo\"><img src=\"/api/user/image/" + storage.noteContentNo + "\"><span>" + storage.user[storage.noteContentNo].userName + " " + storage.userRank[storage.user[storage.noteContentNo].rank][0] + "</span></div>";
+							html += "<div class=\"chatYou\">" + result[i].msg + "</div>";
+							html += "<div class=\"chatYouDate\">" + setDate + "</div>";
+						}else{
+							html += "<div class=\"chatMe\">" + result[i].msg + "</div>";
+							html += "<div class=\"chatMeDate\">" + setDate + "</div>";
+						}
+					}else{
+						html += "<div class=\"chatYouInfo\"><img src=\"/api/my/image\"><span>시스템알림</span></div>";
 						html += "<div class=\"chatYou\">" + result[i].msg + "</div>";
 						html += "<div class=\"chatYouDate\">" + setDate + "</div>";
-					}else{
-						html += "<div class=\"chatMe\">" + result[i].msg + "</div>";
-						html += "<div class=\"chatMeDate\">" + setDate + "</div>";
 					}
+
 				}
 	
 				html += "</div>";
 				html += "<div class=\"noteMainText\">";
-				html += "<textarea id=\"noteSubmitText\"></textarea>";
-				html += "<button type=\"button\" onclick=\"noteSubmit(" + storage.noteContentNo + ");\">전송</button>"
+				html += "<textarea id=\"noteSubmitText\" onkeydown=\"textAreaKeyDown(this)\"></textarea>";
+				html += "<button type=\"button\" onclick=\"noteSubmit();\">전송</button>"
 				html += "</div>";
 			}else{
 				noteUserContainer.hide();
@@ -2967,8 +2974,8 @@ function noteUserItemClick(e){
 				html += "<div class=\"noteMainBtn\"><button type=\"button\" onclick=\"noteUserPage();\">쪽지함</button></div><br /><br />";
 				html += "</div>";
 				html += "<div class=\"noteMainText\">";
-				html += "<textarea id=\"noteSubmitText\"></textarea>";
-				html += "<button type=\"button\" onclick=\"noteSubmit(" + storage.noteContentNo + ");\">전송</button>"
+				html += "<textarea id=\"noteSubmitText\" onkeydown=\"textAreaKeyDown(this)\"></textarea>";
+				html += "<button type=\"button\" onclick=\"noteSubmit();\">전송</button>"
 				html += "</div>";
 			}
 
@@ -3005,7 +3012,6 @@ function noteLiveUpdate(){
 			dataType: "json",
 			contentType: "text/plain",
 			success: (resultData) => {
-				console.log(resultData);
 				if(resultData.result === "ok" && resultData.data !== null){
 					resultData = cipher.decAes(resultData.data);
 					resultData = JSON.parse(resultData);
@@ -3023,7 +3029,6 @@ function noteLiveUpdate(){
 							html += "<div class=\"chatMeDate\">" + setDate + "</div>";
 						}
 					}
-
 					noteMainContent.append(html);
 				}
 			}
@@ -3031,4 +3036,17 @@ function noteLiveUpdate(){
 	}
 	
 	timer = setTimeout("noteLiveUpdate()", 2000);
+}
+
+function textAreaKeyDown(e){
+	let key = event.key || event.keyCode;
+
+	if(key === "Enter" && !event.ctrlKey && !event.shiftKey){
+		event.preventDefault();
+		noteSubmit();
+	}else if(key === "Enter" && event.shiftKey){
+		return true;
+	}else if(key === "Enter" && event.ctrlKey){
+		$(e).val($(e).val() + "\n");
+	}
 }
