@@ -460,7 +460,7 @@ public class ApiGwCtrl extends Ctrl {
     public String apiGwAppProceedPost(HttpServletRequest request, HttpServletResponse response,
             @RequestBody String requestBody, @PathVariable("docNo") String docNo, @PathVariable("ordered") int ordered,
             @PathVariable("ask") int ask) {
-        String result = null, compId = null, userNo = null, data = null, aesIv = null, aesKey = null, lang = null, title = null, comment = null, doc = null, appData = null, customer = null, sopp = null;
+        String result = null, compId = null, userNo = null, data = null, aesIv = null, aesKey = null, lang = null, title = null, comment = null, doc = null, appData = null, customer = null, sopp = null, appDoc;
         String[] files = null, ts = null;
         String[][] appLine = null;
         HttpSession session = null;
@@ -509,6 +509,7 @@ public class ApiGwCtrl extends Ctrl {
 
             // 결재문서 본문에 대한 처리
             doc = json.isNull("doc") ? null : json.getString("doc");
+            appDoc = json.isNull("appDoc") ? null : json.getString("appDoc");
 
             // 결재문서 부가데이터에 대한 처리
             sopp = json.isNull("sopp") ? null : json.getString("sopp") + "";
@@ -533,7 +534,7 @@ public class ApiGwCtrl extends Ctrl {
 
             // 결재문서 처리 요청에 대한 처리
             data = gwService.askAppDoc(compId, docNo, ordered, ask, comment, title, doc, appLine, files, attached, appData,
-                    userNo);
+                    userNo, appDoc);
             if (data.equals("ok")) {
                 result = "{\"result\":\"ok\"}";
             } else if (data.equals("permissionDenied")) {

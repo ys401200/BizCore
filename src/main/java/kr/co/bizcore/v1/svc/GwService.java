@@ -588,7 +588,7 @@ public class GwService extends Svc{
     } // End of getAppDocAndDetailInfo()
 
     // 결재문서 처리 메서드 / 데이터가 null이 아닌 경우 결재문서에 대한 수정 처리
-    public String askAppDoc(String compId, String docNo, int ordered, int ask, String comment, String title, String doc, String[][] appLine, String[] files, HashMap<String, String> attached, String appData, String userNo) {
+    public String askAppDoc(String compId, String docNo, int ordered, int ask, String comment, String title, String doc, String[][] appLine, String[] files, HashMap<String, String> attached, String appData, String userNo, String appDoc) {
         String result = null, revision = null, savedName = null, fileName = null, dept = null, t = null;
         JSONObject json = null;
         int writer = -9999, appType = -9999, no = -9999, x = -1, y = -1;
@@ -657,6 +657,7 @@ public class GwService extends Svc{
                 if(appLine != null){
                     json.put("appLine", true);
                     gwMapper.deleteAppLineSinceEditAppline(compId, docNo, ordered);
+                    doc = appDoc != null ? appDoc : doc; // 수정된 결재선으로 본문 교체
                     
                     // 현재 결제유형이 "결재"인 경우, 수정된 결재선에 결재자가 존재하는 경우 현재의 결재유형을 검토로 수정함
                     if(appType == 2){
