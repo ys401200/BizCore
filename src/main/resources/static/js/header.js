@@ -2970,7 +2970,7 @@ function noteUserItemClick(e){
 			let noteMainBtn = $(".noteMainBtn");
 			noteMainContent = $(".noteMainContent");
 			noteMainBtn.css("width", Math.ceil(noteMainContent.width()));
-			noteMainContent.scrollTop(noteMainContent[0].clientHeight);
+			noteMainContent.scrollTop(noteMainContent[0].scrollHeight);
 		}
 	});
 }
@@ -2998,7 +2998,6 @@ function noteLiveUpdate(){
 			dataType: "json",
 			contentType: "text/plain",
 			success: (resultData) => {
-				console.log(resultData);
 				if(resultData.result === "ok" && resultData.data !== null){
 					resultData = cipher.decAes(resultData.data);
 					resultData = JSON.parse(resultData);
@@ -3006,8 +3005,8 @@ function noteLiveUpdate(){
 					for(let i = 0; i < resultData.length; i++){
 						let disDate = dateDis(resultData[i].sent);
 						let setDate = dateFnc(disDate, "HH:mm:ss");
-						
-						if(resultData[i].writer != storage.noteContentNo){
+
+						if(resultData[i].writer == storage.noteContentNo){
 							html += "<div class=\"chatYouInfo\"><img src=\"/api/user/image/" + storage.noteContentNo + "\"><span>" + storage.user[no].userName + " " + storage.userRank[storage.user[no].rank][0] + "</span></div>";
 							html += "<div class=\"chatYou\">" + result[i].msg + "</div>";
 							html += "<div class=\"chatYouDate\">" + setDate + "</div>";
@@ -3021,7 +3020,8 @@ function noteLiveUpdate(){
 				}
 			}
 		});
+		noteMainContent.scrollTop(noteMainContent[0].scrollHeight);
 	}
-
+	
 	timer = setTimeout("noteLiveUpdate()", 2000);
 }
