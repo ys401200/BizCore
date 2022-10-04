@@ -23,7 +23,7 @@ function getformList() {
 
   $(".selector:first").html(
     "<div>기본 설정</div><div class='formDetail'><div>결재양식</div><div class='formListDiv'></div><button type='button' class='formSelectbtn' onclick='selectForm()'>선택</button><input type='hidden' class='formNumHidden'/></div>" +
-      "<div class='formDetail'><div>열람권한</div><div><label><input type='radio' name='authority' value='dept' checked  />기안자 소속 부서 포함</label><label><input type='radio' name='authority' value='none' />권한 설정 없음</label></div></div>"
+    "<div class='formDetail'><div>열람권한</div><div><label><input type='radio' name='authority' value='dept' checked  />기안자 소속 부서 포함</label><label><input type='radio' name='authority' value='none' />권한 설정 없음</label></div></div>"
   );
 
   $(".selector:first")
@@ -63,7 +63,7 @@ function getformList() {
   $(".modal-wrap").hide();
   $(".insertedDetail").hide();
   $(".createLineBtn").hide();
-  alert("체크");
+
 
   let checkHref = location.href;
   checkHref = checkHref.split("//");
@@ -179,7 +179,7 @@ function setTempReport() {
             storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
           $("." + formId + subTitlesArr[i] + "_position")[j].value =
             storage.userRank[
-              $("." + formId + subTitlesArr[i] + "_position")[j].value
+            $("." + formId + subTitlesArr[i] + "_position")[j].value
             ][0];
         }
       }
@@ -362,7 +362,7 @@ function setSoppList(formId) {
   let my = storage.my;
   //나는 결재선에 노출 안 되게 함
   for (x in storage.user) {
-    if (x != my) {
+    if (x != my && storage.user[x].resign != true) {
       userData.push(x);
     }
   }
@@ -425,7 +425,7 @@ function check(name) {
     let my = storage.my;
     //나는 결재선에 노출 안 되게 함
     for (x in storage.user) {
-      if (x != my) {
+      if (x != my && storage.user[x].resign != true) {
         data.push(x);
       }
     }
@@ -486,7 +486,7 @@ function upClick(obj) {
   let my = storage.my;
   //나는 결재선에 노출 안 되게 함
   for (x in storage.user) {
-    if (x != my) {
+    if (x != my && storage.user[x].resign != true) {
       data.push(x);
     }
   }
@@ -537,7 +537,7 @@ function downClick(obj) {
   let my = storage.my;
   //나는 결재선에 노출 안 되게 함
   for (x in storage.user) {
-    if (x != my) {
+    if (x != my && storage.user[x].resign != true) {
       data.push(x);
     }
   }
@@ -603,7 +603,7 @@ function createLine() {
   let x;
   //나는 결재선에 노출 안 되게 함
   for (x in storage.user) {
-    if (x != my) {
+    if (x != my && storage.user[x].resign != true) {
       data.push(x);
     }
   }

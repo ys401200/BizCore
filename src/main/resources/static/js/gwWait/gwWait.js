@@ -287,7 +287,7 @@ function showReportDetail() {
           storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
         $("." + formId + subTitlesArr[i] + "_position")[j].value =
           storage.userRank[
-            $("." + formId + subTitlesArr[i] + "_position")[j].value
+          $("." + formId + subTitlesArr[i] + "_position")[j].value
           ][0];
       }
     }
@@ -319,43 +319,13 @@ function showReportDetail() {
   setAppLineData();
 }
 
-//결재정보 추가
-// function setOriginLineData() {s
-// 	let originLineData = storage.reportDetailData.appLine;
-// 	let appTitle = ["examine", "agree", "approval", "conduct"];
-// 	let appContainer = [[], [], [], [], []];
 
-// 	for (let i = 0; i < originLineData.length; i++) {
-// 		if (originLineData[i] == 0) {
-// 			appContainer[0].push(originLineData[i]);
-// 		} else if (originLineData[i] == 1) {
-// 			appContainer[1].push(originLineData[i]);
-// 		} else if (originLineData[i] == 2) {
-// 			appContainer[2].push(originLineData[i]);
-// 		} else if (originLineData[i] == 3) {
-// 			appContainer[3].push(originLineData[i]);
-// 		} else if (originLineData[i] == 4) {
-// 			appContainer[4].push(originLineData[i]);
-// 		}
-// 	}
-
-// 	for (let i = 1; i < originLineData.length; i++) {
-// 		for (let j = 0; j < appTitle.length; j++) {
-// 			if (originLineData[i].appType == j) {
-// 				if (originLineData[i].approved != null) {
-
-// 				}
-
-// 			}
-// 		}
-
-// 	}
-
-// }
 
 function showList() {
   location.href = "/gw/wait";
 }
+
+
 // 첨부파일 다운로드
 function getFileArr() {
   let target = $(".selectedFileDiv");
@@ -772,7 +742,7 @@ function approveBtnEvent() {
     storage.reportDetailData.sopp == soppResult &&
     storage.reportDetailData.customer == cusResult &&
     storage.oriCbContainer ==
-      $("input[name='" + formId + "_RD']:checked").attr("id") &&
+    $("input[name='" + formId + "_RD']:checked").attr("id") &&
     storage.oriInsertedContent == $(".insertedContent").html() &&
     storage.oriInsertedDataList == $(".insertedDataList").html()
   ) {
@@ -877,25 +847,49 @@ function showGwModal() {
   let userData = new Array();
   let x;
   let my = storage.my;
-  //나는 결재선에 노출 안 되게 함
+
+
+
+  // 본인 
   for (x in storage.user) {
-    if (x != my) {
+    if (x != my && storage.user[x].resign == false) {
       userData.push(x);
     }
   }
 
+  let oriLine = [];
+  let appLine = storage.reportDetailData.appLine;
+  for (let i = 0; i < appLine.length; i++) {
+    if (appLine[i].employee == my) {
+      oriLine = appLine.slice(0, i + 1);
+      console.log(oriLine);
+    }
+  }
+
+
+  let oriNum = [];
+  for (let i = 0; i < oriLine.length; i++) {
+    oriNum.push(oriLine[i].employee+"");
+  }
+  console.log(oriNum);
+  console.log(userData);
+
+
+
   let innerHtml = "";
   for (let i = 0; i < userData.length; i++) {
-    innerHtml +=
-      "<div><input class='testClass' type ='checkbox' id='cb" +
-      userData[i] +
-      "' name='userNames' value='" +
-      userData[i] +
-      "'><label for='cb" +
-      userData[i] +
-      "'>" +
-      storage.user[userData[i]].userName +
-      "</label></div>";
+    if (oriNum.indexOf(userData[i]) == -1) {
+      innerHtml +=
+        "<div><input class='testClass' type ='checkbox' id='cb" +
+        userData[i] +
+        "' name='userNames' value='" +
+        userData[i] +
+        "'><label for='cb" +
+        userData[i] +
+        "'>" +
+        storage.user[userData[i]].userName +
+        "</label></div>";
+    }
   }
   orgChartTarget.html(innerHtml);
   $(".modal-wrap").show();
@@ -1443,7 +1437,7 @@ function quitModify() {
           storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
         $("." + formId + subTitlesArr[i] + "_position")[j].value =
           storage.userRank[
-            $("." + formId + subTitlesArr[i] + "_position")[j].value
+          $("." + formId + subTitlesArr[i] + "_position")[j].value
           ][0];
       }
     }
@@ -1486,7 +1480,7 @@ function createConfirmBtn(obj) {
   if (div[0].childElementCount < 4) {
     $(".mainBtnDiv").append(
       "<button type='button'name='modConfirm' onclick='reportModify()' >수정완료 </button>" +
-        "<button type='button'name='modConfirm' onclick='quitModify()'>문서 수정 초기화</button>"
+      "<button type='button'name='modConfirm' onclick='quitModify()'>문서 수정 초기화</button>"
     );
   }
   $(":file").css("display", "inline");
