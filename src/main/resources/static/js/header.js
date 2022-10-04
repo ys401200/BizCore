@@ -2923,10 +2923,13 @@ function changeAccIcon(e){
 }
 
 function noteUserItemClick(e){
-	let thisItem, nowLongDate, no;
+	let thisItem, nowLongDate, noteContainer, noteMainContainer, noteMainContent, html = "";
 	thisItem = $(e);
 	nowLongDate = new Date().getTime();
 	storage.noteContentNo = thisItem.data('no');
+	noteContainer = $(".noteContainer");
+	noteUserContainer = $(".noteUserContainer");
+	noteMainContainer = $(".noteMainContainer");
 
 	$.ajax({
 		url: "/api/note/" + storage.noteContentNo + "/" + nowLongDate,
@@ -2935,14 +2938,9 @@ function noteUserItemClick(e){
 		contentType: "text/plain",
 		success: (result) => {
 			if(result.data !== null){
-				let noteUserContainer, html = "", noteContainer, noteMainContent, noteMainContainer;
 				result = cipher.decAes(result.data);
 				result = JSON.parse(result);
-				noteContainer = $(".noteContainer");
-				noteUserContainer = $(".noteUserContainer");
-				noteMainContainer = $(".noteMainContainer");
 				noteUserContainer.hide();
-				
 				noteContainer.find(".noteHeadTitle").text(thisItem.text());
 				
 				html = "<div class=\"noteMainContent\">";
@@ -2974,20 +2972,8 @@ function noteUserItemClick(e){
 				html += "<textarea id=\"noteSubmitText\"></textarea>";
 				html += "<button type=\"button\" onclick=\"noteSubmit(" + storage.noteContentNo + ");\">전송</button>"
 				html += "</div>";
-	
-				noteMainContainer.html(html);
-
-				let noteMainBtn = $(".noteMainBtn");
-				noteMainContent = $(".noteMainContent");
-				noteMainContainer.show();
-				noteMainBtn.css("width", Math.ceil(noteMainContent.width()));
-				noteMainContent.scrollTop(noteMainContent[0].clientHeight);
 			}else{
-				let noteUserContainer, html = "", noteMainContainer;
-				noteUserContainer = $(".noteUserContainer");
-				noteMainContainer = $(".noteMainContainer");
 				noteUserContainer.hide();
-	
 				noteContainer.find(".noteHeadTitle").text(thisItem.text());
 	
 				html = "<div class=\"noteMainContent\">";
@@ -2997,10 +2983,14 @@ function noteUserItemClick(e){
 				html += "<textarea id=\"noteSubmitText\"></textarea>";
 				html += "<button type=\"button\" onclick=\"noteSubmit(" + storage.noteContentNo + ");\">전송</button>"
 				html += "</div>";
-	
-				noteMainContainer.html(html);
-				noteMainContainer.show();
 			}
+
+			noteMainContainer.html(html);
+			noteMainContainer.show();
+			let noteMainBtn = $(".noteMainBtn");
+			noteMainContent = $(".noteMainContent");
+			noteMainBtn.css("width", Math.ceil(noteMainContent.width()));
+			noteMainContent.scrollTop(noteMainContent[0].clientHeight);
 		}
 	});
 }
