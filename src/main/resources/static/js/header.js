@@ -2937,7 +2937,7 @@ function noteUserItemClick(e){
 						setDate = dateFnc(disDate, "HH:mm:ss");
 					}
 	
-					if(result[i].writer != storage.noteContentNo){
+					if(result[i].writer == storage.noteContentNo){
 						html += "<div class=\"chatYouInfo\"><img src=\"/api/user/image/" + storage.noteContentNo + "\"><span>" + storage.user[storage.noteContentNo].userName + " " + storage.userRank[storage.user[storage.noteContentNo].rank][0] + "</span></div>";
 						html += "<div class=\"chatYou\">" + result[i].msg + "</div>";
 						html += "<div class=\"chatYouDate\">" + setDate + "</div>";
@@ -2998,6 +2998,7 @@ function noteLiveUpdate(){
 			dataType: "json",
 			contentType: "text/plain",
 			success: (resultData) => {
+				console.log(resultData);
 				if(resultData.result === "ok" && resultData.data !== null){
 					resultData = cipher.decAes(resultData.data);
 					resultData = JSON.parse(resultData);
