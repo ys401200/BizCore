@@ -85,6 +85,13 @@
     color: #fff;
 }
 
+.noteUserContentItem > img{
+    width: 20px;
+    height: 20px;
+    padding-right: 5px;
+    padding-bottom: 2px;
+}
+
 #noteUserContent.active{ 
 	display: block;
 	animation: 0.6s ease-in-out noteUserLiActive; 
@@ -126,14 +133,45 @@
 
 .noteMainContainer{
     display: none;
+    height: 100%;
 }
 
 .noteMainContent{
-	height: 500px;
-	padding-top: 10px;
+	height: 70%;
 	padding-left: 10px;
 	padding-right: 10px;
 	overflow-y: auto;
+}
+
+.noteMainContent .noteMainBtn{
+    position: fixed;
+    background-color: #fff;
+    width: 100%;
+    z-index: 1;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.noteMainContent .noteMainBtn > button{
+    box-shadow: 0px 1px 2px #bdbfc9;
+    background-color: #2147b1;
+    color: #fff;
+}
+
+.noteMainContent > .chatYouInfo{
+    clear: both;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+}
+
+.noteMainContent > .chatYouInfo > img{
+    width: 30px;
+}
+
+.noteMainContent > .chatYouInfo > span{
+    padding-left: 5px;
+    font-weight: 600;
 }
 
 .noteMainContent > .chatYou{
@@ -144,22 +182,21 @@
     position: relative;
     background-color: #29cea6;
 	color: #ffffff;
-	width: 60%;
-	margin-left: 10px;
+	width: 51%;
 	border-radius: 5px;
     border: 1px solid #999;
 	padding-left: 5px;
 	height: 50px;
 }
 
-.noteMainContent > .chatYou::after{
+/* .noteMainContent > .chatYou::after{
 	content: '';
     position: absolute;
     border-top: 10px solid transparent;
     border-right: 15px solid #29cea6;
     border-bottom: 10px solid transparent;
 	left: -15px;
-}
+} */
 
 .noteMainContent >.chatYouDate{
 	display: flex;
@@ -168,9 +205,8 @@
     width: 60%;
 	font-size: 0.8rem;
     font-weight: 600;
-	margin-left: 15px;
 	margin-bottom: 15px;
-
+    padding-top: 5px;
 }
 
 .noteMainContent > .chatMe{
@@ -182,22 +218,21 @@
     position: relative;
     background: #182f81;
 	color: #ffffff;
-	width: 60%;
-	margin-right: 10px;
+	width: 51%;
 	border-radius: 5px;
 	border: 1px solid #999;
 	padding-right: 5px;
 	height: 50px;
 }
 
-.noteMainContent > .chatMe::after{
+/* .noteMainContent > .chatMe::after{
 	content: '';
     position: absolute;
     border-top: 10px solid transparent;
     border-bottom: 10px solid transparent;
     border-left: 15px solid #182f81;
 	right: -15px;
-}
+} */
 
 .noteMainContent >.chatMeDate{
 	display: flex;
@@ -207,20 +242,20 @@
     width: 60%;
 	font-size: 0.8rem;
     font-weight: 600;
-	margin-right: 15px;
 	margin-bottom: 15px;
+    padding-top: 5px;
 }
 
-.noteText{
+.noteMainText{
 	display: flex;
     align-items: center;
     justify-content: center;
     border-top: 1px solid #000;
-    height: 170px;
+    height: 25%;
 	padding: 10px;
 }
 
-.noteText > textarea{
+.noteMainText > textarea{
 	width: 100%;
 	height: 100%;
 	font-size: 1.2rem;
@@ -229,7 +264,7 @@
 	border-radius: 10px;
 }
 
-.noteText > button{
+.noteMainText > button{
 	display: flex;
     align-items: center;
     justify-content: right;

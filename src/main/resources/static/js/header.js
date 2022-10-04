@@ -169,7 +169,7 @@ function init(){
 		"close": $(".modalContainer").find(".modalWrap .modalFoot .close"),
 		"noteContainer": $(".noteContainer"),
 		"noteContent": $(".noteContainer").find(".note"),
-		"noteNoteWrap": $(".noteContainer").find(".noteWrap"),
+		"noteWrap": $(".noteContainer").find(".noteWrap"),
 		"noteHead": $(".noteContainer").find(".noteWrap .noteHead"),
 		"noteHeadTitle": $(".noteContainer").find(".noteWrap").find(".noteHead .noteHeadTitle"),
 		"noteBody": $(".noteContainer").find(".noteWrap .noteBody"),
@@ -207,6 +207,20 @@ function init(){
 			modal.footBtns.css("width", "49%");
 			modal.confirm.text("확인");
 			modal.close.text("닫기");
+		},
+
+		"noteXClose": () => {
+			modal.noteHide();
+		},
+		"noteShow": () => {
+			modal.noteClear();
+			modal.noteWrap.css('display','flex').hide().fadeIn();
+		},
+		"noteHide": () => {
+			modal.noteClear();
+			modal.noteWrap.fadeOut();
+		},
+		"noteClear": () => {
 			modal.noteHeadTitle.text("");
 			modal.noteBody.html("");
 		},
@@ -320,7 +334,6 @@ function init(){
 		modalClose();
 	});
 	
-	
 	setTimeout(() => {
 		setTiny();
 		menuActive();
@@ -339,6 +352,8 @@ function init(){
 		window.setTimeout(headerMyInfo, 200);
 		window.setTimeout(addNoteContainer, 200);
 	}
+	
+	noteLiveUpdate();
 }
 
 // 위젯 관련 세팅 및 기본설정
@@ -2536,7 +2551,7 @@ function headerMyInfo(){
 
 	// html += "<img id=\"myInfoMessageImg\" src=\"../images/main/icons/message.png\" >";
 	html += "<a href=\"#\" onclick=\"noteContentShow();\" id=\"infoMessageImg\">";
-	html += myNoteList();
+	//html += myNoteList();
 	html += "<img id=\"myInfoMessageImg\" src=\"../images/main/icons/message.png\">";
 	html += "</a>";
 	// html += "<i class=\"fa-solid fa-envelope fa-shake fa-2xl\" id=\"envelope\"></i>";
@@ -2657,224 +2672,6 @@ function plusMenuSelect(select){
 	}
 }
 
-function addNoteContainer(){
-	let noteBody, noteHtml = "";
-	setDeptTree();
-
-	noteBody = $(".noteBody");
-
-	noteHtml += "<div class=\"noteUserContainer\">";
-	noteHtml += "<div class=\"noteUserAccoordion\">";
-	noteHtml += storage.dept.tree.getHtml();
-
-	// noteHtml += "<ul class=\"noteUserUl\">";
-
-	// noteHtml += "<li class=\"noteUserLi\" data-active=\"false\" onclick=\"changeAccIcon(this);\">";
-	// noteHtml += "<h4 class=\"noteUserLiTitle\">기술팀 <span class=\"accIcon\">+</span></h4>";
-	// noteHtml += "</li>";
-
-	// noteHtml += "<div id=\"noteUserContent\" name=\"noteUserContent\">";
-	// noteHtml += "<div class=\"noteUserContentItem\">이대용</div>";
-	// noteHtml += "<div class=\"noteUserContentItem\">조용희</div>";
-	// noteHtml += "</div>";
-
-	// noteHtml += "<li class=\"noteUserLi\" data-active=\"false\" onclick=\"changeAccIcon(this);\">";
-	// noteHtml += "<h4 class=\"noteUserLiTitle\">영업팀 <span class=\"accIcon\">+</span></h4>";
-	// noteHtml += "</li>";
-
-	// noteHtml += "<div id=\"noteUserContent\" name=\"noteUserContent\">";
-	// noteHtml += "<div class=\"noteUserContentItem\">하종성</div>";
-	// noteHtml += "<div class=\"noteUserContentItem\">전용훈</div>";
-	// noteHtml += "<div class=\"noteUserContentItem\">도윤석</div>";
-	// noteHtml += "</div>";
-
-	// noteHtml += "<li class=\"noteUserLi\" data-active=\"false\" onclick=\"changeAccIcon(this);\">";
-	// noteHtml += "<h4 class=\"noteUserLiTitle\">개발팀 <span class=\"accIcon\">+</span></h4>";
-	// noteHtml += "</li>";
-
-	// noteHtml += "<div id=\"noteUserContent\" name=\"noteUserContent\">";
-	// noteHtml += "<div class=\"noteUserContentItem\" data-no=\"10071\" onclick=\"noteUserItemClick(this);\">조병일</div>";
-	// noteHtml += "<div class=\"noteUserContentItem\" data-no=\"10077\" onclick=\"noteUserItemClick(this);\">이송현</div>";
-	// noteHtml += "<div class=\"noteUserContentItem\" data-no=\"10044\" onclick=\"noteUserItemClick(this);\">이장희</div>";
-	// noteHtml += "</div>";
-
-	// noteHtml += "</ul>";
-
-	noteHtml += "</div>";
-	noteHtml += "</div>";
-	
-	// noteHtml += "<div class=\"noteMainContainer\"></div>";
-
-	noteBody.html(noteHtml);
-}
-
-function noteChangeMsg(e){
-	let chat, noteMsgContent, msgHtml = "", no;
-	no = $(e).data("writer");
-	noteMsgContent = $(".noteMsgContent");
-
-	if(no == 0){
-		chat = [
-			{
-				"content": "결재 완료 되었습니다.",
-				"flag": "0",
-				"date": "2022-09-29 21:00:10",
-			},
-			{
-				"content": "결재문서가 반려되었습니다.",
-				"flag": "0",
-				"date": "2022-09-29 21:00:20",
-			},
-			{
-				"content": "결재할 문서가 있습니다.",
-				"flag": "0",
-				"date": "2022-09-29 21:00:30",
-			},
-			{
-				"content": "수신할 문서가 있습니다.",
-				"flag": "0",
-				"date": "2022-09-29 21:00:40",
-			},
-			{
-				"content": "결재 완료 되었습니다.",
-				"flag": "0",
-				"date": "2022-09-29 21:10:10",
-			},
-			{
-				"content": "결재문서가 반려되었습니다.",
-				"flag": "0",
-				"date": "2022-09-29 21:20:20",
-			},
-			{
-				"content": "결재할 문서가 있습니다.",
-				"flag": "0",
-				"date": "2022-09-29 21:30:30",
-			},
-			{
-				"content": "수신할 문서가 있습니다.",
-				"flag": "0",
-				"date": "2022-09-29 21:40:40",
-			},
-			{
-				"content": "결재할 문서가 있습니다.",
-				"flag": "0",
-				"date": "2022-09-29 21:50:30",
-			},
-			{
-				"content": "수신할 문서가 있습니다.",
-				"flag": "0",
-				"date": "2022-09-29 22:00:40",
-			},
-		]
-	}else{
-		chat = [
-			{
-				"content": "가",
-				"flag": "0",
-				"date": "2022-09-29 01:00:00",
-			},
-			{
-				"content": "나",
-				"flag": "1",
-				"date": "2022-09-29 01:01:00",
-			},
-			{
-				"content": "다",
-				"flag": "0",
-				"date": "2022-09-29 01:02:00",
-			},
-			{
-				"content": "라",
-				"flag": "1",
-				"date": "2022-09-29 01:03:00",
-			},
-			{
-				"content": "마",
-				"flag": "0",
-				"date": "2022-09-29 01:03:03",
-			},
-			{
-				"content": "바",
-				"flag": "1",
-				"date": "2022-09-29 01:04:00",
-			},
-			{
-				"content": "사",
-				"flag": "0",
-				"date": "2022-09-29 01:05:00",
-			},
-		];
-	}
-
-	msgHtml = "<div class=\"noteChat\">";
-
-	for(let i = 0; i < chat.length; i++){
-		if(chat[i].flag == 0){
-			msgHtml += "<div class=\"chatYou\">" + chat[i].content + "</div>";
-			msgHtml += "<div class=\"chatYouDate\">" + chat[i].date + "</div>";
-		}else{
-			msgHtml += "<div class=\"chatMe\">" + chat[i].content + "</div>";
-			msgHtml += "<div class=\"chatMeDate\">" + chat[i].date + "</div>";
-		}
-	}
-
-	msgHtml += "</div>";
-	msgHtml += "<div class=\"noteText\">";
-	msgHtml += "<textarea id=\"noteSubmitText\"></textarea>";
-	msgHtml += "<button type=\"button\" onclick=\"noteSubmit();\">전송</button>"
-	msgHtml += "</div>";
-
-	noteMsgContent.html(msgHtml);
-	$(".noteChat").scrollTop($(".noteChat")[0].scrollHeight);
-}
-
-function noteContentShow(){
-	let noteWrap;
-	noteWrap = $(".noteContainer").find(".noteWrap");
-	noteWrap.css('display','flex').hide().fadeIn();
-}
-
-function msgContentOut(){
-	let bodyContent, widgetContainer, noteContainer;
-	bodyContent = $("#bodyContent");
-	widgetContainer = $("#widgetContainer");
-	noteContainer = $(".noteContainer");
-	noteContainer.hide();
-
-	if(bodyContent !== undefined){
-		bodyContent.show();
-	}
-
-	if(widgetContainer !== undefined){
-		widgetContainer.show();
-	}
-}
-
-function noteSubmit(){
-	let noteSubmitText, data;
-	noteSubmitText = $("#noteSubmitText");
-
-	data = {
-		"msg": noteSubmitText.val(),
-		"related": null,
-	};
-
-	data = JSON.stringify(data);
-	data = cipher.encAes(data);
-
-	$.ajax({
-		url: "/api/note/10071",
-		method: "post",
-		data: data,
-		dataType: "json",
-		contentType: "text/plain",
-		success: (result) => {
-			msg.set("전송되었습니다.");
-			noteSubmitText.val("");
-		}
-	});
-}
-
 // 부서트리를 만드는 함수
 function setDeptTree(){
 	let x, y, dept, arr = [], prv, count = 0;
@@ -2966,7 +2763,7 @@ class Department{
 	addEmployee(id, no){
 		let x;
 		if(id === undefined || no === undefined)   return;
-		console.log("input / id : " + id + ", no : " + no + " / dept + " + this.id);
+		//console.log("input / id : " + id + ", no : " + no + " / dept + " + this.id);
 		if(this.id === id){
 			this.employee.push(no);
 			return true;
@@ -3011,47 +2808,15 @@ class Department{
 		deptSelectable = deptSelectable === undefined || deptSelectable !== true ? false : deptSelectable;
 		padding = "0";
 		
-		// noteHtml += "<ul class=\"noteUserUl\">";
-
-		// noteHtml += "<li class=\"noteUserLi\" data-active=\"false\" onclick=\"changeAccIcon(this);\">";
-		// noteHtml += "<h4 class=\"noteUserLiTitle\">기술팀 <span class=\"accIcon\">+</span></h4>";
-		// noteHtml += "</li>";
-
-		// noteHtml += "<div id=\"noteUserContent\" name=\"noteUserContent\">";
-		// noteHtml += "<div class=\"noteUserContentItem\">이대용</div>";
-		// noteHtml += "<div class=\"noteUserContentItem\">조용희</div>";
-		// noteHtml += "</div>";
-
-		// noteHtml += "<li class=\"noteUserLi\" data-active=\"false\" onclick=\"changeAccIcon(this);\">";
-		// noteHtml += "<h4 class=\"noteUserLiTitle\">영업팀 <span class=\"accIcon\">+</span></h4>";
-		// noteHtml += "</li>";
-
-		// noteHtml += "<div id=\"noteUserContent\" name=\"noteUserContent\">";
-		// noteHtml += "<div class=\"noteUserContentItem\">하종성</div>";
-		// noteHtml += "<div class=\"noteUserContentItem\">전용훈</div>";
-		// noteHtml += "<div class=\"noteUserContentItem\">도윤석</div>";
-		// noteHtml += "</div>";
-
-		// noteHtml += "<li class=\"noteUserLi\" data-active=\"false\" onclick=\"changeAccIcon(this);\">";
-		// noteHtml += "<h4 class=\"noteUserLiTitle\">개발팀 <span class=\"accIcon\">+</span></h4>";
-		// noteHtml += "</li>";
-
-		// noteHtml += "<div id=\"noteUserContent\" name=\"noteUserContent\">";
-		// noteHtml += "<div class=\"noteUserContentItem\" data-no=\"10071\" onclick=\"noteUserItemClick(this);\">조병일</div>";
-		// noteHtml += "<div class=\"noteUserContentItem\" data-no=\"10077\" onclick=\"noteUserItemClick(this);\">이송현</div>";
-		// noteHtml += "<div class=\"noteUserContentItem\" data-no=\"10044\" onclick=\"noteUserItemClick(this);\">이장희</div>";
-		// noteHtml += "</div>";
-
-		// noteHtml += "</ul>";
 		html = "<ul class=\"noteUserUl\">";
 		html += ("<li class=\"noteUserLi\" data-active=\"false\" onclick=\"changeAccIcon(this);\"><h4 class=\"noteUserLiTitle\">" + this.name + "<span class=\"accIcon\">+</span></h4></li>");
 		html += ("<div id=\"noteUserContent\" name=\"noteUserContent\">");
 
 		for(x = 0 ; x < this.employee.length ; x++){
-			y = this.employee[x];console.log(y);
+			y = this.employee[x];
 			if(y === undefined) continue;
 			if(storage.user[y] === undefined || storage.user[y].resign) continue;
-			html += ("<div class=\"noteUserContentItem\"><img src=\"/api/user/image/" + y + "\" style=\"width:20px;height:20px;\"> " + storage.user[y].userName + " " + storage.userRank[storage.user[y].rank][0]);
+			html += ("<div class=\"noteUserContentItem\" data-no=\"" + y + "\" onclick=\"noteUserItemClick(this);\"><img src=\"/api/user/image/" + y + "\"> " + storage.user[y].userName + " " + storage.userRank[storage.user[y].rank][0]);
 			html += ("</div>");
 		}
 
@@ -3064,6 +2829,78 @@ class Department{
 		return html;
 	} // End of getHtml()
 } // End of class === Department
+
+function addNoteContainer(){
+	let noteHtml = "";
+	setDeptTree();
+	
+	noteHtml += "<div class=\"noteUserContainer\">";
+	noteHtml += "<div class=\"noteUserAccoordion\">";
+	noteHtml += storage.dept.tree.getHtml();
+	noteHtml += "</div>";
+	noteHtml += "</div>";
+	noteHtml += "<div class=\"noteMainContainer\"></div>";
+	
+	modal.noteBody.html(noteHtml);
+	modal.noteHeadTitle.text("쪽지");
+	let noteUserContent = $("[name=\"noteUserContent\"]");
+	noteUserContent.eq(0).prepend("<div class=\"noteUserContentItem\" data-no=\"0\" onclick=\"noteUserItemClick(this);\"><img src=\"/api/my/image\"> 시스템알림</div>");
+}
+
+function noteContentShow(){
+	modal.noteShow();
+	addNoteContainer();
+}
+
+function noteSubmit(no){
+	let noteSubmitText, data, noteMainContent;
+	noteMainContent = $(".noteMainContent");
+	noteSubmitText = $("#noteSubmitText");
+
+	data = {
+		"msg": noteSubmitText.val(),
+		"related": null,
+	};
+
+	data = JSON.stringify(data);
+	data = cipher.encAes(data);
+
+	$.ajax({
+		url: "/api/note/" + no,
+		method: "post",
+		data: data,
+		dataType: "json",
+		contentType: "text/plain",
+		success: (result) => {
+			if(result.result === "ok"){
+				msg.set("전송되었습니다.");
+				noteSubmitText.val("");
+				
+				$.ajax({
+					url: "/api/note/" + no,
+					method: "get",
+					dataType: "json",
+					contentType: "text/plain",
+					success: (resultData) => {
+						if(resultData.result === "ok"){
+							resultData = cipher.decAes(resultData.data);
+							resultData = JSON.parse(resultData);
+							let disDate = dateDis(resultData[0].sent);
+							let setDate = dateFnc(disDate, "HH:mm:ss");
+							
+							noteMainContent.append("<div class=\"chatMe\">" + resultData[0].msg + "</div>");
+							noteMainContent.append("<div class=\"chatMeDate\">" + setDate + "</div>");
+
+							noteMainContent.scrollTop(noteMainContent[0].scrollHeight);
+						}
+					}
+				});
+			}else{
+				msg.set("전송되지 못했습니다\n다시 시도해주세요.");
+			}
+		}
+	});
+}
 
 function changeAccIcon(e){
 	let thisLi, thisContent, thisAccIcon, noteUserContent, noteUserLi, accIcon;
@@ -3086,53 +2923,135 @@ function changeAccIcon(e){
 }
 
 function noteUserItemClick(e){
-	let thisItem, nowLongDate;
-	thisItem = $(e)
+	let thisItem, nowLongDate, no;
+	thisItem = $(e);
 	nowLongDate = new Date().getTime();
+	storage.noteContentNo = thisItem.data('no');
+
 	$.ajax({
-		url: "/api/note/" + thisItem.data("no") + "/" + nowLongDate,
+		url: "/api/note/" + storage.noteContentNo + "/" + nowLongDate,
 		method: "get",
 		dataType: "json",
 		contentType: "text/plain",
 		success: (result) => {
-			let noteUserContainer, html = "", noteMainContainer;
-			result = cipher.decAes(result.data);
-			result = JSON.parse(result);
-			noteUserContainer = $(".noteUserContainer");
-			noteMainContainer = $(".noteMainContainer");
-			noteUserContainer.hide();
-
-			$(".noteContainer").find(".noteHeadTitle").text(thisItem.text());
-
-			html = "<div class=\"noteMainContent\">";
-
-			for(let i = 0; i < result.length; i++){
-				let disDate, setDate;
-				disDate = dateDis(result[i].related);
-				setDate = dateFnc(disDate);
-
-				if(result[i].writer == thisItem.data("no")){
-					html += "<div class=\"chatYou\">" + result[i].msg + "</div>";
-					html += "<div class=\"chatYouDate\">" + setDate + "</div>";
-				}else{
-					html += "<div class=\"chatMe\">" + result[i].msg + "</div>";
-					html += "<div class=\"chatMeDate\">" + setDate + "</div>";
+			if(result.data !== null){
+				let noteUserContainer, html = "", noteContainer, noteMainContent, noteMainContainer;
+				result = cipher.decAes(result.data);
+				result = JSON.parse(result);
+				noteContainer = $(".noteContainer");
+				noteUserContainer = $(".noteUserContainer");
+				noteMainContainer = $(".noteMainContainer");
+				noteUserContainer.hide();
+				
+				noteContainer.find(".noteHeadTitle").text(thisItem.text());
+				
+				html = "<div class=\"noteMainContent\">";
+				html += "<div class=\"noteMainBtn\"><button type=\"button\" onclick=\"noteUserPage();\">쪽지함</button></div><br /><br />";
+	
+				for(let i = (result.length-1); i >= 0; i--){
+					let disDate, setDate;
+					
+					if((new Date().getTime() - 86400000) > result[i].related){
+						disDate = dateDis(result[i].related);
+						setDate = dateFnc(disDate);
+					}else{
+						disDate = dateDis(result[i].related);
+						setDate = dateFnc(disDate, "HH:mm:ss");
+					}
+	
+					if(result[i].writer != storage.noteContentNo){
+						html += "<div class=\"chatYouInfo\"><img src=\"/api/user/image/" + storage.noteContentNo + "\"><span>" + storage.user[storage.noteContentNo].userName + " " + storage.userRank[storage.user[storage.noteContentNo].rank][0] + "</span></div>";
+						html += "<div class=\"chatYou\">" + result[i].msg + "</div>";
+						html += "<div class=\"chatYouDate\">" + setDate + "</div>";
+					}else{
+						html += "<div class=\"chatMe\">" + result[i].msg + "</div>";
+						html += "<div class=\"chatMeDate\">" + setDate + "</div>";
+					}
 				}
-			}
+	
+				html += "</div>";
+				html += "<div class=\"noteMainText\">";
+				html += "<textarea id=\"noteSubmitText\"></textarea>";
+				html += "<button type=\"button\" onclick=\"noteSubmit(" + storage.noteContentNo + ");\">전송</button>"
+				html += "</div>";
+	
+				noteMainContainer.html(html);
 
-			html += "</div>";
-			html += "<div class=\"noteMainText\">";
-			html += "<textarea id=\"noteSubmitText\"></textarea>";
-			html += "<button type=\"button\" onclick=\"noteSubmit();\">전송</button>"
-			html += "</div>";
-
-			noteMainContainer.html(html);
-
-			setTimeout(() => {
+				let noteMainBtn = $(".noteMainBtn");
+				noteMainContent = $(".noteMainContent");
 				noteMainContainer.show();
-			}, 1000);
-
-			$(".noteMainContent").scrollTop($(".noteMainContent")[0].scrollHeight);
+				noteMainBtn.css("width", Math.ceil(noteMainContent.width()));
+				noteMainContent.scrollTop(noteMainContent[0].clientHeight);
+			}else{
+				let noteUserContainer, html = "", noteMainContainer;
+				noteUserContainer = $(".noteUserContainer");
+				noteMainContainer = $(".noteMainContainer");
+				noteUserContainer.hide();
+	
+				noteContainer.find(".noteHeadTitle").text(thisItem.text());
+	
+				html = "<div class=\"noteMainContent\">";
+				html += "<div class=\"noteMainBtn\"><button type=\"button\" onclick=\"noteUserPage();\">쪽지함</button></div><br /><br />";
+				html += "</div>";
+				html += "<div class=\"noteMainText\">";
+				html += "<textarea id=\"noteSubmitText\"></textarea>";
+				html += "<button type=\"button\" onclick=\"noteSubmit(" + storage.noteContentNo + ");\">전송</button>"
+				html += "</div>";
+	
+				noteMainContainer.html(html);
+				noteMainContainer.show();
+			}
 		}
 	});
+}
+
+function noteUserPage(){
+	let noteUserContainer, noteMainContainer;
+
+	noteUserContainer = $(".noteUserContainer");
+	noteMainContainer = $(".noteMainContainer");
+	noteUserContainer.show();
+	noteMainContainer.hide();
+	modal.noteHeadTitle.text("쪽지");
+	storage.noteContentNo = "";
+}
+
+function noteLiveUpdate(){
+	let noteMainContainer, noteMainContent, html = "";
+	noteMainContainer = $(".noteMainContainer");
+	noteMainContent = $(".noteMainContent");
+
+	if(noteMainContainer.css("display") === "block"){
+		$.ajax({
+			url: "/api/note/" + storage.noteContentNo,
+			method: "get",
+			dataType: "json",
+			contentType: "text/plain",
+			success: (resultData) => {
+				console.log(resultData);
+				if(resultData.result === "ok" && resultData.data !== null){
+					resultData = cipher.decAes(resultData.data);
+					resultData = JSON.parse(resultData);
+
+					for(let i = 0; i < resultData.length; i++){
+						let disDate = dateDis(resultData[i].sent);
+						let setDate = dateFnc(disDate, "HH:mm:ss");
+						
+						if(resultData[i].writer != storage.noteContentNo){
+							html += "<div class=\"chatYouInfo\"><img src=\"/api/user/image/" + storage.noteContentNo + "\"><span>" + storage.user[no].userName + " " + storage.userRank[storage.user[no].rank][0] + "</span></div>";
+							html += "<div class=\"chatYou\">" + result[i].msg + "</div>";
+							html += "<div class=\"chatYouDate\">" + setDate + "</div>";
+						}else{
+							html += "<div class=\"chatMe\">" + resultData[i].msg + "</div>";
+							html += "<div class=\"chatMeDate\">" + setDate + "</div>";
+						}
+					}
+
+					noteMainContent.append(html);
+				}
+			}
+		});
+	}
+
+	timer = setTimeout("noteLiveUpdate()", 1000);
 }

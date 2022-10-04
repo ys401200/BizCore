@@ -6,7 +6,7 @@
 		<div class="note">
 			<div class="noteHead">
 				<span class="noteHeadTitle">쪽지</span>
-				<span class="xClose" onclick="modal.xClose();"><i class="fa-solid fa-xmark"></i></span>
+				<span class="xClose" onclick="modal.noteXClose();"><i class="fa-solid fa-xmark"></i></span>
 			</div>
 			<div class="noteBody"></div>
 		</div>
