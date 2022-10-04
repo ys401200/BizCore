@@ -10,7 +10,7 @@ $(document).ready(() => {
 });
 
 function waitDefault() {
-  $(".noteContainer").hide();
+  
   $("#gwSubTabTitle").html("결재 문서함");
 
   // 리스트 보기
@@ -248,7 +248,7 @@ function showReportDetail() {
           storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
         $("." + formId + subTitlesArr[i] + "_position")[j].value =
           storage.userRank[
-            $("." + formId + subTitlesArr[i] + "_position")[j].value
+          $("." + formId + subTitlesArr[i] + "_position")[j].value
           ][0];
       }
     }
@@ -792,37 +792,6 @@ function setAppLineData() {
   let appLineContainer = new Array();
   appLineContainer = [[], [], [], [], []];
 
-  for (let i = 1; i < appLine.length; i++) {
-    for (let j = 0; j < appLineContainer.length; j++) {
-      if (appLine[i].appType == j) {
-        appLineContainer[j].push(appLine[i]);
-      }
-    }
-  }
-
-  let appTypeTitles = ["_examine", "_agree", "_approval", "_conduct", "_refer"];
-
-  for (let i = 0; i < appLineContainer.length; i++) {
-    for (let j = 0; j < appLineContainer[i].length; j++) {
-      if (appLineContainer[i][j].approved != null) {
-        $("." + formId + appTypeTitles[i] + "_status")[j].value = "승인";
-        $("." + formId + appTypeTitles[i] + "_approved")[j].value =
-          getYmdSlashShort(appLineContainer[i][j].approved);
-      } else if (appLineContainer[i][j].rejected != null) {
-        $("." + formId + appTypeTitles[i] + "_status")[j].value = "반려";
-        $("." + formId + appTypeTitles[i] + "_approved")[j].value =
-          getYmdSlashShort(appLineContainer[i][j].rejected);
-      }
-    }
-  }
-}
-
-function setAppLineData() {
-  let appLine = storage.reportDetailData.appLine;
-  let formId = storage.reportDetailData.formId;
-  let appLineContainer = new Array();
-  appLineContainer = [[], [], [], [], []];
-
   if (appLine[0].approved != null) {
     $("." + formId + "_writer_status").val("승인");
     $("." + formId + "_writer_approved").val(
@@ -873,4 +842,4 @@ function getYmdShortSlash(date) {
   );
 }
 
-function quitApp() {}
+function quitApp() { }

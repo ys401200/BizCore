@@ -9,7 +9,7 @@ $(document).ready(() => {
 });
 
 function defaultMyDraft() {
-  $(".noteContainer").hide();
+  
   $("#gwSubTabTitle").html("임시 저장함");
   let url, method, data, type;
   url = "/api/gw/app/temp";

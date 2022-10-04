@@ -9,7 +9,7 @@ $(document).ready(() => {
 });
 
 function defaultMyDraft() {
-  $(".noteContainer").hide();
+  
   let url, method, data, type;
   url = "/api/gw/app/mydraft";
   method = "get";

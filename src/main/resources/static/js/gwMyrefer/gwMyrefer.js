@@ -9,7 +9,7 @@ $(document).ready(() => {
 });
 
 function defaultMyDraft() {
-  $(".noteContainer").hide();
+  
   $("#gwSubTabTitle").html("참조/열람 문서함");
   let url, method, data, type;
   url = "/api/gw/app/references";

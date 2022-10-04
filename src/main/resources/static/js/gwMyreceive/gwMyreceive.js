@@ -9,7 +9,7 @@ $(document).ready(() => {
 });
 
 function defaultMyDraft() {
-  $(".noteContainer").hide();
+ 
   $("#gwSubTabTitle").html("수신 문서함");
   let url, method, data, type;
   url = "/api/gw/app/received";
@@ -197,7 +197,7 @@ function getDetailView() {
   console.log(testForm);
 
   let detailHtml =
-    "<div class='mainBtnDiv'><button type='button'>목록보기</button></div>" +
+    "<div class='mainBtnDiv'><button type='button' onclick='showList()'>목록보기</button></div>" +
     "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
 
   $(".listPageDiv").html(detailHtml);
@@ -275,7 +275,7 @@ function getDetailView() {
           storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
         $("." + formId + subTitlesArr[i] + "_position")[j].value =
           storage.userRank[
-            $("." + formId + subTitlesArr[i] + "_position")[j].value
+          $("." + formId + subTitlesArr[i] + "_position")[j].value
           ][0];
       }
     }
@@ -306,6 +306,10 @@ function getDetailView() {
   setAppLineData();
 }
 
+
+function showList() {
+  location.href = "/gw/myreceive";
+}
 // 탭 누를때마다의 이벤트 주기
 function changeTab(obj) {
   $(obj).css("background-color", "#62a6ad");

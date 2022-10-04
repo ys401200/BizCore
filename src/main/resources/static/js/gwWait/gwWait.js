@@ -11,7 +11,7 @@ $(document).ready(() => {
 
 function waitDefault() {
   $(".modal-wrap").hide();
-  $(".noteContainer").hide();
+  
 
   let checkHref = location.href;
   checkHref = checkHref.split("//");
@@ -522,6 +522,24 @@ function drawNewCommentLine() {
   let originAppLine = [];
   let appLineArr = [];
 
+  let newAppLine = storage.newAppLine;
+  let newCombine = [[], [], [], [], []];
+
+  for (let i = 0; i < newAppLine.length; i++) {
+    for (let j = 0; j < newCombine.length; j++) {
+      if (i > 0 && newAppLine[i][0] == j) {
+        newCombine[j].push(newAppLine[i][1]);
+
+      }
+    }
+  }
+
+  if (newCombine[2].includes(storage.my + "")) {
+    newCombine[2] = newCombine[2].slice(1);
+    newCombine[0].push(storage.my + "");
+  }
+
+
   for (let i = 0; i < appLine.length; i++) {
     if (appLine[i].employee == my) {
       originAppLine = appLine.slice(0, i + 1);
@@ -556,14 +574,25 @@ function drawNewCommentLine() {
     } else {
       comment = appLine[i].comment;
     }
+    let data;
+    if (i == myIndex && appLine[i].appType == 2 && newCombine[2][0] != appLine[i].employee) {
+      data = {
+        appType: appTypeTitle[0],
+        name: storage.user[appLine[i].employee].userName,
+        status: status,
+        date: date,
+        comment: comment,
+      };
+    } else {
+      data = {
+        appType: appTypeTitle[appLine[i].appType],
+        name: storage.user[appLine[i].employee].userName,
+        status: status,
+        date: date,
+        comment: comment,
+      };
+    }
 
-    let data = {
-      appType: appTypeTitle[appLine[i].appType],
-      name: storage.user[appLine[i].employee].userName,
-      status: status,
-      date: date,
-      comment: comment,
-    };
 
     appLineArr.push(data);
   }
@@ -742,7 +771,7 @@ function approveBtnEvent() {
     storage.reportDetailData.sopp == soppResult &&
     storage.reportDetailData.customer == cusResult &&
     storage.oriCbContainer ==
-    $("input[name='" + formId + "_RD']:checked").attr("id") &&
+   $("input[name='" + formId + "_RD']:checked").attr("id") &&
     storage.oriInsertedContent == $(".insertedContent").html() &&
     storage.oriInsertedDataList == $(".insertedDataList").html()
   ) {
@@ -869,7 +898,7 @@ function showGwModal() {
 
   let oriNum = [];
   for (let i = 0; i < oriLine.length; i++) {
-    oriNum.push(oriLine[i].employee+"");
+    oriNum.push(oriLine[i].employee + "");
   }
   console.log(oriNum);
   console.log(userData);
@@ -1065,9 +1094,9 @@ function closeGwModal(obj) {
     storage.newAppLine = combineData;
 
     $(".modal-wrap").hide();
-    createNewLine();
     $(".inputsAuto").css("background-color", "white");
-    drawNewCommentLine();
+    createNewLine(); // 문서 안에서 결재선 그리는 것 
+    // 문서 정보에서 결재선 정보 그리는 것 
   }
 }
 
@@ -1084,10 +1113,15 @@ function createNewLine() {
     for (let j = 0; j < newCombine.length; j++) {
       if (i > 0 && newAppLine[i][0] == j) {
         newCombine[j].push(newAppLine[i][1]);
+
       }
     }
   }
 
+  if (newCombine[2].includes(storage.my + "")) {
+    newCombine[2] = newCombine[2].slice(1);
+    newCombine[0].push(storage.my + "");
+  }
   let testHtml =
     "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작성</div><div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto' disabled value='" +
     storage.userRank[storage.user[storage.newAppLine[0][1]].rank][0] +
@@ -1221,6 +1255,7 @@ function createNewLine() {
   lineTarget.html(testHtml);
 
   $(".selectedRefer").html(referHtml);
+  drawNewCommentLine();
 }
 
 function check(name) {
