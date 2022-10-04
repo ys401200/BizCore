@@ -2853,7 +2853,7 @@ function noteContentShow(){
 }
 
 function noteSubmit(no){
-	let noteSubmitText, data, noteMainContent;
+	let noteSubmitText, data, noteMainContent, html;
 	noteMainContent = $(".noteMainContent");
 	noteSubmitText = $("#noteSubmitText");
 
@@ -2873,7 +2873,13 @@ function noteSubmit(no){
 		contentType: "text/plain",
 		success: (result) => {
 			if(result.result === "ok"){
+				let nowDate = new Date().getTime();
+				nowDate = dateDis(nowDate);
+				nowDate = dateFnc(nowDate, "HH:mm:ss");
 				msg.set("전송되었습니다.");
+				html = "<div class=\"chatMe\">" + noteSubmitText.val() + "</div>";
+				html += "<div class=\"chatMeDate\">" + nowDate + "</div>";
+				noteMainContent.append(html);
 				noteSubmitText.val("");
 				noteMainContent.scrollTop(noteMainContent[0].scrollHeight);
 			}else{
@@ -3009,8 +3015,8 @@ function noteLiveUpdate(){
 						let setDate = dateFnc(disDate, "HH:mm:ss");
 
 						if(resultData[i].writer == storage.noteContentNo){
-							html += "<div class=\"chatYouInfo\"><img src=\"/api/user/image/" + storage.noteContentNo + "\"><span>" + storage.user[no].userName + " " + storage.userRank[storage.user[no].rank][0] + "</span></div>";
-							html += "<div class=\"chatYou\">" + result[i].msg + "</div>";
+							html += "<div class=\"chatYouInfo\"><img src=\"/api/user/image/" + storage.noteContentNo + "\"><span>" + storage.user[storage.noteContentNo].userName + " " + storage.userRank[storage.user[storage.noteContentNo].rank][0] + "</span></div>";
+							html += "<div class=\"chatYou\">" + resultData[i].msg + "</div>";
 							html += "<div class=\"chatYouDate\">" + setDate + "</div>";
 						}else{
 							html += "<div class=\"chatMe\">" + resultData[i].msg + "</div>";
