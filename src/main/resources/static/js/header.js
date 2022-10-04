@@ -612,9 +612,9 @@ function dateFnc(dateTimeStr, type){
 	year = date.getFullYear();
 	month = (date.getMonth() + 1) < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
 	day = (date.getDate()) < 10 ? "0" + date.getDate() : date.getDate();
-	hh = date.getHours();
-	mm = date.getMinutes();
-	ss = date.getSeconds();
+	hh = (date.getHours()) < 10 ? "0" + date.getHours() : date.getHours();
+	mm = (date.getMinutes()) < 10 ? "0" + date.getMinutes() : date.getMinutes();
+	ss = (date.getSeconds()) < 10 ? "0" + date.getSeconds() : date.getSeconds();
 	
 	if(dateTimeStr === undefined || dateTimeStr === null){
 		return "";
@@ -2875,6 +2875,7 @@ function noteSubmit(no){
 			if(result.result === "ok"){
 				msg.set("전송되었습니다.");
 				noteSubmitText.val("");
+				noteMainContent.scrollTop(noteMainContent[0].scrollHeight);
 			}else{
 				msg.set("전송되지 못했습니다\n다시 시도해주세요.");
 			}
@@ -2928,12 +2929,12 @@ function noteUserItemClick(e){
 	
 				for(let i = (result.length-1); i >= 0; i--){
 					let disDate, setDate;
-					
-					if((new Date().getTime() - 86400000) > result[i].related){
-						disDate = dateDis(result[i].related);
+
+					if((new Date().getTime() - 86400000) > result[i].sent){
+						disDate = dateDis(result[i].sent);
 						setDate = dateFnc(disDate);
 					}else{
-						disDate = dateDis(result[i].related);
+						disDate = dateDis(result[i].sent);
 						setDate = dateFnc(disDate, "HH:mm:ss");
 					}
 	
@@ -3021,7 +3022,6 @@ function noteLiveUpdate(){
 				}
 			}
 		});
-		noteMainContent.scrollTop(noteMainContent[0].scrollHeight);
 	}
 	
 	timer = setTimeout("noteLiveUpdate()", 2000);
