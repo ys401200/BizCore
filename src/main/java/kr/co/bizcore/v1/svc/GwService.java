@@ -642,6 +642,7 @@ public class GwService extends Svc{
                 // 수정된 제목에 대한 처리
                 if(title != null){
                     json.put("title", true);
+                    gwMapper.changeTitle(compId, docNo, title);
                 }else{ // 본뭉
                     json.put("title", false);
                 }
