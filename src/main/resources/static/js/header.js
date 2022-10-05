@@ -353,6 +353,7 @@ function init(){
 		window.setTimeout(addNoteContainer, 200);
 	}
 
+	noteLiveBadge();
 	noteLiveUpdate();
 }
 
@@ -2546,13 +2547,31 @@ function searchDateDefaultSet(e){
 }
 
 function headerMyInfo(){
-	let mainInfo, html = "";
+	let mainInfo, html = "", count = 0;
 	mainInfo = $("#mainInfo");
+
+	$.ajax({
+		url: "/api/note",
+		method: "get",
+		async: false,
+		dataType: "json",
+		contentType: "text/plain",
+		success: (result) => {
+			result = cipher.decAes(result.data);
+			result = JSON.parse(result);
+			count = result.all;
+		}
+	});
 
 	// html += "<img id=\"myInfoMessageImg\" src=\"../images/main/icons/message.png\" >";
 	html += "<a href=\"#\" onclick=\"noteContentShow();\" id=\"infoMessageImg\">";
-	//html += myNoteList();
+	html += myNoteList();
 	html += "<img id=\"myInfoMessageImg\" src=\"../images/main/icons/message.png\">";
+
+	if(count > 0){
+		html += "<span class=\"badgeSpan\" id=\"badgeSpan\">" + count + "</span>";
+	}
+
 	html += "</a>";
 	// html += "<i class=\"fa-solid fa-envelope fa-shake fa-2xl\" id=\"envelope\"></i>";
 	// html += "<i class=\"fa-regular fa-envelope-open fa-beat-fade fa-2xl\" id=\"envelope\"></i>";
@@ -2582,61 +2601,48 @@ function headerMyInfo(){
 	$("#infoMessageImg").mouseleave(() => {
 		$(".myNoteList").hide();
 	});
+
+	if(count > 0){
+		setTimeout(() => {
+			spanBadgeLocation($("#myInfoMessageImg"), $(".badgeSpan"));
+			$(".badgeSpan").css("display", "flex");
+		}, 1000);
+	}
 }
 
 function myNoteList(){
-	let html = "", temp;
+	let html = "";
 
-	temp = [
-		{
-			"compId": "vtek",
-			"no": "1",
-			"writer": "10071",
-			"reader": "10077",
-			"message": "결재할 문서가 있습니다.",
-		},
-		{
-			"compId": "vtek",
-			"no": "2",
-			"writer": "10044",
-			"reader": "10077",
-			"message": "결재 문서가 반려되었습니다.",
-		},
-		{
-			"compId": "vtek",
-			"no": "3",
-			"writer": "10077",
-			"reader": "10044",
-			"message": "결재할 문서가 있습니다.",
-		},
-		{
-			"compId": "vtek",
-			"no": "4",
-			"writer": "10077",
-			"reader": "10044",
-			"message": "수신할 문서가 있습니다.",
-		},
-		{
-			"compId": "vtek",
-			"no": "5",
-			"writer": "10071",
-			"reader": "10044",
-			"message": "결재할 문서가 있습니다.",
-		},
-	];
+	$.ajax({
+		url: "/api/note/0/" + new Date().getTime(),
+		method: "get",
+		async: false,
+		dataType: "json",
+		contentType: "text/plain",
+		success: (result) => {
+			if(result.data != null){
+				result = cipher.decAes(result.data);
+				result = JSON.parse(result);
+	
+				html = "<div class=\"myNoteList\">";
+	
+				for(let i = 0; i < result.length; i++){
+					html += "<div class=\"myNoteListItem\">";
+					html += "<span>" + result[i].msg + "</span>";
+					html += "</div>";
+				}
+			
+				html += "</div>";
+			}else{
+				html = "<div class=\"myNoteList\">";
+				html += "<div class=\"myNoteListItem\">";
+				html += "<span>알림이 없습니다.</span>";
+				html += "</div>";
+				html += "</div>";
+			}
 
-	html = "<div class=\"myNoteList\">";
-
-	for(let i = 0; i < temp.length; i++){
-		if(temp[i].writer == storage.my || temp[i].reader == storage.my){
-			html += "<div class=\"myNoteListItem\">";
-			html += "<p>" + storage.user[temp[i].writer].userName + "</p>";
-			html += "<span>" + temp[i].message + "</span>";
-			html += "</div>";
 		}
-	}
-
-	html += "</div>";
+	});
 
 	return html;
 }
@@ -2836,6 +2842,7 @@ function addNoteContainer(){
 	
 	noteHtml += "<div class=\"noteUserContainer\">";
 	noteHtml += "<div class=\"noteUserAccoordion\">";
+	noteHtml += "<div class=\"noteUserLi\" data-no=\"0\" onclick=\"noteUserItemClick(this);\"><h4 class=\"noteUserLiTitle\">시스템알림</h4></div>";
 	noteHtml += storage.dept.tree.getHtml();
 	noteHtml += "</div>";
 	noteHtml += "</div>";
@@ -2843,8 +2850,6 @@ function addNoteContainer(){
 	
 	modal.noteBody.html(noteHtml);
 	modal.noteHeadTitle.text("쪽지");
-	let noteUserContent = $("[name=\"noteUserContent\"]");
-	noteUserContent.eq(0).prepend("<div class=\"noteUserContentItem\" data-no=\"0\" onclick=\"noteUserItemClick(this);\"><img src=\"/api/my/image\"> 시스템알림</div>");
 }
 
 function noteContentShow(){
@@ -2931,12 +2936,16 @@ function noteUserItemClick(e){
 				noteContainer.find(".noteHeadTitle").text(thisItem.text());
 				
 				html = "<div class=\"noteMainContent\">";
-				html += "<div class=\"noteMainBtn\"><button type=\"button\" onclick=\"noteUserPage();\">쪽지함</button></div><br /><br />";
+				html += "<div class=\"noteMainBtn\"><button type=\"button\" onclick=\"noteUserPage();\"><<쪽지함</button></div><br /><br />";
 	
 				for(let i = (result.length-1); i >= 0; i--){
-					let disDate, setDate;
+					let disDate, setDate, nowDate, sentDate;
+					nowDate = new Date();
+					sentDate = new Date(result[i].sent);
+					nowDate = nowDate.getFullYear() + nowDate.getMonth() + nowDate.getDate();
+					sentDate = sentDate.getFullYear() + sentDate.getMonth() + sentDate.getDate();
 
-					if((new Date().getTime() - 86400000) > result[i].sent){
+					if(nowDate > sentDate){
 						disDate = dateDis(result[i].sent);
 						setDate = dateFnc(disDate);
 					}else{
@@ -2971,7 +2980,7 @@ function noteUserItemClick(e){
 				noteContainer.find(".noteHeadTitle").text(thisItem.text());
 	
 				html = "<div class=\"noteMainContent\">";
-				html += "<div class=\"noteMainBtn\"><button type=\"button\" onclick=\"noteUserPage();\">쪽지함</button></div><br /><br />";
+				html += "<div class=\"noteMainBtn\"><button type=\"button\" onclick=\"noteUserPage();\"><<쪽지함</button></div><br /><br />";
 				html += "</div>";
 				html += "<div class=\"noteMainText\">";
 				html += "<textarea id=\"noteSubmitText\" onkeydown=\"textAreaKeyDown(this)\"></textarea>";
@@ -3049,4 +3058,42 @@ function textAreaKeyDown(e){
 	}else if(key === "Enter" && event.ctrlKey){
 		$(e).val($(e).val() + "\n");
 	}
+}
+
+function spanBadgeLocation(prevElement, badge){
+	let prevElementX, prevElementY;
+	prevElementX = prevElement.position().left + 18;
+	prevElementY = prevElement.position().top + 12;
+	badge.css("left", prevElementX);
+	badge.css("bottom", prevElementY);
+}
+
+function noteLiveBadge(){
+	$.ajax({
+		url: "/api/note",
+		method: "get",
+		dataType: "json",
+		contentType: "text/plain",
+		success: (result) => {
+			let infoMessageImg, badgeSpan;
+			infoMessageImg = $("#infoMessageImg");
+			badgeSpan = $("#badgeSpan");
+			if(result.data != null){
+				result = cipher.decAes(result.data);
+				result = JSON.parse(result);
+				
+				if(result.all > 0){
+					badgeSpan.remove();
+					infoMessageImg.find("img").after("<span class=\"badgeSpan\" id=\"badgeSpan\">" + result.all + "</span>");
+					
+					setTimeout(() => {
+						spanBadgeLocation($("#myInfoMessageImg"), $(".badgeSpan"));
+						$(".badgeSpan").css("display", "flex");
+					}, 1000);
+				}
+			}
+		}
+	});
+
+	badgeTimer = setTimeout("noteLiveBadge()", 180000);
 }

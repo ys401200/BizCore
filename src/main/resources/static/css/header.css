@@ -727,12 +727,6 @@ input[name="tabItem"] {
 	padding-bottom: 5px;
 }
 
-#header #mainInfo a > span{
-	letter-spacing: -1px;
-    font-size: 0.9375rem;
-	color: #000;
-}
-
 #header #mainInfo a > #myInfoImageLogout{
 	padding-left: 16px;
 	padding-bottom: 5px;
@@ -760,7 +754,7 @@ input[name="tabItem"] {
     border-left: 10px solid transparent;
     border-bottom: 15px solid #182f81;
 	top: 40px;
-    right: 268px;
+    right: 275px;
 }
 
 .myNoteList .myNoteListItem{
@@ -778,6 +772,19 @@ input[name="tabItem"] {
 
 .myNoteList .myNoteListItem > p{
 	margin: 0;
+}
+
+span.badgeSpan{
+	padding: 3px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    width: 13px;
+    background-color: #2147b1;
+    color: #fff;
+    border-radius: 10px;
+    font-size: 0.7rem;
 }
 
 /* .dept-tree + label + div{display:none;}
