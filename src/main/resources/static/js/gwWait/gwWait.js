@@ -665,7 +665,7 @@ function drawChangeInfo() {
   let changeHtml = "";
 
   if (changeData.length == 0) {
-    changeHtml += "<div>변경 이력이 없습니다</div>";
+    changeHtml += "<div class='tapLineBCenter'>변경 이력이 없습니다</div>";
   } else {
     for (let i = 0; i < changeData.length; i++) {
       changeHtml +=

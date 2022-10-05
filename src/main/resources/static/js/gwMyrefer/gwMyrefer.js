@@ -9,7 +9,7 @@ $(document).ready(() => {
 });
 
 function defaultMyDraft() {
-  
+
   $("#gwSubTabTitle").html("참조/열람 문서함");
   let url, method, data, type;
   url = "/api/gw/app/references";
@@ -279,7 +279,7 @@ function getDetailView() {
           storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
         $("." + formId + subTitlesArr[i] + "_position")[j].value =
           storage.userRank[
-            $("." + formId + subTitlesArr[i] + "_position")[j].value
+          $("." + formId + subTitlesArr[i] + "_position")[j].value
           ][0];
       }
     }
@@ -426,15 +426,30 @@ function drawChangeInfo() {
 
   let revisionData = storage.reportDetailData.revisionHistory;
   let changeData = new Array();
+  if (revisionData.length > 0) {
+    for (let i = 0; i < revisionData.length; i++) {
+      let modCause = "";
+      if (revisionData[i].content.doc == true) {
+        modCause += "문서 수정 ";
+      }
+      if (revisionData[i].content.files == true) {
+        modCause += "첨부 파일 수정 ";
+      }
+      if (revisionData[i].content.appLine == true) {
+        modCause += "결재선 수정 ";
+      }
 
-  for (let i = 0; i < revisionData.length; i++) {
-    let data = {
-      type: revisionData[i].employee,
-      name: revisionData[i].employee,
-      modifyDate: revisionData[i].date,
-      modCause: revisionData[i].content,
-    };
-    changeData.push(data);
+      revisionData[i].content.date;
+      revisionData[i].content.content;
+
+      let data = {
+        type: "",
+        name: storage.user[revisionData[i].employee].userName,
+        modifyDate: getYmdSlash(revisionData[i].date),
+        modCause: modCause,
+      };
+      changeData.push(data);
+    }
   }
 
   let detail =
@@ -442,7 +457,7 @@ function drawChangeInfo() {
   let changeHtml = "";
 
   if (changeData.length == 0) {
-    changeHtml += "<div>변경 이력이 없습니다</div>";
+    changeHtml += "<div class='tapLineBCenter'>변경 이력이 없습니다</div>";
   } else {
     for (let i = 0; i < changeData.length; i++) {
       changeHtml +=

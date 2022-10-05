@@ -309,6 +309,14 @@
    border-radius:10px 10px 0 0;
 }
 
+
+#tabDetail2 .tapLineBCenter {
+   background-color: white;
+   margin: 0 1em;
+   text-align: center;
+   padding: 0.5em;
+   border-bottom: 0.5px solid #87c1c7;
+ }
 .tapLine>div,
 .tapLineB>div {
    padding: 0.5em;
@@ -324,11 +332,6 @@
    border-radius: 10px 10px 0 0;
 }
 
-.tapLineTitle>div,
-.tapLineB:first-of-type>div {
-   /* background-color: #87c1c7; */
-   /* color: white; */
-}
 
 .readDiv {
    display: grid;
