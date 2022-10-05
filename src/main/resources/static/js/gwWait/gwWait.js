@@ -1099,11 +1099,11 @@ function closeGwModal(obj) {
   let id = obj.id;
   if (id == "close") {
     $(".modal-wrap").hide();
+
+
+
+
     // ====================================================초기화 
-
-
-
-
 
   } else if (id == "reset") {
     let formId = storage.reportDetailData.formId;
@@ -1265,30 +1265,95 @@ function closeGwModal(obj) {
     drawCommentLine();
 
 
+
+    // 수정 
+
   } else if (id == "modify") {
     // 내가 결재자이고 수정할때 아무것도 입력되지 않은 경우에 그냥 원래 결재정보로 그리는 것 
 
-    let appLine = storage.reportDetailData.appLine;
-    let my = storage.my;
-    let myOrdered;
-    if (storage.newAppLine != undefined) {
-      storage.newAppLine = undefined
+    let num = 0;
+    for (let i = 0; i < $(".typeContainer").length; i++) {
+      if ($(".typeContainer")[i].innerHTML == "") {
+        num++;
+      }
+
     }
 
-    for (let i = 0; i < appLine.length; i++) {
+    if (num == 3) {
+      $(".modal-wrap").hide();
 
-      if (appLine[i].employee == my + "") {
+    } else {
+      let appLine = storage.reportDetailData.appLine;
+      let my = storage.my;
+      let myOrdered;
+      if (storage.newAppLine != undefined) {
+        storage.newAppLine = undefined
+      }
 
-        myOrdered = appLine[i].ordered;
-        originLine = appLine.slice(0, i + 1);
+      for (let i = 0; i < appLine.length; i++) {
 
-        if (appLine[i].appType == 2) {
+        if (appLine[i].employee == my + "") {
+
+          myOrdered = appLine[i].ordered;
+          originLine = appLine.slice(0, i + 1);
+
+          if (appLine[i].appType == 2) {
+            let combineData = [];
+            // 기존 데이터 넣기
+            for (let i = 0; i < appLine.length; i++) {
+              if (appLine[i].ordered < Number(myOrdered)) {
+                combineData.push([appLine[i].appType, appLine[i].employee + ""]);
+              } else if (appLine[i].ordered = Number(myOrdered)) {
+                combineData.push([appLine[i].appType, appLine[i].employee + ""]);
+              }
+            }
+
+            let target = $(".typeContainer");
+
+            for (let i = 0; i < target.length; i++) {
+              for (let j = 0; j < target[i].children.length; j++) {
+                let id = target[i].children[j].id.split("_")[1];
+                let targetId = target[i].id;
+
+                if (targetId == "examine") {
+                  targetId = 0;
+                } else if (targetId == "agree") {
+                  targetId = 1;
+                } else if (targetId == "approval") {
+                  targetId = 2;
+                } else if (targetId == "conduct") {
+                  targetId = 3;
+                } else if (targetId == "refer") {
+                  targetId = 4;
+                }
+
+                combineData.push([targetId, id]);
+              }
+            }
+
+            storage.newAppLine = combineData;
+            let checkNum;
+            for (let i = 0; i < storage.newAppLine.length; i++) {
+              if (storage.newAppLine[i][0] == 2 && storage.newAppLine[i][1] == my + "" && (i != (storage.newAppLine.length - 1) && storage.newAppLine[i + 1][0] == 2)) {
+                storage.newAppLine[i][0] = 0;
+              }
+            }
+
+            $(".modal-wrap").hide();
+            $(".inputsAuto").css("background-color", "white");
+            createNewLine(); // 문서 안에서 결재선 그리는 것 
+            // 문서 정보에서 결재선 정보 그리는 것 
+          }
+
+        }
+
+        else {
+
           let combineData = [];
+
           // 기존 데이터 넣기
           for (let i = 0; i < appLine.length; i++) {
-            if (appLine[i].ordered < Number(myOrdered)) {
-              combineData.push([appLine[i].appType, appLine[i].employee + ""]);
-            } else if (appLine[i].ordered = Number(myOrdered)) {
+            if (appLine[i].ordered <= Number(myOrdered)) {
               combineData.push([appLine[i].appType, appLine[i].employee + ""]);
             }
           }
@@ -1317,12 +1382,6 @@ function closeGwModal(obj) {
           }
 
           storage.newAppLine = combineData;
-          let checkNum;
-          for (let i = 0; i < storage.newAppLine.length; i++) {
-            if (storage.newAppLine[i][0] == 2 && storage.newAppLine[i][1] == my + "" && (i != (storage.newAppLine.length - 1) && storage.newAppLine[i + 1][0] == 2)) {
-              storage.newAppLine[i][0] = 0;
-            }
-          }
 
           $(".modal-wrap").hide();
           $(".inputsAuto").css("background-color", "white");
@@ -1331,50 +1390,11 @@ function closeGwModal(obj) {
         }
 
       }
-
-      else {
-
-        let combineData = [];
-
-        // 기존 데이터 넣기
-        for (let i = 0; i < appLine.length; i++) {
-          if (appLine[i].ordered <= Number(myOrdered)) {
-            combineData.push([appLine[i].appType, appLine[i].employee + ""]);
-          }
-        }
-
-        let target = $(".typeContainer");
-
-        for (let i = 0; i < target.length; i++) {
-          for (let j = 0; j < target[i].children.length; j++) {
-            let id = target[i].children[j].id.split("_")[1];
-            let targetId = target[i].id;
-
-            if (targetId == "examine") {
-              targetId = 0;
-            } else if (targetId == "agree") {
-              targetId = 1;
-            } else if (targetId == "approval") {
-              targetId = 2;
-            } else if (targetId == "conduct") {
-              targetId = 3;
-            } else if (targetId == "refer") {
-              targetId = 4;
-            }
-
-            combineData.push([targetId, id]);
-          }
-        }
-
-        storage.newAppLine = combineData;
-
-        $(".modal-wrap").hide();
-        $(".inputsAuto").css("background-color", "white");
-        createNewLine(); // 문서 안에서 결재선 그리는 것 
-        // 문서 정보에서 결재선 정보 그리는 것 
-      }
-
     }
+
+
+
+
   }
 
 }
