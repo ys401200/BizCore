@@ -382,10 +382,19 @@ function setSoppList(formId) {
   // }
   // orgChartTarget.html(innerHtml);
   // $(".modal-wrap").hide();
+
+  setModalhtml();
 }
 
 // 결재선 생성 버튼 눌렀을 때 모달 띄움
 function showModal() {
+
+  $(".modal-wrap").show();
+}
+
+
+
+function setModalhtml() {
   let setGwModalHtml =
     "<div class='gwModal'>" +
     "<div class='modal-title'>결재선 생성</div>" +
@@ -449,8 +458,14 @@ function showModal() {
   }
   orgChartTarget.html(innerHtml);
 
-  $(".modal-wrap").show();
 }
+
+
+
+
+
+
+
 
 // 결재선 모달 취소 생성
 function closeGwModal(obj) {
@@ -670,8 +685,8 @@ function createLine() {
   let testHtml2 = "<div class='lineGridContainer'>";
   let referHtml = "<div>참조</div>";
   let target = $(".typeContainer"); // 결재선 생성 모달에서 결재 타입 각각의 container
-  let titleArr = ["검토",  "결재", "수신", "참조"];
-  let titleId = ["examine",  "approval", "conduct", "refer"];
+  let titleArr = ["검토", "결재", "수신", "참조"];
+  let titleId = ["examine", "approval", "conduct", "refer"];
 
   let data = new Array();
   let x;
