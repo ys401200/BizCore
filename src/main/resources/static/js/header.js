@@ -353,7 +353,6 @@ function init(){
 		window.setTimeout(addNoteContainer, 200);
 	}
 
-	noteLiveBadge();
 	noteLiveUpdate();
 }
 
@@ -2547,31 +2546,13 @@ function searchDateDefaultSet(e){
 }
 
 function headerMyInfo(){
-	let mainInfo, html = "", count = 0;
+	let mainInfo, html = "";
 	mainInfo = $("#mainInfo");
-
-	$.ajax({
-		url: "/api/note",
-		method: "get",
-		async: false,
-		dataType: "json",
-		contentType: "text/plain",
-		success: (result) => {
-			result = cipher.decAes(result.data);
-			result = JSON.parse(result);
-			count = result.all;
-		}
-	});
 
 	// html += "<img id=\"myInfoMessageImg\" src=\"../images/main/icons/message.png\" >";
 	html += "<a href=\"#\" onclick=\"noteContentShow();\" id=\"infoMessageImg\">";
-	html += myNoteList();
+	// html += myNoteList();
 	html += "<img id=\"myInfoMessageImg\" src=\"../images/main/icons/message.png\">";
-
-	if(count > 0){
-		html += "<span class=\"badgeSpan\" id=\"badgeSpan\">" + count + "</span>";
-	}
-
 	html += "</a>";
 	// html += "<i class=\"fa-solid fa-envelope fa-shake fa-2xl\" id=\"envelope\"></i>";
 	// html += "<i class=\"fa-regular fa-envelope-open fa-beat-fade fa-2xl\" id=\"envelope\"></i>";
@@ -2594,58 +2575,53 @@ function headerMyInfo(){
 		$("#logoutBtn").attr("class", "fa-solid fa-person-walking-arrow-right fa-xl");
 	});
 
-	$("#infoMessageImg").mouseenter(() => {
-		$(".myNoteList").show();
-	});
+	// $("#infoMessageImg").mouseenter(() => {
+	// 	$(".myNoteList").show();
+	// });
 
-	$("#infoMessageImg").mouseleave(() => {
-		$(".myNoteList").hide();
-	});
+	// $("#infoMessageImg").mouseleave(() => {
+	// 	$(".myNoteList").hide();
+	// });
 
-	if(count > 0){
-		setTimeout(() => {
-			spanBadgeLocation($("#myInfoMessageImg"), $(".badgeSpan"));
-			$(".badgeSpan").css("display", "flex");
-		}, 1000);
-	}
+	noteLiveBadge();
 }
 
-function myNoteList(){
-	let html = "";
+// function myNoteList(){
+// 	let html = "";
 
-	$.ajax({
-		url: "/api/note/0/" + new Date().getTime(),
-		method: "get",
-		async: false,
-		dataType: "json",
-		contentType: "text/plain",
-		success: (result) => {
-			if(result.data != null){
-				result = cipher.decAes(result.data);
-				result = JSON.parse(result);
+// 	$.ajax({
+// 		url: "/api/note/0/" + new Date().getTime(),
+// 		method: "get",
+// 		async: false,
+// 		dataType: "json",
+// 		contentType: "text/plain",
+// 		success: (result) => {
+// 			if(result.data != null){
+// 				result = cipher.decAes(result.data);
+// 				result = JSON.parse(result);
 	
-				html = "<div class=\"myNoteList\">";
+// 				html = "<div class=\"myNoteList\">";
 	
-				for(let i = 0; i < result.length; i++){
-					html += "<div class=\"myNoteListItem\">";
-					html += "<span>" + result[i].msg + "</span>";
-					html += "</div>";
-				}
+// 				for(let i = 0; i < result.length; i++){
+// 					html += "<div class=\"myNoteListItem\">";
+// 					html += "<span>" + result[i].msg + "</span>";
+// 					html += "</div>";
+// 				}
 			
-				html += "</div>";
-			}else{
-				html = "<div class=\"myNoteList\">";
-				html += "<div class=\"myNoteListItem\">";
-				html += "<span>알림이 없습니다.</span>";
-				html += "</div>";
-				html += "</div>";
-			}
+// 				html += "</div>";
+// 			}else{
+// 				html = "<div class=\"myNoteList\">";
+// 				html += "<div class=\"myNoteListItem\">";
+// 				html += "<span>알림이 없습니다.</span>";
+// 				html += "</div>";
+// 				html += "</div>";
+// 			}
 
-		}
-	});
+// 		}
+// 	});
 
-	return html;
-}
+// 	return html;
+// }
 
 function plusBtnClick(e){
 	let thisBtn;
@@ -2822,8 +2798,10 @@ class Department{
 			y = this.employee[x];
 			if(y === undefined) continue;
 			if(storage.user[y] === undefined || storage.user[y].resign) continue;
-			html += ("<div class=\"noteUserContentItem\" data-no=\"" + y + "\" onclick=\"noteUserItemClick(this);\"><img src=\"/api/user/image/" + y + "\"> " + storage.user[y].userName + " " + storage.userRank[storage.user[y].rank][0]);
-			html += ("</div>");
+			if(storage.my != y){
+				html += ("<div class=\"noteUserContentItem\" data-no=\"" + y + "\" onclick=\"noteUserItemClick(this);\"><img src=\"/api/user/image/" + y + "\"> " + storage.user[y].userName + " " + storage.userRank[storage.user[y].rank][0]);
+				html += ("</div>");
+			}
 		}
 
 		for(x = 0 ; x < this.children.length ; x++){
@@ -2855,6 +2833,7 @@ function addNoteContainer(){
 function noteContentShow(){
 	modal.noteShow();
 	addNoteContainer();
+	noteListBadge();
 }
 
 function noteSubmit(){
@@ -2994,6 +2973,7 @@ function noteUserItemClick(e){
 			noteMainContent = $(".noteMainContent");
 			noteMainBtn.css("width", Math.ceil(noteMainContent.width()));
 			noteMainContent.scrollTop(noteMainContent[0].scrollHeight);
+			noteListBadge();
 		}
 	});
 }
@@ -3007,6 +2987,7 @@ function noteUserPage(){
 	noteMainContainer.hide();
 	modal.noteHeadTitle.text("쪽지");
 	storage.noteContentNo = "";
+	noteListBadge();
 }
 
 function noteLiveUpdate(){
@@ -3077,23 +3058,56 @@ function noteLiveBadge(){
 		success: (result) => {
 			let infoMessageImg, badgeSpan;
 			infoMessageImg = $("#infoMessageImg");
-			badgeSpan = $("#badgeSpan");
+			
 			if(result.data != null){
 				result = cipher.decAes(result.data);
 				result = JSON.parse(result);
+
+				$("#badgeSpan").remove();
 				
 				if(result.all > 0){
-					badgeSpan.remove();
 					infoMessageImg.find("img").after("<span class=\"badgeSpan\" id=\"badgeSpan\">" + result.all + "</span>");
 					
 					setTimeout(() => {
-						spanBadgeLocation($("#myInfoMessageImg"), $(".badgeSpan"));
-						$(".badgeSpan").css("display", "flex");
-					}, 1000);
+						badgeSpan = $("#badgeSpan");
+						spanBadgeLocation($("#myInfoMessageImg"), badgeSpan);
+						badgeSpan.css("display", "flex");
+						console.log($(".noteItemBadge"));
+					}, 300);
 				}
 			}
 		}
 	});
 
-	badgeTimer = setTimeout("noteLiveBadge()", 180000);
+	badgeTimer = setTimeout("noteLiveBadge()", 60000);
+}
+
+function noteListBadge(){
+	$.ajax({
+		url: "/api/note",
+		method: "get",
+		dataType: "json",
+		contentType: "text/plain",
+		success: (result) => {
+			if(result.data != null){
+				let badgeSpan = $("#badgeSpan");
+				result = cipher.decAes(result.data);
+				result = JSON.parse(result);
+				$(".noteItemBadge").remove();
+
+				for(let key in result){
+					$(".noteUserLi[data-no=\"" + key + "\"]").css("display", "flex");
+					$(".noteUserLi[data-no=\"" + key + "\"]").css("align-items", "center");
+					$(".noteUserLi[data-no=\"" + key + "\"]").append("<span class=\"noteItemBadge\">" + result[key] + "</span>");
+					$(".noteUserContentItem[data-no=\"" + key + "\"]").append("<span class=\"noteItemBadge\">" + result[key] + "</span>");
+				}
+
+				if(result.all > 0){
+					badgeSpan.text(result.all);
+				}else{
+					badgeSpan.remove();
+				}
+			}
+		}
+	})
 }

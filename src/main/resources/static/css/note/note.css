@@ -66,15 +66,16 @@
     color: #fff;
 }
 
+.noteUserLiTitle{
+    width: 100%;
+}
+
 #noteUserContent{
     border-bottom: 1px solid #ededed;
 }
 
 .noteUserContentItem{
     height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: left;
     border-bottom: 1px solid #ededed;
     padding: 10px;
 }
@@ -86,10 +87,10 @@
 }
 
 .noteUserContentItem > img{
-    width: 20px;
-    height: 20px;
+    height: 23px;
     padding-right: 5px;
     padding-bottom: 2px;
+    float: left;
 }
 
 #noteUserContent.active{ 
@@ -129,6 +130,20 @@
     align-items: center;
     justify-content: center;
     font-size: 1.5rem;
+}
+
+.noteItemBadge{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    float: right;
+    border-radius: 10px;
+    background-color: #182f81;
+    color: #fff;
+    padding: 5px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    width: 15px;
 }
 
 .noteMainContainer{
