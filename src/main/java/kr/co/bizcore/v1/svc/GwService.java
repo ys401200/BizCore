@@ -356,7 +356,7 @@ public class GwService extends Svc{
     public String getAppDocAndDetailInfo(String compId, String docNo, String dept, String userNo, String aesKey, String aesIv){
         String result = null;
         String sql1 = "SELECT no, docNo, writer, formId, docbox, title, confirmNo, status, readable FROM bizcore.doc_app WHERE deleted IS NULL AND readable <> 'temp' AND compId = ? AND docno = ?";
-        String sql2 = "SELECT ordered, employee, appType, CAST(UNIX_TIMESTAMP(`read`)*1000 AS CHAR) AS `read`, isModify, CAST(UNIX_TIMESTAMP(approved)*1000 AS CHAR) AS approved, CAST(UNIX_TIMESTAMP(rejected)*1000 AS CHAR) AS rejected, comment FROM bizcore.doc_app_detail WHERE compId = ? AND docNo = ? AND retrieved IS NULL ORDER BY ordered";
+        String sql2 = "SELECT ordered, employee, appType, CAST(UNIX_TIMESTAMP(`read`)*1000 AS CHAR) AS `read`, isModify, CAST(UNIX_TIMESTAMP(approved)*1000 AS CHAR) AS approved, CAST(UNIX_TIMESTAMP(rejected)*1000 AS CHAR) AS rejected, comment FROM bizcore.doc_app_detail WHERE deleted IS NULL AND retrieved IS NULL AND compId = ? AND docNo = ? ORDER BY ordered";
         String sql3 = "SELECT doc, appData FROM bizcore.doc_app_detail WHERE deleted IS NULL AND compId = ? AND ordered = (SELECT MAX(ordered) FROM bizcore.doc_app_detail WHERE deleted IS NULL AND compId = ? AND docNo = ? AND retrieved IS NULL AND (approved IS NOT NULL OR rejected IS NOT NULL)) AND docNo = ?";
         String sql4 = "SELECT compId, docNo, CAST(employee AS CHAR) AS employee, CAST(UNIX_TIMESTAMP(created)*1000 AS CHAR) AS created, content FROM bizcore.doc_app_revision WHERE compId = ? AND docNo = ? ORDER BY created";
         String no = null, writer = null, formId = null, docbox = null, title = null, confirmNo = null;
