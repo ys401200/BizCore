@@ -827,7 +827,7 @@ function approveBtnEvent() {
   }
 
   let appDoc;
-  if (storage.newAppLine != undefined || storage.newAppLine.length > 0) {
+  if (storage.newAppLine != undefined || (storage.newAppLine != null && storage.newAppLine.length > 0)) {
     appDoc = $(".seletedForm").html();
   } else {
     storage.newAppLine = null;
@@ -875,6 +875,16 @@ function approveBtnEvent() {
     },
   });
 }
+let related = {
+  "fnc": "hr",
+  "type": "leave", // "overtime", "holidayWork"
+  "start": 169999999,
+  "end": 169999999,
+  "parent": null, // contract:1999999
+  "prev": null, // schedule:199999
+  "next": [],
+  "children": []
+}
 
 //결재선 수정 모달
 function showGwModal() {
@@ -886,7 +896,7 @@ function showGwModal() {
     "<div class='innerDetail' id='lineLeft'></div>" +
     "<div class='innerDetail' id='lineCenter'>" +
     "<button class='appTypeBtn'  onclick='check(this.value)' value='examine'>검토 &gt;</button>" +
-    "<button class='appTypeBtn'  onclick='check(this.value)' value='agree'>합의 &gt;</button>" +
+    // "<button class='appTypeBtn'  onclick='check(this.value)' value='agree'>합의 &gt;</button>" +
     "<button class='appTypeBtn'  onclick='check(this.value)' value='approval'>결재 &gt;</button>" +
     "<button class='appTypeBtn'  onclick='check(this.value)' value='conduct'>수신 &gt;</button>" +
     "<button class='appTypeBtn'  onclick='check(this.value)' value='refer'>참조 &gt;</button></div>" +
@@ -894,8 +904,8 @@ function showGwModal() {
     "<div></div>" +
     "<div><div>검토</div>" +
     "<div class='typeContainer' id='examine'></div></div>" +
-    "<div><div>합의</div>" +
-    "<div class='typeContainer' id='agree'></div></div>" +
+    // "<div><div>합의</div>" +
+    // "<div class='typeContainer' id='agree'></div></div>" +
     "<div><div>결재</div>" +
     "<div class='typeContainer' id='approval'></div></div>" +
     "<div><div>수신</div>" +
@@ -906,6 +916,7 @@ function showGwModal() {
     "</div>" +
     "</div>" +
     "<div class='close-wrap'>" +
+    " <button id='reset' onclick='closeGwModal(this)'>초기화</button>" +
     " <button id='close' onclick='closeGwModal(this)'>취소</button>" +
     " <button id='modify' onclick='closeGwModal(this)'>생성</button>" +
     "</div>" +
@@ -932,19 +943,13 @@ function showGwModal() {
   for (let i = 0; i < appLine.length; i++) {
     if (appLine[i].employee == my) {
       oriLine = appLine.slice(0, i + 1);
-      console.log(oriLine);
     }
   }
-
 
   let oriNum = [];
   for (let i = 0; i < oriLine.length; i++) {
     oriNum.push(oriLine[i].employee + "");
   }
-  console.log(oriNum);
-  console.log(userData);
-
-
 
   let innerHtml = "";
   for (let i = 0; i < userData.length; i++) {
@@ -991,12 +996,19 @@ function setDefaultModalData() {
 
   //내 결재 권한 이후만 수정할 수 있음
   let btns = $(".appTypeBtn");
-  console.log(myappType);
+  console.log("버튼 개수 확인 " + btns.length);
   for (let i = btns.length - 1; i >= 0; i--) {
-    if (i < myappType) {
-      $(".appTypeBtn")[i].remove();
-      $(".typeContainer")[i].parentElement.remove();
+    if (myappType != 2) {
+      if (i < myappType) {
+        $(".appTypeBtn")[i].remove();
+        $(".typeContainer")[i].parentElement.remove();
+      }
     }
+  }
+
+  if (myappType == 2) {
+    $(".appTypeBtn")[0].remove();
+    $(".typeContainer")[0].parentElement.remove();
   }
 
   let html = "";
@@ -1087,58 +1099,284 @@ function closeGwModal(obj) {
   let id = obj.id;
   if (id == "close") {
     $(".modal-wrap").hide();
-  } else if (id == "modify") {
+    // ====================================================초기화 
+
+
+
+
+
+  } else if (id == "reset") {
+    let formId = storage.reportDetailData.formId;
     let appLine = storage.reportDetailData.appLine;
-    let originLine;
-    let my = storage.my;
+    let testHtml =
+      "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작성</div><div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto' disabled value='" +
+      storage.userRank[storage.user[appLine[0].employee].rank][0] +
+      "'></div>" +
+      "<div class='twoBorder'><input type='text' class='inputsAuto' disabled value='" +
+      storage.user[appLine[0].employee].userName +
+      "'></div>" +
+      "<div class='twoBorder'><input type='text' class='inputsAuto' disabled value='승인'></div>" +
+      "<div class='dateBorder'><input type='text' class='inputsAuto' disabled value='" +
+      getYmdSlashShort(appLine[0].read) +
+      "'></div></div></div>";
+    let testHtml2 = "<div class='lineGridContainer'>";
+    let referHtml = "";
+    let titleArr = ["검토", "합의", "결재", "수신", "참조"];
 
-    let myOrdered;
-    for (let i = 0; i < appLine.length; i++) {
-      if (appLine[i].employee == my) {
-        myOrdered = appLine[i].ordered;
-        originLine = appLine.slice(0, i + 1);
+    let titleId = ["examine", "agree", "approval", "conduct", "refer"];
+    let newCombine = [[], [], [], []];
+
+
+    for (let i = 1; i < appLine.length; i++) {
+      for (let j = 0; j < newCombine.length; j++) {
+        if (appLine[i].appType == j) {
+          newCombine[j].push(appLine[i].employee);
+        }
       }
     }
 
-    let combineData = [];
 
-    // 기존 데이터 넣기
-    for (let i = 0; i < appLine.length; i++) {
-      if (appLine[i].ordered <= Number(myOrdered)) {
-        combineData.push([appLine[i].appType, appLine[i].employee + ""]);
+
+    for (let i = 0; i < newCombine.length; i++) {
+      if (newCombine[i].length != 0 && i < 3) {
+        // 해당 결재 타입에 설정된 사람이 없지 않으면서 결재 타입이 검토 합의 결재인 경우
+        testHtml +=
+          "<div class='lineGrid'><div class='lineTitle'>" +
+          titleArr[i] +
+          "</div>";
+      } else if ((newCombine[i].length != 0) != 0 && i == 3) {
+        // 결재타입이 수신인 경우
+        testHtml2 +=
+          "<div class='lineGrid'><div class='lineTitle'>" +
+          titleArr[i] +
+          "</div>";
       }
-    }
 
-    let target = $(".typeContainer");
-
-    for (let i = 0; i < target.length; i++) {
-      for (let j = 0; j < target[i].children.length; j++) {
-        let id = target[i].children[j].id.split("_")[1];
-        let targetId = target[i].id;
-
-        if (targetId == "examine") {
-          targetId = 0;
-        } else if (targetId == "agree") {
-          targetId = 1;
-        } else if (targetId == "approval") {
-          targetId = 2;
-        } else if (targetId == "conduct") {
-          targetId = 3;
-        } else if (targetId == "refer") {
-          targetId = 4;
+      for (let j = 0; j < newCombine[i].length; j++) {
+        // 수신
+        if (i == 3) {
+          testHtml2 +=
+            "<div class='lineSet'><div class='twoBorder'><input type='text' disabled class='inputsAuto " +
+            formId +
+            "_" +
+            titleId[i] +
+            "_position" +
+            "' value='" +
+            storage.userRank[storage.user[newCombine[i][j]].rank][0] +
+            "' data-detail='" +
+            storage.user[newCombine[i][j]].rank +
+            "'/></div>" +
+            "<div class='twoBorder'><input type='text' disabled class='inputsAuto " +
+            formId +
+            "_" +
+            titleId[i] +
+            "' value='" +
+            storage.user[newCombine[i][j]].userName +
+            "' data-detail='" +
+            storage.user[newCombine[i][j]].userNo +
+            "'/></div>" +
+            "<div class='twoBorder'><input type='text'  disabled class='inputsAuto " +
+            formId +
+            "_" +
+            titleId[i] +
+            "_status' value='' data-detail=''/></div>" +
+            "<div class='dateBorder'><input type='text' disabled class='inputsAuto " +
+            formId +
+            "_" +
+            titleId[i] +
+            "_approved" +
+            "' value='' data-detail=''/></div></div>";
         }
 
-        combineData.push([targetId, id]);
+        // 참조
+        else if (i == 4) {
+          referHtml +=
+            "<div class='appendName " +
+            formId +
+            "_" +
+            titleId[i] +
+            "' data-detail='" +
+            storage.user[newCombine[i][j]].userNo +
+            "'>" +
+            storage.userRank[storage.user[newCombine[i][j]].rank][0] +
+            "&nbsp" +
+            storage.user[newCombine[i][j]].userName +
+            "</div>";
+        }
+
+        // 검토 합의 결재
+        else {
+          testHtml +=
+            "<div class='lineSet'><div class='twoBorder'><input type='text' disabled class='inputsAuto " +
+            formId +
+            "_" +
+            titleId[i] +
+            "_position" +
+            "' value='" +
+            storage.userRank[storage.user[newCombine[i][j]].rank][0] +
+            "' data-detail='" +
+            storage.user[newCombine[i][j]].rank +
+            "'/></div>" +
+            "<div class='twoBorder'><input type='text' disabled class='inputsAuto " +
+            formId +
+            "_" +
+            titleId[i] +
+            "' value='" +
+            storage.user[newCombine[i][j]].userName +
+            "' data-detail='" +
+            storage.user[newCombine[i][j]].userNo +
+            "'/></div>" +
+            "<div class='twoBorder'><input type='text'disabled class='inputsAuto " +
+            formId +
+            "_" +
+            titleId[i] +
+            "_status' value='' data-detail=''/></div>" +
+            "<div class='dateBorder'><input type='text' disabled  class='inputsAuto " +
+            formId +
+            "_" +
+            titleId[i] +
+            "_approved" +
+            "' value='' data-detail=''/></div></div>";
+        }
+      }
+
+      if (newCombine[i].length != 0 && i < 3) {
+        testHtml += "</div>";
+      } else if (newCombine[i].length != 0 && i == 3) {
+        testHtml2 += "</div>";
       }
     }
 
-    storage.newAppLine = combineData;
+    testHtml += "</div>";
+    testHtml2 += "</div>";
+
+
+    let lineTarget = $(".infoline")[0].children[1];
+    lineTarget = $("#" + lineTarget.id);
+    lineTarget.html("");
+    lineTarget.css("display", "block");
+    testHtml += testHtml2;
+    lineTarget.html(testHtml);
+
+    $(".selectedRefer").html(referHtml);
 
     $(".modal-wrap").hide();
-    $(".inputsAuto").css("background-color", "white");
-    createNewLine(); // 문서 안에서 결재선 그리는 것 
-    // 문서 정보에서 결재선 정보 그리는 것 
+
+    drawCommentLine();
+
+
+  } else if (id == "modify") {
+    // 내가 결재자이고 수정할때 아무것도 입력되지 않은 경우에 그냥 원래 결재정보로 그리는 것 
+
+    let appLine = storage.reportDetailData.appLine;
+    let my = storage.my;
+    let myOrdered;
+    if (storage.newAppLine != undefined) {
+      storage.newAppLine = undefined
+    }
+
+    for (let i = 0; i < appLine.length; i++) {
+
+      if (appLine[i].employee == my + "") {
+
+        myOrdered = appLine[i].ordered;
+        originLine = appLine.slice(0, i + 1);
+
+        if (appLine[i].appType == 2) {
+          let combineData = [];
+          // 기존 데이터 넣기
+          for (let i = 0; i < appLine.length; i++) {
+            if (appLine[i].ordered < Number(myOrdered)) {
+              combineData.push([appLine[i].appType, appLine[i].employee + ""]);
+            } else if (appLine[i].ordered = Number(myOrdered)) {
+              combineData.push([appLine[i].appType, appLine[i].employee + ""]);
+            }
+          }
+
+          let target = $(".typeContainer");
+
+          for (let i = 0; i < target.length; i++) {
+            for (let j = 0; j < target[i].children.length; j++) {
+              let id = target[i].children[j].id.split("_")[1];
+              let targetId = target[i].id;
+
+              if (targetId == "examine") {
+                targetId = 0;
+              } else if (targetId == "agree") {
+                targetId = 1;
+              } else if (targetId == "approval") {
+                targetId = 2;
+              } else if (targetId == "conduct") {
+                targetId = 3;
+              } else if (targetId == "refer") {
+                targetId = 4;
+              }
+
+              combineData.push([targetId, id]);
+            }
+          }
+
+          storage.newAppLine = combineData;
+          let checkNum;
+          for (let i = 0; i < storage.newAppLine.length; i++) {
+            if (storage.newAppLine[i][0] == 2 && storage.newAppLine[i][1] == my + "" && (i != (storage.newAppLine.length - 1) && storage.newAppLine[i + 1][0] == 2)) {
+              storage.newAppLine[i][0] = 0;
+            }
+          }
+
+          $(".modal-wrap").hide();
+          $(".inputsAuto").css("background-color", "white");
+          createNewLine(); // 문서 안에서 결재선 그리는 것 
+          // 문서 정보에서 결재선 정보 그리는 것 
+        }
+
+      }
+
+      else {
+
+        let combineData = [];
+
+        // 기존 데이터 넣기
+        for (let i = 0; i < appLine.length; i++) {
+          if (appLine[i].ordered <= Number(myOrdered)) {
+            combineData.push([appLine[i].appType, appLine[i].employee + ""]);
+          }
+        }
+
+        let target = $(".typeContainer");
+
+        for (let i = 0; i < target.length; i++) {
+          for (let j = 0; j < target[i].children.length; j++) {
+            let id = target[i].children[j].id.split("_")[1];
+            let targetId = target[i].id;
+
+            if (targetId == "examine") {
+              targetId = 0;
+            } else if (targetId == "agree") {
+              targetId = 1;
+            } else if (targetId == "approval") {
+              targetId = 2;
+            } else if (targetId == "conduct") {
+              targetId = 3;
+            } else if (targetId == "refer") {
+              targetId = 4;
+            }
+
+            combineData.push([targetId, id]);
+          }
+        }
+
+        storage.newAppLine = combineData;
+
+        $(".modal-wrap").hide();
+        $(".inputsAuto").css("background-color", "white");
+        createNewLine(); // 문서 안에서 결재선 그리는 것 
+        // 문서 정보에서 결재선 정보 그리는 것 
+      }
+
+    }
   }
+
 }
 
 function createNewLine() {
@@ -1149,6 +1387,17 @@ function createNewLine() {
   lineTarget.css("display", "block");
   let newAppLine = storage.newAppLine;
   let newCombine = [[], [], [], [], []];
+
+  //내 순서 확인하고 title 잘라버리기 
+  let myType;
+
+  for (let i = 0; i < newAppLine.length; i++) {
+    if (newAppLine[i][1] == storage.my) {
+      myType = newAppLine[i][0];
+    }
+  }
+
+
 
   for (let i = 0; i < newAppLine.length; i++) {
     for (let j = 0; j < newCombine.length; j++) {
@@ -1177,6 +1426,7 @@ function createNewLine() {
   let testHtml2 = "<div class='lineGridContainer'>";
   let referHtml = "";
   let titleArr = ["검토", "합의", "결재", "수신", "참조"];
+
   let titleId = ["examine", "agree", "approval", "conduct", "refer"];
 
   for (let i = 0; i < newCombine.length; i++) {

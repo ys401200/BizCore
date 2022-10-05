@@ -10,7 +10,7 @@ $(document).ready(() => {
 });
 
 function waitDefault() {
-  
+
   $("#gwSubTabTitle").html("결재 문서함");
 
   // 리스트 보기
@@ -77,94 +77,95 @@ function drawNoticeApproval() {
     ];
     createGrid(container, header, data, ids, job, fnc);
 
-    container.append("<div class='noListDefault'>임시 저장 문서가 없습니다.</div>")
+    container.append("<div class='noListDefault'>결재 문서가 없습니다.</div>")
 
 
 
   } else {
     jsonData = storage.approvedList;
- 
-  result = paging(jsonData.length, storage.currentPage, 8);
 
-  pageContainer = document.getElementsByClassName("pageContainer");
-  container = $(".listDiv");
+    result = paging(jsonData.length, storage.currentPage, 8);
 
-  header = [
-    {
-      title: "번호",
-      align: "center",
-    },
-    {
-      title: "문서 종류",
-      align: "center",
-    },
-    {
-      title: "제목",
-      align: "left",
-    },
-    {
-      title: "작성자",
-      align: "center",
-    },
-    {
-      title: "작성일",
-      align: "center",
-    },
-    {
-      title: "상태",
-      align: "center",
-    },
-  ];
-  for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
-    disDate = dateDis(jsonData[i].created, jsonData[i].modified);
-    setDate = dateFnc(disDate);
-    let userName = storage.user[jsonData[i].writer].userName;
-    let status;
-    if (jsonData[i].status == 1) {
-      status = "진행 중";
-    } else if (jsonData[i].status == 2) {
-      status = "수신 대기 ";
-    } else if (jsonData[i].status == 3) {
-      status = "승인 완료";
-    } else if (jsonData[i].status == -3) {
-      status = "반려";
-    }
+    pageContainer = document.getElementsByClassName("pageContainer");
+    container = $(".listDiv");
 
-    str = [
+    header = [
       {
-        setData: jsonData[i].docNo,
+        title: "번호",
+        align: "center",
       },
       {
-        setData: jsonData[i].form,
+        title: "문서 종류",
+        align: "center",
       },
       {
-        setData: jsonData[i].title,
+        title: "제목",
+        align: "left",
       },
       {
-        setData: userName,
+        title: "작성자",
+        align: "center",
       },
       {
-        setData: setDate,
+        title: "작성일",
+        align: "center",
       },
       {
-        setData: status,
+        title: "상태",
+        align: "center",
       },
     ];
+    for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+      disDate = dateDis(jsonData[i].created, jsonData[i].modified);
+      setDate = dateFnc(disDate);
+      let userName = storage.user[jsonData[i].writer].userName;
+      let status;
+      if (jsonData[i].status == 1) {
+        status = "진행 중";
+      } else if (jsonData[i].status == 2) {
+        status = "수신 대기 ";
+      } else if (jsonData[i].status == 3) {
+        status = "승인 완료";
+      } else if (jsonData[i].status == -3) {
+        status = "반려";
+      }
 
-    fnc = "waitDetailView(this)";
-    ids.push(jsonData[i].docNo);
-    data.push(str);
+      str = [
+        {
+          setData: jsonData[i].docNo,
+        },
+        {
+          setData: jsonData[i].form,
+        },
+        {
+          setData: jsonData[i].title,
+        },
+        {
+          setData: userName,
+        },
+        {
+          setData: setDate,
+        },
+        {
+          setData: status,
+        },
+      ];
+
+      fnc = "waitDetailView(this)";
+      ids.push(jsonData[i].docNo);
+      data.push(str);
+    }
+
+    let pageNation = createPaging(
+      pageContainer[0],
+      result[3],
+      "pageMove",
+      "drawNoticeApproval",
+      result[0]
+    );
+    pageContainer[0].innerHTML = pageNation;
+    createGrid(container, header, data, ids, job, fnc);
   }
-
-  let pageNation = createPaging(
-    pageContainer[0],
-    result[3],
-    "pageMove",
-    "drawNoticeApproval",
-    result[0]
-  );
-  pageContainer[0].innerHTML = pageNation;
-  createGrid(container, header, data, ids, job, fnc); }
 
 } // End of drawNoticeApproval()
 

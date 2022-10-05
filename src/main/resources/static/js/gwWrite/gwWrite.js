@@ -394,7 +394,7 @@ function showModal() {
     "<div class='innerDetail' id='lineLeft'></div>" +
     "<div class='innerDetail' id='lineCenter'>" +
     "<button onclick='check(this.value)' value='examine'>검토 &gt;</button>" +
-    "<button onclick='check(this.value)' value='agree'>합의 &gt;</button>" +
+    // "<button onclick='check(this.value)' value='agree'>합의 &gt;</button>" +
     "<button onclick='check(this.value)' value='approval'>결재 &gt;</button>" +
     " <button onclick='check(this.value)' value='conduct'>수신 &gt;</button>" +
     "<button onclick='check(this.value)' value='refer'>참조 &gt;</button></div>" +
@@ -403,8 +403,8 @@ function showModal() {
     "<div><div>검토</div>" +
     "<div class='typeContainer' id='examine'></div>" +
     "</div>" +
-    "<div><div>합의</div>" +
-    "<div class='typeContainer' id='agree'></div></div>" +
+    // "<div><div>합의</div>" +
+    // "<div class='typeContainer' id='agree'></div></div>" +
     "<div><div>결재</div>" +
     "<div class='typeContainer' id='approval'></div></div>" +
     "<div><div>수신</div>" +
@@ -652,7 +652,6 @@ function createLine() {
   lineTarget.html("");
   lineTarget.css("display", "block");
   let my = storage.my;
-  let today = getYmdSlash();
   let testHtml =
     "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작성</div><div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto' value='" +
     storage.userRank[storage.user[my].rank][0] +
@@ -671,26 +670,26 @@ function createLine() {
   let testHtml2 = "<div class='lineGridContainer'>";
   let referHtml = "<div>참조</div>";
   let target = $(".typeContainer"); // 결재선 생성 모달에서 결재 타입 각각의 container
-  let titleArr = ["검토", "합의", "결재", "수신", "열람", "참조"];
-  let titleId = ["examine", "agree", "approval", "conduct", "refer"];
+  let titleArr = ["검토",  "결재", "수신", "참조"];
+  let titleId = ["examine",  "approval", "conduct", "refer"];
 
   let data = new Array();
   let x;
   //나는 결재선에 노출 안 되게 함
   for (x in storage.user) {
-    if (x != my && storage.user[x].resign != true) {
+    if (x != my && storage.user[x].resign == false) {
       data.push(x);
     }
   }
 
   for (let i = 0; i < target.length; i++) {
-    if (target[i].children.length != 0 && i < 3) {
+    if (target[i].children.length != 0 && i < 2) {
       // 해당 결재 타입에 설정된 사람이 없지 않으면서 결재 타입이 검토 합의 결재인 경우
       testHtml +=
         "<div class='lineGrid'><div class='lineTitle'>" +
         titleArr[i] +
         "</div>";
-    } else if (target[i].children.length != 0 && i == 3) {
+    } else if (target[i].children.length != 0 && i == 2) {
       // 결재타입이 수신인 경우
       testHtml2 +=
         "<div class='lineGrid'><div class='lineTitle'>" +
@@ -704,7 +703,7 @@ function createLine() {
       id = id[1];
 
       // 수신
-      if (i == 3) {
+      if (i == 2) {
         testHtml2 +=
           "<div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto " +
           formId +
@@ -739,7 +738,7 @@ function createLine() {
       }
 
       // 참조
-      else if (i == 4) {
+      else if (i == 3) {
         referHtml +=
           "<div class='appendName " +
           formId +
@@ -790,9 +789,9 @@ function createLine() {
       }
     }
 
-    if (target[i].children.length != 0 && i < 3) {
+    if (target[i].children.length != 0 && i < 2) {
       testHtml += "</div>";
-    } else if (target[i].children.length != 0 && i == 3) {
+    } else if (target[i].children.length != 0 && i == 2) {
       testHtml2 += "</div>";
     }
   }
