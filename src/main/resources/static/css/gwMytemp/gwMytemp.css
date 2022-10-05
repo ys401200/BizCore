@@ -108,6 +108,13 @@
   align-items: center;
   justify-content: center;
 }
+.subContainer .listPageDiv .listDiv .noListDefault {
+  text-align: center;
+  color: gray;
+  margin: 8em 0;
+  width: 99%;
+}
+
 
 .inputsAuto {
   padding: 0.5% 0.7%;

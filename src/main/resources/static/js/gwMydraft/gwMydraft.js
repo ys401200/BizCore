@@ -9,7 +9,7 @@ $(document).ready(() => {
 });
 
 function defaultMyDraft() {
-  
+
   let url, method, data, type;
   url = "/api/gw/app/mydraft";
   method = "get";
@@ -41,131 +41,174 @@ function drawMyDraft() {
     fnc;
 
   if (storage.myDraftList === undefined || storage.myDraftList.length == 0) {
-    msg.set("기안한 문서가 없습니다");
+
+
+    container = $(".listDiv");
+
+    header = [
+      {
+        title: "번호",
+        align: "center",
+      },
+      {
+        title: "기안일",
+        align: "center",
+      },
+      {
+        title: "문서양식",
+        align: "center",
+      },
+      {
+        title: "제목",
+        align: "left",
+      },
+
+      {
+        title: "결재 타입",
+        align: "center",
+      },
+      {
+        title: "결재권자",
+        align: "center",
+      },
+      {
+        title: "조회",
+        align: "center",
+      },
+      {
+        title: "상태",
+        align: "center",
+      },
+    ];
+    createGrid(container, header, data, ids, job, fnc);
+
+    container.append("<div class='noListDefault'>기안 문서가 없습니다</div>")
+
   } else {
     jsonData = storage.myDraftList;
-  }
 
-  result = paging(jsonData.length, storage.currentPage, 10);
 
-  pageContainer = document.getElementsByClassName("pageContainer");
-  container = $(".listDiv");
+    result = paging(jsonData.length, storage.currentPage, 10);
 
-  header = [
-    {
-      title: "번호",
-      align: "center",
-    },
-    {
-      title: "기안일",
-      align: "center",
-    },
-    {
-      title: "문서양식",
-      align: "center",
-    },
-    {
-      title: "제목",
-      align: "left",
-    },
+    pageContainer = document.getElementsByClassName("pageContainer");
+    container = $(".listDiv");
 
-    {
-      title: "결재 타입",
-      align: "center",
-    },
-    {
-      title: "결재권자",
-      align: "center",
-    },
-    {
-      title: "조회",
-      align: "center",
-    },
-    {
-      title: "상태",
-      align: "center",
-    },
-  ];
-
-  for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
-    disDate = dateDis(jsonData[i].created, jsonData[i].modified);
-    setDate = dateFnc(disDate);
-    let read = jsonData[i].read;
-    let status;
-    if (read == null) {
-      read = "N";
-    } else {
-      read = getYmdSlash(read);
-    }
-
-    let appType = jsonData[i].appType;
-    if (appType == "0") {
-      appType = "검토";
-    } else if (appType == "1") {
-      appType = "합의";
-    } else if (appType == "2") {
-      appType = "결재";
-    } else if (appType == "3") {
-      appType = "수신";
-    } else {
-      appType = "참조";
-    }
-
-    if (jsonData[i].status == 1) {
-      status = "진행 중";
-    } else if (jsonData[i].status == 2) {
-      status = "수신 대기 ";
-    } else if (jsonData[i].status == 3) {
-      status = "승인 완료";
-    } else if (jsonData[i].status == -3) {
-      status = "반려";
-    } else if (jsonData[i].status == -1) {
-      status = "회수";
-    }
-
-    let authority = storage.user[jsonData[i].authority].userName;
-    str = [
+    header = [
       {
-        setData: jsonData[i].docNo,
+        title: "번호",
+        align: "center",
       },
       {
-        setData: setDate,
+        title: "기안일",
+        align: "center",
       },
       {
-        setData: jsonData[i].form,
+        title: "문서양식",
+        align: "center",
       },
       {
-        setData: jsonData[i].title,
+        title: "제목",
+        align: "left",
       },
 
       {
-        setData: appType,
+        title: "결재 타입",
+        align: "center",
       },
       {
-        setData: authority,
+        title: "결재권자",
+        align: "center",
       },
       {
-        setData: read,
+        title: "조회",
+        align: "center",
       },
       {
-        setData: status,
+        title: "상태",
+        align: "center",
       },
     ];
 
-    fnc = "detailView(this)";
-    ids.push(jsonData[i].docNo);
-    data.push(str);
-  }
+    for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+      disDate = dateDis(jsonData[i].created, jsonData[i].modified);
+      setDate = dateFnc(disDate);
+      let read = jsonData[i].read;
+      let status;
+      if (read == null) {
+        read = "N";
+      } else {
+        read = getYmdSlash(read);
+      }
 
-  let pageNation = createPaging(
-    pageContainer[0],
-    result[3],
-    "pageMove",
-    "drawMyDraft",
-    result[0]
-  );
-  pageContainer[0].innerHTML = pageNation;
-  createGrid(container, header, data, ids, job, fnc);
+      let appType = jsonData[i].appType;
+      if (appType == "0") {
+        appType = "검토";
+      } else if (appType == "1") {
+        appType = "합의";
+      } else if (appType == "2") {
+        appType = "결재";
+      } else if (appType == "3") {
+        appType = "수신";
+      } else {
+        appType = "참조";
+      }
+
+      if (jsonData[i].status == 1) {
+        status = "진행 중";
+      } else if (jsonData[i].status == 2) {
+        status = "수신 대기 ";
+      } else if (jsonData[i].status == 3) {
+        status = "승인 완료";
+      } else if (jsonData[i].status == -3) {
+        status = "반려";
+      } else if (jsonData[i].status == -1) {
+        status = "회수";
+      }
+
+      let authority = storage.user[jsonData[i].authority].userName;
+      str = [
+        {
+          setData: jsonData[i].docNo,
+        },
+        {
+          setData: setDate,
+        },
+        {
+          setData: jsonData[i].form,
+        },
+        {
+          setData: jsonData[i].title,
+        },
+
+        {
+          setData: appType,
+        },
+        {
+          setData: authority,
+        },
+        {
+          setData: read,
+        },
+        {
+          setData: status,
+        },
+      ];
+
+      fnc = "detailView(this)";
+      ids.push(jsonData[i].docNo);
+      data.push(str);
+    }
+
+    let pageNation = createPaging(
+      pageContainer[0],
+      result[3],
+      "pageMove",
+      "drawMyDraft",
+      result[0]
+    );
+    pageContainer[0].innerHTML = pageNation;
+    createGrid(container, header, data, ids, job, fnc);
+  }
 }
 
 function detailView(obj) {
@@ -279,7 +322,7 @@ function getDetailView() {
           storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
         $("." + formId + subTitlesArr[i] + "_position")[j].value =
           storage.userRank[
-            $("." + formId + subTitlesArr[i] + "_position")[j].value
+          $("." + formId + subTitlesArr[i] + "_position")[j].value
           ][0];
       }
     }

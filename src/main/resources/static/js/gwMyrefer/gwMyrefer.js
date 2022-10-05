@@ -33,7 +33,6 @@ function drawMyRefer() {
     result,
     jsonData,
     job,
-    header = [],
     data = [],
     ids = [],
     disDate,
@@ -41,18 +40,7 @@ function drawMyRefer() {
     str,
     fnc;
 
-  if (storage.myReferList === undefined || storage.myReferList.length == 0) {
-    alert("참조/열람 문서가 없습니다");
-  } else {
-    jsonData = storage.myReferList;
-  }
-
-  result = paging(jsonData.length, storage.currentPage, 10);
-
-  pageContainer = document.getElementsByClassName("pageContainer");
-  container = $(".listDiv");
-
-  header = [
+  let header = [
     {
       title: "번호",
       align: "center",
@@ -82,90 +70,100 @@ function drawMyRefer() {
       align: "center",
     },
   ];
+  if (storage.myReferList === undefined || storage.myReferList.length == 0) {
+    container = $(".listDiv");
 
-  for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
-    disDate = dateDis(jsonData[i].created, jsonData[i].modified);
-    setDate = dateFnc(disDate);
-    let read = jsonData[i].read;
-    let status;
-    if (read == null) {
-      read = "N";
-    } else {
-      read = getYmdSlash(read);
+
+    createGrid(container, header, data, ids, job, fnc);
+
+    container.append("<div class='noListDefault'>참조/열람 문서가 없습니다.</div>")
+
+  } else {
+    jsonData = storage.myReferList;
+
+
+    result = paging(jsonData.length, storage.currentPage, 10);
+
+    pageContainer = document.getElementsByClassName("pageContainer");
+    container = $(".listDiv");
+
+
+    for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+      disDate = dateDis(jsonData[i].created, jsonData[i].modified);
+      setDate = dateFnc(disDate);
+      let read = jsonData[i].read;
+      let status;
+      if (read == null) {
+        read = "N";
+      } else {
+        read = getYmdSlash(read);
+      }
+
+      let appType = jsonData[i].appType;
+      if (appType == "0") {
+        appType = "검토";
+      } else if (appType == "1") {
+        appType = "합의";
+      } else if (appType == "2") {
+        appType = "결재";
+      } else if (appType == "3") {
+        appType = "수신";
+      } else if (appType == "4") {
+        appType = "참조";
+      } else {
+        appType = "열람";
+      }
+
+      if (jsonData[i].status == 1) {
+        status = "진행 중";
+      } else if (jsonData[i].status == 2) {
+        status = "수신 대기 ";
+      } else if (jsonData[i].status == 3) {
+        status = "승인 완료";
+      } else if (jsonData[i].status == -3) {
+        status = "반려";
+      }
+
+      str = [
+        {
+          setData: jsonData[i].docNo,
+        },
+        {
+          setData: setDate,
+        },
+        {
+          setData: jsonData[i].form,
+        },
+        {
+          setData: jsonData[i].title,
+        },
+        {
+          setData: storage.user[jsonData[i].writer].userName,
+        },
+        {
+          setData: read,
+        },
+        {
+          setData: status,
+        },
+      ];
+
+      fnc = "detailView(this)";
+      ids.push(jsonData[i].docNo);
+      data.push(str);
     }
 
-    let appType = jsonData[i].appType;
-    if (appType == "0") {
-      appType = "검토";
-    } else if (appType == "1") {
-      appType = "합의";
-    } else if (appType == "2") {
-      appType = "결재";
-    } else if (appType == "3") {
-      appType = "수신";
-    } else if (appType == "4") {
-      appType = "참조";
-    } else {
-      appType = "열람";
-    }
+    let pageNation = createPaging(
+      pageContainer[0],
+      result[3],
+      "pageMove",
+      "drawMyDraft",
+      result[0]
+    );
+    pageContainer[0].innerHTML = pageNation;
+    createGrid(container, header, data, ids, job, fnc);
 
-    if (jsonData[i].status == 1) {
-      status = "진행 중";
-    } else if (jsonData[i].status == 2) {
-      status = "수신 대기 ";
-    } else if (jsonData[i].status == 3) {
-      status = "승인 완료";
-    } else if (jsonData[i].status == -3) {
-      status = "반려";
-    }
-
-    str = [
-      {
-        setData: jsonData[i].docNo,
-      },
-      {
-        setData: setDate,
-      },
-      {
-        setData: jsonData[i].form,
-      },
-      {
-        setData: jsonData[i].title,
-      },
-      {
-        setData: storage.user[jsonData[i].writer].userName,
-      },
-      {
-        setData: read,
-      },
-      {
-        setData: status,
-      },
-    ];
-
-    fnc = "detailView(this)";
-    ids.push(jsonData[i].docNo);
-    data.push(str);
   }
-
-  let pageNation = createPaging(
-    pageContainer[0],
-    result[3],
-    "pageMove",
-    "drawMyDraft",
-    result[0]
-  );
-  pageContainer[0].innerHTML = pageNation;
-  createGrid(container, header, data, ids, job, fnc);
-
-  // 전체선택 전체 해제
-  $(".thisAllcheck").click(function () {
-    if ($(".thisAllcheck").prop("checked")) {
-      $(":checkbox").prop("checked", true);
-    } else {
-      $(":checkbox").prop("checked", false);
-    }
-  });
 }
 
 function detailView(obj) {

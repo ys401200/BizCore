@@ -113,6 +113,12 @@
    justify-content: center;
 }
 
+.subContainer .listPageDiv .listDiv .noListDefault {
+   text-align: center;
+   color: gray;
+   margin: 8em 0;
+   width: 99%;
+}
 
 
 .inputsAuto {
@@ -255,7 +261,7 @@
    grid-template-columns: repeat(2, 1fr);
    font-size: 15px;
    border-radius: 20px 20px 0 0;
-   background-color:#62a6ad ;
+   background-color: #62a6ad;
 }
 
 .detailReport .comment .reportInfoTab input[type="radio"] {
@@ -266,21 +272,21 @@
 .detailReport .comment .reportInfoTab>label {
    padding: 0.5em;
    cursor: pointer;
-   background-color:#dddddd;
-   padding:10px 0;
+   background-color: #dddddd;
+   padding: 10px 0;
    /* background-color:#406c92; */
 }
 
 .detailReport .comment .reportInfoTab>label:first-of-type {
-   background-color:#62a6ad;
-   border-top-left-radius:14px;
-   color:#fff;
+   background-color: #62a6ad;
+   border-top-left-radius: 14px;
+   color: #fff;
 }
 
 .detailReport .comment .reportInfoTab>label:last-of-type {
-   border-top-right-radius:14px;
+   border-top-right-radius: 14px;
    border-bottom-left-radius: 20px;
-   color:#5c5c5c;
+   color: #5c5c5c;
 }
 
 .comment .tabDetail>div:last-of-type {
@@ -293,20 +299,20 @@
 .tapLineB {
    background-color: white;
    /* margin: 0.5em 1em; */
-   margin:0 1em;
+   margin: 0 1em;
    display: grid;
    grid-template-columns: 10% 15% 10% 35% 30%;
    font-size: 15px;
 }
 
-.tapLineB{
+.tapLineB {
    grid-template-columns: 10% 15% 35% 40%;
 }
 
 #tabDetail2>.tapLineB:first-of-type {
-   background-color:#96cbd1;
-   margin:14px 1em 0 1em;
-   border-radius:10px 10px 0 0;
+   background-color: #96cbd1;
+   margin: 14px 1em 0 1em;
+   border-radius: 10px 10px 0 0;
 }
 
 
@@ -316,7 +322,8 @@
    text-align: center;
    padding: 0.5em;
    border-bottom: 0.5px solid #87c1c7;
- }
+}
+
 .tapLine>div,
 .tapLineB>div {
    padding: 0.5em;
@@ -327,8 +334,8 @@
    border-bottom: 0.5px solid #87c1c7;
 }
 
-.tapLineTitle{
-   background-color:#96cbd1;
+.tapLineTitle {
+   background-color: #96cbd1;
    border-radius: 10px 10px 0 0;
 }
 
@@ -361,12 +368,12 @@
 
 }
 
-.readDiv label{
+.readDiv label {
    display: flex;
    align-items: center;
 }
 
-.readDiv input{
+.readDiv input {
    margin-right: 10px;
 }
 

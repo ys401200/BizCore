@@ -75,7 +75,38 @@ function drawNoticeApproval() {
     fnc;
 
   if (storage.waitList.wait == undefined || storage.waitList.wait.length == 0) {
-    alert("결재 대기 문서가 없습니다");
+    container = $(".listDiv");
+    header = [
+      {
+        title: "번호",
+        align: "center",
+      },
+      {
+        title: "결재 타입",
+        align: "center",
+      },
+      {
+        title: "문서 종류",
+        align: "center",
+      },
+      {
+        title: "제목",
+        align: "left",
+      },
+      {
+        title: "작성자",
+        align: "center",
+      },
+      {
+        title: "작성일",
+        align: "center",
+      },
+    ];
+
+    createGrid(container, header, data, ids, job, fnc);
+
+    container.append("<div class='noListDefault'>결재 대기 문서가 없습니다</div>")
+
   } else {
     jsonData = storage.waitList.wait; result = paging(jsonData.length, storage.currentPage, 8);
 

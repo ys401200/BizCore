@@ -47,11 +47,43 @@ function drawNoticeApproval() {
     fnc;
 
   if (storage.approvedList === undefined || storage.approvedList.length == 0) {
-    alert("결재 문서가 없습니다");
+    container = $(".listDiv");
+
+    header = [
+      {
+        title: "번호",
+        align: "center",
+      },
+      {
+        title: "문서 종류",
+        align: "center",
+      },
+      {
+        title: "제목",
+        align: "left",
+      },
+      {
+        title: "작성자",
+        align: "center",
+      },
+      {
+        title: "작성일",
+        align: "center",
+      },
+      {
+        title: "상태",
+        align: "center",
+      },
+    ];
+    createGrid(container, header, data, ids, job, fnc);
+
+    container.append("<div class='noListDefault'>임시 저장 문서가 없습니다.</div>")
+
+
+
   } else {
     jsonData = storage.approvedList;
-  }
-
+ 
   result = paging(jsonData.length, storage.currentPage, 8);
 
   pageContainer = document.getElementsByClassName("pageContainer");
@@ -132,7 +164,8 @@ function drawNoticeApproval() {
     result[0]
   );
   pageContainer[0].innerHTML = pageNation;
-  createGrid(container, header, data, ids, job, fnc);
+  createGrid(container, header, data, ids, job, fnc); }
+
 } // End of drawNoticeApproval()
 
 function waitDetailView(obj) {

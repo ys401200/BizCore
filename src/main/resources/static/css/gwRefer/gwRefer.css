@@ -112,7 +112,13 @@
 	align-items: center;
 	justify-content: center;
 }
-
+.subContainer .listPageDiv .listDiv .noListDefault {
+	text-align: center;
+	color: gray;
+	margin: 8em 0;
+	width: 99%;
+ }
+ 
 
 
 /*-------------------------------- 상세조회 페이지 상단 버튼  */

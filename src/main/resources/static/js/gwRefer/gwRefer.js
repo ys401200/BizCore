@@ -78,7 +78,39 @@ function drawApproval() {
     storage.referList.refer === undefined ||
     storage.referList.refer.length == 0
   ) {
-    alert("참조/열람 대기 문서가 없습니다");
+
+    container = $(".listDiv");
+
+    header = [
+      {
+        title: "번호",
+        align: "center",
+      },
+      {
+        title: "결재 타입",
+        align: "center",
+      },
+      {
+        title: "문서종류",
+        align: "center",
+      },
+      {
+        title: "제목",
+        align: "left",
+      },
+      {
+        title: "작성자",
+        align: "center",
+      },
+      {
+        title: "작성일",
+        align: "center",
+      },
+    ];
+    createGrid(container, header, data, ids, job, fnc);
+
+    container.append("<div class='noListDefault'>참조 대기 문서가 없습니다</div>")
+
   } else {
     jsonData = storage.referList.refer;
 

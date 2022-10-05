@@ -42,10 +42,37 @@ function drawMyDraft() {
     fnc;
 
   if (storage.myTempList === undefined || storage.myTempList.length == 0) {
-    alert("임시 저장 문서가 없습니다");
+    container = $(".listDiv");
+
+    header = [
+      {
+        title: "번호",
+        align: "center",
+      },
+      {
+        title: "문서양식",
+        align: "center",
+      },
+      {
+        title: "제목",
+        align: "left",
+      },
+      {
+        title: "임시 저장 일자",
+        align: "center",
+      },
+    ];
+    createGrid(container, header, data, ids, job, fnc);
+
+    container.append("<div class='noListDefault'>임시 저장 문서가 없습니다.</div>")
+
+
+
+
+
   } else {
     jsonData = storage.myTempList;
-  }
+  
 
   result = paging(jsonData.length, storage.currentPage, 10);
 
@@ -105,14 +132,7 @@ function drawMyDraft() {
   pageContainer[0].innerHTML = pageNation;
   createGrid(container, header, data, ids, job, fnc);
 
-  // 전체선택 전체 해제
-  $(".thisAllcheck").click(function () {
-    if ($(".thisAllcheck").prop("checked")) {
-      $(":checkbox").prop("checked", true);
-    } else {
-      $(":checkbox").prop("checked", false);
-    }
-  });
+ }
 }
 
 function detailView(obj) {

@@ -11,7 +11,7 @@ $(document).ready(() => {
 
 function dueDefault() {
   $(".modal-wrap").hide();
- 
+
   $("#gwSubTabTitle").html("결재 예정 문서");
 
   let checkHref = location.href;
@@ -74,94 +74,129 @@ function drawApproval() {
     str,
     fnc;
 
-  if (storage.dueList === undefined) {
-    alert("결재 예정 문서가 없습니다");
-  } else {
-    jsonData = storage.dueList.due;
-  }
+  if (storage.dueList === undefined || storage.dueList.due.length == 0) {
 
-  result = paging(jsonData.length, storage.currentPage, 14);
 
-  pageContainer = document.getElementsByClassName("pageContainer");
-  container = $(".listDiv");
 
-  header = [
-    {
-      title: "번호",
-      align: "center",
-    },
-    {
-      title: "결재 타입",
-      align: "center",
-    },
-    {
-      title: "문서종류",
-      align: "center",
-    },
-    {
-      title: "제목",
-      align: "left",
-    },
-    {
-      title: "작성자",
-      align: "center",
-    },
-    {
-      title: "작성일",
-      align: "center",
-    },
-  ];
+    container = $(".listDiv");
 
-  for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
-    disDate = dateDis(jsonData[i].created, jsonData[i].modified);
-    setDate = dateFnc(disDate);
-    let userName = storage.user[jsonData[i].writer].userName;
-    let appType = jsonData[i].appType;
-    if (appType == "0") {
-      appType = "검토";
-    } else if (appType == "1") {
-      appType = "합의";
-    } else if (appType == "2") {
-      appType = "결재";
-    } else if (appType == "3") {
-      appType = "수신";
-    } else {
-      appType = "참조";
-    }
-    str = [
+    header = [
       {
-        setData: jsonData[i].docNo,
+        title: "번호",
+        align: "center",
       },
       {
-        setData: appType,
+        title: "결재 타입",
+        align: "center",
       },
       {
-        setData: jsonData[i].form,
+        title: "문서종류",
+        align: "center",
       },
       {
-        setData: jsonData[i].title,
+        title: "제목",
+        align: "left",
       },
       {
-        setData: userName,
+        title: "작성자",
+        align: "center",
       },
       {
-        setData: setDate,
+        title: "작성일",
+        align: "center",
       },
     ];
-    fnc = "detailView(this)";
-    ids.push(jsonData[i].docNo);
-    data.push(str);
-  }
+    createGrid(container, header, data, ids, job, fnc);
 
-  let pageNation = createPaging(
-    pageContainer[0],
-    result[3],
-    "pageMove",
-    "drawApproval",
-    result[0]
-  );
-  pageContainer[0].innerHTML = pageNation;
-  createGrid(container, header, data, ids, job, fnc);
+    container.append("<div class='noListDefault'>결재 예정 문서가 없습니다</div>")
+
+
+  } else {
+    jsonData = storage.dueList.due;
+
+    result = paging(jsonData.length, storage.currentPage, 14);
+
+    pageContainer = document.getElementsByClassName("pageContainer");
+    container = $(".listDiv");
+
+    header = [
+      {
+        title: "번호",
+        align: "center",
+      },
+      {
+        title: "결재 타입",
+        align: "center",
+      },
+      {
+        title: "문서종류",
+        align: "center",
+      },
+      {
+        title: "제목",
+        align: "left",
+      },
+      {
+        title: "작성자",
+        align: "center",
+      },
+      {
+        title: "작성일",
+        align: "center",
+      },
+    ];
+
+    for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+      disDate = dateDis(jsonData[i].created, jsonData[i].modified);
+      setDate = dateFnc(disDate);
+      let userName = storage.user[jsonData[i].writer].userName;
+      let appType = jsonData[i].appType;
+      if (appType == "0") {
+        appType = "검토";
+      } else if (appType == "1") {
+        appType = "합의";
+      } else if (appType == "2") {
+        appType = "결재";
+      } else if (appType == "3") {
+        appType = "수신";
+      } else {
+        appType = "참조";
+      }
+      str = [
+        {
+          setData: jsonData[i].docNo,
+        },
+        {
+          setData: appType,
+        },
+        {
+          setData: jsonData[i].form,
+        },
+        {
+          setData: jsonData[i].title,
+        },
+        {
+          setData: userName,
+        },
+        {
+          setData: setDate,
+        },
+      ];
+      fnc = "detailView(this)";
+      ids.push(jsonData[i].docNo);
+      data.push(str);
+    }
+
+    let pageNation = createPaging(
+      pageContainer[0],
+      result[3],
+      "pageMove",
+      "drawApproval",
+      result[0]
+    );
+    pageContainer[0].innerHTML = pageNation;
+    createGrid(container, header, data, ids, job, fnc);
+  }
 } // End of drawNoticeApproval()
 
 function detailView(obj) {
@@ -275,7 +310,7 @@ function getDetailView() {
           storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
         $("." + formId + subTitlesArr[i] + "_position")[j].value =
           storage.userRank[
-            $("." + formId + subTitlesArr[i] + "_position")[j].value
+          $("." + formId + subTitlesArr[i] + "_position")[j].value
           ][0];
       }
     }
@@ -517,48 +552,15 @@ function showPreAppModal() {
 }
 
 function closeModal(obj) {
-  let examine = [
-    {
-      name: "구민주",
-      status: "",
-      approved: "",
-      comment: "",
-    },
-    {
-      name: "이송현",
-      status: "",
-      approved: "",
-      comment: "",
-    },
-  ];
-
-  let approval = [
-    {
-      name: "이승우",
-      status: "",
-      approved: "",
-      comment: "",
-    },
-  ];
 
   if (obj.id == "quit") {
     $(".modal-wrap").hide();
-    // 체크된 것 초기화
+
     $("input:radio[name='type']").prop("checked", false);
   } else if (obj.id == "set") {
-    // let my = storage.my;
-    // let name = storage.user[my].userName;
-    // console.log(examine[0].name == name);
-    // for (let i = 0; i < examine.length; i++) {
-    //     if (examine[i].name == name) {
-    //         $(".examine_status:eq(" + i + ")").html($("input:radio[name='type']").val());
-    //         $(".examine_approved:eq(" + i + ")").html(getYmdSlash())
-    //         $(".examine_comment:eq(" + i + ")").html($(".preAppComment").val());
-    //     }
-    // }
 
     $(".modal-wrap").hide();
-    //if (storage.user[my].userName)
+
   }
 }
 
