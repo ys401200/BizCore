@@ -12,9 +12,9 @@ import org.apache.ibatis.annotations.Update;
 public interface NotesMapper {
     
     // 읽지 않은 메시지를 카운트하는 메서드
-    @Select("SELECT 'all' AS writer, CAST(COUNT(*) AS CHAR) AS ct FROM bizcore.notes WHERE deleted IS NULL AND compId = #{compId} AND reader = #{userNo} " +
+    @Select("SELECT 'all' AS writer, CAST(COUNT(*) AS CHAR) AS ct FROM bizcore.notes WHERE deleted IS NULL AND `read` IS NULL AND compId = #{compId} AND reader = #{userNo} " +
             "UNION ALL " +
-            "SELECT CAST(writer AS CHAR) AS writer, a.ct FROM (SELECT writer, CAST(COUNT(*) AS CHAR) AS ct FROM bizcore.notes WHERE deleted IS NULL AND compId = #{compId} AND reader = #{userNo} GROUP BY writer) a WHERE a.ct > 0")
+            "SELECT CAST(writer AS CHAR) AS writer, a.ct FROM (SELECT writer, CAST(COUNT(*) AS CHAR) AS ct FROM bizcore.notes WHERE deleted IS NULL AND `read` IS NULL AND compId = #{compId} AND reader = #{userNo} GROUP BY writer) a WHERE a.ct > 0")
     public List<HashMap<String, String>> getNewCount(@Param("compId") String compId, @Param("userNo") String userNo);
 
     // 특정 발신자와의 대화를 가져오는
