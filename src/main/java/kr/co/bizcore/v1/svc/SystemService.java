@@ -22,6 +22,7 @@ import java.util.Map;
 
 import kr.co.bizcore.v1.domain.CommonCode;
 import kr.co.bizcore.v1.domain.ConnUrl;
+import kr.co.bizcore.v1.domain.Customer;
 import kr.co.bizcore.v1.domain.Dept;
 import kr.co.bizcore.v1.domain.Product;
 import kr.co.bizcore.v1.domain.SimpleCustomer;
@@ -105,6 +106,48 @@ public class SystemService extends Svc {
 
         return result;
     } // End of  getCustomers()
+
+    // 일련번호를 받아서 해당 고객사를 전달하느 메서드
+    public Customer getCustomer(String compId, int no){        
+        Customer result = null;
+        result = commonMapper.getCustomeByNo(compId, no);
+        return result;
+    } // End of  getCustomers()
+
+    // 일련번호를 받아서 해당 고객사를 전달하느 메서드
+    public String getCustomerByNo(String compId, int no){        
+        Customer result = null;
+        result = commonMapper.getCustomeByNo(compId, no);
+        return result == null ? null : result.toJson();
+    } // End of  getCustomers()
+
+    // 사업자번호를 받아서 해당 고객사를 전달하느 메서드
+    public String getCustomerByTaxId(String compId, String taxId){        
+        Customer result = null;
+        result = commonMapper.getCustomeByTaxId(compId, taxId);
+        return result == null ? null : result.toJson();
+    } // End of  getCustomers()
+
+    // 고객사 정보를 추가하는 메서드
+    public int addCustomer(String compId, Customer customer){
+        int result = -1;
+        String sql =  null;
+        result = getNextNumberFromDB(compId, "customer");
+        customer.setNo(result);
+        sql = customer.createInsertQuery(null, compId);
+        result = executeSqlQuery(sql) > 0 ? result : -1;
+        return result;
+    }
+    // 고객사 정보를 수정하는 메서드
+    public int modifyCustomer(String compId, Customer customer){
+        int result = -1;
+        String sql =  null;
+        Customer ogn = commonMapper.getCustomeByNo(compId, result);
+        if(ogn == null) return -9999;
+        sql = ogn.createUpdateQuery(customer, null);
+        result = executeSqlQuery(sql) > 0 ? result : -1;
+        return result;
+    }
 
     public String getBasicInfo(String compId, String userNo){
         String result = null;
