@@ -87,4 +87,8 @@ public interface SystemMapper {
     // 부서코드 기준 부서명 가져오기
     @Select("SELECT org_title FROM swcore.swc_organiz WHERE org_code = #{deptId} AND compNo = (SELECT compno FROM swc_company WHERE compid = #{compId})")
     public String getDeptName(@Param("compId") String compId, @Param("deptId") String deptId);
+
+    // 직원 성별을 가져오는 메서드 / 디폴트 아바타 설별 구분용
+    @Select("SELECT gender FROM bizcore.users WHERE compId = #{compId} AND `no` = #{empNo}")
+    public Integer getEmployeeGender(@Param("compId") String compId, @Param("empNo") String empNo);
 }
