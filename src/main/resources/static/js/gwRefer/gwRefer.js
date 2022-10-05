@@ -11,7 +11,7 @@ $(document).ready(() => {
 
 // 참조 문서는 상세 조회가 가능하고 열람은 결재가 끝난 후에 참조/열람 문서함에서 열람 가능함
 function referDefault() {
-  
+
   $(".modal-wrap").hide();
   $("#gwSubTabTitle").html("참조/열람 대기 문서");
 
@@ -280,7 +280,7 @@ function getDetailView() {
           storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
         $("." + formId + subTitlesArr[i] + "_position")[j].value =
           storage.userRank[
-            $("." + formId + subTitlesArr[i] + "_position")[j].value
+          $("." + formId + subTitlesArr[i] + "_position")[j].value
           ][0];
       }
     }
@@ -555,5 +555,17 @@ function getYmdSlash(date) {
     (d.getSeconds() > 9
       ? d.getSeconds().toString()
       : "0" + d.getSeconds().toString())
+  );
+}
+function getYmdShortSlash(date) {
+  let d = new Date(date);
+  return (
+    (d.getFullYear() % 100) +
+    "/" +
+    (d.getMonth() + 1 > 9
+      ? (d.getMonth() + 1).toString()
+      : "0" + (d.getMonth() + 1)) +
+    "/" +
+    (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
   );
 }

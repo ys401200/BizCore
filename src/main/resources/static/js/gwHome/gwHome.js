@@ -10,7 +10,7 @@ $(document).ready(() => {
 });
 
 function drawGwDiv() {
- 
+
   $.ajax({
     url: "/api/gw/app/wait",
     method: "get",
@@ -32,29 +32,36 @@ function drawGwDiv() {
 }
 
 function drawWaitCard(typeList) {
+  console.log(typeList);
   let html = "";
   let types = ["wait", "due", "receive", "refer"];
   let targets = [".waitDiv", ".dueDiv", ".receiveDiv", ".referDiv"];
   for (let j = 0; j < types.length; j++) {
-    for (let i = 0; i < typeList[types[j]].length; i++) {
-      html +=
-        "<div class='waitCard' onClick='cardClick(this)' data-detail='" +
-        types[j] +
-        "!!!" +
-        typeList[types[j]][i].docNo +
-        "'><div>" +
-        typeList[types[j]][i].title +
-        "</div>" +
-        "<div class='subWaitCard'><div class='type'><div>결재타입</div><div>" +
-        typeList[types[j]][i].form +
-        "</div></div>" +
-        "<div class='writer'><div>기안자</div><div>" +
-        storage.user[typeList[types[j]][i].writer].userName +
-        "</div></div>" +
-        "<div class='created'><div>작성일</div><div>" +
-        getYmdSlash(typeList[types[j]][i].created) +
-        "</div></div></div></div>";
+    if (typeList[types[j]].length > 0) {
+      for (let i = 0; i < typeList[types[j]].length; i++) {
+        html +=
+          "<div class='waitCard' onClick='cardClick(this)' data-detail='" +
+          types[j] +
+          "!!!" +
+          typeList[types[j]][i].docNo +
+          "'><div>" +
+          typeList[types[j]][i].title +
+          "</div>" +
+          "<div class='subWaitCard'><div class='type'><div>결재타입</div><div>" +
+          typeList[types[j]][i].form +
+          "</div></div>" +
+          "<div class='writer'><div>기안자</div><div>" +
+          storage.user[typeList[types[j]][i].writer].userName +
+          "</div></div>" +
+          "<div class='created'><div>작성일</div><div>" +
+          getYmdSlash(typeList[types[j]][i].created) +
+          "</div></div></div></div>";
+
+      }
+    } else {
+      html += "<div class='defaultWaitCard'>대기 문서가 없습니다.</div>"
     }
+
 
     $(targets[j]).html(html);
     html = "";
