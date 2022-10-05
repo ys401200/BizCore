@@ -443,8 +443,6 @@ function getScheduleList() {
 					gridListLength = result.length;
 				}
 
-				console.log(gridListLength);
-			
 				for (let i = 0; i < gridListLength; i++) {
 					let job, title, writer, fromDate, fromSetDate, toDate, toSetDate, content;
 					

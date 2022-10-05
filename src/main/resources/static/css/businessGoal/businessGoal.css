@@ -1,0 +1,21 @@
+.goalContainer {
+	margin-top: 1%;
+	background: #FFFFFF;
+	overflow: auto;
+	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
+}
+
+.goalContainer > hr {
+	float: left;
+	border:2px solid #182f81;
+	height: 32px;
+	margin: 0;
+}
+
+.goalContainer > span {
+	font-weight: bolder;
+	font-size: 15px;
+	margin-left: 15px;
+	line-height: 40px;
+	color: #182f81;
+}

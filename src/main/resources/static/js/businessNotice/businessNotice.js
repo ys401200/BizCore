@@ -5,6 +5,7 @@ $(document).ready(() => {
 		$("#loadingDiv").hide();
 		$("#loadingDiv").loading("toggle");
 	}, 300);
+
 	getNoticeList();
 });
 
@@ -16,7 +17,6 @@ function getNoticeList() {
 	data = "";
 	type = "list";
 	crud.defaultAjax(url, method, data, type, noticeSuccessList, noticeErrorList);
-	
 } // End of getNoticeList()
 
 function drawNoticeList() {

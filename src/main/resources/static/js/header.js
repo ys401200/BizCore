@@ -3072,7 +3072,6 @@ function noteLiveBadge(){
 						badgeSpan = $("#badgeSpan");
 						spanBadgeLocation($("#myInfoMessageImg"), badgeSpan);
 						badgeSpan.css("display", "flex");
-						console.log($(".noteItemBadge"));
 					}, 300);
 				}
 			}
