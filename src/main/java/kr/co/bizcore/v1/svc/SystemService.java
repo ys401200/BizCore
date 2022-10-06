@@ -538,79 +538,115 @@ public class SystemService extends Svc {
         return productMapper.removeProduct(compId, no) > 0;
     } // End of removeProduct()
 
-    // 영업목표 가져오는 메서드
+    // 영업목표 가져오는 메서드  
     public String getSalesGoals(String compId, String userNo, int year){
-        String result = null, empNo = null, t1 = null, t2 = null;
-        String sql1 = "SELECT SUM(goal) FROM bizcore.sales_goals WHERE deleted IS NULL AND compId = ? AND `year` = ? AND `month` = ?"; // 회사 전체 합계 가져오는 쿼리
-        String sql2 = "SELECT userNo, `month`, goal FROM bizcore.sales_goals WHERE deleted IS NULL AND compId = ? AND year = ? AND userNo IN (SELECT DISTINCT user_no FROM bizcore.user_dept WHERE dept_id IN (WITH RECURSIVE CTE AS(SELECT org_code AS id, org_mcode AS parent FROM swcore.swc_organiz WHERE org_code IN (SELECT dept_id FROM bizcore.user_dept WHERE comp_id = ? AND user_no = ?) AND compno = (SELECT compno FROM swc_company WHERE compid = ?) UNION ALL SELECT org_code AS id, org_mcode AS parent FROM swcore.swc_organiz a INNER JOIN CTE ON a.org_mcode = CTE.id) SELECT id FROM CTE)) ORDER BY userNo, `month`";
+        String result = null, empNo = null, t1 = null, t2 = null;        
+        String sql1 = "SELECT dept_id AS dept FROM bizcore.user_dept WHERE comp_id  = ? AND user_no = ?";
+        String sql2 = "SELECT CAST(user_no AS CHAR) FROM bizcore.user_dept WHERE comp_id  = ? AND dept_id = ?";
+        String sql3 = "SELECT month, goal FROM bizcore.sales_goals WHERE deleted IS NULL AND compId = ? and userNo = ? AND year = ?";
+        String sql4 = "SELECT `month`, SUM(goal) FROM bizcore.sales_goals WHERE deleted IS NULL AND compId = ? AND `year` = ? GROUP BY `month`"; // 회사 전체 합계 가져오는 쿼리
         long[] company = new long[12], larr = null;
-        ArrayList<long[]> dept = new ArrayList<>();
-        ArrayList<String> emps = new ArrayList<>();
+        HashMap<String, HashMap<String, Long[]>> all = new HashMap<>();
+        HashMap<String, Long[]> dept = null;
+        Long[] emp = null;
+        Long each = null;
+        Object[] keyset1 = null;
+        Object[] keyset2 = null;
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
-        int x = 0, y = 0;
-        
+        int x = 0, y = 0, z = 0;
 
         try{
             conn = sqlSession.getConnection();
+            
+            // 사용자의 소속 부서를 가져온다
+            pstmt = conn.prepareStatement(sql1);
+            pstmt.setString(1, compId);
+            pstmt.setString(2, userNo);
+            rs = pstmt.executeQuery();
+            while(rs.next())    all.put(rs.getString(1), new HashMap<>());
+            rs.close();
+            pstmt.close();
 
-            // 회사 전체 목표금액 가져오기
-            for(x = 1 ; x <= 12 ; x++){
-                pstmt = conn.prepareStatement(sql1);
+            // 부서 아이디 기준 소속 부서원들의 사번을 가져온다
+            keyset1 = all.keySet().toArray();
+            for(Object o : keyset1){
+                pstmt = conn.prepareStatement(sql2);
                 pstmt.setString(1, compId);
-                pstmt.setInt(2, year);
-                pstmt.setInt(3, x);
+                pstmt.setString(2, (String)o);
                 rs = pstmt.executeQuery();
-                if(rs.next())   company[x - 1] = rs.getLong(1);
+                while(rs.next()){
+                    dept = all.get(o);
+                    dept.put(rs.getString(1), new Long[12]);
+                }
                 rs.close();
-                pstmt.close();   
+                pstmt.close();
             }
 
-            // 소속 부서원들의 목표금액 가져오기
-            pstmt = conn.prepareStatement(sql2);
+            // 사번 기준 계획을 가져와서 세팅한다
+            for(Object o : keyset1){
+                dept = all.get(o);
+                keyset2 = dept.keySet().toArray();
+                for(Object n : keyset2){
+                    pstmt = conn.prepareStatement(sql3);
+                    pstmt.setString(1, compId);
+                    pstmt.setString(2, (String)n);
+                    pstmt.setInt(3, year);
+                    pstmt.setInt(1, year);
+                    rs = pstmt.executeQuery();
+                    while(rs.next()){
+                        emp = dept.get(n);
+                        emp[rs.getInt(1)] = rs.getLong(2);
+                    }
+                    rs.close();
+                    pstmt.close();
+                }
+            }
+
+            // 회사 전체 합계를 가져온다
+            emp = new Long[12];
+            pstmt = conn.prepareStatement(sql4);
             pstmt.setString(1, compId);
             pstmt.setInt(2, year);
-            pstmt.setString(3, compId);
-            pstmt.setString(4, userNo);
-            pstmt.setString(5, compId);
             rs = pstmt.executeQuery();
-            while(rs.next()){
-                if(empNo == null || !rs.getString("userNo").equals(empNo)){
-                    larr = new long[12];
-                    dept.add(larr);
-                    empNo = rs.getString("userNo");
-                    emps.add(empNo);
-                }
-                larr[rs.getInt("month") - 1] = rs.getLong("goal");
-            }
-            rs.close();
-            pstmt.close();            
-            
+            while(rs.next())    emp[rs.getInt(1) - 1] = rs.getLong(2);
+
         }catch(SQLException e){e.printStackTrace();}
 
         // 회사 전체 목표 금액
         t1 = "[";
-        for(x = 0 ; x < 12 ; x++){
+        for(x = 0 ; x < emp.length ; x++){
             if(x > 0)   t1 += ",";
-            t1 += company[x];
+            t1 += (emp[x] == null ? 0 : emp[x]);
         }
         t1 += "]";
 
-        t2 = "{";
-        for(x = 0 ; x < dept.size() ; x++){
-            larr = dept.get(x);
-            empNo = emps.get(x);
-            if(x > 0)   t2 += ",";
-            t2 += ("\"" + empNo + "\":[");
-            for(y = 0 ; y < larr.length ; y++){
-                if(y > 0)   t2 += ",";
-                t2 += larr[y];
+        x = 0;
+        t2 = "";
+        for(Object o : keyset1){
+            t2 += ",";
+            y = 0;
+            t2 += ("\"" + ((String)o) + "\":{");
+            dept = all.get(o);
+            keyset2 = dept.keySet().toArray();
+            for(Object n : keyset2){
+                if(y == 0)  y++;
+                else    t2 += ",";
+                emp = dept.get(n);
+                t2 += ("\"" + ((String)n) + "\":[");
+                for(z = 0 ; z < emp.length ; z++){
+                    if(z > 0)  t2 += ",";
+                    t2 += emp[z];  
+                }
+                t2 += "]";
             }
-            t2 += "]";
+            t2 += "}";
         }
-        if(!t2.equals("{"))  t2 += ",";
-        result = t2 + "\"all\":" + t1 + "}";
+        t2 += "}";
+
+        
+        result = "{\"all\":" + t1 + t2;
         return result;
     } // End of getSalesGoals()
 
