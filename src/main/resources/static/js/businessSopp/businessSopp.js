@@ -82,61 +82,73 @@ function drawSoppList() {
 		}
 	];
 
-	for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
-		let soppType, contType, title, customer, endUser, employee, expectedSales, status;
-		
-		disDate = dateDis(jsonData[i].created, jsonData[i].modified);
-		setDate = dateFnc(disDate);
-
-		soppType = (jsonData[i].soppType === null || jsonData[i].soppType === "") ? "" : storage.code.etc[jsonData[i].soppType];
-		contType = (jsonData[i].contType === null || jsonData[i].contType === "") ? "" : storage.code.etc[jsonData[i].contType];
-		title = (jsonData[i].title === null || jsonData[i].title === "") ? "" : jsonData[i].title;
-		customer = (jsonData[i].customer === null || jsonData[i].customer == 0) ? "" : storage.customer[jsonData[i].customer].name;
-		endUser = (jsonData[i].endUser === null || jsonData[i].endUser == 0) ? "" : storage.customer[jsonData[i].endUser].name;
-		employee = (jsonData[i].employee === null || jsonData[i].employee == 0) ? "" : storage.user[jsonData[i].employee].userName;
-		expectedSales = (jsonData[i].expectedSales === null || jsonData[i].expectedSales == 0) ? 0 : numberFormat(jsonData[i].expectedSales);
-		status = (jsonData[i].status === null || jsonData[i].status === "") ? "" : storage.code.etc[jsonData[i].status];
-  
+	if(jsonData === ""){
 		str = [
 			{
-				"setData": jsonData[i].no,
+				"setData": undefined,
+				"col": 10,
 			},
-			{
-				"setData": soppType,
-			},
-			{
-				"setData": contType,
-			},
-			{
-				"setData": title,
-			},
-			{
-				"setData": customer,
-			},
-			{
-				"setData": endUser,
-			},
-			{
-				"setData": employee,
-			},
-			{
-				"setData": expectedSales,
-			},
-			{
-				"setData": status,
-			},
-			{
-				"setData": setDate,
-			}
 		];
-
-		fnc = "soppDetailView(this);";
-		ids.push(jsonData[i].no);
+		
 		data.push(str);
+	}else{
+		for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+			let soppType, contType, title, customer, endUser, employee, expectedSales, status;
+			
+			disDate = dateDis(jsonData[i].created, jsonData[i].modified);
+			setDate = dateFnc(disDate);
+	
+			soppType = (jsonData[i].soppType === null || jsonData[i].soppType === "") ? "" : storage.code.etc[jsonData[i].soppType];
+			contType = (jsonData[i].contType === null || jsonData[i].contType === "") ? "" : storage.code.etc[jsonData[i].contType];
+			title = (jsonData[i].title === null || jsonData[i].title === "") ? "" : jsonData[i].title;
+			customer = (jsonData[i].customer === null || jsonData[i].customer == 0) ? "" : storage.customer[jsonData[i].customer].name;
+			endUser = (jsonData[i].endUser === null || jsonData[i].endUser == 0) ? "" : storage.customer[jsonData[i].endUser].name;
+			employee = (jsonData[i].employee === null || jsonData[i].employee == 0) ? "" : storage.user[jsonData[i].employee].userName;
+			expectedSales = (jsonData[i].expectedSales === null || jsonData[i].expectedSales == 0) ? 0 : numberFormat(jsonData[i].expectedSales);
+			status = (jsonData[i].status === null || jsonData[i].status === "") ? "" : storage.code.etc[jsonData[i].status];
+	  
+			str = [
+				{
+					"setData": jsonData[i].no,
+				},
+				{
+					"setData": soppType,
+				},
+				{
+					"setData": contType,
+				},
+				{
+					"setData": title,
+				},
+				{
+					"setData": customer,
+				},
+				{
+					"setData": endUser,
+				},
+				{
+					"setData": employee,
+				},
+				{
+					"setData": expectedSales,
+				},
+				{
+					"setData": status,
+				},
+				{
+					"setData": setDate,
+				}
+			];
+	
+			fnc = "soppDetailView(this);";
+			ids.push(jsonData[i].no);
+			data.push(str);
+		}
+	
+		let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawSoppList", result[0]);
+		pageContainer[0].innerHTML = pageNation;
 	}
 
-	let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawSoppList", result[0]);
-	pageContainer[0].innerHTML = pageNation;
 	createGrid(container, header, data, ids, job, fnc);
 
 	let path = $(location).attr("pathname").split("/");
@@ -155,7 +167,7 @@ function drawSoppList() {
 		},
 	];
 
-	if(path[3] !== undefined){
+	if(path[3] !== undefined && jsonData !== ""){
 		let content = $(".gridContent[data-id=\"" + path[3] + "\"]");
 		soppDetailView(content);
 	}

@@ -264,41 +264,46 @@ function init(){
 				dataType: "json",
 				contentType: "text/plain",
 				success: (result) => {
+					console.log(result);
 					if(result.result === "ok"){
-						if(successFnc !== undefined){
-							let jsonData;
-							
-							if(type === "list"){
-								jsonData = cipher.decAes(result.data);
-								jsonData = JSON.parse(jsonData);
-								if(localStorage.getItem("searchList")){
-									let searchCategory, searchText, temp = [], resultArray = [];
-									searchCategory = localStorage.getItem("searchCategory");
-									searchText = localStorage.getItem("searchText");
-	
-									for(let i = 0; i < jsonData.length; i++){
-										temp.push(jsonData[i]);
-									}
-	
-									for(let t = 0; t < temp.length; t++){
-										if(temp[t][searchCategory].toString().indexOf(searchText) > -1){
-											resultArray.push(temp[t]);
+						if(result.data !== "null"){
+							if(successFnc !== undefined){
+								let jsonData;
+								
+								if(type === "list"){
+									jsonData = cipher.decAes(result.data);
+									jsonData = JSON.parse(jsonData);
+									if(localStorage.getItem("searchList")){
+										let searchCategory, searchText, temp = [], resultArray = [];
+										searchCategory = localStorage.getItem("searchCategory");
+										searchText = localStorage.getItem("searchText");
+		
+										for(let i = 0; i < jsonData.length; i++){
+											temp.push(jsonData[i]);
 										}
+		
+										for(let t = 0; t < temp.length; t++){
+											if(temp[t][searchCategory].toString().indexOf(searchText) > -1){
+												resultArray.push(temp[t]);
+											}
+										}
+		
+										successFnc(resultArray);
+									}else{
+										successFnc(jsonData);
 									}
-	
-									successFnc(resultArray);
-								}else{
+		
+									localStorage.clear();
+								}else if(type === "detail"){
+									jsonData = cipher.decAes(result.data);
+									jsonData = JSON.parse(jsonData);
 									successFnc(jsonData);
+								}else{
+									successFnc();
 								}
-	
-								localStorage.clear();
-							}else if(type === "detail"){
-								jsonData = cipher.decAes(result.data);
-								jsonData = JSON.parse(jsonData);
-								successFnc(jsonData);
-							}else{
-								successFnc();
 							}
+						}else{
+							successFnc("");
 						}
 					}
 				},
@@ -578,7 +583,11 @@ function createGrid(gridContainer, headerDataArray, dataArray, ids, job, fnc, id
 		gridHtml += "<div id='"+idStr+"_grid_"+i+"' class='gridContent grid_default_body_item' data-drag=\"true\" data-id='"+ids[i]+"' data-job='"+job[i]+"' onclick='"+fnc+"'>";
 		for(let t = 0; t <= dataArray[i].length; t++){
 			if(dataArray[i][t] !== undefined){
-				gridHtml += "<div class='gridContentItem'>"+dataArray[i][t].setData+"</div>";
+				if(dataArray[i][t].setData === undefined){
+					gridHtml += "<div class='gridContentItem' style=\"grid-column: span " + dataArray[i][t].col + "; text-align: center;\">데이터가 없습니다.</div>";	
+				}else{
+					gridHtml += "<div class='gridContentItem'>"+dataArray[i][t].setData+"</div>";
+				}
 			}
 		}
 		gridHtml += "</div>";

@@ -86,77 +86,89 @@ function drawContractList() {
 		},
 	];
 
-	for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
-		let salesType, contractType, title, endUser, contractAmount, profit, employee, startMaintenance, endMaintenance, saleDate;
-		
-		salesType = (jsonData[i].salesType === null || jsonData[i].salesType === "") ? "" : storage.code.etc[jsonData[i].salesType];
-		contractType = (jsonData[i].contractType === null || jsonData[i].contractType === "") ? "" : storage.code.etc[jsonData[i].contractType];
-		title = (jsonData[i].title === null || jsonData[i].title === "") ? "" : jsonData[i].title;
-		endUser = (jsonData[i].endUser === null || jsonData[i].endUser == 0) ? "" : storage.customer[jsonData[i].endUser].name;
-		contractAmount = (jsonData[i].contractAmount == 0 || jsonData[i].contractAmount === null) ? 0 : numberFormat(jsonData[i].contractAmount);
-		profit = (jsonData[i].profit == 0 || jsonData[i].profit === null) ? 0 : numberFormat(jsonData[i].profit);
-		employee = (jsonData[i].employee === null || jsonData[i].employee == 0) ? "" : storage.user[jsonData[i].employee].userName;
-		
-		if(contractType === "유지보수"){
-			disDate = dateDis(jsonData[i].startOfPaidMaintenance);
-			startMaintenance = dateFnc(disDate);
-	
-			disDate = dateDis(jsonData[i].endOfPaidMaintenance);
-			endMaintenance = dateFnc(disDate);
-		}else{
-			disDate = dateDis(jsonData[i].startOfFreeMaintenance);
-			startMaintenance = dateFnc(disDate);
-	
-			disDate = dateDis(jsonData[i].endOfFreeMaintenance);
-			endMaintenance = dateFnc(disDate);
-		}
-
-		disDate = dateDis(jsonData[i].saleDate);
-		saleDate = dateFnc(disDate);
-
+	if(jsonData === ""){
 		str = [
 			{
-				"setData": jsonData[i].no,
+				"setData": undefined,
+				"col": 11,
 			},
-			{
-				"setData": salesType,
-			},
-			{
-				"setData": contractType,
-			},
-			{
-				"setData": title,
-			},
-			{
-				"setData": endUser,
-			},
-			{
-				"setData": contractAmount,
-			},
-			{
-				"setData": profit,
-			},
-			{
-				"setData": employee,
-			},
-			{
-				"setData": startMaintenance,
-			},
-			{
-				"setData": endMaintenance,
-			},
-			{
-				"setData": saleDate,
-			}
 		];
-
-		fnc = "contractDetailView(this);";
-		ids.push(jsonData[i].no);
+		
 		data.push(str);
+	}else{
+		for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+			let salesType, contractType, title, endUser, contractAmount, profit, employee, startMaintenance, endMaintenance, saleDate;
+			
+			salesType = (jsonData[i].salesType === null || jsonData[i].salesType === "") ? "" : storage.code.etc[jsonData[i].salesType];
+			contractType = (jsonData[i].contractType === null || jsonData[i].contractType === "") ? "" : storage.code.etc[jsonData[i].contractType];
+			title = (jsonData[i].title === null || jsonData[i].title === "") ? "" : jsonData[i].title;
+			endUser = (jsonData[i].endUser === null || jsonData[i].endUser == 0) ? "" : storage.customer[jsonData[i].endUser].name;
+			contractAmount = (jsonData[i].contractAmount == 0 || jsonData[i].contractAmount === null) ? 0 : numberFormat(jsonData[i].contractAmount);
+			profit = (jsonData[i].profit == 0 || jsonData[i].profit === null) ? 0 : numberFormat(jsonData[i].profit);
+			employee = (jsonData[i].employee === null || jsonData[i].employee == 0) ? "" : storage.user[jsonData[i].employee].userName;
+			
+			if(contractType === "유지보수"){
+				disDate = dateDis(jsonData[i].startOfPaidMaintenance);
+				startMaintenance = dateFnc(disDate);
+		
+				disDate = dateDis(jsonData[i].endOfPaidMaintenance);
+				endMaintenance = dateFnc(disDate);
+			}else{
+				disDate = dateDis(jsonData[i].startOfFreeMaintenance);
+				startMaintenance = dateFnc(disDate);
+		
+				disDate = dateDis(jsonData[i].endOfFreeMaintenance);
+				endMaintenance = dateFnc(disDate);
+			}
+	
+			disDate = dateDis(jsonData[i].saleDate);
+			saleDate = dateFnc(disDate);
+	
+			str = [
+				{
+					"setData": jsonData[i].no,
+				},
+				{
+					"setData": salesType,
+				},
+				{
+					"setData": contractType,
+				},
+				{
+					"setData": title,
+				},
+				{
+					"setData": endUser,
+				},
+				{
+					"setData": contractAmount,
+				},
+				{
+					"setData": profit,
+				},
+				{
+					"setData": employee,
+				},
+				{
+					"setData": startMaintenance,
+				},
+				{
+					"setData": endMaintenance,
+				},
+				{
+					"setData": saleDate,
+				}
+			];
+	
+			fnc = "contractDetailView(this);";
+			ids.push(jsonData[i].no);
+			data.push(str);
+		}
+	
+		let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawContractList", result[0]);
+		pageContainer[0].innerHTML = pageNation;
 	}
 
-	let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawContractList", result[0]);
-	pageContainer[0].innerHTML = pageNation;
 	createGrid(contractContainer, header, data, ids, job, fnc);
 
 	let path = $(location).attr("pathname").split("/");
@@ -175,7 +187,7 @@ function drawContractList() {
 		},
 	];
 
-	if(path[3] !== undefined){
+	if(path[3] !== undefined && jsonData !== ""){
 		let content = $(".gridContent[data-id=\"" + path[3] + "\"]");
 		contractDetailView(content);
 	}

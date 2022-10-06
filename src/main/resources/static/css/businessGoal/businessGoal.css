@@ -19,3 +19,8 @@
 	line-height: 40px;
 	color: #182f81;
 }
+
+.goalContent {
+	display: grid;
+    grid-template-columns: repeat(14, 1fr);
+}

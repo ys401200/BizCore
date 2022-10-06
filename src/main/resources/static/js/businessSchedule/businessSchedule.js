@@ -13,10 +13,7 @@ $(document).ready(() => {
 
 function getScheduleList() {
 	let url, method, data, type, scheduleRange;
-
 	scheduleRange = $("#scheduleRange").val();
-
-	
 	url = "/api/schedule/calendar/" + scheduleRange;
 	method = "get";
 	data = "";
@@ -83,69 +80,81 @@ function drawScheduleList() {
 		},
 	];
 
-	for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
-		let job, title, customer, writer, fromDate, fromSetDate, toDate, toSetDate, place, content, type;
-		
-		job = (jsonData[i].job === null || jsonData[i].job === "" || jsonData[i].job === undefined) ? "" : jsonData[i].job;
-		
-		if(job === "sales"){
-			job = "영업일정";
-		}else if(job === "tech"){
-			job = "기술지원";
-		}else{
-			job = "기타일정";
-		}
-
-		title = (jsonData[i].title === null || jsonData[i].title === "" || jsonData[i].title === undefined) ? "" : jsonData[i].title;
-		customer = (jsonData[i].customer == 0 || jsonData[i].customer === null || jsonData[i].customer === undefined) ? "" : storage.customer[jsonData[i].customer].name;
-		writer = (jsonData[i].writer == 0 || jsonData[i].writer === null || jsonData[i].writer === undefined) ? "" : storage.user[jsonData[i].writer].userName;
-		place = (jsonData[i].place === null || jsonData[i].place === "" || jsonData[i].place === undefined) ? "" : jsonData[i].place;
-		content = (jsonData[i].content === null || jsonData[i].content === "" || jsonData[i].content === undefined) ? "" : jsonData[i].content;
-		type = (jsonData[i].type === null || jsonData[i].type === "" || jsonData[i].type === undefined) ? "" : storage.code.etc[jsonData[i].type];
-		
-		fromDate = dateDis(jsonData[i].from);
-		fromSetDate = dateFnc(fromDate);
-		
-		toDate = dateDis(jsonData[i].to);
-		toSetDate = dateFnc(toDate);
-
+	if(jsonData === ""){
 		str = [
 			{
-				"setData": jsonData[i].no,
-			},
-			{
-				"setData": job,
-			},
-			{
-				"setData": title,
-			},
-			{
-				"setData": fromSetDate + " ~ " + toSetDate,
-			},
-			{
-				"setData": customer,
-			},
-			{
-				"setData": writer,
-			},
-			{
-				"setData": place,
-			},
-			{
-				"setData": type,
-			},
-			{
-				"setData": content,
+				"setData": undefined,
+				"col": 9,
 			},
 		];
-
-		fnc = "scheduleDetailView(this);";
-		ids.push(jsonData[i].no);
-		dataJob.push(jsonData[i].job);
+		
 		data.push(str);
+	}else{
+		for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+			let job, title, customer, writer, fromDate, fromSetDate, toDate, toSetDate, place, content, type;
+			
+			job = (jsonData[i].job === null || jsonData[i].job === "" || jsonData[i].job === undefined) ? "" : jsonData[i].job;
+			
+			if(job === "sales"){
+				job = "영업일정";
+			}else if(job === "tech"){
+				job = "기술지원";
+			}else{
+				job = "기타일정";
+			}
+	
+			title = (jsonData[i].title === null || jsonData[i].title === "" || jsonData[i].title === undefined) ? "" : jsonData[i].title;
+			customer = (jsonData[i].customer == 0 || jsonData[i].customer === null || jsonData[i].customer === undefined) ? "" : storage.customer[jsonData[i].customer].name;
+			writer = (jsonData[i].writer == 0 || jsonData[i].writer === null || jsonData[i].writer === undefined) ? "" : storage.user[jsonData[i].writer].userName;
+			place = (jsonData[i].place === null || jsonData[i].place === "" || jsonData[i].place === undefined) ? "" : jsonData[i].place;
+			content = (jsonData[i].content === null || jsonData[i].content === "" || jsonData[i].content === undefined) ? "" : jsonData[i].content;
+			type = (jsonData[i].type === null || jsonData[i].type === "" || jsonData[i].type === undefined) ? "" : storage.code.etc[jsonData[i].type];
+			
+			fromDate = dateDis(jsonData[i].from);
+			fromSetDate = dateFnc(fromDate);
+			
+			toDate = dateDis(jsonData[i].to);
+			toSetDate = dateFnc(toDate);
+	
+			str = [
+				{
+					"setData": jsonData[i].no,
+				},
+				{
+					"setData": job,
+				},
+				{
+					"setData": title,
+				},
+				{
+					"setData": fromSetDate + " ~ " + toSetDate,
+				},
+				{
+					"setData": customer,
+				},
+				{
+					"setData": writer,
+				},
+				{
+					"setData": place,
+				},
+				{
+					"setData": type,
+				},
+				{
+					"setData": content,
+				},
+			];
+	
+			fnc = "scheduleDetailView(this);";
+			ids.push(jsonData[i].no);
+			dataJob.push(jsonData[i].job);
+			data.push(str);
+		}
+		let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawScheduleList", result[0]);
+		pageContainer[0].innerHTML = pageNation;
 	}
-	let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawScheduleList", result[0]);
-	pageContainer[0].innerHTML = pageNation;
+
 	createGrid(container, header, data, ids, dataJob, fnc);
 
 	let path = $(location).attr("pathname").split("/");
@@ -164,7 +173,7 @@ function drawScheduleList() {
 		},
 	];
 
-	if(path[3] !== undefined){
+	if(path[3] !== undefined && jsonData !== ""){
 		let content = $(".gridContent[data-id=\"" + path[3] + "\"]");
 		scheduleDetailView(content);
 	}

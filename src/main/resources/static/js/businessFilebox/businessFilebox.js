@@ -57,33 +57,45 @@ function drawFileBoxList() {
 		}
 	];
 
-	for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
-		disDate = dateDis(jsonData[i].created, jsonData[i].modified);
-		setDate = dateFnc(disDate);
-		let userName = storage.user[jsonData[i].writer].userName;
-
+	if(jsonData === ""){
 		str = [
 			{
-				"setData": jsonData[i].no,
+				"setData": undefined,
+				"col": 4,
 			},
-			{
-				"setData": jsonData[i].title,
-			},
-			{
-				"setData": userName,
-			},
-			{
-				"setData": setDate,
-			}
-		]
-
-		fnc = "fileBoxDetailView(this)";
-		ids.push(jsonData[i].no);
+		];
+		
 		data.push(str);
+	}else{
+		for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+			disDate = dateDis(jsonData[i].created, jsonData[i].modified);
+			setDate = dateFnc(disDate);
+			let userName = storage.user[jsonData[i].writer].userName;
+	
+			str = [
+				{
+					"setData": jsonData[i].no,
+				},
+				{
+					"setData": jsonData[i].title,
+				},
+				{
+					"setData": userName,
+				},
+				{
+					"setData": setDate,
+				}
+			]
+	
+			fnc = "fileBoxDetailView(this)";
+			ids.push(jsonData[i].no);
+			data.push(str);
+		}
+
+		let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawFileBoxList", result[0]);
+		pageContainer[0].innerHTML = pageNation;
 	}
 
-	let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawFileBoxList", result[0]);
-	pageContainer[0].innerHTML = pageNation;
 	createGrid(container, header, data, ids, job, fnc);
 
 	let menu = [

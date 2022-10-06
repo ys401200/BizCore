@@ -6,28 +6,28 @@ $(document).ready(() => {
 		$("#loadingDiv").loading("toggle");
 	}, 300);
 
-	getNoticeList();
+	getCustomerList();
 });
 
 // API 서버에서 공지사항 리스트를 가져오는 함수
-function getNoticeList() {
+function getCustomerList() {
 	let url, method, data, type; 
-	url = "/api/notice";
+	url = "/api/system/customer";
 	method ="get"
 	data = "";
 	type = "list";
-	crud.defaultAjax(url, method, data, type, noticeSuccessList, noticeErrorList);
-} // End of getNoticeList()
+	crud.defaultAjax(url, method, data, type, customerSuccessList, customerErrorList);
+} // End of getCustomerList()
 
-function drawNoticeList() {
+function drawCustomerList() {
 	let container, result, jsonData, job, header = [], data = [], ids = [], disDate, setDate, str, fnc;
 
-	if (storage.noticeList === undefined) {
-		msg.set("등록된 공지사항이 없습니다");
+	if (storage.customerList === undefined) {
+		msg.set("등록된 거래처가 없습니다");
 	}
 	else {
 		if(storage.searchDatas === undefined){
-			jsonData = storage.noticeList;
+			jsonData = storage.customerList;
 		}else{
 			jsonData = storage.searchDatas;
 		}
@@ -36,7 +36,7 @@ function drawNoticeList() {
 	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 
 	pageContainer = document.getElementsByClassName("pageContainer");
-	container = $(".gridNoticeList");
+	container = $(".gridCustomerList");
 
 	header = [
 		{
@@ -57,52 +57,40 @@ function drawNoticeList() {
 		}
 	];
 
-	if(jsonData === ""){
+	for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+		disDate = dateDis(jsonData[i].created, jsonData[i].modified);
+		setDate = dateFnc(disDate);
+		let userName = storage.user[jsonData[i].writer].userName;
+
 		str = [
 			{
-				"setData": undefined,
-				"col": 4,
+				"setData": jsonData[i].no,
 			},
-		];
-		
+			{
+				"setData": jsonData[i].title,
+			},
+			{
+				"setData": userName,
+			},
+			{
+				"setData": setDate,
+			}
+		]
+
+		fnc = "customerDetailView(this)";
+		ids.push(jsonData[i].no);
 		data.push(str);
-	}else{
-		for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
-			disDate = dateDis(jsonData[i].created, jsonData[i].modified);
-			setDate = dateFnc(disDate);
-			let userName = storage.user[jsonData[i].writer].userName;
-	
-			str = [
-				{
-					"setData": jsonData[i].no,
-				},
-				{
-					"setData": jsonData[i].title,
-				},
-				{
-					"setData": userName,
-				},
-				{
-					"setData": setDate,
-				}
-			]
-	
-			fnc = "noticeDetailView(this)";
-			ids.push(jsonData[i].no);
-			data.push(str);
-		}
-	
-		let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawNoticeList", result[0]);
-		pageContainer[0].innerHTML = pageNation;
 	}
 
+	let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawCustomerList", result[0]);
+	pageContainer[0].innerHTML = pageNation;
 	createGrid(container, header, data, ids, job, fnc);
 
 	let path = $(location).attr("pathname").split("/");
 	let menu = [
 		{
 			"keyword": "add",
-			"onclick": "noticeInsertForm();"
+			"onclick": "customerInsertForm();"
 		},
 		{
 			"keyword": "notes",
@@ -114,48 +102,48 @@ function drawNoticeList() {
 		},
 	];
 
-	if(path[3] !== undefined && jsonData !== null){
+	if(path[3] !== undefined){
 		let content = $(".gridContent[data-id=\"" + path[3] + "\"]");
-		noticeDetailView(content);
+		customerDetailView(content);
 	}
 
-	plusMenuSelect(menu);
-}// End of drawNoticeList()
+	plusMenuSelect(menu); rr
+}// End of drawCustomerList()
 
-function noticeDetailView(e) {// 선택한 그리드의 글 번호 받아오기 
+function customerDetailView(e) {// 선택한 그리드의 글 번호 받아오기 
 	let id, url, method, data, type;
 	storage.gridContent = $(e);
 
 	id = $(e).data("id");
-	url = "/api/notice/" + id;
+	url = "/api/customer/" + id;
 	method = "get";
 	data = "";
 	type = "detail";
 
-	crud.defaultAjax(url, method, data, type, noticeSuccessView, noticeErrorView);
-} // End of noticeDetailView()
+	crud.defaultAjax(url, method, data, type, customerSuccessView, customerErrorView);
+} // End of customerDetailView()
 
-function noticeSuccessList(result){
-	storage.noticeList = result;
+function customerSuccessList(result){
+	storage.customerList = result;
 
 	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined){
-		window.setTimeout(drawNoticeList, 600);
+		window.setTimeout(drawCustomerList, 600);
 		window.setTimeout(addSearchList, 600);
 		window.setTimeout(searchContainerSet, 600);
 	}else{
-		window.setTimeout(drawNoticeList, 200);
+		window.setTimeout(drawCustomerList, 200);
 		window.setTimeout(addSearchList, 200);
 		window.setTimeout(searchContainerSet, 200);
 	}
 }
 
-function noticeErrorList(){
+function customerErrorList(){
 	alert("에러");
 }
 
-function noticeSuccessView(result){
+function customerSuccessView(result){
 	let html = "", title, content, writer, dataArray, disDate, setDate, notIdArray;
-	storage.detailNoticeNo = result.no;
+	storage.detailCustomerNo = result.no;
 
 	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
 	content = (result.content === null || result.content === "" || result.content === undefined) ? "" : result.content;
@@ -201,15 +189,15 @@ function noticeSuccessView(result){
 		let menu = [
 			{
 				"keyword": "add",
-				"onclick": "noticeInsertForm();"
+				"onclick": "customerInsertForm();"
 			},
 			{
 				"keyword": "edit",
-				"onclick": "enableDisabled(this, \"noticeUpdate();\", \"" + notIdArray + "\");"
+				"onclick": "enableDisabled(this, \"customerUpdate();\", \"" + notIdArray + "\");"
 			},
 			{
 				"keyword": "delete",
-				"onclick": "noticeDelete(" + result.no + ");"
+				"onclick": "customerDelete(" + result.no + ");"
 			},
 		];
 
@@ -220,11 +208,11 @@ function noticeSuccessView(result){
 	}, 100)
 }
 
-function noticeErrorView(){
+function customerErrorView(){
 	alert("에러");
 }
 
-function noticeInsertForm(){
+function customerInsertForm(){
 	let html, dataArray;
 
 	dataArray = [
@@ -254,7 +242,7 @@ function noticeInsertForm(){
 	modal.body.css("max-height", "800px");
 	modal.confirm.text("등록");
 	modal.close.text("취소");
-	modal.confirm.attr("onclick", "noticeInsert();");
+	modal.confirm.attr("onclick", "customerInsert();");
 	modal.close.attr("onclick", "modal.hide();");
 
 	setTimeout(() => {
@@ -265,7 +253,7 @@ function noticeInsertForm(){
 	}, 100);
 }
 
-function noticeInsert(){
+function customerInsert(){
 	let title, content, writer, data;
 
 	title = $("#title").val();
@@ -273,7 +261,7 @@ function noticeInsert(){
 	writer = $("#writer");
 	writer = dataListFormat(writer.attr("id"), writer.val());
 
-	url = "/api/notice";
+	url = "/api/customer";
 	method = "post";
 	data = {
 		"title": title,
@@ -285,19 +273,19 @@ function noticeInsert(){
 	data = JSON.stringify(data);
 	data = cipher.encAes(data);
 
-	crud.defaultAjax(url, method, data, type, noticeSuccessInsert, noticeErrorInsert);
+	crud.defaultAjax(url, method, data, type, customerSuccessInsert, customerErrorInsert);
 }
 
-function noticeSuccessInsert(){
+function customerSuccessInsert(){
 	alert("등록완료");
 	location.reload();
 }
 
-function noticeErrorInsert(){
+function customerErrorInsert(){
 	alert("등록에러");
 }
 
-function noticeUpdate(){
+function customerUpdate(){
 	let title, content, writer;
 
 	title = $("#title").val();
@@ -305,7 +293,7 @@ function noticeUpdate(){
 	writer = $("#writer");
 	writer = dataListFormat(writer.attr("id"), writer.val());
 
-	url = "/api/notice/" + storage.detailNoticeNo;
+	url = "/api/customer/" + storage.detailCustomerNo;
 	method = "put";
 	data = {
 		"title": title,
@@ -317,39 +305,39 @@ function noticeUpdate(){
 	data = JSON.stringify(data);
 	data = cipher.encAes(data);
 
-	crud.defaultAjax(url, method, data, type, noticeSuccessUpdate, noticeErrorUpdate);
+	crud.defaultAjax(url, method, data, type, customerSuccessUpdate, customerErrorUpdate);
 }
 
-function noticeSuccessUpdate(){
+function customerSuccessUpdate(){
 	alert("수정완료");
 	location.reload();
 }
 
-function noticeErrorUpdate(){
+function customerErrorUpdate(){
 	alert("수정에러");
 }
 
-function noticeDelete(no){
+function customerDelete(no){
 	let url, method, data, type;
 
 	if(confirm("정말로 삭제하시겠습니까??")){
-		url = "/api/notice/" + no;
+		url = "/api/customer/" + no;
 		method = "delete";
 		data = "";
 		type = "delete";
 	
-		crud.defaultAjax(url, method, data, type, noticeSuccessDelete, noticeErrorDelete);
+		crud.defaultAjax(url, method, data, type, customerSuccessDelete, customerErrorDelete);
 	}else{
 		return false;
 	}
 }
 
-function noticeSuccessDelete(){
+function customerSuccessDelete(){
 	alert("삭제완료");
 	location.reload();
 }
 
-function noticeErrorDelete(){
+function customerErrorDelete(){
 	alert("삭제에러");
 }
 
@@ -357,19 +345,19 @@ function searchInputKeyup(){
 	let searchAllInput;
 	searchAllInput = $("#searchAllInput").val();
 
-	storage.searchDatas = searchDataFilter(storage.noticeList, searchAllInput, "input");
-	drawNoticeList();
+	storage.searchDatas = searchDataFilter(storage.customerList, searchAllInput, "input");
+	drawCustomerList();
 }
 
 function addSearchList(){
 	storage.searchList = [];
 
-	for(let i = 0; i < storage.noticeList.length; i++){
+	for(let i = 0; i < storage.customerList.length; i++){
 		let no, title, writer, disDate, setDate;
-		no = storage.noticeList[i].no;
-		title = storage.noticeList[i].title;
-		writer = (storage.noticeList[i].writer === null || storage.noticeList[i].writer == 0) ? "" : storage.user[storage.noticeList[i].writer].userName;
-		disDate = dateDis(storage.noticeList[i].created, storage.noticeList[i].modified);
+		no = storage.customerList[i].no;
+		title = storage.customerList[i].title;
+		writer = (storage.customerList[i].writer === null || storage.customerList[i].writer == 0) ? "" : storage.user[storage.customerList[i].writer].userName;
+		disDate = dateDis(storage.customerList[i].created, storage.customerList[i].modified);
 		setDate = parseInt(dateFnc(disDate).replaceAll("-", ""));
 		storage.searchList.push("#" + no + "#" + title + "#" + writer + "#created" + setDate);
 	}
@@ -386,7 +374,7 @@ function searchSubmit(){
 
 	for(let i = 0; i < searchValues.length; i++){
 		if(searchValues[i] !== ""){
-			let tempArray = searchDataFilter(storage.noticeList, searchValues[i], "multi");
+			let tempArray = searchDataFilter(storage.customerList, searchValues[i], "multi");
 			
 			for(let t = 0; t < tempArray.length; t++){
 				dataArray.push(tempArray[t]);
@@ -396,7 +384,7 @@ function searchSubmit(){
 		}
 	}
 
-	resultArray = searchMultiFilter(eachIndex, dataArray, storage.noticeList);
+	resultArray = searchMultiFilter(eachIndex, dataArray, storage.customerList);
 	
 	storage.searchDatas = resultArray;
 
@@ -405,5 +393,5 @@ function searchSubmit(){
 		return false;
 	}
 	
-	drawNoticeList();
+	drawCustomerList();
 }
