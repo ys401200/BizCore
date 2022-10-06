@@ -938,18 +938,54 @@ function reportInsert() {
     appLine.push([4, $("." + formId + "_refer")[i].dataset.detail]);
   }
 
+
+  let fnc, type, start, end;
+
+
+  if (formId == "doc_Form_leave") {
+    fnc = "hr"
+    type = "leave"
+    start = new Date($("#" + formId + "_from").val() + " " + $("#" + formId + "_fromTime").val());
+    end = new Date($("#" + formId + "_to").val() + " " + $("#" + formId + "_toTime").val());
+  } else if (formId == "doc_Form_extension") {
+    fnc = "hr"
+    start = new Date($("#" + formId + "_from").val() + " " + $("#" + formId + "_fromTime").val());
+    end = new Date($("#" + formId + "_to").val() + " " + $("#" + formId + "_toTime").val());
+
+    if ($("#" + formId + "_type").val() == "연장근무") {
+      type = "overTime";
+    } else if ($("#" + formId + "_type").val() == "휴일근무") {
+      type = "holidayWork";
+    }
+  }
+
+
+  let related = {
+    "fnc": fnc,
+    "type": type,
+    "start": start,
+    "end": end,
+    "parent": null,
+    "prev": null,
+    "next": null,
+    "children": null
+  }
+
+
+
   let data = {
-    title: title,
-    sopp: soppResult + "",
-    dept: dept,
-    customer: cusResult + "",
-    attached: storage.attachedList === undefined ? [] : storage.attachedList,
-    content: content,
-    appLine: appLine,
-    appDoc: appDoc,
-    formId: formId,
-    readable: readable,
-    temp: temp,
+    "title": title,
+    "sopp": soppResult + "",
+    "dept": dept,
+    "customer": cusResult + "",
+    "attached": storage.attachedList === undefined ? [] : storage.attachedList,
+    "content": content,
+    "appLine": appLine,
+    "appDoc": appDoc,
+    "formId": formId,
+    "readable": readable,
+    "temp": temp,
+    "related": related
   };
   console.log(data);
   data = JSON.stringify(data);
@@ -958,16 +994,18 @@ function reportInsert() {
   if ($(".createLineBtn").css("display") == "none") {
     alert("결재 문서 양식을 선택하세요");
   } else if (
-    formId != "doc_Form_Pur" &&
-    detailType == undefined &&
-    formId != "doc_Form_Dip" &&
-    detailType == undefined
+    formId != "doc_Form_Pur" && detailType == undefined && formId != "doc_Form_Dip" && detailType == undefined &&
+    formId != "doc_Form_leave" && detailType == undefined && formId != "doc_Form_extension" && detailType == undefined
   ) {
     alert("결재문서 상세 타입을 선택하세요");
   } else if (title == "") {
     alert("제목을 입력하세요");
   } else if ($("#" + formId + "_line").html() == "결재선") {
     alert("결재선을 생성하세요");
+  } else if ((formId == "doc_Form_leave" || formId == "doc_Form_extension") && $("#" + formId + "_type").val() == "") {
+    alert("종류를 선택하세요");
+  } else if ((formId == "doc_Form_leave" || formId == "doc_Form_extension") && (($("#" + formId + "_from").val() == "" || $("#" + formId + "_to").val() == "" || $("#" + formId + "_fromTime").val() == "" || $("#" + formId + "_toTime").val() == ""))) {
+    alert("기간을 설정하세요");
   } else {
     $.ajax({
       url: "/api/gw/app/doc",
