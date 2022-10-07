@@ -654,7 +654,7 @@ public class SystemService extends Svc {
     // 영업목표를 설정하는 메서드 / 소속 부서원들만 수정 가능
     public String setSalesGoal(String compId, String userNo, int year, int empNo, long[] goals){
         String result = null;
-        String sql1 = "SELECT count(*) FROM (SELECT DISTINCT user_no FROM bizcore.user_dept WHERE dept_id IN (WITH RECURSIVE CTE AS(SELECT org_code AS id, org_mcode AS parent FROM swcore.swc_organiz WHERE org_code IN (SELECT dept_id FROM bizcore.user_dept WHERE comp_id = :? AND user_no = ?) AND compno = (SELECT compno FROM swc_company WHERE compid = ?) UNION ALL SELECT org_code AS id, org_mcode AS parent FROM swcore.swc_organiz a INNER JOIN CTE ON a.org_mcode = CTE.id) SELECT id FROM CTE)"; // 권한검증 쿼리
+        String sql1 = "SELECT count(*) FROM (SELECT DISTINCT user_no FROM bizcore.user_dept WHERE dept_id IN (WITH RECURSIVE CTE AS(SELECT org_code AS id, org_mcode AS parent FROM swcore.swc_organiz WHERE org_code IN (SELECT dept_id FROM bizcore.user_dept WHERE comp_id = ? AND user_no = ?) AND compno = (SELECT compno FROM swc_company WHERE compid = ?) UNION ALL SELECT org_code AS id, org_mcode AS parent FROM swcore.swc_organiz a INNER JOIN CTE ON a.org_mcode = CTE.id) SELECT id FROM CTE)"; // 권한검증 쿼리
         String sql2 = "SELECT month FROM bizcore.sales_goals WHERE deleted IS NULL AND compId = ? AND userNo = ? AND `year` = ?";
         String sql3 = "UPDATE bizcore.sales_goals SET goal = ?, modified = NOW() WHERE deleted IS NULL compId = ? AND userNo = ? AND `year` = ? AND `month` = ?";
         String sql4 = "INSERT INTO bizcore.sales_goals(compId, userNo, `year`, `month`, goal) VALUES(?, ?, ?, ?, ?)";

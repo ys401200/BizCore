@@ -1,8 +1,8 @@
 .goalContainer {
-	margin-top: 1%;
 	background: #FFFFFF;
 	overflow: auto;
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
+    max-height: 80%;
 }
 
 .goalContainer > hr {
@@ -20,7 +20,82 @@
 	color: #182f81;
 }
 
-.goalContent {
+.goalContent{
+    padding: 10px;
+}
+
+.goalGridHeader,
+.goalBody,
+.goalBodyMonthContents{
 	display: grid;
-    grid-template-columns: repeat(14, 1fr);
+    grid-template-columns: 12% 6% 6% 6% 6% 6% 6% 6% 6% 6% 6% 6% 6% 15%;
+}
+
+.goalGridHeader > div{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+}
+
+.goalGridHeader > div:first-child{
+    border: 1px solid #e9ecef;
+}
+
+.goalGridHeader > div:not(:first-child){
+    border-top: 1px solid #e9ecef;
+    border-right: 1px solid #e9ecef;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.goalGridBody > .goalBody > div{
+    word-break: break-all;
+    padding:5px;
+}
+
+.goalGridBody > .goalBody .goalBodyUserTotal{
+    display: flex;
+    align-items: center;
+    justify-content: right;
+}
+
+.goalGridBody > div[class^="goalBody"] .goalBodyUser{
+    border: 1px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.goalGridBody > .goalBody > div:not(.goalBodyUser){
+    border: 1px solid #e9ecef;
+}
+
+.goalGridBody > .goalBody > input{
+    width: 80%;
+    text-align: right;
+    border: 1px solid #000;
+    padding: 5px;
+    font-size: 0.7rem;
+}
+
+.goalBodyMonthContents > div{
+    word-break: break-all;
+    padding:5px;
+}
+
+.goalBodyMonthContents > div:first-child{
+    border: 1px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+}
+
+.goalBodyMonthContents > div:not(:first-child){
+    border-top: 1px solid #e9ecef;
+    border-right: 1px solid #e9ecef;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: right;
 }
