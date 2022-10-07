@@ -2,6 +2,7 @@ let cipher, msg, apiServer, modal, storage, fileDataArray = [], removeDataArray 
 storage = {};
 
 function init(){
+	let nextStep;
 	setTimeout(() => {
 		$("#loadingDiv").loading({
 			onStart: function(loading) {
@@ -360,6 +361,13 @@ function init(){
 	}
 
 	noteLiveUpdate();
+
+	nextStep = function(){
+		if(isInit())	prepare();
+		else			window.setTimeout(nextStep,50);
+	}
+
+	if(prepare !== undefined)	window.setTimeout(nextStep,50);
 }
 
 // 위젯 관련 세팅 및 기본설정
@@ -519,6 +527,7 @@ function isInit(){
 	if(storage.user === undefined) 		return false;
 	if(storage.userRank === undefined) 	return false;
 	if(storage.my === undefined) 		return false;
+	if(storage.personalize === undefined)	return false;
 	return true;
 } // End of isInit()()
 
