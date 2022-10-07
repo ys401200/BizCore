@@ -10,43 +10,8 @@ $(document).ready(() => {
 });
 
 function getformList() {
-
-  // $(".ContentDiv").html(
-  //   "<div class='gwWriteBtns'></div><div class='selector'>d</div><div class='selector'>d</div><div class='selector'>d</div>"
-  // );
-
-  // $(".gwWriteBtns").html(
-  //   "<button type='button' onclick='reportInsert()' class='writeBtn'>기안 하기</button> <button class='saveBtn' type='button' onclick='tempSave()' disabled>임시 저장</button>"
-  // );
-
-  // 기본설정
-
-  // $(".selector:first").html(
-  //   "<div>기본 설정</div><div class='formDetail'><div>결재양식</div><div class='formListDiv'></div><button type='button' class='formSelectbtn' onclick='selectForm()'>선택</button><input type='hidden' class='formNumHidden'/></div>" +
-  //   "<div class='formDetail'><div>열람권한</div><div><label><input type='radio' name='authority' value='dept' checked  />기안자 소속 부서 포함</label><label><input type='radio' name='authority' value='none' />권한 설정 없음</label></div></div>"
-  // );
-
-
-  // $(".selector:first").html(
-  //   "<div>기본 설정</div><div><div class='formDetail'><div>결재양식</div><div class='formListDiv'></div><button type='button' class='formSelectbtn' onclick='selectForm()'>선택</button><input type='hidden' class='formNumHidden'/></div>" +
-  //   "<div class='formDetail'><div>열람권한</div><div><label><input type='radio' name='authority' value='dept' checked  />기안자 소속 부서 포함</label><label><input type='radio' name='authority' value='none' />권한 설정 없음</label></div></div>"
-  // );
-
-
-  // $(".selector:first")
-  //   .next()
-  //   .html(
-  //     "<div>결재선 <div class='guide'> 결재 양식을 선택하면 결재선 생성을 할 수 있습니다.</div> <button class='createLineBtn' onclick='showModal()'>결재선생성</button></div><div class='modal-wrap'><div class='gwModal'></div></div>"
-  //   );
-
-  // let lastHtml =
-  //   "<div>상세 입력 <div class='guide'> 결재 양식을 선택하면 상세 입력을 할 수 있습니다.</div></div><div class='insertedDetail'><div class='reportInsertForm'></div><div class='referContainer'><div>참조</div></div><div class='fileDetail'>";
-
-  // // lastHtml += "<div>파일첨부</div><div class='filebtnContainer'><input type='file' class='gwFileInput' onchange='drawSelectedFileList(this)' /><div class='insertedFileList'></div></div></div></div>"
-  // lastHtml +=
-  //   "<div>파일첨부</div><div class='filebtnContainer'><input type='file' multiple id='attached' name='attached[]' onchange='docFileChange()' /><div class='filePreview'></div></div></div></div>";
-
-  // $(".selector:first").next().next().html(lastHtml);
+  let dept = (storage.dept.dept[storage.user[storage.my].deptId].deptName).split(" ")[1];
+  $(".setWriter").html(dept + "&nbsp" + storage.user[storage.my].userName)
 
   let url = "/api/gw/form";
 

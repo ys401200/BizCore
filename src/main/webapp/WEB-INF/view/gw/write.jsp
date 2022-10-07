@@ -34,7 +34,7 @@
                     </div>
                     <div>
                       <div>작성자</div>
-                      <div>누구누구</div>
+                      <div class="setWriter"></div>
                     </div>
                   </div>
 
