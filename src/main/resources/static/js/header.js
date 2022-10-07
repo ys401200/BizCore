@@ -528,11 +528,11 @@ function bodyTopPageClick(e){
 	$("#sideMenu").find("#" + id).attr("class", "active");
 
 	if(id === "business"){
-		$("#sideMenu").attr("style", "background-color: #2147b1;");
+		$("#sideMenu").attr("style", "background-color: #3e3e9e;");
 	}else if(id === "gw"){
-		$("#sideMenu").attr("style", "background-color: #ff5377;");
+		$("#sideMenu").attr("style", "background-color: #425da8;");
 	}else if(id === "accounting"){
-		$("#sideMenu").attr("style", "background-color: #31cca2;");
+		$("#sideMenu").attr("style", "background-color: #406c92;");
 	}
 }
 

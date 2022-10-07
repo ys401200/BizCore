@@ -1,7 +1,7 @@
 @charset "UTF-8";
 
 #sideMenu{
-	background-color:#2147b1;
+	background-color:#3e3e9e;
 	width: 172px;
 	height: 100%;
 	box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
@@ -44,7 +44,7 @@
 }
 
 #sideMenu ul li a.active{
-	background-color: #12338f;
+	background-color: #4f4fb9;
 }
 
 /*업무관리 active 색상 시작*/
@@ -230,7 +230,7 @@
 	width: auto;
 	height: 50px;
 	line-height: 55px;
-	background-color: #211e74;
+	background-color: #4f4fbb;
 	/* border-bottom: 1.5px solid #302D81; */
 	/* border-left:3px solid #89ceff;  */
 }
