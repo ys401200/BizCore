@@ -41,6 +41,7 @@ function drawWaitCard(container) {
   let targets = [".waitDiv", ".dueDiv", ".receiveDiv", ".referDiv"];
   let listTarget = [".waitList", ".dueList", ".receiveList", ".referList"];
   let pageTarget = [".waitPage", ".duePage", ".receivePage", "referPage"];
+
   if (container < 4) {
     types = types.slice(container, container + 1);
     targets = targets.slice(container, container + 1);
@@ -50,18 +51,24 @@ function drawWaitCard(container) {
     $(targets[0]).parent().show();
   }
 
-  storage.cardStart = 0;
+
   let start = storage.cardStart;
+  let end = start + 5;
   for (let j = 0; j < types.length; j++) {
     let cardLength = typeList[types[j]].length;
     if (cardLength > 0) {
       if (cardLength < 4) {
         $(targets[j]).prev().hide();
         $(targets[j]).next().hide();
+      }
 
+      if (start == cardLength - 1) {
+        end = start + 1;
+      } else if (end > cardLength) {
+        end = cardLength;
 
       }
-      for (let i = start; i < start + 5; i++) {
+      for (let i = start; i < end; i++) {
         html +=
           "<div class='waitCard' onClick='cardClick(this)' data-detail='" +
           types[j] +
