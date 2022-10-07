@@ -19,61 +19,61 @@ public class AccountingController extends Ctrl{
     @GetMapping("/slip") // 전표관리
     public String accSlip(HttpServletRequest request){
         doIt(request);
-        return "";
+        return "/accounting/slip";
     }
 
     @GetMapping("/trade") // 매입매출
     public String accㅆㄱㅁㅇㄷ(HttpServletRequest request){
         doIt(request);
-        return "";
+        return "/accounting/trade";
     }
 
     @GetMapping("/unpaid") // 미지급현황
     public String accㅕㅞ먕(HttpServletRequest request){
         doIt(request);
-        return "";
+        return "/accounting/unpaid";
     }
 
     @GetMapping("/receivable") // 미수금현황
     public String accReceivable(HttpServletRequest request){
         doIt(request);
-        return "";
+        return "/accounting/receivable";
     }
 
     @GetMapping("/sales") // 매출원장
     public String accSales(HttpServletRequest request){
         doIt(request);
-        return "";
+        return "/accounting/sales";
     }
 
     @GetMapping("/purchase") // 매입원장
     public String accPurchase(HttpServletRequest request){
         doIt(request);
-        return "";
+        return "/accounting/purchase";
     }
 
     @GetMapping("/bankaccount") // 은행예금
     public String accBankAccount(HttpServletRequest request){
         doIt(request);
-        return "";
+        return "/accounting/bankaccount";
     }
 
     @GetMapping("/corporatecard") // 법인카드
     public String accCorporateCard(HttpServletRequest request){
         doIt(request);
-        return "";
+        return "/accounting/corporatecard";
     }
 
     @GetMapping("/purchasebill") // 세금계산서-매입
     public String accBillPurchase(HttpServletRequest request){
         doIt(request);
-        return "";
+        return "/accounting/purchasebill";
     }
 
     @GetMapping("/salesbill") // 세금계산서-매출
     public String accBillSales(HttpServletRequest request){
         doIt(request);
-        return "";
+        return "/accounting/salesbill";
     }
     
 }
