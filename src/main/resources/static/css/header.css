@@ -14,6 +14,21 @@
 
 @font-face {font-family: 'S-CoreDream-3Light'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-3Light.woff') format('woff'); font-weight: normal; font-style: normal;}
 
+:root{
+	--side-color-fr-11:#ffffff; /* 업무관리 사이드메뉴 포그라운드 컬러 */
+	--side-color-bg-11:#2147b1; /* 업무관리 사이드메뉴 백그라운드 컬러 */
+	--side-color-bg-12:#12338f;
+	--side-color-fr-21:#ffffff; /* 전자결재 사이드메뉴 포그라운드 컬러 */
+	--side-color-bg-21:#ff5377; /* 전자결재 사이드메뉴 백그라운드 컬러 */
+	--side-color-bg-22:#12338f;
+	--side-color-fr-31:#ffffff; /* 회계관리 사이드메뉴 포그라운드 컬러 */
+	--side-color-bg-31:#31cca2; /* 회계관리 사이드메뉴 백그라운드 컬러 */
+	--side-color-bg-32:#12338f;
+	--side-color-fr-41:#ffffff; /* 관리자 사이드메뉴 포그라운드 컬러 */
+	--side-color-bg-41:#31cca2; /* 관리자 사이드메뉴 백그라운드 컬러 */
+	--side-color-bg-42:#12338f;
+}
+
 html, body{
 	font-family:'NanumSquareRound', 'NanumGothicLight', 'NanumGothic', 'NanumGothicBold', 'NanumGothicExtraBold', 'Noto Sans KR', 'S-CoreDream-3Light';
 	background-color: #F7F7F9;
