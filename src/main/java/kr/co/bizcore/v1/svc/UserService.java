@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import kr.co.bizcore.v1.domain.SimpleUser;
@@ -185,4 +186,19 @@ public class UserService extends Svc {
         result += "}";
         return result;
     } // End of getUserMapJson()
+
+    // 개인화 정보를 가져오는 메서드
+    public String getPersonalize(String compId, String userNo) {
+        String result = null;
+        result = userMapper.getPersonalize(compId, userNo);
+        if(result == null)  result = "{}";
+        return null;
+    }
+
+    // 개인화 정보를 저장하는 메서드
+    public int setPersonalize(String compId, String userNo, String data) {
+        int result = -9999;
+        result = userMapper.modifyPersonalize(compId, userNo, data);
+        return result;
+    }
 }

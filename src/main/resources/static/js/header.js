@@ -458,6 +458,56 @@ storage.widget.set = [
 	"sopp/0",
 	"contract/0"
 ];
+storage.personalize = {};
+
+// 개인화 설정 저장 함수
+function setPersonalize(){
+	let str, url;
+
+	str = JSON.stringify(storage.personalize);
+	sessionStorage.setItem("personalizeTime", (new Date()).getTime());
+	sessionStorage.setItem("personalizeData", str);
+	url = apiServer + "/api/user/personalize"
+	
+	$.ajax({
+		"url": url,
+		"method": "post",
+		"data":str,
+		contentType:"text/plain",
+		"cache": false,
+		success:(data) => {console.log("serPersonalize : " + data.result);}
+	});
+} // End of setPersonalize()
+
+// 개인화 설정 가져오기 함수
+function getPersonalize(){
+	let str, t, c, url;
+	
+	t = sessionStorage.getItem("personalizeTime");
+	t = t !== null ? t * 1 : null;
+	c = (new Date()).getTime() - 180000;
+	url = apiServer + "/api/user/personalize"
+	if(t === null || t < c){ // 서버에서 가져오기
+		$.ajax({
+			"url": url,
+			"method": "get",
+			contentType:"text/plain",
+			"cache": false,
+			success:(data) => {
+				let str;
+				if(data.result === "ok"){
+					str = data.data;
+					storage.personalize = JSON.parse(str);
+					sessionStorage.setItem("personalizeTime", (new Date()).getTime());
+					sessionStorage.setItem("personalizeData", str);
+				}
+			}
+		})
+	}else{ // 재활용하기
+		str = sessionStorage.getItem("personalizeData");
+		storage.personalize = JSON.parse(str);
+	}
+} // End of getPersonalize()
 
 // 기초 데이터가 세팅되어 있는지 확인하는 함수
 function isInit(){

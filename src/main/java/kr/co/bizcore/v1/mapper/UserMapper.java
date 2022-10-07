@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
@@ -55,5 +56,17 @@ public interface UserMapper {
     // 직급 정보 가져오기
     @Select("SELECT CAST(`level` AS CHAR) AS lv, nameKor, nameEng FROM bizcore.user_rank WHERE compId = #{compId} ORDER BY `level`")
     public List<HashMap<String, String>> getUserRank(@Param("compId") String compId);
+
+    // 개인화 정보 가져오기
+    @Select("SELECT `data` FROM bizcore.personalize WHERE compId = #{compId} AND userNo = #{userNo}")
+    public String getPersonalize(@Param("compId") String compId, @Param("no") String userNo);
+
+    // 개인화 정보 수정하기
+    @Update("UPDATE bizcore.personalize SET `data` = #{json} WHERE compId = #{compId} AND userNo = #{no}")
+    public int modifyPersonalize(@Param("compId") String compId, @Param("no") String userNo, @Param("json") String data);
+
+    // 개인화 정보 추가하기
+    @Insert("INSERT INTO bizcore.personalize(compId, userNo, `data`) VALUES(#{compId}, #{userNo}, #{json})")
+    public int addPersonalize(@Param("compId") String compId, @Param("no") String userNo, @Param("json") String data);
 
 }
