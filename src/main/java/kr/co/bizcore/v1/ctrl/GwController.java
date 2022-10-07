@@ -15,382 +15,75 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 @RequestMapping("/gw")
 @Slf4j
-public class GwController {
+public class GwController extends Ctrl{
 
     private static final Logger logger = LoggerFactory.getLogger(GwController.class);
 
     @RequestMapping(value = { "/wait", "/wait/{docNo}" }, method = RequestMethod.GET)
     public String mylist(HttpServletRequest request) {
-        HttpSession session = null;
-        String result = null, uri = null, pathName = null, tempStr = null;
-        String[] tempStrArr = null;
-
-        session = request.getSession();
-        SimpleUser user = (SimpleUser) session.getAttribute("user");
-        uri = request.getRequestURI();
-
-        if (uri.substring(0, 1).equals("/"))
-            uri = uri.substring(1);
-        if (uri.substring(uri.length() - 1).equals("/"))
-            uri = uri.substring(0, uri.length() - 1);
-
-        tempStrArr = uri.split("/");
-        if (tempStrArr.length == 0) {
-            pathName = "root";
-        } else if (tempStrArr.length == 1) {
-            pathName = tempStrArr[0];
-        } else if (tempStrArr.length > 1) {
-            tempStr = tempStrArr[1];
-            pathName = tempStrArr[0];
-            pathName += tempStr.substring(0, 1).toUpperCase();
-            pathName += tempStr.substring(1).toLowerCase();
-        }
-
-        session.setAttribute("pathName", pathName);
-
-        result = "/gw/list";
-
-        return result;
+        return doList(request);
     }
 
     @RequestMapping(value = { "/write", "/write/{docNo}" }, method = RequestMethod.GET)
     public String write(HttpServletRequest request) {
-        HttpSession session = null;
-        String result = null, uri = null, pathName = null, tempStr = null;
-        String[] tempStrArr = null;
-
-        session = request.getSession();
-        SimpleUser user = (SimpleUser) session.getAttribute("user");
-        uri = request.getRequestURI();
-
-        if (uri.substring(0, 1).equals("/"))
-            uri = uri.substring(1);
-        if (uri.substring(uri.length() - 1).equals("/"))
-            uri = uri.substring(0, uri.length() - 1);
-
-        tempStrArr = uri.split("/");
-        if (tempStrArr.length == 0) {
-            pathName = "root";
-        } else if (tempStrArr.length == 1) {
-            pathName = tempStrArr[0];
-        } else if (tempStrArr.length > 1) {
-            tempStr = tempStrArr[1];
-            pathName = tempStrArr[0];
-            pathName += tempStr.substring(0, 1).toUpperCase();
-            pathName += tempStr.substring(1).toLowerCase();
-        }
-
-        session.setAttribute("pathName", pathName);
-
-        result = "/gw/write";
-
-        return result;
+        doIt(request);
+        return "/gw/write";
     }
 
     @RequestMapping(value = "/home", method = RequestMethod.GET)
     public String home(HttpServletRequest request) {
-        HttpSession session = null;
-        String result = null, uri = null, pathName = null, tempStr = null;
-        String[] tempStrArr = null;
-
-        session = request.getSession();
-        SimpleUser user = (SimpleUser) session.getAttribute("user");
-        uri = request.getRequestURI();
-
-        if (uri.substring(0, 1).equals("/"))
-            uri = uri.substring(1);
-        if (uri.substring(uri.length() - 1).equals("/"))
-            uri = uri.substring(0, uri.length() - 1);
-
-        tempStrArr = uri.split("/");
-        if (tempStrArr.length == 0) {
-            pathName = "root";
-        } else if (tempStrArr.length == 1) {
-            pathName = tempStrArr[0];
-        } else if (tempStrArr.length > 1) {
-            tempStr = tempStrArr[1];
-            pathName = tempStrArr[0];
-            pathName += tempStr.substring(0, 1).toUpperCase();
-            pathName += tempStr.substring(1).toLowerCase();
-        }
-
-        session.setAttribute("pathName", pathName);
-
-        result = "/gw/home";
-
-        return result;
+        doIt(request);
+        return "/gw/home";
     }
 
     @RequestMapping(value = { "/due", "/due/{docNo}" }, method = RequestMethod.GET)
     public String due(HttpServletRequest request) {
-        HttpSession session = null;
-        String result = null, uri = null, pathName = null, tempStr = null;
-        String[] tempStrArr = null;
-
-        session = request.getSession();
-        SimpleUser user = (SimpleUser) session.getAttribute("user");
-        uri = request.getRequestURI();
-
-        if (uri.substring(0, 1).equals("/"))
-            uri = uri.substring(1);
-        if (uri.substring(uri.length() - 1).equals("/"))
-            uri = uri.substring(0, uri.length() - 1);
-
-        tempStrArr = uri.split("/");
-        if (tempStrArr.length == 0) {
-            pathName = "root";
-        } else if (tempStrArr.length == 1) {
-            pathName = tempStrArr[0];
-        } else if (tempStrArr.length > 1) {
-            tempStr = tempStrArr[1];
-            pathName = tempStrArr[0];
-            pathName += tempStr.substring(0, 1).toUpperCase();
-            pathName += tempStr.substring(1).toLowerCase();
-        }
-
-        session.setAttribute("pathName", pathName);
-
-        result = "/gw/list";
-
-        return result;
+        return doList(request);
     }
 
     @RequestMapping(value = { "/receive", "/receive/{docNo}" }, method = RequestMethod.GET)
     public String receive(HttpServletRequest request) {
-        HttpSession session = null;
-        String result = null, uri = null, pathName = null, tempStr = null;
-        String[] tempStrArr = null;
-
-        session = request.getSession();
-        SimpleUser user = (SimpleUser) session.getAttribute("user");
-        uri = request.getRequestURI();
-
-        if (uri.substring(0, 1).equals("/"))
-            uri = uri.substring(1);
-        if (uri.substring(uri.length() - 1).equals("/"))
-            uri = uri.substring(0, uri.length() - 1);
-
-        tempStrArr = uri.split("/");
-        if (tempStrArr.length == 0) {
-            pathName = "root";
-        } else if (tempStrArr.length == 1) {
-            pathName = tempStrArr[0];
-        } else if (tempStrArr.length > 1) {
-            tempStr = tempStrArr[1];
-            pathName = tempStrArr[0];
-            pathName += tempStr.substring(0, 1).toUpperCase();
-            pathName += tempStr.substring(1).toLowerCase();
-        }
-
-        session.setAttribute("pathName", pathName);
-
-        result = "/gw/list";
-
-        return result;
+        return doList(request);
     }
 
     @RequestMapping(value = { "/refer", "/refer/{docNo}" }, method = RequestMethod.GET)
     public String refer(HttpServletRequest request) {
-        HttpSession session = null;
-        String result = null, uri = null, pathName = null, tempStr = null;
-        String[] tempStrArr = null;
-
-        session = request.getSession();
-        SimpleUser user = (SimpleUser) session.getAttribute("user");
-        uri = request.getRequestURI();
-
-        if (uri.substring(0, 1).equals("/"))
-            uri = uri.substring(1);
-        if (uri.substring(uri.length() - 1).equals("/"))
-            uri = uri.substring(0, uri.length() - 1);
-
-        tempStrArr = uri.split("/");
-        if (tempStrArr.length == 0) {
-            pathName = "root";
-        } else if (tempStrArr.length == 1) {
-            pathName = tempStrArr[0];
-        } else if (tempStrArr.length > 1) {
-            tempStr = tempStrArr[1];
-            pathName = tempStrArr[0];
-            pathName += tempStr.substring(0, 1).toUpperCase();
-            pathName += tempStr.substring(1).toLowerCase();
-        }
-
-        session.setAttribute("pathName", pathName);
-
-        result = "/gw/list";
-
-        return result;
+        return doList(request);
     }
 
     @RequestMapping(value = { "/mydraft", "/mydraft/{docNo}" }, method = RequestMethod.GET)
     public String myDraft(HttpServletRequest request) {
-        HttpSession session = null;
-        String result = null, uri = null, pathName = null, tempStr = null;
-        String[] tempStrArr = null;
-
-        session = request.getSession();
-        SimpleUser user = (SimpleUser) session.getAttribute("user");
-        uri = request.getRequestURI();
-
-        if (uri.substring(0, 1).equals("/"))
-            uri = uri.substring(1);
-        if (uri.substring(uri.length() - 1).equals("/"))
-            uri = uri.substring(0, uri.length() - 1);
-
-        tempStrArr = uri.split("/");
-        if (tempStrArr.length == 0) {
-            pathName = "root";
-        } else if (tempStrArr.length == 1) {
-            pathName = tempStrArr[0];
-        } else if (tempStrArr.length > 1) {
-            tempStr = tempStrArr[1];
-            pathName = tempStrArr[0];
-            pathName += tempStr.substring(0, 1).toUpperCase();
-            pathName += tempStr.substring(1).toLowerCase();
-        }
-
-        session.setAttribute("pathName", pathName);
-
-        result = "/gw/box";
-
-        return result;
+        return doBox(request);
     }
 
     @RequestMapping(value = "/mytemp", method = RequestMethod.GET)
     public String mytemp(HttpServletRequest request) {
-        HttpSession session = null;
-        String result = null, uri = null, pathName = null, tempStr = null;
-        String[] tempStrArr = null;
-
-        session = request.getSession();
-        SimpleUser user = (SimpleUser) session.getAttribute("user");
-        uri = request.getRequestURI();
-
-        if (uri.substring(0, 1).equals("/"))
-            uri = uri.substring(1);
-        if (uri.substring(uri.length() - 1).equals("/"))
-            uri = uri.substring(0, uri.length() - 1);
-
-        tempStrArr = uri.split("/");
-        if (tempStrArr.length == 0) {
-            pathName = "root";
-        } else if (tempStrArr.length == 1) {
-            pathName = tempStrArr[0];
-        } else if (tempStrArr.length > 1) {
-            tempStr = tempStrArr[1];
-            pathName = tempStrArr[0];
-            pathName += tempStr.substring(0, 1).toUpperCase();
-            pathName += tempStr.substring(1).toLowerCase();
-        }
-
-        session.setAttribute("pathName", pathName);
-
-        result = "/gw/box";
-
-        return result;
+        return doBox(request);
     }
 
     @RequestMapping(value = "/myapp", method = RequestMethod.GET)
     public String myapp(HttpServletRequest request) {
-        HttpSession session = null;
-        String result = null, uri = null, pathName = null, tempStr = null;
-        String[] tempStrArr = null;
-
-        session = request.getSession();
-        SimpleUser user = (SimpleUser) session.getAttribute("user");
-        uri = request.getRequestURI();
-
-        if (uri.substring(0, 1).equals("/"))
-            uri = uri.substring(1);
-        if (uri.substring(uri.length() - 1).equals("/"))
-            uri = uri.substring(0, uri.length() - 1);
-
-        tempStrArr = uri.split("/");
-        if (tempStrArr.length == 0) {
-            pathName = "root";
-        } else if (tempStrArr.length == 1) {
-            pathName = tempStrArr[0];
-        } else if (tempStrArr.length > 1) {
-            tempStr = tempStrArr[1];
-            pathName = tempStrArr[0];
-            pathName += tempStr.substring(0, 1).toUpperCase();
-            pathName += tempStr.substring(1).toLowerCase();
-        }
-
-        session.setAttribute("pathName", pathName);
-
-        result = "/gw/box";
-
-        return result;
+        return doBox(request);
     }
 
     @RequestMapping(value = { "/myreceive", "/myreceive/{docNo}" }, method = RequestMethod.GET)
     public String myreceive(HttpServletRequest request) {
-        HttpSession session = null;
-        String result = null, uri = null, pathName = null, tempStr = null;
-        String[] tempStrArr = null;
-
-        session = request.getSession();
-        SimpleUser user = (SimpleUser) session.getAttribute("user");
-        uri = request.getRequestURI();
-
-        if (uri.substring(0, 1).equals("/"))
-            uri = uri.substring(1);
-        if (uri.substring(uri.length() - 1).equals("/"))
-            uri = uri.substring(0, uri.length() - 1);
-
-        tempStrArr = uri.split("/");
-        if (tempStrArr.length == 0) {
-            pathName = "root";
-        } else if (tempStrArr.length == 1) {
-            pathName = tempStrArr[0];
-        } else if (tempStrArr.length > 1) {
-            tempStr = tempStrArr[1];
-            pathName = tempStrArr[0];
-            pathName += tempStr.substring(0, 1).toUpperCase();
-            pathName += tempStr.substring(1).toLowerCase();
-        }
-
-        session.setAttribute("pathName", pathName);
-
-        result = "/gw/box";
-
-        return result;
+        return doBox(request);
     }
 
     @RequestMapping(value = { "/myrefer", "/myrefer/{docNo}" }, method = RequestMethod.GET)
     public String myrefer(HttpServletRequest request) {
-        HttpSession session = null;
-        String result = null, uri = null, pathName = null, tempStr = null;
-        String[] tempStrArr = null;
+        return doBox(request);
+    }
 
-        session = request.getSession();
-        SimpleUser user = (SimpleUser) session.getAttribute("user");
-        uri = request.getRequestURI();
+    private String doList(HttpServletRequest request){
+        doIt(request);
+        return "/gw/list";
+    }
 
-        if (uri.substring(0, 1).equals("/"))
-            uri = uri.substring(1);
-        if (uri.substring(uri.length() - 1).equals("/"))
-            uri = uri.substring(0, uri.length() - 1);
-
-        tempStrArr = uri.split("/");
-        if (tempStrArr.length == 0) {
-            pathName = "root";
-        } else if (tempStrArr.length == 1) {
-            pathName = tempStrArr[0];
-        } else if (tempStrArr.length > 1) {
-            tempStr = tempStrArr[1];
-            pathName = tempStrArr[0];
-            pathName += tempStr.substring(0, 1).toUpperCase();
-            pathName += tempStr.substring(1).toLowerCase();
-        }
-
-        session.setAttribute("pathName", pathName);
-
-        result = "/gw/box";
-
-        return result;
+    private String doBox(HttpServletRequest request){
+        doIt(request);
+        return "/gw/box";
     }
 
 }
