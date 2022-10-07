@@ -1,66 +1,33 @@
 @charset "UTF-8";
 
-#bodyContents #bodyContent {
-  float: right;
-  width: calc(100% - 185px);
-  overflow-y: auto;
-  max-height: calc(100% - 94px);
-  padding: 0.5% 0.5% 0 0.6%;
-  box-sizing: border-box;
-}
 
-select {
-  font-family: 'NanumSquareRound';
-  margin: 0;
-  float: none;
-  padding-right: 0.5em;
-  background-color: white;
-  border: 1px solid black;
-  color: black;
-  border-radius: none;
-  cursor: pointer;
-}
 
-input[type="text"] {
-  font-family: 'NanumSquareRound';
-  margin: 0;
-  float: none;
-  padding: 0;
-  background-color: white;
-  border: none;
-  color: black;
-  border-radius: none;
-  cursor: pointer;
-}
 
-.mywriteContainer {
+.container {
   position: relative;
-  /* left: 2%; */
   width: 100%;
-  height: 96%;
   background: #ffffff;
+  overflow: auto;
   box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
   display: inline-block;
+  margin-top: 0.6%;
+  overflow: auto;
+  height: 92vh;
 }
 
-.mywriteContainer hr {
+.container hr {
   float: left;
-  /* border-top: 0;
-  border-left: thick solid #e45050;
-  border-right: 0;
-  border-bottom: 0; */
-  border: 2px solid #406c92;
   height: 32px;
-  /* width: 4px; */
+  border: 2px solid #456e95;
   margin: 0;
 }
 
-.mywriteContainer span {
-  font-weight: bolder;
-  font-size: 15px;
+.container span {
+  font-size: 16px;
   margin-left: 15px;
   line-height: 40px;
-  color: #406c92;
+  color: #456e95;
+  font-weight: bolder;
 }
 
 .ContentDiv {
@@ -70,22 +37,29 @@ input[type="text"] {
   overflow: auto;
 }
 
-/* .ContentDiv .gwWriteBtns {
-  display: flex;
-  border-bottom: 1px solid #acc1d3;
+.ContentDiv .gwWriteBtns {
+  border-bottom: 2px solid #c1c6cb;
+  padding-bottom: 0.5em;
 
-} */
+}
 
 .ContentDiv .gwWriteBtns button {
-  color: #eaeff3;
+  /* color: #eaeff3; */
   font-size: 14px;
   border: none;
-  background-color:#406c92;
+  border-right: 1px solid #c1c6cb;
+  background-color: white;
   height: 26px;
   padding: 0 0.7em;
   margin: 0 5px;
-  box-shadow: 0px 1px 4px #c1c6cb;
-  border-radius: 5px;
+  /* box-shadow: 0px 1px 4px #c1c6cb; */
+  /* border-radius: 5px; */
+}
+
+.ContentDiv .gwWriteBtns button:last-of-type {
+  border: none;
+  padding: none;
+  margin: none;
 }
 
 .ContentDiv .gwWriteBtns button:hover {
@@ -100,118 +74,75 @@ input[type="text"] {
 }
 
 .selector {
-  width: 100%;
+   width: 80%; 
+  height: max-content;
+  display: grid;
+  grid-template-columns: 5% 95%;
+  margin: 2em 0 0 0;
 }
 
-.selector>div>.guide {
-  font-weight: 100;
-  padding: 0.6em 0 0 0;
-}
 
 .ContentDiv>div:nth-child(n+1):nth-child(-n+2) {
   margin-bottom: 20px;
 }
 
 .selector>div:first-child {
-  font-weight: bolder;
-  margin: 1em 0;
-  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #efefef;
+  border: 1px solid #c3c3c3;
+  border-right: none;
 }
 
 .selector .formDetail {
-  height: 35px;
-  float: left;
+  display: grid;
+  grid-template-rows: 50% 50%;
+  /* float: left;
   overflow: hidden;
-  /* line-height: 20px; */
-  display: flex; 
-  align-items: center;
-  margin-right:12px;
-  border:1px solid #c3c3c3; 
+  margin-right: 12px; */
+  border: 1px solid #c3c3c3;
+  border-left: none;
 }
 
-/* .selector .formDetail:last-of-type {
-  float: left;
-  margin-left: 20px;
-} */
 
-.selector .formDetail:last-of-type>div:first-of-type {
+
+.selector .formDetail>div {
+  display: grid;
+  grid-template-columns: 50%50%;
+}
+
+.selector .formDetail>div:first-of-type {
+  border-bottom: 1px solid #c3c3c3;
+}
+
+
+.selector .formDetail>div>div {
+  display: grid;
+  grid-template-columns: 15%85%;
+}
+
+.selector .formDetail>div>div>div:first-of-type {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.selector .formDetail:last-of-type>div:last-of-type>label {
-
-  display: flex;
-  float: left;
-  padding-right: 1em;
-  font-size: 14px;
-
-}
-
-.selector .formDetail:last-of-type>div:last-of-type>label input {
-  margin-right: 5px;
-}
-
-.selector .formDetail .formListDiv {
-  height: 30px;
-  float: left;
-}
-
-.selector .formDetail .filebtnContainer {
-  padding-left: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.selector .formDetail .formListDiv .formSelector {
-  height: 80%;
-  background-color:#eaeff3;
-  color: #406c92;
-  border: 1px solid #406c9263;
-  position: relative;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.selector .formDetail .formListDiv .formSelector option {
-  background-color: #eaeff3;
-  color: #212121;
-}
-
-.selector .formDetail button {
-  margin: 0.5em 1em 0.5em 1em;
-  float: left;
-  height: 70%;
-  background-color:#406c92;
-  color: #eaeff3;
-  box-shadow: 0px 1px 2px #c1c6cb;
-  padding: 0 0.5em;
-  border-radius: 4px;
-}
-
-.selector .formDetail button:hover {
-  color: #eaeff3;
-  background-color: #406c92;
-}
-
-.selector .formDetail div:first-of-type {
-  margin: 0;
-  font-size: 14px;
-  text-align: center;
-  float: left;
-  line-height: 35px;
-  padding: 0 1em 0 0.6em;
-  border-right:1px solid #c3c3c3;
-  margin-right:10px;
   background-color: #efefef;
+  border-right: 1px solid #c3c3c3;
+  border-left: 1px solid #c3c3c3;
+  padding: 0.5em;
 }
 
-.selector .formDetail div:first-of-type span {
-  border-right: 2px solid #b7c1c9;
-  height: 17px;
+
+.selector .formDetail>div>div>div:last-of-type {
+  display: flex;
+  flex-direction: row;
 }
+
+.selector .lineBtnContainer {
+  border: 1px solid #c3c3c3;
+  padding: 0.5em;
+}
+
 
 .selector .fileDetail {
   display: grid;
@@ -242,13 +173,13 @@ input[type="text"] {
 }
 
 .ContentDiv>div:nth-child(3) button {
-  color:#eaeff3 ;
+  color: #eaeff3;
   background-color: #456e95;
   padding: 0 0.8em;
   height: 24px;
   box-shadow: 0px 1px 4px #c1c6cb;
   margin-left: 10px;
-  border-radius:5px;
+  border-radius: 5px;
 }
 
 /* End 결재양식 선택  ====================================================   */
@@ -282,7 +213,7 @@ input[type="text"] {
   font-size: 16px;
   margin-left: 18px;
   line-height: 3;
-  color:#fff;
+  color: #fff;
 }
 
 .gwModal {
@@ -472,7 +403,7 @@ input[type="text"] {
 .selector .reportInsertForm {
   color: black;
   overflow: auto;
-  border: 1px solid rgb(188, 185, 185);
+  /* border: 1px solid rgb(188, 185, 185); */
 
 }
 

@@ -11,13 +11,13 @@ $(document).ready(() => {
 
 function getformList() {
 
-  $(".ContentDiv").html(
-    "<div class='gwWriteBtns'></div><div class='selector'>d</div><div class='selector'>d</div><div class='selector'>d</div>"
-  );
+  // $(".ContentDiv").html(
+  //   "<div class='gwWriteBtns'></div><div class='selector'>d</div><div class='selector'>d</div><div class='selector'>d</div>"
+  // );
 
-  $(".gwWriteBtns").html(
-    "<button type='button' onclick='reportInsert()' class='writeBtn'>기안 하기</button> <button class='saveBtn' type='button' onclick='tempSave()' disabled>임시 저장</button>"
-  );
+  // $(".gwWriteBtns").html(
+  //   "<button type='button' onclick='reportInsert()' class='writeBtn'>기안 하기</button> <button class='saveBtn' type='button' onclick='tempSave()' disabled>임시 저장</button>"
+  // );
 
   // 기본설정
 
@@ -27,26 +27,26 @@ function getformList() {
   // );
 
 
-  $(".selector:first").html(
-    "<div>기본 설정</div><div><div class='formDetail'><div>결재양식</div><div class='formListDiv'></div><button type='button' class='formSelectbtn' onclick='selectForm()'>선택</button><input type='hidden' class='formNumHidden'/></div>" +
-    "<div class='formDetail'><div>열람권한</div><div><label><input type='radio' name='authority' value='dept' checked  />기안자 소속 부서 포함</label><label><input type='radio' name='authority' value='none' />권한 설정 없음</label></div></div>"
-  );
+  // $(".selector:first").html(
+  //   "<div>기본 설정</div><div><div class='formDetail'><div>결재양식</div><div class='formListDiv'></div><button type='button' class='formSelectbtn' onclick='selectForm()'>선택</button><input type='hidden' class='formNumHidden'/></div>" +
+  //   "<div class='formDetail'><div>열람권한</div><div><label><input type='radio' name='authority' value='dept' checked  />기안자 소속 부서 포함</label><label><input type='radio' name='authority' value='none' />권한 설정 없음</label></div></div>"
+  // );
 
 
-  $(".selector:first")
-    .next()
-    .html(
-      "<div>결재선 <div class='guide'> 결재 양식을 선택하면 결재선 생성을 할 수 있습니다.</div> <button class='createLineBtn' onclick='showModal()'>결재선생성</button></div><div class='modal-wrap'><div class='gwModal'></div></div>"
-    );
+  // $(".selector:first")
+  //   .next()
+  //   .html(
+  //     "<div>결재선 <div class='guide'> 결재 양식을 선택하면 결재선 생성을 할 수 있습니다.</div> <button class='createLineBtn' onclick='showModal()'>결재선생성</button></div><div class='modal-wrap'><div class='gwModal'></div></div>"
+  //   );
 
-  let lastHtml =
-    "<div>상세 입력 <div class='guide'> 결재 양식을 선택하면 상세 입력을 할 수 있습니다.</div></div><div class='insertedDetail'><div class='reportInsertForm'></div><div class='referContainer'><div>참조</div></div><div class='fileDetail'>";
+  // let lastHtml =
+  //   "<div>상세 입력 <div class='guide'> 결재 양식을 선택하면 상세 입력을 할 수 있습니다.</div></div><div class='insertedDetail'><div class='reportInsertForm'></div><div class='referContainer'><div>참조</div></div><div class='fileDetail'>";
 
-  // lastHtml += "<div>파일첨부</div><div class='filebtnContainer'><input type='file' class='gwFileInput' onchange='drawSelectedFileList(this)' /><div class='insertedFileList'></div></div></div></div>"
-  lastHtml +=
-    "<div>파일첨부</div><div class='filebtnContainer'><input type='file' multiple id='attached' name='attached[]' onchange='docFileChange()' /><div class='filePreview'></div></div></div></div>";
+  // // lastHtml += "<div>파일첨부</div><div class='filebtnContainer'><input type='file' class='gwFileInput' onchange='drawSelectedFileList(this)' /><div class='insertedFileList'></div></div></div></div>"
+  // lastHtml +=
+  //   "<div>파일첨부</div><div class='filebtnContainer'><input type='file' multiple id='attached' name='attached[]' onchange='docFileChange()' /><div class='filePreview'></div></div></div></div>";
 
-  $(".selector:first").next().next().html(lastHtml);
+  // $(".selector:first").next().next().html(lastHtml);
 
   let url = "/api/gw/form";
 
@@ -250,8 +250,8 @@ function selectForm() {
   $("#" + formId + "_writer").attr("data-detail", writer);
 
   let date = getYmdHyphen();
-  $("#" + formId + "_created").val(date);
   $("#" + formId + "_created").attr("data-detail", date);
+  $("#" + formId + "_created").val(date);
   $(".testClass").prop("checked", false);
   $(".typeContainer").html("");
   $(".inputsAuto").prop("disabled", "true");
@@ -265,43 +265,46 @@ function selectForm() {
 
   //영업기회 데이터 리스트 만들기
 
-  $.ajax({
-    url: "/api/sopp",
-    type: "get",
-    dataType: "json",
-    success: (result) => {
-      if (result.result == "ok") {
-        let jsondata;
-        jsondata = cipher.decAes(result.data);
-        jsondata = JSON.parse(jsondata);
-        storage.soppList = jsondata;
-        setSoppList(formId);
-      } else {
-        alert("에러");
-      }
-    },
-  });
+  if (formId != "doc_Form_leave" && formId != "doc_Form_extension") {
+    $.ajax({
+      url: "/api/sopp",
+      type: "get",
+      dataType: "json",
+      success: (result) => {
+        if (result.result == "ok") {
+          let jsondata;
+          jsondata = cipher.decAes(result.data);
+          jsondata = JSON.parse(jsondata);
+          storage.soppList = jsondata;
+          setSoppList(formId);
+        } else {
+          alert("에러");
+        }
+      },
+    });
 
-  // 거래처 데이터 리스트
+    // 거래처 데이터 리스트
 
-  let html = $(".infoContentlast")[0].innerHTML;
-  let x;
-  let dataListHtml = "";
+    let html = $(".infoContentlast")[0].innerHTML;
+    let x;
+    let dataListHtml = "";
 
-  // 거래처 데이터 리스트 만들기
-  dataListHtml = "<datalist id='_infoCustomer'>";
-  for (x in storage.customer) {
-    dataListHtml +=
-      "<option data-value='" +
-      x +
-      "' value='" +
-      storage.customer[x].name +
-      "'></option> ";
+    // 거래처 데이터 리스트 만들기
+    dataListHtml = "<datalist id='_infoCustomer'>";
+    for (x in storage.customer) {
+      dataListHtml +=
+        "<option data-value='" +
+        x +
+        "' value='" +
+        storage.customer[x].name +
+        "'></option> ";
+    }
+    dataListHtml += "</datalist>";
+    html += dataListHtml;
+    $(".infoContentlast")[0].innerHTML = html;
+    $("#" + formId + "_infoCustomer").attr("list", "_infoCustomer");
   }
-  dataListHtml += "</datalist>";
-  html += dataListHtml;
-  $(".infoContentlast")[0].innerHTML = html;
-  $("#" + formId + "_infoCustomer").attr("list", "_infoCustomer");
+
 }
 
 // 영업기회 데이터 리스트 가져오는 함수
