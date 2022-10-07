@@ -54,6 +54,21 @@ button {
 	grid-template-columns: 5% 90% 5%;
 }
 
+.container>div:nth-of-type(2)>button {
+	background-color: white;
+	font-size: 2em;
+	font-weight: 700;
+	cursor: pointer;
+
+
+
+}
+
+.container>div:nth-of-type(2)>button:hover {
+	color: rgb(181 200 215);
+	font-size: 2.5em;
+}
+
 .container>div:nth-of-type(2)>div {
 	display: grid;
 	grid-template-columns: repeat(5, 1fr);
