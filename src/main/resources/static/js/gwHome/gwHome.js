@@ -47,18 +47,21 @@ function drawWaitCard(container) {
     listTarget = listTarget.slice(container, container + 1);
     pageTarget = pageTarget.slice(container, container + 1);
     $(listTarget[0]).hide();
-    $(targets[0]).show();
+    $(targets[0]).parent().show();
   }
 
-
+  storage.cardStart = 0;
   let start = storage.cardStart;
   for (let j = 0; j < types.length; j++) {
     let cardLength = typeList[types[j]].length;
     if (cardLength > 0) {
-      if (cardLength > 5) {
-        html = "<button onclick='prevPage(this)'> < </button>"
+      if (cardLength < 4) {
+        $(targets[j]).prev().hide();
+        $(targets[j]).next().hide();
+
+
       }
-      for (let i = start; i < start + 6; i++) {
+      for (let i = start; i < start + 5; i++) {
         html +=
           "<div class='waitCard' onClick='cardClick(this)' data-detail='" +
           types[j] +
@@ -78,12 +81,11 @@ function drawWaitCard(container) {
           "</div></div></div></div>";
 
       }
-      if (cardLength > 5) {
-        html += "<button onclick='nextPage(this)'> > </button>"
-      }
 
     } else {
       html += "<div class='defaultWaitCard'>대기 문서가 없습니다.</div>"
+      $(targets[j]).prev().hide();
+      $(targets[j]).next().hide();
     }
 
     $(targets[j]).html(html);
@@ -95,22 +97,26 @@ function drawWaitCard(container) {
 
 
 function prevPage(obj) {
-  let target = obj.parentElement.className;
-  storage.cardStart = storage.cardStart - 6;
+  let target = $(obj).next().attr("class");
+  if (storage.cardStart != 0) {
+    storage.cardStart = storage.cardStart - 5;
+  }
+
   let type = (target + "").split("D")[0];
   let html = "";
   let start = storage.cardStart;
-  console.log(start + "start 확인 ! ")
+
   for (let j = 0; j < storage.waitList[type].length; j++) {
     let cardLength = storage.waitList[type].length;
-    let end = start + 6;
+    let end = start + 5;
     if (start != 0 && end < cardLength) {
       end = cardLength;
     }
-    console.log(end + "end 확인 ! ")
+
     if (cardLength > 0) {
-      if (cardLength > 5) {
-        html = "<button onclick='prevPage(this)'> < </button>"
+      if (cardLength < 4) {
+        $("." + target).prev().hide();
+        $("." + target).next().hide();
       }
       for (let i = start; i < end; i++) {
         html +=
@@ -132,12 +138,11 @@ function prevPage(obj) {
           "</div></div></div></div>";
 
       }
-      if (cardLength > 5) {
-        html += "<button onclick='nextPage(this)'> > </button>"
-      }
 
     } else {
       html += "<div class='defaultWaitCard'>대기 문서가 없습니다.</div>"
+      $("." + target).prev().hide();
+      $("." + target).next().hide();
     }
 
     $("." + target).html(html);
@@ -146,19 +151,29 @@ function prevPage(obj) {
 }
 
 function nextPage(obj) {
-  storage.cardStart = storage.cardStart + 6;
-  let target = obj.parentElement.className;
+  let target = $(obj).prev().attr("class");
   let type = (target + "").split("D")[0];
+  let cardLength = storage.waitList[type].length;
+  let count = 0;
+  if (storage.strat != 0) {
+    count = (storage.cardStart / 5);
+  }
+  if (cardLength > (count + 1) * 5) {
+    storage.cardStart = storage.cardStart + 5;
+  }
+
   let html = "";
   let start = storage.cardStart;
   for (let j = 0; j < storage.waitList[type].length; j++) {
-    let cardLength = storage.waitList[type].length;
-    let end = start + 6;
+
+    let end = start + 5;
     end = end > cardLength ? cardLength : end;
     if (cardLength > 0) {
-      if (cardLength > 5) {
-        html = "<button onclick='prevPage(this)'> < </button>"
+      if (cardLength < 4) {
+        $("." + target).prev().hide();
+        $("." + target).next().hide();
       }
+      console.log(start + "스타드" + end)
       for (let i = start; i < end; i++) {
         html +=
           "<div class='waitCard' onClick='cardClick(this)' data-detail='" +
@@ -179,12 +194,13 @@ function nextPage(obj) {
           "</div></div></div></div>";
 
       }
-      if (cardLength > 5) {
-        html += "<button onclick='nextPage(this)'> > </button>"
-      }
+
+
 
     } else {
       html += "<div class='defaultWaitCard'>대기 문서가 없습니다.</div>"
+      $("." + target).prev().hide();
+      $("." + target).next().hide();
     }
 
     $("." + target).html(html);
@@ -207,21 +223,22 @@ function drawWaitList(container) {
   let types = ["wait", "due", "receive", "refer"];
   let targets = [".waitDiv", ".dueDiv", ".receiveDiv", ".referDiv"];
   let listTarget = [".waitList", ".dueList", ".receiveList", ".referList"];
+  let pageTarget = [".waitPage", ".duePage", ".receivePage", "referPage"];
   types = types.slice(container, container + 1);
   targets = targets.slice(container, container + 1);
   listTarget = listTarget.slice(container, container + 1);
+  pageTarget = pageTarget.slice(container, container + 1);
   console.log(listTarget);
-  drawMyDraft(types, targets, listTarget);
+  drawMyDraft(types, targets, listTarget, pageTarget);
 
 }
 
 
 
-function drawMyDraft(types, targets, listTarget) {
-  $(targets[0]).hide();
+function drawMyDraft(types, targets, listTarget, pageTarget) {
+  $(targets[0]).parent().hide();
   $(listTarget[0]).show();
-  let pageContainer = $(".pageContainer");
-  $(pageContainer[0]).show();
+  $(pageTarget[0]).show();
   let container,
     result,
     jsonData,

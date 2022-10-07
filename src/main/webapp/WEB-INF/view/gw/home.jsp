@@ -12,7 +12,10 @@
 						<div><button class="waitVerCard" onclick="drawWaitCard(0)">카드</button><button
 								class="waitVerList" onclick="drawWaitList(0)">리스트</button></div>
 					</div>
-					<div class="waitDiv"></div>
+					<div><button onclick="prevPage(this)">
+							< </button>
+								<div class="waitDiv"></div><button onclick="nextPage(this)"> > </button>
+					</div>
 					<div class="waitList listDiv"></div>
 					<div class="pageContainer waitPage"></div>
 
@@ -23,7 +26,10 @@
 						<div><button class="dueVerCard" onclick="drawWaitCard(1)">카드</button><button class="dueVerList"
 								onclick="drawWaitList(1)">리스트</button></div>
 					</div>
-					<div class="dueDiv"></div>
+					<div><button onclick="prevPage(this)">
+							< </button>
+								<div class="dueDiv"></div><button onclick="nextPage(this)"> > </button>
+					</div>
 					<div class="dueList listDiv"></div>
 					<div class="pageContainer duePage"></div>
 				</div>
@@ -36,7 +42,10 @@
 						</div>
 					</div>
 
-					<div class="receiveDiv"></div>
+					<div><button onclick="prevPage(this)">
+							< </button>
+								<div class="receiveDiv"></div><button onclick="nextPage(this)"> > </button>
+					</div>
 					<div class="receiveList listDiv"></div>
 					<div class="pageContainer receivePage"></div>
 				</div>
@@ -48,7 +57,10 @@
 								class="referVerList" onclick="drawWaitList(3)">리스트</button>
 						</div>
 					</div>
-					<div class="referDiv"></div>
+					<div><button onclick="prevPage(this)">
+							< </button>
+								<div class="referDiv"></div><button onclick="nextPage(this)"> > </button>
+					</div>
 					<div class="referList listDiv"></div>
 					<div class="pageContainer referPage"></div>
 				</div>
