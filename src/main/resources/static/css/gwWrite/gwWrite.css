@@ -155,7 +155,19 @@
   border: 1px solid #c3c3c3;
   padding: 0.5em;
   display: grid;
-  grid-template-columns: 10% 90%;
+  grid-template-columns: 8% 92%;
+}
+
+
+.selector .lineBtnContainerB>div:first-of-type {
+  display: flex;
+  align-items: center;
+  justify-content: left;
+}
+
+.selector .lineBtnContainerB .simpleAppLine {
+  display: grid;
+  grid-template-rows: 50%50%;
 }
 
 

@@ -35,8 +35,6 @@ function getformList() {
   $(".modal-wrap").hide();
   $(".insertedDetail").hide();
   $(".createLineBtn").hide();
-
-
   let checkHref = location.href;
   checkHref = checkHref.split("//");
   checkHref = checkHref[1];
@@ -202,6 +200,9 @@ function selectForm() {
   selectedFormTitle = data[$(".formNumHidden").val()].title;
 
   $(".guide").remove();
+
+  let tt = $(".lineBtnContainer");
+  $(tt[0]).addClass("lineBtnContainerB");
   $(".lineDetail").show();
   $(".createLineBtn").show();
   $(".reportInsertForm").html(data[$(".formNumHidden").val()].form);
@@ -662,7 +663,7 @@ function createLine() {
   let target = $(".typeContainer"); // 결재선 생성 모달에서 결재 타입 각각의 container
   let titleArr = ["검토", "결재", "수신", "참조"];
   let titleId = ["examine", "approval", "conduct", "refer"];
-
+  let simpleHtml = "";
   let data = new Array();
   let x;
   //나는 결재선에 노출 안 되게 함
@@ -679,12 +680,16 @@ function createLine() {
         "<div class='lineGrid'><div class='lineTitle'>" +
         titleArr[i] +
         "</div>";
+      simpleHtml += "[" + titleArr[i] + "]";
     } else if (target[i].children.length != 0 && i == 2) {
       // 결재타입이 수신인 경우
       testHtml2 +=
         "<div class='lineGrid'><div class='lineTitle'>" +
         titleArr[i] +
         "</div>";
+      simpleHtml += "[" + titleArr[i] + "]";
+    } else if (target[i].children.length != 0 && i == 3) {
+      simpleHtml += "[" + titleArr[i] + "]";
     }
 
     for (let j = 0; j < target[i].children.length; j++) {
@@ -694,6 +699,12 @@ function createLine() {
 
       // 수신
       if (i == 2) {
+
+        if (j != 0) {
+          simpleHtml += "-" + storage.user[id].userName;
+        } else {
+          simpleHtml += storage.user[id].userName;
+        }
         testHtml2 +=
           "<div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto " +
           formId +
@@ -729,6 +740,11 @@ function createLine() {
 
       // 참조
       else if (i == 3) {
+        if (j != 0) {
+          simpleHtml += "-" + storage.user[id].userName;
+        } else {
+          simpleHtml += storage.user[id].userName;
+        }
         referHtml +=
           "<div class='appendName " +
           formId +
@@ -745,6 +761,11 @@ function createLine() {
 
       // 검토 합의 결재
       else {
+        if (j != 0) {
+          simpleHtml += "-" + storage.user[id].userName;
+        } else {
+          simpleHtml += storage.user[id].userName;
+        }
         testHtml +=
           "<div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto " +
           formId +
@@ -781,8 +802,12 @@ function createLine() {
 
     if (target[i].children.length != 0 && i < 2) {
       testHtml += "</div>";
+      simpleHtml += "  ";
     } else if (target[i].children.length != 0 && i == 2) {
       testHtml2 += "</div>";
+      simpleHtml += "  ";
+    } else if (target[i].children.length != 0 && i == 3) {
+      simpleHtml += "  ";
     }
   }
 
@@ -793,6 +818,18 @@ function createLine() {
   lineTarget.html(testHtml);
 
   $(".referContainer").html(referHtml);
+
+
+  alert(simpleHtml);
+
+  $(".simpleAppLine").html(simpleHtml);
+
+
+
+
+
+
+
 } // End of createLine();
 
 // 날짜 변환 함수

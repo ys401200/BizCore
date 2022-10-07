@@ -58,10 +58,12 @@
               <div>결재선</div>
 
               <div class="lineBtnContainer">
-                <div>
-                  <div class='guide'> 결재 양식을 선택하면 결재선 생성을 할 수 있습니다. </div><button class='createLineBtn'
-                    onclick='showModal()'>결재선생성</button>
+
+                <div class='guide'> 결재 양식을 선택하면 결재선 생성을 할 수 있습니다. </div>
+                <div><button class='createLineBtn' onclick='showModal()'>결재선생성</button></div>
+                <div class="simpleAppLine">
                 </div>
+
                 <div class='modal-wrap'>
                   <div class='gwModal'></div>
                 </div>
