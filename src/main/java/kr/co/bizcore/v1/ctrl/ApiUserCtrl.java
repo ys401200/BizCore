@@ -12,6 +12,7 @@ import javax.servlet.http.HttpSession;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -218,6 +219,49 @@ public class ApiUserCtrl extends Ctrl{
 
         return result;
     }
+
+    @GetMapping("/personalize")
+    public String personalizeGet(HttpServletRequest request){
+        String result = null, userNo = null, data = null, compId = null;
+        
+        HttpSession session = request.getSession();
+
+        userNo = (String)session.getAttribute("userNo");
+        compId = (String)session.getAttribute("compId");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+        }else{
+            data = userService.getPersonalize(compId, userNo);
+            if(data != null)    result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
+            else                result = "{\"result\":\"failure\"}";
+        }
+
+        return result;
+    } // End of personalizeGet
+
+    @PostMapping("/personalize")
+    public String personalizePost(HttpServletRequest request, @RequestBody String requestBody){
+        String result = null, userNo = null, compId = null;
+        
+        HttpSession session = request.getSession();
+
+        userNo = (String)session.getAttribute("userNo");
+        compId = (String)session.getAttribute("compId");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+        }else if(requestBody == null || requestBody.equals("")){
+            result = "{\"result\":\"failure\"}";
+        }else{
+            if(userService.setPersonalize(compId, userNo, requestBody) > 0)    result = "{\"result\":\"ok\"}";
+            else                result = "{\"result\":\"failure\"}";
+        }
+
+        return result;
+    } // End of personalizePost()
 
     @RequestMapping(value = "/image/{no:\\d+}", method = RequestMethod.GET)
     public void myImageGet(HttpServletRequest request, @PathVariable int no, HttpServletResponse response) throws IOException {
