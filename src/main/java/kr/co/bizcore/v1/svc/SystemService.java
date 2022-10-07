@@ -656,7 +656,7 @@ public class SystemService extends Svc {
         String result = null;
         String sql1 = "SELECT count(*) FROM (SELECT DISTINCT user_no AS a FROM bizcore.user_dept WHERE dept_id IN (WITH RECURSIVE CTE AS(SELECT org_code AS id, org_mcode AS parent FROM swcore.swc_organiz WHERE org_code IN (SELECT dept_id FROM bizcore.user_dept WHERE comp_id = ? AND user_no = ?) AND compno = (SELECT compno FROM swc_company WHERE compid = ?) UNION ALL SELECT org_code AS id, org_mcode AS parent FROM swcore.swc_organiz a INNER JOIN CTE ON a.org_mcode = CTE.id) SELECT id FROM CTE)) a WHERE a.a = ?"; // 권한검증 쿼리
         String sql2 = "SELECT month FROM bizcore.sales_goals WHERE deleted IS NULL AND compId = ? AND userNo = ? AND `year` = ?";
-        String sql3 = "UPDATE bizcore.sales_goals SET goal = ?, modified = NOW() WHERE deleted IS NULL compId = ? AND userNo = ? AND `year` = ? AND `month` = ?";
+        String sql3 = "UPDATE bizcore.sales_goals SET goal = ?, modified = NOW() WHERE deleted IS NULL AND compId = ? AND userNo = ? AND `year` = ? AND `month` = ?";
         String sql4 = "INSERT INTO bizcore.sales_goals(compId, userNo, `year`, `month`, goal) VALUES(?, ?, ?, ?, ?)";
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -705,7 +705,7 @@ public class SystemService extends Svc {
                     pstmt.setInt(5, x + 1);
                     y += pstmt.executeUpdate();
                 }else{ // 신규 입력
-                    pstmt = conn.prepareStatement(sql3);
+                    pstmt = conn.prepareStatement(sql4);
                     pstmt.setString(1, compId);
                     pstmt.setString(2, userNo);
                     pstmt.setInt(3, year);

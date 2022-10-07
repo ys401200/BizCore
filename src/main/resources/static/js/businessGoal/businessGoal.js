@@ -108,16 +108,13 @@ function goalInsert(){
         type = "insert";
         data = JSON.stringify(data);
 	    data = cipher.encAes(data);
-        console.log(data);
        
         crud.defaultAjax(url, method, data, type, goalSuccessInsert, goalErrorInsert);
     }
-
 }
 
 function goalSuccessInsert(){
     alert("등록되었습니다.");
-    location.reload();
 }
 
 function goalErrorInsert(){
