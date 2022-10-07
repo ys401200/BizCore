@@ -1,4 +1,4 @@
-let cipher, msg, apiServer, modal, storage, fileDataArray = [], removeDataArray = [], updateDataArray = [];
+let cipher, msg, apiServer, modal, storage, prepare, fileDataArray = [], removeDataArray = [], updateDataArray = [];
 storage = {};
 
 function init(){
