@@ -820,7 +820,7 @@ function createLine() {
   $(".referContainer").html(referHtml);
 
 
-  alert(simpleHtml);
+
 
   $(".simpleAppLine").html(simpleHtml);
 
