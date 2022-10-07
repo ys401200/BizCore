@@ -171,57 +171,46 @@
 
 		<ul id="accounting">
 			<li>
-				<a href="#">
-					<img src="/images/main/icons/mainHomeIcon.png" id="mainHomeIcon" />
+				<a href="/accounting/slip">
+					<img src="/images/main/icons/mainHomeIcon.png" id="accountingSlipIcon" />
 					<span>전표관리</span>
-					<span id="slideSpan">+</span>
 				</a>
-				<ul id="panel">
-					<li><a href="#">- 전표조회</a></li>
-					<li><a href="#">- 전표등록</a></li>
-				</ul>
 			</li>
 			<li>
 				<a href="#">
-					<img src="/images/main/icons/mainHomeIcon.png" id="mainHomeIcon" />
-					<span>매입/매출관리</span>
+					<img src="/images/main/icons/mainHomeIcon.png" id="accountingTradeIcon" />
+					<span>매입매출</span>
 					<span id="slideSpan">+</span>
 				</a>
 				<ul id="panel">
-					<li><a href="#">매입매출조회</a></li>
-					<li><a href="#">매입매출등록</a></li>
-					<li><a href="#">미지급현황</a></li>
-					<li><a href="#">미수금현황</a></li>
+					<li><a href="/accounting/trade">매입매출</a></li>
+					<li><a href="/accounting/unpaid">미지급현황</a></li>
+					<li><a href="/accounting/receivable">미수금현황</a></li>
+					<li><a href="/accounting/sales">매출원장</a></li>
+					<li><a href="/accounting/purchase">매입원장</a></li>
 				</ul>
 			</li>
 			<li>
-				<a href="#">
-					<img src="/images/main/icons/mainHomeIcon.png" id="mainHomeIcon" />
-					<span>자금관리</span>
-					<span id="slideSpan">+</span>
+				<a href="/accounting/bankaccount">
+					<img src="/images/main/icons/mainHomeIcon.png" id="accountingBackIcon" />
+					<span>은행예금</span>
 				</a>
-				<ul id="panel">
-					<li><a href="#">자금현황조회</a></li>
-					<li><a href="#">계좌내역등록</a></li>
-					<li><a href="#">계좌내역조회</a></li>
-					<li><a href="#">카드내역등록</a></li>
-					<li><a href="#">카드내역조회</a></li>
-				</ul>
+			</li>
+			<li>
+				<a href="/accounting/corporatecard">
+					<img src="/images/main/icons/mainHomeIcon.png" id="accountingCardIcon" />
+					<span>법인카드</span>
+				</a>
 			</li>
 			<li>
 				<a href="#">
-					<img src="/images/main/icons/mainHomeIcon.png" id="mainHomeIcon" />
-					<span>세금계산서관리</span>
+					<img src="/images/main/icons/mainHomeIcon.png" id="accountingBillIcon" />
+					<span>세금계산서</span>
 					<span id="slideSpan">+</span>
 				</a>
 				<ul id="panel">
-					<li><a href="#">매입계산서조회</a></li>
-					<li><a href="#">매출계산서조회</a></li>
-					<li><a href="#">계산서등록</a></li>
-					<li><a href="#">계산서발행</a></li>
-					<li><a href="#">계산서연결현황</a></li>
-					<li><a href="#">거래처별매출원장</a></li>
-					<li><a href="#">거래처별매입원장</a></li>
+					<li><a href="/accounting/purchasebill">- 매입</a></li>
+					<li><a href="/accounting/salesbill">- 매출</a></li>
 				</ul>
 			</li>
 		</ul>
@@ -229,7 +218,7 @@
 		<ul id="mis">
 			<li>
 				<a href="#">
-					<img src="/images/main/icons/mainHomeIcon.png" id="mainHomeIcon" />
+					<img src="/images/main/icons/mainHomeIcon.png" id="accountingLedgerIcon" />
 					<span>매입매출현황</span>
 					<span id="slideSpan">+</span>
 				</a>
