@@ -21,6 +21,7 @@ function init(){
 	getBasicInfo();
 	getCustomer();
 	getUserRank();
+	getPersonalize();
 		
 	cipher = { // 암호화 모듈
 		"encRsa" : (message) => {
@@ -468,7 +469,7 @@ function setPersonalize(){
 	sessionStorage.setItem("personalizeTime", (new Date()).getTime());
 	sessionStorage.setItem("personalizeData", str);
 	url = apiServer + "/api/user/personalize"
-	
+
 	$.ajax({
 		"url": url,
 		"method": "post",
