@@ -541,7 +541,7 @@ public class SystemService extends Svc {
     // 영업목표 가져오는 메서드  
     public String getSalesGoals(String compId, String userNo, int year){
         String result = null, empNo = null, t1 = null, t2 = null;        
-        String sql1 = "SELECT dept_id AS dept FROM bizcore.user_dept WHERE comp_id  = ? AND user_no = ?";
+        String sql1 = "WITH RECURSIVE r AS(SELECT org_code AS id, org_mcode AS parent FROM swcore.swc_organiz WHERE org_code IN (SELECT dept_id FROM bizcore.user_dept WHERE comp_id = ? AND user_no = ?) AND compno = (SELECT compno FROM swc_company WHERE compid = ?) UNION ALL SELECT org_code AS id, org_mcode AS parent FROM swcore.swc_organiz a INNER JOIN r ON a.org_mcode = r.id) SELECT id FROM r";
         String sql2 = "SELECT CAST(user_no AS CHAR) FROM bizcore.user_dept WHERE comp_id  = ? AND dept_id = ?";
         String sql3 = "SELECT month, goal FROM bizcore.sales_goals WHERE deleted IS NULL AND compId = ? and userNo = ? AND year = ?";
         String sql4 = "SELECT `month`, SUM(goal) FROM bizcore.sales_goals WHERE deleted IS NULL AND compId = ? AND `year` = ? GROUP BY `month`"; // 회사 전체 합계 가져오는 쿼리
@@ -564,6 +564,7 @@ public class SystemService extends Svc {
             pstmt = conn.prepareStatement(sql1);
             pstmt.setString(1, compId);
             pstmt.setString(2, userNo);
+            pstmt.setString(3, compId);
             rs = pstmt.executeQuery();
             while(rs.next())    all.put(rs.getString(1), new HashMap<>());
             rs.close();
