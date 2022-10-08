@@ -1,6 +1,6 @@
 $(document).ready(() => {
-	init();
-
+    init();
+    
 	setTimeout(() => {
 		$("#loadingDiv").hide();
 		$("#loadingDiv").loading("toggle");
@@ -9,21 +9,22 @@ $(document).ready(() => {
 	getCustomerList();
 });
 
-// API 서버에서 공지사항 리스트를 가져오는 함수
 function getCustomerList() {
-	let url, method, data, type; 
+	let url, method, data, type;
+
 	url = "/api/system/customer";
-	method ="get"
+	method = "get";
 	data = "";
 	type = "list";
+
 	crud.defaultAjax(url, method, data, type, customerSuccessList, customerErrorList);
-} // End of getCustomerList()
+}
 
 function drawCustomerList() {
-	let container, result, jsonData, job, header = [], data = [], ids = [], disDate, setDate, str, fnc;
-
+	let container, result, job, jsonData, header = [], data = [], ids = [], pageContainer, str, fnc;
+	
 	if (storage.customerList === undefined) {
-		msg.set("등록된 거래처가 없습니다");
+		msg.set("등록된 영업기회가 없습니다");
 	}
 	else {
 		if(storage.searchDatas === undefined){
@@ -40,53 +41,59 @@ function drawCustomerList() {
 
 	header = [
 		{
-			"title": "번호",
-			"align": "center",
+			"title" : "고객사명",
+			"align" : "center",
 		},
 		{
-			"title": "제목",
-			"align": "left",
+			"title" : "대표자명",
+			"align" : "center",
 		},
 		{
-			"title": "작성자",
-			"align": "center",
+			"title" : "사업자번호",
+			"align" : "center",
 		},
-		{
-			"title": "등록일",
-			"align": "center",
-		}
 	];
 
-	for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
-		disDate = dateDis(jsonData[i].created, jsonData[i].modified);
-		setDate = dateFnc(disDate);
-		let userName = storage.user[jsonData[i].writer].userName;
-
+	if(jsonData === ""){
 		str = [
 			{
-				"setData": jsonData[i].no,
+				"setData": undefined,
+				"col": 10,
 			},
-			{
-				"setData": jsonData[i].title,
-			},
-			{
-				"setData": userName,
-			},
-			{
-				"setData": setDate,
-			}
-		]
-
-		fnc = "customerDetailView(this)";
-		ids.push(jsonData[i].no);
+		];
+		
 		data.push(str);
+	}else{
+		for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+			let name, taxId, ceoName;
+
+			name = (jsonData[i].name === "" || jsonData[i].name === null || jsonData[i].name === undefined) ? "" : jsonData[i].name;
+			taxId = (jsonData[i].taxId === "" || jsonData[i].taxId === null || jsonData[i].taxId === undefined) ? "" : jsonData[i].taxId;
+			ceoName = (jsonData[i].ceoName === "" || jsonData[i].ceoName === null || jsonData[i].ceoName === undefined) ? "" : jsonData[i].ceoName;
+	  
+			str = [
+				{
+					"setData": name,
+				},
+				{
+					"setData": ceoName,
+				},
+				{
+					"setData": taxId,
+				}
+			];
+	
+			fnc = "customerDetailView(this);";
+			ids.push(jsonData[i].no);
+			data.push(str);
+		}
+	
+		let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawCustomerList", result[0]);
+		pageContainer[0].innerHTML = pageNation;
 	}
 
-	let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawCustomerList", result[0]);
-	pageContainer[0].innerHTML = pageNation;
 	createGrid(container, header, data, ids, job, fnc);
 
-	let path = $(location).attr("pathname").split("/");
 	let menu = [
 		{
 			"keyword": "add",
@@ -102,26 +109,19 @@ function drawCustomerList() {
 		},
 	];
 
-	if(path[3] !== undefined){
-		let content = $(".gridContent[data-id=\"" + path[3] + "\"]");
-		customerDetailView(content);
-	}
+	plusMenuSelect(menu);
+}
 
-	plusMenuSelect(menu); rr
-}// End of drawCustomerList()
-
-function customerDetailView(e) {// 선택한 그리드의 글 번호 받아오기 
+function customerDetailView(e){
 	let id, url, method, data, type;
-	storage.gridContent = $(e);
 
 	id = $(e).data("id");
-	url = "/api/customer/" + id;
+	url = "/api/system/customer/" + id;
 	method = "get";
-	data = "";
 	type = "detail";
 
 	crud.defaultAjax(url, method, data, type, customerSuccessView, customerErrorView);
-} // End of customerDetailView()
+}
 
 function customerSuccessList(result){
 	storage.customerList = result;
@@ -142,70 +142,42 @@ function customerErrorList(){
 }
 
 function customerSuccessView(result){
-	let html = "", title, content, writer, dataArray, disDate, setDate, notIdArray;
-	storage.detailCustomerNo = result.no;
-
-	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
-	content = (result.content === null || result.content === "" || result.content === undefined) ? "" : result.content;
-	writer = (result.writer == 0 || result.writer === null || result.writer === undefined) ? "" : storage.user[result.writer].userName;
-	disDate = dateDis(result.created, result.modified);
-	setDate = dateFnc(disDate);
+	let html, name, ceoName, taxId, dataArray, notIdArray;
+	storage.customerNo = result.no;
+	name = (result.name === null || result.name === "" || result.name === undefined) ? "" : result.name;
+	ceoName = (result.ceoName === null || result.ceoName === "" || result.ceoName === undefined) ? "" : result.ceoName;
+	taxId = (result.taxId === null || result.taxId === "" || result.taxId === undefined) ? "" : result.taxId;
 
 	dataArray = [
 		{
-			"title": "작성자",
-			"elementId": "writer",
-			"dataKeyup": "user",
-			"value": writer,
+			"title": "고객사명",
+			"elementId": "name",
+			"value": name,
 		},
 		{
-			"title": "등록일",
-			"value": setDate,
-			"elementId": "created",
-			"type": "date",
+			"title": "대표자명",
+			"elementId": "ceoName",
+			"value": ceoName,
 		},
 		{
-			"title": "제목",
-			"elementId": "title",
-			"value": title,
-			"col": 3,
-		},
-		{
-			"title": "내용",
-			"elementId": "content",
-			"value": content,
-			"type": "textarea",
-			"col": 3,
+			"title": "사업자번호",
+			"elementId": "taxId",
+			"value": taxId,
 		},
 	];
+	
+	html = detailViewFormModal(dataArray);
 
-	html += detailBoardForm(dataArray);
-	detailBoardContainerHide();
-	storage.gridContent.after(html);
-	notIdArray = ["writer", "created"];
-	$(".detailBtns").html("<button type='button' onclick='detailBoardContainerHide();'><i class=\"fa-solid fa-xmark fa-xl\"></i></button>");
-
-	setTimeout(() => {
-		let menu = [
-			{
-				"keyword": "add",
-				"onclick": "customerInsertForm();"
-			},
-			{
-				"keyword": "edit",
-				"onclick": "enableDisabled(this, \"customerUpdate();\", \"" + notIdArray + "\");"
-			},
-			{
-				"keyword": "delete",
-				"onclick": "customerDelete(" + result.no + ");"
-			},
-		];
-
-		plusMenuSelect(menu);
-		setTiny();
-		tinymce.activeEditor.mode.set('readonly');
-		inputDataList();
-	}, 100)
+	modal.show();
+	modal.headTitle.text(name);
+	modal.content.css("width", "50%");
+	modal.body.html(html);
+	modal.body.css("max-height", "800px");
+	modal.confirm.text("수정");
+	modal.close.text("삭제");
+	notIdArray = [];
+	modal.confirm.attr("onclick", "enableDisabled(this, \"customerUpdate(" + storage.customerNo + ");\", \"" + notIdArray + "\");");
+	modal.close.attr("onclick", "customerDelete();");
 }
 
 function customerErrorView(){
@@ -217,26 +189,26 @@ function customerInsertForm(){
 
 	dataArray = [
 		{
-			"title": "담당자",
-			"elementId": "writer",
-			"dataKeyup": "user",
-		},
-		{
-			"title": "제목",
-			"elementId": "title",
+			"title": "고객사명",
+			"elementId": "name",
 			"disabled": false,
 		},
 		{
-			"title": "내용",
-			"elementId": "content",
-			"type": "textarea",
+			"title": "대표자명",
+			"elementId": "ceoName",
+			"disabled": false,
+		},
+		{
+			"title": "사업자번호",
+			"elementId": "taxId",
+			"disabled": false,
 		},
 	];
 
 	html = detailViewFormModal(dataArray);
 
 	modal.show();
-	modal.headTitle.text("공지사항등록");
+	modal.headTitle.text("고객사등록");
 	modal.content.css("width", "50%");
 	modal.body.html(html);
 	modal.body.css("max-height", "800px");
@@ -244,29 +216,21 @@ function customerInsertForm(){
 	modal.close.text("취소");
 	modal.confirm.attr("onclick", "customerInsert();");
 	modal.close.attr("onclick", "modal.hide();");
-
-	setTimeout(() => {
-		let my;
-		my = storage.my;
-
-		$("#writer").val(storage.user[my].userName);
-	}, 100);
 }
 
 function customerInsert(){
-	let title, content, writer, data;
+	let name, taxId, ceoName;
 
-	title = $("#title").val();
-	content = tinymce.activeEditor.getContent();
-	writer = $("#writer");
-	writer = dataListFormat(writer.attr("id"), writer.val());
+	name = $("#name").val();
+	taxId = $("#taxId").val();
+	ceoName = $("#ceoName").val();
 
-	url = "/api/customer";
+	url = "/api/system/customer";
 	method = "post";
 	data = {
-		"title": title,
-		"content": content,
-		"writer": writer
+		"name": name,
+		"taxId": taxId,
+		"ceoName": ceoName,
 	}
 	type = "insert";
 
@@ -286,19 +250,18 @@ function customerErrorInsert(){
 }
 
 function customerUpdate(){
-	let title, content, writer;
+	let name, taxId, ceoName;
 
-	title = $("#title").val();
-	content = tinymce.activeEditor.getContent();
-	writer = $("#writer");
-	writer = dataListFormat(writer.attr("id"), writer.val());
+	name = $("#name").val();
+	taxId = $("#taxId").val();
+	ceoName = $("#ceoName").val();
 
-	url = "/api/customer/" + storage.detailCustomerNo;
+	url = "/api/system/customer/" + storage.customerNo;
 	method = "put";
 	data = {
-		"title": title,
-		"content": content,
-		"writer": writer,
+		"name": name,
+		"taxId": taxId,
+		"ceoName": ceoName,
 	}
 	type = "update";
 
@@ -317,13 +280,12 @@ function customerErrorUpdate(){
 	alert("수정에러");
 }
 
-function customerDelete(no){
+function customerDelete(){
 	let url, method, data, type;
 
 	if(confirm("정말로 삭제하시겠습니까??")){
-		url = "/api/customer/" + no;
+		url = "/api/system/customer/" + storage.customerNo;
 		method = "delete";
-		data = "";
 		type = "delete";
 	
 		crud.defaultAjax(url, method, data, type, customerSuccessDelete, customerErrorDelete);
@@ -353,24 +315,22 @@ function addSearchList(){
 	storage.searchList = [];
 
 	for(let i = 0; i < storage.customerList.length; i++){
-		let no, title, writer, disDate, setDate;
-		no = storage.customerList[i].no;
-		title = storage.customerList[i].title;
-		writer = (storage.customerList[i].writer === null || storage.customerList[i].writer == 0) ? "" : storage.user[storage.customerList[i].writer].userName;
-		disDate = dateDis(storage.customerList[i].created, storage.customerList[i].modified);
-		setDate = parseInt(dateFnc(disDate).replaceAll("-", ""));
-		storage.searchList.push("#" + no + "#" + title + "#" + writer + "#created" + setDate);
+		let name, ceoName, taxId;
+		name = storage.customerList[i].name;
+		ceoName = storage.customerList[i].ceoName;
+		taxId = storage.customerList[i].taxId;
+		storage.searchList.push("#" + name + "#" + ceoName + "#" + taxId);
 	}
 }
 
 function searchSubmit(){
-	let dataArray = [], resultArray, eachIndex = 0, searchTitle, searchCreatedFrom;
+	let dataArray = [], resultArray, eachIndex = 0, searchEmployee, searchCustomer, searchTitle, searchcustomerType, searchContType, searchStatus, searchCreatedFrom;
 
-	searchTitle = $("#searchTitle").val();
-	searchWriter = $("#searchWriter").val();
-	searchCreatedFrom = ($("#searchCreatedFrom").val() === "") ? "" : $("#searchCreatedFrom").val().replaceAll("-", "") + "#created" + $("#searchCreatedTo").val().replaceAll("-", "");
+	searchName = $("#searchName").val();
+	searchCeoName = $("#searchCeoName").val();
+	searchTaxId = $("#searchTaxId").val();
 	
-	let searchValues = [searchTitle, searchWriter, searchCreatedFrom];
+	let searchValues = [searchName, searchCeoName, searchTaxId];
 
 	for(let i = 0; i < searchValues.length; i++){
 		if(searchValues[i] !== ""){

@@ -1,0 +1,43 @@
+.customerContainer {
+	margin-top: 1%;
+	/* margin-left: 2%; */
+	/* max-width: 1782px; */
+	background: #FFFFFF;
+	overflow: auto;
+	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
+}
+
+.customerContainer > hr {
+	float: left;
+	border:2px solid #182f81;
+	height: 32px;
+	margin: 0;
+}
+
+.customerContainer > span {
+	font-weight: bolder;
+	font-size: 15px;
+	margin-left: 15px;
+	line-height: 40px;
+	color: #182f81;
+}
+
+/* .customerContainer button {
+	margin:1% 1% 0 0;
+	padding:0.3% 0.8% 0.3% 0.8%;
+} */
+
+.gridCustomerList {
+	display: grid;
+	width: 99%;
+	margin: 0 auto;
+}
+
+.gridCustomerList .gridHeader{
+	border-bottom:1px solid #abb6d5;
+}
+
+.gridCustomerList .gridHeader,
+.gridCustomerList .gridContent {
+	grid-template-columns: repeat(3, 1fr);
+}

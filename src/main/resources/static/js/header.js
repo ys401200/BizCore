@@ -275,27 +275,7 @@ function init(){
 								if(type === "list"){
 									jsonData = cipher.decAes(result.data);
 									jsonData = JSON.parse(jsonData);
-									if(localStorage.getItem("searchList")){
-										let searchCategory, searchText, temp = [], resultArray = [];
-										searchCategory = localStorage.getItem("searchCategory");
-										searchText = localStorage.getItem("searchText");
-		
-										for(let i = 0; i < jsonData.length; i++){
-											temp.push(jsonData[i]);
-										}
-		
-										for(let t = 0; t < temp.length; t++){
-											if(temp[t][searchCategory].toString().indexOf(searchText) > -1){
-												resultArray.push(temp[t]);
-											}
-										}
-		
-										successFnc(resultArray);
-									}else{
-										successFnc(jsonData);
-									}
-		
-									localStorage.clear();
+									successFnc(jsonData);
 								}else if(type === "detail"){
 									jsonData = cipher.decAes(result.data);
 									jsonData = JSON.parse(jsonData);
