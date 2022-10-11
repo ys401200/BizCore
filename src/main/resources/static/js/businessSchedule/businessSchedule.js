@@ -425,7 +425,6 @@ function calendarSuccessView(result){
 
 	modal.show();
 	modal.headTitle.text(title);
-	modal.content.css("width", "70%");
 	modal.body.html(html);
 	modal.confirm.text("수정");
 	modal.close.text("삭제");
@@ -603,7 +602,6 @@ function scheduleInsertForm(getDate){
 
 	modal.show();
 	modal.headTitle.text("일정등록");
-	modal.content.css("width", "70%");
 	modal.body.html(html);
 	modal.confirm.text("등록");
 	modal.close.text("취소");
@@ -629,7 +627,6 @@ function scheduleRadioClick(e, result){
 		
 		modal.show();
 		modal.headTitle.text("일정등록");
-		modal.content.css("width", "70%");
 		modal.body.html(html);
 		modal.confirm.text("등록");
 		modal.close.text("취소");
@@ -641,7 +638,6 @@ function scheduleRadioClick(e, result){
 
 		modal.show();
 		modal.headTitle.text(result.title);
-		modal.content.css("width", "70%");
 		modal.body.html(html);
 		modal.confirm.text("수정");
 		modal.close.text("삭제");

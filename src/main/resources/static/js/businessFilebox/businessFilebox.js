@@ -270,7 +270,6 @@ function fileBoxInsertForm(){
 
 	modal.show();
 	modal.headTitle.text("자료 등록");
-	modal.content.css("width", "70%");
 	modal.body.html(html);
 	modal.confirm.text("등록");
 	modal.close.text("취소");
@@ -328,7 +327,6 @@ function fileBoxUpdateForm(result){
 
 	modal.show();
 	modal.headTitle.text(title);
-	modal.content.css("width", "70%");
 	modal.body.html(html);
 	modal.confirm.text("수정완료");
 	modal.close.text("취소");

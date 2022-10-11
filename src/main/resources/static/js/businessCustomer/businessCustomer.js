@@ -170,7 +170,6 @@ function customerSuccessView(result){
 
 	modal.show();
 	modal.headTitle.text(name);
-	modal.content.css("width", "70%");
 	modal.body.html(html);
 	modal.confirm.text("수정");
 	modal.close.text("삭제");
@@ -208,7 +207,6 @@ function customerInsertForm(){
 
 	modal.show();
 	modal.headTitle.text("고객사등록");
-	modal.content.css("width", "70%");
 	modal.body.html(html);
 	modal.confirm.text("등록");
 	modal.close.text("취소");

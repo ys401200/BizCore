@@ -252,7 +252,6 @@ function noticeInsertForm(){
 
 	modal.show();
 	modal.headTitle.text("공지사항등록");
-	modal.content.css("width", "70%");
 	modal.body.html(html);
 	modal.confirm.text("등록");
 	modal.close.text("취소");
