@@ -14,8 +14,62 @@
     color: #332E85;
 }
 
-.accountingList{
-	display: grid;
-    width: 99%;
-    margin: 0 auto;
+.accountingContainer{
+    background: #FFFFFF;
+    overflow-y: hidden;
+    overflow-x: auto;
+    box-shadow: 0px 2px 14px rgb(0 0 0 / 12%);
 }
+
+.accountingContent{padding:0.5rem 1.5rem 1.5rem;}
+
+.accountingContent > div:nth-child(1){
+    overflow-y: auto;
+    overflow-x: hidden;
+    vertical-align: text-top;
+}
+
+.accountListExpand > div{
+    display:grid;
+    grid-template-columns: 2fr 3fr 2fr 4fr 2fr 4fr;
+}
+.accountingContent > div:nth-child(1) > div > *{text-align: center;padding:0.4rem;font-size:0.85rem;}
+.accountingContent > div:nth-child(1) > div:hover{background-color: #EDEDF4;cursor: pointer;}
+.accountingContent > div:nth-child(1) > div:nth-child(1):hover{background-color: initial;cursor: initial;}
+.accountingContent > div:nth-child(1) > div > *:nth-child(4){text-align: right;}
+.accountingContent > div:nth-child(1) > div:nth-child(1) > *:nth-child(4){text-align: center;}
+.accountingContent > div:nth-child(1) > div:nth-child(1) {border-top:1px solid #4f4fb9;;}
+.accountingContent > div:nth-child(1) > div {border-bottom:1px solid #4f4fb9;}
+.accountListExpand > div > div:nth-child(1){border-right:1px solid #4f4fb9;}
+.accountListExpand > div > div:nth-child(2){border-right:1px solid #4f4fb9;}
+.accountListExpand > div > div:nth-child(3){border-right:1px solid #4f4fb9;}
+.accountListExpand > div > div:nth-child(4){border-right:1px solid #4f4fb9;}
+.accountListExpand > div > div:nth-child(5){border-right:1px solid #4f4fb9;}
+.accountListExpand > div > *:nth-child(6){font-size:1rem;border:none;background-color:transparent;}
+.accountListExpand > div > div:nth-child(7){display:none;}
+
+.accountListCollect{display:inline-block;width:280px;margin-right:20px;}
+.accountListCollect > div{
+    display:inline-grid;
+    width:100%;
+    grid-template-columns: 5fr 9fr 1fr;
+}
+.accountListCollect > div > div:nth-child(1){border-right:1px solid #4f4fb9;}
+.accountListCollect > div > div:nth-child(3){display:none;}
+.accountListCollect > div > div:nth-child(4){display:none;}
+.accountListCollect > div > div:nth-child(5){display:none;}
+.accountListCollect > div > *:nth-child(6){display:none;}
+.accountListCollect > div > div:nth-child(7){display:initial;padding-left:0;padding-right:0;text-align: right;font-size:0.9rem;}
+
+.accountHistory{
+    display:none;
+    vertical-align: text-top;
+    width:calc(100% - 300px);
+}
+.accountHistory > div{
+    display:grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    border-bottom:1px solid #4f4fb9;   
+}
+.accountHistory > div:nth-child(1){border-top:1px solid #4f4fb9;}
+.accountHistory > div > div{text-align:center;padding:0 0.4rem;font-size:0.9rem;}
