@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,10 +22,8 @@ import java.util.Map;
 import kr.co.bizcore.v1.domain.CommonCode;
 import kr.co.bizcore.v1.domain.ConnUrl;
 import kr.co.bizcore.v1.domain.Customer;
-import kr.co.bizcore.v1.domain.Dept;
 import kr.co.bizcore.v1.domain.Product;
 import kr.co.bizcore.v1.domain.SimpleCustomer;
-import kr.co.bizcore.v1.domain.User;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -675,7 +672,7 @@ public class SystemService extends Svc {
             pstmt.setString(1, compId);
             pstmt.setString(2, userNo);
             pstmt.setString(3, compId);
-            pstmt.setString(4, userNo);
+            pstmt.setString(4, empNo+"");
             rs = pstmt.executeQuery();
             if(rs.next())   x = rs.getInt(1);
             else            x = -1;
