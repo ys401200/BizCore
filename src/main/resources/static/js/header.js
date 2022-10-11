@@ -327,10 +327,10 @@ function init(){
 	}, 100);
 	
 	$(document).mouseup((e) => {
-		if(modal.content.has(e.target).length === 0 || modal.noteContent.has(e.target).length === 0){
+		if(modal.content.has(e.target).length === 0){
 			modal.hide();
 		}
-	})
+	});
 
 	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined){
 		window.setTimeout(headerMyInfo, 1500);

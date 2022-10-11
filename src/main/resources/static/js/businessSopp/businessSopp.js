@@ -101,8 +101,7 @@ function drawSoppList() {
 			soppType = (jsonData[i].soppType === null || jsonData[i].soppType === "") ? "" : storage.code.etc[jsonData[i].soppType];
 			contType = (jsonData[i].contType === null || jsonData[i].contType === "") ? "" : storage.code.etc[jsonData[i].contType];
 			title = (jsonData[i].title === null || jsonData[i].title === "") ? "" : jsonData[i].title;
-			console.log(jsonData[i].customer);
-			customer = (jsonData[i].customer === null || jsonData[i].customer == 0) ? "" : storage.customer[jsonData[i].customer].name;
+			customer = (jsonData[i].customer === null || jsonData[i].customer == 0 || jsonData[i].customer === undefined) ? "" : storage.customer[jsonData[i].customer].name;
 			endUser = (jsonData[i].endUser === null || jsonData[i].endUser == 0) ? "" : storage.customer[jsonData[i].endUser].name;
 			employee = (jsonData[i].employee === null || jsonData[i].employee == 0) ? "" : storage.user[jsonData[i].employee].userName;
 			expectedSales = (jsonData[i].expectedSales === null || jsonData[i].expectedSales == 0) ? 0 : numberFormat(jsonData[i].expectedSales);
@@ -554,9 +553,8 @@ function soppInsertForm(){
 
 	modal.show();
 	modal.headTitle.text("영업기회등록");
-	modal.content.css("width", "50%");
+	modal.content.css("width", "80%");
 	modal.body.html(html);
-	modal.body.css("max-height", "800px");
 	modal.confirm.text("등록");
 	modal.close.text("취소");
 	modal.confirm.attr("onclick", "soppInsert();");

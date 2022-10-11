@@ -248,7 +248,8 @@ button, select, input[type="text"]{
 /* 페이지네이션 끝 */
 
 /* crud 폼 */
-.defaultFormContainer{
+
+/* .defaultFormContainer{
 	width: 100%;
 	margin:0 auto;
 }
@@ -263,10 +264,10 @@ button, select, input[type="text"]{
 	width: 100%;
 }
 
-/* .defaultFormContainer .defaultFormLine .defaultFormSpanDiv span{
+.defaultFormContainer .defaultFormLine .defaultFormSpanDiv span{
 	font-size: 1.2rem;
 	font-weight: 600;
-} */
+}
 
 .defaultFormContainer .defaultFormLine .defaultFormContent{
 	width: 100%;
@@ -283,6 +284,47 @@ button, select, input[type="text"]{
 	font-weight: 500;
 	border: 1px solid #C1C1C1;
 	border-radius: 5px;
+	background-color: #F5F6F8;
+}
+
+.defaultFormContainer .defaultFormLine .defaultFormContent input[type='text']:hover,
+.defaultFormContainer .defaultFormLine .defaultFormContent input[type='date']:hover,
+.defaultFormContainer .defaultFormLine .defaultFormContent input[type='file']:hover,
+.defaultFormContainer .defaultFormLine .defaultFormContent select:hover{
+	border: 1px solid#302D81;
+} */
+
+.defaultFormContainer{
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+}
+
+.defaultFormContainer .defaultFormLine{
+	display: flex;
+}
+
+.defaultFormContainer .defaultFormLine .defaultFormSpanDiv{
+	display: flex;
+    align-items: center;
+    justify-content: left;
+}
+
+.defaultFormContainer .defaultFormLine .defaultFormSpanDiv span{
+	color: #302D81;
+	font-weight: 600;
+}
+
+.defaultFormContainer .defaultFormLine .defaultFormContent{
+	display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.defaultFormContainer .defaultFormLine .defaultFormContent input[type='text'],
+.defaultFormContainer .defaultFormLine .defaultFormContent input[type='date'],
+.defaultFormContainer .defaultFormLine .defaultFormContent input[type='file'],
+.defaultFormContainer .defaultFormLine .defaultFormContent select{
+	border: 1px solid #C1C1C1;
 	background-color: #F5F6F8;
 }
 

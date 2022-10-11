@@ -77,8 +77,7 @@
 }
 
 /*모달창 라디오 버튼 시작*/
-.modalBody .defaultFormLine:first-child .defaultFormContent{
-    /* margin-top:20px; */
+/* .modalBody .defaultFormLine:first-child .defaultFormContent{
     position: relative;
     font-size: 0.95rem;
 }
@@ -86,11 +85,10 @@
     margin-top:10px;
 }
 .modalBody .defaultFormLine:first-child input{
-    /* display: none; */
     position:absolute;
     z-index:9;
-}
-.modalBody label{
+} */
+/* .modalBody label{
     position:relative;
     border: 2px solid #302D81;
     padding:5px 5px;
@@ -98,16 +96,13 @@
 }
 .modalBody label:before{
     content:"";
-    /* height:16px;
-    width:16px;
-    border:2px solid #302D81; */
     border-radius:100%;
     margin-right:10px;
 }
 .modalBody input[type="radio"]:checked + label{
     background-color:#302D81;
     color:#fff;
-}
+} */
 /* .modalBody input[type="radio"]:checked + label:before{
     height:16px;
     width:16px;

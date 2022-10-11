@@ -12,7 +12,7 @@ $(document).ready(() => {
 function getCustomerList() {
 	let url, method, data, type;
 
-	url = "/api/system/customer";
+	url = "/api/system/customer2";
 	method = "get";
 	data = "";
 	type = "list";

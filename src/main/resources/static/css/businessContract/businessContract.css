@@ -74,6 +74,7 @@
 	margin-left: 15px;
 	line-height: 40px;
 	color: #181f81;
+	float: left;
 }
 
 .contractContainer>button{
