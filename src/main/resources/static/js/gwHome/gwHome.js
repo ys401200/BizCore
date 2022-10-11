@@ -7,6 +7,7 @@ $(document).ready(() => {
   }, 300);
 
   drawGwDiv();
+  window.onresize = function () { $(".waitCard").css("font-size", ((window.innerWidth - 320) / 100) + "px") }
 });
 
 function drawGwDiv() {
@@ -57,7 +58,7 @@ function drawWaitCard(container) {
   for (let j = 0; j < types.length; j++) {
     let cardLength = typeList[types[j]].length;
     if (cardLength > 0) {
-      if (cardLength < 4) {
+      if (cardLength < 5) {
         $(targets[j]).prev().hide();
         $(targets[j]).next().hide();
       }
@@ -121,7 +122,7 @@ function prevPage(obj) {
     }
 
     if (cardLength > 0) {
-      if (cardLength < 4) {
+      if (cardLength < 5) {
         $("." + target).prev().hide();
         $("." + target).next().hide();
       }
@@ -176,7 +177,7 @@ function nextPage(obj) {
     let end = start + 5;
     end = end > cardLength ? cardLength : end;
     if (cardLength > 0) {
-      if (cardLength < 4) {
+      if (cardLength < 5) {
         $("." + target).prev().hide();
         $("." + target).next().hide();
       }

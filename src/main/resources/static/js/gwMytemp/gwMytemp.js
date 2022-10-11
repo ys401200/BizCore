@@ -9,7 +9,7 @@ $(document).ready(() => {
 });
 
 function defaultMyDraft() {
-  
+
   $("#gwSubTabTitle").html("임시 저장함");
   let url, method, data, type;
   url = "/api/gw/app/temp";
@@ -72,67 +72,67 @@ function drawMyDraft() {
 
   } else {
     jsonData = storage.myTempList;
-  
 
-  result = paging(jsonData.length, storage.currentPage, 10);
 
-  pageContainer = document.getElementsByClassName("pageContainer");
-  container = $(".listDiv");
+    result = paging(jsonData.length, storage.currentPage, 10);
 
-  header = [
-    {
-      title: "번호",
-      align: "center",
-    },
-    {
-      title: "문서양식",
-      align: "center",
-    },
-    {
-      title: "제목",
-      align: "left",
-    },
-    {
-      title: "임시 저장 일자",
-      align: "center",
-    },
-  ];
+    pageContainer = document.getElementsByClassName("pageContainer");
+    container = $(".listDiv");
 
-  for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
-    disDate = dateDis(jsonData[i].created, jsonData[i].modified);
-    setDate = getYmdSlash(disDate);
-
-    str = [
+    header = [
       {
-        setData: jsonData[i].docNo,
+        title: "번호",
+        align: "center",
       },
       {
-        setData: jsonData[i].form,
+        title: "문서양식",
+        align: "center",
       },
       {
-        setData: jsonData[i].title,
+        title: "제목",
+        align: "left",
       },
       {
-        setData: setDate,
+        title: "임시 저장 일자",
+        align: "center",
       },
     ];
 
-    fnc = "detailView(this)";
-    ids.push(jsonData[i].docNo);
-    data.push(str);
+    for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+      disDate = dateDis(jsonData[i].created, jsonData[i].modified);
+      setDate = getYmdSlash(disDate);
+
+      str = [
+        {
+          setData: jsonData[i].docNo,
+        },
+        {
+          setData: jsonData[i].form,
+        },
+        {
+          setData: jsonData[i].title,
+        },
+        {
+          setData: setDate,
+        },
+      ];
+
+      fnc = "detailView(this)";
+      ids.push(jsonData[i].docNo);
+      data.push(str);
+    }
+
+    let pageNation = createPaging(
+      pageContainer[0],
+      result[3],
+      "pageMove",
+      "drawMyDraft",
+      result[0]
+    );
+    pageContainer[0].innerHTML = pageNation;
+    createGrid(container, header, data, ids, job, fnc);
+
   }
-
-  let pageNation = createPaging(
-    pageContainer[0],
-    result[3],
-    "pageMove",
-    "drawMyDraft",
-    result[0]
-  );
-  pageContainer[0].innerHTML = pageNation;
-  createGrid(container, header, data, ids, job, fnc);
-
- }
 }
 
 function detailView(obj) {
@@ -173,11 +173,9 @@ function getDetailView() {
 
   $(".listPageDiv").html(detailHtml);
 
-  let selectedFileView =
-    "<label>첨부파일</label><div><div><input class='inputFile' multiple name='attached[]'type='file' onchange='setSelectedFiles()'/></div><div class='selectedFileDiv'></div></div>";
 
   $(".seletedForm").html(testForm);
-  $(".selectedFile").html(selectedFileView);
+
   $(":file").css("display", "none"); // 첨부파일 버튼 숨기기
 
   toReadMode();
@@ -220,9 +218,12 @@ function getDetailView() {
 
   let textAreaArr = target.getElementsByTagName("textarea")[0];
   textAreaArr.value = textAreaArr.dataset.detail;
-  
-  let selectArr = target.getElementsByTagName("select")[0];
-  selectArr.value = selectArr.dataset.detail;
+
+  if (target.getElementsByTagName("select").length > 0) {
+    let selectArr = target.getElementsByTagName("select")[0];
+    selectArr.value = selectArr.dataset.detail;
+  }
+
 
   // 이름 , 직급 한글로 설정하기
   let subTitlesArr = ["_examine", "_approval", "_agree", "_conduct"];
@@ -233,7 +234,7 @@ function getDetailView() {
           storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
         $("." + formId + subTitlesArr[i] + "_position")[j].value =
           storage.userRank[
-            $("." + formId + subTitlesArr[i] + "_position")[j].value
+          $("." + formId + subTitlesArr[i] + "_position")[j].value
           ][0];
       }
     }

@@ -1,64 +1,5 @@
 @charset "UTF-8";
 
-.searchContainer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /*margin: 2%;*/
-  height: 5rem;
-  background: #ffffff;
-  overflow: auto;
-  box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
-}
-
-.searchContainer .searchSelect {
-  margin-right: 1%;
-}
-
-.searchContainer .searchSelect select {
-  color: #332e85;
-  padding: 5px;
-  font-size: 1.2rem;
-  font-weight: 500;
-  border: 0;
-  background-color: #ededf4;
-}
-
-.searchContainer .searchSelect select:hover {
-  border: 1px solid#332E85;
-}
-
-.searchContainer .searchText {
-  margin-right: 1%;
-}
-
-.searchContainer .searchText input {
-  padding: 5px;
-  font-size: 1.2rem;
-  font-weight: 500;
-  width: 500px;
-  border: 0;
-  background-color: #ededf4;
-}
-
-.searchContainer .searchText input:hover {
-  border: 1px solid#332E85;
-}
-
-.searchContainer .searchBtn button {
-  color: #ffffff;
-  padding: 5px;
-  font-size: 1.2rem;
-  font-weight: 500;
-  width: 100px;
-  border: 0;
-  background-color: #332e85;
-}
-
-.searchContainer .searchBtn button:hover {
-  cursor: pointer;
-}
-
 .container {
   position: relative;
   width: 100%;
@@ -92,12 +33,12 @@
   padding-right: 2em;
 }
 
-.subContainer .listPageDiv > div {
+.subContainer .listPageDiv>div {
   margin: 0 auto;
   width: 99%;
 }
 
-.subContainer .listPageDiv > div:last-of-type {
+.subContainer .listPageDiv>div:last-of-type {
   width: auto;
   margin: 1em;
 }
@@ -108,6 +49,7 @@
   align-items: center;
   justify-content: center;
 }
+
 .subContainer .listPageDiv .listDiv .noListDefault {
   text-align: center;
   color: gray;
@@ -147,7 +89,7 @@
   border: 1px solid #507698;
 }
 
-.listDiv > div:first-child {
+.listDiv>div:first-child {
   border-bottom: 1px solid #406c92;
 }
 
@@ -170,7 +112,11 @@
   display: grid;
 }
 
-.listPageDiv .detailReport .selectedReportview > div:first-child {
+.listPageDiv .detailReport .selectedReportview {
+  width: 80%;
+}
+
+.listPageDiv .detailReport .selectedReportview>div:first-child {
   border: 1px solid black;
 }
 
@@ -178,48 +124,39 @@
 
 /* 첨부파일 목록 조회  */
 
-.listPageDiv .detailReport .selectedReportview > div:not(:first-of-type) {
+.listPageDiv .detailReport .selectedReportview>div:not(:first-of-type) {
   margin: 1em 0 0 0;
   display: grid;
   grid-template-columns: 15% 85%;
 }
 
-.listPageDiv .detailReport .selectedReportview .referDiv > div,
-.listPageDiv .detailReport .selectedReportview .referDiv > label {
+.listPageDiv .detailReport .selectedReportview .referDiv>div,
+.listPageDiv .detailReport .selectedReportview .referDiv>label {
   border: 1px solid black;
 }
 
-.listPageDiv .detailReport .selectedReportview .referDiv > div {
+.listPageDiv .detailReport .selectedReportview .referDiv>div {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
 }
 
-.listPageDiv .detailReport .selectedReportview > div:last-of-type > div,
-.listPageDiv .detailReport .selectedReportview > div:last-of-type > label {
+.listPageDiv .detailReport .selectedReportview>div:last-of-type>div,
+.listPageDiv .detailReport .selectedReportview>div:last-of-type>label {
   height: 5em;
   border: 1px solid black;
   display: flex;
   flex-direction: column;
 }
 
-.listPageDiv
-  .detailReport
-  .selectedReportview
-  .selectedFile
-  > div
-  > .inputFile {
+.listPageDiv .detailReport .selectedReportview .selectedFile>div>.inputFile {
   margin: 0.5em 0;
 }
 
-.listPageDiv .detailReport .selectedReportview .selectedFile > div {
+.listPageDiv .detailReport .selectedReportview .selectedFile>div {
   overflow: auto;
 }
 
-.listPageDiv
-  .detailReport
-  .selectedReportview
-  > div:not(:first-of-type)
-  > label {
+.listPageDiv .detailReport .selectedReportview>div:not(:first-of-type)>label {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -227,122 +164,6 @@
   background-color: rgb(208, 206, 206);
 }
 
-/*-------------------------------- 결재정보 변경이력 탭  */
-.listPageDiv .detailReport .comment {
-  background-color: #e6eff1;
-  margin: 0 1em;
-  border-radius: 20px 20px 0 0;
-}
-
-.detailReport .comment .reportInfoTab {
-  /* padding: 1em; */
-  text-align: center;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  font-size: 15px;
-  border-radius: 20px 20px 0 0;
-  background-color: #62a6ad;
-}
-
-.detailReport .comment .reportInfoTab input[type="radio"] {
-  display: none;
-}
-
-.detailReport .comment .reportInfoTab > label {
-  padding: 0.5em;
-  cursor: pointer;
-  background-color: #dddddd;
-  padding: 10px 0;
-  /* background-color:#406c92; */
-}
-
-.detailReport .comment .reportInfoTab > label:first-of-type {
-  background-color: #62a6ad;
-  border-top-left-radius: 14px;
-  color: #fff;
-}
-
-.detailReport .comment .reportInfoTab > label:last-of-type {
-  border-top-right-radius: 14px;
-  border-bottom-left-radius: 20px;
-  color: #5c5c5c;
-}
-
-.comment .tabDetail > div:last-of-type {
-  padding: 1em;
-  border-top-right-radius: 20px;
-}
-
-.tapLine,
-.tapLineB {
-  background-color: white;
-  /* margin: 0.5em 1em; */
-  margin: 0 1em;
-  display: grid;
-  grid-template-columns: 10% 15% 10% 35% 30%;
-  font-size: 15px;
-}
-
-.tapLineB {
-  grid-template-columns: 10% 15% 35% 40%;
-}
-
-#tabDetail2 > .tapLineB:first-of-type {
-  background-color: #96cbd1;
-  margin: 14px 1em 0 1em;
-  border-radius: 10px 10px 0 0;
-}
-
-.tapLine > div,
-.tapLineB > div {
-  padding: 0.5em;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-left: none;
-  border-bottom: 0.5px solid #87c1c7;
-}
-
-.tapLineTitle {
-  background-color: #96cbd1;
-  border-radius: 10px 10px 0 0;
-}
-
-.readDiv {
-  display: grid;
-  grid-template-columns: 10% 90%;
-  margin: 14px 1em 18px 1em;
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 2px 5px rgb(168 173 179 / 80%);
-  font-size: 15px;
-  /* box-shadow: 0 2px 5px rgb(206 217 219);
-   font-size:15px;
-   padding:1px 0; */
-}
-
-.readDiv > div {
-  padding: 0.5em;
-  display: grid;
-  grid-template-columns: 50% 50%;
-}
-
-.readDiv > div:first-of-type {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* background-color: #332E85; */
-  /* color: white; */
-}
-
-.readDiv label {
-  display: flex;
-  align-items: center;
-}
-
-.readDiv input {
-  margin-right: 10px;
-}
 
 /*-------------------------------- 헤더 float 설정 초기화   */
 button,

@@ -64,7 +64,7 @@ function getformList() {
   // let previewWidth = document.getElementsByClassName("reportInsertForm")[0];
   // previewWidth = previewWidth.clientWidth;
   // let target = $(".reportInsertForm");
-  // target.css("height", Math.ceil(previewWidth / 210 * 297));
+  // target.css("height", Math.ceil((previewWidth / 210) * 297));
 }
 
 function setTempReport() {
@@ -87,46 +87,6 @@ function setTempReport() {
 
     $(".saveBtn").prop("disabled", false);
     $(".previewBtn").prop("disabled", false);
-
-    //영업기회 데이터 리스트 만들기
-
-    $.ajax({
-      url: "/api/sopp",
-      type: "get",
-      dataType: "json",
-      success: (result) => {
-        if (result.result == "ok") {
-          let jsondata;
-          jsondata = cipher.decAes(result.data);
-          jsondata = JSON.parse(jsondata);
-          storage.soppList = jsondata;
-          setSoppList(formId);
-        } else {
-          alert("에러");
-        }
-      },
-    });
-
-    // 거래처 데이터 리스트
-
-    let html = $(".infoContentlast")[0].innerHTML;
-    let x;
-    let dataListHtml = "";
-
-    // 거래처 데이터 리스트 만들기
-    dataListHtml = "<datalist id='_infoCustomer'>";
-    for (x in storage.customer) {
-      dataListHtml +=
-        "<option data-value='" +
-        x +
-        "' value='" +
-        storage.customer[x].name +
-        "'></option> ";
-    }
-    dataListHtml += "</datalist>";
-    html += dataListHtml;
-    $(".infoContentlast")[0].innerHTML = html;
-    $("#" + formId + "_infoCustomer").attr("list", "_infoCustomer");
 
     let target = $(".reportInsertForm")[0];
     let inputsArr = target.getElementsByTagName("input");
@@ -162,7 +122,7 @@ function setTempReport() {
         $("#" + rd[i].id).prop("checked", true);
       }
     }
-    $("input[name='" + formId + "_RD']").prop("disabled", true);
+    $("input[name='" + formId + "_RD']").prop("disabled", false);
   }
 }
 
@@ -270,7 +230,10 @@ function selectForm() {
     $(".infoContentlast")[0].innerHTML = html;
     $("#" + formId + "_infoCustomer").attr("list", "_infoCustomer");
   }
-
+  // let previewWidth = document.getElementsByClassName("reportInsertForm")[0];
+  // previewWidth = previewWidth.clientWidth;
+  // let target = $(".reportInsertForm");
+  // target.css("height", Math.ceil((previewWidth / 210) * 297));
 }
 
 // 영업기회 데이터 리스트 가져오는 함수
@@ -469,28 +432,28 @@ function check(name) {
   let target = $("#" + name);
 
   let html = target.html();
+  let x;
+  let my = storage.my;
 
-  if (name == "approval" && html != "") {
+  let data = new Array();
+  // 본인 
+  for (x in storage.user) {
+    if (x != my && storage.user[x].resign == false) {
+      data.push(x);
+    }
+  }
+  let count = 0;
+  for (let i = 0; i < data.length; i++) {
+    if ($("#cb" + data[i]).prop("checked")) {
+      count++;
+    }
+  }
+
+
+  if (name == "approval" && html != "" || name == "approval" && count > 1) {
     alert("결재자는 한 명만 선택할 수 있습니다");
   } else {
     let selectHtml = "";
-
-    let x;
-    let my = storage.my;
-
-    let data = new Array();
-    // 본인 
-    for (x in storage.user) {
-      if (x != my && storage.user[x].resign == false) {
-        data.push(x);
-      }
-    }
-
-
-
-
-
-
 
 
 
@@ -818,19 +781,38 @@ function createLine() {
   lineTarget.html(testHtml);
 
   $(".referContainer").html(referHtml);
-
-
-
-
   $(".simpleAppLine").html(simpleHtml);
 
 
+  let infoLength = document.getElementsByClassName("info")[0];
+  infoLength = infoLength.clientWidth;
+  let lgcTotal = 0;
+  let lineGrid = document.getElementsByClassName("lineGrid");
 
+  if (lineGrid.length > 3) {
+    for (let i = 0; i < 3; i++) {
+      lgcTotal += lineGrid[i].clientWidth;
+    }
+    if (lgcTotal < lineGrid[3].clientWidth) {
+      lgcTotal = lineGrid[3].clientWidth;
+    }
 
+  }
 
-
+  if (lgcTotal > infoLength) {
+    for (let i = 0; i < lineGrid.length; i++) {
+      let tt = lineGrid[i];
+      $(tt).css("width", ((lineGrid[i].clientWidth) * (infoLength / lgcTotal)));
+    }
+  }
 
 } // End of createLine();
+
+
+
+
+
+
 
 // 날짜 변환 함수
 function getYmdHyphen() {
@@ -859,9 +841,6 @@ function getYmdSlash() {
   );
 }
 
-//for(let i = 0 ; i < 3; i ++) {arr.push($(".doc_Form_Consult_date")[i].dataset.detail)}
-// let formId = "doc_Form_Consult_date"
-// $("."+formId)[0].dataset.detail;
 
 // 자주쓰는 결재선 선택시 설정
 function setSavedLine() {
@@ -889,6 +868,8 @@ function setSavedLine() {
   }
 }
 
+
+//기안하기 버튼 함수 
 function reportInsert() {
   let title, content, readable, formId, appDoc, dept;
   let appLine = [];
@@ -1037,6 +1018,10 @@ function reportInsert() {
   }
 }
 
+
+
+
+
 // 파일 첨부 버튼 누를 때 마다 반영
 function docFileChange() {
   let method, data, type, attached;
@@ -1102,6 +1087,7 @@ function docFileChange() {
   // 파일목록 수정의 경우 추가해야함
 }
 
+//파일 삭제 
 function deleteFile(obj) {
   let value = obj.parentElement.dataset.detail;
   storage.attachedList = storage.attachedList.filter(

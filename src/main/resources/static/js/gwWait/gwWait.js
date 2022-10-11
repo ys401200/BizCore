@@ -299,8 +299,11 @@ function showReportDetail() {
 
   let textAreaArr = target.getElementsByTagName("textarea")[0];
   textAreaArr.value = textAreaArr.dataset.detail;
-  let selectArr = target.getElementsByTagName("select")[0];
-  selectArr.value = selectArr.dataset.detail;
+  if (target.getElementsByTagName("select").length > 0) {
+    let selectArr = target.getElementsByTagName("select")[0];
+    selectArr.value = selectArr.dataset.detail;
+
+  }
 
   // 상세타입 체크하게 하기
   let rd = $("input[name='" + formId + "_RD']");
@@ -729,15 +732,15 @@ function closeModal(obj) {
 //결재하기 모달
 function showAppModal() {
   // 결재하기 누르면 결재정보 창으로 세팅되어서 추가하는 것
-  $("#lineInfo").css("background-color", "#332E85");
-  $("#lineInfo").css("color", "white");
-  $("#lineInfo").css("border", "none");
+  // $("#lineInfo").css("background-color", "#332E85");
+  // $("#lineInfo").css("color", "white");
+  // $("#lineInfo").css("border", "none");
 
-  $("#changeInfo").css("background-color", "white");
-  $("#changeInfo").css("color", "#332E85");
-  $("#changeInfo").css("border-bottom", "2px solid #332E85");
-  $("#tabDetail").show();
-  $("#tabDetail2").hide();
+  // $("#changeInfo").css("background-color", "white");
+  // $("#changeInfo").css("color", "#332E85");
+  // $("#changeInfo").css("border-bottom", "2px solid #332E85");
+  // $("#tabDetail").show();
+  // $("#tabDetail2").hide();
 
   let setAppModalHtml =
     "<div class='setApprovalModal'>" +
@@ -998,7 +1001,6 @@ function setDefaultModalData() {
 
   //내 결재 권한 이후만 수정할 수 있음
   let btns = $(".appTypeBtn");
-  console.log("버튼 개수 확인 " + btns.length);
   for (let i = btns.length - 1; i >= 0; i--) {
     if (myappType != 2) {
       if (i < myappType) {
@@ -1089,10 +1091,10 @@ function setDefaultModalData() {
           "' onclick='downClick(this) '>▼</button><button onclick='deleteClick(this)'>✕</button></div>";
       }
       $(".typeContainer")[0].innerHTML = html;
-      $(".typeContainer")[1].innerHTML = html1;
-      $(".typeContainer")[2].innerHTML = html2;
-      $(".typeContainer")[3].innerHTML = html3;
-      $(".typeContainer")[4].innerHTML = html4;
+      $(".typeContainer")[1].innerHTML = html2;
+      $(".typeContainer")[2].innerHTML = html3;
+      $(".typeContainer")[3].innerHTML = html4;
+      // $(".typeContainer")[4].innerHTML = html4;
     }
   }
 }
@@ -1102,174 +1104,9 @@ function closeGwModal(obj) {
   if (id == "close") {
     $(".modal-wrap").hide();
 
-
-
-
     // ====================================================초기화 
-
   } else if (id == "reset") {
-    let formId = storage.reportDetailData.formId;
-    let appLine = storage.reportDetailData.appLine;
-    let testHtml =
-      "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작성</div><div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto' disabled value='" +
-      storage.userRank[storage.user[appLine[0].employee].rank][0] +
-      "'></div>" +
-      "<div class='twoBorder'><input type='text' class='inputsAuto' disabled value='" +
-      storage.user[appLine[0].employee].userName +
-      "'></div>" +
-      "<div class='twoBorder'><input type='text' class='inputsAuto' disabled value='승인'></div>" +
-      "<div class='dateBorder'><input type='text' class='inputsAuto' disabled value='" +
-      getYmdSlashShort(appLine[0].read) +
-      "'></div></div></div>";
-    let testHtml2 = "<div class='lineGridContainer'>";
-    let referHtml = "";
-    let titleArr = ["검토", "합의", "결재", "수신", "참조"];
-
-    let titleId = ["examine", "agree", "approval", "conduct", "refer"];
-    let newCombine = [[], [], [], []];
-
-
-    for (let i = 1; i < appLine.length; i++) {
-      for (let j = 0; j < newCombine.length; j++) {
-        if (appLine[i].appType == j) {
-          newCombine[j].push(appLine[i].employee);
-        }
-      }
-    }
-
-
-
-    for (let i = 0; i < newCombine.length; i++) {
-      if (newCombine[i].length != 0 && i < 3) {
-        // 해당 결재 타입에 설정된 사람이 없지 않으면서 결재 타입이 검토 합의 결재인 경우
-        testHtml +=
-          "<div class='lineGrid'><div class='lineTitle'>" +
-          titleArr[i] +
-          "</div>";
-      } else if ((newCombine[i].length != 0) != 0 && i == 3) {
-        // 결재타입이 수신인 경우
-        testHtml2 +=
-          "<div class='lineGrid'><div class='lineTitle'>" +
-          titleArr[i] +
-          "</div>";
-      }
-
-      for (let j = 0; j < newCombine[i].length; j++) {
-        // 수신
-        if (i == 3) {
-          testHtml2 +=
-            "<div class='lineSet'><div class='twoBorder'><input type='text' disabled class='inputsAuto " +
-            formId +
-            "_" +
-            titleId[i] +
-            "_position" +
-            "' value='" +
-            storage.userRank[storage.user[newCombine[i][j]].rank][0] +
-            "' data-detail='" +
-            storage.user[newCombine[i][j]].rank +
-            "'/></div>" +
-            "<div class='twoBorder'><input type='text' disabled class='inputsAuto " +
-            formId +
-            "_" +
-            titleId[i] +
-            "' value='" +
-            storage.user[newCombine[i][j]].userName +
-            "' data-detail='" +
-            storage.user[newCombine[i][j]].userNo +
-            "'/></div>" +
-            "<div class='twoBorder'><input type='text'  disabled class='inputsAuto " +
-            formId +
-            "_" +
-            titleId[i] +
-            "_status' value='' data-detail=''/></div>" +
-            "<div class='dateBorder'><input type='text' disabled class='inputsAuto " +
-            formId +
-            "_" +
-            titleId[i] +
-            "_approved" +
-            "' value='' data-detail=''/></div></div>";
-        }
-
-        // 참조
-        else if (i == 4) {
-          referHtml +=
-            "<div class='appendName " +
-            formId +
-            "_" +
-            titleId[i] +
-            "' data-detail='" +
-            storage.user[newCombine[i][j]].userNo +
-            "'>" +
-            storage.userRank[storage.user[newCombine[i][j]].rank][0] +
-            "&nbsp" +
-            storage.user[newCombine[i][j]].userName +
-            "</div>";
-        }
-
-        // 검토 합의 결재
-        else {
-          testHtml +=
-            "<div class='lineSet'><div class='twoBorder'><input type='text' disabled class='inputsAuto " +
-            formId +
-            "_" +
-            titleId[i] +
-            "_position" +
-            "' value='" +
-            storage.userRank[storage.user[newCombine[i][j]].rank][0] +
-            "' data-detail='" +
-            storage.user[newCombine[i][j]].rank +
-            "'/></div>" +
-            "<div class='twoBorder'><input type='text' disabled class='inputsAuto " +
-            formId +
-            "_" +
-            titleId[i] +
-            "' value='" +
-            storage.user[newCombine[i][j]].userName +
-            "' data-detail='" +
-            storage.user[newCombine[i][j]].userNo +
-            "'/></div>" +
-            "<div class='twoBorder'><input type='text'disabled class='inputsAuto " +
-            formId +
-            "_" +
-            titleId[i] +
-            "_status' value='' data-detail=''/></div>" +
-            "<div class='dateBorder'><input type='text' disabled  class='inputsAuto " +
-            formId +
-            "_" +
-            titleId[i] +
-            "_approved" +
-            "' value='' data-detail=''/></div></div>";
-        }
-      }
-
-      if (newCombine[i].length != 0 && i < 3) {
-        testHtml += "</div>";
-      } else if (newCombine[i].length != 0 && i == 3) {
-        testHtml2 += "</div>";
-      }
-    }
-
-    testHtml += "</div>";
-    testHtml2 += "</div>";
-
-
-    let lineTarget = $(".infoline")[0].children[1];
-    lineTarget = $("#" + lineTarget.id);
-    lineTarget.html("");
-    lineTarget.css("display", "block");
-    testHtml += testHtml2;
-    lineTarget.html(testHtml);
-
-    $(".selectedRefer").html(referHtml);
-
-    $(".modal-wrap").hide();
-
-    drawCommentLine();
-
-
-
-    // 수정 
-
+    reset();
   } else if (id == "modify") {
     // 내가 결재자이고 수정할때 아무것도 입력되지 않은 경우에 그냥 원래 결재정보로 그리는 것 
 
@@ -1282,7 +1119,9 @@ function closeGwModal(obj) {
     }
 
     if (num == 3) {
+
       $(".modal-wrap").hide();
+      reset();
 
     } else {
       let appLine = storage.reportDetailData.appLine;
@@ -1336,9 +1175,12 @@ function closeGwModal(obj) {
             storage.newAppLine = combineData;
             let checkNum;
             for (let i = 0; i < storage.newAppLine.length; i++) {
-              if (storage.newAppLine[i][0] == 2 && storage.newAppLine[i][1] == my + "" && (i != (storage.newAppLine.length - 1) && storage.newAppLine[i + 1][0] == 2)) {
-                storage.newAppLine[i][0] = 0;
+              if (storage.newAppLine[i][0] == 2 && storage.newAppLine[i][1] == my + "") {
+                if ((i != (storage.newAppLine.length - 1) && storage.newAppLine[i + 1][0] == 2)) {
+                  storage.newAppLine[i][0] = 0;
+                }
               }
+
             }
 
             $(".modal-wrap").hide();
@@ -1569,6 +1411,26 @@ function createNewLine() {
 
   $(".selectedRefer").html(referHtml);
   drawNewCommentLine();
+  let infoLength = document.getElementsByClassName("info")[0];
+  infoLength = infoLength.clientWidth;
+  let lgcTotal = 0;
+  let lineGrid = document.getElementsByClassName("lineGrid");
+
+  if (lineGrid.length > 3) {
+    for (let i = 0; i < 3; i++) {
+      lgcTotal += lineGrid[i].clientWidth;
+    }
+    if (lgcTotal < lineGrid[3].clientWidth) {
+      lgcTotal = lineGrid[3].clientWidth;
+    }
+
+  }
+  if (lgcTotal > infoLength) {
+    for (let i = 0; i < lineGrid.length; i++) {
+      let tt = lineGrid[i];
+      $(tt).css("width", (lineGrid[i].clientWidth * (infoLength / lgcTotal)));
+    }
+  }
 }
 
 function check(name) {
@@ -1576,7 +1438,26 @@ function check(name) {
   let target = $("#" + name);
   let html = target.html();
 
-  if (name == "approval" && html != "") {
+
+  let x;
+  let my = storage.my;
+
+  let data = new Array();
+  // 본인 
+  for (x in storage.user) {
+    if (x != my && storage.user[x].resign == false) {
+      data.push(x);
+    }
+  }
+  let count = 0;
+  for (let i = 0; i < data.length; i++) {
+    if ($("#cb" + data[i]).prop("checked")) {
+      count++;
+    }
+  }
+
+
+  if (name == "approval" && html != "" || name == "approval" && count > 1) {
     alert("결재자는 한 명만 선택할 수 있습니다");
   } else {
     let selectHtml = "";
@@ -1765,6 +1646,13 @@ function quitModify() {
 
   let textAreaArr = target.getElementsByTagName("textarea")[0];
   textAreaArr.value = textAreaArr.dataset.detail;
+
+  if (target.getElementsByTagName("select").length > 0) {
+    let selectArr = target.getElementsByTagName("select")[0];
+    selectArr.value = selectArr.dataset.detail;
+
+  }
+
 
   // 이름 , 직급 한글로 설정하기
   let subTitlesArr = ["_examine", "_approval", "_agree", "_conduct"];
@@ -2001,4 +1889,189 @@ function getYmdShortSlash(date) {
     "/" +
     (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
   );
+}
+
+
+function reset() {
+  let formId = storage.reportDetailData.formId;
+  let appLine = storage.reportDetailData.appLine;
+  let testHtml =
+    "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작성</div><div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto' disabled value='" +
+    storage.userRank[storage.user[appLine[0].employee].rank][0] +
+    "'></div>" +
+    "<div class='twoBorder'><input type='text' class='inputsAuto' disabled value='" +
+    storage.user[appLine[0].employee].userName +
+    "'></div>" +
+    "<div class='twoBorder'><input type='text' class='inputsAuto' disabled value='승인'></div>" +
+    "<div class='dateBorder'><input type='text' class='inputsAuto' disabled value='" +
+    getYmdSlashShort(appLine[0].read) +
+    "'></div></div></div>";
+  let testHtml2 = "<div class='lineGridContainer'>";
+  let referHtml = "";
+  let titleArr = ["검토", "합의", "결재", "수신", "참조"];
+
+  let titleId = ["examine", "agree", "approval", "conduct", "refer"];
+  let newCombine = [[], [], [], []];
+
+
+  for (let i = 1; i < appLine.length; i++) {
+    for (let j = 0; j < newCombine.length; j++) {
+      if (appLine[i].appType == j) {
+        newCombine[j].push(appLine[i].employee);
+      }
+    }
+  }
+
+
+
+  for (let i = 0; i < newCombine.length; i++) {
+    if (newCombine[i].length != 0 && i < 3) {
+      // 해당 결재 타입에 설정된 사람이 없지 않으면서 결재 타입이 검토 합의 결재인 경우
+      testHtml +=
+        "<div class='lineGrid'><div class='lineTitle'>" +
+        titleArr[i] +
+        "</div>";
+    } else if ((newCombine[i].length != 0) != 0 && i == 3) {
+      // 결재타입이 수신인 경우
+      testHtml2 +=
+        "<div class='lineGrid'><div class='lineTitle'>" +
+        titleArr[i] +
+        "</div>";
+    }
+
+    for (let j = 0; j < newCombine[i].length; j++) {
+      // 수신
+      if (i == 3) {
+        testHtml2 +=
+          "<div class='lineSet'><div class='twoBorder'><input type='text' disabled class='inputsAuto " +
+          formId +
+          "_" +
+          titleId[i] +
+          "_position" +
+          "' value='" +
+          storage.userRank[storage.user[newCombine[i][j]].rank][0] +
+          "' data-detail='" +
+          storage.user[newCombine[i][j]].rank +
+          "'/></div>" +
+          "<div class='twoBorder'><input type='text' disabled class='inputsAuto " +
+          formId +
+          "_" +
+          titleId[i] +
+          "' value='" +
+          storage.user[newCombine[i][j]].userName +
+          "' data-detail='" +
+          storage.user[newCombine[i][j]].userNo +
+          "'/></div>" +
+          "<div class='twoBorder'><input type='text'  disabled class='inputsAuto " +
+          formId +
+          "_" +
+          titleId[i] +
+          "_status' value='' data-detail=''/></div>" +
+          "<div class='dateBorder'><input type='text' disabled class='inputsAuto " +
+          formId +
+          "_" +
+          titleId[i] +
+          "_approved" +
+          "' value='' data-detail=''/></div></div>";
+      }
+
+      // 참조
+      else if (i == 4) {
+        referHtml +=
+          "<div class='appendName " +
+          formId +
+          "_" +
+          titleId[i] +
+          "' data-detail='" +
+          storage.user[newCombine[i][j]].userNo +
+          "'>" +
+          storage.userRank[storage.user[newCombine[i][j]].rank][0] +
+          "&nbsp" +
+          storage.user[newCombine[i][j]].userName +
+          "</div>";
+      }
+
+      // 검토 합의 결재
+      else {
+        testHtml +=
+          "<div class='lineSet'><div class='twoBorder'><input type='text' disabled class='inputsAuto " +
+          formId +
+          "_" +
+          titleId[i] +
+          "_position" +
+          "' value='" +
+          storage.userRank[storage.user[newCombine[i][j]].rank][0] +
+          "' data-detail='" +
+          storage.user[newCombine[i][j]].rank +
+          "'/></div>" +
+          "<div class='twoBorder'><input type='text' disabled class='inputsAuto " +
+          formId +
+          "_" +
+          titleId[i] +
+          "' value='" +
+          storage.user[newCombine[i][j]].userName +
+          "' data-detail='" +
+          storage.user[newCombine[i][j]].userNo +
+          "'/></div>" +
+          "<div class='twoBorder'><input type='text'disabled class='inputsAuto " +
+          formId +
+          "_" +
+          titleId[i] +
+          "_status' value='' data-detail=''/></div>" +
+          "<div class='dateBorder'><input type='text' disabled  class='inputsAuto " +
+          formId +
+          "_" +
+          titleId[i] +
+          "_approved" +
+          "' value='' data-detail=''/></div></div>";
+      }
+    }
+
+    if (newCombine[i].length != 0 && i < 3) {
+      testHtml += "</div>";
+    } else if (newCombine[i].length != 0 && i == 3) {
+      testHtml2 += "</div>";
+    }
+  }
+
+  testHtml += "</div>";
+  testHtml2 += "</div>";
+
+
+  let lineTarget = $(".infoline")[0].children[1];
+  lineTarget = $("#" + lineTarget.id);
+  lineTarget.html("");
+  lineTarget.css("display", "block");
+  testHtml += testHtml2;
+  lineTarget.html(testHtml);
+
+  $(".selectedRefer").html(referHtml);
+
+  $(".modal-wrap").hide();
+
+  drawCommentLine();
+
+
+  let infoLength = document.getElementsByClassName("info")[0];
+  infoLength = infoLength.clientWidth;
+  let lgcTotal = 0;
+
+  let lineGrid = document.getElementsByClassName("lineGrid");
+
+  if (lineGrid.length > 3) {
+    for (let i = 0; i < 3; i++) {
+      lgcTotal += lineGrid[i].clientWidth;
+    }
+    if (lgcTotal < lineGrid[3].clientWidth) {
+      lgcTotal = lineGrid[3].clientWidth;
+    }
+
+  }
+  if (lgcTotal > infoLength) {
+    for (let i = 0; i < lineGrid.length; i++) {
+      let tt = lineGrid[i];
+      $(tt).css("width", (lineGrid[i].clientWidth * (infoLength / lgcTotal)));
+    }
+  }
+  // 수정 
 }

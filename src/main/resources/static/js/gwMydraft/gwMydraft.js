@@ -304,8 +304,11 @@ function getDetailView() {
   let textAreaArr = target.getElementsByTagName("textarea")[0];
   textAreaArr.value = textAreaArr.dataset.detail;
 
-  let selectArr = target.getElementsByTagName("select")[0];
-  selectArr.value = selectArr.dataset.detail;
+  if (target.getElementsByTagName("select").length > 0) {
+    let selectArr = target.getElementsByTagName("select")[0];
+    selectArr.value = selectArr.dataset.detail;
+
+  }
 
 
 
