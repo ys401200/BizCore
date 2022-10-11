@@ -92,6 +92,7 @@ public abstract class Domain implements Comparable<Domain>{
             tableMap.put("Procure", "swc_pps");
             tableMap.put("Sopp", "swc_sopp");
             tableMap.put("TradeDetail", "swc_soppdata01");
+            tableMap.put("Customer", "swc_cust");
         }
         return tableMap;
     }
