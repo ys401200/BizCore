@@ -231,6 +231,9 @@ function salesSuccessView(result){
 			],
 			"type": "radio",
 			"elementName": "job",
+			"radioType": "tab",
+			"elementId": "jobSales",
+			"col": 4,
 		},
 		{
 			"title": "활동시작일",
@@ -352,14 +355,14 @@ function salesSuccessView(result){
 			"title": "제목",
 			"elementId": "title",
 			"value": title,
-			"col": 3,
+			"col": 4,
 		},
 		{
 			"title": "내용",
 			"elementId": "content",
 			"type": "textarea",
 			"value": content,
-			"col": 3,
+			"col": 4,
 		}
 	];
 	
@@ -440,6 +443,9 @@ function salesInsertForm(){
 			"type": "radio",
 			"elementName": "job",
 			"disabled": false,
+			"radioType": "tab",
+			"elementId": "jobSales",
+			"col": 4,
 		},
 		{
 			"title": "활동시작일(*)",
@@ -560,11 +566,13 @@ function salesInsertForm(){
 			"title": "제목(*)",
 			"elementId": "title",
 			"disabled": false,
+			"col": 4,
 		},
 		{
 			"title": "내용",
 			"elementId": "content",
 			"type": "textarea",
+			"col": 4,
 		}
 	];
 
@@ -572,9 +580,8 @@ function salesInsertForm(){
 
 	modal.show();
 	modal.headTitle.text("일정등록");
-	modal.content.css("width", "50%");
+	modal.content.css("width", "70%");
 	modal.body.html(html);
-	modal.body.css("max-height", "800px");
 	modal.confirm.text("등록");
 	modal.close.text("취소");
 	modal.confirm.attr("onclick", "salesInsert();");

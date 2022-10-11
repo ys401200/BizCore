@@ -1248,19 +1248,22 @@ function detailViewFormModal(data){
 
 	for(let i = 0; i < data.length; i++){
 		let dataTitle = (data[i].title === undefined) ? "" : data[i].title;
+		let col = (data[i].col === undefined) ? 1 : data[i].col;
 
+		html += "<div class='defaultFormLine' style=\"grid-column: span " + col + ";\">";
+		
 		if(dataTitle !== ""){
-			html += "<div class='defaultFormLine'>";
 			html += "<div class='defaultFormSpanDiv'>";
 			html += "<span class='defaultFormSpan'>" + dataTitle + "</span>";
 			html += "</div>";
-			html += "<div class='defaultFormContent'>";
-	
-			html += inputSet(data[i]);
-			
-			html += "</div>";
-			html += "</div>";
 		}
+
+		html += "<div class='defaultFormContent'>";
+
+		html += inputSet(data[i]);
+		
+		html += "</div>";
+		html += "</div>";
 	}
 
 	html += "</div>";
@@ -1313,7 +1316,7 @@ function detailBoardForm(data){
 	let html = "";
 
 	html = "<div class='detailBoard'>";
-	html += "<div class='detailBtns'></div>"
+	html += "<div class='detailBtns'></div>";
 	html += "<div class='detailContents'>";
 	html += "<div class='detailBoardContainer'>";
 
@@ -1357,17 +1360,21 @@ function inputSet(data){
 		html += "<textarea id='editorSet'>" + dataValue + "</textarea>";
 	}else if(dataType === "radio"){
 		for(let t = 0; t < data.radioValue.length; t++){
+			if(data.radioType !== "tab"){
+				data.radioType = "default";
+			}
+			
 			if(dataDisabled == true){
 				if(t == 0){
-					html += "<input type='radio' id='" + elementId + "' name='" + elementName + "' value='" + data.radioValue[t].key + "' disabled='" + dataDisabled + "' onclick='" + dataClickEvent + "' checked><label>" + data.radioValue[t].value + "</label>" + " ";
+					html += "<input type='radio' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.radioValue[t].key + "' disabled='" + dataDisabled + "' onclick='" + dataClickEvent + "' checked><label data-type=\"" + data.radioType + "\" for=\"" + elementId[t] + "\">" + data.radioValue[t].value + "</label>" + " ";
 				}else{
-					html += "<input type='radio' id='" + elementId + "' name='" + elementName + "' value='" + data.radioValue[t].key + "' disabled='" + dataDisabled + "' onclick='" + dataClickEvent + "'><label>" + data.radioValue[t].value + "</label>" + " ";
+					html += "<input type='radio' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.radioValue[t].key + "' disabled='" + dataDisabled + "' onclick='" + dataClickEvent + "'><label data-type=\"" + data.radioType + "\" for=\"" + elementId[t] + "\">" + data.radioValue[t].value + "</label>" + " ";
 				}
 			}else{
 				if(t == 0){
-					html += "<input type='radio' id='" + elementId + "' name='" + elementName + "' value='" + data.radioValue[t].key + "' onclick='" + dataClickEvent + "' checked><label>" + data.radioValue[t].value + "</label>" + " ";
+					html += "<input type='radio' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.radioValue[t].key + "' onclick='" + dataClickEvent + "' checked><label data-type=\"" + data.radioType + "\" for=\"" + elementId[t] + "\">" + data.radioValue[t].value + "</label>" + " ";
 				}else{
-					html += "<input type='radio' id='" + elementId + "' name='" + elementName + "' value='" + data.radioValue[t].key + "' onclick='" + dataClickEvent + "'><label>" + data.radioValue[t].value + "</label>" + " ";
+					html += "<input type='radio' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.radioValue[t].key + "' onclick='" + dataClickEvent + "'><label data-type=\"" + data.radioType + "\" for=\"" + elementId[t] + "\">" + data.radioValue[t].value + "</label>" + " ";
 				}
 			}
 		}

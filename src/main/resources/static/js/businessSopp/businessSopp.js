@@ -342,14 +342,14 @@ function soppSuccessView(result){
 			"title": "영업기회명",
 			"elementId": "title",
 			"value": title,
-			"col": 3,
+			"col": 4,
 		},
 		{
 			"title": "내용",
 			"elementId": "detail",
 			"value": detail,
 			"type": "textarea",
-			"col": 3,
+			"col": 4,
 		},
 	];
 
@@ -541,11 +541,13 @@ function soppInsertForm(){
 			"title": "영업기회명",
 			"elementId": "title",
 			"disabled": false,
+			"col": 4,
 		},
 		{
 			"title": "내용",
 			"elementId": "detail",
 			"type": "textarea",
+			"col": 4,
 		},
 	];
 
@@ -553,7 +555,7 @@ function soppInsertForm(){
 
 	modal.show();
 	modal.headTitle.text("영업기회등록");
-	modal.content.css("width", "80%");
+	modal.content.css("width", "70%");
 	modal.body.html(html);
 	modal.confirm.text("등록");
 	modal.close.text("취소");

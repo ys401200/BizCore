@@ -277,6 +277,9 @@ function techSuccessView(result){
 			],
 			"type": "radio",
 			"elementName": "job",
+			"radioType": "tab",
+			"elementId": "jobTech",
+			"col": 4,
 		},
 		{
 			"title": "등록구분",
@@ -406,14 +409,14 @@ function techSuccessView(result){
 			"title": "기술지원 요청명(*)",
 			"elementId": "title",
 			"value": title,
-			"col": 3,
+			"col": 4,
 		},
 		{
 			"title": "내용",
 			"type": "textarea",
 			"elementId": "content",
 			"value": content,
-			"col": 3,
+			"col": 4,
 		},
 	];
 	
@@ -502,6 +505,9 @@ function techInsertForm(){
 			],
 			"type": "radio",
 			"elementName": "job",
+			"radioType": "tab",
+			"elementId": "jobTech",
+			"col": 4,
 			"disabled": false,
 		},
 		{
@@ -518,12 +524,15 @@ function techInsertForm(){
 			],
 			"type": "radio",
 			"elementName": "contractMethod",
+			"elementId": ["contractMethodNew", "contractMethodOld"],
+			"col": 4,
 			"disabled": false,
 		},
 		{
 			"title": "기술지원 요청명(*)",
 			"elementId": "title",
 			"disabled": false,
+			"col": 4,
 		},
 		{
 			"title": "영업기회(*)",
@@ -638,6 +647,7 @@ function techInsertForm(){
 			"title": "내용",
 			"type": "textarea",
 			"elementId": "content",
+			"col": 4,
 		},
 	];
 
@@ -645,9 +655,8 @@ function techInsertForm(){
 
 	modal.show();
 	modal.headTitle.text("일정등록");
-	modal.content.css("width", "50%");
+	modal.content.css("width", "70%");
 	modal.body.html(html);
-	modal.body.css("max-height", "800px");
 	modal.confirm.text("등록");
 	modal.close.text("취소");
 	modal.confirm.attr("onclick", "techInsert();");

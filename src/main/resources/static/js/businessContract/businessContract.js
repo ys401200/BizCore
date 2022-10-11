@@ -331,6 +331,8 @@ function contractSuccessView(result){
 			],
 			"type": "radio",
 			"elementName": "contractType",
+			"col": 4,
+			"elementId": ["contractTypeNew", "contractTypeOld"],
 			"onClick": "contractRadioClick(this);",
 		},
 		{
@@ -465,14 +467,14 @@ function contractSuccessView(result){
 			"title": "계약명",
 			"elementId": "title",
 			"value": title,
-			"col": 3,
+			"col": 4,
 		},
 		{
 			"title": "내용",
 			"type": "textarea",
 			"value": detail,
 			"elementId": "detail",
-			"col": 3,
+			"col": 4,
 		},
 	];
 
@@ -582,6 +584,8 @@ function contractInsertForm(){
 				},
 			],
 			"type": "radio",
+			"col": 4,
+			"elementId": ["contractTypeNew", "contractTypeOld"],
 			"elementName": "contractType",
 			"disabled": false,
 			"onClick": "contractRadioClick(this);",
@@ -590,6 +594,7 @@ function contractInsertForm(){
 			"title": "계약명(*)",
 			"elementId": "title",
 			"disabled": false,
+			"col": 4,
 		},
 		{
 			"title": "영업기회(*)",
@@ -725,6 +730,7 @@ function contractInsertForm(){
 			"title": "내용",
 			"type": "textarea",
 			"elementId": "detail",
+			"col": 4,
 		},
 	];
 
@@ -732,9 +738,8 @@ function contractInsertForm(){
 
 	modal.show();
 	modal.headTitle.text("계약등록");
-	modal.content.css("width", "1200px");
+	modal.content.css("width", "70%");
 	modal.body.html(html);
-	modal.body.css("max-height", "800px");
 	modal.confirm.text("등록");
 	modal.close.text("취소");
 	modal.confirm.attr("onclick", "contractInsert();");

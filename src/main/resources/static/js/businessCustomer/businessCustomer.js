@@ -170,9 +170,8 @@ function customerSuccessView(result){
 
 	modal.show();
 	modal.headTitle.text(name);
-	modal.content.css("width", "50%");
+	modal.content.css("width", "70%");
 	modal.body.html(html);
-	modal.body.css("max-height", "800px");
 	modal.confirm.text("수정");
 	modal.close.text("삭제");
 	notIdArray = [];
@@ -209,9 +208,8 @@ function customerInsertForm(){
 
 	modal.show();
 	modal.headTitle.text("고객사등록");
-	modal.content.css("width", "50%");
+	modal.content.css("width", "70%");
 	modal.body.html(html);
-	modal.body.css("max-height", "800px");
 	modal.confirm.text("등록");
 	modal.close.text("취소");
 	modal.confirm.attr("onclick", "customerInsert();");

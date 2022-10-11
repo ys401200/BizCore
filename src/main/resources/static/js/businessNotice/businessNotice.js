@@ -180,14 +180,14 @@ function noticeSuccessView(result){
 			"title": "제목",
 			"elementId": "title",
 			"value": title,
-			"col": 3,
+			"col": 4,
 		},
 		{
 			"title": "내용",
 			"elementId": "content",
 			"value": content,
 			"type": "textarea",
-			"col": 3,
+			"col": 4,
 		},
 	];
 
@@ -232,16 +232,19 @@ function noticeInsertForm(){
 			"title": "담당자",
 			"elementId": "writer",
 			"dataKeyup": "user",
+			"col": 4,
 		},
 		{
 			"title": "제목",
 			"elementId": "title",
 			"disabled": false,
+			"col": 4,
 		},
 		{
 			"title": "내용",
 			"elementId": "content",
 			"type": "textarea",
+			"col": 4,
 		},
 	];
 
@@ -249,9 +252,8 @@ function noticeInsertForm(){
 
 	modal.show();
 	modal.headTitle.text("공지사항등록");
-	modal.content.css("width", "50%");
+	modal.content.css("width", "70%");
 	modal.body.html(html);
-	modal.body.css("max-height", "800px");
 	modal.confirm.text("등록");
 	modal.close.text("취소");
 	modal.confirm.attr("onclick", "noticeInsert();");
