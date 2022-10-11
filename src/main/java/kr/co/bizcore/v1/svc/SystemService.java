@@ -142,7 +142,7 @@ public class SystemService extends Svc {
         //result = getNextNumberFromDB(compId, "customer");
         //customer.setNo(result);
         sql = customer.createInsertQuery(null, compId);
-        result = executeSqlQuery(sql) > 0 ? result : -1;
+        result = executeSqlQuery(sql) > 0 ? 1 : -1;
         return result;
     }
     // 고객사 정보를 수정하는 메서드
