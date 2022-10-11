@@ -452,7 +452,7 @@ public abstract class Domain implements Comparable<Domain>{
         tempStr = className.split("\\.");
         className = tempStr[tempStr.length - 1];
         fieldMap = getFieldMap().get(className);
-        logger.debug("[DOMAIN] fieldMap ? : " + fieldMap.size());
+        logger.debug("[DOMAIN] fieldMap ? : " + (fieldMap == null ? "not exist" : fieldMap.size()));
 
         if(fieldMap == null)    fieldMap = new HashMap<>();
         table = tableMap.get(className) == null ? tableName : tableMap.get(className);
