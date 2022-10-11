@@ -115,7 +115,7 @@ public class ApiSystemCtrl extends Ctrl{
         return result;
     } // End of customer
 
-    @GetMapping("/customer/{taxid:^(\\d{3,3})+[-]+(\\d{2,2})+[-]+(\\d{5,5})$}")
+    @GetMapping("/customer/{taxid}")
     public String customerByTaxid(HttpServletRequest request, @PathVariable("taxid") String taxId){
         String result = null;
         String compId = null;
