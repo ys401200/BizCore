@@ -106,7 +106,7 @@ public class SystemService extends Svc {
                 for(x = 0 ; x < list.size() ; x++){
                     if(result == null)  result = "[";
                     else                result += ",";
-                    result += list.get(x);
+                    result += list.get(x).toJson();
                 }
             }
             result += "]";
