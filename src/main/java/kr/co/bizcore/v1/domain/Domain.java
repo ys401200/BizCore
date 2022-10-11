@@ -305,6 +305,17 @@ public abstract class Domain implements Comparable<Domain>{
             column.put("supportStep", "techdSteps");
             column.put("created","regdatetime");
             column.put("modified","moddatetime");
+
+            column = new HashMap<>();
+            fieldMap.put("Customer", column);
+            column.put("no", "custNo");
+            column.put("name", "custName");
+            column.put("taxId", "custVatno");
+            column.put("email", "custEmail");
+            column.put("emailForTaxbill", "custVatemail");
+            column.put("ceoName", "custBossname");
+            column.put("created","regdatetime");
+            column.put("modified","moddatetime");
         }
 
         return fieldMap;
