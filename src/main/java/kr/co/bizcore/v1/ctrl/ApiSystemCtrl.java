@@ -87,7 +87,7 @@ public class ApiSystemCtrl extends Ctrl{
         return result;
     } // End of customer
 
-    @GetMapping("/customer/{no:\\d+}")
+    @GetMapping("/customer/{no:\\d{6,7}}")
     public String customerByNo(HttpServletRequest request, @PathVariable int no){
         String result = null;
         String compId = null;
@@ -115,7 +115,7 @@ public class ApiSystemCtrl extends Ctrl{
         return result;
     } // End of customer
 
-    @GetMapping("/customer/{taxid}")
+    @GetMapping("/customer/{taxid:\\d{3}-\\d{2}-\\d{5}}")
     public String customerByTaxid(HttpServletRequest request, @PathVariable("taxid") String taxId){
         String result = null;
         String compId = null;
