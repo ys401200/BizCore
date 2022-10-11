@@ -16,7 +16,9 @@ public class BankAccount extends Domain{
     protected String remark; 
     protected String serial; // 호환성을 위해 당분간만 유지
     protected String depositor;
+    protected long balance;
     protected Long limit;
+    protected Date updated;    
     protected Date established;    
     
 }
