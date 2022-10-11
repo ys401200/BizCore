@@ -139,8 +139,8 @@ public class SystemService extends Svc {
     public int addCustomer(String compId, Customer customer){
         int result = -1;
         String sql =  null;
-        result = getNextNumberFromDB(compId, "customer");
-        customer.setNo(result);
+        //result = getNextNumberFromDB(compId, "customer");
+        //customer.setNo(result);
         sql = customer.createInsertQuery(null, compId);
         result = executeSqlQuery(sql) > 0 ? result : -1;
         return result;
