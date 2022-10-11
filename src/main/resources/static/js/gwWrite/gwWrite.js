@@ -900,7 +900,7 @@ function reportInsert() {
   let customerVal = $("#" + formId + "_infoCustomer").val();
   let soppResult;
   for (let x in storage.soppList) {
-    if (soppVal != "" || storage.soppList[x].title === soppVal) {
+    if (soppVal != undefined || soppVal != "" || storage.soppList[x].title === soppVal) {
       soppResult = storage.soppList[x].no + "";
     } else {
       soppResult = "";
@@ -908,7 +908,7 @@ function reportInsert() {
   }
   let cusResult;
   for (let x in storage.customer) {
-    if (customerVal != "" || storage.customer[x].title === customerVal) {
+    if (customerVal != undefined || customerVal != "" || storage.customer[x].title === customerVal) {
       cusResult = storage.customer[x].no + "";
     } else {
       cusResult = "";

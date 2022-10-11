@@ -220,6 +220,9 @@ function getDetailView() {
 
   let textAreaArr = target.getElementsByTagName("textarea")[0];
   textAreaArr.value = textAreaArr.dataset.detail;
+  
+  let selectArr = target.getElementsByTagName("select")[0];
+  selectArr.value = selectArr.dataset.detail;
 
   // 이름 , 직급 한글로 설정하기
   let subTitlesArr = ["_examine", "_approval", "_agree", "_conduct"];

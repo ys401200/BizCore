@@ -259,6 +259,10 @@ function getDetailView() {
   let textAreaArr = target.getElementsByTagName("textarea")[0];
   textAreaArr.value = textAreaArr.dataset.detail;
 
+  let selectArr = target.getElementsByTagName("select")[0];
+  selectArr.value = selectArr.dataset.detail;
+
+
   // 상세타입 체크하게 하기
   let rd = $("input[name='" + formId + "_RD']");
   for (let i = 0; i < rd.length; i++) {

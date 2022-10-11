@@ -1,8 +1,5 @@
 @charset "UTF-8";
 
-
-
-
 .container {
   position: relative;
   width: 100%;
@@ -166,8 +163,7 @@
 }
 
 .selector .lineBtnContainerB .simpleAppLine {
-  display: grid;
-  grid-template-rows: 50%50%;
+  color: #d0cece;
 }
 
 

@@ -283,6 +283,7 @@ function getDetailView() {
   let target = $(".seletedForm")[0];
   let inputsArr = target.getElementsByTagName("input");
 
+
   for (let i = 0; i < inputsArr.length; i++) {
     if (inputsArr[i].dataset.detail !== undefined) {
       inputsArr[i].value = inputsArr[i].dataset.detail;
@@ -291,6 +292,10 @@ function getDetailView() {
 
   let textAreaArr = target.getElementsByTagName("textarea")[0];
   textAreaArr.value = textAreaArr.dataset.detail;
+
+
+  let selectArr = target.getElementsByTagName("select")[0];
+  selectArr.value = selectArr.dataset.detail;
 
   // 상세타입 체크하게 하기
   let rd = $("input[name='" + formId + "_RD']");
