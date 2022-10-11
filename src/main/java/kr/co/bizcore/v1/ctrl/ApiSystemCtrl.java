@@ -220,7 +220,7 @@ public class ApiSystemCtrl extends Ctrl{
     } // End of customer
 
     @DeleteMapping("/customer/{no:\\d+}")
-    public String customerDelete(HttpServletRequest request, @RequestBody String requestBody, @PathVariable("no") int no) {
+    public String customerDelete(HttpServletRequest request,@PathVariable("no") int no) {
         String result = null;
         String compId = null;
         Msg msg = null;
