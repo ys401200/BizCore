@@ -477,7 +477,7 @@ public abstract class Domain implements Comparable<Domain>{
             field.setAccessible(true);
             fieldName = fieldMap.get(field.getName()) != null ? fieldMap.get(field.getName()) : field.getName();
             
-            if(fieldName.equals("no"))  continue;
+            if(!table.contains("bizcore") && fieldName.equals("no"))  continue;
 
             if(className.equals("Schedule")){
                 if(field.getName() != null && (field.getName().equals("no") || field.getName().equals("job") || fieldMap.get(field.getName()) == null))    continue; // Schedule 클래스에서 job는 테이블을 구분하기 위한 것이므로 생락함
