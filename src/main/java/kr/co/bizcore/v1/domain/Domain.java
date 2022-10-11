@@ -306,17 +306,6 @@ public abstract class Domain implements Comparable<Domain>{
             column.put("supportStep", "techdSteps");
             column.put("created","regdatetime");
             column.put("modified","moddatetime");
-
-            column = new HashMap<>();
-            fieldMap.put("Customer", column);
-            column.put("no", "custNo");
-            column.put("name", "custName");
-            column.put("taxId", "custVatno");
-            column.put("email", "custEmail");
-            column.put("emailForTaxbill", "custVatemail");
-            column.put("ceoName", "custBossname");
-            column.put("created","regdatetime");
-            column.put("modified","moddatetime");
         }
 
         return fieldMap;
@@ -493,10 +482,6 @@ public abstract class Domain implements Comparable<Domain>{
 
             if(className.equals("Schedule")){
                 if(field.getName() != null && (field.getName().equals("no") || field.getName().equals("job") || fieldMap.get(field.getName()) == null))    continue; // Schedule 클래스에서 job는 테이블을 구분하기 위한 것이므로 생락함
-            }
-
-            if(className.equals("Customer")){
-                if(field.getName() != null && (field.getName().equals("no") || fieldMap.get(field.getName()) == null))    continue; // Customer 클래스에서 일련번호는 자동증가이므로 생략함
             }
 
             try{
