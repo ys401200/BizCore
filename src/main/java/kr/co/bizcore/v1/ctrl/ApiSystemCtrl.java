@@ -298,7 +298,7 @@ public class ApiSystemCtrl extends Ctrl{
         aesIv = (String)session.getAttribute("aesIv");
         compId = (String)session.getAttribute("compId");
         if(compId == null)  compId = (String)request.getAttribute("compId");
-
+        
         if(compId == null){
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
         }else if(aesKey == null || aesIv == null){
@@ -313,7 +313,7 @@ public class ApiSystemCtrl extends Ctrl{
     } // End of code()
 
     // 영업목표를 가져오는 메서드 / 소속 부서 기준
-    @GetMapping(value={"/goal/{year:\\d{4}}", "/goal/{year:\\d{4}}/{empNo:\\d+}"})
+    @GetMapping(value={"/goal/{year:\\d{4}}", "/goal/{year:\\d{4}}"})
     public String apiSystemGoalYearUsernoGet(HttpServletRequest request, @PathVariable("year") int year){
         String result = null;
         String compId = null;
@@ -330,7 +330,7 @@ public class ApiSystemCtrl extends Ctrl{
         compId = (String)session.getAttribute("compId");
         userNo = (String)session.getAttribute("userNo");
         if(compId == null)  compId = (String)request.getAttribute("compId");
-
+        
         if(compId == null){
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
         }else if(aesKey == null || aesIv == null){
