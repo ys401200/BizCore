@@ -83,7 +83,7 @@ public class SystemService extends Svc {
     } // End oif findCompIdFromConnUrl()
 
     // 고객사 정보를 전달하는 메서드
-    public String getCustomers(String compId){
+    public String getCustomers(String compId, boolean map){
         String result = null;
         SimpleCustomer each = null;
         List<SimpleCustomer> list = null;
@@ -91,16 +91,26 @@ public class SystemService extends Svc {
 
         list = commonMapper.getCustomerList(compId);
 
-        if(list != null && list.size() > 0){
-            for(x = 0 ; x < list.size() ; x++){
-                if(result == null)  result = "{";
-                else                result += ",";
-                each = list.get(x);
-                result += ("\"" + each.getNo() + "\":" + each.toJson());  
+        if(map){ // 맵 형식
+            if(list != null && list.size() > 0){
+                for(x = 0 ; x < list.size() ; x++){
+                    if(result == null)  result = "{";
+                    else                result += ",";
+                    each = list.get(x);
+                    result += ("\"" + each.getNo() + "\":" + each.toJson());  
+                }
             }
-        }
-        result += "}";
-
+            result += "}";
+        }else{ // 배열 형식
+            if(list != null && list.size() > 0){
+                for(x = 0 ; x < list.size() ; x++){
+                    if(result == null)  result = "[";
+                    else                result += ",";
+                    result += list.get(x);
+                }
+            }
+            result += "]";
+        } 
         return result;
     } // End of  getCustomers()
 
