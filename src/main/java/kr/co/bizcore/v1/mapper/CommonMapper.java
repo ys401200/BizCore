@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import kr.co.bizcore.v1.domain.Customer;
 import kr.co.bizcore.v1.domain.SimpleCustomer;
@@ -14,6 +15,9 @@ public interface CommonMapper {
 
     @Select("SELECT no, name, taxId, ceoName FROM bizcore.customer WHERE deleted IS NULL AND compId = #{compId}")
     public List<SimpleCustomer> getCustomerList(String compId);
+
+    @Update("UPDATE bizcore.customer SET deleted = NOW() WHERE deleted IS NULL AND compId = #{compId} AND no = #{no}")
+    public int removeCustomer(@Param("compId") String compId, @Param("no") int no);
 
     @Select("SELECT `no`, name, taxId, email, emailForTaxbill, address, phone, fax, ceoName, related, created, modified, deleted FROM bizcore.customer WHERE deleted IS NULL AND compId = #{compId} AND `no` = #{no}")
     public Customer getCustomeByNo(@Param("compId") String compId, @Param("no") int no);

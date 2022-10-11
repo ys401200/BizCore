@@ -145,14 +145,22 @@ public class SystemService extends Svc {
         result = executeSqlQuery(sql) > 0 ? result : -1;
         return result;
     }
+
     // 고객사 정보를 수정하는 메서드
     public int modifyCustomer(String compId, Customer customer){
         int result = -1;
         String sql =  null;
         Customer ogn = commonMapper.getCustomeByNo(compId, result);
         if(ogn == null) return -9999;
-        sql = ogn.createUpdateQuery(customer, null);
+        sql = ogn.createUpdateQuery(customer, "bizcore.customer");
         result = executeSqlQuery(sql) > 0 ? result : -1;
+        return result;
+    }
+
+    // 고객사 정보를 삭제하는 메서드
+    public int removeCustomer(String compId, int no){
+        int result = -1;
+        result = commonMapper.removeCustomer(compId, no);
         return result;
     }
 

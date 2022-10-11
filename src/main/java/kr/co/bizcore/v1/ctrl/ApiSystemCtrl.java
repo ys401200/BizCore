@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -211,6 +212,30 @@ public class ApiSystemCtrl extends Ctrl{
             customer = mapper.readValue(data, Customer.class);
             customer.setNo(no);
             x = systemService.addCustomer(compId, customer);
+            if(x > 0)  result = "{\"result\":\"ok\",\"data\":" + no + "}";
+            else        result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
+            
+        }
+        return result;
+    } // End of customer
+
+    @DeleteMapping("/customer/{no:\\d+}")
+    public String customerDelete(HttpServletRequest request, @RequestBody String requestBody, @PathVariable("no") int no) throws JsonMappingException, JsonProcessingException{
+        String result = null;
+        String compId = null;
+        Msg msg = null;
+        HttpSession session = null;
+        int x = 0;
+
+        session = request.getSession();
+        compId = (String)session.getAttribute("compId");
+        msg = getMsg((String)session.getAttribute("lang"));
+        if(compId == null)  compId = (String)request.getAttribute("compId");
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        }else{
+            x = systemService.removeCustomer(compId, no);
             if(x > 0)  result = "{\"result\":\"ok\",\"data\":" + no + "}";
             else        result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
             
