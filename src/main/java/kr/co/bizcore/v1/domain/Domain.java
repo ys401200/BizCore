@@ -459,7 +459,7 @@ public abstract class Domain implements Comparable<Domain>{
 
         if(table.contains("bizcore")){
             comp[0] = "compId";
-            comp[1] = compId;
+            comp[1] = "'" + compId + "'";
         }else{
             comp[0] = "compNo";
             comp[1] = "(SELECT compno FROM swc_company WHERE compid = '" + compId + "')";
