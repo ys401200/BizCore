@@ -359,7 +359,7 @@ function scheduleSuccessView(result){
 	setTimeout(() => {
 		$("[name='job'][value='" + result.job + "']").prop("checked", true).removeAttr("onclick");
 		detailBackBtn.css("display", "flex");
-		detailBackBtn.attr("onclick", "getScheduleList();");
+		detailBackBtn.attr("onclick", "drawScheduleList();");
 
 		if(result.job === "sales"){
 			let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;

@@ -371,7 +371,7 @@ function salesSuccessView(result){
 
 	setTimeout(() => {
 		detailBackBtn.css("display", "flex");
-		detailBackBtn.attr("onclick", "getSalesList();");
+		detailBackBtn.attr("onclick", "drawSalesList();");
 
 		let menu = [
 			{

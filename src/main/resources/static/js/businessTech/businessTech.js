@@ -434,7 +434,7 @@ function techSuccessView(result){
 	setTimeout(() => {
 		$("[name='job'][value='tech']").prop("checked", true);
 		detailBackBtn.css("display", "flex");
-		detailBackBtn.attr("onclick", "getTechList();");
+		detailBackBtn.attr("onclick", "drawTechList();");
 
 		let menu = [
 			{
