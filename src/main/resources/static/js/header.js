@@ -4,14 +4,10 @@ storage = {};
 function init(){
 	let nextStep;
 
-	cipher.aes.iv = sessionStorage.getItem("aesIv");
-	cipher.aes.key = sessionStorage.getItem("aesKey");
-	cipher.rsa.public.modulus = sessionStorage.getItem("rsaModulus");
-	cipher.rsa.public.exponent = sessionStorage.getItem("rsaExponent")
-
-	if(cipher.aes.iv === null || cipher.aes.key === null  || cipher.rsa.public.modulus === null || cipher.rsa.public.exponent === null){
-		cipher.rsa.getKey();
-	}
+	cipher.aes.iv = localStorage.getItem("aesIv");
+	cipher.aes.key = localStorage.getItem("aesKey");
+	cipher.rsa.public.modulus = localStorage.getItem("rsaModulus");
+	cipher.rsa.public.exponent = localStorage.getItem("rsaExponent")
 
 	setTimeout(() => {
 		$("#loadingDiv").loading({

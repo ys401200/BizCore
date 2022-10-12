@@ -51,10 +51,10 @@ cipher = { // 암호화 모듈
 							publicKeyModulus = data.data.publicKeyModulus;
 							cipher.rsa.public.modulus = publicKeyModulus;
 							cipher.rsa.public.exponent = publicKeyExponent;
-							sessionStorage.setItem("rsaModulus", publicKeyModulus);
-							sessionStorage.setItem("rsaExponent", publicKeyExponent);
-							sessionStorage.setItem("aesKey", cipher.aes.key);
-							sessionStorage.setItem("aesIv", cipher.aes.iv);
+							localStorage.setItem("rsaModulus", publicKeyModulus);
+							localStorage.setItem("rsaExponent", publicKeyExponent);
+							localStorage.setItem("aesKey", cipher.aes.key);
+							localStorage.setItem("aesIv", cipher.aes.iv);
 							$.ajax({
 								"url": url,
 								"method": "post",
