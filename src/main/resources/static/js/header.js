@@ -3,6 +3,16 @@ storage = {};
 
 function init(){
 	let nextStep;
+
+	cipher.aes.iv = sessionStorage.getItem("aesIv");
+	cipher.aes.key = sessionStorage.getItem("aesKey");
+	cipher.rsa.public.modulus = sessionStorage.getItem("rsaModulus");
+	cipher.rsa.public.exponent = sessionStorage.getItem("rsaExponent")
+
+	if(cipher.aes.iv === null || cipher.aes.key === null  || cipher.rsa.public.modulus === null || cipher.rsa.public.exponent === null){
+		cipher.rsa.getKey();
+	}
+
 	setTimeout(() => {
 		$("#loadingDiv").loading({
 			onStart: function(loading) {
@@ -13,291 +23,6 @@ function init(){
 			}
 		});
 	}, 70);
-	
-	apiServer = "";
-	
-	cipher.rsa.getKey()
-	getCommonCode();
-	getUserMap();
-	getDeptMap();
-	getBasicInfo();
-	getCustomer();
-	getUserRank();
-	getPersonalize();
-		
-	cipher = { // 암호화 모듈
-		"encRsa" : (message) => {
-					let result, rsa;
-					if(message === undefined || message === null)	return message;
-					rsa = new RSAKey();
-					rsa.setPublic(cipher.rsa.public.modulus, cipher.rsa.public.exponent);
-					return btoa(rsa.encrypt(message));
-		},
-		"encAes":(message)=>{
-			let cp, result;
-			cp = CryptoJS.AES.encrypt(message, CryptoJS.enc.Utf8.parse(cipher.aes.key), {
-				"iv": CryptoJS.enc.Utf8.parse(cipher.aes.iv),
-				"padding": CryptoJS.pad.Pkcs7,
-				"mode": CryptoJS.mode.CBC
-			});
-			result = cp.toString();
-			return result;
-		},
-		"decAes":(message)=>{
-			let cp, result;
-			cp = CryptoJS.AES.decrypt(message, CryptoJS.enc.Utf8.parse(cipher.aes.key), {
-				iv: CryptoJS.enc.Utf8.parse(cipher.aes.iv),
-				padding: CryptoJS.pad.Pkcs7,
-				mode: CryptoJS.mode.CBC
-			});
-			result = cp.toString(CryptoJS.enc.Utf8);
-			return result;
-		},
-		"rsa" : {"public":{"modulus":undefined,
-						"exponent":undefined},
-				"private":undefined,
-				"getKey":()=>{
-					let url = apiServer + "/api/user/rsa";
-					$.ajax({
-						url: url,
-						method: "get",
-						dataType: "json",
-						cache: false,
-						success:(data) => {
-							let publicKeyExponent, publicKeyModulus, aesKey, aesIv, url = apiServer + "/api/user/aes";
-							if(data.result === "ok"){
-								aesKey = [cipher.genKey(8), cipher.genKey(8), cipher.genKey(8), cipher.genKey(8)];
-								aesIv = [cipher.genKey(8), cipher.genKey(8)];
-								cipher.aes.key = aesKey[0] + aesKey[1] + aesKey[2] + aesKey[3];
-								cipher.aes.iv = aesIv[0] + aesIv[1];
-								publicKeyExponent = data.data.publicKeyExponent;
-								publicKeyModulus = data.data.publicKeyModulus;
-								cipher.rsa.public.modulus = publicKeyModulus;
-								cipher.rsa.public.exponent = publicKeyExponent;
-								sessionStorage.setItem("rsaModulus", publicKeyModulus);
-								sessionStorage.setItem("rsaExponent", publicKeyExponent);
-								sessionStorage.setItem("aesKey", cipher.aes.key);
-								sessionStorage.setItem("aesIv", cipher.aes.iv);
-								$.ajax({
-									"url": url,
-									"method": "post",
-									data: cipher.encRsa(aesKey[0]) + "\n" + cipher.encRsa(aesKey[1]) + "\n" + cipher.encRsa(aesKey[2]) + "\n" + cipher.encRsa(aesKey[3]) + "\n"+ cipher.encRsa(aesIv[0]) + "\n" + cipher.encRsa(aesIv[1]),
-									contentType:"text/plain",
-									"cache": false,
-									success:(data) => {
-									}
-								})
-							}else{
-								msg.set(data.msg);
-							}
-						}
-					})
-				}},
-		"aes" : {"iv":undefined,
-				"key":undefined},
-		"genKey" : (length)=>{
-			let x, t, result = "", src = [];
-			if(isNaN(length) || length < 8)	length = 32;
-			for(x = 0 ; x < 69 ; x++){
-				if (x < 10)
-					src[x] = (x + 48);
-				else if (x < 36)
-					src[x] = (x + 55);
-				else if (x < 62)
-					src[x] = (x + 61);
-				else if (x == 63)
-					src[x] = 33;
-				else if (x == 64)
-					src[x] = 43;
-				else if (x == 65)
-					src[x] = 126;
-				else
-					src[x] = (x - 31);
-			}
-			for (x = 0; x < length; x++) {
-				t = Math.floor((Math.random() * src.length));
-				result += String.fromCharCode(src[t])
-			}
-			return result;
-		} // End of getKey()
-	}
-
-	msg = { // 메시징 유닛
-		"cnt" : undefined,
-		"handler" : undefined,
-		"time" : 10,
-		"fadeout":300,
-		"set" : (message, time) => {
-			let handler, html;
-			const el = document.createElement("div");
-			if(msg.cnt === undefined || msg.cnt === null)	return;
-			if(message === undefined)	return;
-			if(time === undefined)  time = msg.time;
-			handler = window.setTimeout(()=>{$(el).fadeOut(msg.fadeout);},time*1000);
-			html = "<div class=\"each_msg\"><div data-handler=\"" + handler + "\" onclick=\"msg.clr(this)\" class=\"cls_btn\">&#x2715;</div><div class=\"msg_content\">" + message + "</div></div>";
-			el.innerHTML = html;
-			msg.cnt.appendChild(el);
-		},
-		"clr" : (el) => {
-			let handler;
-			handler = el.dataset.handler*1;
-			window.clearTimeout(handler);
-			$(el.parentElement).fadeOut(msg.fadeout);
-		}
-	}
-	
-	tiny = {
-		options: {
-			language: "ko_KR",
-			menubar: false,
-			plugins: ["advlist", "autolink", "lists", "link", "image", "charmap", "print", "preview", "anchor","searchreplace", "visualblocks", "code", "fullscreen", "insertdatetime", "media", "table","paste", "code", "help", "wordcount", "save"],
-			toolbar: "formatselect fontselect fontsizeselect | forecolor backcolor | bold italic underline strikethrough | alignjustify alignleft aligncenter alignright | bullist numlist | table tabledelete | link image",
-			selector: "textarea",
-			width: "100%",
-			height : "200",
-		}
-	}
-
-	//모달
-	modal = {
-		"container": $(".modalContainer"),
-		"content": $(".modalContainer").find(".modal"),
-		"wrap": $(".modalContainer").find(".modalWrap"),
-		"head": $(".modalContainer").find(".modalWrap .modalHead"),
-		"headTitle": $(".modalContainer").find(".modalWrap").find(".modalHead .modalHeadTitle"),
-		"body": $(".modalContainer").find(".modalWrap .modalBody"),
-		"foot": $(".modalContainer").find(".modalWrap .modalFoot"),
-		"footBtns": $(".modalContainer").find(".modalWrap .modalFoot .modalBtns"),
-		"confirm": $(".modalContainer").find(".modalWrap .modalFoot .confirm"),
-		"close": $(".modalContainer").find(".modalWrap .modalFoot .close"),
-		"noteContainer": $(".noteContainer"),
-		"noteContent": $(".noteContainer").find(".note"),
-		"noteWrap": $(".noteContainer").find(".noteWrap"),
-		"noteHead": $(".noteContainer").find(".noteWrap .noteHead"),
-		"noteHeadTitle": $(".noteContainer").find(".noteWrap").find(".noteHead .noteHeadTitle"),
-		"noteBody": $(".noteContainer").find(".noteWrap .noteBody"),
-		"xClose": () => {
-			modal.hide();
-		},
-		"alert": (title, content) => {
-			modal.show();
-			modal.content.css("width", "400px");
-			modal.headTitle.text(title);
-			modal.body.html(content);
-			modal.confirm.hide();
-			modal.close.text("확인");
-			modal.close.css("width", "100%");
-		},
-		"show": () => {
-			modal.clear();
-
-			setTimeout(() => {
-				setTiny();
-				inputDataList();
-			},100);
-
-			modal.wrap.css('display','flex').hide().fadeIn();
-		},
-		"hide": () => {
-			modal.clear();
-			modal.wrap.fadeOut();
-		},
-		"clear": () => {
-			modal.headTitle.text("");
-			modal.body.html("");
-			modal.confirm.show();
-			modal.close.show();
-			modal.footBtns.css("width", "49%");
-			modal.confirm.text("확인");
-			modal.close.text("닫기");
-		},
-
-		"noteXClose": () => {
-			modal.noteHide();
-		},
-		"noteShow": () => {
-			modal.noteClear();
-			modal.noteWrap.css('display','flex').hide().fadeIn();
-		},
-		"noteHide": () => {
-			modal.noteClear();
-			modal.noteWrap.fadeOut();
-		},
-		"noteClear": () => {
-			modal.noteHeadTitle.text("");
-			modal.noteBody.html("");
-		},
-	}
-
-	dragAndDrop = {
-		"fileDragEnter": (e) => {
-			e.stopPropagation();
-			e.preventDefault();
-			toggleClass("dragenter");
-		},
-
-		"fileDragLeave": (e) => {
-			e.stopPropagation();
-			e.preventDefault();
-			toggleClass("dragleave");
-		},
-
-		"fileDragOver": (e) => {
-			e.stopPropagation();
-			e.preventDefault();
-			toggleClass("dragover");
-		},
-
-		"fileDrop": (e) => {
-			e.preventDefault();
-			let files = e.dataTransfer && e.dataTransfer.files;
-
-			toggleClass("drop");
-			showFile(files);
-			selectFile(files);
-		},
-	},
-
-	crud = {
-		"defaultAjax": (url, method, data, type, successFnc, errorFnc) => {
-			$.ajax({
-				url: url,
-				method: method,
-				data: data,
-				dataType: "json",
-				contentType: "text/plain",
-				success: (result) => {
-					console.log(result);
-					if(result.result === "ok"){
-						if(result.data !== "null"){
-							if(successFnc !== undefined){
-								let jsonData;
-								
-								if(type === "list"){
-									jsonData = cipher.decAes(result.data);
-									jsonData = JSON.parse(jsonData);
-									successFnc(jsonData);
-								}else if(type === "detail"){
-									jsonData = cipher.decAes(result.data);
-									jsonData = JSON.parse(jsonData);
-									successFnc(jsonData);
-								}else{
-									successFnc();
-								}
-							}
-						}else{
-							successFnc("");
-						}
-					}
-				},
-				error: () => {
-					if(errorFnc !== undefined){
-						errorFnc();
-					}
-				}
-			});
-		}
-	}
 
 	msg.cnt = document.getElementsByClassName("msg_cnt")[0];
 	
@@ -347,6 +72,290 @@ function init(){
 	}
 
 	if(prepare !== undefined)	window.setTimeout(nextStep,50);
+	
+	getCommonCode();
+	getUserMap();
+	getDeptMap();
+	getBasicInfo();
+	getCustomer();
+	getUserRank();
+	getPersonalize();
+} // End of init();
+
+apiServer = "";
+
+cipher = { // 암호화 모듈
+	"encRsa" : (message) => {
+				let result, rsa;
+				if(message === undefined || message === null)	return message;
+				rsa = new RSAKey();
+				rsa.setPublic(cipher.rsa.public.modulus, cipher.rsa.public.exponent);
+				return btoa(rsa.encrypt(message));
+	},
+	"encAes":(message)=>{
+		let cp, result;
+		cp = CryptoJS.AES.encrypt(message, CryptoJS.enc.Utf8.parse(cipher.aes.key), {
+			"iv": CryptoJS.enc.Utf8.parse(cipher.aes.iv),
+			"padding": CryptoJS.pad.Pkcs7,
+			"mode": CryptoJS.mode.CBC
+		});
+		result = cp.toString();
+		return result;
+	},
+	"decAes":(message)=>{
+		let cp, result;
+		cp = CryptoJS.AES.decrypt(message, CryptoJS.enc.Utf8.parse(cipher.aes.key), {
+			iv: CryptoJS.enc.Utf8.parse(cipher.aes.iv),
+			padding: CryptoJS.pad.Pkcs7,
+			mode: CryptoJS.mode.CBC
+		});
+		result = cp.toString(CryptoJS.enc.Utf8);
+		return result;
+	},
+	"rsa" : {"public":{"modulus":undefined,
+					"exponent":undefined},
+			"private":undefined,
+			"getKey":()=>{
+				let url = apiServer + "/api/user/rsa";
+				$.ajax({
+					url: url,
+					method: "get",
+					dataType: "json",
+					cache: false,
+					success:(data) => {
+						let publicKeyExponent, publicKeyModulus, aesKey, aesIv, url = apiServer + "/api/user/aes";
+						if(data.result === "ok"){
+							aesKey = [cipher.genKey(8), cipher.genKey(8), cipher.genKey(8), cipher.genKey(8)];
+							aesIv = [cipher.genKey(8), cipher.genKey(8)];
+							cipher.aes.key = aesKey[0] + aesKey[1] + aesKey[2] + aesKey[3];
+							cipher.aes.iv = aesIv[0] + aesIv[1];
+							publicKeyExponent = data.data.publicKeyExponent;
+							publicKeyModulus = data.data.publicKeyModulus;
+							cipher.rsa.public.modulus = publicKeyModulus;
+							cipher.rsa.public.exponent = publicKeyExponent;
+							sessionStorage.setItem("rsaModulus", publicKeyModulus);
+							sessionStorage.setItem("rsaExponent", publicKeyExponent);
+							sessionStorage.setItem("aesKey", cipher.aes.key);
+							sessionStorage.setItem("aesIv", cipher.aes.iv);
+							$.ajax({
+								"url": url,
+								"method": "post",
+								data: cipher.encRsa(aesKey[0]) + "\n" + cipher.encRsa(aesKey[1]) + "\n" + cipher.encRsa(aesKey[2]) + "\n" + cipher.encRsa(aesKey[3]) + "\n"+ cipher.encRsa(aesIv[0]) + "\n" + cipher.encRsa(aesIv[1]),
+								contentType:"text/plain",
+								"cache": false,
+								success:(data) => {
+								}
+							})
+						}else{
+							msg.set(data.msg);
+						}
+					}
+				})
+			}},
+	"aes" : {"iv":undefined,
+			"key":undefined},
+	"genKey" : (length)=>{
+		let x, t, result = "", src = [];
+		if(isNaN(length) || length < 8)	length = 32;
+		for(x = 0 ; x < 69 ; x++){
+			if (x < 10)
+				src[x] = (x + 48);
+			else if (x < 36)
+				src[x] = (x + 55);
+			else if (x < 62)
+				src[x] = (x + 61);
+			else if (x == 63)
+				src[x] = 33;
+			else if (x == 64)
+				src[x] = 43;
+			else if (x == 65)
+				src[x] = 126;
+			else
+				src[x] = (x - 31);
+		}
+		for (x = 0; x < length; x++) {
+			t = Math.floor((Math.random() * src.length));
+			result += String.fromCharCode(src[t])
+		}
+		return result;
+	} // End of getKey()
+}
+
+msg = { // 메시징 유닛
+	"cnt" : undefined,
+	"handler" : undefined,
+	"time" : 10,
+	"fadeout":300,
+	"set" : (message, time) => {
+		let handler, html;
+		const el = document.createElement("div");
+		if(msg.cnt === undefined || msg.cnt === null)	return;
+		if(message === undefined)	return;
+		if(time === undefined)  time = msg.time;
+		handler = window.setTimeout(()=>{$(el).fadeOut(msg.fadeout);},time*1000);
+		html = "<div class=\"each_msg\"><div data-handler=\"" + handler + "\" onclick=\"msg.clr(this)\" class=\"cls_btn\">&#x2715;</div><div class=\"msg_content\">" + message + "</div></div>";
+		el.innerHTML = html;
+		msg.cnt.appendChild(el);
+	},
+	"clr" : (el) => {
+		let handler;
+		handler = el.dataset.handler*1;
+		window.clearTimeout(handler);
+		$(el.parentElement).fadeOut(msg.fadeout);
+	}
+}
+
+tiny = {
+	options: {
+		language: "ko_KR",
+		menubar: false,
+		plugins: ["advlist", "autolink", "lists", "link", "image", "charmap", "print", "preview", "anchor","searchreplace", "visualblocks", "code", "fullscreen", "insertdatetime", "media", "table","paste", "code", "help", "wordcount", "save"],
+		toolbar: "formatselect fontselect fontsizeselect | forecolor backcolor | bold italic underline strikethrough | alignjustify alignleft aligncenter alignright | bullist numlist | table tabledelete | link image",
+		selector: "textarea",
+		width: "100%",
+		height : "200",
+	}
+}
+
+//모달
+modal = {
+	"container": $(".modalContainer"),
+	"content": $(".modalContainer").find(".modal"),
+	"wrap": $(".modalContainer").find(".modalWrap"),
+	"head": $(".modalContainer").find(".modalWrap .modalHead"),
+	"headTitle": $(".modalContainer").find(".modalWrap").find(".modalHead .modalHeadTitle"),
+	"body": $(".modalContainer").find(".modalWrap .modalBody"),
+	"foot": $(".modalContainer").find(".modalWrap .modalFoot"),
+	"footBtns": $(".modalContainer").find(".modalWrap .modalFoot .modalBtns"),
+	"confirm": $(".modalContainer").find(".modalWrap .modalFoot .confirm"),
+	"close": $(".modalContainer").find(".modalWrap .modalFoot .close"),
+	"noteContainer": $(".noteContainer"),
+	"noteContent": $(".noteContainer").find(".note"),
+	"noteWrap": $(".noteContainer").find(".noteWrap"),
+	"noteHead": $(".noteContainer").find(".noteWrap .noteHead"),
+	"noteHeadTitle": $(".noteContainer").find(".noteWrap").find(".noteHead .noteHeadTitle"),
+	"noteBody": $(".noteContainer").find(".noteWrap .noteBody"),
+	"xClose": () => {
+		modal.hide();
+	},
+	"alert": (title, content) => {
+		modal.show();
+		modal.content.css("width", "400px");
+		modal.headTitle.text(title);
+		modal.body.html(content);
+		modal.confirm.hide();
+		modal.close.text("확인");
+		modal.close.css("width", "100%");
+	},
+	"show": () => {
+		modal.clear();
+
+		setTimeout(() => {
+			setTiny();
+			inputDataList();
+		},100);
+
+		modal.wrap.css('display','flex').hide().fadeIn();
+	},
+	"hide": () => {
+		modal.clear();
+		modal.wrap.fadeOut();
+	},
+	"clear": () => {
+		modal.headTitle.text("");
+		modal.body.html("");
+		modal.confirm.show();
+		modal.close.show();
+		modal.footBtns.css("width", "49%");
+		modal.confirm.text("확인");
+		modal.close.text("닫기");
+	},
+
+	"noteXClose": () => {
+		modal.noteHide();
+	},
+	"noteShow": () => {
+		modal.noteClear();
+		modal.noteWrap.css('display','flex').hide().fadeIn();
+	},
+	"noteHide": () => {
+		modal.noteClear();
+		modal.noteWrap.fadeOut();
+	},
+	"noteClear": () => {
+		modal.noteHeadTitle.text("");
+		modal.noteBody.html("");
+	},
+}
+
+dragAndDrop = {
+	"fileDragEnter": (e) => {
+		e.stopPropagation();
+		e.preventDefault();
+		toggleClass("dragenter");
+	},
+
+	"fileDragLeave": (e) => {
+		e.stopPropagation();
+		e.preventDefault();
+		toggleClass("dragleave");
+	},
+
+	"fileDragOver": (e) => {
+		e.stopPropagation();
+		e.preventDefault();
+		toggleClass("dragover");
+	},
+
+	"fileDrop": (e) => {
+		e.preventDefault();
+		let files = e.dataTransfer && e.dataTransfer.files;
+
+		toggleClass("drop");
+		showFile(files);
+		selectFile(files);
+	},
+},
+
+crud = {
+	"defaultAjax": (url, method, data, type, successFnc, errorFnc) => {
+		$.ajax({
+			url: url,
+			method: method,
+			data: data,
+			dataType: "json",
+			contentType: "text/plain",
+			success: (result) => {
+				console.log(result);
+				if(result.result === "ok"){
+					if(result.data !== "null"){
+						if(successFnc !== undefined){
+							let jsonData;
+							
+							if(type === "list"){
+								jsonData = cipher.decAes(result.data);
+								jsonData = JSON.parse(jsonData);
+								successFnc(jsonData);
+							}else if(type === "detail"){
+								jsonData = cipher.decAes(result.data);
+								jsonData = JSON.parse(jsonData);
+								successFnc(jsonData);
+							}else{
+								successFnc();
+							}
+						}
+					}else{
+						successFnc("");
+					}
+				}
+			},
+			error: () => {
+				if(errorFnc !== undefined){
+					errorFnc();
+				}
+			}
+		});
+	}
 }
 
 // 위젯 관련 세팅 및 기본설정
