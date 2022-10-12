@@ -48,10 +48,34 @@ function getBankAccountList(){
 	});
 } // End of getBankAccountList()
 
-function drawAccountList(){
-	let cnt, html, x, t, bnkcode;
+// 서버에서 은행계좌 거래정보를 가져오는 함수
+function getBankAccountHistory(bank, account){
+	let url;
+	url = apiServer + "/api/accounting/bankdetail/" + bank + "/" + account;
+	$.ajax({
+		"url": url,
+		"method": "get",
+		"dataType": "json",
+		"cache": false,
+		success: (data) => {
+			let x, list;
+			if (data.result === "ok") {
+				list = cipher.decAes(data.data);
+				list = JSON.parse(list);
+				storage.bankHistory = list;
+				console.log("[getBankAccountList] Success getting bank account information.");
+				drawAccountHostory();
+			} else {
+				msg.set("[getBankAccountList] Fail to get bank account information.");
+			}
+		}
+	});
+} // End of getBankAccountDetail()
 
-	cnt = document.getElementsByClassName("accountListExpand")[0];
+function drawAccountList(){
+	let cnt, html, x, t;
+
+	cnt = document.getElementsByClassName("accountingContent")[0].children[0];
 
 	// 헤더정보 입력 / 은행 계좌번호 최종확인일 잔고 종류 메모
 	html = "<div><div>은행</div><div>계좌번호</div><div>최종확인일</div><div>잔고</div><div>종류</div><div>메모</div></div>";
@@ -62,7 +86,7 @@ function drawAccountList(){
 		t+= ("<div>" + codeToBank(storage.bankAccount[x].bankCode) + "</div>");
 		t+= ("<div>" + storage.bankAccount[x].account + "</div>");
 		t+= ("<div>" + dateFormat(storage.bankAccount[x].updated) + "</div>");
-		t+= ("<div>" + 0 + "</div>");
+		t+= ("<div>" + storage.bankAccount[x].updated.toLocaleString() + "</div>");
 		t+= ("<div>" + storage.bankAccount[x].type + "</div>");
 		t+= ("<input value=\"" + (storage.bankAccount[x].remark === null ? "" : storage.bankAccount[x].remark) + "\" disabled />");
 		t+= ("<div></div>");
@@ -71,6 +95,30 @@ function drawAccountList(){
 	}
 	cnt.innerHTML = html;
 } // End of drawAccountList();
+
+function drawAccountHostory(){
+	let cnt, html, x, t, list;
+
+	list = storage.bankHistory;
+	cnt = document.getElementsByClassName("accountingContent")[0].children[1];
+	html = "<div><div>일자</div><div>기재내용</div><div>입금</div><div>출금</div><div>잔액</div><div>거래점</div><div>통장메모</div><div>메모</div><div>연결</div></div>";
+
+	for(x in list){
+		html += "<div>";
+		html += ("<div>" + dateFormat(list[x].dt) + "</div>");
+		html += ("<div>" + list[x].desc + "</div>");
+		html += ("<div>" + list[x].deposit.toLocaleString() + "</div>");
+		html += ("<div>" + list[x].withdraw.toLocaleString() + "</div>");
+		html += ("<div>" + list[x].balance.toLocaleString() + "</div>");
+		html += ("<div>" + (list[x].branch === null ? "" : list[x].branch) + "</div>");
+		html += ("<div>" + (list[x].memo1 === null ? "" : list[x].memo1) + "</div>");
+		html += ("<input value=\"" + (list[x].memo2 === null ? "" : list[x].memo2) + "\" />");
+		html += ("<div><img src=\"" + (list[x].link === "y" ? "/images/common/linkIcon.png" : "/images/common/linkIcon.png") + "\"></div>");
+		html +="</div>";
+	}
+
+	cnt.innerHTML = html;
+} // End of drawAccountHostory()
 
 // 날짜 포맷 함수
 function dateFormat(l){
@@ -90,7 +138,7 @@ function codeToBank(code){
 }
 
 function clickedAccount(el){
-	let x, order, cntList, cntContent, parent;
+	let x, order, cntList, cntContent, parent, bank, account;
 
 	order = el.dataset.order * 1;
 	parent = el.parentElement;
@@ -99,9 +147,22 @@ function clickedAccount(el){
 	cntList.className = "accountListCollect";
 	cntContent.style.display = "inline-block";
 	for(x = 1 ; x < parent.children.length ; x++)	parent.children[x].children[6].innerText = "";
+	document.getElementsByClassName("bodyFunc")[0].style.display = "inline-block";;
 	el.children[6].innerText = "►";
-	console.log(order);
+	bank = storage.bankAccount[order].bankCode;
+	account = storage.bankAccount[order].account;
+	getBankAccountHistory(bank, account);
 } // End of clickedAccount()
+
+function clickedCloseHostory(){
+	let x, cntList, cntContent, parent;
+	cntList = document.getElementsByClassName("accountingContent")[0].children[0];
+	cntContent = document.getElementsByClassName("accountingContent")[0].children[1];
+	cntList.className = "accountListExpand";
+	cntContent.style.display = "none";
+	for(x = 1 ; x < cntList.children.length ; x++)	cntList.children[x].children[6].innerText = "";
+	document.getElementsByClassName("bodyFunc")[0].style.display = "none";
+} // End of clickedCloseHostory()
 
 function expandList(){
 	let cntList, cntContent;

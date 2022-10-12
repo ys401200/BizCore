@@ -106,26 +106,30 @@ public class ApiUserCtrl extends Ctrl{
             session.setAttribute("compId", compId); // Set attribute compId to session
             aesKey = (String) session.getAttribute("aesKey");
             aesIv = (String) session.getAttribute("aesIv");
-            dec = userService.decAes(requestBody, aesKey, aesIv);
-            json = new JSONObject(dec);
+            if(aesKey == null || aesIv == null){
+                result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+            }else{
+                dec = userService.decAes(requestBody, aesKey, aesIv);
+                json = new JSONObject(dec);
 
-            userId = json.getString("userId");
-            pw = json.getString("pw");
-            keep = json.getBoolean("keepStatus");
-            if (userId == null || pw == null) {
-                result = "{\"result\":\"failure\",\"msg\":\"" + msg.idPwMisMatch + "\"}";
-            } else {
-                t = userService.verifyLoginTemp(compId, userId, pw, keep);
-                userNo = t[0];
-                keepToken = t[1];
-                if (userNo == null)
+                userId = json.getString("userId");
+                pw = json.getString("pw");
+                keep = json.getBoolean("keepStatus");
+                if (userId == null || pw == null) {
                     result = "{\"result\":\"failure\",\"msg\":\"" + msg.idPwMisMatch + "\"}";
-                else {
-                    session.setAttribute("userNo", userNo);
-                    result = "{\"result\":\"ok\",\"data\":\"" + keepToken + "\"}";
-                    //로그인 상태 유지를 체크한 경우 세션의 유효시간을 연장하도록 함
-                    if(keep)    session.setMaxInactiveInterval(86400);
-                    else        session.setMaxInactiveInterval(3600);
+                } else {
+                    t = userService.verifyLoginTemp(compId, userId, pw, keep);
+                    userNo = t[0];
+                    keepToken = t[1];
+                    if (userNo == null)
+                        result = "{\"result\":\"failure\",\"msg\":\"" + msg.idPwMisMatch + "\"}";
+                    else {
+                        session.setAttribute("userNo", userNo);
+                        result = "{\"result\":\"ok\",\"data\":\"" + keepToken + "\"}";
+                        //로그인 상태 유지를 체크한 경우 세션의 유효시간을 연장하도록 함
+                        if(keep)    session.setMaxInactiveInterval(86400);
+                        else        session.setMaxInactiveInterval(3600);
+                    }
                 }
             }
         }

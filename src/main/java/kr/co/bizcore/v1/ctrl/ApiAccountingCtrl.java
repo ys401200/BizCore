@@ -91,5 +91,72 @@ public class ApiAccountingCtrl extends Ctrl{
         
         return result;
     } // End of apiAccTaxBillOption()
+
+    @GetMapping("/bankaccount")
+    public String getBankAccountList(HttpServletRequest request){
+        String result = null;
+        String compId = null;
+        String aesKey = null;
+        String aesIv = null;
+        String lang = null;
+        Msg msg = null;
+        HttpSession session = null;
+
+        session = request.getSession();
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        compId = (String)session.getAttribute("compId");
+        lang = (String)session.getAttribute("lang");
+        msg = getMsg(lang);
+        if(compId == null)  compId = (String)session.getAttribute("compId");
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        }else{
+            result = accService.getBankAccountList(compId);
+            result = encAes(result, aesKey, aesIv);
+            result = "{\"result\":\"ok\",\"data\":\"" + result + "\"}";
+        }
+        
+        return result;
+    }
+
+
+    @GetMapping("/bankdetail/{bank:\\d+}/{account:[0-9,-]{1,}}")
+    public String getBankAccountDetail(HttpServletRequest request, @PathVariable("bank") String bank, @PathVariable("account") String account){
+        String result = null;
+        String compId = null;
+        String aesKey = null;
+        String aesIv = null;
+        String lang = null;
+        Msg msg = null;
+        HttpSession session = null;
+
+        session = request.getSession();
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        compId = (String)session.getAttribute("compId");
+        lang = (String)session.getAttribute("lang");
+        msg = getMsg(lang);
+        if(compId == null)  compId = (String)session.getAttribute("compId");
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        }else{
+            result = accService.getBankDetail(compId, bank, account);
+            if(result == null){
+                result = "{\"result\":\"failure\",\"msg\":\"" + msg.noResult + "\"}";
+            }else{
+                result = encAes(result, aesKey, aesIv);
+                result = "{\"result\":\"ok\",\"data\":\"" + result + "\"}";
+            }
+        }
+        
+        return result;
+    }
     
 }

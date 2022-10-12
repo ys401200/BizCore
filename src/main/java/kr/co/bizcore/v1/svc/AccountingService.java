@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import kr.co.bizcore.v1.domain.BankAccount;
 import kr.co.bizcore.v1.domain.SimpleTaxBill;
 import kr.co.bizcore.v1.domain.TaxBill;
 import lombok.extern.slf4j.Slf4j;
@@ -74,5 +75,50 @@ public class AccountingService extends Svc{
 
         return result;
     } // End of getTradeAmount()
+
+    // 은행 계좌 목록을 가져오는 메서드
+    public String getBankAccountList(String compId){
+        String result = null;
+        List<BankAccount> list = null;
+        int x = 0;
+
+        list = accMapper.getBankAccountList(compId);
+        result = "[";
+        if(list != null)    for(x = 0 ; x < list.size() ; x++){
+            if(x > 0)   result += ",";
+            result += list.get(x).toJson();
+        }
+        result += "]";
+
+        return result;
+    }
+
+    // 은행 거래내역을 가져오는 메서드
+    public String getBankDetail(String compId, String bank, String account){
+        String result = null;
+        List<HashMap<String, String>> list = null;
+        HashMap<String, String> each = null;
+        int x = 0;
+
+        list = accMapper.getBankDetail(compId, bank, account);
+        if(list != null && list.size() > 0) for(x = 0  ;x < list.size() ; x++){
+            each = list.get(x);
+            if(x == 0)  result = "[";
+            else        result += ",";
+            result += ("{\"dt\":" + each.get("dt") + ",");
+            result += ("\"desc\":\"" + each.get("desc") + "\",");
+            result += ("\"deposit\":" + each.get("deposit") + ",");
+            result += ("\"withdraw\":" + each.get("withdraw") + ",");
+            result += ("\"balance\":" + each.get("balance") + ",");
+            result += ("\"desc\":\"" + each.get("desc") + "\",");
+            result += ("\"branch\":\"" + each.get("branch") + "\",");
+            result += ("\"memo1\":" + (each.get("memo1") == null ? "null" : "\"" + each.get("memo1") + "\"") + ",");
+            result += ("\"memo2\":" + (each.get("memo2") == null ? "null" : "\"" + each.get("memo2") + "\"") + ",");
+            result += ("\"link\":\"" + each.get("link") + "\"}");
+
+        }
+        if(result != null)  result += "]";
+        return result;
+    }
     
 }

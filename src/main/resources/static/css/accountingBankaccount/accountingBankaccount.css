@@ -14,6 +14,9 @@
     color: #332E85;
 }
 
+.bodyFunc{display:none;text-align:right;width:calc(100% - 110px);}
+.bodyFunc > img{width:1rem;height:1rem;margin-left:1rem;cursor:pointer;}
+
 .accountingContainer{
     background: #FFFFFF;
     overflow-y: hidden;
@@ -21,7 +24,10 @@
     box-shadow: 0px 2px 14px rgb(0 0 0 / 12%);
 }
 
-.accountingContent{padding:0.5rem 1.5rem 1.5rem;}
+.accountingContent{
+    padding:0.5rem 1.5rem 1.5rem;
+    min-width:1440px;
+}
 
 .accountingContent > div:nth-child(1){
     overflow-y: auto;
@@ -31,9 +37,9 @@
 
 .accountListExpand > div{
     display:grid;
-    grid-template-columns: 2fr 3fr 2fr 4fr 2fr 4fr;
+    grid-template-columns: 2fr 3fr 2fr 3fr 2fr 4fr;
 }
-.accountingContent > div:nth-child(1) > div > *{text-align: center;padding:0.4rem;font-size:0.85rem;}
+.accountingContent > div:nth-child(1) > div > *{text-align: center;padding:0.4rem;font-size:0.85rem;vertical-align: middle;}
 .accountingContent > div:nth-child(1) > div:hover{background-color: #EDEDF4;cursor: pointer;}
 .accountingContent > div:nth-child(1) > div:nth-child(1):hover{background-color: initial;cursor: initial;}
 .accountingContent > div:nth-child(1) > div > *:nth-child(4){text-align: right;}
@@ -59,7 +65,7 @@
 .accountListCollect > div > div:nth-child(4){display:none;}
 .accountListCollect > div > div:nth-child(5){display:none;}
 .accountListCollect > div > *:nth-child(6){display:none;}
-.accountListCollect > div > div:nth-child(7){display:initial;padding-left:0;padding-right:0;text-align: right;font-size:0.9rem;}
+.accountListCollect > div > div:nth-child(7){display:initial;padding-left:0;padding-right:0;text-align: right;}
 
 .accountHistory{
     display:none;
@@ -68,8 +74,29 @@
 }
 .accountHistory > div{
     display:grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 8fr 8fr 8fr 8fr 8fr 5fr 8fr 15fr 5fr;
     border-bottom:1px solid #4f4fb9;   
 }
 .accountHistory > div:nth-child(1){border-top:1px solid #4f4fb9;}
-.accountHistory > div > div{text-align:center;padding:0 0.4rem;font-size:0.9rem;}
+.accountHistory > div > *{text-align:center;padding:0.4rem 0.1rem;font-size:0.8rem;}
+.accountHistory > div > *:nth-child(3),
+.accountHistory > div > *:nth-child(4),
+.accountHistory > div > *:nth-child(5){
+    text-align: right;
+}
+.accountHistory > div > *:nth-child(8){
+    background-color: transparent;
+    border:none;
+}
+.accountHistory > div > *:nth-child(1),
+.accountHistory > div > *:nth-child(2),
+.accountHistory > div > *:nth-child(3),
+.accountHistory > div > *:nth-child(4),
+.accountHistory > div > *:nth-child(5),
+.accountHistory > div > *:nth-child(6),
+.accountHistory > div > *:nth-child(7),
+.accountHistory > div > *:nth-child(8){
+    border-right:1px solid #c0c0f2;  
+}
+.accountHistory > div > *:nth-child(9) > img{width:1rem;height:0.8rem;}
+.accountHistory > div:nth-child(1) > div{text-align:center;}

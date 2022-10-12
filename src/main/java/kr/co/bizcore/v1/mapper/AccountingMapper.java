@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
+import kr.co.bizcore.v1.domain.BankAccount;
 import kr.co.bizcore.v1.domain.SimpleTaxBill;
 import kr.co.bizcore.v1.domain.TaxBill;
 
@@ -30,5 +31,16 @@ public interface AccountingMapper {
     // 정해진 기간의 계산서 기준 매출액 조회 / 날짜 형식은 2012-10-10
     @Select("SELECT CAST(m AS CHAR) AS m, CAST(SUM(v1) AS CHAR) AS v1, CAST(SUM(v2) AS CHAR) AS v2 FROM (SELECT CAST(MID(CAST(vatissuedate AS CHAR),6,2) AS int) AS m, IF(vattype='S',vatamount,0) AS v1, IF(vattype='B',vatamount,0) AS v2 FROM swc_vat WHERE attrib NOT LIKE 'XXX%' AND year(vatissuedate) = #{year} AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId})) a GROUP BY m")
     public List<HashMap<String, String>> getSalesStatisticsWithYear(@Param("compId") String compId, @Param("year") int year);
+
+    // 은행 계좌 목록을 가져오는 메서드
+    @Select("SELECT a.no, a.bankCode, a.branch, a.account, a.`type`, a.remark, a.serial, a.depositor, a.`limit`, b.balance, a.updated, a.established, a.created, a.modified, a.deleted " +
+            "FROM bizcore.bank_account a, " +
+            "(SELECT b.bank, b.account, b.balance FROM bizcore.bank_account_ledger b, (SELECT bank, account, MAX(dt) AS dt FROM bizcore.bank_account_ledger WHERE deleted IS NULL AND compId = #{compId} GROUP BY bank, account) c WHERE b.bank = c.bank AND b.account = c.account AND b.dt = c.dt) b " +
+            "WHERE a.deleted IS NULL AND a.compId = #{compId} AND a.bankcode = b.bank AND a.account = b.account ORDER BY no")
+    public List<BankAccount> getBankAccountList(@Param("compId") String compId);
+
+    // 특정 계좌의 거래내역을 가져오는 메서드
+    @Select("SELECT CAST(UNIX_TIMESTAMP(dt) * 1000 AS CHAR) AS dt, `desc`, CAST(deposit AS CHAR) AS deposit, CAST(withdraw AS CHAR) AS withdraw, CAST(balance AS CHAR) AS balance, branch, memo1, memo2, link FROM bizcore.bank_account_ledger WHERE deleted IS NULL AND compId = #{compId} AND bank = #{bank} AND account = #{account} ORDER BY dt DESC")
+    public List<HashMap<String, String>> getBankDetail(@Param("compId") String compId, @Param("bank") String bank, @Param("account") String account);
 
 }

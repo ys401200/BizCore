@@ -35,6 +35,7 @@
         <div class="accountingContainer">
             <hr class="bodyTitleBorder" />
             <span class="bodyTitle">은행예금</span>
+			<div class="bodyFunc"><img src="/images/common/diskette.png" /><img src="/images/common/close.png" onclick="clickedCloseHostory()" /></div>
             <!-- <div class="detailContents"></div> -->
             <div class="accountingContent">
 				<div class="accountListExpand"></div><div class="accountHistory">
@@ -47,22 +48,18 @@
 						<div>거래점</div>
 						<div>통장메모</div>
 						<div>메모</div>
-						<div>승인?</div>
 						<div>연결</div>
-						<div>일시</div>
 					</div>
 					<div>
 						<div>22.12.31 12:59</div>
 						<div>기재내용기재내용</div>
-						<div>100,000,000</div>
-						<div>100,000,000</div>
-						<div>100,000,000</div>
+						<div>1,000,000,000</div>
+						<div>1,000,000,000</div>
+						<div>1,000,000,000</div>
 						<div>거래점포</div>
 						<div>통장메모통장메모</div>
-						<div>메모메모메모메모</div>
-						<div>승인?</div>
-						<div>연결</div>
-						<div>일시</div>
+						<input value="메모메모메모메모" />
+						<div><img src="/images/common/linkIcon.png"></div>
 					</div>
 				</div>
 			</div>
