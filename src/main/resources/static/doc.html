@@ -485,14 +485,14 @@
                 doc = docList[x];
                 html += ("<input type=\"checkbox\" id=\"chk" + doc.no + "\" class=\"hidden_chk\" />");
                 html += ("<label class=\"list_item\" for=\"chk" + doc.no + "\" data-no=\"" + doc.no + "\" onclick=\"clickedItem(this)\">");
-                html += ("<div>" + doc.no + "</div>")
-                html += ("<div>" + (new Date(doc.created)).toLocaleString().substring(2, 13).replaceAll(" ", "") + "</div>")
-                html += ("<div>" + (storage.customer[doc.customer] != null ? storage.customer[doc.customer].name : doc.customer) + "</div>")
-                html += ("<div>" + doc.form + "</div>")
-                html += ("<div>" + doc.type + "</div>")
-                html += ("<div>" + doc.title + "</div>")
-                html += ("<div>" + (storage.user[doc.writer].userName) + "</div>")
-                html += ("<div>" + (doc.status + " : " + storage.status[doc.status]) + "</div>")
+                html += ("<div>" + doc.no + "</div>");
+                html += ("<div>" + (new Date(doc.created)).toLocaleString().substring(2, 13).replaceAll(" ", "") + "</div>");
+                html += ("<div>" + (storage.customer[doc.customer] != null ? storage.customer[doc.customer].name : doc.customer) + "</div>");
+                html += ("<div>" + doc.form + "</div>");
+                html += ("<div>" + doc.type + "</div>");
+                html += ("<div>" + doc.title + "</div>");
+                html += ("<div>" + (doc.writer === 0 ? "0" :storage.user[doc.writer].userName) + "</div>");
+                html += ("<div>" + (doc.status + " : " + storage.status[doc.status]) + "</div>");
                 html += "</label>";
             }
 
