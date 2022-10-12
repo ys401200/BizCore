@@ -14,9 +14,9 @@
 }
 
 .modal{
-    /* border-radius:10px;        */
     background-color:#fff;
     box-shadow: 0 5px 12px 1px rgb(0 0 0 / 16%); 
+    min-width: 40%;
 }
 
 .modalHead{
@@ -40,13 +40,13 @@
 }
 
 .modalBody{        
-    max-height: 400px;       
     background-color:#ffffff; 
     padding-left: 22px;
     padding-right: 22px;
     word-break:break-word;    
     overflow-y:auto;   
-    font-size: 15px;       
+    font-size: 15px;   
+    padding-top: 10px;    
 }
 
 .modalFoot{                      

@@ -32,14 +32,14 @@
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
 }
 
-.scheduleContainer hr{
+.scheduleContainer > hr{
 	float: left;
 	border:2px solid #182f81;
  	height : 32px;
  	margin: 0;
 }
 
-.scheduleContainer span:not(.calendarSpan){
+.scheduleContainer > span:not(.calendarSpan){
 	font-weight: bolder;
 	font-size: 15px;
 	margin-left: 15px;
@@ -47,18 +47,18 @@
 	color: #332E85;
 }
 
-.scheduleContainer .gridScheduleList{
+.scheduleContainer .gridList{
     display: grid; 
 	width: 98%; 
 	margin: 0 auto;
 }
 
-.scheduleContainer .gridScheduleList .gridHeader,
-.scheduleContainer .gridScheduleList .gridContent{
-    grid-template-columns: 6% 5% 23% 12% 7% 6% 6% 7% 28%;
+.scheduleContainer .gridList .gridHeader,
+.scheduleContainer .gridList .gridContent{
+    grid-template-columns: 10% 5% 19% 10% 5% 10% 5% 36%;
 }
 
-.scheduleContainer .gridScheduleList .gridHeader{
+.scheduleContainer .gridList .gridHeader{
 	border-bottom:1px solid #abb6d5;
 }
 

@@ -21,7 +21,7 @@ function getSoppList() {
 }
 
 function drawSoppList() {
-	let container, result, job, jsonData, header = [], data = [], ids = [], disDate, setDate, str, fnc;
+	let container, result, job, jsonData, header = [], data = [], ids = [], disDate, setDate, str, fnc, pageContainer, containerTitle, detailBackBtn;
 	
 	if (storage.soppList === undefined) {
 		msg.set("등록된 영업기회가 없습니다");
@@ -36,12 +36,22 @@ function drawSoppList() {
 
 	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 
+	containerTitle = $("#containerTitle");
+	detailBackBtn = $(".detailBackBtn");
 	pageContainer = document.getElementsByClassName("pageContainer");
-	container = $(".gridSoppList");
+	container = $(".gridList");
 
 	header = [
 		{
-			"title" : "번호",
+			"title" : "등록일",
+			"align" : "center",
+		},
+		{
+			"title" : "영업기회명",
+			"align" : "left",
+		},
+		{
+			"title" : "담당자",
 			"align" : "center",
 		},
 		{
@@ -53,19 +63,11 @@ function drawSoppList() {
 			"align" : "center",
 		},
 		{
-			"title" : "영업기회명",
-			"align" : "left",
-		},
-		{
 			"title" : "매출처",
 			"align" : "center",
 		},
 		{
 			"title" : "엔드유저",
-			"align" : "center",
-		},
-		{
-			"title" : "담당자",
 			"align" : "center",
 		},
 		{
@@ -76,10 +78,6 @@ function drawSoppList() {
 			"title" : "진행단계",
 			"align" : "center",
 		},
-        {
-			"title" : "등록일",
-			"align" : "center",
-		}
 	];
 
 	if(jsonData === ""){
@@ -96,7 +94,7 @@ function drawSoppList() {
 			let soppType, contType, title, customer, endUser, employee, expectedSales, status;
 			
 			disDate = dateDis(jsonData[i].created, jsonData[i].modified);
-			setDate = dateFnc(disDate);
+			setDate = dateFnc(disDate, "mm-dd");
 	
 			soppType = (jsonData[i].soppType === null || jsonData[i].soppType === "") ? "" : storage.code.etc[jsonData[i].soppType];
 			contType = (jsonData[i].contType === null || jsonData[i].contType === "") ? "" : storage.code.etc[jsonData[i].contType];
@@ -109,7 +107,13 @@ function drawSoppList() {
 	  
 			str = [
 				{
-					"setData": jsonData[i].no,
+					"setData": setDate,
+				},
+				{
+					"setData": title,
+				},
+				{
+					"setData": employee,
 				},
 				{
 					"setData": soppType,
@@ -118,16 +122,10 @@ function drawSoppList() {
 					"setData": contType,
 				},
 				{
-					"setData": title,
-				},
-				{
 					"setData": customer,
 				},
 				{
 					"setData": endUser,
-				},
-				{
-					"setData": employee,
 				},
 				{
 					"setData": expectedSales,
@@ -135,9 +133,6 @@ function drawSoppList() {
 				{
 					"setData": status,
 				},
-				{
-					"setData": setDate,
-				}
 			];
 	
 			fnc = "soppDetailView(this);";
@@ -149,6 +144,9 @@ function drawSoppList() {
 		pageContainer[0].innerHTML = pageNation;
 	}
 
+	containerTitle.html("영업기회조회");
+	$(pageContainer).children().show();
+	detailBackBtn.hide();
 	createGrid(container, header, data, ids, job, fnc);
 
 	let path = $(location).attr("pathname").split("/");
@@ -205,8 +203,11 @@ function soppErrorList(){
 }
 
 function soppSuccessView(result){
-	let html, title, userName, customer, picOfCustomer, endUser, status, progress, contType, disDate, expectedSales, detail, dataArray;
-	$(".searchContainer").hide();
+	let html, title, userName, customer, picOfCustomer, endUser, status, progress, contType, disDate, expectedSales, detail, dataArray, gridList, searchContainer, containerTitle, detailBackBtn;
+	gridList = $(".gridList");
+	searchContainer = $(".searchContainer");
+	containerTitle = $("#containerTitle");
+	detailBackBtn = $(".detailBackBtn");
 
 	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
 	userName = (result.employee == 0 || result.employee === null || result.employee === undefined) ? "" : storage.user[result.employee].userName;
@@ -339,6 +340,12 @@ function soppSuccessView(result){
 			"keyup": "inputNumberFormat(this)",
 		},
 		{
+			"title": "",
+		},
+		{
+			"title": "",
+		},
+		{
 			"title": "영업기회명",
 			"elementId": "title",
 			"value": title,
@@ -369,8 +376,11 @@ function soppSuccessView(result){
 	html += "</div><br/>";
 	html += detailViewForm(dataArray);
 	html += createTabTradeList(result.trades);
-	conTitleChange("containerTitle", "<a href='#' onclick='detailViewContainerHide(\"영업기회조회\");'>뒤로가기</a>");
-	$(".detailContents").html(html);
+	containerTitle.html(title);
+	gridList.html("");
+	searchContainer.hide();
+	gridList.html(html);
+	gridList.show();
 	notIdArray = ["employee"];
 	
 	storage.attachedList = result.attached;
@@ -381,15 +391,14 @@ function soppSuccessView(result){
 	createTabFileList();
 	createTabTechList(result.schedules);
 	createTabSalesList(result.schedules);
-
-	$(".detailContents").show();
-	
 	detailTabHide("tabContentAll");
 
 	setTimeout(() => {
 		$("#status option[value='" + result.status + "']").prop("selected" ,true);
 		$("#contType option[value='" + result.contType + "']").prop("selected" ,true);
 		$("#soppType option[value='" + result.soppType + "']").prop("selected" ,true);
+		detailBackBtn.css("display", "flex");
+		detailBackBtn.attr("onclick", "getSoppList();");
 
 		let menu = [
 			{
@@ -538,6 +547,12 @@ function soppInsertForm(){
 			"keyup": "inputNumberFormat(this)",
 		},
 		{
+			"title": "",
+		},
+		{
+			"title": "",
+		},
+		{
 			"title": "영업기회명",
 			"elementId": "title",
 			"disabled": false,
@@ -551,7 +566,7 @@ function soppInsertForm(){
 		},
 	];
 
-	html = detailViewFormModal(dataArray);
+	html = detailViewForm(dataArray, "modal");
 
 	modal.show();
 	modal.headTitle.text("영업기회등록");

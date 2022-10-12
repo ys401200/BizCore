@@ -21,7 +21,7 @@ function getContractList() {
 }
 
 function drawContractList() {
-	let contractContainer, result, job, jsonData, header = [], data = [], ids = [], disDate, str, fnc;
+	let container, result, job, jsonData, header = [], data = [], ids = [], disDate, str, fnc, pageContainer, containerTitle, detailBackBtn;
 	
 	if (storage.contractList === undefined) {
 		msg.set("등록된 계약 없습니다");
@@ -36,12 +36,22 @@ function drawContractList() {
 
 	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 
+	containerTitle = $("#containerTitle");
+	detailBackBtn = $(".detailBackBtn");
 	pageContainer = document.getElementsByClassName("pageContainer");
-	contractContainer = $(".gridContractList");
+	container = $(".gridList");
 
 	header = [
 		{
-			"title" : "번호",
+			"title" : "유지보수일자",
+			"align" : "center",
+		},
+		{
+			"title" : "계약명",
+			"align" : "left",
+		},
+		{
+			"title" : "담당자",
 			"align" : "center",
 		},
 		{
@@ -51,10 +61,6 @@ function drawContractList() {
 		{
 			"title" : "계약방식",
 			"align" : "center",
-		},
-		{
-			"title" : "계약명",
-			"align" : "left",
 		},
 		{
 			"title" : "엔드유저",
@@ -67,18 +73,6 @@ function drawContractList() {
 		{
 			"title" : "매출이익",
 			"align" : "right",
-		},
-		{
-			"title" : "담당자",
-			"align" : "center",
-		},
-		{
-			"title" : "유지보수시작일",
-			"align" : "center",
-		},
-        {
-			"title" : "유지보수종료일",
-			"align" : "center",
 		},
 		{
 			"title" : "발주일자",
@@ -109,33 +103,36 @@ function drawContractList() {
 			
 			if(contractType === "유지보수"){
 				disDate = dateDis(jsonData[i].startOfPaidMaintenance);
-				startMaintenance = dateFnc(disDate);
+				startMaintenance = dateFnc(disDate, "yy-mm-dd");
 		
 				disDate = dateDis(jsonData[i].endOfPaidMaintenance);
-				endMaintenance = dateFnc(disDate);
+				endMaintenance = dateFnc(disDate, "yy-mm-dd");
 			}else{
 				disDate = dateDis(jsonData[i].startOfFreeMaintenance);
-				startMaintenance = dateFnc(disDate);
+				startMaintenance = dateFnc(disDate, "yy-mm-dd");
 		
 				disDate = dateDis(jsonData[i].endOfFreeMaintenance);
-				endMaintenance = dateFnc(disDate);
+				endMaintenance = dateFnc(disDate, "yy-mm-dd");
 			}
 	
 			disDate = dateDis(jsonData[i].saleDate);
-			saleDate = dateFnc(disDate);
+			saleDate = dateFnc(disDate, "mm-dd");
 	
 			str = [
 				{
-					"setData": jsonData[i].no,
+					"setData": startMaintenance + " ~ " + endMaintenance,
+				},
+				{
+					"setData": title,
+				},
+				{
+					"setData": employee,
 				},
 				{
 					"setData": salesType,
 				},
 				{
 					"setData": contractType,
-				},
-				{
-					"setData": title,
 				},
 				{
 					"setData": endUser,
@@ -145,15 +142,6 @@ function drawContractList() {
 				},
 				{
 					"setData": profit,
-				},
-				{
-					"setData": employee,
-				},
-				{
-					"setData": startMaintenance,
-				},
-				{
-					"setData": endMaintenance,
 				},
 				{
 					"setData": saleDate,
@@ -169,7 +157,10 @@ function drawContractList() {
 		pageContainer[0].innerHTML = pageNation;
 	}
 
-	createGrid(contractContainer, header, data, ids, job, fnc);
+	containerTitle.html("계약조회");
+	$(pageContainer).children().show();
+	detailBackBtn.hide();
+	createGrid(container, header, data, ids, job, fnc);
 
 	let path = $(location).attr("pathname").split("/");
 	let menu = [
@@ -226,11 +217,12 @@ function contractErrorList(){
 }
 
 function contractSuccessView(result){
-	let notIdArray, sopp, html, contractType, title, employee, customer, salesType, cipOfCustomer, endUser, cipOfendUser, saleDate, delivered, employee2, startOfFreeMaintenance, endOfFreeMaintenance, startOfPaidMaintenance, endOfPaidMaintenance, contractAmount, taxInclude, profit, detail, disDate, dataArray;
-
+	let notIdArray, sopp, html, contractType, title, employee, customer, salesType, cipOfCustomer, endUser, cipOfendUser, saleDate, delivered, employee2, startOfFreeMaintenance, endOfFreeMaintenance, startOfPaidMaintenance, endOfPaidMaintenance, contractAmount, taxInclude, profit, detail, disDate, dataArray, gridList, searchContainer, containerTitle, detailBackBtn;
 	storage.contractNo = result.no;
-
-	$("searchContainer").hide();
+	gridList = $(".gridList");
+	searchContainer = $(".searchContainer");
+	containerTitle = $("#containerTitle");
+	detailBackBtn = $(".detailBackBtn");
 
 	contractType = (result.contractType === null || result.contractType === "" || result.contractType === undefined) ? "" : storage.code.etc[result.contractType];
 	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
@@ -464,6 +456,9 @@ function contractSuccessView(result){
 			"keyup": "inputNumberFormat(this);",
 		},
 		{
+			"title": "",
+		},
+		{
 			"title": "계약명",
 			"elementId": "title",
 			"value": title,
@@ -494,8 +489,11 @@ function contractSuccessView(result){
 	html += "</div><br/>";
 	html += detailViewForm(dataArray);
 	html += createTabTradeList(result.trades);
-	conTitleChange("containerTitle", "<a href='#' onclick='detailViewContainerHide(\"계약조회\");'>뒤로가기</a>");
-	$(".detailContents").html(html);
+	containerTitle.html(title);
+	gridList.html("");
+	searchContainer.hide();
+	gridList.html(html);
+	gridList.show();
 	notIdArray = ["employee"];
 	
 	storage.attachedList = result.attached;
@@ -513,6 +511,9 @@ function contractSuccessView(result){
 		$("[name='contractType'][value='" + result.contractType + "']").prop("checked" ,true);
 		$("#salesType option[value='" + result.salesType + "']").prop("selected" ,true);
 		$("#taxInclude option[value='" + taxInclude + "']").prop("selected" ,true);
+		detailBackBtn.css("display", "flex");
+		detailBackBtn.attr("onclick", "getContractList();");
+
 		let menu = [
 			{
 				"keyword": "add",
@@ -534,26 +535,18 @@ function contractSuccessView(result){
 		inputDataList();
 
 		if(contractType === "판매계약"){
-			$("#startOfFreeMaintenance").parents(".detailViewContent").prev().show();
-			$("#startOfFreeMaintenance").parents(".detailViewContent").show();
-			$("#endOfFreeMaintenance").parents(".detailViewContent").prev().show();
-			$("#endOfFreeMaintenance").parents(".detailViewContent").show();
-			$("#startOfPaidMaintenance").parents(".detailViewContent").prev().hide();
-			$("#startOfPaidMaintenance").parents(".detailViewContent").hide();
-			$("#endOfPaidMaintenance").parents(".detailViewContent").prev().hide();
-			$("#endOfPaidMaintenance").parents(".detailViewContent").hide();
+			$("#startOfFreeMaintenance").parents(".defaultFormLine").show();
+			$("#endOfFreeMaintenance").parents(".defaultFormLine").show();
+			$("#startOfPaidMaintenance").parents(".defaultFormLine").hide();
+			$("#endOfPaidMaintenance").parents(".defaultFormLine").hide();
 
 			$("#startOfPaidMaintenance").val(null);
 			$("#endOfPaidMaintenance").val(null);
 		}else{
-			$("#startOfFreeMaintenance").parents(".detailViewContent").prev().hide();
-			$("#startOfFreeMaintenance").parents(".detailViewContent").hide();
-			$("#endOfFreeMaintenance").parents(".detailViewContent").prev().hide();
-			$("#endOfFreeMaintenance").parents(".detailViewContent").hide();
-			$("#startOfPaidMaintenance").parents(".detailViewContent").prev().show();
-			$("#startOfPaidMaintenance").parents(".detailViewContent").show();
-			$("#endOfPaidMaintenance").parents(".detailViewContent").prev().show();
-			$("#endOfPaidMaintenance").parents(".detailViewContent").show();
+			$("#startOfFreeMaintenance").parents(".defaultFormLine").hide();
+			$("#endOfFreeMaintenance").parents(".defaultFormLine").hide();
+			$("#startOfPaidMaintenance").parents(".defaultFormLine").show();
+			$("#endOfPaidMaintenance").parents(".defaultFormLine").show();
 
 			$("#startOfFreeMaintenance").val(null);
 			$("#endOfFreeMaintenance").val(null);
@@ -727,6 +720,9 @@ function contractInsertForm(){
 			"keyup": "inputNumberFormat(this);",
 		},
 		{
+			"title": "",
+		},
+		{
 			"title": "내용",
 			"type": "textarea",
 			"elementId": "detail",
@@ -734,7 +730,7 @@ function contractInsertForm(){
 		},
 	];
 
-	html = detailViewFormModal(dataArray);
+	html = detailViewForm(dataArray, "modal");
 
 	modal.show();
 	modal.headTitle.text("계약등록");

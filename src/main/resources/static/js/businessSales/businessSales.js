@@ -21,7 +21,7 @@ function getSalesList() {
 } // End of getSalesList()
 
 function drawSalesList() {
-	let container, dataJob = [], result, jsonData, header = [], data = [], ids = [], str, fnc;
+	let container, dataJob = [], result, jsonData, header = [], data = [], ids = [], str, fnc, pageContainer, containerTitle, detailBackBtn;
 	
 	if (storage.scheduleList === undefined) {
 		msg.set("등록된 일정이 없습니다");
@@ -35,13 +35,15 @@ function drawSalesList() {
 	}
 
 	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
-
+	
+	containerTitle = $("#containerTitle");
+	detailBackBtn = $(".detailBackBtn");
 	pageContainer = document.getElementsByClassName("pageContainer");
-	container = $(".gridSalesList");
+	container = $(".gridList");
 
 	header = [
 		{
-			"title" : "번호",
+			"title" : "일정",
 			"align" : "center",
 		},
 		{
@@ -51,10 +53,6 @@ function drawSalesList() {
 		{
 			"title" : "일정제목",
 			"align" : "left",
-		},
-		{
-			"title" : "일정",
-			"align" : "center",
 		},
 		{
 			"title" : "매출처",
@@ -97,26 +95,24 @@ function drawSalesList() {
 			writer = (jsonData[i].writer == 0 || jsonData[i].writer === null || jsonData[i].writer === undefined) ? "" : storage.user[jsonData[i].writer].userName;
 			place = (jsonData[i].place === null || jsonData[i].place === "" || jsonData[i].place === undefined) ? "" : jsonData[i].place;
 			content = (jsonData[i].content === null || jsonData[i].content === "" || jsonData[i].content === undefined) ? "" : jsonData[i].content;
+			content = content.replaceAll("<p>", "").replaceAll("</p>", "").replaceAll("<br />", "");
 			type = (jsonData[i].type === null || jsonData[i].type === "" || jsonData[i].type === undefined) ? "" : storage.code.etc[jsonData[i].type];
 			
 			fromDate = dateDis(jsonData[i].from);
-			fromSetDate = dateFnc(fromDate);
+			fromSetDate = dateFnc(fromDate, "mm-dd");
 			
 			toDate = dateDis(jsonData[i].to);
-			toSetDate = dateFnc(toDate);
+			toSetDate = dateFnc(toDate, "mm-dd");
 	
 			str = [
 				{
-					"setData": jsonData[i].no,
+					"setData": fromSetDate + " ~ " + toSetDate,
 				},
 				{
 					"setData": job,
 				},
 				{
 					"setData": title,
-				},
-				{
-					"setData": fromSetDate + " ~ " + toSetDate,
 				},
 				{
 					"setData": customer,
@@ -144,6 +140,8 @@ function drawSalesList() {
 		pageContainer[0].innerHTML = pageNation;
 	}
 
+	containerTitle.html("영업활동조회");
+	$(pageContainer).children().show();
 	createGrid(container, header, data, ids, dataJob, fnc);
 
 	let path = $(location).attr("pathname").split("/");
@@ -183,11 +181,12 @@ function salesDetailView(e){
 }
 
 function salesSuccessView(result){
-	let dataArray, from, to, place, writer, sopp, customer, partner, title, content;
-	
+	let dataArray, from, to, place, writer, sopp, customer, partner, title, content, gridList, searchContainer, containerTitle, detailBackBtn;
 	storage.salesNo = result.no;
-
-	$(".searchContainer").hide();
+	gridList = $(".gridList");
+	searchContainer = $(".searchContainer");
+	containerTitle = $("#containerTitle");
+	detailBackBtn = $(".detailBackBtn");
 
 	disDate = dateDis(result.from);
 	from = dateFnc(disDate);
@@ -348,10 +347,6 @@ function salesSuccessView(result){
 			"value": partner,
 		},
 		{
-			"title": "",
-			"elementId": "",
-		},
-		{
 			"title": "제목",
 			"elementId": "title",
 			"value": title,
@@ -367,12 +362,17 @@ function salesSuccessView(result){
 	];
 	
 	html = detailViewForm(dataArray);
-	conTitleChange("containerTitle", "<a href='#' onclick='detailViewContainerHide(\"영업활동조회\");'>뒤로가기</a>");
-	$(".detailContents").html(html);
+	containerTitle.html(title);
+	gridList.html("");
+	searchContainer.hide();
+	gridList.html(html);
+	gridList.show();
 	notIdArray = ["writer"];
-	$(".detailContents").show();
 
 	setTimeout(() => {
+		detailBackBtn.css("display", "flex");
+		detailBackBtn.attr("onclick", "getSalesList();");
+
 		let menu = [
 			{
 				"keyword": "add",
@@ -576,19 +576,15 @@ function salesInsertForm(){
 		}
 	];
 
-	html = detailViewFormModal(dataArray);
+	html = detailViewForm(dataArray, "modal");
 
 	modal.show();
-	modal.headTitle.text("일정등록");
+	modal.headTitle.text("영업일정등록");
 	modal.body.html(html);
 	modal.confirm.text("등록");
 	modal.close.text("취소");
 	modal.confirm.attr("onclick", "salesInsert();");
 	modal.close.attr("onclick", "modal.hide();");
-
-	setTimeout(() => {
-		$("[name='job'][value='sales']").prop("checked", true);
-	}, 300);
 }
 
 function salesInsert(){

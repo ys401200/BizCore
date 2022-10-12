@@ -21,7 +21,7 @@ function getTechList() {
 } // End of getTechList()
 
 function drawTechList() {
-	let container, dataJob = [], result, jsonData, header = [], data = [], ids = [], str, fnc;
+	let container, dataJob = [], result, jsonData, header = [], data = [], ids = [], str, fnc, pageContainer, containerTitle, detailBackBtn;
 	
 	if (storage.scheduleList === undefined) {
 		msg.set("등록된 일정이 없습니다");
@@ -46,12 +46,14 @@ function drawTechList() {
 
 	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 
+	containerTitle = $("#containerTitle");
+	detailBackBtn = $(".detailBackBtn");
 	pageContainer = document.getElementsByClassName("pageContainer");
-	container = $(".gridTechList");
+	container = $(".gridList");
 
 	header = [
 		{
-			"title" : "번호",
+			"title" : "일정",
 			"align" : "center",
 		},
 		{
@@ -61,10 +63,6 @@ function drawTechList() {
 		{
 			"title" : "일정제목",
 			"align" : "left",
-		},
-		{
-			"title" : "일정",
-			"align" : "center",
 		},
 		{
 			"title" : "매출처",
@@ -107,26 +105,24 @@ function drawTechList() {
 			writer = (jsonData[i].writer == 0 || jsonData[i].writer === null || jsonData[i].writer === undefined) ? "" : storage.user[jsonData[i].writer].userName;
 			place = (jsonData[i].place === null || jsonData[i].place === "" || jsonData[i].place === undefined) ? "" : jsonData[i].place;
 			content = (jsonData[i].content === null || jsonData[i].content === "" || jsonData[i].content === undefined) ? "" : jsonData[i].content;
+			content = content.replaceAll("<p>", "").replaceAll("</p>", "").replaceAll("<br />", "");
 			type = (jsonData[i].type === null || jsonData[i].type === "" || jsonData[i].type === undefined) ? "" : storage.code.etc[jsonData[i].type];
 	
 			fromDate = dateDis(jsonData[i].from);
-			fromSetDate = dateFnc(fromDate);
+			fromSetDate = dateFnc(fromDate, "mm-dd");
 			
 			toDate = dateDis(jsonData[i].to);
-			toSetDate = dateFnc(toDate);
+			toSetDate = dateFnc(toDate, "mm-dd");
 	
 			str = [
 				{
-					"setData": jsonData[i].no,
+					"setData": fromSetDate + " ~ " + toSetDate,
 				},
 				{
 					"setData": job,
 				},
 				{
 					"setData": title,
-				},
-				{
-					"setData": fromSetDate + " ~ " + toSetDate,
 				},
 				{
 					"setData": customer,
@@ -154,6 +150,9 @@ function drawTechList() {
 		pageContainer[0].innerHTML = pageNation;
 	}
 
+	containerTitle.html("기술일정조회");
+	$(pageContainer).children().show();
+	detailBackBtn.hide();
 	createGrid(container, header, data, ids, dataJob, fnc);
 
 	let path = $(location).attr("pathname").split("/");
@@ -193,10 +192,12 @@ function techDetailView(e){
 }
 
 function techSuccessView(result){
-	let from, to, place, writer, sopp, contract, customer, cipOfCustomer, partner, title, content, supportModel, supportVersion;
-		
-	$(".searchContainer").hide();
+	let from, to, place, writer, sopp, contract, customer, cipOfCustomer, partner, title, content, supportModel, supportVersion, gridList, searchContainer, containerTitle, detailBackBtn;
 	storage.techNo = result.no;
+	gridList = $(".gridList");
+	searchContainer = $(".searchContainer");
+	containerTitle = $("#containerTitle");
+	detailBackBtn = $(".detailBackBtn");
 
 	disDate = dateDis(result.from);
 	from = dateFnc(disDate);
@@ -403,7 +404,9 @@ function techSuccessView(result){
 		},
 		{
 			"title": "",
-			"elementId": "",
+		},
+		{
+			"title": "",
 		},
 		{
 			"title": "기술지원 요청명(*)",
@@ -421,13 +424,18 @@ function techSuccessView(result){
 	];
 	
 	html = detailViewForm(dataArray);
-	conTitleChange("containerTitle", "<a href='#' onclick='detailViewContainerHide(\"기술지원조회\");'>뒤로가기</a>");
-	$(".detailContents").html(html);
+	containerTitle.html(title);
+	gridList.html("");
+	searchContainer.hide();
+	gridList.html(html);
+	gridList.show();
 	notIdArray = ["writer"];
-	$(".detailContents").show();
 
 	setTimeout(() => {
 		$("[name='job'][value='tech']").prop("checked", true);
+		detailBackBtn.css("display", "flex");
+		detailBackBtn.attr("onclick", "getTechList();");
+
 		let menu = [
 			{
 				"keyword": "add",
@@ -644,6 +652,15 @@ function techInsertForm(){
 			"type": "date",
 		},
 		{
+			"title": "",
+		},
+		{
+			"title": "",
+		},
+		{
+			"title": "",
+		},
+		{
 			"title": "내용",
 			"type": "textarea",
 			"elementId": "content",
@@ -651,19 +668,15 @@ function techInsertForm(){
 		},
 	];
 
-	html = detailViewFormModal(dataArray);
+	html = detailViewForm(dataArray, "modal");
 
 	modal.show();
-	modal.headTitle.text("일정등록");
+	modal.headTitle.text("기술일정등록");
 	modal.body.html(html);
 	modal.confirm.text("등록");
 	modal.close.text("취소");
 	modal.confirm.attr("onclick", "techInsert();");
 	modal.close.attr("onclick", "modal.hide();");
-
-	setTimeout(() => {
-		$("[name='job'][value='tech']").prop("checked", true);
-	}, 300);
 }
 
 function techInsert(){

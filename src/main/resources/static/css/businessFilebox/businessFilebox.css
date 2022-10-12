@@ -25,14 +25,14 @@
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
 }
 
-.fileBoxContainer hr {
+.fileBoxContainer > hr {
 	float: left;
 	border:2px solid #182f81;
 	height: 32px;
 	margin: 0;
 }
 
-.fileBoxContainer span {
+.fileBoxContainer > span {
 	font-weight: bolder;
 	font-size: 15px;
 	margin-left: 15px;
@@ -48,7 +48,7 @@
 
 .gridFileBoxList .gridHeader,
 .gridFileBoxList .gridContent {
-	grid-template-columns: 10% 60% 10% 20%;
+	grid-template-columns: 15% 70% 15%;
 }
 
 .fileBoxContent {

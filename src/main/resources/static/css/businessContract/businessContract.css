@@ -54,21 +54,19 @@
 
 .contractContainer{
     margin-top: 1%;
-	/* margin-left: 2%;
-	max-width: 1782px; */
 	background: #FFFFFF;
 	overflow: auto;
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
 }
 
-.contractContainer hr{
+.contractContainer > hr{
 	float: left;
  	height : 32px;
 	border:2px solid #181f81;
  	margin: 0;
 }
 
-.contractContainer span:not(.calendarSpan){
+.contractContainer > span:not(.calendarSpan){
 	font-weight: boder;
 	font-size: 15px;
 	margin-left: 15px;
@@ -77,7 +75,7 @@
 	float: left;
 }
 
-.contractContainer>button{
+.contractContainer > button{
 	margin:0.4% 0.5% 14px 0;
 	box-shadow:0 1px 2px #bdbfc9;
 	color:#ebefff;
@@ -99,18 +97,18 @@
 	margin:20px 0.5% 20px 0.5%;
 }
 
-.contractContainer .gridContractList{
+.contractContainer .gridList{
     display: grid; 
 	width: 99%; 
 	margin: 0 auto;
 }
 
-.contractContainer .gridContractList .gridHeader{
+.contractContainer .gridList .gridHeader{
 	border-bottom:1px solid #abb6d5;
 	color:#181f81;
 }
 
-.contractContainer .gridContractList .gridHeader,
-.contractContainer .gridContractList .gridContent{
-    grid-template-columns: 7% 7% 7% 24% 12% 7% 7% 7% 7% 7% 1fr;
+.contractContainer .gridList .gridHeader,
+.contractContainer .gridList .gridContent{
+    grid-template-columns: 10% 44% 5% 5% 5% 10% 8% 8% 5%;
 }

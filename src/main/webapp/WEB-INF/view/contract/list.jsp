@@ -75,9 +75,9 @@
         </div>
         <div class="contractContainer">
             <hr />
-            <span id="containerTitle">계약조회</span>
-            <div class="detailContents"></div>
-            <div class="gridContractList"></div>
+            <span id="containerTitle"></span>
+            <a href="#" class="detailBackBtn">Back</a>
+            <div class="gridList"></div>
             <div class="pageContainer"></div>
         </div>
 	</div>

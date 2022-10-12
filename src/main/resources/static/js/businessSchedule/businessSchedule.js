@@ -23,7 +23,7 @@ function getScheduleList() {
 } // End of getScheduleList()
 
 function drawScheduleList() {
-	let container, dataJob = [], result, jsonData, header = [], data = [], ids = [], str, fnc;
+	let container, dataJob = [], result, jsonData, header = [], data = [], ids = [], str, fnc, pageContainer, containerTitle, detailBackBtn;
 	
 	if (storage.scheduleList === undefined) {
 		msg.set("등록된 일정이 없습니다");
@@ -38,12 +38,14 @@ function drawScheduleList() {
 
 	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 
+	containerTitle = $("#containerTitle");
 	pageContainer = document.getElementsByClassName("pageContainer");
-	container = $(".gridScheduleList");
+	detailBackBtn = $(".detailBackBtn");
+	container = $(".gridList");
 
 	header = [
 		{
-			"title" : "번호",
+			"title" : "일정",
 			"align" : "center",
 		},
 		{
@@ -53,10 +55,6 @@ function drawScheduleList() {
 		{
 			"title" : "일정제목",
 			"align" : "left",
-		},
-		{
-			"title" : "일정",
-			"align" : "center",
 		},
 		{
 			"title" : "매출처",
@@ -108,26 +106,24 @@ function drawScheduleList() {
 			writer = (jsonData[i].writer == 0 || jsonData[i].writer === null || jsonData[i].writer === undefined) ? "" : storage.user[jsonData[i].writer].userName;
 			place = (jsonData[i].place === null || jsonData[i].place === "" || jsonData[i].place === undefined) ? "" : jsonData[i].place;
 			content = (jsonData[i].content === null || jsonData[i].content === "" || jsonData[i].content === undefined) ? "" : jsonData[i].content;
+			content = content.replaceAll("<p>", "").replaceAll("</p>", "").replaceAll("<br />", "");
 			type = (jsonData[i].type === null || jsonData[i].type === "" || jsonData[i].type === undefined) ? "" : storage.code.etc[jsonData[i].type];
 			
 			fromDate = dateDis(jsonData[i].from);
-			fromSetDate = dateFnc(fromDate);
+			fromSetDate = dateFnc(fromDate, "mm-dd");
 			
 			toDate = dateDis(jsonData[i].to);
-			toSetDate = dateFnc(toDate);
+			toSetDate = dateFnc(toDate, "mm-dd");
 	
 			str = [
 				{
-					"setData": jsonData[i].no,
+					"setData": fromSetDate + " ~ " + toSetDate,
 				},
 				{
 					"setData": job,
 				},
 				{
 					"setData": title,
-				},
-				{
-					"setData": fromSetDate + " ~ " + toSetDate,
 				},
 				{
 					"setData": customer,
@@ -155,6 +151,9 @@ function drawScheduleList() {
 		pageContainer[0].innerHTML = pageNation;
 	}
 
+	containerTitle.html("일정조회");
+	$(pageContainer).children().show();
+	detailBackBtn.hide();
 	createGrid(container, header, data, ids, dataJob, fnc);
 
 	let path = $(location).attr("pathname").split("/");
@@ -343,18 +342,24 @@ function scheduleDetailView(e){
 }
 
 function scheduleSuccessView(result){
-	let html, dataArray, notIdArray, jobArray;
-	$(".searchContainer").hide();
+	let html, dataArray, notIdArray, gridList, searchContainer, containerTitle, detailBackBtn;
+	gridList = $(".gridList");
+	searchContainer = $(".searchContainer");
+	containerTitle = $("#containerTitle");
+	detailBackBtn = $(".detailBackBtn");
 	dataArray = scheduleRadioUpdate(result.job, result);
 	html = detailViewForm(dataArray);
-
-	conTitleChange("containerTitle", "<a href='#' onclick='detailViewContainerHide(\"일정조회\");'>뒤로가기</a>");
-	$(".detailContents").html(html);
+	containerTitle.html(result.title);
+	gridList.html("");
+	searchContainer.hide();
+	gridList.html(html);
+	gridList.show();
 	notIdArray = ["employee"];
-	$(".detailContents").show();
 
 	setTimeout(() => {
 		$("[name='job'][value='" + result.job + "']").prop("checked", true).removeAttr("onclick");
+		detailBackBtn.css("display", "flex");
+		detailBackBtn.attr("onclick", "getScheduleList();");
 
 		if(result.job === "sales"){
 			let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;
@@ -421,7 +426,7 @@ function calendarSuccessView(result){
 
 	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
 	dataArray = scheduleRadioUpdate(result.job, result);
-	html = detailViewFormModal(dataArray);
+	html = detailViewForm(dataArray, "modal");
 
 	modal.show();
 	modal.headTitle.text(title);
@@ -552,7 +557,7 @@ function scheduleCalendarAjax(){
 }
 
 function listChange(event){
-	let tableList = $(".gridScheduleList");
+	let tableList = $(".gridList");
 	let calendarList = $(".calendarList");
 	let pageContainer = $(".pageContainer");
 
@@ -598,7 +603,7 @@ function scheduleInsertForm(getDate){
 
 	dataArray = scheduleRadioInsert("sales", getDate);
 
-	html = detailViewFormModal(dataArray);
+	html = detailViewForm(dataArray, "modal");
 
 	modal.show();
 	modal.headTitle.text("일정등록");
@@ -623,7 +628,7 @@ function scheduleRadioClick(e, result){
 	
 	if(result === undefined){
 		dataArray = scheduleRadioInsert(value);
-		html = detailViewFormModal(dataArray);
+		html = detailViewForm(dataArray, "modal");
 		
 		modal.show();
 		modal.headTitle.text("일정등록");
@@ -634,7 +639,7 @@ function scheduleRadioClick(e, result){
 		modal.close.attr("onclick", "modal.hide();");
 	}else{
 		dataArray = scheduleRadioUpdate(value, result);
-		html = detailViewFormModal(dataArray);
+		html = detailViewForm(dataArray, "modal");
 
 		modal.show();
 		modal.headTitle.text(result.title);
@@ -978,6 +983,15 @@ function scheduleRadioInsert(value, date){
 				"type": "date",
 			},
 			{
+				"title": "",
+			},
+			{
+				"title": "",
+			},
+			{
+				"title": "",
+			},
+			{
 				"title": "내용",
 				"type": "textarea",
 				"elementId": "content",
@@ -1046,6 +1060,12 @@ function scheduleRadioInsert(value, date){
 				"disabled": false,
 				"elementId": "customer",
 				"dataKeyup": "customer",
+			},
+			{
+				"title": "",
+			},
+			{
+				"title": "",
 			},
 			{
 				"title": "제목(*)",
@@ -1653,7 +1673,10 @@ function scheduleRadioUpdate(value, result){
 				"value": to,
 			},
 			{
-				"type": "",
+				"title": "",
+			},
+			{
+				"title": "",
 			},
 			{
 				"title": "기술지원 요청명(*)",
@@ -1762,7 +1785,10 @@ function scheduleRadioUpdate(value, result){
 				"value": customer,
 			},
 			{
-				"type": "",
+				"title": "",
+			},
+			{
+				"title": "",
 			},
 			{
 				"title": "제목",

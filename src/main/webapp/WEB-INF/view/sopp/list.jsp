@@ -65,9 +65,9 @@
         </div>
         <div class="soppContainer">
             <hr />
-            <span id="containerTitle">영업기회조회</span>
-            <div class="detailContents"></div>
-            <div class="gridSoppList"></div>
+            <span id="containerTitle"></span>
+            <a href="#" class="detailBackBtn">Back</a>
+            <div class="gridList"></div>
             <div class="pageContainer"></div>
         </div>
 	</div>

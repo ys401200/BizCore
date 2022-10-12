@@ -339,7 +339,7 @@ function getNoticeList() {
 
 				header = [
 					{
-						"title" : "번호",
+						"title" : "등록일",
 						"align" : "center",
 					},
 					{
@@ -350,10 +350,6 @@ function getNoticeList() {
 						"title" : "작성자",
 						"align" : "center",
 					},
-					{
-						"title" : "등록일",
-						"align" : "center",
-					}
 				];
 
 				if(result.length < gridListLength){
@@ -362,11 +358,11 @@ function getNoticeList() {
 			
 				for (let i = 0; i < gridListLength; i++) {
 					disDate = dateDis(result[i].created, result[i].modified);
-					setDate = dateFnc(disDate);
+					setDate = dateFnc(disDate, "mm-dd");
 
 					str = [
 						{
-							"setData": result[i].no,
+							"setData": setDate,
 						},
 						{
 							"setData": result[i].title,
@@ -374,9 +370,6 @@ function getNoticeList() {
 						{
 							"setData": storage.user[result[i].writer].userName,
 						},
-						{
-							"setData": setDate,
-						}
 					];
 
 					fnc = "rootDetailView(\"notice\", this);";
@@ -414,7 +407,7 @@ function getScheduleList() {
 
 				header = [
 					{
-						"title" : "번호",
+						"title" : "일정",
 						"align" : "center",
 					},
 					{
@@ -426,16 +419,12 @@ function getScheduleList() {
 						"align" : "left",
 					},
 					{
-						"title" : "일정",
-						"align" : "center",
+						"title" : "일정설명",
+						"align" : "left",
 					},
 					{
 						"title" : "담당자",
 						"align" : "center",
-					},
-					{
-						"title" : "일정설명",
-						"align" : "left",
 					},
 				];
 
@@ -459,16 +448,17 @@ function getScheduleList() {
 					title = (result[i].title === null || result[i].title === "" || result[i].title === undefined) ? "제목 없음" : result[i].title;
 					writer = (result[i].writer == 0 || result[i].writer === null || result[i].writer === undefined) ? "없음" : storage.user[result[i].writer].userName;
 					content = (result[i].content === null || result[i].content === "" || result[i].content === undefined) ? "내용 없음" : result[i].content;
+					content = content.replaceAll("<p>", "").replaceAll("</p>", "").replaceAll("<br />", "");
 					
 					fromDate = dateDis(result[i].from);
-					fromSetDate = dateFnc(fromDate);
+					fromSetDate = dateFnc(fromDate, "mm-dd");
 					
 					toDate = dateDis(result[i].to);
-					toSetDate = dateFnc(toDate);
+					toSetDate = dateFnc(toDate, "mm-dd");
 			
 					str = [
 						{
-							"setData": result[i].no,
+							"setData": fromSetDate + " ~ " + toSetDate,
 						},
 						{
 							"setData": job,
@@ -477,13 +467,10 @@ function getScheduleList() {
 							"setData": title,
 						},
 						{
-							"setData": fromSetDate + " ~ " + toSetDate,
+							"setData": content,
 						},
 						{
 							"setData": writer,
-						},
-						{
-							"setData": content,
 						},
 					];
 
@@ -723,7 +710,15 @@ function getSoppList() {
 
 				header = [
 					{
-						"title" : "번호",
+						"title" : "등록일",
+						"align" : "center",
+					},
+					{
+						"title" : "영업기회명",
+						"align" : "left",
+					},
+					{
+						"title" : "담당자",
 						"align" : "center",
 					},
 					{
@@ -735,19 +730,11 @@ function getSoppList() {
 						"align" : "center",
 					},
 					{
-						"title" : "영업기회명",
-						"align" : "left",
-					},
-					{
 						"title" : "매출처",
 						"align" : "center",
 					},
 					{
 						"title" : "엔드유저",
-						"align" : "center",
-					},
-					{
-						"title" : "담당자",
 						"align" : "center",
 					},
 					{
@@ -758,10 +745,6 @@ function getSoppList() {
 						"title" : "진행단계",
 						"align" : "center",
 					},
-					{
-						"title" : "등록일",
-						"align" : "center",
-					}
 				];
 
 				if(result.length < gridListLength){
@@ -772,7 +755,7 @@ function getSoppList() {
 					let soppType, contType, title, customer, endUser, employee, expectedSales, status;
 					
 					disDate = dateDis(result[i].created, result[i].modified);
-					setDate = dateFnc(disDate);
+					setDate = dateFnc(disDate, "mm-dd");
 
 					soppType = (result[i].soppType === null || result[i].soppType === "") ? "없음" : storage.code.etc[result[i].soppType];
 					contType = (result[i].contType === null || result[i].contType === "") ? "없음" : storage.code.etc[result[i].contType];
@@ -785,7 +768,13 @@ function getSoppList() {
 			
 					str = [
 						{
-							"setData": result[i].no,
+							"setData": setDate,
+						},
+						{
+							"setData": title,
+						},
+						{
+							"setData": employee,
 						},
 						{
 							"setData": soppType,
@@ -794,16 +783,10 @@ function getSoppList() {
 							"setData": contType,
 						},
 						{
-							"setData": title,
-						},
-						{
 							"setData": customer,
 						},
 						{
 							"setData": endUser,
-						},
-						{
-							"setData": employee,
 						},
 						{
 							"setData": expectedSales,
@@ -811,9 +794,7 @@ function getSoppList() {
 						{
 							"setData": status,
 						},
-						{
-							"setData": setDate,
-						}
+						
 					];
 
 					fnc = "rootDetailView(\"sopp\", this);";
@@ -848,7 +829,15 @@ function getContractList() {
 
 				header = [
 					{
-						"title" : "번호",
+						"title" : "유지보수일자",
+						"align" : "center",
+					},
+					{
+						"title" : "계약명",
+						"align" : "left",
+					},
+					{
+						"title" : "담당자",
 						"align" : "center",
 					},
 					{
@@ -858,10 +847,6 @@ function getContractList() {
 					{
 						"title" : "계약방식",
 						"align" : "center",
-					},
-					{
-						"title" : "계약명",
-						"align" : "left",
 					},
 					{
 						"title" : "엔드유저",
@@ -874,18 +859,6 @@ function getContractList() {
 					{
 						"title" : "매출이익",
 						"align" : "right",
-					},
-					{
-						"title" : "담당자",
-						"align" : "center",
-					},
-					{
-						"title" : "유지보수시작일",
-						"align" : "center",
-					},
-					{
-						"title" : "유지보수종료일",
-						"align" : "center",
 					},
 					{
 						"title" : "발주일자",
@@ -910,33 +883,36 @@ function getContractList() {
 					
 					if(contractType === "유지보수"){
 						disDate = dateDis(result[i].startOfPaidMaintenance);
-						startMaintenance = dateFnc(disDate);
+						startMaintenance = dateFnc(disDate, "yy-mm-dd");
 				
 						disDate = dateDis(result[i].endOfPaidMaintenance);
-						endMaintenance = dateFnc(disDate);
+						endMaintenance = dateFnc(disDate, "yy-mm-dd");
 					}else{
 						disDate = dateDis(result[i].startOfFreeMaintenance);
-						startMaintenance = dateFnc(disDate);
+						startMaintenance = dateFnc(disDate, "yy-mm-dd");
 				
 						disDate = dateDis(result[i].endOfFreeMaintenance);
-						endMaintenance = dateFnc(disDate);
+						endMaintenance = dateFnc(disDate, "yy-mm-dd");
 					}
 
 					disDate = dateDis(result[i].saleDate);
-					saleDate = dateFnc(disDate);
+					saleDate = dateFnc(disDate, "mm-dd");
 
 					str = [
 						{
-							"setData": result[i].no,
+							"setData": startMaintenance + " ~ " + endMaintenance,
+						},
+						{
+							"setData": title,
+						},
+						{
+							"setData": employee,
 						},
 						{
 							"setData": salesType,
 						},
 						{
 							"setData": contractType,
-						},
-						{
-							"setData": title,
 						},
 						{
 							"setData": endUser,
@@ -948,17 +924,8 @@ function getContractList() {
 							"setData": profit,
 						},
 						{
-							"setData": employee,
-						},
-						{
-							"setData": startMaintenance,
-						},
-						{
-							"setData": endMaintenance,
-						},
-						{
 							"setData": saleDate,
-						}
+						},
 					];
 
 					fnc = "rootDetailView(\"contract\", this);";

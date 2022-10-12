@@ -71,12 +71,12 @@
 }
 
 #notice_body .notice_container .gridHeader{
-    grid-template-columns: 15% 55% 15% 15%;
+    grid-template-columns: 15% 70% 15%;
 	border-bottom:1px solid #182f81;
 }
 
 #notice_body .notice_container .gridContent{
-	grid-template-columns: 15% 55% 15% 15%;
+	grid-template-columns: 15% 70% 15%;
 }
 /* 메인 공지사항 끝 */
 
@@ -90,11 +90,11 @@
 
 #schedule_body .schedule_container .gridHeader{
 	border-bottom:1px solid #182f81;
-    grid-template-columns: 10% 10% 16% 28% 12% 20%;
+    grid-template-columns: 15% 10% 25% 35% 15%;
 }
 
 #schedule_body .schedule_container .gridContent{
-	grid-template-columns: 10% 10% 20% 22% 12% 22%;
+	grid-template-columns: 15% 10% 25% 35% 15%;
 }
 /* 메인 schedule 일정 끝 */
 
@@ -202,11 +202,11 @@
 
 #sopp_body .sopp_container .gridHeader{
 	border-bottom:1px solid #182f81;
-    grid-template-columns: 7% 7% 7% 37% 7% 7% 7% 7% 7% 7%;
+    grid-template-columns: 5% 40% 5% 5% 5% 10% 10% 10% 10%;
 }
 
 #sopp_body .sopp_container .gridContent{
-	grid-template-columns: 7% 7% 7% 37% 7% 7% 7% 7% 7% 7%;
+	grid-template-columns: 5% 40% 5% 5% 5% 10% 10% 10% 10%;
 }
 /* 메인 영업기회 끝 */
 
@@ -220,11 +220,11 @@
 
 #contract_body .contract_container .gridHeader{
 	border-bottom:1px solid #182f81;
-    grid-template-columns: 7% 7% 7% 24% 12% 7% 7% 7% 7% 7% 7%;
+    grid-template-columns: 10% 44% 5% 5% 5% 10% 8% 8% 5%;
 }
 
 #contract_body .contract_container .gridContent{
-	grid-template-columns: 7% 7% 7% 24% 12% 7% 7% 7% 7% 7% 7%;
+	grid-template-columns: 10% 44% 5% 5% 5% 10% 8% 8% 5%;
 }
 /* 메인 계약조회 끝 */
 

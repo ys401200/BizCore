@@ -632,7 +632,7 @@ function createGrid(gridContainer, headerDataArray, dataArray, ids, job, fnc, id
 				if(dataArray[i][t].setData === undefined){
 					gridHtml += "<div class='gridContentItem' style=\"grid-column: span " + dataArray[i][t].col + "; text-align: center;\">데이터가 없습니다.</div>";	
 				}else{
-					gridHtml += "<div class='gridContentItem'>"+dataArray[i][t].setData+"</div>";
+					gridHtml += "<div class='gridContentItem'><span class=\"textNumberFormat\">" + dataArray[i][t].setData + "</span></div>";
 				}
 			}
 		}
@@ -681,6 +681,8 @@ function dateFnc(dateTimeStr, type){
 
 	if(type === "yyyy-mm-dd"){
 		result = year + "-" + month + "-" + day;
+	}else if(type === "yy-mm-dd"){
+		result = year.toString().substring(2, 4) + "-" + month + "-" + day;
 	}else if(type === "yyyy-mm"){
 		result = year + "-" + month;
 	}else if(type === "mm-dd"){
@@ -1246,8 +1248,8 @@ function inputNumberFormat(e){
 	}
 }
 
-//임시 crud 폼
-function detailViewFormModal(data){
+//상세 폼
+function detailViewFormHtml(data){
 	let html = "";
 
 	html = "<div class='defaultFormContainer'>";
@@ -1277,44 +1279,34 @@ function detailViewFormModal(data){
 	return html;
 }
 
-// 상세보기 임시 폼
-function detailViewForm(data){
-	let html = "", detailContents, pageContainer, detailBtns, listChangeBtn, scheduleRange;
+// 상세보기 type별 폼 전달
+function detailViewForm(data, type){
+	let html = "", pageContainer, detailBtns, listChangeBtn, scheduleRange;
 
-	pageContainer = $(".pageContainer");
-	detailContents = $(".detailContents");
-	listChangeBtn = $(".listChangeBtn");
-	scheduleRange = $("#scheduleRange");
-	detailBtns = $(".detailBtns");
+	if(type === undefined){
+		pageContainer = $(".pageContainer");
+		listChangeBtn = $(".listChangeBtn");
+		scheduleRange = $("#scheduleRange");
+		detailBtns = $(".detailBtns");
+	
+		if(listChangeBtn !== undefined){
+			listChangeBtn.hide();
+		}
+	
+		if(scheduleRange !== undefined){
+			scheduleRange.hide();
+		}
+	
+		pageContainer.children().hide();
+		detailBtns.hide();
 
-	if(listChangeBtn !== undefined){
-		listChangeBtn.hide();
+		html = detailViewFormHtml(data);
+	}else if(type === "board"){
+		html = detailBoardForm(data);
+	}else if(type === "modal"){
+		html = detailViewFormHtml(data);
 	}
-
-	if(scheduleRange !== undefined){
-		scheduleRange.hide();
-	}
-
-	pageContainer.hide();
-	pageContainer.prev().hide();
-	detailContents.hide();
-	detailBtns.hide();
-
-	html = "<div class='detailViewContainer tabContent' id='tabContentAll'>";
-
-	for(let i = 0; i < data.length; i++){
-		let dataTitle = (data[i].title === undefined) ? "" : data[i].title;
-		let row = (data[i].row === undefined) ? 1 : data[i].row;
-		let col = (data[i].col === undefined) ? 1 : data[i].col;
-
-		html += "<div class='detailViewFormSpan'>" + dataTitle + "</div>";
-		html += "<div class='detailViewContent' style='grid-row: span " + row + "; grid-column: span " + col + ";'>";
-		html += inputSet(data[i]);
-		html += "</div>";
-	}
-
-	html += "</div>";
-
+	
 	return html;
 }
 
@@ -1324,20 +1316,7 @@ function detailBoardForm(data){
 	html = "<div class='detailBoard'>";
 	html += "<div class='detailBtns'></div>";
 	html += "<div class='detailContents'>";
-	html += "<div class='detailBoardContainer'>";
-
-	for(let i = 0; i < data.length; i++){
-		let dataTitle = (data[i].title === undefined) ? "" : data[i].title;
-		let row = (data[i].row === undefined) ? 1 : data[i].row;
-		let col = (data[i].col === undefined) ? 1 : data[i].col;
-
-		html += "<div class='detailViewFormSpan'>" + dataTitle + "</div>";
-		html += "<div class='detailViewContent' style='grid-row: span " + row + "; grid-column: span " + col + ";'>";
-		html += inputSet(data[i]);
-		html += "</div>";
-	}
-	
-	html += "</div>";
+	html += detailViewFormHtml(data);
 	html += "</div>";
 	html += "</div>";
 
@@ -1653,9 +1632,9 @@ function tradeInsertForm(){
 }
 
 function createTabFileList(){
-	let html = "", container, header = [], data = [], str, detailContents, ids, job, fnc, url;
+	let html = "", container, header = [], data = [], str, gridList, ids, job, fnc, url;
 	
-	detailContents = $(".detailContents");
+	gridList = $(".gridList");
 
 	html = "<div class='tabFileList' id='tabFileList'>";
 	html += "<input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attached[]' id='attached' onchange='fileChange();' multiple>";
@@ -1673,8 +1652,8 @@ function createTabFileList(){
 		},
 	];
 	
-	detailContents.append(html);
-	container = detailContents.find(".tabFileList .fileList");
+	gridList.append(html);
+	container = gridList.find(".tabFileList .fileList");
 	
 	if(storage.attachedList.length > 0){
 		for(let i = 0; i < storage.attachedList.length; i++){
@@ -1894,7 +1873,7 @@ function tabFileItemListUpdate(){
 		},
 	];
 	
-	container = $(".detailContents .tabFileList .fileList");
+	container = $(".gridList .tabFileList .fileList");
 	
 	if(storage.attachedList.length > 0){
 		for(let i = 0; i < storage.attachedList.length; i++){
@@ -1950,9 +1929,9 @@ function tabFileItemListUpdate(){
 
 //견적내역 리스트
 function createTabEstList(){
-	let html = "", container, header = [], data = [], str, detailContents;
+	let html = "", container, header = [], data = [], str, gridList;
 
-	detailContents = $(".detailContents");
+	gridList = $(".gridList");
 
 	html = "<div class='tabEstList' id='tabEstList'>";
 	html += "</div>";
@@ -1996,8 +1975,8 @@ function createTabEstList(){
 		},
 	]
 	
-	detailContents.append(html);
-	container = detailContents.find(".tabEstList");
+	gridList.append(html);
+	container = gridList.find(".tabEstList");
 
 	str = [
 		{
@@ -2038,10 +2017,9 @@ function createTabEstList(){
 
 //기술지원내역 리스트
 function createTabTechList(result){
-	let html = "", container, header = [], data = [], str, detailContents, ids, job, fnc;
+	let html = "", container, header = [], data = [], str, gridList, ids, job, fnc;
 
-	detailContents = $(".detailContents");
-
+	gridList = $(".gridList");
 	html = "<div class='tabTechList' id='tabTechList'></div>";
 	
 	header = [
@@ -2067,8 +2045,8 @@ function createTabTechList(result){
 		},
 	]
 	
-	detailContents.append(html);
-	container = detailContents.find(".tabTechList");
+	gridList.append(html);
+	container = gridList.find(".tabTechList");
 
 	for(let i = 0; i < result.length; i++){
 		if(result[i].job === "tech"){
@@ -2101,9 +2079,9 @@ function createTabTechList(result){
 
 //영업활동내역 리스트
 function createTabSalesList(result){
-	let html = "", container, header = [], data = [], str, detailContents, ids, job, fnc;
+	let html = "", container, header = [], data = [], str, gridList, ids, job, fnc;
 
-	detailContents = $(".detailContents");
+	gridList = $(".gridList");
 	html = "<div class='tabSalesList' id='tabSalesList'></div>";
 	
 	header = [
@@ -2133,8 +2111,8 @@ function createTabSalesList(result){
 		},
 	]
 	
-	detailContents.append(html);
-	container = detailContents.find(".tabSalesList");
+	gridList.append(html);
+	container = gridList.find(".tabSalesList");
 
 	for(let i = 0; i < result.length; i++){
 		if(result[i].job === "sales"){
@@ -2167,44 +2145,10 @@ function createTabSalesList(result){
 	}, 100);
 }
 
-//상세보기 숨김
-function detailViewContainerHide(titleStr){
-	let detailContents, pageContainer, detailBtns, listChangeBtn, scheduleRange, searchContainer;
-
-	pageContainer = $(".pageContainer");
-	detailContents = $(".detailContents");
-	listChangeBtn = $(".listChangeBtn");
-	scheduleRange = $("#scheduleRange");
-	detailBtns = $(".detailBtns");
-	searchContainer = $(".searchContainer");
-
-	if(listChangeBtn !== undefined){
-		listChangeBtn.show();
-	}
-
-	if(scheduleRange !== undefined){
-		scheduleRange.show();
-	}
-
-	pageContainer.show();
-	pageContainer.prev().show();
-	detailContents.hide();
-	detailContents.html("");
-	detailBtns.hide();
-	searchContainer.show();
-
-
-	conTitleChange("containerTitle", titleStr);
-}
-
 function detailBoardContainerHide(){
 	$(".detailBoard").each((index, item) => {
-		$(item).hide();
+		$(item).remove();
 	});
-}
-
-function conTitleChange(contentId, str){
-	$("#" + contentId).html(str);
 }
 
 function sizeToStr(s){
@@ -3175,4 +3119,16 @@ function noteListBadge(){
 			}
 		}
 	})
+}
+
+function stringNumberFormat(str){
+	let resultStr;
+
+	if(str.length >= 10){
+		resultStr = str.substring(0, 10) + "...";
+	}else{
+		resultStr = str;
+	}
+
+	return resultStr;
 }

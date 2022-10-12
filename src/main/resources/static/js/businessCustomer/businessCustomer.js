@@ -153,20 +153,23 @@ function customerSuccessView(result){
 			"title": "고객사명",
 			"elementId": "name",
 			"value": name,
+			"col": 4,
 		},
 		{
 			"title": "대표자명",
 			"elementId": "ceoName",
 			"value": ceoName,
+			"col": 4,
 		},
 		{
 			"title": "사업자번호",
 			"elementId": "taxId",
 			"value": taxId,
+			"col": 4,
 		},
 	];
 	
-	html = detailViewFormModal(dataArray);
+	html = detailViewForm(dataArray, "modal");
 
 	modal.show();
 	modal.headTitle.text(name);
@@ -190,20 +193,23 @@ function customerInsertForm(){
 			"title": "고객사명",
 			"elementId": "name",
 			"disabled": false,
+			"col": 4,
 		},
 		{
 			"title": "대표자명",
 			"elementId": "ceoName",
 			"disabled": false,
+			"col": 4,
 		},
 		{
 			"title": "사업자번호",
 			"elementId": "taxId",
 			"disabled": false,
+			"col": 4,
 		},
 	];
 
-	html = detailViewFormModal(dataArray);
+	html = detailViewForm(dataArray, "modal");
 
 	modal.show();
 	modal.headTitle.text("고객사등록");

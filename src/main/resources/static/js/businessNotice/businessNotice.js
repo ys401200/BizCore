@@ -40,7 +40,7 @@ function drawNoticeList() {
 
 	header = [
 		{
-			"title": "번호",
+			"title": "등록일",
 			"align": "center",
 		},
 		{
@@ -51,10 +51,6 @@ function drawNoticeList() {
 			"title": "작성자",
 			"align": "center",
 		},
-		{
-			"title": "등록일",
-			"align": "center",
-		}
 	];
 
 	if(jsonData === ""){
@@ -69,12 +65,12 @@ function drawNoticeList() {
 	}else{
 		for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
 			disDate = dateDis(jsonData[i].created, jsonData[i].modified);
-			setDate = dateFnc(disDate);
+			setDate = dateFnc(disDate, "mm-dd");
 			let userName = storage.user[jsonData[i].writer].userName;
 	
 			str = [
 				{
-					"setData": jsonData[i].no,
+					"setData": setDate,
 				},
 				{
 					"setData": jsonData[i].title,
@@ -82,9 +78,6 @@ function drawNoticeList() {
 				{
 					"setData": userName,
 				},
-				{
-					"setData": setDate,
-				}
 			]
 	
 			fnc = "noticeDetailView(this)";
@@ -169,12 +162,14 @@ function noticeSuccessView(result){
 			"elementId": "writer",
 			"dataKeyup": "user",
 			"value": writer,
+			"col": 2,
 		},
 		{
 			"title": "등록일",
 			"value": setDate,
 			"elementId": "created",
 			"type": "date",
+			"col": 2,
 		},
 		{
 			"title": "제목",
@@ -191,7 +186,7 @@ function noticeSuccessView(result){
 		},
 	];
 
-	html += detailBoardForm(dataArray);
+	html += detailViewForm(dataArray, "board");
 	detailBoardContainerHide();
 	storage.gridContent.after(html);
 	notIdArray = ["writer", "created"];
@@ -248,7 +243,7 @@ function noticeInsertForm(){
 		},
 	];
 
-	html = detailViewFormModal(dataArray);
+	html = detailViewForm(dataArray, "modal");
 
 	modal.show();
 	modal.headTitle.text("공지사항등록");

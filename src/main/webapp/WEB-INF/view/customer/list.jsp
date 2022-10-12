@@ -25,7 +25,6 @@
 		<div class="customerContainer">
 			<hr />
             <span id="containerTitle">고객사조회</span>
-            <div class="detailContents"></div>
             <div class="gridCustomerList"></div>
             <div class="pageContainer"></div>
 		</div>

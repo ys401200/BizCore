@@ -55,9 +55,9 @@
 		</div>
         <div class="salesContainer">
             <hr />
-            <span id="containerTitle">영업활동조회</span>
-            <div class="detailContents"></div>
-            <div class="gridSalesList"></div>
+            <span id="containerTitle"></span>
+			<a href="#" class="detailBackBtn">Back</a>
+            <div class="gridList"></div>
             <div class="pageContainer"></div>
         </div>
 <jsp:include page="../bottom.jsp"/>

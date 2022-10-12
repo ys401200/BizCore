@@ -40,7 +40,7 @@ function drawFileBoxList() {
 
 	header = [
 		{
-			"title": "번호",
+			"title": "등록일",
 			"align": "center",
 		},
 		{
@@ -51,10 +51,6 @@ function drawFileBoxList() {
 			"title": "작성자",
 			"align": "center",
 		},
-		{
-			"title": "등록일",
-			"align": "center",
-		}
 	];
 
 	if(jsonData === ""){
@@ -69,12 +65,12 @@ function drawFileBoxList() {
 	}else{
 		for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
 			disDate = dateDis(jsonData[i].created, jsonData[i].modified);
-			setDate = dateFnc(disDate);
+			setDate = dateFnc(disDate, "mm-dd");
 			let userName = storage.user[jsonData[i].writer].userName;
 	
 			str = [
 				{
-					"setData": jsonData[i].no,
+					"setData": setDate,
 				},
 				{
 					"setData": jsonData[i].title,
@@ -82,9 +78,6 @@ function drawFileBoxList() {
 				{
 					"setData": userName,
 				},
-				{
-					"setData": setDate,
-				}
 			]
 	
 			fnc = "fileBoxDetailView(this)";
@@ -164,12 +157,14 @@ function fileBoxSuccessView(result){
 			"elementId": "writer",
 			"dataKeyup": "user",
 			"value": writer,
+			"col": 2,
 		},
 		{
 			"title": "등록일",
 			"element": "created",
 			"value": setDate,
 			"type": "date",
+			"col": 2,
 		},
 		{
 			"title": "제목",
@@ -225,7 +220,7 @@ function fileBoxSuccessView(result){
 		setTiny();
 		tinymce.activeEditor.mode.set('readonly');
 		inputDataList();
-	}, 100)
+	}, 500)
 }
 
 function fileBoxErrorView(){
@@ -266,7 +261,7 @@ function fileBoxInsertForm(){
 		},
 	];
 
-	html = detailViewFormModal(dataArray);
+	html = detailViewForm(dataArray, "modal");
 
 	modal.show();
 	modal.headTitle.text("자료 등록");
@@ -323,7 +318,7 @@ function fileBoxUpdateForm(result){
 		},
 	];
 
-	html = detailViewFormModal(dataArray);
+	html = detailViewForm(dataArray, "modal");
 
 	modal.show();
 	modal.headTitle.text(title);

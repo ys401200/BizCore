@@ -68,18 +68,18 @@
 	float: left;
 }
 
-.soppContainer .gridSoppList{
+.soppContainer .gridList{
     display: grid; 
 	width: 99%; 
 	margin: 0 auto;
 }
 
-.soppContainer .gridSoppList .gridHeader,
-.soppContainer .gridSoppList .gridContent{
-    grid-template-columns: 7% 7% 7% 37% 7% 7% 7% 7% 7% 7%;
+.soppContainer .gridList .gridHeader,
+.soppContainer .gridList .gridContent{
+    grid-template-columns: 5% 40% 5% 5% 5% 10% 10% 10% 10%;
 }
 
-.soppContainer .gridSoppList .gridHeader{
+.soppContainer .gridList .gridHeader{
 	border-bottom:1px solid #abb6d5;
 }
 

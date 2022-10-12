@@ -57,7 +57,7 @@
 
 .gridNoticeList .gridHeader,
 .gridNoticeList .gridContent {
-	grid-template-columns: 10% 60% 10% 20%;
+	grid-template-columns: 15% 70% 15%;
 }
 
 .noticeContent {

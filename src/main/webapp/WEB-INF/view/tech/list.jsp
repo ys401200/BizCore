@@ -55,9 +55,9 @@
 		</div>
         <div class="techContainer">
             <hr />
-            <span id="containerTitle">기술지원조회</span>
-            <div class="detailContents"></div>
-            <div class="gridTechList"></div>
+            <span id="containerTitle"></span>
+            <a href="#" class="detailBackBtn">Back</a>
+            <div class="gridList"></div>
             <div class="pageContainer"></div>
         </div>
 <jsp:include page="../bottom.jsp"/>
