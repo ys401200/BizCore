@@ -16,6 +16,7 @@ function init(){
 	
 	apiServer = "";
 	
+	cipher.rsa.getKey()
 	getCommonCode();
 	getUserMap();
 	getDeptMap();
@@ -298,8 +299,6 @@ function init(){
 		}
 	}
 
-	cipher.aes.key = sessionStorage.getItem("aesKey");
-	cipher.aes.iv = sessionStorage.getItem("aesIv");
 	msg.cnt = document.getElementsByClassName("msg_cnt")[0];
 	
 	$("#sideMenu").find("ul:not(#panel) li a").click(function(){
@@ -500,6 +499,8 @@ function getPersonalize(){
 
 // 기초 데이터가 세팅되어 있는지 확인하는 함수
 function isInit(){
+	if(cipher.aes.key === undefined)	return false;
+	if(cipher.aes.iv === undefined)		return false;
 	if(storage.code === undefined) 		return false;
 	if(storage.company === undefined)	return false;
 	if(storage.customer === undefined) 	return false;
