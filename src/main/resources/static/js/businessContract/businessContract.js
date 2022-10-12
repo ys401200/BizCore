@@ -512,7 +512,6 @@ function contractSuccessView(result){
 		$("#salesType option[value='" + result.salesType + "']").prop("selected" ,true);
 		$("#taxInclude option[value='" + taxInclude + "']").prop("selected" ,true);
 		detailBackBtn.css("display", "flex");
-		detailBackBtn.attr("onclick", "drawContractList();");
 
 		let menu = [
 			{

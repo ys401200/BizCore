@@ -9,7 +9,7 @@
         <option value="personal">개인별</option>
     </select>
     <jsp:include page="./calendar.jsp" />
-    <a href="#" class="detailBackBtn">Back</a>
+    <a href="/business/schedule" class="detailBackBtn">Back</a>
     <div class="gridList"></div>
     <div class="pageContainer"></div>
 </div>

@@ -20,7 +20,7 @@ function getSoppList() {
 	crud.defaultAjax(url, method, data, type, soppSuccessList, soppErrorList);
 }
 
-export function drawSoppList() {
+function drawSoppList() {
 	let container, result, job, jsonData, header = [], data = [], ids = [], disDate, setDate, str, fnc, pageContainer, containerTitle, detailBackBtn;
 	
 	if (storage.soppList === undefined) {
@@ -398,8 +398,7 @@ function soppSuccessView(result){
 		$("#contType option[value='" + result.contType + "']").prop("selected" ,true);
 		$("#soppType option[value='" + result.soppType + "']").prop("selected" ,true);
 		detailBackBtn.css("display", "flex");
-		detailBackBtn.attr("onclick", "drawSoppList();");
-
+		
 		let menu = [
 			{
 				"keyword": "add",

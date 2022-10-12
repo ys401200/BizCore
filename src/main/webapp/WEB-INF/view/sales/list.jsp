@@ -56,7 +56,7 @@
         <div class="salesContainer">
             <hr />
             <span id="containerTitle"></span>
-			<a href="#" class="detailBackBtn">Back</a>
+			<a href="/business/sales" class="detailBackBtn">Back</a>
             <div class="gridList"></div>
             <div class="pageContainer"></div>
         </div>
