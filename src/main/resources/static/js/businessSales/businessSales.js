@@ -21,7 +21,7 @@ function getSalesList() {
 } // End of getSalesList()
 
 function drawSalesList() {
-	let container, dataJob = [], result, jsonData, header = [], data = [], ids = [], str, fnc, pageContainer, containerTitle, detailBackBtn;
+	let container, dataJob = [], result, jsonData, header = [], data = [], ids = [], str, fnc, pageContainer, containerTitle, detailBackBtn, listSearchInput;
 	
 	if (storage.scheduleList === undefined) {
 		msg.set("등록된 일정이 없습니다");
@@ -39,6 +39,7 @@ function drawSalesList() {
 	containerTitle = $("#containerTitle");
 	detailBackBtn = $(".detailBackBtn");
 	pageContainer = document.getElementsByClassName("pageContainer");
+	listSearchInput = $(".listSearchInput");
 	container = $(".gridList");
 
 	header = [
@@ -142,6 +143,7 @@ function drawSalesList() {
 
 	containerTitle.html("영업활동조회");
 	$(pageContainer).children().show();
+	listSearchInput.show();
 	createGrid(container, header, data, ids, dataJob, fnc);
 
 	let path = $(location).attr("pathname").split("/");
@@ -181,12 +183,13 @@ function salesDetailView(e){
 }
 
 function salesSuccessView(result){
-	let dataArray, from, to, place, writer, sopp, customer, partner, title, content, gridList, searchContainer, containerTitle, detailBackBtn;
+	let dataArray, from, to, place, writer, sopp, customer, partner, title, content, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput;
 	storage.salesNo = result.no;
 	gridList = $(".gridList");
 	searchContainer = $(".searchContainer");
 	containerTitle = $("#containerTitle");
 	detailBackBtn = $(".detailBackBtn");
+	listSearchInput = $(".listSearchInput");
 
 	disDate = dateDis(result.from);
 	from = dateFnc(disDate);
@@ -371,7 +374,8 @@ function salesSuccessView(result){
 
 	setTimeout(() => {
 		detailBackBtn.css("display", "flex");
-
+		listSearchInput.hide();
+		
 		let menu = [
 			{
 				"keyword": "add",
@@ -755,8 +759,14 @@ function salesErrorDelete(){
 function searchInputKeyup(){
 	let searchAllInput;
 	searchAllInput = $("#searchAllInput").val();
+	tempArray = searchDataFilter(storage.scheduleList, searchAllInput, "input");
 
-	storage.searchDatas = searchDataFilter(storage.scheduleList, searchAllInput, "input");
+	if(tempArray.length > 0){
+		storage.searchDatas = tempArray;
+	}else{
+		storage.searchDatas = "";
+	}
+
 	drawSalesList();
 }
 
@@ -791,7 +801,7 @@ function searchSubmit(){
 	let searchValues = [searchWriter, searchCustomer, searchJob, searchType, searchDateFrom];
 
 	for(let i = 0; i < searchValues.length; i++){
-		if(searchValues[i] !== ""){
+		if(searchValues[i] !== "" && searchValues[i] !== undefined && searchValues[i] !== null){
 			let tempArray = searchDataFilter(storage.scheduleList, searchValues[i], "multi");
 			
 			for(let t = 0; t < tempArray.length; t++){
@@ -803,12 +813,11 @@ function searchSubmit(){
 	}
 
 	resultArray = searchMultiFilter(eachIndex, dataArray, storage.scheduleList);
-	
 	storage.searchDatas = resultArray;
 
 	if(storage.searchDatas.length == 0){
 		alert("찾는 데이터가 없습니다.");
-		return false;
+		storage.searchDatas = storage.scheduleList;
 	}
 	
 	drawSalesList();

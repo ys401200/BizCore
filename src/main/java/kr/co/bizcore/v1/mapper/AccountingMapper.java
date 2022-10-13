@@ -1,10 +1,12 @@
 package kr.co.bizcore.v1.mapper;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import kr.co.bizcore.v1.domain.BankAccount;
 import kr.co.bizcore.v1.domain.SimpleTaxBill;
@@ -42,5 +44,9 @@ public interface AccountingMapper {
     // 특정 계좌의 거래내역을 가져오는 메서드
     @Select("SELECT CAST(UNIX_TIMESTAMP(dt) * 1000 AS CHAR) AS dt, `desc`, CAST(deposit AS CHAR) AS deposit, CAST(withdraw AS CHAR) AS withdraw, CAST(balance AS CHAR) AS balance, branch, memo1, memo2, link FROM bizcore.bank_account_ledger WHERE deleted IS NULL AND compId = #{compId} AND bank = #{bank} AND account = #{account} ORDER BY dt DESC")
     public List<HashMap<String, String>> getBankDetail(@Param("compId") String compId, @Param("bank") String bank, @Param("account") String account);
+
+    // 특정 계좌, 특정 거래건의 메모를 입력하는 메서드 / 실행헤도 업데이트가 되지 않음. 직접 구현하기로 함
+    @Update("UPDATE bizcore.bank_account_ledger SET memo2 = #{memo} WHERE deleted IS NULL AND compId = #{compId} AND bank = #{bank} AND account = #{account} AND UNIX_TIMESTAMP(dt)*1000 = #{dt} AND deposit = #{deposit} AND withdraw = #{withdraw} AND balance = #{balance} AND `desc` = #{desc}")
+    public int updateBankAccHistoryMemo(@Param("compId") String compId, @Param("bank") String bank, @Param("account") String account, @Param("dt") long dt, @Param("memo") String memo, @Param("deposit") long deposit, @Param("withdraw") long withdraw, @Param("balance") long balance, @Param("desc") String desc);
 
 }

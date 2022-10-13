@@ -1,13 +1,20 @@
 @charset "UTF-8";
 
 #bodyContents{
-	display: grid;
-    grid-template-columns: 172px 1fr;
-	height: 100%;
+	display:flex;
+	flex-flow: nowrap;
+	height: calc(100% - 54px);
+}
+
+#bodyContents #sideContents{
+	width:172px;
 }
 
 #bodyContents #bodyContent{
 	padding: 10px 12px 0 12px;
+	width:calc(100% - 172px);
+	/* padding: 8px 8px 0 8px;
+	height: calc(100% - 8px); */
 }
 
 #bodyContents #widgetContainer{
@@ -15,6 +22,8 @@
 	width:100%;
 	max-height: calc(100% - 70px);
 	padding: 10px 12px 0 12px;
+	/* max-height: 100%;
+	padding: 8px 8px 0 8px; */
 	box-sizing:border-box;
 }
 

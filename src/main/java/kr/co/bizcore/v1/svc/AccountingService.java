@@ -1,6 +1,11 @@
 package kr.co.bizcore.v1.svc;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -110,7 +115,6 @@ public class AccountingService extends Svc{
             result += ("\"deposit\":" + each.get("deposit") + ",");
             result += ("\"withdraw\":" + each.get("withdraw") + ",");
             result += ("\"balance\":" + each.get("balance") + ",");
-            result += ("\"desc\":\"" + each.get("desc") + "\",");
             result += ("\"branch\":\"" + each.get("branch") + "\",");
             result += ("\"memo1\":" + (each.get("memo1") == null ? "null" : "\"" + each.get("memo1") + "\"") + ",");
             result += ("\"memo2\":" + (each.get("memo2") == null ? "null" : "\"" + each.get("memo2") + "\"") + ",");
@@ -118,6 +122,55 @@ public class AccountingService extends Svc{
 
         }
         if(result != null)  result += "]";
+        return result;
+    }
+
+    // 은행 거래내역의 메모를 업데이트하는 메서드
+    public boolean setBankAccMemo(String compId, String bank, String account, String memo, String desc, long dt, long deposit, long withdraw, long balance){
+        boolean result = false;
+        int x = -1;
+        x = accMapper.updateBankAccHistoryMemo(compId, bank, account, dt, memo, deposit, withdraw, balance, desc);
+        logger.error("|||||||||||||||||||||||||||||||||" + x);
+        result = x > 0;
+        return result;
+    }
+
+    // 은행 거래내역의 메모를 업데이트하는 메서드
+    public boolean setBankAccMemo2(String compId, String bank, String account, String memo, String desc, long dt, long deposit, long withdraw, long balance){
+        boolean result = false;
+        String sql = "UPDATE bizcore.bank_account_ledger SET memo2 = ? WHERE deleted IS NULL AND compId = ? AND bank = ? AND account = ? AND UNIX_TIMESTAMP(dt)*1000 = ? AND deposit = ? AND withdraw = ? AND balance = ? AND `desc` = ?";
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        int x = -1;
+
+        logger.error("||||||||||||||||||||||||||||||||| compId : " + compId);
+        logger.error("||||||||||||||||||||||||||||||||| bank : " + bank);
+        logger.error("||||||||||||||||||||||||||||||||| account : " + account);
+        logger.error("||||||||||||||||||||||||||||||||| memo : " + memo);
+        logger.error("||||||||||||||||||||||||||||||||| deposit : " + deposit);
+        logger.error("||||||||||||||||||||||||||||||||| withdraw : " + withdraw);
+        logger.error("||||||||||||||||||||||||||||||||| balance : " + balance);
+        logger.error("||||||||||||||||||||||||||||||||| desc : " + desc);
+        logger.error("||||||||||||||||||||||||||||||||| dt : " + dt);
+        
+        try{
+            conn = sqlSession.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, memo);
+            pstmt.setString(2, compId);
+            pstmt.setString(3, bank);
+            pstmt.setString(4, account);
+            pstmt.setLong(5, dt);
+            pstmt.setLong(6, deposit);
+            pstmt.setLong(7, withdraw);
+            pstmt.setLong(8, balance);
+            pstmt.setString(9, desc);
+            x = pstmt.executeUpdate();
+        }catch(SQLException e){e.printStackTrace();}
+
+        logger.error("||||||||||||||||||||||||||||||||| 2 : " + x);
+        result = x > 0;
         return result;
     }
     

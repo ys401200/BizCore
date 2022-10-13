@@ -11,6 +11,7 @@ $(document).ready(() => {
 		$("#loadingDiv").hide();
 		$("#loadingDiv").loading("toggle");
 	}, 300);
+	storage.page = {"max":0,"current":0,"line":0};
 
 	// For Initializing Code . . . . . . .  . . . . 
 });
@@ -58,13 +59,19 @@ function getBankAccountHistory(bank, account){
 		"dataType": "json",
 		"cache": false,
 		success: (data) => {
-			let x, list;
+			let x, list, row;
 			if (data.result === "ok") {
 				list = cipher.decAes(data.data);
 				list = JSON.parse(list);
 				storage.bankHistory = list;
+				row = Math.floor((document.getElementsByClassName("accountingContent")[0].clientHeight - 60) / 31 / 5);
+				row = row < 4 ? 4 : row > 10 ? 10 : row;
+				storage.page.line = row;
+				document.getElementsByClassName("bodyFunc1")[0].children[0].value = row;
+				storage.page.max = Math.ceil(list.length / (row * 5));
+				storage.page.current = 1;
 				console.log("[getBankAccountList] Success getting bank account information.");
-				drawAccountHostory();
+				drawAccountHistory();
 			} else {
 				msg.set("[getBankAccountList] Fail to get bank account information.");
 			}
@@ -96,15 +103,18 @@ function drawAccountList(){
 	cnt.innerHTML = html;
 } // End of drawAccountList();
 
-function drawAccountHostory(){
-	let cnt, html, x, t, list;
+function drawAccountHistory(){
+	let cnt, html, x, list, start, end;
 
 	list = storage.bankHistory;
+	start = (storage.page.current - 1) * (storage.page.line * 5);
+	end = start + (storage.page.line * 5) - 1;
+	end = end >= storage.bankHistory.length ? storage.bankHistory.length - 1 : end;
 	cnt = document.getElementsByClassName("accountingContent")[0].children[1];
 	html = "<div><div>일자</div><div>기재내용</div><div>입금</div><div>출금</div><div>잔액</div><div>거래점</div><div>통장메모</div><div>메모</div><div>연결</div></div>";
 
-	for(x in list){
-		html += "<div>";
+	for(x = start ; x <= end ; x++){
+		html += ("<div data-idx=\"" + x + "\">");
 		html += ("<div>" + dateFormat(list[x].dt) + "</div>");
 		html += ("<div>" + list[x].desc + "</div>");
 		html += ("<div>" + list[x].deposit.toLocaleString() + "</div>");
@@ -112,13 +122,41 @@ function drawAccountHostory(){
 		html += ("<div>" + list[x].balance.toLocaleString() + "</div>");
 		html += ("<div>" + (list[x].branch === null ? "" : list[x].branch) + "</div>");
 		html += ("<div>" + (list[x].memo1 === null ? "" : list[x].memo1) + "</div>");
-		html += ("<input value=\"" + (list[x].memo2 === null ? "" : list[x].memo2) + "\" />");
+		html += ("<input value=\"" + (list[x].memo2 === null ? "" : list[x].memo2) + "\" onkeyup=\"writeMemo(this)\" />");
 		html += ("<div><img src=\"" + (list[x].link === "y" ? "/images/common/linkIcon.png" : "/images/common/linkIcon.png") + "\"></div>");
 		html +="</div>";
 	}
+	cnt.innerHTML = html;
+	drawPaging();
+} // End of drawAccountHostory()
+
+function drawPaging(){
+	let cnt, html, current, start, end, limit, padding, x;
+	cnt = document.getElementsByClassName("pageContainer")[0];
+	limit = storage.page.max;
+	padding = 3;
+	current = storage.page.current;
+	start = current - padding;
+	start = start < 1 ? 1 : start;
+	end = current + padding;
+	end = end > limit ? limit : end;
+	console.log("limit : " + limit + " / padding : " + padding + " / current : " + current + " / start : " + start + " / end" + end);
+	if(start === 1)			html = "";
+	else if(start === 2)	html = "<div onclick=\"clickedPaging(1)\">1</div>";
+	else if(start > 2)	html = "<div onclick=\"clickedPaging(1)\">1</div><div>...</div>";
+	for(x = start ; x <= end ; x++){
+		html += ("<div " + (current !== x ? "onclick=\"clickedPaging(" + x + ")\"" : "class=\"paging_cell_current\"") + ">" + x + "</div>");
+	}
+	if(end === limit - 1)		html += ("<div onclick=\"clickedPaging(" + limit + ")\">" + limit + "</div>");
+	else if(end < limit - 1)	html += ("<div>...</div><div onclick=\"clickedPaging(" + limit + ")\">" + limit + "</div>");
 
 	cnt.innerHTML = html;
-} // End of drawAccountHostory()
+} // End of drawPaging()
+
+function clickedPaging(n){
+	storage.page.current = n*1;
+	drawAccountHistory();
+}
 
 // 날짜 포맷 함수
 function dateFormat(l){
@@ -144,32 +182,100 @@ function clickedAccount(el){
 	parent = el.parentElement;
 	cntList = document.getElementsByClassName("accountingContent")[0].children[0];
 	cntContent = document.getElementsByClassName("accountingContent")[0].children[1];
+	cntContent.innerHTML = "<div><div>일자</div><div>기재내용</div><div>입금</div><div>출금</div><div>잔액</div><div>거래점</div><div>통장메모</div><div>메모</div><div>연결</div></div>";
+	document.getElementsByClassName("pageContainer")[0].innerHTML = "";
 	cntList.className = "accountListCollect";
 	cntContent.style.display = "inline-block";
 	for(x = 1 ; x < parent.children.length ; x++)	parent.children[x].children[6].innerText = "";
-	document.getElementsByClassName("bodyFunc")[0].style.display = "inline-block";;
+	document.getElementsByClassName("bodyFunc1")[0].style.display = "inline-block";
+	document.getElementsByClassName("bodyFunc2")[0].style.display = "inline-block";
 	el.children[6].innerText = "►";
 	bank = storage.bankAccount[order].bankCode;
 	account = storage.bankAccount[order].account;
+	storage.page.account = account;
+	storage.page.bank = bank;
 	getBankAccountHistory(bank, account);
 } // End of clickedAccount()
 
-function clickedCloseHostory(){
-	let x, cntList, cntContent, parent;
+function clickedCloseHistory(){
+	let x, cntList, cntContent;
 	cntList = document.getElementsByClassName("accountingContent")[0].children[0];
 	cntContent = document.getElementsByClassName("accountingContent")[0].children[1];
 	cntList.className = "accountListExpand";
 	cntContent.style.display = "none";
 	for(x = 1 ; x < cntList.children.length ; x++)	cntList.children[x].children[6].innerText = "";
-	document.getElementsByClassName("bodyFunc")[0].style.display = "none";
+	document.getElementsByClassName("bodyFunc1")[0].style.display = "none";
+	document.getElementsByClassName("bodyFunc2")[0].style.display = "none";
+	document.getElementsByClassName("pageContainer")[0].innerHTML = "";
 } // End of clickedCloseHostory()
 
 function expandList(){
 	let cntList, cntContent;
-
 	order = el.dataset.order * 1;
 	cntList = document.getElementsByClassName("accountingContent")[0].children[0];
 	cntContent = document.getElementsByClassName("accountingContent")[0].children[1];
 	cntList.className = "accountListExpand";
 	cntContent.getElementsByClassName.display = "none";
 } // End of expandList()
+
+function changeRange(el){
+	let v, current;
+	v = el.value * 1;
+	current = (storage.page.line * 5 * (storage.page.current - 1)) / (v * 5);console.log("current : " + current)
+	current = Math.floor(current) + 1;
+	storage.page.line = v;
+	storage.page.current = current;
+	storage.page.max = Math.ceil(storage.bankHistory.length / (v * 5));
+	document.getElementsByClassName("bodyFunc1")[0].children[1].innerText = v * 5;
+	if(storage.page.handler !== undefined)	window.clearTimeout(storage.page.handler);
+	storage.page.handler = window.setTimeout(function(){
+		storage.page.handler = undefined;
+		document.getElementsByClassName("bodyFunc1")[0].children[1].innerText = "";
+	},7000);
+	drawAccountHistory();
+} // End of changeRange()
+
+function writeMemo(el){
+	const memo = el.value;
+	const idx = el.parentElement.dataset.idx * 1;
+	if(storage.writeMemo !== undefined)	window.clearTimeout(storage.writeMemo);
+	storage.writeMemo = window.setTimeout(function(){saveBankAccMemo(idx, memo);},3000)
+} // End of writeMemo()
+
+function saveBankAccMemo(idx, memo){
+	let dt, deposit, withdraw, balance, desc, url, data, bank, account;
+	dt = storage.bankHistory[idx].dt;
+	deposit = storage.bankHistory[idx].deposit;
+	withdraw = storage.bankHistory[idx].withdraw;
+	balance = storage.bankHistory[idx].balance;
+	desc = storage.bankHistory[idx].desc === undefined || storage.bankHistory[idx].desc === null ? null : storage.bankHistory[idx].desc;
+	account = storage.page.account;
+	bank = storage.page.bank;
+	data = {
+		"dt":dt,
+		"deposit":deposit,
+		"withdraw":withdraw,
+		"balance":balance,
+		"desc":desc,
+		"memo":memo
+	}
+	data = JSON.stringify(data);
+	data = cipher.encAes(data);
+
+	url = apiServer + "/api/accounting/bankdetail/memo/" + bank + "/" + account;
+	$.ajax({
+		"url": url,
+		"data":data,
+		"method": "post",
+		"dataType": "json",
+		"contentType":"text/plain",
+		"cache": false,
+		success: (data) => {
+			if (data.result === "ok") {
+				msg.set("메모를 저장했습니다.");
+			} else {
+				msg.set("[getBankAccountList] Fail to get bank account information.");
+			}
+		}
+	});
+} // End of saveBankAccMemo()

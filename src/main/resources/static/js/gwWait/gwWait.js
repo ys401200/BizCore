@@ -923,7 +923,7 @@ function showGwModal() {
     "<div class='close-wrap'>" +
     " <button id='reset' onclick='closeGwModal(this)'>초기화</button>" +
     " <button id='close' onclick='closeGwModal(this)'>취소</button>" +
-    " <button id='modify' onclick='closeGwModal(this)'>생성</button>" +
+    " <button id='modify' onclick='closeGwModal(this)'>수정</button>" +
     "</div>" +
     "</div>" +
     "</div>";

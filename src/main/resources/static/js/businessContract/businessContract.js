@@ -21,7 +21,7 @@ function getContractList() {
 }
 
 function drawContractList() {
-	let container, result, job, jsonData, header = [], data = [], ids = [], disDate, str, fnc, pageContainer, containerTitle, detailBackBtn;
+	let container, result, job, jsonData, header = [], data = [], ids = [], disDate, str, fnc, pageContainer, containerTitle, detailBackBtn, listSearchInput;
 	
 	if (storage.contractList === undefined) {
 		msg.set("등록된 계약 없습니다");
@@ -38,6 +38,7 @@ function drawContractList() {
 
 	containerTitle = $("#containerTitle");
 	detailBackBtn = $(".detailBackBtn");
+	listSearchInput = $(".listSearchInput");
 	pageContainer = document.getElementsByClassName("pageContainer");
 	container = $(".gridList");
 
@@ -160,6 +161,7 @@ function drawContractList() {
 	containerTitle.html("계약조회");
 	$(pageContainer).children().show();
 	detailBackBtn.hide();
+	listSearchInput.show();
 	createGrid(container, header, data, ids, job, fnc);
 
 	let path = $(location).attr("pathname").split("/");
@@ -217,12 +219,13 @@ function contractErrorList(){
 }
 
 function contractSuccessView(result){
-	let notIdArray, sopp, html, contractType, title, employee, customer, salesType, cipOfCustomer, endUser, cipOfendUser, saleDate, delivered, employee2, startOfFreeMaintenance, endOfFreeMaintenance, startOfPaidMaintenance, endOfPaidMaintenance, contractAmount, taxInclude, profit, detail, disDate, dataArray, gridList, searchContainer, containerTitle, detailBackBtn;
+	let notIdArray, sopp, html, contractType, title, employee, customer, salesType, cipOfCustomer, endUser, cipOfendUser, saleDate, delivered, employee2, startOfFreeMaintenance, endOfFreeMaintenance, startOfPaidMaintenance, endOfPaidMaintenance, contractAmount, taxInclude, profit, detail, disDate, dataArray, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput;
 	storage.contractNo = result.no;
 	gridList = $(".gridList");
 	searchContainer = $(".searchContainer");
 	containerTitle = $("#containerTitle");
 	detailBackBtn = $(".detailBackBtn");
+	listSearchInput = $(".listSearchInput");
 
 	contractType = (result.contractType === null || result.contractType === "" || result.contractType === undefined) ? "" : storage.code.etc[result.contractType];
 	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
@@ -512,7 +515,8 @@ function contractSuccessView(result){
 		$("#salesType option[value='" + result.salesType + "']").prop("selected" ,true);
 		$("#taxInclude option[value='" + taxInclude + "']").prop("selected" ,true);
 		detailBackBtn.css("display", "flex");
-
+		listSearchInput.hide();
+		
 		let menu = [
 			{
 				"keyword": "add",
@@ -1011,10 +1015,16 @@ function contractRadioClick(e){
 }
 
 function searchInputKeyup(){
-	let searchAllInput;
+	let searchAllInput, tempArray;
 	searchAllInput = $("#searchAllInput").val();
+	tempArray = searchDataFilter(storage.contractList, searchAllInput, "input");
 
-	storage.searchDatas = searchDataFilter(storage.contractList, searchAllInput, "input");
+	if(tempArray.length > 0){
+		storage.searchDatas = tempArray;
+	}else{
+		storage.searchDatas = "";
+	}
+
 	drawContractList();
 }
 
@@ -1056,7 +1066,7 @@ function searchSubmit(){
 	let searchValues = [searchEmployee, searchCustomer, searchEndUser, searchTitle, searchSalesType, searchContractType, startOfFreeMaintenanceFrom, startOfPaidMaintenanceFrom, saleDateFrom];
 
 	for(let i = 0; i < searchValues.length; i++){
-		if(searchValues[i] !== ""){
+		if(searchValues[i] !== "" && searchValues[i] !== undefined && searchValues[i] !== null){
 			let tempArray = searchDataFilter(storage.contractList, searchValues[i], "multi");
 			
 			for(let t = 0; t < tempArray.length; t++){
@@ -1073,7 +1083,7 @@ function searchSubmit(){
 
 	if(storage.searchDatas.length == 0){
 		alert("찾는 데이터가 없습니다.");
-		return false;
+		storage.searchDatas = storage.contractList;
 	}
 	
 	drawContractList();
