@@ -7,7 +7,21 @@ $(document).ready(() => {
   }, 300);
 
   drawGwDiv();
-  window.onresize = function () { $(".waitCard").css("font-size", ((window.innerWidth - 320) / 100) + "px") }
+  // window.onresize = function () { $(".waitCard").css("font-size", ((window.innerWidth - 320) / 100) + "px") }
+  window.onresize = function () {
+    // $(".waitCard").css("font-size", ((window.innerWidth - 320) / 100) + "px") 
+    if ($(".waitDiv").css("width").split("p")[0] < 762) {
+      $(".waitDiv").css("grid-template-columns", "repeat(3, 1fr)");
+    } else if ($(".waitDiv").css("width").split("p")[0] < 1016) {
+      $(".waitDiv").css("grid-template-columns", "repeat(4, 1fr)");
+    } else if ($(".waitDiv").css("width").split("p")[0] < 1270) {
+      $(".waitDiv").css("grid-template-columns", "repeat(5, 1fr)");
+    } else if ($(".waitDiv").css("width").split("p")[0] > 1270) {
+      $(".waitDiv").css("grid-template-columns", "repeat(6, 1fr)");
+    }
+
+  }
+
 });
 
 function drawGwDiv() {
@@ -27,6 +41,7 @@ function drawGwDiv() {
         let container = 0;
         storage.cardStart = 0;
         drawWaitCard(container);
+        getWaitListCount();
         $(".pageContainer").hide();
       } else {
         alert("양식 정보를 불러오지 못했습니다");
@@ -35,8 +50,18 @@ function drawGwDiv() {
   });
 }
 
+
+function getWaitListCount() {
+  let btns = [".waitBtn", ".dueBtn", ".receiveBtn", ".referBtn"];
+
+  $(btns[0]).html("결재 대기 문서 (" + storage.waitList.wait.length + ")");
+  $(btns[1]).html("결재 예정 문서 (" + storage.waitList.due.length + ")")
+  $(btns[2]).html("결재 수신 문서 (" + storage.waitList.receive.length + ")")
+  $(btns[3]).html("참조/열람 대기 문서 (" + storage.waitList.refer.length + ")")
+}
+
 function drawWaitCard(container) {
-  let btns = [".waitBtn", ".dueBtn", ".receiveBtn", ".referBtn"]
+  let btns = [".waitBtn", ".dueBtn", ".receiveBtn", ".referBtn"];
   $(btns[container]).css("background-color", "white");
   $(btns[container]).parent().css("border-bottom", "none");
 
