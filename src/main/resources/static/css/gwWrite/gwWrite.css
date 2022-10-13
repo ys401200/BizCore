@@ -7,7 +7,7 @@
   overflow: auto;
   box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
   display: inline-block;
-  margin-top: 0.6%;
+  /* margin-top: 0.6%; */
   overflow: auto;
   height: 92vh;
 }
@@ -15,7 +15,7 @@
 .container hr {
   float: left;
   height: 32px;
-  border: 2px solid #456e95;
+  border: 2px solid #425da8;
   margin: 0;
 }
 
@@ -23,7 +23,7 @@
   font-size: 16px;
   margin-left: 15px;
   line-height: 40px;
-  color: #456e95;
+  color: #425da8;
   font-weight: bolder;
 }
 

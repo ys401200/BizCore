@@ -7,14 +7,14 @@
 }
 
 #bodyContents #bodyContent{
-	padding: 8px 8px 0 8px;
+	padding: 10px 12px 0 12px;
 }
 
 #bodyContents #widgetContainer{
 	overflow-y: auto;
 	width:100%;
 	max-height: calc(100% - 70px);
-	padding: 8px 8px 0 8px;
+	padding: 10px 12px 0 12px;
 	box-sizing:border-box;
 }
 

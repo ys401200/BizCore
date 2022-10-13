@@ -8,22 +8,23 @@
 	--content-title-hr:2px solid #182f81;
 	--content-title-hr-height:32px;
 	--content-title-line-height:40px;
-	--inContent-margin-top:14px;
+	--inContent-margin-top:8px;
 	--inContent-width:98%;
 }
 
 #bodyContents #widgetContainer{
 	display: grid;
 	grid-template-columns: repeat(6, 1fr);
-	column-gap:10px;
-	row-gap:10px;
+	column-gap:12px;
+	row-gap:12px;
 }
 
 #widgetContainer > div{
 	margin-bottom: var(--rootContainer-marginLeft);
 	background: #FFFFFF;
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
-	height: 500px;
+	/* height: 500px; */
+	padding-bottom:16px;
 }
 
 #widgetContainer > div > hr{
@@ -71,8 +72,12 @@
 }
 
 #notice_body .notice_container .gridHeader{
-    grid-template-columns: 15% 70% 15%;
-	border-bottom:1px solid #182f81;
+    /* grid-template-columns: 15% 70% 15%; */
+	background-color:#f4f4ff;
+	border-top-left-radius:8px;
+	border-top-right-radius: 8px;
+    grid-template-columns: 15% 55% 15% 15%;
+	border-bottom:1px solid #3e3e9e;
 }
 
 #notice_body .notice_container .gridContent{
@@ -89,8 +94,12 @@
 }
 
 #schedule_body .schedule_container .gridHeader{
-	border-bottom:1px solid #182f81;
-    grid-template-columns: 15% 10% 25% 35% 15%;
+    /* grid-template-columns: 15% 10% 25% 35% 15%; */
+	background-color:#f2f2ff;
+	border-top-right-radius: 8px;
+	border-top-left-radius: 8px;
+	border-bottom:1px solid #3e3e9e;
+    grid-template-columns: 10% 10% 16% 28% 12% 20%;
 }
 
 #schedule_body .schedule_container .gridContent{
@@ -201,8 +210,12 @@
 }
 
 #sopp_body .sopp_container .gridHeader{
-	border-bottom:1px solid #182f81;
-    grid-template-columns: 5% 40% 5% 5% 5% 10% 10% 10% 10%;
+    /* grid-template-columns: 5% 40% 5% 5% 5% 10% 10% 10% 10%; */
+	background-color:#f2f2ff;
+	border-top-right-radius: 8px;
+	border-top-left-radius: 8px;
+	border-bottom:1px solid #3e3e9e;
+    grid-template-columns: 7% 7% 7% 37% 7% 7% 7% 7% 7% 7%;
 }
 
 #sopp_body .sopp_container .gridContent{
@@ -219,8 +232,12 @@
 }
 
 #contract_body .contract_container .gridHeader{
-	border-bottom:1px solid #182f81;
-    grid-template-columns: 10% 44% 5% 5% 5% 10% 8% 8% 5%;
+    /* grid-template-columns: 10% 44% 5% 5% 5% 10% 8% 8% 5%; */
+	background-color:#f2f2ff;
+	border-top-right-radius: 8px;
+	border-top-left-radius: 8px;
+	border-bottom:1px solid #3e3e9e;
+    grid-template-columns: 7% 7% 7% 24% 12% 7% 7% 7% 7% 7% 7%;
 }
 
 #contract_body .contract_container .gridContent{

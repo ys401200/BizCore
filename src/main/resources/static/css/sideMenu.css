@@ -40,7 +40,7 @@
 }
 
 #sideMenu ul:not(#panel) li a:hover{
-	background-color: #12338f;
+	background-color: #31318b;
 }
 
 #sideMenu ul li a.active{
@@ -73,7 +73,7 @@
 
 #sideMenu ul li #panel a.active{
 	color: #fff;
-	background-color:#171460;
+	background-color:#31318b;
 }
 
 /* #sideMenu ul li a:hover #mainHomeIcon{
@@ -246,7 +246,7 @@
 
 #sideMenu ul li #panel li a:hover{
 	color: #fff;
-	background-color: #171460;
+	background-color: #31318b;
 }
 
 #sideMenu ul:not(#panel).active{

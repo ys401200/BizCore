@@ -76,8 +76,8 @@ button, select, input[type="text"], input[type="date"]{
 }
 
 .plusContentBtn .plusItems > button{
-	width: 50px;
-    height: 50px;
+	width: 48px;
+    height: 48px;
     border-radius: 50%;
 	line-height: 55px;
 	margin-bottom: 10px;
@@ -146,8 +146,8 @@ button, select, input[type="text"], input[type="date"]{
 
 .gridContent .gridContentItem:not(:last-child){
 	overflow: hidden;
-	border-top: 1px solid #E4E5E9;
-	border-right: 1px solid #ededed;
+	border-top: 1px solid #E0E0E0;
+	border-right: 1px solid #E0E0E0;
 }
 
 .gridContent .gridContentItem:last-child{
@@ -723,9 +723,9 @@ input[name="tabItem"] {
 
 #header #mainTopLogo #mainTopEllipseImg{
 	position: absolute;
-	right: 4px;
+	right: 8px;
 	margin-top:-4px;
-	width:26px;
+	width:24px;
 	cursor: pointer;
 }
 
@@ -737,9 +737,9 @@ input[name="tabItem"] {
 	top: 22px;
 }
 
-#header #mainTopMenu{
+/* #header #mainTopMenu{
 	padding-left: 1%;
-}
+} */
 
 #header #mainTopMenu ul{
 	list-style: none;
