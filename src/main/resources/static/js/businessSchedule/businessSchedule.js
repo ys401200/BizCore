@@ -6,8 +6,6 @@ $(document).ready(() => {
 		$("#loadingDiv").loading("toggle");
 	}, 300);
 
-	$(".calendarList").hide();
-
 	getScheduleList();
 });
 
@@ -152,8 +150,7 @@ function drawScheduleList() {
 	}
 
 	containerTitle.html("일정조회");
-	$(pageContainer).children().show();
-	detailBackBtn.hide();
+	$(pageContainer).hide();
 	createGrid(container, header, data, ids, dataJob, fnc);
 
 	let path = $(location).attr("pathname").split("/");
@@ -559,11 +556,13 @@ function listChange(event){
 	let tableList = $(".gridList");
 	let calendarList = $(".calendarList");
 	let pageContainer = $(".pageContainer");
+	let listSearchInput = $(".listSearchInput");
 
 	if($(event).data("type") === "table"){
 		tableList.hide();
 		pageContainer.hide();
 		calendarList.show();
+		listSearchInput.hide();
 		$(event).data("type", "calendar");
 		$(event).html("<i class=\"fa-solid fa-list-ol fa-xl\"></i>");
 		$(".searchContainer").hide();
@@ -571,6 +570,7 @@ function listChange(event){
 		tableList.show();
 		pageContainer.show();
 		calendarList.hide();
+		listSearchInput.show();
 		$(event).data("type", "table");
 		$(event).html("<i class=\"fa-regular fa-calendar-check fa-xl\"></i>");
 		$(".searchContainer").show();
@@ -2061,8 +2061,14 @@ function calendarMore(e){
 function searchInputKeyup(){
 	let searchAllInput;
 	searchAllInput = $("#searchAllInput").val();
+	tempArray = searchDataFilter(storage.scheduleList, searchAllInput, "input");
 
-	storage.searchDatas = searchDataFilter(storage.scheduleList, searchAllInput, "input");
+	if(tempArray.length > 0){
+		storage.searchDatas = tempArray;
+	}else{
+		storage.searchDatas = "";
+	}
+
 	drawScheduleList();
 }
 
@@ -2095,7 +2101,7 @@ function addSearchList(){
 }
 
 function searchSubmit(){
-	let dataArray = [], resultArray, eachIndex = 0, searchWriter, searchCustomer, searchJob, searchType, searchDateFrom, searchDateTo, searchCreatedFrom;
+	let dataArray = [], resultArray, eachIndex = 0, searchWriter, searchCustomer, searchJob, searchType, searchDateFrom;
 
 	searchWriter = $("#searchWriter").val();
 	searchCustomer = $("#searchCustomer").val();
@@ -2106,7 +2112,7 @@ function searchSubmit(){
 	let searchValues = [searchWriter, searchCustomer, searchJob, searchType, searchDateFrom];
 
 	for(let i = 0; i < searchValues.length; i++){
-		if(searchValues[i] !== ""){
+		if(searchValues[i] !== "" && searchValues[i] !== undefined && searchValues[i] !== null){
 			let tempArray = searchDataFilter(storage.scheduleList, searchValues[i], "multi");
 			
 			for(let t = 0; t < tempArray.length; t++){
@@ -2123,7 +2129,7 @@ function searchSubmit(){
 
 	if(storage.searchDatas.length == 0){
 		alert("찾는 데이터가 없습니다.");
-		return false;
+		storage.searchDatas = storage.scheduleList;
 	}
 	
 	drawScheduleList();

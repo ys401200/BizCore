@@ -306,10 +306,16 @@ function customerErrorDelete(){
 }
 
 function searchInputKeyup(){
-	let searchAllInput;
+	let searchAllInput, tempArray;
 	searchAllInput = $("#searchAllInput").val();
+	tempArray = searchDataFilter(storage.customerList, searchAllInput, "input");
 
-	storage.searchDatas = searchDataFilter(storage.customerList, searchAllInput, "input");
+	if(tempArray.length > 0){
+		storage.searchDatas = tempArray;
+	}else{
+		storage.searchDatas = "";
+	}
+	
 	drawCustomerList();
 }
 
@@ -326,7 +332,7 @@ function addSearchList(){
 }
 
 function searchSubmit(){
-	let dataArray = [], resultArray, eachIndex = 0, searchEmployee, searchCustomer, searchTitle, searchcustomerType, searchContType, searchStatus, searchCreatedFrom;
+	let dataArray = [], resultArray, eachIndex = 0;
 
 	searchName = $("#searchName").val();
 	searchCeoName = $("#searchCeoName").val();
@@ -335,7 +341,7 @@ function searchSubmit(){
 	let searchValues = [searchName, searchCeoName, searchTaxId];
 
 	for(let i = 0; i < searchValues.length; i++){
-		if(searchValues[i] !== ""){
+		if(searchValues[i] !== "" && searchValues[i] !== undefined && searchValues[i] !== null){
 			let tempArray = searchDataFilter(storage.customerList, searchValues[i], "multi");
 			
 			for(let t = 0; t < tempArray.length; t++){
@@ -352,7 +358,7 @@ function searchSubmit(){
 
 	if(storage.searchDatas.length == 0){
 		alert("찾는 데이터가 없습니다.");
-		return false;
+		storage.searchDatas = storage.customerList;
 	}
 	
 	drawCustomerList();

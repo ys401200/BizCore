@@ -30,6 +30,9 @@
 		<div class="fileBoxContainer">
 			<hr />
 			<span>자료실</span>
+            <div class="listSearchInput">
+                <input type="text" class="searchAllInput" id="searchAllInput" onkeyup="searchInputKeyup();" placeholder="단어를 입력해주세요.">
+            </div>
 			<div class="fileBoxContent"></div>
 			<div class="gridFileBoxList"></div>
 			<div class="pageContainer"></div>

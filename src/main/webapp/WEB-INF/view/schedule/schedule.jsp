@@ -7,7 +7,7 @@
 		<jsp:include page="../sideMenu.jsp" />
 	</div>
 	<div id="bodyContent">
-		<div class="searchContainer">
+		<div class="searchContainer" style="display:none;">
 			<jsp:include page="../listSearch.jsp" />
 			<div class="searchMultiContent">
 				<div class="searchWriter">
@@ -62,7 +62,7 @@
 				</div>
 			</div>
 		</div>
-		<jsp:include page="./contents/list.jsp" />
+		<jsp:include page="./contents/calendar.jsp" />
 	</div>
 </div>
 <div class="msg_cnt"></div>

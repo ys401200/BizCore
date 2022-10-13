@@ -1011,10 +1011,16 @@ function contractRadioClick(e){
 }
 
 function searchInputKeyup(){
-	let searchAllInput;
+	let searchAllInput, tempArray;
 	searchAllInput = $("#searchAllInput").val();
+	tempArray = searchDataFilter(storage.contractList, searchAllInput, "input");
 
-	storage.searchDatas = searchDataFilter(storage.contractList, searchAllInput, "input");
+	if(tempArray.length > 0){
+		storage.searchDatas = tempArray;
+	}else{
+		storage.searchDatas = "";
+	}
+
 	drawContractList();
 }
 
@@ -1056,7 +1062,7 @@ function searchSubmit(){
 	let searchValues = [searchEmployee, searchCustomer, searchEndUser, searchTitle, searchSalesType, searchContractType, startOfFreeMaintenanceFrom, startOfPaidMaintenanceFrom, saleDateFrom];
 
 	for(let i = 0; i < searchValues.length; i++){
-		if(searchValues[i] !== ""){
+		if(searchValues[i] !== "" && searchValues[i] !== undefined && searchValues[i] !== null){
 			let tempArray = searchDataFilter(storage.contractList, searchValues[i], "multi");
 			
 			for(let t = 0; t < tempArray.length; t++){
@@ -1073,7 +1079,7 @@ function searchSubmit(){
 
 	if(storage.searchDatas.length == 0){
 		alert("찾는 데이터가 없습니다.");
-		return false;
+		storage.searchDatas = storage.contractList;
 	}
 	
 	drawContractList();

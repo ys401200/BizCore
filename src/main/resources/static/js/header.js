@@ -2269,20 +2269,8 @@ function daumPostCode(){
 }
 
 function searchContainerSet(){
-	let searchContainer, searchChangeBtn, multiSearchResetBtn, multiSearchBtn, searchInputContent, searchMultiContent, jsonData, html = "";
-	searchContainer = $(".searchContainer");
-	searchChangeBtn = $("#searchChangeBtn");
-	multiSearchResetBtn = $("#multiSearchResetBtn");
-	multiSearchBtn = $("#multiSearchBtn");
-	searchInputContent = $(".searchInputContent");
+	let searchMultiContent, jsonData;
 	searchMultiContent = $(".searchMultiContent");
-
-	searchChangeBtn.hide();
-	multiSearchResetBtn.hide();
-	multiSearchBtn.hide();
-	searchInputContent.hide();
-	searchMultiContent.hide();
-	
 	searchMultiContent.find("div input").each((index, item) => {
 		if($(item).data("type") !== undefined){
 			$(item).attr("list", "_" + $(item).attr("id"));
@@ -2329,39 +2317,27 @@ function searchContainerSet(){
 			}
 		}
 	});
-
-	searchContainer.show();
 }
 
 function searchAco(e){
-	let thisBtn, searchChangeBtn, multiSearchResetBtn, multiSearchBtn, searchInputContent, searchMultiContent;
+	let thisBtn, multiSearchResetBtn, multiSearchBtn, searchMultiContent;
 	thisBtn = $(e);
-	searchChangeBtn = $("#searchChangeBtn");
 	multiSearchResetBtn = $("#multiSearchResetBtn");
 	multiSearchBtn = $("#multiSearchBtn");
-	searchInputContent = $(".searchInputContent");
 	searchMultiContent = $(".searchMultiContent");
 
-	if(!thisBtn.data("set")){
-		thisBtn.html("<i class=\"fa-solid fa-minus fa-xl\"></i>");
-		thisBtn.data("set", true);
-		searchChangeBtn.html("<i class=\"fa-solid fa-list fa-xl\"></i>");
-		searchChangeBtn.data("set", false);
-		searchChangeBtn.show();
-		searchInputContent.show();
+	if(thisBtn.data("set")){
+		thisBtn.html("<i class=\"fa-solid fa-plus fa-xl\"></i>");
+		thisBtn.data("set", false);
 		multiSearchBtn.hide();
 		searchMultiContent.hide();
 		multiSearchResetBtn.hide();
 	}else{
-		thisBtn.html("<i class=\"fa-solid fa-plus fa-xl\"></i>");
-		thisBtn.data("set", false);
-		searchChangeBtn.hide();
-		searchChangeBtn.html("<i class=\"fa-solid fa-list fa-xl\"></i>");
-		searchChangeBtn.data("set", false);
-		multiSearchBtn.hide();
-		searchInputContent.hide();
-		searchMultiContent.hide();
-		multiSearchResetBtn.hide();
+		thisBtn.html("<i class=\"fa-solid fa-minus fa-xl\"></i>");
+		thisBtn.data("set", true);
+		multiSearchBtn.show();
+		searchMultiContent.show();
+		multiSearchResetBtn.show();
 	}
 }
 
@@ -2411,7 +2387,7 @@ function searchDataFilter(arrayList, searchDatas, type){
 		if(searchDatas.indexOf("#created") > -1){
 			let splitStr;
 			splitStr = searchDatas.split("#created");
-
+			
 			for(let key in storage.searchList){
 				if(splitStr[0] <= storage.searchList[key].split("#created")[1]){
 					if(storage.searchList[key].split("#created")[1] <= splitStr[1]){
@@ -2433,7 +2409,7 @@ function searchDataFilter(arrayList, searchDatas, type){
 		}else if(searchDatas.indexOf("#startOfFreeMaintenance") > -1){
 			let splitStr;
 			splitStr = searchDatas.split("#startOfFreeMaintenance");
-
+			
 			for(let key in storage.searchList){
 				if(splitStr[0] <= storage.searchList[key].split("#startOfFreeMaintenance")[1]){
 					if(storage.searchList[key].split("#startOfFreeMaintenance")[1] <= splitStr[1]){
@@ -2444,7 +2420,7 @@ function searchDataFilter(arrayList, searchDatas, type){
 		}else if(searchDatas.indexOf("#startOfPaidMaintenance") > -1){
 			let splitStr;
 			splitStr = searchDatas.split("#startOfPaidMaintenance");
-
+			
 			for(let key in storage.searchList){
 				if(splitStr[0] <= storage.searchList[key].split("#startOfPaidMaintenance")[1]){
 					if(storage.searchList[key].split("#startOfPaidMaintenance")[1] <= splitStr[1]){
@@ -2471,13 +2447,14 @@ function searchDataFilter(arrayList, searchDatas, type){
 			}
 		}
 	}
-		
+	
+	console.log(dataArray);
 	return dataArray;
 }
 
 function searchMultiFilter(index, dataArray, arrayList){
 	let arr = [], tempResultArray = [], resultArray = [];
-
+	
 	if(index > 1){
 		for(let i = 0; i < dataArray.length; i++){
 			if(arr[dataArray[i]]){
@@ -2562,7 +2539,7 @@ function headerMyInfo(){
 	// html += "<img id=\"myInfoMessageImg\" src=\"../images/main/icons/message.png\" >";
 	html += "<a href=\"#\" onclick=\"noteContentShow();\" id=\"infoMessageImg\">";
 	// html += myNoteList();
-	html += "<img id=\"myInfoMessageImg\" src=\"../images/main/icons/message.png\">";
+	html += "<img id=\"myInfoMessageImg\" src=\"/images/main/icons/message.png\">";
 	html += "</a>";
 	// html += "<i class=\"fa-solid fa-envelope fa-shake fa-2xl\" id=\"envelope\"></i>";
 	// html += "<i class=\"fa-regular fa-envelope-open fa-beat-fade fa-2xl\" id=\"envelope\"></i>";
@@ -2572,7 +2549,7 @@ function headerMyInfo(){
 	html += "<span>" + storage.user[storage.my].userName + "</span>&nbsp;";
 	html += "<span>" + storage.userRank[storage.user[storage.my].rank][0] + "</span>";
 	html += "</a>";
-	html += "<a href=\"/api/user/logout\" onclick=\"return confirm('로그아웃 하시겠습니까??');\"><img id=\"myInfoImageLogout\" src=\"../images/main/icons/logout.png\" ></a>";
+	html += "<a href=\"/api/user/logout\" onclick=\"return confirm('로그아웃 하시겠습니까??');\"><img id=\"myInfoImageLogout\" src=\"/images/main/icons/logout.png\" ></a>";
 	//html += "<a href=\"/api/user/logout\" onclick=\"return confirm('로그아웃 하시겠습니까??');\"><i class=\"fa-solid fa-person-walking-arrow-right fa-xl\" id=\"logoutBtn\"></i></a>";
 
 	mainInfo.html(html);

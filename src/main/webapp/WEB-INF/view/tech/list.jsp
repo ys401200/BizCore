@@ -56,6 +56,9 @@
         <div class="techContainer">
             <hr />
             <span id="containerTitle"></span>
+			<div class="listSearchInput">
+                <input type="text" class="searchAllInput" id="searchAllInput" onkeyup="searchInputKeyup();" placeholder="단어를 입력해주세요.">
+            </div>
             <a href="/business/tech" class="detailBackBtn">Back</a>
             <div class="gridList"></div>
             <div class="pageContainer"></div>

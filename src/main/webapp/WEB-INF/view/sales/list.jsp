@@ -56,8 +56,13 @@
         <div class="salesContainer">
             <hr />
             <span id="containerTitle"></span>
+			<div class="listSearchInput">
+                <input type="text" class="searchAllInput" id="searchAllInput" onkeyup="searchInputKeyup();" placeholder="단어를 입력해주세요.">
+            </div>
 			<a href="/business/sales" class="detailBackBtn">Back</a>
             <div class="gridList"></div>
             <div class="pageContainer"></div>
         </div>
+	</div>
+</div>
 <jsp:include page="../bottom.jsp"/>
