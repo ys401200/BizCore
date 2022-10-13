@@ -8,19 +8,49 @@
 			<div id="bodyContent">
 				<div class="container">
 					<hr />
-					<div><span> 결재 대기 문서</span>
-						<div><button class="waitVerCard" onclick="drawWaitCard(0)">카드</button><button
-								class="waitVerList" onclick="drawWaitList(0)">리스트</button></div>
+					<div><span>전자결재 홈</span>
+						<div>
+							<!-- <button class="waitVerCard" onclick="drawWaitCard()">카드</button><button class="waitVerList"
+								onclick="drawWaitList()">리스트</button> -->
+						</div>
 					</div>
-					<div><button onclick="prevPage(this)">
-							< </button>
-								<div class="waitDiv"></div><button onclick="nextPage(this)"> > </button>
+					<div>
+						<div class="cardTabButton">
+							<div>
+								<button class="waitBtn" onclick="drawWaitCard(0)">결재 대기 문서</button>
+							</div>
+							<div>
+								<button class="dueBtn" onclick="drawWaitCard(1)">결재 예정 문서</button>
+							</div>
+							<div>
+								<button class="receiveBtn" onclick="drawWaitCard(2)">결재 수신 문서</button>
+							</div>
+							<div>
+								<button class="referBtn" onclick="drawWaitCard(3)">참조/열람 대기 문서</button>
+							</div>
+						</div>
+						<div class="waitDiv"></div>
 					</div>
+
 					<div class="waitList listDiv"></div>
 					<div class="pageContainer waitPage"></div>
 
 				</div>
-				<div class="container">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+				<!-- <div class="container">
 					<hr />
 					<div><span> 결재 예정 문서</span>
 						<div><button class="dueVerCard" onclick="drawWaitCard(1)">카드</button><button class="dueVerList"
@@ -63,7 +93,7 @@
 					</div>
 					<div class="referList listDiv"></div>
 					<div class="pageContainer referPage"></div>
-				</div>
+				</div> -->
 
 			</div>
 		</div>
