@@ -1,28 +1,26 @@
 button {
 	float: none;
 	border: none;
-	background-color: #5d79c9;
-	color: #fff;
-	/* width: 95%; */
-	padding: 2% 16px;
-	/* margin: 0; */
-	border-radius:4px;
+	background-color: rgb(181 200 215);
+	color: #274e70;
+	width: 95%;
+	padding: 2% 0 2% 0;
+	margin: 0;
 }
 
 .container {
 	position: relative;
 	width: 100%;
-	/*height: 26vh;*/
 	background: #FFFFFF;
 	overflow: auto;
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
 	/* display: inline-block; */
-	margin-bottom:12px;
+
 }
 
 .container hr {
 	float: left;
-	border: 2px solid #425da8;
+	border: 2px solid #406c92;
 	height: 32px;
 	margin: 0;
 }
@@ -32,7 +30,7 @@ button {
 	font-size: 15px;
 	padding-left: 15px;
 	line-height: 40px;
-	color: #425da8;
+	color: #406c92;
 }
 
 
@@ -45,12 +43,10 @@ button {
 .container>div:first-of-type>div {
 	display: flex;
 	flex-direction: row;
-	justify-content:right;
-	padding-right: 12px;
 }
 
 .container>div:first-of-type>div button {
-	margin: 0.5em 4px;
+	margin: 0.5em;
 }
 
 
@@ -121,10 +117,8 @@ button {
 	border: 2px solid #EDEDF4;
 	/* margin: 1em; */
 	cursor: pointer;
-	background-color: #f2f5ff;
+	background-color: #eaeff3;
 	border-radius: 10px;
-	/* margin: 1em;
-	box-shadow: 0px 3px 6px rgba(179, 192, 225, 0.45); */
 	box-shadow: 0px 3px 6px rgba(177, 190, 201, 0.65);
 }
 
@@ -135,28 +129,28 @@ button {
 	width: 15em;
 	height: 14vh;
 	flex: 0 0 auto;
-	border: 2px dashed rgba(149, 167, 217, 0.35);
+	border: 2px dashed rgba(177, 190, 201, 0.65);
 	margin: 0.5em;
 	cursor: pointer;
-	background-color: #f2f5ff;
+	background-color: #eaeff3;
 	border-radius: 10px;
 	margin: 1em;
-	box-shadow: 0px 3px 6px rgba(179, 192, 225, 0.45);
-	color: #8499bf;
+	box-shadow: 0px 3px 6px rgba(177, 190, 201, 0.65);
+	color: #406c92;
 }
 
 
 .container>div:nth-of-type(2)>div .waitCard>div:first-of-type {
 	margin: 1em;
-	color: #425da8;
+	color: #406c92;
 	font-weight: 800;
 	font-size: 15px;
-	border-bottom: 1px solid #b3c1f1;
+	border-bottom: 1px solid #acc1d3;
 	padding-bottom: 10px;
 }
 
 .container>div:nth-of-type(2)>div .waitCard .subWaitCard>div>div:first-of-type {
-	color: #425da8;
+	color: #406c92;
 	grid-template-columns: repeat(5, 1fr);
 
 }
@@ -238,15 +232,13 @@ button {
 } */
 
 .listDiv {
-	display: none;
 	/* padding-right: 1em; */
 	margin: 0.5% auto 0 auto;
 	width: 98%;
 }
 
 .listDiv>div:first-of-type {
-	border-bottom: 1px solid #425da8;
-	background-color:#f2f5ff;
+	border-bottom: 1px solid #406c92;
 }
 
 .listDiv .grid_default_body_item:nth-child(2n-1) {

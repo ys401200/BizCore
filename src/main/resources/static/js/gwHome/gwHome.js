@@ -38,9 +38,9 @@ function drawGwDiv() {
         list = JSON.parse(list);
         storage.waitList = list;
         storage.waitList;
-        let container = 0;
+        storage.container = 0;
         storage.cardStart = 0;
-        drawWaitCard(container);
+        drawWaitCard(storage.container);
         getWaitListCount();
         $(".pageContainer").hide();
       } else {
@@ -53,14 +53,19 @@ function drawGwDiv() {
 
 function getWaitListCount() {
   let btns = [".waitBtn", ".dueBtn", ".receiveBtn", ".referBtn"];
-
   $(btns[0]).html("결재 대기 문서 (" + storage.waitList.wait.length + ")");
   $(btns[1]).html("결재 예정 문서 (" + storage.waitList.due.length + ")")
   $(btns[2]).html("결재 수신 문서 (" + storage.waitList.receive.length + ")")
-  $(btns[3]).html("참조/열람 대기 문서 (" + storage.waitList.refer.length + ")")
+  $(btns[3]).html("참조/열람 대기 문서 (" + storage.waitList.refer.length + ")") 
 }
 
 function drawWaitCard(container) {
+  storage.container = container;
+  $(".waitDiv").show();
+  $(".listDiv").hide();
+  $(".waitPage").hide();
+
+
   let btns = [".waitBtn", ".dueBtn", ".receiveBtn", ".referBtn"];
   $(btns[container]).css("background-color", "white");
   $(btns[container]).parent().css("border-bottom", "none");
@@ -124,6 +129,73 @@ function drawWaitCard(container) {
 
 }
 
+
+function drawWaitCardBtn() {
+  let container = storage.container;
+
+  let btns = [".waitBtn", ".dueBtn", ".receiveBtn", ".referBtn"];
+  $(btns[container]).css("background-color", "white");
+  $(btns[container]).parent().css("border-bottom", "none");
+
+  for (let i = 0; i < btns.length; i++) {
+    if (i != container) {
+      $(btns[i]).css("background-color", "#eaeff3");
+      $(btns[i]).parent().css("border-bottom", "1px solid #406c92");
+    }
+  }
+
+  let typeList = storage.waitList;
+  let html = "";
+  let types = ["wait", "due", "receive", "refer"];
+  let targets = [".waitDiv"]
+  let listTarget = [".waitList"]
+
+
+  if (container < 4) {
+    types = types.slice(container, container + 1);
+    btns = btns.slice(container, container + 1);
+    $(listTarget[0]).hide();
+    $(".waitPage").hide();
+    $(targets[0]).show();
+  }
+
+
+  let start = storage.cardStart;
+  for (let j = 0; j < types.length; j++) {
+    let cardLength = typeList[types[j]].length;
+    if (cardLength > 0) {
+
+      for (let i = start; i < cardLength; i++) {
+        html +=
+          "<div class='waitCard' onClick='cardClick(this)' data-detail='" +
+          types[j] +
+          "!!!" +
+          typeList[types[j]][i].docNo +
+          "'><div>" +
+          typeList[types[j]][i].title +
+          "</div>" +
+          "<div class='subWaitCard'><div class='type'><div>결재타입</div><div>" +
+          typeList[types[j]][i].form +
+          "</div></div>" +
+          "<div class='writer'><div>기안자</div><div>" +
+          storage.user[typeList[types[j]][i].writer].userName +
+          "</div></div>" +
+          "<div class='created'><div>작성일</div><div>" +
+          getYmdSlash(typeList[types[j]][i].created) +
+          "</div></div></div></div>";
+
+      }
+
+    } else {
+      html += "<div class='defaultWaitCard'>대기 문서가 없습니다.</div>"
+
+    }
+
+    $(targets[j]).html(html);
+    html = "";
+  }
+
+}
 
 // function prevPage(obj) {
 //   let target = $(obj).next().attr("class");
@@ -248,24 +320,20 @@ function cardClick(obj) {
 
 
 
-function drawWaitList(container) {
+function drawWaitList() {
+  let container = storage.container;
   let types = ["wait", "due", "receive", "refer"];
-  let targets = [".waitDiv", ".dueDiv", ".receiveDiv", ".referDiv"];
-  let listTarget = [".waitList", ".dueList", ".receiveList", ".referList"];
-  let pageTarget = [".waitPage", ".duePage", ".receivePage", "referPage"];
+  let targets = [".waitDiv"];
+  let listTarget = [".waitList"];
+  let pageTarget = [".waitPage"];
   types = types.slice(container, container + 1);
-  targets = targets.slice(container, container + 1);
-  listTarget = listTarget.slice(container, container + 1);
-  pageTarget = pageTarget.slice(container, container + 1);
-  console.log(listTarget);
   drawMyDraft(types, targets, listTarget, pageTarget);
-
 }
 
 
 
 function drawMyDraft(types, targets, listTarget, pageTarget) {
-  $(targets[0]).parent().hide();
+  $(targets[0]).hide();
   $(listTarget[0]).show();
   $(pageTarget[0]).show();
   let container,
@@ -321,7 +389,7 @@ function drawMyDraft(types, targets, listTarget, pageTarget) {
     jsonData = storage.waitList[types[0]]
 
 
-    result = paging(jsonData.length, storage.currentPage, 10);
+    result = paging(jsonData.length, storage.currentPage, 15);
 
     pageContainer = document.getElementsByClassName("pageContainer");
     container = $(listTarget[0]);
