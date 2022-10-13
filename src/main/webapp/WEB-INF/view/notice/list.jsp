@@ -29,6 +29,9 @@
 		<div class="noticeContainer">
 			<hr />
 			<span>공지사항 </span>
+            <div class="listSearchInput">
+                <input type="text" class="searchAllInput" id="searchAllInput" onkeyup="searchInputKeyup();" placeholder="단어를 입력해주세요.">
+            </div>
 			<div class="noticeContent"></div>
 			<div class="gridNoticeList"></div>
 			<div class="pageContainer"></div>

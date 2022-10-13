@@ -755,8 +755,14 @@ function salesErrorDelete(){
 function searchInputKeyup(){
 	let searchAllInput;
 	searchAllInput = $("#searchAllInput").val();
+	tempArray = searchDataFilter(storage.scheduleList, searchAllInput, "input");
 
-	storage.searchDatas = searchDataFilter(storage.scheduleList, searchAllInput, "input");
+	if(tempArray.length > 0){
+		storage.searchDatas = tempArray;
+	}else{
+		storage.searchDatas = "";
+	}
+
 	drawSalesList();
 }
 
@@ -791,7 +797,7 @@ function searchSubmit(){
 	let searchValues = [searchWriter, searchCustomer, searchJob, searchType, searchDateFrom];
 
 	for(let i = 0; i < searchValues.length; i++){
-		if(searchValues[i] !== ""){
+		if(searchValues[i] !== "" && searchValues[i] !== undefined && searchValues[i] !== null){
 			let tempArray = searchDataFilter(storage.scheduleList, searchValues[i], "multi");
 			
 			for(let t = 0; t < tempArray.length; t++){
@@ -803,12 +809,11 @@ function searchSubmit(){
 	}
 
 	resultArray = searchMultiFilter(eachIndex, dataArray, storage.scheduleList);
-	
 	storage.searchDatas = resultArray;
 
 	if(storage.searchDatas.length == 0){
 		alert("찾는 데이터가 없습니다.");
-		return false;
+		storage.searchDatas = storage.scheduleList;
 	}
 	
 	drawSalesList();

@@ -350,10 +350,16 @@ function noticeErrorDelete(){
 }
 
 function searchInputKeyup(){
-	let searchAllInput;
+	let searchAllInput, tempArray;
 	searchAllInput = $("#searchAllInput").val();
+	tempArray = searchDataFilter(storage.noticeList, searchAllInput, "input");
 
-	storage.searchDatas = searchDataFilter(storage.noticeList, searchAllInput, "input");
+	if(tempArray.length > 0){
+		storage.searchDatas = tempArray;
+	}else{
+		storage.searchDatas = "";
+	}
+
 	drawNoticeList();
 }
 
@@ -381,7 +387,7 @@ function searchSubmit(){
 	let searchValues = [searchTitle, searchWriter, searchCreatedFrom];
 
 	for(let i = 0; i < searchValues.length; i++){
-		if(searchValues[i] !== ""){
+		if(searchValues[i] !== "" && searchValues[i] !== undefined && searchValues[i] !== null){
 			let tempArray = searchDataFilter(storage.noticeList, searchValues[i], "multi");
 			
 			for(let t = 0; t < tempArray.length; t++){
@@ -398,7 +404,7 @@ function searchSubmit(){
 
 	if(storage.searchDatas.length == 0){
 		alert("찾는 데이터가 없습니다.");
-		return false;
+		storage.searchDatas = storage.noticeList;
 	}
 	
 	drawNoticeList();

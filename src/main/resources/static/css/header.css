@@ -47,7 +47,7 @@ select:disabled, input:disabled{
 button, select, input[type="text"], input[type="date"]{
 	font-family: 'NanumSquareRound';
 	padding:0.3% 0.7%;
-	border:0;
+	border: 0;
 	cursor: pointer;
 }
 
@@ -606,7 +606,6 @@ input[name="tabItem"] {
 
 /* 각 페이지 검색 시작 */
 .searchContainer{
-	display: none;
 	background: #FFFFFF;
 	overflow: hidden;
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
@@ -644,21 +643,6 @@ input[name="tabItem"] {
 	background-color:#0e2b7e;
 }
 
-.searchContainer .searchInputContent{
-	padding: 20px;
-}
-
-.searchContainer .searchInputContent > input{
-	width: -webkit-fill-available;
-    height: 34px;
-    padding: 0 10px;
-    font-size: 1.1rem;
-    font-weight: 500;
-    border: 1px solid #C1C1C1;
-    border-radius: 5px;
-    background-color: #ffffff;
-}
-
 .searchContainer .searchMultiContent{
 	display: grid;
 	grid-template-columns: repeat(5, 1fr);
@@ -690,6 +674,24 @@ input[name="tabItem"] {
 	line-height: 40px;
 	color: #332E85;
 	float: left;
+}
+
+.listSearchInput{
+    display: flex;
+    align-items: center;
+    float: right;
+    padding-right: 5px;
+    padding-top: 5px;
+}
+
+.listSearchInput .searchAllInput{
+    height: 34px;
+    padding: 0 10px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    border: 1px solid #C1C1C1 !important;
+    border-radius: 5px;
+    background-color: #ffffff;
 }
 /* 각 페이지 검색 끝 */
 

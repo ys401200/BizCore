@@ -10,7 +10,7 @@
             <div class="searchMultiContent">
                 <div class="searchName">
                     <span>고객사명</span>
-                    <input type="text" id="searchName">
+                    <input type="text" data-type="customer" id="searchName">
                 </div>
                 <div class="searchCeoName">
                     <span>대표자명</span>
@@ -25,6 +25,9 @@
 		<div class="customerContainer">
 			<hr />
             <span id="containerTitle">고객사조회</span>
+            <div class="listSearchInput">
+                <input type="text" class="searchAllInput" id="searchAllInput" onkeyup="searchInputKeyup();" placeholder="단어를 입력해주세요.">
+            </div>
             <div class="gridCustomerList"></div>
             <div class="pageContainer"></div>
 		</div>
