@@ -21,7 +21,7 @@ function getSoppList() {
 }
 
 function drawSoppList() {
-	let container, result, job, jsonData, header = [], data = [], ids = [], disDate, setDate, str, fnc, pageContainer, containerTitle, detailBackBtn;
+	let container, result, job, jsonData, header = [], data = [], ids = [], disDate, setDate, str, fnc, pageContainer, containerTitle, detailBackBtn, listSearchInput;
 	
 	if (storage.soppList === undefined) {
 		msg.set("등록된 영업기회가 없습니다");
@@ -39,6 +39,7 @@ function drawSoppList() {
 	containerTitle = $("#containerTitle");
 	detailBackBtn = $(".detailBackBtn");
 	pageContainer = document.getElementsByClassName("pageContainer");
+	listSearchInput = $(".listSearchInput");
 	container = $(".gridList");
 
 	header = [
@@ -147,6 +148,7 @@ function drawSoppList() {
 	containerTitle.html("영업기회조회");
 	$(pageContainer).children().show();
 	detailBackBtn.hide();
+	listSearchInput.show();
 	createGrid(container, header, data, ids, job, fnc);
 
 	let path = $(location).attr("pathname").split("/");
@@ -203,11 +205,12 @@ function soppErrorList(){
 }
 
 function soppSuccessView(result){
-	let html, title, userName, customer, picOfCustomer, endUser, status, progress, contType, disDate, expectedSales, detail, dataArray, gridList, searchContainer, containerTitle, detailBackBtn;
+	let html, title, userName, customer, picOfCustomer, endUser, status, progress, contType, disDate, expectedSales, detail, dataArray, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput;
 	gridList = $(".gridList");
 	searchContainer = $(".searchContainer");
 	containerTitle = $("#containerTitle");
 	detailBackBtn = $(".detailBackBtn");
+	listSearchInput = $(".listSearchInput");
 
 	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
 	userName = (result.employee == 0 || result.employee === null || result.employee === undefined) ? "" : storage.user[result.employee].userName;
@@ -398,7 +401,8 @@ function soppSuccessView(result){
 		$("#contType option[value='" + result.contType + "']").prop("selected" ,true);
 		$("#soppType option[value='" + result.soppType + "']").prop("selected" ,true);
 		detailBackBtn.css("display", "flex");
-		
+		listSearchInput.hide();
+
 		let menu = [
 			{
 				"keyword": "add",

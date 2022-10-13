@@ -21,7 +21,7 @@ function getTechList() {
 } // End of getTechList()
 
 function drawTechList() {
-	let container, dataJob = [], result, jsonData, header = [], data = [], ids = [], str, fnc, pageContainer, containerTitle, detailBackBtn;
+	let container, dataJob = [], result, jsonData, header = [], data = [], ids = [], str, fnc, pageContainer, containerTitle, detailBackBtn, listSearchInput;
 	
 	if (storage.scheduleList === undefined) {
 		msg.set("등록된 일정이 없습니다");
@@ -48,6 +48,7 @@ function drawTechList() {
 
 	containerTitle = $("#containerTitle");
 	detailBackBtn = $(".detailBackBtn");
+	listSearchInput = $(".listSearchInput");
 	pageContainer = document.getElementsByClassName("pageContainer");
 	container = $(".gridList");
 
@@ -153,6 +154,7 @@ function drawTechList() {
 	containerTitle.html("기술일정조회");
 	$(pageContainer).children().show();
 	detailBackBtn.hide();
+	listSearchInput.show();
 	createGrid(container, header, data, ids, dataJob, fnc);
 
 	let path = $(location).attr("pathname").split("/");
@@ -192,12 +194,13 @@ function techDetailView(e){
 }
 
 function techSuccessView(result){
-	let from, to, place, writer, sopp, contract, customer, cipOfCustomer, partner, title, content, supportModel, supportVersion, gridList, searchContainer, containerTitle, detailBackBtn;
+	let from, to, place, writer, sopp, contract, customer, cipOfCustomer, partner, title, content, supportModel, supportVersion, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput;
 	storage.techNo = result.no;
 	gridList = $(".gridList");
 	searchContainer = $(".searchContainer");
 	containerTitle = $("#containerTitle");
 	detailBackBtn = $(".detailBackBtn");
+	listSearchInput = $(".listSearchInput");
 
 	disDate = dateDis(result.from);
 	from = dateFnc(disDate);
@@ -434,7 +437,8 @@ function techSuccessView(result){
 	setTimeout(() => {
 		$("[name='job'][value='tech']").prop("checked", true);
 		detailBackBtn.css("display", "flex");
-
+		listSearchInput.hide();
+		
 		let menu = [
 			{
 				"keyword": "add",

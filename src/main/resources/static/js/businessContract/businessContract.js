@@ -21,7 +21,7 @@ function getContractList() {
 }
 
 function drawContractList() {
-	let container, result, job, jsonData, header = [], data = [], ids = [], disDate, str, fnc, pageContainer, containerTitle, detailBackBtn;
+	let container, result, job, jsonData, header = [], data = [], ids = [], disDate, str, fnc, pageContainer, containerTitle, detailBackBtn, listSearchInput;
 	
 	if (storage.contractList === undefined) {
 		msg.set("등록된 계약 없습니다");
@@ -38,6 +38,7 @@ function drawContractList() {
 
 	containerTitle = $("#containerTitle");
 	detailBackBtn = $(".detailBackBtn");
+	listSearchInput = $(".listSearchInput");
 	pageContainer = document.getElementsByClassName("pageContainer");
 	container = $(".gridList");
 
@@ -160,6 +161,7 @@ function drawContractList() {
 	containerTitle.html("계약조회");
 	$(pageContainer).children().show();
 	detailBackBtn.hide();
+	listSearchInput.show();
 	createGrid(container, header, data, ids, job, fnc);
 
 	let path = $(location).attr("pathname").split("/");
@@ -217,12 +219,13 @@ function contractErrorList(){
 }
 
 function contractSuccessView(result){
-	let notIdArray, sopp, html, contractType, title, employee, customer, salesType, cipOfCustomer, endUser, cipOfendUser, saleDate, delivered, employee2, startOfFreeMaintenance, endOfFreeMaintenance, startOfPaidMaintenance, endOfPaidMaintenance, contractAmount, taxInclude, profit, detail, disDate, dataArray, gridList, searchContainer, containerTitle, detailBackBtn;
+	let notIdArray, sopp, html, contractType, title, employee, customer, salesType, cipOfCustomer, endUser, cipOfendUser, saleDate, delivered, employee2, startOfFreeMaintenance, endOfFreeMaintenance, startOfPaidMaintenance, endOfPaidMaintenance, contractAmount, taxInclude, profit, detail, disDate, dataArray, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput;
 	storage.contractNo = result.no;
 	gridList = $(".gridList");
 	searchContainer = $(".searchContainer");
 	containerTitle = $("#containerTitle");
 	detailBackBtn = $(".detailBackBtn");
+	listSearchInput = $(".listSearchInput");
 
 	contractType = (result.contractType === null || result.contractType === "" || result.contractType === undefined) ? "" : storage.code.etc[result.contractType];
 	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
@@ -512,7 +515,8 @@ function contractSuccessView(result){
 		$("#salesType option[value='" + result.salesType + "']").prop("selected" ,true);
 		$("#taxInclude option[value='" + taxInclude + "']").prop("selected" ,true);
 		detailBackBtn.css("display", "flex");
-
+		listSearchInput.hide();
+		
 		let menu = [
 			{
 				"keyword": "add",

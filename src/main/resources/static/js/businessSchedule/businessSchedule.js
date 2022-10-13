@@ -21,7 +21,7 @@ function getScheduleList() {
 } // End of getScheduleList()
 
 function drawScheduleList() {
-	let container, dataJob = [], result, jsonData, header = [], data = [], ids = [], str, fnc, pageContainer, containerTitle, detailBackBtn;
+	let container, dataJob = [], result, jsonData, header = [], data = [], ids = [], str, fnc, pageContainer, containerTitle;
 	
 	if (storage.scheduleList === undefined) {
 		msg.set("등록된 일정이 없습니다");
@@ -339,11 +339,12 @@ function scheduleDetailView(e){
 }
 
 function scheduleSuccessView(result){
-	let html, dataArray, notIdArray, gridList, searchContainer, containerTitle, detailBackBtn;
+	let html, dataArray, notIdArray, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput;
 	gridList = $(".gridList");
 	searchContainer = $(".searchContainer");
 	containerTitle = $("#containerTitle");
 	detailBackBtn = $(".detailBackBtn");
+	listSearchInput = $(".listSearchInput");
 	dataArray = scheduleRadioUpdate(result.job, result);
 	html = detailViewForm(dataArray);
 	containerTitle.html(result.title);
@@ -355,6 +356,7 @@ function scheduleSuccessView(result){
 
 	setTimeout(() => {
 		$("[name='job'][value='" + result.job + "']").prop("checked", true).removeAttr("onclick");
+		listSearchInput.hide();
 		detailBackBtn.css("display", "flex");
 
 		if(result.job === "sales"){
