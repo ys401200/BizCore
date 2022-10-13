@@ -199,7 +199,7 @@ public class TestService extends Svc{
 
             while(rs.next()){
                 xCustomer = rs.getString(1);
-                xProduct = rs.getString(2);
+                xProduct = rs.getString(2).replaceAll("\t", "").replaceAll("\r", "").replaceAll("\n", "").replaceAll("\"", "\\u0022");
                 xPrice = rs.getLong(3);
                 xQty = rs.getInt(4);
                 xSubtotal = rs.getLong(5);
