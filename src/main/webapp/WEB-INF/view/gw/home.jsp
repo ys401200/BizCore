@@ -29,11 +29,16 @@
 								<button class="referBtn" onclick="drawWaitCard(3)">참조/열람 대기 문서</button>
 							</div>
 						</div>
+						<div class="optionDiv"><button onclick="drawWaitCardBtn()">카드</button><button
+								onclick="drawWaitList()">리스트</button></div>
 						<div class="waitDiv"></div>
+						<div class="waitList listDiv"></div>
+						<div class="pageContainer waitPage"></div>
 					</div>
 
-					<div class="waitList listDiv"></div>
-					<div class="pageContainer waitPage"></div>
+
+
+
 
 				</div>
 
