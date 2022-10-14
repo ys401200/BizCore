@@ -254,7 +254,7 @@ modal = {
 		modal.wrap.css('display','flex').hide().fadeIn();
 	},
 	"hide": () => {
-		modal.clear();
+		window.setTimeout(modal.clear, 500);
 		modal.wrap.fadeOut();
 	},
 	"clear": () => {
