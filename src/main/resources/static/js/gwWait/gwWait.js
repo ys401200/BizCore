@@ -805,9 +805,8 @@ function approveBtnEvent() {
 
   if (
     storage.reportDetailData.sopp == soppResult &&
-    storage.reportDetailData.customer == cusResult &&
-    storage.oriCbContainer ==
-    $("input[name='" + formId + "_RD']:checked").attr("id") &&
+    (storage.reportDetailData.customer == cusResult ||storage.reportDetailData.customer == 104843 ) &&
+    storage.oriCbContainer ==$("input[name='" + formId + "_RD']:checked").attr("id") &&
     storage.oriInsertedContent == $(".insertedContent").html() &&
     storage.oriInsertedDataList == $(".insertedDataList").html()
   ) {
