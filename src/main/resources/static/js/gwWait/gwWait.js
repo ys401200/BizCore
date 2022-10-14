@@ -570,7 +570,7 @@ function drawNewCommentLine() {
     }
   }
 
-  if (newCombine[2].includes(storage.my + "")) {
+  if (newCombine[2].length > 1 && newCombine[2].includes(storage.my + "")) {
     newCombine[2] = newCombine[2].slice(1);
     newCombine[0].push(storage.my + "");
   }
@@ -805,8 +805,8 @@ function approveBtnEvent() {
 
   if (
     storage.reportDetailData.sopp == soppResult &&
-    (storage.reportDetailData.customer == cusResult ||storage.reportDetailData.customer == 104843 ) &&
-    storage.oriCbContainer ==$("input[name='" + formId + "_RD']:checked").attr("id") &&
+    (storage.reportDetailData.customer == cusResult || storage.reportDetailData.customer == 104843) &&
+    storage.oriCbContainer == $("input[name='" + formId + "_RD']:checked").attr("id") &&
     storage.oriInsertedContent == $(".insertedContent").html() &&
     storage.oriInsertedDataList == $(".insertedDataList").html()
   ) {
@@ -1252,7 +1252,6 @@ function createNewLine() {
   let newCombine = [[], [], [], [], []];
 
   //내 순서 확인하고 title 잘라버리기 
-  let myType;
 
   for (let i = 0; i < newAppLine.length; i++) {
     if (newAppLine[i][1] == storage.my) {
@@ -1271,10 +1270,12 @@ function createNewLine() {
     }
   }
 
-  if (newCombine[2].includes(storage.my + "")) {
+  if (newCombine[2].length > 1 && newCombine[2].includes(storage.my + "")) {
     newCombine[2] = newCombine[2].slice(1);
     newCombine[0].push(storage.my + "");
   }
+
+
   let testHtml =
     "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작성</div><div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto' disabled value='" +
     storage.userRank[storage.user[storage.newAppLine[0][1]].rank][0] +
@@ -1289,7 +1290,6 @@ function createNewLine() {
   let testHtml2 = "<div class='lineGridContainer'>";
   let referHtml = "";
   let titleArr = ["검토", "합의", "결재", "수신", "참조"];
-
   let titleId = ["examine", "agree", "approval", "conduct", "refer"];
 
   for (let i = 0; i < newCombine.length; i++) {
@@ -1409,6 +1409,41 @@ function createNewLine() {
   lineTarget.html(testHtml);
 
   $(".selectedRefer").html(referHtml);
+
+  console.log(newCombine);
+
+
+  for (let i = 0; i < newCombine.length; i++) {
+    let titleId = ["examine", "agree", "approval", "conduct", "refer"];
+    let formId = storage.reportDetailData.formId;
+    for (let j = 0; j < newCombine[i].length; j++) {
+      for (let k = 1; k < storage.reportDetailData.appLine.length; k++) {
+        if (newCombine[i][j] == storage.reportDetailData.appLine[k].employee + "") {
+          let approved = "", status = "";
+          if (storage.reportDetailData.appLine[k].approved != null) {
+            approved = getYmdShortSlash(storage.reportDetailData.appLine[k].approved);
+            status = "승인";
+          } else if (storage.reportDetailData.appLine[k].rejected != null) {
+            approved = getYmdShortSlash(storage.reportDetailData.appLine[k].rejected);
+            status = "반려";
+          }
+          console.log(approved + "ddd" + status);
+          $("." + formId + "_" + titleId[i] + "_status")[j].value = status;
+          $("." + formId + "_" + titleId[i] + "_approved")[j].value = approved;
+        }
+
+
+      }
+
+
+
+    }
+  }
+
+
+
+
+
   drawNewCommentLine();
   let infoLength = document.getElementsByClassName("info")[0];
   infoLength = infoLength.clientWidth;
