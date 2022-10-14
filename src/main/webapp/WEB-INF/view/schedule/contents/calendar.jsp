@@ -12,7 +12,7 @@
     <div class="calendarList">
         <div class="calendarMoreContent">
             <div class="moreContentHeader">
-                <div class="moreContentTitle">more</div>
+                <div class="moreContentTitle"></div>
                 <div class="moreContentClose" onclick="moreContentClose();">
                     <i class="fa-solid fa-xmark"></i>
                 </div>

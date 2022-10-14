@@ -289,7 +289,7 @@ function drawCalendar(container){
 		}
 
 		now = year + "-" + month + "-" + day;
-        html += "<div class=\"calendar_cell" + (storage.currentMonth === tempDate.getMonth() + 1 ? "" : " calendar_cell_blur") + "\" data-date=\"" + t + "\">"; // start row / 해당월이 아닌 날짜의 경우 calendar_cell_blue 클래스명을 셀에 추가 지정함
+        html += "<div class=\"calendar_cell" + (storage.currentMonth === tempDate.getMonth() + 1 ? "" : " calendar_cell_blur") + "\" data-date=\"" + now + "\">"; // start row / 해당월이 아닌 날짜의 경우 calendar_cell_blue 클래스명을 셀에 추가 지정함
         html += "<div class=\"calendar_date\" onclick='eventStop();scheduleInsertForm(\"" + now + "\");'>" + (calArr[x1].date.getDate()) + "</div>"; // 셀 안 최상단에 날짜 아이템을 추가함
         for(x2 = 0 ; x2 < slot ; x2++){
 			x3 = [];
@@ -312,12 +312,15 @@ function drawCalendar(container){
     }
     container.innerHTML = html;
 
+	
 	setTimeout(() => {
-		$(".calendar_cell").each((index, item) => {
-			if($(item).children().not(".calendar_item_empty").length > 3){
-				$(item).append("<div class=\"calendar_span_empty\" onclick=\"eventStop();scheduleInsertForm(" + now + ");\"><span data-flag=\"false\" onclick=\"eventStop();calendarMore(this);\">more →</span></div>");
+		let calendar_cell = $(".calendar_cell");
+
+		for(let i = 0; i < calendar_cell.length; i++){
+			if($(calendar_cell[i]).children().not(".calendar_item_empty").length > 3){
+				$(calendar_cell[i]).append("<div class=\"calendar_span_empty\" onclick=\"eventStop();scheduleInsertForm(" + now + ");\"><span data-flag=\"false\" onclick=\"eventStop();calendarMore(this);\">more →</span></div>");
 			}
-		});
+		}
 	}, 100);
 
     return true;
@@ -2039,10 +2042,11 @@ function scheduleErrorDelete(){
 }
 
 function calendarMore(e){
-	let thisEle, moreContentBody, html = "", calendarMoreContent;
+	let thisEle, moreContentBody, html = "", calendarMoreContent, moreContentTitle;
 	thisEle = $(e);
 	setItemParents = thisEle.parents(".calendar_cell");
 	calendarMoreContent = $(".calendarMoreContent");
+	moreContentTitle = $(".moreContentTitle");
 	calendarMoreContent.find(".moreContentBody").remove();
 	calendarMoreContent.css("width", parseInt(setItemParents.innerWidth() - 20) + "px");
 	calendarMoreContent.css("left", setItemParents.position().left + "px");
@@ -2056,6 +2060,7 @@ function calendarMore(e){
 	moreContentBody.children().not(".calendar_item").remove();
 	moreContentBody.find(".calendar_item_empty").remove();
 	moreContentBody.children().show();
+	moreContentTitle.html(thisEle.parents(".calendar_cell").data("date"));
 	calendarMoreContent.show();
 }
 

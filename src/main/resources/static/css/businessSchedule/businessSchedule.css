@@ -238,6 +238,7 @@
     justify-content: left;
     font-weight: 600;
     width: 50%;
+	margin-top: 3px;
 }
 
 .calendarMoreContent > .moreContentHeader > .moreContentClose{
