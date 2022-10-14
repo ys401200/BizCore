@@ -170,6 +170,7 @@ function drawScheduleList() {
 	];
 
 	if(path[3] !== undefined && jsonData !== ""){
+		$(".calendarList").hide();
 		let content = $(".gridContent[data-id=\"" + path[3] + "\"]");
 		scheduleDetailView(content);
 	}
@@ -404,7 +405,7 @@ function scheduleSuccessView(result){
 }
 
 function scheduleErrorView(){
-	alert("에러");
+	msg.set("에러");
 }
 
 function calendarDetailView(e){
@@ -466,7 +467,7 @@ function calendarSuccessView(result){
 }
 
 function calendarErrorView(){
-	alert("에러");
+	msg.set("에러");
 }
 
 function eventStop(){
@@ -596,7 +597,7 @@ function scheduleSuccessList(result){
 }
 
 function scheduleErrorList(){
-	alert("에러");
+	msg.set("에러");
 }
 
 function scheduleInsertForm(getDate){
@@ -1095,13 +1096,13 @@ function scheduleInsert(){
 
 	if(job === "sales"){
 		if($("#from").val() === ""){
-			alert("활동시작일을 선택해주세요.");
+			msg.set("활동시작일을 선택해주세요.");
 			return false;
 		}else if($("#to").val() === ""){
-			alert("활동종료일을 선택해주세요.");
+			msg.set("활동종료일을 선택해주세요.");
 			return false;
 		}else if($("#title").val() === ""){
-			alert("제목을 입력해주세요.");
+			msg.set("제목을 입력해주세요.");
 			$("#title").focus();
 			return false;
 		}else{
@@ -1140,22 +1141,22 @@ function scheduleInsert(){
 		}
 	}else if(job === "tech"){
 		if($("#title").val() === ""){
-			alert("기술요청명을 입력해주세요.");
+			msg.set("기술요청명을 입력해주세요.");
 			$("#title").focus();
 			return false;
 		}else if($("#sopp").val() === ""){
-			alert("영업기회를 선택해주세요.");
+			msg.set("영업기회를 선택해주세요.");
 			$("#sopp").focus();
 			return false;
 		}else if($("#partner").val() === ""){
-			alert("엔드유저를 선택해주세요.");
+			msg.set("엔드유저를 선택해주세요.");
 			$("#partner").focus();
 			return false;
 		}else if($("#from").val() === ""){
-			alert("지원시작일을 선택해주세요.");
+			msg.set("지원시작일을 선택해주세요.");
 			return false;
 		}else if($("#to").val() === ""){
-			alert("지원종료일을 선택해주세요.");
+			msg.set("지원종료일을 선택해주세요.");
 			$("#title").focus();
 			return false;
 		}else{
@@ -1208,13 +1209,13 @@ function scheduleInsert(){
 		}
 	}else{
 		if($("#from").val() === ""){
-			alert("일정시작일을 선택해주세요.");
+			msg.set("일정시작일을 선택해주세요.");
 			return false;
 		}else if($("#to").val() === ""){
-			alert("일정종료일을 선택해주세요.");
+			msg.set("일정종료일을 선택해주세요.");
 			return false;
 		}else if($("#title").val() === ""){
-			alert("제목을 입력해주세요.");
+			msg.set("제목을 입력해주세요.");
 			$("#title").focus();
 			return false;
 		}else{
@@ -1255,12 +1256,12 @@ function scheduleInsert(){
 }
 
 function scheduleSuccessInsert(){
-	alert("등록완료");
+	msg.set("등록완료");
 	location.reload();
 }
 
 function scheduleErrorInsert(){
-	alert("등록에러");
+	msg.set("등록에러");
 
 }
 
@@ -1819,13 +1820,13 @@ function scheduleUpdate(no){
 
 	if(job === "sales"){
 		if($("#from").val() === ""){
-			alert("활동시작일을 선택해주세요.");
+			msg.set("활동시작일을 선택해주세요.");
 			return false;
 		}else if($("#to").val() === ""){
-			alert("활동종료일을 선택해주세요.");
+			msg.set("활동종료일을 선택해주세요.");
 			return false;
 		}else if($("#title").val() === ""){
-			alert("제목을 입력해주세요.");
+			msg.set("제목을 입력해주세요.");
 			$("#title").focus();
 			return false;
 		}else{
@@ -1864,22 +1865,22 @@ function scheduleUpdate(no){
 		}
 	}else if(job === "tech"){
 		if($("#title").val() === ""){
-			alert("기술요청명을 입력해주세요.");
+			msg.set("기술요청명을 입력해주세요.");
 			$("#title").focus();
 			return false;
 		}else if($("#sopp").val() === ""){
-			alert("영업기회를 선택해주세요.");
+			msg.set("영업기회를 선택해주세요.");
 			$("#sopp").focus();
 			return false;
 		}else if($("#customer").val() === ""){
-			alert("엔드유저를 선택해주세요.");
+			msg.set("엔드유저를 선택해주세요.");
 			$("#customer").focus();
 			return false;
 		}else if($("#from").val() === ""){
-			alert("지원시작일을 선택해주세요.");
+			msg.set("지원시작일을 선택해주세요.");
 			return false;
 		}else if($("#to").val() === ""){
-			alert("지원종료일을 선택해주세요.");
+			msg.set("지원종료일을 선택해주세요.");
 			$("#title").focus();
 			return false;
 		}else{
@@ -1932,13 +1933,13 @@ function scheduleUpdate(no){
 		}
 	}else{
 		if($("#from").val() === ""){
-			alert("일정시작일을 선택해주세요.");
+			msg.set("일정시작일을 선택해주세요.");
 			return false;
 		}else if($("#to").val() === ""){
-			alert("일정종료일을 선택해주세요.");
+			msg.set("일정종료일을 선택해주세요.");
 			return false;
 		}else if($("#title").val() === ""){
-			alert("제목을 입력해주세요.");
+			msg.set("제목을 입력해주세요.");
 			$("#title").focus();
 			return false;
 		}else{
@@ -1980,12 +1981,12 @@ function scheduleUpdate(no){
 }
 
 function scheduleSuccessUpdate(){
-	alert("수정완료");
+	msg.set("수정완료");
 	location.reload();
 }
 
 function scheduleErrorUpdate(){
-	alert("에러");
+	msg.set("에러");
 }
 
 function scheduleSelectChange(){
@@ -2013,7 +2014,7 @@ function scheduleSelectSuccess(result){
 }
 
 function scheduleSelectError(){
-	alert("에러");
+	msg.set("에러");
 }
 
 function scheduleDelete(result){
@@ -2031,12 +2032,12 @@ function scheduleDelete(result){
 }
 
 function scheduleSuccessDelete(){
-	alert("삭제완료");
+	msg.set("삭제완료");
 	location.reload();
 }
 
 function scheduleErrorDelete(){
-	alert("에러");
+	msg.set("에러");
 }
 
 function calendarMore(e){
@@ -2138,7 +2139,7 @@ function searchSubmit(){
 	storage.searchDatas = resultArray;
 
 	if(storage.searchDatas.length == 0){
-		alert("찾는 데이터가 없습니다.");
+		msg.set("찾는 데이터가 없습니다.");
 		storage.searchDatas = storage.scheduleList;
 	}
 	

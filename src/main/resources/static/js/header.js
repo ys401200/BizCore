@@ -43,7 +43,6 @@ function init(){
 	}, 100);
 	
 	$(document).click((e) => {
-		console.log();
 		if(modal.wrap.is($(e.target))){
 			modal.hide();
 		}else if(modal.noteWrap.is($(e.target))){
@@ -1795,7 +1794,7 @@ function submitFileSuccess(){
 }
 
 function submitFileError(){
-	alert("파일을 올리는 도중 에러가 생겼습니다.\n다시 시도해주세요.");
+	msg.set("파일을 올리는 도중 에러가 생겼습니다.\n다시 시도해주세요.");
 }
 
 function tabFileInsert(url){
@@ -1819,12 +1818,12 @@ function tabFileInsert(url){
 }
 
 function tabFileSuccessInsert(){
-	alert("등록완료");
+	msg.set("등록완료");
 	location.reload();
 }
 
 function tabFileErrorInsert(){
-	alert("등록에러");
+	msg.set("등록에러");
 }
 
 function tabFileDelete(no, fileType, fileName){
@@ -1847,7 +1846,7 @@ function tabFileSuccessDelete(result){
 }
 
 function tabFileErrorDelete(){
-	alert("삭제에러");
+	msg.set("삭제에러");
 }
 
 function tabFileItemListUpdate(){
@@ -2486,7 +2485,7 @@ function searchDateDefaultSet(e){
 		if(matchDateInput.val() === ""){
 			thisDate.setDate(thisDate.getDate()+1);
 		}else if(thisDate.getTime() > matchDate.getTime()){
-			alert("시작일이 종료일보다 클 수 없습니다.");
+			msg.set("시작일이 종료일보다 클 수 없습니다.");
 			thisDate.setDate(thisDate.getDate()+1);
 		}else{
 			return null;
@@ -2501,7 +2500,7 @@ function searchDateDefaultSet(e){
 		if(matchDateInput.val() === ""){
 			thisDate.setDate(thisDate.getDate()-1);
 		}else if(thisDate.getTime() < matchDate.getTime()){
-			alert("종료일이 시작일보다 작을 수 없습니다.");
+			msg.set("종료일이 시작일보다 작을 수 없습니다.");
 			thisDate.setDate(thisDate.getDate()-1);
 		}else{
 			return null;

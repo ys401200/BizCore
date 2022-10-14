@@ -201,7 +201,7 @@ function soppSuccessList(result){
 }
 
 function soppErrorList(){
-	alert("에러");
+	msg.set("에러");
 }
 
 function soppSuccessView(result){
@@ -426,7 +426,7 @@ function soppSuccessView(result){
 }
 
 function soppErrorView(){
-	alert("에러");
+	msg.set("에러");
 }
 
 function soppInsertForm(){
@@ -635,12 +635,12 @@ function soppInsert(){
 }
 
 function soppSuccessInsert(){
-	alert("등록완료");
+	msg.set("등록완료");
 	location.reload();
 }
 
 function soppErrorInsert(){
-	alert("등록에러");
+	msg.set("등록에러");
 }
 
 function soppUpdate(){
@@ -689,12 +689,12 @@ function soppUpdate(){
 }
 
 function soppSuccessUpdate(){
-	alert("수정완료");
+	msg.set("수정완료");
 	location.reload();
 }
 
 function soppErrorUpdate(){
-	alert("수정에러");
+	msg.set("수정에러");
 }
 
 function soppDelete(no){
@@ -712,12 +712,12 @@ function soppDelete(no){
 }
 
 function soppSuccessDelete(){
-	alert("삭제완료");
+	msg.set("삭제완료");
 	location.reload();
 }
 
 function soppErrorDelete(){
-	alert("삭제에러");
+	msg.set("삭제에러");
 }
 
 function searchInputKeyup(){
@@ -784,7 +784,7 @@ function searchSubmit(){
 	storage.searchDatas = resultArray;
 
 	if(storage.searchDatas.length == 0){
-		alert("찾는 데이터가 없습니다.");
+		msg.set("찾는 데이터가 없습니다.");
 		storage.searchDatas = storage.soppList;
 	}
 	

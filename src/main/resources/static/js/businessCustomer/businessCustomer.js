@@ -138,7 +138,7 @@ function customerSuccessList(result){
 }
 
 function customerErrorList(){
-	alert("에러");
+	msg.set("에러");
 }
 
 function customerSuccessView(result){
@@ -182,7 +182,7 @@ function customerSuccessView(result){
 }
 
 function customerErrorView(){
-	alert("에러");
+	msg.set("에러");
 }
 
 function customerInsertForm(){
@@ -243,12 +243,12 @@ function customerInsert(){
 }
 
 function customerSuccessInsert(){
-	alert("등록완료");
+	msg.set("등록완료");
 	location.reload();
 }
 
 function customerErrorInsert(){
-	alert("등록에러");
+	msg.set("등록에러");
 }
 
 function customerUpdate(){
@@ -274,12 +274,12 @@ function customerUpdate(){
 }
 
 function customerSuccessUpdate(){
-	alert("수정완료");
+	msg.set("수정완료");
 	location.reload();
 }
 
 function customerErrorUpdate(){
-	alert("수정에러");
+	msg.set("수정에러");
 }
 
 function customerDelete(){
@@ -297,12 +297,12 @@ function customerDelete(){
 }
 
 function customerSuccessDelete(){
-	alert("삭제완료");
+	msg.set("삭제완료");
 	location.reload();
 }
 
 function customerErrorDelete(){
-	alert("삭제에러");
+	msg.set("삭제에러");
 }
 
 function searchInputKeyup(){
@@ -357,7 +357,7 @@ function searchSubmit(){
 	storage.searchDatas = resultArray;
 
 	if(storage.searchDatas.length == 0){
-		alert("찾는 데이터가 없습니다.");
+		msg.set("찾는 데이터가 없습니다.");
 		storage.searchDatas = storage.customerList;
 	}
 	

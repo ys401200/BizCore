@@ -215,7 +215,7 @@ function contractSuccessList(result){
 }
 
 function contractErrorList(){
-	alert("에러");
+	msg.set("에러");
 }
 
 function contractSuccessView(result){
@@ -560,7 +560,7 @@ function contractSuccessView(result){
 }
 
 function contractErrorView(){
-	alert("에러");
+	msg.set("에러");
 }
 
 function contractInsertForm(){
@@ -755,23 +755,23 @@ function contractInsertForm(){
 
 function contractInsert(){
 	if($("#title").val() === ""){
-		alert("계약명을 입력해주세요.");
+		msg.set("계약명을 입력해주세요.");
 		$("#title").focus();
 		return false;
 	}else if($("#sopp").val() === ""){
-		alert("영업기회를 입력해주세요.");
+		msg.set("영업기회를 입력해주세요.");
 		$("#sopp").focus();
 		return false;
 	}else if($("#employee").val() === ""){
-		alert("담당자를 입력해주세요.");
+		msg.set("담당자를 입력해주세요.");
 		$("#employee").focus();
 		return false;
 	}else if($("#customer").val() === ""){
-		alert("매출처를 입력해주세요.");
+		msg.set("매출처를 입력해주세요.");
 		$("#customer").focus();
 		return false;
 	}else if($("#endUser").val() === ""){
-		alert("엔드유저를 입력해주세요.");
+		msg.set("엔드유저를 입력해주세요.");
 		$("#endUser").focus();
 		return false;
 	}else{
@@ -850,33 +850,33 @@ function contractInsert(){
 }
 
 function contractSuccessInsert(){
-	alert("등록완료");
+	msg.set("등록완료");
 	location.reload();
 }
 
 function contractErrorInsert(){
-	alert("등록에러");
+	msg.set("등록에러");
 }
 
 function contractUpdate(){
 	if($("#title").val() === ""){
-		alert("계약명을 입력해주세요.");
+		msg.set("계약명을 입력해주세요.");
 		$("#title").focus();
 		return false;
 	}else if($("#sopp").val() === ""){
-		alert("영업기회를 입력해주세요.");
+		msg.set("영업기회를 입력해주세요.");
 		$("#sopp").focus();
 		return false;
 	}else if($("#employee").val() === ""){
-		alert("담당자를 입력해주세요.");
+		msg.set("담당자를 입력해주세요.");
 		$("#employee").focus();
 		return false;
 	}else if($("#customer").val() === ""){
-		alert("매출처를 입력해주세요.");
+		msg.set("매출처를 입력해주세요.");
 		$("#customer").focus();
 		return false;
 	}else if($("#endUser").val() === ""){
-		alert("엔드유저를 입력해주세요.");
+		msg.set("엔드유저를 입력해주세요.");
 		$("#endUser").focus();
 		return false;
 	}else{
@@ -955,12 +955,12 @@ function contractUpdate(){
 }
 
 function contractSuccessUpdate(){
-	alert("수정완료");
+	msg.set("수정완료");
 	location.reload();
 }
 
 function contractErrorUpdate(){
-	alert("수정에러");
+	msg.set("수정에러");
 }
 
 function contractDelete(no){
@@ -979,12 +979,12 @@ function contractDelete(no){
 }
 
 function contractSuccessDelete(){
-	alert("삭제완료");
+	msg.set("삭제완료");
 	location.reload();
 }
 
 function contractErrorDelete(){
-	alert("삭제에러");
+	msg.set("삭제에러");
 }
 
 function contractRadioClick(e){
@@ -1082,7 +1082,7 @@ function searchSubmit(){
 	storage.searchDatas = resultArray;
 
 	if(storage.searchDatas.length == 0){
-		alert("찾는 데이터가 없습니다.");
+		msg.set("찾는 데이터가 없습니다.");
 		storage.searchDatas = storage.contractList;
 	}
 	

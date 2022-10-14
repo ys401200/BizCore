@@ -470,7 +470,7 @@ function techSuccessView(result){
 }
 
 function techErrorView(){
-	alert("에러");
+	msg.set("에러");
 }
 
 function techSuccessList(result){
@@ -493,7 +493,7 @@ function techSuccessList(result){
 }
 
 function techErrorList(){
-	alert("에러");
+	msg.set("에러");
 }
 
 function techInsertForm(){
@@ -692,22 +692,22 @@ function techInsert(){
 	type = "insert";
 
 	if($("#title").val() === ""){
-		alert("기술요청명을 입력해주세요.");
+		msg.set("기술요청명을 입력해주세요.");
 		$("#title").focus();
 		return false;
 	}else if($("#sopp").val() === ""){
-		alert("영업기회를 선택해주세요.");
+		msg.set("영업기회를 선택해주세요.");
 		$("#sopp").focus();
 		return false;
 	}else if($("#partner").val() === ""){
-		alert("엔드유저를 선택해주세요.");
+		msg.set("엔드유저를 선택해주세요.");
 		$("#partner").focus();
 		return false;
 	}else if($("#from").val() === ""){
-		alert("지원시작일을 선택해주세요.");
+		msg.set("지원시작일을 선택해주세요.");
 		return false;
 	}else if($("#to").val() === ""){
-		alert("지원종료일을 선택해주세요.");
+		msg.set("지원종료일을 선택해주세요.");
 		$("#title").focus();
 		return false;
 	}else{
@@ -766,12 +766,12 @@ function techInsert(){
 }
 
 function techSuccessInsert(){
-	alert("등록완료");
+	msg.set("등록완료");
 	location.reload();
 }
 
 function techErrorInsert(){
-	alert("등록에러");
+	msg.set("등록에러");
 
 }
 
@@ -785,22 +785,22 @@ function techUpdate(){
 	type = "update";
 
 	if($("#title").val() === ""){
-		alert("기술요청명을 입력해주세요.");
+		msg.set("기술요청명을 입력해주세요.");
 		$("#title").focus();
 		return false;
 	}else if($("#sopp").val() === ""){
-		alert("영업기회를 선택해주세요.");
+		msg.set("영업기회를 선택해주세요.");
 		$("#sopp").focus();
 		return false;
 	}else if($("#customer").val() === ""){
-		alert("엔드유저를 선택해주세요.");
+		msg.set("엔드유저를 선택해주세요.");
 		$("#customer").focus();
 		return false;
 	}else if($("#from").val() === ""){
-		alert("지원시작일을 선택해주세요.");
+		msg.set("지원시작일을 선택해주세요.");
 		return false;
 	}else if($("#to").val() === ""){
-		alert("지원종료일을 선택해주세요.");
+		msg.set("지원종료일을 선택해주세요.");
 		$("#title").focus();
 		return false;
 	}else{
@@ -859,16 +859,16 @@ function techUpdate(){
 }
 
 function techsuccessUpdate(){
-	alert("수정완료");
+	msg.set("수정완료");
 	location.reload();
 }
 
 function techErrorUpdate(){
-	alert("에러");
+	msg.set("에러");
 }
 
 function techSelectError(){
-	alert("에러");
+	msg.set("에러");
 }
 
 function techDelete(result){
@@ -886,12 +886,12 @@ function techDelete(result){
 }
 
 function techSuccessDelete(){
-	alert("삭제완료");
+	msg.set("삭제완료");
 	location.reload();
 }
 
 function techErrorDelete(){
-	alert("에러");
+	msg.set("에러");
 }
 
 function searchInputKeyup(){
@@ -955,7 +955,7 @@ function searchSubmit(){
 	storage.searchDatas = resultArray;
 
 	if(storage.searchDatas.length == 0){
-		alert("찾는 데이터가 없습니다.");
+		msg.set("찾는 데이터가 없습니다.");
 		storage.searchDatas = storage.scheduleList;
 	}
 	

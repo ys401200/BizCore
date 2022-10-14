@@ -399,7 +399,7 @@ function salesSuccessView(result){
 }
 
 function salesErrorView(){
-	alert("에러");
+	msg.set("에러");
 }
 
 function salesSuccessList(result){
@@ -422,7 +422,7 @@ function salesSuccessList(result){
 }
 
 function salesErrorList(){
-	alert("에러");
+	msg.set("에러");
 }
 
 function salesInsertForm(){
@@ -600,13 +600,13 @@ function salesInsert(){
 	type = "insert";
 
 	if($("#from").val() === ""){
-		alert("활동시작일을 선택해주세요.");
+		msg.set("활동시작일을 선택해주세요.");
 		return false;
 	}else if($("#to").val() === ""){
-		alert("활동종료일을 선택해주세요.");
+		msg.set("활동종료일을 선택해주세요.");
 		return false;
 	}else if($("#title").val() === ""){
-		alert("제목을 입력해주세요.");
+		msg.set("제목을 입력해주세요.");
 		$("#title").focus();
 		return false;
 	}else{
@@ -651,12 +651,12 @@ function salesInsert(){
 }
 
 function salesSuccessInsert(){
-	alert("등록완료");
+	msg.set("등록완료");
 	location.reload();
 }
 
 function salesErrorInsert(){
-	alert("등록에러");
+	msg.set("등록에러");
 
 }
 
@@ -670,13 +670,13 @@ function salesUpdate(){
 	type = "update";
 
 	if($("#from").val() === ""){
-		alert("활동시작일을 선택해주세요.");
+		msg.set("활동시작일을 선택해주세요.");
 		return false;
 	}else if($("#to").val() === ""){
-		alert("활동종료일을 선택해주세요.");
+		msg.set("활동종료일을 선택해주세요.");
 		return false;
 	}else if($("#title").val() === ""){
-		alert("제목을 입력해주세요.");
+		msg.set("제목을 입력해주세요.");
 		$("#title").focus();
 		return false;
 	}else{
@@ -721,16 +721,16 @@ function salesUpdate(){
 }
 
 function salesSuccessUpdate(){
-	alert("수정완료");
+	msg.set("수정완료");
 	location.reload();
 }
 
 function salesErrorUpdate(){
-	alert("에러");
+	msg.set("에러");
 }
 
 function scheduleSelectError(){
-	alert("에러");
+	msg.set("에러");
 }
 
 function salesDelete(result){
@@ -748,12 +748,12 @@ function salesDelete(result){
 }
 
 function salesSuccessDelete(){
-	alert("삭제완료");
+	msg.set("삭제완료");
 	location.reload();
 }
 
 function salesErrorDelete(){
-	alert("에러");
+	msg.set("에러");
 }
 
 function searchInputKeyup(){
@@ -816,7 +816,7 @@ function searchSubmit(){
 	storage.searchDatas = resultArray;
 
 	if(storage.searchDatas.length == 0){
-		alert("찾는 데이터가 없습니다.");
+		msg.set("찾는 데이터가 없습니다.");
 		storage.searchDatas = storage.scheduleList;
 	}
 	
