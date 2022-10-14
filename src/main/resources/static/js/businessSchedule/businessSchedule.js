@@ -204,10 +204,7 @@ function drawCalendar(container){
     }
     endDate = new Date(endDate.getTime() - 86400000);
 
-    // 종료일 잡기
-    while(endDate.getDate() != 6){
-        endDate = new Date(endDate.getTime() + 86400000);
-    }
+    
 
     // 만들어진 달력 날짜에 해당하는 일정이 있는 경우 담아두기
     for(x1 = 0 ; x1 <= (endDate.getTime() - startDate.getTime()) / 86400000 ; x1++){
@@ -272,7 +269,7 @@ function drawCalendar(container){
 	html += "<div class=\"calendar_header\">목</div>";
 	html += "<div class=\"calendar_header\">금</div>";
 	html += "<div class=\"calendar_header\">토</div>";
-
+	
     for(x1 = 0 ; x1 < calArr.length ; x1++){
 		tempDate = calArr[x1].date; // 해당 셀의 날짜 객체를 가져 옮
         t = tempDate.getFullYear();
@@ -292,7 +289,7 @@ function drawCalendar(container){
 		}
 
 		now = year + "-" + month + "-" + day;
-        html += "<div class=\"calendar_cell" + (storage.currentMonth === tempDate.getMonth() + 1 ? "" : " calendar_cell_blur") + "\" data-date=\"" + t + "\">"; // start row / 해당월이 아닌 날짜의 경우 calendar_cell_blue 클래스명을 셀에 추가 지정함
+        html += "<div class=\"calendar_cell" + (storage.currentMonth === tempDate.getMonth() + 1 ? "" : " calendar_cell_blur") + "\" data-date=\"" + now + "\">"; // start row / 해당월이 아닌 날짜의 경우 calendar_cell_blue 클래스명을 셀에 추가 지정함
         html += "<div class=\"calendar_date\" onclick='eventStop();scheduleInsertForm(\"" + now + "\");'>" + (calArr[x1].date.getDate()) + "</div>"; // 셀 안 최상단에 날짜 아이템을 추가함
         for(x2 = 0 ; x2 < slot ; x2++){
 			x3 = [];
@@ -304,7 +301,7 @@ function drawCalendar(container){
 			}
             t = calArr[x1].slot[x2] === undefined ? undefined : storage.scheduleList[calArr[x1].slot[x2]] ; //임시변수에 스케줄 아이템을 담아둠
 			
-			if(x2 > 1){
+			if(x2 > 2){
 				html += "<div class=\"calendar_item" + (t === undefined ? " calendar_item_empty" : "") + (x3[0] ? " calendar_item_left" : "") + (x3[1] ? " calendar_item_right" : "") + "\"" + (t === undefined ? "" : "") + " data-id=" + (t === undefined ? '' : t.no) + " data-job=" + (t === undefined ? '' : t.job) + " onclick='" + (t === undefined ? 'eventStop();scheduleInsertForm("' + now + '");' : 'eventStop();calendarDetailView(this);') + "' data-sort=" + (t === undefined ? 0 : 1) + " style='display:none;'>" + (t === undefined ? "" : storage.user[t.writer].userName + " : " + t.title) + "</div>";
 			}else{
 				html += "<div class=\"calendar_item" + (t === undefined ? " calendar_item_empty" : "") + (x3[0] ? " calendar_item_left" : "") + (x3[1] ? " calendar_item_right" : "") + "\"" + (t === undefined ? "" : "") + " data-id=" + (t === undefined ? '' : t.no) + " data-job=" + (t === undefined ? '' : t.job) + " onclick='" + (t === undefined ? 'eventStop();scheduleInsertForm("' + now + '");' : 'eventStop();calendarDetailView(this);') + "' data-sort=" + (t === undefined ? 0 : 1) + ">" + (t === undefined ? "" : storage.user[t.writer].userName + " : " + t.title) + "</div>";
@@ -315,12 +312,15 @@ function drawCalendar(container){
     }
     container.innerHTML = html;
 
+	
 	setTimeout(() => {
-		$(".calendar_cell").each((index, item) => {
-			if($(item).children().not(".calendar_item_empty").length > 3){
-				$(item).append("<div class=\"calendar_span_empty\" onclick=\"eventStop();scheduleInsertForm(" + now + ");\"><span data-flag=\"false\" onclick=\"eventStop();calendarMore(this);\">more →</span></div>");
+		let calendar_cell = $(".calendar_cell");
+
+		for(let i = 0; i < calendar_cell.length; i++){
+			if($(calendar_cell[i]).children().not(".calendar_item_empty").length > 3){
+				$(calendar_cell[i]).append("<div class=\"calendar_span_empty\" onclick=\"eventStop();scheduleInsertForm(" + now + ");\"><span data-flag=\"false\" onclick=\"eventStop();calendarMore(this);\">more →</span></div>");
 			}
-		});
+		}
 	}, 100);
 
     return true;
@@ -601,9 +601,7 @@ function scheduleErrorList(){
 
 function scheduleInsertForm(getDate){
 	let html, dataArray;
-
 	dataArray = scheduleRadioInsert("sales", getDate);
-
 	html = detailViewForm(dataArray, "modal");
 
 	modal.show();
@@ -2042,10 +2040,11 @@ function scheduleErrorDelete(){
 }
 
 function calendarMore(e){
-	let thisEle, moreContentBody, html = "", calendarMoreContent;
+	let thisEle, moreContentBody, html = "", calendarMoreContent, moreContentTitle;
 	thisEle = $(e);
 	setItemParents = thisEle.parents(".calendar_cell");
 	calendarMoreContent = $(".calendarMoreContent");
+	moreContentTitle = $(".moreContentTitle");
 	calendarMoreContent.find(".moreContentBody").remove();
 	calendarMoreContent.css("width", parseInt(setItemParents.innerWidth() - 20) + "px");
 	calendarMoreContent.css("left", setItemParents.position().left + "px");
@@ -2059,7 +2058,9 @@ function calendarMore(e){
 	moreContentBody.children().not(".calendar_item").remove();
 	moreContentBody.find(".calendar_item_empty").remove();
 	moreContentBody.children().show();
+	moreContentTitle.html(thisEle.parents(".calendar_cell").data("date"));
 	calendarMoreContent.show();
+	calendarMoreContent.draggable();
 }
 
 function moreContentClose(){

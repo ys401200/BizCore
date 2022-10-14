@@ -21,6 +21,7 @@
 .bodyFunc1 > span{margin-left:2rem;}
 .bodyFunc2{display:none;text-align:right;width:calc(100% - 680px);}
 .bodyFunc2 > img{width:1rem;height:1rem;margin-left:1rem;cursor:pointer;}
+.bodyFunc2 > input{display:none;}
 
 .accountingContainer{
     background: #FFFFFF;
@@ -108,3 +109,17 @@
 .accountHistory > div > *:nth-child(9) > img{width:1rem;height:0.8rem;}
 .accountHistory > div:nth-child(1) > div{text-align:center;}
 
+.modalBody > div{display:grid;width:1000px;grid-template-columns: 7fr 6fr 5fr 5fr 5fr 4fr 2fr;text-align:center;font-size: 0.8rem;border-bottom:1px solid #4f4fb9;}
+.modalBody > div > div{padding:0.1rem;font-size:0.8rem;}
+.modalBody > div > div > input{margin: 0;vertical-align: middle;width:0.8rem;height:0.8rem;}
+.modalBody > div > div:nth-child(1),
+.modalBody > div > div:nth-child(2),
+.modalBody > div > div:nth-child(3),
+.modalBody > div > div:nth-child(4),
+.modalBody > div > div:nth-child(5),
+.modalBody > div > div:nth-child(6){border-right:1px solid #4f4fb9;}
+.modalBody > .parsedTitle{border-top:1px solid #4f4fb9;}
+.modalBody > .parsedItem > div:nth-child(3),
+.modalBody > .parsedItem > div:nth-child(4),
+.modalBody > .parsedItem > div:nth-child(5){text-align: right;}
+.modalBody > .savedItem{color:#b7b7b7;}

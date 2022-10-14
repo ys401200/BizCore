@@ -5,7 +5,7 @@
             <hr class="bodyTitleBorder" />
             <span class="bodyTitle">은행예금</span>
 			<div class="bodyFunc1"><input type="range" min="4" max="10" onchange="changeRange(this)" /><span></span></div>
-			<div class="bodyFunc2"><img src="/images/common/diskette.png" /><img src="/images/common/close.png" onclick="clickedCloseHistory()" /></div>
+			<div class="bodyFunc2"><input type="file" id="xlsFile" accept=".xls,.xlsx,.xlsm" onchange="readFile(this)" /><img src="/images/common/diskette.png"  onclick="clickedDisk()" /><img src="/images/common/close.png" onclick="clickedCloseHistory()" /></div>
             <div class="accountingContent">
 				<div class="accountListExpand"></div><div class="accountHistory">
 					<div>
@@ -26,4 +26,4 @@
 
 	</div>
 </div>
-</div><div class="msg_cnt"></div><jsp:include page="../bottom.jsp" />
+</div><div class="msg_cnt"></div><jsp:include page="../bottom.jsp" /><script src="/js/accountingBankaccount/xlsx.full.min.js"></script>

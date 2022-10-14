@@ -37,18 +37,17 @@ function init(){
 		}
 	});
 
-	$(".close").click(function(){
-		modalClose();
-	});
-	
 	setTimeout(() => {
 		setTiny();
 		menuActive();
 	}, 100);
 	
-	$(document).mouseup((e) => {
-		if(modal.content.has(e.target).length === 0){
+	$(document).click((e) => {
+		console.log();
+		if(modal.wrap.is($(e.target))){
 			modal.hide();
+		}else if(modal.noteWrap.is($(e.target))){
+			modal.noteHide();
 		}
 	});
 
@@ -254,8 +253,8 @@ modal = {
 		modal.wrap.css('display','flex').hide().fadeIn();
 	},
 	"hide": () => {
-		window.setTimeout(modal.clear, 500);
 		modal.wrap.fadeOut();
+		window.setTimeout(modal.clear, 500);
 	},
 	"clear": () => {
 		modal.headTitle.text("");
@@ -275,8 +274,8 @@ modal = {
 		modal.noteWrap.css('display','flex').hide().fadeIn();
 	},
 	"noteHide": () => {
-		modal.noteClear();
 		modal.noteWrap.fadeOut();
+		window.setTimeout(modal.noteClear, 500);
 	},
 	"noteClear": () => {
 		modal.noteHeadTitle.text("");
@@ -718,14 +717,6 @@ function dateDis(created, modified){
 	}
 
 	return result;
-}
-
-function modalClose(){
-	modal.hide();
-}
-
-function modalClear(){
-	modal.clear();
 }
 
 // 페이징 만드는 함수
