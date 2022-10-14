@@ -5,6 +5,7 @@ import java.util.Calendar;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -160,6 +161,39 @@ public class ApiAccountingCtrl extends Ctrl{
         return result;
     }
 
+    @GetMapping("/bankdetail/{bank:\\d+}/{account:[0-9,-]{1,}}/{from:\\d+}/{to:\\d+}")
+    public String getBankAccountDetailWithData(HttpServletRequest request, @PathVariable("bank") String bank, @PathVariable("account") String account, @PathVariable("from") long from, @PathVariable("to") long to){
+        String result = null;
+        String compId = null;
+        String aesKey = null;
+        String aesIv = null;
+        Msg msg = null;
+        HttpSession session = null;
+
+        session = request.getSession();
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        compId = (String)session.getAttribute("compId");
+        msg = getMsg((String)session.getAttribute("lang"));
+        if(compId == null)  compId = (String)session.getAttribute("compId");
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        }else{
+            result = accService.getBankDetail(compId, bank, account, from, to);
+            if(result == null){
+                result = "{\"result\":\"failure\",\"msg\":\"" + msg.noResult + "\"}";
+            }else{
+                result = encAes(result, aesKey, aesIv);
+                result = "{\"result\":\"ok\",\"data\":\"" + result + "\"}";
+            }
+        }
+        
+        return result;
+    }
+
     @PostMapping("/bankdetail/memo/{bank:\\d+}/{account:[0-9,-]{1,}}")
     public String setBankAccHistoryMemo(HttpServletRequest request, @RequestBody String requestBody, @PathVariable("bank") String bank, @PathVariable("account") String account){
         String result = null;
@@ -199,6 +233,54 @@ public class ApiAccountingCtrl extends Ctrl{
             if(b){
                 result = "{\"result\":\"ok\"}";
             }
+        }
+        
+        return result;
+    }
+
+    @PostMapping("/bankdetail/detail/{bank:\\d+}/{account:[0-9,-]{1,}}")
+    public String setBankAccHistory(HttpServletRequest request, @RequestBody String requestBody, @PathVariable("bank") String bank, @PathVariable("account") String account){
+        String result = null;
+        String compId = null;
+        String aesKey = null;
+        String aesIv = null;
+        String data = null;
+        String branch = null, remark = null, desc = null;
+        long deposit = -1, withdraw = -1, balance = -1, dt = -1;
+        boolean b = false;
+        int count = 0, x = 0;
+        Msg msg = null;
+        HttpSession session = null;
+        JSONArray jarr1 = null, jarr2 = null;
+
+        session = request.getSession();
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        compId = (String)session.getAttribute("compId");
+        msg = getMsg((String)session.getAttribute("lang"));
+        if(compId == null)  compId = (String)session.getAttribute("compId");
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        }else{
+            result = "{\"result\":\"failure\"}";
+            data = decAes(requestBody, aesKey, aesIv);
+            jarr1 = new JSONArray(data);
+            for(x = 0 ; x < jarr1.length() ; x++){
+                jarr2 = jarr1.getJSONArray(x);
+                dt = jarr2.getLong(0);
+                remark = jarr2.getString(1);
+                desc = jarr2.getString(2);
+                deposit = jarr2.getLong(3);
+                withdraw = jarr2.getLong(4);
+                balance = jarr2.getLong(5);
+                branch = jarr2.getString(6);
+                b = accService.addBankDetail(compId, bank, account, dt, desc, deposit, withdraw, balance, branch, remark);
+                if(b)   count++;
+            }
+            result = "{\"result\":\"ok\",\"data\":" + count + "}";
         }
         
         return result;

@@ -125,51 +125,46 @@ public class AccountingService extends Svc{
         return result;
     }
 
+    // 특정 기간의 은행 거래내역을 가져오는 메서드
+    public String getBankDetail(String compId, String bank, String account, long from, long to){
+        String result = null;
+        List<HashMap<String, String>> list = null;
+        HashMap<String, String> each = null;
+        int x = 0;
+
+        list = accMapper.getDetailWithDate(compId, bank, account, from, to);
+        result = "[";
+        if(list != null && list.size() > 0) for(x = 0  ;x < list.size() ; x++){
+            each = list.get(x);
+            if(x > 0)  result += ",";
+            result += ("{\"dt\":" + each.get("dt") + ",");
+            result += ("\"desc\":\"" + each.get("desc") + "\",");
+            result += ("\"deposit\":" + each.get("deposit") + ",");
+            result += ("\"withdraw\":" + each.get("withdraw") + ",");
+            result += ("\"balance\":" + each.get("balance") + ",");
+            result += ("\"branch\":\"" + each.get("branch") + "\",");
+            result += ("\"memo1\":" + (each.get("memo1") == null ? "null" : "\"" + each.get("memo1") + "\"") + ",");
+            result += ("\"memo2\":" + (each.get("memo2") == null ? "null" : "\"" + each.get("memo2") + "\"") + ",");
+            result += ("\"link\":\"" + each.get("link") + "\"}");
+        }
+        result += "]";
+        return result;
+    }
+
     // 은행 거래내역의 메모를 업데이트하는 메서드
     public boolean setBankAccMemo(String compId, String bank, String account, String memo, String desc, long dt, long deposit, long withdraw, long balance){
         boolean result = false;
         int x = -1;
         x = accMapper.updateBankAccHistoryMemo(compId, bank, account, dt, memo, deposit, withdraw, balance, desc);
-        logger.error("|||||||||||||||||||||||||||||||||" + x);
         result = x > 0;
         return result;
     }
 
-    // 은행 거래내역의 메모를 업데이트하는 메서드
-    public boolean setBankAccMemo2(String compId, String bank, String account, String memo, String desc, long dt, long deposit, long withdraw, long balance){
+    // 은행 거래내역을 추가하는 메소드
+    public boolean addBankDetail(String compId, String bank, String account, long dt, String desc, long deposit, long withdraw, long balance, String branch, String remark){
         boolean result = false;
-        String sql = "UPDATE bizcore.bank_account_ledger SET memo2 = ? WHERE deleted IS NULL AND compId = ? AND bank = ? AND account = ? AND UNIX_TIMESTAMP(dt)*1000 = ? AND deposit = ? AND withdraw = ? AND balance = ? AND `desc` = ?";
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
         int x = -1;
-
-        logger.error("||||||||||||||||||||||||||||||||| compId : " + compId);
-        logger.error("||||||||||||||||||||||||||||||||| bank : " + bank);
-        logger.error("||||||||||||||||||||||||||||||||| account : " + account);
-        logger.error("||||||||||||||||||||||||||||||||| memo : " + memo);
-        logger.error("||||||||||||||||||||||||||||||||| deposit : " + deposit);
-        logger.error("||||||||||||||||||||||||||||||||| withdraw : " + withdraw);
-        logger.error("||||||||||||||||||||||||||||||||| balance : " + balance);
-        logger.error("||||||||||||||||||||||||||||||||| desc : " + desc);
-        logger.error("||||||||||||||||||||||||||||||||| dt : " + dt);
-        
-        try{
-            conn = sqlSession.getConnection();
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, memo);
-            pstmt.setString(2, compId);
-            pstmt.setString(3, bank);
-            pstmt.setString(4, account);
-            pstmt.setLong(5, dt);
-            pstmt.setLong(6, deposit);
-            pstmt.setLong(7, withdraw);
-            pstmt.setLong(8, balance);
-            pstmt.setString(9, desc);
-            x = pstmt.executeUpdate();
-        }catch(SQLException e){e.printStackTrace();}
-
-        logger.error("||||||||||||||||||||||||||||||||| 2 : " + x);
+        accMapper.addDetail(compId, bank, account, new Date(dt - 32400000), desc, deposit, withdraw, balance, branch, remark);
         result = x > 0;
         return result;
     }
