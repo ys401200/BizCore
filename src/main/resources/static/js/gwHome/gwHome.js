@@ -56,7 +56,7 @@ function getWaitListCount() {
   $(btns[0]).html("결재 대기 문서 (" + storage.waitList.wait.length + ")");
   $(btns[1]).html("결재 예정 문서 (" + storage.waitList.due.length + ")")
   $(btns[2]).html("결재 수신 문서 (" + storage.waitList.receive.length + ")")
-  $(btns[3]).html("참조/열람 대기 문서 (" + storage.waitList.refer.length + ")") 
+  $(btns[3]).html("참조/열람 대기 문서 (" + storage.waitList.refer.length + ")")
 }
 
 function drawWaitCard(container) {
@@ -317,6 +317,33 @@ function cardClick(obj) {
   let docNo = val.split("!!!")[1];
   $(".waitCard").click((location.href = "/gw/" + middle + "/" + docNo));
 }
+
+
+
+
+function detailView(obj) {
+  let type = ["wait", "due", "receive", "refer"];
+  let docNo = obj.dataset.id;
+  let middle = type[storage.container];
+  location.href = "/gw/" + middle + "/" + docNo;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
