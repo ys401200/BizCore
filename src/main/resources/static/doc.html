@@ -1151,10 +1151,13 @@
                                     num = storage.docList[i][docListTitle[j]];
                                     let name = storage.user[num].userName;
                                     $("#" + id + "_" + docListTitle[j]).val(name);
+                                    $("#" + id + "_" + docListTitle[j]).attr("data-detail", name);
+
                                 }
                                 else if (docListTitle[j] == "created") {
                                     let date = getYmdSlash(storage.docList[i][docListTitle[j]]);
                                     $("#" + id + "_" + docListTitle[j]).val(date);
+                                    $("#" + id + "_" + docListTitle[j]).attr("data-detail", date);
 
                                 } else if (docListTitle[j] == "content") {
                                     $("#" + id + "_" + docListTitle[j]).val(storage.docList[i][docListTitle[j]]);
@@ -1163,21 +1166,26 @@
                                 } else if (docListTitle[j] == "customer") {
                                     if (storage.docList[i][docListTitle[j]] == 0) {
                                         $("#" + id + "_infoCustomer").val("");
+                                        storage.custResult = "";
                                     } else {
+                                        storage.custResult = storage.docList[i][docListTitle[j]];
+                                        $("#" + id + "_infoCustomer").attr("data-detail", storage.customer[storage.docList[i][docListTitle[j]]].name);
                                         $("#" + id + "_infoCustomer").val(storage.customer[storage.docList[i][docListTitle[j]]].name);
-
                                     }
+
 
                                 } else if (docListTitle[j] == "sopp") {
                                     if (storage.docList[i][docListTitle[j]] == 0) {
                                         $("#" + id + "_sopp").val("");
+                                        storage.soppResult = "";
                                     } else {
                                         let sopp;
                                         for (let i = 0; i < storage.soppList.length; i++) {
+                                            storage.soppResult = storage.docList[i][docListTitle[j]];
                                             if (storage.soppList[i].no == storage.docList[i][docListTitle[j]])
                                                 sopp = storage.soppList[i].title;
                                         }
-
+                                        $("#" + id + "_sopp").attr("data-detail", sopp);
                                         $("#" + id + "_sopp").val(sopp);
                                     }
 
@@ -1185,6 +1193,7 @@
                                     if (storage.docList[i][docListTitle[j]] == 0) {
                                         $("#" + id + "_" + docListTitle[j]).val("");
                                     } else {
+                                        $("#" + id + "_" + docListTitle[j]).attr("data-detail", storage.docList[i][docListTitle[j]]);
                                         $("#" + id + "_" + docListTitle[j]).val(storage.docList[i][docListTitle[j]]);
                                     }
 
@@ -1210,9 +1219,6 @@
                             "<div class='dateBorder'><input class='inputsAuto " + id + "_approval_approved' type='text' data-detail='' ></div></div></div>" +
                             "</div>"
 
-
-
-
                         );
 
 
@@ -1224,6 +1230,7 @@
                                         let app = storage.user[info.appData[i][appTitles[j]]].userName;
                                         $("." + id + "_" + appTitles[j]).val(app);
                                     } else if (appTitles[j] == 'status') {
+
                                         let status = storage.appStatus[info.appData[i][appTitles[j]]];
                                         if (status == '승인요청') {
                                             $("." + id + "_" + "writer_" + appTitles[j]).val("승인");
@@ -1232,13 +1239,11 @@
                                             request = storage.user[request].userName;
                                             //본인반려 
                                             if (request == $("#" + id + "_writer").val()) {
-                                                $("." + id + "_writer_" + appTitles[j]).val("회수");
+                                                $("." + id + "_writer_" + appTitles[j]).val("");
                                                 $("." + id + "_" + appTitles[j]).val("");
                                                 $("." + id + "_approval").val('이승우');
+                                                $("." + id + "_writer_approved").val("");
 
-                                                let approved = $("#" + id + "_approved").val();
-                                                $("." + id + "_writer_approved").val(approved);
-                                                $("." + id + "_approved").val("");
                                             } else if (request == '이승우') {
                                                 $("." + id + "_approval").val('이승우');
                                                 $("." + id + "_approval_status").val('반려');
@@ -1252,6 +1257,12 @@
                                                 $("." + id + "_" + appTitles[j]).val(status);
                                                 $("." + id + "_writer_" + appTitles[j]).val('승인');
                                             }
+
+                                        } else if (status == '임시저장') {
+                                            alert("임시저장");
+                                            $("." + id + "_writer_status").val("");
+                                            $("." + id + "_approval").val('이승우');
+                                            $("." + id + "_writer_approved").val("");
 
                                         } else {
                                             $("." + id + "_" + appTitles[j]).val(status);
@@ -1316,6 +1327,52 @@
                         totalCount = totalCount.toLocaleString();
                         $(".insertedTotal").val(totalCount);
 
+
+
+
+
+
+
+
+                        let title = $("#" + id + "_title").val();
+                        let content = $("#" + id + "_content").val();
+                        let readable = "dept";
+                        let dept = storage.user[num].deptId[0];
+                        let sopp = storage.soppResult;
+                        let customer = storage.custResult;
+                        let attached = storage.docInfo.files;
+                        let appLine = [[2, "10002"]];
+                        let appDoc = $(".app_preview").html();
+                        let formId = id;
+                        let temp = null;
+                        let related = {
+                            "fnc": null,
+                            "type": null,
+                            "start": null,
+                            "end": null,
+                            "parent": null,
+                            "prev": null,
+                            "next": null,
+                            "children": null
+                        }
+
+                        let data = {
+                            "title": title,
+                            "sopp": sopp + "",
+                            "dept": dept,
+                            "customer": customer + "",
+                            "attached": attached,
+                            "content": content,
+                            "appLine": appLine,
+                            "appDoc": appDoc,
+                            "formId": formId,
+                            "readable": readable,
+                            "temp": temp,
+                            "related": related
+                        };
+
+
+                        console.log(data);
 
 
 
@@ -1337,10 +1394,13 @@
                                     num = storage.docList[i][docListTitle[j]];
                                     let name = storage.user[num].userName;
                                     $("#" + id + "_" + docListTitle[j]).val(name);
+                                    $("#" + id + "_" + docListTitle[j]).attr("data-detail", name);
+
                                 }
                                 else if (docListTitle[j] == "created") {
                                     let date = getYmdSlash(storage.docList[i][docListTitle[j]]);
                                     $("#" + id + "_" + docListTitle[j]).val(date);
+                                    $("#" + id + "_" + docListTitle[j]).attr("data-detail", date);
 
                                 } else if (docListTitle[j] == "content") {
                                     $("#" + id + "_" + docListTitle[j]).val(storage.docList[i][docListTitle[j]]);
@@ -1349,21 +1409,26 @@
                                 } else if (docListTitle[j] == "customer") {
                                     if (storage.docList[i][docListTitle[j]] == 0) {
                                         $("#" + id + "_infoCustomer").val("");
+                                        storage.custResult = "";
                                     } else {
+                                        storage.custResult = storage.docList[i][docListTitle[j]];
+                                        $("#" + id + "_infoCustomer").attr("data-detail", storage.customer[storage.docList[i][docListTitle[j]]].name);
                                         $("#" + id + "_infoCustomer").val(storage.customer[storage.docList[i][docListTitle[j]]].name);
-
                                     }
+
 
                                 } else if (docListTitle[j] == "sopp") {
                                     if (storage.docList[i][docListTitle[j]] == 0) {
                                         $("#" + id + "_sopp").val("");
+                                        storage.soppResult = "";
                                     } else {
                                         let sopp;
                                         for (let i = 0; i < storage.soppList.length; i++) {
+                                            storage.soppResult = storage.docList[i][docListTitle[j]];
                                             if (storage.soppList[i].no == storage.docList[i][docListTitle[j]])
                                                 sopp = storage.soppList[i].title;
                                         }
-
+                                        $("#" + id + "_sopp").attr("data-detail", sopp);
                                         $("#" + id + "_sopp").val(sopp);
                                     }
 
@@ -1371,6 +1436,7 @@
                                     if (storage.docList[i][docListTitle[j]] == 0) {
                                         $("#" + id + "_" + docListTitle[j]).val("");
                                     } else {
+                                        $("#" + id + "_" + docListTitle[j]).attr("data-detail", storage.docList[i][docListTitle[j]]);
                                         $("#" + id + "_" + docListTitle[j]).val(storage.docList[i][docListTitle[j]]);
                                     }
 
@@ -1396,11 +1462,6 @@
                             "<div class='dateBorder'><input class='inputsAuto " + id + "_approval_approved' type='text' data-detail='' ></div></div></div>" +
                             "</div>"
 
-
-
-
-
-
                         );
 
 
@@ -1412,6 +1473,7 @@
                                         let app = storage.user[info.appData[i][appTitles[j]]].userName;
                                         $("." + id + "_" + appTitles[j]).val(app);
                                     } else if (appTitles[j] == 'status') {
+
                                         let status = storage.appStatus[info.appData[i][appTitles[j]]];
                                         if (status == '승인요청') {
                                             $("." + id + "_" + "writer_" + appTitles[j]).val("승인");
@@ -1420,13 +1482,11 @@
                                             request = storage.user[request].userName;
                                             //본인반려 
                                             if (request == $("#" + id + "_writer").val()) {
-                                                $("." + id + "_writer_" + appTitles[j]).val("회수");
+                                                $("." + id + "_writer_" + appTitles[j]).val("");
                                                 $("." + id + "_" + appTitles[j]).val("");
                                                 $("." + id + "_approval").val('이승우');
+                                                $("." + id + "_writer_approved").val("");
 
-                                                let approved = $("#" + id + "_approved").val();
-                                                $("." + id + "_writer_approved").val(approved);
-                                                $("." + id + "_approved").val("");
                                             } else if (request == '이승우') {
                                                 $("." + id + "_approval").val('이승우');
                                                 $("." + id + "_approval_status").val('반려');
@@ -1440,6 +1500,12 @@
                                                 $("." + id + "_" + appTitles[j]).val(status);
                                                 $("." + id + "_writer_" + appTitles[j]).val('승인');
                                             }
+
+                                        } else if (status == '임시저장') {
+                                            alert("임시저장");
+                                            $("." + id + "_writer_status").val("");
+                                            $("." + id + "_approval").val('이승우');
+                                            $("." + id + "_writer_approved").val("");
 
                                         } else {
                                             $("." + id + "_" + appTitles[j]).val(status);
@@ -1493,6 +1559,8 @@
 
 
                         $(".insertedDataList").html(dataHtml);
+
+
                         let totalCount = 0;
                         for (let i = 0; i < $("." + id + "_total").length; i++) {
                             totalCount += Number(
@@ -1501,6 +1569,53 @@
                         }
                         totalCount = totalCount.toLocaleString();
                         $(".insertedTotal").val(totalCount);
+
+
+
+
+
+
+
+
+                        let title = $("#" + id + "_title").val();
+                        let content = $("#" + id + "_content").val();
+                        let readable = "dept";
+                        let dept = storage.user[num].deptId[0];
+                        let sopp = storage.soppResult;
+                        let customer = storage.custResult;
+                        let attached = storage.docInfo.files;
+                        let appLine = [[2, "10002"]];
+                        let appDoc = $(".app_preview").html();
+                        let formId = id;
+                        let temp = null;
+                        let related = {
+                            "fnc": null,
+                            "type": null,
+                            "start": null,
+                            "end": null,
+                            "parent": null,
+                            "prev": null,
+                            "next": null,
+                            "children": null
+                        }
+
+                        let data = {
+                            "title": title,
+                            "sopp": sopp + "",
+                            "dept": dept,
+                            "customer": customer + "",
+                            "attached": attached,
+                            "content": content,
+                            "appLine": appLine,
+                            "appDoc": appDoc,
+                            "formId": formId,
+                            "readable": readable,
+                            "temp": temp,
+                            "related": related
+                        };
+
+
+                        console.log(data);
 
 
 

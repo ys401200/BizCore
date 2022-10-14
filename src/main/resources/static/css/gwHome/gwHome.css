@@ -235,3 +235,10 @@ button {
 .listDiv .gridContent {
 	grid-template-columns: 10% 10% 20% 30% 15% 15%;
 }
+
+.noListDefault {
+	text-align: center;
+	color: gray;
+	margin: 8em 0;
+	width: 99%;
+}
