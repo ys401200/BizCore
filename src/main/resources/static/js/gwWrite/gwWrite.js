@@ -797,6 +797,11 @@ function createLine() {
       lgcTotal = lineGrid[3].clientWidth;
     }
 
+  } else {
+    for (let i = 0; i < lineGrid.length; i++) {
+      lgcTotal += lineGrid[i].clientWidth;
+    }
+
   }
 
   if (lgcTotal > infoLength) {
@@ -879,20 +884,20 @@ function reportInsert() {
 
   let soppVal = $("#" + formId + "_sopp").val();
   let customerVal = $("#" + formId + "_infoCustomer").val();
-  let soppResult;
+  let soppResult = "";
   for (let x in storage.soppList) {
-    if ((soppVal != undefined || soppVal != "") && storage.soppList[x].title === soppVal) {
+    if (storage.soppList[x].title == soppVal) {
+
       soppResult = storage.soppList[x].no + "";
-    } else {
-      soppResult = "";
+
     }
   }
-  let cusResult;
+
+
+  let cusResult = "";
   for (let x in storage.customer) {
-    if (customerVal != undefined || customerVal != "" || storage.customer[x].title === customerVal) {
+    if (storage.customer[x].name == customerVal) {
       cusResult = storage.customer[x].no + "";
-    } else {
-      cusResult = "";
     }
   }
 
@@ -968,9 +973,9 @@ function reportInsert() {
 
   let data = {
     "title": title,
-    "sopp": soppResult + "",
+    "sopp": soppResult,
     "dept": dept,
-    "customer": cusResult + "",
+    "customer": cusResult,
     "attached": storage.attachedList === undefined ? [] : storage.attachedList,
     "content": content,
     "appLine": appLine,

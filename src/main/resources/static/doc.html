@@ -708,12 +708,12 @@
                             "<div class='twoBorder'><input class='inputsAuto' value ='" + storage.userRank[storage.user[num].rank][0] + "'></div>" +
                             "<div class='twoBorder'><input class='inputsAuto " + id + "_writer' type='text'  data-detail='" + num + "' value='" + storage.user[num].userName + "'></div>" +
                             "<div class='twoBorder'><input class='inputsAuto " + id + "_writer_status'  data-detail='' type='text' ></div>" +
-                            "<div class='dateBorder'><input class='inputsAuto " + id + "_writer_approved'  data-detail='' type='text' value='" + $("#" + id + '_created').val() + "'></div></div></div>" +
+                            "<div class='dateBorder'><input class='inputsAuto " + id + "_writer_approved'  data-detail='' type='text' value=''></div></div></div>" +
 
                             "<div class='lineGrid'><div class='lineTitle'>결재</div>" +
                             "<div class='lineSet'>" +
                             "<div class='twoBorder'><input class='inputsAuto " + id + "_approval_position' value='대표' ></div>" +
-                            "<div class='twoBorder'><input class='inputsAuto " + id + "_approval' type='text' data-detail='10' value='이승우' ></div>" +
+                            "<div class='twoBorder'><input class='inputsAuto " + id + "_approval' type='text' data-detail='10002' value='이승우' ></div>" +
                             "<div class='twoBorder'><input class='inputsAuto " + id + "_approval_status' data-detail='' type='text' ></div>" +
                             "<div class='dateBorder'><input class='inputsAuto " + id + "_approval_approved' type='text' data-detail='' ></div></div></div>" +
                             "</div>"
@@ -732,7 +732,11 @@
 
                                         let status = storage.appStatus[info.appData[i][appTitles[j]]];
                                         if (status == '승인요청') {
-                                            $("." + id + "_" + "writer_" + appTitles[j]).val("승인");
+                                            $("." + id + "_" + "writer_status").val("승인");
+                                            $("." + id + "_" + "writer_status").attr("data-detail", "승인");
+                                            $("." + id + "_writer_approved").val($("#" + id + "_created").val());
+                                            $("." + id + "_writer_approved").attr("data-detail", $("#" + id + "_created").val());
+
                                         } else if (status == '반려') {
                                             let request = info.appData[i].request;
                                             request = storage.user[request].userName;
@@ -742,10 +746,17 @@
                                                 $("." + id + "_" + appTitles[j]).val("");
                                                 $("." + id + "_approval").val('이승우');
                                                 $("." + id + "_writer_approved").val("");
-
+                                                // 대표 반려인 경우 
                                             } else if (request == '이승우') {
+                                                $("." + id + "_writer_status").val('승인');
+                                                $("." + id + "_writer_status").attr("data-detail", "승인");
+                                                $("." + id + "_writer_approved").val($("#" + id + "_created").val());
+                                                $("." + id + "_writer_approved").attr("data-detail", $("#" + id + "_created").val());
+
                                                 $("." + id + "_approval").val('이승우');
                                                 $("." + id + "_approval_status").val('반려');
+                                                $("." + id + "_approval_status").attr("data-detail", "반려");
+
                                                 let approved;
                                                 if (storage.docInfo.appData[0].approved == null) {
                                                     approved = "";
@@ -753,20 +764,22 @@
                                                     approved = getYmdSlash(storage.docInfo.appData[0].approved)
                                                 }
                                                 $("." + id + "_approval_approved").val(approved);
-                                                $("." + id + "_" + appTitles[j]).val(status);
-                                                $("." + id + "_writer_" + appTitles[j]).val('승인');
+                                                $("." + id + "_approval_approved").attr("data-detail", approved);
                                             }
 
                                         } else if (status == '임시저장') {
-                                            alert("임시저장");
                                             $("." + id + "_writer_status").val("");
-                                            $("." + id + "_approval").val('이승우');
                                             $("." + id + "_writer_approved").val("");
-
+                                            $("." + id + "_approval").val('이승우');
+                                            // 승인인 경우 
                                         } else {
-                                            $("." + id + "_" + appTitles[j]).val(status);
-                                            $("." + id + "_writer_" + appTitles[j]).val('승인');
+                                            $("." + id + "_writer_status").val('승인');
+                                            $("." + id + "_writer_status").attr("data-detail", "승인");
+                                            $("." + id + "_writer_approved").val($("#" + id + "_created").val());
+                                            $("." + id + "_writer_approved").attr("data-detail", $("#" + id + "_created").val());
                                             $("." + id + "_approval_status").val('승인');
+                                            $("." + id + "_approval_status").attr("data-detail", "승인");
+
                                             let approved;
                                             if (storage.docInfo.appData[0].approved == null) {
                                                 approved = "";
@@ -774,18 +787,19 @@
                                                 approved = getYmdSlash(storage.docInfo.appData[0].approved)
                                             }
                                             $("." + id + "_approval_approved").val(approved);
+                                            $("." + id + "_approval_approved").attr("data-detail", approved);
                                         }
-
-                                    } else if (appTitles[j] == 'approved') {
-                                        let date = getYmdSlash(info.appData[i][appTitles[j]]);
-                                        $("." + id + "_" + appTitles[j]).val(date);
-
                                     }
+                                    // } else if (appTitles[j] == 'approved') {
+                                    //     let date = getYmdSlash(info.appData[i][appTitles[j]]);
+                                    //     $("." + id + "_" + appTitles[j]).val(date);
+                                    //     $("." + id + "_" + appTitles[j]).attr("data-detail", date);
 
-
-                                    else {
-                                        $("#" + id + "_" + appTitles[j]).val(info.appData[i][appTitles[j]]);
-                                    }
+                                    // }
+                                    // else {
+                                    //     $("#" + id + "_" + appTitles[j]).val(info.appData[i][appTitles[j]]);
+                                    //     $("#" + id + "_" + appTitles[j]).attr("data-detail", info.appData[i][appTitles[j]]);
+                                    // }
 
                                 }
                             }
@@ -958,7 +972,7 @@
                                 "<div class='twoBorder'><input class='inputsAuto' value ='" + storage.userRank[storage.user[num].rank][0] + "'></div>" +
                                 "<div class='twoBorder'><input class='inputsAuto " + id + "_writer' type='text'  data-detail='" + num + "' value='" + storage.user[num].userName + "'></div>" +
                                 "<div class='twoBorder'><input class='inputsAuto " + id + "_writer_status'  data-detail='' type='text' ></div>" +
-                                "<div class='dateBorder'><input class='inputsAuto " + id + "_writer_approved'  data-detail='' type='text' value='" + $("#" + id + '_created').val() + "'></div></div></div>" +
+                                "<div class='dateBorder'><input class='inputsAuto " + id + "_writer_approved'  data-detail='' type='text'></div></div></div>" +
 
                                 "<div class='lineGrid'><div class='lineTitle'>결재</div>" +
                                 "<div class='lineSet'>" +
@@ -1012,8 +1026,13 @@
                                     } else if (appTitles[j] == 'status') {
                                         let status = storage.appStatus[info.appData[i][appTitles[j]]];
                                         if (status == "승인요청") {
-                                            $("." + id + "_writer_" + appTitles[j]).val('승인');
-                                            $("." + id + "_examine_" + appTitles[j]).val('승인');
+                                            $("." + id + "_writer_status").val("승인");
+                                            $("." + id + "_writer_status").attr("data-detail", "승인");
+                                            $("." + id + "_writer_approved").val($("#" + id + "_created").val());
+                                            $("." + id + "_writer_approved").attr("data-detail", $("#" + id + "_created").val());
+
+                                            $("." + id + "_examine_status").val('승인');
+                                            $("." + id + "_examine_status").attr("data-detail", "승인");
                                             let approved;
                                             if (storage.docInfo.appData[0].approved == null) {
                                                 approved = "";
@@ -1021,78 +1040,106 @@
                                                 approved = getYmdSlash(storage.docInfo.appData[0].approved)
                                             }
                                             $("." + id + "_examine_approved").val(approved);
+                                            $("." + id + "_examine_approved").attr("data-detail", approved);
+
                                         } else if (status == "완료") {
-                                            $("." + id + "_" + appTitles[j]).val(status);
-                                            $("." + id + "_writer_" + appTitles[j]).val('승인');
-                                            $("." + id + "_examine_" + appTitles[j]).val('승인');
-                                            $("." + id + "_approval_" + appTitles[j]).val('승인');
+                                            //$("." + id + "_" + appTitles[j]).val(status);
+                                            $("." + id + "_writer_status").val('승인');
+                                            $("." + id + "_writer_status").attr("data-detail", "승인");
+
+                                            $("." + id + "_examine_status").val('승인');
+                                            $("." + id + "_examine_status").attr("data-detail", "승인");
+
+                                            $("." + id + "_approval_status").val('승인');
+                                            $("." + id + "_approval_status").attr("data-detail", "승인");
                                             let approved;
                                             if (storage.docInfo.appData[0].approved == null) {
                                                 approved = "";
                                             } else {
                                                 approved = getYmdSlash(storage.docInfo.appData[0].approved)
                                             }
+                                            $("." + id + "_writer_approved").val($("#" + id + "_created").val());
+                                            $("." + id + "_writer_approved").attr("data-detail", $("#" + id + "_created").val());
                                             $("." + id + "_examine_approved").val(approved);
                                             $("." + id + "_approval_approved").val(approved);
+                                            $("." + id + "_examine_approved").attr("data-detail", approved);
+                                            $("." + id + "_approval_approved").attr("data-detail", approved);
 
 
                                         } else if (status == '반려') {
-                                            let request = storage.user[info.appData[i].request].userName
+                                            let request = storage.user[info.appData[i].request].userName;
                                             if (request == $("." + id + "_writer").val()) {
                                                 alert("작성자 반려");
-                                                $("." + id + "_approval").val('이승우')
-                                                $("." + id + "_writer_" + appTitles[j]).val("회수");
-                                                let approved = "";
-                                                if (storage.docInfo.appData[0].approved != null) {
-                                                    approved = getYmdSlash(storage.docInfo.appData[0].approved);
-                                                }
-                                                $("." + id + "_writer_approved").val(approved);
-                                                $("." + id + "_approved").val("");
+                                                // $("." + id + "_approval").val('이승우')
+                                                // $("." + id + "_writer_status").val("");
+                                                // let approved = "";
+                                                // if (storage.docInfo.appData[0].approved != null) {
+                                                //     approved = getYmdSlash(storage.docInfo.appData[0].approved);
+                                                // }
+                                                // $("." + id + "_writer_approved").val(approved);
+                                                // $("." + id + "_approved").val("");
 
                                             } else if (request == '구민주') {
                                                 alert("구민주 반려");
+                                                // 구민주가 작성자인 경우 제외하는 것 적기 
                                                 $("." + id + "_approval").val('이승우')
-                                                $("." + id + "_writer_" + appTitles[j]).val('승인');
-                                                $("." + id + "_examine_status").val(status);
+                                                $("." + id + "_writer_status").val('승인');
+                                                $("." + id + "_examine_status").val("반려");
+                                                $("." + id + "_writer_status").attr("data-detail", "승인");
+                                                $("." + id + "_examine_status").attr("data-detail", "승인");
+
                                                 let approved = "";
                                                 if (storage.docInfo.appData[0].approved != null) {
                                                     approved = getYmdSlash(storage.docInfo.appData[0].approved);
                                                 }
                                                 $("." + id + "_examine_approved").val(approved);
-                                                $("." + id + "_approved").val("");
+                                                $("." + id + "_examine_approved").attr("data-detail", approved);
+                                                $("." + id + "_writer_approved").val($("#" + id + "_created").val());
+                                                $("." + id + "_writer_approved").attr("data-detail", $("#" + id + "_created").val());
 
                                             } else {
                                                 alert("대표님 반려")
                                                 $("." + id + "_approval").val('이승우')
                                                 $("." + id + "_approval_status").val('반려')
+                                                $("." + id + "_approval_status").attr("data-detail", "반려");
                                                 $("." + id + "_examine_status").val('승인');
-                                                $("." + id + "_writer_" + appTitles[j]).val('승인');
+                                                $("." + id + "_writer_status").val('승인');
+                                                $("." + id + "_writer_status").attr("data-detail", "승인");
+                                                $("." + id + "_examine_status").attr("data-detail", "승인");
+
                                                 let approved = "";
                                                 if (storage.docInfo.appData[0].approved != null) {
                                                     approved = getYmdSlash(storage.docInfo.appData[0].approved);
                                                 }
                                                 $("." + id + "_examine_approved").val(approved);
                                                 $("." + id + "_approval_approved").val(approved);
-                                                $("." + id + "_" + appTitles[j]).val(status);
+                                                $("." + id + "_examine_approved").attr("data-detail", approved);
+                                                $("." + id + "_approval_approved").attr("data-detail", approved);
+                                                $("." + id + "_writer_approved").val($("#" + id + "_created").val());
+                                                $("." + id + "_writer_approved").attr("data-detail", $("#" + id + "_created").val());
+
                                             }
 
                                         } else if (status == '검토요청') {
-                                            $("." + id + "_writer_" + appTitles[j]).val('승인');
+                                            $("." + id + "_writer_" + appTitles[j]).val("승인");
+                                            $("." + id + "_writer_" + appTitles[j]).attr("data-detail", "승인");
+                                            $("." + id + "_writer_approved").val($("#" + id + "_created").val());
+                                            $("." + id + "_writer_approved").attr("data-detail", $("#" + id + "_created").val());
                                         } else if (status == '임시저장') {
                                             $("." + id + "_writer_approved").val("");
 
                                         }
 
-
-                                    } else if (appTitles[j] == 'approved') {
-                                        let date = getYmdSlash(info.appData[i][appTitles[j]]);
-
-
-                                        $("." + id + "_" + appTitles[j]).val(date);
-
-                                    } else {
-                                        $("." + id + "_" + appTitles[j]).val(info.appData[i][appTitles[j]]);
                                     }
+                                    // } else if (appTitles[j] == 'approved') {
+                                    //     let date = getYmdSlash(info.appData[i][appTitles[j]]);
+
+
+                                    //     $("." + id + "_" + appTitles[j]).val(date);
+
+                                    // } else {
+                                    //     $("." + id + "_" + appTitles[j]).val(info.appData[i][appTitles[j]]);
+                                    // }
 
                                 }
                             }
@@ -1209,12 +1256,12 @@
                             "<div class='twoBorder'><input class='inputsAuto' value ='" + storage.userRank[storage.user[num].rank][0] + "'></div>" +
                             "<div class='twoBorder'><input class='inputsAuto " + id + "_writer' type='text'  data-detail='" + num + "' value='" + storage.user[num].userName + "'></div>" +
                             "<div class='twoBorder'><input class='inputsAuto " + id + "_writer_status'  data-detail='' type='text' ></div>" +
-                            "<div class='dateBorder'><input class='inputsAuto " + id + "_writer_approved'  data-detail='' type='text' value='" + $("#" + id + '_created').val() + "'></div></div></div>" +
+                            "<div class='dateBorder'><input class='inputsAuto " + id + "_writer_approved'  data-detail='' type='text' value=''></div></div></div>" +
 
                             "<div class='lineGrid'><div class='lineTitle'>결재</div>" +
                             "<div class='lineSet'>" +
                             "<div class='twoBorder'><input class='inputsAuto " + id + "_approval_position' value='대표' ></div>" +
-                            "<div class='twoBorder'><input class='inputsAuto " + id + "_approval' type='text' data-detail='10' value='이승우' ></div>" +
+                            "<div class='twoBorder'><input class='inputsAuto " + id + "_approval' type='text' data-detail='10002' value='이승우' ></div>" +
                             "<div class='twoBorder'><input class='inputsAuto " + id + "_approval_status' data-detail='' type='text' ></div>" +
                             "<div class='dateBorder'><input class='inputsAuto " + id + "_approval_approved' type='text' data-detail='' ></div></div></div>" +
                             "</div>"
@@ -1233,7 +1280,11 @@
 
                                         let status = storage.appStatus[info.appData[i][appTitles[j]]];
                                         if (status == '승인요청') {
-                                            $("." + id + "_" + "writer_" + appTitles[j]).val("승인");
+                                            $("." + id + "_" + "writer_status").val("승인");
+                                            $("." + id + "_" + "writer_status").attr("data-detail", "승인");
+                                            $("." + id + "_writer_approved").val($("#" + id + "_created").val());
+                                            $("." + id + "_writer_approved").attr("data-detail", $("#" + id + "_created").val());
+
                                         } else if (status == '반려') {
                                             let request = info.appData[i].request;
                                             request = storage.user[request].userName;
@@ -1243,10 +1294,17 @@
                                                 $("." + id + "_" + appTitles[j]).val("");
                                                 $("." + id + "_approval").val('이승우');
                                                 $("." + id + "_writer_approved").val("");
-
+                                                // 대표 반려인 경우 
                                             } else if (request == '이승우') {
+                                                $("." + id + "_writer_status").val('승인');
+                                                $("." + id + "_writer_status").attr("data-detail", "승인");
+                                                $("." + id + "_writer_approved").val($("#" + id + "_created").val());
+                                                $("." + id + "_writer_approved").attr("data-detail", $("#" + id + "_created").val());
+
                                                 $("." + id + "_approval").val('이승우');
                                                 $("." + id + "_approval_status").val('반려');
+                                                $("." + id + "_approval_status").attr("data-detail", "반려");
+
                                                 let approved;
                                                 if (storage.docInfo.appData[0].approved == null) {
                                                     approved = "";
@@ -1254,20 +1312,22 @@
                                                     approved = getYmdSlash(storage.docInfo.appData[0].approved)
                                                 }
                                                 $("." + id + "_approval_approved").val(approved);
-                                                $("." + id + "_" + appTitles[j]).val(status);
-                                                $("." + id + "_writer_" + appTitles[j]).val('승인');
+                                                $("." + id + "_approval_approved").attr("data-detail", approved);
                                             }
 
                                         } else if (status == '임시저장') {
-                                            alert("임시저장");
                                             $("." + id + "_writer_status").val("");
-                                            $("." + id + "_approval").val('이승우');
                                             $("." + id + "_writer_approved").val("");
-
+                                            $("." + id + "_approval").val('이승우');
+                                            // 승인인 경우 
                                         } else {
-                                            $("." + id + "_" + appTitles[j]).val(status);
-                                            $("." + id + "_writer_" + appTitles[j]).val('승인');
+                                            $("." + id + "_writer_status").val('승인');
+                                            $("." + id + "_writer_status").attr("data-detail", "승인");
+                                            $("." + id + "_writer_approved").val($("#" + id + "_created").val());
+                                            $("." + id + "_writer_approved").attr("data-detail", $("#" + id + "_created").val());
                                             $("." + id + "_approval_status").val('승인');
+                                            $("." + id + "_approval_status").attr("data-detail", "승인");
+
                                             let approved;
                                             if (storage.docInfo.appData[0].approved == null) {
                                                 approved = "";
@@ -1275,18 +1335,19 @@
                                                 approved = getYmdSlash(storage.docInfo.appData[0].approved)
                                             }
                                             $("." + id + "_approval_approved").val(approved);
+                                            $("." + id + "_approval_approved").attr("data-detail", approved);
                                         }
-
-                                    } else if (appTitles[j] == 'approved') {
-                                        let date = getYmdSlash(info.appData[i][appTitles[j]]);
-                                        $("." + id + "_" + appTitles[j]).val(date);
-
                                     }
+                                    // } else if (appTitles[j] == 'approved') {
+                                    //     let date = getYmdSlash(info.appData[i][appTitles[j]]);
+                                    //     $("." + id + "_" + appTitles[j]).val(date);
+                                    //     $("." + id + "_" + appTitles[j]).attr("data-detail", date);
 
-
-                                    else {
-                                        $("#" + id + "_" + appTitles[j]).val(info.appData[i][appTitles[j]]);
-                                    }
+                                    // }
+                                    // else {
+                                    //     $("#" + id + "_" + appTitles[j]).val(info.appData[i][appTitles[j]]);
+                                    //     $("#" + id + "_" + appTitles[j]).attr("data-detail", info.appData[i][appTitles[j]]);
+                                    // }
 
                                 }
                             }
@@ -1452,12 +1513,12 @@
                             "<div class='twoBorder'><input class='inputsAuto' value ='" + storage.userRank[storage.user[num].rank][0] + "'></div>" +
                             "<div class='twoBorder'><input class='inputsAuto " + id + "_writer' type='text'  data-detail='" + num + "' value='" + storage.user[num].userName + "'></div>" +
                             "<div class='twoBorder'><input class='inputsAuto " + id + "_writer_status'  data-detail='' type='text' ></div>" +
-                            "<div class='dateBorder'><input class='inputsAuto " + id + "_writer_approved'  data-detail='' type='text' value='" + $("#" + id + '_created').val() + "'></div></div></div>" +
+                            "<div class='dateBorder'><input class='inputsAuto " + id + "_writer_approved'  data-detail='' type='text' value=''></div></div></div>" +
 
                             "<div class='lineGrid'><div class='lineTitle'>결재</div>" +
                             "<div class='lineSet'>" +
                             "<div class='twoBorder'><input class='inputsAuto " + id + "_approval_position' value='대표' ></div>" +
-                            "<div class='twoBorder'><input class='inputsAuto " + id + "_approval' type='text' data-detail='10' value='이승우' ></div>" +
+                            "<div class='twoBorder'><input class='inputsAuto " + id + "_approval' type='text' data-detail='10002' value='이승우' ></div>" +
                             "<div class='twoBorder'><input class='inputsAuto " + id + "_approval_status' data-detail='' type='text' ></div>" +
                             "<div class='dateBorder'><input class='inputsAuto " + id + "_approval_approved' type='text' data-detail='' ></div></div></div>" +
                             "</div>"
@@ -1476,7 +1537,11 @@
 
                                         let status = storage.appStatus[info.appData[i][appTitles[j]]];
                                         if (status == '승인요청') {
-                                            $("." + id + "_" + "writer_" + appTitles[j]).val("승인");
+                                            $("." + id + "_" + "writer_status").val("승인");
+                                            $("." + id + "_" + "writer_status").attr("data-detail", "승인");
+                                            $("." + id + "_writer_approved").val($("#" + id + "_created").val());
+                                            $("." + id + "_writer_approved").attr("data-detail", $("#" + id + "_created").val());
+
                                         } else if (status == '반려') {
                                             let request = info.appData[i].request;
                                             request = storage.user[request].userName;
@@ -1486,10 +1551,17 @@
                                                 $("." + id + "_" + appTitles[j]).val("");
                                                 $("." + id + "_approval").val('이승우');
                                                 $("." + id + "_writer_approved").val("");
-
+                                                // 대표 반려인 경우 
                                             } else if (request == '이승우') {
+                                                $("." + id + "_writer_status").val('승인');
+                                                $("." + id + "_writer_status").attr("data-detail", "승인");
+                                                $("." + id + "_writer_approved").val($("#" + id + "_created").val());
+                                                $("." + id + "_writer_approved").attr("data-detail", $("#" + id + "_created").val());
+
                                                 $("." + id + "_approval").val('이승우');
                                                 $("." + id + "_approval_status").val('반려');
+                                                $("." + id + "_approval_status").attr("data-detail", "반려");
+
                                                 let approved;
                                                 if (storage.docInfo.appData[0].approved == null) {
                                                     approved = "";
@@ -1497,20 +1569,22 @@
                                                     approved = getYmdSlash(storage.docInfo.appData[0].approved)
                                                 }
                                                 $("." + id + "_approval_approved").val(approved);
-                                                $("." + id + "_" + appTitles[j]).val(status);
-                                                $("." + id + "_writer_" + appTitles[j]).val('승인');
+                                                $("." + id + "_approval_approved").attr("data-detail", approved);
                                             }
 
                                         } else if (status == '임시저장') {
-                                            alert("임시저장");
                                             $("." + id + "_writer_status").val("");
-                                            $("." + id + "_approval").val('이승우');
                                             $("." + id + "_writer_approved").val("");
-
+                                            $("." + id + "_approval").val('이승우');
+                                            // 승인인 경우 
                                         } else {
-                                            $("." + id + "_" + appTitles[j]).val(status);
-                                            $("." + id + "_writer_" + appTitles[j]).val('승인');
+                                            $("." + id + "_writer_status").val('승인');
+                                            $("." + id + "_writer_status").attr("data-detail", "승인");
+                                            $("." + id + "_writer_approved").val($("#" + id + "_created").val());
+                                            $("." + id + "_writer_approved").attr("data-detail", $("#" + id + "_created").val());
                                             $("." + id + "_approval_status").val('승인');
+                                            $("." + id + "_approval_status").attr("data-detail", "승인");
+
                                             let approved;
                                             if (storage.docInfo.appData[0].approved == null) {
                                                 approved = "";
@@ -1518,18 +1592,19 @@
                                                 approved = getYmdSlash(storage.docInfo.appData[0].approved)
                                             }
                                             $("." + id + "_approval_approved").val(approved);
+                                            $("." + id + "_approval_approved").attr("data-detail", approved);
                                         }
-
-                                    } else if (appTitles[j] == 'approved') {
-                                        let date = getYmdSlash(info.appData[i][appTitles[j]]);
-                                        $("." + id + "_" + appTitles[j]).val(date);
-
                                     }
+                                    // } else if (appTitles[j] == 'approved') {
+                                    //     let date = getYmdSlash(info.appData[i][appTitles[j]]);
+                                    //     $("." + id + "_" + appTitles[j]).val(date);
+                                    //     $("." + id + "_" + appTitles[j]).attr("data-detail", date);
 
-
-                                    else {
-                                        $("#" + id + "_" + appTitles[j]).val(info.appData[i][appTitles[j]]);
-                                    }
+                                    // }
+                                    // else {
+                                    //     $("#" + id + "_" + appTitles[j]).val(info.appData[i][appTitles[j]]);
+                                    //     $("#" + id + "_" + appTitles[j]).attr("data-detail", info.appData[i][appTitles[j]]);
+                                    // }
 
                                 }
                             }
@@ -1616,9 +1691,6 @@
 
 
                         console.log(data);
-
-
-
                     }
 
 
@@ -1629,7 +1701,7 @@
             $(".inputsAuto").prop("readonly", true);
 
             $(".detailcontentbox").hide();
-            doDataSet();
+            // doDataSet();
             toReadMode();
         }
 
@@ -1659,12 +1731,15 @@
         }
 
         function doDataSet() {
-            let inputEl = document.getElementsByTagName("input");
-            for (let i = 0; i < inputEl.length; i++) {
-                inputEl[i].dataset.detail = inputEl[i].value;
+            let target = $(".app_preview")[0];
+            let inputsArr = target.getElementsByTagName("input");
+
+            for (let i = 0; i < inputsArr.length; i++) {
+                if (inputsArr[i].dataset.detail !== undefined) {
+                    inputsArr[i].value = inputsArr[i].dataset.detail;
+                }
             }
-            let textAreaEl = document.getElementsByTagName("textarea");
-            textAreaEl[0].dataset.detail = textAreaEl[0].value;
+
         }
 
 
