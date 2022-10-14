@@ -204,10 +204,7 @@ function drawCalendar(container){
     }
     endDate = new Date(endDate.getTime() - 86400000);
 
-    // 종료일 잡기
-    while(endDate.getDate() != 6){
-        endDate = new Date(endDate.getTime() + 86400000);
-    }
+    
 
     // 만들어진 달력 날짜에 해당하는 일정이 있는 경우 담아두기
     for(x1 = 0 ; x1 <= (endDate.getTime() - startDate.getTime()) / 86400000 ; x1++){
@@ -272,7 +269,7 @@ function drawCalendar(container){
 	html += "<div class=\"calendar_header\">목</div>";
 	html += "<div class=\"calendar_header\">금</div>";
 	html += "<div class=\"calendar_header\">토</div>";
-
+	
     for(x1 = 0 ; x1 < calArr.length ; x1++){
 		tempDate = calArr[x1].date; // 해당 셀의 날짜 객체를 가져 옮
         t = tempDate.getFullYear();
@@ -304,7 +301,7 @@ function drawCalendar(container){
 			}
             t = calArr[x1].slot[x2] === undefined ? undefined : storage.scheduleList[calArr[x1].slot[x2]] ; //임시변수에 스케줄 아이템을 담아둠
 			
-			if(x2 > 1){
+			if(x2 > 2){
 				html += "<div class=\"calendar_item" + (t === undefined ? " calendar_item_empty" : "") + (x3[0] ? " calendar_item_left" : "") + (x3[1] ? " calendar_item_right" : "") + "\"" + (t === undefined ? "" : "") + " data-id=" + (t === undefined ? '' : t.no) + " data-job=" + (t === undefined ? '' : t.job) + " onclick='" + (t === undefined ? 'eventStop();scheduleInsertForm("' + now + '");' : 'eventStop();calendarDetailView(this);') + "' data-sort=" + (t === undefined ? 0 : 1) + " style='display:none;'>" + (t === undefined ? "" : storage.user[t.writer].userName + " : " + t.title) + "</div>";
 			}else{
 				html += "<div class=\"calendar_item" + (t === undefined ? " calendar_item_empty" : "") + (x3[0] ? " calendar_item_left" : "") + (x3[1] ? " calendar_item_right" : "") + "\"" + (t === undefined ? "" : "") + " data-id=" + (t === undefined ? '' : t.no) + " data-job=" + (t === undefined ? '' : t.job) + " onclick='" + (t === undefined ? 'eventStop();scheduleInsertForm("' + now + '");' : 'eventStop();calendarDetailView(this);') + "' data-sort=" + (t === undefined ? 0 : 1) + ">" + (t === undefined ? "" : storage.user[t.writer].userName + " : " + t.title) + "</div>";
