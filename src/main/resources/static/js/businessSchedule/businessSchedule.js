@@ -601,9 +601,7 @@ function scheduleErrorList(){
 
 function scheduleInsertForm(getDate){
 	let html, dataArray;
-
 	dataArray = scheduleRadioInsert("sales", getDate);
-
 	html = detailViewForm(dataArray, "modal");
 
 	modal.show();
@@ -2062,6 +2060,7 @@ function calendarMore(e){
 	moreContentBody.children().show();
 	moreContentTitle.html(thisEle.parents(".calendar_cell").data("date"));
 	calendarMoreContent.show();
+	calendarMoreContent.draggable();
 }
 
 function moreContentClose(){
