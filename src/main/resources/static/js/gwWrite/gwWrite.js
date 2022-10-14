@@ -881,7 +881,7 @@ function reportInsert() {
   let customerVal = $("#" + formId + "_infoCustomer").val();
   let soppResult;
   for (let x in storage.soppList) {
-    if (soppVal != undefined || soppVal != "" || storage.soppList[x].title === soppVal) {
+    if ((soppVal != undefined || soppVal != "") && storage.soppList[x].title === soppVal) {
       soppResult = storage.soppList[x].no + "";
     } else {
       soppResult = "";

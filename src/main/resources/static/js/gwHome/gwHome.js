@@ -188,7 +188,7 @@ function drawWaitCardBtn() {
 
     } else {
       html += "<div class='defaultWaitCard'>대기 문서가 없습니다.</div>"
-
+      $(".waitPage").hide();
     }
 
     $(targets[j]).html(html);
