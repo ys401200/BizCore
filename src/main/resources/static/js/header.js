@@ -1422,7 +1422,6 @@ function createTabTradeList(result){
 	let html = "";
 
 	html = "<div class='tradeList' id='tabTradeList'>";
-
 	html += "<div class='tradeThirdFormTitle'>";
 	html += "<div class='tradeThirdTitleItem'>구분(등록/수정일)</div>";
 	html += "<div class='tradeThirdTitleItem'>거래처(매입/매출처)</div>";

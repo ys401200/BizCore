@@ -489,7 +489,7 @@ function contractSuccessView(result){
 	html += "<label class='tabItem' for='tabTech'>기술지원내역</label>";
 	html += "<input type='radio' id='tabSales' name='tabItem' data-content-id='tabSalesList' onclick='tabItemClick(this)'>";
 	html += "<label class='tabItem' for='tabSales'>영업활동내역</label>";
-	html += "</div><br/>";
+	html += "</div>";
 	html += detailViewForm(dataArray);
 	html += createTabTradeList(result.trades);
 	containerTitle.html(title);
