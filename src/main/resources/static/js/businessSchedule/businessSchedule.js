@@ -304,7 +304,7 @@ function drawCalendar(container){
 			}
             t = calArr[x1].slot[x2] === undefined ? undefined : storage.scheduleList[calArr[x1].slot[x2]] ; //임시변수에 스케줄 아이템을 담아둠
 			
-			if(x2 > 2){
+			if(x2 > 1){
 				html += "<div class=\"calendar_item" + (t === undefined ? " calendar_item_empty" : "") + (x3[0] ? " calendar_item_left" : "") + (x3[1] ? " calendar_item_right" : "") + "\"" + (t === undefined ? "" : "") + " data-id=" + (t === undefined ? '' : t.no) + " data-job=" + (t === undefined ? '' : t.job) + " onclick='" + (t === undefined ? 'eventStop();scheduleInsertForm("' + now + '");' : 'eventStop();calendarDetailView(this);') + "' data-sort=" + (t === undefined ? 0 : 1) + " style='display:none;'>" + (t === undefined ? "" : storage.user[t.writer].userName + " : " + t.title) + "</div>";
 			}else{
 				html += "<div class=\"calendar_item" + (t === undefined ? " calendar_item_empty" : "") + (x3[0] ? " calendar_item_left" : "") + (x3[1] ? " calendar_item_right" : "") + "\"" + (t === undefined ? "" : "") + " data-id=" + (t === undefined ? '' : t.no) + " data-job=" + (t === undefined ? '' : t.job) + " onclick='" + (t === undefined ? 'eventStop();scheduleInsertForm("' + now + '");' : 'eventStop();calendarDetailView(this);') + "' data-sort=" + (t === undefined ? 0 : 1) + ">" + (t === undefined ? "" : storage.user[t.writer].userName + " : " + t.title) + "</div>";
@@ -317,7 +317,7 @@ function drawCalendar(container){
 
 	setTimeout(() => {
 		$(".calendar_cell").each((index, item) => {
-			if($(item).children().not(".calendar_item_empty").length > 4){
+			if($(item).children().not(".calendar_item_empty").length > 3){
 				$(item).append("<div class=\"calendar_span_empty\" onclick=\"eventStop();scheduleInsertForm(" + now + ");\"><span data-flag=\"false\" onclick=\"eventStop();calendarMore(this);\">more →</span></div>");
 			}
 		});
@@ -2042,22 +2042,29 @@ function scheduleErrorDelete(){
 }
 
 function calendarMore(e){
-	if(!$(e).data("flag")){
-		$(e).text("← close");
-		$(e).data("flag", true);
-	}else{
-		$(e).text("more →");
-		$(e).data("flag", false);
-	}
+	let thisEle, moreContentBody, html = "", calendarMoreContent;
+	thisEle = $(e);
+	setItemParents = thisEle.parents(".calendar_cell");
+	calendarMoreContent = $(".calendarMoreContent");
+	calendarMoreContent.find(".moreContentBody").remove();
+	calendarMoreContent.css("width", parseInt(setItemParents.innerWidth() - 20) + "px");
+	calendarMoreContent.css("left", setItemParents.position().left + "px");
+	calendarMoreContent.css("top", setItemParents.position().top + "px");
+	calendarMoreContent.append("<div class=\"moreContentBody\"></div>");
+	
+	html = setItemParents.html();
 
-	$(e).parents(".calendar_cell").children(".calendar_item").not(".calendar_item_empty").each((index, item) => {
-		console.log($(item).css("display"));
-		if($(item).css("display") === "none"){
-			$(item).css("display", "flex");
-		}else if($(item).css("display") === "flex"){
-			$(item).css("display", "none");
-		}
-	});
+	moreContentBody = $(".moreContentBody");
+	moreContentBody.html(html);
+	moreContentBody.children().not(".calendar_item").remove();
+	moreContentBody.find(".calendar_item_empty").remove();
+	moreContentBody.children().show();
+	calendarMoreContent.show();
+}
+
+function moreContentClose(){
+	let calendarMoreContent = $(".calendarMoreContent");
+	calendarMoreContent.hide();
 }
 
 function searchInputKeyup(){

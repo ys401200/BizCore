@@ -10,6 +10,14 @@
     </select>
     <jsp:include page="./list.jsp" />
     <div class="calendarList">
+        <div class="calendarMoreContent">
+            <div class="moreContentHeader">
+                <div class="moreContentTitle">more</div>
+                <div class="moreContentClose" onclick="moreContentClose();">
+                    <i class="fa-solid fa-xmark"></i>
+                </div>
+            </div>
+        </div>
         <div class="calendarInfo">
             <button type="button" onclick="calendarPrev(this);"><img src="../images/common/privious-btn.png" alt="next"/></button>&nbsp;&nbsp;
             <div class="calendarYear"></div>
