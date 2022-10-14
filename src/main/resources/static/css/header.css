@@ -29,7 +29,7 @@
 }
 
 html, body{
-	font-family:'NanumSquareRound', 'NanumGothicLight', 'NanumGothic', 'NanumGothicBold', 'NanumGothicExtraBold', 'Noto Sans KR', 'S-CoreDream-3Light';
+	font-family:'NanumGothic', 'NanumSquareRound', 'NanumGothicLight', 'NanumGothicBold', 'NanumGothicExtraBold', 'Noto Sans KR', 'S-CoreDream-3Light','맑은 고딕';
 	background-color: #F7F7F9;
 	margin: 0;
 	height: 100%;
@@ -146,14 +146,19 @@ button, select, input[type="text"], input[type="date"]{
 
 .gridContent .gridContentItem:not(:last-child){
 	overflow: hidden;
-	border-top: 1px solid #E0E0E0;
-	border-right: 1px solid #E0E0E0;
+	border: 1px solid #e0e4e9;
+	margin:0.5px;
+	/* border-top: 1px solid #e0e4e9; */
+	/* border-right: 1px solid #E0E0E0; */
+	padding:8px;
 }
 
 .gridContent .gridContentItem:last-child{
 	overflow: hidden;
-	border-top: 1px solid #D9D9D9;
-	border-right: 0;
+	border: 1px solid #e0e4e9;
+	margin:0.5px;
+	/* border-top: 1px solid #D9D9D9; */
+	/* border-right: 0; */
 }
 
 .grid_default_text_align_center{
@@ -161,23 +166,25 @@ button, select, input[type="text"], input[type="date"]{
 	align-items: center;
 	justify-content: center;
 	overflow: hidden;
-	font-size:14px;
+	/* font-size:13px; 중복*/
 }
 
 .grid_default_text_align_left{
 	display: flex;
 	align-items: center;
     justify-content: left;
-	padding: 0 16px;
+	padding: 0 8px;
 	overflow: hidden;
-	font-size:14px;
+	/* font-size:13px; 중복*/
 }
+
+/* #contract_body .contract_container .gridHeader .grid_default_text_align_left{padding: 0 8px; overflow: hidden;} */
 
 .grid_default_text_align_right{
 	display: flex;
 	align-items: center;
     justify-content: right;
-	padding: 0 20px;
+	padding: 0 8px;
 	overflow: hidden;
 }
 
