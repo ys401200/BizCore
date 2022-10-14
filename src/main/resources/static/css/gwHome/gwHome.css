@@ -84,6 +84,7 @@ button {
 
 .container>div:nth-of-type(2)>div:first-of-type button {
 	width: 100%;
+	padding: 1em 0;
 	background-color: #eaeff3;
 }
 
@@ -97,6 +98,10 @@ button {
 
 }
 
+.container>div:nth-of-type(2) .optionDiv button {
+	margin: 1em 0.3em 0.3em 0;
+
+}
 
 
 
