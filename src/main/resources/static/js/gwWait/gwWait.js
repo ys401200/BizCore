@@ -12,7 +12,6 @@ $(document).ready(() => {
 function waitDefault() {
   $(".modal-wrap").hide();
 
-
   let checkHref = location.href;
   checkHref = checkHref.split("//");
   checkHref = checkHref[1];
@@ -105,10 +104,12 @@ function drawNoticeApproval() {
 
     createGrid(container, header, data, ids, job, fnc);
 
-    container.append("<div class='noListDefault'>결재 대기 문서가 없습니다</div>")
-
+    container.append(
+      "<div class='noListDefault'>결재 대기 문서가 없습니다</div>"
+    );
   } else {
-    jsonData = storage.waitList.wait; result = paging(jsonData.length, storage.currentPage, 8);
+    jsonData = storage.waitList.wait;
+    result = paging(jsonData.length, storage.currentPage, 8);
 
     pageContainer = document.getElementsByClassName("pageContainer");
     container = $(".listDiv");
@@ -191,8 +192,6 @@ function drawNoticeApproval() {
     pageContainer[0].innerHTML = pageNation;
     createGrid(container, header, data, ids, job, fnc);
   }
-
-
 } // End of drawNoticeApproval()
 
 function waitDetailView(obj) {
@@ -302,7 +301,6 @@ function showReportDetail() {
   if (target.getElementsByTagName("select").length > 0) {
     let selectArr = target.getElementsByTagName("select")[0];
     selectArr.value = selectArr.dataset.detail;
-
   }
 
   // 상세타입 체크하게 하기
@@ -323,7 +321,7 @@ function showReportDetail() {
           storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
         $("." + formId + subTitlesArr[i] + "_position")[j].value =
           storage.userRank[
-          $("." + formId + subTitlesArr[i] + "_position")[j].value
+            $("." + formId + subTitlesArr[i] + "_position")[j].value
           ][0];
       }
     }
@@ -355,12 +353,9 @@ function showReportDetail() {
   setAppLineData();
 }
 
-
-
 function showList() {
   location.href = "/gw/wait";
 }
-
 
 // 첨부파일 다운로드
 function getFileArr() {
@@ -565,7 +560,6 @@ function drawNewCommentLine() {
     for (let j = 0; j < newCombine.length; j++) {
       if (i > 0 && newAppLine[i][0] == j) {
         newCombine[j].push(newAppLine[i][1]);
-
       }
     }
   }
@@ -574,7 +568,6 @@ function drawNewCommentLine() {
     newCombine[2] = newCombine[2].slice(1);
     newCombine[0].push(storage.my + "");
   }
-
 
   for (let i = 0; i < appLine.length; i++) {
     if (appLine[i].employee == my) {
@@ -611,7 +604,11 @@ function drawNewCommentLine() {
       comment = appLine[i].comment;
     }
     let data;
-    if (i == myIndex && appLine[i].appType == 2 && newCombine[2][0] != appLine[i].employee) {
+    if (
+      i == myIndex &&
+      appLine[i].appType == 2 &&
+      newCombine[2][0] != appLine[i].employee
+    ) {
       data = {
         appType: appTypeTitle[0],
         name: storage.user[appLine[i].employee].userName,
@@ -628,7 +625,6 @@ function drawNewCommentLine() {
         comment: comment,
       };
     }
-
 
     appLineArr.push(data);
   }
@@ -805,8 +801,10 @@ function approveBtnEvent() {
 
   if (
     storage.reportDetailData.sopp == soppResult &&
-    (storage.reportDetailData.customer == cusResult || storage.reportDetailData.customer == 104843) &&
-    storage.oriCbContainer == $("input[name='" + formId + "_RD']:checked").attr("id") &&
+    (storage.reportDetailData.customer == cusResult ||
+      storage.reportDetailData.customer == 104843) &&
+    storage.oriCbContainer ==
+      $("input[name='" + formId + "_RD']:checked").attr("id") &&
     storage.oriInsertedContent == $(".insertedContent").html() &&
     storage.oriInsertedDataList == $(".insertedDataList").html()
   ) {
@@ -823,7 +821,9 @@ function approveBtnEvent() {
   }
 
   selectVal === "approve" ? (type = 1) : (type = 0);
-  storage.newFileData == undefined || storage.newFileData.length == 0 ? (storage.newFileData = null) : (storage.newFileData = storage.newFileData);
+  storage.newFileData == undefined || storage.newFileData.length == 0
+    ? (storage.newFileData = null)
+    : (storage.newFileData = storage.newFileData);
 
   let title = $("#" + formId + "_title").val();
   if (storage.reportDetailData.title == title) {
@@ -831,14 +831,15 @@ function approveBtnEvent() {
   }
 
   let appDoc;
-  if (storage.newAppLine != undefined || (storage.newAppLine != null && storage.newAppLine.length > 0)) {
+  if (
+    storage.newAppLine != undefined ||
+    (storage.newAppLine != null && storage.newAppLine.length > 0)
+  ) {
     appDoc = $(".seletedForm").html();
   } else {
     storage.newAppLine = null;
     appDoc = null;
   }
-
-
 
   let data = {
     doc: storage.newDoc,
@@ -880,15 +881,15 @@ function approveBtnEvent() {
   });
 }
 let related = {
-  "fnc": "hr",
-  "type": "leave", // "overtime", "holidayWork"
-  "start": 169999999,
-  "end": 169999999,
-  "parent": null, // contract:1999999
-  "prev": null, // schedule:199999
-  "next": [],
-  "children": []
-}
+  fnc: "hr",
+  type: "leave", // "overtime", "holidayWork"
+  start: 169999999,
+  end: 169999999,
+  parent: null, // contract:1999999
+  prev: null, // schedule:199999
+  next: [],
+  children: [],
+};
 
 //결재선 수정 모달
 function showGwModal() {
@@ -933,17 +934,34 @@ function showGwModal() {
   let x;
   let my = storage.my;
 
+  // 내 앞의 결재선에 해당되는 사람은 출력하지 않음 !
+  let appLine = storage.reportDetailData.appLine;
+  let employees = [];
 
+  for (let i = 0; i < storage.reportDetailData.appLine.length; i++) {
+    employees.push(storage.reportDetailData.appLine[i].employee);
+    if (my == storage.reportDetailData.appLine[i].employee) {
+      break;
+    }
+  }
 
-  // 본인 
+  // for (x in storage.user) {
+  //   if (x != my && storage.user[x].resign == false && !employees.includes(x)) {
+  //     userData.push(x);
+  //   }
+  // }
+
   for (x in storage.user) {
-    if (x != my && storage.user[x].resign == false) {
+    if (
+      storage.user[x].resign == false &&
+      !employees.includes(storage.user[x].userNo)
+    ) {
       userData.push(x);
     }
   }
 
   let oriLine = [];
-  let appLine = storage.reportDetailData.appLine;
+
   for (let i = 0; i < appLine.length; i++) {
     if (appLine[i].employee == my) {
       oriLine = appLine.slice(0, i + 1);
@@ -1103,37 +1121,32 @@ function closeGwModal(obj) {
   if (id == "close") {
     $(".modal-wrap").hide();
 
-    // ====================================================초기화 
+    // ====================================================초기화
   } else if (id == "reset") {
     reset();
   } else if (id == "modify") {
-    // 내가 결재자이고 수정할때 아무것도 입력되지 않은 경우에 그냥 원래 결재정보로 그리는 것 
+    // 내가 결재자이고 수정할때 아무것도 입력되지 않은 경우에 그냥 원래 결재정보로 그리는 것
 
     let num = 0;
     for (let i = 0; i < $(".typeContainer").length; i++) {
       if ($(".typeContainer")[i].innerHTML == "") {
         num++;
       }
-
     }
 
     if (num == 3) {
-
       $(".modal-wrap").hide();
       reset();
-
     } else {
       let appLine = storage.reportDetailData.appLine;
       let my = storage.my;
       let myOrdered;
       if (storage.newAppLine != undefined) {
-        storage.newAppLine = undefined
+        storage.newAppLine = undefined;
       }
 
       for (let i = 0; i < appLine.length; i++) {
-
         if (appLine[i].employee == my + "") {
-
           myOrdered = appLine[i].ordered;
           originLine = appLine.slice(0, i + 1);
 
@@ -1142,9 +1155,15 @@ function closeGwModal(obj) {
             // 기존 데이터 넣기
             for (let i = 0; i < appLine.length; i++) {
               if (appLine[i].ordered < Number(myOrdered)) {
-                combineData.push([appLine[i].appType, appLine[i].employee + ""]);
-              } else if (appLine[i].ordered = Number(myOrdered)) {
-                combineData.push([appLine[i].appType, appLine[i].employee + ""]);
+                combineData.push([
+                  appLine[i].appType,
+                  appLine[i].employee + "",
+                ]);
+              } else if ((appLine[i].ordered = Number(myOrdered))) {
+                combineData.push([
+                  appLine[i].appType,
+                  appLine[i].employee + "",
+                ]);
               }
             }
 
@@ -1174,24 +1193,25 @@ function closeGwModal(obj) {
             storage.newAppLine = combineData;
             let checkNum;
             for (let i = 0; i < storage.newAppLine.length; i++) {
-              if (storage.newAppLine[i][0] == 2 && storage.newAppLine[i][1] == my + "") {
-                if ((i != (storage.newAppLine.length - 1) && storage.newAppLine[i + 1][0] == 2)) {
+              if (
+                storage.newAppLine[i][0] == 2 &&
+                storage.newAppLine[i][1] == my + ""
+              ) {
+                if (
+                  i != storage.newAppLine.length - 1 &&
+                  storage.newAppLine[i + 1][0] == 2
+                ) {
                   storage.newAppLine[i][0] = 0;
                 }
               }
-
             }
 
             $(".modal-wrap").hide();
             $(".inputsAuto").css("background-color", "white");
-            createNewLine(); // 문서 안에서 결재선 그리는 것 
-            // 문서 정보에서 결재선 정보 그리는 것 
+            createNewLine(); // 문서 안에서 결재선 그리는 것
+            // 문서 정보에서 결재선 정보 그리는 것
           }
-
-        }
-
-        else {
-
+        } else {
           let combineData = [];
 
           // 기존 데이터 넣기
@@ -1228,18 +1248,12 @@ function closeGwModal(obj) {
 
           $(".modal-wrap").hide();
           $(".inputsAuto").css("background-color", "white");
-          createNewLine(); // 문서 안에서 결재선 그리는 것 
-          // 문서 정보에서 결재선 정보 그리는 것 
+          createNewLine(); // 문서 안에서 결재선 그리는 것
+          // 문서 정보에서 결재선 정보 그리는 것
         }
-
       }
     }
-
-
-
-
   }
-
 }
 
 function createNewLine() {
@@ -1251,7 +1265,7 @@ function createNewLine() {
   let newAppLine = storage.newAppLine;
   let newCombine = [[], [], [], [], []];
 
-  //내 순서 확인하고 title 잘라버리기 
+  //내 순서 확인하고 title 잘라버리기
 
   for (let i = 0; i < newAppLine.length; i++) {
     if (newAppLine[i][1] == storage.my) {
@@ -1259,13 +1273,10 @@ function createNewLine() {
     }
   }
 
-
-
   for (let i = 0; i < newAppLine.length; i++) {
     for (let j = 0; j < newCombine.length; j++) {
       if (i > 0 && newAppLine[i][0] == j) {
         newCombine[j].push(newAppLine[i][1]);
-
       }
     }
   }
@@ -1274,7 +1285,6 @@ function createNewLine() {
     newCombine[2] = newCombine[2].slice(1);
     newCombine[0].push(storage.my + "");
   }
-
 
   let testHtml =
     "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작성</div><div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto' disabled value='" +
@@ -1412,37 +1422,35 @@ function createNewLine() {
 
   console.log(newCombine);
 
-
   for (let i = 0; i < newCombine.length; i++) {
     let titleId = ["examine", "agree", "approval", "conduct", "refer"];
     let formId = storage.reportDetailData.formId;
     for (let j = 0; j < newCombine[i].length; j++) {
       for (let k = 1; k < storage.reportDetailData.appLine.length; k++) {
-        if (newCombine[i][j] == storage.reportDetailData.appLine[k].employee + "") {
-          let approved = "", status = "";
+        if (
+          newCombine[i][j] ==
+          storage.reportDetailData.appLine[k].employee + ""
+        ) {
+          let approved = "",
+            status = "";
           if (storage.reportDetailData.appLine[k].approved != null) {
-            approved = getYmdShortSlash(storage.reportDetailData.appLine[k].approved);
+            approved = getYmdShortSlash(
+              storage.reportDetailData.appLine[k].approved
+            );
             status = "승인";
           } else if (storage.reportDetailData.appLine[k].rejected != null) {
-            approved = getYmdShortSlash(storage.reportDetailData.appLine[k].rejected);
+            approved = getYmdShortSlash(
+              storage.reportDetailData.appLine[k].rejected
+            );
             status = "반려";
           }
           console.log(approved + "ddd" + status);
           $("." + formId + "_" + titleId[i] + "_status")[j].value = status;
           $("." + formId + "_" + titleId[i] + "_approved")[j].value = approved;
         }
-
-
       }
-
-
-
     }
   }
-
-
-
-
 
   drawNewCommentLine();
   let infoLength = document.getElementsByClassName("info")[0];
@@ -1457,12 +1465,11 @@ function createNewLine() {
     if (lgcTotal < lineGrid[3].clientWidth) {
       lgcTotal = lineGrid[3].clientWidth;
     }
-
   }
   if (lgcTotal > infoLength) {
     for (let i = 0; i < lineGrid.length; i++) {
       let tt = lineGrid[i];
-      $(tt).css("width", (lineGrid[i].clientWidth * (infoLength / lgcTotal)));
+      $(tt).css("width", lineGrid[i].clientWidth * (infoLength / lgcTotal));
     }
   }
 }
@@ -1472,12 +1479,11 @@ function check(name) {
   let target = $("#" + name);
   let html = target.html();
 
-
   let x;
   let my = storage.my;
 
   let data = new Array();
-  // 본인 
+  // 본인
   for (x in storage.user) {
     if (x != my && storage.user[x].resign == false) {
       data.push(x);
@@ -1490,12 +1496,10 @@ function check(name) {
     }
   }
 
-
-  if (name == "approval" && html != "" || name == "approval" && count > 1) {
+  if ((name == "approval" && html != "") || (name == "approval" && count > 1)) {
     alert("결재자는 한 명만 선택할 수 있습니다");
   } else {
     let selectHtml = "";
-
 
     for (let i = 0; i < inputLength.length; i++) {
       let id = inputLength[i].id.substring(2, inputLength[i].id.length);
@@ -1684,9 +1688,7 @@ function quitModify() {
   if (target.getElementsByTagName("select").length > 0) {
     let selectArr = target.getElementsByTagName("select")[0];
     selectArr.value = selectArr.dataset.detail;
-
   }
-
 
   // 이름 , 직급 한글로 설정하기
   let subTitlesArr = ["_examine", "_approval", "_agree", "_conduct"];
@@ -1697,7 +1699,7 @@ function quitModify() {
           storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
         $("." + formId + subTitlesArr[i] + "_position")[j].value =
           storage.userRank[
-          $("." + formId + subTitlesArr[i] + "_position")[j].value
+            $("." + formId + subTitlesArr[i] + "_position")[j].value
           ][0];
       }
     }
@@ -1740,7 +1742,7 @@ function createConfirmBtn(obj) {
   if (div[0].childElementCount < 5) {
     $(".mainBtnDiv").append(
       "<button type='button'name='modConfirm' onclick='reportModify()' >수정완료 </button>" +
-      "<button type='button'name='modConfirm' onclick='quitModify()'>문서 수정 초기화</button>"
+        "<button type='button'name='modConfirm' onclick='quitModify()'>문서 수정 초기화</button>"
     );
   }
   $(":file").css("display", "inline");
@@ -1925,7 +1927,6 @@ function getYmdShortSlash(date) {
   );
 }
 
-
 function reset() {
   let formId = storage.reportDetailData.formId;
   let appLine = storage.reportDetailData.appLine;
@@ -1947,7 +1948,6 @@ function reset() {
   let titleId = ["examine", "agree", "approval", "conduct", "refer"];
   let newCombine = [[], [], [], []];
 
-
   for (let i = 1; i < appLine.length; i++) {
     for (let j = 0; j < newCombine.length; j++) {
       if (appLine[i].appType == j) {
@@ -1955,8 +1955,6 @@ function reset() {
       }
     }
   }
-
-
 
   for (let i = 0; i < newCombine.length; i++) {
     if (newCombine[i].length != 0 && i < 3) {
@@ -2071,7 +2069,6 @@ function reset() {
   testHtml += "</div>";
   testHtml2 += "</div>";
 
-
   let lineTarget = $(".infoline")[0].children[1];
   lineTarget = $("#" + lineTarget.id);
   lineTarget.html("");
@@ -2084,7 +2081,6 @@ function reset() {
   $(".modal-wrap").hide();
 
   drawCommentLine();
-
 
   let infoLength = document.getElementsByClassName("info")[0];
   infoLength = infoLength.clientWidth;
@@ -2099,13 +2095,12 @@ function reset() {
     if (lgcTotal < lineGrid[3].clientWidth) {
       lgcTotal = lineGrid[3].clientWidth;
     }
-
   }
   if (lgcTotal > infoLength) {
     for (let i = 0; i < lineGrid.length; i++) {
       let tt = lineGrid[i];
-      $(tt).css("width", (lineGrid[i].clientWidth * (infoLength / lgcTotal)));
+      $(tt).css("width", lineGrid[i].clientWidth * (infoLength / lgcTotal));
     }
   }
-  // 수정 
+  // 수정
 }
