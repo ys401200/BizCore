@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<style>
+    @charset "UTF-8";
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300&family=Outfit:wght@600&display=swap');
+    @font-face {font-family:MalgunGothic; src:url(${path}/form/fonts/malgun.ttf);}
+    body{font-family:MalgunGothic, sans-serif;font-weight:0;overflow: hidden;}
+    table{width:100%; font-size: 10px; margin-bottom: 10px;}
+    th, td{padding:1px 1px 4px 2px;}
+    #imgLogo #logoLeft{margin-top: 10px;width:28%;height:auto;}
+    #imgLogo #logoRight{width:70%;height:auto;position:absolute; top:13px;right: 0;}
+    #pdfTitle #titlePdf{font-family: 'Outfit', sans-serif;font-size: 40px;text-align:center;margin-top: 30px;margin-bottom: 20px;}
+    #headList{text-align:left;border: 2px solid #000; }
+    #headList tr th:first-child{padding:2px 0 2px 30px;}
+    #headList tr th:last-child{padding:2px 0 2px 0;position:absolute;left:55%;}
+    #totalInfo{text-align: left;border: 2px solid #000; padding: 5px 0;}
+    #totalInfo tr th:first-child{padding: 4px 0 4px 30px;}
+    #totalInfo tr th:last-child{padding: 4px 0 4px 0;position:absolute;left:62%;}
+    #pdfRemarks{font-size: 10px;margin-bottom: 20px;}
+    #pdfRemarks h3 span{font-size: 10px;padding: 0 10px;}
+    #pdfBottom img{width:60%;float:right;}
+    #mainTable{border: 2px solid #000; border-collapse: collapse;}
+    #mainTable thead tr th{color: #fff;background-color: #990B19;border-right:1px solid #000;border-bottom:1px solid #000;}
+    #mainTable tbody td{border-right:1px solid #000;}
+    #mainTable #mainTr td{border-bottom:1px solid #000;}
+</style>
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<body>
+	<div class="mainPdf" id="mainPdf">
+		<div id="imgLogo"><img src="/images/pdf_logo_left.jpg" id="logoLeft" /><img src="/images/pdf_logo_right.png" id="logoRight" /></div>
+		<div id="pdfTitle"><div id="titlePdf">QUOTATION</div></div>
+        <table id="headList">
+            <tr><th>견&ensp;적&ensp;일&ensp;자 : 2022-10-07</th><th>상&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;호 : 주식회사 비전테크(부산)</th></tr>
+            <tr><th>견&ensp;적&ensp;번&ensp;호 : VTEK202210_628</th><th>대&ensp;표&ensp;이&ensp;사 : 이 승 우 (직인생략)</th></tr>
+            <tr><th>사&ensp;&nbsp;&nbsp;업&ensp;&nbsp;&nbsp;명 : [2022년12월 05일 ~ 2024년 11월 30일 ] 한국산업기술평가관리원 유지보수 견적서</th><th><div style="margin:0; float:left;">주&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;소 :&nbsp;</div><div style="display: flex;">부산시 해운대구 센텀중앙로 97 센텀스카이비즈 A동 2509호</div><div style="padding-top: 1.5%;">전 화 / 팩 스 : 070-8260-3882 / 051-955-3723</div></th></tr>
+            <tr><th>수&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;신 :KCC 정보통신/담당자</th><th></th></tr>
+            <tr><th>영&ensp;업&ensp;담&ensp;당 : 조용희//</th><th></th></tr>
+        </table>
+        <table id="totalInfo"><tr><th>견&ensp;적&ensp;금&ensp;액 : ￦&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;12,000,000&ensp;&ensp;(VAT 포함)</th><th>유&ensp;효&ensp;기&ensp;간 : 견적일로 부터 4주</th></tr></table>
+		<table id="mainTable">
+			<colgroup><col width="3%"><col width="10%"><col width="55%"><col width="5%"><col width="7%"><col width="7%"><col width="7%"><col width="7%"></colgroup>
+			<thead><tr><th style="border-left:1px solid #000;">No.</th><th>구분</th><th>품 명 / 규 격</th><th>수량</th><th>소비자가</th><th>공급 단가</th><th>합계</th><th>비고</th></tr></thead>
+			<tbody>		
+                <tr id="mainTr">
+                    <td class="noTitleTd" style="text-align:center;">1</td>
+                    <td style="text-align:center; font-weight:700;word-break:break-all;">2023년 유지보수</td>
+                    <td id="specTd"><span style="font-weight:600;">D-Station</span><p>품명 : Dstation 150 User</p>
+                        <p>- 제품 S/W 업데이트 지원(Ver. X.Y.Z에서 Y.Z 지원)</p>
+                        <p>- 일상 지원 : 전화/E-Mail/Online 지원</p>
+                        <p>- 장애처리 : 장애 시 방문 또는 Online 지원</p>
+                        <p>- 정기점검 : 반기 방문 점검(5월,11월)&nbsp; 후 보고서 제출&nbsp;</p></td>
+                    <td style="text-align:center;">1</td>
+                    <td></td>
+                    <td style="text-align:right;">5,454,545</td>
+                    <td style="text-align:right;">5,454,545</td>
+                    <td style="border-right:1px solid #000;"></td>
+                </tr>
+                <tr id="mainTr">
+                    <td class="noTitleTd" style="text-align:center;">2</td>
+                    <td style="text-align:center; font-weight:700;word-break:break-all;">2024년 유지보수</td>
+                    <td id="specTd"><span style="font-weight:600;">D-Station</span><p>품명 : Dstation 150 User</p>
+                        <p>- 제품 S/W 업데이트 지원(Ver. X.Y.Z에서 Y.Z 지원)</p>
+                        <p>- 일상 지원 : 전화/E-Mail/Online 지원</p>
+                        <p>- 장애처리 : 장애 시 방문 또는 Online 지원</p>
+                        <p>- 정기점검 : 반기 방문 점검(5월,11월)&nbsp; 후 보고서 제출&nbsp;</p></td>
+                    <td style="text-align:center;">1</td>
+                    <td></td>
+                    <td style="text-align:right;">5,454,545</td>
+                    <td style="text-align:right;">5,454,545</td>
+                    <td style="border-right:1px solid #000;"></td>
+                </tr>
+				<tr style="border-top:1px solid #000;">
+					<th colspan="6" style="border-right:1px solid #000;">공&ensp;급&ensp;가&ensp;합&ensp;계</th>
+					<td style="text-align:right;">10,909,090</td>
+					<th></th>
+				</tr>
+				<tr>
+					<th colspan="6" style="border-right:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;">부&ensp;가&ensp;가&ensp;치&ensp;세</th>
+					<td style="text-align:right; border-top:1px solid #000; border-bottom:1px solid #000;">1,090,910</td>
+					<th style="border-top:1px solid #000; border-bottom:1px solid #000;"></th>
+				</tr>
+				<tr>
+					<th colspan="6" style="border-right:1px solid #000;">총&ensp;&ensp;&ensp;&ensp;금&ensp;&ensp;&ensp;&ensp;액</th>
+					<td style="text-align:right;">12,000,000</td>
+					<th></th>
+				</tr>
+			</tbody>
+		</table>
+		<div id="pdfRemarks"><h3>Remarks<span><p>기간 :&nbsp; 2022년12월 05일 ~ 2024년 11월 30일&nbsp;</p><p>결제조건은 검수(납품) 당월 계산서 발행, 익월 결제 입니다.<br />납기기간은 발주 후 최대 4주 입니다.<br />설치비용 포함 견적이며 고객사 응용프로그램 사용에 따른 커스터 마이징 비용은 미 포함이며 협의 후 포함합니다.</p></span></h3></div>
+		<div id="pdfBottom"><img src="/images/pdf_bottom.png" id="bottomImg" /></div>
+	</div><!-- <div style="width:100%;"><button type="button" onclick="solPdf();" style="border: 0; background-color: #4680ff; color: #fff; text-align:center; width: 30%; height:44px; cursor: pointer;">PDF파일 저장</button></div> -->
+</body>
+<script>
+function solPdf(){ 
+    let nowDate, element, date, estTitle, estDate, dateYear, dateMonth, dateDay, now, year, month;
+    
+    
+    estTitle = "[2022년12월 05일 ~ 2024년 11월 30일 ] 한국산업기술평가관리원 유지보수 견적서";
+	estDate = "2022-10-07";	
+	dateYear = estDate.substring(2,4);
+	dateMonth = estDate.substring(5,7);
+	dateDay = estDate.substring(9,11);	
+	now = new Date();
+	year = now.getFullYear();
+	month = parseInt(now.getMonth())+1;
+	
+	if(month < 10) month = "0" + month;
+	else month = month;
+	
+	if(now.getDate() < 10) date = "0" + now.getDate();
+	else date = now.getDate();
+	
+	nowDate = year + "-" + month + "-" + date;
+	element = document.getElementById("mainPdf");
+	
+	html2pdf().from(element).set({
+	  margin: 5,
+      filename: dateYear + dateMonth + dateMonth + "_" + estTitle + '.pdf',
+      html2canvas: { scale: 10 },
+      jsPDF: {orientation: 'portrait', unit: 'mm', format: 'a4', compressPDF: true}
+	}).save();
+}
+
+function romanize(num) {
+    let digits, key, roman, i;
+    if (isNaN(num)) return NaN;
+    digits = String(+num).split("");
+    key = ["","C","CC","CCC","CD","D","DC","DCC","DCCC","CM","","X","XX","XXX","XL","L","LX","LXX","LXXX","XC","","I","II","III","IV","V","VI","VII","VIII","IX"];
+    roman = "";
+    i = 3;
+    while (i--) roman = (key[+digits.pop() + (i * 10)] || "") + roman;
+    return Array(+digits.join("") + 1).join("M") + roman;
+}
+
+$(document).ready(function(){
+	let temp, dataTemp, specTd;
+    temp = [];
+	dataTemp = {};
+	specTd = $("#mainTable tbody #mainTr #specTd");
+	
+	specTd.each(function(index, item){
+		$(item).html($(item).html().replaceAll("<p>", "<br>").replaceAll("</p>", ""));
+		console.log($(item).html());
+	});
+	
+	if($("#mainTable tbody tr").find("#titleNumber")){
+		$("#mainTable tbody tr").find("#titleNumber").each(function(index, item){
+			$(this).html(romanize($(this).attr("data-number")));
+		});
+	}
+	
+	if($("#mainTable tbody tr").find(".noTitleTd")){
+		$("#mainTable tbody tr").find(".noTitleTd").each(function(index, item){
+			var rows = $(".noTitleTd:contains('" + $(this).text() + "')");
+	        if (rows.length > 1) {
+	            rows.eq(0).attr("rowspan", rows.length);
+	            rows.not(":eq(0)").remove();
+	        }
+		});
+	}
+});
+</script>
+</html>

@@ -1,0 +1,128 @@
+<div class="estimate_wrap">
+    <div class="company_ci"><img src="images/estimate/pdf_logo_left.jpeg" class="logoLeft" /><img src="images/estimate/pdf_logo_right.png" class="logoRight" /></div>
+    <div class="estimate_title">QUOTATION</div>
+    <div class="estimate_header">
+        <div><div><div><span>견</span><span>적</span><span>일</span><span>자</span></div></div><div class="estimate_date"></div><div><div><span>상</span><span>호</span></div></div><div class="company_name"></div></div>
+        <div><div><div><span>견</span><span>적</span><span>번</span><span>호</span></div></div><div class="estimate_no"></div><div><div><span>대</span><span>표</span><span>이</span><span>사</span></div></div><div class="company_ceo"></div></div>
+        <div><div><div><span>사</span><span>업</span><span>명</span></div></div><div class="estimate_project"></div><div><div><span>주</span><span>소</span></div></div><div class="company_address"></div></div>
+        <div><div><div><span>수</span><span>신</span></div></div><div class="estimate_receiver"></div><div class="company_contact"><div><span>전</span><span>화</span><span>/</span><span>팩</span><span>스</span></div></div><div></div></div>
+        <div><div><div><span>영</span><span>업</span><span>담</span><span>당</span></div></div><div class="estimate_sender"></div></div>
+    </div>
+    <div class="estimate_summary"><div><div><div><span>견</span><span>적</span><span>금</span><span>액</span></div></div><div class="estimate_total_amount"></div><div><div><span>유</span><span>효</span><span>기</span><span>간</span></div></div><div class="estiomate_expiration_period"></div></div></div>
+    <div class="estimate_content">
+        <div><div>No.</div><div>구분</div><div>품 명 / 규 격</div><div>수량</div><div>소비자가</div><div>공급 단가</div><div>합계</div><div>비고</div></div>
+        <div><div style="grid-column-start: 1;grid-column-end: 7;font-weight: bold;"><div class="estimate_content_footer"><span>공</span><span>급</span><span>가</span><span>합</span><span>계</span></div></div><div style="justify-content: right;">999</div><div></div></div>
+        <div><div style="grid-column-start: 1;grid-column-end: 7;font-weight: bold;"><div class="estimate_content_footer"><span>부</span><span>가</span><span>가</span><span>치</span><span>세</span></div></div><div style="justify-content: right;">1,090,910</div><div></div></div>
+        <div><div style="grid-column-start: 1;grid-column-end: 7;font-weight: bold;"><div class="estimate_content_footer"><span>총</span><span>금</span><span>액</span></div></div><div style="justify-content: right;">12,000,000</div><div></div></div>
+    </div>
+    <div class="estimate_remark"><h3>Remarks<span><p>기간 :&nbsp; 2022년12월 05일 ~ 2024년 11월 30일&nbsp;</p><p>결제조건은 검수(납품) 당월 계산서 발행, 익월 결제 입니다.<br />납기기간은 발주 후 최대 4주 입니다.<br />설치비용 포함 견적이며 고객사 응용프로그램 사용에 따른 커스터 마이징 비용은 미 포함이며 협의 후 포함합니다.</p></span></h3></div>
+    <div class="estimate_footer"><img src="images/estimate/pdf_bottom.png" class="estimate_bottom_img" /></div>
+</div>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300&family=Outfit:wght@600&display=swap');
+    @font-face {font-family:MalgunGothic; src:url(${path}/form/fonts/malgun.ttf);}
+    .estimate_wrap{font-family:MalgunGothic, sans-serif;font-weight:0;overflow: hidden;font-size: 10px;}
+    th, td{padding:1px 1px 4px 2px;}
+    .company_ci .logoLeft{margin-top: 10px;width:28%;height:auto;}
+    .company_ci .logoRight{width:70%;height:auto;position:absolute; top:13px;right: 0;}
+    .estimate_title{font-family: 'Outfit', sans-serif;font-size: 40px;text-align:center;padding-top: 30px;padding-bottom: 20px;}
+    .estimate_header{font-size:10px;font-weight: bold;border: 2px solid #000;padding:0.5em 3em; margin:0.5em 0 1em;}
+    .estimate_header > div{display:grid;grid-template-columns: 1fr 7fr 1fr 7fr;padding:0.2em 0;}
+    .estimate_header > div > div:nth-child(odd) > div{width:calc(100% - 1.5em);display: inline-flex;flex-flow:row nowrap;justify-content: space-between;}
+    .estimate_header > div > div:nth-child(even){text-align: left;}
+    .estimate_header > div > div:nth-child(odd)::after{content:':';padding:0 0.5em;margin:0;}
+
+    .estimate_summary{font-size:10px;font-weight: bold;border: 2px solid #000;padding:1em 3em; margin:0.5em 0 1em;}
+    .estimate_summary > div{display:grid;grid-template-columns: 1fr 7fr 1fr 7fr;padding:0.2em 0;}
+    .estimate_summary > div > div:nth-child(odd) > div{width:calc(100% - 1.5em);display: inline-flex;flex-flow:row nowrap;justify-content: space-between;}
+    .estimate_summary > div > div:nth-child(even){text-align: left;}
+    .estimate_summary > div > div:nth-child(odd)::after{content:':';padding:0 0.5em;margin:0;}
+
+    .estimate_content{font-size:10px;border: 2px solid #000;margin:0.5em 0 1em;}
+    .estimate_content > div{display: grid;grid-template-columns: 4fr 11fr 64fr 6fr 8fr 8fr 8fr 7fr;border-top:1px solid black;}
+    .estimate_content > div > div{border-right:1px solid black;padding:0.3em;display:flex;align-items: center;justify-content: center;}
+    .estimate_content > div > div:nth-child(3){text-align: left;display:block;}
+    .estimate_content > div > div:nth-child(8){justify-content: left;}
+    .estimate_content > div > div:nth-child(8){border-right:none;}
+    .estimate_content > div > div:nth-child(5),
+    .estimate_content > div > div:nth-child(6),
+    .estimate_content > div > div:nth-child(7){justify-content: right;}
+    .estimate_content > div:nth-child(1){background-color: #990B19;border-top:none;}
+    .estimate_content > div:nth-child(1) > div{display: block;color:white;font-weight: bold;text-align:center;}
+    .estimate_content .estimate_content_footer{display:flex;width:12em;margin:0 auto;align-items: center;justify-content: space-between;}
+    .estimate_remark{font-size: 10px;margin-bottom: 20px;}
+    .estimate_remark h3 span{font-size: 10px;padding: 0 10px;}
+    .estimate_footer img{width:60%;float:right;}
+</style>
+
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script>
+function solPdf(){ 
+    let nowDate, element, date, estTitle, estDate, dateYear, dateMonth, dateDay, now, year, month;
+    
+    
+    estTitle = "[2022년12월 05일 ~ 2024년 11월 30일 ] 한국산업기술평가관리원 유지보수 견적서";
+	estDate = "2022-10-07";	
+	dateYear = estDate.substring(2,4);
+	dateMonth = estDate.substring(5,7);
+	dateDay = estDate.substring(9,11);	
+	now = new Date();
+	year = now.getFullYear();
+	month = parseInt(now.getMonth())+1;
+	
+	if(month < 10) month = "0" + month;
+	else month = month;
+	
+	if(now.getDate() < 10) date = "0" + now.getDate();
+	else date = now.getDate();
+	
+	nowDate = year + "-" + month + "-" + date;
+	element = document.getElementById("mainPdf");
+	
+	html2pdf().from(element).set({
+	  margin: 5,
+      filename: dateYear + dateMonth + dateMonth + "_" + estTitle + '.pdf',
+      html2canvas: { scale: 10 },
+      jsPDF: {orientation: 'portrait', unit: 'mm', format: 'a4', compressPDF: true}
+	}).save();
+}
+
+function romanize(num) {
+    let digits, key, roman, i;
+    if (isNaN(num)) return NaN;
+    digits = String(+num).split("");
+    key = ["","C","CC","CCC","CD","D","DC","DCC","DCCC","CM","","X","XX","XXX","XL","L","LX","LXX","LXXX","XC","","I","II","III","IV","V","VI","VII","VIII","IX"];
+    roman = "";
+    i = 3;
+    while (i--) roman = (key[+digits.pop() + (i * 10)] || "") + roman;
+    return Array(+digits.join("") + 1).join("M") + roman;
+}
+
+$(document).ready(function(){
+	let temp, dataTemp, specTd;
+    temp = [];
+	dataTemp = {};
+	specTd = $("#mainTable tbody #mainTr #specTd");
+	
+	specTd.each(function(index, item){
+		$(item).html($(item).html().replaceAll("<p>", "<br>").replaceAll("</p>", ""));
+		console.log($(item).html());
+	});
+	
+	if($("#mainTable tbody tr").find("#titleNumber")){
+		$("#mainTable tbody tr").find("#titleNumber").each(function(index, item){
+			$(this).html(romanize($(this).attr("data-number")));
+		});
+	}
+	
+	if($("#mainTable tbody tr").find(".noTitleTd")){
+		$("#mainTable tbody tr").find(".noTitleTd").each(function(index, item){
+			var rows = $(".noTitleTd:contains('" + $(this).text() + "')");
+	        if (rows.length > 1) {
+	            rows.eq(0).attr("rowspan", rows.length);
+	            rows.not(":eq(0)").remove();
+	        }
+		});
+	}
+});
+</script>

@@ -1,0 +1,51 @@
+<div class="estimate_wrap">
+    <div class="company_ci"><img src="/images/estimate/pdf_logo_left.jpeg" class="logoLeft" /><img src="/images/estimate/pdf_logo_right.png" class="logoRight" /></div>
+    <div class="estimate_title">QUOTATION</div>
+    <div class="estimate_header">
+        <div><div><div><span>견</span><span>적</span><span>일</span><span>자</span></div></div><div class="estimate_date"></div><div><div><span>상</span><span>호</span></div></div><div class="company_name"></div></div>
+        <div><div><div><span>견</span><span>적</span><span>번</span><span>호</span></div></div><div class="estimate_no"></div><div><div><span>대</span><span>표</span><span>이</span><span>사</span></div></div><div class="company_ceo"></div></div>
+        <div><div><div><span>사</span><span>업</span><span>명</span></div></div><div class="estimate_project"></div><div><div><span>주</span><span>소</span></div></div><div class="company_address"></div></div>
+        <div><div><div><span>수</span><span>신</span></div></div><div class="estimate_receiver"></div><div class="company_contact"><div><span>전</span><span>화</span><span>/</span><span>팩</span><span>스</span></div></div><div></div></div>
+        <div><div><div><span>영</span><span>업</span><span>담</span><span>당</span></div></div><div class="estimate_sender"></div></div>
+    </div>
+    <div class="estimate_summary"><div><div><div><span>견</span><span>적</span><span>금</span><span>액</span></div></div><div class="estimate_total_amount"></div><div><div><span>유</span><span>효</span><span>기</span><span>간</span></div></div><div class="estiomate_expiration_period"></div></div></div>
+    <div class="estimate_content"></div>
+    <div class="estimate_remark"></div>
+    <div class="estimate_footer"><img src="/images/estimate/pdf_bottom.png" class="estimate_bottom_img" /></div>
+</div>
+<style>
+    @import url(''https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300&family=Outfit:wght@600&display=swap'');
+    @font-face {font-family:MalgunGothic; src:url(${path}/form/fonts/malgun.ttf);}
+    .estimate_wrap{font-family:MalgunGothic, sans-serif;font-weight:0;overflow: hidden;font-size: 10px;}
+    th, td{padding:1px 1px 4px 2px;}
+    .company_ci .logoLeft{margin-top: 10px;width:28%;height:auto;}
+    .company_ci .logoRight{width:70%;height:auto;position:absolute; top:13px;right: 0;}
+    .estimate_title{font-family: ''Outfit'', sans-serif;font-size: 40px;text-align:center;padding-top: 30px;padding-bottom: 20px;}
+    .estimate_header{font-size:10px;font-weight: bold;border: 2px solid #000;padding:0.5em 3em; margin:0.5em 0 1em;}
+    .estimate_header > div{display:grid;grid-template-columns: 1fr 7fr 1fr 7fr;padding:0.2em 0;}
+    .estimate_header > div > div:nth-child(odd) > div{width:calc(100% - 1.5em);display: inline-flex;flex-flow:row nowrap;justify-content: space-between;}
+    .estimate_header > div > div:nth-child(even){text-align: left;}
+    .estimate_header > div > div:nth-child(odd)::after{content:'':'';padding:0 0.5em;margin:0;}
+
+    .estimate_summary{font-size:10px;font-weight: bold;border: 2px solid #000;padding:1em 3em; margin:0.5em 0 1em;}
+    .estimate_summary > div{display:grid;grid-template-columns: 1fr 7fr 1fr 7fr;padding:0.2em 0;}
+    .estimate_summary > div > div:nth-child(odd) > div{width:calc(100% - 1.5em);display: inline-flex;flex-flow:row nowrap;justify-content: space-between;}
+    .estimate_summary > div > div:nth-child(even){text-align: left;}
+    .estimate_summary > div > div:nth-child(odd)::after{content:'':'';padding:0 0.5em;margin:0;}
+
+    .estimate_content{font-size:10px;border: 2px solid #000;margin:0.5em 0 1em;}
+    .estimate_content > div{display: grid;grid-template-columns: 4fr 11fr 64fr 6fr 8fr 8fr 8fr 7fr;border-top:1px solid black;}
+    .estimate_content > div > div{border-right:1px solid black;padding:0.3em;display:flex;align-items: center;justify-content: center;}
+    .estimate_content > div > div:nth-child(3){text-align: left;display:block;}
+    .estimate_content > div > div:nth-child(8){justify-content: left;}
+    .estimate_content > div > div:nth-child(8){border-right:none;}
+    .estimate_content > div > div:nth-child(5),
+    .estimate_content > div > div:nth-child(6),
+    .estimate_content > div > div:nth-child(7){justify-content: right;}
+    .estimate_content > div:nth-child(1){background-color: #990B19;border-top:none;}
+    .estimate_content > div:nth-child(1) > div{display: block;color:white;font-weight: bold;text-align:center;}
+    .estimate_content .estimate_content_footer{display:flex;width:12em;margin:0 auto;align-items: center;justify-content: space-between;}
+    .estimate_remark{font-size: 10px;margin-bottom: 20px;}
+    .estimate_remark h3 span{font-size: 10px;padding: 0 10px;}
+    .estimate_footer img{width:60%;float:right;}
+</style>
