@@ -75,7 +75,7 @@ public class BusinessController extends Ctrl{
     @RequestMapping("/estimate")
     public String estimate(HttpServletRequest request) {
         doIt(request);
-        return "/estimate/estimate";
+        return "/business/estimate";
     } // End of /business/**
 
     @RequestMapping("/workjournal")
