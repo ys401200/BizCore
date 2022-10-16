@@ -53,18 +53,24 @@
 					<li><a href="/business/est">견적관리</a></li>
 				</ul> -->
 			</li>
+			<li>
+				<a href="/business/estimate">
+					<img src="/images/main/icons/mainSoppIcon.png" id="mainSoppIcon" />
+					<span>견적관리</span>
+				</a>
+			</li>
 			<!-- <li>
-			<a href="#">
-				<img src="/images/main/icons/mainPpsIcon.png" id="mainPpsIcon" />
-				<span>조달업무</span>
-				<span id="slideSpan">+</span>
-			</a>
-			<ul id="panel">
-		  		<li><a href="#">조달업무할당</a></li>
-		  		<li><a href="#">조달진행상황</a></li>
-		  		<li><a href="#">조달계약관리</a></li>
-		  	</ul>
-		</li> -->
+				<a href="#">
+					<img src="/images/main/icons/mainPpsIcon.png" id="mainPpsIcon" />
+					<span>조달업무</span>
+					<span id="slideSpan">+</span>
+				</a>
+				<ul id="panel">
+					<li><a href="#">조달업무할당</a></li>
+					<li><a href="#">조달진행상황</a></li>
+					<li><a href="#">조달계약관리</a></li>
+				</ul>
+			</li> -->
 			<li>
 				<a href="/business/contract">
 					<img src="/images/main/icons/mainContIcon.png" id="mainContIcon" />
