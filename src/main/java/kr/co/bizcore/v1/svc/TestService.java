@@ -181,6 +181,49 @@ public class TestService extends Svc{
         return result;
     }
 
+    public String attList(){
+        String result = null;
+        String sql1 = "SELECT CONCAT('H',CAST(attendId AS CHAR)) AS no, userno AS writer, atttype AS type, attstatus AS status, soppno AS sopp, attdesc AS content, regdate AS created, attstart AS st, attend AS ed FROM swcore.swc_userattend WHERE compno=100002 AND attrib NOT LIKE 'XXX%'";
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        String xNo = null, xContent = null;
+        Date xCreated = null, xStart = null, xEnd = null;
+        int xWriter = -1, xType = -1, xStatus = -1;
+
+        try{
+            conn = sqlSession.getConnection();
+            pstmt = conn.prepareStatement(sql1);
+            rs = pstmt.executeQuery();
+
+            while(rs.next()){
+                xNo = rs.getString(1);
+                xWriter = rs.getInt(2);
+                xType = rs.getInt(3);
+                xStatus = rs.getInt(4);
+                xContent = rs.getString(5);
+                xCreated = rs.getDate(6);
+                xStart = rs.getDate(7);
+                xEnd = rs.getDate(8);
+
+                if(result == null)  result = "[";
+                else                result += ",";
+
+                result += ("{\"no\":" + xNo + ",");
+                result += ("\"writer\":" + xWriter + ",");
+                result += ("\"type\":" + xType + ",");
+                result += ("\"status\":" + xStatus + ",");
+                result += ("\"content\":" + (xContent == null ? "null" : "\"" + xContent.replaceAll("\"", "\\u0022").replaceAll("\t", "\\u0022") + "\"") + ",");
+                result += ("\"created\":" + (xCreated == null ? "null" :xCreated.getTime()) + ",");
+                result += ("\"start\":" + (xStart == null ? "null" : xStart.getTime()) + ",");
+                result += ("\"end\":" + (xEnd == null ? "null" : xEnd.getTime()) + "}");
+            }
+            if(result != null)  result += "]";
+        }catch(Exception e){e.printStackTrace();}
+
+        return result;
+    }
+
     public String docData(String docNo){
         String result = null;
         String sql1 = "SELECT custname AS customer, productname AS product, productnetprice AS price, productqty AS qty, productamount AS subtotal, productvat AS tax, producttotal AS total, productremark AS remark, productDate AS dt FROM swcore.swc_businessdocdata WHERE attrib NOT LIKE 'XXX%' AND docno = ?";
