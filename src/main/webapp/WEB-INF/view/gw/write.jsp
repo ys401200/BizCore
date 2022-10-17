@@ -17,7 +17,7 @@
 
 
             <div class='selector'>
-              <div><label class="stepLabel">●</label> 기본 설정</div>
+              <div class="stepLabel">● 기본 설정</div>
               <div class='formDetail'>
 
                 <div>
@@ -56,7 +56,7 @@
 
             <div class='selector'>
 
-              <div><label class="stepLabel">●</label>결재선</div>
+              <div class="stepLabel">● 결재선</div>
               <div class="lineBtnContainer">
 
                 <div class='guide'> 결재 양식을 선택하면 결재선 생성을 할 수 있습니다. </div>
@@ -81,7 +81,7 @@
             <div class='selector'>
 
 
-              <div><label class="stepLabel">●</label>상세 입력</div>
+              <div class="stepLabel">●상세 입력</div>
               <div class='insertedDetail'>
                 <div class='reportInsertForm'></div>
                 <div class='referContainer'>
