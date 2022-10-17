@@ -321,7 +321,7 @@ function showReportDetail() {
           storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
         $("." + formId + subTitlesArr[i] + "_position")[j].value =
           storage.userRank[
-            $("." + formId + subTitlesArr[i] + "_position")[j].value
+          $("." + formId + subTitlesArr[i] + "_position")[j].value
           ][0];
       }
     }
@@ -783,28 +783,36 @@ function approveBtnEvent() {
   let soppVal = $("#" + formId + "_sopp").val();
   let customerVal = $("#" + formId + "_infoCustomer").val();
   let soppResult;
+
+
   for (let x in storage.soppList) {
-    if (soppVal != "" || storage.soppList[x].title === soppVal) {
-      soppResult = storage.soppList[x].no + "";
-    } else {
-      soppResult = null;
+    if (storage.soppList[x].title == soppVal) {
+      soppResult = storage.soppList[x].no;
     }
   }
   let cusResult;
   for (let x in storage.customer) {
-    if (customerVal != "" || storage.customer[x].title === customerVal) {
-      cusResult = storage.customer[x].no + "";
-    } else {
-      cusResult = null;
+    if (storage.customer[storage.customer[x].no].name != customerVal) {
+      cusResult = storage.customer[x].no;
     }
   }
 
+
+  if (storage.reportDetailData.sopp == soppResult) {
+    soppResult = "";
+  }
+  if (storage.reportDetailData.customer == cusResult) {
+    cusResult = "";
+  }
+
+
+
+
   if (
-    storage.reportDetailData.sopp == soppResult &&
-    (storage.reportDetailData.customer == cusResult ||
-      storage.reportDetailData.customer == 104843) &&
+    soppResult == null &&
+    cusResult == null &&
     storage.oriCbContainer ==
-      $("input[name='" + formId + "_RD']:checked").attr("id") &&
+    $("input[name='" + formId + "_RD']:checked").attr("id") &&
     storage.oriInsertedContent == $(".insertedContent").html() &&
     storage.oriInsertedDataList == $(".insertedDataList").html()
   ) {
@@ -813,12 +821,6 @@ function approveBtnEvent() {
     storage.newDoc = $(".seletedForm").html();
   }
 
-  if (storage.reportDetailData.sopp == soppResult) {
-    soppResult = "";
-  }
-  if (storage.reportDetailData.customer == cusResult) {
-    cusResult = "";
-  }
 
   selectVal === "approve" ? (type = 1) : (type = 0);
   storage.newFileData == undefined || storage.newFileData.length == 0
@@ -847,8 +849,8 @@ function approveBtnEvent() {
     files: storage.newFileData,
     appLine: storage.newAppLine,
     appDoc: appDoc,
-    sopp: soppResult,
-    customer: cusResult,
+    sopp: soppResult + "",
+    customer: cusResult + "",
     title: title,
   };
 
@@ -1699,7 +1701,7 @@ function quitModify() {
           storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
         $("." + formId + subTitlesArr[i] + "_position")[j].value =
           storage.userRank[
-            $("." + formId + subTitlesArr[i] + "_position")[j].value
+          $("." + formId + subTitlesArr[i] + "_position")[j].value
           ][0];
       }
     }
@@ -1742,7 +1744,7 @@ function createConfirmBtn(obj) {
   if (div[0].childElementCount < 5) {
     $(".mainBtnDiv").append(
       "<button type='button'name='modConfirm' onclick='reportModify()' >수정완료 </button>" +
-        "<button type='button'name='modConfirm' onclick='quitModify()'>문서 수정 초기화</button>"
+      "<button type='button'name='modConfirm' onclick='quitModify()'>문서 수정 초기화</button>"
     );
   }
   $(":file").css("display", "inline");
