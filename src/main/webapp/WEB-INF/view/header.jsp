@@ -36,6 +36,7 @@
 <body>
 <input type="hidden" id="pathName" value="${getPathName}" />
 <div id="loadingDiv" style="width: 100%; height: 100%;"></div>
+<div class="msg_cnt"></div>
 <div class="plusContentBtn">
 	<div class="plusItems">
 		<button type="button" data-keyword="widget" data-status="false" class="plusWidgetItem"><i class="fa-solid fa-screwdriver-wrench fa-2xl"></i></button>
@@ -53,7 +54,7 @@
 		<img src="/images/main/topEllipse.png" id="mainTopEllipseImg" />
 		<%-- <img src="/images/main/topVector.png" id="mainTopVectorImg" /> --%>
 	</div>
-	<div id="mainTopMenu">
+	<div class="mainTopMenu" id="mainTopMenu">
 		<ul>
 			<li><button type="button" data-keyword="business" onClick="bodyTopPageClick(this);">업무관리</button></li>
 			<li><button type="button" data-keyword="gw" onClick="bodyTopPageClick(this);">전자결재</button></li>

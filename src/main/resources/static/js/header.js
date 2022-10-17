@@ -22,11 +22,11 @@ function init(){
 
 	msg.cnt = document.getElementsByClassName("msg_cnt")[0];
 	
-	$("#sideMenu").find("ul:not(#panel) li a").click(function(){
+	$(".sideMenu").find("ul:not(#panel) li a").click(function(){
 		if($(this).attr("class") !== "active"){
-			$("#sideMenu").find("ul:not(#panel) li a").removeAttr("class");
-			$("#sideMenu").find("ul:not(#panel) li a").next().removeAttr("class");
-			$("#sideMenu").find("ul:not(#panel) li a").find("#slideSpan").text("+");
+			$(".sideMenu").find("ul:not(#panel) li a").removeAttr("class");
+			$(".sideMenu").find("ul:not(#panel) li a").next().removeAttr("class");
+			$(".sideMenu").find("ul:not(#panel) li a").find("#slideSpan").text("+");
 			$(this).next().attr("class", "active");
 			$(this).find("#slideSpan").text("-");
 			$(this).attr("class", "active");
@@ -520,16 +520,16 @@ function menuActive(){
 	let i = null, pathName = null, fullStr = null, firstStr = null, lastStr = null, strLength = null, sideMenu = null, mainTopMenu = null;
 	
 	pathName = $("#pathName").val();
-	mainTopMenu = $("#mainTopMenu");
-	sideMenu = $("#sideMenu");
+	mainTopMenu = $(".mainTopMenu");
+	sideMenu = $(".sideMenu");
 	strLength = pathName.length;
 	i = 0;
 
 	if(pathName === "root"){
 		mainTopMenu.find("ul li button").removeAttr("class");
 		mainTopMenu.find("ul li button[data-keyword='business']").attr("class", "active");
-
 		readyTopPageActive();
+		sideMenu.css("background-color", "#3e3e9e;");
 	}else if(pathName === "mypage"){
 		mainTopMenu.find("ul li button").removeAttr("class");
 		mainTopMenu.find("ul li button").eq(0).attr("class", "active");
@@ -553,6 +553,14 @@ function menuActive(){
 				sideMenu.find("ul[id='"+firstStr+"']").find("a[href='"+"/"+firstStr+"/"+lastStr+"']").parents("#panel").prev().find("#slideSpan").text("-");
 				sideMenu.find("ul[id='"+firstStr+"']").find("a[href='"+"/"+firstStr+"/"+lastStr+"']").parents("#panel").attr("class", "active");
 				sideMenu.find("ul[id='"+firstStr+"']").find("a[href='"+"/"+firstStr+"/"+lastStr+"']").attr("class", "active");
+				if(firstStr === "business"){
+					sideMenu.css("background-color", "#3e3e9e;");
+				}else if(firstStr === "gw"){
+					sideMenu.css("background-color", "#425da8;");
+				}else{
+					sideMenu.css("background-color", "#406c92;");
+				}
+
 				break;
 			}
 	
@@ -565,18 +573,18 @@ function menuActive(){
 function bodyTopPageClick(e){
 	let id = $(e).data("keyword");
 	
-	$("#mainTopMenu ul li button").removeAttr("class");
+	$(".mainTopMenu ul li button").removeAttr("class");
 	$(e).attr("class", "active");
 	
-	$("#sideMenu").find("ul").not("#panel").removeAttr("class");
-	$("#sideMenu").find("#" + id).attr("class", "active");
+	$(".sideMenu").find("ul").not("#panel").removeAttr("class");
+	$(".sideMenu").find("#" + id).attr("class", "active");
 
 	if(id === "business"){
-		$("#sideMenu").attr("style", "background-color: #3e3e9e;");
+		location.href = "/";
 	}else if(id === "gw"){
-		$("#sideMenu").attr("style", "background-color: #425da8;");
+		location.href = "/gw/home";
 	}else if(id === "accounting"){
-		$("#sideMenu").attr("style", "background-color: #406c92;");
+		
 	}
 }
 
@@ -584,15 +592,15 @@ function bodyTopPageClick(e){
 function readyTopPageActive(){
 	let sideMenu = null, mainTopMenu = null;
 
-	mainTopMenu = $("#mainTopMenu");
-	sideMenu = $("#sideMenu");
+	mainTopMenu = $(".mainTopMenu").find("ul li button");
+	sideMenu = $(".sideMenu");
 
-	mainTopMenu.find("ul li button").each(function(index, item){
-		if($(item).attr("class") === "active"){
-			sideMenu.find("ul").not("[id='"+$(item).attr("data-keyword")+"']").removeAttr("class");
-			sideMenu.find("ul[id='"+$(item).attr("data-keyword")+"']").attr("class", "active");
+	for(let i = 0; i < mainTopMenu.length; i++){
+		if($(mainTopMenu[i]).attr("class") === "active"){
+			sideMenu.find("ul").not("[id='"+$(mainTopMenu[i]).attr("data-keyword")+"']").removeAttr("class");
+			sideMenu.find("ul[id='"+$(mainTopMenu[i]).attr("data-keyword")+"']").attr("class", "active");
 		}
-	});
+	}
 }
 
 //기본 그리드
@@ -1341,15 +1349,15 @@ function inputSet(data){
 			
 			if(dataDisabled == true){
 				if(t == 0){
-					html += "<input type='radio' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.radioValue[t].key + "' disabled='" + dataDisabled + "' onclick='" + dataClickEvent + "' checked><label data-type=\"" + data.radioType + "\" for=\"" + elementId[t] + "\">" + data.radioValue[t].value + "</label>" + " ";
+					html += "<input type='radio' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.radioValue[t].key + "' disabled='" + dataDisabled + "' data-type=\"" + data.radioType + "\" onclick='" + dataClickEvent + "' checked><label data-type=\"" + data.radioType + "\" for=\"" + elementId[t] + "\">" + data.radioValue[t].value + "</label>" + " ";
 				}else{
-					html += "<input type='radio' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.radioValue[t].key + "' disabled='" + dataDisabled + "' onclick='" + dataClickEvent + "'><label data-type=\"" + data.radioType + "\" for=\"" + elementId[t] + "\">" + data.radioValue[t].value + "</label>" + " ";
+					html += "<input type='radio' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.radioValue[t].key + "' disabled='" + dataDisabled + "' data-type=\"" + data.radioType + "\" onclick='" + dataClickEvent + "'><label data-type=\"" + data.radioType + "\" for=\"" + elementId[t] + "\">" + data.radioValue[t].value + "</label>" + " ";
 				}
 			}else{
 				if(t == 0){
-					html += "<input type='radio' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.radioValue[t].key + "' onclick='" + dataClickEvent + "' checked><label data-type=\"" + data.radioType + "\" for=\"" + elementId[t] + "\">" + data.radioValue[t].value + "</label>" + " ";
+					html += "<input type='radio' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.radioValue[t].key + "' data-type=\"" + data.radioType + "\" onclick='" + dataClickEvent + "' checked><label data-type=\"" + data.radioType + "\" for=\"" + elementId[t] + "\">" + data.radioValue[t].value + "</label>" + " ";
 				}else{
-					html += "<input type='radio' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.radioValue[t].key + "' onclick='" + dataClickEvent + "'><label data-type=\"" + data.radioType + "\" for=\"" + elementId[t] + "\">" + data.radioValue[t].value + "</label>" + " ";
+					html += "<input type='radio' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.radioValue[t].key + "' data-type=\"" + data.radioType + "\" onclick='" + dataClickEvent + "'><label data-type=\"" + data.radioType + "\" for=\"" + elementId[t] + "\">" + data.radioValue[t].value + "</label>" + " ";
 				}
 			}
 		}

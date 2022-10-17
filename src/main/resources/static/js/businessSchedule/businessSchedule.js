@@ -624,8 +624,6 @@ function scheduleRadioClick(e, result){
 	tempFrom = $("#from").val();
 	tempTo = $("#to").val();
 
-	modal.hide();
-	
 	if(result === undefined){
 		dataArray = scheduleRadioInsert(value);
 		html = detailViewForm(dataArray, "modal");
@@ -1304,7 +1302,7 @@ function scheduleRadioUpdate(value, result){
 
 		dataArray = [
 			{
-				"title": "일정선택",
+				"title": undefined,
 				"radioValue": [
 					{
 						"key": "sales",
@@ -1529,7 +1527,7 @@ function scheduleRadioUpdate(value, result){
 
 		dataArray = [
 			{
-				"title": "일정선택",
+				"title": undefined,
 				"radioValue": [
 					{
 						"key": "sales",
@@ -1727,7 +1725,7 @@ function scheduleRadioUpdate(value, result){
 
 		dataArray = [
 			{
-				"title": "일정선택",
+				"title": undefined,
 				"radioValue": [
 					{
 						"key": "sales",

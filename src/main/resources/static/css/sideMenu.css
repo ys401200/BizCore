@@ -1,13 +1,12 @@
 @charset "UTF-8";
 
-#sideMenu{
-	background-color:#3e3e9e;
+.sideMenu{
 	width: 172px;
 	height: 100%;
 	box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-#sideMenu ul{
+.sideMenu ul{
 	display: block;
 	max-height: calc(100% - 80px);
 	overflow-y: auto;
@@ -16,34 +15,34 @@
 	padding: 0;
 }
 
-#sideMenu ul::-webkit-scrollbar{
+.sideMenu ul::-webkit-scrollbar{
 	width: 0.1px;
 }
 
-#sideMenu ul::-webkit-scrollbar-thumb{
+.sideMenu ul::-webkit-scrollbar-thumb{
 	height: 30%;
     background-color: #302D81;
 }
 
-#sideMenu ul::-webkit-scrollbar-track{
+.sideMenu ul::-webkit-scrollbar-track{
 	background-color: #302D81;
 }
 
-#sideMenu ul li{
+.sideMenu ul li{
 	line-height: 52px;
 }
 
-#sideMenu ul li a{
+.sideMenu ul li a{
 	display: block;
 	color: #ffffff;
 	text-decoration: none;
 }
 
-#sideMenu ul:not(#panel) li a:hover{
+.sideMenu ul:not(#panel) li a:hover{
 	background-color: #31318b;
 }
 
-#sideMenu ul li a.active{
+.sideMenu ul li a.active{
 	background-color: #4f4fb9;
 }
 
@@ -62,149 +61,149 @@
 	border-left:3px solid #8989ff;
 }
 
-#sideMenu #gw li #panel li{
+.sideMenu #gw li #panel li{
 	border-left:3px solid #8989ff;
 }
 /* /그룹웨어 active 색상 끝/ */
 
-#sideMenu ul li a.active span{
+.sideMenu ul li a.active span{
 	color: #fff;
 }
 
-#sideMenu ul li #panel a.active{
+.sideMenu ul li #panel a.active{
 	color: #fff;
 	background-color:#31318b;
 }
 
-/* #sideMenu ul li a:hover #mainHomeIcon{
+/* .sideMenu ul li a:hover #mainHomeIcon{
 	content: url("/images/main/icons/mainHomeIcon_hover.png");
 }
 
-#sideMenu ul li a:hover #mainNoticeIcon{
+.sideMenu ul li a:hover #mainNoticeIcon{
 	content: url("/images/main/icons/mainNoticeIcon_hover.png");
 }
 
-#sideMenu ul li a:hover #mainSchedIcon{
+.sideMenu ul li a:hover #mainSchedIcon{
 	content: url("/images/main/icons/mainSchedIcon_hover.png");
 }
 
-#sideMenu ul li a:hover #mainSalesIcon{
+.sideMenu ul li a:hover #mainSalesIcon{
 	content: url("/images/main/icons/mainSalesIcon_hover.png");
 }
 
-#sideMenu ul li a:hover #mainSoppIcon{
+.sideMenu ul li a:hover #mainSoppIcon{
 	content: url("/images/main/icons/mainSoppIcon_hover.png");
 }
 
-#sideMenu ul li a:hover #mainSoppList2Icon{
+.sideMenu ul li a:hover #mainSoppList2Icon{
 	content: url("/images/main/icons/mainSoppList2Icon_hover.png");
 }
 
-#sideMenu ul li a:hover #mainPpsIcon{
+.sideMenu ul li a:hover #mainPpsIcon{
 	content: url("/images/main/icons/mainPpsIcon_hover.png");
 }
 
-#sideMenu ul li a:hover #mainContIcon{
+.sideMenu ul li a:hover #mainContIcon{
 	content: url("/images/main/icons/mainContIcon_hover.png");
 }
 
-#sideMenu ul li a:hover #mainTechIcon{
+.sideMenu ul li a:hover #mainTechIcon{
 	content: url("/images/main/icons/mainTechIcon_hover.png");
 }
 
-#sideMenu ul li a:hover #mainBoardFileIcon{
+.sideMenu ul li a:hover #mainBoardFileIcon{
 	content: url("/images/main/icons/mainBoardFileIcon_hover.png");
 }
 
-#sideMenu ul li a:hover #mainManualIcon{
+.sideMenu ul li a:hover #mainManualIcon{
 	content: url("/images/main/icons/mainManualIcon_hover.png");
 }
 
-#sideMenu ul li a:hover #mainSettingIcon{
+.sideMenu ul li a:hover #mainSettingIcon{
 	content: url("/images/main/icons/mainSettingIcon_hover.png");
 }
 
-#sideMenu ul li a:hover #mainLogOutIcon{
+.sideMenu ul li a:hover #mainLogOutIcon{
 	content: url("/images/main/icons/mainLogOutIcon_hover.png");
 }
 
-#sideMenu ul li a.active #mainHomeIcon{
+.sideMenu ul li a.active #mainHomeIcon{
 	content: url("/images/main/icons/mainHomeIcon_hover.png");
 }
 
-#sideMenu ul li a.active #mainNoticeIcon{
+.sideMenu ul li a.active #mainNoticeIcon{
 	content: url("/images/main/icons/mainNoticeIcon_hover.png");
 }
 
-#sideMenu ul li a.active #mainSchedIcon{
+.sideMenu ul li a.active #mainSchedIcon{
 	content: url("/images/main/icons/mainSchedIcon_hover.png");
 }
 
-#sideMenu ul li a.active #mainSalesIcon{
+.sideMenu ul li a.active #mainSalesIcon{
 	content: url("/images/main/icons/mainSalesIcon_hover.png");
 }
 
-#sideMenu ul li a.active #mainSoppIcon{
+.sideMenu ul li a.active #mainSoppIcon{
 	content: url("/images/main/icons/mainSoppIcon_hover.png");
 }
 
-#sideMenu ul li a.active #mainSoppList2Icon{
+.sideMenu ul li a.active #mainSoppList2Icon{
 	content: url("/images/main/icons/mainSoppList2Icon_hover.png");
 }
 
-#sideMenu ul li a.active #mainPpsIcon{
+.sideMenu ul li a.active #mainPpsIcon{
 	content: url("/images/main/icons/mainPpsIcon_hover.png");
 }
 
-#sideMenu ul li a.active #mainContIcon{
+.sideMenu ul li a.active #mainContIcon{
 	content: url("/images/main/icons/mainContIcon_hover.png");
 }
 
-#sideMenu ul li a.active #mainTechIcon{
+.sideMenu ul li a.active #mainTechIcon{
 	content: url("/images/main/icons/mainTechIcon_hover.png");
 }
 
-#sideMenu ul li a.active #mainBoardFileIcon{
+.sideMenu ul li a.active #mainBoardFileIcon{
 	content: url("/images/main/icons/mainBoardFileIcon_hover.png");
 }
 
-#sideMenu ul li a.active #mainManualIcon{
+.sideMenu ul li a.active #mainManualIcon{
 	content: url("/images/main/icons/mainManualIcon_hover.png");
 }
 
-#sideMenu ul li a.active #mainSettingIcon{
+.sideMenu ul li a.active #mainSettingIcon{
 	content: url("/images/main/icons/mainSettingIcon_hover.png");
 }
 
-#sideMenu ul li a.active #mainLogOutIcon{
+.sideMenu ul li a.active #mainLogOutIcon{
 	content: url("/images/main/icons/mainLogOutIcon_hover.png");
 } */
 
-#sideMenu ul li a:hover span:not(#slideSpan){
+.sideMenu ul li a:hover span:not(#slideSpan){
 	color: #fff;
 	font-weight: 500;
 	opacity:1;
 }
 
-#sideMenu ul li a:hover span{
+.sideMenu ul li a:hover span{
 	color: #fff;
 	opacity:0.8;
 }
 
-#sideMenu ul li a img{
+.sideMenu ul li a img{
 	/* width: 20px; */
 	/* height: 27px; */
 	margin-left: 15px;
 	vertical-align: sub;
 }
 
-#sideMenu ul li a span:not(#slideSpan){
+.sideMenu ul li a span:not(#slideSpan){
 	margin-left: 8px;
 	font-weight: 500;
 	font-size: 14px;
 }
 
-#sideMenu ul li a.active #slideSpan{
+.sideMenu ul li a.active #slideSpan{
 	float: right;
 	margin-right: 15px;
 	font-weight: 400;
@@ -212,7 +211,7 @@
 	opacity: 0.8;
 }
 
-#sideMenu ul li a:not(.active) #slideSpan{
+.sideMenu ul li a:not(.active) #slideSpan{
 	float: right;
 	margin-right: 14px;
 	font-weight: 400;
@@ -220,13 +219,13 @@
 	opacity: 0.8;
 }
 
-#sideMenu ul li #panel{
+.sideMenu ul li #panel{
 	list-style: none;
 	background-color: #302D81;
 	overflow: hidden;
 }
 
-#sideMenu ul li #panel li{
+.sideMenu ul li #panel li{
 	width: auto;
 	height: 50px;
 	line-height: 55px;
@@ -235,7 +234,7 @@
 	/* border-left:3px solid #89ceff;  */
 }
 
-#sideMenu ul li #panel li a{
+.sideMenu ul li #panel li a{
 	display: block;
 	padding: 0 0 0 25%;
 	text-decoration: none;
@@ -244,12 +243,12 @@
 	color: #ffffff;
 }
 
-#sideMenu ul li #panel li a:hover{
+.sideMenu ul li #panel li a:hover{
 	color: #fff;
 	background-color: #31318b;
 }
 
-#sideMenu ul:not(#panel).active{
+.sideMenu ul:not(#panel).active{
 	display: block;
 	animation: 0.6s ease-in-out ulActive; 
 }
@@ -263,7 +262,7 @@
 	}
 }
 
-#sideMenu ul:not(#panel):not(.active){ 
+.sideMenu ul:not(#panel):not(.active){ 
 	display: none;
 	content: "+";
 	animation: 0.5s ease-in-out ulUnactive; 
@@ -280,7 +279,7 @@
 	}
 }
 
-#sideMenu ul li #panel.active{ 
+.sideMenu ul li #panel.active{ 
 	display: block;
 	animation: 0.6s ease-in-out panelActive; 
 }
@@ -294,7 +293,7 @@
     }
 }
 
-#sideMenu ul li #panel:not(.active){ 
+.sideMenu ul li #panel:not(.active){ 
 	display: none;
 	animation: 0.5s ease-in-out panelUnactive; 
 }
@@ -310,10 +309,10 @@
     }
 }
 
-/* #header #mainTopMenu ul li button[data-keyword="gw"] {
+/* #header .mainTopMenu ul li button[data-keyword="gw"] {
 	background-color:#a5a2df;
 	border:1px solid #171460;
 }
 
-#sideMenu[data-keyword="gw"]{background-color:#8989ff;} */
+.sideMenu[data-keyword="gw"]{background-color:#8989ff;} */
 

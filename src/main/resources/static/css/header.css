@@ -266,13 +266,17 @@ button, select, input[type="text"], input[type="date"]{
 .defaultFormContainer{
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
-    border-left: 1px solid #B5B2FF;
     border-bottom: 1px solid #B5B2FF;
 }
 
-.defaultFormContainer .defaultFormLine{
+.defaultFormContainer .defaultFormLine:not(:first-child){
 	display: flex;
 	border-top: 1px solid #B5B2FF;
+}
+
+.defaultFormContainer .defaultFormLine:first-child{
+	display: flex;
+	border: 0;
 }
 
 .defaultFormContainer .defaultFormLine .defaultFormSpanDiv{
@@ -296,7 +300,40 @@ button, select, input[type="text"], input[type="date"]{
     align-items: center;
     justify-content: left;
     width: 100%;
-    border-right: 1px solid #B5B2FF;
+}
+
+.defaultFormContainer .defaultFormLine .defaultFormContent > input[type="radio"][data-type="tab"]{
+	display: none;
+}
+
+.defaultFormContainer .defaultFormLine .defaultFormContent > input[type="radio"][data-type="default"]{
+	display: block;
+}
+
+
+.defaultFormContainer .defaultFormLine .defaultFormContent > label[data-type="tab"]{
+	display: flex;
+    align-items: center;
+    padding: 10px;
+    border-radius: 0 15px 0 0;
+	background-color: #B5B2FF;
+	color: #ffffff;
+}
+
+.defaultFormContainer .defaultFormLine .defaultFormContent > label[data-type="tab"]:hover{
+	background-color: #2147b1;
+	color: #ffffff;
+	cursor: pointer;
+}
+
+.defaultFormContainer .defaultFormLine .defaultFormContent > input[type="radio"][data-type="tab"]:checked + label{
+	background-color: #2147b1;
+	color: #ffffff;
+}
+
+.defaultFormContainer .defaultFormLine .defaultFormContent > label[data-type="default"]{
+	display: flex;
+    align-items: center;
 }
 
 .defaultFormContainer .defaultFormLine .defaultFormContent input[type='text'],
@@ -709,25 +746,25 @@ input[name="tabItem"] {
 	top: 22px;
 }
 
-/* #header #mainTopMenu{
+/* #header .mainTopMenu{
 	padding-left: 1%;
 } */
 
-#header #mainTopMenu ul{
+#header .mainTopMenu ul{
 	list-style: none;
 	height:100%;
 	margin: 0;
 	padding: 0;
 }
 
-#header #mainTopMenu ul li{
+#header .mainTopMenu ul li{
 	float: left;
 	text-align: center;
 	width: 126px;
 	height: 100%;
 }
 
-#header #mainTopMenu ul li button{
+#header .mainTopMenu ul li button{
 	width: 100%;
 	height: 54px;
 	font-weight: 500;
@@ -737,7 +774,7 @@ input[name="tabItem"] {
 	background-color: #ffffff;
 }
 
-#header #mainTopMenu ul li button.active{
+#header .mainTopMenu ul li button.active{
 	width: 100%;
 	height: 54px;
 	font-weight: 500;
@@ -748,7 +785,7 @@ input[name="tabItem"] {
 	cursor: pointer;
 }
 
-#header #mainTopMenu ul li button:not(.active):hover{
+#header .mainTopMenu ul li button:not(.active):hover{
 	width: 100%;
 	height: 54px;
 	font-weight: 500;

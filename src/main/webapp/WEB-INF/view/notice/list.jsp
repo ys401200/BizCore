@@ -38,5 +38,4 @@
 		</div>
 	</div>
 </div>
-<div class="msg_cnt"></div>
 <jsp:include page="../bottom.jsp" />
