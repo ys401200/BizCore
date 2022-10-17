@@ -436,11 +436,17 @@
 /* End ======================== 결재선관련 ============================= */
 
 
+.selector .insertedDetail {
+  padding: 1em;
+  /* border: 1px solid rgb(188, 185, 185); */
+
+}
 
 
 .selector .reportInsertForm {
   color: black;
   overflow: auto;
+
   /* border: 1px solid rgb(188, 185, 185); */
 
 }

@@ -160,7 +160,7 @@ function selectForm() {
   let selectedFormNo = $(".formSelector").val();
   $(".formNumHidden").val(selectedFormNo);
   selectedFormTitle = data[$(".formNumHidden").val()].title;
-
+  $(".lineBtnContainer").css("border-left", "2px solid black");
   $(".guide").remove();
 
   let tt = $(".lineBtnContainer");
@@ -168,7 +168,7 @@ function selectForm() {
   $(".lineDetail").show();
   $(".createLineBtn").show();
   $(".reportInsertForm").html(data[$(".formNumHidden").val()].form);
-  $(".insertedDetail").show();
+  //$(".insertedDetail").show();
 
   //작성자 작성일 자동 입력
   let my = storage.my;
@@ -423,6 +423,10 @@ function closeGwModal(obj) {
       $(".inputsAuto").eq(1).css("text-align", "left");
       $(".inputsAuto").eq(2).css("text-align", "left");
       $(".modal-wrap").hide();
+      $(".insertedDetail").show();
+ 
+      $(".insertedDetail").css("border", "1px solid black");
+
     }
   }
 }
