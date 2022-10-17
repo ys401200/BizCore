@@ -553,6 +553,7 @@ function menuActive(){
 				sideMenu.find("ul[id='"+firstStr+"']").find("a[href='"+"/"+firstStr+"/"+lastStr+"']").parents("#panel").prev().find("#slideSpan").text("-");
 				sideMenu.find("ul[id='"+firstStr+"']").find("a[href='"+"/"+firstStr+"/"+lastStr+"']").parents("#panel").attr("class", "active");
 				sideMenu.find("ul[id='"+firstStr+"']").find("a[href='"+"/"+firstStr+"/"+lastStr+"']").attr("class", "active");
+
 				if(firstStr === "business"){
 					sideMenu.css("background-color", "#3e3e9e;");
 				}else if(firstStr === "gw"){
@@ -1347,6 +1348,8 @@ function inputSet(data){
 				data.radioType = "default";
 			}
 			
+			html += "<div class=\"detailRadioBox\" data-type=\"" + data.radioType + "\">";
+
 			if(dataDisabled == true){
 				if(t == 0){
 					html += "<input type='radio' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.radioValue[t].key + "' disabled='" + dataDisabled + "' data-type=\"" + data.radioType + "\" onclick='" + dataClickEvent + "' checked><label data-type=\"" + data.radioType + "\" for=\"" + elementId[t] + "\">" + data.radioValue[t].value + "</label>" + " ";
@@ -1360,6 +1363,8 @@ function inputSet(data){
 					html += "<input type='radio' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.radioValue[t].key + "' data-type=\"" + data.radioType + "\" onclick='" + dataClickEvent + "'><label data-type=\"" + data.radioType + "\" for=\"" + elementId[t] + "\">" + data.radioValue[t].value + "</label>" + " ";
 				}
 			}
+
+			html += "</div>";
 		}
 	}else if(dataType === "date"){
 		if(dataDisabled == true){

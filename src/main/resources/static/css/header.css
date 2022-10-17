@@ -302,16 +302,23 @@ button, select, input[type="text"], input[type="date"]{
     width: 100%;
 }
 
-.defaultFormContainer .defaultFormLine .defaultFormContent > input[type="radio"][data-type="tab"]{
+.defaultFormContainer .defaultFormLine .defaultFormContent .detailRadioBox[data-type="default"]{
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-left: 5px;
+}
+
+.defaultFormContainer .defaultFormLine .defaultFormContent .detailRadioBox > input[type="radio"][data-type="tab"]{
 	display: none;
 }
 
-.defaultFormContainer .defaultFormLine .defaultFormContent > input[type="radio"][data-type="default"]{
-	display: block;
+.defaultFormContainer .defaultFormLine .defaultFormContent .detailRadioBox > input[type="radio"][data-type="default"]{
+	position: absolute;
+    width: 22px;
 }
 
 
-.defaultFormContainer .defaultFormLine .defaultFormContent > label[data-type="tab"]{
+.defaultFormContainer .defaultFormLine .defaultFormContent .detailRadioBox > label[data-type="tab"]{
 	display: flex;
     align-items: center;
     padding: 10px;
@@ -320,20 +327,24 @@ button, select, input[type="text"], input[type="date"]{
 	color: #ffffff;
 }
 
-.defaultFormContainer .defaultFormLine .defaultFormContent > label[data-type="tab"]:hover{
+.defaultFormContainer .defaultFormLine .defaultFormContent .detailRadioBox > label[data-type="tab"]:hover{
 	background-color: #2147b1;
 	color: #ffffff;
 	cursor: pointer;
 }
 
-.defaultFormContainer .defaultFormLine .defaultFormContent > input[type="radio"][data-type="tab"]:checked + label{
+.defaultFormContainer .defaultFormLine .defaultFormContent .detailRadioBox > input[type="radio"][data-type="tab"]:checked + label{
 	background-color: #2147b1;
 	color: #ffffff;
 }
 
-.defaultFormContainer .defaultFormLine .defaultFormContent > label[data-type="default"]{
-	display: flex;
-    align-items: center;
+.defaultFormContainer .defaultFormLine .defaultFormContent .detailRadioBox > label[data-type="default"]{
+	background-color: #2147b1;
+    padding: 5px;
+    border-radius: 15px;
+    color: #ffffff;
+    padding-left: 30px;
+    padding-right: 10px;
 }
 
 .defaultFormContainer .defaultFormLine .defaultFormContent input[type='text'],
