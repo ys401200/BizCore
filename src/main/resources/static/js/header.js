@@ -37,10 +37,7 @@ function init(){
 		}
 	});
 
-	setTimeout(() => {
-		setTiny();
-		menuActive();
-	}, 100);
+	
 	
 	$(document).click((e) => {
 		if(modal.wrap.is($(e.target))){
@@ -58,13 +55,12 @@ function init(){
 		window.setTimeout(addNoteContainer, 200);
 	}
 
-	noteLiveUpdate();
-
+	
 	nextStep = function(){
 		if(isInit())	prepare();
 		else			window.setTimeout(nextStep,50);
 	}
-
+	
 	if(prepare !== undefined)	window.setTimeout(nextStep,50);
 	
 	getCommonCode();
@@ -74,6 +70,8 @@ function init(){
 	getCustomer();
 	getUserRank();
 	getPersonalize();
+	noteLiveUpdate();
+	menuActive();
 } // End of init();
 
 apiServer = "";
@@ -245,7 +243,6 @@ modal = {
 		modal.clear();
 
 		setTimeout(() => {
-			setTiny();
 			inputDataList();
 		},100);
 
@@ -349,6 +346,29 @@ crud = {
 				}
 			}
 		});
+	}
+},
+
+ckeditor = {
+	"options": {
+		toolbar: {
+			items: [
+				'heading', '|',
+				'fontfamily', 'fontsize', '|',
+				'alignment', '|',
+				'fontColor', 'fontBackgroundColor', '|',
+				'bold', 'italic', 'strikethrough', 'underline', 'subscript', 'superscript', '|',
+				'link', '|',
+				'outdent', 'indent', '|',
+				'bulletedList', 'numberedList', 'todoList', '|',
+				'code', 'codeBlock', '|',
+				'insertTable', '|',
+				'uploadImage', 'blockQuote', '|',
+				'undo', 'redo'
+			],
+			shouldNotGroupWhenFull: true
+		},
+		language: "ko",
 	}
 }
 
@@ -1341,7 +1361,7 @@ function inputSet(data){
 			html += "<input type='text' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "' data-keyup='" + dataKeyup + "' onchange='" + dataChangeEvent + "' onclick='" + dataClickEvent + "' onkeyup='" + dataKeyupEvent + "'>";
 		}
 	}else if(dataType === "textarea"){
-		html += "<textarea id='editorSet'>" + dataValue + "</textarea>";
+		html += "<div id='editorSet'>" + dataValue + "</div>";
 	}else if(dataType === "radio"){
 		for(let t = 0; t < data.radioValue.length; t++){
 			if(data.radioType !== "tab"){
@@ -1403,9 +1423,18 @@ function detailTabHide(notId){
 }
 
 //tinyMCE
-function setTiny(){
-	tinymce.remove();
-	tinymce.init(tiny.options);
+// function setTiny(){
+// 	tinymce.remove();
+// 	tinymce.init(tiny.options);
+// }
+
+//ckeditor
+function setEditor(){
+	InlineEditor
+	.create(document.querySelector("#editorSet"),ckeditor.options)
+	.catch(error => {
+		console.error( error );
+	});
 }
 
 // datalist

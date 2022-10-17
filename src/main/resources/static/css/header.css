@@ -269,14 +269,9 @@ button, select, input[type="text"], input[type="date"]{
     border-bottom: 1px solid #B5B2FF;
 }
 
-.defaultFormContainer .defaultFormLine:not(:first-child){
+.defaultFormContainer .defaultFormLine{
 	display: flex;
 	border-top: 1px solid #B5B2FF;
-}
-
-.defaultFormContainer .defaultFormLine:first-child{
-	display: flex;
-	border: 0;
 }
 
 .defaultFormContainer .defaultFormLine .defaultFormSpanDiv{

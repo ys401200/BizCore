@@ -209,8 +209,7 @@ function noticeSuccessView(result){
 		];
 
 		plusMenuSelect(menu);
-		setTiny();
-		tinymce.activeEditor.mode.set('readonly');
+		setEditor();
 		inputDataList();
 	}, 100)
 }
