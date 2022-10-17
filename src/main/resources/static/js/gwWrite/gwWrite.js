@@ -67,6 +67,7 @@ function getformList() {
 
   let tt = $(".stepLabel")[0];
   $(tt).css("color", "black");
+  $(".simpleAppLine").hide();
   // let previewWidth = document.getElementsByClassName("reportInsertForm")[0];
   // previewWidth = previewWidth.clientWidth;
   // let target = $(".reportInsertForm");
@@ -792,9 +793,9 @@ function createLine() {
 
   testHtml += testHtml2;
   lineTarget.html(testHtml);
-
+  $(".simpleAppLine").show();
   $(".referContainer").html(referHtml);
-  $(".simpleAppLine").html(simpleHtml);
+  $(".simpleAppLineData").html(simpleHtml);
 
 
   let infoLength = document.getElementsByClassName("info")[0];

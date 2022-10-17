@@ -168,24 +168,33 @@
   margin: 0.4em;
 }
 
-.selector .lineBtnContainerB {
-  border: 1px solid #c3c3c3;
-  padding: 0.5em;
+
+
+.selector .lineBtnContainer .simpleAppLine {
+
+
+  border: 1px solid rgb(188, 185, 185);
   display: grid;
-  grid-template-columns: 8% 92%;
+  grid-template-columns: 7% 93%;
+  margin: 0.5em 0;
 }
 
 
-.selector .lineBtnContainerB>div:first-of-type {
+.selector .lineBtnContainer .simpleAppLine>div:first-of-type {
+  padding: 0.5em;
+  border-right: 1px solid rgb(188, 185, 185);
+  text-align: center;
+  background-color: #efefef;
+
+}
+
+.selector .lineBtnContainer .simpleAppLine>div:last-of-type {
   display: flex;
   align-items: center;
-  justify-content: left;
-}
+  margin: 0.5em;
 
-.selector .lineBtnContainerB .simpleAppLine {
-  color: #d0cece;
-}
 
+}
 
 .selector .fileDetail {
   display: grid;
@@ -228,7 +237,7 @@
 /* End 결재양식 선택  ====================================================   */
 
 
-/* Start ======================== 결재선관련 ============================= */
+/* Start ======================== 결재선 모달 관련 ============================= */
 /* .createLineBtn {
   font-weight: bolder;
   font-size: 15px;
