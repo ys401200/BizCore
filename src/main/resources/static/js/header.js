@@ -1621,9 +1621,9 @@ function tradeInsertForm(){
 }
 
 function createTabFileList(){
-	let html = "", container, header = [], data = [], str, gridList, ids, job, fnc, url;
+	let html = "", container, header = [], data = [], str, detailSecondTabs, ids, job, fnc, url;
 	
-	gridList = $(".gridList");
+	detailSecondTabs = $(".detailSecondTabs");
 
 	html = "<div class='tabFileList' id='tabFileList'>";
 	html += "<input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attached[]' id='attached' onchange='fileChange();' multiple>";
@@ -1641,8 +1641,8 @@ function createTabFileList(){
 		},
 	];
 	
-	gridList.append(html);
-	container = gridList.find(".tabFileList .fileList");
+	detailSecondTabs.append(html);
+	container = detailSecondTabs.find(".tabFileList .fileList");
 	
 	if(storage.attachedList.length > 0){
 		for(let i = 0; i < storage.attachedList.length; i++){
@@ -1862,7 +1862,7 @@ function tabFileItemListUpdate(){
 		},
 	];
 	
-	container = $(".gridList .tabFileList .fileList");
+	container = $(".detailSecondTabs .tabFileList .fileList");
 	
 	if(storage.attachedList.length > 0){
 		for(let i = 0; i < storage.attachedList.length; i++){
@@ -1918,9 +1918,9 @@ function tabFileItemListUpdate(){
 
 //견적내역 리스트
 function createTabEstList(){
-	let html = "", container, header = [], data = [], str, gridList;
+	let html = "", container, header = [], data = [], str, detailSecondTabs;
 
-	gridList = $(".gridList");
+	detailSecondTabs = $(".detailSecondTabs");
 
 	html = "<div class='tabEstList' id='tabEstList'>";
 	html += "</div>";
@@ -1964,8 +1964,8 @@ function createTabEstList(){
 		},
 	]
 	
-	gridList.append(html);
-	container = gridList.find(".tabEstList");
+	detailSecondTabs.append(html);
+	container = detailSecondTabs.find(".tabEstList");
 
 	str = [
 		{
@@ -2006,9 +2006,9 @@ function createTabEstList(){
 
 //기술지원내역 리스트
 function createTabTechList(result){
-	let html = "", container, header = [], data = [], str, gridList, ids, job, fnc;
+	let html = "", container, header = [], data = [], str, detailSecondTabs, ids, job, fnc;
 
-	gridList = $(".gridList");
+	detailSecondTabs = $(".detailSecondTabs");
 	html = "<div class='tabTechList' id='tabTechList'></div>";
 	
 	header = [
@@ -2034,8 +2034,8 @@ function createTabTechList(result){
 		},
 	]
 	
-	gridList.append(html);
-	container = gridList.find(".tabTechList");
+	detailSecondTabs.append(html);
+	container = detailSecondTabs.find(".tabTechList");
 
 	for(let i = 0; i < result.length; i++){
 		if(result[i].job === "tech"){
@@ -2068,9 +2068,9 @@ function createTabTechList(result){
 
 //영업활동내역 리스트
 function createTabSalesList(result){
-	let html = "", container, header = [], data = [], str, gridList, ids, job, fnc;
+	let html = "", container, header = [], data = [], str, detailSecondTabs, ids, job, fnc;
 
-	gridList = $(".gridList");
+	detailSecondTabs = $(".detailSecondTabs");
 	html = "<div class='tabSalesList' id='tabSalesList'></div>";
 	
 	header = [
@@ -2100,8 +2100,8 @@ function createTabSalesList(result){
 		},
 	]
 	
-	gridList.append(html);
-	container = gridList.find(".tabSalesList");
+	detailSecondTabs.append(html);
+	container = detailSecondTabs.find(".tabSalesList");
 
 	for(let i = 0; i < result.length; i++){
 		if(result[i].job === "sales"){

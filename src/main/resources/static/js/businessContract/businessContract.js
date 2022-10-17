@@ -219,13 +219,14 @@ function contractErrorList(){
 }
 
 function contractSuccessView(result){
-	let notIdArray, sopp, html, contractType, title, employee, customer, salesType, cipOfCustomer, endUser, cipOfendUser, saleDate, delivered, employee2, startOfFreeMaintenance, endOfFreeMaintenance, startOfPaidMaintenance, endOfPaidMaintenance, contractAmount, taxInclude, profit, detail, disDate, dataArray, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput;
+	let notIdArray, sopp, html, htmlSecond, contractType, title, employee, customer, salesType, cipOfCustomer, endUser, cipOfendUser, saleDate, delivered, employee2, startOfFreeMaintenance, endOfFreeMaintenance, startOfPaidMaintenance, endOfPaidMaintenance, contractAmount, taxInclude, profit, detail, disDate, dataArray, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput;
 	storage.contractNo = result.no;
 	gridList = $(".gridList");
 	searchContainer = $(".searchContainer");
 	containerTitle = $("#containerTitle");
 	detailBackBtn = $(".detailBackBtn");
 	listSearchInput = $(".listSearchInput");
+	detailSecondTabs = $(".detailSecondTabs");
 
 	contractType = (result.contractType === null || result.contractType === "" || result.contractType === undefined) ? "" : storage.code.etc[result.contractType];
 	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
@@ -477,21 +478,23 @@ function contractSuccessView(result){
 	];
 
 	html = "<div class='tabs'>";
-	html += "<input type='radio' id='tabAll' name='tabItem' data-content-id='tabContentAll' onclick='tabItemClick(this)' checked>";
+	html += "<input type='radio' id='tabAll' name='tabItem' disabled>";
 	html += "<label class='tabItem' for='tabAll'>기본정보</label>";
-	html += "<input type='radio' id='tabTrade' name ='tabItem' data-content-id='tabTradeList' onclick='tabItemClick(this)'>";
-	html += "<label class='tabItem' for='tabTrade'>매입매출내역</label>";
-	// html += "<input type='radio' id='tabEst' name='tabItem' data-content-id='tabEstList' onclick='tabItemClick(this)'>";
-	// html += "<label class='tabItem' for='tabEst'>견적내역</label>";
-	html += "<input type='radio' id='tabFile' name='tabItem' data-content-id='tabFileList' data-id='" + result.no + "' onclick='tabItemClick(this)'>";
-	html += "<label class='tabItem' for='tabFile'>파일첨부</label>";
-	html += "<input type='radio' id='tabTech' name='tabItem' data-content-id='tabTechList' onclick='tabItemClick(this)'>";
-	html += "<label class='tabItem' for='tabTech'>기술지원내역</label>";
-	html += "<input type='radio' id='tabSales' name='tabItem' data-content-id='tabSalesList' onclick='tabItemClick(this)'>";
-	html += "<label class='tabItem' for='tabSales'>영업활동내역</label>";
 	html += "</div>";
 	html += detailViewForm(dataArray);
-	html += createTabTradeList(result.trades);
+	htmlSecond = "<div class='tabs'>";
+	htmlSecond += "<input type='radio' id='tabTrade' name ='tabItem' data-content-id='tabTradeList' onclick='tabItemClick(this)' checked>";
+	htmlSecond += "<label class='tabItem' for='tabTrade'>매입매출내역</label>";
+	htmlSecond += "<input type='radio' id='tabFile' name='tabItem' data-content-id='tabFileList' data-id='" + result.no + "' onclick='tabItemClick(this)'>";
+	htmlSecond += "<label class='tabItem' for='tabFile'>파일첨부</label>";
+	htmlSecond += "<input type='radio' id='tabTech' name='tabItem' data-content-id='tabTechList' onclick='tabItemClick(this)'>";
+	htmlSecond += "<label class='tabItem' for='tabTech'>기술지원내역</label>";
+	htmlSecond += "<input type='radio' id='tabSales' name='tabItem' data-content-id='tabSalesList' onclick='tabItemClick(this)'>";
+	htmlSecond += "<label class='tabItem' for='tabSales'>영업활동내역</label>";
+	htmlSecond += "</div>";
+	htmlSecond += createTabTradeList(result.trades);
+	detailSecondTabs.append(htmlSecond);
+	detailSecondTabs.show();
 	containerTitle.html(title);
 	gridList.html("");
 	searchContainer.hide();
@@ -556,7 +559,7 @@ function contractSuccessView(result){
 		}
 	}, 100);
 
-	detailTabHide("tabContentAll");
+	detailTabHide("tabTradeList");
 }
 
 function contractErrorView(){

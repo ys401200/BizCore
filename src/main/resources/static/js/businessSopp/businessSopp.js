@@ -205,12 +205,13 @@ function soppErrorList(){
 }
 
 function soppSuccessView(result){
-	let html, title, userName, customer, picOfCustomer, endUser, status, progress, contType, disDate, expectedSales, detail, dataArray, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput;
+	let html, htmlSecond, title, userName, customer, picOfCustomer, endUser, status, progress, contType, disDate, expectedSales, detail, dataArray, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput, detailSecondTabs;
 	gridList = $(".gridList");
 	searchContainer = $(".searchContainer");
 	containerTitle = $("#containerTitle");
 	detailBackBtn = $(".detailBackBtn");
 	listSearchInput = $(".listSearchInput");
+	detailSecondTabs = $(".detailSecondTabs");
 
 	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
 	userName = (result.employee == 0 || result.employee === null || result.employee === undefined) ? "" : storage.user[result.employee].userName;
@@ -364,21 +365,23 @@ function soppSuccessView(result){
 	];
 
 	html = "<div class='tabs'>";
-	html += "<input type='radio' id='tabAll' name='tabItem' data-content-id='tabContentAll' onclick='tabItemClick(this)' checked>";
+	html += "<input type='radio' id='tabAll' name='tabItem' disabled>";
 	html += "<label class='tabItem' for='tabAll'>기본정보</label>";
-	html += "<input type='radio' id='tabTrade' name='tabItem' data-content-id='tabTradeList' onclick='tabItemClick(this)'>";
-	html += "<label class='tabItem' for='tabTrade'>매입매출내역</label>";
-	// html += "<input type='radio' id='tabEst' name='tabItem' data-content-id='tabEstList' onclick='tabItemClick(this)'>";
-	// html += "<label class='tabItem' for='tabEst'>견적내역</label>";
-	html += "<input type='radio' id='tabFile' name='tabItem' data-content-id='tabFileList' data-id='" + result.no + "' onclick='tabItemClick(this)'>";
-	html += "<label class='tabItem' for='tabFile'>파일첨부</label>";
-	html += "<input type='radio' id='tabTech' name='tabItem' data-content-id='tabTechList' onclick='tabItemClick(this)'>";
-	html += "<label class='tabItem' for='tabTech'>기술지원내역</label>";
-	html += "<input type='radio' id='tabSales' name='tabItem' data-content-id='tabSalesList' onclick='tabItemClick(this)'>";
-	html += "<label class='tabItem' for='tabSales'>영업활동내역</label>";
 	html += "</div>";
 	html += detailViewForm(dataArray);
-	html += createTabTradeList(result.trades);
+	htmlSecond = "<div class='tabs'>";
+	htmlSecond += "<input type='radio' id='tabTrade' name='tabItem' data-content-id='tabTradeList' onclick='tabItemClick(this)' checked>";
+	htmlSecond += "<label class='tabItem' for='tabTrade'>매입매출내역</label>";
+	htmlSecond += "<input type='radio' id='tabFile' name='tabItem' data-content-id='tabFileList' data-id='" + result.no + "' onclick='tabItemClick(this)'>";
+	htmlSecond += "<label class='tabItem' for='tabFile'>파일첨부</label>";
+	htmlSecond += "<input type='radio' id='tabTech' name='tabItem' data-content-id='tabTechList' onclick='tabItemClick(this)'>";
+	htmlSecond += "<label class='tabItem' for='tabTech'>기술지원내역</label>";
+	htmlSecond += "<input type='radio' id='tabSales' name='tabItem' data-content-id='tabSalesList' onclick='tabItemClick(this)'>";
+	htmlSecond += "<label class='tabItem' for='tabSales'>영업활동내역</label>";
+	htmlSecond += "</div>";
+	htmlSecond += createTabTradeList(result.trades);
+	detailSecondTabs.append(htmlSecond);
+	detailSecondTabs.show();
 	containerTitle.html(title);
 	gridList.html("");
 	searchContainer.hide();
@@ -394,7 +397,7 @@ function soppSuccessView(result){
 	createTabFileList();
 	createTabTechList(result.schedules);
 	createTabSalesList(result.schedules);
-	detailTabHide("tabContentAll");
+	detailTabHide("tabTradeList");
 
 	setTimeout(() => {
 		$("#status option[value='" + result.status + "']").prop("selected" ,true);

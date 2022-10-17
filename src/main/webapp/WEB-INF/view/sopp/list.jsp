@@ -73,6 +73,7 @@
             <div class="gridList"></div>
             <div class="pageContainer"></div>
         </div>
+        <div class="detailSecondTabs"></div>
 	</div>
 </div>
 <div class="msg_cnt"></div>
