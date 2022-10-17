@@ -104,6 +104,11 @@
   border: 1px solid #c3c3c3;
   border-left: none;
 } */
+.selector .stepLabel {
+  color: #99989843;
+}
+
+
 
 
 .selector .formDetail {

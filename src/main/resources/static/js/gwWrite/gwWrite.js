@@ -63,6 +63,10 @@ function getformList() {
       },
     });
   }
+
+
+  let tt = $(".stepLabel")[0];
+  $(tt).css("color", "black");
   // let previewWidth = document.getElementsByClassName("reportInsertForm")[0];
   // previewWidth = previewWidth.clientWidth;
   // let target = $(".reportInsertForm");
@@ -160,10 +164,12 @@ function selectForm() {
   let selectedFormNo = $(".formSelector").val();
   $(".formNumHidden").val(selectedFormNo);
   selectedFormTitle = data[$(".formNumHidden").val()].title;
+  let tt = $(".stepLabel")[1];
+  $(tt).css("color", "black");
   $(".lineBtnContainer").css("border-left", "2px solid black");
   $(".guide").remove();
 
-  let tt = $(".lineBtnContainer");
+  // let tt = $(".lineBtnContainer");
   //$(tt[0]).addClass("lineBtnContainerB");
   $(".lineDetail").show();
   $(".createLineBtn").show();
@@ -424,7 +430,8 @@ function closeGwModal(obj) {
       $(".inputsAuto").eq(2).css("text-align", "left");
       $(".modal-wrap").hide();
       $(".insertedDetail").show();
- 
+      let tt = $(".stepLabel")[2];
+      $(tt).css("color", "black");
       $(".insertedDetail").css("border", "1px solid black");
 
     }
