@@ -7,6 +7,8 @@ $(document).ready(() => {
   }, 300);
 
   getformList();
+
+
 });
 
 function getformList() {
@@ -162,7 +164,7 @@ function selectForm() {
   $(".guide").remove();
 
   let tt = $(".lineBtnContainer");
-  $(tt[0]).addClass("lineBtnContainerB");
+  //$(tt[0]).addClass("lineBtnContainerB");
   $(".lineDetail").show();
   $(".createLineBtn").show();
   $(".reportInsertForm").html(data[$(".formNumHidden").val()].form);
@@ -797,6 +799,9 @@ function createLine() {
       lgcTotal = lineGrid[3].clientWidth;
     }
 
+
+
+
   } else {
     for (let i = 0; i < lineGrid.length; i++) {
       lgcTotal += lineGrid[i].clientWidth;
@@ -807,15 +812,14 @@ function createLine() {
   if (lgcTotal > infoLength) {
     for (let i = 0; i < lineGrid.length; i++) {
       let tt = lineGrid[i];
-      $(tt).css("width", ((lineGrid[i].clientWidth) * (infoLength / lgcTotal)));
+      let kk = lineGrid[0]
+      kk = $(kk).css("margin-right");
+      kk = kk.split("p")[0];
+      $(tt).css("width", ((lineGrid[i].clientWidth) * (infoLength / (lgcTotal + (kk * 4)))));
     }
   }
 
 } // End of createLine();
-
-
-
-
 
 
 

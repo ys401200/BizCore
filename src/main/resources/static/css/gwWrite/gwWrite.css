@@ -75,8 +75,8 @@
   width: 80%;
   height: max-content;
   display: grid;
-  grid-template-columns: 5% 95%;
-  margin: 2em 0 0 0;
+  padding-left: 1em;
+
 }
 
 
@@ -84,41 +84,55 @@
   margin-bottom: 20px;
 }
 
-.selector>div:first-child {
+
+
+/* .selector>div:first-child {
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: #efefef;
   border: 1px solid #c3c3c3;
   border-right: none;
-}
+}  */
 
-.selector .formDetail {
+/* .selector .formDetail {
   display: grid;
   grid-template-rows: 50% 50%;
-  /* float: left;
+  float: left;
   overflow: hidden;
-  margin-right: 12px; */
+  margin-right: 12px;
   border: 1px solid #c3c3c3;
   border-left: none;
+} */
+
+
+.selector .formDetail {
+  padding: 1em;
+  border-left: 2px solid black;
+  margin: 0.5em;
 }
-
-
 
 .selector .formDetail>div {
   display: grid;
   grid-template-columns: 50%50%;
+  border: 1px solid black;
 }
 
-.selector .formDetail>div:first-of-type {
-  border-bottom: 1px solid #c3c3c3;
+.selector .formDetail>div {
+  border: 1px solid #c3c3c3;
+  border-left: none;
+
+}
+
+.selector .formDetail>div:last-of-type {
+
+  border-top: none;
 }
 
 .selector .formDetail>div>div {
   display: grid;
   grid-template-columns: 15% 85%;
 }
-
 
 
 .selector .formDetail>div>div>div:first-of-type {
@@ -144,8 +158,9 @@
 }
 
 .selector .lineBtnContainer {
-  border: 1px solid #c3c3c3;
-  padding: 0.5em;
+  border-left: 2px solid #99989843;
+  padding: 1em;
+  margin: 0.4em;
 }
 
 .selector .lineBtnContainerB {
