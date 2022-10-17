@@ -792,7 +792,7 @@ function approveBtnEvent() {
   }
   let cusResult;
   for (let x in storage.customer) {
-    if (storage.customer[storage.customer[x].no].name != customerVal) {
+    if (storage.customer[storage.customer[x].no].name == customerVal) {
       cusResult = storage.customer[x].no;
     }
   }
@@ -809,8 +809,8 @@ function approveBtnEvent() {
 
 
   if (
-    soppResult == null &&
-    cusResult == null &&
+    soppResult == "" &&
+    cusResult == "" &&
     storage.oriCbContainer ==
     $("input[name='" + formId + "_RD']:checked").attr("id") &&
     storage.oriInsertedContent == $(".insertedContent").html() &&
