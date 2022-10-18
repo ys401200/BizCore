@@ -51,6 +51,29 @@ button, select, input[type="text"], input[type="date"]{
 	cursor: pointer;
 }
 
+/* ckeditor 시작 */
+#editorSet{
+	resize: none;
+}
+
+#cke_editorSet{
+    width: 100%;
+}
+
+#cke_editorSet p{
+    margin: 0;
+}
+
+/* #cke_editorSet .cke_inner > .cke_top {
+    display: none;
+} */
+
+#cke_editorSet .cke_inner > .cke_bottom{
+	display: none;
+}
+
+/* ckeditor 끝 */
+
 /* plus 버튼 시작 */
 .plusContentBtn{
 	z-index: 1;

@@ -257,6 +257,8 @@ function noticeInsertForm(){
 		my = storage.my;
 
 		$("#writer").val(storage.user[my].userName);
+		setEditor();
+		ckeditor.config.readOnly = false;
 	}, 100);
 }
 

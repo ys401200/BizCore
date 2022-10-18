@@ -1,4 +1,4 @@
-let cipher, msg, apiServer, modal, storage, prepare, fileDataArray = [], removeDataArray = [], updateDataArray = [];
+let cipher, msg, apiServer, modal, storage, prepare, fileDataArray = [], removeDataArray = [], updateDataArray = [], editor;
 storage = {};
 
 function init(){
@@ -36,10 +36,9 @@ function init(){
 			$(this).find("#slideSpan").text("+");
 		}
 	});
-
-	
 	
 	$(document).click((e) => {
+		console.log($(e.target));
 		if(modal.wrap.is($(e.target))){
 			modal.hide();
 		}else if(modal.noteWrap.is($(e.target))){
@@ -350,26 +349,27 @@ crud = {
 },
 
 ckeditor = {
-	"options": {
-		toolbar: {
-			items: [
-				'heading', '|',
-				'fontfamily', 'fontsize', '|',
-				'alignment', '|',
-				'fontColor', 'fontBackgroundColor', '|',
-				'bold', 'italic', 'strikethrough', 'underline', 'subscript', 'superscript', '|',
-				'link', '|',
-				'outdent', 'indent', '|',
-				'bulletedList', 'numberedList', 'todoList', '|',
-				'code', 'codeBlock', '|',
-				'insertTable', '|',
-				'uploadImage', 'blockQuote', '|',
-				'undo', 'redo'
-			],
-			shouldNotGroupWhenFull: true
-		},
-		language: "ko",
-	}
+	"config": {
+		"readOnly": true,
+		"language": "ko",
+		"toolbarGroups": [
+			{ name: 'document',	   groups: [ 'mode', 'document', 'doctools' ] },
+			{ name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
+			{ name: 'editing',     groups: [ 'find', 'selection', 'spellchecker' ] },
+			{ name: 'forms' },
+			{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+			{ name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ] },
+			{ name: 'links' },
+			{ name: 'insert' },
+			{ name: 'styles' },
+			{ name: 'colors' },
+			{ name: 'tools' },
+			{ name: 'others' },
+			{ name: 'about' }
+		],
+		"removeButtons": "Cut,Copy,Paste,Undo,Redo,Anchor,Underline,Strike,Subscript,Superscript",
+		"removeDialogTabs": "link:advanced",
+	},
 }
 
 // 위젯 관련 세팅 및 기본설정
@@ -1361,7 +1361,7 @@ function inputSet(data){
 			html += "<input type='text' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "' data-keyup='" + dataKeyup + "' onchange='" + dataChangeEvent + "' onclick='" + dataClickEvent + "' onkeyup='" + dataKeyupEvent + "'>";
 		}
 	}else if(dataType === "textarea"){
-		html += "<div id='editorSet'>" + dataValue + "</div>";
+		html += "<textarea id=\"editorSet\">" + dataValue + "</textarea>";
 	}else if(dataType === "radio"){
 		for(let t = 0; t < data.radioValue.length; t++){
 			if(data.radioType !== "tab"){
@@ -1430,10 +1430,12 @@ function detailTabHide(notId){
 
 //ckeditor
 function setEditor(){
-	InlineEditor
-	.create(document.querySelector("#editorSet"),ckeditor.options)
-	.catch(error => {
-		console.error( error );
+    editor = CKEDITOR.replace(document.querySelector("#editorSet"));
+	
+	editor.on("instanceReady", function(evt){
+		evt.editor.editable().on('click', function (event) {
+			// $("#cke_editorSet .cke_inner .cke_top").show();
+		});
 	});
 }
 
