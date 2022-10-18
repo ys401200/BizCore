@@ -576,6 +576,14 @@
             let appDataHtml = "";
             let docDataHtml = "";
             //docInfo = { "files": tt.files, "appData": tt.appData, "docData": tt.docData };
+            let created, dataStatus, insertData, insertDetailData = "";
+            let detailArr = [];
+            let appDatas = [];
+            let soppAndCus = null;
+
+            console.log(storage.soppResult + "처음에 확인하는 영업기회");
+            console.log(storage.cusResult + "처음에 확인하는 고객 ")
+
 
             let dataTitles = ["date", "customer", "product", "price", "quantity", "subTotal", "tax", "total", "remark"];
             let appTitles = ["app", "approved", "comment", "request", "status"];
@@ -654,6 +662,7 @@
 
                                 }
                                 else if (docListTitle[j] == "created") {
+                                    created = storage.docList[i][docListTitle[j]];
                                     let date = getYmdSlash(storage.docList[i][docListTitle[j]]);
                                     $("#" + id + "_" + docListTitle[j]).val(date);
                                     $("#" + id + "_" + docListTitle[j]).attr("data-detail", date);
@@ -674,9 +683,14 @@
 
 
                                 } else if (docListTitle[j] == "sopp") {
+
+                                    console.log(storage.docList[i][docListTitle[j]]);
                                     if (storage.docList[i][docListTitle[j]] == 0) {
                                         $("#" + id + "_sopp").val("");
                                         storage.soppResult = "";
+                                        console.log(storage.soppResult + "0일때 확인하는 영업기회");
+
+
                                     } else {
                                         let sopp;
                                         for (let i = 0; i < storage.soppList.length; i++) {
@@ -720,6 +734,12 @@
 
                         );
 
+                        soppAndCus = {
+                            "sopp": storage.soppResult = "" ? null : storage.soppResult + "",
+                            "customer": storage.custResult = "" || undefined ? null : storage.custResult + "",
+                        }
+
+
 
                         for (let i = 0; i < info.appData.length; i++) {
                             for (let j = 0; j < appTitles.length; j++) {
@@ -732,22 +752,36 @@
 
                                         let status = storage.appStatus[info.appData[i][appTitles[j]]];
                                         if (status == '승인요청') {
+                                            dataStatus = 1;
                                             $("." + id + "_" + "writer_status").val("승인");
                                             $("." + id + "_" + "writer_status").attr("data-detail", "승인");
                                             $("." + id + "_writer_approved").val($("#" + id + "_created").val());
                                             $("." + id + "_writer_approved").attr("data-detail", $("#" + id + "_created").val());
+
+
+                                            appDatas = [[0, num, 0, getYmdSlash(created) + "", 0, getYmdSlash(created) + "", "", soppAndCus],
+                                            [10, 10002, 2, "", 0, "", "", ""]]
+
+
 
                                         } else if (status == '반려') {
                                             let request = info.appData[i].request;
                                             request = storage.user[request].userName;
                                             //본인반려 
                                             if (request == $("#" + id + "_writer").val()) {
+                                                dataStatus = -1;
                                                 $("." + id + "_writer_" + appTitles[j]).val("");
                                                 $("." + id + "_" + appTitles[j]).val("");
                                                 $("." + id + "_approval").val('이승우');
                                                 $("." + id + "_writer_approved").val("");
+                                                // ordered employee appType read isModify doc approved retrievee rejeceted comment appData 
+                                                appDatas = [[0, num, 0, getYmdSlash(created) + "", 0, $(".app_preview").html(), null, getYmdSlash(created) + "", null, null, soppAndCus],
+                                                [10, 10002, 2, null, 0, null, null, null, null, null, null]];
+
                                                 // 대표 반려인 경우 
+
                                             } else if (request == '이승우') {
+                                                dataStatus = -3;
                                                 $("." + id + "_writer_status").val('승인');
                                                 $("." + id + "_writer_status").attr("data-detail", "승인");
                                                 $("." + id + "_writer_approved").val($("#" + id + "_created").val());
@@ -765,14 +799,20 @@
                                                 }
                                                 $("." + id + "_approval_approved").val(approved);
                                                 $("." + id + "_approval_approved").attr("data-detail", approved);
+                                                // ordered employee appType read isModify doc approved retrievee rejeceted comment appData 
+                                                appDatas = [[0, num, 0, getYmdSlash(created) + "", 0, $(".app_preview").html(), getYmdSlash(created) + "", null, null, null, soppAndCus],
+                                                [10, 10002, 2, approved, 0, null, null, null, approved, storage.docInfo.appData[0].comment, null]];
+
                                             }
 
                                         } else if (status == '임시저장') {
+                                            dataStatus = 0;
                                             $("." + id + "_writer_status").val("");
                                             $("." + id + "_writer_approved").val("");
                                             $("." + id + "_approval").val('이승우');
                                             // 승인인 경우 
                                         } else {
+                                            dataStatus = 3;
                                             $("." + id + "_writer_status").val('승인');
                                             $("." + id + "_writer_status").attr("data-detail", "승인");
                                             $("." + id + "_writer_approved").val($("#" + id + "_created").val());
@@ -782,12 +822,20 @@
 
                                             let approved;
                                             if (storage.docInfo.appData[0].approved == null) {
-                                                approved = "";
+                                                approved = null;
                                             } else {
                                                 approved = getYmdSlash(storage.docInfo.appData[0].approved)
                                             }
                                             $("." + id + "_approval_approved").val(approved);
                                             $("." + id + "_approval_approved").attr("data-detail", approved);
+                                            // ordered employee appType read isModify doc approved retrievee rejeceted comment appData 
+                                            let comment = null;
+                                            if (storage.docInfo.appData[0].comment != null) {
+                                                comment = storage.docInfo.appData[0].comment;
+                                            }
+                                            appDatas = [[0, num, 0, getYmdSlash(created) + "", 0, $(".app_preview").html(), getYmdSlash(created) + "", null, null, null, soppAndCus],
+                                            [10, 10002, 2, approved, 0, null, approved, null, null, comment, null]];
+
                                         }
                                     }
                                     // } else if (appTitles[j] == 'approved') {
@@ -869,23 +917,119 @@
                             "children": null
                         }
 
-                        let data = {
-                            "title": title,
-                            "sopp": sopp + "",
-                            "dept": dept,
-                            "customer": customer + "",
-                            "attached": attached,
-                            "content": content,
-                            "appLine": appLine,
-                            "appDoc": appDoc,
-                            "formId": formId,
-                            "readable": readable,
-                            "temp": temp,
-                            "related": related
-                        };
+
+                        let confirmNo = "";
+                        if (dataStatus == 3) {
+                            confirmNo = "vtek_2022" + $("#" + id + "_no").val();
+                        }
 
 
-                        console.log(data);
+                        insertData = {
+                            "docNo": "vtek_2022" + $("#" + id + "_no").val() + "",
+                            "writer": num,
+                            "formId": id,
+                            "dept": storage.user[num].deptId[0],
+                            "docBox": storage.user[num].deptId[0],
+                            "title": $("#" + id + "_title").val(),
+                            "confirmNo": confirmNo,
+                            "status": dataStatus,
+                            "readable": "dept",
+                            "created": getYmdSlash(created) + "",
+                        }
+                        console.log(insertData)
+                        url = apiServer + "/system/doc";
+
+                        insertData = JSON.stringify(insertData);
+                        insertData = cipher.encAes(insertData);
+
+
+                        $.ajax({
+                            url: url,
+                            method: "post",
+                            data: insertData,
+                            dataType: "json",
+                            contentType: "text/plain",
+                            success: (result) => {
+                                if (result.result === "ok") {
+                                    alert("성공");
+                                } else {
+                                    alert(result.msg);
+                                }
+
+
+                            }
+                        })
+
+
+
+                        // appDatas = [[0, num, 0, getYmdSlash(created) + "", 0, $(".app_preview").html(), getYmdSlash(created) + "", null, null, null, appData],
+                        //[10, 10002, 2, approved, 0, null, approved, null, null, storage.docInfo.appData[0].comment, null]];
+
+                        let count = 0;
+                        for (let i = 0; i < appDatas.length; i++) {
+                            let appDatasJ = {
+                                "docNo": "vtek_2022" + $("#" + id + "_no").val() + "",
+                                "ordered": appDatas[i][0],
+                                "employee": appDatas[i][1],
+                                "appType": appDatas[i][2],
+                                "read": appDatas[i][3],
+                                "isModify": appDatas[i][4],
+                                "doc": appDatas[i][5],
+                                "approved": appDatas[i][6],
+                                "retrieved": appDatas[i][7],
+                                "rejected": appDatas[i][8],
+                                "comment": appDatas[i][9],
+                                "appData": JSON.stringify(appDatas[i][10]),
+
+                            }
+                            console.log(appDatasJ);
+                            appDatasJ = JSON.stringify(appDatasJ);
+                            appDatasJ = cipher.encAes(appDatasJ);
+                            $.ajax({
+                                url: apiServer + "/system/doc/oridetail",
+                                method: "post",
+                                data: appDatasJ,
+                                dataType: "json",
+                                contentType: "text/plain",
+                                success: (result) => {
+                                    if (result.result === "ok") {
+                                        count++;
+
+                                    } else {
+                                        alert(result.msg);
+                                    }
+
+                                }
+                            })
+
+                            if (count == 2) {
+                                alert("ok");
+                            }
+                        }
+
+
+
+
+
+
+                        // insertDetailData = {
+                        //     "docNo" :docNo
+                        //     "ordered" :0 
+                        //     "employee" :
+                        //     "appType" :
+                        //     "read" :
+                        //     "isModify" :
+                        //     "doc" :
+                        //     "approved" :
+                        //     "rejected" :
+                        //     "comment" :
+                        //     "sopp" :
+                        //     "customer" :
+                        // }
+
+
+
+
 
                         ///////////////////////////////////////////////////결재타입이 지출결의서인 경우 ////////////////////////////////////////////////
 
@@ -1389,12 +1533,6 @@
                         $(".insertedTotal").val(totalCount);
 
 
-
-
-
-
-
-
                         let title = $("#" + id + "_title").val();
                         let content = $("#" + id + "_content").val();
                         let readable = "dept";
@@ -1417,20 +1555,54 @@
                             "children": null
                         }
 
-                        let data = {
-                            "title": title,
-                            "sopp": sopp + "",
-                            "dept": dept,
-                            "customer": customer + "",
-                            "attached": attached,
-                            "content": content,
-                            "appLine": appLine,
-                            "appDoc": appDoc,
-                            "formId": formId,
-                            "readable": readable,
-                            "temp": temp,
-                            "related": related
-                        };
+                        // let data = {
+
+                        //     "title": title,
+                        //     "sopp": sopp + "",
+                        //     "dept": dept,
+                        //     "customer": customer + "",
+                        //     "attached": attached,
+                        //     "content": content,
+                        //     "appLine": appLine,
+                        //     "appDoc": appDoc,
+                        //     "formId": formId,
+                        //     "readable": readable,
+                        //     "temp": temp,
+                        //     "related": related
+                        // };
+
+
+                        // doc app readable = 열람 권한 
+                        // let docAppData2 = {
+                        //     "docNo" : "vtek_2022"+$("#"+id+"_no").val() ,
+                        //     "writer" :num,
+                        //     "formId": id,
+                        //     "dept" : storage.user[num].deptId[0] ,
+                        //     "docBox" :storage.user[num].deptId[0] ,
+                        //     "title" : $("#"+id+"_title"),
+                        //     "confirmNo" :  ,
+                        //     "status" : ,
+                        //     "readable" : ,
+                        //     "created" : ,
+                        //     "deleted" : } 
+
+                        // let docAppDetail = {
+                        //     "compId":"vtek",
+                        //     "docNo":
+                        //     "ordered" :
+                        //     "employee":
+                        //     "appType":
+                        //     "read" :
+                        //     "isModify":
+                        //     "doc":
+                        //     "approved":
+                        //     "retrieved": null,
+                        //     "rejected" : 
+                        //     "comment" : 
+                        //     "appData" : 
+                        //     "deleted" : null,
+
+                        // } 
 
 
                         console.log(data);
@@ -1740,6 +1912,31 @@
                 }
             }
 
+        }
+
+        function getYmdSlash(date) {
+            let d = new Date(date);
+            return (
+                (d.getFullYear() % 100) +
+                "-" +
+                (d.getMonth() + 1 > 9
+                    ? (d.getMonth() + 1).toString()
+                    : "0" + (d.getMonth() + 1)) +
+                "-" +
+                (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString()) +
+                " " +
+                (d.getHours() > 9
+                    ? d.getHours().toString()
+                    : "0" + d.getHours().toString()) +
+                ":" +
+                (d.getMinutes() > 9
+                    ? d.getMinutes().toString()
+                    : "0" + d.getMinutes().toString()) +
+                ":" +
+                (d.getSeconds() > 9
+                    ? d.getSeconds().toString()
+                    : "0" + d.getSeconds().toString())
+            );
         }
 
 
