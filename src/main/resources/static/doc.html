@@ -601,7 +601,6 @@
 
             filesHtml += "<div>" + "filename_" + info.files + "</div>";
 
-
             fileTarget.html(filesHtml);
 
             if (info.docData != null) for (let i = 0; i < info.docData.length; i++) {
@@ -614,11 +613,8 @@
             docDataHtml += "</div>"
             dataTarget.html(docDataHtml);
 
-
             let target = $(".app_preview");
-
             let typeHtml = "";
-
 
             for (let i = 0; i < info.appData.length; i++) {
                 for (let j = 0; j < appTitles.length; j++) {
@@ -630,22 +626,16 @@
                 if (storage.docList[i].no == no) {
 
 
-
                     /////////////////////////////////////////////////// 결재 타입이 지출품의서인 경우 /////////////////////////////////////////////////////
 
                     let docListTitle = ['no', 'writer', 'type', 'title', 'status', 'sopp', 'customer', 'content', 'form', 'draw', 'created'];
 
-
                     if (storage.docList[i].type == "TRS" || storage.docList[i].type == "BUY") {
                         target.html(storage.form[0].form);
-
                         if (storage.docList[i].type == "TRS") {
-
                             $("#TRS").attr("checked", true);
-
                         } else {
                             $("#BUY").attr("checked", true);
-
                         }
                         let id = storage.form[0].id;
 
@@ -659,7 +649,6 @@
                                     let name = storage.user[num].userName;
                                     $("#" + id + "_" + docListTitle[j]).val(name);
                                     $("#" + id + "_" + docListTitle[j]).attr("data-detail", name);
-
                                 }
                                 else if (docListTitle[j] == "created") {
                                     created = storage.docList[i][docListTitle[j]];
@@ -681,18 +670,13 @@
                                         $("#" + id + "_infoCustomer").val(storage.customer[storage.docList[i][docListTitle[j]]].name);
                                     }
 
-
                                 } else if (docListTitle[j] == "sopp") {
-
                                     console.log(storage.docList[i][docListTitle[j]]);
                                     if (storage.docList[i][docListTitle[j]] == 0) {
                                         $("#" + id + "_sopp").val("");
                                         storage.soppResult = "";
                                         console.log(storage.soppResult + "0일때 확인하는 영업기회");
-
                                     } else {
-
-
                                         let sopp;
                                         for (let k = 0; k < storage.soppList.length; k++) {
 
@@ -708,20 +692,24 @@
                                         // $("#" + id + "_sopp").attr("data-detail", sopp);
                                         // $("#" + id + "_sopp").val(sopp);
                                     }
-
-                                } else {
+                                } else if (docListTitle[j] == "no") {
+                                    if (storage.docList[i][docListTitle[j]] == 0) {
+                                        $("#" + id + "_" + docListTitle[j]).val("");
+                                    } else {
+                                        $("#" + id + "_" + docListTitle[j]).attr("data-detail", "VTEK_2022" + storage.docList[i][docListTitle[j]] + "");
+                                        $("#" + id + "_" + docListTitle[j]).val("VTEK_2022" + storage.docList[i][docListTitle[j]] + "");
+                                    }
+                                }
+                                else {
                                     if (storage.docList[i][docListTitle[j]] == 0) {
                                         $("#" + id + "_" + docListTitle[j]).val("");
                                     } else {
                                         $("#" + id + "_" + docListTitle[j]).attr("data-detail", storage.docList[i][docListTitle[j]]);
                                         $("#" + id + "_" + docListTitle[j]).val(storage.docList[i][docListTitle[j]]);
                                     }
-
                                 }
                             }
-
                         }
-
 
                         $("#" + id + "_line").html(
                             "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작성</div>" +
@@ -756,7 +744,6 @@
                                         let app = storage.user[info.appData[i][appTitles[j]]].userName;
                                         $("." + id + "_" + appTitles[j]).val(app);
                                     } else if (appTitles[j] == 'status') {
-
                                         let status = storage.appStatus[info.appData[i][appTitles[j]]];
                                         if (status == '승인요청') {
                                             dataStatus = 1;
@@ -764,12 +751,8 @@
                                             $("." + id + "_" + "writer_status").attr("data-detail", "승인");
                                             $("." + id + "_writer_approved").val($("#" + id + "_created").val());
                                             $("." + id + "_writer_approved").attr("data-detail", $("#" + id + "_created").val());
-
-
-                                            appDatas = [[0, num, 0, getYmdSlash(created) + "", 0, getYmdSlash(created) + "", "", soppAndCus],
+                                            appDatas = [[0, num, 0, getYmdSlash2(created) + "", 0, getYmdSlash2(created) + "", "", soppAndCus],
                                             [10, 10002, 2, "", 0, "", "", ""]]
-
-
 
                                         } else if (status == '반려') {
                                             let request = info.appData[i].request;
@@ -782,7 +765,7 @@
                                                 $("." + id + "_approval").val('이승우');
                                                 $("." + id + "_writer_approved").val("");
                                                 // ordered employee appType read isModify doc approved retrievee rejeceted comment appData 
-                                                appDatas = [[0, num, 0, getYmdSlash(created) + "", 0, $(".app_preview").html(), null, getYmdSlash(created) + "", null, null, soppAndCus],
+                                                appDatas = [[0, num, 0, getYmdSlash2(created) + "", 0, $(".app_preview").html(), null, getYmdSlash2(created) + "", null, null, soppAndCus],
                                                 [10, 10002, 2, null, 0, null, null, null, null, null, null]];
 
                                                 // 대표 반려인 경우 
@@ -807,11 +790,9 @@
                                                 $("." + id + "_approval_approved").val(approved);
                                                 $("." + id + "_approval_approved").attr("data-detail", approved);
                                                 // ordered employee appType read isModify doc approved retrievee rejeceted comment appData 
-                                                appDatas = [[0, num, 0, getYmdSlash(created) + "", 0, $(".app_preview").html(), getYmdSlash(created) + "", null, null, null, soppAndCus],
+                                                appDatas = [[0, num, 0, getYmdSlash2(created) + "", 0, $(".app_preview").html(), getYmdSlash2(created) + "", null, null, null, soppAndCus],
                                                 [10, 10002, 2, approved, 0, null, null, null, approved, storage.docInfo.appData[0].comment, null]];
-
                                             }
-
                                         } else if (status == '임시저장') {
                                             dataStatus = 0;
                                             $("." + id + "_writer_status").val("");
@@ -826,7 +807,6 @@
                                             $("." + id + "_writer_approved").attr("data-detail", $("#" + id + "_created").val());
                                             $("." + id + "_approval_status").val('승인');
                                             $("." + id + "_approval_status").attr("data-detail", "승인");
-
                                             let approved;
                                             if (storage.docInfo.appData[0].approved == null) {
                                                 approved = null;
@@ -840,22 +820,10 @@
                                             if (storage.docInfo.appData[0].comment != null) {
                                                 comment = storage.docInfo.appData[0].comment;
                                             }
-                                            appDatas = [[0, num, 0, getYmdSlash(created) + "", 0, $(".app_preview").html(), getYmdSlash(created) + "", null, null, null, soppAndCus],
+                                            appDatas = [[0, num, 0, getYmdSlash2(created) + "", 0, $(".app_preview").html(), getYmdSlash2(created) + "", null, null, null, soppAndCus],
                                             [10, 10002, 2, approved, 0, null, approved, null, null, comment, null]];
-
                                         }
                                     }
-                                    // } else if (appTitles[j] == 'approved') {
-                                    //     let date = getYmdSlash(info.appData[i][appTitles[j]]);
-                                    //     $("." + id + "_" + appTitles[j]).val(date);
-                                    //     $("." + id + "_" + appTitles[j]).attr("data-detail", date);
-
-                                    // }
-                                    // else {
-                                    //     $("#" + id + "_" + appTitles[j]).val(info.appData[i][appTitles[j]]);
-                                    //     $("#" + id + "_" + appTitles[j]).attr("data-detail", info.appData[i][appTitles[j]]);
-                                    // }
-
                                 }
                             }
                         }
@@ -880,11 +848,7 @@
                             } dataHtml += "<div class='detailcontentbox'><input type='checkbox' class='detailBox'></div></div>"
                         }
 
-
-
-
                         $(".insertedDataList").html(dataHtml);
-
 
                         let totalCount = 0;
                         for (let i = 0; i < $("." + id + "_total").length; i++) {
@@ -894,158 +858,127 @@
                         }
                         totalCount = totalCount.toLocaleString();
                         $(".insertedTotal").val(totalCount);
+                        insertDataFnc(dataStatus, insertData, num, id, created, appDatas);
 
-
-
-
-
-
-
-
-                        let title = $("#" + id + "_title").val();
-                        let content = $("#" + id + "_content").val();
-                        let readable = "dept";
-                        let dept = storage.user[num].deptId[0];
-                        let sopp = storage.soppResult;
-                        let customer = storage.custResult;
-                        let attached = storage.docInfo.files;
-                        let appLine = [[2, "10002"]];
-                        let appDoc = $(".app_preview").html();
-                        let formId = id;
-                        let temp = null;
-                        let related = {
-                            "fnc": null,
-                            "type": null,
-                            "start": null,
-                            "end": null,
-                            "parent": null,
-                            "prev": null,
-                            "next": null,
-                            "children": null
-                        }
-
-
-                        let confirmNo = "";
-                        if (dataStatus == 3) {
-                            confirmNo = "vtek_2022" + $("#" + id + "_no").val();
-                        }
-
-
-                        insertData = {
-                            "docNo": "vtek_2022" + $("#" + id + "_no").val() + "",
-                            "writer": num,
-                            "formId": id,
-                            "dept": storage.user[num].deptId[0],
-                            "docBox": storage.user[num].deptId[0],
-                            "title": $("#" + id + "_title").val(),
-                            "confirmNo": confirmNo,
-                            "status": dataStatus,
-                            "readable": "dept",
-                            "created": getYmdSlash(created) + "",
-                        }
-                        console.log(insertData)
-                        url = apiServer + "/system/doc";
-
-                        insertData = JSON.stringify(insertData);
-                        insertData = cipher.encAes(insertData);
-
-
-                        $.ajax({
-                            url: url,
-                            method: "post",
-                            data: insertData,
-                            dataType: "json",
-                            contentType: "text/plain",
-                            success: (result) => {
-                                if (result.result === "ok") {
-                                    alert("성공");
-                                } else {
-                                    alert(result.msg);
-                                }
-
-
-                            }
-                        })
-
-
-
-                        // appDatas = [[0, num, 0, getYmdSlash(created) + "", 0, $(".app_preview").html(), getYmdSlash(created) + "", null, null, null, appData],
-                        //[10, 10002, 2, approved, 0, null, approved, null, null, storage.docInfo.appData[0].comment, null]];
-
-                        let count = 0;
-                        for (let i = 0; i < appDatas.length; i++) {
-                            let appDatasJ = {
-                                "docNo": "vtek_2022" + $("#" + id + "_no").val() + "",
-                                "ordered": appDatas[i][0],
-                                "employee": appDatas[i][1],
-                                "appType": appDatas[i][2],
-                                "read": appDatas[i][3],
-                                "isModify": appDatas[i][4],
-                                "doc": appDatas[i][5],
-                                "approved": appDatas[i][6],
-                                "retrieved": appDatas[i][7],
-                                "rejected": appDatas[i][8],
-                                "comment": appDatas[i][9],
-                                "appData": JSON.stringify(appDatas[i][10]),
-
-                            }
-                            console.log(appDatasJ);
-                            appDatasJ = JSON.stringify(appDatasJ);
-                            appDatasJ = cipher.encAes(appDatasJ);
-                            $.ajax({
-                                url: apiServer + "/system/doc/oridetail",
-                                method: "post",
-                                data: appDatasJ,
-                                dataType: "json",
-                                contentType: "text/plain",
-                                success: (result) => {
-                                    if (result.result === "ok") {
-                                        count++;
-
-                                    } else {
-                                        alert(result.msg);
-                                    }
-
-                                }
-                            })
-
-                            if (count == 2) {
-                                alert("ok");
-                            }
-                        }
-
-
-
-
-
-
-                        // insertDetailData = {
-                        //     "docNo" :docNo
-                        //     "ordered" :0 
-                        //     "employee" :
-                        //     "appType" :
-                        //     "read" :
-                        //     "isModify" :
-                        //     "doc" :
-                        //     "approved" :
-                        //     "rejected" :
-                        //     "comment" :
-                        //     "sopp" :
-                        //     "customer" :
+                        // let title = $("#" + id + "_title").val();
+                        // let content = $("#" + id + "_content").val();
+                        // let readable = "dept";
+                        // let dept = storage.user[num].deptId[0];
+                        // let sopp = storage.soppResult;
+                        // let customer = storage.custResult;
+                        // let attached = storage.docInfo.files;
+                        // let appLine = [[2, "10002"]];
+                        // let appDoc = $(".app_preview").html();
+                        // let formId = id;
+                        // let temp = null;
+                        // let related = {
+                        //     "fnc": null,
+                        //     "type": null,
+                        //     "start": null,
+                        //     "end": null,
+                        //     "parent": null,
+                        //     "prev": null,
+                        //     "next": null,
+                        //     "children": null
                         // }
 
 
+                        // let confirmNo = "";
+                        // if (dataStatus == 3) {
+                        //     confirmNo = $("#" + id + "_no").val();
+                        // }
+
+
+                        // insertData = {
+                        //     "docNo": $("#" + id + "_no").val(),
+                        //     "writer": num,
+                        //     "formId": id,
+                        //     "dept": storage.user[num].deptId[0],
+                        //     "docBox": storage.user[num].deptId[0],
+                        //     "title": $("#" + id + "_title").val(),
+                        //     "confirmNo": confirmNo,
+                        //     "status": dataStatus,
+                        //     "readable": "dept",
+                        //     "created": getYmdSlash(created) + "",
+                        // }
+                        // console.log(insertData)
+                        // url = apiServer + "/system/doc";
+
+                        // insertData = JSON.stringify(insertData);
+                        // insertData = cipher.encAes(insertData);
+
+
+                        // $.ajax({
+                        //     url: url,
+                        //     method: "post",
+                        //     data: insertData,
+                        //     dataType: "json",
+                        //     contentType: "text/plain",
+                        //     success: (result) => {
+                        //         if (result.result === "ok") {
+                        //             alert("성공");
+                        //         } else {
+                        //             alert(result.msg);
+                        //         }
+
+
+                        //     }
+                        // })
+
+
+
+                        // // appDatas = [[0, num, 0, getYmdSlash(created) + "", 0, $(".app_preview").html(), getYmdSlash(created) + "", null, null, null, appData],
+                        // //[10, 10002, 2, approved, 0, null, approved, null, null, storage.docInfo.appData[0].comment, null]];
+
+                        // let count = 0;
+                        // for (let i = 0; i < appDatas.length; i++) {
+                        //     let appDatasJ = {
+                        //         "docNo": "vtek_2022" + $("#" + id + "_no").val() + "",
+                        //         "ordered": appDatas[i][0],
+                        //         "employee": appDatas[i][1],
+                        //         "appType": appDatas[i][2],
+                        //         "read": appDatas[i][3],
+                        //         "isModify": appDatas[i][4],
+                        //         "doc": appDatas[i][5],
+                        //         "approved": appDatas[i][6],
+                        //         "retrieved": appDatas[i][7],
+                        //         "rejected": appDatas[i][8],
+                        //         "comment": appDatas[i][9],
+                        //         "appData": JSON.stringify(appDatas[i][10]),
+
+                        //     }
+                        //     console.log(appDatasJ);
+                        //     appDatasJ = JSON.stringify(appDatasJ);
+                        //     appDatasJ = cipher.encAes(appDatasJ);
+                        //     $.ajax({
+                        //         url: apiServer + "/system/doc/oridetail",
+                        //         method: "post",
+                        //         data: appDatasJ,
+                        //         dataType: "json",
+                        //         contentType: "text/plain",
+                        //         success: (result) => {
+                        //             if (result.result === "ok") {
+                        //                 count++;
+
+                        //             } else {
+                        //                 alert(result.msg);
+                        //             }
+
+                        //         }
+                        //     })
+
+                        //     if (count == 2) {
+                        //         alert("ok");
+                        //     }
+                        // }
 
 
 
                         ///////////////////////////////////////////////////결재타입이 지출결의서인 경우 ////////////////////////////////////////////////
 
 
-
                     } else if (storage.docList[i].type == "COST" || storage.docList[i].type == "CREDIT" ||
                         storage.docList[i].type == "PAY" || storage.docList[i].type == "TAX") {
-
-
                         target.html(storage.form[1].form)
 
                         if (storage.docList[i].type == "COST") {
@@ -1060,13 +993,11 @@
                         let id = storage.form[1].id;
 
 
-
                         ////// info title content 출력하기 
                         //let docListTitle = Object.keys(storage.docList[i]);
                         let num;
                         for (let k = 0; k < Object.keys(storage.docList[i]).length; k++) {
                             for (let j = 0; j < docListTitle.length; j++) {
-
                                 if (docListTitle[j] == "writer") {
                                     num = storage.docList[i][docListTitle[j]];
                                     let name = storage.user[num].userName;
@@ -1075,49 +1006,56 @@
                                 else if (docListTitle[j] == "created") {
                                     let date = getYmdSlash(storage.docList[i][docListTitle[j]]);
                                     $("#" + id + "_" + docListTitle[j]).val(date);
-
                                 } else if (docListTitle[j] == "content") {
                                     $("#" + id + "_" + docListTitle[j]).val(storage.docList[i][docListTitle[j]]);
                                     $("#" + id + "_" + docListTitle[j]).html(storage.docList[i][docListTitle[j]]);
-
                                 } else if (docListTitle[j] == "customer") {
                                     if (storage.docList[i][docListTitle[j]] == 0) {
                                         $("#" + id + "_infoCustomer").val("");
                                     } else {
                                         $("#" + id + "_infoCustomer").val(storage.customer[storage.docList[i][docListTitle[j]]].name);
-
                                     }
 
                                 } else if (docListTitle[j] == "sopp") {
+                                    console.log(storage.docList[i][docListTitle[j]]);
                                     if (storage.docList[i][docListTitle[j]] == 0) {
                                         $("#" + id + "_sopp").val("");
+                                        storage.soppResult = "";
+                                        console.log(storage.soppResult + "0일때 확인하는 영업기회");
                                     } else {
                                         let sopp;
-                                        for (let i = 0; i < storage.soppList.length; i++) {
-                                            if (storage.soppList[i].no == storage.docList[i][docListTitle[j]])
-                                                sopp = storage.soppList[i].title;
-                                        }
+                                        for (let k = 0; k < storage.soppList.length; k++) {
+                                            if (storage.soppList[k].no == storage.docList[i][docListTitle[j]]) {
+                                                sopp = storage.soppList[k].title;
+                                                storage.soppResult = storage.docList[i][docListTitle[j]];
+                                            }
 
+                                        } $("#" + id + "_sopp").attr("data-detail", sopp);
                                         $("#" + id + "_sopp").val(sopp);
+                                        // $("#" + id + "_sopp").attr("data-detail", sopp);
+                                        // $("#" + id + "_sopp").val(sopp);
                                     }
-
-                                } else {
+                                } else if (docListTitle[j] == "no") {
                                     if (storage.docList[i][docListTitle[j]] == 0) {
                                         $("#" + id + "_" + docListTitle[j]).val("");
                                     } else {
+                                        $("#" + id + "_" + docListTitle[j]).attr("data-detail", "VTEK_2022" + storage.docList[i][docListTitle[j]] + "");
+                                        $("#" + id + "_" + docListTitle[j]).val("VTEK_2022" + storage.docList[i][docListTitle[j]] + "");
+                                    }
+                                }
+                                else {
+                                    if (storage.docList[i][docListTitle[j]] == 0) {
+                                        $("#" + id + "_" + docListTitle[j]).val("");
+                                    } else {
+                                        $("#" + id + "_" + docListTitle[j]).attr("data-detail", storage.docList[i][docListTitle[j]]);
                                         $("#" + id + "_" + docListTitle[j]).val(storage.docList[i][docListTitle[j]]);
                                     }
-
                                 }
                             }
-
                         }
-
 
                         if ($("#" + id + "_writer").val() == '구민주') {
                             $("#" + id + "_line").html(
-
-
                                 "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작성</div>" +
                                 "<div class='lineSet'>" +
                                 "<div class='twoBorder'><input class='inputsAuto' value ='" + storage.userRank[storage.user[num].rank][0] + "'></div>" +
@@ -1132,11 +1070,8 @@
                                 "<div class='twoBorder'><input class='inputsAuto " + id + "_approval_status' data-detail='' type='text' ></div>" +
                                 "<div class='dateBorder'><input class='inputsAuto " + id + "_approval_approved' type='text' data-detail='' ></div></div></div>" +
                                 "</div>"
-
-
                             );
                         } else {
-
                             $("#" + id + "_line").html(
 
                                 "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작성</div>" +
@@ -1161,7 +1096,6 @@
                                 "<div class='dateBorder'><input class='inputsAuto " + id + "_approval_approved' type='text' data-detail='' ></div></div></div>" +
                                 "</div>"
 
-
                             );
                         }
 
@@ -1169,7 +1103,6 @@
 
                         for (let i = 0; i < info.appData.length; i++) {
                             for (let j = 0; j < appTitles.length; j++) {
-
                                 if (info.appData[i][appTitles[j]] != null) {
                                     if (appTitles[j] == 'app') {
                                         let app = storage.user[info.appData[i][appTitles[j]]].userName;
@@ -1192,15 +1125,12 @@
                                             }
                                             $("." + id + "_examine_approved").val(approved);
                                             $("." + id + "_examine_approved").attr("data-detail", approved);
-
                                         } else if (status == "완료") {
                                             //$("." + id + "_" + appTitles[j]).val(status);
                                             $("." + id + "_writer_status").val('승인');
                                             $("." + id + "_writer_status").attr("data-detail", "승인");
-
                                             $("." + id + "_examine_status").val('승인');
                                             $("." + id + "_examine_status").attr("data-detail", "승인");
-
                                             $("." + id + "_approval_status").val('승인');
                                             $("." + id + "_approval_status").attr("data-detail", "승인");
                                             let approved;
@@ -1216,7 +1146,6 @@
                                             $("." + id + "_examine_approved").attr("data-detail", approved);
                                             $("." + id + "_approval_approved").attr("data-detail", approved);
 
-
                                         } else if (status == '반려') {
                                             let request = storage.user[info.appData[i].request].userName;
                                             if (request == $("." + id + "_writer").val()) {
@@ -1229,7 +1158,6 @@
                                                 // }
                                                 // $("." + id + "_writer_approved").val(approved);
                                                 // $("." + id + "_approved").val("");
-
                                             } else if (request == '구민주') {
                                                 alert("구민주 반려");
                                                 // 구민주가 작성자인 경우 제외하는 것 적기 
@@ -1238,7 +1166,6 @@
                                                 $("." + id + "_examine_status").val("반려");
                                                 $("." + id + "_writer_status").attr("data-detail", "승인");
                                                 $("." + id + "_examine_status").attr("data-detail", "승인");
-
                                                 let approved = "";
                                                 if (storage.docInfo.appData[0].approved != null) {
                                                     approved = getYmdSlash(storage.docInfo.appData[0].approved);
@@ -1247,7 +1174,6 @@
                                                 $("." + id + "_examine_approved").attr("data-detail", approved);
                                                 $("." + id + "_writer_approved").val($("#" + id + "_created").val());
                                                 $("." + id + "_writer_approved").attr("data-detail", $("#" + id + "_created").val());
-
                                             } else {
                                                 alert("대표님 반려")
                                                 $("." + id + "_approval").val('이승우')
@@ -1257,7 +1183,6 @@
                                                 $("." + id + "_writer_status").val('승인');
                                                 $("." + id + "_writer_status").attr("data-detail", "승인");
                                                 $("." + id + "_examine_status").attr("data-detail", "승인");
-
                                                 let approved = "";
                                                 if (storage.docInfo.appData[0].approved != null) {
                                                     approved = getYmdSlash(storage.docInfo.appData[0].approved);
@@ -1268,9 +1193,7 @@
                                                 $("." + id + "_approval_approved").attr("data-detail", approved);
                                                 $("." + id + "_writer_approved").val($("#" + id + "_created").val());
                                                 $("." + id + "_writer_approved").attr("data-detail", $("#" + id + "_created").val());
-
                                             }
-
                                         } else if (status == '검토요청') {
                                             $("." + id + "_writer_" + appTitles[j]).val("승인");
                                             $("." + id + "_writer_" + appTitles[j]).attr("data-detail", "승인");
@@ -1278,29 +1201,13 @@
                                             $("." + id + "_writer_approved").attr("data-detail", $("#" + id + "_created").val());
                                         } else if (status == '임시저장') {
                                             $("." + id + "_writer_approved").val("");
-
                                         }
-
                                     }
-                                    // } else if (appTitles[j] == 'approved') {
-                                    //     let date = getYmdSlash(info.appData[i][appTitles[j]]);
-
-
-                                    //     $("." + id + "_" + appTitles[j]).val(date);
-
-                                    // } else {
-                                    //     $("." + id + "_" + appTitles[j]).val(info.appData[i][appTitles[j]]);
-                                    // }
-
                                 }
                             }
-
                         }
 
-
                         let dataHtml = ""
-
-
 
                         if (info.docData != null) for (let q = 0; q < Object.keys(info.docData).length; q++) {
                             dataHtml += "<div class='detailcontentDiv'>"
@@ -1318,9 +1225,6 @@
                             } dataHtml += "<div class='detailcontentbox'><input type='checkbox' class='detailBox'></div></div>"
                         }
 
-
-
-
                         $(".insertedDataList").html(dataHtml);
 
                         let totalCount = 0;
@@ -1337,9 +1241,6 @@
                     } else if (storage.docList[i].type == "PUR") {
                         target.html(storage.form[2].form)
                         let id = storage.form[2].id;
-
-
-
                         ////// info title content 출력하기 
                         //  let docListTitle = Object.keys(storage.docList[i]);
                         let num;
@@ -1350,7 +1251,6 @@
                                     let name = storage.user[num].userName;
                                     $("#" + id + "_" + docListTitle[j]).val(name);
                                     $("#" + id + "_" + docListTitle[j]).attr("data-detail", name);
-
                                 }
                                 else if (docListTitle[j] == "created") {
                                     let date = getYmdSlash(storage.docList[i][docListTitle[j]]);
@@ -1371,36 +1271,45 @@
                                         $("#" + id + "_infoCustomer").val(storage.customer[storage.docList[i][docListTitle[j]]].name);
                                     }
 
-
                                 } else if (docListTitle[j] == "sopp") {
+                                    console.log(storage.docList[i][docListTitle[j]]);
                                     if (storage.docList[i][docListTitle[j]] == 0) {
                                         $("#" + id + "_sopp").val("");
                                         storage.soppResult = "";
+                                        console.log(storage.soppResult + "0일때 확인하는 영업기회");
                                     } else {
                                         let sopp;
-                                        for (let i = 0; i < storage.soppList.length; i++) {
-                                            storage.soppResult = storage.docList[i][docListTitle[j]];
-                                            if (storage.soppList[i].no == storage.docList[i][docListTitle[j]])
-                                                sopp = storage.soppList[i].title;
-                                        }
-                                        $("#" + id + "_sopp").attr("data-detail", sopp);
+                                        for (let k = 0; k < storage.soppList.length; k++) {
+
+                                            if (storage.soppList[k].no == storage.docList[i][docListTitle[j]]) {
+                                                sopp = storage.soppList[k].title;
+                                                storage.soppResult = storage.docList[i][docListTitle[j]];
+                                            }
+                                        } $("#" + id + "_sopp").attr("data-detail", sopp);
                                         $("#" + id + "_sopp").val(sopp);
+                                        // $("#" + id + "_sopp").attr("data-detail", sopp);
+                                        // $("#" + id + "_sopp").val(sopp);
                                     }
 
-                                } else {
+                                } else if (docListTitle[j] == "no") {
+                                    if (storage.docList[i][docListTitle[j]] == 0) {
+                                        $("#" + id + "_" + docListTitle[j]).val("");
+                                    } else {
+                                        $("#" + id + "_" + docListTitle[j]).attr("data-detail", "VTEK_2022" + storage.docList[i][docListTitle[j]] + "");
+                                        $("#" + id + "_" + docListTitle[j]).val("VTEK_2022" + storage.docList[i][docListTitle[j]] + "");
+                                    }
+
+                                }
+                                else {
                                     if (storage.docList[i][docListTitle[j]] == 0) {
                                         $("#" + id + "_" + docListTitle[j]).val("");
                                     } else {
                                         $("#" + id + "_" + docListTitle[j]).attr("data-detail", storage.docList[i][docListTitle[j]]);
                                         $("#" + id + "_" + docListTitle[j]).val(storage.docList[i][docListTitle[j]]);
                                     }
-
                                 }
                             }
-
                         }
-
-
                         $("#" + id + "_line").html(
                             "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작성</div>" +
                             "<div class='lineSet'>" +
@@ -1419,10 +1328,8 @@
 
                         );
 
-
                         for (let i = 0; i < info.appData.length; i++) {
                             for (let j = 0; j < appTitles.length; j++) {
-
                                 if (info.appData[i][appTitles[j]] != null) {
                                     if (appTitles[j] == 'app') {
                                         let app = storage.user[info.appData[i][appTitles[j]]].userName;
@@ -1489,24 +1396,11 @@
                                             $("." + id + "_approval_approved").attr("data-detail", approved);
                                         }
                                     }
-                                    // } else if (appTitles[j] == 'approved') {
-                                    //     let date = getYmdSlash(info.appData[i][appTitles[j]]);
-                                    //     $("." + id + "_" + appTitles[j]).val(date);
-                                    //     $("." + id + "_" + appTitles[j]).attr("data-detail", date);
-
-                                    // }
-                                    // else {
-                                    //     $("#" + id + "_" + appTitles[j]).val(info.appData[i][appTitles[j]]);
-                                    //     $("#" + id + "_" + appTitles[j]).attr("data-detail", info.appData[i][appTitles[j]]);
-                                    // }
-
                                 }
                             }
                         }
 
-
                         let dataHtml = ""
-
 
                         if (info.docData != null) for (let q = 0; q < Object.keys(info.docData).length; q++) {
                             dataHtml += "<div class='detailcontentDiv'>"
@@ -1524,11 +1418,7 @@
                             } dataHtml += "<div class='detailcontentbox'><input type='checkbox' class='detailBox'></div></div>"
                         }
 
-
-
-
                         $(".insertedDataList").html(dataHtml);
-
 
                         let totalCount = 0;
                         for (let i = 0; i < $("." + id + "_total").length; i++) {
@@ -1539,91 +1429,10 @@
                         totalCount = totalCount.toLocaleString();
                         $(".insertedTotal").val(totalCount);
 
-
-                        let title = $("#" + id + "_title").val();
-                        let content = $("#" + id + "_content").val();
-                        let readable = "dept";
-                        let dept = storage.user[num].deptId[0];
-                        let sopp = storage.soppResult;
-                        let customer = storage.custResult;
-                        let attached = storage.docInfo.files;
-                        let appLine = [[2, "10002"]];
-                        let appDoc = $(".app_preview").html();
-                        let formId = id;
-                        let temp = null;
-                        let related = {
-                            "fnc": null,
-                            "type": null,
-                            "start": null,
-                            "end": null,
-                            "parent": null,
-                            "prev": null,
-                            "next": null,
-                            "children": null
-                        }
-
-                        // let data = {
-
-                        //     "title": title,
-                        //     "sopp": sopp + "",
-                        //     "dept": dept,
-                        //     "customer": customer + "",
-                        //     "attached": attached,
-                        //     "content": content,
-                        //     "appLine": appLine,
-                        //     "appDoc": appDoc,
-                        //     "formId": formId,
-                        //     "readable": readable,
-                        //     "temp": temp,
-                        //     "related": related
-                        // };
-
-
-                        // doc app readable = 열람 권한 
-                        // let docAppData2 = {
-                        //     "docNo" : "vtek_2022"+$("#"+id+"_no").val() ,
-                        //     "writer" :num,
-                        //     "formId": id,
-                        //     "dept" : storage.user[num].deptId[0] ,
-                        //     "docBox" :storage.user[num].deptId[0] ,
-                        //     "title" : $("#"+id+"_title"),
-                        //     "confirmNo" :  ,
-                        //     "status" : ,
-                        //     "readable" : ,
-                        //     "created" : ,
-                        //     "deleted" : } 
-
-                        // let docAppDetail = {
-                        //     "compId":"vtek",
-                        //     "docNo":
-                        //     "ordered" :
-                        //     "employee":
-                        //     "appType":
-                        //     "read" :
-                        //     "isModify":
-                        //     "doc":
-                        //     "approved":
-                        //     "retrieved": null,
-                        //     "rejected" : 
-                        //     "comment" : 
-                        //     "appData" : 
-                        //     "deleted" : null,
-
-                        // } 
-
-
-                        console.log(data);
-
-
-
-
-
                         // 결재타입이 공문서인 경우 
                     } else if (storage.docList[i].type == "DIP") {
                         target.html(storage.form[3].form)
                         let id = storage.form[3].id;
-
-
 
                         ////// info title content 출력하기 
                         // let docListTitle = Object.keys(storage.docList[i]);
@@ -1658,31 +1467,41 @@
 
 
                                 } else if (docListTitle[j] == "sopp") {
+
+                                    console.log(storage.docList[i][docListTitle[j]]);
                                     if (storage.docList[i][docListTitle[j]] == 0) {
                                         $("#" + id + "_sopp").val("");
                                         storage.soppResult = "";
+                                        console.log(storage.soppResult + "0일때 확인하는 영업기회");
+
                                     } else {
                                         let sopp;
-                                        for (let i = 0; i < storage.soppList.length; i++) {
-                                            storage.soppResult = storage.docList[i][docListTitle[j]];
-                                            if (storage.soppList[i].no == storage.docList[i][docListTitle[j]])
-                                                sopp = storage.soppList[i].title;
-                                        }
-                                        $("#" + id + "_sopp").attr("data-detail", sopp);
+                                        for (let k = 0; k < storage.soppList.length; k++) {
+                                            if (storage.soppList[k].no == storage.docList[i][docListTitle[j]]) {
+                                                sopp = storage.soppList[k].title;
+                                                storage.soppResult = storage.docList[i][docListTitle[j]];
+                                            }
+                                        } $("#" + id + "_sopp").attr("data-detail", sopp);
                                         $("#" + id + "_sopp").val(sopp);
                                     }
 
-                                } else {
+                                } else if (docListTitle[j] == "no") {
+                                    if (storage.docList[i][docListTitle[j]] == 0) {
+                                        $("#" + id + "_" + docListTitle[j]).val("");
+                                    } else {
+                                        $("#" + id + "_" + docListTitle[j]).attr("data-detail", "VTEK_2022" + storage.docList[i][docListTitle[j]] + "");
+                                        $("#" + id + "_" + docListTitle[j]).val("VTEK_2022" + storage.docList[i][docListTitle[j]] + "");
+                                    }
+                                }
+                                else {
                                     if (storage.docList[i][docListTitle[j]] == 0) {
                                         $("#" + id + "_" + docListTitle[j]).val("");
                                     } else {
                                         $("#" + id + "_" + docListTitle[j]).attr("data-detail", storage.docList[i][docListTitle[j]]);
                                         $("#" + id + "_" + docListTitle[j]).val(storage.docList[i][docListTitle[j]]);
                                     }
-
                                 }
                             }
-
                         }
 
 
@@ -1707,20 +1526,17 @@
 
                         for (let i = 0; i < info.appData.length; i++) {
                             for (let j = 0; j < appTitles.length; j++) {
-
                                 if (info.appData[i][appTitles[j]] != null) {
                                     if (appTitles[j] == 'app') {
                                         let app = storage.user[info.appData[i][appTitles[j]]].userName;
                                         $("." + id + "_" + appTitles[j]).val(app);
                                     } else if (appTitles[j] == 'status') {
-
                                         let status = storage.appStatus[info.appData[i][appTitles[j]]];
                                         if (status == '승인요청') {
                                             $("." + id + "_" + "writer_status").val("승인");
                                             $("." + id + "_" + "writer_status").attr("data-detail", "승인");
                                             $("." + id + "_writer_approved").val($("#" + id + "_created").val());
                                             $("." + id + "_writer_approved").attr("data-detail", $("#" + id + "_created").val());
-
                                         } else if (status == '반려') {
                                             let request = info.appData[i].request;
                                             request = storage.user[request].userName;
@@ -1774,24 +1590,11 @@
                                             $("." + id + "_approval_approved").attr("data-detail", approved);
                                         }
                                     }
-                                    // } else if (appTitles[j] == 'approved') {
-                                    //     let date = getYmdSlash(info.appData[i][appTitles[j]]);
-                                    //     $("." + id + "_" + appTitles[j]).val(date);
-                                    //     $("." + id + "_" + appTitles[j]).attr("data-detail", date);
-
-                                    // }
-                                    // else {
-                                    //     $("#" + id + "_" + appTitles[j]).val(info.appData[i][appTitles[j]]);
-                                    //     $("#" + id + "_" + appTitles[j]).attr("data-detail", info.appData[i][appTitles[j]]);
-                                    // }
-
                                 }
                             }
                         }
 
-
                         let dataHtml = ""
-
 
                         if (info.docData != null) for (let q = 0; q < Object.keys(info.docData).length; q++) {
                             dataHtml += "<div class='detailcontentDiv'>"
@@ -1809,11 +1612,7 @@
                             } dataHtml += "<div class='detailcontentbox'><input type='checkbox' class='detailBox'></div></div>"
                         }
 
-
-
-
                         $(".insertedDataList").html(dataHtml);
-
 
                         let totalCount = 0;
                         for (let i = 0; i < $("." + id + "_total").length; i++) {
@@ -1823,66 +1622,26 @@
                         }
                         totalCount = totalCount.toLocaleString();
                         $(".insertedTotal").val(totalCount);
-
-
-
-
-
-
-
-
-                        let title = $("#" + id + "_title").val();
-                        let content = $("#" + id + "_content").val();
-                        let readable = "dept";
-                        let dept = storage.user[num].deptId[0];
-                        let sopp = storage.soppResult;
-                        let customer = storage.custResult;
-                        let attached = storage.docInfo.files;
-                        let appLine = [[2, "10002"]];
-                        let appDoc = $(".app_preview").html();
-                        let formId = id;
-                        let temp = null;
-                        let related = {
-                            "fnc": null,
-                            "type": null,
-                            "start": null,
-                            "end": null,
-                            "parent": null,
-                            "prev": null,
-                            "next": null,
-                            "children": null
-                        }
-
-                        let data = {
-                            "title": title,
-                            "sopp": sopp + "",
-                            "dept": dept,
-                            "customer": customer + "",
-                            "attached": attached,
-                            "content": content,
-                            "appLine": appLine,
-                            "appDoc": appDoc,
-                            "formId": formId,
-                            "readable": readable,
-                            "temp": temp,
-                            "related": related
-                        };
-
-
-                        console.log(data);
                     }
-
-
                 }
-
             }
             $(".inputs").prop("readonly", true);
             $(".inputsAuto").prop("readonly", true);
-
             $(".detailcontentbox").hide();
             // doDataSet();
             toReadMode();
         }
+
+
+
+
+
+
+
+
+
+        /// 날짜 설정 함수 //////////////////////////////////////날짜 설정 함수 //////////////////////////////////////////////////////날짜 설정 함수 //////////////////////////////////////날짜 설정 함수/////////////////////////
+
 
 
 
@@ -1909,19 +1668,9 @@
             );
         }
 
-        function doDataSet() {
-            let target = $(".app_preview")[0];
-            let inputsArr = target.getElementsByTagName("input");
 
-            for (let i = 0; i < inputsArr.length; i++) {
-                if (inputsArr[i].dataset.detail !== undefined) {
-                    inputsArr[i].value = inputsArr[i].dataset.detail;
-                }
-            }
 
-        }
-
-        function getYmdSlash(date) {
+        function getYmdSlash2(date) {
             let d = new Date(date);
             return (
                 (d.getFullYear() % 100) +
@@ -1946,6 +1695,106 @@
             );
         }
 
+        function doDataSet() {
+            let target = $(".app_preview")[0];
+            let inputsArr = target.getElementsByTagName("input");
+
+            for (let i = 0; i < inputsArr.length; i++) {
+                if (inputsArr[i].dataset.detail !== undefined) {
+                    inputsArr[i].value = inputsArr[i].dataset.detail;
+                }
+            }
+
+        }
+
+
+        function insertDataFnc(dataStatus, insertData, num, id, created, appDatas) {
+            let confirmNo = "";
+            if (dataStatus == 3) {
+                confirmNo = $("#" + id + "_no").val();
+            }
+
+            insertData = {
+                "docNo": $("#" + id + "_no").val(),
+                "writer": num,
+                "formId": id,
+                "dept": storage.user[num].deptId[0],
+                "docBox": storage.user[num].deptId[0],
+                "title": $("#" + id + "_title").val(),
+                "confirmNo": confirmNo,
+                "status": dataStatus,
+                "readable": "dept",
+                "created": getYmdSlash(created) + "",
+            }
+
+            let url = apiServer + "/system/doc";
+
+            insertData = JSON.stringify(insertData);
+            insertData = cipher.encAes(insertData);
+
+            $.ajax({
+                url: url,
+                method: "post",
+                data: insertData,
+                dataType: "json",
+                contentType: "text/plain",
+                success: (result) => {
+                    if (result.result === "ok") {
+                        alert("성공");
+                    } else {
+                        alert(result.msg);
+                    }
+
+
+                }
+            });
+
+            let count = 0;
+            for (let i = 0; i < appDatas.length; i++) {
+                let ten = appDatas[i][10];
+                if (ten != null) {
+                    ten = JSON.stringify(appDatas[i][10]);
+                }
+                let appDatasJ = {
+                    "docNo": $("#" + id + "_no").val() + "",
+                    "ordered": appDatas[i][0],
+                    "employee": appDatas[i][1],
+                    "appType": appDatas[i][2],
+                    "read": appDatas[i][3],
+                    "isModify": appDatas[i][4],
+                    "doc": appDatas[i][5],
+                    "approved": appDatas[i][6],
+                    "retrieved": appDatas[i][7],
+                    "rejected": appDatas[i][8],
+                    "comment": appDatas[i][9],
+                    "appData": ten
+
+                }
+                console.log(appDatasJ);
+                appDatasJ = JSON.stringify(appDatasJ);
+                appDatasJ = cipher.encAes(appDatasJ);
+                $.ajax({
+                    url: apiServer + "/system/doc/oridetail",
+                    method: "post",
+                    data: appDatasJ,
+                    dataType: "json",
+                    contentType: "text/plain",
+                    success: (result) => {
+                        if (result.result === "ok") {
+                            count++;
+
+                        } else {
+                            alert(result.msg);
+                        }
+
+                    }
+                })
+
+                if (count == 2) {
+                    alert("ok");
+                }
+            }
+        }
 
 
     </script>

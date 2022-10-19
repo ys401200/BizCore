@@ -235,6 +235,7 @@ public class SystemCtrl extends Ctrl {
             retrieved = json.isNull("retrieved") ? null : json.getString("retrieved");
             comment = json.isNull("comment") ? null : json.getString("comment");
             appData = json.isNull("appData") ? null : json.getString("appData");
+
             serviceAnswer = systemService.insertReportDetail(docNo, ordered, employee, appType, read, isModify,
                     doc, approved, retrieved, rejected, comment, appData);
             if (serviceAnswer == 1) {
