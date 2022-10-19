@@ -249,8 +249,10 @@ modal = {
 	"hide": () => {
 		modal.wrap.fadeOut();
 		window.setTimeout(modal.clear, 500);
-		ckeditor.config.readOnly = true;
-		window.setTimeout(setEditor, 500);
+		if(editor !== undefined && editor !== null){
+			ckeditor.config.readOnly = true;
+			window.setTimeout(setEditor, 500);
+		}
 	},
 	"clear": () => {
 		modal.headTitle.text("");
@@ -1429,7 +1431,7 @@ function detailTabHide(notId){
 
 //ckeditor
 function setEditor(){
-	if(editor !== undefined){
+	if(editor !== undefined && editor !== null){
 		editor = CKEDITOR.instances.editorSet.destroy();
 	}
 
