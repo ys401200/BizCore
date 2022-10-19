@@ -690,16 +690,23 @@
                                         storage.soppResult = "";
                                         console.log(storage.soppResult + "0일때 확인하는 영업기회");
 
-
                                     } else {
+
+
                                         let sopp;
-                                        for (let i = 0; i < storage.soppList.length; i++) {
-                                            storage.soppResult = storage.docList[i][docListTitle[j]];
-                                            if (storage.soppList[i].no == storage.docList[i][docListTitle[j]])
-                                                sopp = storage.soppList[i].title;
-                                        }
-                                        $("#" + id + "_sopp").attr("data-detail", sopp);
+                                        for (let k = 0; k < storage.soppList.length; k++) {
+
+                                            if (storage.soppList[k].no == storage.docList[i][docListTitle[j]]) {
+                                                sopp = storage.soppList[k].title;
+                                                storage.soppResult = storage.docList[i][docListTitle[j]];
+
+                                            }
+
+                                        } $("#" + id + "_sopp").attr("data-detail", sopp);
                                         $("#" + id + "_sopp").val(sopp);
+
+                                        // $("#" + id + "_sopp").attr("data-detail", sopp);
+                                        // $("#" + id + "_sopp").val(sopp);
                                     }
 
                                 } else {
