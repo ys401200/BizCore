@@ -795,11 +795,11 @@
 
                                             // ordered employee appType read isModify doc approved retrieved rejected comment appData 
                                             if ($("#" + id + "_writer").val() == '구민주') {
-                                                appDatas = [[0, 10017, 0, getYmdSlash2(created)+"", 0, $(".app_preview").html(), getYmdSlash2(created)+"", null, null, null, soppAndCus],
+                                                appDatas = [[0, 10017, 0, getYmdSlash2(created) + "", 0, $(".app_preview").html(), getYmdSlash2(created) + "", null, null, null, soppAndCus],
                                                 [10, 10002, 2, null, 0, null, null, null, null, null, null]];
                                             } else {
                                                 appDatas =
-                                                    [[0, num, 0, getYmdSlash2(created) +"", 0, $(".app_preview").html(), getYmdSlash2(created)+"" , null, null, null, soppAndCus],
+                                                    [[0, num, 0, getYmdSlash2(created) + "", 0, $(".app_preview").html(), getYmdSlash2(created) + "", null, null, null, soppAndCus],
                                                     [10, 10017, 0, null, 0, null, null, null, null, null, null,],
                                                     [20, 10002, 2, null, 0, null, null, null, null, null, null]];
                                             }
@@ -829,14 +829,14 @@
 
                                             if ($("#" + id + "_writer").val() == '구민주') {
                                                 appDatas =
-                                                    [[0, 10017, 0, getYmdSlash2(created)+"" , 0, $(".app_preview").html(), getYmdSlash2(created)+"", null, null, null, soppAndCus],
-                                                    [10, 10002, 2, approved, 0, null, approved , null, null, null, null]];
+                                                    [[0, 10017, 0, getYmdSlash2(created) + "", 0, $(".app_preview").html(), getYmdSlash2(created) + "", null, null, null, soppAndCus],
+                                                    [10, 10002, 2, approved, 0, null, approved, null, null, null, null]];
 
                                             } else {
                                                 appDatas =
-                                                    [[0, num, 0, getYmdSlash2(created)+"", 0, $(".app_preview").html(), getYmdSlash2(created)+"" , null, null, null, soppAndCus],
-                                                    [10, 10017, 0, approved , 0, null, approved , null, null, null, null],
-                                                    [20, 10002, 2, approved, 0, null, approved , null, null, null, null]];
+                                                    [[0, num, 0, getYmdSlash2(created) + "", 0, $(".app_preview").html(), getYmdSlash2(created) + "", null, null, null, soppAndCus],
+                                                    [10, 10017, 0, approved, 0, null, approved, null, null, null, null],
+                                                    [20, 10002, 2, approved, 0, null, approved, null, null, null, null]];
 
 
                                             }
@@ -850,12 +850,12 @@
                                                 alert("작성자 반려");
                                                 if ($("#" + id + "_writer").val() == '구민주') {
                                                     appDatas =
-                                                        [[0, num, 0, getYmdSlash2(created)+"" , 0, $(".app_preview").html(), null, null, getYmdSlash2(created) +"", null, soppAndCus],
+                                                        [[0, num, 0, getYmdSlash2(created) + "", 0, $(".app_preview").html(), null, null, getYmdSlash2(created) + "", null, soppAndCus],
                                                         [10, 10002, 2, null, 0, null, null, null, null, null, null]];
                                                 } else {
 
                                                     appDatas =
-                                                        [[0, num, 0, getYmdSlash2(created)+"" , 0, $(".app_preview").html(), null, getYmdSlash2(created)+"" , null, null, soppAndCus],
+                                                        [[0, num, 0, getYmdSlash2(created) + "", 0, $(".app_preview").html(), null, getYmdSlash2(created) + "", null, null, soppAndCus],
                                                         [10, 10017, 0, null, 0, null, null, null, null, null, null],
                                                         [20, 10002, 2, null, 0, null, null, null, null, null, null]];
 
@@ -880,7 +880,7 @@
                                                 $("." + id + "_writer_approved").attr("data-detail", $("#" + id + "_created").val());
                                                 // ordered employee appType read isModify doc approved retrieved rejected comment appData 
 
-                                                appDatas = [[0, num, 0, getYmdSlash2(created)+"" , 0, $(".app_preview").html(), getYmdSlash2(created) + "", null, null, null, soppAndCus],
+                                                appDatas = [[0, num, 0, getYmdSlash2(created) + "", 0, $(".app_preview").html(), getYmdSlash2(created) + "", null, null, null, soppAndCus],
                                                 [10, 10017, 0, approved, 0, null, null, null, approved + "", null, null], [20, 10002, 2, null, 0, null, null, null, null, null, null]];
 
 
@@ -911,7 +911,7 @@
                                                     [10, 10002, 2, approved + "", 0, null, null, null, approved + "", null, null]];
                                                 } else {
                                                     appDatas = [[0, num, 0, getYmdSlash2(created) + "", 0, $(".app_preview").html(), getYmdSlash2(created) + "", null, null, null, soppAndCus],
-                                                    [10, 10017, 0, approved + "", 0, null, approved+ "", null, null, null, null],
+                                                    [10, 10017, 0, approved + "", 0, null, approved + "", null, null, null, null],
                                                     [20, 10002, 2, approved + "", 0, null, null, null, approved + "", null, null]];
                                                 }
                                             }
@@ -966,6 +966,16 @@
                         }
                         totalCount = totalCount.toLocaleString();
                         $(".insertedTotal").val(totalCount);
+                        let originHtml = $("#contentContainer").html();
+                        originHtml += "<div class='innerHtml'></div>"
+                        $("#contentContainer").html(originHtml);
+                        $(".innerHtml").html(storage.docList[i].content);
+                        $("#" + id + "_content").hide();
+
+
+
+
+
 
                         insertDataFnc(dataStatus, insertData, num, id, created, appDatas);
                         // 결재타입이 발주서인 경우 
@@ -1159,9 +1169,31 @@
                 }
             }
 
+            if (storage.docInfo.files != null) {
+                let data = {
+
+                    "docNo": ($("#" + id + "_no").val() + "").split("2022")[1]
+                }
+
+                data = JSON.stringify(data);
+                data = cipher.encAes(data);
+                $.ajax({
+                    url: apiServer + "/system/doc/attachedFile/" + ($("#" + id + "_no").val() + "").split("2022")[1],
+                    method: "get",
+                    contentType: "text/plain",
+                    success: (result) => {
+                        if (result.result === "ok") {
+                            alert("성공");
+
+                        } else {
+                            alert(result.msg);
+                        }
+
+                    }
+                })
+            }
 
 
-            if
         }
 
 
@@ -1185,6 +1217,7 @@
                     } else if (docListTitle[j] == "content") {
                         $("#" + id + "_" + docListTitle[j]).val(storage.docList[i][docListTitle[j]]);
                         $("#" + id + "_" + docListTitle[j]).html(storage.docList[i][docListTitle[j]]);
+
 
                     } else if (docListTitle[j] == "customer") {
                         if (storage.docList[i][docListTitle[j]] == 0) {
@@ -1254,6 +1287,14 @@
                 "</div>"
 
             );
+
+            let originHtml = $("#contentContainer").html();
+            originHtml += "<div class='innerHtml'></div>"
+            $("#contentContainer").html(originHtml);
+            $(".innerHtml").html(storage.docList[i].content);
+            $("#" + id + "_content").hide();
+
+
 
             soppAndCus = {
                 "sopp": storage.soppResult = "" ? null : storage.soppResult + "",

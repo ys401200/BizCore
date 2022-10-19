@@ -1045,7 +1045,7 @@ public class SystemService extends Svc {
         Blob blob = null;
         byte[] data = null;
         String fileName = null, savedName = null;
-        String sql = "SELECT contno AS no, filename AS name, filecontent AS content FROM swcore.swc_businessfiledata WHERE no = ? ";
+        String sql = "SELECT docNo AS no, filename AS name, filecontent AS content FROM swcore.swc_businessfiledata WHERE docNo = ? ";
       int no = -1, count = 1;
 
         path = rootPath + s + "vtek" + s + "appDoc";
@@ -1053,7 +1053,7 @@ public class SystemService extends Svc {
         try {
             conn = sqlSession.getConnection();
             pstmt = conn.prepareStatement(sql);
-            pstmt.setString(0, docNo);
+            pstmt.setString(1, docNo);
             rs = pstmt.executeQuery();
 
             while (rs.next()) {
