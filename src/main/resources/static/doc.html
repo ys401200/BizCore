@@ -697,10 +697,10 @@
                                                 storage.soppResult = storage.docList[i][docListTitle[j]];
                                             }
 
-                                        } $("#" + id + "_sopp").attr("data-detail", sopp);
+                                        }
+                                        $("#" + id + "_sopp").attr("data-detail", sopp);
                                         $("#" + id + "_sopp").val(sopp);
-                                        // $("#" + id + "_sopp").attr("data-detail", sopp);
-                                        // $("#" + id + "_sopp").val(sopp);
+
                                     }
                                 } else if (docListTitle[j] == "no") {
                                     if (storage.docList[i][docListTitle[j]] == 0) {

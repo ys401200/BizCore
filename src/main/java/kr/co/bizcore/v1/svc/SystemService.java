@@ -981,21 +981,23 @@ public class SystemService extends Svc {
         Connection conn = null;
         PreparedStatement pstmt = null;
         int result = 0;
-        String sql = "INSERT INTO bizcore.doc_app(compId, docNo, writer, formId, dept,  docBox,title, confirmNo,status, readable,created) VALUES('vtek', ?, ?, ?, ?, ?,?,?,?,?,?)";
+        String sql = "INSERT INTO bizcore.doc_app(no,compId, docNo, writer, formId, dept,  docBox,title, confirmNo,status, readable,created) VALUES(?,'vtek', ?, ?, ?, ?, ?,?,?,?,?,?)";
 
         try {
             conn = sqlSession.getConnection();
             pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, docNo);
-            pstmt.setInt(2, writer);
-            pstmt.setString(3, formId);
-            pstmt.setString(4, dept);
-            pstmt.setString(5, docBox);
-            pstmt.setString(6, title);
-            pstmt.setString(7, confirmNo);
-            pstmt.setInt(8, status);
-            pstmt.setString(9, readable);
-            pstmt.setString(10, created);
+           int no = getNextNumberFromDB("vtek", "bizcore.doc_app");
+            pstmt.setInt(1, no);
+            pstmt.setString(2, docNo);
+            pstmt.setInt(3, writer);
+            pstmt.setString(4, formId);
+            pstmt.setString(5, dept);
+            pstmt.setString(6, docBox);
+            pstmt.setString(7, title);
+            pstmt.setString(8, confirmNo);
+            pstmt.setInt(9, status);
+            pstmt.setString(10, readable);
+            pstmt.setString(11, created);
             result = pstmt.executeUpdate();
 
         } catch (SQLException e) {
@@ -1046,7 +1048,7 @@ public class SystemService extends Svc {
         byte[] data = null;
         String fileName = null, savedName = null;
         String sql = "SELECT docNo AS no, filename AS name, filecontent AS content FROM swcore.swc_businessfiledata WHERE docNo = ? ";
-      int no = -1, count = 1;
+        int no = -1, count = 1;
 
         path = rootPath + s + "vtek" + s + "appDoc";
 
