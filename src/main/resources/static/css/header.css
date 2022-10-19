@@ -54,22 +54,35 @@ button, select, input[type="text"], input[type="date"]{
 /* ckeditor 시작 */
 #editorSet{
 	resize: none;
+	width: 100%;
 }
 
 #cke_editorSet{
     width: 100%;
+	border: 0;
 }
 
-#cke_editorSet p{
-    margin: 0;
+#cke_editorSet .cke_inner{
+	overflow: hidden;
 }
 
-/* #cke_editorSet .cke_inner > .cke_top {
-    display: none;
-} */
+#cke_editorSet .cke_inner > .cke_contents {
+    display: inline-block;
+    overflow: hidden;
+	width: 100%;
+}
 
 #cke_editorSet .cke_inner > .cke_bottom{
 	display: none;
+}
+
+#cke_editorSet:not(.cke_focus) .cke_inner > .cke_top{
+	display: none;
+    border: 0;
+}
+
+#cke_editorSet.cke_focus .cke_inner > .cke_top{
+	display: inline-block;
 }
 
 /* ckeditor 끝 */

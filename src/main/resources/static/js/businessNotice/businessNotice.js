@@ -243,8 +243,8 @@ function noticeInsertForm(){
 	];
 
 	html = detailViewForm(dataArray, "modal");
-
 	modal.show();
+	modal.content.css("max-width", "40%");
 	modal.headTitle.text("공지사항등록");
 	modal.body.html(html);
 	modal.confirm.text("등록");
@@ -257,7 +257,7 @@ function noticeInsertForm(){
 		my = storage.my;
 
 		$("#writer").val(storage.user[my].userName);
-		setEditor();
+		window.setTimeout(setEditor, 100);
 		ckeditor.config.readOnly = false;
 	}, 100);
 }
@@ -266,7 +266,7 @@ function noticeInsert(){
 	let title, content, writer, data;
 
 	title = $("#title").val();
-	content = tinymce.activeEditor.getContent();
+	content = CKEDITOR.instances.editorSet.getData();
 	writer = $("#writer");
 	writer = dataListFormat(writer.attr("id"), writer.val());
 
@@ -298,7 +298,7 @@ function noticeUpdate(){
 	let title, content, writer;
 
 	title = $("#title").val();
-	content = tinymce.activeEditor.getContent();
+	content = CKEDITOR.instances.editorSet.getData();
 	writer = $("#writer");
 	writer = dataListFormat(writer.attr("id"), writer.val());
 

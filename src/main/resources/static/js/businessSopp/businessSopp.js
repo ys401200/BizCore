@@ -422,8 +422,8 @@ function soppSuccessView(result){
 		];
 
 		plusMenuSelect(menu);
-		setTiny();
-		tinymce.activeEditor.mode.set('readonly');
+		ckeditor.config.readOnly = true;
+		window.setTimeout(setEditor, 100);
 		inputDataList();
 	}, 100);
 }
@@ -575,6 +575,8 @@ function soppInsertForm(){
 	html = detailViewForm(dataArray, "modal");
 
 	modal.show();
+	modal.content.css("min-width", "70%");
+	modal.content.css("max-width", "70%");
 	modal.headTitle.text("영업기회등록");
 	modal.body.html(html);
 	modal.confirm.text("등록");
@@ -586,9 +588,10 @@ function soppInsertForm(){
 		let my = storage.my, nowDate;
 		nowDate = new Date();
 		nowDate = nowDate.toISOString().substring(0, 10);
-
 		$("#employee").val(storage.user[my].userName);
 		$("#targetDate").val(nowDate);
+		ckeditor.config.readOnly = false;
+		window.setTimeout(setEditor, 100);
 	}, 100);
 }
 
@@ -611,7 +614,7 @@ function soppInsert(){
 	targetDate = new Date(targetDate).getTime();
 	soppType = $("#soppType").val();
 	expectedSales = $("#expectedSales").val().replaceAll(",", "");
-	detail = tinymce.activeEditor.getContent();
+	detail = CKEDITOR.instances.editorSet.getData();
 
 	url = "/api/sopp";
 	method = "post";
@@ -665,7 +668,7 @@ function soppUpdate(){
 	targetDate = new Date(targetDate).getTime();
 	soppType = $("#soppType").val();
 	expectedSales = $("#expectedSales").val().replaceAll(",", "");
-	detail = tinymce.activeEditor.getContent();
+	detail = CKEDITOR.instances.editorSet.getData();
 
 	url = "/api/sopp/" + storage.attachedNo;
 	method = "put";

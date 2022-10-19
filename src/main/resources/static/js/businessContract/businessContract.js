@@ -534,12 +534,7 @@ function contractSuccessView(result){
 				"onclick": "contractDelete(" + result.no + ");"
 			},
 		];
-
-		plusMenuSelect(menu);
-		setTiny();
-		tinymce.activeEditor.mode.set('readonly');
-		inputDataList();
-
+		
 		if(contractType === "판매계약"){
 			$("#startOfFreeMaintenance").parents(".defaultFormLine").show();
 			$("#endOfFreeMaintenance").parents(".defaultFormLine").show();
@@ -553,10 +548,15 @@ function contractSuccessView(result){
 			$("#endOfFreeMaintenance").parents(".defaultFormLine").hide();
 			$("#startOfPaidMaintenance").parents(".defaultFormLine").show();
 			$("#endOfPaidMaintenance").parents(".defaultFormLine").show();
-
+			
 			$("#startOfFreeMaintenance").val(null);
 			$("#endOfFreeMaintenance").val(null);
 		}
+
+		plusMenuSelect(menu);
+		ckeditor.config.readOnly = true;
+		window.setTimeout(setEditor, 100);
+		inputDataList();
 	}, 100);
 
 	detailTabHide("tabTradeList");
@@ -739,6 +739,8 @@ function contractInsertForm(){
 	html = detailViewForm(dataArray, "modal");
 
 	modal.show();
+	modal.content.css("min-width", "70%");
+	modal.content.css("max-width", "70%");
 	modal.headTitle.text("계약등록");
 	modal.body.html(html);
 	modal.confirm.text("등록");
@@ -748,11 +750,12 @@ function contractInsertForm(){
 	
 	setTimeout(() => {
 		let my = storage.my;
-
 		$("[name='contractType']").eq(0).prop("checked", true);
 		$("#startOfPaidMaintenance").parents(".defaultFormLine").hide();
 		$("#endOfPaidMaintenance").parents(".defaultFormLine").hide();
 		$("#employee").val(storage.user[my].userName);
+		ckeditor.config.readOnly = false;
+		window.setTimeout(setEditor, 100);
 	}, 100);
 }
 
@@ -817,7 +820,7 @@ function contractInsert(){
 		contractAmount = $("#contractAmount").val().replaceAll(",", "");
 		taxInclude = $("#taxInclude").val();
 		profit = $("#profit").val().replaceAll(",", "");
-		detail = tinymce.activeEditor.getContent();
+		detail = CKEDITOR.instances.editorSet.getData();
 	
 		url = "/api/contract";
 		method = "post";
@@ -922,7 +925,7 @@ function contractUpdate(){
 		contractAmount = $("#contractAmount").val().replaceAll(",", "");
 		taxInclude = $("#taxInclude").val();
 		profit = $("#profit").val().replaceAll(",", "");
-		detail = tinymce.activeEditor.getContent();
+		detail = CKEDITOR.instances.editorSet.getData();
 	
 		url = "/api/contract/" + storage.contractNo;
 		method = "put";

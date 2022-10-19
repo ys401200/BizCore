@@ -20,10 +20,11 @@
 }
 
 .modalHead{
-    padding:0 20px;
     height:50px;  
     color: #ffffff;
     background-color:#2147b1;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 .modalHead .modalHeadTitle{
@@ -39,31 +40,30 @@
     cursor: pointer;
 }
 
-.modalBody{        
+.modalBody{
     background-color:#ffffff; 
-    padding-left: 22px;
-    padding-right: 22px;
     word-break:break-word;    
     overflow-y:auto;   
     font-size: 15px;   
-    padding-top: 10px;    
+    padding-top: 10px; 
+    padding-left: 10px;   
+    padding-right: 10px;
 }
 
-.modalFoot{                      
-    width:100%;
+.modalFoot{          
+    display: flex;
+    align-items: center;            
+    justify-content: right;
     height:50px;
-    padding:2% 0 0 72%;
+    padding-right: 10px;
 }
 .modalBtns{ 
-    display:inline-flex;            
-    width:12% !important;              
+    display: flex;
+    align-items: center;
+    justify-content: center;
     height:62%;                    
-    justify-content:center;         
-    align-items:center;             
-    float:left;                     
     color:#ffffff;                  
     cursor:pointer;
-    /* margin-left:20px; */
     padding:0.8% 4%;
     font-size:0.9rem;
     box-shadow:0 3px 4px rgba(33, 71, 177, 0.184);        

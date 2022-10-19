@@ -38,7 +38,6 @@ function init(){
 	});
 	
 	$(document).click((e) => {
-		console.log($(e.target));
 		if(modal.wrap.is($(e.target))){
 			modal.hide();
 		}else if(modal.noteWrap.is($(e.target))){
@@ -250,13 +249,14 @@ modal = {
 	"hide": () => {
 		modal.wrap.fadeOut();
 		window.setTimeout(modal.clear, 500);
+		ckeditor.config.readOnly = true;
+		window.setTimeout(setEditor, 500);
 	},
 	"clear": () => {
 		modal.headTitle.text("");
 		modal.body.html("");
 		modal.confirm.show();
 		modal.close.show();
-		modal.footBtns.css("width", "49%");
 		modal.confirm.text("확인");
 		modal.close.text("닫기");
 	},
@@ -367,8 +367,7 @@ ckeditor = {
 			{ name: 'others' },
 			{ name: 'about' }
 		],
-		"removeButtons": "Cut,Copy,Paste,Undo,Redo,Anchor,Underline,Strike,Subscript,Superscript",
-		"removeDialogTabs": "link:advanced",
+		"filebrowserUploadUrl": '/business/imageUpload',
 	},
 }
 
@@ -1430,13 +1429,11 @@ function detailTabHide(notId){
 
 //ckeditor
 function setEditor(){
-    editor = CKEDITOR.replace(document.querySelector("#editorSet"));
-	
-	editor.on("instanceReady", function(evt){
-		evt.editor.editable().on('click', function (event) {
-			// $("#cke_editorSet .cke_inner .cke_top").show();
-		});
-	});
+	if(editor !== undefined){
+		editor = CKEDITOR.instances.editorSet.destroy();
+	}
+
+	editor = CKEDITOR.replace(document.querySelector("#editorSet"));
 }
 
 // datalist
@@ -2264,7 +2261,8 @@ function enableDisabled(e, clickStr, notIdArray){
 	}
 	
 	$(e).attr("onclick", clickStr);
-	tinymce.activeEditor.mode.set('design'); 
+	ckeditor.config.readOnly = false;
+	window.setTimeout(setEditor, 100);
 }
 
 function calWindowLength(){

@@ -463,8 +463,8 @@ function techSuccessView(result){
 		$("#supportStep option[value='" + supportStep + "']").prop("selected", true);
 		
 		plusMenuSelect(menu);
-		setTiny();
-		tinymce.activeEditor.mode.set('readonly');
+		ckeditor.config.readOnly = true;
+		window.setTimeout(setEditor, 100);
 		inputDataList();
 	}, 100);
 }
@@ -674,12 +674,16 @@ function techInsertForm(){
 	html = detailViewForm(dataArray, "modal");
 
 	modal.show();
+	modal.content.css("min-width", "70%");
+	modal.content.css("max-width", "70%");
 	modal.headTitle.text("기술일정등록");
 	modal.body.html(html);
 	modal.confirm.text("등록");
 	modal.close.text("취소");
 	modal.confirm.attr("onclick", "techInsert();");
 	modal.close.attr("onclick", "modal.hide();");
+	ckeditor.config.readOnly = false;
+	window.setTimeout(setEditor, 100);
 }
 
 function techInsert(){
@@ -727,7 +731,7 @@ function techInsert(){
 		partner = $("#partner");
 		partner = dataListFormat(partner.attr("id"), partner.val());
 		title = $("#title").val();
-		content = tinymce.activeEditor.getContent();
+		content = CKEDITOR.instances.editorSet.getData();
 		supportModel = $("#supportModel").val();
 		supportVersion = $("#supportVersion").val();
 		contract = $("#contract");
@@ -820,7 +824,7 @@ function techUpdate(){
 		partner = $("#partner");
 		partner = dataListFormat(partner.attr("id"), partner.val());
 		title = $("#title").val();
-		content = tinymce.activeEditor.getContent();
+		content = CKEDITOR.instances.editorSet.getData();
 		supportModel = $("#supportModel").val();
 		supportVersion = $("#supportVersion").val();
 		contract = $("#contract");

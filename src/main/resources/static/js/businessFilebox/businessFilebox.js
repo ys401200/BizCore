@@ -217,8 +217,8 @@ function fileBoxSuccessView(result){
 		];
 
 		plusMenuSelect(menu);
-		setTiny();
-		tinymce.activeEditor.mode.set('readonly');
+		ckeditor.config.readOnly = true;
+		window.setTimeout(setEditor, 100);
 		inputDataList();
 	}, 500)
 }
@@ -264,6 +264,8 @@ function fileBoxInsertForm(){
 	html = detailViewForm(dataArray, "modal");
 
 	modal.show();
+	modal.content.css("min-width", "40%");
+	modal.content.css("max-width", "40%");
 	modal.headTitle.text("자료 등록");
 	modal.body.html(html);
 	modal.confirm.text("등록");
@@ -274,9 +276,10 @@ function fileBoxInsertForm(){
 	setTimeout(() => {
 		let my;
 		my = storage.my;
-
 		$(document).find("#writer").val(storage.user[my].userName);
 		$(document).find("#attached").after("<div class='filePreview'></div>");
+		ckeditor.config.readOnly = false;
+		window.setTimeout(setEditor, 100);
 	}, 100);
 }
 
@@ -321,6 +324,8 @@ function fileBoxUpdateForm(result){
 	html = detailViewForm(dataArray, "modal");
 
 	modal.show();
+	modal.content.css("min-width", "40%");
+	modal.content.css("max-width", "40%");
 	modal.headTitle.text(title);
 	modal.body.html(html);
 	modal.confirm.text("수정완료");
@@ -332,20 +337,23 @@ function fileBoxUpdateForm(result){
 
 	html = "";
 
-	if(result.attached.length > 0){
+	if(result.attached !== undefined && result.attached.length > 0){
 		for(let i = 0; i < result.attached.length; i++){
 			fileDataArray.push(result.attached[i].ognName);
 			html += "<div style='padding-bottom: 4%;'><span style='float:left; display: block; width: 95%;'>" + result.attached[i].ognName + "</span><button type='button' id='fileDataDelete' style='float:right; width: 5%;' data-index='" + i + "' onclick='fileViewDelete(this);'>삭제</button></div>";
 			$(document).find(".filePreview").html(html);
 		}
 	}
+
+	ckeditor.config.readOnly = false;
+	window.setTimeout(setEditor, 100);
 }
 
 function fileBoxInsert(){
 	let title, content, writer, data;
 
 	title = $(document).find("#title").val();
-	content = tinymce.activeEditor.getContent();
+	content = CKEDITOR.instances.editorSet.getData();
 	writer = $(document).find("#writer");
 	writer = dataListFormat(writer.attr("id"), writer.val());
 	
@@ -378,7 +386,7 @@ function fileBoxUpdate(){
 	let title, content, writer;
 
 	title = $(document).find("#title").val();
-	content = tinymce.activeEditor.getContent();
+	content = CKEDITOR.instances.editorSet.getData();
 	writer = $(document).find("#writer");
 	writer = dataListFormat(writer.attr("id"), writer.val());
 

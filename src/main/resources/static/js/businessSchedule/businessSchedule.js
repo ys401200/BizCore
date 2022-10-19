@@ -398,8 +398,8 @@ function scheduleSuccessView(result){
 		}
 
 		plusMenuSelect(menu);
-		setTiny();
-		tinymce.activeEditor.mode.set('readonly');
+		ckeditor.config.readOnly = true;
+		window.setTimeout(setEditor, 100);
 		inputDataList();
 	}, 100);
 }
@@ -428,6 +428,8 @@ function calendarSuccessView(result){
 	html = detailViewForm(dataArray, "modal");
 
 	modal.show();
+	modal.content.css("min-width", "70%");
+	modal.content.css("max-width", "70%");
 	modal.headTitle.text(title);
 	modal.body.html(html);
 	modal.confirm.text("수정");
@@ -461,8 +463,8 @@ function calendarSuccessView(result){
 			}
 		}
 
-		setTiny();
-		tinymce.activeEditor.mode.set('readonly');
+		ckeditor.config.readOnly = true;
+		window.setTimeout(setEditor, 100);
 	}, 100);
 }
 
@@ -606,6 +608,8 @@ function scheduleInsertForm(getDate){
 	html = detailViewForm(dataArray, "modal");
 
 	modal.show();
+	modal.content.css("min-width", "70%");
+	modal.content.css("max-width", "70%");
 	modal.headTitle.text("일정등록");
 	modal.body.html(html);
 	modal.confirm.text("등록");
@@ -615,6 +619,8 @@ function scheduleInsertForm(getDate){
 
 	setTimeout(() => {
 		$("[name='job'][value='sales']").prop("checked", true);
+		window.setTimeout(setEditor, 100);
+		ckeditor.config.readOnly = false;
 	}, 100);
 }
 
@@ -653,6 +659,8 @@ function scheduleRadioClick(e, result){
 		$("[name='job'][value='" + value + "']").prop("checked", true);
 		$("#from").val(tempFrom);
 		$("#to").val(tempTo);
+		window.setTimeout(setEditor, 100);
+		ckeditor.config.readOnly = false;
 	}, 100);
 }
 
@@ -1120,7 +1128,7 @@ function scheduleInsert(){
 			partner = $("#partner");
 			partner = dataListFormat(partner.attr("id"), partner.val());
 			title = $("#title").val();
-			content = tinymce.activeEditor.getContent();
+			content = CKEDITOR.instances.editorSet.getData();
 			type = $("#type").val();
 
 			data = {
@@ -1174,7 +1182,7 @@ function scheduleInsert(){
 			partner = $("#partner");
 			partner = dataListFormat(partner.attr("id"), partner.val());
 			title = $("#title").val();
-			content = tinymce.activeEditor.getContent();
+			content = CKEDITOR.instances.editorSet.getData();
 			supportModel = $("#supportModel").val();
 			supportVersion = $("#supportVersion").val();
 			contract = $("#contract");
@@ -1231,7 +1239,7 @@ function scheduleInsert(){
 			customer = $("#customer");
 			customer = dataListFormat(customer.attr("id"), customer.val());
 			title = $("#title").val();
-			content = tinymce.activeEditor.getContent();
+			content = CKEDITOR.instances.editorSet.getData();
 	
 			data = {
 				"job": job,
@@ -1564,6 +1572,7 @@ function scheduleRadioUpdate(value, result){
 				"type": "radio",
 				"elementId": "contractMethod",
 				"elementName": "contractMethod",
+				"col": 4,
 			},
 			{
 				"title": "영업기회(*)",
@@ -1844,7 +1853,7 @@ function scheduleUpdate(no){
 			partner = $("#partner");
 			partner = dataListFormat(partner.attr("id"), partner.val());
 			title = $("#title").val();
-			content = tinymce.activeEditor.getContent();
+			content = CKEDITOR.instances.editorSet.getData();
 			type = $("#type").val();
 
 			data = {
@@ -1898,7 +1907,7 @@ function scheduleUpdate(no){
 			partner = $("#partner");
 			partner = dataListFormat(partner.attr("id"), partner.val());
 			title = $("#title").val();
-			content = tinymce.activeEditor.getContent();
+			content = CKEDITOR.instances.editorSet.getData();
 			supportModel = $("#supportModel").val();
 			supportVersion = $("#supportVersion").val();
 			contract = $("#contract");
@@ -1955,7 +1964,7 @@ function scheduleUpdate(no){
 			customer = $("#customer");
 			customer = dataListFormat(customer.attr("id"), customer.val());
 			title = $("#title").val();
-			content = tinymce.activeEditor.getContent();
+			content = CKEDITOR.instances.editorSet.getData();
 	
 			data = {
 				"job": job,
