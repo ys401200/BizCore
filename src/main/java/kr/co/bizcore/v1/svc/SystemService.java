@@ -1006,7 +1006,7 @@ public class SystemService extends Svc {
     }
 
     public int insertReportDetail(String docNo, int ordered, int employee, int appType, String read, int isModify,
-        String doc, String approved, String retrieved, String rejected, String comment, String appData) {
+            String doc, String approved, String retrieved, String rejected, String comment, String appData) {
         Connection conn = null;
         PreparedStatement pstmt = null;
         int result = 0;
@@ -1033,4 +1033,52 @@ public class SystemService extends Svc {
         }
         return result;
     }
+
+    public int docFileDownloadAndSave(String docNo) {
+        String rootPath = fileStoragePath, path = null, s = File.separator;
+        File file = null;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        FileOutputStream fos = null;
+        InputStream isr = null;
+        Blob blob = null;
+        byte[] data = null;
+        String fileName = null, savedName = null;
+        String sql = "SELECT contno AS no, filename AS name, filecontent AS content FROM swcore.swc_businessfiledata WHERE no = ? ";
+      int no = -1, count = 1;
+
+        path = rootPath + s + "vtek" + s + "appDoc";
+
+        try {
+            conn = sqlSession.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(0, docNo);
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                no = rs.getInt(1);
+                fileName = rs.getString(2);
+                savedName = createRandomFileName();
+                blob = rs.getBlob(3);
+                isr = blob.getBinaryStream();
+                data = isr.readAllBytes();
+                isr.close();
+                file = new File(path + s + no);
+                if (!file.exists())
+                    file.mkdir();
+                file = new File(path + s + no + s + savedName);
+                fos = new FileOutputStream(file);
+                logger.info("[SystemService] Try save file data : " + count + " / " + fileName);
+                fos.write(data);
+                fos.close();
+                saveAttachedData("appDoc", no, fileName, savedName, file.length());
+                count++;
+            }
+
+        } catch (SQLException | IOException e) {
+            e.printStackTrace();
+        }
+        return count;
+    } // End of contractFileDownloadAndSave()
 }

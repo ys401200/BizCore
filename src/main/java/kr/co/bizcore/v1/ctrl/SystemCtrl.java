@@ -247,4 +247,47 @@ public class SystemCtrl extends Ctrl {
         }
         return result;
     }
+
+    @PostMapping("/doc/attachedFile") // 기존 문서 기본 정보 insert
+    public String convertFile(HttpServletRequest request, @RequestBody String requestBody) {
+
+        String compId, docNo = null;
+        HttpSession session = null;
+        String data = null, lang = null;
+        String aesKey, aesIv, userNo;
+        Msg msg = null;
+        JSONObject json = null;
+        int serviceAnswer = 0;
+        String result = null;
+        session = request.getSession();
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        userNo = (String) session.getAttribute("userNo");
+        lang = (String) session.getAttribute("lang");
+        msg = getMsg(lang);
+        compId = (String) session.getAttribute("compId");
+        if (compId == null) {
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        } else if (aesKey == null || aesIv == null) {
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        } else
+
+            data = decAes(requestBody, aesKey, aesIv);
+
+        if (data == null) {
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.dataIsWornFormat + "\"}";
+        } else {
+            json = new JSONObject(data);
+            docNo = json.getString("docNo");
+
+            serviceAnswer = systemService.docFileDownloadAndSave(docNo);
+            if (serviceAnswer == 1) {
+                result = "{\"result\":\"failure\"}";
+            } else {
+                result = "{\"result\":\"ok\"}";
+            }
+
+        }
+        return result;
+    }
 }
