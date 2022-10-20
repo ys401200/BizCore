@@ -1048,7 +1048,8 @@ public class SystemService extends Svc {
         byte[] data = null;
         String fileName = null, savedName = null;
         String sql = "SELECT docNo AS no, filename AS name, filecontent AS content FROM swcore.swc_businessfiledata WHERE docNo = ? ";
-        int no = -1, count = 1;
+        int no = -1;
+        int count = 1;
 
         path = rootPath + s + "vtek" + s + "appDoc";
 
@@ -1071,16 +1072,18 @@ public class SystemService extends Svc {
                     file.mkdir();
                 file = new File(path + s + no + s + savedName);
                 fos = new FileOutputStream(file);
-                logger.info("[SystemService] Try save file data : " + count + " / " + fileName);
                 fos.write(data);
                 fos.close();
                 saveAttachedData("appDoc", no, fileName, savedName, file.length());
                 count++;
+               
             }
 
         } catch (SQLException | IOException e) {
             e.printStackTrace();
         }
+        logger.info("file count end " + count);
         return count;
+
     } // End of contractFileDownloadAndSave()
 }

@@ -251,13 +251,16 @@ public class SystemCtrl extends Ctrl {
     @GetMapping("/doc/attachedFile/{docNo}") // 기존 문서 기본 정보 insert
     public String convertFile(HttpServletRequest request, HttpServletResponse response,
             @PathVariable String docNo) {
-        String result;
-        int serviceAnswer;
+        String result =null;
+        int serviceAnswer =0;
         serviceAnswer = systemService.docFileDownloadAndSave(docNo);
-        if (serviceAnswer == 1) {
-            result = "{\"result\":\"failure\"}";
+        logger.info("controller chk" + serviceAnswer);
+        if (serviceAnswer > 1) {
+            result = "ok";
+            // result = "{\"result\":\"ok\"}";
         } else {
-            result = "{\"result\":\"ok\"}";
+            result = "failure";
+            // result = "{\"result\":\"failure\"}";
         }
         return result;
     }
