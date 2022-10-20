@@ -194,13 +194,14 @@ function techDetailView(e){
 }
 
 function techSuccessView(result){
-	let from, to, place, writer, sopp, contract, customer, cipOfCustomer, partner, title, content, supportModel, supportVersion, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput;
+	let from, to, place, writer, sopp, contract, customer, cipOfCustomer, partner, title, content, supportModel, supportVersion, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput, listRange;
 	storage.techNo = result.no;
 	gridList = $(".gridList");
 	searchContainer = $(".searchContainer");
 	containerTitle = $("#containerTitle");
 	detailBackBtn = $(".detailBackBtn");
 	listSearchInput = $(".listSearchInput");
+	listRange = $(".listRange");
 
 	disDate = dateDis(result.from);
 	from = dateFnc(disDate);
@@ -438,6 +439,7 @@ function techSuccessView(result){
 		$("[name='job'][value='tech']").prop("checked", true);
 		detailBackBtn.css("display", "flex");
 		listSearchInput.hide();
+		listRange.hide();
 		
 		let menu = [
 			{

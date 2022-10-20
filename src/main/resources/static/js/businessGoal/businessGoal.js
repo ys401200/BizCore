@@ -103,18 +103,20 @@ function goalInsert(){
         for(let i = 0; i < $(goalBodyItems[t]).find("input").length; i++){
             data.push(parseInt($($(goalBodyItems[t]).find("input")[i]).val().replaceAll(",", "")));
         }
-
+        
         method = "post";
         type = "insert";
         data = JSON.stringify(data);
 	    data = cipher.encAes(data);
-       
+        
         crud.defaultAjax(url, method, data, type, goalSuccessInsert, goalErrorInsert);
     }
+
+    alert("등록되었습니다.");
 }
 
 function goalSuccessInsert(){
-    alert("등록되었습니다.");
+
 }
 
 function goalErrorInsert(){

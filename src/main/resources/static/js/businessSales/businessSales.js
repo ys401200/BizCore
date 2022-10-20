@@ -183,13 +183,14 @@ function salesDetailView(e){
 }
 
 function salesSuccessView(result){
-	let dataArray, from, to, place, writer, sopp, customer, partner, title, content, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput;
+	let dataArray, from, to, place, writer, sopp, customer, partner, title, content, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput, listRange;
 	storage.salesNo = result.no;
 	gridList = $(".gridList");
 	searchContainer = $(".searchContainer");
 	containerTitle = $("#containerTitle");
 	detailBackBtn = $(".detailBackBtn");
 	listSearchInput = $(".listSearchInput");
+	listRange = $(".listRange");
 
 	disDate = dateDis(result.from);
 	from = dateFnc(disDate);
@@ -375,6 +376,7 @@ function salesSuccessView(result){
 	setTimeout(() => {
 		detailBackBtn.css("display", "flex");
 		listSearchInput.hide();
+		listRange.hide();
 		
 		let menu = [
 			{

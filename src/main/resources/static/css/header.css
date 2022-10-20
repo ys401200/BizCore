@@ -46,24 +46,49 @@ select:disabled, input:disabled{
 
 button, select, input[type="text"], input[type="date"]{
 	font-family: 'NanumSquareRound';
-	padding:0.3% 0.7%;
+	/* padding:0.3% 0.7%; */
 	border: 0;
 	cursor: pointer;
 }
+
+/* 리스트 input range 시작 */
+.listRange{
+	display: flex;
+    align-items: center;
+    line-height: 40px;
+    padding-left: 1%;
+	float: left;
+}
+
+.listRange > span{
+	color: #332E85;
+	font-weight: 600;
+	font-size: 0.9rem;
+}
+/* 리스트 input range 끝 */
 
 /* ckeditor 시작 */
 #editorSet{
 	resize: none;
 	width: 100%;
+	height: 300px;
 }
 
 #cke_editorSet{
-    width: 100%;
+	width: 100%;
 	border: 0;
 }
 
 #cke_editorSet .cke_inner{
 	overflow: hidden;
+}
+
+#cke_editorSet:not(.cke_focus){
+	height: 300px;
+}
+
+#cke_editorSet.cke_focus{
+	height: 300px;
 }
 
 #cke_editorSet .cke_inner > .cke_contents {
@@ -331,6 +356,7 @@ button, select, input[type="text"], input[type="date"]{
     align-items: center;
     justify-content: left;
     width: 100%;
+	overflow: hidden;
 }
 
 .defaultFormContainer .defaultFormLine .defaultFormContent .detailRadioBox[data-type="default"]{
@@ -675,16 +701,17 @@ input[name="tabItem"] {
 
 .searchContainer .searchBtns > button{
 	display: flex;
-	align-items: center;
-	justify-content: right;
-	color: #ebefff;
+    align-items: center;
+    justify-content: right;
+    color: #ebefff;
     box-shadow: 0 1px 1px #bdbfc9;
     background-color: #2147b1;
-    height: 30px;
+    height: 20px;
     border-radius: 5px;
     margin-top: 5px;
     margin-right: 5px;
     margin-bottom: 10px;
+    font-size: 0.6rem;
 }
 
 .searchContainer .searchBtns > button:hover{
@@ -700,17 +727,18 @@ input[name="tabItem"] {
 
 .searchContainer .searchMultiContent div{
 	padding-right: 10px;
-	padding-bottom: 10px;
+    padding-bottom: 10px;
+    font-size: 0.8rem;
+    font-weight: 600;
 }
 
 .searchContainer .searchMultiContent div > input,
 .searchContainer .searchMultiContent div > select{
 	width: -webkit-fill-available;
-    height: 34px;
-	margin-top:10px;
-    padding: 0 10px;
-    font-size: 1.1rem;
-    font-weight: 500;
+    height: 24px;
+    margin-top: 5px;
+    font-size: 0.9rem;
+    font-weight: 600;
     border: 1px solid #C1C1C1;
     border-radius: 5px;
     background-color: #ffffff;
@@ -718,11 +746,11 @@ input[name="tabItem"] {
 
 .searchContainer > span{
 	font-weight: bolder;
-	font-size: 15px;
-	margin-left: 15px;
-	line-height: 40px;
-	color: #332E85;
-	float: left;
+    font-size: 15px;
+    color: #332E85;
+    float: left;
+    padding-left: 10px;
+    padding-top: 10px;
 }
 
 .listSearchInput{

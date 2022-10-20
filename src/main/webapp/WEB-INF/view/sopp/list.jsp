@@ -65,9 +65,13 @@
         </div>
         <div class="soppContainer">
             <hr />
-            <span id="containerTitle"></span>
+            <span id="containerTitle">영업기회조회</span>
             <div class="listSearchInput">
                 <input type="text" class="searchAllInput" id="searchAllInput" onkeyup="searchInputKeyup();" placeholder="단어를 입력해주세요.">
+            </div>
+            <div class="listRange">
+                <input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="listRangeChange(this, drawSoppList);">
+                <span class="listRangeSpan">0</span>
             </div>
             <a href="/business/sopp" class="detailBackBtn">Back</a>
             <div class="gridList"></div>

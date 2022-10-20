@@ -38,7 +38,6 @@ function drawScheduleList() {
 
 	containerTitle = $("#containerTitle");
 	pageContainer = document.getElementsByClassName("pageContainer");
-	detailBackBtn = $(".detailBackBtn");
 	container = $(".gridList");
 
 	header = [
@@ -181,8 +180,9 @@ function drawScheduleList() {
 
 // 일정 캘린더를 만드는 함수
 function drawCalendar(container){
-    let calArr, slot, html, startDate, endDate, tempDate, tempArr, current, x1, x2, x3, t, now;
-
+    let calArr, slot, html, startDate, endDate, tempDate, tempArr, current, x1, x2, x3, t, now, listRange;
+	listRange = $(".listRange");
+	listRange.hide();
     calArr = [];
     tempDate = [];
     if(storage.currentYear === undefined)   storage.currentYear = (new Date()).getFullYear();
@@ -313,7 +313,6 @@ function drawCalendar(container){
     }
     container.innerHTML = html;
 
-	
 	setTimeout(() => {
 		let calendar_cell = $(".calendar_cell");
 
@@ -340,12 +339,13 @@ function scheduleDetailView(e){
 }
 
 function scheduleSuccessView(result){
-	let html, dataArray, notIdArray, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput;
+	let html, dataArray, notIdArray, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput, listRange;
 	gridList = $(".gridList");
 	searchContainer = $(".searchContainer");
 	containerTitle = $("#containerTitle");
 	detailBackBtn = $(".detailBackBtn");
 	listSearchInput = $(".listSearchInput");
+	listRange = $(".listRange");
 	dataArray = scheduleRadioUpdate(result.job, result);
 	html = detailViewForm(dataArray);
 	containerTitle.html(result.title);
@@ -358,6 +358,7 @@ function scheduleSuccessView(result){
 	setTimeout(() => {
 		$("[name='job'][value='" + result.job + "']").prop("checked", true).removeAttr("onclick");
 		listSearchInput.hide();
+		listRange.hide();
 		detailBackBtn.css("display", "flex");
 
 		if(result.job === "sales"){
@@ -562,12 +563,14 @@ function listChange(event){
 	let calendarList = $(".calendarList");
 	let pageContainer = $(".pageContainer");
 	let listSearchInput = $(".listSearchInput");
+	let listRange = $(".listRange");
 
 	if($(event).data("type") === "table"){
 		tableList.hide();
 		pageContainer.hide();
 		calendarList.show();
 		listSearchInput.hide();
+		listRange.hide();
 		$(event).data("type", "calendar");
 		$(event).html("<i class=\"fa-solid fa-list-ol fa-xl\"></i>");
 		$(".searchContainer").hide();
@@ -576,6 +579,7 @@ function listChange(event){
 		pageContainer.show();
 		calendarList.hide();
 		listSearchInput.show();
+		listRange.show();
 		$(event).data("type", "table");
 		$(event).html("<i class=\"fa-regular fa-calendar-check fa-xl\"></i>");
 		$(".searchContainer").show();

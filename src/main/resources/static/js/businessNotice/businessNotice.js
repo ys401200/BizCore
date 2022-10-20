@@ -209,9 +209,10 @@ function noticeSuccessView(result){
 		];
 
 		plusMenuSelect(menu);
-		setEditor();
+		ckeditor.config.readOnly = true;
+		window.setTimeout(setEditor, 100);
 		inputDataList();
-	}, 100)
+	}, 100);
 }
 
 function noticeErrorView(){
@@ -244,7 +245,8 @@ function noticeInsertForm(){
 
 	html = detailViewForm(dataArray, "modal");
 	modal.show();
-	modal.content.css("max-width", "40%");
+	modal.content.css("min-width", "70%");
+	modal.content.css("max-width", "70%");
 	modal.headTitle.text("공지사항등록");
 	modal.body.html(html);
 	modal.confirm.text("등록");
@@ -257,8 +259,8 @@ function noticeInsertForm(){
 		my = storage.my;
 
 		$("#writer").val(storage.user[my].userName);
-		window.setTimeout(setEditor, 100);
 		ckeditor.config.readOnly = false;
+		window.setTimeout(setEditor, 100);
 	}, 100);
 }
 
