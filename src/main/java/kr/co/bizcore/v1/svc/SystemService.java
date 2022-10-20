@@ -155,10 +155,13 @@ public class SystemService extends Svc {
     public int modifyCustomer(String compId, Customer customer) {
         int result = -1;
         String sql = null;
-        Customer ogn = commonMapper.getCustomeByNo(compId, result);
+        Customer ogn = commonMapper.getCustomeByNo(compId, customer.getNo());
+        logger.error("SystemService.modifyCustomer() ::::::: Customer = " + customer.toJson());
+        logger.error("SystemService.modifyCustomer() ::::::: ogn = " + ogn.toJson());
         if (ogn == null)
             return -9999;
         sql = ogn.createUpdateQuery(customer, "bizcore.customer");
+        logger.error("SystemService.modifyCustomer() ::::::: sql = " + sql);
         result = executeSqlQuery(sql) > 0 ? result : -1;
         return result;
     }
