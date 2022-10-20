@@ -251,7 +251,6 @@ public class SystemCtrl extends Ctrl {
     @GetMapping("/doc/attachedFile/{docNo}") // 기존 문서 기본 정보 insert
     public String convertFile(HttpServletRequest request, HttpServletResponse response,
             @PathVariable String docNo) {
-
         String result;
         int serviceAnswer;
         serviceAnswer = systemService.docFileDownloadAndSave(docNo);
@@ -260,7 +259,6 @@ public class SystemCtrl extends Ctrl {
         } else {
             result = "{\"result\":\"ok\"}";
         }
-
         return result;
     }
 }
