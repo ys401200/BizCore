@@ -14,6 +14,7 @@ import kr.co.bizcore.v1.mapper.BoardMapper;
 import kr.co.bizcore.v1.mapper.CommonMapper;
 import kr.co.bizcore.v1.mapper.ContractMapper;
 import kr.co.bizcore.v1.mapper.DeptMapper;
+import kr.co.bizcore.v1.mapper.EstimateMapper;
 import kr.co.bizcore.v1.mapper.GwFormMapper;
 import kr.co.bizcore.v1.mapper.GwMapper;
 import kr.co.bizcore.v1.mapper.NotesMapper;
@@ -107,6 +108,9 @@ public abstract class Svc {
 
     @Autowired
     protected NotesMapper notesMapper;
+
+    @Autowired
+    protected EstimateMapper estimateMapper;
 
     @Autowired 
     protected NotesService notes;

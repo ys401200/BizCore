@@ -1,29 +1,81 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %><%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %><jsp:include page="../header.jsp" />
 <div id="bodyContents"><div id="sideContents"><jsp:include page="../sideMenu.jsp" /></div>
 	<div id="bodyContent">
-        <div class="accountingContainer">
+        <div class="listContainer">
             <hr class="bodyTitleBorder" />
-            <span class="bodyTitle">은행예금</span>
-			<div class="bodyFunc1"><input type="range" min="4" max="10" onchange="changeRange(this)" /><span></span></div>
-			<div class="bodyFunc2"><input type="file" id="xlsFile" accept=".xls,.xlsx,.xlsm" onchange="readFile(this)" /><img src="/images/common/diskette.png"  onclick="clickedDisk()" /><img src="/images/common/close.png" onclick="clickedCloseHistory()" /></div>
-            <div class="accountingContent">
-				<div class="accountListExpand"></div><div class="accountHistory">
+            <span class="bodyTitle">견적 목록</span><span class="bodyTitleFnc"><div onclick="clickedAdd()">추가</div></span>
+            <div class="listContent">
+				<div class="estimateList">
 					<div>
-						<div>일자</div>
-						<div>기재내용</div>
-						<div>입금</div>
-						<div>출금</div>
-						<div>잔액</div>
-						<div>거래점</div>
-						<div>통장메모</div>
-						<div>메모</div>
-						<div>연결</div>
+						<div>견적일</div>
+						<div>담당자</div>
+						<div>견적번호</div>
+						<div>견적명</div>
+						<div>거래처</div>
+						<div>공급가액</div>
+						<div>부가가치세</div>
+						<div>합계</div>
+						<div>비고</div>
 					</div>
 				</div>
 				<div class="pageContainer"></div>
 			</div>
         </div>
 
+		<div class="eachContainer">
+            <hr class="bodyTitleBorder" />
+            <span class="bodyTitle">견적 상세 내용</span><span class="bodyTitleFnc"><div onclick="closeAdd()">닫기</div></span>
+            <div class="eachContent">
+				<div>
+					<div class="passed"><!-- STEP 1 -->
+						<div><div></div><div>양식 / 권한</div></div>
+						<div class="estimateStep1"><div style="height:96px;"></div>
+							<div>
+								<div>견적 양식</div>
+								<div class="formNames" style="grid-column-start: 2;grid-column-end: 5;border-right:1px solid #c3c3c3;"></div>
+								<div>견 적 명</div>
+								<div style="grid-column-start: 2;grid-column-end: 5;border-right:1px solid #c3c3c3;"><input class="estimateProject" style="width:calc(100% - 3px);height:100%;border:none;font-size:1em;" onkeyup="setProject(this)" /></div>
+								<div>작 성 자</div>
+								<div></div>
+								<div>열람권한</div>
+								<div></div>
+							</div>
+						</div>
+					</div>
+					<div><!-- STEP 2 -->
+						<div><div></div><div>거래처 / 견적 유효기간</div></div>
+						<div class="estimateStep2"><div style="height:70px;"></div>
+							<div>
+								<div>업 체 명</div>
+								<div style="grid-column-start: 2;grid-column-end: 5;border-right:1px solid #c3c3c3;"><input class="estimateInput" onkeyup="inputCustomer(this, event)" onblur="if(!storage.ac.mouseon)storage.ac.close()" data-value="-1"/></div>
+								<div>담 당 자</div>
+								<div><input class="estimateInput" onkeyup="inputCip(this)" /></div>
+								<div>유효기간</div>
+								<div class="formExp"><input type="radio" name="rExp" value="1w" id="rExp1" onchange="storage.estimate.exp=this.value;setDataToPreview();passed(2);" /><label style="margin-right:0.5em;">1주</label><input type="radio" name="rExp" value="2w" id="rExp2" onchange="storage.estimate.exp=this.value;setDataToPreview();passed(2);" /><label style="margin-right:0.5em;">2주</label><input type="radio" name="rExp" value="4w" id="rExp3" onchange="storage.estimate.exp=this.value;setDataToPreview();passed(2);" /><label style="margin-right:0.5em;">4주</label><input type="radio" name="rExp" value="1m" id="rExp4" onchange="storage.estimate.exp=this.value;setDataToPreview();passed(2);" /><label style="margin-right:0.5em;">1개월</label></div>
+							</div>
+						</div>
+					</div>
+					<div><!-- STEP 3 -->
+						<div><div></div><div><div style="display:inline-block;width:50%;">항목 입력</div><div style="display:inline-block;width:50%;text-align:right;"><span style="margin:0 1em;" onclick="addEstimateItem(this)">+</span><span onclick="removeEstimateItem(this)">-</span></div></div></div>
+						<div class="estimateItem"><div style="height:224px;border-right: 1px dotted #2c77b7;width:1px;margin: -0.2em 0.5em -0.4em calc(0.2em - 1px);"></div>
+							<div>
+								<div>구 분</div><input onkeyup="setItem(this)" />
+								<div>타이틀</div><input onkeyup="setItem(this)" style="border-right:1px solid #c3c3c3;" />
+								<div>매입처</div><input onkeyup="setItem(this, event)" data-type="customer" />
+								<div>아이템</div><input onkeyup="setItem(this, event)" data-type="item" style="border-right:1px solid #c3c3c3;" />
+								<div>스 펙</div><textarea onkeyup="setItem(this)" style="grid-column-start: 2;grid-column-end: 5;border-right:1px solid #c3c3c3;height:100px;"></textarea>
+								<div>수 량</div><input onkeyup="setItem(this)" pattern="[0-9,\\,]+" data-type="number" />
+								<div>단 가</div><input onkeyup="setItem(this)" data-type="number" style="border-right:1px solid #c3c3c3;" />
+								<div>VAT</div><div></div>
+								<div>합 계</div><div style="border-right:1px solid #c3c3c3;"></div>
+							</div>
+						</div>
+					</div>
+				</div><div class="estimatePreview">미리보기</div>
+
+			</div>
+        </div>
+
 	</div>
 </div>
-</div><div class="msg_cnt"></div><jsp:include page="../bottom.jsp" /><script src="/js/accountingBankaccount/xlsx.full.min.js"></script>
+</div><div class="msg_cnt"></div><div class="ac_cnt" onmouseenter="storage.ac.mouseon=true" onmouseleave="storage.ac.mouseon=false"></div><jsp:include page="../bottom.jsp" /><script src="/js/accountingBankaccount/xlsx.full.min.js"></script>

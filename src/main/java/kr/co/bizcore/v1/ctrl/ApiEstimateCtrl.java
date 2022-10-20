@@ -21,7 +21,7 @@ public class ApiEstimateCtrl extends Ctrl {
 
     private static final Logger logger = LoggerFactory.getLogger(ApiEstimateCtrl.class);
 
-    @GetMapping("")
+    @GetMapping("/form")
     public String apiEstimateGet(HttpServletRequest request){
         String result = null, aesKey = null, aesIv = null, compId = null;
         HttpSession session = null;
@@ -40,15 +40,39 @@ public class ApiEstimateCtrl extends Ctrl {
         if (compId == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
         } else
-            list = soppService.getEstimateList(compId);
+            list = estimateSvc.getEstimateForms(compId);
             if (list == null) {
                 result = "{\"result\":\"failure\",\"msg\":\"" + msg.noResult + "\"}";
             } else {
-                list = soppService.encAes(list, aesKey, aesIv);
+                list = encAes(list, aesKey, aesIv);
                 result = "{\"result\":\"ok\",\"data\":\"" + list + "\"}";
             }
         return result;
     } // End of apiEstimateGet
+
+    @GetMapping("/item")
+    public String apiEstimateNumberGet(HttpServletRequest request){
+        String result = null, aesKey = null, aesIv = null, compId = null;
+        HttpSession session = null;
+        String list = null;
+        Msg msg = null;
+
+        session = request.getSession();
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        msg = getMsg((String)session.getAttribute("lang"));
+        compId = (String) session.getAttribute("compId");
+        if (compId == null)
+            compId = (String) request.getAttribute("compId");
+
+        if (compId == null) {
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        } else
+            list = estimateSvc.getItems(compId);
+            list = encAes(list, aesKey, aesIv);
+            result = "{\"result\":\"ok\",\"data\":\"" + list + "\"}";
+        return result;
+    } // End of apiEstimateNumberGet
 
     @GetMapping("/{no}")
     public String apiEstimateNumberGet(HttpServletRequest request, @PathVariable String no){
