@@ -302,15 +302,8 @@
             } // End of getKey()
         }
 
-
-
-
-
-
-
         function getForms() {
             let url;
-
             url = apiServer + "/api/gw/form";
 
             $.ajax({
@@ -332,12 +325,9 @@
             })
         } // End of getUserMap()
 
-
-
         // API 서버에서 직원 정보를 가져오는 함수
         function getUserMap() {
             let url;
-
             url = apiServer + "/api/user/map";
 
             $.ajax({
@@ -347,7 +337,6 @@
                 "cache": false,
                 success: (data) => {
                     let list;
-
                     if (data.result === "ok") {
                         list = cipher.decAes(data.data);
                         list = JSON.parse(list);
@@ -363,7 +352,6 @@
         // API 서버에서 직원 정보를 가져오는 함수
         function getDeptMap() {
             let url;
-
             url = apiServer + "/api/dept/map";
 
             $.ajax({
@@ -389,9 +377,7 @@
         // API 서버에서 고객사 정보를 가져오는 함수
         function getCustomer() {
             let url;
-
             url = apiServer + "/api/system/customer";
-
             $.ajax({
                 "url": url,
                 "method": "get",
@@ -399,7 +385,6 @@
                 "cache": false,
                 success: (data) => {
                     let list;
-
                     if (data.result === "ok") {
                         list = cipher.decAes(data.data);
                         list = JSON.parse(list);
@@ -413,7 +398,6 @@
         } // End of getCustomer()
         function getUserRank() {
             let url, userRankTime, userRankData;
-
             url = apiServer + "/api/user/rank";
             userRankTime = sessionStorage.getItem("userRankTime");
             userRankTime = userRankTime == null ? 0 : userRankTime * 1;
@@ -445,7 +429,6 @@
             }
         } // End of getUserRank()
 
-
         function getSopp() {
             $.ajax({
                 url: "/api/sopp",
@@ -459,14 +442,11 @@
                         storage.soppList = jsondata;
 
                     } else {
-                        alert("에러");
+                        console.log("에러");
                     }
                 },
             });
         }
-
-
-
 
         // 초기화 함수
         function init() {
@@ -557,6 +537,8 @@
             cnt.innerHTML = html;
         } // End of drawDocList()
 
+
+
         // 리스트 아이템이 클릭되면 실행되는 함수
         function clickedItem(el) {
             let docNo;
@@ -564,7 +546,6 @@
             getDocData(docNo);
 
         } // End of clickedItem()
-
 
         function drawClickedDetail(info, no) {
 
@@ -580,10 +561,6 @@
             let detailArr = [];
             let appDatas = [];
             let soppAndCus = null;
-
-            console.log(storage.soppResult + "처음에 확인하는 영업기회");
-            console.log(storage.cusResult + "처음에 확인하는 고객 ")
-
 
             let dataTitles = ["date", "customer", "product", "price", "quantity", "subTotal", "tax", "total", "remark"];
             let appTitles = ["app", "approved", "comment", "request", "status"];
@@ -658,7 +635,6 @@
                         }
                         let id = storage.form[1].id;
 
-
                         ////// info title content 출력하기 
                         //let docListTitle = Object.keys(storage.docList[i]);
                         let num;
@@ -684,11 +660,11 @@
                                     }
 
                                 } else if (docListTitle[j] == "sopp") {
-                                    console.log(storage.docList[i][docListTitle[j]]);
+
                                     if (storage.docList[i][docListTitle[j]] == 0) {
                                         $("#" + id + "_sopp").val("");
                                         storage.soppResult = "";
-                                        console.log(storage.soppResult + "0일때 확인하는 영업기회");
+
                                     } else {
                                         let sopp;
                                         for (let k = 0; k < storage.soppList.length; k++) {
@@ -786,7 +762,7 @@
                                             $("." + id + "_examine_status").attr("data-detail", "승인");
                                             let approved;
                                             if (storage.docInfo.appData[0].approved == null) {
-                                                approved = "";
+                                                approved = getYmdSlash(created);
                                             } else {
                                                 approved = getYmdSlash(storage.docInfo.appData[0].approved)
                                             }
@@ -813,7 +789,7 @@
                                             $("." + id + "_examine_status").attr("data-detail", "승인");
                                             $("." + id + "_approval_status").val('승인');
                                             $("." + id + "_approval_status").attr("data-detail", "승인");
-                                            let approved;
+                                            let approved = getYmdSlash(created);
                                             if (storage.docInfo.appData[0].approved == null) {
                                                 approved = "";
                                             } else {
@@ -843,11 +819,11 @@
 
 
                                         } else if (status == '반려') {
-
+                                            // 작성자 반려 
                                             let request = storage.user[info.appData[i].request].userName;
                                             if (request == $("." + id + "_writer").val()) {
                                                 dataStatus = -1;
-                                                alert("작성자 반려");
+                                                console.log("작성자 반려");
                                                 if ($("#" + id + "_writer").val() == '구민주') {
                                                     appDatas =
                                                         [[0, num, 0, getYmdSlash2(created) + "", 0, $(".app_preview").html(), null, null, getYmdSlash2(created) + "", null, soppAndCus],
@@ -861,16 +837,16 @@
 
                                                 }
 
-
+                                                // 검토 구민주 반려 
                                             } else if ($("#" + id + "_writer").val() != '구민주' && request == '구민주') {
-                                                alert("구민주 반려");
+                                                console.log("구민주 반려");
                                                 dataStatus = -3;
                                                 $("." + id + "_approval").val('이승우')
                                                 $("." + id + "_writer_status").val('승인');
                                                 $("." + id + "_examine_status").val("반려");
                                                 $("." + id + "_writer_status").attr("data-detail", "승인");
                                                 $("." + id + "_examine_status").attr("data-detail", "승인");
-                                                let approved = "";
+                                                let approved = getYmdSlash(created);
                                                 if (storage.docInfo.appData[0].approved != null) {
                                                     approved = getYmdSlash(storage.docInfo.appData[0].approved);
                                                 }
@@ -886,8 +862,9 @@
 
 
                                             } else {
+                                                //대표 반려 
                                                 dataStatus = -3;
-                                                alert("대표님 반려")
+                                                console.log("대표님 반려")
                                                 $("." + id + "_approval").val('이승우')
                                                 $("." + id + "_approval_status").val('반려')
                                                 $("." + id + "_approval_status").attr("data-detail", "반려");
@@ -895,7 +872,7 @@
                                                 $("." + id + "_writer_status").val('승인');
                                                 $("." + id + "_writer_status").attr("data-detail", "승인");
                                                 $("." + id + "_examine_status").attr("data-detail", "승인");
-                                                let approved = "";
+                                                let approved = getYmdSlash(created);
                                                 if (storage.docInfo.appData[0].approved != null) {
                                                     approved = getYmdSlash(storage.docInfo.appData[0].approved);
                                                 }
@@ -905,7 +882,7 @@
                                                 $("." + id + "_approval_approved").attr("data-detail", approved);
                                                 $("." + id + "_writer_approved").val($("#" + id + "_created").val());
                                                 $("." + id + "_writer_approved").attr("data-detail", $("#" + id + "_created").val());
-                                                // ordered employee appType read isModify doc approved retrieved rejected comment appData 
+
                                                 if ($("#" + id + "_writer").val() == '구민주') {
                                                     appDatas = [[0, 10017, 0, getYmdSlash2(created) + "", 0, $(".app_preview").html(), getYmdSlash2(created) + "", null, null, null, soppAndCus],
                                                     [10, 10002, 2, approved + "", 0, null, null, null, approved + "", null, null]];
@@ -915,6 +892,7 @@
                                                     [20, 10002, 2, approved + "", 0, null, null, null, approved + "", null, null]];
                                                 }
                                             }
+                                            // 검토 요청  
                                         } else if (status == '검토요청') {
                                             dataStatus = 1;
                                             $("." + id + "_writer_" + appTitles[j]).val("승인");
@@ -971,11 +949,6 @@
                         $("#contentContainer").html(originHtml);
                         $(".innerHtml").html(storage.docList[i].content);
                         $("#" + id + "_content").hide();
-
-
-
-
-
 
                         insertDataFnc(dataStatus, insertData, num, id, created, appDatas);
                         // 결재타입이 발주서인 경우 
@@ -1081,10 +1054,11 @@
 
         }
 
-
+        let successPoint = 1;
         function insertDataFnc(dataStatus, insertData, num, id, created, appDatas) {
+
             let confirmNo = "";
-            if (dataStatus == 3) {
+            if (dataStatus == 3 || dataStatus == -3) {
                 confirmNo = $("#" + id + "_no").val();
             }
 
@@ -1101,98 +1075,105 @@
                 "created": getYmdSlash(created) + "",
             }
 
-            let url = apiServer + "/system/doc";
 
-            insertData = JSON.stringify(insertData);
-            insertData = cipher.encAes(insertData);
+            // 승인이거나 반려인 경우에만 진행 
+            if (dataStatus == 3 || dataStatus == -3) {
+                let url = apiServer + "/system/doc";
 
-            $.ajax({
-                url: url,
-                method: "post",
-                data: insertData,
-                dataType: "json",
-                contentType: "text/plain",
-                success: (result) => {
-                    if (result.result === "ok") {
-                        alert("성공");
-                    } else {
-                        alert(result.msg);
-                    }
+                insertData = JSON.stringify(insertData);
+                insertData = cipher.encAes(insertData);
 
-
-                }
-            });
-
-            let count = 0;
-            for (let i = 0; i < appDatas.length; i++) {
-                let ten = appDatas[i][10];
-                if (ten != null) {
-                    ten = JSON.stringify(appDatas[i][10]);
-                }
-                let appDatasJ = {
-                    "docNo": $("#" + id + "_no").val() + "",
-                    "ordered": appDatas[i][0],
-                    "employee": appDatas[i][1],
-                    "appType": appDatas[i][2],
-                    "read": appDatas[i][3],
-                    "isModify": appDatas[i][4],
-                    "doc": appDatas[i][5],
-                    "approved": appDatas[i][6],
-                    "retrieved": appDatas[i][7],
-                    "rejected": appDatas[i][8],
-                    "comment": appDatas[i][9],
-                    "appData": ten
-
-                }
-                console.log(appDatasJ);
-                appDatasJ = JSON.stringify(appDatasJ);
-                appDatasJ = cipher.encAes(appDatasJ);
                 $.ajax({
-                    url: apiServer + "/system/doc/oridetail",
+                    url: url,
                     method: "post",
-                    data: appDatasJ,
+                    data: insertData,
                     dataType: "json",
                     contentType: "text/plain",
                     success: (result) => {
                         if (result.result === "ok") {
-                            count++;
+                            console.log("성공");
 
                         } else {
-                            alert(result.msg);
+                            console.log("실패" + result.msg);
+                            successPoint = -1;
                         }
 
+
                     }
-                })
+                });
 
-                if (count == 2) {
-                    alert("ok");
-                }
-            }
+                // let count = 0;
+                for (let i = 0; i < appDatas.length; i++) {
+                    let ten = appDatas[i][10];
+                    if (ten != null) {
+                        ten = JSON.stringify(appDatas[i][10]);
+                    }
+                    let appDatasJ = {
+                        "docNo": $("#" + id + "_no").val() + "",
+                        "ordered": appDatas[i][0],
+                        "employee": appDatas[i][1],
+                        "appType": appDatas[i][2],
+                        "read": appDatas[i][3],
+                        "isModify": appDatas[i][4],
+                        "doc": appDatas[i][5],
+                        "approved": appDatas[i][6],
+                        "retrieved": appDatas[i][7],
+                        "rejected": appDatas[i][8],
+                        "comment": appDatas[i][9],
+                        "appData": ten
 
-            if (storage.docInfo.files != null) {
-                let data = {
+                    }
+                    console.log(appDatasJ);
+                    appDatasJ = JSON.stringify(appDatasJ);
+                    appDatasJ = cipher.encAes(appDatasJ);
+                    $.ajax({
+                        url: apiServer + "/system/doc/oridetail",
+                        method: "post",
+                        data: appDatasJ,
+                        dataType: "json",
+                        contentType: "text/plain",
+                        success: (result) => {
+                            if (result.result === "ok") {
+                                // console.log("결재선 넣기 성공");
+                            } else {
 
-                    "docNo": ($("#" + id + "_no").val() + "").split("2022")[1]
-                }
+                                successPoint = -2;
+                                console.log("결재선 넣기 실패" + result.msg);
+                            }
 
-                data = JSON.stringify(data);
-                data = cipher.encAes(data);
-                $.ajax({
-                    url: apiServer + "/system/doc/attachedFile/" + ($("#" + id + "_no").val() + "").split("2022")[1],
-                    method: "get",
-                    contentType: "text/plain",
-                    success: (result) => {
-                        if (result.result === "ok") {
-                            alert("성공");
-
-                        } else {
-                            alert(result.msg);
                         }
+                    })
 
+                    // if (count != 2) {
+                    //     console.log("실패");
+                    // }
+                }
+
+                if (storage.docInfo.files != null) {
+                    let data = {
+
+                        "docNo": ($("#" + id + "_no").val() + "").split("2022")[1]
                     }
-                })
-            }
 
+                    data = JSON.stringify(data);
+                    data = cipher.encAes(data);
+                    $.ajax({
+                        url: apiServer + "/system/doc/attachedFile/" + ($("#" + id + "_no").val() + "").split("2022")[1],
+                        method: "get",
+                        contentType: "text/plain",
+                        success: (result) => {
+                            if (result.result === "ok") {
+                                console.log("성공");
+
+                            } else {
+                                successPoint = -3;
+                                console.log("파일 업로드 실패" + $("#" + id + "_no").val());
+                            }
+
+                        }
+                    })
+                }
+            }
 
         }
 
@@ -1230,11 +1211,11 @@
                         }
 
                     } else if (docListTitle[j] == "sopp") {
-                        console.log(storage.docList[i][docListTitle[j]]);
+
                         if (storage.docList[i][docListTitle[j]] == 0) {
                             $("#" + id + "_sopp").val("");
                             storage.soppResult = "";
-                            console.log(storage.soppResult + "0일때 확인하는 영업기회");
+
                         } else {
                             let sopp;
                             for (let k = 0; k < storage.soppList.length; k++) {
@@ -1346,14 +1327,13 @@
                                     $("." + id + "_writer_status").attr("data-detail", "승인");
                                     $("." + id + "_writer_approved").val($("#" + id + "_created").val());
                                     $("." + id + "_writer_approved").attr("data-detail", $("#" + id + "_created").val());
-
                                     $("." + id + "_approval").val('이승우');
                                     $("." + id + "_approval_status").val('반려');
                                     $("." + id + "_approval_status").attr("data-detail", "반려");
 
                                     let approved;
                                     if (storage.docInfo.appData[0].approved == null) {
-                                        approved = "";
+                                        approved = getYmdSlash(created);
                                     } else {
                                         approved = getYmdSlash(storage.docInfo.appData[0].approved)
                                     }
@@ -1379,7 +1359,7 @@
                                 $("." + id + "_approval_status").attr("data-detail", "승인");
                                 let approved;
                                 if (storage.docInfo.appData[0].approved == null) {
-                                    approved = null;
+                                    approved = getYmdSlash(created);
                                 } else {
                                     approved = getYmdSlash(storage.docInfo.appData[0].approved)
                                 }

@@ -986,7 +986,7 @@ public class SystemService extends Svc {
         try {
             conn = sqlSession.getConnection();
             pstmt = conn.prepareStatement(sql);
-           int no = getNextNumberFromDB("vtek", "bizcore.doc_app");
+            int no = getNextNumberFromDB("vtek", "bizcore.doc_app");
             pstmt.setInt(1, no);
             pstmt.setString(2, docNo);
             pstmt.setInt(3, writer);
@@ -1059,7 +1059,7 @@ public class SystemService extends Svc {
             rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                no = rs.getInt(1);
+                no = getNextNumberFromDB("vtek", "bizcore.doc_app");
                 fileName = rs.getString(2);
                 savedName = createRandomFileName();
                 blob = rs.getBlob(3);
