@@ -751,7 +751,7 @@ public class SystemService extends Svc {
             barr = new boolean[12];
             pstmt = conn.prepareStatement(sql2);
             pstmt.setString(1, compId);
-            pstmt.setString(2, userNo);
+            pstmt.setString(2, empNo+"");
             pstmt.setInt(3, year);
             rs = pstmt.executeQuery();
             while (rs.next())
@@ -765,14 +765,14 @@ public class SystemService extends Svc {
                     pstmt = conn.prepareStatement(sql3);
                     pstmt.setLong(1, goals[x]);
                     pstmt.setString(2, compId);
-                    pstmt.setString(3, userNo);
+                    pstmt.setString(3, empNo+"");
                     pstmt.setInt(4, year);
                     pstmt.setInt(5, x + 1);
                     y += pstmt.executeUpdate();
                 } else { // 신규 입력
                     pstmt = conn.prepareStatement(sql4);
                     pstmt.setString(1, compId);
-                    pstmt.setString(2, userNo);
+                    pstmt.setString(2, empNo+"");
                     pstmt.setInt(3, year);
                     pstmt.setInt(4, x + 1);
                     pstmt.setLong(5, goals[x]);
