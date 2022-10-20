@@ -264,8 +264,8 @@ function fileBoxInsertForm(){
 	html = detailViewForm(dataArray, "modal");
 
 	modal.show();
-	modal.content.css("min-width", "40%");
-	modal.content.css("max-width", "40%");
+	modal.content.css("min-width", "70%");
+	modal.content.css("max-width", "70%");
 	modal.headTitle.text("자료 등록");
 	modal.body.html(html);
 	modal.confirm.text("등록");
@@ -324,8 +324,8 @@ function fileBoxUpdateForm(result){
 	html = detailViewForm(dataArray, "modal");
 
 	modal.show();
-	modal.content.css("min-width", "40%");
-	modal.content.css("max-width", "40%");
+	modal.content.css("min-width", "70%");
+	modal.content.css("max-width", "70%");
 	modal.headTitle.text(title);
 	modal.body.html(html);
 	modal.confirm.text("수정완료");

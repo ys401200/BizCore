@@ -205,13 +205,14 @@ function soppErrorList(){
 }
 
 function soppSuccessView(result){
-	let html, htmlSecond, title, userName, customer, picOfCustomer, endUser, status, progress, contType, disDate, expectedSales, detail, dataArray, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput, detailSecondTabs;
+	let html, htmlSecond, title, userName, customer, picOfCustomer, endUser, status, progress, contType, disDate, expectedSales, detail, dataArray, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput, detailSecondTabs, listRange;
 	gridList = $(".gridList");
 	searchContainer = $(".searchContainer");
 	containerTitle = $("#containerTitle");
 	detailBackBtn = $(".detailBackBtn");
 	listSearchInput = $(".listSearchInput");
 	detailSecondTabs = $(".detailSecondTabs");
+	listRange = $(".listRange");
 
 	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
 	userName = (result.employee == 0 || result.employee === null || result.employee === undefined) ? "" : storage.user[result.employee].userName;
@@ -405,6 +406,7 @@ function soppSuccessView(result){
 		$("#soppType option[value='" + result.soppType + "']").prop("selected" ,true);
 		detailBackBtn.css("display", "flex");
 		listSearchInput.hide();
+		listRange.hide();
 
 		let menu = [
 			{

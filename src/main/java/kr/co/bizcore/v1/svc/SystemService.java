@@ -155,10 +155,13 @@ public class SystemService extends Svc {
     public int modifyCustomer(String compId, Customer customer) {
         int result = -1;
         String sql = null;
-        Customer ogn = commonMapper.getCustomeByNo(compId, result);
+        Customer ogn = commonMapper.getCustomeByNo(compId, customer.getNo());
+        logger.error("SystemService.modifyCustomer() ::::::: Customer = " + customer.toJson());
+        logger.error("SystemService.modifyCustomer() ::::::: ogn = " + ogn.toJson());
         if (ogn == null)
             return -9999;
         sql = ogn.createUpdateQuery(customer, "bizcore.customer");
+        logger.error("SystemService.modifyCustomer() ::::::: sql = " + sql);
         result = executeSqlQuery(sql) > 0 ? result : -1;
         return result;
     }
@@ -648,11 +651,10 @@ public class SystemService extends Svc {
                     pstmt.setString(1, compId);
                     pstmt.setString(2, (String) n);
                     pstmt.setInt(3, year);
-                    pstmt.setInt(1, year);
                     rs = pstmt.executeQuery();
                     while (rs.next()) {
                         emp = dept.get(n);
-                        emp[rs.getInt(1)] = rs.getLong(2);
+                        emp[rs.getInt(1) - 1] = rs.getLong(2);
                     }
                     rs.close();
                     pstmt.close();
@@ -752,7 +754,7 @@ public class SystemService extends Svc {
             barr = new boolean[12];
             pstmt = conn.prepareStatement(sql2);
             pstmt.setString(1, compId);
-            pstmt.setString(2, userNo);
+            pstmt.setString(2, empNo+"");
             pstmt.setInt(3, year);
             rs = pstmt.executeQuery();
             while (rs.next())
@@ -766,14 +768,14 @@ public class SystemService extends Svc {
                     pstmt = conn.prepareStatement(sql3);
                     pstmt.setLong(1, goals[x]);
                     pstmt.setString(2, compId);
-                    pstmt.setString(3, userNo);
+                    pstmt.setString(3, empNo+"");
                     pstmt.setInt(4, year);
                     pstmt.setInt(5, x + 1);
                     y += pstmt.executeUpdate();
                 } else { // 신규 입력
                     pstmt = conn.prepareStatement(sql4);
                     pstmt.setString(1, compId);
-                    pstmt.setString(2, userNo);
+                    pstmt.setString(2, empNo+"");
                     pstmt.setInt(3, year);
                     pstmt.setInt(4, x + 1);
                     pstmt.setLong(5, goals[x]);

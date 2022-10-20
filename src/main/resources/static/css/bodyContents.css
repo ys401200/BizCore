@@ -15,6 +15,7 @@
 	width:calc(100% - 172px);
 	/* padding: 8px 8px 0 8px;
 	height: calc(100% - 8px); */
+	overflow-y: auto;
 }
 
 #bodyContents #widgetContainer{

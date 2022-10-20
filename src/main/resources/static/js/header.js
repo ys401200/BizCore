@@ -195,18 +195,6 @@ msg = { // 메시징 유닛
 	}
 }
 
-tiny = {
-	options: {
-		language: "ko_KR",
-		menubar: false,
-		plugins: ["advlist", "autolink", "lists", "link", "image", "charmap", "print", "preview", "anchor","searchreplace", "visualblocks", "code", "fullscreen", "insertdatetime", "media", "table","paste", "code", "help", "wordcount", "save"],
-		toolbar: "formatselect fontselect fontsizeselect | forecolor backcolor | bold italic underline strikethrough | alignjustify alignleft aligncenter alignright | bullist numlist | table tabledelete | link image",
-		selector: "textarea",
-		width: "100%",
-		height : "200",
-	}
-}
-
 //모달
 modal = {
 	"container": $(".modalContainer"),
@@ -355,21 +343,23 @@ ckeditor = {
 		"readOnly": true,
 		"language": "ko",
 		"toolbarGroups": [
-			{ name: 'document',	   groups: [ 'mode', 'document', 'doctools' ] },
-			{ name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
-			{ name: 'editing',     groups: [ 'find', 'selection', 'spellchecker' ] },
-			{ name: 'forms' },
+			{ name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
+			{ name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
+			{ name: 'editing', groups: [ 'find', 'selection', 'spellchecker', 'editing' ] },
+			{ name: 'forms', groups: [ 'forms' ] },
 			{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
-			{ name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ] },
-			{ name: 'links' },
-			{ name: 'insert' },
-			{ name: 'styles' },
-			{ name: 'colors' },
-			{ name: 'tools' },
-			{ name: 'others' },
-			{ name: 'about' }
+			{ name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
+			{ name: 'links', groups: [ 'links' ] },
+			{ name: 'insert', groups: [ 'insert' ] },
+			{ name: 'styles', groups: [ 'styles' ] },
+			{ name: 'colors', groups: [ 'colors' ] },
+			{ name: 'tools', groups: [ 'tools' ] },
+			{ name: 'others', groups: [ 'others' ] },
+			{ name: 'about', groups: [ 'about' ] }
 		],
-		"filebrowserUploadUrl": '/business/imageUpload',
+		"removeButtons": "TextField,Textarea,Button,ImageButton,HiddenField,Image,Flash,Replace,Select,Radio,Checkbox,Form,RemoveFormat,CopyFormatting,Indent,Outdent,CreateDiv,Language,Anchor,Iframe,About",
+		"extraPlugins": "pastebase64, base64image",
+		"height": 300,
 	},
 }
 
@@ -1435,7 +1425,9 @@ function setEditor(){
 		editor = CKEDITOR.instances.editorSet.destroy();
 	}
 
-	editor = CKEDITOR.replace(document.querySelector("#editorSet"));
+	if($("#editorSet").length > 0){
+		editor = CKEDITOR.replace(document.querySelector("#editorSet"));
+	}
 }
 
 // datalist
@@ -2265,6 +2257,10 @@ function enableDisabled(e, clickStr, notIdArray){
 	$(e).attr("onclick", clickStr);
 	ckeditor.config.readOnly = false;
 	window.setTimeout(setEditor, 100);
+	
+	if(modal.wrap.css("display") !== "none"){
+		modal.confirm.text("수정완료");
+	}
 }
 
 function calWindowLength(){
@@ -3141,4 +3137,16 @@ function stringNumberFormat(str){
 	}
 
 	return resultStr;
+}
+
+function listRangeChange(e, drawList){
+	let thisEle;
+	thisEle = $(e);
+	thisEle.next().html(thisEle.val());
+	if(thisEle.val() > 0){
+		storage.articlePerPage = thisEle.val();
+	}else{
+		storage.articlePerPage = undefined;
+	}
+	drawList();
 }

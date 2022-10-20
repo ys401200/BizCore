@@ -142,43 +142,76 @@ function customerErrorList(){
 }
 
 function customerSuccessView(result){
-	let html, name, ceoName, taxId, dataArray, notIdArray;
+	let html, name, ceoName, taxId, address, email, fax, phone, dataArray, notIdArray;
 	storage.customerNo = result.no;
 	name = (result.name === null || result.name === "" || result.name === undefined) ? "" : result.name;
 	ceoName = (result.ceoName === null || result.ceoName === "" || result.ceoName === undefined) ? "" : result.ceoName;
 	taxId = (result.taxId === null || result.taxId === "" || result.taxId === undefined) ? "" : result.taxId;
+	address = (result.address === null || result.address === "" || result.address === undefined) ? "" : result.address;
+	email = (result.email === null || result.email === "" || result.email === undefined) ? "" : result.email;
+	fax = (result.fax === null || result.fax === "" || result.fax === undefined) ? "" : result.fax;
+	phone = (result.phone === null || result.phone === "" || result.phone === undefined) ? "" : result.phone;
 
 	dataArray = [
 		{
 			"title": "고객사명",
 			"elementId": "name",
+			"disabled": true,
 			"value": name,
+			"col": 2,
+		},
+		{
+			"title": "사업자번호",
+			"elementId": "taxId",
+			"disabled": true,
+			"value": taxId,
+			"col": 2,
+		},
+		{
+			"title": "주소",
+			"elementId": "address",
+			"disabled": true,
+			"value": address,
 			"col": 4,
 		},
 		{
 			"title": "대표자명",
 			"elementId": "ceoName",
+			"disabled": true,
 			"value": ceoName,
-			"col": 4,
 		},
 		{
-			"title": "사업자번호",
-			"elementId": "taxId",
-			"value": taxId,
-			"col": 4,
+			"title": "이메일",
+			"elementId": "email",
+			"disabled": true,
+			"value": email,
+		},
+		{
+			"title": "팩스",
+			"elementId": "fax",
+			"disabled": true,
+			"value": fax,
+		},
+		{
+			"title": "연락처",
+			"elementId": "phone",
+			"disabled": true,
+			"value": phone,
 		},
 	];
 	
 	html = detailViewForm(dataArray, "modal");
 
 	modal.show();
+	modal.content.css("min-width", "70%");
+	modal.content.css("max-width", "70%");
 	modal.headTitle.text(name);
 	modal.body.html(html);
 	modal.confirm.text("수정");
-	modal.close.text("삭제");
+	modal.close.text("취소");
 	notIdArray = [];
 	modal.confirm.attr("onclick", "enableDisabled(this, \"customerUpdate(" + storage.customerNo + ");\", \"" + notIdArray + "\");");
-	modal.close.attr("onclick", "customerDelete();");
+	modal.close.attr("onclick", "modal.hide();");
 }
 
 function customerErrorView(){
@@ -193,25 +226,47 @@ function customerInsertForm(){
 			"title": "고객사명",
 			"elementId": "name",
 			"disabled": false,
+			"col": 2,
+		},
+		{
+			"title": "사업자번호",
+			"elementId": "taxId",
+			"disabled": false,
+			"col": 2,
+		},
+		{
+			"title": "주소",
+			"elementId": "address",
+			"disabled": false,
 			"col": 4,
 		},
 		{
 			"title": "대표자명",
 			"elementId": "ceoName",
 			"disabled": false,
-			"col": 4,
 		},
 		{
-			"title": "사업자번호",
-			"elementId": "taxId",
+			"title": "이메일",
+			"elementId": "email",
 			"disabled": false,
-			"col": 4,
+		},
+		{
+			"title": "팩스",
+			"elementId": "fax",
+			"disabled": false,
+		},
+		{
+			"title": "연락처",
+			"elementId": "phone",
+			"disabled": false,
 		},
 	];
 
 	html = detailViewForm(dataArray, "modal");
 
 	modal.show();
+	modal.content.css("min-width", "70%");
+	modal.content.css("max-width", "70%");
 	modal.headTitle.text("고객사등록");
 	modal.body.html(html);
 	modal.confirm.text("등록");
@@ -221,18 +276,25 @@ function customerInsertForm(){
 }
 
 function customerInsert(){
-	let name, taxId, ceoName;
-
+	let name, taxId, address, ceoName, email, fax, phone;
 	name = $("#name").val();
 	taxId = $("#taxId").val();
+	address = $("#address").val();
 	ceoName = $("#ceoName").val();
+	email = $("#email").val();
+	fax = $("#fax").val();
+	phone = $("#phone").val();
 
 	url = "/api/system/customer";
 	method = "post";
 	data = {
 		"name": name,
 		"taxId": taxId,
+		"address": address,
 		"ceoName": ceoName,
+		"email": email,
+		"fax": fax,
+		"phone": phone,
 	}
 	type = "insert";
 
@@ -252,18 +314,25 @@ function customerErrorInsert(){
 }
 
 function customerUpdate(){
-	let name, taxId, ceoName;
-
+	let name, taxId, address, ceoName, email, fax, phone;
 	name = $("#name").val();
 	taxId = $("#taxId").val();
+	address = $("#address").val();
 	ceoName = $("#ceoName").val();
+	email = $("#email").val();
+	fax = $("#fax").val();
+	phone = $("#phone").val();
 
 	url = "/api/system/customer/" + storage.customerNo;
 	method = "put";
 	data = {
 		"name": name,
 		"taxId": taxId,
+		"address": address,
 		"ceoName": ceoName,
+		"email": email,
+		"fax": fax,
+		"phone": phone,
 	}
 	type = "update";
 

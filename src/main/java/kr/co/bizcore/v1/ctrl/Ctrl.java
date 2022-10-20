@@ -15,6 +15,7 @@ import kr.co.bizcore.v1.svc.AttachedService;
 import kr.co.bizcore.v1.svc.BoardService;
 import kr.co.bizcore.v1.svc.ContractService;
 import kr.co.bizcore.v1.svc.DeptService;
+import kr.co.bizcore.v1.svc.EstimateSvc;
 import kr.co.bizcore.v1.svc.GwService;
 import kr.co.bizcore.v1.svc.NotesService;
 import kr.co.bizcore.v1.svc.ProcureService;
@@ -67,6 +68,9 @@ public abstract class Ctrl {
 
     @Autowired
     protected GwService gwService;
+
+    @Autowired
+    protected EstimateSvc estimateSvc;
 
     @Autowired
     protected TradeService tradeService;
