@@ -211,7 +211,7 @@ public class ApiSystemCtrl extends Ctrl{
             mapper = new ObjectMapper();
             customer = mapper.readValue(data, Customer.class);
             customer.setNo(no);
-            x = systemService.addCustomer(compId, customer);
+            x = systemService.modifyCustomer(compId, customer);
             if(x > 0)  result = "{\"result\":\"ok\",\"data\":" + no + "}";
             else        result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
             
