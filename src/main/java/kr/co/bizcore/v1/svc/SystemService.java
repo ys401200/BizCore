@@ -648,11 +648,10 @@ public class SystemService extends Svc {
                     pstmt.setString(1, compId);
                     pstmt.setString(2, (String) n);
                     pstmt.setInt(3, year);
-                    pstmt.setInt(1, year);
                     rs = pstmt.executeQuery();
                     while (rs.next()) {
                         emp = dept.get(n);
-                        emp[rs.getInt(1)] = rs.getLong(2);
+                        emp[rs.getInt(1) - 1] = rs.getLong(2);
                     }
                     rs.close();
                     pstmt.close();
