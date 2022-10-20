@@ -112,7 +112,10 @@ function goalInsert(){
         crud.defaultAjax(url, method, data, type, goalSuccessInsert, goalErrorInsert);
     }
 
-    alert("등록되었습니다.");
+    setTimeout(() => {
+        alert("등록되었습니다.");
+        location.reload();
+    }, 1000);
 }
 
 function goalSuccessInsert(){
