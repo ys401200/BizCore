@@ -452,11 +452,11 @@ function setDataToPreview(){
 	x = dt.getFullYear() + "년 ";
 	x += ((dt.getMonth() + 1) + "월 ");
 	x += (dt.getDate() + "일");
-	document.getElementsByClassName("estimate_date")[0].innerText = x;
+	cnt.getElementsByClassName("estimate_date")[0].innerText = x;
 
 	// =========================== 견적명 =========================
 	t = storage.estimate.title;
-	document.getElementsByClassName("estimate_project")[0].innerText = t === undefined ? "" : t;
+	cnt.getElementsByClassName("estimate_project")[0].innerText = t === undefined ? "" : t;
 
 	// ========================== 담당자 및 고객사 ==========================
 	t = [];
@@ -470,17 +470,17 @@ function setDataToPreview(){
 	}else t[1] = "";
 	t[2] = t[1] + " " + t[0];
 	t[2] = t[2].trim();
-	document.getElementsByClassName("estimate_receiver")[0].innerText = t === undefined ? "" : t[2];
+	cnt.getElementsByClassName("estimate_receiver")[0].innerText = t === undefined ? "" : t[2];
 
 	// ====================== 견적 유효기간 ========================
 	t = storage.estimate.exp;
 	t = t === "1w" ? "견적일로 부터 1주일" : t === "2w" ? "견적일로 부터 2주일" : t === "4w" ? "견적일로 부터 4주일" : t === "1m" ? "견적일로 부터 1개월" : "";
-	document.getElementsByClassName("estiomate_expiration_period")[0].innerText = t;
+	cnt.getElementsByClassName("estiomate_expiration_period")[0].innerText = t;
 
 	// ====================== 하단 주석 ========================
 	t = storage.estimate.remarks;
 	t = t === undefined ? "" : t;
-	document.getElementsByClassName("estimate_remark")[0].innerHTML = t;
+	cnt.getElementsByClassName("estimate_remark")[0].innerHTML = t;
 
 	// =========== 개별 아이템들 ============ 저장된 값들을 바탕으로 견적서에 그려 넣음 =============
 	html = "<div style=\"display:grid;border-top:border-top: 1px solid black;\"><div>No</div><div>구 분</div><div>품 명 / 규 격</div><div>수 량</div><div>소비자가</div><div>공급단가</div><div>합계</div><div>비고</div></div>";
@@ -500,7 +500,7 @@ function setDataToPreview(){
 		sum += (each.quantity * each.price);
 	}
 	t = [Math.round(sum * 0.1), Math.round(sum * 1.1)];
-	document.getElementsByClassName("estimate_total_amount")[0].innerText = "₩ " + t[1].toLocaleString()
+	cnt.getElementsByClassName("estimate_total_amount")[0].innerText = "₩ " + t[1].toLocaleString()
 	html += ("<div style=\"display:grid;\"><div style=\"grid-column-start:1;grid-column-end:7;\">공급가합계</div><div style=\"display:initial;text-align:right;\">" + sum.toLocaleString() + "</div><div style=\"border-right:none;\"></div></div>");
 	html += ("<div style=\"display:grid;\"><div style=\"grid-column-start:1;grid-column-end:7;\">부가가치세</div><div style=\"display:initial;text-align:right;\">" + t[0].toLocaleString() + "</div><div style=\"border-right:none;\"></div></div>");
 	html += ("<div style=\"display:grid;\"><div style=\"grid-column-start:1;grid-column-end:7;\">총 금 액</div><div style=\"display:initial;text-align:right;\">" + t[1].toLocaleString() + "</div><div style=\"border-right:none;\"></div></div>");
@@ -723,8 +723,11 @@ function clickedEstimate(el){
 } // End of clickedEstimate()
 
 function clickedEstmVer(el){
-	let x, cnt;
+	let x, cnt, els, color = "#e1e9ff";
 	cnt = document.getElementsByClassName("versionPreview")[0];
+	els = el.parentElement.children;
+	for(x = 1 ; x < els.length ; x++)	els[x].style.backgroundColor = "";
+	el.style.backgroundColor = color;
 	x = el.dataset.idx*1;
 	cnt.innerHTML = storage.estmVerList[x].doc;
 	cnt.style.display = "inline-block";
