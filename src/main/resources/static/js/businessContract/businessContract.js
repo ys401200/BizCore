@@ -478,11 +478,7 @@ function contractSuccessView(result){
 		},
 	];
 
-	html = "<div class='tabs'>";
-	html += "<input type='radio' id='tabAll' name='tabItem' disabled>";
-	html += "<label class='tabItem' for='tabAll'>기본정보</label>";
-	html += "</div>";
-	html += detailViewForm(dataArray);
+	html = detailViewForm(dataArray);
 	htmlSecond = "<div class='tabs'>";
 	htmlSecond += "<input type='radio' id='tabTrade' name ='tabItem' data-content-id='tabTradeList' onclick='tabItemClick(this)' checked>";
 	htmlSecond += "<label class='tabItem' for='tabTrade'>매입매출내역</label>";

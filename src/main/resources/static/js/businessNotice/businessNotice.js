@@ -13,7 +13,7 @@ $(document).ready(() => {
 function getNoticeList() {
 	let url, method, data, type; 
 	url = "/api/notice";
-	method ="get"
+	method ="get";
 	data = "";
 	type = "list";
 	crud.defaultAjax(url, method, data, type, noticeSuccessList, noticeErrorList);

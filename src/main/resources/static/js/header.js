@@ -2067,34 +2067,44 @@ function createTabTechList(result){
 			"title" : "비고",
 			"align" : "left",
 		},
-	]
+	];
 	
 	detailSecondTabs.append(html);
 	container = detailSecondTabs.find(".tabTechList");
 
-	for(let i = 0; i < result.length; i++){
-		if(result[i].job === "tech"){
-			str = [
-				{
-					"setData": result[i].created,
-				},
-				{
-					"setData": storage.code.etc[result[i].type],
-				},
-				{
-					"setData": result[i].place,
-				},
-				{
-					"setData": storage.user[result[i].writer].userName,
-				},
-				{
-					"setData": result[i].content,
-				},
-			];
-			
-			data.push(str);
+	if(result.length > 0){
+		for(let i = 0; i < result.length; i++){
+			if(result[i].job === "tech"){
+				str = [
+					{
+						"setData": result[i].created,
+					},
+					{
+						"setData": storage.code.etc[result[i].type],
+					},
+					{
+						"setData": result[i].place,
+					},
+					{
+						"setData": storage.user[result[i].writer].userName,
+					},
+					{
+						"setData": result[i].content,
+					},
+				];
+			}
 		}
+	}else{
+		str = [
+			{
+				"setData": undefined,
+				"col": 5,
+			},
+		];
+		
 	}
+	
+	data.push(str);
 
 	setTimeout(() => {
 		createGrid(container, header, data, ids, job, fnc);
@@ -2138,32 +2148,42 @@ function createTabSalesList(result){
 	detailSecondTabs.append(html);
 	container = detailSecondTabs.find(".tabSalesList");
 
-	for(let i = 0; i < result.length; i++){
-		if(result[i].job === "sales"){
-			str = [
-				{
-					"setData": result[i].created,
-				},
-				{
-					"setData": storage.code.etc[result[i].type],
-				},
-				{
-					"setData": result[i].title,
-				},
-				{
-					"setData": result[i].content,
-				},
-				{
-					"setData": storage.user[result[i].writer].userName,
-				},
-				{
-					"setData": result[i].place,
-				},
-			];
-			data.push(str);
+	if(result.length > 0){
+		for(let i = 0; i < result.length; i++){
+			if(result[i].job === "sales"){
+				str = [
+					{
+						"setData": result[i].created,
+					},
+					{
+						"setData": storage.code.etc[result[i].type],
+					},
+					{
+						"setData": result[i].title,
+					},
+					{
+						"setData": result[i].content,
+					},
+					{
+						"setData": storage.user[result[i].writer].userName,
+					},
+					{
+						"setData": result[i].place,
+					},
+				];
+			}
 		}
+	}else{
+		str = [
+			{
+				"setData": undefined,
+				"col": 6,
+			},
+		];
+		
 	}
 
+	data.push(str);
 	setTimeout(() => {
 		createGrid(container, header, data, ids, job, fnc);
 	}, 100);
