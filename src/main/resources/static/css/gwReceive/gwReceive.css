@@ -159,8 +159,10 @@
 
 
 .listDiv>div:first-child {
-   border-bottom: 1px solid #406c92;
+   border-bottom: 1px solid #425da8;
+   background-color:#f2f5ff;
 }
+
 
 .listDiv .grid_default_body_item:nth-chhild(2n-1) {
    background-color: rgba(234, 239, 243, 0.4)

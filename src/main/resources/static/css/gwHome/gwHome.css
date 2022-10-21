@@ -228,6 +228,12 @@ button {
 	border-top: none;
 }
 
+.listDiv>div:first-child {
+	border-bottom: 1px solid #425da8;
+	background-color:#eaeff3;
+ }
+ 
+
 .listDiv>div:first-of-type {
 	border-bottom: 1px solid #406c92;
 }
