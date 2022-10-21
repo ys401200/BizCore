@@ -51,6 +51,44 @@ button, select, input[type="text"], input[type="date"]{
 	cursor: pointer;
 }
 
+/* 메시징 컨테이너 시작 */
+.msg_cnt{
+	position:fixed;
+	top: 1%;
+	right:1%;
+	width:400px;
+	z-index: 100;
+}
+.msg_cnt .each_msg{
+	position:relative;
+	margin:7px 0;
+	background-color: #332E85;
+	color: #fff;
+	border-radius: 15px;
+}
+.msg_cnt .each_msg > .cls_btn{
+	position:absolute;
+	top:0;
+	right:0;
+	background-color: #332E85;
+	text-align:center;
+	font-size:12px;
+	width:20px;
+	height:20px;
+	color:#fff;
+	cursor:pointer;
+	font-weight: bold;
+	display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.msg_cnt .each_msg > .msg_content{
+	text-overflow: ellipsis;
+    padding: 13px 0;
+    margin: 0 20px 0 18px;
+}
+/* 메시징 컨테이너 끝 */
+
 /* 리스트 input range 시작 */
 .listRange{
 	display: flex;

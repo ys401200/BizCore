@@ -154,14 +154,14 @@ function customerSuccessView(result){
 
 	dataArray = [
 		{
-			"title": "고객사명",
+			"title": "고객사명(*)",
 			"elementId": "name",
 			"disabled": true,
 			"value": name,
 			"col": 2,
 		},
 		{
-			"title": "사업자번호",
+			"title": "사업자번호(*)",
 			"elementId": "taxId",
 			"disabled": true,
 			"value": taxId,
@@ -175,19 +175,19 @@ function customerSuccessView(result){
 			"col": 4,
 		},
 		{
-			"title": "대표자명",
+			"title": "대표자명(*)",
 			"elementId": "ceoName",
 			"disabled": true,
 			"value": ceoName,
 		},
 		{
-			"title": "이메일",
+			"title": "이메일(*)",
 			"elementId": "email",
 			"disabled": true,
 			"value": email,
 		},
 		{
-			"title": "팩스",
+			"title": "팩스(*)",
 			"elementId": "fax",
 			"disabled": true,
 			"value": fax,
@@ -196,6 +196,7 @@ function customerSuccessView(result){
 			"title": "연락처",
 			"elementId": "phone",
 			"disabled": true,
+			"keyup": "phoneFormat(this);",
 			"value": phone,
 		},
 	];
@@ -223,13 +224,13 @@ function customerInsertForm(){
 
 	dataArray = [
 		{
-			"title": "고객사명",
+			"title": "고객사명(*)",
 			"elementId": "name",
 			"disabled": false,
 			"col": 2,
 		},
 		{
-			"title": "사업자번호",
+			"title": "사업자번호(*)",
 			"elementId": "taxId",
 			"disabled": false,
 			"col": 2,
@@ -241,23 +242,24 @@ function customerInsertForm(){
 			"col": 4,
 		},
 		{
-			"title": "대표자명",
+			"title": "대표자명(*)",
 			"elementId": "ceoName",
 			"disabled": false,
 		},
 		{
-			"title": "이메일",
+			"title": "이메일(*)",
 			"elementId": "email",
 			"disabled": false,
 		},
 		{
-			"title": "팩스",
+			"title": "팩스(*)",
 			"elementId": "fax",
 			"disabled": false,
 		},
 		{
 			"title": "연락처",
 			"elementId": "phone",
+			"keyup": "phoneFormat(this);",
 			"disabled": false,
 		},
 	];
@@ -276,32 +278,56 @@ function customerInsertForm(){
 }
 
 function customerInsert(){
-	let name, taxId, address, ceoName, email, fax, phone;
-	name = $("#name").val();
-	taxId = $("#taxId").val();
-	address = $("#address").val();
-	ceoName = $("#ceoName").val();
-	email = $("#email").val();
-	fax = $("#fax").val();
-	phone = $("#phone").val();
-
-	url = "/api/system/customer";
-	method = "post";
-	data = {
-		"name": name,
-		"taxId": taxId,
-		"address": address,
-		"ceoName": ceoName,
-		"email": email,
-		"fax": fax,
-		"phone": phone,
+	if($("#name").val() === ""){
+		msg.set("고객사명을 입력해주세요.");
+		$("#name").focus();
+		return false;
+	}else if($("#taxId").val() === ""){
+		msg.set("사업자번호를 입력해주세요.");
+		$("#taxId").focus();
+		return false;
+	}else if($("#ceoName").val() === ""){
+		msg.set("대표자명을 입력해주세요.");
+		$("#ceoName").focus();
+		return false;
+	}else if($("#email").val() === ""){
+		msg.set("이메일을 입력해주세요.");
+		$("#email").focus();
+		return false;
+	}else if(!validateEmail($("#email").val())){
+		msg.set("이메일 형식이 바르지 않습니다.");
+		$("#email").focus();
+		return false;
+	}else if($("#fax").val() === ""){
+		msg.set("팩스를 입력해주세요.");
+		$("#fax").focus();
+		return false;
+	}else{
+		let name, taxId, address, ceoName, email, fax, phone;
+		name = $("#name").val();
+		taxId = $("#taxId").val();
+		address = $("#address").val();
+		ceoName = $("#ceoName").val();
+		email = $("#email").val();
+		fax = $("#fax").val();
+		phone = $("#phone").val();
+	
+		url = "/api/system/customer";
+		method = "post";
+		data = {
+			"name": name,
+			"taxId": taxId,
+			"address": address,
+			"ceoName": ceoName,
+			"email": email,
+			"fax": fax,
+			"phone": phone,
+		}
+		type = "insert";
+		data = JSON.stringify(data);
+		data = cipher.encAes(data);
+		crud.defaultAjax(url, method, data, type, customerSuccessInsert, customerErrorInsert);
 	}
-	type = "insert";
-
-	data = JSON.stringify(data);
-	data = cipher.encAes(data);
-
-	crud.defaultAjax(url, method, data, type, customerSuccessInsert, customerErrorInsert);
 }
 
 function customerSuccessInsert(){
@@ -314,32 +340,58 @@ function customerErrorInsert(){
 }
 
 function customerUpdate(){
-	let name, taxId, address, ceoName, email, fax, phone;
-	name = $("#name").val();
-	taxId = $("#taxId").val();
-	address = $("#address").val();
-	ceoName = $("#ceoName").val();
-	email = $("#email").val();
-	fax = $("#fax").val();
-	phone = $("#phone").val();
+	if($("#name").val() === ""){
+		msg.set("고객사명을 입력해주세요.");
+		$("#name").focus();
+		return false;
+	}else if($("#taxId").val() === ""){
+		msg.set("사업자번호를 입력해주세요.");
+		$("#taxId").focus();
+		return false;
+	}else if($("#ceoName").val() === ""){
+		msg.set("대표자명을 입력해주세요.");
+		$("#ceoName").focus();
+		return false;
+	}else if($("#email").val() === ""){
+		msg.set("이메일을 입력해주세요.");
+		$("#email").focus();
+		return false;
+	}else if(!validateEmail($("#email").val())){
+		msg.set("이메일 형식이 바르지 않습니다.");
+		$("#email").focus();
+		return false;
+	}else if($("#fax").val() === ""){
+		msg.set("팩스를 입력해주세요.");
+		$("#fax").focus();
+		return false;
+	}else{
+		let name, taxId, address, ceoName, email, fax, phone;
+		name = $("#name").val();
+		taxId = $("#taxId").val();
+		address = $("#address").val();
+		ceoName = $("#ceoName").val();
+		email = $("#email").val();
+		fax = $("#fax").val();
+		phone = $("#phone").val();
 
-	url = "/api/system/customer/" + storage.customerNo;
-	method = "put";
-	data = {
-		"name": name,
-		"taxId": taxId,
-		"address": address,
-		"ceoName": ceoName,
-		"email": email,
-		"fax": fax,
-		"phone": phone,
+		url = "/api/system/customer/" + storage.customerNo;
+		method = "put";
+		data = {
+			"name": name,
+			"taxId": taxId,
+			"address": address,
+			"ceoName": ceoName,
+			"email": email,
+			"fax": fax,
+			"phone": phone,
+		}
+		type = "update";
+
+		data = JSON.stringify(data);
+		data = cipher.encAes(data);
+
+		crud.defaultAjax(url, method, data, type, customerSuccessUpdate, customerErrorUpdate);
 	}
-	type = "update";
-
-	data = JSON.stringify(data);
-	data = cipher.encAes(data);
-
-	crud.defaultAjax(url, method, data, type, customerSuccessUpdate, customerErrorUpdate);
 }
 
 function customerSuccessUpdate(){

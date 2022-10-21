@@ -725,7 +725,7 @@ function scheduleRadioInsert(value, date){
 				"disabled": false,
 			},
 			{
-				"title": "활동형태",
+				"title": "활동형태(*)",
 				"selectValue": [
 					{
 						"key": "10170",
@@ -860,7 +860,7 @@ function scheduleRadioInsert(value, date){
 				"onClick": "scheduleRadioClick(this);",
 			},
 			{
-				"title": "등록구분",
+				"title": "등록구분(*)",
 				"radioValue": [
 					{
 						"key": "10247",
@@ -876,12 +876,6 @@ function scheduleRadioInsert(value, date){
 				"elementId": ["contractMethodNew", "contractMethodOld"],
 				"col": 4,
 				"disabled": false,
-			},
-			{
-				"title": "기술지원 요청명(*)",
-				"elementId": "title",
-				"disabled": false,
-				"col": 4,
 			},
 			{
 				"title": "영업기회(*)",
@@ -1002,6 +996,12 @@ function scheduleRadioInsert(value, date){
 				"title": "",
 			},
 			{
+				"title": "기술지원명(*)",
+				"elementId": "title",
+				"disabled": false,
+				"col": 4,
+			},
+			{
 				"title": "내용",
 				"type": "textarea",
 				"elementId": "content",
@@ -1042,7 +1042,7 @@ function scheduleRadioInsert(value, date){
 				"disabled": false,
 			},
 			{
-				"title": "일정종료일",
+				"title": "일정종료일(*)",
 				"type": "date",
 				"value": date,
 				"elementId": "to",
@@ -1266,8 +1266,8 @@ function scheduleInsert(){
 }
 
 function scheduleSuccessInsert(){
-	msg.set("등록완료");
 	location.reload();
+	msg.set("등록완료");
 }
 
 function scheduleErrorInsert(){
@@ -1337,13 +1337,13 @@ function scheduleRadioUpdate(value, result){
 				"onClick": "scheduleRadioClick(this, " + JSON.stringify(result) + ");",
 			},
 			{
-				"title": "활동시작일",
+				"title": "활동시작일(*)",
 				"elementId": "from",
 				"type": "date",
 				"value": from,
 			},
 			{
-				"title": "활동종료일",
+				"title": "활동종료일(*)",
 				"elementId": "to",
 				"type": "date",
 				"value": to,
@@ -1354,7 +1354,7 @@ function scheduleRadioUpdate(value, result){
 				"value": place,
 			},
 			{
-				"title": "활동형태",
+				"title": "활동형태(*)",
 				"selectValue": [
 					{
 						"key": "10170",
@@ -1425,7 +1425,7 @@ function scheduleRadioUpdate(value, result){
 				"elementId": "type",
 			},
 			{
-				"title": "담당자",
+				"title": "담당자(*)",
 				"elementId": "writer",
 				"dataKeyup": "user",
 				"value": writer,				
@@ -1452,7 +1452,7 @@ function scheduleRadioUpdate(value, result){
 				"type": "",
 			},
 			{
-				"title": "제목",
+				"title": "제목(*)",
 				"elementId": "title",
 				"value": title,
 				"col": 4,
@@ -1562,7 +1562,7 @@ function scheduleRadioUpdate(value, result){
 				"onClick": "scheduleRadioClick(this, " + JSON.stringify(result) + ");",
 			},
 			{
-				"title": "등록구분",
+				"title": "등록구분(*)",
 				"radioValue": [
 					{
 						"key": "10247",
@@ -1672,13 +1672,13 @@ function scheduleRadioUpdate(value, result){
 				"value": writer,
 			},
 			{
-				"title": "지원일자 시작일",
+				"title": "지원일자 시작일(*)",
 				"elementId": "from",
 				"type": "date",
 				"value": from,
 			},
 			{
-				"title": "지원일자 종료일",
+				"title": "지원일자 종료일(*)",
 				"elementId": "to",
 				"type": "date",
 				"value": to,
@@ -1690,7 +1690,7 @@ function scheduleRadioUpdate(value, result){
 				"title": "",
 			},
 			{
-				"title": "기술지원 요청명(*)",
+				"title": "기술지원명(*)",
 				"elementId": "title",
 				"value": title,
 				"col": 4,
@@ -1761,13 +1761,13 @@ function scheduleRadioUpdate(value, result){
 				"onClick": "scheduleRadioClick(this, " + JSON.stringify(result) + ");",
 			},
 			{
-				"title": "일정시작일",
+				"title": "일정시작일(*)",
 				"type": "date",
 				"elementId": "from",
 				"value": from,
 			},
 			{
-				"title": "일정종료일",
+				"title": "일정종료일(*)",
 				"type": "date",
 				"elementId": "to",
 				"value": to,
@@ -1778,7 +1778,7 @@ function scheduleRadioUpdate(value, result){
 				"value": place,
 			},
 			{
-				"title": "영업기회(*)",
+				"title": "영업기회",
 				"elementId": "sopp",
 				"dataKeyup": "sopp",
 				"value": sopp,
@@ -1802,7 +1802,7 @@ function scheduleRadioUpdate(value, result){
 				"title": "",
 			},
 			{
-				"title": "제목",
+				"title": "제목(*)",
 				"elementId": "title",
 				"value": title,
 				"col": 4,
@@ -1876,7 +1876,7 @@ function scheduleUpdate(no){
 		}
 	}else if(job === "tech"){
 		if($("#title").val() === ""){
-			msg.set("기술요청명을 입력해주세요.");
+			msg.set("기술지원명을 입력해주세요.");
 			$("#title").focus();
 			return false;
 		}else if($("#sopp").val() === ""){
@@ -1992,8 +1992,8 @@ function scheduleUpdate(no){
 }
 
 function scheduleSuccessUpdate(){
-	msg.set("수정완료");
 	location.reload();
+	msg.set("수정완료");
 }
 
 function scheduleErrorUpdate(){
@@ -2043,8 +2043,8 @@ function scheduleDelete(result){
 }
 
 function scheduleSuccessDelete(){
-	msg.set("삭제완료");
 	location.reload();
+	msg.set("삭제완료");
 }
 
 function scheduleErrorDelete(){

@@ -333,19 +333,19 @@ function contractSuccessView(result){
 			"onClick": "contractRadioClick(this);",
 		},
 		{
-			"title": "영업기회",
+			"title": "영업기회(*)",
 			"elementId": "sopp",
 			"dataKeyup": "sopp",
 			"value": sopp,
 		},
 		{
-			"title": "담당자",
+			"title": "담당자(*)",
 			"dataKeyup": "user",
 			"elementId": "employee",
 			"value": employee,
 		},
 		{
-			"title": "판매방식",
+			"title": "판매방식(*)",
 			"selectValue": [
 				{
 					"key": "10173",
@@ -368,7 +368,7 @@ function contractSuccessView(result){
 			"type": "select",
 		},
 		{
-			"title": "매출처",
+			"title": "매출처(*)",
 			"elementId": "customer",
 			"dataKeyup": "customer",
 			"value": customer,
@@ -380,7 +380,7 @@ function contractSuccessView(result){
 			"dataKeyup": "customerUser",
 		},
 		{
-			"title": "엔드유저",
+			"title": "엔드유저(*)",
 			"elementId": "endUser",
 			"value": endUser,
 			"dataKeyup": "customer",
@@ -464,7 +464,7 @@ function contractSuccessView(result){
 			"title": "",
 		},
 		{
-			"title": "계약명",
+			"title": "계약명(*)",
 			"elementId": "title",
 			"value": title,
 			"col": 4,
@@ -586,12 +586,6 @@ function contractInsertForm(){
 			"elementName": "contractType",
 			"disabled": false,
 			"onClick": "contractRadioClick(this);",
-		},
-		{
-			"title": "계약명(*)",
-			"elementId": "title",
-			"disabled": false,
-			"col": 4,
 		},
 		{
 			"title": "영업기회(*)",
@@ -727,6 +721,12 @@ function contractInsertForm(){
 			"title": "",
 		},
 		{
+			"title": "계약명(*)",
+			"elementId": "title",
+			"disabled": false,
+			"col": 4,
+		},
+		{
 			"title": "내용",
 			"type": "textarea",
 			"elementId": "detail",
@@ -747,11 +747,14 @@ function contractInsertForm(){
 	modal.close.attr("onclick", "modal.hide();");
 	
 	setTimeout(() => {
-		let my = storage.my;
+		let my = storage.my, nowDate;
+		nowDate = new Date().toISOString().substring(0, 10);
 		$("[name='contractType']").eq(0).prop("checked", true);
 		$("#startOfPaidMaintenance").parents(".defaultFormLine").hide();
 		$("#endOfPaidMaintenance").parents(".defaultFormLine").hide();
 		$("#employee").val(storage.user[my].userName);
+		$("#saleDate, #delivered, #startOfFreeMaintenance, #endOfFreeMaintenance, #startOfPaidMaintenance, #endOfPaidMaintenance").val(nowDate);
+
 		ckeditor.config.readOnly = false;
 		window.setTimeout(setEditor, 100);
 	}, 100);
@@ -992,29 +995,23 @@ function contractErrorDelete(){
 }
 
 function contractRadioClick(e){
-	value = $(e).val();
-
+	value = $(e).val(), nowDate;
+	nowDate = new Date().toISOString().substring(0, 10);
 	
 	if(value === "10247"){
-		console.log("무상실행");
 		$("#startOfFreeMaintenance").parents(".defaultFormLine").show();
 		$("#endOfFreeMaintenance").parents(".defaultFormLine").show();
 		$("#startOfPaidMaintenance").parents(".defaultFormLine").hide();
 		$("#endOfPaidMaintenance").parents(".defaultFormLine").hide();
-
-		$("#startOfPaidMaintenance").val("");
-		$("#endOfPaidMaintenance").val("");
+		$("#startOfPaidMaintenance").val(nowDate);
+		$("#endOfPaidMaintenance").val(nowDate);
 	}else{
 		$("#startOfFreeMaintenance").parents(".defaultFormLine").hide();
 		$("#endOfFreeMaintenance").parents(".defaultFormLine").hide();
 		$("#startOfPaidMaintenance").parents(".defaultFormLine").show();
 		$("#endOfPaidMaintenance").parents(".defaultFormLine").show();
-		
-		console.log("유상실행");
-		console.log($("#startOfFreeMaintenance"));
-		console.log($("#startOfPaidMaintenance"));
-		$("#startOfFreeMaintenance").val("");
-		$("#endOfFreeMaintenance").val("");
+		$("#startOfFreeMaintenance").val(nowDate);
+		$("#endOfFreeMaintenance").val(nowDate);
 	}
 }
 

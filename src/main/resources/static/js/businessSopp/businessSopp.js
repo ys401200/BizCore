@@ -231,13 +231,13 @@ function soppSuccessView(result){
 
 	dataArray = [
 		{
-			"title": "담당자",
+			"title": "담당자(*)",
 			"elementId": "employee",
 			"dataKeyup": "user",
 			"value": userName,
 		},
 		{
-			"title": "매출처",
+			"title": "매출처(*)",
 			"elementId": "customer",
 			"dataKeyup": "customer",
 			"value": customer,
@@ -249,13 +249,13 @@ function soppSuccessView(result){
 			"value": picOfCustomer,
 		},
 		{
-			"title": "엔드유저",
+			"title": "엔드유저(*)",
 			"dataKeyup": "customer",
 			"elementId": "endUser",
 			"value": endUser,
 		},
 		{
-			"title": "진행단계",
+			"title": "진행단계(*)",
 			"selectValue": [
 				{
 					"key": "10178",
@@ -283,7 +283,7 @@ function soppSuccessView(result){
 			"value": progress,
 		},
 		{
-			"title": "계약구분",
+			"title": "계약구분(*)",
 			"selectValue": [
 				{
 					"key": "10247",
@@ -308,7 +308,7 @@ function soppSuccessView(result){
 			"value": targetDate,
 		},
 		{
-			"title": "판매방식",
+			"title": "판매방식(*)",
 			"selectValue": [
 				{
 					"key": "10173",
@@ -351,7 +351,7 @@ function soppSuccessView(result){
 			"title": "",
 		},
 		{
-			"title": "영업기회명",
+			"title": "영업기회명(*)",
 			"elementId": "title",
 			"value": title,
 			"col": 4,
@@ -435,12 +435,12 @@ function soppInsertForm(){
 
 	dataArray = [
 		{
-			"title": "담당자",
+			"title": "담당자(*)",
 			"elementId": "employee",
 			"dataKeyup": "user",
 		},
 		{
-			"title": "매출처",
+			"title": "매출처(*)",
 			"elementId": "customer",
 			"dataKeyup": "customer",
 			"disabled": false,
@@ -452,13 +452,13 @@ function soppInsertForm(){
 			"disabled": false,
 		},
 		{
-			"title": "엔드유저",
+			"title": "엔드유저(*)",
 			"dataKeyup": "customer",
 			"elementId": "endUser",
 			"disabled": false,
 		},
 		{
-			"title": "진행단계",
+			"title": "진행단계(*)",
 			"selectValue": [
 				{
 					"key": "10178",
@@ -487,7 +487,7 @@ function soppInsertForm(){
 			"disabled": false,
 		},
 		{
-			"title": "계약구분",
+			"title": "계약구분(*)",
 			"selectValue": [
 				{
 					"key": "10247",
@@ -513,7 +513,7 @@ function soppInsertForm(){
 			"disabled": false,
 		},
 		{
-			"title": "판매방식",
+			"title": "판매방식(*)",
 			"selectValue": [
 				{
 					"key": "10173",
@@ -557,7 +557,7 @@ function soppInsertForm(){
 			"title": "",
 		},
 		{
-			"title": "영업기회명",
+			"title": "영업기회명(*)",
 			"elementId": "title",
 			"disabled": false,
 			"col": 4,
@@ -594,53 +594,69 @@ function soppInsertForm(){
 }
 
 function soppInsert(){
-	let title, employee, customer, picOfCustomer, endUser, status, progress, contType, targetDate, soppType, expectedSales, detail, data;
-
-	title = $("#title").val();
-	employee = $("#employee");
-	employee = dataListFormat(employee.attr("id"), employee.val());
-	customer = $("#customer");
-	customer = dataListFormat(customer.attr("id"), customer.val());
-	picOfCustomer = $("#picOfCustomer");
-	picOfCustomer = dataListFormat(picOfCustomer.attr("id"), picOfCustomer.val());
-	endUser = $("#endUser");
-	endUser = dataListFormat(endUser.attr("id"), endUser.val());
-	status = $("#status").val();
-	progress = $("#progress").val();
-	contType = $("#contType").val();
-	targetDate = $("#targetDate").val();
-	targetDate = new Date(targetDate).getTime();
-	soppType = $("#soppType").val();
-	expectedSales = $("#expectedSales").val().replaceAll(",", "");
-	detail = CKEDITOR.instances.editorSet.getData();
-
-	url = "/api/sopp";
-	method = "post";
-	data = {
-		"title": title,
-		"employee": employee,
-		"customer": customer,
-		"picOfCustomer": picOfCustomer,
-		"endUser": endUser,
-		"status": status,
-		"progress": progress,
-		"contType": contType,
-		"targetDate": targetDate,
-		"soppType": soppType,
-		"expectedSales": expectedSales,
-		"detail": detail,
+	if($("#title").val() === ""){
+		msg.set("제목을 입력해주세요.");
+		$("#title").focus();
+		return false;
+	}else if($("#employee").val() === ""){
+		msg.set("담당자를 입력해주세요.");
+		$("#employee").focus();
+		return false;
+	}else if($("#customer").val() === ""){
+		msg.set("매출처를 입력해주세요.");
+		$("#customer").focus();
+		return false;
+	}else if($("#endUser").val() === ""){
+		msg.set("엔드유저를 입력해주세요.");
+		$("#endUser").focus();
+		return false;
+	}else{
+		let title, employee, customer, picOfCustomer, endUser, status, progress, contType, targetDate, soppType, expectedSales, detail, data;
+		title = $("#title").val();
+		employee = $("#employee");
+		employee = dataListFormat(employee.attr("id"), employee.val());
+		customer = $("#customer");
+		customer = dataListFormat(customer.attr("id"), customer.val());
+		picOfCustomer = $("#picOfCustomer");
+		picOfCustomer = dataListFormat(picOfCustomer.attr("id"), picOfCustomer.val());
+		endUser = $("#endUser");
+		endUser = dataListFormat(endUser.attr("id"), endUser.val());
+		status = $("#status").val();
+		progress = $("#progress").val();
+		contType = $("#contType").val();
+		targetDate = $("#targetDate").val();
+		targetDate = new Date(targetDate).getTime();
+		soppType = $("#soppType").val();
+		expectedSales = $("#expectedSales").val().replaceAll(",", "");
+		detail = CKEDITOR.instances.editorSet.getData();
+		url = "/api/sopp";
+		method = "post";
+		data = {
+			"title": title,
+			"employee": employee,
+			"customer": customer,
+			"picOfCustomer": picOfCustomer,
+			"endUser": endUser,
+			"status": status,
+			"progress": progress,
+			"contType": contType,
+			"targetDate": targetDate,
+			"soppType": soppType,
+			"expectedSales": expectedSales,
+			"detail": detail,
+		}
+		type = "insert";
+		data = JSON.stringify(data);
+		data = cipher.encAes(data);
+		
+		crud.defaultAjax(url, method, data, type, soppSuccessInsert, soppErrorInsert);
 	}
-	type = "insert";
 
-	data = JSON.stringify(data);
-	data = cipher.encAes(data);
-
-	crud.defaultAjax(url, method, data, type, soppSuccessInsert, soppErrorInsert);
 }
 
 function soppSuccessInsert(){
-	msg.set("등록완료");
 	location.reload();
+	msg.set("등록완료");
 }
 
 function soppErrorInsert(){
@@ -648,53 +664,68 @@ function soppErrorInsert(){
 }
 
 function soppUpdate(){
-	let title, employee, customer, picOfCustomer, endUser, status, progress, contType, targetDate, soppType, expectedSales, detail;
+	if($("#title").val() === ""){
+		msg.set("제목을 입력해주세요.");
+		$("#title").focus();
+		return false;
+	}else if($("#employee").val() === ""){
+		msg.set("담당자를 입력해주세요.");
+		$("#employee").focus();
+		return false;
+	}else if($("#customer").val() === ""){
+		msg.set("매출처를 입력해주세요.");
+		$("#customer").focus();
+		return false;
+	}else if($("#endUser").val() === ""){
+		msg.set("엔드유저를 입력해주세요.");
+		$("#endUser").focus();
+		return false;
+	}else{
+		let title, employee, customer, picOfCustomer, endUser, status, progress, contType, targetDate, soppType, expectedSales, detail;
+		title = $("#title").val();
+		employee = $("#employee");
+		employee = dataListFormat(employee.attr("id"), employee.val());
+		customer = $("#customer");
+		customer = dataListFormat(customer.attr("id"), customer.val());
+		picOfCustomer = $("#picOfCustomer");
+		picOfCustomer = dataListFormat(picOfCustomer.attr("id"), picOfCustomer.val());
+		endUser = $("#endUser");
+		endUser = dataListFormat(endUser.attr("id"), endUser.val());
+		status = $("#status").val();
+		progress = $("#progress").val().replaceAll("%", "");
+		contType = $("#contType").val();
+		targetDate = $("#targetDate").val();
+		targetDate = new Date(targetDate).getTime();
+		soppType = $("#soppType").val();
+		expectedSales = $("#expectedSales").val().replaceAll(",", "");
+		detail = CKEDITOR.instances.editorSet.getData();
+		url = "/api/sopp/" + storage.attachedNo;
+		method = "put";
+		data = {
+			"title": title,
+			"employee": employee,
+			"customer": customer,
+			"picOfCustomer": picOfCustomer,
+			"endUser": endUser,
+			"status": status,
+			"progress": progress,
+			"contType": contType,
+			"targetDate": targetDate,
+			"soppType": soppType,
+			"expectedSales": expectedSales,
+			"detail": detail,
+		}
+		type = "update";
+		data = JSON.stringify(data);
+		data = cipher.encAes(data);
 
-	title = $("#title").val();
-	employee = $("#employee");
-	employee = dataListFormat(employee.attr("id"), employee.val());
-	customer = $("#customer");
-	customer = dataListFormat(customer.attr("id"), customer.val());
-	picOfCustomer = $("#picOfCustomer");
-	picOfCustomer = dataListFormat(picOfCustomer.attr("id"), picOfCustomer.val());
-	endUser = $("#endUser");
-	endUser = dataListFormat(endUser.attr("id"), endUser.val());
-	status = $("#status").val();
-	progress = $("#progress").val().replaceAll("%", "");
-	contType = $("#contType").val();
-	targetDate = $("#targetDate").val();
-	targetDate = new Date(targetDate).getTime();
-	soppType = $("#soppType").val();
-	expectedSales = $("#expectedSales").val().replaceAll(",", "");
-	detail = CKEDITOR.instances.editorSet.getData();
-
-	url = "/api/sopp/" + storage.attachedNo;
-	method = "put";
-	data = {
-		"title": title,
-		"employee": employee,
-		"customer": customer,
-		"picOfCustomer": picOfCustomer,
-		"endUser": endUser,
-		"status": status,
-		"progress": progress,
-		"contType": contType,
-		"targetDate": targetDate,
-		"soppType": soppType,
-		"expectedSales": expectedSales,
-		"detail": detail,
+		crud.defaultAjax(url, method, data, type, soppSuccessUpdate, soppErrorUpdate);
 	}
-	type = "update";
-
-	data = JSON.stringify(data);
-	data = cipher.encAes(data);
-
-	crud.defaultAjax(url, method, data, type, soppSuccessUpdate, soppErrorUpdate);
 }
 
 function soppSuccessUpdate(){
-	msg.set("수정완료");
 	location.reload();
+	msg.set("수정완료");
 }
 
 function soppErrorUpdate(){
@@ -716,8 +747,8 @@ function soppDelete(no){
 }
 
 function soppSuccessDelete(){
-	msg.set("삭제완료");
 	location.reload();
+	msg.set("삭제완료");
 }
 
 function soppErrorDelete(){

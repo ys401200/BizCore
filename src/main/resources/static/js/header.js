@@ -3170,3 +3170,49 @@ function listRangeChange(e, drawList){
 	}
 	drawList();
 }
+
+function phoneFormat(e, type){
+    let thisEle, thisValue, formatNum = "";
+	thisEle = $(e);
+	thisValue = $(e).val().replaceAll("-", "");
+	thisEle.attr("maxLength", 13);
+
+    if(thisValue.length == 11){
+        if(type == 0){
+            formatNum = thisValue.replace(/(\d{3})(\d{4})(\d{4})/, '$1-****-$3');
+        }else{
+            formatNum = thisValue.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+        }
+    }else if(thisValue.length == 8){
+        formatNum = thisValue.replace(/(\d{4})(\d{4})/, '$1-$2');
+    }else{
+        if(thisValue.indexOf('02') == 0){
+            if(type == 0){
+                formatNum = thisValue.replace(/(\d{2})(\d{4})(\d{4})/, '$1-****-$3');
+            }else{
+                formatNum = thisValue.replace(/(\d{2})(\d{4})(\d{4})/, '$1-$2-$3');
+            }
+        }else{
+            if(type == 0){
+                formatNum = thisValue.replace(/(\d{3})(\d{3})(\d{4})/, '$1-***-$3');
+            }else{
+                formatNum = thisValue.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+            }
+        }
+    }
+
+	thisEle.val(formatNum);
+}
+
+function validateEmail(email) {
+	let filter, result;
+	filter = /^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+
+	if (filter.test(email)) {
+		result = true;
+	}else {
+		result = false;
+	}
+
+	return result;
+}

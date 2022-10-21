@@ -172,13 +172,13 @@ function noticeSuccessView(result){
 			"col": 2,
 		},
 		{
-			"title": "제목",
+			"title": "제목(*)",
 			"elementId": "title",
 			"value": title,
 			"col": 4,
 		},
 		{
-			"title": "내용",
+			"title": "내용(*)",
 			"elementId": "content",
 			"value": content,
 			"type": "textarea",
@@ -230,13 +230,13 @@ function noticeInsertForm(){
 			"col": 4,
 		},
 		{
-			"title": "제목",
+			"title": "제목(*)",
 			"elementId": "title",
 			"disabled": false,
 			"col": 4,
 		},
 		{
-			"title": "내용",
+			"title": "내용(*)",
 			"elementId": "content",
 			"type": "textarea",
 			"col": 4,
@@ -265,31 +265,38 @@ function noticeInsertForm(){
 }
 
 function noticeInsert(){
-	let title, content, writer, data;
+	if(title === ""){
+		msg.set("제목을 입력해주세요.");
+		$("#title").focus();
+		return false;
+	}else if(content === ""){
+		msg.set("내용을 입력해주세요.");
+		return false;
+	}else{
+		let title, content, writer, data;
+		title = $("#title").val();
+		content = CKEDITOR.instances.editorSet.getData();
+		writer = $("#writer");
+		writer = dataListFormat(writer.attr("id"), writer.val());
+		url = "/api/notice";
+		method = "post";
+		data = {
+			"title": title,
+			"content": content,
+			"writer": writer
+		}
+		type = "insert";
+		data = JSON.stringify(data);
+		data = cipher.encAes(data);
 
-	title = $("#title").val();
-	content = CKEDITOR.instances.editorSet.getData();
-	writer = $("#writer");
-	writer = dataListFormat(writer.attr("id"), writer.val());
-
-	url = "/api/notice";
-	method = "post";
-	data = {
-		"title": title,
-		"content": content,
-		"writer": writer
+		crud.defaultAjax(url, method, data, type, noticeSuccessInsert, noticeErrorInsert);
 	}
-	type = "insert";
 
-	data = JSON.stringify(data);
-	data = cipher.encAes(data);
-
-	crud.defaultAjax(url, method, data, type, noticeSuccessInsert, noticeErrorInsert);
 }
 
 function noticeSuccessInsert(){
-	msg.set("등록완료");
 	location.reload();
+	msg.set("등록완료");
 }
 
 function noticeErrorInsert(){
@@ -297,31 +304,37 @@ function noticeErrorInsert(){
 }
 
 function noticeUpdate(){
-	let title, content, writer;
+	if(title === ""){
+		msg.set("제목을 입력해주세요.");
+		$("#title").focus();
+		return false;
+	}else if(content === ""){
+		msg.set("내용을 입력해주세요.");
+		return false;
+	}else{
+		let title, content, writer;
+		title = $("#title").val();
+		content = CKEDITOR.instances.editorSet.getData();
+		writer = $("#writer");
+		writer = dataListFormat(writer.attr("id"), writer.val());
+		url = "/api/notice/" + storage.detailNoticeNo;
+		method = "put";
+		data = {
+			"title": title,
+			"content": content,
+			"writer": writer,
+		}
+		type = "update";
+		data = JSON.stringify(data);
+		data = cipher.encAes(data);
 
-	title = $("#title").val();
-	content = CKEDITOR.instances.editorSet.getData();
-	writer = $("#writer");
-	writer = dataListFormat(writer.attr("id"), writer.val());
-
-	url = "/api/notice/" + storage.detailNoticeNo;
-	method = "put";
-	data = {
-		"title": title,
-		"content": content,
-		"writer": writer,
+		crud.defaultAjax(url, method, data, type, noticeSuccessUpdate, noticeErrorUpdate);
 	}
-	type = "update";
-
-	data = JSON.stringify(data);
-	data = cipher.encAes(data);
-
-	crud.defaultAjax(url, method, data, type, noticeSuccessUpdate, noticeErrorUpdate);
 }
 
 function noticeSuccessUpdate(){
-	msg.set("수정완료");
 	location.reload();
+	msg.set("수정완료");
 }
 
 function noticeErrorUpdate(){
@@ -344,8 +357,8 @@ function noticeDelete(no){
 }
 
 function noticeSuccessDelete(){
-	msg.set("삭제완료");
 	location.reload();
+	msg.set("삭제완료");
 }
 
 function noticeErrorDelete(){

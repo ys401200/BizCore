@@ -225,7 +225,7 @@ function salesSuccessView(result){
 
 	dataArray = [
 		{
-			"title": "일정선택",
+			"title": undefined,
 			"radioValue": [
 				{
 					"key": "sales",
@@ -239,13 +239,13 @@ function salesSuccessView(result){
 			"col": 4,
 		},
 		{
-			"title": "활동시작일",
+			"title": "활동시작일(*)",
 			"elementId": "from",
 			"type": "date",
 			"value": from,
 		},
 		{
-			"title": "활동종료일",
+			"title": "활동종료일(*)",
 			"elementId": "to",
 			"type": "date",
 			"value": to,
@@ -256,7 +256,7 @@ function salesSuccessView(result){
 			"value": place,
 		},
 		{
-			"title": "활동형태",
+			"title": "활동형태(*)",
 			"selectValue": [
 				{
 					"key": "10170",
@@ -327,7 +327,7 @@ function salesSuccessView(result){
 			"elementId": "type",
 		},
 		{
-			"title": "담당자",
+			"title": "담당자(*)",
 			"elementId": "writer",
 			"dataKeyup": "user",
 			"value": writer,				
@@ -351,7 +351,7 @@ function salesSuccessView(result){
 			"value": partner,
 		},
 		{
-			"title": "제목",
+			"title": "제목(*)",
 			"elementId": "title",
 			"value": title,
 			"col": 4,
@@ -438,7 +438,7 @@ function salesInsertForm(){
 
 	dataArray = [
 		{
-			"title": "일정선택",
+			"title": undefined,
 			"radioValue": [
 				{
 					"key": "sales",
@@ -472,7 +472,7 @@ function salesInsertForm(){
 			"disabled": false,
 		},
 		{
-			"title": "활동형태",
+			"title": "활동형태(*)",
 			"selectValue": [
 				{
 					"key": "10170",
@@ -598,14 +598,6 @@ function salesInsertForm(){
 }
 
 function salesInsert(){
-	let url, method, data, type, job;
-
-	job = $("[name='job']:checked").val();
-
-	url = "/api/schedule/" + job;
-	method = "post";
-	type = "insert";
-
 	if($("#from").val() === ""){
 		msg.set("활동시작일을 선택해주세요.");
 		return false;
@@ -617,8 +609,8 @@ function salesInsert(){
 		$("#title").focus();
 		return false;
 	}else{
-		let from, to, place, writer, sopp, customer, partner, title, content, type;
-
+		let url, method, data, job, from, to, place, writer, sopp, customer, partner, title, content, type;
+		job = $("[name='job']:checked").val();
 		from = $("#from").val();
 		from = new Date(from).getTime();
 		to = $("#to").val();
@@ -635,7 +627,9 @@ function salesInsert(){
 		title = $("#title").val();
 		content = CKEDITOR.instances.editorSet.getData();
 		type = $("#type").val();
-
+		url = "/api/schedule/" + job;
+		method = "post";
+		type = "insert";
 		data = {
 			"job": job,
 			"from": from,
@@ -650,7 +644,6 @@ function salesInsert(){
 			"type": type,
 		};
 	}
-
 	data = JSON.stringify(data);
 	data = cipher.encAes(data);
 
@@ -658,8 +651,8 @@ function salesInsert(){
 }
 
 function salesSuccessInsert(){
-	msg.set("등록완료");
 	location.reload();
+	msg.set("등록완료");
 }
 
 function salesErrorInsert(){
@@ -668,14 +661,6 @@ function salesErrorInsert(){
 }
 
 function salesUpdate(){
-	let url, method, data, type, job;
-
-	job = $("[name='job']:checked").val();
-
-	url = "/api/schedule/" + job + "/" + storage.salesNo;
-	method = "put";
-	type = "update";
-
 	if($("#from").val() === ""){
 		msg.set("활동시작일을 선택해주세요.");
 		return false;
@@ -687,8 +672,8 @@ function salesUpdate(){
 		$("#title").focus();
 		return false;
 	}else{
-		let from, to, place, writer, sopp, customer, partner, title, content, type;
-
+		let url, method, data, job, from, to, place, writer, sopp, customer, partner, title, content, type;
+		job = $("[name='job']:checked").val();
 		from = $("#from").val();
 		from = new Date(from).getTime();
 		to = $("#to").val();
@@ -705,7 +690,9 @@ function salesUpdate(){
 		title = $("#title").val();
 		content = CKEDITOR.instances.editorSet.getData();
 		type = $("#type").val();
-
+		url = "/api/schedule/" + job + "/" + storage.salesNo;
+		method = "put";
+		type = "update";
 		data = {
 			"job": job,
 			"from": from,
@@ -720,7 +707,6 @@ function salesUpdate(){
 			"type": type,
 		};
 	}
-
 	data = JSON.stringify(data);
 	data = cipher.encAes(data);
 
@@ -728,8 +714,8 @@ function salesUpdate(){
 }
 
 function salesSuccessUpdate(){
-	msg.set("수정완료");
 	location.reload();
+	msg.set("수정완료");
 }
 
 function salesErrorUpdate(){
@@ -755,8 +741,8 @@ function salesDelete(result){
 }
 
 function salesSuccessDelete(){
-	msg.set("삭제완료");
 	location.reload();
+	msg.set("삭제완료");
 }
 
 function salesErrorDelete(){

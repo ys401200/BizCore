@@ -287,7 +287,7 @@ function techSuccessView(result){
 			"col": 4,
 		},
 		{
-			"title": "등록구분",
+			"title": "등록구분(*)",
 			"radioValue": [
 				{
 					"key": "10247",
@@ -395,13 +395,13 @@ function techSuccessView(result){
 			"value": writer,
 		},
 		{
-			"title": "지원일자 시작일",
+			"title": "지원일자 시작일(*)",
 			"elementId": "from",
 			"type": "date",
 			"value": from,
 		},
 		{
-			"title": "지원일자 종료일",
+			"title": "지원일자 종료일(*)",
 			"elementId": "to",
 			"type": "date",
 			"value": to,
@@ -413,7 +413,7 @@ function techSuccessView(result){
 			"title": "",
 		},
 		{
-			"title": "기술지원 요청명(*)",
+			"title": "기술지원명(*)",
 			"elementId": "title",
 			"value": title,
 			"col": 4,
@@ -524,7 +524,7 @@ function techInsertForm(){
 			"disabled": false,
 		},
 		{
-			"title": "등록구분",
+			"title": "등록구분(*)",
 			"radioValue": [
 				{
 					"key": "10247",
@@ -540,12 +540,6 @@ function techInsertForm(){
 			"elementId": ["contractMethodNew", "contractMethodOld"],
 			"col": 4,
 			"disabled": false,
-		},
-		{
-			"title": "기술지원 요청명(*)",
-			"elementId": "title",
-			"disabled": false,
-			"col": 4,
 		},
 		{
 			"title": "영업기회(*)",
@@ -666,6 +660,12 @@ function techInsertForm(){
 			"title": "",
 		},
 		{
+			"title": "기술지원명(*)",
+			"elementId": "title",
+			"disabled": false,
+			"col": 4,
+		},
+		{
 			"title": "내용",
 			"type": "textarea",
 			"elementId": "content",
@@ -689,14 +689,6 @@ function techInsertForm(){
 }
 
 function techInsert(){
-	let url, method, data, type, job;
-
-	job = $("[name='job']:checked").val();
-
-	url = "/api/schedule/" + job;
-	method = "post";
-	type = "insert";
-
 	if($("#title").val() === ""){
 		msg.set("기술요청명을 입력해주세요.");
 		$("#title").focus();
@@ -717,8 +709,8 @@ function techInsert(){
 		$("#title").focus();
 		return false;
 	}else{
-		let from, to, place, writer, sopp, contract, contractMethod, customer, cipOfCustomer, partner, title, content, supportModel, supportVersion, supportStep, type;
-
+		let url, method, data, job, from, to, place, writer, sopp, contract, contractMethod, customer, cipOfCustomer, partner, title, content, supportModel, supportVersion, supportStep, type;
+		job = $("[name='job']:checked").val();
 		from = $("#from").val();
 		from = new Date(from).getTime();
 		to = $("#to").val();
@@ -765,9 +757,11 @@ function techInsert(){
 		};
 	}
 
+	url = "/api/schedule/" + job;
+	method = "post";
+	type = "insert";
 	data = JSON.stringify(data);
 	data = cipher.encAes(data);
-
 	crud.defaultAjax(url, method, data, type, techSuccessInsert, techErrorInsert);
 }
 
@@ -782,14 +776,6 @@ function techErrorInsert(){
 }
 
 function techUpdate(){
-	let url, method, data, type, job;
-
-	job = $("[name='job']:checked").val();
-
-	url = "/api/schedule/" + job + "/" + storage.techNo;
-	method = "put";
-	type = "update";
-
 	if($("#title").val() === ""){
 		msg.set("기술요청명을 입력해주세요.");
 		$("#title").focus();
@@ -810,8 +796,8 @@ function techUpdate(){
 		$("#title").focus();
 		return false;
 	}else{
-		let from, to, place, writer, sopp, contract, contractMethod, customer, cipOfCustomer, partner, title, content, supportModel, supportVersion, supportStep, type;
-
+		let url, method, data, type, job, from, to, place, writer, sopp, contract, contractMethod, customer, cipOfCustomer, partner, title, content, supportModel, supportVersion, supportStep;
+		job = $("[name='job']:checked").val();
 		from = $("#from").val();
 		from = new Date(from).getTime();
 		to = $("#to").val();
@@ -858,6 +844,9 @@ function techUpdate(){
 		};
 	}
 
+	url = "/api/schedule/" + job + "/" + storage.techNo;
+	method = "put";
+	type = "update";
 	data = JSON.stringify(data);
 	data = cipher.encAes(data);
 

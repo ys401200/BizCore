@@ -44,7 +44,7 @@ function drawFileBoxList() {
 			"align": "center",
 		},
 		{
-			"title": "제목",
+			"title": "제목(*)",
 			"align": "left",
 		},
 		{
@@ -167,13 +167,13 @@ function fileBoxSuccessView(result){
 			"col": 2,
 		},
 		{
-			"title": "제목",
+			"title": "제목(*)",
 			"elementId": "title",
 			"value": title,
 			"col": 4,
 		},
 		{
-			"title": "내용",
+			"title": "내용(*)",
 			"elementId": "content",
 			"value": content,
 			"type": "textarea",
@@ -248,13 +248,13 @@ function fileBoxInsertForm(){
 			"col": 2,
 		},
 		{
-			"title": "제목",
+			"title": "제목(*)",
 			"elementId": "title",
 			"disabled": false,
 			"col": 4,
 		},
 		{
-			"title": "내용",
+			"title": "내용(*)",
 			"elementId": "content",
 			"type": "textarea",
 			"col": 4,
@@ -306,14 +306,14 @@ function fileBoxUpdateForm(result){
 			"col": 2,
 		},
 		{
-			"title": "제목",
+			"title": "제목(*)",
 			"elementId": "title",
 			"value": title,
 			"disabled": false,
 			"col": 4,
 		},
 		{
-			"title": "내용",
+			"title": "내용(*)",
 			"elementId": "content",
 			"value": content,
 			"type": "textarea",
@@ -350,27 +350,35 @@ function fileBoxUpdateForm(result){
 }
 
 function fileBoxInsert(){
-	let title, content, writer, data;
-
-	title = $(document).find("#title").val();
-	content = CKEDITOR.instances.editorSet.getData();
-	writer = $(document).find("#writer");
-	writer = dataListFormat(writer.attr("id"), writer.val());
+	if($("#title").val() === ""){
+		msg.set("제목을 입력해주세요.");
+		$("#title").focus();
+		return false;
+	}else if($("#content").val() === ""){
+		msg.set("내용을 입력해주세요.");
+		$("#content").focus();
+		return false;
+	}else{
+		let title, content, writer, data;
 	
-	url = "/api/board/filebox";
-	method = "post";
-	data = {
-		"title": title,
-		"content": content,
-		"writer": writer,
-		"files": fileDataArray,
+		title = $(document).find("#title").val();
+		content = CKEDITOR.instances.editorSet.getData();
+		writer = $(document).find("#writer");
+		writer = dataListFormat(writer.attr("id"), writer.val());
+		
+		url = "/api/board/filebox";
+		method = "post";
+		data = {
+			"title": title,
+			"content": content,
+			"writer": writer,
+			"files": fileDataArray,
+		}
+		type = "insert";
+		data = JSON.stringify(data);
+		data = cipher.encAes(data);
+		crud.defaultAjax(url, method, data, type, fileBoxSuccessInsert, fileBoxErrorInsert);
 	}
-	type = "insert";
-
-	data = JSON.stringify(data);
-	data = cipher.encAes(data);
-
-	crud.defaultAjax(url, method, data, type, fileBoxSuccessInsert, fileBoxErrorInsert);
 }
 
 function fileBoxSuccessInsert(){
@@ -383,28 +391,36 @@ function fileBoxErrorInsert(){
 }
 
 function fileBoxUpdate(){
-	let title, content, writer;
+	if($("#title").val() === ""){
+		msg.set("제목을 입력해주세요.");
+		$("#title").focus();
+		return false;
+	}else if($("#content").val() === ""){
+		msg.set("내용을 입력해주세요.");
+		$("#content").focus();
+		return false;
+	}else{
+		let title, content, writer;
 
-	title = $(document).find("#title").val();
-	content = CKEDITOR.instances.editorSet.getData();
-	writer = $(document).find("#writer");
-	writer = dataListFormat(writer.attr("id"), writer.val());
+		title = $(document).find("#title").val();
+		content = CKEDITOR.instances.editorSet.getData();
+		writer = $(document).find("#writer");
+		writer = dataListFormat(writer.attr("id"), writer.val());
 
-	url = "/api/board/filebox/" + storage.fileBoxNo;
-	method = "put";
-	data = {
-		"title": title,
-		"content": content,
-		"writer": writer,
-		"addFiles": updateDataArray,
-		"removeFiles": removeDataArray,
+		url = "/api/board/filebox/" + storage.fileBoxNo;
+		method = "put";
+		data = {
+			"title": title,
+			"content": content,
+			"writer": writer,
+			"addFiles": updateDataArray,
+			"removeFiles": removeDataArray,
+		}
+		type = "update";
+		data = JSON.stringify(data);
+		data = cipher.encAes(data);
+		crud.defaultAjax(url, method, data, type, fileBoxSuccessUpdate, fileBoxErrorUpdate);
 	}
-	type = "update";
-
-	data = JSON.stringify(data);
-	data = cipher.encAes(data);
-
-	crud.defaultAjax(url, method, data, type, fileBoxSuccessUpdate, fileBoxErrorUpdate);
 }
 
 function fileBoxSuccessUpdate(){
