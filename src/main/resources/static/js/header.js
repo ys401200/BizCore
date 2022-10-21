@@ -542,8 +542,8 @@ function menuActive(){
 	}else if(pathName === "mypage"){
 		mainTopMenu.find("ul li button").removeAttr("class");
 		mainTopMenu.find("ul li button").eq(0).attr("class", "active");
-
 		readyTopPageActive();
+		sideMenu.css("background-color", "#3e3e9e;");
 	}else{
 		readyTopPageActive();
 
