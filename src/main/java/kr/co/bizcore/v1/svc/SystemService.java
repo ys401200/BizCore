@@ -1050,6 +1050,7 @@ public class SystemService extends Svc {
         byte[] data = null;
         String fileName = null, savedName = null;
         String sql = "SELECT docNo AS no, filename AS name, filecontent AS content FROM swcore.swc_businessfiledata WHERE docNo = ? ";
+        String sql1 = "select no from bizcore.doc_app where substring(docNo,10) = ?";
         int no = -1;
         int count = 1;
 
@@ -1057,15 +1058,27 @@ public class SystemService extends Svc {
 
         try {
             conn = sqlSession.getConnection();
-            pstmt = conn.prepareStatement(sql);
+            pstmt = conn.prepareStatement(sql1);
             pstmt.setString(1, docNo);
             rs = pstmt.executeQuery();
 
+            if (rs.next()) {
+                no = rs.getInt(1);
+            }
+            rs.close();
+            pstmt.close();
+
+            logger.error("/////////////////////////////////////////////////// no : " + no);
+
+            if(no == -1)    return -99999;
+
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, docNo);
+            rs = pstmt.executeQuery();
             while (rs.next()) {
-                no = getNextNumberFromDB("vtek", "bizcore.doc_app");
-                fileName = rs.getString(2);
+                fileName = rs.getString("name");
                 savedName = createRandomFileName();
-                blob = rs.getBlob(3);
+                blob = rs.getBlob("content");
                 isr = blob.getBinaryStream();
                 data = isr.readAllBytes();
                 isr.close();
@@ -1078,7 +1091,7 @@ public class SystemService extends Svc {
                 fos.close();
                 saveAttachedData("appDoc", no, fileName, savedName, file.length());
                 count++;
-               
+                data = null;
             }
 
         } catch (SQLException | IOException e) {

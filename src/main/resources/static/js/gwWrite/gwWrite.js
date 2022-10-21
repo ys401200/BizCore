@@ -121,8 +121,6 @@ function setTempReport() {
     $(".simpleAppLineData").html(simpleapp);
 
 
-
-
     //작성자 작성일 자동 입력
     $(".typeContainer").html("");
     $(".testClass").prop("checked", false);

@@ -150,7 +150,7 @@ function drawMyRefer() {
       pageContainer[0],
       result[3],
       "pageMove",
-      "drawMyDraft",
+      "drawMyRefer",
       result[0]
     );
     pageContainer[0].innerHTML = pageNation;
