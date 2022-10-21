@@ -80,20 +80,21 @@ function setTempReport() {
     $(".guide").remove();
     $(".lineDetail").show();
     $(".createLineBtn").show();
-    $(".reportInsertForm").html(storage.reportDetailData.doc);
     $(".insertedDetail").show();
+    $(".simpleAppLine").show();
+    $(".reportInsertForm").html(storage.reportDetailData.doc);
     $(".insertedDetail").css("border", "1px solid black");
 
     //작성자 작성일 자동 입력
-    $(".testClass").prop("checked", false);
     $(".typeContainer").html("");
+    $(".testClass").prop("checked", false);
     $(".inputsAuto").prop("disabled", "true");
+    $(".saveBtn").prop("disabled", false);
+    $(".previewBtn").prop("disabled", false);
     $(".inputsAuto").css("text-align", "center");
     $(".inputsAuto").eq(0).css("text-align", "left");
     $(".inputsAuto").eq(1).css("text-align", "left");
     $(".inputsAuto").eq(2).css("text-align", "left");
-    $(".saveBtn").prop("disabled", false);
-    $(".previewBtn").prop("disabled", false);
     $(".stepLabel").css("color", "black");
     $(".lineBtnContainer").css("border-left", "2px solid black");
 
@@ -171,6 +172,8 @@ function selectForm() {
   $(tt).css("color", "black");
   $(".lineBtnContainer").css("border-left", "2px solid black");
   $(".guide").remove();
+  $(".simpleAppLine").show();
+  $(".simpleAppLineData").html("");
 
   // let tt = $(".lineBtnContainer");
   //$(tt[0]).addClass("lineBtnContainerB");

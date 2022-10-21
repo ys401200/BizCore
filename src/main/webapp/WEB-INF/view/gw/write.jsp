@@ -56,11 +56,11 @@
 
             <div class='selector'>
 
-              <div class="stepLabel">● 결재선</div>
+              <div class="stepLabel">● 결재선<button class='createLineBtn' onclick='showModal()'>결재선 생성</button></div>
               <div class="lineBtnContainer">
 
                 <div class='guide stepLabel'> 결재 양식을 선택하면 결재선 생성을 할 수 있습니다. </div>
-                <div><button class='createLineBtn' onclick='showModal()'>결재선 생성</button></div>
+                
                 <div class="simpleAppLine">
                   <div>결재정보</div>
                   <div class="simpleAppLineData"></div>
