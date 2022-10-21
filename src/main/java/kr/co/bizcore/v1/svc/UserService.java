@@ -34,9 +34,10 @@ public class UserService extends Svc {
 
     // 로그인 검증 메서드 / 이사하는 과도기에 사용하는 메서드 / 비번 유혐 감지 후 기존비번인 경우 신규 비번으로 바꾸도록 함
     public String[] verifyLoginTemp(String compId, String userId, String pw, boolean keep) {
-        String[] result = {null, null}, t = null;
-        String userNo = null, pwDB = null, pwCvt = null, keepToken = null;
+        String[] result = new String[4], t = null;
+        String userNo = null, pwDB = null, pwCvt = null, keepToken = null, userName, userRank;
         String sql1 = "SELECT no AS userNo, pw, PASSWORD(?) FROM bizcore.users WHERE userid = ? AND compId = ? AND deleted IS NULL";
+               sql1 = "SELECT no AS userNo, pw, PASSWORD(?), username, (SELECT namekor FROM bizcore.user_rank WHERE compId = ? AND level = rank) AS rank FROM bizcore.users a WHERE userid = ? AND compId = ? AND deleted IS NULL";
         String sql2 = "UPDATE bizcore.users SET pw = ? WHERE compId = ? AND no = ?";
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -48,19 +49,24 @@ public class UserService extends Svc {
             // 비번유형에 대한 파악
             pstmt = conn.prepareStatement(sql1);
             pstmt.setString(1, pw);
-            pstmt.setString(2, userId);
-            pstmt.setString(3, compId);
+            pstmt.setString(2, compId);
+            pstmt.setString(3, userId);
+            pstmt.setString(4, compId);
             rs = pstmt.executeQuery();
             if(!rs.next())  return result; // 결과가 없으면 종료함 / 로그인 x
             userNo = rs.getString(1);
             pwDB = rs.getString(2);
             pwCvt = rs.getString(3);
+            userName = rs.getString(4);
+            userRank = rs.getString(5);
             rs.close();
             pstmt.close();
 
             if(pwDB.substring(0,1).equals("*")){ // 기존 비번 모드
                 if(!pwDB.equals(pwCvt)) return result; // 패스워드 불일치시 종료함 / 로그인 x
                 result[0] = userNo;
+                result[2] = userName;
+                result[3] = userRank;
 
                 pstmt = conn.prepareStatement(sql2);
                 pstmt.setString(1, encSHA512(pw));
@@ -69,7 +75,11 @@ public class UserService extends Svc {
                 pstmt.executeUpdate();
             }else{ // 신규 비번 모드
                 pwCvt = encSHA512(pw);
-                if(pwDB.equals(pwCvt))  result[0] = userNo;
+                if(pwDB.equals(pwCvt)){
+                    result[0] = userNo;
+                    result[2] = userName;
+                    result[3] = userRank;
+                }
             }
             
         }catch(SQLException e){e.printStackTrace();}

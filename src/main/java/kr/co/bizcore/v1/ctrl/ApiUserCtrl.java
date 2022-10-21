@@ -67,7 +67,7 @@ public class ApiUserCtrl extends Ctrl{
     @RequestMapping(value = "/login/*", method = RequestMethod.POST)
     public String userLogin(HttpServletRequest request, @RequestBody String requestBody) {
         String userId = null, pw = null, userNo = null, compId = null, result = null, uri = null;
-        String dec = null, aesKey = null, aesIv = null, lang = null, keepToken = null;
+        String dec = null, aesKey = null, aesIv = null, lang = null, keepToken = null, userName = null, userRank = null;
         String[] t = null;
         Msg msg = null;
         boolean keep = false;
@@ -120,11 +120,15 @@ public class ApiUserCtrl extends Ctrl{
                 } else {
                     t = userService.verifyLoginTemp(compId, userId, pw, keep);
                     userNo = t[0];
+                    userName = t[2];
+                    userRank = t[3];
                     keepToken = t[1];
                     if (userNo == null)
                         result = "{\"result\":\"failure\",\"msg\":\"" + msg.idPwMisMatch + "\"}";
                     else {
                         session.setAttribute("userNo", userNo);
+                        session.setAttribute("userName", userName);
+                        session.setAttribute("userRank", userRank);
                         result = "{\"result\":\"ok\",\"data\":\"" + keepToken + "\"}";
                         //로그인 상태 유지를 체크한 경우 세션의 유효시간을 연장하도록 함
                         if(keep)    session.setMaxInactiveInterval(86400);
