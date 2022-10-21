@@ -331,8 +331,8 @@ function customerInsert(){
 }
 
 function customerSuccessInsert(){
-	msg.set("등록완료");
 	location.reload();
+	msg.set("등록완료");
 }
 
 function customerErrorInsert(){
@@ -395,8 +395,8 @@ function customerUpdate(){
 }
 
 function customerSuccessUpdate(){
-	msg.set("수정완료");
 	location.reload();
+	msg.set("수정완료");
 }
 
 function customerErrorUpdate(){
@@ -418,8 +418,8 @@ function customerDelete(){
 }
 
 function customerSuccessDelete(){
-	msg.set("삭제완료");
 	location.reload();
+	msg.set("삭제완료");
 }
 
 function customerErrorDelete(){

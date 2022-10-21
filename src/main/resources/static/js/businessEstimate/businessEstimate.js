@@ -731,7 +731,6 @@ function clickedEstmVer(el){
 	x = el.dataset.idx*1;
 	cnt.innerHTML = storage.estmVerList[x].doc;
 	cnt.style.display = "inline-block";
-	cnt.style.width = "400px";
 	cnt.style.height = Math.floor(400 / storage.estmVerList[x].width * storage.estmVerList[x].height) + "px";
 	cnt.style.fontSize = (400 / 120) + "px";
 } // End of clickedEstmVer()

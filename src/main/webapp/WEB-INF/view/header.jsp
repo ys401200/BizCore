@@ -64,7 +64,19 @@
 			<!-- <li><button type="button" data-keyword="mis" onClick="bodyTopPageClick(this);">경영정보</button></li> -->
 		</ul>
 	</div>
-	<div id="mainInfo"></div>
+	<div id="mainInfo">
+		<a href="#" onclick="noteContentShow();" id="infoMessageImg">
+			<img id="myInfoMessageImg" src="/images/main/icons/message.png">
+		</a>
+		<img id="myInfoImage" src="/api/my/image" >
+		<a href="/mypage">
+			<span><%= session.getAttribute("userName") %></span>&nbsp;
+			<span><%= session.getAttribute("userRank") %></span>
+		</a>
+		<a href="/api/user/logout" onclick="return confirm('로그아웃 하시겠습니까??');">
+			<img id="myInfoImageLogout" src="/images/main/icons/logout.png" >
+		</a>
+	</div>
 </div>
 <script src="/js/header.js"></script>
 

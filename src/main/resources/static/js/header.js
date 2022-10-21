@@ -46,10 +46,8 @@ function init(){
 	});
 
 	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined){
-		window.setTimeout(headerMyInfo, 1500);
 		window.setTimeout(addNoteContainer, 1500);
 	}else{
-		window.setTimeout(headerMyInfo, 200);
 		window.setTimeout(addNoteContainer, 200);
 	}
 
@@ -2580,84 +2578,6 @@ function searchDateDefaultSet(e){
 
 	matchDateInput.val(year + "-" + month + "-" + day);	
 }
-
-function headerMyInfo(){
-	let mainInfo, html = "";
-	mainInfo = $("#mainInfo");
-
-	// html += "<img id=\"myInfoMessageImg\" src=\"../images/main/icons/message.png\" >";
-	html += "<a href=\"#\" onclick=\"noteContentShow();\" id=\"infoMessageImg\">";
-	// html += myNoteList();
-	html += "<img id=\"myInfoMessageImg\" src=\"/images/main/icons/message.png\">";
-	html += "</a>";
-	// html += "<i class=\"fa-solid fa-envelope fa-shake fa-2xl\" id=\"envelope\"></i>";
-	// html += "<i class=\"fa-regular fa-envelope-open fa-beat-fade fa-2xl\" id=\"envelope\"></i>";
-	html += "<img id=\"myInfoImage\" src=\"/api/my/image\" >";
-	// html += "<img id=\"myInfoProfileManImg\" src=\"../images/main/icons/profileMan.png\" >";
-	html += "<a href=\"/mypage\">";
-	html += "<span>" + storage.user[storage.my].userName + "</span>&nbsp;";
-	html += "<span>" + storage.userRank[storage.user[storage.my].rank][0] + "</span>";
-	html += "</a>";
-	html += "<a href=\"/api/user/logout\" onclick=\"return confirm('로그아웃 하시겠습니까??');\"><img id=\"myInfoImageLogout\" src=\"/images/main/icons/logout.png\" ></a>";
-	//html += "<a href=\"/api/user/logout\" onclick=\"return confirm('로그아웃 하시겠습니까??');\"><i class=\"fa-solid fa-person-walking-arrow-right fa-xl\" id=\"logoutBtn\"></i></a>";
-
-	mainInfo.html(html);
-	
-	$("#logoutBtn").hover((e) => {
-		$(e.target).removeAttr("class");
-		$(e.target).attr("class", "fa-solid fa-person-walking-arrow-right fa-bounce fa-xl");
-	}, () => {
-		$("#logoutBtn").removeAttr("class");
-		$("#logoutBtn").attr("class", "fa-solid fa-person-walking-arrow-right fa-xl");
-	});
-
-	// $("#infoMessageImg").mouseenter(() => {
-	// 	$(".myNoteList").show();
-	// });
-
-	// $("#infoMessageImg").mouseleave(() => {
-	// 	$(".myNoteList").hide();
-	// });
-
-	noteLiveBadge();
-}
-
-// function myNoteList(){
-// 	let html = "";
-
-// 	$.ajax({
-// 		url: "/api/note/0/" + new Date().getTime(),
-// 		method: "get",
-// 		async: false,
-// 		dataType: "json",
-// 		contentType: "text/plain",
-// 		success: (result) => {
-// 			if(result.data != null){
-// 				result = cipher.decAes(result.data);
-// 				result = JSON.parse(result);
-	
-// 				html = "<div class=\"myNoteList\">";
-	
-// 				for(let i = 0; i < result.length; i++){
-// 					html += "<div class=\"myNoteListItem\">";
-// 					html += "<span>" + result[i].msg + "</span>";
-// 					html += "</div>";
-// 				}
-			
-// 				html += "</div>";
-// 			}else{
-// 				html = "<div class=\"myNoteList\">";
-// 				html += "<div class=\"myNoteListItem\">";
-// 				html += "<span>알림이 없습니다.</span>";
-// 				html += "</div>";
-// 				html += "</div>";
-// 			}
-
-// 		}
-// 	});
-
-// 	return html;
-// }
 
 function plusBtnClick(e){
 	let thisBtn;
