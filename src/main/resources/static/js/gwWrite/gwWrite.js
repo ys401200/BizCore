@@ -85,6 +85,44 @@ function setTempReport() {
     $(".reportInsertForm").html(storage.reportDetailData.doc);
     $(".insertedDetail").css("border", "1px solid black");
 
+    // simplAppLine 채우기 
+    let appLine = storage.reportDetailData.appLine;
+    let simpleapp = "";
+    let title = ["[검토]", "[합의]", "[결재]", "[수신]", "[참조]"]
+    let newCombine = [[], [], [], [], []];
+    for (let j = 0; j < 5; j++) {
+      for (let i = 0; i < appLine.length; i++) {
+        if (appLine[i][0] == j) {
+          newCombine[j].push(appLine[i][1]);
+        }
+      }
+    }
+
+    for (let k = 0; k < newCombine.length; k++) {
+      if (newCombine[k].length != 0) {
+        simpleapp += title[k];
+      }
+
+      for (let i = 0; i < newCombine.length; i++) {
+        if (k == i) {
+          for (let j = 0; j < newCombine[i].length; j++) {
+            if (j != newCombine[i].length - 1) {
+              simpleapp += storage.user[newCombine[i][j]].userName + "-";
+            } else {
+              simpleapp += storage.user[newCombine[i][j]].userName + " ";
+            }
+
+          }
+        }
+      }
+    }
+
+
+    $(".simpleAppLineData").html(simpleapp);
+
+
+
+
     //작성자 작성일 자동 입력
     $(".typeContainer").html("");
     $(".testClass").prop("checked", false);
