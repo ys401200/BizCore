@@ -5,30 +5,17 @@
             <hr class="bodyTitleBorder" />
             <span class="bodyTitle">견적 목록</span><span class="bodyTitleFnc"><div onclick="clickedAdd()">추가</div></span>
             <div class="listContent">
-				<div class="estimateList">
-					<div>
-						<div>견적일</div>
-						<div>담당자</div>
-						<div>견적번호</div>
-						<div>견적명</div>
-						<div>거래처</div>
-						<div>공급가액</div>
-						<div>부가가치세</div>
-						<div>합계</div>
-						<div>비고</div>
-					</div>
-				</div>
-				<div class="pageContainer"></div>
+				<div class="estimateList"></div><div class="versionList"></div><div class="versionPreview"></div>
 			</div>
         </div>
 
 		<div class="eachContainer">
             <hr class="bodyTitleBorder" />
-            <span class="bodyTitle">견적 상세 내용</span><span class="bodyTitleFnc"><div onclick="closeAdd()">닫기</div></span>
+            <span class="bodyTitle">견적 상세 내용</span><span class="bodyTitleFnc"><div onclick="saveEstimate()" style="display:none" >저장</div><div onclick="closeAdd()" style="margin-left:2em">닫기</div></span>
             <div class="eachContent">
 				<div>
 					<div class="passed"><!-- STEP 1 -->
-						<div><div></div><div>양식 / 권한</div></div>
+						<div><div></div><div>양식 / 견적명</div></div>
 						<div class="estimateStep1"><div style="height:96px;"></div>
 							<div>
 								<div>견적 양식</div>
@@ -43,31 +30,33 @@
 						</div>
 					</div>
 					<div><!-- STEP 2 -->
-						<div><div></div><div>거래처 / 견적 유효기간</div></div>
-						<div class="estimateStep2"><div style="height:70px;"></div>
+						<div><div></div><div>거래처 정보 / 견적 유효기간 </div></div>
+						<div class="estimateStep2"><div style="height:130px;"></div>
 							<div>
 								<div>업 체 명</div>
-								<div style="grid-column-start: 2;grid-column-end: 5;border-right:1px solid #c3c3c3;"><input class="estimateInput" onkeyup="inputCustomer(this, event)" onblur="if(!storage.ac.mouseon)storage.ac.close()" data-value="-1"/></div>
+								<div style="grid-column-start: 2;grid-column-end: 5;border-right:1px solid #c3c3c3;"><input disabled class="estimateInput" onkeyup="inputCustomer(this, event)" onblur="if(!storage.ac.mouseon)storage.ac.close()" data-value="-1"/></div>
 								<div>담 당 자</div>
-								<div><input class="estimateInput" onkeyup="inputCip(this)" /></div>
+								<div><input disabled class="estimateInput" onkeyup="inputCip(this)" /></div>
 								<div>유효기간</div>
-								<div class="formExp"><input type="radio" name="rExp" value="1w" id="rExp1" onchange="storage.estimate.exp=this.value;setDataToPreview();passed(2);" /><label style="margin-right:0.5em;">1주</label><input type="radio" name="rExp" value="2w" id="rExp2" onchange="storage.estimate.exp=this.value;setDataToPreview();passed(2);" /><label style="margin-right:0.5em;">2주</label><input type="radio" name="rExp" value="4w" id="rExp3" onchange="storage.estimate.exp=this.value;setDataToPreview();passed(2);" /><label style="margin-right:0.5em;">4주</label><input type="radio" name="rExp" value="1m" id="rExp4" onchange="storage.estimate.exp=this.value;setDataToPreview();passed(2);" /><label style="margin-right:0.5em;">1개월</label></div>
+								<div class="formExp"><input disabled type="radio" name="rExp" value="1w" id="rExp1" onchange="storage.estimate.exp=this.value;setDataToPreview();passed(2);" /><label style="margin-right:0.5em;">1주</label><input disabled type="radio" name="rExp" value="2w" id="rExp2" onchange="storage.estimate.exp=this.value;setDataToPreview();passed(2);" /><label style="margin-right:0.5em;">2주</label><input disabled type="radio" name="rExp" value="4w" id="rExp3" onchange="storage.estimate.exp=this.value;setDataToPreview();passed(2);" /><label style="margin-right:0.5em;">4주</label><input disabled type="radio" name="rExp" value="1m" id="rExp4" onchange="storage.estimate.exp=this.value;setDataToPreview();passed(2);" /><label style="margin-right:0.5em;">1개월</label></div>
+								<div>비 고</div><textarea disabled onkeyup="storage.estimate.remarks=this.value.replaceAll('\n','<br />');setDataToPreview();" style="grid-column-start: 2;grid-column-end: 5;border-right:1px solid #c3c3c3;height:50px;">Remarks</textarea>
 							</div>
 						</div>
 					</div>
 					<div><!-- STEP 3 -->
-						<div><div></div><div><div style="display:inline-block;width:50%;">항목 입력</div><div style="display:inline-block;width:50%;text-align:right;"><span style="margin:0 1em;" onclick="addEstimateItem(this)">+</span><span onclick="removeEstimateItem(this)">-</span></div></div></div>
-						<div class="estimateItem"><div style="height:224px;border-right: 1px dotted #2c77b7;width:1px;margin: -0.2em 0.5em -0.4em calc(0.2em - 1px);"></div>
+						<div><div></div><div><div style="display:inline-block;width:50%;">견적 항목 입력</div><div style="display:inline-block;width:50%;text-align:right;"><span class="addBtn" style="margin:0 1em;" onclick="addEstimateItem(this)">+</span><span onclick="removeEstimateItem(this)">-</span></div></div></div>
+						<div class="estimateItem"><div style="height:275px;border-right: 1px dotted #2c77b7;width:1px;margin: -0.2em 0.5em -0.4em calc(0.2em - 1px);"></div>
 							<div>
-								<div>구 분</div><input onkeyup="setItem(this)" />
-								<div>타이틀</div><input onkeyup="setItem(this)" style="border-right:1px solid #c3c3c3;" />
-								<div>매입처</div><input onkeyup="setItem(this, event)" data-type="customer" />
-								<div>아이템</div><input onkeyup="setItem(this, event)" data-type="item" style="border-right:1px solid #c3c3c3;" />
-								<div>스 펙</div><textarea onkeyup="setItem(this)" style="grid-column-start: 2;grid-column-end: 5;border-right:1px solid #c3c3c3;height:100px;"></textarea>
-								<div>수 량</div><input onkeyup="setItem(this)" pattern="[0-9,\\,]+" data-type="number" />
-								<div>단 가</div><input onkeyup="setItem(this)" data-type="number" style="border-right:1px solid #c3c3c3;" />
+								<div>구 분</div><input disabled onkeyup="setItem(this)" />
+								<div>타이틀</div><input disabled onkeyup="setItem(this)" style="border-right:1px solid #c3c3c3;" />
+								<div>매입처</div><input disabled onkeyup="setItem(this, event)" data-type="customer" />
+								<div>아이템</div><input disabled onkeyup="setItem(this, event)" data-type="item" style="border-right:1px solid #c3c3c3;" />
+								<div>스 펙</div><textarea disabled onkeyup="setItem(this)" style="grid-column-start: 2;grid-column-end: 5;border-right:1px solid #c3c3c3;height:100px;"></textarea>
+								<div>수 량</div><input disabled onkeyup="setItem(this)" pattern="[0-9,\\,]+" data-type="number" />
+								<div>단 가</div><input disabled onkeyup="setItem(this)" data-type="number" style="border-right:1px solid #c3c3c3;" />
 								<div>VAT</div><div></div>
 								<div>합 계</div><div style="border-right:1px solid #c3c3c3;"></div>
+								<div>비 고</div><textarea disabled onkeyup="setItem(this)" style="grid-column-start: 2;grid-column-end: 5;border-right:1px solid #c3c3c3;"></textarea>
 							</div>
 						</div>
 					</div>

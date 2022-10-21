@@ -6,6 +6,7 @@ $(document).ready(() => {
 	prepare = function(){
 		getEstimateForm();
 		getEstimateItem();
+		getEstimateList();
 	} // End of prepare()
 
     init();
@@ -476,6 +477,11 @@ function setDataToPreview(){
 	t = t === "1w" ? "견적일로 부터 1주일" : t === "2w" ? "견적일로 부터 2주일" : t === "4w" ? "견적일로 부터 4주일" : t === "1m" ? "견적일로 부터 1개월" : "";
 	document.getElementsByClassName("estiomate_expiration_period")[0].innerText = t;
 
+	// ====================== 하단 주석 ========================
+	t = storage.estimate.remarks;
+	t = t === undefined ? "" : t;
+	document.getElementsByClassName("estimate_remark")[0].innerHTML = t;
+
 	// =========== 개별 아이템들 ============ 저장된 값들을 바탕으로 견적서에 그려 넣음 =============
 	html = "<div style=\"display:grid;border-top:border-top: 1px solid black;\"><div>No</div><div>구 분</div><div>품 명 / 규 격</div><div>수 량</div><div>소비자가</div><div>공급단가</div><div>합계</div><div>비고</div></div>";
 	sum = 0;
@@ -490,7 +496,7 @@ function setDataToPreview(){
 		html += ("<div></div>");
 		html += ("<div>" + each.price.toLocaleString() + "</div>");
 		html += ("<div>" + t.toLocaleString() + "</div>");
-		html += ("<div></div></div>");
+		html += ("<div>" + each.remark + "</div></div>");
 		sum += (each.quantity * each.price);
 	}
 	t = [Math.round(sum * 0.1), Math.round(sum * 1.1)];
@@ -538,6 +544,7 @@ function setItem(el, e){
 		each.quantity = t[4].value.replaceAll(",","")*1;
 		each.price = t[5].value.replaceAll(",","")*1;
 		each.spec = els[x].children[1].getElementsByTagName("textarea")[0].value.replaceAll("\n", "<br />");
+		each.remark = els[x].children[1].getElementsByTagName("textarea")[1].value.replaceAll("\n", "<br />");
 		items.push(each);
 		t = [Math.round((each.quantity * each.price) * 0.1), Math.round((each.quantity * each.price) * 1.1)];
 		els[x].children[1].children[15].innerText = t[0].toLocaleString();
@@ -565,125 +572,295 @@ function passed(step){
 		els[1] = document.getElementsByClassName("estimateProject")[0];
 		chk = false;
 		for(x = 0 ; x < els[0].length ; x++)	if(els[0][x].checked)	chk = true;
-		if(els[1].value !== "" && chk)	document.getElementsByClassName("eachContent")[0].children[0].children[1].className = "passed";
+		if(els[1].value !== "" && chk){
+			document.getElementsByClassName("eachContent")[0].children[0].children[1].className = "passed";
+			els = document.getElementsByClassName("eachContent")[0].children[0].children[1].getElementsByTagName("input");
+			for(x = 0 ; x < els.length ; x++)	els[x].disabled = false;
+			els = document.getElementsByClassName("eachContent")[0].children[0].children[1].getElementsByTagName("textarea");
+			for(x = 0 ; x < els.length ; x++)	els[x].disabled = false;
+		}
 	}else if(step === 2){
 		els = document.querySelector("#bodyContent > div.eachContainer > div > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2)").getElementsByTagName("input");
 		if(els[0].value !== "" && els[1].value !== "" && (els[2].checked || els[3].checked || els[4].checked || els[5].checked)){
 			document.querySelector("#bodyContent > div.eachContainer > div > div:nth-child(1) > div:nth-child(3)").className = "passed";
+			els = document.getElementsByClassName("eachContent")[0].children[0].children[2].getElementsByTagName("input");
+			for(x = 0 ; x < els.length ; x++)	els[x].disabled = false;
+			els = document.getElementsByClassName("eachContent")[0].children[0].children[2].getElementsByTagName("textarea");
+			for(x = 0 ; x < els.length ; x++)	els[x].disabled = false;
+			document.getElementsByClassName("bodyTitleFnc")[1].children[0].style = "block";
 		}
 	}
-}
+} // End of passed()
 
 // 견적 항목을 추가하는 한수
 function addEstimateItem(el){
 	let html, t, cnt = el.parentElement.parentElement.parentElement.parentElement
-	html = "<div style=\"width:15px;\"></div><div><div>구 분</div><input onkeyup=\"setItem(this)\" /><div>타이틀</div><input onkeyup=\"setItem(this)\" style=\"border-right:1px solid #c3c3c3;\" /><div>매입처</div><input onkeyup=\"setItem(this, event)\" data-type=\"customer\" /><div>아이템</div><input onkeyup=\"setItem(this, event)\" style=\"border-right:1px solid #c3c3c3;\" /><div>스 펙</div><textarea onkeyup=\"setItem(this)\" data-type=\"html\" style=\"grid-column-start: 2;grid-column-end: 5;border-right:1px solid #c3c3c3;height:100px;\"></textarea><div>수 량</div><input onkeyup=\"setItem(this)\" data-type=\"number\" /><div>단 가</div><input onkeyup=\"setItem(this)\" data-type=\"number\" style=\"border-right:1px solid #c3c3c3;\" /><div>VAT</div><div></div><div>합 계</div><div style=\"border-right:1px solid #c3c3c3;\"></div></div>";
+	html = "<div style=\"width:15px;\"></div><div><div>구 분</div><input onkeyup=\"setItem(this)\" /><div>타이틀</div><input onkeyup=\"setItem(this)\" style=\"border-right:1px solid #c3c3c3;\" /><div>매입처</div><input onkeyup=\"setItem(this, event)\" data-type=\"customer\" /><div>아이템</div><input onkeyup=\"setItem(this, event)\" data-type=\"item\" style=\"border-right:1px solid #c3c3c3;\" /><div>스 펙</div><textarea onkeyup=\"setItem(this)\" data-type=\"html\" style=\"grid-column-start: 2;grid-column-end: 5;border-right:1px solid #c3c3c3;height:100px;\"></textarea><div>수 량</div><input onkeyup=\"setItem(this)\" data-type=\"number\" /><div>단 가</div><input onkeyup=\"setItem(this)\" data-type=\"number\" style=\"border-right:1px solid #c3c3c3;\" /><div>VAT</div><div></div><div>합 계</div><div style=\"border-right:1px solid #c3c3c3;\"></div><div>비 고</div><textarea onkeyup=\"setItem(this)\" style=\"grid-column-start: 2;grid-column-end: 5;border-right:1px solid #c3c3c3;\"></textarea></div>";
 	t = document.createElement("div");
 	t.className = "estimateItem";
 	t.innerHTML = html;
 	cnt.appendChild(t);
-
 } // End of addEstimateItem()
 
 // 견적 항목을 제거하는 한수
 function removeEstimateItem(el){
 	let els = document.getElementsByClassName("estimateItem");
-	if(els.length > 1)	els[els.length - 1].remove();	
+	if(els.length > 1){
+		els[els.length - 1].remove();	
+		storage.estimate.items.pop()
+	}
 } // End of removeEstimateItem()
 
+// 견적 데이터를 인풋 엘리먼트에 넣어주는 함수
+function setDataToInput(estimate){
+	let x, t, v, el;
+
+	// 양식 활성화
+	v = estimate.form;
+	el = document.getElementsByClassName("formNames")[0].getElementsByTagName("label");
+	for(x = 0 ; x < el.length ; x++){
+		if(el[x].innerText == v){
+			el[x].click();
+			break;
+		}
+	}
+	// 견적명
+	v = estimate.title;
+	el = document.getElementsByClassName("estimateProject")[0];
+	el.value = v;
+	passed(1);
+
+	// 업체명 
+	v = estimate.title;
+	el = document.getElementsByClassName("estimateInput")[0];
+	el.dataset.value = v;
+	t = storage.customer[v];
+	t = t !== undefined ? t.name : v;
+	el.value = t;
+
+	// 업체 담당자
+	v = estimate.title;
+	el = document.getElementsByClassName("estimateInput")[1];
+	el.value = v;
+
+	// 유효기간
+	v = estimate.exp;
+	el = document.getElementsByName("rExp");
+	for(x = 0 ; x < el.length ; x++)	if(el[x].value == v)	el[x].checked = true;
+
+	// 하단 비고
+	v = estimate.remarks;
+	el = document.getElementsByClassName("formExp")[0].nextElementSibling.nextElementSibling;
+	el.value = v.replaceAll("<br />","\n");
+	passed(2);
+
+	// ======================== 견적 항목 입력 ========================
+
+	// 아이템 수 만큼 엘리먼트 만들어두기
+	el = document.getElementsByClassName("addBtn")[0];
+	for(x = 1 ; x < estimate.items.length ; x++)	addEstimateItem(el);
+
+	// ===== for loop =====
+	el = document.getElementsByClassName("estimateItem");
+	for(x = 0 ; x < estimate.items.length ; x++){
+
+		// 구분
+		v = estimate.items[x].div;
+		el[x].children[1].children[1].value = v;
+
+		// 타이틀
+		v = estimate.items[x].title;
+		el[x].children[1].children[3].value = v;
+
+		// 매입처
+		v = estimate.items[x].supplier;
+		el[x].children[1].children[5].dataset.value = v;
+		t = storage.customer[v];
+		if(t !== undefined && t.name !== undefined)	el[x].children[1].children[5].value = t.name;
+		else										el[x].children[1].children[5].value = v;
+
+		// 아이템
+		v = estimate.items[x].item;
+		el[x].children[1].children[7].dataset.value = v;
+		for(t = 0 ; t < storage.item.length ; t++){
+			if(t === undefined) continue;
+			if(storage.item[t].no = v)	break;
+		}
+		t = storage.item[t];
+		if(t !== undefined && t.no !== undefined)	el[x].children[1].children[7].value = t.product;
+		else										el[x].children[1].children[7].value = v;
+
+		// 스펙
+		v = estimate.items[x].spec;
+		el[x].children[1].children[9].value = v;
+
+		// 수량
+		v = estimate.items[x].quantity;
+		el[x].children[1].children[11].value = v;
+
+		// 가격
+		v = estimate.items[x].price;
+		el[x].children[1].children[13].value = v;
+
+		// 비고
+		v = estimate.items[x].remark;
+		el[x].children[1].children[15].value = v.replaceAll("<br />","\n");		
+	}
+
+	storage.estimate = estimate;
+	setDataToPreview();
+} // End of setDataToInput()
+
+// 견적 목록 클릭 이벤트 리스너
+function clickedEstimate(el){
+	let x, cnt, els, color = "#e1e9ff", estmNo;
+	cnt = el.parentElement;
+	els = cnt.children;
+	for(x = 1 ; x < els.length ; x++)	els[x].style.backgroundColor = "";
+	el.style.backgroundColor = color;
+	estmNo = el.children[0].innerText;
+	getEstmVerList(estmNo);
+} // End of clickedEstimate()
+
+function clickedEstmVer(el){
+	let x, cnt;
+	cnt = document.getElementsByClassName("versionPreview")[0];
+	x = el.dataset.idx*1;
+	cnt.innerHTML = storage.estmVerList[x].doc;
+	cnt.style.display = "inline-block";
+	cnt.style.width = "400px";
+	cnt.style.height = Math.floor(400 / storage.estmVerList[x].width * storage.estmVerList[x].height) + "px";
+	cnt.style.fontSize = (400 / 120) + "px";
+} // End of clickedEstmVer()
+
+// 견적 목록을 그리는 함수
+function drawEstmList(){
+	let cnt, html, x, t;
+	cnt = document.getElementsByClassName("estimateList")[0];
+	html = "<div><div>번 호</div><div>양 식</div><div>견 적 명</div><div>버전</div><div>등록일</div><div>금 액</div></div>";
+	for(x = 0 ; x < storage.estmList.length ; x++){
+		t = "<div onclick=\"clickedEstimate(this)\" data-idx=\"" + x + "\"><div>" + storage.estmList[x].no + "</div>";
+		t += ("<div>" + storage.estmList[x].form + "</div>");
+		t += ("<div>" + storage.estmList[x].title + "</div>");
+		t += ("<div>" + storage.estmList[x].version + "</div>");
+		t += ("<div>" + dateFormat(storage.estmList[x].date) + "</div>");
+		t += ("<div>" + storage.estmList[x].total.toLocaleString() + "</div></div>");
+		html += t;
+	}
+	cnt.innerHTML = html;
+} // End of drawEstmList()
+
+// 견적 버전 목록을 그리는 함수
+function drawEstmVerList(){
+	let cnt, html, x, t;
+	cnt = document.getElementsByClassName("versionList")[0];
+	html = "<div><div>버전</div><div>견 적 명</div><div>작성자</div><div>작성일</div><div>금액</div></div>";
+	for(x = 0 ; x < storage.estmVerList.length ; x++){
+		t = "<div onclick=\"clickedEstmVer(this)\" data-idx=\"" + x + "\"><div>" + storage.estmVerList[x].version + "</div>";
+		t += ("<div>" + storage.estmVerList[x].title + "</div>");
+		t += ("<div>" + storage.user[storage.estmVerList[x].writer].userName + "</div>");
+		t += ("<div>" + dateFormat(storage.estmVerList[x].date) + "</div>");
+		t += ("<div>" + storage.estmList[x].total.toLocaleString() + "</div></div>");
+		html += t;
+	}
+	cnt.innerHTML = html;
+	cnt.style.display="inline-block";
+} // End of drawEstmList()
+
+// 견적 정보를 저장하는 함수
+function saveEstimate(){
+	let url, data, width = 0, height = 0, x;
+	url = apiServer + "/api/estimate";
+	data = storage.estimate;
+
+	for(x = 0 ; x < storage.estimateForm.length ; x++){
+		if(storage.estimateForm[x].name === storage.estimate.form){
+			height = storage.estimateForm[x].height;
+			width = storage.estimateForm[x].width;
+			break;
+		}
+	}
+
+	data.doc = document.getElementsByClassName("estimatePreview")[0].innerHTML.replaceAll("\r","").replaceAll("\n","");
+	data.width = width;
+	data.height = height;
+	data.no = null;
+	data.version = 1;
+	data.related = {};
+	data.related.parent = "empty:0000";
+	data.related.previous = "empty:0000";
+	data.related.next = ["empty:0000","empty:0000"];
+	data = JSON.stringify(data);
+	data = cipher.encAes(data);
+
+	$.ajax({
+		"url": url,
+		"data":data,
+		"method": "post",
+		"dataType": "json",
+		"contentType":"text/plain",
+		"cache": false,
+		success: (data) => {
+			if (data.result === "ok") {
+				console.log(" = = = O K = = = ");
+			} else {
+				console.log(data.msg);
+			}
+		}
+	});
+} // End of saveEstimate()
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// 서버에서 은행계좌 거래정보를 가져오는 함수
-function getBankAccountHistory(bank, account){
+// 견적 정보를 가져하는 함수
+function getEstimateList(){
 	let url;
-	url = apiServer + "/api/accounting/bankdetail/" + bank + "/" + account;
+	url = apiServer + "/api/estimate";
+
 	$.ajax({
 		"url": url,
 		"method": "get",
 		"dataType": "json",
 		"cache": false,
 		success: (data) => {
-			let x, list, row;
+			let list;
 			if (data.result === "ok") {
-				list = cipher.decAes(data.data);
-				list = list.replaceAll("\r","").replaceAll("\n","").replaceAll("\t","");
-				list = JSON.parse(list);
-				storage.bankHistory = list;
-				row = Math.floor((document.getElementsByClassName("accountingContent")[0].clientHeight - 60) / 31 / 5);
-				row = row < 4 ? 4 : row > 10 ? 10 : row;
-				storage.page.line = row;
-				document.getElementsByClassName("bodyFunc1")[0].children[0].value = row;
-				storage.page.max = Math.ceil(list.length / (row * 5));
-				storage.page.current = 1;
-				console.log("[getBankAccountList] Success getting bank account information.");
-				drawAccountHistory();
+				list = data.data;
+				list = cipher.decAes(list);
+				storage.estmList = JSON.parse(list);
+				drawEstmList();
 			} else {
-				msg.set("[getBankAccountList] Fail to get bank account information.");
+				console.log(data.msg);
 			}
 		}
 	});
-} // End of getBankAccountDetail()
+} // End of getEstimateList()
 
+// 견적 버전 목록을 가져오는 함수
+function getEstmVerList(estmNo){
+	let url;
+	url = apiServer + "/api/estimate/" + estmNo;
 
+	$.ajax({
+		"url": url,
+		"method": "get",
+		"dataType": "json",
+		"cache": false,
+		success: (data) => {
+			let list, x;
+			if (data.result === "ok") {
+				list = data.data;
+				list = cipher.decAes(list);
+				list = JSON.parse(list);
+				for(x = 0 ; x < list.length ; x++)	list[x].doc = cipher.decAes(list[x].doc);
+				storage.estmVerList = list;
+				drawEstmVerList();
+			} else {
+				console.log(data.msg);
+			}
+		}
+	});
+} // End of getEstimateList()
 
-
-
-
-
-
-
-
-
-
-function drawPaging(){
-	let cnt, html, current, start, end, limit, padding, x;
-	cnt = document.getElementsByClassName("pageContainer")[0];
-	limit = storage.page.max;
-	padding = 3;
-	current = storage.page.current;
-	start = current - padding;
-	start = start < 1 ? 1 : start;
-	end = current + padding;
-	end = end > limit ? limit : end;
-	console.log("limit : " + limit + " / padding : " + padding + " / current : " + current + " / start : " + start + " / end" + end);
-	if(start === 1)			html = "";
-	else if(start === 2)	html = "<div onclick=\"clickedPaging(1)\">1</div>";
-	else if(start > 2)	html = "<div onclick=\"clickedPaging(1)\">1</div><div>...</div>";
-	for(x = start ; x <= end ; x++){
-		html += ("<div " + (current !== x ? "onclick=\"clickedPaging(" + x + ")\"" : "class=\"paging_cell_current\"") + ">" + x + "</div>");
-	}
-	if(end === limit - 1)		html += ("<div onclick=\"clickedPaging(" + limit + ")\">" + limit + "</div>");
-	else if(end < limit - 1)	html += ("<div>...</div><div onclick=\"clickedPaging(" + limit + ")\">" + limit + "</div>");
-
-	cnt.innerHTML = html;
-} // End of drawPaging()
-
-function clickedPaging(n){
-	storage.page.current = n*1;
-	drawAccountHistory();
-}
-
-
-
-
-
-// 날짜 포맷 함수
 function dateFormat(l){
 	let str = "", dt;
 	if(l === undefined || l === null || isNaN(l))	return "";
@@ -693,37 +870,3 @@ function dateFormat(l){
 	str += (dt.getDate());
 	return str;
 } // End of dateFormat()
-
-
-
-
-
-function codeToBank(code){
-	let t, bnk = {"002": "KDB산업은행","003": "IBK기업은행","004": "KB국민은행","007": "수협은행","011": "NH농협은행","012": "농협중앙회(단위농축협)","020": "우리은행","023": "SC제일은행","027": "한국씨티은행","031": "대구은행","032": "부산은행","034": "광주은행","035": "제주은행","037": "전북은행","039": "경남은행","045": "새마을금고중앙회","048": "신협중앙회","050": "저축은행중앙회","064": "산림조합중앙회","071": "우체국","081": "하나은행","088": "신한은행","089": "케이뱅크","090": "카카오뱅크","092": "토스뱅크","218": "KB증권","238": "미래에셋대우","240": "삼성증권","243": "한국투자증권","247": "NH투자증권","261": "교보증권","262": "하이투자증권","263": "현대차증권","264": "키움증권","265": "이베스트투자증권","266": "SK증권","267": "대신증권","269": "한화투자증권","271": "토스증권","278": "신한금융투자","279": "DB금융투자","280": "유진투자증권","287": "메리츠증권"};
-	t = code === undefined ? "" : bnk[code];
-	return t === undefined ? "" : t;
-}
-
-function clickedAccount(el){
-	let x, order, cntList, cntContent, parent, bank, account;
-
-	order = el.dataset.order * 1;
-	parent = el.parentElement;
-	cntList = document.getElementsByClassName("accountingContent")[0].children[0];
-	cntContent = document.getElementsByClassName("accountingContent")[0].children[1];
-	cntContent.innerHTML = "<div><div>일자</div><div>기재내용</div><div>입금</div><div>출금</div><div>잔액</div><div>거래점</div><div>통장메모</div><div>메모</div><div>연결</div></div>";
-	document.getElementsByClassName("pageContainer")[0].innerHTML = "";
-	cntList.className = "accountListCollect";
-	cntContent.style.display = "inline-block";
-	for(x = 1 ; x < parent.children.length ; x++)	parent.children[x].children[6].innerText = "";
-	document.getElementsByClassName("bodyFunc1")[0].style.display = "inline-block";
-	document.getElementsByClassName("bodyFunc2")[0].style.display = "inline-block";
-	el.children[6].innerText = "►";
-	bank = storage.bankAccount[order].bankCode;
-	account = storage.bankAccount[order].account;
-	storage.page.account = account;
-	storage.page.bank = bank;
-	getBankAccountHistory(bank, account);
-} // End of clickedAccount()
-
-
