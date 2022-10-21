@@ -613,10 +613,13 @@
                     if (storage.docList[i].type == "TRS" || storage.docList[i].type == "BUY") {
                         target.html(storage.form[0].form);
                         if (storage.docList[i].type == "TRS") {
-                            $("#TRS").attr("checked", true);
+                            $("#TRS").attr("checked", true); 
                         } else {
                             $("#BUY").attr("checked", true);
                         }
+
+                        
+
                         let id = storage.form[0].id;
                         commonDrawFnc(docListTitle, info, appTitles, i, id, dataTitles);
 
@@ -746,6 +749,55 @@
                         }
 
 
+                        let dataHtml = ""
+
+                        if (info.docData != null) for (let q = 0; q < Object.keys(info.docData).length; q++) {
+                            dataHtml += "<div class='detailcontentDiv'>"
+                            for (let j = 0; j < dataTitles.length; j++) {
+                                if (j == (dataTitles.length - 1)) {
+                                    dataHtml += "<div class='detailcontentlast'><input type='text' value='" + info.docData[q][dataTitles[j]] + "' onkeyup='this.dataset.detail=this.value' class='inputs outlineNonedata " + id + "_" + dataTitles[j] + "'></div>";
+                                } else if (dataTitles[j] == 'date') {
+                                    let date = getYmdHyphen(info.docData[q][dataTitles[j]]);
+                                    dataHtml += "<div class='detailcontent'><input class='inputs outlineNonedata " + id + "_" + dataTitles[j] + "' onchange='this.dataset.detail=this.value;' type='date' value='" + date + "' ></div>";
+                                } else if (dataTitles[j] == 'price' || dataTitles[j] == 'quantity' || dataTitles[j] == 'subTotal' || dataTitles[j] == 'tax' || dataTitles[j] == 'total') {
+                                    dataHtml += "<div class='detailcontent'><input class='inputs outlineNonedata " + id + "_" + dataTitles[j] + "' type='text' oninput='setNum(this)'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' value='" + (info.docData[q][dataTitles[j]]).toLocaleString() + "'></div>";
+                                } else {
+                                    dataHtml += "<div class='detailcontent'><input class='inputs outlineNonedata" + id + "_" + dataTitles[j] + "' type='text' onkeyup='this.dataset.detail=this.value' value='" + info.docData[q][dataTitles[j]] + "'></div>";
+                                }
+                            } dataHtml += "<div class='detailcontentbox'><input type='checkbox' class='detailBox'></div></div>"
+                        }
+
+                        $(".insertedDataList").html(dataHtml);
+
+                        let totalCount = 0;
+                        for (let i = 0; i < $("." + id + "_total").length; i++) {
+                            totalCount += Number(
+                                $("." + id + "_total")[i].value.replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "")
+                            );
+                        }
+                        totalCount = totalCount.toLocaleString();
+                        $(".insertedTotal").val(totalCount);
+                        let originHtml = $("#contentContainer").html();
+                        originHtml += "<div class='innerHtml'></div>"
+                        $("#contentContainer").html(originHtml);
+                        $(".innerHtml").html(storage.docList[i].content);
+                        $("#" + id + "_content").hide();
+
+                        
+// 모든 인풋 데이터셋 설정 
+let app_preview= $(".app_preview")[0];
+let inputsArr = app_preview.getElementsByTagName("input");
+
+for (let i = 0; i < inputsArr.length; i++) {
+inputsArr[i].dataset.detail = inputsArr[i].value;}
+
+
+
+$(".list_comment")[0].dataset.detail="old"; 
+
+
+
+
 
                         for (let i = 0; i < info.appData.length; i++) {
                             for (let j = 0; j < appTitles.length; j++) {
@@ -809,13 +861,13 @@
                                             if ($("#" + id + "_writer").val() == '구민주') {
                                                 appDatas =
                                                     [[0, 10017, 0, getYmdSlash2(created) + "", 0, $(".app_preview").html(), getYmdSlash2(created) + "", null, null, null, soppAndCus],
-                                                    [10, 10002, 2, approved, 0, null, approved, null, null, null, null]];
+                                                    [10, 10002, 2, approved, 0, $(".app_preview").html(), approved, null, null, null, soppAndCus]];
 
                                             } else {
                                                 appDatas =
                                                     [[0, num, 0, getYmdSlash2(created) + "", 0, $(".app_preview").html(), getYmdSlash2(created) + "", null, null, null, soppAndCus],
-                                                    [10, 10017, 0, approved, 0, null, approved, null, null, null, null],
-                                                    [20, 10002, 2, approved, 0, null, approved, null, null, null, null]];
+                                                    [10, 10017, 0, approved, 0,$(".app_preview").html(), approved, null, null, null, soppAndCus],
+                                                    [20, 10002, 2, approved, 0, $(".app_preview").html(), approved, null, null, null, soppAndCus]];
 
 
                                             }
@@ -860,7 +912,7 @@
                                                 // ordered employee appType read isModify doc approved retrieved rejected comment appData 
 
                                                 appDatas = [[0, num, 0, getYmdSlash2(created) + "", 0, $(".app_preview").html(), getYmdSlash2(created) + "", null, null, null, soppAndCus],
-                                                [10, 10017, 0, approved, 0, null, null, null, approved + "", null, null], [20, 10002, 2, null, 0, null, null, null, null, null, null]];
+                                                [10, 10017, 0, approved, 0, $(".app_preview").html(), null, null, approved + "", null, soppAndCus], [20, 10002, 2, null, 0, null, null, null, null, null, null]];
 
 
 
@@ -888,11 +940,11 @@
 
                                                 if ($("#" + id + "_writer").val() == '구민주') {
                                                     appDatas = [[0, 10017, 0, getYmdSlash2(created) + "", 0, $(".app_preview").html(), getYmdSlash2(created) + "", null, null, null, soppAndCus],
-                                                    [10, 10002, 2, approved + "", 0, null, null, null, approved + "", null, null]];
+                                                    [10, 10002, 2, approved + "", 0, $(".app_preview").html(), null, null, approved + "", null, soppAndCus]];
                                                 } else {
                                                     appDatas = [[0, num, 0, getYmdSlash2(created) + "", 0, $(".app_preview").html(), getYmdSlash2(created) + "", null, null, null, soppAndCus],
-                                                    [10, 10017, 0, approved + "", 0, null, approved + "", null, null, null, null],
-                                                    [20, 10002, 2, approved + "", 0, null, null, null, approved + "", null, null]];
+                                                    [10, 10017, 0, approved + "", 0, $(".app_preview").html(), approved + "", null, null, null, soppAndCus],
+                                                    [20, 10002, 2, approved + "", 0, $(".app_preview").html(), null, null, approved + "", null, soppAndCus]];
                                                 }
                                             }
                                             // 검토 요청  
@@ -908,7 +960,7 @@
                                             $("." + id + "_writer_approved").attr("data-detail", $("#" + id + "_created").val());
                                             if ($("#" + id + "_writer").val() == '구민주') {
                                                 appDatas = [[0, 10017, 0, getYmdSlash2(created) + "", 0, $(".app_preview").html(), getYmdSlash2(created) + "", null, null, null, soppAndCus],
-                                                [10, 10002, 2, approved, 0, null, null, null, null, null, null]];
+                                                [10, 10002, 2, approved, 0, null, null, null, null, null, soppAndCus]];
                                             } else {
                                                 appDatas = [[0, num, 0, getYmdSlash2(created) + "", 0, $(".app_preview").html(), getYmdSlash2(created) + "", null, null, null, soppAndCus],
                                                 [10, 10017, 0, null, 0, null, null, null, null, null, null], [20, 10002, 2, null, 0, null, null, null, null, null, null]];
@@ -923,39 +975,7 @@
                             }
                         }
 
-                        let dataHtml = ""
-
-                        if (info.docData != null) for (let q = 0; q < Object.keys(info.docData).length; q++) {
-                            dataHtml += "<div class='detailcontentDiv'>"
-                            for (let j = 0; j < dataTitles.length; j++) {
-                                if (j == (dataTitles.length - 1)) {
-                                    dataHtml += "<div class='detailcontentlast'><input type='text' value='" + info.docData[q][dataTitles[j]] + "' onkeyup='this.dataset.detail=this.value' class='inputs outlineNonedata " + id + "_" + dataTitles[j] + "'></div>";
-                                } else if (dataTitles[j] == 'date') {
-                                    let date = getYmdHyphen(info.docData[q][dataTitles[j]]);
-                                    dataHtml += "<div class='detailcontent'><input class='inputs outlineNonedata " + id + "_" + dataTitles[j] + "' onchange='this.dataset.detail=this.value;' type='date' value='" + date + "' ></div>";
-                                } else if (dataTitles[j] == 'price' || dataTitles[j] == 'quantity' || dataTitles[j] == 'subTotal' || dataTitles[j] == 'tax' || dataTitles[j] == 'total') {
-                                    dataHtml += "<div class='detailcontent'><input class='inputs outlineNonedata " + id + "_" + dataTitles[j] + "' type='text' oninput='setNum(this)'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' value='" + (info.docData[q][dataTitles[j]]).toLocaleString() + "'></div>";
-                                } else {
-                                    dataHtml += "<div class='detailcontent'><input class='inputs outlineNonedata" + id + "_" + dataTitles[j] + "' type='text' onkeyup='this.dataset.detail=this.value' value='" + info.docData[q][dataTitles[j]] + "'></div>";
-                                }
-                            } dataHtml += "<div class='detailcontentbox'><input type='checkbox' class='detailBox'></div></div>"
-                        }
-
-                        $(".insertedDataList").html(dataHtml);
-
-                        let totalCount = 0;
-                        for (let i = 0; i < $("." + id + "_total").length; i++) {
-                            totalCount += Number(
-                                $("." + id + "_total")[i].value.replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "")
-                            );
-                        }
-                        totalCount = totalCount.toLocaleString();
-                        $(".insertedTotal").val(totalCount);
-                        let originHtml = $("#contentContainer").html();
-                        originHtml += "<div class='innerHtml'></div>"
-                        $("#contentContainer").html(originHtml);
-                        $(".innerHtml").html(storage.docList[i].content);
-                        $("#" + id + "_content").hide();
+                        
 
                         insertDataFnc(dataStatus, insertData, num, id, created, appDatas);
                         // 결재타입이 발주서인 경우 
@@ -1284,17 +1304,51 @@
             $(".innerHtml").html(storage.docList[i].content);
             $("#" + id + "_content").hide();
 
-
-
             soppAndCus = {
                 "sopp": storage.soppResult = "" ? null : storage.soppResult + "",
                 "customer": storage.custResult = "" || undefined ? null : storage.custResult + "",
             }
 
 
-            for (let i = 0; i < info.appData.length; i++) {
-                for (let j = 0; j < appTitles.length; j++) {
+            let dataHtml = ""
 
+        if (info.docData != null) for (let q = 0; q < Object.keys(info.docData).length; q++) {
+                dataHtml += "<div class='detailcontentDiv'>"
+                     for (let j = 0; j < dataTitles.length; j++) {
+                 if (j == (dataTitles.length - 1)) {
+                  dataHtml += "<div class='detailcontentlast'><input type='text' onkeyup='this.dataset.detail=this.value' value='" + info.docData[q][dataTitles[j]] + "' class='inputs outlineNonedata " + id + "_" + dataTitles[j] + "'></div>";
+                } else if (dataTitles[j] == 'date') {
+                 let date = getYmdHyphen(info.docData[q][dataTitles[j]]);
+                 dataHtml += "<div class='detailcontent'><input class='inputs outlineNonedata " + id + "_" + dataTitles[j] + "' onchange='this.dataset.detail=this.value;' type='date' value='" + date + "' ></div>";
+                } else if (dataTitles[j] == 'price' || dataTitles[j] == 'quantity' || dataTitles[j] == 'subTotal' || dataTitles[j] == 'tax' || dataTitles[j] == 'total') {
+                 dataHtml += "<div class='detailcontent'><input class='inputs outlineNonedata " + id + "_" + dataTitles[j] + "' type='text' oninput='setNum(this)'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' value='" + (info.docData[q][dataTitles[j]]).toLocaleString() + "'></div>";
+                } else {
+                 dataHtml += "<div class='detailcontent'><input class='inputs outlineNonedata " + id + "_" + dataTitles[j] + "' type='text'  onkeyup='this.dataset.detail=this.value' value='" + info.docData[q][dataTitles[j]] + "'></div>";
+                }
+            } dataHtml += "<div class='detailcontentbox'><input type='checkbox' class='detailBox'></div></div>"
+        }
+
+            $(".insertedDataList").html(dataHtml);
+
+              let totalCount = 0;
+              for (let i = 0; i < $("." + id + "_total").length; i++) {
+                  totalCount += Number($("." + id + "_total")[i].value.replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", ""));
+                }
+
+                   totalCount = totalCount.toLocaleString();
+                    $(".insertedTotal").val(totalCount);
+
+// 모든 인풋 데이터셋 설정 
+let target = $(".app_preview")[0];
+let inputsArr = target.getElementsByTagName("input");
+
+for (let i = 0; i < inputsArr.length; i++) {
+inputsArr[i].dataset.detail = inputsArr[i].value;}
+$(".list_comment")[0].dataset.detail="old"; 
+
+
+     for (let i = 0; i < info.appData.length; i++) {
+                for (let j = 0; j < appTitles.length; j++) {
                     if (info.appData[i][appTitles[j]] != null) {
                         if (appTitles[j] == 'app') {
                             let app = storage.user[info.appData[i][appTitles[j]]].userName;
@@ -1309,10 +1363,8 @@
                                 $("." + id + "_writer_approved").attr("data-detail", $("#" + id + "_created").val());
 
 
-
                                 appDatas = [[0, num, 0, getYmdSlash2(created) + "", 0, $(".app_preview").html(), getYmdSlash2(created) + "", null, null, null, soppAndCus],
                                 [10, 10002, 2, null, 0, null, null, null, null, null, null]];
-
 
                             } else if (status == '반려') {
                                 let request = info.appData[i].request;
@@ -1350,7 +1402,7 @@
                                     $("." + id + "_approval_approved").attr("data-detail", approved);
                                     // ordered employee appType read isModify doc approved retrievee rejeceted comment appData 
                                     appDatas = [[0, num, 0, getYmdSlash2(created) + "", 0, $(".app_preview").html(), getYmdSlash2(created) + "", null, null, null, soppAndCus],
-                                    [10, 10002, 2, approved, 0, null, null, null, approved, storage.docInfo.appData[0].comment, null]];
+                                    [10, 10002, 2, approved, 0, $(".app_preview").html(), null, null, approved, storage.docInfo.appData[0].comment, soppAndCus]];
                                 }
                             } else if (status == '임시저장') {
                                 dataStatus = 0;
@@ -1380,50 +1432,18 @@
                                     comment = storage.docInfo.appData[0].comment;
                                 }
                                 appDatas = [[0, num, 0, getYmdSlash2(created) + "", 0, $(".app_preview").html(), getYmdSlash2(created) + "", null, null, null, soppAndCus],
-                                [10, 10002, 2, approved, 0, null, approved, null, null, comment, null]];
+                                [10, 10002, 2, approved, 0, $(".app_preview").html(), approved, null, null, comment, soppAndCus]];
                             }
                         }
                     }
                 }
             }
 
-
-            let dataHtml = ""
-
-
-            if (info.docData != null) for (let q = 0; q < Object.keys(info.docData).length; q++) {
-                dataHtml += "<div class='detailcontentDiv'>"
-                for (let j = 0; j < dataTitles.length; j++) {
-                    if (j == (dataTitles.length - 1)) {
-                        dataHtml += "<div class='detailcontentlast'><input type='text' onkeyup='this.dataset.detail=this.value' value='" + info.docData[q][dataTitles[j]] + "' class='inputs outlineNonedata " + id + "_" + dataTitles[j] + "'></div>";
-                    } else if (dataTitles[j] == 'date') {
-                        let date = getYmdHyphen(info.docData[q][dataTitles[j]]);
-                        dataHtml += "<div class='detailcontent'><input class='inputs outlineNonedata " + id + "_" + dataTitles[j] + "' onchange='this.dataset.detail=this.value;' type='date' value='" + date + "' ></div>";
-                    } else if (dataTitles[j] == 'price' || dataTitles[j] == 'quantity' || dataTitles[j] == 'subTotal' || dataTitles[j] == 'tax' || dataTitles[j] == 'total') {
-                        dataHtml += "<div class='detailcontent'><input class='inputs outlineNonedata " + id + "_" + dataTitles[j] + "' type='text' oninput='setNum(this)'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' value='" + (info.docData[q][dataTitles[j]]).toLocaleString() + "'></div>";
-                    } else {
-                        dataHtml += "<div class='detailcontent'><input class='inputs outlineNonedata " + id + "_" + dataTitles[j] + "' type='text'  onkeyup='this.dataset.detail=this.value' value='" + info.docData[q][dataTitles[j]] + "'></div>";
-                    }
-                } dataHtml += "<div class='detailcontentbox'><input type='checkbox' class='detailBox'></div></div>"
-            }
-
-            $(".insertedDataList").html(dataHtml);
-
-            let totalCount = 0;
-            for (let i = 0; i < $("." + id + "_total").length; i++) {
-                totalCount += Number(
-                    $("." + id + "_total")[i].value.replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "")
-                );
-            }
-            totalCount = totalCount.toLocaleString();
-            $(".insertedTotal").val(totalCount);
             insertDataFnc(dataStatus, insertData, num, id, created, appDatas);
 
-
-
-
+        
         }
-
+    
 
 
 

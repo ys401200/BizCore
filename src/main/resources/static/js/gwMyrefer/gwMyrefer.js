@@ -62,10 +62,6 @@ function drawMyRefer() {
       align: "center",
     },
     {
-      title: "조회",
-      align: "center",
-    },
-    {
       title: "상태",
       align: "center",
     },
@@ -139,9 +135,6 @@ function drawMyRefer() {
         },
         {
           setData: storage.user[jsonData[i].writer].userName,
-        },
-        {
-          setData: read,
         },
         {
           setData: status,

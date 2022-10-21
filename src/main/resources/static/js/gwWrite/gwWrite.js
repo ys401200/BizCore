@@ -82,6 +82,7 @@ function setTempReport() {
     $(".createLineBtn").show();
     $(".reportInsertForm").html(storage.reportDetailData.doc);
     $(".insertedDetail").show();
+    $(".insertedDetail").css("border", "1px solid black");
 
     //작성자 작성일 자동 입력
     $(".testClass").prop("checked", false);
@@ -91,9 +92,10 @@ function setTempReport() {
     $(".inputsAuto").eq(0).css("text-align", "left");
     $(".inputsAuto").eq(1).css("text-align", "left");
     $(".inputsAuto").eq(2).css("text-align", "left");
-
     $(".saveBtn").prop("disabled", false);
     $(".previewBtn").prop("disabled", false);
+    $(".stepLabel").css("color", "black");
+    $(".lineBtnContainer").css("border-left", "2px solid black");
 
     let target = $(".reportInsertForm")[0];
     let inputsArr = target.getElementsByTagName("input");
@@ -195,7 +197,7 @@ function selectForm() {
   $(".inputsAuto").eq(1).css("text-align", "left");
   $(".inputsAuto").eq(2).css("text-align", "left");
 
-  $(".saveBtn").prop("disabled", false);
+  // $(".saveBtn").prop("disabled", false);
   $(".previewBtn").prop("disabled", false);
 
   //영업기회 데이터 리스트 만들기
@@ -243,6 +245,7 @@ function selectForm() {
   // previewWidth = previewWidth.clientWidth;
   // let target = $(".reportInsertForm");
   // target.css("height", Math.ceil((previewWidth / 210) * 297));
+  setModalhtml();
 }
 
 // 영업기회 데이터 리스트 가져오는 함수
@@ -331,7 +334,7 @@ function setSoppList(formId) {
   // orgChartTarget.html(innerHtml);
   // $(".modal-wrap").hide();
 
-  setModalhtml();
+
 }
 
 // 결재선 생성 버튼 눌렀을 때 모달 띄움
@@ -431,6 +434,7 @@ function closeGwModal(obj) {
       $(".inputsAuto").eq(2).css("text-align", "left");
       $(".modal-wrap").hide();
       $(".insertedDetail").show();
+      $(".saveBtn").prop("disabled", false);
       let tt = $(".stepLabel")[2];
       $(tt).css("color", "black");
       $(".insertedDetail").css("border", "1px solid black");
@@ -811,16 +815,12 @@ function createLine() {
       lgcTotal = lineGrid[3].clientWidth;
     }
 
-
-
-
   } else {
     for (let i = 0; i < lineGrid.length; i++) {
       lgcTotal += lineGrid[i].clientWidth;
     }
 
   }
-
   if (lgcTotal > infoLength) {
     for (let i = 0; i < lineGrid.length; i++) {
       let tt = lineGrid[i];

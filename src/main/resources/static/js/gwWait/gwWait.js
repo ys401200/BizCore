@@ -798,19 +798,21 @@ function approveBtnEvent() {
   }
 
 
-  if (storage.reportDetailData.sopp == soppResult) {
-    soppResult = "";
-  }
-  if (storage.reportDetailData.customer == cusResult) {
-    cusResult = "";
-  }
+  // if (storage.reportDetailData.sopp == soppResult) {
+  //   soppResult = "";
+  // }
+  // if (storage.reportDetailData.customer == cusResult) {
+  //   cusResult = "";
+  // }
 
 
 
 
   if (
-    soppResult == "" &&
-    cusResult == "" &&
+    // soppResult == "" &&
+    // cusResult == "" &&
+    storage.reportDetailData.sopp == soppResult &&
+    storage.reportDetailData.customer == cusResult &&
     storage.oriCbContainer ==
     $("input[name='" + formId + "_RD']:checked").attr("id") &&
     storage.oriInsertedContent == $(".insertedContent").html() &&

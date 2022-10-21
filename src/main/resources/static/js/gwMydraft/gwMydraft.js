@@ -310,15 +310,25 @@ function getDetailView() {
 
   }
 
-
-
-  // 상세타입 체크하게 하기
-  let rd = $("input[name='" + formId + "_RD']");
-  for (let i = 0; i < rd.length; i++) {
-    if (rd[i].dataset.detail == "on") {
-      $("#" + rd[i].id).prop("checked", true);
+  // 이전 전자 결재 문서 가져온 경우 
+  if ($(".list_comment")[0].dataset.detail == "old") {
+    let rd = $("input[name='" + formId + "_RD']");
+    for (let i = 0; i < rd.length; i++) {
+      if (rd[i].checked == true) {
+        $("#" + rd[i].id).prop("checked", true);
+      }
     }
+  } else { // 새문서 작성한 것 가져온 경우 구분 
+    let rd2 = $("input[name='" + formId + "_RD']");
+    for (let i = 0; i < rd2.length; i++) {
+      if (rd2[i].dataset.detail == "on") {
+        $("#" + rd2[i].id).prop("checked", true);
+      }
+    }
+
   }
+
+
   $("input[name='" + formId + "_RD']").prop("disabled", true);
 
   // 이름 , 직급 한글로 설정하기
@@ -329,9 +339,7 @@ function getDetailView() {
         $("." + formId + subTitlesArr[i])[j].value =
           storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
         $("." + formId + subTitlesArr[i] + "_position")[j].value =
-          storage.userRank[
-          $("." + formId + subTitlesArr[i] + "_position")[j].value
-          ][0];
+          storage.userRank[$("." + formId + subTitlesArr[i] + "_position")[j].value][0];
       }
     }
   }
