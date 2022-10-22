@@ -1,1510 +1,2311 @@
 <!DOCTYPE html>
 <html lang="ko">
-
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <style>
-        html,
-        body {
-            font-size: 10px;
-            padding: 0;
-            margin: 0;
-            overflow: hidden;
-            height: 100%;
-            width: 100%;
-        }
+      html,
+      body {
+        font-size: 10px;
+        padding: 0;
+        margin: 0;
+        overflow: hidden;
+        height: 100%;
+        width: 100%;
+      }
 
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
 
-        .wrap {
-            width: 1280px;
-            height: 800px;
-            display: grid;
-            grid-template-columns: 3fr 2fr 5fr;
-            grid-template-rows: 1fr 1fr 2fr 2fr;
-            gap: 1rem;
-            border: 1px solid #eeeeee;
-            overflow: hidden;
-        }
+      .wrap {
+        width: 1280px;
+        height: 800px;
+        display: grid;
+        grid-template-columns: 3fr 2fr 5fr;
+        grid-template-rows: 1fr 1fr 2fr 2fr;
+        gap: 1rem;
+        border: 1px solid #eeeeee;
+        overflow: hidden;
+      }
 
-        .wrap>* {
-            border: 1px solid #bbbbbb;
-            overflow-x: hidden;
-            overflow-y: scroll;
-        }
+      .wrap > * {
+        border: 1px solid #bbbbbb;
+        overflow-x: hidden;
+        overflow-y: scroll;
+      }
 
-        .wrap>div:nth-child(1) {
-            grid-column-start: 1;
-            grid-column-end: 2;
-            grid-row-start: 1;
-            grid-row-end: 5;
-        }
+      .wrap > div:nth-child(1) {
+        grid-column-start: 1;
+        grid-column-end: 2;
+        grid-row-start: 1;
+        grid-row-end: 5;
+      }
 
-        .wrap>div:nth-child(6) {
-            grid-column-start: 3;
-            grid-column-end: 4;
-            grid-row-start: 1;
-            grid-row-end: 5;
-        }
+      .wrap > div:nth-child(6) {
+        grid-column-start: 3;
+        grid-column-end: 4;
+        grid-row-start: 1;
+        grid-row-end: 5;
+      }
 
-        .hidden_chk {
-            display: none;
-        }
+      .hidden_chk {
+        display: none;
+      }
 
-        .hidden_chk:checked+label {
-            background-color: #f3dcdc
-        }
+      .hidden_chk:checked + label {
+        background-color: #f3dcdc;
+      }
 
-        .list_item {
-            display: grid;
-            border: 1px solid #aaaadd;
-            grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-        }
+      .list_item {
+        display: grid;
+        border: 1px solid #aaaadd;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+      }
 
-        .list_item:hover {
-            background-color: #e8e8fc
-        }
+      .list_item:hover {
+        background-color: #e8e8fc;
+      }
 
-        .list_item>div {
-            text-align: center;
-        }
+      .list_item > div {
+        text-align: center;
+      }
 
-        .list_item>div:nth-child(6) {
-            grid-column-start: 1;
-            grid-column-end: 6;
-        }
+      .list_item > div:nth-child(6) {
+        grid-column-start: 1;
+        grid-column-end: 6;
+      }
 
+      .app_line,
+      .app_files,
+      .app_data,
+      .app_forms {
+        font-size: 16px;
+      }
 
-
-        .app_line,
-        .app_files,
-        .app_data,
-        .app_forms {
-            font-size: 16px;
-        }
-
-
-        /* .detailContentDiv {
+      /* .detailContentDiv {
             margin-left: 1em;
             margin-right: 1em;
             display: grid;
             grid-template-columns: 10% 15% 15% 10% 5% 10% 10% 10% 15%;
         } */
 
+      .detailcontentlast {
+        border-left: 1px solid black;
+        border-right: 1px solid black;
+        border-bottom: 1px solid black;
+      }
 
+      .lineDivContainer {
+        display: grid;
+        grid-template-columns: 33% 33% 33%;
+        margin: 0 1em;
+      }
 
-        .detailcontentlast {
-            border-left: 1px solid black;
-            border-right: 1px solid black;
-            border-bottom: 1px solid black;
-        }
+      .lineDiv {
+        display: grid;
+        grid-template-columns: 15% 85%;
+        text-align: center;
+      }
 
+      .lineDiv input {
+        border: none;
+        width: 85%;
+        text-align: center;
+      }
 
-        .lineDivContainer {
-            display: grid;
-            grid-template-columns: 33% 33% 33%;
-            margin: 0 1em;
-        }
+      .lineDiv .lineDivContentfirst,
+      .lineDiv .lineDivContentfirstw {
+        border: 1px solid black;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgb(208, 206, 206);
+      }
 
-        .lineDiv {
-            display: grid;
-            grid-template-columns: 15% 85%;
-            text-align: center;
+      .lineDiv .lineDivContent {
+        border-top: 1px solid black;
+        border-right: 1px solid black;
+      }
 
-        }
+      .lineDiv .lineDivContentw {
+        border-top: 1px solid black;
+      }
 
-        .lineDiv input {
-            border: none;
-            width: 85%;
-            text-align: center;
-        }
+      .lineDiv .lineDivContentlast {
+        border-top: 1px solid black;
+        border-right: 1px solid black;
+        border-bottom: 1px solid black;
+      }
 
-        .lineDiv .lineDivContentfirst,
-        .lineDiv .lineDivContentfirstw {
-            border: 1px solid black;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: rgb(208, 206, 206);
-        }
+      .lineDiv .lineDivContentlastw {
+        border-top: 1px solid black;
+        border-bottom: 1px solid black;
+      }
 
+      .appDivContent {
+        border-top: 1px solid black;
+        border-right: 1px solid black;
+      }
 
+      .appDivContentlast {
+        border-top: 1px solid black;
+        border-right: 1px solid black;
+        border-bottom: 1px solid black;
+      }
 
-        .lineDiv .lineDivContent {
-            border-top: 1px solid black;
-            border-right: 1px solid black;
-        }
+      .lineDivContentnone,
+      .lineDivContentwnone {
+        border: none;
+      }
 
-        .lineDiv .lineDivContentw {
-            border-top: 1px solid black;
+      .appDivContentnone {
+        border-right: 1px solid black;
+      }
 
-        }
-
-        .lineDiv .lineDivContentlast {
-            border-top: 1px solid black;
-            border-right: 1px solid black;
-            border-bottom: 1px solid black;
-        }
-
-        .lineDiv .lineDivContentlastw {
-            border-top: 1px solid black;
-            border-bottom: 1px solid black;
-        }
-
-
-        .appDivContent {
-            border-top: 1px solid black;
-            border-right: 1px solid black;
-        }
-
-        .appDivContentlast {
-            border-top: 1px solid black;
-            border-right: 1px solid black;
-            border-bottom: 1px solid black;
-        }
-
-        .lineDivContentnone,
-        .lineDivContentwnone {
-            border: none;
-
-        }
-
-        .appDivContentnone {
-            border-right: 1px solid black;
-        }
-
-        .lineGridContainer input {
-            text-align: center;
-            width: 90%;
-            height: 80%;
-        }
+      .lineGridContainer input {
+        text-align: center;
+        width: 90%;
+        height: 80%;
+      }
     </style>
-</head>
+  </head>
 
-<body onload="init()">
+  <body onload="init()">
     <div class="wrap">
-        <div class="app_list"></div>
-        <div class="app_files"></div>
-        <div class="app_line"></div>
-        <div class="app_data"></div>
-        <div class="app_forms"></div>
-        <div class="app_preview"></div>
+      <div class="app_list"></div>
+      <div class="app_files"></div>
+      <div class="app_line"></div>
+      <div class="app_data"></div>
+      <div class="app_forms"></div>
+      <div class="app_preview"></div>
     </div>
     <script src="js/jquery.min.js"></script>
     <script src="js/cipher.js"></script>
     <script>
-        let docList, docInfo, _server = "/system/doc", apiServer = "", storage = {}, cipher, filecount = 0;
+      let docList,
+        docInfo,
+        _server = "/system/doc",
+        apiServer = "",
+        storage = {},
+        cipher,
+        filecount = 0;
 
-
-        cipher = { // 암호화 모듈
-            "encRsa": (message) => {
-                let result, rsa;
-                if (message === undefined || message === null) return message;
-                rsa = new RSAKey();
-                rsa.setPublic(cipher.rsa.public.modulus, cipher.rsa.public.exponent);
-                return btoa(rsa.encrypt(message));
-            },
-            "encAes": (message) => {
-                let cp, result;
-                cp = CryptoJS.AES.encrypt(message, CryptoJS.enc.Utf8.parse(cipher.aes.key), {
-                    "iv": CryptoJS.enc.Utf8.parse(cipher.aes.iv),
-                    "padding": CryptoJS.pad.Pkcs7,
-                    "mode": CryptoJS.mode.CBC
-                });
-                result = cp.toString();
-                return result;
-            },
-            "decAes": (message) => {
-                let cp, result;
-                cp = CryptoJS.AES.decrypt(message, CryptoJS.enc.Utf8.parse(cipher.aes.key), {
-                    iv: CryptoJS.enc.Utf8.parse(cipher.aes.iv),
-                    padding: CryptoJS.pad.Pkcs7,
-                    mode: CryptoJS.mode.CBC
-                });
-                result = cp.toString(CryptoJS.enc.Utf8);
-                return result;
-            },
-            "rsa": {
-                "public": {
-                    "modulus": undefined,
-                    "exponent": undefined
-                },
-                "private": undefined,
-                "getKey": () => {
-                    let url = apiServer + "/api/user/rsa";
-                    $.ajax({
-                        url: url,
-                        method: "get",
-                        dataType: "json",
-                        cache: false,
-                        success: (data) => {
-                            let publicKeyExponent, publicKeyModulus, aesKey, aesIv, url = apiServer + "/api/user/aes";
-                            if (data.result === "ok") {
-                                aesKey = [cipher.genKey(8), cipher.genKey(8), cipher.genKey(8), cipher.genKey(8)];
-                                aesIv = [cipher.genKey(8), cipher.genKey(8)];
-                                cipher.aes.key = aesKey[0] + aesKey[1] + aesKey[2] + aesKey[3];
-                                cipher.aes.iv = aesIv[0] + aesIv[1];
-                                publicKeyExponent = data.data.publicKeyExponent;
-                                publicKeyModulus = data.data.publicKeyModulus;
-                                cipher.rsa.public.modulus = publicKeyModulus;
-                                cipher.rsa.public.exponent = publicKeyExponent;
-                                sessionStorage.setItem("rsaModulus", publicKeyModulus);
-                                sessionStorage.setItem("rsaExponent", publicKeyExponent);
-                                sessionStorage.setItem("aesKey", cipher.aes.key);
-                                sessionStorage.setItem("aesIv", cipher.aes.iv);
-                                $.ajax({
-                                    "url": url,
-                                    "method": "post",
-                                    data: cipher.encRsa(aesKey[0]) + "\n" + cipher.encRsa(aesKey[1]) + "\n" + cipher.encRsa(aesKey[2]) + "\n" + cipher.encRsa(aesKey[3]) + "\n" + cipher.encRsa(aesIv[0]) + "\n" + cipher.encRsa(aesIv[1]),
-                                    contentType: "text/plain",
-                                    "cache": false,
-                                    success: (data) => {
-                                    }
-                                })
-                            } else {
-                                //  msg.set(data.msg);
-                            }
-                        }
-                    })
-                }
-            },
-            "aes": {
-                "iv": undefined,
-                "key": undefined
-            },
-            "genKey": (length) => {
-                let x, t, result = "", src = [];
-                if (isNaN(length) || length < 8) length = 32;
-                for (x = 0; x < 69; x++) {
-                    if (x < 10)
-                        src[x] = (x + 48);
-                    else if (x < 36)
-                        src[x] = (x + 55);
-                    else if (x < 62)
-                        src[x] = (x + 61);
-                    else if (x == 63)
-                        src[x] = 33;
-                    else if (x == 64)
-                        src[x] = 43;
-                    else if (x == 65)
-                        src[x] = 126;
-                    else
-                        src[x] = (x - 31);
-                }
-                for (x = 0; x < length; x++) {
-                    t = Math.floor((Math.random() * src.length));
-                    result += String.fromCharCode(src[t])
-                }
-                return result;
-            } // End of getKey()
-        }
-
-        function getForms() {
-            let url;
-            url = apiServer + "/api/gw/form";
-
+      cipher = {
+        // 암호화 모듈
+        encRsa: (message) => {
+          let result, rsa;
+          if (message === undefined || message === null) return message;
+          rsa = new RSAKey();
+          rsa.setPublic(cipher.rsa.public.modulus, cipher.rsa.public.exponent);
+          return btoa(rsa.encrypt(message));
+        },
+        encAes: (message) => {
+          let cp, result;
+          cp = CryptoJS.AES.encrypt(
+            message,
+            CryptoJS.enc.Utf8.parse(cipher.aes.key),
+            {
+              iv: CryptoJS.enc.Utf8.parse(cipher.aes.iv),
+              padding: CryptoJS.pad.Pkcs7,
+              mode: CryptoJS.mode.CBC,
+            }
+          );
+          result = cp.toString();
+          return result;
+        },
+        decAes: (message) => {
+          let cp, result;
+          cp = CryptoJS.AES.decrypt(
+            message,
+            CryptoJS.enc.Utf8.parse(cipher.aes.key),
+            {
+              iv: CryptoJS.enc.Utf8.parse(cipher.aes.iv),
+              padding: CryptoJS.pad.Pkcs7,
+              mode: CryptoJS.mode.CBC,
+            }
+          );
+          result = cp.toString(CryptoJS.enc.Utf8);
+          return result;
+        },
+        rsa: {
+          public: {
+            modulus: undefined,
+            exponent: undefined,
+          },
+          private: undefined,
+          getKey: () => {
+            let url = apiServer + "/api/user/rsa";
             $.ajax({
-                "url": url,
-                "method": "get",
-                "dataType": "json",
-                "cache": false,
-                success: (data) => {
-                    let list;
-                    if (data.result === "ok") {
-                        list = cipher.decAes(data.data);
-                        list = JSON.parse(list);
-                        storage.form = list;
-                        console.log("[getForms] Success getting employee information.");
-                    } else {
-                        // msg.set("양식 정보를 가져오지 못했습니다.");
-                    }
-                }
-            })
-        } // End of getUserMap()
-
-        // API 서버에서 직원 정보를 가져오는 함수
-        function getUserMap() {
-            let url;
-            url = apiServer + "/api/user/map";
-
-            $.ajax({
-                "url": url,
-                "method": "get",
-                "dataType": "json",
-                "cache": false,
-                success: (data) => {
-                    let list;
-                    if (data.result === "ok") {
-                        list = cipher.decAes(data.data);
-                        list = JSON.parse(list);
-                        storage.user = list;
-                        console.log("[getUserMap] Success getting employee information.");
-                    } else {
-                        //   msg.set("직원 정보를 가져오지 못했습니다.");
-                    }
-                }
-            })
-        } // End of getUserMap()
-
-        // API 서버에서 직원 정보를 가져오는 함수
-        function getDeptMap() {
-            let url;
-            url = apiServer + "/api/dept/map";
-
-            $.ajax({
-                "url": url,
-                "method": "get",
-                "dataType": "json",
-                "cache": false,
-                success: (data) => {
-                    let list;
-
-                    if (data.result === "ok") {
-                        list = cipher.decAes(data.data);
-                        list = JSON.parse(list);
-                        storage.dept = list;
-                        console.log("[getDeptMap] Success getting department information.");
-                    } else {
-                        //  msg.set("부서 정보를 가져오지 못했습니다.");
-                    }
-                }
-            })
-        } // End of getDeptMap()console.log
-
-        // API 서버에서 고객사 정보를 가져오는 함수
-        function getCustomer() {
-            let url;
-            url = apiServer + "/api/system/customer";
-            $.ajax({
-                "url": url,
-                "method": "get",
-                "dataType": "json",
-                "cache": false,
-                success: (data) => {
-                    let list;
-                    if (data.result === "ok") {
-                        list = cipher.decAes(data.data);
-                        list = JSON.parse(list);
-                        storage.customer = list;
-                        console.log("[getCustomer] Success getting customer information.");
-                    } else {
-                        //   msg.set("고객 정보를 가져오지 못했습니다.");
-                    }
-                }
-            })
-        } // End of getCustomer()
-        function getUserRank() {
-            let url, userRankTime, userRankData;
-            url = apiServer + "/api/user/rank";
-            userRankTime = sessionStorage.getItem("userRankTime");
-            userRankTime = userRankTime == null ? 0 : userRankTime * 1;
-            if ((new Date()).getTime() < userRankTime + 600000) {
-                userRankData = sessionStorage.getItem("userRankData");
-                userRankData = JSON.parse(userRankData);
-                storage.userRank = userRankData;
-                console.log("[getUserMap] set rank info from sessionStorage.");
-            } else {
-                $.ajax({
-                    "url": url,
-                    "method": "get",
-                    "dataType": "json",
-                    "cache": false,
-                    success: (data) => {
-                        let list;
-                        if (data.result === "ok") {
-                            list = cipher.decAes(data.data);
-                            sessionStorage.setItem("userRankData", list);
-                            sessionStorage.setItem("userRankTime", (new Date()).getTime() + "");
-                            list = JSON.parse(list);
-                            storage.userRank = list;
-                            console.log("[getBasicInfo] Success getting rank information.");
-                        } else {
-                            alert("직급 정보를 가져오지 못했습니다.");
-                        }
-                    }
-                })
-            }
-        } // End of getUserRank()
-
-        function getSopp() {
-            $.ajax({
-                url: "/api/sopp",
-                type: "get",
-                dataType: "json",
-                success: (result) => {
-                    if (result.result == "ok") {
-                        let jsondata;
-                        jsondata = cipher.decAes(result.data);
-                        jsondata = JSON.parse(jsondata);
-                        storage.soppList = jsondata;
-
-                    } else {
-                        console.log("에러");
-                    }
-                },
-            });
-        }
-
-        // 초기화 함수
-        function init() {
-            getList();
-            cipher.rsa.getKey()
-            window.setTimeout(() => {
-                getCustomer();
-                getDeptMap();
-                getUserMap();
-                getForms();
-                getUserRank();
-                getSopp();
-            }, 1000);
-            storage.appStatus = { "1": "임시저장", "2": "검토요청", "3": "반려", "4": "승인요청", "5": "완료" }
-            storage.status = { "1": "작성중", "2": "진행중", "3": "완료" }
-        } // End of init()
-        function lineUp(str) { let x, r = 0; for (x in str) r += str[x].charCodeAt(); return r; }
-        // 서버에서 문서 목록을 가져오는 함수
-        function getList() {
-            $.ajax({
-                url: _server,
-                method: "get",
-                success: (result) => {
-                    let tt = result.replace(/\n+/g, "");
-                    tt = tt.replace(/\t+/g, "");
-                    tt = JSON.parse(tt);
-                    if (tt.result === "ok") {
-                        docList = tt.data;
-                        storage.docList = docList;
-                        drawDocList();
-                    } else {
-                        console.log("[ERROR] Failure parse.");
-                    }
-                },
-                error: () => {
-                    console.log("[ERROR] Failure getting document information.");
-                }
-            });
-        } // End of getList()
-
-        // 개별 문서 정보를 가져오는 함수
-        function getDocData(docNo) {
-            $.ajax({
-                url: _server + "/" + docNo,
-                method: "get",
-                success: (result) => {
-                    let tt = result.replace(/\n+/g, "");
-                    tt = tt.replace(/\t+/g, "");
-                    tt = JSON.parse(tt);
-                    if (tt.result === "ok") {
-                        docInfo = { "files": tt.files, "appData": tt.appData, "docData": tt.docData };
-                        storage.docInfo = docInfo;
-                        drawClickedDetail(docNo);
-                    } else {
-                        console.log("[ERROR] Failure parse.");
-                    }
-                },
-                error: () => {
-                    console.log("[ERROR] Failure getting document information.");
-                }
-            });
-        } // End of getDocData()
-
-        //문서 목록을 화면에 그리는 함수
-        function drawDocList() {
-            let html, x, doc, cnt;
-            if (storage.customer == undefined || storage.user == undefined || storage.dept == undefined) {
-                window.setTimeout(drawDocList, 100);
-                return;
-            }
-            cnt = document.getElementsByClassName("app_list")[0];
-            html = "";
-            for (x in docList) {
-                doc = docList[x];
-                html += ("<input type=\"checkbox\" id=\"chk" + doc.no + "\" class=\"hidden_chk\" />");
-                html += ("<label class=\"list_item\" for=\"chk" + doc.no + "\" data-no=\"" + doc.no + "\" onclick=\"clickedItem(this)\">");
-                html += ("<div>" + doc.no + "</div>");
-                html += ("<div>" + (new Date(doc.created)).toLocaleString().substring(2, 13).replaceAll(" ", "") + "</div>");
-                html += ("<div>" + (storage.customer[doc.customer] != null ? storage.customer[doc.customer].name : doc.customer) + "</div>");
-                html += ("<div>" + doc.form + "</div>");
-                html += ("<div>" + doc.type + "</div>");
-                html += ("<div>" + doc.title + "</div>");
-                html += ("<div>" + (doc.writer === 0 ? "0" : storage.user[doc.writer].userName) + "</div>");
-                html += ("<div>" + (doc.status + " : " + storage.status[doc.status]) + "</div>");
-                html += "</label>";
-            }
-
-            cnt.innerHTML = html;
-        } // End of drawDocList()
-
-
-
-        // 리스트 아이템이 클릭되면 실행되는 함수
-        function clickedItem(el) {
-            let docNo;
-            docNo = el.dataset.no;
-            getDocData(docNo);
-
-        } // End of clickedItem()
-
-
-
-        function drawClickedDetail(no) {
-
-            let fileTarget = $(".app_files");
-            let appTarget = $(".app_line");
-            let dataTarget = $(".app_data");
-            let files, appData, docData = new Array();
-            let filesHtml = "";
-            let appDataHtml = "";
-            let docDataHtml = "";
-            //docInfo = { "files": tt.files, "appData": tt.appData, "docData": tt.docData };
-            let created, dataStatus, insertData, insertDetailData = "";
-            let detailArr = [];
-            let appDatas = [];
-            let soppAndCus = null;
-
-            let dataTitles = ["date", "customer", "product", "price", "quantity", "subTotal", "tax", "total", "remark"];
-            let appTitles = ["app", "approved", "comment", "request", "status"];
-            let info = storage.docInfo;
-            for (let i = 0; i < info.appData.length; i++) {
-                appDataHtml += "<div>" + "app_" + info.appData[i].app + "</div>";
-                appDataHtml += "<div>" + "approved_" + info.appData[i].approved + "</div>";
-                appDataHtml += "<div>" + "comment_" + info.appData[i].comment + "</div>";
-                appDataHtml += "<div>" + "request_" + info.appData[i].request + "</div>";
-                appDataHtml += "<div>" + "writer_" + info.appData[i].writer + "</div>";
-                appDataHtml += "<div>" + "status_" + info.appData[i].status + "</div>";
-            }
-
-            appTarget.html(appDataHtml);
-
-            filesHtml += "<div>" + "filename_" + info.files + "</div>";
-
-            fileTarget.html(filesHtml);
-
-            if (info.docData != null) for (let i = 0; i < info.docData.length; i++) {
-                docDataHtml += "<div>" + i + "데이터 -------------"
-                for (let j = 0; j < dataTitles.length; j++) {
-                    docDataHtml += "<div>" + info.docData[i][dataTitles[j]] + "</div>";
-                }
-            }
-
-            docDataHtml += "</div>"
-            dataTarget.html(docDataHtml);
-
-            let target = $(".app_preview");
-            let typeHtml = "";
-
-            for (let i = 0; i < info.appData.length; i++) {
-                for (let j = 0; j < appTitles.length; j++) {
-                    info.appData[i][appTitles[j]];
-                }
-            }
-
-            for (let i = 0; i < storage.docList.length; i++) {
-                if (storage.docList[i].no == no) {
-
-
-                    /////////////////////////////////////////////////// 결재 타입이 지출품의서인 경우 /////////////////////////////////////////////////////
-
-                    let docListTitle = ['no', 'writer', 'type', 'title', 'status', 'sopp', 'customer', 'content', 'form', 'draw', 'created'];
-
-                    if (storage.docList[i].type == "TRS" || storage.docList[i].type == "BUY") {
-                        target.html(storage.form[0].form);
-                        if (storage.docList[i].type == "TRS") {
-                            $("#TRS").attr("checked", true);
-                        } else {
-                            $("#BUY").attr("checked", true);
-                        }
-
-
-
-                        let id = storage.form[0].id;
-                        commonDrawFnc(docListTitle, info, appTitles, i, id, dataTitles);
-
-                        ///////////////////////////////////////////////////결재타입이 지출결의서인 경우 ////////////////////////////////////////////////
-
-
-                    } else if (storage.docList[i].type == "COST" || storage.docList[i].type == "CREDIT" ||
-                        storage.docList[i].type == "PAY" || storage.docList[i].type == "TAX") {
-                        target.html(storage.form[1].form)
-
-                        if (storage.docList[i].type == "COST") {
-                            $("#COST").attr("checked", true);
-                        } else if (storage.docList[i].type == "CREDIT") {
-                            $("#CREDIT").attr("checked", true);
-                        } else if (storage.docList[i].type == "PAY") {
-                            $("#PAY").attr("checked", true);
-                        } else {
-                            $("#TAX").attr("checked", true);
-                        }
-                        let id = storage.form[1].id;
-
-                        ////// info title content 출력하기 
-                        //let docListTitle = Object.keys(storage.docList[i]);
-                        let num;
-                        for (let k = 0; k < Object.keys(storage.docList[i]).length; k++) {
-                            for (let j = 0; j < docListTitle.length; j++) {
-                                if (docListTitle[j] == "writer") {
-                                    num = storage.docList[i][docListTitle[j]];
-                                    let name = storage.user[num].userName;
-                                    $("#" + id + "_" + docListTitle[j]).val(name);
-                                }
-                                else if (docListTitle[j] == "created") {
-                                    created = storage.docList[i][docListTitle[j]];
-                                    let date = getYmdSlash(storage.docList[i][docListTitle[j]]);
-                                    $("#" + id + "_" + docListTitle[j]).val(date);
-                                } else if (docListTitle[j] == "content") {
-                                    $("#" + id + "_" + docListTitle[j]).val(storage.docList[i][docListTitle[j]]);
-                                    $("#" + id + "_" + docListTitle[j]).html(storage.docList[i][docListTitle[j]]);
-                                } else if (docListTitle[j] == "customer") {
-                                    if (storage.docList[i][docListTitle[j]] == 0) {
-                                        $("#" + id + "_infoCustomer").val("");
-                                    } else {
-                                        $("#" + id + "_infoCustomer").val(storage.customer[storage.docList[i][docListTitle[j]]].name);
-                                    }
-
-                                } else if (docListTitle[j] == "sopp") {
-
-                                    if (storage.docList[i][docListTitle[j]] == 0) {
-                                        $("#" + id + "_sopp").val("");
-                                        storage.soppResult = "";
-
-                                    } else {
-                                        let sopp;
-                                        for (let k = 0; k < storage.soppList.length; k++) {
-                                            if (storage.soppList[k].no == storage.docList[i][docListTitle[j]]) {
-                                                sopp = storage.soppList[k].title;
-                                                storage.soppResult = storage.docList[i][docListTitle[j]];
-                                            }
-
-                                        }
-                                        $("#" + id + "_sopp").attr("data-detail", sopp);
-                                        $("#" + id + "_sopp").val(sopp);
-
-                                    }
-                                } else if (docListTitle[j] == "no") {
-                                    if (storage.docList[i][docListTitle[j]] == 0) {
-                                        $("#" + id + "_" + docListTitle[j]).val("");
-                                    } else {
-                                        $("#" + id + "_" + docListTitle[j]).attr("data-detail", "VTEK_2022" + storage.docList[i][docListTitle[j]] + "");
-                                        $("#" + id + "_" + docListTitle[j]).val("VTEK_2022" + storage.docList[i][docListTitle[j]] + "");
-                                    }
-                                }
-                                else {
-                                    if (storage.docList[i][docListTitle[j]] == 0) {
-                                        $("#" + id + "_" + docListTitle[j]).val("");
-                                    } else {
-                                        $("#" + id + "_" + docListTitle[j]).attr("data-detail", storage.docList[i][docListTitle[j]]);
-                                        $("#" + id + "_" + docListTitle[j]).val(storage.docList[i][docListTitle[j]]);
-                                    }
-                                }
-                            }
-                        }
-
-                        if ($("#" + id + "_writer").val() == '구민주') {
-                            $("#" + id + "_line").html(
-                                "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작성</div>" +
-                                "<div class='lineSet'>" +
-                                "<div class='twoBorder'><input class='inputsAuto' value ='" + storage.userRank[storage.user[num].rank][0] + "'></div>" +
-                                "<div class='twoBorder'><input class='inputsAuto " + id + "_writer' type='text'  data-detail='" + num + "' value='" + storage.user[num].userName + "'></div>" +
-                                "<div class='twoBorder'><input class='inputsAuto " + id + "_writer_status'  data-detail='' type='text' ></div>" +
-                                "<div class='dateBorder'><input class='inputsAuto " + id + "_writer_approved'  data-detail='' type='text'></div></div></div>" +
-
-                                "<div class='lineGrid'><div class='lineTitle'>결재</div>" +
-                                "<div class='lineSet'>" +
-                                "<div class='twoBorder'><input class='inputsAuto " + id + "_approval_position'data-detail='10' value='대표' ></div>" +
-                                "<div class='twoBorder'><input class='inputsAuto " + id + "_approval' type='text' data-detail='10002' value='이승우' ></div>" +
-                                "<div class='twoBorder'><input class='inputsAuto " + id + "_approval_status' data-detail='' type='text' ></div>" +
-                                "<div class='dateBorder'><input class='inputsAuto " + id + "_approval_approved' type='text' data-detail='' ></div></div></div>" +
-                                "</div>"
-                            );
-                        } else {
-                            $("#" + id + "_line").html(
-
-                                "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작성</div>" +
-                                "<div class='lineSet'>" +
-                                "<div class='twoBorder'><input class='inputsAuto' value ='" + storage.userRank[storage.user[num].rank][0] + "'></div>" +
-                                "<div class='twoBorder'><input class='inputsAuto " + id + "_writer' type='text'  data-detail='" + num + "' value='" + storage.user[num].userName + "'></div>" +
-                                "<div class='twoBorder'><input class='inputsAuto " + id + "_writer_status'  data-detail='' type='text' ></div>" +
-                                "<div class='dateBorder'><input class='inputsAuto " + id + "_writer_approved'  data-detail='' type='text' value='" + $("#" + id + '_created').val() + "'></div></div></div>" +
-
-                                "<div class='lineGrid'><div class='lineTitle'>검토</div>" +
-                                "<div class='lineSet'>" +
-                                "<div class='twoBorder'><input class='inputsAuto " + id + "_examine_position' value='과장' ></div>" +
-                                "<div class='twoBorder'><input class='inputsAuto " + id + "_examine' type='text' data-detail='10017' value='구민주' ></div>" +
-                                "<div class='twoBorder'><input class='inputsAuto " + id + "_examine_status' data-detail='' type='text' ></div>" +
-                                "<div class='dateBorder'><input class='inputsAuto " + id + "_examine_approved' type='text' data-detail='' ></div></div></div>" +
-
-                                "<div class='lineGrid'><div class='lineTitle'>결재</div>" +
-                                "<div class='lineSet'>" +
-                                "<div class='twoBorder'><input class='inputsAuto " + id + "_approval_position'  data-detail='10' value='대표' ></div>" +
-                                "<div class='twoBorder'><input class='inputsAuto " + id + "_approval' type='text' data-detail='10002' value='이승우' ></div>" +
-                                "<div class='twoBorder'><input class='inputsAuto " + id + "_approval_status' data-detail='' type='text' ></div>" +
-                                "<div class='dateBorder'><input class='inputsAuto " + id + "_approval_approved' type='text' data-detail='' ></div></div></div>" +
-                                "</div>"
-
-                            );
-                        }
-
-
-                        let dataHtml = ""
-
-                        if (info.docData != null) for (let q = 0; q < Object.keys(info.docData).length; q++) {
-                            dataHtml += "<div class='detailcontentDiv'>"
-                            for (let j = 0; j < dataTitles.length; j++) {
-                                if (j == (dataTitles.length - 1)) {
-                                    dataHtml += "<div class='detailcontentlast'><input type='text' value='" + info.docData[q][dataTitles[j]] + "' onkeyup='this.dataset.detail=this.value' class='inputs outlineNonedata " + id + "_" + dataTitles[j] + "'></div>";
-                                } else if (dataTitles[j] == 'date') {
-                                    let date = getYmdHyphen(info.docData[q][dataTitles[j]]);
-                                    dataHtml += "<div class='detailcontent'><input class='inputs outlineNonedata " + id + "_" + dataTitles[j] + "' onchange='this.dataset.detail=this.value;' type='date' value='" + date + "' ></div>";
-                                } else if (dataTitles[j] == 'price' || dataTitles[j] == 'quantity' || dataTitles[j] == 'subTotal' || dataTitles[j] == 'tax' || dataTitles[j] == 'total') {
-                                    dataHtml += "<div class='detailcontent'><input class='inputs outlineNonedata " + id + "_" + dataTitles[j] + "' type='text' oninput='setNum(this)'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' value='" + (info.docData[q][dataTitles[j]]).toLocaleString() + "'></div>";
-                                } else {
-                                    dataHtml += "<div class='detailcontent'><input class='inputs outlineNonedata" + id + "_" + dataTitles[j] + "' type='text' onkeyup='this.dataset.detail=this.value' value='" + info.docData[q][dataTitles[j]] + "'></div>";
-                                }
-                            } dataHtml += "<div class='detailcontentbox'><input type='checkbox' class='detailBox'></div></div>"
-                        }
-
-                        $(".insertedDataList").html(dataHtml);
-
-                        let totalCount = 0;
-                        for (let i = 0; i < $("." + id + "_total").length; i++) {
-                            totalCount += Number(
-                                $("." + id + "_total")[i].value.replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "")
-                            );
-                        }
-                        totalCount = totalCount.toLocaleString();
-                        $(".insertedTotal").val(totalCount);
-                        let originHtml = $("#contentContainer").html();
-                        originHtml += "<div class='innerHtml'></div>"
-                        $("#contentContainer").html(originHtml);
-                        $(".innerHtml").html(storage.docList[i].content);
-                        $("#" + id + "_content").hide();
-
-
-                        // 모든 인풋 데이터셋 설정 
-                        let app_preview = $(".app_preview")[0];
-                        let inputsArr = app_preview.getElementsByTagName("input");
-
-                        for (let i = 0; i < inputsArr.length; i++) {
-                            inputsArr[i].dataset.detail = inputsArr[i].value;
-                        }
-
-
-
-                        $(".list_comment")[0].dataset.detail = "old";
-
-
-
-
-
-                        for (let i = 0; i < info.appData.length; i++) {
-                            for (let j = 0; j < appTitles.length; j++) {
-                                if (info.appData[i][appTitles[j]] != null) {
-                                    if (appTitles[j] == 'app') {
-                                        let app = storage.user[info.appData[i][appTitles[j]]].userName;
-                                        $("." + id + "_" + appTitles[j]).val(app);
-                                    } else if (appTitles[j] == 'status') {
-                                        let status = storage.appStatus[info.appData[i][appTitles[j]]];
-                                        if (status == "승인요청") {
-                                            dataStatus = 1;
-                                            $("." + id + "_writer_status").val("승인");
-                                            $("." + id + "_writer_status").attr("data-detail", "승인");
-                                            $("." + id + "_writer_approved").val($("#" + id + "_created").val());
-                                            $("." + id + "_writer_approved").attr("data-detail", $("#" + id + "_created").val());
-                                            $("." + id + "_examine_status").val('승인');
-                                            $("." + id + "_examine_status").attr("data-detail", "승인");
-                                            let approved;
-                                            if (storage.docInfo.appData[0].approved == null) {
-                                                approved = getYmdSlash(created);
-                                            } else {
-                                                approved = getYmdSlash(storage.docInfo.appData[0].approved)
-                                            }
-                                            $("." + id + "_examine_approved").val(approved);
-                                            $("." + id + "_examine_approved").attr("data-detail", approved);
-
-                                            // ordered employee appType read isModify doc approved retrieved rejected comment appData 
-                                            if ($("#" + id + "_writer").val() == '구민주') {
-                                                appDatas = [[0, 10017, 0, getYmdSlash2(created) + "", 0, $(".app_preview").html(), getYmdSlash2(created) + "", null, null, null, soppAndCus],
-                                                [10, 10002, 2, null, 0, null, null, null, null, null, null]];
-                                            } else {
-                                                appDatas =
-                                                    [[0, num, 0, getYmdSlash2(created) + "", 0, $(".app_preview").html(), getYmdSlash2(created) + "", null, null, null, soppAndCus],
-                                                    [10, 10017, 0, null, 0, null, null, null, null, null, null,],
-                                                    [20, 10002, 2, null, 0, null, null, null, null, null, null]];
-                                            }
-
-                                        } else if (status == "완료") {
-                                            dataStatus = 3;
-                                            //$("." + id + "_" + appTitles[j]).val(status);
-                                            $("." + id + "_writer_status").val('승인');
-                                            $("." + id + "_writer_status").attr("data-detail", "승인");
-                                            $("." + id + "_examine_status").val('승인');
-                                            $("." + id + "_examine_status").attr("data-detail", "승인");
-                                            $("." + id + "_approval_status").val('승인');
-                                            $("." + id + "_approval_status").attr("data-detail", "승인");
-                                            let approved = getYmdSlash(created);
-                                            if (storage.docInfo.appData[0].approved == null) {
-                                                approved = "";
-                                            } else {
-                                                approved = getYmdSlash(storage.docInfo.appData[0].approved)
-                                            }
-                                            $("." + id + "_writer_approved").val($("#" + id + "_created").val());
-                                            $("." + id + "_writer_approved").attr("data-detail", $("#" + id + "_created").val());
-                                            $("." + id + "_examine_approved").val(approved);
-                                            $("." + id + "_approval_approved").val(approved);
-                                            $("." + id + "_examine_approved").attr("data-detail", approved);
-                                            $("." + id + "_approval_approved").attr("data-detail", approved);
-
-
-                                            if ($("#" + id + "_writer").val() == '구민주') {
-                                                appDatas =
-                                                    [[0, 10017, 0, getYmdSlash2(created) + "", 0, $(".app_preview").html(), getYmdSlash2(created) + "", null, null, null, soppAndCus],
-                                                    [10, 10002, 2, approved, 0, $(".app_preview").html(), approved, null, null, null, soppAndCus]];
-
-                                            } else {
-                                                appDatas =
-                                                    [[0, num, 0, getYmdSlash2(created) + "", 0, $(".app_preview").html(), getYmdSlash2(created) + "", null, null, null, soppAndCus],
-                                                    [10, 10017, 0, approved, 0, $(".app_preview").html(), approved, null, null, null, soppAndCus],
-                                                    [20, 10002, 2, approved, 0, $(".app_preview").html(), approved, null, null, null, soppAndCus]];
-
-
-                                            }
-
-
-                                        } else if (status == '반려') {
-                                            // 작성자 반려 
-                                            let request = storage.user[info.appData[i].request].userName;
-                                            if (request == $("." + id + "_writer").val()) {
-                                                dataStatus = -1;
-                                                //   console.log("작성자 반려");
-                                                if ($("#" + id + "_writer").val() == '구민주') {
-                                                    appDatas =
-                                                        [[0, num, 0, getYmdSlash2(created) + "", 0, $(".app_preview").html(), null, null, getYmdSlash2(created) + "", null, soppAndCus],
-                                                        [10, 10002, 2, null, 0, null, null, null, null, null, null]];
-                                                } else {
-
-                                                    appDatas =
-                                                        [[0, num, 0, getYmdSlash2(created) + "", 0, $(".app_preview").html(), null, getYmdSlash2(created) + "", null, null, soppAndCus],
-                                                        [10, 10017, 0, null, 0, null, null, null, null, null, null],
-                                                        [20, 10002, 2, null, 0, null, null, null, null, null, null]];
-
-                                                }
-
-                                                // 검토 구민주 반려 
-                                            } else if ($("#" + id + "_writer").val() != '구민주' && request == '구민주') {
-                                                //   console.log("구민주 반려");
-                                                dataStatus = -3;
-                                                $("." + id + "_approval").val('이승우')
-                                                $("." + id + "_writer_status").val('승인');
-                                                $("." + id + "_examine_status").val("반려");
-                                                $("." + id + "_writer_status").attr("data-detail", "승인");
-                                                $("." + id + "_examine_status").attr("data-detail", "승인");
-                                                let approved = getYmdSlash(created);
-                                                if (storage.docInfo.appData[0].approved != null) {
-                                                    approved = getYmdSlash(storage.docInfo.appData[0].approved);
-                                                }
-                                                $("." + id + "_examine_approved").val(approved);
-                                                $("." + id + "_examine_approved").attr("data-detail", approved);
-                                                $("." + id + "_writer_approved").val($("#" + id + "_created").val());
-                                                $("." + id + "_writer_approved").attr("data-detail", $("#" + id + "_created").val());
-                                                // ordered employee appType read isModify doc approved retrieved rejected comment appData 
-
-                                                appDatas = [[0, num, 0, getYmdSlash2(created) + "", 0, $(".app_preview").html(), getYmdSlash2(created) + "", null, null, null, soppAndCus],
-                                                [10, 10017, 0, approved, 0, $(".app_preview").html(), null, null, approved + "", null, soppAndCus], [20, 10002, 2, null, 0, null, null, null, null, null, null]];
-
-
-
-                                            } else {
-                                                //대표 반려 
-                                                dataStatus = -3;
-                                                // console.log("대표님 반려")
-                                                $("." + id + "_approval").val('이승우')
-                                                $("." + id + "_approval_status").val('반려')
-                                                $("." + id + "_approval_status").attr("data-detail", "반려");
-                                                $("." + id + "_examine_status").val('승인');
-                                                $("." + id + "_writer_status").val('승인');
-                                                $("." + id + "_writer_status").attr("data-detail", "승인");
-                                                $("." + id + "_examine_status").attr("data-detail", "승인");
-                                                let approved = getYmdSlash(created);
-                                                if (storage.docInfo.appData[0].approved != null) {
-                                                    approved = getYmdSlash(storage.docInfo.appData[0].approved);
-                                                }
-                                                $("." + id + "_examine_approved").val(approved);
-                                                $("." + id + "_approval_approved").val(approved);
-                                                $("." + id + "_examine_approved").attr("data-detail", approved);
-                                                $("." + id + "_approval_approved").attr("data-detail", approved);
-                                                $("." + id + "_writer_approved").val($("#" + id + "_created").val());
-                                                $("." + id + "_writer_approved").attr("data-detail", $("#" + id + "_created").val());
-
-                                                if ($("#" + id + "_writer").val() == '구민주') {
-                                                    appDatas = [[0, 10017, 0, getYmdSlash2(created) + "", 0, $(".app_preview").html(), getYmdSlash2(created) + "", null, null, null, soppAndCus],
-                                                    [10, 10002, 2, approved + "", 0, $(".app_preview").html(), null, null, approved + "", null, soppAndCus]];
-                                                } else {
-                                                    appDatas = [[0, num, 0, getYmdSlash2(created) + "", 0, $(".app_preview").html(), getYmdSlash2(created) + "", null, null, null, soppAndCus],
-                                                    [10, 10017, 0, approved + "", 0, $(".app_preview").html(), approved + "", null, null, null, soppAndCus],
-                                                    [20, 10002, 2, approved + "", 0, $(".app_preview").html(), null, null, approved + "", null, soppAndCus]];
-                                                }
-                                            }
-                                            // 검토 요청  
-                                        } else if (status == '검토요청') {
-                                            dataStatus = 1;
-                                            let approved = getYmdSlash(created);
-                                            if (storage.docInfo.appData[0].approved != null) {
-                                                approved = getYmdSlash(storage.docInfo.appData[0].approved);
-                                            }
-                                            $("." + id + "_writer_" + appTitles[j]).val("승인");
-                                            $("." + id + "_writer_" + appTitles[j]).attr("data-detail", "승인");
-                                            $("." + id + "_writer_approved").val($("#" + id + "_created").val());
-                                            $("." + id + "_writer_approved").attr("data-detail", $("#" + id + "_created").val());
-                                            if ($("#" + id + "_writer").val() == '구민주') {
-                                                appDatas = [[0, 10017, 0, getYmdSlash2(created) + "", 0, $(".app_preview").html(), getYmdSlash2(created) + "", null, null, null, soppAndCus],
-                                                [10, 10002, 2, approved, 0, null, null, null, null, null, soppAndCus]];
-                                            } else {
-                                                appDatas = [[0, num, 0, getYmdSlash2(created) + "", 0, $(".app_preview").html(), getYmdSlash2(created) + "", null, null, null, soppAndCus],
-                                                [10, 10017, 0, null, 0, null, null, null, null, null, null], [20, 10002, 2, null, 0, null, null, null, null, null, null]];
-
-                                            }
-                                        } else if (status == '임시저장') {
-                                            dataStatus = 0;
-                                            $("." + id + "_writer_approved").val("");
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-
-
-                        insertDataFnc(dataStatus, insertData, num, id, created, appDatas);
-                        // 결재타입이 발주서인 경우 
-                    } else if (storage.docList[i].type == "PUR") {
-                        target.html(storage.form[2].form)
-                        let id = storage.form[2].id;
-                        ////// info title content 출력하기 
-                        //  let docListTitle = Object.keys(storage.docList[i]);
-                        commonDrawFnc(docListTitle, info, appTitles, i, id, dataTitles);
-
-                        // 결재타입이 공문서인 경우 
-                    } else if (storage.docList[i].type == "DIP") {
-                        target.html(storage.form[3].form)
-                        let id = storage.form[3].id;
-                        ////// info title content 출력하기 
-                        // let docListTitle = Object.keys(storage.docList[i]);
-                        commonDrawFnc(docListTitle, info, appTitles, i, id, dataTitles);
-
-                    }
-                }
-            }
-
-
-            $(".inputs").prop("readonly", true);
-            $(".inputsAuto").prop("readonly", true);
-            $(".detailcontentbox").hide();
-            // doDataSet();
-            //toReadMode();
-
-
-        }
-
-
-
-
-
-
-
-
-
-        /// 날짜 설정 함수 //////////////////////////////////////날짜 설정 함수 //////////////////////////////////////////////////////날짜 설정 함수 //////////////////////////////////////날짜 설정 함수/////////////////////////
-
-
-
-
-        function getYmd(date) {
-            let d = new Date(date);
-            return d.getFullYear() + "/" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "/" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString());
-        }
-
-        function getYmdHyphen(date) {
-            let d = new Date(date);
-            return d.getFullYear() + "-" + ((d.getMonth() + 1) > 9 ? (d.getMonth() + 1).toString() : "0" + (d.getMonth() + 1)) + "-" + (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString());
-        }
-
-        function getYmdSlash(date) {
-            let d = new Date(date);
-            return (
-                (d.getFullYear() % 100) +
-                "/" +
-                (d.getMonth() + 1 > 9
-                    ? (d.getMonth() + 1).toString()
-                    : "0" + (d.getMonth() + 1)) +
-                "/" +
-                (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
-            );
-        }
-
-
-
-        function getYmdSlash2(date) {
-            let d = new Date(date);
-            return (
-                (d.getFullYear() % 100) +
-                "-" +
-                (d.getMonth() + 1 > 9
-                    ? (d.getMonth() + 1).toString()
-                    : "0" + (d.getMonth() + 1)) +
-                "-" +
-                (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString()) +
-                " " +
-                (d.getHours() > 9
-                    ? d.getHours().toString()
-                    : "0" + d.getHours().toString()) +
-                ":" +
-                (d.getMinutes() > 9
-                    ? d.getMinutes().toString()
-                    : "0" + d.getMinutes().toString()) +
-                ":" +
-                (d.getSeconds() > 9
-                    ? d.getSeconds().toString()
-                    : "0" + d.getSeconds().toString())
-            );
-        }
-
-        function doDataSet() {
-            let target = $(".app_preview")[0];
-            let inputsArr = target.getElementsByTagName("input");
-
-            for (let i = 0; i < inputsArr.length; i++) {
-                if (inputsArr[i].dataset.detail !== undefined) {
-                    inputsArr[i].value = inputsArr[i].dataset.detail;
-                }
-            }
-
-        }
-
-
-        function insertDataFnc(dataStatus, insertData, num, id, created, appDatas) {
-
-            let confirmNo = "";
-            if (dataStatus == 3 || dataStatus == -3) {
-                confirmNo = $("#" + id + "_no").val();
-            }
-
-            insertData = {
-                "docNo": $("#" + id + "_no").val(),
-                "writer": num,
-                "formId": id,
-                "dept": storage.user[num].deptId[0],
-                "docBox": storage.user[num].deptId[0],
-                "title": $("#" + id + "_title").val(),
-                "confirmNo": confirmNo,
-                "status": dataStatus,
-                "readable": "dept",
-                "created": getYmdSlash(created) + "",
-            }
-
-
-            // 승인이거나 반려인 경우에만 진행 
-            if (dataStatus == 3 || dataStatus == -3) {
-                let url = apiServer + "/system/doc";
-
-                insertData = JSON.stringify(insertData);
-                insertData = cipher.encAes(insertData);
-
-                $.ajax({
+              url: url,
+              method: "get",
+              dataType: "json",
+              cache: false,
+              success: (data) => {
+                let publicKeyExponent,
+                  publicKeyModulus,
+                  aesKey,
+                  aesIv,
+                  url = apiServer + "/api/user/aes";
+                if (data.result === "ok") {
+                  aesKey = [
+                    cipher.genKey(8),
+                    cipher.genKey(8),
+                    cipher.genKey(8),
+                    cipher.genKey(8),
+                  ];
+                  aesIv = [cipher.genKey(8), cipher.genKey(8)];
+                  cipher.aes.key =
+                    aesKey[0] + aesKey[1] + aesKey[2] + aesKey[3];
+                  cipher.aes.iv = aesIv[0] + aesIv[1];
+                  publicKeyExponent = data.data.publicKeyExponent;
+                  publicKeyModulus = data.data.publicKeyModulus;
+                  cipher.rsa.public.modulus = publicKeyModulus;
+                  cipher.rsa.public.exponent = publicKeyExponent;
+                  sessionStorage.setItem("rsaModulus", publicKeyModulus);
+                  sessionStorage.setItem("rsaExponent", publicKeyExponent);
+                  sessionStorage.setItem("aesKey", cipher.aes.key);
+                  sessionStorage.setItem("aesIv", cipher.aes.iv);
+                  $.ajax({
                     url: url,
                     method: "post",
-                    data: insertData,
-                    dataType: "json",
+                    data:
+                      cipher.encRsa(aesKey[0]) +
+                      "\n" +
+                      cipher.encRsa(aesKey[1]) +
+                      "\n" +
+                      cipher.encRsa(aesKey[2]) +
+                      "\n" +
+                      cipher.encRsa(aesKey[3]) +
+                      "\n" +
+                      cipher.encRsa(aesIv[0]) +
+                      "\n" +
+                      cipher.encRsa(aesIv[1]),
                     contentType: "text/plain",
-                    success: (result) => {
-                        if (result.result === "ok") {
-                            //  console.log("성공");
-
-                        } else {
-                            console.log("실패" + result.msg);
-
-                        }
-
-
-                    }
-                });
-
-                // let count = 0;
-                for (let i = 0; i < appDatas.length; i++) {
-                    let ten = appDatas[i][10];
-                    if (ten != null) {
-                        ten = JSON.stringify(appDatas[i][10]);
-                    }
-                    let appDatasJ = {
-                        "docNo": $("#" + id + "_no").val() + "",
-                        "ordered": appDatas[i][0],
-                        "employee": appDatas[i][1],
-                        "appType": appDatas[i][2],
-                        "read": appDatas[i][3],
-                        "isModify": appDatas[i][4],
-                        "doc": appDatas[i][5],
-                        "approved": appDatas[i][6],
-                        "retrieved": appDatas[i][7],
-                        "rejected": appDatas[i][8],
-                        "comment": appDatas[i][9],
-                        "appData": ten
-
-                    }
-                    // console.log(appDatasJ);
-                    appDatasJ = JSON.stringify(appDatasJ);
-                    appDatasJ = cipher.encAes(appDatasJ);
-                    $.ajax({
-                        url: apiServer + "/system/doc/oridetail",
-                        method: "post",
-                        data: appDatasJ,
-                        dataType: "json",
-                        contentType: "text/plain",
-                        success: (result) => {
-                            if (result.result === "ok") {
-                                // console.log("결재선 넣기 성공");
-                            } else {
-
-
-                                console.log("결재선 넣기 실패" + result.msg);
-                            }
-
-                        }
-                    })
-
-                    // if (count != 2) {
-                    //     console.log("실패");
-                    // }
+                    cache: false,
+                    success: (data) => {},
+                  });
+                } else {
+                  //  msg.set(data.msg);
                 }
+              },
+            });
+          },
+        },
+        aes: {
+          iv: undefined,
+          key: undefined,
+        },
+        genKey: (length) => {
+          let x,
+            t,
+            result = "",
+            src = [];
+          if (isNaN(length) || length < 8) length = 32;
+          for (x = 0; x < 69; x++) {
+            if (x < 10) src[x] = x + 48;
+            else if (x < 36) src[x] = x + 55;
+            else if (x < 62) src[x] = x + 61;
+            else if (x == 63) src[x] = 33;
+            else if (x == 64) src[x] = 43;
+            else if (x == 65) src[x] = 126;
+            else src[x] = x - 31;
+          }
+          for (x = 0; x < length; x++) {
+            t = Math.floor(Math.random() * src.length);
+            result += String.fromCharCode(src[t]);
+          }
+          return result;
+        }, // End of getKey()
+      };
 
-                // if (storage.docInfo.files != null) {
-                //     let data = {
+      function getForms() {
+        let url;
+        url = apiServer + "/api/gw/form";
 
-                //         "docNo": ($("#" + id + "_no").val() + "").split("2022")[1]
-                //     }
-
-                //     data = JSON.stringify(data);
-                //     data = cipher.encAes(data);
-                //     $.ajax({
-                //         url: apiServer + "/system/doc/attachedFile/" + ($("#" + id + "_no").val() + "").split("2022")[1],
-                //         method: "get",
-                //         contentType: "text/plain",
-                //         success: (result) => {
-
-                //             if (result == "ok") {
-                //                 //  console.log("성공");
-                //             } else {
-
-                //                 console.log("파일 업로드 실패" + $("#" + id + "_no").val());
-                //             }
-
-                //         }
-                //     })
-                // }
+        $.ajax({
+          url: url,
+          method: "get",
+          dataType: "json",
+          cache: false,
+          success: (data) => {
+            let list;
+            if (data.result === "ok") {
+              list = cipher.decAes(data.data);
+              list = JSON.parse(list);
+              storage.form = list;
+              console.log("[getForms] Success getting employee information.");
+            } else {
+              // msg.set("양식 정보를 가져오지 못했습니다.");
             }
+          },
+        });
+      } // End of getUserMap()
 
+      // API 서버에서 직원 정보를 가져오는 함수
+      function getUserMap() {
+        let url;
+        url = apiServer + "/api/user/map";
+
+        $.ajax({
+          url: url,
+          method: "get",
+          dataType: "json",
+          cache: false,
+          success: (data) => {
+            let list;
+            if (data.result === "ok") {
+              list = cipher.decAes(data.data);
+              list = JSON.parse(list);
+              storage.user = list;
+              console.log("[getUserMap] Success getting employee information.");
+            } else {
+              //   msg.set("직원 정보를 가져오지 못했습니다.");
+            }
+          },
+        });
+      } // End of getUserMap()
+
+      // API 서버에서 직원 정보를 가져오는 함수
+      function getDeptMap() {
+        let url;
+        url = apiServer + "/api/dept/map";
+
+        $.ajax({
+          url: url,
+          method: "get",
+          dataType: "json",
+          cache: false,
+          success: (data) => {
+            let list;
+
+            if (data.result === "ok") {
+              list = cipher.decAes(data.data);
+              list = JSON.parse(list);
+              storage.dept = list;
+              console.log(
+                "[getDeptMap] Success getting department information."
+              );
+            } else {
+              //  msg.set("부서 정보를 가져오지 못했습니다.");
+            }
+          },
+        });
+      } // End of getDeptMap()console.log
+
+      // API 서버에서 고객사 정보를 가져오는 함수
+      function getCustomer() {
+        let url;
+        url = apiServer + "/api/system/customer";
+        $.ajax({
+          url: url,
+          method: "get",
+          dataType: "json",
+          cache: false,
+          success: (data) => {
+            let list;
+            if (data.result === "ok") {
+              list = cipher.decAes(data.data);
+              list = JSON.parse(list);
+              storage.customer = list;
+              console.log(
+                "[getCustomer] Success getting customer information."
+              );
+            } else {
+              //   msg.set("고객 정보를 가져오지 못했습니다.");
+            }
+          },
+        });
+      } // End of getCustomer()
+      function getUserRank() {
+        let url, userRankTime, userRankData;
+        url = apiServer + "/api/user/rank";
+        userRankTime = sessionStorage.getItem("userRankTime");
+        userRankTime = userRankTime == null ? 0 : userRankTime * 1;
+        if (new Date().getTime() < userRankTime + 600000) {
+          userRankData = sessionStorage.getItem("userRankData");
+          userRankData = JSON.parse(userRankData);
+          storage.userRank = userRankData;
+          console.log("[getUserMap] set rank info from sessionStorage.");
+        } else {
+          $.ajax({
+            url: url,
+            method: "get",
+            dataType: "json",
+            cache: false,
+            success: (data) => {
+              let list;
+              if (data.result === "ok") {
+                list = cipher.decAes(data.data);
+                sessionStorage.setItem("userRankData", list);
+                sessionStorage.setItem(
+                  "userRankTime",
+                  new Date().getTime() + ""
+                );
+                list = JSON.parse(list);
+                storage.userRank = list;
+                console.log("[getBasicInfo] Success getting rank information.");
+              } else {
+                alert("직급 정보를 가져오지 못했습니다.");
+              }
+            },
+          });
+        }
+      } // End of getUserRank()
+
+      function getSopp() {
+        $.ajax({
+          url: "/api/sopp",
+          type: "get",
+          dataType: "json",
+          success: (result) => {
+            if (result.result == "ok") {
+              let jsondata;
+              jsondata = cipher.decAes(result.data);
+              jsondata = JSON.parse(jsondata);
+              storage.soppList = jsondata;
+            } else {
+              console.log("에러");
+            }
+          },
+        });
+      }
+
+      // 초기화 함수
+      function init() {
+        getList();
+        cipher.rsa.getKey();
+        window.setTimeout(() => {
+          getCustomer();
+          getDeptMap();
+          getUserMap();
+          getForms();
+          getUserRank();
+          getSopp();
+        }, 1000);
+        storage.appStatus = {
+          1: "임시저장",
+          2: "검토요청",
+          3: "반려",
+          4: "승인요청",
+          5: "완료",
+        };
+        storage.status = { 1: "작성중", 2: "진행중", 3: "완료" };
+      } // End of init()
+      function lineUp(str) {
+        let x,
+          r = 0;
+        for (x in str) r += str[x].charCodeAt();
+        return r;
+      }
+      // 서버에서 문서 목록을 가져오는 함수
+      function getList() {
+        $.ajax({
+          url: _server,
+          method: "get",
+          success: (result) => {
+            let tt = result.replace(/\n+/g, "");
+            tt = tt.replace(/\t+/g, "");
+            tt = JSON.parse(tt);
+            if (tt.result === "ok") {
+              docList = tt.data;
+              storage.docList = docList;
+              drawDocList();
+            } else {
+              console.log("[ERROR] Failure parse.");
+            }
+          },
+          error: () => {
+            console.log("[ERROR] Failure getting document information.");
+          },
+        });
+      } // End of getList()
+
+      // 개별 문서 정보를 가져오는 함수
+      function getDocData(docNo) {
+        $.ajax({
+          url: _server + "/" + docNo,
+          method: "get",
+          success: (result) => {
+            let tt = result.replace(/\n+/g, "");
+            tt = tt.replace(/\t+/g, "");
+            tt = JSON.parse(tt);
+            if (tt.result === "ok") {
+              docInfo = {
+                files: tt.files,
+                appData: tt.appData,
+                docData: tt.docData,
+              };
+              storage.docInfo = docInfo;
+              drawClickedDetail(docNo);
+            } else {
+              console.log("[ERROR] Failure parse.");
+            }
+          },
+          error: () => {
+            console.log("[ERROR] Failure getting document information.");
+          },
+        });
+      } // End of getDocData()
+
+      //문서 목록을 화면에 그리는 함수
+      function drawDocList() {
+        let html, x, doc, cnt;
+        if (
+          storage.customer == undefined ||
+          storage.user == undefined ||
+          storage.dept == undefined
+        ) {
+          window.setTimeout(drawDocList, 100);
+          return;
+        }
+        cnt = document.getElementsByClassName("app_list")[0];
+        html = "";
+        for (x in docList) {
+          doc = docList[x];
+          html +=
+            '<input type="checkbox" id="chk' +
+            doc.no +
+            '" class="hidden_chk" />';
+          html +=
+            '<label class="list_item" for="chk' +
+            doc.no +
+            '" data-no="' +
+            doc.no +
+            '" onclick="clickedItem(this)">';
+          html += "<div>" + doc.no + "</div>";
+          html +=
+            "<div>" +
+            new Date(doc.created)
+              .toLocaleString()
+              .substring(2, 13)
+              .replaceAll(" ", "") +
+            "</div>";
+          html +=
+            "<div>" +
+            (storage.customer[doc.customer] != null
+              ? storage.customer[doc.customer].name
+              : doc.customer) +
+            "</div>";
+          html += "<div>" + doc.form + "</div>";
+          html += "<div>" + doc.type + "</div>";
+          html += "<div>" + doc.title + "</div>";
+          html +=
+            "<div>" +
+            (doc.writer === 0 ? "0" : storage.user[doc.writer].userName) +
+            "</div>";
+          html +=
+            "<div>" +
+            (doc.status + " : " + storage.status[doc.status]) +
+            "</div>";
+          html += "</label>";
         }
 
+        cnt.innerHTML = html;
+      } // End of drawDocList()
 
-        // 지출품의서 발주서 공문서 그리는 공통 함수 //////////////////////////////////////////////////////////////////////////////////////
-        function commonDrawFnc(docListTitle, info, appTitles, i, id, dataTitles) {
-            let num;
-            for (let k = 0; k < Object.keys(storage.docList[i]).length; k++) {
+      // 리스트 아이템이 클릭되면 실행되는 함수
+      function clickedItem(el) {
+        let docNo;
+        docNo = el.dataset.no;
+        getDocData(docNo);
+      } // End of clickedItem()
+
+      function drawClickedDetail(no) {
+        let fileTarget = $(".app_files");
+        let appTarget = $(".app_line");
+        let dataTarget = $(".app_data");
+        let files,
+          appData,
+          docData = new Array();
+        let filesHtml = "";
+        let appDataHtml = "";
+        let docDataHtml = "";
+        //docInfo = { "files": tt.files, "appData": tt.appData, "docData": tt.docData };
+        let created,
+          dataStatus,
+          insertData,
+          insertDetailData = "";
+        let detailArr = [];
+        let appDatas = [];
+        let soppAndCus = null;
+
+        let dataTitles = [
+          "date",
+          "customer",
+          "product",
+          "price",
+          "quantity",
+          "subTotal",
+          "tax",
+          "total",
+          "remark",
+        ];
+        let appTitles = ["app", "approved", "comment", "request", "status"];
+        let info = storage.docInfo;
+        for (let i = 0; i < info.appData.length; i++) {
+          appDataHtml += "<div>" + "app_" + info.appData[i].app + "</div>";
+          appDataHtml +=
+            "<div>" + "approved_" + info.appData[i].approved + "</div>";
+          appDataHtml +=
+            "<div>" + "comment_" + info.appData[i].comment + "</div>";
+          appDataHtml +=
+            "<div>" + "request_" + info.appData[i].request + "</div>";
+          appDataHtml +=
+            "<div>" + "writer_" + info.appData[i].writer + "</div>";
+          appDataHtml +=
+            "<div>" + "status_" + info.appData[i].status + "</div>";
+        }
+
+        appTarget.html(appDataHtml);
+
+        filesHtml += "<div>" + "filename_" + info.files + "</div>";
+
+        fileTarget.html(filesHtml);
+
+        if (info.docData != null)
+          for (let i = 0; i < info.docData.length; i++) {
+            docDataHtml += "<div>" + i + "데이터 -------------";
+            for (let j = 0; j < dataTitles.length; j++) {
+              docDataHtml +=
+                "<div>" + info.docData[i][dataTitles[j]] + "</div>";
+            }
+          }
+
+        docDataHtml += "</div>";
+        dataTarget.html(docDataHtml);
+
+        let target = $(".app_preview");
+        let typeHtml = "";
+
+        for (let i = 0; i < info.appData.length; i++) {
+          for (let j = 0; j < appTitles.length; j++) {
+            info.appData[i][appTitles[j]];
+          }
+        }
+
+        for (let i = 0; i < storage.docList.length; i++) {
+          if (storage.docList[i].no == no) {
+            /////////////////////////////////////////////////// 결재 타입이 지출품의서인 경우 /////////////////////////////////////////////////////
+
+            let docListTitle = [
+              "no",
+              "writer",
+              "type",
+              "title",
+              "status",
+              "sopp",
+              "customer",
+              "content",
+              "form",
+              "draw",
+              "created",
+            ];
+
+            if (
+              storage.docList[i].type == "TRS" ||
+              storage.docList[i].type == "BUY"
+            ) {
+              target.html(storage.form[0].form);
+              if (storage.docList[i].type == "TRS") {
+                $("#TRS").attr("checked", true);
+              } else {
+                $("#BUY").attr("checked", true);
+              }
+
+              let id = storage.form[0].id;
+              commonDrawFnc(docListTitle, info, appTitles, i, id, dataTitles);
+
+              ///////////////////////////////////////////////////결재타입이 지출결의서인 경우 ////////////////////////////////////////////////
+            } else if (
+              storage.docList[i].type == "COST" ||
+              storage.docList[i].type == "CREDIT" ||
+              storage.docList[i].type == "PAY" ||
+              storage.docList[i].type == "TAX"
+            ) {
+              target.html(storage.form[1].form);
+
+              if (storage.docList[i].type == "COST") {
+                $("#COST").attr("checked", true);
+              } else if (storage.docList[i].type == "CREDIT") {
+                $("#CREDIT").attr("checked", true);
+              } else if (storage.docList[i].type == "PAY") {
+                $("#PAY").attr("checked", true);
+              } else {
+                $("#TAX").attr("checked", true);
+              }
+              let id = storage.form[1].id;
+
+              ////// info title content 출력하기
+              //let docListTitle = Object.keys(storage.docList[i]);
+              let num;
+              for (let k = 0; k < Object.keys(storage.docList[i]).length; k++) {
                 for (let j = 0; j < docListTitle.length; j++) {
-                    if (docListTitle[j] == "writer") {
-                        num = storage.docList[i][docListTitle[j]];
-                        let name = storage.user[num].userName;
-                        $("#" + id + "_" + docListTitle[j]).val(name);
-                        $("#" + id + "_" + docListTitle[j]).attr("data-detail", name);
-                    }
-                    else if (docListTitle[j] == "created") {
-                        created = storage.docList[i][docListTitle[j]];
-                        let date = getYmdSlash(storage.docList[i][docListTitle[j]]);
-                        $("#" + id + "_" + docListTitle[j]).val(date);
-                        $("#" + id + "_" + docListTitle[j]).attr("data-detail", date);
-
-                    } else if (docListTitle[j] == "content") {
-                        $("#" + id + "_" + docListTitle[j]).val(storage.docList[i][docListTitle[j]]);
-                        $("#" + id + "_" + docListTitle[j]).html(storage.docList[i][docListTitle[j]]);
-
-
-                    } else if (docListTitle[j] == "customer") {
-                        if (storage.docList[i][docListTitle[j]] == 0) {
-                            $("#" + id + "_infoCustomer").val("");
-                            storage.custResult = "";
-                        } else {
-                            storage.custResult = storage.docList[i][docListTitle[j]];
-                            $("#" + id + "_infoCustomer").attr("data-detail", storage.customer[storage.docList[i][docListTitle[j]]].name);
-                            $("#" + id + "_infoCustomer").val(storage.customer[storage.docList[i][docListTitle[j]]].name);
-                        }
-
-                    } else if (docListTitle[j] == "sopp") {
-
-                        if (storage.docList[i][docListTitle[j]] == 0) {
-                            $("#" + id + "_sopp").val("");
-                            storage.soppResult = "";
-
-                        } else {
-                            let sopp;
-                            for (let k = 0; k < storage.soppList.length; k++) {
-
-                                if (storage.soppList[k].no == storage.docList[i][docListTitle[j]]) {
-                                    sopp = storage.soppList[k].title;
-                                    storage.soppResult = storage.docList[i][docListTitle[j]];
-
-                                }
-
-                            } $("#" + id + "_sopp").attr("data-detail", sopp);
-                            $("#" + id + "_sopp").val(sopp);
-
-                            // $("#" + id + "_sopp").attr("data-detail", sopp);
-                            // $("#" + id + "_sopp").val(sopp);
-                        }
-                    } else if (docListTitle[j] == "no") {
-                        if (storage.docList[i][docListTitle[j]] == 0) {
-                            $("#" + id + "_" + docListTitle[j]).val("");
-                        } else {
-                            $("#" + id + "_" + docListTitle[j]).attr("data-detail", "VTEK_2022" + storage.docList[i][docListTitle[j]] + "");
-                            $("#" + id + "_" + docListTitle[j]).val("VTEK_2022" + storage.docList[i][docListTitle[j]] + "");
-                        }
-                    }
-                    else {
-                        if (storage.docList[i][docListTitle[j]] == 0) {
-                            $("#" + id + "_" + docListTitle[j]).val("");
-                        } else {
-                            $("#" + id + "_" + docListTitle[j]).attr("data-detail", storage.docList[i][docListTitle[j]]);
-                            $("#" + id + "_" + docListTitle[j]).val(storage.docList[i][docListTitle[j]]);
-                        }
-                    }
-                }
-            }
-
-            $("#" + id + "_line").html(
-                "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작성</div>" +
-                "<div class='lineSet'>" +
-                "<div class='twoBorder'><input class='inputsAuto' value ='" + storage.userRank[storage.user[num].rank][0] + "'></div>" +
-                "<div class='twoBorder'><input class='inputsAuto " + id + "_writer' type='text'  data-detail='" + num + "' value='" + storage.user[num].userName + "'></div>" +
-                "<div class='twoBorder'><input class='inputsAuto " + id + "_writer_status'  data-detail='' type='text' ></div>" +
-                "<div class='dateBorder'><input class='inputsAuto " + id + "_writer_approved'  data-detail='' type='text' value=''></div></div></div>" +
-
-                "<div class='lineGrid'><div class='lineTitle'>결재</div>" +
-                "<div class='lineSet'>" +
-                "<div class='twoBorder'><input class='inputsAuto " + id + "_approval_position' value='대표' ></div>" +
-                "<div class='twoBorder'><input class='inputsAuto " + id + "_approval' type='text' data-detail='10002' value='이승우' ></div>" +
-                "<div class='twoBorder'><input class='inputsAuto " + id + "_approval_status' data-detail='' type='text' ></div>" +
-                "<div class='dateBorder'><input class='inputsAuto " + id + "_approval_approved' type='text' data-detail='' ></div></div></div>" +
-                "</div>"
-
-            );
-
-            let originHtml = $("#contentContainer").html();
-            originHtml += "<div class='innerHtml'></div>"
-            $("#contentContainer").html(originHtml);
-            $(".innerHtml").html(storage.docList[i].content);
-            $("#" + id + "_content").hide();
-
-            soppAndCus = {
-                "sopp": storage.soppResult = "" ? null : storage.soppResult + "",
-                "customer": storage.custResult = "" || undefined ? null : storage.custResult + "",
-            }
-
-
-            let dataHtml = ""
-
-            if (info.docData != null) for (let q = 0; q < Object.keys(info.docData).length; q++) {
-                dataHtml += "<div class='detailcontentDiv'>"
-                for (let j = 0; j < dataTitles.length; j++) {
-                    if (j == (dataTitles.length - 1)) {
-                        dataHtml += "<div class='detailcontentlast'><input type='text' onkeyup='this.dataset.detail=this.value' value='" + info.docData[q][dataTitles[j]] + "' class='inputs outlineNonedata " + id + "_" + dataTitles[j] + "'></div>";
-                    } else if (dataTitles[j] == 'date') {
-                        let date = getYmdHyphen(info.docData[q][dataTitles[j]]);
-                        dataHtml += "<div class='detailcontent'><input class='inputs outlineNonedata " + id + "_" + dataTitles[j] + "' onchange='this.dataset.detail=this.value;' type='date' value='" + date + "' ></div>";
-                    } else if (dataTitles[j] == 'price' || dataTitles[j] == 'quantity' || dataTitles[j] == 'subTotal' || dataTitles[j] == 'tax' || dataTitles[j] == 'total') {
-                        dataHtml += "<div class='detailcontent'><input class='inputs outlineNonedata " + id + "_" + dataTitles[j] + "' type='text' oninput='setNum(this)'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' value='" + (info.docData[q][dataTitles[j]]).toLocaleString() + "'></div>";
+                  if (docListTitle[j] == "writer") {
+                    num = storage.docList[i][docListTitle[j]];
+                    let name = storage.user[num].userName;
+                    $("#" + id + "_" + docListTitle[j]).val(name);
+                  } else if (docListTitle[j] == "created") {
+                    created = storage.docList[i][docListTitle[j]];
+                    let date = getYmdSlash(storage.docList[i][docListTitle[j]]);
+                    $("#" + id + "_" + docListTitle[j]).val(date);
+                  } else if (docListTitle[j] == "content") {
+                    $("#" + id + "_" + docListTitle[j]).val(
+                      storage.docList[i][docListTitle[j]]
+                    );
+                    $("#" + id + "_" + docListTitle[j]).html(
+                      storage.docList[i][docListTitle[j]]
+                    );
+                  } else if (docListTitle[j] == "customer") {
+                    if (storage.docList[i][docListTitle[j]] == 0) {
+                      $("#" + id + "_infoCustomer").val("");
                     } else {
-                        dataHtml += "<div class='detailcontent'><input class='inputs outlineNonedata " + id + "_" + dataTitles[j] + "' type='text'  onkeyup='this.dataset.detail=this.value' value='" + info.docData[q][dataTitles[j]] + "'></div>";
+                      $("#" + id + "_infoCustomer").val(
+                        storage.customer[storage.docList[i][docListTitle[j]]]
+                          .name
+                      );
                     }
-                } dataHtml += "<div class='detailcontentbox'><input type='checkbox' class='detailBox'></div></div>"
-            }
-
-            $(".insertedDataList").html(dataHtml);
-
-            let totalCount = 0;
-            for (let i = 0; i < $("." + id + "_total").length; i++) {
-                totalCount += Number($("." + id + "_total")[i].value.replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", ""));
-            }
-
-            totalCount = totalCount.toLocaleString();
-            $(".insertedTotal").val(totalCount);
-
-            // 모든 인풋 데이터셋 설정 
-            let target = $(".app_preview")[0];
-            let inputsArr = target.getElementsByTagName("input");
-
-            for (let i = 0; i < inputsArr.length; i++) {
-                inputsArr[i].dataset.detail = inputsArr[i].value;
-            }
-            $(".list_comment")[0].dataset.detail = "old";
-
-
-            for (let i = 0; i < info.appData.length; i++) {
-                for (let j = 0; j < appTitles.length; j++) {
-                    if (info.appData[i][appTitles[j]] != null) {
-                        if (appTitles[j] == 'app') {
-                            let app = storage.user[info.appData[i][appTitles[j]]].userName;
-                            $("." + id + "_" + appTitles[j]).val(app);
-                        } else if (appTitles[j] == 'status') {
-                            let status = storage.appStatus[info.appData[i][appTitles[j]]];
-                            if (status == '승인요청') {
-                                dataStatus = 1;
-                                $("." + id + "_" + "writer_status").val("승인");
-                                $("." + id + "_" + "writer_status").attr("data-detail", "승인");
-                                $("." + id + "_writer_approved").val($("#" + id + "_created").val());
-                                $("." + id + "_writer_approved").attr("data-detail", $("#" + id + "_created").val());
-
-
-                                appDatas = [[0, num, 0, getYmdSlash2(created) + "", 0, $(".app_preview").html(), getYmdSlash2(created) + "", null, null, null, soppAndCus],
-                                [10, 10002, 2, null, 0, null, null, null, null, null, null]];
-
-                            } else if (status == '반려') {
-                                let request = info.appData[i].request;
-                                request = storage.user[request].userName;
-                                //본인반려 
-                                if (request == $("#" + id + "_writer").val()) {
-                                    dataStatus = -1;
-                                    $("." + id + "_writer_" + appTitles[j]).val("");
-                                    $("." + id + "_" + appTitles[j]).val("");
-                                    $("." + id + "_approval").val('이승우');
-                                    $("." + id + "_writer_approved").val("");
-                                    // ordered employee appType read isModify doc approved retrievee rejeceted comment appData 
-                                    appDatas = [[0, num, 0, getYmdSlash2(created) + "", 0, $(".app_preview").html(), null, getYmdSlash2(created) + "", null, null, soppAndCus],
-                                    [10, 10002, 2, null, 0, null, null, null, null, null, null]];
-
-                                    // 대표 반려인 경우 
-
-                                } else if (request == '이승우') {
-                                    dataStatus = -3;
-                                    $("." + id + "_writer_status").val('승인');
-                                    $("." + id + "_writer_status").attr("data-detail", "승인");
-                                    $("." + id + "_writer_approved").val($("#" + id + "_created").val());
-                                    $("." + id + "_writer_approved").attr("data-detail", $("#" + id + "_created").val());
-                                    $("." + id + "_approval").val('이승우');
-                                    $("." + id + "_approval_status").val('반려');
-                                    $("." + id + "_approval_status").attr("data-detail", "반려");
-
-                                    let approved;
-                                    if (storage.docInfo.appData[0].approved == null) {
-                                        approved = getYmdSlash(created);
-                                    } else {
-                                        approved = getYmdSlash(storage.docInfo.appData[0].approved)
-                                    }
-                                    $("." + id + "_approval_approved").val(approved);
-                                    $("." + id + "_approval_approved").attr("data-detail", approved);
-                                    // ordered employee appType read isModify doc approved retrievee rejeceted comment appData 
-                                    appDatas = [[0, num, 0, getYmdSlash2(created) + "", 0, $(".app_preview").html(), getYmdSlash2(created) + "", null, null, null, soppAndCus],
-                                    [10, 10002, 2, approved, 0, $(".app_preview").html(), null, null, approved, storage.docInfo.appData[0].comment, soppAndCus]];
-                                }
-                            } else if (status == '임시저장') {
-                                dataStatus = 0;
-                                $("." + id + "_writer_status").val("");
-                                $("." + id + "_writer_approved").val("");
-                                $("." + id + "_approval").val('이승우');
-                                // 승인인 경우 
-                            } else {
-                                dataStatus = 3;
-                                $("." + id + "_writer_status").val('승인');
-                                $("." + id + "_writer_status").attr("data-detail", "승인");
-                                $("." + id + "_writer_approved").val($("#" + id + "_created").val());
-                                $("." + id + "_writer_approved").attr("data-detail", $("#" + id + "_created").val());
-                                $("." + id + "_approval_status").val('승인');
-                                $("." + id + "_approval_status").attr("data-detail", "승인");
-                                let approved;
-                                if (storage.docInfo.appData[0].approved == null) {
-                                    approved = getYmdSlash(created);
-                                } else {
-                                    approved = getYmdSlash(storage.docInfo.appData[0].approved)
-                                }
-                                $("." + id + "_approval_approved").val(approved);
-                                $("." + id + "_approval_approved").attr("data-detail", approved);
-                                // ordered employee appType read isModify doc approved retrievee rejeceted comment appData 
-                                let comment = null;
-                                if (storage.docInfo.appData[0].comment != null) {
-                                    comment = storage.docInfo.appData[0].comment;
-                                }
-                                appDatas = [[0, num, 0, getYmdSlash2(created) + "", 0, $(".app_preview").html(), getYmdSlash2(created) + "", null, null, null, soppAndCus],
-                                [10, 10002, 2, approved, 0, $(".app_preview").html(), approved, null, null, comment, soppAndCus]];
-                            }
+                  } else if (docListTitle[j] == "sopp") {
+                    if (storage.docList[i][docListTitle[j]] == 0) {
+                      $("#" + id + "_sopp").val("");
+                      storage.soppResult = "";
+                    } else {
+                      let sopp;
+                      for (let k = 0; k < storage.soppList.length; k++) {
+                        if (
+                          storage.soppList[k].no ==
+                          storage.docList[i][docListTitle[j]]
+                        ) {
+                          sopp = storage.soppList[k].title;
+                          storage.soppResult =
+                            storage.docList[i][docListTitle[j]];
                         }
+                      }
+                      $("#" + id + "_sopp").attr("data-detail", sopp);
+                      $("#" + id + "_sopp").val(sopp);
                     }
+                  } else if (docListTitle[j] == "no") {
+                    if (storage.docList[i][docListTitle[j]] == 0) {
+                      $("#" + id + "_" + docListTitle[j]).val("");
+                    } else {
+                      $("#" + id + "_" + docListTitle[j]).attr(
+                        "data-detail",
+                        "VTEK_2022" + storage.docList[i][docListTitle[j]] + ""
+                      );
+                      $("#" + id + "_" + docListTitle[j]).val(
+                        "VTEK_2022" + storage.docList[i][docListTitle[j]] + ""
+                      );
+                    }
+                  } else {
+                    if (storage.docList[i][docListTitle[j]] == 0) {
+                      $("#" + id + "_" + docListTitle[j]).val("");
+                    } else {
+                      $("#" + id + "_" + docListTitle[j]).attr(
+                        "data-detail",
+                        storage.docList[i][docListTitle[j]]
+                      );
+                      $("#" + id + "_" + docListTitle[j]).val(
+                        storage.docList[i][docListTitle[j]]
+                      );
+                    }
+                  }
                 }
+              }
+
+              if ($("#" + id + "_writer").val() == "구민주") {
+                $("#" + id + "_line").html(
+                  "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작성</div>" +
+                    "<div class='lineSet'>" +
+                    "<div class='twoBorder'><input class='inputsAuto' value ='" +
+                    storage.userRank[storage.user[num].rank][0] +
+                    "'></div>" +
+                    "<div class='twoBorder'><input class='inputsAuto " +
+                    id +
+                    "_writer' type='text'  data-detail='" +
+                    num +
+                    "' value='" +
+                    storage.user[num].userName +
+                    "'></div>" +
+                    "<div class='twoBorder'><input class='inputsAuto " +
+                    id +
+                    "_writer_status'  data-detail='' type='text' ></div>" +
+                    "<div class='dateBorder'><input class='inputsAuto " +
+                    id +
+                    "_writer_approved'  data-detail='' type='text'></div></div></div>" +
+                    "<div class='lineGrid'><div class='lineTitle'>결재</div>" +
+                    "<div class='lineSet'>" +
+                    "<div class='twoBorder'><input class='inputsAuto " +
+                    id +
+                    "_approval_position'data-detail='10' value='대표' ></div>" +
+                    "<div class='twoBorder'><input class='inputsAuto " +
+                    id +
+                    "_approval' type='text' data-detail='10002' value='이승우' ></div>" +
+                    "<div class='twoBorder'><input class='inputsAuto " +
+                    id +
+                    "_approval_status' data-detail='' type='text' ></div>" +
+                    "<div class='dateBorder'><input class='inputsAuto " +
+                    id +
+                    "_approval_approved' type='text' data-detail='' ></div></div></div>" +
+                    "</div>"
+                );
+              } else {
+                $("#" + id + "_line").html(
+                  "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작성</div>" +
+                    "<div class='lineSet'>" +
+                    "<div class='twoBorder'><input class='inputsAuto' value ='" +
+                    storage.userRank[storage.user[num].rank][0] +
+                    "'></div>" +
+                    "<div class='twoBorder'><input class='inputsAuto " +
+                    id +
+                    "_writer' type='text'  data-detail='" +
+                    num +
+                    "' value='" +
+                    storage.user[num].userName +
+                    "'></div>" +
+                    "<div class='twoBorder'><input class='inputsAuto " +
+                    id +
+                    "_writer_status'  data-detail='' type='text' ></div>" +
+                    "<div class='dateBorder'><input class='inputsAuto " +
+                    id +
+                    "_writer_approved'  data-detail='' type='text' value='" +
+                    $("#" + id + "_created").val() +
+                    "'></div></div></div>" +
+                    "<div class='lineGrid'><div class='lineTitle'>검토</div>" +
+                    "<div class='lineSet'>" +
+                    "<div class='twoBorder'><input class='inputsAuto " +
+                    id +
+                    "_examine_position' value='과장' ></div>" +
+                    "<div class='twoBorder'><input class='inputsAuto " +
+                    id +
+                    "_examine' type='text' data-detail='10017' value='구민주' ></div>" +
+                    "<div class='twoBorder'><input class='inputsAuto " +
+                    id +
+                    "_examine_status' data-detail='' type='text' ></div>" +
+                    "<div class='dateBorder'><input class='inputsAuto " +
+                    id +
+                    "_examine_approved' type='text' data-detail='' ></div></div></div>" +
+                    "<div class='lineGrid'><div class='lineTitle'>결재</div>" +
+                    "<div class='lineSet'>" +
+                    "<div class='twoBorder'><input class='inputsAuto " +
+                    id +
+                    "_approval_position'  data-detail='10' value='대표' ></div>" +
+                    "<div class='twoBorder'><input class='inputsAuto " +
+                    id +
+                    "_approval' type='text' data-detail='10002' value='이승우' ></div>" +
+                    "<div class='twoBorder'><input class='inputsAuto " +
+                    id +
+                    "_approval_status' data-detail='' type='text' ></div>" +
+                    "<div class='dateBorder'><input class='inputsAuto " +
+                    id +
+                    "_approval_approved' type='text' data-detail='' ></div></div></div>" +
+                    "</div>"
+                );
+              }
+
+              let dataHtml = "";
+
+              if (info.docData != null)
+                for (let q = 0; q < Object.keys(info.docData).length; q++) {
+                  dataHtml += "<div class='detailcontentDiv'>";
+                  for (let j = 0; j < dataTitles.length; j++) {
+                    if (j == dataTitles.length - 1) {
+                      dataHtml +=
+                        "<div class='detailcontentlast'><input type='text' value='" +
+                        info.docData[q][dataTitles[j]] +
+                        "' onkeyup='this.dataset.detail=this.value' class='inputs outlineNonedata " +
+                        id +
+                        "_" +
+                        dataTitles[j] +
+                        "'></div>";
+                    } else if (dataTitles[j] == "date") {
+                      let date = getYmdHyphen(info.docData[q][dataTitles[j]]);
+                      dataHtml +=
+                        "<div class='detailcontent'><input class='inputs outlineNonedata " +
+                        id +
+                        "_" +
+                        dataTitles[j] +
+                        "' onchange='this.dataset.detail=this.value;' type='date' value='" +
+                        date +
+                        "' ></div>";
+                    } else if (
+                      dataTitles[j] == "price" ||
+                      dataTitles[j] == "quantity" ||
+                      dataTitles[j] == "subTotal" ||
+                      dataTitles[j] == "tax" ||
+                      dataTitles[j] == "total"
+                    ) {
+                      dataHtml +=
+                        "<div class='detailcontent'><input class='inputs outlineNonedata " +
+                        id +
+                        "_" +
+                        dataTitles[j] +
+                        "' type='text' oninput='setNum(this)'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' value='" +
+                        info.docData[q][dataTitles[j]].toLocaleString() +
+                        "'></div>";
+                    } else {
+                      dataHtml +=
+                        "<div class='detailcontent'><input class='inputs outlineNonedata" +
+                        id +
+                        "_" +
+                        dataTitles[j] +
+                        "' type='text' onkeyup='this.dataset.detail=this.value' value='" +
+                        info.docData[q][dataTitles[j]] +
+                        "'></div>";
+                    }
+                  }
+                  dataHtml +=
+                    "<div class='detailcontentbox'><input type='checkbox' class='detailBox'></div></div>";
+                }
+
+              $(".insertedDataList").html(dataHtml);
+
+              let totalCount = 0;
+              for (let i = 0; i < $("." + id + "_total").length; i++) {
+                totalCount += Number(
+                  $("." + id + "_total")
+                    [i].value.replace(",", "")
+                    .replace(",", "")
+                    .replace(",", "")
+                    .replace(",", "")
+                    .replace(",", "")
+                );
+              }
+              totalCount = totalCount.toLocaleString();
+              $(".insertedTotal").val(totalCount);
+              let originHtml = $("#contentContainer").html();
+              originHtml += "<div class='innerHtml'></div>";
+              $("#contentContainer").html(originHtml);
+              $(".innerHtml").html(storage.docList[i].content);
+              $("#" + id + "_content").hide();
+
+              // 모든 인풋 데이터셋 설정
+              let app_preview = $(".app_preview")[0];
+              let inputsArr = app_preview.getElementsByTagName("input");
+
+              for (let i = 0; i < inputsArr.length; i++) {
+                inputsArr[i].dataset.detail = inputsArr[i].value;
+              }
+
+              $(".list_comment")[0].dataset.detail = "old";
+
+              for (let i = 0; i < info.appData.length; i++) {
+                for (let j = 0; j < appTitles.length; j++) {
+                  if (info.appData[i][appTitles[j]] != null) {
+                    if (appTitles[j] == "app") {
+                      let app =
+                        storage.user[info.appData[i][appTitles[j]]].userName;
+                      $("." + id + "_" + appTitles[j]).val(app);
+                    } else if (appTitles[j] == "status") {
+                      let status =
+                        storage.appStatus[info.appData[i][appTitles[j]]];
+                      if (status == "승인요청") {
+                        dataStatus = 1;
+                        $("." + id + "_writer_status").val("승인");
+                        $("." + id + "_writer_status").attr(
+                          "data-detail",
+                          "승인"
+                        );
+                        $("." + id + "_writer_approved").val(
+                          $("#" + id + "_created").val()
+                        );
+                        $("." + id + "_writer_approved").attr(
+                          "data-detail",
+                          $("#" + id + "_created").val()
+                        );
+                        $("." + id + "_examine_status").val("승인");
+                        $("." + id + "_examine_status").attr(
+                          "data-detail",
+                          "승인"
+                        );
+                        let approved;
+                        if (storage.docInfo.appData[0].approved == null) {
+                          approved = getYmdSlash(created);
+                        } else {
+                          approved = getYmdSlash(
+                            storage.docInfo.appData[0].approved
+                          );
+                        }
+                        $("." + id + "_examine_approved").val(approved);
+                        $("." + id + "_examine_approved").attr(
+                          "data-detail",
+                          approved
+                        );
+
+                        // ordered employee appType read isModify doc approved retrieved rejected comment appData
+                        if ($("#" + id + "_writer").val() == "구민주") {
+                          appDatas = [
+                            [
+                              0,
+                              10017,
+                              0,
+                              getYmdSlash2(created) + "",
+                              0,
+                              $(".app_preview").html(),
+                              getYmdSlash2(created) + "",
+                              null,
+                              null,
+                              null,
+                              soppAndCus,
+                            ],
+                            [
+                              10,
+                              10002,
+                              2,
+                              null,
+                              0,
+                              null,
+                              null,
+                              null,
+                              null,
+                              null,
+                              null,
+                            ],
+                          ];
+                        } else {
+                          appDatas = [
+                            [
+                              0,
+                              num,
+                              0,
+                              getYmdSlash2(created) + "",
+                              0,
+                              $(".app_preview").html(),
+                              getYmdSlash2(created) + "",
+                              null,
+                              null,
+                              null,
+                              soppAndCus,
+                            ],
+                            [
+                              10,
+                              10017,
+                              0,
+                              null,
+                              0,
+                              null,
+                              null,
+                              null,
+                              null,
+                              null,
+                              null,
+                            ],
+                            [
+                              20,
+                              10002,
+                              2,
+                              null,
+                              0,
+                              null,
+                              null,
+                              null,
+                              null,
+                              null,
+                              null,
+                            ],
+                          ];
+                        }
+                      } else if (status == "완료") {
+                        dataStatus = 3;
+                        //$("." + id + "_" + appTitles[j]).val(status);
+                        $("." + id + "_writer_status").val("승인");
+                        $("." + id + "_writer_status").attr(
+                          "data-detail",
+                          "승인"
+                        );
+                        $("." + id + "_examine_status").val("승인");
+                        $("." + id + "_examine_status").attr(
+                          "data-detail",
+                          "승인"
+                        );
+                        $("." + id + "_approval_status").val("승인");
+                        $("." + id + "_approval_status").attr(
+                          "data-detail",
+                          "승인"
+                        );
+                        let approved = getYmdSlash(created);
+                        if (storage.docInfo.appData[0].approved == null) {
+                          approved = "";
+                        } else {
+                          approved = getYmdSlash(
+                            storage.docInfo.appData[0].approved
+                          );
+                        }
+                        $("." + id + "_writer_approved").val(
+                          $("#" + id + "_created").val()
+                        );
+                        $("." + id + "_writer_approved").attr(
+                          "data-detail",
+                          $("#" + id + "_created").val()
+                        );
+                        $("." + id + "_examine_approved").val(approved);
+                        $("." + id + "_approval_approved").val(approved);
+                        $("." + id + "_examine_approved").attr(
+                          "data-detail",
+                          approved
+                        );
+                        $("." + id + "_approval_approved").attr(
+                          "data-detail",
+                          approved
+                        );
+
+                        if ($("#" + id + "_writer").val() == "구민주") {
+                          appDatas = [
+                            [
+                              0,
+                              10017,
+                              0,
+                              getYmdSlash2(created) + "",
+                              0,
+                              $(".app_preview").html(),
+                              getYmdSlash2(created) + "",
+                              null,
+                              null,
+                              null,
+                              soppAndCus,
+                            ],
+                            [
+                              10,
+                              10002,
+                              2,
+                              approved,
+                              0,
+                              $(".app_preview").html(),
+                              approved,
+                              null,
+                              null,
+                              null,
+                              soppAndCus,
+                            ],
+                          ];
+                        } else {
+                          appDatas = [
+                            [
+                              0,
+                              num,
+                              0,
+                              getYmdSlash2(created) + "",
+                              0,
+                              $(".app_preview").html(),
+                              getYmdSlash2(created) + "",
+                              null,
+                              null,
+                              null,
+                              soppAndCus,
+                            ],
+                            [
+                              10,
+                              10017,
+                              0,
+                              approved,
+                              0,
+                              $(".app_preview").html(),
+                              approved,
+                              null,
+                              null,
+                              null,
+                              soppAndCus,
+                            ],
+                            [
+                              20,
+                              10002,
+                              2,
+                              approved,
+                              0,
+                              $(".app_preview").html(),
+                              approved,
+                              null,
+                              null,
+                              null,
+                              soppAndCus,
+                            ],
+                          ];
+                        }
+                      } else if (status == "반려") {
+                        // 작성자 반려
+                        let request =
+                          storage.user[info.appData[i].request].userName;
+                        if (request == $("." + id + "_writer").val()) {
+                          dataStatus = -1;
+                          //   console.log("작성자 반려");
+                          if ($("#" + id + "_writer").val() == "구민주") {
+                            appDatas = [
+                              [
+                                0,
+                                num,
+                                0,
+                                getYmdSlash2(created) + "",
+                                0,
+                                $(".app_preview").html(),
+                                null,
+                                null,
+                                getYmdSlash2(created) + "",
+                                null,
+                                soppAndCus,
+                              ],
+                              [
+                                10,
+                                10002,
+                                2,
+                                null,
+                                0,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                              ],
+                            ];
+                          } else {
+                            appDatas = [
+                              [
+                                0,
+                                num,
+                                0,
+                                getYmdSlash2(created) + "",
+                                0,
+                                $(".app_preview").html(),
+                                null,
+                                getYmdSlash2(created) + "",
+                                null,
+                                null,
+                                soppAndCus,
+                              ],
+                              [
+                                10,
+                                10017,
+                                0,
+                                null,
+                                0,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                              ],
+                              [
+                                20,
+                                10002,
+                                2,
+                                null,
+                                0,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                              ],
+                            ];
+                          }
+
+                          // 검토 구민주 반려
+                        } else if (
+                          $("#" + id + "_writer").val() != "구민주" &&
+                          request == "구민주"
+                        ) {
+                          //   console.log("구민주 반려");
+                          dataStatus = -3;
+                          $("." + id + "_approval").val("이승우");
+                          $("." + id + "_writer_status").val("승인");
+                          $("." + id + "_examine_status").val("반려");
+                          $("." + id + "_writer_status").attr(
+                            "data-detail",
+                            "승인"
+                          );
+                          $("." + id + "_examine_status").attr(
+                            "data-detail",
+                            "승인"
+                          );
+                          let approved = getYmdSlash(created);
+                          if (storage.docInfo.appData[0].approved != null) {
+                            approved = getYmdSlash(
+                              storage.docInfo.appData[0].approved
+                            );
+                          }
+                          $("." + id + "_examine_approved").val(approved);
+                          $("." + id + "_examine_approved").attr(
+                            "data-detail",
+                            approved
+                          );
+                          $("." + id + "_writer_approved").val(
+                            $("#" + id + "_created").val()
+                          );
+                          $("." + id + "_writer_approved").attr(
+                            "data-detail",
+                            $("#" + id + "_created").val()
+                          );
+                          // ordered employee appType read isModify doc approved retrieved rejected comment appData
+
+                          appDatas = [
+                            [
+                              0,
+                              num,
+                              0,
+                              getYmdSlash2(created) + "",
+                              0,
+                              $(".app_preview").html(),
+                              getYmdSlash2(created) + "",
+                              null,
+                              null,
+                              null,
+                              soppAndCus,
+                            ],
+                            [
+                              10,
+                              10017,
+                              0,
+                              approved,
+                              0,
+                              $(".app_preview").html(),
+                              null,
+                              null,
+                              approved + "",
+                              null,
+                              soppAndCus,
+                            ],
+                            [
+                              20,
+                              10002,
+                              2,
+                              null,
+                              0,
+                              null,
+                              null,
+                              null,
+                              null,
+                              null,
+                              null,
+                            ],
+                          ];
+                        } else {
+                          //대표 반려
+                          dataStatus = -3;
+                          // console.log("대표님 반려")
+                          $("." + id + "_approval").val("이승우");
+                          $("." + id + "_approval_status").val("반려");
+                          $("." + id + "_approval_status").attr(
+                            "data-detail",
+                            "반려"
+                          );
+                          $("." + id + "_examine_status").val("승인");
+                          $("." + id + "_writer_status").val("승인");
+                          $("." + id + "_writer_status").attr(
+                            "data-detail",
+                            "승인"
+                          );
+                          $("." + id + "_examine_status").attr(
+                            "data-detail",
+                            "승인"
+                          );
+                          let approved = getYmdSlash(created);
+                          if (storage.docInfo.appData[0].approved != null) {
+                            approved = getYmdSlash(
+                              storage.docInfo.appData[0].approved
+                            );
+                          }
+                          $("." + id + "_examine_approved").val(approved);
+                          $("." + id + "_approval_approved").val(approved);
+                          $("." + id + "_examine_approved").attr(
+                            "data-detail",
+                            approved
+                          );
+                          $("." + id + "_approval_approved").attr(
+                            "data-detail",
+                            approved
+                          );
+                          $("." + id + "_writer_approved").val(
+                            $("#" + id + "_created").val()
+                          );
+                          $("." + id + "_writer_approved").attr(
+                            "data-detail",
+                            $("#" + id + "_created").val()
+                          );
+
+                          if ($("#" + id + "_writer").val() == "구민주") {
+                            appDatas = [
+                              [
+                                0,
+                                10017,
+                                0,
+                                getYmdSlash2(created) + "",
+                                0,
+                                $(".app_preview").html(),
+                                getYmdSlash2(created) + "",
+                                null,
+                                null,
+                                null,
+                                soppAndCus,
+                              ],
+                              [
+                                10,
+                                10002,
+                                2,
+                                approved + "",
+                                0,
+                                $(".app_preview").html(),
+                                null,
+                                null,
+                                approved + "",
+                                null,
+                                soppAndCus,
+                              ],
+                            ];
+                          } else {
+                            appDatas = [
+                              [
+                                0,
+                                num,
+                                0,
+                                getYmdSlash2(created) + "",
+                                0,
+                                $(".app_preview").html(),
+                                getYmdSlash2(created) + "",
+                                null,
+                                null,
+                                null,
+                                soppAndCus,
+                              ],
+                              [
+                                10,
+                                10017,
+                                0,
+                                approved + "",
+                                0,
+                                $(".app_preview").html(),
+                                approved + "",
+                                null,
+                                null,
+                                null,
+                                soppAndCus,
+                              ],
+                              [
+                                20,
+                                10002,
+                                2,
+                                approved + "",
+                                0,
+                                $(".app_preview").html(),
+                                null,
+                                null,
+                                approved + "",
+                                null,
+                                soppAndCus,
+                              ],
+                            ];
+                          }
+                        }
+                        // 검토 요청
+                      } else if (status == "검토요청") {
+                        dataStatus = 1;
+                        let approved = getYmdSlash(created);
+                        if (storage.docInfo.appData[0].approved != null) {
+                          approved = getYmdSlash(
+                            storage.docInfo.appData[0].approved
+                          );
+                        }
+                        $("." + id + "_writer_" + appTitles[j]).val("승인");
+                        $("." + id + "_writer_" + appTitles[j]).attr(
+                          "data-detail",
+                          "승인"
+                        );
+                        $("." + id + "_writer_approved").val(
+                          $("#" + id + "_created").val()
+                        );
+                        $("." + id + "_writer_approved").attr(
+                          "data-detail",
+                          $("#" + id + "_created").val()
+                        );
+                        if ($("#" + id + "_writer").val() == "구민주") {
+                          appDatas = [
+                            [
+                              0,
+                              10017,
+                              0,
+                              getYmdSlash2(created) + "",
+                              0,
+                              $(".app_preview").html(),
+                              getYmdSlash2(created) + "",
+                              null,
+                              null,
+                              null,
+                              soppAndCus,
+                            ],
+                            [
+                              10,
+                              10002,
+                              2,
+                              approved,
+                              0,
+                              null,
+                              null,
+                              null,
+                              null,
+                              null,
+                              soppAndCus,
+                            ],
+                          ];
+                        } else {
+                          appDatas = [
+                            [
+                              0,
+                              num,
+                              0,
+                              getYmdSlash2(created) + "",
+                              0,
+                              $(".app_preview").html(),
+                              getYmdSlash2(created) + "",
+                              null,
+                              null,
+                              null,
+                              soppAndCus,
+                            ],
+                            [
+                              10,
+                              10017,
+                              0,
+                              null,
+                              0,
+                              null,
+                              null,
+                              null,
+                              null,
+                              null,
+                              null,
+                            ],
+                            [
+                              20,
+                              10002,
+                              2,
+                              null,
+                              0,
+                              null,
+                              null,
+                              null,
+                              null,
+                              null,
+                              null,
+                            ],
+                          ];
+                        }
+                      } else if (status == "임시저장") {
+                        dataStatus = 0;
+                        $("." + id + "_writer_approved").val("");
+                      }
+                    }
+                  }
+                }
+              }
+
+              insertDataFnc(dataStatus, insertData, num, id, created, appDatas);
+              // 결재타입이 발주서인 경우
+            } else if (storage.docList[i].type == "PUR") {
+              target.html(storage.form[2].form);
+              let id = storage.form[2].id;
+              ////// info title content 출력하기
+              //  let docListTitle = Object.keys(storage.docList[i]);
+              commonDrawFnc(docListTitle, info, appTitles, i, id, dataTitles);
+
+              // 결재타입이 공문서인 경우
+            } else if (storage.docList[i].type == "DIP") {
+              target.html(storage.form[3].form);
+              let id = storage.form[3].id;
+              ////// info title content 출력하기
+              // let docListTitle = Object.keys(storage.docList[i]);
+              commonDrawFnc(docListTitle, info, appTitles, i, id, dataTitles);
             }
-
-            insertDataFnc(dataStatus, insertData, num, id, created, appDatas);
-
-
+          }
         }
 
-        // 10월 21일 오후 4시 15분 까지 완료된 문서만 추가 storage.docList.length = 1129개 
+        $(".inputs").prop("readonly", true);
+        $(".inputsAuto").prop("readonly", true);
+        $(".detailcontentbox").hide();
+        // doDataSet();
+        //toReadMode();
+      }
 
+      /// 날짜 설정 함수 //////////////////////////////////////날짜 설정 함수 //////////////////////////////////////////////////////날짜 설정 함수 //////////////////////////////////////날짜 설정 함수/////////////////////////
 
+      function getYmd(date) {
+        let d = new Date(date);
+        return (
+          d.getFullYear() +
+          "/" +
+          (d.getMonth() + 1 > 9
+            ? (d.getMonth() + 1).toString()
+            : "0" + (d.getMonth() + 1)) +
+          "/" +
+          (d.getDate() > 9
+            ? d.getDate().toString()
+            : "0" + d.getDate().toString())
+        );
+      }
 
-        // for(let r = 0 ; r < storage.docList.length; r++) {
-        //     if(storage.docList[r].no != 1823 && storage.docList[r].no != 1766&& storage.docList[r].no != 2952&& storage.docList[r].no != 3908) {
-        //         getDocData(storage.docList[r].no);
-        //     }
+      function getYmdHyphen(date) {
+        let d = new Date(date);
+        return (
+          d.getFullYear() +
+          "-" +
+          (d.getMonth() + 1 > 9
+            ? (d.getMonth() + 1).toString()
+            : "0" + (d.getMonth() + 1)) +
+          "-" +
+          (d.getDate() > 9
+            ? d.getDate().toString()
+            : "0" + d.getDate().toString())
+        );
+      }
 
-        // }
+      function getYmdSlash(date) {
+        let d = new Date(date);
+        return (
+          (d.getFullYear() % 100) +
+          "/" +
+          (d.getMonth() + 1 > 9
+            ? (d.getMonth() + 1).toString()
+            : "0" + (d.getMonth() + 1)) +
+          "/" +
+          (d.getDate() > 9
+            ? d.getDate().toString()
+            : "0" + d.getDate().toString())
+        );
+      }
 
+      function getYmdSlash2(date) {
+        let d = new Date(date);
+        return (
+          (d.getFullYear() % 100) +
+          "-" +
+          (d.getMonth() + 1 > 9
+            ? (d.getMonth() + 1).toString()
+            : "0" + (d.getMonth() + 1)) +
+          "-" +
+          (d.getDate() > 9
+            ? d.getDate().toString()
+            : "0" + d.getDate().toString()) +
+          " " +
+          (d.getHours() > 9
+            ? d.getHours().toString()
+            : "0" + d.getHours().toString()) +
+          ":" +
+          (d.getMinutes() > 9
+            ? d.getMinutes().toString()
+            : "0" + d.getMinutes().toString()) +
+          ":" +
+          (d.getSeconds() > 9
+            ? d.getSeconds().toString()
+            : "0" + d.getSeconds().toString())
+        );
+      }
 
-        
-        function setFile(filecount) {
-            if (storage.docList[filecount].status == 3) {
-                let no = storage.docList[filecount].no;
-                if (no != 1823 && no != 1766 && no != 2952 && no != 3908) {
+      function doDataSet() {
+        let target = $(".app_preview")[0];
+        let inputsArr = target.getElementsByTagName("input");
 
-                    $.ajax({
-                        url: apiServer + "/system/doc/attachedFile/" + no,
-                        method: "get",
-                        contentType: "text/plain",
-                        success: (result) => {
-                            if (result == "ok") {
-                                console.log("성공 : " + filecount);
-                                filecount++;
-                                if (filecount < storage.docList.length) {
-                                    setFile(filecount);
-                                }
-                            } else {
-                                console.log("A / 파일 업로드 실패 : " + filecount);
-                                filecount++;
-                                console.log("A / ???????? : " + filecount);
-                                if (filecount < storage.docList.length) {
-                                    console.log("A / !!!!!!!! : " + filecount);
-                                    setFile(filecount);
-                                }
-                            }
-                        },
-                        "error":()=>{
-                            console.log("B / 파일 업로드 실패: " + filecount);
-                                filecount++;
-                                if (filecount < storage.docList.length) {
-                                    setFile(filecount);
-                                }
-                        }
-                    })
+        for (let i = 0; i < inputsArr.length; i++) {
+          if (inputsArr[i].dataset.detail !== undefined) {
+            inputsArr[i].value = inputsArr[i].dataset.detail;
+          }
+        }
+      }
 
+      function insertDataFnc(
+        dataStatus,
+        insertData,
+        num,
+        id,
+        created,
+        appDatas
+      ) {
+        let confirmNo = "";
+        if (dataStatus == 3 || dataStatus == -3) {
+          confirmNo = $("#" + id + "_no").val();
+        }
+
+        insertData = {
+          docNo: $("#" + id + "_no").val(),
+          writer: num,
+          formId: id,
+          dept: storage.user[num].deptId[0],
+          docBox: storage.user[num].deptId[0],
+          title: $("#" + id + "_title").val(),
+          confirmNo: confirmNo,
+          status: dataStatus,
+          readable: "dept",
+          created: getYmdSlash(created) + "",
+        };
+
+        // 승인이거나 반려인 경우에만 진행
+        if (dataStatus == 3 || dataStatus == -3) {
+          let url = apiServer + "/system/doc";
+
+          insertData = JSON.stringify(insertData);
+          insertData = cipher.encAes(insertData);
+
+          $.ajax({
+            url: url,
+            method: "post",
+            data: insertData,
+            dataType: "json",
+            contentType: "text/plain",
+            success: (result) => {
+              if (result.result === "ok") {
+                //  console.log("성공");
+              } else {
+                console.log("실패" + result.msg);
+              }
+            },
+          });
+
+          // let count = 0;
+          for (let i = 0; i < appDatas.length; i++) {
+            let ten = appDatas[i][10];
+            if (ten != null) {
+              ten = JSON.stringify(appDatas[i][10]);
+            }
+            let appDatasJ = {
+              docNo: $("#" + id + "_no").val() + "",
+              ordered: appDatas[i][0],
+              employee: appDatas[i][1],
+              appType: appDatas[i][2],
+              read: appDatas[i][3],
+              isModify: appDatas[i][4],
+              doc: appDatas[i][5],
+              approved: appDatas[i][6],
+              retrieved: appDatas[i][7],
+              rejected: appDatas[i][8],
+              comment: appDatas[i][9],
+              appData: ten,
+            };
+            // console.log(appDatasJ);
+            appDatasJ = JSON.stringify(appDatasJ);
+            appDatasJ = cipher.encAes(appDatasJ);
+            $.ajax({
+              url: apiServer + "/system/doc/oridetail",
+              method: "post",
+              data: appDatasJ,
+              dataType: "json",
+              contentType: "text/plain",
+              success: (result) => {
+                if (result.result === "ok") {
+                  // console.log("결재선 넣기 성공");
+                } else {
+                  console.log("결재선 넣기 실패" + result.msg);
                 }
-            }else{
-                console.log("C : " + filecount);
+              },
+            });
+
+            // if (count != 2) {
+            //     console.log("실패");
+            // }
+          }
+
+          // if (storage.docInfo.files != null) {
+          //     let data = {
+
+          //         "docNo": ($("#" + id + "_no").val() + "").split("2022")[1]
+          //     }
+
+          //     data = JSON.stringify(data);
+          //     data = cipher.encAes(data);
+          //     $.ajax({
+          //         url: apiServer + "/system/doc/attachedFile/" + ($("#" + id + "_no").val() + "").split("2022")[1],
+          //         method: "get",
+          //         contentType: "text/plain",
+          //         success: (result) => {
+
+          //             if (result == "ok") {
+          //                 //  console.log("성공");
+          //             } else {
+
+          //                 console.log("파일 업로드 실패" + $("#" + id + "_no").val());
+          //             }
+
+          //         }
+          //     })
+          // }
+        }
+      }
+
+      // 지출품의서 발주서 공문서 그리는 공통 함수 //////////////////////////////////////////////////////////////////////////////////////
+      function commonDrawFnc(docListTitle, info, appTitles, i, id, dataTitles) {
+        let num;
+        for (let k = 0; k < Object.keys(storage.docList[i]).length; k++) {
+          for (let j = 0; j < docListTitle.length; j++) {
+            if (docListTitle[j] == "writer") {
+              num = storage.docList[i][docListTitle[j]];
+              let name = storage.user[num].userName;
+              $("#" + id + "_" + docListTitle[j]).val(name);
+              $("#" + id + "_" + docListTitle[j]).attr("data-detail", name);
+            } else if (docListTitle[j] == "created") {
+              created = storage.docList[i][docListTitle[j]];
+              let date = getYmdSlash(storage.docList[i][docListTitle[j]]);
+              $("#" + id + "_" + docListTitle[j]).val(date);
+              $("#" + id + "_" + docListTitle[j]).attr("data-detail", date);
+            } else if (docListTitle[j] == "content") {
+              $("#" + id + "_" + docListTitle[j]).val(
+                storage.docList[i][docListTitle[j]]
+              );
+              $("#" + id + "_" + docListTitle[j]).html(
+                storage.docList[i][docListTitle[j]]
+              );
+            } else if (docListTitle[j] == "customer") {
+              if (storage.docList[i][docListTitle[j]] == 0) {
+                $("#" + id + "_infoCustomer").val("");
+                storage.custResult = "";
+              } else {
+                storage.custResult = storage.docList[i][docListTitle[j]];
+                $("#" + id + "_infoCustomer").attr(
+                  "data-detail",
+                  storage.customer[storage.docList[i][docListTitle[j]]].name
+                );
+                $("#" + id + "_infoCustomer").val(
+                  storage.customer[storage.docList[i][docListTitle[j]]].name
+                );
+              }
+            } else if (docListTitle[j] == "sopp") {
+              if (storage.docList[i][docListTitle[j]] == 0) {
+                $("#" + id + "_sopp").val("");
+                storage.soppResult = "";
+              } else {
+                let sopp;
+                for (let k = 0; k < storage.soppList.length; k++) {
+                  if (
+                    storage.soppList[k].no ==
+                    storage.docList[i][docListTitle[j]]
+                  ) {
+                    sopp = storage.soppList[k].title;
+                    storage.soppResult = storage.docList[i][docListTitle[j]];
+                  }
+                }
+                $("#" + id + "_sopp").attr("data-detail", sopp);
+                $("#" + id + "_sopp").val(sopp);
+
+                // $("#" + id + "_sopp").attr("data-detail", sopp);
+                // $("#" + id + "_sopp").val(sopp);
+              }
+            } else if (docListTitle[j] == "no") {
+              if (storage.docList[i][docListTitle[j]] == 0) {
+                $("#" + id + "_" + docListTitle[j]).val("");
+              } else {
+                $("#" + id + "_" + docListTitle[j]).attr(
+                  "data-detail",
+                  "VTEK_2022" + storage.docList[i][docListTitle[j]] + ""
+                );
+                $("#" + id + "_" + docListTitle[j]).val(
+                  "VTEK_2022" + storage.docList[i][docListTitle[j]] + ""
+                );
+              }
+            } else {
+              if (storage.docList[i][docListTitle[j]] == 0) {
+                $("#" + id + "_" + docListTitle[j]).val("");
+              } else {
+                $("#" + id + "_" + docListTitle[j]).attr(
+                  "data-detail",
+                  storage.docList[i][docListTitle[j]]
+                );
+                $("#" + id + "_" + docListTitle[j]).val(
+                  storage.docList[i][docListTitle[j]]
+                );
+              }
+            }
+          }
+        }
+
+        $("#" + id + "_line").html(
+          "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작성</div>" +
+            "<div class='lineSet'>" +
+            "<div class='twoBorder'><input class='inputsAuto' value ='" +
+            storage.userRank[storage.user[num].rank][0] +
+            "'></div>" +
+            "<div class='twoBorder'><input class='inputsAuto " +
+            id +
+            "_writer' type='text'  data-detail='" +
+            num +
+            "' value='" +
+            storage.user[num].userName +
+            "'></div>" +
+            "<div class='twoBorder'><input class='inputsAuto " +
+            id +
+            "_writer_status'  data-detail='' type='text' ></div>" +
+            "<div class='dateBorder'><input class='inputsAuto " +
+            id +
+            "_writer_approved'  data-detail='' type='text' value=''></div></div></div>" +
+            "<div class='lineGrid'><div class='lineTitle'>결재</div>" +
+            "<div class='lineSet'>" +
+            "<div class='twoBorder'><input class='inputsAuto " +
+            id +
+            "_approval_position' value='대표' ></div>" +
+            "<div class='twoBorder'><input class='inputsAuto " +
+            id +
+            "_approval' type='text' data-detail='10002' value='이승우' ></div>" +
+            "<div class='twoBorder'><input class='inputsAuto " +
+            id +
+            "_approval_status' data-detail='' type='text' ></div>" +
+            "<div class='dateBorder'><input class='inputsAuto " +
+            id +
+            "_approval_approved' type='text' data-detail='' ></div></div></div>" +
+            "</div>"
+        );
+
+        let originHtml = $("#contentContainer").html();
+        originHtml += "<div class='innerHtml'></div>";
+        $("#contentContainer").html(originHtml);
+        $(".innerHtml").html(storage.docList[i].content);
+        $("#" + id + "_content").hide();
+
+        soppAndCus = {
+          sopp: (storage.soppResult = "" ? null : storage.soppResult + ""),
+          customer: (storage.custResult =
+            "" || undefined ? null : storage.custResult + ""),
+        };
+
+        let dataHtml = "";
+
+        if (info.docData != null)
+          for (let q = 0; q < Object.keys(info.docData).length; q++) {
+            dataHtml += "<div class='detailcontentDiv'>";
+            for (let j = 0; j < dataTitles.length; j++) {
+              if (j == dataTitles.length - 1) {
+                dataHtml +=
+                  "<div class='detailcontentlast'><input type='text' onkeyup='this.dataset.detail=this.value' value='" +
+                  info.docData[q][dataTitles[j]] +
+                  "' class='inputs outlineNonedata " +
+                  id +
+                  "_" +
+                  dataTitles[j] +
+                  "'></div>";
+              } else if (dataTitles[j] == "date") {
+                let date = getYmdHyphen(info.docData[q][dataTitles[j]]);
+                dataHtml +=
+                  "<div class='detailcontent'><input class='inputs outlineNonedata " +
+                  id +
+                  "_" +
+                  dataTitles[j] +
+                  "' onchange='this.dataset.detail=this.value;' type='date' value='" +
+                  date +
+                  "' ></div>";
+              } else if (
+                dataTitles[j] == "price" ||
+                dataTitles[j] == "quantity" ||
+                dataTitles[j] == "subTotal" ||
+                dataTitles[j] == "tax" ||
+                dataTitles[j] == "total"
+              ) {
+                dataHtml +=
+                  "<div class='detailcontent'><input class='inputs outlineNonedata " +
+                  id +
+                  "_" +
+                  dataTitles[j] +
+                  "' type='text' oninput='setNum(this)'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' value='" +
+                  info.docData[q][dataTitles[j]].toLocaleString() +
+                  "'></div>";
+              } else {
+                dataHtml +=
+                  "<div class='detailcontent'><input class='inputs outlineNonedata " +
+                  id +
+                  "_" +
+                  dataTitles[j] +
+                  "' type='text'  onkeyup='this.dataset.detail=this.value' value='" +
+                  info.docData[q][dataTitles[j]] +
+                  "'></div>";
+              }
+            }
+            dataHtml +=
+              "<div class='detailcontentbox'><input type='checkbox' class='detailBox'></div></div>";
+          }
+
+        $(".insertedDataList").html(dataHtml);
+
+        let totalCount = 0;
+        for (let i = 0; i < $("." + id + "_total").length; i++) {
+          totalCount += Number(
+            $("." + id + "_total")
+              [i].value.replace(",", "")
+              .replace(",", "")
+              .replace(",", "")
+              .replace(",", "")
+              .replace(",", "")
+          );
+        }
+
+        totalCount = totalCount.toLocaleString();
+        $(".insertedTotal").val(totalCount);
+
+        // 모든 인풋 데이터셋 설정
+        let target = $(".app_preview")[0];
+        let inputsArr = target.getElementsByTagName("input");
+
+        for (let i = 0; i < inputsArr.length; i++) {
+          inputsArr[i].dataset.detail = inputsArr[i].value;
+        }
+        $(".list_comment")[0].dataset.detail = "old";
+
+        for (let i = 0; i < info.appData.length; i++) {
+          for (let j = 0; j < appTitles.length; j++) {
+            if (info.appData[i][appTitles[j]] != null) {
+              if (appTitles[j] == "app") {
+                let app = storage.user[info.appData[i][appTitles[j]]].userName;
+                $("." + id + "_" + appTitles[j]).val(app);
+              } else if (appTitles[j] == "status") {
+                let status = storage.appStatus[info.appData[i][appTitles[j]]];
+                if (status == "승인요청") {
+                  dataStatus = 1;
+                  $("." + id + "_" + "writer_status").val("승인");
+                  $("." + id + "_" + "writer_status").attr(
+                    "data-detail",
+                    "승인"
+                  );
+                  $("." + id + "_writer_approved").val(
+                    $("#" + id + "_created").val()
+                  );
+                  $("." + id + "_writer_approved").attr(
+                    "data-detail",
+                    $("#" + id + "_created").val()
+                  );
+
+                  appDatas = [
+                    [
+                      0,
+                      num,
+                      0,
+                      getYmdSlash2(created) + "",
+                      0,
+                      $(".app_preview").html(),
+                      getYmdSlash2(created) + "",
+                      null,
+                      null,
+                      null,
+                      soppAndCus,
+                    ],
+                    [10, 10002, 2, null, 0, null, null, null, null, null, null],
+                  ];
+                } else if (status == "반려") {
+                  let request = info.appData[i].request;
+                  request = storage.user[request].userName;
+                  //본인반려
+                  if (request == $("#" + id + "_writer").val()) {
+                    dataStatus = -1;
+                    $("." + id + "_writer_" + appTitles[j]).val("");
+                    $("." + id + "_" + appTitles[j]).val("");
+                    $("." + id + "_approval").val("이승우");
+                    $("." + id + "_writer_approved").val("");
+                    // ordered employee appType read isModify doc approved retrievee rejeceted comment appData
+                    appDatas = [
+                      [
+                        0,
+                        num,
+                        0,
+                        getYmdSlash2(created) + "",
+                        0,
+                        $(".app_preview").html(),
+                        null,
+                        getYmdSlash2(created) + "",
+                        null,
+                        null,
+                        soppAndCus,
+                      ],
+                      [
+                        10,
+                        10002,
+                        2,
+                        null,
+                        0,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                      ],
+                    ];
+
+                    // 대표 반려인 경우
+                  } else if (request == "이승우") {
+                    dataStatus = -3;
+                    $("." + id + "_writer_status").val("승인");
+                    $("." + id + "_writer_status").attr("data-detail", "승인");
+                    $("." + id + "_writer_approved").val(
+                      $("#" + id + "_created").val()
+                    );
+                    $("." + id + "_writer_approved").attr(
+                      "data-detail",
+                      $("#" + id + "_created").val()
+                    );
+                    $("." + id + "_approval").val("이승우");
+                    $("." + id + "_approval_status").val("반려");
+                    $("." + id + "_approval_status").attr(
+                      "data-detail",
+                      "반려"
+                    );
+
+                    let approved;
+                    if (storage.docInfo.appData[0].approved == null) {
+                      approved = getYmdSlash(created);
+                    } else {
+                      approved = getYmdSlash(
+                        storage.docInfo.appData[0].approved
+                      );
+                    }
+                    $("." + id + "_approval_approved").val(approved);
+                    $("." + id + "_approval_approved").attr(
+                      "data-detail",
+                      approved
+                    );
+                    // ordered employee appType read isModify doc approved retrievee rejeceted comment appData
+                    appDatas = [
+                      [
+                        0,
+                        num,
+                        0,
+                        getYmdSlash2(created) + "",
+                        0,
+                        $(".app_preview").html(),
+                        getYmdSlash2(created) + "",
+                        null,
+                        null,
+                        null,
+                        soppAndCus,
+                      ],
+                      [
+                        10,
+                        10002,
+                        2,
+                        approved,
+                        0,
+                        $(".app_preview").html(),
+                        null,
+                        null,
+                        approved,
+                        storage.docInfo.appData[0].comment,
+                        soppAndCus,
+                      ],
+                    ];
+                  }
+                } else if (status == "임시저장") {
+                  dataStatus = 0;
+                  $("." + id + "_writer_status").val("");
+                  $("." + id + "_writer_approved").val("");
+                  $("." + id + "_approval").val("이승우");
+                  // 승인인 경우
+                } else {
+                  dataStatus = 3;
+                  $("." + id + "_writer_status").val("승인");
+                  $("." + id + "_writer_status").attr("data-detail", "승인");
+                  $("." + id + "_writer_approved").val(
+                    $("#" + id + "_created").val()
+                  );
+                  $("." + id + "_writer_approved").attr(
+                    "data-detail",
+                    $("#" + id + "_created").val()
+                  );
+                  $("." + id + "_approval_status").val("승인");
+                  $("." + id + "_approval_status").attr("data-detail", "승인");
+                  let approved;
+                  if (storage.docInfo.appData[0].approved == null) {
+                    approved = getYmdSlash(created);
+                  } else {
+                    approved = getYmdSlash(storage.docInfo.appData[0].approved);
+                  }
+                  $("." + id + "_approval_approved").val(approved);
+                  $("." + id + "_approval_approved").attr(
+                    "data-detail",
+                    approved
+                  );
+                  // ordered employee appType read isModify doc approved retrievee rejeceted comment appData
+                  let comment = null;
+                  if (storage.docInfo.appData[0].comment != null) {
+                    comment = storage.docInfo.appData[0].comment;
+                  }
+                  appDatas = [
+                    [
+                      0,
+                      num,
+                      0,
+                      getYmdSlash2(created) + "",
+                      0,
+                      $(".app_preview").html(),
+                      getYmdSlash2(created) + "",
+                      null,
+                      null,
+                      null,
+                      soppAndCus,
+                    ],
+                    [
+                      10,
+                      10002,
+                      2,
+                      approved,
+                      0,
+                      $(".app_preview").html(),
+                      approved,
+                      null,
+                      null,
+                      comment,
+                      soppAndCus,
+                    ],
+                  ];
+                }
+              }
+            }
+          }
+        }
+
+        insertDataFnc(dataStatus, insertData, num, id, created, appDatas);
+      }
+
+      // 10월 21일 오후 4시 15분 까지 완료된 문서만 추가 storage.docList.length = 1129개
+
+      // for(let r = 0 ; r < storage.docList.length; r++) {
+      //     if(storage.docList[r].no != 1823 && storage.docList[r].no != 1766&& storage.docList[r].no != 2952&& storage.docList[r].no != 3908) {
+      //         getDocData(storage.docList[r].no);
+      //     }
+
+      // }
+
+      function setFile(filecount) {
+        if (storage.docList[filecount].status == 3) {
+          let no = storage.docList[filecount].no;
+          if (no != 1823 && no != 1766 && no != 2952 && no != 3908) {
+            $.ajax({
+              url: apiServer + "/system/doc/attachedFile/" + no,
+              method: "get",
+              contentType: "text/plain",
+              success: (result) => {
+                if (result == "ok") {
+                  console.log("성공 : " + filecount);
+                  filecount++;
+                  if (filecount < storage.docList.length) {
+                    setFile(filecount);
+                  }
+                } else {
+                  console.log("A / 파일 업로드 실패 : " + filecount);
+                  filecount++;
+
+                  if (filecount < storage.docList.length) {
+                    setFile(filecount);
+                  }
+                }
+              },
+              error: () => {
+                console.log("B / 파일 업로드 실패: " + filecount);
                 filecount++;
                 if (filecount < storage.docList.length) {
-                    setFile(filecount);
+                  setFile(filecount);
                 }
-            }
+              },
+            });
+          }
+        } else {
+          console.log("C : " + filecount);
+          filecount++;
+          if (filecount < storage.docList.length) {
+            setFile(filecount);
+          }
         }
-
+      }
     </script>
-</body>
-
+  </body>
 </html>
