@@ -321,7 +321,7 @@ function showReportDetail() {
           storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
         $("." + formId + subTitlesArr[i] + "_position")[j].value =
           storage.userRank[
-          $("." + formId + subTitlesArr[i] + "_position")[j].value
+            $("." + formId + subTitlesArr[i] + "_position")[j].value
           ][0];
       }
     }
@@ -782,21 +782,19 @@ function approveBtnEvent() {
 
   let soppVal = $("#" + formId + "_sopp").val();
   let customerVal = $("#" + formId + "_infoCustomer").val();
-  let soppResult;
-
+  let soppResult = "";
 
   for (let x in storage.soppList) {
     if (storage.soppList[x].title == soppVal) {
       soppResult = storage.soppList[x].no;
     }
   }
-  let cusResult;
+  let cusResult = "";
   for (let x in storage.customer) {
     if (storage.customer[storage.customer[x].no].name == customerVal) {
       cusResult = storage.customer[x].no;
     }
   }
-
 
   // if (storage.reportDetailData.sopp == soppResult) {
   //   soppResult = "";
@@ -805,16 +803,15 @@ function approveBtnEvent() {
   //   cusResult = "";
   // }
 
-
-
-
   if (
     // soppResult == "" &&
     // cusResult == "" &&
-    storage.reportDetailData.sopp == soppResult &&
-    storage.reportDetailData.customer == cusResult &&
+    ((storage.reportDetailData.sopp == null && soppResult == "") ||
+      storage.reportDetailData.sopp == soppResult) &&
+    ((storage.reportDetailData.customer == null && cusResult == "") ||
+      storage.reportDetailData.customer == cusResult) &&
     storage.oriCbContainer ==
-    $("input[name='" + formId + "_RD']:checked").attr("id") &&
+      $("input[name='" + formId + "_RD']:checked").attr("id") &&
     storage.oriInsertedContent == $(".insertedContent").html() &&
     storage.oriInsertedDataList == $(".insertedDataList").html()
   ) {
@@ -822,7 +819,6 @@ function approveBtnEvent() {
   } else {
     storage.newDoc = $(".seletedForm").html();
   }
-
 
   selectVal === "approve" ? (type = 1) : (type = 0);
   storage.newFileData == undefined || storage.newFileData.length == 0
@@ -1128,6 +1124,7 @@ function closeGwModal(obj) {
     // ====================================================초기화
   } else if (id == "reset") {
     reset();
+    setAppLineData();
   } else if (id == "modify") {
     // 내가 결재자이고 수정할때 아무것도 입력되지 않은 경우에 그냥 원래 결재정보로 그리는 것
 
@@ -1703,7 +1700,7 @@ function quitModify() {
           storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
         $("." + formId + subTitlesArr[i] + "_position")[j].value =
           storage.userRank[
-          $("." + formId + subTitlesArr[i] + "_position")[j].value
+            $("." + formId + subTitlesArr[i] + "_position")[j].value
           ][0];
       }
     }
@@ -1726,6 +1723,7 @@ function quitModify() {
   }
 
   fileTarget.html(html);
+  setAppLineData();
 }
 
 // 문서 수정시 변경이력에 반영
@@ -1746,7 +1744,7 @@ function createConfirmBtn(obj) {
   if (div[0].childElementCount < 5) {
     $(".mainBtnDiv").append(
       "<button type='button'name='modConfirm' onclick='reportModify()' >수정완료 </button>" +
-      "<button type='button'name='modConfirm' onclick='quitModify()'>문서 수정 초기화</button>"
+        "<button type='button'name='modConfirm' onclick='quitModify()'>문서 수정 초기화</button>"
     );
   }
   $(":file").css("display", "inline");
@@ -2108,3 +2106,28 @@ function reset() {
   }
   // 수정
 }
+
+// function setLineData() {
+//   let newArr = [[], [], [], [], []];
+// for (let j = 0; j < newArr.length; j++) {
+//   for (let i = 1; i < storage.reportDetailData.appLine.length; i++) {
+//     if (storage.reportDetailData.appLine[i].appType == j) {
+//       if (storage.reportDetailData.appLine[i].approved != null) {
+//         newArr[j].push([
+//           storage.reportDetailData.appLine[i].employee,
+//           "승인",
+//           storage.reportDetailData.appLine[i].approved,
+//         ]);
+//       } else if (storage.reportDetailData.appLine[i].rejected != null ) {
+//         newArr[j].push([
+//           storage.reportDetailData.appLine[i].employee,
+//           "반려",
+//           storage.reportDetailData.appLine[i].approved,
+//         ]);
+//       }
+//     }
+//   }
+// }
+
+// let titles = [""]
+// }
