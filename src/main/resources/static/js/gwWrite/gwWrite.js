@@ -7,13 +7,12 @@ $(document).ready(() => {
   }, 300);
 
   getformList();
-
-
 });
 
 function getformList() {
-  let dept = (storage.dept.dept[storage.user[storage.my].deptId].deptName).split(" ")[1];
-  $(".setWriter").html(dept + "&nbsp" + storage.user[storage.my].userName)
+  let dept =
+    storage.dept.dept[storage.user[storage.my].deptId].deptName.split(" ")[1];
+  $(".setWriter").html(dept + "&nbsp" + storage.user[storage.my].userName);
 
   let url = "/api/gw/form";
 
@@ -64,7 +63,6 @@ function getformList() {
     });
   }
 
-
   let tt = $(".stepLabel")[0];
   $(tt).css("color", "black");
   $(".simpleAppLine").hide();
@@ -85,10 +83,10 @@ function setTempReport() {
     $(".reportInsertForm").html(storage.reportDetailData.doc);
     $(".insertedDetail").css("border", "1px solid black");
 
-    // simplAppLine 채우기 
+    // simplAppLine 채우기
     let appLine = storage.reportDetailData.appLine;
     let simpleapp = "";
-    let title = ["[검토]", "[합의]", "[결재]", "[수신]", "[참조]"]
+    let title = ["[검토]", "[합의]", "[결재]", "[수신]", "[참조]"];
     let newCombine = [[], [], [], [], []];
     for (let j = 0; j < 5; j++) {
       for (let i = 0; i < appLine.length; i++) {
@@ -111,15 +109,12 @@ function setTempReport() {
             } else {
               simpleapp += storage.user[newCombine[i][j]].userName + " ";
             }
-
           }
         }
       }
     }
 
-
     $(".simpleAppLineData").html(simpleapp);
-
 
     //작성자 작성일 자동 입력
     $(".typeContainer").html("");
@@ -155,7 +150,7 @@ function setTempReport() {
             storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
           $("." + formId + subTitlesArr[i] + "_position")[j].value =
             storage.userRank[
-            $("." + formId + subTitlesArr[i] + "_position")[j].value
+              $("." + formId + subTitlesArr[i] + "_position")[j].value
             ][0];
         }
       }
@@ -210,7 +205,7 @@ function selectForm() {
   $(".guide").remove();
   $(".simpleAppLine").show();
   $(".simpleAppLineData").html("");
-
+  setModalhtml();
   // let tt = $(".lineBtnContainer");
   //$(tt[0]).addClass("lineBtnContainerB");
   $(".lineDetail").show();
@@ -284,7 +279,6 @@ function selectForm() {
   // previewWidth = previewWidth.clientWidth;
   // let target = $(".reportInsertForm");
   // target.css("height", Math.ceil((previewWidth / 210) * 297));
-  setModalhtml();
 }
 
 // 영업기회 데이터 리스트 가져오는 함수
@@ -372,17 +366,12 @@ function setSoppList(formId) {
   // }
   // orgChartTarget.html(innerHtml);
   // $(".modal-wrap").hide();
-
-
 }
 
 // 결재선 생성 버튼 눌렀을 때 모달 띄움
 function showModal() {
-
   $(".modal-wrap").show();
 }
-
-
 
 function setModalhtml() {
   let setGwModalHtml =
@@ -447,15 +436,7 @@ function setModalhtml() {
       "</label></div>";
   }
   orgChartTarget.html(innerHtml);
-
 }
-
-
-
-
-
-
-
 
 // 결재선 모달 취소 생성
 function closeGwModal(obj) {
@@ -477,14 +458,12 @@ function closeGwModal(obj) {
       let tt = $(".stepLabel")[2];
       $(tt).css("color", "black");
       $(".insertedDetail").css("border", "1px solid black");
-
     }
   }
 }
 
 ////조직도에서 결재 타입 선택 함수
 function check(name) {
-
   let inputLength = $(".testClass");
   let target = $("#" + name);
 
@@ -493,7 +472,7 @@ function check(name) {
   let my = storage.my;
 
   let data = new Array();
-  // 본인 
+  // 본인
   for (x in storage.user) {
     if (x != my && storage.user[x].resign == false) {
       data.push(x);
@@ -506,13 +485,10 @@ function check(name) {
     }
   }
 
-
-  if (name == "approval" && html != "" || name == "approval" && count > 1) {
+  if ((name == "approval" && html != "") || (name == "approval" && count > 1)) {
     alert("결재자는 한 명만 선택할 수 있습니다");
   } else {
     let selectHtml = "";
-
-
 
     for (let i = 0; i < inputLength.length; i++) {
       if ($("#cb" + data[i]).prop("checked")) {
@@ -719,7 +695,6 @@ function createLine() {
 
       // 수신
       if (i == 2) {
-
         if (j != 0) {
           simpleHtml += "-" + storage.user[id].userName;
         } else {
@@ -840,7 +815,6 @@ function createLine() {
   $(".referContainer").html(referHtml);
   $(".simpleAppLineData").html(simpleHtml);
 
-
   let infoLength = document.getElementsByClassName("info")[0];
   infoLength = infoLength.clientWidth;
   let lgcTotal = 0;
@@ -853,26 +827,24 @@ function createLine() {
     if (lgcTotal < lineGrid[3].clientWidth) {
       lgcTotal = lineGrid[3].clientWidth;
     }
-
   } else {
     for (let i = 0; i < lineGrid.length; i++) {
       lgcTotal += lineGrid[i].clientWidth;
     }
-
   }
   if (lgcTotal > infoLength) {
     for (let i = 0; i < lineGrid.length; i++) {
       let tt = lineGrid[i];
-      let kk = lineGrid[0]
+      let kk = lineGrid[0];
       kk = $(kk).css("margin-right");
       kk = kk.split("p")[0];
-      $(tt).css("width", ((lineGrid[i].clientWidth) * (infoLength / (lgcTotal + (kk * 4)))));
+      $(tt).css(
+        "width",
+        lineGrid[i].clientWidth * (infoLength / (lgcTotal + kk * 4))
+      );
     }
   }
-
 } // End of createLine();
-
-
 
 // 날짜 변환 함수
 function getYmdHyphen() {
@@ -901,7 +873,6 @@ function getYmdSlash() {
   );
 }
 
-
 // 자주쓰는 결재선 선택시 설정
 function setSavedLine() {
   let val = $("select[name='saveLineSelect']")[0].value;
@@ -928,8 +899,7 @@ function setSavedLine() {
   }
 }
 
-
-//기안하기 버튼 함수 
+//기안하기 버튼 함수
 function reportInsert() {
   let title, content, readable, formId, appDoc, dept;
   let appLine = [];
@@ -942,12 +912,9 @@ function reportInsert() {
   let soppResult = "";
   for (let x in storage.soppList) {
     if (storage.soppList[x].title == soppVal) {
-
       soppResult = storage.soppList[x].no + "";
-
     }
   }
-
 
   let cusResult = "";
   for (let x in storage.customer) {
@@ -991,54 +958,61 @@ function reportInsert() {
     appLine.push([4, $("." + formId + "_refer")[i].dataset.detail]);
   }
 
-
   let fnc, type, start, end;
 
+  // if (formId == "doc_Form_leave") {
+  //   fnc = "hr";
+  //   type = "leave";
+  //   start = new Date(
+  //     $("#" + formId + "_from").val() +
+  //       " " +
+  //       $("#" + formId + "_fromTime").val()
+  //   );
+  //   end = new Date(
+  //     $("#" + formId + "_to").val() + " " + $("#" + formId + "_toTime").val()
+  //   );
+  // } else if (formId == "doc_Form_extension") {
+  //   fnc = "hr";
+  //   start = new Date(
+  //     $("#" + formId + "_from").val() +
+  //       " " +
+  //       $("#" + formId + "_fromTime").val()
+  //   );
+  //   end = new Date(
+  //     $("#" + formId + "_to").val() + " " + $("#" + formId + "_toTime").val()
+  //   );
 
-  if (formId == "doc_Form_leave") {
-    fnc = "hr"
-    type = "leave"
-    start = new Date($("#" + formId + "_from").val() + " " + $("#" + formId + "_fromTime").val());
-    end = new Date($("#" + formId + "_to").val() + " " + $("#" + formId + "_toTime").val());
-  } else if (formId == "doc_Form_extension") {
-    fnc = "hr"
-    start = new Date($("#" + formId + "_from").val() + " " + $("#" + formId + "_fromTime").val());
-    end = new Date($("#" + formId + "_to").val() + " " + $("#" + formId + "_toTime").val());
+  //   if ($("#" + formId + "_type").val() == "연장근무") {
+  //     type = "overTime";
+  //   } else if ($("#" + formId + "_type").val() == "휴일근무") {
+  //     type = "holidayWork";
+  //   }
+  // }
 
-    if ($("#" + formId + "_type").val() == "연장근무") {
-      type = "overTime";
-    } else if ($("#" + formId + "_type").val() == "휴일근무") {
-      type = "holidayWork";
-    }
-  }
-
-
-  let related = {
-    "fnc": fnc,
-    "type": type,
-    "start": start,
-    "end": end,
-    "parent": null,
-    "prev": null,
-    "next": null,
-    "children": null
-  }
-
-
+  // let related = {
+  //   fnc: fnc,
+  //   type: type,
+  //   start: start + "",
+  //   end: end + "",
+  //   parent: null,
+  //   prev: null,
+  //   next: null,
+  //   children: null,
+  // };
 
   let data = {
-    "title": title,
-    "sopp": soppResult,
-    "dept": dept,
-    "customer": cusResult,
-    "attached": storage.attachedList === undefined ? [] : storage.attachedList,
-    "content": content,
-    "appLine": appLine,
-    "appDoc": appDoc,
-    "formId": formId,
-    "readable": readable,
-    "temp": temp,
-    "related": related
+    title: title,
+    sopp: soppResult,
+    dept: dept,
+    customer: cusResult,
+    attached: storage.attachedList === undefined ? [] : storage.attachedList,
+    content: content,
+    appLine: appLine,
+    appDoc: appDoc,
+    formId: formId,
+    readable: readable,
+    temp: temp,
+    // related: related,
   };
   console.log(data);
   data = JSON.stringify(data);
@@ -1047,17 +1021,32 @@ function reportInsert() {
   if ($(".createLineBtn").css("display") == "none") {
     alert("결재 문서 양식을 선택하세요");
   } else if (
-    formId != "doc_Form_Pur" && detailType == undefined && formId != "doc_Form_Dip" && detailType == undefined &&
-    formId != "doc_Form_leave" && detailType == undefined && formId != "doc_Form_extension" && detailType == undefined
+    formId != "doc_Form_Pur" &&
+    detailType == undefined &&
+    formId != "doc_Form_Dip" &&
+    detailType == undefined &&
+    formId != "doc_Form_leave" &&
+    detailType == undefined &&
+    formId != "doc_Form_extension" &&
+    detailType == undefined
   ) {
     alert("결재문서 상세 타입을 선택하세요");
   } else if (title == "") {
     alert("제목을 입력하세요");
   } else if ($("#" + formId + "_line").html() == "결재선") {
     alert("결재선을 생성하세요");
-  } else if ((formId == "doc_Form_leave" || formId == "doc_Form_extension") && $("#" + formId + "_type").val() == "") {
+  } else if (
+    (formId == "doc_Form_leave" || formId == "doc_Form_extension") &&
+    $("#" + formId + "_type").val() == ""
+  ) {
     alert("종류를 선택하세요");
-  } else if ((formId == "doc_Form_leave" || formId == "doc_Form_extension") && (($("#" + formId + "_from").val() == "" || $("#" + formId + "_to").val() == "" || $("#" + formId + "_fromTime").val() == "" || $("#" + formId + "_toTime").val() == ""))) {
+  } else if (
+    (formId == "doc_Form_leave" || formId == "doc_Form_extension") &&
+    ($("#" + formId + "_from").val() == "" ||
+      $("#" + formId + "_to").val() == "" ||
+      $("#" + formId + "_fromTime").val() == "" ||
+      $("#" + formId + "_toTime").val() == "")
+  ) {
     alert("기간을 설정하세요");
   } else {
     $.ajax({
@@ -1077,10 +1066,6 @@ function reportInsert() {
     });
   }
 }
-
-
-
-
 
 // 파일 첨부 버튼 누를 때 마다 반영
 function docFileChange() {
@@ -1147,7 +1132,7 @@ function docFileChange() {
   // 파일목록 수정의 경우 추가해야함
 }
 
-//파일 삭제 
+//파일 삭제
 function deleteFile(obj) {
   let value = obj.parentElement.dataset.detail;
   storage.attachedList = storage.attachedList.filter(
