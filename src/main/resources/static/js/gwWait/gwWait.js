@@ -1138,6 +1138,7 @@ function closeGwModal(obj) {
     if (num == 3) {
       $(".modal-wrap").hide();
       reset();
+      setAppLineData();
     } else {
       let appLine = storage.reportDetailData.appLine;
       let my = storage.my;
@@ -2084,26 +2085,26 @@ function reset() {
 
   drawCommentLine();
 
-  let infoLength = document.getElementsByClassName("info")[0];
-  infoLength = infoLength.clientWidth;
-  let lgcTotal = 0;
+  // let infoLength = document.getElementsByClassName("info")[0];
+  // infoLength = infoLength.clientWidth;
+  // let lgcTotal = 0;
 
-  let lineGrid = document.getElementsByClassName("lineGrid");
+  // let lineGrid = document.getElementsByClassName("lineGrid");
 
-  if (lineGrid.length > 3) {
-    for (let i = 0; i < 3; i++) {
-      lgcTotal += lineGrid[i].clientWidth;
-    }
-    if (lgcTotal < lineGrid[3].clientWidth) {
-      lgcTotal = lineGrid[3].clientWidth;
-    }
-  }
-  if (lgcTotal > infoLength) {
-    for (let i = 0; i < lineGrid.length; i++) {
-      let tt = lineGrid[i];
-      $(tt).css("width", lineGrid[i].clientWidth * (infoLength / lgcTotal));
-    }
-  }
+  // if (lineGrid.length > 3) {
+  //   for (let i = 0; i < 3; i++) {
+  //     lgcTotal += lineGrid[i].clientWidth;
+  //   }
+  //   if (lgcTotal < lineGrid[3].clientWidth) {
+  //     lgcTotal = lineGrid[3].clientWidth;
+  //   }
+  // }
+  // if (lgcTotal > infoLength) {
+  //   for (let i = 0; i < lineGrid.length; i++) {
+  //     let tt = lineGrid[i];
+  //     $(tt).css("width", lineGrid[i].clientWidth * (infoLength / lgcTotal));
+  //   }
+  // }
   // 수정
 }
 
