@@ -106,45 +106,46 @@ button, select, input[type="text"], input[type="date"]{
 /* 리스트 input range 끝 */
 
 /* ckeditor 시작 */
-#editorSet{
+textarea{
 	resize: none;
 	width: 100%;
 	height: 300px;
 }
 
-#cke_editorSet{
-	width: 100%;
+.cke{
+	width: 100% !important;
 	border: 0;
 }
 
-#cke_editorSet .cke_inner{
+.cke .cke_inner{
+	height: 300px;
 	overflow: hidden;
 }
 
-#cke_editorSet:not(.cke_focus){
+.cke:not(.cke_focus){
 	height: 300px;
 }
 
-#cke_editorSet.cke_focus{
+.cke.cke_focus{
 	height: 300px;
 }
 
-#cke_editorSet .cke_inner > .cke_contents {
+.cke .cke_inner > .cke_contents {
     display: inline-block;
     overflow: hidden;
 	width: 100%;
 }
 
-#cke_editorSet .cke_inner > .cke_bottom{
+.cke .cke_inner > .cke_bottom{
 	display: none;
 }
 
-#cke_editorSet:not(.cke_focus) .cke_inner > .cke_top{
+.cke:not(.cke_focus) .cke_inner > .cke_top{
 	display: none;
     border: 0;
 }
 
-#cke_editorSet.cke_focus .cke_inner > .cke_top{
+.cke.cke_focus .cke_inner > .cke_top{
 	display: inline-block;
 }
 

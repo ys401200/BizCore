@@ -39,7 +39,7 @@
 								<div><input disabled class="estimateInput" onkeyup="inputCip(this)" /></div>
 								<div>유효기간</div>
 								<div class="formExp"><input disabled type="radio" name="rExp" value="1w" id="rExp1" onchange="storage.estimate.exp=this.value;setDataToPreview();passed(2);" /><label style="margin-right:0.5em;">1주</label><input disabled type="radio" name="rExp" value="2w" id="rExp2" onchange="storage.estimate.exp=this.value;setDataToPreview();passed(2);" /><label style="margin-right:0.5em;">2주</label><input disabled type="radio" name="rExp" value="4w" id="rExp3" onchange="storage.estimate.exp=this.value;setDataToPreview();passed(2);" /><label style="margin-right:0.5em;">4주</label><input disabled type="radio" name="rExp" value="1m" id="rExp4" onchange="storage.estimate.exp=this.value;setDataToPreview();passed(2);" /><label style="margin-right:0.5em;">1개월</label></div>
-								<div>비 고</div><textarea disabled onkeyup="storage.estimate.remarks=this.value.replaceAll('\n','<br />');setDataToPreview();" style="grid-column-start: 2;grid-column-end: 5;border-right:1px solid #c3c3c3;height:50px;">Remarks</textarea>
+								<div>비 고</div><textarea id="remarks1" onkeyup="storage.estimate.remarks=this.value.replaceAll('\n','<br />');setDataToPreview();" style="grid-column-start: 2;grid-column-end: 5;border-right:1px solid #c3c3c3;">Remarks</textarea>
 							</div>
 						</div>
 					</div>
@@ -51,12 +51,12 @@
 								<div>타이틀</div><input disabled onkeyup="setItem(this)" style="border-right:1px solid #c3c3c3;" />
 								<div>매입처</div><input disabled onkeyup="setItem(this, event)" data-type="customer" />
 								<div>아이템</div><input disabled onkeyup="setItem(this, event)" data-type="item" style="border-right:1px solid #c3c3c3;" />
-								<div>스 펙</div><textarea disabled onkeyup="setItem(this)" style="grid-column-start: 2;grid-column-end: 5;border-right:1px solid #c3c3c3;height:100px;"></textarea>
+								<div>스 펙</div><textarea id="spec" onkeyup="setItem(this)" style="grid-column-start: 2;grid-column-end: 5;border-right:1px solid #c3c3c3;"></textarea>
 								<div>수 량</div><input disabled onkeyup="setItem(this)" pattern="[0-9,\\,]+" data-type="number" />
 								<div>단 가</div><input disabled onkeyup="setItem(this)" data-type="number" style="border-right:1px solid #c3c3c3;" />
 								<div>VAT</div><div></div>
 								<div>합 계</div><div style="border-right:1px solid #c3c3c3;"></div>
-								<div>비 고</div><textarea disabled onkeyup="setItem(this)" style="grid-column-start: 2;grid-column-end: 5;border-right:1px solid #c3c3c3;"></textarea>
+								<div>비 고</div><textarea id="remarks2" onkeyup="setItem(this)" style="grid-column-start: 2;grid-column-end: 5;border-right:1px solid #c3c3c3;"></textarea>
 							</div>
 						</div>
 					</div>

@@ -420,6 +420,7 @@ function soppSuccessView(result){
 		];
 
 		plusMenuSelect(menu);
+		storage.editorArray = ["detail"];
 		ckeditor.config.readOnly = true;
 		window.setTimeout(setEditor, 100);
 		inputDataList();
@@ -588,6 +589,7 @@ function soppInsertForm(){
 		nowDate = nowDate.toISOString().substring(0, 10);
 		$("#employee").val(storage.user[my].userName);
 		$("#targetDate").val(nowDate);
+		storage.editorArray = ["detail"];
 		ckeditor.config.readOnly = false;
 		window.setTimeout(setEditor, 100);
 	}, 100);
@@ -628,7 +630,7 @@ function soppInsert(){
 		targetDate = new Date(targetDate).getTime();
 		soppType = $("#soppType").val();
 		expectedSales = $("#expectedSales").val().replaceAll(",", "");
-		detail = CKEDITOR.instances.editorSet.getData();
+		detail = CKEDITOR.instances.detail.getData();
 		url = "/api/sopp";
 		method = "post";
 		data = {
@@ -698,7 +700,7 @@ function soppUpdate(){
 		targetDate = new Date(targetDate).getTime();
 		soppType = $("#soppType").val();
 		expectedSales = $("#expectedSales").val().replaceAll(",", "");
-		detail = CKEDITOR.instances.editorSet.getData();
+		detail = CKEDITOR.instances.detail.getData();
 		url = "/api/sopp/" + storage.attachedNo;
 		method = "put";
 		data = {

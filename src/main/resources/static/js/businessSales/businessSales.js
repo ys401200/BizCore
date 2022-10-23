@@ -394,6 +394,7 @@ function salesSuccessView(result){
 		];
 
 		plusMenuSelect(menu);
+		storage.editorArray = ["content"];
 		ckeditor.config.readOnly = true;
 		window.setTimeout(setEditor, 100);
 		inputDataList();
@@ -592,7 +593,7 @@ function salesInsertForm(){
 	modal.close.text("취소");
 	modal.confirm.attr("onclick", "salesInsert();");
 	modal.close.attr("onclick", "modal.hide();");
-
+	storage.editorArray = ["content"];
 	ckeditor.config.readOnly = false;
 	window.setTimeout(setEditor, 100);
 }
@@ -625,7 +626,7 @@ function salesInsert(){
 		partner = $("#partner");
 		partner = dataListFormat(partner.attr("id"), partner.val());
 		title = $("#title").val();
-		content = CKEDITOR.instances.editorSet.getData();
+		content = CKEDITOR.instances.content.getData();
 		type = $("#type").val();
 		url = "/api/schedule/" + job;
 		method = "post";
@@ -688,7 +689,7 @@ function salesUpdate(){
 		partner = $("#partner");
 		partner = dataListFormat(partner.attr("id"), partner.val());
 		title = $("#title").val();
-		content = CKEDITOR.instances.editorSet.getData();
+		content = CKEDITOR.instances.content.getData();
 		type = $("#type").val();
 		url = "/api/schedule/" + job + "/" + storage.salesNo;
 		method = "put";

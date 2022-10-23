@@ -552,6 +552,7 @@ function contractSuccessView(result){
 		}
 
 		plusMenuSelect(menu);
+		storage.editorArray = ["detail"];
 		ckeditor.config.readOnly = true;
 		window.setTimeout(setEditor, 100);
 		inputDataList();
@@ -754,7 +755,7 @@ function contractInsertForm(){
 		$("#endOfPaidMaintenance").parents(".defaultFormLine").hide();
 		$("#employee").val(storage.user[my].userName);
 		$("#saleDate, #delivered, #startOfFreeMaintenance, #endOfFreeMaintenance, #startOfPaidMaintenance, #endOfPaidMaintenance").val(nowDate);
-
+		storage.editorArray = ["detail"];
 		ckeditor.config.readOnly = false;
 		window.setTimeout(setEditor, 100);
 	}, 100);
@@ -821,7 +822,7 @@ function contractInsert(){
 		contractAmount = $("#contractAmount").val().replaceAll(",", "");
 		taxInclude = $("#taxInclude").val();
 		profit = $("#profit").val().replaceAll(",", "");
-		detail = CKEDITOR.instances.editorSet.getData();
+		detail = CKEDITOR.instances.detail.getData();
 	
 		url = "/api/contract";
 		method = "post";
@@ -926,7 +927,7 @@ function contractUpdate(){
 		contractAmount = $("#contractAmount").val().replaceAll(",", "");
 		taxInclude = $("#taxInclude").val();
 		profit = $("#profit").val().replaceAll(",", "");
-		detail = CKEDITOR.instances.editorSet.getData();
+		detail = CKEDITOR.instances.detail.getData();
 	
 		url = "/api/contract/" + storage.contractNo;
 		method = "put";

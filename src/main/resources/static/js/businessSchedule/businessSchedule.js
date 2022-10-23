@@ -356,7 +356,7 @@ function scheduleSuccessView(result){
 	notIdArray = ["employee"];
 
 	setTimeout(() => {
-		$("[name='job'][value='" + result.job + "']").prop("checked", true).removeAttr("onclick");
+		$("[name='job'][value='" + result.job + "']").attr("checked", true).removeAttr("onclick");
 		listSearchInput.hide();
 		listRange.hide();
 		detailBackBtn.css("display", "flex");
@@ -364,15 +364,15 @@ function scheduleSuccessView(result){
 		if(result.job === "sales"){
 			let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;
 
-			$("#type option[value='" + type + "']").prop("selected", true);
+			$("#type option[value='" + type + "']").attr("selected", true);
 		}else if(result.job === "tech"){
 			let contractMethod = (result.contractMethod === null || result.contractMethod === "" || result.contractMethod === undefined) ? "" : result.contractMethod;
 			let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;
 			let supportStep = (result.supportStep === null || result.supportStep === "" || result.supportStep === undefined) ? "" : result.supportStep;
 
-			$("[name='contractMethod'][value='" + contractMethod + "']").prop("checked", true);
-			$("#type option[value='" + type + "']").prop("selected", true);
-			$("#supportStep option[value='" + supportStep + "']").prop("selected", true);
+			$("[name='contractMethod'][value='" + contractMethod + "']").attr("checked", true);
+			$("#type option[value='" + type + "']").attr("selected", true);
+			$("#supportStep option[value='" + supportStep + "']").attr("selected", true);
 		}
 
 		let jobArray = $("input[name=\"job\"]");
@@ -399,6 +399,7 @@ function scheduleSuccessView(result){
 		}
 
 		plusMenuSelect(menu);
+		storage.editorArray = ["content"];
 		ckeditor.config.readOnly = true;
 		window.setTimeout(setEditor, 100);
 		inputDataList();
@@ -440,19 +441,19 @@ function calendarSuccessView(result){
 	modal.close.attr("onclick", "scheduleDelete(" + JSON.stringify(result) + ");");
 
 	setTimeout(() => {
-		$("[name='job'][value='" + result.job + "']").prop("checked", true).removeAttr("onclick");
+		$("[name='job'][value='" + result.job + "']").attr("checked", true).removeAttr("onclick");
 
 		if(result.job === "sales"){
 			let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;
-			$("#type option[value='" + type + "']").prop("selected", true);
+			$("#type option[value='" + type + "']").attr("selected", true);
 		}else if(result.job === "tech"){
 			let contractMethod = (result.contractMethod === null || result.contractMethod === "" || result.contractMethod === undefined) ? "" : result.contractMethod;
 			let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;
 			let supportStep = (result.supportStep === null || result.supportStep === "" || result.supportStep === undefined) ? "" : result.supportStep;
 
-			$("[name='contractMethod'][value='" + contractMethod + "']").prop("checked", true);
-			$("#type option[value='" + type + "']").prop("selected", true);
-			$("#supportStep option[value='" + supportStep + "']").prop("selected", true);
+			$("[name='contractMethod'][value='" + contractMethod + "']").attr("checked", true);
+			$("#type option[value='" + type + "']").attr("selected", true);
+			$("#supportStep option[value='" + supportStep + "']").attr("selected", true);
 		}
 
 		let jobArray = $("input[name=\"job\"]");
@@ -464,6 +465,7 @@ function calendarSuccessView(result){
 			}
 		}
 
+		storage.editorArray = ["content"];
 		ckeditor.config.readOnly = true;
 		window.setTimeout(setEditor, 100);
 	}, 100);
@@ -474,8 +476,8 @@ function calendarErrorView(){
 }
 
 function eventStop(){
-	if(event.stopPropagation){
-		event.stopPropagation();
+	if(event.stopattragation){
+		event.stopattragation();
 	}
 	event.cancelBubble = true;
 }
@@ -622,9 +624,10 @@ function scheduleInsertForm(getDate){
 	modal.close.attr("onclick", "modal.hide();");
 
 	setTimeout(() => {
-		$("[name='job'][value='sales']").prop("checked", true);
-		window.setTimeout(setEditor, 100);
+		storage.editorArray = ["content"];
+		$("[name='job'][value='sales']").attr("checked", true);
 		ckeditor.config.readOnly = false;
+		window.setTimeout(setEditor, 100);
 	}, 100);
 }
 
@@ -660,7 +663,7 @@ function scheduleRadioClick(e, result){
 	}
 
 	setTimeout(() => {
-		$("[name='job'][value='" + value + "']").prop("checked", true);
+		$("[name='job'][value='" + value + "']").attr("checked", true);
 		$("#from").val(tempFrom);
 		$("#to").val(tempTo);
 		window.setTimeout(setEditor, 100);
@@ -1132,7 +1135,7 @@ function scheduleInsert(){
 			partner = $("#partner");
 			partner = dataListFormat(partner.attr("id"), partner.val());
 			title = $("#title").val();
-			content = CKEDITOR.instances.editorSet.getData();
+			content = CKEDITOR.instances.content.getData();
 			type = $("#type").val();
 
 			data = {
@@ -1186,7 +1189,7 @@ function scheduleInsert(){
 			partner = $("#partner");
 			partner = dataListFormat(partner.attr("id"), partner.val());
 			title = $("#title").val();
-			content = CKEDITOR.instances.editorSet.getData();
+			content = CKEDITOR.instances.content.getData();
 			supportModel = $("#supportModel").val();
 			supportVersion = $("#supportVersion").val();
 			contract = $("#contract");
@@ -1243,7 +1246,7 @@ function scheduleInsert(){
 			customer = $("#customer");
 			customer = dataListFormat(customer.attr("id"), customer.val());
 			title = $("#title").val();
-			content = CKEDITOR.instances.editorSet.getData();
+			content = CKEDITOR.instances.content.getData();
 	
 			data = {
 				"job": job,
@@ -1857,7 +1860,7 @@ function scheduleUpdate(no){
 			partner = $("#partner");
 			partner = dataListFormat(partner.attr("id"), partner.val());
 			title = $("#title").val();
-			content = CKEDITOR.instances.editorSet.getData();
+			content = CKEDITOR.instances.content.getData();
 			type = $("#type").val();
 
 			data = {
@@ -1911,7 +1914,7 @@ function scheduleUpdate(no){
 			partner = $("#partner");
 			partner = dataListFormat(partner.attr("id"), partner.val());
 			title = $("#title").val();
-			content = CKEDITOR.instances.editorSet.getData();
+			content = CKEDITOR.instances.content.getData();
 			supportModel = $("#supportModel").val();
 			supportVersion = $("#supportVersion").val();
 			contract = $("#contract");
@@ -1968,7 +1971,7 @@ function scheduleUpdate(no){
 			customer = $("#customer");
 			customer = dataListFormat(customer.attr("id"), customer.val());
 			title = $("#title").val();
-			content = CKEDITOR.instances.editorSet.getData();
+			content = CKEDITOR.instances.content.getData();
 	
 			data = {
 				"job": job,

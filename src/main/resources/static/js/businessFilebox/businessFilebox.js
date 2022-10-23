@@ -217,6 +217,7 @@ function fileBoxSuccessView(result){
 		];
 
 		plusMenuSelect(menu);
+		storage.editorArray = ["content"];
 		ckeditor.config.readOnly = true;
 		window.setTimeout(setEditor, 100);
 		inputDataList();
@@ -278,6 +279,7 @@ function fileBoxInsertForm(){
 		my = storage.my;
 		$(document).find("#writer").val(storage.user[my].userName);
 		$(document).find("#attached").after("<div class='filePreview'></div>");
+		storage.editorArray = ["content"];
 		ckeditor.config.readOnly = false;
 		window.setTimeout(setEditor, 100);
 	}, 100);
@@ -362,7 +364,7 @@ function fileBoxInsert(){
 		let title, content, writer, data;
 	
 		title = $(document).find("#title").val();
-		content = CKEDITOR.instances.editorSet.getData();
+		content = CKEDITOR.instances.content.getData();
 		writer = $(document).find("#writer");
 		writer = dataListFormat(writer.attr("id"), writer.val());
 		
@@ -403,7 +405,7 @@ function fileBoxUpdate(){
 		let title, content, writer;
 
 		title = $(document).find("#title").val();
-		content = CKEDITOR.instances.editorSet.getData();
+		content = CKEDITOR.instances.content.getData();
 		writer = $(document).find("#writer");
 		writer = dataListFormat(writer.attr("id"), writer.val());
 

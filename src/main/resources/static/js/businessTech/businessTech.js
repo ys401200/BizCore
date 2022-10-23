@@ -465,6 +465,7 @@ function techSuccessView(result){
 		$("#supportStep option[value='" + supportStep + "']").prop("selected", true);
 		
 		plusMenuSelect(menu);
+		storage.editorArray = ["content"];
 		ckeditor.config.readOnly = true;
 		window.setTimeout(setEditor, 100);
 		inputDataList();
@@ -684,6 +685,7 @@ function techInsertForm(){
 	modal.close.text("취소");
 	modal.confirm.attr("onclick", "techInsert();");
 	modal.close.attr("onclick", "modal.hide();");
+	storage.editorArray = ["content"];
 	ckeditor.config.readOnly = false;
 	window.setTimeout(setEditor, 100);
 }
@@ -725,7 +727,7 @@ function techInsert(){
 		partner = $("#partner");
 		partner = dataListFormat(partner.attr("id"), partner.val());
 		title = $("#title").val();
-		content = CKEDITOR.instances.editorSet.getData();
+		content = CKEDITOR.instances.content.getData();
 		supportModel = $("#supportModel").val();
 		supportVersion = $("#supportVersion").val();
 		contract = $("#contract");
@@ -812,7 +814,7 @@ function techUpdate(){
 		partner = $("#partner");
 		partner = dataListFormat(partner.attr("id"), partner.val());
 		title = $("#title").val();
-		content = CKEDITOR.instances.editorSet.getData();
+		content = CKEDITOR.instances.content.getData();
 		supportModel = $("#supportModel").val();
 		supportVersion = $("#supportVersion").val();
 		contract = $("#contract");

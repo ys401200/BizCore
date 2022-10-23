@@ -193,6 +193,7 @@ function noticeSuccessView(result){
 	$(".detailBtns").html("<button type='button' onclick='detailBoardContainerHide();'><i class=\"fa-solid fa-xmark fa-xl\"></i></button>");
 
 	setTimeout(() => {
+		storage.editorArray = ["content"];
 		let menu = [
 			{
 				"keyword": "add",
@@ -257,8 +258,8 @@ function noticeInsertForm(){
 	setTimeout(() => {
 		let my;
 		my = storage.my;
-
 		$("#writer").val(storage.user[my].userName);
+		storage.editorArray = ["content"];
 		ckeditor.config.readOnly = false;
 		window.setTimeout(setEditor, 100);
 	}, 100);
@@ -275,7 +276,8 @@ function noticeInsert(){
 	}else{
 		let title, content, writer, data;
 		title = $("#title").val();
-		content = CKEDITOR.instances.editorSet.getData();
+		content = CKEDITOR.instances.content.getData();
+		console.log(content.replaceAll("\r\n", ""));
 		writer = $("#writer");
 		writer = dataListFormat(writer.attr("id"), writer.val());
 		url = "/api/notice";
@@ -314,7 +316,7 @@ function noticeUpdate(){
 	}else{
 		let title, content, writer;
 		title = $("#title").val();
-		content = CKEDITOR.instances.editorSet.getData();
+		content = CKEDITOR.instances.content.getData();
 		writer = $("#writer");
 		writer = dataListFormat(writer.attr("id"), writer.val());
 		url = "/api/notice/" + storage.detailNoticeNo;

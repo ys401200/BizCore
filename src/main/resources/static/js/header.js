@@ -235,10 +235,12 @@ modal = {
 	"hide": () => {
 		modal.wrap.fadeOut();
 		window.setTimeout(modal.clear, 500);
-		if(editor !== undefined && editor !== null){
+		if($(".plusEditItem").data("hide-flag")){
+			ckeditor.config.readOnly = false;
+		}else{
 			ckeditor.config.readOnly = true;
-			window.setTimeout(setEditor, 500);
 		}
+		window.setTimeout(setEditor, 500);
 	},
 	"clear": () => {
 		modal.headTitle.text("");
@@ -1350,7 +1352,7 @@ function inputSet(data){
 			html += "<input type='text' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "' data-keyup='" + dataKeyup + "' onchange='" + dataChangeEvent + "' onclick='" + dataClickEvent + "' onkeyup='" + dataKeyupEvent + "'>";
 		}
 	}else if(dataType === "textarea"){
-		html += "<textarea id=\"editorSet\">" + dataValue + "</textarea>";
+		html += "<textarea id=\"" + elementId + "\">" + dataValue + "</textarea>";
 	}else if(dataType === "radio"){
 		for(let t = 0; t < data.radioValue.length; t++){
 			if(data.radioType !== "tab"){
@@ -1419,12 +1421,18 @@ function detailTabHide(notId){
 
 //ckeditor
 function setEditor(){
-	if(editor !== undefined && editor !== null){
-		editor = CKEDITOR.instances.editorSet.destroy();
+	if (typeof CKEDITOR !== undefined) {
+		if ($(CKEDITOR.instances).length) {
+			for (var key in CKEDITOR.instances) {
+				CKEDITOR.instances[key].destroy();
+			}
+		}
 	}
 
-	if($("#editorSet").length > 0){
-		editor = CKEDITOR.replace(document.querySelector("#editorSet"));
+	if(storage.editorArray.length > 0){
+		for(let i = 0; i < storage.editorArray.length; i++){
+			CKEDITOR.replace(document.querySelector("#" + storage.editorArray[i]));
+		}
 	}
 }
 
@@ -2273,6 +2281,7 @@ function enableDisabled(e, clickStr, notIdArray){
 	}
 	
 	$(e).attr("onclick", clickStr);
+	$(e).attr("data-hide-flag", true);
 	ckeditor.config.readOnly = false;
 	window.setTimeout(setEditor, 100);
 	
