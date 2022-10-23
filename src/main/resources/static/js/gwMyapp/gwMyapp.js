@@ -10,7 +10,6 @@ $(document).ready(() => {
 });
 
 function waitDefault() {
-
   $("#gwSubTabTitle").html("결재 문서함");
 
   // 리스트 보기
@@ -77,10 +76,7 @@ function drawNoticeApproval() {
     ];
     createGrid(container, header, data, ids, job, fnc);
 
-    container.append("<div class='noListDefault'>결재 문서가 없습니다.</div>")
-
-
-
+    container.append("<div class='noListDefault'>결재 문서가 없습니다.</div>");
   } else {
     jsonData = storage.approvedList;
 
@@ -166,7 +162,6 @@ function drawNoticeApproval() {
     pageContainer[0].innerHTML = pageNation;
     createGrid(container, header, data, ids, job, fnc);
   }
-
 } // End of drawNoticeApproval()
 
 function waitDetailView(obj) {
@@ -261,6 +256,15 @@ function showReportDetail() {
     }
   }
 
+  let selectArr = target.getElementsByTagName("select");
+  if (selectArr.length != 0) {
+    for (let i = 0; i < selectArr.length; i++) {
+      if (selectArr[i].dataset.detail !== undefined) {
+        selectArr[i].value = selectArr[i].dataset.detail;
+      }
+    }
+  }
+
   let textAreaArr = target.getElementsByTagName("textarea")[0];
   textAreaArr.value = textAreaArr.dataset.detail;
 
@@ -282,7 +286,7 @@ function showReportDetail() {
           storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
         $("." + formId + subTitlesArr[i] + "_position")[j].value =
           storage.userRank[
-          $("." + formId + subTitlesArr[i] + "_position")[j].value
+            $("." + formId + subTitlesArr[i] + "_position")[j].value
           ][0];
       }
     }
@@ -876,4 +880,4 @@ function getYmdShortSlash(date) {
   );
 }
 
-function quitApp() { }
+function quitApp() {}

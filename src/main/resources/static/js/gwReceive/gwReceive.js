@@ -11,7 +11,6 @@ $(document).ready(() => {
 
 // 참조 문서는 상세 조회가 가능하고 열람은 결재가 끝난 후에 참조/열람 문서함에서 열람 가능함
 function referDefault() {
-
   $(".modal-wrap").hide();
   $("#gwSubTabTitle").html("결재 수신 문서");
 
@@ -52,7 +51,6 @@ function drawApproval() {
     storage.receiveList.receive === undefined ||
     storage.receiveList.receive.length == 0
   ) {
-
     container = $(".listDiv");
 
     header = [
@@ -83,8 +81,9 @@ function drawApproval() {
     ];
     createGrid(container, header, data, ids, job, fnc);
 
-    container.append("<div class='noListDefault'>결재 수신 문서가 없습니다</div>")
-
+    container.append(
+      "<div class='noListDefault'>결재 수신 문서가 없습니다</div>"
+    );
   } else {
     jsonData = storage.receiveList.receive;
 
@@ -260,7 +259,7 @@ function getDetailView() {
           storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
         $("." + formId + subTitlesArr[i] + "_position")[j].value =
           storage.userRank[
-          $("." + formId + subTitlesArr[i] + "_position")[j].value
+            $("." + formId + subTitlesArr[i] + "_position")[j].value
           ][0];
       }
     }
@@ -273,7 +272,6 @@ function getDetailView() {
   storage.oriInsertedDataList = $(".insertedDataList").html();
   storage.oriInfoData = $(".info").html();
   setAppLineData();
-
 }
 
 // 탭 누를때마다의 이벤트 주기
@@ -304,7 +302,6 @@ function changeTab(obj) {
     drawChangeInfo();
   }
 }
-
 
 function showList() {
   location.href = "/gw/receive";
@@ -495,15 +492,15 @@ function getFileArr() {
 
 function showAppModal() {
   // 결재하기 누르면 결재정보 창으로 세팅되어서 추가하는 것
-  $("#lineInfo").css("background-color", "#332E85");
-  $("#lineInfo").css("color", "white");
-  $("#lineInfo").css("border", "none");
+  // $("#lineInfo").css("background-color", "#332E85");
+  // $("#lineInfo").css("color", "white");
+  // $("#lineInfo").css("border", "none");
 
-  $("#changeInfo").css("background-color", "white");
-  $("#changeInfo").css("color", "#332E85");
-  $("#changeInfo").css("border-bottom", "2px solid #332E85");
-  $("#tabDetail").show();
-  $("#tabDetail2").hide();
+  // $("#changeInfo").css("background-color", "white");
+  // $("#changeInfo").css("color", "#332E85");
+  // $("#changeInfo").css("border-bottom", "2px solid #332E85");
+  // $("#tabDetail").show();
+  // $("#tabDetail2").hide();
 
   let setAppModalHtml =
     "<div class='setApprovalModal'>" +
@@ -549,44 +546,55 @@ function approveBtnEvent() {
 
   let soppVal = $("#" + formId + "_sopp").val();
   let customerVal = $("#" + formId + "_infoCustomer").val();
-  let soppResult;
+  let soppResult = "";
+
   for (let x in storage.soppList) {
-    if (soppVal != "" || storage.soppList[x].title === soppVal) {
-      soppResult = storage.soppList[x].no + "";
-    } else {
-      soppResult = null;
+    if (storage.soppList[x].title == soppVal) {
+      soppResult = storage.soppList[x].no;
     }
   }
-  let cusResult;
+  let cusResult = "";
   for (let x in storage.customer) {
-    if (customerVal != "" || storage.customer[x].title === customerVal) {
-      cusResult = storage.customer[x].no + "";
-    } else {
-      cusResult = null;
+    if (storage.customer[storage.customer[x].no].name == customerVal) {
+      cusResult = storage.customer[x].no;
     }
   }
 
-  if (
-    storage.reportDetailData.sopp == soppResult &&
-    storage.reportDetailData.customer == cusResult &&
-    storage.oriCbContainer == $("input[name='" + formId + "_RD']:checked").attr("id") &&
-    storage.oriInsertedContent == $(".insertedContent").html() &&
-    storage.oriInsertedDataList == $(".insertedDataList").html()
-  ) {
-    storage.newDoc = null;
-  } else {
-    storage.newDoc = $(".seletedForm").html();
-  }
+  // if (storage.reportDetailData.sopp == soppResult) {
+  //   soppResult = "";
+  // }
+  // if (storage.reportDetailData.customer == cusResult) {
+  //   cusResult = "";
+  // }
 
-  if (storage.reportDetailData.sopp == soppResult) {
-    soppResult = "";
-  }
-  if (storage.reportDetailData.customer == cusResult) {
-    cusResult = "";
+  if (formId != "doc_Form_leave" && formId != "doc_Form_extension") {
+    if (
+      ((storage.reportDetailData.sopp == null && soppResult == "") ||
+        storage.reportDetailData.sopp == soppResult) &&
+      ((storage.reportDetailData.customer == null && cusResult == "") ||
+        storage.reportDetailData.customer == cusResult) &&
+      storage.oriCbContainer ==
+        $("input[name='" + formId + "_RD']:checked").attr("id") &&
+      storage.oriInsertedContent == $(".insertedContent").html() &&
+      storage.oriInsertedDataList == $(".insertedDataList").html()
+    ) {
+      storage.newDoc = null;
+    } else {
+      storage.newDoc = $(".seletedForm").html();
+    }
+  } else {
+    if (
+      storage.oriInsertedContent == $(".insertedContent").html() &&
+      storage.oriInsertedData == $(".insertedData").html()
+    ) {
+      storage.newDoc = null;
+    } else {
+      storage.newDoc = $(".seletedForm").html();
+    }
   }
 
   selectVal === "approve" ? (type = 1) : (type = 0);
-  storage.newFileData == undefined
+  storage.newFileData == undefined || storage.newFileData.length == 0
     ? (storage.newFileData = null)
     : (storage.newFileData = storage.newFileData);
 
@@ -594,14 +602,27 @@ function approveBtnEvent() {
   if (storage.reportDetailData.title == title) {
     title = null;
   }
+
+  let appDoc;
+  if (
+    storage.newAppLine != undefined ||
+    (storage.newAppLine != null && storage.newAppLine.length > 0)
+  ) {
+    appDoc = $(".seletedForm").html();
+  } else {
+    storage.newAppLine = null;
+    appDoc = null;
+  }
+
   let data = {
-    doc: storage.newDoc,
+    doc: null,
     comment: comment,
-    files: storage.newFileData,
-    appLine: storage.newAppLine,
-    sopp: soppResult,
-    customer: cusResult,
-    title: title,
+    files: null,
+    appLine: null,
+    appDoc: null,
+    sopp: soppResult + "",
+    customer: cusResult + "",
+    title: null,
   };
 
   console.log(data);
@@ -625,14 +646,23 @@ function approveBtnEvent() {
     success: (data) => {
       if (data.result === "ok") {
         alert("결재 완료");
-
-        //location.href = "/gw/myreceive";
+        //location.href = "/gw/myapp";
       } else {
         alert("결재 실패");
       }
     },
   });
 }
+let related = {
+  fnc: "hr",
+  type: "leave", // "overtime", "holidayWork"
+  start: 169999999,
+  end: 169999999,
+  parent: null, // contract:1999999
+  prev: null, // schedule:199999
+  next: [],
+  children: [],
+};
 
 // 모달별 버튼
 function closeModal(obj) {

@@ -9,7 +9,6 @@ $(document).ready(() => {
 });
 
 function defaultMyDraft() {
-
   let url, method, data, type;
   url = "/api/gw/app/mydraft";
   method = "get";
@@ -41,8 +40,6 @@ function drawMyDraft() {
     fnc;
 
   if (storage.myDraftList === undefined || storage.myDraftList.length == 0) {
-
-
     container = $(".listDiv");
 
     header = [
@@ -82,11 +79,9 @@ function drawMyDraft() {
     ];
     createGrid(container, header, data, ids, job, fnc);
 
-    container.append("<div class='noListDefault'>기안 문서가 없습니다</div>")
-
+    container.append("<div class='noListDefault'>기안 문서가 없습니다</div>");
   } else {
     jsonData = storage.myDraftList;
-
 
     result = paging(jsonData.length, storage.currentPage, 10);
 
@@ -301,16 +296,23 @@ function getDetailView() {
     }
   }
 
+  let selectArr = target.getElementsByTagName("select");
+  if (selectArr.length != 0) {
+    for (let i = 0; i < selectArr.length; i++) {
+      if (selectArr[i].dataset.detail !== undefined) {
+        selectArr[i].value = selectArr[i].dataset.detail;
+      }
+    }
+  }
   let textAreaArr = target.getElementsByTagName("textarea")[0];
   textAreaArr.value = textAreaArr.dataset.detail;
 
   if (target.getElementsByTagName("select").length > 0) {
     let selectArr = target.getElementsByTagName("select")[0];
     selectArr.value = selectArr.dataset.detail;
-
   }
 
-  // 이전 전자 결재 문서 가져온 경우 
+  // 이전 전자 결재 문서 가져온 경우
   if ($(".list_comment")[0].dataset.detail == "old") {
     let rd = $("input[name='" + formId + "_RD']");
     for (let i = 0; i < rd.length; i++) {
@@ -318,16 +320,15 @@ function getDetailView() {
         $("#" + rd[i].id).prop("checked", true);
       }
     }
-  } else { // 새문서 작성한 것 가져온 경우 구분 
+  } else {
+    // 새문서 작성한 것 가져온 경우 구분
     let rd2 = $("input[name='" + formId + "_RD']");
     for (let i = 0; i < rd2.length; i++) {
       if (rd2[i].dataset.detail == "on") {
         $("#" + rd2[i].id).prop("checked", true);
       }
     }
-
   }
-
 
   $("input[name='" + formId + "_RD']").prop("disabled", true);
 
@@ -339,7 +340,9 @@ function getDetailView() {
         $("." + formId + subTitlesArr[i])[j].value =
           storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
         $("." + formId + subTitlesArr[i] + "_position")[j].value =
-          storage.userRank[$("." + formId + subTitlesArr[i] + "_position")[j].value][0];
+          storage.userRank[
+            $("." + formId + subTitlesArr[i] + "_position")[j].value
+          ][0];
       }
     }
   }
@@ -623,7 +626,6 @@ function drawChangeInfo() {
   detail += changeHtml;
   target.html(detail);
 }
-
 
 function returnReport() {
   if (

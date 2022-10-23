@@ -333,6 +333,9 @@ function showReportDetail() {
   storage.oriInsertedContent = $(".insertedContent").html();
   storage.oriInsertedDataList = $(".insertedDataList").html();
   storage.oriInfoData = $(".info").html();
+  if ($(".insertedData") != undefined) {
+    storage.oriInsertedData = $(".insertedData").html();
+  }
 
   // 영업기회 리스트 가져옴
   $.ajax({
@@ -803,21 +806,30 @@ function approveBtnEvent() {
   //   cusResult = "";
   // }
 
-  if (
-    // soppResult == "" &&
-    // cusResult == "" &&
-    ((storage.reportDetailData.sopp == null && soppResult == "") ||
-      storage.reportDetailData.sopp == soppResult) &&
-    ((storage.reportDetailData.customer == null && cusResult == "") ||
-      storage.reportDetailData.customer == cusResult) &&
-    storage.oriCbContainer ==
-      $("input[name='" + formId + "_RD']:checked").attr("id") &&
-    storage.oriInsertedContent == $(".insertedContent").html() &&
-    storage.oriInsertedDataList == $(".insertedDataList").html()
-  ) {
-    storage.newDoc = null;
+  if (formId != "doc_Form_leave" && formId != "doc_Form_extension") {
+    if (
+      ((storage.reportDetailData.sopp == null && soppResult == "") ||
+        storage.reportDetailData.sopp == soppResult) &&
+      ((storage.reportDetailData.customer == null && cusResult == "") ||
+        storage.reportDetailData.customer == cusResult) &&
+      storage.oriCbContainer ==
+        $("input[name='" + formId + "_RD']:checked").attr("id") &&
+      storage.oriInsertedContent == $(".insertedContent").html() &&
+      storage.oriInsertedDataList == $(".insertedDataList").html()
+    ) {
+      storage.newDoc = null;
+    } else {
+      storage.newDoc = $(".seletedForm").html();
+    }
   } else {
-    storage.newDoc = $(".seletedForm").html();
+    if (
+      storage.oriInsertedContent == $(".insertedContent").html() &&
+      storage.oriInsertedData == $(".insertedData").html()
+    ) {
+      storage.newDoc = null;
+    } else {
+      storage.newDoc = $(".seletedForm").html();
+    }
   }
 
   selectVal === "approve" ? (type = 1) : (type = 0);
@@ -1455,25 +1467,25 @@ function createNewLine() {
   }
 
   drawNewCommentLine();
-  let infoLength = document.getElementsByClassName("info")[0];
-  infoLength = infoLength.clientWidth;
-  let lgcTotal = 0;
-  let lineGrid = document.getElementsByClassName("lineGrid");
+  // let infoLength = document.getElementsByClassName("info")[0];
+  // infoLength = infoLength.clientWidth;
+  // let lgcTotal = 0;
+  // let lineGrid = document.getElementsByClassName("lineGrid");
 
-  if (lineGrid.length > 3) {
-    for (let i = 0; i < 3; i++) {
-      lgcTotal += lineGrid[i].clientWidth;
-    }
-    if (lgcTotal < lineGrid[3].clientWidth) {
-      lgcTotal = lineGrid[3].clientWidth;
-    }
-  }
-  if (lgcTotal > infoLength) {
-    for (let i = 0; i < lineGrid.length; i++) {
-      let tt = lineGrid[i];
-      $(tt).css("width", lineGrid[i].clientWidth * (infoLength / lgcTotal));
-    }
-  }
+  // if (lineGrid.length > 3) {
+  //   for (let i = 0; i < 3; i++) {
+  //     lgcTotal += lineGrid[i].clientWidth;
+  //   }
+  //   if (lgcTotal < lineGrid[3].clientWidth) {
+  //     lgcTotal = lineGrid[3].clientWidth;
+  //   }
+  // }
+  // if (lgcTotal > infoLength) {
+  //   for (let i = 0; i < lineGrid.length; i++) {
+  //     let tt = lineGrid[i];
+  //     $(tt).css("width", lineGrid[i].clientWidth * (infoLength / lgcTotal));
+  //   }
+  // }
 }
 
 function check(name) {
@@ -1684,6 +1696,15 @@ function quitModify() {
     }
   }
 
+  let selectArr = target.getElementsByTagName("select");
+  if (selectArr.length != 0) {
+    for (let i = 0; i < selectArr.length; i++) {
+      if (selectArr[i].dataset.detail !== undefined) {
+        selectArr[i].value = selectArr[i].dataset.detail;
+      }
+    }
+  }
+
   let textAreaArr = target.getElementsByTagName("textarea")[0];
   textAreaArr.value = textAreaArr.dataset.detail;
 
@@ -1725,8 +1746,34 @@ function quitModify() {
 
   fileTarget.html(html);
   setAppLineData();
+  if ($("." + formId + "_total") != undefined) {
+    getTotalCount();
+  }
 }
 
+function getTotalCount() {
+  let id = stroage.reportDetailData.formId;
+  let totalCount = Number(0);
+  for (let i = 0; i < $("." + id + "_total").length; i++) {
+    if ($("." + id + "_total")[i].dataset.detail != undefined) {
+      totalCount += Number(
+        $("." + id + "_total")
+          [i].dataset.detail.replace(",", "")
+          .replace(",", "")
+          .replace(",", "")
+          .replace(",", "")
+          .replace(",", "")
+          .replace(",", "")
+          .replace(",", "")
+          .replace(",", "")
+      );
+    } else {
+      totalCount += 0;
+    }
+  }
+  $(".insertedTotal").val(Number(totalCount).toLocaleString() + "원");
+  $(".insertedTotal")[0].dataset.detail = Number(totalCount).toLocaleString();
+}
 // 문서 수정시 변경이력에 반영
 function reportModify(obj) {
   $(".modal-wrap").hide();
