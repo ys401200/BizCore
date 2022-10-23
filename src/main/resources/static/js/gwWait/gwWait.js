@@ -885,7 +885,7 @@ function approveBtnEvent() {
     success: (data) => {
       if (data.result === "ok") {
         alert("결재 완료");
-        //location.href = "/gw/myapp";
+        location.href = "/gw/myapp";
       } else {
         alert("결재 실패");
       }
