@@ -75,9 +75,6 @@ function drawApproval() {
     fnc;
 
   if (storage.dueList === undefined || storage.dueList.due.length == 0) {
-
-
-
     container = $(".listDiv");
 
     header = [
@@ -108,9 +105,9 @@ function drawApproval() {
     ];
     createGrid(container, header, data, ids, job, fnc);
 
-    container.append("<div class='noListDefault'>결재 예정 문서가 없습니다</div>")
-
-
+    container.append(
+      "<div class='noListDefault'>결재 예정 문서가 없습니다</div>"
+    );
   } else {
     jsonData = storage.dueList.due;
 
@@ -283,7 +280,6 @@ function getDetailView() {
   let target = $(".seletedForm")[0];
   let inputsArr = target.getElementsByTagName("input");
 
-
   for (let i = 0; i < inputsArr.length; i++) {
     if (inputsArr[i].dataset.detail !== undefined) {
       inputsArr[i].value = inputsArr[i].dataset.detail;
@@ -297,8 +293,6 @@ function getDetailView() {
   if (selectArr != undefined) {
     selectArr.value = selectArr.dataset.detail;
   }
-
-
 
   // 상세타입 체크하게 하기
   let rd = $("input[name='" + formId + "_RD']");
@@ -318,7 +312,7 @@ function getDetailView() {
           storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
         $("." + formId + subTitlesArr[i] + "_position")[j].value =
           storage.userRank[
-          $("." + formId + subTitlesArr[i] + "_position")[j].value
+            $("." + formId + subTitlesArr[i] + "_position")[j].value
           ][0];
       }
     }
@@ -560,15 +554,12 @@ function showPreAppModal() {
 }
 
 function closeModal(obj) {
-
   if (obj.id == "quit") {
     $(".modal-wrap").hide();
 
     $("input:radio[name='type']").prop("checked", false);
   } else if (obj.id == "set") {
-
     $(".modal-wrap").hide();
-
   }
 }
 

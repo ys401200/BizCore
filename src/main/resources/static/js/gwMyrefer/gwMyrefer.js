@@ -9,7 +9,6 @@ $(document).ready(() => {
 });
 
 function defaultMyDraft() {
-
   $("#gwSubTabTitle").html("참조/열람 문서함");
   let url, method, data, type;
   url = "/api/gw/app/references";
@@ -69,20 +68,18 @@ function drawMyRefer() {
   if (storage.myReferList === undefined || storage.myReferList.length == 0) {
     container = $(".listDiv");
 
-
     createGrid(container, header, data, ids, job, fnc);
 
-    container.append("<div class='noListDefault'>참조/열람 문서가 없습니다.</div>")
-
+    container.append(
+      "<div class='noListDefault'>참조/열람 문서가 없습니다.</div>"
+    );
   } else {
     jsonData = storage.myReferList;
-
 
     result = paging(jsonData.length, storage.currentPage, 10);
 
     pageContainer = document.getElementsByClassName("pageContainer");
     container = $(".listDiv");
-
 
     for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
       disDate = dateDis(jsonData[i].created, jsonData[i].modified);
@@ -155,7 +152,6 @@ function drawMyRefer() {
     );
     pageContainer[0].innerHTML = pageNation;
     createGrid(container, header, data, ids, job, fnc);
-
   }
 }
 
@@ -253,8 +249,9 @@ function getDetailView() {
   textAreaArr.value = textAreaArr.dataset.detail;
 
   let selectArr = target.getElementsByTagName("select")[0];
-  selectArr.value = selectArr.dataset.detail;
-
+  if (selectArr != undefined) {
+    selectArr.value = selectArr.dataset.detail;
+  }
 
   // 상세타입 체크하게 하기
   let rd = $("input[name='" + formId + "_RD']");
@@ -274,7 +271,7 @@ function getDetailView() {
           storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
         $("." + formId + subTitlesArr[i] + "_position")[j].value =
           storage.userRank[
-          $("." + formId + subTitlesArr[i] + "_position")[j].value
+            $("." + formId + subTitlesArr[i] + "_position")[j].value
           ][0];
       }
     }

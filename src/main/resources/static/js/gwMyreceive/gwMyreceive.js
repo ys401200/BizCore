@@ -9,7 +9,6 @@ $(document).ready(() => {
 });
 
 function defaultMyDraft() {
-
   $("#gwSubTabTitle").html("수신 문서함");
   let url, method, data, type;
   url = "/api/gw/app/received";
@@ -39,52 +38,49 @@ function drawMyDraft() {
     setDate,
     str,
     fnc;
-    header = [
-      {
-        title: "번호",
-        align: "center",
-      },
-      {
-        title: "기안일",
-        align: "center",
-      },
-      {
-        title: "문서양식",
-        align: "center",
-      },
-      {
-        title: "제목",
-        align: "left",
-      },
-      {
-        title: "작성자",
-        align: "center",
-      },
+  header = [
+    {
+      title: "번호",
+      align: "center",
+    },
+    {
+      title: "기안일",
+      align: "center",
+    },
+    {
+      title: "문서양식",
+      align: "center",
+    },
+    {
+      title: "제목",
+      align: "left",
+    },
+    {
+      title: "작성자",
+      align: "center",
+    },
 
-      {
-        title: "상태",
-        align: "center",
-      },
-    ];
+    {
+      title: "상태",
+      align: "center",
+    },
+  ];
   if (
     storage.myReceiveList === undefined ||
     storage.myReceiveList.length == 0
   ) {
     container = $(".listDiv");
 
-   
     createGrid(container, header, data, ids, job, fnc);
 
-    container.append("<div class='noListDefault'>수신 문서가 없습니다</div>")
+    container.append("<div class='noListDefault'>수신 문서가 없습니다</div>");
   } else {
     jsonData = storage.myReceiveList;
-
 
     result = paging(jsonData.length, storage.currentPage, 10);
 
     pageContainer = document.getElementsByClassName("pageContainer");
     container = $(".listDiv");
-
 
     for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
       disDate = dateDis(jsonData[i].created, jsonData[i].modified);
@@ -156,7 +152,6 @@ function drawMyDraft() {
     );
     pageContainer[0].innerHTML = pageNation;
     createGrid(container, header, data, ids, job, fnc);
-
   }
 }
 
@@ -252,9 +247,11 @@ function getDetailView() {
 
   let textAreaArr = target.getElementsByTagName("textarea")[0];
   textAreaArr.value = textAreaArr.dataset.detail;
-  
+
   let selectArr = target.getElementsByTagName("select")[0];
-  selectArr.value = selectArr.dataset.detail;
+  if (selectArr != undefined) {
+    selectArr.value = selectArr.dataset.detail;
+  }
 
   // 상세타입 체크하게 하기
   let rd = $("input[name='" + formId + "_RD']");
@@ -274,7 +271,7 @@ function getDetailView() {
           storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
         $("." + formId + subTitlesArr[i] + "_position")[j].value =
           storage.userRank[
-          $("." + formId + subTitlesArr[i] + "_position")[j].value
+            $("." + formId + subTitlesArr[i] + "_position")[j].value
           ][0];
       }
     }
@@ -304,7 +301,6 @@ function getDetailView() {
 
   setAppLineData();
 }
-
 
 function showList() {
   location.href = "/gw/myreceive";

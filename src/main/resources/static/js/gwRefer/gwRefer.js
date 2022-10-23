@@ -11,7 +11,6 @@ $(document).ready(() => {
 
 // 참조 문서는 상세 조회가 가능하고 열람은 결재가 끝난 후에 참조/열람 문서함에서 열람 가능함
 function referDefault() {
-
   $(".modal-wrap").hide();
   $("#gwSubTabTitle").html("참조/열람 대기 문서");
 
@@ -78,7 +77,6 @@ function drawApproval() {
     storage.referList.refer === undefined ||
     storage.referList.refer.length == 0
   ) {
-
     container = $(".listDiv");
 
     header = [
@@ -109,8 +107,9 @@ function drawApproval() {
     ];
     createGrid(container, header, data, ids, job, fnc);
 
-    container.append("<div class='noListDefault'>참조 대기 문서가 없습니다</div>")
-
+    container.append(
+      "<div class='noListDefault'>참조 대기 문서가 없습니다</div>"
+    );
   } else {
     jsonData = storage.referList.refer;
 
@@ -294,8 +293,9 @@ function getDetailView() {
   let textAreaArr = target.getElementsByTagName("textarea")[0];
   textAreaArr.value = textAreaArr.dataset.detail;
   let selectArr = target.getElementsByTagName("select")[0];
-  selectArr.value = selectArr.dataset.detail;
-
+  if (selectArr != undefined) {
+    selectArr.value = selectArr.dataset.detail;
+  }
 
   // 상세타입 체크하게 하기
   let rd = $("input[name='" + formId + "_RD']");
@@ -315,7 +315,7 @@ function getDetailView() {
           storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
         $("." + formId + subTitlesArr[i] + "_position")[j].value =
           storage.userRank[
-          $("." + formId + subTitlesArr[i] + "_position")[j].value
+            $("." + formId + subTitlesArr[i] + "_position")[j].value
           ][0];
       }
     }

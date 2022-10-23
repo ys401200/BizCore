@@ -237,7 +237,9 @@ function getDetailView() {
   let textAreaArr = target.getElementsByTagName("textarea")[0];
   textAreaArr.value = textAreaArr.dataset.detail;
   let selectArr = target.getElementsByTagName("select")[0];
-  selectArr.value = selectArr.dataset.detail;
+  if (selectArr != undefined) {
+    selectArr.value = selectArr.dataset.detail;
+  }
 
   let formId = storage.reportDetailData.formId;
 
