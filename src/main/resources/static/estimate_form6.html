@@ -1,0 +1,131 @@
+<div class="estimate_wrap">
+  <div class="company_ci"><img src="/images/estimate/pdf_logo_left.jpeg" class="logoLeft" /><img src="/images/estimate/pdf_logo_right.png" class="logoRight" /></div>
+  <div class="estimate_title">QUOTATION</div>
+  <div class="estimate_header">
+    <div style="display: grid">
+      <div><div><span>견</span><span>적</span><span>일</span><span>자</span></div></div><div class="estimate_date"></div>
+      <div><div><span>상</span><span>호</span></div></div><div class="company_name"></div>
+    </div>
+    <div style="display: grid">
+      <div><div><span>견</span><span>적</span><span>번</span><span>호</span></div></div><div class="estimate_no"></div><div>
+		<div><span>대</span><span>표</span><span>이</span><span>사</span></div></div><div class="company_ceo"></div>
+    </div>
+    <div style="display: grid">
+      <div><div><span>사</span><span>업</span><span>명</span></div></div><div class="estimate_project"></div>
+      <div><div><span>주</span><span>소</span></div></div><div class="company_address"></div>
+    </div>
+    <div style="display: grid">
+      <div><div><span>수</span><span>신</span></div></div><div class="estimate_receiver"></div>
+      <div><div><span>전</span><span>화</span><span>/</span><span>팩</span><span>스</span></div></div><div class="company_contact"></div>
+    </div>
+    <div style="display: grid"><div><div><span>영</span><span>업</span><span>담</span><span>당</span></div></div><div class="estimate_sender"></div></div>
+  </div>
+  <div class="estimate_summary">
+    <div style="display: grid">
+      <div><div><span>견</span><span>적</span><span>금</span><span>액</span></div></div><div class="estimate_total_amount"></div>
+      <div><div><span>유</span><span>효</span><span>기</span><span>간</span></div></div><div class="estiomate_expiration_period"></div>
+    </div>
+  </div>
+  <div class="estimate_content"></div><div class="estimate_remark"></div><div class="estimate_footer"><img src="/images/estimate/pdf_bottom.png" class="estimate_bottom_img" /></div>
+</div>
+<style>
+  @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300&family=Outfit:wght@600&display=swap");
+  .estimate_wrap {font-family: MalgunGothic, sans-serif;font-weight: 0;overflow: hidden;font-size: 1em;
+  }
+  .estimate_wrap th,
+  .estimate_wrap td {padding: 1px 1px 4px 2px;}
+  .company_ci .logoLeft {width: 28%;padding-right: 4%;}
+  .company_ci .logoRight {width: 68%;padding-bottom: 7px;}
+  .estimate_title {font-family: "Outfit", sans-serif;font-size: 4em;text-align: center;padding-top: 10px;padding-bottom: 20px;}
+  .estimate_header {font-size: 1em;font-weight: bold;border: 2px solid #000;padding: 0.5em 3em;margin: 0.5em 0 1em;}
+  .estimate_header > div {display: grid;grid-template-columns: 1fr 5fr 1fr 5fr;padding: 0.2em 0;}
+  .estimate_header > div > div:nth-child(odd) > div {width: calc(100% - 1.5em);display: inline-flex;flex-flow: row nowrap;justify-content: space-between;}
+  .estimate_header > div > div:nth-child(even) {text-align: left;}
+  .estimate_header > div > div:nth-child(odd)::after {content: ":";padding: 0 0.5em;margin: 0;}
+  .estimate_summary {font-size: 1em;font-weight: bold;border: 2px solid #000;padding: 1em 3em;margin: 0.5em 0 1em;}
+  .estimate_summary > div {display: grid;grid-template-columns: 1fr 7fr 1fr 7fr;padding: 0.2em 0;}
+  .estimate_summary > div > div:nth-child(odd) > div {width: calc(100% - 1.5em);display: inline-flex;flex-flow: row nowrap;justify-content: space-between;}
+  .estimate_summary > div > div:nth-child(even) {text-align: left;}
+  .estimate_summary > div > div:nth-child(odd)::after {content: ":";padding: 0 0.5em;margin: 0;}
+  .estimate_content {font-size: 1em;border: 2px solid #000;margin: 0.5em 0 1em;min-height: 60px;}
+  .estimate_content > div {display: grid;grid-template-columns: 4fr 11fr 64fr 6fr 8fr 8fr 8fr 7fr;border-top: 1px solid black;}
+  .estimate_content > div > div {border-right: 1px solid black;padding: 0.3em;display: flex;align-items: center;justify-content: center;}
+  .estimate_content > div > div:nth-child(3) {text-align: left;display: block;}
+  .estimate_content > div > div:nth-child(8) {justify-content: left;}
+  .estimate_content > div > div:nth-child(8) {border-right: none;}
+  .estimate_content > div > div:nth-child(5),
+  .estimate_content > div > div:nth-child(6),
+  .estimate_content > div > div:nth-child(7) {justify-content: right;}
+  .estimate_content > div:nth-child(1) {background-color: #990b19;border-top: none;}
+  .estimate_content > div:nth-child(1) > div {display: block;color: white;font-weight: bold;text-align: center;}
+  .estimate_content .estimate_content_footer {display: flex;width: 12em;margin: 0 auto;align-items: center;justify-content: space-between;}
+  .estimate_remark {font-size: 1em;margin-bottom: 20px;}
+  .estimate_remark h3 span {font-size: 1em;padding: 0 10px;}
+  .estimate_footer img {width: 60%;float: right;}
+</style>
+<script>
+storage.setDataToPreview = function(cnt){
+	let x, t, items, each, sum, dt, remark;
+	if(cnt === undefined)	return;
+	
+	remark = "=============== 견적일자 =======================";
+	if(storage.estimate.date === undefined)	storage.estimate.date = (new Date()).getTime();
+	dt = new Date(storage.estimate.date);
+	x = dt.getFullYear() + "년 ";
+	x += ((dt.getMonth() + 1) + "월 ");
+	x += (dt.getDate() + "일");
+	cnt.getElementsByClassName("estimate_date")[0].innerText = x;
+
+	remark = "=========================== 견적명 =========================";
+	t = storage.estimate.title;
+	cnt.getElementsByClassName("estimate_project")[0].innerText = t === undefined ? "" : t;
+
+	remark = "========================== 담당자 및 고객사 ==========================";
+	t = [];
+	t[0] = storage.estimate.cip;
+	if(t[0] === undefined)	t[0] = "";
+	
+	t[1] = storage.estimate.customer;
+	if(t[1] !== undefined){
+		t[1] =  storage.customer[t[1]];
+		t[1] = t[1] !== undefined ? t[1].name : storage.estimate.customer;
+	}else t[1] = "";
+	t[2] = t[1] + " " + t[0];
+	t[2] = t[2].trim();
+	cnt.getElementsByClassName("estimate_receiver")[0].innerText = t === undefined ? "" : t[2];
+
+	remark = "====================== 견적 유효기간 ========================";
+	t = storage.estimate.exp;
+	t = t === "1w" ? "견적일로 부터 1주일" : t === "2w" ? "견적일로 부터 2주일" : t === "4w" ? "견적일로 부터 4주일" : t === "1m" ? "견적일로 부터 1개월" : "";
+	cnt.getElementsByClassName("estiomate_expiration_period")[0].innerText = t;
+
+	remark = "====================== 하단 주석 ========================";
+	t = storage.estimate.remarks;
+	t = t === undefined ? "" : t;
+	cnt.getElementsByClassName("estimate_remark")[0].innerHTML = t;
+
+	remark = "=========== 개별 아이템들 ============ 저장된 값들을 바탕으로 견적서에 그려 넣음 =============";
+	html = "<div style=\"display:grid;border-top:border-top: 1px solid black;\"><div>No</div><div>구 분</div><div>품 명 / 규 격</div><div>수 량</div><div>소비자가</div><div>공급단가</div><div>합계</div><div>비고</div></div>";
+	sum = 0;
+	items = storage.estimate.items === undefined ? [] : storage.estimate.items;
+	for(x = 0 ; x < items.length ; x++){
+		each = items[x];
+		t = each.quantity * each.price;
+		html += ("<div style=\"display:grid;\"><div>" + (x+1) + "</div>");
+		html += ("<div>" + each.div + "</div>");
+		html += ("<div><span style=\"font-weight:bold;\">" + each.title + "</span><br />" + each.spec + "</div>");
+		html += ("<div>" + each.quantity.toLocaleString() + "</div>");
+		html += ("<div></div>");
+		html += ("<div>" + each.price.toLocaleString() + "</div>");
+		html += ("<div>" + t.toLocaleString() + "</div>");
+		html += ("<div>" + each.remark + "</div></div>");
+		sum += (each.quantity * each.price);
+	}
+	t = [Math.round(sum * 0.1), Math.round(sum * 1.1)];
+	cnt.getElementsByClassName("estimate_total_amount")[0].innerText = "₩ " + t[1].toLocaleString()
+	html += ("<div style=\"display:grid;\"><div style=\"grid-column-start:1;grid-column-end:7;\">공급가합계</div><div style=\"display:initial;text-align:right;\">" + sum.toLocaleString() + "</div><div style=\"border-right:none;\"></div></div>");
+	html += ("<div style=\"display:grid;\"><div style=\"grid-column-start:1;grid-column-end:7;\">부가가치세</div><div style=\"display:initial;text-align:right;\">" + t[0].toLocaleString() + "</div><div style=\"border-right:none;\"></div></div>");
+	html += ("<div style=\"display:grid;\"><div style=\"grid-column-start:1;grid-column-end:7;\">총 금 액</div><div style=\"display:initial;text-align:right;\">" + t[1].toLocaleString() + "</div><div style=\"border-right:none;\"></div></div>");
+	document.getElementsByClassName("estimate_content")[0].innerHTML = html;
+}
+</script>
