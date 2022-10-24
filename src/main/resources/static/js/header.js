@@ -306,7 +306,6 @@ crud = {
 			dataType: "json",
 			contentType: "text/plain",
 			success: (result) => {
-				console.log(result);
 				if(result.result === "ok"){
 					if(result.data !== "null"){
 						if(successFnc !== undefined){
@@ -359,7 +358,6 @@ ckeditor = {
 		],
 		"removeButtons": "TextField,Textarea,Button,ImageButton,HiddenField,Image,Flash,Replace,Select,Radio,Checkbox,Form,RemoveFormat,CopyFormatting,Indent,Outdent,CreateDiv,Language,Anchor,Iframe,About",
 		"extraPlugins": "pastebase64, base64image",
-		"height": 300,
 	},
 }
 
@@ -2291,12 +2289,16 @@ function enableDisabled(e, clickStr, notIdArray){
 }
 
 function calWindowLength(){
-	let bodyContents, gridContent;
+	let bodyContent, containerTitle, searchContainer, searchCal, titleCal, totalCal;
 
-	bodyContents = $("#bodyContents");
-	gridContent = $(".gridContent");
+	bodyContent = $("#bodyContent");
+	searchContainer = $(".searchContainer");
+	containerTitle = $("#containerTitle");
+	searchCal = parseInt(bodyContent.innerHeight() - searchContainer.innerHeight());
+	titleCal = parseInt(containerTitle.innerHeight() + 70);
+	totalCal = (parseInt(searchCal - titleCal) - parseInt(36)) / parseInt(38);
 
-	return parseInt((bodyContents.innerHeight() - 360) / 40);
+	return parseInt(totalCal);
 }
 
 function daumPostCode(){
@@ -2504,7 +2506,6 @@ function searchDataFilter(arrayList, searchDatas, type){
 		}
 	}
 	
-	console.log(dataArray);
 	return dataArray;
 }
 

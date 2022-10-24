@@ -44,6 +44,10 @@ function drawContractList() {
 
 	header = [
 		{
+			"title" : "등록일",
+			"align" : "center",
+		},
+		{
 			"title" : "유지보수일자",
 			"align" : "center",
 		},
@@ -92,7 +96,7 @@ function drawContractList() {
 		data.push(str);
 	}else{
 		for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
-			let salesType, contractType, title, endUser, contractAmount, profit, employee, startMaintenance, endMaintenance, saleDate;
+			let salesType, contractType, title, endUser, contractAmount, profit, employee, startMaintenance, endMaintenance, saleDate, setCreated;
 			
 			salesType = (jsonData[i].salesType === null || jsonData[i].salesType === "") ? "" : storage.code.etc[jsonData[i].salesType];
 			contractType = (jsonData[i].contractType === null || jsonData[i].contractType === "") ? "" : storage.code.etc[jsonData[i].contractType];
@@ -118,8 +122,14 @@ function drawContractList() {
 	
 			disDate = dateDis(jsonData[i].saleDate);
 			saleDate = dateFnc(disDate, "mm-dd");
+
+			disDate = dateDis(jsonData[i].created, jsonData[i].modified);
+			setCreated = dateFnc(disDate, "mm-dd");
 	
 			str = [
+				{
+					"setData": setCreated,
+				},
 				{
 					"setData": startMaintenance + " ~ " + endMaintenance,
 				},
@@ -1048,7 +1058,9 @@ function addSearchList(){
 		startOfPaidMaintenance = parseInt(dateFnc(disDate).replaceAll("-", ""));
 		disDate = dateDis(storage.contractList[i].saleDate);
 		saleDate = parseInt(dateFnc(disDate).replaceAll("-", ""));
-		storage.searchList.push("#" + no + "#" + customer + "#" + endUser + "#" + title + "#" + contractType + "#" + salesType + "#" + employee + "#startOfFreeMaintenance" + startOfFreeMaintenance + "#startOfPaidMaintenance" + startOfPaidMaintenance + "#saleDate" + saleDate);
+		disDate = dateDis(storage.contractList[i].created, storage.contractList[i].modified);
+		setCreated = parseInt(dateFnc(disDate).replaceAll("-", ""));
+		storage.searchList.push("#" + no + "#" + customer + "#" + endUser + "#" + title + "#" + contractType + "#" + salesType + "#" + employee + "#startOfFreeMaintenance" + startOfFreeMaintenance + "#startOfPaidMaintenance" + startOfPaidMaintenance + "#saleDate" + saleDate + "#created" + setCreated);
 	}
 }
 

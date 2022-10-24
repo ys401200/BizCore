@@ -404,8 +404,13 @@ function getScheduleList() {
 			if (result.result === "ok") {
 				result = cipher.decAes(result.data);
 				result = JSON.parse(result);
+				result = result.sort(function(a, b){return b.created - a.created;});
 
 				header = [
+					{
+						"title" : "등록일",
+						"align" : "center",
+					},
 					{
 						"title" : "일정",
 						"align" : "center",
@@ -433,7 +438,7 @@ function getScheduleList() {
 				}
 
 				for (let i = 0; i < gridListLength; i++) {
-					let job, title, writer, fromDate, fromSetDate, toDate, toSetDate, content;
+					let job, title, writer, fromDate, fromSetDate, toDate, toSetDate, content, disDate;
 					
 					job = (result[i].job === null || result[i].job === "" || result[i].job === undefined) ? "" : result[i].job;
 
@@ -449,6 +454,9 @@ function getScheduleList() {
 					writer = (result[i].writer == 0 || result[i].writer === null || result[i].writer === undefined) ? "없음" : storage.user[result[i].writer].userName;
 					content = (result[i].content === null || result[i].content === "" || result[i].content === undefined) ? "내용 없음" : result[i].content;
 					content = content.replaceAll("<p>", "").replaceAll("</p>", "").replaceAll("<br />", "");
+
+					disDate = dateDis(result[i].created, result[i].created);
+					disDate = dateFnc(disDate, "mm-dd");
 					
 					fromDate = dateDis(result[i].from);
 					fromSetDate = dateFnc(fromDate, "mm-dd");
@@ -457,6 +465,9 @@ function getScheduleList() {
 					toSetDate = dateFnc(toDate, "mm-dd");
 			
 					str = [
+						{
+							"setData": disDate,
+						},
 						{
 							"setData": fromSetDate + " ~ " + toSetDate,
 						},
@@ -829,6 +840,10 @@ function getContractList() {
 
 				header = [
 					{
+						"title" : "등록일",
+						"align" : "center",
+					},
+					{
 						"title" : "유지보수일자",
 						"align" : "center",
 					},
@@ -871,7 +886,7 @@ function getContractList() {
 				}
 			
 				for (let i = 0; i < gridListLength; i++) {
-					let salesType, contractType, title, endUser, contractAmount, profit, employee, startMaintenance, endMaintenance, saleDate;
+					let salesType, contractType, title, endUser, contractAmount, profit, employee, startMaintenance, endMaintenance, saleDate, setCreated;
 		
 					salesType = (result[i].salesType === null || result[i].salesType === "") ? "없음" : storage.code.etc[result[i].salesType];
 					contractType = (result[i].contractType === null || result[i].contractType === "") ? "없음" : storage.code.etc[result[i].contractType];
@@ -894,11 +909,17 @@ function getContractList() {
 						disDate = dateDis(result[i].endOfFreeMaintenance);
 						endMaintenance = dateFnc(disDate, "yy-mm-dd");
 					}
-
+					
 					disDate = dateDis(result[i].saleDate);
 					saleDate = dateFnc(disDate, "mm-dd");
 
+					disDate = dateDis(result[i].created, result[i].modified);
+					setCreated = dateFnc(disDate, "mm-dd");
+
 					str = [
+						{
+							"setData": setCreated,
+						},
 						{
 							"setData": startMaintenance + " ~ " + endMaintenance,
 						},

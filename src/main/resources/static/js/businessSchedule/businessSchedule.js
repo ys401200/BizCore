@@ -28,19 +28,22 @@ function drawScheduleList() {
 	}
 	else {
 		if(storage.searchDatas === undefined){
-			jsonData = storage.scheduleList;
+			jsonData = storage.scheduleList.sort(function(a, b){return b.created - a.created;});
 		}else{
-			jsonData = storage.searchDatas;
+			jsonData = storage.searchDatas.sort(function(a, b){return b.created - a.created;});
 		}
 	}
 
 	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
-
 	containerTitle = $("#containerTitle");
 	pageContainer = document.getElementsByClassName("pageContainer");
 	container = $(".gridList");
 
 	header = [
+		{
+			"title" : "등록일",
+			"align" : "center",
+		},
 		{
 			"title" : "일정",
 			"align" : "center",
@@ -86,7 +89,7 @@ function drawScheduleList() {
 		data.push(str);
 	}else{
 		for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
-			let job, title, customer, writer, fromDate, fromSetDate, toDate, toSetDate, place, content, type;
+			let job, title, customer, writer, fromDate, fromSetDate, toDate, toSetDate, place, content, type, disDate;
 			
 			job = (jsonData[i].job === null || jsonData[i].job === "" || jsonData[i].job === undefined) ? "" : jsonData[i].job;
 			
@@ -111,8 +114,14 @@ function drawScheduleList() {
 			
 			toDate = dateDis(jsonData[i].to);
 			toSetDate = dateFnc(toDate, "mm-dd");
+
+			disDate = dateDis(jsonData[i].created, jsonData[i].modified);
+			disDate = dateFnc(disDate, "mm-dd");
 	
 			str = [
+				{
+					"setData": disDate,
+				},
 				{
 					"setData": fromSetDate + " ~ " + toSetDate,
 				},
@@ -317,8 +326,8 @@ function drawCalendar(container){
 		let calendar_cell = $(".calendar_cell");
 
 		for(let i = 0; i < calendar_cell.length; i++){
-			if($(calendar_cell[i]).children().not(".calendar_item_empty").length > 3){
-				$(calendar_cell[i]).append("<div class=\"calendar_span_empty\" onclick=\"eventStop();scheduleInsertForm(" + now + ");\"><span data-flag=\"false\" onclick=\"eventStop();calendarMore(this);\">more →</span></div>");
+			if($(calendar_cell[i]).children().not(".calendar_item_empty").length > 4){
+				$(calendar_cell[i]).append("<div class=\"calendar_span_empty\" onclick=\"eventStop();scheduleInsertForm(" + now + ");\"><span data-flag=\"false\" onclick=\"eventStop();calendarMore(this);\">more(" + parseInt($(calendar_cell[i]).children().not(".calendar_item_empty").length-1) + ") →</span></div>");
 			}
 		}
 	}, 100);
@@ -2101,7 +2110,7 @@ function addSearchList(){
 	storage.searchList = [];
 
 	for(let i = 0; i < storage.scheduleList.length; i++){
-		let no, writer, customer, job, type, from, to, disDate;
+		let no, writer, customer, job, type, from, to, disDate, setCreated;
 		no = storage.scheduleList[i].no;
 		writer = (storage.scheduleList[i].writer === null || storage.scheduleList[i].writer == 0) ? "" : storage.user[storage.scheduleList[i].writer].userName;
 		customer = (storage.scheduleList[i].customer === null || storage.scheduleList[i].customer == 0) ? "" : storage.customer[storage.scheduleList[i].customer].name;
@@ -2121,7 +2130,9 @@ function addSearchList(){
 		from = parseInt(dateFnc(disDate).replaceAll("-", ""));
 		disDate = dateDis(storage.scheduleList[i].to);
 		to = parseInt(dateFnc(disDate).replaceAll("-", ""));
-		storage.searchList.push("#" + no + "#" + writer + "#" + customer + "#" + title + "#" + job + "#" + type + "#from" + from + "#to" + to);
+		disDate = dateDis(storage.scheduleList[i].created, storage.scheduleList[i].modified);
+		setCreated = parseInt(dateFnc(disDate).replaceAll("-", ""));
+		storage.searchList.push("#" + no + "#" + writer + "#" + customer + "#" + title + "#" + job + "#" + type + "#from" + from + "#to" + to + "#created" + setCreated);
 	}
 }
 

@@ -19,16 +19,16 @@
                 <div class="searchCreated">
                     <span>등록일</span>
                     <div class="searchGridItem">
-                        <input type="date" id="searchCreatedFrom" data-date-type="from" onchange="searchDateDefaultSet(this);">
+                        <input type="date" id="searchCreatedFrom" max="9999-12-31" data-date-type="from" onchange="searchDateDefaultSet(this);">
                         <span>~</span>
-                        <input type="date" id="searchCreatedTo" data-date-type="to" onchange="searchDateDefaultSet(this);">
+                        <input type="date" id="searchCreatedTo" max="9999-12-31" data-date-type="to" onchange="searchDateDefaultSet(this);">
                     </div>
                 </div>
             </div>
         </div>
 		<div class="noticeContainer">
 			<hr />
-			<span>공지사항 </span>
+			<span id="containerTitle">공지사항</span>
             <div class="listSearchInput">
                 <input type="text" class="searchAllInput" id="searchAllInput" onkeyup="searchInputKeyup();" placeholder="단어를 입력해주세요.">
             </div>

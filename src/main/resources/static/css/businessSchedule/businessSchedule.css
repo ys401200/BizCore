@@ -24,7 +24,7 @@
 }
 
 .scheduleContainer{
-    margin-top: 1%;
+    margin-top: 3px;
 	background: #FFFFFF;
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
 }
@@ -53,7 +53,7 @@
 
 .scheduleContainer .gridList .gridHeader,
 .scheduleContainer .gridList .gridContent{
-    grid-template-columns: 10% 5% 19% 10% 5% 10% 5% 36%;
+    grid-template-columns: 5% 10% 5% 16% 10% 5% 10% 5% 34%;
 }
 
 .scheduleContainer .gridList .gridHeader{
@@ -73,6 +73,7 @@
 	justify-content: center;
 	align-items: center;
 	margin-bottom:1rem;
+	font-size: 0.9rem;
 }
 
 .scheduleContainer .calendarList .calendarInfo button{
@@ -80,12 +81,11 @@
 	box-shadow:0px 1px 2px #bdbfc9;
 	margin:0;
 	color:#fff;
-	padding:0.3% 0.4%;
 	border-radius:7px;
 }
 
 .scheduleContainer .calendarList .calendarInfo button img{
-	width:10px;
+	width:5px;
 }
 
 .scheduleContainer .calendarList .calendarInfo .calendarYear{
@@ -281,17 +281,17 @@
 /*일정조회 버튼 및 게시글 페이지 번호 시작*/
 .scheduleContainer > button,
 .scheduleContainer > select{
-	margin:8px 0.5% 0 0;
-	box-shadow:0px 1px 2px #bdbfc9;
-	color:#ebefff;
-	background-color:#2147b1;
-	height:30px;
-	border-radius:5px;
+	box-shadow: 0px 1px 2px #bdbfc9;
+	color: #ebefff;
+	background-color: #2147b1;
+	border-radius: 5px;
 	float: right;
-}
-
-.searchContainer .searchBtns{
-	margin:8px 15px 0 0;
+	height: 25px;
+	font-size: 0.8rem;
+	display: flex;
+	align-items: center;
+	margin-right: 5px;
+	margin-top: 8px;
 }
 
 .searchContainer .searchInputContent{padding-top:0;}

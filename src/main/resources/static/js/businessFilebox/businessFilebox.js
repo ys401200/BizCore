@@ -44,7 +44,7 @@ function drawFileBoxList() {
 			"align": "center",
 		},
 		{
-			"title": "제목(*)",
+			"title": "제목",
 			"align": "left",
 		},
 		{

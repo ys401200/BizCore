@@ -53,17 +53,19 @@ function goalSuccessList(result){
     for(let key1 in result){
         if(key1 !== "all"){
             for(let key2 in result[key1]){
-                html += "<div class=\"goalBody\" data-key=\"" + key2 + "\">";
-                html += "<div class=\"goalBodyUser\">" + storage.user[key2].userName + "</div>";
-                for(let i = 0; i < result[key1][key2].length; i++){
-                    if(result[key1][key2][i] == null){
-                        html += "<input type=\"text\" data-index=\"" + (i+1) + "\" data-key=\"" + key2 + "\" onkeyup=\"goalKeyup(this)\" value=\"0\">";
-                    }else{
-                        html += "<input type=\"text\" data-index=\"" + (i+1) + "\" data-key=\"" + key2 + "\" onkeyup=\"goalKeyup(this)\" value=\"" + result[key1][key2][i] + "\">";
+                if(!storage.user[key2].resign){
+                    html += "<div class=\"goalBody\" data-key=\"" + key2 + "\">";
+                    html += "<div class=\"goalBodyUser\">" + storage.user[key2].userName + "</div>";
+                    for(let i = 0; i < result[key1][key2].length; i++){
+                        if(result[key1][key2][i] == null){
+                            html += "<input type=\"text\" data-index=\"" + (i+1) + "\" data-key=\"" + key2 + "\" onkeyup=\"goalKeyup(this)\" value=\"0\">";
+                        }else{
+                            html += "<input type=\"text\" data-index=\"" + (i+1) + "\" data-key=\"" + key2 + "\" onkeyup=\"goalKeyup(this)\" value=\"" + result[key1][key2][i] + "\">";
+                        }
                     }
+                    html += "<div class=\"goalBodyUserTotal\">0</div>";
+                    html += "</div>";
                 }
-                html += "<div class=\"goalBodyUserTotal\">0</div>";
-                html += "</div>";
             }
         }
     }

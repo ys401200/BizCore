@@ -28,9 +28,9 @@ function drawTechList() {
 	}
 	else {
 		if(storage.searchDatas === undefined){
-			jsonData = storage.scheduleList;
+			jsonData = storage.scheduleList.sort(function(a, b){return b.created - a.created;});
 		}else{
-			jsonData = storage.searchDatas;
+			jsonData = storage.searchDatas.sort(function(a, b){return b.created - a.created;});
 		}
 	}
 
@@ -53,6 +53,10 @@ function drawTechList() {
 	container = $(".gridList");
 
 	header = [
+		{
+			"title" : "등록일",
+			"align" : "center",
+		},
 		{
 			"title" : "일정",
 			"align" : "center",
@@ -98,7 +102,7 @@ function drawTechList() {
 		data.push(str);
 	}else{
 		for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
-			let job, title, customer, writer, fromDate, fromSetDate, toDate, toSetDate, place, content, type;
+			let job, title, customer, writer, fromDate, fromSetDate, toDate, toSetDate, place, content, type, disDate;
 	
 			job = (jsonData[i].job === null || jsonData[i].job === "" || jsonData[i].job === undefined) ? "" : "기술일정";
 			title = (jsonData[i].title === null || jsonData[i].title === "" || jsonData[i].title === undefined) ? "" : jsonData[i].title;
@@ -114,8 +118,14 @@ function drawTechList() {
 			
 			toDate = dateDis(jsonData[i].to);
 			toSetDate = dateFnc(toDate, "mm-dd");
+
+			disDate = dateDis(jsonData[i].created, jsonData[i].modified);
+			disDate = dateFnc(disDate, "mm-dd");
 	
 			str = [
+				{
+					"setData": disDate,
+				},
 				{
 					"setData": fromSetDate + " ~ " + toSetDate,
 				},
@@ -909,7 +919,7 @@ function addSearchList(){
 	storage.searchList = [];
 
 	for(let i = 0; i < storage.scheduleList.length; i++){
-		let no, writer, customer, job, type, from, to, disDate;
+		let no, writer, customer, job, type, from, to, disDate, setCreated;
 		no = storage.scheduleList[i].no;
 		writer = (storage.scheduleList[i].writer === null || storage.scheduleList[i].writer == 0) ? "" : storage.user[storage.scheduleList[i].writer].userName;
 		customer = (storage.scheduleList[i].customer === null || storage.scheduleList[i].customer == 0) ? "" : storage.customer[storage.scheduleList[i].customer].name;
@@ -920,7 +930,9 @@ function addSearchList(){
 		from = parseInt(dateFnc(disDate).replaceAll("-", ""));
 		disDate = dateDis(storage.scheduleList[i].to);
 		to = parseInt(dateFnc(disDate).replaceAll("-", ""));
-		storage.searchList.push("#" + no + "#" + writer + "#" + customer + "#" + title + "#" + job + "#" + type + "#from" + from + "#to" + to);
+		disDate = dateDis(storage.scheduleList[i].created, storage.scheduleList[i].modified);
+		setCreated = parseInt(dateFnc(disDate).replaceAll("-", ""));
+		storage.searchList.push("#" + no + "#" + writer + "#" + customer + "#" + title + "#" + job + "#" + type + "#from" + from + "#to" + to + "#created" + setCreated);
 	}
 }
 

@@ -56,9 +56,9 @@
                 <div class="searchCreated">
                     <span>등록일</span>
                     <div class="searchGridItem">
-                        <input type="date" id="searchCreatedFrom" data-date-type="from" onchange="searchDateDefaultSet(this);">
+                        <input type="date" id="searchCreatedFrom" max="9999-12-31" data-date-type="from" onchange="searchDateDefaultSet(this);">
                         <span>~</span>
-                        <input type="date" id="searchCreatedTo" data-date-type="to" onchange="searchDateDefaultSet(this);">
+                        <input type="date" id="searchCreatedTo" max="9999-12-31" data-date-type="to" onchange="searchDateDefaultSet(this);">
                     </div>
                 </div>
             </div>

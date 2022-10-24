@@ -15,8 +15,8 @@
 #bodyContents #widgetContainer{
 	display: grid;
 	grid-template-columns: repeat(6, 1fr);
-	column-gap:10px;
-	row-gap:10px;
+	column-gap:3px;
+	row-gap:3px;
 }
 
 #widgetContainer > div{
@@ -50,7 +50,7 @@
 	padding: 10px;
 	background-color: #eaedf3;
 	color: #253340;
-	font-size: 14px;
+	font-size: 0.9rem;
 	border-radius: 14px;
 	line-height:23px;
 }
@@ -84,7 +84,6 @@
 	border-top-right-radius: 8px;
     /* grid-template-columns: 15% 55% 15% 15%; */
 	border-bottom:1px solid #566d9b;
-	font-size:13px;
 	position:sticky;
 	top:0;
 }
@@ -108,9 +107,8 @@
 #schedule_body .schedule_container:hover::-webkit-scrollbar{display: block;}
 
 #schedule_body .schedule_container .gridHeader{
-    grid-template-columns: 15% 10% 25% 35% 15%;
+    grid-template-columns: 10% 15% 10% 20% 30% 15%;
 	font-family: 'NanumSquareRound';
-	font-size: 13px;
 	background-color:#f2f2ff;
 	border-top-right-radius: 8px;
 	border-top-left-radius: 8px;
@@ -121,7 +119,7 @@
 }
 
 #schedule_body .schedule_container .gridContent{
-	grid-template-columns: 15% 10% 25% 35% 15%;
+	grid-template-columns: 10% 15% 10% 20% 30% 15%;
 }
 /* 메인 schedule 일정 끝 */
 
@@ -238,7 +236,6 @@
 	border-top-right-radius: 8px;
 	border-top-left-radius: 8px;
 	border-bottom:1px solid #3e3e9e;
-	font-size:13px;
 	position:sticky;
 	top:0;
     /* grid-template-columns: 7% 7% 7% 37% 7% 7% 7% 7% 7% 7%; */
@@ -263,8 +260,7 @@
 #contract_body .contract_container:hover::-webkit-scrollbar {display:block;}
 
 #contract_body .contract_container .gridHeader{
-    grid-template-columns: 10% 44% 5% 5% 5% 10% 8% 8% 5%;
-	font-size:13px;
+    grid-template-columns: 5% 10% 40% 5% 5% 5% 10% 8% 8% 4%;
 	background-color:#f2f2ff;
 	border-top-right-radius: 8px;
 	border-top-left-radius: 8px;
@@ -277,10 +273,8 @@
 #contract_body .contract_container .gridHeader::-webkit-scrollbar{display:none;}
 #contract_body .contract_container .gridHeader:hover::-webkit-scrollbar{display:block;}
 
-#contract_body .contract_container .gridHeader .grid_default_text_align_right{font-size:14px;}
-
 #contract_body .contract_container .gridContent{
-	grid-template-columns: 10% 44% 5% 5% 5% 10% 8% 8% 5%;
+	grid-template-columns: 5% 10% 40% 5% 5% 5% 10% 8% 8% 4%;
 }
 /* 메인 계약조회 끝 */
 

@@ -34,7 +34,7 @@ function drawNoticeList() {
 	}
 
 	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
-
+	console.log(result);
 	pageContainer = document.getElementsByClassName("pageContainer");
 	container = $(".gridNoticeList");
 

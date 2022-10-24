@@ -50,25 +50,25 @@
                 <div class="searchStartOfFreeMaintenance">
                     <span>무상유지보수(시작일)</span>
                     <div class="searchGridItem">
-                        <input type="date" id="startOfFreeMaintenanceFrom" data-date-type="from" onchange="searchDateDefaultSet(this);">
+                        <input type="date" id="startOfFreeMaintenanceFrom" max="9999-12-31" data-date-type="from" onchange="searchDateDefaultSet(this);">
                         <span>~</span>
-                        <input type="date" id="startOfFreeMaintenanceTo" data-date-type="to" onchange="searchDateDefaultSet(this);">
+                        <input type="date" id="startOfFreeMaintenanceTo" max="9999-12-31" data-date-type="to" onchange="searchDateDefaultSet(this);">
                     </div>
                 </div>
                 <div class="searchStartOfPaidMaintenance">
                     <span>유상유지보수(시작일)</span>
                     <div class="searchGridItem">
-                        <input type="date" id="startOfPaidMaintenanceFrom" data-date-type="from" onchange="searchDateDefaultSet(this);">
+                        <input type="date" id="startOfPaidMaintenanceFrom" max="9999-12-31" data-date-type="from" onchange="searchDateDefaultSet(this);">
                         <span>~</span>
-                        <input type="date" id="startOfPaidMaintenanceTo" data-date-type="to" onchange="searchDateDefaultSet(this);">
+                        <input type="date" id="startOfPaidMaintenanceTo" max="9999-12-31" data-date-type="to" onchange="searchDateDefaultSet(this);">
                     </div>
                 </div>
                 <div class="searchSaleDate">
                     <span>발주일</span>
                     <div class="searchGridItem">
-                        <input type="date" id="saleDateFrom" data-date-type="from" onchange="searchDateDefaultSet(this);">
+                        <input type="date" id="saleDateFrom" max="9999-12-31" data-date-type="from" onchange="searchDateDefaultSet(this);">
                         <span>~</span>
-                        <input type="date" id="saleDateTo" data-date-type="to" onchange="searchDateDefaultSet(this);">
+                        <input type="date" id="saleDateTo" max="9999-12-31" data-date-type="to" onchange="searchDateDefaultSet(this);">
                     </div>
                 </div>
             </div>

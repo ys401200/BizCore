@@ -53,7 +53,7 @@
 }
 
 .contractContainer{
-    margin-top: 1%;
+    margin-top: 3px;
 	background: #FFFFFF;
 	overflow: auto;
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
@@ -103,12 +103,7 @@
 	margin: 0 auto;
 }
 
-.contractContainer .gridList .gridHeader{
-	border-bottom:1px solid #abb6d5;
-	color:#181f81;
-}
-
 .contractContainer .gridList .gridHeader,
 .contractContainer .gridList .gridContent{
-    grid-template-columns: 10% 44% 5% 5% 5% 10% 8% 8% 5%;
+    grid-template-columns: 5% 10% 40% 5% 5% 5% 10% 8% 8% 4%;
 }

@@ -11,21 +11,20 @@
 }
 
 #bodyContents #bodyContent{
-	padding: 10px 12px 0 12px;
-	width:calc(100% - 172px);
-	/* padding: 8px 8px 0 8px;
-	height: calc(100% - 8px); */
-	overflow-y: auto;
+	width: calc(100% - 172px);
+    overflow-y: auto;
+    padding-top: 3px;
+    padding-left: 3px;
+    padding-right: 3px;
 }
 
 #bodyContents #widgetContainer{
 	overflow-y: auto;
-	width:100%;
-	max-height: calc(100% - 70px);
-	padding: 10px 12px 0 12px;
-	/* max-height: 100%;
-	padding: 8px 8px 0 8px; */
-	box-sizing:border-box;
+    width: 100%;
+    padding-top: 3px;
+    box-sizing: border-box;
+    padding-left: 3px;
+    padding-right: 3px;
 }
 
 @media all and (min-width:1920px){

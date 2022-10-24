@@ -46,9 +46,9 @@
 				<div class="searchDate">
 					<span>일정시작일</span>
 					<div class="searchGridItem">
-						<input type="date" id="searchDateFrom" data-date-type="from" onchange="searchDateDefaultSet(this);">
+						<input type="date" id="searchDateFrom" max="9999-12-31" data-date-type="from" onchange="searchDateDefaultSet(this);">
 						<span>~</span>
-						<input type="date" id="searchDateTo" data-date-type="to" onchange="searchDateDefaultSet(this);">
+						<input type="date" id="searchDateTo" max="9999-12-31" data-date-type="to" onchange="searchDateDefaultSet(this);">
 					</div>
 				</div>
 			</div>
