@@ -460,7 +460,8 @@ public class ApiGwCtrl extends Ctrl {
     public String apiGwAppProceedPost(HttpServletRequest request, HttpServletResponse response,
             @RequestBody String requestBody, @PathVariable("docNo") String docNo, @PathVariable("ordered") int ordered,
             @PathVariable("ask") int ask) {
-        String result = null, compId = null, userNo = null, data = null, aesIv = null, aesKey = null, lang = null, title = null, comment = null, doc = null, appData = null, customer = null, sopp = null, appDoc;
+        String result = null, compId = null, userNo = null, data = null, aesIv = null, aesKey = null, lang = null,
+                title = null, comment = null, doc = null, appData = null, customer = null, sopp = null, appDoc;
         String[] files = null, ts = null;
         String[][] appLine = null;
         HttpSession session = null;
@@ -533,7 +534,8 @@ public class ApiGwCtrl extends Ctrl {
             }
 
             // 결재문서 처리 요청에 대한 처리
-            data = gwService.askAppDoc(compId, docNo, ordered, ask, comment, title, doc, appLine, files, attached, appData,
+            data = gwService.askAppDoc(compId, docNo, ordered, ask, comment, title, doc, appLine, files, attached,
+                    appData,
                     userNo, appDoc);
             if (data.equals("ok")) {
                 result = "{\"result\":\"ok\"}";
@@ -652,5 +654,71 @@ public class ApiGwCtrl extends Ctrl {
         }
         return result;
     } // End of apiGwAppReceivedGet()
+
+    @PostMapping("/app/savedLine")
+    public String setSavedLine(HttpServletRequest request, @RequestBody String requestBody) {
+        HttpSession session = null;
+        session = request.getSession();
+        String result = null, aesKey = null, aesIv = null, compId = null, userNo = null, title = null;
+        String data = null, lang = null;
+        Msg msg = null;
+        JSONObject json = null;
+        int x = -1;
+
+        String appLine = null;
+        session = request.getSession();
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        userNo = (String) session.getAttribute("userNo");
+        lang = (String) session.getAttribute("lang");
+        msg = getMsg(lang);
+        compId = (String) session.getAttribute("compId");
+        if (compId == null)
+            compId = (String) request.getAttribute("compId");
+
+        if (compId == null) {
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        } else if (aesKey == null || aesIv == null) {
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        } else
+            data = decAes(requestBody, aesKey, aesIv);
+        if (data == null) {
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.dataIsWornFormat + "\"}";
+        } else {
+            json = new JSONObject(data);
+            title = json.getString("title");
+            appLine = json.getJSONArray("appLine").toString();
+
+        }
+
+        x = gwService.setSavedLineService(compId, userNo, title, appLine);
+
+        if (x > 0) {
+            result = "{\"result\":\"ok\"}";
+        } else {
+            result = "{\"result\":\"failure\"}";
+        }
+
+        return result;
+
+    }
+
+    @GetMapping("/app/savedLine/{userNo}")
+    public String getSavedLineData(HttpServletRequest request, @PathVariable("userNo") String userNo) {
+        String list = null;
+        String result = null;
+
+        HttpSession session = null;
+
+        session = request.getSession();
+        String compId = (String) session.getAttribute("compId");
+        String aesKey = (String) session.getAttribute("aesKey");
+        String aesIv = (String) session.getAttribute("aesIv");
+
+        list = gwService.getSavedLineDataServ(compId, userNo);
+        result = "{\"result\":\"ok\",\"data\":\"" + list + "\"}";
+        return result;
+
+    }
 
 }
