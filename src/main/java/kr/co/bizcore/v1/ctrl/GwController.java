@@ -56,7 +56,7 @@ public class GwController extends Ctrl{
         return doBox(request);
     }
 
-    @RequestMapping(value = "/mytemp", method = RequestMethod.GET)
+    @RequestMapping(value = { "/mytemp", "/mytemp/{docNo}" }, method = RequestMethod.GET)
     public String mytemp(HttpServletRequest request) {
         return doBox(request);
     }

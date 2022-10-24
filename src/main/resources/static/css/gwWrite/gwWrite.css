@@ -1,5 +1,7 @@
 @charset "UTF-8";
 
+
+
 .container {
   position: relative;
   width: 100%;
@@ -509,6 +511,10 @@ select,
 input {
   margin: 0;
   float: none;
+}
+
+.inputsAuto {
+  padding: 0.3% 0.7%;
 }
 
 /*스크롤*/

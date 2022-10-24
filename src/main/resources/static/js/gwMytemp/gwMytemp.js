@@ -11,12 +11,45 @@ $(document).ready(() => {
 function defaultMyDraft() {
 
   $("#gwSubTabTitle").html("임시 저장함");
-  let url, method, data, type;
-  url = "/api/gw/app/temp";
-  method = "get";
-  data = "";
-  type = "list";
-  crud.defaultAjax(url, method, data, type, successList, errorList);
+  let checkHref = location.href;
+  checkHref = checkHref.split("//");
+  checkHref = checkHref[1];
+  let splitArr = checkHref.split("/");
+
+  // 전자결재 홈 화면에서 들어오는 경우 , 상세조회
+  if (splitArr.length > 3) {
+    $.ajax({
+      url: apiServer + "/api/gw/app/temp/" + splitArr[3],
+      method: "get",
+      dataType: "json",
+      cache: false,
+      success: (data) => {
+        let detailData;
+        if (data.result === "ok") {
+          detailData = cipher.decAes(data.data);
+          detailData = JSON.parse(detailData);
+          detailData.doc = cipher.decAes(detailData.doc);
+          detailData.doc = detailData.doc.replaceAll('\\"', '"');
+          storage.reportDetailData = detailData;
+          getDetailView();
+        } else {
+          alert("문서 정보를 가져오는 데 실패했습니다");
+        }
+      },
+    });
+
+
+
+  } else {
+
+
+    let url, method, data, type;
+    url = "/api/gw/app/temp";
+    method = "get";
+    data = "";
+    type = "list";
+    crud.defaultAjax(url, method, data, type, successList, errorList);
+  }
 }
 
 function successList(result) {
