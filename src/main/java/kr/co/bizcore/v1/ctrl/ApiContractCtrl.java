@@ -51,7 +51,7 @@ public class ApiContractCtrl extends Ctrl{
             if (list == null) {
                 result = "{\"result\":\"failure\",\"msg\":\"" + msg.noResult + "\"}";
             } else {
-                list = contractService.encAes(list, aesKey, aesIv);
+                list = encAes(list, aesKey, aesIv);
                 result = "{\"result\":\"ok\",\"data\":\"" + list + "\"}";
             }
         return result;
