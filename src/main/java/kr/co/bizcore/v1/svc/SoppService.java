@@ -47,7 +47,7 @@ public class SoppService extends Svc {
         List<Schedule> list1 = scheduleMapper.getScheduleListFromSchedWithSopp(compId, soppNo+"");
         List<Schedule> list2 = scheduleMapper.getScheduleListFromSalesWithSopp(compId, soppNo+"");
         List<Schedule> list3 = scheduleMapper.getScheduleListFromTechdWithsopp(compId, soppNo+"");
-        List<TradeDetail> list4 = tradeMapper.getTradeDetailList(soppNo+"");
+        List<TradeDetail> list4 = tradeMapper.getTradeDetailListXXXXX(soppNo+"");
         list1.addAll(list2);
         list1.addAll(list3);
         Collections.sort(list1);

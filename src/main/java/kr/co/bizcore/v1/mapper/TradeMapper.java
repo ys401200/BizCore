@@ -10,6 +10,8 @@ import kr.co.bizcore.v1.domain.TradeDetail;
 import kr.co.bizcore.v1.domain.TradeSummary;
 
 public interface TradeMapper {
+
+    // ↓↓↓↓↓↓↓↓↓↓↓↓ 2022. 10. 23 이전  작업분량↓↓↓↓↓↓↓↓↓↓↓↓
     
     @Select("SELECT soppno AS no, " +
             "	regdatetime AS `date`, " +
@@ -19,7 +21,7 @@ public interface TradeMapper {
             "FROM swc_sopp a " +
             "WHERE attrib NOT LIKE 'XXX%' AND soppno IN (SELECT soppno FROM swc_soppdata01 WHERE attrib NOT LIKE 'XXX%' AND datatype IN (1101, 1102)) AND a.compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) " +
             "ORDER BY `date` DESC")
-    public List<TradeSummary> getTradeList(String compId);
+    public List<TradeSummary> getTradeListXXXXX(String compId);
 
     @Select("SELECT soppdatano AS no, " +
             "   soppno AS sopp, " +
@@ -43,7 +45,7 @@ public interface TradeMapper {
             "	moddatetime AS modified " +
             "FROM swc_soppdata01 " +
             "WHERE attrib NOT LIKE 'XXX%' AND soppno = #{sopp}")
-    public List<TradeDetail> getTradeDetailList(@Param("sopp") String sopp);
+    public List<TradeDetail> getTradeDetailListXXXXX(@Param("sopp") String sopp);
 
     @Select("SELECT soppdatano AS no, " +
             "   soppno AS sopp, " +
@@ -67,7 +69,7 @@ public interface TradeMapper {
             "	moddatetime AS modified " +
             "FROM swc_soppdata01 " +
             "WHERE attrib NOT LIKE 'XXX%' AND soppdatano = #{no}")
-    public TradeDetail getTradeDetail(@Param("no") String no);
+    public TradeDetail getTradeDetailXXXXX(@Param("no") String no);
 
     @Select("SELECT soppdatano AS no, " +
             "   soppno AS sopp, " +
@@ -91,8 +93,8 @@ public interface TradeMapper {
             "	moddatetime AS modified " +
             "FROM swc_soppdata01 " +
             "WHERE attrib NOT LIKE 'XXX%' AND soppdatano = (SELECT soppno FROM swc_cont WHERE contno = #{contNo})")
-    public List<TradeDetail> getTradeDetailForContract(@Param("contNo") int no);
+    public List<TradeDetail> getTradeDetailForContractXXXXX(@Param("contNo") int no);
 
     @Update("UPDATE swc_soppdata01 SET attrib='XXXXX' WHERE soppdatano=#{no}")
-    public int removeTradeDetail(@Param("no") String no);
+    public int removeTradeDetailXXXXX(@Param("no") String no);
 }
