@@ -26,14 +26,15 @@ public class EstimateSvc extends Svc{
     private static final Logger logger = LoggerFactory.getLogger(EstimateSvc.class);
 
     // 견적 양식
-    public String getEstimateForms(String compId){
-        String result = null, t = null;
+    public String getEstimateBasic(String compId, String aesKey, String aesIv){
+        String result = null, t = null, form = null, info = null;
         List<HashMap<String, String>> list = null;
         HashMap<String, String> each = null;
         int x = 0;
 
+        // 견적 양식
         list = estimateMapper.getEstimateFormList(compId);
-        result = "[";
+        form = "[";
         if(list != null && list.size() > 0) for(x = 0 ; x < list.size() ; x++){
             each = list.get(x);
             t = "{\"no\":" + each.get("no") + ",";
@@ -41,12 +42,32 @@ public class EstimateSvc extends Svc{
             t += ("\"version\":" + each.get("version") + ",");
             t += ("\"width\":" + each.get("width") + ",");
             t += ("\"height\":" + each.get("height") + ",");
-            t += ("\"form\":\"" + each.get("form").replaceAll("\r", "").replaceAll("\n", "").replaceAll("\t", "").replaceAll("\"", "\\\\u0022") + "\",");
+            t += ("\"form\":\"" + encAes(each.get("form").replaceAll("\r", "").replaceAll("\n", "").replaceAll("\t", ""), aesKey, aesIv) + "\",");
             t += ("\"remark\":\"" + each.get("remark") + "\"}");
-            if(x > 0)   result += ",";
-            result += t;
+            if(x > 0)   form += ",";
+            form += t;
         }
-        result += "]";
+        form += "]";
+
+        // 견적 기본정보
+        list = estimateMapper.getEstmBasicInfo(compId);
+        info = "{";
+        if(list != null && list.size() > 0) for(x = 0 ; x < list.size() ; x++){
+            each = list.get(x);
+            t = ("\"" + each.get("no") + "\":");
+            t += ("{\"name\":\"" + each.get("name") + "\",");
+            t += ("\"firmName\":\"" + each.get("firmName") + "\",");
+            t += ("\"representative\":\"" + each.get("representative") + "\",");
+            t += ("\"address\":\"" + each.get("address") + "\",");
+            t += ("\"phone\":\"" + each.get("phone") + "\",");
+            t += ("\"fax\":\"" + each.get("fax") + "\"}");
+            if(x > 0)   info += ",";
+            info += t;
+        }
+        info += "}";
+
+        result = "{\"form\":" + form + ",\"info\":" + info + "}";
+
         return result;
     } // End of getEstimateForms()
 

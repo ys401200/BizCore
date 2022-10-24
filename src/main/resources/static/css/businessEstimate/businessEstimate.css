@@ -162,4 +162,5 @@
 .estimateItem > div:nth-child(2) > div:nth-child(odd){text-align: center;background-color: #efefef;}
 
 .estimateFormName:checked + label{border-bottom: 2px solid blue;padding-bottom: 0.1em;}
+.estimateBasInfo:checked + label{border-bottom: 2px solid blue;padding-bottom: 0.1em;}
 .estimateInput{border:none;font-size:1em;width:calc(100% - 4px);height:100%;}

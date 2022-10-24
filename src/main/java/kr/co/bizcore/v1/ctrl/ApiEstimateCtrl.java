@@ -84,7 +84,7 @@ public class ApiEstimateCtrl extends Ctrl {
         return result;
     } // End of apiEstimateGet
 
-    @GetMapping("/form")
+    @GetMapping("/basic")
     public String apiEstimateFormGet(HttpServletRequest request){
         String result = null, aesKey = null, aesIv = null, compId = null;
         HttpSession session = null;
@@ -103,7 +103,7 @@ public class ApiEstimateCtrl extends Ctrl {
         if (compId == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
         } else
-            list = estimateSvc.getEstimateForms(compId);
+            list = estimateSvc.getEstimateBasic(compId, aesKey, aesIv);
             if (list == null) {
                 result = "{\"result\":\"failure\",\"msg\":\"" + msg.noResult + "\"}";
             } else {

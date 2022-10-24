@@ -20,6 +20,8 @@
 							<div>
 								<div>견적 양식</div>
 								<div class="formNames" style="grid-column-start: 2;grid-column-end: 5;border-right:1px solid #c3c3c3;"></div>
+								<div>기본 정보</div>
+								<div class="basicInfo" style="grid-column-start: 2;grid-column-end: 5;border-right:1px solid #c3c3c3;"></div>
 								<div>견 적 명</div>
 								<div style="grid-column-start: 2;grid-column-end: 5;border-right:1px solid #c3c3c3;"><input class="estimateProject" style="width:calc(100% - 3px);height:100%;border:none;font-size:1em;" onkeyup="setProject(this)" /></div>
 								<div>작 성 자</div>
@@ -51,11 +53,11 @@
 								<div>타이틀</div><input disabled onkeyup="setItem(this)" style="border-right:1px solid #c3c3c3;" />
 								<div>매입처</div><input disabled onkeyup="setItem(this, event)" data-type="customer" />
 								<div>아이템</div><input disabled onkeyup="setItem(this, event)" data-type="item" style="border-right:1px solid #c3c3c3;" />
-								<div>스 펙</div><textarea id="spec" onkeyup="setItem(this)" style="grid-column-start: 2;grid-column-end: 5;border-right:1px solid #c3c3c3;"></textarea>
+								<div>스 펙</div><div style="grid-column-start: 2;grid-column-end: 5;border-right:1px solid #c3c3c3;"><textarea  id="spec" onkeyup="setItem(this)" style="width:100%;height:100%"></textarea></div>
 								<div>수 량</div><input disabled onkeyup="setItem(this)" pattern="[0-9,\\,]+" data-type="number" />
 								<div>단 가</div><input disabled onkeyup="setItem(this)" data-type="number" style="border-right:1px solid #c3c3c3;" />
-								<div>VAT</div><div></div>
-								<div>합 계</div><div style="border-right:1px solid #c3c3c3;"></div>
+								<div>VAT</div><div><label style="width:20%;"><input type="radio" name="vatInclude0" checked onchange="setItem(this)" />과세</label><label style="width:30%;"><input type="radio" name="vatInclude0" onchange="setItem(this)" />비과세</label><div style="display:inline-block;width:50%;text-align:right"></div></div>
+								<div>합 계</div><div style="border-right:1px solid #c3c3c3;text-align:right;"></div>
 								<div>비 고</div><textarea id="remarks2" onkeyup="setItem(this)" style="grid-column-start: 2;grid-column-end: 5;border-right:1px solid #c3c3c3;"></textarea>
 							</div>
 						</div>
