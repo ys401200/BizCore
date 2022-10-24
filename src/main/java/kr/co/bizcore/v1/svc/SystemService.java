@@ -183,7 +183,7 @@ public class SystemService extends Svc {
         if (map != null) {
             data[0] = map.get("comname");
             data[1] = map.get("comaddress");
-            data[2] = map.get("comnamephone");
+            data[2] = map.get("comphone");
             data[3] = map.get("comfax");
             data[4] = map.get("comboss");
             result = "{\"my\":" + userNo + ",";
