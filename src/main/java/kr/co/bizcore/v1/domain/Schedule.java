@@ -51,6 +51,8 @@ public class Schedule extends Domain{
         result += ("\"content\":" + (content == null ? "null" : "\"" + content.replaceAll("\"", "\\u0022").replaceAll("\n", "<br />").replaceAll("\r", "").replaceAll("\t", "").replaceAll("\\\\", "\\u005c") + "\"") + ",");
         result += ("\"report\":" + report + ",");
         result += ("\"type\":" + (type == null ? "null" : "\"" + type + "\"") + ",");
+        result += ("\"created\":" + (created == null ? "null" : created.getTime()) + ",");
+        result += ("\"modified\":" + (modified == null ? "null" : modified.getTime()) + ",");
         result += ("\"place\":\"" + place + "\"}");
         return result;
     }
@@ -69,6 +71,8 @@ public class Schedule extends Domain{
         result += ("\"content\":" + (content == null ? "null" : "\"" + content.replaceAll("\"", "\\u0022").replaceAll("\n", "<br />").replaceAll("\r", "").replaceAll("\t", "").replaceAll("\\\\", "\\u005c") + "\"") + ",");
         result += ("\"report\":" + report + ",");
         result += ("\"type\":" + (type == null ? "null" : "\"" + type + "\"") + ",");
+        result += ("\"created\":" + (created == null ? "null" : created.getTime()) + ",");
+        result += ("\"modified\":" + (modified == null ? "null" : modified.getTime()) + ",");
         result += ("\"place\":\"" + place + "\",");
         result += ("\"partner\":" + partner);
         result += "}";
@@ -88,6 +92,8 @@ public class Schedule extends Domain{
         result += ("\"title\":" + (title == null ? "null" : "\"" + title + "\"") + ",");
         result += ("\"content\":" + (content == null ? "null" : "\"" + content.replaceAll("\"", "\\u0022").replaceAll("\n", "<br />").replaceAll("\r", "").replaceAll("\t", "").replaceAll("\\\\", "\\u005c") + "\"") + ",");
         result += ("\"report\":" + report + ",");
+        result += ("\"created\":" + (created == null ? "null" : created.getTime()) + ",");
+        result += ("\"modified\":" + (modified == null ? "null" : modified.getTime()) + ",");
         result += ("\"type\":" + (type == null ? "null" : "\"" + type + "\"") + ",");
         result += ("\"place\":\"" + place + "\",");
         result += ("\"partner\":" + partner) + ",";
