@@ -168,5 +168,36 @@ public class AccountingService extends Svc{
         result = x > 0;
         return result;
     }
+
+    // 연월과 사번을 딥력받고 사용 내역을 전달하는 메서드
+    public String getCorporateCardDetailData(String compId, String userNo, int ym){
+        String result = null, t = null;
+        List<HashMap<String, String>> list = null;
+        HashMap<String, String> each = null;
+        int x = 0, price = 0, vat = 0, total = 0;
+
+        logger.error("/////////////////////////////////// compId : " + compId + " / userNo : " + userNo + " / ym : " + ym);
+
+        list = accMapper.getCorporateCardDetailData(compId, userNo, ym);
+        result = "[";
+        for(x = 0 ; x < list.size() ; x++){
+            each = list.get(x);
+            total = strToInt(each.get("total"));
+            price = total * 10 / 11;
+            vat = total - price;
+            t = ("{\"no\":" + each.get("no") + ",");
+            t += ("\"date\":\"" + each.get("dt") + "\",");
+            t += ("\"card\":\"" + each.get("card") + "\",");
+            t += ("\"content\":\"" + each.get("content") + "\",");
+            t += ("\"price\":" + price + ",");
+            t += ("\"vat\":" + vat + ",");
+            t += ("\"total\":" + total + "}");
+            if(x > 0)   result += ",";
+            result += t;
+        }
+        result += "]";
+
+        return result;
+    } // End of getCorporateCardDetailData()
     
 }

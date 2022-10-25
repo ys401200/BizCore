@@ -285,5 +285,40 @@ public class ApiAccountingCtrl extends Ctrl{
         
         return result;
     }
+
+    @GetMapping("/corporatecard/my/{ym:\\d+}")
+    public String getCorporatecardWithYm(HttpServletRequest request, @PathVariable("ym") int ym){
+        String result = null;
+        String compId = null;
+        String aesKey = null;
+        String aesIv = null;
+        String userNo = null;
+        Msg msg = null;
+        HttpSession session = null;
+
+        session = request.getSession();
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        compId = (String)session.getAttribute("compId");
+        userNo = (String)session.getAttribute("userNo");
+        msg = getMsg((String)session.getAttribute("lang"));
+        if(compId == null)  compId = (String)session.getAttribute("compId");
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        }else{
+            result = accService.getCorporateCardDetailData(compId, userNo, ym);
+            if(result == null){
+                result = "{\"result\":\"failure\",\"msg\":\"" + msg.noResult + "\"}";
+            }else{
+                result = encAes(result, aesKey, aesIv);
+                result = "{\"result\":\"ok\",\"data\":\"" + result + "\"}";
+            }
+        }
+        
+        return result;
+    }
     
 }

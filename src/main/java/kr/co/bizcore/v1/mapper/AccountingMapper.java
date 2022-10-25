@@ -57,4 +57,8 @@ public interface AccountingMapper {
     // 은행 거래내역을 추가하는 메서드
     @Insert("INSERT INTO bizcore.bank_account_ledger(compId, bank, account, dt, `desc`, deposit, withdraw, balance, branch, remark, created) VALUES(#{compId}, #{bank}, #{account}, #{dt}, #{desc}, #{deposit}, #{withdraw}, #{balance}, #{branch}, #{remark}, NOW())")
     public int addDetail(@Param("compId") String compId, @Param("bank") String bank, @Param("account") String account, @Param("dt") Date dt, @Param("desc") String desc, @Param("deposit") long deposit, @Param("withdraw") long withdraw, @Param("balance") long balance, @Param("branch") String branch, @Param("remark") String remark);
+
+    // 연월과 사번을 입력받고 사용중인 카드의ㅣ 사용 내역을 가져오는 메서드
+    @Select("SELECT CAST(cardLogNo AS CHAR) AS no, CAST(appDate AS CHAR) AS dt, cardDisNum AS card, appContents AS content, CAST(appAmount AS CHAR) AS total FROM swcore.swc_cardledger WHERE attrib NOT LIKE 'XXX%' AND carddisnum IN (SELECT carddisnum FROM swcore.swc_card WHERE attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swcore.swc_company WHERE compid = #{compId}) and user_card = #{userNo}) AND YEAR(appdate)*100+MONTH(appdate) = #{ym} ORDER BY appdate, apptime")
+    public List<HashMap<String, String>> getCorporateCardDetailData(@Param("compId") String compId, @Param("userNo") String userNo, @Param("ym") int ym);
 }
