@@ -205,7 +205,7 @@ function soppErrorList(){
 }
 
 function soppSuccessView(result){
-	let html, htmlSecond, title, userName, customer, picOfCustomer, endUser, status, progress, contType, disDate, expectedSales, detail, dataArray, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput, detailSecondTabs, listRange;
+	let html, htmlSecond, title, userName, customer, picOfCustomer, endUser, status, progress, contType, disDate, expectedSales, detail, dataArray, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput, detailSecondTabs, listRange, pageContainer;
 	gridList = $(".gridList");
 	searchContainer = $(".searchContainer");
 	containerTitle = $("#containerTitle");
@@ -213,6 +213,7 @@ function soppSuccessView(result){
 	listSearchInput = $(".listSearchInput");
 	detailSecondTabs = $(".detailSecondTabs");
 	listRange = $(".listRange");
+	pageContainer = $(".pageContainer");
 
 	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
 	userName = (result.employee == 0 || result.employee === null || result.employee === undefined) ? "" : storage.user[result.employee].userName;
@@ -365,6 +366,7 @@ function soppSuccessView(result){
 		},
 	];
 
+	pageContainer.hide();
 	html = detailViewForm(dataArray);
 	htmlSecond = "<div class='tabs'>";
 	htmlSecond += "<input type='radio' id='tabTrade' name='tabItem' data-content-id='tabTradeList' onclick='tabItemClick(this)' checked>";

@@ -229,7 +229,7 @@ function contractErrorList(){
 }
 
 function contractSuccessView(result){
-	let notIdArray, sopp, html, htmlSecond, contractType, title, employee, customer, salesType, cipOfCustomer, endUser, cipOfendUser, saleDate, delivered, employee2, startOfFreeMaintenance, endOfFreeMaintenance, startOfPaidMaintenance, endOfPaidMaintenance, contractAmount, taxInclude, profit, detail, disDate, dataArray, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput, listRange;
+	let notIdArray, sopp, html, htmlSecond, contractType, title, employee, customer, salesType, cipOfCustomer, endUser, cipOfendUser, saleDate, delivered, employee2, startOfFreeMaintenance, endOfFreeMaintenance, startOfPaidMaintenance, endOfPaidMaintenance, contractAmount, taxInclude, profit, detail, disDate, dataArray, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput, listRange, pageContainer;
 	storage.contractNo = result.no;
 	gridList = $(".gridList");
 	searchContainer = $(".searchContainer");
@@ -238,6 +238,7 @@ function contractSuccessView(result){
 	listSearchInput = $(".listSearchInput");
 	detailSecondTabs = $(".detailSecondTabs");
 	listRange = $(".listRange");
+	pageContainer = $(".pageContainer");
 
 	contractType = (result.contractType === null || result.contractType === "" || result.contractType === undefined) ? "" : storage.code.etc[result.contractType];
 	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
@@ -488,6 +489,7 @@ function contractSuccessView(result){
 		},
 	];
 
+	pageContainer.hide();
 	html = detailViewForm(dataArray);
 	htmlSecond = "<div class='tabs'>";
 	htmlSecond += "<input type='radio' id='tabTrade' name ='tabItem' data-content-id='tabTradeList' onclick='tabItemClick(this)' checked>";

@@ -43,21 +43,15 @@
 				</ul> -->
 			</li>
 			<li>
-				<a href="/business/sopp">
+				<a href="#">
 					<img src="/images/main/icons/mainSoppIcon.png" id="mainSoppIcon" />
 					<span>영업기회</span>
-					<!-- <span id="slideSpan">+</span> -->
+					<span id="slideSpan">+</span>
 				</a>
-				<!-- <ul id="panel">
+				<ul id="panel">
 					<li><a href="/business/sopp">영업기회조회</a></li>
-					<li><a href="/business/est">견적관리</a></li>
-				</ul> -->
-			</li>
-			<li>
-				<a href="/business/estimate">
-					<img src="/images/main/icons/mainSoppIcon.png" id="mainSoppIcon" />
-					<span>견적관리</span>
-				</a>
+					<li><a href="/business/estimate">견적관리</a></li>
+				</ul>
 			</li>
 			<!-- <li>
 				<a href="#">
