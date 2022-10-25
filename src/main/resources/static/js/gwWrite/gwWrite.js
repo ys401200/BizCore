@@ -248,6 +248,7 @@ function selectForm() {
           jsondata = JSON.parse(jsondata);
           storage.soppList = jsondata;
           setSoppList(formId);
+          setCusDataList();
         } else {
           alert("에러");
         }
@@ -275,6 +276,8 @@ function selectForm() {
     $(".infoContentlast")[0].innerHTML = html;
     $("#" + formId + "_infoCustomer").attr("list", "_infoCustomer");
   }
+
+  $(".insertbtn").click(setCusDataList);
   // let previewWidth = document.getElementsByClassName("reportInsertForm")[0];
   // previewWidth = previewWidth.clientWidth;
   // let target = $(".reportInsertForm");
@@ -305,9 +308,9 @@ function setSoppList(formId) {
 
 
   //선택 후 수정하는 경우에 
-  if(formId == "doc_Form_Resolution" && $(".btnDiv").children.length == 2 ) {
+  if (formId == "doc_Form_Resolution" && $(".btnDiv").children.length == 2) {
     $(".btnDiv").append("<button onclick='getCardDetails()'>법인카드 내역</button>")
-  } 
+  }
 }
 
 // 결재선 생성 버튼 눌렀을 때 모달 띄움
@@ -1454,26 +1457,26 @@ function setCardData() {
             "' disabled></div>";
         }
 
-      } else if (dataTitles[j] == "quantity" ) {
+      } else if (dataTitles[j] == "quantity") {
         console.log("수량 ");
         dataHtml +=
-        "<div class='detailcontent'><input class='inputs outlineNonedata " +
-        id +
-        "_" +
-        dataTitles[j] +
-        "' type='text' oninput='setNum(this)'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' value='1' disabled></div>";
+          "<div class='detailcontent'><input class='inputs outlineNonedata " +
+          id +
+          "_" +
+          dataTitles[j] +
+          "' type='text' oninput='setNum(this)'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' value='1' disabled></div>";
 
-      } else if(dataTitles[j] == "product") {
+      } else if (dataTitles[j] == "product") {
         dataHtml +=
-            "<div class='detailcontent'><input class='inputs outlineNonedata " +
-            id +
-            "_" +
-            dataTitles[j] +
-            "' type='text' oninput='setNum(this)'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' value='" +
-            cardData[q][cardTitles[j]] +
-            "' disabled></div>";
+          "<div class='detailcontent'><input class='inputs outlineNonedata " +
+          id +
+          "_" +
+          dataTitles[j] +
+          "' type='text' oninput='setNum(this)'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' value='" +
+          cardData[q][cardTitles[j]] +
+          "' disabled></div>";
 
-      }else {
+      } else {
         if (cardData[q][cardTitles[j]] == null) {
           cardData[q][cardTitles[j]] = "";
         }
@@ -1502,3 +1505,39 @@ function setCardData() {
   }
   getTotalCount();
 }
+
+
+function setCusDataList() {
+
+  let id;
+  if ($(".formNumHidden").val() == "") {
+    id = storage.reportDetailData.formId;
+  } else {
+    id = storage.formList[$(".formNumHidden").val()].id;
+  }
+
+  let target = $("." + id + "_customer");
+  for (let i = 0; i < target.length; i++) {
+    let html = $("." + id + "_customer")[i].innerHTML;
+    let x;
+    let dataListHtml = "";
+
+    // 거래처 데이터 리스트 만들기
+    dataListHtml = "<datalist id='_customer'>";
+    for (x in storage.customer) {
+      dataListHtml +=
+        "<option data-value='" +
+        x +
+        "' value='" +
+        storage.customer[x].name +
+        "'></option> ";
+    }
+    dataListHtml += "</datalist>";
+    html += dataListHtml;
+    $("." + id + "_customer")[i].innerHTML = html;
+    $("." + id + "_customer").attr("list", "_customer");
+
+  }
+}
+
+

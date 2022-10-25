@@ -321,7 +321,7 @@ function showReportDetail() {
           storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
         $("." + formId + subTitlesArr[i] + "_position")[j].value =
           storage.userRank[
-            $("." + formId + subTitlesArr[i] + "_position")[j].value
+          $("." + formId + subTitlesArr[i] + "_position")[j].value
           ][0];
       }
     }
@@ -354,6 +354,7 @@ function showReportDetail() {
     },
   });
   setAppLineData();
+  $(".insertbtn").click(setCusDataList);
 }
 
 function showList() {
@@ -684,15 +685,30 @@ function drawChangeInfo() {
 
   let revisionData = storage.reportDetailData.revisionHistory;
   let changeData = new Array();
+  if (revisionData.length > 0) {
+    for (let i = 0; i < revisionData.length; i++) {
+      let modCause = "";
+      if (revisionData[i].content.doc == true) {
+        modCause += "문서 수정 ";
+      }
+      if (revisionData[i].content.files == true) {
+        modCause += "첨부 파일 수정 ";
+      }
+      if (revisionData[i].content.appLine == true) {
+        modCause += "결재선 수정 ";
+      }
 
-  for (let i = 0; i < revisionData.length; i++) {
-    let data = {
-      type: revisionData[i].employee,
-      name: revisionData[i].employee,
-      modifyDate: revisionData[i].date,
-      modCause: revisionData[i].content,
-    };
-    changeData.push(data);
+      revisionData[i].content.date;
+      revisionData[i].content.content;
+
+      let data = {
+        type: "",
+        name: storage.user[revisionData[i].employee].userName,
+        modifyDate: getYmdSlash(revisionData[i].date),
+        modCause: modCause,
+      };
+      changeData.push(data);
+    }
   }
 
   let detail =
@@ -813,7 +829,7 @@ function approveBtnEvent() {
       ((storage.reportDetailData.customer == null && cusResult == "") ||
         storage.reportDetailData.customer == cusResult) &&
       storage.oriCbContainer ==
-        $("input[name='" + formId + "_RD']:checked").attr("id") &&
+      $("input[name='" + formId + "_RD']:checked").attr("id") &&
       storage.oriInsertedContent == $(".insertedContent").html() &&
       storage.oriInsertedDataList == $(".insertedDataList").html()
     ) {
@@ -1722,7 +1738,7 @@ function quitModify() {
           storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
         $("." + formId + subTitlesArr[i] + "_position")[j].value =
           storage.userRank[
-            $("." + formId + subTitlesArr[i] + "_position")[j].value
+          $("." + formId + subTitlesArr[i] + "_position")[j].value
           ][0];
       }
     }
@@ -1758,7 +1774,7 @@ function getTotalCount() {
     if ($("." + id + "_total")[i].dataset.detail != undefined) {
       totalCount += Number(
         $("." + id + "_total")
-          [i].dataset.detail.replace(",", "")
+        [i].dataset.detail.replace(",", "")
           .replace(",", "")
           .replace(",", "")
           .replace(",", "")
@@ -1792,7 +1808,7 @@ function createConfirmBtn(obj) {
   if (div[0].childElementCount < 5) {
     $(".mainBtnDiv").append(
       "<button type='button'name='modConfirm' onclick='reportModify()' >수정완료 </button>" +
-        "<button type='button'name='modConfirm' onclick='quitModify()'>문서 수정 초기화</button>"
+      "<button type='button'name='modConfirm' onclick='quitModify()'>문서 수정 초기화</button>"
     );
   }
   $(":file").css("display", "inline");
@@ -2154,7 +2170,33 @@ function reset() {
   // }
   // 수정
 }
+function setCusDataList() {
 
+  let id = storage.reportDetailData.formId;
+
+  let target = $("." + id + "_customer");
+  for (let i = 0; i < target.length; i++) {
+    let html = $("." + id + "_customer")[i].innerHTML;
+    let x;
+    let dataListHtml = "";
+
+    // 거래처 데이터 리스트 만들기
+    dataListHtml = "<datalist id='_customer'>";
+    for (x in storage.customer) {
+      dataListHtml +=
+        "<option data-value='" +
+        x +
+        "' value='" +
+        storage.customer[x].name +
+        "'></option> ";
+    }
+    dataListHtml += "</datalist>";
+    html += dataListHtml;
+    $("." + id + "_customer")[i].innerHTML = html;
+    $("." + id + "_customer").attr("list", "_customer");
+
+  }
+}
 // function setLineData() {
 //   let newArr = [[], [], [], [], []];
 // for (let j = 0; j < newArr.length; j++) {
