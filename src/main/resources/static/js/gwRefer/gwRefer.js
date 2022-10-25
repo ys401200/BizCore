@@ -483,22 +483,35 @@ function drawCommentLine() {
     $("#noneRd").prop("checked", true);
   }
 }
-
-//  변경이력 그리는 함수
 function drawChangeInfo() {
   let target = $("#tabDetail2");
 
   let revisionData = storage.reportDetailData.revisionHistory;
   let changeData = new Array();
+  if (revisionData.length > 0) {
+    for (let i = 0; i < revisionData.length; i++) {
+      let modCause = "";
+      if (revisionData[i].content.doc == true) {
+        modCause += "문서 수정 ";
+      }
+      if (revisionData[i].content.files == true) {
+        modCause += "첨부 파일 수정 ";
+      }
+      if (revisionData[i].content.appLine == true) {
+        modCause += "결재선 수정 ";
+      }
 
-  for (let i = 0; i < revisionData.length; i++) {
-    let data = {
-      type: revisionData[i].employee,
-      name: revisionData[i].employee,
-      modifyDate: revisionData[i].date,
-      modCause: revisionData[i].content,
-    };
-    changeData.push(data);
+      revisionData[i].content.date;
+      revisionData[i].content.content;
+
+      let data = {
+        type: "",
+        name: storage.user[revisionData[i].employee].userName,
+        modifyDate: getYmdSlash(revisionData[i].date),
+        modCause: modCause,
+      };
+      changeData.push(data);
+    }
   }
 
   let detail =
@@ -527,7 +540,6 @@ function drawChangeInfo() {
   detail += changeHtml;
   target.html(detail);
 }
-
 function getFileArr() {
   let target = $(".selectedFileDiv");
   let html = "";
