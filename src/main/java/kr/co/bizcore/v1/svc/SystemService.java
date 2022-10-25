@@ -160,7 +160,7 @@ public class SystemService extends Svc {
         logger.error("SystemService.modifyCustomer() ::::::: ogn = " + ogn.toJson());
         if (ogn == null)
             return -9999;
-        sql = ogn.createUpdateQuery(customer, "bizcore.customer");
+        sql = ogn.createUpdateQuery(customer, "bizcore.customer") + " WHERE deleted IS NULL AND compId = '" + compId + "' AND no = " + customer.getNo();
         logger.error("SystemService.modifyCustomer() ::::::: sql = " + sql);
         result = executeSqlQuery(sql) > 0 ? result : -1;
         return result;
