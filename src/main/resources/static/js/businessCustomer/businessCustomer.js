@@ -227,6 +227,9 @@ function customerInsertForm(){
 			"title": "고객사명(*)",
 			"elementId": "name",
 			"disabled": false,
+			"complete": "customer",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 			"col": 2,
 		},
 		{
