@@ -3,6 +3,7 @@ package kr.co.bizcore.v1.svc;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.security.spec.X509EncodedKeySpec;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -1068,7 +1069,7 @@ public class GwService extends Svc {
         String result = null;
         List<HashMap<String, String>> list = null;
         HashMap<String, String> each = null;
-int x = 0;
+        int x = 0;
         list = gwMapper.getSavedLineData(compId, userNo);
         result = "[";
         if (list != null && list.size() > 0)
@@ -1076,17 +1077,22 @@ int x = 0;
                 each = list.get(x);
                 if (x > 0)
                     result += ",";
-                result += ("{\"title\":" + each.get("title") + ",");
-                result += ("\"appLine\":\"" + each.get("appLine") + "\"}");
-             ;
+                result += ("{\"no\":" + each.get("no") + ",");
+                result += ("\"title\":" + (each.get("title") == null ? null : "\"" + each.get("title") + "\"") + ",");
+                result += ("\"appLine\":" + each.get("appLine") + "}");
+                ;
 
             }
         result += "]";
 
-        
-
         return result;
 
+    }
+
+    public int delSavedLine(String compId, String userNo, String no) {
+        int x = 0;
+        x = gwMapper.delSavedLine(compId, userNo, no);
+        return x;
     }
 
 }

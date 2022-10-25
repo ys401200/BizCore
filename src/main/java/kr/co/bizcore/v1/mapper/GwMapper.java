@@ -207,6 +207,10 @@ public interface GwMapper {
         public String getDeptIdFromDoc(@Param("compId") String compId, @Param("docNo") String docNo);
 
         // 자주쓰는 결재선 목록 가져오기
-        @Select("select title , appLine from bizcore.saved_docapp where compId =#{compId} and userNo = #{userNo}")
-        public  List<HashMap<String, String>> getSavedLineData(@Param("compId") String compId, @Param("userNo") String userNo);
+        @Select("SELECT CAST(no AS CHAR) no, title , appLine FROM bizcore.saved_docapp WHERE compId =#{compId} and userNo = #{userNo} and deleted IS NULL")
+        public List<HashMap<String, String>> getSavedLineData(@Param("compId") String compId,
+                        @Param("userNo") String userNo);
+
+        @Update("UPDATE bizcore.saved_docapp SET deleted = now() WHERE compId = #{compId} and userNo = #{userNo} and no = #{no} ")
+        public int delSavedLine(@Param("compId") String compId, @Param("userNo") String userNo, @Param("no") String no);
 }

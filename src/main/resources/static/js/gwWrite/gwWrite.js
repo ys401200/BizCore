@@ -303,74 +303,12 @@ function setSoppList(formId) {
   soppTarget.innerHTML = soppHtml;
   $("#" + formId + "_sopp").attr("list", "_infoSopp");
 
-  // let setGwModalHtml =
-  //   "<div class='gwModal'>" +
-  //   "<div class='modal-title'>결재선 생성</div>" +
-  //   "<div class='lineDetail'>" +
-  //   "<div class='lineTop'>" +
-  //   "<div class='innerDetail' id='lineLeft'></div>" +
-  //   "<div class='innerDetail' id='lineCenter'>" +
-  //   "<button onclick='check(this.value)' value='examine'>검토 &gt;</button>" +
-  //   "<button onclick='check(this.value)' value='agree'>합의 &gt;</button>" +
-  //   "<button onclick='check(this.value)' value='approval'>결재 &gt;</button>" +
-  //   " <button onclick='check(this.value)' value='conduct'>수신 &gt;</button>" +
-  //   "<button onclick='check(this.value)' value='refer'>참조 &gt;</button></div>" +
-  //   "<div class='innerDetail' id='lineRight'>" +
-  //   "<div><select name='saveLineSelect' ><option value=''>자주 쓰는 결재선</option><option value='basic'>대표</option><option value='middle'>구민주 과장-대표</option><</select><button type='button' onclick='setSavedLine()'>불러오기</button><button type='button'>삭제하기</button><button type='button'>저장하기</button></div>" +
-  //   "<div><div>검토</div>" +
-  //   "<div class='typeContainer' id='examine'></div>" +
-  //   "</div>" +
-  //   "<div><div>합의</div>" +
-  //   "<div class='typeContainer' id='agree'></div></div>" +
-  //   "<div><div>결재</div>" +
-  //   "<div class='typeContainer' id='approval'></div></div>" +
-  //   "<div><div>수신</div>" +
-  //   "<div class='typeContainer' id='conduct'></div></div>" +
-  //   "<div><div>참조</div>" +
-  //   "<div class='typeContainer' id='refer'></div></div>" +
-  //   "</div>" +
-  //   "</div>" +
-  //   "</div>" +
-  //   "<div class='close-wrap'>" +
-  //   " <button id='close' onclick='closeGwModal(this)'>취소</button>" +
-  //   " <button id='create' onclick='closeGwModal(this)'>생성</button>" +
-  //   "</div>" +
-  //   "</div>" +
-  //   "</div>";
-  // $(".modal-wrap").html(setGwModalHtml);
-
-  // let orgChartTarget = $("#lineLeft");
-  // let userData = new Array();
-
-  // let x;
-  // let my = storage.my;
-  // //나는 결재선에 노출 안 되게 함
-  // for (x in storage.user) {
-  //   if (x != my && storage.user[x].resign != true) {
-  //     userData.push(x);
-  //   }
-  // }
-
-  // let innerHtml = "";
-  // for (let i = 0; i < userData.length; i++) {
-  //   innerHtml +=
-  //     "<div><input class='testClass' type ='checkbox' id='cb" +
-  //     userData[i] +
-  //     "' name='userNames' value='" +
-  //     userData[i] +
-  //     "'><label for='cb" +
-  //     userData[i] +
-  //     "'>" +
-  //     storage.user[userData[i]].userName +
-  //     "</label></div>";
-  // }
-  // orgChartTarget.html(innerHtml);
-  // $(".modal-wrap").hide();
 }
 
 // 결재선 생성 버튼 눌렀을 때 모달 띄움
 function showModal() {
   $(".modal-wrap").show();
+  getSavedLine();
 }
 
 function setModalhtml() {
@@ -387,8 +325,8 @@ function setModalhtml() {
     " <button onclick='check(this.value)' value='conduct'>수신 &gt;</button>" +
     "<button onclick='check(this.value)' value='refer'>참조 &gt;</button></div>" +
     "<div class='innerDetail' id='lineRight'>" +
-    "<div><div>자주 쓰는 결재선</div><div><select name='saveLineSelect' ><option value=''>-선택-</option><option value='basic'>대표</option><option value='middle'>구민주 과장-대표</option><</select>" +
-    "<button type='button' class='getSavedLineBtn' onclick='setSavedLine()'>불러오기</button><button type='button' class='delSavedLineBtn' >삭제하기</button><input type='text' class='setSavedLineTitle' placeholder='결재선 이름을 입력하세요'><button type='button' class='setSavedLine' onclick='lineSaveFnc()'>저장하기</button></div></div>" +
+    "<div><div>자주 쓰는 결재선</div><div><div class='savedLineContainer'><select name='saveLineSelect'></select></div>" +
+    "<button type='button' class='getSavedLineBtn' onclick='setSavedLine()'>불러오기</button><button type='button' class='delSavedLineBtn' onclick='delSavedLineData()' >삭제하기</button><input type='text' class='setSavedLineTitle' placeholder='결재선 이름을 입력하세요'><button type='button' class='setSavedLine' onclick='lineSaveFnc()'>저장하기</button></div></div>" +
     "<div><div>검토</div>" +
     "<div class='typeContainer' id='examine'></div>" +
     "</div>" +
@@ -461,12 +399,20 @@ function closeGwModal(obj) {
       let tt = $(".stepLabel")[2];
       $(tt).css("color", "black");
       $(".insertedDetail").css("border", "1px solid black");
+      let data = storage.formList;
+      let selectedFormNo = $(".formSelector").val();
+      $(".formNumHidden").val(selectedFormNo);
+      let formId = data[$(".formNumHidden").val()].id;
+      if(formId == 'doc_Form_Resolution') {
+       $(".btnDiv").append("<button>법인카드 내역</button>") 
+      }
     }
   }
 }
 
 ////조직도에서 결재 타입 선택 함수
 function check(name) {
+  $("select[name='saveLineSelect']")[0].value = "null";
   let inputLength = $(".testClass");
   let target = $("#" + name);
 
@@ -879,27 +825,31 @@ function getYmdSlash() {
 // 자주쓰는 결재선 선택시 설정
 function setSavedLine() {
   let val = $("select[name='saveLineSelect']")[0].value;
-  if (val == "middle") {
-    // 구민주 검토 이승우 결재
-    $("#examine").html(
-      "<div class='lineDataContainer' id='lineContainer_10017'><label id='linedata_10017'>구민주</label><button value='10017' onclick='upClick(this)'>▲</button><button  value='10017'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
-    );
-    $("#approval").html(
-      "<div class='lineDataContainer' id='lineContainer_10002'><label id='linedata_10002'>이승우</label><button value='10002' onclick='upClick(this)'>▲</button><button  value='10002'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
-    );
-    $("#agree").html("");
-    $("#conduct").html("");
-    $("#refer").html("");
-  } else if (val == "basic") {
-    // 이승우 결재
-    $("#approval").html(
-      "<div class='lineDataContainer' id='lineContainer_10002'><label id='linedata0'>이승우</label><button value='10002' onclick='upClick(this)'>▲</button><button  value='10002'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
-    );
+
+  if (val != "null") {
+
+    $("#approval").html("");
     $("#agree").html("");
     $("#examine").html("");
     $("#conduct").html("");
     $("#refer").html("");
+
+    let appLine = storage.savedLine;
+    let selectedAppLine = [];
+    for (let i = 0; i < appLine.length; i++) {
+      if (appLine[i].no == val) {
+        selectedAppLine = appLine[i].appLine;
+      }
+    }
+
+    let target = $(".typeContainer");
+    for (let k = 0; k < selectedAppLine.length; k++) {
+      let html = target[selectedAppLine[k][0]].innerHTML;
+      html += "<div class='lineDataContainer' id='lineContainer_" + selectedAppLine[k][1] + "'><label id='linedata_" + selectedAppLine[k][1] + "'>" + storage.user[selectedAppLine[k][1]].userName + "</label><button value='" + selectedAppLine[k][1] + "' onclick='upClick(this)'>▲</button><button  value='" + selectedAppLine[k][1] + "'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>";
+      target[selectedAppLine[k][0]].innerHTML = html;
+    }
   }
+
 
 }
 
@@ -1303,7 +1253,9 @@ function lineSaveFnc() {
     contentType: "text/plain",
     success: (result) => {
       if (result.result === "ok") {
-        alert("성공");
+        alert("저장 되었습니다.");
+        getSavedLine();
+        $(".setSavedLineTitle").val("");
       } else {
         alert("실패");
       }
@@ -1315,34 +1267,80 @@ function lineSaveFnc() {
 
 // 로그인한 사람의 사번으로 저장된 결재선 찾음 
 function getSavedLine() {
-  let data;
+
   $.ajax({
-    url: "/api/gw/app/savedLine/" + storage.my + "",
+    url: "/api/gw/app/savedLine/" + storage.my,
     method: "get",
     dataType: "json",
-    contentType: "text/plain",
+    cache: false,
     success: (result) => {
-      if (result.result === "ok") {
-        alert("성공");
-        data = result.data;
+      let savedLine;
+      if (result.result == "ok") {
+        savedLine = cipher.decAes(result.data);
+        savedLine = JSON.parse(savedLine);
+        storage.savedLine = savedLine;
+        setSavedLinedata();
       } else {
         alert("자주쓰는 결재선을 가져오는데 실패함 ");
       }
     },
   });
 
-  let target = $(".saveLineSelect");
-  let html = "";
+}
 
-  for (let i = 0; i < data.length; i++) {
-    html += "<option value=" + data[i].title + " data-detail='" + data[i].appLine + "'>" + data[i].title + "</option>"
+
+function setSavedLinedata() {
+  let target = $(".savedLineContainer");
+  let savedLine = storage.savedLine;
+  let html = "<select name='saveLineSelect'><option value='null'>-선택-</option>";
+  for (let i = 0; i < savedLine.length; i++) {
+    html += "<option value='" + savedLine[i].no + "'>" + savedLine[i].title + "</option>"
+  }
+  html += "</select>"
+  target.html(html);
+}
+
+
+function delSavedLineData() {
+  let val = $("select[name='saveLineSelect']")[0].value;
+  if (val != null) {
+    $.ajax({
+      url: "/api/gw/app/savedLine/" + val,
+      method: "delete",
+      dataType: "json",
+      cache: false,
+      success: (result) => {
+        if (result.result == "ok") {
+          alert("삭제 성공")
+          getSavedLine();
+        } else {
+          alert("자주 쓰는 결재선에서 삭제하는 데 실패함  ");
+        }
+      },
+    });
   }
 
-  target.html(html);
 
 }
 
-// 번호도 같이 받아와서 지우기 
-function deleteSavedLine() {
 
+function getCardDetails() {
+  let data = new Date();
+  let month = data.getMonth +1; 
+  let year = 1900 + date.getYear();
+
+  $.ajax({
+    url: "/api/accounting/coporatecard/my/" +year+month,
+    method: "get",
+    dataType: "json",
+    cache: false,
+    success: (result) => {
+      if (result.result == "ok") {
+        alert("성공");
+       
+      } else {
+        alert("자주 쓰는 결재선에서 삭제하는 데 실패함  ");
+      }
+    },
+  });
 }

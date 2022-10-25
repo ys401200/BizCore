@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.tomcat.util.json.JSONParser;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -707,18 +708,53 @@ public class ApiGwCtrl extends Ctrl {
     public String getSavedLineData(HttpServletRequest request, @PathVariable("userNo") String userNo) {
         String list = null;
         String result = null;
-
+        Msg msg = null;
         HttpSession session = null;
 
         session = request.getSession();
         String compId = (String) session.getAttribute("compId");
         String aesKey = (String) session.getAttribute("aesKey");
         String aesIv = (String) session.getAttribute("aesIv");
+        String lang = (String) session.getAttribute("lang");
+        msg = getMsg(lang);
 
         list = gwService.getSavedLineDataServ(compId, userNo);
-        result = "{\"result\":\"ok\",\"data\":\"" + list + "\"}";
+
+        if (list == null)
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
+        else {
+            list = encAes(list, aesKey, aesIv);
+            result = "{\"result\":\"ok\",\"data\":\"" + list + "\"}";
+        }
         return result;
 
+    }
+
+    @DeleteMapping("/app/savedLine/{no}")
+    public String delSavedLineData(HttpServletRequest request, @PathVariable("no") String no) {
+        String result = null, compId = null, lang = null, userNo;
+        Msg msg = null;
+        HttpSession session = null;
+
+        session = request.getSession();
+        compId = (String) session.getAttribute("compId");
+        userNo = (String) session.getAttribute("userNo");
+        lang = (String) session.getAttribute("lang");
+        msg = getMsg(lang);
+        if (compId == null)
+            compId = (String) request.getAttribute("compId");
+
+        if (compId == null) {
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        } else {
+            if (gwService.delSavedLine(compId, userNo, no) > 0) {
+                result = "{\"result\":\"ok\"}";
+            } else {
+                result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
+            }
+
+        }
+        return result;
     }
 
 }
