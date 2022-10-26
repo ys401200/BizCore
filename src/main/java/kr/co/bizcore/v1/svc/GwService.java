@@ -399,7 +399,7 @@ public class GwService extends Svc {
         String sql1 = "SELECT no, docNo, writer, formId, docbox, title, confirmNo, status, readable FROM bizcore.doc_app WHERE deleted IS NULL AND readable <> 'temp' AND compId = ? AND docno = ?";
         String sql2 = "SELECT ordered, employee, appType, CAST(UNIX_TIMESTAMP(`read`)*1000 AS CHAR) AS `read`, isModify, CAST(UNIX_TIMESTAMP(approved)*1000 AS CHAR) AS approved, CAST(UNIX_TIMESTAMP(rejected)*1000 AS CHAR) AS rejected, comment FROM bizcore.doc_app_detail WHERE deleted IS NULL AND retrieved IS NULL AND compId = ? AND docNo = ? ORDER BY ordered";
         String sql3 = "SELECT doc, appData FROM bizcore.doc_app_detail WHERE deleted IS NULL AND compId = ? AND ordered = (SELECT MAX(ordered) FROM bizcore.doc_app_detail WHERE deleted IS NULL AND compId = ? AND docNo = ? AND retrieved IS NULL AND (approved IS NOT NULL OR rejected IS NOT NULL)) AND docNo = ?";
-        String sql4 = "SELECT compId, docNo, CAST(employee AS CHAR) AS employee, CAST(UNIX_TIMESTAMP(created)*1000 AS CHAR) AS created, content FROM bizcore.doc_app_revision WHERE compId = ? AND docNo = ? ORDER BY created";
+        String sql4 = "SELECT COUNT(user_no) x FROM bizcore.user_dept WHERE comp_id = ? AND user_no = ? AND dept_id IN (SELECT dept_id FROM bizcore.user_dept WHERE comp_id = ? AND user_no = ?)";
         String no = null, writer = null, formId = null, docbox = null, title = null, confirmNo = null;
         String ordered = null, employee = null, appType = null, read = null, isModify = null, approved = null,
                 rejected = null, comment = null, appData = null, t = null, doc = null;
@@ -408,7 +408,7 @@ public class GwService extends Svc {
                 appReceiver = new HashSet<>(), appAll = new HashSet<>();
         List<HashMap<String, String>> list = null;
         HashMap<String, String> each = null;
-        boolean readable = false;
+        boolean readable = false, sameDept = false;
         ArrayList<String> appLine = null;
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -441,6 +441,18 @@ public class GwService extends Svc {
             rs.close();
             pstmt.close();
             // ========== ↑ 문서 기본정보 읽기 완료 ==========
+
+            // ========== ↓ 동일 부서 권환 확인 ==========
+            pstmt = conn.prepareStatement(sql4);
+            pstmt.setString(1, compId);
+            pstmt.setString(2, writer);
+            pstmt.setString(3, compId);
+            pstmt.setString(4, userNo);
+            rs = pstmt.executeQuery();
+            if(rs.next())   sameDept = rs.getInt(1) > 0;
+            rs.close();
+            pstmt.close();
+            // ========== ↑ 동일부서 권한 확인 ==========
 
             // ========== ↓ 결재선 정보 읽기 시작 ==========
             pstmt = conn.prepareStatement(sql2);
@@ -494,8 +506,8 @@ public class GwService extends Svc {
             // 상태코드 / -3 : 반려 / -2 : 결재취소 / -1 : 회수 / 0 : 임시저장 / 1 : 진행중 / 2 : 수신대기 / 3 : 완료
             // 결재 취소 및 임시저장은 작성자만 읽기 가능, 반려는 작성자와 반려자 이전 결재선 인원만 읽기 가능,
             // 회수/진행은 결재선에 존재하는 인원 중 수신자 제외 읽기 가능, 수신대기 및 완료는 젠체 읽기 가능
-
-            if (!appAll.contains(userNo)) {
+            
+            if (!appAll.contains(userNo) && !sameDept) {
                 return "permissionDenied";
             } else if (status == -3) {
                 if (writer.equals(userNo) || appBefore.contains(userNo) || appRead.contains(userNo)) {
@@ -536,7 +548,7 @@ public class GwService extends Svc {
                     return "permissionDenied";
                 }
             } else if (status == 3) {
-                if (appAll.contains(userNo)) {
+                if (appAll.contains(userNo) || sameDept) { // 결재선에 본인이 포홤되거나, 동일부서이거나....
                     docStatus = "read";
                 } else {
                     logger.info(appAll.toString());
