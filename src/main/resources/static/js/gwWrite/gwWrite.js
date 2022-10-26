@@ -597,7 +597,7 @@ function createLine() {
   lineTarget.css("display", "block");
   let my = storage.my;
   let testHtml =
-    "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작성</div><div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto' value='" +
+    "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작 성</div><div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto' value='" +
     storage.userRank[storage.user[my].rank][0] +
     "'></div>" +
     "<div class='twoBorder'><input type='text' class='inputsAuto " +
@@ -610,11 +610,11 @@ function createLine() {
     "_writer_status' value=''></div>" +
     "<div class='dateBorder'><input type='text' class='inputsAuto " +
     formId +
-    "_writer_approved''value=''></div></div></div>";
+    "_writer_approved''value='' style='background-color: transparent;'></div></div></div>";
   let testHtml2 = "<div class='lineGridContainer'>";
-  let referHtml = "<div>참조</div>";
+  let referHtml = "<div>참 조</div>";
   let target = $(".typeContainer"); // 결재선 생성 모달에서 결재 타입 각각의 container
-  let titleArr = ["검토", "결재", "수신", "참조"];
+  let titleArr = ["검 토", "결 재", "수 신", "참 조"];
   let titleId = ["examine", "approval", "conduct", "refer"];
   let simpleHtml = "";
   let data = new Array();
@@ -687,7 +687,7 @@ function createLine() {
           "_" +
           titleId[i] +
           "_approved" +
-          "' value='' data-detail=''/></div></div>";
+          "' value='' data-detail='' style='background-color: transparent;'/></div></div>";
       }
 
       // 참조
@@ -748,7 +748,7 @@ function createLine() {
           "_" +
           titleId[i] +
           "_approved" +
-          "' value='' data-detail=''/></div></div>";
+          "' value='' data-detail='' style='background-color: transparent;'/></div></div>";
       }
     }
 
@@ -1370,74 +1370,103 @@ function getCardDetails() {
 
 
 function setCardData() {
-  let id;
-  if ($(".formNumHidden").val() == "") {
-    id = storage.reportDetailData.formId;
+  if (storage.cardData.length == 0) {
+    alert("법인카드 내역이 없습니다");
   } else {
-    id = storage.formList[$(".formNumHidden").val()].id;
-  }
+    let id;
+    if ($(".formNumHidden").val() == "") {
+      id = storage.reportDetailData.formId;
+    } else {
+      id = storage.formList[$(".formNumHidden").val()].id;
+    }
 
-  let cardData = storage.cardData;
-  let dataHtml = "";
+    let cardData = storage.cardData;
+    let dataHtml = "";
 
-  let dataTitles = [
-    "date",
-    "customer",
-    "product",
-    "price",// 단가 
-    "quantity",// 수량
-    "subTotal",//공급가액
-    "tax",
-    "total",
-    "remark",
-  ];
-  let cardTitles = [
-    "date",
-    "customer", //none
-    "content",
-    "price",
-    "quantity", //1
-    "price",
-    "vat",
-    "total",
-    "remark",
-  ];
+    let dataTitles = [
+      "date",
+      "customer",
+      "product",
+      "price",// 단가 
+      "quantity",// 수량
+      "subTotal",//공급가액
+      "tax",
+      "total",
+      "remark",
+    ];
+    let cardTitles = [
+      "date",
+      "customer", //none
+      "content",
+      "price",
+      "quantity", //1
+      "price",
+      "vat",
+      "total",
+      "remark",
+    ];
 
 
 
-  for (let q = 0; q < cardData.length; q++) {
-    dataHtml += "<div class='detailcontentDiv'>";
-    for (let j = 0; j < dataTitles.length; j++) {
-      if (j == dataTitles.length - 1) {
-        if (cardData[q][cardTitles[j]] == null) {
-          cardData[q][cardTitles[j]] = "";
-        }
-        dataHtml +=
-          "<div class='detailcontentlast'><input type='text' value='" +
-          cardData[q][cardTitles[j]] +
-          "' onkeyup='this.dataset.detail=this.value' class='inputs outlineNonedata " +
-          id +
-          "_" +
-          dataTitles[j] +
-          "'></div>";
-      } else if (dataTitles[j] == "date") {
-        let date = cardData[q][cardTitles[j]];
-        dataHtml +=
-          "<div class='detailcontent'><input class='inputs outlineNonedata " +
-          id +
-          "_" +
-          dataTitles[j] +
-          "' onchange='this.dataset.detail=this.value;' type='date' value='" +
-          date +
-          "' disabled ></div>";
-      } else if (
-        dataTitles[j] == "price" ||
-        dataTitles[j] == "subTotal" ||
-        dataTitles[j] == "tax" ||
-        dataTitles[j] == "total"
-      ) {
-        if (cardData[q][cardTitles[j]] == null) {
-          cardData[q][cardTitles[j]] = "";
+    for (let q = 0; q < cardData.length; q++) {
+      dataHtml += "<div class='detailcontentDiv'>";
+      for (let j = 0; j < dataTitles.length; j++) {
+        if (j == dataTitles.length - 1) {
+          if (cardData[q][cardTitles[j]] == null) {
+            cardData[q][cardTitles[j]] = "";
+          }
+          dataHtml +=
+            "<div class='detailcontentlast'><input type='text' value='" +
+            cardData[q][cardTitles[j]] +
+            "' onkeyup='this.dataset.detail=this.value' class='inputs outlineNonedata " + id +"_" +dataTitles[j] +
+            "'></div>";
+        } else if (dataTitles[j] == "date") {
+          let date = cardData[q][cardTitles[j]];
+          dataHtml +=
+            "<div class='detailcontent'><input class='inputs outlineNonedata " +
+            id +
+            "_" +
+            dataTitles[j] +
+            "' onchange='this.dataset.detail=this.value;' type='date' value='" +
+            date +
+            "' disabled ></div>";
+        } else if (
+          dataTitles[j] == "price" ||
+          dataTitles[j] == "subTotal" ||
+          dataTitles[j] == "tax" ||
+          dataTitles[j] == "total"
+        ) {
+          if (cardData[q][cardTitles[j]] == null) {
+            cardData[q][cardTitles[j]] = "";
+            dataHtml +=
+              "<div class='detailcontent'><input class='inputs outlineNonedata " +
+              id +
+              "_" +
+              dataTitles[j] +
+              "' type='text' oninput='setNum(this)'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' value='" +
+              cardData[q][cardTitles[j]] +
+              "' disabled ></div>";
+          } else {
+            dataHtml +=
+              "<div class='detailcontent'><input class='inputs outlineNonedata " +
+              id +
+              "_" +
+              dataTitles[j] +
+              "' type='text' oninput='setNum(this)'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' value='" +
+              cardData[q][cardTitles[j]].toLocaleString() +
+              "' disabled></div>";
+          }
+
+        } else if (dataTitles[j] == "quantity") {
+          console.log("수량 ");
+          dataHtml +=
+            "<div class='detailcontent'><input class='inputs outlineNonedata " +
+            id +
+            "_" +
+            dataTitles[j] +
+            "' type='text' oninput='setNum(this)'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' value='1' disabled></div>";
+
+        } else if (dataTitles[j] == "product") {
           dataHtml +=
             "<div class='detailcontent'><input class='inputs outlineNonedata " +
             id +
@@ -1445,65 +1474,38 @@ function setCardData() {
             dataTitles[j] +
             "' type='text' oninput='setNum(this)'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' value='" +
             cardData[q][cardTitles[j]] +
-            "' disabled ></div>";
+            "' disabled></div>";
+
         } else {
+          if (cardData[q][cardTitles[j]] == null) {
+            cardData[q][cardTitles[j]] = "";
+          }
           dataHtml +=
-            "<div class='detailcontent'><input class='inputs outlineNonedata " +
+            "<div class='detailcontent'><input class='inputs outlineNonedata" +
             id +
             "_" +
             dataTitles[j] +
-            "' type='text' oninput='setNum(this)'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' value='" +
-            cardData[q][cardTitles[j]].toLocaleString() +
-            "' disabled></div>";
+            "' type='text' onkeyup='this.dataset.detail=this.value' value='" +
+            cardData[q][cardTitles[j]] +
+            "'></div>";
         }
-
-      } else if (dataTitles[j] == "quantity") {
-        console.log("수량 ");
-        dataHtml +=
-          "<div class='detailcontent'><input class='inputs outlineNonedata " +
-          id +
-          "_" +
-          dataTitles[j] +
-          "' type='text' oninput='setNum(this)'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' value='1' disabled></div>";
-
-      } else if (dataTitles[j] == "product") {
-        dataHtml +=
-          "<div class='detailcontent'><input class='inputs outlineNonedata " +
-          id +
-          "_" +
-          dataTitles[j] +
-          "' type='text' oninput='setNum(this)'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' value='" +
-          cardData[q][cardTitles[j]] +
-          "' disabled></div>";
-
-      } else {
-        if (cardData[q][cardTitles[j]] == null) {
-          cardData[q][cardTitles[j]] = "";
-        }
-        dataHtml +=
-          "<div class='detailcontent'><input class='inputs outlineNonedata" +
-          id +
-          "_" +
-          dataTitles[j] +
-          "' type='text' onkeyup='this.dataset.detail=this.value' value='" +
-          cardData[q][cardTitles[j]] +
-          "'></div>";
       }
+      dataHtml +=
+        "<div class='detailcontentbox'><input type='checkbox' class='detailBox'></div></div>";
     }
-    dataHtml +=
-      "<div class='detailcontentbox'><input type='checkbox' class='detailBox'></div></div>";
+
+    $(".insertedDataList").html(dataHtml);
+
+
+    let target = $(".insertedDataList")[0];
+
+    let inputsArr = target.getElementsByTagName("input");
+    for (let i = 0; i < inputsArr.length; i++) {
+      inputsArr[i].dataset.detail = inputsArr[i].value;
+    }
+    getTotalCount();
   }
 
-  $(".insertedDataList").html(dataHtml);
-
-
-  let target = $(".insertedDataList")[0];
-
-  let inputsArr = target.getElementsByTagName("input");
-  for (let i = 0; i < inputsArr.length; i++) {
-    inputsArr[i].dataset.detail = inputsArr[i].value;
-  }
-  getTotalCount();
 }
 
 

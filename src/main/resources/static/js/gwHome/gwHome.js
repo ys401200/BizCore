@@ -330,23 +330,6 @@ function detailView(obj) {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function drawWaitList() {
   let container = storage.container;
   let types = ["wait", "due", "receive", "refer"];
@@ -356,7 +339,6 @@ function drawWaitList() {
   types = types.slice(container, container + 1);
   drawMyDraft(types, targets, listTarget, pageTarget);
 }
-
 
 
 function drawMyDraft(types, targets, listTarget, pageTarget) {
