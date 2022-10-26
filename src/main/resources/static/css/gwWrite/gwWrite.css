@@ -21,7 +21,7 @@
   margin: 0;
 }
 
-.container span {
+.container .titleSpan {
   font-size: 16px;
   margin-left: 15px;
   line-height: 40px;

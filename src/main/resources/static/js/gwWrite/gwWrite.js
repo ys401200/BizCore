@@ -282,7 +282,7 @@ function selectForm() {
   // previewWidth = previewWidth.clientWidth;
   // let target = $(".reportInsertForm");
   // target.css("height", Math.ceil((previewWidth / 210) * 297));
-  storage.editorArray = ["doc_Form_Consult_content"];
+  storage.editorArray = [formId + "_content"];
   ckeditor.config.readOnly = false;
   window.setTimeout(setEditor, 100);
 }
@@ -414,7 +414,7 @@ function closeGwModal(obj) {
       let selectedFormNo = $(".formSelector").val();
       $(".formNumHidden").val(selectedFormNo);
       let formId = data[$(".formNumHidden").val()].id;
-      storage.editorArray = ["doc_Form_Consult_content"];
+      storage.editorArray = [formId + "_content"];
       ckeditor.config.readOnly = false;
       window.setTimeout(setEditor, 100);
       // if (formId == 'doc_Form_Resolution') {
@@ -892,7 +892,9 @@ function reportInsert() {
   }
 
   title = $("#" + formId + "_title").val();
-  content = $("#" + formId + "_content").val();
+  content = CKEDITOR.instances[formId + "_content"].getData();
+  $("#" + formId + "_content").attr("data-detail", content);
+  //content = $("#" + formId + "_content").val();
   readable = $("input[name=authority]:checked").val();
   appDoc = $(".reportInsertForm").html();
   appDoc = appDoc
@@ -1424,7 +1426,7 @@ function setCardData() {
           dataHtml +=
             "<div class='detailcontentlast'><input type='text' value='" +
             cardData[q][cardTitles[j]] +
-            "' onkeyup='this.dataset.detail=this.value' class='inputs outlineNonedata " + id +"_" +dataTitles[j] +
+            "' onkeyup='this.dataset.detail=this.value' class='inputs outlineNonedata " + id + "_" + dataTitles[j] +
             "'></div>";
         } else if (dataTitles[j] == "date") {
           let date = cardData[q][cardTitles[j]];

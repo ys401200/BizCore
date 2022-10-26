@@ -8,7 +8,7 @@
       <div id="bodyContent">
         <div class="container">
           <hr />
-          <span>새 결재 진행</span>
+          <span clsss="titleSpan">새 결재 진행</span>
           <div class="ContentDiv">
             <div class='gwWriteBtns'>
               <button type='button' onclick='reportInsert()' class='writeBtn'>기안 하기</button>
