@@ -282,6 +282,9 @@ function selectForm() {
   // previewWidth = previewWidth.clientWidth;
   // let target = $(".reportInsertForm");
   // target.css("height", Math.ceil((previewWidth / 210) * 297));
+  storage.editorArray = ["doc_Form_Consult_content"];
+  ckeditor.config.readOnly = false;
+  window.setTimeout(setEditor, 100);
 }
 
 // 영업기회 데이터 리스트 가져오는 함수
@@ -411,6 +414,9 @@ function closeGwModal(obj) {
       let selectedFormNo = $(".formSelector").val();
       $(".formNumHidden").val(selectedFormNo);
       let formId = data[$(".formNumHidden").val()].id;
+      storage.editorArray = ["doc_Form_Consult_content"];
+      ckeditor.config.readOnly = false;
+      window.setTimeout(setEditor, 100);
       // if (formId == 'doc_Form_Resolution') {
       //   $(".btnDiv").append("<button onclick='getCardDetails()'>법인카드 내역</button>")
       // }
