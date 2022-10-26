@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import kr.co.bizcore.v1.domain.TradeDetail;
+import kr.co.bizcore.v1.msg.Msg;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
@@ -61,12 +62,14 @@ public class ApiTradeCtrl extends Ctrl{
         String compId = null;
         String aesKey = null;
         String aesIv = null;
+        Msg msg = null;
         HttpSession session = null;
 
         session = request.getSession();
         compId = (String)session.getAttribute("compId");
         aesKey = (String)session.getAttribute("aesKey");
         aesIv = (String)session.getAttribute("aesIv");
+        msg = getMsg((String)session.getAttribute("lang"));
         if(compId == null)  compId = (String)request.getAttribute("compId");
 
         if(compId == null){
@@ -77,6 +80,41 @@ public class ApiTradeCtrl extends Ctrl{
             result = tradeService.getTradeDetailList(no);
             result = encAes(result, aesKey, aesIv);
             result = "{\"result\":\"ok\",\"data\":\"" + result + "\"}";
+        }
+
+        return result;
+    }
+
+    // 연결된 매입매출 자료를 가져오는 메서드
+    @GetMapping("/{funcName}/{funcNo}")
+    public String ApiTradeFuncGet(HttpServletRequest request, @PathVariable("funcName") String funcName, @PathVariable("funcNo") String funcNo){
+        String result = null, data = null;
+        String compId = null;
+        String aesKey = null;
+        String aesIv = null;
+        Msg msg = null;
+        HttpSession session = null;
+
+        session = request.getSession();
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        compId = (String)session.getAttribute("compId");
+        msg = getMsg((String)session.getAttribute("lang"));
+        if(compId == null)  compId = (String)request.getAttribute("compId");
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        }else{
+            data = tradeService.getTradeListByFunc(compId, funcName, funcNo);
+            if(data != null){
+                data = encAes(data, aesKey, aesIv);
+                result = "{\"result\":\"ok\",\"" + data + "\"}";
+            }else{
+                result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
+            }
+            
         }
 
         return result;
@@ -103,7 +141,7 @@ public class ApiTradeCtrl extends Ctrl{
         return result;
     }
 
-    @PostMapping("")
+    //@PostMapping("")
     public String ApiTradePost(HttpServletRequest request, @RequestBody String requestBody) throws JsonMappingException, JsonProcessingException{
         String result = null;
         String compId = null;
@@ -137,7 +175,7 @@ public class ApiTradeCtrl extends Ctrl{
         return result;
     }
 
-    @PutMapping("{no}")
+    //@PutMapping("{no}")
     public String ApiTradePut(HttpServletRequest request, @RequestBody String requestBody, @PathVariable("no") String no) throws JsonMappingException, JsonProcessingException{
         String result = null;
         String compId = null;
