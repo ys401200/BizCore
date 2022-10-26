@@ -229,9 +229,14 @@ function contractErrorList(){
 }
 
 function contractSuccessView(result){
-	storage.formList = result;
-	let notIdArray, sopp, html, htmlSecond, contractType, title, employee, customer, salesType, cipOfCustomer, endUser, cipOfendUser, saleDate, delivered, employee2, startOfFreeMaintenance, endOfFreeMaintenance, startOfPaidMaintenance, endOfPaidMaintenance, contractAmount, taxInclude, profit, detail, disDate, dataArray, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput, listRange, pageContainer;
-	storage.contractNo = result.no;
+	let notIdArray, detailTrueDatas, sopp, html, htmlSecond, contractType, title, employee, customer, salesType, cipOfCustomer, endUser, cipOfendUser, saleDate, delivered, employee2, startOfFreeMaintenance, endOfFreeMaintenance, startOfPaidMaintenance, endOfPaidMaintenance, contractAmount, taxInclude, profit, detail, disDate, dataArray, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput, listRange, pageContainer;
+	storage.formList = {};
+	for(let key in result){
+		if(typeof result[key] !== "object"){
+			storage.formList[key] = result[key];
+		}
+	}
+
 	gridList = $(".gridList");
 	searchContainer = $(".searchContainer");
 	containerTitle = $("#containerTitle");
@@ -240,6 +245,7 @@ function contractSuccessView(result){
 	detailSecondTabs = $(".detailSecondTabs");
 	listRange = $(".listRange");
 	pageContainer = $(".pageContainer");
+	detailTrueDatas = ["employee", "customer", "cipOfCustomer", "endUser", "cipOfendUser", "sopp", "employee2"];
 
 	contractType = (result.contractType === null || result.contractType === "" || result.contractType === undefined) ? "" : storage.code.etc[result.contractType];
 	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
@@ -250,79 +256,39 @@ function contractSuccessView(result){
 	endUser = (result.endUser == 0 || result.endUser === null || result.endUser === undefined) ? "" : storage.customer[result.endUser].name;
 	cipOfendUser = (result.cipOfendUser == 0 || result.cipOfendUser === null || result.cipOfendUser === undefined) ? "" : result.cipOfendUser;
 	sopp = (result.sopp == 0 || result.sopp === null || result.sopp === undefined) ? "" : result.sopp;
-
 	disDate = dateDis(result.saleDate);
 	saleDate = dateFnc(disDate);
-
 	disDate = dateDis(result.delivered);
 	delivered = dateFnc(disDate);
-
 	employee2 = (result.employee2 == 0 || result.employee2 === null || result.employee2 === undefined) ? "" : storage.user[result.employee2].userName;
-
 	disDate = dateDis(result.startOfFreeMaintenance);
 	startOfFreeMaintenance = dateFnc(disDate); 
-
 	disDate = dateDis(result.endOfFreeMaintenance);
 	endOfFreeMaintenance = dateFnc(disDate);
-
 	disDate = dateDis(result.startOfPaidMaintenance);
 	startOfPaidMaintenance = dateFnc(disDate);
-
 	disDate = dateDis(result.endOfPaidMaintenance);
 	endOfPaidMaintenance = dateFnc(disDate);
-	
 	contractAmount = (result.contractAmount == 0 || result.contractAmount === null || result.contractAmount === undefined) ? 0 : numberFormat(result.contractAmount);
 	taxInclude = (result.taxInclude === null || result.taxInclude === "" || result.taxInclude === "N" || result.taxInclude === undefined) ? false : true;
 	profit = (result.profit == 0 || result.profit === null || result.profit === undefined) ? 0 : numberFormat(result.profit);
 	detail = (result.detail === null || result.detail === "" || result.detail === undefined) ? "" : result.detail;
-
+	
 	if(cipOfCustomer !== ""){
-		$.ajax({
-			url: "/api/system/cip/" + cipOfCustomer,
-			method: "get",
-			async: false,
-			dataType: "json",
-			success:(resultData) => {
-				let jsonData;
-				jsonData = cipher.decAes(resultData.data);
-
-				cipOfCustomer = jsonData;
-			}
-		});
+		cipOfCustomer = storage.cip[cipOfCustomer].name;
 	}
 
 	if(cipOfendUser !== ""){
-		$.ajax({
-			url: "/api/system/cip/" + cipOfendUser,
-			method: "get",
-			async: false,
-			dataType: "json",
-			success:(resultData) => {
-				let jsonData;
-				jsonData = cipher.decAes(resultData.data);
-
-				cipOfendUser = jsonData;
-			}
-		});
+		cipOfendUser = storage.cip[cipOfendUser].name;
 	}
 
+
 	if(sopp !== ""){
-		$.ajax({
-			url: "/api/sopp/" + result.sopp,
-			method: "get",
-			async: false,
-			dataType: "json",
-			success:(resultData) => {
-				let resultJson;
-				resultJson = cipher.decAes(resultData.data);
-				resultJson = JSON.parse(resultJson);
-	
-				sopp = resultJson.title;
-			},
-			error:() => {
-				msg.set("영업기회를 찾을 수 없습니다.");
+		for(let key in storage.sopp){
+			if(storage.sopp[key].no === result.sopp){
+				sopp = storage.sopp[key].title;
 			}
-		});
+		}
 	}
 
 	dataArray = [
@@ -347,7 +313,9 @@ function contractSuccessView(result){
 		{
 			"title": "영업기회(*)",
 			"elementId": "sopp",
-			"dataKeyup": "sopp",
+			"complete": "sopp",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 			"value": sopp,
 		},
 		{
@@ -393,19 +361,25 @@ function contractSuccessView(result){
 			"title": "매출처 담당자",
 			"elementId": "cipOfCustomer",
 			"value": cipOfCustomer,
-			"dataKeyup": "customerUser",
+			"complete": "cip",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 		},
 		{
 			"title": "엔드유저(*)",
 			"elementId": "endUser",
 			"value": endUser,
-			"dataKeyup": "customer",
+			"complete": "customer",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 		},
 		{
 			"title": "엔드유저 담당자",
 			"elementId": "cipOfendUser",
 			"value": cipOfendUser,
-			"dataKeyup": "customerUser",
+			"complete": "cip",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 		},
 		{
 			"title": "발주일자",
@@ -423,43 +397,45 @@ function contractSuccessView(result){
 			"title": "(부)담당자",
 			"elementId": "employee2",
 			"value": employee2,
-			"dataKeyup": "user",
+			"complete": "user",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 		},
 		{
 			"title": "VAT 포함여부",
 			"selectValue": [
 				{
 					"key": true,
-					"value": "Y",
+					"value": "포함",
 				},
 				{
 					"key": false,
-					"value": "N",
+					"value": "미포함",
 				},
 			],
 			"type": "select",
 			"elementId": "taxInclude",
 		},
 		{
-			"title": "무상 유지보수일자 시작일",
+			"title": "무상 시작일",
 			"elementId": "startOfFreeMaintenance",
 			"value": startOfFreeMaintenance,
 			"type": "date",
 		},
 		{
-			"title": "무상 유지보수일자 종료일",
+			"title": "무상 종료일",
 			"elementId": "endOfFreeMaintenance",
 			"value": endOfFreeMaintenance,
 			"type": "date",
 		},
 		{
-			"title": "유상 유지보수일자 시작일",
+			"title": "유상 시작일",
 			"elementId": "startOfPaidMaintenance",
 			"value": startOfPaidMaintenance,
 			"type": "date",
 		},
 		{
-			"title": "유상 유지보수일자 종료일",
+			"title": "유상 종료일",
 			"elementId": "endOfPaidMaintenance",
 			"value": endOfPaidMaintenance,
 			"type": "date",
@@ -524,6 +500,14 @@ function contractSuccessView(result){
 	createTabFileList();
 	createTabTechList(result.schedules);
 	createTabSalesList(result.schedules);
+
+	for(let i = 0; i < detailTrueDatas.length; i++){
+		if($("#" + detailTrueDatas[i]).length > 0){
+			$("#" + detailTrueDatas[i]).attr("data-change", true);
+		}else if($("[name=\"" + detailTrueDatas[i] + "\"]").length > 0){
+			$("[name=\"" + detailTrueDatas[i] + "\"]").attr("data-change", true);
+		}
+	}
 
 	$(".detailContents").show();
 	
@@ -607,14 +591,17 @@ function contractInsertForm(){
 		{
 			"title": "영업기회(*)",
 			"elementId": "sopp",
-			"dataKeyup": "sopp",
+			"complete": "sopp",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 			"disabled": false,
 		},
 		{
 			"title": "담당자(*)",
-			"dataKeyup": "user",
+			"complete": "user",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 			"elementId": "employee",
-			"dataKeyup": "user",
 		},
 		{
 			"title": "판매방식(*)",
@@ -644,25 +631,33 @@ function contractInsertForm(){
 			"title": "매출처(*)",
 			"elementId": "customer",
 			"disabled": false,
-			"dataKeyup": "customer",
+			"complete": "customer",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 		},
 		{
 			"title": "매출처 담당자",
 			"elementId": "cipOfCustomer",
 			"disabled": false,
-			"dataKeyup": "customerUser",
+			"complete": "cip",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 		},
 		{
 			"title": "엔드유저(*)",
 			"elementId": "endUser",
 			"disabled": false,
-			"dataKeyup": "customer",
+			"complete": "customer",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 		},
 		{
 			"title": "엔드유저 담당자",
 			"elementId": "cipOfendUser",
 			"disabled": false,
-			"dataKeyup": "customerUser",
+			"complete": "cip",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 		},
 		{
 			"title": "발주일자",
@@ -680,28 +675,30 @@ function contractInsertForm(){
 			"title": "(부)담당자",
 			"elementId": "employee2",
 			"disabled": false,
-			"dataKeyup": "user",
+			"complete": "user",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 		},
 		{
-			"title": "무상 유지보수일자 시작일",
+			"title": "무상 시작일",
 			"elementId": "startOfFreeMaintenance",
 			"disabled": false,
 			"type": "date",
 		},
 		{
-			"title": "무상 유지보수일자 종료일",
+			"title": "무상 종료일",
 			"elementId": "endOfFreeMaintenance",
 			"disabled": false,
 			"type": "date",
 		},
 		{
-			"title": "유상 유지보수일자 시작일",
+			"title": "유상 시작일",
 			"elementId": "startOfPaidMaintenance",
 			"disabled": false,
 			"type": "date",
 		},
 		{
-			"title": "유상 유지보수일자 종료일",
+			"title": "유상 종료일",
 			"elementId": "endOfPaidMaintenance",
 			"disabled": false,
 			"type": "date",
@@ -717,11 +714,11 @@ function contractInsertForm(){
 			"selectValue": [
 				{
 					"key": true,
-					"value": "Y",
+					"value": "포함",
 				},
 				{
 					"key": false,
-					"value": "N",
+					"value": "미포함",
 				},
 			],
 			"type": "select",
@@ -764,40 +761,46 @@ function contractInsertForm(){
 	modal.close.attr("onclick", "modal.hide();");
 	
 	storage.formList = {
-		"contractType": null,
-		"sopp": null,
-		"employee": null,
-		"salesType": null,
-		"customer": null,
-		"cipOfCustomer": null,
-		"endUser": null,
-		"cipOfendUser": null,
-		"saleDate": null,
-		"delivered": null,
-		"employee2": null,
-		"startOfFreeMaintenance": null,
-		"endOfFreeMaintenance": null,
-		"startOfPaidMaintenance": null,
-		"endOfPaidMaintenance": null,
-		"contractAmount": null,
-		"taxInclude": null,
-		"profit": null,
-		"title": null,
-		"detail": null
+		"contractType": "",
+		"sopp": 0,
+		"employee": storage.my,
+		"salesType": "",
+		"customer": 0,
+		"cipOfCustomer": 0,
+		"endUser": 0,
+		"cipOfendUser": 0,
+		"saleDate": "",
+		"delivered": "",
+		"employee2": 0,
+		"startOfFreeMaintenance": "",
+		"endOfFreeMaintenance": "",
+		"startOfPaidMaintenance": "",
+		"endOfPaidMaintenance": "",
+		"contractAmount": 0,
+		"taxInclude": "",
+		"profit": 0,
+		"title": "",
+		"detail": ""
 	};
 	
 	setTimeout(() => {
 		let my = storage.my, nowDate;
 		nowDate = new Date().toISOString().substring(0, 10);
+		storage.editorArray = ["detail"];
+		ckeditor.config.readOnly = false;
+		window.setTimeout(setEditor, 100);
 		$("[name='contractType']").eq(0).prop("checked", true);
 		$("#startOfPaidMaintenance").parents(".defaultFormLine").hide();
 		$("#endOfPaidMaintenance").parents(".defaultFormLine").hide();
 		$("#employee").val(storage.user[my].userName);
+		$("#employee").attr("data-change", true);
 		$("#saleDate, #delivered, #startOfFreeMaintenance, #endOfFreeMaintenance, #startOfPaidMaintenance, #endOfPaidMaintenance").val(nowDate);
-		storage.editorArray = ["detail"];
-		ckeditor.config.readOnly = false;
-		window.setTimeout(setEditor, 100);
 	}, 100);
+	
+	setTimeout(() => {
+		$(".cke").css("height", "300px");
+		$(".cke_contents").css("height", "300px");
+	}, 400);
 }
 
 function contractInsert(){
@@ -822,80 +825,15 @@ function contractInsert(){
 		$("#endUser").focus();
 		return false;
 	}else{
-		// let contractType, title, sopp, employee, salesType, customer, cipOfCustomer, endUser, cipOfendUser, saleDate, delivered, employee2, startOfFreeMaintenance, endOfFreeMaintenance, startOfPaidMaintenance, endOfPaidMaintenance, contractAmount, taxInclude, profit, detail, url, method, data, type;
-	
-		// contractType = $("[name='contractType']:checked").val();
-		// title = $("#title").val();
-		// sopp = $("#sopp");
-		// sopp = dataListFormat(sopp.attr("id"), sopp.val());
-		// employee = $("#employee");
-		// employee = dataListFormat(employee.attr("id"), employee.val());
-		// salesType = $("#salesType").val();
-		// customer = $("#customer");
-		// customer = dataListFormat(customer.attr("id"), customer.val());
-		// cipOfCustomer = $("#cipOfCustomer");
-		// cipOfCustomer = dataListFormat(cipOfCustomer.attr("id"), cipOfCustomer.val());
-		// endUser = $("#endUser");
-		// endUser = dataListFormat(endUser.attr("id"), endUser.val());
-		// cipOfendUser = $("#cipOfendUser");
-		// cipOfendUser = dataListFormat(cipOfendUser.attr("id"), cipOfendUser.val());
-		// saleDate = $("#saleDate").val();
-		// saleDate = new Date(saleDate).getTime();
-		// delivered = $("#delivered").val();
-		// delivered = new Date(delivered).getTime();
-		// employee2 = $("#employee2");
-		// employee2 = dataListFormat(employee2.attr("id"), employee2.val());
-		// startOfFreeMaintenance = $("#startOfFreeMaintenance").val();
-		// endOfFreeMaintenance = $("#endOfFreeMaintenance").val();
-		// startOfPaidMaintenance = $("#startOfPaidMaintenance").val();
-		// endOfPaidMaintenance = $("#endOfPaidMaintenance").val();
-	
-		// if(contractType === "10247"){
-		// 	startOfFreeMaintenance = new Date(startOfFreeMaintenance).getTime();
-		// 	endOfFreeMaintenance = new Date(endOfFreeMaintenance).getTime();
-		// }else{
-		// 	startOfPaidMaintenance = new Date(startOfPaidMaintenance).getTime();
-		// 	endOfPaidMaintenance = new Date(endOfPaidMaintenance).getTime();
-		// }
-		
-		// contractAmount = $("#contractAmount").val().replaceAll(",", "");
-		// taxInclude = $("#taxInclude").val();
-		// profit = $("#profit").val().replaceAll(",", "");
-		// detail = CKEDITOR.instances.detail.getData();
-	
-		// url = "/api/contract";
-		// method = "post";
-		// data = {
-		// 	"contractType": contractType,
-		// 	"title": title,
-		// 	"sopp": sopp,
-		// 	"employee": employee,
-		// 	"salesType": salesType,
-		// 	"customer": customer,
-		// 	"cipOfCustomer": cipOfCustomer,
-		// 	"endUser": endUser,
-		// 	"cipOfendUser": cipOfendUser,
-		// 	"saleDate": saleDate,
-		// 	"delivered": delivered,
-		// 	"employee2": employee2,
-		// 	"startOfFreeMaintenance": startOfFreeMaintenance,
-		// 	"endOfFreeMaintenance": endOfFreeMaintenance,
-		// 	"startOfPaidMaintenance": startOfPaidMaintenance,
-		// 	"endOfPaidMaintenance": endOfPaidMaintenance,
-		// 	"contractAmount": contractAmount,
-		// 	"taxInclude": taxInclude,
-		// 	"profit": profit,
-		// 	"detail": detail
-		// }
-		// type = "insert";
-	
-		// data = JSON.stringify(data);
-		// data = cipher.encAes(data);
-	
-		// crud.defaultAjax(url, method, data, type, contractSuccessInsert, contractErrorInsert);
-
+		let url, method, data, type;
 		formDataSet();
-		console.log(storage.formList);
+		url = "/api/contract";
+		method = "post";
+		data = storage.formList;
+		type = "insert";
+		data = JSON.stringify(data);
+		data = cipher.encAes(data);
+		crud.defaultAjax(url, method, data, type, contractSuccessInsert, contractErrorInsert);
 	}
 }
 
@@ -931,21 +869,14 @@ function contractUpdate(){
 		return false;
 	}else{
 		let url, method, data, type;
-	
-		for(let key in storage.formList){
-			let value = $("#" + key).val();
-			storage.formList[key] = (value === undefined || value === "") ? null : value;
-		}
-
-		storage.formList.no = storage.contractNo;
+		formDataSet();
 		url = "/api/contract/" + storage.formList.no;
-		method = "get";
+		method = "put";
 		data = storage.formList;
 		type = "update";
 		data = JSON.stringify(data);
 		data = cipher.encAes(data);
-	
-		// crud.defaultAjax(url, method, data, type, contractSuccessUpdate, contractErrorUpdate);
+		crud.defaultAjax(url, method, data, type, contractSuccessUpdate, contractErrorUpdate);
 	}
 }
 

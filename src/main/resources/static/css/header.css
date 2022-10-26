@@ -52,21 +52,24 @@ button, select, input[type="text"], input[type="date"]{
 }
 
 .autoComplete{
-	border: 1px solid #000;
+	border: 1px solid #ededed;
     position: absolute;
     z-index: 200;
     background-color: #ffffff;
     max-height: 200px;
     overflow-y: auto;
+	border-radius: 10px;
 }
 
 .autoComplete div{
 	text-align: center;
 	padding: 5px;
+	font-size: 0.8rem;
 }
 
 .autoComplete div:hover{
-	background-color: #ededed;
+	background-color: #2147b1;
+	color: #ffffff;
 	cursor: pointer;
 }
 
@@ -408,6 +411,7 @@ textarea{
     align-items: center;
     width: 110px;
     justify-content: center;
+	font-size: 0.8rem;
 }
 
 .defaultFormContainer .defaultFormLine .defaultFormContent{
@@ -441,6 +445,7 @@ textarea{
     border-radius: 0 15px 0 0;
 	background-color: #B5B2FF;
 	color: #ffffff;
+	font-size: 0.8rem;
 }
 
 .defaultFormContainer .defaultFormLine .defaultFormContent .detailRadioBox > label[data-type="tab"]:hover{
@@ -461,6 +466,8 @@ textarea{
     color: #ffffff;
     padding-left: 30px;
     padding-right: 10px;
+	line-height: 19px;
+	font-size: 0.8rem;
 }
 
 .defaultFormContainer .defaultFormLine .defaultFormContent input[type='text'],
@@ -469,6 +476,7 @@ textarea{
 .defaultFormContainer .defaultFormLine .defaultFormContent select{
 	padding: 5px;
     width: 100%;
+	font-size: 0.8rem;
 }
 
 .detailBackBtn{

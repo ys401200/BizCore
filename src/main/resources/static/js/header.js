@@ -70,6 +70,7 @@ function init(){
 	getPersonalize();
 	noteLiveUpdate();
 	menuActive();
+	getStorageList();
 } // End of init();
 
 apiServer = "";
@@ -227,6 +228,11 @@ modal = {
 	},
 	"show": () => {
 		modal.clear();
+
+		// setTimeout(() => {
+		// 	inputDataList();
+		// }, 1000);
+
 		modal.wrap.css('display','flex').hide().fadeIn();
 	},
 	"hide": () => {
@@ -697,15 +703,7 @@ function dateFnc(dateTimeStr, type){
 	}
 
 	if(type === "yyyy-mm-dd"){
-		if (calTime < 1){
-			result = "방금전";
-		}else if(calTime < 60) {
-			reuslt = calTime + "분전";
-		}else if(calTimeHour < 24) {
-			reuslt = calTimeHour + "시간전";
-		}else{
-			result = year + "-" + month + "-" + day;
-		}
+		result = year + "-" + month + "-" + day;
 	}else if(type === "yy-mm-dd"){
 		result = year.toString().substring(2, 4) + "-" + month + "-" + day;
 	}else if(type === "yyyy-mm"){
@@ -1151,96 +1149,96 @@ function paging(total, currentPage, articlePerPage){
 }
 
 //자동완성
-// function inputDataList(){
-// 	setTimeout(() => {
-// 		let input, jsonData;
+function inputDataList(){
+	setTimeout(() => {
+		let input, jsonData;
 
-// 		input = $(document).find("input[type='text']");
+		input = $(document).find("input[type='text']");
 
-// 		input.each((index, item) => {
-// 			let dataKey = $(item).data("keyup");
+		input.each((index, item) => {
+			let dataKey = $(item).data("keyup");
 			
-// 			if($(item).data("keyup") !== undefined){
-// 				$(item).attr("list", "_" + $(item).attr("id"));
-// 				$(item).after("<datalist id='_" + $(item).attr("id") + "'></datalist>");
+			if($(item).data("keyup") !== undefined){
+				$(item).attr("list", "_" + $(item).attr("id"));
+				$(item).after("<datalist id='_" + $(item).attr("id") + "'></datalist>");
 
-// 				if(storage[dataKey] !== undefined){
-// 					jsonData = storage[dataKey];
+				if(storage[dataKey] !== undefined){
+					jsonData = storage[dataKey];
 					
-// 					for(let key in jsonData){
-// 						if($(item).data("keyup") === "user"){
-// 							$(item).parents("div").find("datalist#_" + $(item).attr("id")).append("<option data-value='" + key + "' value='" + jsonData[key].userName + "'></option>");
-// 						}else if($(item).data("keyup") === "customer"){
-// 							$(item).parents("div").find("datalist#_" + $(item).attr("id")).append("<option data-value='" + key + "' value='" + jsonData[key].name + "'></option>");
-// 						}
-// 					}
-// 				}else{
-// 					if($(item).data("keyup") === "sopp"){
-// 						$.ajax({
-// 							url: "/api/sopp",
-// 							method: "get",
-// 							dataType: "json",
-// 							success:(result) => {
-// 								if(result.result === "ok"){
-// 									let resultJson;
-// 									resultJson = cipher.decAes(result.data);
-// 									resultJson = JSON.parse(resultJson);
+					for(let key in jsonData){
+						if($(item).data("keyup") === "user"){
+							$(item).parents("div").find("datalist#_" + $(item).attr("id")).append("<option data-value='" + key + "' value='" + jsonData[key].userName + "'></option>");
+						}else if($(item).data("keyup") === "customer"){
+							$(item).parents("div").find("datalist#_" + $(item).attr("id")).append("<option data-value='" + key + "' value='" + jsonData[key].name + "'></option>");
+						}
+					}
+				}else{
+					if($(item).data("keyup") === "sopp"){
+						$.ajax({
+							url: "/api/sopp",
+							method: "get",
+							dataType: "json",
+							success:(result) => {
+								if(result.result === "ok"){
+									let resultJson;
+									resultJson = cipher.decAes(result.data);
+									resultJson = JSON.parse(resultJson);
 									
-// 									for(let i = 0; i < resultJson.length; i++){
-// 										$(item).parents("div").find("datalist#_" + $(item).attr("id")).append("<option data-value='" + resultJson[i].no + "' value='" + resultJson[i].title + "'></option>");
-// 									}
-// 								}
-// 							},
-// 							error:() => {
-// 								msg.set("sopp 에러");
-// 							}
-// 						});
-// 					}else if($(item).data("keyup") === "contract"){
-// 						$.ajax({
-// 							url: "/api/contract",
-// 							method: "get",
-// 							dataType: "json",
-// 							success:(result) => {
-// 								if(result.result === "ok"){
-// 									let resultJson;
-// 									resultJson = cipher.decAes(result.data);
-// 									resultJson = JSON.parse(resultJson);
+									for(let i = 0; i < resultJson.length; i++){
+										$(item).parents("div").find("datalist#_" + $(item).attr("id")).append("<option data-value='" + resultJson[i].no + "' value='" + resultJson[i].title + "'></option>");
+									}
+								}
+							},
+							error:() => {
+								msg.set("sopp 에러");
+							}
+						});
+					}else if($(item).data("keyup") === "contract"){
+						$.ajax({
+							url: "/api/contract",
+							method: "get",
+							dataType: "json",
+							success:(result) => {
+								if(result.result === "ok"){
+									let resultJson;
+									resultJson = cipher.decAes(result.data);
+									resultJson = JSON.parse(resultJson);
 									
-// 									for(let i = 0; i < resultJson.length; i++){
-// 										$(item).parents("div").find("datalist#_" + $(item).attr("id")).append("<option data-value='" + resultJson[i].no + "' value='" + resultJson[i].title + "'></option>");
-// 									}
-// 								}
-// 							},
-// 							error:() => {
-// 								msg.set("contract 에러");
-// 							}
-// 						});
-// 					}else if($(item).data("keyup") === "customerUser"){
-// 						$.ajax({
-// 							url: "/api/system/cip",
-// 							method: "get",
-// 							dataType: "json",
-// 							success:(result) => {
-// 								if(result.result === "ok"){
-// 									let resultJson;
-// 									resultJson = cipher.decAes(result.data);
-// 									resultJson = JSON.parse(resultJson);
+									for(let i = 0; i < resultJson.length; i++){
+										$(item).parents("div").find("datalist#_" + $(item).attr("id")).append("<option data-value='" + resultJson[i].no + "' value='" + resultJson[i].title + "'></option>");
+									}
+								}
+							},
+							error:() => {
+								msg.set("contract 에러");
+							}
+						});
+					}else if($(item).data("keyup") === "customerUser"){
+						$.ajax({
+							url: "/api/system/cip",
+							method: "get",
+							dataType: "json",
+							success:(result) => {
+								if(result.result === "ok"){
+									let resultJson;
+									resultJson = cipher.decAes(result.data);
+									resultJson = JSON.parse(resultJson);
 
-// 									for(let key in resultJson){
-// 										$(item).parents("div").find("datalist#_" + $(item).attr("id")).append("<option data-value='" + key + "' value='" + resultJson[key].name + "'></option>");
-// 									}
-// 								}
-// 							},
-// 							error:() => {
-// 								msg.set("contract 에러");
-// 							}
-// 						});
-// 					}
-// 				}
-// 			}
-// 		});
-// 	}, 700);
-// }
+									for(let key in resultJson){
+										$(item).parents("div").find("datalist#_" + $(item).attr("id")).append("<option data-value='" + key + "' value='" + resultJson[key].name + "'></option>");
+									}
+								}
+							},
+							error:() => {
+								msg.set("contract 에러");
+							}
+						});
+					}
+				}
+			}
+		});
+	}, 700);
+}
 
 //숫자 포맷
 function numberFormat(num){
@@ -1446,17 +1444,17 @@ function setEditor(){
 }
 
 // datalist
-// function dataListFormat(id, value){
-// 	let result;
+function dataListFormat(id, value){
+	let result;
 
-// 	result = $(document).find("datalist#_" + id + " option[value='" + value + "']").data("value");
+	result = $(document).find("datalist#_" + id + " option[value='" + value + "']").data("value");
 
-// 	if(result === undefined){
-// 		return "";
-// 	}else{
-// 		return result;
-// 	}
-// }
+	if(result === undefined){
+		return "";
+	}else{
+		return result;
+	}
+}
 
 // crud tab 클릭 함수
 function tabItemClick(e){
@@ -1850,7 +1848,7 @@ function tabFileInsert(url){
 	let writer, data, method, type;
 
 	writer = $(document).find("#writer");
-	// writer = dataListFormat(writer.attr("id"), writer.val());
+	writer = dataListFormat(writer.attr("id"), writer.val());
 	
 	url = url;
 	method = "post";
@@ -3162,21 +3160,37 @@ function formDataSet(){
 	let element;
 
 	for(let key in storage.formList){
-		console.log(key);
-		if($("#" + key) !== undefined){
+		if($("#" + key).length > 0){
 			element = $("#" + key);
-		}else if($("[name=\"" + key + "\"]") !== undefined){
-			element = $("[name=\"" + key + "\"]");
-		}
-
-
-		if(element.prop('tagName') === "TEXTAREA"){
-			storage.formList[key] = CKEDITOR.instances[key].getData();
-		}else{
-			if(element.attr("type") === "radio"){
-				storage.formList[key] = element.attr("ckecked").val();
+		}else if($("[name=\"" + key + "\"]").length > 0){
+			if($("[name=\"" + key + "\"]:checked").length > 0){
+				element = $("[name=\"" + key + "\"]:checked");
 			}else{
-				storage.formList[key] = element.val();
+				element = $("[name=\"" + key + "\"]");
+			}
+		}
+		
+		if(element !== undefined){
+			if(element.prop('tagName') === "TEXTAREA"){
+				storage.formList[key] = CKEDITOR.instances[key].getData().replaceAll("\n", "");
+			}else{
+				if(!element.data("change")){
+					if(typeof storage.formList[key] === "number"){
+						if(element.attr("type") === "date"){
+							let dateTime = new Date(element.val()).getTime();
+							storage.formList[key] = dateTime;
+						}else{
+							storage.formList[key] = element.val().replaceAll(",", "");
+						}
+					}else{
+						if(element.attr("type") === "date"){
+							let dateTime = new Date(element.val()).getTime();
+							storage.formList[key] = dateTime;
+						}else{
+							storage.formList[key] = element.val();
+						}
+					}
+				}
 			}
 		}
 	}
@@ -3192,31 +3206,109 @@ function addAutoComplete(e){
 	thisEle = $(e);
 	thisEle.after("<div class=\"autoComplete\"></div>");
 	autoComplete = $(".autoComplete");
-	autoComplete.css("top", thisEle.position().top + thisEle.innerHeight());
+	autoComplete.css("top", thisEle.position().top + thisEle.innerHeight() + 8);
 	autoComplete.css("left", thisEle.position().left);
-	autoComplete.css("width", thisEle.innerWidth());
+	autoComplete.css("width", thisEle.innerWidth() - 5);
 
 	if(thisEle.val() === ""){
 		for(let key in storage[thisEle.data("complete")]){
-			if(thisEle.data("complete") === "customer"){
-				autoComplete.append("<div>" + storage[thisEle.data("complete")][key].name + "</div>");
+			if(thisEle.data("complete") === "customer" || thisEle.data("complete") === "cip"){
+				autoComplete.append("<div data-value=\"" + key + "\" onclick=\"autoCompleteClick(this);\">" + storage[thisEle.data("complete")][key].name + "</div>");
 			}else if(thisEle.data("complete") === "user"){
-				autoComplete.append("<div>" + storage[thisEle.data("complete")][key].userName + "</div>");
+				autoComplete.append("<div data-value=\"" + storage[thisEle.data("complete")][key].userNo + "\" onclick=\"autoCompleteClick(this);\">" + storage[thisEle.data("complete")][key].userName + "</div>");
+			}else if(thisEle.data("complete") === "sopp" || thisEle.data("complete") === "contract"){
+				autoComplete.append("<div data-value=\"" + storage[thisEle.data("complete")][key].no + "\" onclick=\"autoCompleteClick(this);\">" + storage[thisEle.data("complete")][key].title + "</div>");
 			}
 		}
 	}else{
 		for(let key in storage[thisEle.data("complete")]){
-			if(storage[thisEle.data("complete")][key].name.indexOf(thisEle.val()) > -1){
-				if(thisEle.data("complete") === "customer"){
-					autoComplete.append("<div>" + storage[thisEle.data("complete")][key].name + "</div>");
-				}else if(thisEle.data("complete") === "user"){
-					autoComplete.append("<div>" + storage[thisEle.data("complete")][key].userName + "</div>");
+			if(thisEle.data("complete") === "customer" || thisEle.data("complete") === "cip"){
+				if(storage[thisEle.data("complete")][key].name.indexOf(thisEle.val()) > -1){
+					autoComplete.append("<div data-value=\"" + key + "\" onclick=\"autoCompleteClick(this);\">" + storage[thisEle.data("complete")][key].name + "</div>");
+				}
+			}else if(thisEle.data("complete") === "user"){
+				if(storage[thisEle.data("complete")][key].userName.indexOf(thisEle.val()) > -1){
+					autoComplete.append("<div data-value=\"" + storage[thisEle.data("complete")][key].userNo + "\" onclick=\"autoCompleteClick(this);\">" + storage[thisEle.data("complete")][key].userName + "</div>");
+				}
+			}else if(thisEle.data("complete") === "sopp" || thisEle.data("complete") === "contract"){
+				if(storage[thisEle.data("complete")][key].title.indexOf(thisEle.val()) > -1){
+					autoComplete.append("<div data-value=\"" + storage[thisEle.data("complete")][key].no + "\" onclick=\"autoCompleteClick(this);\">" + storage[thisEle.data("complete")][key].title + "</div>");
 				}
 			}
 		}
 	}
 }
 
-function autoCompleteClick(){
+function autoCompleteClick(e){
+	let thisEle, input, autoComplete;
+	thisEle = $(e);
+	input = thisEle.parent().prev();
+	autoComplete = $(".autoComplete");
+	input.val(thisEle.text());
+	input.attr("data-change", true);
 
+	if(storage.formList[input.attr("id")] !== undefined){
+		storage.formList[input.attr("id")] = thisEle.data("value");
+	}
+
+	autoComplete.remove();
+}
+
+function getStorageList(){
+	if(storage.sopp === undefined){
+		$.ajax({
+			url: "/api/sopp",
+			method: "get",
+			dataType: "json",
+			success:(result) => {
+				if(result.result === "ok"){
+					let resultJson;
+					resultJson = cipher.decAes(result.data);
+					resultJson = JSON.parse(resultJson);
+					storage.sopp = resultJson;
+				}
+			},
+			error:() => {
+				msg.set("sopp 에러");
+			}
+		});
+	}
+	
+	if(storage.contract === undefined){
+		$.ajax({
+			url: "/api/contract",
+			method: "get",
+			dataType: "json",
+			success:(result) => {
+				if(result.result === "ok"){
+					let resultJson;
+					resultJson = cipher.decAes(result.data);
+					resultJson = JSON.parse(resultJson);
+					storage.contract = resultJson;
+				}
+			},
+			error:() => {
+				msg.set("contract 에러");
+			}
+		});
+	}
+	
+	if(storage.cip === undefined){
+		$.ajax({
+			url: "/api/system/cip",
+			method: "get",
+			dataType: "json",
+			success:(result) => {
+				if(result.result === "ok"){
+					let resultJson;
+					resultJson = cipher.decAes(result.data);
+					resultJson = JSON.parse(resultJson);
+					storage.cip = resultJson;
+				}
+			},
+			error:() => {
+				msg.set("cip 에러");
+			}
+		});
+	}
 }
