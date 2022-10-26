@@ -201,20 +201,13 @@ function drawCalendar(container){
 	$(".calendarMonth").text(storage.currentMonth);
 
     startDate = new Date(storage.currentYear, storage.currentMonth - 1 , 1);
-    endDate = new Date(storage.currentYear, storage.currentMonth - 1 , 28);
+    endDate = new Date(new Date(storage.currentYear, storage.currentMonth, 1).getTime() - 86400000);
 
     // 시작하는 날짜 잡기
-    while(startDate.getDay() != 0){
-        startDate = new Date(startDate.getTime() - 86400000);
-    }
+    startDate = new Date(startDate.getTime() - startDate.getDay() * 86400000);
 
     // 말일 찾기
-    while(endDate.getDate() != 1){
-        endDate = new Date(endDate.getTime() + 86400000);
-    }
-    endDate = new Date(endDate.getTime() - 86400000);
-
-    
+    endDate = new Date(endDate.getTime() + (6 - endDate.getDay()) * 86400000);    
 
     // 만들어진 달력 날짜에 해당하는 일정이 있는 경우 담아두기
     for(x1 = 0 ; x1 <= (endDate.getTime() - startDate.getTime()) / 86400000 ; x1++){

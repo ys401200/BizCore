@@ -68,13 +68,13 @@ storage.setDataToPreview = function(cnt){
 	let x, t, items, each, sum, dt, remark;
 	if(cnt === undefined)	return;
 	
-	remark = "=============== 견적일자 =======================";
+	remark = '=============== 견적일자 =======================';
 	if(storage.estimate.date === undefined)	storage.estimate.date = (new Date()).getTime();
 	dt = new Date(storage.estimate.date);
-	x = dt.getFullYear() + "년 ";
-	x += ((dt.getMonth() + 1) + "월 ");
-	x += (dt.getDate() + "일");
-	cnt.getElementsByClassName("estimate_date")[0].innerText = x;
+	x = dt.getFullYear() + '년 ';
+	x += ((dt.getMonth() + 1) + '월 ');
+	x += (dt.getDate() + '일');
+	cnt.getElementsByClassName('estimate_date')[0].innerText = x;
 
 	remark = "=========================== 견적명 =========================";
 	t = storage.estimate.title;
@@ -105,27 +105,27 @@ storage.setDataToPreview = function(cnt){
 	cnt.getElementsByClassName("estimate_remark")[0].innerHTML = t;
 
 	remark = "=========== 개별 아이템들 ============ 저장된 값들을 바탕으로 견적서에 그려 넣음 =============";
-	html = "<div style=\"display:grid;border-top:border-top: 1px solid black;\"><div>No</div><div>구 분</div><div>품 명 / 규 격</div><div>수 량</div><div>소비자가</div><div>공급단가</div><div>합계</div><div>비고</div></div>";
+	html = '<div style=\"display:grid;border-top:border-top: 1px solid black;\"><div>No</div><div>구 분</div><div>품 명 / 규 격</div><div>수 량</div><div>소비자가</div><div>공급단가</div><div>합계</div><div>비고</div></div>';
 	sum = 0;
 	items = storage.estimate.items === undefined ? [] : storage.estimate.items;
 	for(x = 0 ; x < items.length ; x++){
 		each = items[x];
 		t = each.quantity * each.price;
-		html += ("<div style=\"display:grid;\"><div>" + (x+1) + "</div>");
-		html += ("<div>" + each.div + "</div>");
-		html += ("<div><span style=\"font-weight:bold;\">" + each.title + "</span><br />" + each.spec + "</div>");
-		html += ("<div>" + each.quantity.toLocaleString() + "</div>");
-		html += ("<div></div>");
-		html += ("<div>" + each.price.toLocaleString() + "</div>");
-		html += ("<div>" + t.toLocaleString() + "</div>");
-		html += ("<div>" + each.remark + "</div></div>");
+		html += ('<div style=\"display:grid;\"><div>' + (x+1) + '</div>');
+		html += ('<div>' + each.div + '</div>');
+		html += ('<div><span style=\"font-weight:bold;\">' + each.title + '</span><br />' + each.spec + '</div>');
+		html += ('<div>' + each.quantity.toLocaleString() + '</div>');
+		html += ('<div></div>');
+		html += ('<div>' + each.price.toLocaleString() + '</div>');
+		html += ('<div>' + t.toLocaleString() + '</div>');
+		html += ('<div>' + each.remark + '</div></div>');
 		sum += (each.quantity * each.price);
 	}
 	t = [Math.round(sum * 0.1), Math.round(sum * 1.1)];
 	cnt.getElementsByClassName("estimate_total_amount")[0].innerText = "₩ " + t[1].toLocaleString()
-	html += ("<div style=\"display:grid;\"><div style=\"grid-column-start:1;grid-column-end:7;\">공급가합계</div><div style=\"display:initial;text-align:right;\">" + sum.toLocaleString() + "</div><div style=\"border-right:none;\"></div></div>");
-	html += ("<div style=\"display:grid;\"><div style=\"grid-column-start:1;grid-column-end:7;\">부가가치세</div><div style=\"display:initial;text-align:right;\">" + t[0].toLocaleString() + "</div><div style=\"border-right:none;\"></div></div>");
-	html += ("<div style=\"display:grid;\"><div style=\"grid-column-start:1;grid-column-end:7;\">총 금 액</div><div style=\"display:initial;text-align:right;\">" + t[1].toLocaleString() + "</div><div style=\"border-right:none;\"></div></div>");
+	html += ('<div style=\"display:grid;\"><div style=\"grid-column-start:1;grid-column-end:7;\">공급가합계</div><div style=\"display:initial;text-align:right;\">' + sum.toLocaleString() + '</div><div style=\"border-right:none;\"></div></div>');
+	html += ('<div style=\"display:grid;\"><div style=\"grid-column-start:1;grid-column-end:7;\">부가가치세</div><div style=\"display:initial;text-align:right;\">' + t[0].toLocaleString() + '</div><div style=\"border-right:none;\"></div></div>');
+	html += ('<div style=\"display:grid;\"><div style=\"grid-column-start:1;grid-column-end:7;\">총 금 액</div><div style=\"display:initial;text-align:right;\">' + t[1].toLocaleString() + '</div><div style=\"border-right:none;\"></div></div>');
 	document.getElementsByClassName("estimate_content")[0].innerHTML = html;
 }
 </script>

@@ -19,10 +19,10 @@ public interface CommonMapper {
     @Update("UPDATE bizcore.customer SET deleted = NOW() WHERE deleted IS NULL AND compId = #{compId} AND no = #{no}")
     public int removeCustomer(@Param("compId") String compId, @Param("no") int no);
 
-    @Select("SELECT `no`, name, taxId, email, emailForTaxbill, address, phone, fax, ceoName, related, created, modified, deleted FROM bizcore.customer WHERE deleted IS NULL AND compId = #{compId} AND `no` = #{no}")
+    @Select("SELECT no, name, taxId, email, emailForTaxbill, zipCode, address, phone, fax, ceoName, typeOfBusiness, itemsOfBusiness, remark1, remark2, ci_manufacturer, ci_partner, ci_public, ci_civilian, tos_directProcument, tos_indirectProcument, tos_agencyProcument, tos_maintenance, tos_generalCompany, tos_hospital, tos_finance, tos_public, ti_supplier, ti_partner, ti_client, ti_notTrade, related, created, modified FROM bizcore.customer WHERE deleted IS NULL AND compId = #{compId} AND `no` = #{no}")
     public Customer getCustomeByNo(@Param("compId") String compId, @Param("no") int no);
 
-    @Select("SELECT `no`, name, taxId, email, emailForTaxbill, address, phone, fax, ceoName, related, created, modified, deleted FROM bizcore.customer WHERE deleted IS NULL AND compId = #{compId} AND taxId = #{taxId}")
+    @Select("SELECT no, name, taxId, email, emailForTaxbill, zipCode, address, phone, fax, ceoName, typeOfBusiness, itemsOfBusiness, remark1, remark2, ci_manufacturer, ci_partner, ci_public, ci_civilian, tos_directProcument, tos_indirectProcument, tos_agencyProcument, tos_maintenance, tos_generalCompany, tos_hospital, tos_finance, tos_public, ti_supplier, ti_partner, ti_client, ti_notTrade, related, created, modified FROM bizcore.customer WHERE deleted IS NULL AND compId = #{compId} AND taxId = #{taxId}")
     public Customer getCustomeByTaxId(@Param("compId") String compId, @Param("taxId") String taxId);
 
     @Select("SELECT comname, comaddress, comphone, comfax, comboss FROM swc_cominfo WHERE compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) limit 1")

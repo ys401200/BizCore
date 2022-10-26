@@ -1,5 +1,6 @@
 package kr.co.bizcore.v1.mapper;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
@@ -10,6 +11,10 @@ import kr.co.bizcore.v1.domain.TradeDetail;
 import kr.co.bizcore.v1.domain.TradeSummary;
 
 public interface TradeMapper {
+
+    @Select("SELECT CAST(no AS CHAR) AS no, CAST(UNIX_TIMESTAMP(dt)*1000 AS CHAR) AS dt, CAST(writer AS CHAR) AS writer, type, CAST(product AS CHAR) AS product, CAST(customer AS CHAR) AS customer, taxbill, title, CAST(qty AS CHAR) AS qty, CAST(price AS CHAR) AS price, CAST(vat AS CHAR) AS vat, remark, CAST(UNIX_TIMESTAMP(created)*1000 AS CHAR) AS created FROM bizcore.trade WHERE compId = #{compId} AND belongto = #{belongTo}")
+    public List<HashMap<String, String>> getTradeByFunc(@Param("compId") String compId, @Param("belongTo") String func);
+
 
     // ↓↓↓↓↓↓↓↓↓↓↓↓ 2022. 10. 23 이전  작업분량↓↓↓↓↓↓↓↓↓↓↓↓
     
