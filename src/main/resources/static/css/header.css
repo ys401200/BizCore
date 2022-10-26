@@ -51,6 +51,25 @@ button, select, input[type="text"], input[type="date"]{
 	cursor: pointer;
 }
 
+.autoComplete{
+	border: 1px solid #000;
+    position: absolute;
+    z-index: 200;
+    background-color: #ffffff;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.autoComplete div{
+	text-align: center;
+	padding: 5px;
+}
+
+.autoComplete div:hover{
+	background-color: #ededed;
+	cursor: pointer;
+}
+
 /* 메시징 컨테이너 시작 */
 .msg_cnt{
 	position:fixed;

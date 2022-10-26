@@ -321,7 +321,7 @@ function showReportDetail() {
           storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
         $("." + formId + subTitlesArr[i] + "_position")[j].value =
           storage.userRank[
-            $("." + formId + subTitlesArr[i] + "_position")[j].value
+          $("." + formId + subTitlesArr[i] + "_position")[j].value
           ][0];
       }
     }
@@ -354,6 +354,7 @@ function showReportDetail() {
     },
   });
   setAppLineData();
+  $(".insertbtn").click(setCusDataList);
 }
 
 function showList() {
@@ -684,15 +685,30 @@ function drawChangeInfo() {
 
   let revisionData = storage.reportDetailData.revisionHistory;
   let changeData = new Array();
+  if (revisionData.length > 0) {
+    for (let i = 0; i < revisionData.length; i++) {
+      let modCause = "";
+      if (revisionData[i].content.doc == true) {
+        modCause += "문서 수정 ";
+      }
+      if (revisionData[i].content.files == true) {
+        modCause += "첨부 파일 수정 ";
+      }
+      if (revisionData[i].content.appLine == true) {
+        modCause += "결재선 수정 ";
+      }
 
-  for (let i = 0; i < revisionData.length; i++) {
-    let data = {
-      type: revisionData[i].employee,
-      name: revisionData[i].employee,
-      modifyDate: revisionData[i].date,
-      modCause: revisionData[i].content,
-    };
-    changeData.push(data);
+      revisionData[i].content.date;
+      revisionData[i].content.content;
+
+      let data = {
+        type: "",
+        name: storage.user[revisionData[i].employee].userName,
+        modifyDate: getYmdSlash(revisionData[i].date),
+        modCause: modCause,
+      };
+      changeData.push(data);
+    }
   }
 
   let detail =
@@ -813,7 +829,7 @@ function approveBtnEvent() {
       ((storage.reportDetailData.customer == null && cusResult == "") ||
         storage.reportDetailData.customer == cusResult) &&
       storage.oriCbContainer ==
-        $("input[name='" + formId + "_RD']:checked").attr("id") &&
+      $("input[name='" + formId + "_RD']:checked").attr("id") &&
       storage.oriInsertedContent == $(".insertedContent").html() &&
       storage.oriInsertedDataList == $(".insertedDataList").html()
     ) {
@@ -1139,7 +1155,137 @@ function closeGwModal(obj) {
     setAppLineData();
   } else if (id == "modify") {
     // 내가 결재자이고 수정할때 아무것도 입력되지 않은 경우에 그냥 원래 결재정보로 그리는 것
+     let appLine = storage.reportDetailData.appLine;
+     let myType; 
+     let my = storage.my;
+     for (let i = 0; i < appLine.length; i++) {
+      if (appLine[i].employee == my + "") {
+        myType = appLine[i].appType;}
 
+      }
+
+//내 결재 타입이 검토인 경우 ========================================================================
+if(myType == 0) {
+ if($(".typeContainer")[1].children.length == 0){
+  alert("결재자를 선택하세요"); 
+ } else {let appLine = storage.reportDetailData.appLine;
+  let my = storage.my;
+  let myOrdered;
+  if (storage.newAppLine != undefined) {
+    storage.newAppLine = undefined;
+  }
+
+  for (let i = 0; i < appLine.length; i++) {
+    if (appLine[i].employee == my + "") {
+      myOrdered = appLine[i].ordered;
+      originLine = appLine.slice(0, i + 1);
+
+      if (appLine[i].appType == 2) {
+        let combineData = [];
+        // 기존 데이터 넣기
+        for (let i = 0; i < appLine.length; i++) {
+          if (appLine[i].ordered < Number(myOrdered)) {
+            combineData.push([
+              appLine[i].appType,
+              appLine[i].employee + "",
+            ]);
+          } else if ((appLine[i].ordered = Number(myOrdered))) {
+            combineData.push([
+              appLine[i].appType,
+              appLine[i].employee + "",
+            ]);
+          }
+        }
+
+        let target = $(".typeContainer");
+
+        for (let i = 0; i < target.length; i++) {
+          for (let j = 0; j < target[i].children.length; j++) {
+            let id = target[i].children[j].id.split("_")[1];
+            let targetId = target[i].id;
+
+            if (targetId == "examine") {
+              targetId = 0;
+            } else if (targetId == "agree") {
+              targetId = 1;
+            } else if (targetId == "approval") {
+              targetId = 2;
+            } else if (targetId == "conduct") {
+              targetId = 3;
+            } else if (targetId == "refer") {
+              targetId = 4;
+            }
+
+            combineData.push([targetId, id]);
+          }
+        }
+
+        storage.newAppLine = combineData;
+        let checkNum;
+        for (let i = 0; i < storage.newAppLine.length; i++) {
+          if (
+            storage.newAppLine[i][0] == 2 &&
+            storage.newAppLine[i][1] == my + ""
+          ) {
+            if (
+              i != storage.newAppLine.length - 1 &&
+              storage.newAppLine[i + 1][0] == 2
+            ) {
+              storage.newAppLine[i][0] = 0;
+            }
+          }
+        }
+
+        $(".modal-wrap").hide();
+        $(".inputsAuto").css("background-color", "white");
+        createNewLine(); // 문서 안에서 결재선 그리는 것
+        // 문서 정보에서 결재선 정보 그리는 것
+      }
+    } else {
+      let combineData = [];
+
+      // 기존 데이터 넣기
+      for (let i = 0; i < appLine.length; i++) {
+        if (appLine[i].ordered <= Number(myOrdered)) {
+          combineData.push([appLine[i].appType, appLine[i].employee + ""]);
+        }
+      }
+
+      let target = $(".typeContainer");
+
+      for (let i = 0; i < target.length; i++) {
+        for (let j = 0; j < target[i].children.length; j++) {
+          let id = target[i].children[j].id.split("_")[1];
+          let targetId = target[i].id;
+
+          if (targetId == "examine") {
+            targetId = 0;
+          } else if (targetId == "agree") {
+            targetId = 1;
+          } else if (targetId == "approval") {
+            targetId = 2;
+          } else if (targetId == "conduct") {
+            targetId = 3;
+          } else if (targetId == "refer") {
+            targetId = 4;
+          }
+
+          combineData.push([targetId, id]);
+        }
+      }
+
+      storage.newAppLine = combineData;
+
+      $(".modal-wrap").hide();
+      $(".inputsAuto").css("background-color", "white");
+      createNewLine(); // 문서 안에서 결재선 그리는 것
+      // 문서 정보에서 결재선 정보 그리는 것
+    }
+  }
+
+ }
+}else { // 내 결재 타입이 결재인 경우 ============================================================== 
+  
     let num = 0;
     for (let i = 0; i < $(".typeContainer").length; i++) {
       if ($(".typeContainer")[i].innerHTML == "") {
@@ -1267,6 +1413,11 @@ function closeGwModal(obj) {
         }
       }
     }
+}
+
+
+
+    
   }
 }
 
@@ -1722,7 +1873,7 @@ function quitModify() {
           storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
         $("." + formId + subTitlesArr[i] + "_position")[j].value =
           storage.userRank[
-            $("." + formId + subTitlesArr[i] + "_position")[j].value
+          $("." + formId + subTitlesArr[i] + "_position")[j].value
           ][0];
       }
     }
@@ -1758,7 +1909,7 @@ function getTotalCount() {
     if ($("." + id + "_total")[i].dataset.detail != undefined) {
       totalCount += Number(
         $("." + id + "_total")
-          [i].dataset.detail.replace(",", "")
+        [i].dataset.detail.replace(",", "")
           .replace(",", "")
           .replace(",", "")
           .replace(",", "")
@@ -1792,7 +1943,7 @@ function createConfirmBtn(obj) {
   if (div[0].childElementCount < 5) {
     $(".mainBtnDiv").append(
       "<button type='button'name='modConfirm' onclick='reportModify()' >수정완료 </button>" +
-        "<button type='button'name='modConfirm' onclick='quitModify()'>문서 수정 초기화</button>"
+      "<button type='button'name='modConfirm' onclick='quitModify()'>문서 수정 초기화</button>"
     );
   }
   $(":file").css("display", "inline");
@@ -2154,7 +2305,33 @@ function reset() {
   // }
   // 수정
 }
+function setCusDataList() {
 
+  let id = storage.reportDetailData.formId;
+
+  let target = $("." + id + "_customer");
+  for (let i = 0; i < target.length; i++) {
+    let html = $("." + id + "_customer")[i].innerHTML;
+    let x;
+    let dataListHtml = "";
+
+    // 거래처 데이터 리스트 만들기
+    dataListHtml = "<datalist id='_customer'>";
+    for (x in storage.customer) {
+      dataListHtml +=
+        "<option data-value='" +
+        x +
+        "' value='" +
+        storage.customer[x].name +
+        "'></option> ";
+    }
+    dataListHtml += "</datalist>";
+    html += dataListHtml;
+    $("." + id + "_customer")[i].innerHTML = html;
+    $("." + id + "_customer").attr("list", "_customer");
+
+  }
+}
 // function setLineData() {
 //   let newArr = [[], [], [], [], []];
 // for (let j = 0; j < newArr.length; j++) {

@@ -416,7 +416,7 @@ function drawMyDraft(types, targets, listTarget, pageTarget) {
     jsonData = storage.waitList[types[0]]
 
 
-    result = paging(jsonData.length, storage.currentPage, 15);
+    result = paging(jsonData.length, storage.currentPage, 19);
 
     pageContainer = document.getElementsByClassName("pageContainer");
     container = $(listTarget[0]);
@@ -451,6 +451,18 @@ function drawMyDraft(types, targets, listTarget, pageTarget) {
     for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
       disDate = dateDis(jsonData[i].created, jsonData[i].modified);
       setDate = getYmdSlash(disDate);
+      let appType;
+      if (jsonData[i].appType == 0) {
+        appType = "검토";
+      } else if (jsonData[i].appType == 1) {
+        appType = "합의";
+      } else if (jsonData[i].appType == 2) {
+        appType = "결재";
+      } else if (jsonData[i].appType == 3) {
+        appType = "수신";
+      } else if (jsonData[i].appType == 4) {
+        appType = "참조";
+      }
 
       str = [
         {
@@ -460,7 +472,7 @@ function drawMyDraft(types, targets, listTarget, pageTarget) {
           setData: jsonData[i].form,
         },
         {
-          setData: jsonData[i].appType,
+          setData: appType,
         },
         {
           setData: jsonData[i].title,
