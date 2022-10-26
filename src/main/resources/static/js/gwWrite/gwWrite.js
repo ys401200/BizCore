@@ -150,7 +150,7 @@ function setTempReport() {
             storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
           $("." + formId + subTitlesArr[i] + "_position")[j].value =
             storage.userRank[
-            $("." + formId + subTitlesArr[i] + "_position")[j].value
+              $("." + formId + subTitlesArr[i] + "_position")[j].value
             ][0];
         }
       }
@@ -282,9 +282,9 @@ function selectForm() {
   // previewWidth = previewWidth.clientWidth;
   // let target = $(".reportInsertForm");
   // target.css("height", Math.ceil((previewWidth / 210) * 297));
-  storage.editorArray = [formId + "_content"];
-  ckeditor.config.readOnly = false;
-  window.setTimeout(setEditor, 100);
+  // storage.editorArray = [formId + "_content"];
+  // ckeditor.config.readOnly = false;
+  // window.setTimeout(setEditor, 100);
 }
 
 // 영업기회 데이터 리스트 가져오는 함수
@@ -309,10 +309,11 @@ function setSoppList(formId) {
   soppTarget.innerHTML = soppHtml;
   $("#" + formId + "_sopp").attr("list", "_infoSopp");
 
-
-  //선택 후 수정하는 경우에 
+  //선택 후 수정하는 경우에
   if (formId == "doc_Form_Resolution" && $(".btnDiv").children.length == 2) {
-    $(".btnDiv").append("<button onclick='getCardDetails()'>법인카드 내역</button>")
+    $(".btnDiv").append(
+      "<button onclick='getCardDetails()'>법인카드 내역</button>"
+    );
   }
 }
 
@@ -341,7 +342,7 @@ function setModalhtml() {
     "<div><div>검토</div>" +
     "<div class='typeContainer' id='examine'></div>" +
     "</div>" +
-    // "<div><div>합의</div>" + 
+    // "<div><div>합의</div>" +
     // "<div class='typeContainer' id='agree'></div></div>" +
     "<div><div>결재</div>" +
     "<div class='typeContainer' id='approval'></div></div>" +
@@ -359,8 +360,6 @@ function setModalhtml() {
     "</div>" +
     "</div>";
   $(".modal-wrap").html(setGwModalHtml);
-
-
 
   let orgChartTarget = $("#lineLeft");
   let userData = new Array();
@@ -413,10 +412,10 @@ function closeGwModal(obj) {
       let data = storage.formList;
       let selectedFormNo = $(".formSelector").val();
       $(".formNumHidden").val(selectedFormNo);
-      let formId = data[$(".formNumHidden").val()].id;
-      storage.editorArray = [formId + "_content"];
-      ckeditor.config.readOnly = false;
-      window.setTimeout(setEditor, 100);
+      // let formId = data[$(".formNumHidden").val()].id;
+      // storage.editorArray = [formId + "_content"];
+      // ckeditor.config.readOnly = false;
+      // window.setTimeout(setEditor, 100);
       // if (formId == 'doc_Form_Resolution') {
       //   $(".btnDiv").append("<button onclick='getCardDetails()'>법인카드 내역</button>")
       // }
@@ -841,7 +840,6 @@ function setSavedLine() {
   let val = $("select[name='saveLineSelect']")[0].value;
 
   if (val != "null") {
-
     $("#approval").html("");
     $("#agree").html("");
     $("#examine").html("");
@@ -859,12 +857,21 @@ function setSavedLine() {
     let target = $(".typeContainer");
     for (let k = 0; k < selectedAppLine.length; k++) {
       let html = target[selectedAppLine[k][0]].innerHTML;
-      html += "<div class='lineDataContainer' id='lineContainer_" + selectedAppLine[k][1] + "'><label id='linedata_" + selectedAppLine[k][1] + "'>" + storage.user[selectedAppLine[k][1]].userName + "</label><button value='" + selectedAppLine[k][1] + "' onclick='upClick(this)'>▲</button><button  value='" + selectedAppLine[k][1] + "'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>";
+      html +=
+        "<div class='lineDataContainer' id='lineContainer_" +
+        selectedAppLine[k][1] +
+        "'><label id='linedata_" +
+        selectedAppLine[k][1] +
+        "'>" +
+        storage.user[selectedAppLine[k][1]].userName +
+        "</label><button value='" +
+        selectedAppLine[k][1] +
+        "' onclick='upClick(this)'>▲</button><button  value='" +
+        selectedAppLine[k][1] +
+        "'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>";
       target[selectedAppLine[k][0]].innerHTML = html;
     }
   }
-
-
 }
 
 //기안하기 버튼 함수
@@ -892,9 +899,9 @@ function reportInsert() {
   }
 
   title = $("#" + formId + "_title").val();
-  content = CKEDITOR.instances[formId + "_content"].getData();
-  $("#" + formId + "_content").attr("data-detail", content);
-  //content = $("#" + formId + "_content").val();
+  // content = CKEDITOR.instances[formId + "_content"].getData();
+  // $("#" + formId + "_content").attr("data-detail", content);
+  content = $("#" + formId + "_content").val();
   readable = $("input[name=authority]:checked").val();
   appDoc = $(".reportInsertForm").html();
   appDoc = appDoc
@@ -1240,32 +1247,27 @@ function tempSave() {
   }
 }
 
-
-
-// 결재선 정보 저장하기 
+// 결재선 정보 저장하기
 function lineSaveFnc() {
   let title = $(".setSavedLineTitle").val();
-  let appLine = []; // 이차원 배열에 담기 
-
+  let appLine = []; // 이차원 배열에 담기
 
   let target = $(".typeContainer");
 
   for (let i = 0; i < target.length; i++) {
     for (let j = 0; j < target[i].children.length; j++) {
-      appLine.push([i, (target[i].children[j].id.split("_")[1])]);
+      appLine.push([i, target[i].children[j].id.split("_")[1]]);
     }
   }
   console.log(appLine);
   let data = {
-    "title": title,
-    "appLine": appLine
-  }
+    title: title,
+    appLine: appLine,
+  };
 
   console.log(data);
   data = JSON.stringify(data);
   data = cipher.encAes(data);
-
-
 
   $.ajax({
     url: "/api/gw/app/savedLine",
@@ -1283,13 +1285,10 @@ function lineSaveFnc() {
       }
     },
   });
-
 }
 
-
-// 로그인한 사람의 사번으로 저장된 결재선 찾음 
+// 로그인한 사람의 사번으로 저장된 결재선 찾음
 function getSavedLine() {
-
   $.ajax({
     url: "/api/gw/app/savedLine/" + storage.my,
     method: "get",
@@ -1307,21 +1306,24 @@ function getSavedLine() {
       }
     },
   });
-
 }
-
 
 function setSavedLinedata() {
   let target = $(".savedLineContainer");
   let savedLine = storage.savedLine;
-  let html = "<select name='saveLineSelect'><option value='null'>-선택-</option>";
+  let html =
+    "<select name='saveLineSelect'><option value='null'>-선택-</option>";
   for (let i = 0; i < savedLine.length; i++) {
-    html += "<option value='" + savedLine[i].no + "'>" + savedLine[i].title + "</option>"
+    html +=
+      "<option value='" +
+      savedLine[i].no +
+      "'>" +
+      savedLine[i].title +
+      "</option>";
   }
-  html += "</select>"
+  html += "</select>";
   target.html(html);
 }
-
 
 function delSavedLineData() {
   let val = $("select[name='saveLineSelect']")[0].value;
@@ -1333,7 +1335,7 @@ function delSavedLineData() {
       cache: false,
       success: (result) => {
         if (result.result == "ok") {
-          alert("삭제 성공")
+          alert("삭제 성공");
           getSavedLine();
         } else {
           alert("자주 쓰는 결재선에서 삭제하는 데 실패함  ");
@@ -1341,10 +1343,7 @@ function delSavedLineData() {
       },
     });
   }
-
-
 }
-
 
 function getCardDetails() {
   let date = new Date();
@@ -1354,7 +1353,6 @@ function getCardDetails() {
   if (month == 0) {
     month = 12;
     year = year - 1;
-
   }
 
   $.ajax({
@@ -1376,7 +1374,6 @@ function getCardDetails() {
   });
 }
 
-
 function setCardData() {
   if (storage.cardData.length == 0) {
     alert("법인카드 내역이 없습니다");
@@ -1395,9 +1392,9 @@ function setCardData() {
       "date",
       "customer",
       "product",
-      "price",// 단가 
-      "quantity",// 수량
-      "subTotal",//공급가액
+      "price", // 단가
+      "quantity", // 수량
+      "subTotal", //공급가액
       "tax",
       "total",
       "remark",
@@ -1414,8 +1411,6 @@ function setCardData() {
       "remark",
     ];
 
-
-
     for (let q = 0; q < cardData.length; q++) {
       dataHtml += "<div class='detailcontentDiv'>";
       for (let j = 0; j < dataTitles.length; j++) {
@@ -1426,7 +1421,10 @@ function setCardData() {
           dataHtml +=
             "<div class='detailcontentlast'><input type='text' value='" +
             cardData[q][cardTitles[j]] +
-            "' onkeyup='this.dataset.detail=this.value' class='inputs outlineNonedata " + id + "_" + dataTitles[j] +
+            "' onkeyup='this.dataset.detail=this.value' class='inputs outlineNonedata " +
+            id +
+            "_" +
+            dataTitles[j] +
             "'></div>";
         } else if (dataTitles[j] == "date") {
           let date = cardData[q][cardTitles[j]];
@@ -1464,7 +1462,6 @@ function setCardData() {
               cardData[q][cardTitles[j]].toLocaleString() +
               "' disabled></div>";
           }
-
         } else if (dataTitles[j] == "quantity") {
           console.log("수량 ");
           dataHtml +=
@@ -1473,7 +1470,6 @@ function setCardData() {
             "_" +
             dataTitles[j] +
             "' type='text' oninput='setNum(this)'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' value='1' disabled></div>";
-
         } else if (dataTitles[j] == "product") {
           dataHtml +=
             "<div class='detailcontent'><input class='inputs outlineNonedata " +
@@ -1483,7 +1479,6 @@ function setCardData() {
             "' type='text' oninput='setNum(this)'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' value='" +
             cardData[q][cardTitles[j]] +
             "' disabled></div>";
-
         } else {
           if (cardData[q][cardTitles[j]] == null) {
             cardData[q][cardTitles[j]] = "";
@@ -1504,7 +1499,6 @@ function setCardData() {
 
     $(".insertedDataList").html(dataHtml);
 
-
     let target = $(".insertedDataList")[0];
 
     let inputsArr = target.getElementsByTagName("input");
@@ -1513,12 +1507,9 @@ function setCardData() {
     }
     getTotalCount();
   }
-
 }
 
-
 function setCusDataList() {
-
   let id;
   if ($(".formNumHidden").val() == "") {
     id = storage.reportDetailData.formId;
@@ -1546,8 +1537,5 @@ function setCusDataList() {
     html += dataListHtml;
     $("." + id + "_customer")[i].innerHTML = html;
     $("." + id + "_customer").attr("list", "_customer");
-
   }
 }
-
-
