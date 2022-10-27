@@ -90,4 +90,10 @@ public class BusinessController extends Ctrl{
         doIt(request);
         return "/customer/list";
     } // End of /business/**
+
+    @RequestMapping("/employee")
+    public String employee(HttpServletRequest request) {
+        doIt(request);
+        return "/business/employee";
+    } // End of /business/**
 }
