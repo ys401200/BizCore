@@ -77,7 +77,7 @@
    margin: 0;
 }
 
-.container span:not(.textNumberFormat) {
+.container #gwSubTabTitle {
 	font-weight: bolder;
 	font-size: 15px;
 	padding-left: 15px;

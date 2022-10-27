@@ -355,6 +355,14 @@ function showReportDetail() {
   });
   setAppLineData();
   $(".insertbtn").click(setCusDataList);
+
+
+  $(".cke").remove();
+  $("." + formId + "_content").html($("#" + formId + "_content").attr("data-detail"));
+  $("#" + formId + "_content").hide();
+  $("." + formId + "_content").css("font-size", $("#" + formId + "_content").css("font-size"));
+  $("." + formId + "_content").css("padding","0.3em");
+
 }
 
 function showList() {
@@ -400,6 +408,9 @@ function getFileArr() {
     }
     target.html(html);
   }
+
+
+
 }
 
 // 문서 수정시 첨부파일목록 수정
@@ -1155,175 +1166,101 @@ function closeGwModal(obj) {
     setAppLineData();
   } else if (id == "modify") {
     // 내가 결재자이고 수정할때 아무것도 입력되지 않은 경우에 그냥 원래 결재정보로 그리는 것
-     let appLine = storage.reportDetailData.appLine;
-     let myType; 
-     let my = storage.my;
-     for (let i = 0; i < appLine.length; i++) {
+    let appLine = storage.reportDetailData.appLine;
+    let myType;
+    let my = storage.my;
+    for (let i = 0; i < appLine.length; i++) {
       if (appLine[i].employee == my + "") {
-        myType = appLine[i].appType;}
-
+        myType = appLine[i].appType;
       }
 
-//내 결재 타입이 검토인 경우 ========================================================================
-if(myType == 0) {
- if($(".typeContainer")[1].children.length == 0){
-  alert("결재자를 선택하세요"); 
- } else {let appLine = storage.reportDetailData.appLine;
-  let my = storage.my;
-  let myOrdered;
-  if (storage.newAppLine != undefined) {
-    storage.newAppLine = undefined;
-  }
+    }
 
-  for (let i = 0; i < appLine.length; i++) {
-    if (appLine[i].employee == my + "") {
-      myOrdered = appLine[i].ordered;
-      originLine = appLine.slice(0, i + 1);
+    //내 결재 타입이 검토인 경우 ========================================================================
+    if (myType == 0) {
+      if ($(".typeContainer")[1].children.length == 0) {
+        alert("결재자를 선택하세요");
+      } else {
+        let appLine = storage.reportDetailData.appLine;
+        let my = storage.my;
+        let myOrdered;
+        if (storage.newAppLine != undefined) {
+          storage.newAppLine = undefined;
+        }
 
-      if (appLine[i].appType == 2) {
-        let combineData = [];
-        // 기존 데이터 넣기
         for (let i = 0; i < appLine.length; i++) {
-          if (appLine[i].ordered < Number(myOrdered)) {
-            combineData.push([
-              appLine[i].appType,
-              appLine[i].employee + "",
-            ]);
-          } else if ((appLine[i].ordered = Number(myOrdered))) {
-            combineData.push([
-              appLine[i].appType,
-              appLine[i].employee + "",
-            ]);
-          }
-        }
+          if (appLine[i].employee == my + "") {
+            myOrdered = appLine[i].ordered;
+            originLine = appLine.slice(0, i + 1);
 
-        let target = $(".typeContainer");
+            if (appLine[i].appType == 2) {
+              let combineData = [];
+              // 기존 데이터 넣기
+              for (let i = 0; i < appLine.length; i++) {
+                if (appLine[i].ordered < Number(myOrdered)) {
+                  combineData.push([
+                    appLine[i].appType,
+                    appLine[i].employee + "",
+                  ]);
+                } else if ((appLine[i].ordered = Number(myOrdered))) {
+                  combineData.push([
+                    appLine[i].appType,
+                    appLine[i].employee + "",
+                  ]);
+                }
+              }
 
-        for (let i = 0; i < target.length; i++) {
-          for (let j = 0; j < target[i].children.length; j++) {
-            let id = target[i].children[j].id.split("_")[1];
-            let targetId = target[i].id;
+              let target = $(".typeContainer");
 
-            if (targetId == "examine") {
-              targetId = 0;
-            } else if (targetId == "agree") {
-              targetId = 1;
-            } else if (targetId == "approval") {
-              targetId = 2;
-            } else if (targetId == "conduct") {
-              targetId = 3;
-            } else if (targetId == "refer") {
-              targetId = 4;
+              for (let i = 0; i < target.length; i++) {
+                for (let j = 0; j < target[i].children.length; j++) {
+                  let id = target[i].children[j].id.split("_")[1];
+                  let targetId = target[i].id;
+
+                  if (targetId == "examine") {
+                    targetId = 0;
+                  } else if (targetId == "agree") {
+                    targetId = 1;
+                  } else if (targetId == "approval") {
+                    targetId = 2;
+                  } else if (targetId == "conduct") {
+                    targetId = 3;
+                  } else if (targetId == "refer") {
+                    targetId = 4;
+                  }
+
+                  combineData.push([targetId, id]);
+                }
+              }
+
+              storage.newAppLine = combineData;
+              let checkNum;
+              for (let i = 0; i < storage.newAppLine.length; i++) {
+                if (
+                  storage.newAppLine[i][0] == 2 &&
+                  storage.newAppLine[i][1] == my + ""
+                ) {
+                  if (
+                    i != storage.newAppLine.length - 1 &&
+                    storage.newAppLine[i + 1][0] == 2
+                  ) {
+                    storage.newAppLine[i][0] = 0;
+                  }
+                }
+              }
+
+              $(".modal-wrap").hide();
+              $(".inputsAuto").css("background-color", "white");
+              createNewLine(); // 문서 안에서 결재선 그리는 것
+              // 문서 정보에서 결재선 정보 그리는 것
             }
-
-            combineData.push([targetId, id]);
-          }
-        }
-
-        storage.newAppLine = combineData;
-        let checkNum;
-        for (let i = 0; i < storage.newAppLine.length; i++) {
-          if (
-            storage.newAppLine[i][0] == 2 &&
-            storage.newAppLine[i][1] == my + ""
-          ) {
-            if (
-              i != storage.newAppLine.length - 1 &&
-              storage.newAppLine[i + 1][0] == 2
-            ) {
-              storage.newAppLine[i][0] = 0;
-            }
-          }
-        }
-
-        $(".modal-wrap").hide();
-        $(".inputsAuto").css("background-color", "white");
-        createNewLine(); // 문서 안에서 결재선 그리는 것
-        // 문서 정보에서 결재선 정보 그리는 것
-      }
-    } else {
-      let combineData = [];
-
-      // 기존 데이터 넣기
-      for (let i = 0; i < appLine.length; i++) {
-        if (appLine[i].ordered <= Number(myOrdered)) {
-          combineData.push([appLine[i].appType, appLine[i].employee + ""]);
-        }
-      }
-
-      let target = $(".typeContainer");
-
-      for (let i = 0; i < target.length; i++) {
-        for (let j = 0; j < target[i].children.length; j++) {
-          let id = target[i].children[j].id.split("_")[1];
-          let targetId = target[i].id;
-
-          if (targetId == "examine") {
-            targetId = 0;
-          } else if (targetId == "agree") {
-            targetId = 1;
-          } else if (targetId == "approval") {
-            targetId = 2;
-          } else if (targetId == "conduct") {
-            targetId = 3;
-          } else if (targetId == "refer") {
-            targetId = 4;
-          }
-
-          combineData.push([targetId, id]);
-        }
-      }
-
-      storage.newAppLine = combineData;
-
-      $(".modal-wrap").hide();
-      $(".inputsAuto").css("background-color", "white");
-      createNewLine(); // 문서 안에서 결재선 그리는 것
-      // 문서 정보에서 결재선 정보 그리는 것
-    }
-  }
-
- }
-}else { // 내 결재 타입이 결재인 경우 ============================================================== 
-  
-    let num = 0;
-    for (let i = 0; i < $(".typeContainer").length; i++) {
-      if ($(".typeContainer")[i].innerHTML == "") {
-        num++;
-      }
-    }
-
-    if (num == 3) {
-      $(".modal-wrap").hide();
-      reset();
-      setAppLineData();
-    } else {
-      let appLine = storage.reportDetailData.appLine;
-      let my = storage.my;
-      let myOrdered;
-      if (storage.newAppLine != undefined) {
-        storage.newAppLine = undefined;
-      }
-
-      for (let i = 0; i < appLine.length; i++) {
-        if (appLine[i].employee == my + "") {
-          myOrdered = appLine[i].ordered;
-          originLine = appLine.slice(0, i + 1);
-
-          if (appLine[i].appType == 2) {
+          } else {
             let combineData = [];
+
             // 기존 데이터 넣기
             for (let i = 0; i < appLine.length; i++) {
-              if (appLine[i].ordered < Number(myOrdered)) {
-                combineData.push([
-                  appLine[i].appType,
-                  appLine[i].employee + "",
-                ]);
-              } else if ((appLine[i].ordered = Number(myOrdered))) {
-                combineData.push([
-                  appLine[i].appType,
-                  appLine[i].employee + "",
-                ]);
+              if (appLine[i].ordered <= Number(myOrdered)) {
+                combineData.push([appLine[i].appType, appLine[i].employee + ""]);
               }
             }
 
@@ -1351,73 +1288,149 @@ if(myType == 0) {
             }
 
             storage.newAppLine = combineData;
-            let checkNum;
-            for (let i = 0; i < storage.newAppLine.length; i++) {
-              if (
-                storage.newAppLine[i][0] == 2 &&
-                storage.newAppLine[i][1] == my + ""
-              ) {
-                if (
-                  i != storage.newAppLine.length - 1 &&
-                  storage.newAppLine[i + 1][0] == 2
-                ) {
-                  storage.newAppLine[i][0] = 0;
-                }
-              }
-            }
 
             $(".modal-wrap").hide();
             $(".inputsAuto").css("background-color", "white");
             createNewLine(); // 문서 안에서 결재선 그리는 것
             // 문서 정보에서 결재선 정보 그리는 것
           }
-        } else {
-          let combineData = [];
+        }
 
-          // 기존 데이터 넣기
-          for (let i = 0; i < appLine.length; i++) {
-            if (appLine[i].ordered <= Number(myOrdered)) {
-              combineData.push([appLine[i].appType, appLine[i].employee + ""]);
-            }
-          }
+      }
+    } else { // 내 결재 타입이 결재인 경우 ============================================================== 
 
-          let target = $(".typeContainer");
+      let num = 0;
+      for (let i = 0; i < $(".typeContainer").length; i++) {
+        if ($(".typeContainer")[i].innerHTML == "") {
+          num++;
+        }
+      }
 
-          for (let i = 0; i < target.length; i++) {
-            for (let j = 0; j < target[i].children.length; j++) {
-              let id = target[i].children[j].id.split("_")[1];
-              let targetId = target[i].id;
+      if (num == 3) {
+        $(".modal-wrap").hide();
+        reset();
+        setAppLineData();
+      } else {
+        let appLine = storage.reportDetailData.appLine;
+        let my = storage.my;
+        let myOrdered;
+        if (storage.newAppLine != undefined) {
+          storage.newAppLine = undefined;
+        }
 
-              if (targetId == "examine") {
-                targetId = 0;
-              } else if (targetId == "agree") {
-                targetId = 1;
-              } else if (targetId == "approval") {
-                targetId = 2;
-              } else if (targetId == "conduct") {
-                targetId = 3;
-              } else if (targetId == "refer") {
-                targetId = 4;
+        for (let i = 0; i < appLine.length; i++) {
+          if (appLine[i].employee == my + "") {
+            myOrdered = appLine[i].ordered;
+            originLine = appLine.slice(0, i + 1);
+
+            if (appLine[i].appType == 2) {
+              let combineData = [];
+              // 기존 데이터 넣기
+              for (let i = 0; i < appLine.length; i++) {
+                if (appLine[i].ordered < Number(myOrdered)) {
+                  combineData.push([
+                    appLine[i].appType,
+                    appLine[i].employee + "",
+                  ]);
+                } else if ((appLine[i].ordered = Number(myOrdered))) {
+                  combineData.push([
+                    appLine[i].appType,
+                    appLine[i].employee + "",
+                  ]);
+                }
               }
 
-              combineData.push([targetId, id]);
+              let target = $(".typeContainer");
+
+              for (let i = 0; i < target.length; i++) {
+                for (let j = 0; j < target[i].children.length; j++) {
+                  let id = target[i].children[j].id.split("_")[1];
+                  let targetId = target[i].id;
+
+                  if (targetId == "examine") {
+                    targetId = 0;
+                  } else if (targetId == "agree") {
+                    targetId = 1;
+                  } else if (targetId == "approval") {
+                    targetId = 2;
+                  } else if (targetId == "conduct") {
+                    targetId = 3;
+                  } else if (targetId == "refer") {
+                    targetId = 4;
+                  }
+
+                  combineData.push([targetId, id]);
+                }
+              }
+
+              storage.newAppLine = combineData;
+              let checkNum;
+              for (let i = 0; i < storage.newAppLine.length; i++) {
+                if (
+                  storage.newAppLine[i][0] == 2 &&
+                  storage.newAppLine[i][1] == my + ""
+                ) {
+                  if (
+                    i != storage.newAppLine.length - 1 &&
+                    storage.newAppLine[i + 1][0] == 2
+                  ) {
+                    storage.newAppLine[i][0] = 0;
+                  }
+                }
+              }
+
+              $(".modal-wrap").hide();
+              $(".inputsAuto").css("background-color", "white");
+              createNewLine(); // 문서 안에서 결재선 그리는 것
+              // 문서 정보에서 결재선 정보 그리는 것
             }
+          } else {
+            let combineData = [];
+
+            // 기존 데이터 넣기
+            for (let i = 0; i < appLine.length; i++) {
+              if (appLine[i].ordered <= Number(myOrdered)) {
+                combineData.push([appLine[i].appType, appLine[i].employee + ""]);
+              }
+            }
+
+            let target = $(".typeContainer");
+
+            for (let i = 0; i < target.length; i++) {
+              for (let j = 0; j < target[i].children.length; j++) {
+                let id = target[i].children[j].id.split("_")[1];
+                let targetId = target[i].id;
+
+                if (targetId == "examine") {
+                  targetId = 0;
+                } else if (targetId == "agree") {
+                  targetId = 1;
+                } else if (targetId == "approval") {
+                  targetId = 2;
+                } else if (targetId == "conduct") {
+                  targetId = 3;
+                } else if (targetId == "refer") {
+                  targetId = 4;
+                }
+
+                combineData.push([targetId, id]);
+              }
+            }
+
+            storage.newAppLine = combineData;
+
+            $(".modal-wrap").hide();
+            $(".inputsAuto").css("background-color", "white");
+            createNewLine(); // 문서 안에서 결재선 그리는 것
+            // 문서 정보에서 결재선 정보 그리는 것
           }
-
-          storage.newAppLine = combineData;
-
-          $(".modal-wrap").hide();
-          $(".inputsAuto").css("background-color", "white");
-          createNewLine(); // 문서 안에서 결재선 그리는 것
-          // 문서 정보에서 결재선 정보 그리는 것
         }
       }
     }
-}
 
 
 
-    
+
   }
 }
 
@@ -1930,7 +1943,15 @@ function reportModify(obj) {
   $(".modal-wrap").hide();
   $("button[name='modConfirm']:last-child").remove();
   $("button[name='modConfirm']:last-child").remove();
+  let formId = storage.reportDetailData.formId;
+  let content = CKEDITOR.instances[formId + "_content"].getData();
+  $(".cke").remove();
 
+  $("#" + formId + "_content").attr("data-detail", content);
+  $("#" + formId + "_content").val(content);
+  $("#" + formId + "_content").hide();
+  $("." + formId + "_content").html(content);
+  $("." + formId + "_content").show();
   $(":file").css("display", "none");
   getFileArr();
   toReadMode();
@@ -1957,6 +1978,12 @@ function createConfirmBtn(obj) {
   ///결재하기 버튼 disabled
 
   $("button[name='approvalBtn']")[0].disabled = true;
+
+  $(".doc_Form_Consult_content").hide();
+  $("#doc_Form_Consult_content").val($("#doc_Form_Consult_content").attr("data-detail"));
+  storage.editorArray = ["doc_Form_Consult_content"];
+  ckeditor.config.readOnly = false;
+  window.setTimeout(setEditor, 100);
 }
 
 function getYmdSlash(date) {

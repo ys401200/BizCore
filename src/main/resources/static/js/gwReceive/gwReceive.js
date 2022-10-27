@@ -274,6 +274,12 @@ function getDetailView() {
   storage.oriInsertedDataList = $(".insertedDataList").html();
   storage.oriInfoData = $(".info").html();
   setAppLineData();
+
+  $(".cke").remove();
+  $("." + formId + "_content").html($("#" + formId + "_content").attr("data-detail"));
+  $("#" + formId + "_content").hide();
+  $("." + formId + "_content").css("font-size", $("#" + formId + "_content").css("font-size"));
+  $("." + formId + "_content").css("padding","0.3em");
 }
 
 // 탭 누를때마다의 이벤트 주기

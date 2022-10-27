@@ -370,6 +370,12 @@ function getDetailView() {
     },
   });
   setAppLineData();
+
+  $(".cke").remove();
+  $("." + formId + "_content").html($("#" + formId + "_content").attr("data-detail"));
+  $("#" + formId + "_content").hide();
+  $("." + formId + "_content").css("font-size", $("#" + formId + "_content").css("font-size"));
+  $("." + formId + "_content").css("padding","0.3em");
 }
 
 // 목록보기
