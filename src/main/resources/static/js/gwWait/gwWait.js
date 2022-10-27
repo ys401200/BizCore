@@ -330,7 +330,9 @@ function showReportDetail() {
   storage.oriCbContainer = $("input[name='" + formId + "_RD']:checked").attr(
     "id"
   );
-  storage.oriInsertedContent = $(".insertedContent").html();
+  storage.oriTitle = $("#" + formId + "_title").html();
+  storage.oriContent = $("#" + formId + "_content").attr("data-detail");
+  // storage.oriInsertedContent = $(".insertedContent").html();
   storage.oriInsertedDataList = $(".insertedDataList").html();
   storage.oriInfoData = $(".info").html();
   if ($(".insertedData") != undefined) {
@@ -361,7 +363,7 @@ function showReportDetail() {
   $("." + formId + "_content").html($("#" + formId + "_content").attr("data-detail"));
   $("#" + formId + "_content").hide();
   $("." + formId + "_content").css("font-size", $("#" + formId + "_content").css("font-size"));
-  $("." + formId + "_content").css("padding","0.3em");
+  $("." + formId + "_content").css("padding", "0.3em");
 
 }
 
@@ -841,7 +843,8 @@ function approveBtnEvent() {
         storage.reportDetailData.customer == cusResult) &&
       storage.oriCbContainer ==
       $("input[name='" + formId + "_RD']:checked").attr("id") &&
-      storage.oriInsertedContent == $(".insertedContent").html() &&
+      storage.oriTitle == $("#" + formId + "_title").html() &&
+      storage.oriContent == $("#" + formId + "_content").attr("datail-data") &&
       storage.oriInsertedDataList == $(".insertedDataList").html()
     ) {
       storage.newDoc = null;
@@ -850,7 +853,9 @@ function approveBtnEvent() {
     }
   } else {
     if (
-      storage.oriInsertedContent == $(".insertedContent").html() &&
+
+      storage.oriTitle == $("#" + formId + "_title").html() &&
+      storage.oriContent == $("#" + formId + "_content").attr("datail-data") &&
       storage.oriInsertedData == $(".insertedData").html()
     ) {
       storage.newDoc = null;
@@ -1839,80 +1844,88 @@ function setSavedLine(obj) {
 }
 
 // 문서 수정 취소 함수
-function quitModify() {
-  let formId = storage.reportDetailData.formId;
-  $("button[name='modConfirm']:last-child").remove();
-  $("button[name='modConfirm']:last-child").remove();
+function quitModify() {   showReportDetail();
+  // let formId = storage.reportDetailData.formId;
+  // $("button[name='modConfirm']:last-child").remove();
+  // $("button[name='modConfirm']:last-child").remove();
 
-  toReadMode();
-  $(":file").css("display", "none");
-  $("button[name='approvalBtn']")[0].disabled = false;
-  $(".info").html(storage.oriInfoData);
-  $("#" + storage.oriCbContainer).prop("checked", true);
-  $(".insertedContent").html(storage.oriInsertedContent);
-  $(".insertedDataList").html(storage.oriInsertedDataList);
-  let target = $(".seletedForm")[0];
-  let inputsArr = target.getElementsByTagName("input");
+  // toReadMode();
+  // $(":file").css("display", "none");
+  // $("button[name='approvalBtn']")[0].disabled = false;
+  // $(".info").html(storage.oriInfoData);
+  // $("#" + storage.oriCbContainer).prop("checked", true);
+  // $("#" + formId + "_title").html(storage.oriTitle);
+  // $(".insertedDataList").html(storage.oriInsertedDataList);
 
-  for (let i = 0; i < inputsArr.length; i++) {
-    if (inputsArr[i].dataset.detail !== undefined) {
-      inputsArr[i].value = inputsArr[i].dataset.detail;
-    }
-  }
 
-  let selectArr = target.getElementsByTagName("select");
-  if (selectArr.length != 0) {
-    for (let i = 0; i < selectArr.length; i++) {
-      if (selectArr[i].dataset.detail !== undefined) {
-        selectArr[i].value = selectArr[i].dataset.detail;
-      }
-    }
-  }
+  // $("#" + formId + "_content").attr("data-detail", storage.oriContent);
+  // $("#" + formId + "_content").val(storage.oriContent);
+  // $("#" + formId + "_content").hide();
+  // $("." + formId + "_content").html(storage.oriContent);
+  // $(".cke").remove();
+  // $("." + formId + "_content").show();
+  // let target = $(".seletedForm")[0];
+  // let inputsArr = target.getElementsByTagName("input");
 
-  let textAreaArr = target.getElementsByTagName("textarea")[0];
-  textAreaArr.value = textAreaArr.dataset.detail;
+  // for (let i = 0; i < inputsArr.length; i++) {
+  //   if (inputsArr[i].dataset.detail !== undefined) {
+  //     inputsArr[i].value = inputsArr[i].dataset.detail;
+  //   }
+  // }
 
-  if (target.getElementsByTagName("select").length > 0) {
-    let selectArr = target.getElementsByTagName("select")[0];
-    selectArr.value = selectArr.dataset.detail;
-  }
+  // let selectArr = target.getElementsByTagName("select");
+  // if (selectArr.length != 0) {
+  //   for (let i = 0; i < selectArr.length; i++) {
+  //     if (selectArr[i].dataset.detail !== undefined) {
+  //       selectArr[i].value = selectArr[i].dataset.detail;
+  //     }
+  //   }
+  // }
 
-  // 이름 , 직급 한글로 설정하기
-  let subTitlesArr = ["_examine", "_approval", "_agree", "_conduct"];
-  for (let i = 0; i < subTitlesArr.length; i++) {
-    if ($("." + formId + subTitlesArr[i]).val() != undefined) {
-      for (let j = 0; j < $("." + formId + subTitlesArr[i]).length; j++) {
-        $("." + formId + subTitlesArr[i])[j].value =
-          storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
-        $("." + formId + subTitlesArr[i] + "_position")[j].value =
-          storage.userRank[
-          $("." + formId + subTitlesArr[i] + "_position")[j].value
-          ][0];
-      }
-    }
-  }
+  // let textAreaArr = target.getElementsByTagName("textarea")[0];
+  // textAreaArr.value = textAreaArr.dataset.detail;
 
-  let fileTarget = $(".selectedFileDiv");
-  let html = "";
-  let no = storage.reportDetailData.no;
-  let fileList = storage.reportDetailData.fileList;
+  // if (target.getElementsByTagName("select").length > 0) {
+  //   let selectArr = target.getElementsByTagName("select")[0];
+  //   selectArr.value = selectArr.dataset.detail;
+  // }
 
-  for (let i = 0; i < fileList.length; i++) {
-    html +=
-      "<div><a href='/api/attached/docapp/" +
-      no +
-      "/" +
-      encodeURI(fileList[i].fileName) +
-      "'>" +
-      fileList[i].fileName +
-      "</a></div>";
-  }
+  // // 이름 , 직급 한글로 설정하기
+  // let subTitlesArr = ["_examine", "_approval", "_agree", "_conduct"];
+  // for (let i = 0; i < subTitlesArr.length; i++) {
+  //   if ($("." + formId + subTitlesArr[i]).val() != undefined) {
+  //     for (let j = 0; j < $("." + formId + subTitlesArr[i]).length; j++) {
+  //       $("." + formId + subTitlesArr[i])[j].value =
+  //         storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
+  //       $("." + formId + subTitlesArr[i] + "_position")[j].value =
+  //         storage.userRank[
+  //         $("." + formId + subTitlesArr[i] + "_position")[j].value
+  //         ][0];
+  //     }
+  //   }
+  // }
 
-  fileTarget.html(html);
-  setAppLineData();
-  if ($("." + formId + "_total") != undefined) {
-    getTotalCount();
-  }
+  // let fileTarget = $(".selectedFileDiv");
+  // let html = "";
+  // let no = storage.reportDetailData.no;
+  // let fileList = storage.reportDetailData.fileList;
+
+  // for (let i = 0; i < fileList.length; i++) {
+  //   html +=
+  //     "<div><a href='/api/attached/docapp/" +
+  //     no +
+  //     "/" +
+  //     encodeURI(fileList[i].fileName) +
+  //     "'>" +
+  //     fileList[i].fileName +
+  //     "</a></div>";
+  // }
+
+  // fileTarget.html(html);
+  // setAppLineData();
+  // if ($("." + formId + "_total") != undefined) {
+  //   getTotalCount();
+  // }
 }
 
 function getTotalCount() {
@@ -1939,7 +1952,7 @@ function getTotalCount() {
   $(".insertedTotal")[0].dataset.detail = Number(totalCount).toLocaleString();
 }
 // 문서 수정시 변경이력에 반영
-function reportModify(obj) {
+function reportModify() {
   $(".modal-wrap").hide();
   $("button[name='modConfirm']:last-child").remove();
   $("button[name='modConfirm']:last-child").remove();
@@ -1959,7 +1972,7 @@ function reportModify(obj) {
 }
 
 //문서 수정 버튼 누르면 수정 완료 버튼 생성
-function createConfirmBtn(obj) {
+function createConfirmBtn() {
   let div = document.getElementsByClassName("mainBtnDiv");
   if (div[0].childElementCount < 5) {
     $(".mainBtnDiv").append(
@@ -1978,10 +1991,11 @@ function createConfirmBtn(obj) {
   ///결재하기 버튼 disabled
 
   $("button[name='approvalBtn']")[0].disabled = true;
-
-  $(".doc_Form_Consult_content").hide();
-  $("#doc_Form_Consult_content").val($("#doc_Form_Consult_content").attr("data-detail"));
-  storage.editorArray = ["doc_Form_Consult_content"];
+  let formId = storage.reportDetailData.formId;
+  $("." + formId + "_content").hide();
+  $("#" + formId + "_content").val($("." + formId + "_content").html());
+  $("#" + formId + "_content").attr("data-detail",$("." + formId + "_content").html());
+  storage.editorArray = [formId + "_content"];
   ckeditor.config.readOnly = false;
   window.setTimeout(setEditor, 100);
 }
