@@ -189,27 +189,16 @@ function noticeSuccessView(result){
 	detailBoardContainerHide();
 	storage.gridContent.after(html);
 	notIdArray = ["writer", "created"];
-	$(".detailBtns").html("<button type='button' onclick='detailBoardContainerHide();'><i class=\"fa-solid fa-xmark fa-xl\"></i></button>");
 	detailTrueDatas(datas);
+	
+	$(".detailBtns").html(
+		"<button type=\"button\" onclick=\"enableDisabled(this, 'noticeUpdate();', '" + notIdArray + "');\"><i class=\"fa-solid fa-pen-to-square fa-sm\"></i></button>"
+		+ "<button type=\"button\" onclick=\"noticeDelete(" + result.no + ");\"><i class=\"fa-solid fa-trash-can fa-sm\"></i></button>"
+		+ "<button type='button' onclick='detailBoardContainerHide();'><i class=\"fa-solid fa-xmark fa-xl\"></i></button>"
+	);
 
 	setTimeout(() => {
 		storage.editorArray = ["content"];
-		let menu = [
-			{
-				"keyword": "add",
-				"onclick": "noticeInsertForm();"
-			},
-			{
-				"keyword": "edit",
-				"onclick": "enableDisabled(this, \"noticeUpdate();\", \"" + notIdArray + "\");"
-			},
-			{
-				"keyword": "delete",
-				"onclick": "noticeDelete(" + result.no + ");"
-			},
-		];
-
-		plusMenuSelect(menu);
 		ckeditor.config.readOnly = true;
 		window.setTimeout(setEditor, 100);
 	}, 100);

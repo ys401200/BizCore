@@ -29,6 +29,9 @@
 		<div class="noticeContainer">
 			<hr />
 			<span id="containerTitle">공지사항</span>
+            <div class="crudBtns">
+                <button type="button" onclick="noticeInsertForm();"><i class="fa-solid fa-pencil"></i></button>
+            </div>
             <div class="listSearchInput">
                 <input type="text" class="searchAllInput" id="searchAllInput" onkeyup="searchInputKeyup();" placeholder="단어를 입력해주세요.">
             </div>
