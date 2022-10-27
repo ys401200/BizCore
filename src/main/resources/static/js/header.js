@@ -2730,35 +2730,36 @@ class Department{
 	} // End of getChildrenId()
 
 	// 조직도 그리기 태그문자열 생성/전달(원본 데이터임 삭제X)
-	// getHtml(empSelectable, deptSelectable){
-	// 	let x, y, html, padding;
-	// 	empSelectable = empSelectable === undefined || empSelectable !== true ? false : empSelectable;
-	// 	deptSelectable = deptSelectable === undefined || deptSelectable !== true ? false : deptSelectable;
-	// 	padding = "1rem";
+	getTreeHtml(empSelectable, deptSelectable){
+		let x, y, html, padding;
+		empSelectable = empSelectable === undefined || empSelectable !== true ? false : empSelectable;
+		deptSelectable = deptSelectable === undefined || deptSelectable !== true ? false : deptSelectable;
+		padding = "1rem";
 
-	// 	html = "<input type=\"checkbox\" class=\"dept-tree\" style=\"display:none\" id=\"dept-tree-" + this.id + "\" />";
-	// 	html += ("<label for=\"dept-tree-" + this.id + "\"><img src=\"/images/common/corporate.png\" style=\"width:20px;height:20px;\">" + this.name + "</label>");
-	// 	if(deptSelectable)  html += ("<input type=\"checkbox\" class=\"dept-tree-select\" data-select=\"dept:" + this.id + "\" />");
-	// 	html += ("<div class=class=\"dept-tree-cnt\" style=\"padding-left:" + padding + "\">");
+		html = "<input type=\"checkbox\" class=\"dept-tree\" style=\"display:none\" id=\"dept-tree-" + this.id + "\" />";
+	 	html += ("<label for=\"dept-tree-" + this.id + "\"><img src=\"/images/common/corporate.png\" style=\"width:20px;height:20px;\">" + this.name + "</label>");
+	 	if(deptSelectable)  html += ("<input type=\"checkbox\" class=\"dept-tree-select\" data-select=\"dept:" + this.id + "\" />");
+	 	html += ("<div class=\"dept-tree-cnt\">");
 
-	// 	for(x = 0 ; x < this.employee.length ; x++){
-	// 		y = this.employee[x];console.log(y);
-	// 		if(y === undefined) continue;
-	// 		if(storage.user[y] === undefined || storage.user[y].resign) continue;
-	// 		html += ("<div><img src=\"/api/user/image/" + y + "\" style=\"width:20px;height:20px;\"> " + storage.user[y].userName + " " + storage.userRank[storage.user[y].rank][0]);
-	// 		if(empSelectable)   html += ("<input type=\"checkbox\" class=\"dept-tree-select\" data-select=\"emp:" + y + "\" />");
-	// 		html += ("</div>");
-	// 	}
+	 	for(x = 0 ; x < this.employee.length ; x++){
+	 		y = this.employee[x];console.log(y);
+	 		if(y === undefined) continue;
+	 		if(storage.user[y] === undefined || storage.user[y].resign) continue;
+			 if(empSelectable)	html += ("<input style=\"display:none;\" type=\"checkbox\" class=\"dept-tree-select\" data-select=\"emp:" + y + "\" id=\"emp:" + y + "\" />");
+			 else				html += ("<input style=\"display:none;\" type=\"radio\" name=\"deptTreeSelectEmp\" class=\"dept-tree-select\" data-select=\"emp:" + y + "\" id=\"emp:" + y + "\" />");
+	 		html += ("<label for=\"emp:" + y + "\" ><img src=\"/api/user/image/" + y + "\" style=\"width:20px;height:20px;\"> <div>" + storage.user[y].userName + " " + storage.userRank[storage.user[y].rank][0]) + "</div></label>";
+	 	}
 
-	// 	for(x = 0 ; x < this.children.length ; x++){
-	// 		y = this.children[x];
-	// 		html += y.getHtml(empSelectable, deptSelectable);
-	// 	}
+	 	for(x = 0 ; x < this.children.length ; x++){
+	 		y = this.children[x];
+	 		html += y.getTreeHtml(empSelectable, deptSelectable);
+	 	}
 
-	// 	html += ("</div>");
-	// 	return html;
-	// } // End of getHtml()
+	 	html += ("</div>");
+	 	return html;
+	} // End of getTreeHtml()
 
+	// 쪽지 조직도 - 세로 선형 리스트
 	getHtml(empSelectable, deptSelectable){
 		let x, y, html, padding;
 		empSelectable = empSelectable === undefined || empSelectable !== true ? false : empSelectable;

@@ -1101,4 +1101,60 @@ public class SystemService extends Svc {
         return count;
 
     } // End of contractFileDownloadAndSave()
+
+    // 관리자용 - 직원 함녕의 전체 정보를 가져오는 메서드
+    public String getEmployeeDetailInfo(String compId, String employeeNo){
+        String result = null, t = null, aesKey = null, aesIv = null;
+        String userId = null, userName = null,rank = null,prohibited = null, birthDay = null, gender = null, residentNo = null, email = null ,address = null,zipCode = null,homePhone = null,cellPhone = null,joined = null,resigned = null,created = null,modified = null,deleted = null;
+        HashMap<String, String> info = null;
+
+        info = userMapper.getEmployeeDetailInfo(compId, employeeNo);
+        
+        userId = info.get("userId");
+        userName = info.get("userName");
+        rank = info.get("rank");
+        prohibited = info.get("prohibited");
+        birthDay = info.get("birthDay");
+        gender = info.get("gender");
+        residentNo = info.get("residentNo");
+        email = info.get("email");
+        address = info.get("address");
+        zipCode = info.get("zipCode");
+        homePhone = info.get("homePhone");
+        cellPhone = info.get("cellPhone");
+        joined = info.get("joined");
+        resigned = info.get("resigned");
+        created = info.get("created");
+        modified = info.get("modified");
+        deleted = info.get("deleted");
+
+        // 주민번호 복호화
+        if(residentNo != null){
+            info = systemMapper.getCompanyAesKey(compId);
+            aesKey = info.get("aesKey");
+            aesIv = info.get("aesIv");
+            residentNo = decAes(residentNo, aesKey, aesIv);
+        }
+
+        result = ("{\"userId\":\"" + userId + "\",");
+        result += ("\"userName\":\"" + userName + "\",");
+        result += ("\"rank\":" + rank + ",");
+        result += ("\"prohibited\":" + prohibited.equals("1") + ",");
+        result += ("\"birthDay\":\"" + birthDay + "\",");
+        result += ("\"gender\":" + gender + ",");
+        result += ("\"residentNo\":" + residentNo + ",");
+        result += ("\"email\":" + (email == null ? null : "\"" + email + "\"") + ",");
+        result += ("\"address\":" + (address == null ? null : "\"" + address + "\"") + ",");
+        result += ("\"zipCode\":" + zipCode + ",");
+        result += ("\"homePhone\":" + (homePhone == null ? null : "\"" + homePhone + "\"") + ",");
+        result += ("\"cellPhone\":" + (cellPhone == null ? null : "\"" + cellPhone + "\"") + ",");
+        result += ("\"joined\":\"" + joined + "\",");
+        result += ("\"resigned\":" + (resigned == null ? null : "\"" + resigned + "\"") + ",");
+        result += ("\"created\":" + created + ",");
+        result += ("\"modified\":" + modified + ",");
+        result += ("\"deleted\":" + deleted + "}");
+
+        return result;
+    }
+
 }

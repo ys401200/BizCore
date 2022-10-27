@@ -37,7 +37,7 @@ public class UserService extends Svc {
         String[] result = new String[5], t = null;
         String userNo = null, pwDB = null, pwCvt = null, keepToken = null, userName, userRank;
         String sql1 = "SELECT no AS userNo, pw, PASSWORD(?), prohibited FROM bizcore.users WHERE userid = ? AND compId = ? AND deleted IS NULL";
-               sql1 = "SELECT no AS userNo, pw, PASSWORD(?), username, (SELECT namekor FROM bizcore.user_rank WHERE compId = ? AND level = rank) AS rank FROM bizcore.users a WHERE userid = ? AND compId = ? AND deleted IS NULL";
+               sql1 = "SELECT no AS userNo, pw, PASSWORD(?), username, (SELECT namekor FROM bizcore.user_rank WHERE compId = ? AND level = rank) AS rank, prohibited FROM bizcore.users a WHERE userid = ? AND compId = ? AND deleted IS NULL";
         String sql2 = "UPDATE bizcore.users SET pw = ? WHERE compId = ? AND no = ?";
         boolean prohibited = false;
         Connection conn = null;
