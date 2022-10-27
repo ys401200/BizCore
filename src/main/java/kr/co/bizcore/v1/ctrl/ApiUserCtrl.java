@@ -123,9 +123,11 @@ public class ApiUserCtrl extends Ctrl{
                     userName = t[2];
                     userRank = t[3];
                     keepToken = t[1];
-                    if (userNo == null)
+                    if (userNo == null){
                         result = "{\"result\":\"failure\",\"msg\":\"" + msg.idPwMisMatch + "\"}";
-                    else {
+                    }else if(t[4] != null){
+                        result = "{\"result\":\"failure\",\"msg\":\"" + msg.permissionDenied + "\"}";
+                    }else {
                         session.setAttribute("userNo", userNo);
                         session.setAttribute("userName", userName);
                         session.setAttribute("userRank", userRank);
