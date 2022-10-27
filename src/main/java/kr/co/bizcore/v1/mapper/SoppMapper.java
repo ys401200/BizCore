@@ -22,7 +22,7 @@ public interface SoppMapper {
     public List<SimpleSopp> getSoppList(String compId);
 
     @Select("SELECT soppno AS no, sopptype AS soppType, cntrctMth AS contType, sopptitle AS title, buyrno AS customer, custNo AS enduser, userNo AS employee, sopptargetamt AS expectedSales, soppstatus AS status, " + 
-            "contno AS contract, (SELECT q.custMname FROM swc_custData03 q WHERE q.custData03no = custMemberNo) AS picOfCustomer, " + 
+            "contno AS contract, custMemberNo AS picOfCustomer, " + 
             "ptncno AS ptnc, ptncmemberno AS picOfPtnc, buyrmemberno AS picOfBuyer, soppDesc AS detail,  " + 
             "sopptargetdate AS targetDate, maintenance_s AS startOfMaintenance, maintenance_e AS endOfMaintenance, soppsrate AS progress, soppsource AS source, " + 
             "sopp2desc AS remark, sopp2regdatetime AS remarkDate, businessType, op_priority AS priority, regDatetime AS created, modDatetime AS modified " + 
