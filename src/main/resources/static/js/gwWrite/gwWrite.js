@@ -220,7 +220,7 @@ function selectForm() {
   $("#" + formId + "_writer").val(writer);
   $("#" + formId + "_writer").attr("data-detail", writer);
 
-  let date = getYmdHyphen();
+  let date = getYmdSlash();
   $("#" + formId + "_created").attr("data-detail", date);
   $("#" + formId + "_created").val(date);
   $(".testClass").prop("checked", false);

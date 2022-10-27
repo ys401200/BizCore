@@ -911,23 +911,23 @@
                   for (let j = 0; j < dataTitles.length; j++) {
                     if (j == dataTitles.length - 1) {
                       dataHtml +=
-                        "<div class='detailcontentlast'><input type='text' value='" +
+                        "<input type='text' value='" +
                         info.docData[q][dataTitles[j]] +
                         "' onkeyup='this.dataset.detail=this.value' class='inputs outlineNonedata " +
                         id +
                         "_" +
                         dataTitles[j] +
-                        "'></div>";
+                        "' style='border-right:1px solid black; border-bottom:1px solid black;padding:0.3em;'>";
                     } else if (dataTitles[j] == "date") {
                       let date = getYmdHyphen(info.docData[q][dataTitles[j]]);
                       dataHtml +=
-                        "<div class='detailcontent'><input class='inputs outlineNonedata " +
+                        "<input class='inputs outlineNonedata " +
                         id +
                         "_" +
                         dataTitles[j] +
                         "' onchange='this.dataset.detail=this.value;' type='date' value='" +
                         date +
-                        "' ></div>";
+                        "' style='border-right:1px solid black; border-bottom:1px solid black;padding:0.3em;' >";
                     } else if (
                       dataTitles[j] == "price" ||
                       dataTitles[j] == "quantity" ||
@@ -936,26 +936,26 @@
                       dataTitles[j] == "total"
                     ) {
                       dataHtml +=
-                        "<div class='detailcontent'><input class='inputs outlineNonedata " +
+                        "<input class='inputs outlineNonedata " +
                         id +
                         "_" +
                         dataTitles[j] +
                         "' type='text' oninput='setNum(this)'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' value='" +
                         info.docData[q][dataTitles[j]].toLocaleString() +
-                        "'></div>";
+                        "' style='border-right:1px solid black; border-bottom:1px solid black;padding:0.3em;'>";
                     } else {
                       dataHtml +=
-                        "<div class='detailcontent'><input class='inputs outlineNonedata" +
+                        "<input class='inputs outlineNonedata" +
                         id +
                         "_" +
                         dataTitles[j] +
                         "' type='text' onkeyup='this.dataset.detail=this.value' value='" +
                         info.docData[q][dataTitles[j]] +
-                        "'></div>";
+                        "' style='border-right:1px solid black; border-bottom:1px solid black;padding:0.3em;'>";
                     }
                   }
                   dataHtml +=
-                    "<div class='detailcontentbox'><input type='checkbox' class='detailBox'></div></div>";
+                    "<div class='detailcontentbox' style='border-right:1px solid black; border-bottom:1px solid black; padding:0.3em;'><input type='checkbox' class='detailBox'></div></div>";
                 }
 
               $(".insertedDataList").html(dataHtml);
