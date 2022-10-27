@@ -233,7 +233,7 @@ modal = {
 	"hide": () => {
 		modal.wrap.fadeOut();
 		window.setTimeout(modal.clear, 500);
-		if($(".plusEditItem").data("hide-flag")){
+		if($(".updateBtn").data("hide-flag")){
 			ckeditor.config.readOnly = false;
 		}else{
 			ckeditor.config.readOnly = true;
@@ -2178,7 +2178,9 @@ function contentTopBtn(content){
 }
 
 function enableDisabled(e, clickStr, notIdArray){
-	let box = $("input, select");
+	let thisEle, box;
+	thisEle = $(e);
+	box = $("input, select");
 
 	for(let i = 0; i < box.length; i++){
 		if($(box[i]).attr("type") === "radio"){
@@ -2190,14 +2192,12 @@ function enableDisabled(e, clickStr, notIdArray){
 		}
 	}
 	
-	$(e).attr("onclick", clickStr);
-	$(e).attr("data-hide-flag", true);
+	thisEle.attr("onclick", clickStr);
+	thisEle.attr("data-hide-flag", true);
+	thisEle.html("수정완료");
+	console.log(thisEle.html());
 	ckeditor.config.readOnly = false;
 	window.setTimeout(setEditor, 100);
-	
-	if(modal.wrap.css("display") !== "none"){
-		modal.confirm.text("수정완료");
-	}
 }
 
 function calWindowLength(){
@@ -2499,37 +2499,6 @@ function searchDateDefaultSet(e){
 	}
 
 	matchDateInput.val(year + "-" + month + "-" + day);	
-}
-
-function plusBtnClick(e){
-	let thisBtn;
-	thisBtn = $(e);
-
-	if(thisBtn.data("click") == false){
-		thisBtn.html("<i class=\"fa-solid fa-xmark\"></i>");
-		thisBtn.data("click", true);
-		thisBtn.prev().find("button[data-status=\"true\"]").fadeIn(400);
-	}else{
-		thisBtn.html("<i class=\"fa-solid fa-ellipsis\"></i>");
-		thisBtn.data("click", false);
-		thisBtn.prev().find("button[data-status=\"true\"]").fadeOut();
-	}
-}
-
-function plusMenuSelect(select){
-	let btnItems, plusBtn;
-	btnItems = $(".plusItems button");
-	plusBtn = $("#plusBtn");
-
-	plusBtn.data("click", true);
-	plusBtnClick(plusBtn);
-	btnItems.attr("data-status", false);
-	btnItems.attr("onclick", "");
-
-	for(let i = 0; i < select.length; i++){
-		$(".plusItems button[data-keyword=\"" + select[i].keyword + "\"]").attr("data-status", true);
-		$(".plusItems button[data-keyword=\"" + select[i].keyword + "\"]").attr("onclick", select[i].onclick);
-	}
 }
 
 // 부서트리를 만드는 함수

@@ -168,27 +168,10 @@ function drawTechList() {
 	createGrid(container, header, data, ids, dataJob, fnc);
 
 	let path = $(location).attr("pathname").split("/");
-	let menu = [
-		{
-			"keyword": "add",
-			"onclick": "techInsertForm();"
-		},
-		{
-			"keyword": "notes",
-			"onclick": ""
-		},
-		{
-			"keyword": "set",
-			"onclick": ""
-		},
-	];
-	
 	if(path[3] !== undefined && jsonData !== ""){
 		let content = $(".gridContent[data-id=\"" + path[3] + "\"]");
 		techDetailView(content);
 	}
-
-	plusMenuSelect(menu);
 }
 
 function techDetailView(e){
@@ -204,7 +187,7 @@ function techDetailView(e){
 }
 
 function techSuccessView(result){
-	let from, datas, to, place, writer, sopp, contract, customer, cipOfCustomer, partner, title, content, supportModel, supportVersion, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput, listRange;
+	let from, datas, to, place, writer, sopp, contract, customer, cipOfCustomer, partner, title, content, supportModel, supportVersion, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput, listRange, crudAddBtn, crudUpdateBtn, crudDeleteBtn;
 	detailSetFormList(result);
 	gridList = $(".gridList");
 	searchContainer = $(".searchContainer");
@@ -212,7 +195,11 @@ function techSuccessView(result){
 	detailBackBtn = $(".detailBackBtn");
 	listSearchInput = $(".listSearchInput");
 	listRange = $(".listRange");
+	crudAddBtn = $(".crudAddBtn");
+	crudUpdateBtn = $(".crudUpdateBtn");
+	crudDeleteBtn = $(".crudDeleteBtn");
 	datas = ["sopp", "writer", "customer", "partner", "cipOfCustomer", "contract"];
+	notIdArray = ["writer"];
 
 	disDate = dateDis(result.from);
 	from = dateFnc(disDate);
@@ -455,8 +442,15 @@ function techSuccessView(result){
 	gridList.html("");
 	searchContainer.hide();
 	gridList.html(html);
+	crudAddBtn.hide();
+
+	if(storage.my == result.writer){
+		crudUpdateBtn.attr("onclick", "enableDisabled(this, \"techUpdate();\", \"" + notIdArray + "\");");
+		crudUpdateBtn.css("display", "flex");
+		crudDeleteBtn.css("display", "flex");
+	}
+	
 	gridList.show();
-	notIdArray = ["writer"];
 	detailTrueDatas(datas);
 
 	setTimeout(() => {
@@ -464,22 +458,6 @@ function techSuccessView(result){
 		detailBackBtn.css("display", "flex");
 		listSearchInput.hide();
 		listRange.hide();
-		
-		let menu = [
-			{
-				"keyword": "add",
-				"onclick": "techInsertForm();"
-			},
-			{
-				"keyword": "edit",
-				"onclick": "enableDisabled(this, \"techUpdate();\", \"" + notIdArray + "\");"
-			},
-			{
-				"keyword": "delete",
-				"onclick": "techDelete(" + JSON.stringify(result) + ");"
-			},
-		];
-
 		let contractMethod = (result.contractMethod === null || result.contractMethod === "" || result.contractMethod === undefined) ? "" : result.contractMethod;
 		let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;
 		let supportStep = (result.supportStep === null || result.supportStep === "" || result.supportStep === undefined) ? "" : result.supportStep;
@@ -487,8 +465,7 @@ function techSuccessView(result){
 		$("[name='contractMethod'][value='" + contractMethod + "']").prop("checked", true);
 		$("#type option[value='" + type + "']").prop("selected", true);
 		$("#supportStep option[value='" + supportStep + "']").prop("selected", true);
-		
-		plusMenuSelect(menu);
+
 		storage.editorArray = ["content"];
 		ckeditor.config.readOnly = true;
 		window.setTimeout(setEditor, 100);
@@ -846,11 +823,11 @@ function techSelectError(){
 	msg.set("에러");
 }
 
-function techDelete(result){
+function techDelete(){
 	if(confirm("삭제하시겠습니까??")){
 		let url, method, data, type;
 
-		url = "/api/schedule/" + result.job + "/" + result.no;
+		url = "/api/schedule/" + storage.formList.job + "/" + storage.formList.no;
 		method = "delete";
 		type = "delete";
 

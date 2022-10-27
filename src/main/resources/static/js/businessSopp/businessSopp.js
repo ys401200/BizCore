@@ -152,27 +152,10 @@ function drawSoppList() {
 	createGrid(container, header, data, ids, job, fnc);
 
 	let path = $(location).attr("pathname").split("/");
-	let menu = [
-		{
-			"keyword": "add",
-			"onclick": "soppInsertForm();"
-		},
-		{
-			"keyword": "notes",
-			"onclick": ""
-		},
-		{
-			"keyword": "set",
-			"onclick": ""
-		},
-	];
-
 	if(path[3] !== undefined && jsonData !== ""){
 		let content = $(".gridContent[data-id=\"" + path[3] + "\"]");
 		soppDetailView(content);
 	}
-
-	plusMenuSelect(menu);
 }
 
 function soppDetailView(e){
@@ -205,7 +188,7 @@ function soppErrorList(){
 }
 
 function soppSuccessView(result){
-	let html, htmlSecond, title, userName, customer, picOfCustomer, endUser, status, progress, contType, disDate, expectedSales, detail, dataArray, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput, detailSecondTabs, listRange, pageContainer, datas;
+	let html, htmlSecond, title, userName, customer, picOfCustomer, endUser, status, progress, contType, disDate, expectedSales, detail, dataArray, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput, detailSecondTabs, listRange, pageContainer, datas, crudAddBtn, crudUpdateBtn, crudDeleteBtn;
 	detailSetFormList(result);
 	gridList = $(".gridList");
 	searchContainer = $(".searchContainer");
@@ -215,7 +198,11 @@ function soppSuccessView(result){
 	detailSecondTabs = $(".detailSecondTabs");
 	listRange = $(".listRange");
 	pageContainer = $(".pageContainer");
+	crudAddBtn = $(".crudAddBtn");
+	crudUpdateBtn = $(".crudUpdateBtn");
+	crudDeleteBtn = $(".crudDeleteBtn");
 	datas = ["employee", "customer", "picOfCustomer", "endUser"];
+	notIdArray = ["employee"];
 
 	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
 	userName = (result.employee == 0 || result.employee === null || result.employee === undefined) ? "" : storage.user[result.employee].userName;
@@ -395,8 +382,16 @@ function soppSuccessView(result){
 	gridList.html("");
 	searchContainer.hide();
 	gridList.html(html);
+	crudAddBtn.hide();
+
+	if(storage.my == result.employee){
+		crudUpdateBtn.attr("onclick", "enableDisabled(this, \"soppUpdate();\", \"" + notIdArray + "\");");
+		crudUpdateBtn.css("display", "flex");
+		crudDeleteBtn.css("display", "flex");
+	}
+	
 	gridList.show();
-	notIdArray = ["employee"];
+	
 	
 	storage.attachedList = result.attached;
 	storage.attachedNo = result.no;
@@ -416,23 +411,6 @@ function soppSuccessView(result){
 		detailBackBtn.css("display", "flex");
 		listSearchInput.hide();
 		listRange.hide();
-
-		let menu = [
-			{
-				"keyword": "add",
-				"onclick": "soppInsertForm();"
-			},
-			{
-				"keyword": "edit",
-				"onclick": "enableDisabled(this, \"soppUpdate();\", \"" + notIdArray + "\");"
-			},
-			{
-				"keyword": "delete",
-				"onclick": "soppDelete(" + result.no + ");"
-			},
-		];
-
-		plusMenuSelect(menu);
 		storage.editorArray = ["detail"];
 		ckeditor.config.readOnly = true;
 		window.setTimeout(setEditor, 100);
@@ -617,7 +595,7 @@ function soppInsertForm(){
 		"title": "",
 		"detail": ""
 	};
-
+	
 	setTimeout(() => {
 		let my = storage.my, nowDate;
 		nowDate = new Date();
@@ -665,7 +643,6 @@ function soppInsert(){
 		data = cipher.encAes(data);
 		crud.defaultAjax(url, method, data, type, soppSuccessInsert, soppErrorInsert);
 	}
-
 }
 
 function soppSuccessInsert(){
@@ -716,11 +693,11 @@ function soppErrorUpdate(){
 	msg.set("수정에러");
 }
 
-function soppDelete(no){
+function soppDelete(){
 	let url, method, data, type;
 
 	if(confirm("정말로 삭제하시겠습니까??")){
-		url = "/api/sopp/" + no;
+		url = "/api/sopp/" + storage.formList.no;
 		method = "delete";
 		type = "delete";
 	

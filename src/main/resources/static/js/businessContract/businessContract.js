@@ -175,27 +175,10 @@ function drawContractList() {
 	createGrid(container, header, data, ids, job, fnc);
 
 	let path = $(location).attr("pathname").split("/");
-	let menu = [
-		{
-			"keyword": "add",
-			"onclick": "contractInsertForm();"
-		},
-		{
-			"keyword": "notes",
-			"onclick": ""
-		},
-		{
-			"keyword": "set",
-			"onclick": ""
-		},
-	];
-
 	if(path[3] !== undefined && jsonData !== ""){
 		let content = $(".gridContent[data-id=\"" + path[3] + "\"]");
 		contractDetailView(content);
 	}
-
-	plusMenuSelect(menu);
 }
 
 function contractDetailView(e){
@@ -229,7 +212,7 @@ function contractErrorList(){
 }
 
 function contractSuccessView(result){
-	let notIdArray, datas, sopp, html, htmlSecond, contractType, title, employee, customer, salesType, cipOfCustomer, endUser, cipOfendUser, saleDate, delivered, employee2, startOfFreeMaintenance, endOfFreeMaintenance, startOfPaidMaintenance, endOfPaidMaintenance, contractAmount, taxInclude, profit, detail, disDate, dataArray, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput, listRange, pageContainer;
+	let notIdArray, datas, sopp, html, htmlSecond, contractType, title, employee, customer, salesType, cipOfCustomer, endUser, cipOfendUser, saleDate, delivered, employee2, startOfFreeMaintenance, endOfFreeMaintenance, startOfPaidMaintenance, endOfPaidMaintenance, contractAmount, taxInclude, profit, detail, disDate, dataArray, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput, listRange, pageContainer, crudAddBtn, crudUpdateBtn, crudDeleteBtn;
 	detailSetFormList(result);
 	gridList = $(".gridList");
 	searchContainer = $(".searchContainer");
@@ -239,7 +222,11 @@ function contractSuccessView(result){
 	detailSecondTabs = $(".detailSecondTabs");
 	listRange = $(".listRange");
 	pageContainer = $(".pageContainer");
+	crudAddBtn = $(".crudAddBtn");
+	crudUpdateBtn = $(".crudUpdateBtn");
+	crudDeleteBtn = $(".crudDeleteBtn");
 	datas = ["employee", "customer", "cipOfCustomer", "endUser", "cipOfendUser", "sopp", "employee2"];
+	notIdArray = ["employee"];
 
 	contractType = (result.contractType === null || result.contractType === "" || result.contractType === undefined) ? "" : storage.code.etc[result.contractType];
 	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
@@ -483,8 +470,15 @@ function contractSuccessView(result){
 	gridList.html("");
 	searchContainer.hide();
 	gridList.html(html);
+	crudAddBtn.hide();
+
+	if(storage.my == result.employee){
+		crudUpdateBtn.attr("onclick", "enableDisabled(this, \"contractUpdate();\", \"" + notIdArray + "\");");
+		crudUpdateBtn.css("display", "flex");
+		crudDeleteBtn.css("display", "flex");
+	}
+	
 	gridList.show();
-	notIdArray = ["employee"];
 	
 	storage.attachedList = result.attached;
 	storage.attachedNo = result.no;
@@ -507,21 +501,6 @@ function contractSuccessView(result){
 		listSearchInput.hide();
 		listRange.hide();
 		
-		let menu = [
-			{
-				"keyword": "add",
-				"onclick": "contractInsertForm();"
-			},
-			{
-				"keyword": "edit",
-				"onclick": "enableDisabled(this, \"contractUpdate();\", \"" + notIdArray + "\");"
-			},
-			{
-				"keyword": "delete",
-				"onclick": "contractDelete(" + result.no + ");"
-			},
-		];
-		
 		if(contractType === "판매계약"){
 			$("#startOfFreeMaintenance").parents(".defaultFormLine").show();
 			$("#endOfFreeMaintenance").parents(".defaultFormLine").show();
@@ -540,7 +519,6 @@ function contractSuccessView(result){
 			$("#endOfFreeMaintenance").val(null);
 		}
 
-		plusMenuSelect(menu);
 		storage.editorArray = ["detail"];
 		ckeditor.config.readOnly = true;
 		window.setTimeout(setEditor, 100);
@@ -876,11 +854,11 @@ function contractErrorUpdate(){
 	msg.set("수정에러");
 }
 
-function contractDelete(no){
+function contractDelete(){
 	let url, method, data, type;
 
 	if(confirm("정말로 삭제하시겠습니까??")){
-		url = "/api/contract/" + no;
+		url = "/api/contract/" + storage.formList.no;
 		method = "delete";
 		data = "";
 		type = "delete";

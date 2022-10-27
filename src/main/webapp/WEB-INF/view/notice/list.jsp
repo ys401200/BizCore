@@ -29,11 +29,11 @@
 		<div class="noticeContainer">
 			<hr />
 			<span id="containerTitle">공지사항</span>
-            <div class="crudBtns">
-                <button type="button" onclick="noticeInsertForm();"><i class="fa-solid fa-pencil"></i></button>
-            </div>
             <div class="listSearchInput">
                 <input type="text" class="searchAllInput" id="searchAllInput" onkeyup="searchInputKeyup();" placeholder="단어를 입력해주세요.">
+            </div>
+            <div class="crudBtns">
+                <button type="button" class="crudAddBtn" onclick="noticeInsertForm();">등록</button>
             </div>
             <div class="listRange">
                 <input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="listRangeChange(this, drawNoticeList);">

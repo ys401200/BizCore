@@ -83,7 +83,12 @@
                 <input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="listRangeChange(this, drawContractList);">
                 <span class="listRangeSpan">0</span>
             </div>
-            <a href="/business/contract" class="detailBackBtn">Back</a>
+            <div class="crudBtns">
+				<button type="button" class="crudAddBtn" onclick="contractInsertForm();">등록</button>
+				<button type="button" class="crudUpdateBtn">수정</button>
+				<button type="button" class="crudDeleteBtn" onclick="contractDelete();">삭제</button>
+                <a href="/business/contract" class="detailBackBtn" style="display:none;">Back</a>
+			</div>
             <div class="gridList"></div>
             <div class="pageContainer"></div>
         </div>

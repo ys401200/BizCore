@@ -107,6 +107,16 @@
 }
 
 .filePreview > div > button{
-	width: 3%;
+	width: 40px;
     font-size: 0.8rem;
+	background-color: #2147b1;
+	color: #ffffff;
+}
+
+.fileDownloadBtn{
+	text-decoration: none;
+}
+
+.fileDownloadBtn:hover{
+	text-decoration: underline;
 }

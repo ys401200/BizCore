@@ -90,23 +90,6 @@ function drawFileBoxList() {
 	}
 
 	createGrid(container, header, data, ids, job, fnc);
-
-	let menu = [
-		{
-			"keyword": "add",
-			"onclick": "fileBoxInsertForm();"
-		},
-		{
-			"keyword": "notes",
-			"onclick": ""
-		},
-		{
-			"keyword": "set",
-			"onclick": ""
-		},
-	];
-
-	plusMenuSelect(menu);
 }// End of drawFileBoxList()
 
 function fileBoxDetailView(e) {// 선택한 그리드의 글 번호 받아오기 
@@ -142,8 +125,8 @@ function fileBoxErrorList(){
 }
 
 function fileBoxSuccessView(result){
-	let html = "", fileHtml = "", title, content, writer, dataArray, disDate, setDate, downloadApiPath, notIdArray;
-
+	let html = "", fileHtml = "", title, content, writer, dataArray, disDate, setDate, downloadApiPath, btnHtml = "";
+	storage.formList = result;
 	storage.fileBoxNo = result.no;
 	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
 	content = (result.content === null || result.content === "" || result.content === undefined) ? "" : result.content;
@@ -185,38 +168,35 @@ function fileBoxSuccessView(result){
 	
 	if(result.attached !== undefined){
 		if(result.attached.length > 0){
-			fileHtml = "<div><span>첨부파일</span></div>";
 			downloadApiPath = "/api/board/filebox/" + storage.fileBoxNo + "/";
+			fileHtml = "<div class=\"defaultFormLine\" style=\"grid-column: span 4\">";
+			fileHtml += "<div class=\"defaultFormSpanDiv\">";
+			fileHtml += "<span class=\"defaultFormSpan\">첨부파일</span>";
+			fileHtml += "</div>"
+			fileHtml += "<div class=\"defaultFormContent\" style=\"display: block\">";
 		
 			for(let i = 0; i < result.attached.length; i++){
-				fileHtml += "<div><div><a href='" + downloadApiPath + encodeURI(result.attached[i].ognName) + "'>" + result.attached[i].ognName + "</a></div><div>";
+				fileHtml += "<div style=\"padding: 5px; font-size: 0.8rem;\"><a class=\"fileDownloadBtn\" href='" + downloadApiPath + encodeURI(result.attached[i].ognName) + "'>" + result.attached[i].ognName + "</a></div>";
 			}
+
+			fileHtml += "</div>";
 		}
 	}
 
 	detailBoardContainerHide();
 	storage.gridContent.after(html);
-	notIdArray = ["writer", "created"];
-	$(".detailBtns").html("<button type='button' onclick='detailBoardContainerHide();'><i class=\"fa-solid fa-xmark fa-xl\"></i></button>");
-	$(".detailContents").append(fileHtml);
+
+	if(storage.my == result.writer){
+		btnHtml += "<button type=\"button\" class=\"updateBtn\" onclick=\"fileBoxUpdateForm();\">수정</button>";
+		btnHtml += "<button type=\"button\" onclick=\"fileBoxDelete();\">삭제</button>";
+	}
+
+	btnHtml += "<button type='button' onclick='detailBoardContainerHide();'><i class=\"fa-solid fa-xmark\"></i></button>";
+	
+	$(".detailBtns").html(btnHtml);
+	$(".detailContents .defaultFormContainer").append(fileHtml);
 
 	setTimeout(() => {
-		let menu = [
-			{
-				"keyword": "add",
-				"onclick": "fileBoxInsertForm();"
-			},
-			{
-				"keyword": "edit",
-				"onclick": "fileBoxUpdateForm(" + JSON.stringify(result) + ");"
-			},
-			{
-				"keyword": "delete",
-				"onclick": "fileBoxDelete(" + result.no + ");"
-			},
-		];
-
-		plusMenuSelect(menu);
 		storage.editorArray = ["content"];
 		ckeditor.config.readOnly = true;
 		window.setTimeout(setEditor, 100);
@@ -284,12 +264,12 @@ function fileBoxInsertForm(){
 	}, 100);
 }
 
-function fileBoxUpdateForm(result){
+function fileBoxUpdateForm(){
 	let title, content, writer, dataArray, html = "";
 
-	title = (result.title === null || result.title === "") ? "" : result.title;
-	content = (result.content === null || result.content === "") ? "" : result.content;
-	writer = (result.writer == 0 || result.writer === null) ? "" : storage.user[result.writer].userName;
+	title = (storage.formList.title === null || storage.formList.title === "") ? "" : storage.formList.title;
+	content = (storage.formList.content === null || storage.formList.content === "") ? "" : storage.formList.content;
+	writer = (storage.formList.writer == 0 || storage.formList.writer === null) ? "" : storage.user[storage.formList.writer].userName;
 
 	dataArray = [
 		{
@@ -331,17 +311,18 @@ function fileBoxUpdateForm(result){
 	modal.body.html(html);
 	modal.confirm.text("수정완료");
 	modal.close.text("취소");
-	modal.confirm.attr("onclick", "fileBoxUpdate(" + result.no + ");");
+	modal.confirm.attr("onclick", "fileBoxUpdate();");
 	modal.close.attr("onclick", "modal.hide();");
 
-	$(".defaultFormContainer .defaultFormLine").eq(1).after("<div class=\"filePreview\"></div>");
-
+	defaultFormLine = $(".defaultFormLine");
+	defaultFormLine.eq(1).after("<div class=\"filePreview\"></div>");
+	
 	html = "";
 
-	if(result.attached !== undefined && result.attached.length > 0){
-		for(let i = 0; i < result.attached.length; i++){
-			fileDataArray.push(result.attached[i].ognName);
-			html += "<div><span>" + result.attached[i].ognName + "</span><button type='button' id='fileDataDelete' data-index='" + i + "' onclick='fileViewDelete(this);'>삭제</button></div>";
+	if(storage.formList.attached !== undefined && storage.formList.attached.length > 0){
+		for(let i = 0; i < storage.formList.attached.length; i++){
+			fileDataArray.push(storage.formList.attached[i].ognName);
+			html += "<div><span>" + storage.formList.attached[i].ognName + "</span><button type='button' id='fileDataDelete' data-index='" + i + "' onclick='fileViewDelete(this);'>삭제</button></div>";
 			$(".filePreview").html(html);
 		}
 	}
@@ -425,11 +406,11 @@ function fileBoxErrorUpdate(){
 	msg.set("수정에러");
 }
 
-function fileBoxDelete(no){
+function fileBoxDelete(){
 	let url, method, data, type;
 
 	if(confirm("정말로 삭제하시겠습니까??")){
-		url = "/api/board/filebox/" + no;
+		url = "/api/board/filebox/" + storage.fileBoxNo;
 		method = "delete";
 		data = "";
 		type = "delete";

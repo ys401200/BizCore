@@ -162,29 +162,12 @@ function drawScheduleList() {
 	createGrid(container, header, data, ids, dataJob, fnc);
 
 	let path = $(location).attr("pathname").split("/");
-	let menu = [
-		{
-			"keyword": "add",
-			"onclick": "scheduleInsertForm();"
-		},
-		{
-			"keyword": "notes",
-			"onclick": ""
-		},
-		{
-			"keyword": "set",
-			"onclick": ""
-		},
-	];
 
 	if(path[3] !== undefined && jsonData !== ""){
 		$(".calendarList").hide();
 		let content = $(".gridContent[data-id=\"" + path[3] + "\"]");
 		scheduleDetailView(content);
 	}
-
-	plusMenuSelect(menu);
-
 }// End of drawNoticeList()
 
 // 일정 캘린더를 만드는 함수
@@ -341,21 +324,32 @@ function scheduleDetailView(e){
 }
 
 function scheduleSuccessView(result){
-	let html, dataArray, notIdArray, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput, listRange, datas;
+	let html, dataArray, notIdArray, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput, listRange, datas, crudAddBtn, crudUpdateBtn, crudDeleteBtn;
+	notIdArray = ["writer"];
 	gridList = $(".gridList");
 	searchContainer = $(".searchContainer");
 	containerTitle = $("#containerTitle");
 	detailBackBtn = $(".detailBackBtn");
 	listSearchInput = $(".listSearchInput");
 	listRange = $(".listRange");
+	crudAddBtn = $(".crudAddBtn");
+	crudUpdateBtn = $(".crudUpdateBtn");
+	crudDeleteBtn = $(".crudDeleteBtn");
 	dataArray = scheduleRadioUpdate(result.job, result);
 	html = detailViewForm(dataArray);
 	containerTitle.html(result.title);
 	gridList.html("");
 	searchContainer.hide();
 	gridList.html(html);
+	crudAddBtn.hide();
+
+	if(storage.my == result.writer){
+		crudUpdateBtn.attr("onclick", "enableDisabled(this, \"scheduleUpdate();\", \"" + notIdArray + "\");");
+		crudUpdateBtn.css("display", "flex");
+		crudDeleteBtn.css("display", "flex");
+	}
+	
 	gridList.show();
-	notIdArray = ["writer"];
 
 	setTimeout(() => {
 		$("[name='job'][value='" + result.job + "']").attr("checked", true).removeAttr("onclick");
@@ -382,20 +376,6 @@ function scheduleSuccessView(result){
 		}
 
 		let jobArray = $("input[name=\"job\"]");
-		let menu = [
-			{
-				"keyword": "add",
-				"onclick": "scheduleInsertForm();"
-			},
-			{
-				"keyword": "edit",
-				"onclick": "enableDisabled(this, \"scheduleUpdate(" + result.no + ");\", \"" + notIdArray + "\");"
-			},
-			{
-				"keyword": "delete",
-				"onclick": "scheduleDelete(" + JSON.stringify(result) + ");"
-			},
-		];
 
 		for(let i = 0; i < jobArray.length; i++){
 			if(!$(jobArray[i]).is(":checked")){
@@ -404,7 +384,6 @@ function scheduleSuccessView(result){
 			}
 		}
 
-		plusMenuSelect(menu);
 		detailTrueDatas(datas);
 		storage.editorArray = ["content"];
 		ckeditor.config.readOnly = true;
@@ -429,22 +408,31 @@ function calendarDetailView(e){
 }
 
 function calendarSuccessView(result){
-	let html, title, dataArray, notIdArray, datas;
+	let html, title, dataArray, notIdArray, datas, defaultFormLine;
 
 	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
 	dataArray = scheduleRadioUpdate(result.job, result);
 	html = detailViewForm(dataArray, "modal");
-
+	
+	
 	modal.show();
 	modal.content.css("min-width", "70%");
 	modal.content.css("max-width", "70%");
 	modal.headTitle.text(title);
 	modal.body.html(html);
-	modal.confirm.text("수정");
-	modal.close.text("삭제");
 	notIdArray = ["writer"];
-	modal.confirm.attr("onclick", "enableDisabled(this, \"scheduleUpdate(" + result.no + ");\", \"" + notIdArray + "\");");
-	modal.close.attr("onclick", "scheduleDelete(" + JSON.stringify(result) + ");");
+
+	if(storage.my == result.writer){
+		modal.confirm.text("수정");
+		modal.confirm.attr("onclick", "enableDisabled(this, \"scheduleUpdate();\", \"" + notIdArray + "\");");
+		defaultFormLine = $(".defaultFormLine");
+		defaultFormLine.eq(0).append("<button type=\"button\" class=\"modalDeleteBtn\" onclick=\"scheduleDelete();\">삭제</button>");
+	}else{
+		modal.confirm.hide();
+	}
+
+	modal.close.text("취소");
+	modal.close.attr("onclick", "modal.hide();");
 
 	setTimeout(() => {
 		$("[name='job'][value='" + result.job + "']").attr("checked", true).removeAttr("onclick");
@@ -1851,12 +1839,12 @@ function scheduleRadioUpdate(value, result){
 	return dataArray;
 }
 
-function scheduleUpdate(no){
+function scheduleUpdate(){
 	let url, method, data, type, job;
 
 	job = $("[name='job']:checked").val();
 
-	url = "/api/schedule/" + job + "/" + no;
+	url = "/api/schedule/" + job + "/" + storage.formList.no;
 	method = "put";
 	type = "update";
 
@@ -1952,11 +1940,11 @@ function scheduleSelectError(){
 	msg.set("에러");
 }
 
-function scheduleDelete(result){
+function scheduleDelete(){
 	if(confirm("삭제하시겠습니까??")){
 		let url, method, data, type;
 
-		url = "/api/schedule/" + result.job + "/" + result.no;
+		url = "/api/schedule/" + storage.formList.job + "/" + storage.formList.no;
 		method = "delete";
 		type = "delete";
 

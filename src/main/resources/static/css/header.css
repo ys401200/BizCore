@@ -51,9 +51,12 @@ button, select, input[type="text"], input[type="date"]{
 	cursor: pointer;
 }
 
+/* crud 관련 버튼 시작 */
 .crudBtns{
+	display: flex;
+	align-items: center;
 	float: right;
-    padding-top: 8px;
+    padding-top: 9px;
     padding-right: 5px;
 }
 
@@ -64,8 +67,59 @@ button, select, input[type="text"], input[type="date"]{
     align-items: center;
     background-color: #2147b1;
     color: #ffffff;
+    border-radius: 5px;
 }
 
+.crudBtns > button:hover{
+	background-color: #0e2b7e;
+}
+
+.crudBtns > .crudUpdateBtn{
+	display: none;
+	margin-right: 5px;
+}
+
+.crudBtns > .crudDeleteBtn{
+	display: none;
+	margin-right: 5px;
+}
+
+.modalDeleteBtn{
+	display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 30px;
+    background-color: #2147b1;
+    color: #ffffff;
+}
+
+.detailBackBtn{
+	align-items: center;
+    display: none;
+    padding-right: 15px;
+    text-decoration: none;
+    background-color: #2147b1;
+    height: 5px;
+    padding: 10px;
+    color: #ffffff;
+    border-radius: 5px;
+}
+
+.detailBackBtn:hover{
+	background-color: #0e2b7e;
+	cursor: pointer;
+}
+
+.detailSecondTabs{
+	display: none;
+	background-color: #ffffff;
+	padding: 10px;
+	margin-top: 3px;
+}
+/* crud 관련 버튼 끝 */
+
+/* 자동완성 시작 */
 .autoComplete{
 	border: 1px solid #ededed;
     position: absolute;
@@ -87,6 +141,7 @@ button, select, input[type="text"], input[type="date"]{
 	color: #ffffff;
 	cursor: pointer;
 }
+/* 자동완성 끝 */
 
 /* 메시징 컨테이너 시작 */
 .msg_cnt{
@@ -487,25 +542,6 @@ textarea{
 	padding: 5px;
     width: 100%;
 	font-size: 0.8rem;
-}
-
-.detailBackBtn{
-	align-items: center;
-	float: right;
-	display: none;
-	line-height: 40px;
-    padding-right: 15px;
-}
-
-.detailBackBtn:hover{
-	cursor: pointer;
-}
-
-.detailSecondTabs{
-	display: none;
-	background-color: #ffffff;
-	padding: 10px;
-	margin-top: 3px;
 }
 /* crud 폼 끝 */
 

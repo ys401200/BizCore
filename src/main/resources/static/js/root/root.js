@@ -11,15 +11,6 @@ $(document).ready(() => {
 	}else{
 		window.setTimeout(gridWidget, 200);
 	}
-
-	let menu = [
-		{
-			"keyword": "widget",
-			"onclick": ""
-		},
-	];
-
-	plusMenuSelect(menu);
 });
 
 function gridWidget(){

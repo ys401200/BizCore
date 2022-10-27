@@ -91,27 +91,11 @@ function drawNoticeList() {
 	createGrid(container, header, data, ids, job, fnc);
 
 	let path = $(location).attr("pathname").split("/");
-	let menu = [
-		{
-			"keyword": "add",
-			"onclick": "noticeInsertForm();"
-		},
-		{
-			"keyword": "notes",
-			"onclick": ""
-		},
-		{
-			"keyword": "set",
-			"onclick": ""
-		},
-	];
 
 	if(path[3] !== undefined && jsonData !== null){
 		let content = $(".gridContent[data-id=\"" + path[3] + "\"]");
 		noticeDetailView(content);
 	}
-
-	plusMenuSelect(menu);
 }// End of drawNoticeList()
 
 function noticeDetailView(e) {// 선택한 그리드의 글 번호 받아오기 
@@ -146,7 +130,7 @@ function noticeErrorList(){
 }
 
 function noticeSuccessView(result){
-	let html = "", datas, title, content, writer, dataArray, disDate, setDate, notIdArray;
+	let html = "", btnHtml = "", datas, title, content, writer, dataArray, disDate, setDate, notIdArray;
 	detailSetFormList(result);
 	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
 	content = (result.content === null || result.content === "" || result.content === undefined) ? "" : result.content;
@@ -191,11 +175,14 @@ function noticeSuccessView(result){
 	notIdArray = ["writer", "created"];
 	detailTrueDatas(datas);
 	
-	$(".detailBtns").html(
-		"<button type=\"button\" onclick=\"enableDisabled(this, 'noticeUpdate();', '" + notIdArray + "');\"><i class=\"fa-solid fa-pen-to-square fa-sm\"></i></button>"
-		+ "<button type=\"button\" onclick=\"noticeDelete(" + result.no + ");\"><i class=\"fa-solid fa-trash-can fa-sm\"></i></button>"
-		+ "<button type='button' onclick='detailBoardContainerHide();'><i class=\"fa-solid fa-xmark fa-xl\"></i></button>"
-	);
+	if(storage.my == storage.formList.writer){
+		btnHtml += "<button type=\"button\" class=\"updateBtn\" onclick=\"enableDisabled(this, 'noticeUpdate();', '" + notIdArray + "');\">수정</button>";
+		btnHtml += "<button type=\"button\" onclick=\"noticeDelete();\">삭제</button>";
+	}
+
+	btnHtml += "<button type='button' onclick='detailBoardContainerHide();'><i class=\"fa-solid fa-xmark\"></i></button>";
+
+	$(".detailBtns").html(btnHtml);
 
 	setTimeout(() => {
 		storage.editorArray = ["content"];
@@ -319,11 +306,11 @@ function noticeErrorUpdate(){
 	msg.set("수정에러");
 }
 
-function noticeDelete(no){
+function noticeDelete(){
 	let url, method, data, type;
 
 	if(confirm("정말로 삭제하시겠습니까??")){
-		url = "/api/notice/" + no;
+		url = "/api/notice/" + storage.formList.no;
 		method = "delete";
 		data = "";
 		type = "delete";

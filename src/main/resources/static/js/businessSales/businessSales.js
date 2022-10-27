@@ -157,27 +157,11 @@ function drawSalesList() {
 	createGrid(container, header, data, ids, dataJob, fnc);
 
 	let path = $(location).attr("pathname").split("/");
-	let menu = [
-		{
-			"keyword": "add",
-			"onclick": "salesInsertForm();"
-		},
-		{
-			"keyword": "notes",
-			"onclick": ""
-		},
-		{
-			"keyword": "set",
-			"onclick": ""
-		},
-	];
 	
 	if(path[3] !== undefined && jsonData !== ""){
 		let content = $(".gridContent[data-id=\"" + path[3] + "\"]");
 		salesDetailView(content);
 	}
-
-	plusMenuSelect(menu);
 }
 
 function salesDetailView(e){
@@ -193,7 +177,7 @@ function salesDetailView(e){
 }
 
 function salesSuccessView(result){
-	let dataArray, datas, from, to, place, writer, sopp, customer, partner, title, content, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput, listRange;
+	let dataArray, datas, from, to, place, writer, sopp, customer, partner, title, content, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput, listRange, crudAddBtn, crudUpdateBtn, crudDeleteBtn;
 	detailSetFormList(result);
 	gridList = $(".gridList");
 	searchContainer = $(".searchContainer");
@@ -201,7 +185,11 @@ function salesSuccessView(result){
 	detailBackBtn = $(".detailBackBtn");
 	listSearchInput = $(".listSearchInput");
 	listRange = $(".listRange");
+	crudAddBtn = $(".crudAddBtn");
+	crudUpdateBtn = $(".crudUpdateBtn");
+	crudDeleteBtn = $(".crudDeleteBtn");
 	datas = ["sopp", "writer", "customer", "partner"];
+	notIdArray = ["writer"];
 
 	disDate = dateDis(result.from);
 	from = dateFnc(disDate);
@@ -389,8 +377,15 @@ function salesSuccessView(result){
 	gridList.html("");
 	searchContainer.hide();
 	gridList.html(html);
+	crudAddBtn.hide();
+
+	if(storage.my == result.writer){
+		crudUpdateBtn.attr("onclick", "enableDisabled(this, \"salesUpdate();\", \"" + notIdArray + "\");");
+		crudUpdateBtn.css("display", "flex");
+		crudDeleteBtn.css("display", "flex");
+	}
+
 	gridList.show();
-	notIdArray = ["writer"];
 	detailTrueDatas(datas);
 
 	setTimeout(() => {
@@ -399,23 +394,6 @@ function salesSuccessView(result){
 		detailBackBtn.css("display", "flex");
 		listSearchInput.hide();
 		listRange.hide();
-		
-		let menu = [
-			{
-				"keyword": "add",
-				"onclick": "salesInsertForm();"
-			},
-			{
-				"keyword": "edit",
-				"onclick": "enableDisabled(this, \"salesUpdate();\", \"" + notIdArray + "\");"
-			},
-			{
-				"keyword": "delete",
-				"onclick": "salesDelete(" + JSON.stringify(result) + ");"
-			},
-		];
-
-		plusMenuSelect(menu);
 		storage.editorArray = ["content"];
 		ckeditor.config.readOnly = true;
 		window.setTimeout(setEditor, 100);
@@ -724,11 +702,11 @@ function scheduleSelectError(){
 	msg.set("에러");
 }
 
-function salesDelete(result){
+function salesDelete(){
 	if(confirm("삭제하시겠습니까??")){
 		let url, method, data, type;
 
-		url = "/api/schedule/" + result.job + "/" + result.no;
+		url = "/api/schedule/" + storage.formList.job + "/" + storage.formList.no;
 		method = "delete";
 		type = "delete";
 

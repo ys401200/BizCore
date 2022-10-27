@@ -24,7 +24,7 @@ function drawCustomerList() {
 	let container, result, job, jsonData, header = [], data = [], ids = [], pageContainer, str, fnc;
 	
 	if (storage.customerList === undefined) {
-		msg.set("등록된 영업기회가 없습니다");
+		msg.set("등록된 고객사가 없습니다");
 	}
 	else {
 		if(storage.searchDatas === undefined){
@@ -93,23 +93,6 @@ function drawCustomerList() {
 	}
 
 	createGrid(container, header, data, ids, job, fnc);
-
-	let menu = [
-		{
-			"keyword": "add",
-			"onclick": "customerInsertForm();"
-		},
-		{
-			"keyword": "notes",
-			"onclick": ""
-		},
-		{
-			"keyword": "set",
-			"onclick": ""
-		},
-	];
-
-	plusMenuSelect(menu);
 }
 
 function customerDetailView(e){
@@ -143,6 +126,7 @@ function customerErrorList(){
 
 function customerSuccessView(result){
 	let html, name, ceoName, taxId, address, email, fax, phone, dataArray, notIdArray;
+	console.log(result);
 	storage.customerNo = result.no;
 	name = (result.name === null || result.name === "" || result.name === undefined) ? "" : result.name;
 	ceoName = (result.ceoName === null || result.ceoName === "" || result.ceoName === undefined) ? "" : result.ceoName;
