@@ -229,14 +229,8 @@ function contractErrorList(){
 }
 
 function contractSuccessView(result){
-	let notIdArray, detailTrueDatas, sopp, html, htmlSecond, contractType, title, employee, customer, salesType, cipOfCustomer, endUser, cipOfendUser, saleDate, delivered, employee2, startOfFreeMaintenance, endOfFreeMaintenance, startOfPaidMaintenance, endOfPaidMaintenance, contractAmount, taxInclude, profit, detail, disDate, dataArray, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput, listRange, pageContainer;
-	storage.formList = {};
-	for(let key in result){
-		if(typeof result[key] !== "object"){
-			storage.formList[key] = result[key];
-		}
-	}
-
+	let notIdArray, datas, sopp, html, htmlSecond, contractType, title, employee, customer, salesType, cipOfCustomer, endUser, cipOfendUser, saleDate, delivered, employee2, startOfFreeMaintenance, endOfFreeMaintenance, startOfPaidMaintenance, endOfPaidMaintenance, contractAmount, taxInclude, profit, detail, disDate, dataArray, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput, listRange, pageContainer;
+	detailSetFormList(result);
 	gridList = $(".gridList");
 	searchContainer = $(".searchContainer");
 	containerTitle = $("#containerTitle");
@@ -245,7 +239,7 @@ function contractSuccessView(result){
 	detailSecondTabs = $(".detailSecondTabs");
 	listRange = $(".listRange");
 	pageContainer = $(".pageContainer");
-	detailTrueDatas = ["employee", "customer", "cipOfCustomer", "endUser", "cipOfendUser", "sopp", "employee2"];
+	datas = ["employee", "customer", "cipOfCustomer", "endUser", "cipOfendUser", "sopp", "employee2"];
 
 	contractType = (result.contractType === null || result.contractType === "" || result.contractType === undefined) ? "" : storage.code.etc[result.contractType];
 	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
@@ -500,14 +494,8 @@ function contractSuccessView(result){
 	createTabFileList();
 	createTabTechList(result.schedules);
 	createTabSalesList(result.schedules);
-
-	for(let i = 0; i < detailTrueDatas.length; i++){
-		if($("#" + detailTrueDatas[i]).length > 0){
-			$("#" + detailTrueDatas[i]).attr("data-change", true);
-		}else if($("[name=\"" + detailTrueDatas[i] + "\"]").length > 0){
-			$("[name=\"" + detailTrueDatas[i] + "\"]").attr("data-change", true);
-		}
-	}
+	detailTabHide("tabTradeList");
+	detailTrueDatas(datas);
 
 	$(".detailContents").show();
 	
@@ -557,8 +545,6 @@ function contractSuccessView(result){
 		ckeditor.config.readOnly = true;
 		window.setTimeout(setEditor, 100);
 	}, 100);
-
-	detailTabHide("tabTradeList");
 }
 
 function contractErrorView(){
@@ -799,6 +785,7 @@ function contractInsertForm(){
 	
 	setTimeout(() => {
 		$(".cke").css("height", "300px");
+		$(".cke_inner").css("height", "300px");
 		$(".cke_contents").css("height", "300px");
 	}, 400);
 }

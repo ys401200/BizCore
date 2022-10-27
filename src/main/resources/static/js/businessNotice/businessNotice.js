@@ -34,7 +34,6 @@ function drawNoticeList() {
 	}
 
 	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
-	console.log(result);
 	pageContainer = document.getElementsByClassName("pageContainer");
 	container = $(".gridNoticeList");
 
@@ -147,14 +146,14 @@ function noticeErrorList(){
 }
 
 function noticeSuccessView(result){
-	let html = "", title, content, writer, dataArray, disDate, setDate, notIdArray;
-	storage.detailNoticeNo = result.no;
-
+	let html = "", datas, title, content, writer, dataArray, disDate, setDate, notIdArray;
+	detailSetFormList(result);
 	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
 	content = (result.content === null || result.content === "" || result.content === undefined) ? "" : result.content;
 	writer = (result.writer == 0 || result.writer === null || result.writer === undefined) ? "" : storage.user[result.writer].userName;
 	disDate = dateDis(result.created, result.modified);
 	setDate = dateFnc(disDate);
+	datas = ["writer"];
 
 	dataArray = [
 		{
@@ -191,6 +190,7 @@ function noticeSuccessView(result){
 	storage.gridContent.after(html);
 	notIdArray = ["writer", "created"];
 	$(".detailBtns").html("<button type='button' onclick='detailBoardContainerHide();'><i class=\"fa-solid fa-xmark fa-xl\"></i></button>");
+	detailTrueDatas(datas);
 
 	setTimeout(() => {
 		storage.editorArray = ["content"];
@@ -212,7 +212,6 @@ function noticeSuccessView(result){
 		plusMenuSelect(menu);
 		ckeditor.config.readOnly = true;
 		window.setTimeout(setEditor, 100);
-		inputDataList();
 	}, 100);
 }
 
@@ -227,7 +226,6 @@ function noticeInsertForm(){
 		{
 			"title": "담당자",
 			"elementId": "writer",
-			"dataKeyup": "user",
 			"col": 4,
 		},
 		{
@@ -255,6 +253,12 @@ function noticeInsertForm(){
 	modal.confirm.attr("onclick", "noticeInsert();");
 	modal.close.attr("onclick", "modal.hide();");
 
+	storage.formList = {
+		"writer": storage.my,
+		"title": "",
+		"content": "",
+	};
+
 	setTimeout(() => {
 		let my;
 		my = storage.my;
@@ -263,6 +267,12 @@ function noticeInsertForm(){
 		ckeditor.config.readOnly = false;
 		window.setTimeout(setEditor, 100);
 	}, 100);
+
+	setTimeout(() => {
+		$(".cke").css("height", "300px");
+		$(".cke_inner").css("height", "300px");
+		$(".cke_contents").css("height", "300px");
+	}, 400);
 }
 
 function noticeInsert(){
@@ -270,27 +280,15 @@ function noticeInsert(){
 		msg.set("제목을 입력해주세요.");
 		$("#title").focus();
 		return false;
-	}else if(content === ""){
-		msg.set("내용을 입력해주세요.");
-		return false;
 	}else{
-		let title, content, writer, data;
-		title = $("#title").val();
-		content = CKEDITOR.instances.content.getData();
-		console.log(content.replaceAll("\r\n", ""));
-		writer = $("#writer");
-		writer = dataListFormat(writer.attr("id"), writer.val());
+		let url, method, data, type;
+		formDataSet();
 		url = "/api/notice";
 		method = "post";
-		data = {
-			"title": title,
-			"content": content,
-			"writer": writer
-		}
+		data = storage.formList;
 		type = "insert";
 		data = JSON.stringify(data);
 		data = cipher.encAes(data);
-
 		crud.defaultAjax(url, method, data, type, noticeSuccessInsert, noticeErrorInsert);
 	}
 
@@ -310,26 +308,15 @@ function noticeUpdate(){
 		msg.set("제목을 입력해주세요.");
 		$("#title").focus();
 		return false;
-	}else if(content === ""){
-		msg.set("내용을 입력해주세요.");
-		return false;
 	}else{
-		let title, content, writer;
-		title = $("#title").val();
-		content = CKEDITOR.instances.content.getData();
-		writer = $("#writer");
-		writer = dataListFormat(writer.attr("id"), writer.val());
-		url = "/api/notice/" + storage.detailNoticeNo;
+		let url, method, data, type;
+		formDataSet();
+		url = "/api/notice/" + storage.formList.no;
 		method = "put";
-		data = {
-			"title": title,
-			"content": content,
-			"writer": writer,
-		}
+		data = storage.formList;
 		type = "update";
 		data = JSON.stringify(data);
 		data = cipher.encAes(data);
-
 		crud.defaultAjax(url, method, data, type, noticeSuccessUpdate, noticeErrorUpdate);
 	}
 }

@@ -204,14 +204,15 @@ function techDetailView(e){
 }
 
 function techSuccessView(result){
-	let from, to, place, writer, sopp, contract, customer, cipOfCustomer, partner, title, content, supportModel, supportVersion, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput, listRange;
-	storage.techNo = result.no;
+	let from, datas, to, place, writer, sopp, contract, customer, cipOfCustomer, partner, title, content, supportModel, supportVersion, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput, listRange;
+	detailSetFormList(result);
 	gridList = $(".gridList");
 	searchContainer = $(".searchContainer");
 	containerTitle = $("#containerTitle");
 	detailBackBtn = $(".detailBackBtn");
 	listSearchInput = $(".listSearchInput");
 	listRange = $(".listRange");
+	datas = ["sopp", "writer", "customer", "partner", "cipOfCustomer", "contract"];
 
 	disDate = dateDis(result.from);
 	from = dateFnc(disDate);
@@ -283,7 +284,7 @@ function techSuccessView(result){
 
 	dataArray = [
 		{
-			"title": "일정선택",
+			"title": undefined,
 			"radioValue": [
 				{
 					"key": "tech",
@@ -293,7 +294,7 @@ function techSuccessView(result){
 			"type": "radio",
 			"elementName": "job",
 			"radioType": "tab",
-			"elementId": "jobTech",
+			"elementId": ["jobTech"],
 			"col": 4,
 		},
 		{
@@ -314,31 +315,41 @@ function techSuccessView(result){
 		{
 			"title": "영업기회(*)",
 			"elementId": "sopp",
-			"dataKeyup": "sopp",
+			"complete": "sopp",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 			"value": sopp,
 		},
 		{
 			"title": "계약",
 			"elementId": "contract",
-			"dataKeyup": "contract",
+			"complete": "contract",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 			"value": contract,
 		},
 		{
 			"title": "매출처",
 			"elementId": "partner",
-			"dataKeyup": "customer",
+			"complete": "customer",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 			"value": partner,
 		},
 		{
 			"title": "매출처 담당자",
-			"dataKeyup": "customerUser",
+			"complete": "cip",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 			"elementId": "cipOfCustomer",
 			"value": cipOfCustomer,
 		},
 		{
 			"title": "엔드유저(*)",
 			"elementId": "customer",
-			"dataKeyup": "customer",
+			"complete": "customer",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 			"value": customer,
 		},
 		{
@@ -400,7 +411,9 @@ function techSuccessView(result){
 		},
 		{
 			"title": "담당자(*)",
-			"dataKeyup": "user",
+			"complete": "user",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 			"elementId": "writer",
 			"value": writer,
 		},
@@ -444,6 +457,7 @@ function techSuccessView(result){
 	gridList.html(html);
 	gridList.show();
 	notIdArray = ["writer"];
+	detailTrueDatas(datas);
 
 	setTimeout(() => {
 		$("[name='job'][value='tech']").prop("checked", true);
@@ -478,7 +492,6 @@ function techSuccessView(result){
 		storage.editorArray = ["content"];
 		ckeditor.config.readOnly = true;
 		window.setTimeout(setEditor, 100);
-		inputDataList();
 	}, 100);
 }
 
@@ -520,7 +533,7 @@ function techInsertForm(){
 
 	dataArray = [
 		{
-			"title": "일정선택",
+			"title": undefined,
 			"radioValue": [
 				{
 					"key": "tech",
@@ -530,7 +543,7 @@ function techInsertForm(){
 			"type": "radio",
 			"elementName": "job",
 			"radioType": "tab",
-			"elementId": "jobTech",
+			"elementId": ["jobTech"],
 			"col": 4,
 			"disabled": false,
 		},
@@ -555,24 +568,32 @@ function techInsertForm(){
 		{
 			"title": "영업기회(*)",
 			"elementId": "sopp",
-			"dataKeyup": "sopp",
+			"complete": "sopp",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 			"disabled": false,
 		},
 		{
 			"title": "계약",
 			"elementId": "contract",
-			"dataKeyup": "contract",
+			"complete": "contract",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 			"disabled": false,
 		},
 		{
 			"title": "매출처",
 			"disabled": false,
 			"elementId": "partner",
-			"dataKeyup": "customer",
+			"complete": "customer",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 		},
 		{
 			"title": "매출처 담당자",
-			"dataKeyup": "customerUser",
+			"complete": "cip",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 			"elementId": "cipOfCustomer",
 			"disabled": false,
 		},
@@ -580,7 +601,9 @@ function techInsertForm(){
 			"title": "엔드유저(*)",
 			"elementId": "customer",
 			"disabled": false,
-			"dataKeyup": "customer",
+			"complete": "customer",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 		},
 		{
 			"title": "모델",
@@ -643,7 +666,9 @@ function techInsertForm(){
 		},
 		{
 			"title": "담당자(*)",
-			"dataKeyup": "user",
+			"complete": "user",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 			"elementId": "writer",
 			"value": myName,
 		},
@@ -695,9 +720,39 @@ function techInsertForm(){
 	modal.close.text("취소");
 	modal.confirm.attr("onclick", "techInsert();");
 	modal.close.attr("onclick", "modal.hide();");
-	storage.editorArray = ["content"];
-	ckeditor.config.readOnly = false;
-	window.setTimeout(setEditor, 100);
+
+	storage.formList = {
+		"job" : "",
+		"contractMethod" : "",
+		"sopp" : 0,
+		"contract" : 0,
+		"partner" : 0,
+		"cipOfCustomer" : 0,
+		"customer" : 0,
+		"supportModel" : "",
+		"supportVersion" : "",
+		"supportStep" : "",
+		"type" : "",
+		"place" : "",
+		"writer" : storage.my,
+		"from" : "",
+		"to" : "",
+		"title" : "",
+		"content" : "",
+	};
+
+	setTimeout(() => {
+		$("#writer").attr("data-change", true);
+		storage.editorArray = ["content"];
+		ckeditor.config.readOnly = false;
+		window.setTimeout(setEditor, 100);
+	}, 100);
+
+	setTimeout(() => {
+		$(".cke").css("height", "300px");
+		$(".cke_inner").css("height", "300px");
+		$(".cke_contents").css("height", "300px");
+	}, 400);
 }
 
 function techInsert(){
@@ -721,60 +776,17 @@ function techInsert(){
 		$("#title").focus();
 		return false;
 	}else{
-		let url, method, data, job, from, to, place, writer, sopp, contract, contractMethod, customer, cipOfCustomer, partner, title, content, supportModel, supportVersion, supportStep, type;
+		let url, method, data, type, job;
 		job = $("[name='job']:checked").val();
-		from = $("#from").val();
-		from = new Date(from).getTime();
-		to = $("#to").val();
-		to = new Date(to).getTime();
-		place = $("#place").val();
-		writer = $("#writer");
-		writer = dataListFormat(writer.attr("id"), writer.val());
-		sopp = $("#sopp");
-		sopp = dataListFormat(sopp.attr("id"), sopp.val());
-		customer = $("#customer");
-		customer = dataListFormat(customer.attr("id"), customer.val());
-		partner = $("#partner");
-		partner = dataListFormat(partner.attr("id"), partner.val());
-		title = $("#title").val();
-		content = CKEDITOR.instances.content.getData();
-		supportModel = $("#supportModel").val();
-		supportVersion = $("#supportVersion").val();
-		contract = $("#contract");
-		contract = dataListFormat(contract.attr("id"), contract.val()); 
-		contractMethod = $("[name='contractMethod']:checked").val();
-		cipOfCustomer = $("#cipOfCustomer");
-		cipOfCustomer = dataListFormat(cipOfCustomer.attr("id"), cipOfCustomer.val());
-		supportStep = $("#supportStep").val();
-		type = $("#type").val();
-
-		data = {
-			"job": job,
-			"from": from,
-			"to": to,
-			"place": place,
-			"writer": writer,
-			"sopp": sopp,
-			"customer": customer,
-			"partner": partner,
-			"title": title,
-			"content": content,
-			"supportModel": supportModel,
-			"supportVersion": supportVersion,
-			"contract": contract,
-			"contractMethod": contractMethod,
-			"cipOfCustomer": cipOfCustomer,
-			"supportStep": supportStep,
-			"type": type,
-		};
+		formDataSet();
+		url = "/api/schedule/" + job;
+		method = "post";
+		data = storage.formList;
+		type = "insert";
+		data = JSON.stringify(data);
+		data = cipher.encAes(data);
+		crud.defaultAjax(url, method, data, type, techSuccessInsert, techErrorInsert);
 	}
-
-	url = "/api/schedule/" + job;
-	method = "post";
-	type = "insert";
-	data = JSON.stringify(data);
-	data = cipher.encAes(data);
-	crud.defaultAjax(url, method, data, type, techSuccessInsert, techErrorInsert);
 }
 
 function techSuccessInsert(){
@@ -808,61 +820,17 @@ function techUpdate(){
 		$("#title").focus();
 		return false;
 	}else{
-		let url, method, data, type, job, from, to, place, writer, sopp, contract, contractMethod, customer, cipOfCustomer, partner, title, content, supportModel, supportVersion, supportStep;
+		let url, method, data, type, job;
 		job = $("[name='job']:checked").val();
-		from = $("#from").val();
-		from = new Date(from).getTime();
-		to = $("#to").val();
-		to = new Date(to).getTime();
-		place = $("#place").val();
-		writer = $("#writer");
-		writer = dataListFormat(writer.attr("id"), writer.val());
-		sopp = $("#sopp");
-		sopp = dataListFormat(sopp.attr("id"), sopp.val());
-		customer = $("#customer");
-		customer = dataListFormat(customer.attr("id"), customer.val());
-		partner = $("#partner");
-		partner = dataListFormat(partner.attr("id"), partner.val());
-		title = $("#title").val();
-		content = CKEDITOR.instances.content.getData();
-		supportModel = $("#supportModel").val();
-		supportVersion = $("#supportVersion").val();
-		contract = $("#contract");
-		contract = dataListFormat(contract.attr("id"), contract.val()); 
-		contractMethod = $("[name='contractMethod']:checked").val();
-		cipOfCustomer = $("#cipOfCustomer");
-		cipOfCustomer = dataListFormat(cipOfCustomer.attr("id"), cipOfCustomer.val());
-		supportStep = $("#supportStep").val();
-		type = $("#type").val();
-
-		data = {
-			"job": job,
-			"from": from,
-			"to": to,
-			"place": place,
-			"writer": writer,
-			"sopp": sopp,
-			"customer": customer,
-			"partner": partner,
-			"title": title,
-			"content": content,
-			"supportModel": supportModel,
-			"supportVersion": supportVersion,
-			"contract": contract,
-			"contractMethod": contractMethod,
-			"cipOfCustomer": cipOfCustomer,
-			"supportStep": supportStep,
-			"type": type,
-		};
+		formDataSet();
+		url = "/api/schedule/" + job + "/" + storage.formList.no;
+		method = "put";
+		data = storage.formList;
+		type = "update";
+		data = JSON.stringify(data);
+		data = cipher.encAes(data);
+		crud.defaultAjax(url, method, data, type, techsuccessUpdate, techErrorUpdate);
 	}
-
-	url = "/api/schedule/" + job + "/" + storage.techNo;
-	method = "put";
-	type = "update";
-	data = JSON.stringify(data);
-	data = cipher.encAes(data);
-
-	crud.defaultAjax(url, method, data, type, techsuccessUpdate, techErrorUpdate);
 }
 
 function techsuccessUpdate(){

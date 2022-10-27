@@ -12,19 +12,19 @@
             <div class="searchMultiContent">
                 <div class="searchEmployee">
                     <span>담당자</span>
-                    <input type="text" data-complete="user" id="searchEmployee" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">
+                    <input type="text" data-complete="user" autocomplete="off" id="searchEmployee" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">
                 </div>
                 <div class="searchCustomer">
                     <span>거래처</span>
-                    <input type="text" data-complete="customer" id="searchCustomer" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">
+                    <input type="text" data-complete="customer" autocomplete="off" id="searchCustomer" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">
                 </div>
                 <div class="searchEndUser">
                     <span>엔드유저</span>
-                    <input type="text" data-complete="customer" id="searchEndUser" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">
+                    <input type="text" data-complete="customer" autocomplete="off" id="searchEndUser" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">
                 </div>
                 <div class="searchTitle">
                     <span>계약명</span>
-                    <input type="text" data-complete="contract" id="searchTitle" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">
+                    <input type="text" data-complete="contract" autocomplete="off" id="searchTitle" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">
                 </div>
                 <div class="searchSalesType">
                     <span>판매방식</span>

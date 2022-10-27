@@ -12,11 +12,11 @@
 			<div class="searchMultiContent">
 				<div class="searchWriter">
 					<span>담당자</span>
-					<input type="text" data-type="user" id="searchWriter">
+					<input type="text" data-complete="user" autocomplete="off" id="searchWriter" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">
 				</div>
 				<div class="searchCustomer">
 					<span>거래처</span>
-					<input type="text" data-type="customer" id="searchCustomer">
+					<input type="text" data-complete="customer" autocomplete="off" id="searchCustomer" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">
 				</div>
 				<div class="searchType">
 					<span>활동형태</span>

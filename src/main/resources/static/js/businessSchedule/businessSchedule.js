@@ -341,7 +341,7 @@ function scheduleDetailView(e){
 }
 
 function scheduleSuccessView(result){
-	let html, dataArray, notIdArray, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput, listRange;
+	let html, dataArray, notIdArray, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput, listRange, datas;
 	gridList = $(".gridList");
 	searchContainer = $(".searchContainer");
 	containerTitle = $("#containerTitle");
@@ -355,7 +355,7 @@ function scheduleSuccessView(result){
 	searchContainer.hide();
 	gridList.html(html);
 	gridList.show();
-	notIdArray = ["employee"];
+	notIdArray = ["writer"];
 
 	setTimeout(() => {
 		$("[name='job'][value='" + result.job + "']").attr("checked", true).removeAttr("onclick");
@@ -365,16 +365,20 @@ function scheduleSuccessView(result){
 
 		if(result.job === "sales"){
 			let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;
+			datas = ["sopp", "writer", "customer", "partner"];
 
 			$("#type option[value='" + type + "']").attr("selected", true);
 		}else if(result.job === "tech"){
 			let contractMethod = (result.contractMethod === null || result.contractMethod === "" || result.contractMethod === undefined) ? "" : result.contractMethod;
 			let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;
 			let supportStep = (result.supportStep === null || result.supportStep === "" || result.supportStep === undefined) ? "" : result.supportStep;
+			datas = ["sopp", "writer", "customer", "partner", "cipOfCustomer", "contract"];
 
 			$("[name='contractMethod'][value='" + contractMethod + "']").attr("checked", true);
 			$("#type option[value='" + type + "']").attr("selected", true);
 			$("#supportStep option[value='" + supportStep + "']").attr("selected", true);
+		}else{
+			datas = ["sopp", "writer", "customer"];
 		}
 
 		let jobArray = $("input[name=\"job\"]");
@@ -401,10 +405,10 @@ function scheduleSuccessView(result){
 		}
 
 		plusMenuSelect(menu);
+		detailTrueDatas(datas);
 		storage.editorArray = ["content"];
 		ckeditor.config.readOnly = true;
 		window.setTimeout(setEditor, 100);
-		inputDataList();
 	}, 100);
 }
 
@@ -425,7 +429,7 @@ function calendarDetailView(e){
 }
 
 function calendarSuccessView(result){
-	let html, title, dataArray, notIdArray;
+	let html, title, dataArray, notIdArray, datas;
 
 	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
 	dataArray = scheduleRadioUpdate(result.job, result);
@@ -444,18 +448,21 @@ function calendarSuccessView(result){
 
 	setTimeout(() => {
 		$("[name='job'][value='" + result.job + "']").attr("checked", true).removeAttr("onclick");
-
 		if(result.job === "sales"){
 			let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;
+			datas = ["sopp", "writer", "customer", "partner"];
 			$("#type option[value='" + type + "']").attr("selected", true);
 		}else if(result.job === "tech"){
 			let contractMethod = (result.contractMethod === null || result.contractMethod === "" || result.contractMethod === undefined) ? "" : result.contractMethod;
 			let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;
 			let supportStep = (result.supportStep === null || result.supportStep === "" || result.supportStep === undefined) ? "" : result.supportStep;
+			datas = ["sopp", "writer", "customer", "partner", "cipOfCustomer", "contract"];
 
 			$("[name='contractMethod'][value='" + contractMethod + "']").attr("checked", true);
 			$("#type option[value='" + type + "']").attr("selected", true);
 			$("#supportStep option[value='" + supportStep + "']").attr("selected", true);
+		}else{
+			datas = ["sopp", "writer", "customer"];
 		}
 
 		let jobArray = $("input[name=\"job\"]");
@@ -467,10 +474,17 @@ function calendarSuccessView(result){
 			}
 		}
 
+		detailTrueDatas(datas);
 		storage.editorArray = ["content"];
 		ckeditor.config.readOnly = true;
 		window.setTimeout(setEditor, 100);
 	}, 100);
+
+	setTimeout(() => {
+		$(".cke").css("height", "300px");
+		$(".cke_inner").css("height", "300px");
+		$(".cke_contents").css("height", "300px");
+	}, 400);
 }
 
 function calendarErrorView(){
@@ -628,9 +642,16 @@ function scheduleInsertForm(getDate){
 	setTimeout(() => {
 		storage.editorArray = ["content"];
 		$("[name='job'][value='sales']").attr("checked", true);
+		$("#writer").attr("data-change", true);
 		ckeditor.config.readOnly = false;
 		window.setTimeout(setEditor, 100);
 	}, 100);
+
+	setTimeout(() => {
+		$(".cke").css("height", "300px");
+		$(".cke_inner").css("height", "300px");
+		$(".cke_contents").css("height", "300px");
+	}, 400);
 }
 
 function scheduleRadioClick(e, result){
@@ -668,9 +689,16 @@ function scheduleRadioClick(e, result){
 		$("[name='job'][value='" + value + "']").attr("checked", true);
 		$("#from").val(tempFrom);
 		$("#to").val(tempTo);
+		$("#writer").attr("data-change", true);
 		window.setTimeout(setEditor, 100);
 		ckeditor.config.readOnly = false;
 	}, 100);
+
+	setTimeout(() => {
+		$(".cke").css("height", "300px");
+		$(".cke_inner").css("height", "300px");
+		$(".cke_contents").css("height", "300px");
+	}, 400);
 }
 
 function scheduleRadioInsert(value, date){
@@ -804,26 +832,34 @@ function scheduleRadioInsert(value, date){
 			{
 				"title": "담당자(*)",
 				"elementId": "writer",
-				"dataKeyup": "user",
+				"complete": "user",
+				"keyup": "addAutoComplete(this);",
+				"onClick": "addAutoComplete(this);",
 				"value": myName,
 			},
 			{
 				"title": "영업기회",
 				"elementId": "sopp",
-				"dataKeyup": "sopp",
+				"complete": "sopp",
+				"keyup": "addAutoComplete(this);",
+				"onClick": "addAutoComplete(this);",
 				"disabled": false,
 			},
 			{
 				"title": "매출처",
 				"disabled": false,
 				"elementId": "customer",
-				"dataKeyup": "customer",
+				"complete": "customer",
+				"keyup": "addAutoComplete(this);",
+				"onClick": "addAutoComplete(this);",
 			},
 			{
 				"title": "엔드유저",
 				"disabled": false,
 				"elementId": "partner",
-				"dataKeyup": "customer",
+				"complete": "customer",
+				"keyup": "addAutoComplete(this);",
+				"onClick": "addAutoComplete(this);",
 			},
 			{
 				"title": "제목(*)",
@@ -838,6 +874,20 @@ function scheduleRadioInsert(value, date){
 				"col": 4,
 			}
 		];
+
+		storage.formList = {
+			"job" : "",
+			"from" : "",
+			"to" : "",
+			"place" : "",
+			"type" : "",
+			"writer" : storage.my,
+			"sopp" : 0,
+			"customer" : 0,
+			"partner" : 0,
+			"title" : "",
+			"content" : "",
+		};
 	}else if(value === "tech"){
 		dataArray = [
 			{
@@ -885,24 +935,32 @@ function scheduleRadioInsert(value, date){
 			{
 				"title": "영업기회(*)",
 				"elementId": "sopp",
-				"dataKeyup": "sopp",
+				"complete": "sopp",
+				"keyup": "addAutoComplete(this);",
+				"onClick": "addAutoComplete(this);",
 				"disabled": false,
 			},
 			{
 				"title": "계약",
 				"elementId": "contract",
-				"dataKeyup": "contract",
+				"complete": "contract",
+				"keyup": "addAutoComplete(this);",
+				"onClick": "addAutoComplete(this);",
 				"disabled": false,
 			},
 			{
 				"title": "매출처",
 				"disabled": false,
 				"elementId": "partner",
-				"dataKeyup": "customer",
+				"complete": "customer",
+				"keyup": "addAutoComplete(this);",
+				"onClick": "addAutoComplete(this);",
 			},
 			{
 				"title": "매출처 담당자",
-				"dataKeyup": "customerUser",
+				"complete": "cip",
+				"keyup": "addAutoComplete(this);",
+				"onClick": "addAutoComplete(this);",
 				"elementId": "cipOfCustomer",
 				"disabled": false,
 			},
@@ -910,7 +968,9 @@ function scheduleRadioInsert(value, date){
 				"title": "엔드유저(*)",
 				"elementId": "customer",
 				"disabled": false,
-				"dataKeyup": "customer",
+				"complete": "customer",
+				"keyup": "addAutoComplete(this);",
+				"onClick": "addAutoComplete(this);",
 			},
 			{
 				"title": "모델",
@@ -973,7 +1033,9 @@ function scheduleRadioInsert(value, date){
 			},
 			{
 				"title": "담당자(*)",
-				"dataKeyup": "user",
+				"complete": "user",
+				"keyup": "addAutoComplete(this);",
+				"onClick": "addAutoComplete(this);",
 				"elementId": "writer",
 				"value": myName,
 			},
@@ -1013,6 +1075,26 @@ function scheduleRadioInsert(value, date){
 				"col": 4,
 			},
 		];
+
+		storage.formList = {
+			"job" : "",
+			"contractMethod" : "",
+			"sopp" : 0,
+			"contract" : 0,
+			"partner" : 0,
+			"cipOfCustomer" : 0,
+			"customer" : 0,
+			"supportModel" : "",
+			"supportVersion" : "",
+			"supportStep" : "",
+			"type" : "",
+			"place" : "",
+			"writer" : storage.my,
+			"from" : "",
+			"to" : "",
+			"title" : "",
+			"content" : "",
+		};
 	}else{
 		dataArray = [
 			{
@@ -1061,20 +1143,26 @@ function scheduleRadioInsert(value, date){
 			{
 				"title": "영업기회",
 				"elementId": "sopp",
-				"dataKeyup": "sopp",
+				"complete": "sopp",
+				"keyup": "addAutoComplete(this);",
+				"onClick": "addAutoComplete(this);",
 				"disabled": false,
 			},
 			{
 				"title": "담당자(*)",
 				"elementId": "writer",
-				"dataKeyup": "user",
+				"complete": "user",
+				"keyup": "addAutoComplete(this);",
+				"onClick": "addAutoComplete(this);",
 				"value": myName,
 			},
 			{
 				"title": "매출처",
 				"disabled": false,
 				"elementId": "customer",
-				"dataKeyup": "customer",
+				"complete": "customer",
+				"keyup": "addAutoComplete(this);",
+				"onClick": "addAutoComplete(this);",
 			},
 			{
 				"title": "",
@@ -1095,6 +1183,18 @@ function scheduleRadioInsert(value, date){
 				"col": 4,
 			},
 		];
+
+		storage.formList = {
+			"job" : "",
+			"from" : "",
+			"to" : "",
+			"place" : "",
+			"sopp" : 0,
+			"writer" : storage.my,
+			"customer" : 0,
+			"title" : "",
+			"content" : "",
+		};
 	}
 
 	return dataArray;
@@ -1120,39 +1220,6 @@ function scheduleInsert(){
 			msg.set("제목을 입력해주세요.");
 			$("#title").focus();
 			return false;
-		}else{
-			let from, to, place, writer, sopp, customer, partner, title, content, type;
-
-			from = $("#from").val();
-			from = new Date(from).getTime();
-			to = $("#to").val();
-			to = new Date(to).getTime();
-			place = $("#place").val();
-			writer = $("#writer");
-			writer = dataListFormat(writer.attr("id"), writer.val());
-			sopp = $("#sopp");
-			sopp = dataListFormat(sopp.attr("id"), sopp.val());
-			customer = $("#customer");
-			customer = dataListFormat(customer.attr("id"), customer.val());
-			partner = $("#partner");
-			partner = dataListFormat(partner.attr("id"), partner.val());
-			title = $("#title").val();
-			content = CKEDITOR.instances.content.getData();
-			type = $("#type").val();
-
-			data = {
-				"job": job,
-				"from": from,
-				"to": to,
-				"place": place,
-				"writer": writer,
-				"sopp": sopp,
-				"customer": customer,
-				"partner": partner,
-				"title": title,
-				"content": content,
-				"type": type,
-			};
 		}
 	}else if(job === "tech"){
 		if($("#title").val() === ""){
@@ -1174,53 +1241,6 @@ function scheduleInsert(){
 			msg.set("지원종료일을 선택해주세요.");
 			$("#title").focus();
 			return false;
-		}else{
-			let from, to, place, writer, sopp, contract, contractMethod, customer, cipOfCustomer, partner, title, content, supportModel, supportVersion, supportStep, type;
-
-			from = $("#from").val();
-			from = new Date(from).getTime();
-			to = $("#to").val();
-			to = new Date(to).getTime();
-			place = $("#place").val();
-			writer = $("#writer");
-			writer = dataListFormat(writer.attr("id"), writer.val());
-			sopp = $("#sopp");
-			sopp = dataListFormat(sopp.attr("id"), sopp.val());
-			customer = $("#customer");
-			customer = dataListFormat(customer.attr("id"), customer.val());
-			partner = $("#partner");
-			partner = dataListFormat(partner.attr("id"), partner.val());
-			title = $("#title").val();
-			content = CKEDITOR.instances.content.getData();
-			supportModel = $("#supportModel").val();
-			supportVersion = $("#supportVersion").val();
-			contract = $("#contract");
-			contract = dataListFormat(contract.attr("id"), contract.val()); 
-			contractMethod = $("[name='contractMethod']:checked").val();
-			cipOfCustomer = $("#cipOfCustomer");
-			cipOfCustomer = dataListFormat(cipOfCustomer.attr("id"), cipOfCustomer.val());
-			supportStep = $("#supportStep").val();
-			type = $("#type").val();
-
-			data = {
-				"job": job,
-				"from": from,
-				"to": to,
-				"place": place,
-				"writer": writer,
-				"sopp": sopp,
-				"customer": customer,
-				"partner": partner,
-				"title": title,
-				"content": content,
-				"supportModel": supportModel,
-				"supportVersion": supportVersion,
-				"contract": contract,
-				"contractMethod": contractMethod,
-				"cipOfCustomer": cipOfCustomer,
-				"supportStep": supportStep,
-				"type": type,
-			};
 		}
 	}else{
 		if($("#from").val() === ""){
@@ -1233,37 +1253,11 @@ function scheduleInsert(){
 			msg.set("제목을 입력해주세요.");
 			$("#title").focus();
 			return false;
-		}else{
-			let from, to, place, writer, sopp, customer, title, content;
-	
-			from = $("#from").val();
-			from = new Date(from).getTime();
-			to = $("#to").val();
-			to = new Date(to).getTime();
-			place = $("#place").val();
-			writer = $("#writer");
-			writer = dataListFormat(writer.attr("id"), writer.val());
-			sopp = $("#sopp");
-			sopp = dataListFormat(sopp.attr("id"), sopp.val());
-			customer = $("#customer");
-			customer = dataListFormat(customer.attr("id"), customer.val());
-			title = $("#title").val();
-			content = CKEDITOR.instances.content.getData();
-	
-			data = {
-				"job": job,
-				"from": from,
-				"to": to,
-				"place": place,
-				"writer": writer,
-				"sopp": sopp,
-				"customer": customer,
-				"title": title,
-				"content": content,
-			};
 		}
 	}
 
+	formDataSet();
+	data = storage.formList;
 	data = JSON.stringify(data);
 	data = cipher.encAes(data);
 
@@ -1284,6 +1278,7 @@ function scheduleRadioUpdate(value, result){
 	let dataArray; 
 
 	if(value === "sales"){
+		detailSetFormList(result);
 		let from, to, place, writer, sopp, customer, partner, title, content;
 		
 		disDate = dateDis(result.from);
@@ -1316,7 +1311,7 @@ function scheduleRadioUpdate(value, result){
 		partner = (result.partner == 0 || result.partner === null || result.partner === undefined) ? "" : storage.customer[result.partner].name;
 		title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
 		content = (result.content === null || result.content === "" || result.content === undefined) ? "" : result.content;
-
+		
 		dataArray = [
 			{
 				"title": undefined,
@@ -1432,25 +1427,33 @@ function scheduleRadioUpdate(value, result){
 			{
 				"title": "담당자(*)",
 				"elementId": "writer",
-				"dataKeyup": "user",
+				"complete": "user",
+				"keyup": "addAutoComplete(this);",
+				"onClick": "addAutoComplete(this);",
 				"value": writer,				
 			},
 			{
 				"title": "영업기회",
 				"elementId": "sopp",
-				"dataKeyup": "sopp",
+				"complete": "sopp",
+				"keyup": "addAutoComplete(this);",
+				"onClick": "addAutoComplete(this);",
 				"value": sopp,
 			},
 			{
 				"title": "매출처",
 				"elementId": "customer",
-				"dataKeyup": "customer",
+				"complete": "customer",
+				"keyup": "addAutoComplete(this);",
+				"onClick": "addAutoComplete(this);",
 				"value": customer,
 			},
 			{
 				"title": "엔드유저",
 				"elementId": "partner",
-				"dataKeyup": "customer",
+				"complete": "customer",
+				"keyup": "addAutoComplete(this);",
+				"onClick": "addAutoComplete(this);",
 				"value": partner,
 			},
 			{
@@ -1471,6 +1474,7 @@ function scheduleRadioUpdate(value, result){
 			}
 		];
 	}else if(value === "tech"){
+		detailSetFormList(result);
 		let from, to, place, writer, sopp, contract, contractMethod, customer, cipOfCustomer, partner, title, content, supportModel, supportVersion;
 		
 		disDate = dateDis(result.from);
@@ -1586,31 +1590,41 @@ function scheduleRadioUpdate(value, result){
 			{
 				"title": "영업기회(*)",
 				"elementId": "sopp",
-				"dataKeyup": "sopp",
+				"complete": "sopp",
+				"keyup": "addAutoComplete(this);",
+				"onClick": "addAutoComplete(this);",
 				"value": sopp,
 			},
 			{
 				"title": "계약",
 				"elementId": "contract",
-				"dataKeyup": "contract",
+				"complete": "contract",
+				"keyup": "addAutoComplete(this);",
+				"onClick": "addAutoComplete(this);",
 				"value": contract,
 			},
 			{
 				"title": "매출처",
 				"elementId": "partner",
-				"dataKeyup": "customer",
+				"complete": "customer",
+				"keyup": "addAutoComplete(this);",
+				"onClick": "addAutoComplete(this);",
 				"value": partner,
 			},
 			{
 				"title": "매출처 담당자",
-				"dataKeyup": "customerUser",
+				"complete": "cip",
+				"keyup": "addAutoComplete(this);",
+				"onClick": "addAutoComplete(this);",
 				"elementId": "cipOfCustomer",
 				"value": cipOfCustomer,
 			},
 			{
 				"title": "엔드유저(*)",
 				"elementId": "customer",
-				"dataKeyup": "customer",
+				"complete": "customer",
+				"keyup": "addAutoComplete(this);",
+				"onClick": "addAutoComplete(this);",
 				"value": customer,
 			},
 			{
@@ -1672,7 +1686,9 @@ function scheduleRadioUpdate(value, result){
 			},
 			{
 				"title": "담당자(*)",
-				"dataKeyup": "user",
+				"complete": "user",
+				"keyup": "addAutoComplete(this);",
+				"onClick": "addAutoComplete(this);",
 				"elementId": "writer",
 				"value": writer,
 			},
@@ -1695,6 +1711,9 @@ function scheduleRadioUpdate(value, result){
 				"title": "",
 			},
 			{
+				"title": "",
+			},
+			{
 				"title": "기술지원명(*)",
 				"elementId": "title",
 				"value": title,
@@ -1709,6 +1728,7 @@ function scheduleRadioUpdate(value, result){
 			},
 		];
 	}else{
+		detailSetFormList(result);
 		let from, to, disDate, place, sopp, customer, writer, title, content;
 
 		disDate = dateDis(result.from);
@@ -1785,19 +1805,25 @@ function scheduleRadioUpdate(value, result){
 			{
 				"title": "영업기회",
 				"elementId": "sopp",
-				"dataKeyup": "sopp",
+				"complete": "sopp",
+				"keyup": "addAutoComplete(this);",
+				"onClick": "addAutoComplete(this);",
 				"value": sopp,
 			},
 			{
 				"title": "담당자(*)",
 				"elementId": "writer",
-				"dataKeyup": "user",
+				"complete": "user",
+				"keyup": "addAutoComplete(this);",
+				"onClick": "addAutoComplete(this);",
 				"value": writer,
 			},
 			{
 				"title": "매출처",
 				"elementId": "customer",
-				"dataKeyup": "customer",
+				"complete": "customer",
+				"keyup": "addAutoComplete(this);",
+				"onClick": "addAutoComplete(this);",
 				"value": customer,
 			},
 			{
@@ -1845,39 +1871,6 @@ function scheduleUpdate(no){
 			msg.set("제목을 입력해주세요.");
 			$("#title").focus();
 			return false;
-		}else{
-			let from, to, place, writer, sopp, customer, partner, title, content, type;
-
-			from = $("#from").val();
-			from = new Date(from).getTime();
-			to = $("#to").val();
-			to = new Date(to).getTime();
-			place = $("#place").val();
-			writer = $("#writer");
-			writer = dataListFormat(writer.attr("id"), writer.val());
-			sopp = $("#sopp");
-			sopp = dataListFormat(sopp.attr("id"), sopp.val());
-			customer = $("#customer");
-			customer = dataListFormat(customer.attr("id"), customer.val());
-			partner = $("#partner");
-			partner = dataListFormat(partner.attr("id"), partner.val());
-			title = $("#title").val();
-			content = CKEDITOR.instances.content.getData();
-			type = $("#type").val();
-
-			data = {
-				"job": job,
-				"from": from,
-				"to": to,
-				"place": place,
-				"writer": writer,
-				"sopp": sopp,
-				"customer": customer,
-				"partner": partner,
-				"title": title,
-				"content": content,
-				"type": type,
-			};
 		}
 	}else if(job === "tech"){
 		if($("#title").val() === ""){
@@ -1899,53 +1892,6 @@ function scheduleUpdate(no){
 			msg.set("지원종료일을 선택해주세요.");
 			$("#title").focus();
 			return false;
-		}else{
-			let from, to, place, writer, sopp, contract, contractMethod, customer, cipOfCustomer, partner, title, content, supportModel, supportVersion, supportStep, type;
-
-			from = $("#from").val();
-			from = new Date(from).getTime();
-			to = $("#to").val();
-			to = new Date(to).getTime();
-			place = $("#place").val();
-			writer = $("#writer");
-			writer = dataListFormat(writer.attr("id"), writer.val());
-			sopp = $("#sopp");
-			sopp = dataListFormat(sopp.attr("id"), sopp.val());
-			customer = $("#customer");
-			customer = dataListFormat(customer.attr("id"), customer.val());
-			partner = $("#partner");
-			partner = dataListFormat(partner.attr("id"), partner.val());
-			title = $("#title").val();
-			content = CKEDITOR.instances.content.getData();
-			supportModel = $("#supportModel").val();
-			supportVersion = $("#supportVersion").val();
-			contract = $("#contract");
-			contract = dataListFormat(contract.attr("id"), contract.val()); 
-			contractMethod = $("[name='contractMethod']:checked").val();
-			cipOfCustomer = $("#cipOfCustomer");
-			cipOfCustomer = dataListFormat(cipOfCustomer.attr("id"), cipOfCustomer.val());
-			supportStep = $("#supportStep").val();
-			type = $("#type").val();
-
-			data = {
-				"job": job,
-				"from": from,
-				"to": to,
-				"place": place,
-				"writer": writer,
-				"sopp": sopp,
-				"customer": customer,
-				"partner": partner,
-				"title": title,
-				"content": content,
-				"supportModel": supportModel,
-				"supportVersion": supportVersion,
-				"contract": contract,
-				"contractMethod": contractMethod,
-				"cipOfCustomer": cipOfCustomer,
-				"supportStep": supportStep,
-				"type": type,
-			};
 		}
 	}else{
 		if($("#from").val() === ""){
@@ -1958,38 +1904,11 @@ function scheduleUpdate(no){
 			msg.set("제목을 입력해주세요.");
 			$("#title").focus();
 			return false;
-		}else{
-			let from, to, place, writer, sopp, customer, title, content;
-	
-			from = $("#from").val();
-			from = new Date(from).getTime();
-			to = $("#to").val();
-			to = new Date(to).getTime();
-			place = $("#place").val();
-			writer = $("#writer");
-			writer = dataListFormat(writer.attr("id"), writer.val());
-			sopp = $("#sopp");
-			sopp = dataListFormat(sopp.attr("id"), sopp.val());
-			customer = $("#customer");
-			customer = dataListFormat(customer.attr("id"), customer.val());
-			title = $("#title").val();
-			content = CKEDITOR.instances.content.getData();
-	
-			data = {
-				"job": job,
-				"from": from,
-				"to": to,
-				"place": place,
-				"writer": writer,
-				"sopp": sopp,
-				"customer": customer,
-				"title": title,
-				"content": content,
-				"type": job,
-			};
 		}
 	}
 
+	formDataSet();
+	data = storage.formList;
 	data = JSON.stringify(data);
 	data = cipher.encAes(data);
 
@@ -2086,8 +2005,9 @@ function moreContentClose(){
 }
 
 function searchInputKeyup(){
-	let searchAllInput;
+	let searchAllInput, pageContainer;
 	searchAllInput = $("#searchAllInput").val();
+	pageContainer = $(".pageContainer");
 	tempArray = searchDataFilter(storage.scheduleList, searchAllInput, "input");
 
 	if(tempArray.length > 0){
@@ -2097,6 +2017,7 @@ function searchInputKeyup(){
 	}
 
 	drawScheduleList();
+	pageContainer.show();
 }
 
 function addSearchList(){
@@ -2105,8 +2026,8 @@ function addSearchList(){
 	for(let i = 0; i < storage.scheduleList.length; i++){
 		let no, writer, customer, job, type, from, to, disDate, setCreated;
 		no = storage.scheduleList[i].no;
-		writer = (storage.scheduleList[i].writer === null || storage.scheduleList[i].writer == 0) ? "" : storage.user[storage.scheduleList[i].writer].userName;
-		customer = (storage.scheduleList[i].customer === null || storage.scheduleList[i].customer == 0) ? "" : storage.customer[storage.scheduleList[i].customer].name;
+		writer = (storage.scheduleList[i].writer === null || storage.scheduleList[i].writer == 0 || storage.scheduleList[i].writer === undefined) ? "" : storage.user[storage.scheduleList[i].writer].userName;
+		customer = (storage.scheduleList[i].customer === null || storage.scheduleList[i].customer == 0 || storage.scheduleList[i].customer === undefined) ? "" : storage.customer[storage.scheduleList[i].customer].name;
 		title = storage.scheduleList[i].title;
 		job = storage.scheduleList[i].job;
 		
@@ -2130,14 +2051,14 @@ function addSearchList(){
 }
 
 function searchSubmit(){
-	let dataArray = [], resultArray, eachIndex = 0, searchWriter, searchCustomer, searchJob, searchType, searchDateFrom;
+	let dataArray = [], resultArray, eachIndex = 0, searchWriter, searchCustomer, searchJob, searchType, searchDateFrom, pageContainer;
 
 	searchWriter = $("#searchWriter").val();
 	searchCustomer = $("#searchCustomer").val();
 	searchJob = $("#searchJob").val();
 	searchType = $("#searchType").val();
 	searchDateFrom = ($("#searchDateFrom").val() === "") ? "" : $("#searchDateFrom").val().replaceAll("-", "") + "#from" + $("#searchDateTo").val().replaceAll("-", "");
-	
+	pageContainer = $(".pageContainer");
 	let searchValues = [searchWriter, searchCustomer, searchJob, searchType, searchDateFrom];
 
 	for(let i = 0; i < searchValues.length; i++){
@@ -2162,4 +2083,5 @@ function searchSubmit(){
 	}
 	
 	drawScheduleList();
+	pageContainer.show();
 }

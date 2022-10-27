@@ -193,14 +193,15 @@ function salesDetailView(e){
 }
 
 function salesSuccessView(result){
-	let dataArray, from, to, place, writer, sopp, customer, partner, title, content, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput, listRange;
-	storage.salesNo = result.no;
+	let dataArray, datas, from, to, place, writer, sopp, customer, partner, title, content, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput, listRange;
+	detailSetFormList(result);
 	gridList = $(".gridList");
 	searchContainer = $(".searchContainer");
 	containerTitle = $("#containerTitle");
 	detailBackBtn = $(".detailBackBtn");
 	listSearchInput = $(".listSearchInput");
 	listRange = $(".listRange");
+	datas = ["sopp", "writer", "customer", "partner"];
 
 	disDate = dateDis(result.from);
 	from = dateFnc(disDate);
@@ -245,7 +246,7 @@ function salesSuccessView(result){
 			"type": "radio",
 			"elementName": "job",
 			"radioType": "tab",
-			"elementId": "jobSales",
+			"elementId": ["jobSales"],
 			"col": 4,
 		},
 		{
@@ -339,25 +340,33 @@ function salesSuccessView(result){
 		{
 			"title": "담당자(*)",
 			"elementId": "writer",
-			"dataKeyup": "user",
+			"complete": "user",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 			"value": writer,				
 		},
 		{
 			"title": "영업기회",
 			"elementId": "sopp",
-			"dataKeyup": "sopp",
+			"complete": "sopp",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 			"value": sopp,
 		},
 		{
 			"title": "매출처",
 			"elementId": "customer",
-			"dataKeyup": "customer",
+			"complete": "customer",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 			"value": customer,
 		},
 		{
 			"title": "엔드유저",
 			"elementId": "partner",
-			"dataKeyup": "customer",
+			"complete": "customer",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 			"value": partner,
 		},
 		{
@@ -382,8 +391,11 @@ function salesSuccessView(result){
 	gridList.html(html);
 	gridList.show();
 	notIdArray = ["writer"];
+	detailTrueDatas(datas);
 
 	setTimeout(() => {
+		let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;
+		$("#type option[value='" + type + "']").attr("selected", true);
 		detailBackBtn.css("display", "flex");
 		listSearchInput.hide();
 		listRange.hide();
@@ -407,7 +419,6 @@ function salesSuccessView(result){
 		storage.editorArray = ["content"];
 		ckeditor.config.readOnly = true;
 		window.setTimeout(setEditor, 100);
-		inputDataList();
 	}, 100);
 }
 
@@ -460,7 +471,7 @@ function salesInsertForm(){
 			"elementName": "job",
 			"disabled": false,
 			"radioType": "tab",
-			"elementId": "jobSales",
+			"elementId": ["jobSales"],
 			"col": 4,
 		},
 		{
@@ -557,26 +568,34 @@ function salesInsertForm(){
 		{
 			"title": "담당자(*)",
 			"elementId": "writer",
-			"dataKeyup": "user",
+			"complete": "user",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 			"value": myName,
 		},
 		{
 			"title": "영업기회",
 			"elementId": "sopp",
-			"dataKeyup": "sopp",
+			"complete": "sopp",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 			"disabled": false,
 		},
 		{
 			"title": "매출처",
 			"disabled": false,
 			"elementId": "customer",
-			"dataKeyup": "customer",
+			"complete": "customer",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 		},
 		{
 			"title": "엔드유저",
 			"disabled": false,
 			"elementId": "partner",
-			"dataKeyup": "customer",
+			"complete": "customer",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 		},
 		{
 			"title": "제목(*)",
@@ -592,6 +611,20 @@ function salesInsertForm(){
 		}
 	];
 
+	storage.formList = {
+		"job" : "",
+		"from" : "",
+		"to" : "",
+		"place" : "",
+		"type" : "",
+		"writer" : storage.my,
+		"sopp" : 0,
+		"customer" : 0,
+		"partner" : 0,
+		"title" : "",
+		"content" : "",
+	};
+
 	html = detailViewForm(dataArray, "modal");
 
 	modal.show();
@@ -603,9 +636,19 @@ function salesInsertForm(){
 	modal.close.text("취소");
 	modal.confirm.attr("onclick", "salesInsert();");
 	modal.close.attr("onclick", "modal.hide();");
-	storage.editorArray = ["content"];
-	ckeditor.config.readOnly = false;
-	window.setTimeout(setEditor, 100);
+
+	setTimeout(() => {
+		$("#writer").attr("data-change", true);
+		storage.editorArray = ["content"];
+		ckeditor.config.readOnly = false;
+		window.setTimeout(setEditor, 100);
+	}, 100);
+
+	setTimeout(() => {
+		$(".cke").css("height", "300px");
+		$(".cke_inner").css("height", "300px");
+		$(".cke_contents").css("height", "300px");
+	}, 400);
 }
 
 function salesInsert(){
@@ -620,45 +663,17 @@ function salesInsert(){
 		$("#title").focus();
 		return false;
 	}else{
-		let url, method, data, job, from, to, place, writer, sopp, customer, partner, title, content, type;
+		let url, method, data, job, type;
 		job = $("[name='job']:checked").val();
-		from = $("#from").val();
-		from = new Date(from).getTime();
-		to = $("#to").val();
-		to = new Date(to).getTime();
-		place = $("#place").val();
-		writer = $("#writer");
-		writer = dataListFormat(writer.attr("id"), writer.val());
-		sopp = $("#sopp");
-		sopp = dataListFormat(sopp.attr("id"), sopp.val());
-		customer = $("#customer");
-		customer = dataListFormat(customer.attr("id"), customer.val());
-		partner = $("#partner");
-		partner = dataListFormat(partner.attr("id"), partner.val());
-		title = $("#title").val();
-		content = CKEDITOR.instances.content.getData();
-		type = $("#type").val();
 		url = "/api/schedule/" + job;
 		method = "post";
 		type = "insert";
-		data = {
-			"job": job,
-			"from": from,
-			"to": to,
-			"place": place,
-			"writer": writer,
-			"sopp": sopp,
-			"customer": customer,
-			"partner": partner,
-			"title": title,
-			"content": content,
-			"type": type,
-		};
+		formDataSet();
+		data = storage.formList;
+		data = JSON.stringify(data);
+		data = cipher.encAes(data);
+		crud.defaultAjax(url, method, data, type, salesSuccessInsert, salesErrorInsert);
 	}
-	data = JSON.stringify(data);
-	data = cipher.encAes(data);
-
-	crud.defaultAjax(url, method, data, type, salesSuccessInsert, salesErrorInsert);
 }
 
 function salesSuccessInsert(){
@@ -683,45 +698,17 @@ function salesUpdate(){
 		$("#title").focus();
 		return false;
 	}else{
-		let url, method, data, job, from, to, place, writer, sopp, customer, partner, title, content, type;
+		let url, method, data, type, job;
 		job = $("[name='job']:checked").val();
-		from = $("#from").val();
-		from = new Date(from).getTime();
-		to = $("#to").val();
-		to = new Date(to).getTime();
-		place = $("#place").val();
-		writer = $("#writer");
-		writer = dataListFormat(writer.attr("id"), writer.val());
-		sopp = $("#sopp");
-		sopp = dataListFormat(sopp.attr("id"), sopp.val());
-		customer = $("#customer");
-		customer = dataListFormat(customer.attr("id"), customer.val());
-		partner = $("#partner");
-		partner = dataListFormat(partner.attr("id"), partner.val());
-		title = $("#title").val();
-		content = CKEDITOR.instances.content.getData();
-		type = $("#type").val();
-		url = "/api/schedule/" + job + "/" + storage.salesNo;
+		formDataSet();
+		url = "/api/schedule/" + job + "/" + storage.formList.no;
 		method = "put";
+		data = storage.formList;
 		type = "update";
-		data = {
-			"job": job,
-			"from": from,
-			"to": to,
-			"place": place,
-			"writer": writer,
-			"sopp": sopp,
-			"customer": customer,
-			"partner": partner,
-			"title": title,
-			"content": content,
-			"type": type,
-		};
+		data = JSON.stringify(data);
+		data = cipher.encAes(data);
+		crud.defaultAjax(url, method, data, type, salesSuccessUpdate, salesErrorUpdate);
 	}
-	data = JSON.stringify(data);
-	data = cipher.encAes(data);
-
-	crud.defaultAjax(url, method, data, type, salesSuccessUpdate, salesErrorUpdate);
 }
 
 function salesSuccessUpdate(){

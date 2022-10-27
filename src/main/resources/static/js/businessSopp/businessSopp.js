@@ -205,7 +205,8 @@ function soppErrorList(){
 }
 
 function soppSuccessView(result){
-	let html, htmlSecond, title, userName, customer, picOfCustomer, endUser, status, progress, contType, disDate, expectedSales, detail, dataArray, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput, detailSecondTabs, listRange, pageContainer;
+	let html, htmlSecond, title, userName, customer, picOfCustomer, endUser, status, progress, contType, disDate, expectedSales, detail, dataArray, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput, detailSecondTabs, listRange, pageContainer, datas;
+	detailSetFormList(result);
 	gridList = $(".gridList");
 	searchContainer = $(".searchContainer");
 	containerTitle = $("#containerTitle");
@@ -214,11 +215,12 @@ function soppSuccessView(result){
 	detailSecondTabs = $(".detailSecondTabs");
 	listRange = $(".listRange");
 	pageContainer = $(".pageContainer");
+	datas = ["employee", "customer", "picOfCustomer", "endUser"];
 
 	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
 	userName = (result.employee == 0 || result.employee === null || result.employee === undefined) ? "" : storage.user[result.employee].userName;
 	customer = (result.customer == 0 || result.customer === null || result.customer === undefined) ? "" : storage.customer[result.customer].name;
-	picOfCustomer = (result.picOfCustomer == 0 || result.picOfCustomer === null || result.picOfCustomer === undefined) ? "" : result.picOfCustomer;
+	picOfCustomer = (result.picOfCustomer == 0 || result.picOfCustomer === null || result.picOfCustomer === undefined) ? "" : storage.cip[result.picOfCustomer].name;
 	endUser = (result.endUser == 0 || result.endUser === null || result.endUser === undefined) ? "" : storage.customer[result.endUser].name;
 	status = (result.status === null || result.status === "" || result.status === undefined) ? "" : storage.code.etc[result.status];
 	progress = (result.progress === null || result.progress === "" || result.progress === undefined) ? "" : result.progress + "%";
@@ -234,24 +236,32 @@ function soppSuccessView(result){
 		{
 			"title": "담당자(*)",
 			"elementId": "employee",
-			"dataKeyup": "user",
+			"complete": "user",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 			"value": userName,
 		},
 		{
 			"title": "매출처(*)",
 			"elementId": "customer",
-			"dataKeyup": "customer",
+			"complete": "customer",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 			"value": customer,
 		},
 		{
 			"title": "매출처 담당자",
-			"dataKeyup": "customerUser",
+			"complete": "cip",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 			"elementId": "picOfCustomer",
 			"value": picOfCustomer,
 		},
 		{
 			"title": "엔드유저(*)",
-			"dataKeyup": "customer",
+			"complete": "customer",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 			"elementId": "endUser",
 			"value": endUser,
 		},
@@ -397,6 +407,7 @@ function soppSuccessView(result){
 	createTabTechList(result.schedules);
 	createTabSalesList(result.schedules);
 	detailTabHide("tabTradeList");
+	detailTrueDatas(datas);
 
 	setTimeout(() => {
 		$("#status option[value='" + result.status + "']").prop("selected" ,true);
@@ -425,7 +436,6 @@ function soppSuccessView(result){
 		storage.editorArray = ["detail"];
 		ckeditor.config.readOnly = true;
 		window.setTimeout(setEditor, 100);
-		inputDataList();
 	}, 100);
 }
 
@@ -440,23 +450,31 @@ function soppInsertForm(){
 		{
 			"title": "담당자(*)",
 			"elementId": "employee",
-			"dataKeyup": "user",
+			"complete": "user",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 		},
 		{
 			"title": "매출처(*)",
 			"elementId": "customer",
-			"dataKeyup": "customer",
+			"complete": "customer",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 			"disabled": false,
 		},
 		{
 			"title": "매출처 담당자",
-			"dataKeyup": "customerUser",
+			"complete": "cip",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 			"elementId": "picOfCustomer",
 			"disabled": false,
 		},
 		{
 			"title": "엔드유저(*)",
-			"dataKeyup": "customer",
+			"complete": "customer",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
 			"elementId": "endUser",
 			"disabled": false,
 		},
@@ -585,16 +603,38 @@ function soppInsertForm(){
 	modal.confirm.attr("onclick", "soppInsert();");
 	modal.close.attr("onclick", "modal.hide();");
 
+	storage.formList = {
+		"employee": storage.my,
+		"customer": 0,
+		"picOfCustomer": 0,
+		"endUser": 0,
+		"status": "",
+		"progress": 0,
+		"contType": "",
+		"targetDate": "",
+		"soppType": "",
+		"expectedSales": 0,
+		"title": "",
+		"detail": ""
+	};
+
 	setTimeout(() => {
 		let my = storage.my, nowDate;
 		nowDate = new Date();
 		nowDate = nowDate.toISOString().substring(0, 10);
 		$("#employee").val(storage.user[my].userName);
+		$("#employee").attr("data-change", true);
 		$("#targetDate").val(nowDate);
 		storage.editorArray = ["detail"];
 		ckeditor.config.readOnly = false;
 		window.setTimeout(setEditor, 100);
 	}, 100);
+
+	setTimeout(() => {
+		$(".cke").css("height", "300px");
+		$(".cke_inner").css("height", "300px");
+		$(".cke_contents").css("height", "300px");
+	}, 400);
 }
 
 function soppInsert(){
@@ -615,44 +655,14 @@ function soppInsert(){
 		$("#endUser").focus();
 		return false;
 	}else{
-		let title, employee, customer, picOfCustomer, endUser, status, progress, contType, targetDate, soppType, expectedSales, detail, data;
-		title = $("#title").val();
-		employee = $("#employee");
-		employee = dataListFormat(employee.attr("id"), employee.val());
-		customer = $("#customer");
-		customer = dataListFormat(customer.attr("id"), customer.val());
-		picOfCustomer = $("#picOfCustomer");
-		picOfCustomer = dataListFormat(picOfCustomer.attr("id"), picOfCustomer.val());
-		endUser = $("#endUser");
-		endUser = dataListFormat(endUser.attr("id"), endUser.val());
-		status = $("#status").val();
-		progress = $("#progress").val();
-		contType = $("#contType").val();
-		targetDate = $("#targetDate").val();
-		targetDate = new Date(targetDate).getTime();
-		soppType = $("#soppType").val();
-		expectedSales = $("#expectedSales").val().replaceAll(",", "");
-		detail = CKEDITOR.instances.detail.getData();
+		let url, method, data, type;
+		formDataSet();
 		url = "/api/sopp";
 		method = "post";
-		data = {
-			"title": title,
-			"employee": employee,
-			"customer": customer,
-			"picOfCustomer": picOfCustomer,
-			"endUser": endUser,
-			"status": status,
-			"progress": progress,
-			"contType": contType,
-			"targetDate": targetDate,
-			"soppType": soppType,
-			"expectedSales": expectedSales,
-			"detail": detail,
-		}
+		data = storage.formList;
 		type = "insert";
 		data = JSON.stringify(data);
 		data = cipher.encAes(data);
-		
 		crud.defaultAjax(url, method, data, type, soppSuccessInsert, soppErrorInsert);
 	}
 
@@ -685,44 +695,14 @@ function soppUpdate(){
 		$("#endUser").focus();
 		return false;
 	}else{
-		let title, employee, customer, picOfCustomer, endUser, status, progress, contType, targetDate, soppType, expectedSales, detail;
-		title = $("#title").val();
-		employee = $("#employee");
-		employee = dataListFormat(employee.attr("id"), employee.val());
-		customer = $("#customer");
-		customer = dataListFormat(customer.attr("id"), customer.val());
-		picOfCustomer = $("#picOfCustomer");
-		picOfCustomer = dataListFormat(picOfCustomer.attr("id"), picOfCustomer.val());
-		endUser = $("#endUser");
-		endUser = dataListFormat(endUser.attr("id"), endUser.val());
-		status = $("#status").val();
-		progress = $("#progress").val().replaceAll("%", "");
-		contType = $("#contType").val();
-		targetDate = $("#targetDate").val();
-		targetDate = new Date(targetDate).getTime();
-		soppType = $("#soppType").val();
-		expectedSales = $("#expectedSales").val().replaceAll(",", "");
-		detail = CKEDITOR.instances.detail.getData();
-		url = "/api/sopp/" + storage.attachedNo;
+		let url, method, data, type;
+		formDataSet();
+		url = "/api/sopp/" + storage.formList.no;
 		method = "put";
-		data = {
-			"title": title,
-			"employee": employee,
-			"customer": customer,
-			"picOfCustomer": picOfCustomer,
-			"endUser": endUser,
-			"status": status,
-			"progress": progress,
-			"contType": contType,
-			"targetDate": targetDate,
-			"soppType": soppType,
-			"expectedSales": expectedSales,
-			"detail": detail,
-		}
+		data = storage.formList;
 		type = "update";
 		data = JSON.stringify(data);
 		data = cipher.encAes(data);
-
 		crud.defaultAjax(url, method, data, type, soppSuccessUpdate, soppErrorUpdate);
 	}
 }

@@ -220,7 +220,6 @@ function fileBoxSuccessView(result){
 		storage.editorArray = ["content"];
 		ckeditor.config.readOnly = true;
 		window.setTimeout(setEditor, 100);
-		inputDataList();
 	}, 500)
 }
 
@@ -277,8 +276,8 @@ function fileBoxInsertForm(){
 	setTimeout(() => {
 		let my;
 		my = storage.my;
-		$(document).find("#writer").val(storage.user[my].userName);
-		$(document).find("#attached").after("<div class='filePreview'></div>");
+		$("#writer").val(storage.user[my].userName);
+		$(".defaultFormContainer .defaultFormLine").eq(1).after("<div class=\"filePreview\"></div>");
 		storage.editorArray = ["content"];
 		ckeditor.config.readOnly = false;
 		window.setTimeout(setEditor, 100);
@@ -335,15 +334,15 @@ function fileBoxUpdateForm(result){
 	modal.confirm.attr("onclick", "fileBoxUpdate(" + result.no + ");");
 	modal.close.attr("onclick", "modal.hide();");
 
-	$(document).find("#attached").after("<div class='filePreview'></div>");
+	$(".defaultFormContainer .defaultFormLine").eq(1).after("<div class=\"filePreview\"></div>");
 
 	html = "";
 
 	if(result.attached !== undefined && result.attached.length > 0){
 		for(let i = 0; i < result.attached.length; i++){
 			fileDataArray.push(result.attached[i].ognName);
-			html += "<div style='padding-bottom: 4%;'><span style='float:left; display: block; width: 95%;'>" + result.attached[i].ognName + "</span><button type='button' id='fileDataDelete' style='float:right; width: 5%;' data-index='" + i + "' onclick='fileViewDelete(this);'>삭제</button></div>";
-			$(document).find(".filePreview").html(html);
+			html += "<div><span>" + result.attached[i].ognName + "</span><button type='button' id='fileDataDelete' data-index='" + i + "' onclick='fileViewDelete(this);'>삭제</button></div>";
+			$(".filePreview").html(html);
 		}
 	}
 
@@ -356,16 +355,12 @@ function fileBoxInsert(){
 		msg.set("제목을 입력해주세요.");
 		$("#title").focus();
 		return false;
-	}else if($("#content").val() === ""){
-		msg.set("내용을 입력해주세요.");
-		$("#content").focus();
-		return false;
 	}else{
 		let title, content, writer, data;
 	
-		title = $(document).find("#title").val();
-		content = CKEDITOR.instances.content.getData();
-		writer = $(document).find("#writer");
+		title = $("#title").val();
+		content = CKEDITOR.instances.content.getData().replaceAll("\n", "");
+		writer = $("#writer");
 		writer = dataListFormat(writer.attr("id"), writer.val());
 		
 		url = "/api/board/filebox";
@@ -397,16 +392,12 @@ function fileBoxUpdate(){
 		msg.set("제목을 입력해주세요.");
 		$("#title").focus();
 		return false;
-	}else if($("#content").val() === ""){
-		msg.set("내용을 입력해주세요.");
-		$("#content").focus();
-		return false;
 	}else{
 		let title, content, writer;
 
-		title = $(document).find("#title").val();
-		content = CKEDITOR.instances.content.getData();
-		writer = $(document).find("#writer");
+		title = $("#title").val();
+		content = CKEDITOR.instances.content.getData().replaceAll("\n", "");
+		writer = $("#writer");
 		writer = dataListFormat(writer.attr("id"), writer.val());
 
 		url = "/api/board/filebox/" + storage.fileBoxNo;

@@ -10,11 +10,11 @@
             <div class="searchMultiContent">
                 <div class="searchTitle">
                     <span>제목</span>
-                    <input type="text" id="searchTitle">
+                    <input type="text" autocomplete="off" id="searchTitle">
                 </div>
                 <div class="searchWriter">
                     <span>담당자</span>
-                    <input type="text" data-type="user" id="searchWriter">
+                    <input type="text" data-complete="user" autocomplete="off" id="searchWriter" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">
                 </div>
                 <div class="searchCreated">
                     <span>등록일</span>

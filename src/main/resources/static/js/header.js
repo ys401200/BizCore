@@ -228,11 +228,6 @@ modal = {
 	},
 	"show": () => {
 		modal.clear();
-
-		// setTimeout(() => {
-		// 	inputDataList();
-		// }, 1000);
-
 		modal.wrap.css('display','flex').hide().fadeIn();
 	},
 	"hide": () => {
@@ -1148,98 +1143,6 @@ function paging(total, currentPage, articlePerPage){
 	return result;
 }
 
-//자동완성
-function inputDataList(){
-	setTimeout(() => {
-		let input, jsonData;
-
-		input = $(document).find("input[type='text']");
-
-		input.each((index, item) => {
-			let dataKey = $(item).data("keyup");
-			
-			if($(item).data("keyup") !== undefined){
-				$(item).attr("list", "_" + $(item).attr("id"));
-				$(item).after("<datalist id='_" + $(item).attr("id") + "'></datalist>");
-
-				if(storage[dataKey] !== undefined){
-					jsonData = storage[dataKey];
-					
-					for(let key in jsonData){
-						if($(item).data("keyup") === "user"){
-							$(item).parents("div").find("datalist#_" + $(item).attr("id")).append("<option data-value='" + key + "' value='" + jsonData[key].userName + "'></option>");
-						}else if($(item).data("keyup") === "customer"){
-							$(item).parents("div").find("datalist#_" + $(item).attr("id")).append("<option data-value='" + key + "' value='" + jsonData[key].name + "'></option>");
-						}
-					}
-				}else{
-					if($(item).data("keyup") === "sopp"){
-						$.ajax({
-							url: "/api/sopp",
-							method: "get",
-							dataType: "json",
-							success:(result) => {
-								if(result.result === "ok"){
-									let resultJson;
-									resultJson = cipher.decAes(result.data);
-									resultJson = JSON.parse(resultJson);
-									
-									for(let i = 0; i < resultJson.length; i++){
-										$(item).parents("div").find("datalist#_" + $(item).attr("id")).append("<option data-value='" + resultJson[i].no + "' value='" + resultJson[i].title + "'></option>");
-									}
-								}
-							},
-							error:() => {
-								msg.set("sopp 에러");
-							}
-						});
-					}else if($(item).data("keyup") === "contract"){
-						$.ajax({
-							url: "/api/contract",
-							method: "get",
-							dataType: "json",
-							success:(result) => {
-								if(result.result === "ok"){
-									let resultJson;
-									resultJson = cipher.decAes(result.data);
-									resultJson = JSON.parse(resultJson);
-									
-									for(let i = 0; i < resultJson.length; i++){
-										$(item).parents("div").find("datalist#_" + $(item).attr("id")).append("<option data-value='" + resultJson[i].no + "' value='" + resultJson[i].title + "'></option>");
-									}
-								}
-							},
-							error:() => {
-								msg.set("contract 에러");
-							}
-						});
-					}else if($(item).data("keyup") === "customerUser"){
-						$.ajax({
-							url: "/api/system/cip",
-							method: "get",
-							dataType: "json",
-							success:(result) => {
-								if(result.result === "ok"){
-									let resultJson;
-									resultJson = cipher.decAes(result.data);
-									resultJson = JSON.parse(resultJson);
-
-									for(let key in resultJson){
-										$(item).parents("div").find("datalist#_" + $(item).attr("id")).append("<option data-value='" + key + "' value='" + resultJson[key].name + "'></option>");
-									}
-								}
-							},
-							error:() => {
-								msg.set("contract 에러");
-							}
-						});
-					}
-				}
-			}
-		});
-	}, 700);
-}
-
 //숫자 포맷
 function numberFormat(num){
 	if(num !== undefined){
@@ -1413,9 +1316,9 @@ function inputSet(data){
 function detailTabHide(notId){
 	$(".tabs input:radio").each((index, item) => {
 		if(notId === undefined){
-			$(document).find("#" + $(item).data("content-id")).hide();
+			$("#" + $(item).data("content-id")).hide();
 		}else{
-			$(document).find("#" + $(item).data("content-id")).not("#" + notId).hide();
+			$("#" + $(item).data("content-id")).not("#" + notId).hide();
 		}
 	});
 }
@@ -1447,7 +1350,7 @@ function setEditor(){
 function dataListFormat(id, value){
 	let result;
 
-	result = $(document).find("datalist#_" + id + " option[value='" + value + "']").data("value");
+	result = $("datalist#_" + id + " option[value='" + value + "']").data("value");
 
 	if(result === undefined){
 		return "";
@@ -1458,11 +1361,11 @@ function dataListFormat(id, value){
 
 // crud tab 클릭 함수
 function tabItemClick(e){
-	$(document).find(".tabs input:radio").each((index, item) => {
-		$(document).find("#" + $(item).data("content-id")).hide();
+	$(".tabs input:radio").each((index, item) => {
+		$("#" + $(item).data("content-id")).hide();
 	});
 
-	$(document).find("#" + $(e).data("content-id")).show();
+	$("#" + $(e).data("content-id")).show();
 }
 
 //매입매출내역 리스트
@@ -1736,7 +1639,7 @@ function createTabFileList(){
 
 function fileChange(){
 	let method, data, type, attached, fileDatas = [], html = "", flag;
-	attached = $(document).find("[name='attached[]']")[0].files;
+	attached = $("[name='attached[]']")[0].files;
 
 	if(storage.attachedList === undefined || storage.attachedList <= 0){
 		storage.attachedList = [];
@@ -1793,7 +1696,7 @@ function fileChange(){
 	if(flag){
 		tabFileItemListUpdate();
 	}else{
-		$(document).find(".filePreview").html(html);
+		$(".filePreview").html(html);
 	
 		for(let i = 0; i < fileDatas.length; i++){
 			fileDataArray.push(fileDatas[i]);
@@ -1801,14 +1704,14 @@ function fileChange(){
 	
 		if(fileDataArray.length > 0){
 			for(let i = 0; i < fileDataArray.length; i++){
-				html += "<div style='padding-bottom: 4%;'><span style='float:left; display: block; width: 95%;'>" + fileDataArray[i] + "</span><button type='button' id='fileDataDelete' style='float:right; width: 5%;' data-index='" + i + "' onclick='fileViewDelete(this);'>삭제</button></div>";
-				$(document).find(".filePreview").html(html);
+				html += "<div><span>" + fileDataArray[i] + "</span><button type='button' id='fileDataDelete' data-index='" + i + "' onclick='fileViewDelete(this);'>삭제</button></div>";
+				$(".filePreview").html(html);
 			}
 		}
 	}
 
-	// divHeight = $(document).find(".filePreview").innerHeight();
-	// $(document).find("#attached").parent().parent().next().css("padding-top", divHeight);
+	// divHeight = $(".filePreview").innerHeight();
+	// $("#attached").parent().parent().next().css("padding-top", divHeight);
 }
 
 function tabFileDownload(no, fileType, fileName){
@@ -1831,7 +1734,7 @@ function fileViewDelete(e){
 	removeDataArray.push($(e).prev().text());
 	$(e).parent().remove();
 
-	$(document).find(".filePreview div button").each((index, item) => {
+	$(".filePreview div button").each((index, item) => {
 		$(item).attr("data-index", index);		
 	});
 }
@@ -1847,7 +1750,7 @@ function submitFileError(){
 function tabFileInsert(url){
 	let writer, data, method, type;
 
-	writer = $(document).find("#writer");
+	writer = $("#writer");
 	writer = dataListFormat(writer.attr("id"), writer.val());
 	
 	url = url;
@@ -3158,9 +3061,8 @@ function validateEmail(email) {
 }
 
 function formDataSet(){
-	let element;
-
 	for(let key in storage.formList){
+		let element = "";
 		if($("#" + key).length > 0){
 			element = $("#" + key);
 		}else if($("[name=\"" + key + "\"]").length > 0){
@@ -3171,7 +3073,7 @@ function formDataSet(){
 			}
 		}
 		
-		if(element !== undefined){
+		if(element !== undefined && element !== ""){
 			if(element.prop('tagName') === "TEXTAREA"){
 				storage.formList[key] = CKEDITOR.instances[key].getData().replaceAll("\n", "");
 			}else{
@@ -3181,7 +3083,7 @@ function formDataSet(){
 							let dateTime = new Date(element.val()).getTime();
 							storage.formList[key] = dateTime;
 						}else{
-							storage.formList[key] = element.val().replaceAll(",", "");
+							storage.formList[key] = parseInt(element.val().replaceAll(",", ""));
 						}
 					}else{
 						if(element.attr("type") === "date"){
@@ -3248,8 +3150,10 @@ function autoCompleteClick(e){
 	input.val(thisEle.text());
 	input.attr("data-change", true);
 
-	if(storage.formList[input.attr("id")] !== undefined){
-		storage.formList[input.attr("id")] = thisEle.data("value");
+	if(storage.formList !== undefined){
+		if(storage.formList[input.attr("id")] !== undefined){
+			storage.formList[input.attr("id")] = thisEle.data("value");
+		}
 	}
 
 	autoComplete.remove();
@@ -3311,5 +3215,24 @@ function getStorageList(){
 				msg.set("cip 에러");
 			}
 		});
+	}
+}
+
+function detailSetFormList(result){
+	storage.formList = {};
+	for(let key in result){
+		if(typeof result[key] !== "object"){
+			storage.formList[key] = result[key];
+		}
+	}
+}
+
+function detailTrueDatas(datas){
+	for(let i = 0; i < datas.length; i++){
+		if($("#" + datas[i]).length > 0){
+			$("#" + datas[i]).attr("data-change", true);
+		}else if($("[name=\"" + datas[i] + "\"]").length > 0){
+			$("[name=\"" + datas[i] + "\"]").attr("data-change", true);
+		}
 	}
 }
