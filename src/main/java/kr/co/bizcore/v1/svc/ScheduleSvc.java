@@ -1,5 +1,9 @@
 package kr.co.bizcore.v1.svc;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -297,9 +301,106 @@ public class ScheduleSvc extends Svc{
         return result;
     }
 
+    // 기슬지원에 대한 상세 일정을 가져오는 메서드
+    public String getTechDetil(String compId, int sopp, int customer, int contract) {
+        String result = null, t = null;
+        String sql = null;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        sql = "SELECT 'tech' AS job, techdNo AS no, userNo AS writer, soppNo AS sopp, IF(endCustNo=100002,NULL,endCustNo) AS customer, CAST(UNIX_TIMESTAMP(techdFrom)*1000 AS CHAR) AS `from`, CAST(UNIX_TIMESTAMP(techdTo)*1000 AS CHAR) AS `to`, techdTitle AS title, techdDesc AS content, techdCheck AS report, techdType AS type, techdPlace AS place, custNo AS partner, contNo AS contract, cntrctMth AS contractMethod, custmemberNo AS cipOfCustomer, techdItemmodel AS supportModel, techdItemversion AS supportVersion, techdSteps AS supportStep, CAST(UNIX_TIMESTAMP(regdatetime)*1000 AS CHAR) AS created, CAST(UNIX_TIMESTAMP(moddatetime)*1000 AS CHAR) AS modified " +
+            "FROM swc_techd "+
+            "WHERE attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = '" + compId + "') ";
+        if(sopp > 0)        sql += (" AND soppno = " + sopp);
+        if(customer > 0)    sql += (" AND custno = " + customer);
+        if(contract > 0)    sql += (" AND contno = " + customer);
+        sql += " ORDER BY regdatetime DESC";
+
+        try{
+            conn = sqlSession.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+            while(rs.next()){
+                if(result == null)  result = "[";
+                else                result += ",";
+                t = "{\"job\":\"" + rs.getString(1) + "\",";
+                t += ("\"no\":" + rs.getString(2) + ",");
+                t += ("\"writer\":" + rs.getString(3) + ",");
+                t += ("\"sopp\":" + rs.getString(4) + ",");
+                t += ("\"customer\":" + rs.getString(5) + ",");
+                t += ("\"from\":" + rs.getString(6) + ",");
+                t += ("\"to\":" + rs.getString(7) + ",");
+                t += ("\"title\":" + (rs.getString(8) == null ? null : "\"" + rs.getString(8) + "\"") + ",");
+                t += ("\"content\":" + (rs.getString(9) == null ? null : "\"" + rs.getString(9).replaceAll("\n", "").replaceAll("\r", "").replaceAll("\t", "") + "\"") + ",");
+                t += ("\"report\":" + rs.getString(10) + ",");
+                t += ("\"type\":" + (rs.getString(11) == null ? null : "\"" + rs.getString(11) + "\"") + ",");
+                t += ("\"place\":" + (rs.getString(12) == null ? null : "\"" + rs.getString(12) + "\"") + ",");
+                t += ("\"partner\":" + (rs.getString(13) == null ? null : "\"" + rs.getString(13) + "\"") + ",");
+                t += ("\"contract\":" + (rs.getString(14) == null ? null : "\"" + rs.getString(14) + "\"") + ",");
+                t += ("\"contractMethod\":" + (rs.getString(15) == null ? null : "\"" + rs.getString(15) + "\"") + ",");
+                t += ("\"cipOfCustomer\":" + rs.getString(16) + ",");
+                t += ("\"supportModel\":" + (rs.getString(17) == null ? null : "\"" + rs.getString(17) + "\"") + ",");
+                t += ("\"supportVersion\":" + (rs.getString(18) == null ? null : "\"" + rs.getString(18) + "\"") + ",");
+                t += ("\"supportStep\":" + (rs.getString(19) == null ? null : "\"" + rs.getString(19) + "\"") + ",");
+                t += ("\"created\":" + rs.getString(20) + ",");
+                t += ("\"modified\":" + rs.getString(21) + "}");
+                result += t;
+            }
+            if(result != null)  result += "]";
+        }catch(SQLException e){e.printStackTrace();}
+
+        return result;
+    }
+
+    // 영업일정에 대한 상세 일정을 가져오는 메서드
+    public String getSalesDetil(String compId, int sopp, int customer) {
+        String result = null, t = null;
+        String sql = null;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        sql = "SELECT 'sales' AS job, salesNo AS no, userNo AS writer, soppNo AS sopp, ptncNo AS customer, CAST(UNIX_TIMESTAMP(salesFrdatetime)*1000 AS CHAR) AS `from`, CAST(UNIX_TIMESTAMP(salesTodatetime)*1000 AS CHAR) AS `to`, salesTitle AS title, salesDesc AS content, salesCheck AS report, salesType AS type, salesPlace AS place, custNo AS partner, CAST(UNIX_TIMESTAMP(regdatetime)*1000 AS CHAR) AS created, CAST(UNIX_TIMESTAMP(moddatetime)*1000 AS CHAR) AS modified " +
+            "FROM swc_sales "+
+            "WHERE attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = '" + compId + "') ";
+        if(sopp > 0)        sql += (" AND soppno = " + sopp);
+        if(customer > 0)    sql += (" AND (custno = " + customer + " OR ptncno = " + customer + ")");
+        sql += " ORDER BY regdatetime DESC";
+
+        try{
+            conn = sqlSession.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+            while(rs.next()){
+                if(result == null)  result = "[";
+                else                result += ",";
+                t = "{\"job\":\"" + rs.getString(1) + "\",";
+                t += ("\"no\":" + rs.getString(2) + ",");
+                t += ("\"writer\":" + rs.getString(3) + ",");
+                t += ("\"sopp\":" + rs.getString(4) + ",");
+                t += ("\"customer\":" + rs.getString(5) + ",");
+                t += ("\"from\":" + rs.getString(6) + ",");
+                t += ("\"to\":" + rs.getString(7) + ",");
+                t += ("\"title\":" + (rs.getString(8) == null ? null : "\"" + rs.getString(8) + "\"") + ",");
+                t += ("\"content\":" + (rs.getString(9) == null ? null : "\"" + rs.getString(9).replaceAll("\n", "").replaceAll("\r", "").replaceAll("\t", "") + "\"") + ",");
+                t += ("\"report\":" + rs.getString(10) + ",");
+                t += ("\"type\":" + (rs.getString(11) == null ? null : "\"" + rs.getString(11) + "\"") + ",");
+                t += ("\"place\":" + (rs.getString(12) == null ? null : "\"" + rs.getString(12) + "\"") + ",");
+                t += ("\"partner\":" + (rs.getString(13) == null ? null : "\"" + rs.getString(13) + "\"") + ",");
+                t += ("\"created\":" + rs.getString(14) + ",");
+                t += ("\"modified\":" + rs.getString(15) + "}");
+                result += t;
+            }
+            if(result != null)  result += "]";
+        }catch(SQLException e){e.printStackTrace();}
+
+        return result;
+    }
 
 
 
+    //  FROM swc_sales WHERE attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND
 
     // ======================= 유틸리티 메서드 ===========================
 
@@ -312,6 +413,8 @@ public class ScheduleSvc extends Svc{
         cal.add(Calendar.MONTH, 1);
         end.setTime(cal.getTimeInMillis());
     } // End of calcStartAndEndDate()
+
+    
 
     
     
