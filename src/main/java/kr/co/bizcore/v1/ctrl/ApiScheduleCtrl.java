@@ -371,6 +371,35 @@ public class ApiScheduleCtrl extends Ctrl {
         return result;
     }
 
+    @GetMapping("/tech/sopp/{sopp:\\d+}/customer/{customer:\\d+}/contract/{contract:\\d+}")
+    public String apiTechDetailSchedulr(HttpServletRequest request, @PathVariable("sopp") int sopp, @PathVariable("customer") int customer, @PathVariable("contract") int contract){
+        String result = null, data = null;
+        HttpSession session = null;
+        String compId = null, aesKey = null, aesIv = null;
+
+        session = request.getSession();
+        compId = (String)session.getAttribute("compId");
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
+        }else{
+            data = scheduleService.getTechDetil(compId, sopp, customer, contract);
+            if(data != null){
+                data = encAes(data, aesKey, aesIv);
+                result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
+            }else{
+                result = "{\"result\":\"failure\",\"msg\":\"Error occured.\"}";
+            }
+        }
+
+        return result;
+    }
+
     // ===================== P R I V A T E _ M E T H O D =========================
     private int getCurrentDate(){
         int result = 0;
