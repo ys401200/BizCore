@@ -150,7 +150,7 @@ function setTempReport() {
             storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
           $("." + formId + subTitlesArr[i] + "_position")[j].value =
             storage.userRank[
-              $("." + formId + subTitlesArr[i] + "_position")[j].value
+            $("." + formId + subTitlesArr[i] + "_position")[j].value
             ][0];
         }
       }
@@ -899,9 +899,10 @@ function reportInsert() {
   }
 
   title = $("#" + formId + "_title").val();
+  
   content = CKEDITOR.instances[formId + "_content"].getData();
   $("#" + formId + "_content").attr("data-detail", content);
- // content = $("#" + formId + "_content").val();
+  // content = $("#" + formId + "_content").val();
   readable = $("input[name=authority]:checked").val();
   appDoc = $(".reportInsertForm").html();
   appDoc = appDoc
@@ -935,47 +936,7 @@ function reportInsert() {
     appLine.push([4, $("." + formId + "_refer")[i].dataset.detail]);
   }
 
-  let fnc, type, start, end;
 
-  // if (formId == "doc_Form_leave") {
-  //   fnc = "hr";
-  //   type = "leave";
-  //   start = new Date(
-  //     $("#" + formId + "_from").val() +
-  //       " " +
-  //       $("#" + formId + "_fromTime").val()
-  //   );
-  //   end = new Date(
-  //     $("#" + formId + "_to").val() + " " + $("#" + formId + "_toTime").val()
-  //   );
-  // } else if (formId == "doc_Form_extension") {
-  //   fnc = "hr";
-  //   start = new Date(
-  //     $("#" + formId + "_from").val() +
-  //       " " +
-  //       $("#" + formId + "_fromTime").val()
-  //   );
-  //   end = new Date(
-  //     $("#" + formId + "_to").val() + " " + $("#" + formId + "_toTime").val()
-  //   );
-
-  //   if ($("#" + formId + "_type").val() == "연장근무") {
-  //     type = "overTime";
-  //   } else if ($("#" + formId + "_type").val() == "휴일근무") {
-  //     type = "holidayWork";
-  //   }
-  // }
-
-  // let related = {
-  //   fnc: fnc,
-  //   type: type,
-  //   start: start + "",
-  //   end: end + "",
-  //   parent: null,
-  //   prev: null,
-  //   next: null,
-  //   children: null,
-  // };
 
   let data = {
     title: title,
@@ -1005,6 +966,8 @@ function reportInsert() {
     formId != "doc_Form_leave" &&
     detailType == undefined &&
     formId != "doc_Form_extension" &&
+    detailType == undefined &&
+    formId != "doc_Form_SalesReport" &&
     detailType == undefined
   ) {
     alert("결재문서 상세 타입을 선택하세요");
