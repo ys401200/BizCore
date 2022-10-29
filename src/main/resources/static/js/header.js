@@ -616,7 +616,6 @@ function readyTopPageActive(){
 //기본 그리드
 function createGrid(gridContainer, headerDataArray, dataArray, ids, job, fnc, idName){
 	let gridHtml = "", gridContents, idStr;
-
 	ids = (ids === undefined) ? 0 : ids;
 	fnc = (fnc === undefined) ? "" : fnc;
 	job = (job === undefined) ? "" : job;
@@ -656,24 +655,25 @@ function createGrid(gridContainer, headerDataArray, dataArray, ids, job, fnc, id
 	}
 
 	gridContainer.html(gridHtml);
-
+	
 	if(idName === undefined){
 		gridContents = $(".gridContent");
 	}else{
-		gridContents = $("#" + idName + " div .gridContent");
+		gridContents = $("#" + idName + " .gridContent");
+	}
+	
+	for(let i = 0; i < headerDataArray.length; i++){
+		for(let t = 0; t < gridContents.length; t++){
+			if(headerDataArray[i].align === "center"){
+				$(gridContents[t]).find(".gridContentItem").eq(i).attr("class", "gridContentItem grid_default_text_align_center");
+			}else if(headerDataArray[i].align === "left"){
+				$(gridContents[t]).find(".gridContentItem").eq(i).attr("class", "gridContentItem grid_default_text_align_left");
+			}else{
+				$(gridContents[t]).find(".gridContentItem").eq(i).attr("class", "gridContentItem grid_default_text_align_right");
+			}
+		}
 	}
 
-	for(let i = 0; i < headerDataArray.length; i++){
-		gridContents.each(function(index, item){
-			if(headerDataArray[i].align === "center"){
-				$(item).find(".gridContentItem").eq(i).attr("class", "gridContentItem grid_default_text_align_center");
-			}else if(headerDataArray[i].align === "left"){
-				$(item).find(".gridContentItem").eq(i).attr("class", "gridContentItem grid_default_text_align_left");
-			}else{
-				$(item).find(".gridContentItem").eq(i).attr("class", "gridContentItem grid_default_text_align_right");
-			}
-		});
-	}
 }
 
 //날짜 포맷
@@ -1337,13 +1337,16 @@ function inputSet(data){
 }
 
 function detailTabHide(notId){
-	$(".tabs input:radio").each((index, item) => {
+	let radio;
+	radio = $(".tabs input:radio");
+
+	for(let i = 0; i < radio.length; i++){
 		if(notId === undefined){
-			$("#" + $(item).data("content-id")).hide();
+			$("#" + $(radio[i]).data("content-id")).hide();
 		}else{
-			$("#" + $(item).data("content-id")).not("#" + notId).hide();
+			$("#" + $(radio[i]).data("content-id")).not("#" + notId).hide();
 		}
-	});
+	}
 }
 
 //tinyMCE
@@ -1408,7 +1411,7 @@ function createTabTradeList(result){
 	html += "<div class='tradeThirdTitleItem'>비고</div>";
 	html += "<div class='tradeThirdTitleItem'>승인번호</div>";
 	html += "<div class='tradeThirdTitleItem'>수정</div>";
-	html += "<div class='tradeThirdTitleItem'>삭제</div>";
+	html += "<div class='tradeThirdTitleItem'>삭제</div>"; 
 	html += "</div>";
 	
 	html += "<div class='tradeThirdFormContent'>";
@@ -1495,8 +1498,14 @@ function createTabTradeList(result){
 	}
 
 	html += "</div>";
+	$(".detailSecondTabs").append(html);
 
-	return html;
+	let tabs = $(".tabs");
+	if(result.length > 0){
+		tabs.find("label[for=\"tabTrade\"]").text("매입매출내역(" + result.length + ")");
+	}else{
+		tabs.find("label[for=\"tabTrade\"]").text("매입매출내역(0)");
+	}
 }
 
 function tradeInsertForm(){
@@ -1595,10 +1604,10 @@ function tradeInsertForm(){
 }
 
 function createTabFileList(){
-	let html = "", container, header = [], data = [], str, detailSecondTabs, ids, job, fnc, url;
+	let html = "", tabs, container, header = [], data = [], str, detailSecondTabs, ids, job, fnc, url;
 	
 	detailSecondTabs = $(".detailSecondTabs");
-
+	
 	html = "<div class='tabFileList' id='tabFileList'>";
 	html += "<input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attached[]' id='attached' onchange='fileChange();' multiple>";
 	html += "<div class='fileList'></div>";
@@ -1617,7 +1626,14 @@ function createTabFileList(){
 	
 	detailSecondTabs.append(html);
 	container = detailSecondTabs.find(".tabFileList .fileList");
-	
+	tabs = $(".tabs");
+
+	if(storage.attachedList.length > 0){
+		tabs.find("label[for=\"tabFile\"]").text("파일첨부(" + storage.attachedList.length + ")");
+	}else{
+		tabs.find("label[for=\"tabFile\"]").text("파일첨부(0)");
+	}
+
 	if(storage.attachedList.length > 0){
 		for(let i = 0; i < storage.attachedList.length; i++){
 			url = "/api/attached/" + storage.attachedType + "/" + storage.attachedNo + "/" + storage.attachedList[i].fileName;
@@ -1654,10 +1670,8 @@ function createTabFileList(){
 		];
 		data.push(str);
 	}
-
-	setTimeout(() => {
-		createGrid(container, header, data, ids, job, fnc);
-	}, 100);
+	
+	createGrid(container, header, data, ids, job, fnc);
 }
 
 function fileChange(){
@@ -1980,11 +1994,13 @@ function createTabEstList(){
 
 //기술지원내역 리스트
 function createTabTechList(result){
-	let html = "", container, header = [], data = [], str, detailSecondTabs, ids, job, fnc;
+	let html = "", lengthIndex, tabs, container, header, data = [], str, detailSecondTabs, ids, job, fnc, disDate, idName;
 
 	detailSecondTabs = $(".detailSecondTabs");
 	html = "<div class='tabTechList' id='tabTechList'></div>";
-	
+	lengthIndex = 0;
+	idName = "tabTechList";
+
 	header = [
 		{
 			"title" : "일자",
@@ -2010,13 +2026,18 @@ function createTabTechList(result){
 	
 	detailSecondTabs.append(html);
 	container = detailSecondTabs.find(".tabTechList");
+	tabs = $(".tabs");
 
 	if(result.length > 0){
 		for(let i = 0; i < result.length; i++){
 			if(result[i].job === "tech"){
+				result[i].created = new Date(result[i].created).getTime();
+				disDate = dateDis(result[i].created);
+				disDate = dateFnc(disDate); 
+
 				str = [
 					{
-						"setData": result[i].created,
+						"setData": disDate,
 					},
 					{
 						"setData": storage.code.etc[result[i].type],
@@ -2031,6 +2052,9 @@ function createTabTechList(result){
 						"setData": result[i].content,
 					},
 				];
+
+				data.push(str);
+				lengthIndex++;
 			}
 		}
 	}else{
@@ -2041,21 +2065,27 @@ function createTabTechList(result){
 			},
 		];
 	}
-	
-	data.push(str);
+
+	if(lengthIndex > 0){
+		tabs.find("label[for=\"tabTech\"]").text("기술지원내역(" + lengthIndex + ")");
+	}else{
+		tabs.find("label[for=\"tabTech\"]").text("기술지원내역(0)");
+	}
 
 	setTimeout(() => {
-		createGrid(container, header, data, ids, job, fnc);
+		createGrid(container, header, data, ids, job, fnc, idName);
 	}, 100);
 }
 
 //영업활동내역 리스트
 function createTabSalesList(result){
-	let html = "", container, header = [], data = [], str, detailSecondTabs, ids, job, fnc;
+	let html = "", lengthIndex, tabs, container, header, data = [], str, detailSecondTabs, ids, job, fnc, disDate, idName;
 
 	detailSecondTabs = $(".detailSecondTabs");
 	html = "<div class='tabSalesList' id='tabSalesList'></div>";
-	
+	lengthIndex = 0;
+	idName = "tabSalesList";
+
 	header = [
 		{
 			"title" : "일자",
@@ -2085,13 +2115,17 @@ function createTabSalesList(result){
 	
 	detailSecondTabs.append(html);
 	container = detailSecondTabs.find(".tabSalesList");
+	tabs = $(".tabs");
 
 	if(result.length > 0){
 		for(let i = 0; i < result.length; i++){
 			if(result[i].job === "sales"){
+				disDate = dateDis(result[i].created, result[i].modified);
+				disDate = dateFnc(disDate); 
+
 				str = [
 					{
-						"setData": result[i].created,
+						"setData": disDate,
 					},
 					{
 						"setData": storage.code.etc[result[i].type],
@@ -2109,6 +2143,9 @@ function createTabSalesList(result){
 						"setData": result[i].place,
 					},
 				];
+
+				data.push(str);
+				lengthIndex++;
 			}
 		}
 	}else{
@@ -2117,13 +2154,17 @@ function createTabSalesList(result){
 				"setData": undefined,
 				"col": 6,
 			},
-		];
-		
+		];	
 	}
 
-	data.push(str);
+	if(lengthIndex > 0){
+		tabs.find("label[for=\"tabSales\"]").text("영업활동내역(" + lengthIndex + ")");
+	}else{
+		tabs.find("label[for=\"tabSales\"]").text("영업활동내역(0)");
+	}
+
 	setTimeout(() => {
-		createGrid(container, header, data, ids, job, fnc);
+		createGrid(container, header, data, ids, job, fnc, idName);
 	}, 100);
 }
 
@@ -3270,6 +3311,28 @@ function detailCheckedTrueView(){
 					}
 				}
 			}
+		}
+	}
+}
+
+function setTabsLayOutMenu(){
+	let tabs, tabItem, tabItemLength, width, temp, padding;
+	tabs = $(".tabs");
+	tabItem = $(".tabItem");
+	tabItemLength = tabItem.length;
+	temp = tabItemLength * 2;
+
+	for(let i = 0; i < tabItemLength; i++){
+		$(tabItem[i]).css("z-index", temp);
+		temp -= 2;
+		if(i > 0){
+			padding += parseInt($(tabItem[i-1]).width() - 8);
+			$(tabItem[i]).css("width", width + "%");
+			$(tabItem[i]).css("padding-left", padding + "px");
+		}else{
+			width = parseInt(100 / tabItemLength);
+			$(tabItem[i]).css("width", width + "%");
+			padding = width;
 		}
 	}
 }

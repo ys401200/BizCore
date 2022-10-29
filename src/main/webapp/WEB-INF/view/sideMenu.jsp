@@ -120,6 +120,7 @@
 				</a>
 				<ul id="panel">
 					<li><a href="/business/customer">고객사설정</a></li>
+					<li><a href="/business/product">상품설정</a></li>
 					<li><a href="/business/goal">영업목표설정</a></li>
 					<li><a href="/business/employee">직원관리</a></li>
 				</ul>

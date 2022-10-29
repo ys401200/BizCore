@@ -21,11 +21,6 @@
 	float: left;
 }
 
-/* .customerContainer button {
-	margin:1% 1% 0 0;
-	padding:0.3% 0.8% 0.3% 0.8%;
-} */
-
 .gridList {
 	display: grid;
 	width: 99%;
@@ -39,4 +34,28 @@
 .gridList .gridHeader,
 .gridList .gridContent {
 	grid-template-columns: repeat(3, 1fr);
+}
+
+.customerTabSalesList{
+	display: grid;
+	width: 100%;
+	max-height: 200px;
+	overflow-y: auto;
+}
+
+.customerTabSalesList .gridHeader,
+.customerTabSalesList .gridContent{
+	grid-template-columns: 10% 30% 50% 10%;
+}
+
+.customerTabTechList{
+	display: grid;
+	width: 100%;
+	max-height: 200px;
+	overflow-y: auto;
+}
+
+.customerTabTechList .gridHeader,
+.customerTabTechList .gridContent{
+	grid-template-columns: 10% 30% 50% 10%;
 }

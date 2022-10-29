@@ -95,17 +95,6 @@ function drawCustomerList() {
 	createGrid(container, header, data, ids, job, fnc);
 }
 
-function customerDetailView(e){
-	let id, url, method, data, type;
-
-	id = $(e).data("id");
-	url = "/api/system/customer/" + id;
-	method = "get";
-	type = "detail";
-
-	crud.defaultAjax(url, method, data, type, customerSuccessView, customerErrorView);
-}
-
 function customerSuccessList(result){
 	storage.customerList = result;
 
@@ -124,14 +113,26 @@ function customerErrorList(){
 	msg.set("에러");
 }
 
+function customerDetailView(e){
+	let id, url, method, data, type;
+
+	id = $(e).data("id");
+	url = "/api/system/customer/" + id;
+	method = "get";
+	type = "detail";
+
+	crud.defaultAjax(url, method, data, type, customerSuccessView, customerErrorView);
+}
+
 function customerSuccessView(result){
-	let html, name, ceoName, taxId, address, detailAddress, zipCode, email, emailForTaxbill, fax, phone, remark1, remark2, dataArray, notIdArray, searchContainer, containerTitle, detailBackBtn, listSearchInput, listRange, pageContainer, crudAddBtn, crudUpdateBtn, crudDeleteBtn;
+	let html, htmlSecond, name, ceoName, taxId, address, detailAddress, zipCode, email, emailForTaxbill, fax, phone, remark1, remark2, dataArray, notIdArray, searchContainer, containerTitle, detailBackBtn, listSearchInput, listRange, detailSecondTabs, pageContainer, crudAddBtn, crudUpdateBtn, crudDeleteBtn;
 	detailSetFormList(result);
 	gridList = $(".gridList");
 	searchContainer = $(".searchContainer");
 	containerTitle = $("#containerTitle");
 	detailBackBtn = $(".detailBackBtn");
 	listSearchInput = $(".listSearchInput");
+	detailSecondTabs = $(".detailSecondTabs");
 	listRange = $(".listRange");
 	crudAddBtn = $(".crudAddBtn");
 	crudUpdateBtn = $(".crudUpdateBtn");
@@ -326,6 +327,16 @@ function customerSuccessView(result){
 	];
 
 	html = detailViewForm(dataArray);
+	htmlSecond = "<div class='tabs'>";
+	htmlSecond += "<input type='radio' id='customerTabSales' name='tabItem' data-content-id='customerTabSalesList' onclick='tabItemClick(this)' checked>";
+	htmlSecond += "<label class='tabItem' for='customerTabSales'></label>";
+	htmlSecond += "<input type='radio' id='customerTabContract' name='tabItem' data-content-id='customerTabContractList' onclick='tabItemClick(this)'>";
+	htmlSecond += "<label class='tabItem' for='customerTabContract'>계약정보</label>";
+	htmlSecond += "<input type='radio' id='customerTabTech' name='tabItem' data-content-id='customerTabTechList' onclick='tabItemClick(this)'>";
+	htmlSecond += "<label class='tabItem' for='customerTabTech'>기술지원정보</label>";
+	htmlSecond += "</div>";
+	detailSecondTabs.append(htmlSecond);
+	detailSecondTabs.show();
 	containerTitle.html(name);
 	gridList.html("");
 	detailBackBtn.css("display", "flex");
@@ -337,13 +348,17 @@ function customerSuccessView(result){
 	crudUpdateBtn.attr("onclick", "enableDisabled(this, \"customerUpdate();\", \"" + notIdArray + "\");");
 	crudUpdateBtn.css("display", "flex");
 	crudDeleteBtn.css("display", "flex");
+	setTabsLayOutMenu();
+	customerTabSalesList();
+	customerTabTechList();
 	gridList.show();
 
 	setTimeout(() => {
 		detailCheckedTrueView();
 		ckeditor.config.readOnly = true;
 		window.setTimeout(setEditor, 100);
-	}, 100);
+		detailTabHide("customerTabSalesList");
+	}, 500);
 }
 
 function customerErrorView(){
@@ -779,4 +794,167 @@ function searchSubmit(){
 	}
 	
 	drawCustomerList();
+}
+
+function customerTabSalesList(){
+	$.ajax({
+		url: "/api/schedule/sales/sopp/0/customer/" + storage.formList.no,
+		method: "get",
+		dataType: "json",
+		contentType: "text/plain",
+		success: (result) => {
+			let html = "", container, header = [], data = [], str, detailSecondTabs, ids, job, fnc, disDate, idName;
+			result = cipher.decAes(result.data);
+			result = JSON.parse(result);
+
+			if(result.length > 0){
+				$(".tabItem[for=\"customerTabSales\"]").text("영업활동정보(" + result.length + ")");
+			}else{
+				$(".tabItem[for=\"customerTabSales\"]").text("영업활동정보(0)");
+			}
+
+			detailSecondTabs = $(".detailSecondTabs");
+			html = "<div class='customerTabSalesList' id='customerTabSalesList'></div>";
+			header = [
+				{
+					"title" : "일자",
+					"align" : "center",
+				},
+				{
+					"title" : "영업활동명",
+					"align" : "left",
+				},
+				{
+					"title" : "비고",
+					"align" : "left",
+				},
+				{
+					"title" : "담당자",
+					"align" : "center",
+				},
+			];
+			
+			detailSecondTabs.append(html);
+			container = detailSecondTabs.find(".customerTabSalesList");
+		
+			if(result.length > 0){
+				for(let i = 0; i < result.length; i++){
+					if(result[i].job === "sales"){
+						disDate = dateDis(result[i].created, result[i].modified);
+						disDate = dateFnc(disDate); 
+		
+						str = [
+							{
+								"setData": disDate,
+							},
+							{
+								"setData": result[i].title,
+							},
+							{
+								"setData": result[i].content,
+							},
+							{
+								"setData": storage.user[result[i].writer].userName,
+							},
+						];
+					}
+					data.push(str);
+				}
+			}else{
+				str = [
+					{
+						"setData": undefined,
+						"col": 4,
+					},
+				];
+			}
+
+			idName = "customerTabSalesList";
+			setTimeout(() => {
+				createGrid(container, header, data, ids, job, fnc, idName);
+			}, 100);
+		}
+	})
+}
+
+function customerTabTechList(){
+	$.ajax({
+		url: "/api/schedule/tech/sopp/0/customer/" + storage.formList.no + "/contract/0",
+		method: "get",
+		dataType: "json",
+		contentType: "text/plain",
+		success: (result) => {
+			let html = "", container, header = [], data = [], str, detailSecondTabs, ids, job, fnc, disDate, idName;
+			result = cipher.decAes(result.data);
+			result = JSON.parse(result);
+	
+			if(result.length > 0){
+				$(".tabItem[for=\"customerTabTech\"]").text("기술지원정보(" + result.length + ")");
+			}else{
+				$(".tabItem[for=\"customerTabTech\"]").text("기술지원정보(0)");
+			}
+
+			detailSecondTabs = $(".detailSecondTabs");
+			html = "<div class='customerTabTechList' id='customerTabTechList'></div>";
+			header = [
+				{
+					"title" : "일자",
+					"align" : "center",
+				},
+				{
+					"title" : "기술지원명",
+					"align" : "left",
+				},
+				{
+					"title" : "비고",
+					"align" : "left",
+				},
+				{
+					"title" : "담당자",
+					"align" : "center",
+				},
+			];
+			
+			detailSecondTabs.append(html);
+			container = detailSecondTabs.find(".customerTabTechList");
+		
+			if(result.length > 0){
+				for(let i = 0; i < result.length; i++){
+					if(result[i].job === "tech"){
+						disDate = dateDis(result[i].created, result[i].modified);
+						disDate = dateFnc(disDate); 
+		
+						str = [
+							{
+								"setData": disDate,
+							},
+							{
+								"setData": result[i].title,
+							},
+							{
+								"setData": result[i].content,
+							},
+							{
+								"setData": storage.user[result[i].writer].userName,
+							},
+						];
+					}
+
+					data.push(str);
+				}
+			}else{
+				str = [
+					{
+						"setData": undefined,
+						"col": 4,
+					},
+				];
+			}
+		
+			idName = "customerTabTechList";
+			setTimeout(() => {
+				createGrid(container, header, data, ids, job, fnc, idName);
+			}, 100);
+		}
+	})
 }

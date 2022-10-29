@@ -41,6 +41,7 @@
             <div class="gridList"></div>
             <div class="pageContainer"></div>
 		</div>
+        <div class="detailSecondTabs"></div>
 	</div>
 </div>
 <jsp:include page="../bottom.jsp" />

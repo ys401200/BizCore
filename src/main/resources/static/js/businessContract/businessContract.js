@@ -455,42 +455,41 @@ function contractSuccessView(result){
 	html = detailViewForm(dataArray);
 	htmlSecond = "<div class='tabs'>";
 	htmlSecond += "<input type='radio' id='tabTrade' name ='tabItem' data-content-id='tabTradeList' onclick='tabItemClick(this)' checked>";
-	htmlSecond += "<label class='tabItem' for='tabTrade'>매입매출내역</label>";
+	htmlSecond += "<label class='tabItem' for='tabTrade'></label>";
 	htmlSecond += "<input type='radio' id='tabFile' name='tabItem' data-content-id='tabFileList' data-id='" + result.no + "' onclick='tabItemClick(this)'>";
-	htmlSecond += "<label class='tabItem' for='tabFile'>파일첨부</label>";
+	htmlSecond += "<label class='tabItem' for='tabFile'></label>";
 	htmlSecond += "<input type='radio' id='tabTech' name='tabItem' data-content-id='tabTechList' onclick='tabItemClick(this)'>";
-	htmlSecond += "<label class='tabItem' for='tabTech'>기술지원내역</label>";
+	htmlSecond += "<label class='tabItem' for='tabTech'></label>";
 	htmlSecond += "<input type='radio' id='tabSales' name='tabItem' data-content-id='tabSalesList' onclick='tabItemClick(this)'>";
-	htmlSecond += "<label class='tabItem' for='tabSales'>영업활동내역</label>";
+	htmlSecond += "<label class='tabItem' for='tabSales'></label>";
 	htmlSecond += "</div>";
-	htmlSecond += createTabTradeList(result.trades);
 	detailSecondTabs.append(htmlSecond);
 	detailSecondTabs.show();
 	containerTitle.html(title);
 	gridList.html("");
 	searchContainer.hide();
 	gridList.html(html);
+	setTabsLayOutMenu();
 	crudAddBtn.hide();
-
+	
 	if(storage.my == result.employee){
 		crudUpdateBtn.attr("onclick", "enableDisabled(this, \"contractUpdate();\", \"" + notIdArray + "\");");
 		crudUpdateBtn.css("display", "flex");
 		crudDeleteBtn.css("display", "flex");
 	}
-	
-	gridList.show();
-	
+
 	storage.attachedList = result.attached;
 	storage.attachedNo = result.no;
 	storage.attachedType = "contract";
 	storage.attachedFlag = true;
-
+	
+	createTabTradeList(result.trades);
 	createTabFileList();
 	createTabTechList(result.schedules);
 	createTabSalesList(result.schedules);
 	detailTabHide("tabTradeList");
+	gridList.show();
 	detailTrueDatas(datas);
-
 	$(".detailContents").show();
 	
 	setTimeout(() => {

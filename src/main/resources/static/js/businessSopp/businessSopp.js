@@ -375,7 +375,6 @@ function soppSuccessView(result){
 	htmlSecond += "<input type='radio' id='tabSales' name='tabItem' data-content-id='tabSalesList' onclick='tabItemClick(this)'>";
 	htmlSecond += "<label class='tabItem' for='tabSales'>영업활동내역</label>";
 	htmlSecond += "</div>";
-	htmlSecond += createTabTradeList(result.trades);
 	detailSecondTabs.append(htmlSecond);
 	detailSecondTabs.show();
 	containerTitle.html(title);
@@ -385,6 +384,7 @@ function soppSuccessView(result){
 	listSearchInput.hide();
 	listRange.hide();
 	gridList.html(html);
+	setTabsLayOutMenu();
 	crudAddBtn.hide();
 
 	if(storage.my == result.employee){
@@ -392,14 +392,15 @@ function soppSuccessView(result){
 		crudUpdateBtn.css("display", "flex");
 		crudDeleteBtn.css("display", "flex");
 	}
-	
-	gridList.show();
-	
+
 	storage.attachedList = result.attached;
 	storage.attachedNo = result.no;
 	storage.attachedType = "sopp";
 	storage.attachedFlag = true;
-
+	
+	gridList.show();
+	
+	createTabTradeList(result.trades);
 	createTabFileList();
 	createTabTechList(result.schedules);
 	createTabSalesList(result.schedules);
