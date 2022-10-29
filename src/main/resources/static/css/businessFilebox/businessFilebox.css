@@ -30,9 +30,9 @@
 	margin: 0;
 }
 
-.fileBoxContainer > span {
-	font-weight: bolder;
-	font-size: 15px;
+.fileBoxContainer > #containerTitle {
+	font-weight: 600;
+    font-size: 0.9rem;
 	margin-left: 15px;
 	line-height: 40px;
 	color: #182f81;

@@ -385,7 +385,6 @@ function scheduleSuccessView(result){
 		}
 
 		detailTrueDatas(datas);
-		storage.editorArray = ["content"];
 		ckeditor.config.readOnly = true;
 		window.setTimeout(setEditor, 100);
 	}, 100);
@@ -463,16 +462,9 @@ function calendarSuccessView(result){
 		}
 
 		detailTrueDatas(datas);
-		storage.editorArray = ["content"];
 		ckeditor.config.readOnly = true;
 		window.setTimeout(setEditor, 100);
 	}, 100);
-
-	setTimeout(() => {
-		$(".cke").css("height", "300px");
-		$(".cke_inner").css("height", "300px");
-		$(".cke_contents").css("height", "300px");
-	}, 400);
 }
 
 function calendarErrorView(){
@@ -628,65 +620,38 @@ function scheduleInsertForm(getDate){
 	modal.close.attr("onclick", "modal.hide();");
 
 	setTimeout(() => {
-		storage.editorArray = ["content"];
 		$("[name='job'][value='sales']").attr("checked", true);
 		$("#writer").attr("data-change", true);
 		ckeditor.config.readOnly = false;
 		window.setTimeout(setEditor, 100);
-	}, 100);
-
-	setTimeout(() => {
-		$(".cke").css("height", "300px");
-		$(".cke_inner").css("height", "300px");
-		$(".cke_contents").css("height", "300px");
-	}, 400);
+	}, 300);
 }
 
-function scheduleRadioClick(e, result){
-	let html, dataArray, tempFrom, tempTo, value = $(e).val(), notIdArray;
+function scheduleRadioClick(e){
+	let html, dataArray, tempFrom, tempTo, value = $(e).val();
 	
 	tempFrom = $("#from").val();
 	tempTo = $("#to").val();
 
-	if(result === undefined){
-		dataArray = scheduleRadioInsert(value);
-		html = detailViewForm(dataArray, "modal");
-		
-		modal.show();
-		modal.headTitle.text("일정등록");
-		modal.body.html(html);
-		modal.confirm.text("등록");
-		modal.close.text("취소");
-		modal.confirm.attr("onclick", "scheduleInsert();");
-		modal.close.attr("onclick", "modal.hide();");
-	}else{
-		dataArray = scheduleRadioUpdate(value, result);
-		html = detailViewForm(dataArray, "modal");
-
-		modal.show();
-		modal.headTitle.text(result.title);
-		modal.body.html(html);
-		modal.confirm.text("수정");
-		modal.close.text("삭제");
-		notIdArray = ["writer"];
-		modal.confirm.attr("onclick", "enableDisabled(this, \"scheduleUpdate(" + result.no + ");\", \"" + notIdArray + "\");");
-		modal.close.attr("onclick", "scheduleDelete(" + JSON.stringify(result) + ");");
-	}
+	dataArray = scheduleRadioInsert(value);
+	html = detailViewForm(dataArray, "modal");
+	
+	modal.show();
+	modal.headTitle.text("일정등록");
+	modal.body.html(html);
+	modal.confirm.text("등록");
+	modal.close.text("취소");
+	modal.confirm.attr("onclick", "scheduleInsert();");
+	modal.close.attr("onclick", "modal.hide();");
 
 	setTimeout(() => {
 		$("[name='job'][value='" + value + "']").attr("checked", true);
 		$("#from").val(tempFrom);
 		$("#to").val(tempTo);
 		$("#writer").attr("data-change", true);
-		window.setTimeout(setEditor, 100);
 		ckeditor.config.readOnly = false;
+		window.setTimeout(setEditor, 100);
 	}, 100);
-
-	setTimeout(() => {
-		$(".cke").css("height", "300px");
-		$(".cke_inner").css("height", "300px");
-		$(".cke_contents").css("height", "300px");
-	}, 400);
 }
 
 function scheduleRadioInsert(value, date){
@@ -859,6 +824,7 @@ function scheduleRadioInsert(value, date){
 				"title": "내용",
 				"elementId": "content",
 				"type": "textarea",
+				"disabled": false,
 				"col": 4,
 			}
 		];
@@ -1060,6 +1026,7 @@ function scheduleRadioInsert(value, date){
 				"title": "내용",
 				"type": "textarea",
 				"elementId": "content",
+				"disabled": false,
 				"col": 4,
 			},
 		];
@@ -1168,6 +1135,7 @@ function scheduleRadioInsert(value, date){
 				"title": "내용",
 				"elementId": "content",
 				"type": "textarea",
+				"disabled": false,
 				"col": 4,
 			},
 		];
@@ -1322,7 +1290,7 @@ function scheduleRadioUpdate(value, result){
 				"radioType": "tab",
 				"elementId": ["jobSales", "jobTech", "jobSchedule"],
 				"col": 4,
-				"onClick": "scheduleRadioClick(this, " + JSON.stringify(result) + ");",
+				"onClick": "scheduleRadioClick(this);",
 			},
 			{
 				"title": "활동시작일(*)",
@@ -1556,7 +1524,7 @@ function scheduleRadioUpdate(value, result){
 				"radioType": "tab",
 				"elementId": ["jobSales", "jobTech", "jobSchedule"],
 				"col": 4,
-				"onClick": "scheduleRadioClick(this, " + JSON.stringify(result) + ");",
+				"onClick": "scheduleRadioClick(this);",
 			},
 			{
 				"title": "등록구분(*)",
@@ -1771,7 +1739,7 @@ function scheduleRadioUpdate(value, result){
 				"radioType": "tab",
 				"elementId": ["jobSales", "jobTech", "jobSchedule"],
 				"col": 4,
-				"onClick": "scheduleRadioClick(this, " + JSON.stringify(result) + ");",
+				"onClick": "scheduleRadioClick(this);",
 			},
 			{
 				"title": "일정시작일(*)",

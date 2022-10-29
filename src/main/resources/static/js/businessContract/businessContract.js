@@ -518,8 +518,7 @@ function contractSuccessView(result){
 			$("#startOfFreeMaintenance").val(null);
 			$("#endOfFreeMaintenance").val(null);
 		}
-
-		storage.editorArray = ["detail"];
+		
 		ckeditor.config.readOnly = true;
 		window.setTimeout(setEditor, 100);
 	}, 100);
@@ -708,6 +707,7 @@ function contractInsertForm(){
 			"title": "내용",
 			"type": "textarea",
 			"elementId": "detail",
+			"disabled": false,
 			"col": 4,
 		},
 	];
@@ -750,22 +750,15 @@ function contractInsertForm(){
 	setTimeout(() => {
 		let my = storage.my, nowDate;
 		nowDate = new Date().toISOString().substring(0, 10);
-		storage.editorArray = ["detail"];
-		ckeditor.config.readOnly = false;
-		window.setTimeout(setEditor, 100);
 		$("[name='contractType']").eq(0).prop("checked", true);
 		$("#startOfPaidMaintenance").parents(".defaultFormLine").hide();
 		$("#endOfPaidMaintenance").parents(".defaultFormLine").hide();
 		$("#employee").val(storage.user[my].userName);
 		$("#employee").attr("data-change", true);
 		$("#saleDate, #delivered, #startOfFreeMaintenance, #endOfFreeMaintenance, #startOfPaidMaintenance, #endOfPaidMaintenance").val(nowDate);
+		ckeditor.config.readOnly = false;
+		window.setTimeout(setEditor, 100);
 	}, 100);
-	
-	setTimeout(() => {
-		$(".cke").css("height", "300px");
-		$(".cke_inner").css("height", "300px");
-		$(".cke_contents").css("height", "300px");
-	}, 400);
 }
 
 function contractInsert(){

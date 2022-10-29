@@ -12,9 +12,9 @@
 	margin: 0;
 }
 
-.customerContainer > span {
-	font-weight: bolder;
-	font-size: 15px;
+.customerContainer > #containerTitle {
+	font-weight: 600;
+    font-size: 0.9rem;
 	margin-left: 15px;
 	line-height: 40px;
 	color: #182f81;
@@ -26,17 +26,17 @@
 	padding:0.3% 0.8% 0.3% 0.8%;
 } */
 
-.gridCustomerList {
+.gridList {
 	display: grid;
 	width: 99%;
 	margin: 0 auto;
 }
 
-.gridCustomerList .gridHeader{
+.gridList .gridHeader{
 	border-bottom:1px solid #abb6d5;
 }
 
-.gridCustomerList .gridHeader,
-.gridCustomerList .gridContent {
+.gridList .gridHeader,
+.gridList .gridContent {
 	grid-template-columns: repeat(3, 1fr);
 }

@@ -466,7 +466,6 @@ function techSuccessView(result){
 		$("#type option[value='" + type + "']").prop("selected", true);
 		$("#supportStep option[value='" + supportStep + "']").prop("selected", true);
 
-		storage.editorArray = ["content"];
 		ckeditor.config.readOnly = true;
 		window.setTimeout(setEditor, 100);
 	}, 100);
@@ -682,6 +681,7 @@ function techInsertForm(){
 			"title": "내용",
 			"type": "textarea",
 			"elementId": "content",
+			"disabled": false,
 			"col": 4,
 		},
 	];
@@ -720,16 +720,9 @@ function techInsertForm(){
 
 	setTimeout(() => {
 		$("#writer").attr("data-change", true);
-		storage.editorArray = ["content"];
 		ckeditor.config.readOnly = false;
 		window.setTimeout(setEditor, 100);
 	}, 100);
-
-	setTimeout(() => {
-		$(".cke").css("height", "300px");
-		$(".cke_inner").css("height", "300px");
-		$(".cke_contents").css("height", "300px");
-	}, 400);
 }
 
 function techInsert(){

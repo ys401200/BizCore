@@ -394,7 +394,6 @@ function salesSuccessView(result){
 		detailBackBtn.css("display", "flex");
 		listSearchInput.hide();
 		listRange.hide();
-		storage.editorArray = ["content"];
 		ckeditor.config.readOnly = true;
 		window.setTimeout(setEditor, 100);
 	}, 100);
@@ -585,6 +584,7 @@ function salesInsertForm(){
 			"title": "내용",
 			"elementId": "content",
 			"type": "textarea",
+			"disabled": false,
 			"col": 4,
 		}
 	];
@@ -617,16 +617,9 @@ function salesInsertForm(){
 
 	setTimeout(() => {
 		$("#writer").attr("data-change", true);
-		storage.editorArray = ["content"];
 		ckeditor.config.readOnly = false;
 		window.setTimeout(setEditor, 100);
 	}, 100);
-
-	setTimeout(() => {
-		$(".cke").css("height", "300px");
-		$(".cke_inner").css("height", "300px");
-		$(".cke_contents").css("height", "300px");
-	}, 400);
 }
 
 function salesInsert(){

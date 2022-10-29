@@ -50,16 +50,16 @@
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
 }
 
-.soppContainer hr{
+.soppContainer > hr{
 	float: left;
 	border:2px solid #182f81;
  	height : 32px;
  	margin: 0;
 }
 
-.soppContainer > span:not(.calendarSpan){
-	font-weight: bolder;
-	font-size: 15px;
+.soppContainer > #containerTitle {
+	font-weight: 600;
+    font-size: 0.9rem;
 	margin-left: 15px;
 	line-height: 40px;
 	color: #332E85;

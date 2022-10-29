@@ -40,9 +40,31 @@ a{
 	color: #000;
 }
 
-select:disabled, input:disabled{
-	background-color: #fff;
+select:read-only, input[type="text"]:read-only, input[type="date"]:read-only{
+	background-color: #ffffff;
+	color: #000;
 }
+
+/* 라디오버튼 기본 css */
+input[type="radio"]:disabled:checked {
+	border: 3px solid #ffffff;
+    background-color: #8C8C8C;
+}
+
+input[type="radio"]:disabled:not(:checked) {
+    background-color: #ffffff;
+}
+
+input[type="radio"]:not(:disabled):checked {
+    border: 3px solid #ffffff;
+    background-color: #0054FF;
+}
+
+input[type="radio"]:not(:disabled):not(:checked) {
+    background-color: #ffffff;
+}
+/* 라디오버튼 기본 css */
+
 
 button, select, input[type="text"], input[type="date"]{
 	font-family: 'NanumSquareRound';
@@ -203,38 +225,18 @@ textarea{
 	width: 100%;
 }
 
-.cke{
+.cke_textarea_inline{
 	width: 100% !important;
+	padding: 5px;
 	border: 0;
+	max-height: 200px;
+    overflow-y: auto;
+	font-size: 0.8rem;
 }
 
-.cke .cke_inner{
-	overflow: hidden;
+.cke_textarea_inline > p{
+	margin: 0;
 }
-
-.cke.cke_focus{
-	height: 300px;
-}
-
-.cke .cke_inner > .cke_contents {
-    display: inline-block;
-    overflow: hidden;
-	width: 100%;
-}
-
-.cke .cke_inner > .cke_bottom{
-	display: none;
-}
-
-.cke:not(.cke_focus) .cke_inner > .cke_top{
-	display: none;
-    border: 0;
-}
-
-.cke.cke_focus .cke_inner > .cke_top{
-	display: inline-block;
-}
-
 /* ckeditor 끝 */
 
 /* plus 버튼 시작 */
@@ -499,9 +501,12 @@ textarea{
 
 .defaultFormContainer .defaultFormLine .defaultFormContent .detailRadioBox > input[type="radio"][data-type="default"]{
 	position: absolute;
-    width: 22px;
+    appearance: none;
+    height: 15px;
+    border-radius: 15px;
+    width: 15px;
+    vertical-align: middle;
 }
-
 
 .defaultFormContainer .defaultFormLine .defaultFormContent .detailRadioBox > label[data-type="tab"]{
 	display: flex;
@@ -529,7 +534,7 @@ textarea{
     padding: 5px;
     border-radius: 15px;
     color: #ffffff;
-    padding-left: 30px;
+    padding-left: 25px;
     padding-right: 10px;
 	line-height: 19px;
 	font-size: 0.8rem;
@@ -643,7 +648,7 @@ textarea{
 	background-color: #F7F7F9;
 	box-shadow: 0 0 10px rgb(0 0 0 / 20%);
 	width: 100%;
-	margin-bottom: 3.5%;
+	margin-bottom: 35px;
 }
 
 .tabs > label[for="tabTrade"]{
@@ -672,7 +677,7 @@ textarea{
     display: flex;
     font-weight: 600;
     border-radius: 0 20px 0 0;
-    height: 50px;
+    height: 30px;
     align-items: center;
     justify-content: center;
     position: absolute;

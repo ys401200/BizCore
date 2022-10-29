@@ -343,18 +343,20 @@ ckeditor = {
 			{ name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
 			{ name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
 			{ name: 'editing', groups: [ 'find', 'selection', 'spellchecker', 'editing' ] },
-			{ name: 'forms', groups: [ 'forms' ] },
 			{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
-			{ name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
-			{ name: 'links', groups: [ 'links' ] },
-			{ name: 'insert', groups: [ 'insert' ] },
 			{ name: 'styles', groups: [ 'styles' ] },
 			{ name: 'colors', groups: [ 'colors' ] },
+			{ name: 'paragraph', groups: [ 'list', 'align', 'indent', 'blocks', 'bidi', 'paragraph' ] },
+			{ name: 'insert', groups: [ 'insert' ] },
+			{ name: 'forms', groups: [ 'forms' ] },
+			'/',
+			{ name: 'links', groups: [ 'links' ] },
+			'/',
 			{ name: 'tools', groups: [ 'tools' ] },
 			{ name: 'others', groups: [ 'others' ] },
 			{ name: 'about', groups: [ 'about' ] }
 		],
-		"removeButtons": "TextField,Textarea,Button,ImageButton,HiddenField,Image,Flash,Replace,Select,Radio,Checkbox,Form,RemoveFormat,CopyFormatting,Indent,Outdent,CreateDiv,Language,Anchor,Iframe,About",
+		"removeButtons": "Source,Save,Templates,NewPage,Preview,Print,Cut,Copy,Paste,PasteText,PasteFromWord,Find,Replace,SelectAll,Scayt,ImageButton,HiddenField,CopyFormatting,RemoveFormat,Outdent,Indent,Blockquote,CreateDiv,BidiLtr,BidiRtl,Language,Link,Unlink,Anchor,Image,Flash,HorizontalRule,Smiley,SpecialChar,PageBreak,Iframe,Maximize,ShowBlocks,About,Button,Select,Textarea,TextField,Radio,Checkbox,Form",
 		"extraPlugins": "pastebase64, base64image",
 	},
 }
@@ -1254,15 +1256,20 @@ function inputSet(data){
 	let dataClickEvent = (data.onClick === undefined) ? "" : data.onClick;
 	let dataComplete = (data.complete === undefined) ? "" : data.complete;
 	let autoComplete = (data.autoComplete === undefined) ? "off" : data.autoComplete;
+	let placeHolder = (data.placeHolder === undefined) ? "" : data.placeHolder;
 
 	if(dataType === "text"){
 		if(dataDisabled == true){
-			html += "<input type='text' id='" + elementId + "' name='" + elementName + "' autocomplete=\"" + autoComplete + "\" value='" + dataValue + "' data-complete='" + dataComplete + "' data-keyup='" + dataKeyup + "' onchange='" + dataChangeEvent + "' onclick='" + dataClickEvent + "' onkeyup='" + dataKeyupEvent + "' disabled='" + dataDisabled + "'>";
+			html += "<input type='text' id='" + elementId + "' name='" + elementName + "' autocomplete=\"" + autoComplete + "\" value='" + dataValue + "' data-complete='" + dataComplete + "' data-keyup='" + dataKeyup + "' onchange='" + dataChangeEvent + "' onclick='" + dataClickEvent + "' onkeyup='" + dataKeyupEvent + "' placeholder=\"" + placeHolder + "\" readonly>";
 		}else{
-			html += "<input type='text' id='" + elementId + "' name='" + elementName + "' autocomplete=\"" + autoComplete + "\" value='" + dataValue + "' data-complete='" + dataComplete + "' data-keyup='" + dataKeyup + "' onchange='" + dataChangeEvent + "' onclick='" + dataClickEvent + "' onkeyup='" + dataKeyupEvent + "'>";
+			html += "<input type='text' id='" + elementId + "' name='" + elementName + "' autocomplete=\"" + autoComplete + "\" value='" + dataValue + "' data-complete='" + dataComplete + "' data-keyup='" + dataKeyup + "' onchange='" + dataChangeEvent + "' onclick='" + dataClickEvent + "' onkeyup='" + dataKeyupEvent + "' placeholder=\"" + placeHolder + "\">";
 		}
 	}else if(dataType === "textarea"){
-		html += "<textarea id=\"" + elementId + "\">" + dataValue + "</textarea>";
+		if(dataDisabled == true){
+			html += "<textarea id=\"" + elementId + "\" readonly>" + dataValue + "</textarea>";
+		}else{
+			html += "<textarea id=\"" + elementId + "\">" + dataValue + "</textarea>";
+		}
 	}else if(dataType === "radio"){
 		for(let t = 0; t < data.radioValue.length; t++){
 			if(data.radioType !== "tab"){
@@ -1273,19 +1280,35 @@ function inputSet(data){
 
 			if(dataDisabled == true){
 				if(t == 0){
-					html += "<input type='radio' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.radioValue[t].key + "' disabled='" + dataDisabled + "' data-type=\"" + data.radioType + "\" onclick='" + dataClickEvent + "' checked><label data-type=\"" + data.radioType + "\" for=\"" + elementId[t] + "\">" + data.radioValue[t].value + "</label>" + " ";
+					html += "<input type='radio' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.radioValue[t].key + "' disabled='" + dataDisabled + "' data-type=\"" + data.radioType + "\" onclick='" + dataClickEvent + "' onChange=\"" + dataChangeEvent + "\" checked><label data-type=\"" + data.radioType + "\" for=\"" + elementId[t] + "\">" + data.radioValue[t].value + "</label>" + " ";
 				}else{
-					html += "<input type='radio' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.radioValue[t].key + "' disabled='" + dataDisabled + "' data-type=\"" + data.radioType + "\" onclick='" + dataClickEvent + "'><label data-type=\"" + data.radioType + "\" for=\"" + elementId[t] + "\">" + data.radioValue[t].value + "</label>" + " ";
+					html += "<input type='radio' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.radioValue[t].key + "' disabled='" + dataDisabled + "' data-type=\"" + data.radioType + "\" onclick='" + dataClickEvent + "' onChange=\"" + dataChangeEvent + "\"><label data-type=\"" + data.radioType + "\" for=\"" + elementId[t] + "\">" + data.radioValue[t].value + "</label>" + " ";
 				}
 			}else{
 				if(t == 0){
-					html += "<input type='radio' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.radioValue[t].key + "' data-type=\"" + data.radioType + "\" onclick='" + dataClickEvent + "' checked><label data-type=\"" + data.radioType + "\" for=\"" + elementId[t] + "\">" + data.radioValue[t].value + "</label>" + " ";
+					html += "<input type='radio' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.radioValue[t].key + "' data-type=\"" + data.radioType + "\" onclick='" + dataClickEvent + "' onChange=\"" + dataChangeEvent + "\" checked><label data-type=\"" + data.radioType + "\" for=\"" + elementId[t] + "\">" + data.radioValue[t].value + "</label>" + " ";
 				}else{
-					html += "<input type='radio' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.radioValue[t].key + "' data-type=\"" + data.radioType + "\" onclick='" + dataClickEvent + "'><label data-type=\"" + data.radioType + "\" for=\"" + elementId[t] + "\">" + data.radioValue[t].value + "</label>" + " ";
+					html += "<input type='radio' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.radioValue[t].key + "' data-type=\"" + data.radioType + "\" onclick='" + dataClickEvent + "' onChange=\"" + dataChangeEvent + "\"><label data-type=\"" + data.radioType + "\" for=\"" + elementId[t] + "\">" + data.radioValue[t].value + "</label>" + " ";
 				}
 			}
 
 			html += "</div>";
+		}
+	}else if(dataType === "checkbox"){
+		for(let t = 0; t < data.checkValue.length; t++){
+			if(dataDisabled == true){
+				if(t == 0){
+					html += "<input type='checkbox' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.checkValue[t].value + "' disabled='" + dataDisabled + "' onclick='" + dataClickEvent + "' onChange=\"" + dataChangeEvent + "\"><label for=\"" + elementId[t] + "\">" + data.checkValue[t].key + "</label>" + " ";
+				}else{
+					html += "<input type='checkbox' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.checkValue[t].value + "' disabled='" + dataDisabled + "' onclick='" + dataClickEvent + "' onChange=\"" + dataChangeEvent + "\"><label for=\"" + elementId[t] + "\">" + data.checkValue[t].key + "</label>" + " ";
+				}
+			}else{
+				if(t == 0){
+					html += "<input type='checkbox' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.checkValue[t].value + "' onclick='" + dataClickEvent + "' onChange=\"" + dataChangeEvent + "\"><label for=\"" + elementId[t] + "\">" + data.checkValue[t].key + "</label>" + " ";
+				}else{
+					html += "<input type='checkbox' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.checkValue[t].value + "' onclick='" + dataClickEvent + "' onChange=\"" + dataChangeEvent + "\"><label for=\"" + elementId[t] + "\">" + data.checkValue[t].key + "</label>" + " ";
+				}
+			}
 		}
 	}else if(dataType === "date"){
 		if(dataDisabled == true){
@@ -1339,10 +1362,10 @@ function setEditor(){
 		}
 	}
 
-	if(storage.editorArray.length > 0){
-		for(let i = 0; i < storage.editorArray.length; i++){
-			CKEDITOR.replace(document.querySelector("#" + storage.editorArray[i]));
-		}
+	let textarea = $("textarea");
+
+	for(let i = 0; i < textarea.length; i++){
+		CKEDITOR.inline(document.querySelector("#" + $(textarea[i]).attr("id")));
 	}
 }
 
@@ -2017,7 +2040,6 @@ function createTabTechList(result){
 				"col": 5,
 			},
 		];
-		
 	}
 	
 	data.push(str);
@@ -2180,14 +2202,16 @@ function contentTopBtn(content){
 function enableDisabled(e, clickStr, notIdArray){
 	let thisEle, box;
 	thisEle = $(e);
-	box = $("input, select");
+	box = $("input, select, textarea");
 
 	for(let i = 0; i < box.length; i++){
 		if($(box[i]).attr("type") === "radio"){
-			$(box[i]).prop("disabled", false);
+			$(box[i]).removeAttr("readonly");
+			$(box[i]).removeAttr("disabled");
 		}else{
 			if(notIdArray.indexOf($(box[i]).attr("id")) == -1){
-				$(box[i]).prop("disabled", false);
+				$(box[i]).removeAttr("readonly");
+				$(box[i]).removeAttr("disabled");
 			}
 		}
 	}
@@ -2195,7 +2219,6 @@ function enableDisabled(e, clickStr, notIdArray){
 	thisEle.attr("onclick", clickStr);
 	thisEle.attr("data-hide-flag", true);
 	thisEle.html("수정완료");
-	console.log(thisEle.html());
 	ckeditor.config.readOnly = false;
 	window.setTimeout(setEditor, 100);
 }
@@ -2213,7 +2236,7 @@ function calWindowLength(){
 	return parseInt(totalCal);
 }
 
-function daumPostCode(){
+function daumPostCode(zipCode, address, detailAddress){
 	let popupWidth, popupHeight;
 	popupWidth = 500;
 	popupHeight = 500;
@@ -2228,9 +2251,9 @@ function daumPostCode(){
 		width: popupWidth,
 		height: popupHeight,
         oncomplete: function(data) {
-			$("#postCode").val(data.zonecode);
-			$("#mainAddress").val(data.address + " " + data.buildingName);
-			$("#detailAddress").focus();
+			$("#" + zipCode).val(data.zonecode);
+			$("#" + address).val(data.address + " " + data.buildingName);
+			$("#" + detailAddress).focus();
         }
     }).open({
 		left: Math.ceil((document.body.offsetWidth / 2) - (popupWidth / 2) + window.screenLeft),
@@ -3070,41 +3093,43 @@ function formDataSet(){
 
 function addAutoComplete(e){
 	let thisEle, autoComplete;
-	
-	if($(".autoComplete") !== undefined){
-		$(".autoComplete").remove();
-	}
-
 	thisEle = $(e);
-	thisEle.after("<div class=\"autoComplete\"></div>");
-	autoComplete = $(".autoComplete");
-	autoComplete.css("top", thisEle.position().top + thisEle.innerHeight() + 8);
-	autoComplete.css("left", thisEle.position().left);
-	autoComplete.css("width", thisEle.innerWidth() - 5);
-
-	if(thisEle.val() === ""){
-		for(let key in storage[thisEle.data("complete")]){
-			if(thisEle.data("complete") === "customer" || thisEle.data("complete") === "cip"){
-				autoComplete.append("<div data-value=\"" + key + "\" onclick=\"autoCompleteClick(this);\">" + storage[thisEle.data("complete")][key].name + "</div>");
-			}else if(thisEle.data("complete") === "user"){
-				autoComplete.append("<div data-value=\"" + storage[thisEle.data("complete")][key].userNo + "\" onclick=\"autoCompleteClick(this);\">" + storage[thisEle.data("complete")][key].userName + "</div>");
-			}else if(thisEle.data("complete") === "sopp" || thisEle.data("complete") === "contract"){
-				autoComplete.append("<div data-value=\"" + storage[thisEle.data("complete")][key].no + "\" onclick=\"autoCompleteClick(this);\">" + storage[thisEle.data("complete")][key].title + "</div>");
-			}
+	
+	if(!thisEle.attr("readonly")){
+		if($(".autoComplete") !== undefined){
+			$(".autoComplete").remove();
 		}
-	}else{
-		for(let key in storage[thisEle.data("complete")]){
-			if(thisEle.data("complete") === "customer" || thisEle.data("complete") === "cip"){
-				if(storage[thisEle.data("complete")][key].name.indexOf(thisEle.val()) > -1){
+		
+		thisEle.after("<div class=\"autoComplete\"></div>");
+		autoComplete = $(".autoComplete");
+		autoComplete.css("top", thisEle.position().top + thisEle.innerHeight() + 8);
+		autoComplete.css("left", thisEle.position().left);
+		autoComplete.css("width", thisEle.innerWidth() - 5);
+	
+		if(thisEle.val() === ""){
+			for(let key in storage[thisEle.data("complete")]){
+				if(thisEle.data("complete") === "customer" || thisEle.data("complete") === "cip"){
 					autoComplete.append("<div data-value=\"" + key + "\" onclick=\"autoCompleteClick(this);\">" + storage[thisEle.data("complete")][key].name + "</div>");
-				}
-			}else if(thisEle.data("complete") === "user"){
-				if(storage[thisEle.data("complete")][key].userName.indexOf(thisEle.val()) > -1){
+				}else if(thisEle.data("complete") === "user"){
 					autoComplete.append("<div data-value=\"" + storage[thisEle.data("complete")][key].userNo + "\" onclick=\"autoCompleteClick(this);\">" + storage[thisEle.data("complete")][key].userName + "</div>");
-				}
-			}else if(thisEle.data("complete") === "sopp" || thisEle.data("complete") === "contract"){
-				if(storage[thisEle.data("complete")][key].title.indexOf(thisEle.val()) > -1){
+				}else if(thisEle.data("complete") === "sopp" || thisEle.data("complete") === "contract"){
 					autoComplete.append("<div data-value=\"" + storage[thisEle.data("complete")][key].no + "\" onclick=\"autoCompleteClick(this);\">" + storage[thisEle.data("complete")][key].title + "</div>");
+				}
+			}
+		}else{
+			for(let key in storage[thisEle.data("complete")]){
+				if(thisEle.data("complete") === "customer" || thisEle.data("complete") === "cip"){
+					if(storage[thisEle.data("complete")][key].name.indexOf(thisEle.val()) > -1){
+						autoComplete.append("<div data-value=\"" + key + "\" onclick=\"autoCompleteClick(this);\">" + storage[thisEle.data("complete")][key].name + "</div>");
+					}
+				}else if(thisEle.data("complete") === "user"){
+					if(storage[thisEle.data("complete")][key].userName.indexOf(thisEle.val()) > -1){
+						autoComplete.append("<div data-value=\"" + storage[thisEle.data("complete")][key].userNo + "\" onclick=\"autoCompleteClick(this);\">" + storage[thisEle.data("complete")][key].userName + "</div>");
+					}
+				}else if(thisEle.data("complete") === "sopp" || thisEle.data("complete") === "contract"){
+					if(storage[thisEle.data("complete")][key].title.indexOf(thisEle.val()) > -1){
+						autoComplete.append("<div data-value=\"" + storage[thisEle.data("complete")][key].no + "\" onclick=\"autoCompleteClick(this);\">" + storage[thisEle.data("complete")][key].title + "</div>");
+					}
 				}
 			}
 		}
@@ -3190,7 +3215,7 @@ function getStorageList(){
 function detailSetFormList(result){
 	storage.formList = {};
 	for(let key in result){
-		if(typeof result[key] !== "object"){
+		if(key !== "attached" && key !== "schedules" && key !== "trades" && key !== "bills"){
 			storage.formList[key] = result[key];
 		}
 	}
@@ -3202,6 +3227,49 @@ function detailTrueDatas(datas){
 			$("#" + datas[i]).attr("data-change", true);
 		}else if($("[name=\"" + datas[i] + "\"]").length > 0){
 			$("[name=\"" + datas[i] + "\"]").attr("data-change", true);
+		}
+	}
+}
+
+function radioTrueChange(e){
+	let thisEle, thisEleName, thisEleId;
+	thisEle = $(e);
+	thisEleName = thisEle.attr("name");
+	thisEleId = thisEle.attr("id");
+
+	for(let key in storage.formList[thisEleName]){
+		storage.formList[thisEleName][key] = false;
+	}
+
+	storage.formList[thisEleName][thisEleId] = true;
+}
+
+function checkTrueChange(e){
+	let thisEle, splitStr, thisEleName, thisEleId;
+	thisEle = $(e);
+	splitStr = thisEle.attr("id").split("_");
+	thisEleName = splitStr[0];
+	thisEleId = splitStr[1];
+
+	if(thisEle.is(":checked")){
+		storage.formList[thisEleName][thisEleId] = true;
+	}else{
+		storage.formList[thisEleName][thisEleId] = false;
+	}
+}
+
+function detailCheckedTrueView(){
+	for(let key in storage.formList){
+		if(typeof storage.formList[key] === "object"){
+			for(let key2 in storage.formList[key]){
+				if(storage.formList[key][key2]){
+					if($("#" + key2) !== undefined){
+						$("#" + key2).attr("checked", "checked");
+					}else if($("#" + key + "_" + key2) !== undefined){
+						$("#" + key + "_" + key2).attr("checked", "checked");
+					}
+				}
+			}
 		}
 	}
 }

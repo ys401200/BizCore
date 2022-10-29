@@ -66,9 +66,9 @@
  	margin: 0;
 }
 
-.contractContainer > span:not(.calendarSpan){
-	font-weight: boder;
-	font-size: 15px;
+.contractContainer > #containerTitle{
+	font-weight: 600;
+    font-size: 0.9rem;
 	margin-left: 15px;
 	line-height: 40px;
 	color: #181f81;

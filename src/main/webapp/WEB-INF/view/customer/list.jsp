@@ -32,7 +32,13 @@
                 <input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="listRangeChange(this, drawCustomerList);">
                 <span class="listRangeSpan">0</span>
             </div>
-            <div class="gridCustomerList"></div>
+            <div class="crudBtns">
+				<button type="button" class="crudAddBtn" onclick="customerInsertForm();">등록</button>
+				<button type="button" class="crudUpdateBtn">수정</button>
+				<button type="button" class="crudDeleteBtn" onclick="customerDelete();">삭제</button>
+				<a href="/business/customer" class="detailBackBtn" style="display:none;">Back</a>
+			</div>
+            <div class="gridList"></div>
             <div class="pageContainer"></div>
 		</div>
 	</div>

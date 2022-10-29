@@ -381,6 +381,9 @@ function soppSuccessView(result){
 	containerTitle.html(title);
 	gridList.html("");
 	searchContainer.hide();
+	detailBackBtn.css("display", "flex");
+	listSearchInput.hide();
+	listRange.hide();
 	gridList.html(html);
 	crudAddBtn.hide();
 
@@ -391,7 +394,6 @@ function soppSuccessView(result){
 	}
 	
 	gridList.show();
-	
 	
 	storage.attachedList = result.attached;
 	storage.attachedNo = result.no;
@@ -408,10 +410,6 @@ function soppSuccessView(result){
 		$("#status option[value='" + result.status + "']").prop("selected" ,true);
 		$("#contType option[value='" + result.contType + "']").prop("selected" ,true);
 		$("#soppType option[value='" + result.soppType + "']").prop("selected" ,true);
-		detailBackBtn.css("display", "flex");
-		listSearchInput.hide();
-		listRange.hide();
-		storage.editorArray = ["detail"];
 		ckeditor.config.readOnly = true;
 		window.setTimeout(setEditor, 100);
 	}, 100);
@@ -565,6 +563,7 @@ function soppInsertForm(){
 			"title": "내용",
 			"elementId": "detail",
 			"type": "textarea",
+			"disabled": false,
 			"col": 4,
 		},
 	];
@@ -603,16 +602,9 @@ function soppInsertForm(){
 		$("#employee").val(storage.user[my].userName);
 		$("#employee").attr("data-change", true);
 		$("#targetDate").val(nowDate);
-		storage.editorArray = ["detail"];
 		ckeditor.config.readOnly = false;
 		window.setTimeout(setEditor, 100);
 	}, 100);
-
-	setTimeout(() => {
-		$(".cke").css("height", "300px");
-		$(".cke_inner").css("height", "300px");
-		$(".cke_contents").css("height", "300px");
-	}, 400);
 }
 
 function soppInsert(){

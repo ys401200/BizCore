@@ -25,9 +25,9 @@
  	margin: 0;
 }
 
-.techContainer > span:not(.calendarSpan){
-	font-weight: bolder;
-	font-size: 15px;
+.techContainer > #containerTitle {
+	font-weight: 600;
+    font-size: 0.9rem;
 	margin-left: 15px;
 	line-height: 40px;
 	color: #332E85;

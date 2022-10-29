@@ -37,7 +37,7 @@ function drawCustomerList() {
 	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 
 	pageContainer = document.getElementsByClassName("pageContainer");
-	container = $(".gridCustomerList");
+	container = $(".gridList");
 
 	header = [
 		{
@@ -125,78 +125,225 @@ function customerErrorList(){
 }
 
 function customerSuccessView(result){
-	let html, name, ceoName, taxId, address, email, fax, phone, dataArray, notIdArray;
-	console.log(result);
-	storage.customerNo = result.no;
+	let html, name, ceoName, taxId, address, detailAddress, zipCode, email, emailForTaxbill, fax, phone, remark1, remark2, dataArray, notIdArray, searchContainer, containerTitle, detailBackBtn, listSearchInput, listRange, pageContainer, crudAddBtn, crudUpdateBtn, crudDeleteBtn;
+	detailSetFormList(result);
+	gridList = $(".gridList");
+	searchContainer = $(".searchContainer");
+	containerTitle = $("#containerTitle");
+	detailBackBtn = $(".detailBackBtn");
+	listSearchInput = $(".listSearchInput");
+	listRange = $(".listRange");
+	crudAddBtn = $(".crudAddBtn");
+	crudUpdateBtn = $(".crudUpdateBtn");
+	crudDeleteBtn = $(".crudDeleteBtn");
+	notIdArray = ["zipCode", "address"];
+
 	name = (result.name === null || result.name === "" || result.name === undefined) ? "" : result.name;
 	ceoName = (result.ceoName === null || result.ceoName === "" || result.ceoName === undefined) ? "" : result.ceoName;
 	taxId = (result.taxId === null || result.taxId === "" || result.taxId === undefined) ? "" : result.taxId;
-	address = (result.address === null || result.address === "" || result.address === undefined) ? "" : result.address;
+	zipCode = (result.zipCode === null || result.zipCode === 0 || result.zipCode === undefined) ? "" : result.zipCode;
+	address = (result.address === null || result.address === "" || result.address === undefined) ? "" : result.address[0];
+	detailAddress = (result.address === null || result.address === "" || result.address === undefined) ? "" : result.address[1];
 	email = (result.email === null || result.email === "" || result.email === undefined) ? "" : result.email;
+	emailForTaxbill = (result.emailForTaxbill === null || result.emailForTaxbill === "" || result.emailForTaxbill === undefined) ? "" : result.emailForTaxbill;
 	fax = (result.fax === null || result.fax === "" || result.fax === undefined) ? "" : result.fax;
 	phone = (result.phone === null || result.phone === "" || result.phone === undefined) ? "" : result.phone;
+	remark1 = (result.remark1 === null || result.remark1 === "" || result.remark1 === undefined) ? "" : result.remark1;
+	remark2 = (result.remark2 === null || result.remark2 === "" || result.remark2 === undefined) ? "" : result.remark2;
 
 	dataArray = [
 		{
+			"title": undefined,
+			"radioValue": [
+				{
+					"key": true,
+					"value": "제조사",
+				},
+				{
+					"key": false,
+					"value": "협력사",
+				},
+				{
+					"key": false,
+					"value": "공공",
+				},
+				{
+					"key": false,
+					"value": "민수",
+				},
+			],
+			"type": "radio",
+			"elementId": ["manufacturer", "partner", "publicCustomer", "civilianCustomer"],
+			"elementName": "companyInformation",
+			"onChange" : "radioTrueChange(this);",
+			"col": 4,
+		},
+		{
+			"title": "영업정보",
+			"radioValue": [
+				{
+					"key": true,
+					"value": "조달-직판",
+				},
+				{
+					"key": false,
+					"value": "조달-간판",
+				},
+				{
+					"key": false,
+					"value": "조달-대행",
+				},
+				{
+					"key": false,
+					"value": "유지보수",
+				},
+				{
+					"key": false,
+					"value": "일반기업",
+				},
+				{
+					"key": false,
+					"value": "병원",
+				},
+				{
+					"key": false,
+					"value": "금융",
+				},
+				{
+					"key": false,
+					"value": "공공기관",
+				},
+			],
+			"type": "radio",
+			"elementId": ["directProcurement", "indirectProcurement", "agencyProcurement", "maintenance", "generalCompany", "hospital", "finance", "public"],
+			"elementName": "typeOfSales",
+			"onChange" : "radioTrueChange(this);",
+			"col": 4,
+		},
+		{
+			"title": "거래정보",
+			"checkValue": [
+				{
+					"key": "공급사",
+					"value": false,
+				},
+				{
+					"key": "협력사",
+					"value": false,
+				},
+				{
+					"key": "고객사",
+					"value": false,
+				},
+				{
+					"key": "거래안함",
+					"value": false,
+				},
+			],
+			"type": "checkbox",
+			"elementId": ["transactionInformation_supplier", "transactionInformation_partner", "transactionInformation_client", "transactionInformation_notTrade"],
+			"onChange" : "checkTrueChange(this);",
+			"col": 4,
+		},
+		{
 			"title": "고객사명(*)",
 			"elementId": "name",
-			"disabled": true,
 			"value": name,
-			"col": 2,
+		},
+		{
+			"title": "대표자명(*)",
+			"elementId": "ceoName",
+			"value": ceoName,
 		},
 		{
 			"title": "사업자번호(*)",
 			"elementId": "taxId",
-			"disabled": true,
 			"value": taxId,
+			"col": 2,
+		},
+		{
+			"title": "우편번호",
+			"elementId": "zipCode",
+			"onClick": "daumPostCode(\"zipCode\", \"address\", \"detailAddress\");",
+			"placeHolder": "우편번호를 넣으려면 클릭해주세요.",
+			"value": zipCode,
 			"col": 2,
 		},
 		{
 			"title": "주소",
 			"elementId": "address",
-			"disabled": true,
+			"onClick": "daumPostCode(\"zipCode\", \"address\", \"detailAddress\");",
+			"placeHolder": "주소를 넣으려면 클릭해주세요.",
 			"value": address,
-			"col": 4,
+			"col": 2,
 		},
 		{
-			"title": "대표자명(*)",
-			"elementId": "ceoName",
-			"disabled": true,
-			"value": ceoName,
+			"title": "상세주소",
+			"elementId": "detailAddress",
+			"value": detailAddress,
+			"col": 4,
 		},
 		{
 			"title": "이메일(*)",
 			"elementId": "email",
-			"disabled": true,
 			"value": email,
+			"col": 2,
+		},
+		{
+			"title": "계산서이메일(*)",
+			"elementId": "emailForTaxbill",
+			"value": emailForTaxbill,
+			"col": 2,
 		},
 		{
 			"title": "팩스(*)",
 			"elementId": "fax",
-			"disabled": true,
+			"keyup": "phoneFormat(this);",
 			"value": fax,
+			"col": 2,
 		},
 		{
 			"title": "연락처",
 			"elementId": "phone",
-			"disabled": true,
 			"keyup": "phoneFormat(this);",
 			"value": phone,
+			"col": 2,
+		},
+		{
+			"title": "메모",
+			"type": "textarea",
+			"elementId": "remark1",
+			"value": remark1,
+			"col": 4,
+		},
+		{
+			"title": "세무 메모",
+			"type": "textarea",
+			"elementId": "remark2",
+			"value": remark2,
+			"col": 4,
 		},
 	];
-	
-	html = detailViewForm(dataArray, "modal");
 
-	modal.show();
-	modal.content.css("min-width", "70%");
-	modal.content.css("max-width", "70%");
-	modal.headTitle.text(name);
-	modal.body.html(html);
-	modal.confirm.text("수정");
-	modal.close.text("취소");
-	notIdArray = [];
-	modal.confirm.attr("onclick", "enableDisabled(this, \"customerUpdate(" + storage.customerNo + ");\", \"" + notIdArray + "\");");
-	modal.close.attr("onclick", "modal.hide();");
+	html = detailViewForm(dataArray);
+	containerTitle.html(name);
+	gridList.html("");
+	detailBackBtn.css("display", "flex");
+	searchContainer.hide();
+	listSearchInput.hide();
+	listRange.hide();
+	gridList.html(html);
+	crudAddBtn.hide();
+	crudUpdateBtn.attr("onclick", "enableDisabled(this, \"customerUpdate();\", \"" + notIdArray + "\");");
+	crudUpdateBtn.css("display", "flex");
+	crudDeleteBtn.css("display", "flex");
+	gridList.show();
+
+	setTimeout(() => {
+		detailCheckedTrueView();
+		ckeditor.config.readOnly = true;
+		window.setTimeout(setEditor, 100);
+	}, 100);
 }
 
 function customerErrorView(){
@@ -208,13 +355,110 @@ function customerInsertForm(){
 
 	dataArray = [
 		{
+			"title": undefined,
+			"radioValue": [
+				{
+					"key": true,
+					"value": "제조사",
+				},
+				{
+					"key": false,
+					"value": "협력사",
+				},
+				{
+					"key": false,
+					"value": "공공",
+				},
+				{
+					"key": false,
+					"value": "민수",
+				},
+			],
+			"type": "radio",
+			"elementId": ["manufacturer", "partner", "publicCustomer", "civilianCustomer"],
+			"elementName": "companyInformation",
+			"disabled": false,
+			"onChange" : "radioTrueChange(this);",
+			"col": 4,
+		},
+		{
+			"title": "영업정보",
+			"radioValue": [
+				{
+					"key": true,
+					"value": "조달-직판",
+				},
+				{
+					"key": false,
+					"value": "조달-간판",
+				},
+				{
+					"key": false,
+					"value": "조달-대행",
+				},
+				{
+					"key": false,
+					"value": "유지보수",
+				},
+				{
+					"key": false,
+					"value": "일반기업",
+				},
+				{
+					"key": false,
+					"value": "병원",
+				},
+				{
+					"key": false,
+					"value": "금융",
+				},
+				{
+					"key": false,
+					"value": "공공기관",
+				},
+			],
+			"type": "radio",
+			"elementId": ["directProcurement", "indirectProcurement", "agencyProcurement", "maintenance", "generalCompany", "hospital", "finance", "public"],
+			"elementName": "typeOfSales",
+			"onChange" : "radioTrueChange(this);",
+			"disabled": false,
+			"col": 4,
+		},
+		{
+			"title": "거래정보",
+			"checkValue": [
+				{
+					"key": "공급사",
+					"value": false,
+				},
+				{
+					"key": "협력사",
+					"value": false,
+				},
+				{
+					"key": "고객사",
+					"value": false,
+				},
+				{
+					"key": "거래안함",
+					"value": false,
+				},
+			],
+			"type": "checkbox",
+			"elementId": ["transactionInformation_supplier", "transactionInformation_partner", "transactionInformation_client", "transactionInformation_notTrade"],
+			"onChange" : "checkTrueChange(this);",
+			"disabled": false,
+			"col": 4,
+		},
+		{
 			"title": "고객사명(*)",
 			"elementId": "name",
 			"disabled": false,
-			"complete": "customer",
-			"keyup": "addAutoComplete(this);",
-			"onClick": "addAutoComplete(this);",
-			"col": 2,
+		},
+		{
+			"title": "대표자명(*)",
+			"elementId": "ceoName",
+			"disabled": false,
 		},
 		{
 			"title": "사업자번호(*)",
@@ -223,33 +467,102 @@ function customerInsertForm(){
 			"col": 2,
 		},
 		{
-			"title": "주소",
-			"elementId": "address",
-			"disabled": false,
-			"col": 4,
+			"title": "우편번호",
+			"elementId": "zipCode",
+			"onClick": "daumPostCode(\"zipCode\", \"address\", \"detailAddress\");",
+			"placeHolder": "우편번호를 넣으려면 클릭해주세요.",
+			"col": 2,
 		},
 		{
-			"title": "대표자명(*)",
-			"elementId": "ceoName",
+			"title": "주소",
+			"elementId": "address",
+			"onClick": "daumPostCode(\"zipCode\", \"address\", \"detailAddress\");",
+			"placeHolder": "주소를 넣으려면 클릭해주세요.",
+			"col": 2,
+		},
+		{
+			"title": "상세주소",
+			"elementId": "detailAddress",
 			"disabled": false,
+			"col": 4,
 		},
 		{
 			"title": "이메일(*)",
 			"elementId": "email",
 			"disabled": false,
+			"col": 2,
+		},
+		{
+			"title": "계산서이메일(*)",
+			"elementId": "emailForTaxbill",
+			"disabled": false,
+			"col": 2,
 		},
 		{
 			"title": "팩스(*)",
 			"elementId": "fax",
+			"keyup": "phoneFormat(this);",
 			"disabled": false,
+			"col": 2,
 		},
 		{
 			"title": "연락처",
 			"elementId": "phone",
 			"keyup": "phoneFormat(this);",
 			"disabled": false,
+			"col": 2,
+		},
+		{
+			"title": "메모",
+			"type": "textarea",
+			"elementId": "remark1",
+			"disabled": false,
+			"col": 4,
+		},
+		{
+			"title": "세무 메모",
+			"type": "textarea",
+			"elementId": "remark2",
+			"disabled": false,
+			"col": 4,
 		},
 	];
+
+	storage.formList = {
+		"companyInformation" : {
+			"manufacturer" : true,
+			"partner" : false,
+			"publicCustomer" : false,
+			"civilianCustomer" : false,
+		},
+		"typeOfSales" : {
+			"directProcurement" : true,
+		 	"indirectProcurement" : false, 
+			"agencyProcurement" : false, 
+			"maintenance" : false, 
+			"generalCompany" : false, 
+			"hospital" : false, 
+			"finance" : false, 
+			"public" : false,
+		},
+		"transactionInformation" : {
+			"supplier" : false,
+			"partner" : false, 
+			"client" : false, 
+			"notTrade" : false,
+		},
+		"name" : "",
+		"ceoName" : "",
+		"taxId" : "",
+		"zipCode" : 0,
+		"address" : ["", ""],
+		"email" : "",
+		"emailForTaxbill" : "",
+		"fax" : "",
+		"phone" : "",
+		"remark1" : "",
+		"remark2" : "",
+	};
 
 	html = detailViewForm(dataArray, "modal");
 
@@ -262,6 +575,8 @@ function customerInsertForm(){
 	modal.close.text("취소");
 	modal.confirm.attr("onclick", "customerInsert();");
 	modal.close.attr("onclick", "modal.hide();");
+	ckeditor.config.readOnly = false;
+	window.setTimeout(setEditor, 100);
 }
 
 function customerInsert(){
@@ -285,31 +600,29 @@ function customerInsert(){
 		msg.set("이메일 형식이 바르지 않습니다.");
 		$("#email").focus();
 		return false;
+	}else if(!validateEmail($("#emailForTaxbill").val())){
+		msg.set("이메일 형식이 바르지 않습니다.");
+		$("#emailForTaxbill").focus();
+		return false;
 	}else if($("#fax").val() === ""){
 		msg.set("팩스를 입력해주세요.");
 		$("#fax").focus();
 		return false;
 	}else{
-		let name, taxId, address, ceoName, email, fax, phone;
-		name = $("#name").val();
-		taxId = $("#taxId").val();
-		address = $("#address").val();
-		ceoName = $("#ceoName").val();
-		email = $("#email").val();
-		fax = $("#fax").val();
-		phone = $("#phone").val();
-	
+		storage.formList.name = $("#name").val();
+		storage.formList.ceoName = $("#ceoName").val();
+		storage.formList.taxId = $("#taxId").val();
+		storage.formList.zipCode = parseInt($("#zipCode").val());
+		storage.formList.address = [$("#address").val(), $("#detailAddress").val()];
+		storage.formList.email = $("#email").val();
+		storage.formList.emailForTaxbill = $("#emailForTaxbill").val();
+		storage.formList.fax = $("#fax").val();
+		storage.formList.phone = $("#phone").val();
+		storage.formList.remark1 = $("#remark1").val();
+		storage.formList.remark2 = $("#remark2").val();
 		url = "/api/system/customer";
 		method = "post";
-		data = {
-			"name": name,
-			"taxId": taxId,
-			"address": address,
-			"ceoName": ceoName,
-			"email": email,
-			"fax": fax,
-			"phone": phone,
-		}
+		data = storage.formList;
 		type = "insert";
 		data = JSON.stringify(data);
 		data = cipher.encAes(data);
@@ -347,36 +660,32 @@ function customerUpdate(){
 		msg.set("이메일 형식이 바르지 않습니다.");
 		$("#email").focus();
 		return false;
+	}else if(!validateEmail($("#emailForTaxbill").val())){
+		msg.set("이메일 형식이 바르지 않습니다.");
+		$("#emailForTaxbill").focus();
+		return false;
 	}else if($("#fax").val() === ""){
 		msg.set("팩스를 입력해주세요.");
 		$("#fax").focus();
 		return false;
 	}else{
-		let name, taxId, address, ceoName, email, fax, phone;
-		name = $("#name").val();
-		taxId = $("#taxId").val();
-		address = $("#address").val();
-		ceoName = $("#ceoName").val();
-		email = $("#email").val();
-		fax = $("#fax").val();
-		phone = $("#phone").val();
-
-		url = "/api/system/customer/" + storage.customerNo;
+		storage.formList.name = $("#name").val();
+		storage.formList.ceoName = $("#ceoName").val();
+		storage.formList.taxId = $("#taxId").val();
+		storage.formList.zipCode = parseInt($("#zipCode").val());
+		storage.formList.address = [$("#address").val(), $("#detailAddress").val()];
+		storage.formList.email = $("#email").val();
+		storage.formList.emailForTaxbill = $("#emailForTaxbill").val();
+		storage.formList.fax = $("#fax").val();
+		storage.formList.phone = $("#phone").val();
+		storage.formList.remark1 = $("#remark1").val();
+		storage.formList.remark2 = $("#remark2").val();
+		url = "/api/system/customer/" + storage.formList.no;
 		method = "put";
-		data = {
-			"name": name,
-			"taxId": taxId,
-			"address": address,
-			"ceoName": ceoName,
-			"email": email,
-			"fax": fax,
-			"phone": phone,
-		}
+		data = storage.formList;
 		type = "update";
-
 		data = JSON.stringify(data);
 		data = cipher.encAes(data);
-
 		crud.defaultAjax(url, method, data, type, customerSuccessUpdate, customerErrorUpdate);
 	}
 }
@@ -394,7 +703,7 @@ function customerDelete(){
 	let url, method, data, type;
 
 	if(confirm("정말로 삭제하시겠습니까??")){
-		url = "/api/system/customer/" + storage.customerNo;
+		url = "/api/system/customer/" + storage.formList.no;
 		method = "delete";
 		type = "delete";
 	

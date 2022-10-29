@@ -197,10 +197,9 @@ function fileBoxSuccessView(result){
 	$(".detailContents .defaultFormContainer").append(fileHtml);
 
 	setTimeout(() => {
-		storage.editorArray = ["content"];
 		ckeditor.config.readOnly = true;
 		window.setTimeout(setEditor, 100);
-	}, 500)
+	}, 100)
 }
 
 function fileBoxErrorView(){
@@ -237,6 +236,7 @@ function fileBoxInsertForm(){
 			"title": "내용(*)",
 			"elementId": "content",
 			"type": "textarea",
+			"disabled": false,
 			"col": 4,
 		},
 	];
@@ -258,7 +258,6 @@ function fileBoxInsertForm(){
 		my = storage.my;
 		$("#writer").val(storage.user[my].userName);
 		$(".defaultFormContainer .defaultFormLine").eq(1).after("<div class=\"filePreview\"></div>");
-		storage.editorArray = ["content"];
 		ckeditor.config.readOnly = false;
 		window.setTimeout(setEditor, 100);
 	}, 100);

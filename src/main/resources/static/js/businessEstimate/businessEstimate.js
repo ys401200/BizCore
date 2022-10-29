@@ -144,13 +144,6 @@ function clickedAdd(el){
 	cnt.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.style.textAlign = "center";
 	cnt.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.innerText = "공개";
 	cnt.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.style.textAlign = "center";
-	
-	ckeditor.config.readOnly = true;
-	storage.editorArray = ["remarks1", "spec", "remarks2"];
-	window.setTimeout(setEditor, 500);
-	setTimeout(() => {
-		$(".cke").css("grid-column", "2 / 5");
-	}, 1000);
 } // End of clickedAdd()
 
 // 견적 추가버튼 클릭시 실행되는 한수
