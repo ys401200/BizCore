@@ -9,9 +9,15 @@ import kr.co.bizcore.v1.domain.TaxBill;
 import kr.co.bizcore.v1.domain.TradeDetail;
 import lombok.extern.slf4j.Slf4j;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+
 import org.slf4j.Logger;
 
 @Service
@@ -110,5 +116,61 @@ public class ContractService extends Svc{
         count = contractMapper.removeContract(no, compId);
         return count > 0;
     } // End of removeProcure()
+
+    public String getContract(String compId, int sopp, int customer){
+        String result = null;
+        String sql = null;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        Contract cont = null;
+        ArrayList<Contract> list = new ArrayList<>();
+        int x = 0;
+
+        sql = "SELECT contno AS no, conttype AS salesType, cntrctmth AS contractType, conttitle AS title, soppno AS sopp, IFNULL(buyrno,0) AS endUser, custno AS partner, contamt AS contractAmount, net_profit AS profit, userno AS employee, unix_timestamp(freemaintsdate)*1000 AS startOfFreeMaintenance, unix_timestamp(freemaintedate)*1000 as endOfFreeMaintenance, unix_timestamp(paymaintSdate)*1000 as startOfPaidMaintenance, unix_timestamp(paymaintEdate)*1000 as endOfPaidMaintenance, unix_timestamp(contorddate)*1000 AS saleDate, unix_timestamp(regdatetime)*1000 AS created, unix_timestamp(moddatetime)*1000 AS modified ";
+        sql += "FROM swc_cont ";
+        sql += "WHERE attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = '" + compId + "') ";
+        if(sopp > 0)        sql += " AND soppno = " + sopp;
+        if(customer > 0)    sql += (" AND (buyrno = " + customer + " OR custno = " + customer + ")");
+        sql += " ORDER BY regdatetime DESC";
+
+        try{
+            conn = sqlSession.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+            while(rs.next()){
+                cont = new Contract();
+                cont.setNo(rs.getInt("no"));
+                cont.setSalesType(rs.getInt("salesType"));
+                cont.setContractType(rs.getString("contractType"));
+                cont.setTitle(rs.getString("title"));
+                cont.setSopp(rs.getInt("sopp"));
+                cont.setEndUser(rs.getInt("endUser"));
+                cont.setPartner(rs.getInt("partner"));
+                cont.setContractAmount(rs.getLong("contractAmount"));
+                cont.setProfit(rs.getInt("profit"));
+                cont.setEmployee(rs.getInt("employee"));
+                cont.setStartOfFreeMaintenance(rs.getLong("startOfFreeMaintenance"));
+                cont.setEndOfFreeMaintenance(rs.getLong("endOfFreeMaintenance"));
+                cont.setStartOfPaidMaintenance(rs.getLong("startOfPaidMaintenance"));
+                cont.setEndOfPaidMaintenance(rs.getLong("endOfPaidMaintenance"));
+                cont.setSaleDate(rs.getLong("saleDate"));
+                cont.setCreated(rs.getLong("created"));
+                cont.setModified(rs.getLong("modified"));
+                list.add(cont);
+            }
+        }catch(SQLException e){e.printStackTrace();}
+
+        result = "[";
+        for(x = 0 ; x < list.size() ; x++){
+            cont = list.get(x);
+            if(x > 0)   result += ",";
+            result += cont.toJson();
+        }
+        result += "]";
+
+        return result;
+
+    } // End of getContract()
     
 }
