@@ -529,7 +529,7 @@
     } // End of getList()
 
     // 개별 문서 정보를 가져오는 함수
-    function getDocData(docNo) {
+   function getDocData(docNo) {
       $.ajax({
         url: _server + "/" + docNo,
         method: "get",
@@ -977,7 +977,7 @@
                   .replace(",", "")
               );
             }
-            totalCount = totalCount.toLocaleString();
+            totalCount = totalCount.toLocaleString() + "원";
             $(".insertedTotal").val(totalCount);
             $("." + id + "_content").html(storage.docList[i].content);
             $("." + id + "_content").css("padding", "0.3em");
@@ -993,6 +993,12 @@
             }
 
             $(".list_comment")[0].dataset.detail = "old";
+            soppAndCus = {
+              sopp: (storage.soppResult = "" ? null : storage.soppResult + ""),
+              customer: (storage.custResult =
+                "" || undefined ? null : storage.custResult + ""),
+            };
+
 
             for (let i = 0; i < info.appData.length; i++) {
               for (let j = 0; j < appTitles.length; j++) {
@@ -2035,7 +2041,7 @@
         );
       }
 
-      totalCount = totalCount.toLocaleString();
+      totalCount = totalCount.toLocaleString() + "원";
       $(".insertedTotal").val(totalCount);
 
       // 모든 인풋 데이터셋 설정
@@ -2260,53 +2266,70 @@
       insertDataFnc(dataStatus, insertData, num, id, created, appDatas);
     }
 
-    // 10월 21일 오전 4시 15분 까지 완료된 문서만 추가 storage.docList.length = 1145
+    // 10월 30일까지 1151개의 문서 중 결재 완료된 문서만 추가함 
 
     // for(let r = 0 ; r < storage.docList.length; r++) {
-    //     if(storage.docList[r].no != 1823 && storage.docList[r].no != 1766&& storage.docList[r].no != 2952&& storage.docList[r].no != 3908) {
+    //     if(storage.docList[r].no != 1823 && storage.docList[r].no != 1766&& storage.docList[r].no != 2952&& storage.docList[r].no != 3908 && storage.docList[r].no != 4146) {
     //         getDocData(storage.docList[r].no);
     //     }
 
     // }
 
-    function setFile(filecount) {
+    function setFile() {
+      let no = storage.docList[filecount].no;
       if (storage.docList[filecount].status == 3) {
-        let no = storage.docList[filecount].no;
-        if (no != 1823 && no != 1766 && no != 2952 && no != 3908) {
+        if(no === 2952) console.log("===== STEP 1 =====");
+        if (no != 1823 && no != 1766 && no != 2952 && no != 3908 && no != 4146) {
+          if(no === 2952) console.log("===== STEP 2 =====");
           $.ajax({
             url: apiServer + "/system/doc/attachedFile/" + no,
             method: "get",
             contentType: "text/plain",
             success: (result) => {
               if (result == "ok") {
-                console.log("성공 : " + filecount);
+                console.log("성공 : " + filecount + "/" + no);
                 filecount++;
                 if (filecount < storage.docList.length) {
-                  setFile(filecount);
+                  if(no === 2952) console.log("===== STEP 3 =====");
+                  setFile();
                 }
               } else {
-                console.log("A / 파일 업로드 실패 : " + filecount);
+                if(no === 2952) console.log("===== STEP 4 =====");
+                console.log("A / 파일 업로드 실패 : " + filecount + "//////" + no);
                 filecount++;
 
                 if (filecount < storage.docList.length) {
-                  setFile(filecount);
+                  if(no === 2952) console.log("===== STEP 5 =====");
+                  setFile();
                 }
               }
             },
             error: () => {
-              console.log("B / 파일 업로드 실패: " + filecount);
+              if(no === 2952) console.log("===== STEP 6 =====");
+              console.log("B / 파일 업로드 실패: " + filecount + "//////" + no);
               filecount++;
               if (filecount < storage.docList.length) {
-                setFile(filecount);
+                if(no === 2952) console.log("===== STEP 7 =====");
+                if(no === 2952){
+                  if(no === 2952) console.log("===== STEP 8 =====");
+                  setFile();
+                }
               }
             },
           });
+        }else{
+          if(no === 2952) console.log("===== STEP 9 =====");
+          filecount++;
+          window.setTimeout(setFile,100);
         }
       } else {
-        console.log("C : " + filecount);
+        //let no = storage.docList[filecount].no;
+        if(no === 2952) console.log("===== STEP 10 =====");
+        console.log("C : " + filecount + "///////");
         filecount++;
         if (filecount < storage.docList.length) {
-          setFile(filecount);
+          if(no === 2952) console.log("===== STEP 11 =====");
+          window.setTimeout(setFile,100);
         }
       }
     }
