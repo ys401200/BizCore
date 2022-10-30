@@ -256,6 +256,25 @@ function getDetailView() {
     let selectArr = target.getElementsByTagName("select")[0];
     selectArr.value = selectArr.dataset.detail;
   }
+  // 기존 전자 결재 문서 가져온 경우
+  if ($(".list_comment")[0].dataset.detail == "old") {
+    let rd = $("input[name='" + formId + "_RD']");
+    for (let i = 0; i < rd.length; i++) {
+      if (rd[i].checked == true) {
+        $("#" + rd[i].id).prop("checked", true);
+      }
+    }
+    for(let i = 0 ; i < 3 ; i ++) {let tt = $(".inputsAuto")[i]; $(tt).css("text-align","left");} 
+   
+  } else {
+    // 새문서 작성한 것 가져온 경우 구분
+    let rd2 = $("input[name='" + formId + "_RD']");
+    for (let i = 0; i < rd2.length; i++) {
+      if (rd2[i].dataset.detail == "on") {
+        $("#" + rd2[i].id).prop("checked", true);
+      }
+    }
+  }
 
 
   // 이름 , 직급 한글로 설정하기

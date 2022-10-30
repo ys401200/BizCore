@@ -312,7 +312,7 @@ function getDetailView() {
     selectArr.value = selectArr.dataset.detail;
   }
 
-  // 이전 전자 결재 문서 가져온 경우
+  // 기존 전자 결재 문서 가져온 경우
   if ($(".list_comment")[0].dataset.detail == "old") {
     let rd = $("input[name='" + formId + "_RD']");
     for (let i = 0; i < rd.length; i++) {
@@ -320,6 +320,8 @@ function getDetailView() {
         $("#" + rd[i].id).prop("checked", true);
       }
     }
+    for(let i = 0 ; i < 3 ; i ++) {let tt = $(".inputsAuto")[i]; $(tt).css("text-align","left");} 
+   
   } else {
     // 새문서 작성한 것 가져온 경우 구분
     let rd2 = $("input[name='" + formId + "_RD']");
@@ -341,7 +343,7 @@ function getDetailView() {
           storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
         $("." + formId + subTitlesArr[i] + "_position")[j].value =
           storage.userRank[
-            $("." + formId + subTitlesArr[i] + "_position")[j].value
+          $("." + formId + subTitlesArr[i] + "_position")[j].value
           ][0];
       }
     }
@@ -375,7 +377,7 @@ function getDetailView() {
   $("." + formId + "_content").html($("#" + formId + "_content").attr("data-detail"));
   $("#" + formId + "_content").hide();
   $("." + formId + "_content").css("font-size", $("#" + formId + "_content").css("font-size"));
-  $("." + formId + "_content").css("padding","0.3em");
+  $("." + formId + "_content").css("padding", "0.3em");
 }
 
 // 목록보기
