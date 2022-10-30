@@ -7,14 +7,16 @@
             <div class="listContent">
 				<div class="estimateList"></div><div class="versionList"></div><div class="versionPreview"></div>
 			</div>
+			<div class="addPdfForm" style="display:none;">
+				<jsp:include page="./form.jsp" />
+			</div>
         </div>
-
-		<div class="eachContainer">
+		<!-- <div class="eachContainer">
             <hr class="bodyTitleBorder" />
             <span class="bodyTitle">견적 상세 내용</span><span class="bodyTitleFnc"><div onclick="saveEstimate()" style="display:none" >저장</div><div onclick="closeAdd()" style="margin-left:2em">닫기</div></span>
             <div class="eachContent">
 				<div>
-					<div class="passed"><!-- STEP 1 -->
+					<div class="passed">STEP 1
 						<div><div></div><div>양식 / 견적명</div></div>
 						<div class="estimateStep1"><div style="height:96px;"></div>
 							<div>
@@ -31,7 +33,7 @@
 							</div>
 						</div>
 					</div>
-					<div><!-- STEP 2 -->
+					<div>STEP 2
 						<div><div></div><div>거래처 정보 / 견적 유효기간 </div></div>
 						<div class="estimateStep2"><div style="height:130px;"></div>
 							<div>
@@ -45,7 +47,7 @@
 							</div>
 						</div>
 					</div>
-					<div><!-- STEP 3 -->
+					<div>STEP 3
 						<div><div></div><div><div style="display:inline-block;width:50%;">견적 항목 입력</div><div style="display:inline-block;width:50%;text-align:right;"><span class="addBtn" style="margin:0 1em;" onclick="addEstimateItem(this)">+</span><span onclick="removeEstimateItem(this)">-</span></div></div></div>
 						<div class="estimateItem"><div style="height:275px;border-right: 1px dotted #2c77b7;width:1px;margin: -0.2em 0.5em -0.4em calc(0.2em - 1px);"></div>
 							<div>
@@ -65,7 +67,7 @@
 				</div><div class="estimatePreview">미리보기</div>
 
 			</div>
-        </div>
+        </div> -->
 
 	</div>
 </div>

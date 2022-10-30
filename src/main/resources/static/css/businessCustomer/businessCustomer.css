@@ -48,6 +48,18 @@
 	grid-template-columns: 10% 30% 50% 10%;
 }
 
+.customerTabContractList{
+	display: grid;
+	width: 100%;
+	max-height: 200px;
+	overflow-y: auto;
+}
+
+.customerTabContractList .gridHeader,
+.customerTabContractList .gridContent{
+	grid-template-columns: 10% 30% 50% 10%;
+}
+
 .customerTabTechList{
 	display: grid;
 	width: 100%;
