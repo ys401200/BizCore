@@ -1164,7 +1164,7 @@ function inputNumberFormat(e){
 	if(value > 0){
 		$(e).val(parseInt(value).toLocaleString("en-US"));	
 	}else{
-		$(e).val(0);
+		$(e).val("");
 	}
 }
 

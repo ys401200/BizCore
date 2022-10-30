@@ -6,6 +6,7 @@ import javax.servlet.http.HttpSession;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -249,5 +250,34 @@ public class ApiContractCtrl extends Ctrl{
 
         return result;
     } // End of apiProcureNumberDelete()
+
+    @GetMapping("/sopp/{sopp:\\d+}/customer/{customer:\\d+}")
+    public String apiContractDetailSchedule(HttpServletRequest request, @PathVariable("sopp") int sopp, @PathVariable("customer") int customer){
+        String result = null, data = null;
+        HttpSession session = null;
+        String compId = null, aesKey = null, aesIv = null;
+
+        session = request.getSession();
+        compId = (String)session.getAttribute("compId");
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
+        }else{
+            data = contractService.getContract(compId, sopp, customer);
+            if(data != null){
+                data = encAes(data, aesKey, aesIv);
+                result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
+            }else{
+                result = "{\"result\":\"failure\",\"msg\":\"Error occured.\"}";
+            }
+        }
+
+        return result;
+    }
     
 }

@@ -111,40 +111,52 @@ function selectBasicInfo(n){
 }
 
 // 견적 추가버튼 클릭시 실행되는 한수
-function clickedAdd(el){
-	let x, cnt, html;
+// function clickedAdd(el){
+// 	let x, cnt, html;
 
-	storage.estimate = {};
-	cnt = document.getElementsByClassName("estimatePreview")[0];
-	document.getElementsByClassName("listContainer")[0].style.display = "none";
-	document.getElementsByClassName("eachContainer")[0].style.display = "block";
+// 	storage.estimate = {};
+// 	cnt = document.getElementsByClassName("estimatePreview")[0];
+// 	document.getElementsByClassName("listContainer")[0].style.display = "none";
+// 	document.getElementsByClassName("eachContainer")[0].style.display = "block";
 
-	// 양식 목록
-	html = "";
-	for(x = 0 ; x < storage.estimateForm.length ; x++){
-		html += ("<input type=\"radio\" class=\"estimateFormName\" name=\"estimateFormName\" style=\"display:none;\" id=\"estimateFormName" + x + "\" />");
-		html += ("<label onclick=\"selectForm(" + x + ")\" for=\"estimateFormName" + x + "\" data-no=\"" + x + "\" style=\"margin:0 0.5em;\">" + storage.estimateForm[x].name + "</label>");
-	}
-	cnt = document.getElementsByClassName("formNames")[0];
-	cnt.innerHTML = html;
+// 	// 양식 목록
+// 	html = "";
+// 	for(x = 0 ; x < storage.estimateForm.length ; x++){
+// 		html += ("<input type=\"radio\" class=\"estimateFormName\" name=\"estimateFormName\" style=\"display:none;\" id=\"estimateFormName" + x + "\" />");
+// 		html += ("<label onclick=\"selectForm(" + x + ")\" for=\"estimateFormName" + x + "\" data-no=\"" + x + "\" style=\"margin:0 0.5em;\">" + storage.estimateForm[x].name + "</label>");
+// 	}
+// 	cnt = document.getElementsByClassName("formNames")[0];
+// 	cnt.innerHTML = html;
 
-	// 견적 기본정보
-	html = "";
-	for(x in storage.estimateBasic){
-		if(x === undefined)	continue;
-		console.log(x);
-		html += ("<input type=\"radio\" class=\"estimateBasInfo\" name=\"estimateBasInfo\" style=\"display:none;\" id=\"estimateBasInfo" + x + "\" />");
-		html += ("<label onclick=\"selectBasicInfo(" + x + ")\" for=\"estimateBasInfo" + x + "\" data-no=\"" + x + "\" style=\"margin:0 0.5em;\">" + storage.estimateBasic[x].name + "</label>");
-	}
-	cnt = document.getElementsByClassName("basicInfo")[0];
-	cnt.innerHTML = html;
+// 	// 견적 기본정보
+// 	html = "";
+// 	for(x in storage.estimateBasic){
+// 		if(x === undefined)	continue;
+// 		console.log(x);
+// 		html += ("<input type=\"radio\" class=\"estimateBasInfo\" name=\"estimateBasInfo\" style=\"display:none;\" id=\"estimateBasInfo" + x + "\" />");
+// 		html += ("<label onclick=\"selectBasicInfo(" + x + ")\" for=\"estimateBasInfo" + x + "\" data-no=\"" + x + "\" style=\"margin:0 0.5em;\">" + storage.estimateBasic[x].name + "</label>");
+// 	}
+// 	cnt = document.getElementsByClassName("basicInfo")[0];
+// 	cnt.innerHTML = html;
 
-	// 작성자 등 기본 정보
-	cnt.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.innerText = storage.user[storage.my].userName;
-	cnt.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.style.textAlign = "center";
-	cnt.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.innerText = "공개";
-	cnt.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.style.textAlign = "center";
-} // End of clickedAdd()
+// 	// 작성자 등 기본 정보
+// 	cnt.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.innerText = storage.user[storage.my].userName;
+// 	cnt.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.style.textAlign = "center";
+// 	cnt.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.innerText = "공개";
+// 	cnt.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.style.textAlign = "center";
+// }
+
+function clickedAdd(){
+	let listContent, addPdfForm, addBtn;
+	ckeditor.config.readOnly = false;
+	window.setTimeout(setEditor, 100);
+	listContent = $(".listContent");
+	addPdfForm = $(".addPdfForm");
+	addBtn = $(".addBtn");
+	listContent.hide();
+	addPdfForm.show();
+	addBtn.show();
+}
 
 // 견적 추가버튼 클릭시 실행되는 한수
 function closeAdd(el){
@@ -886,3 +898,47 @@ function dateFormat(l){
 	str += (dt.getDate());
 	return str;
 } // End of dateFormat()
+
+function addEstTitle(e){
+	let thisEle;
+	thisEle = $(e);
+	thisEle.parent().before("<div class=\"pdfMainContentTitle\"><div class=\"subTitleIndex\"></div><div class=\"subTitle\"><input type=\"text\" id=\"subTitle\"></div><div></div><div></div><div></div><div class=\"subTitleTotal\">0</div><div></div></div>");
+	
+	let subTitleIndex = $(".subTitleIndex");
+	subTitleIndex.eq(subTitleIndex.length - 1).html(romanize(subTitleIndex.length));
+	storage.subItemLength = 0;
+}
+
+function addEstItem(e){
+	let thisEle;
+	thisEle = $(e);
+
+	if(storage.subItemLength === undefined){
+		storage.subItemLength = 1;
+	}else{
+		storage.subItemLength++;
+	}
+
+	thisEle.parent().before("<div class=\"pdfMainContentItem\"><div class=\"itemIndex\">" + storage.subItemLength + "</div><div class=\"itemDivision\"><input type=\"text\"></div><div class=\"itemProductName\"><textarea></textarea></div><div class=\"itemQuantity\"><input type=\"text\"></div><div class=\"itemConsumer\"><input type=\"text\" onkeyup=\"inputNumberFormat(this)\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"inputNumberFormat(this)\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"></div></div>");
+
+	let pdfMainContentItem = $(".pdfMainContentItem");
+	let itemProductName = $(".itemProductName textarea");
+
+	for(let i = 1; i <= pdfMainContentItem.length; i++){
+		$(itemProductName[i-1]).attr("id", "itemProductName_" + i);
+	}
+
+	ckeditor.config.readOnly = false;
+	window.setTimeout(setEditor, 100);
+}
+
+function romanize(num) {
+    let digits, key, roman, i;
+    if (isNaN(num)) return NaN;
+    digits = String(+num).split("");
+    key = ["","C","CC","CCC","CD","D","DC","DCC","DCCC","CM","","X","XX","XXX","XL","L","LX","LXX","LXXX","XC","","I","II","III","IV","V","VI","VII","VIII","IX"];
+    roman = "";
+    i = 3;
+    while (i--) roman = (key[+digits.pop() + (i * 10)] || "") + roman;
+    return Array(+digits.join("") + 1).join("M") + roman;
+}

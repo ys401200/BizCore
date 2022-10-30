@@ -1105,13 +1105,13 @@ public class SystemService extends Svc {
     // 관리자용 - 직원 함녕의 전체 정보를 가져오는 메서드
     public String getEmployeeDetailInfo(String compId, String employeeNo){
         String result = null, t = null, aesKey = null, aesIv = null;
-        String userId = null, userName = null,rank = null,prohibited = null, birthDay = null, gender = null, residentNo = null, email = null ,address = null,zipCode = null,homePhone = null,cellPhone = null,joined = null,resigned = null,created = null,modified = null,deleted = null;
+        String id = null, name = null,rank = null,prohibited = null, birthDay = null, gender = null, residentNo = null, email = null ,address = null,zipCode = null,homePhone = null,cellPhone = null,joined = null,resigned = null,created = null,modified = null,deleted = null;
         HashMap<String, String> info = null;
 
         info = userMapper.getEmployeeDetailInfo(compId, employeeNo);
         
-        userId = info.get("userId");
-        userName = info.get("userName");
+        id = info.get("userId");
+        name = info.get("userName");
         rank = info.get("rank");
         prohibited = info.get("prohibited");
         birthDay = info.get("birthDay");
@@ -1136,8 +1136,9 @@ public class SystemService extends Svc {
             residentNo = decAes(residentNo, aesKey, aesIv);
         }
 
-        result = ("{\"userId\":\"" + userId + "\",");
-        result += ("\"userName\":\"" + userName + "\",");
+        result = ("{\"id\":\"" + id + "\",");
+        result += ("\"no\":\"" + employeeNo + "\",");
+        result += ("\"name\":\"" + name + "\",");
         result += ("\"rank\":" + rank + ",");
         result += ("\"prohibited\":" + prohibited.equals("1") + ",");
         result += ("\"birthDay\":\"" + birthDay + "\",");

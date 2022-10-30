@@ -96,7 +96,7 @@ function drawWorkReportList() {
         }
     }
 
-    html += "<div style='grid-row: span " + rowLength + "; justify-content: center;'>" + storage.workReportList.week + "</div>";
+    html += "<div style='grid-row: span " + (rowLength + 1) + "; justify-content: center;'>" + storage.workReportList.week + "</div>";
     
     for(let i = 0; i < jsonData.schedules.length; i++){
         let date = new Date(jsonData.schedules[i].date);

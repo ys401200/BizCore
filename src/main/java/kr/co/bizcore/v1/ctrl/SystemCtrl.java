@@ -264,4 +264,14 @@ public class SystemCtrl extends Ctrl {
         }
         return result;
     }
+
+    @GetMapping("/estimate") // 견적 컨버팅 / 기존 견적 정보 불러오기
+    public String getEstimateInfo(HttpServletRequest request) {
+        String result =null, data = null;
+        
+        data = tsvc.getEstmInfo();
+
+
+        return result;
+    }
 }

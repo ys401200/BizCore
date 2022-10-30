@@ -372,7 +372,7 @@ public class ApiScheduleCtrl extends Ctrl {
     }
 
     @GetMapping("/tech/sopp/{sopp:\\d+}/customer/{customer:\\d+}/contract/{contract:\\d+}")
-    public String apiTechDetailSchedulr(HttpServletRequest request, @PathVariable("sopp") int sopp, @PathVariable("customer") int customer, @PathVariable("contract") int contract){
+    public String apiTechDetailSchedule(HttpServletRequest request, @PathVariable("sopp") int sopp, @PathVariable("customer") int customer, @PathVariable("contract") int contract){
         String result = null, data = null;
         HttpSession session = null;
         String compId = null, aesKey = null, aesIv = null;
@@ -401,7 +401,7 @@ public class ApiScheduleCtrl extends Ctrl {
     }
 
     @GetMapping("/sales/sopp/{sopp:\\d+}/customer/{customer:\\d+}")
-    public String apiSalesDetailSchedulr(HttpServletRequest request, @PathVariable("sopp") int sopp, @PathVariable("customer") int customer){
+    public String apiSalesDetailSchedule(HttpServletRequest request, @PathVariable("sopp") int sopp, @PathVariable("customer") int customer){
         String result = null, data = null;
         HttpSession session = null;
         String compId = null, aesKey = null, aesIv = null;

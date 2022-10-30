@@ -225,7 +225,8 @@ textarea{
 	width: 100%;
 }
 
-.cke_textarea_inline{
+.cke_textarea_inline,
+.cke_editable_inline{
 	width: 100% !important;
 	padding: 5px;
 	border: 0;
@@ -234,7 +235,8 @@ textarea{
 	font-size: 0.8rem;
 }
 
-.cke_textarea_inline > p{
+.cke_textarea_inline > p,
+.cke_editable_inline > p{
 	margin: 0;
 }
 /* ckeditor 끝 */

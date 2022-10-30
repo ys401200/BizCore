@@ -331,7 +331,7 @@ function customerSuccessView(result){
 	htmlSecond += "<input type='radio' id='customerTabSales' name='tabItem' data-content-id='customerTabSalesList' onclick='tabItemClick(this)' checked>";
 	htmlSecond += "<label class='tabItem' for='customerTabSales'></label>";
 	htmlSecond += "<input type='radio' id='customerTabContract' name='tabItem' data-content-id='customerTabContractList' onclick='tabItemClick(this)'>";
-	htmlSecond += "<label class='tabItem' for='customerTabContract'>계약정보</label>";
+	htmlSecond += "<label class='tabItem' for='customerTabContract'></label>";
 	htmlSecond += "<input type='radio' id='customerTabTech' name='tabItem' data-content-id='customerTabTechList' onclick='tabItemClick(this)'>";
 	htmlSecond += "<label class='tabItem' for='customerTabTech'>기술지원정보</label>";
 	htmlSecond += "</div>";
@@ -350,6 +350,7 @@ function customerSuccessView(result){
 	crudDeleteBtn.css("display", "flex");
 	setTabsLayOutMenu();
 	customerTabSalesList();
+	customerTabContractList();
 	customerTabTechList();
 	gridList.show();
 
@@ -870,6 +871,86 @@ function customerTabSalesList(){
 			}
 
 			idName = "customerTabSalesList";
+			setTimeout(() => {
+				createGrid(container, header, data, ids, job, fnc, idName);
+			}, 100);
+		}
+	})
+}
+
+function customerTabContractList(){
+	$.ajax({
+		url: "/api/contract/sopp/0/customer/" + storage.formList.no,
+		method: "get",
+		dataType: "json",
+		contentType: "text/plain",
+		success: (result) => {
+			let html = "", container, header = [], data = [], str, detailSecondTabs, ids, job, fnc, disDate, idName;
+			result = cipher.decAes(result.data);
+			result = JSON.parse(result);
+
+			if(result.length > 0){
+				$(".tabItem[for=\"customerTabContract\"]").text("계약정보(" + result.length + ")");
+			}else{
+				$(".tabItem[for=\"customerTabContract\"]").text("계약정보(0)");
+			}
+
+			detailSecondTabs = $(".detailSecondTabs");
+			html = "<div class='customerTabContractList' id='customerTabContractList'></div>";
+			header = [
+				{
+					"title" : "일자",
+					"align" : "center",
+				},
+				{
+					"title" : "계약명",
+					"align" : "left",
+				},
+				{
+					"title" : "비고",
+					"align" : "left",
+				},
+				{
+					"title" : "계약금액",
+					"align" : "right",
+				},
+			];
+			
+			detailSecondTabs.append(html);
+			container = detailSecondTabs.find(".customerTabContractList");
+		
+			if(result.length > 0){
+				for(let i = 0; i < result.length; i++){
+					disDate = dateDis(result[i].created, result[i].modified);
+					disDate = dateFnc(disDate); 
+	
+					str = [
+						{
+							"setData": disDate,
+						},
+						{
+							"setData": result[i].title,
+						},
+						{
+							"setData": result[i].detail,
+						},
+						{
+							"setData": parseInt(result[i].contractAmount).toLocaleString("en-US"),
+						},
+					];
+					
+					data.push(str);
+				}
+			}else{
+				str = [
+					{
+						"setData": undefined,
+						"col": 4,
+					},
+				];
+			}
+
+			idName = "customerTabContractList";
 			setTimeout(() => {
 				createGrid(container, header, data, ids, job, fnc, idName);
 			}, 100);
