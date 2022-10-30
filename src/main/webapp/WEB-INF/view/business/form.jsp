@@ -4,6 +4,11 @@
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300&family=Outfit:wght@600&display=swap');
     @font-face {font-family:MalgunGothic; src:url(/fonts/malgun.ttf);}
 
+    .cke_textarea_inline{
+        border: 1px solid #000;
+        padding: 0;
+    }
+
     .mainPdf{
         font-family:MalgunGothic, sans-serif;
         border: 1px solid #000;
@@ -61,11 +66,28 @@
     .pdfHeadInfo > div > span{
         font-size: 0.8rem;
         padding-bottom: 4px;
+        font-weight: 600;
     }
 
     .pdfHeadInfo > div > input{
         border: 1px solid #000;
         width: 60%;
+    }
+
+    .pdfHeadInfo > div > .headInfoCustomer{
+        width: 28%;
+    }
+
+    .pdfHeadInfo > div > .headInfoCip{
+        width: 28%;
+    }
+
+    .pdfHeadInfo > div > .headInfoPhone{
+        width: 28%;
+    }
+
+    .pdfHeadInfo > div > .headInfoFax{
+        width: 28%;
     }
 
     .pdfHeadInfoPrice{
@@ -86,11 +108,13 @@
     .pdfHeadInfoPrice > div > span{
         font-size: 0.8rem;
         padding-bottom: 4px;
+        font-weight: 600;
     }
 
     .pdfHeadInfoPrice > div:first-child > input{
         border: 1px solid #000;
         width: 50%;
+        text-align: right;
     }
 
     .pdfHeadInfoPrice > div:last-child > input{
@@ -117,6 +141,9 @@
         align-items: center;
         justify-content: center;
         border-right: 1px solid #000;
+        background-color: #990B19;
+        color: #ffffff;
+        font-weight: 600;
     }
 
     .pdfMainContentHeader > div:last-child{
@@ -148,12 +175,14 @@
     .pdfMainContentTitle > .subTitle{
         grid-column: span 2;
         justify-content: center;
+        padding: 5px;
     }
 
     .pdfMainContentTitle > .subTitle > input{
         width: 100%;
         background-color: #FFFF75;
         text-align: center;
+        border: 1px solid #000;
     }
 
     .pdfMainContentTitle > .subTitleTotal{
@@ -175,11 +204,13 @@
         align-items: center;
         justify-content: center;
         border-right: 1px solid #000;
+        padding: 5px;
     }
 
     .pdfMainContentItem > div > input{
         width: 100%;
         text-align: center;
+        border: 1px solid #000;
     }
 
     .pdfMainContentItem > .itemConsumer > input{
@@ -188,6 +219,10 @@
 
     .pdfMainContentItem > .itemAmount > input{
         text-align: right;
+    }
+
+    .pdfMainContentItem > .itemRemarks > input{
+        text-align: left;
     }
 
     .pdfMainContentItem > .itemTotal{
@@ -228,12 +263,14 @@
         display: flex;
         align-items: center;
         border-right: 1px solid #000;
+        padding: 5px;
     }
 
     .pdfMainContentAmount > div:first-child{
         grid-column: span 6;
         justify-content: center;
         letter-spacing: 0.5em;
+        font-weight: 600;
     }
 
     .pdfMainContentAmount > div:not(:first-child){
@@ -254,12 +291,14 @@
         display: flex;
         align-items: center;
         border-right: 1px solid #000;
+        padding: 5px;
     }
 
     .pdfMainContentTax > div:first-child{
         grid-column: span 6;
         justify-content: center;
         letter-spacing: 0.5em;
+        font-weight: 600;
     }
 
     .pdfMainContentTax > div:not(:first-child){
@@ -280,12 +319,14 @@
         display: flex;
         align-items: center;
         border-right: 1px solid #000;
+        padding: 5px;
     }
 
     .pdfMainContentTotal > div:first-child{
         grid-column: span 6;
         justify-content: center;
         letter-spacing: 0.5em;
+        font-weight: 600;
     }
 
     .pdfMainContentTotal > div:not(:first-child){
@@ -300,8 +341,10 @@
         font-size: 0.8rem;
     }
 
-    .pdfBottomRemarks > div{
-        padding: 10px 0 10px 0;
+    .pdfBottomRemarks > span{
+        display: block;
+        font-weight: 600;
+        padding-bottom: 10px;
     }
 
     .pdfBottomLogo{
@@ -326,46 +369,48 @@
     <div class="pdfHeadInfo">
         <div>
             <span>견&ensp;적&ensp;일&ensp;자&nbsp;:&nbsp;</span>
-            <input type="text">
+            <input type="date" max="9999-12-31">
         </div>
         <div>
             <span>상&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;호&nbsp;:&nbsp;</span>
-            <input type="text">
-        </div>
-        <div>
-            <span>대&ensp;표&ensp;이&ensp;사&nbsp;:&nbsp;</span>
-            <input type="text">
+            <input type="text" placeholder="ex) 주식회사 비전테크(부산)">
         </div>
         <div>
             <span>사&ensp;&nbsp;&nbsp;업&ensp;&nbsp;&nbsp;명&nbsp;:&nbsp;</span>
-            <input type="text">
+            <input type="text" placeholder="사업명 입력">
         </div>
         <div>
-            <span>주&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;소&nbsp;:&nbsp;</span>
-            <input type="text">
+            <span>대&ensp;표&ensp;이&ensp;사&nbsp;:&nbsp;</span>
+            <input type="text" class="headInfoCeoName" placeholder="ex) 이승우">
         </div>
         <div>
             <span>수&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;신&nbsp;:&nbsp;</span>
-            <input type="text">
+            <input type="text" class="headInfoCustomer" data-complete="customer" placeholder="ex) 무등록거래처" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">&nbsp;/&nbsp;
+            <input type="text" class="headInfoCip" data-complete="cip" placeholder="ex) 담당자명" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">
         </div>
         <div>
-            <span>전 화 / 팩 스&nbsp;:&nbsp;</span>
-            <input type="text">
+            <span>주&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;소&nbsp;:&nbsp;</span>
+            <input type="text" class="headInfoAddress" placeholder="ex) 부산시 해운대구 센텀중앙로 97 센텀스카이비즈 A동 2509호">
         </div>
         <div>
             <span>영&ensp;업&ensp;담&ensp;당&nbsp;:&nbsp;</span>
-            <input type="text">
+            <input type="text" class="headInfoUser" placeholder="ex) 영업담당자명">
+        </div>
+        <div>
+            <span>전 화 / 팩 스&nbsp;:&nbsp;</span>
+            <input type="text" class="headInfoPhone" onkeyup="phoneFormat(this);" placeholder="ex) 070-8260-3882">&nbsp;/&nbsp;
+            <input type="text" class="headInfoFax" onkeyup="phoneFormat(this);" placeholder="ex) 051-955-3723">
         </div>
     </div>
     <div class="pdfHeadInfoPrice">
         <div>
             <span>견&ensp;적&ensp;금&ensp;액&nbsp;:&nbsp;</span>
-            <input type="text">&nbsp;
+            <input type="text" readonly>&nbsp;
             <span>(VAT 포함)</span>
         </div>
         <div>
             <span>유&ensp;효&ensp;기&ensp;간&nbsp;:&nbsp;</span>
-            <input type="text">
+            <input type="text" placeholder="ex) 견적일로부터 4주">
         </div>
     </div>
     <div class="pdfMainContainer">

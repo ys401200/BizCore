@@ -1162,6 +1162,7 @@ function inputNumberFormat(e){
 	value = $(e).val().replaceAll(",", "");
 
 	if(value > 0){
+		$(e).val($(e).val().replace(/[^0-9]/g,""));
 		$(e).val(parseInt(value).toLocaleString("en-US"));	
 	}else{
 		$(e).val("");
@@ -3052,27 +3053,26 @@ function phoneFormat(e, type){
 	thisEle = $(e);
 	thisValue = $(e).val().replaceAll("-", "");
 	thisEle.attr("maxLength", 13);
-
     if(thisValue.length == 11){
         if(type == 0){
-            formatNum = thisValue.replace(/(\d{3})(\d{4})(\d{4})/, '$1-****-$3');
+            formatNum = thisValue.replace(/[^0-9]/g,"").replace(/(\d{3})(\d{4})(\d{4})/, '$1-****-$3');
         }else{
-            formatNum = thisValue.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+            formatNum = thisValue.replace(/[^0-9]/g,"").replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
         }
     }else if(thisValue.length == 8){
-        formatNum = thisValue.replace(/(\d{4})(\d{4})/, '$1-$2');
+        formatNum = thisValue.replace(/[^0-9]/g,"").replace(/(\d{4})(\d{4})/, '$1-$2');
     }else{
         if(thisValue.indexOf('02') == 0){
             if(type == 0){
-                formatNum = thisValue.replace(/(\d{2})(\d{4})(\d{4})/, '$1-****-$3');
+                formatNum = thisValue.replace(/[^0-9]/g,"").replace(/(\d{2})(\d{4})(\d{4})/, '$1-****-$3');
             }else{
-                formatNum = thisValue.replace(/(\d{2})(\d{4})(\d{4})/, '$1-$2-$3');
+                formatNum = thisValue.replace(/[^0-9]/g,"").replace(/(\d{2})(\d{4})(\d{4})/, '$1-$2-$3');
             }
         }else{
             if(type == 0){
-                formatNum = thisValue.replace(/(\d{3})(\d{3})(\d{4})/, '$1-***-$3');
+                formatNum = thisValue.replace(/[^0-9]/g,"").replace(/(\d{3})(\d{3})(\d{4})/, '$1-***-$3');
             }else{
-                formatNum = thisValue.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+                formatNum = thisValue.replace(/[^0-9]/g,"").replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
             }
         }
     }

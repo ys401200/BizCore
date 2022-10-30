@@ -147,21 +147,34 @@ function selectBasicInfo(n){
 // }
 
 function clickedAdd(){
-	let listContent, addPdfForm, addBtn;
+	let listContent, addPdfForm, addBtn, bodyTitle, bodyTitleFnc;
 	ckeditor.config.readOnly = false;
 	window.setTimeout(setEditor, 100);
 	listContent = $(".listContent");
 	addPdfForm = $(".addPdfForm");
-	addBtn = $(".addBtn");
+	bodyTitle = $(".bodyTitle");
+	bodyTitleFnc = $(".bodyTitleFnc div");
+	bodyTitle.text("견적추가");
+	bodyTitleFnc.eq(0).text("저장");
+	bodyTitleFnc.eq(0).attr("onclick", "saveEstimate();");
+	bodyTitleFnc.eq(1).show();
 	listContent.hide();
 	addPdfForm.show();
-	addBtn.show();
 }
 
 // 견적 추가버튼 클릭시 실행되는 한수
 function closeAdd(el){
-	document.getElementsByClassName("listContainer")[0].style.display = "block";
-	document.getElementsByClassName("eachContainer")[0].style.display = "none";
+	let listContent, addPdfForm, bodyTitle, bodyTitleFnc;
+	listContent = $(".listContent");
+	addPdfForm = $(".addPdfForm");
+	bodyTitle = $(".bodyTitle");
+	bodyTitleFnc = $(".bodyTitleFnc div");
+	bodyTitle.text("견적목록");
+	bodyTitleFnc.eq(0).text("추가");
+	bodyTitleFnc.eq(0).attr("onclick", "clickedAdd();");
+	bodyTitleFnc.eq(1).hide();
+	listContent.show();
+	addPdfForm.hide();
 } // End of closeAdd()
 
 // 서버에서 견적 양식을 가져오는 함수
@@ -902,7 +915,7 @@ function dateFormat(l){
 function addEstTitle(e){
 	let thisEle;
 	thisEle = $(e);
-	thisEle.parent().before("<div class=\"pdfMainContentTitle\"><div class=\"subTitleIndex\"></div><div class=\"subTitle\"><input type=\"text\" id=\"subTitle\"></div><div></div><div></div><div></div><div class=\"subTitleTotal\">0</div><div></div></div>");
+	thisEle.parent().before("<div class=\"pdfMainContentTitle\"><div class=\"subTitleIndex\"></div><div class=\"subTitle\"><input type=\"text\" placeholder=\"타이틀입력\"></div><div></div><div></div><div></div><div class=\"subTitleTotal\"></div><div></div></div>");
 	
 	let subTitleIndex = $(".subTitleIndex");
 	subTitleIndex.eq(subTitleIndex.length - 1).html(romanize(subTitleIndex.length));
@@ -919,7 +932,7 @@ function addEstItem(e){
 		storage.subItemLength++;
 	}
 
-	thisEle.parent().before("<div class=\"pdfMainContentItem\"><div class=\"itemIndex\">" + storage.subItemLength + "</div><div class=\"itemDivision\"><input type=\"text\"></div><div class=\"itemProductName\"><textarea></textarea></div><div class=\"itemQuantity\"><input type=\"text\"></div><div class=\"itemConsumer\"><input type=\"text\" onkeyup=\"inputNumberFormat(this)\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"inputNumberFormat(this)\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"></div></div>");
+	thisEle.parent().before("<div class=\"pdfMainContentItem\"><div class=\"itemIndex\">" + storage.subItemLength + "</div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemProductName\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeyup=\"quanCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"amountCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div></div>");
 
 	let pdfMainContentItem = $(".pdfMainContentItem");
 	let itemProductName = $(".itemProductName textarea");
@@ -941,4 +954,75 @@ function romanize(num) {
     i = 3;
     while (i--) roman = (key[+digits.pop() + (i * 10)] || "") + roman;
     return Array(+digits.join("") + 1).join("M") + roman;
+}
+
+function quanCalKeyup(e){
+	let thisEle, itemAmount, itemTotal, pdfMainContentAmount, pdfMainContentTax, pdfMainContentTotal, pdfHeadInfoPrice, cal, calAmount = 0;
+	thisEle = $(e);
+	itemAmount = thisEle.parent().nextAll(".itemAmount").children().val().replaceAll(",", "");
+	itemTotal = thisEle.parent().nextAll(".itemTotal");
+	pdfMainContentAmount = $(".pdfMainContentAmount div").eq(1);
+	pdfMainContentTax = $(".pdfMainContentTax div").eq(1);
+	pdfMainContentTotal = $(".pdfMainContentTotal div").eq(1);
+	pdfHeadInfoPrice = $(".pdfHeadInfoPrice div:eq(0) input");
+
+	if(itemAmount === ""){
+		itemAmount = 0;
+	}
+
+	thisEle.val(thisEle.val().replace(/[^0-9]/g,""));
+	cal = parseInt(thisEle.val()) * parseInt(itemAmount);
+	itemTotal.html(cal.toLocaleString("en-US"));
+
+	let pdfMainContentItem = $(".pdfMainContentItem .itemTotal");
+	for(let i = 0; i < pdfMainContentItem.length; i++){
+		let item = parseInt($(pdfMainContentItem[i]).html().replaceAll(",", ""));
+
+		if(isNaN(item)){
+			item = 0;
+		}
+
+		calAmount += item;
+	}
+
+	pdfMainContentAmount.html(calAmount.toLocaleString("en-US"));
+	pdfMainContentTax.html(parseInt(pdfMainContentAmount.html().replaceAll(",", "") / 10).toLocaleString("en-US"));
+	pdfMainContentTotal.html((calAmount + parseInt(pdfMainContentTax.html().replaceAll(",", ""))).toLocaleString("en-US"));
+	pdfHeadInfoPrice.val(pdfMainContentTotal.html());
+}
+
+function amountCalKeyup(e){
+	let thisEle, itemQuantity, itemTotal, pdfMainContentAmount, pdfMainContentTax, pdfMainContentTotal, pdfHeadInfoPrice, cal, calAmount = 0;
+	thisEle = $(e);
+	itemQuantity = thisEle.parent().prevAll(".itemQuantity").children();
+	itemTotal = thisEle.parent().nextAll(".itemTotal");
+	pdfMainContentAmount = $(".pdfMainContentAmount div").eq(1);
+	pdfMainContentTax = $(".pdfMainContentTax div").eq(1);
+	pdfMainContentTotal = $(".pdfMainContentTotal div").eq(1);
+	pdfHeadInfoPrice = $(".pdfHeadInfoPrice div:eq(0) input");
+	
+	if(itemQuantity.val() === ""){
+		itemQuantity.val(1);
+	}
+	
+	thisEle.val(thisEle.val().replace(/[^0-9]/g,""));
+	cal = parseInt(thisEle.val().replaceAll(",", "")) * parseInt(itemQuantity.val());
+	itemTotal.html(cal.toLocaleString("en-US"));
+	
+	let pdfMainContentItem = $(".pdfMainContentItem .itemTotal");
+	for(let i = 0; i < pdfMainContentItem.length; i++){
+		let item = parseInt($(pdfMainContentItem[i]).html().replaceAll(",", ""));
+		
+		if(isNaN(item)){
+			item = 0;
+		}
+		
+		calAmount += item;
+	}
+	
+	inputNumberFormat(thisEle);
+	pdfMainContentAmount.html(calAmount.toLocaleString("en-US"));
+	pdfMainContentTax.html(parseInt(pdfMainContentAmount.html().replaceAll(",", "") / 10).toLocaleString("en-US"));
+	pdfMainContentTotal.html((calAmount + parseInt(pdfMainContentTax.html().replaceAll(",", ""))).toLocaleString("en-US"));
+	pdfHeadInfoPrice.val(pdfMainContentTotal.html());
 }

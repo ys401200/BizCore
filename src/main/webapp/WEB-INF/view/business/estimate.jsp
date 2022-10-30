@@ -3,11 +3,15 @@
 	<div id="bodyContent">
         <div class="listContainer">
             <hr class="bodyTitleBorder" />
-            <span class="bodyTitle">견적 목록</span><span class="bodyTitleFnc"><div onclick="clickedAdd()">추가</div></span>
+            <span class="bodyTitle">견적 목록</span>
+			<span class="bodyTitleFnc">
+				<div onclick="clickedAdd()">추가</div>
+				<div onclick="closeAdd()">닫기</div>
+			</span>
             <div class="listContent">
 				<div class="estimateList"></div><div class="versionList"></div><div class="versionPreview"></div>
 			</div>
-			<div class="addPdfForm" style="display:none;">
+			<div class="addPdfForm">
 				<jsp:include page="./form.jsp" />
 			</div>
         </div>
