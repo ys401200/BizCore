@@ -379,7 +379,7 @@ function showReportDetail() {
   $(".insertbtn").click(setCusDataList);
 
 
-  $(".cke").remove();
+  $(".cke_editable").remove();
   $("." + formId + "_content").html($("#" + formId + "_content").attr("data-detail"));
   $("#" + formId + "_content").hide();
   $("." + formId + "_content").css("font-size", $("#" + formId + "_content").css("font-size"));
@@ -1978,7 +1978,7 @@ function reportModify() {
   $("button[name='modConfirm']:last-child").remove();
   let formId = storage.reportDetailData.formId;
   let content = CKEDITOR.instances[formId + "_content"].getData();
-  $(".cke").remove();
+  $(".cke_editable").remove();
 
   $("#" + formId + "_content").attr("data-detail", content);
   $("#" + formId + "_content").val(content);

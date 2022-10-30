@@ -337,7 +337,7 @@ function showReportDetail() {
 
   setAppLineData();
 
-  $(".cke").remove();
+  $(".cke_editable").remove();
   $("." + formId + "_content").html($("#" + formId + "_content").attr("data-detail"));
   $("#" + formId + "_content").hide();
   $("." + formId + "_content").css("font-size", $("#" + formId + "_content").css("font-size"));
