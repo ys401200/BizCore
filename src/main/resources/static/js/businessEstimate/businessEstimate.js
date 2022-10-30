@@ -606,12 +606,6 @@ function passed(step){
 			for(x = 0 ; x < els.length ; x++)	els[x].disabled = false;
 			els = document.getElementsByClassName("eachContent")[0].children[0].children[1].getElementsByTagName("textarea");
 			for(x = 0 ; x < els.length ; x++)	els[x].disabled = false;
-			ckeditor.config.readOnly = false;
-			storage.editorArray = ["remarks1", "spec", "remarks2"];
-			window.setTimeout(setEditor, 500);
-			setTimeout(() => {
-				$(".cke").css("grid-column", "2 / 5");
-			}, 1000);
 		}
 	}else if(step === 2){
 		els = document.querySelector("#bodyContent > div.eachContainer > div > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2)").getElementsByTagName("input");
@@ -943,6 +937,23 @@ function addEstItem(e){
 
 	ckeditor.config.readOnly = false;
 	window.setTimeout(setEditor, 100);
+}
+
+function removeEstItem(e){
+	let thisEle, index, pdfMainContentItem;
+	thisEle = $(e);
+	thisEle.parent().prev().remove();
+	pdfMainContentItem = $(".pdfMainContentItem");
+
+	if(pdfMainContentItem.last() === undefined){
+		storage.subItemLength = 0;
+	}else{
+		if(pdfMainContentItem.last().next().attr("class") === "pdfMainContentTitle"){
+			storage.subItemLength = 0;
+		}else{
+			storage.subItemLength = pdfMainContentItem.last().find(".itemIndex").html();
+		}
+	}
 }
 
 function romanize(num) {
