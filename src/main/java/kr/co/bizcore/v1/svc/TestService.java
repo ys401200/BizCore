@@ -10,9 +10,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import kr.co.bizcore.v1.domain.Contract;
 
 @Service
 @Transactional
@@ -354,6 +359,62 @@ public class TestService extends Svc{
         //Contract cnt = 
 
 
+        return result;
+    }
+
+    public String getEstmInfo() {
+        String result = null;
+        String sql1 = "SELECT estid no, estver `version`, esttitle title, ifnull(custno,0) customer, ifnull(soppno,0) sopp, userno writer, estamount total, estvat tax, unix_timestamp(estdate)*1000 `date`, unix_timestamp(regdate)*1000 `created`,estno l_estno, esttype l_type from swcore.swc_est where attrib not like 'XXX%' and compno = 100002";
+        String sql2 = "";
+        String sql3 = "";
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        HashMap<String, JSONObject> estms = new HashMap<>();
+        JSONObject item = null, version = null, estm = null;
+        JSONArray items = null;
+        String xNo = null, xTitle = null, xlType = null;
+        long xDate = 0, xCreated = 0;
+        int xVersion = 0, xCustomer = 0, xSopp = 0, xWriter = 0, xTotl = 0, xTotal = 0, xlEstno = 0, xVat = 0, zVersion = 0, zQuantity = 0, zPrice = 0;
+        boolean zVat = false;
+
+        try{
+            conn = sqlSession.getConnection();
+
+            // 견적 마스터 목록
+            pstmt = conn.prepareStatement(sql1);
+            rs = pstmt.executeQuery();
+            while(rs.next()){
+                xNo = rs.getString("no");
+                xTitle = rs.getString("title");
+                xlType = rs.getString("l_type");
+                xVersion = rs.getInt("version");
+                xCustomer = rs.getInt("customer");
+                xSopp = rs.getInt("sopp");
+                xWriter = rs.getInt("writer");
+                xTotal = rs.getInt("customer");
+                xVat = rs.getInt("tax");
+                xDate = rs.getLong("date");
+                xCreated = rs.getLong("created");
+
+                estm = new JSONObject();
+                estm.put("no", xNo);
+                estm.put("title", xTitle);
+                estm.put("lType", xlType);
+                estm.put("version", xVersion);
+                estm.put("customer", xCustomer);
+                estm.put("sopp", xSopp);
+                estm.put("writer", xWriter);
+                estm.put("total", xTotal);
+                estm.put("vat", xVat);
+                estm.put("date", xDate);
+                estm.put("created", xCreated);
+                estms.put(xNo, estm);
+            }
+
+            // 견적 상세 정보
+        }catch(SQLException e){e.printStackTrace();}
+        
         return result;
     }
 }

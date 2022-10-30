@@ -52,11 +52,12 @@
 .deptTree{
     width:90%;
     margin:0 auto;
-    border:1px solid gray;
+    border:1px solid #3e3e9e;
     height:calc(100% - 70px);
     text-align: initial;
     padding: 1.5rem;
     box-sizing: border-box;
+    overflow: auto;
 }
 .deptTree .dept-tree-cnt{
     display:none;
@@ -85,9 +86,37 @@
 }
 .listContent > div:nth-child(2) > div:nth-child(2){
     width:90%;
-    border:1px solid gray;
-    height:calc(100% - 70px);
+    border:1px solid #3e3e9e;
     text-align: initial;
-    padding: 1.5rem;
     box-sizing: border-box;
+    font-size: 0.9rem;
+    /* height:calc(100% - 70px);
+    min-height: 650px; */
+}
+.employeeDetail > div{display:grid;grid-template-columns: 1fr 4fr 1fr 4fr;height:calc(100% / 18);}
+.employeeDetail > div > div{border-top:1px solid #3e3e9e;padding:0.5rem 20%;border-left:1px solid #3e3e9e;}
+.employeeDetail > div:nth-child(1) > div{border-top:none;}
+.employeeDetail > div > div:nth-child(1){border-left:none;}
+.employeeDetail > div > div:nth-child(odd){display: flex;align-items: center;justify-content: space-between;background-color: #f7f7ff;}
+.employeeDetail > div > div:nth-child(even){
+    display: flex;
+    align-items: center;
+    /* justify-content: space-between; */
+    padding:0.1rem 1.5rem;
+}
+.xEmpInput{
+    border:none;
+    padding:0;
+    font-size:0.9rem;
+    width:calc(100% - 3rem);
+    height:calc(100% - 0.2rem);
+    border-bottom: 2px solid #d6d6d5;
+    outline:none;
+}
+.xEmpInput:focus{border-color:red;}
+.xEmpProhibited:checked + label{background-color: #e6e4ff;border-radius:20px;}
+.xEmpResNo{
+    width: 1.2rem;
+    text-align: center;
+    margin-right: 0.5rem;
 }
