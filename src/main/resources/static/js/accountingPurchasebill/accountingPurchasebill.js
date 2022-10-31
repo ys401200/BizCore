@@ -12,7 +12,7 @@ $(document).ready(() => {
 function getPurchasebillList() {
 	let url, method, data, type;
 
-	url = "/api/accounting/taxbillAll/B";
+	url = "/api/accounting/taxbillYear/B";
 	method = "get";
 	data = "";
 	type = "list";
@@ -22,7 +22,7 @@ function getPurchasebillList() {
 
 function drawPurchasebillList() {
 	let container, result, job, jsonData, header = [], data = [], ids = [], str, fnc, pageContainer, containerTitle, detailBackBtn, listSearchInput;
-	
+
 	if (storage.purchasebillList === undefined) {
 		msg.set("등록된 매입계산서가 없습니다");
 	}
@@ -151,7 +151,6 @@ function drawPurchasebillList() {
 				},
 			];
 	
-			fnc = "purchasebillDetailView(this);";
 			ids.push(jsonData[i].no);
 			data.push(str);
 		}
@@ -168,6 +167,19 @@ function drawPurchasebillList() {
 }
 
 function purchasebillSuccessList(result){
+	// storage.purchasebillList = [];
+	// let nowDate = new Date();
+	// let nowYear = nowDate.getFullYear();
+
+	// for(let i = 0; i < result.length; i++){
+	// 	let getDate = new Date(result[i].issueDate);
+	// 	let getYear = getDate.getFullYear();
+
+	// 	if(nowYear == getYear){
+	// 		storage.purchasebillList.push(result[i]);
+	// 	}
+	// }
+
 	storage.purchasebillList = result;
 
 	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined){
@@ -188,7 +200,7 @@ function purchasebillErrorList(){
 function searchInputKeyup(){
 	let searchAllInput, tempArray;
 	searchAllInput = $("#searchAllInput").val();
-	tempArray = searchDataFilter(storage.soppList, searchAllInput, "input");
+	tempArray = searchDataFilter(storage.purchasebillList, searchAllInput, "input");
 
 	if(tempArray.length > 0){
 		storage.searchDatas = tempArray;
@@ -196,7 +208,7 @@ function searchInputKeyup(){
 		storage.searchDatas = "";
 	}
 
-	drawSoppList();
+	drawPurchasebillList();
 }
 
 function addSearchList(){
@@ -204,7 +216,7 @@ function addSearchList(){
 
 	for(let i = 0; i < storage.purchasebillList.length; i++){
 		let disDate, setDate, sellerCustomer, sn, status, amount, tax, product, standard, remark;
-		disDate = dateDis(storage.purchasebillList[i].created, storage.purchasebillList[i].modified);
+		disDate = dateDis(storage.purchasebillList[i].issueDate);
 		setDate = parseInt(dateFnc(disDate).replaceAll("-", ""));
 		sellerCustomer = (storage.purchasebillList[i].sellerCustomer === null || storage.purchasebillList[i].sellerCustomer == 0 || storage.purchasebillList[i].sellerCustomer === undefined) ? "" : storage.customer[storage.purchasebillList[i].sellerCustomer].name;
 		sn = (storage.purchasebillList[i].sn === null || storage.purchasebillList[i].sn === "" || storage.purchasebillList[i].sn === undefined) ? "" : storage.purchasebillList[i].sn;
@@ -224,26 +236,22 @@ function addSearchList(){
 		standard = (storage.purchasebillList[i].standard === null || storage.purchasebillList[i].standard === "" || storage.purchasebillList[i].standard === undefined) ? "" : storage.purchasebillList[i].standard;
 		remark = (storage.purchasebillList[i].remark === null || storage.purchasebillList[i].remark === "" || storage.purchasebillList[i].remark === undefined) ? "" : storage.purchasebillList[i].remark;
 
-		storage.searchList.push("#issueDate" + setDate + "#" + sellerCustomer + "#" + sn + "#" + status + "#" + (amount + tax) + "#" + product + "#" + standard + "#" + remark + "#");
+		storage.searchList.push("#issueDate" + setDate + "#" + sellerCustomer + "#" + sn + "#" + status + "#price" + (amount + tax) + "#" + product + "#" + standard + "#" + remark + "#");
 	}
 }
 
 function searchSubmit(){
-	let dataArray = [], resultArray, eachIndex = 0, searchEmployee, searchCustomer, searchTitle, searchSoppType, searchContType, searchStatus, searchCreatedFrom;
+	let dataArray = [], resultArray, eachIndex = 0, searchSellerCustomer, searchIssueFrom, searchPriceFrom;
 
-	searchEmployee = $("#searchEmployee").val();
-	searchCustomer = $("#searchCustomer").val();
-	searchTitle = $("#searchTitle").val();
-	searchSoppType = $("#searchSoppType").val();
-	searchContType = $("#searchContType").val();
-	searchStatus = $("#searchStatus").val();
-	searchCreatedFrom = ($("#searchCreatedFrom").val() === "") ? "" : $("#searchCreatedFrom").val().replaceAll("-", "") + "#created" + $("#searchCreatedTo").val().replaceAll("-", "");
-	
-	let searchValues = [searchEmployee, searchCustomer, searchTitle, searchSoppType, searchContType, searchStatus, searchCreatedFrom];
+	searchSellerCustomer = $("#searchSellerCustomer").val();
+	searchIssueFrom = ($("#searchIssueFrom").val() === "") ? "" : $("#searchIssueFrom").val().replaceAll("-", "") + "#issueDate" + $("#searchIssueTo").val().replaceAll("-", "");
+	searchPriceFrom = ($("#searchPriceFrom").val() === "") ? "" : $("#searchPriceFrom").val().replaceAll(",", "") + "#price" + $("#searchPriceTo").val().replaceAll(",", "");
+
+	let searchValues = [searchSellerCustomer, searchIssueFrom, searchPriceFrom];
 
 	for(let i = 0; i < searchValues.length; i++){
 		if(searchValues[i] !== "" && searchValues[i] !== undefined && searchValues[i] !== null){
-			let tempArray = searchDataFilter(storage.soppList, searchValues[i], "multi");
+			let tempArray = searchDataFilter(storage.purchasebillList, searchValues[i], "multi");
 			
 			for(let t = 0; t < tempArray.length; t++){
 				dataArray.push(tempArray[t]);
@@ -253,14 +261,14 @@ function searchSubmit(){
 		}
 	}
 
-	resultArray = searchMultiFilter(eachIndex, dataArray, storage.soppList);
+	resultArray = searchMultiFilter(eachIndex, dataArray, storage.purchasebillList);
 	
 	storage.searchDatas = resultArray;
 
 	if(storage.searchDatas.length == 0){
 		msg.set("찾는 데이터가 없습니다.");
-		storage.searchDatas = storage.soppList;
+		storage.searchDatas = storage.purchasebillList;
 	}
 	
-	drawSoppList();
+	drawPurchasebillList();
 }

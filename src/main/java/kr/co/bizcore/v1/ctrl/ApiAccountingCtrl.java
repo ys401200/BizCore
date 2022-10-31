@@ -27,7 +27,7 @@ public class ApiAccountingCtrl extends Ctrl{
     private static final Logger logger = LoggerFactory.getLogger(ApiAccountingCtrl.class);
 
     @GetMapping("/taxbillAll/{option}")
-    public String apiAccTaxBill(HttpServletRequest request, @PathVariable String option){
+    public String taxbillAll(HttpServletRequest request, @PathVariable String option){
         String result = null;
         String compId = null;
         String aesKey = null;
@@ -54,6 +54,36 @@ public class ApiAccountingCtrl extends Ctrl{
             result = "{\"result\":\"ok\",\"data\":\"" + result + "\"}";
         }
         
+        return result;
+    }
+
+    @GetMapping("/taxbillYear/{option}")
+    public String taxbillYear(HttpServletRequest request, @PathVariable String option){
+        String result = null;
+        String compId = null;
+        String aesKey = null;
+        String aesIv = null;
+        String lang = null;
+        Msg msg = null;
+        HttpSession session = null;
+
+        session = request.getSession();
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        compId = (String)session.getAttribute("compId");
+        lang = (String)session.getAttribute("lang");
+        msg = getMsg(lang);
+        if(compId == null)  compId = (String)session.getAttribute("compId");
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        }else{
+            result = accService.getSimpleYearList(compId, option);
+            result = encAes(result, aesKey, aesIv);
+            result = "{\"result\":\"ok\",\"data\":\"" + result + "\"}";
+        }
         return result;
     } // End of apiAccTaxBillOption()
 

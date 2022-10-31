@@ -2473,6 +2473,28 @@ function searchDataFilter(arrayList, searchDatas, type){
 					}
 				}
 			}
+		}else if(searchDatas.indexOf("#issueDate") > -1){
+			let splitStr;
+			splitStr = searchDatas.split("#issueDate");
+
+			for(let key in storage.searchList){
+				if(splitStr[0] <= storage.searchList[key].split("#issueDate")[1]){
+					if(storage.searchList[key].split("#issueDate")[1] <= splitStr[1]){
+						dataArray.push(key);
+					}
+				}
+			}
+		}else if(searchDatas.indexOf("#price") > -1){
+			let splitStr;
+			splitStr = searchDatas.split("#price");
+
+			for(let key in storage.searchList){
+				if(splitStr[0] <= storage.searchList[key].split("#price")[1]){
+					if(storage.searchList[key].split("#price")[1] <= splitStr[1]){
+						dataArray.push(key);
+					}
+				}
+			}
 		}else{
 			for(let key in storage.searchList){
 				if(storage.searchList[key].indexOf(searchDatas) > -1){
