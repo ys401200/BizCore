@@ -25,6 +25,10 @@ public class SimpleTaxBill extends Domain{
     @XmlElement(nillable=true)
     protected String product;
     @XmlElement(nillable=true)
+    protected int buyerCustomer;
+    protected int sellerCustomer;
+    protected String status;
+    protected String standard;
     protected String remark;
 
     public void setType(boolean t){type=t;}
@@ -43,11 +47,15 @@ public class SimpleTaxBill extends Domain{
         result += ("\"issueDate\":" + (issueDate == null ? "null" : issueDate.getTime()) + ",");
         result += ("\"tradeDate\":" + (tradeDate == null ? "null" : tradeDate.getTime()) + ",");
         result += ("\"regNo\":\"" + regNo + "\",");
+        result += ("\"buyerCustomer\":" + buyerCustomer + ",");
+        result += ("\"sellerCustomer\":" + sellerCustomer + ",");
         result += ("\"sn\":\"" + sn + "\",");
+        result += ("\"status\":\"" + status + "\",");
         result += ("\"amount\":" + amount + ",");
         result += ("\"tax\":" + tax + ",");
         result += ("\"product\":" + (product == null ? "null" : "\"" + product + "\"") + ",");
         result += ("\"remark\":" + (remark == null ? "null" : "\"" + remark + "\"") + ",");
+        result += ("\"standard\":\"" + standard + "\",");
         result += ("\"created\":" + (created == null ? "null" : created.getTime()) + ",");
         result += ("\"modified\":" + (modified == null ? "null" : modified.getTime()) + "}");
         return result;

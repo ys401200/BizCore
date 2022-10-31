@@ -1367,7 +1367,6 @@ function setEditor(){
 	}
 
 	let textarea = $("textarea");
-
 	for(let i = 0; i < textarea.length; i++){
 		CKEDITOR.inline(document.querySelector("#" + $(textarea[i]).attr("id")));
 	}
@@ -3316,7 +3315,7 @@ function detailCheckedTrueView(){
 }
 
 function setTabsLayOutMenu(){
-	let tabs, tabItem, tabItemLength, width, temp, padding;
+	let tabs, tabItem, tabItemLength, width, temp;
 	tabs = $(".tabs");
 	tabItem = $(".tabItem");
 	tabItemLength = tabItem.length;
@@ -3326,13 +3325,39 @@ function setTabsLayOutMenu(){
 		$(tabItem[i]).css("z-index", temp);
 		temp -= 2;
 		if(i > 0){
-			padding += parseInt($(tabItem[i-1]).width() - 8);
 			$(tabItem[i]).css("width", width + "%");
-			$(tabItem[i]).css("padding-left", padding + "px");
+			$(tabItem[i]).css("padding-left", (width * i) + "%");
 		}else{
-			width = parseInt(100 / tabItemLength);
+			width = 100 / tabItemLength;
 			$(tabItem[i]).css("width", width + "%");
-			padding = width;
 		}
+	}
+}
+
+function popup(e){
+	var nWidth = "800";
+	var nHeight = "800";
+
+	var curX = window.screenLeft;
+	var curY = window.screenTop;
+	var curWidth = document.body.clientWidth;
+	var curHeight = document.body.clientHeight;
+
+	var nLeft = curX + (curWidth / 2) - (nWidth / 2);
+	var nTop = curY + (curHeight / 2) - (nHeight / 2);
+
+	var strOption = "";
+	strOption += "left=" + nLeft + "px,";
+	strOption += "top=" + nTop + "px,";
+	strOption += "width=" + nWidth + "px,";
+	strOption += "height=" + nHeight + "px,";
+	strOption += "toolbar=no,menubar=no,location=no,";
+	strOption += "resizable=yes,status=yes";
+
+	var winObj = window.open($(e).attr("href"), '', strOption);
+
+	if (winObj == null) {
+		alert("팝업 차단을 해제해주세요.");
+		return false;
 	}
 }

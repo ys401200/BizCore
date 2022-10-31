@@ -14,7 +14,10 @@ import kr.co.bizcore.v1.domain.SimpleTaxBill;
 import kr.co.bizcore.v1.domain.TaxBill;
 
 public interface AccountingMapper {
-    
+        @Select("SELECT vatid AS no, vattype AS type, vatissuedate AS issueDate, vattradedate AS tradeDate, vatno AS regNo, vatserial AS sn, vatamount AS amount, vattax AS tax, vatproductname AS product, vatremark AS remark, vatBuyerCustNo AS buyerCustomer, vatSellerCustNo AS sellerCustomer, vatStatus AS status, vatStandard AS standard, regdate AS created, modDate AS modified " + 
+                "FROM swc_vat WHERE attrib NOT LIKE 'XXX%' AND vatType = #{type} AND vatIssueDate BETWEEN #{startDate} and #{endDate} AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) ORDER BY issueDate desc")
+        public List<SimpleTaxBill> getSimpleAllList(@Param("compId") String compId, @Param("type") String type, @Param("startDate") String startDate, @Param("endDate") String endDate);
+
     @Select("SELECT vatid AS no, vattype AS type, vatissuedate AS issueDate, vattradedate AS tradeDate, vatno AS regNo, vatserial AS sn, vatamount AS amount, vattax AS tax, vatproductname AS product, vatremark AS remark, regdate AS created, modDate AS modified " + 
             "FROM swc_vat WHERE attrib NOT LIKE 'XXX%' AND (#{all} = 1 OR vatstatus NOT IN ('B5', 'S5')) AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) ORDER BY issueDate desc")
     public List<SimpleTaxBill> getSimpleTaxBillList(@Param("compId") String compId, @Param("all") boolean all);

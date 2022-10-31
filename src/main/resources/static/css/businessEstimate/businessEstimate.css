@@ -180,4 +180,5 @@
 .addPdfForm{
     display: none;
     clear: both;
+    height: calc(100% - 70px);
 }

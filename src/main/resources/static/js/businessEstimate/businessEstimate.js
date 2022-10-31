@@ -926,7 +926,7 @@ function addEstItem(e){
 		storage.subItemLength++;
 	}
 
-	thisEle.parent().before("<div class=\"pdfMainContentItem\"><div class=\"itemIndex\">" + storage.subItemLength + "</div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemProductName\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeyup=\"quanCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"amountCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div></div>");
+	thisEle.parent().before("<div class=\"pdfMainContentItem\"><div class=\"itemIndex\">" + storage.subItemLength + "</div><div class=\"itemDivision\"><input type=\"text\" id=\"div\" placeholder=\"SW\"></div><div class=\"itemProductName\"><textarea id=\"title\" placeholder=\"품명\"></textarea></div><div id=\"quantity\" class=\"itemQuantity\"><input type=\"text\" id= value=\"1\" onkeyup=\"quanCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"amountCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" id=\"remark\" placeholder=\"비고\"></div></div>");
 
 	let pdfMainContentItem = $(".pdfMainContentItem");
 	let itemProductName = $(".itemProductName textarea");

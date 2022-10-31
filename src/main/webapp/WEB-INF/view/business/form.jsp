@@ -13,7 +13,7 @@
         font-family:MalgunGothic, sans-serif;
         border: 1px solid #000;
         padding: 10px;
-        max-height: 600px;
+        height: 100%;
         overflow-y: auto;
     }
 
@@ -373,44 +373,44 @@
         </div>
         <div>
             <span>상&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;호&nbsp;:&nbsp;</span>
-            <input type="text" id="firmName" placeholder="ex) 주식회사 비전테크(부산)" id="firmName">
+            <input type="text" autocomplete="off" id="firmName" placeholder="ex) 주식회사 비전테크(부산)" id="firmName">
         </div>
         <div>
             <span>사&ensp;&nbsp;&nbsp;업&ensp;&nbsp;&nbsp;명&nbsp;:&nbsp;</span>
-            <input type="text" placeholder="사업명 입력" id="title">
+            <input type="text" autocomplete="off" placeholder="사업명 입력" id="title">
         </div>
         <div>
             <span>대&ensp;표&ensp;이&ensp;사&nbsp;:&nbsp;</span>
-            <input type="text" id="representative" class="headInfoCeoName" placeholder="ex) 이승우">
+            <input type="text" autocomplete="off" id="representative" class="headInfoCeoName" placeholder="ex) 이승우">
         </div>
         <div>
             <span>수&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;신&nbsp;:&nbsp;</span>
-            <input type="text" class="headInfoCustomer" id="customer" data-complete="customer" placeholder="ex) 무등록거래처" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">&nbsp;/&nbsp;
-            <input type="text" class="headInfoCip" id="cip" data-complete="cip" placeholder="ex) 담당자명" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">
+            <input type="text" autocomplete="off" class="headInfoCustomer" id="customer" data-complete="customer" placeholder="ex) 무등록거래처" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">&nbsp;/&nbsp;
+            <input type="text" autocomplete="off" class="headInfoCip" id="cip" data-complete="cip" placeholder="ex) 담당자명" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">
         </div>
         <div>
             <span>주&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;소&nbsp;:&nbsp;</span>
-            <input type="text" id="address" class="headInfoAddress" placeholder="ex) 부산시 해운대구 센텀중앙로 97 센텀스카이비즈 A동 2509호">
+            <input type="text" autocomplete="off" id="address" class="headInfoAddress" placeholder="ex) 부산시 해운대구 센텀중앙로 97 센텀스카이비즈 A동 2509호">
         </div>
         <div>
             <span>영&ensp;업&ensp;담&ensp;당&nbsp;:&nbsp;</span>
-            <input type="text" id="writer" class="headInfoWriter" placeholder="ex) 영업담당자명">
+            <input type="text" autocomplete="off" id="writer" class="headInfoWriter" placeholder="ex) 영업담당자명">
         </div>
         <div>
             <span>전 화 / 팩 스&nbsp;:&nbsp;</span>
-            <input type="text" id="phone" class="headInfoPhone" onkeyup="phoneFormat(this);" placeholder="ex) 070-8260-3882">&nbsp;/&nbsp;
-            <input type="text" id="fax" class="headInfoFax" onkeyup="phoneFormat(this);" placeholder="ex) 051-955-3723">
+            <input type="text" autocomplete="off" id="phone" class="headInfoPhone" onkeyup="phoneFormat(this);" placeholder="ex) 070-8260-3882">&nbsp;/&nbsp;
+            <input type="text" autocomplete="off" id="fax" class="headInfoFax" onkeyup="phoneFormat(this);" placeholder="ex) 051-955-3723">
         </div>
     </div>
     <div class="pdfHeadInfoPrice">
         <div>
             <span>견&ensp;적&ensp;금&ensp;액&nbsp;:&nbsp;</span>
-            <input type="text" id="price" readonly>&nbsp;
+            <input type="text" autocomplete="off" id="price" readonly>&nbsp;
             <span>(VAT 포함)</span>
         </div>
         <div>
             <span>유&ensp;효&ensp;기&ensp;간&nbsp;:&nbsp;</span>
-            <input type="text" placeholder="ex) 견적일로부터 4주">
+            <input type="text" autocomplete="off" id="exp" placeholder="ex) 견적일로부터 4주">
         </div>
     </div>
     <div class="pdfMainContainer">

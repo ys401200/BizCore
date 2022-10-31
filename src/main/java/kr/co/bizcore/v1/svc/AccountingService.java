@@ -1,9 +1,7 @@
 package kr.co.bizcore.v1.svc;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -24,6 +22,27 @@ public class AccountingService extends Svc{
 
     private static final Logger logger = LoggerFactory.getLogger(AccountingService.class);
 
+    public String getSimpleAllList(String compId, String type){
+        String result = null;
+        List<SimpleTaxBill> list = null;
+        int x = 0;
+        LocalDate now = LocalDate.now();
+        String startDate = String.valueOf(now.getYear()) + "-01-01";
+        String endDate = String.valueOf(now.getYear()) + "-12-31";
+        
+        list = accMapper.getSimpleAllList(compId, type, startDate, endDate);
+        if(list != null && list.size() > 0){
+            for(x = 0 ; x < list.size() ; x++){
+                if(x == 0)  result = "[";
+                else        result += ",";
+                result += list.get(x).toJson();
+            }
+            result += "]";
+        }
+        
+        return result;
+    }
+    
     public String getSimpleTaxBillList(String compId, boolean all){
         String result = null;
         List<SimpleTaxBill> list = null;
