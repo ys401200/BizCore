@@ -311,7 +311,18 @@ function getDetailView() {
     let selectArr = target.getElementsByTagName("select")[0];
     selectArr.value = selectArr.dataset.detail;
   }
-
+  if ( formId == "doc_Form_Consult" && $(".list_comment").attr("data-detail") == "old" || formId == "doc_Form_Resolution" && $(".list_comment").attr("data-detail") == "old") {
+    for (let i = 0; i < 4; i++) {
+      let tt = $("input[name="+formId+"_RD]")[i];
+      if ($("#" + tt.id).attr("checked") == "checked") {
+        $("#" + tt.id).attr("data-detail", "on");
+        $("#" + tt.id).val("on");
+      } else {
+        $("#" + tt.id).attr("data-detail", "off");
+        $("#" + tt.id).val("off");
+      }
+    }
+}
   // 기존 전자 결재 문서 가져온 경우
   if ($(".list_comment")[0].dataset.detail == "old") {
     let rd = $("input[name='" + formId + "_RD']");

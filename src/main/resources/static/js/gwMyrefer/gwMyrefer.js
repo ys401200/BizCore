@@ -253,6 +253,19 @@ function getDetailView() {
     selectArr.value = selectArr.dataset.detail;
   }
 
+  if ( formId == "doc_Form_Consult" && $(".list_comment").attr("data-detail") == "old" || formId == "doc_Form_Resolution" && $(".list_comment").attr("data-detail") == "old") {
+    for (let i = 0; i < 4; i++) {
+      let tt = $("input[name="+formId+"_RD]")[i];
+      if ($("#" + tt.id).attr("checked") == "checked") {
+        $("#" + tt.id).attr("data-detail", "on");
+        $("#" + tt.id).val("on");
+      } else {
+        $("#" + tt.id).attr("data-detail", "off");
+        $("#" + tt.id).val("off");
+      }
+    }
+}
+
   // 상세타입 체크하게 하기
   let rd = $("input[name='" + formId + "_RD']");
   for (let i = 0; i < rd.length; i++) {

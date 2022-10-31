@@ -303,6 +303,23 @@ function showReportDetail() {
     selectArr.value = selectArr.dataset.detail;
   }
 
+
+  // 컨버팅 관련 코드 /////// 
+
+  if (formId == "doc_Form_Consult" && $(".list_comment").attr("data-detail") == "old" || formId == "doc_Form_Resolution" && $(".list_comment").attr("data-detail") == "old") {
+    for (let i = 0; i < 4; i++) {
+      let tt = $("input[name=" + formId + "_RD]")[i];
+      if ($("#" + tt.id).attr("checked") == "checked") {
+        $("#" + tt.id).attr("data-detail", "on");
+        $("#" + tt.id).val("on");
+      } else {
+        $("#" + tt.id).attr("data-detail", "off");
+        $("#" + tt.id).val("off");
+      }
+    }
+  }
+
+
   // 상세타입 체크하게 하기
   let rd = $("input[name='" + formId + "_RD']");
   for (let i = 0; i < rd.length; i++) {
@@ -320,8 +337,8 @@ function showReportDetail() {
         $("#" + rd[i].id).prop("checked", true);
       }
     }
-    for(let i = 0 ; i < 3 ; i ++) {let tt = $(".inputsAuto")[i]; $(tt).css("text-align","left");} 
-   
+    for (let i = 0; i < 3; i++) { let tt = $(".inputsAuto")[i]; $(tt).css("text-align", "left"); }
+
   } else {
     // 새문서 작성한 것 가져온 경우 구분
     let rd2 = $("input[name='" + formId + "_RD']");
@@ -347,6 +364,8 @@ function showReportDetail() {
     }
   }
 
+
+  // 문서 변경내역 확인 하기 위한 storage 
   storage.oriCbContainer = $("input[name='" + formId + "_RD']:checked").attr(
     "id"
   );
@@ -1864,7 +1883,8 @@ function setSavedLine(obj) {
 }
 
 // 문서 수정 취소 함수
-function quitModify() {   showReportDetail();
+function quitModify() {
+  showReportDetail();
   // let formId = storage.reportDetailData.formId;
   // $("button[name='modConfirm']:last-child").remove();
   // $("button[name='modConfirm']:last-child").remove();
@@ -2014,7 +2034,7 @@ function createConfirmBtn() {
   let formId = storage.reportDetailData.formId;
   $("." + formId + "_content").hide();
   $("#" + formId + "_content").val($("." + formId + "_content").html());
-  $("#" + formId + "_content").attr("data-detail",$("." + formId + "_content").html());
+  $("#" + formId + "_content").attr("data-detail", $("." + formId + "_content").html());
   storage.editorArray = [formId + "_content"];
   ckeditor.config.readOnly = false;
   window.setTimeout(setEditor, 100);
