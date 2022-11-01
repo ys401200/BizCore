@@ -45,9 +45,11 @@
     font-weight: bold;
     width:90%;
     background-color: #3e3e9e;
-    padding: 10px;
+    padding: 10px 30%;
     box-sizing: border-box;
     text-align: center;
+    display: flex;
+    justify-content: space-between;
 }
 .deptTree{
     width:90%;
@@ -75,21 +77,27 @@
 .dept-tree-select:checked + label > div{background-color: beige;}
 .deptTree label > div{display:inline-block;}
 
-.listContent > div:nth-child(2) > div:nth-child(1){
+.listContent > div:nth-child(2) > div:nth-child(odd){display:grid;grid-template-columns: 1fr 5fr 1fr;background-color: #3e3e9e;width:90%;}
+.listContent > div:nth-child(2) > div:nth-child(odd) > div:nth-child(odd){text-align: center;padding:5px;}
+.listContent > div:nth-child(2) > div:nth-child(odd) > div:nth-child(odd) > img{width:1.8rem;height:1.8rem;vertical-align: middle;margin:0 10px;opacity:0.5;cursor:pointer;}
+.listContent > div:nth-child(2) > div:nth-child(odd) > div:nth-child(odd) > img:hover{opacity:1;}
+.listContent > div:nth-child(2) > div:nth-child(odd) > div:nth-child(even){
     color:white;
     font-weight: bold;
-    width:90%;
-    background-color: #3e3e9e;
-    padding: 10px;
+    padding: 10px 30%;
     box-sizing: border-box;
     text-align: center;
+    display: flex;
+    justify-content: space-between;
+    vertical-align: middle;
 }
-.listContent > div:nth-child(2) > div:nth-child(2){
+.listContent > div:nth-child(2) > div:nth-child(even){
     width:90%;
     border:1px solid #3e3e9e;
     text-align: initial;
     box-sizing: border-box;
     font-size: 0.9rem;
+    margin-bottom: 1.5rem;
     /* height:calc(100% - 70px);
     min-height: 650px; */
 }
@@ -97,11 +105,12 @@
 .employeeDetail > div > div{border-top:1px solid #3e3e9e;padding:0.5rem 20%;border-left:1px solid #3e3e9e;}
 .employeeDetail > div:nth-child(1) > div{border-top:none;}
 .employeeDetail > div > div:nth-child(1){border-left:none;}
+.employeeDetail > div > div > select{width:16.5rem;}
 .employeeDetail > div > div:nth-child(odd){display: flex;align-items: center;justify-content: space-between;background-color: #f7f7ff;}
 .employeeDetail > div > div:nth-child(even){
     display: flex;
     align-items: center;
-    /* justify-content: space-between; */
+    justify-content: space-between;
     padding:0.1rem 1.5rem;
 }
 .xEmpInput{
@@ -114,9 +123,10 @@
     outline:none;
 }
 .xEmpInput:focus{border-color:red;}
-.xEmpProhibited:checked + label{background-color: #e6e4ff;border-radius:20px;}
+.radioSwitch{display:none;}
+.radioSwitch + label{display: inline-block;padding: 0.3rem 1.5rem;}
+.radioSwitch:checked + label{background-color: #e6e4ff;border-radius:20px;}
 .xEmpResNo{
     width: 1.2rem;
     text-align: center;
-    margin-right: 0.5rem;
 }

@@ -68,13 +68,13 @@ function setEmpData(){
 
 	 html = "";
 
-	// ===== 기본 정보 타이틀 =====
+	// =========================================== 기본 정보 타이틀 ===========================================
 	title = "기본정보";
-	html += "<div>";
+	html += "<div><div class=\"image_btns\"><img src=\"/images/manage/icon_modified.png\" /></div><div class=\"manageSubTitle\">";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
-	html += "</div>";
+	html += "</div><div class=\"image_btns\"><img src=\"/images/manage/icon_undo.png\" /><img src=\"/images/manage/icon_confirm.png\" /></div></div>";
 
-	// ===== 기본 정보 내용 =====
+	// =========================================== 기본 정보 내용 ===========================================
 	html += "<div class=\"employeeDetail\">";
 
 	// 사번
@@ -124,7 +124,7 @@ function setEmpData(){
 	html += "<div><div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
 	html += "</div>";
-	html += ("<div><input class=\"xEmpJoined xEmpInput\" data-n=\"joined\" type=\"date\" value=\"" + (storage.empInfo.joined == null ? "" : (new Date(storage.empInfo.joined)).toISOString().substring(0,10)) + "\" onchange=\"collectEmpData(event)\" /></div>");
+	html += ("<div class=\"xEmpJoined\" data-n=\"joined\" type=\"date\">" + (storage.empInfo.joined == null ? "" : (new Date(storage.empInfo.joined)).toISOString().substring(0,10)) + "</div>");
 
 	// 퇴사일
 	title = "퇴사일";
@@ -138,7 +138,7 @@ function setEmpData(){
 	html += "<div><div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
 	html += "</div>";
-	html += ("<div><input type=\"radio\" id=\"xEmpProhibited0\" data-n=\"prohibited\" name=\"xEmpProhibited\" class=\"xEmpProhibited\" style=\"display:none;\" data-v=\"0\" " + (storage.empInfo.prohibited ? "" : "checked") + " onchange=\"collectEmpData(event)\" /><label for=\"xEmpProhibited0\" style=\"display:inline-block;margin-right:2rem;padding:0.3rem;\">허 용</label><input type=\"radio\" id=\"xEmpProhibited1\" name=\"xEmpProhibited\" class=\"xEmpProhibited\" style=\"display:none;\" data-n=\"prohibited\" data-v=\"1\" " + (storage.empInfo.prohibited ? "checked" : "") + " onchange=\"collectEmpData(event)\" /><label for=\"xEmpProhibited1\" style=\"display:inline-block;margin-right:2rem;padding:0.3rem;\">차 단</label></div>");
+	html += ("<div><input type=\"radio\" id=\"xEmpProhibited0\" data-n=\"prohibited\" name=\"xEmpProhibited\" class=\"xEmpProhibited radioSwitch\" data-v=\"0\" " + (storage.empInfo.prohibited ? "" : "checked") + " onchange=\"collectEmpData(event)\" /><label for=\"xEmpProhibited0\">허 용</label><input type=\"radio\" id=\"xEmpProhibited1\" name=\"xEmpProhibited\" class=\"xEmpProhibited radioSwitch\" data-n=\"prohibited\" data-v=\"1\" " + (storage.empInfo.prohibited ? "checked" : "") + " onchange=\"collectEmpData(event)\" /><label for=\"xEmpProhibited1\">차 단</label></div>");
 
 	// 주민번호
 	if(storage.empInfo.birthDay !== undefined && storage.empInfo.birthDay !== null)	t = storage.empInfo.birthDay.replaceAll("-","").substring(2);
@@ -203,9 +203,140 @@ function setEmpData(){
 	title = "삭제일";
 	html += "<div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
-	html += ("</div><div>" + (storage.empInfo.deleted == null ? "" : (new Date(storage.empInfo.deleted)).toISOString().substring(0,10)) + "</div></div>");
+	html += ("</div><div>" + (storage.empInfo.deleted == null ? "" : (new Date(storage.empInfo.deleted)).toISOString().substring(0,10)) + "</div></div></div>");
+
+	
+	// =========================================== 부 서 설 정  타 이 틀 ===========================================
+	title = "부서설정";
+	html += "<div><div class=\"image_btns\"><img src=\"/images/manage/icon_modified.png\" /></div><div class=\"manageSubTitle\">";
+	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+	html += "</div><div class=\"image_btns\"><img src=\"/images/manage/icon_undo.png\" /><img src=\"/images/manage/icon_confirm.png\" /></div></div>";
+	
+	// =========================================== 부 서 설 정  내 용 ===========================================
+	html += "<div class=\"employeeDetail\">";
+
+	// 부서장
+	title = "부서장";
+	html += "<div><div>";
+	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+	html += "</div>";
+	html += ("<div class=\"xEmpNo\"><input type=\"radio\" class=\"radioSwitch\" name=\"deptHead\" id=\"deptHead1\" /><label for=\"deptHead1\">예</label><input type=\"radio\" class=\"radioSwitch\" name=\"deptHead\" id=\"deptHead0\" /><label for=\"deptHead0\">아니오</label></div>");
+
+	// 문서관리
+	title = "문서관리";
+	html += "<div>";
+	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+	html += ("</div><div class=\"xEmpId\"><input type=\"radio\" class=\"radioSwitch\" name=\"deptDocMng\" id=\"deptDocMng1\" /><label for=\"deptDocMng1\">예</label><input type=\"radio\" class=\"radioSwitch\" name=\"deptDocMng\" id=\"deptDocMng0\" /><label for=\"deptDocMng0\">아니오</label></div></div></div>");
 
 
+	// =========================================== 회 사 설 정  타 이 틀 ===========================================
+	title = "회사설정";
+	html += "<div><div class=\"image_btns\"><img src=\"/images/manage/icon_modified.png\" /></div><div class=\"manageSubTitle\">";
+	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+	html += "</div><div class=\"image_btns\"><img src=\"/images/manage/icon_undo.png\" /><img src=\"/images/manage/icon_confirm.png\" /></div></div>";
+	
+	// =========================================== 회 사 설 정  내 용 ===========================================
+	html += "<div class=\"employeeDetail\">";
+
+	// 인사
+	title = "인사담당";
+	html += "<div><div>";
+	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+	html += "</div>";
+	html += ("<div class=\"xEmpNo\"><input type=\"radio\" class=\"radioSwitch\" name=\"hrCip\" id=\"hrCip1\" /><label for=\"hrCip1\">예</label><input type=\"radio\" class=\"radioSwitch\" name=\"hrCip\" id=\"hrCip0\" /><label for=\"hrCip0\">아니오</label></div>");
+
+	// 문서
+	title = "문서담당";
+	html += "<div>";
+	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+	html += ("</div><div class=\"xEmpId\"><input type=\"radio\" class=\"radioSwitch\" name=\"docMng\" id=\"docMng1\" /><label for=\"docMng1\">예</label><input type=\"radio\" class=\"radioSwitch\" name=\"docMng\" id=\"docMng0\" /><label for=\"docMng0\">아니오</label></div></div>");
+
+	// 인사
+	title = "회계담당";
+	html += "<div><div>";
+	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+	html += "</div>";
+	html += ("<div class=\"xEmpNo\"><input type=\"radio\" class=\"radioSwitch\" name=\"accCip\" id=\"accCip1\" /><label for=\"accCip1\">예</label><input type=\"radio\" class=\"radioSwitch\" name=\"accCip\" id=\"accCip0\" /><label for=\"accCip0\">아니오</label></div>");
+
+	// 문서
+	title = "관리자";
+	html += "<div>";
+	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+	html += ("</div><div class=\"xEmpId\"><input type=\"radio\" class=\"radioSwitch\" name=\"prgMng\" id=\"prgMng1\" /><label for=\"prgMng1\">예</label><input type=\"radio\" class=\"radioSwitch\" name=\"prgMng\" id=\"prgMng0\" /><label for=\"prgMng0\">아니오</label></div></div></div>");
+
+	
+	// =========================================== 연 차 정 보  타 이 틀 ===========================================
+	title = "연차정보";
+	html += "<div><div class=\"image_btns\"><img src=\"/images/manage/icon_modified.png\" /></div><div class=\"manageSubTitle\">";
+	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+	html += "</div><div class=\"image_btns\"><img src=\"/images/manage/icon_undo.png\" /><img src=\"/images/manage/icon_confirm.png\" /></div></div>";
+	
+	// =========================================== 연 차 정 보 내 용 ===========================================
+	html += "<div class=\"employeeDetail\">";
+
+	// 기준일
+	title = "발생기준";
+	html += "<div><div>";
+	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+	html += "</div>";
+	html += ("<div class=\"xEmpNo\">2001-01-01</div>");
+
+	// 근속연수
+	title = "근속연수";
+	html += "<div>";
+	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+	html += ("</div><div class=\"xEmpId\">10</div></div>");
+
+	// 발생 연차
+	title = "발생연차";
+	html += "<div><div>";
+	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+	html += "</div>";
+	html += ("<div class=\"xEmpNo\">19</div>");
+
+	// 사용 및 잔여 연차
+	title = "사용/잔여";
+	html += "<div>";
+	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+	html += ("</div><div class=\"xEmpId\">10 / 9</div></div>");
+
+	// 연차 사용 내역
+	title = "사용내역";
+	html += "<div><div>";
+	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+	html += "</div>";
+	html += ("<div class=\"xEmpNo\" style=\"grid-column:span 3\">3 : 2022-01-03 ~ 2022-01-05<br />1 : 2022-02-11<br />0.5 : 2022-04-27 오후</div></div></div>");
+
+
+	// =========================================== 법인카드 / 법인차량 ===========================================
+	title = "법인카드/법인차량";
+	html += "<div><div class=\"image_btns\"><img src=\"/images/manage/icon_modified.png\" /></div><div class=\"manageSubTitle\">";
+	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+	html += "</div><div class=\"image_btns\"><img src=\"/images/manage/icon_undo.png\" /><img src=\"/images/manage/icon_confirm.png\" /></div></div>";
+	
+	// =========================================== 법인카드 / 법인차량  내 용 ===========================================
+	html += "<div class=\"employeeDetail\">";
+
+	// 법인카드
+	title = "법인카드";
+	html += "<div><div>";
+	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+	html += "</div>";
+	html += ("<div class=\"xEmpNo\" style=\"grid-column:span 3;\"><select class=\"cocard\"><option>없음</option><option>9999-9999-9999-9997 BNK</option><option>9999-9999-9999-9998 MASTER</option><option>9999-9999-9999-9999 VISA</option></select></div></div>");
+
+	// 법인차량
+	title = "법인차량";
+	html += "<div><div>";
+	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+	html += "</div>";
+	html += ("<div class=\"xEmpNo\"><select class=\"cocar\"><option>없음</option><option>123차1234 제네시스</option><option>123차1235 그랜저</option><option>123차1236 소나타</option></select></div>");
+
+	// 하이패스
+	title = "하이패스";
+	html += "<div>";
+	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+	html += "</div>";
+	html += ("<div class=\"xEmpNo\"><select class=\"hipass\"><option>없음</option><option>9999-9999-9999-9997 BNK</option><option>9999-9999-9999-9998 MASTER</option><option>9999-9999-9999-9999 VISA</option></select></div></div>");
 
 
 
