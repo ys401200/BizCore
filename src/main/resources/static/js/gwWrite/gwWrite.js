@@ -1502,3 +1502,12 @@ function setCusDataList() {
     $("." + id + "_customer").attr("list", "_customer");
   }
 }
+
+
+
+function setEstData() {
+  ///1. 견적 데이터 가져옴 
+  ///2. 견적서 양식 기본으로 넣음 
+  ///3. 
+
+}
