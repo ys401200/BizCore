@@ -76,4 +76,9 @@ public class AccountingController extends Ctrl{
         return "/accounting/salesbill";
     }
     
+    @GetMapping("/billDetail") // 세금계산서 - 매입/매출 상세
+    public String billDetail(HttpServletRequest request){
+        doIt(request);
+        return "/accounting/detailTable";
+    }
 }
