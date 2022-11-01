@@ -274,4 +274,18 @@ public class SystemCtrl extends Ctrl {
 
         return result;
     }
+
+    @GetMapping(value = {"/pathtest/{n1}/{v1}","/pathtest/{n1}/{v1}/{n2}/{v2}","/pathtest/{n1}/{v1}/{n2}/{v2}/{n3}/{v3}"})
+    public String pathTest(@PathVariable(required = false) String n1, @PathVariable(required = false) String v1, @PathVariable(required = false) String n2, @PathVariable(required = false) String v2, @PathVariable(required = false) String n3, @PathVariable(required = false) String v3){
+        String result = "";
+
+        if(n1 != null)  result += (n1 + " / ");
+        if(v1 != null)  result += (v1 + " / ");
+        if(n2 != null)  result += (n2 + " / ");
+        if(v2 != null)  result += (v2 + " / ");
+        if(n3 != null)  result += (n3 + " / ");
+        if(v3 != null)  result += (v3 + " / ");
+
+        return result;
+    }
 }

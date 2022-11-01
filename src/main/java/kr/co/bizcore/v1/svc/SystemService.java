@@ -518,7 +518,7 @@ public class SystemService extends Svc {
         return size;
     } // End of checkUsedSpace
 
-    public String getProductList(String compId) {
+    public String getProductListXX(String compId) {
         String result = null;
         List<Product> list = null;
         int x = 0;
@@ -1154,6 +1154,24 @@ public class SystemService extends Svc {
         result += ("\"created\":" + created + ",");
         result += ("\"modified\":" + modified + ",");
         result += ("\"deleted\":" + deleted + "}");
+
+        return result;
+    }
+
+    public String getProductList(String compId){
+        String result = null;
+        List<Product> list = null;
+        Product each = null;
+        int x = 0;
+
+        list = commonMapper.getProductList(compId);
+        result = "[";
+        for(x = 0 ; x < list.size() ; x++){
+            if(x > 0)   result += ",";
+            each = list.get(x);
+            result += each.toJson();
+        }
+        result += "]";
 
         return result;
     }

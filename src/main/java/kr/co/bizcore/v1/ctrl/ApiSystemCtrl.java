@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import kr.co.bizcore.v1.domain.Customer;
+import kr.co.bizcore.v1.domain.Product;
 import kr.co.bizcore.v1.mapper.UserMapper;
 import kr.co.bizcore.v1.msg.Msg;
 import lombok.extern.slf4j.Slf4j;
@@ -477,5 +478,38 @@ public class ApiSystemCtrl extends Ctrl{
 
         return result;
     }
+
+    // 제품 전체 조회
+    @GetMapping("/product")
+    public String productGet(HttpServletRequest request){
+        String result = null;
+        String compId = null;
+        String aesKey = null;
+        String aesIv = null;
+        String userNo = null;
+        Msg msg = null;
+        HttpSession session = null;
+
+        session = request.getSession();
+        msg = getMsg((String)session.getAttribute("lang"));
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        compId = (String)session.getAttribute("compId");
+        userNo = (String)session.getAttribute("userNo");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
+        
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        }else{
+            result = systemService.getProductList(compId);
+            result = encAes(result, aesKey, aesIv);
+            result = "{\"result\":\"ok\",\"data\":\"" + result + "\"}";
+        }
+
+        return result;
+    } // End of productGet()
+
 
 }
