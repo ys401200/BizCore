@@ -2700,7 +2700,7 @@ class Department{
 	 	html += ("<div class=\"dept-tree-cnt\">");
 
 	 	for(x = 0 ; x < this.employee.length ; x++){
-	 		y = this.employee[x];console.log(y);
+	 		y = this.employee[x];
 	 		if(y === undefined) continue;
 	 		if(storage.user[y] === undefined || storage.user[y].resign) continue;
 			 if(empSelectable)	html += ("<input style=\"display:none;\" type=\"checkbox\" class=\"dept-tree-select\" data-select=\"emp:" + y + "\" id=\"emp:" + y + "\" />");
