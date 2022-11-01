@@ -4,11 +4,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import kr.co.bizcore.v1.domain.Customer;
+import kr.co.bizcore.v1.domain.Product;
 import kr.co.bizcore.v1.domain.SimpleCustomer;
 
 public interface CommonMapper {
@@ -59,4 +61,10 @@ public interface CommonMapper {
 
     @Select("SELECT custmname FROM swcore.swc_custdata03 WHERE custdata03no = #{no} AND attrib NOT LIKE 'XXX%'")
     public String getCipName(String no);
+
+    @Select("SELECT no, category, categoryName, supplier, writer, name, `desc`, price, created, modified FROM bizcore.product WHERE deleted IS NULL AND compId = #{compId} ORDER BY no")
+    public List<Product> getProductList(@Param("compId") String compId);
+
+    @Insert("INSERT INTO bizcore.product (compId, no, category, categoryName, supplier, writer, name, `desc`, price, created) VALUES(#{compId}, #{p.no}, #{p.category}, #{p.categoryName}, #{p.supplier}, #{p.writer}, #{p.name}, #{p.desc}, #{p.price}, NOW())")
+    public int addProduct(@Param("compId") String compId, @Param("p") Product product);
 }
