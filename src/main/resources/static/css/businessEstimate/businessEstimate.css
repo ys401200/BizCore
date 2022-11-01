@@ -1,4 +1,8 @@
 /* */
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300&family=Outfit:wght@600&display=swap');
+@font-face {font-family:MalgunGothic; src:url(/fonts/malgun.ttf);}
+
 .ac_cnt{
     display:none;
     position:absolute;
@@ -181,4 +185,394 @@
     display: none;
     clear: both;
     height: calc(100% - 70px);
+    margin: 0 auto;
+    width: 60%;
+}
+
+.cke_textarea_inline{
+    border: 1px solid #000;
+    padding: 0;
+}
+
+.mainPdf{
+    font-family:MalgunGothic, sans-serif;
+    border: 1px solid #000;
+    padding: 10px;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.imgLogo{
+    display: flex;
+    align-items: center;
+}
+
+.pdfLogoLeft{
+    width: 100%;
+    padding-right: 7%;
+}
+
+.pdfLogoLeft > img{
+    width: 100%;
+}
+
+.pdfLogoRight{
+    padding-bottom: 7px;
+}
+
+.pdfTitle{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 30px;
+    padding-bottom: 20px;
+    font-size: 2.5rem;
+    font-family: 'Outfit', sans-serif;
+}
+
+.selectAddress{
+    display: flex;
+    align-items: center;
+    justify-content: right;
+    padding: 10px;
+}
+
+.selectAddress > select{
+    border: 1px solid #000;
+    width: 10%;
+}
+
+.pdfHeadInfo{
+    border: 1px solid #000;
+    display: grid;
+    grid-template-columns: 50% 50%;
+    padding: 10px;
+    margin-bottom: 5px;
+}
+
+.pdfHeadInfo > div{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pdfHeadInfo > div > span{
+    font-size: 0.8rem;
+    padding-bottom: 4px;
+    font-weight: 600;
+}
+
+.pdfHeadInfo > div > input{
+    border: 1px solid #000;
+    width: 60%;
+}
+
+.pdfHeadInfo > div > .headInfoCustomer,
+.pdfHeadInfo > div > .headInfoCip,
+.pdfHeadInfo > div > .headInfoPhone,
+.pdfHeadInfo > div > .headInfoFax{
+    width: 27.5%;
+}
+
+.pdfHeadInfoPrice{
+    border: 1px solid #000;
+    display: grid;
+    grid-template-columns: 50% 50%;
+    padding: 10px;
+    margin-bottom: 5px;
+}
+
+.pdfHeadInfoPrice > div{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pdfHeadInfoPrice > div:last-child{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    padding-left: 11.5%;
+}
+
+
+.pdfHeadInfoPrice > div > span{
+    font-size: 0.8rem;
+    padding-bottom: 4px;
+    font-weight: 600;
+}
+
+.pdfHeadInfoPrice > div:first-child > input{
+    border: 1px solid #000;
+    width: 25%;
+    text-align: right;
+}
+
+.pdfHeadInfoPrice > div:first-child > input[type="radio"]{
+    margin: 0;
+    width: 5%;
+}
+
+.pdfHeadInfoPrice > div:first-child > label{
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    font-size: 0.8rem;
+    width: 11%;
+    padding-bottom: 2px;
+}
+
+.pdfHeadInfoPrice > div:first-child > label:last-child{
+    width: 13%;
+}
+
+.pdfHeadInfoPrice > div:last-child > input[type="radio"]{
+    margin: 0;
+    width: 5%;
+}
+
+.pdfHeadInfoPrice > div:last-child > label{
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    font-size: 0.8rem;
+    width: 3%;
+    padding-bottom: 1px;
+}
+
+.pdfMainContainer{
+    font-size: 0.8rem;
+    border-top:2px solid #000;
+    border-left: 2px solid #000;
+    border-right: 2px solid #000;
+    margin-bottom: 15px;
+}
+
+.pdfMainContentHeader{
+    display: grid;
+    grid-template-columns: 10% 10% 20% 10% 10% 10% 10% 10% 10%;
+    border-bottom: 1px solid #000;
+}
+
+.pdfMainContentHeader > div{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid #000;
+    background-color: #990B19;
+    color: #ffffff;
+    font-weight: 600;
+    padding: 5px;
+}
+
+.pdfMainContentHeader > div:last-child{
+    border-right: 0;
+}
+
+.pdfMainContentTitle{
+    display: grid;
+    grid-template-columns: 10% 10% 20% 10% 10% 10% 10% 10% 10%;
+    background-color: #FFFF75;
+    font-weight: 500;
+    font-size: 0.8rem;
+    border-bottom: 1px solid #000;
+}
+
+.pdfMainContentTitle > div{
+    display: flex;
+    align-items: center;
+    background-color: #FFFF75;
+    font-weight: 600;
+    font-size: 0.8rem;
+    border-right: 1px solid #000;
+}
+
+.pdfMainContentTitle > .subTitleIndex{
+    justify-content: center;
+}
+
+.pdfMainContentTitle > .subTitle{
+    grid-column: span 2;
+    justify-content: center;
+    padding: 5px;
+}
+
+.pdfMainContentTitle > .subTitle > input{
+    width: 100%;
+    background-color: #FFFF75;
+    text-align: center;
+    border: 1px solid #000;
+}
+
+.pdfMainContentTitle > .subTitleTotal{
+    justify-content: right;
+}
+
+.pdfMainContentTitle > div:last-child{
+    border-right: 0;
+}
+
+.pdfMainContentItem{
+    display: grid;
+    grid-template-columns: 10% 10% 20% 10% 10% 10% 10% 10% 10%;
+    border-bottom: 1px solid #000;
+}
+
+.pdfMainContentItem > div{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid #000;
+    padding: 5px;
+}
+
+.pdfMainContentItem > div > input{
+    width: 100%;
+    text-align: center;
+    border: 1px solid #000;
+}
+
+.pdfMainContentItem > .itemConsumer > input{
+    text-align: right;
+}
+
+.pdfMainContentItem > .itemAmount > input{
+    text-align: right;
+}
+
+.pdfMainContentItem > .itemRemarks > input{
+    text-align: left;
+}
+
+.pdfMainContentItem > .itemTotal{
+    justify-content: right;
+}
+
+.pdfMainContentItem > div:last-child{
+    border-right: 0;
+}
+
+.pdfMainContentAddBtns{
+    display: flex;
+    align-items: center;
+    justify-content: right;
+    padding: 10px;
+    border-bottom: 1px solid #000;
+}
+
+.pdfMainContentAddBtns > button{
+    background-color: #2147b1;
+    color: #ffffff;
+    padding: 5px;
+    border-radius: 5px;
+    margin-right: 5px;
+}
+
+.pdfMainContentAddBtns > button:hover{
+    background-color: #182f81;
+}
+
+.pdfMainContentAmount{
+    border-bottom: 1px solid #000;
+    display: grid;
+    grid-template-columns: 10% 10% 30% 10% 10% 10% 10% 10%;
+}
+
+.pdfMainContentAmount > div{
+    display: flex;
+    align-items: center;
+    border-right: 1px solid #000;
+    padding: 5px;
+}
+
+.pdfMainContentAmount > div:first-child{
+    grid-column: span 6;
+    justify-content: center;
+    letter-spacing: 0.5em;
+    font-weight: 600;
+}
+
+.pdfMainContentAmount > div:not(:first-child){
+    justify-content: right;
+}
+
+.pdfMainContentAmount > div:last-child{
+    border-right: 0;
+}
+
+.pdfMainContentTax{
+    border-bottom: 1px solid #000;
+    display: grid;
+    grid-template-columns: 10% 10% 30% 10% 10% 10% 10% 10%;
+}
+
+.pdfMainContentTax > div{
+    display: flex;
+    align-items: center;
+    border-right: 1px solid #000;
+    padding: 5px;
+}
+
+.pdfMainContentTax > div:first-child{
+    grid-column: span 6;
+    justify-content: center;
+    letter-spacing: 0.5em;
+    font-weight: 600;
+}
+
+.pdfMainContentTax > div:not(:first-child){
+    justify-content: right;
+}
+
+.pdfMainContentTax > div:last-child{
+    border-right: 0;
+}
+
+.pdfMainContentTotal{
+    border-bottom: 2px solid #000;
+    display: grid;
+    grid-template-columns: 10% 10% 30% 10% 10% 10% 10% 10%;
+}
+
+.pdfMainContentTotal > div{
+    display: flex;
+    align-items: center;
+    border-right: 1px solid #000;
+    padding: 5px;
+}
+
+.pdfMainContentTotal > div:first-child{
+    grid-column: span 6;
+    justify-content: center;
+    letter-spacing: 0.5em;
+    font-weight: 600;
+}
+
+.pdfMainContentTotal > div:not(:first-child){
+    justify-content: right;
+}
+
+.pdfMainContentTotal > div:last-child{
+    border-right: 0;
+}
+
+.pdfBottomRemarks{
+    font-size: 0.8rem;
+}
+
+.pdfBottomRemarks > span{
+    display: block;
+    font-weight: 600;
+    padding-bottom: 10px;
+}
+
+.pdfBottomLogo{
+    display: flex;
+    align-items: center;
+    justify-content: right;
+    padding-top: 20px;
 }
