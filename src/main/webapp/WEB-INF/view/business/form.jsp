@@ -25,7 +25,7 @@
             <input type="text" autocomplete="off" id="firmName" readonly>
         </div>
         <div>
-            <span>사&ensp;&nbsp;&nbsp;업&ensp;&nbsp;&nbsp;명&nbsp;:&nbsp;</span>
+            <span>사&nbsp;&nbsp;&nbsp;&nbsp;업&nbsp;&nbsp;&nbsp;명&nbsp;:&nbsp;</span>
             <input type="text" autocomplete="off" placeholder="사업명 입력" id="title">
         </div>
         <div>
@@ -39,7 +39,8 @@
         </div>
         <div>
             <span>주&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;소&nbsp;:&nbsp;</span>
-            <input type="text" autocomplete="off" id="address" class="headInfoAddress" readonly>
+            <!-- <input type="text" autocomplete="off" id="address" class="headInfoAddress" readonly> -->
+            <textarea class="address" disabled></textarea>
         </div>
         <div>
             <span>영&ensp;업&ensp;담&ensp;당&nbsp;:&nbsp;</span>

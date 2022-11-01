@@ -156,7 +156,7 @@ function clickedAdd(){
 	bodyTitleFnc = $(".bodyTitleFnc div");
 	bodyTitle.text("견적추가");
 	bodyTitleFnc.eq(0).text("저장");
-	bodyTitleFnc.eq(0).attr("onclick", "saveEstimate();");
+	bodyTitleFnc.eq(0).attr("onclick", "estimateInsert();");
 	bodyTitleFnc.eq(1).show();
 	listContent.hide();
 	addPdfForm.show();
@@ -907,6 +907,94 @@ function dateFormat(l){
 	return str;
 } // End of dateFormat()
 
+function estimateInsert(){
+	let address, cip, customer, date, exp, fax, firmName, phone, representative, title, pdfMainContentTitle, pdfMainContentItem, addPdfForm, items, form, datas;
+	pdfMainContentTitle = $(".pdfMainContainer .pdfMainContentTitle");
+	pdfMainContentItem = $(".pdfMainContainer .pdfMainContentItem");
+	addPdfForm = $(".addPdfForm");
+	remarks = CKEDITOR.instances.remarks.getData().replaceAll("\n", "");
+	address = $(".address").val();
+	cip = $("#cip").val();
+	customer = $("#customer").data("value").toString();
+	date = new Date($("#date").val()).getTime();
+	exp = $("[name=\"exp\"]:checked").val();
+	fax = $("#fax").val();
+	firmName = $("#firmName").val();
+	phone = $("#phone").val();
+	representative = $("#representative").val();
+	title = $("#title").val();
+	items = [];
+	
+	if(pdfMainContentTitle.length > 0){
+		form = "서브타이틀";
+	}else{
+		form = "기본견적서";
+	}
+
+	for(let i = 0; i < pdfMainContentItem.length; i++){
+		let item = $(pdfMainContentItem[i]);
+		let textareaId = item.find(".itemSpec").children().attr("id");
+		let itemDatas = {
+			"div": item.find(".itemDivision").children().val(),
+			"price": parseInt(item.find(".itemTotal").html().replaceAll(",", "")), 
+			"quantity": parseInt(item.find(".itemQuantity").children().val()),
+			"remark": item.find(".itemRemarks").children().val(),
+			"spec": CKEDITOR.instances[textareaId].getData().replaceAll("\n", ""),
+			"item": "1100041",
+			"supplier": $("#customer").data("value").toString(),
+			"title": item.prevAll(".pdfMainContentTitle").eq(0).find(".subTitle").children().val(),
+			"vat": $("[name=\"vat\"]:checked").data("value"),
+		};
+		items.push(itemDatas);
+	}
+
+	insertCopyPdf();
+
+	datas = {
+		"doc": addPdfForm.html().replaceAll("\r","").replaceAll("\n",""),
+		"address": address,
+		"cip": cip,
+		"customer": customer,
+		"date": date,
+		"exp": exp,
+		"fax": fax,
+		"firmName": firmName,
+		"form": form,
+		"items": items,
+		"phone": phone,
+		"representative": representative,
+		"title": title,
+		"width": 210,
+		"height": 297,
+		"no": null,
+		"version": 1,
+		"related": {
+			"parent": "empty:0000",
+			"previous": "empty:0000",
+			"next": ["empty:0000", "empty:0000"],
+		},
+		"remarks": remarks,
+	};
+
+	datas = JSON.stringify(datas);
+	datas = cipher.encAes(datas);
+
+	$.ajax({
+		url: "/api/estimate",
+		method: "post",
+		data: datas,
+		dataType: "json",
+		contentType: "text/plain",
+		success: (result) => {
+			msg.set("등록되었습니다.");
+			location.reload();
+		},
+		error: () => {
+			msg.set("에러입니다.");
+		}
+	});
+}
+
 function addEstTitle(e){
 	let thisEle;
 	thisEle = $(e);
@@ -920,7 +1008,7 @@ function addEstTitle(e){
 function addEstItem(e){
 	let thisEle;
 	thisEle = $(e);
-	thisEle.parent().before("<div class=\"pdfMainContentItem\"><div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" id=\"div\" placeholder=\"SW\"></div><div class=\"itemProductName\"><textarea id=\"title\" placeholder=\"품명\"></textarea></div><div id=\"quantity\" class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeyup=\"itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" id=\"remark\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"oneEstItemAdd(this);\">추가</button><button type=\"button\" onclick=\"oneEstItemRemove(this);\">삭제</button></div></div>");
+	thisEle.parent().before("<div class=\"pdfMainContentItem\"><div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemSpec\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeyup=\"itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"oneEstItemAdd(this);\">추가</button><button type=\"button\" onclick=\"oneEstItemRemove(this);\">삭제</button></div></div>");
 	productNameSet();
 	ckeditor.config.readOnly = false;
 	window.setTimeout(setEditor, 100);
@@ -931,7 +1019,7 @@ function oneEstItemAdd(e){
 	let thisEle, parent;
 	thisEle = $(e);
 	parent = thisEle.parents(".pdfMainContentItem");
-	parent.after("<div class=\"pdfMainContentItem\"><div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" id=\"div\" placeholder=\"SW\"></div><div class=\"itemProductName\"><textarea id=\"title\" placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" id=\"quantity\" value=\"1\" onkeyup=\"itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" id=\"remark\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"oneEstItemAdd(this);\">추가</button><button type=\"button\" onclick=\"oneEstItemRemove(this);\">삭제</button></div></div>");
+	parent.after("<div class=\"pdfMainContentItem\"><div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemSpec\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeyup=\"itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"oneEstItemAdd(this);\">추가</button><button type=\"button\" onclick=\"oneEstItemRemove(this);\">삭제</button></div></div>");
 	productNameSet();
 	ckeditor.config.readOnly = false;
 	window.setTimeout(setEditor, 100);
@@ -977,7 +1065,7 @@ function addItemIndex(){
 function productNameSet(){
 	let pdfMainContentItem, itemProductName;
 	pdfMainContentItem = $(".pdfMainContentItem");
-	itemProductName = $(".itemProductName textarea");
+	itemProductName = $(".itemSpec textarea");
 
 	for(let i = 1; i <= pdfMainContentItem.length; i++){
 		$(itemProductName[i-1]).attr("id", "itemProductName_" + i);
@@ -994,34 +1082,6 @@ function romanize(num) {
     while (i--) roman = (key[+digits.pop() + (i * 10)] || "") + roman;
     return Array(+digits.join("") + 1).join("M") + roman;
 }
-
-// function setTitleTotal(e){
-// 	let thisEle, quantity, amount, cal, thisParentTitle;
-// 	thisEle = $(e);
-// 	quantity = thisEle.parent().parent().find(".itemQuantity").children().val();
-// 	amount = thisEle.parent().parent().find(".itemAmount").children().val();
-// 	thisParentTitle = thisEle.parent().parent().prevAll(".pdfMainContentTitle").eq(0).find(".subTitleTotal");
-
-// 	if(thisParentTitle !== undefined){
-// 		if(quantity === ""){
-// 			quantity = 0;
-// 		}
-
-// 		if(amount === ""){
-// 			amount = 0;
-// 		}else{
-// 			amount = amount.replaceAll(",", "");
-// 		}
-
-// 		cal = parseInt(quantity) * parseInt(amount);
-
-// 		if(thisParentTitle.html() === ""){
-// 			thisParentTitle.html((parseInt(cal) + 0).toLocaleString("en-US"));
-// 		}else{
-// 			thisParentTitle.html((parseInt(cal) + parseInt(thisParentTitle.html().replaceAll(",", ""))).toLocaleString("en-US"));
-// 		}
-// 	}
-// }
 
 function itemCalKeyup(e){
 	let thisEle, itemQuantity, itemAmount, itemTotal, cal;
@@ -1067,7 +1127,7 @@ function selectAddressInit(index){
 	let firmName, representative, address, phone, fax;
 	firmName = $("#firmName");
 	representative = $("#representative");
-	address = $("#address");
+	address = $(".address");
 	phone = $("#phone");
 	fax = $("#fax");
 
@@ -1110,7 +1170,7 @@ function setTotalHtml(){
 		pdfMainContentTax.html(parseInt(pdfMainContentAmount.html().replaceAll(",", "") / 10).toLocaleString("en-US"));
 	}else{
 		pdfMainContentTax = $(".pdfMainContentTax div").eq(1);
-		pdfMainContentTax.html(0)
+		pdfMainContentTax.html(0);
 	}
 
 	pdfMainContentTotal.html((calAmount + parseInt(pdfMainContentTax.html().replaceAll(",", ""))).toLocaleString("en-US"));
@@ -1133,6 +1193,83 @@ function setTitleTotal(){
 			return false;
 		}else{
 			calTotal = 0;
+		}
+	}
+}
+
+function insertCopyPdf(){
+	let mainPdf, pdfMainContentAddBtns;
+	mainPdf = $(".mainPdf");
+	pdfMainContentAddBtns = $(".mainPdf .pdfMainContentAddBtns");
+	mainPdf.find("select").remove();
+	pdfMainContentAddBtns.remove();
+
+	if (typeof CKEDITOR !== undefined) {
+		if ($(CKEDITOR.instances).length) {
+			for (var key in CKEDITOR.instances) {
+				CKEDITOR.instances[key].destroy();
+			}
+		}
+	}
+	
+	let mainInput = mainPdf.find("input");
+	for(let i = 0; i < mainInput.length; i++){
+		let item = $(mainInput[i]);
+		
+		if(item.attr("type") === "radio"){
+			if(item.attr("name") === "vat"){
+				let parent = item.parent();
+				if($(".mainPdf").find("[name=\"vat\"]:checked").data("value")){
+					item.after("<span>(VAT 포함)</span>");
+					parent.children("input[type=\"radio\"]").remove();
+				}else{
+					item.after("<span>(VAT 비포함)</span>");
+					parent.children("input[type=\"radio\"]").remove();
+				}
+				parent.children("label").remove();
+			}else if(item.attr("name") === "exp"){
+				let checkedValue = $(".mainPdf").find("[name=\"exp\"]:checked").val();
+				let parent = item.parent();
+				item.parent().children().not(":eq(0)").remove();
+
+				if(checkedValue === "1w"){
+					parent.append("<span>견적일로부터 1주일</span>");
+				}else if(checkedValue === "2w"){
+					parent.append("<span>견적일로부터 2주일</span>");
+				}else if(checkedValue === "4w"){
+					parent.append("<span>견적일로부터 4주일</span>");
+				}else{
+					parent.append("<span>견적일로부터 1달</span>");
+				}
+			}
+		}else{
+			item.attr("disabled", true);
+			item.css("border", 0);
+			item.css("curser", "none");
+			item.css("font-size", "0.8rem");
+			item.css("padding", 0);
+		}
+	}
+
+	let pdfMainContainer = $(".mainPdf .pdfMainContainer").children("div");
+	for(let i = 0; i < pdfMainContainer.length; i++){
+		let item = $(pdfMainContainer[i]);
+		if(item.attr("class") === "pdfMainContentHeader" || item.attr("class") === "pdfMainContentTitle" || item.attr("class") === "pdfMainContentItem"){
+			item.children("div").last().remove();
+			item.css("grid-template-columns", "10% 10% 30% 10% 10% 10% 10% 10%");
+		}
+	}
+	
+	let textarea = mainPdf.find("textarea");
+	for(let i = 0; i < textarea.length; i++){
+		let item = $(textarea[i]);
+		let parent = item.parent();
+		if(item.attr("class") !== "address"){
+			parent.append(item.val());
+			item.remove();
+		}else{
+			item.css("border", 0);
+			item.css("width", "14.4vw");
 		}
 	}
 }

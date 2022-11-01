@@ -214,11 +214,15 @@
 }
 
 .pdfLogoLeft > img{
-    width: 100%;
+    width: 15vw;
 }
 
 .pdfLogoRight{
-    padding-bottom: 7px;
+    padding-bottom: 0.7vh;
+}
+
+.pdfLogoRight > img{
+    width: 33vw;
 }
 
 .pdfTitle{
@@ -266,14 +270,32 @@
 
 .pdfHeadInfo > div > input{
     border: 1px solid #000;
-    width: 60%;
+    width: 14.7vw;
+}
+
+.pdfHeadInfo > div > input[type="date"]{
+    border: 1px solid #000;
+    width: 14.9vw;
 }
 
 .pdfHeadInfo > div > .headInfoCustomer,
 .pdfHeadInfo > div > .headInfoCip,
 .pdfHeadInfo > div > .headInfoPhone,
 .pdfHeadInfo > div > .headInfoFax{
-    width: 27.5%;
+    width: 6.6vw;
+}
+
+.pdfHeadInfo > div > .address{
+    font-size: 0.8rem;
+    font-family: 'NanumSquareRound';
+    width: 14.7vw;
+    overflow: hidden;
+}
+
+.pdfHeadInfo > div > .address:disabled{
+    background-color: #ffffff;
+    color: #000;
+    border: 1px solid #000;
 }
 
 .pdfHeadInfoPrice{
@@ -296,7 +318,7 @@
     display: flex;
     align-items: center;
     justify-content: left;
-    padding-left: 11.5%;
+    padding-left: 2.1vw;
 }
 
 
@@ -308,7 +330,7 @@
 
 .pdfHeadInfoPrice > div:first-child > input{
     border: 1px solid #000;
-    width: 25%;
+    width: 4.5vw;
     text-align: right;
 }
 
@@ -322,12 +344,12 @@
     align-items: center;
     font-weight: 600;
     font-size: 0.8rem;
-    width: 11%;
+    width: 3.4vw;
     padding-bottom: 2px;
 }
 
 .pdfHeadInfoPrice > div:first-child > label:last-child{
-    width: 13%;
+    width: 4.2vw;
 }
 
 .pdfHeadInfoPrice > div:last-child > input[type="radio"]{
@@ -340,7 +362,7 @@
     align-items: center;
     font-weight: 600;
     font-size: 0.8rem;
-    width: 3%;
+    width: 1.2vw;
     padding-bottom: 1px;
 }
 

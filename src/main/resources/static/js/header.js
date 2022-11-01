@@ -3210,6 +3210,8 @@ function autoCompleteClick(e){
 		if(storage.formList[input.attr("id")] !== undefined){
 			storage.formList[input.attr("id")] = thisEle.data("value");
 		}
+	}else{
+		input.attr("data-value", thisEle.data("value"));
 	}
 
 	autoComplete.remove();
