@@ -122,10 +122,86 @@ function setEstData() {
   $("#" + formId + "_created").val(getYmdSlash());
   let total = data.total.toLocaleString();
   $("#" + formId + "_soppTargetAmt").val(total + "원");
+  // 매입 매출의 항목 세팅 
+  let items = storage.estmVerList[3].related.estimate.items;
+  let inSumTarget = $(".inSum");
+  let outSumTarget = $(".outSum");
+  let inHtml = "";
+  let outHtml = "";
+
+  for (let i = 0; i < items.length; i++) {
+
+    //매입데이터셋 
+    inHtml = inSumTarget.html();
+    inHtml += "<div class='detailcontentDiv'><input value='매입' disabled style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'  class='inputs doc_Form_SalesReport_type'></input>"
+    inHtml += "<input type='date' data-detail='' onchange='this.dataset.detail=this.value;' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs doc_Form_SalesReport_date'></input>"
+    inHtml += "<input type='text'   data-detail='' onkeyup='this.dataset.detail=this.value'  style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'  data-detail='"+items[i].supplier+"' value='"+items[i].supplier+"' class='inputs doc_Form_SalesReport_customer'></input>"
+    inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'    data-detail='"+items[i].product+"' value='"+items[i].product+"' onkeyup='this.dataset.detail=this.value' class='inputs doc_Form_SalesReport_product'></input>"
+    inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inputs doc_Form_SalesReport_price'></input>"
+    inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inputs doc_Form_SalesReport_quantity'></input>"
+    inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inputs doc_Form_SalesReport_amount'></input>"
+    inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inputs doc_Form_SalesReport_tax'></input>"
+    inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inTotal inputs doc_Form_SalesReport_total'></input>"
+    inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='' onkeyup='this.dataset.detail=this.value' class='inputs doc_Form_SalesReport_remark'></input>"
+    inHtml += "<div class='detailcontentbox'><input type='checkbox' class='detailBox'></div></div>"
+    //매출데이터셋 
+    outHtml = outSumTarget.html();
+    outHtml += "<div class='detailcontentDiv'><input value='매출' disabled style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs doc_Form_SalesReport_type'></input>"
+    outHtml += "<input type='date' onchange='this.dataset.detail=this.value;' data-detail='' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs doc_Form_SalesReport_date'></input>"
+    outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='' onkeyup='this.dataset.detail=this.value'  class='inputs doc_Form_SalesReport_customer'></input>"
+    outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'  data-detail='' onkeyup='this.dataset.detail=this.value'  data-detail='"+items[i].product+"' value='"+items[i].product+"' class='inputs doc_Form_SalesReport_product'></input>"
+    outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'oninput='setNum(this)' data-detail=''  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' data-detail='"+items[i].price+"' value='"+items[i].price+"' class='inputs doc_Form_SalesReport_price'></input>"
+    outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail=''  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' data-detail='"+items[i].quantity+"' value='"+items[i].quantity+"' class='inputs doc_Form_SalesReport_quantity'></input>"
+    outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)'  class='inputs doc_Form_SalesReport_amount'></input>"
+    outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)'  class='inputs doc_Form_SalesReport_tax'></input>"
+    outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)'  class='outTotal inputs doc_Form_SalesReport_total'></input>"
+    outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='' onkeyup='this.dataset.detail=this.value' class='inputs doc_Form_SalesReport_remark'></input>"
+    outHtml += "<div class='detailcontentbox'><input type='checkbox' class='detailBox'></div></div>"
+
+
+  }
+  inSumTarget.html(inHtml); 
+  outSumTarget.html(outHtml);
+
+
+
+
+  setCusDataList();
+  setProductData();
+
+
+
+
 
 
 }
 
+//거래처 데이더리스트 가져오는 함수 
+function setCusDataList() {
+  let id = "doc_Form_SalesReport";
+
+  let target = $("." + id + "_customer");
+  for (let i = 0; i < target.length; i++) {
+    let html = $("." + id + "_customer")[i].innerHTML;
+    let x;
+    let dataListHtml = "";
+
+    // 거래처 데이터 리스트 만들기
+    dataListHtml = "<datalist id='_customer'>";
+    for (x in storage.customer) {
+      dataListHtml +=
+        "<option data-value='" +
+        x +
+        "' value='" +
+        storage.customer[x].name +
+        "'></option> ";
+    }
+    dataListHtml += "</datalist>";
+    html += dataListHtml;
+    $("." + id + "_customer")[i].innerHTML = html;
+    $("." + id + "_customer").attr("list", "_customer");
+  }
+}
 
 //자주쓰는 결재선 데이터 가져옴 
 function getSavedLine() {
@@ -165,7 +241,6 @@ function setSavedLinedata() {
   html += "</select>";
   target.html(html);
 }
-
 
 
 // 항목 데이터 셋 하는 함수 
@@ -246,144 +321,128 @@ function createLine() {
 
   console.log(typeLine);
 
-
- 
- 
-
   let data = storage.estmVerList[storage.estmVerList.length - 1];
   let writer = data.writer;
 
   // line grid container 안 닫음 
   let lineData = "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작 성</div>" +
     "<div class='lineSet'>" +
-    "<div class='twoBorder'><input class='inputsAuto' value ='" +
+    "<div class='twoBorder'><input disabled class='inputsAuto' style='text-align:center' value ='" +
     storage.userRank[storage.user[writer].rank][0] +
     "'></div>" +
     "<div class='twoBorder'><input class='inputsAuto " +
     formId +
-    "_writer' type='text'  data-detail='" +
+    "_writer' style='text-align:center' disabled type='text'  data-detail='" +
     writer +
     "' value='" +
     storage.user[writer].userName +
     "'></div>" +
-    "<div class='twoBorder'><input class='inputsAuto " +
+    "<div class='twoBorder'><input disabled class='inputsAuto " +
     formId +
-    "_writer_status'  data-detail='' type='text' ></div>" +
-    "<div class='dateBorder'><input class='inputsAuto " +
+    "_writer_status' style='text-align:center'  data-detail='' type='text' ></div>" +
+    "<div class='dateBorder'><input disabled class='inputsAuto " +
     formId +
     "_writer_approved'  data-detail='' type='text' value=''></div></div></div>";
-    let titleArr = ["검 토", "결 재", "수 신", "참 조"];
-    let titleId = ["examine", "approval", "conduct", "refer"];
-    let testHtml2 = "<div class='lineGridContainer'>";
+  let titleArr = ["검 토", "결 재", "수 신", "참 조"];
+  let titleId = ["examine", "approval", "conduct", "refer"];
+  let testHtml2 = "<div class='lineGridContainer'>";
 
- for(let i = 0 ; i < typeLine.length; i ++) {
-  if(typeLine[i].length != 0 && i < 2) {
-    lineData += 
-    "<div class='lineGrid'><div class='lineTitle'>" +
-    titleArr[i] +
-    "</div>";
-  } else if (typeLine[i].length !=0 && i == 2) {
-    testHtml2 +=
+  for (let i = 0; i < typeLine.length; i++) {
+    if (typeLine[i].length != 0 && i < 2) {
+      lineData +=
+        "<div class='lineGrid'><div class='lineTitle'>" +
+        titleArr[i] +
+        "</div>";
+    } else if (typeLine[i].length != 0 && i == 2) {
+      testHtml2 +=
         "<div class='lineGrid'><div class='lineTitle'>" +
         titleArr[i] +
         "</div>";
 
-  }
+    }
 
-  for( let j = 0 ; j < typeLine[i].length ; j++) {
-   // 수신인 경우 
-    if (i == 2) {
-      testHtml2 +=
-        "<div class='lineSet'><div class='twoBorder'><input type='text' disabled class='inputsAuto " +
-        formId +
-        "_" +
-        titleId[i] +
-        "_position" +
-        "' value='" +
-        storage.userRank[storage.user[typeLine[i][j]].rank][0] +
-        "' data-detail='" +
-        storage.user[typeLine[i][j]].rank +
-        "'/></div>" +
-        "<div class='twoBorder'><input type='text' disabled class='inputsAuto " +
-        formId +
-        "_" +
-        titleId[i] +
-        "' value='" +
-        storage.user[typeLine[i][j]].userName +
-        "' data-detail='" +
-        storage.user[typeLine[i][j]].userNo +
-        "'/></div>" +
-        "<div class='twoBorder'><input type='text'  disabled class='inputsAuto " +
-        formId +
-        "_" +
-        titleId[i] +
-        "_status' value='' data-detail=''/></div>" +
-        "<div class='dateBorder'><input type='text' disabled class='inputsAuto " +
-        formId +
-        "_" +
-        titleId[i] +
-        "_approved" +
-        "' value='' data-detail=''/></div></div>";
-    } else {
-      lineData += 
-      "<div class='lineSet'><div class='twoBorder'><input type='text' disabled class='inputsAuto " +
-      formId +
-      "_" +
-      titleId[i] +
-      "_position" +
-      "' value='" +
-      storage.userRank[storage.user[typeLine[i][j]].rank][0] +
-      "' data-detail='" +
-      storage.user[typeLine[i][j]].rank +
-      "'/></div>" +
-      "<div class='twoBorder'><input type='text' disabled class='inputsAuto " +
-      formId +
-      "_" +
-      titleId[i] +
-      "' value='" +
-      storage.user[typeLine[i][j]].userName +
-      "' data-detail='" +
-      storage.user[typeLine[i][j]].userNo +
-      "'/></div>" +
-      "<div class='twoBorder'><input type='text'disabled class='inputsAuto " +
-      formId +
-      "_" +
-      titleId[i] +
-      "_status' value='' data-detail=''/></div>" +
-      "<div class='dateBorder'><input type='text' disabled  class='inputsAuto " +
-      formId +
-      "_" +
-      titleId[i] +
-      "_approved" +
-      "' value='' data-detail=''/></div></div>";
+    for (let j = 0; j < typeLine[i].length; j++) {
+      // 수신인 경우 
+      if (i == 2) {
+        testHtml2 +=
+          "<div class='lineSet'><div class='twoBorder'><input type='text' disabled style='text-align:center' class='inputsAuto " +
+          formId +
+          "_" +
+          titleId[i] +
+          "_position" +
+          "' value='" +
+          storage.userRank[storage.user[typeLine[i][j]].rank][0] +
+          "' data-detail='" +
+          storage.user[typeLine[i][j]].rank +
+          "'/></div>" +
+          "<div class='twoBorder'><input type='text' disabled style='text-align:center' class='inputsAuto " +
+          formId +
+          "_" +
+          titleId[i] +
+          "' value='" +
+          storage.user[typeLine[i][j]].userName +
+          "' data-detail='" +
+          storage.user[typeLine[i][j]].userNo +
+          "'/></div>" +
+          "<div class='twoBorder'><input type='text'  disabled style='text-align:center' class='inputsAuto " +
+          formId +
+          "_" +
+          titleId[i] +
+          "_status' value='' data-detail=''/></div>" +
+          "<div class='dateBorder'><input type='text' disabled style='text-align:center' class='inputsAuto " +
+          formId +
+          "_" +
+          titleId[i] +
+          "_approved" +
+          "' value='' data-detail=''/></div></div>";
+      } else {
+        lineData +=
+          "<div class='lineSet'><div class='twoBorder'><input type='text' disabled  style='text-align:center' class='inputsAuto " +
+          formId +
+          "_" +
+          titleId[i] +
+          "_position" +
+          "' value='" +
+          storage.userRank[storage.user[typeLine[i][j]].rank][0] +
+          "' data-detail='" +
+          storage.user[typeLine[i][j]].rank +
+          "'/></div>" +
+          "<div class='twoBorder'><input type='text' disabled style='text-align:center' class='inputsAuto " +
+          formId +
+          "_" +
+          titleId[i] +
+          "' value='" +
+          storage.user[typeLine[i][j]].userName +
+          "' data-detail='" +
+          storage.user[typeLine[i][j]].userNo +
+          "'/></div>" +
+          "<div class='twoBorder'><input type='text'disabled style='text-align:center' class='inputsAuto " +
+          formId +
+          "_" +
+          titleId[i] +
+          "_status' value='' data-detail=''/></div>" +
+          "<div class='dateBorder'><input type='text' disabled  style='text-align:center' class='inputsAuto " +
+          formId +
+          "_" +
+          titleId[i] +
+          "_approved" +
+          "' value='' data-detail=''/></div></div>";
+      }
+    }
+
+    if (typeLine[i].length != 0 && i < 2) {
+      lineData += "</div>";
+    } else if (typeLine[i].length != 0 && i == 2) {
+      testHtml2 += "</div>";
     }
   }
 
-  if (typeLine[i].length != 0 && i < 2) {
-    lineData+= "</div>";
-  } else if (typeLine[i].length != 0 && i == 2) {
-    testHtml2 += "</div>";
-  }
- }
+  lineData += "</div>";
+  testHtml2 += "</div>";
 
- lineData += "</div>";
- testHtml2 += "</div>";
-
-lineData += testHtml2; 
-
-
-
-let lineTarget = $("#" + formId + "_line");
-
-
-
- lineTarget.html(lineData);
-
-
-
-
-
-
+  lineData += testHtml2;
+  let lineTarget = $("#" + formId + "_line");
+  lineTarget.html(lineData);
 
 
 }
