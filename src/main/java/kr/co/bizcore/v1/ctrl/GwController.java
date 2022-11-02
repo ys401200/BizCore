@@ -85,6 +85,7 @@ public class GwController extends Ctrl{
         doIt(request);
         return "/gw/box";
     }
+    
     @RequestMapping(value = { "/estimate" }, method = RequestMethod.GET)
     public String setEstimate(HttpServletRequest request) {
         doIt(request);

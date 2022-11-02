@@ -47,6 +47,7 @@ public class GwService extends Svc {
         }
         if (result != null)
             result += "]";
+        
         return result;
     }
 
