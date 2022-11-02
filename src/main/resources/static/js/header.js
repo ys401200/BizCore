@@ -2695,7 +2695,7 @@ class Department{
 		padding = "1rem";
 
 		html = "<input type=\"checkbox\" class=\"dept-tree\" style=\"display:none\" id=\"dept-tree-" + this.id + "\" />";
-	 	html += ("<label for=\"dept-tree-" + this.id + "\"><img src=\"/images/common/corporate.png\" style=\"width:20px;height:20px;vertical-align:middle;\">" + this.name + "</label>");
+	 	html += ("<div class=\"deptName\"><label for=\"dept-tree-" + this.id + "\"></label><img src=\"/images/common/corporate.png\" style=\"width:20px;height:20px;vertical-align:middle;\">" + this.name + "</div>");
 	 	if(deptSelectable)  html += ("<input type=\"checkbox\" class=\"dept-tree-select\" data-select=\"dept:" + this.id + "\" />");
 	 	html += ("<div class=\"dept-tree-cnt\">");
 
@@ -2705,7 +2705,7 @@ class Department{
 	 		if(storage.user[y] === undefined || storage.user[y].resign) continue;
 			 if(empSelectable)	html += ("<input style=\"display:none;\" type=\"checkbox\" class=\"dept-tree-select\" data-select=\"emp:" + y + "\" id=\"emp:" + y + "\" />");
 			 else				html += ("<input style=\"display:none;\" type=\"radio\" name=\"deptTreeSelectEmp\" class=\"dept-tree-select\" data-select=\"emp:" + y + "\" id=\"emp:" + y + "\" />");
-	 		html += ("<label for=\"emp:" + y + "\" ><img src=\"/api/user/image/" + y + "\" style=\"width:20px;height:20px;vertical-align:middle;\"> <div>" + storage.user[y].userName + " " + storage.userRank[storage.user[y].rank][0]) + "</div></label>";
+	 		html += ("<label for=\"emp:" + y + "\" ><div><img src=\"/api/user/image/" + y + "\" style=\"width:20px;height:20px;vertical-align:middle;margin-left:1.2rem;\" /> " + storage.user[y].userName + " " + storage.userRank[storage.user[y].rank][0]) + "</div></label>";
 	 	}
 
 	 	for(x = 0 ; x < this.children.length ; x++){
