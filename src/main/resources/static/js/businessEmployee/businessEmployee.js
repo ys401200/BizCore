@@ -8,7 +8,8 @@ $(document).ready(() => {
 	} // End of prepare()
 
     init();
-    
+    getCorporateAssetInfo();
+
 	setTimeout(() => {
 		$("#loadingDiv").hide();
 		$("#loadingDiv").loading("toggle");
@@ -21,7 +22,7 @@ $(document).ready(() => {
 		els = cnt.getElementsByTagName("label");
 		for(x = 0 ; x < els.length ; x++){
 			if(els[x] === undefined) continue;
-			els[x].onclick = getEmployeeDetailInfo;
+			els[x].onclick = getDetailInfo;
 		}
 		els = cnt.getElementsByClassName("dept-tree");
 		for(x = 0 ; x < els.length ; x++)	els[x].checked = true;
@@ -31,15 +32,31 @@ $(document).ready(() => {
 	// For Initializing Code . . . . . . .  . . . . 
 });
 
+// 부서 혹은 직원 클릭시 실행되는 함수
+function getDetailInfo(){
+	let empNo, dept;
+	if(this.getAttribute("for").substring(0,3) === "emp"){
+		empNo = this.getAttribute("for").substring(4);
+		dept = this.parentElement.previousSibling.children[0].getAttribute("for").substring(10);
+		getEmployeeDetailInfo(empNo, dept);
+	}else if(this.getAttribute("for").substring(0,4) === "dept"){
+		dept = this.getAttribute("for").substring(10);
+		getDeptDetailInfo(empNo, dept); // ==================== 해당 함수 만들어야 함
+	}
+} // End of getDetailInfo()()
+
+// 부서 클리기 실행되는 함수
+function getDeptDetailInfo(){
+
+} // End of getDeptDetailInfo()
+
 
 // 서버에서 직원의 상세 정보를 가져오는 함수
-function getEmployeeDetailInfo(){
-	let url, empNo;
-	if(this.getAttribute("for").substring(0,3) !== "emp")	return;
-	empNo = this.getAttribute("for").substring(4);
+function getEmployeeDetailInfo(empNo, dept){
+	let url;
 	if(empNo === undefined)	return;
 
-	url = apiServer + "/api/system/manage/employee/" + empNo;
+	url = apiServer + "/api/manage/employee/" + dept + "/" + empNo;
 	$.ajax({
 		"url": url,
 		"method": "get",
@@ -51,7 +68,9 @@ function getEmployeeDetailInfo(){
 				msg.set("[getEmployeeDetailInfo] Success to get detail employee information.",1);
 				list = cipher.decAes(data.data);
 				list = JSON.parse(list);
-				storage.empInfo = list;
+				storage.basic = list.basic;
+				storage.annualLeave = list.annualLeave;
+				storage.permission = list.permission;
 				setEmpData();
 			} else {
 				msg.set("[getEmployeeDetailInfo] Fail to get bank account information.");
@@ -60,10 +79,33 @@ function getEmployeeDetailInfo(){
 	});
 } // End of getBankAccountList()
 
+// 서버에서 법인카드 정보를 가져오는 함수
+function getCorporateAssetInfo(){
+	let url;
+
+	url = apiServer + "/api/manage/corporateasset";
+	$.ajax({
+		"url": url,
+		"method": "get",
+		"dataType": "json",
+		"cache": false,
+		success: (data) => {
+			let list;
+			if (data.result === "ok") {
+				list = cipher.decAes(data.data);
+				list = JSON.parse(list);
+				storage.card = list.card;
+				storage.vehicle = list.vehicle;
+			} else {
+				msg.set("[getEmployeeDetailInfo] Fail to get bank account information.");
+			}
+		}
+	});
+} // End of getCorporateCardInfo()
 
 // 엘리먼트에 직원정보를 입력하는 함수
 function setEmpData(){
-	let cnt, x, y, html, title, t;
+	let cnt, x, y, html, title, t, t1, t2;
 	cnt = document.getElementsByClassName("listContent")[0].children[1];
 
 	 html = "";
@@ -82,41 +124,41 @@ function setEmpData(){
 	html += "<div><div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
 	html += "</div>";
-	html += ("<div class=\"xEmpNo\">" + storage.empInfo.no + "</div>");
+	html += ("<div class=\"xEmpNo\">" + storage.basic.no + "</div>");
 
 	// 아이디
 	title = "아이디";
 	html += "<div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
-	html += ("</div><div class=\"xEmpId\">" + storage.empInfo.id + "</div></div>");
+	html += ("</div><div class=\"xEmpId\">" + storage.basic.id + "</div></div>");
 
 	// 비번
 	title = "비밀번호";
 	html += "<div><div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
 	html += "</div>";
-	html += ("<div class=\"xEmpPw1\" ><input type=\"password\" data-n=\"pw\" class=\"xEmpPw xEmpInput\" onkeyup=\"collectEmpData(event)\" /></div>");
+	html += ("<div class=\"xEmpPw1\" ><input type=\"password\" data-p=\"basic\" data-n=\"pw\" class=\"xEmpPw xEmpInput\" onkeyup=\"collectEmpData(event)\" /></div>");
 
 	title = "비번확인";
 	html += "<div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
 	html += "</div>";
-	html += ("<div class=\"xEmpPw2\"><input type=\"password\" data-n=\"pw\" class=\"xEmpPw xEmpInput\"  onkeyup=\"collectEmpData(event)\"/></div></div>");
+	html += ("<div class=\"xEmpPw2\"><input type=\"password\" data-p=\"basic\"  data-n=\"pw\" class=\"xEmpPw xEmpInput\"  onkeyup=\"collectEmpData(event)\"/></div></div>");
 
 	// 이름
 	title = "이름";
 	html += "<div><div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
 	html += "</div>";
-	html += ("<div><input class=\"xEmpName xEmpInput\" data-n=\"name\" value=\"" + storage.empInfo.name + "\" onkeyup=\"collectEmpData(event)\" /></div>");
+	html += ("<div><input class=\"xEmpName xEmpInput\" data-p=\"basic\" data-n=\"name\" value=\"" + storage.basic.name + "\" onkeyup=\"collectEmpData(event)\" /></div>");
 
 	// 직급
 	title = "직급";
 	html += "<div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
-	html += "</div><div><select class=\"xEmpRank xEmpInput\" onchange=\"collectEmpData(event)\" data-n=\"rank\" >";
+	html += "</div><div><select class=\"xEmpRank xEmpInput\" onchange=\"collectEmpData(event)\" data-p=\"basic\"  data-n=\"rank\" >";
 	t = "";
-	for(x in storage.userRank)	t = "<option value=\"" + x + "\" " + (storage.empInfo.rank == x ? "selected" : "") + " >" + storage.userRank[x][0] + " / " + storage.userRank[x][1] + "</option>" + t;
+	for(x in storage.userRank)	t = "<option value=\"" + x + "\" " + (storage.basic.rank == x ? "selected" : "") + " >" + storage.userRank[x][0] + " / " + storage.userRank[x][1] + "</option>" + t;
 	html += (t + "<select></div></div>");
 
 	// 입사일
@@ -124,32 +166,32 @@ function setEmpData(){
 	html += "<div><div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
 	html += "</div>";
-	html += ("<div class=\"xEmpJoined\" data-n=\"joined\" type=\"date\">" + (storage.empInfo.joined == null ? "" : (new Date(storage.empInfo.joined)).toISOString().substring(0,10)) + "</div>");
+	html += ("<div class=\"xEmpJoined\" data-n=\"joined\" type=\"date\">" + (storage.basic.joined == null ? "" : (new Date(storage.basic.joined)).toISOString().substring(0,10)) + "</div>");
 
 	// 퇴사일
 	title = "퇴사일";
 	html += "<div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
 	html += "</div>";
-	html += ("<div><input class=\"xEmpResigned xEmpInput\" data-n=\"resigned\" type=\"date\" value=\"" + (storage.empInfo.resigned == null ? "" : (new Date(storage.empInfo.resigned)).toISOString().substring(0,10)) + "\" onchange=\"collectEmpData(event)\" /></div></div>");
+	html += ("<div><input class=\"xEmpResigned xEmpInput\" data-p=\"basic\" data-n=\"resigned\" type=\"date\" value=\"" + (storage.basic.resigned == null ? "" : (new Date(storage.basic.resigned)).toISOString().substring(0,10)) + "\" onchange=\"collectEmpData(event)\" /></div></div>");
 
 	// 로그인차단
 	title = "로그인";
 	html += "<div><div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
 	html += "</div>";
-	html += ("<div><input type=\"radio\" id=\"xEmpProhibited0\" data-n=\"prohibited\" name=\"xEmpProhibited\" class=\"xEmpProhibited radioSwitch\" data-v=\"0\" " + (storage.empInfo.prohibited ? "" : "checked") + " onchange=\"collectEmpData(event)\" /><label for=\"xEmpProhibited0\">허 용</label><input type=\"radio\" id=\"xEmpProhibited1\" name=\"xEmpProhibited\" class=\"xEmpProhibited radioSwitch\" data-n=\"prohibited\" data-v=\"1\" " + (storage.empInfo.prohibited ? "checked" : "") + " onchange=\"collectEmpData(event)\" /><label for=\"xEmpProhibited1\">차 단</label></div>");
+	html += ("<div><input type=\"radio\" id=\"xEmpProhibited0\" data-p=\"basic\" data-n=\"prohibited\" name=\"xEmpProhibited\" class=\"xEmpProhibited radioSwitch\" data-v=\"0\" " + (storage.basic.prohibited ? "" : "checked") + " onchange=\"collectEmpData(event)\" /><label for=\"xEmpProhibited0\">허 용</label><input type=\"radio\" id=\"xEmpProhibited1\" name=\"xEmpProhibited\" class=\"xEmpProhibited radioSwitch\" data-n=\"prohibited\" data-v=\"1\" " + (storage.basic.prohibited ? "checked" : "") + " onchange=\"collectEmpData(event)\" /><label for=\"xEmpProhibited1\">차 단</label></div>");
 
 	// 주민번호
-	if(storage.empInfo.birthDay !== undefined && storage.empInfo.birthDay !== null)	t = storage.empInfo.birthDay.replaceAll("-","").substring(2);
+	if(storage.basic.birthDay !== undefined && storage.basic.birthDay !== null)	t = storage.basic.birthDay.replaceAll("-","").substring(2);
 	else t = "      ";
-	if(storage.empInfo.residentNo !== undefined && storage.empInfo.residentNo !== null)	t += storage.empInfo.residentNo;
+	if(storage.basic.residentNo !== undefined && storage.basic.residentNo !== null)	t += storage.basic.residentNo;
 	else t += "       ";
 	title = "주민번호";
 	html += "<div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
 	html += "</div><div>";
-	for(x = 0 ; x < t.length ; x++)	html += ("<input class=\"xEmpResNo xEmpInput\" data-n=\"residentNo\" maxlength=\"1\" value=\"" + t[x].trim() + "\" onkeyup=\"collectEmpData(event)\" onfocus=\"this.select()\" " + (x > 6 ? "type=\"password\"" : "") + " />" + (x === 5 ? "<span style=\"width:1.2rem;text-align:center;margin-right:0.5rem;\">-</span>" : ""));
+	for(x = 0 ; x < t.length ; x++)	html += ("<input class=\"xEmpResNo xEmpInput\" data-p=\"basic\" data-n=\"residentNo\" maxlength=\"1\" value=\"" + t[x].trim() + "\" onkeyup=\"collectEmpData(event)\" onfocus=\"this.select()\" " + (x > 6 ? "type=\"password\"" : "") + " />" + (x === 5 ? "<span style=\"width:1.2rem;text-align:center;margin-right:0.5rem;\">-</span>" : ""));
 	html += "</div></div>";
 
 	// 집주소
@@ -157,53 +199,53 @@ function setEmpData(){
 	html += "<div><div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
 	html += "</div>";
-	html += ("<div><input type=\"hidden\" id=\"postCode\" class=\"xEmpAddr\"/><input id=\"mainAddress\" class=\"xEmpAddr xEmpInput\" data-n=\"address\" value=\"" + (storage.empInfo.address == null ? "" : storage.empInfo.address.split("===")[0]) + "\" onclick=\"daumPostCode()\" /></div>");
+	html += ("<div><input type=\"hidden\" id=\"postCode\" class=\"xEmpAddr\"/><input id=\"mainAddress\" class=\"xEmpAddr xEmpInput\" data-p=\"basic\" data-n=\"address\" value=\"" + (storage.basic.address == null ? "" : storage.basic.address.split("===")[0]) + "\" onclick=\"daumPostCode()\" /></div>");
 
 	// 상세주소
 	title = "상세주소";
 	html += "<div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
 	html += "</div>";
-	html += ("<div><input id=\"detailAddress\" class=\"xEmpAddr xEmpInput\" data-n=\"address\" value=\"" + (storage.empInfo.address == null ? "" : storage.empInfo.address.split("===")[0]) + "\" onkeyup=\"collectEmpData(event)\" onfocus=\"collectEmpData(event)\" /></div></div>");
+	html += ("<div><input id=\"detailAddress\" class=\"xEmpAddr xEmpInput\" data-p=\"basic\" data-n=\"address\" value=\"" + (storage.basic.address == null ? "" : storage.basic.address.split("===")[1]) + "\" onkeyup=\"collectEmpData(event)\" onfocus=\"collectEmpData(event)\" /></div></div>");
 
 	// 집전화
 	title = "집전화";
 	html += "<div><div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
 	html += "</div>";
-	html += ("<div><input class=\"xEmpPhone xEmpInput\" data-n=\"homePhone\" value=\"" + (storage.empInfo.homePhone === null ? "" : storage.empInfo.homePhone) + "\" onkeyup=\"collectEmpData(event)\" /></div>");
+	html += ("<div><input class=\"xEmpPhone xEmpInput\" data-p=\"basic\" data-n=\"homePhone\" value=\"" + (storage.basic.homePhone === null ? "" : storage.basic.homePhone) + "\" onkeyup=\"collectEmpData(event)\" /></div>");
 
 	// 휴대전화
 	title = "휴대전화";
 	html += "<div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
 	html += "</div>";
-	html += ("<div><input class=\"xEmpCellNo xEmpInput\" data-n=\"cellPhone\" value=\"" + (storage.empInfo.cellPhone === null ? "" : storage.empInfo.cellPhone) + "\" onkeyup=\"collectEmpData(event)\" /></div></div>");
+	html += ("<div><input class=\"xEmpCellNo xEmpInput\" data-p=\"basic\" data-n=\"cellPhone\" value=\"" + (storage.basic.cellPhone === null ? "" : storage.basic.cellPhone) + "\" onkeyup=\"collectEmpData(event)\" /></div></div>");
 
 	// 이메일
 	title = "이메일";
 	html += "<div><div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
 	html += "</div>";
-	html += ("<div><input class=\"xEmpEmail xEmpInput\" data-n=\"email\" value=\"" + (storage.empInfo.email === null ? "" : storage.empInfo.email) + "\" onkeyup=\"collectEmpData(event)\" /></div>");
+	html += ("<div><input class=\"xEmpEmail xEmpInput\" data-p=\"basic\" data-n=\"email\" value=\"" + (storage.basic.email === null ? "" : storage.basic.email) + "\" onkeyup=\"collectEmpData(event)\" /></div>");
 
 	// 등록일
 	title = "등록일";
 	html += "<div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
-	html += ("</div><div>" + (storage.empInfo.created == null ? "" : (new Date(storage.empInfo.created)).toISOString().substring(0,10)) + "</div></div>");
+	html += ("</div><div>" + (storage.basic.created == null ? "" : (new Date(storage.basic.created)).toISOString().substring(0,10)) + "</div></div>");
 
 	// 수정일
 	title = "수정일";
 	html += "<div><div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
-	html += ("</div><div>" + (storage.empInfo.modified == null ? "" : (new Date(storage.empInfo.modified)).toISOString().substring(0,10)) + "</div>");
+	html += ("</div><div>" + (storage.basic.modified == null ? "" : (new Date(storage.basic.modified)).toISOString().substring(0,10)) + "</div>");
 
 	// 삭제일
 	title = "삭제일";
 	html += "<div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
-	html += ("</div><div>" + (storage.empInfo.deleted == null ? "" : (new Date(storage.empInfo.deleted)).toISOString().substring(0,10)) + "</div></div></div>");
+	html += ("</div><div>" + (storage.basic.deleted == null ? "" : (new Date(storage.basic.deleted)).toISOString().substring(0,10)) + "</div></div></div>");
 
 	
 	// =========================================== 부 서 설 정  타 이 틀 ===========================================
@@ -220,13 +262,13 @@ function setEmpData(){
 	html += "<div><div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
 	html += "</div>";
-	html += ("<div class=\"xEmpNo\"><input type=\"radio\" class=\"radioSwitch\" name=\"deptHead\" id=\"deptHead1\" /><label for=\"deptHead1\">예</label><input type=\"radio\" class=\"radioSwitch\" name=\"deptHead\" id=\"deptHead0\" /><label for=\"deptHead0\">아니오</label></div>");
+	html += ("<div class=\"xEmpNo\"><input type=\"radio\" class=\"radioSwitch\" name=\"deptHead\" id=\"deptHead1\" data-p=\"permission\" data-n=\"head\" data-v=\"1\" " + (storage.permission.head ? "checked" : "") + " /><label for=\"deptHead1\">예</label><input type=\"radio\" class=\"radioSwitch\" name=\"deptHead\" id=\"deptHead0\" data-p=\"permission\" data-n=\"head\" data-v=\"0\" " + (storage.permission.head ? "" : "checked") + " /><label for=\"deptHead0\">아니오</label></div>");
 
 	// 문서관리
 	title = "문서관리";
 	html += "<div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
-	html += ("</div><div class=\"xEmpId\"><input type=\"radio\" class=\"radioSwitch\" name=\"deptDocMng\" id=\"deptDocMng1\" /><label for=\"deptDocMng1\">예</label><input type=\"radio\" class=\"radioSwitch\" name=\"deptDocMng\" id=\"deptDocMng0\" /><label for=\"deptDocMng0\">아니오</label></div></div></div>");
+	html += ("</div><div class=\"xEmpId\"><input type=\"radio\" class=\"radioSwitch\" name=\"deptDocMng\" id=\"deptDocMng1\" data-p=\"permission\" data-n=\"dptdoc\" data-v=\"1\" " + (storage.permission.doc ? "checked" : "") + " /><label for=\"deptDocMng1\">예</label><input type=\"radio\" class=\"radioSwitch\" name=\"deptDocMng\" id=\"deptDocMng0\" data-p=\"permission\" data-n=\"dptdoc\" data-v=\"0\" " + (storage.permission.doc ? "" : "checked") + " /><label for=\"deptDocMng0\">아니오</label></div></div></div>");
 
 
 	// =========================================== 회 사 설 정  타 이 틀 ===========================================
@@ -243,28 +285,50 @@ function setEmpData(){
 	html += "<div><div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
 	html += "</div>";
-	html += ("<div class=\"xEmpNo\"><input type=\"radio\" class=\"radioSwitch\" name=\"hrCip\" id=\"hrCip1\" /><label for=\"hrCip1\">예</label><input type=\"radio\" class=\"radioSwitch\" name=\"hrCip\" id=\"hrCip0\" /><label for=\"hrCip0\">아니오</label></div>");
+	html += ("<div class=\"xEmpNo\"><input type=\"radio\" class=\"radioSwitch\" name=\"hrCip\" id=\"hrCip1\" data-p=\"permission\" data-n=\"hr\" data-v=\"1\" " + (storage.permission.hr ? "checked" : "") + " /><label for=\"hrCip1\">예</label><input type=\"radio\" class=\"radioSwitch\" name=\"hrCip\" id=\"hrCip0\" data-p=\"permission\" data-n=\"hr\" data-v=\"0\" " + (storage.permission.hr ? "" : "checked") + " /><label for=\"hrCip0\">아니오</label></div>");
 
 	// 문서
 	title = "문서담당";
 	html += "<div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
-	html += ("</div><div class=\"xEmpId\"><input type=\"radio\" class=\"radioSwitch\" name=\"docMng\" id=\"docMng1\" /><label for=\"docMng1\">예</label><input type=\"radio\" class=\"radioSwitch\" name=\"docMng\" id=\"docMng0\" /><label for=\"docMng0\">아니오</label></div></div>");
+	html += ("</div><div class=\"xEmpId\"><input type=\"radio\" class=\"radioSwitch\" name=\"docMng\" id=\"docMng1\" data-p=\"permission\" data-n=\"doc\" data-v=\"1\" " + (storage.permission.docmng ? "checked" : "") + " /><label for=\"docMng1\">예</label><input type=\"radio\" class=\"radioSwitch\" name=\"docMng\" id=\"docMng0\" data-p=\"permission\" data-n=\"doc\" data-v=\"0\" " + (storage.permission.docmng ? "" : "checked") + " /><label for=\"docMng0\">아니오</label></div></div>");
 
 	// 인사
 	title = "회계담당";
 	html += "<div><div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
 	html += "</div>";
-	html += ("<div class=\"xEmpNo\"><input type=\"radio\" class=\"radioSwitch\" name=\"accCip\" id=\"accCip1\" /><label for=\"accCip1\">예</label><input type=\"radio\" class=\"radioSwitch\" name=\"accCip\" id=\"accCip0\" /><label for=\"accCip0\">아니오</label></div>");
+	html += ("<div class=\"xEmpNo\"><input type=\"radio\" class=\"radioSwitch\" name=\"accCip\" id=\"accCip1\" data-p=\"permission\" data-n=\"acc\" data-v=\"1\" " + (storage.permission.accounting ? "checked" : "") + " /><label for=\"accCip1\">예</label><input type=\"radio\" class=\"radioSwitch\" name=\"accCip\" id=\"accCip0\" data-p=\"permission\" data-n=\"acc\" data-v=\"0\" " + (storage.permission.accounting ? "" : "checked") + " /><label for=\"accCip0\">아니오</label></div>");
 
 	// 문서
 	title = "관리자";
 	html += "<div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
-	html += ("</div><div class=\"xEmpId\"><input type=\"radio\" class=\"radioSwitch\" name=\"prgMng\" id=\"prgMng1\" /><label for=\"prgMng1\">예</label><input type=\"radio\" class=\"radioSwitch\" name=\"prgMng\" id=\"prgMng0\" /><label for=\"prgMng0\">아니오</label></div></div></div>");
+	html += ("</div><div class=\"xEmpId\"><input type=\"radio\" class=\"radioSwitch\" name=\"prgMng\" id=\"prgMng1\" data-p=\"permission\" data-n=\"super\" data-v=\"1\" " + (storage.permission.manager ? "checked" : "") + " /><label for=\"prgMng1\">예</label><input type=\"radio\" class=\"radioSwitch\" name=\"prgMng\" id=\"prgMng0\" data-p=\"permission\" data-n=\"super\" data-v=\"0\" " + (storage.permission.manager ? "" : "checked") + " /><label for=\"prgMng0\">아니오</label></div></div></div>");
 
 	
+	// =========================================== 연 차 정 보  계 산 ===========================================
+	y = {};
+	y.join = new Date(storage.basic.joined);
+	y.annual = Math.floor((new Date() - y.join) / 86400000 / 365);
+	y.total = 15 + Math.floor(y.annual / 2);
+	y.used = 0;
+	y.list = [];
+
+	for(x = 0 ; x < storage.annualLeave.length ; x++){
+		t1 = storage.annualLeave[x].start;
+		t2 = storage.annualLeave[x].end;
+		if(t2 - t1 < 86400000){ // 시작일과 종료일이 같은 경우
+			t = (Math.floor((t2 - t1) / (60000 * 60) /2)) / 4;
+			y.used += t;
+			y.list.push([t, new Date(t1).toISOString().substring(0,10) + (t <= 0.5 ? " " + (new Date(t1).getHours() < 12 ? "오전" : "오후") : "")]);
+		}else{ // 시작일이 종료일과 다른 경우
+			t = (Math.ceil((t2 - t1 + 21600000) / 21600000)) / 4;
+			y.list.push([t, new Date(t1).toISOString().substring(0,10) + " ~ " + new Date(t2).toISOString().substring(0,10)]);
+		}
+		
+
+	}
 	// =========================================== 연 차 정 보  타 이 틀 ===========================================
 	title = "연차정보";
 	html += "<div><div class=\"image_btns\"><img src=\"/images/manage/icon_modified.png\" /></div><div class=\"manageSubTitle\">";
@@ -279,33 +343,37 @@ function setEmpData(){
 	html += "<div><div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
 	html += "</div>";
-	html += ("<div class=\"xEmpNo\">2001-01-01</div>");
+	html += ("<div class=\"xEmpNo\">" + storage.basic.joined + "</div>");
 
 	// 근속연수
 	title = "근속연수";
 	html += "<div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
-	html += ("</div><div class=\"xEmpId\">10</div></div>");
+	html += ("</div><div class=\"xEmpId\">" + (y.annual + " 년") + "</div></div>");
 
 	// 발생 연차
 	title = "발생연차";
 	html += "<div><div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
 	html += "</div>";
-	html += ("<div class=\"xEmpNo\">19</div>");
+	html += ("<div class=\"xEmpNo\">" + y.total + "</div>");
 
 	// 사용 및 잔여 연차
 	title = "사용/잔여";
 	html += "<div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
-	html += ("</div><div class=\"xEmpId\">10 / 9</div></div>");
+	html += ("</div><div class=\"xEmpId\">" + (y.used + " / " + (y.total - y.used)) + "</div></div>");
 
 	// 연차 사용 내역
 	title = "사용내역";
 	html += "<div><div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
 	html += "</div>";
-	html += ("<div class=\"xEmpNo\" style=\"grid-column:span 3\">3 : 2022-01-03 ~ 2022-01-05<br />1 : 2022-02-11<br />0.5 : 2022-04-27 오후</div></div></div>");
+	html += "<div class=\"xEmpNo\" style=\"grid-column:span 3\">";
+	for(x = 0 ; x < y.list.length ; x++){
+		html += (y.list[x][0] + " : " + y.list[x][1] + "<br />");
+	}
+	html += "</div></div></div>";
 
 
 	// =========================================== 법인카드 / 법인차량 ===========================================
@@ -322,21 +390,21 @@ function setEmpData(){
 	html += "<div><div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
 	html += "</div>";
-	html += ("<div class=\"xEmpNo\" style=\"grid-column:span 3;\"><select class=\"cocard\"><option>없음</option><option>9999-9999-9999-9997 BNK</option><option>9999-9999-9999-9998 MASTER</option><option>9999-9999-9999-9999 VISA</option></select></div></div>");
+	html += ("<div class=\"xEmpNo\" style=\"grid-column:span 3;\"><select class=\"cocard\" data-p=\"asset\" data-n=\"card\"><option>없음</option><option>9999-9999-9999-9997 BNK</option><option>9999-9999-9999-9998 MASTER</option><option>9999-9999-9999-9999 VISA</option></select></div></div>");
 
 	// 법인차량
 	title = "법인차량";
 	html += "<div><div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
 	html += "</div>";
-	html += ("<div class=\"xEmpNo\"><select class=\"cocar\"><option>없음</option><option>123차1234 제네시스</option><option>123차1235 그랜저</option><option>123차1236 소나타</option></select></div>");
+	html += ("<div class=\"xEmpNo\"><select class=\"cocar\"  data-p=\"asset\" data-n=\"car\"><option>없음</option><option>123차1234 제네시스</option><option>123차1235 그랜저</option><option>123차1236 소나타</option></select></div>");
 
 	// 하이패스
 	title = "하이패스";
 	html += "<div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
 	html += "</div>";
-	html += ("<div class=\"xEmpNo\"><select class=\"hipass\"><option>없음</option><option>9999-9999-9999-9997 BNK</option><option>9999-9999-9999-9998 MASTER</option><option>9999-9999-9999-9999 VISA</option></select></div></div>");
+	html += ("<div class=\"xEmpNo\"><select class=\"hipass\" data-p=\"asset\" data-n=\"hipass\"><option>없음</option><option>9999-9999-9999-9997 BNK</option><option>9999-9999-9999-9998 MASTER</option><option>9999-9999-9999-9999 VISA</option></select></div></div>");
 
 
 

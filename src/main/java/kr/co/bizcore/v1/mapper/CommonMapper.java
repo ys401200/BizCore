@@ -67,4 +67,38 @@ public interface CommonMapper {
 
     @Insert("INSERT INTO bizcore.product (compId, no, category, categoryName, supplier, writer, name, `desc`, price, created) VALUES(#{compId}, #{p.no}, #{p.category}, #{p.categoryName}, #{p.supplier}, #{p.writer}, #{p.name}, #{p.desc}, #{p.price}, NOW())")
     public int addProduct(@Param("compId") String compId, @Param("p") Product product);
+
+    // 연차 사용 현황
+    @Select("SELECT CAST(unix_timestamp(`START`)*1000 AS CHAR) AS `start`, CAST(unix_timestamp(`END`)*1000 AS CHAR) AS `end`, CAST(used AS CHAR) AS used FROM bizcore.annual_leave WHERE deleted IS NULL AND compId = #{compId} AND employee = #{userNo} AND `end` > (SELECT CAST(CONCAT(IF(tm*100+td < jm*jd, ty-1, ty),'-',jm,'-',jd) AS DATETIME) AS refdt FROM (SELECT MONTH(joined) jm, DAY(joined) jd, YEAR(DATE_ADD(NOW(), INTERVAL 9 HOUR)) ty , MONTH(DATE_ADD(NOW(), INTERVAL 9 HOUR)) tm, DAY(DATE_ADD(NOW(), INTERVAL 9 HOUR)) td FROM bizcore.users WHERE NO = #{userNo}) z)  ORDER BY `start`")
+    public List<HashMap<String, String>> getUsedAnnualLeave(@Param("compId") String compId, @Param("userNo") int employee);
+
+    // 권한 확인
+    @Select("SELECT dept, func_id sub, CAST(permission AS CHAR) perm FROM bizcore.permission WHERE permission > 0 AND comp_id = #{compId} AND ((dept = #{dept} AND func_id IN ('head', 'doc')) OR (dept = 'all' AND func_id IN ('manager', 'accounting', 'hr', 'docmng'))) AND user_no = #{employee}")
+    public List<HashMap<String, String>> getPermissionWithDept(@Param("compId") String compId, @Param("dept") String dept, @Param("employee") int employee);
+
+    // 법인카드 목록과 사용자를 가져오는 메서드
+    @Select("SELECT c.card, c.div, c.bank, CAST(c.hipass AS CHAR) hipass, CAST(d.e AS CHAR) employee " +
+            "FROM bizcore.corporate_card c " +
+            "LEFT JOIN (SELECT a.employee e, a.card c " +
+            "        FROM bizcore.corporate_card_history a, " +
+            "        (SELECT card, MAX(issued) i " +
+            "        FROM bizcore.corporate_card_history " +
+            "        WHERE retrieved IS NULL AND compId = #{compId} " +
+            "        GROUP BY card) b " +
+            "        WHERE a.card = b.card AND a.issued = b.i) d ON c.card = d.c " +
+            "WHERE c.deleted IS NULL AND c.status = '정상' AND c.compId = #{compId}")
+    public List<HashMap<String, String>> getCorporateCardList(@Param("compId") String compId);
+
+    // 법인차량 목록과 사용자를 가져오는 메서드
+    @Select("SELECT c.vehicle, c.model, CAST(d.e AS CHAR) employee " +
+        "FROM bizcore.corporate_vehicle c " +
+        "  LEFT JOIN (SELECT a.employee e, a.vehicle v " +
+        "    FROM bizcore.corporate_vehicle_history a, " +
+        "    (SELECT vehicle, MAX(issued) i " +
+        "      FROM bizcore.corporate_vehicle_history " +
+        "      WHERE retrieved IS NULL AND compId = #{compId} " +
+        "      GROUP BY vehicle) b " +
+        "    WHERE a.vehicle = b.vehicle AND a.issued = b.i) d ON c.vehicle = d.v " +
+        "WHERE c.deleted IS NULL AND c.status = '정상' AND c.compId = #{compId}")
+    public List<HashMap<String, String>> getCorporateVehicleList(@Param("compId") String compId);
 }

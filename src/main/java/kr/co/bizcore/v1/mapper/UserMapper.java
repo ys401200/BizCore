@@ -71,7 +71,7 @@ public interface UserMapper {
 
     // 관리자 페이지용 - 직원 한 명의 전체 정보 가져오기
     @Select("SELECT CAST(no AS CHAR) AS no, userId, userName, CAST(`rank` AS CHAR) AS `rank`, CAST(prohibited AS CHAR) AS prohibited, CAST(birthDay AS CHAR) AS birthDay, gender, residentNo, email, address, CAST(zipCode AS CHAR) as zipCode, homePhone, cellPhone, cast(joined AS CHAR) as joined, CAST(resigned AS CHAR) AS resigned, CAST(UNIX_TIMESTAMP(created)*1000 AS CHAR) created, CAST(UNIX_TIMESTAMP(modified)*1000 AS CHAR) modified, CAST(UNIX_TIMESTAMP(deleted)*1000  AS CHAR) deleted FROM bizcore.users WHERE (deleted IS NULL OR deleted > DATE_ADD(NOW(), INTERVAL -1 MONTH)) AND compId = #{compId} AND no = #{employee}")
-    public HashMap<String, String> getEmployeeDetailInfo(@Param("compId") String compId, @Param("employee") String employeeNo);
+    public HashMap<String, String> getEmployeeDetailInfo(@Param("compId") String compId, @Param("employee") int employee);
     
 
 }
