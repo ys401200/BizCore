@@ -5,8 +5,6 @@ import lombok.Setter;
 
 @Setter @Getter
 public class TaxBill extends SimpleTaxBill{
-
-    private int status;
     private int buyer;
     private int seller;
     private String email;
@@ -25,7 +23,6 @@ public class TaxBill extends SimpleTaxBill{
         result += ("\"tax\":" + tax + ",");
         result += ("\"product\":\"" + product == null ? "null" : product + "\",");
         result += ("\"remark\":\"" + remark == null ? "null" : remark + "\",");
-        result += ("\"status\":" + status + ",");
         result += ("\"buyer\":" + buyer + ",");
         result += ("\"seller\":" + seller + ",");
         result += ("\"email\":\"" + email + "\",");

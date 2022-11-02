@@ -979,20 +979,20 @@ function estimateInsert(){
 	datas = JSON.stringify(datas);
 	datas = cipher.encAes(datas);
 
-	$.ajax({
-		url: "/api/estimate",
-		method: "post",
-		data: datas,
-		dataType: "json",
-		contentType: "text/plain",
-		success: (result) => {
-			msg.set("등록되었습니다.");
-			location.reload();
-		},
-		error: () => {
-			msg.set("에러입니다.");
-		}
-	});
+	// $.ajax({
+	// 	url: "/api/estimate",
+	// 	method: "post",
+	// 	data: datas,
+	// 	dataType: "json",
+	// 	contentType: "text/plain",
+	// 	success: (result) => {
+	// 		msg.set("등록되었습니다.");
+	// 		location.reload();
+	// 	},
+	// 	error: () => {
+	// 		msg.set("에러입니다.");
+	// 	}
+	// });
 }
 
 function addEstTitle(e){
@@ -1215,10 +1215,10 @@ function insertCopyPdf(){
 	let mainInput = mainPdf.find("input");
 	for(let i = 0; i < mainInput.length; i++){
 		let item = $(mainInput[i]);
-		
+		let parent = item.parent();
+
 		if(item.attr("type") === "radio"){
 			if(item.attr("name") === "vat"){
-				let parent = item.parent();
 				if($(".mainPdf").find("[name=\"vat\"]:checked").data("value")){
 					item.after("<span>(VAT 포함)</span>");
 					parent.children("input[type=\"radio\"]").remove();
@@ -1226,11 +1226,11 @@ function insertCopyPdf(){
 					item.after("<span>(VAT 비포함)</span>");
 					parent.children("input[type=\"radio\"]").remove();
 				}
+				
 				parent.children("label").remove();
 			}else if(item.attr("name") === "exp"){
 				let checkedValue = $(".mainPdf").find("[name=\"exp\"]:checked").val();
-				let parent = item.parent();
-				item.parent().children().not(":eq(0)").remove();
+				parent.children().not(":eq(0)").remove();
 
 				if(checkedValue === "1w"){
 					parent.append("<span>견적일로부터 1주일</span>");
@@ -1243,11 +1243,8 @@ function insertCopyPdf(){
 				}
 			}
 		}else{
-			item.attr("disabled", true);
-			item.css("border", 0);
-			item.css("curser", "none");
-			item.css("font-size", "0.8rem");
-			item.css("padding", 0);
+			parent.append("<div class=\"afterDiv\">" + item.val() + "</div>");
+			item.remove();
 		}
 	}
 

@@ -9,7 +9,6 @@ import lombok.Setter;
 
 @Setter @Getter
 public class SimpleTaxBill extends Domain{
-    
     protected int no;
     protected boolean type;
     @XmlElement(nillable=true)
@@ -53,12 +52,14 @@ public class SimpleTaxBill extends Domain{
         result += ("\"status\":\"" + status + "\",");
         result += ("\"amount\":" + amount + ",");
         result += ("\"tax\":" + tax + ",");
-        result += ("\"product\":" + (product == null ? "null" : "\"" + product + "\"") + ",");
+        result += ("\"product\":" + (product == null ? "null" : "\"" + product.replaceAll("\"", "") + "\"") + ",");
         result += ("\"remark\":" + (remark == null ? "null" : "\"" + remark + "\"") + ",");
         result += ("\"standard\":\"" + standard + "\",");
         result += ("\"created\":" + (created == null ? "null" : created.getTime()) + ",");
         result += ("\"modified\":" + (modified == null ? "null" : modified.getTime()) + "}");
         return result;
+    }
+    public void replaceAll(String string, String string2) {
     }
     
 }

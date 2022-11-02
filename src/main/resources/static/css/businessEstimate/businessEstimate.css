@@ -195,7 +195,6 @@
 }
 
 .mainPdf{
-    font-family:MalgunGothic, sans-serif;
     border: 1px solid #000;
     padding: 10px;
     height: 100%;
@@ -259,10 +258,23 @@
     width: 100%;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: left;
 }
 
 .pdfHeadInfo > div > span{
+    text-align: justify;
+    width: 3.5vw;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.pdfHeadInfo > div > span:after{
+    content: "";
+    display: inline-block;
+    width: 100%;
+}
+
+/* .pdfHeadInfo > div > span{
     font-size: 0.8rem;
     padding-bottom: 4px;
     font-weight: 600;
@@ -296,7 +308,7 @@
     background-color: #ffffff;
     color: #000;
     border: 1px solid #000;
-}
+} */
 
 .pdfHeadInfoPrice{
     border: 1px solid #000;
@@ -320,7 +332,6 @@
     justify-content: left;
     padding-left: 2.1vw;
 }
-
 
 .pdfHeadInfoPrice > div > span{
     font-size: 0.8rem;
@@ -597,4 +608,36 @@
     align-items: center;
     justify-content: right;
     padding-top: 20px;
+}
+
+.pdfHeadInfo > .date > .afterDiv{
+    font-size: 0.8rem;
+}
+
+.pdfHeadInfo > .firmName > .afterDiv{
+    font-size: 0.8rem;
+}
+
+.pdfHeadInfo > .title > .afterDiv{
+    font-size: 0.8rem;
+}
+
+.pdfHeadInfo > .representative > .afterDiv{
+    font-size: 0.8rem;
+}
+
+.pdfHeadInfo > .headInfoCustomer > .afterDiv{
+    font-size: 0.8rem;
+}
+
+.pdfHeadInfo > .address > .afterDiv{
+    font-size: 0.8rem;
+}
+
+.pdfHeadInfo > .writer > .afterDiv{
+    font-size: 0.8rem;
+}
+
+.pdfHeadInfo > .headInfoPhone > .afterDiv{
+    font-size: 0.8rem;
 }

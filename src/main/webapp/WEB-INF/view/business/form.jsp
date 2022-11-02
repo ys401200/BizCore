@@ -16,53 +16,53 @@
         <select onchange="selectAddressChange(this);"></select>
     </div>
     <div class="pdfHeadInfo">
-        <div>
-            <span>견&ensp;적&ensp;일&ensp;자&nbsp;:&nbsp;</span>
+        <div class="date">
+            <span>견 적 일 자</span>
             <input type="date" max="9999-12-31" id="date">
         </div>
-        <div>
-            <span>상&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;호&nbsp;:&nbsp;</span>
+        <div class="firmName">
+            <span>상 호</span>
             <input type="text" autocomplete="off" id="firmName" readonly>
         </div>
-        <div>
-            <span>사&nbsp;&nbsp;&nbsp;&nbsp;업&nbsp;&nbsp;&nbsp;명&nbsp;:&nbsp;</span>
+        <div class="title">
+            <span>사 업 명</span>
             <input type="text" autocomplete="off" placeholder="사업명 입력" id="title">
         </div>
-        <div>
-            <span>대&ensp;표&ensp;이&ensp;사&nbsp;:&nbsp;</span>
+        <div class="representative">
+            <span>대 표 이 사</span>
             <input type="text" autocomplete="off" id="representative" class="headInfoCeoName" readonly>
         </div>
-        <div>
-            <span>수&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;신&nbsp;:&nbsp;</span>
-            <input type="text" autocomplete="off" class="headInfoCustomer" id="customer" data-complete="customer" placeholder="ex) 무등록거래처" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">&nbsp;/&nbsp;
+        <div class="headInfoCustomer">
+            <span>수 신</span>
+            <input type="text" autocomplete="off" class="headInfoCustomer" id="customer" data-complete="customer" placeholder="ex) 무등록거래처" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">/
             <input type="text" autocomplete="off" class="headInfoCip" id="cip" data-complete="cip" placeholder="ex) 담당자명" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">
         </div>
-        <div>
-            <span>주&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;소&nbsp;:&nbsp;</span>
+        <div class="address">
+            <span>주 소</span>
             <!-- <input type="text" autocomplete="off" id="address" class="headInfoAddress" readonly> -->
             <textarea class="address" disabled></textarea>
         </div>
-        <div>
-            <span>영&ensp;업&ensp;담&ensp;당&nbsp;:&nbsp;</span>
+        <div class="writer">
+            <span>영 업 담 당</span>
             <input type="text" autocomplete="off" id="writer" class="headInfoWriter" readonly>
         </div>
-        <div>
-            <span>전 화 / 팩 스&nbsp;:&nbsp;</span>
-            <input type="text" autocomplete="off" id="phone" class="headInfoPhone" onkeyup="phoneFormat(this);" readonly>&nbsp;/&nbsp;
+        <div class="headInfoPhone">
+            <span>전 화 / 팩 스</span>
+            <input type="text" autocomplete="off" id="phone" class="headInfoPhone" onkeyup="phoneFormat(this);" readonly>/
             <input type="text" autocomplete="off" id="fax" class="headInfoFax" onkeyup="phoneFormat(this);" readonly>
         </div>
     </div>
     <div class="pdfHeadInfoPrice">
         <div>
-            <span>견&ensp;적&ensp;금&ensp;액&nbsp;:&nbsp;</span>
-            <input type="text" autocomplete="off" id="price" readonly>&nbsp;
+            <span>견적금액:</span>
+            <input type="text" autocomplete="off" id="price" readonly>
             <input type="radio" name="vat" data-value="true" id="vatTrue" onclick="setTotalHtml();" checked>
             <label for="vatTrue">VAT 포함</label>
             <input type="radio" name="vat" data-value="false" id="vatFalse" onclick="setTotalHtml();">
             <label for="vatFalse">VAT 비포함</label>
         </div>
         <div>
-            <span>유&ensp;효&ensp;기&ensp;간&nbsp;:&nbsp;</span>
+            <span>유효기간:</span>
             <input type="radio" name="exp" value="1w" id="exp_1w" checked>
             <label for="exp_1w">1w</label>
             <input type="radio" name="exp" value="2w" id="exp_2w">
