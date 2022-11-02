@@ -536,6 +536,24 @@ public class SystemService extends Svc {
         return result;
     } // End of getProductList()
 
+    public String getProductList(String compId) {
+        String result = null;
+        List<Product> list = null;
+        int x = 0;
+
+        list = productMapper.getProductList(compId);
+        result = "[";
+        if (list != null && list.size() > 0)
+            for (x = 0; x < list.size(); x++) {
+                if (x > 0)
+                    result += ",";
+                result += list.get(x).toJson();
+            }
+        result = "]";
+
+        return result;
+    } // End of getProductList()
+
     public String getProductList(String compId, int start, int end) {
         String result = null;
         List<Product> list = null;

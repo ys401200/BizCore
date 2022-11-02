@@ -449,7 +449,7 @@ public class ApiSystemCtrl extends Ctrl{
 
     // 관리자용 -- 직원정보를 가져오는 메서드
     @GetMapping("/manage/employee/{employeeNo:\\d+}")
-    public String apiSystemGoalYearUsernoGet(HttpServletRequest request, @PathVariable("employeeNo") String employeeNo){
+    public String apiSystemGoalYearUsernoGet(HttpServletRequest request, @PathVariable("employeeNo") String employee){
         String result = null;
         String compId = null;
         String aesKey = null;
@@ -471,7 +471,7 @@ public class ApiSystemCtrl extends Ctrl{
         }else if(aesKey == null || aesIv == null){
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
         }else{
-            result = systemService.getEmployeeDetailInfo(compId, employeeNo);
+            result = manageSvc.getEmployeeDetailInfo(compId, strToInt(employee));
             result = encAes(result, aesKey, aesIv);
             result = "{\"result\":\"ok\",\"data\":\"" + result + "\"}";
         }
