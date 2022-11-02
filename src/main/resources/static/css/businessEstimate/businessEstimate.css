@@ -78,7 +78,7 @@
 
 .estimateList > div{
     display: grid;
-    grid-template-columns: 10fr 5fr 12fr 2fr 6fr 8fr;
+    grid-template-columns: 15% 35% 10% 10% 20%;
     font-size: 0.8rem;
     text-align: center;
     cursor: pointer;
@@ -181,6 +181,51 @@
 .estimateBasInfo:checked + label{border-bottom: 2px solid blue;padding-bottom: 0.1em;}
 .estimateInput{border:none;font-size:1em;width:calc(100% - 4px);height:100%;}
 
+/* 리스트 */
+.estimateContainer {
+	margin-top: 1%;
+    background: #FFFFFF;
+    overflow: auto;
+    box-shadow: 0px 2px 14px rgb(0 0 0 / 12%);
+    margin-top: 3px;
+}
+
+.estimateContainer > hr {
+	float: left;
+	border:2px solid #182f81;
+	height: 32px;
+	margin: 0;
+}
+
+.estimateContainer > #containerTitle {
+	font-weight: 600;
+    font-size: 0.9rem;
+	margin-left: 15px;
+	line-height: 40px;
+	color: #182f81;
+	float: left;
+}
+
+.gridEstimateList {
+	display: grid;
+	width: 40%;
+    clear: both;
+}
+
+.gridEstimateList .gridHeader{
+	border-bottom:1px solid #abb6d5;
+}
+
+.gridEstimateList .gridHeader,
+.gridEstimateList .gridContent {
+	grid-template-columns: 15% 15% 50% 5% 15%;
+}
+
+.pageContainer{
+    width: 40%;
+}
+
+/* 추가양식 */
 .addPdfForm{
     display: none;
     clear: both;
@@ -250,7 +295,7 @@
     border: 1px solid #000;
     display: grid;
     grid-template-columns: 50% 50%;
-    padding: 10px;
+    padding: 0.5vh 0.5vw 0.5vh 2.5vw;
     margin-bottom: 5px;
 }
 
@@ -263,9 +308,10 @@
 
 .pdfHeadInfo > div > span{
     text-align: justify;
-    width: 3.5vw;
+    width: 4vw;
     font-size: 0.8rem;
     font-weight: 600;
+    height: 2vh;
 }
 
 .pdfHeadInfo > div > span:after{
@@ -274,47 +320,30 @@
     width: 100%;
 }
 
-/* .pdfHeadInfo > div > span{
-    font-size: 0.8rem;
-    padding-bottom: 4px;
-    font-weight: 600;
+.pdfHeadInfo > .firmName > input{
+    padding-top: 0.2vh;
 }
-
 .pdfHeadInfo > div > input{
-    border: 1px solid #000;
-    width: 14.7vw;
+    padding-top: 0.6vh;
 }
 
-.pdfHeadInfo > div > input[type="date"]{
-    border: 1px solid #000;
-    width: 14.9vw;
-}
-
-.pdfHeadInfo > div > .headInfoCustomer,
-.pdfHeadInfo > div > .headInfoCip,
-.pdfHeadInfo > div > .headInfoPhone,
-.pdfHeadInfo > div > .headInfoFax{
-    width: 6.6vw;
-}
-
-.pdfHeadInfo > div > .address{
-    font-size: 0.8rem;
-    font-family: 'NanumSquareRound';
-    width: 14.7vw;
+.pdfHeadInfo > div > textarea{
+    width: 17vw;
     overflow: hidden;
+    font-family: 'NanumSquareRound';
 }
 
-.pdfHeadInfo > div > .address:disabled{
+.pdfHeadInfo > div > textarea:disabled{
     background-color: #ffffff;
     color: #000;
-    border: 1px solid #000;
-} */
+    border: 0;
+}
 
 .pdfHeadInfoPrice{
     border: 1px solid #000;
     display: grid;
     grid-template-columns: 50% 50%;
-    padding: 10px;
+    padding: 0.5vh 0.5vw 0.5vh 2.5vw;
     margin-bottom: 5px;
 }
 
@@ -322,32 +351,32 @@
     width: 100%;
     display: flex;
     align-items: center;
-    justify-content: center;
-}
-
-.pdfHeadInfoPrice > div:last-child{
-    width: 100%;
-    display: flex;
-    align-items: center;
     justify-content: left;
-    padding-left: 2.1vw;
 }
 
 .pdfHeadInfoPrice > div > span{
+    text-align: justify;
+    width: 4vw;
     font-size: 0.8rem;
-    padding-bottom: 4px;
     font-weight: 600;
+    height: 2vh;
 }
 
-.pdfHeadInfoPrice > div:first-child > input{
-    border: 1px solid #000;
+.pdfHeadInfoPrice > div > span:after{
+    content: "";
+    display: inline-block;
+    width: 100%;
+}
+
+.pdfHeadInfoPrice > div:first-child > input[type="text"]{
+    padding-top: 0.4vh;
     width: 4.5vw;
     text-align: right;
 }
 
-.pdfHeadInfoPrice > div:first-child > input[type="radio"]{
+.pdfHeadInfoPrice > div > input[type="radio"]{
     margin: 0;
-    width: 5%;
+    width: 1vw;
 }
 
 .pdfHeadInfoPrice > div:first-child > label{
@@ -355,26 +384,6 @@
     align-items: center;
     font-weight: 600;
     font-size: 0.8rem;
-    width: 3.4vw;
-    padding-bottom: 2px;
-}
-
-.pdfHeadInfoPrice > div:first-child > label:last-child{
-    width: 4.2vw;
-}
-
-.pdfHeadInfoPrice > div:last-child > input[type="radio"]{
-    margin: 0;
-    width: 5%;
-}
-
-.pdfHeadInfoPrice > div:last-child > label{
-    display: flex;
-    align-items: center;
-    font-weight: 600;
-    font-size: 0.8rem;
-    width: 1.2vw;
-    padding-bottom: 1px;
 }
 
 .pdfMainContainer{
@@ -463,6 +472,11 @@
     padding: 5px;
 }
 
+.pdfMainContentItem > .itemSpec,
+.pdfMainContentItem > .itemRemarks{
+    justify-content: left;
+}
+
 .pdfMainContentItem > div > input{
     width: 100%;
     text-align: center;
@@ -487,6 +501,20 @@
 
 .pdfMainContentItem > div:last-child{
     border-right: 0;
+}
+
+.pdfMainContentItem > div:last-child > button{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #2147b1;
+    color: #ffffff;
+    width: 1.3vw;
+    height: 2.5vh;
+    border-radius: 5px;
+    font-weight: 600;
+    padding-top: 3.5px;
+    margin-right: 5px;
 }
 
 .pdfMainContentAddBtns{
@@ -610,34 +638,24 @@
     padding-top: 20px;
 }
 
-.pdfHeadInfo > .date > .afterDiv{
+.afterDiv{
     font-size: 0.8rem;
+    padding-top: 0.6vh;
 }
 
 .pdfHeadInfo > .firmName > .afterDiv{
-    font-size: 0.8rem;
+    padding-top: 0.2vh;
 }
 
-.pdfHeadInfo > .title > .afterDiv{
-    font-size: 0.8rem;
+.pdfHeadInfoPrice > .vatInfo > .afterDiv:first-child{
+	padding-left: 2.5vw;
+	padding-right: 1vw;
 }
 
-.pdfHeadInfo > .representative > .afterDiv{
-    font-size: 0.8rem;
+.pdfHeadInfoPrice > .vatInfo > .afterDiv:last-child{
+    padding-top: 0.2vh;
 }
 
-.pdfHeadInfo > .headInfoCustomer > .afterDiv{
-    font-size: 0.8rem;
-}
-
-.pdfHeadInfo > .address > .afterDiv{
-    font-size: 0.8rem;
-}
-
-.pdfHeadInfo > .writer > .afterDiv{
-    font-size: 0.8rem;
-}
-
-.pdfHeadInfo > .headInfoPhone > .afterDiv{
-    font-size: 0.8rem;
+.pdfHeadInfoPrice > .expInfo > .afterDiv{
+	padding-top: 0.2vh;
 }

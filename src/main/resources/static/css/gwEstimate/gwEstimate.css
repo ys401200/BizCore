@@ -1,0 +1,27 @@
+.mainBtnDiv {
+    text-align: right;
+    margin: 0.5em 0 0.5em 0.5em;
+}
+
+.mainBtnDiv>select,
+.mainBtnDiv>button:first-of-type {
+    margin: 0.5em;
+}
+
+.mainBtnDiv>select {
+    border: none;
+    border-bottom: 1px solid black;
+}
+
+.mainBtnDiv>button {
+    border: none;
+    background-color: rgba(220, 218, 218, 0.215);
+    border-radius: 3px;
+    font-weight: 600;
+}
+
+.mainBtnDiv>button:hover {
+    background-color: rgba(193, 190, 190, 0.6);
+}
+
+

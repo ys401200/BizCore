@@ -747,12 +747,16 @@ function setDataToInput(estimate){
 
 // 견적 목록 클릭 이벤트 리스너
 function clickedEstimate(el){
-	let x, cnt, els, color = "#e1e9ff", estmNo;
-	cnt = el.parentElement;
+	let x, cnt, els, color = "#e1e9ff", estmNo, versionList;
+	thisEle = el;
+	versionList = document.createElement("div");
+	versionList.className = "versionList";
+	thisEle.after(versionList);
+	cnt = thisEle.parentElement;
 	els = cnt.children;
 	for(x = 1 ; x < els.length ; x++)	els[x].style.backgroundColor = "";
-	el.style.backgroundColor = color;
-	estmNo = el.children[0].innerText;
+	thisEle.style.backgroundColor = color;
+	estmNo = thisEle.children[0].innerText;
 	getEstmVerList(estmNo);
 } // End of clickedEstimate()
 
@@ -773,24 +777,32 @@ function clickedEstmVer(el){
 function drawEstmList(){
 	let cnt, html, x, t;
 	cnt = document.getElementsByClassName("estimateList")[0];
-	html = "<div><div>번 호</div><div>양 식</div><div>견 적 명</div><div>버전</div><div>등록일</div><div>금 액</div></div>";
+
+	html = "<div>";
+	html += "<div>등록일</div>";
+	html += "<div>견적명</div>";
+	html += "<div>버전</div>";
+	html += "<div>양식</div>";
+	html += "<div>금액</div>";
+	html += "</div>";
+	html += "<div onclick=\"clickedEstimate(this)\" data-idx=\"" + x + "\">";
+
 	for(x = 0 ; x < storage.estmList.length ; x++){
-		t = "<div onclick=\"clickedEstimate(this)\" data-idx=\"" + x + "\"><div>" + storage.estmList[x].no + "</div>";
-		t += ("<div>" + storage.estmList[x].form + "</div>");
-		t += ("<div>" + storage.estmList[x].title + "</div>");
-		t += ("<div>" + storage.estmList[x].version + "</div>");
-		t += ("<div>" + dateFormat(storage.estmList[x].date) + "</div>");
-		t += ("<div>" + storage.estmList[x].total.toLocaleString() + "</div></div>");
-		html += t;
+		html += "<div>" + storage.estmList[x].form + "</div>";
+		html += "<div>" + storage.estmList[x].title + "</div>";
+		html += "<div>" + storage.estmList[x].version + "</div>";
+		html += "<div>" + dateFormat(storage.estmList[x].date) + "</div>";
+		html += "<div>" + storage.estmList[x].total.toLocaleString() + "</div></div>";
 	}
+
+	html += "</div>";
 	cnt.innerHTML = html;
 } // End of drawEstmList()
 
 // 견적 버전 목록을 그리는 함수
 function drawEstmVerList(){
-	let cnt, html, x, t;
+	let cnt, html = "", x, t;
 	cnt = document.getElementsByClassName("versionList")[0];
-	html = "<div><div>버전</div><div>견 적 명</div><div>작성자</div><div>작성일</div><div>금액</div></div>";
 	for(x = 0 ; x < storage.estmVerList.length ; x++){
 		t = "<div onclick=\"clickedEstmVer(this)\" data-idx=\"" + x + "\"><div>" + storage.estmVerList[x].version + "</div>";
 		t += ("<div>" + storage.estmVerList[x].title + "</div>");
@@ -911,13 +923,12 @@ function estimateInsert(){
 	let address, cip, customer, date, exp, fax, firmName, phone, representative, title, pdfMainContentTitle, pdfMainContentItem, addPdfForm, items, form, datas;
 	pdfMainContentTitle = $(".pdfMainContainer .pdfMainContentTitle");
 	pdfMainContentItem = $(".pdfMainContainer .pdfMainContentItem");
-	addPdfForm = $(".addPdfForm");
 	remarks = CKEDITOR.instances.remarks.getData().replaceAll("\n", "");
 	address = $(".address").val();
 	cip = $("#cip").val();
 	customer = $("#customer").data("value").toString();
 	date = new Date($("#date").val()).getTime();
-	exp = $("[name=\"exp\"]:checked").val();
+	exp = $("#exp").val();
 	fax = $("#fax").val();
 	firmName = $("#firmName").val();
 	phone = $("#phone").val();
@@ -934,6 +945,20 @@ function estimateInsert(){
 	for(let i = 0; i < pdfMainContentItem.length; i++){
 		let item = $(pdfMainContentItem[i]);
 		let textareaId = item.find(".itemSpec").children().attr("id");
+		let itemTitle = item.prevAll(".pdfMainContentTitle").eq(0).find(".subTitle").children().val();
+		let price;
+
+		if($("[name=\"vat\"]:checked").data("value")){
+			let tax = parseInt(item.find(".itemTotal").html().replaceAll(",", "") / 10);
+			price = parseInt(item.find(".itemTotal").html().replaceAll(",", "")) + parseInt(tax);
+		}else{
+			price = parseInt(item.find(".itemTotal").html().replaceAll(",", ""));
+		}
+
+		if(itemTitle === undefined){
+			itemTitle = "";
+		}
+
 		let itemDatas = {
 			"div": item.find(".itemDivision").children().val(),
 			"price": parseInt(item.find(".itemTotal").html().replaceAll(",", "")), 
@@ -942,57 +967,60 @@ function estimateInsert(){
 			"spec": CKEDITOR.instances[textareaId].getData().replaceAll("\n", ""),
 			"item": "1100041",
 			"supplier": $("#customer").data("value").toString(),
-			"title": item.prevAll(".pdfMainContentTitle").eq(0).find(".subTitle").children().val(),
+			"title": itemTitle,
 			"vat": $("[name=\"vat\"]:checked").data("value"),
 		};
 		items.push(itemDatas);
 	}
 
 	insertCopyPdf();
-
-	datas = {
-		"doc": addPdfForm.html().replaceAll("\r","").replaceAll("\n",""),
-		"address": address,
-		"cip": cip,
-		"customer": customer,
-		"date": date,
-		"exp": exp,
-		"fax": fax,
-		"firmName": firmName,
-		"form": form,
-		"items": items,
-		"phone": phone,
-		"representative": representative,
-		"title": title,
-		"width": 210,
-		"height": 297,
-		"no": null,
-		"version": 1,
-		"related": {
-			"parent": "empty:0000",
-			"previous": "empty:0000",
-			"next": ["empty:0000", "empty:0000"],
-		},
-		"remarks": remarks,
-	};
-
-	datas = JSON.stringify(datas);
-	datas = cipher.encAes(datas);
-
-	// $.ajax({
-	// 	url: "/api/estimate",
-	// 	method: "post",
-	// 	data: datas,
-	// 	dataType: "json",
-	// 	contentType: "text/plain",
-	// 	success: (result) => {
-	// 		msg.set("등록되었습니다.");
-	// 		location.reload();
-	// 	},
-	// 	error: () => {
-	// 		msg.set("에러입니다.");
-	// 	}
-	// });
+	
+	setTimeout(() => {
+		addPdfForm = $(".addPdfForm");
+	
+		datas = {
+			"doc": addPdfForm.html().replaceAll("\r","").replaceAll("\n",""),
+			"address": address,
+			"cip": cip,
+			"customer": customer,
+			"date": date,
+			"exp": exp,
+			"fax": fax,
+			"firmName": firmName,
+			"form": form,
+			"items": items,
+			"phone": phone,
+			"representative": representative,
+			"title": title,
+			"width": 210,
+			"height": 297,
+			"no": null,
+			"version": 1,
+			"related": {
+				"parent": "empty:0000",
+				"previous": "empty:0000",
+				"next": ["empty:0000", "empty:0000"],
+			},
+			"remarks": remarks,
+		};
+	
+		datas = JSON.stringify(datas);
+		datas = cipher.encAes(datas);
+	
+		$.ajax({
+			url: "/api/estimate",
+			method: "post",
+			data: datas,
+			dataType: "json",
+			contentType: "text/plain",
+			success: (result) => {
+				msg.set("등록되었습니다.");
+			},
+			error: () => {
+				msg.set("에러입니다.");
+			}
+		});
+	}, 300)
 }
 
 function addEstTitle(e){
@@ -1008,7 +1036,7 @@ function addEstTitle(e){
 function addEstItem(e){
 	let thisEle;
 	thisEle = $(e);
-	thisEle.parent().before("<div class=\"pdfMainContentItem\"><div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemSpec\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeyup=\"itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"oneEstItemAdd(this);\">추가</button><button type=\"button\" onclick=\"oneEstItemRemove(this);\">삭제</button></div></div>");
+	thisEle.parent().before("<div class=\"pdfMainContentItem\"><div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemSpec\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeyup=\"itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"oneEstItemAdd(this);\">+</button><button type=\"button\" onclick=\"oneEstItemRemove(this);\">-</button></div></div>");
 	productNameSet();
 	ckeditor.config.readOnly = false;
 	window.setTimeout(setEditor, 100);
@@ -1019,7 +1047,7 @@ function oneEstItemAdd(e){
 	let thisEle, parent;
 	thisEle = $(e);
 	parent = thisEle.parents(".pdfMainContentItem");
-	parent.after("<div class=\"pdfMainContentItem\"><div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemSpec\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeyup=\"itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"oneEstItemAdd(this);\">추가</button><button type=\"button\" onclick=\"oneEstItemRemove(this);\">삭제</button></div></div>");
+	parent.after("<div class=\"pdfMainContentItem\"><div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemSpec\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeyup=\"itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"oneEstItemAdd(this);\">+</button><button type=\"button\" onclick=\"oneEstItemRemove(this);\">-</button></div></div>");
 	productNameSet();
 	ckeditor.config.readOnly = false;
 	window.setTimeout(setEditor, 100);
@@ -1220,33 +1248,31 @@ function insertCopyPdf(){
 		if(item.attr("type") === "radio"){
 			if(item.attr("name") === "vat"){
 				if($(".mainPdf").find("[name=\"vat\"]:checked").data("value")){
-					item.after("<span>(VAT 포함)</span>");
+					item.after("<div class=\"afterDiv\">(VAT 포함)</div>");
 					parent.children("input[type=\"radio\"]").remove();
 				}else{
-					item.after("<span>(VAT 비포함)</span>");
+					item.after("<div class=\"afterDiv\">(VAT 비포함)</div>");
 					parent.children("input[type=\"radio\"]").remove();
 				}
-				
-				parent.children("label").remove();
-			}else if(item.attr("name") === "exp"){
-				let checkedValue = $(".mainPdf").find("[name=\"exp\"]:checked").val();
-				parent.children().not(":eq(0)").remove();
 
-				if(checkedValue === "1w"){
-					parent.append("<span>견적일로부터 1주일</span>");
-				}else if(checkedValue === "2w"){
-					parent.append("<span>견적일로부터 2주일</span>");
-				}else if(checkedValue === "4w"){
-					parent.append("<span>견적일로부터 4주일</span>");
-				}else{
-					parent.append("<span>견적일로부터 1달</span>");
-				}
+				parent.children("label").remove();
 			}
 		}else{
-			parent.append("<div class=\"afterDiv\">" + item.val() + "</div>");
-			item.remove();
+			if(parent.attr("class") === "vatInfo"){
+				parent.children().eq(1).after("<div class=\"afterDiv\">" + item.val() + "</div>");
+				parent.children().eq(2).css("padding-top", "0.45vh");
+				parent.children().eq(2).css("padding-left", "2.5vw");
+				parent.children().eq(2).css("padding-right", "1vw");
+				item.remove();
+			}else{
+				parent.append("<div class=\"afterDiv\">" + item.val() + "</div>");
+				item.remove();
+			}
 		}
 	}
+	
+	mainPdf.find(".headInfoCustomer").children(".afterDiv").eq(0).after("&nbsp;/&nbsp;");
+	mainPdf.find(".headInfoPhone").children(".afterDiv").eq(0).after("&nbsp;/&nbsp;");
 
 	let pdfMainContainer = $(".mainPdf .pdfMainContainer").children("div");
 	for(let i = 0; i < pdfMainContainer.length; i++){
@@ -1261,12 +1287,7 @@ function insertCopyPdf(){
 	for(let i = 0; i < textarea.length; i++){
 		let item = $(textarea[i]);
 		let parent = item.parent();
-		if(item.attr("class") !== "address"){
-			parent.append(item.val());
-			item.remove();
-		}else{
-			item.css("border", 0);
-			item.css("width", "14.4vw");
-		}
+		parent.append("<div class=\"afterDiv\">" + item.val() + "</div>");
+		item.remove();
 	}
 }

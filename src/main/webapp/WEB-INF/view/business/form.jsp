@@ -17,60 +17,53 @@
     </div>
     <div class="pdfHeadInfo">
         <div class="date">
-            <span>견 적 일 자</span>
-            <input type="date" max="9999-12-31" id="date">
+            <span>견 적 일 자</span>&nbsp;:&nbsp;
+            <input type="text" autocomplete="off" placeholder="숫자만 입력" onkeyup="inputDateFormat(this)" maxlength="10" id="date">
         </div>
         <div class="firmName">
-            <span>상 호</span>
+            <span>상 호</span>&nbsp;:&nbsp;
             <input type="text" autocomplete="off" id="firmName" readonly>
         </div>
         <div class="title">
-            <span>사 업 명</span>
-            <input type="text" autocomplete="off" placeholder="사업명 입력" id="title">
+            <span>사 업 명</span>&nbsp;:&nbsp;
+            <input type="text" autocomplete="off" placeholder="사업명" id="title">
         </div>
         <div class="representative">
-            <span>대 표 이 사</span>
+            <span>대 표 이 사</span>&nbsp;:&nbsp;
             <input type="text" autocomplete="off" id="representative" class="headInfoCeoName" readonly>
         </div>
         <div class="headInfoCustomer">
-            <span>수 신</span>
-            <input type="text" autocomplete="off" class="headInfoCustomer" id="customer" data-complete="customer" placeholder="ex) 무등록거래처" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">/
-            <input type="text" autocomplete="off" class="headInfoCip" id="cip" data-complete="cip" placeholder="ex) 담당자명" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">
+            <span>수 신</span>&nbsp;:&nbsp;
+            <input type="text" autocomplete="off" class="headInfoCustomer" placeholder="ex) 부경대학교" id="customer" data-complete="customer" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">
+            <input type="text" autocomplete="off" class="headInfoCip" id="cip" placeholder="ex) 담당자명" data-complete="cip" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">
         </div>
         <div class="address">
-            <span>주 소</span>
+            <span>주 소</span>&nbsp;:&nbsp;
             <!-- <input type="text" autocomplete="off" id="address" class="headInfoAddress" readonly> -->
             <textarea class="address" disabled></textarea>
         </div>
         <div class="writer">
-            <span>영 업 담 당</span>
+            <span>영 업 담 당</span>&nbsp;:&nbsp;
             <input type="text" autocomplete="off" id="writer" class="headInfoWriter" readonly>
         </div>
         <div class="headInfoPhone">
-            <span>전 화 / 팩 스</span>
-            <input type="text" autocomplete="off" id="phone" class="headInfoPhone" onkeyup="phoneFormat(this);" readonly>/
+            <span>전 화 / 팩 스</span>&nbsp;:&nbsp;
+            <input type="text" autocomplete="off" id="phone" class="headInfoPhone" onkeyup="phoneFormat(this);" readonly>
             <input type="text" autocomplete="off" id="fax" class="headInfoFax" onkeyup="phoneFormat(this);" readonly>
         </div>
     </div>
     <div class="pdfHeadInfoPrice">
-        <div>
-            <span>견적금액:</span>
+        <div class="vatInfo">
+            <span>견 적 금 액</span>&nbsp;:&nbsp;
             <input type="text" autocomplete="off" id="price" readonly>
             <input type="radio" name="vat" data-value="true" id="vatTrue" onclick="setTotalHtml();" checked>
             <label for="vatTrue">VAT 포함</label>
             <input type="radio" name="vat" data-value="false" id="vatFalse" onclick="setTotalHtml();">
             <label for="vatFalse">VAT 비포함</label>
         </div>
-        <div>
-            <span>유효기간:</span>
-            <input type="radio" name="exp" value="1w" id="exp_1w" checked>
-            <label for="exp_1w">1w</label>
-            <input type="radio" name="exp" value="2w" id="exp_2w">
-            <label for="exp_2w">2w</label>
-            <input type="radio" name="exp" value="4w" id="exp_4w">
-            <label for="exp_4w">4w</label>
-            <input type="radio" name="exp" value="1m" id="exp_1m">
-            <label for="exp_1m">1m</label>
+        <div class="expInfo">
+            <span>유 효 기 간</span>&nbsp;:&nbsp;
+            <input type="text" placeholder="견적일로부터 4주" id="exp">
         </div>
     </div>
     <div class="pdfMainContainer">

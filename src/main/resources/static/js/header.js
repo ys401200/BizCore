@@ -715,6 +715,8 @@ function dateFnc(dateTimeStr, type){
 		result = hh + ":" + mm;
 	}else if(type === "mm:ss"){
 		result = mm + ":" + ss;
+	}else if(type === "yyyy.mm.dd"){
+		result = year + "." + month + "." + day;
 	}
 
 	return result;
@@ -2270,7 +2272,7 @@ function calWindowLength(){
 	bodyContent = $("#bodyContent");
 	searchContainer = $(".searchContainer");
 	containerTitle = $("#containerTitle");
-	searchCal = parseInt(bodyContent.innerHeight() - searchContainer.innerHeight());
+	searchCal = parseInt(bodyContent.innerHeight() - searchContainer.innerHeight() + 100);
 	titleCal = parseInt(containerTitle.innerHeight() + 70);
 	totalCal = (parseInt(searchCal - titleCal) - parseInt(36)) / parseInt(38);
 
@@ -3384,4 +3386,9 @@ function popup(e){
 		alert("팝업 차단을 해제해주세요.");
 		return false;
 	}
+}
+
+function inputDateFormat(e){
+	let thisEle = $(e);
+	thisEle.val(thisEle.val().replace(/(\d\d\d\d)(\d\d)(\d\d)/g, '$1-$2-$3'));
 }

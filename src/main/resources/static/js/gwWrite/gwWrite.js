@@ -899,7 +899,7 @@ function reportInsert() {
   }
 
   title = $("#" + formId + "_title").val();
-  
+
   content = CKEDITOR.instances[formId + "_content"].getData();
   $("#" + formId + "_content").attr("data-detail", content);
   // content = $("#" + formId + "_content").val();
@@ -1505,9 +1505,3 @@ function setCusDataList() {
 
 
 
-function setEstData() {
-  ///1. 견적 데이터 가져옴 
-  ///2. 견적서 양식 기본으로 넣음 
-  ///3. 
-
-}
