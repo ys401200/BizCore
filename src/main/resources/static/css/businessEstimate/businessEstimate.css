@@ -85,16 +85,19 @@
     border-bottom: 1px solid #ededed;
     height: 30px;
     line-height: 30px;
+    clear:both;
 }
 
 .estimateList > div:hover{background-color: #e1e9ff;}
 .versionList{
-    display:none;
+    display: none;
     vertical-align: top;
-    width:450px;
+    float: right;
+    width: 34vw;
     border-top: 1px solid #ededed;
     border-left: 1px solid #ededed;
     border-right: 1px solid #ededed;
+    width: 45vw;
 }
 .versionList > div{
     display: grid;
@@ -111,7 +114,6 @@
 .versionPreview{
     display: inline-block;
     font-size: 3.33333px;
-    width: 580px;
     border: 1px solid #ededed;
     padding: 10px;
 }
@@ -254,19 +256,23 @@
 
 .pdfLogoLeft{
     width: 100%;
-    padding-right: 7%;
+    display: flex;
+    align-items: center;
+    justify-content: left;
 }
 
 .pdfLogoLeft > img{
-    width: 15vw;
+    width: 10vw;
 }
 
 .pdfLogoRight{
-    padding-bottom: 0.7vh;
+    display: flex;
+    align-items: center;
+    justify-content: right;
 }
 
 .pdfLogoRight > img{
-    width: 33vw;
+    width: 23vw;
 }
 
 .pdfTitle{
@@ -275,7 +281,7 @@
     justify-content: center;
     padding-top: 30px;
     padding-bottom: 20px;
-    font-size: 2.5rem;
+    font-size: 1.5rem;
     font-family: 'Outfit', sans-serif;
 }
 
@@ -309,7 +315,7 @@
 .pdfHeadInfo > div > span{
     text-align: justify;
     width: 4vw;
-    font-size: 0.8rem;
+    font-size: 0.5rem;
     font-weight: 600;
     height: 2vh;
 }
@@ -324,13 +330,16 @@
     padding-top: 0.2vh;
 }
 .pdfHeadInfo > div > input{
+    font-size: 0.5rem;
     padding-top: 0.6vh;
 }
 
 .pdfHeadInfo > div > textarea{
-    width: 17vw;
+    height: 3.5vh;
+    width: 13vw;
     overflow: hidden;
     font-family: 'NanumSquareRound';
+    font-size: 0.5rem;
 }
 
 .pdfHeadInfo > div > textarea:disabled{
@@ -357,7 +366,7 @@
 .pdfHeadInfoPrice > div > span{
     text-align: justify;
     width: 4vw;
-    font-size: 0.8rem;
+    font-size: 0.5rem;
     font-weight: 600;
     height: 2vh;
 }
@@ -372,18 +381,26 @@
     padding-top: 0.4vh;
     width: 4.5vw;
     text-align: right;
+    font-size: 0.5rem;
 }
 
 .pdfHeadInfoPrice > div > input[type="radio"]{
     margin: 0;
-    width: 1vw;
+    width: 0.8vw;
+    margin-left: 0.5vw;
+    margin-right: 0.2vw
 }
 
 .pdfHeadInfoPrice > div:first-child > label{
     display: flex;
     align-items: center;
     font-weight: 600;
-    font-size: 0.8rem;
+    font-size: 0.5rem;
+    padding-bottom: 0.3vh;
+}
+
+.pdfHeadInfoPrice > div:last-child > input{
+    font-size: 0.5rem;
 }
 
 .pdfMainContainer{
@@ -429,8 +446,9 @@
     align-items: center;
     background-color: #FFFF75;
     font-weight: 600;
-    font-size: 0.8rem;
+    font-size: 0.5rem;
     border-right: 1px solid #000;
+    padding: 3px;
 }
 
 .pdfMainContentTitle > .subTitleIndex{
@@ -470,6 +488,7 @@
     justify-content: center;
     border-right: 1px solid #000;
     padding: 5px;
+    font-size: 0.5rem;
 }
 
 .pdfMainContentItem > .itemSpec,
@@ -548,6 +567,7 @@
     align-items: center;
     border-right: 1px solid #000;
     padding: 5px;
+    font-size: 0.5rem;
 }
 
 .pdfMainContentAmount > div:first-child{
@@ -576,6 +596,7 @@
     align-items: center;
     border-right: 1px solid #000;
     padding: 5px;
+    font-size: 0.5rem;
 }
 
 .pdfMainContentTax > div:first-child{
@@ -604,6 +625,7 @@
     align-items: center;
     border-right: 1px solid #000;
     padding: 5px;
+    font-size: 0.5rem;
 }
 
 .pdfMainContentTotal > div:first-child{
@@ -638,24 +660,33 @@
     padding-top: 20px;
 }
 
+.pdfBottomLogo > img{
+    width: 18vw;
+}
+
 .afterDiv{
-    font-size: 0.8rem;
-    padding-top: 0.6vh;
+    font-size: 0.5rem;
+    padding-top: 0.5vh;
 }
 
 .pdfHeadInfo > .firmName > .afterDiv{
-    padding-top: 0.2vh;
+    padding-top: 0;
+}
+
+.pdfHeadInfo > .address > .afterDiv{
+    width: 10vw;
 }
 
 .pdfHeadInfoPrice > .vatInfo > .afterDiv:first-child{
-	padding-left: 2.5vw;
-	padding-right: 1vw;
+    padding-top: 0.45vh;
+    padding-left: 1.5vw;
+    padding-right: 0.5vw;
 }
 
 .pdfHeadInfoPrice > .vatInfo > .afterDiv:last-child{
-    padding-top: 0.2vh;
+    padding-top: 0;
 }
 
 .pdfHeadInfoPrice > .expInfo > .afterDiv{
-	padding-top: 0.2vh;
+	padding-top: 0;
 }

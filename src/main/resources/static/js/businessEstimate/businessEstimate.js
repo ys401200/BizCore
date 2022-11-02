@@ -748,6 +748,14 @@ function setDataToInput(estimate){
 // 견적 목록 클릭 이벤트 리스너
 function clickedEstimate(el){
 	let x, cnt, els, color = "#e1e9ff", estmNo, versionList;
+
+	versionList = document.getElementsByClassName("versionList");
+	if(versionList.length > 0){
+		for(let i = 0; i < versionList.length; i++){
+			versionList[i].remove();
+		}
+	}
+
 	thisEle = el;
 	versionList = document.createElement("div");
 	versionList.className = "versionList";
@@ -756,7 +764,7 @@ function clickedEstimate(el){
 	els = cnt.children;
 	for(x = 1 ; x < els.length ; x++)	els[x].style.backgroundColor = "";
 	thisEle.style.backgroundColor = color;
-	estmNo = thisEle.children[0].innerText;
+	estmNo = thisEle.dataset.no;
 	getEstmVerList(estmNo);
 } // End of clickedEstimate()
 
@@ -779,23 +787,23 @@ function drawEstmList(){
 	cnt = document.getElementsByClassName("estimateList")[0];
 
 	html = "<div>";
-	html += "<div>등록일</div>";
-	html += "<div>견적명</div>";
-	html += "<div>버전</div>";
-	html += "<div>양식</div>";
-	html += "<div>금액</div>";
+	html += "<div style=\"text-align:center\">등록일</div>";
+	html += "<div style=\"text-align:left\">견적명</div>";
+	html += "<div style=\"text-align:center\">버전</div>";
+	html += "<div style=\"text-align:center\">양식</div>";
+	html += "<div style=\"text-align:right\">금액</div>";
 	html += "</div>";
-	html += "<div onclick=\"clickedEstimate(this)\" data-idx=\"" + x + "\">";
-
+	
 	for(x = 0 ; x < storage.estmList.length ; x++){
-		html += "<div>" + storage.estmList[x].form + "</div>";
-		html += "<div>" + storage.estmList[x].title + "</div>";
-		html += "<div>" + storage.estmList[x].version + "</div>";
-		html += "<div>" + dateFormat(storage.estmList[x].date) + "</div>";
-		html += "<div>" + storage.estmList[x].total.toLocaleString() + "</div></div>";
+		html += "<div onclick=\"clickedEstimate(this)\" data-idx=\"" + x + "\" data-no=\"" + storage.estmList[x].no + "\">";
+		html += "<div style=\"text-align:center\">" + storage.estmList[x].form + "</div>";
+		html += "<div style=\"text-align:left\">" + storage.estmList[x].title + "</div>";
+		html += "<div style=\"text-align:center\">" + storage.estmList[x].version + "</div>";
+		html += "<div style=\"text-align:center\">" + dateFormat(storage.estmList[x].date) + "</div>";
+		html += "<div style=\"text-align:right\">" + storage.estmList[x].total.toLocaleString() + "</div></div>";
+		html += "</div>";
 	}
 
-	html += "</div>";
 	cnt.innerHTML = html;
 } // End of drawEstmList()
 
@@ -803,13 +811,13 @@ function drawEstmList(){
 function drawEstmVerList(){
 	let cnt, html = "", x, t;
 	cnt = document.getElementsByClassName("versionList")[0];
+
 	for(x = 0 ; x < storage.estmVerList.length ; x++){
-		t = "<div onclick=\"clickedEstmVer(this)\" data-idx=\"" + x + "\"><div>" + storage.estmVerList[x].version + "</div>";
-		t += ("<div>" + storage.estmVerList[x].title + "</div>");
-		t += ("<div>" + storage.user[storage.estmVerList[x].writer].userName + "</div>");
-		t += ("<div>" + dateFormat(storage.estmVerList[x].date) + "</div>");
-		t += ("<div>" + storage.estmList[x].total.toLocaleString() + "</div></div>");
-		html += t;
+		html = "<div onclick=\"clickedEstmVer(this)\" data-idx=\"" + x + "\"><div>" + storage.estmVerList[x].version + "</div>";
+		html += ("<div>" + storage.estmVerList[x].title + "</div>");
+		html += ("<div>" + storage.user[storage.estmVerList[x].writer].userName + "</div>");
+		html += ("<div>" + dateFormat(storage.estmVerList[x].date) + "</div>");
+		html += ("<div>" + storage.estmList[x].total.toLocaleString() + "</div></div>");
 	}
 	cnt.innerHTML = html;
 	cnt.style.display="inline-block";
@@ -1260,9 +1268,6 @@ function insertCopyPdf(){
 		}else{
 			if(parent.attr("class") === "vatInfo"){
 				parent.children().eq(1).after("<div class=\"afterDiv\">" + item.val() + "</div>");
-				parent.children().eq(2).css("padding-top", "0.45vh");
-				parent.children().eq(2).css("padding-left", "2.5vw");
-				parent.children().eq(2).css("padding-right", "1vw");
 				item.remove();
 			}else{
 				parent.append("<div class=\"afterDiv\">" + item.val() + "</div>");
