@@ -9,7 +9,7 @@
 				<div onclick="closeAdd()">닫기</div>
 			</span>
             <div class="listContent">
-				<div class="estimateList"></div><div class="versionList"></div><div class="versionPreview"></div>
+				<div class="estimateList"></div><div class="versionPreview"></div>
 			</div>
 			<div class="addPdfForm">
 				<jsp:include page="./form.jsp" />
@@ -69,10 +69,8 @@
 						</div>
 					</div>
 				</div><div class="estimatePreview">미리보기</div>
-
 			</div>
         </div> -->
-
 	</div>
 </div>
 </div><div class="msg_cnt"></div><div class="ac_cnt" onmouseenter="storage.ac.mouseon=true" onmouseleave="storage.ac.mouseon=false"></div><jsp:include page="../bottom.jsp" /><script src="/js/accountingBankaccount/xlsx.full.min.js"></script>
