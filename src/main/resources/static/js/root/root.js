@@ -1,16 +1,18 @@
 $(document).ready(() => {
 	init();
+	goalList();
 
 	setTimeout(() => {
 		$("#loadingDiv").hide();
 		$("#loadingDiv").loading("toggle");
 	}, 300);
 
-	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined){
+	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined || storage.monthTarget === undefined){
 		window.setTimeout(gridWidget, 1000);
 	}else{
 		window.setTimeout(gridWidget, 200);
 	}
+	
 });
 
 function gridWidget(){
@@ -68,6 +70,7 @@ function addChart(){
 	addChart_2();
 	addChart_3();
 	addChart_4();
+	addChart_5();
 }
 
 function addChart_1(){
@@ -87,7 +90,7 @@ function addChart_1(){
 }
 
 function chartSuccess_1(result){
-	let chart_0, dataArray = [], t = 0;
+	let chart_0, dataArray = [], t = 0, temp = 0, salesArray = [];
 	chart_0 = document.getElementById('chart_0').getContext('2d');
 
 	for(let i = 0; i < 12; i++){
@@ -100,72 +103,77 @@ function chartSuccess_1(result){
 		}
 	}
 
-	new Chart(chart_0, {
-		type: "bar",
-		data: {
-			labels: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
-			datasets: [
-				{
-					label: "월별목표",
-					data: [100000000, 1200000000, 1600000000, 1100000000, 1300000000, 180000000, 1400000000, 1500000000, 1700000000, 1900000000, 800000000, 600000000],
-					backgroundColor: "#5f46c6", //#4374D9
-					borderColor: "#5f46c6",
-					borderWidth: 3,
-					radius: 0,
-				},
-				{
-					label: "월별매출",
-					data: dataArray,
-					backgroundColor: "#76e3f1",//#B7F0B
-					borderColor: "#76e3f1",
-					borderWidth: 3,
-					radius: 0,
-				},
-				// {
-				// 	type: "line",
-				// 	label: "누적목표",
-				// 	data: [100000000, 200000000, 1000000000, 580000000, 250000000, 930000000, 270000000, 360000000, 480000000, 310000000, 850000000, 730000000],
-				// 	fill: false,
-				// 	lineTension: 0,
-				// 	backgroundColor: "#A566FF",
-				// 	borderColor: "#A566FF",
-				// },
-				// {
-				// 	type: "line",
-				// 	label: "누적매출",
-				// 	data: dataArray,
-				// 	fill: false,
-				// 	lineTension: 0,
-				// 	backgroundColor: "#F15F5F",
-				// 	borderColor: "#F15F5F",
-				// },
-			],
-		},
-		options: {
-			scales: {
-			  	yAxes: [{
-					ticks: {
-						beginAtZero: true,
-						callback: function(value, index) {
-							if(value.toString().length > 8){
-								return (Math.floor(value / 100000000)).toLocaleString("ko-KR") + " (억원)";
-							}else if(value.toString().length > 4){
-								return (Math.floor(value / 10000)).toLocaleString("ko-KR") + " (만원)";
-							}else{
-								return value.toLocaleString("ko-KR"); 
-							}
-						}
-					},
-				}]
-		  	},
-			tooltips: { 
-				callbacks: { 
-					label: function(tooltipItem, data) {
-						return " " + tooltipItem.yLabel.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "원"; 
-						} 
-				 },
-			},
-		}
+	for(let i = 0; i < dataArray.length; i++){
+		temp += dataArray[i];
+		salesArray.push(temp);
+	}
+
+	// new Chart(chart_0, {
+	// 	type: "bar",
+	// 	data: {
+	// 		labels: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
+	// 		datasets: [
+	// 			{
+	// 				label: "월별목표",
+	// 				data: storage.monthTarget,
+	// 				backgroundColor: "#5f46c6", //#4374D9
+	// 				borderColor: "#5f46c6",
+	// 				borderWidth: 3,
+	// 				radius: 0,
+	// 			},
+	// 			{
+	// 				label: "월별매출",
+	// 				data: dataArray,
+	// 				backgroundColor: "#76e3f1",//#B7F0B
+	// 				borderColor: "#76e3f1",
+	// 				borderWidth: 3,
+	// 				radius: 0,
+	// 			},
+	// 			{
+	// 				type: "line",
+	// 				label: "누적목표",
+	// 				data: storage.accMonthTarget,
+	// 				fill: false,
+	// 				lineTension: 0,
+	// 				backgroundColor: "#A566FF",
+	// 				borderColor: "#A566FF",
+	// 			},
+	// 			{
+	// 				type: "line",
+	// 				label: "누적매출",
+	// 				data: salesArray,
+	// 				fill: false,
+	// 				lineTension: 0,
+	// 				backgroundColor: "#F15F5F",
+	// 				borderColor: "#F15F5F",
+	// 			},
+	// 		],
+	// 	},
+	// 	options: {
+	// 		scales: {
+	// 		  	yAxes: [{
+	// 				ticks: {
+	// 					beginAtZero: true,
+	// 					callback: function(value, index) {
+	// 						if(value.toString().length > 8){
+	// 							return (Math.floor(value / 100000000)).toLocaleString("ko-KR") + " (억원)";
+	// 						}else if(value.toString().length > 4){
+	// 							return (Math.floor(value / 10000)).toLocaleString("ko-KR") + " (만원)";
+	// 						}else{
+	// 							return value.toLocaleString("ko-KR"); 
+	// 						}
+	// 					}
+	// 				},
+	// 			}]
+	// 	  	},
+	// 		tooltips: { 
+	// 			callbacks: { 
+	// 				label: function(tooltipItem, data) {
+	// 					return " " + tooltipItem.yLabel.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "원"; 
+	// 				} 
+	// 			 },
+	// 		},
+	// 	}
 	});
 
 	console.log("cal: " + t);
@@ -283,6 +291,38 @@ function addChart_4(){
 	chart_3 = document.getElementById('chart_3').getContext('2d');
 
 	new Chart(chart_3, {
+		type: "pie",
+		data: {
+			labels: ["조달직판", "조달간판", "조달대행", "직접판매", "간접판매", "기타"],
+			datasets: [
+				{
+					data: [310, 200, 110, 220, 100, 50],
+					backgroundColor: [
+						"#29cea6",
+						"#2795f7",
+						"#f7d766",
+						"#ff5377",
+						"#7952e9",
+						"#d9d9d9",
+					]
+				},
+			],
+		},
+		options: {
+			scales: {
+				y: {
+					beginAtZero: true
+				}
+			}
+		},
+	});
+}
+
+function addChart_5(){
+	let chart_4;
+	chart_4 = document.getElementById('chart_3').getContext('2d');
+
+	new Chart(chart_4, {
 		type: "pie",
 		data: {
 			labels: ["조달직판", "조달간판", "조달대행", "직접판매", "간접판매", "기타"],
@@ -955,4 +995,29 @@ function getContractList() {
 function rootDetailView(page, e){
 	let id = $(e).data("id");
 	location.href = apiServer + "/business/" + page + "/" + id;
+}
+
+function goalList(){
+	let nowDate, nowYear;
+	nowDate = new Date();
+	nowYear = nowDate.getFullYear();
+
+	$.ajax({
+		url: "/api/system/goal/" + nowYear,
+		method: "get",
+		dataType: "json",
+		contentType: "text/plain",
+		success: (result) => {
+			let temp = 0;
+			result = cipher.decAes(result.data);
+			result = JSON.parse(result);
+			storage.monthTarget = result.all;
+			storage.accMonthTarget = [];
+
+			for(let i = 0; i < storage.monthTarget.length; i++){
+				temp += storage.monthTarget[i];
+				storage.accMonthTarget.push(temp);
+			}
+		}
+	});
 }

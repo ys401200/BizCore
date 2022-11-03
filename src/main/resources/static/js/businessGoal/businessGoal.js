@@ -12,7 +12,7 @@ $(document).ready(() => {
 function gridGoalList(){
     let nowYear, url, method, data, type;
     nowYear = new Date();
-    nowYear = nowYear.getFullYear()
+    nowYear = nowYear.getFullYear();
     url = "/api/system/goal/" + nowYear;
     method = "get";
     type = "list";

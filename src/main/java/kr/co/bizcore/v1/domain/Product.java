@@ -9,7 +9,7 @@ import lombok.Setter;
 public class Product extends Domain{
 
     private int no;
-    private int category;
+    private String category;
     private String categoryName;
     private int supplier;
     private int writer;
@@ -19,5 +19,6 @@ public class Product extends Domain{
     private String image;
     private Date created;
     private Date modified;
+    private int vendor;
     
 }

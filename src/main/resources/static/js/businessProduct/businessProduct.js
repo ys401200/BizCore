@@ -24,7 +24,7 @@ function drawProductList() {
 	let container, result, job, jsonData, header = [], data = [], ids = [], disDate, setDate, str, fnc, pageContainer, containerTitle, detailBackBtn, listSearchInput;
 	
 	if (storage.productList === undefined) {
-		msg.set("등록된 영업기회가 없습니다");
+		msg.set("등록된 상품이 없습니다");
 	}
 	else {
 		if(storage.searchDatas === undefined){
@@ -49,7 +49,7 @@ function drawProductList() {
 		},
 		{
 			"title" : "제품그룹",
-			"align" : "left",
+			"align" : "center",
 		},
 		{
 			"title" : "상품명",
@@ -57,7 +57,7 @@ function drawProductList() {
 		},
 		{
 			"title" : "상품설명",
-			"align" : "center",
+			"align" : "left",
 		},
 	];
 
@@ -72,32 +72,24 @@ function drawProductList() {
 		data.push(str);
 	}else{
 		for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
-			let soppType, contType, title, customer, endUser, employee, expectedSales, status;
-			
-			disDate = dateDis(jsonData[i].created, jsonData[i].modified);
-			setDate = dateFnc(disDate, "mm-dd");
-	
-			soppType = (jsonData[i].soppType === null || jsonData[i].soppType === "") ? "" : storage.code.etc[jsonData[i].soppType];
-			contType = (jsonData[i].contType === null || jsonData[i].contType === "") ? "" : storage.code.etc[jsonData[i].contType];
-			title = (jsonData[i].title === null || jsonData[i].title === "") ? "" : jsonData[i].title;
-			customer = (jsonData[i].customer === null || jsonData[i].customer == 0 || jsonData[i].customer === undefined) ? "" : storage.customer[jsonData[i].customer].name;
-			endUser = (jsonData[i].endUser === null || jsonData[i].endUser == 0) ? "" : storage.customer[jsonData[i].endUser].name;
-			employee = (jsonData[i].employee === null || jsonData[i].employee == 0) ? "" : storage.user[jsonData[i].employee].userName;
-			expectedSales = (jsonData[i].expectedSales === null || jsonData[i].expectedSales == 0) ? 0 : numberFormat(jsonData[i].expectedSales);
-			status = (jsonData[i].status === null || jsonData[i].status === "") ? "" : storage.code.etc[jsonData[i].status];
-	  
+			let vendor, category, name, desc;
+			vendor = storage.customer[jsonData[i].vendor].name;
+			category = (jsonData[i].category === null || jsonData[i].category === "" || jsonData[i].category === undefined) ? "" : jsonData[i].category;
+			name = (jsonData[i].name === null || jsonData[i].name === "" || jsonData[i].name === undefined) ? "" : jsonData[i].name;
+			desc = (jsonData[i].desc === null || jsonData[i].desc === "" || jsonData[i].desc === undefined) ? "" : jsonData[i].desc;
+			console.log(vendor);
 			str = [
 				{
-					"setData": setDate,
+					"setData": vendor,
 				},
 				{
-					"setData": title,
+					"setData": category,
 				},
 				{
-					"setData": employee,
+					"setData": name,
 				},
 				{
-					"setData": soppType,
+					"setData": desc,
 				},
 			];
 	
@@ -106,7 +98,7 @@ function drawProductList() {
 			data.push(str);
 		}
 	
-		let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawSoppList", result[0]);
+		let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawProductList", result[0]);
 		pageContainer[0].innerHTML = pageNation;
 	}
 
@@ -501,11 +493,11 @@ function searchInputKeyup(){
 function addSearchList(){
 	storage.searchList = [];
 
-	for(let i = 0; i < storage.customerList.length; i++){
+	for(let i = 0; i < storage.productList.length; i++){
 		let name, ceoName, taxId;
-		name = storage.customerList[i].name;
-		ceoName = storage.customerList[i].ceoName;
-		taxId = storage.customerList[i].taxId;
+		name = storage.productList[i].name;
+		ceoName = storage.productList[i].ceoName;
+		taxId = storage.productList[i].taxId;
 		storage.searchList.push("#" + name + "#" + ceoName + "#" + taxId);
 	}
 }

@@ -23,7 +23,7 @@ function getSalesList() {
 function drawSalesList() {
 	let container, dataJob = [], result, jsonData, header = [], data = [], ids = [], str, fnc, pageContainer, containerTitle, detailBackBtn, listSearchInput;
 	
-	if (storage.scheduleList === undefined) {
+	if (storage.scheduleList === "") {
 		msg.set("등록된 일정이 없습니다");
 	}
 	else {
@@ -32,9 +32,8 @@ function drawSalesList() {
 		}else{
 			jsonData = storage.searchDatas.sort(function(a, b){return b.created - a.created;});
 		}
+		result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 	}
-
-	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 	
 	containerTitle = $("#containerTitle");
 	detailBackBtn = $(".detailBackBtn");
@@ -81,7 +80,7 @@ function drawSalesList() {
 		},
 	];
 
-	if(jsonData === ""){
+	if(jsonData === "" || jsonData === undefined){
 		str = [
 			{
 				"setData": undefined,
@@ -404,11 +403,15 @@ function salesErrorView(){
 }
 
 function salesSuccessList(result){
-	storage.scheduleList = [];
-	for(let i = 0; i < result.length; i++){
-		if(result[i].job === "sales"){
-			storage.scheduleList.push(result[i]);
+	if(result.length > 0){
+		storage.scheduleList = [];
+		for(let i = 0; i < result.length; i++){
+			if(result[i].job === "sales"){
+				storage.scheduleList.push(result[i]);
+			}
 		}
+	}else{
+		storage.scheduleList = "";
 	}
 
 	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined){

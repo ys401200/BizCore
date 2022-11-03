@@ -21,9 +21,11 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import kr.co.bizcore.v1.domain.Product;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/product")
+@Slf4j
 public class ApiProductCtrl extends Ctrl{
 
     private static final Logger logger = LoggerFactory.getLogger(ApiProductCtrl.class);

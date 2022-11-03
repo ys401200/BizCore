@@ -44,6 +44,15 @@
 	font-family: 'NanumSquareRound';
 }
 
+.chart_container{
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.chart_container > canvas{
+	width: 98% !important;
+}
+
 .chart_1_info,
 .chart_2_info{
 	text-align: right;
@@ -53,15 +62,6 @@
 	font-size: 0.9rem;
 	border-radius: 14px;
 	line-height:23px;
-}
-
-.chart_container{
-	padding-left: 10px;
-	padding-right: 10px;
-}
-
-.chart_container > canvas{
-	width: 98% !important;
 }
 
 /* 메인 공지사항 시작*/

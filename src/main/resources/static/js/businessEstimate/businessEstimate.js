@@ -1008,9 +1008,9 @@ function estimateInsert(){
 			"no": null,
 			"version": 1,
 			"related": {
-				"parent": "empty:0000",
-				"previous": "empty:0000",
-				"next": ["empty:0000", "empty:0000"],
+				"parent": null,
+				"previous": null,
+				"next": [null],
 			},
 			"remarks": remarks,
 		};
@@ -1128,7 +1128,6 @@ function itemCalKeyup(e){
 	itemQuantity = thisEle.parent().parent().find(".itemQuantity").children();
 	itemAmount = thisEle.parent().parent().find(".itemAmount").children();
 	itemTotal = thisEle.parent().nextAll(".itemTotal");
-	
 	
 	if(itemQuantity.val() === ""){
 		itemQuantity.val(1);

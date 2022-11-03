@@ -542,14 +542,16 @@ public class SystemService extends Svc {
         int x = 0;
 
         list = productMapper.getProductList(compId);
-        result = "[";
-        if (list != null && list.size() > 0)
+        if (list != null && list.size() > 0) {
             for (x = 0; x < list.size(); x++) {
-                if (x > 0)
+                if (result == null)
+                    result = "[";
+                else
                     result += ",";
                 result += list.get(x).toJson();
             }
-        result = "]";
+        }
+        result += "]";
 
         return result;
     } // End of getProductList()

@@ -365,7 +365,7 @@ ckeditor = {
 storage.widget = {};
 storage.widget.chart = [
     {
-        "size":[3,2],
+        "size":[2,2],
 		"title": "연간 계획대비 실적",
 		"info": false,
     },
@@ -378,6 +378,11 @@ storage.widget.chart = [
         "size":[1,2],
 		"title": "누적 계획대비 실적",
 		"info": true,
+    },
+	{
+        "size":[1,2],
+		"title": "누적 판매방식 실적",
+		"info": false,
     },
 	{
         "size":[1,2],
@@ -453,6 +458,7 @@ storage.widget.set = [
 	"chart/1",
 	"chart/2",
 	"chart/3",
+	"chart/4",
     "notice/0",
 	"schedule/0",
 	"sopp/0",
