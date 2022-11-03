@@ -77,7 +77,6 @@ function drawProductList() {
 			category = (jsonData[i].category === null || jsonData[i].category === "" || jsonData[i].category === undefined) ? "" : jsonData[i].category;
 			name = (jsonData[i].name === null || jsonData[i].name === "" || jsonData[i].name === undefined) ? "" : jsonData[i].name;
 			desc = (jsonData[i].desc === null || jsonData[i].desc === "" || jsonData[i].desc === undefined) ? "" : jsonData[i].desc;
-			console.log(vendor);
 			str = [
 				{
 					"setData": vendor,
@@ -139,7 +138,7 @@ function productDetailView(e){
 }
 
 function productSuccessView(result){
-	let html, htmlSecond, name, ceoName, taxId, address, detailAddress, zipCode, email, emailForTaxbill, fax, phone, remark1, remark2, dataArray, notIdArray, searchContainer, containerTitle, detailBackBtn, listSearchInput, listRange, detailSecondTabs, pageContainer, crudAddBtn, crudUpdateBtn, crudDeleteBtn;
+	let html, vendor, category, datas, name, desc, dataArray, notIdArray, searchContainer, containerTitle, detailBackBtn, listSearchInput, listRange, detailSecondTabs, pageContainer, crudAddBtn, crudUpdateBtn, crudDeleteBtn;
 	detailSetFormList(result);
 	gridList = $(".gridList");
 	searchContainer = $(".searchContainer");
@@ -151,20 +150,15 @@ function productSuccessView(result){
 	crudAddBtn = $(".crudAddBtn");
 	crudUpdateBtn = $(".crudUpdateBtn");
 	crudDeleteBtn = $(".crudDeleteBtn");
-	notIdArray = [];
+	pageContainer = $(".pageContainer");
+	datas = ["vendor"];
+	notIdArray = ["vendor"];
 
+	vendor = (result.vendor === null || result.vendor === 0 || result.vendor === undefined) ? "" : storage.customer[result.vendor].name;
+	category = (result.category === null || result.category === "" || result.category === undefined) ? "" : result.category;
 	name = (result.name === null || result.name === "" || result.name === undefined) ? "" : result.name;
-	ceoName = (result.ceoName === null || result.ceoName === "" || result.ceoName === undefined) ? "" : result.ceoName;
-	taxId = (result.taxId === null || result.taxId === "" || result.taxId === undefined) ? "" : result.taxId;
-	zipCode = (result.zipCode === null || result.zipCode === 0 || result.zipCode === undefined) ? "" : result.zipCode;
-	address = (result.address === null || result.address === "" || result.address === undefined) ? "" : result.address[0];
-	detailAddress = (result.address === null || result.address === "" || result.address === undefined) ? "" : result.address[1];
-	email = (result.email === null || result.email === "" || result.email === undefined) ? "" : result.email;
-	emailForTaxbill = (result.emailForTaxbill === null || result.emailForTaxbill === "" || result.emailForTaxbill === undefined) ? "" : result.emailForTaxbill;
-	fax = (result.fax === null || result.fax === "" || result.fax === undefined) ? "" : result.fax;
-	phone = (result.phone === null || result.phone === "" || result.phone === undefined) ? "" : result.phone;
-	remark1 = (result.remark1 === null || result.remark1 === "" || result.remark1 === undefined) ? "" : result.remark1;
-	remark2 = (result.remark2 === null || result.remark2 === "" || result.remark2 === undefined) ? "" : result.remark2;
+	price = (result.price === null || result.price == 0 || result.price === undefined) ? "" : numberFormat(price)
+	desc = (result.desc === null || result.desc === "" || result.desc === undefined) ? "" : result.desc;
 
 	dataArray = [
 		{
@@ -173,47 +167,37 @@ function productSuccessView(result){
             "complete": "customer",
 			"keyup": "addAutoComplete(this);",
 			"onClick": "addAutoComplete(this);",
-			"value": name,
+			"value": vendor,
             "col": 2,
 		},
 		{
 			"title": "제품그룹(*)",
 			"elementId": "ceoName",
-			"value": ceoName,
+			"value": category,
             "col": 2,
 		},
 		{
 			"title": "상품명(*)",
 			"elementId": "taxId",
-			"value": taxId,
+			"value": name,
 			"col": 3,
 		},
         {
 			"title": "상품기본가격(*)",
 			"elementId": "taxId",
             "keyup": "inputNumberFormat(this)",
-			"value": taxId,
+			"value": price,
 		},
 		{
 			"title": "상품설명",
 			"type": "textarea",
-			"elementId": "remark1",
-			"value": remark1,
+			"elementId": "desc",
+			"value": desc,
 			"col": 4,
 		},
 	];
 
 	html = detailViewForm(dataArray);
-	htmlSecond = "<div class='tabs'>";
-	htmlSecond += "<input type='radio' id='customerTabSales' name='tabItem' data-content-id='customerTabSalesList' onclick='tabItemClick(this)' checked>";
-	htmlSecond += "<label class='tabItem' for='customerTabSales'></label>";
-	htmlSecond += "<input type='radio' id='customerTabContract' name='tabItem' data-content-id='customerTabContractList' onclick='tabItemClick(this)'>";
-	htmlSecond += "<label class='tabItem' for='customerTabContract'>계약정보</label>";
-	htmlSecond += "<input type='radio' id='customerTabTech' name='tabItem' data-content-id='customerTabTechList' onclick='tabItemClick(this)'>";
-	htmlSecond += "<label class='tabItem' for='customerTabTech'>기술지원정보</label>";
-	htmlSecond += "</div>";
-	detailSecondTabs.append(htmlSecond);
-	detailSecondTabs.show();
 	containerTitle.html(name);
 	gridList.html("");
 	detailBackBtn.css("display", "flex");
@@ -221,20 +205,18 @@ function productSuccessView(result){
 	listSearchInput.hide();
 	listRange.hide();
 	gridList.html(html);
+	gridList.css("padding-bottom", "20px");
 	crudAddBtn.hide();
 	crudUpdateBtn.attr("onclick", "enableDisabled(this, \"productUpdate();\", \"" + notIdArray + "\");");
 	crudUpdateBtn.css("display", "flex");
 	crudDeleteBtn.css("display", "flex");
-	setTabsLayOutMenu();
-	customerTabSalesList();
-	customerTabTechList();
+	pageContainer.hide();
 	gridList.show();
+	detailTrueDatas(datas);
 
 	setTimeout(() => {
-		detailCheckedTrueView();
 		ckeditor.config.readOnly = true;
 		window.setTimeout(setEditor, 100);
-		detailTabHide("customerTabSalesList");
 	}, 500);
 }
 
@@ -248,7 +230,7 @@ function productInsertForm(){
 	dataArray = [
 		{
 			"title": "공급사(*)",
-			"elementId": "name",
+			"elementId": "vendor",
             "complete": "customer",
 			"keyup": "addAutoComplete(this);",
 			"onClick": "addAutoComplete(this);",
@@ -257,65 +239,44 @@ function productInsertForm(){
 		},
 		{
 			"title": "제품그룹(*)",
-			"elementId": "ceoName",
+			"elementId": "category",
             "disabled": false,
             "col": 2,
 		},
 		{
 			"title": "상품명(*)",
-			"elementId": "taxId",
+			"elementId": "name",
             "disabled": false,
 			"col": 3,
 		},
         {
 			"title": "상품기본가격(*)",
-			"elementId": "taxId",
+			"elementId": "price",
             "disabled": false,
             "keyup": "inputNumberFormat(this)",
 		},
 		{
 			"title": "상품설명",
 			"type": "textarea",
-			"elementId": "remark1",
+			"elementId": "desc",
             "disabled": false,
 			"col": 4,
 		},
 	];
 
 	storage.formList = {
-		"companyInformation" : {
-			"manufacturer" : true,
-			"partner" : false,
-			"publicCustomer" : false,
-			"civilianCustomer" : false,
-		},
-		"typeOfSales" : {
-			"directProcurement" : true,
-		 	"indirectProcurement" : false, 
-			"agencyProcurement" : false, 
-			"maintenance" : false, 
-			"generalCompany" : false, 
-			"hospital" : false, 
-			"finance" : false, 
-			"public" : false,
-		},
-		"transactionInformation" : {
-			"supplier" : false,
-			"partner" : false, 
-			"client" : false, 
-			"notTrade" : false,
-		},
+		"no": 0,
+		"category" : "",
+		"categoryName": "",
+		"desc" : "",
+		"image" : "",
 		"name" : "",
-		"ceoName" : "",
-		"taxId" : "",
-		"zipCode" : 0,
-		"address" : ["", ""],
-		"email" : "",
-		"emailForTaxbill" : "",
-		"fax" : "",
-		"phone" : "",
-		"remark1" : "",
-		"remark2" : "",
+		"price" : 0,
+		"supplier" : 0,
+		"vendor" : 0,
+		"writer" : storage.my,
+		"created": 0,
+		"modified": 0,
 	};
 
 	html = detailViewForm(dataArray, "modal");
@@ -334,47 +295,25 @@ function productInsertForm(){
 }
 
 function productInsert(){
-	if($("#name").val() === ""){
-		msg.set("고객사명을 입력해주세요.");
+	if($("#vendor").val() === ""){
+		msg.set("공급사를 선택해주세요.");
+		$("#vendor").focus();
+		return false;
+	}else if($("#category").val() === ""){
+		msg.set("제품그룹을 입력하세요.");
+		$("#category").focus();
+		return false;
+	}else if($("#name").val() === ""){
+		msg.set("상품명을 입력해주세요.");
 		$("#name").focus();
 		return false;
-	}else if($("#taxId").val() === ""){
-		msg.set("사업자번호를 입력해주세요.");
-		$("#taxId").focus();
-		return false;
-	}else if($("#ceoName").val() === ""){
-		msg.set("대표자명을 입력해주세요.");
-		$("#ceoName").focus();
-		return false;
-	}else if($("#email").val() === ""){
-		msg.set("이메일을 입력해주세요.");
-		$("#email").focus();
-		return false;
-	}else if(!validateEmail($("#email").val())){
-		msg.set("이메일 형식이 바르지 않습니다.");
-		$("#email").focus();
-		return false;
-	}else if(!validateEmail($("#emailForTaxbill").val())){
-		msg.set("이메일 형식이 바르지 않습니다.");
-		$("#emailForTaxbill").focus();
-		return false;
-	}else if($("#fax").val() === ""){
-		msg.set("팩스를 입력해주세요.");
-		$("#fax").focus();
+	}else if($("#price").val() === ""){
+		msg.set("가격을 입력해주세요.");
+		$("#price").focus();
 		return false;
 	}else{
-		storage.formList.name = $("#name").val();
-		storage.formList.ceoName = $("#ceoName").val();
-		storage.formList.taxId = $("#taxId").val();
-		storage.formList.zipCode = parseInt($("#zipCode").val());
-		storage.formList.address = [$("#address").val(), $("#detailAddress").val()];
-		storage.formList.email = $("#email").val();
-		storage.formList.emailForTaxbill = $("#emailForTaxbill").val();
-		storage.formList.fax = $("#fax").val();
-		storage.formList.phone = $("#phone").val();
-		storage.formList.remark1 = $("#remark1").val();
-		storage.formList.remark2 = $("#remark2").val();
-		url = "/api/system/customer";
+		formDataSet();
+		url = "/api/product";
 		method = "post";
 		data = storage.formList;
 		type = "insert";

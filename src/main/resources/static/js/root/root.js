@@ -12,7 +12,6 @@ $(document).ready(() => {
 	}else{
 		window.setTimeout(gridWidget, 200);
 	}
-	
 });
 
 function gridWidget(){
@@ -41,7 +40,14 @@ function gridWidget(){
 
 		if(splitStr[0] === "chart"){
 			html += "<div class=\"" + splitStr[0] + "_container" + "\">";
-			html += "<canvas id=\"" + splitStr[0] + "_" + splitStr[1] + "\"></canvas>";
+
+			if(splitStr[1] == 0){
+				html += "<canvas id=\"" + splitStr[0] + "_" + splitStr[1] + "\" height=\"30\"></canvas>";
+			}else if(splitStr[1] == 3){
+				html += "<canvas id=\"" + splitStr[0] + "_" + splitStr[1] + "\" height=\"110\"></canvas>";
+			}else{
+				html += "<canvas id=\"" + splitStr[0] + "_" + splitStr[1] + "\"></canvas>";
+			}
 			
 			if(storage.widget[splitStr[0]][splitStr[1]].info){
 				html += "<br />";
@@ -104,7 +110,7 @@ function chartSuccess_1(result){
 	}
 
 	for(let i = 0; i < dataArray.length; i++){
-		temp += dataArray[i];
+		temp += dataArray[i] / 10;
 		salesArray.push(temp);
 	}
 
@@ -116,7 +122,7 @@ function chartSuccess_1(result){
 				{
 					label: "월별목표",
 					data: storage.monthTarget,
-					backgroundColor: "#5f46c6", //#4374D9
+					backgroundColor: "#5f46c6", 
 					borderColor: "#5f46c6",
 					borderWidth: 3,
 					radius: 0,
@@ -124,7 +130,7 @@ function chartSuccess_1(result){
 				{
 					label: "월별매출",
 					data: dataArray,
-					backgroundColor: "#76e3f1",//#B7F0B
+					backgroundColor: "#76e3f1",
 					borderColor: "#76e3f1",
 					borderWidth: 3,
 					radius: 0,
@@ -134,6 +140,7 @@ function chartSuccess_1(result){
 					label: "누적목표",
 					data: storage.accMonthTarget,
 					fill: false,
+					order: true,
 					lineTension: 0,
 					backgroundColor: "#A566FF",
 					borderColor: "#A566FF",
@@ -143,6 +150,7 @@ function chartSuccess_1(result){
 					label: "누적매출",
 					data: salesArray,
 					fill: false,
+					order: true,
 					lineTension: 0,
 					backgroundColor: "#F15F5F",
 					borderColor: "#F15F5F",
@@ -150,6 +158,9 @@ function chartSuccess_1(result){
 			],
 		},
 		options: {
+			layout: {
+				padding: 10,
+			},
 			scales: {
 			  	yAxes: [{
 					ticks: {
@@ -169,15 +180,16 @@ function chartSuccess_1(result){
 			tooltips: { 
 				callbacks: { 
 					label: function(tooltipItem, data) {
-						return " " + tooltipItem.yLabel.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "원"; 
+						if(tooltipItem.datasetIndex == 2 || tooltipItem.datasetIndex == 3){
+							return " " + (tooltipItem.yLabel * 10).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "원"; 
+						}else{
+							return " " + tooltipItem.yLabel.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "원"; 
+						}
 					} 
 				 },
 			},
 		}
 	});
-
-	console.log("cal: " + t);
-	console.log("total: " + parseInt(100000000 + 1200000000 + 1600000000 + 1100000000 + 1300000000 + 180000000 + 1400000000 + 1500000000 + 1700000000 + 1900000000 + 800000000 + 600000000));
 }
 
 function chartError_1(){
@@ -1015,7 +1027,7 @@ function goalList(){
 			storage.accMonthTarget = [];
 
 			for(let i = 0; i < storage.monthTarget.length; i++){
-				temp += storage.monthTarget[i];
+				temp += storage.monthTarget[i] / 10;
 				storage.accMonthTarget.push(temp);
 			}
 		}
