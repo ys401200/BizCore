@@ -529,52 +529,54 @@ function menuActive(){
 	let i = null, pathName = null, fullStr = null, firstStr = null, lastStr = null, strLength = null, sideMenu = null, mainTopMenu = null;
 	
 	pathName = $("#pathName").val();
-	mainTopMenu = $(".mainTopMenu");
-	sideMenu = $(".sideMenu");
-	strLength = pathName.length;
-	i = 0;
-
-	if(pathName === "root"){
-		mainTopMenu.find("ul li button").removeAttr("class");
-		mainTopMenu.find("ul li button[data-keyword='business']").attr("class", "active");
-		readyTopPageActive();
-		sideMenu.css("background-color", "#3e3e9e;");
-	}else if(pathName === "mypage"){
-		mainTopMenu.find("ul li button").removeAttr("class");
-		mainTopMenu.find("ul li button").eq(0).attr("class", "active");
-		readyTopPageActive();
-		sideMenu.css("background-color", "#3e3e9e;");
-	}else{
-		readyTopPageActive();
-
-		while(i <= strLength){
-			fullStr = pathName.charAt(i);
+	if(pathName !== undefined){
+		mainTopMenu = $(".mainTopMenu");
+		sideMenu = $(".sideMenu");
+		strLength = pathName.length;
+		i = 0;
 	
-			if(fullStr == fullStr.toUpperCase()){
-				firstStr = pathName.substring(0, i).toLowerCase();
-				lastStr = pathName.substring(i, strLength).toLowerCase();
-				
-				mainTopMenu.find("ul li button").removeAttr("class");
-				mainTopMenu.find("ul li button[data-keyword='"+firstStr+"']").attr("class", "active");
-
-				sideMenu.find("ul[id='"+firstStr+"']").attr("class", "active");
-				sideMenu.find("ul[id='"+firstStr+"']").find("a[href='"+"/"+firstStr+"/"+lastStr+"']").parents("#panel").prev().attr("class", "active");
-				sideMenu.find("ul[id='"+firstStr+"']").find("a[href='"+"/"+firstStr+"/"+lastStr+"']").parents("#panel").prev().find("#slideSpan").text("-");
-				sideMenu.find("ul[id='"+firstStr+"']").find("a[href='"+"/"+firstStr+"/"+lastStr+"']").parents("#panel").attr("class", "active");
-				sideMenu.find("ul[id='"+firstStr+"']").find("a[href='"+"/"+firstStr+"/"+lastStr+"']").attr("class", "active");
-
-				if(firstStr === "business"){
-					sideMenu.css("background-color", "#3e3e9e;");
-				}else if(firstStr === "gw"){
-					sideMenu.css("background-color", "#425da8;");
-				}else{
-					sideMenu.css("background-color", "#406c92;");
+		if(pathName === "root"){
+			mainTopMenu.find("ul li button").removeAttr("class");
+			mainTopMenu.find("ul li button[data-keyword='business']").attr("class", "active");
+			readyTopPageActive();
+			sideMenu.css("background-color", "#3e3e9e;");
+		}else if(pathName === "mypage"){
+			mainTopMenu.find("ul li button").removeAttr("class");
+			mainTopMenu.find("ul li button").eq(0).attr("class", "active");
+			readyTopPageActive();
+			sideMenu.css("background-color", "#3e3e9e;");
+		}else{
+			readyTopPageActive();
+	
+			while(i <= strLength){
+				fullStr = pathName.charAt(i);
+		
+				if(fullStr == fullStr.toUpperCase()){
+					firstStr = pathName.substring(0, i).toLowerCase();
+					lastStr = pathName.substring(i, strLength).toLowerCase();
+					
+					mainTopMenu.find("ul li button").removeAttr("class");
+					mainTopMenu.find("ul li button[data-keyword='"+firstStr+"']").attr("class", "active");
+	
+					sideMenu.find("ul[id='"+firstStr+"']").attr("class", "active");
+					sideMenu.find("ul[id='"+firstStr+"']").find("a[href='"+"/"+firstStr+"/"+lastStr+"']").parents("#panel").prev().attr("class", "active");
+					sideMenu.find("ul[id='"+firstStr+"']").find("a[href='"+"/"+firstStr+"/"+lastStr+"']").parents("#panel").prev().find("#slideSpan").text("-");
+					sideMenu.find("ul[id='"+firstStr+"']").find("a[href='"+"/"+firstStr+"/"+lastStr+"']").parents("#panel").attr("class", "active");
+					sideMenu.find("ul[id='"+firstStr+"']").find("a[href='"+"/"+firstStr+"/"+lastStr+"']").attr("class", "active");
+	
+					if(firstStr === "business"){
+						sideMenu.css("background-color", "#3e3e9e;");
+					}else if(firstStr === "gw"){
+						sideMenu.css("background-color", "#425da8;");
+					}else{
+						sideMenu.css("background-color", "#406c92;");
+					}
+	
+					break;
 				}
-
-				break;
+		
+				i++;
 			}
-	
-			i++;
 		}
 	}
 }
