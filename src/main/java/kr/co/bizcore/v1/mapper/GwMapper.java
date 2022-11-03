@@ -213,4 +213,7 @@ public interface GwMapper {
 
         @Update("UPDATE bizcore.saved_docapp SET deleted = now() WHERE compId = #{compId} and userNo = #{userNo} and no = #{no} ")
         public int delSavedLine(@Param("compId") String compId, @Param("userNo") String userNo, @Param("no") String no);
+
+        @Select("SELECT formid FROM bizcore.doc_app WHERE deleted IS NULL AND compid = #{compId} AND docNo = #{docNo}")
+        public String getFormIdWithDocNo(@Param("compId") String compId, @Param("docNo") String docNo);
 }

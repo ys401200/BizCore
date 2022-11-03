@@ -665,7 +665,7 @@ public class GwService extends Svc {
     public String askAppDoc(String compId, String docNo, int ordered, int ask, String comment, String title, String doc,
             String[][] appLine, String[] files, HashMap<String, String> attached, String appData, String userNo,
             String appDoc) {
-        String result = null, revision = null, savedName = null, fileName = null, dept = null, t = null;
+        String result = null, revision = null, savedName = null, fileName = null, dept = null, t = null,  formId = null;
         JSONObject json = null;
         int writer = -9999, appType = -9999, no = -9999, x = -1, y = -1;
         List<String> prvFiles = null, tFiles = null, newFiles = null;
@@ -819,7 +819,13 @@ public class GwService extends Svc {
             map = gwMapper.getNextAppData(compId, docNo, ordered);
 
             if (map == null) { // 결재절차가 종료된 경우
-                notes.sendNewNotes(compId, 0, writer, "결재 완료 되었습니다.", "{\"func\":\"docApp\",\"no\":\"" + docNo + "\"}");
+                formId = gwMapper.getFormIdWithDocNo(compId, docNo);
+                if(formId != null && formId.equals("doc_Form_SalesReport")){
+                
+                    notes.sendNewNotes(compId, 0, writer, "결재 완료 되었습니다.<br /><a href=\\u0022/business/contract/" + docNo + "\\u0022>계약 등록하기</a>", "{\"func\":\"docApp\",\"no\":\"" + docNo + "\"}");
+                }else{
+                    notes.sendNewNotes(compId, 0, writer, "결재 완료 되었습니다.<br /><a href=\\u0022/gw/mydraft/" + docNo + "\\u0022>바로가기</a>", "{\"func\":\"docApp\",\"no\":\"" + docNo + "\"}");
+                }
                 gwMapper.setCompleteStatus(compId, docNo, 3);
                 result = "ok";
             } else {

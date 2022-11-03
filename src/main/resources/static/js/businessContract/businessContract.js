@@ -10,6 +10,7 @@ $(document).ready(() => {
 });
 
 function getContractList() {
+	
 	let url, method, data, type;
 
 	url = "/api/contract";

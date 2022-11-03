@@ -463,7 +463,7 @@ String related =null;
             @RequestBody String requestBody, @PathVariable("docNo") String docNo, @PathVariable("ordered") int ordered,
             @PathVariable("ask") int ask) {
         String result = null, compId = null, userNo = null, data = null, aesIv = null, aesKey = null, lang = null,
-                title = null, comment = null, doc = null, appData = null, customer = null, sopp = null, appDoc;
+                title = null, comment = null, doc = null, appData = null, customer = null, sopp = null, appDoc = null;
         String[] files = null, ts = null;
         String[][] appLine = null;
         HttpSession session = null;
