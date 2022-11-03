@@ -106,7 +106,7 @@
 					.subDataDetail>div {
 					  text-align: center;
 					  display: grid;
-					  grid-template-columns: 15% 10% 15% 10% 15% 10% 15% 10%;
+					  grid-template-columns: 15% 10% 10%15%  10% 15%   10%15%;
 					  border-left: 1px solid black;
 					  border-top: 1px solid black;
 					}
@@ -574,6 +574,7 @@
 							  <div class="doc_Form_SalesReport_content"></div>
 							  <textarea class="inputs" id="doc_Form_SalesReport_content" data-detail=""
 								onkeyup="this.dataset.detail=this.value"></textarea>
+								
 							</div>
 						  </div>
 						</div>

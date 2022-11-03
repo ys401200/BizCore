@@ -882,6 +882,9 @@ function reportInsert() {
   formId = storage.formList[selectedFormNo].id;
   let detailType = $("input[name='" + formId + "_RD']:checked").attr("id");
 
+
+
+////////// sopp 
   let soppVal = $("#" + formId + "_sopp").val();
   let customerVal = $("#" + formId + "_infoCustomer").val();
   let soppResult = "";
