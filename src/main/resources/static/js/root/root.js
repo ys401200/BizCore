@@ -108,72 +108,72 @@ function chartSuccess_1(result){
 		salesArray.push(temp);
 	}
 
-	// new Chart(chart_0, {
-	// 	type: "bar",
-	// 	data: {
-	// 		labels: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
-	// 		datasets: [
-	// 			{
-	// 				label: "월별목표",
-	// 				data: storage.monthTarget,
-	// 				backgroundColor: "#5f46c6", //#4374D9
-	// 				borderColor: "#5f46c6",
-	// 				borderWidth: 3,
-	// 				radius: 0,
-	// 			},
-	// 			{
-	// 				label: "월별매출",
-	// 				data: dataArray,
-	// 				backgroundColor: "#76e3f1",//#B7F0B
-	// 				borderColor: "#76e3f1",
-	// 				borderWidth: 3,
-	// 				radius: 0,
-	// 			},
-	// 			{
-	// 				type: "line",
-	// 				label: "누적목표",
-	// 				data: storage.accMonthTarget,
-	// 				fill: false,
-	// 				lineTension: 0,
-	// 				backgroundColor: "#A566FF",
-	// 				borderColor: "#A566FF",
-	// 			},
-	// 			{
-	// 				type: "line",
-	// 				label: "누적매출",
-	// 				data: salesArray,
-	// 				fill: false,
-	// 				lineTension: 0,
-	// 				backgroundColor: "#F15F5F",
-	// 				borderColor: "#F15F5F",
-	// 			},
-	// 		],
-	// 	},
-	// 	options: {
-	// 		scales: {
-	// 		  	yAxes: [{
-	// 				ticks: {
-	// 					beginAtZero: true,
-	// 					callback: function(value, index) {
-	// 						if(value.toString().length > 8){
-	// 							return (Math.floor(value / 100000000)).toLocaleString("ko-KR") + " (억원)";
-	// 						}else if(value.toString().length > 4){
-	// 							return (Math.floor(value / 10000)).toLocaleString("ko-KR") + " (만원)";
-	// 						}else{
-	// 							return value.toLocaleString("ko-KR"); 
-	// 						}
-	// 					}
-	// 				},
-	// 			}]
-	// 	  	},
-	// 		tooltips: { 
-	// 			callbacks: { 
-	// 				label: function(tooltipItem, data) {
-	// 					return " " + tooltipItem.yLabel.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "원"; 
-	// 				} 
-	// 			 },
-	// 		},
-	// 	}
+	new Chart(chart_0, {
+		type: "bar",
+		data: {
+			labels: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
+			datasets: [
+				{
+					label: "월별목표",
+					data: storage.monthTarget,
+					backgroundColor: "#5f46c6", //#4374D9
+					borderColor: "#5f46c6",
+					borderWidth: 3,
+					radius: 0,
+				},
+				{
+					label: "월별매출",
+					data: dataArray,
+					backgroundColor: "#76e3f1",//#B7F0B
+					borderColor: "#76e3f1",
+					borderWidth: 3,
+					radius: 0,
+				},
+				{
+					type: "line",
+					label: "누적목표",
+					data: storage.accMonthTarget,
+					fill: false,
+					lineTension: 0,
+					backgroundColor: "#A566FF",
+					borderColor: "#A566FF",
+				},
+				{
+					type: "line",
+					label: "누적매출",
+					data: salesArray,
+					fill: false,
+					lineTension: 0,
+					backgroundColor: "#F15F5F",
+					borderColor: "#F15F5F",
+				},
+			],
+		},
+		options: {
+			scales: {
+			  	yAxes: [{
+					ticks: {
+						beginAtZero: true,
+						callback: function(value, index) {
+							if(value.toString().length > 8){
+								return (Math.floor(value / 100000000)).toLocaleString("ko-KR") + " (억원)";
+							}else if(value.toString().length > 4){
+								return (Math.floor(value / 10000)).toLocaleString("ko-KR") + " (만원)";
+							}else{
+								return value.toLocaleString("ko-KR"); 
+							}
+						}
+					},
+				}]
+		  	},
+			tooltips: { 
+				callbacks: { 
+					label: function(tooltipItem, data) {
+						return " " + tooltipItem.yLabel.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "원"; 
+					} 
+				 },
+			},
+		}
 	});
 
 	console.log("cal: " + t);
