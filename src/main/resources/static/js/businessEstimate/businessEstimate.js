@@ -777,13 +777,13 @@ function clickedEstmVer(el){
 	x = el.dataset.idx*1;
 	cnt.innerHTML = storage.estmVerList[x].doc;
 	cnt.style.display = "inline-block";
-	cnt.style.height = Math.floor(400 / storage.estmVerList[x].width * storage.estmVerList[x].height) + "px";
+	// cnt.style.height = Math.floor(400 / storage.estmVerList[x].width * storage.estmVerList[x].height) + "px";
 	cnt.style.fontSize = (400 / 120) + "px";
 } // End of clickedEstmVer()
 
 // 견적 목록을 그리는 함수
 function drawEstmList(){
-	let cnt, html, x, t;
+	let cnt, html, x, t, disDate;
 	cnt = document.getElementsByClassName("estimateList")[0];
 
 	html = "<div>";
@@ -795,11 +795,14 @@ function drawEstmList(){
 	html += "</div>";
 	
 	for(x = 0 ; x < storage.estmList.length ; x++){
+		disDate = dateDis(storage.estmList[x].date);
+		disDate = dateFnc(disDate, "yyyy.mm.dd");
+
 		html += "<div onclick=\"clickedEstimate(this)\" data-idx=\"" + x + "\" data-no=\"" + storage.estmList[x].no + "\">";
-		html += "<div style=\"text-align:center\">" + storage.estmList[x].form + "</div>";
+		html += "<div style=\"text-align:center\">" + disDate + "</div>";
 		html += "<div style=\"text-align:left\">" + storage.estmList[x].title + "</div>";
 		html += "<div style=\"text-align:center\">" + storage.estmList[x].version + "</div>";
-		html += "<div style=\"text-align:center\">" + dateFormat(storage.estmList[x].date) + "</div>";
+		html += "<div style=\"text-align:center\">" + storage.estmList[x].form + "</div>";
 		html += "<div style=\"text-align:right\">" + storage.estmList[x].total.toLocaleString() + "</div></div>";
 		html += "</div>";
 	}

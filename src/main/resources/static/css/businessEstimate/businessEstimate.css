@@ -93,11 +93,10 @@
     display: none;
     vertical-align: top;
     float: right;
-    width: 34vw;
     border-top: 1px solid #ededed;
     border-left: 1px solid #ededed;
     border-right: 1px solid #ededed;
-    width: 45vw;
+    width: 85%;
 }
 .versionList > div{
     display: grid;
@@ -116,6 +115,7 @@
     font-size: 3.33333px;
     border: 1px solid #ededed;
     padding: 10px;
+    width: 40%;
 }
 
 .eachContainer{display:none;font-size:14px;}
@@ -426,6 +426,7 @@
     color: #ffffff;
     font-weight: 600;
     padding: 5px;
+    font-size: 0.5rem;
 }
 
 .pdfMainContentHeader > div:last-child{
