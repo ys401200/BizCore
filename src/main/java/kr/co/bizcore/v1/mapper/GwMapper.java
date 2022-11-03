@@ -27,10 +27,10 @@ public interface GwMapper {
                         @Param("ordered") int ordered, @Param("employee") String employee,
                         @Param("appType") String appType, @Param("doc") String doc, @Param("appData") String appData);
 
-        @Insert("INSERT INTO bizcore.doc_app_detail(compId, docNo, ordered, employee, appType, doc, appData, `read`, approved) VALUES(#{compId}, #{docNo}, #{ordered}, #{employee}, #{appType}, #{doc}, #{appData}, NOW(), NOW())")
+        @Insert("INSERT INTO bizcore.doc_app_detail(compId, docNo, ordered, employee, appType, doc, appData, `read`, approved,related) VALUES(#{compId}, #{docNo}, #{ordered}, #{employee}, #{appType}, #{doc}, #{appData}, NOW(), NOW(),#{related})")
         public int addNewDocAppLineForSelf(@Param("compId") String compId, @Param("docNo") String docNo,
                         @Param("ordered") int ordered, @Param("employee") String employee,
-                        @Param("appType") String appType, @Param("doc") String doc, @Param("appData") String appData);
+                        @Param("appType") String appType, @Param("doc") String doc, @Param("appData") String appData, @Param("related") String related);
 
         // 결재 대기 및 예정문서의 문서 번호를 가져오는 메서드
         @Select("SELECT a.docno, IF(a.apptype=4,'refer',IF(a.ordered=b.ordered,'wait','due')) AS stat FROM bizcore.doc_app_detail a, "

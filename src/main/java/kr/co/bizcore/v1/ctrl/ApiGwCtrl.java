@@ -237,7 +237,7 @@ public class ApiGwCtrl extends Ctrl {
         JSONObject json = null;
         JSONArray jarr = null, tj = null;
         int docNo = -1, x = -1;
-
+        String related = null;
         session = request.getSession();
         aesKey = (String) session.getAttribute("aesKey");
         aesIv = (String) session.getAttribute("aesIv");
@@ -267,7 +267,7 @@ public class ApiGwCtrl extends Ctrl {
             formId = json.getString("formId");
             customer = json.getString("customer");
             appDoc = json.getString("appDoc");
-
+            related = json.getString("related");
             // 첨부파일명에 대한 배열 전환 처리
             jarr = json.getJSONArray("attached");
             if (jarr != null && jarr.length() > 0) {
@@ -295,7 +295,7 @@ public class ApiGwCtrl extends Ctrl {
 
             // 결재문서 처리 서비스로직으로 데이터 전달
             docNo = gwService.addAppDoc(compId, dept, title, userNo, sopp, customer, formId, readable, appDoc, files,
-                    attached, appLine);
+                    attached, appLine, related);
 
             result = "{\"result\":\"ok\",\"data\":\"" + docNo + "\"}";
         }
@@ -316,7 +316,7 @@ public class ApiGwCtrl extends Ctrl {
         JSONObject json = null;
         JSONArray jarr = null, tj = null;
         int x = -1;
-
+String related =null;
         session = request.getSession();
         aesKey = (String) session.getAttribute("aesKey");
         aesIv = (String) session.getAttribute("aesIv");
@@ -345,6 +345,7 @@ public class ApiGwCtrl extends Ctrl {
             customer = json.getString("customer");
             appDoc = json.getString("appDoc");
             temp = json.isNull("temp") ? null : json.getString("temp");
+            related = json.getString("related");
             if (!json.isNull("appLine")) {
                 jarr = json.getJSONArray("appLine");
                 appLine = jarr.toString();
@@ -352,7 +353,7 @@ public class ApiGwCtrl extends Ctrl {
 
             // 결재문서 처리 서비스로직으로 데이터 전달
             docNo = gwService.addAppTemp(compId, title, userNo, sopp, customer, formId, readable, appDoc, appLine,
-                    temp);
+                    temp, related);
 
             result = "{\"result\":\"ok\",\"data\":\"" + docNo + "\"}";
         }
@@ -757,6 +758,4 @@ public class ApiGwCtrl extends Ctrl {
         return result;
     }
 
-
-    
 }

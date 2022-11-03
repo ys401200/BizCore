@@ -47,7 +47,7 @@ public class GwService extends Svc {
         }
         if (result != null)
             result += "]";
-        
+
         return result;
     }
 
@@ -63,7 +63,7 @@ public class GwService extends Svc {
     // 결재문서 상신 처리
     public int addAppDoc(String compId, String dept, String title, String userNo, String sopp, String customer,
             String formId, String readable, String appDoc, String[] files, HashMap<String, String> attached,
-            String[][] appLine) {
+            String[][] appLine, String related) {
         int year = -1, x = -1, no = 0;
         String docNo = null, str = null, savedName = null, appData = null;
         String[] line = null;
@@ -81,7 +81,7 @@ public class GwService extends Svc {
         // ========================= 결재선에 대한 처리
         appData = "{\"sopp\":" + (sopp == null ? sopp : "\"" + sopp + "\"") + ",\"customer\":"
                 + (customer == null ? customer : "\"" + customer + "\"") + "}";
-        gwMapper.addNewDocAppLineForSelf(compId, docNo, 0, userNo, "0", appDoc, appData); // 작성자 본인 입력
+        gwMapper.addNewDocAppLineForSelf(compId, docNo, 0, userNo, "0", appDoc, appData, related); // 작성자 본인 입력
         if (appLine != null && appLine.length > 0)
             for (x = 0; x < appLine.length; x++) {
                 line = appLine[x];
@@ -103,7 +103,7 @@ public class GwService extends Svc {
     } // End of addAppDoc()
 
     public String addAppTemp(String compId, String title, String userNo, String sopp, String customer, String formId,
-            String readable, String appDoc, String appLine, String temp) {
+            String readable, String appDoc, String appLine, String temp, String related) {
         String result = null;
         int no = 0;
         long t = 0;
@@ -136,7 +136,7 @@ public class GwService extends Svc {
                 return null; // 헤더정보 입력 실패
 
             // ========================= 결재선에 대한 처리
-            gwMapper.addNewDocAppLineForSelf(compId, docNo, 0, userNo, "0", appDoc, appData);
+            gwMapper.addNewDocAppLineForSelf(compId, docNo, 0, userNo, "0", appDoc, appData, related);
             result = docNo;
         } else { // 기 저장된 임시문서를 수정하는 경우
             if (title != null)
@@ -392,14 +392,15 @@ public class GwService extends Svc {
         return result;
     }
 
-    // 문서 관리번호를 입력받아서 결재 문서 정보, 본문, 결재선, 첨부파일 정보를 전달하는 메서드 / 오류메시지 : notFound /
+    // 문서 관리번호를 입력받아서 결재 문서 정보, 본문, 결재선, 첨부파일 + related 정보를 전달하는 메서드 / 오류메시지 :
+    // notFound /
     // errorInAppLine / appDocContentIsEmpty / permissionDenied
     public String getAppDocAndDetailInfo(String compId, String docNo, String dept, String userNo, String aesKey,
             String aesIv) {
         String result = null;
         String sql1 = "SELECT no, docNo, writer, formId, docbox, title, confirmNo, status, readable FROM bizcore.doc_app WHERE deleted IS NULL AND readable <> 'temp' AND compId = ? AND docno = ?";
         String sql2 = "SELECT ordered, employee, appType, CAST(UNIX_TIMESTAMP(`read`)*1000 AS CHAR) AS `read`, isModify, CAST(UNIX_TIMESTAMP(approved)*1000 AS CHAR) AS approved, CAST(UNIX_TIMESTAMP(rejected)*1000 AS CHAR) AS rejected, comment FROM bizcore.doc_app_detail WHERE deleted IS NULL AND retrieved IS NULL AND compId = ? AND docNo = ? ORDER BY ordered";
-        String sql3 = "SELECT doc, appData FROM bizcore.doc_app_detail WHERE deleted IS NULL AND compId = ? AND ordered = (SELECT MAX(ordered) FROM bizcore.doc_app_detail WHERE deleted IS NULL AND compId = ? AND docNo = ? AND retrieved IS NULL AND (approved IS NOT NULL OR rejected IS NOT NULL)) AND docNo = ?";
+        String sql3 = "SELECT doc, appData ,related FROM bizcore.doc_app_detail WHERE deleted IS NULL AND compId = ? AND ordered = (SELECT MAX(ordered) FROM bizcore.doc_app_detail WHERE deleted IS NULL AND compId = ? AND docNo = ? AND retrieved IS NULL AND (approved IS NOT NULL OR rejected IS NOT NULL)) AND docNo = ?";
         String sql4 = "SELECT COUNT(user_no) x FROM bizcore.user_dept WHERE comp_id = ? AND user_no = ? AND dept_id IN (SELECT dept_id FROM bizcore.user_dept WHERE comp_id = ? AND user_no = ?)";
         String no = null, writer = null, formId = null, docbox = null, title = null, confirmNo = null;
         String ordered = null, employee = null, appType = null, read = null, isModify = null, approved = null,
@@ -416,7 +417,7 @@ public class GwService extends Svc {
         ResultSet rs = null;
         JSONObject json = null;
         int x = 0, status = -9999;
-
+        String related = null;
         try {
             conn = sqlSession.getConnection();
             pstmt = conn.prepareStatement(sql1);
@@ -438,6 +439,7 @@ public class GwService extends Svc {
                 // 권한 : 완결되지 않은 문서는 readable가 true인 경우 결재선의 인원과 부서원, false인 경우 결재선에 있는 인원만 읽기 가능
                 // / 완결된 문서는 부서원들 읽기 가능
                 readable = t != null && t.equals("dept");
+
             }
             rs.close();
             pstmt.close();
@@ -450,7 +452,8 @@ public class GwService extends Svc {
             pstmt.setString(3, compId);
             pstmt.setString(4, userNo);
             rs = pstmt.executeQuery();
-            if(rs.next())   sameDept = rs.getInt(1) > 0;
+            if (rs.next())
+                sameDept = rs.getInt(1) > 0;
             rs.close();
             pstmt.close();
             // ========== ↑ 동일부서 권한 확인 ==========
@@ -507,7 +510,7 @@ public class GwService extends Svc {
             // 상태코드 / -3 : 반려 / -2 : 결재취소 / -1 : 회수 / 0 : 임시저장 / 1 : 진행중 / 2 : 수신대기 / 3 : 완료
             // 결재 취소 및 임시저장은 작성자만 읽기 가능, 반려는 작성자와 반려자 이전 결재선 인원만 읽기 가능,
             // 회수/진행은 결재선에 존재하는 인원 중 수신자 제외 읽기 가능, 수신대기 및 완료는 젠체 읽기 가능
-            
+
             if (!appAll.contains(userNo) && !sameDept) {
                 return "permissionDenied";
             } else if (status == -3) {
@@ -613,6 +616,8 @@ public class GwService extends Svc {
                     if (sopp == null || sopp.equals(""))
                         sopp = "null";
                 }
+
+                related = rs.getString("related");
             }
             rs.close();
             pstmt.close();
@@ -644,6 +649,7 @@ public class GwService extends Svc {
             result += ("\"sopp\":" + sopp + ",");
             result += ("\"revisionHistory\":" + revisionHistory + ",");
             result += ("\"fileList\":" + files + ",");
+            result += ("\"related\":" + related + ",");
             result += ("\"doc\":\"" + encAes(doc, aesKey, aesIv) + "\"}");
 
         } catch (SQLException e) {

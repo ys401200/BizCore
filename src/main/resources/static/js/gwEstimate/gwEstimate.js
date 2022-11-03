@@ -1,8 +1,8 @@
 
 let estmNo = 'VTEK202210_0001';
-
-prepareForm();
 init();
+prepareForm();
+
 
 
 
@@ -16,7 +16,7 @@ function prepareForm() {
   if (aesIv !== undefined && aesIv !== null) cipher.aes.iv = aesIv;
   getProductList();
   getEstmVerList(estmNo);
- 
+
   ckeditor.config.readOnly = false;
   window.setTimeout(setEditor, 100);
 } // End of prepare()
@@ -67,14 +67,14 @@ function getEstmVerList(estmNo) {
         storage.estmVerList = list;
         setEstData();
         getSavedLine();
-      
+
       } else {
         console.log(data.msg);
       }
     }
   });
 
-  
+
 } // End of getEstimateList()
 
 
@@ -127,7 +127,7 @@ function setEstData() {
   $("#" + formId + "_created").val(getYmdSlash());
   let total = data.total.toLocaleString();
   $("#" + formId + "_soppTargetAmt").val(total + "원");
- let cip = storage.estmVerList[3].related.estimate.cip; 
+
 
   // 매입 매출의 항목 세팅 
   let items = storage.estmVerList[3].related.estimate.items;
@@ -158,17 +158,19 @@ function setEstData() {
     outAmount = Number(items[i].quantity) * Number(items[i].price);
     if (items[0].vat == true) {
       outTax = Number(items[i].quantity) * Number(items[i].price) * 0.1;
+    } else {
+      outTax = 0;
     }
     outTotal = outAmount + outTax;
     outHtml = outSumTarget.html();
     outHtml += "<div class='detailcontentDiv'><input value='매출' disabled style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs doc_Form_SalesReport_type'></input>"
     outHtml += "<input type='date' onchange='this.dataset.detail=this.value;' data-detail='' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs doc_Form_SalesReport_date'></input>"
-    outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='' onkeyup='this.dataset.detail=this.value'  class='inputs doc_Form_SalesReport_customer'></input>"
-    outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'  data-detail='' onkeyup='this.dataset.detail=this.value'  data-detail='' value='" + items[i].product + "' class='inputs doc_Form_SalesReport_product'></input>"
-    outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'oninput='setNum(this)' data-detail=''  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' data-detail='' value='" + items[i].price + "' class='inputs doc_Form_SalesReport_price'></input>"
-    outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail=''  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' data-detail='' value='" + items[i].quantity + "' class='inputs doc_Form_SalesReport_quantity'></input>"
-    outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' data-detail='' value='" + outAmount.toLocaleString() + "'  class='inputs doc_Form_SalesReport_amount'></input>"
-    outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' data-detail='' value='" + outTax.toLocaleString() + "'  class='inputs doc_Form_SalesReport_tax'></input>"
+    outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='' onkeyup='this.dataset.detail=this.value'  class='outCus inputs doc_Form_SalesReport_customer'></input>"
+    outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'  data-detail='' onkeyup='this.dataset.detail=this.value'  data-detail='' value='" + items[i].product + "' class='inputs outProduct doc_Form_SalesReport_product'></input>"
+    outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'oninput='setNum(this)' data-detail=''  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' data-detail='' value='" + items[i].price + "' class='inputs outPrice doc_Form_SalesReport_price'></input>"
+    outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail=''  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' data-detail='' value='" + items[i].quantity + "' class='inputs outQuantity doc_Form_SalesReport_quantity'></input>"
+    outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' data-detail='' value='" + outAmount.toLocaleString() + "'  class='inputs outAmount doc_Form_SalesReport_amount'></input>"
+    outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' data-detail='' value='" + outTax.toLocaleString() + "'  class='inputs  doc_Form_SalesReport_tax'></input>"
     outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' data-detail='' value='" + outTotal.toLocaleString() + "' class='outTotal inputs doc_Form_SalesReport_total'></input>"
     outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='' onkeyup='this.dataset.detail=this.value' class='inputs doc_Form_SalesReport_remark'></input>"
     outHtml += "<div class='detailcontentbox'><input type='checkbox' class='detailBox'></div></div>"
@@ -191,19 +193,19 @@ function setEstData() {
 
   getTotalCount();
 
+
 }
 
 
-
-
 function reportInsert() {
+
+
   let title, content, readable, formId, appDoc, dept;
   let appLine = [];
- 
+
   formId = "doc_Form_SalesReport";
 
-
-////////// sopp 
+  ////////// sopp 
   let soppVal = $("#" + formId + "_sopp").val();
   let customerVal = $("#" + formId + "_infoCustomer").val();
   let soppResult = "";
@@ -222,11 +224,11 @@ function reportInsert() {
 
   title = $("#" + formId + "_title").val();
 
-  //content = CKEDITOR.instances[formId + "_content"].getData();
+  content = CKEDITOR.instances[formId + "_content"].getData();
   $("#" + formId + "_content").attr("data-detail", content);
   // content = $("#" + formId + "_content").val();
-  readable = $("input[name=authority]:checked").val();
-  appDoc = $(".reportInsertForm").html();
+  readable = "dept";
+  appDoc = $(".estDiv").html();
   appDoc = appDoc
     .replaceAll("\n", "")
     .replaceAll("\r", "")
@@ -260,6 +262,31 @@ function reportInsert() {
 
 
 
+  let items = [];
+
+  for (let i = 0; i < $(".outProduct").length; i++) {
+    let tt = {
+      "outProduct": $(".outProduct")[i].value,
+      "outPrice": $(".outPrice")[i].value,
+      "outQuantity": $(".outQuantity")[i].value
+    };
+
+    items.push(tt);
+  }
+
+
+  let related = {
+    "next": "",
+    "parent": "",
+    "previous": "estimate:" + estmNo + "",
+    "outSumAllTotal": $(".outSumAllTotal").val(),
+    "profit": $("." + formId + "_profit").val(),
+    "items": items
+  }
+
+
+  related = JSON.stringify(related);
+
   let data = {
     title: title,
     sopp: soppResult,
@@ -272,28 +299,35 @@ function reportInsert() {
     formId: formId,
     readable: readable,
     temp: temp,
-    // related: related,
+    related: related,
   };
+
+
   console.log(data);
   data = JSON.stringify(data);
   data = cipher.encAes(data);
 
-  if ($(".createLineBtn").css("display") == "none") {
-    alert("결재 문서 양식을 선택하세요");
-  } else if (
-    formId != "doc_Form_Pur" &&
-    detailType == undefined &&
-    formId != "doc_Form_Dip" &&
-    detailType == undefined &&
-    formId != "doc_Form_leave" &&
-    detailType == undefined &&
-    formId != "doc_Form_extension" &&
-    detailType == undefined &&
-    formId != "doc_Form_SalesReport" &&
-    detailType == undefined
-  ) {
-    alert("결재문서 상세 타입을 선택하세요");
-  } else if (title == "") {
+  let target = $(".mainDiv")[0];
+  let inputsArr = target.getElementsByTagName("input");
+
+  for (let i = 0; i < inputsArr.length; i++) {
+    if (inputsArr[i].dataset.detail !== undefined) {
+      inputsArr[i].dataset.detail = inputsArr[i].value
+    }
+  }
+
+
+  let textAreaArr = target.getElementsByTagName("textarea")[0];
+  textAreaArr.dataset.detail = textAreaArr.value;
+
+  if (target.getElementsByTagName("select").length > 0) {
+    let selectArr = target.getElementsByTagName("select")[0];
+    selectArr.dataset.detail = selectArr.value;
+  }
+
+
+
+  if (title == "") {
     alert("제목을 입력하세요");
   } else if ($("#" + formId + "_line").html() == "결재선") {
     alert("결재선을 생성하세요");
@@ -319,8 +353,9 @@ function reportInsert() {
       contentType: "text/plain",
       success: (result) => {
         if (result.result === "ok") {
+
           alert("기안 완료");
-          location.href = "/gw/mydraft";
+          // location.href = "/gw/mydraft";
         } else {
           alert(result.msg);
         }
@@ -406,6 +441,7 @@ function setCusDataList() {
     // 거래처 데이터 리스트 만들기
     dataListHtml = "<datalist id='_customer'>";
     for (x in storage.customer) {
+
       dataListHtml +=
         "<option data-value='" +
         x +
@@ -505,12 +541,40 @@ function setSoppList(formId) {
   soppTarget.innerHTML = soppHtml;
   $("#" + formId + "_sopp").attr("list", "_infoSopp");
 
+  let soppNo = storage.estmVerList[3].related.parent.split(":")[1];
+  console.log(storage.sopp);
+  for (let i = 0; i < storage.sopp.length; i++) {
+    if (storage.sopp[i].no + "" == soppNo) {
 
-  if (formId == "doc_Form_Resolution" && $(".btnDiv").children.length == 2) {
-    $(".btnDiv").append(
-      "<button onclick='getCardDetails()'>법인카드 내역</button>"
-    );
+      $("#" + formId + "_sopp").val(storage.sopp[i].title);
+      $("#" + formId + "_infoCustomer").val(storage.customer[storage.sopp[i].customer].name);
+      $("#" + formId + "_endCustName").val(storage.customer[storage.sopp[i].customer].name);
+      $("#" + formId + "_cntrctMtn").val(storage.sopp[i].customer);
+      $("#" + formId + "_soppType").val(storage.sopp[i].soppType);
+      $("#" + formId + "_soppTargetAmt").val(storage.sopp[i].expectedSales.toLocaleString() + "원");
+      $("#" + formId + "_title").val(storage.sopp[i].title + " 수주판매보고");
+      $(".outCus").val(storage.customer[storage.sopp[i].customer].name);
+
+    }
   }
+
+  let target = $(".mainDiv")[0];
+  let inputsArr = target.getElementsByTagName("input");
+
+  for (let i = 0; i < inputsArr.length; i++) {
+    if (inputsArr[i].dataset.detail !== undefined) {
+      inputsArr[i].dataset.detail = inputsArr[i].value
+    }
+  }
+  let textAreaArr = target.getElementsByTagName("textarea")[0];
+  textAreaArr.dataset.detail = textAreaArr.value;
+  if (target.getElementsByTagName("select").length > 0) {
+    for (let i = 0; i < target.getElementsByTagName("select").length; i++) {
+      let selectArr = target.getElementsByTagName("select")[i];
+      selectArr.dataset.detail = selectArr.value;
+    }
+  }
+
 
 }
 
