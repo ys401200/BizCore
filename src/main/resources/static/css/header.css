@@ -239,6 +239,10 @@ textarea{
 .cke_editable_inline > p{
 	margin: 0;
 }
+
+.cke_focus{
+	height: 300px;
+}
 /* ckeditor 끝 */
 
 /* plus 버튼 시작 */

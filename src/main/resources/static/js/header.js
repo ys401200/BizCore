@@ -1162,7 +1162,7 @@ function numberFormat(num){
 		setNumber = parseInt(num).toLocaleString("en-US");
 		return setNumber;
 	}else{
-		return "format undefined";
+		return 0;
 	}
 }
 

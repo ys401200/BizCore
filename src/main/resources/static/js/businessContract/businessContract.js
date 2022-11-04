@@ -755,7 +755,6 @@ function contractInsertForm() {
 	];
 
 	html = detailViewForm(dataArray, "modal");
-
 	modal.show();
 	modal.content.css("min-width", "70%");
 	modal.content.css("max-width", "70%");

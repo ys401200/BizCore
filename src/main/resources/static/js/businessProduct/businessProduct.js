@@ -21,7 +21,7 @@ function getProductList() {
 }
 
 function drawProductList() {
-	let container, result, job, jsonData, header = [], data = [], ids = [], disDate, setDate, str, fnc, pageContainer, containerTitle, detailBackBtn, listSearchInput;
+	let container, result, job, jsonData, header = [], data = [], ids = [], str, fnc, pageContainer, containerTitle, detailBackBtn, listSearchInput;
 	
 	if (storage.productList === undefined) {
 		msg.set("등록된 상품이 없습니다");
@@ -72,9 +72,9 @@ function drawProductList() {
 		data.push(str);
 	}else{
 		for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
-			let vendor, category, name, desc;
+			let vendor, categoryName, name, desc;
 			vendor = storage.customer[jsonData[i].vendor].name;
-			category = (jsonData[i].category === null || jsonData[i].category === "" || jsonData[i].category === undefined) ? "" : jsonData[i].category;
+			categoryName = (jsonData[i].categoryName === null || jsonData[i].categoryName === "" || jsonData[i].categoryName === undefined) ? "" : jsonData[i].categoryName;
 			name = (jsonData[i].name === null || jsonData[i].name === "" || jsonData[i].name === undefined) ? "" : jsonData[i].name;
 			desc = (jsonData[i].desc === null || jsonData[i].desc === "" || jsonData[i].desc === undefined) ? "" : jsonData[i].desc;
 			str = [
@@ -82,7 +82,7 @@ function drawProductList() {
 					"setData": vendor,
 				},
 				{
-					"setData": category,
+					"setData": categoryName,
 				},
 				{
 					"setData": name,
@@ -138,7 +138,7 @@ function productDetailView(e){
 }
 
 function productSuccessView(result){
-	let html, vendor, category, datas, name, desc, dataArray, notIdArray, searchContainer, containerTitle, detailBackBtn, listSearchInput, listRange, detailSecondTabs, pageContainer, crudAddBtn, crudUpdateBtn, crudDeleteBtn;
+	let html, vendor, category, price, datas, name, desc, dataArray, notIdArray, searchContainer, containerTitle, detailBackBtn, listSearchInput, listRange, detailSecondTabs, pageContainer, crudAddBtn, crudUpdateBtn, crudDeleteBtn;
 	detailSetFormList(result);
 	gridList = $(".gridList");
 	searchContainer = $(".searchContainer");
@@ -157,7 +157,7 @@ function productSuccessView(result){
 	vendor = (result.vendor === null || result.vendor === 0 || result.vendor === undefined) ? "" : storage.customer[result.vendor].name;
 	category = (result.category === null || result.category === "" || result.category === undefined) ? "" : result.category;
 	name = (result.name === null || result.name === "" || result.name === undefined) ? "" : result.name;
-	price = (result.price === null || result.price == 0 || result.price === undefined) ? "" : numberFormat(price)
+	price = (result.price === null || result.price == 0 || result.price === undefined) ? "" : numberFormat(result.price);
 	desc = (result.desc === null || result.desc === "" || result.desc === undefined) ? "" : result.desc;
 
 	dataArray = [

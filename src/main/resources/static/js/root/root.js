@@ -118,6 +118,24 @@ function chartSuccess_1(result){
 			labels: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
 			datasets: [
 				{
+					type: "line",
+					label: "누적목표",
+					data: storage.accMonthTarget,
+					fill: false,
+					lineTension: 0,
+					backgroundColor: "#A566FF",
+					borderColor: "#A566FF",
+				},
+				{
+					type: "line",
+					label: "누적매출",
+					data: salesArray,
+					fill: false,
+					lineTension: 0,
+					backgroundColor: "#F15F5F",
+					borderColor: "#F15F5F",
+				},
+				{
 					label: "월별목표",
 					data: storage.monthTarget,
 					backgroundColor: "#5f46c6", 
@@ -133,29 +151,9 @@ function chartSuccess_1(result){
 					borderWidth: 3,
 					radius: 0,
 				},
-				{
-					type: "line",
-					label: "누적목표",
-					data: storage.accMonthTarget,
-					fill: false,
-					order: true,
-					lineTension: 0,
-					backgroundColor: "#A566FF",
-					borderColor: "#A566FF",
-				},
-				{
-					type: "line",
-					label: "누적매출",
-					data: salesArray,
-					fill: false,
-					order: true,
-					lineTension: 0,
-					backgroundColor: "#F15F5F",
-					borderColor: "#F15F5F",
-				},
 			],
 		},
-		options: {
+		options: {	
 			responsive: false,
 			scales: {
 			  	yAxes: [{
@@ -309,7 +307,7 @@ function chartSuccess_3(result){
 }
 
 function chartError_3(){
-	alert("두번째 차트에 에러가 있습니다.\n다시 확인해주세요.");
+	alert("세번째 차트에 에러가 있습니다.\n다시 확인해주세요.");
 }
 
 function addChart_4(){
@@ -378,7 +376,7 @@ function chartSuccess_4(result){
 }
 
 function chartError_4(){
-	alert("세번째 차트에 에러가 있습니다.\n다시 확인해주세요.");
+	alert("네번째 차트에 에러가 있습니다.\n다시 확인해주세요.");
 }
 
 function addChart_5(){
@@ -404,6 +402,11 @@ function addChart_5(){
 			],
 		},
 		options: {
+			layout:{
+				padding: {
+					top: 50,
+				}
+			},
 			scales: {
 				y: {
 					beginAtZero: true
@@ -899,7 +902,6 @@ function getSoppList() {
 						{
 							"setData": status,
 						},
-						
 					];
 
 					fnc = "rootDetailView(\"sopp\", this);";
