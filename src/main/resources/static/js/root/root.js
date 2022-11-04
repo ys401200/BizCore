@@ -42,16 +42,16 @@ function gridWidget(){
 			html += "<div class=\"" + splitStr[0] + "_container" + "\">";
 
 			if(splitStr[1] == 0){
-				html += "<canvas id=\"" + splitStr[0] + "_" + splitStr[1] + "\" height=\"30\"></canvas>";
-			}else if(splitStr[1] == 3){
-				html += "<canvas id=\"" + splitStr[0] + "_" + splitStr[1] + "\" height=\"110\"></canvas>";
+				html += "<canvas id=\"" + splitStr[0] + "_" + splitStr[1] + "\" height=\"400vh\"></canvas>";
+			}else if(splitStr[1] == 4){
+				html += "<canvas id=\"" + splitStr[0] + "_" + splitStr[1] + "\" height=\"15vh\"></canvas>";
 			}else{
 				html += "<canvas id=\"" + splitStr[0] + "_" + splitStr[1] + "\"></canvas>";
 			}
 			
 			if(storage.widget[splitStr[0]][splitStr[1]].info){
 				html += "<br />";
-				html += "<div class=\"" + splitStr[0] + "_" + splitStr[1] + "_info" + "\"></div>"
+				html += "<div class=\"chartInfo\"></div>"
 			}
 
 			html += "</div>"
@@ -81,7 +81,7 @@ function addChart(){
 
 function addChart_1(){
 	let now, url, method, data, type, chart_0_body;
-	chart_0_body = $(".chart_0_body");
+	chart_0_body = document.getElementsByClassName("chart_0_body");
 
 	if(chart_0_body !== undefined){
 		now = new Date();
@@ -96,16 +96,14 @@ function addChart_1(){
 }
 
 function chartSuccess_1(result){
-	let chart_0, dataArray = [], t = 0, temp = 0, salesArray = [];
+	let chart_0, dataArray = [], temp = 0, salesArray = [];
 	chart_0 = document.getElementById('chart_0').getContext('2d');
 
 	for(let i = 0; i < 12; i++){
 		if(result[i] === undefined){
 			dataArray.push(0);
-			t += 0
 		}else{
 			dataArray.push(result[i].sales);
-			t += result[i].sales;
 		}
 	}
 
@@ -158,9 +156,6 @@ function chartSuccess_1(result){
 			],
 		},
 		options: {
-			layout: {
-				padding: 10,
-			},
 			scales: {
 			  	yAxes: [{
 					ticks: {
@@ -198,7 +193,7 @@ function chartError_1(){
 
 function addChart_2(){
 	let now, url, method, data, type, chart_1_body;
-	chart_1_body = $(".chart_1_body");
+	chart_1_body = document.getElementsByClassName("chart_1_body");
 	
 	if(chart_1_body !== undefined){
 		now = new Date();
@@ -213,16 +208,11 @@ function addChart_2(){
 }
 
 function chartSuccess_2(result){
-	let chart_1, infoHtml = "", calResult = 0;
+	let chart_1, infoHtml = "", nowDate, month, monthTarget;
 	chart_1 = document.getElementById('chart_1').getContext('2d');
-
-	for(let i = 0; i < result.length; i++){
-		if(result[i] === undefined){
-			calResult += 0;
-		}else{
-			calResult += result[i].sales
-		}
-	}
+	nowDate = new Date();
+	month = nowDate.getMonth();
+	monthTarget = (result[month] === undefined) ? 0 : result[month].sales;
 
 	new Chart(chart_1, {
 		type: "doughnut",
@@ -230,7 +220,67 @@ function chartSuccess_2(result){
 			labels: ["달성률", "미달성률"],
 			datasets: [
 				{
-					data: [(calResult / 13380000000 * 100).toFixed(2), (100 - (calResult / 13380000000 * 100).toFixed(2))],
+					data: [100, 0],
+					backgroundColor: [
+						"#ff5377",
+						"#95c1e6"
+					],
+					radius:0,
+					borderWidth: 1,
+				},
+			],
+		},
+		options: {
+			scales: {
+				y: {
+					beginAtZero: true
+				}
+			},
+		},
+	});
+
+	infoHtml = "<div>목표 0</div>";
+	infoHtml += "<div>매출 0</div>";
+	infoHtml += "<div>달성률 0.00%<div>";
+	infoHtml += "<hr />";
+	infoHtml += "<div>-0</div>";
+	chart_1.canvas.parentNode.getElementsByClassName("chartInfo")[0].innerHTML = infoHtml;
+}
+
+function chartError_2(){
+	alert("두번째 차트에 에러가 있습니다.\n다시 확인해주세요.");
+}
+
+function addChart_3(){
+	let now, url, method, data, type, chart_2_body;
+	chart_2_body = document.getElementsByClassName("chart_2_body");
+	
+	if(chart_2_body !== undefined){
+		now = new Date();
+		now = now.toISOString().substring(0, 10).replaceAll("-", "");
+	
+		url = "/api/accounting/statistics/sales/" + now;
+		method = "get";
+		type = "detail";
+	
+		crud.defaultAjax(url, method, data, type, chartSuccess_3, chartError_3);
+	}
+}
+
+function chartSuccess_3(result){
+	let chart_2, infoHtml = "", nowDate, month, monthTarget;
+	chart_2 = document.getElementById('chart_2').getContext('2d');
+	nowDate = new Date();
+	month = nowDate.getMonth();
+	monthTarget = (result[month] === undefined) ? 0 : result[month].sales;
+
+	new Chart(chart_2, {
+		type: "doughnut",
+		data: {
+			labels: ["달성률", "미달성률"],
+			datasets: [
+				{
+					data: [(monthTarget / storage.monthTarget[month] * 100).toFixed(2), (100 - (monthTarget / storage.monthTarget[month] * 100).toFixed(2))],
 					backgroundColor: [
 						"#31cca2",
 						"#95c1e6"
@@ -249,34 +299,63 @@ function chartSuccess_2(result){
 		},
 	});
 
-	infoHtml = "<div>목표 13,380,000,000</div>";
-	infoHtml += "<div>매출 " + parseInt(calResult).toLocaleString("en-US") + "</div>";
-	infoHtml += "<div>달성률 " + (calResult / 13380000000 * 100).toFixed(2) + "%<div>";
+	infoHtml = "<div>목표 " + (parseInt(storage.monthTarget[month])).toLocaleString("en-US") + "</div>";
+	infoHtml += "<div>매출 " + parseInt(monthTarget).toLocaleString("en-US") + "</div>";
+	infoHtml += "<div>달성률 " + (monthTarget / storage.monthTarget[month] * 100).toFixed(2) + "%<div>";
 	infoHtml += "<hr />";
-	infoHtml += "<div>-" + parseInt(13380000000 - calResult).toLocaleString("en-US") + "</div>";
-
-	$(".chart_1_info").html(infoHtml);
+	infoHtml += "<div>-" + parseInt(storage.monthTarget[month] - monthTarget).toLocaleString("en-US") + "</div>";
+	chart_2.canvas.parentNode.getElementsByClassName("chartInfo")[0].innerHTML = infoHtml;
 }
 
-function chartError_2(){
+function chartError_3(){
 	alert("두번째 차트에 에러가 있습니다.\n다시 확인해주세요.");
 }
 
-function addChart_3(){
-	let chart_2, infoHtml = "";
-	chart_2 = document.getElementById('chart_2').getContext('2d');
+function addChart_4(){
+	let now, url, method, data, type, chart_3_body;
+	chart_3_body = document.getElementsByClassName("chart_3_body");
+	
+	if(chart_3_body !== undefined){
+		now = new Date();
+		now = now.toISOString().substring(0, 10).replaceAll("-", "");
+	
+		url = "/api/accounting/statistics/sales/" + now;
+		method = "get";
+		type = "detail";
+	
+		crud.defaultAjax(url, method, data, type, chartSuccess_4, chartError_4);
+	}
+}
 
-	new Chart(chart_2, {
+function chartSuccess_4(result){
+	let chart_3, infoHtml = "", dataArray = [], monthTarget = 0;
+	chart_3 = document.getElementById('chart_3').getContext('2d');
+
+	for(let i = 0; i < 12; i++){
+		if(result[i] === undefined){
+			dataArray.push(0);
+		}else{
+			dataArray.push(result[i].sales);
+		}
+	}
+
+	for(let i = 0; i < dataArray.length; i++){
+		monthTarget += dataArray[i];
+	}
+
+	new Chart(chart_3, {
 		type: "doughnut",
 		data: {
 			labels: ["달성률", "미달성률"],
 			datasets: [
 				{
-					data: [70, 30],
+					data: [(monthTarget / (storage.accMonthTarget[11] * 10) * 100).toFixed(2), (100 - (monthTarget / (storage.accMonthTarget[11] * 10) * 100).toFixed(2))],
 					backgroundColor: [
-						"#247de5",
-						"#f3db5f"
-					]
+						"#31cca2",
+						"#95c1e6"
+					],
+					radius:0,
+					borderWidth: 1,
 				},
 			],
 		},
@@ -285,54 +364,25 @@ function addChart_3(){
 				y: {
 					beginAtZero: true
 				}
-			}
+			},
 		},
 	});
 
-	infoHtml = "<div>목표 13,660,000,000</div>";
-	infoHtml += "<div>매출 8,045,953,735</div>";
-	infoHtml += "<div>달성률 58.90%<div>";
+	infoHtml = "<div>목표 " + (parseInt(storage.accMonthTarget[11] * 10)).toLocaleString("en-US") + "</div>";
+	infoHtml += "<div>매출 " + parseInt(monthTarget).toLocaleString("en-US") + "</div>";
+	infoHtml += "<div>달성률 " + (monthTarget / (storage.accMonthTarget[11] * 10) * 100).toFixed(2) + "%<div>";
 	infoHtml += "<hr />";
-	infoHtml += "<div>-5,614,046,265</div>";
-
-	$(".chart_2_info").html(infoHtml);
+	infoHtml += "<div>-" + parseInt((storage.accMonthTarget[11] * 10) - monthTarget).toLocaleString("en-US") + "</div>";
+	chart_3.canvas.parentNode.getElementsByClassName("chartInfo")[0].innerHTML = infoHtml;
 }
 
-function addChart_4(){
-	let chart_3;
-	chart_3 = document.getElementById('chart_3').getContext('2d');
-
-	new Chart(chart_3, {
-		type: "pie",
-		data: {
-			labels: ["조달직판", "조달간판", "조달대행", "직접판매", "간접판매", "기타"],
-			datasets: [
-				{
-					data: [310, 200, 110, 220, 100, 50],
-					backgroundColor: [
-						"#29cea6",
-						"#2795f7",
-						"#f7d766",
-						"#ff5377",
-						"#7952e9",
-						"#d9d9d9",
-					]
-				},
-			],
-		},
-		options: {
-			scales: {
-				y: {
-					beginAtZero: true
-				}
-			}
-		},
-	});
+function chartError_4(){
+	alert("세번째 차트에 에러가 있습니다.\n다시 확인해주세요.");
 }
 
 function addChart_5(){
 	let chart_4;
-	chart_4 = document.getElementById('chart_3').getContext('2d');
+	chart_4 = document.getElementById('chart_4').getContext('2d');
 
 	new Chart(chart_4, {
 		type: "pie",

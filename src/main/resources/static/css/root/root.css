@@ -53,8 +53,7 @@
 	width: 98% !important;
 }
 
-.chart_1_info,
-.chart_2_info{
+.chartInfo{
 	text-align: right;
 	padding: 10px;
 	background-color: #eaedf3;

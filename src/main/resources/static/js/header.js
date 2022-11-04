@@ -369,6 +369,11 @@ storage.widget.chart = [
 		"title": "연간 계획대비 실적",
 		"info": false,
     },
+	{
+        "size":[1,2],
+		"title": "월간 유지보수 실적",
+		"info": true,
+    },
     {
         "size":[1,2],
 		"title": "월간 계획대비 실적",
@@ -384,11 +389,6 @@ storage.widget.chart = [
 		"title": "누적 판매방식 실적",
 		"info": false,
     },
-	{
-        "size":[1,2],
-		"title": "누적 판매방식 실적",
-		"info": false,
-    }
 ];
 storage.widget.schedule = [
     {
