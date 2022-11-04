@@ -9,13 +9,10 @@
 				<div class="container">
 					<hr />
 					<div><span>전자결재 홈</span>
-						<div>
-							<!-- <button class="waitVerCard" onclick="drawWaitCard()">카드</button><button class="waitVerList"
-								onclick="drawWaitList()">리스트</button> -->
-						</div>
 					</div>
-					<div class="comTabWrap">
-						<div class="comTabTitle">
+					
+					<div>
+						<div >
 							
 							<label for="waitBtn">결재 대기 문서<input type="radio" class="waitBtn" name="domTab" id="waitBtn" onclick="drawWaitCard(0)"></label>
 								
@@ -33,9 +30,6 @@
 						<div class="waitList listDiv"></div>
 						<div class="pageContainer waitPage"></div></div>
 					</div>
-
-
-
 
 
 				</div>

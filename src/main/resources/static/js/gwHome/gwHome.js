@@ -69,11 +69,12 @@ function drawWaitCard(container) {
   let btns = [".waitBtn", ".dueBtn", ".receiveBtn", ".referBtn"];
   $(btns[container]).css("background-color", "white");
   $(btns[container]).parent().css("border-bottom", "none");
-
+  $(btns[container]).parent().css("background-color", "white");
   for (let i = 0; i < btns.length; i++) {
     if (i != container) {
       $(btns[i]).css("background-color", "#eaeff3");
       $(btns[i]).parent().css("border-bottom", "1px solid #406c92");
+      $(btns[i]).parent().css("background-color", "#eaeff3");
     }
   }
 
@@ -141,6 +142,7 @@ function drawWaitCardBtn() {
     if (i != container) {
       $(btns[i]).css("background-color", "#eaeff3");
       $(btns[i]).parent().css("border-bottom", "1px solid #406c92");
+
     }
   }
 

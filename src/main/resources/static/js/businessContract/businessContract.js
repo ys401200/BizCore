@@ -1128,3 +1128,38 @@ function setFormListDefaultData() {
 }
 
 
+// //////////////////////////////기존 데이터 테이블 바꾸기 //////////////////////////
+let count = 0;
+
+function mtncArrSet() {
+   let cnt = storage.contract;
+
+
+   let contNo = cnt[count].no;
+   $.ajax({
+      url: "/api/system/maintanence/" + contNo,
+      method: "get",
+      dataType: "json",
+      cache: false,
+      contentType: "text/plain",
+      success: (result) => {
+         if (result.data != "ok") {
+            count++;
+            if (count < storage.contract.length) {
+
+               mtncArrSet();
+            }
+
+         } else {
+            count++;
+            if (count < storage.contract.length) {
+
+               mtncArrSet();
+            }
+         }
+
+      }
+   });
+
+
+}

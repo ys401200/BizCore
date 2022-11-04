@@ -69,6 +69,18 @@ button {
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
 	margin: 0 1em;
+	text-align: center;
+}
+.container>div:nth-of-type(2)>div:first-of-type label {
+	
+	padding:0.5em;
+	border-left: 1px solid #406c92;
+	border-top: 1px solid #406c92;
+	border-bottom: 1px solid #406c92;
+	background-color: #eaeff3;
+}
+.container>div:nth-of-type(2)>div:first-of-type label:last-of-type {
+	border-right: 1px solid #406c92;
 }
 
 .container>div:nth-of-type(2)>div:first-of-type>div {
