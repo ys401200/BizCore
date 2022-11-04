@@ -49,10 +49,6 @@
 	padding-right: 10px;
 }
 
-.chart_container > canvas{
-	width: 98% !important;
-}
-
 .chartInfo{
 	text-align: right;
 	padding: 10px;

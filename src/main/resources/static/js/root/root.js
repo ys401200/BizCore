@@ -42,11 +42,11 @@ function gridWidget(){
 			html += "<div class=\"" + splitStr[0] + "_container" + "\">";
 
 			if(splitStr[1] == 0){
-				html += "<canvas id=\"" + splitStr[0] + "_" + splitStr[1] + "\" height=\"400vh\"></canvas>";
+				html += "<canvas id=\"" + splitStr[0] + "_" + splitStr[1] + "\" height=\"400\" width=\"550\"></canvas>";
 			}else if(splitStr[1] == 4){
-				html += "<canvas id=\"" + splitStr[0] + "_" + splitStr[1] + "\" height=\"15vh\"></canvas>";
+				html += "<canvas id=\"" + splitStr[0] + "_" + splitStr[1] + "\" height=\"100\" width=\"100\"></canvas>";
 			}else{
-				html += "<canvas id=\"" + splitStr[0] + "_" + splitStr[1] + "\"></canvas>";
+				html += "<canvas id=\"" + splitStr[0] + "_" + splitStr[1] + "\" width=\"200\" height=\"200\"></canvas>";
 			}
 			
 			if(storage.widget[splitStr[0]][splitStr[1]].info){
