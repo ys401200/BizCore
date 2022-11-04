@@ -156,6 +156,7 @@ function chartSuccess_1(result){
 			],
 		},
 		options: {
+			responsive: false,
 			scales: {
 			  	yAxes: [{
 					ticks: {

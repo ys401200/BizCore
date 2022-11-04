@@ -359,7 +359,11 @@ function customerSuccessView(result){
 		ckeditor.config.readOnly = true;
 		window.setTimeout(setEditor, 100);
 		detailTabHide("customerTabSalesList");
-	}, 500);
+	}, 100);
+
+	setTimeout(() => {
+		document.getElementsByClassName("cke_textarea_inline")[0].style.height = "300px";
+	}, 300);
 }
 
 function customerErrorView(){
@@ -593,6 +597,10 @@ function customerInsertForm(){
 	modal.close.attr("onclick", "modal.hide();");
 	ckeditor.config.readOnly = false;
 	window.setTimeout(setEditor, 100);
+
+	setTimeout(() => {
+		document.getElementsByClassName("cke_textarea_inline")[0].style.height = "300px";
+	}, 300);
 }
 
 function customerInsert(){

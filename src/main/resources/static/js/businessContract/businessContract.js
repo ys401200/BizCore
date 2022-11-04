@@ -801,6 +801,10 @@ function contractInsertForm() {
 		ckeditor.config.readOnly = false;
 		window.setTimeout(setEditor, 100);
 	}, 100);
+
+	setTimeout(() => {
+		document.getElementsByClassName("cke_textarea_inline")[0].style.height = "300px";
+	}, 300);
 }
 
 function contractInsert() {

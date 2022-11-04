@@ -124,6 +124,7 @@ public class ApiProductCtrl extends Ctrl{
         ObjectMapper mapper = null;
         boolean e = false;
 
+        mapper = new ObjectMapper();
         session = request.getSession();
         aesKey = (String) session.getAttribute("aesKey");
         aesIv = (String) session.getAttribute("aesIv");
