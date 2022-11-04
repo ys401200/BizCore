@@ -1210,6 +1210,40 @@ function tempSave() {
     appLine = null;
   }
 
+
+  let related = { 
+    "next": "",
+    "parent": "",
+    "previous": "",
+   
+};
+  let items = [];
+
+
+
+  if (formId == "doc_Form_SalesReport") {
+    for (let i = 0; i < $(".outProduct").length; i++) {
+      let tt = {
+        "outProduct": $(".outProduct")[i].value,
+        "outPrice": $(".outPrice")[i].value,
+        "outQuantity": $(".outQuantity")[i].value
+      };
+      items.push(tt);
+    }
+    related = {
+      "next": "",
+      "parent": "",
+      "previous": "",
+      "outSumAllTotal": $(".outSumAllTotal").val(),
+      "profit": $("." + formId + "_profit").val(),
+      "items": items
+    }
+
+    
+  }
+
+related = JSON.stringify(related);
+
   let data = {
     dept: dept,
     title: title,
@@ -1220,6 +1254,7 @@ function tempSave() {
     appDoc: appDoc,
     appLine: appLine,
     temp: temp,
+    related:related 
   };
   console.log(data);
   if (title == "") {
