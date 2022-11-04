@@ -163,7 +163,7 @@ function productSuccessView(result){
 	dataArray = [
 		{
 			"title": "공급사(*)",
-			"elementId": "name",
+			"elementId": "vendor",
             "complete": "customer",
 			"keyup": "addAutoComplete(this);",
 			"onClick": "addAutoComplete(this);",
@@ -172,19 +172,19 @@ function productSuccessView(result){
 		},
 		{
 			"title": "제품그룹(*)",
-			"elementId": "ceoName",
+			"elementId": "categoryName",
 			"value": category,
             "col": 2,
 		},
 		{
 			"title": "상품명(*)",
-			"elementId": "taxId",
+			"elementId": "name",
 			"value": name,
 			"col": 3,
 		},
         {
 			"title": "상품기본가격(*)",
-			"elementId": "taxId",
+			"elementId": "price",
             "keyup": "inputNumberFormat(this)",
 			"value": price,
 		},
@@ -239,7 +239,7 @@ function productInsertForm(){
 		},
 		{
 			"title": "제품그룹(*)",
-			"elementId": "category",
+			"elementId": "categoryName",
             "disabled": false,
             "col": 2,
 		},
@@ -265,18 +265,14 @@ function productInsertForm(){
 	];
 
 	storage.formList = {
-		"no": 0,
-		"category" : "",
-		"categoryName": "",
+		"category" : 1,
+		"categoryName" : "",
 		"desc" : "",
-		"image" : "",
+		"image" : "0",
 		"name" : "",
 		"price" : 0,
-		"supplier" : 0,
 		"vendor" : 0,
 		"writer" : storage.my,
-		"created": 0,
-		"modified": 0,
 	};
 
 	html = detailViewForm(dataArray, "modal");
@@ -292,6 +288,10 @@ function productInsertForm(){
 	modal.close.attr("onclick", "modal.hide();");
 	ckeditor.config.readOnly = false;
 	window.setTimeout(setEditor, 100);
+
+	setTimeout(() => {
+		document.getElementsByClassName("cke_textarea_inline")[0].style.height = "300px";
+	}, 300);
 }
 
 function productInsert(){

@@ -230,7 +230,7 @@ function fileBoxInsertForm(){
 			"title": "제목(*)",
 			"elementId": "title",
 			"disabled": false,
-			"col": 4,
+			"col": 4,ssss
 		},
 		{
 			"title": "내용(*)",
@@ -261,6 +261,10 @@ function fileBoxInsertForm(){
 		ckeditor.config.readOnly = false;
 		window.setTimeout(setEditor, 100);
 	}, 100);
+
+	setTimeout(() => {
+		document.getElementsByClassName("cke_textarea_inline")[0].style.height = "300px";
+	}, 300);
 }
 
 function fileBoxUpdateForm(){
@@ -328,6 +332,10 @@ function fileBoxUpdateForm(){
 
 	ckeditor.config.readOnly = false;
 	window.setTimeout(setEditor, 100);
+
+	setTimeout(() => {
+		document.getElementsByClassName("cke_textarea_inline")[0].style.height = "300px";
+	}, 300);
 }
 
 function fileBoxInsert(){

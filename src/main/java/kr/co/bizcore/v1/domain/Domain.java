@@ -92,6 +92,7 @@ public abstract class Domain implements Comparable<Domain>{
             tableMap.put("Procure", "swc_pps");
             tableMap.put("Sopp", "swc_sopp");
             tableMap.put("TradeDetail", "swc_soppdata01");
+            tableMap.put("Product", "bizcore.product");
         }
         return tableMap;
     }
@@ -477,10 +478,10 @@ public abstract class Domain implements Comparable<Domain>{
             field.setAccessible(true);
             fieldName = fieldMap.get(field.getName()) != null ? fieldMap.get(field.getName()) : field.getName();
             
-            if(!table.contains("bizcore") && fieldName.equals("no"))  continue;
+            if(!table.contains("bizcore") && fieldName.equals("no")) continue;
 
             if(className.equals("Schedule")){
-                if(field.getName() != null && (field.getName().equals("no") || field.getName().equals("job") || fieldMap.get(field.getName()) == null))    continue; // Schedule 클래스에서 job는 테이블을 구분하기 위한 것이므로 생락함
+                if(field.getName() != null && (field.getName().equals("no") || field.getName().equals("job") || fieldMap.get(field.getName()) == null)) continue; // Schedule 클래스에서 job는 테이블을 구분하기 위한 것이므로 생락함
             }
 
             try{
@@ -488,7 +489,12 @@ public abstract class Domain implements Comparable<Domain>{
                 if(v == null)   continue;
 
                 if (field.getType().getName().equals(String.class.getName())) {
-                    str1 += ("," + fieldName);
+                    if(fieldName.equals("desc")){
+                        str1 += ("," + "`" + fieldName + "`");
+                    }else{
+                        str1 += ("," + fieldName);
+                    }
+
                     str2 += (",'" + String.class.cast(v) + "'");
                 } else if (field.getType().getName().equals("int")) {
                     str1 += ("," + fieldName);
