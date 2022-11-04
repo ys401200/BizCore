@@ -82,7 +82,8 @@
 
 .listContent > div:nth-child(2) > div:nth-child(odd){display:grid;grid-template-columns: 1fr 5fr 1fr;background-color: #3e3e9e;width:90%;}
 .listContent > div:nth-child(2) > div:nth-child(odd) > div:nth-child(odd){text-align: center;padding:5px;}
-.listContent > div:nth-child(2) > div:nth-child(odd) > div:nth-child(odd) > img{width:1.8rem;height:1.8rem;vertical-align: middle;margin:0 10px;opacity:0.5;}
+.image_btns > img{width:1.8rem;height:1.8rem;vertical-align: middle;margin:0 10px;opacity:0.5;display:none;}
+.edited > .image_btns > img{display:initial;}
 .listContent > div:nth-child(2) > div:nth-child(odd) > div:nth-child(3) > img:hover{opacity:1;cursor:pointer;}
 .listContent > div:nth-child(2) > div:nth-child(odd) > div:nth-child(even){
     color:white;
@@ -119,7 +120,7 @@
 .xEmpInput{
     border:none;
     padding:0;
-    font-size:0.9rem;
+    font-size:0.8rem;
     width:calc(100% - 3rem);
     height:calc(100% - 0.2rem);
     border-bottom: 2px solid #d6d6d5;
