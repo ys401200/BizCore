@@ -684,11 +684,12 @@ function clickedImgBtn(el, status){
 			"contentType":"text/plain",
 			"cache": false,
 			success: (data) => {
-
 				if (data.result === "ok") {
 					console.log("success");
+					getEmployeeDetailInfo(storage.basic.no, storage.collected.dept);
 				} else {
-					console.log("fsilure / " + data.msg);
+					msg.set("오류가 발생했습니다.");
+					console.log("failure / " + data.msg);
 				}
 			}
 		});
