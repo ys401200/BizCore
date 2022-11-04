@@ -214,10 +214,10 @@ public class ApiManageCtrl extends Ctrl{
             json = new JSONObject(data);
             xDept = json.isNull("dept") ? null : json.getString("dept");
             xAccounting = json.isNull("accounting") ? -1 : json.getBoolean("accounting") ? 1 : 0;
-            xDoc = json.isNull("doc") ? -1 : json.getBoolean("accounting") ? 1 : 0;
-            xHead = json.isNull("head") ? -1 : json.getBoolean("accounting") ? 1 : 0;
-            xHr = json.isNull("hr") ? -1 : json.getBoolean("accounting") ? 1 : 0;
-            xDocmng= json.isNull("docmng") ? -1 : json.getBoolean("accounting") ? 1 : 0;
+            xDoc = json.isNull("doc") ? -1 : json.getBoolean("doc") ? 1 : 0;
+            xHead = json.isNull("head") ? -1 : json.getBoolean("head") ? 1 : 0;
+            xHr = json.isNull("hr") ? -1 : json.getBoolean("hr") ? 1 : 0;
+            xDocmng= json.isNull("docmng") ? -1 : json.getBoolean("docmng") ? 1 : 0;
             xManager = json.isNull("manager") ? -1 : json.getBoolean("manager") ? 1 : 0;
 
             count = manageSvc.updateEmployeePermission(compId, userNo, employee, xDept, xManager, xAccounting, xDoc, xDocmng, xHr, xHead);
