@@ -884,7 +884,7 @@ function reportInsert() {
 
 
 
-////////// sopp 
+  ////////// sopp 
   let soppVal = $("#" + formId + "_sopp").val();
   let customerVal = $("#" + formId + "_infoCustomer").val();
   let soppResult = "";
@@ -940,6 +940,38 @@ function reportInsert() {
   }
 
 
+  let related = { 
+    "next": "",
+    "parent": "",
+    "previous": "",
+   
+};
+  let items = [];
+
+
+
+  if (formId == "doc_Form_SalesReport") {
+    for (let i = 0; i < $(".outProduct").length; i++) {
+      let tt = {
+        "outProduct": $(".outProduct")[i].value,
+        "outPrice": $(".outPrice")[i].value,
+        "outQuantity": $(".outQuantity")[i].value
+      };
+      items.push(tt);
+    }
+    related = {
+      "next": "",
+      "parent": "",
+      "previous": "",
+      "outSumAllTotal": $(".outSumAllTotal").val(),
+      "profit": $("." + formId + "_profit").val(),
+      "items": items
+    }
+
+    
+  }
+
+related = JSON.stringify(related);
 
   let data = {
     title: title,
@@ -953,7 +985,7 @@ function reportInsert() {
     formId: formId,
     readable: readable,
     temp: temp,
-    // related: related,
+    related: related,
   };
   console.log(data);
   data = JSON.stringify(data);
