@@ -830,7 +830,22 @@ function contractInsert() {
 		return false;
 	} else {
 		let url, method, data, type;
-		formDataSet(); 
+
+
+		formDataSet();
+		// 수주판매보고양식에서 계약 등록하는 경우 구분 
+
+		let checkHref = location.href;
+		checkHref = checkHref.split("//");
+		checkHref = checkHref[1];
+		let splitArr = checkHref.split("/");
+		if (splitArr.length > 3) {
+			console.log("확인");
+			setFormListDefaultData();
+		}
+
+		console.log(storage.formList);
+
 		url = "/api/contract";
 		method = "post";
 		data = storage.formList;
@@ -843,7 +858,7 @@ function contractInsert() {
 
 function contractSuccessInsert() {
 	msg.set("등록완료");
-	location.reload();
+	location.href = "/business/contract";
 }
 
 function contractErrorInsert() {
@@ -873,7 +888,9 @@ function contractUpdate() {
 		return false;
 	} else {
 		let url, method, data, type;
+
 		formDataSet();
+
 		url = "/api/contract/" + storage.formList.no;
 		method = "put";
 		data = storage.formList;
@@ -887,6 +904,7 @@ function contractUpdate() {
 function contractSuccessUpdate() {
 	msg.set("수정완료");
 	location.reload();
+
 }
 
 function contractErrorUpdate() {
@@ -1033,7 +1051,7 @@ function getEstimateData() {
 				list = JSON.parse(list);
 				for (x = 0; x < list.length; x++)	list[x].doc = cipher.decAes(list[x].doc);
 				storage.estmVerList = list;
-				setSalesReportData();
+				window.setTimeout(setSalesReportData, 700);
 			} else {
 				console.log(data.msg);
 			}
@@ -1067,10 +1085,14 @@ function setSalesReportData() {
 	contType = soppData.contType;
 
 
+
 	$("#sopp").val(contTitle);
+	$("#sopp").attr("disabled", "disabled");
 	$("#salesType").val(salesType);
 	$("#customer").val(storage.customer[customer].name);
+	$("#customer").attr("disabled", "disabled");
 	$("#endUser").val(storage.customer[endUser].name);
+	$("#endUser").attr("disabled", "disabled");
 	$("#contractAmount").val(contractAmount);
 	$("#profit").val(profit);
 	if ($("input[name=contractType]")[0].value == contType) {
@@ -1079,13 +1101,30 @@ function setSalesReportData() {
 		$("input[name=contractType]")[1].checked = "checked";
 	}
 
+}
+
+
+function setFormListDefaultData() {
+	let soppData, soppNo;
+
+	soppNo = storage.reportDetailData.sopp;
+
+
+	for (let i = 0; i < storage.sopp.length; i++) {
+		if (storage.sopp[i].no == soppNo) {
+			soppData = storage.sopp[i];
+		}
+	}
+
+
+
+	customer = soppData.customer;
+	endUser = soppData.endUser;
+	soppNo = soppData.no;
 
 	storage.formList.customer = customer;
 	storage.formList.endUser = endUser;
-	storage.formList.sopp = Number(soppNo);
-
-
+	storage.formList.sopp = soppNo;
 }
-
 
 
