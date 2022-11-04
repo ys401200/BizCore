@@ -224,8 +224,6 @@ public class ApiManageCtrl extends Ctrl{
             r = count > 0;
             if(r)   result = "{\"result\":\"ok\"}";
             else    result = "{\"result\":\"failure\"}";
-            //result = encAes(result, aesKey, aesIv);
-            //result = "{\"result\":\"ok\",\"data\":\"" + result + "\"}";
         }
 
         return result;
@@ -262,7 +260,7 @@ public class ApiManageCtrl extends Ctrl{
             xHipass = json.isNull("hipass") ? null : json.getString("hipass");
             jarr = json.isNull("card") ? null : json.getJSONArray("card");
             if(jarr != null && jarr.length() > 0)for(x = 0 ; x < jarr.length() ; x++)    xCard.add(jarr.getString(x));
-            
+
             count = manageSvc.updateEmployeeAsset(compId, userNo, employee, xCard, xVehicle, xHipass);
             if(count > 0)   result = "{\"result\":\"ok\"}";
             else            result = "{\"result\":\"failure\"}";
