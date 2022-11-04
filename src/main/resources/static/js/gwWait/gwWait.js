@@ -924,6 +924,40 @@ function approveBtnEvent() {
     appDoc = null;
   }
 
+
+
+
+
+
+
+
+  let related = null;
+  let items = [];
+  if (formId = "doc_Form_SalesReport") {
+    for (let i = 0; i < $(".outProduct").length; i++) {
+      let tt = {
+        "outProduct": $(".outProduct")[i].value,
+        "outPrice": $(".outPrice")[i].value,
+        "outQuantity": $(".outQuantity")[i].value
+      };
+
+      items.push(tt);
+    }
+
+    related = {
+      "next": "",
+      "parent": "",
+      "previous": "estimate:" + storage.reportDetailData.related.previous.split(":")[1] + "",
+      "outSumAllTotal": $(".outSumAllTotal").val(),
+      "profit": $("." + formId + "_profit").val(),
+      "items": items
+    }
+
+  }
+
+  related = JSON.stringify(related);
+
+
   let data = {
     doc: storage.newDoc,
     comment: comment,
@@ -933,6 +967,7 @@ function approveBtnEvent() {
     sopp: soppResult + "",
     customer: cusResult + "",
     title: title,
+    related: related,
   };
 
   console.log(data);
@@ -963,16 +998,7 @@ function approveBtnEvent() {
     },
   });
 }
-let related = {
-  fnc: "hr",
-  type: "leave", // "overtime", "holidayWork"
-  start: 169999999,
-  end: 169999999,
-  parent: null, // contract:1999999
-  prev: null, // schedule:199999
-  next: [],
-  children: [],
-};
+
 
 //결재선 수정 모달
 function showGwModal() {

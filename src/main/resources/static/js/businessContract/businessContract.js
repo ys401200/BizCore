@@ -1,6 +1,6 @@
 $(document).ready(() => {
-    init();
-    
+	init();
+
 	setTimeout(() => {
 		$("#loadingDiv").hide();
 		$("#loadingDiv").loading("toggle");
@@ -10,7 +10,7 @@ $(document).ready(() => {
 });
 
 function getContractList() {
-	
+
 	let url, method, data, type;
 
 	url = "/api/contract";
@@ -19,18 +19,60 @@ function getContractList() {
 	type = "list";
 
 	crud.defaultAjax(url, method, data, type, contractSuccessList, contractErrorList);
+
+
+
+
+
+	let checkHref = location.href;
+	checkHref = checkHref.split("//");
+	checkHref = checkHref[1];
+	let splitArr = checkHref.split("/"); // 전자결재 문서 번호로 들어오는 경우 
+
+	// 전자결재 홈 화면에서 들어오는 경우 , 상세조회
+	if (splitArr.length > 3) {
+		$.ajax({
+			url: apiServer + "/api/gw/app/doc/" + splitArr[3],
+			method: "get",
+			dataType: "json",
+			cache: false,
+			success: (data) => {
+				let detailData;
+				if (data.result === "ok") {
+					detailData = cipher.decAes(data.data);
+					detailData = JSON.parse(detailData);
+					detailData.doc = cipher.decAes(detailData.doc);
+					detailData.doc = detailData.doc.replaceAll('\\"', '"');
+					storage.reportDetailData = detailData;
+					contractInsertForm();
+					getEstimateData();
+				} else {
+					alert("문서 정보를 가져오는 데 실패했습니다");
+				}
+			},
+		});
+	}
+
+
+
+
+
+
+
+
+
 }
 
 function drawContractList() {
 	let container, result, job, jsonData, header = [], data = [], ids = [], disDate, str, fnc, pageContainer, containerTitle, detailBackBtn, listSearchInput;
-	
+
 	if (storage.contractList === undefined) {
 		msg.set("등록된 계약 없습니다");
 	}
 	else {
-		if(storage.searchDatas === undefined){
+		if (storage.searchDatas === undefined) {
 			jsonData = storage.contractList;
-		}else{
+		} else {
 			jsonData = storage.searchDatas;
 		}
 	}
@@ -45,60 +87,60 @@ function drawContractList() {
 
 	header = [
 		{
-			"title" : "등록일",
-			"align" : "center",
+			"title": "등록일",
+			"align": "center",
 		},
 		{
-			"title" : "유지보수일자",
-			"align" : "center",
+			"title": "유지보수일자",
+			"align": "center",
 		},
 		{
-			"title" : "계약명",
-			"align" : "left",
+			"title": "계약명",
+			"align": "left",
 		},
 		{
-			"title" : "담당자",
-			"align" : "center",
+			"title": "담당자",
+			"align": "center",
 		},
 		{
-			"title" : "판매방식",
-			"align" : "center",
+			"title": "판매방식",
+			"align": "center",
 		},
 		{
-			"title" : "계약방식",
-			"align" : "center",
+			"title": "계약방식",
+			"align": "center",
 		},
 		{
-			"title" : "엔드유저",
-			"align" : "center",
+			"title": "엔드유저",
+			"align": "center",
 		},
 		{
-			"title" : "계약금액",
-			"align" : "right",
+			"title": "계약금액",
+			"align": "right",
 		},
 		{
-			"title" : "매출이익",
-			"align" : "right",
+			"title": "매출이익",
+			"align": "right",
 		},
 		{
-			"title" : "발주일자",
-			"align" : "center",
+			"title": "발주일자",
+			"align": "center",
 		},
 	];
 
-	if(jsonData === ""){
+	if (jsonData === "") {
 		str = [
 			{
 				"setData": undefined,
 				"col": 11,
 			},
 		];
-		
+
 		data.push(str);
-	}else{
+	} else {
 		for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
 			let salesType, contractType, title, endUser, contractAmount, profit, employee, startMaintenance, endMaintenance, saleDate, setCreated;
-			
+
 			salesType = (jsonData[i].salesType === null || jsonData[i].salesType === "") ? "" : storage.code.etc[jsonData[i].salesType];
 			contractType = (jsonData[i].contractType === null || jsonData[i].contractType === "") ? "" : storage.code.etc[jsonData[i].contractType];
 			title = (jsonData[i].title === null || jsonData[i].title === "") ? "" : jsonData[i].title;
@@ -106,27 +148,27 @@ function drawContractList() {
 			contractAmount = (jsonData[i].contractAmount == 0 || jsonData[i].contractAmount === null) ? 0 : numberFormat(jsonData[i].contractAmount);
 			profit = (jsonData[i].profit == 0 || jsonData[i].profit === null) ? 0 : numberFormat(jsonData[i].profit);
 			employee = (jsonData[i].employee === null || jsonData[i].employee == 0) ? "" : storage.user[jsonData[i].employee].userName;
-			
-			if(contractType === "유지보수"){
+
+			if (contractType === "유지보수") {
 				disDate = dateDis(jsonData[i].startOfPaidMaintenance);
 				startMaintenance = dateFnc(disDate, "yy-mm-dd");
-		
+
 				disDate = dateDis(jsonData[i].endOfPaidMaintenance);
 				endMaintenance = dateFnc(disDate, "yy-mm-dd");
-			}else{
+			} else {
 				disDate = dateDis(jsonData[i].startOfFreeMaintenance);
 				startMaintenance = dateFnc(disDate, "yy-mm-dd");
-		
+
 				disDate = dateDis(jsonData[i].endOfFreeMaintenance);
 				endMaintenance = dateFnc(disDate, "yy-mm-dd");
 			}
-	
+
 			disDate = dateDis(jsonData[i].saleDate);
 			saleDate = dateFnc(disDate, "mm-dd");
 
 			disDate = dateDis(jsonData[i].created, jsonData[i].modified);
 			setCreated = dateFnc(disDate, "mm-dd");
-	
+
 			str = [
 				{
 					"setData": setCreated,
@@ -159,12 +201,12 @@ function drawContractList() {
 					"setData": saleDate,
 				}
 			];
-	
+
 			fnc = "contractDetailView(this);";
 			ids.push(jsonData[i].no);
 			data.push(str);
 		}
-	
+
 		let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawContractList", result[0]);
 		pageContainer[0].innerHTML = pageNation;
 	}
@@ -176,13 +218,13 @@ function drawContractList() {
 	createGrid(container, header, data, ids, job, fnc);
 
 	let path = $(location).attr("pathname").split("/");
-	if(path[3] !== undefined && jsonData !== ""){
+	if (path[3] !== undefined && jsonData !== "") {
 		let content = $(".gridContent[data-id=\"" + path[3] + "\"]");
 		contractDetailView(content);
 	}
 }
 
-function contractDetailView(e){
+function contractDetailView(e) {
 	let id, url, method, data, type;
 	contentTopBtn("bodyContent");
 
@@ -194,25 +236,25 @@ function contractDetailView(e){
 	crud.defaultAjax(url, method, data, type, contractSuccessView, contractErrorView);
 }
 
-function contractSuccessList(result){
+function contractSuccessList(result) {
 	storage.contractList = result;
-	
-	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined){
+
+	if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined) {
 		window.setTimeout(drawContractList, 600);
 		window.setTimeout(addSearchList, 600);
 		window.setTimeout(searchContainerSet, 600);
-	}else{
+	} else {
 		window.setTimeout(drawContractList, 200);
 		window.setTimeout(addSearchList, 200);
 		window.setTimeout(searchContainerSet, 200);
 	}
 }
 
-function contractErrorList(){
+function contractErrorList() {
 	msg.set("에러");
 }
 
-function contractSuccessView(result){
+function contractSuccessView(result) {
 	let notIdArray, datas, sopp, html, htmlSecond, contractType, title, employee, customer, salesType, cipOfCustomer, endUser, cipOfendUser, saleDate, delivered, employee2, startOfFreeMaintenance, endOfFreeMaintenance, startOfPaidMaintenance, endOfPaidMaintenance, contractAmount, taxInclude, profit, detail, disDate, dataArray, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput, listRange, pageContainer, crudAddBtn, crudUpdateBtn, crudDeleteBtn;
 	detailSetFormList(result);
 	gridList = $(".gridList");
@@ -244,7 +286,7 @@ function contractSuccessView(result){
 	delivered = dateFnc(disDate);
 	employee2 = (result.employee2 == 0 || result.employee2 === null || result.employee2 === undefined) ? "" : storage.user[result.employee2].userName;
 	disDate = dateDis(result.startOfFreeMaintenance);
-	startOfFreeMaintenance = dateFnc(disDate); 
+	startOfFreeMaintenance = dateFnc(disDate);
 	disDate = dateDis(result.endOfFreeMaintenance);
 	endOfFreeMaintenance = dateFnc(disDate);
 	disDate = dateDis(result.startOfPaidMaintenance);
@@ -255,19 +297,19 @@ function contractSuccessView(result){
 	taxInclude = (result.taxInclude === null || result.taxInclude === "" || result.taxInclude === "N" || result.taxInclude === undefined) ? false : true;
 	profit = (result.profit == 0 || result.profit === null || result.profit === undefined) ? 0 : numberFormat(result.profit);
 	detail = (result.detail === null || result.detail === "" || result.detail === undefined) ? "" : result.detail;
-	
-	if(cipOfCustomer !== ""){
+
+	if (cipOfCustomer !== "") {
 		cipOfCustomer = storage.cip[cipOfCustomer].name;
 	}
 
-	if(cipOfendUser !== ""){
+	if (cipOfendUser !== "") {
 		cipOfendUser = storage.cip[cipOfendUser].name;
 	}
 
 
-	if(sopp !== ""){
-		for(let key in storage.sopp){
-			if(storage.sopp[key].no === result.sopp){
+	if (sopp !== "") {
+		for (let key in storage.sopp) {
+			if (storage.sopp[key].no === result.sopp) {
 				sopp = storage.sopp[key].title;
 			}
 		}
@@ -472,8 +514,8 @@ function contractSuccessView(result){
 	gridList.html(html);
 	setTabsLayOutMenu();
 	crudAddBtn.hide();
-	
-	if(storage.my == result.employee){
+
+	if (storage.my == result.employee) {
 		crudUpdateBtn.attr("onclick", "enableDisabled(this, \"contractUpdate();\", \"" + notIdArray + "\");");
 		crudUpdateBtn.css("display", "flex");
 		crudDeleteBtn.css("display", "flex");
@@ -483,7 +525,7 @@ function contractSuccessView(result){
 	storage.attachedNo = result.no;
 	storage.attachedType = "contract";
 	storage.attachedFlag = true;
-	
+
 	createTabTradeList(result.trades);
 	createTabFileList();
 	createTabTechList(result.schedules);
@@ -492,16 +534,16 @@ function contractSuccessView(result){
 	gridList.show();
 	detailTrueDatas(datas);
 	$(".detailContents").show();
-	
+
 	setTimeout(() => {
-		$("[name='contractType'][value='" + result.contractType + "']").prop("checked" ,true);
-		$("#salesType option[value='" + result.salesType + "']").prop("selected" ,true);
-		$("#taxInclude option[value='" + taxInclude + "']").prop("selected" ,true);
+		$("[name='contractType'][value='" + result.contractType + "']").prop("checked", true);
+		$("#salesType option[value='" + result.salesType + "']").prop("selected", true);
+		$("#taxInclude option[value='" + taxInclude + "']").prop("selected", true);
 		detailBackBtn.css("display", "flex");
 		listSearchInput.hide();
 		listRange.hide();
-		
-		if(contractType === "판매계약"){
+
+		if (contractType === "판매계약") {
 			$("#startOfFreeMaintenance").parents(".defaultFormLine").show();
 			$("#endOfFreeMaintenance").parents(".defaultFormLine").show();
 			$("#startOfPaidMaintenance").parents(".defaultFormLine").hide();
@@ -509,26 +551,26 @@ function contractSuccessView(result){
 
 			$("#startOfPaidMaintenance").val(null);
 			$("#endOfPaidMaintenance").val(null);
-		}else{
+		} else {
 			$("#startOfFreeMaintenance").parents(".defaultFormLine").hide();
 			$("#endOfFreeMaintenance").parents(".defaultFormLine").hide();
 			$("#startOfPaidMaintenance").parents(".defaultFormLine").show();
 			$("#endOfPaidMaintenance").parents(".defaultFormLine").show();
-			
+
 			$("#startOfFreeMaintenance").val(null);
 			$("#endOfFreeMaintenance").val(null);
 		}
-		
+
 		ckeditor.config.readOnly = true;
 		window.setTimeout(setEditor, 100);
 	}, 100);
 }
 
-function contractErrorView(){
+function contractErrorView() {
 	msg.set("에러");
 }
 
-function contractInsertForm(){
+function contractInsertForm() {
 	let html, dataArray;
 
 	dataArray = [
@@ -723,7 +765,7 @@ function contractInsertForm(){
 	modal.close.text("취소");
 	modal.confirm.attr("onclick", "contractInsert();");
 	modal.close.attr("onclick", "modal.hide();");
-	
+
 	storage.formList = {
 		"contractType": "",
 		"sopp": 0,
@@ -746,7 +788,7 @@ function contractInsertForm(){
 		"title": "",
 		"detail": ""
 	};
-	
+
 	setTimeout(() => {
 		let my = storage.my, nowDate;
 		nowDate = new Date().toISOString().substring(0, 10);
@@ -761,30 +803,30 @@ function contractInsertForm(){
 	}, 100);
 }
 
-function contractInsert(){
-	if($("#title").val() === ""){
+function contractInsert() {
+	if ($("#title").val() === "") {
 		msg.set("계약명을 입력해주세요.");
 		$("#title").focus();
 		return false;
-	}else if($("#sopp").val() === ""){
+	} else if ($("#sopp").val() === "") {
 		msg.set("영업기회를 입력해주세요.");
 		$("#sopp").focus();
 		return false;
-	}else if($("#employee").val() === ""){
+	} else if ($("#employee").val() === "") {
 		msg.set("담당자를 입력해주세요.");
 		$("#employee").focus();
 		return false;
-	}else if($("#customer").val() === ""){
+	} else if ($("#customer").val() === "") {
 		msg.set("매출처를 입력해주세요.");
 		$("#customer").focus();
 		return false;
-	}else if($("#endUser").val() === ""){
+	} else if ($("#endUser").val() === "") {
 		msg.set("엔드유저를 입력해주세요.");
 		$("#endUser").focus();
 		return false;
-	}else{
+	} else {
 		let url, method, data, type;
-		formDataSet();
+		formDataSet(); 
 		url = "/api/contract";
 		method = "post";
 		data = storage.formList;
@@ -795,37 +837,37 @@ function contractInsert(){
 	}
 }
 
-function contractSuccessInsert(){
+function contractSuccessInsert() {
 	msg.set("등록완료");
 	location.reload();
 }
 
-function contractErrorInsert(){
+function contractErrorInsert() {
 	msg.set("등록에러");
 }
 
-function contractUpdate(){
-	if($("#title").val() === ""){
+function contractUpdate() {
+	if ($("#title").val() === "") {
 		msg.set("계약명을 입력해주세요.");
 		$("#title").focus();
 		return false;
-	}else if($("#sopp").val() === ""){
+	} else if ($("#sopp").val() === "") {
 		msg.set("영업기회를 입력해주세요.");
 		$("#sopp").focus();
 		return false;
-	}else if($("#employee").val() === ""){
+	} else if ($("#employee").val() === "") {
 		msg.set("담당자를 입력해주세요.");
 		$("#employee").focus();
 		return false;
-	}else if($("#customer").val() === ""){
+	} else if ($("#customer").val() === "") {
 		msg.set("매출처를 입력해주세요.");
 		$("#customer").focus();
 		return false;
-	}else if($("#endUser").val() === ""){
+	} else if ($("#endUser").val() === "") {
 		msg.set("엔드유저를 입력해주세요.");
 		$("#endUser").focus();
 		return false;
-	}else{
+	} else {
 		let url, method, data, type;
 		formDataSet();
 		url = "/api/contract/" + storage.formList.no;
@@ -838,51 +880,51 @@ function contractUpdate(){
 	}
 }
 
-function contractSuccessUpdate(){
+function contractSuccessUpdate() {
 	msg.set("수정완료");
 	location.reload();
 }
 
-function contractErrorUpdate(){
+function contractErrorUpdate() {
 	msg.set("수정에러");
 }
 
-function contractDelete(){
+function contractDelete() {
 	let url, method, data, type;
 
-	if(confirm("정말로 삭제하시겠습니까??")){
+	if (confirm("정말로 삭제하시겠습니까??")) {
 		url = "/api/contract/" + storage.formList.no;
 		method = "delete";
 		data = "";
 		type = "delete";
-	
+
 		crud.defaultAjax(url, method, data, type, contractSuccessDelete, contractErrorDelete);
-	}else{
+	} else {
 		return false;
 	}
 }
 
-function contractSuccessDelete(){
+function contractSuccessDelete() {
 	msg.set("삭제완료");
 	location.reload();
 }
 
-function contractErrorDelete(){
+function contractErrorDelete() {
 	msg.set("삭제에러");
 }
 
-function contractRadioClick(e){
+function contractRadioClick(e) {
 	let value = $(e).val(), nowDate;
 	nowDate = new Date().toISOString().substring(0, 10);
-	
-	if(value === "10247"){
+
+	if (value === "10247") {
 		$("#startOfFreeMaintenance").parents(".defaultFormLine").show();
 		$("#endOfFreeMaintenance").parents(".defaultFormLine").show();
 		$("#startOfPaidMaintenance").parents(".defaultFormLine").hide();
 		$("#endOfPaidMaintenance").parents(".defaultFormLine").hide();
 		$("#startOfPaidMaintenance").val(nowDate);
 		$("#endOfPaidMaintenance").val(nowDate);
-	}else{
+	} else {
 		$("#startOfFreeMaintenance").parents(".defaultFormLine").hide();
 		$("#endOfFreeMaintenance").parents(".defaultFormLine").hide();
 		$("#startOfPaidMaintenance").parents(".defaultFormLine").show();
@@ -892,24 +934,24 @@ function contractRadioClick(e){
 	}
 }
 
-function searchInputKeyup(){
+function searchInputKeyup() {
 	let searchAllInput, tempArray;
 	searchAllInput = $("#searchAllInput").val();
 	tempArray = searchDataFilter(storage.contractList, searchAllInput, "input");
 
-	if(tempArray.length > 0){
+	if (tempArray.length > 0) {
 		storage.searchDatas = tempArray;
-	}else{
+	} else {
 		storage.searchDatas = "";
 	}
 
 	drawContractList();
 }
 
-function addSearchList(){
+function addSearchList() {
 	storage.searchList = [];
 
-	for(let i = 0; i < storage.contractList.length; i++){
+	for (let i = 0; i < storage.contractList.length; i++) {
 		let no, customer, endUser, title, contractType, employee, salesType, disDate, startOfFreeMaintenance, startOfPaidMaintenance, saleDate;
 		no = storage.contractList[i].no;
 		customer = (storage.contractList[i].customer === null || storage.contractList[i].customer == 0 || storage.contractList[i].customer === undefined) ? "" : storage.customer[storage.contractList[i].customer].name;
@@ -930,7 +972,7 @@ function addSearchList(){
 	}
 }
 
-function searchSubmit(){
+function searchSubmit() {
 	let dataArray = [], resultArray, eachIndex = 0, searchEmployee, searchCustomer, searchTitle, searchEndUser, searchSalesType, searchContractType, startOfFreeMaintenanceFrom, startOfPaidMaintenanceFrom, saleDateFrom;
 
 	searchEmployee = $("#searchEmployee").val();
@@ -942,14 +984,14 @@ function searchSubmit(){
 	startOfFreeMaintenanceFrom = ($("#startOfFreeMaintenanceFrom").val() === "") ? "" : $("#startOfFreeMaintenanceFrom").val().replaceAll("-", "") + "#startOfFreeMaintenance" + $("#startOfFreeMaintenanceTo").val().replaceAll("-", "");
 	startOfPaidMaintenanceFrom = ($("#startOfPaidMaintenanceFrom").val() === "") ? "" : $("#startOfPaidMaintenanceFrom").val().replaceAll("-", "") + "#startOfPaidMaintenance" + $("#startOfPaidMaintenanceTo").val().replaceAll("-", "");
 	saleDateFrom = ($("#saleDateFrom").val() === "") ? "" : $("#saleDateFrom").val().replaceAll("-", "") + "#saleDate" + $("#saleDateTo").val().replaceAll("-", "");
-	
+
 	let searchValues = [searchEmployee, searchCustomer, searchEndUser, searchTitle, searchSalesType, searchContractType, startOfFreeMaintenanceFrom, startOfPaidMaintenanceFrom, saleDateFrom];
 
-	for(let i = 0; i < searchValues.length; i++){
-		if(searchValues[i] !== "" && searchValues[i] !== undefined && searchValues[i] !== null){
+	for (let i = 0; i < searchValues.length; i++) {
+		if (searchValues[i] !== "" && searchValues[i] !== undefined && searchValues[i] !== null) {
 			let tempArray = searchDataFilter(storage.contractList, searchValues[i], "multi");
-			
-			for(let t = 0; t < tempArray.length; t++){
+
+			for (let t = 0; t < tempArray.length; t++) {
 				dataArray.push(tempArray[t]);
 			}
 
@@ -958,13 +1000,88 @@ function searchSubmit(){
 	}
 
 	resultArray = searchMultiFilter(eachIndex, dataArray, storage.contractList);
-	
+
 	storage.searchDatas = resultArray;
 
-	if(storage.searchDatas.length == 0){
+	if (storage.searchDatas.length == 0) {
 		msg.set("찾는 데이터가 없습니다.");
 		storage.searchDatas = storage.contractList;
 	}
-	
+
 	drawContractList();
 }
+function getEstimateData() {
+	let related = storage.reportDetailData.related;
+	let estimate = related.previous.split(":")[1];
+	let url;
+	url = apiServer + "/api/estimate/" + estimate;
+
+	$.ajax({
+		"url": url,
+		"method": "get",
+		"dataType": "json",
+		"cache": false,
+		success: (data) => {
+			let list, x;
+			if (data.result === "ok") {
+				list = data.data;
+				list = cipher.decAes(list);
+				list = JSON.parse(list);
+				for (x = 0; x < list.length; x++)	list[x].doc = cipher.decAes(list[x].doc);
+				storage.estmVerList = list;
+				setSalesReportData();
+			} else {
+				console.log(data.msg);
+			}
+		}
+	});
+
+}
+// 수주판매보고양식에서 계약 등록으로 온 경우 데이터 자동 세팅 
+function setSalesReportData() {
+	let related, contractAmount, profit, soppNo, soppData;
+	let customer, salesType, endUser, contTitle, contType;
+	related = storage.reportDetailData.related;
+
+	// 영업기회 
+	contractAmount = related.outSumAllTotal;
+	contractAmount = Number(contractAmount.split("원")[0]);
+	profit = related.profit;
+	profit = Number(profit.split("원")[0])
+
+	soppNo = storage.estmVerList[storage.estmVerList.length - 1].related.parent.split(":")[1];
+
+	for (let i = 0; i < storage.sopp.length; i++) {
+		if (storage.sopp[i].no == soppNo) {
+			soppData = storage.sopp[i];
+		}
+	}
+	customer = soppData.customer;
+	endUser = soppData.endUser;
+	salesType = soppData.soppType;
+	contTitle = soppData.title;
+	contType = soppData.contType;
+
+
+	$("#sopp").val(contTitle);
+	$("#salesType").val(salesType);
+	$("#customer").val(storage.customer[customer].name);
+	$("#endUser").val(storage.customer[endUser].name);
+	$("#contractAmount").val(contractAmount);
+	$("#profit").val(profit);
+	if ($("input[name=contractType]")[0].value == contType) {
+		$("input[name=contractType]")[0].checked = "checked"
+	} else {
+		$("input[name=contractType]")[1].checked = "checked";
+	}
+
+
+	storage.formList.customer = customer;
+	storage.formList.endUser = endUser;
+	storage.formList.sopp = Number(soppNo);
+
+
+}
+
+
+

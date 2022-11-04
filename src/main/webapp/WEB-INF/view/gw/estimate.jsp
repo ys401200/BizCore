@@ -26,7 +26,7 @@
 
 
 
-	<div class="estDiv" style="border : 1px solid black; width: 1400px; height :fit-content; ">
+	<div class="estDiv" style="border : 1px solid black; width: 1050px; height :fit-content; ">
 
 
 

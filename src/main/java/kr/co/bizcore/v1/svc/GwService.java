@@ -664,7 +664,7 @@ public class GwService extends Svc {
     // 결재문서 처리 메서드 / 데이터가 null이 아닌 경우 결재문서에 대한 수정 처리
     public String askAppDoc(String compId, String docNo, int ordered, int ask, String comment, String title, String doc,
             String[][] appLine, String[] files, HashMap<String, String> attached, String appData, String userNo,
-            String appDoc) {
+            String appDoc, String related) {
         String result = null, revision = null, savedName = null, fileName = null, dept = null, t = null,  formId = null;
         JSONObject json = null;
         int writer = -9999, appType = -9999, no = -9999, x = -1, y = -1;
@@ -734,6 +734,16 @@ public class GwService extends Svc {
                     json.put("doc", false);
                 }
 
+
+               //related에 대한 처리 
+               if (related != null) {
+                json.put("related", true);
+            } else { // 본뭉
+                json.put("related", false);
+            }
+
+
+
                 // 수정된 결재선에 대한 처리
                 if (appLine != null) {
                     json.put("appLine", true);
@@ -760,6 +770,11 @@ public class GwService extends Svc {
                 } else {
                     json.put("appLine", false);
                 } // 결재선의 수정에 대한 처리 종료
+
+
+               
+
+
 
                 // ============== 수정된 첨부파일에 대한 처리 =======================
                 if (files != null) {
@@ -813,7 +828,7 @@ public class GwService extends Svc {
             gwMapper.updateAppDocContent(compId, docNo, ordered, doc);
 
             // 결재처리를 기록함
-            gwMapper.setProceedDocAppStatus(compId, docNo, ordered, comment, appData);
+            gwMapper.setProceedDocAppStatus(compId, docNo, ordered, comment, appData ,related);
 
             // 남아있는 결재 절차가 있는지 확인함
             map = gwMapper.getNextAppData(compId, docNo, ordered);

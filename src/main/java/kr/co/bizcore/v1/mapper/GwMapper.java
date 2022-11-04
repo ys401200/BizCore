@@ -121,10 +121,10 @@ public interface GwMapper {
                         @Param("content") String revision);
 
         // 결재선에 결재처리를 기록하는 메서드
-        @Update("UPDATE bizcore.doc_app_detail SET approved = NOW(), comment = #{comment}, appData = #{appData} WHERE deleted IS NULL AND compId = #{compId} AND docNo = #{docNo} AND ordered = #{ordered}")
+        @Update("UPDATE bizcore.doc_app_detail SET approved = NOW(), comment = #{comment}, appData = #{appData}, related = #{related} WHERE deleted IS NULL AND compId = #{compId} AND docNo = #{docNo} AND ordered = #{ordered} ")
         public int setProceedDocAppStatus(@Param("compId") String compId, @Param("docNo") String docNo,
                         @Param("ordered") int ordered, @Param("comment") String comment,
-                        @Param("appData") String appData);
+                        @Param("appData") String appData ,  @Param("related") String related);
 
         // 이전 결재절차의 본문을 가져오는 메서드
         @Select("SELECT doc FROM bizcore.doc_app_detail WHERE deleted IS NULL AND compId = #{compId} AND docNo = #{docNo} AND ordered = (SELECT MAX(ordered) FROM bizcore.doc_app_detail WHERE deleted IS NULL AND compId = #{compId} AND docNo = #{docNo} AND ordered < #{ordered})")

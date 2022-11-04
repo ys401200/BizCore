@@ -463,7 +463,7 @@ String related =null;
             @RequestBody String requestBody, @PathVariable("docNo") String docNo, @PathVariable("ordered") int ordered,
             @PathVariable("ask") int ask) {
         String result = null, compId = null, userNo = null, data = null, aesIv = null, aesKey = null, lang = null,
-                title = null, comment = null, doc = null, appData = null, customer = null, sopp = null, appDoc = null;
+                title = null, comment = null, doc = null, appData = null, customer = null, sopp = null, appDoc = null, related = null;
         String[] files = null, ts = null;
         String[][] appLine = null;
         HttpSession session = null;
@@ -499,6 +499,10 @@ String related =null;
 
             // 결재 문서 제목에 대한 처리
             title = json.isNull("title") ? null : json.getString("title");
+
+            // related에 대한 처리 
+            related =  json.isNull("related") ? null : json.getString("related");
+
 
             // 첨부파일에 대한 처리
             if (!json.isNull("files")) {
@@ -538,7 +542,7 @@ String related =null;
             // 결재문서 처리 요청에 대한 처리
             data = gwService.askAppDoc(compId, docNo, ordered, ask, comment, title, doc, appLine, files, attached,
                     appData,
-                    userNo, appDoc);
+                    userNo, appDoc, related);
             if (data.equals("ok")) {
                 result = "{\"result\":\"ok\"}";
             } else if (data.equals("permissionDenied")) {
