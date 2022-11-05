@@ -59,24 +59,29 @@ function drawProductList() {
 			"title" : "상품설명",
 			"align" : "left",
 		},
+		{
+			"title" : "가격",
+			"align" : "right",
+		},
 	];
 
 	if(jsonData === ""){
 		str = [
 			{
 				"setData": undefined,
-				"col": 4,
+				"col": 5,
 			},
 		];
 		
 		data.push(str);
 	}else{
 		for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
-			let vendor, categoryName, name, desc;
+			let vendor, categoryName, name, desc, price;
 			vendor = storage.customer[jsonData[i].vendor].name;
 			categoryName = (jsonData[i].categoryName === null || jsonData[i].categoryName === "" || jsonData[i].categoryName === undefined) ? "" : jsonData[i].categoryName;
 			name = (jsonData[i].name === null || jsonData[i].name === "" || jsonData[i].name === undefined) ? "" : jsonData[i].name;
 			desc = (jsonData[i].desc === null || jsonData[i].desc === "" || jsonData[i].desc === undefined) ? "" : jsonData[i].desc;
+			price = (jsonData[i].price === null || jsonData[i].price == 0 || jsonData[i].price === undefined) ? "" : jsonData[i].price;
 			str = [
 				{
 					"setData": vendor,
@@ -89,6 +94,9 @@ function drawProductList() {
 				},
 				{
 					"setData": desc,
+				},
+				{
+					"setData": price.toLocaleString("en-US"),
 				},
 			];
 	
@@ -138,7 +146,7 @@ function productDetailView(e){
 }
 
 function productSuccessView(result){
-	let html, vendor, category, price, datas, name, desc, dataArray, notIdArray, searchContainer, containerTitle, detailBackBtn, listSearchInput, listRange, detailSecondTabs, pageContainer, crudAddBtn, crudUpdateBtn, crudDeleteBtn;
+	let html, vendor, categoryName, price, datas, name, desc, dataArray, notIdArray, searchContainer, containerTitle, detailBackBtn, listSearchInput, listRange, detailSecondTabs, pageContainer, crudAddBtn, crudUpdateBtn, crudDeleteBtn;
 	detailSetFormList(result);
 	gridList = $(".gridList");
 	searchContainer = $(".searchContainer");
@@ -155,7 +163,7 @@ function productSuccessView(result){
 	notIdArray = ["vendor"];
 
 	vendor = (result.vendor === null || result.vendor === 0 || result.vendor === undefined) ? "" : storage.customer[result.vendor].name;
-	category = (result.category === null || result.category === "" || result.category === undefined) ? "" : result.category;
+	categoryName = (result.categoryName === null || result.categoryName === "" || result.categoryName === undefined) ? "" : result.categoryName;
 	name = (result.name === null || result.name === "" || result.name === undefined) ? "" : result.name;
 	price = (result.price === null || result.price == 0 || result.price === undefined) ? "" : numberFormat(result.price);
 	desc = (result.desc === null || result.desc === "" || result.desc === undefined) ? "" : result.desc;
@@ -173,7 +181,7 @@ function productSuccessView(result){
 		{
 			"title": "제품그룹(*)",
 			"elementId": "categoryName",
-			"value": category,
+			"value": categoryName,
             "col": 2,
 		},
 		{
@@ -299,9 +307,13 @@ function productInsert(){
 		msg.set("공급사를 선택해주세요.");
 		$("#vendor").focus();
 		return false;
-	}else if($("#category").val() === ""){
+	}else if(!validateAutoComplete($("#vendor").val(), "customer")){
+		msg.set("조회된 공급사가 없습니다.\n다시 확인해주세요.");
+		$("#vendor").focus();
+		return false;
+	}else if($("#categoryName").val() === ""){
 		msg.set("제품그룹을 입력하세요.");
-		$("#category").focus();
+		$("#categoryName").focus();
 		return false;
 	}else if($("#name").val() === ""){
 		msg.set("상품명을 입력해주세요.");
@@ -333,47 +345,29 @@ function productErrorInsert(){
 }
 
 function productUpdate(){
-	if($("#name").val() === ""){
-		msg.set("고객사명을 입력해주세요.");
+	if($("#vendor").val() === ""){
+		msg.set("공급사를 선택해주세요.");
+		$("#vendor").focus();
+		return false;
+	}else if(!validateAutoComplete($("#vendor").val(), "customer")){
+		msg.set("조회된 공급사가 없습니다.\n다시 확인해주세요.");
+		$("#vendor").focus();
+		return false;
+	}else if($("#categoryName").val() === ""){
+		msg.set("제품그룹을 입력하세요.");
+		$("#categoryName").focus();
+		return false;
+	}else if($("#name").val() === ""){
+		msg.set("상품명을 입력해주세요.");
 		$("#name").focus();
 		return false;
-	}else if($("#taxId").val() === ""){
-		msg.set("사업자번호를 입력해주세요.");
-		$("#taxId").focus();
-		return false;
-	}else if($("#ceoName").val() === ""){
-		msg.set("대표자명을 입력해주세요.");
-		$("#ceoName").focus();
-		return false;
-	}else if($("#email").val() === ""){
-		msg.set("이메일을 입력해주세요.");
-		$("#email").focus();
-		return false;
-	}else if(!validateEmail($("#email").val())){
-		msg.set("이메일 형식이 바르지 않습니다.");
-		$("#email").focus();
-		return false;
-	}else if(!validateEmail($("#emailForTaxbill").val())){
-		msg.set("이메일 형식이 바르지 않습니다.");
-		$("#emailForTaxbill").focus();
-		return false;
-	}else if($("#fax").val() === ""){
-		msg.set("팩스를 입력해주세요.");
-		$("#fax").focus();
+	}else if($("#price").val() === ""){
+		msg.set("가격을 입력해주세요.");
+		$("#price").focus();
 		return false;
 	}else{
-		storage.formList.name = $("#name").val();
-		storage.formList.ceoName = $("#ceoName").val();
-		storage.formList.taxId = $("#taxId").val();
-		storage.formList.zipCode = parseInt($("#zipCode").val());
-		storage.formList.address = [$("#address").val(), $("#detailAddress").val()];
-		storage.formList.email = $("#email").val();
-		storage.formList.emailForTaxbill = $("#emailForTaxbill").val();
-		storage.formList.fax = $("#fax").val();
-		storage.formList.phone = $("#phone").val();
-		storage.formList.remark1 = $("#remark1").val();
-		storage.formList.remark2 = $("#remark2").val();
-		url = "/api/system/customer/" + storage.formList.no;
+		formDataSet();
+		url = "/api/product/" + storage.formList.no;
 		method = "put";
 		data = storage.formList;
 		type = "update";
@@ -396,7 +390,7 @@ function productDelete(){
 	let url, method, data, type;
 
 	if(confirm("정말로 삭제하시겠습니까??")){
-		url = "/api/system/customer/" + storage.formList.no;
+		url = "/api/product/" + storage.formList.no;
 		method = "delete";
 		type = "delete";
 	
@@ -418,7 +412,7 @@ function productErrorDelete(){
 function searchInputKeyup(){
 	let searchAllInput, tempArray;
 	searchAllInput = $("#searchAllInput").val();
-	tempArray = searchDataFilter(storage.customerList, searchAllInput, "input");
+	tempArray = searchDataFilter(storage.productList, searchAllInput, "input");
 
 	if(tempArray.length > 0){
 		storage.searchDatas = tempArray;
@@ -433,26 +427,26 @@ function addSearchList(){
 	storage.searchList = [];
 
 	for(let i = 0; i < storage.productList.length; i++){
-		let name, ceoName, taxId;
+		let vendor, categoryName, name, desc;
+		vendor = storage.customer[storage.productList[i].vendor].name;
+		categoryName = storage.productList[i].categoryName;
 		name = storage.productList[i].name;
-		ceoName = storage.productList[i].ceoName;
-		taxId = storage.productList[i].taxId;
-		storage.searchList.push("#" + name + "#" + ceoName + "#" + taxId);
+		storage.searchList.push("#" + vendor + "#" + categoryName + "#" + name);
 	}
 }
 
 function searchSubmit(){
-	let dataArray = [], resultArray, eachIndex = 0;
+	let dataArray = [], resultArray, eachIndex = 0, searchVendor, searchCategoryName, searchName;
 
+	searchVendor = $("#searchVendor").val();
+	searchCategoryName = $("#searchCategoryName").val();
 	searchName = $("#searchName").val();
-	searchCeoName = $("#searchCeoName").val();
-	searchTaxId = $("#searchTaxId").val();
 	
-	let searchValues = [searchName, searchCeoName, searchTaxId];
+	let searchValues = [searchVendor, searchCategoryName, searchName];
 
 	for(let i = 0; i < searchValues.length; i++){
 		if(searchValues[i] !== "" && searchValues[i] !== undefined && searchValues[i] !== null){
-			let tempArray = searchDataFilter(storage.customerList, searchValues[i], "multi");
+			let tempArray = searchDataFilter(storage.productList, searchValues[i], "multi");
 			
 			for(let t = 0; t < tempArray.length; t++){
 				dataArray.push(tempArray[t]);
@@ -462,13 +456,13 @@ function searchSubmit(){
 		}
 	}
 
-	resultArray = searchMultiFilter(eachIndex, dataArray, storage.customerList);
+	resultArray = searchMultiFilter(eachIndex, dataArray, storage.productList);
 	
 	storage.searchDatas = resultArray;
 
 	if(storage.searchDatas.length == 0){
 		msg.set("찾는 데이터가 없습니다.");
-		storage.searchDatas = storage.customerList;
+		storage.searchDatas = storage.productList;
 	}
 	
 	drawProductList();

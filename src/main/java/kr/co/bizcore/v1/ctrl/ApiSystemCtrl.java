@@ -243,7 +243,6 @@ public class ApiSystemCtrl extends Ctrl{
             x = systemService.removeCustomer(compId, no);
             if(x > 0)  result = "{\"result\":\"ok\",\"data\":" + no + "}";
             else        result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
-            
         }
         return result;
     } // End of customer

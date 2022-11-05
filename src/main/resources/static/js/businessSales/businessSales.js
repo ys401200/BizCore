@@ -640,6 +640,18 @@ function salesInsert(){
 		msg.set("제목을 입력해주세요.");
 		$("#title").focus();
 		return false;
+	}else if($("#sopp").val() !== "" && !validateAutoComplete($("#sopp").val(), "sopp")){
+		msg.set("조회된 영업기회가 없습니다.\n다시 확인해주세요.");
+		$("#sopp").focus();
+		return false;
+	}else if($("#customer").val() !== "" && !validateAutoComplete($("#customer").val(), "customer")){
+		msg.set("조회된 매출처가 없습니다.\n다시 확인해주세요.");
+		$("#customer").focus();
+		return false;
+	}else if($("#partner").val() !== "" && !validateAutoComplete($("#partner").val(), "customer")){
+		msg.set("조회된 엔드유저가 없습니다.\n다시 확인해주세요.");
+		$("#partner").focus();
+		return false;
 	}else{
 		let url, method, data, job, type;
 		job = $("[name='job']:checked").val();
@@ -674,6 +686,18 @@ function salesUpdate(){
 	}else if($("#title").val() === ""){
 		msg.set("제목을 입력해주세요.");
 		$("#title").focus();
+		return false;
+	}else if($("#sopp").val() !== "" && !validateAutoComplete($("#sopp").val(), "sopp")){
+		msg.set("조회된 영업기회가 없습니다.\n다시 확인해주세요.");
+		$("#sopp").focus();
+		return false;
+	}else if($("#customer").val() !== "" && !validateAutoComplete($("#customer").val(), "customer")){
+		msg.set("조회된 매출처가 없습니다.\n다시 확인해주세요.");
+		$("#customer").focus();
+		return false;
+	}else if($("#partner").val() !== "" && !validateAutoComplete($("#partner").val(), "customer")){
+		msg.set("조회된 엔드유저가 없습니다.\n다시 확인해주세요.");
+		$("#partner").focus();
 		return false;
 	}else{
 		let url, method, data, type, job;

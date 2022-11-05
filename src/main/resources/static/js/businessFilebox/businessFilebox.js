@@ -230,7 +230,7 @@ function fileBoxInsertForm(){
 			"title": "제목(*)",
 			"elementId": "title",
 			"disabled": false,
-			"col": 4,ssss
+			"col": 4,
 		},
 		{
 			"title": "내용(*)",

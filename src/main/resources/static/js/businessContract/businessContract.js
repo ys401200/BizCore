@@ -815,6 +815,10 @@ function contractInsert() {
 		msg.set("영업기회를 입력해주세요.");
 		$("#sopp").focus();
 		return false;
+	} else if(!validateAutoComplete($("#sopp").val(), "sopp")){
+		msg.set("조회된 영업기회가 없습니다.\n다시 확인해주세요.");
+		$("#sopp").focus();
+		return false;
 	} else if ($("#employee").val() === "") {
 		msg.set("담당자를 입력해주세요.");
 		$("#employee").focus();
@@ -823,8 +827,24 @@ function contractInsert() {
 		msg.set("매출처를 입력해주세요.");
 		$("#customer").focus();
 		return false;
+	} else if($("#cipOfCustomer").val() !== "" && !validateAutoComplete($("#cipOfCustomer").val(), "cip")){
+		msg.set("조회된 매출처 담당자가 없습니다.\n다시 확인해주세요.");
+		$("#cipOfCustomer").focus();
+		return false;
+	} else if(!validateAutoComplete($("#customer").val(), "customer")){
+		msg.set("조회된 매출처가 없습니다.\n다시 확인해주세요.");
+		$("#customer").focus();
+		return false;
 	} else if ($("#endUser").val() === "") {
 		msg.set("엔드유저를 입력해주세요.");
+		$("#endUser").focus();
+		return false;
+	} else if($("#cipOfendUser").val() !== "" && !validateAutoComplete($("#cipOfendUser").val(), "cip")){
+		msg.set("조회된 엔드유저 담당자가 없습니다.\n다시 확인해주세요.");
+		$("#cipOfendUser").focus();
+		return false;
+	} else if(!validateAutoComplete($("#endUser").val(), "customer")){
+		msg.set("조회된 엔드유저가 없습니다.\n다시 확인해주세요.");
 		$("#endUser").focus();
 		return false;
 	} else {
@@ -873,6 +893,10 @@ function contractUpdate() {
 		msg.set("영업기회를 입력해주세요.");
 		$("#sopp").focus();
 		return false;
+	} else if(!validateAutoComplete($("#sopp").val(), "sopp")){
+		msg.set("조회된 영업기회가 없습니다.\n다시 확인해주세요.");
+		$("#sopp").focus();
+		return false;
 	} else if ($("#employee").val() === "") {
 		msg.set("담당자를 입력해주세요.");
 		$("#employee").focus();
@@ -881,8 +905,24 @@ function contractUpdate() {
 		msg.set("매출처를 입력해주세요.");
 		$("#customer").focus();
 		return false;
+	} else if($("#cipOfCustomer").val() !== "" && !validateAutoComplete($("#cipOfCustomer").val(), "cip")){
+		msg.set("조회된 매출처 담당자가 없습니다.\n다시 확인해주세요.");
+		$("#cipOfCustomer").focus();
+		return false;
+	} else if(!validateAutoComplete($("#customer").val(), "customer")){
+		msg.set("조회된 매출처가 없습니다.\n다시 확인해주세요.");
+		$("#customer").focus();
+		return false;
 	} else if ($("#endUser").val() === "") {
 		msg.set("엔드유저를 입력해주세요.");
+		$("#endUser").focus();
+		return false;
+	} else if($("#cipOfendUser").val() !== "" && !validateAutoComplete($("#cipOfendUser").val(), "cip")){
+		msg.set("조회된 엔드유저 담당자가 없습니다.\n다시 확인해주세요.");
+		$("#cipOfendUser").focus();
+		return false;
+	} else if(!validateAutoComplete($("#endUser").val(), "customer")){
+		msg.set("조회된 엔드유저가 없습니다.\n다시 확인해주세요.");
 		$("#endUser").focus();
 		return false;
 	} else {

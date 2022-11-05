@@ -10,17 +10,17 @@
         <div class="searchContainer">
             <jsp:include page="../listSearch.jsp" />
             <div class="searchMultiContent">
-                <div class="searchEmployee">
+                <div class="searchVendor">
                     <span>공급사</span>
-                    <input type="text" data-complete="customer" autocomplete="off" id="searchEmployee" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">
+                    <input type="text" data-complete="customer" autocomplete="off" id="searchVendor" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">
                 </div>
-                <div class="searchCustomer">
+                <div class="searchCategoryName">
                     <span>제품그룹</span>
-                    <input type="text" autocomplete="off" id="searchCustomer">
+                    <input type="text" autocomplete="off" id="searchCategoryName">
                 </div>
-                <div class="searchTitle">
+                <div class="searchName">
                     <span>상품명</span>
-                    <input type="text" autocomplete="off" id="searchTitle">
+                    <input type="text" autocomplete="off" id="searchName">
                 </div>
             </div>
         </div>
@@ -31,7 +31,7 @@
                 <input type="text" class="searchAllInput" id="searchAllInput" onkeyup="searchInputKeyup();" placeholder="단어를 입력해주세요.">
             </div>
             <div class="listRange">
-                <input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="listRangeChange(this, drawSoppList);">
+                <input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="listRangeChange(this, drawProductList);">
                 <span class="listRangeSpan">0</span>
             </div>
             <div class="crudBtns">

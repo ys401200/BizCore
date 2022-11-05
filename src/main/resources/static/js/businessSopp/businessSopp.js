@@ -625,8 +625,20 @@ function soppInsert(){
 		msg.set("매출처를 입력해주세요.");
 		$("#customer").focus();
 		return false;
+	}else if(!validateAutoComplete($("#customer").val(), "customer")){
+		msg.set("조회된 매출처가 없습니다.\n다시 확인해주세요.");
+		$("#customer").focus();
+		return false;
+	}else if($("#picOfCustomer").val() !== "" && !validateAutoComplete($("#picOfCustomer").val(), "cip")){
+		msg.set("조회된 매출처 담당자가 없습니다.\n다시 확인해주세요.");
+		$("#picOfCustomer").focus();
+		return false;
 	}else if($("#endUser").val() === ""){
 		msg.set("엔드유저를 입력해주세요.");
+		$("#endUser").focus();
+		return false;
+	}else if(!validateAutoComplete($("#endUser").val(), "customer")){
+		msg.set("조회된 엔드유저가 없습니다.\n다시 확인해주세요.");
 		$("#endUser").focus();
 		return false;
 	}else{

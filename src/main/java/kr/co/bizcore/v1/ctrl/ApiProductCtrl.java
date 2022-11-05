@@ -158,6 +158,7 @@ public class ApiProductCtrl extends Ctrl{
         ObjectMapper mapper = null;
         boolean e = false;
 
+        mapper = new ObjectMapper();
         session = request.getSession();
         aesKey = (String) session.getAttribute("aesKey");
         aesIv = (String) session.getAttribute("aesIv");
@@ -169,17 +170,22 @@ public class ApiProductCtrl extends Ctrl{
             result = "{\"result\":\"failure\",\"msg\":\"Company ID is not verified.\"}";
         }else if(aesKey == null || aesIv == null){
             result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
-        }else
-            try {
-                data = decAes(requestBody, aesKey, aesIv);
-                prod = mapper.readValue(data, Product.class);
-                e = 0 < systemService.modifyProduct(compId, no, prod);
-                if(e)   result = "{\"result\":\"ok\"}";
-                else    result = "{\"result\":\"failure\",\"msg\":\"Ann error occurred.\"}";
-            }catch (Exception ex) {
-                ex.printStackTrace();
-                result = "{\"result\":\"failure\",\"msg\":\"Ann error occurred.\"}";
+        }else{
+            data = decAes(requestBody, aesKey, aesIv);
+            if(data == null){
+                result = "{\"result\":\"failure\",\"msg\":\"Decryption fail.\"}";
+            }else{
+                try {
+                    prod = mapper.readValue(data, Product.class);
+                    e = 0 < systemService.modifyProduct(compId, no, prod);
+                    if(e)   result = "{\"result\":\"ok\"}";
+                    else    result = "{\"result\":\"failure\",\"msg\":\"Ann error occurred.\"}";
+                }catch (Exception ex) {
+                    ex.printStackTrace();
+                    result = "{\"result\":\"failure\",\"msg\":\"Ann error occurred.\"}";
+                }
             }
+        }
         return result;
     } // End of apiProductPut()
 
@@ -187,8 +193,7 @@ public class ApiProductCtrl extends Ctrl{
     public String apiProductDelete(HttpServletRequest request, @PathVariable("no") int no){
         String result = null, compId = null;
         HttpSession session = null;
-        ObjectMapper mapper = null;
-        boolean e = false;
+        int e = 0;
 
         session = request.getSession();
         compId = (String) session.getAttribute("compId");
@@ -197,10 +202,11 @@ public class ApiProductCtrl extends Ctrl{
 
         if (compId == null) {
             result = "{\"result\":\"failure\",\"msg\":\"Company ID is not verified.\"}";
-        }else
+        }else{
             e = systemService.removeProduct(compId, no);
-            if(e)   result = "{\"result\":\"ok\"}";
+            if(e > 0)   result = "{\"result\":\"ok\"}";
             else    result = "{\"result\":\"failure\",\"msg\":\"Ann error occurred.\"}";
+        }
         return result;
     } // End of apiProductDelete()
 

@@ -365,7 +365,9 @@ public abstract class Domain implements Comparable<Domain>{
                 if(field.getName() != null && (field.getName().equals("no") || field.getName().equals("job") || fieldMap.get(field.getName()) == null))    continue; // Schedule 클래스에서 job는 테이블을 구분하기 위한 것이므로 생락함
             }    
             if(column.equals("created") || column.equals("modified") || column.equals("deleted") || column.equals("no"))    continue;
-            
+            if(column.equals("desc")){
+                column = "`desc`";
+            }
             try{
                 v1 = field.get(this);
                 v2 = field.get(target);

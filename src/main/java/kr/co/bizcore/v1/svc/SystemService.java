@@ -600,14 +600,16 @@ public class SystemService extends Svc {
         Product ogn = null;
         ogn = productMapper.getProduct(compId, no);
         if (ogn != null && prod != null) {
-            sql = ogn.createUpdateQuery(prod, null);
+            sql = ogn.createUpdateQuery(prod, "bizcore.product") + " WHERE deleted IS NULL AND compId = '" + compId + "' AND no = " + prod.getNo();
             result = executeSqlQuery(sql);
         }
         return result;
     } // End of modifyProduct()
 
-    public boolean removeProduct(String compId, int no) {
-        return productMapper.removeProduct(compId, no) > 0;
+    public int removeProduct(String compId, int no) {
+        int result = -1;
+        result = productMapper.removeProduct(compId, no);
+        return result;
     } // End of removeProduct()
 
     // 영업목표 가져오는 메서드

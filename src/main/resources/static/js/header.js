@@ -3227,6 +3227,28 @@ function autoCompleteClick(e){
 	autoComplete.remove();
 }
 
+function validateAutoComplete(value, type){
+	let result = false;
+
+	for(let key in storage[type]){
+		if(type === "customer" || type === "cip"){
+			if(storage[type][key].name === value){
+				result = true;			
+			}
+		}else if(type === "user"){
+			if(storage[type][key].userName === value){
+				result = true;
+			}
+		}else if(type === "sopp" || type === "contract"){
+			if(storage[type][key].title === value){
+				result = true;
+			}
+		}
+	}
+
+	return result;
+}
+
 function getStorageList(){
 	if(storage.sopp === undefined){
 		$.ajax({
