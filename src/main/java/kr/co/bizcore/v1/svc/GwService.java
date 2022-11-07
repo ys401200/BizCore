@@ -702,14 +702,16 @@ public class GwService extends Svc {
         // 권한 확인
         if (!userNo.equals((x + "")))
             return "permissionDenied";
-
+       
         // 문서 반려 처리
         if (ask == 0) {
             // 결배문서의 반려 처리에 대한 알림 입력
+          
             notes.sendNewNotes(compId, 0, writer, "결재문서가 반려되었습니다.", "{\"func\":\"docApp\",\"no\":\"" + docNo + "\"}");
             gwMapper.setDocAppLineRejected(compId, docNo, ordered, appData, related);
             gwMapper.setDocAppRejected(compId, docNo);
             result = "ok";
+           
         }
 
         // 결재문서 승인 처리
