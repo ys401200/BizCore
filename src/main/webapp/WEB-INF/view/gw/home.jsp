@@ -14,14 +14,14 @@
 					<div>
 						<div>
 
-							<input type="radio" class="waitBtn" name="domTab" id="waitBtn" onclick="drawWaitCard(0)">
+							<div><button  class="waitBtn" name="domTab" id="waitBtn" onclick="drawWaitCard(0)"></button></div>
 
-							<input type="radio" class="dueBtn" name="domTab" id="dueBtn" onclick="drawWaitCard(1)">
+							<div><button  class="dueBtn" name="domTab" id="dueBtn" onclick="drawWaitCard(1)"></button></div>
 
-							<input type="radio" class="receiveBtn" name="domTab" id="receiveBtn"
-								onclick="drawWaitCard(2)">
+							<div><button  class="receiveBtn" name="domTab" id="receiveBtn"
+								onclick="drawWaitCard(2)"></button></div>
 
-							<input type="radio" class="referBtn" name="domTab" id="referBtn" onclick="drawWaitCard(3)">
+								<div><button  class="referBtn" name="domTab" id="referBtn" onclick="drawWaitCard(3)"></button></div>
 
 						</div>
 						<div class="optionDiv"><button onclick="drawWaitCardBtn()">카드</button><button
