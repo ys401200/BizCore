@@ -239,7 +239,7 @@ function showReportDetail() {
     "<button type='button' onclick='showGwModal()'>결재선 수정</button>" +
     "<button type='button' onclick='toWriteMode();createConfirmBtn(this)'>문서 수정</button></div>" +
     // "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
- "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
+    "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
   $(".listPageDiv").html(detailHtml);
 
   let selectedFileView =
@@ -369,7 +369,7 @@ function showReportDetail() {
   storage.oriCbContainer = $("input[name='" + formId + "_RD']:checked").attr(
     "id"
   );
-  storage.oriTitle = $("#" + formId + "_title").html();
+  storage.oriTitle = $("#" + formId + "_title").val();
   storage.oriContent = $("#" + formId + "_content").attr("data-detail");
   // storage.oriInsertedContent = $(".insertedContent").html();
   storage.oriInsertedDataList = $(".insertedDataList").html();
@@ -882,8 +882,8 @@ function approveBtnEvent() {
         storage.reportDetailData.customer == cusResult) &&
       storage.oriCbContainer ==
       $("input[name='" + formId + "_RD']:checked").attr("id") &&
-      storage.oriTitle == $("#" + formId + "_title").html() &&
-      storage.oriContent == $("#" + formId + "_content").attr("datail-data") &&
+      storage.oriTitle == $("#" + formId + "_title").val() &&
+      storage.oriContent == $("#" + formId + "_content").val() &&
       storage.oriInsertedDataList == $(".insertedDataList").html()
     ) {
       storage.newDoc = null;
@@ -893,8 +893,8 @@ function approveBtnEvent() {
   } else {
     if (
 
-      storage.oriTitle == $("#" + formId + "_title").html() &&
-      storage.oriContent == $("#" + formId + "_content").attr("datail-data") &&
+      storage.oriTitle == $("#" + formId + "_title").val() &&
+      storage.oriContent == $("#" + formId + "_content").val() &&
       storage.oriInsertedData == $(".insertedData").html()
     ) {
       storage.newDoc = null;
@@ -991,7 +991,7 @@ function approveBtnEvent() {
     success: (data) => {
       if (data.result === "ok") {
         alert("결재 완료");
-        location.href = "/gw/myapp";
+        // location.href = "/gw/myapp";
       } else {
         alert("결재 실패");
       }
@@ -1546,7 +1546,7 @@ function createNewLine() {
     getYmdSlashShort(storage.reportDetailData.appLine[0].read) +
     "'></div></div></div>";
   let testHtml2 = "<div class='lineGridContainer'>";
- // let referHtml = "";
+  // let referHtml = "";
   let titleArr = ["검토", "합의", "결재", "수신", "참조"];
   let titleId = ["examine", "agree", "approval", "conduct", "refer"];
 
@@ -1602,20 +1602,20 @@ function createNewLine() {
       }
 
       // 참조
-      else if (i == 4) {
-        // referHtml +=
-        //   "<div class='appendName " +
-        //   formId +
-        //   "_" +
-        //   titleId[i] +
-        //   "' data-detail='" +
-        //   storage.user[newCombine[i][j]].userNo +
-        //   "'>" +
-        //   storage.userRank[storage.user[newCombine[i][j]].rank][0] +
-        //   "&nbsp" +
-        //   storage.user[newCombine[i][j]].userName +
-        //   "</div>";
-      }
+      // else if (i == 4) {
+      //   referHtml +=
+      //     "<div class='appendName " +
+      //     formId +
+      //     "_" +
+      //     titleId[i] +
+      //     "' data-detail='" +
+      //     storage.user[newCombine[i][j]].userNo +
+      //     "'>" +
+      //     storage.userRank[storage.user[newCombine[i][j]].rank][0] +
+      //     "&nbsp" +
+      //     storage.user[newCombine[i][j]].userName +
+      //     "</div>";
+      // }
 
       // 검토 합의 결재
       else {
@@ -1666,7 +1666,7 @@ function createNewLine() {
   testHtml += testHtml2;
   lineTarget.html(testHtml);
 
- // $(".selectedRefer").html(referHtml);
+  // $(".selectedRefer").html(referHtml);
 
   console.log(newCombine);
 
@@ -2315,7 +2315,7 @@ function reset() {
           "' value='' data-detail=''/></div></div>";
       }
 
-    
+
       else if (i == 4) {
         // referHtml +=
         //   "<div class='appendName " +
@@ -2384,7 +2384,7 @@ function reset() {
   testHtml += testHtml2;
   lineTarget.html(testHtml);
 
- // $(".selectedRefer").html(referHtml);
+  // $(".selectedRefer").html(referHtml);
 
   $(".modal-wrap").hide();
 
@@ -2463,3 +2463,5 @@ function setCusDataList() {
 
 // let titles = [""]
 // }
+
+
