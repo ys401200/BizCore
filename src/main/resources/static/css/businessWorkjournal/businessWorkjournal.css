@@ -25,27 +25,21 @@
 .workJournalContainer .workJournalContent{
 	display: grid;
 	grid-template-columns: 10% 90%;
-	padding: 20px;
-	margin-top:10px;
+	padding: 10px;
 }
 
 .workJournalContainer .workJournalContent .journalUserHeader{
 	display: grid;
 	grid-template-columns: 75% 25%;
-	border-top: 1px solid #000;
-	border-left: 1px solid #000;
 }
 .workJournalContainer .workJournalContent .journalUserBody{
 	display: grid;
 	grid-template-columns: 75% 25%;
-	border-top: 1px solid #000;
-	border-right: 1px solid #000;
-	border-left: 1px solid #000;
 }
 
 .workJournalContainer .workJournalContent .journalUserHeader > div{
-	background-color:#ecf3fb;
-	border-right: 1px solid #000;
+	background-color:#182f81;
+	color: #FFFFFF;
 }
 
 .workJournalContainer .workJournalContent .journalUserBody > div{
@@ -67,16 +61,12 @@
 }
 
 .workJournalContainer .workJournalContent .journalPreviewHeader{
-	border-top: 1px solid #000;
-	border-right: 1px solid #000;
-	background-color:#ecf3fb;
+	color: #ffffff;
+    background-color: #182f81;
 }
 
 .workJournalContainer .workJournalContent .journalPreview{
 	padding: 20px;
-	border-top: 1px solid #000;
-	border-right: 1px solid #000;
-	border-bottom: 1px solid #000;
 }
 
 .workJournalContainer 

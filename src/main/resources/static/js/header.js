@@ -2272,6 +2272,12 @@ function enableDisabled(e, clickStr, notIdArray){
 	thisEle.html("수정완료");
 	ckeditor.config.readOnly = false;
 	window.setTimeout(setEditor, 100);
+
+	if(modal.wrap.css("display") !== "none"){
+		setTimeout(() => {
+			document.getElementsByClassName("cke_textarea_inline")[0].style.height = "300px";
+		}, 300);
+	}
 }
 
 function calWindowLength(){
@@ -3421,4 +3427,16 @@ function popup(e){
 function inputDateFormat(e){
 	let thisEle = $(e);
 	thisEle.val(thisEle.val().replace(/(\d\d\d\d)(\d\d)(\d\d)/g, '$1-$2-$3'));
+}
+
+function gridSetRowSpan(className){
+	let ele = $("." + className);
+	
+	for(let i = 0; i < ele.length; i++){
+		let rows = $("." + className + ":contains(\"" + $(ele[i]).html() + "\")");
+		if(rows.length > 1){
+			rows.eq(0).css("grid-row", "span " + rows.length);
+			rows.not(":eq(0)").remove();
+		}
+	}
 }

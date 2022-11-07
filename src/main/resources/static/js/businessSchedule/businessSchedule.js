@@ -660,6 +660,10 @@ function scheduleRadioClick(e){
 		ckeditor.config.readOnly = false;
 		window.setTimeout(setEditor, 100);
 	}, 100);
+
+	setTimeout(() => {
+		document.getElementsByClassName("cke_textarea_inline")[0].style.height = "300px";
+	}, 300);
 }
 
 function scheduleRadioInsert(value, date){
@@ -849,6 +853,7 @@ function scheduleRadioInsert(value, date){
 			"partner" : 0,
 			"title" : "",
 			"content" : "",
+			"report" : 1,
 		};
 	}else if(value === "tech"){
 		dataArray = [
@@ -1057,6 +1062,7 @@ function scheduleRadioInsert(value, date){
 			"to" : "",
 			"title" : "",
 			"content" : "",
+			"report" : 1,
 		};
 	}else{
 		dataArray = [
@@ -1158,6 +1164,7 @@ function scheduleRadioInsert(value, date){
 			"customer" : 0,
 			"title" : "",
 			"content" : "",
+			"report" : 1,
 		};
 	}
 
@@ -1965,34 +1972,6 @@ function scheduleSuccessUpdate(){
 }
 
 function scheduleErrorUpdate(){
-	msg.set("에러");
-}
-
-function scheduleSelectChange(){
-	let url, method, data, type, scheduleRange;
-
-	scheduleRange = $("#scheduleRange").val();
-	url = "/api/schedule/calendar/" + scheduleRange;
-	method = "get";
-	data = "";
-	type = "list";
-
-	crud.defaultAjax(url, method, data, type, scheduleSelectSuccess, scheduleSelectError);
-}
-
-function scheduleSelectSuccess(result){
-	storage.scheduleList = result;
-
-	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined){
-		window.setTimeout(drawScheduleList, 600);
-		window.setTimeout(drawCalendar(document.getElementsByClassName("calendar_container")[0]), 600);
-	}else{
-		window.setTimeout(drawScheduleList, 200);
-		window.setTimeout(drawCalendar(document.getElementsByClassName("calendar_container")[0]), 200);
-	}
-}
-
-function scheduleSelectError(){
 	msg.set("에러");
 }
 
