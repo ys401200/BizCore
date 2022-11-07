@@ -620,7 +620,7 @@ function collectEmpData(e){
 
 		// === 원 저장값과 입력된 값을 비교함
 		// 법인카드
-		if(v.card.length !== t.c.length){
+		if(v.card.length !== t.c.length || JSON.stringify(v.card) !== JSON.stringify(t.c)){
 			storage.collected.asset.card = t.c;
 			edited = true;
 		}else if(v.card.length === t.c.length){
@@ -695,3 +695,52 @@ function clickedImgBtn(el, status){
 		});
 	}
 } // End of clickImgBtn()
+
+
+
+
+
+
+
+account = {
+	no : number, // 번호
+	owner : number, // 소유자
+	observer : array[number], // 참관자 / 세부 항목의 담당자는 당연히 옵저버로 등록이 됨
+	title : string, // 제목
+	desc : string, // 상세설명
+	status : number, // 상태 코드 / 개설(sopp 없음) / 진행(sopp 있고 close 안됨) / 종료 (sopp 종료 및 세부항목 완료되고 클로징 됨)
+	established : number, // 개설일
+	closed : number | null, // 상태가 종료인 경우 종료일
+	type : number, // 어카운트의 유형 / 상세항목 미정
+	sopp : array[number] // 영업기회들
+}
+
+sopp = {
+	no : number, // 번호
+	owner : number, // 주 담당자
+	crew : array[number], // 담당자
+	stage : number, // 진해 단계 코드
+	title : string, // 제목
+	desc : string, // 상세설명
+	basis : { // 기초정보
+		customer : number, // 거래처
+		expected : number, // 예상매출액
+		possibility : number, // 예상 가능성
+		cip : {}, // 업체 담당자
+		decisionMaker : {}, // 업체 의사결정권자
+		items : [ // 예상 매출 아이템
+			{
+				supplier : number,
+				product : number,
+				price : number | null,
+				quantity : number | null
+			}
+		]
+	},
+	source : null | string, // 근원 ?
+	type : number, // 유형코드
+	established : number, // 개설일
+	closed : number | null, // 상태가 종료인 경우 종료일
+	estimates : [string], // 견적번호들
+	contract : number, // 계약번호
+}
