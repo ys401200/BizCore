@@ -72,6 +72,8 @@ function getformList() {
   // target.css("height", Math.ceil((previewWidth / 210) * 297));
 }
 
+
+// 임시저장문서 가져옴 
 function setTempReport() {
   if (storage.reportDetailData != undefined) {
     let formId = storage.reportDetailData.formId;
@@ -275,9 +277,16 @@ function selectForm() {
     html += dataListHtml;
     $(".infoContentlast")[0].innerHTML = html;
     $("#" + formId + "_infoCustomer").attr("list", "_infoCustomer");
-  }
 
+    if (formId == "doc_Form_SalesReport") {
+      $("#" + formId + "_endCustName").attr("list", "_infoCustomer");
+    }
+  }
+  estimate
+  // 데이터 추가시 insertbtn에 거래처 항목 리스트 추가하는 함수 
   $(".insertbtn").click(setCusDataList);
+  $(".insertbtn").click(setProductData);
+
   // let previewWidth = document.getElementsByClassName("reportInsertForm")[0];
   // previewWidth = previewWidth.clientWidth;
   // let target = $(".reportInsertForm");
@@ -285,6 +294,32 @@ function selectForm() {
   storage.editorArray = [formId + "_content"];
   ckeditor.config.readOnly = false;
   window.setTimeout(setEditor, 100);
+
+
+  // 항목 데이터 가져오기 
+  let url;
+  url = apiServer + "/api/estimate/item"
+
+  $.ajax({
+    "url": url,
+    "method": "get",
+    "dataType": "json",
+    "cache": false,
+    success: (data) => {
+      let list, x;
+      if (data.result === "ok") {
+        list = data.data;
+        list = cipher.decAes(list);
+        list = JSON.parse(list);
+        storage.productList = list;
+
+      } else {
+        console.log(data.msg);
+      }
+    }
+  });
+
+
 }
 
 // 영업기회 데이터 리스트 가져오는 함수
@@ -316,6 +351,33 @@ function setSoppList(formId) {
     );
   }
 }
+
+// 항목 데이터 리스트 가져오는 함수 
+function setProductData() {
+  let data = storage.formList;
+  let formId = data[$(".formNumHidden").val()].id;
+  let targetHtml = $("." + formId + "_product")[0].innerHTML;
+  let y;
+  let productListhtml = "";
+  productListhtml = "<datalist id='_product'>";
+  for (y in storage.productList) {
+    productListhtml +=
+      "<option data-value='" +
+      storage.productList[y].no +
+      "' value='" +
+      storage.productList[y].product +
+      "'></option> ";
+  }
+
+  targetHtml += productListhtml;
+  $("." + formId + "_product")[0].innerHTML = targetHtml;
+  $("." + formId + "_product").attr("list", "_product");
+
+
+}
+
+
+
 
 // 결재선 생성 버튼 눌렀을 때 모달 띄움
 function showModal() {
@@ -940,17 +1002,21 @@ function reportInsert() {
   }
 
 
-  let related = { 
+  let related = {
     "next": "",
     "parent": "",
     "previous": "",
-   
-};
+
+  };
   let items = [];
 
 
 
+
+
+  // 문서 양식이 수주판매인 경우 related;  // 
   if (formId == "doc_Form_SalesReport") {
+
     for (let i = 0; i < $(".outProduct").length; i++) {
       let tt = {
         "outProduct": $(".outProduct")[i].value,
@@ -959,6 +1025,7 @@ function reportInsert() {
       };
       items.push(tt);
     }
+
     related = {
       "next": "",
       "parent": "",
@@ -968,10 +1035,10 @@ function reportInsert() {
       "items": items
     }
 
-    
+
   }
 
-related = JSON.stringify(related);
+  related = JSON.stringify(related);
 
   let data = {
     title: title,
@@ -1211,12 +1278,12 @@ function tempSave() {
   }
 
 
-  let related = { 
+  let related = {
     "next": "",
     "parent": "",
     "previous": "",
-   
-};
+
+  };
   let items = [];
 
 
@@ -1239,10 +1306,10 @@ function tempSave() {
       "items": items
     }
 
-    
+
   }
 
-related = JSON.stringify(related);
+  related = JSON.stringify(related);
 
   let data = {
     dept: dept,
@@ -1254,7 +1321,7 @@ related = JSON.stringify(related);
     appDoc: appDoc,
     appLine: appLine,
     temp: temp,
-    related:related 
+    related: related
   };
   console.log(data);
   if (title == "") {
@@ -1543,6 +1610,8 @@ function setCardData() {
 }
 
 function setCusDataList() {
+
+
   let id;
   if ($(".formNumHidden").val() == "") {
     id = storage.reportDetailData.formId;
@@ -1570,6 +1639,7 @@ function setCusDataList() {
     html += dataListHtml;
     $("." + id + "_customer")[i].innerHTML = html;
     $("." + id + "_customer").attr("list", "_customer");
+
   }
 }
 

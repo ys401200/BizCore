@@ -170,7 +170,7 @@ function setEstData() {
     outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'oninput='setNum(this)' data-detail=''  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' data-detail='' value='" + items[i].price + "' class='inputs outPrice doc_Form_SalesReport_price'></input>"
     outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail=''  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' data-detail='' value='" + items[i].quantity + "' class='inputs outQuantity doc_Form_SalesReport_quantity'></input>"
     outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' data-detail='' value='" + outAmount.toLocaleString() + "'  class='inputs outAmount doc_Form_SalesReport_amount'></input>"
-    outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' data-detail='' value='" + outTax.toLocaleString() + "'  class='inputs  doc_Form_SalesReport_tax'></input>"
+    outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' data-detail='' value='" + outTax.toLocaleString() + "'  class='outTax inputs  doc_Form_SalesReport_tax'></input>"
     outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' data-detail='' value='" + outTotal.toLocaleString() + "' class='outTotal inputs doc_Form_SalesReport_total'></input>"
     outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='' onkeyup='this.dataset.detail=this.value' class='inputs doc_Form_SalesReport_remark'></input>"
     outHtml += "<div class='detailcontentbox'><input type='checkbox' class='detailBox'></div></div>"
@@ -264,11 +264,13 @@ function reportInsert() {
 
   let items = [];
 
+
   for (let i = 0; i < $(".outProduct").length; i++) {
     let tt = {
       "outProduct": $(".outProduct")[i].value,
       "outPrice": $(".outPrice")[i].value,
-      "outQuantity": $(".outQuantity")[i].value
+      "outQuantity": $(".outQuantity")[i].value,
+      "tax": $(".outTax")[i].value
     };
 
     items.push(tt);
