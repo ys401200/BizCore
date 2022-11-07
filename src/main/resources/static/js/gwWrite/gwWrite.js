@@ -282,7 +282,7 @@ function selectForm() {
       $("#" + formId + "_endCustName").attr("list", "_infoCustomer");
     }
   }
-  estimate
+
   // 데이터 추가시 insertbtn에 거래처 항목 리스트 추가하는 함수 
   $(".insertbtn").click(setCusDataList);
   $(".insertbtn").click(setProductData);
