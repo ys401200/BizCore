@@ -91,4 +91,8 @@ public interface SystemMapper {
     // 직원 성별을 가져오는 메서드 / 디폴트 아바타 설별 구분용
     @Select("SELECT gender FROM bizcore.users WHERE compId = #{compId} AND `no` = #{empNo}")
     public Integer getEmployeeGender(@Param("compId") String compId, @Param("empNo") String empNo);
+
+    // 퇴사일이 기록되어 있고 경과한 사람에 대한 퇴사 처리
+    @Update("UPDATE bizcore.users SET deleted = NOW(), prohibited = 1 WHERE DATE_ADD(NOW(), INTERVAL 9 HOUR) > resigned AND deleted IS NULL")
+    public int processResignedEmployee();
 }
