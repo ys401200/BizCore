@@ -1,5 +1,9 @@
 @charset "UTF-8";
 
+select:read-only, input[type="text"]:read-only, input[type="date"]:read-only {
+  background-color: transparent;
+}
+
 
 .container {
   position: relative;

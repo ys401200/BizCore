@@ -1349,42 +1349,49 @@ function tempSave() {
 
 // 결재선 정보 저장하기
 function lineSaveFnc() {
-  let title = $(".setSavedLineTitle").val();
-  let appLine = []; // 이차원 배열에 담기
 
-  let target = $(".typeContainer");
+  if ($("#approval").html() == "") {
+    alert("결재자를 설정하세요");
+  } else if ($(".setSavedLineTitle").val() == "") {
+    alert("결재선 이름을 입력하세요");
+  } else {
+    let title = $(".setSavedLineTitle").val();
+    let appLine = []; // 이차원 배열에 담기
 
-  for (let i = 0; i < target.length; i++) {
-    for (let j = 0; j < target[i].children.length; j++) {
-      appLine.push([i, target[i].children[j].id.split("_")[1]]);
-    }
-  }
-  console.log(appLine);
-  let data = {
-    title: title,
-    appLine: appLine,
-  };
+    let target = $(".typeContainer");
 
-  console.log(data);
-  data = JSON.stringify(data);
-  data = cipher.encAes(data);
-
-  $.ajax({
-    url: "/api/gw/app/savedLine",
-    method: "post",
-    data: data,
-    dataType: "json",
-    contentType: "text/plain",
-    success: (result) => {
-      if (result.result === "ok") {
-        alert("저장 되었습니다.");
-        getSavedLine();
-        $(".setSavedLineTitle").val("");
-      } else {
-        alert("실패");
+    for (let i = 0; i < target.length; i++) {
+      for (let j = 0; j < target[i].children.length; j++) {
+        appLine.push([i, target[i].children[j].id.split("_")[1]]);
       }
-    },
-  });
+    }
+
+    let data = {
+      title: title,
+      appLine: appLine,
+    };
+
+    console.log(data);
+    data = JSON.stringify(data);
+    data = cipher.encAes(data);
+
+    $.ajax({
+      url: "/api/gw/app/savedLine",
+      method: "post",
+      data: data,
+      dataType: "json",
+      contentType: "text/plain",
+      success: (result) => {
+        if (result.result === "ok") {
+          alert("저장 되었습니다.");
+          getSavedLine();
+          $(".setSavedLineTitle").val("");
+        } else {
+          alert("실패");
+        }
+      },
+    });
+  }
 }
 
 // 로그인한 사람의 사번으로 저장된 결재선 찾음
