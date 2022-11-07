@@ -10,25 +10,27 @@
 					<hr />
 					<div><span>전자결재 홈</span>
 					</div>
-					
+
 					<div>
-						<div >
-							
-							<label for="waitBtn">결재 대기 문서<input type="radio" class="waitBtn" name="domTab" id="waitBtn" onclick="drawWaitCard(0)"></label>
-								
-							<label for="dueBtn">결재 예정 문서<input type="radio" class="dueBtn" name="domTab" id="dueBtn" onclick="drawWaitCard(1)"></label>
-								
-							<label for="receiveBtn">수신 대기 문서<input type="radio" class="receiveBtn" name="domTab" id="receiveBtn" onclick="drawWaitCard(2)"></label>
-								
-							<label for="referBtn">참조/열람 대기문서<input type="radio" class="referBtn" name="domTab" id="referBtn" onclick="drawWaitCard(3)"></label>
-								
+						<div>
+
+							<input type="radio" class="waitBtn" name="domTab" id="waitBtn" onclick="drawWaitCard(0)">
+
+							<input type="radio" class="dueBtn" name="domTab" id="dueBtn" onclick="drawWaitCard(1)">
+
+							<input type="radio" class="receiveBtn" name="domTab" id="receiveBtn"
+								onclick="drawWaitCard(2)">
+
+							<input type="radio" class="referBtn" name="domTab" id="referBtn" onclick="drawWaitCard(3)">
+
 						</div>
 						<div class="optionDiv"><button onclick="drawWaitCardBtn()">카드</button><button
 								onclick="drawWaitList()">리스트</button></div>
 						<div class="comTabContent">
-						<div class="waitDiv"></div>
-						<div class="waitList listDiv"></div>
-						<div class="pageContainer waitPage"></div></div>
+							<div class="waitDiv"></div>
+							<div class="waitList listDiv"></div>
+							<div class="pageContainer waitPage"></div>
+						</div>
 					</div>
 
 

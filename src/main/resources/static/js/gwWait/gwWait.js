@@ -238,8 +238,8 @@ function showReportDetail() {
     "<div class='mainBtnDiv'><button onclick='showList()'>목록보기</button><button type='button' name='approvalBtn' onclick='showAppModal()'>결재하기</button>" +
     "<button type='button' onclick='showGwModal()'>결재선 수정</button>" +
     "<button type='button' onclick='toWriteMode();createConfirmBtn(this)'>문서 수정</button></div>" +
-    "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
-
+    // "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
+ "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
   $(".listPageDiv").html(detailHtml);
 
   let selectedFileView =
@@ -260,31 +260,31 @@ function showReportDetail() {
   getFileArr();
 
   // 참조 데이터 추가
-  let referArr = new Array();
+  // let referArr = new Array();
 
-  for (let i = 0; i < storage.reportDetailData.appLine.length; i++) {
-    if (storage.reportDetailData.appLine[i].appType == "4") {
-      referArr.push(storage.reportDetailData.appLine[i]);
-    }
-  }
+  // for (let i = 0; i < storage.reportDetailData.appLine.length; i++) {
+  //   if (storage.reportDetailData.appLine[i].appType == "4") {
+  //     referArr.push(storage.reportDetailData.appLine[i]);
+  //   }
+  // }
 
-  let referTarget = $(".selectedRefer");
-  let referHtml = "";
-  for (let i = 0; i < referArr.length; i++) {
-    let id = referArr[i].employee;
-    referHtml +=
-      "<div class='appendName " +
-      formId +
-      "_refer' data-detail='" +
-      storage.user[id].userNo +
-      "'>" +
-      storage.userRank[storage.user[id].rank][0] +
-      "&nbsp" +
-      storage.user[id].userName +
-      "</div>";
-  }
+  // let referTarget = $(".selectedRefer");
+  // let referHtml = "";
+  // for (let i = 0; i < referArr.length; i++) {
+  //   let id = referArr[i].employee;
+  //   referHtml +=
+  //     "<div class='appendName " +
+  //     formId +
+  //     "_refer' data-detail='" +
+  //     storage.user[id].userNo +
+  //     "'>" +
+  //     storage.userRank[storage.user[id].rank][0] +
+  //     "&nbsp" +
+  //     storage.user[id].userName +
+  //     "</div>";
+  // }
 
-  referTarget.html(referHtml);
+  // referTarget.html(referHtml);
 
   // dataset > input value 적용
   let target = $(".seletedForm")[0];
@@ -1546,7 +1546,7 @@ function createNewLine() {
     getYmdSlashShort(storage.reportDetailData.appLine[0].read) +
     "'></div></div></div>";
   let testHtml2 = "<div class='lineGridContainer'>";
-  let referHtml = "";
+ // let referHtml = "";
   let titleArr = ["검토", "합의", "결재", "수신", "참조"];
   let titleId = ["examine", "agree", "approval", "conduct", "refer"];
 
@@ -1603,18 +1603,18 @@ function createNewLine() {
 
       // 참조
       else if (i == 4) {
-        referHtml +=
-          "<div class='appendName " +
-          formId +
-          "_" +
-          titleId[i] +
-          "' data-detail='" +
-          storage.user[newCombine[i][j]].userNo +
-          "'>" +
-          storage.userRank[storage.user[newCombine[i][j]].rank][0] +
-          "&nbsp" +
-          storage.user[newCombine[i][j]].userName +
-          "</div>";
+        // referHtml +=
+        //   "<div class='appendName " +
+        //   formId +
+        //   "_" +
+        //   titleId[i] +
+        //   "' data-detail='" +
+        //   storage.user[newCombine[i][j]].userNo +
+        //   "'>" +
+        //   storage.userRank[storage.user[newCombine[i][j]].rank][0] +
+        //   "&nbsp" +
+        //   storage.user[newCombine[i][j]].userName +
+        //   "</div>";
       }
 
       // 검토 합의 결재
@@ -1666,7 +1666,7 @@ function createNewLine() {
   testHtml += testHtml2;
   lineTarget.html(testHtml);
 
-  $(".selectedRefer").html(referHtml);
+ // $(".selectedRefer").html(referHtml);
 
   console.log(newCombine);
 
@@ -2250,7 +2250,7 @@ function reset() {
     getYmdSlashShort(appLine[0].read) +
     "'></div></div></div>";
   let testHtml2 = "<div class='lineGridContainer'>";
-  let referHtml = "";
+  //let referHtml = "";
   let titleArr = ["검토", "합의", "결재", "수신", "참조"];
 
   let titleId = ["examine", "agree", "approval", "conduct", "refer"];
@@ -2315,20 +2315,20 @@ function reset() {
           "' value='' data-detail=''/></div></div>";
       }
 
-      // 참조
+    
       else if (i == 4) {
-        referHtml +=
-          "<div class='appendName " +
-          formId +
-          "_" +
-          titleId[i] +
-          "' data-detail='" +
-          storage.user[newCombine[i][j]].userNo +
-          "'>" +
-          storage.userRank[storage.user[newCombine[i][j]].rank][0] +
-          "&nbsp" +
-          storage.user[newCombine[i][j]].userName +
-          "</div>";
+        // referHtml +=
+        //   "<div class='appendName " +
+        //   formId +
+        //   "_" +
+        //   titleId[i] +
+        //   "' data-detail='" +
+        //   storage.user[newCombine[i][j]].userNo +
+        //   "'>" +
+        //   storage.userRank[storage.user[newCombine[i][j]].rank][0] +
+        //   "&nbsp" +
+        //   storage.user[newCombine[i][j]].userName +
+        //   "</div>";
       }
 
       // 검토 합의 결재
@@ -2384,7 +2384,7 @@ function reset() {
   testHtml += testHtml2;
   lineTarget.html(testHtml);
 
-  $(".selectedRefer").html(referHtml);
+ // $(".selectedRefer").html(referHtml);
 
   $(".modal-wrap").hide();
 
