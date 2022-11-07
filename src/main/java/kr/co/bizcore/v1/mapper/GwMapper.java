@@ -137,7 +137,7 @@ public interface GwMapper {
                         @Param("ordered") int ordered);
 
         // 결재절차가 완료된 경우 이를 헤더 테이블에 기록하믐 메서드
-        @Update("UPDATE bizcore.doc_app SET status = #{status}, confirmNo = docNo WHERE deleted IS NULL AND compId = #{compId} AND docNo = #{docNo}")
+        @Update("UPDATE bizcore.doc_app SET status = #{status}, confirmNo = bizcore.create_doc_confirm_no(#{compId}, #{docNo}) WHERE deleted IS NULL AND compId = #{compId} AND docNo = #{docNo}")
         public int setCompleteStatus(@Param("compId") String compId, @Param("docNo") String docNo,
                         @Param("status") int status);
 
