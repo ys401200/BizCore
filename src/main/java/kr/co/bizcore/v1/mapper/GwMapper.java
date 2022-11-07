@@ -81,7 +81,7 @@ public interface GwMapper {
                         @Param("docNo") String docNo);
 
         // 결재선에 반려처리를 기록하는 메서드
-        @Update("UPDATE bizcore.doc_app_detail SET rejected = NOW() WHERE compId = #{compId} AND docNo = #{docNo} AND ordered = #{ordered}")
+        @Update("UPDATE bizcore.doc_app_detail SET rejected = NOW(), doc = (SELECT doc FROM bizcore.doc_app_detail x, (SELECT MAX(ordered) o FROM bizcore.doc_app_detail WHERE compId = #{compId} AND docNo = #{docNo} AND ordered < #{ordered}) y WHERE x.compid = #{compId} AND x.docno = #{docNo} AND x.ordered = y.o) WHERE compId = #{compId} AND docNo = #{docNo} AND ordered = #{ordered}")
         public int setDocAppLineRejected(@Param("compId") String compId, @Param("docNo") String docNo,
                         @Param("ordered") int ordered);
 
