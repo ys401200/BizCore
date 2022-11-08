@@ -47,6 +47,37 @@ function getProductList() {
 } // End of getEstimateList()
 
 
+function getSoppData() {
+
+  let soppNo = storage.estmVerList[storage.estmVerList.length - 1].related.parent.split(":")[1] * 1;
+  $.ajax({
+    "url": "/api/sopp/" + soppNo,
+    "method": "get",
+    "dataType": "json",
+    "cache": false,
+    success: (data) => {
+      let list, x;
+      if (data.result === "ok") {
+        list = data.data;
+        list = cipher.decAes(list);
+        list = JSON.parse(list);
+        storage.soppDetail = list;
+
+      } else {
+        console.log(data.msg);
+      }
+    }
+
+  })
+}
+
+
+
+
+
+
+
+
 // 견적 데이터 가져오는 함수 
 function getEstmVerList(estmNo) {
   let url;
@@ -67,6 +98,7 @@ function getEstmVerList(estmNo) {
         storage.estmVerList = list;
         setEstData();
         getSavedLine();
+        getSoppData();
 
       } else {
         console.log(data.msg);
@@ -74,12 +106,17 @@ function getEstmVerList(estmNo) {
     }
   });
 
-
 } // End of getEstimateList()
+
+
+
+
 
 
 //데이터 리스트 셋하는 함수 
 function setEstData() {
+
+
   let formId = "doc_Form_SalesReport";
 
   $.ajax({
@@ -99,6 +136,7 @@ function setEstData() {
       }
     },
   });
+
 
   let html = $(".infoContentlast")[0].innerHTML;
   let x;
@@ -368,26 +406,6 @@ function reportInsert() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function getTotalCount() {
 
 
@@ -543,22 +561,23 @@ function setSoppList(formId) {
   soppTarget.innerHTML = soppHtml;
   $("#" + formId + "_sopp").attr("list", "_infoSopp");
 
-  let soppNo = storage.estmVerList[3].related.parent.split(":")[1];
-  console.log(storage.sopp);
-  for (let i = 0; i < storage.sopp.length; i++) {
-    if (storage.sopp[i].no + "" == soppNo) {
+  //영업기회 정보 세팅 
 
-      $("#" + formId + "_sopp").val(storage.sopp[i].title);
-      $("#" + formId + "_infoCustomer").val(storage.customer[storage.sopp[i].customer].name);
-      $("#" + formId + "_endCustName").val(storage.customer[storage.sopp[i].customer].name);
-      $("#" + formId + "_cntrctMtn").val(storage.sopp[i].customer);
-      $("#" + formId + "_soppType").val(storage.sopp[i].soppType);
-      $("#" + formId + "_soppTargetAmt").val(storage.sopp[i].expectedSales.toLocaleString() + "원");
-      $("#" + formId + "_title").val(storage.sopp[i].title + " 수주판매보고");
-      $(".outCus").val(storage.customer[storage.sopp[i].customer].name);
+  
+      $("#" + formId + "_sopp").val(storage.soppDetail.title); // 영업기회 
+      $("#" + formId + "_infoCustomer").val(storage.customer[storage.soppDetail.customer].name); // 매출처 
+      $("#" +formId+ "_custmemberName").val(storage.cip[storage.soppDetail.picOfCustomer].name);//매출처 담당자 
+      $("#" + formId + "_endCustName").val(storage.customer[storage.soppDetail.customer].name); // 엔드유저 
+      $("#" + formId + "_soppStatus").val(storage.soppDetail.status); // 진행단계 
+      $("#" + formId + "_soppRate").val(storage.soppDetail.progress + "%"); // 가능성 
+      $("#" + formId + "_cntrctMtn").val(storage.soppDetail.contType);//계약 구분 
+      $("#" + formId + "_targetDate").val(getYmdHypen(storage.soppDetail.targetDate)); // 매출 예정일 
+      $("#" + formId + "_soppType").val(storage.soppDetail.soppType); // 판매방식 
+      $("#" + formId + "_soppTargetAmt").val(storage.soppDetail.expectedSales.toLocaleString() + "원"); // 예상매출 
+      $("#" + formId + "_title").val(storage.soppDetail.title + " 수주판매보고"); 
+      $(".outCus").val(storage.customer[storage.soppDetail.customer].name);
 
-    }
-  }
+ 
 
   let target = $(".mainDiv")[0];
   let inputsArr = target.getElementsByTagName("input");
@@ -744,3 +763,15 @@ function getYmdSlash() {
   );
 }
 
+function getYmdHypen(date) {
+  let d = new Date(date);
+  return (
+    (d.getFullYear()) +
+    "-" +
+    (d.getMonth() + 1 > 9
+      ? (d.getMonth() + 1).toString()
+      : "0" + (d.getMonth() + 1)) +
+    "-" +
+    (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
+  );
+}
