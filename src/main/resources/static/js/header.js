@@ -957,6 +957,10 @@ function getBasicInfo(){
 					// storage.widget.set = list.widget;
 					storage.my = list.my;
 					console.log("[getBasicInfo] Success getting basic information.");
+					// 회계 관리 권한 적용
+					if(!storage.permission._manager && !storage.permission._accounting)	document.getElementsByClassName("mainTopMenu")[0].children[0].children[2].remove();
+					// 인사관리 권한 적용
+					if(!storage.permission._manager && !storage.permission._hr)	document.getElementsByClassName("sideMenu")[0].children[0].children[8].children[1].children[3].remove();
 				} else {
 					msg.set("기본 정보를 가져오지 못했습니다.");
 				}
