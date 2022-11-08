@@ -37,19 +37,44 @@ function getDetailInfo(){
 	let empNo, dept;
 	if(this.getAttribute("for").substring(0,3) === "emp"){
 		empNo = this.getAttribute("for").substring(4);
-		dept = this.parentElement.previousSibling.children[0].getAttribute("for").substring(10);
+		if(storage.basic !== undefined && storage.basic.no !== undefined && storage.basic.no == empNo)	return; // 현재 선택된 직원을 클릭하는 경우 종료함
+		dept = this.parentElement.previousSibling.getAttribute("for").substring(10);
 		storage.collected = {"dept":dept};
+		document.getElementsByClassName("image_btns")[0].children[0].style.display = "";
+		document.getElementsByClassName("image_btns")[0].children[1].style.display = "";
 		getEmployeeDetailInfo(empNo, dept);
 	}else if(this.getAttribute("for").substring(0,4) === "dept"){
 		dept = this.getAttribute("for").substring(10);
 		storage.collected = {"dept":dept};
-		getDeptDetailInfo(empNo, dept); // ==================== 해당 함수 만들어야 함
+		document.getElementsByClassName("image_btns")[0].children[0].style.display = "initial";
+		document.getElementsByClassName("image_btns")[0].children[1].style.display = "initial";
+		getDeptDetailInfo(dept); // ==================== 해당 함수 만들어야 함
 	}
 } // End of getDetailInfo()()
 
-// 부서 클리기 실행되는 함수
-function getDeptDetailInfo(){
+// 부서 클릭시 실행되는 함수
+function getDeptDetailInfo(dept){
+	let url;
+	document.getElementsByClassName("listContent")[0].children[1].innerHTML = "";
 
+	url = apiServer + "/api/manage/department/" + dept;
+	$.ajax({
+		"url": url,
+		"method": "get",
+		"dataType": "json",
+		"cache": false,
+		success: (data) => {
+			let list;
+			if (data.result === "ok") {
+				list = cipher.decAes(data.data);
+				list = JSON.parse(list);
+				storage.basic = list;
+				setDeptData();
+			} else {
+				msg.set("[getEmployeeDetailInfo] Fail to get bank account information.");
+			}
+		}
+	});
 } // End of getDeptDetailInfo()
 
 
@@ -57,6 +82,8 @@ function getDeptDetailInfo(){
 function getEmployeeDetailInfo(empNo, dept){
 	let url;
 	if(empNo === undefined)	return;
+	document.getElementsByClassName("listContent")[0].children[1].innerHTML = "";
+	storage.collected = {};
 
 	url = apiServer + "/api/manage/employee/" + dept + "/" + empNo;
 	$.ajax({
@@ -67,7 +94,6 @@ function getEmployeeDetailInfo(empNo, dept){
 		success: (data) => {
 			let list;
 			if (data.result === "ok") {
-				msg.set("[getEmployeeDetailInfo] Success to get detail employee information.",1);
 				list = cipher.decAes(data.data);
 				list = JSON.parse(list);
 				storage.basic = list.basic;
@@ -472,6 +498,49 @@ function setEmpData(){
 
 } // End of setEmpData()
 
+function setDeptData(){
+	let cnt, x, y, html = "", title, t, t1, t2;
+	cnt = document.getElementsByClassName("listContent")[0].children[1];
+	// =========================================== 기본 정보 타이틀 ===========================================
+	title = "기본정보";
+	html += "<div><div class=\"image_btns\"><img src=\"/images/manage/icon_modified.png\" /></div><div class=\"manageSubTitle\">";
+	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+	html += "</div><div class=\"image_btns\"><img src=\"/images/manage/icon_undo.png\" data-p\"basic\" onclick=\"clickedImgBtn(this, false)\" /><img src=\"/images/manage/icon_confirm.png\" data-p\"basic\" onclick=\"clickedImgBtn(this, true)\" /></div></div>";
+
+	html += "<div class=\"employeeDetail\" data-p=\"basic\">";
+
+	// =========================================== 기본 정보 내용 ===========================================
+	// 부서명
+	title = "부서명";
+	html += "<div><div>";
+	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+	html += "</div>";
+	html += ("<div class=\"xDeptName\">" + storage.basic.name + "</div>");
+
+	// 아이디
+	title = "부서코드";
+	html += "<div>";
+	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+	html += ("</div><div class=\"xDeptId\">" + storage.basic.id + "</div></div>");
+
+	// 생성일
+	title = "생성일";
+	html += "<div><div>";
+	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+	html += "</div>";
+	html += ("<div class=\"xDeptCreated\">" + storage.basic.created + "</div>");
+
+	// 수정일
+	title = "수정일";
+	html += "<div>";
+	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+	html += ("</div><div class=\"xDeptModified\">" + storage.basic.modified + "</div></div>");
+	
+	html += "</div>";
+
+	cnt.innerHTML = html;
+} // End of setDeptData()
+
 // 정보 수정 시. 입력된 데이터를 수집하는 함수
 function collectEmpData(e){
 	let v, n, t, x, y, p, edited;
@@ -696,52 +765,4 @@ function clickedImgBtn(el, status){
 	}
 } // End of clickImgBtn()
 
-
-
-
-
-
-
-account = {
-	no : number, // 번호
-	owner : number, // 소유자
-	observer : array[number], // 참관자 / 세부 항목의 담당자는 당연히 옵저버로 등록이 됨
-	title : string, // 제목
-	desc : string, // 상세설명
-	status : number, // 상태 코드 / 개설(sopp 없음) / 진행(sopp 있고 close 안됨) / 종료 (sopp 종료 및 세부항목 완료되고 클로징 됨)
-	established : number, // 개설일
-	closed : number | null, // 상태가 종료인 경우 종료일
-	type : number, // 어카운트의 유형 / 상세항목 미정
-	sopp : array[number] // 영업기회들
-}
-
-sopp = {
-	no : number, // 번호
-	owner : number, // 주 담당자
-	crew : array[number], // 담당자
-	stage : number, // 진해 단계 코드
-	title : string, // 제목
-	desc : string, // 상세설명
-	basis : { // 기초정보
-		customer : number, // 거래처
-		expected : number, // 예상매출액
-		possibility : number, // 예상 가능성
-		cip : {}, // 업체 담당자
-		decisionMaker : {}, // 업체 의사결정권자
-		items : [ // 예상 매출 아이템
-			{
-				supplier : number,
-				product : number,
-				price : number | null,
-				quantity : number | null
-			}
-		]
-	},
-	source : null | string, // 근원 ?
-	type : number, // 유형코드
-	established : number, // 개설일
-	closed : number | null, // 상태가 종료인 경우 종료일
-	estimates : [string], // 견적번호들
-	contract : number, // 계약번호
-}
 

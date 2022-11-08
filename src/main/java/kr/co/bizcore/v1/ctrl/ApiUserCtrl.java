@@ -182,9 +182,12 @@ public class ApiUserCtrl extends Ctrl{
         return result;
     }
 
-    @RequestMapping(value = "/map", method = RequestMethod.GET)
-    public String userMap(HttpServletRequest request) {
+    @RequestMapping(value = {"/map", "/map/{admin:\\D{5}}"}, method = RequestMethod.GET)
+    public String userMap(HttpServletRequest request, @PathVariable(required = false) String admin) {
         String result = null, aesKey = null, aesIv = null, map = null, compId = null;
+        boolean adm = false;
+
+        if(admin != null && admin.equals("admin"))  adm = true;
         
         HttpSession session = request.getSession();
 
@@ -198,7 +201,7 @@ public class ApiUserCtrl extends Ctrl{
         }else if(aesKey == null || aesIv == null){
             result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
         }else{
-            map = userService.getUserMapJson(compId);
+            map = userService.getUserMapJson(compId, adm);
             map = userService.encAes(map, aesKey, aesIv);
             result = "{\"result\":\"ok\",\"data\":\"" + map + "\"}";
         }

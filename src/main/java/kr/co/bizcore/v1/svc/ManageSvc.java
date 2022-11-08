@@ -637,5 +637,22 @@ public class ManageSvc extends Svc{
 
         return result;
     } // End of updateEmployeeAsset()
+
+    public String getDeptDetilInfo(String compId, String dept){
+        String result = null;
+        HashMap<String, String> each = null;
+        each = deptMapper.getDeptDetailInfo(compId, dept);
+        result = "{\"id\":\"" + each.get("deptId") + "\",";
+        result += ("\"name\":\"" + each.get("deptName") + "\",");
+        result += ("\"parent\":\"" + each.get("parent") + "\",");
+        result += ("\"color\":\"" + each.get("colorCode") + "\",");
+        result += ("\"isRoot\":" + each.get("isRoot").equals("1") + ",");
+        result += ("\"head\":" + each.get("head") + ",");
+        result += ("\"doc\":" + each.get("doc") + ",");
+        result += ("\"created\":" + each.get("created") + ",");
+        result += ("\"modified\":" + each.get("created") + ",");
+        result += ("\"deleted\":" + each.get("deleted") + "}");logger.error("///////////////////////////////////////// " + result);
+        return result;
+    } // End of getEdptDetilInfo()
     
 } 

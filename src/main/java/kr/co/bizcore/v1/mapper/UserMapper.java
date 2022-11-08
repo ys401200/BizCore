@@ -27,6 +27,9 @@ public interface UserMapper {
     @Select("SELECT no AS userNo, compId, userId, userName, rank, gender, deleted FROM bizcore.users WHERE compid = #{compId}")
     public List<SimpleUser> getAllUser(String compId);
 
+    @Select("SELECT no AS userNo, compId, userId, userName, rank, gender, IF(deleted > DATE_ADD(NOW(), INTERVAL -1 month), NULL, deleted) AS deleted FROM bizcore.users WHERE compid = #{compId}")
+    public List<SimpleUser> getAllUserForAdmin(String compId);
+
     @Select("SELECT CAST(user_no AS CHAR) AS userNo, dept_id AS deptId FROM bizcore.user_dept WHERE comp_id = #{compId} ORDER BY user_no, priority")
     public List<Map<String, String>> getAllDeptInfo(String compId);
 

@@ -155,6 +155,41 @@ public class UserService extends Svc {
         return userMap;
     } // End of getUserMap()
 
+    public HashMap<String, SimpleUser> getUserMapForAdmin(String compId){
+        HashMap<String, SimpleUser> userMap = null;
+        List<SimpleUser> userList = null;
+        List<Map<String, String>> deptInfo = null, permList = null;
+        Map<String, String> deptEach = null, permEach = null;
+        SimpleUser each = null;
+        String userNo = null, deptId = null, funcId = null, subId, perm = null;
+        int x = 0;
+
+        userList = userMapper.getAllUserForAdmin(compId);
+        deptInfo = userMapper.getAllDeptInfo(compId);
+        if(userList != null && userList.size() > 0){
+            userMap = new HashMap<>();
+            
+            // user 정보가 담긴 list를 map으로 변환
+            for(x = 0 ; x < userList.size() ; x++){
+                each = userList.get(x);
+                userMap.put(each.getUserNo()+"", each);
+            }
+
+            // 변환된 map에 각 사용자의 부서를 설정
+            for(x = 0 ; x < deptInfo.size() ; x++){
+                deptEach = deptInfo.get(x);
+                userNo = deptEach.get("userNo");
+                deptId = deptEach.get("deptId");
+                each = userMap.get(userNo);
+                if(each != null){
+                    each.addDeptId(deptId);
+                }
+            }
+        }
+
+        return userMap;
+    } // End of getUserMap()
+
     // 직급정보를 전달하는 메서드
     public String getUserRank(String compId){
         HashMap<String, String> each = null;
@@ -180,7 +215,7 @@ public class UserService extends Svc {
         return result;
     } // End of getUserMap()
 
-    public String getUserMapJson(String compId){
+    public String getUserMapJson(String compId, boolean admin){
         String result = "{";
         HashMap<String, SimpleUser> map = null;
         SimpleUser user = null;
@@ -188,7 +223,8 @@ public class UserService extends Svc {
         String userNo = null;
         int x = 0;
 
-        map = getUserMap(compId);
+        if(admin)   map = getUserMapForAdmin(compId);
+        else        map = getUserMap(compId);
         keySet = map.keySet().toArray();
         for(x = 0 ; x < keySet.length ; x++){
             userNo = (String)keySet[x];
