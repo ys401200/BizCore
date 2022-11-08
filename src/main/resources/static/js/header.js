@@ -821,17 +821,12 @@ function classType(obj){
 
 // API 서버에서 직원 정보를 가져오는 함수
 function getUserMap(){
-	let url, userMapTime, userMapData;
+	let url, userMapTime, userMapData, arr, adminMode = false;
 
-	url = apiServer + "/api/user/map";
-	userMapTime = sessionStorage.getItem("userMapTime");
-	userMapTime = userMapTime == null ? 0 : userMapTime * 1;
-	if((new Date()).getTime() < userMapTime + 600000){
-		userMapData = sessionStorage.getItem("userMapData");
-		userMapData = JSON.parse(userMapData);
-		storage.user = userMapData;
-		console.log("[getUserMap] set user data from sessionStorage.");
-	}else{
+	arr = location.href.split("/");
+	adminMode = arr[arr.length - 2] === "business" && arr[arr.length - 1] === "employee";
+	if(adminMode){
+		url = apiServer + "/api/user/map/admin";
 		$.ajax({
 			"url": url,
 			"method": "get",
@@ -839,20 +834,49 @@ function getUserMap(){
 			"cache": false,
 			success: (data) => {
 				let list;
-	
 				if (data.result === "ok") {
 					list = cipher.decAes(data.data);
-					sessionStorage.setItem("userMapData", list);
-					sessionStorage.setItem("userMapTime", (new Date()).getTime() + "");
 					list = JSON.parse(list);
 					storage.user = list;
-					console.log("[getUserMap] Success getting employee information.");
 				} else {
 					msg.set("직원 정보를 가져오지 못했습니다.");
 				}
 			}
-		})
-	}
+		});
+	}else{
+		url = apiServer + "/api/user/map";
+		userMapTime = sessionStorage.getItem("userMapTime");
+		userMapTime = userMapTime == null ? 0 : userMapTime * 1;
+
+		if((new Date()).getTime() < userMapTime + 600000){
+			userMapData = sessionStorage.getItem("userMapData");
+			userMapData = JSON.parse(userMapData);
+			storage.user = userMapData;
+			console.log("[getUserMap] set user data from sessionStorage.");
+		}else{
+			$.ajax({
+				"url": url,
+				"method": "get",
+				"dataType": "json",
+				"cache": false,
+				success: (data) => {
+					let list;
+
+					if (data.result === "ok") {
+						list = cipher.decAes(data.data);
+						sessionStorage.setItem("userMapData", list);
+						sessionStorage.setItem("userMapTime", (new Date()).getTime() + "");
+						list = JSON.parse(list);
+						storage.user = list;
+						console.log("[getUserMap] Success getting employee information.");
+					} else {
+						msg.set("직원 정보를 가져오지 못했습니다.");
+					}
+				}
+			});
+		}
+	}	
+	
 } // End of getUserMap()
 
 // API 서버에서 직원 정보를 가져오는 함수
@@ -2708,7 +2732,7 @@ class Department{
 		return false;
 	} // End of getChildrenId()
 
-	// 조직도 그리기 태그문자열 생성/전달(원본 데이터임 삭제X)
+	// 조직 설정에서 조직도 그리기 태그문자열 생성/전달
 	getTreeHtml(empSelectable, deptSelectable){
 		let x, y, html, padding;
 		empSelectable = empSelectable === undefined || empSelectable !== true ? false : empSelectable;
@@ -2716,16 +2740,14 @@ class Department{
 		padding = "1rem";
 
 		html = "<input type=\"checkbox\" class=\"dept-tree\" style=\"display:none\" id=\"dept-tree-" + this.id + "\" />";
-	 	html += ("<div class=\"deptName\"><label for=\"dept-tree-" + this.id + "\"></label><img src=\"/images/common/corporate.png\" style=\"width:20px;height:20px;vertical-align:middle;\">" + this.name + "</div>");
-	 	if(deptSelectable)  html += ("<input type=\"checkbox\" class=\"dept-tree-select\" data-select=\"dept:" + this.id + "\" />");
+	 	html += ("<label for=\"dept-tree-" + this.id + "\" class=\"deptName\"><div><img src=\"/images/common/corporate.png\" style=\"width:20px;height:20px;vertical-align:middle;\">" + this.name + "</div></label>");
 	 	html += ("<div class=\"dept-tree-cnt\">");
 
 	 	for(x = 0 ; x < this.employee.length ; x++){
 	 		y = this.employee[x];
 	 		if(y === undefined) continue;
 	 		if(storage.user[y] === undefined || storage.user[y].resign) continue;
-			 if(empSelectable)	html += ("<input style=\"display:none;\" type=\"checkbox\" class=\"dept-tree-select\" data-select=\"emp:" + y + "\" id=\"emp:" + y + "\" />");
-			 else				html += ("<input style=\"display:none;\" type=\"radio\" name=\"deptTreeSelectEmp\" class=\"dept-tree-select\" data-select=\"emp:" + y + "\" id=\"emp:" + y + "\" />");
+			html += ("<input style=\"display:none;\" type=\"radio\" name=\"deptTreeSelectEmp\" class=\"dept-tree-select\" data-select=\"emp:" + y + "\" id=\"emp:" + y + "\" />");
 	 		html += ("<label for=\"emp:" + y + "\" ><div><img src=\"/api/user/image/" + y + "\" style=\"width:20px;height:20px;vertical-align:middle;margin-left:1.2rem;\" /> " + storage.user[y].userName + " " + storage.userRank[storage.user[y].rank][0]) + "</div></label>";
 	 	}
 
