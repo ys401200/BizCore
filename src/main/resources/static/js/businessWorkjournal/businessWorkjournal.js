@@ -41,7 +41,7 @@ function getworkJournal(){
 }
 
 function drawWorkJournalList() {
-    let workJournalContent, html = "", startDate, endDate;
+    let workJournalContent, html = "", startDate, endDate, parent;
     workJournalContent = $(".workJournalContainer .workJournalContent");
 
     $(document).find("#absBtn").hide();
@@ -101,8 +101,8 @@ function drawWorkJournalList() {
                 if(dateStart.getTime() + 86400000 * 7 > date.getTime() && scheduleDatas[index].report){
                     let week = calWeekDay(scheduleDatas[index].date);
 
-                    html += "<div class=\"rowSpanColumn\" style='text-align:center; display: flex; align-items: center; justify-content: center; border-right: 1px solid #ededed;'>" + week + "</div>";
-                    html += "<div style='padding-left: 10px;'><span style='font-weight: 600;'>" + scheduleDatas[index].title + "</span><br /><span>" + scheduleDatas[index].content.replaceAll("<p>", "").replaceAll("</p>", "") + "<span></div>";
+                    html += "<div class=\"rowSpanColumn\" style='text-align:center; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #ededed; border-right: 1px solid #ededed;'>" + week + "</div>";
+                    html += "<div style='padding-left: 10px; border-bottom: 1px solid #ededed;'><span style='font-weight: 600;'>" + scheduleDatas[index].title + "</span><br /><span>" + scheduleDatas[index].content.replaceAll("<p>", "").replaceAll("</p>", "") + "<span></div>";
                 }
             }
         }
@@ -151,7 +151,8 @@ function drawWorkJournalList() {
 
     workJournalContent.hide();
     workJournalContent.html(html);
-    gridSetRowSpan("rowSpanColumn");
+    parent = ["journalBodyContent_3_last", "journalBodyContent_3_this"];
+    gridSetRowSpan("rowSpanColumn", parent);
     $("[class^=journalPreviewBody_]").eq(0).show();
     
     if($(".journalBodyContent_3_last").html() === ""){

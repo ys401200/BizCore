@@ -3468,14 +3468,26 @@ function inputDateFormat(e){
 	thisEle.val(thisEle.val().replace(/(\d\d\d\d)(\d\d)(\d\d)/g, '$1-$2-$3'));
 }
 
-function gridSetRowSpan(className){
+function gridSetRowSpan(className, parentClassName){
 	let ele = $("." + className);
 	
-	for(let i = 0; i < ele.length; i++){
-		let rows = $("." + className + ":contains(\"" + $(ele[i]).html() + "\")");
-		if(rows.length > 1){
-			rows.eq(0).css("grid-row", "span " + rows.length);
-			rows.not(":eq(0)").remove();
+	if(parentClassName === undefined){
+		for(let i = 0; i < ele.length; i++){
+			let rows = $("." + className + ":contains(\"" + $(ele[i]).html() + "\")");
+			if(rows.length > 1){
+				rows.eq(0).css("grid-row", "span " + rows.length);
+				rows.not(":eq(0)").remove();
+			}
+		}
+	}else{
+		for(let i = 0; i < parentClassName.length; i++){
+			for(let t = 0; t < ele.length; t++){
+				let rows = $("." + parentClassName[i]).find("." + className + ":contains(\"" + $(ele[t]).html() + "\")");
+				if(rows.length > 1){
+					rows.eq(0).css("grid-row", "span " + rows.length);
+					rows.not(":eq(0)").remove();
+				}
+			}
 		}
 	}
 }

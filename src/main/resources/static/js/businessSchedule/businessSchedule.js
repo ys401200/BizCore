@@ -1980,6 +1980,34 @@ function scheduleErrorDelete(){
 	msg.set("에러");
 }
 
+function scheduleSelectChange(){
+    let url, method, data, type, scheduleRange;
+
+    scheduleRange = $("#scheduleRange").val();
+    url = "/api/schedule/calendar/" + scheduleRange;
+    method = "get";
+    data = "";
+    type = "list";
+
+    crud.defaultAjax(url, method, data, type, scheduleSelectSuccess, scheduleSelectError);
+}
+
+function scheduleSelectSuccess(result){
+    storage.scheduleList = result;
+
+    if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined){
+        window.setTimeout(drawScheduleList, 600);
+        window.setTimeout(drawCalendar(document.getElementsByClassName("calendar_container")[0]), 600);
+    }else{
+        window.setTimeout(drawScheduleList, 200);
+        window.setTimeout(drawCalendar(document.getElementsByClassName("calendar_container")[0]), 200);
+    }
+}
+
+function scheduleSelectError(){
+    msg.set("에러");
+}
+
 function calendarMore(e){
 	let thisEle, moreContentBody, html = "", calendarMoreContent, moreContentTitle;
 	thisEle = $(e);
