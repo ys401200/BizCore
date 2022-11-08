@@ -45,11 +45,11 @@
 .workJournalContainer .workJournalContent .journalUserBody > div{
 	display:flex;
 	justify-content: center;
-	border-bottom: 1px solid #000;
+	border-bottom: 1px solid #ededed;
 }
 
 .workJournalContainer .workJournalContent .journalUserBody .userBodyFirst{
-	border-right: 1px solid #000;
+	border-right: 1px solid #ededed;
 	display: flex;
 	align-items: center; 
 	justify-content: center;
@@ -68,8 +68,6 @@
 .workJournalContainer .workJournalContent .journalPreview{
 	padding: 20px;
 }
-
-.workJournalContainer 
 
 .workJournalContainer button, select, input[type="text"]{
 	margin:0.5% 0.5% 0 0;

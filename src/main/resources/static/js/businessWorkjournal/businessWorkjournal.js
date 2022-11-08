@@ -60,98 +60,110 @@ function drawWorkJournalList() {
     html += "<div><span class='journalSpans'>성명</span></div>";
     html += "<div><span class='journalSpans'>선택</span></div>";
     html += "</div>";
-
+    
     html += "<div class='journalPreviewHeader' style='text-align: center; font-weight: 600;'><span>미리보기</span></div>";
-    html += "<div class='journalUserBody'>";
+    
+    html += "<div class='journalUserBody' style=\"height: 40px; font-size: 0.8rem; border-top: 1px solid #ededed;\">";
+
+    if(storage.workJournalList.workReports !== null){
+        for(let key in storage.workJournalList.workReports){
+            html += "<div class='userBodyFirst' onclick='journalTitleClick(" + key + ");'>" + storage.user[key].userName + "</div>";
+            html += "<div><input type='checkbox' class='userBodyCheck' data-no='" + key + "' checked></div>"; 
+        }
+    }
+
     html += "</div>";
     
-    for(let setKey in storage.workJournalList.workReports){
-            html += "<div class='journalPreviewBody_" + setKey + "' style='page-break-after: always; display: none;'>";
-            html += "<div class='journalBodyContent' id='journalBodyContent' style='border: 1px solid #000;'>";
-        
-            html += "<div class='journalBodyContent_1' style='display: grid; grid-template-columns: repeat(2, 1fr);'>";
-            html += "<div style='border: 1px solid #000; text-align:center'>일자: " + startDate + " ~ " + endDate + "</div>";
-            html += "<div style='border: 1px solid #000; text-align:center'>담당: " + storage.user[setKey].userName + "</div>";
-            html += "</div>";
-        
-            html += "<div class='journalBodyContent_2' style='display: grid; grid-template-columns: repeat(2, 1fr);'>";
-            html += "<div style='border: 1px solid #000; text-align:center'>지난주 진행사항</div>";
-            html += "<div style='border: 1px solid #000; text-align:center'>이번주 예정사항</div>";
-            html += "</div>";
-        
-            html += "<div class='journalBodyContent_3' style='display: grid; grid-template-columns: repeat(2, 1fr);'>";
-            html += "<div class='journalBodyContent_3_last' style='display: grid; grid-template-columns: 10% 90%; border: 1px solid #000; padding: 5px;'>";
-        
-            for(let key in storage.workJournalList.workReports){
-                if(key === setKey){
-                    if(storage.workJournalList.workReports[key].schedules.length > 0){
-                        for(let index in storage.workJournalList.workReports[key].schedules){
-                            let date = new Date(storage.workJournalList.workReports[key].schedules[index].date);
-                            let dateStart = new Date(storage.workJournalList.start);
-                            if(dateStart.getTime() + 86400000 * 7 > date.getTime() && storage.workJournalList.workReports[key].schedules[index].report){
-                                let week = calWeekDay(storage.workJournalList.workReports[key].schedules[index].date);
-            
-                                html += "<div style='border: 1px solid #000; text-align:center; display: flex; align-items: center; justify-content: center; margin-bottom: 5px;'>" + week + "</div>";
-                                html += "<div style='border: 1px solid #000; padding-left: 10px; margin-bottom: 5px;'><span style='font-weight: 600;'>" + storage.workJournalList.workReports[key].schedules[index].title + "</span><br /><span>" + storage.workJournalList.workReports[key].schedules[index].content + "<span></div>";
-                            }
-                        }
-                    }else{
-                        html += "<div style='grid-column: span 2; font-weight: 600; border: 1px solid #000; display: flex; align-items: center; justify-content: center;'>지난주 데이터가 없습니다.</div>";
-                    }
-                }
-            }
-            
-            html += "</div>";
-            html += "<div class='journalBodyContent_3_this' style='display: grid; grid-template-columns: 10% 90%; border: 1px solid #000; padding: 5px;'>";
+    for(let key in storage.workJournalList.workReports){
+        let scheduleDatas = storage.workJournalList.workReports[key].schedules.sort(function(a, b){return a.date - b.date;});
 
-            for(let key in storage.workJournalList.workReports){
-                if(key === setKey){
-                    if(storage.workJournalList.workReports[key].schedules.length > 0){
-                        for(let index in storage.workJournalList.workReports[key].schedules){
-                            let date = new Date(storage.workJournalList.workReports[key].schedules[index].date);
-                            let dateStart = new Date(storage.workJournalList.start);
-                            if(dateStart.getTime() + 86400000 * 7 < date.getTime() && storage.workJournalList.workReports[key].schedules[index].report){
-                                let week = calWeekDay(storage.workJournalList.workReports[key].schedules[index].date);
-            
-                                html += "<div style='border: 1px solid #000; text-align:center; display: flex; align-items: center; justify-content: center; margin-bottom: 5px;'>" + week + "</div>";
-                                html += "<div style='border: 1px solid #000; padding-left: 10px; margin-bottom: 5px;'><span style='font-weight: 600;'>" + storage.workJournalList.workReports[key].schedules[index].title + "</span><br /><span>" + storage.workJournalList.workReports[key].schedules[index].content + "<span></div>";
-                            }
-                        }
-                    }else{
-                        html += "<div style='grid-column: span 2; font-weight: 600; border: 1px solid #000; display: flex; align-items: center; justify-content: center;'>이번주 데이터가 없습니다.</div>";
-                    }
+        html += "<div class='journalPreviewBody_" + key + "' data-no=\"" + key + "\" id=\"journalPreview\" style='page-break-after: always; display: none; font-size: 0.8rem;'>";
+        html += "<div class='journalBodyContent' id='journalBodyContent'>";
+    
+        html += "<div class='journalBodyContent_1' style='display: grid; grid-template-columns: repeat(2, 1fr); border-top: 1px solid #ededed; border-bottom: 1px solid #ededed; border-left: 1px solid #ededed;'>";
+        html += "<div style='text-align:center;'>일자: " + startDate + " ~ " + endDate + "</div>";
+        html += "<div style='text-align:center; border-left: 1px solid #ededed;'>담당: " + storage.user[key].userName + "</div>";
+        html += "</div>";
+    
+        html += "<div class='journalBodyContent_2' style='display: grid; grid-template-columns: repeat(2, 1fr); border-bottom: 1px solid #ededed; border-left: 1px solid #ededed;'>";
+        html += "<div style='text-align:center;'>지난주 진행사항</div>";
+        html += "<div style='text-align:center; border-left: 1px solid #ededed;'>이번주 예정사항</div>";
+        html += "</div>";
+    
+        html += "<div class='journalBodyContent_3' style='display: grid; grid-template-columns: repeat(2, 1fr); border-left: 1px solid #ededed;'>";
+        html += "<div class='journalBodyContent_3_last' style='display: grid; grid-template-columns: 10% 90%;'>";
+    
+        if(scheduleDatas.length > 0){
+            for(let index in scheduleDatas){
+                let date = new Date(scheduleDatas[index].date);
+                let dateStart = new Date(storage.workJournalList.start);
+                console.log(scheduleDatas);
+                if(dateStart.getTime() + 86400000 * 7 > date.getTime() && scheduleDatas[index].report){
+                    let week = calWeekDay(scheduleDatas[index].date);
+
+                    html += "<div class=\"rowSpanColumn\" style='text-align:center; display: flex; align-items: center; justify-content: center; border-right: 1px solid #ededed;'>" + week + "</div>";
+                    html += "<div style='padding-left: 10px;'><span style='font-weight: 600;'>" + scheduleDatas[index].title + "</span><br /><span>" + scheduleDatas[index].content.replaceAll("<p>", "").replaceAll("</p>", "") + "<span></div>";
                 }
             }
+        }
         
-            html += "</div>";
-            html += "</div>";
-        
-            html += "<div class='journalBodyContent_4' style='display: grid; grid-template-columns: repeat(2, 1fr);'>";
-            html += "<div style='border: 1px solid #000; text-align:center'>추가기재사항</div>";
-            html += "<div style='border: 1px solid #000; text-align:center'>추가기재사항</div>";
-            html += "<div style='border: 1px solid #000; text-align:center'>기재사항 지난주</div>";
-            html += "<div style='border: 1px solid #000; text-align:center'>기재사항 이번주</div>";
-        
-            if(storage.workJournalList.workReports.currentWeekCheck){
-                html += "<div style='border: 1px solid #000; padding-left: 10px; font-weight: 600;'>" + storage.workJournalList.workReports[key].currentWeek + "</div>";
-            }else{
-                html += "<div style='border: 1px solid #000; text-align: center; font-weight: 600;'>지난주 추가기재사항이 없습니다.</div>";
+        html += "</div>";
+        html += "<div class='journalBodyContent_3_this' style='display: grid; grid-template-columns: 10% 90%; border-left: 1px solid #ededed;'>";
+
+        if(scheduleDatas.length > 0){
+            for(let index in scheduleDatas){
+                let date = new Date(scheduleDatas[index].date);
+                let dateStart = new Date(storage.workJournalList.start);
+                if(dateStart.getTime() + 86400000 * 7 < date.getTime() && scheduleDatas[index].report){
+                    let week = calWeekDay(scheduleDatas[index].date);
+
+                    html += "<div class=\"rowSpanColumn\" style='text-align:center; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #ededed; border-right: 1px solid #ededed;'>" + week + "</div>";
+                    html += "<div style='padding-left: 10px; border-bottom: 1px solid #ededed;'><span style='font-weight: 600;'>" + scheduleDatas[index].title + "</span><br /><span>" + scheduleDatas[index].content.replaceAll("<p>", "").replaceAll("</p>", "") + "<span></div>";
+                }
             }
-            
-            if(storage.workJournalList.workReports.nextWeekCheck){
-                html += "<div style='border: 1px solid #000; padding-left: 10px; font-weight: 600;'>" + storage.workJournalList.workReports[key].nextWeek + "</div>";
-            }else{
-                html += "<div style='border: 1px solid #000; text-align: center; font-weight: 600;'>이번주 추가기재사항이 없습니다.</div>";
-            }
-            
-            html += "</div>";
-            html += "</div>";
-            html += "</div>";
+        }
+    
+        html += "</div>";
+        html += "</div>";
+    
+        html += "<div class='journalBodyContent_4' style='display: grid; grid-template-columns: repeat(2, 1fr); border-left: 1px solid #ededed;'>";
+        html += "<div style='display: flex; align-items: center; justify-content: center; text-align:center; border-bottom: 1px solid #ededed;'>추가기재사항 지난주</div>";
+        html += "<div style='display: flex; align-items: center; justify-content: center; text-align:center; border-bottom: 1px solid #ededed; border-left: 1px solid #ededed;'>추가기재사항 이번주</div>";
+    
+        if(storage.workJournalList.workReports[key].currentWeekCheck){
+            html += "<div style='display: flex; align-items: center; padding-left: 10px; font-weight: 600; border-bottom: 1px solid #ededed;'>" + storage.workJournalList.workReports[key].currentWeek.replaceAll("<p>", "").replaceAll("</p>", "") + "</div>";
+        }else{
+            html += "<div style='display: flex; align-items: center; justify-content: center; font-weight: 600; border-bottom: 1px solid #ededed;'>지난주 추가기재사항이 없습니다.</div>";
+        }
+        
+        if(storage.workJournalList.workReports[key].previousWeekCheck){
+            html += "<div style='display: flex; align-items: center; padding-left: 10px; font-weight: 600; border-bottom: 1px solid #ededed; border-left: 1px solid #ededed;'>" + storage.workJournalList.workReports[key].previousWeek.replaceAll("<p>", "").replaceAll("</p>", "") + "</div>";
+        }else{
+            html += "<div style='display: flex; align-items: center; justify-content: center; font-weight: 600; border-bottom: 1px solid #ededed; border-left: 1px solid #ededed;'>이번주 추가기재사항이 없습니다.</div>";
+        }
+        
+        html += "</div>";
+        html += "</div>";
+        html += "</div>";
     }
 
     html += "</div>";
 
+    workJournalContent.hide();
     workJournalContent.html(html);
+    gridSetRowSpan("rowSpanColumn");
+    $("[class^=journalPreviewBody_]").eq(0).show();
+    
+    if($(".journalBodyContent_3_last").html() === ""){
+        $(".journalBodyContent_3_last").append("<div style='grid-column: span 2; font-weight: 600; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #ededed;'>지난주 데이터가 없습니다.</div>");
+    }
+    
+    if($(".journalBodyContent_3_this").html() === ""){
+        $(".journalBodyContent_3_last").append("<div style='grid-column: span 2; font-weight: 600; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #ededed;'>이번주 데이터가 없습니다.</div>");
+    }
+
+    $("#solPdf").attr("onclick", "solPdf(" + $("[class^=journalPreviewBody_]").eq(0).data("no") + ");")
+    workJournalContent.show();
 }
 
 function workJournalSuccessList(result){
@@ -196,7 +208,7 @@ function solPdf(no){
 	html2pdf().from(element).set({
 	  margin: 10,
       filename: title + '(' + nowDate + ')' + '.pdf',
-      html2canvas: { scale: 3 },
+      html2canvas: { scale: 10 },
       jsPDF: {orientation: 'landscape', unit: 'mm', format: 'a4', compressPDF: true}
 	}).save();
 
