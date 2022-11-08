@@ -626,6 +626,8 @@ function scheduleInsertForm(getDate){
 	setTimeout(() => {
 		$("[name='job'][value='sales']").attr("checked", true);
 		$("#writer").attr("data-change", true);
+		$("#from").val(getDate + "T09:00");
+		$("#to").val(getDate + "T18:00");
 		ckeditor.config.readOnly = false;
 		window.setTimeout(setEditor, 100);
 	}, 100);
@@ -707,14 +709,14 @@ function scheduleRadioInsert(value, date){
 				"title": "활동시작일(*)",
 				"elementId": "from",
 				"value": date,
-				"type": "date",
+				"type": "datetime",
 				"disabled": false,
 			},
 			{
 				"title": "활동종료일(*)",
 				"elementId": "to",
 				"value": date,
-				"type": "date",
+				"type": "datetime",
 				"disabled": false,
 			},
 			{
@@ -1011,14 +1013,14 @@ function scheduleRadioInsert(value, date){
 				"elementId": "from",
 				"value": date,
 				"disabled": false,
-				"type": "date",
+				"type": "datetime",
 			},
 			{
 				"title": "지원 종료일(*)",
 				"elementId": "to",
 				"value": date,
 				"disabled": false,
-				"type": "date",
+				"type": "datetime",
 			},
 			{
 				"title": "",
@@ -1092,14 +1094,14 @@ function scheduleRadioInsert(value, date){
 			},
 			{
 				"title": "일정시작일(*)",
-				"type": "date",
+				"type": "datetime",
 				"value": date,
 				"elementId": "from",
 				"disabled": false,
 			},
 			{
 				"title": "일정종료일(*)",
-				"type": "date",
+				"type": "datetime",
 				"value": date,
 				"elementId": "to",
 				"disabled": false,
@@ -1293,28 +1295,19 @@ function scheduleRadioUpdate(value, result){
 		let from, to, place, writer, sopp, customer, partner, title, content;
 		
 		disDate = dateDis(result.from);
-		from = dateFnc(disDate);
+		from = dateFnc(disDate, "yyyy-mm-dd T HH:mm");
 
 		disDate = dateDis(result.to);
-		to = dateFnc(disDate);
+		to = dateFnc(disDate, "yyyy-mm-dd T HH:mm");
 
 		place = (result.place === null || result.place === "" || result.place === undefined) ? "" : result.place;
 		
-		if(result.sopp > 0){
-			$.ajax({
-				url: "/api/sopp/" + result.sopp,
-				method: "get",
-				async: false,
-				dataType: "json",
-				success:(resultData) => {
-					let jsonData;
-					jsonData = cipher.decAes(resultData.data);
-					jsonData = JSON.parse(jsonData);
-					sopp = jsonData.title;
-				}
-			});
-		}else{
-			sopp = 0;
+		for(let key in storage.sopp){
+			if(storage.sopp[key].no == result.sopp){
+				sopp = storage.sopp[key].title;
+			}else{
+				sopp = "";
+			}
 		}
 
 		writer = (result.writer === null || result.writer == 0 || result.writer === undefined) ? "" : storage.user[result.writer].userName;
@@ -1350,13 +1343,13 @@ function scheduleRadioUpdate(value, result){
 			{
 				"title": "활동시작일(*)",
 				"elementId": "from",
-				"type": "date",
+				"type": "datetime",
 				"value": from,
 			},
 			{
 				"title": "활동종료일(*)",
 				"elementId": "to",
-				"type": "date",
+				"type": "datetime",
 				"value": to,
 			},
 			{
@@ -1489,28 +1482,19 @@ function scheduleRadioUpdate(value, result){
 		let from, to, place, writer, sopp, contract, contractMethod, customer, cipOfCustomer, partner, title, content, supportModel, supportVersion;
 		
 		disDate = dateDis(result.from);
-		from = dateFnc(disDate);
+		from = dateFnc(disDate, "yyyy-mm-dd T HH:mm");
 
 		disDate = dateDis(result.to);
-		to = dateFnc(disDate);
+		to = dateFnc(disDate, "yyyy-mm-dd T HH:mm");
 
 		place = (result.place === null || result.place === "" || result.place === undefined) ? "" : result.place;
 		
-		if(result.sopp > 0){
-			$.ajax({
-				url: "/api/sopp/" + result.sopp,
-				method: "get",
-				async: false,
-				dataType: "json",
-				success:(resultData) => {
-					let jsonData;
-					jsonData = cipher.decAes(resultData.data);
-					jsonData = JSON.parse(jsonData);
-					sopp = jsonData.title;
-				}
-			});
-		}else{
-			sopp = 0;
+		for(let key in storage.sopp){
+			if(storage.sopp[key].no == result.sopp){
+				sopp = storage.sopp[key].title;
+			}else{
+				sopp = "";
+			}
 		}
 
 		writer = (result.writer === null || result.writer === "" || result.writer === undefined) ? "" : storage.user[result.writer].userName;
@@ -1706,13 +1690,13 @@ function scheduleRadioUpdate(value, result){
 			{
 				"title": "지원일자 시작일(*)",
 				"elementId": "from",
-				"type": "date",
+				"type": "datetime",
 				"value": from,
 			},
 			{
 				"title": "지원일자 종료일(*)",
 				"elementId": "to",
-				"type": "date",
+				"type": "datetime",
 				"value": to,
 			},
 			{
@@ -1743,28 +1727,19 @@ function scheduleRadioUpdate(value, result){
 		let from, to, disDate, place, sopp, customer, writer, title, content;
 
 		disDate = dateDis(result.from);
-		from = dateFnc(disDate);
+		from = dateFnc(disDate, "yyyy-mm-dd T HH:mm");
 
 		disDate = dateDis(result.to);
-		to = dateFnc(disDate);
+		to = dateFnc(disDate, "yyyy-mm-dd T HH:mm");
 
 		place = (result.place === null || result.place === "" || result.place === undefined) ? "" : result.place;
 		
-		if(result.sopp > 0){
-			$.ajax({
-				url: "/api/sopp/" + result.sopp,
-				method: "get",
-				async: false,
-				dataType: "json",
-				success:(resultData) => {
-					let jsonData;
-					jsonData = cipher.decAes(resultData.data);
-					jsonData = JSON.parse(jsonData);
-					sopp = jsonData.title;
-				}
-			});
-		}else{
-			sopp = 0;
+		for(let key in storage.sopp){
+			if(storage.sopp[key].no == result.sopp){
+				sopp = storage.sopp[key].title;
+			}else{
+				sopp = "";
+			}
 		}
 
 		writer = (result.writer === null || result.writer === "" || result.writer === undefined) ? "" : storage.user[result.writer].userName;
@@ -1798,13 +1773,13 @@ function scheduleRadioUpdate(value, result){
 			},
 			{
 				"title": "일정시작일(*)",
-				"type": "date",
+				"type": "datetime",
 				"elementId": "from",
 				"value": from,
 			},
 			{
 				"title": "일정종료일(*)",
-				"type": "date",
+				"type": "datetime",
 				"elementId": "to",
 				"value": to,
 			},

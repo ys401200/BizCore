@@ -190,6 +190,7 @@ public class ScheduleSvc extends Svc{
                     }
                 } 
 
+
                 result = "{\"week\":" + week + ",";
                 result += "\"start\":" + start.getTime() + ",";
                 result += "\"end\":" + end.getTime() + ",";

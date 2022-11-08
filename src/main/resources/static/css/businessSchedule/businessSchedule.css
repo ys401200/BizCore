@@ -147,7 +147,7 @@
 }
 
 .calendar_container > .calendar_cell > .calendar_span_empty{
-	text-align: right;
+	float: right;
     padding-right: 10px;
 }
 

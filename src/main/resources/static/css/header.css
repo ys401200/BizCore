@@ -66,7 +66,7 @@ input[type="radio"]:not(:disabled):not(:checked) {
 /* 라디오버튼 기본 css */
 
 
-button, select, input[type="text"], input[type="date"]{
+button, select, input[type="text"], input[type="date"], input[type="datetime-local"]{
 	font-family: 'NanumSquareRound';
 	/* padding:0.3% 0.7%; */
 	border: 0;

@@ -725,6 +725,8 @@ function dateFnc(dateTimeStr, type){
 		result = mm + ":" + ss;
 	}else if(type === "yyyy.mm.dd"){
 		result = year + "." + month + "." + day;
+	}else if(type === "yyyy-mm-dd T HH:mm"){
+		result = year + "-" + month + "-" + day + "T" + hh + ":" + mm;
 	}
 
 	return result;
@@ -1355,6 +1357,12 @@ function inputSet(data){
 			html += "<input type='date' max='9999-12-31' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "' disabled='" + dataDisabled + "'>";
 		}else{
 			html += "<input type='date' max='9999-12-31' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "'>";
+		}
+	}else if(dataType === "datetime"){
+		if(dataDisabled == true){
+			html += "<input type='datetime-local' max='9999-12-31T23:59:59' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "' disabled='" + dataDisabled + "'>";
+		}else{
+			html += "<input type='datetime-local' max='9999-12-31T23:59:59' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "'>";
 		}
 	}else if(dataType === "select"){
 		if(dataDisabled == true){
@@ -3176,14 +3184,18 @@ function formDataSet(){
 			}else{
 				if(!element.data("change")){
 					if(typeof storage.formList[key] === "number"){
-						if(element.attr("type") === "date"){
+						if(element.attr("type") === "date" || element.attr("type") === "datetime-local"){
 							let dateTime = new Date(element.val()).getTime();
 							storage.formList[key] = dateTime;
 						}else{
-							storage.formList[key] = parseInt(element.val().replaceAll(",", ""));
+							if(element.val() === ""){
+								storage.formList[key] = 0;
+							}else{
+								storage.formList[key] = parseInt(element.val().replaceAll(",", ""));
+							}
 						}
 					}else{
-						if(element.attr("type") === "date"){
+						if(element.attr("type") === "date" || element.attr("type") === "datetime-local"){
 							let dateTime = new Date(element.val()).getTime();
 							storage.formList[key] = dateTime;
 						}else{
