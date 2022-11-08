@@ -73,11 +73,6 @@ function getSoppData() {
 
 
 
-
-
-
-
-
 // 견적 데이터 가져오는 함수 
 function getEstmVerList(estmNo) {
   let url;
@@ -107,10 +102,6 @@ function getEstmVerList(estmNo) {
   });
 
 } // End of getEstimateList()
-
-
-
-
 
 
 //데이터 리스트 셋하는 함수 
@@ -180,7 +171,7 @@ function setEstData() {
     inHtml = inSumTarget.html();
     inHtml += "<div class='detailcontentDiv'><input value='매입' disabled style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'  class='inputs doc_Form_SalesReport_type'></input>"
     inHtml += "<input type='date' data-detail='' onchange='this.dataset.detail=this.value;' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs doc_Form_SalesReport_date'></input>"
-    inHtml += "<input type='text'   data-detail='' onkeyup='this.dataset.detail=this.value'  style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'  data-detail='" + items[i].supplier + "' value='" + items[i].supplier + "' class='inputs doc_Form_SalesReport_customer'></input>"
+    inHtml += "<input type='text'   data-detail='' onkeyup='this.dataset.detail=this.value'  style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'  data-detail='" + items[i].supplier + "' value='" + items[i].supplier + "' class='inputs inCus doc_Form_SalesReport_customer'></input>"
     inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'    data-detail='" + items[i].product + "' value='" + items[i].product + "' onkeyup='this.dataset.detail=this.value' class='inputs inProduct doc_Form_SalesReport_product'></input>"
     inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inputs inPrice doc_Form_SalesReport_price'></input>"
     inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inputs inQuantity doc_Form_SalesReport_quantity'></input>"
@@ -299,53 +290,52 @@ function reportInsert() {
   }
 
 
-  let inItems =[]; 
+  let inItems = [];
   let outItems = [];
   let outProductNo;
 
- 
+
   for (let j = 0; j < $(".outProduct").length; j++) {
 
- for (let i = 0; i < storage.productList.length; i++) {
-    if (storage.productList[i].product == $(".outProduct")[j].value) {
-      outProductNo = storage.productList[i].no;
+    for (let i = 0; i < storage.productList.length; i++) {
+      if (storage.productList[i].product == $(".outProduct")[j].value) {
+        outProductNo = storage.productList[i].no;
+      }
     }
-  }
 
     let tt = {
+      "outCustomer": storage.soppDetail.customer,
       "outProduct": outProductNo * 1,
       "outPrice": $(".outPrice")[j].value * 1,
       "outQuantity": $(".outQuantity")[j].value * 1,
       "tax": $(".outTax")[j].value * 1
     };
-
     outItems.push(tt);
   }
+
   for (let j = 0; j < $(".inProduct").length; j++) {
-
     for (let i = 0; i < storage.productList.length; i++) {
-       if (storage.productList[i].product == $(".inProduct")[j].value) {
-         outProductNo = storage.productList[i].no;
-       }
-   
-     }
-   
-       let tt = {
-         "inProduct": outProductNo * 1,
-         "inPrice": $(".outPrice")[j].value * 1,
-         "inQuantity": $(".inQuantity")[j].value * 1,
-         "inTax": $(".outTax")[j].value * 1
-       };
-       inItems.push(tt);
-     }
-   
+      if (storage.productList[i].product == $(".inProduct")[j].value) {
+        outProductNo = storage.productList[i].no;
+      }
+    }
 
+    let customer;
+    for (let x in storage.customer) {
+      if (storage.customer[x].name == storage.estmVerList[3].related.estimate.items[j].supplier) {
+        customer = storage.customer[x].no + "";
+      }
+    }
 
-
-
-
-
-
+    let tt = {
+      "inCustomer": customer,
+      "inProduct": outProductNo * 1,
+      "inPrice": $(".outPrice")[j].value * 1,
+      "inQuantity": $(".inQuantity")[j].value * 1,
+      "inTax": $(".outTax")[j].value * 1
+    };
+    inItems.push(tt);
+  }
 
 
   let related = {
@@ -355,8 +345,10 @@ function reportInsert() {
     "outSumAllTotal": $(".outSumAllTotal").val() * 1,
     "profit": $("." + formId + "_profit").val() * 1,
     "outItems": outItems,
-    "inItems" : inItems
+    "inItems": inItems
   }
+
+
 
 
   related = JSON.stringify(related);
@@ -600,12 +592,17 @@ function setSoppList(formId) {
 
   $("#" + formId + "_sopp").val(storage.soppDetail.title); // 영업기회 
   $("#" + formId + "_infoCustomer").val(storage.customer[storage.soppDetail.customer].name); // 매출처 
-  $("#" + formId + "_custmemberName").val(storage.cip[storage.soppDetail.picOfCustomer].name);//매출처 담당자 
+  if (storage.cip[storage.soppDetail.picOfCustomer] != undefined) {
+    $("#" + formId + "_custmemberName").val(storage.cip[storage.soppDetail.picOfCustomer].name);//매출처 담당자 
+  }
+
   $("#" + formId + "_endCustName").val(storage.customer[storage.soppDetail.endUser].name); // 엔드유저 
   $("#" + formId + "_soppStatus").val(storage.soppDetail.status); // 진행단계 
   $("#" + formId + "_soppRate").val(storage.soppDetail.progress + "%"); // 가능성 
   $("#" + formId + "_cntrctMtn").val(storage.soppDetail.contType);//계약 구분 
-  $("#" + formId + "_targetDate").val(getYmdHypen(storage.soppDetail.targetDate)); // 매출 예정일 
+  if (storage.cip[storage.soppDetail.targetDate] != undefined) {
+    $("#" + formId + "_targetDate").val(getYmdHypen(storage.soppDetail.targetDate)); // 매출 예정일 
+  }
   $("#" + formId + "_soppType").val(storage.soppDetail.soppType); // 판매방식 
   $("#" + formId + "_soppTargetAmt").val(storage.soppDetail.expectedSales.toLocaleString() + "원"); // 예상매출 
   $("#" + formId + "_title").val(storage.soppDetail.title + " 수주판매보고");
@@ -629,7 +626,6 @@ function setSoppList(formId) {
       selectArr.dataset.detail = selectArr.value;
     }
   }
-
 
 }
 

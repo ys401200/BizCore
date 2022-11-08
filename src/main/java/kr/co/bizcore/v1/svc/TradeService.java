@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import kr.co.bizcore.v1.domain.Trade;
 import kr.co.bizcore.v1.domain.TradeDetail;
 import kr.co.bizcore.v1.domain.TradeSummary;
 import lombok.extern.slf4j.Slf4j;
@@ -113,6 +114,14 @@ public class TradeService extends Svc{
         int count = -1;
         String sql = null;
         sql = detail.createInsertQuery(null,null);
+        count = executeSqlQuery(sql);
+        return count > 0;
+    }
+
+    public boolean addTradeDetail(Trade detail, String compId){
+        int count = -1;
+        String sql = null;
+        sql = detail.createInsertQuery("bizcore.trade",compId);
         count = executeSqlQuery(sql);
         return count > 0;
     }

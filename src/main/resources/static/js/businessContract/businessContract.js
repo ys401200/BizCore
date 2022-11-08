@@ -1190,7 +1190,7 @@ function setSalesReportData() {
 
 
 
-;
+	;
 
 	// 매입 데이터 insert 
 	for (let i = 0; i < storage.reportDetailData.related.inItems.length; i++) {
@@ -1205,13 +1205,14 @@ function setSalesReportData() {
 			"writer": storage.my,
 			"type": "purchase", // 매입인지 매출인지 
 			"product": storage.reportDetailData.related.inItems[0].inProduct, // 상품번호
-			"customer": "",
+			"customer": storage.reportDetailData.related.inItems[0].inCus *1,
 			"title": "",
 			"qty": storage.reportDetailData.related.inItems[0].inQuantity,//수량
 			"price": storage.reportDetailData.related.inItems[0].inPrice, // 단가
 			"vat": storage.reportDetailData.related.inItems[0].tax,// 부가세액
 		}
 
+		console.log(inData);
 		url = "/api/trade"
 		method = "post"
 		data = inData;
@@ -1234,7 +1235,7 @@ function setSalesReportData() {
 			"writer": storage.my,
 			"type": "sale", // 매입인지 매출인지 
 			"product": storage.reportDetailData.related.outItems[0].outProduct, // 상품번호
-			"customer": "",
+			"customer": storage.reportDetailData.related.outItems[0].outCus * 1,
 			"title": "",
 			"qty": storage.reportDetailData.related.outItems[0].outQuantity,//수량
 			"price": storage.reportDetailData.related.outItems[0].outPrice, // 단가
@@ -1242,6 +1243,8 @@ function setSalesReportData() {
 		}
 
 
+
+		console.log(outData);
 		url = "/api/trade"
 		method = "post"
 		data = outData;

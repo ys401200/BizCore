@@ -951,7 +951,16 @@ function approveBtnEvent() {
     if ($(".outTax")[j].value != "" && $(".outTax")[j].value != null && $(".outTax")[j].value != undefined) {
       tax = $(".outTax")[j].value * 1;
     }
+    let customer;
+    for (let x in storage.customer) {
+      if (storage.customer[x].name == $(".outCus")[j].value) {
+        customer = storage.customer[x].no + "";
+      }
+    }
+
+
     let tt = {
+      "outCus": customer,
       "outProduct": outProductNo * 1,
       "outPrice": $(".outPrice")[j].value * 1,
       "outQuantity": $(".outQuantity")[j].value * 1,
@@ -972,7 +981,19 @@ function approveBtnEvent() {
     if ($(".inTax")[j].value != "" && $(".inTax")[j].value != null && $(".inTax")[j].value != undefined) {
       tax = $(".outTax")[j].value * 1;
     }
+
+
+    let customer;
+    for (let x in storage.customer) {
+      if (storage.customer[x].name == $(".inCus")[j].value) {
+        customer = storage.customer[x].no + "";
+      }
+    }
+
+
+
     let tt = {
+      "inCus": customer,
       "inProduct": inProductNo * 1,
       "inPrice": $(".inPrice")[j].value * 1,
       "inQuantity": $(".inQuantity")[j].value * 1,
