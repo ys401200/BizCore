@@ -190,7 +190,7 @@ function getDetailView() {
   let detailHtml =
     "<div class='mainBtnDiv'><button type='button' onclick='showList()'>목록보기</button></div>" +
     "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
-    // "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
+  // "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
 
   $(".listPageDiv").html(detailHtml);
 
@@ -253,10 +253,15 @@ function getDetailView() {
   if (selectArr != undefined) {
     selectArr.value = selectArr.dataset.detail;
   }
-
-  if ( formId == "doc_Form_Consult" && $(".list_comment").attr("data-detail") == "old" || formId == "doc_Form_Resolution" && $(".list_comment").attr("data-detail") == "old") {
-    for (let i = 0; i < 4; i++) {
-      let tt = $("input[name="+formId+"_RD]")[i];
+  let end;
+  if (formId == "doc_Form_Consult" && $(".list_comment").attr("data-detail") == "old" || formId == "doc_Form_Resolution" && $(".list_comment").attr("data-detail") == "old") {
+    if (formId == "doc_Form_Consult") {
+      end = 2;
+    } else {
+      end = 4;
+    }
+    for (let i = 0; i < end; i++) {
+      let tt = $("input[name=" + formId + "_RD]")[i];
       if ($("#" + tt.id).attr("checked") == "checked") {
         $("#" + tt.id).attr("data-detail", "on");
         $("#" + tt.id).val("on");
@@ -265,7 +270,7 @@ function getDetailView() {
         $("#" + tt.id).val("off");
       }
     }
-}
+  }
 
   // 상세타입 체크하게 하기
   let rd = $("input[name='" + formId + "_RD']");
@@ -283,8 +288,8 @@ function getDetailView() {
         $("#" + rd[i].id).prop("checked", true);
       }
     }
-    for(let i = 0 ; i < 3 ; i ++) {let tt = $(".inputsAuto")[i]; $(tt).css("text-align","left");} 
-   
+    for (let i = 0; i < 3; i++) { let tt = $(".inputsAuto")[i]; $(tt).css("text-align", "left"); }
+
   } else {
     // 새문서 작성한 것 가져온 경우 구분
     let rd2 = $("input[name='" + formId + "_RD']");
@@ -304,7 +309,7 @@ function getDetailView() {
           storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
         $("." + formId + subTitlesArr[i] + "_position")[j].value =
           storage.userRank[
-            $("." + formId + subTitlesArr[i] + "_position")[j].value
+          $("." + formId + subTitlesArr[i] + "_position")[j].value
           ][0];
       }
     }
@@ -338,7 +343,8 @@ function getDetailView() {
   $("." + formId + "_content").html($("#" + formId + "_content").attr("data-detail"));
   $("#" + formId + "_content").hide();
   $("." + formId + "_content").css("font-size", $("#" + formId + "_content").css("font-size"));
-  $("." + formId + "_content").css("padding","0.3em");
+  $("." + formId + "_content").css("padding", "0.3em");
+  for (let i = 0; i < 3; i++) { let tt = $(".inputsAuto")[i]; $(tt).css("text-align", "left"); }
 }
 
 function showList() {

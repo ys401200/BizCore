@@ -258,6 +258,7 @@ function showReportDetail() {
   toReadMode();
   drawCommentLine();
   getFileArr();
+  getProductList();
 
   // 참조 데이터 추가
   // let referArr = new Array();
@@ -337,7 +338,9 @@ function showReportDetail() {
         $("#" + rd[i].id).prop("checked", true);
       }
     }
+
     for (let i = 0; i < 3; i++) { let tt = $(".inputsAuto")[i]; $(tt).css("text-align", "left"); }
+
 
   } else {
     // 새문서 작성한 것 가져온 경우 구분
@@ -346,6 +349,9 @@ function showReportDetail() {
       if (rd2[i].dataset.detail == "on") {
         $("#" + rd2[i].id).prop("checked", true);
       }
+    }
+    for (let i = 0; i < 3; i++) {
+      let tt = $(".inputsAuto")[i]; $(tt).css("text-align", "left");
     }
   }
 
@@ -932,28 +938,67 @@ function approveBtnEvent() {
 
 
   let related = null;
-  let items = [];
-  if (formId = "doc_Form_SalesReport") {
-    for (let i = 0; i < $(".outProduct").length; i++) {
-      let tt = {
-        "outProduct": $(".outProduct")[i].value,
-        "outPrice": $(".outPrice")[i].value,
-        "outQuantity": $(".outQuantity")[i].value
-      };
-
-      items.push(tt);
+  let outItems = [];
+  let inItems = [];
+  let tax = 0;
+  let outProductNo;
+  for (let j = 0; j < $(".outProduct").length; j++) {
+    for (let i = 0; i < storage.productList.length; i++) {
+      if (storage.productList[i].product == $(".outProduct")[j].value) {
+        outProductNo = storage.productList[i].no;
+      }
     }
-
-    related = {
-      "next": "",
-      "parent": "",
-      "previous": "estimate:" + storage.reportDetailData.related.previous.split(":")[1] + "",
-      "outSumAllTotal": $(".outSumAllTotal").val(),
-      "profit": $("." + formId + "_profit").val(),
-      "items": items
+    if ($(".outTax")[j].value != "" && $(".outTax")[j].value != null && $(".outTax")[j].value != undefined) {
+      tax = $(".outTax")[j].value * 1;
     }
+    let tt = {
+      "outProduct": outProductNo * 1,
+      "outPrice": $(".outPrice")[j].value * 1,
+      "outQuantity": $(".outQuantity")[j].value * 1,
+      "tax": $(".outTax")[j].value * 1
+    };
 
+    outItems.push(tt);
   }
+
+  let inProductNo;
+
+  for (let j = 0; j < $(".inProduct").length; j++) {
+    for (let i = 0; i < storage.productList.length; i++) {
+      if (storage.productList[i].product == $(".inProduct")[j].value) {
+        inProductNo = storage.productList[i].no;
+      }
+    }
+    if ($(".inTax")[j].value != "" && $(".inTax")[j].value != null && $(".inTax")[j].value != undefined) {
+      tax = $(".outTax")[j].value * 1;
+    }
+    let tt = {
+      "inProduct": inProductNo * 1,
+      "inPrice": $(".inPrice")[j].value * 1,
+      "inQuantity": $(".inQuantity")[j].value * 1,
+      "tax": $(".inTax")[j].value * 1
+    };
+
+    inItems.push(tt);
+  }
+
+  if (tax != 0) {
+    tax = true;
+  } else {
+    tax = false;
+  }
+  related = {
+    "next": "",
+    "parent": "",
+    "previous": "estimate:" + storage.reportDetailData.related.previous.split(":")[1] + "",
+    "outSumAllTotal": $(".outSumAllTotal").val().split("원")[0] * 1,
+    "profit": $("." + formId + "_profit").val().split("원")[0] * 1,
+    "tax": tax,
+    "outItems": outItems,
+    "inItems": inItems
+  }
+
+
 
   related = JSON.stringify(related);
 
@@ -2465,3 +2510,26 @@ function setCusDataList() {
 // }
 
 
+function getProductList() {
+  let url;
+  url = apiServer + "/api/estimate/item"
+
+  $.ajax({
+    "url": url,
+    "method": "get",
+    "dataType": "json",
+    "cache": false,
+    success: (data) => {
+      let list, x;
+      if (data.result === "ok") {
+        list = data.data;
+        list = cipher.decAes(list);
+        list = JSON.parse(list);
+        storage.productList = list;
+
+      } else {
+        console.log(data.msg);
+      }
+    }
+  });
+} // End of getEstimateList()

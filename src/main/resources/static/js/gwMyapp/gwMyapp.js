@@ -328,6 +328,7 @@ function showReportDetail() {
   storage.oriInsertedContent = $(".insertedContent").html();
   storage.oriInsertedDataList = $(".insertedDataList").html();
   storage.oriInfoData = $(".info").html();
+  for (let i = 0; i < 3; i++) { let tt = $(".inputsAuto")[i]; $(tt).css("text-align", "left"); }
 
   // 영업기회 리스트 가져옴
   $.ajax({

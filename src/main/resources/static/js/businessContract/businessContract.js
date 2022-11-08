@@ -44,8 +44,9 @@ function getContractList() {
 					detailData.doc = cipher.decAes(detailData.doc);
 					detailData.doc = detailData.doc.replaceAll('\\"', '"');
 					storage.reportDetailData = detailData;
-					contractInsertForm();
+					//	contractInsertForm();
 					getEstimateData();
+
 				} else {
 					alert("문서 정보를 가져오는 데 실패했습니다");
 				}
@@ -815,7 +816,7 @@ function contractInsert() {
 		msg.set("영업기회를 입력해주세요.");
 		$("#sopp").focus();
 		return false;
-	} else if(!validateAutoComplete($("#sopp").val(), "sopp")){
+	} else if (!validateAutoComplete($("#sopp").val(), "sopp")) {
 		msg.set("조회된 영업기회가 없습니다.\n다시 확인해주세요.");
 		$("#sopp").focus();
 		return false;
@@ -827,11 +828,11 @@ function contractInsert() {
 		msg.set("매출처를 입력해주세요.");
 		$("#customer").focus();
 		return false;
-	} else if($("#cipOfCustomer").val() !== "" && !validateAutoComplete($("#cipOfCustomer").val(), "cip")){
+	} else if ($("#cipOfCustomer").val() !== "" && !validateAutoComplete($("#cipOfCustomer").val(), "cip")) {
 		msg.set("조회된 매출처 담당자가 없습니다.\n다시 확인해주세요.");
 		$("#cipOfCustomer").focus();
 		return false;
-	} else if(!validateAutoComplete($("#customer").val(), "customer")){
+	} else if (!validateAutoComplete($("#customer").val(), "customer")) {
 		msg.set("조회된 매출처가 없습니다.\n다시 확인해주세요.");
 		$("#customer").focus();
 		return false;
@@ -839,11 +840,11 @@ function contractInsert() {
 		msg.set("엔드유저를 입력해주세요.");
 		$("#endUser").focus();
 		return false;
-	} else if($("#cipOfendUser").val() !== "" && !validateAutoComplete($("#cipOfendUser").val(), "cip")){
+	} else if ($("#cipOfendUser").val() !== "" && !validateAutoComplete($("#cipOfendUser").val(), "cip")) {
 		msg.set("조회된 엔드유저 담당자가 없습니다.\n다시 확인해주세요.");
 		$("#cipOfendUser").focus();
 		return false;
-	} else if(!validateAutoComplete($("#endUser").val(), "customer")){
+	} else if (!validateAutoComplete($("#endUser").val(), "customer")) {
 		msg.set("조회된 엔드유저가 없습니다.\n다시 확인해주세요.");
 		$("#endUser").focus();
 		return false;
@@ -893,7 +894,7 @@ function contractUpdate() {
 		msg.set("영업기회를 입력해주세요.");
 		$("#sopp").focus();
 		return false;
-	} else if(!validateAutoComplete($("#sopp").val(), "sopp")){
+	} else if (!validateAutoComplete($("#sopp").val(), "sopp")) {
 		msg.set("조회된 영업기회가 없습니다.\n다시 확인해주세요.");
 		$("#sopp").focus();
 		return false;
@@ -905,11 +906,11 @@ function contractUpdate() {
 		msg.set("매출처를 입력해주세요.");
 		$("#customer").focus();
 		return false;
-	} else if($("#cipOfCustomer").val() !== "" && !validateAutoComplete($("#cipOfCustomer").val(), "cip")){
+	} else if ($("#cipOfCustomer").val() !== "" && !validateAutoComplete($("#cipOfCustomer").val(), "cip")) {
 		msg.set("조회된 매출처 담당자가 없습니다.\n다시 확인해주세요.");
 		$("#cipOfCustomer").focus();
 		return false;
-	} else if(!validateAutoComplete($("#customer").val(), "customer")){
+	} else if (!validateAutoComplete($("#customer").val(), "customer")) {
 		msg.set("조회된 매출처가 없습니다.\n다시 확인해주세요.");
 		$("#customer").focus();
 		return false;
@@ -917,11 +918,11 @@ function contractUpdate() {
 		msg.set("엔드유저를 입력해주세요.");
 		$("#endUser").focus();
 		return false;
-	} else if($("#cipOfendUser").val() !== "" && !validateAutoComplete($("#cipOfendUser").val(), "cip")){
+	} else if ($("#cipOfendUser").val() !== "" && !validateAutoComplete($("#cipOfendUser").val(), "cip")) {
 		msg.set("조회된 엔드유저 담당자가 없습니다.\n다시 확인해주세요.");
 		$("#cipOfendUser").focus();
 		return false;
-	} else if(!validateAutoComplete($("#endUser").val(), "customer")){
+	} else if (!validateAutoComplete($("#endUser").val(), "customer")) {
 		msg.set("조회된 엔드유저가 없습니다.\n다시 확인해주세요.");
 		$("#endUser").focus();
 		return false;
@@ -1071,6 +1072,10 @@ function searchSubmit() {
 
 	drawContractList();
 }
+
+
+
+// 견적데이터 가져오기 
 function getEstimateData() {
 	let related = storage.reportDetailData.related;
 	let estimate = related.previous.split(":")[1];
@@ -1090,6 +1095,8 @@ function getEstimateData() {
 				list = JSON.parse(list);
 				for (x = 0; x < list.length; x++)	list[x].doc = cipher.decAes(list[x].doc);
 				storage.estmVerList = list;
+				getSoppData();
+				getProductList();
 				window.setTimeout(setSalesReportData, 700);
 			} else {
 				console.log(data.msg);
@@ -1100,105 +1107,241 @@ function getEstimateData() {
 }
 // 수주판매보고양식에서 계약 등록으로 온 경우 데이터 자동 세팅 
 function setSalesReportData() {
+
 	let related, contractAmount, profit, soppNo, soppData;
-	let customer, salesType, endUser, contTitle, contType;
+	let customer, salesType, endUser, contTitle, contType, tax;
 	related = storage.reportDetailData.related;
 
 	// 영업기회 
-	contractAmount = related.outSumAllTotal;
-	contractAmount = Number(contractAmount.split("원")[0]);
-	profit = related.profit;
-	profit = Number(profit.split("원")[0])
+	contractAmount = related.outSumAllTotal;  // 계약금액 
+	profit = related.profit;// 매출이익
+	soppNo = storage.reportDetailData.sopp; // 영업기회 번호 
+	soppData = storage.soppDetail; // 
+	customer = soppData.customer; // 매출처
+	endUser = soppData.endUser; // 엔드유저
+	salesType = soppData.soppType; // 판매방식 
+	contTitle = soppData.title; // 계약 제목
+	contType = soppData.contType; // 계약타입
+	cipOfCustomer = soppData.picOfCustomer; // 매출처 담당자 
+	tax = related.tax;
 
-	soppNo = storage.estmVerList[storage.estmVerList.length - 1].related.parent.split(":")[1];
+	let today = new Date();
+	let startDate = new Date(today.setDate(today.getDate() + 1)).getTime();
+	let endDate = new Date(today.setDate(today.getDate() + 364)).getTime();
 
-	for (let i = 0; i < storage.sopp.length; i++) {
-		if (storage.sopp[i].no == soppNo) {
-			soppData = storage.sopp[i];
-		}
-	}
-	customer = soppData.customer;
-	endUser = soppData.endUser;
-	salesType = soppData.soppType;
-	contTitle = soppData.title;
-	contType = soppData.contType;
+	// 유지보수이면 유상 유지보수에 date 넣으면 됨 
 
 
-
-	$("#sopp").val(contTitle);
-	$("#sopp").attr("disabled", "disabled");
-	$("#salesType").val(salesType);
-	$("#customer").val(storage.customer[customer].name);
-	$("#customer").attr("disabled", "disabled");
-	$("#endUser").val(storage.customer[endUser].name);
-	$("#endUser").attr("disabled", "disabled");
-	$("#contractAmount").val(contractAmount);
-	$("#profit").val(profit);
-	if ($("input[name=contractType]")[0].value == contType) {
-		$("input[name=contractType]")[0].checked = "checked"
+	if (contType == 10247) {
+		storage.formList = {
+			"contractType": contType,
+			"sopp": storage.reportDetailData.sopp,
+			"employee": storage.my,
+			"salesType": soppData.soppType,
+			"customer": soppData.customer,
+			"cipOfCustomer": soppData.picOfCustomer,
+			"endUser": soppData.endUser,
+			"cipOfendUser": 0,
+			"saleDate": null,
+			"delivered": null,
+			"employee2": 0,
+			"startOfFreeMaintenance": startDate,
+			"endOfFreeMaintenance": endDate,
+			"startOfPaidMaintenance": null,
+			"endOfPaidMaintenance": null,
+			"contractAmount": related.outSumAllTotal,
+			"taxInclude": related.tax,
+			"profit": storage.reportDetailData.related.profit,
+			"title": storage.reportDetailData.sopp,
+			"detail": ""
+		};
 	} else {
-		$("input[name=contractType]")[1].checked = "checked";
+		storage.formList = {
+			"contractType": contType,
+			"sopp": storage.reportDetailData.sopp,
+			"employee": storage.my,
+			"salesType": soppData.soppType,
+			"customer": soppData.customer,
+			"cipOfCustomer": soppData.picOfCustomer,
+			"endUser": soppData.endUser,
+			"cipOfendUser": 0,
+			"saleDate": null,
+			"delivered": null,
+			"employee2": 0,
+			"startOfFreeMaintenance": null,
+			"endOfFreeMaintenance": null,
+			"startOfPaidMaintenance": startDate,
+			"endOfPaidMaintenance": endDate,
+			"contractAmount": related.outSumAllTotal,
+			"taxInclude": related.tax,
+			"profit": storage.reportDetailData.related.profit,
+			"title": storage.reportDetailData.sopp,
+			"detail": ""
+		};
 	}
+	// 계약 생성 
+	url = "/api/contract";
+	method = "post";
+	data = storage.formList;
+	type = "insert";
+	data = JSON.stringify(data);
+	data = cipher.encAes(data);
+	crud.defaultAjax(url, method, data, type, contractSuccessInsert, contractErrorInsert);
 
-}
 
 
-function setFormListDefaultData() {
-	let soppData, soppNo;
+;
 
-	soppNo = storage.reportDetailData.sopp;
-
-
-	for (let i = 0; i < storage.sopp.length; i++) {
-		if (storage.sopp[i].no == soppNo) {
-			soppData = storage.sopp[i];
+	// 매입 데이터 insert 
+	for (let i = 0; i < storage.reportDetailData.related.inItems.length; i++) {
+		let product;
+		for (let i = 0; i < storage.productList.length; i++) {
+			if (storage.productList[i].no == storage.reportDetailData.related.inItems[0].inProduct) {
+				product = storage.productList[i].product;
+			}
 		}
+		let inData = {
+			"belongTo": "sopp:" + storage.reportDetailData.sopp + "",
+			"writer": storage.my,
+			"type": "purchase", // 매입인지 매출인지 
+			"product": storage.reportDetailData.related.inItems[0].inProduct, // 상품번호
+			"customer": "",
+			"title": "",
+			"qty": storage.reportDetailData.related.inItems[0].inQuantity,//수량
+			"price": storage.reportDetailData.related.inItems[0].inPrice, // 단가
+			"vat": storage.reportDetailData.related.inItems[0].tax,// 부가세액
+		}
+
+		url = "/api/trade"
+		method = "post"
+		data = inData;
+		type = "insert";
+		data = JSON.stringify(data);
+		data = cipher.encAes(data);
+		crud.defaultAjax(url, method, data, type, contractSuccessInsert, contractErrorInsert);
+
+	}
+	// 매출 데이터 insert 
+	for (let i = 0; i < storage.reportDetailData.related.outItems.length; i++) {
+		let product;
+		for (let i = 0; i < storage.productList.length; i++) {
+			if (storage.productList[i].no == storage.reportDetailData.related.inItems[0].inProduct) {
+				product = storage.productList[i].product;
+			}
+		}
+		let outData = {
+			"belongTo": "sopp:" + storage.reportDetailData.sopp + "",
+			"writer": storage.my,
+			"type": "sale", // 매입인지 매출인지 
+			"product": storage.reportDetailData.related.outItems[0].outProduct, // 상품번호
+			"customer": "",
+			"title": "",
+			"qty": storage.reportDetailData.related.outItems[0].outQuantity,//수량
+			"price": storage.reportDetailData.related.outItems[0].outPrice, // 단가
+			"vat": storage.reportDetailData.related.outItems[0].tax,// 부가세액
+		}
+
+
+		url = "/api/trade"
+		method = "post"
+		data = outData;
+		type = "insert";
+		data = JSON.stringify(data);
+		data = cipher.encAes(data);
+		crud.defaultAjax(url, method, data, type, contractSuccessInsert, contractErrorInsert);
+
 	}
 
 
-
-	customer = soppData.customer;
-	endUser = soppData.endUser;
-	soppNo = soppData.no;
-
-	storage.formList.customer = customer;
-	storage.formList.endUser = endUser;
-	storage.formList.sopp = soppNo;
 }
+
+
+
+//해당된 번호의 soppdetail 가져옴 
+function getSoppData() {
+
+	let soppNo = storage.estmVerList[storage.estmVerList.length - 1].related.parent.split(":")[1] * 1;
+	$.ajax({
+		"url": "/api/sopp/" + soppNo,
+		"method": "get",
+		"dataType": "json",
+		"cache": false,
+		success: (data) => {
+			let list, x;
+			if (data.result === "ok") {
+				list = data.data;
+				list = cipher.decAes(list);
+				list = JSON.parse(list);
+				storage.soppDetail = list;
+				setSalesReportData();
+			} else {
+				console.log(data.msg);
+			}
+		}
+	})
+}
+
+// 항목 리스트 가져옴 
+function getProductList() {
+	let url;
+	url = apiServer + "/api/estimate/item"
+
+	$.ajax({
+		"url": url,
+		"method": "get",
+		"dataType": "json",
+		"cache": false,
+		success: (data) => {
+			let list, x;
+			if (data.result === "ok") {
+				list = data.data;
+				list = cipher.decAes(list);
+				list = JSON.parse(list);
+				storage.productList = list;
+
+			} else {
+				console.log(data.msg);
+			}
+		}
+	});
+} // End of getEstimateList()
+
+
 
 
 // //////////////////////////////기존 데이터 테이블 바꾸기 //////////////////////////
 let count = 0;
 
 function mtncArrSet() {
-   let cnt = storage.contract;
+	let cnt = storage.contract;
 
 
-   let contNo = cnt[count].no;
-   $.ajax({
-      url: "/api/system/maintanence/" + contNo,
-      method: "get",
-      dataType: "json",
-      cache: false,
-      contentType: "text/plain",
-      success: (result) => {
-         if (result.data != "ok") {
-            count++;
-            if (count < storage.contract.length) {
+	let contNo = cnt[count].no;
+	$.ajax({
+		url: "/api/system/maintanence/" + contNo,
+		method: "get",
+		dataType: "json",
+		cache: false,
+		contentType: "text/plain",
+		success: (result) => {
+			if (result.data != "ok") {
+				count++;
+				if (count < storage.contract.length) {
 
-               mtncArrSet();
-            }
+					mtncArrSet();
+				}
 
-         } else {
-            count++;
-            if (count < storage.contract.length) {
+			} else {
+				count++;
+				if (count < storage.contract.length) {
 
-               mtncArrSet();
-            }
-         }
+					mtncArrSet();
+				}
+			}
 
-      }
-   });
+		}
+	});
 
 
 }
+

@@ -472,13 +472,13 @@
 							<div class="infoTitle">담당 사원</div>
 
 							<input class="infoContent inputsAuto" data-detail="" type="text" id="doc_Form_SalesReport_writer"
-								style="border-top: 1px solid black;border-right: 1px solid black; padding:0.3em;" />
+								style="text-align: left;border-top: 1px solid black;border-right: 1px solid black; padding:0.3em;" />
 
 						</div>
 						<div class="infoDiv">
 							<div class="infoTitle">작성일</div>
 							<input class="inputsAuto infoContent" type="text" data-detail="" id="doc_Form_SalesReport_created"
-								style="border-top : 1px solid black;border-right: 1px solid black;padding:0.3em;" />
+								style="text-align: left;border-top : 1px solid black;border-right: 1px solid black;padding:0.3em;" />
 						</div>
 						<div class="infoDiv">
 							<div class="infoTitle">영업기회</div>
