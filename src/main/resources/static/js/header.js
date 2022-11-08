@@ -953,6 +953,7 @@ function getBasicInfo(){
 					sessionStorage.setItem("basicInfoTime", (new Date()).getTime() + "");
 					list = JSON.parse(list);
 					storage.company = list.company;
+					storage.permission = list.permission;
 					// storage.widget.set = list.widget;
 					storage.my = list.my;
 					console.log("[getBasicInfo] Success getting basic information.");

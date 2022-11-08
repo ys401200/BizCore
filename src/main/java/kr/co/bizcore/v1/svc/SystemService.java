@@ -174,27 +174,63 @@ public class SystemService extends Svc {
     }
 
     public String getBasicInfo(String compId, String userNo) {
-        String result = null;
+        String result = null, company = null, permission = null, t = null;
         String[] data = new String[5];
+        List<HashMap<String, String>> list = null;
         Map<String, String> map = null;
+        Object[] keyset = null;
+        int x = 0;
 
+        // 회사 정보
         map = commonMapper.getCompanyInfo(compId);
-
         if (map != null) {
             data[0] = map.get("comname");
             data[1] = map.get("comaddress");
             data[2] = map.get("comphone");
             data[3] = map.get("comfax");
             data[4] = map.get("comboss");
-            result = "{\"my\":" + userNo + ",";
-            result += ("\"widget\":[\"notice/0\"],");
-            result += ("\"company\":{");
-            result += ("\"name\":\"" + data[0] + "\",");
-            result += ("\"address\":\"" + data[1] + "\",");
-            result += ("\"phone\":\"" + data[2] + "\",");
-            result += ("\"fax\":\"" + data[3] + "\",");
-            result += ("\"ceo\":\"" + data[4] + "\"}}");
+            company = "{\"name\":\"" + data[0] + "\",";
+            company += ("\"address\":\"" + data[1] + "\",");
+            company += ("\"phone\":\"" + data[2] + "\",");
+            company += ("\"fax\":\"" + data[3] + "\",");
+            company += ("\"ceo\":\"" + data[4] + "\"}");
         }
+
+        // 전사권한
+        list = systemMapper.getEmployeeCompPermission(compId, userNo);
+        map = new HashMap<>();
+        map.put("hr", "0");
+        map.put("accounting", "0");
+        map.put("docmng", "0");
+        map.put("manager", "0");
+        if(list != null)    for(x = 0 ; x < list.size() ; x++)  map.put(list.get(x).get("f"), list.get(x).get("p"));
+        keyset = map.keySet().toArray();
+        permission = "{";
+        for(Object o : keyset)  permission += ("\"_" + o + "\":" + (map.get(o).equals("1") + ","));
+        // 부서권한
+        list = systemMapper.getEmployeeDeptPermission(compId, userNo);
+        for(x = 0 ; x < list.size() ; x++){
+            map = list.get(x);
+            if(t == null){
+                t = map.get("dept");
+                permission += ("\"" + t + "\":{");
+            }else if(!t.equals(map.get("dept"))){
+                t = map.get("dept");
+                permission += ("},\"" + t + "\":{");
+            }else   permission += ",";
+            if(map.get("func_id") != null)  result += ("\"" + map.get("func_id") + "\":true");
+        }
+        permission += "}}";
+
+
+
+
+        result = "{\"my\":" + userNo + ",";
+        result += ("\"widget\":[\"notice/0\"],");
+        result += ("\"company\":" + company + ",");
+        result += ("\"permission\":" + permission + "");
+        result += "}";
+
         return result;
     } // End of getBasicInfo
 

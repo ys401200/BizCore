@@ -95,4 +95,17 @@ public interface SystemMapper {
     // 퇴사일이 기록되어 있고 경과한 사람에 대한 퇴사 처리
     @Update("UPDATE bizcore.users SET deleted = NOW(), prohibited = 1 WHERE DATE_ADD(NOW(), INTERVAL 9 HOUR) > resigned AND deleted IS NULL")
     public int processResignedEmployee();
+
+    // 직원의 전사 권한 조회
+    @Select("SELECT func_id f, CAST(permission AS CHAR) p FROM bizcore.permission WHERE dept = 'all' AND comp_id = #{compId} AND user_no = #{employee}")
+    public List<HashMap<String, String>> getEmployeeCompPermission(@Param("compId") String compId, @Param("employee") String employee);
+
+    // 직원의 부서 권한 조회
+    @Select("SELECT d.dept_id dept, p.func_id " +
+            "FROM bizcore.user_dept d " +
+            "LEFT JOIN bizcore.permission p " + 
+            "ON (d.dept_id = p.dept AND p.comp_id = #{compId} AND p.user_no = #{employee} AND p.permission = 1) " + 
+            "WHERE d.comp_id = #{compId} AND d.user_no = #{employee}")
+    public List<HashMap<String, String>> getEmployeeDeptPermission(@Param("compId") String compId, @Param("employee") String employee);
+
 }
