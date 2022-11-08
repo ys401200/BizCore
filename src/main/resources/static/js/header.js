@@ -2739,7 +2739,7 @@ class Department{
 		deptSelectable = deptSelectable === undefined || deptSelectable !== true ? false : deptSelectable;
 		padding = "1rem";
 
-		html = "<input type=\"checkbox\" class=\"dept-tree\" style=\"display:none\" id=\"dept-tree-" + this.id + "\" />";
+		html = "<input type=\"radio\" class=\"dept-tree-select\" name=\"deptTreeSelectEmp\" style=\"display:none\" id=\"dept-tree-" + this.id + "\" />";
 	 	html += ("<label for=\"dept-tree-" + this.id + "\" class=\"deptName\"><div><img src=\"/images/common/corporate.png\" style=\"width:20px;height:20px;vertical-align:middle;\">" + this.name + "</div></label>");
 	 	html += ("<div class=\"dept-tree-cnt\">");
 
