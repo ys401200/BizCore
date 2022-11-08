@@ -626,8 +626,15 @@ function scheduleInsertForm(getDate){
 	setTimeout(() => {
 		$("[name='job'][value='sales']").attr("checked", true);
 		$("#writer").attr("data-change", true);
-		$("#from").val(getDate + "T09:00");
-		$("#to").val(getDate + "T18:00");
+
+		if(getDate === undefined){
+			let nowDate = new Date().toISOString().substring(0, 10);
+			$("#from").val(nowDate + "T09:00");
+			$("#to").val(nowDate + "T18:00");
+		}else{
+			$("#from").val(getDate + "T09:00");
+			$("#to").val(getDate + "T18:00");
+		}
 		ckeditor.config.readOnly = false;
 		window.setTimeout(setEditor, 100);
 	}, 100);
