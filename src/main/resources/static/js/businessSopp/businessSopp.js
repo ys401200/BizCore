@@ -21,7 +21,7 @@ function getSoppList() {
 }
 
 function drawSoppList() {
-	let container, result, job, jsonData, header = [], data = [], ids = [], disDate, setDate, str, fnc, pageContainer, containerTitle, detailBackBtn, listSearchInput;
+	let container, result, job, jsonData, header = [], data = [], ids = [], disDate, setDate, str, fnc, pageContainer, containerTitle, hideArr, showArr;
 	
 	if (storage.soppList === undefined) {
 		msg.set("등록된 영업기회가 없습니다");
@@ -35,11 +35,11 @@ function drawSoppList() {
 	}
 
 	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
-
+	
+	hideArr = ["detailBackBtn", "crudUpdateBtn", "crudDeleteBtn"];
+	showArr = ["gridList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "crudAddBtn", "listSearchInput"];
 	containerTitle = $("#containerTitle");
-	detailBackBtn = $(".detailBackBtn");
 	pageContainer = document.getElementsByClassName("pageContainer");
-	listSearchInput = $(".listSearchInput");
 	container = $(".gridList");
 
 	header = [
@@ -155,10 +155,8 @@ function drawSoppList() {
 	}
 
 	containerTitle.html("영업기회조회");
-	$(pageContainer).children().show();
-	detailBackBtn.hide();
-	listSearchInput.show();
 	createGrid(container, header, data, ids, job, fnc);
+	setViewContents(hideArr, showArr);
 
 	let path = $(location).attr("pathname").split("/");
 	if(path[3] !== undefined && jsonData !== ""){
@@ -197,19 +195,14 @@ function soppErrorList(){
 }
 
 function soppSuccessView(result){
-	let html, htmlSecond, title, userName, customer, picOfCustomer, endUser, status, progress, contType, disDate, expectedSales, detail, dataArray, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput, detailSecondTabs, listRange, pageContainer, datas, crudAddBtn, crudUpdateBtn, crudDeleteBtn;
+	let html, htmlSecond, title, userName, customer, picOfCustomer, endUser, status, progress, contType, disDate, expectedSales, detail, dataArray, gridList, containerTitle, detailBackBtn, datas, crudUpdateBtn, crudDeleteBtn, detailSecondTabs;
 	detailSetFormList(result);
 	gridList = $(".gridList");
-	searchContainer = $(".searchContainer");
 	containerTitle = $("#containerTitle");
 	detailBackBtn = $(".detailBackBtn");
-	listSearchInput = $(".listSearchInput");
-	detailSecondTabs = $(".detailSecondTabs");
-	listRange = $(".listRange");
-	pageContainer = $(".pageContainer");
-	crudAddBtn = $(".crudAddBtn");
 	crudUpdateBtn = $(".crudUpdateBtn");
 	crudDeleteBtn = $(".crudDeleteBtn");
+	detailSecondTabs = $(".detailSecondTabs");
 	datas = ["employee", "customer", "picOfCustomer", "endUser"];
 	notIdArray = ["employee"];
 
@@ -372,7 +365,6 @@ function soppSuccessView(result){
 		},
 	];
 
-	pageContainer.hide();
 	html = detailViewForm(dataArray);
 	htmlSecond = "<div class='tabs'>";
 	htmlSecond += "<input type='radio' id='tabTrade' name='tabItem' data-content-id='tabTradeList' onclick='tabItemClick(this)' checked>";
@@ -385,29 +377,24 @@ function soppSuccessView(result){
 	htmlSecond += "<label class='tabItem' for='tabSales'>영업활동내역</label>";
 	htmlSecond += "</div>";
 	detailSecondTabs.append(htmlSecond);
-	detailSecondTabs.show();
 	containerTitle.html(title);
-	gridList.html("");
-	searchContainer.hide();
-	detailBackBtn.css("display", "flex");
-	listSearchInput.hide();
-	listRange.hide();
-	gridList.html(html);
+	gridList.after(html);
 	setTabsLayOutMenu();
-	crudAddBtn.hide();
-
+	
 	if(storage.my == result.employee){
 		crudUpdateBtn.attr("onclick", "enableDisabled(this, \"soppUpdate();\", \"" + notIdArray + "\");");
 		crudUpdateBtn.css("display", "flex");
 		crudDeleteBtn.css("display", "flex");
+	}else{
+		crudUpdateBtn.css("display", "none");
+		crudDeleteBtn.css("display", "none");
 	}
-
+	
+	detailBackBtn.css("display", "flex");
 	storage.attachedList = result.attached;
 	storage.attachedNo = result.no;
 	storage.attachedType = "sopp";
 	storage.attachedFlag = true;
-	
-	gridList.show();
 	
 	createTabTradeList(result.trades);
 	createTabFileList();
@@ -420,6 +407,9 @@ function soppSuccessView(result){
 		$("#status option[value='" + result.status + "']").prop("selected" ,true);
 		$("#contType option[value='" + result.contType + "']").prop("selected" ,true);
 		$("#soppType option[value='" + result.soppType + "']").prop("selected" ,true);
+		hideArr = ["gridList", "listRange", "crudAddBtn", "listSearchInput", "searchContainer", "pageContainer"];
+		showArr = ["defaultFormContainer", "detailSecondTabs"];
+		setViewContents(hideArr, showArr);
 		ckeditor.config.readOnly = true;
 		window.setTimeout(setEditor, 100);
 	}, 100);

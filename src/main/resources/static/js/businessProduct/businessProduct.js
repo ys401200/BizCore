@@ -21,7 +21,7 @@ function getProductList() {
 }
 
 function drawProductList() {
-	let container, result, job, jsonData, header = [], data = [], ids = [], str, fnc, pageContainer, containerTitle, detailBackBtn, listSearchInput;
+	let container, result, job, jsonData, header = [], data = [], ids = [], str, fnc, pageContainer, containerTitle;
 	
 	if (storage.productList === undefined) {
 		msg.set("등록된 상품이 없습니다");
@@ -36,10 +36,10 @@ function drawProductList() {
 
 	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 
+	hideArr = ["detailBackBtn", "crudUpdateBtn", "crudDeleteBtn"];
+	showArr = ["gridList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "crudAddBtn", "listSearchInput"];
 	containerTitle = $("#containerTitle");
-	detailBackBtn = $(".detailBackBtn");
 	pageContainer = document.getElementsByClassName("pageContainer");
-	listSearchInput = $(".listSearchInput");
 	container = $(".gridList");
 
 	header = [
@@ -115,10 +115,8 @@ function drawProductList() {
 	}
 
 	containerTitle.html("상품조회");
-	$(pageContainer).children().show();
-	detailBackBtn.hide();
-	listSearchInput.show();
 	createGrid(container, header, data, ids, job, fnc);
+	setViewContents(hideArr, showArr);
 }
 
 function productSuccessList(result){
@@ -154,16 +152,11 @@ function productSuccessView(result){
 	let html, vendor, categoryName, price, datas, name, desc, dataArray, notIdArray, searchContainer, containerTitle, detailBackBtn, listSearchInput, listRange, detailSecondTabs, pageContainer, crudAddBtn, crudUpdateBtn, crudDeleteBtn;
 	detailSetFormList(result);
 	gridList = $(".gridList");
-	searchContainer = $(".searchContainer");
 	containerTitle = $("#containerTitle");
 	detailBackBtn = $(".detailBackBtn");
-	listSearchInput = $(".listSearchInput");
 	detailSecondTabs = $(".detailSecondTabs");
-	listRange = $(".listRange");
-	crudAddBtn = $(".crudAddBtn");
 	crudUpdateBtn = $(".crudUpdateBtn");
 	crudDeleteBtn = $(".crudDeleteBtn");
-	pageContainer = $(".pageContainer");
 	datas = ["vendor"];
 	notIdArray = ["vendor"];
 
@@ -212,19 +205,15 @@ function productSuccessView(result){
 
 	html = detailViewForm(dataArray);
 	containerTitle.html(name);
-	gridList.html("");
 	detailBackBtn.css("display", "flex");
-	searchContainer.hide();
-	listSearchInput.hide();
-	listRange.hide();
-	gridList.html(html);
+	gridList.after(html);
 	gridList.css("padding-bottom", "20px");
-	crudAddBtn.hide();
+	hideArr = ["gridList", "listRange", "crudAddBtn", "listSearchInput", "searchContainer", "pageContainer"];
+	showArr = ["defaultFormContainer", "detailSecondTabs"];
+	setViewContents(hideArr, showArr);
 	crudUpdateBtn.attr("onclick", "enableDisabled(this, \"productUpdate();\", \"" + notIdArray + "\");");
 	crudUpdateBtn.css("display", "flex");
 	crudDeleteBtn.css("display", "flex");
-	pageContainer.hide();
-	gridList.show();
 	detailTrueDatas(datas);
 
 	setTimeout(() => {

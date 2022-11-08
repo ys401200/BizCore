@@ -67,7 +67,7 @@
 				<button type="button" class="crudAddBtn" onclick="techInsertForm();">등록</button>
 				<button type="button" class="crudUpdateBtn">수정</button>
 				<button type="button" class="crudDeleteBtn" onclick="techDelete();">삭제</button>
-                <a href="/business/tech" class="detailBackBtn" style="display:none;">Back</a>
+                <a href="#" onclick="hideDetailView(drawTechList);" class="detailBackBtn" style="display:none;">Back</a>
 			</div>
             <div class="gridList"></div>
             <div class="pageContainer"></div>

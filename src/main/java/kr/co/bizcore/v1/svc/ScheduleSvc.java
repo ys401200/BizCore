@@ -311,8 +311,8 @@ public class ScheduleSvc extends Svc{
         ResultSet rs = null;
 
         sql = "SELECT 'tech' AS job, techdNo AS no, userNo AS writer, soppNo AS sopp, IF(endCustNo=100002,NULL,endCustNo) AS customer, CAST(UNIX_TIMESTAMP(techdFrom)*1000 AS CHAR) AS `from`, CAST(UNIX_TIMESTAMP(techdTo)*1000 AS CHAR) AS `to`, techdTitle AS title, techdDesc AS content, techdCheck AS report, techdType AS type, techdPlace AS place, custNo AS partner, contNo AS contract, cntrctMth AS contractMethod, custmemberNo AS cipOfCustomer, techdItemmodel AS supportModel, techdItemversion AS supportVersion, techdSteps AS supportStep, CAST(UNIX_TIMESTAMP(regdatetime)*1000 AS CHAR) AS created, CAST(UNIX_TIMESTAMP(moddatetime)*1000 AS CHAR) AS modified " +
-            "FROM swc_techd "+
-            "WHERE attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = '" + compId + "') ";
+            "FROM swcore2.swc_techd "+
+            "WHERE attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swcore2.swc_company WHERE compid = '" + compId + "') ";
         if(sopp > 0)        sql += (" AND soppno = " + sopp);
         if(customer > 0)    sql += (" AND custno = " + customer);
         if(contract > 0)    sql += (" AND contno = " + customer);
@@ -363,8 +363,8 @@ public class ScheduleSvc extends Svc{
         ResultSet rs = null;
 
         sql = "SELECT 'sales' AS job, salesNo AS no, userNo AS writer, soppNo AS sopp, ptncNo AS customer, CAST(UNIX_TIMESTAMP(salesFrdatetime)*1000 AS CHAR) AS `from`, CAST(UNIX_TIMESTAMP(salesTodatetime)*1000 AS CHAR) AS `to`, salesTitle AS title, salesDesc AS content, salesCheck AS report, salesType AS type, salesPlace AS place, custNo AS partner, CAST(UNIX_TIMESTAMP(regdatetime)*1000 AS CHAR) AS created, CAST(UNIX_TIMESTAMP(moddatetime)*1000 AS CHAR) AS modified " +
-            "FROM swc_sales "+
-            "WHERE attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = '" + compId + "') ";
+            "FROM swcore2.swc_sales "+
+            "WHERE attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swcore2.swc_company WHERE compid = '" + compId + "') ";
         if(sopp > 0)        sql += (" AND soppno = " + sopp);
         if(customer > 0)    sql += (" AND (custno = " + customer + " OR ptncno = " + customer + ")");
         sql += " ORDER BY regdatetime DESC";

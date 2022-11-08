@@ -36,7 +36,7 @@
 				<button type="button" class="crudAddBtn" onclick="customerInsertForm();">등록</button>
 				<button type="button" class="crudUpdateBtn">수정</button>
 				<button type="button" class="crudDeleteBtn" onclick="customerDelete();">삭제</button>
-				<a href="/business/customer" class="detailBackBtn" style="display:none;">Back</a>
+				<a href="#" onclick="hideDetailView(drawCustomerList);" class="detailBackBtn">Back</a>
 			</div>
             <div class="gridList"></div>
             <div class="pageContainer"></div>

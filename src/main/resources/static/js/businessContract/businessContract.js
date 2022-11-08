@@ -65,7 +65,7 @@ function getContractList() {
 }
 
 function drawContractList() {
-	let container, result, job, jsonData, header = [], data = [], ids = [], disDate, str, fnc, pageContainer, containerTitle, detailBackBtn, listSearchInput;
+	let container, result, job, jsonData, header = [], data = [], ids = [], disDate, str, fnc, pageContainer, containerTitle, hideArr, showArr;
 
 	if (storage.contractList === undefined) {
 		msg.set("등록된 계약 없습니다");
@@ -80,9 +80,9 @@ function drawContractList() {
 
 	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 
+	hideArr = ["detailBackBtn", "crudUpdateBtn", "crudDeleteBtn"];
+	showArr = ["gridList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "crudAddBtn", "listSearchInput"];
 	containerTitle = $("#containerTitle");
-	detailBackBtn = $(".detailBackBtn");
-	listSearchInput = $(".listSearchInput");
 	pageContainer = document.getElementsByClassName("pageContainer");
 	container = $(".gridList");
 
@@ -223,10 +223,8 @@ function drawContractList() {
 	}
 
 	containerTitle.html("계약조회");
-	$(pageContainer).children().show();
-	detailBackBtn.hide();
-	listSearchInput.show();
 	createGrid(container, header, data, ids, job, fnc);
+	setViewContents(hideArr, showArr);
 
 	let path = $(location).attr("pathname").split("/");
 	if (path[3] !== undefined && jsonData !== "") {
@@ -266,17 +264,12 @@ function contractErrorList() {
 }
 
 function contractSuccessView(result) {
-	let notIdArray, datas, sopp, html, htmlSecond, contractType, title, employee, customer, salesType, cipOfCustomer, endUser, cipOfendUser, saleDate, delivered, employee2, startOfFreeMaintenance, endOfFreeMaintenance, startOfPaidMaintenance, endOfPaidMaintenance, contractAmount, taxInclude, profit, detail, disDate, dataArray, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput, listRange, pageContainer, crudAddBtn, crudUpdateBtn, crudDeleteBtn;
+	let notIdArray, datas, sopp, html, htmlSecond, contractType, title, employee, customer, salesType, cipOfCustomer, endUser, cipOfendUser, saleDate, delivered, employee2, startOfFreeMaintenance, endOfFreeMaintenance, startOfPaidMaintenance, endOfPaidMaintenance, contractAmount, taxInclude, profit, detail, disDate, dataArray, gridList, containerTitle, detailBackBtn, crudUpdateBtn, crudDeleteBtn;
 	detailSetFormList(result);
 	gridList = $(".gridList");
-	searchContainer = $(".searchContainer");
 	containerTitle = $("#containerTitle");
 	detailBackBtn = $(".detailBackBtn");
-	listSearchInput = $(".listSearchInput");
 	detailSecondTabs = $(".detailSecondTabs");
-	listRange = $(".listRange");
-	pageContainer = $(".pageContainer");
-	crudAddBtn = $(".crudAddBtn");
 	crudUpdateBtn = $(".crudUpdateBtn");
 	crudDeleteBtn = $(".crudDeleteBtn");
 	datas = ["employee", "customer", "cipOfCustomer", "endUser", "cipOfendUser", "sopp", "employee2"];
@@ -505,7 +498,6 @@ function contractSuccessView(result) {
 		},
 	];
 
-	pageContainer.hide();
 	html = detailViewForm(dataArray);
 	htmlSecond = "<div class='tabs'>";
 	htmlSecond += "<input type='radio' id='tabTrade' name ='tabItem' data-content-id='tabTradeList' onclick='tabItemClick(this)' checked>";
@@ -518,20 +510,20 @@ function contractSuccessView(result) {
 	htmlSecond += "<label class='tabItem' for='tabSales'></label>";
 	htmlSecond += "</div>";
 	detailSecondTabs.append(htmlSecond);
-	detailSecondTabs.show();
 	containerTitle.html(title);
-	gridList.html("");
-	searchContainer.hide();
-	gridList.html(html);
+	gridList.after(html);
 	setTabsLayOutMenu();
-	crudAddBtn.hide();
 
 	if (storage.my == result.employee) {
 		crudUpdateBtn.attr("onclick", "enableDisabled(this, \"contractUpdate();\", \"" + notIdArray + "\");");
 		crudUpdateBtn.css("display", "flex");
 		crudDeleteBtn.css("display", "flex");
+	}else{
+		crudUpdateBtn.css("display", "none");
+		crudDeleteBtn.css("display", "none");
 	}
 
+	detailBackBtn.css("display", "flex");
 	storage.attachedList = result.attached;
 	storage.attachedNo = result.no;
 	storage.attachedType = "contract";
@@ -542,17 +534,12 @@ function contractSuccessView(result) {
 	createTabTechList(result.schedules);
 	createTabSalesList(result.schedules);
 	detailTabHide("tabTradeList");
-	gridList.show();
 	detailTrueDatas(datas);
-	$(".detailContents").show();
 
 	setTimeout(() => {
 		$("[name='contractType'][value='" + result.contractType + "']").prop("checked", true);
 		$("#salesType option[value='" + result.salesType + "']").prop("selected", true);
 		$("#taxInclude option[value='" + taxInclude + "']").prop("selected", true);
-		detailBackBtn.css("display", "flex");
-		listSearchInput.hide();
-		listRange.hide();
 
 		if (contractType === "판매계약") {
 			$("#startOfFreeMaintenance").parents(".defaultFormLine").show();
@@ -572,6 +559,9 @@ function contractSuccessView(result) {
 			$("#endOfFreeMaintenance").val(null);
 		}
 
+		hideArr = ["gridList", "listRange", "crudAddBtn", "listSearchInput", "searchContainer", "pageContainer"];
+		showArr = ["defaultFormContainer", "detailSecondTabs"];
+		setViewContents(hideArr, showArr);
 		ckeditor.config.readOnly = true;
 		window.setTimeout(setEditor, 100);
 	}, 100);

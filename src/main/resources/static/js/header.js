@@ -1983,7 +1983,7 @@ function createTabEstList(){
 		},
 		{
 			"title" : "견적명",
-			"align" : "left",
+			"align" : "center",
 		},
 		{
 			"title" : "거래처",
@@ -1991,19 +1991,19 @@ function createTabEstList(){
 		},
 		{
 			"title" : "공급가합계",
-			"align" : "right",
+			"align" : "center",
 		},
 		{
 			"title" : "부가세합계",
-			"align" : "right",
+			"align" : "center",
 		},
 		{
 			"title" : "금액",
-			"align" : "right",
+			"align" : "center",
 		},
 		{
 			"title" : "적요",
-			"align" : "left",
+			"align" : "center",
 		},
 	]
 	
@@ -2075,7 +2075,7 @@ function createTabTechList(result){
 		},
 		{
 			"title" : "비고",
-			"align" : "left",
+			"align" : "center",
 		},
 	];
 	
@@ -2093,18 +2093,23 @@ function createTabTechList(result){
 				str = [
 					{
 						"setData": disDate,
+						"align" : "center",
 					},
 					{
 						"setData": storage.code.etc[result[i].type],
+						"align" : "center",
 					},
 					{
 						"setData": result[i].place,
+						"align" : "center",
 					},
 					{
 						"setData": storage.user[result[i].writer].userName,
+						"align" : "center",
 					},
 					{
 						"setData": result[i].content,
+						"align" : "left",
 					},
 				];
 
@@ -2152,11 +2157,11 @@ function createTabSalesList(result){
 		},
 		{
 			"title" : "제목",
-			"align" : "left",
+			"align" : "center",
 		},
 		{
 			"title" : "비고",
-			"align" : "left",
+			"align" : "center",
 		},
 		{
 			"title" : "담당자",
@@ -2181,21 +2186,27 @@ function createTabSalesList(result){
 				str = [
 					{
 						"setData": disDate,
+						"align" : "center",
 					},
 					{
 						"setData": storage.code.etc[result[i].type],
+						"align" : "center",
 					},
 					{
 						"setData": result[i].title,
+						"align" : "left",
 					},
 					{
 						"setData": result[i].content,
+						"align" : "left",
 					},
 					{
 						"setData": storage.user[result[i].writer].userName,
+						"align" : "center",
 					},
 					{
 						"setData": result[i].place,
+						"align" : "center",
 					},
 				];
 
@@ -3498,4 +3509,31 @@ function gridSetRowSpan(className, parentClassName){
 			}
 		}
 	}
+}
+
+function setViewContents(hideArr, showArr){
+	for(let i = 0; i < hideArr.length; i++){
+		let item = $("." + hideArr[i]);
+		item.hide();
+	}
+
+	for(let i = 0; i < showArr.length; i++){
+		let item = $("." + showArr[i]);
+		item.show();
+	}
+}
+
+function hideDetailView(func){
+	let defaultFormContainer, crudUpdateBtn, detailSecondTabs;
+	defaultFormContainer = $(".defaultFormContainer");
+	crudUpdateBtn = $(".crudUpdateBtn");
+	detailSecondTabs = $(".detailSecondTabs");
+	defaultFormContainer.remove();
+	crudUpdateBtn.text("수정");
+
+	if(detailSecondTabs !== undefined){
+		detailSecondTabs.html("");
+	}
+
+	func();
 }

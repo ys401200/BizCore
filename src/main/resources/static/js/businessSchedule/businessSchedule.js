@@ -21,7 +21,7 @@ function getScheduleList() {
 } // End of getScheduleList()
 
 function drawScheduleList() {
-	let container, dataJob = [], result, jsonData, header = [], data = [], ids = [], str, fnc, pageContainer, containerTitle;
+	let container, dataJob = [], result, jsonData, header = [], data = [], ids = [], str, fnc, pageContainer, containerTitle, hideArr, showArr;
 	
 	if (storage.scheduleList === undefined) {
 		msg.set("등록된 일정이 없습니다");
@@ -34,6 +34,8 @@ function drawScheduleList() {
 		}
 	}
 
+	hideArr = ["calendarList", "detailBackBtn", "crudUpdateBtn", "crudDeleteBtn"];
+	showArr = ["gridList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "crudAddBtn", "listSearchInput", "scheduleRange", "listChangeBtn"];
 	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 	containerTitle = $("#containerTitle");
 	pageContainer = document.getElementsByClassName("pageContainer");
@@ -168,6 +170,7 @@ function drawScheduleList() {
 
 	containerTitle.html("일정조회");
 	createGrid(container, header, data, ids, dataJob, fnc);
+	setViewContents(hideArr, showArr);
 
 	let path = $(location).attr("pathname").split("/");
 
@@ -180,13 +183,14 @@ function drawScheduleList() {
 
 // 일정 캘린더를 만드는 함수
 function drawCalendar(container){
-    let calArr, slot, html, startDate, endDate, tempDate, tempArr, current, x1, x2, x3, t, now, listRange, pageContainer;
-	listRange = $(".listRange");
-	listRange.hide();
+    let calArr, slot, html, startDate, endDate, tempDate, tempArr, current, x1, x2, x3, t, now, pageContainer, hideArr, showArr;
     calArr = [];
     tempDate = [];
     if(storage.currentYear === undefined)   storage.currentYear = (new Date()).getFullYear();
     if(storage.currentMonth === undefined)  storage.currentMonth = (new Date()).getMonth() + 1;
+
+	hideArr = ["gridList", "pageContainer", "listRange", "listSearchInput", "searchContainer", "detailBackBtn"];
+	showArr = ["calendarList", "scheduleRange", "listChangeBtn"];
 
 	$(".calendarYear").text(storage.currentYear);
 	$(".calendarMonth").text(storage.currentMonth);
@@ -315,10 +319,9 @@ function drawCalendar(container){
 				$(calendar_cell[i]).append("<div class=\"calendar_span_empty\" onclick=\"eventStop();scheduleInsertForm(" + now + ");\"><span data-flag=\"false\" onclick=\"eventStop();calendarMore(this);\">more(" + parseInt($(calendar_cell[i]).children().not(".calendar_item_empty").length-1) + ") →</span></div>");
 			}
 		}
-
-		$(pageContainer).hide();
 	}, 100);
-
+	
+	setViewContents(hideArr, showArr);
     return true;
 } // End of drawCalendar()
 
@@ -335,39 +338,34 @@ function scheduleDetailView(e){
 }
 
 function scheduleSuccessView(result){
-	let html, dataArray, notIdArray, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput, listRange, datas, crudAddBtn, crudUpdateBtn, crudDeleteBtn;
+	let html, dataArray, notIdArray, gridList, containerTitle, datas, crudUpdateBtn, crudDeleteBtn, detailBackBtn, hideArr, showArr;
 	notIdArray = ["writer"];
 	gridList = $(".gridList");
-	searchContainer = $(".searchContainer");
 	containerTitle = $("#containerTitle");
-	detailBackBtn = $(".detailBackBtn");
-	listSearchInput = $(".listSearchInput");
-	listRange = $(".listRange");
-	crudAddBtn = $(".crudAddBtn");
 	crudUpdateBtn = $(".crudUpdateBtn");
 	crudDeleteBtn = $(".crudDeleteBtn");
+	detailBackBtn = $(".detailBackBtn");
 	dataArray = scheduleRadioUpdate(result.job, result);
 	html = detailViewForm(dataArray);
 	containerTitle.html(result.title);
-	gridList.html("");
-	searchContainer.hide();
-	gridList.html(html);
-	crudAddBtn.hide();
+	gridList.after(html);
+	hideArr = ["gridList", "calendarList", "listRange", "crudAddBtn", "listSearchInput", "searchContainer", "pageContainer"];
+	showArr = ["defaultFormContainer"];
+	setViewContents(hideArr, showArr);
 
 	if(storage.my == result.writer){
 		crudUpdateBtn.attr("onclick", "enableDisabled(this, \"scheduleUpdate();\", \"" + notIdArray + "\");");
 		crudUpdateBtn.css("display", "flex");
 		crudDeleteBtn.css("display", "flex");
+	}else{
+		crudUpdateBtn.css("display", "none");
+		crudDeleteBtn.css("display", "none");
 	}
 	
-	gridList.show();
+	detailBackBtn.css("display", "flex");
 
 	setTimeout(() => {
 		$("[name='job'][value='" + result.job + "']").attr("checked", true).removeAttr("onclick");
-		listSearchInput.hide();
-		listRange.hide();
-		detailBackBtn.css("display", "flex");
-
 		if(result.job === "sales"){
 			let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;
 			datas = ["sopp", "writer", "customer", "partner"];
@@ -572,30 +570,14 @@ function scheduleCalendarAjax(){
 }
 
 function listChange(event){
-	let tableList = $(".gridList");
-	let calendarList = $(".calendarList");
-	let pageContainer = $(".pageContainer");
-	let listSearchInput = $(".listSearchInput");
-	let listRange = $(".listRange");
-
 	if($(event).data("type") === "table"){
-		tableList.hide();
-		pageContainer.hide();
-		calendarList.show();
-		listSearchInput.hide();
-		listRange.hide();
 		$(event).data("type", "calendar");
 		$(event).html("<i class=\"fa-solid fa-list-ol fa-xl\"></i>");
-		$(".searchContainer").hide();
+		drawCalendar(document.getElementsByClassName("calendar_container")[0]);
 	}else{
-		tableList.show();
-		pageContainer.show();
-		calendarList.hide();
-		listSearchInput.show();
-		listRange.show();
 		$(event).data("type", "table");
 		$(event).html("<i class=\"fa-regular fa-calendar-check fa-xl\"></i>");
-		$(".searchContainer").show();
+		drawScheduleList();
 	}
 }
 
@@ -603,14 +585,10 @@ function scheduleSuccessList(result){
 	storage.scheduleList = result;
 
 	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined){
-		window.setTimeout(drawScheduleList, 600);
 		window.setTimeout(drawCalendar(document.getElementsByClassName("calendar_container")[0]), 600);
-		window.setTimeout(addSearchList, 800);
 		window.setTimeout(searchContainerSet, 800);
 	}else{
-		window.setTimeout(drawScheduleList, 200);
 		window.setTimeout(drawCalendar(document.getElementsByClassName("calendar_container")[0]), 200);
-		window.setTimeout(addSearchList, 400);
 		window.setTimeout(searchContainerSet, 400);
 	}
 }

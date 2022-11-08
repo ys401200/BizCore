@@ -21,7 +21,7 @@ function getTechList() {
 } // End of getTechList()
 
 function drawTechList() {
-	let container, dataJob = [], result, jsonData, header = [], data = [], ids = [], str, fnc, pageContainer, containerTitle, detailBackBtn, listSearchInput;
+	let container, dataJob = [], result, jsonData, header = [], data = [], ids = [], str, fnc, pageContainer, containerTitle, detailBackBtn, listSearchInput, hideArr, showArr;
 	
 	if (storage.scheduleList === undefined) {
 		msg.set("등록된 일정이 없습니다");
@@ -46,9 +46,9 @@ function drawTechList() {
 
 	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 
+	hideArr = ["detailBackBtn", "crudUpdateBtn", "crudDeleteBtn"];
+	showArr = ["gridList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "crudAddBtn", "listSearchInput"];
 	containerTitle = $("#containerTitle");
-	detailBackBtn = $(".detailBackBtn");
-	listSearchInput = $(".listSearchInput");
 	pageContainer = document.getElementsByClassName("pageContainer");
 	container = $(".gridList");
 
@@ -171,10 +171,8 @@ function drawTechList() {
 	}
 
 	containerTitle.html("기술일정조회");
-	$(pageContainer).children().show();
-	detailBackBtn.hide();
-	listSearchInput.show();
 	createGrid(container, header, data, ids, dataJob, fnc);
+	setViewContents(hideArr, showArr);
 
 	let path = $(location).attr("pathname").split("/");
 	if(path[3] !== undefined && jsonData !== ""){
@@ -199,40 +197,28 @@ function techSuccessView(result){
 	let from, datas, to, place, writer, sopp, contract, customer, cipOfCustomer, partner, title, content, supportModel, supportVersion, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput, listRange, crudAddBtn, crudUpdateBtn, crudDeleteBtn;
 	detailSetFormList(result);
 	gridList = $(".gridList");
-	searchContainer = $(".searchContainer");
 	containerTitle = $("#containerTitle");
 	detailBackBtn = $(".detailBackBtn");
-	listSearchInput = $(".listSearchInput");
-	listRange = $(".listRange");
-	crudAddBtn = $(".crudAddBtn");
 	crudUpdateBtn = $(".crudUpdateBtn");
 	crudDeleteBtn = $(".crudDeleteBtn");
 	datas = ["sopp", "writer", "customer", "partner", "cipOfCustomer", "contract"];
 	notIdArray = ["writer"];
 
 	disDate = dateDis(result.from);
-	from = dateFnc(disDate);
+	from = dateFnc(disDate, "yyyy-mm-dd T HH:mm");
 
 	disDate = dateDis(result.to);
-	to = dateFnc(disDate);
+	to = dateFnc(disDate, "yyyy-mm-dd T HH:mm");
 
 	place = (result.place === null || result.place === "" || result.place === undefined) ? "" : result.place;
 	
 	if(result.sopp > 0){
-		$.ajax({
-			url: "/api/sopp/" + result.sopp,
-			method: "get",
-			async: false,
-			dataType: "json",
-			success:(resultData) => {
-				let jsonData;
-				jsonData = cipher.decAes(resultData.data);
-				jsonData = JSON.parse(jsonData);
-				sopp = jsonData.title;
+		sopp = "";
+		for(let key in storage.sopp){
+			if(storage.sopp[key].no === result.sopp){
+				sopp = storage.sopp[key].title;
 			}
-		});
-	}else{
-		sopp = 0;
+		}
 	}
 
 	writer = (result.writer === null || result.writer === "" || result.writer === undefined) ? "" : storage.user[result.writer].userName;
@@ -242,41 +228,23 @@ function techSuccessView(result){
 	content = (result.content === null || result.content === "" || result.content === undefined) ? "" : result.content;
 	supportModel = (result.supportModel === null || result.supportModel === "" || result.supportModel === undefined) ? "" : result.supportModel;
 	supportVersion = (result.supportVersion === null || result.supportVersion === "" || result.supportVersion === undefined) ? "" : result.supportVersion;
-	cipOfCustomer = (result.cipOfCustomer === null || result.cipOfCustomer === "" || result.cipOfCustomer === undefined) ? "" : result.cipOfCustomer;
+	cipOfCustomer = (result.cipOfCustomer === null || result.cipOfCustomer == 0 || result.cipOfCustomer === undefined) ? "" : result.cipOfCustomer;
 	contractMethod = (result.contractMethod === null || result.contractMethod === "" || result.contractMethod === undefined) ? "" : storage.code.etc[result.contractMethod];
 	supportStep = (result.supportStep === "" || result.supportStep === null || result.supportStep === undefined) ? "" : storage.code.etc[result.supportStep];
 	type = (result.type === "" || result.type === null || result.type === undefined) ? "" : storage.code.etc[result.type]; 
 
-	if(result.contract > 0){
-		$.ajax({
-			url: "/api/contract/" + result.contract,
-			method: "get",
-			async: false,
-			dataType: "json",
-			success:(resultData) => {
-				let jsonData;
-				jsonData = cipher.decAes(resultData.data);
-				jsonData = JSON.parse(jsonData);
-				contract = jsonData.title;
-			}
-		});
-	}else{
-		contract = "";
+	contract = "";
+	for(let key in storage.contract){
+		if(storage.contract[key].no === result.contract){
+			contract = storage.contract[key].title;
+		}
 	}
 
-	$.ajax({
-		url: "/api/system/cip/" + cipOfCustomer,
-		method: "get",
-		async: false,
-		dataType: "json",
-		success:(resultData) => {
-			let jsonData;
-			jsonData = cipher.decAes(resultData.data);
-			console.log(jsonData);
-
-			cipOfCustomer = jsonData;
+	for(let key in storage.cip){
+		if(storage.cip[key].no === cipOfCustomer){
+			cipOfCustomer = storage.cip[key].name;
 		}
-	});
+	}
 
 	dataArray = [
 		{
@@ -416,13 +384,13 @@ function techSuccessView(result){
 		{
 			"title": "지원일자 시작일(*)",
 			"elementId": "from",
-			"type": "date",
+			"type": "datetime",
 			"value": from,
 		},
 		{
 			"title": "지원일자 종료일(*)",
 			"elementId": "to",
-			"type": "date",
+			"type": "datetime",
 			"value": to,
 		},
 		{
@@ -448,25 +416,25 @@ function techSuccessView(result){
 	
 	html = detailViewForm(dataArray);
 	containerTitle.html(title);
-	gridList.html("");
-	searchContainer.hide();
-	gridList.html(html);
-	crudAddBtn.hide();
+	gridList.after(html);
+	hideArr = ["gridList", "listRange", "crudAddBtn", "listSearchInput", "searchContainer", "pageContainer"];
+	showArr = ["defaultFormContainer"];
+	setViewContents(hideArr, showArr);
 
 	if(storage.my == result.writer){
 		crudUpdateBtn.attr("onclick", "enableDisabled(this, \"techUpdate();\", \"" + notIdArray + "\");");
 		crudUpdateBtn.css("display", "flex");
 		crudDeleteBtn.css("display", "flex");
+	}else{
+		crudUpdateBtn.css("display", "none");
+		crudDeleteBtn.css("display", "none");
 	}
 	
-	gridList.show();
+	detailBackBtn.css("display", "flex");
 	detailTrueDatas(datas);
 
 	setTimeout(() => {
 		$("[name='job'][value='tech']").prop("checked", true);
-		detailBackBtn.css("display", "flex");
-		listSearchInput.hide();
-		listRange.hide();
 		let contractMethod = (result.contractMethod === null || result.contractMethod === "" || result.contractMethod === undefined) ? "" : result.contractMethod;
 		let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;
 		let supportStep = (result.supportStep === null || result.supportStep === "" || result.supportStep === undefined) ? "" : result.supportStep;
@@ -662,14 +630,14 @@ function techInsertForm(){
 			"elementId": "from",
 			"value": date,
 			"disabled": false,
-			"type": "date",
+			"type": "datetime",
 		},
 		{
 			"title": "지원 종료일(*)",
 			"elementId": "to",
 			"value": date,
 			"disabled": false,
-			"type": "date",
+			"type": "datetime",
 		},
 		{
 			"title": "",
@@ -728,6 +696,9 @@ function techInsertForm(){
 	};
 
 	setTimeout(() => {
+		let nowDate = new Date().toISOString().substring(0, 10);
+		$("#from").val(nowDate + "T09:00");
+		$("#to").val(nowDate + "T18:00");
 		$("#writer").attr("data-change", true);
 		ckeditor.config.readOnly = false;
 		window.setTimeout(setEditor, 100);

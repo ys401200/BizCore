@@ -36,6 +36,8 @@ function drawCustomerList() {
 
 	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 
+	hideArr = ["detailBackBtn", "crudUpdateBtn", "crudDeleteBtn"];
+	showArr = ["gridList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "crudAddBtn", "listSearchInput"];
 	pageContainer = document.getElementsByClassName("pageContainer");
 	container = $(".gridList");
 
@@ -96,6 +98,7 @@ function drawCustomerList() {
 	}
 
 	createGrid(container, header, data, ids, job, fnc);
+	setViewContents(hideArr, showArr);
 }
 
 function customerSuccessList(result){
@@ -128,16 +131,12 @@ function customerDetailView(e){
 }
 
 function customerSuccessView(result){
-	let html, htmlSecond, name, ceoName, taxId, address, detailAddress, zipCode, email, emailForTaxbill, fax, phone, remark1, remark2, dataArray, notIdArray, searchContainer, containerTitle, detailBackBtn, listSearchInput, listRange, detailSecondTabs, pageContainer, crudAddBtn, crudUpdateBtn, crudDeleteBtn;
+	let html, htmlSecond, name, ceoName, taxId, address, detailAddress, zipCode, email, emailForTaxbill, fax, phone, remark1, remark2, dataArray, notIdArray, containerTitle, detailBackBtn, detailSecondTabs, crudUpdateBtn, crudDeleteBtn;
 	detailSetFormList(result);
 	gridList = $(".gridList");
-	searchContainer = $(".searchContainer");
 	containerTitle = $("#containerTitle");
 	detailBackBtn = $(".detailBackBtn");
-	listSearchInput = $(".listSearchInput");
 	detailSecondTabs = $(".detailSecondTabs");
-	listRange = $(".listRange");
-	crudAddBtn = $(".crudAddBtn");
 	crudUpdateBtn = $(".crudUpdateBtn");
 	crudDeleteBtn = $(".crudDeleteBtn");
 	notIdArray = ["zipCode", "address"];
@@ -339,15 +338,9 @@ function customerSuccessView(result){
 	htmlSecond += "<label class='tabItem' for='customerTabTech'>기술지원정보</label>";
 	htmlSecond += "</div>";
 	detailSecondTabs.append(htmlSecond);
-	detailSecondTabs.show();
 	containerTitle.html(name);
-	gridList.html("");
 	detailBackBtn.css("display", "flex");
-	searchContainer.hide();
-	listSearchInput.hide();
-	listRange.hide();
-	gridList.html(html);
-	crudAddBtn.hide();
+	gridList.after(html);
 	crudUpdateBtn.attr("onclick", "enableDisabled(this, \"customerUpdate();\", \"" + notIdArray + "\");");
 	crudUpdateBtn.css("display", "flex");
 	crudDeleteBtn.css("display", "flex");
@@ -355,14 +348,16 @@ function customerSuccessView(result){
 	customerTabSalesList();
 	customerTabContractList();
 	customerTabTechList();
-	gridList.show();
 
 	setTimeout(() => {
 		detailCheckedTrueView();
+		hideArr = ["gridList", "listRange", "crudAddBtn", "listSearchInput", "searchContainer", "pageContainer"];
+		showArr = ["defaultFormContainer", "detailSecondTabs"];
+		setViewContents(hideArr, showArr);
 		ckeditor.config.readOnly = true;
 		window.setTimeout(setEditor, 100);
 		detailTabHide("customerTabSalesList");
-	}, 100);
+	}, 300);
 }
 
 function customerErrorView(){
@@ -807,76 +802,84 @@ function customerTabSalesList(){
 		dataType: "json",
 		contentType: "text/plain",
 		success: (result) => {
-			let html = "", container, header = [], data = [], str, detailSecondTabs, ids, job, fnc, disDate, idName;
-			result = cipher.decAes(result.data);
-			result = JSON.parse(result);
-
-			if(result.length > 0){
-				$(".tabItem[for=\"customerTabSales\"]").text("영업활동정보(" + result.length + ")");
+			if(result.result === "ok"){
+				let html = "", container, header = [], data = [], str, detailSecondTabs, ids, job, fnc, disDate, idName;
+				result = cipher.decAes(result.data);
+				result = JSON.parse(result);
+	
+				if(result.length > 0){
+					$(".tabItem[for=\"customerTabSales\"]").text("영업활동정보(" + result.length + ")");
+				}else{
+					$(".tabItem[for=\"customerTabSales\"]").text("영업활동정보(0)");
+				}
+	
+				detailSecondTabs = $(".detailSecondTabs");
+				html = "<div class='customerTabSalesList' id='customerTabSalesList'></div>";
+				header = [
+					{
+						"title" : "일자",
+						"align" : "center",
+					},
+					{
+						"title" : "영업활동명",
+						"align" : "center",
+					},
+					{
+						"title" : "비고",
+						"align" : "center",
+					},
+					{
+						"title" : "담당자",
+						"align" : "center",
+					},
+				];
+				
+				detailSecondTabs.append(html);
+				container = detailSecondTabs.find(".customerTabSalesList");
+			
+				if(result.length > 0){
+					for(let i = 0; i < result.length; i++){
+						if(result[i].job === "sales"){
+							disDate = dateDis(result[i].created, result[i].modified);
+							disDate = dateFnc(disDate); 
+			
+							str = [
+								{
+									"setData": disDate,
+									"align" : "center",
+								},
+								{
+									"setData": result[i].title,
+									"align" : "left",
+								},
+								{
+									"setData": result[i].content,
+									"align" : "left",
+								},
+								{
+									"setData": storage.user[result[i].writer].userName,
+									"align" : "center",
+								},
+							];
+						}
+						data.push(str);
+					}
+				}else{
+					str = [
+						{
+							"setData": undefined,
+							"col": 4,
+						},
+					];
+				}
+	
+				idName = "customerTabSalesList";
+				setTimeout(() => {
+					createGrid(container, header, data, ids, job, fnc, idName);
+				}, 100);
 			}else{
 				$(".tabItem[for=\"customerTabSales\"]").text("영업활동정보(0)");
 			}
-
-			detailSecondTabs = $(".detailSecondTabs");
-			html = "<div class='customerTabSalesList' id='customerTabSalesList'></div>";
-			header = [
-				{
-					"title" : "일자",
-					"align" : "center",
-				},
-				{
-					"title" : "영업활동명",
-					"align" : "left",
-				},
-				{
-					"title" : "비고",
-					"align" : "left",
-				},
-				{
-					"title" : "담당자",
-					"align" : "center",
-				},
-			];
-			
-			detailSecondTabs.append(html);
-			container = detailSecondTabs.find(".customerTabSalesList");
-		
-			if(result.length > 0){
-				for(let i = 0; i < result.length; i++){
-					if(result[i].job === "sales"){
-						disDate = dateDis(result[i].created, result[i].modified);
-						disDate = dateFnc(disDate); 
-		
-						str = [
-							{
-								"setData": disDate,
-							},
-							{
-								"setData": result[i].title,
-							},
-							{
-								"setData": result[i].content,
-							},
-							{
-								"setData": storage.user[result[i].writer].userName,
-							},
-						];
-					}
-					data.push(str);
-				}
-			}else{
-				str = [
-					{
-						"setData": undefined,
-						"col": 4,
-					},
-				];
-			}
-
-			idName = "customerTabSalesList";
-			setTimeout(() => {
-				createGrid(container, header, data, ids, job, fnc, idName);
-			}, 100);
 		}
 	})
 }
@@ -907,15 +910,15 @@ function customerTabContractList(){
 				},
 				{
 					"title" : "계약명",
-					"align" : "left",
+					"align" : "center",
 				},
 				{
 					"title" : "비고",
-					"align" : "left",
+					"align" : "center",
 				},
 				{
 					"title" : "계약금액",
-					"align" : "right",
+					"align" : "center",
 				},
 			];
 			
@@ -930,15 +933,19 @@ function customerTabContractList(){
 					str = [
 						{
 							"setData": disDate,
+							"align" : "center",
 						},
 						{
 							"setData": result[i].title,
+							"align" : "left",
 						},
 						{
 							"setData": result[i].detail,
+							"align" : "left",
 						},
 						{
 							"setData": parseInt(result[i].contractAmount).toLocaleString("en-US"),
+							"align" : "right",
 						},
 					];
 					
@@ -987,11 +994,11 @@ function customerTabTechList(){
 				},
 				{
 					"title" : "기술지원명",
-					"align" : "left",
+					"align" : "center",
 				},
 				{
 					"title" : "비고",
-					"align" : "left",
+					"align" : "center",
 				},
 				{
 					"title" : "담당자",
@@ -1011,15 +1018,19 @@ function customerTabTechList(){
 						str = [
 							{
 								"setData": disDate,
+								"align" : "center",
 							},
 							{
 								"setData": result[i].title,
+								"align" : "left",
 							},
 							{
 								"setData": result[i].content,
+								"align" : "left",
 							},
 							{
 								"setData": storage.user[result[i].writer].userName,
+								"align" : "center",
 							},
 						];
 					}

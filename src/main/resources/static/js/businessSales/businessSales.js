@@ -21,7 +21,7 @@ function getSalesList() {
 } // End of getSalesList()
 
 function drawSalesList() {
-	let container, dataJob = [], result, jsonData, header = [], data = [], ids = [], str, fnc, pageContainer, containerTitle, detailBackBtn, listSearchInput;
+	let container, dataJob = [], result, jsonData, header = [], data = [], ids = [], str, fnc, pageContainer, containerTitle, listSearchInput, hideArr, showArr;
 	
 	if (storage.scheduleList === "") {
 		msg.set("등록된 일정이 없습니다");
@@ -35,10 +35,10 @@ function drawSalesList() {
 		result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 	}
 	
+	hideArr = ["detailBackBtn", "crudUpdateBtn", "crudDeleteBtn"];
+	showArr = ["gridList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "crudAddBtn", "listSearchInput"];
 	containerTitle = $("#containerTitle");
-	detailBackBtn = $(".detailBackBtn");
 	pageContainer = document.getElementsByClassName("pageContainer");
-	listSearchInput = $(".listSearchInput");
 	container = $(".gridList");
 
 	header = [
@@ -160,9 +160,8 @@ function drawSalesList() {
 	}
 
 	containerTitle.html("영업활동조회");
-	$(pageContainer).children().show();
-	listSearchInput.show();
 	createGrid(container, header, data, ids, dataJob, fnc);
+	setViewContents(hideArr, showArr);
 
 	let path = $(location).attr("pathname").split("/");
 	
@@ -188,40 +187,28 @@ function salesSuccessView(result){
 	let dataArray, datas, from, to, place, writer, sopp, customer, partner, title, content, gridList, searchContainer, containerTitle, detailBackBtn, listSearchInput, listRange, crudAddBtn, crudUpdateBtn, crudDeleteBtn;
 	detailSetFormList(result);
 	gridList = $(".gridList");
-	searchContainer = $(".searchContainer");
 	containerTitle = $("#containerTitle");
 	detailBackBtn = $(".detailBackBtn");
-	listSearchInput = $(".listSearchInput");
-	listRange = $(".listRange");
-	crudAddBtn = $(".crudAddBtn");
 	crudUpdateBtn = $(".crudUpdateBtn");
 	crudDeleteBtn = $(".crudDeleteBtn");
 	datas = ["sopp", "writer", "customer", "partner"];
 	notIdArray = ["writer"];
 
 	disDate = dateDis(result.from);
-	from = dateFnc(disDate);
+	from = dateFnc(disDate, "yyyy-mm-dd T HH:mm");
 
 	disDate = dateDis(result.to);
-	to = dateFnc(disDate);
+	to = dateFnc(disDate, "yyyy-mm-dd T HH:mm");
 
 	place = (result.place === null || result.place === "" || result.place === undefined) ? "" : result.place;
 	
 	if(result.sopp > 0){
-		$.ajax({
-			url: "/api/sopp/" + result.sopp,
-			method: "get",
-			async: false,
-			dataType: "json",
-			success:(resultData) => {
-				let jsonData;
-				jsonData = cipher.decAes(resultData.data);
-				jsonData = JSON.parse(jsonData);
-				sopp = jsonData.title;
+		sopp = "";
+		for(let key in storage.sopp){
+			if(storage.sopp[key].no === result.sopp){
+				sopp = storage.sopp[key].title;
 			}
-		});
-	}else{
-		sopp = 0;
+		}
 	}
 
 	writer = (result.writer === null || result.writer == 0 || result.writer === undefined) ? "" : storage.user[result.writer].userName;
@@ -248,13 +235,13 @@ function salesSuccessView(result){
 		{
 			"title": "활동시작일(*)",
 			"elementId": "from",
-			"type": "date",
+			"type": "datetime",
 			"value": from,
 		},
 		{
 			"title": "활동종료일(*)",
 			"elementId": "to",
-			"type": "date",
+			"type": "datetime",
 			"value": to,
 		},
 		{
@@ -382,26 +369,26 @@ function salesSuccessView(result){
 	
 	html = detailViewForm(dataArray);
 	containerTitle.html(title);
-	gridList.html("");
-	searchContainer.hide();
-	gridList.html(html);
-	crudAddBtn.hide();
+	gridList.after(html);
+	hideArr = ["gridList", "listRange", "crudAddBtn", "listSearchInput", "searchContainer", "pageContainer"];
+	showArr = ["defaultFormContainer"];
+	setViewContents(hideArr, showArr);
 
 	if(storage.my == result.writer){
 		crudUpdateBtn.attr("onclick", "enableDisabled(this, \"salesUpdate();\", \"" + notIdArray + "\");");
 		crudUpdateBtn.css("display", "flex");
 		crudDeleteBtn.css("display", "flex");
+	}else{
+		crudUpdateBtn.css("display", "none");
+		crudDeleteBtn.css("display", "none");
 	}
 
-	gridList.show();
+	detailBackBtn.css("display", "flex");
 	detailTrueDatas(datas);
 
 	setTimeout(() => {
 		let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;
 		$("#type option[value='" + type + "']").attr("selected", true);
-		detailBackBtn.css("display", "flex");
-		listSearchInput.hide();
-		listRange.hide();
 		ckeditor.config.readOnly = true;
 		window.setTimeout(setEditor, 100);
 	}, 100);
@@ -467,14 +454,14 @@ function salesInsertForm(){
 			"title": "활동시작일(*)",
 			"elementId": "from",
 			"value": date,
-			"type": "date",
+			"type": "datetime",
 			"disabled": false,
 		},
 		{
 			"title": "활동종료일(*)",
 			"elementId": "to",
 			"value": date,
-			"type": "date",
+			"type": "datetime",
 			"disabled": false,
 		},
 		{
@@ -628,6 +615,9 @@ function salesInsertForm(){
 	modal.close.attr("onclick", "modal.hide();");
 
 	setTimeout(() => {
+		let nowDate = new Date().toISOString().substring(0, 10);
+		$("#from").val(nowDate + "T09:00");
+		$("#to").val(nowDate + "T18:00");
 		$("#writer").attr("data-change", true);
 		ckeditor.config.readOnly = false;
 		window.setTimeout(setEditor, 100);
@@ -649,7 +639,11 @@ function salesInsert(){
 		msg.set("제목을 입력해주세요.");
 		$("#title").focus();
 		return false;
-	}else if($("#sopp").val() !== "" && !validateAutoComplete($("#sopp").val(), "sopp")){
+	}else if($("#sopp").val() === ""){
+		msg.set("영업기회를 선택해주세요.");
+		$("#sopp").focus();
+		return false;
+	}else if(!validateAutoComplete($("#sopp").val(), "sopp")){
 		msg.set("조회된 영업기회가 없습니다.\n다시 확인해주세요.");
 		$("#sopp").focus();
 		return false;
@@ -696,7 +690,11 @@ function salesUpdate(){
 		msg.set("제목을 입력해주세요.");
 		$("#title").focus();
 		return false;
-	}else if($("#sopp").val() !== "" && !validateAutoComplete($("#sopp").val(), "sopp")){
+	}else if($("#sopp").val() === ""){
+		msg.set("영업기회를 선택해주세요.");
+		$("#sopp").focus();
+		return false;
+	}else if(!validateAutoComplete($("#sopp").val(), "sopp")){
 		msg.set("조회된 영업기회가 없습니다.\n다시 확인해주세요.");
 		$("#sopp").focus();
 		return false;

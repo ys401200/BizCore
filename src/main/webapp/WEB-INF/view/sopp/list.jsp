@@ -77,7 +77,7 @@
 				<button type="button" class="crudAddBtn" onclick="soppInsertForm();">등록</button>
 				<button type="button" class="crudUpdateBtn">수정</button>
 				<button type="button" class="crudDeleteBtn" onclick="soppDelete();">삭제</button>
-				<a href="/business/sopp" class="detailBackBtn" style="display:none;">Back</a>
+				<a href="#" onclick="hideDetailView(drawSoppList);" class="detailBackBtn">Back</a>
 			</div>
             <div class="gridList"></div>
             <div class="pageContainer"></div>

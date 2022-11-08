@@ -10,7 +10,7 @@
     <button type="button" class="crudAddBtn" onclick="scheduleInsertForm();">등록</button>
     <button type="button" class="crudUpdateBtn">수정</button>
     <button type="button" class="crudDeleteBtn" onclick="scheduleDelete();">삭제</button>
-    <a href="/business/schedule" class="detailBackBtn" style="display:none;">Back</a>
+    <a href="#" onclick="hideDetailView(drawScheduleList);" class="detailBackBtn">Back</a>
 </div>
-<div class="gridList" style="display:none;"></div>
+<div class="gridList"></div>
 <div class="pageContainer"></div>
