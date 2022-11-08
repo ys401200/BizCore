@@ -74,12 +74,15 @@ function drawCustomerList() {
 			str = [
 				{
 					"setData": name,
+					"align": "center",
 				},
 				{
 					"setData": ceoName,
+					"align": "center",
 				},
 				{
 					"setData": taxId,
+					"align": "center",
 				}
 			];
 	

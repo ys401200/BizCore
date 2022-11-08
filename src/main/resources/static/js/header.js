@@ -669,12 +669,20 @@ function createGrid(gridContainer, headerDataArray, dataArray, ids, job, fnc, id
 	}else{
 		gridContents = $("#" + idName + " .gridContent");
 	}
+
+	let tempArray = [];
 	
-	for(let i = 0; i < headerDataArray.length; i++){
+	for(let i = 0; i < dataArray.length; i++){
+		for(let key in dataArray[i]){
+			tempArray.push(dataArray[i][key]);
+		}
+	}
+
+	for(let i = 0; i < tempArray.length; i++){
 		for(let t = 0; t < gridContents.length; t++){
-			if(headerDataArray[i].align === "center"){
+			if(tempArray[i].align === "center"){
 				$(gridContents[t]).find(".gridContentItem").eq(i).attr("class", "gridContentItem grid_default_text_align_center");
-			}else if(headerDataArray[i].align === "left"){
+			}else if(tempArray[i].align === "left"){
 				$(gridContents[t]).find(".gridContentItem").eq(i).attr("class", "gridContentItem grid_default_text_align_left");
 			}else{
 				$(gridContents[t]).find(".gridContentItem").eq(i).attr("class", "gridContentItem grid_default_text_align_right");
@@ -2323,7 +2331,7 @@ function calWindowLength(){
 	bodyContent = $("#bodyContent");
 	searchContainer = $(".searchContainer");
 	containerTitle = $("#containerTitle");
-	searchCal = parseInt(bodyContent.innerHeight() - searchContainer.innerHeight() + 100);
+	searchCal = parseInt(bodyContent.innerHeight() - searchContainer.innerHeight());
 	titleCal = parseInt(containerTitle.innerHeight() + 70);
 	totalCal = (parseInt(searchCal - titleCal) - parseInt(36)) / parseInt(38);
 

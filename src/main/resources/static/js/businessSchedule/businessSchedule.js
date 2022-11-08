@@ -54,7 +54,7 @@ function drawScheduleList() {
 		},
 		{
 			"title" : "일정제목",
-			"align" : "left",
+			"align" : "center",
 		},
 		{
 			"title" : "매출처",
@@ -74,7 +74,7 @@ function drawScheduleList() {
 		},
 		{
 			"title" : "일정설명",
-			"align" : "left",
+			"align" : "center",
 		},
 	];
 
@@ -121,30 +121,39 @@ function drawScheduleList() {
 			str = [
 				{
 					"setData": disDate,
+					"align": "center",
 				},
 				{
 					"setData": fromSetDate + " ~ " + toSetDate,
+					"align": "center",
 				},
 				{
 					"setData": job,
+					"align": "center",
 				},
 				{
 					"setData": title,
+					"align": "left",
 				},
 				{
 					"setData": customer,
+					"align": "center",
 				},
 				{
 					"setData": writer,
+					"align": "center",
 				},
 				{
 					"setData": place,
+					"align": "center",
 				},
 				{
 					"setData": type,
+					"align": "center",
 				},
 				{
 					"setData": content,
+					"align": "left",
 				},
 			];
 	
@@ -158,7 +167,6 @@ function drawScheduleList() {
 	}
 
 	containerTitle.html("일정조회");
-	$(pageContainer).hide();
 	createGrid(container, header, data, ids, dataJob, fnc);
 
 	let path = $(location).attr("pathname").split("/");
@@ -172,7 +180,7 @@ function drawScheduleList() {
 
 // 일정 캘린더를 만드는 함수
 function drawCalendar(container){
-    let calArr, slot, html, startDate, endDate, tempDate, tempArr, current, x1, x2, x3, t, now, listRange;
+    let calArr, slot, html, startDate, endDate, tempDate, tempArr, current, x1, x2, x3, t, now, listRange, pageContainer;
 	listRange = $(".listRange");
 	listRange.hide();
     calArr = [];
@@ -182,6 +190,7 @@ function drawCalendar(container){
 
 	$(".calendarYear").text(storage.currentYear);
 	$(".calendarMonth").text(storage.currentMonth);
+	pageContainer = document.getElementsByClassName("pageContainer");
 
     startDate = new Date(storage.currentYear, storage.currentMonth - 1 , 1);
     endDate = new Date(new Date(storage.currentYear, storage.currentMonth, 1).getTime() - 86400000);
@@ -306,6 +315,8 @@ function drawCalendar(container){
 				$(calendar_cell[i]).append("<div class=\"calendar_span_empty\" onclick=\"eventStop();scheduleInsertForm(" + now + ");\"><span data-flag=\"false\" onclick=\"eventStop();calendarMore(this);\">more(" + parseInt($(calendar_cell[i]).children().not(".calendar_item_empty").length-1) + ") →</span></div>");
 			}
 		}
+
+		$(pageContainer).hide();
 	}, 100);
 
     return true;
@@ -812,7 +823,7 @@ function scheduleRadioInsert(value, date){
 				"value": myName,
 			},
 			{
-				"title": "영업기회",
+				"title": "영업기회(*)",
 				"elementId": "sopp",
 				"complete": "sopp",
 				"keyup": "addAutoComplete(this);",
@@ -1119,7 +1130,7 @@ function scheduleRadioInsert(value, date){
 				"disabled": false,
 			},
 			{
-				"title": "영업기회",
+				"title": "영업기회(*)",
 				"elementId": "sopp",
 				"complete": "sopp",
 				"keyup": "addAutoComplete(this);",
@@ -1200,7 +1211,11 @@ function scheduleInsert(){
 			msg.set("제목을 입력해주세요.");
 			$("#title").focus();
 			return false;
-		}else if($("#sopp").val() !== "" && !validateAutoComplete($("#sopp").val(), "sopp")){
+		}else if($("#sopp").val() === ""){
+			msg.set("영업기회를 선택해주세요.");
+			$("#sopp").focus();
+			return false;
+		}else if(!validateAutoComplete($("#sopp").val(), "sopp")){
 			msg.set("조회된 영업기회가 없습니다.\n다시 확인해주세요.");
 			$("#sopp").focus();
 			return false;
@@ -1265,7 +1280,11 @@ function scheduleInsert(){
 			msg.set("제목을 입력해주세요.");
 			$("#title").focus();
 			return false;
-		}else if($("#sopp").val() !== "" && !validateAutoComplete($("#sopp").val(), "sopp")){
+		}else if($("#sopp").val() === ""){
+			msg.set("영업기회를 선택해주세요.");
+			$("#sopp").focus();
+			return false;
+		}else if(!validateAutoComplete($("#sopp").val(), "sopp")){
 			msg.set("조회된 영업기회가 없습니다.\n다시 확인해주세요.");
 			$("#sopp").focus();
 			return false;
@@ -1309,11 +1328,10 @@ function scheduleRadioUpdate(value, result){
 
 		place = (result.place === null || result.place === "" || result.place === undefined) ? "" : result.place;
 		
+		sopp = "";
 		for(let key in storage.sopp){
-			if(storage.sopp[key].no == result.sopp){
+			if(storage.sopp[key].no === result.sopp){
 				sopp = storage.sopp[key].title;
-			}else{
-				sopp = "";
 			}
 		}
 
@@ -1444,7 +1462,7 @@ function scheduleRadioUpdate(value, result){
 				"value": writer,				
 			},
 			{
-				"title": "영업기회",
+				"title": "영업기회(*)",
 				"elementId": "sopp",
 				"complete": "sopp",
 				"keyup": "addAutoComplete(this);",
@@ -1496,11 +1514,10 @@ function scheduleRadioUpdate(value, result){
 
 		place = (result.place === null || result.place === "" || result.place === undefined) ? "" : result.place;
 		
+		sopp = "";
 		for(let key in storage.sopp){
-			if(storage.sopp[key].no == result.sopp){
+			if(storage.sopp[key].no === result.sopp){
 				sopp = storage.sopp[key].title;
-			}else{
-				sopp = "";
 			}
 		}
 
@@ -1516,36 +1533,19 @@ function scheduleRadioUpdate(value, result){
 		supportStep = (result.supportStep === "" || result.supportStep === null || result.supportStep === undefined) ? "" : storage.code.etc[result.supportStep];
 		type = (result.type === "" || result.type === null || result.type === undefined) ? "" : storage.code.etc[result.type]; 
 
-		if(result.contract > 0){
-			$.ajax({
-				url: "/api/contract/" + result.contract,
-				method: "get",
-				async: false,
-				dataType: "json",
-				success:(resultData) => {
-					let jsonData;
-					jsonData = cipher.decAes(resultData.data);
-					jsonData = JSON.parse(jsonData);
-					contract = jsonData.title;
-				}
-			});
-		}else{
-			contract = "";
+		contract = "";
+		for(let key in storage.contract){
+			if(storage.contract[key].no === result.contract){
+				contract = storage.contract[key].title;
+			}
 		}
 
 		if(cipOfCustomer !== ""){
-			$.ajax({
-				url: "/api/system/cip/" + cipOfCustomer,
-				method: "get",
-				async: false,
-				dataType: "json",
-				success:(resultData) => {
-					let jsonData;
-					jsonData = cipher.decAes(resultData.data);
-	
-					cipOfCustomer = jsonData;
+			for(let key in storage.cip){
+				if(storage.cip[key].no === cipOfCustomer){
+					cipOfCustomer = storage.cip[key].name;
 				}
-			});
+			}
 		}
 
 		dataArray = [
@@ -1741,11 +1741,10 @@ function scheduleRadioUpdate(value, result){
 
 		place = (result.place === null || result.place === "" || result.place === undefined) ? "" : result.place;
 		
+		sopp = "";
 		for(let key in storage.sopp){
-			if(storage.sopp[key].no == result.sopp){
+			if(storage.sopp[key].no === result.sopp){
 				sopp = storage.sopp[key].title;
-			}else{
-				sopp = "";
 			}
 		}
 
@@ -1796,7 +1795,7 @@ function scheduleRadioUpdate(value, result){
 				"value": place,
 			},
 			{
-				"title": "영업기회",
+				"title": "영업기회(*)",
 				"elementId": "sopp",
 				"complete": "sopp",
 				"keyup": "addAutoComplete(this);",
@@ -1864,7 +1863,11 @@ function scheduleUpdate(){
 			msg.set("제목을 입력해주세요.");
 			$("#title").focus();
 			return false;
-		}else if($("#sopp").val() !== "" && !validateAutoComplete($("#sopp").val(), "sopp")){
+		}else if($("#sopp").val() === ""){
+			msg.set("영업기회를 선택해주세요.");
+			$("#sopp").focus();
+			return false;
+		}else if(!validateAutoComplete($("#sopp").val(), "sopp")){
 			msg.set("조회된 영업기회가 없습니다.\n다시 확인해주세요.");
 			$("#sopp").focus();
 			return false;
@@ -1929,7 +1932,11 @@ function scheduleUpdate(){
 			msg.set("제목을 입력해주세요.");
 			$("#title").focus();
 			return false;
-		}else if($("#sopp").val() !== "" && !validateAutoComplete($("#sopp").val(), "sopp")){
+		}else if($("#sopp").val() === ""){
+			msg.set("영업기회를 선택해주세요.");
+			$("#sopp").focus();
+			return false;
+		}else if(!validateAutoComplete($("#sopp").val(), "sopp")){
 			msg.set("조회된 영업기회가 없습니다.\n다시 확인해주세요.");
 			$("#sopp").focus();
 			return false;

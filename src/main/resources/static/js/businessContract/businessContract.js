@@ -97,7 +97,7 @@ function drawContractList() {
 		},
 		{
 			"title": "계약명",
-			"align": "left",
+			"align": "center",
 		},
 		{
 			"title": "담당자",
@@ -117,11 +117,11 @@ function drawContractList() {
 		},
 		{
 			"title": "계약금액",
-			"align": "right",
+			"align": "center",
 		},
 		{
 			"title": "매출이익",
-			"align": "right",
+			"align": "center",
 		},
 		{
 			"title": "발주일자",
@@ -173,33 +173,43 @@ function drawContractList() {
 			str = [
 				{
 					"setData": setCreated,
+					"align": "center",
 				},
 				{
 					"setData": startMaintenance + " ~ " + endMaintenance,
+					"align": "center",
 				},
 				{
 					"setData": title,
+					"align": "left",
 				},
 				{
 					"setData": employee,
+					"align": "center",
 				},
 				{
 					"setData": salesType,
+					"align": "center",
 				},
 				{
 					"setData": contractType,
+					"align": "center",
 				},
 				{
 					"setData": endUser,
+					"align": "center",
 				},
 				{
 					"setData": contractAmount,
+					"align": "right",
 				},
 				{
 					"setData": profit,
+					"align": "right",
 				},
 				{
 					"setData": saleDate,
+					"align": "center",
 				}
 			];
 

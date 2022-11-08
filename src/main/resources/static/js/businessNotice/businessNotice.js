@@ -44,7 +44,7 @@ function drawNoticeList() {
 		},
 		{
 			"title": "제목",
-			"align": "left",
+			"align": "center",
 		},
 		{
 			"title": "작성자",
@@ -70,12 +70,15 @@ function drawNoticeList() {
 			str = [
 				{
 					"setData": setDate,
+					"align": "center",
 				},
 				{
 					"setData": jsonData[i].title,
+					"align": "left",
 				},
 				{
 					"setData": userName,
+					"align": "center",
 				},
 			]
 	

@@ -49,7 +49,7 @@ function drawSoppList() {
 		},
 		{
 			"title" : "영업기회명",
-			"align" : "left",
+			"align" : "center",
 		},
 		{
 			"title" : "담당자",
@@ -73,7 +73,7 @@ function drawSoppList() {
 		},
 		{
 			"title" : "예상매출액",
-			"align" : "right",
+			"align" : "center",
 		},
 		{
 			"title" : "진행단계",
@@ -109,30 +109,39 @@ function drawSoppList() {
 			str = [
 				{
 					"setData": setDate,
+					"align": "center",
 				},
 				{
 					"setData": title,
+					"align": "left",
 				},
 				{
 					"setData": employee,
+					"align": "center",
 				},
 				{
 					"setData": soppType,
+					"align": "center",
 				},
 				{
 					"setData": contType,
+					"align": "center",
 				},
 				{
 					"setData": customer,
+					"align": "center",
 				},
 				{
 					"setData": endUser,
+					"align": "center",
 				},
 				{
 					"setData": expectedSales,
+					"align": "right",
 				},
 				{
 					"setData": status,
+					"align": "center",
 				},
 			];
 	

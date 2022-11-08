@@ -67,7 +67,7 @@ function drawTechList() {
 		},
 		{
 			"title" : "일정제목",
-			"align" : "left",
+			"align" : "center",
 		},
 		{
 			"title" : "매출처",
@@ -87,7 +87,7 @@ function drawTechList() {
 		},
 		{
 			"title" : "일정설명",
-			"align" : "left",
+			"align" : "center",
 		},
 	];
 
@@ -125,30 +125,39 @@ function drawTechList() {
 			str = [
 				{
 					"setData": disDate,
+					"align": "center",
 				},
 				{
 					"setData": fromSetDate + " ~ " + toSetDate,
+					"align": "center",
 				},
 				{
 					"setData": job,
+					"align": "center",
 				},
 				{
 					"setData": title,
+					"align": "left",
 				},
 				{
 					"setData": customer,
+					"align": "center",
 				},
 				{
 					"setData": writer,
+					"align": "center",
 				},
 				{
 					"setData": place,
+					"align": "center",
 				},
 				{
 					"setData": type,
+					"align": "center",
 				},
 				{
 					"setData": content,
+					"align": "left",
 				},
 			];
 	

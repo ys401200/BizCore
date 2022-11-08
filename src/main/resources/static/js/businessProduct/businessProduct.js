@@ -57,11 +57,11 @@ function drawProductList() {
 		},
 		{
 			"title" : "상품설명",
-			"align" : "left",
+			"align" : "center",
 		},
 		{
 			"title" : "가격",
-			"align" : "right",
+			"align" : "center",
 		},
 	];
 
@@ -85,18 +85,23 @@ function drawProductList() {
 			str = [
 				{
 					"setData": vendor,
+					"align": "center",
 				},
 				{
 					"setData": categoryName,
+					"align": "center",
 				},
 				{
 					"setData": name,
+					"align": "center",
 				},
 				{
 					"setData": desc,
+					"align": "left",
 				},
 				{
 					"setData": price.toLocaleString("en-US"),
+					"align": "right",
 				},
 			];
 	
