@@ -1011,6 +1011,26 @@ function estimateInsert(){
 				"parent": null,
 				"previous": null,
 				"next": [null],
+				"estimate": {
+					"doc": addPdfForm.html().replaceAll("\r","").replaceAll("\n",""),
+					"address": address,
+					"cip": cip,
+					"customer": customer,
+					"date": date,
+					"exp": exp,
+					"fax": fax,
+					"firmName": firmName,
+					"form": form,
+					"items": items,
+					"phone": phone,
+					"representative": representative,
+					"title": title,
+					"width": 210,
+					"height": 297,
+					"no": null,
+					"version": 1,
+					"remarks": remarks,
+				}
 			},
 			"remarks": remarks,
 		};
@@ -1025,6 +1045,7 @@ function estimateInsert(){
 			dataType: "json",
 			contentType: "text/plain",
 			success: (result) => {
+				location.reload();
 				msg.set("등록되었습니다.");
 			},
 			error: () => {
