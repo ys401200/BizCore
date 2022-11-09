@@ -441,7 +441,7 @@ function getNoticeList() {
 					},
 					{
 						"title" : "제목",
-						"align" : "left",
+						"align" : "center",
 					},
 					{
 						"title" : "작성자",
@@ -460,12 +460,15 @@ function getNoticeList() {
 					str = [
 						{
 							"setData": setDate,
+							"align" : "center",
 						},
 						{
 							"setData": result[i].title,
+							"align" : "left",
 						},
 						{
 							"setData": storage.user[result[i].writer].userName,
+							"align" : "center",
 						},
 					];
 
@@ -518,11 +521,11 @@ function getScheduleList() {
 					},
 					{
 						"title" : "일정제목",
-						"align" : "left",
+						"align" : "center",
 					},
 					{
 						"title" : "일정설명",
-						"align" : "left",
+						"align" : "center",
 					},
 					{
 						"title" : "담당자",
@@ -564,21 +567,27 @@ function getScheduleList() {
 					str = [
 						{
 							"setData": disDate,
+							"align" : "center",
 						},
 						{
 							"setData": fromSetDate + " ~ " + toSetDate,
+							"align" : "center",
 						},
 						{
 							"setData": job,
+							"align" : "center",
 						},
 						{
 							"setData": title,
+							"align" : "left",
 						},
 						{
 							"setData": content,
+							"align" : "left",
 						},
 						{
 							"setData": writer,
+							"align" : "center",
 						},
 					];
 
@@ -823,7 +832,7 @@ function getSoppList() {
 					},
 					{
 						"title" : "영업기회명",
-						"align" : "left",
+						"align" : "center",
 					},
 					{
 						"title" : "담당자",
@@ -847,7 +856,7 @@ function getSoppList() {
 					},
 					{
 						"title" : "예상매출액",
-						"align" : "right",
+						"align" : "center",
 					},
 					{
 						"title" : "진행단계",
@@ -877,30 +886,39 @@ function getSoppList() {
 					str = [
 						{
 							"setData": setDate,
+							"align" : "center",
 						},
 						{
 							"setData": title,
+							"align" : "left",
 						},
 						{
 							"setData": employee,
+							"align" : "center",
 						},
 						{
 							"setData": soppType,
+							"align" : "center",
 						},
 						{
 							"setData": contType,
+							"align" : "center",
 						},
 						{
 							"setData": customer,
+							"align" : "center",
 						},
 						{
 							"setData": endUser,
+							"align" : "center",
 						},
 						{
 							"setData": expectedSales,
+							"align" : "right",
 						},
 						{
 							"setData": status,
+							"align" : "center",
 						},
 					];
 
@@ -945,7 +963,7 @@ function getContractList() {
 					},
 					{
 						"title" : "계약명",
-						"align" : "left",
+						"align" : "center",
 					},
 					{
 						"title" : "담당자",
@@ -965,11 +983,11 @@ function getContractList() {
 					},
 					{
 						"title" : "계약금액",
-						"align" : "right",
+						"align" : "center",
 					},
 					{
 						"title" : "매출이익",
-						"align" : "right",
+						"align" : "center",
 					},
 					{
 						"title" : "발주일자",
@@ -1015,33 +1033,43 @@ function getContractList() {
 					str = [
 						{
 							"setData": setCreated,
+							"align" : "center",
 						},
 						{
 							"setData": startMaintenance + " ~ " + endMaintenance,
+							"align" : "center",
 						},
 						{
 							"setData": title,
+							"align" : "left",
 						},
 						{
 							"setData": employee,
+							"align" : "center",
 						},
 						{
 							"setData": salesType,
+							"align" : "center",
 						},
 						{
 							"setData": contractType,
+							"align" : "center",
 						},
 						{
 							"setData": endUser,
+							"align" : "center",
 						},
 						{
 							"setData": contractAmount,
+							"align" : "right",
 						},
 						{
 							"setData": profit,
+							"align" : "right",
 						},
 						{
 							"setData": saleDate,
+							"align" : "center",
 						},
 					];
 
