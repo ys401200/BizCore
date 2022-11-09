@@ -970,8 +970,12 @@ function getBasicInfo(){
 		basicInfoData = sessionStorage.getItem("basicInfoData");
 		basicInfoData = JSON.parse(basicInfoData);
 		storage.company = basicInfoData.company;
-		// storage.widget.set = basicInfoData.widget;
+		storage.bizcore = storage.bizcore === undefined ? {} : storage.bizcore;
+		storage.bizcore.version = basicInfoData.version;
+		storage.permission = basicInfoData.permission;
 		storage.my = basicInfoData.my;
+		// storage.widget.set = basicInfoData.widget;
+		document.title = document.title + " " + storage.bizcore.version;
 		console.log("[getUserMap] set basic info from sessionStorage.");
 	}else{
 		$.ajax({
