@@ -1,5 +1,5 @@
 // let soppNo = 10005548;
-let soppNo = 10005635;
+let soppNo = "10005635";
 init();
 prepareForm();
 
@@ -265,33 +265,39 @@ function setEstData() {
 
   //   }
   // }
+
+
+  $(".inputs").attr("disabled", "disabled");
+
 }
 
 
-function reportInsert() {
 
+
+//기안하기 
+function reportInsert() {
 
   let title, content, readable, formId, appDoc, dept;
   let appLine = [];
 
   formId = "doc_Form_SalesReport";
 
-  ////////// sopp 
-  let soppVal = $("#" + formId + "_sopp").val();
-  let customerVal = $("#" + formId + "_infoCustomer").val();
-  let soppResult = "";
-  for (let x in storage.soppList) {
-    if (storage.soppList[x].title == soppVal) {
-      soppResult = storage.soppList[x].no + "";
-    }
-  }
+  // ////////// sopp 
+  // let soppVal = $("#" + formId + "_sopp").val();
+  // let customerVal = $("#" + formId + "_infoCustomer").val();
+  // let soppResult = "";
+  // for (let x in storage.soppList) {
+  //   if (storage.soppList[x].title == soppVal) {
+  //     soppResult = storage.soppList[x].no + "";
+  //   }
+  // }
 
-  let cusResult = "";
-  for (let x in storage.customer) {
-    if (storage.customer[x].name == customerVal) {
-      cusResult = storage.customer[x].no + "";
-    }
-  }
+  // let cusResult = "";
+  // for (let x in storage.customer) {
+  //   if (storage.customer[x].name == customerVal) {
+  //     cusResult = storage.customer[x].no + "";
+  //   }
+  // }
 
   title = $("#" + formId + "_title").val();
 
@@ -332,74 +338,71 @@ function reportInsert() {
   }
 
 
-  let inItems = [];
-  let outItems = [];
-  let outProductNo;
+  // let inItems = [];
+  // let outItems = [];
+  // let outProductNo;
 
 
-  for (let j = 0; j < $(".outProduct").length; j++) {
+  // for (let j = 0; j < $(".outProduct").length; j++) {
 
-    for (let i = 0; i < storage.productList.length; i++) {
-      if (storage.productList[i].product == $(".outProduct")[j].value) {
-        outProductNo = storage.productList[i].no;
-      }
-    }
+  //   for (let i = 0; i < storage.productList.length; i++) {
+  //     if (storage.productList[i].product == $(".outProduct")[j].value) {
+  //       outProductNo = storage.productList[i].no;
+  //     }
+  //   }
 
-    let tt = {
-      "outCustomer": storage.soppDetail.customer,
-      "outProduct": outProductNo * 1,
-      "outPrice": $(".outPrice")[j].value * 1,
-      "outQuantity": $(".outQuantity")[j].value * 1,
-      "tax": $(".outTax")[j].value * 1
-    };
-    outItems.push(tt);
-  }
+  //   let tt = {
+  //     "outCustomer": storage.soppDetail.customer,
+  //     "outProduct": outProductNo * 1,
+  //     "outPrice": $(".outPrice")[j].value * 1,
+  //     "outQuantity": $(".outQuantity")[j].value * 1,
+  //     "tax": $(".outTax")[j].value * 1
+  //   };
+  //   outItems.push(tt);
+  // }
 
-  for (let j = 0; j < $(".inProduct").length; j++) {
-    for (let i = 0; i < storage.productList.length; i++) {
-      if (storage.productList[i].product == $(".inProduct")[j].value) {
-        outProductNo = storage.productList[i].no;
-      }
-    }
+  // for (let j = 0; j < $(".inProduct").length; j++) {
+  //   for (let i = 0; i < storage.productList.length; i++) {
+  //     if (storage.productList[i].product == $(".inProduct")[j].value) {
+  //       outProductNo = storage.productList[i].no;
+  //     }
+  //   }
 
-    let customer;
-    for (let x in storage.customer) {
-      if (storage.customer[x].name == storage.estmVerList[3].related.estimate.items[j].supplier) {
-        customer = storage.customer[x].no + "";
-      }
-    }
+  //   let customer;
+  //   for (let x in storage.customer) {
+  //     if (storage.customer[x].name == storage.estmVerList[3].related.estimate.items[j].supplier) {
+  //       customer = storage.customer[x].no + "";
+  //     }
+  //   }
 
-    let tt = {
-      "inCustomer": customer,
-      "inProduct": outProductNo * 1,
-      "inPrice": $(".outPrice")[j].value * 1,
-      "inQuantity": $(".inQuantity")[j].value * 1,
-      "inTax": $(".outTax")[j].value * 1
-    };
-    inItems.push(tt);
-  }
+  //   let tt = {
+  //     "inCustomer": customer,
+  //     "inProduct": outProductNo * 1,
+  //     "inPrice": $(".outPrice")[j].value * 1,
+  //     "inQuantity": $(".inQuantity")[j].value * 1,
+  //     "inTax": $(".outTax")[j].value * 1
+  //   };
+  //   inItems.push(tt);
+  // }
 
 
   let related = {
     "next": "",
     "parent": "",
-    "previous": "estimate:" + estmNo + "",
-    "outSumAllTotal": $(".outSumAllTotal").val() * 1,
-    "profit": $("." + formId + "_profit").val() * 1,
-    "outItems": outItems,
-    "inItems": inItems
+    "previous": "sopp:" + soppNo + "",
+    // "outSumAllTotal": $(".outSumAllTotal").val() * 1,
+    // "profit": $("." + formId + "_profit").val() * 1,
+    // "outItems": outItems,
+    // "inItems": inItems
   }
-
-
-
 
   related = JSON.stringify(related);
 
   let data = {
     title: title,
-    sopp: soppResult,
+    sopp: soppNo,
     dept: dept,
-    customer: cusResult,
+    customer: storage.soppDetailData.customer + "",
     attached: storage.attachedList === undefined ? [] : storage.attachedList,
     content: content,
     appLine: appLine,
@@ -410,7 +413,6 @@ function reportInsert() {
     related: related,
   };
 
-
   console.log(data);
   data = JSON.stringify(data);
   data = cipher.encAes(data);
@@ -420,10 +422,9 @@ function reportInsert() {
 
   for (let i = 0; i < inputsArr.length; i++) {
     if (inputsArr[i].dataset.detail !== undefined) {
-      inputsArr[i].dataset.detail = inputsArr[i].value
+      inputsArr[i].dataset.detail = inputsArr[i].value;
     }
   }
-
 
   let textAreaArr = target.getElementsByTagName("textarea")[0];
   textAreaArr.dataset.detail = textAreaArr.value;
@@ -432,7 +433,6 @@ function reportInsert() {
     let selectArr = target.getElementsByTagName("select")[0];
     selectArr.dataset.detail = selectArr.value;
   }
-
 
 
   if (title == "") {
@@ -463,7 +463,7 @@ function reportInsert() {
         if (result.result === "ok") {
 
           alert("기안 완료");
-          // location.href = "/gw/mydraft";
+          window.close('/gw/estimate');
         } else {
           alert(result.msg);
         }

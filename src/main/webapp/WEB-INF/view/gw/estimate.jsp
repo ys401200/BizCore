@@ -292,7 +292,7 @@
 		  text-align: center;
 		}
 	
-		.insertedDataList>div input:nth-of-type(n + 5):nth-of-type(-n + 7) {
+		.insertedDataList>div input:nth-of-type(n + 5):nth-of-type(-n + 9) {
 		  text-align: right;
 		}
 	
