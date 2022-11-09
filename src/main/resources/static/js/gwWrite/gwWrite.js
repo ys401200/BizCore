@@ -11,7 +11,7 @@ $(document).ready(() => {
 
 function getformList() {
   let dept =
-    storage.dept.dept[storage.user[storage.my].deptId].deptName.split(" ")[1];
+    storage.dept.dept[storage.user[storage.my].deptId].deptName;
   $(".setWriter").html(dept + "&nbsp" + storage.user[storage.my].userName);
 
   let url = "/api/gw/form";

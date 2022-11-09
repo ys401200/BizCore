@@ -1190,7 +1190,7 @@ function setSalesReportData() {
 
 
 
-	;
+	; cipher.decAes
 
 	// 매입 데이터 insert 
 	for (let i = 0; i < storage.reportDetailData.related.inItems.length; i++) {

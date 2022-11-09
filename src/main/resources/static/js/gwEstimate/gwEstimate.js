@@ -1,5 +1,5 @@
-
-let estmNo = 'VTEK202210_0001';
+let soppNo = 10005658;
+// let estmNo = 'VTEK202210_0001';
 init();
 prepareForm();
 
@@ -14,17 +14,19 @@ function prepareForm() {
   aesIv = localStorage.getItem("aesIv");
   if (aesKey !== undefined && aesKey !== null) cipher.aes.key = aesKey;
   if (aesIv !== undefined && aesIv !== null) cipher.aes.iv = aesIv;
-  getProductList();
-  getEstmVerList(estmNo);
-
+  // getProductList();
+  // getEstmVerList(estmNo);
+  getSoppDetailData(soppNo);
   ckeditor.config.readOnly = false;
   window.setTimeout(setEditor, 100);
+  getSavedLine();
 } // End of prepare()
 
 
-function getProductList() {
+
+function getSoppDetailData(soppNo) {
   let url;
-  url = apiServer + "/api/estimate/item"
+  url = apiServer + "/api/sopp/" + soppNo;
 
   $.ajax({
     "url": url,
@@ -37,180 +39,180 @@ function getProductList() {
         list = data.data;
         list = cipher.decAes(list);
         list = JSON.parse(list);
-        storage.productList = list;
+        storage.soppDetailData = list;
+        window.setTimeout(setEstData, 500);
 
       } else {
         console.log(data.msg);
       }
     }
   });
-} // End of getEstimateList()
-
-
-function getSoppData() {
-
-  let soppNo = storage.estmVerList[storage.estmVerList.length - 1].related.parent.split(":")[1] * 1;
-  $.ajax({
-    "url": "/api/sopp/" + soppNo,
-    "method": "get",
-    "dataType": "json",
-    "cache": false,
-    success: (data) => {
-      let list, x;
-      if (data.result === "ok") {
-        list = data.data;
-        list = cipher.decAes(list);
-        list = JSON.parse(list);
-        storage.soppDetail = list;
-
-      } else {
-        console.log(data.msg);
-      }
-    }
-
-  })
 }
 
 
 
-// 견적 데이터 가져오는 함수 
-function getEstmVerList(estmNo) {
-  let url;
-  url = apiServer + "/api/estimate/" + estmNo;
 
-  $.ajax({
-    "url": url,
-    "method": "get",
-    "dataType": "json",
-    "cache": false,
-    success: (data) => {
-      let list, x;
-      if (data.result === "ok") {
-        list = data.data;
-        list = cipher.decAes(list);
-        list = JSON.parse(list);
-        for (x = 0; x < list.length; x++)	list[x].doc = cipher.decAes(list[x].doc);
-        storage.estmVerList = list;
-        setEstData();
-        getSavedLine();
-        getSoppData();
 
-      } else {
-        console.log(data.msg);
-      }
-    }
-  });
+// function getProductList() {
+//   let url;
+//   url = apiServer + "/api/estimate/item"
 
-} // End of getEstimateList()
+//   $.ajax({
+//     "url": url,
+//     "method": "get",
+//     "dataType": "json",
+//     "cache": false,
+//     success: (data) => {
+//       let list, x;
+//       if (data.result === "ok") {
+//         list = data.data;
+//         list = cipher.decAes(list);
+//         list = JSON.parse(list);
+//         storage.productList = list;
+
+//       } else {
+//         console.log(data.msg);
+//       }
+//     }
+//   });
+// } // End of getEstimateList()
+
+
+// function getSoppData() {
+
+//   let soppNo = storage.estmVerList[storage.estmVerList.length - 1].related.parent.split(":")[1] * 1;
+//   $.ajax({
+//     "url": "/api/sopp/" + soppNo,
+//     "method": "get",
+//     "dataType": "json",
+//     "cache": false,
+//     success: (data) => {
+//       let list, x;
+//       if (data.result === "ok") {
+//         list = data.data;
+//         list = cipher.decAes(list);
+//         list = JSON.parse(list);
+//         storage.soppDetail = list;
+
+//       } else {
+//         console.log(data.msg);
+//       }
+//     }
+
+//   })
+// }
+
+
+
+// // 견적 데이터 가져오는 함수 
+// function getEstmVerList(estmNo) {
+//   let url;
+//   url = apiServer + "/api/estimate/" + estmNo;
+
+//   $.ajax({
+//     "url": url,
+//     "method": "get",
+//     "dataType": "json",
+//     "cache": false,
+//     success: (data) => {
+//       let list, x;
+//       if (data.result === "ok") {
+//         list = data.data;
+//         list = cipher.decAes(list);
+//         list = JSON.parse(list);
+//         for (x = 0; x < list.length; x++)	list[x].doc = cipher.decAes(list[x].doc);
+//         storage.estmVerList = list;
+//         setEstData();
+//         getSavedLine();
+//         getSoppData();
+
+//       } else {
+//         console.log(data.msg);
+//       }
+//     }
+//   });
+
+// } // End of getEstimateList()
 
 
 //데이터 리스트 셋하는 함수 
 function setEstData() {
 
 
+  //기본 정보 세팅 
   let formId = "doc_Form_SalesReport";
 
-  $.ajax({
-    url: "/api/sopp",
-    type: "get",
-    dataType: "json",
-    success: (result) => {
-      if (result.result == "ok") {
-        let jsondata;
-        jsondata = cipher.decAes(result.data);
-        jsondata = JSON.parse(jsondata);
-        storage.soppList = jsondata;
-        setSoppList(formId);
+  let soppDetail = storage.soppDetailData;
+  let writer, created, sopp, infoCustomer, title, picOfCustomer, endUser, status, progress, contType, targetDate, soppType, expectedSales;
 
-      } else {
-        alert("에러");
-      }
-    },
-  });
+  writer = storage.my;
+  created = getYmdSlash();
+  sopp = (soppDetail.title === null || soppDetail.title === undefined || soppDetail.title === "") ? "" : soppDetail.title;
+  infoCustomer = (soppDetail.customer === null || soppDetail.customer === undefined || soppDetail.customer === "" || soppDetail.customer === 0) ? "" : soppDetail.customer;
+  title = (soppDetail.title === null || soppDetail.title === undefined || soppDetail.title === "") ? "" : soppDetail.title;
+  picOfCustomer = (soppDetail.picOfCustomer === null || soppDetail.picOfCustomer == 0 || soppDetail.picOfCustomer === "") ? "" : soppDetail.picOfCustomer;
+  endUser = (soppDetail.endUser === null || soppDetail.endUser == 0 || soppDetail.endUser === "") ? "" : storage.customer[soppDetail.endUser].name;
+  status = (soppDetail.status === null || soppDetail.status === "") ? "" : soppDetail.status;
+  progress = (soppDetail.progress === null || soppDetail.progress === "") ? "" : soppDetail.progress + "%";
+  contType = (soppDetail.contType === null || soppDetail.contType === "") ? "" : soppDetail.contType;
+  soppType = (soppDetail.soppType === null || soppDetail.soppType === "") ? "" : soppDetail.soppType;
+  expectedSales = (soppDetail.expectedSales === null || soppDetail.expectedSales === "") ? "" : soppDetail.expectedSales.toLocaleString() + "원"
 
 
-  let html = $(".infoContentlast")[0].innerHTML;
-  let x;
-  let dataListHtml = "";
-
-  // 거래처 데이터 리스트 만들기
-  dataListHtml = "<datalist id='_infoCustomer'>";
-  for (x in storage.customer) {
-    dataListHtml +=
-      "<option data-value='" +
-      x +
-      "' value='" +
-      storage.customer[x].name +
-      "'></option> ";
-  }
-  dataListHtml += "</datalist>";
-  html += dataListHtml;
-  $(".infoContentlast")[0].innerHTML = html;
-  $("#" + formId + "_infoCustomer").attr("list", "_infoCustomer");
-  $("#" + formId + "_endCustName").attr("list", "_infoCustomer");
-
-  let data = storage.estmVerList[storage.estmVerList.length - 1];
-
-  let writer = storage.my;
   $("#" + formId + "_writer").val(storage.user[writer].userName);
   $("#" + formId + "_created").val(getYmdSlash());
-  let total = data.total.toLocaleString();
-  $("#" + formId + "_soppTargetAmt").val(total + "원");
-
+  $("#" + formId + "_sopp").val(sopp);
+  $("#" + formId + "_infoCustomer").val(storage.customer[infoCustomer].name);
+  $("#" + formId + "_title").val(title + " 수주판매 보고");
+  $("#" + formId + "_custmemberName").val(picOfCustomer);
+  $("#" + formId + "_endCustName").val(endUser);
+  $("#" + formId + "_soppStatus").val(status);
+  $("#" + formId + "_soppRate").val(progress);
+  $("#" + formId + "_cntrctMtn").val(contType);
+  $("#" + formId + "_targetDate").val();
+  $("#" + formId + "_soppType").val(soppType);
+  $("#" + formId + "_soppTargetAmt").val(expectedSales);
 
   // 매입 매출의 항목 세팅 
-  let items = storage.estmVerList[3].related.estimate.items;
+  let items = storage.soppDetailData.trades;
   let inSumTarget = $(".inSum");
   let outSumTarget = $(".outSum");
   let inHtml = "";
   let outHtml = "";
 
   for (let i = 0; i < items.length; i++) {
+    if (items[i].type == '1101') {
+      inHtml = inSumTarget.html();
+      inHtml += "<div class='detailcontentDiv'><input value='매입' disabled style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'  class='inputs doc_Form_SalesReport_type'></input>"
+      inHtml += "<input type='date'  onchange='this.dataset.detail=this.value;' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' data-detail='" + getYmdHypen(items[i].created) + "' value='" + getYmdHypen(items[i].created) + "'  class='inputs doc_Form_SalesReport_date'></input>"
+      inHtml += "<input type='text'  onkeyup='this.dataset.detail=this.value'  style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'  data-detail='" + storage.customer[items[i].customer].name + "' value='" + storage.customer[items[i].customer].name + "' class='inputs inCus doc_Form_SalesReport_customer'></input>"
+      inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='" + items[i].title + "' value='" + items[i].title + "' onkeyup='this.dataset.detail=this.value' class='inputs inProduct doc_Form_SalesReport_product'></input>"
+      inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='" + items[i].netPrice.toLocaleString() + "' value='" + items[i].netPrice.toLocaleString() + "'onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inputs inPrice doc_Form_SalesReport_price'></input>"
+      inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='" + items[i].quantity.toLocaleString() + "' value='" + items[i].quantity.toLocaleString() + "' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inputs inQuantity doc_Form_SalesReport_quantity'></input>"
+      inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='" + items[i].amount.toLocaleString() + "' value='" + items[i].amount.toLocaleString() + "' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inputs doc_Form_SalesReport_amount'></input>"
+      inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='" + items[i].tax.toLocaleString() + "' value='" + items[i].tax.toLocaleString() + "' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inputs inTax doc_Form_SalesReport_tax'></input>"
+      inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'oninput='setNum(this)' data-detail='" + items[i].total.toLocaleString() + "' value='" + items[i].total.toLocaleString() + "' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inTotal inputs doc_Form_SalesReport_total'></input>"
+      inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='' onkeyup='this.dataset.detail=this.value' class='inputs doc_Form_SalesReport_remark' data-detail='" + items[i].remark + "' value='" + items[i].remark + "'></input></div>"
 
-    //매입데이터셋 
-    inHtml = inSumTarget.html();
-    inHtml += "<div class='detailcontentDiv'><input value='매입' disabled style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'  class='inputs doc_Form_SalesReport_type'></input>"
-    inHtml += "<input type='date' data-detail='' onchange='this.dataset.detail=this.value;' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs doc_Form_SalesReport_date'></input>"
-    inHtml += "<input type='text'   data-detail='' onkeyup='this.dataset.detail=this.value'  style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'  data-detail='" + items[i].supplier + "' value='" + items[i].supplier + "' class='inputs inCus doc_Form_SalesReport_customer'></input>"
-    inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'    data-detail='" + items[i].product + "' value='" + items[i].product + "' onkeyup='this.dataset.detail=this.value' class='inputs inProduct doc_Form_SalesReport_product'></input>"
-    inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inputs inPrice doc_Form_SalesReport_price'></input>"
-    inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inputs inQuantity doc_Form_SalesReport_quantity'></input>"
-    inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inputs doc_Form_SalesReport_amount'></input>"
-    inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inputs inTax doc_Form_SalesReport_tax'></input>"
-    inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inTotal inputs doc_Form_SalesReport_total'></input>"
-    inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='' onkeyup='this.dataset.detail=this.value' class='inputs doc_Form_SalesReport_remark'></input>"
-    inHtml += "<div class='detailcontentbox'><input type='checkbox' class='detailBox'></div></div>"
-    //매출데이터셋 
-
-
-    let outAmount, outTax, outTotal;
-    outAmount = Number(items[i].quantity) * Number(items[i].price);
-    if (items[0].vat == true) {
-      outTax = Number(items[i].quantity) * Number(items[i].price) * 0.1;
     } else {
-      outTax = 0;
-    }
-    outTotal = outAmount + outTax;
-    outHtml = outSumTarget.html();
-    outHtml += "<div class='detailcontentDiv'><input value='매출' disabled style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs doc_Form_SalesReport_type'></input>"
-    outHtml += "<input type='date' onchange='this.dataset.detail=this.value;' data-detail='' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs doc_Form_SalesReport_date'></input>"
-    outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='' onkeyup='this.dataset.detail=this.value'  class='outCus inputs doc_Form_SalesReport_customer'></input>"
-    outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'  data-detail='' onkeyup='this.dataset.detail=this.value'  data-detail='' value='" + items[i].product + "' class='inputs outProduct doc_Form_SalesReport_product'></input>"
-    outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'oninput='setNum(this)' data-detail=''  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' data-detail='' value='" + items[i].price + "' class='inputs outPrice doc_Form_SalesReport_price'></input>"
-    outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail=''  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' data-detail='' value='" + items[i].quantity + "' class='inputs outQuantity doc_Form_SalesReport_quantity'></input>"
-    outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' data-detail='' value='" + outAmount.toLocaleString() + "'  class='inputs outAmount doc_Form_SalesReport_amount'></input>"
-    outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' data-detail='' value='" + outTax.toLocaleString() + "'  class='outTax inputs  doc_Form_SalesReport_tax'></input>"
-    outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' data-detail='' value='" + outTotal.toLocaleString() + "' class='outTotal inputs doc_Form_SalesReport_total'></input>"
-    outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='' onkeyup='this.dataset.detail=this.value' class='inputs doc_Form_SalesReport_remark'></input>"
-    outHtml += "<div class='detailcontentbox'><input type='checkbox' class='detailBox'></div></div>"
+      outHtml = outSumTarget.html();
+      outHtml += "<div class='detailcontentDiv'><input value='매출' disabled style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs doc_Form_SalesReport_type'></input>"
+      outHtml += "<input type='date' onchange='this.dataset.detail=this.value;' data-detail='" + getYmdHypen(items[i].created) + "' value='" + getYmdHypen(items[i].created) + "'  style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs doc_Form_SalesReport_date'></input>"
+      outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'  data-detail='" + storage.customer[items[i].customer].name + "' value='" + storage.customer[items[i].customer].name + "' onkeyup='this.dataset.detail=this.value'  class='outCus inputs doc_Form_SalesReport_customer'></input>"
+      outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'  data-detail='" + items[i].title + "' value='" + items[i].title + "' onkeyup='this.dataset.detail=this.value'  data-detail='' value='" + items[i].product + "' class='inputs outProduct doc_Form_SalesReport_product'></input>"
+      outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'oninput='setNum(this)' data-detail='" + items[i].netPrice.toLocaleString() + "' value='" + items[i].netPrice.toLocaleString() + "'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)'  class='inputs outPrice doc_Form_SalesReport_price'></input>"
+      outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='" + items[i].quantity.toLocaleString() + "' value='" + items[i].quantity.toLocaleString() + "'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inputs outQuantity doc_Form_SalesReport_quantity'></input>"
+      outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)'  data-detail='" + items[i].amount.toLocaleString() + "' value='" + items[i].amount.toLocaleString() + "'  class='inputs outAmount doc_Form_SalesReport_amount'></input>"
+      outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' data-detail='" + items[i].tax.toLocaleString() + "' value='" + items[i].tax.toLocaleString() + "'  class='outTax inputs  doc_Form_SalesReport_tax'></input>"
+      outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' data-detail='" + items[i].total.toLocaleString() + "' value='" + items[i].total.toLocaleString() + "' class='outTotal inputs doc_Form_SalesReport_total'></input>"
+      outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='' onkeyup='this.dataset.detail=this.value' class='inputs doc_Form_SalesReport_remark'  data-detail='" + items[i].remark + "' value='" + items[i].remark + "'></input></div>"
 
+    }
 
   }
   inSumTarget.html(inHtml);
   outSumTarget.html(outHtml);
 
-  setCusDataList();
-  setProductData();
   let target = $(".mainDiv")[0];
   let inputsArr = target.getElementsByTagName("input");
 
@@ -222,7 +224,41 @@ function setEstData() {
 
   getTotalCount();
 
+  // 일정 데이터 셋팅 
+  let techHtml = $(".techSche").html();
+  let salesHtml = $(".salesSche").html();
+  let sche = storage.soppDetailData.schedules;
+  for (let i = 0; i < sche.length; i++) {
+    if (sche[i].job == "tech") {
+      techHtml += "<div class='insertedTechSche'>";
+      techHtml += "<input type='date' class='techDate'  data-detail='" + getYmdHypen(sche[i].created) + "' value='" + getYmdHypen(sche[i].created) + "' style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+      techHtml += "<input type='text' class='techType' data-detail='" + storage.code.etc[sche[i].type] + "' value='" + storage.code.etc[sche[i].type] + "' style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+      techHtml += "<input type='text' class='techTitle' data-detail='" + sche[i].title + "' value='" + sche[i].title + "' style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+      techHtml += "<input type='text' class='techContent' data-detail='" + sche[i].content + "' value='" + sche[i].content + "'  style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+      techHtml += "<input type='text' class='techWriter' data-detail='" + storage.user[sche[i].writer].userName + "' value='" + storage.user[sche[i].writer].userName + "'  style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+      techHtml += "<input type='text' class='techPlace' data-detail='" + sche[i].place + "' value='" + sche[i].place + "' style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/></div>";
+    } else {
+      salesHtml += "'<div class='insertedSalesSche'>";
+      salesHtml += "<input type='date' class='salesDate'  data-detail='" + getYmdHypen(sche[i].created) + "' value='" + getYmdHypen(sche[i].created) + "' style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+      salesHtml += "<input type='text' class='salesType' data-detail='" + storage.code.etc[sche[i].type] + "' value='" + storage.code.etc[sche[i].type] + "' style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+      salesHtml += "<input type='text' class='salesTitle' data-detail='" + sche[i].title + "' value='" + sche[i].title + "' style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+      salesHtml += "<input type='text' class='salesContent' data-detail='" + sche[i].content + "' value='" + sche[i].content + "'  style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+      salesHtml += "<input type='text' class='salesWriter' data-detail='" + storage.user[sche[i].writer].userName + "' value='" + storage.user[sche[i].writer].userName + "'  style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+      salesHtml += "<input type='text' class='salesPlace' data-detail='" + sche[i].place + "' value='" + sche[i].place + "' style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/></div>";
+    }
+  }
 
+  $(".techSche").html(techHtml);
+  $(".salesSche").html(salesHtml);
+
+  // 파일 데이터 셋팅 
+
+  // let files = storage.soppDetailData.attached;
+  // if(files.length !=0 ) {
+  //   for(let i = 0 ; i <files.length; i++) {
+
+  //   }
+  // }
 }
 
 
@@ -433,7 +469,6 @@ function reportInsert() {
 
 
 function getTotalCount() {
-
 
   let totalCount = Number(0);
   for (let i = 0; i < $(".inTotal").length; i++) {
@@ -653,7 +688,7 @@ function createLine() {
 
   console.log(typeLine);
 
-  let data = storage.estmVerList[storage.estmVerList.length - 1];
+
   let writer = storage.my;
 
   // line grid container 안 닫음 
