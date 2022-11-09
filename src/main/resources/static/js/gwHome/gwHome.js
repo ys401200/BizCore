@@ -450,22 +450,28 @@ function drawMyDraft(types, targets, listTarget, pageTarget) {
 
       str = [
         {
-          setData: jsonData[i].docNo,
+          "setData": jsonData[i].docNo,
+          "align": "center"
         },
         {
-          setData: jsonData[i].form,
+          "setData": jsonData[i].form,
+          "align": "center"
         },
         {
-          setData: appType,
+          "setData": appType,
+          "align": "center"
         },
         {
-          setData: jsonData[i].title,
+          "setData": jsonData[i].title,
+          "align": "left"
         },
         {
-          setData: storage.user[jsonData[i].writer].userName,
+          "setData": storage.user[jsonData[i].writer].userName,
+          "align": "center"
         },
         {
-          setData: setDate
+          "setData": setDate,
+          "align": "center"
         },
       ];
 

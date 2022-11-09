@@ -109,7 +109,7 @@ function drawNoticeApproval() {
     );
   } else {
     jsonData = storage.waitList.wait;
-    result = paging(jsonData.length, storage.currentPage, 8);
+    result = paging(jsonData.length, storage.currentPage,10);
 
     pageContainer = document.getElementsByClassName("pageContainer");
     container = $(".listDiv");
@@ -142,7 +142,7 @@ function drawNoticeApproval() {
     ];
     for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
       disDate = dateDis(jsonData[i].created, jsonData[i].modified);
-      setDate = dateFnc(disDate);
+      setDate = dateFnc(disDate, "mm-dd");
       let userName = storage.user[jsonData[i].writer].userName;
       let appType = jsonData[i].appType;
       if (appType == "0") {
@@ -158,22 +158,28 @@ function drawNoticeApproval() {
       }
       str = [
         {
-          setData: jsonData[i].docNo,
+          "setData": jsonData[i].docNo,
+          "align" : "center"
         },
         {
-          setData: appType,
+          "setData": appType,
+          "align" : "center"
         },
         {
-          setData: jsonData[i].form,
+          "setData": jsonData[i].form,
+          "align" : "center"
         },
         {
-          setData: jsonData[i].title,
+          "setData": jsonData[i].title,
+          "align": "left",
         },
         {
-          setData: userName,
+          "setData": userName,
+          "align" : "center"
         },
         {
-          setData: setDate,
+          "setData": setDate,
+          "align" : "center"
         },
       ];
 

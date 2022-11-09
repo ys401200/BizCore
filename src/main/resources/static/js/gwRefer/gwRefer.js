@@ -161,22 +161,28 @@ function drawApproval() {
       }
       str = [
         {
-          setData: jsonData[i].docNo,
+          "setData": jsonData[i].docNo,
+          "align": "center"
         },
         {
-          setData: appType,
+          "setData": appType,
+          "align": "center"
         },
         {
-          setData: jsonData[i].form,
+          "setData": jsonData[i].form,
+          "align": "center"
         },
         {
-          setData: jsonData[i].title,
+          "setData": jsonData[i].title,
+          "align": "left",
         },
         {
-          setData: userName,
+          "setData": userName,
+          "align": "center"
         },
         {
-          setData: setDate,
+          "setData": setDate,
+          "align": "center"
         },
 
         // {
@@ -236,7 +242,7 @@ function getDetailView() {
   let detailHtml =
     "<div class='mainBtnDiv'><button onclick='showList()'>목록보기</button></div>" +
     "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
-    //"<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
+  //"<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
   $(".listPageDiv").html(detailHtml);
 
   let selectedFileView =
@@ -314,8 +320,8 @@ function getDetailView() {
         $("#" + rd[i].id).prop("checked", true);
       }
     }
-    for(let i = 0 ; i < 3 ; i ++) {let tt = $(".inputsAuto")[i]; $(tt).css("text-align","left");} 
-   
+    for (let i = 0; i < 3; i++) { let tt = $(".inputsAuto")[i]; $(tt).css("text-align", "left"); }
+
   } else {
     // 새문서 작성한 것 가져온 경우 구분
     let rd2 = $("input[name='" + formId + "_RD']");
@@ -335,7 +341,7 @@ function getDetailView() {
           storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
         $("." + formId + subTitlesArr[i] + "_position")[j].value =
           storage.userRank[
-            $("." + formId + subTitlesArr[i] + "_position")[j].value
+          $("." + formId + subTitlesArr[i] + "_position")[j].value
           ][0];
       }
     }
@@ -346,7 +352,7 @@ function getDetailView() {
   $("." + formId + "_content").html($("#" + formId + "_content").attr("data-detail"));
   $("#" + formId + "_content").hide();
   $("." + formId + "_content").css("font-size", $("#" + formId + "_content").css("font-size"));
-  $("." + formId + "_content").css("padding","0.3em");
+  $("." + formId + "_content").css("padding", "0.3em");
 
 
 

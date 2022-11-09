@@ -137,16 +137,20 @@ function drawMyDraft() {
 
       str = [
         {
-          setData: jsonData[i].docNo,
+          "setData": jsonData[i].docNo,
+          "align" : "center"
         },
         {
-          setData: jsonData[i].form,
+          "setData": jsonData[i].form,
+          "align" : "center"
         },
         {
-          setData: jsonData[i].title,
+          "setData": jsonData[i].title,
+          "align": "left",
         },
         {
-          setData: setDate,
+          "setData": setDate,
+          "align" : "center"
         },
       ];
 

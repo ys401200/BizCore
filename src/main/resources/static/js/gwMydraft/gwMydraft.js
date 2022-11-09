@@ -163,29 +163,37 @@ function drawMyDraft() {
       let authority = storage.user[jsonData[i].authority].userName;
       str = [
         {
-          setData: jsonData[i].docNo,
+          "setData": jsonData[i].docNo,
+          "align" : "center"
         },
         {
-          setData: setDate,
+          "setData": setDate,
+          "align" : "center"
         },
         {
-          setData: jsonData[i].form,
+          "setData": jsonData[i].form,
+          "align" : "center"
         },
         {
-          setData: jsonData[i].title,
+          "setData": jsonData[i].title,
+          "align": "left",
         },
 
         {
-          setData: appType,
+          "setData": appType,
+          "align" : "center"
         },
         {
-          setData: authority,
+          "setData": authority,
+          "align" : "center"
         },
         {
-          setData: read,
+          "setData": read,
+          "align" : "center"
         },
         {
-          setData: status,
+          "setData": status,
+          "align" : "center"
         },
       ];
 
