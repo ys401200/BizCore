@@ -99,10 +99,10 @@ public class ViewInterceptor implements HandlerInterceptor {
         if(!root.exists()) return result;
 
         last = root.lastModified() + 32400000L;
-        result = "v.";
+        result = "Ver.";
         cal.setTimeInMillis(last);
         x = cal.get(Calendar.MONTH) + 1;
-        result = x < 10 ? "0" + x + ".": x + ".";
+        result += (x < 10 ? "0" + x + ".": x + ".");
         x = cal.get(Calendar.DATE);
         result += (x < 10 ? "0" + x + ".": x + ".");
         x = cal.get(Calendar.HOUR);
