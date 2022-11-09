@@ -167,8 +167,8 @@ public class ApiEstimateCtrl extends Ctrl {
         return result;
     } // End of apiEstimateNumberGet
 
-    @PostMapping("")
-    public String apiEstimatePost(HttpServletRequest request, @RequestBody String requestBody){
+    @PostMapping({"","/{estmNo}"})
+    public String apiEstimatePost(HttpServletRequest request, @RequestBody String requestBody, @PathVariable(required = false) String estmNo){
         String result = null, aesKey = null, aesIv = null, compId = null, data = null, userNo = null, no = null;
         HttpSession session = null;
         JSONObject json = null;
@@ -191,7 +191,7 @@ public class ApiEstimateCtrl extends Ctrl {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
             data = decAes(requestBody, aesKey, aesIv);
             json = new JSONObject(data);
-            no = estimateSvc.saveEstimate(compId, userNo, json, null);
+            no = estimateSvc.saveEstimate(compId, userNo, json, estmNo);
         }
             
         return result;

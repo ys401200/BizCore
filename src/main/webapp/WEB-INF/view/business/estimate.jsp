@@ -5,11 +5,16 @@
             <hr class="bodyTitleBorder" />
             <span class="bodyTitle">견적 목록</span>
 			<span class="bodyTitleFnc">
-				<div onclick="clickedAdd()">추가</div>
+				<div style="display: none;">추가</div>
 				<div onclick="closeAdd()">닫기</div>
 			</span>
             <div class="listContent">
-				<div class="estimateList"></div><div class="versionPreview"></div>
+				<div class="estimateList"></div>
+				<div class="versionPreview">
+					<div class="previewDefault">
+						<div>미리보기</div>
+					</div>
+				</div>
 			</div>
 			<div class="addPdfForm">
 				<jsp:include page="./form.jsp" />

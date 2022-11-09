@@ -1458,7 +1458,7 @@ function tabItemClick(e){
 
 //매입매출내역 리스트
 function createTabTradeList(result){
-	let html = "";
+	let html = "", countIndex = 0;
 
 	html = "<div class='tradeList' id='tabTradeList'>";
 	html += "<div class='tradeThirdFormTitle'>";
@@ -1485,6 +1485,7 @@ function createTabTradeList(result){
 		
 		for(let i = 0; i < result.length; i++){
 			if(result[i].type === "1101"){
+				countIndex++;
 				disDate = dateDis(result[i].created, result[i].modified);
 				setDate = dateFnc(disDate);
 				customer = (result[i].customer == 0 || result[i].customer === null || result[i].customer === undefined) ? "없음 " : storage.customer[result[i].customer].name;
@@ -1522,6 +1523,7 @@ function createTabTradeList(result){
 
 		for(let i = 0; i < result.length; i++){
 			if(result[i].type === "1102"){
+				countIndex++;
 				disDate = dateDis(result[i].created, result[i].modified);
 				setDate = dateFnc(disDate);
 				customer = (result[i].customer == 0 || result[i].customer === null || result[i].customer === undefined) ? "없음 " : storage.customer[result[i].customer].name;
@@ -1563,8 +1565,8 @@ function createTabTradeList(result){
 	$(".detailSecondTabs").append(html);
 
 	let tabs = $(".tabs");
-	if(result.length > 0){
-		tabs.find("label[for=\"tabTrade\"]").text("매입매출내역(" + result.length + ")");
+	if(countIndex > 0){
+		tabs.find("label[for=\"tabTrade\"]").text("매입매출내역(" + countIndex + ")");
 	}else{
 		tabs.find("label[for=\"tabTrade\"]").text("매입매출내역(0)");
 	}

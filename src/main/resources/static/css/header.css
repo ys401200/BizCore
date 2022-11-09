@@ -228,11 +228,12 @@ textarea{
 .cke_textarea_inline,
 .cke_editable_inline{
 	width: 100% !important;
-	padding: 5px;
-	border: 0;
-	max-height: 200px;
+    padding: 5px;
+    border: 0;
+    max-height: 200px;
     overflow-y: auto;
-	font-size: 0.8rem;
+    font-size: 0.8rem;
+    font-weight: 600;
 }
 
 .cke_textarea_inline > p,

@@ -3,6 +3,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300&family=Outfit:wght@600&display=swap');
 @font-face {font-family:MalgunGothic; src:url(/fonts/malgun.ttf);}
 
+.cke_focus{
+	height: auto;
+}
+
 .ac_cnt{
     display:none;
     position:absolute;
@@ -13,7 +17,7 @@
     overflow-y: auto;
     max-height: 350px;
 }
-.ac_cnt > div{padding:0.2em;text-overflow: ellipsis;}
+.ac_cnt > div{padding:0.2rem;text-overflow: ellipsis;}
 .bodyTitleBorder{
 	float: left;
     border: 2px solid #182f81;
@@ -68,15 +72,107 @@
 }
 
 .estimateList{
-    display:inline-block;
-    width:600px;
-    vertical-align: top;
+    float: left;
+    width: 40%;
     border-top: 1px solid #ededed;
     border-left: 1px solid #ededed;
+    margin-right: 20px;
+}
+
+.estimateAddBtns{
+    display: flex;
+    align-items: center;
+    justify-content: right;
+    padding: 5px;
+    border-right: 1px solid #ededed;
+    border-bottom: 1px solid #ededed;
+}
+
+.estimateAddBtns > button{
+    background-color: #2147b1;
+    color: #ffffff;
+    padding: 5px;
+}
+
+.estimateAddBtns > button:hover{
+    cursor: pointer;
+}
+
+.estimateListHeader,
+.esimateListBody{
+    display: grid;
+    grid-template-columns: 15% 35% 15% 15% 20%;
+    border-bottom: 1px solid #ededed;
+}
+
+.estimateListHeader > div{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid #ededed;
+    padding: 5px;
+    font-size: 0.8rem;
+}
+
+.esimateListBody > div{
+    display: flex;
+    align-items: center;
+    border-right: 1px solid #ededed;
+    padding: 5px;
+    font-size: 0.8rem;
+}
+
+.esimateListBody:hover{
+    background-color: #2147b1;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+.versionList{
+    padding: 10px;
+    border-top: 1px solid #ededed;
+    border-bottom: 1px solid #ededed;
     border-right: 1px solid #ededed;
 }
 
-.estimateList > div{
+.versionListHeader{
+    display: grid;
+    grid-template-columns: 15% 35% 15% 15% 20%;
+    border-bottom: 1px solid #ededed;
+    border-top: 1px solid #ededed;
+    border-left: 1px solid #ededed;
+}
+
+.versionListBody{
+    display: grid;
+    grid-template-columns: 15% 35% 15% 15% 20%;
+    border-bottom: 1px solid #ededed;
+    border-left: 1px solid #ededed;
+}
+
+.versionListHeader > div{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid #ededed;
+    padding: 5px;
+    font-size: 0.7rem;
+}
+
+.versionListBody > div{
+    display: flex;
+    align-items: center;
+    border-right: 1px solid #ededed;
+    padding: 5px;
+    font-size: 0.7rem;
+}
+
+.versionListBody:hover{
+    background-color: #e1e9ff;
+    cursor: pointer;
+}
+
+/* .estimateList > div{
     display: grid;
     grid-template-columns: 15% 35% 10% 10% 20%;
     font-size: 0.8rem;
@@ -96,7 +192,7 @@
     border-top: 1px solid #ededed;
     border-left: 1px solid #ededed;
     border-right: 1px solid #ededed;
-    width: 85%;
+    width: 100%;
 }
 .versionList > div{
     display: grid;
@@ -108,14 +204,29 @@
     line-height: 30px;
     border-bottom: 1px solid #ededed;
 }
-.versionList > div:hover{background-color: #e1e9ff;}
+.versionList > div:hover{background-color: #e1e9ff;} */
 
 .versionPreview{
-    display: inline-block;
-    font-size: 3.33333px;
     border: 1px solid #ededed;
     padding: 10px;
-    width: 40%;
+    float: left;
+}
+
+.estimateUpdateBtns{
+    display: flex;
+    align-items: center;
+    justify-content: right;
+    padding-bottom: 10px;
+}
+
+.estimateUpdateBtns > button{
+    background-color: #2147b1;
+    color: #ffffff;
+    padding: 5px;
+}
+
+.estimateUpdateBtns > button:hover{
+    cursor: pointer;
 }
 
 .eachContainer{display:none;font-size:14px;}
@@ -127,18 +238,18 @@
 .eachContent > div:nth-child(1) > div.passed > div:nth-child(1) > div:nth-child(1){background-color: #2c77b7;}
 .eachContent > div > div > div > div{display:inline-block;}
 .eachContent > div > div > div:nth-child(1) > div:nth-child(1){
-    width:0.4em;
-    height:0.4em;
+    width:0.4rem;
+    height:0.4rem;
     border-radius: 50%;
     border:1px solid #2c77b7;
-    margin-right:0.5em;
+    margin-right:0.5rem;
     padding:0;
 }
-.eachContent > div > div > div:nth-child(1) > div:nth-child(2){padding:0.4em 0.2em;width: 650px;}
+.eachContent > div > div > div:nth-child(1) > div:nth-child(2){padding:0.4rem 0.2rem;width: 650px;}
 .eachContent > div > div > div:nth-child(2) > div:nth-child(odd){
     width:1px;
     border-right: 1px solid #2c77b7;
-    margin:-0.2em 0.5em -0.4em calc(0.2em - 1px);
+    margin:-0.2rem 0.5rem -0.4rem calc(0.2rem - 1px);
     vertical-align: middle;
     padding:0;
 }
@@ -148,40 +259,40 @@
     grid-template-columns: 2fr 5fr 2fr 5fr;
     border-bottom:1px solid #c3c3c3;
     vertical-align: top;
-    width:calc(100% - 2em);
+    width:calc(100% - 2rem);
 }
 .estimateStep1 > div:nth-child(2) > *,
 .estimateStep2 > div:nth-child(2) > *{
     border:none;
     border-top:1px solid #c3c3c3;
     border-left:1px solid #c3c3c3;
-    padding:0.4em 0.2em;
+    padding:0.4rem 0.2rem;
 }
 .estimateStep1 > div:nth-child(2) > div:last-child,
 .estimateStep2 > div:nth-child(2) > div:last-child{border-right:1px solid #c3c3c3;}
 .estimateStep1 > div:nth-child(2) > div:nth-child(odd),
 .estimateStep2 > div:nth-child(2) > div:nth-child(odd){text-align: center;background-color: #efefef;}
 
-.estimateItem{margin-bottom:0.5em;}
-.estimateItem > div:nth-child(2){
+.estimateItrem{margin-bottom:0.5rem;}
+.estimateItrem > div:nth-child(2){
     display:inline-grid;
     grid-template-columns: 2fr 5fr 2fr 5fr;
     border-bottom:1px solid #c3c3c3;
     vertical-align: top;
-    width:calc(100% - 2em);
+    width:calc(100% - 2rem);
 }
-.estimateItem > div:nth-child(2) > *{
+.estimateItrem > div:nth-child(2) > *{
     border:none;
     border-top:1px solid #c3c3c3;
     border-left:1px solid #c3c3c3;
-    padding:0.4em 0.2em;
+    padding:0.4rem 0.2rem;
 }
-.estimateItem > div:nth-child(2) > div:last-child{border-right:1px solid #c3c3c3;}
-.estimateItem > div:nth-child(2) > div:nth-child(odd){text-align: center;background-color: #efefef;}
+.estimateItrem > div:nth-child(2) > div:last-child{border-right:1px solid #c3c3c3;}
+.estimateItrem > div:nth-child(2) > div:nth-child(odd){text-align: center;background-color: #efefef;}
 
-.estimateFormName:checked + label{border-bottom: 2px solid blue;padding-bottom: 0.1em;}
-.estimateBasInfo:checked + label{border-bottom: 2px solid blue;padding-bottom: 0.1em;}
-.estimateInput{border:none;font-size:1em;width:calc(100% - 4px);height:100%;}
+.estimateFormName:checked + label{border-bottom: 2px solid blue;padding-bottom: 0.1rem;}
+.estimateBasInfo:checked + label{border-bottom: 2px solid blue;padding-bottom: 0.1rem;}
+.estimateInput{border:none;font-size:1rem;width:calc(100% - 4px);height:100%;}
 
 /* 리스트 */
 .estimateContainer {
@@ -231,9 +342,9 @@
 .addPdfForm{
     display: none;
     clear: both;
-    height: calc(100% - 70px);
     margin: 0 auto;
     width: 60%;
+    padding: 20px;
 }
 
 .cke_textarea_inline{
@@ -242,12 +353,33 @@
 }
 
 .mainPdf{
-    border: 1px solid #000;
-    padding: 10px;
-    height: 100%;
-    overflow-y: auto;
-    overflow-x: hidden;
+    width: 21cm;
+    min-height: 29.7cm;
+    /* padding: 2cm; */
+    border: 1px #D3D3D3 solid;
+    border-radius: 5px;
+    background: white;
+    box-shadow: 0 0 5px rgb(0 0 0 / 10%);
+    padding: 30px 20px 0 20px;
 }
+
+.previewDefault{
+    width: 21cm;
+    min-height: 29.7cm;
+    border: 1px #D3D3D3 solid;
+    border-radius: 5px;
+    background: #ededed;
+    box-shadow: 0 0 5px rgb(0 0 0 / 10%);
+    padding: 30px 20px 0 20px;
+}
+
+.previewDefault > div{
+    display: block;
+    padding-top: 50%;
+    padding-left: 45%;
+    color: #BDBDBD;
+}
+
 
 .imgLogo{
     display: flex;
@@ -262,7 +394,7 @@
 }
 
 .pdfLogoLeft > img{
-    width: 10vw;
+    width: 13vw;
 }
 
 .pdfLogoRight{
@@ -272,7 +404,9 @@
 }
 
 .pdfLogoRight > img{
-    width: 23vw;
+    width: 27vw;
+    height: 3.2vh;
+    padding-bottom: 0.5vh;
 }
 
 .pdfTitle{
@@ -281,7 +415,7 @@
     justify-content: center;
     padding-top: 30px;
     padding-bottom: 20px;
-    font-size: 1.5rem;
+    font-size: 2.5rem;
     font-family: 'Outfit', sans-serif;
 }
 
@@ -298,7 +432,7 @@
 }
 
 .pdfHeadInfo{
-    border: 1px solid #000;
+    border: 2px solid #000;
     display: grid;
     grid-template-columns: 50% 50%;
     padding: 0.5vh 0.5vw 0.5vh 2.5vw;
@@ -306,40 +440,38 @@
 }
 
 .pdfHeadInfo > div{
-    width: 100%;
     display: flex;
-    align-items: center;
-    justify-content: left;
+    height: 3vh;
 }
 
-.pdfHeadInfo > div > span{
+.pdfHeadInfo > .address{
+    height: 4.5vh;
+}
+
+.pdfHeadInfo > div > span:first-child{
     text-align: justify;
     width: 4vw;
-    font-size: 0.5rem;
+    font-size: 0.9rem;
     font-weight: 600;
-    height: 2vh;
+    line-height: 3vh;
 }
 
-.pdfHeadInfo > div > span:after{
+.pdfHeadInfo > div > span:first-child:after{
     content: "";
     display: inline-block;
     width: 100%;
 }
 
-.pdfHeadInfo > .firmName > input{
-    padding-top: 0.2vh;
-}
 .pdfHeadInfo > div > input{
-    font-size: 0.5rem;
-    padding-top: 0.6vh;
+    height: 2.6vh;
+    width: 6vw;
 }
 
 .pdfHeadInfo > div > textarea{
-    height: 3.5vh;
     width: 13vw;
     overflow: hidden;
     font-family: 'NanumSquareRound';
-    font-size: 0.5rem;
+    display: block;
 }
 
 .pdfHeadInfo > div > textarea:disabled{
@@ -349,7 +481,7 @@
 }
 
 .pdfHeadInfoPrice{
-    border: 1px solid #000;
+    border: 2px solid #000;
     display: grid;
     grid-template-columns: 50% 50%;
     padding: 0.5vh 0.5vw 0.5vh 2.5vw;
@@ -357,54 +489,48 @@
 }
 
 .pdfHeadInfoPrice > div{
-    width: 100%;
     display: flex;
-    align-items: center;
-    justify-content: left;
+    height: 3vh;
 }
 
-.pdfHeadInfoPrice > div > span{
+.pdfHeadInfoPrice > div > span:first-child{
     text-align: justify;
     width: 4vw;
-    font-size: 0.5rem;
+    font-size: 0.9rem;
     font-weight: 600;
-    height: 2vh;
 }
 
-.pdfHeadInfoPrice > div > span:after{
+.pdfHeadInfoPrice > div > span:first-child:after{
     content: "";
     display: inline-block;
     width: 100%;
 }
 
 .pdfHeadInfoPrice > div:first-child > input[type="text"]{
-    padding-top: 0.4vh;
-    width: 4.5vw;
+    width: 5vw;
     text-align: right;
-    font-size: 0.5rem;
+    height: 2.6vh;
+}
+
+.pdfHeadInfoPrice > div:last-child > input[type="text"]{
+    height: 2.6vh;
 }
 
 .pdfHeadInfoPrice > div > input[type="radio"]{
-    margin: 0;
-    width: 0.8vw;
     margin-left: 0.5vw;
-    margin-right: 0.2vw
+    margin-right: 0.2vw;
+    height: 2.2vh;
 }
 
 .pdfHeadInfoPrice > div:first-child > label{
     display: flex;
     align-items: center;
     font-weight: 600;
-    font-size: 0.5rem;
-    padding-bottom: 0.3vh;
-}
-
-.pdfHeadInfoPrice > div:last-child > input{
-    font-size: 0.5rem;
+    font-size: 0.75rem;
+    height: 2.7vh;
 }
 
 .pdfMainContainer{
-    font-size: 0.8rem;
     border-top:2px solid #000;
     border-left: 2px solid #000;
     border-right: 2px solid #000;
@@ -424,9 +550,7 @@
     border-right: 1px solid #000;
     background-color: #990B19;
     color: #ffffff;
-    font-weight: 600;
-    padding: 5px;
-    font-size: 0.5rem;
+    font-size: 0.8rem;
 }
 
 .pdfMainContentHeader > div:last-child{
@@ -437,8 +561,6 @@
     display: grid;
     grid-template-columns: 10% 10% 20% 10% 10% 10% 10% 10% 10%;
     background-color: #FFFF75;
-    font-weight: 500;
-    font-size: 0.8rem;
     border-bottom: 1px solid #000;
 }
 
@@ -447,9 +569,10 @@
     align-items: center;
     background-color: #FFFF75;
     font-weight: 600;
-    font-size: 0.5rem;
     border-right: 1px solid #000;
-    padding: 3px;
+    font-size: 0.8rem;
+    padding-left: 3px;
+    padding-right: 3px;
 }
 
 .pdfMainContentTitle > .subTitleIndex{
@@ -459,7 +582,6 @@
 .pdfMainContentTitle > .subTitle{
     grid-column: span 2;
     justify-content: center;
-    padding: 5px;
 }
 
 .pdfMainContentTitle > .subTitle > input{
@@ -488,8 +610,9 @@
     align-items: center;
     justify-content: center;
     border-right: 1px solid #000;
-    padding: 5px;
-    font-size: 0.5rem;
+    font-size: 0.8rem;
+    padding-left: 3px;
+    padding-right: 3px;
 }
 
 .pdfMainContentItem > .itemSpec,
@@ -503,6 +626,7 @@
     border: 1px solid #000;
 }
 
+
 .pdfMainContentItem > .itemConsumer > input{
     text-align: right;
 }
@@ -513,6 +637,10 @@
 
 .pdfMainContentItem > .itemRemarks > input{
     text-align: left;
+}
+
+.pdfMainContentItem > .itemAmount{
+    justify-content: right;
 }
 
 .pdfMainContentItem > .itemTotal{
@@ -567,14 +695,16 @@
     display: flex;
     align-items: center;
     border-right: 1px solid #000;
-    padding: 5px;
-    font-size: 0.5rem;
+    padding: 2px;
+    font-size: 0.8rem;
+    padding-left: 3px;
+    padding-right: 3px;
 }
 
 .pdfMainContentAmount > div:first-child{
     grid-column: span 6;
     justify-content: center;
-    letter-spacing: 0.5em;
+    letter-spacing: 0.5rem;
     font-weight: 600;
 }
 
@@ -596,14 +726,16 @@
     display: flex;
     align-items: center;
     border-right: 1px solid #000;
-    padding: 5px;
-    font-size: 0.5rem;
+    padding: 2px;
+    font-size: 0.8rem;
+    padding-left: 3px;
+    padding-right: 3px;
 }
 
 .pdfMainContentTax > div:first-child{
     grid-column: span 6;
     justify-content: center;
-    letter-spacing: 0.5em;
+    letter-spacing: 0.5rem;
     font-weight: 600;
 }
 
@@ -625,14 +757,16 @@
     display: flex;
     align-items: center;
     border-right: 1px solid #000;
-    padding: 5px;
-    font-size: 0.5rem;
+    padding: 2px;
+    font-size: 0.8rem;
+    padding-left: 3px;
+    padding-right: 3px;
 }
 
 .pdfMainContentTotal > div:first-child{
     grid-column: span 6;
     justify-content: center;
-    letter-spacing: 0.5em;
+    letter-spacing: 0.5rem;
     font-weight: 600;
 }
 
@@ -644,30 +778,28 @@
     border-right: 0;
 }
 
-.pdfBottomRemarks{
-    font-size: 0.8rem;
-}
-
 .pdfBottomRemarks > span{
     display: block;
     font-weight: 600;
     padding-bottom: 10px;
+    font-size: 0.9rem;
 }
 
 .pdfBottomLogo{
     display: flex;
     align-items: center;
     justify-content: right;
-    padding-top: 20px;
+    padding-top: 30px;
 }
 
 .pdfBottomLogo > img{
-    width: 18vw;
+    width: 22.5vw;
 }
 
 .afterDiv{
-    font-size: 0.5rem;
-    padding-top: 0.5vh;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
 }
 
 .pdfHeadInfo > .firmName > .afterDiv{
@@ -675,19 +807,19 @@
 }
 
 .pdfHeadInfo > .address > .afterDiv{
-    width: 10vw;
+    width: 14vw;
 }
 
-.pdfHeadInfoPrice > .vatInfo > .afterDiv:first-child{
-    padding-top: 0.45vh;
-    padding-left: 1.5vw;
-    padding-right: 0.5vw;
+.pdfHeadInfoPrice > .vatInfo > div:last-child{
+    padding-bottom: 4px;
+    font-weight: 600;
 }
 
-.pdfHeadInfoPrice > .vatInfo > .afterDiv:last-child{
-    padding-top: 0;
+.pdfHeadInfoPrice > .expInfo > span{
+    padding-top: 0.2vh;
 }
 
 .pdfHeadInfoPrice > .expInfo > .afterDiv{
-	padding-top: 0;
+	padding-bottom: 0.35vh;
+    font-weight: 600;
 }
