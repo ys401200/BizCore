@@ -179,6 +179,9 @@ function clickedUpdate(){
 	bodyTitleFnc.eq(1).show();
 	listContent.hide();
 	addPdfForm.show();
+	$("input").val("");
+	$(".pdfMainContentTitle").remove();
+	$(".pdfMainContentItem").remove();
 	storage.estmDetail = storage.estmVerList[storage.detailIdx];
 	estimateFormInit();
 }
@@ -197,6 +200,10 @@ function closeAdd(el){
 	bodyTitleFnc.eq(1).hide();
 	listContent.show();
 	addPdfForm.hide();
+	storage.estmDetail = undefined;
+	$("input").val("");
+	$(".pdfMainContentTitle").remove();
+	$(".pdfMainContentItem").remove();
 } // End of closeAdd()
 
 // 서버에서 견적 양식을 가져오는 함수
@@ -793,7 +800,6 @@ function clickedEstimate(el){
 	estmNo = thisEle.dataset.no;
 	getEstmVerList(estmNo);
 	setTimeout(() => {
-		console.log($(thisEle).next().children(".versionListBody").eq(0));
 		$(thisEle).next().children(".versionListBody").eq(0).trigger("click");
 	}, 300);
 } // End of clickedEstimate()
@@ -1266,14 +1272,14 @@ function estimateUpdate(){
 			datas = cipher.encAes(datas);
 		
 			$.ajax({
-				url: "/api/estimate",
+				url: "/api/estimate/" + storage.estmDetail.no,
 				method: "post",
 				data: datas,
 				dataType: "json",
 				contentType: "text/plain",
 				success: (result) => {
 					location.reload();
-					msg.set("등록되었습니다.");
+					msg.set("수정되었습니다.");
 				},
 				error: () => {
 					msg.set("에러입니다.");
@@ -1281,7 +1287,6 @@ function estimateUpdate(){
 			});
 		}, 300)
 	}
-
 }
 
 function addEstTitle(e){
@@ -1318,7 +1323,11 @@ function oneEstItemAdd(e){
 function removeEstItem(e){
 	let thisEle;
 	thisEle = $(e);
-	thisEle.parent().prev().remove();
+
+	if(thisEle.parent().prev().attr("class") !== "pdfMainContentHeader"){
+		thisEle.parent().prev().remove();
+	}
+
 	addItemIndex();
 	setTotalHtml();
 	setTitleTotal();
@@ -1392,16 +1401,79 @@ function itemCalKeyup(e){
 }
 
 function estimateFormInit(){
-	let selectAddress, writer;
+	let selectAddress, writer, pdfMainContentAddBtns;
 	selectAddress = $(".selectAddress select");
 	writer = $("#writer");
-	
+	pdfMainContentAddBtns = $(".pdfMainContentAddBtns");
+
 	for(let index in storage.estimateBasic){
 		selectAddress.append("<option value=\"" + index + "\">" + storage.estimateBasic[index].name + "</option>")
 	}
 	
 	writer.val(storage.user[storage.my].userName);
+
+	if(storage.estmDetail !== undefined){
+		for(let key in storage.estmDetail.related.estimate){
+			if($("#" + key) !== undefined){
+				let value = storage.estmDetail.related.estimate[key];
+
+				if(key === "date"){
+					value = new Date(storage.estmDetail.related.estimate[key]);
+					value = dateDis(value);
+					value = dateFnc(value);
+				}else if(key === "customer"){
+					$("#" + key).attr("data-value", value);
+					value = storage.customer[value].name;
+				}
+				
+				$("#" + key).val(value);
+			}
+
+		}
+
+		if(storage.estmDetail.related.estimate.items.length > 0){
+			detailItemSet();
+		}
+	}
+
 	selectAddressInit();
+}
+
+function detailItemSet(){
+	let thisBtn;
+	let item = storage.estmDetail.related.estimate;
+	let items = storage.estmDetail.related.estimate.items;
+
+	for(let i = 0; i < items.length; i++){
+		if(item.form === "서브타이틀"){
+			let pdfMainContentTitle = $(".pdfMainContentTitle");
+			
+			if(pdfMainContentTitle.length == 0 || pdfMainContentTitle === undefined){
+				thisBtn = $(".pdfMainContentAddBtns button").eq(0);
+				addEstTitle(thisBtn);
+				let subTitle = $(".subTitle");
+				subTitle.eq(i).find("input").val(items[i].title);
+			}else{
+				let temp = $(".subTitle").find("input[value=\"" + items[i].title + "\"]");
+				console.log(temp);
+				if(temp.length == 0){
+					thisBtn = $(".pdfMainContentAddBtns button").eq(0);
+					addEstTitle(thisBtn);
+					let subTitle = $(".subTitle");
+					subTitle.eq(i).find("input").val(items[i].title);	
+				}
+			}
+		}
+		
+		thisBtn = $(".pdfMainContentAddBtns button").eq(1);
+		addEstItem(thisBtn);
+		let pdfMainContentItem = $(".pdfMainContentItem").eq(i);
+		pdfMainContentItem.find(".itemDivision input").val(items[i].div);
+		pdfMainContentItem.find(".itemSpec").find("textarea").val(items[i].spec);
+		pdfMainContentItem.find(".itemQuantity").find("input").val(items[i].quantity);
+		pdfMainContentItem.find(".itemAmount").find("input").val(items[i].price);
+		pdfMainContentItem.find(".itemRemarks").find("input").val(items[i].remark);
+	}
 }
 
 function selectAddressChange(e){

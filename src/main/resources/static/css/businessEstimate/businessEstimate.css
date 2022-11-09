@@ -57,7 +57,6 @@
 
 .listContainer, .eachContainer{
     background: #FFFFFF;
-    overflow-y: hidden;
     overflow-x: auto;
     box-shadow: 0px 2px 14px rgb(0 0 0 / 12%);
     height: calc(100% - 8px);
@@ -111,7 +110,7 @@
     justify-content: center;
     border-right: 1px solid #ededed;
     padding: 5px;
-    font-size: 0.8rem;
+    font-size: 11px;
 }
 
 .esimateListBody > div{
@@ -119,7 +118,7 @@
     align-items: center;
     border-right: 1px solid #ededed;
     padding: 5px;
-    font-size: 0.8rem;
+    font-size: 11px;
 }
 
 .esimateListBody:hover{
@@ -175,7 +174,7 @@
 /* .estimateList > div{
     display: grid;
     grid-template-columns: 15% 35% 10% 10% 20%;
-    font-size: 0.8rem;
+    font-size: 11px;
     text-align: center;
     cursor: pointer;
     border-bottom: 1px solid #ededed;
@@ -197,7 +196,7 @@
 .versionList > div{
     display: grid;
     grid-template-columns: 3fr 10fr 5fr 6fr 6fr;
-    font-size: 0.8rem;
+    font-size: 11px;
     text-align: center;
     cursor: pointer;
     height: 30px;
@@ -312,7 +311,7 @@
 
 .estimateContainer > #containerTitle {
 	font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 13px;
 	margin-left: 15px;
 	line-height: 40px;
 	color: #182f81;
@@ -394,7 +393,7 @@
 }
 
 .pdfLogoLeft > img{
-    width: 13vw;
+    width: 198px;
 }
 
 .pdfLogoRight{
@@ -404,8 +403,8 @@
 }
 
 .pdfLogoRight > img{
-    width: 27vw;
-    height: 3.2vh;
+    width: 560px;
+    height: 24px;
     padding-bottom: 0.5vh;
 }
 
@@ -451,7 +450,7 @@
 .pdfHeadInfo > div > span:first-child{
     text-align: justify;
     width: 4vw;
-    font-size: 0.9rem;
+    font-size: 11px;
     font-weight: 600;
     line-height: 3vh;
 }
@@ -465,19 +464,22 @@
 .pdfHeadInfo > div > input{
     height: 2.6vh;
     width: 6vw;
+    font-size: 11px;
 }
 
 .pdfHeadInfo > div > textarea{
-    width: 13vw;
+    width: 16vw;
     overflow: hidden;
     font-family: 'NanumSquareRound';
     display: block;
+    font-size: 11px;
 }
 
 .pdfHeadInfo > div > textarea:disabled{
     background-color: #ffffff;
     color: #000;
     border: 0;
+    font-size: 11px;
 }
 
 .pdfHeadInfoPrice{
@@ -496,7 +498,7 @@
 .pdfHeadInfoPrice > div > span:first-child{
     text-align: justify;
     width: 4vw;
-    font-size: 0.9rem;
+    font-size: 11px;
     font-weight: 600;
 }
 
@@ -510,10 +512,12 @@
     width: 5vw;
     text-align: right;
     height: 2.6vh;
+    font-size: 11px;
 }
 
 .pdfHeadInfoPrice > div:last-child > input[type="text"]{
     height: 2.6vh;
+    font-size: 11px;
 }
 
 .pdfHeadInfoPrice > div > input[type="radio"]{
@@ -526,7 +530,7 @@
     display: flex;
     align-items: center;
     font-weight: 600;
-    font-size: 0.75rem;
+    font-size: 11px;
     height: 2.7vh;
 }
 
@@ -550,7 +554,7 @@
     border-right: 1px solid #000;
     background-color: #990B19;
     color: #ffffff;
-    font-size: 0.8rem;
+    font-size: 13px;
 }
 
 .pdfMainContentHeader > div:last-child{
@@ -570,7 +574,7 @@
     background-color: #FFFF75;
     font-weight: 600;
     border-right: 1px solid #000;
-    font-size: 0.8rem;
+    font-size: 11px;
     padding-left: 3px;
     padding-right: 3px;
 }
@@ -610,7 +614,7 @@
     align-items: center;
     justify-content: center;
     border-right: 1px solid #000;
-    font-size: 0.8rem;
+    font-size: 11px;
     padding-left: 3px;
     padding-right: 3px;
 }
@@ -696,7 +700,7 @@
     align-items: center;
     border-right: 1px solid #000;
     padding: 2px;
-    font-size: 0.8rem;
+    font-size: 13px;
     padding-left: 3px;
     padding-right: 3px;
 }
@@ -727,7 +731,7 @@
     align-items: center;
     border-right: 1px solid #000;
     padding: 2px;
-    font-size: 0.8rem;
+    font-size: 13px;
     padding-left: 3px;
     padding-right: 3px;
 }
@@ -758,7 +762,7 @@
     align-items: center;
     border-right: 1px solid #000;
     padding: 2px;
-    font-size: 0.8rem;
+    font-size: 13px;
     padding-left: 3px;
     padding-right: 3px;
 }
@@ -782,7 +786,7 @@
     display: block;
     font-weight: 600;
     padding-bottom: 10px;
-    font-size: 0.9rem;
+    font-size: 13px;
 }
 
 .pdfBottomLogo{
@@ -797,7 +801,7 @@
 }
 
 .afterDiv{
-    font-size: 0.8rem;
+    font-size: 11px;
     display: flex;
     align-items: center;
 }
