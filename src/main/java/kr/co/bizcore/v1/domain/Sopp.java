@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -48,11 +49,13 @@ public class Sopp extends SimpleSopp{
     public String toJson(List<HashMap<String, String>> fileData, List<Schedule> schedules, List<TradeDetail> trades) {
         ObjectMapper mapper = new ObjectMapper();
         mapper.setSerializationInclusion(Include.NON_NULL);
-        String result = null;
+        String result = null, t = null;
         JSONObject json = null;
         Object obj = null;
         HashMap<String, Object> t1 = null;
         List<HashMap<String, Object>> t2 = new ArrayList<>();
+        int x = 0;
+        Schedule sch = null;
 
         if(fileData != null)    for(HashMap<String, String> each : fileData){
             t1 = new HashMap<>();
@@ -66,11 +69,20 @@ public class Sopp extends SimpleSopp{
             t2.add(t1);
         }
 
+        t = "[";
+        if(schedules != null && schedules.size() > 0)   for(x = 0 ; x < schedules.size() ; x++){
+            if(x > 0)   t += ",";
+            sch = schedules.get(x);
+            t += sch.toJson();
+        }
+        t += "]";
+
+
         try {
             result = mapper.writeValueAsString(this);
             json = new JSONObject(result);
             json.put("attached", t2);
-            json.put("schedules", schedules);
+            json.put("schedules", new JSONArray(t));
             json.put("trades", trades);
         } catch (JsonProcessingException e) {e.printStackTrace();}
         result = json.toString();
