@@ -49,13 +49,14 @@ public class Sopp extends SimpleSopp{
     public String toJson(List<HashMap<String, String>> fileData, List<Schedule> schedules, List<TradeDetail> trades) {
         ObjectMapper mapper = new ObjectMapper();
         mapper.setSerializationInclusion(Include.NON_NULL);
-        String result = null, t = null;
+        String result = null, t3 = null, t4 = null;
         JSONObject json = null;
         Object obj = null;
         HashMap<String, Object> t1 = null;
         List<HashMap<String, Object>> t2 = new ArrayList<>();
         int x = 0;
         Schedule sch = null;
+        TradeDetail tr = null;
 
         if(fileData != null)    for(HashMap<String, String> each : fileData){
             t1 = new HashMap<>();
@@ -69,21 +70,29 @@ public class Sopp extends SimpleSopp{
             t2.add(t1);
         }
 
-        t = "[";
+        t3 = "[";
         if(schedules != null && schedules.size() > 0)   for(x = 0 ; x < schedules.size() ; x++){
-            if(x > 0)   t += ",";
+            if(x > 0)   t3 += ",";
             sch = schedules.get(x);
-            t += sch.toJson();
+            t3 += sch.toJson();
         }
-        t += "]";
+        t3 += "]";
+
+        t4 = "[";
+        if(trades != null && trades.size() > 0) for(x = 0 ; x < trades.size() ; x++){
+            if(x > 0)   t4 += ",";
+            tr = trades.get(x);
+            t4 += tr.toJson();
+        }
+        t4 += "]";
 
 
         try {
             result = mapper.writeValueAsString(this);
             json = new JSONObject(result);
             json.put("attached", t2);
-            json.put("schedules", new JSONArray(t));
-            json.put("trades", trades);
+            json.put("schedules", new JSONArray(t3));
+            json.put("trades", new JSONArray(t4));
         } catch (JsonProcessingException e) {e.printStackTrace();}
         result = json.toString();
         return result;
