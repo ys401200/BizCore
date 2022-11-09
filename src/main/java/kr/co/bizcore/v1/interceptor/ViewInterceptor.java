@@ -55,8 +55,6 @@ public class ViewInterceptor implements HandlerInterceptor {
         if(version == null) version = getVersion();
         session.setAttribute("version", version);
 
-        logger.error("//////////////////////////////////////////////////////////// " + version);
-
         server = request.getServerName();
         uri = request.getRequestURI();
         userNo = (String)request.getSession().getAttribute("userNo");

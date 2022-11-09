@@ -321,8 +321,6 @@ public class ApiSystemCtrl extends Ctrl{
         compId = (String)session.getAttribute("compId");
         if(compId == null)  compId = (String)request.getAttribute("compId");
 
-        logger.error("||||||||||||||||||||||||||||||||||||||||||| " + version);
-
         if(compId == null){
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
         }else if(aesKey == null || aesIv == null){
