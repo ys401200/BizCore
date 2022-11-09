@@ -173,7 +173,7 @@ public class SystemService extends Svc {
         return result;
     }
 
-    public String getBasicInfo(String compId, String userNo) {
+    public String getBasicInfo(String compId, String userNo, String version) {
         String result = null, company = null, permission = null, t = null;
         String[] data = new String[5];
         List<HashMap<String, String>> list = null;
@@ -228,7 +228,8 @@ public class SystemService extends Svc {
         result = "{\"my\":" + userNo + ",";
         result += ("\"widget\":[\"notice/0\"],");
         result += ("\"company\":" + company + ",");
-        result += ("\"permission\":" + permission + "");
+        result += ("\"permission\":" + permission + ",");
+        result += ("\"version\":\"" + version + "\"");
         result += "}";
 
         return result;

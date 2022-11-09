@@ -1,16 +1,16 @@
 package kr.co.bizcore.v1.interceptor;
 
+import java.io.File;
+import java.util.Calendar;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
-
 import kr.co.bizcore.v1.msg.Msg;
 import kr.co.bizcore.v1.msg.MsgEng;
 import kr.co.bizcore.v1.msg.MsgKor;
@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ViewInterceptor implements HandlerInterceptor {
 
     private static final Logger logger = LoggerFactory.getLogger(ViewInterceptor.class);
+    private static String version;
 
     @Autowired
     private SystemService systemService;
@@ -40,14 +41,21 @@ public class ViewInterceptor implements HandlerInterceptor {
         String lang1 = (String)session.getAttribute("lang");
         String lang2 = request.getHeader("Accept-Language");
 
+        // 언어
         if(lang2 != null && lang2.toLowerCase().indexOf("ko-kr") >= 0)   lang2 = "ko-kr";
-
         if(lang1 == null && lang2 != null){
             session.setAttribute("lang", lang2.toLowerCase());
             lang1 = lang2.toLowerCase();
         }
         
+        // 언어에 맞는 메시지
         Msg msg = (lang1 == null) ? new MsgEng() : lang1.toLowerCase().equals("ko-kr") ? new MsgKor() : new MsgEng();
+
+        // 버전
+        if(version == null) version = getVersion();
+        session.setAttribute("version", version);
+
+        logger.error("//////////////////////////////////////////////////////////// " + version);
 
         server = request.getServerName();
         uri = request.getRequestURI();
@@ -81,5 +89,28 @@ public class ViewInterceptor implements HandlerInterceptor {
         }
         return HandlerInterceptor.super.preHandle(request, response, handler);
     }
+
+    private String getVersion(){
+        String result = "Ver.(DEV)", path = "/srv/web_root/ROOT.war";
+        long last = 0;
+        int x = 0;
+        File root = null;
+        Calendar cal = Calendar.getInstance();
+
+        root = new File(path);
+        if(!root.exists()) return result;
+
+        last = root.lastModified() + 32400000L;
+        result = "v.";
+        cal.setTimeInMillis(last);
+        x = cal.get(Calendar.MONTH) + 1;
+        result = x < 10 ? "0" + x + ".": x + ".";
+        x = cal.get(Calendar.DATE);
+        result += (x < 10 ? "0" + x + ".": x + ".");
+        x = cal.get(Calendar.HOUR);
+        result += (x < 10 ? "0" + x: "" + x);
+
+        return result;
+    } // End of findLastTime
 
 }

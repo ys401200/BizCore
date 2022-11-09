@@ -987,9 +987,12 @@ function getBasicInfo(){
 					sessionStorage.setItem("basicInfoTime", (new Date()).getTime() + "");
 					list = JSON.parse(list);
 					storage.company = list.company;
+					storage.bizcore = storage.bizcore === undefined ? {} : storage.bizcore;
+					storage.bizcore.version = list.version;
 					storage.permission = list.permission;
 					// storage.widget.set = list.widget;
 					storage.my = list.my;
+					document.title = document.title + " " + storage.bizcore.version;
 					console.log("[getBasicInfo] Success getting basic information.");
 					// 회계 관리 권한 적용
 					if(!storage.permission._manager && !storage.permission._accounting)	document.getElementsByClassName("mainTopMenu")[0].children[0].children[2].remove();
