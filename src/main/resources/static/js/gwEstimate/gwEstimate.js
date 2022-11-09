@@ -1,5 +1,5 @@
-let soppNo = 10005658;
-// let estmNo = 'VTEK202210_0001';
+// let soppNo = 10005548;
+let soppNo = 10005635;
 init();
 prepareForm();
 
@@ -169,7 +169,11 @@ function setEstData() {
   $("#" + formId + "_soppStatus").val(status);
   $("#" + formId + "_soppRate").val(progress);
   $("#" + formId + "_cntrctMtn").val(contType);
-  $("#" + formId + "_targetDate").val();
+
+  if (soppDetail.targetDate != null || soppDetail.targetDate != "" || soppDetail.targetDate != 0) {
+    $("#" + formId + "_targetDate").val(getYmdHypen(soppDetail.targetDate));
+  }
+
   $("#" + formId + "_soppType").val(soppType);
   $("#" + formId + "_soppTargetAmt").val(expectedSales);
 
@@ -192,7 +196,8 @@ function setEstData() {
       inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='" + items[i].amount.toLocaleString() + "' value='" + items[i].amount.toLocaleString() + "' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inputs doc_Form_SalesReport_amount'></input>"
       inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='" + items[i].tax.toLocaleString() + "' value='" + items[i].tax.toLocaleString() + "' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inputs inTax doc_Form_SalesReport_tax'></input>"
       inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'oninput='setNum(this)' data-detail='" + items[i].total.toLocaleString() + "' value='" + items[i].total.toLocaleString() + "' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inTotal inputs doc_Form_SalesReport_total'></input>"
-      inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='' onkeyup='this.dataset.detail=this.value' class='inputs doc_Form_SalesReport_remark' data-detail='" + items[i].remark + "' value='" + items[i].remark + "'></input></div>"
+      inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='' onkeyup='this.dataset.detail=this.value' class='inputs doc_Form_SalesReport_remark' data-detail='" + items[i].remark + "' value='" + items[i].remark + "'></input>"
+      inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='' onkeyup='this.dataset.detail=this.value' class='inputs doc_Form_SalesReport_vatSerial' data-detail='" + items[i].vatSerial + "' value='" + items[i].vatSerial + "'></input></div>"
 
     } else {
       outHtml = outSumTarget.html();
@@ -205,7 +210,8 @@ function setEstData() {
       outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)'  data-detail='" + items[i].amount.toLocaleString() + "' value='" + items[i].amount.toLocaleString() + "'  class='inputs outAmount doc_Form_SalesReport_amount'></input>"
       outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' data-detail='" + items[i].tax.toLocaleString() + "' value='" + items[i].tax.toLocaleString() + "'  class='outTax inputs  doc_Form_SalesReport_tax'></input>"
       outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' data-detail='" + items[i].total.toLocaleString() + "' value='" + items[i].total.toLocaleString() + "' class='outTotal inputs doc_Form_SalesReport_total'></input>"
-      outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='' onkeyup='this.dataset.detail=this.value' class='inputs doc_Form_SalesReport_remark'  data-detail='" + items[i].remark + "' value='" + items[i].remark + "'></input></div>"
+      outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='' onkeyup='this.dataset.detail=this.value' class='inputs doc_Form_SalesReport_remark'  data-detail='" + items[i].remark + "' value='" + items[i].remark + "'></input>"
+      outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='' onkeyup='this.dataset.detail=this.value' class='inputs doc_Form_SalesReport_vatSerial' data-detail='" + items[i].vatSerial + "' value='" + items[i].vatSerial + "'></input></div>"
 
     }
 
@@ -501,11 +507,18 @@ function getTotalCount() {
   let profit, profitper;
   if ($(".outSumAllTotal").val() != "" && $(".inSumAllTotal").val() != "") {
     profit = Number($(".outSumAllTotal").val().split("원")[0].replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "")) - Number($(".inSumAllTotal").val().split("원")[0].replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", ""));
-    profitper = (profit / Number($(".outSumAllTotal").val().split("원")[0].replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", ""))) * 100;
+    if (Number($(".outSumAllTotal").val().split("원")[0].replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "")) != 0) {
+      profitper = (profit / Number($(".outSumAllTotal").val().split("원")[0].replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", ""))) * 100;
+    } else {
+      profitper = 0;
+    }
+
+    console.log(profit);
+    console.log(profitper + "확인");
     $(".doc_Form_SalesReport_profit").val(Number(profit).toLocaleString() + "원");
     $(".doc_Form_SalesReport_profit").attr("data-detail", Number(profit).toLocaleString() + "원");
-    $(".doc_Form_SalesReport_profitper").val(Number(profitper).toLocaleString() + "%");
-    $(".doc_Form_SalesReport_profitper").attr("data-detail", Number(profitper).toLocaleString() + "%");
+    $(".doc_Form_SalesReport_profitper").val(Number(profitper) + "%");
+    $(".doc_Form_SalesReport_profitper").attr("data-detail", Number(profitper) + "%");
   }
 
 }

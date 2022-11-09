@@ -26,7 +26,7 @@
 
 
 
-	<div class="estDiv" style="border : 1px solid black; width: 1050px; height :fit-content; ">
+	<div class="estDiv" style="border : 1px solid black; width: 1200px; height :fit-content; ">
 
 
 
@@ -212,7 +212,7 @@
 	
 		.detailDiv,.detailcontentDiv  {
 		  display: grid;
-		  grid-template-columns: 5% 10% 10% 15% 10% 5% 10% 10% 10% 15%;
+		  grid-template-columns: 5% 10% 10% 12% 10% 5% 10% 8% 10% 10% 10%;
 		  text-align: center;
 		  border-left: 1px solid black;
 		}
@@ -352,7 +352,7 @@
 		  border-right: none;
 		  display: grid;
 	
-		  grid-template-columns: 75% 10% 15%;
+		  grid-template-columns: 70% 10% 20%;
 		}
 	
 		.insertedTotalContainer>* {
@@ -655,7 +655,8 @@
 			  <div class="datailTitle">공급가액</div>
 			  <div class="datailTitle">부가세액</div>
 			  <div class="datailTitle">금액</div>
-			  <div class="datailTitlelast">적요</div>
+			  <div class="datailTitle">적요</div>
+			  <div class="datailTitlelast">승인번호</div>
 			  <!-- <div class="datailTitlebox">
 				<input type="checkbox" class="checkAll" />
 			  </div> -->
