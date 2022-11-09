@@ -184,16 +184,17 @@ public class SystemService extends Svc {
         // 회사 정보
         map = commonMapper.getCompanyInfo(compId);
         if (map != null) {
-            data[0] = map.get("comname");
-            data[1] = map.get("comaddress");
-            data[2] = map.get("comphone");
-            data[3] = map.get("comfax");
-            data[4] = map.get("comboss");
-            company = "{\"name\":\"" + data[0] + "\",";
-            company += ("\"address\":\"" + data[1] + "\",");
-            company += ("\"phone\":\"" + data[2] + "\",");
-            company += ("\"fax\":\"" + data[3] + "\",");
-            company += ("\"ceo\":\"" + data[4] + "\"}");
+            company = "{\"name\":\"" + map.get("name") + "\",";
+            company += ("\"ceo\":\"" + map.get("ceo") + "\",");
+            company += ("\"corpRegNo\":" + (map.get("corpregno") == null ? null : "\"" + map.get("corpregno") + "\"") + ",");
+            company += ("\"taxId\":" + (map.get("taxid") == null ? null : "\"" + map.get("taxid") + "\"") + ",");
+            company += ("\"zipCode\":" + map.get("zipcode") + ",");
+            company += ("\"address\":" + map.get("address") + ",");
+            company += ("\"contact\":" + map.get("contact") + ",");
+            company += ("\"fax\":\"" + (map.get("email") == null ? null : "\"" + map.get("fax") + "\"") + "\",");
+            company += ("\"email\":" + (map.get("email") == null ? null : "\"" + map.get("email") + "\"") + ",");
+            company += ("\"created\":" + map.get("created") + ",");
+            company += ("\"modified\":" + map.get("modified") + "}");
         }
 
         // 전사권한

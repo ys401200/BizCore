@@ -27,7 +27,7 @@ public interface CommonMapper {
     @Select("SELECT no, name, taxId, email, emailForTaxbill, zipCode, address, phone, fax, ceoName, typeOfBusiness, itemsOfBusiness, remark1, remark2, ci_manufacturer, ci_partner, ci_public, ci_civilian, tos_directProcument, tos_indirectProcument, tos_agencyProcument, tos_maintenance, tos_generalCompany, tos_hospital, tos_finance, tos_public, ti_supplier, ti_partner, ti_client, ti_notTrade, related, created, modified FROM bizcore.customer WHERE deleted IS NULL AND compId = #{compId} AND taxId = #{taxId}")
     public Customer getCustomeByTaxId(@Param("compId") String compId, @Param("taxId") String taxId);
 
-    @Select("SELECT comname, comaddress, comphone, comfax, comboss FROM swc_cominfo WHERE compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) limit 1")
+    @Select("SELECT name, ceo, corpregno, taxid, CAST(zipcode AS CHAR) zipcode, address, contact, fax, email, CAST(UNIX_TIMESTAMP(created)*1000 AS CHAR) created, CAST(UNIX_TIMESTAMP(modified)*1000 AS CHAR)modified FROM bizsys.companies WHERE compId = #{compId}")
     public Map<String, String> getCompanyInfo(String compId);
 
     @Select("SELECT codeno AS code, desc03 AS name FROM swc_code WHERE desc03 IS NOT NULL AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId})")

@@ -644,14 +644,20 @@ public class ManageSvc extends Svc{
         each = deptMapper.getDeptDetailInfo(compId, dept);
         result = "{\"id\":\"" + each.get("deptId") + "\",";
         result += ("\"name\":\"" + each.get("deptName") + "\",");
-        result += ("\"parent\":\"" + each.get("parent") + "\",");
-        result += ("\"color\":\"" + each.get("colorCode") + "\",");
+        result += ("\"parent\":" + (each.get("parent") == null ? null : "\"" + each.get("parent") + "\"") + ",");
+        result += ("\"taxId\":" + (each.get("taxId") == null ? null : "\"" + each.get("taxId") + "\"") + ",");
+        result += ("\"zipCode\":" + each.get("zipCode") + ",");
+        result += ("\"address\":" + each.get("address") + ",");
+        result += ("\"contact\":" + each.get("contact") + ",");
+        result += ("\"fax\":" + (each.get("fax") == null ? null : "\"" + each.get("fax") + "\"") + ",");
+        result += ("\"email\":" + (each.get("fax") == null ? null : "\"" + each.get("fax") + "\"") + ",");
+        result += ("\"color\":" + (each.get("colorCode") == null ? null : "\"" + each.get("colorCode") + "\"") + ",");
         result += ("\"isRoot\":" + each.get("isRoot").equals("1") + ",");
         result += ("\"head\":" + each.get("head") + ",");
         result += ("\"doc\":" + each.get("doc") + ",");
         result += ("\"created\":" + each.get("created") + ",");
-        result += ("\"modified\":" + each.get("created") + ",");
-        result += ("\"deleted\":" + each.get("deleted") + "}");logger.error("///////////////////////////////////////// " + result);
+        result += ("\"modified\":" + each.get("modified") + ",");
+        result += ("\"deleted\":" + each.get("deleted") + "}");
         return result;
     } // End of getEdptDetilInfo()
     
