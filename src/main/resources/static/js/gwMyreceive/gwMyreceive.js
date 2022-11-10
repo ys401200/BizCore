@@ -75,8 +75,10 @@ function drawMyDraft() {
 
     container.append("<div class='noListDefault'>수신 문서가 없습니다</div>");
   } else {
-    jsonData = storage.myReceiveList;
-
+    // jsonData = storage.myReceiveList;
+    let tt = []; 
+    for (let i = storage.myReceiveList.length - 1; i >= 0; i--) { tt.push(storage.myReceiveList[i]) };
+    jsonData = tt; 
     result = paging(jsonData.length, storage.currentPage, 10);
 
     pageContainer = document.getElementsByClassName("pageContainer");

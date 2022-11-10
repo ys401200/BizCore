@@ -78,8 +78,10 @@ function drawNoticeApproval() {
 
     container.append("<div class='noListDefault'>결재 문서가 없습니다.</div>");
   } else {
-    jsonData = storage.approvedList;
-
+    // jsonData = storage.approvedList;
+    let tt = []; 
+    for (let i = storage.approvedList.length - 1; i >= 0; i--) { tt.push(storage.approvedList[i]) };
+    jsonData = tt; 
     result = paging(jsonData.length, storage.currentPage, 8);
 
     pageContainer = document.getElementsByClassName("pageContainer");

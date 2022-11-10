@@ -267,9 +267,9 @@
 		  grid-template-columns: 5% 10% 10% 15% 10% 5% 10% 10% 10% 10% 5%;
 		} */
 	
-		.detailcontentHide {
+		/* .detailcontentHide {
 		  grid-template-columns: 5% 10% 10% 15% 10% 5% 10% 10% 10% 15%;
-		}
+		} */
 	
 	
 		.insertedDataList>* {
@@ -537,14 +537,14 @@
 			  <div class="infoDiv">
 				<div class="infoTitle">담당 사원</div>
 	
-				<input class="infoContent inputsAuto" type="text" id="doc_Form_SalesReport_writer"
-				  style="border-top: 1px solid black;border-right: 1px solid black; padding:0.3em;" />
+				<input class="infoContent inputsAuto" type="text" id="doc_Form_SalesReport_writer" data-detail=""
+				  style="border-top: 1px solid black;border-right: 1px solid black; padding:0.3em; text-align: left;" />
 	
 			  </div>
 			  <div class="infoDiv">
 				<div class="infoTitle">작성일</div>
-				<input class="inputsAuto infoContent" type="text" id="doc_Form_SalesReport_created"
-				  style="border-top : 1px solid black;border-right: 1px solid black;padding:0.3em;" />
+				<input class="inputsAuto infoContent" type="text" id="doc_Form_SalesReport_created" data-detail=""
+				  style="border-top : 1px solid black;border-right: 1px solid black;padding:0.3em; text-align: left;" />
 			  </div>
 			  <div class="infoDiv">
 				<div class="infoTitle">영업기회</div>
@@ -668,14 +668,14 @@
 			<div>매입 합계</div>
 			<input type="text" class="inputsAuto inSumAllTotal" data-detail="" disabled
 			  style="border-right : 1px solid black;padding:0.3em;text-align:right;">
-			<div></div>
+		<input disabled style="border : none;border-right : 1px solid black;padding:0.3em;text-align:right;"/>
 		  </div>
 		  <div class="insertedDataList outSum"></div>
 		  <div class="insertedTotalContainer outSumTotal">
 			<div>매출 합계</div>
 			<input type="text" class="inputsAuto outSumAllTotal" data-detail="" disabled
 			  style="border-right : 1px solid black;padding:0.3em; text-align: right;">
-			<div></div>
+			  <input disabled style="border : none;border-right : 1px solid black;padding:0.3em;text-align:right;"/>
 		  </div>
 	
 		  <div class="calculateDiv">
@@ -762,13 +762,8 @@
 		  function toReadMode() {
 			$("select").attr("disabled", "disabled");
 			$(".list_comment").attr("data-tag", "readTag");
-			$(".detailDiv").removeClass("detailDivHide");
-			$(".detailcontentDiv").addClass("detailcontentHide");
-			$(".datailTitlebox").hide();
-			$(".detailcontentbox").hide();
 			$(".inputs").attr("readonly", true);
 			$(".inputsAuto").attr("readonly", true);
-	
 			$(".datailTitlebox").hide();
 			$("#TRS").prop("disabled", true);
 			$("#BUY").prop("disabled", true);
@@ -778,10 +773,6 @@
 		  function toWriteMode() {
 			$("select").attr("disabled", "false");
 			$(".list_comment").attr("data-tag", "writeTag");
-			$(".detailDiv").addClass("detailDivHide");
-			$(".detailcontentDiv").removeClass("detailcontentHide");
-			$(".datailTitlebox").show();
-			$(".detailcontentbox").show();
 			$(".inputs").attr("readonly", false);
 			$("#TRS").prop("disabled", false);
 			$("#BUY").prop("disabled", false);

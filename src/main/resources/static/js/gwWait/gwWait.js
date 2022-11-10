@@ -108,7 +108,10 @@ function drawNoticeApproval() {
       "<div class='noListDefault'>결재 대기 문서가 없습니다</div>"
     );
   } else {
-    jsonData = storage.waitList.wait;
+    // jsonData = storage.waitList.wait;
+    let tt = []; 
+    for (let i = storage.waitList.wait.length - 1; i >= 0; i--) { tt.push(storage.waitList.wait[i]) };
+    jsonData = tt; 
     result = paging(jsonData.length, storage.currentPage,10);
 
     pageContainer = document.getElementsByClassName("pageContainer");

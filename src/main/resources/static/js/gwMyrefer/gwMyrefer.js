@@ -75,7 +75,7 @@ function drawMyRefer() {
     );
   } else {
     jsonData = storage.myReferList;
-
+  
     result = paging(jsonData.length, storage.currentPage, 19);
 
     pageContainer = document.getElementsByClassName("pageContainer");

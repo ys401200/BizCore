@@ -85,8 +85,10 @@ function drawApproval() {
       "<div class='noListDefault'>결재 수신 문서가 없습니다</div>"
     );
   } else {
-    jsonData = storage.receiveList.receive;
-
+    // jsonData = storage.receiveList.receive;
+    let tt = []; 
+    for (let i = storage.receiveList.receive.length - 1; i >= 0; i--) { tt.push(storage.receiveList.receive[i]) };
+    jsonData = tt; 
     result = paging(jsonData.length, storage.currentPage, 5);
 
     pageContainer = document.getElementsByClassName("pageContainer");

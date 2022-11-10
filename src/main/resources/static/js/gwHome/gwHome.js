@@ -397,8 +397,10 @@ function drawMyDraft(types, targets, listTarget, pageTarget) {
 
 
   } else {
-    jsonData = storage.waitList[types[0]]
-
+    // jsonData = storage.waitList[types[0]]
+    let tt = []; 
+    for (let i = storage.waitList[types[0]].length - 1; i >= 0; i--) { tt.push(storage.waitList[types[0]][i]) };
+    jsonData = tt; 
 
     result = paging(jsonData.length, storage.currentPage, 19);
 

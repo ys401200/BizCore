@@ -109,8 +109,10 @@ function drawApproval() {
       "<div class='noListDefault'>결재 예정 문서가 없습니다</div>"
     );
   } else {
-    jsonData = storage.dueList.due;
-
+    // jsonData = storage.dueList.due;
+    let tt = []; 
+    for (let i = storage.dueList.due.length - 1; i >= 0; i--) { tt.push(storage.dueList.due[i]) };
+    jsonData = tt; 
     result = paging(jsonData.length, storage.currentPage, 14);
 
     pageContainer = document.getElementsByClassName("pageContainer");

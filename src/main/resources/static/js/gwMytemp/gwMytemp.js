@@ -104,9 +104,11 @@ function drawMyDraft() {
 
 
   } else {
-    jsonData = storage.myTempList;
+    // jsonData = storage.myTempList;
 
-
+    let tt = []; 
+    for (let i = storage.myTempList.length - 1; i >= 0; i--) { tt.push(storage.myTempList[i]) };
+    jsonData = tt; 
     result = paging(jsonData.length, storage.currentPage, 10);
 
     pageContainer = document.getElementsByClassName("pageContainer");

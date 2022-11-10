@@ -111,8 +111,10 @@ function drawApproval() {
       "<div class='noListDefault'>참조 대기 문서가 없습니다</div>"
     );
   } else {
-    jsonData = storage.referList.refer;
-
+    // jsonData = storage.referList.refer;
+    let tt = []; 
+    for (let i = storage.referList.refer.length - 1; i >= 0; i--) { tt.push(storage.referList.refer[i]) };
+    jsonData = tt; 
     result = paging(jsonData.length, storage.currentPage, 5);
 
     pageContainer = document.getElementsByClassName("pageContainer");

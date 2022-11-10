@@ -40,7 +40,7 @@ function getSoppDetailData(soppNo) {
         list = cipher.decAes(list);
         list = JSON.parse(list);
         storage.soppDetailData = list;
-        window.setTimeout(setEstData, 500);
+        window.setTimeout(setEstData, 700);
 
       } else {
         console.log(data.msg);
@@ -157,7 +157,7 @@ function setEstData() {
   contType = (soppDetail.contType === null || soppDetail.contType === "") ? "" : soppDetail.contType;
   soppType = (soppDetail.soppType === null || soppDetail.soppType === "") ? "" : soppDetail.soppType;
   expectedSales = (soppDetail.expectedSales === null || soppDetail.expectedSales === "") ? "" : soppDetail.expectedSales.toLocaleString() + "원"
-
+  alert(status);
 
   $("#" + formId + "_writer").val(storage.user[writer].userName);
   $("#" + formId + "_created").val(getYmdSlash());
@@ -227,6 +227,19 @@ function setEstData() {
       inputsArr[i].dataset.detail = inputsArr[i].value
     }
   }
+
+  if (target.getElementsByTagName("select").length > 0) {
+    let selectArr = target.getElementsByTagName("select");
+    for (let i = 0; i < selectArr.length; i++) {
+      selectArr[i].dataset.detail = selectArr[i].value;
+    }
+
+  }
+
+  let textAreaArr = target.getElementsByTagName("textarea")[0];
+  textAreaArr.dataset.detail = textAreaArr.value;
+
+
 
   getTotalCount();
 
@@ -461,7 +474,6 @@ function reportInsert() {
       contentType: "text/plain",
       success: (result) => {
         if (result.result === "ok") {
-
           alert("기안 완료");
           window.close('/gw/estimate');
         } else {
@@ -713,7 +725,7 @@ function createLine() {
     "<div class='twoBorder'><input class='inputsAuto " +
     formId +
     "_writer' style='text-align:center' disabled type='text'  data-detail='" +
-    writer +
+    storage.user[writer].userName +
     "' value='" +
     storage.user[writer].userName +
     "'></div>" +
