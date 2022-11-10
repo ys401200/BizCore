@@ -46,10 +46,10 @@ public class Sopp extends SimpleSopp{
     @XmlElement(nillable=true)
     private String priority;
 
-    public String toJson(List<HashMap<String, String>> fileData, List<Schedule> schedules, List<TradeDetail> trades) {
+    public String toJson(List<HashMap<String, String>> fileData, List<Schedule> schedules, String trades) {
         ObjectMapper mapper = new ObjectMapper();
         mapper.setSerializationInclusion(Include.NON_NULL);
-        String result = null, t3 = null, t4 = null;
+        String result = null, t3 = null;
         JSONObject json = null;
         Object obj = null;
         HashMap<String, Object> t1 = null;
@@ -78,21 +78,12 @@ public class Sopp extends SimpleSopp{
         }
         t3 += "]";
 
-        t4 = "[";
-        if(trades != null && trades.size() > 0) for(x = 0 ; x < trades.size() ; x++){
-            if(x > 0)   t4 += ",";
-            tr = trades.get(x);
-            t4 += tr.toJson();
-        }
-        t4 += "]";
-
-
         try {
             result = mapper.writeValueAsString(this);
             json = new JSONObject(result);
             json.put("attached", t2);
             json.put("schedules", new JSONArray(t3));
-            json.put("trades", new JSONArray(t4));
+            json.put("trades", new JSONArray(trades));
         } catch (JsonProcessingException e) {e.printStackTrace();}
         result = json.toString();
         return result;

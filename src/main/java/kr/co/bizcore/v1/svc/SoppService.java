@@ -43,16 +43,41 @@ public class SoppService extends Svc {
     
     public String getSopp(int soppNo, String compId){
         Sopp result = null;
+        String t = null;
         List<HashMap<String, String>> attached = systemMapper.getAttachedFileList(compId, "sopp", soppNo);
         List<Schedule> list1 = scheduleMapper.getScheduleListFromSchedWithSopp(compId, soppNo+"");
         List<Schedule> list2 = scheduleMapper.getScheduleListFromSalesWithSopp(compId, soppNo+"");
         List<Schedule> list3 = scheduleMapper.getScheduleListFromTechdWithsopp(compId, soppNo+"");
-        List<TradeDetail> list4 = tradeMapper.getTradeDetailListXXXXX(soppNo+"");
+        List<HashMap<String, String>> trades = tradeMapper.getTradeByFunc(compId, "sopp:"+soppNo);
+        HashMap<String, String> each = null;
+        int x = 0;
         list1.addAll(list2);
         list1.addAll(list3);
         Collections.sort(list1);
         result = soppMapper.getSopp(soppNo+"", compId);
-        return result.toJson(attached, list1, list4);
+
+        t = "[";
+        if(trades != null && trades.size() > 0)    for(x = 0 ; x < trades.size() ; x++){
+            each = trades.get(x);
+            if(x > 0)   t += ",";
+            t += ("{\"no\":" + each.get("no") + ",");
+            t += ("\"dt\":" + each.get("dt") + ",");
+            t += ("\"writer\":" + each.get("writer") + ",");
+            t += ("\"type\":" + (each.get("type") == null ? null : "\"" + each.get("type") + "\"") + ",");
+            t += ("\"product\":" + each.get("product") + ",");
+            t += ("\"customer\":" + each.get("customer") + ",");
+            t += ("\"taxbill\":" + (each.get("taxbill") == null ? null : "\"" + each.get("taxbill") + "\"") + ",");
+            t += ("\"title\":" + (each.get("title") == null ? null : "\"" + each.get("title") + "\"") + ",");
+            t += ("\"qty\":" + each.get("qty") + ",");
+            t += ("\"price\":" + each.get("price") + ",");
+            t += ("\"vat\":" + each.get("vat") + ",");
+            t += ("\"remark\":" + (each.get("remark") == null ? null : "\"" + each.get("remark") + "\"") + ",");
+            t += ("\"created\":" + each.get("created") + "}");
+
+        }
+        t += "]";
+
+        return result.toJson(attached, list1, t);
     }
 
     public String getEstimateList(String compId){
