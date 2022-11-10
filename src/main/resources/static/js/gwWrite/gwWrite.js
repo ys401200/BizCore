@@ -958,7 +958,7 @@ function reportInsert() {
 
   let cusResult = "";
   for (let x in storage.customer) {
-    if (storage.customer[x].name == customerVal) {
+    if (customerVal != "" && storage.customer[x].name == customerVal) {
       cusResult = storage.customer[x].no + "";
     }
   }

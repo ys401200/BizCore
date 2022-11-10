@@ -75,7 +75,7 @@ function drawMyRefer() {
     );
   } else {
     jsonData = storage.myReferList;
-  
+
     result = paging(jsonData.length, storage.currentPage, 19);
 
     pageContainer = document.getElementsByClassName("pageContainer");
@@ -120,15 +120,15 @@ function drawMyRefer() {
       str = [
         {
           "setData": jsonData[i].docNo,
-          "align" : "center"
+          "align": "center"
         },
         {
           "setData": setDate,
-          "align" : "center"
+          "align": "center"
         },
         {
           "setData": jsonData[i].form,
-          "align" : "center"
+          "align": "center"
         },
         {
           "setData": jsonData[i].title,
@@ -136,11 +136,11 @@ function drawMyRefer() {
         },
         {
           "setData": storage.user[jsonData[i].writer].userName,
-          "align" : "center"
+          "align": "center"
         },
         {
           "setData": status,
-          "align" : "center"
+          "align": "center"
         },
       ];
 
@@ -194,7 +194,7 @@ function getDetailView() {
   console.log(testForm);
 
   let detailHtml =
-    "<div class='mainBtnDiv'><button type='button' onclick='showList()'>목록보기</button></div>" +
+    "<div class='mainBtnDiv'><button type='button' onclick='showList()'>목록보기</button><button type='button' class='printBtn'>인쇄하기</button></div>" +
     "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
   // "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
 
@@ -216,6 +216,9 @@ function getDetailView() {
   toReadMode();
   drawCommentLine();
   getFileArr();
+
+  $(".printBtn").click(openPrintTab);
+
 
   // let referArr = new Array();
 
@@ -355,6 +358,13 @@ function getDetailView() {
 
 function showList() {
   location.href = "/gw/myrefer";
+}
+
+function openPrintTab() {
+  window.open("/gw/print/"+storage.reportDetailData.docNo, "인쇄하기", "width :210mm");
+ 
+  
+  
 }
 
 // 탭 누를때마다의 이벤트 주기

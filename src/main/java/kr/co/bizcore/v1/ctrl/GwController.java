@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 @RequestMapping("/gw")
 @Slf4j
-public class GwController extends Ctrl{
+public class GwController extends Ctrl {
 
     private static final Logger logger = LoggerFactory.getLogger(GwController.class);
 
@@ -76,21 +76,26 @@ public class GwController extends Ctrl{
         return doBox(request);
     }
 
-    private String doList(HttpServletRequest request){
+    private String doList(HttpServletRequest request) {
         doIt(request);
         return "/gw/list";
     }
 
-    private String doBox(HttpServletRequest request){
+    private String doBox(HttpServletRequest request) {
         doIt(request);
         return "/gw/box";
     }
-    
+
     @RequestMapping(value = { "/estimate" }, method = RequestMethod.GET)
     public String setEstimate(HttpServletRequest request) {
         doIt(request);
         return "/gw/estimate";
     }
 
+    @RequestMapping(value = { "/print/{docNo}" }, method = RequestMethod.GET)
+    public String setprint(HttpServletRequest request) {
+        doIt(request);
+        return "/gw/print";
+    }
 
 }

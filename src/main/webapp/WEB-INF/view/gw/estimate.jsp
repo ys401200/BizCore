@@ -219,7 +219,7 @@
 	
 		.detailDivSche {
 		  display: grid;
-		  grid-template-columns: 10% 10% 20% 40% 10% 10%;
+		  grid-template-columns: 10% 10% 20% 45% 5% 10%;
 		  text-align: center;
 		  border-left: 1px solid black;
 		}
@@ -490,7 +490,7 @@
 	
 		.scheData>div {
 		  display: grid;
-		  grid-template-columns: 10% 10% 20% 40% 10% 10%;
+		  grid-template-columns: 10% 10% 20% 45% 5% 10%;
 		  border-left: 1px solid black;
 		}
 	

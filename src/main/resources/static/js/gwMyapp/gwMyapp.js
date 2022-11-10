@@ -362,6 +362,10 @@ function showReportDetail() {
   $("#" + formId + "_content").hide();
   $("." + formId + "_content").css("font-size", $("#" + formId + "_content").css("font-size"));
   $("." + formId + "_content").css("padding", "0.3em");
+
+  if(storage.reportDetailData.confirmNo != 'null') {
+    $("#"+formId +"_no").val(storage.reportDetailData.confirmNo);
+  }
 }
 
 function showList() {

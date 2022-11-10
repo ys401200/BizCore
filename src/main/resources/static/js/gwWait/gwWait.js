@@ -109,10 +109,10 @@ function drawNoticeApproval() {
     );
   } else {
     // jsonData = storage.waitList.wait;
-    let tt = []; 
+    let tt = [];
     for (let i = storage.waitList.wait.length - 1; i >= 0; i--) { tt.push(storage.waitList.wait[i]) };
-    jsonData = tt; 
-    result = paging(jsonData.length, storage.currentPage,10);
+    jsonData = tt;
+    result = paging(jsonData.length, storage.currentPage, 10);
 
     pageContainer = document.getElementsByClassName("pageContainer");
     container = $(".listDiv");
@@ -162,15 +162,15 @@ function drawNoticeApproval() {
       str = [
         {
           "setData": jsonData[i].docNo,
-          "align" : "center"
+          "align": "center"
         },
         {
           "setData": appType,
-          "align" : "center"
+          "align": "center"
         },
         {
           "setData": jsonData[i].form,
-          "align" : "center"
+          "align": "center"
         },
         {
           "setData": jsonData[i].title,
@@ -178,11 +178,11 @@ function drawNoticeApproval() {
         },
         {
           "setData": userName,
-          "align" : "center"
+          "align": "center"
         },
         {
           "setData": setDate,
-          "align" : "center"
+          "align": "center"
         },
       ];
 
@@ -877,7 +877,7 @@ function approveBtnEvent() {
   }
   let cusResult = "";
   for (let x in storage.customer) {
-    if (storage.customer[storage.customer[x].no].name == customerVal) {
+    if (customerVal != "" && storage.customer[storage.customer[x].no].name == customerVal) {
       cusResult = storage.customer[x].no;
     }
   }
@@ -941,94 +941,87 @@ function approveBtnEvent() {
 
 
 
-
-
-
-
-
   let related = null;
-  let outItems = [];
-  let inItems = [];
-  let tax = 0;
-  let outProductNo;
-  for (let j = 0; j < $(".outProduct").length; j++) {
-    for (let i = 0; i < storage.productList.length; i++) {
-      if (storage.productList[i].product == $(".outProduct")[j].value) {
-        outProductNo = storage.productList[i].no;
-      }
-    }
-    if ($(".outTax")[j].value != "" && $(".outTax")[j].value != null && $(".outTax")[j].value != undefined) {
-      tax = $(".outTax")[j].value * 1;
-    }
-    let customer;
-    for (let x in storage.customer) {
-      if (storage.customer[x].name == $(".outCus")[j].value) {
-        customer = storage.customer[x].no + "";
-      }
-    }
+  // let outItems = [];
+  // let inItems = [];
+  // let tax = 0;
+  // let outProductNo;
+  // for (let j = 0; j < $(".outProduct").length; j++) {
+  //   for (let i = 0; i < storage.productList.length; i++) {
+  //     if (storage.productList[i].product == $(".outProduct")[j].value) {
+  //       outProductNo = storage.productList[i].no;
+  //     }
+  //   }
+  //   if ($(".outTax")[j].value != "" && $(".outTax")[j].value != null && $(".outTax")[j].value != undefined) {
+  //     tax = $(".outTax")[j].value * 1;
+  //   }
+  //   let customer;
+  //   for (let x in storage.customer) {
+  //     if (storage.customer[x].name == $(".outCus")[j].value) {
+  //       customer = storage.customer[x].no + "";
+  //     }
+  //   }
 
 
-    let tt = {
-      "outCus": customer,
-      "outProduct": outProductNo * 1,
-      "outPrice": $(".outPrice")[j].value * 1,
-      "outQuantity": $(".outQuantity")[j].value * 1,
-      "tax": $(".outTax")[j].value * 1
-    };
+  //   let tt = {
+  //     "outCus": customer,
+  //     "outProduct": outProductNo * 1,
+  //     "outPrice": $(".outPrice")[j].value * 1,
+  //     "outQuantity": $(".outQuantity")[j].value * 1,
+  //     "tax": $(".outTax")[j].value * 1
+  //   };
 
-    outItems.push(tt);
-  }
+  //   outItems.push(tt);
+  // }
 
-  let inProductNo;
+  // let inProductNo;
 
-  for (let j = 0; j < $(".inProduct").length; j++) {
-    for (let i = 0; i < storage.productList.length; i++) {
-      if (storage.productList[i].product == $(".inProduct")[j].value) {
-        inProductNo = storage.productList[i].no;
-      }
-    }
-    if ($(".inTax")[j].value != "" && $(".inTax")[j].value != null && $(".inTax")[j].value != undefined) {
-      tax = $(".outTax")[j].value * 1;
-    }
-
-
-    let customer;
-    for (let x in storage.customer) {
-      if (storage.customer[x].name == $(".inCus")[j].value) {
-        customer = storage.customer[x].no + "";
-      }
-    }
+  // for (let j = 0; j < $(".inProduct").length; j++) {
+  //   for (let i = 0; i < storage.productList.length; i++) {
+  //     if (storage.productList[i].product == $(".inProduct")[j].value) {
+  //       inProductNo = storage.productList[i].no;
+  //     }
+  //   }
+  //   if ($(".inTax")[j].value != "" && $(".inTax")[j].value != null && $(".inTax")[j].value != undefined) {
+  //     tax = $(".outTax")[j].value * 1;
+  //   }
 
 
+  //   let customer;
+  //   for (let x in storage.customer) {
+  //     if (storage.customer[x].name == $(".inCus")[j].value) {
+  //       customer = storage.customer[x].no + "";
+  //     }
+  //   }
 
-    let tt = {
-      "inCus": customer,
-      "inProduct": inProductNo * 1,
-      "inPrice": $(".inPrice")[j].value * 1,
-      "inQuantity": $(".inQuantity")[j].value * 1,
-      "tax": $(".inTax")[j].value * 1
-    };
 
-    inItems.push(tt);
-  }
 
-  if (tax != 0) {
-    tax = true;
-  } else {
-    tax = false;
-  }
+  //   let tt = {
+  //     "inCus": customer,
+  //     "inProduct": inProductNo * 1,
+  //     "inPrice": $(".inPrice")[j].value * 1,
+  //     "inQuantity": $(".inQuantity")[j].value * 1,
+  //     "tax": $(".inTax")[j].value * 1
+  //   };
+
+  //   inItems.push(tt);
+  // }
+
+  // if (tax != 0) {
+  //   tax = true;
+  // } else {
+  //   tax = false;
+  // }
   related = {
     "next": "",
     "parent": "",
-    "previous": "estimate:" + storage.reportDetailData.related.previous.split(":")[1] + "",
-    "outSumAllTotal": $(".outSumAllTotal").val().split("원")[0] * 1,
-    "profit": $("." + formId + "_profit").val().split("원")[0] * 1,
-    "tax": tax,
-    "outItems": outItems,
-    "inItems": inItems
+    "previous": "",
+    // "outSumAllTotal": $(".outSumAllTotal").val().split("원")[0] * 1,
+    // "profit": $("." + formId + "_profit").val().split("원")[0] * 1,
+    // "tax": tax,
+    // "outItems": outItems,
+    // "inItems": inItems
   }
-
-
 
   related = JSON.stringify(related);
 

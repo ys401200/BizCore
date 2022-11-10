@@ -82,9 +82,9 @@ function drawMyDraft() {
     container.append("<div class='noListDefault'>기안 문서가 없습니다</div>");
   } else {
     // jsonData = storage.myDraftList;
-    let tt = []; 
+    let tt = [];
     for (let i = storage.myDraftList.length - 1; i >= 0; i--) { tt.push(storage.myDraftList[i]) };
-    jsonData = tt; 
+    jsonData = tt;
     result = paging(jsonData.length, storage.currentPage, 10);
 
     pageContainer = document.getElementsByClassName("pageContainer");
@@ -166,15 +166,15 @@ function drawMyDraft() {
       str = [
         {
           "setData": jsonData[i].docNo,
-          "align" : "center"
+          "align": "center"
         },
         {
           "setData": setDate,
-          "align" : "center"
+          "align": "center"
         },
         {
           "setData": jsonData[i].form,
-          "align" : "center"
+          "align": "center"
         },
         {
           "setData": jsonData[i].title,
@@ -183,19 +183,19 @@ function drawMyDraft() {
 
         {
           "setData": appType,
-          "align" : "center"
+          "align": "center"
         },
         {
           "setData": authority,
-          "align" : "center"
+          "align": "center"
         },
         {
           "setData": read,
-          "align" : "center"
+          "align": "center"
         },
         {
           "setData": status,
-          "align" : "center"
+          "align": "center"
         },
       ];
 
@@ -251,7 +251,7 @@ function getDetailView() {
   let detailHtml =
     "<div class='mainBtnDiv'><button type='button' onclick='showList()'>목록보기</button><button type='button' onclick='returnReport()'>회수</button><button type='button' onclick='moveCntForm()'>계약생성</button></div>" +
     "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
-    //"<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
+  //"<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
 
   $(".listPageDiv").html(detailHtml);
 
@@ -322,9 +322,9 @@ function getDetailView() {
     let selectArr = target.getElementsByTagName("select")[0];
     selectArr.value = selectArr.dataset.detail;
   }
-  if ( formId == "doc_Form_Consult" && $(".list_comment").attr("data-detail") == "old" || formId == "doc_Form_Resolution" && $(".list_comment").attr("data-detail") == "old") {
+  if (formId == "doc_Form_Consult" && $(".list_comment").attr("data-detail") == "old" || formId == "doc_Form_Resolution" && $(".list_comment").attr("data-detail") == "old") {
     for (let i = 0; i < 4; i++) {
-      let tt = $("input[name="+formId+"_RD]")[i];
+      let tt = $("input[name=" + formId + "_RD]")[i];
       if ($("#" + tt.id).attr("checked") == "checked") {
         $("#" + tt.id).attr("data-detail", "on");
         $("#" + tt.id).val("on");
@@ -333,7 +333,7 @@ function getDetailView() {
         $("#" + tt.id).val("off");
       }
     }
-}
+  }
   // 기존 전자 결재 문서 가져온 경우
   if ($(".list_comment")[0].dataset.detail == "old") {
     let rd = $("input[name='" + formId + "_RD']");
@@ -342,8 +342,8 @@ function getDetailView() {
         $("#" + rd[i].id).prop("checked", true);
       }
     }
-    for(let i = 0 ; i < 3 ; i ++) {let tt = $(".inputsAuto")[i]; $(tt).css("text-align","left");} 
-   
+    for (let i = 0; i < 3; i++) { let tt = $(".inputsAuto")[i]; $(tt).css("text-align", "left"); }
+
   } else {
     // 새문서 작성한 것 가져온 경우 구분
     let rd2 = $("input[name='" + formId + "_RD']");
@@ -400,6 +400,10 @@ function getDetailView() {
   $("#" + formId + "_content").hide();
   $("." + formId + "_content").css("font-size", $("#" + formId + "_content").css("font-size"));
   $("." + formId + "_content").css("padding", "0.3em");
+  if (storage.reportDetailData.confirmNo != 'null') {
+    $("#" + formId + "_no").val(storage.reportDetailData.confirmNo);
+    $("#" + formId + "_no").css("text-align", "left");
+  }
 }
 
 // 목록보기
@@ -721,8 +725,8 @@ function getYmdShortSlash(date) {
 
 
 function moveCntForm() {
- 
-let docNo = storage.reportDetailData.docNo;
-location.href = "/business/contract/" + docNo;
+
+  let docNo = storage.reportDetailData.docNo;
+  location.href = "/business/contract/" + docNo;
 
 }

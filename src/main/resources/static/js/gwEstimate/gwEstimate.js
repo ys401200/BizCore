@@ -1,5 +1,7 @@
 // let soppNo = 10005548;
-let soppNo = "10005635";
+// let soppNo = "10005635";
+let soppNo = "10005514";
+// let soppNo = " 10005247";
 init();
 prepareForm();
 
@@ -184,12 +186,14 @@ function setEstData() {
   let inHtml = "";
   let outHtml = "";
 
+
+
   for (let i = 0; i < items.length; i++) {
-    if (items[i].type == '1101') {
+    if (items[i].type == "1101") {
       inHtml = inSumTarget.html();
       inHtml += "<div class='detailcontentDiv'><input value='매입' disabled style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'  class='inputs doc_Form_SalesReport_type'></input>"
       inHtml += "<input type='date'  onchange='this.dataset.detail=this.value;' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' data-detail='" + getYmdHypen(items[i].created) + "' value='" + getYmdHypen(items[i].created) + "'  class='inputs doc_Form_SalesReport_date'></input>"
-      inHtml += "<input type='text'  onkeyup='this.dataset.detail=this.value'  style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'  data-detail='" + storage.customer[items[i].customer].name + "' value='" + storage.customer[items[i].customer].name + "' class='inputs inCus doc_Form_SalesReport_customer'></input>"
+      inHtml += "<input type='text'  onkeyup='this.dataset.detail=this.value'  style='text-overflow:ellipsis;padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'  data-detail='" + storage.customer[items[i].customer].name + "' value='" + storage.customer[items[i].customer].name + "' class='inputs inCus doc_Form_SalesReport_customer'></input>"
       inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='" + items[i].title + "' value='" + items[i].title + "' onkeyup='this.dataset.detail=this.value' class='inputs inProduct doc_Form_SalesReport_product'></input>"
       inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='" + items[i].netPrice.toLocaleString() + "' value='" + items[i].netPrice.toLocaleString() + "'onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inputs inPrice doc_Form_SalesReport_price'></input>"
       inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='" + items[i].quantity.toLocaleString() + "' value='" + items[i].quantity.toLocaleString() + "' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inputs inQuantity doc_Form_SalesReport_quantity'></input>"
@@ -198,12 +202,12 @@ function setEstData() {
       inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'oninput='setNum(this)' data-detail='" + items[i].total.toLocaleString() + "' value='" + items[i].total.toLocaleString() + "' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inTotal inputs doc_Form_SalesReport_total'></input>"
       inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='' onkeyup='this.dataset.detail=this.value' class='inputs doc_Form_SalesReport_remark' data-detail='" + items[i].remark + "' value='" + items[i].remark + "'></input>"
       inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='' onkeyup='this.dataset.detail=this.value' class='inputs doc_Form_SalesReport_vatSerial' data-detail='" + items[i].vatSerial + "' value='" + items[i].vatSerial + "'></input></div>"
-
+      inSumTarget.html(inHtml);
     } else {
       outHtml = outSumTarget.html();
       outHtml += "<div class='detailcontentDiv'><input value='매출' disabled style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs doc_Form_SalesReport_type'></input>"
       outHtml += "<input type='date' onchange='this.dataset.detail=this.value;' data-detail='" + getYmdHypen(items[i].created) + "' value='" + getYmdHypen(items[i].created) + "'  style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs doc_Form_SalesReport_date'></input>"
-      outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'  data-detail='" + storage.customer[items[i].customer].name + "' value='" + storage.customer[items[i].customer].name + "' onkeyup='this.dataset.detail=this.value'  class='outCus inputs doc_Form_SalesReport_customer'></input>"
+      outHtml += "<input type='text' style='text-overflow:ellipsis;padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'  data-detail='" + storage.customer[items[i].customer].name + "' value='" + storage.customer[items[i].customer].name + "' onkeyup='this.dataset.detail=this.value'  class='outCus inputs doc_Form_SalesReport_customer'></input>"
       outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'  data-detail='" + items[i].title + "' value='" + items[i].title + "' onkeyup='this.dataset.detail=this.value'  data-detail='' value='" + items[i].product + "' class='inputs outProduct doc_Form_SalesReport_product'></input>"
       outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'oninput='setNum(this)' data-detail='" + items[i].netPrice.toLocaleString() + "' value='" + items[i].netPrice.toLocaleString() + "'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)'  class='inputs outPrice doc_Form_SalesReport_price'></input>"
       outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='" + items[i].quantity.toLocaleString() + "' value='" + items[i].quantity.toLocaleString() + "'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inputs outQuantity doc_Form_SalesReport_quantity'></input>"
@@ -212,12 +216,12 @@ function setEstData() {
       outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' data-detail='" + items[i].total.toLocaleString() + "' value='" + items[i].total.toLocaleString() + "' class='outTotal inputs doc_Form_SalesReport_total'></input>"
       outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='' onkeyup='this.dataset.detail=this.value' class='inputs doc_Form_SalesReport_remark'  data-detail='" + items[i].remark + "' value='" + items[i].remark + "'></input>"
       outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='' onkeyup='this.dataset.detail=this.value' class='inputs doc_Form_SalesReport_vatSerial' data-detail='" + items[i].vatSerial + "' value='" + items[i].vatSerial + "'></input></div>"
-
+      outSumTarget.html(outHtml);
     }
 
   }
-  inSumTarget.html(inHtml);
-  outSumTarget.html(outHtml);
+  // inSumTarget.html(inHtml);
+  // outSumTarget.html(outHtml);
 
   let target = $(".mainDiv")[0];
   let inputsArr = target.getElementsByTagName("input");
@@ -243,27 +247,36 @@ function setEstData() {
 
   getTotalCount();
 
+
+  let schecreated, scheType, scheTitle, scheContent, schePlace;
   // 일정 데이터 셋팅 
   let techHtml = $(".techSche").html();
   let salesHtml = $(".salesSche").html();
   let sche = storage.soppDetailData.schedules;
   for (let i = 0; i < sche.length; i++) {
+    schecreated = (sche[i].created === null || sche[i].created === undefined || sche[i].created === "") ? "" : getYmdHypen(sche[i].created);
+    scheType = (sche[i].type === null || sche[i].type === undefined || sche[i].type === "") ? "" : storage.code.etc[sche[i].type];
+    scheTitle = (sche[i].title === null || sche[i].title === undefined || sche[i].title === "") ? "" : sche[i].title;
+    scheContent = (sche[i].content === null || sche[i].content === undefined || sche[i].content === "") ? "" : sche[i].content;
+    schePlace = (sche[i].place === null || sche[i].place === undefined || sche[i].place === "") ? "" : sche[i].place;
+
+
     if (sche[i].job == "tech") {
       techHtml += "<div class='insertedTechSche'>";
-      techHtml += "<input type='date' class='techDate'  data-detail='" + getYmdHypen(sche[i].created) + "' value='" + getYmdHypen(sche[i].created) + "' style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
-      techHtml += "<input type='text' class='techType' data-detail='" + storage.code.etc[sche[i].type] + "' value='" + storage.code.etc[sche[i].type] + "' style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
-      techHtml += "<input type='text' class='techTitle' data-detail='" + sche[i].title + "' value='" + sche[i].title + "' style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
-      techHtml += "<input type='text' class='techContent' data-detail='" + sche[i].content + "' value='" + sche[i].content + "'  style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
-      techHtml += "<input type='text' class='techWriter' data-detail='" + storage.user[sche[i].writer].userName + "' value='" + storage.user[sche[i].writer].userName + "'  style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
-      techHtml += "<input type='text' class='techPlace' data-detail='" + sche[i].place + "' value='" + sche[i].place + "' style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/></div>";
+      techHtml += "<input type='date' class='techDate'  data-detail='" + schecreated + "' value='" + schecreated + "' style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+      techHtml += "<input type='text' class='techType' data-detail='" + scheType + "' value='" + scheType + "' style='text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+      techHtml += "<input type='text' class='techTitle' data-detail='" + scheTitle + "' value='" + scheTitle + "' style='text-overflow:ellipsis;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+      techHtml += "<input type='text' class='techContent' data-detail='" + scheContent + "' value='" + scheContent + "'  style='text-overflow:ellipsis;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+      techHtml += "<input type='text' class='techWriter' data-detail='" + storage.user[sche[i].writer].userName + "' value='" + storage.user[sche[i].writer].userName + "'  style='text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+      techHtml += "<input type='text' class='techPlace' data-detail='" + schePlace + "' value='" + schePlace + "' style='text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/></div>";
     } else {
       salesHtml += "'<div class='insertedSalesSche'>";
-      salesHtml += "<input type='date' class='salesDate'  data-detail='" + getYmdHypen(sche[i].created) + "' value='" + getYmdHypen(sche[i].created) + "' style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
-      salesHtml += "<input type='text' class='salesType' data-detail='" + storage.code.etc[sche[i].type] + "' value='" + storage.code.etc[sche[i].type] + "' style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
-      salesHtml += "<input type='text' class='salesTitle' data-detail='" + sche[i].title + "' value='" + sche[i].title + "' style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
-      salesHtml += "<input type='text' class='salesContent' data-detail='" + sche[i].content + "' value='" + sche[i].content + "'  style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
-      salesHtml += "<input type='text' class='salesWriter' data-detail='" + storage.user[sche[i].writer].userName + "' value='" + storage.user[sche[i].writer].userName + "'  style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
-      salesHtml += "<input type='text' class='salesPlace' data-detail='" + sche[i].place + "' value='" + sche[i].place + "' style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/></div>";
+      salesHtml += "<input type='date' class='salesDate'  data-detail='" + schecreated + "' value='" + schecreated + "' style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+      salesHtml += "<input type='text' class='salesType' data-detail='" + scheType + "' value='" + scheType + "' style='text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+      salesHtml += "<input type='text' class='salesTitle' data-detail='" + scheTitle + "' value='" + scheTitle + "' style='text-overflow:ellipsis;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+      salesHtml += "<input type='text' class='salesContent' data-detail='" + scheContent + "' value='" + scheContent + "'  style='text-overflow:ellipsis;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+      salesHtml += "<input type='text' class='salesWriter' data-detail='" + storage.user[sche[i].writer].userName + "' value='" + storage.user[sche[i].writer].userName + "'  style='text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+      salesHtml += "<input type='text' class='salesPlace' data-detail='" + schePlace + "' value='" + schePlace + "' style='text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/></div>";
     }
   }
 
@@ -281,6 +294,20 @@ function setEstData() {
 
 
   $(".inputs").attr("disabled", "disabled");
+
+  let inputsArrs = target.getElementsByTagName("input");
+  for (let i = 0; i < inputsArrs.length; i++) {
+    let tt = inputsArrs[i]
+    $(tt).attr("disabled", "disabled");
+    $(tt).css("color", "black");
+  }
+  let selectArrs = target.getElementsByTagName("select");
+  for (let i = 0; i < selectArrs.length; i++) {
+    let tt = selectArrs[i];
+    $(tt).css("color", "black");
+  }
+
+
 
 }
 
