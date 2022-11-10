@@ -1,6 +1,6 @@
 // let soppNo = 10005548;
 // let soppNo = "10005635";
-let soppNo = "10005514";
+// let soppNo = "10005514";
 // let soppNo = " 10005247";
 init();
 prepareForm();
@@ -26,9 +26,15 @@ function prepareForm() {
 
 
 
-function getSoppDetailData(soppNo) {
+function getSoppDetailData() {
+
+  let checkHref = location.href;
+  checkHref = checkHref.split("//");
+  checkHref = checkHref[1];
+  let splitArr = checkHref.split("/");
+
   let url;
-  url = apiServer + "/api/sopp/" + soppNo;
+  url = apiServer + "/api/sopp/" + splitArr[3];
 
   $.ajax({
     "url": url,
@@ -159,7 +165,7 @@ function setEstData() {
   contType = (soppDetail.contType === null || soppDetail.contType === "") ? "" : soppDetail.contType;
   soppType = (soppDetail.soppType === null || soppDetail.soppType === "") ? "" : soppDetail.soppType;
   expectedSales = (soppDetail.expectedSales === null || soppDetail.expectedSales === "") ? "" : soppDetail.expectedSales.toLocaleString() + "원"
-  alert(status);
+ 
 
   $("#" + formId + "_writer").val(storage.user[writer].userName);
   $("#" + formId + "_created").val(getYmdSlash());

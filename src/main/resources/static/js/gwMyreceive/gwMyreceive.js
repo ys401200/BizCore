@@ -371,6 +371,12 @@ function getDetailView() {
   $("#" + formId + "_content").hide();
   $("." + formId + "_content").css("font-size", $("#" + formId + "_content").css("font-size"));
   $("." + formId + "_content").css("padding", "0.3em");
+
+  if (storage.reportDetailData.confirmNo != 'null') {
+    $("#" + formId + "_no").val(storage.reportDetailData.confirmNo);
+    $("#" + formId + "_no").attr("data-detail",storage.reportDetailData.confirmNo);
+    $("#" + formId + "_no").css("text-align", "left");
+  }
 }
 
 function showList() {

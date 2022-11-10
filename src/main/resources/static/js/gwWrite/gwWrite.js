@@ -948,6 +948,11 @@ function reportInsert() {
 
   ////////// sopp 
   let soppVal = $("#" + formId + "_sopp").val();
+  if (soppVal == "") {
+    $("#" + formId + "_sopp").val("영업기회 미등록");
+    $("#" + formId + "_sopp").attr("data-detail", "영업기회 미등록");
+    soppVal = "영업기회 미등록";
+  }
   let customerVal = $("#" + formId + "_infoCustomer").val();
   let soppResult = "";
   for (let x in storage.soppList) {
@@ -1091,6 +1096,10 @@ function reportInsert() {
   ) {
     alert("기간을 설정하세요");
   } else {
+
+
+
+
     $.ajax({
       url: "/api/gw/app/doc",
       method: "post",

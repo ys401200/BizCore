@@ -13,7 +13,7 @@
             <div class='gwWriteBtns'>
               <button type='button' onclick='reportInsert()' class='writeBtn'>기안 하기</button>
               <button class='saveBtn' type='button' onclick='tempSave()' disabled>임시 저장</button>
-              <button class="createEst" type="button" onclick="window.open('/gw/estimate','','width:1100px')">견적서 셋</button>
+              <!-- <button class="createEst" type="button" onclick="window.open('/gw/estimate','','width:1100px')">견적서 셋</button> -->
             </div>
 
 

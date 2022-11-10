@@ -354,6 +354,11 @@ function getDetailView() {
   $("." + formId + "_content").css("font-size", $("#" + formId + "_content").css("font-size"));
   $("." + formId + "_content").css("padding", "0.3em");
   for (let i = 0; i < 3; i++) { let tt = $(".inputsAuto")[i]; $(tt).css("text-align", "left"); }
+  if (storage.reportDetailData.confirmNo != 'null') {
+    $("#" + formId + "_no").val(storage.reportDetailData.confirmNo);
+    $("#" + formId + "_no").attr("data-detail",storage.reportDetailData.confirmNo);
+    $("#" + formId + "_no").css("text-align", "left");
+  }
 }
 
 function showList() {

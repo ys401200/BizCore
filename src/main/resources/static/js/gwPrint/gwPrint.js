@@ -123,6 +123,13 @@ function setSelectedData() {
       $(inputText).css("font-size", titleFontSize);
     }
   }
+
+
+  if (storage.reportDetailData.confirmNo != 'null') {
+    $("#" + formId + "_no").val(storage.reportDetailData.confirmNo);
+    $("#" + formId + "_no").attr("data-detail",storage.reportDetailData.confirmNo);
+    $("#" + formId + "_no").css("text-align", "left");
+  }
   window.print();
 }
 
