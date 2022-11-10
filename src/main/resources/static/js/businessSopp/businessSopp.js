@@ -100,8 +100,8 @@ function drawSoppList() {
 			soppType = (jsonData[i].soppType === null || jsonData[i].soppType === "") ? "" : storage.code.etc[jsonData[i].soppType];
 			contType = (jsonData[i].contType === null || jsonData[i].contType === "") ? "" : storage.code.etc[jsonData[i].contType];
 			title = (jsonData[i].title === null || jsonData[i].title === "") ? "" : jsonData[i].title;
-			customer = (jsonData[i].customer === null || jsonData[i].customer == 0 || jsonData[i].customer === undefined) ? "" : storage.customer[jsonData[i].customer].name;
-			endUser = (jsonData[i].endUser === null || jsonData[i].endUser == 0) ? "" : storage.customer[jsonData[i].endUser].name;
+			customer = (jsonData[i].customer === null || jsonData[i].customer == 0) ? "" : jsonData[i].customer;
+			endUser = (jsonData[i].endUser === null || jsonData[i].endUser == 0 || jsonData[i].endUser === undefined) ? "" : jsonData[i].endUser;
 			employee = (jsonData[i].employee === null || jsonData[i].employee == 0) ? "" : storage.user[jsonData[i].employee].userName;
 			expectedSales = (jsonData[i].expectedSales === null || jsonData[i].expectedSales == 0) ? 0 : numberFormat(jsonData[i].expectedSales);
 			status = (jsonData[i].status === null || jsonData[i].status === "") ? "" : storage.code.etc[jsonData[i].status];

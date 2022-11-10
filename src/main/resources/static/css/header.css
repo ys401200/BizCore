@@ -710,7 +710,7 @@ textarea{
 .tradeList .tradeThirdFormTitle
 {
 	display: grid;
-	grid-template-columns: repeat(12, 1fr);
+	grid-template-columns: repeat(11, 1fr);
 	color: #302D81;
 	font-weight: 500;
 }
@@ -718,7 +718,7 @@ textarea{
 .tradeList .tradeThirdFormContent .tradeThirdFormContentDiv
 {
 	display: grid;
-	grid-template-columns: repeat(12, 1fr);
+	grid-template-columns: repeat(11, 1fr);
 	color: #000;
 	font-size: 0.8rem;
 }
