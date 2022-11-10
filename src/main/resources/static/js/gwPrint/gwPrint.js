@@ -152,6 +152,7 @@ function setSelectedData() {
     }
   }
 }
+$(".btnDiv").hide();
   if (storage.reportDetailData.confirmNo != 'null') {
     $("#" + formId + "_no").val(storage.reportDetailData.confirmNo);
     $("#" + formId + "_no").attr("data-detail", storage.reportDetailData.confirmNo);

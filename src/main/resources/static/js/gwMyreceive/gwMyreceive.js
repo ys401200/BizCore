@@ -376,6 +376,7 @@ function getDetailView() {
     $("#" + formId + "_no").val(storage.reportDetailData.confirmNo);
     $("#" + formId + "_no").attr("data-detail", storage.reportDetailData.confirmNo);
     $("#" + formId + "_no").css("text-align", "left");
+   
   }
 }
 

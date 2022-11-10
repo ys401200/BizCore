@@ -102,7 +102,7 @@ function drawApproval() {
         title: "작성자",
         align: "center",
       },
-      
+
     ];
     createGrid(container, header, data, ids, job, fnc);
 
@@ -111,9 +111,9 @@ function drawApproval() {
     );
   } else {
     // jsonData = storage.dueList.due;
-    let tt = []; 
+    let tt = [];
     for (let i = storage.dueList.due.length - 1; i >= 0; i--) { tt.push(storage.dueList.due[i]) };
-    jsonData = tt; 
+    jsonData = tt;
     result = paging(jsonData.length, storage.currentPage, 14);
 
     pageContainer = document.getElementsByClassName("pageContainer");
@@ -144,7 +144,7 @@ function drawApproval() {
         title: "작성자",
         align: "center",
       },
-      
+
     ];
 
     for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
@@ -170,15 +170,15 @@ function drawApproval() {
         // },
         {
           "setData": setDate,
-          "align" : "center"
+          "align": "center"
         },
         {
           "setData": appType,
-          "align" : "center"
+          "align": "center"
         },
         {
           "setData": jsonData[i].form,
-          "align" : "center"
+          "align": "center"
         },
         {
           "setData": jsonData[i].title,
@@ -186,9 +186,9 @@ function drawApproval() {
         },
         {
           "setData": userName,
-          "align" : "center"
+          "align": "center"
         },
-      
+
       ];
       fnc = "detailView(this)";
       ids.push(jsonData[i].docNo);
@@ -239,9 +239,9 @@ function getDetailView() {
   let testForm = storage.reportDetailData.doc;
 
   let detailHtml =
-    "<div class='mainBtnDiv'><button type='button'onclick='showList()'>목록보기</button></div>" +
+    "<div class='mainBtnDiv'><button type='button'onclick='showList()'>목록보기</button><button class='printBtn' onclick='openPrintTab();' >인쇄하기</button></div>" +
     "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
-    // "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
+  // "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
   $(".listPageDiv").html(detailHtml);
 
   let selectedFileView =
@@ -323,8 +323,8 @@ function getDetailView() {
         $("#" + rd[i].id).prop("checked", true);
       }
     }
-    for(let i = 0 ; i < 3 ; i ++) {let tt = $(".inputsAuto")[i]; $(tt).css("text-align","left");} 
-   
+    for (let i = 0; i < 3; i++) { let tt = $(".inputsAuto")[i]; $(tt).css("text-align", "left"); }
+
   } else {
     // 새문서 작성한 것 가져온 경우 구분
     let rd2 = $("input[name='" + formId + "_RD']");
@@ -344,7 +344,7 @@ function getDetailView() {
           storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
         $("." + formId + subTitlesArr[i] + "_position")[j].value =
           storage.userRank[
-            $("." + formId + subTitlesArr[i] + "_position")[j].value
+          $("." + formId + subTitlesArr[i] + "_position")[j].value
           ][0];
       }
     }
@@ -378,12 +378,18 @@ function getDetailView() {
   $("." + formId + "_content").html($("#" + formId + "_content").attr("data-detail"));
   $("#" + formId + "_content").hide();
   $("." + formId + "_content").css("font-size", $("#" + formId + "_content").css("font-size"));
-  $("." + formId + "_content").css("padding","0.3em");
+  $("." + formId + "_content").css("padding", "0.3em");
+
 }
 
 function showList() {
   location.href = "/gw/due";
 }
+
+function openPrintTab() {
+  window.open("/gw/print/" + storage.reportDetailData.docNo, "인쇄하기", "width :210mm");
+}
+
 // 결재선정보 체크
 function setAppLineData() {
   let appLine = storage.reportDetailData.appLine;

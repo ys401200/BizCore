@@ -100,7 +100,7 @@ function drawNoticeApproval() {
         title: "작성자",
         align: "center",
       },
-     
+
     ];
 
     createGrid(container, header, data, ids, job, fnc);
@@ -143,7 +143,7 @@ function drawNoticeApproval() {
         title: "작성자",
         align: "center",
       },
-    
+
     ];
     for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
       disDate = dateDis(jsonData[i].created, jsonData[i].modified);
@@ -186,7 +186,7 @@ function drawNoticeApproval() {
           "setData": userName,
           "align": "center"
         },
-       
+
       ];
 
       fnc = "waitDetailView(this)";
@@ -247,7 +247,7 @@ function showReportDetail() {
   let testForm = storage.reportDetailData.doc;
 
   let detailHtml =
-    "<div class='mainBtnDiv'><button onclick='showList()'>목록보기</button><button type='button' name='approvalBtn' onclick='showAppModal()'>결재하기</button>" +
+    "<div class='mainBtnDiv'><button onclick='showList()'>목록보기</button><button class='printBtn' onclick='openPrintTab();' >인쇄하기</button><button type='button' name='approvalBtn' onclick='showAppModal()'>결재하기</button>" +
     "<button type='button' onclick='showGwModal()'>결재선 수정</button>" +
     "<button type='button' onclick='toWriteMode();createConfirmBtn(this)'>문서 수정</button></div>" +
     // "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
@@ -424,7 +424,7 @@ function showReportDetail() {
 
   if (storage.reportDetailData.confirmNo != 'null') {
     $("#" + formId + "_no").val(storage.reportDetailData.confirmNo);
-    $("#" + formId + "_no").attr("data-detail",storage.reportDetailData.confirmNo);
+    $("#" + formId + "_no").attr("data-detail", storage.reportDetailData.confirmNo);
     $("#" + formId + "_no").css("text-align", "left");
   }
 
@@ -432,6 +432,10 @@ function showReportDetail() {
 
 function showList() {
   location.href = "/gw/wait";
+}
+
+function openPrintTab() {
+  window.open("/gw/print/" + storage.reportDetailData.docNo, "인쇄하기", "width :210mm");
 }
 
 // 첨부파일 다운로드
@@ -2117,7 +2121,7 @@ function reportModify() {
 //문서 수정 버튼 누르면 수정 완료 버튼 생성
 function createConfirmBtn() {
   let div = document.getElementsByClassName("mainBtnDiv");
-  if (div[0].childElementCount < 5) {
+  if (div[0].childElementCount < 6) {
     $(".mainBtnDiv").append(
       "<button type='button'name='modConfirm' onclick='reportModify()' >수정완료 </button>" +
       "<button type='button'name='modConfirm' onclick='quitModify()'>문서 수정 초기화</button>"
