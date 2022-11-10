@@ -363,17 +363,21 @@ function drawMyDraft(types, targets, listTarget, pageTarget) {
     container = $(listTarget[0]);
 
     header = [
+      // {
+      //   title: "번호",
+      //   align: "center",
+      // },
       {
-        title: "번호",
-        align: "center",
-      },
-      {
-        title: "문서 양식",
+        title: "작성일",
         align: "center",
       },
       {
         title: "결재 타입",
         align: "left",
+      },
+      {
+        title: "문서 양식",
+        align: "center",
       },
       {
         title: "제목",
@@ -383,10 +387,7 @@ function drawMyDraft(types, targets, listTarget, pageTarget) {
         title: "작성자",
         align: "center",
       },
-      {
-        title: "작성일",
-        align: "center",
-      },
+     
     ];
     createGrid(container, header, data, ids, job, fnc);
 
@@ -402,14 +403,22 @@ function drawMyDraft(types, targets, listTarget, pageTarget) {
     for (let i = storage.waitList[types[0]].length - 1; i >= 0; i--) { tt.push(storage.waitList[types[0]][i]) };
     jsonData = tt; 
 
-    result = paging(jsonData.length, storage.currentPage, 19);
+    result = paging(jsonData.length, storage.currentPage, 18);
 
     pageContainer = document.getElementsByClassName("pageContainer");
     container = $(listTarget[0]);
 
     header = [
+      // {
+      //   title: "번호",
+      //   align: "center",
+      // },
       {
-        title: "번호",
+        title: "작성일",
+        align: "center",
+      },
+      {
+        title: "결재 타입",
         align: "center",
       },
       {
@@ -417,21 +426,14 @@ function drawMyDraft(types, targets, listTarget, pageTarget) {
         align: "center",
       },
       {
-        title: "결재 타입",
-        align: "left",
-      },
-      {
         title: "제목",
-        align: "center",
+        align: "left",
       },
       {
         title: "작성자",
         align: "center",
       },
-      {
-        title: "작성일",
-        align: "center",
-      },
+     
     ];
 
     for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
@@ -451,18 +453,23 @@ function drawMyDraft(types, targets, listTarget, pageTarget) {
       }
 
       str = [
+        // {
+        //   "setData": jsonData[i].docNo,
+        //   "align": "center"
+        // },
         {
-          "setData": jsonData[i].docNo,
-          "align": "center"
-        },
-        {
-          "setData": jsonData[i].form,
+          "setData": setDate,
           "align": "center"
         },
         {
           "setData": appType,
           "align": "center"
         },
+        {
+          "setData": jsonData[i].form,
+          "align": "center"
+        },
+       
         {
           "setData": jsonData[i].title,
           "align": "left"
@@ -471,10 +478,7 @@ function drawMyDraft(types, targets, listTarget, pageTarget) {
           "setData": storage.user[jsonData[i].writer].userName,
           "align": "center"
         },
-        {
-          "setData": setDate,
-          "align": "center"
-        },
+       
       ];
 
       fnc = "detailView(this)";

@@ -113,7 +113,7 @@ function drawNoticeApproval() {
     let tt = [];
     for (let i = storage.waitList.wait.length - 1; i >= 0; i--) { tt.push(storage.waitList.wait[i]) };
     jsonData = tt;
-    result = paging(jsonData.length, storage.currentPage, 10);
+    result = paging(jsonData.length, storage.currentPage, 18);
 
     pageContainer = document.getElementsByClassName("pageContainer");
     container = $(".listDiv");
@@ -147,7 +147,7 @@ function drawNoticeApproval() {
     ];
     for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
       disDate = dateDis(jsonData[i].created, jsonData[i].modified);
-      setDate = dateFnc(disDate, "mm-dd");
+      setDate = dateFnc(disDate);
       let userName = storage.user[jsonData[i].writer].userName;
       let appType = jsonData[i].appType;
       if (appType == "0") {
