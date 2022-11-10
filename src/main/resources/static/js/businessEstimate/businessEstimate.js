@@ -148,8 +148,6 @@ function selectBasicInfo(n){
 
 function clickedAdd(){
 	let listContent, addPdfForm, addBtn, bodyTitle, bodyTitleFnc;
-	ckeditor.config.readOnly = false;
-	window.setTimeout(setEditor, 100);
 	listContent = $(".listContent");
 	addPdfForm = $(".addPdfForm");
 	bodyTitle = $(".bodyTitle");
@@ -164,10 +162,16 @@ function clickedAdd(){
 	estimateFormInit();
 }
 
+function previewReset(){
+	// <div class="previewDefault">
+	// 	<div>미리보기</div>
+	// </div>
+	let versionPreview = $(".versionPreview");
+	versionPreview.find(".mainPdf").remove();
+}
+
 function clickedUpdate(){
 	let listContent, addPdfForm, addBtn, bodyTitle, bodyTitleFnc;
-	ckeditor.config.readOnly = false;
-	window.setTimeout(setEditor, 100);
 	listContent = $(".listContent");
 	addPdfForm = $(".addPdfForm");
 	bodyTitle = $(".bodyTitle");
@@ -1302,7 +1306,7 @@ function addEstTitle(e){
 function addEstItem(e){
 	let thisEle;
 	thisEle = $(e);
-	thisEle.parent().before("<div class=\"pdfMainContentItem\"><div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemSpec\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeyup=\"itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"oneEstItemAdd(this);\">+</button><button type=\"button\" onclick=\"oneEstItemRemove(this);\">-</button></div></div>");
+	thisEle.parent().before("<div class=\"pdfMainContentItem\"><div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemSpec\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeypress=\"itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"oneEstItemAdd(this);\">+</button><button type=\"button\" onclick=\"oneEstItemRemove(this);\">-</button></div></div>");
 	productNameSet();
 	ckeditor.config.readOnly = false;
 	window.setTimeout(setEditor, 100);
@@ -1512,6 +1516,10 @@ function setTotalHtml(){
 	pdfMainContentTotal = $(".pdfMainContentTotal div").eq(1);
 	pdfHeadInfoPrice = $(".pdfHeadInfoPrice div:eq(0) input");
 	pdfMainContentItem = $(".pdfMainContentItem .itemTotal");
+	console.log(pdfMainContentAmount);
+	console.log(pdfMainContentTotal);
+	console.log(pdfHeadInfoPrice);
+	console.log(pdfMainContentItem);
 
 	for(let i = 0; i < pdfMainContentItem.length; i++){
 		let item = parseInt($(pdfMainContentItem[i]).html().replaceAll(",", ""));

@@ -443,10 +443,6 @@
     height: 3vh;
 }
 
-.pdfHeadInfo > .address{
-    height: 4.5vh;
-}
-
 .pdfHeadInfo > div > span:first-child{
     text-align: justify;
     width: 4vw;
@@ -468,7 +464,7 @@
 }
 
 .pdfHeadInfo > div > textarea{
-    width: 16vw;
+    width: 13vw;
     overflow: hidden;
     font-family: 'NanumSquareRound';
     display: block;
@@ -500,6 +496,7 @@
     width: 4vw;
     font-size: 11px;
     font-weight: 600;
+    padding-top: 0.3vh;
 }
 
 .pdfHeadInfoPrice > div > span:first-child:after{
@@ -511,12 +508,12 @@
 .pdfHeadInfoPrice > div:first-child > input[type="text"]{
     width: 5vw;
     text-align: right;
-    height: 2.6vh;
+    height: 2.3vh;
     font-size: 11px;
 }
 
 .pdfHeadInfoPrice > div:last-child > input[type="text"]{
-    height: 2.6vh;
+    height: 2.3vh;
     font-size: 11px;
 }
 
@@ -555,6 +552,7 @@
     background-color: #990B19;
     color: #ffffff;
     font-size: 13px;
+    padding: 2px;
 }
 
 .pdfMainContentHeader > div:last-child{
@@ -575,8 +573,7 @@
     font-weight: 600;
     border-right: 1px solid #000;
     font-size: 11px;
-    padding-left: 3px;
-    padding-right: 3px;
+    padding: 2px;
 }
 
 .pdfMainContentTitle > .subTitleIndex{
@@ -615,8 +612,7 @@
     justify-content: center;
     border-right: 1px solid #000;
     font-size: 11px;
-    padding-left: 3px;
-    padding-right: 3px;
+    padding: 2px;
 }
 
 .pdfMainContentItem > .itemSpec,
@@ -699,10 +695,8 @@
     display: flex;
     align-items: center;
     border-right: 1px solid #000;
+    font-size: 11px;
     padding: 2px;
-    font-size: 13px;
-    padding-left: 3px;
-    padding-right: 3px;
 }
 
 .pdfMainContentAmount > div:first-child{
@@ -731,9 +725,7 @@
     align-items: center;
     border-right: 1px solid #000;
     padding: 2px;
-    font-size: 13px;
-    padding-left: 3px;
-    padding-right: 3px;
+    font-size: 11px;
 }
 
 .pdfMainContentTax > div:first-child{
@@ -762,9 +754,7 @@
     align-items: center;
     border-right: 1px solid #000;
     padding: 2px;
-    font-size: 13px;
-    padding-left: 3px;
-    padding-right: 3px;
+    font-size: 11px;
 }
 
 .pdfMainContentTotal > div:first-child{

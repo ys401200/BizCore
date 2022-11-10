@@ -1217,11 +1217,11 @@ function inputNumberFormat(e){
 	let value;
 	value = $(e).val().replaceAll(",", "");
 
-	if(value > 0){
+	if(value > 0 && !isNaN(value)){
 		$(e).val($(e).val().replace(/[^0-9]/g,""));
 		$(e).val(parseInt(value).toLocaleString("en-US"));	
 	}else{
-		$(e).val("");
+		$(e).val(0);
 	}
 }
 
@@ -1458,9 +1458,17 @@ function tabItemClick(e){
 
 //매입매출내역 리스트
 function createTabTradeList(result){
-	let html = "", countIndex = 0;
+	let html = "", countIndex = 0, calSale = 0, calPur = 0, calSaleTotal = 0, calPurTotal = 0;
 
-	html = "<div class='tradeList' id='tabTradeList'>";
+	html = "<div class=\"tradeInput\">";
+	html += "<div class=\"tradeInputAdd\">";
+	html += "<div>구분</div><div>거래일자</div><div>고객사</div><div>항목</div><div style=\"grid-column: span 2;\">적요</div><div>추가</div>";
+	html += "<div><select id=\"type\"><option value=\"purchase\">매입</option><option value=\"sale\">매출</option></select></div><div><input type=\"date\" id=\"dt\"></div><div><input type=\"text\" autocomplete=\"off\" id=\"customer\" data-complete=\"customer\" onclick=\"addAutoComplete(this);\" onkeyup=\"addAutoComplete(this);\"></div><div><input type=\"text\" autocomplete=\"off\" id=\"title\" data-complete=\"product\" onclick=\"addAutoComplete(this);\" onkeyup=\"addAutoComplete(this);\"></div><div style=\"grid-column: span 2;\"><input type=\"text\" id=\"remark\"></div><div style=\"grid-row: span 3;\"><button type=\"button\" onclick=\"tradeInsert();\">추가</button></div>";
+	html += "<div>단가</div><div>수량</div><div>공급가</div><div>부가세</div><div>합계금액</div><div>승인번호</div>";
+	html += "<div data-format=\"netPrice\"><input type=\"text\" class=\"netPrice\" onkeyup=\"inputNetFormat(this, 'tradeInputAdd');\" value=\"0\"></div><div data-format=\"quantity\"><input type=\"text\" id=\"qty\" onkeyup=\"inputQuanFormat(this, 'tradeInputAdd');\" value=\"1\"></div><div data-format=\"amount\"><input type=\"text\" id=\"price\" onkeyup=\"inputVatFormat(this);\" value=\"0\" readonly></div><div data-format=\"vat\"><input type=\"text\" id=\"vat\" onkeyup=\"inputVatFormat(this, 'tradeInputAdd');\" value=\"0\"></div><div data-format=\"total\"><input type=\"text\" class=\"total\" onkeyup=\"inputTotalFormat(this, 'tradeInputAdd');\" value=\"0\"></div><div><input type=\"text\" id=\"taxbill\"></div>";
+	html += "</div>";
+	html += "</div>";
+	html += "<div class='tradeList' id='tabTradeList'>";
 	html += "<div class='tradeThirdFormTitle'>";
 	html += "<div class='tradeThirdTitleItem'>구분(등록/수정일)</div>";
 	html += "<div class='tradeThirdTitleItem'>거래처(매입/매출처)</div>";
@@ -1479,87 +1487,115 @@ function createTabTradeList(result){
 	html += "<div class='tradeThirdFormContent'>";
 
 	if(result.length > 0){
-		let disDate, setDate, customer, product, netPrice, quantity, tax, amount, total, remark, vatSerial, calTotal = 0;
+		let disDate, setDate, customer, title, netPrice, qty, vat, price, total, remark, taxbill;
 
 		html += "<div class='tradeThirdFormContentDiv'>";
 		
 		for(let i = 0; i < result.length; i++){
-			if(result[i].type === "1101"){
+			if(result[i].type === "purchase"){
 				countIndex++;
-				disDate = dateDis(result[i].created, result[i].modified);
+				disDate = dateDis(result[i].created);
 				setDate = dateFnc(disDate);
-				customer = (result[i].customer == 0 || result[i].customer === null || result[i].customer === undefined) ? "없음 " : storage.customer[result[i].customer].name;
-				product = (result[i].product === null || result[i].product == 0 || result[i].product === undefined) ? "없음" : "임시 항목";
-				netPrice = (result[i].netPrice == 0 || result[i].netPrice === null || result[i].netPrice === undefined) ? 0 : numberFormat(result[i].netPrice);
-				quantity = (result[i].quantity == 0 || result[i].quantity === null || result[i].quantity === undefined) ? 0 : result[i].quantity;
-				tax = (result[i].tax == 0 || result[i].tax === null || result[i].tax === undefined) ? 0 : numberFormat(result[i].tax);
-				amount = (result[i].amount == 0 || result[i].amount === null || result[i].amount === undefined) ? 0 : numberFormat(result[i].amount);
-				total = (result[i].total == 0 || result[i].total === null || result[i].total === undefined) ? 0 : numberFormat(result[i].total);
-				remark = (result[i].remark === null || result[i].remark === "" || result[i].remark === undefined) ? "비고 없음" : result[i].remark;
-				vatSerial = (result[i].vatSerial === null || result[i].vatSerial === "" || result[i].vatSerial === undefined) ? "없음" : result[i].vatSerial;
+				customer = (result[i].customer == 0 || result[i].customer === null || result[i].customer === undefined) ? "" : storage.customer[result[i].customer].name;
+				title = (result[i].title === null || result[i].title == 0 || result[i].title === undefined) ? "" : result[i].title;
+				netPrice = (result[i].price == 0 || result[i].price === null || result[i].price === undefined) ? 0 : numberFormat(result[i].price / result[i].qty);
+				qty = (result[i].qty == 0 || result[i].qty === null || result[i].qty === undefined) ? 0 : result[i].qty;
+				vat = (result[i].vat == 0 || result[i].vat === null || result[i].vat === undefined) ? 0 : numberFormat(result[i].vat);
+				price = (result[i].price == 0 || result[i].price === null || result[i].price === undefined) ? 0 : numberFormat(result[i].price);
+				total = (result[i].price == 0 || result[i].price === null || result[i].price === undefined) ? 0 : numberFormat(result[i].price + result[i].vat);
+				remark = (result[i].remark === null || result[i].remark === "" || result[i].remark === undefined) ? "" : result[i].remark;
+				taxbill = (result[i].taxbill === null || result[i].taxbill === "" || result[i].taxbill === undefined) ? "" : result[i].taxbill;
 
 				html += "<div class='tradeThirdContentItem'>" + setDate + "</div>";
 				html += "<div class='tradeThirdContentItem'>" + customer + "</div>";
-				html += "<div class='tradeThirdContentItem'>" + product + "</div>";
+				html += "<div class='tradeThirdContentItem'>" + title + "</div>";
 				html += "<div class='tradeThirdContentItem'>" + netPrice + "</div>";
-				html += "<div class='tradeThirdContentItem'>" + quantity + "</div>";
-				html += "<div class='tradeThirdContentItem'>" + tax + "</div>";
-				html += "<div class='tradeThirdContentItem'>" + amount + "</div>";
+				html += "<div class='tradeThirdContentItem'>" + qty + "</div>";
+				html += "<div class='tradeThirdContentItem'>" + vat + "</div>";
+				html += "<div class='tradeThirdContentItem'>" + price + "</div>";
 				html += "<div class='tradeThirdContentItem'>" + total + "</div>";
 				html += "<div class='tradeThirdContentItem'>" + remark + "</div>";
-				html += "<div class='tradeThirdContentItem'>" + vatSerial + "</div>";
+				html += "<div class='tradeThirdContentItem'>" + taxbill + "</div>";
 				html += "<div class='tradeThirdContentItem'>수정</div>";
 				html += "<div class='tradeThirdContentItem'>삭제</div>";
 
-				calTotal += parseInt(result[i].total);
+				calSale += parseInt(result[i].price);
+				calSaleTotal += parseInt(result[i].price + result[i].vat);
 			}
 		}
 
 		html +="</div>";
-		html += "<div class='tradeThirdFormContentTotal'><span>매입합계</span><span>" + numberFormat(calTotal) + "</span></div>";
+		html += "<div class='tradeThirdFormContentTotal'><span>매입합계</span><span>" + numberFormat(calSaleTotal) + "</span></div>";
 		html += "<div class='tradeThirdFormContentDiv'>";
 
 		calTotal = 0;
 
 		for(let i = 0; i < result.length; i++){
-			if(result[i].type === "1102"){
+			if(result[i].type === "sale"){
 				countIndex++;
-				disDate = dateDis(result[i].created, result[i].modified);
+				disDate = dateDis(result[i].created);
 				setDate = dateFnc(disDate);
-				customer = (result[i].customer == 0 || result[i].customer === null || result[i].customer === undefined) ? "없음 " : storage.customer[result[i].customer].name;
-				product = (result[i].product === null || result[i].product == 0 || result[i].product === undefined) ? "없음" : "임시 항목";
-				netPrice = (result[i].netPrice == 0 || result[i].netPrice === null || result[i].netPrice === undefined) ? 0 : numberFormat(result[i].netPrice);
-				quantity = (result[i].quantity == 0 || result[i].quantity === null || result[i].quantity === undefined) ? 0 : result[i].quantity;
-				tax = (result[i].tax == 0 || result[i].tax === null || result[i].tax === undefined) ? 0 : numberFormat(result[i].tax);
-				amount = (result[i].amount == 0 || result[i].amount === null || result[i].amount === undefined) ? 0 : numberFormat(result[i].amount);
-				total = (result[i].total == 0 || result[i].total === null || result[i].total === undefined) ? 0 : numberFormat(result[i].total);
-				remark = (result[i].remark === null || result[i].remark === "" || result[i].remark === undefined) ? "비고 없음" : result[i].remark;
-				vatSerial = (result[i].vatSerial === null || result[i].vatSerial === "" || result[i].vatSerial === undefined) ? "없음" : result[i].vatSerial;
+				customer = (result[i].customer == 0 || result[i].customer === null || result[i].customer === undefined) ? "" : storage.customer[result[i].customer].name;
+				title = (result[i].title === null || result[i].title == 0 || result[i].title === undefined) ? "" : result[i].title;
+				netPrice = (result[i].price == 0 || result[i].price === null || result[i].price === undefined) ? 0 : numberFormat(result[i].price / result[i].qty);
+				qty = (result[i].qty == 0 || result[i].qty === null || result[i].qty === undefined) ? 0 : result[i].qty;
+				vat = (result[i].vat == 0 || result[i].vat === null || result[i].vat === undefined) ? 0 : numberFormat(result[i].vat);
+				price = (result[i].price == 0 || result[i].price === null || result[i].price === undefined) ? 0 : numberFormat(result[i].price);
+				total = (result[i].price == 0 || result[i].price === null || result[i].price === undefined) ? 0 : numberFormat(result[i].price + result[i].vat);
+				remark = (result[i].remark === null || result[i].remark === "" || result[i].remark === undefined) ? "" : result[i].remark;
+				taxbill = (result[i].taxbill === null || result[i].taxbill === "" || result[i].taxbill === undefined) ? "" : result[i].taxbill;
 
 				html += "<div class='tradeThirdContentItem'>" + setDate + "</div>";
 				html += "<div class='tradeThirdContentItem'>" + customer + "</div>";
-				html += "<div class='tradeThirdContentItem'>" + product + "</div>";
+				html += "<div class='tradeThirdContentItem'>" + title + "</div>";
 				html += "<div class='tradeThirdContentItem'>" + netPrice + "</div>";
-				html += "<div class='tradeThirdContentItem'>" + quantity + "</div>";
-				html += "<div class='tradeThirdContentItem'>" + tax + "</div>";
-				html += "<div class='tradeThirdContentItem'>" + amount + "</div>";
+				html += "<div class='tradeThirdContentItem'>" + qty + "</div>";
+				html += "<div class='tradeThirdContentItem'>" + vat + "</div>";
+				html += "<div class='tradeThirdContentItem'>" + price + "</div>";
 				html += "<div class='tradeThirdContentItem'>" + total + "</div>";
 				html += "<div class='tradeThirdContentItem'>" + remark + "</div>";
-				html += "<div class='tradeThirdContentItem'>" + vatSerial + "</div>";
+				html += "<div class='tradeThirdContentItem'>" + taxbill + "</div>";
 				html += "<div class='tradeThirdContentItem'>수정</div>";
 				html += "<div class='tradeThirdContentItem'>삭제</div>";
 
-				calTotal += parseInt(result[i].total);
+				calPur += parseInt(result[i].price);
+				calPurTotal += parseInt(result[i].price + result[i].vat);
 			}
 		}
 
 		html += "</div>";
-		html += "<div class='tradeThirdFormContentTotal'><span>매출합계</span><span>" + numberFormat(calTotal) + "</span></div>";
+		html += "<div class='tradeThirdFormContentTotal'><span>매출합계</span><span>" + numberFormat(calPurTotal) + "</span></div>";
 	}else{
 		html += "<div class='tradeThirdFormContentDiv'>";
 		html += "<div class='tradeThirdContentItem' style='grid-column: span 12; text-align:center;'>데이터가 없습니다.</div>";
 		html += "</div>";
 	}
+
+	let calMinus = calSale - calPur;
+	let calPercent = calMinus / calPur * 100;
+
+	if(isNaN(calPercent)){
+		calPercent = 0;
+	} else if (calPercent == '-Infinity'){
+		calPercent = 0;
+	} else if (calPercent == 'Infinity'){
+		calPercent = 0;
+	} else if(calPercent >= 0){
+		calPercent = "+" + calPercent.toString().substring(0, 4);
+	} else if(calPercent < 0){
+		calPercent = calPercent.toString().substring(0, 4);
+	}
+
+	html += "<div class=\"tradeTotalInfo\">";
+	html += "<div>매입합계</div>";
+	html += "<div style=\"justify-content: right;\">" + numberFormat(calSale) + "</div>";
+	html += "<div>매출합계</div>";
+	html += "<div style=\"justify-content: right;\">" + numberFormat(calPur) + "</div>";
+	html += "<div>이익합계</div>";
+	html += "<div style=\"justify-content: right;\">" + numberFormat(calMinus * -1)  + "</div>";
+	html += "<div>이익률</div>";
+	html += "<div style=\"justify-content: right;\">" + calPercent + "%</div>";
+	html += "</div>";
 
 	html += "</div>";
 	$(".detailSecondTabs").append(html);
@@ -1570,101 +1606,135 @@ function createTabTradeList(result){
 	}else{
 		tabs.find("label[for=\"tabTrade\"]").text("매입매출내역(0)");
 	}
+
+	storage.tradeFormList = {
+		dt: 0,
+		belongTo: "sopp:" + storage.soppDetailNo,
+		writer: storage.my,
+		type: "",
+		product: 0,
+		customer: 0,
+		taxbill: "",
+		title: "",
+		qty: 0,
+		price: 0,
+		vat: 0,
+		remark: "",
+	}
+
+	setTimeout(() => {
+		let nowDate = new Date().toISOString().substring(0, 10);
+		document.getElementById("dt").value = nowDate;
+	}, 100);
 }
 
-function tradeInsertForm(){
-	let html = "";
+function inputNetFormat(e, parentClass){
+	let thisEle, quantity, amount, vat, total;
+	thisEle = $(e);
+	quantity = thisEle.parents("." + parentClass).find("div[data-format=\"quantity\"]").children();
+	amount = thisEle.parents("." + parentClass).find("div[data-format=\"amount\"]").children();
+	vat = thisEle.parents("." + parentClass).find("div[data-format=\"vat\"]").children();
+	total = thisEle.parents("." + parentClass).find("div[data-format=\"total\"]").children();
+	cal = Math.round(quantity.val() * thisEle.val().replace(/,/g, ""));
+	calVat = Math.round(cal * 0.1);
+	calTotal = Math.round(cal + calVat);
+	
+	inputNumberFormat(e);
+	amount.val(cal.toLocaleString("en-US"));
+	vat.val(calVat.toLocaleString("en-US"));
+	total.val(calTotal.toLocaleString("en-US"));
+}
 
-	html += "<div class='tradeList'>";
-	html += "<div class='tradeFirstTitle'>";
-	html += "<div class='tradeFirstTitleItem'>구분(매입/매출)</div>";
-	html += "<div class='tradeFirstTitleItem'>거래일자</div>";
-	html += "<div class='tradeFirstTitleItem'>분할횟수</div>";
-	html += "<div class='tradeFirstTitleItem'>단위(개월)</div>";
-	html += "<div class='tradeFirstTitleItem'>계약금액</div>";
-	html += "<div class='tradeFirstTitleItem'>거래처(매입/매출처)</div>";
-	html += "<div class='tradeFirstTitleItem'>항목</div>";
-	html += "</div>";
+function inputQuanFormat(e, parentClass){
+	let thisEle, netPrice, amount, vat, total;
+	thisEle = $(e);
+	netPrice = thisEle.parents("." + parentClass).find("div[data-format=\"netPrice\"]").children();
+	amount = thisEle.parents("." + parentClass).find("div[data-format=\"amount\"]").children();
+	vat = thisEle.parents("." + parentClass).find("div[data-format=\"vat\"]").children();
+	total = thisEle.parents("." + parentClass).find("div[data-format=\"total\"]").children();
+	cal = Math.round(netPrice.val().replace(/,/g, "") * thisEle.val());
+	calVat = Math.round(cal * 0.1);
+	calTotal = Math.round(cal + calVat);
+	
+	amount.val(cal.toLocaleString("en-US"));
+	vat.val(calVat.toLocaleString("en-US"));
+	total.val(calTotal.toLocaleString("en-US"));
+}
 
-	html += "<div class='tradeFirstFormContent'>";
-	html += "<div class='tradeFirstContentItem'>";
-	html += "<select>"
-	html += "<option value='매입'>매입</option>";
-	html += "<option value='매출'>매출</option>";
-	html += "</select>";
-	html += "</div>"
-	html += "<div class='tradeFirstContentItem'>";
-	html += "<input type='date' />";
-	html += "</div>";
-	html += "<div class='tradeFirstContentItem'>";
-	html += "<input type='text' />";
-	html += "</div>";
-	html += "<div class='tradeFirstContentItem'>";
-	html += "<input type='text' />";
-	html += "</div>";
-	html += "<div class='tradeFirstContentItem'>";
-	html += "<input type='text' />";
-	html += "</div>";
-	html += "<div class='tradeFirstContentItem'>";
-	html += "<input type='text' />";
-	html += "</div>";
-	html += "<div class='tradeFirstContentItem'>";
-	html += "<div>";
-	html += "<select>";
-	html += "<option value='항목선택'>항목선택</option>";
-	html += "<option value='직접입력'>직접입력</option>";
-	html += "</select>";
-	html += "</div>";
-	html += "<div>";
-	html += "<input type='text' />";
-	html += "</div>";
-	html += "</div>";
-	html += "</div>";
+function inputVatFormat(e, parentClass){
+	let thisEle, amount, total;
+	thisEle = $(e);
+	amount = thisEle.parents("." + parentClass).find("div[data-format=\"amount\"]").children();
+	total = thisEle.parents("." + parentClass).find("div[data-format=\"total\"]").children();
+	cal = Math.round(parseInt(thisEle.val().replace(/,/g, "")) + parseInt(amount.val().replace(/,/g, "")));
+	
+	inputNumberFormat(e);
+	total.val(cal.toLocaleString("en-US"));
+}
 
-	html += "<div class='tradeSecondFormTitle'>";
-	html += "<div class='tradeSecondTitleItem'>단가</div>";
-	html += "<div class='tradeSecondTitleItem'>수량</div>";
-	html += "<div class='tradeSecondTitleItem'>공급가</div>";
-	html += "<div class='tradeSecondTitleItem'>부가세</div>";
-	html += "<div class='tradeSecondTitleItem'>합계금액</div>";
-	html += "<div class='tradeSecondTitleItem'>승인번호</div>";
-	html += "<div class='tradeSecondTitleItem'>적요</div>";
-	html += "</div>";
+function inputTotalFormat(e, parentClass){
+	let thisEle, netPrice, quantity, amount, vat;
+	thisEle = $(e);
+	netPrice = thisEle.parents("." + parentClass).find("div[data-format=\"netPrice\"]").children();
+	quantity = thisEle.parents("." + parentClass).find("div[data-format=\"quantity\"]").children();
+	amount = thisEle.parents("." + parentClass).find("div[data-format=\"amount\"]").children();
+	vat = thisEle.parents("." + parentClass).find("div[data-format=\"vat\"]").children();
+	calNet = Math.round(thisEle.val().replace(/,/g, "") / 11 * 10 / quantity.val());
+	calAmount = Math.round(thisEle.val().replace(/,/g, "") / 11 * 10);
+	calVat = Math.round(thisEle.val().replace(/,/g, "") / 11);
+	
+	inputNumberFormat(e);
+	netPrice.val(calNet.toLocaleString("en-US"));
+	amount.val(calAmount.toLocaleString("en-US"));
+	vat.val(calVat.toLocaleString("en-US"));
+}
 
-	html += "<div class='tradeSecondFormContent'>";
-	html += "<div class='tradeSecondContentItem'>";
-	html += "<input type='text' />";
-	html += "</div>"
-	html += "<div class='tradeSecondContentItem'>";
-	html += "<input type='text' />";
-	html += "</div>";
-	html += "<div class='tradeSecondContentItem'>";
-	html += "<input type='text' />";
-	html += "</div>";
-	html += "<div class='tradeSecondContentItem'>";
-	html += "<input type='text' />";
-	html += "</div>";
-	html += "<div class='tradeSecondContentItem'>";
-	html += "<input type='text' />";
-	html += "</div>";
-	html += "<div class='tradeSecondContentItem'>";
-	html += "<input type='text' />";
-	html += "</div>";
-	html += "<div class='tradeSecondContentItem'>";
-	html += "<input type='text' />";
-	html += "</div>";
-	html += "</div>";
-	html += "</div>";
+function tradeInsert(){
+	let data, formArr = storage.tradeFormList;
+	for(let key in formArr){
+		if(key !== "belongTo" && key !== "writer" && key !== "product" && key !== "related"){
+			if(typeof formArr[key] === "number"){
+				if(key === "customer"){
+					formArr[key] = $(".tradeInput").find("#" + key).data("value");	
+				}else if(key === "dt"){
+					let date = new Date($(".tradeInput").find("#" + key).val()).getTime();
+					formArr[key] = date;
+				}else{
+					let number = $(".tradeInput").find("#" + key).val().replace(/,/g, "");
+					formArr[key] = $(".tradeInput").find("#" + key).val() === "" ? 0 : parseInt(number);
+				}
+			}else{
+				formArr[key] = $(".tradeInput").find("#" + key).val();
+			}
+		}
+	};
 
-	modal.show();
-	modal.headTitle.text("매입매출등록");
-	modal.content.css("width", "90%");
-	modal.body.html(html);
-	modal.body.css("max-height", "800px");
-	modal.confirm.text("추가");
-	modal.close.text("취소");
-	modal.confirm.attr("onclick", "tradeInsert();");
-	modal.close.attr("onclick", "modal.hide();");
+	data = JSON.stringify(formArr);
+	data = cipher.encAes(data);
+
+	$.ajax({
+		url: "/api/trade",
+		method: "post",
+		data: data,
+		dataType: "json",
+		contentType: "text/plain",
+		success: () => {
+			let tradeThirdFormContentTotal, tradeInputAdd;
+			tradeThirdFormContentTotal = $(".tradeThirdFormContentTotal");
+			tradeInputAdd = $(".tradeInputAdd");
+
+			if(formArr.type === "sale"){
+				tradeThirdFormContentTotal.eq(1).before("<div class=\"tradeThirdFormContentDiv\"><div class=\"tradeThirdContentItem\">" + new Date(formArr.dt).toISOString().substring(0, 10) + "</div><div class=\"tradeThirdContentItem\">" + storage.customer[formArr.customer].name + "</div><div class=\"tradeThirdContentItem\">" + formArr.title + "</div><div class=\"tradeThirdContentItem\">" + parseInt(formArr.price).toLocaleString("en-US") + "</div><div class=\"tradeThirdContentItem\">" + formArr.qty + "</div><div class=\"tradeThirdContentItem\">" + parseInt(formArr.vat).toLocaleString("en-US") + "</div><div class=\"tradeThirdContentItem\">" + parseInt(formArr.price).toLocaleString("en-US") + "</div><div class=\"tradeThirdContentItem\">" + parseInt(formArr.price + formArr.vat).toLocaleString("en-US") + "</div><div class=\"tradeThirdContentItem\">" + formArr.remark + "</div><div class=\"tradeThirdContentItem\">" + formArr.taxbill + "</div><div class=\"tradeThirdContentItem\">수정</div><div class=\"tradeThirdContentItem\">삭제</div></div>");
+			}else{
+				tradeThirdFormContentTotal.eq(0).before("<div class=\"tradeThirdFormContentDiv\"><div class=\"tradeThirdContentItem\">" + new Date(formArr.dt).toISOString().substring(0, 10) + "</div><div class=\"tradeThirdContentItem\">" + storage.customer[formArr.customer].name + "</div><div class=\"tradeThirdContentItem\">" + formArr.title + "</div><div class=\"tradeThirdContentItem\">" + parseInt(formArr.price).toLocaleString("en-US") + "</div><div class=\"tradeThirdContentItem\">" + formArr.qty + "</div><div class=\"tradeThirdContentItem\">" + parseInt(formArr.vat).toLocaleString("en-US") + "</div><div class=\"tradeThirdContentItem\">" + parseInt(formArr.price).toLocaleString("en-US") + "</div><div class=\"tradeThirdContentItem\">" + parseInt(formArr.price + formArr.vat).toLocaleString("en-US") + "</div><div class=\"tradeThirdContentItem\">" + formArr.remark + "</div><div class=\"tradeThirdContentItem\">" + formArr.taxbill + "</div><div class=\"tradeThirdContentItem\">수정</div><div class=\"tradeThirdContentItem\">삭제</div></div>");
+			}
+
+			msg.set("등록되었습니다.");
+		},
+		error: () => {
+			msg.set("등록에 실패하였습니다.\n확인 후 다시 시도해주세요.");
+		}
+	});
 }
 
 function createTabFileList(){
@@ -3193,8 +3263,12 @@ function validateEmail(email) {
 	return result;
 }
 
-function formDataSet(){
-	for(let key in storage.formList){
+function formDataSet(storageArr){
+	if(storageArr === undefined){
+		storageArr = storage.formList;
+	}
+
+	for(let key in storageArr){
 		let element = "";
 		if($("#" + key).length > 0){
 			element = $("#" + key);
@@ -3208,26 +3282,26 @@ function formDataSet(){
 		
 		if(element !== undefined && element !== ""){
 			if(element.prop('tagName') === "TEXTAREA"){
-				storage.formList[key] = CKEDITOR.instances[key].getData().replaceAll("\n", "");
+				storageArr[key] = CKEDITOR.instances[key].getData().replaceAll("\n", "");
 			}else{
 				if(!element.data("change")){
-					if(typeof storage.formList[key] === "number"){
+					if(typeof storageArr[key] === "number"){
 						if(element.attr("type") === "date" || element.attr("type") === "datetime-local"){
 							let dateTime = new Date(element.val()).getTime();
-							storage.formList[key] = dateTime;
+							storageArr[key] = dateTime;
 						}else{
 							if(element.val() === ""){
-								storage.formList[key] = 0;
+								storageArr[key] = 0;
 							}else{
-								storage.formList[key] = parseInt(element.val().replaceAll(",", ""));
+								storageArr[key] = parseInt(element.val().replaceAll(",", ""));
 							}
 						}
 					}else{
 						if(element.attr("type") === "date" || element.attr("type") === "datetime-local"){
 							let dateTime = new Date(element.val()).getTime();
-							storage.formList[key] = dateTime;
+							storageArr[key] = dateTime;
 						}else{
-							storage.formList[key] = element.val();
+							storageArr[key] = element.val();
 						}
 					}
 				}
@@ -3253,7 +3327,7 @@ function addAutoComplete(e){
 	
 		if(thisEle.val() === ""){
 			for(let key in storage[thisEle.data("complete")]){
-				if(thisEle.data("complete") === "customer" || thisEle.data("complete") === "cip"){
+				if(thisEle.data("complete") === "customer" || thisEle.data("complete") === "cip" || thisEle.data("complete") === "product"){
 					autoComplete.append("<div data-value=\"" + key + "\" onclick=\"autoCompleteClick(this);\">" + storage[thisEle.data("complete")][key].name + "</div>");
 				}else if(thisEle.data("complete") === "user"){
 					autoComplete.append("<div data-value=\"" + storage[thisEle.data("complete")][key].userNo + "\" onclick=\"autoCompleteClick(this);\">" + storage[thisEle.data("complete")][key].userName + "</div>");
@@ -3263,7 +3337,7 @@ function addAutoComplete(e){
 			}
 		}else{
 			for(let key in storage[thisEle.data("complete")]){
-				if(thisEle.data("complete") === "customer" || thisEle.data("complete") === "cip"){
+				if(thisEle.data("complete") === "customer" || thisEle.data("complete") === "cip" || thisEle.data("complete") === "product"){
 					if(storage[thisEle.data("complete")][key].name.indexOf(thisEle.val()) > -1){
 						autoComplete.append("<div data-value=\"" + key + "\" onclick=\"autoCompleteClick(this);\">" + storage[thisEle.data("complete")][key].name + "</div>");
 					}
@@ -3293,10 +3367,9 @@ function autoCompleteClick(e){
 		if(storage.formList[input.attr("id")] !== undefined){
 			storage.formList[input.attr("id")] = thisEle.data("value");
 		}
-	}else{
-		input.attr("data-value", thisEle.data("value"));
 	}
-
+	
+	input.attr("data-value", thisEle.data("value"));
 	autoComplete.remove();
 }
 
@@ -3376,6 +3449,25 @@ function getStorageList(){
 			},
 			error:() => {
 				msg.set("cip 에러");
+			}
+		});
+	}
+
+	if(storage.product === undefined){
+		$.ajax({
+			url: "/api/product",
+			method: "get",
+			dataType: "json",
+			success:(result) => {
+				if(result.result === "ok"){
+					let resultJson;
+					resultJson = cipher.decAes(result.data);
+					resultJson = JSON.parse(resultJson);
+					storage.product = resultJson;
+				}
+			},
+			error:() => {
+				msg.set("product 에러");
 			}
 		});
 	}

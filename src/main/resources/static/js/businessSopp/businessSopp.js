@@ -196,7 +196,7 @@ function soppErrorList(){
 
 function soppSuccessView(result){
 	let html, htmlSecond, title, userName, customer, picOfCustomer, endUser, status, progress, contType, disDate, expectedSales, detail, dataArray, gridList, containerTitle, detailBackBtn, datas, crudUpdateBtn, crudDeleteBtn, detailSecondTabs;
-	console.log(result);
+	storage.soppDetailNo = result.no;
 	detailSetFormList(result);
 	gridList = $(".gridList");
 	containerTitle = $("#containerTitle");
