@@ -70,22 +70,47 @@ public class ContractService extends Svc{
     }
 
     public String getContract(int no, String compId){
-        String result = null;
-        List<HashMap<String, String>> files = null;
+        String result = null, t = null;
+        List<HashMap<String, String>> files = null, trades = null;
         List<Schedule> schedule1 = null;
         List<Schedule> schedule2 = null;
-        List<TradeDetail> trades = null;
+        HashMap<String, String> each = null;
         List<TaxBill> bills = null;
+        int x = 0;
+        Integer sopp = null;
 
+        sopp = contractMapper.getSoppNoXXXXX(no + "");
+        if(sopp != null && sopp > 0)    trades = tradeMapper.getTradeByFunc(compId, "sopp:" + sopp);
         files = systemMapper.getAttachedFileList(compId, "contract", no);
-        trades = tradeMapper.getTradeDetailForContractXXXXX(no);
         schedule1 = scheduleMapper.getScheduleListFromSchedWithContrct(compId, no);
         schedule2 = scheduleMapper.getScheduleListFromTechdWithContrct(compId, no);
         schedule1.addAll(schedule2);
         Collections.sort(schedule1);
         bills = accMapper.getTaxBillForContract(compId, no);
         Contract cnt = contractMapper.getContract(no, compId);
-        result = cnt.toJson(files, schedule1, trades, bills);
+
+        t = "[";
+        if(trades != null && trades.size() > 0)    for(x = 0 ; x < trades.size() ; x++){
+            each = trades.get(x);
+            if(x > 0)   t += ",";
+            t += ("{\"no\":" + each.get("no") + ",");
+            t += ("\"dt\":" + each.get("dt") + ",");
+            t += ("\"writer\":" + each.get("writer") + ",");
+            t += ("\"type\":" + (each.get("type") == null ? null : "\"" + each.get("type") + "\"") + ",");
+            t += ("\"product\":" + each.get("product") + ",");
+            t += ("\"customer\":" + each.get("customer") + ",");
+            t += ("\"taxbill\":" + (each.get("taxbill") == null ? null : "\"" + each.get("taxbill") + "\"") + ",");
+            t += ("\"title\":" + (each.get("title") == null ? null : "\"" + each.get("title") + "\"") + ",");
+            t += ("\"qty\":" + each.get("qty") + ",");
+            t += ("\"price\":" + each.get("price") + ",");
+            t += ("\"vat\":" + each.get("vat") + ",");
+            t += ("\"remark\":" + (each.get("remark") == null ? null : "\"" + each.get("remark") + "\"") + ",");
+            t += ("\"created\":" + each.get("created") + "}");
+
+        }
+        t += "]";
+
+        result = cnt.toJson(files, schedule1, t, bills);
         return result;
     } // End of getContract()
 

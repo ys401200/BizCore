@@ -32,5 +32,8 @@ public interface ContractMapper {
 
     @Update("UPDATE swc_cont SET attrib = 'XXXXX' WHERE contno = #{no} AND compno = (SELECT compno FROM swcore.swc_company WHERE compid = #{compId})")
     public int removeContract(@Param("no") String no, @Param("compId") String compId);
+
+    @Select("SELECT soppno FROM swc_cont WHERE contno = #{contNo}")
+    public int getSoppNoXXXXX(String contNo);
 }
 

@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -54,7 +55,7 @@ public class Contract extends SimpleContract{
     public void setSaleDate(long e){saleDate = new Date(e);}
     public void setSaleDate(Date e){saleDate = e;}
 
-    public String toJson(List<HashMap<String, String>> fileData, List<Schedule> schedules, List<TradeDetail> trades, List<TaxBill> bills) {
+    public String toJson(List<HashMap<String, String>> fileData, List<Schedule> schedules, String trades, List<TaxBill> bills) {
         ObjectMapper mapper = new ObjectMapper();
         mapper.setSerializationInclusion(Include.NON_NULL);
         String result = null;
@@ -80,8 +81,8 @@ public class Contract extends SimpleContract{
             json = new JSONObject(result);
             json.put("attached", fileData);
             json.put("schedules", schedules);
-            json.put("trades", trades);
-            json.put("bills", trades);
+            json.put("trades", new JSONArray(trades));
+            json.put("bills", bills);
         } catch (JsonProcessingException e) {e.printStackTrace();}
         result = json.toString();
         return result;
