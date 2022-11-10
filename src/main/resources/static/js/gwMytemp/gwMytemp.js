@@ -140,7 +140,7 @@ function drawMyDraft() {
       disDate = dateDis(jsonData[i].created, jsonData[i].modified);
     
       setDate = getYmdSlash(disDate);
-      let userName = storage.user[jsonData[i].writer].userName;
+    //  let userName = storage.user[jsonData[i].writer].userName;
       str = [
        
         {
@@ -156,7 +156,7 @@ function drawMyDraft() {
           "align": "left",
         },
         {
-          "setData": userName,
+          "setData": storage.user[storage.my].userName,
           "align" : "center"
         },
        

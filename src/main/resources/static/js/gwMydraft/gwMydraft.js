@@ -85,7 +85,7 @@ function drawMyDraft() {
     let tt = [];
     for (let i = storage.myDraftList.length - 1; i >= 0; i--) { tt.push(storage.myDraftList[i]) };
     jsonData = tt;
-    result = paging(jsonData.length, storage.currentPage, 10);
+    result = paging(jsonData.length, storage.currentPage, 18);
 
     pageContainer = document.getElementsByClassName("pageContainer");
     container = $(".listDiv");
@@ -249,7 +249,7 @@ function getDetailView() {
   console.log(testForm);
 
   let detailHtml =
-    "<div class='mainBtnDiv'><button type='button' onclick='showList()'>목록보기</button><button type='button' onclick='returnReport()'>회수</button><button>인쇄하기</button></div>" +
+    "<div class='mainBtnDiv'><button type='button' onclick='showList()'>목록보기</button><button type='button' onclick='returnReport()'>회수</button><button class='printBtn'>인쇄하기</button></div>" +
     "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
   //"<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
 
@@ -271,7 +271,7 @@ function getDetailView() {
   toReadMode();
   drawCommentLine();
   getFileArr();
-
+  $(".printBtn").click(openPrintTab);
   // let referArr = new Array();
 
   // for (let i = 0; i < storage.reportDetailData.appLine.length; i++) {
@@ -377,6 +377,11 @@ function getDetailView() {
   storage.oriInsertedContent = $(".insertedContent").html();
   storage.oriInsertedDataList = $(".insertedDataList").html();
 
+  for (let i = 0; i < $(".dateBorder").length; i++) {
+    let tt = $(".dateBorder")[i].children;
+    $(tt).css("background-color" ,"transparent");
+  }
+
   //영업기회 리스트 가져오기
   $.ajax({
     url: "/api/sopp",
@@ -403,7 +408,7 @@ function getDetailView() {
 
   if (storage.reportDetailData.confirmNo != 'null') {
     $("#" + formId + "_no").val(storage.reportDetailData.confirmNo);
-    $("#" + formId + "_no").attr("data-detail",storage.reportDetailData.confirmNo);
+    $("#" + formId + "_no").attr("data-detail", storage.reportDetailData.confirmNo);
     $("#" + formId + "_no").css("text-align", "left");
   }
 }
@@ -411,6 +416,11 @@ function getDetailView() {
 // 목록보기
 function showList() {
   location.href = "/gw/mydraft";
+}
+
+function openPrintTab() {
+  window.open("/gw/print/" + storage.reportDetailData.docNo, "인쇄하기", "width :fit-content");
+
 }
 
 //결재선 정보

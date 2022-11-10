@@ -76,9 +76,9 @@ function drawMyDraft() {
     container.append("<div class='noListDefault'>수신 문서가 없습니다</div>");
   } else {
     // jsonData = storage.myReceiveList;
-    let tt = []; 
+    let tt = [];
     for (let i = storage.myReceiveList.length - 1; i >= 0; i--) { tt.push(storage.myReceiveList[i]) };
-    jsonData = tt; 
+    jsonData = tt;
     result = paging(jsonData.length, storage.currentPage, 10);
 
     pageContainer = document.getElementsByClassName("pageContainer");
@@ -197,7 +197,7 @@ function getDetailView() {
   console.log(testForm);
 
   let detailHtml =
-    "<div class='mainBtnDiv'><button type='button' onclick='showList()'>목록보기</button></div>" +
+    "<div class='mainBtnDiv'><button type='button' onclick='showList()'>목록보기</button><button class='printBtn' onclick='openPrintTab();' >인쇄하기</button></div>" +
     "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
   //"<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
   $(".listPageDiv").html(detailHtml);
@@ -374,13 +374,17 @@ function getDetailView() {
 
   if (storage.reportDetailData.confirmNo != 'null') {
     $("#" + formId + "_no").val(storage.reportDetailData.confirmNo);
-    $("#" + formId + "_no").attr("data-detail",storage.reportDetailData.confirmNo);
+    $("#" + formId + "_no").attr("data-detail", storage.reportDetailData.confirmNo);
     $("#" + formId + "_no").css("text-align", "left");
   }
 }
 
 function showList() {
   location.href = "/gw/myreceive";
+}
+
+function openPrintTab() {
+  window.open("/gw/print/" + storage.reportDetailData.docNo, "인쇄하기", "width :210mm");
 }
 // 탭 누를때마다의 이벤트 주기
 function changeTab(obj) {

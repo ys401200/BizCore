@@ -63,6 +63,7 @@ function setSelectedData() {
       inputsArr[i].value = inputsArr[i].dataset.detail;
       let tt = inputsArr[i];
       $(tt).css("font-size", "1em");
+      $(tt).css("background-color", "trasparent");
     }
   }
 
@@ -76,17 +77,27 @@ function setSelectedData() {
       selectArr[i].value = selectArr[i].dataset.detail;
       let tt = selectArr[i];
       $(tt).css("font-size", "1em");
+      $(tt).css("border", "none");
+      $(tt).css("color", "black");
     }
+
+    $(".inputsTime").css("border","none");
+
+
+
+
 
   }
 
   for (let i = 0; i < $(".twoBorder").length; i++) {
     let tt = $(".twoBorder")[i].children;
     $(tt).css("text-align", "center");
+    $(tt).css("font-size", "1em");
   }
   for (let i = 0; i < $(".dateBorder").length; i++) {
     let tt = $(".dateBorder")[i].children;
     $(tt).css("text-align", "center");
+    $(tt).css("font-size", "1em");
   }
 
   $("input[name='" + storage.reportDetailData.formId + "_RD']").attr("disabled", "disabled");
@@ -125,9 +136,25 @@ function setSelectedData() {
   }
 
 
+  if($(".list_comment")[0].dataset.detail != "old") {
+  // 이름 , 직급 한글로 설정하기
+  let subTitlesArr = ["_examine", "_approval", "_agree", "_conduct"];
+  for (let i = 0; i < subTitlesArr.length; i++) {
+    if ($("." + formId + subTitlesArr[i]).val() != undefined) {
+      for (let j = 0; j < $("." + formId + subTitlesArr[i]).length; j++) {
+        $("." + formId + subTitlesArr[i])[j].value =
+          storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
+        $("." + formId + subTitlesArr[i] + "_position")[j].value =
+          storage.userRank[
+          $("." + formId + subTitlesArr[i] + "_position")[j].value
+          ][0];
+      }
+    }
+  }
+}
   if (storage.reportDetailData.confirmNo != 'null') {
     $("#" + formId + "_no").val(storage.reportDetailData.confirmNo);
-    $("#" + formId + "_no").attr("data-detail",storage.reportDetailData.confirmNo);
+    $("#" + formId + "_no").attr("data-detail", storage.reportDetailData.confirmNo);
     $("#" + formId + "_no").css("text-align", "left");
   }
   window.print();

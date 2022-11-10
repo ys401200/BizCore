@@ -364,13 +364,11 @@ function getDetailView() {
 function showList() {
   location.href = "/gw/myrefer";
 }
-
 function openPrintTab() {
   window.open("/gw/print/"+storage.reportDetailData.docNo, "인쇄하기", "width :210mm");
  
-  
-  
 }
+
 
 // 탭 누를때마다의 이벤트 주기
 function changeTab(obj) {

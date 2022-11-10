@@ -1535,23 +1535,23 @@ function setCardData() {
             cardData[q][cardTitles[j]] = "";
           }
           dataHtml +=
-            "<div class='detailcontentlast'><input type='text' value='" +
+            "<input type='text' value='" +
             cardData[q][cardTitles[j]] +
-            "' onkeyup='this.dataset.detail=this.value' class='inputs outlineNonedata " +
+            "' onkeyup='this.dataset.detail=this.value' style='padding:0.3em;border-bottom:1px solid black; border-right:1px solid black' class='inputs  " +
             id +
             "_" +
             dataTitles[j] +
-            "'></div>";
+            "'>";
         } else if (dataTitles[j] == "date") {
           let date = cardData[q][cardTitles[j]];
           dataHtml +=
-            "<div class='detailcontent'><input class='inputs outlineNonedata " +
+            "<input class='inputs  " +
             id +
             "_" +
             dataTitles[j] +
-            "' onchange='this.dataset.detail=this.value;' type='date' value='" +
+            "' onchange='this.dataset.detail=this.value;' style='padding:0.3em;border-bottom:1px solid black; border-right:1px solid black' type='date' value='" +
             date +
-            "' disabled ></div>";
+            "' disabled >";
         } else if (
           dataTitles[j] == "price" ||
           dataTitles[j] == "subTotal" ||
@@ -1561,52 +1561,52 @@ function setCardData() {
           if (cardData[q][cardTitles[j]] == null) {
             cardData[q][cardTitles[j]] = "";
             dataHtml +=
-              "<div class='detailcontent'><input class='inputs outlineNonedata " +
+              "<input class='inputs " +
               id +
               "_" +
               dataTitles[j] +
-              "' type='text' oninput='setNum(this)'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' value='" +
+              "' type='text' oninput='setNum(this)' style='padding:0.3em;border-bottom:1px solid black; border-right:1px solid black' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' value='" +
               cardData[q][cardTitles[j]] +
-              "' disabled ></div>";
+              "' disabled >";
           } else {
             dataHtml +=
-              "<div class='detailcontent'><input class='inputs outlineNonedata " +
+              "<input class='inputs  " +
               id +
               "_" +
               dataTitles[j] +
-              "' type='text' oninput='setNum(this)'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' value='" +
+              "' type='text' oninput='setNum(this)'  style='padding:0.3em;border-bottom:1px solid black; border-right:1px solid black' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' value='" +
               cardData[q][cardTitles[j]].toLocaleString() +
-              "' disabled></div>";
+              "' disabled>";
           }
         } else if (dataTitles[j] == "quantity") {
           console.log("수량 ");
           dataHtml +=
-            "<div class='detailcontent'><input class='inputs outlineNonedata " +
+            "<input class='inputs  " +
             id +
             "_" +
             dataTitles[j] +
-            "' type='text' oninput='setNum(this)'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' value='1' disabled></div>";
+            "' type='text' oninput='setNum(this)' style='padding:0.3em;border-bottom:1px solid black; border-right:1px solid black'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' value='1' disabled>";
         } else if (dataTitles[j] == "product") {
           dataHtml +=
-            "<div class='detailcontent'><input class='inputs outlineNonedata " +
+            "<input class='inputs  " +
             id +
             "_" +
             dataTitles[j] +
-            "' type='text' oninput='setNum(this)'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' value='" +
+            "' type='text' oninput='setNum(this)'  style='padding:0.3em;border-bottom:1px solid black; border-right:1px solid black' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' value='" +
             cardData[q][cardTitles[j]] +
-            "' disabled></div>";
+            "' disabled>";
         } else {
           if (cardData[q][cardTitles[j]] == null) {
             cardData[q][cardTitles[j]] = "";
           }
           dataHtml +=
-            "<div class='detailcontent'><input class='inputs outlineNonedata" +
+            "<input class='inputs " +
             id +
             "_" +
             dataTitles[j] +
-            "' type='text' onkeyup='this.dataset.detail=this.value' value='" +
+            "' type='text' style='padding:0.3em;border-bottom:1px solid black; border-right:1px solid black' onkeyup='this.dataset.detail=this.value' value='" +
             cardData[q][cardTitles[j]] +
-            "'></div>";
+            "'>";
         }
       }
       dataHtml +=

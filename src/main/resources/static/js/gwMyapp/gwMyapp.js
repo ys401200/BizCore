@@ -208,7 +208,7 @@ function showReportDetail() {
 
   let detailHtml =
     "<div class='mainBtnDiv'><button type='button' onclick='showList()'>목록보기</button>" +
-    "<button type='button' onclick='quitApp()'>결재 취소</button></div>" +
+    "<button  class='printBtn' onclick='openPrintTab();'>인쇄하기</button></div>" +
     "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
     // "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
 
@@ -376,7 +376,9 @@ function showReportDetail() {
 function showList() {
   location.href = "/gw/myapp";
 }
-
+function openPrintTab() {
+  window.open("/gw/print/"+storage.reportDetailData.docNo, "인쇄하기", "width :210mm");
+}
 // 첨부파일 다운로드
 function getFileArr() {
   let target = $(".selectedFileDiv");
