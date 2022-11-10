@@ -862,7 +862,7 @@ function drawEstmVerList(){
 	html += "<div>금액</div>";
 	html += "</div>";
 	
-	for(x = storage.estmVerList.length-1 ; x >= 0 ; x--){
+	for(x = 0 ; x < storage.estmVerList.length ; x++){
 		html += "<div class=\"versionListBody\" onclick=\"clickedEstmVer(this)\" data-idx=\"" + x + "\">";
 		html += "<div style=\"justify-content: center;\">" + storage.estmVerList[x].version + "</div>";
 		html += "<div style=\"justify-content: left;\">" + storage.estmVerList[x].title + "</div>";
@@ -1306,7 +1306,7 @@ function addEstTitle(e){
 function addEstItem(e){
 	let thisEle;
 	thisEle = $(e);
-	thisEle.parent().before("<div class=\"pdfMainContentItem\"><div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemSpec\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeyup=\"itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"oneEstItemAdd(this);\">+</button><button type=\"button\" onclick=\"oneEstItemRemove(this);\">-</button></div></div>");
+	thisEle.parent().before("<div class=\"pdfMainContentItem\"><div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemSpec\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeypress=\"itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"oneEstItemAdd(this);\">+</button><button type=\"button\" onclick=\"oneEstItemRemove(this);\">-</button></div></div>");
 	productNameSet();
 	ckeditor.config.readOnly = false;
 	window.setTimeout(setEditor, 100);
@@ -1450,25 +1450,33 @@ function detailItemSet(){
 
 	for(let i = 0; i < items.length; i++){
 		if(item.form === "서브타이틀"){
-			let pdfMainContentTitle = $(".mainPdf").eq(1).find(".pdfMainContentTitle");
+			let pdfMainContentTitle = $(".pdfMainContentTitle");
 			
 			if(pdfMainContentTitle.length == 0 || pdfMainContentTitle === undefined){
-				thisBtn = $(".mainPdf").eq(1).find(".pdfMainContentAddBtns button").eq(0);
+				thisBtn = $(".pdfMainContentAddBtns button").eq(0);
 				addEstTitle(thisBtn);
-				let subTitle = $(".mainPdf").eq(1).find(".subTitle");
+				let subTitle = $(".subTitle");
 				subTitle.eq(i).find("input").val(items[i].title);
+			}else{
+				let temp = $(".subTitle").find("input[value=\"" + items[i].title + "\"]");
+				console.log(temp);
+				if(temp.length == 0){
+					thisBtn = $(".pdfMainContentAddBtns button").eq(0);
+					addEstTitle(thisBtn);
+					let subTitle = $(".subTitle");
+					subTitle.eq(i).find("input").val(items[i].title);	
+				}
 			}
 		}
 		
-		thisBtn = $(".mainPdf").eq(1).find(".pdfMainContentAddBtns button").eq(1);
+		thisBtn = $(".pdfMainContentAddBtns button").eq(1);
 		addEstItem(thisBtn);
-		let pdfMainContentItem = $(".mainPdf").eq(1).find(".pdfMainContentItem").eq(i);
+		let pdfMainContentItem = $(".pdfMainContentItem").eq(i);
 		pdfMainContentItem.find(".itemDivision input").val(items[i].div);
 		pdfMainContentItem.find(".itemSpec").find("textarea").val(items[i].spec);
 		pdfMainContentItem.find(".itemQuantity").find("input").val(items[i].quantity);
-		pdfMainContentItem.find(".itemAmount").find("input").val(numberFormat(items[i].price));
+		pdfMainContentItem.find(".itemAmount").find("input").val(items[i].price);
 		pdfMainContentItem.find(".itemRemarks").find("input").val(items[i].remark);
-		itemCalKeyup(pdfMainContentItem.find(".itemAmount input"));
 	}
 }
 
@@ -1503,20 +1511,15 @@ function selectAddressInit(index){
 }
 
 function setTotalHtml(){
-	let pdfMainContentAmount, pdfMainContentTotal, pdfHeadInfoPrice, pdfMainContentItem, pdfMainContentTax, calAmount = 0;
-	if($(".mainPdf").length > 1){
-		pdfMainContentAmount = $(".mainPdf").eq(1).find(".pdfMainContentAmount div").eq(1);
-		pdfMainContentTotal = $(".mainPdf").eq(1).find(".pdfMainContentTotal div").eq(1);
-		pdfHeadInfoPrice = $(".mainPdf").eq(1).find(".pdfHeadInfoPrice div:eq(0) input");
-		pdfMainContentItem = $(".mainPdf").eq(1).find(".pdfMainContentItem .itemTotal");
-		pdfMainContentTax = $(".mainPdf").eq(1).find(".pdfMainContentTax div").eq(1);
-	}else{
-		pdfMainContentAmount = $(".pdfMainContentAmount div").eq(1);
-		pdfMainContentTotal = $(".pdfMainContentTotal div").eq(1);
-		pdfHeadInfoPrice = $(".pdfHeadInfoPrice div:eq(0) input");
-		pdfMainContentItem = $(".pdfMainContentItem .itemTotal");
-		pdfMainContentTax = $(".pdfMainContentTax div").eq(1);
-	}
+	let pdfMainContentAmount, pdfMainContentTotal, pdfHeadInfoPrice, pdfMainContentItem, calAmount = 0;
+	pdfMainContentAmount = $(".pdfMainContentAmount div").eq(1);
+	pdfMainContentTotal = $(".pdfMainContentTotal div").eq(1);
+	pdfHeadInfoPrice = $(".pdfHeadInfoPrice div:eq(0) input");
+	pdfMainContentItem = $(".pdfMainContentItem .itemTotal");
+	console.log(pdfMainContentAmount);
+	console.log(pdfMainContentTotal);
+	console.log(pdfHeadInfoPrice);
+	console.log(pdfMainContentItem);
 
 	for(let i = 0; i < pdfMainContentItem.length; i++){
 		let item = parseInt($(pdfMainContentItem[i]).html().replaceAll(",", ""));
@@ -1531,9 +1534,10 @@ function setTotalHtml(){
 	pdfMainContentAmount.html(calAmount.toLocaleString("en-US"));
 
 	if($("#vatTrue").is(":checked")){
-		
+		pdfMainContentTax = $(".pdfMainContentTax div").eq(1);
 		pdfMainContentTax.html(parseInt(pdfMainContentAmount.html().replaceAll(",", "") / 10).toLocaleString("en-US"));
 	}else{
+		pdfMainContentTax = $(".pdfMainContentTax div").eq(1);
 		pdfMainContentTax.html(0);
 	}
 
@@ -1563,14 +1567,8 @@ function setTitleTotal(){
 
 function insertCopyPdf(){
 	let mainPdf, pdfMainContentAddBtns;
-
-	if($(".mainPdf").length > 1){
-		mainPdf = $(".mainPdf").eq(1);
-	}else{
-		mainPdf = $(".mainPdf").eq(0);
-	}
-	
-	pdfMainContentAddBtns = mainPdf.find(".pdfMainContentAddBtns");
+	mainPdf = $(".mainPdf");
+	pdfMainContentAddBtns = $(".mainPdf .pdfMainContentAddBtns");
 	mainPdf.find(".selectAddress").remove();
 	pdfMainContentAddBtns.remove();
 

@@ -12,7 +12,7 @@ import kr.co.bizcore.v1.domain.TradeSummary;
 
 public interface TradeMapper {
 
-    @Select("SELECT CAST(no AS CHAR) AS no, CAST(UNIX_TIMESTAMP(dt)*1000 AS CHAR) AS dt, CAST(writer AS CHAR) AS writer, type, CAST(product AS CHAR) AS product, CAST(customer AS CHAR) AS customer, taxbill, title, CAST(qty AS CHAR) AS qty, CAST(price AS CHAR) AS price, CAST(vat AS CHAR) AS vat, remark, CAST(UNIX_TIMESTAMP(created)*1000 AS CHAR) AS created FROM bizcore.trade WHERE deleted IS NULL AND compId = #{compId} AND belongto = #{belongTo}")
+    @Select("SELECT CAST(no AS CHAR) AS no, CAST(UNIX_TIMESTAMP(dt)*1000 AS CHAR) AS dt, CAST(writer AS CHAR) AS writer, type, CAST(product AS CHAR) AS product, CAST(customer AS CHAR) AS customer, taxbill, title, CAST(qty AS CHAR) AS qty, CAST(price AS CHAR) AS price, CAST(vat AS CHAR) AS vat, remark, CAST(UNIX_TIMESTAMP(created)*1000 AS CHAR) AS created FROM bizcore.trade WHERE compId = #{compId} AND belongto = #{belongTo}")
     public List<HashMap<String, String>> getTradeByFunc(@Param("compId") String compId, @Param("belongTo") String func);
 
 
@@ -100,6 +100,6 @@ public interface TradeMapper {
             "WHERE attrib NOT LIKE 'XXX%' AND soppdatano = (SELECT soppno FROM swc_cont WHERE contno = #{contNo})")
     public List<TradeDetail> getTradeDetailForContractXXXXX(@Param("contNo") int no);
 
-    @Update("UPDATE bizcore.trade SET deleted = now() WHERE no = #{no}")
+    @Update("UPDATE swc_soppdata01 SET attrib='XXXXX' WHERE soppdatano=#{no}")
     public int removeTradeDetailXXXXX(@Param("no") String no);
 }

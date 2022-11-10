@@ -1480,21 +1480,22 @@ function createTabTradeList(result){
 	html += "<div class='tradeThirdTitleItem'>금액</div>";
 	html += "<div class='tradeThirdTitleItem'>비고</div>";
 	html += "<div class='tradeThirdTitleItem'>승인번호</div>";
+	html += "<div class='tradeThirdTitleItem'>수정</div>";
 	html += "<div class='tradeThirdTitleItem'>삭제</div>"; 
 	html += "</div>";
 	
 	html += "<div class='tradeThirdFormContent'>";
 
 	if(result.length > 0){
-		let disDate, setDate, no, customer, title, netPrice, qty, vat, price, total, remark, taxbill;
+		let disDate, setDate, customer, title, netPrice, qty, vat, price, total, remark, taxbill;
 
+		html += "<div class='tradeThirdFormContentDiv'>";
 		
 		for(let i = 0; i < result.length; i++){
 			if(result[i].type === "purchase"){
 				countIndex++;
 				disDate = dateDis(result[i].created);
 				setDate = dateFnc(disDate);
-				no = result[i].no;
 				customer = (result[i].customer == 0 || result[i].customer === null || result[i].customer === undefined) ? "" : storage.customer[result[i].customer].name;
 				title = (result[i].title === null || result[i].title == 0 || result[i].title === undefined) ? "" : result[i].title;
 				netPrice = (result[i].price == 0 || result[i].price === null || result[i].price === undefined) ? 0 : numberFormat(result[i].price / result[i].qty);
@@ -1504,8 +1505,7 @@ function createTabTradeList(result){
 				total = (result[i].price == 0 || result[i].price === null || result[i].price === undefined) ? 0 : numberFormat(result[i].price + result[i].vat);
 				remark = (result[i].remark === null || result[i].remark === "" || result[i].remark === undefined) ? "" : result[i].remark;
 				taxbill = (result[i].taxbill === null || result[i].taxbill === "" || result[i].taxbill === undefined) ? "" : result[i].taxbill;
-				
-				html += "<div class='tradeThirdFormContentDiv'>";
+
 				html += "<div class='tradeThirdContentItem'>" + setDate + "</div>";
 				html += "<div class='tradeThirdContentItem'>" + customer + "</div>";
 				html += "<div class='tradeThirdContentItem'>" + title + "</div>";
@@ -1513,22 +1513,28 @@ function createTabTradeList(result){
 				html += "<div class='tradeThirdContentItem'>" + qty + "</div>";
 				html += "<div class='tradeThirdContentItem'>" + vat + "</div>";
 				html += "<div class='tradeThirdContentItem'>" + price + "</div>";
-				html += "<div class='tradeThirdContentItem' data-type=\"purchase\">" + total + "</div>";
+				html += "<div class='tradeThirdContentItem'>" + total + "</div>";
 				html += "<div class='tradeThirdContentItem'>" + remark + "</div>";
 				html += "<div class='tradeThirdContentItem'>" + taxbill + "</div>";
-				html += "<div class='tradeThirdContentItem tradeItemRemoveBtn'><button type=\"button\" data-type=\"" + result[i].type + "\" data-no=\"" + no + "\" onclick=\"tradeItemRemove(this);\">삭제</button></div>";
-				html +="</div>";
+				html += "<div class='tradeThirdContentItem'>수정</div>";
+				html += "<div class='tradeThirdContentItem'>삭제</div>";
+
+				calSale += parseInt(result[i].price);
+				calSaleTotal += parseInt(result[i].price + result[i].vat);
 			}
 		}
 
-		html += "<div class='tradeThirdFormContentTotal'><span>매입합계</span><span></span></div>";
-		
+		html +="</div>";
+		html += "<div class='tradeThirdFormContentTotal'><span>매입합계</span><span>" + numberFormat(calSaleTotal) + "</span></div>";
+		html += "<div class='tradeThirdFormContentDiv'>";
+
+		calTotal = 0;
+
 		for(let i = 0; i < result.length; i++){
 			if(result[i].type === "sale"){
 				countIndex++;
 				disDate = dateDis(result[i].created);
 				setDate = dateFnc(disDate);
-				no = result[i].no;
 				customer = (result[i].customer == 0 || result[i].customer === null || result[i].customer === undefined) ? "" : storage.customer[result[i].customer].name;
 				title = (result[i].title === null || result[i].title == 0 || result[i].title === undefined) ? "" : result[i].title;
 				netPrice = (result[i].price == 0 || result[i].price === null || result[i].price === undefined) ? 0 : numberFormat(result[i].price / result[i].qty);
@@ -1538,8 +1544,7 @@ function createTabTradeList(result){
 				total = (result[i].price == 0 || result[i].price === null || result[i].price === undefined) ? 0 : numberFormat(result[i].price + result[i].vat);
 				remark = (result[i].remark === null || result[i].remark === "" || result[i].remark === undefined) ? "" : result[i].remark;
 				taxbill = (result[i].taxbill === null || result[i].taxbill === "" || result[i].taxbill === undefined) ? "" : result[i].taxbill;
-				
-				html += "<div class='tradeThirdFormContentDiv'>";
+
 				html += "<div class='tradeThirdContentItem'>" + setDate + "</div>";
 				html += "<div class='tradeThirdContentItem'>" + customer + "</div>";
 				html += "<div class='tradeThirdContentItem'>" + title + "</div>";
@@ -1547,30 +1552,49 @@ function createTabTradeList(result){
 				html += "<div class='tradeThirdContentItem'>" + qty + "</div>";
 				html += "<div class='tradeThirdContentItem'>" + vat + "</div>";
 				html += "<div class='tradeThirdContentItem'>" + price + "</div>";
-				html += "<div class='tradeThirdContentItem' data-type=\"sale\">" + total + "</div>";
+				html += "<div class='tradeThirdContentItem'>" + total + "</div>";
 				html += "<div class='tradeThirdContentItem'>" + remark + "</div>";
 				html += "<div class='tradeThirdContentItem'>" + taxbill + "</div>";
-				html += "<div class='tradeThirdContentItem tradeItemRemoveBtn'><button type=\"button\" data-type=\"" + result[i].type + "\" data-no=\"" + no + "\" onclick=\"tradeItemRemove(this);\">삭제</button></div>";
-				html += "</div>";
+				html += "<div class='tradeThirdContentItem'>수정</div>";
+				html += "<div class='tradeThirdContentItem'>삭제</div>";
+
+				calPur += parseInt(result[i].price);
+				calPurTotal += parseInt(result[i].price + result[i].vat);
 			}
 		}
 
-		html += "<div class='tradeThirdFormContentTotal'><span>매출합계</span><span></span></div>";
+		html += "</div>";
+		html += "<div class='tradeThirdFormContentTotal'><span>매출합계</span><span>" + numberFormat(calPurTotal) + "</span></div>";
 	}else{
 		html += "<div class='tradeThirdFormContentDiv'>";
 		html += "<div class='tradeThirdContentItem' style='grid-column: span 12; text-align:center;'>데이터가 없습니다.</div>";
 		html += "</div>";
 	}
 
+	let calMinus = calSale - calPur;
+	let calPercent = calMinus / calPur * 100;
+
+	if(isNaN(calPercent)){
+		calPercent = 0;
+	} else if (calPercent == '-Infinity'){
+		calPercent = 0;
+	} else if (calPercent == 'Infinity'){
+		calPercent = 0;
+	} else if(calPercent >= 0){
+		calPercent = "+" + calPercent.toString().substring(0, 4);
+	} else if(calPercent < 0){
+		calPercent = calPercent.toString().substring(0, 4);
+	}
+
 	html += "<div class=\"tradeTotalInfo\">";
 	html += "<div>매입합계</div>";
-	html += "<div style=\"justify-content: right;\"></div>";
+	html += "<div style=\"justify-content: right;\">" + numberFormat(calSale) + "</div>";
 	html += "<div>매출합계</div>";
-	html += "<div style=\"justify-content: right;\"></div>";
+	html += "<div style=\"justify-content: right;\">" + numberFormat(calPur) + "</div>";
 	html += "<div>이익합계</div>";
-	html += "<div style=\"justify-content: right;\"></div>";
+	html += "<div style=\"justify-content: right;\">" + numberFormat(calMinus * -1)  + "</div>";
 	html += "<div>이익률</div>";
-	html += "<div style=\"justify-content: right;\"></div>";
+	html += "<div style=\"justify-content: right;\">" + calPercent + "%</div>";
 	html += "</div>";
 
 	html += "</div>";
@@ -1582,8 +1606,6 @@ function createTabTradeList(result){
 	}else{
 		tabs.find("label[for=\"tabTrade\"]").text("매입매출내역(0)");
 	}
-
-	tradeTotalSet();
 
 	storage.tradeFormList = {
 		dt: 0,
@@ -1604,48 +1626,6 @@ function createTabTradeList(result){
 		let nowDate = new Date().toISOString().substring(0, 10);
 		document.getElementById("dt").value = nowDate;
 	}, 100);
-}
-
-function tradeTotalSet(){
-	let calSale = 0, calPur = 0, calSaleVat = 0, calPurVat = 0, saleTotal, purTotal, tradeTotalInfo, calMinus = 0, calPercent = 0;
-	purTotal = $(".tradeThirdFormContentDiv .tradeThirdContentItem[data-type=\"purchase\"]");
-	saleTotal = $(".tradeThirdFormContentDiv .tradeThirdContentItem[data-type=\"sale\"]");
-	tradeTotalInfo = $(".tradeTotalInfo div");
-
-	for(let i = 0; i < purTotal.length; i++){
-		calPur += parseInt($(purTotal[i]).html().replace(/,/g, ""));
-		calPurVat += parseInt($(purTotal[i]).prev().prev().html().replace(/,/g, ""));
-	}
-
-	for(let i = 0; i < saleTotal.length; i++){
-		calSale += parseInt($(saleTotal[i]).html().replace(/,/g, ""));
-		calSaleVat += parseInt($(saleTotal[i]).prev().prev().html().replace(/,/g, ""));
-	}
-
-	$(".tradeThirdFormContentTotal").eq(0).find("span").eq(1).text(numberFormat(calPur));
-	$(".tradeThirdFormContentTotal").eq(1).find("span").eq(1).text(numberFormat(calSale));
-
-	calPur = calPur - calPurVat;
-	calSale = calSale - calSaleVat;
-	calMinus = calPur - calSale;
-	calPercent = calMinus / calSale * 100;
-
-	if(isNaN(calPercent)){
-		calPercent = 0;
-	} else if (calPercent == '-Infinity'){
-		calPercent = 0;
-	} else if (calPercent == 'Infinity'){
-		calPercent = 0;
-	} else if(calPercent >= 0){
-		calPercent = "+" + calPercent.toString().substring(0, 4);
-	} else if(calPercent < 0){
-		calPercent = calPercent.toString().substring(0, 4);
-	}
-
-	tradeTotalInfo.eq(1).html(numberFormat(calPur));
-	tradeTotalInfo.eq(3).html(numberFormat(calSale));
-	tradeTotalInfo.eq(5).html(numberFormat(calMinus * -1));
-	tradeTotalInfo.eq(7).html(calPercent + "%");
 }
 
 function inputNetFormat(e, parentClass){
@@ -1742,82 +1722,19 @@ function tradeInsert(){
 			let tradeThirdFormContentTotal, tradeInputAdd;
 			tradeThirdFormContentTotal = $(".tradeThirdFormContentTotal");
 			tradeInputAdd = $(".tradeInputAdd");
-			
-			if(formArr.type === "sale"){
-				tradeThirdFormContentTotal.eq(1).before("<div class=\"tradeThirdFormContentDiv\"><div class=\"tradeThirdContentItem\">" + new Date(formArr.dt).toISOString().substring(0, 10) + "</div><div class=\"tradeThirdContentItem\">" + storage.customer[formArr.customer].name + "</div><div class=\"tradeThirdContentItem\">" + formArr.title + "</div><div class=\"tradeThirdContentItem\">" + parseInt(formArr.price).toLocaleString("en-US") + "</div><div class=\"tradeThirdContentItem\">" + formArr.qty + "</div><div class=\"tradeThirdContentItem\">" + parseInt(formArr.vat).toLocaleString("en-US") + "</div><div class=\"tradeThirdContentItem\">" + parseInt(formArr.price).toLocaleString("en-US") + "</div><div class=\"tradeThirdContentItem\" data-type=\"sale\">" + parseInt(formArr.price + formArr.vat).toLocaleString("en-US") + "</div><div class=\"tradeThirdContentItem\">" + formArr.remark + "</div><div class=\"tradeThirdContentItem\">" + formArr.taxbill + "</div><div class=\"tradeThirdContentItem tradeItemRemoveBtn\"><button type=\"button\" data-type=\"sale\" onclick=\"tradeItemRemove(this);\">삭제</button></div></div>");
-			}else{
-				tradeThirdFormContentTotal.eq(0).before("<div class=\"tradeThirdFormContentDiv\"><div class=\"tradeThirdContentItem\">" + new Date(formArr.dt).toISOString().substring(0, 10) + "</div><div class=\"tradeThirdContentItem\">" + storage.customer[formArr.customer].name + "</div><div class=\"tradeThirdContentItem\">" + formArr.title + "</div><div class=\"tradeThirdContentItem\">" + parseInt(formArr.price).toLocaleString("en-US") + "</div><div class=\"tradeThirdContentItem\">" + formArr.qty + "</div><div class=\"tradeThirdContentItem\">" + parseInt(formArr.vat).toLocaleString("en-US") + "</div><div class=\"tradeThirdContentItem\">" + parseInt(formArr.price).toLocaleString("en-US") + "</div><div class=\"tradeThirdContentItem\" data-type=\"purchase\">" + parseInt(formArr.price + formArr.vat).toLocaleString("en-US") + "</div><div class=\"tradeThirdContentItem\">" + formArr.remark + "</div><div class=\"tradeThirdContentItem\">" + formArr.taxbill + "</div><div class=\"tradeThirdContentItem tradeItemRemoveBtn\"><button type=\"button\" data-type=\"purchase\" onclick=\"tradeItemRemove(this);\">삭제</button></div></div>");
-			}
-			
-			msg.set("등록되었습니다.");
-			tradeTotalSet();
-			getSoppNo(storage.soppDetailNo);
-			$(".tabItem[for=\"tabTrade\"]").text("매입매출내역(" + $(".tradeThirdFormContent .tradeThirdFormContentDiv").length + ")");
 
-			setTimeout(() => {
-				let tradePurBtns = $(".tradeThirdFormContentDiv").find(".tradeItemRemoveBtn button[data-type=\"purchase\"]");
-				let tradeSaleBtns = $(".tradeThirdFormContentDiv").find(".tradeItemRemoveBtn button[data-type=\"sale\"]");
-				
-				for(let i = 0; i < storage.purchaseList.length; i++){
-					let item = tradePurBtns;
-					item.attr("data-no", storage.purchaseList[i]);
-				}
-	
-				for(let i = 0; i < storage.purchaseList.length; i++){
-					let item = tradeSaleBtns;
-					item.attr("data-no", storage.saleList[i]);
-				}
-			}, 300);
+			if(formArr.type === "sale"){
+				tradeThirdFormContentTotal.eq(1).before("<div class=\"tradeThirdFormContentDiv\"><div class=\"tradeThirdContentItem\">" + new Date(formArr.dt).toISOString().substring(0, 10) + "</div><div class=\"tradeThirdContentItem\">" + storage.customer[formArr.customer].name + "</div><div class=\"tradeThirdContentItem\">" + formArr.title + "</div><div class=\"tradeThirdContentItem\">" + parseInt(formArr.price).toLocaleString("en-US") + "</div><div class=\"tradeThirdContentItem\">" + formArr.qty + "</div><div class=\"tradeThirdContentItem\">" + parseInt(formArr.vat).toLocaleString("en-US") + "</div><div class=\"tradeThirdContentItem\">" + parseInt(formArr.price).toLocaleString("en-US") + "</div><div class=\"tradeThirdContentItem\">" + parseInt(formArr.price + formArr.vat).toLocaleString("en-US") + "</div><div class=\"tradeThirdContentItem\">" + formArr.remark + "</div><div class=\"tradeThirdContentItem\">" + formArr.taxbill + "</div><div class=\"tradeThirdContentItem\">수정</div><div class=\"tradeThirdContentItem\">삭제</div></div>");
+			}else{
+				tradeThirdFormContentTotal.eq(0).before("<div class=\"tradeThirdFormContentDiv\"><div class=\"tradeThirdContentItem\">" + new Date(formArr.dt).toISOString().substring(0, 10) + "</div><div class=\"tradeThirdContentItem\">" + storage.customer[formArr.customer].name + "</div><div class=\"tradeThirdContentItem\">" + formArr.title + "</div><div class=\"tradeThirdContentItem\">" + parseInt(formArr.price).toLocaleString("en-US") + "</div><div class=\"tradeThirdContentItem\">" + formArr.qty + "</div><div class=\"tradeThirdContentItem\">" + parseInt(formArr.vat).toLocaleString("en-US") + "</div><div class=\"tradeThirdContentItem\">" + parseInt(formArr.price).toLocaleString("en-US") + "</div><div class=\"tradeThirdContentItem\">" + parseInt(formArr.price + formArr.vat).toLocaleString("en-US") + "</div><div class=\"tradeThirdContentItem\">" + formArr.remark + "</div><div class=\"tradeThirdContentItem\">" + formArr.taxbill + "</div><div class=\"tradeThirdContentItem\">수정</div><div class=\"tradeThirdContentItem\">삭제</div></div>");
+			}
+
+			msg.set("등록되었습니다.");
 		},
 		error: () => {
 			msg.set("등록에 실패하였습니다.\n확인 후 다시 시도해주세요.");
 		}
 	});
-}
-
-function getSoppNo(no){
-	$.ajax({
-		url: "/api/sopp/" + no,
-		method: "get",
-		dataType: "json",
-		contentType: "text/plain",
-		success: (result) => {
-			result = cipher.decAes(result.data);
-			result = JSON.parse(result);
-			storage.purchaseList = [];
-			storage.saleList = [];
-			storage.tradeLength = result.trades.length;
-
-			for(let i = 0; i < result.trades.length; i++){
-				if(result.trades[i].type === "purchase"){
-					storage.purchaseList.push(result.trades[i].no);
-				}else{
-					storage.saleList.push(result.trades[i].no);
-				}
-			}
-		}
-	})
-}
-
-function tradeItemRemove(e){
-	if(confirm("삭제하시겠습니까??")){
-		let thisEle;
-		thisEle = $(e);
-	
-		$.ajax({
-			url: "/api/trade/" + thisEle.data("no"),
-			method: "delete",
-			dataType: "json",
-			contentType: "text/plain",
-			success: () => {
-				msg.set("삭제되었습니다.");
-				thisEle.parents(".tradeThirdFormContentDiv").remove();
-				tradeTotalSet();
-			}
-		});
-	}else{
-		return false;
-	}
 }
 
 function createTabFileList(){
