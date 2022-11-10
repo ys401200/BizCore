@@ -1,7 +1,4 @@
-// let soppNo = 10005548;
-// let soppNo = "10005635";
-// let soppNo = "10005514";
-// let soppNo = " 10005247";
+
 init();
 prepareForm();
 
@@ -48,7 +45,7 @@ function getSoppDetailData() {
         list = cipher.decAes(list);
         list = JSON.parse(list);
         storage.soppDetailData = list;
-        window.setTimeout(setEstData, 700);
+        window.setTimeout(setEstData, 1000);
 
       } else {
         console.log(data.msg);
@@ -165,18 +162,23 @@ function setEstData() {
   contType = (soppDetail.contType === null || soppDetail.contType === "") ? "" : soppDetail.contType;
   soppType = (soppDetail.soppType === null || soppDetail.soppType === "") ? "" : soppDetail.soppType;
   expectedSales = (soppDetail.expectedSales === null || soppDetail.expectedSales === "") ? "" : soppDetail.expectedSales.toLocaleString() + "원"
-
+  targetDate = (soppDetail.targetDate === undefined || soppDetail.targetDate === "" || soppDetail.targetDate == 0) ? "" : soppDetail.targetDate;
 
   $("#" + formId + "_writer").val(storage.user[writer].userName);
   $("#" + formId + "_created").val(getYmdSlash());
   $("#" + formId + "_sopp").val(sopp);
   $("#" + formId + "_infoCustomer").val(storage.customer[infoCustomer].name);
   $("#" + formId + "_title").val(title + " 수주판매 보고");
+
+  if (picOfCustomer != "") {
+    picOfCustomer = storage.cip[picOfCustomer].name;
+  }
   $("#" + formId + "_custmemberName").val(picOfCustomer);
   $("#" + formId + "_endCustName").val(endUser);
   $("#" + formId + "_soppStatus").val(status);
   $("#" + formId + "_soppRate").val(progress);
   $("#" + formId + "_cntrctMtn").val(contType);
+
 
   if (soppDetail.targetDate != null || soppDetail.targetDate != "" || soppDetail.targetDate != 0) {
     $("#" + formId + "_targetDate").val(getYmdHypen(soppDetail.targetDate));
@@ -203,9 +205,9 @@ function setEstData() {
       inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='" + items[i].title + "' value='" + items[i].title + "' onkeyup='this.dataset.detail=this.value' class='inputs inProduct doc_Form_SalesReport_product'></input>"
       inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='" + items[i].price.toLocaleString() + "' value='" + items[i].price.toLocaleString() + "'onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inputs inPrice doc_Form_SalesReport_price'></input>"
       inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='" + items[i].qty.toLocaleString() + "' value='" + items[i].qty.toLocaleString() + "' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inputs inQuantity doc_Form_SalesReport_quantity'></input>"
-      inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='" + (items[i].price*items[i].qty).toLocaleString() + "' value='" + (items[i].price*items[i].qty).toLocaleString() + "' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inputs doc_Form_SalesReport_amount'></input>"
+      inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='" + (items[i].price * items[i].qty).toLocaleString() + "' value='" + (items[i].price * items[i].qty).toLocaleString() + "' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inputs doc_Form_SalesReport_amount'></input>"
       inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='" + items[i].vat.toLocaleString() + "' value='" + items[i].vat.toLocaleString() + "' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inputs inTax doc_Form_SalesReport_tax'></input>"
-      inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'oninput='setNum(this)' data-detail='" + ((items[i].price*items[i].qty)+items[i].vat).toLocaleString() + "' value='" + ((items[i].price*items[i].qty)+items[i].vat).toLocaleString() + "' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inTotal inputs doc_Form_SalesReport_total'></input>"
+      inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'oninput='setNum(this)' data-detail='" + ((items[i].price * items[i].qty) + items[i].vat).toLocaleString() + "' value='" + ((items[i].price * items[i].qty) + items[i].vat).toLocaleString() + "' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inTotal inputs doc_Form_SalesReport_total'></input>"
       inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='' onkeyup='this.dataset.detail=this.value' class='inputs doc_Form_SalesReport_remark' data-detail='" + items[i].remark + "' value='" + items[i].remark + "'></input>"
       inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='' onkeyup='this.dataset.detail=this.value' class='inputs doc_Form_SalesReport_vatSerial' data-detail='" + items[i].taxbill + "' value='" + items[i].taxbill + "'></input></div>"
       inSumTarget.html(inHtml);
@@ -215,11 +217,11 @@ function setEstData() {
       outHtml += "<input type='date' onchange='this.dataset.detail=this.value;' data-detail='" + getYmdHypen(items[i].created) + "' value='" + getYmdHypen(items[i].created) + "'  style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs doc_Form_SalesReport_date'></input>"
       outHtml += "<input type='text' style='text-overflow:ellipsis;padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'  data-detail='" + storage.customer[items[i].customer].name + "' value='" + storage.customer[items[i].customer].name + "' onkeyup='this.dataset.detail=this.value'  class='outCus inputs doc_Form_SalesReport_customer'></input>"
       outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'  data-detail='" + items[i].title + "' value='" + items[i].title + "' onkeyup='this.dataset.detail=this.value'  data-detail='' value='" + items[i].product + "' class='inputs outProduct doc_Form_SalesReport_product'></input>"
-      outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'oninput='setNum(this)' data-detail='" + items[i].price.toLocaleString() + "' value='" + items[i].price.toLocaleString()+ "'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)'  class='inputs outPrice doc_Form_SalesReport_price'></input>"
-      outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='" + items[i].qty.toLocaleString()  + "' value='" + items[i].qty.toLocaleString()  + "'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inputs outQuantity doc_Form_SalesReport_quantity'></input>"
-      outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)'  data-detail='" +(items[i].price*items[i].qty).toLocaleString() + "' value='" + (items[i].price*items[i].qty).toLocaleString() + "'  class='inputs outAmount doc_Form_SalesReport_amount'></input>"
+      outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'oninput='setNum(this)' data-detail='" + items[i].price.toLocaleString() + "' value='" + items[i].price.toLocaleString() + "'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)'  class='inputs outPrice doc_Form_SalesReport_price'></input>"
+      outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='" + items[i].qty.toLocaleString() + "' value='" + items[i].qty.toLocaleString() + "'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inputs outQuantity doc_Form_SalesReport_quantity'></input>"
+      outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)'  data-detail='" + (items[i].price * items[i].qty).toLocaleString() + "' value='" + (items[i].price * items[i].qty).toLocaleString() + "'  class='inputs outAmount doc_Form_SalesReport_amount'></input>"
       outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' data-detail='" + items[i].vat.toLocaleString() + "' value='" + items[i].vat.toLocaleString() + "'  class='outTax inputs  doc_Form_SalesReport_tax'></input>"
-      outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' data-detail='" + ((items[i].price*items[i].qty)+items[i].vat).toLocaleString()+ "' value='" + ((items[i].price*items[i].qty)+items[i].vat).toLocaleString() + "' class='outTotal inputs doc_Form_SalesReport_total'></input>"
+      outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' data-detail='" + ((items[i].price * items[i].qty) + items[i].vat).toLocaleString() + "' value='" + ((items[i].price * items[i].qty) + items[i].vat).toLocaleString() + "' class='outTotal inputs doc_Form_SalesReport_total'></input>"
       outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='' onkeyup='this.dataset.detail=this.value' class='inputs doc_Form_SalesReport_remark'  data-detail='" + items[i].remark + "' value='" + items[i].remark + "'></input>"
       outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='' onkeyup='this.dataset.detail=this.value' class='inputs doc_Form_SalesReport_vatSerial' data-detail='" + items[i].taxbill + "' value='" + items[i].taxbill + "'></input></div>"
       outSumTarget.html(outHtml);
@@ -435,7 +437,7 @@ function reportInsert() {
   let related = {
     "next": "",
     "parent": "",
-    "previous": "sopp:" + storage.soppDetailData.no+ "",
+    "previous": "sopp:" + storage.soppDetailData.no + "",
     // "outSumAllTotal": $(".outSumAllTotal").val() * 1,
     // "profit": $("." + formId + "_profit").val() * 1,
     // "outItems": outItems,
@@ -446,7 +448,7 @@ function reportInsert() {
 
   let data = {
     title: title,
-    sopp: storage.soppDetailData.no+"",
+    sopp: storage.soppDetailData.no + "",
     dept: dept,
     customer: storage.soppDetailData.customer + "",
     attached: storage.attachedList === undefined ? [] : storage.attachedList,
@@ -701,6 +703,7 @@ function setSoppList(formId) {
   $("#" + formId + "_soppTargetAmt").val(storage.soppDetail.expectedSales.toLocaleString() + "원"); // 예상매출 
   $("#" + formId + "_title").val(storage.soppDetail.title + " 수주판매보고");
   $(".outCus").val(storage.customer[storage.soppDetail.customer].name);
+
 
 
 
