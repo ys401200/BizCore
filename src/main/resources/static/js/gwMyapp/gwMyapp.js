@@ -49,8 +49,12 @@ function drawNoticeApproval() {
     container = $(".listDiv");
 
     header = [
+      // {
+      //   title: "번호",
+      //   align: "center",
+      // },
       {
-        title: "번호",
+        title: "작성일",
         align: "center",
       },
       {
@@ -65,10 +69,7 @@ function drawNoticeApproval() {
         title: "작성자",
         align: "center",
       },
-      {
-        title: "작성일",
-        align: "center",
-      },
+     
       {
         title: "상태",
         align: "center",
@@ -88,8 +89,12 @@ function drawNoticeApproval() {
     container = $(".listDiv");
 
     header = [
+      // {
+      //   title: "번호",
+      //   align: "center",
+      // },
       {
-        title: "번호",
+        title: "작성일",
         align: "center",
       },
       {
@@ -104,10 +109,7 @@ function drawNoticeApproval() {
         title: "작성자",
         align: "center",
       },
-      {
-        title: "작성일",
-        align: "center",
-      },
+     
       {
         title: "상태",
         align: "center",
@@ -129,8 +131,12 @@ function drawNoticeApproval() {
       }
 
       str = [
+        // {
+        //   "setData": jsonData[i].docNo,
+        //   "align" : "center"
+        // },
         {
-          "setData": jsonData[i].docNo,
+          "setData": setDate,
           "align" : "center"
         },
         {
@@ -145,10 +151,7 @@ function drawNoticeApproval() {
           "setData": userName,
           "align" : "center"
         },
-        {
-          "setData": setDate,
-          "align" : "center"
-        },
+        
         {
           "setData": status,
           "align" : "center"

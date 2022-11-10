@@ -40,10 +40,10 @@ function drawMyRefer() {
     fnc;
 
   let header = [
-    {
-      title: "번호",
-      align: "center",
-    },
+    // {
+    //   title: "번호",
+    //   align: "center",
+    // },
     {
       title: "기안일",
       align: "center",
@@ -118,10 +118,10 @@ function drawMyRefer() {
       }
 
       str = [
-        {
-          "setData": jsonData[i].docNo,
-          "align": "center"
-        },
+        // {
+        //   "setData": jsonData[i].docNo,
+        //   "align": "center"
+        // },
         {
           "setData": setDate,
           "align": "center"

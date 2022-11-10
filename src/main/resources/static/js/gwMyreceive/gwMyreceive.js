@@ -39,10 +39,10 @@ function drawMyDraft() {
     str,
     fnc;
   header = [
-    {
-      title: "번호",
-      align: "center",
-    },
+    // {
+    //   title: "번호",
+    //   align: "center",
+    // },
     {
       title: "기안일",
       align: "center",
@@ -120,10 +120,10 @@ function drawMyDraft() {
 
       // let authority = storage.user[jsonData[i].authority].userName;
       str = [
-        {
-          "setData": jsonData[i].docNo,
-          "align": "center"
-        },
+        // {
+        //   "setData": jsonData[i].docNo,
+        //   "align": "center"
+        // },
         {
           "setData": setDate,
           "align": "center"

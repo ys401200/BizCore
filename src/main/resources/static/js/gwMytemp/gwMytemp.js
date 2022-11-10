@@ -79,7 +79,7 @@ function drawMyDraft() {
 
     header = [
       {
-        title: "번호",
+        title: "임시 저장 일자",
         align: "center",
       },
       {
@@ -91,9 +91,10 @@ function drawMyDraft() {
         align: "left",
       },
       {
-        title: "임시 저장 일자",
+        title: "작성자",
         align: "center",
       },
+      
     ];
     createGrid(container, header, data, ids, job, fnc);
 
@@ -115,8 +116,9 @@ function drawMyDraft() {
     container = $(".listDiv");
 
     header = [
+      
       {
-        title: "번호",
+        title: "임시 저장 일자",
         align: "center",
       },
       {
@@ -128,18 +130,21 @@ function drawMyDraft() {
         align: "left",
       },
       {
-        title: "임시 저장 일자",
+        title: "작성자",
         align: "center",
       },
+     
     ];
 
     for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
       disDate = dateDis(jsonData[i].created, jsonData[i].modified);
+    
       setDate = getYmdSlash(disDate);
-
+      let userName = storage.user[jsonData[i].writer].userName;
       str = [
+       
         {
-          "setData": jsonData[i].docNo,
+          "setData": setDate,
           "align" : "center"
         },
         {
@@ -151,9 +156,10 @@ function drawMyDraft() {
           "align": "left",
         },
         {
-          "setData": setDate,
+          "setData": userName,
           "align" : "center"
         },
+       
       ];
 
       fnc = "detailView(this)";

@@ -78,8 +78,12 @@ function drawApproval() {
     container = $(".listDiv");
 
     header = [
+      // {
+      //   title: "번호",
+      //   align: "center",
+      // },
       {
-        title: "번호",
+        title: "작성일",
         align: "center",
       },
       {
@@ -98,10 +102,7 @@ function drawApproval() {
         title: "작성자",
         align: "center",
       },
-      {
-        title: "작성일",
-        align: "center",
-      },
+      
     ];
     createGrid(container, header, data, ids, job, fnc);
 
@@ -119,8 +120,12 @@ function drawApproval() {
     container = $(".listDiv");
 
     header = [
+      // {
+      //   title: "번호",
+      //   align: "center",
+      // },
       {
-        title: "번호",
+        title: "작성일",
         align: "center",
       },
       {
@@ -139,10 +144,7 @@ function drawApproval() {
         title: "작성자",
         align: "center",
       },
-      {
-        title: "작성일",
-        align: "center",
-      },
+      
     ];
 
     for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
@@ -162,8 +164,12 @@ function drawApproval() {
         appType = "참조";
       }
       str = [
+        // {
+        //   "setData": jsonData[i].docNo,
+        //   "align" : "center"
+        // },
         {
-          "setData": jsonData[i].docNo,
+          "setData": setDate,
           "align" : "center"
         },
         {
@@ -182,10 +188,7 @@ function drawApproval() {
           "setData": userName,
           "align" : "center"
         },
-        {
-          "setData": setDate,
-          "align" : "center"
-        },
+      
       ];
       fnc = "detailView(this)";
       ids.push(jsonData[i].docNo);
