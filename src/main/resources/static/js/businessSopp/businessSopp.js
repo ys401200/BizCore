@@ -36,7 +36,7 @@ function drawSoppList() {
 
 	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 	
-	hideArr = ["detailBackBtn", "crudUpdateBtn", "crudDeleteBtn"];
+	hideArr = ["detailBackBtn", "crudUpdateBtn", "crudDeleteBtn", "contractReqBtn"];
 	showArr = ["gridList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "crudAddBtn", "listSearchInput"];
 	containerTitle = $("#containerTitle");
 	pageContainer = document.getElementsByClassName("pageContainer");
@@ -100,8 +100,8 @@ function drawSoppList() {
 			soppType = (jsonData[i].soppType === null || jsonData[i].soppType === "") ? "" : storage.code.etc[jsonData[i].soppType];
 			contType = (jsonData[i].contType === null || jsonData[i].contType === "") ? "" : storage.code.etc[jsonData[i].contType];
 			title = (jsonData[i].title === null || jsonData[i].title === "") ? "" : jsonData[i].title;
-			customer = (jsonData[i].customer === null || jsonData[i].customer == 0) ? "" : jsonData[i].customer;
-			endUser = (jsonData[i].endUser === null || jsonData[i].endUser == 0 || jsonData[i].endUser === undefined) ? "" : jsonData[i].endUser;
+			customer = (jsonData[i].customer === null || jsonData[i].customer == 0) ? "" : storage.customer[jsonData[i].customer].name;
+			endUser = (jsonData[i].endUser === null || jsonData[i].endUser == 0 || jsonData[i].endUser === undefined) ? "" : storage.customer[jsonData[i].endUser].name;
 			employee = (jsonData[i].employee === null || jsonData[i].employee == 0) ? "" : storage.user[jsonData[i].employee].userName;
 			expectedSales = (jsonData[i].expectedSales === null || jsonData[i].expectedSales == 0) ? 0 : numberFormat(jsonData[i].expectedSales);
 			status = (jsonData[i].status === null || jsonData[i].status === "") ? "" : storage.code.etc[jsonData[i].status];
@@ -195,7 +195,7 @@ function soppErrorList(){
 }
 
 function soppSuccessView(result){
-	let html, htmlSecond, title, userName, customer, picOfCustomer, endUser, status, progress, contType, disDate, expectedSales, detail, dataArray, gridList, containerTitle, detailBackBtn, datas, crudUpdateBtn, crudDeleteBtn, detailSecondTabs;
+	let html, htmlSecond, title, userName, customer, picOfCustomer, endUser, status, progress, contType, disDate, expectedSales, detail, dataArray, gridList, containerTitle, detailBackBtn, datas, crudUpdateBtn, crudDeleteBtn, detailSecondTabs, contractReqBtn;
 	storage.soppDetailNo = result.no;
 	detailSetFormList(result);
 	gridList = $(".gridList");
@@ -204,6 +204,7 @@ function soppSuccessView(result){
 	crudUpdateBtn = $(".crudUpdateBtn");
 	crudDeleteBtn = $(".crudDeleteBtn");
 	detailSecondTabs = $(".detailSecondTabs");
+	contractReqBtn = $(".contractReqBtn");
 	datas = ["employee", "customer", "picOfCustomer", "endUser"];
 	notIdArray = ["employee"];
 
@@ -372,6 +373,8 @@ function soppSuccessView(result){
 	htmlSecond += "<label class='tabItem' for='tabTrade'>매입매출내역</label>";
 	htmlSecond += "<input type='radio' id='tabFile' name='tabItem' data-content-id='tabFileList' data-id='" + result.no + "' onclick='tabItemClick(this)'>";
 	htmlSecond += "<label class='tabItem' for='tabFile'>파일첨부</label>";
+	htmlSecond += "<input type='radio' id='tabEst' name='tabItem' data-content-id='tabEstList' onclick='tabItemClick(this)'>";
+	htmlSecond += "<label class='tabItem' for='tabEst'>견적내역</label>";
 	htmlSecond += "<input type='radio' id='tabTech' name='tabItem' data-content-id='tabTechList' onclick='tabItemClick(this)'>";
 	htmlSecond += "<label class='tabItem' for='tabTech'>기술지원내역</label>";
 	htmlSecond += "<input type='radio' id='tabSales' name='tabItem' data-content-id='tabSalesList' onclick='tabItemClick(this)'>";
@@ -386,9 +389,12 @@ function soppSuccessView(result){
 		crudUpdateBtn.attr("onclick", "enableDisabled(this, \"soppUpdate();\", \"" + notIdArray + "\");");
 		crudUpdateBtn.css("display", "flex");
 		crudDeleteBtn.css("display", "flex");
+		contractReqBtn.css("display", "flex");
+		contractReqBtn.attr("data-href", "/gw/estimate/" + result.no);
 	}else{
 		crudUpdateBtn.css("display", "none");
 		crudDeleteBtn.css("display", "none");
+		contractReqBtn.css("display", "none");
 	}
 	
 	detailBackBtn.css("display", "flex");

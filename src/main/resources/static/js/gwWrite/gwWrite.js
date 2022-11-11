@@ -372,8 +372,6 @@ function setProductData() {
   targetHtml += productListhtml;
   $("." + formId + "_product")[0].innerHTML = targetHtml;
   $("." + formId + "_product").attr("list", "_product");
-
-
 }
 
 

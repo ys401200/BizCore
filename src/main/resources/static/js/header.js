@@ -1458,9 +1458,10 @@ function tabItemClick(e){
 
 //매입매출내역 리스트
 function createTabTradeList(result){
-	let html = "", countIndex = 0, calSale = 0, calPur = 0, calSaleTotal = 0, calPurTotal = 0;
+	let html = "", countIndex = 0;
 
-	html = "<div class=\"tradeInput\">";
+	html = "<div class='tradeList' id='tabTradeList'>";
+	html += "<div class=\"tradeInput\">";
 	html += "<div class=\"tradeInputAdd\">";
 	html += "<div>구분</div><div>거래일자</div><div>고객사</div><div>항목</div><div style=\"grid-column: span 2;\">적요</div><div>추가</div>";
 	html += "<div><select id=\"type\"><option value=\"purchase\">매입</option><option value=\"sale\">매출</option></select></div><div><input type=\"date\" id=\"dt\"></div><div><input type=\"text\" autocomplete=\"off\" id=\"customer\" data-complete=\"customer\" onclick=\"addAutoComplete(this);\" onkeyup=\"addAutoComplete(this);\"></div><div><input type=\"text\" autocomplete=\"off\" id=\"title\" data-complete=\"product\" onclick=\"addAutoComplete(this);\" onkeyup=\"addAutoComplete(this);\"></div><div style=\"grid-column: span 2;\"><input type=\"text\" id=\"remark\"></div><div style=\"grid-row: span 3;\"><button type=\"button\" onclick=\"tradeInsert();\">추가</button></div>";
@@ -1468,7 +1469,6 @@ function createTabTradeList(result){
 	html += "<div data-format=\"netPrice\"><input type=\"text\" class=\"netPrice\" onkeyup=\"inputNetFormat(this, 'tradeInputAdd');\" value=\"0\"></div><div data-format=\"quantity\"><input type=\"text\" id=\"qty\" onkeyup=\"inputQuanFormat(this, 'tradeInputAdd');\" value=\"1\"></div><div data-format=\"amount\"><input type=\"text\" id=\"price\" onkeyup=\"inputVatFormat(this);\" value=\"0\" readonly></div><div data-format=\"vat\"><input type=\"text\" id=\"vat\" onkeyup=\"inputVatFormat(this, 'tradeInputAdd');\" value=\"0\"></div><div data-format=\"total\"><input type=\"text\" class=\"total\" onkeyup=\"inputTotalFormat(this, 'tradeInputAdd');\" value=\"0\"></div><div><input type=\"text\" id=\"taxbill\"></div>";
 	html += "</div>";
 	html += "</div>";
-	html += "<div class='tradeList' id='tabTradeList'>";
 	html += "<div class='tradeThirdFormTitle'>";
 	html += "<div class='tradeThirdTitleItem'>구분(등록/수정일)</div>";
 	html += "<div class='tradeThirdTitleItem'>거래처(매입/매출처)</div>";
@@ -2122,90 +2122,89 @@ function tabFileItemListUpdate(){
 }
 
 //견적내역 리스트
-function createTabEstList(){
-	let html = "", container, header = [], data = [], str, detailSecondTabs;
-
+function createTabEstList(result){
+	let html = "", lengthIndex, tabs, container, header, data = [], str, detailSecondTabs, ids, job, fnc, disDate, idName;
 	detailSecondTabs = $(".detailSecondTabs");
+	html = "<div class='tabEstList' id='tabEstList'></div>";
+	lengthIndex = 0;
+	idName = "tabEstList";
 
-	html = "<div class='tabEstList' id='tabEstList'>";
-	html += "</div>";
-	
-	header = [
-		{
-			"title" : "견적일자",
-			"align" : "center",
-		},
-		{
-			"title" : "작성자",
-			"align" : "center",
-		},
-		{
-			"title" : "견적번호",
-			"align" : "center",
-		},
-		{
-			"title" : "견적명",
-			"align" : "center",
-		},
-		{
-			"title" : "거래처",
-			"align" : "center",
-		},
-		{
-			"title" : "공급가합계",
-			"align" : "center",
-		},
-		{
-			"title" : "부가세합계",
-			"align" : "center",
-		},
-		{
-			"title" : "금액",
-			"align" : "center",
-		},
-		{
-			"title" : "적요",
-			"align" : "center",
-		},
-	]
+	// header = [
+	// 	{
+	// 		"title" : "버전",
+	// 		"align" : "center",
+	// 	},
+	// 	{
+	// 		"title" : "견적명",
+	// 		"align" : "center",
+	// 	},
+	// 	{
+	// 		"title" : "담당자",
+	// 		"align" : "center",
+	// 	},
+	// 	{
+	// 		"title" : "견적일자",
+	// 		"align" : "center",
+	// 	},
+	// 	{
+	// 		"title" : "금액",
+	// 		"align" : "center",
+	// 	},
+	// ];
 	
 	detailSecondTabs.append(html);
 	container = detailSecondTabs.find(".tabEstList");
+	tabs = $(".tabs");
 
-	str = [
-		{
-			"setData": "test1",
-		},
-		{
-			"setData": "test2",
-		},
-		{
-			"setData": "test3",
-		},
-		{
-			"setData": "test4",
-		},
-		{
-			"setData": "test5",
-		},
-		{
-			"setData": "test6",
-		},
-		{
-			"setData": "test7",
-		},
-		{
-			"setData": "test8",
-		},
-		{
-			"setData": "test9",
-		}
-	];
+	// if(result.length > 0){
+	// 	for(let i = 0; i < result.length; i++){
+	// 		disDate = dateDis(result[i].date);
+	// 		disDate = dateFnc(disDate);
 
-	data.push(str);
+	// 		str = [
+	// 			{
+	// 				"setData": result[i].version,
+	// 				"align" : "center",
+	// 			},
+	// 			{
+	// 				"setData": result[i].title,
+	// 				"align" : "center",
+	// 			},
+	// 			{
+	// 				"setData": storage.user[result[i].userName].userName,
+	// 				"align" : "center",
+	// 			},
+	// 			{
+	// 				"setData": disDate,
+	// 				"align" : "center",
+	// 			},
+	// 			{
+	// 				"setData": numberFormat(result[i].total),
+	// 				"align" : "left",
+	// 			},
+	// 		];
+
+	// 		data.push(str);
+	// 		lengthIndex++;
+	// 	}
+	// }else{
+	// 	str = [
+	// 		{
+	// 			"setData": undefined,
+	// 			"col": 5,
+	// 		},
+	// 	];
+	// }
+
+	// if(lengthIndex > 0){
+	// 	tabs.find("label[for=\"tabEst\"]").text("견적내역(" + lengthIndex + ")");
+	// }else{
+	// 	tabs.find("label[for=\"tabEst\"]").text("견적내역(0)");
+	// }
 
 	setTimeout(() => {
-		createGrid(container, header, data);
+		// createGrid(container, header, data, ids, job, fnc, idName);
+		container.prepend("<div class=\"soppEstAddBtn\"><button type=\"button\">등록</button></div>");
 	}, 100);
 }
 
@@ -3639,18 +3638,16 @@ function setTabsLayOutMenu(){
 }
 
 function popup(e){
-	var nWidth = "800";
-	var nHeight = "800";
-
-	var curX = window.screenLeft;
-	var curY = window.screenTop;
-	var curWidth = document.body.clientWidth;
-	var curHeight = document.body.clientHeight;
-
-	var nLeft = curX + (curWidth / 2) - (nWidth / 2);
-	var nTop = curY + (curHeight / 2) - (nHeight / 2);
-
-	var strOption = "";
+	let winObj;
+	let nWidth = "1250";
+	let nHeight = "800";
+	let curX = window.screenLeft;
+	let curY = window.screenTop;
+	let curWidth = document.body.clientWidth;
+	let curHeight = document.body.clientHeight;
+	let nLeft = curX + (curWidth / 2) - (nWidth / 2);
+	let nTop = curY + (curHeight / 2) - (nHeight / 2);
+	let strOption = "";
 	strOption += "left=" + nLeft + "px,";
 	strOption += "top=" + nTop + "px,";
 	strOption += "width=" + nWidth + "px,";
@@ -3658,7 +3655,11 @@ function popup(e){
 	strOption += "toolbar=no,menubar=no,location=no,";
 	strOption += "resizable=yes,status=yes";
 
-	var winObj = window.open($(e).attr("href"), '', strOption);
+	if($(e).attr("href") === undefined){
+		winObj = window.open($(e).data("href"), '', strOption);
+	}else{
+		winObj = window.open($(e).attr("href"), '', strOption);
+	}
 
 	if (winObj == null) {
 		alert("팝업 차단을 해제해주세요.");

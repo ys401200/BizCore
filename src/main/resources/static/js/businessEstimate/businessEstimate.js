@@ -153,7 +153,7 @@ function clickedAdd(){
 	bodyTitle = $(".bodyTitle");
 	bodyTitleFnc = $(".bodyTitleFnc div");
 	bodyTitle.text("견적추가");
-	bodyTitleFnc.eq(0).text("저장");
+	bodyTitleFnc.eq(0).text("새견적추가");
 	bodyTitleFnc.eq(0).attr("onclick", "estimateInsert();");
 	bodyTitleFnc.eq(0).show();
 	bodyTitleFnc.eq(1).show();
@@ -177,7 +177,8 @@ function clickedUpdate(){
 	bodyTitle = $(".bodyTitle");
 	bodyTitleFnc = $(".bodyTitleFnc div");
 	bodyTitle.text("견적수정");
-	bodyTitleFnc.eq(0).text("저장");
+	bodyTitleFnc.eq(0).before("<div onclick=\"estimateInsert();\">새견적추가</div>");
+	bodyTitleFnc.eq(0).text("견적수정");
 	bodyTitleFnc.eq(0).attr("onclick", "estimateUpdate();");
 	bodyTitleFnc.eq(0).show();
 	bodyTitleFnc.eq(1).show();
@@ -1613,7 +1614,7 @@ function insertCopyPdf(){
 	mainPdf.find(".headInfoCustomer").children(".afterDiv").eq(0).after("&nbsp;/&nbsp;");
 	mainPdf.find(".headInfoPhone").children(".afterDiv").eq(0).after("&nbsp;/&nbsp;");
 
-	let pdfMainContainer = $(".mainPdf .pdfMainContainer").children("div");
+	let pdfMainContainer = mainPdf.find(".pdfMainContainer").children("div");
 	for(let i = 0; i < pdfMainContainer.length; i++){
 		let item = $(pdfMainContainer[i]);
 		if(item.attr("class") === "pdfMainContentHeader" || item.attr("class") === "pdfMainContentTitle" || item.attr("class") === "pdfMainContentItem"){
