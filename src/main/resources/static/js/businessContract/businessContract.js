@@ -355,6 +355,14 @@ function contractSuccessView(result) {
 			"value": employee,
 		},
 		{
+			"title": "(부)담당자",
+			"elementId": "employee2",
+			"value": employee2,
+			"complete": "user",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
+		},
+		{
 			"title": "판매방식(*)",
 			"selectValue": [
 				{
@@ -410,41 +418,6 @@ function contractSuccessView(result) {
 			"onClick": "addAutoComplete(this);",
 		},
 		{
-			"title": "발주일자",
-			"elementId": "saleDate",
-			"value": saleDate,
-			"type": "date",
-		},
-		{
-			"title": "검수일자",
-			"elementId": "delivered",
-			"value": delivered,
-			"type": "date",
-		},
-		{
-			"title": "(부)담당자",
-			"elementId": "employee2",
-			"value": employee2,
-			"complete": "user",
-			"keyup": "addAutoComplete(this);",
-			"onClick": "addAutoComplete(this);",
-		},
-		{
-			"title": "VAT 포함여부",
-			"selectValue": [
-				{
-					"key": true,
-					"value": "포함",
-				},
-				{
-					"key": false,
-					"value": "미포함",
-				},
-			],
-			"type": "select",
-			"elementId": "taxInclude",
-		},
-		{
 			"title": "무상 시작일",
 			"elementId": "startOfFreeMaintenance",
 			"value": startOfFreeMaintenance,
@@ -467,6 +440,33 @@ function contractSuccessView(result) {
 			"elementId": "endOfPaidMaintenance",
 			"value": endOfPaidMaintenance,
 			"type": "date",
+		},
+		{
+			"title": "발주일자",
+			"elementId": "saleDate",
+			"value": saleDate,
+			"type": "date",
+		},
+		{
+			"title": "검수일자",
+			"elementId": "delivered",
+			"value": delivered,
+			"type": "date",
+		},
+		{
+			"title": "VAT 포함여부",
+			"selectValue": [
+				{
+					"key": true,
+					"value": "포함",
+				},
+				{
+					"key": false,
+					"value": "미포함",
+				},
+			],
+			"type": "select",
+			"elementId": "taxInclude",
 		},
 		{
 			"title": "계약금액",
@@ -610,6 +610,14 @@ function contractInsertForm() {
 			"elementId": "employee",
 		},
 		{
+			"title": "(부)담당자",
+			"elementId": "employee2",
+			"disabled": false,
+			"complete": "user",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
+		},
+		{
 			"title": "판매방식(*)",
 			"selectValue": [
 				{
@@ -666,26 +674,6 @@ function contractInsertForm() {
 			"onClick": "addAutoComplete(this);",
 		},
 		{
-			"title": "발주일자",
-			"elementId": "saleDate",
-			"disabled": false,
-			"type": "date",
-		},
-		{
-			"title": "검수일자",
-			"elementId": "delivered",
-			"disabled": false,
-			"type": "date",
-		},
-		{
-			"title": "(부)담당자",
-			"elementId": "employee2",
-			"disabled": false,
-			"complete": "user",
-			"keyup": "addAutoComplete(this);",
-			"onClick": "addAutoComplete(this);",
-		},
-		{
 			"title": "무상 시작일",
 			"elementId": "startOfFreeMaintenance",
 			"disabled": false,
@@ -706,6 +694,18 @@ function contractInsertForm() {
 		{
 			"title": "유상 종료일",
 			"elementId": "endOfPaidMaintenance",
+			"disabled": false,
+			"type": "date",
+		},
+		{
+			"title": "발주일자",
+			"elementId": "saleDate",
+			"disabled": false,
+			"type": "date",
+		},
+		{
+			"title": "검수일자",
+			"elementId": "delivered",
 			"disabled": false,
 			"type": "date",
 		},

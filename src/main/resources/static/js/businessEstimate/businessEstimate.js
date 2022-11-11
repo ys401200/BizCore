@@ -159,6 +159,8 @@ function clickedAdd(){
 	bodyTitleFnc.eq(1).show();
 	listContent.hide();
 	addPdfForm.show();
+	ckeditor.config.readOnly = false;
+	window.setTimeout(setEditor, 100);
 	estimateFormInit();
 }
 
@@ -171,7 +173,7 @@ function previewReset(){
 }
 
 function clickedUpdate(){
-	let listContent, addPdfForm, addBtn, bodyTitle, bodyTitleFnc;
+	let listContent, addPdfForm, bodyTitle, bodyTitleFnc;
 	listContent = $(".listContent");
 	addPdfForm = $(".addPdfForm");
 	bodyTitle = $(".bodyTitle");
@@ -184,10 +186,10 @@ function clickedUpdate(){
 	bodyTitleFnc.eq(1).show();
 	listContent.hide();
 	addPdfForm.show();
-	$("input").val("");
-	$(".pdfMainContentTitle").remove();
-	$(".pdfMainContentItem").remove();
 	storage.estmDetail = storage.estmVerList[storage.detailIdx];
+	$(".mainPdf").eq(1).find("input").val("");
+	$(".mainPdf").eq(1).find(".pdfMainContentTitle").remove();
+	$(".mainPdf").eq(1).find(".pdfMainContentItem").remove();
 	estimateFormInit();
 }
 
@@ -206,9 +208,9 @@ function closeAdd(el){
 	listContent.show();
 	addPdfForm.hide();
 	storage.estmDetail = undefined;
-	$("input").val("");
-	$(".pdfMainContentTitle").remove();
-	$(".pdfMainContentItem").remove();
+	$(".mainPdf").eq(1).find("input").val("");
+	$(".mainPdf").eq(1).find(".pdfMainContentTitle").remove();
+	$(".mainPdf").eq(1).find(".pdfMainContentItem").remove();
 } // End of closeAdd()
 
 // 서버에서 견적 양식을 가져오는 함수
@@ -1349,9 +1351,15 @@ function oneEstItemRemove(e){
 }
 
 function addItemIndex(){
-	let mainDiv;
+	let mainDiv, mainPdf;
 	let index = 0;
-	mainDiv = $(".pdfMainContainer").children("div");
+	mainPdf = $(".mainPdf");
+
+	if(mainPdf.length > 1){
+		mainDiv = mainPdf.eq(1).find(".pdfMainContainer").children("div");
+	}else{
+		mainDiv = mainPdf.eq(0).find(".pdfMainContainer").children("div");
+	}
 	
 	for(let i = 0; i < mainDiv.length; i++){
 		if($(mainDiv[i]).attr("class") === "pdfMainContentItem"){
@@ -1366,9 +1374,16 @@ function addItemIndex(){
 }
 
 function productNameSet(){
-	let pdfMainContentItem, itemProductName;
-	pdfMainContentItem = $(".pdfMainContentItem");
-	itemProductName = $(".itemSpec textarea");
+	let pdfMainContentItem, itemProductName, mainPdf;
+	mainPdf = $(".mainPdf");
+
+	if(mainPdf.length > 1){
+		pdfMainContentItem = mainPdf.eq(1).find(".pdfMainContentItem");
+		itemProductName = mainPdf.eq(1).find(".itemSpec textarea");
+	}else{
+		pdfMainContentItem = mainPdf.eq(0).find(".pdfMainContentItem");
+		itemProductName = mainPdf.eq(0).find(".itemSpec textarea");
+	}
 
 	for(let i = 1; i <= pdfMainContentItem.length; i++){
 		$(itemProductName[i-1]).attr("id", "itemProductName_" + i);
@@ -1611,8 +1626,8 @@ function insertCopyPdf(){
 		}
 	}
 	
-	mainPdf.find(".headInfoCustomer").children(".afterDiv").eq(0).after("&nbsp;/&nbsp;");
-	mainPdf.find(".headInfoPhone").children(".afterDiv").eq(0).after("&nbsp;/&nbsp;");
+	mainPdf.find(".headInfoCustomer").children(".afterDiv").eq(0).after("<span style=\"font-size: 11px; display: flex; align-items: center; padding-left: 3px; padding-right: 3px;\">/</span>");
+	mainPdf.find(".headInfoPhone").children(".afterDiv").eq(0).after("<span style=\"font-size: 11px; display: flex; align-items: center; padding-left: 3px; padding-right: 3px;\">/</span>");
 
 	let pdfMainContainer = mainPdf.find(".pdfMainContainer").children("div");
 	for(let i = 0; i < pdfMainContainer.length; i++){

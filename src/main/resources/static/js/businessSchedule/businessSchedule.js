@@ -992,11 +992,6 @@ function scheduleRadioInsert(value, date){
 				"disabled": false,
 			},
 			{
-				"title": "장소",
-				"elementId": "place",
-				"disabled": false,
-			},
-			{
 				"title": "담당자(*)",
 				"complete": "user",
 				"keyup": "addAutoComplete(this);",
@@ -1019,19 +1014,15 @@ function scheduleRadioInsert(value, date){
 				"type": "datetime",
 			},
 			{
-				"title": "",
-			},
-			{
-				"title": "",
-			},
-			{
-				"title": "",
+				"title": "장소",
+				"elementId": "place",
+				"disabled": false,
 			},
 			{
 				"title": "기술지원명(*)",
 				"elementId": "title",
 				"disabled": false,
-				"col": 4,
+				"col": 3,
 			},
 			{
 				"title": "내용",
@@ -1132,16 +1123,10 @@ function scheduleRadioInsert(value, date){
 				"onClick": "addAutoComplete(this);",
 			},
 			{
-				"title": "",
-			},
-			{
-				"title": "",
-			},
-			{
 				"title": "제목(*)",
 				"elementId": "title",
 				"disabled": false,
-				"col": 4,
+				"col": 2,
 			},
 			{
 				"title": "내용",
@@ -1506,7 +1491,7 @@ function scheduleRadioUpdate(value, result){
 		content = (result.content === null || result.content === "" || result.content === undefined) ? "" : result.content;
 		supportModel = (result.supportModel === null || result.supportModel === "" || result.supportModel === undefined) ? "" : result.supportModel;
 		supportVersion = (result.supportVersion === null || result.supportVersion === "" || result.supportVersion === undefined) ? "" : result.supportVersion;
-		cipOfCustomer = (result.cipOfCustomer === null || result.cipOfCustomer === "" || result.cipOfCustomer === undefined) ? "" : result.cipOfCustomer;
+		cipOfCustomer = (result.cipOfCustomer === null || result.cipOfCustomer === 0 || result.cipOfCustomer === undefined) ? "" : storage.cip[result.cipOfCustomer].name;
 		contractMethod = (result.contractMethod === null || result.contractMethod === "" || result.contractMethod === undefined) ? "" : storage.code.etc[result.contractMethod];
 		supportStep = (result.supportStep === "" || result.supportStep === null || result.supportStep === undefined) ? "" : storage.code.etc[result.supportStep];
 		type = (result.type === "" || result.type === null || result.type === undefined) ? "" : storage.code.etc[result.type]; 
@@ -1518,13 +1503,6 @@ function scheduleRadioUpdate(value, result){
 			}
 		}
 
-		if(cipOfCustomer !== ""){
-			for(let key in storage.cip){
-				if(storage.cip[key].no === cipOfCustomer){
-					cipOfCustomer = storage.cip[key].name;
-				}
-			}
-		}
 
 		dataArray = [
 			{
@@ -1660,11 +1638,6 @@ function scheduleRadioUpdate(value, result){
 				"elementId": "type",
 			},
 			{
-				"title": "장소",
-				"elementId": "place",
-				"value": place,
-			},
-			{
 				"title": "담당자(*)",
 				"complete": "user",
 				"keyup": "addAutoComplete(this);",
@@ -1685,19 +1658,15 @@ function scheduleRadioUpdate(value, result){
 				"value": to,
 			},
 			{
-				"title": "",
-			},
-			{
-				"title": "",
-			},
-			{
-				"title": "",
+				"title": "장소",
+				"elementId": "place",
+				"value": place,
 			},
 			{
 				"title": "기술지원명(*)",
 				"elementId": "title",
 				"value": title,
-				"col": 4,
+				"col": 3,
 			},
 			{
 				"title": "내용",
@@ -1797,16 +1766,10 @@ function scheduleRadioUpdate(value, result){
 				"value": customer,
 			},
 			{
-				"title": "",
-			},
-			{
-				"title": "",
-			},
-			{
 				"title": "제목(*)",
 				"elementId": "title",
 				"value": title,
-				"col": 4,
+				"col": 2,
 			},
 			{
 				"title": "내용",

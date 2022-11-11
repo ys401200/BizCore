@@ -274,6 +274,7 @@ function techSuccessView(result){
 				},
 			],
 			"type": "radio",
+			"col": 4,
 			"elementName": "contractMethod",
 		},
 		{
@@ -369,11 +370,6 @@ function techSuccessView(result){
 			"elementId": "type",
 		},
 		{
-			"title": "장소",
-			"elementId": "place",
-			"value": place,
-		},
-		{
 			"title": "담당자(*)",
 			"complete": "user",
 			"keyup": "addAutoComplete(this);",
@@ -394,16 +390,15 @@ function techSuccessView(result){
 			"value": to,
 		},
 		{
-			"title": "",
-		},
-		{
-			"title": "",
+			"title": "장소",
+			"elementId": "place",
+			"value": place,
 		},
 		{
 			"title": "기술지원명(*)",
 			"elementId": "title",
 			"value": title,
-			"col": 4,
+			"col": 3,
 		},
 		{
 			"title": "내용",
@@ -613,11 +608,6 @@ function techInsertForm(){
 			"disabled": false,
 		},
 		{
-			"title": "장소",
-			"elementId": "place",
-			"disabled": false,
-		},
-		{
 			"title": "담당자(*)",
 			"complete": "user",
 			"keyup": "addAutoComplete(this);",
@@ -640,19 +630,15 @@ function techInsertForm(){
 			"type": "datetime",
 		},
 		{
-			"title": "",
-		},
-		{
-			"title": "",
-		},
-		{
-			"title": "",
+			"title": "장소",
+			"elementId": "place",
+			"disabled": false,
 		},
 		{
 			"title": "기술지원명(*)",
 			"elementId": "title",
 			"disabled": false,
-			"col": 4,
+			"col": 3,
 		},
 		{
 			"title": "내용",
