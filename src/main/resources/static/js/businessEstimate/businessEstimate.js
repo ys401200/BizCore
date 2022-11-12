@@ -156,7 +156,8 @@ function clickedAdd(){
 	bodyTitleFnc.eq(0).text("새견적추가");
 	bodyTitleFnc.eq(0).attr("onclick", "estimateInsert();");
 	bodyTitleFnc.eq(0).show();
-	bodyTitleFnc.eq(1).show();
+	bodyTitleFnc.eq(1).hide();
+	bodyTitleFnc.eq(2).show();
 	listContent.hide();
 	addPdfForm.show();
 	ckeditor.config.readOnly = false;
@@ -179,17 +180,16 @@ function clickedUpdate(){
 	bodyTitle = $(".bodyTitle");
 	bodyTitleFnc = $(".bodyTitleFnc div");
 	bodyTitle.text("견적수정");
-	bodyTitleFnc.eq(0).before("<div onclick=\"estimateInsert();\">새견적추가</div>");
-	bodyTitleFnc.eq(0).text("견적수정");
-	bodyTitleFnc.eq(0).attr("onclick", "estimateUpdate();");
+	bodyTitleFnc.eq(0).text("새견적추가");
+	bodyTitleFnc.eq(0).attr("onclick", "estimateInsert();");
+	bodyTitleFnc.eq(1).text("견적수정");
+	bodyTitleFnc.eq(1).attr("onclick", "estimateUpdate();");
 	bodyTitleFnc.eq(0).show();
 	bodyTitleFnc.eq(1).show();
+	bodyTitleFnc.eq(2).show();
 	listContent.hide();
 	addPdfForm.show();
 	storage.estmDetail = storage.estmVerList[storage.detailIdx];
-	$(".mainPdf").eq(1).find("input").val("");
-	$(".mainPdf").eq(1).find(".pdfMainContentTitle").remove();
-	$(".mainPdf").eq(1).find(".pdfMainContentItem").remove();
 	estimateFormInit();
 }
 
@@ -208,6 +208,11 @@ function closeAdd(el){
 	listContent.show();
 	addPdfForm.hide();
 	storage.estmDetail = undefined;
+
+	if(storage.thisEle !== undefined){
+		clickedEstmVer(storage.thisEle);
+	}
+
 	$(".mainPdf").eq(1).find("input").val("");
 	$(".mainPdf").eq(1).find(".pdfMainContentTitle").remove();
 	$(".mainPdf").eq(1).find(".pdfMainContentItem").remove();
@@ -807,12 +812,13 @@ function clickedEstimate(el){
 	estmNo = thisEle.dataset.no;
 	getEstmVerList(estmNo);
 	setTimeout(() => {
+		storage.thisEle = $(thisEle).next().children(".versionListBody").eq(0);
 		$(thisEle).next().children(".versionListBody").eq(0).trigger("click");
 	}, 300);
 } // End of clickedEstimate()
 
 function clickedEstmVer(el){
-	let x, cnt, els, color = "#e1e9ff";
+	let x, cnt, els, color = "#e1e9ff", versionPreview;
 	cnt = document.getElementsByClassName("versionPreview")[0];
 	els = el.parentElement.children;
 	for(x = 1 ; x < els.length ; x++)	els[x].style.backgroundColor = "";
@@ -820,6 +826,11 @@ function clickedEstmVer(el){
 	x = el.dataset.idx*1;
 	cnt.innerHTML = storage.estmVerList[x].doc;
 	storage.detailIdx = $(el).data("idx");
+	storage.thisEle = el;
+	setTimeout(() => {
+		versionPreview = $(".versionPreview");
+		versionPreview.prepend("<div class=\"estimateUpdateBtns\"><button type=\"button\" onclick=\"clickedUpdate();\">견적수정</button></div>");
+	}, 500);
 	// cnt.style.height = Math.floor(400 / storage.estmVerList[x].width * storage.estmVerList[x].height) + "px";
 } // End of clickedEstmVer()
 
@@ -876,10 +887,6 @@ function drawEstmVerList(){
 	}
 	
 	cnt.innerHTML = html;
-	setTimeout(() => {
-		versionPreview = $(".versionPreview");
-		versionPreview.prepend("<div class=\"estimateUpdateBtns\"><button type=\"button\" onclick=\"clickedUpdate();\">견적수정</button></div>");
-	}, 500)
 } // End of drawEstmList()
 
 // 견적 정보를 저장하는 함수
@@ -1072,7 +1079,7 @@ function estimateInsert(){
 		insertCopyPdf();
 		
 		setTimeout(() => {
-			addPdfForm = $(".addPdfForm");
+			addPdfForm = $(".addPdfForm");	
 		
 			datas = {
 				"doc": addPdfForm.html().replaceAll("\r","").replaceAll("\n",""),
@@ -1297,17 +1304,22 @@ function estimateUpdate(){
 }
 
 function addEstTitle(e){
-	let thisEle;
+	let thisEle, subTitleIndex;
 	thisEle = $(e);
 	thisEle.parent().before("<div class=\"pdfMainContentTitle\"><div class=\"subTitleIndex\"></div><div class=\"subTitle\"><input type=\"text\" placeholder=\"타이틀입력\"></div><div></div><div></div><div></div><div class=\"subTitleTotal\"></div><div></div><div></div></div>");
 	
-	let subTitleIndex = $(".subTitleIndex");
+	if($(".mainPdf").length > 1){
+		subTitleIndex = $(".mainPdf").eq(1).find(".subTitleIndex");
+	}else{
+		subTitleIndex = $(".mainPdf").eq(0).find(".subTitleIndex");
+	}
+
 	subTitleIndex.eq(subTitleIndex.length - 1).html(romanize(subTitleIndex.length));
 	storage.subItemLength = 0;
 }
 
 function addEstItem(e){
-	let thisEle;
+	let thisEle, findClass;
 	thisEle = $(e);
 	thisEle.parent().before("<div class=\"pdfMainContentItem\"><div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemSpec\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeyup=\"itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"oneEstItemAdd(this);\">+</button><button type=\"button\" onclick=\"oneEstItemRemove(this);\">-</button></div></div>");
 	productNameSet();
@@ -1463,6 +1475,8 @@ function detailItemSet(){
 	let thisBtn;
 	let item = storage.estmDetail.related.estimate;
 	let items = storage.estmDetail.related.estimate.items;
+	$(".pdfMainContentTitle").remove();
+	$(".pdfMainContentItem").remove();
 
 	for(let i = 0; i < items.length; i++){
 		if(item.form === "서브타이틀"){
@@ -1477,7 +1491,9 @@ function detailItemSet(){
 		}
 		
 		thisBtn = $(".mainPdf").eq(1).find(".pdfMainContentAddBtns button").eq(1);
-		addEstItem(thisBtn);
+		thisBtn.parent().before("<div class=\"pdfMainContentItem\"><div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemSpec\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeyup=\"itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"oneEstItemAdd(this);\">+</button><button type=\"button\" onclick=\"oneEstItemRemove(this);\">-</button></div></div>");
+		productNameSet();
+		addItemIndex();
 		let pdfMainContentItem = $(".mainPdf").eq(1).find(".pdfMainContentItem").eq(i);
 		pdfMainContentItem.find(".itemDivision input").val(items[i].div);
 		pdfMainContentItem.find(".itemSpec").find("textarea").val(items[i].spec);
@@ -1486,6 +1502,8 @@ function detailItemSet(){
 		pdfMainContentItem.find(".itemRemarks").find("input").val(items[i].remark);
 		itemCalKeyup(pdfMainContentItem.find(".itemAmount input"));
 	}
+	ckeditor.config.readOnly = false;
+	window.setTimeout(setEditor, 100);
 }
 
 function selectAddressChange(e){

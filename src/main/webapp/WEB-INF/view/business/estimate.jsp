@@ -5,6 +5,7 @@
             <hr class="bodyTitleBorder" />
             <span class="bodyTitle">견적 목록</span>
 			<span class="bodyTitleFnc">
+				<div style="display: none;"></div>
 				<div style="display: none;">추가</div>
 				<div onclick="closeAdd()">닫기</div>
 			</span>
