@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<div class="mainPdf">
+<div class="mainPdf" id="mainPdf">
     <div class="imgLogo">
         <div class="pdfLogoLeft">
             <img src="/images/estimate/pdf_logo_left.jpeg" class="logoLeft" />

@@ -814,11 +814,11 @@ function clickedEstimate(el){
 	setTimeout(() => {
 		storage.thisEle = $(thisEle).next().children(".versionListBody").eq(0);
 		$(thisEle).next().children(".versionListBody").eq(0).trigger("click");
-	}, 300);
+	}, 500);
 } // End of clickedEstimate()
 
 function clickedEstmVer(el){
-	let x, cnt, els, color = "#e1e9ff", versionPreview;
+	let x, cnt, els, color = "#e1e9ff";
 	cnt = document.getElementsByClassName("versionPreview")[0];
 	els = el.parentElement.children;
 	for(x = 1 ; x < els.length ; x++)	els[x].style.backgroundColor = "";
@@ -828,8 +828,12 @@ function clickedEstmVer(el){
 	storage.detailIdx = $(el).data("idx");
 	storage.thisEle = el;
 	setTimeout(() => {
-		versionPreview = $(".versionPreview");
-		versionPreview.prepend("<div class=\"estimateUpdateBtns\"><button type=\"button\" onclick=\"clickedUpdate();\">견적수정</button></div>");
+		let versionPreview = $(".versionPreview");
+		versionPreview.find(".mainPdf").attr("id", "estPrintPdf");
+		let versionList = $(".versionList");
+		let title = versionList.find(".versionListBody div").eq(1).html();
+		let userName = versionList.find(".versionListBody div").eq(2).html();
+		versionPreview.prepend("<div class=\"estimatePdfBtn\"><button type=\"button\" onclick=\"estimatePdf('" + title + "', '" + userName + "');\">Pdf 다운로드</button></div><div class=\"estimateUpdateBtns\"><button type=\"button\" onclick=\"clickedUpdate();\">견적수정</button></div>");
 	}, 500);
 	// cnt.style.height = Math.floor(400 / storage.estmVerList[x].width * storage.estmVerList[x].height) + "px";
 } // End of clickedEstmVer()
@@ -1663,4 +1667,15 @@ function insertCopyPdf(){
 		parent.append("<div class=\"afterDiv\">" + item.val().replaceAll("<p>", "").replaceAll("</p>", "") + "</div>");
 		item.remove();
 	}
+}
+
+function estimatePdf(title, userName){
+	let element = document.getElementById("estPrintPdf");
+ 
+	html2pdf().from(element).set({
+		margin: 0,
+		filename: title + "_" + userName + ".pdf",
+		html2canvas: { width: 835, height: 1000 },
+		jsPDF: {orientation: 'portrait', unit: 'mm', format: 'a4', compressPDF: true}
+	}).save();
 }

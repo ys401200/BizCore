@@ -214,14 +214,27 @@
 .estimateUpdateBtns{
     display: flex;
     align-items: center;
-    justify-content: right;
     padding-bottom: 10px;
+    float: right;
+    padding-right: 10px;
 }
 
 .estimateUpdateBtns > button{
     background-color: #2147b1;
     color: #ffffff;
     padding: 5px;
+}
+
+.estimatePdfBtn{
+    display: flex;
+    align-items: center;
+    float: right;
+}
+
+.estimatePdfBtn > button{
+    background-color: #2147b1;
+    color: #ffffff;
+    padding: 3.5px;
 }
 
 .estimateUpdateBtns > button:hover{
@@ -354,12 +367,12 @@
 .mainPdf{
     width: 21cm;
     min-height: 29.7cm;
-    /* padding: 2cm; */
     border: 1px #D3D3D3 solid;
     border-radius: 5px;
     background: white;
     box-shadow: 0 0 5px rgb(0 0 0 / 10%);
     padding: 30px 20px 0 20px;
+    clear: both;
 }
 
 .previewDefault{

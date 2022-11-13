@@ -3637,10 +3637,8 @@ function setTabsLayOutMenu(){
 	}
 }
 
-function popup(e){
+function popup(e, nWidth, nHeight){
 	let winObj;
-	let nWidth = "1250";
-	let nHeight = "800";
 	let curX = window.screenLeft;
 	let curY = window.screenTop;
 	let curWidth = document.body.clientWidth;
