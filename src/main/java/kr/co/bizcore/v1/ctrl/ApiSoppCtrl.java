@@ -67,7 +67,7 @@ public class ApiSoppCtrl extends Ctrl{
         }else if(aesKey == null || aesIv == null){
             result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
         }else{
-            sopp = soppService.getSopp(no, compId);
+            sopp = soppService.getSopp(no, compId, aesKey, aesIv);
             if(sopp == null){
                 result = "{\"result\":\"failure\",\"msg\":\"Sopp not exist.\"}";
             }else{

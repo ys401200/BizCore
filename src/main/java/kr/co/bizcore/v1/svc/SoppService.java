@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.slf4j.LoggerFactory;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 
@@ -41,43 +43,100 @@ public class SoppService extends Svc {
         return result;
     } // End of getSoppList()
     
-    public String getSopp(int soppNo, String compId){
+    public String getSopp(int soppNo, String compId, String aesKey, String aesIv){
         Sopp result = null;
-        String t = null;
+        String trade = null, estm = null, estmNo = null;
         List<HashMap<String, String>> attached = systemMapper.getAttachedFileList(compId, "sopp", soppNo);
         List<Schedule> list1 = scheduleMapper.getScheduleListFromSchedWithSopp(compId, soppNo+"");
         List<Schedule> list2 = scheduleMapper.getScheduleListFromSalesWithSopp(compId, soppNo+"");
         List<Schedule> list3 = scheduleMapper.getScheduleListFromTechdWithsopp(compId, soppNo+"");
-        List<HashMap<String, String>> trades = tradeMapper.getTradeByFunc(compId, "sopp:"+soppNo);
+        List<HashMap<String, String>> list = null;
         HashMap<String, String> each = null;
-        int x = 0;
+        JSONObject json = null;
+        JSONArray jarr = null;
+        int x = 0, y = 0, total = 0, v = 0, z1 = 0, z2 = 0;
+
         list1.addAll(list2);
         list1.addAll(list3);
         Collections.sort(list1);
         result = soppMapper.getSopp(soppNo+"", compId);
 
-        t = "[";
-        if(trades != null && trades.size() > 0)    for(x = 0 ; x < trades.size() ; x++){
-            each = trades.get(x);
-            if(x > 0)   t += ",";
-            t += ("{\"no\":" + each.get("no") + ",");
-            t += ("\"dt\":" + each.get("dt") + ",");
-            t += ("\"writer\":" + each.get("writer") + ",");
-            t += ("\"type\":" + (each.get("type") == null ? null : "\"" + each.get("type") + "\"") + ",");
-            t += ("\"product\":" + each.get("product") + ",");
-            t += ("\"customer\":" + each.get("customer") + ",");
-            t += ("\"taxbill\":" + (each.get("taxbill") == null ? null : "\"" + each.get("taxbill") + "\"") + ",");
-            t += ("\"title\":" + (each.get("title") == null ? null : "\"" + each.get("title") + "\"") + ",");
-            t += ("\"qty\":" + each.get("qty") + ",");
-            t += ("\"price\":" + each.get("price") + ",");
-            t += ("\"vat\":" + each.get("vat") + ",");
-            t += ("\"remark\":" + (each.get("remark") == null ? null : "\"" + each.get("remark") + "\"") + ",");
-            t += ("\"created\":" + each.get("created") + "}");
+        // 매입매출 자료 가져오기 및 변환
+        list = tradeMapper.getTradeByFunc(compId, "sopp:"+soppNo);;
+        trade = "[";
+        if(list != null && list.size() > 0)    for(x = 0 ; x < list.size() ; x++){
+            each = list.get(x);
+            if(x > 0)   trade += ",";
+            trade += ("{\"no\":" + each.get("no") + ",");
+            trade += ("\"dt\":" + each.get("dt") + ",");
+            trade += ("\"writer\":" + each.get("writer") + ",");
+            trade += ("\"type\":" + (each.get("type") == null ? null : "\"" + each.get("type") + "\"") + ",");
+            trade += ("\"product\":" + each.get("product") + ",");
+            trade += ("\"customer\":" + each.get("customer") + ",");
+            trade += ("\"taxbill\":" + (each.get("taxbill") == null ? null : "\"" + each.get("taxbill") + "\"") + ",");
+            trade += ("\"title\":" + (each.get("title") == null ? null : "\"" + each.get("title") + "\"") + ",");
+            trade += ("\"qty\":" + each.get("qty") + ",");
+            trade += ("\"price\":" + each.get("price") + ",");
+            trade += ("\"vat\":" + each.get("vat") + ",");
+            trade += ("\"remark\":" + (each.get("remark") == null ? null : "\"" + each.get("remark") + "\"") + ",");
+            trade += ("\"created\":" + each.get("created") + "}");
 
         }
-        t += "]";
+        trade += "]";
 
-        return result.toJson(attached, list1, t);
+        // 견적 가져오기 및 변환
+        list = estimateMapper.getEstimateWithParent(compId, "sopp:" + soppNo);
+        estm = "[";
+        estmNo = "";
+        if(list != null && x < list.size()) for(x = 0 ; x < list.size() ; x++){
+            each = list.get(x);
+            if(!estmNo.equals(each.get("no"))){
+                estmNo = each.get("no");
+                if(x > 0){
+                    estm += "\"version\":" + v + ",";
+                    estm += "\"total\":" + total + "},";
+                    total = 0;
+                    v = 0;
+                }
+                estm += ("{\"no\":\"" + estmNo + "\",");
+                estm += ("\"date\":" + each.get("date") + ",");
+                estm += ("\"form\":\"" + each.get("form") + "\",");
+                estm += ("\"title\":\"" + each.get("title") + "\",");
+                estm += "\"children\":[";
+            }else   estm += "},";
+            estm += ("{\"date\":" + each.get("date") + ",");
+            estm += ("\"doc\":\"" + encAes(each.get("doc"), aesKey, aesIv) + "\",");
+            estm += ("\"exp\":\"" + each.get("exp") + "\",");
+            estm += ("\"form\":\"" + each.get("form") + "\",");
+            estm += ("\"height\":" + each.get("height") + ",");
+            estm += ("\"width\":" + each.get("width") + ",");
+            estm += ("\"no\":\"" + estmNo + "\",");
+            estm += ("\"related\":" + each.get("related") + ",");
+            estm += ("\"remarks\":\"" + each.get("remarks") + "\",");
+            estm += ("\"title\":\"" + each.get("title") + "\",");
+            estm += ("\"version\":" + each.get("version") + ",");
+            estm += ("\"writer\":" + each.get("writer"));
+            json = new JSONObject(each.get("related"));
+            json = json.getJSONObject("estimate");
+            jarr = json.isNull("items") ? null : json.getJSONArray("items");
+            if(jarr != null){
+                for(y = 0 ; y < jarr.length() ; y++){
+                    z2 = (jarr.getJSONObject(y).getInt("quantity") * jarr.getJSONObject(y).getInt("price"));
+                }
+            }
+            z1 = strToInt(each.get("version"));
+            if(z1 > v){
+                v = z1;
+                total = z2;
+            }
+
+        }
+
+        estm += ("}]");
+        estm += ",\"version\":" + v + ",";
+        estm += "\"total\":" + total + "}]";
+
+        return result.toJson(attached, list1, trade, estm);
     }
 
     public String getEstimateList(String compId){
