@@ -102,4 +102,10 @@ public class BusinessController extends Ctrl{
         doIt(request);
         return "/product/list";
     } // End of /business/**
+
+    @RequestMapping("/popupEstForm")
+    public String popupEstForm(HttpServletRequest request) {
+        doIt(request);
+        return "/business/popupEstForm";
+    } // End of /business/**
 }

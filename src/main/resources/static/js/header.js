@@ -2123,88 +2123,112 @@ function tabFileItemListUpdate(){
 
 //견적내역 리스트
 function createTabEstList(result){
+	console.log(result);
 	let html = "", lengthIndex, tabs, container, header, data = [], str, detailSecondTabs, ids, job, fnc, disDate, idName;
 	detailSecondTabs = $(".detailSecondTabs");
+	if($(".tabEstList").length > 0){
+		$(".tabEstList").remove();
+	}
+
 	html = "<div class='tabEstList' id='tabEstList'></div>";
 	lengthIndex = 0;
 	idName = "tabEstList";
 
-	// header = [
-	// 	{
-	// 		"title" : "버전",
-	// 		"align" : "center",
-	// 	},
-	// 	{
-	// 		"title" : "견적명",
-	// 		"align" : "center",
-	// 	},
-	// 	{
-	// 		"title" : "담당자",
-	// 		"align" : "center",
-	// 	},
-	// 	{
-	// 		"title" : "견적일자",
-	// 		"align" : "center",
-	// 	},
-	// 	{
-	// 		"title" : "금액",
-	// 		"align" : "center",
-	// 	},
-	// ];
+	header = [
+		{
+			"title" : "견적일자",
+			"align" : "center",
+		},
+		{
+			"title" : "버전",
+			"align" : "center",
+		},
+		{
+			"title" : "견적명",
+			"align" : "center",
+		},
+		{
+			"title" : "담당자",
+			"align" : "center",
+		},
+		{
+			"title" : "금액",
+			"align" : "center",
+		},
+		{
+			"title" : "비고",
+			"align" : "center",
+		},
+	];
 	
 	detailSecondTabs.append(html);
 	container = detailSecondTabs.find(".tabEstList");
 	tabs = $(".tabs");
 
-	// if(result.length > 0){
-	// 	for(let i = 0; i < result.length; i++){
-	// 		disDate = dateDis(result[i].date);
-	// 		disDate = dateFnc(disDate);
+	if(result.length > 0){
+		for(let i = 0; i < result.length; i++){
+			let itemTotal = 0, itemPrice = 0, itemVat = 0;
 
-	// 		str = [
-	// 			{
-	// 				"setData": result[i].version,
-	// 				"align" : "center",
-	// 			},
-	// 			{
-	// 				"setData": result[i].title,
-	// 				"align" : "center",
-	// 			},
-	// 			{
-	// 				"setData": storage.user[result[i].userName].userName,
-	// 				"align" : "center",
-	// 			},
-	// 			{
-	// 				"setData": disDate,
-	// 				"align" : "center",
-	// 			},
-	// 			{
-	// 				"setData": numberFormat(result[i].total),
-	// 				"align" : "left",
-	// 			},
-	// 		];
+			for(let t = 0; t < result[i].related.estimate.items.length; t++){
+				let item = result[i].related.estimate.items[t];
+				itemPrice += item.price;
+				itemVat += item.price * 0.1;
+			}
 
-	// 		data.push(str);
-	// 		lengthIndex++;
-	// 	}
-	// }else{
-	// 	str = [
-	// 		{
-	// 			"setData": undefined,
-	// 			"col": 5,
-	// 		},
-	// 	];
-	// }
+			itemTotal = itemPrice + itemVat;
+			disDate = dateDis(result[i].date);
+			disDate = dateFnc(disDate);
+			
+			str = [
+				{
+					"setData": disDate,
+					"align" : "center",
+				},
+				{
+					"setData": result[i].version,
+					"align" : "center",
+				},
+				{
+					"setData": result[i].title,
+					"align" : "left",
+				},
+				{
+					"setData": storage.user[result[i].writer].userName,
+					"align" : "center",
+				},
+				{
+					"setData": numberFormat(itemTotal),
+					"align" : "right",
+				},
+				{
+					"setData": result[i].related.estimate.remarks.replace(/<br \/>/g, "").replace(/<p>/g, "").replace(/<\/p>/g, ""),
+					"align" : "left",
+				},
+			];
 
-	// if(lengthIndex > 0){
-	// 	tabs.find("label[for=\"tabEst\"]").text("견적내역(" + lengthIndex + ")");
-	// }else{
-	// 	tabs.find("label[for=\"tabEst\"]").text("견적내역(0)");
-	// }
+			data.push(str);
+			lengthIndex++;
+		}
+	}else{
+		str = [
+			{
+				"setData": undefined,
+				"col": 6,
+				"align": "center",
+			},
+		];
+		data.push(str);
+	}
+
+	if(lengthIndex > 0){
+		tabs.find("label[for=\"tabEst\"]").text("견적내역(" + lengthIndex + ")");
+	}else{
+		tabs.find("label[for=\"tabEst\"]").text("견적내역(0)");
+	}
 
 	setTimeout(() => {
-		// createGrid(container, header, data, ids, job, fnc, idName);
-		container.prepend("<div class=\"soppEstAddBtn\"><button type=\"button\">등록</button></div>");
+		createGrid(container, header, data, ids, job, fnc, idName);
+		container.prepend("<div class=\"estAddBtn\"><button type=\"button\" data-href=\"/business/popupEstForm\" onclick=\"popup(this, 880, 800);\">등록</button></div>");
 	}, 100);
 }
 
@@ -2283,8 +2307,10 @@ function createTabTechList(result){
 			{
 				"setData": undefined,
 				"col": 5,
+				"align": "center",
 			},
 		];
+		data.push(str);
 	}
 
 	if(lengthIndex > 0){
@@ -2380,8 +2406,10 @@ function createTabSalesList(result){
 			{
 				"setData": undefined,
 				"col": 6,
+				"align": "center",
 			},
 		];	
+		data.push(str);
 	}
 
 	if(lengthIndex > 0){
@@ -3719,4 +3747,21 @@ function hideDetailView(func){
 	}
 
 	func();
+}
+
+function getJsonData(url, method, data){
+	if(url !== undefined && method !== undefined){
+		$.ajax({
+			url: url,
+			method: method,
+			data: data,
+			dataType: "json",
+			contentType: "text/plain",
+			success: (result) => {
+				result = cipher.decAes(result.data);
+				result = JSON.parse(result);
+				createTabEstList(result.estimate[0].children);
+			}
+		})
+	}
 }

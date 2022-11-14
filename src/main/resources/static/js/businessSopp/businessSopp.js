@@ -196,7 +196,7 @@ function soppErrorList(){
 
 function soppSuccessView(result){
 	let html, htmlSecond, title, userName, customer, picOfCustomer, endUser, status, progress, contType, disDate, expectedSales, detail, dataArray, gridList, containerTitle, detailBackBtn, datas, crudUpdateBtn, crudDeleteBtn, detailSecondTabs, contractReqBtn;
-	storage.soppDetailNo = result.no;
+	
 	detailSetFormList(result);
 	gridList = $(".gridList");
 	containerTitle = $("#containerTitle");
@@ -405,6 +405,14 @@ function soppSuccessView(result){
 	
 	createTabTradeList(result.trades);
 	createTabFileList();
+	detailEstSet(result, "sopp");
+
+	if(result.estimate.length < 1){
+		createTabEstList(result.estimate);
+	}else{
+		createTabEstList(result.estimate[0].children);
+	}
+
 	createTabTechList(result.schedules);
 	createTabSalesList(result.schedules);
 	detailTabHide("tabTradeList");
@@ -424,6 +432,15 @@ function soppSuccessView(result){
 
 function soppErrorView(){
 	msg.set("에러");
+}
+
+function detailEstSet(result, pageType){
+	localStorage.setItem("detailNo", result.no);
+	localStorage.setItem("detailType", pageType);
+	
+	if(result.estimate.length > 0){
+		localStorage.setItem("estimateNo", result.estimate[0].no);
+	}
 }
 
 function soppInsertForm(){

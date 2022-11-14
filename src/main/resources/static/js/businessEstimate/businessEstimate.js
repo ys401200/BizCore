@@ -1026,10 +1026,13 @@ function estimateInsert(){
 		msg.set("유효기간을 입력해주세요.");
 		$("#exp").focus();
 		return false;
+	}else if($(".pdfMainContainer").find(".pdfMainContentItem").length < 1){
+		msg.set("항목을 1개 이상 추가하여 입력해주세요.");
+		return false;
 	}else{
 		let address, cip, customer, date, exp, fax, firmName, phone, representative, title, pdfMainContentTitle, pdfMainContentItem, addPdfForm, items, form, datas;
-		pdfMainContentTitle = $(".pdfMainContainer .pdfMainContentTitle");
-		pdfMainContentItem = $(".pdfMainContainer .pdfMainContentItem");
+		pdfMainContentTitle = $(".pdfMainContainer").find(".pdfMainContentTitle");
+		pdfMainContentItem = $(".pdfMainContainer").find(".pdfMainContentItem");
 		remarks = CKEDITOR.instances.remarks.getData().replaceAll("\n", "");
 		address = $(".address").val();
 		cip = $("#cip").val();
@@ -1181,10 +1184,13 @@ function estimateUpdate(){
 		msg.set("유효기간을 입력해주세요.");
 		$("#exp").focus();
 		return false;
+	}else if($(".pdfMainContainer").find(".pdfMainContentItem").length < 1){
+		msg.set("항목을 1개 이상 추가하여 입력해주세요.");
+		return false;
 	}else{
 		let address, cip, customer, date, exp, fax, firmName, phone, representative, title, pdfMainContentTitle, pdfMainContentItem, addPdfForm, items, form, datas;
-		pdfMainContentTitle = $(".pdfMainContainer .pdfMainContentTitle");
-		pdfMainContentItem = $(".pdfMainContainer .pdfMainContentItem");
+		pdfMainContentTitle = $(".pdfMainContainer").find(".pdfMainContentTitle");
+		pdfMainContentItem = $(".pdfMainContainer").find(".pdfMainContentItem");
 		remarks = CKEDITOR.instances.remarks.getData().replaceAll("\n", "");
 		address = $(".address").val();
 		cip = $("#cip").val();
@@ -1437,9 +1443,10 @@ function itemCalKeyup(e){
 }
 
 function estimateFormInit(){
-	let selectAddress, writer, pdfMainContentAddBtns;
+	let selectAddress, writer, date, pdfMainContentAddBtns;
 	selectAddress = $(".selectAddress select");
 	writer = $("#writer");
+	date = $("#date");
 	pdfMainContentAddBtns = $(".pdfMainContentAddBtns");
 
 	for(let index in storage.estimateBasic){
@@ -1447,6 +1454,7 @@ function estimateFormInit(){
 	}
 	
 	writer.val(storage.user[storage.my].userName);
+	date.val(new Date().toISOString().substring(0, 10));
 
 	if(storage.estmDetail !== undefined){
 		for(let key in storage.estmDetail.related.estimate){
@@ -1454,9 +1462,13 @@ function estimateFormInit(){
 				let value = storage.estmDetail.related.estimate[key];
 
 				if(key === "date"){
-					value = new Date(storage.estmDetail.related.estimate[key]);
-					value = dateDis(value);
-					value = dateFnc(value);
+					if(storage.estmDetail.related.estimate[key] !== null){
+						value = new Date(storage.estmDetail.related.estimate[key]);
+						value = dateDis(value);
+						value = dateFnc(value);
+					}else{
+						value = new Date().toISOString().substring(0, 10);
+					}
 				}else if(key === "customer"){
 					$("#" + key).attr("data-value", value);
 					value = storage.customer[value].name;
@@ -1538,6 +1550,12 @@ function selectAddressInit(index){
 		phone.val(storage.estimateBasic[index].phone);
 		fax.val(storage.estimateBasic[index].fax);
 	}
+	
+	setTimeout(() => {
+		if($(".mainPdf").length > 1){
+			$(".mainPdf").eq(0).remove();
+		}
+	}, 300)
 }
 
 function setTotalHtml(){
@@ -1664,7 +1682,7 @@ function insertCopyPdf(){
 	for(let i = 0; i < textarea.length; i++){
 		let item = $(textarea[i]);
 		let parent = item.parent();
-		parent.append("<div class=\"afterDiv\">" + item.val().replaceAll("<p>", "").replaceAll("</p>", "") + "</div>");
+		parent.append("<div class=\"afterDiv\">" + item.val() + "</div>");
 		item.remove();
 	}
 }
@@ -1675,7 +1693,7 @@ function estimatePdf(title, userName){
 	html2pdf().from(element).set({
 		margin: 0,
 		filename: title + "_" + userName + ".pdf",
-		html2canvas: { width: 835, height: 1000 },
+		html2canvas: { width: 835, height: 1000, scale: 10 },
 		jsPDF: {orientation: 'portrait', unit: 'mm', format: 'a4', compressPDF: true}
 	}).save();
 }
