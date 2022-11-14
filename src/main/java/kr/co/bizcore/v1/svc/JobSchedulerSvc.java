@@ -1,6 +1,9 @@
 package kr.co.bizcore.v1.svc;
 
 import java.io.File;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Calendar;
 
 import org.slf4j.Logger;
@@ -46,6 +49,8 @@ public class JobSchedulerSvc extends Svc{
         // 매 스케줄링 마다 실행되는 작업들
         cleanTempFiles(); // 임시파일 정리
         cleanKeepLoginInfo(); // 만료된 로그인 유지정보 삭제
+        copyCustomerInfoFromLegacyDB(); // 고객사 정보 자동 복사
+        copyTradeInfoFromLegacyDB(); // 매입매출 자료 복사
 
         // 스케줄 작업
     } // End of scheduleJob()
@@ -116,6 +121,36 @@ public class JobSchedulerSvc extends Svc{
         result += cal.get(Calendar.SECOND);
         return result;
     } // End of getDate()
+
+    public int copyCustomerInfoFromLegacyDB(){
+        int result = -1;
+        String sql = "INSERT INTO bizcore.customer(compid, no, name, taxId,email,emailForTaxbill, address, phone, fax, ceoname, related, created) SELECT 'vtek', a.custno, a.custname, IF(a.custvatno='',NULL,a.custvatno), IF(a.custEmail='',NULL,a.custEmail), IF(a.custVatemail='',NULL,a.custVatemail), NULL, NULL, NULL, IF(a.custBossname='',NULL,a.custBossname), '{}', '2022-8-31' FROM swcore.swc_cust a WHERE compno = 100002 AND custno NOT IN (SELECT no FROM bizcore.customer)";
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+
+        try{
+            conn = sqlSession.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            result = pstmt.executeUpdate();
+        }catch(SQLException e){e.printStackTrace();}
+        logger.debug("[Job Scheduler] Copy Customer info : " + result);
+        return result;
+    } // End of copyCustomerInfoFromLegacyDB()
+
+    public int copyTradeInfoFromLegacyDB(){
+        int result = -1;
+        String sql = "INSERT INTO bizcore.trade(`no`,compId,dt,belongTo,writer,`type`,product,customer,taxbill,title,qty,price,vat,remark,created) SELECT soppdatano, 'vtek', CAST(regdatetime AS DATE), IF(soppno IS NULL,'',CONCAT('sopp:',soppno)), userno, IF(SUBSTRING(datatype,4)=1,'purchase','sale'), productno, salescustno, vatserial, datatitle, dataquanty, datanetprice, datavat, dataremark, regDatetime FROM swcore.swc_soppdata01 WHERE soppdatano NOT IN (SELECT no FROM bizcore.trade)";
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+
+        try{
+            conn = sqlSession.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            result = pstmt.executeUpdate();
+        }catch(SQLException e){e.printStackTrace();}
+        logger.debug("[Job Scheduler] Copy Trade info : " + result);
+        return result;
+    }
     
     
 }
