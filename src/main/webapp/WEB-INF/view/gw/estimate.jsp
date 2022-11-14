@@ -679,8 +679,8 @@
 		  </div>
 	
 		  <div class="calculateDiv">
-			<div>매입 합계</div><input type="text" class="inputsAuto inSumAllTotal" data-detail="">
-			<div>매출 합계</div><input type="text" class="inputsAuto outSumAllTotal" data-detail="">
+			<div>매입 합계</div><input type="text" class="inputsAuto inAmountTotal" data-detail="">
+			<div>매출 합계</div><input type="text" class="inputsAuto outAmountTotal" data-detail="">
 			<div>이익 합계</div><input type="text" class="inputsAuto doc_Form_SalesReport_profit" data-detail="">
 			<div>이익률</div><input type="text" class="inputsAuto doc_Form_SalesReport_profitper" data-detail="">
 		  </div>

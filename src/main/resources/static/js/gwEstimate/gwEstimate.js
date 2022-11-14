@@ -46,9 +46,10 @@ function getSoppDetailData() {
         list = JSON.parse(list);
         storage.soppDetailData = list;
         window.setTimeout(setEstData, 1000);
-
+        console.log("확인");
       } else {
         console.log(data.msg);
+        console.log("실패");
       }
     }
   });
@@ -205,7 +206,7 @@ function setEstData() {
       inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='" + items[i].title + "' value='" + items[i].title + "' onkeyup='this.dataset.detail=this.value' class='inputs inProduct doc_Form_SalesReport_product'></input>"
       inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='" + items[i].price.toLocaleString() + "' value='" + items[i].price.toLocaleString() + "'onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inputs inPrice doc_Form_SalesReport_price'></input>"
       inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='" + items[i].qty.toLocaleString() + "' value='" + items[i].qty.toLocaleString() + "' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inputs inQuantity doc_Form_SalesReport_quantity'></input>"
-      inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='" + (items[i].price * items[i].qty).toLocaleString() + "' value='" + (items[i].price * items[i].qty).toLocaleString() + "' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inputs doc_Form_SalesReport_amount'></input>"
+      inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='" + (items[i].price * items[i].qty).toLocaleString() + "' value='" + (items[i].price * items[i].qty).toLocaleString() + "' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inAmount inputs doc_Form_SalesReport_amount'></input>"
       inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='" + items[i].vat.toLocaleString() + "' value='" + items[i].vat.toLocaleString() + "' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inputs inTax doc_Form_SalesReport_tax'></input>"
       inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'oninput='setNum(this)' data-detail='" + ((items[i].price * items[i].qty) + items[i].vat).toLocaleString() + "' value='" + ((items[i].price * items[i].qty) + items[i].vat).toLocaleString() + "' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inTotal inputs doc_Form_SalesReport_total'></input>"
       inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='' onkeyup='this.dataset.detail=this.value' class='inputs doc_Form_SalesReport_remark' data-detail='" + items[i].remark + "' value='" + items[i].remark + "'></input>"
@@ -550,12 +551,38 @@ function getTotalCount() {
   $(".outSumAllTotal").attr("data-detail", Number(totalCount2).toLocaleString() + "원");
 
 
+  let inAmountCount = Number(0); 
+  let outAmountCount = Number(0); 
+
+  for(let i = 0 ; i < $(".inAmount").length; i++) {
+    if($(".inAmount")[i].dataset.detail != undefined) {
+      inAmountCount += Number($(".inAmount")[i].dataset.detail.replace(",","").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", ""));
+    console.log("확인2"); 
+    }else  {
+      console.log("확인3"); 
+      inAmountCount += 0; 
+    }
+  }
+
+  
+ for(let i = 0 ; i < $(".outAmount").length; i++) {
+    if($(".outAmount")[i].dataset.detail != undefined) {
+      outAmountCount += Number($(".outAmount")[i].dataset.detail.replace(",","").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", ""));
+    }else  {
+      outAmountCount += 0; 
+    }
+  }
+  $(".inAmountTotal").val(Number(inAmountCount).toLocaleString()+"원"); 
+  $(".inAmountTotal").attr("data-detail", Number(inAmountCount).toLocaleString() + "원");
+  $(".outAmountTotal").val(Number(outAmountCount).toLocaleString()+"원"); 
+  $(".outAmountTotal").attr("data-detail", Number(outAmountCount).toLocaleString() + "원");
+
 
   let profit, profitper;
-  if ($(".outSumAllTotal").val() != "" && $(".inSumAllTotal").val() != "") {
-    profit = Number($(".outSumAllTotal").val().split("원")[0].replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "")) - Number($(".inSumAllTotal").val().split("원")[0].replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", ""));
-    if (Number($(".outSumAllTotal").val().split("원")[0].replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "")) != 0) {
-      profitper = (profit / Number($(".outSumAllTotal").val().split("원")[0].replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", ""))) * 100;
+  if ($(".outAmountTotal").val() != "" && $(".inAmountTotal").val() != "") {
+    profit = Number($(".outAmountTotal").val().split("원")[0].replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "")) - Number($(".inAmountTotal").val().split("원")[0].replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", ""));
+    if (Number($(".outAmountTotal").val().split("원")[0].replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "")) != 0) {
+      profitper = (profit / Number($(".outAmountTotal").val().split("원")[0].replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", ""))) * 100;
       profitper = Math.round(profitper * 10) / 10;
     } else {
       profitper = 0;
