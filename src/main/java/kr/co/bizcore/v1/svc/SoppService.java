@@ -88,53 +88,54 @@ public class SoppService extends Svc {
         list = estimateMapper.getEstimateWithParent(compId, "sopp:" + soppNo);
         estm = "[";
         estmNo = "";
-        if(list != null && x < list.size()) for(x = 0 ; x < list.size() ; x++){
-            each = list.get(x);
-            if(!estmNo.equals(each.get("no"))){
-                estmNo = each.get("no");
-                if(x > 0){
-                    estm += "\"version\":" + v + ",";
-                    estm += "\"total\":" + total + "},";
-                    total = 0;
-                    v = 0;
-                }
-                estm += ("{\"no\":\"" + estmNo + "\",");
-                estm += ("\"date\":" + each.get("date") + ",");
+        if(list != null && 0 < list.size()){
+            for(x = 0 ; x < list.size() ; x++){
+                each = list.get(x);
+                if(!estmNo.equals(each.get("no"))){
+                    estmNo = each.get("no");
+                    if(x > 0){
+                        estm += "\"version\":" + v + ",";
+                        estm += "\"total\":" + total + "},";
+                        total = 0;
+                        v = 0;
+                    }
+                    estm += ("{\"no\":\"" + estmNo + "\",");
+                    estm += ("\"date\":" + each.get("date") + ",");
+                    estm += ("\"form\":\"" + each.get("form") + "\",");
+                    estm += ("\"title\":\"" + each.get("title") + "\",");
+                    estm += "\"children\":[";
+                }else   estm += "},";
+                estm += ("{\"date\":" + each.get("date") + ",");
+                estm += ("\"doc\":\"" + encAes(each.get("doc"), aesKey, aesIv) + "\",");
+                estm += ("\"exp\":\"" + each.get("exp") + "\",");
                 estm += ("\"form\":\"" + each.get("form") + "\",");
+                estm += ("\"height\":" + each.get("height") + ",");
+                estm += ("\"width\":" + each.get("width") + ",");
+                estm += ("\"no\":\"" + estmNo + "\",");
+                estm += ("\"related\":" + each.get("related") + ",");
+                estm += ("\"remarks\":\"" + each.get("remarks") + "\",");
                 estm += ("\"title\":\"" + each.get("title") + "\",");
-                estm += "\"children\":[";
-            }else   estm += "},";
-            estm += ("{\"date\":" + each.get("date") + ",");
-            estm += ("\"doc\":\"" + encAes(each.get("doc"), aesKey, aesIv) + "\",");
-            estm += ("\"exp\":\"" + each.get("exp") + "\",");
-            estm += ("\"form\":\"" + each.get("form") + "\",");
-            estm += ("\"height\":" + each.get("height") + ",");
-            estm += ("\"width\":" + each.get("width") + ",");
-            estm += ("\"no\":\"" + estmNo + "\",");
-            estm += ("\"related\":" + each.get("related") + ",");
-            estm += ("\"remarks\":\"" + each.get("remarks") + "\",");
-            estm += ("\"title\":\"" + each.get("title") + "\",");
-            estm += ("\"version\":" + each.get("version") + ",");
-            estm += ("\"writer\":" + each.get("writer"));
-            json = new JSONObject(each.get("related"));
-            json = json.getJSONObject("estimate");
-            jarr = json.isNull("items") ? null : json.getJSONArray("items");
-            if(jarr != null){
-                for(y = 0 ; y < jarr.length() ; y++){
-                    z2 = (jarr.getJSONObject(y).getInt("quantity") * jarr.getJSONObject(y).getInt("price"));
+                estm += ("\"version\":" + each.get("version") + ",");
+                estm += ("\"writer\":" + each.get("writer"));
+                json = new JSONObject(each.get("related"));
+                json = json.getJSONObject("estimate");
+                jarr = json.isNull("items") ? null : json.getJSONArray("items");
+                if(jarr != null){
+                    for(y = 0 ; y < jarr.length() ; y++){
+                        z2 = (jarr.getJSONObject(y).getInt("quantity") * jarr.getJSONObject(y).getInt("price"));
+                    }
                 }
+                z1 = strToInt(each.get("version"));
+                if(z1 > v){
+                    v = z1;
+                    total = z2;
+                }    
             }
-            z1 = strToInt(each.get("version"));
-            if(z1 > v){
-                v = z1;
-                total = z2;
-            }
-
+            estm += ("}]");
+            estm += ",\"version\":" + v + ",";
+            estm += "\"total\":" + total + "}";
         }
-
-        estm += ("}]");
-        estm += ",\"version\":" + v + ",";
-        estm += "\"total\":" + total + "}]";
+        estm += "]";        
 
         return result.toJson(attached, list1, trade, estm);
     }
