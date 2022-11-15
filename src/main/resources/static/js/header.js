@@ -2690,6 +2690,17 @@ function searchDataFilter(arrayList, searchDatas, type){
 					}
 				}
 			}
+		}else if(searchDatas.indexOf("#date") > -1){
+			let splitStr;
+			splitStr = searchDatas.split("#date");
+
+			for(let key in storage.searchList){
+				if(splitStr[0] <= storage.searchList[key].split("#date")[1]){
+					if(storage.searchList[key].split("#date")[1] <= splitStr[1]){
+						dataArray.push(key);
+					}
+				}
+			}
 		}else if(searchDatas.indexOf("#from") > -1){
 			let splitStr;
 			splitStr = searchDatas.split("#from");

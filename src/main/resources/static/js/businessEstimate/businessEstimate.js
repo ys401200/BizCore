@@ -809,7 +809,7 @@ function clickedEstimate(el){
 
 	thisEle.style.backgroundColor = color;
 	thisEle.style.color = "#ffffff";
-	estmNo = thisEle.dataset.no;
+	estmNo = thisEle.dataset.id;
 	getEstmVerList(estmNo);
 	setTimeout(() => {
 		storage.thisEle = $(thisEle).next().children(".versionListBody").eq(0);
@@ -840,33 +840,107 @@ function clickedEstmVer(el){
 
 // 견적 목록을 그리는 함수
 function drawEstmList(){
-	let cnt, html, x, t, disDate;
-	cnt = document.getElementsByClassName("estimateList")[0];
-
-	html = "<div class=\"estimateAddBtns\"><button type=\"button\" onclick=\"clickedAdd();\">새견적추가</button></div>";
-	html += "<div class=\"estimateListHeader\">";
-	html += "<div>견적일자</div>";
-	html += "<div>견적명</div>";
-	html += "<div>버전</div>";
-	html += "<div>양식</div>";
-	html += "<div>금액</div>";
-	html += "</div>";
+	let container, result, job, jsonData, header = [], data = [], ids = [], disDate, setDate, str, fnc, pageContainer, containerTitle, hideArr, showArr;
 	
-	for(x = 0 ; x < storage.estmList.length ; x++){
-		disDate = dateDis(storage.estmList[x].date);
-		disDate = dateFnc(disDate, "yyyy.mm.dd");
-
-		html += "<div class=\"esimateListBody\" onclick=\"clickedEstimate(this)\" data-idx=\"" + x + "\" data-no=\"" + storage.estmList[x].no + "\">";
-		html += "<div style=\"justify-content: center;\">" + disDate + "</div>";
-		html += "<div style=\"justify-content: left;\">" + storage.estmList[x].title + "</div>";
-		html += "<div style=\"justify-content: center;\">" + storage.estmList[x].version + "</div>";
-		html += "<div style=\"justify-content: center;\">" + storage.estmList[x].form + "</div>";
-		html += "<div style=\"justify-content: right;\">" + storage.estmList[x].total.toLocaleString() + "</div></div>";
-		html += "</div>";
+	if (storage.estmList === undefined) {
+		msg.set("등록된 견적이 없습니다");
+	}
+	else {
+		if(storage.searchDatas === undefined){
+			jsonData = storage.estmList;
+		}else{
+			jsonData = storage.searchDatas;
+		}
 	}
 
-	cnt.innerHTML = html;
-} // End of drawEstmList()
+	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+	
+	hideArr = ["detailBackBtn", "crudUpdateBtn", "crudDeleteBtn", "contractReqBtn"];
+	showArr = ["gridList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "crudAddBtn", "listSearchInput"];
+	containerTitle = $("#containerTitle");
+	pageContainer = document.getElementsByClassName("pageContainer");
+	container = $(".estimateList");
+
+	header = [
+		{
+			"title" : "견적일자",
+			"align" : "center",
+		},
+		{
+			"title" : "견적명",
+			"align" : "center",
+		},
+		{
+			"title" : "버전",
+			"align" : "center",
+		},
+		{
+			"title" : "양식",
+			"align" : "center",
+		},
+		{
+			"title" : "금액",
+			"align" : "center",
+		},
+	];
+
+	if(jsonData === ""){
+		str = [
+			{
+				"setData": undefined,
+				"col": 5,
+				"align": "center",
+			},
+		];
+		
+		data.push(str);
+	}else{
+		for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+			disDate = dateDis(jsonData[i].date);
+			disDate = dateFnc(disDate, "yyyy.mm.dd");
+	  
+			str = [
+				{
+					"setData": disDate,
+					"align": "center",
+				},
+				{
+					"setData": jsonData[i].title,
+					"align": "left",
+				},
+				{
+					"setData": jsonData[i].version,
+					"align": "center",
+				},
+				{
+					"setData": jsonData[i].form,
+					"align": "center",
+				},
+				{
+					"setData": numberFormat(jsonData[i].total),
+					"align": "right",
+				},
+			];
+	
+			fnc = "clickedEstimate(this);";
+			ids.push(jsonData[i].no);
+			data.push(str);
+		}
+	
+		let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawEstmList", result[0]);
+		pageContainer[0].innerHTML = pageNation;
+	}
+
+	containerTitle.html("견적목록");
+	createGrid(container, header, data, ids, job, fnc);
+	setViewContents(hideArr, showArr);
+
+	let path = $(location).attr("pathname").split("/");
+	if(path[3] !== undefined && jsonData !== ""){
+		let content = $(".gridContent[data-id=\"" + path[3] + "\"]");
+		soppDetailView(content);
+	}
+}
 
 // 견적 버전 목록을 그리는 함수
 function drawEstmVerList(){
@@ -881,12 +955,19 @@ function drawEstmVerList(){
 	html += "</div>";
 	
 	for(x = storage.estmVerList.length-1 ; x >= 0 ; x--){
+		let total = 0;
+
+		for(let i = 0; i < storage.estmVerList[x].related.estimate.items.length; i++){
+			let item = storage.estmVerList[x].related.estimate.items[i];
+			total += (item.price * item.quantity) + (item.price * item.quantity * 0.1);
+		}
+
 		html += "<div class=\"versionListBody\" onclick=\"clickedEstmVer(this)\" data-idx=\"" + x + "\">";
 		html += "<div style=\"justify-content: center;\">" + storage.estmVerList[x].version + "</div>";
 		html += "<div style=\"justify-content: left;\">" + storage.estmVerList[x].title + "</div>";
 		html += "<div style=\"justify-content: center;\">" + storage.user[storage.estmVerList[x].writer].userName + "</div>";
 		html += "<div style=\"justify-content: center;\">" + dateFormat(storage.estmVerList[x].date) + "</div>";
-		html += "<div style=\"justify-content: right;\">" + storage.estmList[x].total.toLocaleString() + "</div>";
+		html += "<div style=\"justify-content: right;\">" + numberFormat(total) + "</div>";
 		html += "</div>";
 	}
 	
@@ -954,6 +1035,7 @@ function getEstimateList(){
 				list = cipher.decAes(list);
 				storage.estmList = JSON.parse(list);
 				drawEstmList();
+				addSearchList();
 			} else {
 				console.log(data.msg);
 			}
@@ -1311,6 +1393,70 @@ function estimateUpdate(){
 			});
 		}, 300)
 	}
+}
+
+function addSearchList(){
+	storage.searchList = [];
+
+	for(let i = 0; i < storage.estmList.length; i++){
+		let form, title, version, disDate, setDate;
+		disDate = dateDis(storage.estmList[i].date);
+		setDate = parseInt(dateFnc(disDate).replaceAll("-", ""));
+		title = storage.estmList[i].title;
+		version = storage.estmList[i].version;
+		form = storage.estmList[i].form;
+		total = storage.estmList[i].total;
+		storage.searchList.push("#" + title + "#" + version + "#" + form + "#price" + total + "#date" + setDate);
+	}
+}
+
+function searchSubmit(){
+	let dataArray = [], resultArray, eachIndex = 0, searchTitle, searchVersion, searchForm, searchPriceFrom, searchDateFrom;
+
+	searchTitle = $("#searchTitle").val();
+	searchVersion = $("#searchVersion").val();
+	searchForm = $("#searchForm").val();
+	searchPriceFrom = ($("#searchPriceFrom").val() === "") ? "" : $("#searchPriceFrom").val().replaceAll(",", "") + "#price" + $("#searchPriceTo").val().replaceAll(",", "");
+	searchDateFrom = ($("#searchDateFrom").val() === "") ? "" : $("#searchDateFrom").val().replaceAll("-", "") + "#date" + $("#searchDateTo").val().replaceAll("-", "");
+	
+	let searchValues = [searchTitle, searchVersion, searchForm, searchPriceFrom, searchDateFrom];
+
+	for(let i = 0; i < searchValues.length; i++){
+		if(searchValues[i] !== "" && searchValues[i] !== undefined && searchValues[i] !== null){
+			let tempArray = searchDataFilter(storage.estmList, searchValues[i], "multi");
+			
+			for(let t = 0; t < tempArray.length; t++){
+				dataArray.push(tempArray[t]);
+			}
+
+			eachIndex++;
+		}
+	}
+
+	resultArray = searchMultiFilter(eachIndex, dataArray, storage.estmList);
+	
+	storage.searchDatas = resultArray;
+
+	if(storage.searchDatas.length == 0){
+		msg.set("찾는 데이터가 없습니다.");
+		storage.searchDatas = storage.estmList;
+	}
+	
+	drawEstmList();
+}
+
+function searchInputKeyup(){
+	let searchAllInput, tempArray;
+	searchAllInput = $("#searchAllInput").val();
+	tempArray = searchDataFilter(storage.estmList, searchAllInput, "input");
+
+	if(tempArray.length > 0){
+		storage.searchDatas = tempArray;
+	}else{
+		storage.searchDatas = "";
+	}
+
+	drawEstmList();
 }
 
 function addEstTitle(e){

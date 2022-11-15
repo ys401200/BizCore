@@ -115,7 +115,11 @@ public class EstimateSvc extends Svc{
             jarr = json.isNull("items") ? null : json.getJSONArray("items");
             if(jarr != null && jarr.length() > 0)   for(y = 0 ; y < jarr.length() ; y++){
                 json = jarr.getJSONObject(y);
-                total += ((json.isNull("quantity") ? 0 : json.getInt("quantity")) * (json.isNull("price") ? 0 : json.getInt("price")));
+                if(json.getBoolean("vat")){
+                    total += ((json.isNull("quantity") ? 0 : json.getInt("quantity")) * (json.isNull("price") ? 0 : json.getInt("price")) + (json.getInt("price") * 0.1));
+                }else{
+                    total += ((json.isNull("quantity") ? 0 : json.getInt("quantity")) * (json.isNull("price") ? 0 : json.getInt("price")));
+                }
             }
             t = "{\"no\":\"" + each.get("no") + "\",";
             t += ("\"form\":\"" + each.get("form") + "\",");

@@ -70,13 +70,13 @@
     overflow-x: hidden;
 }
 
-.estimateList{
+/* .estimateList{
     float: left;
     width: 40%;
     border-top: 1px solid #ededed;
     border-left: 1px solid #ededed;
     margin-right: 20px;
-}
+} */
 
 .estimateAddBtns{
     display: flex;
@@ -97,21 +97,21 @@
     cursor: pointer;
 }
 
-.estimateListHeader,
+/* .estimateListHeader,
 .esimateListBody{
     display: grid;
     grid-template-columns: 15% 35% 15% 15% 20%;
     border-bottom: 1px solid #ededed;
-}
+} */
 
-.estimateListHeader > div{
+/* .estimateListHeader > div{
     display: flex;
     align-items: center;
     justify-content: center;
     border-right: 1px solid #ededed;
     padding: 5px;
     font-size: 11px;
-}
+} */
 
 .esimateListBody > div{
     display: flex;
@@ -205,10 +205,103 @@
 }
 .versionList > div:hover{background-color: #e1e9ff;} */
 
+.searchContainer .searchMultiContent .searchPrice > .searchGridItem{
+	display: grid;
+	grid-template-columns: 45% 10% 45%;
+	text-align: center;
+}
+
+.searchContainer .searchMultiContent .searchPrice > .searchGridItem > span{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.searchContainer .searchMultiContent .searchPrice > .searchGridItem > input{
+	text-align: right;
+}
+
+.searchContainer .searchMultiContent .searchDate > .searchGridItem{
+	display: grid;
+	grid-template-columns: 45% 10% 45%;
+	text-align: center;
+}
+
+.searchContainer .searchMultiContent .searchDate > .searchGridItem > span{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.listContainer > button{
+	color: #ebefff;
+	box-shadow: 0 1px 1px #bdbfc9;
+	background-color:#182f81;
+	padding:0 14px;
+	height:30px;
+	border-radius: 5px;
+	float: right;
+	margin-top: 5px;
+	margin-right: 5px;
+	margin-bottom: 10px;
+}
+
+.listContainer > button:hover{
+	color: #182f81;
+	box-shadow: 0 1px 2px #bdbfc9;
+	background-color:#ebefff;
+}
+
+.listContainer{
+	margin-top: 3px;
+	background: #FFFFFF;
+	overflow: hidden;
+	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
+}
+
+.listContainer > hr{
+	float: left;
+	border:2px solid #182f81;
+ 	height : 32px;
+ 	margin: 0;
+}
+
+.listContainer > #containerTitle {
+	font-weight: 600;
+    font-size: 0.9rem;
+	margin-left: 15px;
+	line-height: 40px;
+	color: #332E85;
+	float: left;
+}
+
+.listContainer .estimateList{
+    display: grid; 
+	width: 48%;
+    float: left;
+    clear: both;
+}
+
+.listContainer .estimateList .gridHeader,
+.listContainer .estimateList .gridContent{
+    grid-template-columns: 15% 50% 5% 15% 15%;
+}
+
+.listContainer .estimateList .gridHeader{
+	border-bottom:1px solid #abb6d5;
+}
+
+.listContainer .pageContainer{
+	float: left;
+    clear: left;
+    width: 48%;
+}
+
 .versionPreview{
     border: 1px solid #ededed;
     padding: 10px;
-    float: left;
+    float: right;
+    margin-right: 10px;
 }
 
 .estimateUpdateBtns{

@@ -1,22 +1,68 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %><%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %><jsp:include page="../header.jsp" />
 <div id="bodyContents"><div id="sideContents"><jsp:include page="../sideMenu.jsp" /></div>
 	<div id="bodyContent">
+		<div class="searchContainer">
+            <jsp:include page="../listSearch.jsp" />
+            <div class="searchMultiContent">
+				<div class="searchDate">
+                    <span>견적일자</span>
+                    <div class="searchGridItem">
+                        <input type="date" id="searchDateFrom" max="9999-12-31" data-date-type="from" onchange="searchDateDefaultSet(this);">
+                        <span>~</span>
+                        <input type="date" id="searchDateTo" max="9999-12-31" data-date-type="to" onchange="searchDateDefaultSet(this);">
+                    </div>
+                </div>
+                <div class="searchTitle">
+                    <span>견적명</span>
+                    <input type="text" autocomplete="off" id="searchTitle">
+                </div>
+                <div class="searchVersion">
+                    <span>버전</span>
+                    <input type="text" autocomplete="off" id="searchVersion">
+                </div>
+                <div class="searchForm">
+                    <span>양식</span>
+                    <input type="text" autocomplete="off" id="searchForm">
+                </div>
+				<div class="searchPrice">
+                    <span>금액</span>
+                    <div class="searchGridItem">
+                        <input type="text" id="searchPriceFrom" onkeyup="inputNumberFormat(this);">
+                        <span>~</span>
+                        <input type="text" id="searchPriceTo" onkeyup="inputNumberFormat(this);">
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="listContainer">
-            <hr class="bodyTitleBorder" />
-            <span class="bodyTitle">견적 목록</span>
-			<span class="bodyTitleFnc">
+            <hr />
+            <span id="containerTitle">견적목록</span>
+			<div class="listSearchInput">
+                <input type="text" class="searchAllInput" id="searchAllInput" onkeyup="searchInputKeyup();" placeholder="단어를 입력해주세요.">
+            </div>
+            <div class="listRange">
+                <input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="listRangeChange(this, drawSoppList);">
+                <span class="listRangeSpan">0</span>
+            </div>
+            <div class="crudBtns">
+                <button type="button" class="contractReqBtn" onclick="popup(this);">계약요청</button>
+				<button type="button" class="crudAddBtn" onclick="soppInsertForm();">등록</button>
+				<button type="button" class="crudUpdateBtn">수정</button>
+				<button type="button" class="crudDeleteBtn" onclick="soppDelete();">삭제</button>
+				<a href="#" onclick="hideDetailView(drawSoppList);" class="detailBackBtn">Back</a>
+			</div>
+			<!-- <span class="bodyTitleFnc">
 				<div style="display: none;"></div>
 				<div style="display: none;">추가</div>
 				<div onclick="closeAdd()">닫기</div>
-			</span>
-            <div class="listContent">
-				<div class="estimateList"></div>
-				<div class="versionPreview">
-					<div class="previewDefault">
-						<div>미리보기</div>
-					</div>
+			</span> -->
+			<div class="estimateList"></div>
+			<div class="versionPreview">
+				<div class="previewDefault">
+					<div>미리보기</div>
 				</div>
 			</div>
+			<div class="pageContainer"></div>
 			<div class="addPdfForm">
 				<jsp:include page="./form.jsp" />
 			</div>
