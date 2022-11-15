@@ -107,3 +107,8 @@
 .contractContainer .gridList .gridContent{
     grid-template-columns: 5% 10% 40% 5% 5% 5% 10% 8% 8% 4%;
 }
+
+
+.tabMaintenanceList .gridHeader{
+grid-template-columns: 30% 30% 15% 15% 10%;
+}

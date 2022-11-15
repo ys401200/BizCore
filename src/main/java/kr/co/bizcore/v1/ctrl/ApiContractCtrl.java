@@ -22,13 +22,13 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/api/contract")
 @Slf4j
-public class ApiContractCtrl extends Ctrl{
+public class ApiContractCtrl extends Ctrl {
 
     private static final Logger logger = LoggerFactory.getLogger(ApiContractCtrl.class);
 
     // 계약 전부
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public String apiProcureGetAll(HttpServletRequest request){
+    public String apiProcureGetAll(HttpServletRequest request) {
         String result = null, aesKey = null, aesIv = null, compId = null, lang = null;
         Msg msg = null;
         HttpSession session = null;
@@ -37,7 +37,7 @@ public class ApiContractCtrl extends Ctrl{
         session = request.getSession();
         aesKey = (String) session.getAttribute("aesKey");
         aesIv = (String) session.getAttribute("aesIv");
-        lang = (String)session.getAttribute("lang");
+        lang = (String) session.getAttribute("lang");
         msg = getMsg(lang);
         compId = (String) session.getAttribute("compId");
         if (compId == null)
@@ -45,22 +45,23 @@ public class ApiContractCtrl extends Ctrl{
 
         if (compId == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
-        }else if(aesKey == null || aesIv == null){
+        } else if (aesKey == null || aesIv == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
         } else
             list = contractService.getContractList(compId);
-            if (list == null) {
-                result = "{\"result\":\"failure\",\"msg\":\"" + msg.noResult + "\"}";
-            } else {
-                list = encAes(list, aesKey, aesIv);
-                result = "{\"result\":\"ok\",\"data\":\"" + list + "\"}";
-            }
+        if (list == null) {
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.noResult + "\"}";
+        } else {
+            list = encAes(list, aesKey, aesIv);
+            result = "{\"result\":\"ok\",\"data\":\"" + list + "\"}";
+        }
         return result;
-    } 
+    }
 
     // 계약 일부
     @RequestMapping(value = "/{start:\\d+}/{end:\\d+}", method = RequestMethod.GET)
-    public String apiProcureGet(HttpServletRequest request, @PathVariable("start") int start, @PathVariable("end") int end){
+    public String apiProcureGet(HttpServletRequest request, @PathVariable("start") int start,
+            @PathVariable("end") int end) {
         String result = null, aesKey = null, aesIv = null, compId = null, lang = null;
         Msg msg = null;
         int count = -9999;
@@ -70,30 +71,30 @@ public class ApiContractCtrl extends Ctrl{
         session = request.getSession();
         aesKey = (String) session.getAttribute("aesKey");
         aesIv = (String) session.getAttribute("aesIv");
-        lang = (String)session.getAttribute("lang");
+        lang = (String) session.getAttribute("lang");
         msg = getMsg(lang);
         compId = (String) session.getAttribute("compId");
         if (compId == null)
             compId = (String) request.getAttribute("compId");
-
         if (compId == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
-        }else if(aesKey == null || aesIv == null){
+        } else if (aesKey == null || aesIv == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
         } else
             list = contractService.getContractList(compId, start, end);
-            count = contractService.getContractCount(compId);
-            if (list == null) {
-                result = "{\"result\":\"failure\",\"msg\":\"" + msg.noResult + "\"}";
-            } else {
-                list = encAes(list, aesKey, aesIv);
-                result = "{\"result\":\"ok\",\"data\":\"" + list + "\",\"count\":" + count + ",\"start\":" + start + ",\"end\":" + end + "}";
-            }
+        count = contractService.getContractCount(compId);
+        if (list == null) {
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.noResult + "\"}";
+        } else {
+            list = encAes(list, aesKey, aesIv);
+            result = "{\"result\":\"ok\",\"data\":\"" + list + "\",\"count\":" + count + ",\"start\":" + start
+                    + ",\"end\":" + end + "}";
+        }
         return result;
-    } 
+    }
 
     @RequestMapping(value = "/{no}", method = RequestMethod.GET)
-    public String getDetail(HttpServletRequest request, @PathVariable String no){
+    public String getDetail(HttpServletRequest request, @PathVariable String no) {
         String result = null;
         String compId = null;
         String aesKey = null;
@@ -105,26 +106,25 @@ public class ApiContractCtrl extends Ctrl{
         HttpSession session = null;
 
         number = salesService.strToInt(no);
-
         session = request.getSession();
-        compId = (String)session.getAttribute("compId");
-        aesKey = (String)session.getAttribute("aesKey");
-        aesIv = (String)session.getAttribute("aesIv");
-        lang = (String)session.getAttribute("lang");
+        compId = (String) session.getAttribute("compId");
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        lang = (String) session.getAttribute("lang");
         msg = getMsg(lang);
-        if(compId == null)  compId = (String)request.getAttribute("compId");
-
-        if(compId == null){
+        if (compId == null)
+            compId = (String) request.getAttribute("compId");
+        if (compId == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
-        }else if(number < 0){
+        } else if (number < 0) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.invalidCondition + "\"}";
-        }else if(aesKey == null || aesIv == null){
+        } else if (aesKey == null || aesIv == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
-        }else{
+        } else {
             data = contractService.getContract(number, compId);
-            if(data == null){
+            if (data == null) {
                 result = "{\"result\":\"failure\",\"msg\":\"" + msg.noResult + "\"}";
-            }else{
+            } else {
                 data = contractService.encAes(data, aesKey, aesIv);
                 result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
             }
@@ -134,7 +134,7 @@ public class ApiContractCtrl extends Ctrl{
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public String apiProcurePost(HttpServletRequest request, @RequestBody String requestBody){
+    public String apiProcurePost(HttpServletRequest request, @RequestBody String requestBody) {
         String result = null;
         String compId = null;
         String aesKey = null;
@@ -148,28 +148,31 @@ public class ApiContractCtrl extends Ctrl{
         HttpSession session = null;
 
         session = request.getSession();
-        compId = (String)session.getAttribute("compId");
-        aesKey = (String)session.getAttribute("aesKey");
-        aesIv = (String)session.getAttribute("aesIv");
-        lang = (String)session.getAttribute("lang");
+        compId = (String) session.getAttribute("compId");
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        lang = (String) session.getAttribute("lang");
         msg = getMsg(lang);
-        if(compId == null)  compId = (String)request.getAttribute("compId");
+        if (compId == null)
+            compId = (String) request.getAttribute("compId");
 
-        if(compId == null){
+        if (compId == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
-        }else if(aesKey == null || aesIv == null){
+        } else if (aesKey == null || aesIv == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
-        }else{
+        } else {
             data = procureService.decAes(requestBody, aesKey, aesIv);
-            if(data == null){
+            if (data == null) {
                 result = "{\"result\":\"failure\",\"msg\":\"" + msg.failDecrypt + "\"}";
-            }else{
+            } else {
                 try {
                     mapper = new ObjectMapper();
                     contract = mapper.readValue(data, Contract.class);
                     contract.setCreated(null);
-                    if(contractService.addContract(contract, compId))  result = "{\"result\":\"ok\"}";
-                    else                                               result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
+                    if (contractService.addContract(contract, compId))
+                        result = "{\"result\":\"ok\"}";
+                    else
+                        result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
                 } catch (Exception e) {
                     result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
                     e.printStackTrace();
@@ -182,7 +185,8 @@ public class ApiContractCtrl extends Ctrl{
     } // End of apiProcurePost()
 
     @RequestMapping(value = "/{no}", method = RequestMethod.PUT)
-    public String apiProcureNumberPut(HttpServletRequest request, @RequestBody String requestBody, @PathVariable String no){
+    public String apiProcureNumberPut(HttpServletRequest request, @RequestBody String requestBody,
+            @PathVariable String no) {
         String result = null;
         String compId = null;
         String aesKey = null;
@@ -196,27 +200,30 @@ public class ApiContractCtrl extends Ctrl{
         ObjectMapper mapper = null;
 
         session = request.getSession();
-        compId = (String)session.getAttribute("compId");
-        aesKey = (String)session.getAttribute("aesKey");
-        aesIv = (String)session.getAttribute("aesIv");
-        lang = (String)session.getAttribute("lang");
+        compId = (String) session.getAttribute("compId");
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        lang = (String) session.getAttribute("lang");
         msg = getMsg(lang);
-        if(compId == null)  compId = (String)request.getAttribute("compId");
+        if (compId == null)
+            compId = (String) request.getAttribute("compId");
 
-        if(compId == null){
+        if (compId == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
-        }else if(aesKey == null || aesIv == null){
+        } else if (aesKey == null || aesIv == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
-        }else{
+        } else {
             data = procureService.decAes(requestBody, aesKey, aesIv);
-            if(data == null){
+            if (data == null) {
                 result = "{\"result\":\"failure\",\"msg\":\"" + msg.failDecrypt + "\"}";
-            }else{
+            } else {
                 try {
                     mapper = new ObjectMapper();
                     contract = mapper.readValue(data, Contract.class);
-                    if(contractService.modifyContract(no, contract, compId))  result = "{\"result\":\"ok\"}";
-                    else                                               result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
+                    if (contractService.modifyContract(no, contract, compId))
+                        result = "{\"result\":\"ok\"}";
+                    else
+                        result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
                 } catch (Exception e) {
                     result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
                     e.printStackTrace();
@@ -228,7 +235,7 @@ public class ApiContractCtrl extends Ctrl{
     } // End of apiProcureNumberPut()
 
     @RequestMapping(value = "/{no}", method = RequestMethod.DELETE)
-    public String apiProcureNumberDelete(HttpServletRequest request, @PathVariable String no){
+    public String apiProcureNumberDelete(HttpServletRequest request, @PathVariable String no) {
         String result = null;
         String compId = null;
         String lang = null;
@@ -236,48 +243,78 @@ public class ApiContractCtrl extends Ctrl{
         HttpSession session = null;
 
         session = request.getSession();
-        lang = (String)session.getAttribute("lang");
+        lang = (String) session.getAttribute("lang");
         msg = getMsg(lang);
-        compId = (String)session.getAttribute("compId");
-        if(compId == null)  compId = (String)request.getAttribute("compId");
+        compId = (String) session.getAttribute("compId");
+        if (compId == null)
+            compId = (String) request.getAttribute("compId");
 
-        if(compId == null){
+        if (compId == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
-        }else{
-            if(contractService.removeContract(no, compId))    result = "{\"result\":\"ok\"}";
-            else                                            result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
+        } else {
+            if (contractService.removeContract(no, compId))
+                result = "{\"result\":\"ok\"}";
+            else
+                result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
         }
 
         return result;
     } // End of apiProcureNumberDelete()
 
-    @GetMapping("/sopp/{sopp:\\d+}/customer/{customer:\\d+}")
-    public String apiContractDetailSchedule(HttpServletRequest request, @PathVariable("sopp") int sopp, @PathVariable("customer") int customer){
-        String result = null, data = null;
-        HttpSession session = null;
-        String compId = null, aesKey = null, aesIv = null;
+    // // 계약번호로 유지보수 데이터 가져옴
+    // @RequestMapping(value = "/maintenance/{contract}", method = RequestMethod.GET)
+    // public String getMaintenanceDate(HttpServletRequest request, @PathVariable String contract) {
+    //     String result = null;
+    //     String compId = null;
+    //     String lang = null;
+    //     Msg msg = null;
+    //     HttpSession session = null;
+    //     String list = null;
+    //     session = request.getSession();
+    //     lang = (String) session.getAttribute("lang");
+    //     msg = getMsg(lang);
+    //     compId = (String) session.getAttribute("compId");
+    //     if (compId == null)
+    //         compId = (String) request.getAttribute("compId");
 
-        session = request.getSession();
-        compId = (String)session.getAttribute("compId");
-        aesKey = (String)session.getAttribute("aesKey");
-        aesIv = (String)session.getAttribute("aesIv");
-        if(compId == null)  compId = (String)request.getAttribute("compId");
+    //     if (compId == null) {
+    //         result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+    //     } else {
+    //         list = contractService.getMtncData(contract, compId);
+    //         result = "{\"result\":\"ok\",\"data\":\"" + list + "\"}";
+    //     }
 
-        if(compId == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
-        }else if(aesKey == null || aesIv == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
-        }else{
-            data = contractService.getContract(compId, sopp, customer);
-            if(data != null){
-                data = encAes(data, aesKey, aesIv);
-                result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
-            }else{
-                result = "{\"result\":\"failure\",\"msg\":\"Error occured.\"}";
-            }
-        }
+    //     return result;
+    // }
 
-        return result;
-    }
-    
+    // @GetMapping("/sopp/{sopp:\\d+}/customer/{customer:\\d+}")
+    // public String apiContractDetailSchedule(HttpServletRequest request,
+    // @PathVariable("sopp") int sopp, @PathVariable("customer") int customer){
+    // String result = null, data = null;
+    // HttpSession session = null;
+    // String compId = null, aesKey = null, aesIv = null;
+
+    // session = request.getSession();
+    // compId = (String)session.getAttribute("compId");
+    // aesKey = (String)session.getAttribute("aesKey");
+    // aesIv = (String)session.getAttribute("aesIv");
+    // if(compId == null) compId = (String)request.getAttribute("compId");
+
+    // if(compId == null){
+    // result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+    // }else if(aesKey == null || aesIv == null){
+    // result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
+    // }else{
+    // data = contractService.getContract(compId, sopp, customer);
+    // if(data != null){
+    // data = encAes(data, aesKey, aesIv);
+    // result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
+    // }else{
+    // result = "{\"result\":\"failure\",\"msg\":\"Error occured.\"}";
+    // }
+    // }
+
+    // return result;
+    // }
+
 }

@@ -21,9 +21,6 @@ function getContractList() {
 	crud.defaultAjax(url, method, data, type, contractSuccessList, contractErrorList);
 
 
-
-
-
 	let checkHref = location.href;
 	checkHref = checkHref.split("//");
 	checkHref = checkHref[1];
@@ -53,14 +50,6 @@ function getContractList() {
 			},
 		});
 	}
-
-
-
-
-
-
-
-
 
 }
 
@@ -141,9 +130,13 @@ function drawContractList() {
 	} else {
 		for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
 			let salesType, contractType, title, endUser, contractAmount, profit, employee, startMaintenance, endMaintenance, saleDate, setCreated;
+			let related = jsonData[i].related;
+			related = JSON.parse(related);
 
-			salesType = (jsonData[i].salesType === null || jsonData[i].salesType === "") ? "" : storage.code.etc[jsonData[i].salesType];
-			contractType = (jsonData[i].contractType === null || jsonData[i].contractType === "") ? "" : storage.code.etc[jsonData[i].contractType];
+			// salesType = (jsonData[i].salesType === null || jsonData[i].salesType === "") ? "" : storage.code.etc[jsonData[i].salesType];
+			// contractType = (jsonData[i].contractType === null || jsonData[i].contractType === "") ? "" : storage.code.etc[jsonData[i].contractType];
+			salesType = (related.salesType === null || related.salesType === "") ? "" : storage.code.etc[related.salesType];
+			contractType = (related.contractType === null || related.contractType === "") ? "" : storage.code.etc[related.contractType];
 			title = (jsonData[i].title === null || jsonData[i].title === "") ? "" : jsonData[i].title;
 			endUser = (jsonData[i].endUser === null || jsonData[i].endUser == 0) ? "" : storage.customer[jsonData[i].endUser].name;
 			contractAmount = (jsonData[i].contractAmount == 0 || jsonData[i].contractAmount === null) ? 0 : numberFormat(jsonData[i].contractAmount);
@@ -243,6 +236,11 @@ function contractDetailView(e) {
 	type = "detail";
 
 	crud.defaultAjax(url, method, data, type, contractSuccessView, contractErrorView);
+
+
+
+
+
 }
 
 function contractSuccessList(result) {
@@ -264,8 +262,10 @@ function contractErrorList() {
 }
 
 function contractSuccessView(result) {
+	storage.contractDetail = result;
 	let notIdArray, datas, sopp, html, htmlSecond, contractType, title, employee, customer, salesType, cipOfCustomer, endUser, cipOfendUser, saleDate, delivered, employee2, startOfFreeMaintenance, endOfFreeMaintenance, startOfPaidMaintenance, endOfPaidMaintenance, contractAmount, taxInclude, profit, detail, disDate, dataArray, gridList, containerTitle, detailBackBtn, crudUpdateBtn, crudDeleteBtn;
 	detailSetFormList(result);
+	let related;
 	gridList = $(".gridList");
 	containerTitle = $("#containerTitle");
 	detailBackBtn = $(".detailBackBtn");
@@ -274,16 +274,21 @@ function contractSuccessView(result) {
 	crudDeleteBtn = $(".crudDeleteBtn");
 	datas = ["employee", "customer", "cipOfCustomer", "endUser", "cipOfendUser", "sopp", "employee2"];
 	notIdArray = ["employee"];
+	related = JSON.parse(result.related);
+	sopp = (related.parent.split(":")[1] == 0 || related.parent.split(":")[1] === null || related.parent.split(":")[1] === undefined || related.parent.split(":")[1] === "") ? "" : related.parent.split(":")[1];
+	contractType = (related.contractType == 0 || related.contractType === null || related.contractType === undefined || related.contractType === "") ? "" : related.contractType;
+	salesType = (related.salesType == 0 || related.salesType === null || related.salesType === undefined || related.salesType === "") ? "" : related.salesType;
+	// contractType = (result.contractType === null || result.contractType === "" || result.contractType === undefined) ? "" : storage.code.etc[result.contractType];
+	// salesType = (result.salesType === null || result.salesType === "" || result.salesType === undefined) ? "" : storage.code.etc[result.salesType];
 
-	contractType = (result.contractType === null || result.contractType === "" || result.contractType === undefined) ? "" : storage.code.etc[result.contractType];
 	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
 	employee = (result.employee == 0 || result.employee === null || result.employee === undefined) ? "" : storage.user[result.employee].userName;
 	customer = (result.customer == 0 || result.customer === null || result.customer === undefined) ? "" : storage.customer[result.customer].name;
-	salesType = (result.salesType === null || result.salesType === "" || result.salesType === undefined) ? "" : storage.code.etc[result.salesType];
+
 	cipOfCustomer = (result.cipOfCustomer == 0 || result.cipOfCustomer === null || result.cipOfCustomer === undefined) ? "" : result.cipOfCustomer;
 	endUser = (result.endUser == 0 || result.endUser === null || result.endUser === undefined) ? "" : storage.customer[result.endUser].name;
 	cipOfendUser = (result.cipOfendUser == 0 || result.cipOfendUser === null || result.cipOfendUser === undefined) ? "" : result.cipOfendUser;
-	sopp = (result.sopp == 0 || result.sopp === null || result.sopp === undefined) ? "" : result.sopp;
+
 	disDate = dateDis(result.saleDate);
 	saleDate = dateFnc(disDate);
 	disDate = dateDis(result.delivered);
@@ -313,7 +318,7 @@ function contractSuccessView(result) {
 
 	if (sopp !== "") {
 		for (let key in storage.sopp) {
-			if (storage.sopp[key].no === result.sopp) {
+			if (storage.sopp[key].no == sopp) {
 				sopp = storage.sopp[key].title;
 			}
 		}
@@ -518,7 +523,7 @@ function contractSuccessView(result) {
 		crudUpdateBtn.attr("onclick", "enableDisabled(this, \"contractUpdate();\", \"" + notIdArray + "\");");
 		crudUpdateBtn.css("display", "flex");
 		crudDeleteBtn.css("display", "flex");
-	}else{
+	} else {
 		crudUpdateBtn.css("display", "none");
 		crudDeleteBtn.css("display", "none");
 	}
@@ -535,6 +540,19 @@ function contractSuccessView(result) {
 	createTabSalesList(result.schedules);
 	detailTabHide("tabTradeList");
 	detailTrueDatas(datas);
+	let maintenance = storage.contractDetail.maintenance;
+	if (maintenance != undefined) {
+		maintenance = JSON.parse(maintenance);
+	} else {
+		maintenance = [];
+	}
+	setMaintenanceTab(maintenance);
+
+
+
+
+
+
 
 	setTimeout(() => {
 		$("[name='contractType'][value='" + result.contractType + "']").prop("checked", true);
@@ -565,6 +583,12 @@ function contractSuccessView(result) {
 		ckeditor.config.readOnly = true;
 		window.setTimeout(setEditor, 100);
 	}, 100);
+
+
+
+
+
+
 }
 
 function contractErrorView() {
@@ -1205,7 +1229,7 @@ function setSalesReportData() {
 			"writer": storage.my,
 			"type": "purchase", // 매입인지 매출인지 
 			"product": storage.reportDetailData.related.inItems[0].inProduct, // 상품번호
-			"customer": storage.reportDetailData.related.inItems[0].inCus *1,
+			"customer": storage.reportDetailData.related.inItems[0].inCus * 1,
 			"title": "",
 			"qty": storage.reportDetailData.related.inItems[0].inQuantity,//수량
 			"price": storage.reportDetailData.related.inItems[0].inPrice, // 단가
@@ -1308,6 +1332,48 @@ function getProductList() {
 		}
 	});
 } // End of getEstimateList()
+
+
+
+
+
+function setMaintenanceTab(maintanence) {
+
+	$(".tabItem").css("width", "20%");
+
+
+
+	let index = 10;
+	let leftPadding = 0;
+	for (let i = 0; i < $(".tabItem").length; i++) {
+		let tt = $(".tabItem")[i];
+		$(tt).css("z-index", index);
+		$(tt).css("padding-left", leftPadding + "%");
+		leftPadding += 20;
+		index = (index - 2);
+	}
+
+	// let tabsHtml = $(".tabs").html();
+	// let detailSecondTabsHtml = $(".detailSecondTabs").html();
+	$(".tabs").append("<input type='radio' id='tabMaintenance' name='tabItem' data-content-id='tabMaintenanceList' onclick='tabItemClick(this)'><label class='tabItem' for='tabMaintenance' style='z-index: 2; width: 20%; padding-left: 80%;'>유지보수 내역(0)</label>");
+	$(".detailSecondTabs").append("<div class='tabMaintenanceList' id='tabMaintenanceList' style='display: none;'><div class='gridHeader grid_default_header_item'><div class='gridHeaderItem grid_default_text_align_center'>유지보수 기간</div><div class='gridHeaderItem grid_default_text_align_center'>제목</div><div class='gridHeaderItem grid_default_text_align_center'>고객사</div><div class='gridHeaderItem grid_default_text_align_center'>항목</div><div class='gridHeaderItem grid_default_text_align_center'>담당자</div></div></div>");
+
+	"<div id='tabMaintenanceList_"+i+"' class='gridContent grid_default_body_item' data-drag='true' data-id='' data-job='' onclick=''>"+
+	"<div class='gridContentItem grid_default_text_align_center'><span class='textNumberFormat'>"+maintanence.startDate+"-"+maintanence.endDate+"</span></div>"+
+	"<div class='gridContentItem grid_default_text_align_left'><span class='textNumberFormat'></span></div>"+
+	"<div class='gridContentItem grid_default_text_align_center'><span class='textNumberFormat'>"+maintanence.customer+"</span></div>"+
+	"<div class='gridContentItem grid_default_text_align_center'><span class='textNumberFormat'>"+maintanence.engineer+"</span></div>"+
+	"<div class='gridContentItem grid_default_text_align_center'><span class='textNumberFormat'>"+maintanence.startDate+"</span></div></div>"
+
+
+}
+
+
+
+
+
+
+
 
 
 
