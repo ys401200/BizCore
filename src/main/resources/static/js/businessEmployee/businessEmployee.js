@@ -83,7 +83,6 @@ function getEmployeeDetailInfo(empNo, dept){
 	let url;
 	if(empNo === undefined)	return;
 	document.getElementsByClassName("listContent")[0].children[1].innerHTML = "";
-	storage.collected = {};
 
 	url = apiServer + "/api/manage/employee/" + dept + "/" + empNo;
 	$.ajax({
@@ -499,8 +498,24 @@ function setEmpData(){
 } // End of setEmpData()
 
 function setDeptData(){
-	let cnt, x, y, html = "", title, t, t1, t2;
+	let cnt, x, y, html = "", title, t, t1, t2, root = storage.basic.isRoot;
 	cnt = document.getElementsByClassName("listContent")[0].children[1];
+
+	// 루트 부서를 선택한 경우, 회사정보를 기본정보로 세팅함
+	if(root){
+		storage.basic.name = storage.company.name;
+		storage.basic.parent = null;
+		storage.basic.taxId = storage.company.taxId;
+		storage.basic.corpRegNo = storage.company.corpRegNo;
+		storage.basic.zipCode = storage.company.zipCode;
+		storage.basic.address = storage.company.address;
+		storage.basic.contact = storage.company.contact;
+		storage.basic.fax = storage.company.fax;
+		storage.basic.email = storage.company.email;
+		storage.basic.created = storage.company.created;
+		storage.basic.modified = storage.company.modified;
+	}
+
 	// =========================================== 기본 정보 타이틀 ===========================================
 	title = "기본정보";
 	html += "<div><div class=\"image_btns\"><img src=\"/images/manage/icon_modified.png\" /></div><div class=\"manageSubTitle\">";
@@ -515,27 +530,154 @@ function setDeptData(){
 	html += "<div><div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
 	html += "</div>";
-	html += ("<div class=\"xDeptName\">" + storage.basic.name + "</div>");
+	html += ("<div class=\"xDeptName\" data-n=\"name\"><input class=\"xEmpInput\" value=\"" + storage.basic.name + "\" onkeyup=\"collectDeptData(this)\" /></div>");
 
 	// 아이디
 	title = "부서코드";
 	html += "<div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
-	html += ("</div><div class=\"xDeptId\">" + storage.basic.id + "</div></div>");
+	html += ("</div><div class=\"xDeptId\" data-n=\"id\"><input class=\"xEmpInput\" value=\"" + (storage.basic.id !== null ? storage.basic.id : "") + "\" disabled onkeyup=\"collectDeptData(this)\" /></div></div>");
+
+	/*
+	// 부서장
+	title = "부서장";
+	html += "<div><div>";
+	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+	html += "</div>";
+	html += ("<div class=\"xDeptHead\">" + (storage.basic.head == null ? "지정안함" : storage.user[storage.basic.head].userName) + "</div>");
+
+	// 문서관리자
+	title = "문서관리자";
+	html += "<div>";
+	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+	html += ("</div><div class=\"xDeptDoc\">" + (storage.basic.doc == null ? "지정안함" : storage.user[storage.basic.doc].userName) + "</div></div>");
+	*/
+
+	// 기본주소
+	title = "주소";
+	html += "<div><div>";
+	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+	html += "</div>";
+	html += ("<div class=\"xDeptAddress\" data-n=\"address\" style=\"grid-column:span 3\"><input type=\"hidden\" id=\"zzAddr1\" /><input type=\"checkbox\" " + (storage.basic.address == null && !root ? "" : "checked") + " class=\"xDeptInuse\" " + (root ? "style=\"display:none;\"" : "") + " onchange=\"if(this.checked){if(storage.basic.address!==null){this.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.value=storage.basic.address[0];this.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.value=storage.basic.address[1];}}else{this.nextElementSibling.nextElementSibling.value='';this.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.value='';}\" /><span style=\"margin-left:2rem;\">기본주소:</span><input class=\"xEmpInput\" id=\"zzAddr2\" style=\"width:38%;\" value=\"" + (storage.basic.address == null ? "" : storage.basic.address[0]) + "\" onclick=\"daumPostCode('zzAddr1', 'zzAddr2', 'zzAddr3')\" /><span style=\"margin-left:2rem;\">상세주소:</span><input class=\"xEmpInput\" id=\"zzAddr3\" style=\"width:38%;\" value=\"" + (storage.basic.address == null ? "" : storage.basic.address[1]) + "\" onkeyup=\"collectDeptData(this)\" /></div></div>");
+
+	// 연락처
+	title = "전화번호";
+	html += "<div><div>";
+	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+	html += "</div>";
+	html += ("<div class=\"xDeptContct\" style=\"grid-column:span 3\" data-n=\"contact\"><input type=\"checkbox\" " + (storage.basic.contact == null && !root ? "" : "checked") + " " + (root ? "style=\"display:none;\"" : "") + " class=\"xDeptInuse\" onchange=\"if(this.checked){for(let x=1;x<4;x++){this.parentElement.children[x].style.display='initial';this.parentElement.children[x].value=storage.basic.contact!==null&&storage.basic.contact[x-1]!==undefined?storage.basic.contact[x-1]:'';}}else{for(let x=1;x<4;x++){this.parentElement.children[x].style.display='none';this.parentElement.children[x].value=''};this.nextElementSibling.onkeyup();}\" onkeyup=\"collectDeptData(this)\" />");
+	html += "<input class=\"xEmpInput\" style=\"width:16.5rem;\" value = \"" + (storage.basic.contact !== null && storage.basic.contact[0] !== undefined ? storage.basic.contact[0] : "") + "\" onkeyup=\"collectDeptData(this)\" /><input class=\"xEmpInput\" style=\"width:16.5rem;\" value = \"" + (storage.basic.contact !== null && storage.basic.contact[1] !== undefined ? storage.basic.contact[1] : "") + "\" onkeyup=\"collectDeptData(this)\" /><input class=\"xEmpInput\" style=\"width:16.5rem;\" value = \"" + (storage.basic.contact !== null && storage.basic.contact[2] !== undefined ? storage.basic.contact[2] : "") + "\" onkeyup=\"collectDeptData(this)\" /></div></div>";
+
+	// 팩스
+	title = "FAX";
+	html += "<div><div>";
+	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+	html += "</div>";
+	html += ("<div class=\"xDeptFax\" data-n=\"fax\"><input type=\"checkbox\" " + (storage.basic.fax == null && !root ? "" : "checked ") + (root ? "style=\"display:none;\"" : "") + " class=\"xDeptInuse\" onchange=\"this.nextElementSibling.value='';this.nextElementSibling.onkeyup()\" /><input class=\"xEmpInput\" value=\"" + (storage.basic.fax == null ? "" : storage.basic.fax) + "\" onkeyup=\"collectDeptData(this)\" /></div>");
+
+	// 이메일
+	title = "email";
+	html += "<div>";
+	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+	html += ("</div><div class=\"xDeptEmail\" data-n=\"email\"><input type=\"checkbox\" " + (storage.basic.email == null && !root ? "" : "checked ") + (root ? "style=\"display:none;\"" : "") + " class=\"xDeptInuse\" onchange=\"this.nextElementSibling.value='';this.nextElementSibling.onkeyup()\" /><input class=\"xEmpInput\" value=\"" + (storage.basic.email == null ? "" : storage.basic.email) + "\" onkeyup=\"collectDeptData(this)\" /></div></div>");
+
+	// 사업자번호
+	title = "사업자번호";
+	html += "<div><div>";
+	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+	html += "</div>";
+	// 루트 부서인 경우 법인번호를 입력할 수 있도록 한다.
+	html += ("<div class=\"xDeptTaxId\" " + (root ? "" : "style=\"grid-column:span 3\"") + " data-n=\"taxId\"><input type=\"checkbox\" " + (storage.basic.taxId == null && !root? "" : "checked ") + (root ? "style=\"display:none;\"" : "") + " class=\"xDeptInuse\" onchange=\"this.nextElementSibling.value='';this.nextElementSibling.onkeyup()\" /><input class=\"xEmpInput\" value=\"" + (storage.basic.taxId == null ? "" : storage.basic.taxId) + "\" onkeyup=\"collectDeptData(this)\" /></div>");
+	if(root){ // 법인번호
+		title = "법인번호";
+		html += "<div>";
+		for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+		html += "</div>";
+		html += ("<div class=\"xDeptCorpRegNo\" data-n=\"corpRegNo\"><input class=\"xEmpInput\" value=\"" + (storage.basic.corpRegNo == null ? "" : storage.company.corpRegNo) + "\" onkeyup=\"collectDeptData(this)\" /></div>");
+	}
+	html += "</div>";
 
 	// 생성일
 	title = "생성일";
 	html += "<div><div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
 	html += "</div>";
-	html += ("<div class=\"xDeptCreated\">" + storage.basic.created + "</div>");
+	html += ("<div class=\"xDeptCreated\">" + (storage.basic.created !== null ? (new Date(storage.basic.created)).toISOString().substring(0,10) : "") + "</div>");
 
 	// 수정일
 	title = "수정일";
 	html += "<div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
-	html += ("</div><div class=\"xDeptModified\">" + storage.basic.modified + "</div></div>");
+	html += ("</div><div class=\"xDeptModified\">" + (storage.basic.modified !== null ? (new Date(storage.basic.modified)).toISOString().substring(0,10) : "") + "</div></div>");
 	
+	html += "</div>";
+
+	// =========================================== 사용 현황 타이틀 ===========================================
+	title = "사용현황";
+	html += "<div><div class=\"image_btns\"><img src=\"/images/manage/icon_modified.png\" /></div><div class=\"manageSubTitle\">";
+	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+	html += "</div><div class=\"image_btns\"><img src=\"/images/manage/icon_undo.png\" data-p\"basic\" onclick=\"clickedImgBtn(this, false)\" /><img src=\"/images/manage/icon_confirm.png\" data-p\"basic\" onclick=\"clickedImgBtn(this, true)\" /></div></div>";
+
+	html += "<div class=\"employeeDetail\" data-p=\"basic\">";
+
+	// =========================================== 사용 현황 내용 ===========================================
+
+	// 항목 1
+	title = "항목1";
+	html += "<div><div>";
+	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+	html += "</div>";
+	html += ("<div class=\"x\" style=\"grid-column:span 3\">. . . . .</div></div>");
+	// 항목 1
+	title = "항목2";
+	html += "<div><div>";
+	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+	html += "</div>";
+	html += ("<div class=\"x\" style=\"grid-column:span 3\">. . . . .</div></div>");
+	// 항목 1
+	title = "항목3";
+	html += "<div><div>";
+	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+	html += "</div>";
+	html += ("<div class=\"x\" style=\"grid-column:span 3\">. . . . .</div></div>");
+	// 항목 1
+	title = "항목4";
+	html += "<div><div>";
+	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+	html += "</div>";
+	html += ("<div class=\"x\" style=\"grid-column:span 3\">. . . . .</div></div>");
+	// 항목 1
+	title = "항목5";
+	html += "<div><div>";
+	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+	html += "</div>";
+	html += ("<div class=\"x\" style=\"grid-column:span 3\">. . . . .</div></div>");
+	// 항목 1
+	title = "항목6";
+	html += "<div><div>";
+	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+	html += "</div>";
+	html += ("<div class=\"x\" style=\"grid-column:span 3\">. . . . .</div></div>");
+	// 항목 1
+	title = "항목7";
+	html += "<div><div>";
+	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+	html += "</div>";
+	html += ("<div class=\"x\" style=\"grid-column:span 3\">. . . . .</div></div>");
+	// 항목 1
+	title = "항목8";
+	html += "<div><div>";
+	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+	html += "</div>";
+	html += ("<div class=\"x\" style=\"grid-column:span 3\">. . . . .</div></div>");
+	// 항목 1
+	title = "항목9";
+	html += "<div><div>";
+	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+	html += "</div>";
+	html += ("<div class=\"x\" style=\"grid-column:span 3\">. . . . .</div></div>");
+
+
 	html += "</div>";
 
 	cnt.innerHTML = html;
@@ -720,12 +862,95 @@ function collectEmpData(e){
 
 	if(edited !== false && edited !== true){
 		t = 0;
-		for(x in storage.collected[p]) if(x !== undefined) t++;
+		for(x in storage.collected[n]) if(x !== undefined) t++;
 	}
 
 	if(t > 0 || edited )	e.target.parentElement.parentElement.parentElement.previousElementSibling.className = "edited";
 	else					e.target.parentElement.parentElement.parentElement.previousElementSibling.className = "";
 } // End of collectEmpData()
+
+function collectDeptData(e){
+	let n, x, y, v, t, edited;
+	n = e.parentElement.dataset.n;
+
+	if(n === "name"){
+		v = e.value;
+		if(storage.basic[n] === v || v === "")	delete storage.collected[n];
+		else	storage.collected[n] = v;
+		y = false;
+		if(storage.basic.name !== v)	for(x in storage.dept.dept){
+			if(storage.dept.dept[x].deptName === v){
+				y = true;
+				break;
+			}
+		}
+		if(v === "" || y){
+			edited = false;
+			e.style.backgroundColor = "rgb(255, 239, 243)";
+		}else{
+			e.style.backgroundColor = "";
+		}
+	}else if(n === "id"){
+		v = e.value;
+		if(storage.basic[n] === v || v === "")	delete storage.collected[n];
+		else	storage.collected[n] = v;
+		y = false;
+		if(storage.basic.id !== v)	for(x in storage.dept.dept){
+			if(x === v){
+				y = true;
+				break;
+			}
+		}
+		if(v === "" || y){
+			edited = false;
+			e.style.backgroundColor = "rgb(255, 239, 243)";
+		}else{
+			e.style.backgroundColor = "";
+		}
+	}else if(n === "fax"){
+		v = e.value;
+		if(storage.basic[n] === v || v === "")	delete storage.collected[n];
+		else	storage.collected[n] = v;
+	}else if(n === "email"){
+		v = e.value;
+		if(storage.basic[n] === v || v === "")	delete storage.collected[n];
+		else	storage.collected[n] = v;
+	}else if(n === "taxId"){
+		v = e.value;
+		if(storage.basic[n] === v || v === "")	delete storage.collected[n];
+		else	storage.collected[n] = v;
+	}else if(n === "address"){
+		v = [null,[null,e.value]];
+		v[0] = document.getElementById("zzAddr1").value;
+		v[1][0] = document.getElementById("zzAddr2").value;
+		if(JSON.stringify(storage.basic[n]) === JSON.stringify(v[1]) || e.value === ""){
+			delete storage.collected[n];
+			delete storage.collected.zipCode;
+		}else{
+			storage.collected.zipCode = v[0];
+			storage.collected[n] = v[1];
+			edited = true;
+		}
+	}else if(n === "contact"){
+		v = [];
+		for(x = 1 ; x < 4 ; x++)	if(e.parentElement.children[x].value !== "")	v.push(e.parentElement.children[x].value);
+		if(JSON.stringify(storage.basic[n] !== null ? storage.basic[n].sort() : storage.basic[n]) === JSON.stringify(v.sort()))	delete storage.collected[n];
+		else	storage.collected[n] = v;
+	}else if(n === "corpRegNo"){
+		v = e.value;
+		if(storage.basic[n] === v || v === "")	delete storage.collected[n];
+		else	storage.collected[n] = v;
+	}
+
+	if(edited !== false && edited !== true){
+		t = 0;
+		for(x in storage.collected[n]) if(x !== undefined) t++;
+	}
+
+	if(t > 0 || edited )	e.parentElement.parentElement.parentElement.previousElementSibling.className = "edited";
+	else					e.parentElement.parentElement.parentElement.previousElementSibling.className = "";
+
+} // End of collectDeptData()
 
 
 // 입력 된 데이터에 대한 초기화/저장 작업 함수
