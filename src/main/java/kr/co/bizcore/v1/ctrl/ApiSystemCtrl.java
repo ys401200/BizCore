@@ -1,6 +1,10 @@
 package kr.co.bizcore.v1.ctrl;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.json.JSONArray;
 import org.slf4j.Logger;
@@ -503,6 +507,29 @@ public class ApiSystemCtrl extends Ctrl{
 
         return result;
     } // End of productGet()
+
+    // 회사 로고를 전달하는 메서드
+    @RequestMapping(value = "/logo", method = RequestMethod.GET)
+    public void logoGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String compId = null;
+        HttpSession session = null;
+        byte[] result = null;
+        OutputStream os = null;
+
+        session = request.getSession();
+        compId = (String)session.getAttribute("compId");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
+
+        if(compId == null){
+            response.setStatus(404);
+        }else{
+            result = attachedService.getCompanyLogo(compId);
+            response.setContentType("image/png");
+            os = response.getOutputStream();
+            os.write(result);
+            os.flush();
+        }
+    } // End of myImageGet()
 
 
 }
