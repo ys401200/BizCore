@@ -191,7 +191,7 @@ public class SystemService extends Svc {
             company += ("\"zipCode\":" + map.get("zipcode") + ",");
             company += ("\"address\":" + map.get("address") + ",");
             company += ("\"contact\":" + map.get("contact") + ",");
-            company += ("\"fax\":\"" + (map.get("email") == null ? null : "\"" + map.get("fax") + "\"") + "\",");
+            company += ("\"fax\":" + (map.get("fax") == null ? null : "\"" + map.get("fax") + "\"") + ",");
             company += ("\"email\":" + (map.get("email") == null ? null : "\"" + map.get("email") + "\"") + ",");
             company += ("\"created\":" + map.get("created") + ",");
             company += ("\"modified\":" + map.get("modified") + "}");
@@ -219,7 +219,7 @@ public class SystemService extends Svc {
                 t = map.get("dept");
                 permission += ("},\"" + t + "\":{");
             }else   permission += ",";
-            if(map.get("func_id") != null)  result += ("\"" + map.get("func_id") + "\":true");
+            if(map.get("func_id") != null)  permission += ("\"" + map.get("func_id") + "\":true");
         }
         permission += "}}";
 
@@ -1128,8 +1128,6 @@ public class SystemService extends Svc {
             rs.close();
             pstmt.close();
 
-            logger.error("/////////////////////////////////////////////////// no : " + no);
-
             if(no == -1)    return -99999;
 
             pstmt = conn.prepareStatement(sql);
@@ -1161,5 +1159,6 @@ public class SystemService extends Svc {
         return count;
 
     } // End of contractFileDownloadAndSave()
+    
 
 }
