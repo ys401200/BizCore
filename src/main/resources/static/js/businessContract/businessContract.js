@@ -540,14 +540,7 @@ function contractSuccessView(result) {
 	createTabSalesList(result.schedules);
 	detailTabHide("tabTradeList");
 	detailTrueDatas(datas);
-	let maintenance = storage.contractDetail.maintenance;
-	if (maintenance != undefined) {
-		maintenance = JSON.parse(maintenance);
-	} else {
-		maintenance = [];
-	}
-	setMaintenanceTab(maintenance);
-
+	
 
 
 
@@ -585,6 +578,13 @@ function contractSuccessView(result) {
 	}, 100);
 
 
+	let maintenance = storage.contractDetail.maintenance;
+	if (maintenance != undefined) {
+		maintenance = JSON.parse(maintenance);
+	} else {
+		maintenance = [];
+	}
+	setMaintenanceTab(maintenance);
 
 
 
