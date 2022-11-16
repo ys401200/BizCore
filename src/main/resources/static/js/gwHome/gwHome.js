@@ -333,7 +333,7 @@ function detailView(obj) {
 }
 
 
-function drawWaitList() {
+function drawWaitList(num) {
   let container = storage.container;
   let types = ["wait", "due", "receive", "refer"];
   let targets = [".waitDiv"];
@@ -488,7 +488,7 @@ function drawMyDraft() {
       }
 
       let pageNation = createPaging(
-        pageContainer[x],
+        pageContainer[0],
         result[3],
         "pageMove",
         "drawMyDraft",

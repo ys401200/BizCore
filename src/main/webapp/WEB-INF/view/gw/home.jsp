@@ -45,30 +45,30 @@
 
 
 					<div class="list waitList" id="tabWaitList">
-						<div><button onclick="drawWaitCardBtn(this)">카드</button><button
-								onclick="drawWaitList(this)">리스트</button></div>
+						<div><button onclick="drawWaitCardBtn(0)">카드</button><button
+								onclick="drawWaitList(0)">리스트</button></div>
 						<div class="card"></div>
 						<div class="detailList"></div>
 						<div class="pageContainer"></div>
 
 					</div>
 					<div class="list dueList" id="tabDueList" style="display: none;">
-						<div><button onclick="drawWaitCardBtn(this)">카드</button><button
-								onclick="drawWaitList(this)">리스트</button></div>
+						<div><button onclick="drawWaitCardBtn(1)">카드</button><button
+								onclick="drawWaitList(1)">리스트</button></div>
 						<div class="card"></div>
 						<div class="detailList"></div>
 						<div class="pageContainer"></div>
 					</div>
 					<div class="list receiveList" id="tabReceiveList" style="display: none;">
-						<div><button onclick="drawWaitCardBtn(this)">카드</button><button
-								onclick="drawWaitList(this)">리스트</button></div>
+						<div><button onclick="drawWaitCardBtn(2)">카드</button><button
+								onclick="drawWaitList(2)">리스트</button></div>
 						<div class="card"></div>
 						<div class="detailList"></div>
 						<div class="pageContainer"></div>
 					</div>
 					<div class="list referList" id="tabReferList" style="display: none;">
-						<div><button onclick="drawWaitCardBtn(this)">카드</button><button
-								onclick="drawWaitList(this)">리스트</button></div>
+						<div><button onclick="drawWaitCardBtn(3)">카드</button><button
+								onclick="drawWaitList(3)">리스트</button></div>
 						<div class="card"></div>
 						<div class="detailList"></div>
 						<div class="pageContainer"></div>

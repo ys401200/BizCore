@@ -241,29 +241,29 @@
  	height: 10em;
  }
 
- .listDiv {
+ .list {
  	margin: 0 1em;
  	padding: 1em;
  	border: 1px solid #406c92;
  	border-top: none;
  }
 
- .listDiv>div:first-child {
+ /* .list >div:first-child {
  	border-bottom: 1px solid #425da8;
  	background-color: #eaeff3;
  }
 
 
- .listDiv>div:first-of-type {
+ .list >div:first-of-type {
  	border-bottom: 1px solid #406c92;
- }
+ } */
 
- .listDiv .grid_default_body_item:nth-child(2n-1) {
+ .grid_default_body_item:nth-child(2n-1) {
  	background-color: rgba(234, 239, 243, 0.4)
  }
 
- .listDiv .gridHeader,
- .listDiv .gridContent {
+ .gridHeader,
+ .gridContent {
  	grid-template-columns: 10% 10% 10% 60% 10%;
  }
 
@@ -274,3 +274,9 @@
  	width: 99%;
  }
 
+
+
+ .detailList,
+ .pageContainer {
+ 	display: none;
+ }
