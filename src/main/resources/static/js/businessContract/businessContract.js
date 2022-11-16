@@ -81,10 +81,6 @@ function drawContractList() {
 			"align": "center",
 		},
 		{
-			"title": "유지보수일자",
-			"align": "center",
-		},
-		{
 			"title": "계약명",
 			"align": "center",
 		},
@@ -166,10 +162,6 @@ function drawContractList() {
 			str = [
 				{
 					"setData": setCreated,
-					"align": "center",
-				},
-				{
-					"setData": startMaintenance + " ~ " + endMaintenance,
 					"align": "center",
 				},
 				{
@@ -325,24 +317,7 @@ function contractSuccessView(result) {
 	}
 
 	dataArray = [
-		{
-			"title": "등록구분",
-			"radioValue": [
-				{
-					"key": "10247",
-					"value": "판매계약",
-				},
-				{
-					"key": "10248",
-					"value": "유지보수",
-				},
-			],
-			"type": "radio",
-			"elementName": "contractType",
-			"col": 4,
-			"elementId": ["contractTypeNew", "contractTypeOld"],
-			"onClick": "contractRadioClick(this);",
-		},
+	
 		{
 			"title": "영업기회(*)",
 			"elementId": "sopp",
@@ -422,30 +397,7 @@ function contractSuccessView(result) {
 			"keyup": "addAutoComplete(this);",
 			"onClick": "addAutoComplete(this);",
 		},
-		{
-			"title": "무상 시작일",
-			"elementId": "startOfFreeMaintenance",
-			"value": startOfFreeMaintenance,
-			"type": "date",
-		},
-		{
-			"title": "무상 종료일",
-			"elementId": "endOfFreeMaintenance",
-			"value": endOfFreeMaintenance,
-			"type": "date",
-		},
-		{
-			"title": "유상 시작일",
-			"elementId": "startOfPaidMaintenance",
-			"value": startOfPaidMaintenance,
-			"type": "date",
-		},
-		{
-			"title": "유상 종료일",
-			"elementId": "endOfPaidMaintenance",
-			"value": endOfPaidMaintenance,
-			"type": "date",
-		},
+		
 		{
 			"title": "발주일자",
 			"elementId": "saleDate",
@@ -487,6 +439,7 @@ function contractSuccessView(result) {
 		},
 		{
 			"title": "",
+			"col": 3,
 		},
 		{
 			"title": "계약명(*)",
@@ -540,7 +493,7 @@ function contractSuccessView(result) {
 	createTabSalesList(result.schedules);
 	detailTabHide("tabTradeList");
 	detailTrueDatas(datas);
-	
+
 
 
 
@@ -599,25 +552,7 @@ function contractInsertForm() {
 	let html, dataArray;
 
 	dataArray = [
-		{
-			"title": "등록구분",
-			"radioValue": [
-				{
-					"key": "10247",
-					"value": "판매계약",
-				},
-				{
-					"key": "10248",
-					"value": "유지보수",
-				},
-			],
-			"type": "radio",
-			"col": 4,
-			"elementId": ["contractTypeNew", "contractTypeOld"],
-			"elementName": "contractType",
-			"disabled": false,
-			"onClick": "contractRadioClick(this);",
-		},
+		
 		{
 			"title": "영업기회(*)",
 			"elementId": "sopp",
@@ -696,30 +631,6 @@ function contractInsertForm() {
 			"complete": "cip",
 			"keyup": "addAutoComplete(this);",
 			"onClick": "addAutoComplete(this);",
-		},
-		{
-			"title": "무상 시작일",
-			"elementId": "startOfFreeMaintenance",
-			"disabled": false,
-			"type": "date",
-		},
-		{
-			"title": "무상 종료일",
-			"elementId": "endOfFreeMaintenance",
-			"disabled": false,
-			"type": "date",
-		},
-		{
-			"title": "유상 시작일",
-			"elementId": "startOfPaidMaintenance",
-			"disabled": false,
-			"type": "date",
-		},
-		{
-			"title": "유상 종료일",
-			"elementId": "endOfPaidMaintenance",
-			"disabled": false,
-			"type": "date",
 		},
 		{
 			"title": "발주일자",
@@ -1357,15 +1268,50 @@ function setMaintenanceTab(maintanence) {
 	// let detailSecondTabsHtml = $(".detailSecondTabs").html();
 	$(".tabs").append("<input type='radio' id='tabMaintenance' name='tabItem' data-content-id='tabMaintenanceList' onclick='tabItemClick(this)'><label class='tabItem' for='tabMaintenance' style='z-index: 2; width: 20%; padding-left: 80%;'>유지보수 내역(0)</label>");
 	$(".detailSecondTabs").append("<div class='tabMaintenanceList' id='tabMaintenanceList' style='display: none;'><div class='gridHeader grid_default_header_item'><div class='gridHeaderItem grid_default_text_align_center'>유지보수 기간</div><div class='gridHeaderItem grid_default_text_align_center'>제목</div><div class='gridHeaderItem grid_default_text_align_center'>고객사</div><div class='gridHeaderItem grid_default_text_align_center'>항목</div><div class='gridHeaderItem grid_default_text_align_center'>담당자</div></div></div>");
+	let maintenanceData = "";
+	let startDate, endDate, title, customer, product, engineer;
+	$(".tabItem")[4].innerHTML = "유지보수 내역(" + maintanence.length + ")";
+	for (let i = 0; i < maintanence.length; i++) {
+		startDate = (maintanence[i].startDate == null || maintanence[i].startDate == undefined) ? "" : getYmd(maintanence[i].startDate);
+		endDate = (maintanence[i].endDate == null || maintanence[i].endDate == undefined) ? "" : getYmd(maintanence[i].endDate);
+		title = (maintanence[i].title == null || maintanence[i].title == undefined) ? "" : maintanence[i].title;
+		customer = (maintanence[i].customer == null || maintanence[i].customer == undefined || maintanence[i].customer == 0) ? "" : storage.customer[maintanence[i].customer].name;
+		product = (maintanence[i].product == null || maintanence[i].product == undefined || maintanence[i].product == "") ? "" : maintanence[i].prodcut;
+		for (let i = 0; i < storage.product.length; i++) {
+			if (storage.product[i].no == product) {
+				prodcut = storage.product[i].name;
+			}
+		}
+		engineer = (maintanence[i].engineer == null || maintanence[i].engineer == undefined) ? "" : storage.user[maintanence[i].engineer].userName;
 
-	"<div id='tabMaintenanceList_"+i+"' class='gridContent grid_default_body_item' data-drag='true' data-id='' data-job='' onclick=''>"+
-	"<div class='gridContentItem grid_default_text_align_center'><span class='textNumberFormat'>"+maintanence.startDate+"-"+maintanence.endDate+"</span></div>"+
-	"<div class='gridContentItem grid_default_text_align_left'><span class='textNumberFormat'></span></div>"+
-	"<div class='gridContentItem grid_default_text_align_center'><span class='textNumberFormat'>"+maintanence.customer+"</span></div>"+
-	"<div class='gridContentItem grid_default_text_align_center'><span class='textNumberFormat'>"+maintanence.engineer+"</span></div>"+
-	"<div class='gridContentItem grid_default_text_align_center'><span class='textNumberFormat'>"+maintanence.startDate+"</span></div></div>"
 
 
+
+
+		maintenanceData += "<div id='tabMaintenanceList_" + i + "' class='gridContent grid_default_body_item' data-drag='true' data-id='' data-job='' onclick=''>" +
+			"<div class='gridContentItem grid_default_text_align_center'><span class='textNumberFormat'>" + startDate + "  ~  " + endDate + "</span></div>" +
+			"<div class='gridContentItem grid_default_text_align_left'><span class='textNumberFormat'></span></div>" +
+			"<div class='gridContentItem grid_default_text_align_center'><span class='textNumberFormat'>" + customer + "</span></div>" +
+			"<div class='gridContentItem grid_default_text_align_center'><span class='textNumberFormat'>" + product + "</span></div>" +
+			"<div class='gridContentItem grid_default_text_align_center'><span class='textNumberFormat'>" + engineer + "</span></div></div>"
+	}
+	$(".tabMaintenanceList").append(maintenanceData);
+
+
+}
+
+
+function getYmd(date) {
+	let d = new Date(date);
+	return (
+		(d.getFullYear() % 100) +
+		"-" +
+		(d.getMonth() + 1 > 9
+			? (d.getMonth() + 1).toString()
+			: "0" + (d.getMonth() + 1)) +
+		"-" +
+		(d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
+	);
 }
 
 

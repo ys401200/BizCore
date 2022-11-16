@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 @Getter
 public class Maintenance extends Domain {
-   
+
     private int no;
     private int contract;
     private int customer;
@@ -21,6 +21,5 @@ public class Maintenance extends Domain {
     private Date modified;
     private Date deleted;
     private String realted;
-  
-  
+
 }
