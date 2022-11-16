@@ -333,16 +333,26 @@ function detailView(obj) {
 }
 
 
-function drawWaitList(num) {
-  let container = storage.container;
-  let types = ["wait", "due", "receive", "refer"];
-  let targets = [".waitDiv"];
-  let listTarget = [".waitList"];
-  let pageTarget = [".waitPage"];
-  types = types.slice(container, container + 1);
-  drawMyDraft(types, targets, listTarget, pageTarget);
+function showList(num) {
+  let targetList = $(".detailList")[num];
+  let targetCard = $(".card")[num];
+  let targetPage = $(".pageContainer")[num];
+  $(targetCard).hide();
+  $(targetList).show();
+  $(targetPage).show();
+
 }
 
+function showCard(num) {
+  let targetList = $(".detailList")[num];
+  let targetCard = $(".card")[num];
+  let targetPage = $(".pageContainer")[num];
+  $(targetCard).show();
+  $(targetList).hide();
+  $(targetPage).hide();
+
+
+}
 
 function drawMyDraft() {
   let typeList = storage.waitList;
@@ -409,7 +419,7 @@ function drawMyDraft() {
 
       result = paging(jsonData.length, storage.currentPage, 18);
 
-     let pageContainer = document.getElementsByClassName("pageContainer");
+      let pageContainer = document.getElementsByClassName("pageContainer");
       let target = $(".detailList")[x];
       container = $(target);
       console.log("확인" + container);
