@@ -37,12 +37,12 @@ function drawGwDiv() {
         list = cipher.decAes(data.data);
         list = JSON.parse(list);
         storage.waitList = list;
-        storage.waitList;
         storage.container = 0;
         storage.cardStart = 0;
-        drawWaitCard(storage.container);
-        getWaitListCount();
-        $(".pageContainer").hide();
+        drawWaitCard();
+        drawMyDraft();
+        // getWaitListCount();
+        // $(".pageContainer").hide();
       } else {
         alert("양식 정보를 불러오지 못했습니다");
       }
@@ -51,54 +51,54 @@ function drawGwDiv() {
 }
 
 
-function getWaitListCount() {
-  let btns = [".waitBtn", ".dueBtn", ".receiveBtn", ".referBtn"];
-  $(btns[0]).html("결재 대기 문서 (" + storage.waitList.wait.length + ")");
-  $(btns[1]).html("결재 예정 문서 (" + storage.waitList.due.length + ")")
-  $(btns[2]).html("결재 수신 문서 (" + storage.waitList.receive.length + ")")
-  $(btns[3]).html("참조/열람 대기 문서 (" + storage.waitList.refer.length + ")")
-}
+// function getWaitListCount() {
+//   let btns = [".waitBtn", ".dueBtn", ".receiveBtn", ".referBtn"];
+//   $(btns[0]).html("결재 대기 문서 (" + storage.waitList.wait.length + ")");
+//   $(btns[1]).html("결재 예정 문서 (" + storage.waitList.due.length + ")")
+//   $(btns[2]).html("결재 수신 문서 (" + storage.waitList.receive.length + ")")
+//   $(btns[3]).html("참조/열람 대기 문서 (" + storage.waitList.refer.length + ")")
+// }
 
-function drawWaitCard(container) {
-  storage.container = container;
-  $(".waitDiv").show();
-  $(".listDiv").hide();
-  $(".waitPage").hide();
+function drawWaitCard() {
+  // storage.container = container;
+  // $(".waitDiv").show();
+  // $(".listDiv").hide();
+  // $(".waitPage").hide();
 
 
-  let btns = [".waitBtn", ".dueBtn", ".receiveBtn", ".referBtn"];
-  $(btns[container]).css("background-color", "white");
-  $(btns[container]).parent().css("border-bottom", "none");
-  $(btns[container]).parent().css("background-color", "white");
-  for (let i = 0; i < btns.length; i++) {
-    if (i != container) {
-      $(btns[i]).css("background-color", "#eaeff3");
-      $(btns[i]).parent().css("border-bottom", "1px solid #406c92");
-      $(btns[i]).parent().css("background-color", "#eaeff3");
-    }
-  }
+  // let btns = [".waitBtn", ".dueBtn", ".receiveBtn", ".referBtn"];
+  // $(btns[container]).css("background-color", "white");
+  // $(btns[container]).parent().css("border-bottom", "none");
+  // $(btns[container]).parent().css("background-color", "white");
+  // for (let i = 0; i < btns.length; i++) {
+  //   if (i != container) {
+  //     $(btns[i]).css("background-color", "#eaeff3");
+  //     $(btns[i]).parent().css("border-bottom", "1px solid #406c92");
+  //     $(btns[i]).parent().css("background-color", "#eaeff3");
+  //   }
+  // }
 
   let typeList = storage.waitList;
   let html = "";
   let types = ["wait", "due", "receive", "refer"];
-  let targets = [".waitDiv"]
-  let listTarget = [".waitList"]
 
 
-  if (container < 4) {
-    types = types.slice(container, container + 1);
-    btns = btns.slice(container, container + 1);
-    $(listTarget[0]).hide();
-    $(targets[0]).parent().show();
-  }
 
 
-  let start = storage.cardStart;
+  // if (container < 4) {
+  //   types = types.slice(container, container + 1);
+  //   btns = btns.slice(container, container + 1);
+  //   $(listTarget[0]).hide();
+  //   $(targets[0]).parent().show();
+  // }
+
+
+
   for (let j = 0; j < types.length; j++) {
     let cardLength = typeList[types[j]].length;
     if (cardLength > 0) {
-
-      for (let i = start; i < cardLength; i++) {
+      for (let i = 0; i < cardLength; i++) {
+        console.log("확인0");
         html +=
           "<div class='waitCard' onClick='cardClick(this)' data-detail='" +
           types[j] +
@@ -120,84 +120,85 @@ function drawWaitCard(container) {
       }
 
     } else {
+      console.log("확인1");
       html += "<div class='defaultWaitCard'>대기 문서가 없습니다.</div>"
 
     }
-
-    $(targets[j]).html(html);
+    let target = $(".card")[j];
+    $(target).html(html);
     html = "";
   }
 
 }
 
 
-function drawWaitCardBtn() {
-  let container = storage.container;
+// function drawWaitCardBtn() {
+//   let container = storage.container;
 
-  let btns = [".waitBtn", ".dueBtn", ".receiveBtn", ".referBtn"];
-  $(btns[container]).css("background-color", "white");
-  $(btns[container]).parent().css("border-bottom", "none");
+//   let btns = [".waitBtn", ".dueBtn", ".receiveBtn", ".referBtn"];
+//   $(btns[container]).css("background-color", "white");
+//   $(btns[container]).parent().css("border-bottom", "none");
 
-  for (let i = 0; i < btns.length; i++) {
-    if (i != container) {
-      $(btns[i]).css("background-color", "#eaeff3");
-      $(btns[i]).parent().css("border-bottom", "1px solid #406c92");
+//   for (let i = 0; i < btns.length; i++) {
+//     if (i != container) {
+//       $(btns[i]).css("background-color", "#eaeff3");
+//       $(btns[i]).parent().css("border-bottom", "1px solid #406c92");
 
-    }
-  }
+//     }
+//   }
 
-  let typeList = storage.waitList;
-  let html = "";
-  let types = ["wait", "due", "receive", "refer"];
-  let targets = [".waitDiv"]
-  let listTarget = [".waitList"]
-
-
-  if (container < 4) {
-    types = types.slice(container, container + 1);
-    btns = btns.slice(container, container + 1);
-    $(listTarget[0]).hide();
-    $(".waitPage").hide();
-    $(targets[0]).show();
-  }
+//   let typeList = storage.waitList;
+//   let html = "";
+//   let types = ["wait", "due", "receive", "refer"];
+//   let targets = [".waitDiv"]
+//   let listTarget = [".waitList"]
 
 
-  let start = storage.cardStart;
-  for (let j = 0; j < types.length; j++) {
-    let cardLength = typeList[types[j]].length;
-    if (cardLength > 0) {
+//   if (container < 4) {
+//     types = types.slice(container, container + 1);
+//     btns = btns.slice(container, container + 1);
+//     $(listTarget[0]).hide();
+//     $(".waitPage").hide();
+//     $(targets[0]).show();
+//   }
 
-      for (let i = start; i < cardLength; i++) {
-        html +=
-          "<div class='waitCard' onClick='cardClick(this)' data-detail='" +
-          types[j] +
-          "!!!" +
-          typeList[types[j]][i].docNo +
-          "'><div>" +
-          typeList[types[j]][i].title +
-          "</div>" +
-          "<div class='subWaitCard'><div class='type'><div>결재타입</div><div>" +
-          typeList[types[j]][i].form +
-          "</div></div>" +
-          "<div class='writer'><div>기안자</div><div>" +
-          storage.user[typeList[types[j]][i].writer].userName +
-          "</div></div>" +
-          "<div class='created'><div>작성일</div><div>" +
-          getYmdSlash(typeList[types[j]][i].created) +
-          "</div></div></div></div>";
 
-      }
+//   let start = storage.cardStart;
+//   for (let j = 0; j < types.length; j++) {
+//     let cardLength = typeList[types[j]].length;
+//     if (cardLength > 0) {
 
-    } else {
-      html += "<div class='defaultWaitCard'>대기 문서가 없습니다.</div>"
-      $(".waitPage").hide();
-    }
+//       for (let i = start; i < cardLength; i++) {
+//         html +=
+//           "<div class='waitCard' onClick='cardClick(this)' data-detail='" +
+//           types[j] +
+//           "!!!" +
+//           typeList[types[j]][i].docNo +
+//           "'><div>" +
+//           typeList[types[j]][i].title +
+//           "</div>" +
+//           "<div class='subWaitCard'><div class='type'><div>결재타입</div><div>" +
+//           typeList[types[j]][i].form +
+//           "</div></div>" +
+//           "<div class='writer'><div>기안자</div><div>" +
+//           storage.user[typeList[types[j]][i].writer].userName +
+//           "</div></div>" +
+//           "<div class='created'><div>작성일</div><div>" +
+//           getYmdSlash(typeList[types[j]][i].created) +
+//           "</div></div></div></div>";
 
-    $(targets[j]).html(html);
-    html = "";
-  }
+//       }
 
-}
+//     } else {
+//       html += "<div class='defaultWaitCard'>대기 문서가 없습니다.</div>"
+//       $(".waitPage").hide();
+//     }
+
+//     $(targets[j]).html(html);
+//     html = "";
+//   }
+
+// }
 
 // function prevPage(obj) {
 //   let target = $(obj).next().attr("class");
@@ -343,10 +344,12 @@ function drawWaitList() {
 }
 
 
-function drawMyDraft(types, targets, listTarget, pageTarget) {
-  $(targets[0]).hide();
-  $(listTarget[0]).show();
-  $(pageTarget[0]).show();
+function drawMyDraft() {
+  let typeList = storage.waitList;
+  let html = "";
+  let types = ["wait", "due", "receive", "refer"];
+  console.log("확인1")
+
   let container,
     result,
     jsonData,
@@ -358,144 +361,143 @@ function drawMyDraft(types, targets, listTarget, pageTarget) {
     setDate,
     str,
     fnc;
+  for (let x = 0; x < 4; x++) {
+    if (storage.waitList[types[x]] === undefined || storage.waitList[types[x]].length == 0) {
+      let target = $(".detailList")[x];
+      console.log("확인2")
 
-  if (storage.waitList[types[0]] === undefined || storage.waitList[types[0]].length == 0) {
-    container = $(listTarget[0]);
+      container = $(target);
 
-    header = [
-      // {
-      //   title: "번호",
-      //   align: "center",
-      // },
-      {
-        title: "작성일",
-        align: "center",
-      },
-      {
-        title: "결재 타입",
-        align: "left",
-      },
-      {
-        title: "문서 양식",
-        align: "center",
-      },
-      {
-        title: "제목",
-        align: "center",
-      },
-      {
-        title: "작성자",
-        align: "center",
-      },
-     
-    ];
-    createGrid(container, header, data, ids, job, fnc);
+      header = [
 
-    container.append("<div class='noListDefault'>대기 문서가 없습니다.</div>")
-
-
-
-
-
-  } else {
-    // jsonData = storage.waitList[types[0]]
-    let tt = []; 
-    for (let i = storage.waitList[types[0]].length - 1; i >= 0; i--) { tt.push(storage.waitList[types[0]][i]) };
-    jsonData = tt; 
-
-    result = paging(jsonData.length, storage.currentPage, 18);
-
-    pageContainer = document.getElementsByClassName("pageContainer");
-    container = $(listTarget[0]);
-
-    header = [
-      // {
-      //   title: "번호",
-      //   align: "center",
-      // },
-      {
-        title: "작성일",
-        align: "center",
-      },
-      {
-        title: "결재 타입",
-        align: "center",
-      },
-      {
-        title: "문서 양식",
-        align: "center",
-      },
-      {
-        title: "제목",
-        align: "left",
-      },
-      {
-        title: "작성자",
-        align: "center",
-      },
-     
-    ];
-
-    for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
-      disDate = dateDis(jsonData[i].created, jsonData[i].modified);
-      setDate = getYmdSlash(disDate);
-      let appType;
-      if (jsonData[i].appType == 0) {
-        appType = "검토";
-      } else if (jsonData[i].appType == 1) {
-        appType = "합의";
-      } else if (jsonData[i].appType == 2) {
-        appType = "결재";
-      } else if (jsonData[i].appType == 3) {
-        appType = "수신";
-      } else if (jsonData[i].appType == 4) {
-        appType = "참조";
-      }
-
-      str = [
-        // {
-        //   "setData": jsonData[i].docNo,
-        //   "align": "center"
-        // },
         {
-          "setData": setDate,
-          "align": "center"
+          title: "작성일",
+          align: "center",
         },
         {
-          "setData": appType,
-          "align": "center"
+          title: "결재 타입",
+          align: "left",
         },
         {
-          "setData": jsonData[i].form,
-          "align": "center"
-        },
-       
-        {
-          "setData": jsonData[i].title,
-          "align": "left"
+          title: "문서 양식",
+          align: "center",
         },
         {
-          "setData": storage.user[jsonData[i].writer].userName,
-          "align": "center"
+          title: "제목",
+          align: "center",
         },
-       
+        {
+          title: "작성자",
+          align: "center",
+        },
+
+      ];
+      createGrid(container, header, data, ids, job, fnc);
+
+      container.append("<div class='noListDefault'>대기 문서가 없습니다.</div>")
+
+
+
+      console.log("확인3" + container);
+
+
+    } else {
+      // jsonData = storage.waitList[types[0]]
+      let tt = [];
+      for (let i = storage.waitList[types[x]].length - 1; i >= 0; i--) { tt.push(storage.waitList[types[x]][i]) };
+      jsonData = tt;
+
+      result = paging(jsonData.length, storage.currentPage, 18);
+
+     let pageContainer = document.getElementsByClassName("pageContainer");
+      let target = $(".detailList")[x];
+      container = $(target);
+      console.log("확인" + container);
+      header = [
+        {
+          title: "작성일",
+          align: "center",
+        },
+        {
+          title: "결재 타입",
+          align: "center",
+        },
+        {
+          title: "문서 양식",
+          align: "center",
+        },
+        {
+          title: "제목",
+          align: "left",
+        },
+        {
+          title: "작성자",
+          align: "center",
+        },
+
       ];
 
-      fnc = "detailView(this)";
-      ids.push(jsonData[i].docNo);
-      data.push(str);
+      for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+        disDate = dateDis(jsonData[i].created, jsonData[i].modified);
+        setDate = getYmdSlash(disDate);
+        let appType;
+        if (jsonData[i].appType == 0) {
+          appType = "검토";
+        } else if (jsonData[i].appType == 1) {
+          appType = "합의";
+        } else if (jsonData[i].appType == 2) {
+          appType = "결재";
+        } else if (jsonData[i].appType == 3) {
+          appType = "수신";
+        } else if (jsonData[i].appType == 4) {
+          appType = "참조";
+        }
+
+        str = [
+          // {
+          //   "setData": jsonData[i].docNo,
+          //   "align": "center"
+          // },
+          {
+            "setData": setDate,
+            "align": "center"
+          },
+          {
+            "setData": appType,
+            "align": "center"
+          },
+          {
+            "setData": jsonData[i].form,
+            "align": "center"
+          },
+
+          {
+            "setData": jsonData[i].title,
+            "align": "left"
+          },
+          {
+            "setData": storage.user[jsonData[i].writer].userName,
+            "align": "center"
+          },
+
+        ];
+
+        fnc = "detailView(this)";
+        ids.push(jsonData[i].docNo);
+        data.push(str);
+      }
+
+      let pageNation = createPaging(
+        pageContainer[x],
+        result[3],
+        "pageMove",
+        "drawMyDraft",
+        result[0]
+      );
+      pageContainer[x].innerHTML = pageNation;
+      createGrid(container, header, data, ids, job, fnc);
+
     }
-
-    let pageNation = createPaging(
-      pageContainer[0],
-      result[3],
-      "pageMove",
-      "drawMyDraft",
-      result[0]
-    );
-    pageContainer[0].innerHTML = pageNation;
-    createGrid(container, header, data, ids, job, fnc);
-
   }
 }
 
