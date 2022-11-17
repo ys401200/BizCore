@@ -254,11 +254,11 @@ function showReportDetail() {
     "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
   $(".listPageDiv").html(detailHtml);
 
-  let selectedFileView =
-    "<label>첨부파일</label><div><div><input class='inputFile' multiple name='attached[]'type='file' onchange='setSelectedFiles()'/></div><div class='selectedFileDiv'></div></div>";
+  // let selectedFileView =
+  //   "<label>첨부파일</label><div><div><input class='inputFile' multiple name='attached[]'type='file' onchange='setSelectedFiles()'/></div><div class='selectedFileDiv'></div></div>";
 
   $(".seletedForm").html(testForm);
-  $(".selectedFile").html(selectedFileView);
+  // $(".selectedFile").html(selectedFileView);
   $(":file").css("display", "none"); // 첨부파일 버튼 숨기기
 
   let tabHtml =
@@ -596,7 +596,7 @@ function drawCommentLine() {
     appLineArr.push(data);
   }
 
-  let html =
+  let html = "<div class='readDiv selectedFile'><div>첨부파일</div><div><div class='selectedFileDiv'></div><div><input class='inputFile' multiple='' name='attached[]' type='file' onchange='setSelectedFiles()' style='display: none;'></div></div></div>" +
     "<div class='readDiv'><div>열람</div><div><label for='deptRd'><input type='radio' id='deptRd' name='rd' value='dept' disabled/>작성자 소속 부서</label><label for='noneRd'><input type='radio' id='noneRd' name='rd' value='none' disabled/>열람 설정 없음</label></div></div>";
   let detail =
     "<div class='tapLine tapLineTitle'><div>타입</div><div>이름</div><div>상태</div><div>일자</div><div>의견</div></div>";

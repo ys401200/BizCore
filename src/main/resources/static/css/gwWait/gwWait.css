@@ -191,7 +191,14 @@
 
 .listPageDiv .detailReport .selectedReportview>div:first-child {
    border: 1px solid black;
-
+   /* width: 21cm;
+   min-height: 29.7cm; */
+   border: 1px #D3D3D3 solid;
+   border-radius: 5px;
+   box-shadow: 0 0 5px rgb(0 0 0 / 10%);
+   padding: 30px 20px 0 20px;
+   clear: both;
+   margin: 0 auto;
 }
 
 
@@ -347,9 +354,22 @@
 }
 
 
+.readDiv:first-of-type {
+   display: grid;
+   grid-template-columns: 20% 80%;
+   margin: 14px 1em 18px 1em;
+   background-color: white;
+   border-radius: 10px;
+   box-shadow: 0 2px 5px rgb(168 173 179 / 80%);
+   font-size: 15px;
+   /* box-shadow: 0 2px 5px rgb(206 217 219);
+   font-size:15px;
+   padding:1px 0; */
+}
+
 .readDiv {
    display: grid;
-   grid-template-columns: 10% 90%;
+   grid-template-columns: 20% 80%;
    margin: 14px 1em 18px 1em;
    background-color: white;
    border-radius: 10px;
@@ -370,8 +390,8 @@
    display: flex;
    align-items: center;
    justify-content: center;
-   /* background-color: #332E85; */
-   /* color: white; */
+   background-color: #DAD9FF;
+   border-radius: 10px 0 0 10px;
 
 }
 
