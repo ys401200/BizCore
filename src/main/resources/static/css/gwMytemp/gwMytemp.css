@@ -71,10 +71,10 @@
   grid-template-columns: 15% 15% 50% 20%;
 }
 
-.subContainer .listPageDiv .pageContainer {
+/* .subContainer .listPageDiv .pageContainer {
   display: flex;
   float: right;
-}
+} */
 
 .subContainer .listPageDiv .pageContainer .paging_cell_current {
   background-color: #eaeff3;

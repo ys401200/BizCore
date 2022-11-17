@@ -138,10 +138,10 @@ select:read-only, input[type="text"]:read-only, input[type="date"]:read-only {
   grid-template-columns: 10% 10% 55% 5% 5% 10% 5%;
 }
 
-.subContainer .listPageDiv .pageContainer {
+/* .subContainer .listPageDiv .pageContainer {
   display: flex;
   float: right;
-}
+} */
 
 .subContainer .listPageDiv .pageContainer .paging_cell_current {
   background-color: #eaeff3;

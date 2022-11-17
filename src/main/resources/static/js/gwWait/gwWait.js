@@ -247,7 +247,7 @@ function showReportDetail() {
   let testForm = storage.reportDetailData.doc;
 
   let detailHtml =
-    "<div class='mainBtnDiv'><button onclick='showList()'>목록보기</button><button class='printBtn' onclick='openPrintTab();' >인쇄하기</button><button type='button' name='approvalBtn' onclick='showAppModal()'>결재하기</button>" +
+    "<div class='mainBtnDiv crudBtns'><button onclick='showList()'>목록보기</button><button class='printBtn' onclick='openPrintTab();' >인쇄하기</button><button type='button' name='approvalBtn' onclick='showAppModal()'>결재하기</button>" +
     "<button type='button' onclick='showGwModal()'>결재선 수정</button>" +
     "<button type='button' onclick='toWriteMode();createConfirmBtn(this)'>문서 수정</button></div>" +
     // "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
@@ -262,9 +262,12 @@ function showReportDetail() {
   $(":file").css("display", "none"); // 첨부파일 버튼 숨기기
 
   let tabHtml =
-    "<div class='reportInfoTab'>" +
-    "<label id='lineInfo' onclick='changeTab(this)'>문서정보</label><label id='changeInfo' onclick='changeTab(this)'>변경이력</label></div>" +
-    "<div id='tabDetail'></div><div id='tabDetail2'></div>";
+    "<div class='reportInfoTab tabs'>" +
+    "<input type='radio' id='tablineInfo' name='tabItem' data-content-id='tabDetail' onclick='tabItemClick(this)' checked>" +
+    "<label  class='tabItem' for='tablineInfo'  style='z-index:5; width:50% ; padding-left : 0%;'>문서정보</label>" +
+    "<input type='radio' id='tabChangeInfo' name='tabItem' data-content-id='tabDetail2' onclick='tabItemClick(this)' checked>" +
+    "<label  class='tabItem' for='tabChangeInfo' style='z-index:0; width:50% ; padding-left : 50%;' onclick='changeTab(this)'>변경이력</label></div>" +
+    "<div class='tabDetail'id='tabDetail'></div><div class='tabDetail2' id='tabDetail2'></div>";
   $(".comment").html(tabHtml);
 
   toReadMode();
@@ -521,9 +524,9 @@ function fileRemove(obj) {
 
 // 탭 누를때마다의 이벤트 주기
 function changeTab(obj) {
-  $(obj).css("background-color", "#62a6ad");
-  $(obj).css("color", "#fff");
-  $(obj).css("border-top-left", "14px");
+  // $(obj).css("background-color", "#62a6ad");
+  // $(obj).css("color", "#fff");
+  // $(obj).css("border-top-left", "14px");
   //$(obj).css("border-bottom", "2px solid #5298d5");
 
   if (obj.id == "lineInfo") {

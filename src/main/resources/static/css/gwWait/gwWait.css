@@ -78,11 +78,11 @@
 }
 
 .container #gwSubTabTitle {
-	font-weight: bolder;
-	font-size: 15px;
-	padding-left: 15px;
-	line-height: 40px;
-	color: #406c92;
+   font-weight: bolder;
+   font-size: 15px;
+   padding-left: 15px;
+   line-height: 40px;
+   color: #406c92;
 }
 
 
@@ -133,14 +133,14 @@
 
 .listDiv .gridHeader,
 .listDiv .gridContent {
-   grid-template-columns: 10% 10% 10% 60% 10%; 
+   grid-template-columns: 10% 10% 10% 60% 10%;
 }
 
 
-.subContainer .listPageDiv .pageContainer {
+/* .subContainer .listPageDiv .pageContainer {
    display: flex;
    float: right;
-}
+} */
 
 .subContainer .listPageDiv .pageContainer .paging_cell_current {
    background-color: #eaeff3;
@@ -159,7 +159,7 @@
 
 .listDiv>div:first-child {
    border-bottom: 1px solid #425da8;
-   background-color:#f2f5ff;
+   background-color: #f2f5ff;
 }
 
 .listDiv .grid_default_body_item:nth-chhild(2n-1) {
@@ -252,17 +252,20 @@
 .listPageDiv .detailReport .comment {
    background-color: #e6eff1;
    margin: 0 1em;
+   padding-bottom: 1em;
    border-radius: 20px 20px 0 0;
+   height: fit-content;
 }
 
 .detailReport .comment .reportInfoTab {
-   /* padding: 1em; */
+   padding: 0.5em;
    text-align: center;
    display: grid;
    grid-template-columns: repeat(2, 1fr);
    font-size: 15px;
    border-radius: 20px 20px 0 0;
-   background-color: #62a6ad;
+   /* background-color: #62a6ad; */
+   width: inherit;
 }
 
 .detailReport .comment .reportInfoTab input[type="radio"] {
@@ -270,31 +273,34 @@
 }
 
 
-.detailReport .comment .reportInfoTab>label {
+/* .detailReport .comment .reportInfoTab>label {
    padding: 0.5em;
    cursor: pointer;
    background-color: #dddddd;
-   padding: 10px 0;
-   /* background-color:#406c92; */
-}
+   padding: 10px 0; */
+/* background-color:#406c92; */
+/* } */
 
-.detailReport .comment .reportInfoTab>label:first-of-type {
+/* .detailReport .comment .reportInfoTab>label:first-of-type {
    background-color: #62a6ad;
    border-top-left-radius: 14px;
    color: #fff;
-}
+} */
 
-.detailReport .comment .reportInfoTab>label:last-of-type {
+/* .detailReport .comment .reportInfoTab>label:last-of-type {
    border-top-right-radius: 14px;
    border-bottom-left-radius: 20px;
    color: #5c5c5c;
-}
+} */
 
-.comment .tabDetail>div:last-of-type {
+/* .comment .tabDetail>div:last-of-type {
    padding: 1em;
    border-top-right-radius: 20px;
-}
+} */
 
+.tabs {
+   box-shadow: none;
+}
 
 .tapLine,
 .tapLineB {
@@ -311,7 +317,7 @@
 }
 
 #tabDetail2>.tapLineB:first-of-type {
-   background-color: #96cbd1;
+   background-color: #DAD9FF;
    margin: 14px 1em 0 1em;
    border-radius: 10px 10px 0 0;
 }
@@ -322,7 +328,7 @@
    margin: 0 1em;
    text-align: center;
    padding: 0.5em;
-   border-bottom: 0.5px solid #87c1c7;
+   border-bottom: 0.5px solid #DAD9FF;
 }
 
 .tapLine>div,
@@ -332,11 +338,11 @@
    align-items: center;
    justify-content: center;
    border-left: none;
-   border-bottom: 0.5px solid #87c1c7;
+   border-bottom: 0.5px solid #DAD9FF;
 }
 
 .tapLineTitle {
-   background-color: #96cbd1;
+   background-color: #DAD9FF;
    border-radius: 10px 10px 0 0;
 }
 
