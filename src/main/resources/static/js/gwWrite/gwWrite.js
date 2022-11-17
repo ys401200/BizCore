@@ -386,34 +386,34 @@ function showModal() {
 function setModalhtml() {
   let setGwModalHtml =
     "<div class='gwModal'>" +
-    "<div class='modal-title'>결재선 생성</div>" +
+    "<div class='modalHead'><span class='modalHeadTitle'>결재선 생성</span><span class='xClose' onclick='closeX()'><i class='fa-solid fa-xmark'></i></span></div>" +
     "<div class='lineDetail'>" +
     "<div class='lineTop'>" +
     "<div class='innerDetail' id='lineLeft'></div>" +
-    "<div class='innerDetail' id='lineCenter'>" +
+    "<div class='innerDetail crudBtns' id='lineCenter'>" +
     "<button onclick='check(this.value)' value='examine'>검토 &gt;</button>" +
     // "<button onclick='check(this.value)' value='agree'>합의 &gt;</button>" +
     "<button onclick='check(this.value)' value='approval'>결재 &gt;</button>" +
     " <button onclick='check(this.value)' value='conduct'>수신 &gt;</button>" +
     "<button onclick='check(this.value)' value='refer'>참조 &gt;</button></div>" +
     "<div class='innerDetail' id='lineRight'>" +
-    "<div><div>자주 쓰는 결재선</div><div><div class='savedLineContainer'><select name='saveLineSelect'></select></div>" +
+    "<div ><div class='gwModalTitle'>자주 쓰는 결재선</div><div class='crudBtns'><div class='savedLineContainer'><select name='saveLineSelect'></select></div>" +
     "<button type='button' class='getSavedLineBtn' onclick='setSavedLine()'>불러오기</button><button type='button' class='delSavedLineBtn' onclick='delSavedLineData()' >삭제하기</button><input type='text' class='setSavedLineTitle' placeholder='결재선 이름을 입력하세요'><button type='button' class='setSavedLine' onclick='lineSaveFnc()'>저장하기</button></div></div>" +
-    "<div><div>검토</div>" +
+    "<div><div class='defaultFormSpanDiv'>검토</div>" +
     "<div class='typeContainer' id='examine'></div>" +
     "</div>" +
     // "<div><div>합의</div>" +
     // "<div class='typeContainer' id='agree'></div></div>" +
-    "<div><div>결재</div>" +
+    "<div><div class='defaultFormSpanDiv'>결재</div>" +
     "<div class='typeContainer' id='approval'></div></div>" +
-    "<div><div>수신</div>" +
+    "<div><div class='defaultFormSpanDiv'>수신</div>" +
     "<div class='typeContainer' id='conduct'></div></div>" +
-    "<div><div>참조</div>" +
+    "<div><div class='defaultFormSpanDiv'>참조</div>" +
     "<div class='typeContainer' id='refer'></div></div>" +
     "</div>" +
     "</div>" +
     "</div>" +
-    "<div class='close-wrap'>" +
+    "<div class='close-wrap crudBtns'>" +
     " <button id='close' onclick='closeGwModal(this)'>취소</button>" +
     " <button id='create' onclick='closeGwModal(this)'>생성</button>" +
     "</div>" +
@@ -448,6 +448,13 @@ function setModalhtml() {
   }
   orgChartTarget.html(innerHtml);
 }
+
+
+
+function closeX() {
+  $(".modal-wrap").hide();
+}
+
 
 // 결재선 모달 취소 생성
 function closeGwModal(obj) {
@@ -527,7 +534,7 @@ function check(name) {
             id +
             "' onclick='upClick(this)'>▲</button><button  value='" +
             id +
-            "' onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>";
+            "' onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'><i class='fa-solid fa-xmark'></i></button></div>";
         }
       }
     }
@@ -588,7 +595,7 @@ function upClick(obj) {
       numArr[i] +
       "' onclick='upClick(this)'>▲</button><button  value='" +
       numArr[i] +
-      "'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>";
+      "'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'><i class='fa-solid fa-xmark'></i></button></div>";
   }
 
   target.html(selectHtml);
@@ -639,7 +646,7 @@ function downClick(obj) {
       numArr[i] +
       "' onclick='upClick(this)'>▲</button><button  value='" +
       numArr[i] +
-      "'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>";
+      "'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'><i class='fa-solid fa-xmark'></i></button></div>";
   }
 
   target.html(selectHtml);
@@ -928,7 +935,7 @@ function setSavedLine() {
         selectedAppLine[k][1] +
         "' onclick='upClick(this)'>▲</button><button  value='" +
         selectedAppLine[k][1] +
-        "'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>";
+        "'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'><i class='fa-solid fa-xmark'></i></button></div>";
       target[selectedAppLine[k][0]].innerHTML = html;
     }
   }
@@ -1174,7 +1181,7 @@ function docFileChange() {
       fileDataArray[i] +
       "'>" +
       fileDataArray[i] +
-      "<button type='button' onclick='deleteFile(this)'>x</button></div></div>";
+      "<button type='button' onclick='deleteFile(this)'><i class='fa-solid fa-xmark'></i></button></div></div>";
     $(".filePreview").html(html);
   }
 

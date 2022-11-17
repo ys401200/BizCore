@@ -1,5 +1,14 @@
 @charset "UTF-8";
 
+.ContentDiv .crudBtns button:first-of-type {
+  margin: 0 0.3em;
+
+}
+
+.ContentDiv .paddingBottom {
+  border-bottom: 1px solid black;
+  padding-bottom: 0.5em;
+}
 
 
 .container {
@@ -36,7 +45,7 @@
   overflow: auto;
 }
 
-.ContentDiv .gwWriteBtns {
+/* .ContentDiv .gwWriteBtns {
   border-bottom: 2px solid #c1c6cb;
   padding-bottom: 0.5em;
   width: 80%;
@@ -44,7 +53,7 @@
 }
 
 .ContentDiv .gwWriteBtns button {
-  /* color: #eaeff3; */
+  color: #eaeff3;
   font-size: 14px;
   border: none;
   border-right: 1px solid #c1c6cb;
@@ -52,8 +61,8 @@
   height: 26px;
   padding: 0 0.7em;
   margin: 0 5px;
-  /* box-shadow: 0px 1px 4px #c1c6cb; */
-  /* border-radius: 5px; */
+   box-shadow: 0px 1px 4px #c1c6cb; 
+   border-radius: 5px; 
 }
 
 .ContentDiv .gwWriteBtns button:last-of-type {
@@ -65,7 +74,7 @@
 .ContentDiv .gwWriteBtns button:hover {
   transform: scale(1.01);
 }
-
+ */
 
 
 /* 결재양식 선택 start ====================================================   */
@@ -226,15 +235,11 @@
   justify-content: left;
 }
 
-.ContentDiv>div:nth-child(3) button {
-  color: #eaeff3;
-  background-color: #456e95;
-  padding: 0 0.8em;
-  height: 24px;
-  box-shadow: 0px 1px 4px #c1c6cb;
-  margin-left: 10px;
-  border-radius: 5px;
-}
+/* .ContentDiv>div:nth-child(3) button {
+
+  margin-left: 1em;
+
+} */
 
 /* End 결재양식 선택  ====================================================   */
 
@@ -262,24 +267,24 @@
 
 }
 
-.modal-title {
-  font-weight: 500;
-  font-size: 16px;
-  margin-left: 18px;
-  line-height: 3;
-  color: #fff;
+.modalHead {
+  height: 50px;
+  color: #ffffff;
+  background-color: #2147b1;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .gwModal {
-  background-color: #456e95;
+  background-color: white;
   width: 60%;
   border-radius: 0.3em;
-  padding: 0.5em 0.5em 0.9em 0.5em;
+  /* padding: 0.5em 0.5em 0.9em 0.5em; */
 }
 
 .close-wrap {
   text-align: right;
-  margin: 0.3em 0.5em 0 0;
+  margin: 0.3em 0.5em 0.3em 0;
 }
 
 
@@ -307,7 +312,7 @@
   background-color: #ffffff;
   overflow: auto;
   border-radius: 3px;
-  /* border: 1px solid black; */
+  border: 1px solid #B5B2FF;
 }
 
 .selector .lineDetail .innerDetail>div {
@@ -353,11 +358,11 @@
 
 }
 
-.selector .lineDetail #lineRight>div:first-of-type>div:first-of-type {
+/* .selector .lineDetail #lineRight>div:first-of-type>div:first-of-type {
   color: #456e95;
   font-size: 0.8em;
   font-weight: 200;
-}
+} */
 
 
 .selector .lineDetail #lineRight>div:first-of-type>div:last-of-type {
@@ -370,17 +375,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid black;
+  border: 1px solid #B5B2FF;
 
 }
 
 .selector .lineDetail #lineRight>div:not(:first-of-type)>div:last-of-type {
-  border: 1px solid black;
+  border: 1px solid #B5B2FF;
   border-left: none;
 }
 
 .selector .lineDetail #lineRight>div:first-of-type {
-  background-color: #eaeff3;
+  background-color: #DAD9FF;
   border-radius: 5px;
   display: flex;
   flex-direction: column;
@@ -390,7 +395,7 @@
 
 .selector .lineDetail #lineRight>div:first-of-type input {
 
-  margin: 0 0.5em;
+  margin: 0 0.2em 0 1.2em;
 }
 
 
@@ -441,22 +446,30 @@
   width: 70%;
 }
 
-.typeContainer .lineDataContainer>button {
+/* .typeContainer .lineDataContainer>button {
   float: left;
   width: 10%;
-}
+} */
 
 /*결재선 모달창 버튼*/
 .ContentDiv>div:nth-child(3) .gwModal #lineCenter button {
   height: 25px;
   font-weight: bolder;
   box-shadow: 0px 2px 4px #a5b6c1;
+
+}
+
+.ContentDiv>div:nth-child(3) .lineDataContainer button {
+
+  background-color: #2147b1;
+  color: #ffffff;
+  border-radius: 5px;
 }
 
 .ContentDiv>div:nth-child(3) .gwModal #lineCenter button:hover,
 .ContentDiv>div:nth-child(3) .lineDataContainer button:hover {
   color: #fff;
-  background-color: #61829e;
+  background-color: #B5B2FF;
   font-weight: normal;
 }
 
@@ -467,6 +480,22 @@
 
 .ContentDiv>div:nth-child(3) .gwModal .close-wrap button {
   box-shadow: none;
+}
+
+.defaultFormSpanDiv {
+  display: flex;
+  align-items: center;
+  border-right: 1px solid #B5B2FF;
+  background-color: #DAD9FF;
+  color: #000;
+  font-weight: 600;
+
+}
+
+.gwModalTitle {
+  color: #000;
+  font-weight: 600;
+  font-size: 0.8rem;
 }
 
 /* End ======================== 결재선관련 ============================= */

@@ -10,7 +10,7 @@
           <hr />
           <span class="titleSpan">새 결재 진행</span>
           <div class="ContentDiv">
-            <div class='gwWriteBtns'>
+            <div class="crudBtns paddingBottom">
               <button type='button' onclick='reportInsert()' class='writeBtn'>기안 하기</button>
               <button class='saveBtn' type='button' onclick='tempSave()' disabled>임시 저장</button>
               <!-- <button class="createEst" type="button" onclick="window.open('/gw/estimate','','width:1100px')">견적서 셋</button> -->
@@ -25,7 +25,7 @@
 
                   <div>
                     <div> 결재양식</div>
-                    <div>
+                    <div class="crudBtns">
                       <div class='formListDiv'></div>
                       <button type='button' class='formSelectbtn' onclick='selectForm()'>선택</button>
                       <input type='hidden' class='formNumHidden' />
@@ -57,7 +57,8 @@
 
             <div class='selector'>
 
-              <div class="stepLabel">● 결재선<button class='createLineBtn' onclick='showModal()'>결재선 생성</button></div>
+              <div class="stepLabel crudBtns">● 결재선<button class='createLineBtn' onclick='showModal()'>결재선 생성</button>
+              </div>
               <div class="lineBtnContainer">
 
                 <div class='guide stepLabel'> 결재 양식을 선택하면 결재선 생성을 할 수 있습니다. </div>
