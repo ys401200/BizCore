@@ -10,29 +10,31 @@
 					<hr />
 					<span>전자결재 홈</span>
 
-					<div class="tabs">
+					<div class="reportContainer">
+						<div class="tabs">
 
-						<input type="radio" id="tabWait" name="tabItem" data-content-id="tabWaitList"
-							onclick="tabItemClick(this)" checked>
-						<label class="tabItem" for="tabWait" style="z-index: 8; width:24%; padding-left: 0%;">결재 대기
-							문서(0)</label>
+							<input type="radio" id="tabWait" name="tabItem" data-content-id="tabWaitList"
+								onclick="tabItemClick(this)" checked>
+							<label class="tabItem" for="tabWait" style="z-index: 8; width:25%; padding-left:0%;">결재 대기
+								문서(0)</label>
 
-						<input type="radio" id="tabDue" name="tabItem" data-content-id="tabDueList"
-							onclick="tabItemClick(this)">
-						<label class="tabItem" for="tabDue" style="z-index: 6; width: 24%; padding-left: 25%;">결재 예정
-							문서(0)</label>
+							<input type="radio" id="tabDue" name="tabItem" data-content-id="tabDueList"
+								onclick="tabItemClick(this)">
+							<label class="tabItem" for="tabDue" style="z-index: 6; width: 25%; padding-left: 25%;">결재 예정
+								문서(0)</label>
 
-						<input type="radio" id="tabReceive" name="tabItem" data-content-id="tabReceiveList"
-							onclick="tabItemClick(this)">
-						<label class="tabItem" for="tabReceive" style="z-index: 4; width: 24%; padding-left: 50%;">결재 수신
-							문서(0)</label>
+							<input type="radio" id="tabReceive" name="tabItem" data-content-id="tabReceiveList"
+								onclick="tabItemClick(this)">
+							<label class="tabItem" for="tabReceive" style="z-index: 4; width:25%; padding-left: 50%;">결재
+								수신
+								문서(0)</label>
 
-						<input type="radio" id="tabRefer" name="tabItem" data-content-id="tabReferList"
-							onclick="tabItemClick(this)">
-						<label class="tabItem" for="tabRefer" style="z-index: 2; width: 24%; padding-left: 75%;">
-							참조/열람 문서(0)</label>
+							<input type="radio" id="tabRefer" name="tabItem" data-content-id="tabReferList"
+								onclick="tabItemClick(this)">
+							<label class="tabItem" for="tabRefer" style="z-index: 2; width: 25%; padding-left: 75%;">
+								참조/열람 문서(0)</label>
 
-						<!-- <div><button  class="waitBtn" name="domTab" id="waitBtn" onclick="drawWaitCard(0)"></button></div>
+							<!-- <div><button  class="waitBtn" name="domTab" id="waitBtn" onclick="drawWaitCard(0)"></button></div>
 
 							<div><button  class="dueBtn" name="domTab" id="dueBtn" onclick="drawWaitCard(1)"></button></div>
 
@@ -41,7 +43,8 @@
 
 							<div><button  class="referBtn" name="domTab" id="referBtn" onclick="drawWaitCard(3)"></button></div> -->
 
-					</div>
+						</div>
+				
 
 
 					<div class="list waitList" id="tabWaitList">
@@ -90,7 +93,7 @@
 
 
 
-
+			</div>
 
 
 

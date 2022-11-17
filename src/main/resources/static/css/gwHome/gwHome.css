@@ -26,6 +26,11 @@
  	color: #406c92;
  }
 
+ .container>div:first-of-type {
+ 	padding: 0 1em;
+ 	display: grid;
+ }
+
  .container>div:not(:first-of-type) {
  	padding: 0 1em;
  }
@@ -33,7 +38,6 @@
  .container>div:not(:first-of-type) {
  	height: fit-content;
  }
-
 
 
  .list>div:first-of-type {
@@ -136,12 +140,7 @@
  	grid-template-columns: repeat(6, 1fr);
  	column-gap: 1.5em;
  	row-gap: 1.5em;
- 	margin: 0 1em 1em 1em;
-
-
  }
-
-
 
  .waitCard {
  	width: 15em;
@@ -242,10 +241,8 @@
  }
 
  .list {
- 	margin: 0 1em;
- 	padding: 1em;
- 	border: 1px solid #406c92;
- 	border-top: none;
+ 	padding: 1em 0;
+
  }
 
  /* .list >div:first-child {

@@ -321,17 +321,12 @@ function cardClick(obj) {
   $(".waitCard").click((location.href = "/gw/" + middle + "/" + docNo));
 }
 
-
-
-
 function detailView(obj) {
   let type = ["wait", "due", "receive", "refer"];
   let docNo = obj.dataset.id;
   let middle = type[storage.container];
   location.href = "/gw/" + middle + "/" + docNo;
-
 }
-
 
 function showList(num) {
   let targetList = $(".detailList")[num];
@@ -340,7 +335,6 @@ function showList(num) {
   $(targetCard).hide();
   $(targetList).show();
   $(targetPage).show();
-
 }
 
 function showCard(num) {
@@ -350,8 +344,6 @@ function showCard(num) {
   $(targetCard).show();
   $(targetList).hide();
   $(targetPage).hide();
-
-
 }
 
 function drawMyDraft() {
@@ -506,7 +498,7 @@ function drawMyDraft() {
       );
       pageContainer[x].innerHTML = pageNation;
       createGrid(container, header, data, ids, job, fnc);
-
+      data = [];
     }
   }
 }
