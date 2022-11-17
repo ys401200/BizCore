@@ -501,6 +501,11 @@ function drawMyDraft() {
       data = [];
     }
   }
+
+
+  $(".detailList").hide();
+  $(".pageContainer").hide();
+
 }
 
 
