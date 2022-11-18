@@ -10,15 +10,27 @@ $(document).ready(() => {
   // window.onresize = function () { $(".waitCard").css("font-size", ((window.innerWidth - 320) / 100) + "px") }
   window.onresize = function () {
     // $(".waitCard").css("font-size", ((window.innerWidth - 320) / 100) + "px") 
-    if ($(".waitDiv").css("width").split("p")[0] < 762) {
-      $(".waitDiv").css("grid-template-columns", "repeat(3, 1fr)");
-    } else if ($(".waitDiv").css("width").split("p")[0] < 1016) {
-      $(".waitDiv").css("grid-template-columns", "repeat(4, 1fr)");
-    } else if ($(".waitDiv").css("width").split("p")[0] < 1270) {
-      $(".waitDiv").css("grid-template-columns", "repeat(5, 1fr)");
-    } else if ($(".waitDiv").css("width").split("p")[0] > 1270) {
-      $(".waitDiv").css("grid-template-columns", "repeat(6, 1fr)");
+
+
+    if ($(".list").css("width").split("p")[0] < 762) {
+      $(".list").css("grid-template-columns", "repeat(3, 1fr)");
+    } else if ($(".list").css("width").split("p")[0] < 1016) {
+      $(".list").css("grid-template-columns", "repeat(4, 1fr)");
+    } else if ($(".list").css("width").split("p")[0] < 1270) {
+      $(".list").css("grid-template-columns", "repeat(5, 1fr)");
+    } else if ($(".list").css("width").split("p")[0] > 1270) {
+      $(".list").css("grid-template-columns", "repeat(6, 1fr)");
     }
+
+    // if ($(".waitDiv").css("width").split("p")[0] < 762) {
+    //   $(".waitDiv").css("grid-template-columns", "repeat(3, 1fr)");
+    // } else if ($(".waitDiv").css("width").split("p")[0] < 1016) {
+    //   $(".waitDiv").css("grid-template-columns", "repeat(4, 1fr)");
+    // } else if ($(".waitDiv").css("width").split("p")[0] < 1270) {
+    //   $(".waitDiv").css("grid-template-columns", "repeat(5, 1fr)");
+    // } else if ($(".waitDiv").css("width").split("p")[0] > 1270) {
+    //   $(".waitDiv").css("grid-template-columns", "repeat(6, 1fr)");
+    // }
 
   }
 
@@ -41,7 +53,7 @@ function drawGwDiv() {
         storage.cardStart = 0;
         drawWaitCard();
         drawMyDraft();
-        // getWaitListCount();
+        getWaitListCount();
         // $(".pageContainer").hide();
       } else {
         alert("양식 정보를 불러오지 못했습니다");
@@ -51,48 +63,18 @@ function drawGwDiv() {
 }
 
 
-// function getWaitListCount() {
-//   let btns = [".waitBtn", ".dueBtn", ".receiveBtn", ".referBtn"];
-//   $(btns[0]).html("결재 대기 문서 (" + storage.waitList.wait.length + ")");
-//   $(btns[1]).html("결재 예정 문서 (" + storage.waitList.due.length + ")")
-//   $(btns[2]).html("결재 수신 문서 (" + storage.waitList.receive.length + ")")
-//   $(btns[3]).html("참조/열람 대기 문서 (" + storage.waitList.refer.length + ")")
-// }
+function getWaitListCount() {
+  let tab = $(".tabItem");
+  $(tab[0]).html("결재 대기 문서 (" + storage.waitList.wait.length + ")");
+  $(tab[1]).html("결재 예정 문서 (" + storage.waitList.due.length + ")")
+  $(tab[2]).html("결재 수신 문서 (" + storage.waitList.receive.length + ")")
+  $(tab[3]).html("참조/열람 대기 문서 (" + storage.waitList.refer.length + ")")
+}
 
 function drawWaitCard() {
-  // storage.container = container;
-  // $(".waitDiv").show();
-  // $(".listDiv").hide();
-  // $(".waitPage").hide();
-
-
-  // let btns = [".waitBtn", ".dueBtn", ".receiveBtn", ".referBtn"];
-  // $(btns[container]).css("background-color", "white");
-  // $(btns[container]).parent().css("border-bottom", "none");
-  // $(btns[container]).parent().css("background-color", "white");
-  // for (let i = 0; i < btns.length; i++) {
-  //   if (i != container) {
-  //     $(btns[i]).css("background-color", "#eaeff3");
-  //     $(btns[i]).parent().css("border-bottom", "1px solid #406c92");
-  //     $(btns[i]).parent().css("background-color", "#eaeff3");
-  //   }
-  // }
-
   let typeList = storage.waitList;
   let html = "";
   let types = ["wait", "due", "receive", "refer"];
-
-
-
-
-  // if (container < 4) {
-  //   types = types.slice(container, container + 1);
-  //   btns = btns.slice(container, container + 1);
-  //   $(listTarget[0]).hide();
-  //   $(targets[0]).parent().show();
-  // }
-
-
 
   for (let j = 0; j < types.length; j++) {
     let cardLength = typeList[types[j]].length;
@@ -132,188 +114,7 @@ function drawWaitCard() {
 }
 
 
-// function drawWaitCardBtn() {
-//   let container = storage.container;
 
-//   let btns = [".waitBtn", ".dueBtn", ".receiveBtn", ".referBtn"];
-//   $(btns[container]).css("background-color", "white");
-//   $(btns[container]).parent().css("border-bottom", "none");
-
-//   for (let i = 0; i < btns.length; i++) {
-//     if (i != container) {
-//       $(btns[i]).css("background-color", "#eaeff3");
-//       $(btns[i]).parent().css("border-bottom", "1px solid #406c92");
-
-//     }
-//   }
-
-//   let typeList = storage.waitList;
-//   let html = "";
-//   let types = ["wait", "due", "receive", "refer"];
-//   let targets = [".waitDiv"]
-//   let listTarget = [".waitList"]
-
-
-//   if (container < 4) {
-//     types = types.slice(container, container + 1);
-//     btns = btns.slice(container, container + 1);
-//     $(listTarget[0]).hide();
-//     $(".waitPage").hide();
-//     $(targets[0]).show();
-//   }
-
-
-//   let start = storage.cardStart;
-//   for (let j = 0; j < types.length; j++) {
-//     let cardLength = typeList[types[j]].length;
-//     if (cardLength > 0) {
-
-//       for (let i = start; i < cardLength; i++) {
-//         html +=
-//           "<div class='waitCard' onClick='cardClick(this)' data-detail='" +
-//           types[j] +
-//           "!!!" +
-//           typeList[types[j]][i].docNo +
-//           "'><div>" +
-//           typeList[types[j]][i].title +
-//           "</div>" +
-//           "<div class='subWaitCard'><div class='type'><div>결재타입</div><div>" +
-//           typeList[types[j]][i].form +
-//           "</div></div>" +
-//           "<div class='writer'><div>기안자</div><div>" +
-//           storage.user[typeList[types[j]][i].writer].userName +
-//           "</div></div>" +
-//           "<div class='created'><div>작성일</div><div>" +
-//           getYmdSlash(typeList[types[j]][i].created) +
-//           "</div></div></div></div>";
-
-//       }
-
-//     } else {
-//       html += "<div class='defaultWaitCard'>대기 문서가 없습니다.</div>"
-//       $(".waitPage").hide();
-//     }
-
-//     $(targets[j]).html(html);
-//     html = "";
-//   }
-
-// }
-
-// function prevPage(obj) {
-//   let target = $(obj).next().attr("class");
-//   if (storage.cardStart != 0) {
-//     storage.cardStart = storage.cardStart - 5;
-//   }
-
-//   let type = (target + "").split("D")[0];
-//   let html = "";
-//   let start = storage.cardStart;
-
-//   for (let j = 0; j < storage.waitList[type].length; j++) {
-//     let cardLength = storage.waitList[type].length;
-//     let end = start + 5;
-//     if (start != 0 && end < cardLength) {
-//       end = cardLength;
-//     }
-
-//     if (cardLength > 0) {
-//       if (cardLength < 6) {
-//         $("." + target).prev().hide();
-//         $("." + target).next().hide();
-//       }
-//       for (let i = start; i < end; i++) {
-//         html +=
-//           "<div class='waitCard' onClick='cardClick(this)' data-detail='" +
-//           type +
-//           "!!!" +
-//           storage.waitList[type][i].docNo +
-//           "'><div>" +
-//           storage.waitList[type][i].title +
-//           "</div>" +
-//           "<div class='subWaitCard'><div class='type'><div>결재타입</div><div>" +
-//           storage.waitList[type][i].form +
-//           "</div></div>" +
-//           "<div class='writer'><div>기안자</div><div>" +
-//           storage.user[storage.waitList[type][i].writer].userName +
-//           "</div></div>" +
-//           "<div class='created'><div>작성일</div><div>" +
-//           getYmdSlash(storage.waitList[type][i].created) +
-//           "</div></div></div></div>";
-
-//       }
-
-//     } else {
-//       html += "<div class='defaultWaitCard'>대기 문서가 없습니다.</div>"
-//       $("." + target).prev().hide();
-//       $("." + target).next().hide();
-//     }
-
-//     $("." + target).html(html);
-//     html = "";
-//   }
-// }
-
-// function nextPage(obj) {
-//   let target = $(obj).prev().attr("class");
-//   let type = (target + "").split("D")[0];
-//   let cardLength = storage.waitList[type].length;
-//   let count = 0;
-//   if (storage.strat != 0) {
-//     count = (storage.cardStart / 5);
-//   }
-//   if (cardLength > (count + 1) * 5) {
-//     storage.cardStart = storage.cardStart + 5;
-//   }
-
-//   let html = "";
-//   let start = storage.cardStart;
-//   for (let j = 0; j < storage.waitList[type].length; j++) {
-
-//     let end = start + 5;
-//     end = end > cardLength ? cardLength : end;
-//     if (cardLength > 0) {
-//       if (cardLength < 6) {
-//         $("." + target).prev().hide();
-//         $("." + target).next().hide();
-//       }
-//       console.log(start + "스타드" + end)
-//       for (let i = start; i < end; i++) {
-//         html +=
-//           "<div class='waitCard' onClick='cardClick(this)' data-detail='" +
-//           type +
-//           "!!!" +
-//           storage.waitList[type][i].docNo +
-//           "'><div>" +
-//           storage.waitList[type][i].title +
-//           "</div>" +
-//           "<div class='subWaitCard'><div class='type'><div>결재타입</div><div>" +
-//           storage.waitList[type][i].form +
-//           "</div></div>" +
-//           "<div class='writer'><div>기안자</div><div>" +
-//           storage.user[storage.waitList[type][i].writer].userName +
-//           "</div></div>" +
-//           "<div class='created'><div>작성일</div><div>" +
-//           getYmdSlash(storage.waitList[type][i].created) +
-//           "</div></div></div></div>";
-
-//       }
-
-
-
-//     } else {
-//       html += "<div class='defaultWaitCard'>대기 문서가 없습니다.</div>"
-//       $("." + target).prev().hide();
-//       $("." + target).next().hide();
-//     }
-
-//     $("." + target).html(html);
-//     html = "";
-//   }
-
-
-
-// }
 function cardClick(obj) {
   let val = obj.dataset.detail;
   let middle = val.split("!!!")[0];
@@ -507,23 +308,6 @@ function drawMyDraft() {
   $(".pageContainer").hide();
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 function getYmdSlash(date) {
