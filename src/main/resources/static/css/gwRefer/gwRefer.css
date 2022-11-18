@@ -100,7 +100,7 @@
 }
 
 .subContainer .listPageDiv>div:last-of-type {
-	
+
 	margin: 1em;
 }
 
@@ -112,13 +112,14 @@
 	align-items: center;
 	justify-content: center;
 }
+
 .subContainer .listPageDiv .listDiv .noListDefault {
 	text-align: center;
 	color: gray;
 	margin: 8em 0;
 	width: 99%;
- }
- 
+}
+
 
 
 /*-------------------------------- 상세조회 페이지 상단 버튼  */
@@ -127,16 +128,21 @@
 
 .listDiv>div:first-child {
 	border-bottom: 1px solid #425da8;
-	background-color:#f2f5ff;
- }
- 
+	background-color: #f2f5ff;
+}
+
 
 .listDiv .grid_default_body_item:nth-child(2n-1) {
 	background-color: rgba(234, 239, 243, 0.4)
 }
 
 .listPageDiv .detailReport .selectedReportview>div:first-child {
-	border: 1px solid black;
+	border: 1px #D3D3D3 solid;
+	border-radius: 5px;
+	box-shadow: 0 0 5px rgb(0 0 0 / 10%);
+	padding: 30px 20px 0 20px;
+	clear: both;
+	margin: 0 auto;
 
 }
 
@@ -173,13 +179,10 @@
 
 .listPageDiv .detailReport {
 	display: grid;
-	grid-template-columns:  65% 35%;
+	grid-template-columns: 65% 35%;
 }
 
-.listPageDiv .detailReport .selectedReportview>div:first-child {
-	border: 1px solid black;
 
-}
 
 
 
@@ -187,12 +190,12 @@
 /*-------------------------------- 결재정보 변경이력 탭  */
 .listPageDiv .detailReport .comment {
 	background-color: #e6eff1;
-	margin: 0 1em 1em 1em;
+	margin: 0 1em 0 1em;
 	padding-bottom: 1em;
 	border-radius: 20px 20px 0 0;
- }
- 
- .detailReport .comment .reportInfoTab {
+}
+
+.detailReport .comment .reportInfoTab {
 	padding: 0.5em;
 	text-align: center;
 	display: grid;
@@ -201,63 +204,70 @@
 	border-radius: 20px 20px 0 0;
 	/* background-color: #62a6ad; */
 	width: inherit;
- }
- 
- .detailReport .comment .reportInfoTab input[type="radio"] {
+}
+
+.detailReport .comment .reportInfoTab input[type="radio"] {
 	display: none;
- }
- 
- 
- .tabs {
+}
+
+
+.tabs {
 	box-shadow: none;
- }
- 
- .tapLine,
- .tapLineB {
+}
+
+
+.lineDiv {
+	border-radius: 10px 10px 0 0;
+	margin: 0 1em;
+	box-shadow: 0 2px 5px rgb(168 173 179 / 80%);
+}
+
+.tapLine,
+.tapLineB {
 	background-color: white;
 	/* margin: 0.5em 1em; */
-	margin: 0 1em;
+	/* margin: 0 1em; */
 	display: grid;
 	grid-template-columns: 10% 15% 10% 35% 30%;
 	font-size: 15px;
- }
- 
- .tapLineB {
+}
+
+.tapLineB {
 	grid-template-columns: 10% 15% 35% 40%;
- }
- 
- #tabDetail2>.tapLineB:first-of-type {
+}
+
+#tabDetail2>.tapLineB:first-of-type {
 	background-color: #DAD9FF;
 	margin: 14px 1em 0 1em;
 	border-radius: 10px 10px 0 0;
- }
- 
- 
- #tabDetail2 .tapLineBCenter {
+}
+
+
+#tabDetail2 .tapLineBCenter {
 	background-color: white;
 	margin: 0 1em;
 	text-align: center;
 	padding: 0.5em;
 	border-bottom: 0.5px solid #DAD9FF;
- }
- 
- .tapLine>div,
- .tapLineB>div {
+}
+
+.tapLine>div,
+.tapLineB>div {
 	padding: 0.5em;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	border-left: none;
 	border-bottom: 0.5px solid #DAD9FF;
- }
- 
- .tapLineTitle {
+}
+
+.tapLineTitle {
 	background-color: #DAD9FF;
 	border-radius: 10px 10px 0 0;
- }
- 
- 
- .readDiv:first-of-type {
+}
+
+
+.readDiv:first-of-type {
 	display: grid;
 	grid-template-columns: 20% 80%;
 	margin: 14px 1em 18px 1em;
@@ -265,10 +275,10 @@
 	border-radius: 10px;
 	box-shadow: 0 2px 5px rgb(168 173 179 / 80%);
 	font-size: 15px;
- 
- }
- 
- .readDiv {
+
+}
+
+.readDiv {
 	display: grid;
 	grid-template-columns: 20% 80%;
 	margin: 14px 1em 18px 1em;
@@ -276,30 +286,29 @@
 	border-radius: 10px;
 	box-shadow: 0 2px 5px rgb(168 173 179 / 80%);
 	font-size: 15px;
- 
- }
- 
- .readDiv>div {
+
+}
+
+.readDiv>div {
 	padding: 0.5em;
 	display: grid;
 	grid-template-columns: 50% 50%;
- }
- 
- .readDiv>div:first-of-type {
+}
+
+.readDiv>div:first-of-type {
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	background-color: #DAD9FF;
 	border-radius: 10px 0 0 10px;
- 
- }
- 
- .readDiv label {
+
+}
+
+.readDiv label {
 	display: flex;
 	align-items: center;
- }
- 
- .readDiv input {
+}
+
+.readDiv input {
 	margin-right: 10px;
- }
- 
+}

@@ -164,7 +164,7 @@ function drawApproval() {
         appType = "참조";
       }
       str = [
-       
+
         {
           "setData": setDate,
           "align": "center"
@@ -240,12 +240,12 @@ function getDetailView() {
   let detailHtml =
     "<div class='mainBtnDiv crudBtns'><button onclick='showList()'>목록보기</button><button class='printBtn' onclick='openPrintTab();' >인쇄하기</button></div>" +
     "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
- 
+
   $(".listPageDiv").html(detailHtml);
 
-  
+
   $(".seletedForm").html(testForm);
-  
+
   $(":file").css("display", "none"); // 첨부파일 버튼 숨기기
 
   let tabHtml =
@@ -263,7 +263,7 @@ function getDetailView() {
   $(".tabDetail2").hide();
   getFileArr();
 
-  
+
 
   let target = $(".seletedForm")[0];
   let inputsArr = target.getElementsByTagName("input");
@@ -467,11 +467,11 @@ function drawCommentLine() {
     appLineArr.push(data);
   }
 
- 
+
   let html = "<div class='readDiv'><div>열람</div><div><label for='deptRd'><input type='radio' id='deptRd' name='rd' value='dept' disabled/>작성자 소속 부서</label><label for='noneRd'><input type='radio' id='noneRd' name='rd' value='none' disabled/>열람 설정 없음</label></div></div>" +
     "<div class='readDiv selectedFile'><div>첨부파일</div><div><div class='selectedFileDiv'></div><div><input class='inputFile' multiple='' name='attached[]' type='file' onchange='setSelectedFiles()' style='display: none;'></div></div></div>";
   let detail =
-    "<div class='tapLine tapLineTitle'><div>타입</div><div>이름</div><div>상태</div><div>일자</div><div>의견</div></div>";
+    "<div class='lineDiv'><div class='tapLine tapLineTitle'><div>타입</div><div>이름</div><div>상태</div><div>일자</div><div>의견</div></div>";
   let lineDetailHtml = "";
 
   for (let i = 0; i < appLineArr.length; i++) {
@@ -488,7 +488,7 @@ function drawCommentLine() {
       appLineArr[i].comment +
       "</div></div>";
   }
-
+  lineDetailHtml += "</div>";
   detail += lineDetailHtml;
 
   detail += html;
