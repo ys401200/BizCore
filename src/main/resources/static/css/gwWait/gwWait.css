@@ -100,7 +100,7 @@
 }
 
 .subContainer .listPageDiv>div:last-of-type {
-   width: auto;
+
    margin: 1em;
 }
 
@@ -191,8 +191,6 @@
 
 .listPageDiv .detailReport .selectedReportview>div:first-child {
    border: 1px solid black;
-   /* width: 21cm;
-   min-height: 29.7cm; */
    border: 1px #D3D3D3 solid;
    border-radius: 5px;
    box-shadow: 0 0 5px rgb(0 0 0 / 10%);
@@ -308,11 +306,17 @@
    box-shadow: none;
 }
 
+
+.lineDiv {
+   border-radius: 10px 10px 0 0;
+   margin: 0 1em;
+   box-shadow: 0 2px 5px rgb(168 173 179 / 80%);
+}
+
 .tapLine,
 .tapLineB {
    background-color: white;
    /* margin: 0.5em 1em; */
-   margin: 0 1em;
    display: grid;
    grid-template-columns: 10% 15% 10% 35% 30%;
    font-size: 15px;

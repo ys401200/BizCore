@@ -1,5 +1,7 @@
 @charset "UTF-8";
 
+
+/* 검색 관련 시작  ////////////////////////////////////////////////////////////////*/
 .searchContainer {
    display: flex;
    align-items: center;
@@ -59,6 +61,10 @@
    cursor: pointer;
 }
 
+
+/* 검색 관련 끝 ////////////////////////////////////////////////////////////////*/
+
+
 .container {
    position: relative;
    width: 100%;
@@ -100,7 +106,7 @@
 }
 
 .subContainer .listPageDiv>div:last-of-type {
-   width: auto;
+
    margin: 1em;
 }
 
@@ -190,7 +196,12 @@
 
 
 .listPageDiv .detailReport .selectedReportview>div:first-child {
-   border: 1px solid black;
+   border: 1px #D3D3D3 solid;
+   border-radius: 5px;
+   box-shadow: 0 0 5px rgb(0 0 0 / 10%);
+   padding: 30px 20px 0 20px;
+   clear: both;
+   margin: 0 auto;
 
 }
 
@@ -251,18 +262,20 @@
 /*-------------------------------- 결재정보 변경이력 탭  */
 .listPageDiv .detailReport .comment {
    background-color: #e6eff1;
-   margin: 0 1em;
+   margin: 0 1em 1em 1em;
+   padding-bottom: 1em;
    border-radius: 20px 20px 0 0;
 }
 
 .detailReport .comment .reportInfoTab {
-   /* padding: 1em; */
+   padding: 0.5em;
    text-align: center;
    display: grid;
    grid-template-columns: repeat(2, 1fr);
    font-size: 15px;
    border-radius: 20px 20px 0 0;
-   background-color: #62a6ad;
+   /* background-color: #62a6ad; */
+   width: inherit;
 }
 
 .detailReport .comment .reportInfoTab input[type="radio"] {
@@ -270,37 +283,15 @@
 }
 
 
-.detailReport .comment .reportInfoTab>label {
-   padding: 0.5em;
-   cursor: pointer;
-   background-color: #dddddd;
-   padding: 10px 0;
-   /* background-color:#406c92; */
+.tabs {
+   box-shadow: none;
 }
-
-.detailReport .comment .reportInfoTab>label:first-of-type {
-   background-color: #62a6ad;
-   border-top-left-radius: 14px;
-   color: #fff;
-}
-
-.detailReport .comment .reportInfoTab>label:last-of-type {
-   border-top-right-radius: 14px;
-   border-bottom-left-radius: 20px;
-   color: #5c5c5c;
-}
-
-.comment .tabDetail>div:last-of-type {
-   padding: 1em;
-   border-top-right-radius: 20px;
-}
-
 
 .tapLine,
 .tapLineB {
    background-color: white;
    /* margin: 0.5em 1em; */
-   margin: 0 1em;
+   /* margin: 0 1em; */
    display: grid;
    grid-template-columns: 10% 15% 10% 35% 30%;
    font-size: 15px;
@@ -311,7 +302,7 @@
 }
 
 #tabDetail2>.tapLineB:first-of-type {
-   background-color: #96cbd1;
+   background-color: #DAD9FF;
    margin: 14px 1em 0 1em;
    border-radius: 10px 10px 0 0;
 }
@@ -322,7 +313,7 @@
    margin: 0 1em;
    text-align: center;
    padding: 0.5em;
-   border-bottom: 0.5px solid #87c1c7;
+   border-bottom: 0.5px solid #DAD9FF;
 }
 
 .tapLine>div,
@@ -332,26 +323,41 @@
    align-items: center;
    justify-content: center;
    border-left: none;
-   border-bottom: 0.5px solid #87c1c7;
+   border-bottom: 0.5px solid #DAD9FF;
 }
 
 .tapLineTitle {
-   background-color: #96cbd1;
+   background-color: #DAD9FF;
    border-radius: 10px 10px 0 0;
+
 }
 
+.lineDiv {
+   border-radius: 10px 10px 0 0;
+   margin: 0 1em;
+   box-shadow: 0 2px 5px rgb(168 173 179 / 80%);
+}
 
-.readDiv {
+.readDiv:first-of-type {
    display: grid;
-   grid-template-columns: 10% 90%;
+   grid-template-columns: 20% 80%;
    margin: 14px 1em 18px 1em;
    background-color: white;
    border-radius: 10px;
    box-shadow: 0 2px 5px rgb(168 173 179 / 80%);
    font-size: 15px;
-   /* box-shadow: 0 2px 5px rgb(206 217 219);
-   font-size:15px;
-   padding:1px 0; */
+
+}
+
+.readDiv {
+   display: grid;
+   grid-template-columns: 20% 80%;
+   margin: 14px 1em 18px 1em;
+   background-color: white;
+   border-radius: 10px;
+   box-shadow: 0 2px 5px rgb(168 173 179 / 80%);
+   font-size: 15px;
+
 }
 
 .readDiv>div {
@@ -364,8 +370,8 @@
    display: flex;
    align-items: center;
    justify-content: center;
-   /* background-color: #332E85; */
-   /* color: white; */
+   background-color: #DAD9FF;
+   border-radius: 10px 0 0 10px;
 
 }
 
@@ -519,10 +525,6 @@
    margin: 1em 0;
 }
 
-/* .selector .lineDetail #lineRight>label {
-   border: 1px solid rgb(188, 185, 185);
-   margin: 0.5rem;
- } */
 
 .lineDetail #lineRight>div {
    display: grid;
@@ -560,10 +562,6 @@
    font-size: 15px;
 }
 
-/* #lineRight label .typeContainer {
-   padding:5px 0;
- } */
-
 
 
 .lineDataContainer {
@@ -576,8 +574,6 @@
 .lineDataContainer button {
    margin: 0 0.2em;
    padding: 0.5em 0.5em;
-   /* display: grid;
-   grid-template-columns: 1fr 8% 8% 8%; */
    border-bottom: 1px solid #cedfdd;
    font-size: 14px;
    color: #212121;
@@ -621,14 +617,4 @@
 
 .gwModal .close-wrap button {
    box-shadow: none;
-}
-
-
-
-/*-------------------------------- 헤더 float 설정 초기화   */
-button,
-select,
-input {
-   margin: 0;
-   float: none;
 }

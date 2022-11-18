@@ -239,54 +239,30 @@ function getDetailView() {
   let testForm = storage.reportDetailData.doc;
 
   let detailHtml =
-    "<div class='mainBtnDiv'><button type='button'onclick='showList()'>목록보기</button><button class='printBtn' onclick='openPrintTab();' >인쇄하기</button></div>" +
+    "<div class='mainBtnDiv crudBtns'><button type='button'onclick='showList()'>목록보기</button><button class='printBtn' onclick='openPrintTab();' >인쇄하기</button></div>" +
     "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
   // "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
+
+
   $(".listPageDiv").html(detailHtml);
-
-  let selectedFileView =
-    "<label>첨부파일</label><div><div><input class='inputFile' multiple name='attached[]'type='file' onchange='setSelectedFiles()'/></div><div class='selectedFileDiv'></div></div>";
-
   $(".seletedForm").html(testForm);
-  $(".selectedFile").html(selectedFileView);
   $(":file").css("display", "none"); // 첨부파일 버튼 숨기기
 
   let tabHtml =
-    "<div class='reportInfoTab'>" +
-    "<label id='lineInfo' onclick='changeTab(this)'>문서정보</label><label id='changeInfo' onclick='changeTab(this)'>변경이력</label></div>" +
-    "<div id='tabDetail'></div><div id='tabDetail2'></div>";
+    "<div class='reportInfoTab tabs'>" +
+    "<input type='radio' id='tablineInfo' name='tabItem' data-content-id='tabDetail' onclick='tabItemClick(this)' checked>" +
+    "<label  class='tabItem' for='tablineInfo'  style='z-index:5; width:50% ; padding-left : 0%;'>문서정보</label>" +
+    "<input type='radio' id='tabChangeInfo' name='tabItem' data-content-id='tabDetail2' onclick='tabItemClick(this)' >" +
+    "<label  class='tabItem' for='tabChangeInfo' style='z-index:0; width:50% ; padding-left : 50%;' >변경이력</label></div>" +
+    "<div class='tabDetail'id='tabDetail'></div><div class='tabDetail2' id='tabDetail2'></div>";
   $(".comment").html(tabHtml);
 
   toReadMode();
   drawCommentLine();
-
+  drawChangeInfo();
+  $(".tabDetail2").hide();
   getFileArr();
 
-  // let referArr = new Array();
-
-  // for (let i = 0; i < storage.reportDetailData.appLine.length; i++) {
-  //   if (storage.reportDetailData.appLine[i].appType == "4") {
-  //     referArr.push(storage.reportDetailData.appLine[i]);
-  //   }
-  // }
-
-  // let referTarget = $(".selectedRefer");
-  // let referHtml = "";
-  // for (let i = 0; i < referArr.length; i++) {
-  //   let id = referArr[i].employee;
-  //   referHtml +=
-  //     "<div class='appendName " +
-  //     formId +
-  //     "_refer' data-detail='" +
-  //     storage.user[id].userNo +
-  //     "'>" +
-  //     storage.userRank[storage.user[id].rank][0] +
-  //     "&nbsp" +
-  //     storage.user[id].userName +
-  //     "</div>";
-  // }
-
-  // referTarget.html(referHtml);
 
   let target = $(".seletedForm")[0];
   let inputsArr = target.getElementsByTagName("input");
@@ -424,34 +400,6 @@ function setAppLineData() {
   }
 }
 
-// 탭 누를때마다의 이벤트 주기
-function changeTab(obj) {
-  $(obj).css("background-color", "#62a6ad");
-  $(obj).css("color", "#fff");
-  $(obj).css("border-top-left", "14px");
-  //$(obj).css("border-bottom", "2px solid #5298d5");
-
-  if (obj.id == "lineInfo") {
-    $("#changeInfo").css("background-color", "#dddddd");
-    $("#changeInfo").css("color", "#5c5c5c");
-    $("#changeInfo").css("border-bottom-left-radius", "20px");
-    $("#tabDetail2").hide();
-    $("#tabDetail").show();
-    if (storage.newAppLine == undefined) {
-      drawCommentLine();
-    } else {
-      drawNewCommentLine();
-    }
-  } else if ((obj.id = "changeInfo")) {
-    $("#lineInfo").css("background-color", "#dddddd");
-    $("#lineInfo").css("color", "#5c5c5c");
-    $("#lineInfo").css("border-bottom-right-radius", "20px");
-    $("#tabDetail").hide();
-    $("#tabDetail2").show();
-
-    drawChangeInfo();
-  }
-}
 
 // 문서 정보 그리는 함수
 function drawCommentLine() {
@@ -499,10 +447,10 @@ function drawCommentLine() {
     appLineArr.push(data);
   }
 
-  let html =
-    "<div class='readDiv'><div>열람</div><div><label for='deptRd'><input type='radio' id='deptRd' name='rd' value='dept' disabled/>작성자 소속 부서</label><label for='noneRd'><input type='radio' id='noneRd' name='rd' value='none' disabled/>열람 설정 없음</label></div></div>";
+  let html = "<div class='readDiv'><div>열람</div><div><label for='deptRd'><input type='radio' id='deptRd' name='rd' value='dept' disabled/>작성자 소속 부서</label><label for='noneRd'><input type='radio' id='noneRd' name='rd' value='none' disabled/>열람 설정 없음</label></div></div>" +
+    "<div class='readDiv selectedFile'><div>첨부파일</div><div><div class='selectedFileDiv'></div><div><input class='inputFile' multiple='' name='attached[]' type='file' onchange='setSelectedFiles()' style='display: none;'></div></div></div>";
   let detail =
-    "<div class='tapLine tapLineTitle'><div>타입</div><div>이름</div><div>상태</div><div>일자</div><div>의견</div></div>";
+    "<div class='lineDiv'><div class='tapLine tapLineTitle'><div>타입</div><div>이름</div><div>상태</div><div>일자</div><div>의견</div></div>";
   let lineDetailHtml = "";
 
   for (let i = 0; i < appLineArr.length; i++) {
@@ -520,13 +468,16 @@ function drawCommentLine() {
       "</div></div>";
   }
 
+  lineDetailHtml += "</div>";
+
   detail += lineDetailHtml;
 
-  html += detail;
+  detail += html;
 
   $(".tabLine").children(0).css("padding", "5em");
 
-  target.html(html);
+  target.html(detail);
+
 
   // 열람 권한 체크하기
   let readable = storage.reportDetailData.readable;

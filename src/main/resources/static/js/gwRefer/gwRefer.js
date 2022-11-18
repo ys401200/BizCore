@@ -104,7 +104,7 @@ function drawApproval() {
         title: "작성자",
         align: "center",
       },
-     
+
     ];
     createGrid(container, header, data, ids, job, fnc);
 
@@ -113,9 +113,9 @@ function drawApproval() {
     );
   } else {
     // jsonData = storage.referList.refer;
-    let tt = []; 
+    let tt = [];
     for (let i = storage.referList.refer.length - 1; i >= 0; i--) { tt.push(storage.referList.refer[i]) };
-    jsonData = tt; 
+    jsonData = tt;
     result = paging(jsonData.length, storage.currentPage, 5);
 
     pageContainer = document.getElementsByClassName("pageContainer");
@@ -145,7 +145,7 @@ function drawApproval() {
         title: "작성자",
         align: "center",
       },
-    
+
     ];
     for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
       disDate = dateDis(jsonData[i].created, jsonData[i].modified);
@@ -164,10 +164,7 @@ function drawApproval() {
         appType = "참조";
       }
       str = [
-        // {
-        //   "setData": jsonData[i].docNo,
-        //   "align": "center"
-        // },
+       
         {
           "setData": setDate,
           "align": "center"
@@ -188,11 +185,7 @@ function drawApproval() {
           "setData": userName,
           "align": "center"
         },
-      
 
-        // {
-        // 	"setData": "<input type='checkbox' class='thisCheck' data-id='" + jsonData[i].no + "'>",
-        // }
       ];
 
       fnc = "detailView(this)";
@@ -245,53 +238,32 @@ function getDetailView() {
   console.log(testForm);
 
   let detailHtml =
-    "<div class='mainBtnDiv'><button onclick='showList()'>목록보기</button><button class='printBtn' onclick='openPrintTab();' >인쇄하기</button></div>" +
+    "<div class='mainBtnDiv crudBtns'><button onclick='showList()'>목록보기</button><button class='printBtn' onclick='openPrintTab();' >인쇄하기</button></div>" +
     "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
-  //"<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
+ 
   $(".listPageDiv").html(detailHtml);
 
-  let selectedFileView =
-    "<label>첨부파일</label><div><div><input class='inputFile' multiple name='attached[]'type='file' onchange='setSelectedFiles()'/></div><div class='selectedFileDiv'></div></div>";
-
+  
   $(".seletedForm").html(testForm);
-  $(".selectedFile").html(selectedFileView);
+  
   $(":file").css("display", "none"); // 첨부파일 버튼 숨기기
 
   let tabHtml =
-    "<div class='reportInfoTab'>" +
-    "<label id='lineInfo' onclick='changeTab(this)'>문서정보</label><label id='changeInfo' onclick='changeTab(this)'>변경이력</label></div>" +
-    "<div id='tabDetail'></div><div id='tabDetail2'></div>";
+    "<div class='reportInfoTab tabs'>" +
+    "<input type='radio' id='tablineInfo' name='tabItem' data-content-id='tabDetail' onclick='tabItemClick(this)' checked>" +
+    "<label  class='tabItem' for='tablineInfo'  style='z-index:5; width:50% ; padding-left : 0%;'>문서정보</label>" +
+    "<input type='radio' id='tabChangeInfo' name='tabItem' data-content-id='tabDetail2' onclick='tabItemClick(this)' >" +
+    "<label  class='tabItem' for='tabChangeInfo' style='z-index:0; width:50% ; padding-left : 50%;' >변경이력</label></div>" +
+    "<div class='tabDetail'id='tabDetail'></div><div class='tabDetail2' id='tabDetail2'></div>";
   $(".comment").html(tabHtml);
 
   toReadMode();
   drawCommentLine();
+  drawChangeInfo();
+  $(".tabDetail2").hide();
   getFileArr();
 
-  // let referArr = new Array();
-
-  // for (let i = 0; i < storage.reportDetailData.appLine.length; i++) {
-  //   if (storage.reportDetailData.appLine[i].appType == "4") {
-  //     referArr.push(storage.reportDetailData.appLine[i]);
-  //   }
-  // }
-
-  // let referTarget = $(".selectedRefer");
-  // let referHtml = "";
-  // for (let i = 0; i < referArr.length; i++) {
-  //   let id = referArr[i].employee;
-  //   referHtml +=
-  //     "<div class='appendName " +
-  //     formId +
-  //     "_refer' data-detail='" +
-  //     storage.user[id].userNo +
-  //     "'>" +
-  //     storage.userRank[storage.user[id].rank][0] +
-  //     "&nbsp" +
-  //     storage.user[id].userName +
-  //     "</div>";
-  // }
-
-  // referTarget.html(referHtml);
+  
 
   let target = $(".seletedForm")[0];
   let inputsArr = target.getElementsByTagName("input");
@@ -361,7 +333,7 @@ function getDetailView() {
 
   if (storage.reportDetailData.confirmNo != 'null') {
     $("#" + formId + "_no").val(storage.reportDetailData.confirmNo);
-    $("#" + formId + "_no").attr("data-detail",storage.reportDetailData.confirmNo);
+    $("#" + formId + "_no").attr("data-detail", storage.reportDetailData.confirmNo);
     $("#" + formId + "_no").css("text-align", "left");
   }
 
@@ -495,8 +467,9 @@ function drawCommentLine() {
     appLineArr.push(data);
   }
 
-  let html =
-    "<div class='readDiv'><div>열람</div><div><label for='deptRd'><input type='radio' id='deptRd' name='rd' value='dept' disabled/>작성자 소속 부서</label><label for='noneRd'><input type='radio' id='noneRd' name='rd' value='none' disabled/>열람 설정 없음</label></div></div>";
+ 
+  let html = "<div class='readDiv'><div>열람</div><div><label for='deptRd'><input type='radio' id='deptRd' name='rd' value='dept' disabled/>작성자 소속 부서</label><label for='noneRd'><input type='radio' id='noneRd' name='rd' value='none' disabled/>열람 설정 없음</label></div></div>" +
+    "<div class='readDiv selectedFile'><div>첨부파일</div><div><div class='selectedFileDiv'></div><div><input class='inputFile' multiple='' name='attached[]' type='file' onchange='setSelectedFiles()' style='display: none;'></div></div></div>";
   let detail =
     "<div class='tapLine tapLineTitle'><div>타입</div><div>이름</div><div>상태</div><div>일자</div><div>의견</div></div>";
   let lineDetailHtml = "";
@@ -518,11 +491,12 @@ function drawCommentLine() {
 
   detail += lineDetailHtml;
 
-  html += detail;
+  detail += html;
 
   $(".tabLine").children(0).css("padding", "5em");
 
-  target.html(html);
+  target.html(detail);
+
 
   // 열람 권한 체크하기
   let readable = storage.reportDetailData.readable;
