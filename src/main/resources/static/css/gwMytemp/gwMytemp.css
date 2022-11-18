@@ -120,7 +120,13 @@
 }
 
 .listPageDiv .detailReport .selectedReportview>div:first-child {
-  border: 1px solid black;
+  border: 1px #D3D3D3 solid;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgb(0 0 0 / 10%);
+  padding: 30px 20px 0 20px;
+  clear: both;
+  margin: 0 auto;
+
 }
 
 /*-------------------------------선택 결재문서양식 첨부파일 목록  조회 탭   */

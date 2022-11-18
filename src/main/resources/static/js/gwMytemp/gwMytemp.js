@@ -94,7 +94,7 @@ function drawMyDraft() {
         title: "작성자",
         align: "center",
       },
-      
+
     ];
     createGrid(container, header, data, ids, job, fnc);
 
@@ -107,16 +107,16 @@ function drawMyDraft() {
   } else {
     // jsonData = storage.myTempList;
 
-    let tt = []; 
+    let tt = [];
     for (let i = storage.myTempList.length - 1; i >= 0; i--) { tt.push(storage.myTempList[i]) };
-    jsonData = tt; 
+    jsonData = tt;
     result = paging(jsonData.length, storage.currentPage, 10);
 
     pageContainer = document.getElementsByClassName("pageContainer");
     container = $(".listDiv");
 
     header = [
-      
+
       {
         title: "임시 저장 일자",
         align: "center",
@@ -133,23 +133,23 @@ function drawMyDraft() {
         title: "작성자",
         align: "center",
       },
-     
+
     ];
 
     for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
       disDate = dateDis(jsonData[i].created, jsonData[i].modified);
-    
+
       setDate = getYmdSlash(disDate);
-    //  let userName = storage.user[jsonData[i].writer].userName;
+      //  let userName = storage.user[jsonData[i].writer].userName;
       str = [
-       
+
         {
           "setData": setDate,
-          "align" : "center"
+          "align": "center"
         },
         {
           "setData": jsonData[i].form,
-          "align" : "center"
+          "align": "center"
         },
         {
           "setData": jsonData[i].title,
@@ -157,9 +157,9 @@ function drawMyDraft() {
         },
         {
           "setData": storage.user[storage.my].userName,
-          "align" : "center"
+          "align": "center"
         },
-       
+
       ];
 
       fnc = "detailView(this)";
@@ -213,7 +213,7 @@ function getDetailView() {
   console.log(testForm);
 
   let detailHtml =
-    "<div class='mainBtnDiv'><button type='button' onclick='showList()'>목록보기</button><button type='button' onclick='reWriteTemp()'>이어서 작성</button><button type='button' onclick='deleteTemp()'>삭제하기</button></div>" +
+    "<div class='mainBtnDiv crudBtns'><button type='button' onclick='showList()'>목록보기</button><button type='button' onclick='reWriteTemp()'>이어서 작성</button><button type='button' onclick='deleteTemp()'>삭제하기</button></div>" +
     "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div></div>";
 
   $(".listPageDiv").html(detailHtml);
@@ -276,8 +276,8 @@ function getDetailView() {
         $("#" + rd[i].id).prop("checked", true);
       }
     }
-    for(let i = 0 ; i < 3 ; i ++) {let tt = $(".inputsAuto")[i]; $(tt).css("text-align","left");} 
-   
+    for (let i = 0; i < 3; i++) { let tt = $(".inputsAuto")[i]; $(tt).css("text-align", "left"); }
+
   } else {
     // 새문서 작성한 것 가져온 경우 구분
     let rd2 = $("input[name='" + formId + "_RD']");
@@ -333,12 +333,12 @@ function getDetailView() {
   $("." + formId + "_content").html($("#" + formId + "_content").attr("data-detail"));
   $("#" + formId + "_content").hide();
   $("." + formId + "_content").css("font-size", $("#" + formId + "_content").css("font-size"));
-  $("." + formId + "_content").css("padding","0.3em");
+  $("." + formId + "_content").css("padding", "0.3em");
   if (storage.reportDetailData.confirmNo != 'null') {
     $("#" + formId + "_no").val(storage.reportDetailData.confirmNo);
-    $("#" + formId + "_no").attr("data-detail",storage.reportDetailData.confirmNo);
+    $("#" + formId + "_no").attr("data-detail", storage.reportDetailData.confirmNo);
     $("#" + formId + "_no").css("text-align", "left");
-   
+
   }
 }
 
