@@ -258,10 +258,9 @@
 /*-------------------------------- 결재정보 변경이력 탭  */
 .listPageDiv .detailReport .comment {
    background-color: #e6eff1;
-   margin: 0 1em;
+   margin: 0 1em 1em 1em;
    padding-bottom: 1em;
    border-radius: 20px 20px 0 0;
-   height: fit-content;
 }
 
 .detailReport .comment .reportInfoTab {
