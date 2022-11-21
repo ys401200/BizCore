@@ -11,18 +11,61 @@ $(document).ready(() => {
 
 // 참조 문서는 상세 조회가 가능하고 열람은 결재가 끝난 후에 참조/열람 문서함에서 열람 가능함
 function referDefault() {
+
+
+
+
+
+
+
+
+
+
   $(".modal-wrap").hide();
   $("#gwSubTabTitle").html("결재 수신 문서");
 
-  let url, method, data, type;
-  url = "/api/gw/app/wait";
-  method = "get";
-  data = "";
-  type = "list";
-  crud.defaultAjax(url, method, data, type, successList, errorList);
 
-  $(".searchContainer").show();
-  $(".listPageDiv").show();
+
+  let checkHref = location.href;
+  checkHref = checkHref.split("//");
+  checkHref = checkHref[1];
+  let splitArr = checkHref.split("/");
+
+  // 전자결재 홈 화면에서 들어오는 경우 , 상세조회
+  if (splitArr.length > 3) {
+    $.ajax({
+      url: apiServer + "/api/gw/app/doc/" + splitArr[3],
+      method: "get",
+      dataType: "json",
+      cache: false,
+      success: (data) => {
+        let detailData;
+        if (data.result === "ok") {
+          detailData = cipher.decAes(data.data);
+          detailData = JSON.parse(detailData);
+          detailData.doc = cipher.decAes(detailData.doc);
+          detailData.doc = detailData.doc.replaceAll('\\"', '"');
+          storage.reportDetailData = detailData;
+          getDetailView();
+        } else {
+          alert("문서 정보를 가져오는 데 실패했습니다");
+        }
+      },
+    });
+  } else {
+
+    let url, method, data, type;
+    url = "/api/gw/app/wait";
+    method = "get";
+    data = "";
+    type = "list";
+    crud.defaultAjax(url, method, data, type, successList, errorList);
+
+    $(".searchContainer").show();
+    $(".listPageDiv").show();
+  }
+
+
 }
 
 function successList(result) {
@@ -184,8 +227,12 @@ function drawApproval() {
 
 function detailView(obj) {
   // 선택한 그리드의 글 번호 받아오기
-
-  let no = obj.dataset.id;
+  let no;
+  if (storage.reportDetailData == undefined) {
+    no = obj.dataset.id;
+  } else {
+    no = storage.reportDetailData.docNo;
+  }
 
   $.ajax({
     url: apiServer + "/api/gw/app/doc/" + no,

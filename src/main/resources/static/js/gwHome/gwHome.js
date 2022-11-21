@@ -130,9 +130,9 @@ function cardClick(obj) {
 }
 
 function detailView(obj) {
-  let type = ["wait", "due", "receive", "refer"];
+  let middle = $(obj).parent().parent();
+  middle = middle[0].className.split(" ")[1].split("List")[0];
   let docNo = obj.dataset.id;
-  let middle = type[storage.container];
   location.href = "/gw/" + middle + "/" + docNo;
 }
 
@@ -307,6 +307,7 @@ function drawMyDraft() {
       pageContainer[x].innerHTML = pageNation;
       createGrid(container, header, data, ids, job, fnc);
       data = [];
+      ids = [];
     }
   }
 
