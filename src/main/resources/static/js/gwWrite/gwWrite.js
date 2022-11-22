@@ -547,6 +547,8 @@ function check(name) {
 
 //// 조직도 결재 순서
 function upClick(obj) {
+
+  
   let parent;
   parent = obj.parentElement;
   parent = parent.parentElement;

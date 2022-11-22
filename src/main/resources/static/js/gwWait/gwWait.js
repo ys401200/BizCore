@@ -604,6 +604,7 @@ function drawNewCommentLine() {
   let originAppLine = [];
   let appLineArr = [];
 
+
   let newAppLine = storage.newAppLine;
   let newCombine = [[], [], [], [], []];
 
@@ -692,7 +693,7 @@ function drawNewCommentLine() {
     appLineArr.push(data);
   }
 
-  console.log(appLineArr);
+
   /// 첨부파일 변경된 내용 그대로 가져와서 html 넣어햐함 
   let files = $(".readDiv")[1].innerHTML;
   files = "<div class='readDiv selectedFile'>" + files + "</div>"
@@ -930,85 +931,11 @@ function approveBtnEvent() {
 
 
   let related = null;
-  // let outItems = [];
-  // let inItems = [];
-  // let tax = 0;
-  // let outProductNo;
-  // for (let j = 0; j < $(".outProduct").length; j++) {
-  //   for (let i = 0; i < storage.productList.length; i++) {
-  //     if (storage.productList[i].product == $(".outProduct")[j].value) {
-  //       outProductNo = storage.productList[i].no;
-  //     }
-  //   }
-  //   if ($(".outTax")[j].value != "" && $(".outTax")[j].value != null && $(".outTax")[j].value != undefined) {
-  //     tax = $(".outTax")[j].value * 1;
-  //   }
-  //   let customer;
-  //   for (let x in storage.customer) {
-  //     if (storage.customer[x].name == $(".outCus")[j].value) {
-  //       customer = storage.customer[x].no + "";
-  //     }
-  //   }
 
-
-  //   let tt = {
-  //     "outCus": customer,
-  //     "outProduct": outProductNo * 1,
-  //     "outPrice": $(".outPrice")[j].value * 1,
-  //     "outQuantity": $(".outQuantity")[j].value * 1,
-  //     "tax": $(".outTax")[j].value * 1
-  //   };
-
-  //   outItems.push(tt);
-  // }
-
-  // let inProductNo;
-
-  // for (let j = 0; j < $(".inProduct").length; j++) {
-  //   for (let i = 0; i < storage.productList.length; i++) {
-  //     if (storage.productList[i].product == $(".inProduct")[j].value) {
-  //       inProductNo = storage.productList[i].no;
-  //     }
-  //   }
-  //   if ($(".inTax")[j].value != "" && $(".inTax")[j].value != null && $(".inTax")[j].value != undefined) {
-  //     tax = $(".outTax")[j].value * 1;
-  //   }
-
-
-  //   let customer;
-  //   for (let x in storage.customer) {
-  //     if (storage.customer[x].name == $(".inCus")[j].value) {
-  //       customer = storage.customer[x].no + "";
-  //     }
-  //   }
-
-
-
-  //   let tt = {
-  //     "inCus": customer,
-  //     "inProduct": inProductNo * 1,
-  //     "inPrice": $(".inPrice")[j].value * 1,
-  //     "inQuantity": $(".inQuantity")[j].value * 1,
-  //     "tax": $(".inTax")[j].value * 1
-  //   };
-
-  //   inItems.push(tt);
-  // }
-
-  // if (tax != 0) {
-  //   tax = true;
-  // } else {
-  //   tax = false;
-  // }
   related = {
     "next": "",
     "parent": "",
     "previous": "",
-    // "outSumAllTotal": $(".outSumAllTotal").val().split("원")[0] * 1,
-    // "profit": $("." + formId + "_profit").val().split("원")[0] * 1,
-    // "tax": tax,
-    // "outItems": outItems,
-    // "inItems": inItems
   }
 
   related = JSON.stringify(related);
@@ -1026,7 +953,7 @@ function approveBtnEvent() {
     related: related,
   };
 
-  console.log(data);
+
   data = JSON.stringify(data);
   data = cipher.encAes(data);
 
@@ -1066,7 +993,6 @@ function showGwModal() {
     "<div class='innerDetail' id='lineLeft'></div>" +
     "<div class='innerDetail' id='lineCenter'>" +
     "<button class='appTypeBtn'  onclick='check(this.value)' value='examine'>검토 &gt;</button>" +
-    // "<button class='appTypeBtn'  onclick='check(this.value)' value='agree'>합의 &gt;</button>" +
     "<button class='appTypeBtn'  onclick='check(this.value)' value='approval'>결재 &gt;</button>" +
     "<button class='appTypeBtn'  onclick='check(this.value)' value='conduct'>수신 &gt;</button>" +
     "<button class='appTypeBtn'  onclick='check(this.value)' value='refer'>참조 &gt;</button></div>" +
@@ -1074,8 +1000,6 @@ function showGwModal() {
     "<div></div>" +
     "<div><div>검토</div>" +
     "<div class='typeContainer' id='examine'></div></div>" +
-    // "<div><div>합의</div>" +
-    // "<div class='typeContainer' id='agree'></div></div>" +
     "<div><div>결재</div>" +
     "<div class='typeContainer' id='approval'></div></div>" +
     "<div><div>수신</div>" +
@@ -1098,80 +1022,47 @@ function showGwModal() {
   let userData = new Array();
   let x;
   let my = storage.my;
-
-  // 내 앞의 결재선에 해당되는 사람은 출력하지 않음 !
   let appLine = storage.reportDetailData.appLine;
-  let employees = [];
+  // 내 앞의 결재선에 해당되는 사람은 출력하지 않음 !
+
+  let disabledUser = [];
 
   for (let i = 0; i < storage.reportDetailData.appLine.length; i++) {
-    employees.push(storage.reportDetailData.appLine[i].employee);
+    disabledUser.push(storage.reportDetailData.appLine[i].employee);
     if (my == storage.reportDetailData.appLine[i].employee) {
       break;
     }
   }
 
-  // for (x in storage.user) {
-  //   if (x != my && storage.user[x].resign == false && !employees.includes(x)) {
-  //     userData.push(x);
-  //   }
-  // }
-
   for (x in storage.user) {
-    if (
-      storage.user[x].resign == false &&
-      !employees.includes(storage.user[x].userNo)
-    ) {
+    if (storage.user[x].resign == false) {
       userData.push(x);
     }
-  }
-
-  let oriLine = [];
-
-  for (let i = 0; i < appLine.length; i++) {
-    if (appLine[i].employee == my) {
-      oriLine = appLine.slice(0, i + 1);
-    }
-  }
-
-  let oriNum = [];
-  for (let i = 0; i < oriLine.length; i++) {
-    oriNum.push(oriLine[i].employee + "");
   }
 
   let innerHtml = "";
   for (let i = 0; i < userData.length; i++) {
-    if (oriNum.indexOf(userData[i]) == -1) {
-      innerHtml +=
-        "<div><input class='testClass' type ='checkbox' id='cb" +
-        userData[i] +
-        "' name='userNames' value='" +
-        userData[i] +
-        "'><label for='cb" +
-        userData[i] +
-        "'>" +
-        storage.user[userData[i]].userName +
-        "</label></div>";
-    }
+    innerHtml +=
+      "<div><input class='testClass' type ='checkbox' id='cb" +
+      userData[i] +
+      "' name='userNames' value='" +
+      userData[i] +
+      "'><label for='cb" +
+      userData[i] +
+      "'>" +
+      storage.user[userData[i]].userName +
+      "</label></div>";
   }
+
   orgChartTarget.html(innerHtml);
   $(".modal-wrap").show();
   setDefaultModalData();
+
 }
 
 function setDefaultModalData() {
   let appLine = storage.reportDetailData.appLine;
-
-  let x;
-  let userData = new Array();
-  let my;
-  my = storage.my;
-  //나는 결재선에 노출 안 되게 함
-  for (x in storage.user) {
-    if (x != my) {
-      userData.push(x);
-    }
-  }
-
+  let my = storage.my;
   let myTurn;
   let myappType;
   for (let i = 0; i < appLine.length; i++) {
@@ -1181,85 +1072,27 @@ function setDefaultModalData() {
     }
   }
 
-  //내 결재 권한 이후만 수정할 수 있음
-  let btns = $(".appTypeBtn");
-  for (let i = btns.length - 1; i >= 0; i--) {
-    if (myappType != 2) {
-      if (i < myappType) {
-        $(".appTypeBtn")[i].remove();
-        $(".typeContainer")[i].parentElement.remove();
-      }
-    }
-  }
 
-  if (myappType == 2) {
-    $(".appTypeBtn")[0].remove();
-    $(".typeContainer")[0].parentElement.remove();
-  }
-
-  let html = "";
-  let html1 = "";
-  let html2 = "";
-  let html3 = "";
-  let html4 = "";
+  let examineHtml = "";
+  let approvalHtml = "";
+  let conductHtml = "";
+  let referHtml = "";
 
   // 내 이후의 결재선만 출력함
   for (let i = 1; i < appLine.length; i++) {
-    if (Number(appLine[i].ordered) > Number(myTurn)) {
-      if (appLine[i].appType == 0) {
-        html +=
+
+    if (appLine[i].appType == 0) {
+      if (appLine[i].ordered <= myTurn) {
+        examineHtml +=
           "<div class='lineDataContainer' id='lineContainer_" +
           appLine[i].employee +
           "'><label id='linedata_" +
           appLine[i].employee +
           "'>" +
           storage.user[appLine[i].employee].userName +
-          "</label><button value='" +
-          i +
-          "' onclick='upClick(this)'>▲</button><button  value='" +
-          appLine[i].employee +
-          "' onclick='downClick(this) '>▼</button><button onclick='deleteClick(this)'>✕</button></div>";
-      } else if (appLine[i].appType == 1) {
-        html1 +=
-          "<div class='lineDataContainer' id='lineContainer_" +
-          appLine[i].employee +
-          "'><label id='linedata_" +
-          appLine[i].employee +
-          "'>" +
-          storage.user[appLine[i].employee].userName +
-          "</label><button value='" +
-          i +
-          "' onclick='upClick(this)'>▲</button><button  value='" +
-          appLine[i].employee +
-          "' onclick='downClick(this) '>▼</button><button onclick='deleteClick(this)'>✕</button></div>";
-      } else if (appLine[i].appType == 2) {
-        html2 +=
-          "<div class='lineDataContainer' id='lineContainer_" +
-          appLine[i].employee +
-          "'><label id='linedata_" +
-          appLine[i].employee +
-          "'>" +
-          storage.user[appLine[i].employee].userName +
-          "</label><button value='" +
-          i +
-          "' onclick='upClick(this)'>▲</button><button  value='" +
-          appLine[i].employee +
-          "' onclick='downClick(this) '>▼</button><button onclick='deleteClick(this)'>✕</button></div>";
-      } else if (appLine[i].appType == 3) {
-        html3 +=
-          "<div class='lineDataContainer' id='lineContainer_" +
-          appLine[i].employee +
-          "'><label id='linedata_" +
-          appLine[i].employee +
-          "'>" +
-          storage.user[appLine[i].employee].userName +
-          "</label><button value='" +
-          i +
-          "' onclick='upClick(this)'>▲</button><button  value='" +
-          appLine[i].employee +
-          "' onclick='downClick(this) '>▼</button><button onclick='deleteClick(this)'>✕</button></div>";
-      } else if (appLine[i].appType == 4) {
-        html4 +=
+          "</label></div>";
+      } else {
+        examineHtml +=
           "<div class='lineDataContainer' id='lineContainer_" +
           appLine[i].employee +
           "'><label id='linedata_" +
@@ -1272,12 +1105,69 @@ function setDefaultModalData() {
           appLine[i].employee +
           "' onclick='downClick(this) '>▼</button><button onclick='deleteClick(this)'>✕</button></div>";
       }
-      $(".typeContainer")[0].innerHTML = html;
-      $(".typeContainer")[1].innerHTML = html2;
-      $(".typeContainer")[2].innerHTML = html3;
-      $(".typeContainer")[3].innerHTML = html4;
-      // $(".typeContainer")[4].innerHTML = html4;
+    } else if (appLine[i].appType == 2) {
+      if (appLine[i].ordered <= myTurn) {
+        approvalHtml +=
+          "<div class='lineDataContainer' id='lineContainer_" +
+          appLine[i].employee +
+          "'><label id='linedata_" +
+          appLine[i].employee +
+          "'>" +
+          storage.user[appLine[i].employee].userName +
+          "</label></div>";
+      } else {
+        approvalHtml +=
+          "<div class='lineDataContainer' id='lineContainer_" +
+          appLine[i].employee +
+          "'><label id='linedata_" +
+          appLine[i].employee +
+          "'>" +
+          storage.user[appLine[i].employee].userName +
+          "</label><button value='" +
+          i +
+          "' onclick='upClick(this)'>▲</button><button  value='" +
+          appLine[i].employee +
+          "' onclick='downClick(this) '>▼</button><button onclick='deleteClick(this)'>✕</button></div>";
+      }
+
+    } else if (appLine[i].appType == 3) {
+      conductHtml +=
+        "<div class='lineDataContainer' id='lineContainer_" +
+        appLine[i].employee +
+        "'><label id='linedata_" +
+        appLine[i].employee +
+        "'>" +
+        storage.user[appLine[i].employee].userName +
+        "</label><button value='" +
+        i +
+        "' onclick='upClick(this)'>▲</button><button  value='" +
+        appLine[i].employee +
+        "' onclick='downClick(this) '>▼</button><button onclick='deleteClick(this)'>✕</button></div>";
+    } else if (appLine[i].appType == 4) {
+      referHtml +=
+        "<div class='lineDataContainer' id='lineContainer_" +
+        appLine[i].employee +
+        "'><label id='linedata_" +
+        appLine[i].employee +
+        "'>" +
+        storage.user[appLine[i].employee].userName +
+        "</label><button value='" +
+        i +
+        "' onclick='upClick(this)'>▲</button><button  value='" +
+        appLine[i].employee +
+        "' onclick='downClick(this) '>▼</button><button onclick='deleteClick(this)'>✕</button></div>";
     }
+
+    // if (myappType == 0) {
+    $("#examine").html(examineHtml);
+    $("#approval").html(approvalHtml);
+    $("#conduct").html(conductHtml);
+    $("#refer").html(referHtml);
+    // } else if (myappType == 2) {
+    //   $("#conduct").html(conductHtml);
+    //   $("#refer").html(referHtml);
+    // }
+
   }
 }
 
@@ -1315,251 +1205,251 @@ function closeGwModal(obj) {
         }
 
         for (let i = 0; i < appLine.length; i++) {
-          if (appLine[i].employee == my + "") {
-            myOrdered = appLine[i].ordered;
-            originLine = appLine.slice(0, i + 1);
+          // if (appLine[i].employee == my + "") {
+          //   // 내 결재 순서 
+          //   myOrdered = appLine[i].ordered;
+          //   // 내 결재 순서까지 기존 결재 배열 자름 
+          //   originLine = appLine.slice(0, i + 1);
 
-            if (appLine[i].appType == 2) {
-              let combineData = [];
-              // 기존 데이터 넣기
-              for (let i = 0; i < appLine.length; i++) {
-                if (appLine[i].ordered < Number(myOrdered)) {
-                  combineData.push([
-                    appLine[i].appType,
-                    appLine[i].employee + "",
-                  ]);
-                } else if ((appLine[i].ordered = Number(myOrdered))) {
-                  combineData.push([
-                    appLine[i].appType,
-                    appLine[i].employee + "",
-                  ]);
-                }
+
+          //   // if (appLine[i].appType == 2) {
+          //   let combineData = [];
+          //   // 기존 데이터 넣기
+          //   // for (let i = 0; i < appLine.length; i++) {
+          //   //   if (appLine[i].ordered < Number(myOrdered)) {
+          //   //     combineData.push([
+          //   //       appLine[i].appType,
+          //   //       appLine[i].employee + "",
+          //   //     ]);
+          //   //   } else if ((appLine[i].ordered = Number(myOrdered))) {
+          //   //     combineData.push([
+          //   //       appLine[i].appType,
+          //   //       appLine[i].employee + "",
+          //   //     ]);
+          //   //   }
+          //   // }
+
+          //   let target = $(".typeContainer");
+
+          //   for (let i = 0; i < target.length; i++) {
+          //     for (let j = 0; j < target[i].children.length; j++) {
+          //       let id = target[i].children[j].id.split("_")[1];
+          //       let targetId = target[i].id;
+
+          //       if (targetId == "examine") {
+          //         targetId = 0;
+          //       } else if (targetId == "agree") {
+          //         targetId = 1;
+          //       } else if (targetId == "approval") {
+          //         targetId = 2;
+          //       } else if (targetId == "conduct") {
+          //         targetId = 3;
+          //       } else if (targetId == "refer") {
+          //         targetId = 4;
+          //       }
+
+          //       combineData.push([targetId, id]);
+          //     }
+          //   }
+
+          //   storage.newAppLine = combineData;
+
+          //   let checkNum;
+          //   for (let i = 0; i < storage.newAppLine.length; i++) {
+          //     if (
+          //       storage.newAppLine[i][0] == 2 &&
+          //       storage.newAppLine[i][1] == my + ""
+          //     ) {
+          //       if (
+          //         i != storage.newAppLine.length - 1 &&
+          //         storage.newAppLine[i + 1][0] == 2
+          //       ) {
+          //         storage.newAppLine[i][0] = 0;
+          //       }
+          //     }
+          //   }
+
+
+          //   $(".modal-wrap").hide();
+          //   $(".inputsAuto").css("background-color", "white");
+          //   createNewLine(); // 문서 안에서 결재선 그리는 것
+          //   // 문서 정보에서 결재선 정보 그리는 것
+          //   // }
+          // } 
+          // else {
+          let combineData = [];
+
+          combineData.push([appLine[0].appType, appLine[0].employee + ""]);
+          let target = $(".typeContainer");
+
+          for (let i = 0; i < target.length; i++) {
+            for (let j = 0; j < target[i].children.length; j++) {
+              let id = target[i].children[j].id.split("_")[1];
+              let targetId = target[i].id;
+
+              if (targetId == "examine") {
+                targetId = 0;
+              } else if (targetId == "agree") {
+                targetId = 1;
+              } else if (targetId == "approval") {
+                targetId = 2;
+              } else if (targetId == "conduct") {
+                targetId = 3;
+              } else if (targetId == "refer") {
+                targetId = 4;
               }
 
-              let target = $(".typeContainer");
-
-              for (let i = 0; i < target.length; i++) {
-                for (let j = 0; j < target[i].children.length; j++) {
-                  let id = target[i].children[j].id.split("_")[1];
-                  let targetId = target[i].id;
-
-                  if (targetId == "examine") {
-                    targetId = 0;
-                  } else if (targetId == "agree") {
-                    targetId = 1;
-                  } else if (targetId == "approval") {
-                    targetId = 2;
-                  } else if (targetId == "conduct") {
-                    targetId = 3;
-                  } else if (targetId == "refer") {
-                    targetId = 4;
-                  }
-
-                  combineData.push([targetId, id]);
-                }
-              }
-
-              storage.newAppLine = combineData;
-              let checkNum;
-              for (let i = 0; i < storage.newAppLine.length; i++) {
-                if (
-                  storage.newAppLine[i][0] == 2 &&
-                  storage.newAppLine[i][1] == my + ""
-                ) {
-                  if (
-                    i != storage.newAppLine.length - 1 &&
-                    storage.newAppLine[i + 1][0] == 2
-                  ) {
-                    storage.newAppLine[i][0] = 0;
-                  }
-                }
-              }
-
-              $(".modal-wrap").hide();
-              $(".inputsAuto").css("background-color", "white");
-              createNewLine(); // 문서 안에서 결재선 그리는 것
-              // 문서 정보에서 결재선 정보 그리는 것
+              combineData.push([targetId, id]);
             }
-          } else {
-            let combineData = [];
-
-            // 기존 데이터 넣기
-            for (let i = 0; i < appLine.length; i++) {
-              if (appLine[i].ordered <= Number(myOrdered)) {
-                combineData.push([appLine[i].appType, appLine[i].employee + ""]);
-              }
-            }
-
-            let target = $(".typeContainer");
-
-            for (let i = 0; i < target.length; i++) {
-              for (let j = 0; j < target[i].children.length; j++) {
-                let id = target[i].children[j].id.split("_")[1];
-                let targetId = target[i].id;
-
-                if (targetId == "examine") {
-                  targetId = 0;
-                } else if (targetId == "agree") {
-                  targetId = 1;
-                } else if (targetId == "approval") {
-                  targetId = 2;
-                } else if (targetId == "conduct") {
-                  targetId = 3;
-                } else if (targetId == "refer") {
-                  targetId = 4;
-                }
-
-                combineData.push([targetId, id]);
-              }
-            }
-
-            storage.newAppLine = combineData;
-
-            $(".modal-wrap").hide();
-            $(".inputsAuto").css("background-color", "white");
-            createNewLine(); // 문서 안에서 결재선 그리는 것
-            // 문서 정보에서 결재선 정보 그리는 것
           }
+
+          storage.newAppLine = combineData;
+
+          $(".modal-wrap").hide();
+          $(".inputsAuto").css("background-color", "white");
+          createNewLine(); // 문서 안에서 결재선 그리는 것
+          // 문서 정보에서 결재선 정보 그리는 것
+          // }
         }
 
       }
     } else { // 내 결재 타입이 결재인 경우 ============================================================== 
 
-      let num = 0;
-      for (let i = 0; i < $(".typeContainer").length; i++) {
-        if ($(".typeContainer")[i].innerHTML == "") {
-          num++;
-        }
+      // let num = 0;
+      // for (let i = 0; i < $(".typeContainer").length; i++) {
+      //   if ($(".typeContainer")[i].innerHTML == "") {
+      //     num++;
+      //   }
+      // }
+
+      // if (num == 3) {
+      //   $(".modal-wrap").hide();
+      //   reset();
+      //   setAppLineData();
+      // } else {
+
+      let appLine = storage.reportDetailData.appLine;
+      let my = storage.my;
+      let myOrdered;
+      if (storage.newAppLine != undefined) {
+        storage.newAppLine = undefined;
       }
 
-      if (num == 3) {
-        $(".modal-wrap").hide();
-        reset();
-        setAppLineData();
-      } else {
-        let appLine = storage.reportDetailData.appLine;
-        let my = storage.my;
-        let myOrdered;
-        if (storage.newAppLine != undefined) {
-          storage.newAppLine = undefined;
-        }
+      for (let i = 0; i < appLine.length; i++) {
+        // if (appLine[i].employee == my + "") {
+        //   myOrdered = appLine[i].ordered;
+        //   originLine = appLine.slice(0, i + 1);
 
+        //   if (appLine[i].appType == 2) {
+        //     let combineData = [];
+        //     // // 기존 데이터 넣기
+        //     // for (let i = 0; i < appLine.length; i++) {
+        //     //   if (appLine[i].ordered < Number(myOrdered)) {
+        //     //     combineData.push([
+        //     //       appLine[i].appType,
+        //     //       appLine[i].employee + "",
+        //     //     ]);
+        //     //   } else if ((appLine[i].ordered = Number(myOrdered))) {
+        //     //     combineData.push([
+        //     //       appLine[i].appType,
+        //     //       appLine[i].employee + "",
+        //     //     ]);
+        //     //   }
+        //     // }
+
+        //     let target = $(".typeContainer");
+
+        //     for (let i = 0; i < target.length; i++) {
+        //       for (let j = 0; j < target[i].children.length; j++) {
+        //         let id = target[i].children[j].id.split("_")[1];
+        //         let targetId = target[i].id;
+
+        //         if (targetId == "examine") {
+        //           targetId = 0;
+        //         } else if (targetId == "agree") {
+        //           targetId = 1;
+        //         } else if (targetId == "approval") {
+        //           targetId = 2;
+        //         } else if (targetId == "conduct") {
+        //           targetId = 3;
+        //         } else if (targetId == "refer") {
+        //           targetId = 4;
+        //         }
+
+        //         combineData.push([targetId, id]);
+        //       }
+        //     }
+        //     console.log(storage.newAppLine + "확인 ++++++++++ㅇㅇㅇㅇㅇㅇ++++++++ㅇ+ㅇ+ㅇ+ㅇ+ㅇ++ㅇ+ㅇ+ ")
+        //     storage.newAppLine = combineData;
+        //     let checkNum;
+        //     for (let i = 0; i < storage.newAppLine.length; i++) {
+        //       if (
+        //         storage.newAppLine[i][0] == 2 &&
+        //         storage.newAppLine[i][1] == my + ""
+        //       ) {
+        //         if (
+        //           i != storage.newAppLine.length - 1 &&
+        //           storage.newAppLine[i + 1][0] == 2
+        //         ) {
+        //           storage.newAppLine[i][0] = 0;
+        //         }
+        //       }
+        //     }
+
+        //     $(".modal-wrap").hide();
+        //     $(".inputsAuto").css("background-color", "white");
+        //     createNewLine(); // 문서 안에서 결재선 그리는 것
+        //     // 문서 정보에서 결재선 정보 그리는 것
+        //   }
+        // } else {
+        let combineData = [];
+        combineData.push([appLine[0].appType, appLine[0].employee + ""]);
+        // 기존 데이터 넣기
         for (let i = 0; i < appLine.length; i++) {
-          if (appLine[i].employee == my + "") {
-            myOrdered = appLine[i].ordered;
-            originLine = appLine.slice(0, i + 1);
-
-            if (appLine[i].appType == 2) {
-              let combineData = [];
-              // 기존 데이터 넣기
-              for (let i = 0; i < appLine.length; i++) {
-                if (appLine[i].ordered < Number(myOrdered)) {
-                  combineData.push([
-                    appLine[i].appType,
-                    appLine[i].employee + "",
-                  ]);
-                } else if ((appLine[i].ordered = Number(myOrdered))) {
-                  combineData.push([
-                    appLine[i].appType,
-                    appLine[i].employee + "",
-                  ]);
-                }
-              }
-
-              let target = $(".typeContainer");
-
-              for (let i = 0; i < target.length; i++) {
-                for (let j = 0; j < target[i].children.length; j++) {
-                  let id = target[i].children[j].id.split("_")[1];
-                  let targetId = target[i].id;
-
-                  if (targetId == "examine") {
-                    targetId = 0;
-                  } else if (targetId == "agree") {
-                    targetId = 1;
-                  } else if (targetId == "approval") {
-                    targetId = 2;
-                  } else if (targetId == "conduct") {
-                    targetId = 3;
-                  } else if (targetId == "refer") {
-                    targetId = 4;
-                  }
-
-                  combineData.push([targetId, id]);
-                }
-              }
-
-              storage.newAppLine = combineData;
-              let checkNum;
-              for (let i = 0; i < storage.newAppLine.length; i++) {
-                if (
-                  storage.newAppLine[i][0] == 2 &&
-                  storage.newAppLine[i][1] == my + ""
-                ) {
-                  if (
-                    i != storage.newAppLine.length - 1 &&
-                    storage.newAppLine[i + 1][0] == 2
-                  ) {
-                    storage.newAppLine[i][0] = 0;
-                  }
-                }
-              }
-
-              $(".modal-wrap").hide();
-              $(".inputsAuto").css("background-color", "white");
-              createNewLine(); // 문서 안에서 결재선 그리는 것
-              // 문서 정보에서 결재선 정보 그리는 것
-            }
-          } else {
-            let combineData = [];
-
-            // 기존 데이터 넣기
-            for (let i = 0; i < appLine.length; i++) {
-              if (appLine[i].ordered <= Number(myOrdered)) {
-                combineData.push([appLine[i].appType, appLine[i].employee + ""]);
-              }
-            }
-
-            let target = $(".typeContainer");
-
-            for (let i = 0; i < target.length; i++) {
-              for (let j = 0; j < target[i].children.length; j++) {
-                let id = target[i].children[j].id.split("_")[1];
-                let targetId = target[i].id;
-
-                if (targetId == "examine") {
-                  targetId = 0;
-                } else if (targetId == "agree") {
-                  targetId = 1;
-                } else if (targetId == "approval") {
-                  targetId = 2;
-                } else if (targetId == "conduct") {
-                  targetId = 3;
-                } else if (targetId == "refer") {
-                  targetId = 4;
-                }
-
-                combineData.push([targetId, id]);
-              }
-            }
-
-            storage.newAppLine = combineData;
-
-            $(".modal-wrap").hide();
-            $(".inputsAuto").css("background-color", "white");
-            createNewLine(); // 문서 안에서 결재선 그리는 것
-            // 문서 정보에서 결재선 정보 그리는 것
+          if (appLine[i].ordered <= Number(myOrdered)) {
+            combineData.push([appLine[i].appType, appLine[i].employee + ""]);
           }
         }
+
+        let target = $(".typeContainer");
+
+        for (let i = 0; i < target.length; i++) {
+          for (let j = 0; j < target[i].children.length; j++) {
+            let id = target[i].children[j].id.split("_")[1];
+            let targetId = target[i].id;
+
+            if (targetId == "examine") {
+              targetId = 0;
+            } else if (targetId == "agree") {
+              targetId = 1;
+            } else if (targetId == "approval") {
+              targetId = 2;
+            } else if (targetId == "conduct") {
+              targetId = 3;
+            } else if (targetId == "refer") {
+              targetId = 4;
+            }
+
+            combineData.push([targetId, id]);
+          }
+        }
+
+        storage.newAppLine = combineData;
+        console.log(storage.newAppLine + "확인 ++++++++++ㅇㅇㅇㅇㅇㅇ++++++++ㅇ+ㅇ+ㅇ+ㅇ+ㅇ++ㅇ+ㅇ+ ")
+        $(".modal-wrap").hide();
+        $(".inputsAuto").css("background-color", "white");
+        createNewLine(); // 문서 안에서 결재선 그리는 것
+        // 문서 정보에서 결재선 정보 그리는 것
       }
     }
-
-
-
-
+    // }
   }
+
+  // }
 }
 
+
+//새 결재선 그리기 
 function createNewLine() {
   let formId = storage.reportDetailData.formId;
   let lineTarget = $(".infoline")[0].children[1];
@@ -1567,6 +1457,8 @@ function createNewLine() {
   lineTarget.html("");
   lineTarget.css("display", "block");
   let newAppLine = storage.newAppLine;
+
+
   let newCombine = [[], [], [], [], []];
 
   //내 순서 확인하고 title 잘라버리기
@@ -1576,19 +1468,35 @@ function createNewLine() {
       myType = newAppLine[i][0];
     }
   }
+  console.log(newAppLine + "확인하기 2 ");
+  // for (let i = 0; i < newAppLine.length; i++) {
+  //   for (let j = 0; j < newCombine.length; j++) {
+  //     if (i > 0 && newAppLine[i][0] == j) {
+  //       newCombine[j].push(newAppLine[i][1]);
+  //     }
+  //   }
+  // }
 
-  for (let i = 0; i < newAppLine.length; i++) {
-    for (let j = 0; j < newCombine.length; j++) {
-      if (i > 0 && newAppLine[i][0] == j) {
-        newCombine[j].push(newAppLine[i][1]);
+
+  for (let i = 0; i < newCombine.length; i++) {
+    for (let j = 0; j < newAppLine.length; j++) {
+      if (j > 0 && i == newAppLine[j][0]) {
+        newCombine[i].push(newAppLine[j][1]);
       }
     }
   }
 
-  if (newCombine[2].length > 1 && newCombine[2].includes(storage.my + "")) {
-    newCombine[2] = newCombine[2].slice(1);
-    newCombine[0].push(storage.my + "");
-  }
+  console.log(newCombine);
+
+
+  // if (newCombine[2].length > 1 && newCombine[2].includes(storage.my + "")) {
+  //   newCombine[2] = newCombine[2].slice(1);
+  //   newCombine[0].push(storage.my + "");
+  // }
+
+
+  console.log(newCombine + "새 결재선 조합 확인 ");
+
 
   let testHtml =
     "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작성</div><div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto' disabled value='" +
@@ -1656,22 +1564,9 @@ function createNewLine() {
           "_approved" +
           "' value='' data-detail=''/></div></div>";
       }
-
-      // 참조
-      // else if (i == 4) {
-      //   referHtml +=
-      //     "<div class='appendName " +
-      //     formId +
-      //     "_" +
-      //     titleId[i] +
-      //     "' data-detail='" +
-      //     storage.user[newCombine[i][j]].userNo +
-      //     "'>" +
-      //     storage.userRank[storage.user[newCombine[i][j]].rank][0] +
-      //     "&nbsp" +
-      //     storage.user[newCombine[i][j]].userName +
-      //     "</div>";
-      // }
+      else if (i == 4) {
+        console.log("참조구나");
+      }
 
       // 검토 합의 결재
       else {
@@ -1722,10 +1617,8 @@ function createNewLine() {
   testHtml += testHtml2;
   lineTarget.html(testHtml);
 
-  // $(".selectedRefer").html(referHtml);
 
-  console.log(newCombine);
-
+  drawNewCommentLine();
   for (let i = 0; i < newCombine.length; i++) {
     let titleId = ["examine", "agree", "approval", "conduct", "refer"];
     let formId = storage.reportDetailData.formId;
@@ -1748,7 +1641,7 @@ function createNewLine() {
             );
             status = "반려";
           }
-          console.log(approved + "ddd" + status);
+
           $("." + formId + "_" + titleId[i] + "_status")[j].value = status;
           $("." + formId + "_" + titleId[i] + "_approved")[j].value = approved;
         }
@@ -1756,7 +1649,6 @@ function createNewLine() {
     }
   }
 
-  drawNewCommentLine();
 
 }
 
@@ -1764,6 +1656,7 @@ function check(name) {
   let inputLength = $(".testClass");
   let target = $("#" + name);
   let html = target.html();
+
 
   let x;
   let my = storage.my;
@@ -1782,40 +1675,55 @@ function check(name) {
     }
   }
 
-  if ((name == "approval" && html != "") || (name == "approval" && count > 1)) {
-    alert("결재자는 한 명만 선택할 수 있습니다");
-  } else {
-    let selectHtml = "";
 
-    for (let i = 0; i < inputLength.length; i++) {
-      let id = inputLength[i].id.substring(2, inputLength[i].id.length);
-      if ($("#cb" + id).prop("checked")) {
-        if (document.getElementById("linedata_" + id) == null) {
-          selectHtml +=
-            "<div class='lineDataContainer' id='lineContainer_" +
-            id +
-            "'><label id='linedata_" +
-            id +
-            "'>" +
-            storage.user[id].userName +
-            "</label><button value='" +
-            id +
-            "' onclick='upClick(this)'>▲</button><button  value='" +
-            id +
-            "' onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>";
-        }
+  let selectHtml = "";
+  if ((name == "approval" && html != "") || (name == "approval" && count == 1)) {
+    $("#examine").append($("#" + name).html());
+  }
+
+
+  for (let i = 0; i < inputLength.length; i++) {
+
+    let id = inputLength[i].id.substring(2, inputLength[i].id.length);
+    if ($("#cb" + id).prop("checked")) {
+      if (document.getElementById("linedata_" + id) == null) {
+        selectHtml +=
+          "<div class='lineDataContainer' id='lineContainer_" +
+          id +
+          "'><label id='linedata_" +
+          id +
+          "'>" +
+          storage.user[id].userName +
+          "</label><button value='" +
+          id +
+          "' onclick='upClick(this)'>▲</button><button  value='" +
+          id +
+          "' onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>";
       }
     }
-
-    html += selectHtml;
-    target.html(html);
-
-    $(".testClass").prop("checked", false);
   }
-} //End of check(name)
+  if (name == "approval") {
+    html = "";
+  }
+  html += selectHtml;
+  target.html(html);
+
+  $(".testClass").prop("checked", false);
+}
+//End of check(name)
 
 //// 조직도 결재 순서
 function upClick(obj) {
+  let appLine = storage.reportDetailData.appLine;
+  let orgEmployee = [];
+  let my = storage.my
+  for (let i = 0; i < appLine.length; i++) {
+    orgEmployee.push(appLine[i].employee);
+    if (appLine[i].employee == my) {
+      break;
+    }
+  }
+
   let parent;
   parent = obj.parentElement;
   parent = parent.parentElement;
@@ -1829,44 +1737,62 @@ function upClick(obj) {
     numArr.push(idArr[1]);
   }
 
+  console.log(numArr);
+
   for (let i = 0; i < numArr.length; i++) {
     if (obj.value == numArr[i] && i != 0) {
-      let temp = numArr[i];
-      numArr[i] = numArr[i - 1];
-      numArr[i - 1] = temp;
+      if (orgEmployee.includes(numArr[i - 1] * 1) == false) {
+        let temp = numArr[i];
+        numArr[i] = numArr[i - 1];
+        numArr[i - 1] = temp;
+      }
+
     }
   }
 
-  let data = new Array();
-  let x;
-  let my = storage.my;
-  //나는 결재선에 노출 안 되게 함
-  for (x in storage.user) {
-    if (x != my) {
-      data.push(x);
-    }
-  }
+
 
   let selectHtml = "";
   for (let i = 0; i < numArr.length; i++) {
-    selectHtml +=
-      "<div class='lineDataContainer' id='lineContainer_" +
-      numArr[i] +
-      "'><label id='linedata" +
-      numArr[i] +
-      "'>" +
-      storage.user[numArr[i]].userName +
-      "</label><button value='" +
-      numArr[i] +
-      "' onclick='upClick(this)'>▲</button><button  value='" +
-      numArr[i] +
-      "'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>";
+    if (orgEmployee.includes(numArr[i] * 1)) {
+      selectHtml +=
+        "<div class='lineDataContainer' id='lineContainer_" +
+        numArr[i] +
+        "'><label id='linedata" +
+        numArr[i] +
+        "'>" +
+        storage.user[numArr[i]].userName +
+        "</label></div>";
+    } else {
+      selectHtml +=
+        "<div class='lineDataContainer' id='lineContainer_" +
+        numArr[i] +
+        "'><label id='linedata" +
+        numArr[i] +
+        "'>" +
+        storage.user[numArr[i]].userName +
+        "</label><button value='" +
+        numArr[i] +
+        "' onclick='upClick(this)'>▲</button><button  value='" +
+        numArr[i] +
+        "'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>";
+    }
+
   }
 
   target.html(selectHtml);
 } // End of upClick(obj);
 
 function downClick(obj) {
+  let appLine = storage.reportDetailData.appLine;
+  let orgEmployee = [];
+  let my = storage.my
+  for (let i = 0; i < appLine.length; i++) {
+    orgEmployee.push(appLine[i].employee);
+    if (appLine[i].employee == my) {
+      break;
+    }
+  }
   let parent;
   parent = obj.parentNode;
   parent = parent.parentNode;
@@ -1888,30 +1814,33 @@ function downClick(obj) {
     }
   }
 
-  let data = new Array();
-  let x;
-  let my = storage.my;
-  //나는 결재선에 노출 안 되게 함
-  for (x in storage.user) {
-    if (x != my) {
-      data.push(x);
-    }
-  }
-
   let selectHtml = "";
   for (let i = 0; i < numArr.length; i++) {
-    selectHtml +=
-      "<div class='lineDataContainer' id='lineContainer_" +
-      numArr[i] +
-      "'><label id='linedata" +
-      numArr[i] +
-      "'>" +
-      storage.user[numArr[i]].userName +
-      "</label><button value='" +
-      numArr[i] +
-      "' onclick='upClick(this)'>▲</button><button  value='" +
-      numArr[i] +
-      "'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>";
+    if (orgEmployee.includes(numArr[i] * 1)) {
+      selectHtml +=
+        "<div class='lineDataContainer' id='lineContainer_" +
+        numArr[i] +
+        "'><label id='linedata" +
+        numArr[i] +
+        "'>" +
+        storage.user[numArr[i]].userName +
+        "</label></div>";
+
+    } else {
+      selectHtml +=
+        "<div class='lineDataContainer' id='lineContainer_" +
+        numArr[i] +
+        "'><label id='linedata" +
+        numArr[i] +
+        "'>" +
+        storage.user[numArr[i]].userName +
+        "</label><button value='" +
+        numArr[i] +
+        "' onclick='upClick(this)'>▲</button><button  value='" +
+        numArr[i] +
+        "'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>";
+    }
+
   }
 
   target.html(selectHtml);
@@ -2278,18 +2207,7 @@ function reset() {
 
 
       else if (i == 4) {
-        // referHtml +=
-        //   "<div class='appendName " +
-        //   formId +
-        //   "_" +
-        //   titleId[i] +
-        //   "' data-detail='" +
-        //   storage.user[newCombine[i][j]].userNo +
-        //   "'>" +
-        //   storage.userRank[storage.user[newCombine[i][j]].rank][0] +
-        //   "&nbsp" +
-        //   storage.user[newCombine[i][j]].userName +
-        //   "</div>";
+        console.log("참조");
       }
 
       // 검토 합의 결재
