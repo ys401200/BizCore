@@ -1683,7 +1683,7 @@ function check(name) {
 
 
   for (let i = 0; i < inputLength.length; i++) {
-
+z
     let id = inputLength[i].id.substring(2, inputLength[i].id.length);
     if ($("#cb" + id).prop("checked")) {
       if (document.getElementById("linedata_" + id) == null) {
