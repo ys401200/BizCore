@@ -38,6 +38,12 @@ public class SystemService extends Svc {
         return result;
     } // End of test()
 
+    // 404 일 때 리턴하기 위한 내용을 세팅하는ㄴ 메서드
+    public void set404(String html){html404 = html;}
+
+    // 500 일 때 리턴하기 위한 내용을 세팅하는ㄴ 메서드
+    public void set500(String html){html500 = html;}
+
     public String getConnUrl() {
         List<ConnUrl> data = null;
         String result = null;

@@ -1,6 +1,7 @@
 package kr.co.bizcore.v1;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -26,6 +28,9 @@ import lombok.extern.slf4j.Slf4j;
 public class ViewConfig implements WebMvcConfigurer {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ViewConfig.class);
+
+    @Autowired
+    ResourceLoader resourceLoader;
 
     @Autowired
     private SystemService systemService;
@@ -55,7 +60,7 @@ public class ViewConfig implements WebMvcConfigurer {
 
     private void appInitialize(){
 
-        String rootPath = null, compId = null, s = File.separator;
+        String rootPath = null, compId = null, s = File.separator, t = null;;
         List<String> compIdList = null;
         List<String> dirs = null;
         File root = null, each = null;
@@ -109,6 +114,12 @@ public class ViewConfig implements WebMvcConfigurer {
             e.printStackTrace();
         }
 
+        // 404, 500 코드일 경우 리턴하기 위해서 파일을 읽어서 변수에 저장함
+        t = "<!DOCTYPE html><html><head><link rel=\"icon\" href=\"/favicon\" type=\"image/x-icon\"><meta charset=\"UTF-8\"><link rel=\"stylesheet\" type=\"text/css\" href=\"/css/error/error.css\" /><title>404 ERROR!</title></head><body><img src=\"/images/errors/404.jpg\"/></body></html>";
+        systemService.set404(t);
+        t = "<!DOCTYPE html><html><head><link rel=\"icon\" href=\"/favicon\" type=\"image/x-icon\"><meta charset=\"UTF-8\"><link rel=\"stylesheet\" type=\"text/css\" href=\"/css/error/error.css\" /><title>500 ERROR!</title></head><body><img src=\"/images/errors/500.jpg\"/></body></html>";
+        systemService.set500(t);
+        
     } // End of appInitialize()
 
 }

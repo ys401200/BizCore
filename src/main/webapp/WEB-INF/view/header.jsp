@@ -42,7 +42,7 @@
 <jsp:include page="./note/note.jsp"/>
 <div id="header">
 	<div id="mainTopLogo">
-		<a href="/"><img src="/images/main/topLogo.png" id="mainTopLogoImg" /></a>
+		<a href="/"><img src="/api/system/logo" id="mainTopLogoImg" /></a>
 		<img src="/images/main/topEllipse.png" id="mainTopEllipseImg" />
 		<%-- <img src="/images/main/topVector.png" id="mainTopVectorImg" /> --%>
 	</div>

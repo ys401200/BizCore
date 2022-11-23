@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <style>
+        html, body{margin:0;padding:0;width:100%;height:100%;}
+        body{
+            display:flex;
+            align-items: center;
+            justify-content: center;
+            font-size:10px;
+            background-color: #e4e4e4;
+        }
+        .wrap{
+            width:80rem;
+            height:48rem;
+            border: 1px solid #d1d1d1;
+            background-color:white;
+            overflow: hidden;
+        }
+        .tab{
+            height:6%;
+            display:flex;
+            align-items: center;
+            justify-content: center;
+            font-size:1.3rem;
+            border-top:1px solid #e7e7e7;
+            border-bottom:1px solid #e7e7e7;
+            box-sizing: border-box;
+        }
+        .pane{height:0;overflow: hidden;box-sizing: border-box;}
+        .wrap > div:nth-child(1){background-color: #edf0ff;}
+        .wrap > div:nth-child(2){background-color: #f3f3f3;font-size: 3rem;}
+        .wrap > div:nth-child(2) > div{margin:7rem;}
+        .wrap > div:nth-child(2) > div:nth-child(3){text-align:right;}
+        .wrap > div:nth-child(2) > div:nth-child(3) > div{display:inline-flex;cursor:pointer;width:3rem;height:3rem;align-items: center;justify-content: center;border-radius: 50%;padding: 0.25rem;font-size: 2rem;    vertical-align: middle;}
+        .wrap > div:nth-child(3){background-color: #e1e5fc;}
+        .wrap > div:nth-child(4){background-color: #f3f3f3;}
+        .wrap > div:nth-child(4) > div > span{
+            /* color: #5757be; */
+            margin: 1rem 3rem 0;
+            font-size: 2rem;
+            padding: 2rem 2rem 2rem 4rem;
+            display: inline-block;
+            text-align: right;
+            width: 25rem;
+        }
+        .wrap > div:nth-child(4) > div > input{
+            border: none;
+            background-color: transparent;
+            border-bottom: 0.3rem solid #ffc6c6;
+            display: inline-block;
+            font-size: 2rem;
+            width: 30rem;
+        }
+        .wrap > div:nth-child(4) > div:nth-child(5) > div{display:inline-flex;cursor:pointer;width:3rem;height:3rem;align-items: center;justify-content: center;border-radius: 50%;padding: 0.25rem;font-size: 2rem;    vertical-align: middle;}
+        .wrap > div:nth-child(5){background-color: #d8dcf7;}
+        .wrap > div:nth-child(6){background-color: #f3f3f3;}
+        .wrap > div:nth-child(7){background-color: #ccd0f0;}
+        .wrap > div:nth-child(8){background-color: #f3f3f3;}
+
+        .pane > div{color:transparent;}
+
+        .pane-close{animation: close 2s forwards;overflow: hidden;box-sizing: content-box;}
+        .pane-open{animation: open 2s forwards;overflow: hidden;}
+        .pane-first{height:76%;}
+
+        .txt-appear1{animation: appear 2s forwards;animation-delay: 1s;}
+        .txt-appear2{animation: appear 2s forwards;animation-delay: 3s;}
+        .txt-appear3{animation: button 2s forwards;animation-delay: 5s;}
+
+        ._hidden{display:none;}
+
+        @keyframes close {
+            from {height: 76%;}
+            to {height: 0px;}
+        }
+        @keyframes open {
+            to {height: 76%;}
+            from {height: 0px;}
+        }
+        @keyframes appear {
+            to {color:#5757be;display:block;}
+            from {color:transparent;display:none;}
+        }
+        @keyframes button {
+            to {color:white;background-color:#42c3e6;}
+            from {color:transparent;background-color:transparent;}
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="tab"><span>W e l c o m e</span></div>
+        <div class="pane pane-first">
+            <div class="txt-appear1">반갑습니다.</div>
+            <div class="txt-appear2">비즈코어를 선택해 주셔서 감사합니다.</div>
+            <div><div  class="txt-appear3" onclick="nextStep(this)">▷</div></div>
+        </div>
+        <div class="tab"><span>관 리 자</span></div>
+        <div class="pane">
+            <div><span style="color:#5757be;">이름을 입력하세요 </span><input onkeyup="enterName(this)" /></div>
+            <div class="_hidden"><span style="color:#5757be;">아이디를 입력하세요 </span><input onkeyup="enterId(this)" /></div>
+            <div class="_hidden"><span style="color:#5757be;">비밀번호를 입력하세요 </span><input data-x="1" onkeyup="enterPw(this)" type="password" /></div>
+            <div class="_hidden"><span style="color:#5757be;">비밀번호를 확인하세요 </span><input data-x="2" onkeyup="enterPw(this)" type="password" /></div>
+            <div class="_hidden"><div onclick="nextStep(this)">▷</div></div>
+        </div>
+        <div class="tab"><span>회 사 정 보</span></div>
+        <div class="pane">
+            <button onclick="nextStep(this)">X</button>
+        </div>
+        <div class="tab"><span>마 무 리</span></div>
+        <div class="pane">
+            <button onclick="nextStep(this)">X</button>
+        </div>
+    </div>
+<script>
+let nextStep, enterName, enterId, enterPw, manager, company;
+manager = {};
+company = {};
+nextStep = (el) => {
+    let wrap = document.getElementsByClassName("wrap")[0];
+    while(el.parentElement !== wrap)    el = el.parentElement;
+    el.className = "pane-close";
+    el.nextElementSibling.nextElementSibling.className = "pane-open";
+}; // End of nextStep()
+enterName = (el) => {
+    let value = el.value;
+    manager.name = value;
+    if(value.length > 1) el.parentElement.nextElementSibling.className = "txt-appear1";
+}; //End of enterName
+enterId = (el) => {
+    let value = el.value;
+    manager.id = value;
+    if(value.length > 5) el.parentElement.nextElementSibling.className = "txt-appear1";
+}; //End of enterId
+enterPw = (el) => {
+    let x = el.dataset.x, value = el.value, r1, r2, r3, r4;
+    r1 = new RegExp("[0-9]{1,}");
+    r2 = new RegExp("[A-Z]{1,}");
+    r3 = new RegExp("[a-z]{1,}");
+    r4 = new RegExp("[!|@|#|$|%|\\^|&|*|\\(|\\)|\\?|<|>]{1,}");
+    if(x === "1"){
+        if(r1.test(value) && r2.test(value) && r3.test(value) && value.length > 8){
+            el.style.backgroundColor = "";
+            el.parentElement.nextElementSibling.className = "txt-appear1";
+            manager.pw = value;
+        }else el.style.backgroundColor = "#ffe9e9";
+    }else{
+        if(value !== manager.pw)    el.style.backgroundColor = "#ffe9e9";
+        else{
+            el.style.backgroundColor = "";
+            el.parentElement.nextElementSibling.className = "txt-appear1";
+        }
+    }
+}; //End of enterPw
+</script>
+</body>
+</html>

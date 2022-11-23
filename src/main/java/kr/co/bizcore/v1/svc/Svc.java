@@ -124,6 +124,9 @@ public abstract class Svc {
 
     protected long timeCorrect;
 
+    protected String html404;
+    protected String html500;
+
     protected DataFactory dataFactory = DataFactory.getFactory();
 
     public boolean debug(){return DEBUG;}
