@@ -1136,6 +1136,9 @@ public class GwService extends Svc {
     public int doBacth(String docNo, String employee) {
         int result = 0;
         result = gwMapper.batchApprove(docNo, employee);
+        if (result > 0) {
+            gwMapper.setStatus(docNo, employee);
+        }
         return result;
     }
 

@@ -220,7 +220,7 @@ public interface GwMapper {
         public String getFormIdWithDocNo(@Param("compId") String compId, @Param("docNo") String docNo);
 
         // 일괄 결재하기
-        @Update("update bizcore.doc_app_detail set" +
+        @Update("UPDATE bizcore.doc_app_detail set" +
                         "`read` = now()," +
                         "doc = (select doc from bizcore.doc_app_detail where docNo =#{docNo} && ordered = (select (ordered - 10) as prevNo from bizcore.doc_app_detail where docNo = #{docNo} && employee = #{employee} )),"
                         +
@@ -232,6 +232,21 @@ public interface GwMapper {
                         " where docNo = #{docNo} && employee = #{employee} ")
         public int batchApprove(@Param("docNo") String docNo, @Param("employee") String employee);
 
-        // 일괄결재시 결재 타입이 2인 경우 
-F
+        // 일괄결재시 결재 타입이 2인 경우
+
+        @Update("update  bizcore.doc_app set " +
+                        "status =" +
+                        "case " +
+                        " when (select apptype from bizcore.doc_app_detail where  docNo = #{docNo} && employee = #{employee} )=2 && (select apptype from bizcore.doc_app_detail where  docNo =#{docNo} && ordered = (select (ordered + 10) as prevNo from bizcore.doc_app_detail) !=3) then  3 "
+                        +
+                        " when (select apptype from bizcore.doc_app_detail where  docNo = #{docNo} && employee = #{employee} )=2 && (select apptype from bizcore.doc_app_detail where  docNo =#{docNo} && ordered = (select (ordered + 10) as prevNo from bizcore.doc_app_detail) =3 ) then  2"
+                        +
+                        " when (select apptype from bizcore.doc_app_detail where  docNo = #{docNo} && employee = #{employee} )=0  then  1 "
+                        +
+                        " when (select apptype from bizcore.doc_app_detail where  docNo = #{docNo} && employee = #{employee} )=3 && (select apptype from bizcore.doc_app_detail where  docNo =#{docNo} && ordered = (select (ordered + 10) as prevNo from bizcore.doc_app_detail) =3 )then 2"
+                        +
+                        " when (select apptype from bizcore.doc_app_detail where  docNo = #{docNo} && employee = #{employee} )=3 && (select apptype from bizcore.doc_app_detail where  docNo =#{docNo} && ordered = (select (ordered + 10) as prevNo from bizcore.doc_app_detail) !=3 )then 3"
+                        +
+                        "end  where docNo = #{docNo} ")
+        public int setStatus(@Param("docNo") String docNo, @Param("employee") String employee);
 }
