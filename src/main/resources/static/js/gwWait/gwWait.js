@@ -1305,6 +1305,9 @@ function closeGwModal(obj) {
 
           storage.newAppLine = combineData;
 
+
+
+
           $(".modal-wrap").hide();
           $(".inputsAuto").css("background-color", "white");
           createNewLine(); // 문서 안에서 결재선 그리는 것
@@ -1327,119 +1330,122 @@ function closeGwModal(obj) {
       //   reset();
       //   setAppLineData();
       // } else {
+      if ($(".typeContainer")[1].children.length == 0) {
+        alert("결재자를 선택하세요");
+      } else {
+        let appLine = storage.reportDetailData.appLine;
+        let my = storage.my;
+        let myOrdered;
+        if (storage.newAppLine != undefined) {
+          storage.newAppLine = undefined;
+        }
 
-      let appLine = storage.reportDetailData.appLine;
-      let my = storage.my;
-      let myOrdered;
-      if (storage.newAppLine != undefined) {
-        storage.newAppLine = undefined;
-      }
-
-      for (let i = 0; i < appLine.length; i++) {
-        // if (appLine[i].employee == my + "") {
-        //   myOrdered = appLine[i].ordered;
-        //   originLine = appLine.slice(0, i + 1);
-
-        //   if (appLine[i].appType == 2) {
-        //     let combineData = [];
-        //     // // 기존 데이터 넣기
-        //     // for (let i = 0; i < appLine.length; i++) {
-        //     //   if (appLine[i].ordered < Number(myOrdered)) {
-        //     //     combineData.push([
-        //     //       appLine[i].appType,
-        //     //       appLine[i].employee + "",
-        //     //     ]);
-        //     //   } else if ((appLine[i].ordered = Number(myOrdered))) {
-        //     //     combineData.push([
-        //     //       appLine[i].appType,
-        //     //       appLine[i].employee + "",
-        //     //     ]);
-        //     //   }
-        //     // }
-
-        //     let target = $(".typeContainer");
-
-        //     for (let i = 0; i < target.length; i++) {
-        //       for (let j = 0; j < target[i].children.length; j++) {
-        //         let id = target[i].children[j].id.split("_")[1];
-        //         let targetId = target[i].id;
-
-        //         if (targetId == "examine") {
-        //           targetId = 0;
-        //         } else if (targetId == "agree") {
-        //           targetId = 1;
-        //         } else if (targetId == "approval") {
-        //           targetId = 2;
-        //         } else if (targetId == "conduct") {
-        //           targetId = 3;
-        //         } else if (targetId == "refer") {
-        //           targetId = 4;
-        //         }
-
-        //         combineData.push([targetId, id]);
-        //       }
-        //     }
-        //     console.log(storage.newAppLine + "확인 ++++++++++ㅇㅇㅇㅇㅇㅇ++++++++ㅇ+ㅇ+ㅇ+ㅇ+ㅇ++ㅇ+ㅇ+ ")
-        //     storage.newAppLine = combineData;
-        //     let checkNum;
-        //     for (let i = 0; i < storage.newAppLine.length; i++) {
-        //       if (
-        //         storage.newAppLine[i][0] == 2 &&
-        //         storage.newAppLine[i][1] == my + ""
-        //       ) {
-        //         if (
-        //           i != storage.newAppLine.length - 1 &&
-        //           storage.newAppLine[i + 1][0] == 2
-        //         ) {
-        //           storage.newAppLine[i][0] = 0;
-        //         }
-        //       }
-        //     }
-
-        //     $(".modal-wrap").hide();
-        //     $(".inputsAuto").css("background-color", "white");
-        //     createNewLine(); // 문서 안에서 결재선 그리는 것
-        //     // 문서 정보에서 결재선 정보 그리는 것
-        //   }
-        // } else {
-        let combineData = [];
-        combineData.push([appLine[0].appType, appLine[0].employee + ""]);
-        // 기존 데이터 넣기
         for (let i = 0; i < appLine.length; i++) {
-          if (appLine[i].ordered <= Number(myOrdered)) {
-            combineData.push([appLine[i].appType, appLine[i].employee + ""]);
-          }
-        }
+          // if (appLine[i].employee == my + "") {
+          //   myOrdered = appLine[i].ordered;
+          //   originLine = appLine.slice(0, i + 1);
 
-        let target = $(".typeContainer");
+          //   if (appLine[i].appType == 2) {
+          //     let combineData = [];
+          //     // // 기존 데이터 넣기
+          //     // for (let i = 0; i < appLine.length; i++) {
+          //     //   if (appLine[i].ordered < Number(myOrdered)) {
+          //     //     combineData.push([
+          //     //       appLine[i].appType,
+          //     //       appLine[i].employee + "",
+          //     //     ]);
+          //     //   } else if ((appLine[i].ordered = Number(myOrdered))) {
+          //     //     combineData.push([
+          //     //       appLine[i].appType,
+          //     //       appLine[i].employee + "",
+          //     //     ]);
+          //     //   }
+          //     // }
 
-        for (let i = 0; i < target.length; i++) {
-          for (let j = 0; j < target[i].children.length; j++) {
-            let id = target[i].children[j].id.split("_")[1];
-            let targetId = target[i].id;
+          //     let target = $(".typeContainer");
 
-            if (targetId == "examine") {
-              targetId = 0;
-            } else if (targetId == "agree") {
-              targetId = 1;
-            } else if (targetId == "approval") {
-              targetId = 2;
-            } else if (targetId == "conduct") {
-              targetId = 3;
-            } else if (targetId == "refer") {
-              targetId = 4;
+          //     for (let i = 0; i < target.length; i++) {
+          //       for (let j = 0; j < target[i].children.length; j++) {
+          //         let id = target[i].children[j].id.split("_")[1];
+          //         let targetId = target[i].id;
+
+          //         if (targetId == "examine") {
+          //           targetId = 0;
+          //         } else if (targetId == "agree") {
+          //           targetId = 1;
+          //         } else if (targetId == "approval") {
+          //           targetId = 2;
+          //         } else if (targetId == "conduct") {
+          //           targetId = 3;
+          //         } else if (targetId == "refer") {
+          //           targetId = 4;
+          //         }
+
+          //         combineData.push([targetId, id]);
+          //       }
+          //     }
+          //     console.log(storage.newAppLine + "확인 ++++++++++ㅇㅇㅇㅇㅇㅇ++++++++ㅇ+ㅇ+ㅇ+ㅇ+ㅇ++ㅇ+ㅇ+ ")
+          //     storage.newAppLine = combineData;
+          //     let checkNum;
+          //     for (let i = 0; i < storage.newAppLine.length; i++) {
+          //       if (
+          //         storage.newAppLine[i][0] == 2 &&
+          //         storage.newAppLine[i][1] == my + ""
+          //       ) {
+          //         if (
+          //           i != storage.newAppLine.length - 1 &&
+          //           storage.newAppLine[i + 1][0] == 2
+          //         ) {
+          //           storage.newAppLine[i][0] = 0;
+          //         }
+          //       }
+          //     }
+
+          //     $(".modal-wrap").hide();
+          //     $(".inputsAuto").css("background-color", "white");
+          //     createNewLine(); // 문서 안에서 결재선 그리는 것
+          //     // 문서 정보에서 결재선 정보 그리는 것
+          //   }
+          // } else {
+          let combineData = [];
+          combineData.push([appLine[0].appType, appLine[0].employee + ""]);
+          // 기존 데이터 넣기
+          for (let i = 0; i < appLine.length; i++) {
+            if (appLine[i].ordered <= Number(myOrdered)) {
+              combineData.push([appLine[i].appType, appLine[i].employee + ""]);
             }
-
-            combineData.push([targetId, id]);
           }
-        }
 
-        storage.newAppLine = combineData;
-        console.log(storage.newAppLine + "확인 ++++++++++ㅇㅇㅇㅇㅇㅇ++++++++ㅇ+ㅇ+ㅇ+ㅇ+ㅇ++ㅇ+ㅇ+ ")
-        $(".modal-wrap").hide();
-        $(".inputsAuto").css("background-color", "white");
-        createNewLine(); // 문서 안에서 결재선 그리는 것
-        // 문서 정보에서 결재선 정보 그리는 것
+          let target = $(".typeContainer");
+
+          for (let i = 0; i < target.length; i++) {
+            for (let j = 0; j < target[i].children.length; j++) {
+              let id = target[i].children[j].id.split("_")[1];
+              let targetId = target[i].id;
+
+              if (targetId == "examine") {
+                targetId = 0;
+              } else if (targetId == "agree") {
+                targetId = 1;
+              } else if (targetId == "approval") {
+                targetId = 2;
+              } else if (targetId == "conduct") {
+                targetId = 3;
+              } else if (targetId == "refer") {
+                targetId = 4;
+              }
+
+              combineData.push([targetId, id]);
+            }
+          }
+
+          storage.newAppLine = combineData;
+          console.log(storage.newAppLine + "확인 ++++++++++ㅇㅇㅇㅇㅇㅇ++++++++ㅇ+ㅇ+ㅇ+ㅇ+ㅇ++ㅇ+ㅇ+ ")
+          $(".modal-wrap").hide();
+          $(".inputsAuto").css("background-color", "white");
+          createNewLine(); // 문서 안에서 결재선 그리는 것
+          // 문서 정보에서 결재선 정보 그리는 것
+        }
       }
     }
     // }
@@ -1675,40 +1681,47 @@ function check(name) {
     }
   }
 
+  console.log(count + "체크박수 개수 확인 =============");
 
   let selectHtml = "";
-  if ((name == "approval" && html != "") || (name == "approval" && count == 1)) {
+  if ((name == "approval" && count == 1)) {
     $("#examine").append($("#" + name).html());
   }
 
 
-  for (let i = 0; i < inputLength.length; i++) {
-z
-    let id = inputLength[i].id.substring(2, inputLength[i].id.length);
-    if ($("#cb" + id).prop("checked")) {
-      if (document.getElementById("linedata_" + id) == null) {
-        selectHtml +=
-          "<div class='lineDataContainer' id='lineContainer_" +
-          id +
-          "'><label id='linedata_" +
-          id +
-          "'>" +
-          storage.user[id].userName +
-          "</label><button value='" +
-          id +
-          "' onclick='upClick(this)'>▲</button><button  value='" +
-          id +
-          "' onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>";
+  if (name == "approval" && count > 1) {
+    alert("결재자는 한명만 설정할 수 있습니다");
+  } else {
+    for (let i = 0; i < inputLength.length; i++) {
+
+      let id = inputLength[i].id.substring(2, inputLength[i].id.length);
+      if ($("#cb" + id).prop("checked")) {
+        if (document.getElementById("linedata_" + id) == null) {
+          selectHtml +=
+            "<div class='lineDataContainer' id='lineContainer_" +
+            id +
+            "'><label id='linedata_" +
+            id +
+            "'>" +
+            storage.user[id].userName +
+            "</label><button value='" +
+            id +
+            "' onclick='upClick(this)'>▲</button><button  value='" +
+            id +
+            "' onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>";
+        }
       }
     }
-  }
-  if (name == "approval") {
-    html = "";
-  }
-  html += selectHtml;
-  target.html(html);
+    if (name == "approval") {
+      html = "";
+    }
+    html += selectHtml;
+    target.html(html);
 
-  $(".testClass").prop("checked", false);
+    $(".testClass").prop("checked", false);
+  }
+
+
 }
 //End of check(name)
 
@@ -2347,3 +2360,12 @@ function getProductList() {
     }
   });
 } // End of getEstimateList()
+
+
+
+
+// function getGWTreeHtml() {
+//   let department = new Department();
+//   let treeHtml = department.getGWTreeHtml();
+//   $("#lineLeft").html(treeHtml);
+// }
