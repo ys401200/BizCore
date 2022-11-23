@@ -315,12 +315,17 @@
   border: 1px solid #B5B2FF;
 }
 
-.selector .lineDetail .innerDetail>div {
+/* .selector .lineDetail .innerDetail>div {
   padding: 3px 0;
 }
 
 .selector .lineDetail .innerDetail input {
   margin-right: 6px;
+} */
+
+.dept-tree-cnt>label {
+  display: flex;
+  flex-direction: row;
 }
 
 .selector .lineDetail #lineCenter {

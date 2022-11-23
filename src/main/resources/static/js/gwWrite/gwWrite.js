@@ -433,20 +433,30 @@ function setModalhtml() {
     }
   }
 
-  let innerHtml = "";
-  for (let i = 0; i < userData.length; i++) {
-    innerHtml +=
-      "<div><input class='testClass' type ='checkbox' id='cb" +
-      userData[i] +
-      "' name='userNames' value='" +
-      userData[i] +
-      "'><label for='cb" +
-      userData[i] +
-      "'>" +
-      storage.user[userData[i]].userName +
-      "</label></div>";
-  }
-  orgChartTarget.html(innerHtml);
+  // let innerHtml = "";
+  // for (let i = 0; i < userData.length; i++) {
+  //   innerHtml +=
+  //     "<div><input class='testClass' type ='checkbox' id='cb" +
+  //     userData[i] +
+  //     "' name='userNames' value='" +
+  //     userData[i] +
+  //     "'><label for='cb" +
+  //     userData[i] +
+  //     "'>" +
+  //     storage.user[userData[i]].userName +
+  //     "</label></div>";
+  // }
+
+  // orgChartTarget.html(innerHtml);
+
+  let gwTreeHtml = storage.dept.tree.getGwHtml();
+
+  orgChartTarget.html(gwTreeHtml);
+  // 작성자 본인은 선택할 수 없음 
+  $("#cb" + storage.my).hide();
+
+
+
 }
 
 
@@ -503,7 +513,7 @@ function check(name) {
   let data = new Array();
   // 본인
   for (x in storage.user) {
-    if (x != my && storage.user[x].resign == false) {
+    if (storage.user[x].resign == false) {
       data.push(x);
     }
   }
@@ -521,7 +531,10 @@ function check(name) {
 
     for (let i = 0; i < inputLength.length; i++) {
       if ($("#cb" + data[i]).prop("checked")) {
-        let id = inputLength[i].id.substring(2, inputLength[i].id.length);
+        console.log(inputLength[i].id + "substring 전 확인하기 ")
+
+        id = data[i];
+        console.log(id + "id 확인하기")
         if (document.getElementById("linedata_" + id) == null) {
           selectHtml +=
             "<div class='lineDataContainer' id='lineContainer_" +
@@ -548,7 +561,7 @@ function check(name) {
 //// 조직도 결재 순서
 function upClick(obj) {
 
-  
+
   let parent;
   parent = obj.parentElement;
   parent = parent.parentElement;

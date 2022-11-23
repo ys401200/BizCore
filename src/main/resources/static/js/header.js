@@ -1,7 +1,7 @@
 let cipher, msg, apiServer, modal, storage, prepare, fileDataArray = [], removeDataArray = [], updateDataArray = [], editor;
 storage = {};
 
-function init(){
+function init() {
 	let nextStep;
 
 	cipher.aes.iv = localStorage.getItem("aesIv");
@@ -11,56 +11,56 @@ function init(){
 
 	setTimeout(() => {
 		$("#loadingDiv").loading({
-			onStart: function(loading) {
+			onStart: function (loading) {
 				loading.overlay.fadeIn(1000);
 			},
-			onStop: function(loading) {
+			onStop: function (loading) {
 				loading.overlay.fadeOut(1000);
 			}
 		});
 	}, 70);
 
 	msg.cnt = document.getElementsByClassName("msg_cnt")[0];
-	
-	$(".sideMenu").find("ul:not(#panel) li a").click(function(){
-		if($(this).attr("class") !== "active"){
+
+	$(".sideMenu").find("ul:not(#panel) li a").click(function () {
+		if ($(this).attr("class") !== "active") {
 			$(".sideMenu").find("ul:not(#panel) li a").removeAttr("class");
 			$(".sideMenu").find("ul:not(#panel) li a").next().removeAttr("class");
 			$(".sideMenu").find("ul:not(#panel) li a").find("#slideSpan").text("+");
 			$(this).next().attr("class", "active");
 			$(this).find("#slideSpan").text("-");
 			$(this).attr("class", "active");
-		}else{
+		} else {
 			$(this).removeAttr("class");
 			$(this).next().removeAttr("class");
 			$(this).find("#slideSpan").text("+");
 		}
 	});
-	
+
 	$(document).click((e) => {
-		if(modal.wrap.is($(e.target))){
+		if (modal.wrap.is($(e.target))) {
 			modal.hide();
-		}else if(modal.noteWrap.is($(e.target))){
+		} else if (modal.noteWrap.is($(e.target))) {
 			modal.noteHide();
-		}else if(!$("input").is($(e.target)) || $(e.target).data("complete") === undefined || $(e.target).data("complete") === "" || $(e.target).data("complete") == null){
+		} else if (!$("input").is($(e.target)) || $(e.target).data("complete") === undefined || $(e.target).data("complete") === "" || $(e.target).data("complete") == null) {
 			$(".autoComplete").remove();
 		}
 	});
 
-	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined){
+	if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined) {
 		window.setTimeout(addNoteContainer, 1500);
-	}else{
+	} else {
 		window.setTimeout(addNoteContainer, 200);
 	}
 
-	
-	nextStep = function(){
-		if(isInit())	prepare();
-		else			window.setTimeout(nextStep,50);
+
+	nextStep = function () {
+		if (isInit()) prepare();
+		else window.setTimeout(nextStep, 50);
 	}
-	
-	if(prepare !== undefined)	window.setTimeout(nextStep,50);
-	
+
+	if (prepare !== undefined) window.setTimeout(nextStep, 50);
+
 	getCommonCode();
 	getUserMap();
 	getDeptMap();
@@ -76,14 +76,14 @@ function init(){
 apiServer = "";
 
 cipher = { // 암호화 모듈
-	"encRsa" : (message) => {
-				let result, rsa;
-				if(message === undefined || message === null)	return message;
-				rsa = new RSAKey();
-				rsa.setPublic(cipher.rsa.public.modulus, cipher.rsa.public.exponent);
-				return btoa(rsa.encrypt(message));
+	"encRsa": (message) => {
+		let result, rsa;
+		if (message === undefined || message === null) return message;
+		rsa = new RSAKey();
+		rsa.setPublic(cipher.rsa.public.modulus, cipher.rsa.public.exponent);
+		return btoa(rsa.encrypt(message));
 	},
-	"encAes":(message)=>{
+	"encAes": (message) => {
 		let cp, result;
 		cp = CryptoJS.AES.encrypt(message, CryptoJS.enc.Utf8.parse(cipher.aes.key), {
 			"iv": CryptoJS.enc.Utf8.parse(cipher.aes.iv),
@@ -93,7 +93,7 @@ cipher = { // 암호화 모듈
 		result = cp.toString();
 		return result;
 	},
-	"decAes":(message)=>{
+	"decAes": (message) => {
 		let cp, result;
 		cp = CryptoJS.AES.decrypt(message, CryptoJS.enc.Utf8.parse(cipher.aes.key), {
 			iv: CryptoJS.enc.Utf8.parse(cipher.aes.iv),
@@ -103,52 +103,58 @@ cipher = { // 암호화 모듈
 		result = cp.toString(CryptoJS.enc.Utf8);
 		return result;
 	},
-	"rsa" : {"public":{"modulus":undefined,
-					"exponent":undefined},
-			"private":undefined,
-			"getKey":()=>{
-				let url = apiServer + "/api/user/rsa";
-				$.ajax({
-					url: url,
-					method: "get",
-					dataType: "json",
-					cache: false,
-					success:(data) => {
-						let publicKeyExponent, publicKeyModulus, aesKey, aesIv, url = apiServer + "/api/user/aes";
-						if(data.result === "ok"){
-							aesKey = [cipher.genKey(8), cipher.genKey(8), cipher.genKey(8), cipher.genKey(8)];
-							aesIv = [cipher.genKey(8), cipher.genKey(8)];
-							cipher.aes.key = aesKey[0] + aesKey[1] + aesKey[2] + aesKey[3];
-							cipher.aes.iv = aesIv[0] + aesIv[1];
-							publicKeyExponent = data.data.publicKeyExponent;
-							publicKeyModulus = data.data.publicKeyModulus;
-							cipher.rsa.public.modulus = publicKeyModulus;
-							cipher.rsa.public.exponent = publicKeyExponent;
-							sessionStorage.setItem("rsaModulus", publicKeyModulus);
-							sessionStorage.setItem("rsaExponent", publicKeyExponent);
-							sessionStorage.setItem("aesKey", cipher.aes.key);
-							sessionStorage.setItem("aesIv", cipher.aes.iv);
-							$.ajax({
-								"url": url,
-								"method": "post",
-								data: cipher.encRsa(aesKey[0]) + "\n" + cipher.encRsa(aesKey[1]) + "\n" + cipher.encRsa(aesKey[2]) + "\n" + cipher.encRsa(aesKey[3]) + "\n"+ cipher.encRsa(aesIv[0]) + "\n" + cipher.encRsa(aesIv[1]),
-								contentType:"text/plain",
-								"cache": false,
-								success:(data) => {
-								}
-							})
-						}else{
-							msg.set(data.msg);
-						}
+	"rsa": {
+		"public": {
+			"modulus": undefined,
+			"exponent": undefined
+		},
+		"private": undefined,
+		"getKey": () => {
+			let url = apiServer + "/api/user/rsa";
+			$.ajax({
+				url: url,
+				method: "get",
+				dataType: "json",
+				cache: false,
+				success: (data) => {
+					let publicKeyExponent, publicKeyModulus, aesKey, aesIv, url = apiServer + "/api/user/aes";
+					if (data.result === "ok") {
+						aesKey = [cipher.genKey(8), cipher.genKey(8), cipher.genKey(8), cipher.genKey(8)];
+						aesIv = [cipher.genKey(8), cipher.genKey(8)];
+						cipher.aes.key = aesKey[0] + aesKey[1] + aesKey[2] + aesKey[3];
+						cipher.aes.iv = aesIv[0] + aesIv[1];
+						publicKeyExponent = data.data.publicKeyExponent;
+						publicKeyModulus = data.data.publicKeyModulus;
+						cipher.rsa.public.modulus = publicKeyModulus;
+						cipher.rsa.public.exponent = publicKeyExponent;
+						sessionStorage.setItem("rsaModulus", publicKeyModulus);
+						sessionStorage.setItem("rsaExponent", publicKeyExponent);
+						sessionStorage.setItem("aesKey", cipher.aes.key);
+						sessionStorage.setItem("aesIv", cipher.aes.iv);
+						$.ajax({
+							"url": url,
+							"method": "post",
+							data: cipher.encRsa(aesKey[0]) + "\n" + cipher.encRsa(aesKey[1]) + "\n" + cipher.encRsa(aesKey[2]) + "\n" + cipher.encRsa(aesKey[3]) + "\n" + cipher.encRsa(aesIv[0]) + "\n" + cipher.encRsa(aesIv[1]),
+							contentType: "text/plain",
+							"cache": false,
+							success: (data) => {
+							}
+						})
+					} else {
+						msg.set(data.msg);
 					}
-				})
-			}},
-	"aes" : {"iv":undefined,
-			"key":undefined},
-	"genKey" : (length)=>{
+				}
+			})
+		}
+	},
+	"aes": {
+		"iv": undefined,
+		"key": undefined
+	},
+	"genKey": (length) => {
 		let x, t, result = "", src = [];
-		if(isNaN(length) || length < 8)	length = 32;
-		for(x = 0 ; x < 69 ; x++){
+		if (isNaN(length) || length < 8) length = 32;
+		for (x = 0; x < 69; x++) {
 			if (x < 10)
 				src[x] = (x + 48);
 			else if (x < 36)
@@ -173,24 +179,24 @@ cipher = { // 암호화 모듈
 }
 
 msg = { // 메시징 유닛
-	"cnt" : undefined,
-	"handler" : undefined,
-	"time" : 10,
-	"fadeout":300,
-	"set" : (message, time) => {
+	"cnt": undefined,
+	"handler": undefined,
+	"time": 10,
+	"fadeout": 300,
+	"set": (message, time) => {
 		let handler, html;
 		const el = document.createElement("div");
-		if(msg.cnt === undefined || msg.cnt === null)	return;
-		if(message === undefined)	return;
-		if(time === undefined)  time = msg.time;
-		handler = window.setTimeout(()=>{$(el).fadeOut(msg.fadeout);},time*1000);
+		if (msg.cnt === undefined || msg.cnt === null) return;
+		if (message === undefined) return;
+		if (time === undefined) time = msg.time;
+		handler = window.setTimeout(() => { $(el).fadeOut(msg.fadeout); }, time * 1000);
 		html = "<div class=\"each_msg\"><div data-handler=\"" + handler + "\" onclick=\"msg.clr(this)\" class=\"cls_btn\">&#x2715;</div><div class=\"msg_content\">" + message + "</div></div>";
 		el.innerHTML = html;
 		msg.cnt.appendChild(el);
 	},
-	"clr" : (el) => {
+	"clr": (el) => {
 		let handler;
-		handler = el.dataset.handler*1;
+		handler = el.dataset.handler * 1;
 		window.clearTimeout(handler);
 		$(el.parentElement).fadeOut(msg.fadeout);
 	}
@@ -228,14 +234,14 @@ modal = {
 	},
 	"show": () => {
 		modal.clear();
-		modal.wrap.css('display','flex').hide().fadeIn();
+		modal.wrap.css('display', 'flex').hide().fadeIn();
 	},
 	"hide": () => {
 		modal.wrap.fadeOut();
 		window.setTimeout(modal.clear, 500);
-		if($(".updateBtn").data("hide-flag")){
+		if ($(".updateBtn").data("hide-flag")) {
 			ckeditor.config.readOnly = false;
-		}else{
+		} else {
 			ckeditor.config.readOnly = true;
 		}
 		window.setTimeout(setEditor, 500);
@@ -254,7 +260,7 @@ modal = {
 	},
 	"noteShow": () => {
 		modal.noteClear();
-		modal.noteWrap.css('display','flex').hide().fadeIn();
+		modal.noteWrap.css('display', 'flex').hide().fadeIn();
 	},
 	"noteHide": () => {
 		modal.noteWrap.fadeOut();
@@ -295,171 +301,171 @@ dragAndDrop = {
 	},
 },
 
-crud = {
-	"defaultAjax": (url, method, data, type, successFnc, errorFnc) => {
-		$.ajax({
-			url: url,
-			method: method,
-			data: data,
-			dataType: "json",
-			contentType: "text/plain",
-			success: (result) => {
-				if(result.result === "ok"){
-					if(result.data !== "null"){
-						if(successFnc !== undefined){
-							let jsonData;
-							
-							if(type === "list"){
-								jsonData = cipher.decAes(result.data);
-								jsonData = JSON.parse(jsonData);
-								successFnc(jsonData);
-							}else if(type === "detail"){
-								jsonData = cipher.decAes(result.data);
-								jsonData = JSON.parse(jsonData);
-								successFnc(jsonData);
-							}else{
-								successFnc();
+	crud = {
+		"defaultAjax": (url, method, data, type, successFnc, errorFnc) => {
+			$.ajax({
+				url: url,
+				method: method,
+				data: data,
+				dataType: "json",
+				contentType: "text/plain",
+				success: (result) => {
+					if (result.result === "ok") {
+						if (result.data !== "null") {
+							if (successFnc !== undefined) {
+								let jsonData;
+
+								if (type === "list") {
+									jsonData = cipher.decAes(result.data);
+									jsonData = JSON.parse(jsonData);
+									successFnc(jsonData);
+								} else if (type === "detail") {
+									jsonData = cipher.decAes(result.data);
+									jsonData = JSON.parse(jsonData);
+									successFnc(jsonData);
+								} else {
+									successFnc();
+								}
 							}
+						} else {
+							successFnc("");
 						}
-					}else{
-						successFnc("");
+					}
+				},
+				error: () => {
+					if (errorFnc !== undefined) {
+						errorFnc();
 					}
 				}
-			},
-			error: () => {
-				if(errorFnc !== undefined){
-					errorFnc();
-				}
-			}
-		});
-	}
-},
-
-ckeditor = {
-	"config": {
-		"readOnly": true,
-		"language": "ko",
-		"toolbarGroups": [
-			{ name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
-			{ name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
-			{ name: 'editing', groups: [ 'find', 'selection', 'spellchecker', 'editing' ] },
-			{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
-			{ name: 'styles', groups: [ 'styles' ] },
-			{ name: 'colors', groups: [ 'colors' ] },
-			{ name: 'paragraph', groups: [ 'list', 'align', 'indent', 'blocks', 'bidi', 'paragraph' ] },
-			{ name: 'insert', groups: [ 'insert' ] },
-			{ name: 'forms', groups: [ 'forms' ] },
-			'/',
-			{ name: 'links', groups: [ 'links' ] },
-			'/',
-			{ name: 'tools', groups: [ 'tools' ] },
-			{ name: 'others', groups: [ 'others' ] },
-			{ name: 'about', groups: [ 'about' ] }
-		],
-		"removeButtons": "Source,Save,Templates,NewPage,Preview,Print,Cut,Copy,Paste,PasteText,PasteFromWord,Find,Replace,SelectAll,Scayt,ImageButton,HiddenField,CopyFormatting,RemoveFormat,Outdent,Indent,Blockquote,CreateDiv,BidiLtr,BidiRtl,Language,Link,Unlink,Anchor,Image,Flash,HorizontalRule,Smiley,SpecialChar,PageBreak,Iframe,Maximize,ShowBlocks,About,Button,Select,Textarea,TextField,Radio,Checkbox,Form",
-		"extraPlugins": "pastebase64, base64image",
+			});
+		}
 	},
-}
+
+	ckeditor = {
+		"config": {
+			"readOnly": true,
+			"language": "ko",
+			"toolbarGroups": [
+				{ name: 'document', groups: ['mode', 'document', 'doctools'] },
+				{ name: 'clipboard', groups: ['clipboard', 'undo'] },
+				{ name: 'editing', groups: ['find', 'selection', 'spellchecker', 'editing'] },
+				{ name: 'basicstyles', groups: ['basicstyles', 'cleanup'] },
+				{ name: 'styles', groups: ['styles'] },
+				{ name: 'colors', groups: ['colors'] },
+				{ name: 'paragraph', groups: ['list', 'align', 'indent', 'blocks', 'bidi', 'paragraph'] },
+				{ name: 'insert', groups: ['insert'] },
+				{ name: 'forms', groups: ['forms'] },
+				'/',
+				{ name: 'links', groups: ['links'] },
+				'/',
+				{ name: 'tools', groups: ['tools'] },
+				{ name: 'others', groups: ['others'] },
+				{ name: 'about', groups: ['about'] }
+			],
+			"removeButtons": "Source,Save,Templates,NewPage,Preview,Print,Cut,Copy,Paste,PasteText,PasteFromWord,Find,Replace,SelectAll,Scayt,ImageButton,HiddenField,CopyFormatting,RemoveFormat,Outdent,Indent,Blockquote,CreateDiv,BidiLtr,BidiRtl,Language,Link,Unlink,Anchor,Image,Flash,HorizontalRule,Smiley,SpecialChar,PageBreak,Iframe,Maximize,ShowBlocks,About,Button,Select,Textarea,TextField,Radio,Checkbox,Form",
+			"extraPlugins": "pastebase64, base64image",
+		},
+	}
 
 // 위젯 관련 세팅 및 기본설정
 storage.widget = {};
 storage.widget.chart = [
-    {
-        "size":[2,2],
+	{
+		"size": [2, 2],
 		"title": "연간 계획대비 실적",
 		"info": false,
-    },
+	},
 	{
-        "size":[1,2],
+		"size": [1, 2],
 		"title": "월간 유지보수 실적",
 		"info": true,
-    },
-    {
-        "size":[1,2],
+	},
+	{
+		"size": [1, 2],
 		"title": "월간 계획대비 실적",
 		"info": true,
-    },
+	},
 	{
-        "size":[1,2],
+		"size": [1, 2],
 		"title": "누적 계획대비 실적",
 		"info": true,
-    },
+	},
 	{
-        "size":[1,2],
+		"size": [1, 2],
 		"title": "누적 판매방식 실적",
 		"info": false,
-    },
+	},
 ];
 storage.widget.schedule = [
-    {
-        "size":[3,2],
+	{
+		"size": [3, 2],
 		"title": "일정",
-    },
-    {
-        "size":[4,1],
-        "type":"calendar/weekly"
-    },
-    {
-        "size":[4,2],
-        "type":"calendar/monthly"
-    },
-    {
-        "size":[2,1],
-        "type":"calendar/yearly"
-    },
-    {
-        "size":[2,1],
-        "type":"calendar/daily"
-    }
+	},
+	{
+		"size": [4, 1],
+		"type": "calendar/weekly"
+	},
+	{
+		"size": [4, 2],
+		"type": "calendar/monthly"
+	},
+	{
+		"size": [2, 1],
+		"type": "calendar/yearly"
+	},
+	{
+		"size": [2, 1],
+		"type": "calendar/daily"
+	}
 ]
 storage.widget.docApp = [
-    {
-        "size":[4,1],
-        "type":"tile",
-        "content":"wait"
-    },
-    {
-        "size":[2,1],
-        "type":"list",
-        "content":"wait"
-    },
-    {
-        "size":[4,1],
-        "type":"tile",
-        "content":"mydraft"
-    },
-    {
-        "size":[2,1],
-        "type":"list",
-        "content":"due"
-    }
+	{
+		"size": [4, 1],
+		"type": "tile",
+		"content": "wait"
+	},
+	{
+		"size": [2, 1],
+		"type": "list",
+		"content": "wait"
+	},
+	{
+		"size": [4, 1],
+		"type": "tile",
+		"content": "mydraft"
+	},
+	{
+		"size": [2, 1],
+		"type": "list",
+		"content": "due"
+	}
 ]
 storage.widget.notice = [
-    {
-        "size":[3,2],
+	{
+		"size": [3, 2],
 		"title": "공지사항",
-    }
+	}
 ];
 storage.widget.sopp = [
-    {
-        "size":[6,2],
+	{
+		"size": [6, 2],
 		"title": "영업기회",
-    }
+	}
 ];
 
 storage.widget.contract = [
-    {
-        "size":[6,2],
-        "title": "계약",
-    }
+	{
+		"size": [6, 2],
+		"title": "계약",
+	}
 ];
 storage.widget.set = [
-    "chart/0",
+	"chart/0",
 	"chart/1",
 	"chart/2",
 	"chart/3",
 	"chart/4",
-    "notice/0",
+	"notice/0",
 	"schedule/0",
 	"sopp/0",
 	"contract/0"
@@ -467,7 +473,7 @@ storage.widget.set = [
 storage.personalize = {};
 
 // 개인화 설정 저장 함수
-function setPersonalize(){
+function setPersonalize() {
 	let str, url;
 
 	str = JSON.stringify(storage.personalize);
@@ -478,30 +484,30 @@ function setPersonalize(){
 	$.ajax({
 		"url": url,
 		"method": "post",
-		"data":str,
-		contentType:"text/plain",
+		"data": str,
+		contentType: "text/plain",
 		"cache": false,
-		success:(data) => {console.log("serPersonalize : " + data.result);}
+		success: (data) => { console.log("serPersonalize : " + data.result); }
 	});
 } // End of setPersonalize()
 
 // 개인화 설정 가져오기 함수
-function getPersonalize(){
+function getPersonalize() {
 	let str, t, c, url;
-	
+
 	t = sessionStorage.getItem("personalizeTime");
 	t = t !== null ? t * 1 : null;
 	c = (new Date()).getTime() - 180000;
 	url = apiServer + "/api/user/personalize"
-	if(t === null || t < c){ // 서버에서 가져오기
+	if (t === null || t < c) { // 서버에서 가져오기
 		$.ajax({
 			"url": url,
 			"method": "get",
-			contentType:"text/plain",
+			contentType: "text/plain",
 			"cache": false,
-			success:(data) => {
+			success: (data) => {
 				let str;
-				if(data.result === "ok"){
+				if (data.result === "ok") {
 					str = data.data;
 					storage.personalize = JSON.parse(str);
 					sessionStorage.setItem("personalizeTime", (new Date()).getTime());
@@ -509,78 +515,78 @@ function getPersonalize(){
 				}
 			}
 		})
-	}else{ // 재활용하기
+	} else { // 재활용하기
 		str = sessionStorage.getItem("personalizeData");
 		storage.personalize = JSON.parse(str);
 	}
 } // End of getPersonalize()
 
 // 기초 데이터가 세팅되어 있는지 확인하는 함수
-function isInit(){
-	if(cipher.aes.key === undefined)	return false;
-	if(cipher.aes.iv === undefined)		return false;
-	if(storage.code === undefined) 		return false;
-	if(storage.company === undefined)	return false;
-	if(storage.customer === undefined) 	return false;
-	if(storage.dept === undefined) 		return false;
-	if(storage.user === undefined) 		return false;
-	if(storage.userRank === undefined) 	return false;
-	if(storage.my === undefined) 		return false;
-	if(storage.personalize === undefined)	return false;
+function isInit() {
+	if (cipher.aes.key === undefined) return false;
+	if (cipher.aes.iv === undefined) return false;
+	if (storage.code === undefined) return false;
+	if (storage.company === undefined) return false;
+	if (storage.customer === undefined) return false;
+	if (storage.dept === undefined) return false;
+	if (storage.user === undefined) return false;
+	if (storage.userRank === undefined) return false;
+	if (storage.my === undefined) return false;
+	if (storage.personalize === undefined) return false;
 	return true;
 } // End of isInit()()
 
 //페이징될 때 header, sideMenu active를 위한 함수
-function menuActive(){
+function menuActive() {
 	let i = null, pathName = null, fullStr = null, firstStr = null, lastStr = null, strLength = null, sideMenu = null, mainTopMenu = null;
-	
+
 	pathName = $("#pathName").val();
-	if(pathName !== undefined){
+	if (pathName !== undefined) {
 		mainTopMenu = $(".mainTopMenu");
 		sideMenu = $(".sideMenu");
 		strLength = pathName.length;
 		i = 0;
-	
-		if(pathName === "root"){
+
+		if (pathName === "root") {
 			mainTopMenu.find("ul li button").removeAttr("class");
 			mainTopMenu.find("ul li button[data-keyword='business']").attr("class", "active");
 			readyTopPageActive();
 			sideMenu.css("background-color", "#3e3e9e;");
-		}else if(pathName === "mypage"){
+		} else if (pathName === "mypage") {
 			mainTopMenu.find("ul li button").removeAttr("class");
 			mainTopMenu.find("ul li button").eq(0).attr("class", "active");
 			readyTopPageActive();
 			sideMenu.css("background-color", "#3e3e9e;");
-		}else{
+		} else {
 			readyTopPageActive();
-	
-			while(i <= strLength){
+
+			while (i <= strLength) {
 				fullStr = pathName.charAt(i);
-		
-				if(fullStr == fullStr.toUpperCase()){
+
+				if (fullStr == fullStr.toUpperCase()) {
 					firstStr = pathName.substring(0, i).toLowerCase();
 					lastStr = pathName.substring(i, strLength).toLowerCase();
-					
+
 					mainTopMenu.find("ul li button").removeAttr("class");
-					mainTopMenu.find("ul li button[data-keyword='"+firstStr+"']").attr("class", "active");
-	
-					sideMenu.find("ul[id='"+firstStr+"']").attr("class", "active");
-					sideMenu.find("ul[id='"+firstStr+"']").find("a[href='"+"/"+firstStr+"/"+lastStr+"']").parents("#panel").prev().attr("class", "active");
-					sideMenu.find("ul[id='"+firstStr+"']").find("a[href='"+"/"+firstStr+"/"+lastStr+"']").parents("#panel").prev().find("#slideSpan").text("-");
-					sideMenu.find("ul[id='"+firstStr+"']").find("a[href='"+"/"+firstStr+"/"+lastStr+"']").parents("#panel").attr("class", "active");
-					sideMenu.find("ul[id='"+firstStr+"']").find("a[href='"+"/"+firstStr+"/"+lastStr+"']").attr("class", "active");
-	
-					if(firstStr === "business"){
+					mainTopMenu.find("ul li button[data-keyword='" + firstStr + "']").attr("class", "active");
+
+					sideMenu.find("ul[id='" + firstStr + "']").attr("class", "active");
+					sideMenu.find("ul[id='" + firstStr + "']").find("a[href='" + "/" + firstStr + "/" + lastStr + "']").parents("#panel").prev().attr("class", "active");
+					sideMenu.find("ul[id='" + firstStr + "']").find("a[href='" + "/" + firstStr + "/" + lastStr + "']").parents("#panel").prev().find("#slideSpan").text("-");
+					sideMenu.find("ul[id='" + firstStr + "']").find("a[href='" + "/" + firstStr + "/" + lastStr + "']").parents("#panel").attr("class", "active");
+					sideMenu.find("ul[id='" + firstStr + "']").find("a[href='" + "/" + firstStr + "/" + lastStr + "']").attr("class", "active");
+
+					if (firstStr === "business") {
 						sideMenu.css("background-color", "#3e3e9e;");
-					}else if(firstStr === "gw"){
+					} else if (firstStr === "gw") {
 						sideMenu.css("background-color", "#425da8;");
-					}else{
+					} else {
 						sideMenu.css("background-color", "#406c92;");
 					}
-	
+
 					break;
 				}
-		
+
 				i++;
 			}
 		}
@@ -588,73 +594,73 @@ function menuActive(){
 }
 
 //사이드 메뉴 클릭
-function bodyTopPageClick(e){
+function bodyTopPageClick(e) {
 	let id = $(e).data("keyword");
-	
+
 	$(".mainTopMenu ul li button").removeAttr("class");
 	$(e).attr("class", "active");
-	
+
 	$(".sideMenu").find("ul").not("#panel").removeAttr("class");
 	$(".sideMenu").find("#" + id).attr("class", "active");
 
-	if(id === "business"){
+	if (id === "business") {
 		location.href = "/";
-	}else if(id === "gw"){
+	} else if (id === "gw") {
 		location.href = "/gw/home";
-	}else if(id === "accounting"){
-		
+	} else if (id === "accounting") {
+
 	}
 }
 
 //header active 여부에 따라 사이드메뉴 active 적용
-function readyTopPageActive(){
+function readyTopPageActive() {
 	let sideMenu = null, mainTopMenu = null;
 
 	mainTopMenu = $(".mainTopMenu").find("ul li button");
 	sideMenu = $(".sideMenu");
 
-	for(let i = 0; i < mainTopMenu.length; i++){
-		if($(mainTopMenu[i]).attr("class") === "active"){
-			sideMenu.find("ul").not("[id='"+$(mainTopMenu[i]).attr("data-keyword")+"']").removeAttr("class");
-			sideMenu.find("ul[id='"+$(mainTopMenu[i]).attr("data-keyword")+"']").attr("class", "active");
+	for (let i = 0; i < mainTopMenu.length; i++) {
+		if ($(mainTopMenu[i]).attr("class") === "active") {
+			sideMenu.find("ul").not("[id='" + $(mainTopMenu[i]).attr("data-keyword") + "']").removeAttr("class");
+			sideMenu.find("ul[id='" + $(mainTopMenu[i]).attr("data-keyword") + "']").attr("class", "active");
 		}
 	}
 }
 
 //기본 그리드
-function createGrid(gridContainer, headerDataArray, dataArray, ids, job, fnc, idName){
+function createGrid(gridContainer, headerDataArray, dataArray, ids, job, fnc, idName) {
 	let gridHtml = "", gridContents, idStr;
 	ids = (ids === undefined) ? 0 : ids;
 	fnc = (fnc === undefined) ? "" : fnc;
 	job = (job === undefined) ? "" : job;
-	
-	if(idName === undefined){
+
+	if (idName === undefined) {
 		idStr = "gridContent";
-	}else{
+	} else {
 		idStr = idName;
 	}
 
 	gridHtml = "<div class='gridHeader grid_default_header_item'>";
-	
-	for(let i = 0; i < headerDataArray.length; i++){
-		if(headerDataArray[i].align === "center"){
-			gridHtml += "<div class='gridHeaderItem grid_default_text_align_center'>"+headerDataArray[i].title+"</div>";
-		}else if(headerDataArray[i].align === "left"){
-			gridHtml += "<div class='gridHeaderItem grid_default_text_align_left'>"+headerDataArray[i].title+"</div>";
-		}else{
-			gridHtml += "<div class='gridHeaderItem grid_default_text_align_right'>"+headerDataArray[i].title+"</div>";
+
+	for (let i = 0; i < headerDataArray.length; i++) {
+		if (headerDataArray[i].align === "center") {
+			gridHtml += "<div class='gridHeaderItem grid_default_text_align_center'>" + headerDataArray[i].title + "</div>";
+		} else if (headerDataArray[i].align === "left") {
+			gridHtml += "<div class='gridHeaderItem grid_default_text_align_left'>" + headerDataArray[i].title + "</div>";
+		} else {
+			gridHtml += "<div class='gridHeaderItem grid_default_text_align_right'>" + headerDataArray[i].title + "</div>";
 		}
 	}
 
 	gridHtml += "</div>";
-	
-	for(let i = 0; i < dataArray.length; i++){
-		gridHtml += "<div id='"+idStr+"_grid_"+i+"' class='gridContent grid_default_body_item' data-drag=\"true\" data-id='"+ids[i]+"' data-job='"+job[i]+"' onclick='"+fnc+"'>";
-		for(let t = 0; t <= dataArray[i].length; t++){
-			if(dataArray[i][t] !== undefined){
-				if(dataArray[i][t].setData === undefined){
-					gridHtml += "<div class='gridContentItem' style=\"grid-column: span " + dataArray[i][t].col + "; text-align: center;\">데이터가 없습니다.</div>";	
-				}else{
+
+	for (let i = 0; i < dataArray.length; i++) {
+		gridHtml += "<div id='" + idStr + "_grid_" + i + "' class='gridContent grid_default_body_item' data-drag=\"true\" data-id='" + ids[i] + "' data-job='" + job[i] + "' onclick='" + fnc + "'>";
+		for (let t = 0; t <= dataArray[i].length; t++) {
+			if (dataArray[i][t] !== undefined) {
+				if (dataArray[i][t].setData === undefined) {
+					gridHtml += "<div class='gridContentItem' style=\"grid-column: span " + dataArray[i][t].col + "; text-align: center;\">데이터가 없습니다.</div>";
+				} else {
 					gridHtml += "<div class='gridContentItem'><span class=\"textNumberFormat\">" + dataArray[i][t].setData + "</span></div>";
 				}
 			}
@@ -663,28 +669,28 @@ function createGrid(gridContainer, headerDataArray, dataArray, ids, job, fnc, id
 	}
 
 	gridContainer.html(gridHtml);
-	
-	if(idName === undefined){
+
+	if (idName === undefined) {
 		gridContents = $(".gridContent");
-	}else{
+	} else {
 		gridContents = $("#" + idName + " .gridContent");
 	}
 
 	let tempArray = [];
-	
-	for(let i = 0; i < dataArray.length; i++){
-		for(let key in dataArray[i]){
+
+	for (let i = 0; i < dataArray.length; i++) {
+		for (let key in dataArray[i]) {
 			tempArray.push(dataArray[i][key]);
 		}
 	}
 
-	for(let i = 0; i < tempArray.length; i++){
-		for(let t = 0; t < gridContents.length; t++){
-			if(tempArray[i].align === "center"){
+	for (let i = 0; i < tempArray.length; i++) {
+		for (let t = 0; t < gridContents.length; t++) {
+			if (tempArray[i].align === "center") {
 				$(gridContents[t]).find(".gridContentItem").eq(i).attr("class", "gridContentItem grid_default_text_align_center");
-			}else if(tempArray[i].align === "left"){
+			} else if (tempArray[i].align === "left") {
 				$(gridContents[t]).find(".gridContentItem").eq(i).attr("class", "gridContentItem grid_default_text_align_left");
-			}else{
+			} else {
 				$(gridContents[t]).find(".gridContentItem").eq(i).attr("class", "gridContentItem grid_default_text_align_right");
 			}
 		}
@@ -693,10 +699,10 @@ function createGrid(gridContainer, headerDataArray, dataArray, ids, job, fnc, id
 }
 
 //날짜 포맷
-function dateFnc(dateTimeStr, type){
+function dateFnc(dateTimeStr, type) {
 	let result, year, month, day, hh, mm, ss, date, nowDate, calTime, calTimeHour, calTimeDay;
 	nowDate = new Date();
-	date = new Date(dateTimeStr*1);
+	date = new Date(dateTimeStr * 1);
 	calTime = Math.floor((nowDate.getTime() - date.getTime()) / 1000 / 60);
 	calTimeHour = Math.floor(calTime / 60);
 	calTimeDay = Math.floor(calTime / 60 / 24);
@@ -706,54 +712,54 @@ function dateFnc(dateTimeStr, type){
 	hh = (date.getHours()) < 10 ? "0" + date.getHours() : date.getHours();
 	mm = (date.getMinutes()) < 10 ? "0" + date.getMinutes() : date.getMinutes();
 	ss = (date.getSeconds()) < 10 ? "0" + date.getSeconds() : date.getSeconds();
-	
-	if(dateTimeStr === undefined || dateTimeStr === null){
+
+	if (dateTimeStr === undefined || dateTimeStr === null) {
 		return "";
 	}
 
-	if(type === undefined){
+	if (type === undefined) {
 		type = "yyyy-mm-dd";
 	}
 
-	if(type === "yyyy-mm-dd"){
+	if (type === "yyyy-mm-dd") {
 		result = year + "-" + month + "-" + day;
-	}else if(type === "yy-mm-dd"){
+	} else if (type === "yy-mm-dd") {
 		result = year.toString().substring(2, 4) + "-" + month + "-" + day;
-	}else if(type === "yyyy-mm"){
+	} else if (type === "yyyy-mm") {
 		result = year + "-" + month;
-	}else if(type === "mm-dd"){
+	} else if (type === "mm-dd") {
 		result = month + "-" + day;
-	}else if(type === "yyyy-mm-dd HH:mm:ss"){
+	} else if (type === "yyyy-mm-dd HH:mm:ss") {
 		result = year + "-" + month + "-" + day + " " + hh + ":" + mm + ":" + ss;
-	}else if(type === "HH:mm:ss"){
+	} else if (type === "HH:mm:ss") {
 		result = hh + ":" + mm + ":" + ss;
-	}else if(type === "HH:mm"){
+	} else if (type === "HH:mm") {
 		result = hh + ":" + mm;
-	}else if(type === "mm:ss"){
+	} else if (type === "mm:ss") {
 		result = mm + ":" + ss;
-	}else if(type === "yyyy.mm.dd"){
+	} else if (type === "yyyy.mm.dd") {
 		result = year + "." + month + "." + day;
-	}else if(type === "yyyy-mm-dd T HH:mm"){
+	} else if (type === "yyyy-mm-dd T HH:mm") {
 		result = year + "-" + month + "-" + day + "T" + hh + ":" + mm;
 	}
 
 	return result;
 }
 
-function dateDis(created, modified){
+function dateDis(created, modified) {
 	let result;
 
-	if(created === undefined){
+	if (created === undefined) {
 		created = null;
-	}else if(modified === undefined){
+	} else if (modified === undefined) {
 		modified = null;
 	}
 
-	if(created !== null && modified !== null){
+	if (created !== null && modified !== null) {
 		result = modified;
-	}else if(created === null && modified !== null){
+	} else if (created === null && modified !== null) {
 		result = modified;
-	}else if(created !== null && modified === null){
+	} else if (created !== null && modified === null) {
 		result = created;
 	}
 
@@ -761,60 +767,60 @@ function dateDis(created, modified){
 }
 
 // 페이징 만드는 함수
-function createPaging(container, max, eventListener, fncStr, current, nextCount, forwardStep){
+function createPaging(container, max, eventListener, fncStr, current, nextCount, forwardStep) {
 	let x = 0, page, html = ["", "", "", ""];
-	if(container == undefined){
+	if (container == undefined) {
 		console.log("[createPaging] Paging container is Empty.");
 		return false;
-	}else if(!classType(container).includes("Element")){
+	} else if (!classType(container).includes("Element")) {
 		console.log("[createPaging] Container is Not Html Element.");
 		return false;
-	}else if(isNaN(max) || max === "" || max < 1){
+	} else if (isNaN(max) || max === "" || max < 1) {
 		console.log("[createPaging] max value is abnormal.");
 		return false;
-	}else if(eventListener === undefined){
+	} else if (eventListener === undefined) {
 		console.log("[createPaging] Click event listener unavailable.");
 		return false;
 	}
 
-	if(current === undefined) current = 1;
-	if(nextCount === undefined)	nextCount = 3;
-	if(forwardStep === undefined) forwardStep = 10;
+	if (current === undefined) current = 1;
+	if (nextCount === undefined) nextCount = 3;
+	if (forwardStep === undefined) forwardStep = 10;
 
 	html[1] = "<div class=\"paging_cell paging_cell_current\">" + current + "</div>";
 
-	for(page = current - 1 ; page >= current - nextCount && page > 0; page--){
+	for (page = current - 1; page >= current - nextCount && page > 0; page--) {
 		html[1] = "<div class=\"paging_cell\" onclick=\"" + eventListener + "(" + page + ", " + fncStr + ")\">" + page + "</div>" + html[1];
 	}
 
-	if(page === 1){
+	if (page === 1) {
 		html[0] = "<div class=\"paging_cell\" onclick=\"" + eventListener + "(" + page + ", " + fncStr + ")\">" + page + "</div>";
-	}else if(page > 1){
-		if(current - forwardStep > 1){
+	} else if (page > 1) {
+		if (current - forwardStep > 1) {
 			html[0] = "<div class=\"paging_cell\" onclick=\"" + eventListener + "(" + (current - forwardStep) + ", " + fncStr + ")\">&laquo;</div>";
 		}
 		html[0] = "<div class=\"paging_cell\" onclick=\"" + eventListener + "(1, " + fncStr + ")\">1</div>" + html[0];
-	}else{
+	} else {
 		html[0] = undefined;
 	}
 
-	for(page = current + 1 ; page <= (current + nextCount) && page <= max ; page++){
+	for (page = current + 1; page <= (current + nextCount) && page <= max; page++) {
 		html[1] = html[1] + "<div class=\"paging_cell\" onclick=\"" + eventListener + "(" + page + ", " + fncStr + ")\">" + page + "</div>";
 	}
 
-	if(page === max){
+	if (page === max) {
 		html[2] = "<div class=\"paging_cell\" onclick=\"" + eventListener + "(" + page + ", " + fncStr + ")\">" + page + "</div>";
-	}else if(page < max){
-		if(current + forwardStep < max){
+	} else if (page < max) {
+		if (current + forwardStep < max) {
 			html[2] = "<div class=\"paging_cell\" onclick=\"" + eventListener + "(" + (current + forwardStep) + ", " + fncStr + ")\">&raquo;</div>";
 		}
 		html[2] = html[2] + "<div class=\"paging_cell\" onclick=\"" + eventListener + "(" + max + ", " + fncStr + ")\">" + max + "</div>";
-	}else html[2] = undefined;
+	} else html[2] = undefined;
 
 	html[3] = html[1];
-	if(html[0] !== undefined) html[3] = html[0] + "<div class=\"paging_cell_empty\">...</div>" + html[1];
-	if(html[2] != undefined) html[3] = html[3] + "<div class=\"paging_cell_empty\">...</div>" + html[2];
-	
+	if (html[0] !== undefined) html[3] = html[0] + "<div class=\"paging_cell_empty\">...</div>" + html[1];
+	if (html[2] != undefined) html[3] = html[3] + "<div class=\"paging_cell_empty\">...</div>" + html[2];
+
 	return html[3];
 } // End of createPaging
 
@@ -825,17 +831,17 @@ function pageMove(page, drawFnc) {
 }
 
 // 데이터 타입 확인 하수
-function classType(obj){
+function classType(obj) {
 	return obj == undefined ? obj : Object.prototype.toString.call(obj).slice(8, -1);
 } // End of classType()
 
 // API 서버에서 직원 정보를 가져오는 함수
-function getUserMap(){
+function getUserMap() {
 	let url, userMapTime, userMapData, arr, adminMode = false;
 
 	arr = location.href.split("/");
 	adminMode = arr[arr.length - 2] === "business" && arr[arr.length - 1] === "employee";
-	if(adminMode){
+	if (adminMode) {
 		url = apiServer + "/api/user/map/admin";
 		$.ajax({
 			"url": url,
@@ -853,17 +859,17 @@ function getUserMap(){
 				}
 			}
 		});
-	}else{
+	} else {
 		url = apiServer + "/api/user/map";
 		userMapTime = sessionStorage.getItem("userMapTime");
 		userMapTime = userMapTime == null ? 0 : userMapTime * 1;
 
-		if((new Date()).getTime() < userMapTime + 600000){
+		if ((new Date()).getTime() < userMapTime + 600000) {
 			userMapData = sessionStorage.getItem("userMapData");
 			userMapData = JSON.parse(userMapData);
 			storage.user = userMapData;
 			console.log("[getUserMap] set user data from sessionStorage.");
-		}else{
+		} else {
 			$.ajax({
 				"url": url,
 				"method": "get",
@@ -885,23 +891,23 @@ function getUserMap(){
 				}
 			});
 		}
-	}	
-	
+	}
+
 } // End of getUserMap()
 
 // API 서버에서 직원 정보를 가져오는 함수
-function getDeptMap(){
+function getDeptMap() {
 	let url, deptMapData, deptMapTime;
 
 	url = apiServer + "/api/dept/map";
 	deptMapTime = sessionStorage.getItem("deptMapTime");
 	deptMapTime = deptMapTime == null ? 0 : deptMapTime * 1;
-	if((new Date()).getTime() < deptMapTime + 600000){
+	if ((new Date()).getTime() < deptMapTime + 600000) {
 		deptMapData = sessionStorage.getItem("deptMapData");
 		deptMapData = JSON.parse(deptMapData);
 		storage.dept = deptMapData;
 		console.log("[getUserMap] set dept data from sessionStorage.");
-	}else{
+	} else {
 		$.ajax({
 			"url": url,
 			"method": "get",
@@ -925,25 +931,25 @@ function getDeptMap(){
 } // End of getDeptMap()
 
 // API 서버에서 고객사 정보를 가져오는 함수
-function getCustomer(){
+function getCustomer() {
 	let url, customerTime, customerData;
 
 	url = apiServer + "/api/system/customer";
 	customerTime = sessionStorage.getItem("customerTime");
 	customerTime = customerTime == null ? 0 : customerTime * 1;
-	if((new Date()).getTime() < customerTime + 600000){
+	if ((new Date()).getTime() < customerTime + 600000) {
 		customerData = sessionStorage.getItem("customerData");
 		customerData = JSON.parse(customerData);
 		storage.customer = customerData;
 		console.log("[getUserMap] set customer data from sessionStorage.");
-	}else{
+	} else {
 		$.ajax({
 			"url": url,
 			"method": "get",
 			"dataType": "json",
 			"cache": false,
 			success: (data) => {
-				let list;	
+				let list;
 				if (data.result === "ok") {
 					list = cipher.decAes(data.data);
 					sessionStorage.setItem("customerData", list);
@@ -960,13 +966,13 @@ function getCustomer(){
 } // End of getCustomer()
 
 // API 서버에서 회사 및 사용자 사번을 정보를 가져오는 함수
-function getBasicInfo(){
+function getBasicInfo() {
 	let url, basicInfoTime, basicInfoData;
 
 	url = apiServer + "/api/system/basic";
 	basicInfoTime = sessionStorage.getItem("basicInfoTime");
 	basicInfoTime = basicInfoTime == null ? 0 : basicInfoTime * 1;
-	if((new Date()).getTime() < basicInfoTime + 600000){
+	if ((new Date()).getTime() < basicInfoTime + 600000) {
 		basicInfoData = sessionStorage.getItem("basicInfoData");
 		basicInfoData = JSON.parse(basicInfoData);
 		storage.company = basicInfoData.company;
@@ -977,14 +983,14 @@ function getBasicInfo(){
 		// storage.widget.set = basicInfoData.widget;
 		document.title = document.title + " " + storage.bizcore.version;
 		console.log("[getUserMap] set basic info from sessionStorage.");
-	}else{
+	} else {
 		$.ajax({
 			"url": url,
 			"method": "get",
 			"dataType": "json",
 			"cache": false,
 			success: (data) => {
-				let list;	
+				let list;
 				if (data.result === "ok") {
 					list = cipher.decAes(data.data);
 					sessionStorage.setItem("basicInfoData", list);
@@ -999,9 +1005,9 @@ function getBasicInfo(){
 					document.title = document.title + " " + storage.bizcore.version;
 					console.log("[getBasicInfo] Success getting basic information.");
 					// 회계 관리 권한 적용
-					if(!storage.permission._manager && !storage.permission._accounting)	document.getElementsByClassName("mainTopMenu")[0].children[0].children[2].remove();
+					if (!storage.permission._manager && !storage.permission._accounting) document.getElementsByClassName("mainTopMenu")[0].children[0].children[2].remove();
 					// 인사관리 권한 적용
-					if(!storage.permission._manager && !storage.permission._hr)	document.getElementsByClassName("sideMenu")[0].children[0].children[8].children[1].children[3].remove();
+					if (!storage.permission._manager && !storage.permission._hr) document.getElementsByClassName("sideMenu")[0].children[0].children[8].children[1].children[3].remove();
 				} else {
 					msg.set("기본 정보를 가져오지 못했습니다.");
 				}
@@ -1011,25 +1017,25 @@ function getBasicInfo(){
 } // End of getBasicInfo()
 
 // API 서버에서 회사 및 사용자 사번을 정보를 가져오는 함수
-function getUserRank(){
+function getUserRank() {
 	let url, userRankTime, userRankData;
 
 	url = apiServer + "/api/user/rank";
 	userRankTime = sessionStorage.getItem("userRankTime");
 	userRankTime = userRankTime == null ? 0 : userRankTime * 1;
-	if((new Date()).getTime() < userRankTime + 600000){
+	if ((new Date()).getTime() < userRankTime + 600000) {
 		userRankData = sessionStorage.getItem("userRankData");
 		userRankData = JSON.parse(userRankData);
 		storage.userRank = userRankData;
 		console.log("[getUserMap] set rank info from sessionStorage.");
-	}else{
+	} else {
 		$.ajax({
 			"url": url,
 			"method": "get",
 			"dataType": "json",
 			"cache": false,
 			success: (data) => {
-				let list;	
+				let list;
 				if (data.result === "ok") {
 					list = cipher.decAes(data.data);
 					sessionStorage.setItem("userRankData", list);
@@ -1046,25 +1052,25 @@ function getUserRank(){
 } // End of getUserRank()
 
 // API 서버에서 코드 정보를 가져오는 함수
-function getCommonCode(){
+function getCommonCode() {
 	let url, commonCodeTime, commonCodeData;
 
 	url = apiServer + "/api/system/code";
 	commonCodeTime = sessionStorage.getItem("commonCodeTime");
 	commonCodeTime = commonCodeTime == null ? 0 : commonCodeTime * 1;
-	if((new Date()).getTime() < commonCodeTime + 600000){
+	if ((new Date()).getTime() < commonCodeTime + 600000) {
 		commonCodeData = sessionStorage.getItem("commonCodeData");
 		commonCodeData = JSON.parse(commonCodeData);
 		storage.code = commonCodeData;
 		console.log("[getUserMap] set common code from sessionStorage.");
-	}else{
+	} else {
 		$.ajax({
 			"url": url,
 			"method": "get",
 			"dataType": "json",
 			"cache": false,
 			success: (data) => {
-				let list;	
+				let list;
 				if (data.result === "ok") {
 					list = cipher.decAes(data.data);
 					sessionStorage.setItem("commonCodeData", list);
@@ -1078,34 +1084,34 @@ function getCommonCode(){
 			}
 		});
 	}
-	
+
 } // End of getDeptMap()
 
 //파일 dropzone class 변경
-function toggleClass(className){
+function toggleClass(className) {
 	let list = ["dragenter", "dragleave", "dragover", "drop"];
 	let dropZone = $(".dropZone");
 
-	for(let i = 0; i < list.length; i++){
-		if(className === list[i]){
+	for (let i = 0; i < list.length; i++) {
+		if (className === list[i]) {
 			dropZone.addClass("dropZone_" + list[i]);
-		}else{
+		} else {
 			dropZone.removeClass("dropZone_" + list[i]);
 		}
 	}
 }
 
 //파일 drag show 샘플
-function showFile(files){
+function showFile(files) {
 	let dropZone = $(".dropZone");
 	dropZone.innerHTML = "";
 
-	for(let i = 0; i < files.length; i++){
+	for (let i = 0; i < files.length; i++) {
 		dropZone.html("<p>" + files[i].name + "</p>");
 	}
 }
 
-function selectFile(files){
+function selectFile(files) {
 	let file;
 	file = document.getElementById("attached");
 
@@ -1117,12 +1123,12 @@ function selectFile(files){
 //drag 최상위 부모 클래스 전달
 function enableDragSort(listClass) {
 	let sortableLists = document.getElementsByClassName(listClass);
-	Array.prototype.map.call(sortableLists, (list) => {enableDragList(list)});
+	Array.prototype.map.call(sortableLists, (list) => { enableDragList(list) });
 }
-  
+
 //drag 자식 클래스 전달
 function enableDragList(list) {
-	Array.prototype.map.call(list.children, (item) => {enableDragItem(item)});
+	Array.prototype.map.call(list.children, (item) => { enableDragItem(item) });
 }
 
 //자식 클래스 draggable, ondrag, ondragend 기능 적용
@@ -1138,31 +1144,31 @@ function handleDrag(item) {
 
 	currentEl = item.target;
 	tempEl = currentEl;
-	while(true){
-		if(tempEl === document.body) break;
-		if(tempEl.dataset.drag === "true"){
+	while (true) {
+		if (tempEl === document.body) break;
+		if (tempEl.dataset.drag === "true") {
 			selectedItem = tempEl;
 			break;
-		}else tempEl = tempEl.parentElement;
+		} else tempEl = tempEl.parentElement;
 	}
 
-	if(selectedItem === undefined) return;
+	if (selectedItem === undefined) return;
 
 	list = selectedItem.parentNode;
 	x = item.clientX;
-	y = item.clientY + (Math.floor(selectedItem.clientHeight)/2);
+	y = item.clientY + (Math.floor(selectedItem.clientHeight) / 2);
 
 	selectedItem.classList.add('dragActive');
 	let swapItem = document.elementFromPoint(x, y) === null ? selectedItem : document.elementFromPoint(x, y);
 
 	tempEl = swapItem;
 
-	while(true){
-		if(tempEl === document.body) break;
-		if(tempEl.dataset.drag === "true"){
+	while (true) {
+		if (tempEl === document.body) break;
+		if (tempEl.dataset.drag === "true") {
 			swapItem = tempEl;
 			break
-		}else tempEl = tempEl.parentElement;
+		} else tempEl = tempEl.parentElement;
 	}
 
 	list.insertBefore(selectedItem, swapItem);
@@ -1174,7 +1180,7 @@ function handleDrop(item) {
 }
 
 //페이지네이션에 필요한 계산 공통함수
-function paging(total, currentPage, articlePerPage){
+function paging(total, currentPage, articlePerPage) {
 	let getArticle = calWindowLength();
 	let lastPage, result = [], max;
 
@@ -1182,7 +1188,7 @@ function paging(total, currentPage, articlePerPage){
 		storage.currentPage = 1;
 		currentPage = storage.currentPage;
 	}
-	
+
 	if (articlePerPage === undefined) {
 		storage.articlePerPage = getArticle;
 		articlePerPage = storage.articlePerPage;
@@ -1202,42 +1208,42 @@ function paging(total, currentPage, articlePerPage){
 }
 
 //숫자 포맷
-function numberFormat(num){
-	if(num !== undefined){
+function numberFormat(num) {
+	if (num !== undefined) {
 		let setNumber;
 		setNumber = parseInt(num).toLocaleString("en-US");
 		return setNumber;
-	}else{
+	} else {
 		return 0;
 	}
 }
 
 //input text keyup 숫자포맷
-function inputNumberFormat(e){
+function inputNumberFormat(e) {
 	let value;
 	value = $(e).val().replaceAll(",", "");
 
-	if(value > 0 && !isNaN(value)){
-		$(e).val($(e).val().replace(/[^0-9]/g,""));
-		$(e).val(parseInt(value).toLocaleString("en-US"));	
-	}else{
+	if (value > 0 && !isNaN(value)) {
+		$(e).val($(e).val().replace(/[^0-9]/g, ""));
+		$(e).val(parseInt(value).toLocaleString("en-US"));
+	} else {
 		$(e).val(0);
 	}
 }
 
 //상세 폼
-function detailViewFormHtml(data){
+function detailViewFormHtml(data) {
 	let html = "";
 
 	html = "<div class='defaultFormContainer'>";
 
-	for(let i = 0; i < data.length; i++){
+	for (let i = 0; i < data.length; i++) {
 		let dataTitle = (data[i].title === undefined) ? "" : data[i].title;
 		let col = (data[i].col === undefined) ? 1 : data[i].col;
 
 		html += "<div class='defaultFormLine' style=\"grid-column: span " + col + ";\">";
-		
-		if(dataTitle !== ""){
+
+		if (dataTitle !== "") {
 			html += "<div class='defaultFormSpanDiv'>";
 			html += "<span class='defaultFormSpan'>" + dataTitle + "</span>";
 			html += "</div>";
@@ -1246,7 +1252,7 @@ function detailViewFormHtml(data){
 		html += "<div class='defaultFormContent'>";
 
 		html += inputSet(data[i]);
-		
+
 		html += "</div>";
 		html += "</div>";
 	}
@@ -1257,37 +1263,37 @@ function detailViewFormHtml(data){
 }
 
 // 상세보기 type별 폼 전달
-function detailViewForm(data, type){
+function detailViewForm(data, type) {
 	let html = "", pageContainer, detailBtns, listChangeBtn, scheduleRange;
 
-	if(type === undefined){
+	if (type === undefined) {
 		pageContainer = $(".pageContainer");
 		listChangeBtn = $(".listChangeBtn");
 		scheduleRange = $("#scheduleRange");
 		detailBtns = $(".detailBtns");
-	
-		if(listChangeBtn !== undefined){
+
+		if (listChangeBtn !== undefined) {
 			listChangeBtn.hide();
 		}
-	
-		if(scheduleRange !== undefined){
+
+		if (scheduleRange !== undefined) {
 			scheduleRange.hide();
 		}
-	
+
 		pageContainer.children().hide();
 		detailBtns.hide();
 
 		html = detailViewFormHtml(data);
-	}else if(type === "board"){
+	} else if (type === "board") {
 		html = detailBoardForm(data);
-	}else if(type === "modal"){
+	} else if (type === "modal") {
 		html = detailViewFormHtml(data);
 	}
-	
+
 	return html;
 }
 
-function detailBoardForm(data){
+function detailBoardForm(data) {
 	let html = "";
 
 	html = "<div class='detailBoard'>";
@@ -1300,7 +1306,7 @@ function detailBoardForm(data){
 	return html;
 }
 
-function inputSet(data){
+function inputSet(data) {
 	let html = "";
 	let dataValue = (data.value === undefined) ? "" : data.value;
 	let dataDisabled = (data.disabled === undefined) ? true : data.disabled;
@@ -1315,98 +1321,98 @@ function inputSet(data){
 	let autoComplete = (data.autoComplete === undefined) ? "off" : data.autoComplete;
 	let placeHolder = (data.placeHolder === undefined) ? "" : data.placeHolder;
 
-	if(dataType === "text"){
-		if(dataDisabled == true){
+	if (dataType === "text") {
+		if (dataDisabled == true) {
 			html += "<input type='text' id='" + elementId + "' name='" + elementName + "' autocomplete=\"" + autoComplete + "\" value='" + dataValue + "' data-complete='" + dataComplete + "' data-keyup='" + dataKeyup + "' onchange='" + dataChangeEvent + "' onclick='" + dataClickEvent + "' onkeyup='" + dataKeyupEvent + "' placeholder=\"" + placeHolder + "\" readonly>";
-		}else{
+		} else {
 			html += "<input type='text' id='" + elementId + "' name='" + elementName + "' autocomplete=\"" + autoComplete + "\" value='" + dataValue + "' data-complete='" + dataComplete + "' data-keyup='" + dataKeyup + "' onchange='" + dataChangeEvent + "' onclick='" + dataClickEvent + "' onkeyup='" + dataKeyupEvent + "' placeholder=\"" + placeHolder + "\">";
 		}
-	}else if(dataType === "textarea"){
-		if(dataDisabled == true){
+	} else if (dataType === "textarea") {
+		if (dataDisabled == true) {
 			html += "<textarea id=\"" + elementId + "\" readonly>" + dataValue + "</textarea>";
-		}else{
+		} else {
 			html += "<textarea id=\"" + elementId + "\">" + dataValue + "</textarea>";
 		}
-	}else if(dataType === "radio"){
-		for(let t = 0; t < data.radioValue.length; t++){
-			if(data.radioType !== "tab"){
+	} else if (dataType === "radio") {
+		for (let t = 0; t < data.radioValue.length; t++) {
+			if (data.radioType !== "tab") {
 				data.radioType = "default";
 			}
-			
+
 			html += "<div class=\"detailRadioBox\" data-type=\"" + data.radioType + "\">";
 
-			if(dataDisabled == true){
-				if(t == 0){
+			if (dataDisabled == true) {
+				if (t == 0) {
 					html += "<input type='radio' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.radioValue[t].key + "' disabled='" + dataDisabled + "' data-type=\"" + data.radioType + "\" onclick='" + dataClickEvent + "' onChange=\"" + dataChangeEvent + "\" checked><label data-type=\"" + data.radioType + "\" for=\"" + elementId[t] + "\">" + data.radioValue[t].value + "</label>" + " ";
-				}else{
+				} else {
 					html += "<input type='radio' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.radioValue[t].key + "' disabled='" + dataDisabled + "' data-type=\"" + data.radioType + "\" onclick='" + dataClickEvent + "' onChange=\"" + dataChangeEvent + "\"><label data-type=\"" + data.radioType + "\" for=\"" + elementId[t] + "\">" + data.radioValue[t].value + "</label>" + " ";
 				}
-			}else{
-				if(t == 0){
+			} else {
+				if (t == 0) {
 					html += "<input type='radio' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.radioValue[t].key + "' data-type=\"" + data.radioType + "\" onclick='" + dataClickEvent + "' onChange=\"" + dataChangeEvent + "\" checked><label data-type=\"" + data.radioType + "\" for=\"" + elementId[t] + "\">" + data.radioValue[t].value + "</label>" + " ";
-				}else{
+				} else {
 					html += "<input type='radio' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.radioValue[t].key + "' data-type=\"" + data.radioType + "\" onclick='" + dataClickEvent + "' onChange=\"" + dataChangeEvent + "\"><label data-type=\"" + data.radioType + "\" for=\"" + elementId[t] + "\">" + data.radioValue[t].value + "</label>" + " ";
 				}
 			}
 
 			html += "</div>";
 		}
-	}else if(dataType === "checkbox"){
-		for(let t = 0; t < data.checkValue.length; t++){
-			if(dataDisabled == true){
-				if(t == 0){
+	} else if (dataType === "checkbox") {
+		for (let t = 0; t < data.checkValue.length; t++) {
+			if (dataDisabled == true) {
+				if (t == 0) {
 					html += "<input type='checkbox' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.checkValue[t].value + "' disabled='" + dataDisabled + "' onclick='" + dataClickEvent + "' onChange=\"" + dataChangeEvent + "\"><label for=\"" + elementId[t] + "\">" + data.checkValue[t].key + "</label>" + " ";
-				}else{
+				} else {
 					html += "<input type='checkbox' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.checkValue[t].value + "' disabled='" + dataDisabled + "' onclick='" + dataClickEvent + "' onChange=\"" + dataChangeEvent + "\"><label for=\"" + elementId[t] + "\">" + data.checkValue[t].key + "</label>" + " ";
 				}
-			}else{
-				if(t == 0){
+			} else {
+				if (t == 0) {
 					html += "<input type='checkbox' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.checkValue[t].value + "' onclick='" + dataClickEvent + "' onChange=\"" + dataChangeEvent + "\"><label for=\"" + elementId[t] + "\">" + data.checkValue[t].key + "</label>" + " ";
-				}else{
+				} else {
 					html += "<input type='checkbox' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.checkValue[t].value + "' onclick='" + dataClickEvent + "' onChange=\"" + dataChangeEvent + "\"><label for=\"" + elementId[t] + "\">" + data.checkValue[t].key + "</label>" + " ";
 				}
 			}
 		}
-	}else if(dataType === "date"){
-		if(dataDisabled == true){
+	} else if (dataType === "date") {
+		if (dataDisabled == true) {
 			html += "<input type='date' max='9999-12-31' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "' disabled='" + dataDisabled + "'>";
-		}else{
+		} else {
 			html += "<input type='date' max='9999-12-31' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "'>";
 		}
-	}else if(dataType === "datetime"){
-		if(dataDisabled == true){
+	} else if (dataType === "datetime") {
+		if (dataDisabled == true) {
 			html += "<input type='datetime-local' max='9999-12-31T23:59:59' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "' disabled='" + dataDisabled + "'>";
-		}else{
+		} else {
 			html += "<input type='datetime-local' max='9999-12-31T23:59:59' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "'>";
 		}
-	}else if(dataType === "select"){
-		if(dataDisabled == true){
+	} else if (dataType === "select") {
+		if (dataDisabled == true) {
 			html += "<select id='" + elementId + "' name='" + elementName + "' disabled='" + dataDisabled + "'>";
-		}else{
+		} else {
 			html += "<select id='" + elementId + "' name='" + elementName + "'>";
 		}
-		for(let t = 0; t < data.selectValue.length; t++){
+		for (let t = 0; t < data.selectValue.length; t++) {
 			html += "<option value='" + data.selectValue[t].key + "'>" + data.selectValue[t].value + "</option>";
 		}
 
 		html += "</select>";
-	}else if(dataType === "file"){
+	} else if (dataType === "file") {
 		html += "<input type='file' id='" + elementId + "' name='" + elementName + "' onchange='fileChange();' multiple>";
-	}else if(dataType === ""){
+	} else if (dataType === "") {
 		html += "";
 	}
 
 	return html;
 }
 
-function detailTabHide(notId){
+function detailTabHide(notId) {
 	let radio;
 	radio = $(".tabs input:radio");
 
-	for(let i = 0; i < radio.length; i++){
-		if(notId === undefined){
+	for (let i = 0; i < radio.length; i++) {
+		if (notId === undefined) {
 			$("#" + $(radio[i]).data("content-id")).hide();
-		}else{
+		} else {
 			$("#" + $(radio[i]).data("content-id")).not("#" + notId).hide();
 		}
 	}
@@ -1419,7 +1425,7 @@ function detailTabHide(notId){
 // }
 
 //ckeditor
-function setEditor(){
+function setEditor() {
 	if (typeof CKEDITOR !== undefined) {
 		if ($(CKEDITOR.instances).length) {
 			for (var key in CKEDITOR.instances) {
@@ -1429,26 +1435,26 @@ function setEditor(){
 	}
 
 	let textarea = $("textarea");
-	for(let i = 0; i < textarea.length; i++){
+	for (let i = 0; i < textarea.length; i++) {
 		CKEDITOR.inline(document.querySelector("#" + $(textarea[i]).attr("id")));
 	}
 }
 
 // datalist
-function dataListFormat(id, value){
+function dataListFormat(id, value) {
 	let result;
 
 	result = $("datalist#_" + id + " option[value='" + value + "']").data("value");
 
-	if(result === undefined){
+	if (result === undefined) {
 		return "";
-	}else{
+	} else {
 		return result;
 	}
 }
 
 // crud tab 클릭 함수
-function tabItemClick(e){
+function tabItemClick(e) {
 	$(".tabs input:radio").each((index, item) => {
 		$("#" + $(item).data("content-id")).hide();
 	});
@@ -1457,7 +1463,7 @@ function tabItemClick(e){
 }
 
 //매입매출내역 리스트
-function createTabTradeList(result){
+function createTabTradeList(result) {
 	let html = "", countIndex = 0;
 
 	html = "<div class='tradeList' id='tabTradeList'>";
@@ -1480,17 +1486,17 @@ function createTabTradeList(result){
 	html += "<div class='tradeThirdTitleItem'>금액</div>";
 	html += "<div class='tradeThirdTitleItem'>비고</div>";
 	html += "<div class='tradeThirdTitleItem'>승인번호</div>";
-	html += "<div class='tradeThirdTitleItem'>삭제</div>"; 
+	html += "<div class='tradeThirdTitleItem'>삭제</div>";
 	html += "</div>";
-	
+
 	html += "<div class='tradeThirdFormContent'>";
 
-	if(result.length > 0){
+	if (result.length > 0) {
 		let disDate, setDate, no, customer, title, netPrice, qty, vat, price, total, remark, taxbill;
 
-		
-		for(let i = 0; i < result.length; i++){
-			if(result[i].type === "purchase"){
+
+		for (let i = 0; i < result.length; i++) {
+			if (result[i].type === "purchase") {
 				countIndex++;
 				disDate = dateDis(result[i].created);
 				setDate = dateFnc(disDate);
@@ -1504,7 +1510,7 @@ function createTabTradeList(result){
 				total = (result[i].price == 0 || result[i].price === null || result[i].price === undefined) ? 0 : numberFormat(result[i].price + result[i].vat);
 				remark = (result[i].remark === null || result[i].remark === "" || result[i].remark === undefined) ? "" : result[i].remark;
 				taxbill = (result[i].taxbill === null || result[i].taxbill === "" || result[i].taxbill === undefined) ? "" : result[i].taxbill;
-				
+
 				html += "<div class='tradeThirdFormContentDiv'>";
 				html += "<div class='tradeThirdContentItem'>" + setDate + "</div>";
 				html += "<div class='tradeThirdContentItem'>" + customer + "</div>";
@@ -1517,14 +1523,14 @@ function createTabTradeList(result){
 				html += "<div class='tradeThirdContentItem'>" + remark + "</div>";
 				html += "<div class='tradeThirdContentItem'>" + taxbill + "</div>";
 				html += "<div class='tradeThirdContentItem tradeItemRemoveBtn'><button type=\"button\" data-type=\"" + result[i].type + "\" data-no=\"" + no + "\" onclick=\"tradeItemRemove(this);\">삭제</button></div>";
-				html +="</div>";
+				html += "</div>";
 			}
 		}
 
 		html += "<div class='tradeThirdFormContentTotal'><span>매입합계</span><span></span></div>";
-		
-		for(let i = 0; i < result.length; i++){
-			if(result[i].type === "sale"){
+
+		for (let i = 0; i < result.length; i++) {
+			if (result[i].type === "sale") {
 				countIndex++;
 				disDate = dateDis(result[i].created);
 				setDate = dateFnc(disDate);
@@ -1538,7 +1544,7 @@ function createTabTradeList(result){
 				total = (result[i].price == 0 || result[i].price === null || result[i].price === undefined) ? 0 : numberFormat(result[i].price + result[i].vat);
 				remark = (result[i].remark === null || result[i].remark === "" || result[i].remark === undefined) ? "" : result[i].remark;
 				taxbill = (result[i].taxbill === null || result[i].taxbill === "" || result[i].taxbill === undefined) ? "" : result[i].taxbill;
-				
+
 				html += "<div class='tradeThirdFormContentDiv'>";
 				html += "<div class='tradeThirdContentItem'>" + setDate + "</div>";
 				html += "<div class='tradeThirdContentItem'>" + customer + "</div>";
@@ -1556,7 +1562,7 @@ function createTabTradeList(result){
 		}
 
 		html += "<div class='tradeThirdFormContentTotal'><span>매출합계</span><span></span></div>";
-	}else{
+	} else {
 		html += "<div class='tradeThirdFormContentDiv'>";
 		html += "<div class='tradeThirdContentItem' style='grid-column: span 12; text-align:center;'>데이터가 없습니다.</div>";
 		html += "</div>";
@@ -1577,9 +1583,9 @@ function createTabTradeList(result){
 	$(".detailSecondTabs").append(html);
 
 	let tabs = $(".tabs");
-	if(countIndex > 0){
+	if (countIndex > 0) {
 		tabs.find("label[for=\"tabTrade\"]").text("매입매출내역(" + countIndex + ")");
-	}else{
+	} else {
 		tabs.find("label[for=\"tabTrade\"]").text("매입매출내역(0)");
 	}
 
@@ -1606,18 +1612,18 @@ function createTabTradeList(result){
 	}, 100);
 }
 
-function tradeTotalSet(){
+function tradeTotalSet() {
 	let calSale = 0, calPur = 0, calSaleVat = 0, calPurVat = 0, saleTotal, purTotal, tradeTotalInfo, calMinus = 0, calPercent = 0;
 	purTotal = $(".tradeThirdFormContentDiv .tradeThirdContentItem[data-type=\"purchase\"]");
 	saleTotal = $(".tradeThirdFormContentDiv .tradeThirdContentItem[data-type=\"sale\"]");
 	tradeTotalInfo = $(".tradeTotalInfo div");
 
-	for(let i = 0; i < purTotal.length; i++){
+	for (let i = 0; i < purTotal.length; i++) {
 		calPur += parseInt($(purTotal[i]).html().replace(/,/g, ""));
 		calPurVat += parseInt($(purTotal[i]).prev().prev().html().replace(/,/g, ""));
 	}
 
-	for(let i = 0; i < saleTotal.length; i++){
+	for (let i = 0; i < saleTotal.length; i++) {
 		calSale += parseInt($(saleTotal[i]).html().replace(/,/g, ""));
 		calSaleVat += parseInt($(saleTotal[i]).prev().prev().html().replace(/,/g, ""));
 	}
@@ -1630,15 +1636,15 @@ function tradeTotalSet(){
 	calMinus = calPur - calSale;
 	calPercent = calMinus / calSale * 100;
 
-	if(isNaN(calPercent)){
+	if (isNaN(calPercent)) {
 		calPercent = 0;
-	} else if (calPercent == '-Infinity'){
+	} else if (calPercent == '-Infinity') {
 		calPercent = 0;
-	} else if (calPercent == 'Infinity'){
+	} else if (calPercent == 'Infinity') {
 		calPercent = 0;
-	} else if(calPercent >= 0){
+	} else if (calPercent >= 0) {
 		calPercent = "+" + calPercent.toString().substring(0, 4);
-	} else if(calPercent < 0){
+	} else if (calPercent < 0) {
 		calPercent = calPercent.toString().substring(0, 4);
 	}
 
@@ -1648,7 +1654,7 @@ function tradeTotalSet(){
 	tradeTotalInfo.eq(7).html(calPercent + "%");
 }
 
-function inputNetFormat(e, parentClass){
+function inputNetFormat(e, parentClass) {
 	let thisEle, quantity, amount, vat, total;
 	thisEle = $(e);
 	quantity = thisEle.parents("." + parentClass).find("div[data-format=\"quantity\"]").children();
@@ -1658,14 +1664,14 @@ function inputNetFormat(e, parentClass){
 	cal = Math.round(quantity.val() * thisEle.val().replace(/,/g, ""));
 	calVat = Math.round(cal * 0.1);
 	calTotal = Math.round(cal + calVat);
-	
+
 	inputNumberFormat(e);
 	amount.val(cal.toLocaleString("en-US"));
 	vat.val(calVat.toLocaleString("en-US"));
 	total.val(calTotal.toLocaleString("en-US"));
 }
 
-function inputQuanFormat(e, parentClass){
+function inputQuanFormat(e, parentClass) {
 	let thisEle, netPrice, amount, vat, total;
 	thisEle = $(e);
 	netPrice = thisEle.parents("." + parentClass).find("div[data-format=\"netPrice\"]").children();
@@ -1675,24 +1681,24 @@ function inputQuanFormat(e, parentClass){
 	cal = Math.round(netPrice.val().replace(/,/g, "") * thisEle.val());
 	calVat = Math.round(cal * 0.1);
 	calTotal = Math.round(cal + calVat);
-	
+
 	amount.val(cal.toLocaleString("en-US"));
 	vat.val(calVat.toLocaleString("en-US"));
 	total.val(calTotal.toLocaleString("en-US"));
 }
 
-function inputVatFormat(e, parentClass){
+function inputVatFormat(e, parentClass) {
 	let thisEle, amount, total;
 	thisEle = $(e);
 	amount = thisEle.parents("." + parentClass).find("div[data-format=\"amount\"]").children();
 	total = thisEle.parents("." + parentClass).find("div[data-format=\"total\"]").children();
 	cal = Math.round(parseInt(thisEle.val().replace(/,/g, "")) + parseInt(amount.val().replace(/,/g, "")));
-	
+
 	inputNumberFormat(e);
 	total.val(cal.toLocaleString("en-US"));
 }
 
-function inputTotalFormat(e, parentClass){
+function inputTotalFormat(e, parentClass) {
 	let thisEle, netPrice, quantity, amount, vat;
 	thisEle = $(e);
 	netPrice = thisEle.parents("." + parentClass).find("div[data-format=\"netPrice\"]").children();
@@ -1702,28 +1708,28 @@ function inputTotalFormat(e, parentClass){
 	calNet = Math.round(thisEle.val().replace(/,/g, "") / 11 * 10 / quantity.val());
 	calAmount = Math.round(thisEle.val().replace(/,/g, "") / 11 * 10);
 	calVat = Math.round(thisEle.val().replace(/,/g, "") / 11);
-	
+
 	inputNumberFormat(e);
 	netPrice.val(calNet.toLocaleString("en-US"));
 	amount.val(calAmount.toLocaleString("en-US"));
 	vat.val(calVat.toLocaleString("en-US"));
 }
 
-function tradeInsert(){
+function tradeInsert() {
 	let data, formArr = storage.tradeFormList;
-	for(let key in formArr){
-		if(key !== "belongTo" && key !== "writer" && key !== "product" && key !== "related"){
-			if(typeof formArr[key] === "number"){
-				if(key === "customer"){
-					formArr[key] = $(".tradeInput").find("#" + key).data("value");	
-				}else if(key === "dt"){
+	for (let key in formArr) {
+		if (key !== "belongTo" && key !== "writer" && key !== "product" && key !== "related") {
+			if (typeof formArr[key] === "number") {
+				if (key === "customer") {
+					formArr[key] = $(".tradeInput").find("#" + key).data("value");
+				} else if (key === "dt") {
 					let date = new Date($(".tradeInput").find("#" + key).val()).getTime();
 					formArr[key] = date;
-				}else{
+				} else {
 					let number = $(".tradeInput").find("#" + key).val().replace(/,/g, "");
 					formArr[key] = $(".tradeInput").find("#" + key).val() === "" ? 0 : parseInt(number);
 				}
-			}else{
+			} else {
 				formArr[key] = $(".tradeInput").find("#" + key).val();
 			}
 		}
@@ -1742,13 +1748,13 @@ function tradeInsert(){
 			let tradeThirdFormContentTotal, tradeInputAdd;
 			tradeThirdFormContentTotal = $(".tradeThirdFormContentTotal");
 			tradeInputAdd = $(".tradeInputAdd");
-			
-			if(formArr.type === "sale"){
+
+			if (formArr.type === "sale") {
 				tradeThirdFormContentTotal.eq(1).before("<div class=\"tradeThirdFormContentDiv\"><div class=\"tradeThirdContentItem\">" + new Date(formArr.dt).toISOString().substring(0, 10) + "</div><div class=\"tradeThirdContentItem\">" + storage.customer[formArr.customer].name + "</div><div class=\"tradeThirdContentItem\">" + formArr.title + "</div><div class=\"tradeThirdContentItem\">" + parseInt(formArr.price).toLocaleString("en-US") + "</div><div class=\"tradeThirdContentItem\">" + formArr.qty + "</div><div class=\"tradeThirdContentItem\">" + parseInt(formArr.vat).toLocaleString("en-US") + "</div><div class=\"tradeThirdContentItem\">" + parseInt(formArr.price).toLocaleString("en-US") + "</div><div class=\"tradeThirdContentItem\" data-type=\"sale\">" + parseInt(formArr.price + formArr.vat).toLocaleString("en-US") + "</div><div class=\"tradeThirdContentItem\">" + formArr.remark + "</div><div class=\"tradeThirdContentItem\">" + formArr.taxbill + "</div><div class=\"tradeThirdContentItem tradeItemRemoveBtn\"><button type=\"button\" data-type=\"sale\" onclick=\"tradeItemRemove(this);\">삭제</button></div></div>");
-			}else{
+			} else {
 				tradeThirdFormContentTotal.eq(0).before("<div class=\"tradeThirdFormContentDiv\"><div class=\"tradeThirdContentItem\">" + new Date(formArr.dt).toISOString().substring(0, 10) + "</div><div class=\"tradeThirdContentItem\">" + storage.customer[formArr.customer].name + "</div><div class=\"tradeThirdContentItem\">" + formArr.title + "</div><div class=\"tradeThirdContentItem\">" + parseInt(formArr.price).toLocaleString("en-US") + "</div><div class=\"tradeThirdContentItem\">" + formArr.qty + "</div><div class=\"tradeThirdContentItem\">" + parseInt(formArr.vat).toLocaleString("en-US") + "</div><div class=\"tradeThirdContentItem\">" + parseInt(formArr.price).toLocaleString("en-US") + "</div><div class=\"tradeThirdContentItem\" data-type=\"purchase\">" + parseInt(formArr.price + formArr.vat).toLocaleString("en-US") + "</div><div class=\"tradeThirdContentItem\">" + formArr.remark + "</div><div class=\"tradeThirdContentItem\">" + formArr.taxbill + "</div><div class=\"tradeThirdContentItem tradeItemRemoveBtn\"><button type=\"button\" data-type=\"purchase\" onclick=\"tradeItemRemove(this);\">삭제</button></div></div>");
 			}
-			
+
 			msg.set("등록되었습니다.");
 			tradeTotalSet();
 			getSoppNo(storage.soppDetailNo);
@@ -1757,13 +1763,13 @@ function tradeInsert(){
 			setTimeout(() => {
 				let tradePurBtns = $(".tradeThirdFormContentDiv").find(".tradeItemRemoveBtn button[data-type=\"purchase\"]");
 				let tradeSaleBtns = $(".tradeThirdFormContentDiv").find(".tradeItemRemoveBtn button[data-type=\"sale\"]");
-				
-				for(let i = 0; i < storage.purchaseList.length; i++){
+
+				for (let i = 0; i < storage.purchaseList.length; i++) {
 					let item = tradePurBtns;
 					item.attr("data-no", storage.purchaseList[i]);
 				}
-	
-				for(let i = 0; i < storage.purchaseList.length; i++){
+
+				for (let i = 0; i < storage.purchaseList.length; i++) {
 					let item = tradeSaleBtns;
 					item.attr("data-no", storage.saleList[i]);
 				}
@@ -1775,7 +1781,7 @@ function tradeInsert(){
 	});
 }
 
-function getSoppNo(no){
+function getSoppNo(no) {
 	$.ajax({
 		url: "/api/sopp/" + no,
 		method: "get",
@@ -1788,10 +1794,10 @@ function getSoppNo(no){
 			storage.saleList = [];
 			storage.tradeLength = result.trades.length;
 
-			for(let i = 0; i < result.trades.length; i++){
-				if(result.trades[i].type === "purchase"){
+			for (let i = 0; i < result.trades.length; i++) {
+				if (result.trades[i].type === "purchase") {
 					storage.purchaseList.push(result.trades[i].no);
-				}else{
+				} else {
 					storage.saleList.push(result.trades[i].no);
 				}
 			}
@@ -1799,11 +1805,11 @@ function getSoppNo(no){
 	})
 }
 
-function tradeItemRemove(e){
-	if(confirm("삭제하시겠습니까??")){
+function tradeItemRemove(e) {
+	if (confirm("삭제하시겠습니까??")) {
 		let thisEle;
 		thisEle = $(e);
-	
+
 		$.ajax({
 			url: "/api/trade/" + thisEle.data("no"),
 			method: "delete",
@@ -1815,46 +1821,46 @@ function tradeItemRemove(e){
 				tradeTotalSet();
 			}
 		});
-	}else{
+	} else {
 		return false;
 	}
 }
 
-function createTabFileList(){
+function createTabFileList() {
 	let html = "", tabs, container, header = [], data = [], str, detailSecondTabs, ids, job, fnc, url;
-	
+
 	detailSecondTabs = $(".detailSecondTabs");
-	
+
 	html = "<div class='tabFileList' id='tabFileList'>";
 	html += "<input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attached[]' id='attached' onchange='fileChange();' multiple>";
 	html += "<div class='fileList'></div>";
 	html += "</div>";
-	
+
 	header = [
 		{
-			"title" : "파일명",
-			"align" : "center",
+			"title": "파일명",
+			"align": "center",
 		},
 		{
-			"title" : "삭제",
-			"align" : "center",
+			"title": "삭제",
+			"align": "center",
 		},
 	];
-	
+
 	detailSecondTabs.append(html);
 	container = detailSecondTabs.find(".tabFileList .fileList");
 	tabs = $(".tabs");
 
-	if(storage.attachedList.length > 0){
+	if (storage.attachedList.length > 0) {
 		tabs.find("label[for=\"tabFile\"]").text("파일첨부(" + storage.attachedList.length + ")");
-	}else{
+	} else {
 		tabs.find("label[for=\"tabFile\"]").text("파일첨부(0)");
 	}
 
-	if(storage.attachedList.length > 0){
-		for(let i = 0; i < storage.attachedList.length; i++){
+	if (storage.attachedList.length > 0) {
+		for (let i = 0; i < storage.attachedList.length; i++) {
 			url = "/api/attached/" + storage.attachedType + "/" + storage.attachedNo + "/" + storage.attachedList[i].fileName;
-			if(storage.attachedList[i].removed){
+			if (storage.attachedList[i].removed) {
 				str = [
 					{
 						"setData": "<div style='text-decoration: line-through;'>" + storage.attachedList[i].fileName + "</div>",
@@ -1863,7 +1869,7 @@ function createTabFileList(){
 						"setData": "<button type='button' disabled>삭제</button>",
 					},
 				];
-			}else{
+			} else {
 				str = [
 					{
 						"setData": "<a href='/api/attached/" + storage.attachedType + "/" + storage.attachedNo + "/" + encodeURI(storage.attachedList[i].fileName) + "'>" + storage.attachedList[i].fileName + "</a>",
@@ -1875,7 +1881,7 @@ function createTabFileList(){
 			}
 			data.push(str);
 		}
-	}else{
+	} else {
 		str = [
 			{
 				"setData": "<div>데이터가 없습니다.</div>",
@@ -1883,25 +1889,25 @@ function createTabFileList(){
 			{
 				"setData": "<button type='button' disabled>삭제</button>",
 			},
-			
+
 		];
 		data.push(str);
 	}
-	
+
 	createGrid(container, header, data, ids, job, fnc);
 }
 
-function fileChange(){
+function fileChange() {
 	let method, data, type, attached, fileDatas = [], html = "", flag;
 	attached = $("[name='attached[]']")[0].files;
 
-	if(storage.attachedList === undefined || storage.attachedList <= 0){
+	if (storage.attachedList === undefined || storage.attachedList <= 0) {
 		storage.attachedList = [];
 	}
 
 	flag = storage.attachedFlag;
 
-	for(let i = 0; i < attached.length; i++){
+	for (let i = 0; i < attached.length; i++) {
 		let reader = new FileReader();
 		let temp, fileName, indexFlag = false;
 
@@ -1909,55 +1915,55 @@ function fileChange(){
 
 		reader.onload = (e) => {
 			let binary, x, fData = e.target.result;
-            const bytes = new Uint8Array(fData);
-            binary = "";
-            for(x = 0 ; x < bytes.byteLength ; x++) binary += String.fromCharCode(bytes[x]);
+			const bytes = new Uint8Array(fData);
+			binary = "";
+			for (x = 0; x < bytes.byteLength; x++) binary += String.fromCharCode(bytes[x]);
 			let fileData = cipher.encAes(btoa(binary));
 			let fullData = (fileName + "\r\n" + fileData);
 
 			let url = (flag == false) ? "/api/board/filebox/attached" : "/api/attached/" + storage.attachedType + "/" + storage.attachedNo;
-			
+
 			url = url;
 			method = "post";
 			data = fullData;
 			type = "insert";
-			
+
 			crud.defaultAjax(url, method, data, type, submitFileSuccess, submitFileError);
 		}
 
 		reader.readAsArrayBuffer(attached[i]);
-		
+
 		temp = attached[i].name;
 		fileDatas.push(temp);
 		updateDataArray.push(temp);
 
-		for(let t = 0; t < storage.attachedList.length; t++){
-			if(storage.attachedList[t].fileName == temp){
+		for (let t = 0; t < storage.attachedList.length; t++) {
+			if (storage.attachedList[t].fileName == temp) {
 				indexFlag = true;
 			}
 		}
 
-		if(!indexFlag){
+		if (!indexFlag) {
 			temp = {
 				"fileName": attached[i].name,
 				"removed": attached[i].removed,
 			}
-	
+
 			storage.attachedList.push(temp);
 		}
 	}
 
-	if(flag){
+	if (flag) {
 		tabFileItemListUpdate();
-	}else{
+	} else {
 		$(".filePreview").html(html);
-	
-		for(let i = 0; i < fileDatas.length; i++){
+
+		for (let i = 0; i < fileDatas.length; i++) {
 			fileDataArray.push(fileDatas[i]);
 		}
-	
-		if(fileDataArray.length > 0){
-			for(let i = 0; i < fileDataArray.length; i++){
+
+		if (fileDataArray.length > 0) {
+			for (let i = 0; i < fileDataArray.length; i++) {
 				html += "<div><span>" + fileDataArray[i] + "</span><button type='button' id='fileDataDelete' data-index='" + i + "' onclick='fileViewDelete(this);'>삭제</button></div>";
 				$(".filePreview").html(html);
 			}
@@ -1968,7 +1974,7 @@ function fileChange(){
 	// $("#attached").parent().parent().next().css("padding-top", divHeight);
 }
 
-function tabFileDownload(no, fileType, fileName){
+function tabFileDownload(no, fileType, fileName) {
 	$.ajax({
 		url: "/api/attached/" + fileType + "/" + no + "/" + fileName,
 		method: "get",
@@ -1976,11 +1982,11 @@ function tabFileDownload(no, fileType, fileName){
 	});
 }
 
-function fileViewDelete(e){
+function fileViewDelete(e) {
 	fileDataArray.splice($(e).data("index"), 1);
-	
-	for(let i = 0; i < updateDataArray.length; i++){
-		if(updateDataArray[i] === $(e).prev().text()){
+
+	for (let i = 0; i < updateDataArray.length; i++) {
+		if (updateDataArray[i] === $(e).prev().text()) {
 			updateDataArray.splice(i, 1);
 		}
 	}
@@ -1989,24 +1995,24 @@ function fileViewDelete(e){
 	$(e).parent().remove();
 
 	$(".filePreview div button").each((index, item) => {
-		$(item).attr("data-index", index);		
+		$(item).attr("data-index", index);
 	});
 }
 
-function submitFileSuccess(){
+function submitFileSuccess() {
 	return false;
 }
 
-function submitFileError(){
+function submitFileError() {
 	msg.set("파일을 올리는 도중 에러가 생겼습니다.\n다시 시도해주세요.");
 }
 
-function tabFileInsert(url){
+function tabFileInsert(url) {
 	let writer, data, method, type;
 
 	writer = $("#writer");
 	writer = dataListFormat(writer.attr("id"), writer.val());
-	
+
 	url = url;
 	method = "post";
 	data = {
@@ -2021,58 +2027,58 @@ function tabFileInsert(url){
 	crud.defaultAjax(url, method, data, type, tabFileSuccessInsert, tabFileErrorInsert);
 }
 
-function tabFileSuccessInsert(){
+function tabFileSuccessInsert() {
 	msg.set("등록완료");
 	location.reload();
 }
 
-function tabFileErrorInsert(){
+function tabFileErrorInsert() {
 	msg.set("등록에러");
 }
 
-function tabFileDelete(no, fileType, fileName){
+function tabFileDelete(no, fileType, fileName) {
 	let method, data, type;
-	
-	if(confirm("정말로 삭제하시겠습니까??")){
+
+	if (confirm("정말로 삭제하시겠습니까??")) {
 		url = "/api/attached/" + fileType + "/" + no + "/" + fileName;
 		method = "delete";
 		type = "detail";
-	
+
 		crud.defaultAjax(url, method, data, type, tabFileSuccessDelete, tabFileErrorDelete);
-	}else{
+	} else {
 		return false;
 	}
 }
 
-function tabFileSuccessDelete(result){
+function tabFileSuccessDelete(result) {
 	storage.attachedList = result;
 	tabFileItemListUpdate();
 }
 
-function tabFileErrorDelete(){
+function tabFileErrorDelete() {
 	msg.set("삭제에러");
 }
 
-function tabFileItemListUpdate(){
+function tabFileItemListUpdate() {
 	let header, data = [], ids, job, fnc, content, html = "";
-	
+
 	header = [
 		{
-			"title" : "파일명",
-			"align" : "center",
+			"title": "파일명",
+			"align": "center",
 		},
 		{
-			"title" : "삭제",
-			"align" : "center",
+			"title": "삭제",
+			"align": "center",
 		},
 	];
-	
+
 	container = $(".detailSecondTabs .tabFileList .fileList");
-	
-	if(storage.attachedList.length > 0){
-		for(let i = 0; i < storage.attachedList.length; i++){
+
+	if (storage.attachedList.length > 0) {
+		for (let i = 0; i < storage.attachedList.length; i++) {
 			url = "/api/attached/" + storage.attachedType + "/" + storage.attachedNo + "/" + storage.attachedList[i].fileName;
-			if(storage.attachedList[i].removed){
+			if (storage.attachedList[i].removed) {
 				str = [
 					{
 						"setData": "<div style='text-decoration: line-through;'>" + storage.attachedList[i].fileName + "</div>",
@@ -2081,7 +2087,7 @@ function tabFileItemListUpdate(){
 						"setData": "<button type='button' disabled>삭제</button>",
 					},
 				];
-			}else{
+			} else {
 				str = [
 					{
 						"setData": "<a href='/api/attached/" + storage.attachedType + "/" + storage.attachedNo + "/" + encodeURI(storage.attachedList[i].fileName) + "'>" + storage.attachedList[i].fileName + "</a>",
@@ -2093,7 +2099,7 @@ function tabFileItemListUpdate(){
 			}
 			data.push(str);
 		}
-	}else{
+	} else {
 		str = [
 			{
 				"setData": "<div>데이터가 없습니다.</div>",
@@ -2101,7 +2107,7 @@ function tabFileItemListUpdate(){
 			{
 				"setData": "<button type='button' disabled>삭제</button>",
 			},
-			
+
 		];
 		data.push(str);
 	}
@@ -2113,7 +2119,7 @@ function tabFileItemListUpdate(){
 	content = $(".tabFileList .fileList .gridContent");
 	content.html("");
 
-	for(let i = 0; i < storage.attachedList.length; i++){
+	for (let i = 0; i < storage.attachedList.length; i++) {
 		html += "<div class='gridContentItem grid_default_text_align_center'>" + storage.attachedList[i].fileName + "</div>";
 		html += "<div class='gridContentItem grid_default_text_align_center' data-name='" + storage.attachedList[i].fileName + "'><button type='button' onclick='tabFileDelete('/api/attached/'" + storage.attchedType + "/" + storage.attchedNo + "/" + storage.attachedList[i].fileName + "');>삭제</button></div>";
 	}
@@ -2122,11 +2128,11 @@ function tabFileItemListUpdate(){
 }
 
 //견적내역 리스트
-function createTabEstList(result){
+function createTabEstList(result) {
 	console.log(result);
 	let html = "", lengthIndex, tabs, container, header, data = [], str, detailSecondTabs, ids, job, fnc, disDate, idName;
 	detailSecondTabs = $(".detailSecondTabs");
-	if($(".tabEstList").length > 0){
+	if ($(".tabEstList").length > 0) {
 		$(".tabEstList").remove();
 	}
 
@@ -2136,40 +2142,40 @@ function createTabEstList(result){
 
 	header = [
 		{
-			"title" : "견적일자",
-			"align" : "center",
+			"title": "견적일자",
+			"align": "center",
 		},
 		{
-			"title" : "버전",
-			"align" : "center",
+			"title": "버전",
+			"align": "center",
 		},
 		{
-			"title" : "견적명",
-			"align" : "center",
+			"title": "견적명",
+			"align": "center",
 		},
 		{
-			"title" : "담당자",
-			"align" : "center",
+			"title": "담당자",
+			"align": "center",
 		},
 		{
-			"title" : "금액",
-			"align" : "center",
+			"title": "금액",
+			"align": "center",
 		},
 		{
-			"title" : "비고",
-			"align" : "center",
+			"title": "비고",
+			"align": "center",
 		},
 	];
-	
+
 	detailSecondTabs.append(html);
 	container = detailSecondTabs.find(".tabEstList");
 	tabs = $(".tabs");
 
-	if(result.length > 0){
-		for(let i = 0; i < result.length; i++){
+	if (result.length > 0) {
+		for (let i = 0; i < result.length; i++) {
 			let itemTotal = 0, itemPrice = 0, itemVat = 0;
 
-			for(let t = 0; t < result[i].related.estimate.items.length; t++){
+			for (let t = 0; t < result[i].related.estimate.items.length; t++) {
 				let item = result[i].related.estimate.items[t];
 				itemPrice += item.price;
 				itemVat += item.price * 0.1;
@@ -2178,38 +2184,38 @@ function createTabEstList(result){
 			itemTotal = itemPrice + itemVat;
 			disDate = dateDis(result[i].date);
 			disDate = dateFnc(disDate);
-			
+
 			str = [
 				{
 					"setData": disDate,
-					"align" : "center",
+					"align": "center",
 				},
 				{
 					"setData": result[i].version,
-					"align" : "center",
+					"align": "center",
 				},
 				{
 					"setData": result[i].title,
-					"align" : "left",
+					"align": "left",
 				},
 				{
 					"setData": storage.user[result[i].writer].userName,
-					"align" : "center",
+					"align": "center",
 				},
 				{
 					"setData": numberFormat(itemTotal),
-					"align" : "right",
+					"align": "right",
 				},
 				{
 					"setData": result[i].related.estimate.remarks.replace(/<br \/>/g, "").replace(/<p>/g, "").replace(/<\/p>/g, ""),
-					"align" : "left",
+					"align": "left",
 				},
 			];
 
 			data.push(str);
 			lengthIndex++;
 		}
-	}else{
+	} else {
 		str = [
 			{
 				"setData": undefined,
@@ -2220,9 +2226,9 @@ function createTabEstList(result){
 		data.push(str);
 	}
 
-	if(lengthIndex > 0){
+	if (lengthIndex > 0) {
 		tabs.find("label[for=\"tabEst\"]").text("견적내역(" + lengthIndex + ")");
-	}else{
+	} else {
 		tabs.find("label[for=\"tabEst\"]").text("견적내역(0)");
 	}
 
@@ -2233,7 +2239,7 @@ function createTabEstList(result){
 }
 
 //기술지원내역 리스트
-function createTabTechList(result){
+function createTabTechList(result) {
 	let html = "", lengthIndex, tabs, container, header, data = [], str, detailSecondTabs, ids, job, fnc, disDate, idName;
 
 	detailSecondTabs = $(".detailSecondTabs");
@@ -2243,58 +2249,58 @@ function createTabTechList(result){
 
 	header = [
 		{
-			"title" : "일자",
-			"align" : "center",
+			"title": "일자",
+			"align": "center",
 		},
 		{
-			"title" : "지원형태",
-			"align" : "center",
+			"title": "지원형태",
+			"align": "center",
 		},
 		{
-			"title" : "장소",
-			"align" : "center",
+			"title": "장소",
+			"align": "center",
 		},
 		{
-			"title" : "담당자",
-			"align" : "center",
+			"title": "담당자",
+			"align": "center",
 		},
 		{
-			"title" : "비고",
-			"align" : "center",
+			"title": "비고",
+			"align": "center",
 		},
 	];
-	
+
 	detailSecondTabs.append(html);
 	container = detailSecondTabs.find(".tabTechList");
 	tabs = $(".tabs");
 
-	if(result.length > 0){
-		for(let i = 0; i < result.length; i++){
-			if(result[i].job === "tech"){
+	if (result.length > 0) {
+		for (let i = 0; i < result.length; i++) {
+			if (result[i].job === "tech") {
 				result[i].created = new Date(result[i].created).getTime();
 				disDate = dateDis(result[i].created);
-				disDate = dateFnc(disDate); 
+				disDate = dateFnc(disDate);
 
 				str = [
 					{
 						"setData": disDate,
-						"align" : "center",
+						"align": "center",
 					},
 					{
 						"setData": storage.code.etc[result[i].type],
-						"align" : "center",
+						"align": "center",
 					},
 					{
 						"setData": result[i].place,
-						"align" : "center",
+						"align": "center",
 					},
 					{
 						"setData": storage.user[result[i].writer].userName,
-						"align" : "center",
+						"align": "center",
 					},
 					{
 						"setData": result[i].content,
-						"align" : "left",
+						"align": "left",
 					},
 				];
 
@@ -2302,7 +2308,7 @@ function createTabTechList(result){
 				lengthIndex++;
 			}
 		}
-	}else{
+	} else {
 		str = [
 			{
 				"setData": undefined,
@@ -2313,9 +2319,9 @@ function createTabTechList(result){
 		data.push(str);
 	}
 
-	if(lengthIndex > 0){
+	if (lengthIndex > 0) {
 		tabs.find("label[for=\"tabTech\"]").text("기술지원내역(" + lengthIndex + ")");
-	}else{
+	} else {
 		tabs.find("label[for=\"tabTech\"]").text("기술지원내역(0)");
 	}
 
@@ -2325,7 +2331,7 @@ function createTabTechList(result){
 }
 
 //영업활동내역 리스트
-function createTabSalesList(result){
+function createTabSalesList(result) {
 	let html = "", lengthIndex, tabs, container, header, data = [], str, detailSecondTabs, ids, job, fnc, disDate, idName;
 
 	detailSecondTabs = $(".detailSecondTabs");
@@ -2335,65 +2341,65 @@ function createTabSalesList(result){
 
 	header = [
 		{
-			"title" : "일자",
-			"align" : "center",
+			"title": "일자",
+			"align": "center",
 		},
 		{
-			"title" : "활동종류",
-			"align" : "center",
+			"title": "활동종류",
+			"align": "center",
 		},
 		{
-			"title" : "제목",
-			"align" : "center",
+			"title": "제목",
+			"align": "center",
 		},
 		{
-			"title" : "비고",
-			"align" : "center",
+			"title": "비고",
+			"align": "center",
 		},
 		{
-			"title" : "담당자",
-			"align" : "center",
+			"title": "담당자",
+			"align": "center",
 		},
 		{
-			"title" : "장소",
-			"align" : "center",
+			"title": "장소",
+			"align": "center",
 		},
 	]
-	
+
 	detailSecondTabs.append(html);
 	container = detailSecondTabs.find(".tabSalesList");
 	tabs = $(".tabs");
 
-	if(result.length > 0){
-		for(let i = 0; i < result.length; i++){
-			if(result[i].job === "sales"){
+	if (result.length > 0) {
+		for (let i = 0; i < result.length; i++) {
+			if (result[i].job === "sales") {
 				disDate = dateDis(result[i].created, result[i].modified);
-				disDate = dateFnc(disDate); 
+				disDate = dateFnc(disDate);
 
 				str = [
 					{
 						"setData": disDate,
-						"align" : "center",
+						"align": "center",
 					},
 					{
 						"setData": storage.code.etc[result[i].type],
-						"align" : "center",
+						"align": "center",
 					},
 					{
 						"setData": result[i].title,
-						"align" : "left",
+						"align": "left",
 					},
 					{
 						"setData": result[i].content,
-						"align" : "left",
+						"align": "left",
 					},
 					{
 						"setData": storage.user[result[i].writer].userName,
-						"align" : "center",
+						"align": "center",
 					},
 					{
 						"setData": result[i].place,
-						"align" : "center",
+						"align": "center",
 					},
 				];
 
@@ -2401,20 +2407,20 @@ function createTabSalesList(result){
 				lengthIndex++;
 			}
 		}
-	}else{
+	} else {
 		str = [
 			{
 				"setData": undefined,
 				"col": 6,
 				"align": "center",
 			},
-		];	
+		];
 		data.push(str);
 	}
 
-	if(lengthIndex > 0){
+	if (lengthIndex > 0) {
 		tabs.find("label[for=\"tabSales\"]").text("영업활동내역(" + lengthIndex + ")");
-	}else{
+	} else {
 		tabs.find("label[for=\"tabSales\"]").text("영업활동내역(0)");
 	}
 
@@ -2423,109 +2429,109 @@ function createTabSalesList(result){
 	}, 100);
 }
 
-function detailBoardContainerHide(){
+function detailBoardContainerHide() {
 	$(".detailBoard").each((index, item) => {
 		$(item).remove();
 	});
 }
 
-function sizeToStr(s){
-    let result, t, r;
-    r = 1024;
-    if(s === undefined || s === null || isNaN(s) || s === "")   return s;
-    if(s < r) return s + "b";
-    s = Math.floor(s / 102.4) / 10;
-    if(s < r) return s + "kb";
-    s = Math.floor(s / 102.4) / 10;
-    if(s < r) return s + "mb";
-    s = Math.floor(s / 102.4) / 10;
-    return s + "gb";
+function sizeToStr(s) {
+	let result, t, r;
+	r = 1024;
+	if (s === undefined || s === null || isNaN(s) || s === "") return s;
+	if (s < r) return s + "b";
+	s = Math.floor(s / 102.4) / 10;
+	if (s < r) return s + "kb";
+	s = Math.floor(s / 102.4) / 10;
+	if (s < r) return s + "mb";
+	s = Math.floor(s / 102.4) / 10;
+	return s + "gb";
 }
 
-function calWeekDay(date){
-    let disDate, week;
+function calWeekDay(date) {
+	let disDate, week;
 
-    disDate = dateDis(date);
-    date = dateFnc(disDate);
+	disDate = dateDis(date);
+	date = dateFnc(disDate);
 
-    week = new Date(date).getDay();
+	week = new Date(date).getDay();
 
-    if(week == 0){
-        week = "일";
-    }else if(week == 1){
-        week = "월";
-    }else if(week == 2){
-        week = "화";
-    }else if(week == 3){
-        week = "수";
-    }else if(week == 4){
-        week = "목";
-    }else if(week == 5){
-        week = "금";
-    }else{
+	if (week == 0) {
+		week = "일";
+	} else if (week == 1) {
+		week = "월";
+	} else if (week == 2) {
+		week = "화";
+	} else if (week == 3) {
+		week = "수";
+	} else if (week == 4) {
+		week = "목";
+	} else if (week == 5) {
+		week = "금";
+	} else {
 		week = "토";
 	}
 
-    return week;
+	return week;
 }
 
-function calDays(date, type){
-    let getDate, year, month, day, resultDate;
+function calDays(date, type) {
+	let getDate, year, month, day, resultDate;
 
-    getDate = new Date(date);
+	getDate = new Date(date);
 
-    year = getDate.getFullYear();
-    month = getDate.getMonth();
-    day = getDate.getDate();
-	
-    if(type === "last"){
+	year = getDate.getFullYear();
+	month = getDate.getMonth();
+	day = getDate.getDate();
+
+	if (type === "last") {
 		day = day - 6;
-        resultDate = new Date(year, month, day).toISOString().substring(0, 10).replaceAll("-", "");
-    }else{
+		resultDate = new Date(year, month, day).toISOString().substring(0, 10).replaceAll("-", "");
+	} else {
 		day = day + 8;
-        resultDate = new Date(year, month, day).toISOString().substring(0, 10).replaceAll("-", "");
-    }
+		resultDate = new Date(year, month, day).toISOString().substring(0, 10).replaceAll("-", "");
+	}
 
-    return resultDate;
+	return resultDate;
 }
 
-function contentTopBtn(content){
+function contentTopBtn(content) {
 	$("#" + content).animate({
 		scrollTop: 0,
 	}, 100);
 }
 
-function enableDisabled(e, clickStr, notIdArray){
+function enableDisabled(e, clickStr, notIdArray) {
 	let thisEle, box;
 	thisEle = $(e);
 	box = $("input, select, textarea");
 
-	for(let i = 0; i < box.length; i++){
-		if($(box[i]).attr("type") === "radio"){
+	for (let i = 0; i < box.length; i++) {
+		if ($(box[i]).attr("type") === "radio") {
 			$(box[i]).removeAttr("readonly");
 			$(box[i]).removeAttr("disabled");
-		}else{
-			if(notIdArray.indexOf($(box[i]).attr("id")) == -1){
+		} else {
+			if (notIdArray.indexOf($(box[i]).attr("id")) == -1) {
 				$(box[i]).removeAttr("readonly");
 				$(box[i]).removeAttr("disabled");
 			}
 		}
 	}
-	
+
 	thisEle.attr("onclick", clickStr);
 	thisEle.attr("data-hide-flag", true);
 	thisEle.html("수정완료");
 	ckeditor.config.readOnly = false;
 	window.setTimeout(setEditor, 100);
 
-	if(modal.wrap.css("display") !== "none"){
+	if (modal.wrap.css("display") !== "none") {
 		setTimeout(() => {
 			document.getElementsByClassName("cke_textarea_inline")[0].style.height = "300px";
 		}, 300);
 	}
 }
 
-function calWindowLength(){
+function calWindowLength() {
 	let bodyContent, containerTitle, searchContainer, searchCal, titleCal, totalCal;
 
 	bodyContent = $("#bodyContent");
@@ -2538,7 +2544,7 @@ function calWindowLength(){
 	return parseInt(totalCal);
 }
 
-function daumPostCode(zipCode, address, detailAddress){
+function daumPostCode(zipCode, address, detailAddress) {
 	let popupWidth, popupHeight;
 	popupWidth = 500;
 	popupHeight = 500;
@@ -2552,36 +2558,36 @@ function daumPostCode(zipCode, address, detailAddress){
 		pleaseReadGuide: true,
 		width: popupWidth,
 		height: popupHeight,
-        oncomplete: function(data) {
+		oncomplete: function (data) {
 			$("#" + zipCode).val(data.zonecode);
 			$("#" + address).val(data.address + " " + data.buildingName);
 			$("#" + detailAddress).focus();
-        }
-    }).open({
+		}
+	}).open({
 		left: Math.ceil((document.body.offsetWidth / 2) - (popupWidth / 2) + window.screenLeft),
 		top: Math.ceil((document.body.offsetHeight / 2) - (popupHeight / 2))
 	});
 }
 
-function searchContainerSet(){
+function searchContainerSet() {
 	let searchMultiContent, jsonData;
 	searchMultiContent = $(".searchMultiContent");
 	searchMultiContent.find("div input").each((index, item) => {
-		if($(item).data("type") !== undefined){
+		if ($(item).data("type") !== undefined) {
 			$(item).attr("list", "_" + $(item).attr("id"));
 			$(item).after("<datalist id=\"_" + $(item).attr("id") + "\"></datalist>");
-			
-			if($(item).data("type") === "user"){
+
+			if ($(item).data("type") === "user") {
 				jsonData = storage.user;
-				for(let key in jsonData){
+				for (let key in jsonData) {
 					$(item).next().append("<option data-value=\"" + key + "\" value=\"" + jsonData[key].userName + "\">");
 				}
-			}else if($(item).data("type") === "customer"){
+			} else if ($(item).data("type") === "customer") {
 				jsonData = storage.customer;
-				for(let key in jsonData){
+				for (let key in jsonData) {
 					$(item).next().append("<option data-value=\"" + key + "\" value=\"" + jsonData[key].name + "\">");
 				}
-			}else if($(item).data("type") === "sopp"){
+			} else if ($(item).data("type") === "sopp") {
 				$.ajax({
 					url: "/api/sopp",
 					method: "get",
@@ -2589,13 +2595,13 @@ function searchContainerSet(){
 					success: (result) => {
 						jsonData = cipher.decAes(result.data);
 						jsonData = JSON.parse(jsonData);
-						
-						for(let i = 0; i < jsonData.length; i++){
+
+						for (let i = 0; i < jsonData.length; i++) {
 							$(item).next().append("<option data-value='" + jsonData[i].no + "' value='" + jsonData[i].title + "'></option>");
 						}
 					}
 				})
-			}else if($(item).data("type") === "contract"){
+			} else if ($(item).data("type") === "contract") {
 				$.ajax({
 					url: "/api/contract",
 					method: "get",
@@ -2603,8 +2609,8 @@ function searchContainerSet(){
 					success: (result) => {
 						jsonData = cipher.decAes(result.data);
 						jsonData = JSON.parse(jsonData);
-						
-						for(let i = 0; i < jsonData.length; i++){
+
+						for (let i = 0; i < jsonData.length; i++) {
 							$(item).next().append("<option data-value='" + jsonData[i].no + "' value='" + jsonData[i].title + "'></option>");
 						}
 					}
@@ -2614,20 +2620,20 @@ function searchContainerSet(){
 	});
 }
 
-function searchAco(e){
+function searchAco(e) {
 	let thisBtn, multiSearchResetBtn, multiSearchBtn, searchMultiContent;
 	thisBtn = $(e);
 	multiSearchResetBtn = $("#multiSearchResetBtn");
 	multiSearchBtn = $("#multiSearchBtn");
 	searchMultiContent = $(".searchMultiContent");
 
-	if(thisBtn.data("set")){
+	if (thisBtn.data("set")) {
 		thisBtn.html("<i class=\"fa-solid fa-plus fa-xl\"></i>");
 		thisBtn.data("set", false);
 		multiSearchBtn.hide();
 		searchMultiContent.hide();
 		multiSearchResetBtn.hide();
-	}else{
+	} else {
 		thisBtn.html("<i class=\"fa-solid fa-minus fa-xl\"></i>");
 		thisBtn.data("set", true);
 		multiSearchBtn.show();
@@ -2636,7 +2642,7 @@ function searchAco(e){
 	}
 }
 
-function searchChange(e){
+function searchChange(e) {
 	let thisBtn, multiSearchResetBtn, multiSearchBtn, searchInputContent, searchMultiContent;
 	thisBtn = $(e);
 	multiSearchResetBtn = $("#multiSearchResetBtn");
@@ -2644,14 +2650,14 @@ function searchChange(e){
 	searchInputContent = $(".searchInputContent");
 	searchMultiContent = $(".searchMultiContent");
 
-	if(!thisBtn.data("set")){
+	if (!thisBtn.data("set")) {
 		thisBtn.html("<i class=\"fa-solid fa-keyboard fa-xl\"></i>");
 		thisBtn.data("set", true);
 		multiSearchResetBtn.show();
 		multiSearchBtn.show();
 		searchInputContent.hide();
 		searchMultiContent.show();
-	}else{
+	} else {
 		thisBtn.html("<i class=\"fa-solid fa-list fa-xl\"></i>");
 		thisBtn.data("set", false);
 		multiSearchResetBtn.hide();
@@ -2661,7 +2667,7 @@ function searchChange(e){
 	}
 }
 
-function searchReset(){
+function searchReset() {
 	let searchMultiContent = $(".searchMultiContent");
 
 	searchMultiContent.find("div input, select").each((index, item) => {
@@ -2669,139 +2675,139 @@ function searchReset(){
 	});
 }
 
-function searchDataFilter(arrayList, searchDatas, type){
+function searchDataFilter(arrayList, searchDatas, type) {
 	let dataArray = [];
-	
-	if(type === "input"){
-		for(let key in storage.searchList){
-			if(storage.searchList[key].indexOf(searchDatas) > -1){
+
+	if (type === "input") {
+		for (let key in storage.searchList) {
+			if (storage.searchList[key].indexOf(searchDatas) > -1) {
 				dataArray.push(arrayList[key]);
 			}
 		}
-	}else{
-		if(searchDatas.indexOf("#created") > -1){
+	} else {
+		if (searchDatas.indexOf("#created") > -1) {
 			let splitStr;
 			splitStr = searchDatas.split("#created");
-			
-			for(let key in storage.searchList){
-				if(splitStr[0] <= storage.searchList[key].split("#created")[1]){
-					if(storage.searchList[key].split("#created")[1] <= splitStr[1]){
+
+			for (let key in storage.searchList) {
+				if (splitStr[0] <= storage.searchList[key].split("#created")[1]) {
+					if (storage.searchList[key].split("#created")[1] <= splitStr[1]) {
 						dataArray.push(key);
 					}
 				}
 			}
-		}else if(searchDatas.indexOf("#date") > -1){
+		} else if (searchDatas.indexOf("#date") > -1) {
 			let splitStr;
 			splitStr = searchDatas.split("#date");
 
-			for(let key in storage.searchList){
-				if(splitStr[0] <= storage.searchList[key].split("#date")[1]){
-					if(storage.searchList[key].split("#date")[1] <= splitStr[1]){
+			for (let key in storage.searchList) {
+				if (splitStr[0] <= storage.searchList[key].split("#date")[1]) {
+					if (storage.searchList[key].split("#date")[1] <= splitStr[1]) {
 						dataArray.push(key);
 					}
 				}
 			}
-		}else if(searchDatas.indexOf("#from") > -1){
+		} else if (searchDatas.indexOf("#from") > -1) {
 			let splitStr;
 			splitStr = searchDatas.split("#from");
 
-			for(let key in storage.searchList){
-				if(splitStr[0] <= storage.searchList[key].split("#from")[1]){
-					if(storage.searchList[key].split("#from")[1] <= splitStr[1]){
+			for (let key in storage.searchList) {
+				if (splitStr[0] <= storage.searchList[key].split("#from")[1]) {
+					if (storage.searchList[key].split("#from")[1] <= splitStr[1]) {
 						dataArray.push(key);
 					}
 				}
 			}
-		}else if(searchDatas.indexOf("#startOfFreeMaintenance") > -1){
+		} else if (searchDatas.indexOf("#startOfFreeMaintenance") > -1) {
 			let splitStr;
 			splitStr = searchDatas.split("#startOfFreeMaintenance");
-			
-			for(let key in storage.searchList){
-				if(splitStr[0] <= storage.searchList[key].split("#startOfFreeMaintenance")[1]){
-					if(storage.searchList[key].split("#startOfFreeMaintenance")[1] <= splitStr[1]){
+
+			for (let key in storage.searchList) {
+				if (splitStr[0] <= storage.searchList[key].split("#startOfFreeMaintenance")[1]) {
+					if (storage.searchList[key].split("#startOfFreeMaintenance")[1] <= splitStr[1]) {
 						dataArray.push(key);
 					}
 				}
 			}
-		}else if(searchDatas.indexOf("#startOfPaidMaintenance") > -1){
+		} else if (searchDatas.indexOf("#startOfPaidMaintenance") > -1) {
 			let splitStr;
 			splitStr = searchDatas.split("#startOfPaidMaintenance");
-			
-			for(let key in storage.searchList){
-				if(splitStr[0] <= storage.searchList[key].split("#startOfPaidMaintenance")[1]){
-					if(storage.searchList[key].split("#startOfPaidMaintenance")[1] <= splitStr[1]){
+
+			for (let key in storage.searchList) {
+				if (splitStr[0] <= storage.searchList[key].split("#startOfPaidMaintenance")[1]) {
+					if (storage.searchList[key].split("#startOfPaidMaintenance")[1] <= splitStr[1]) {
 						dataArray.push(key);
 					}
 				}
 			}
-		}else if(searchDatas.indexOf("#saleDate") > -1){
+		} else if (searchDatas.indexOf("#saleDate") > -1) {
 			let splitStr;
 			splitStr = searchDatas.split("#saleDate");
 
-			for(let key in storage.searchList){
-				if(splitStr[0] <= storage.searchList[key].split("#saleDate")[1]){
-					if(storage.searchList[key].split("#saleDate")[1] <= splitStr[1]){
+			for (let key in storage.searchList) {
+				if (splitStr[0] <= storage.searchList[key].split("#saleDate")[1]) {
+					if (storage.searchList[key].split("#saleDate")[1] <= splitStr[1]) {
 						dataArray.push(key);
 					}
 				}
 			}
-		}else if(searchDatas.indexOf("#issueDate") > -1){
+		} else if (searchDatas.indexOf("#issueDate") > -1) {
 			let splitStr;
 			splitStr = searchDatas.split("#issueDate");
 
-			for(let key in storage.searchList){
-				if(splitStr[0] <= storage.searchList[key].split("#issueDate")[1]){
-					if(storage.searchList[key].split("#issueDate")[1] <= splitStr[1]){
+			for (let key in storage.searchList) {
+				if (splitStr[0] <= storage.searchList[key].split("#issueDate")[1]) {
+					if (storage.searchList[key].split("#issueDate")[1] <= splitStr[1]) {
 						dataArray.push(key);
 					}
 				}
 			}
-		}else if(searchDatas.indexOf("#price") > -1){
+		} else if (searchDatas.indexOf("#price") > -1) {
 			let splitStr;
 			splitStr = searchDatas.split("#price");
 
-			for(let key in storage.searchList){
-				if(splitStr[0] <= storage.searchList[key].split("#price")[1]){
-					if(storage.searchList[key].split("#price")[1] <= splitStr[1]){
+			for (let key in storage.searchList) {
+				if (splitStr[0] <= storage.searchList[key].split("#price")[1]) {
+					if (storage.searchList[key].split("#price")[1] <= splitStr[1]) {
 						dataArray.push(key);
 					}
 				}
 			}
-		}else{
-			for(let key in storage.searchList){
-				if(storage.searchList[key].indexOf(searchDatas) > -1){
+		} else {
+			for (let key in storage.searchList) {
+				if (storage.searchList[key].indexOf(searchDatas) > -1) {
 					dataArray.push(key);
 				}
 			}
 		}
 	}
-	
+
 	return dataArray;
 }
 
-function searchMultiFilter(index, dataArray, arrayList){
+function searchMultiFilter(index, dataArray, arrayList) {
 	let arr = [], tempResultArray = [], resultArray = [];
-	
-	if(index > 1){
-		for(let i = 0; i < dataArray.length; i++){
-			if(arr[dataArray[i]]){
+
+	if (index > 1) {
+		for (let i = 0; i < dataArray.length; i++) {
+			if (arr[dataArray[i]]) {
 				arr[dataArray[i]]++;
-			}else{
+			} else {
 				arr[dataArray[i]] = 1;
 			}
 		}
-	
-		for(let key in arr){
-			if(index == arr[key]){
+
+		for (let key in arr) {
+			if (index == arr[key]) {
 				tempResultArray.push(key);
 			}
 		}
 
-		for(let i = 0; i < tempResultArray.length; i++){
+		for (let i = 0; i < tempResultArray.length; i++) {
 			resultArray.push(arrayList[tempResultArray[i]]);
 		}
-	}else{
-		for(let i = 0; i < dataArray.length; i++){
+	} else {
+		for (let i = 0; i < dataArray.length; i++) {
 			resultArray.push(arrayList[dataArray[i]]);
 		}
 	}
@@ -2809,100 +2815,100 @@ function searchMultiFilter(index, dataArray, arrayList){
 	return resultArray;
 }
 
-function searchDateDefaultSet(e){
+function searchDateDefaultSet(e) {
 	let thisDateInput = $(e), matchDateInput, thisDate, year, month, day;
 
-	if(thisDateInput.data("date-type") === "from"){
+	if (thisDateInput.data("date-type") === "from") {
 		matchDateInput = thisDateInput.next().next();
 		let splitDate = thisDateInput.val().split("-");
-		thisDate = new Date(splitDate[0], parseInt(splitDate[1]-1), splitDate[2]);
+		thisDate = new Date(splitDate[0], parseInt(splitDate[1] - 1), splitDate[2]);
 		splitDate = matchDateInput.val().split("-");
-		let matchDate = new Date(splitDate[0], parseInt(splitDate[1]-1), splitDate[2]);
+		let matchDate = new Date(splitDate[0], parseInt(splitDate[1] - 1), splitDate[2]);
 
-		if(matchDateInput.val() === ""){
-			thisDate.setDate(thisDate.getDate()+1);
-		}else if(thisDate.getTime() > matchDate.getTime()){
+		if (matchDateInput.val() === "") {
+			thisDate.setDate(thisDate.getDate() + 1);
+		} else if (thisDate.getTime() > matchDate.getTime()) {
 			msg.set("시작일이 종료일보다 클 수 없습니다.");
-			thisDate.setDate(thisDate.getDate()+1);
-		}else{
+			thisDate.setDate(thisDate.getDate() + 1);
+		} else {
 			return null;
 		}
-	}else{
+	} else {
 		matchDateInput = thisDateInput.prev().prev();
 		let splitDate = thisDateInput.val().split("-");
-		thisDate = new Date(splitDate[0], parseInt(splitDate[1]-1), splitDate[2]);
+		thisDate = new Date(splitDate[0], parseInt(splitDate[1] - 1), splitDate[2]);
 		splitDate = matchDateInput.val().split("-");
-		let matchDate = new Date(splitDate[0], parseInt(splitDate[1]-1), splitDate[2]);
+		let matchDate = new Date(splitDate[0], parseInt(splitDate[1] - 1), splitDate[2]);
 
-		if(matchDateInput.val() === ""){
-			thisDate.setDate(thisDate.getDate()-1);
-		}else if(thisDate.getTime() < matchDate.getTime()){
+		if (matchDateInput.val() === "") {
+			thisDate.setDate(thisDate.getDate() - 1);
+		} else if (thisDate.getTime() < matchDate.getTime()) {
 			msg.set("종료일이 시작일보다 작을 수 없습니다.");
-			thisDate.setDate(thisDate.getDate()-1);
-		}else{
+			thisDate.setDate(thisDate.getDate() - 1);
+		} else {
 			return null;
 		}
 	}
 
 	year = thisDate.getFullYear();
-	month = thisDate.getMonth()+1;
+	month = thisDate.getMonth() + 1;
 	day = thisDate.getDate();
 
-	if(month < 10){
+	if (month < 10) {
 		month = "0" + month;
 	}
-	
-	if(day < 10){
+
+	if (day < 10) {
 		day = "0" + day;
 	}
 
-	matchDateInput.val(year + "-" + month + "-" + day);	
+	matchDateInput.val(year + "-" + month + "-" + day);
 }
 
 // 부서트리를 만드는 함수
-function setDeptTree(){
+function setDeptTree() {
 	let x, y, dept, arr = [], prv, count = 0;
-	if(storage.dept === undefined)  return;
+	if (storage.dept === undefined) return;
 
 	// 최상위 부서를 찾고 이를 이를 인스턴스화 하고 map에 세팅함
 	dept = storage.dept.root === undefined ? null : storage.dept.root;
 	dept = storage.dept.dept[dept] === undefined ? null : storage.dept.dept[dept];
-	if(dept === null)   return;
-	
+	if (dept === null) return;
+
 	// storage.dept에 최상위 부서 세팅
 	storage.dept.tree = new Department(dept);
 	storage.dept.tree.root = true;
-	
+
 	// 하위부서 추가 전 준비
-	for(x in storage.dept.dept){
-		if(x !== undefined && x !== storage.dept.root) arr.push(x);
+	for (x in storage.dept.dept) {
+		if (x !== undefined && x !== storage.dept.root) arr.push(x);
 	}
-	
+
 	// 하위부서 추가
 	x = 0;
-	while(arr.length > 0){
+	while (arr.length > 0) {
 		x += 1;
 		x = x < arr.length ? x : 0;
 		dept = arr[x];
-		if(prv === dept){
+		if (prv === dept) {
 			console.log("처리안됨 : " + prv);
 			break; // 무한루프 방지
 		}
 		prv = dept;
 		dept = new Department(storage.dept.dept[arr[x]]);
-		if(storage.dept.tree.addDept(dept)) arr.splice(x,1);
+		if (storage.dept.tree.addDept(dept)) arr.splice(x, 1);
 	}
 
 	// 부서원 추가
-	for(x in storage.user){
-		if(x === undefined || storage.user[x] === undefined)    continue;
+	for (x in storage.user) {
+		if (x === undefined || storage.user[x] === undefined) continue;
 		dept = storage.user[x].deptId;
-		for(y in dept)  if(storage.dept.tree.addEmployee(dept[y], x))    break;
+		for (y in dept) if (storage.dept.tree.addEmployee(dept[y], x)) break;
 	}
 } // End of setDeptTree()
 
-class Department{
-	constructor(e){
+class Department {
+	constructor(e) {
 		this.no = (e.id === undefined || e.id === null) ? null : e.id;
 		this.name = (e.deptName === undefined || e.deptName === null) ? null : e.deptName;
 		this.id = (e.deptId === undefined || e.deptId === null) ? null : e.deptId;
@@ -2916,99 +2922,129 @@ class Department{
 	}
 
 	// 하위부서 추가
-	addDept(e){
+	addDept(e) {
 		let x;
 		if (!(e instanceof Department)) return false;
-		if(this.id === e.parent){
+		if (this.id === e.parent) {
 			this.children.push(e);
 			return true;
-		}else for(x = 0 ; x < this.children.length ; x++)    if(this.children[x].addDept(e)) return true;
+		} else for (x = 0; x < this.children.length; x++)    if (this.children[x].addDept(e)) return true;
 		return false;
 	} // End of addDept()
 
 	// 부서아이디를 통한 부서 찾기
-	getDept(id){
+	getDept(id) {
 		let child = null, x;
-		if(this.children.length === undefined || this.children.length === 0)    return null;
-		else for(x = 0 ; x < this.children.length ; x++){
+		if (this.children.length === undefined || this.children.length === 0) return null;
+		else for (x = 0; x < this.children.length; x++) {
 			child = this.children[x].getDept(id);
-			if(child !== null)  return child;
+			if (child !== null) return child;
 		}
 		return null;
 	} // End of getDept()
 
 	// 하위 부서 아이디를 전무 찾는 메서드
-	getChildrenId(arr){
+	getChildrenId(arr) {
 		let x;
-		if(arr === undefined)   arr = [];
-		else    arr.push(this.id);
-		for(x = 0 ; x < this.children.length ; x++) this.children[x].getChildrenId(arr);
+		if (arr === undefined) arr = [];
+		else arr.push(this.id);
+		for (x = 0; x < this.children.length; x++) this.children[x].getChildrenId(arr);
 		return arr;
 	} // End of getChildrenId()
 
 	// 소속 부서를 찾아서 직원을 추가하는 함수
-	addEmployee(id, no){
+	addEmployee(id, no) {
 		let x;
-		if(id === undefined || no === undefined)   return;
+		if (id === undefined || no === undefined) return;
 		//console.log("input / id : " + id + ", no : " + no + " / dept + " + this.id);
-		if(this.id === id){
+		if (this.id === id) {
 			this.employee.push(no);
 			return true;
 		}
-		for(x = 0 ; x < this.children.length ; x++) if(this.children[x].addEmployee(id, no))    return true;
+		for (x = 0; x < this.children.length; x++) if (this.children[x].addEmployee(id, no)) return true;
 		return false;
 	} // End of getChildrenId()
 
 	// 조직 설정에서 조직도 그리기 태그문자열 생성/전달
-	getTreeHtml(empSelectable, deptSelectable){
+	getTreeHtml(empSelectable, deptSelectable) {
 		let x, y, html, padding;
 		empSelectable = empSelectable === undefined || empSelectable !== true ? false : empSelectable;
 		deptSelectable = deptSelectable === undefined || deptSelectable !== true ? false : deptSelectable;
 		padding = "1rem";
 
 		html = "<input type=\"radio\" class=\"dept-tree-select\" name=\"deptTreeSelectEmp\" style=\"display:none\" id=\"dept-tree-" + this.id + "\" />";
-	 	html += ("<label for=\"dept-tree-" + this.id + "\" class=\"deptName\"><div><img src=\"/images/common/corporate.png\" style=\"width:20px;height:20px;vertical-align:middle;\">" + this.name + "</div></label>");
-	 	html += ("<div class=\"dept-tree-cnt\">");
+		html += ("<label for=\"dept-tree-" + this.id + "\" class=\"deptName\"><div><img src=\"/images/common/corporate.png\" style=\"width:20px;height:20px;vertical-align:middle;\">" + this.name + "</div></label>");
+		html += ("<div class=\"dept-tree-cnt\">");
 
-	 	for(x = 0 ; x < this.employee.length ; x++){
-	 		y = this.employee[x];
-	 		if(y === undefined) continue;
-	 		if(storage.user[y] === undefined || storage.user[y].resign) continue;
+		for (x = 0; x < this.employee.length; x++) {
+			y = this.employee[x];
+			if (y === undefined) continue;
+			if (storage.user[y] === undefined || storage.user[y].resign) continue;
 			html += ("<input style=\"display:none;\" type=\"radio\" name=\"deptTreeSelectEmp\" class=\"dept-tree-select\" data-select=\"emp:" + y + "\" id=\"emp:" + y + "\" />");
-	 		html += ("<label for=\"emp:" + y + "\" ><div><img src=\"/api/user/image/" + y + "\" style=\"width:20px;height:20px;vertical-align:middle;margin-left:1.2rem;\" /> " + storage.user[y].userName + " " + storage.userRank[storage.user[y].rank][0]) + "</div></label>";
-	 	}
+			html += ("<label for=\"emp:" + y + "\" ><div><img src=\"/api/user/image/" + y + "\" style=\"width:20px;height:20px;vertical-align:middle;margin-left:1.2rem;\" /> " + storage.user[y].userName + " " + storage.userRank[storage.user[y].rank][0]) + "</div></label>";
+		}
 
-	 	for(x = 0 ; x < this.children.length ; x++){
-	 		y = this.children[x];
-	 		html += y.getTreeHtml(empSelectable, deptSelectable);
-	 	}
+		for (x = 0; x < this.children.length; x++) {
+			y = this.children[x];
+			html += y.getTreeHtml(empSelectable, deptSelectable);
+		}
 
-	 	html += ("</div>");
-	 	return html;
+		html += ("</div>");
+		return html;
+	} // End of getTreeHtml()
+
+
+	getGwHtml(empSelectable, deptSelectable) {
+		let x, y, html, padding;
+		empSelectable = empSelectable === undefined || empSelectable !== true ? false : empSelectable;
+		deptSelectable = deptSelectable === undefined || deptSelectable !== true ? false : deptSelectable;
+		padding = "1rem";
+
+		html = "<input type=\"checkbox\" class=\"dept-tree-select\" name=\"deptTreeSelectEmp\" style=\"display:none\" id=\"dept-tree-" + this.id + "\" />";
+		html += ("<label for=\"dept-tree-" + this.id + "\" class=\"deptName\"><div><img src=\"/images/common/corporate.png\" style=\"width:20px;height:20px;vertical-align:middle;\">" + this.name + "</div></label>");
+		html += ("<div class=\"dept-tree-cnt\">");
+
+		for (x = 0; x < this.employee.length; x++) {
+			y = this.employee[x];
+			if (y === undefined) continue;
+			if (storage.user[y] === undefined || storage.user[y].resign) continue;
+			// html += ("<label for=\"emp:" + y + "\" ><input type=\"checkbox\" name=\"deptTreeSelectEmp\" class=\"dept-tree-select\" data-select=\"emp:" + y + "\" id=\"emp:" + y + "\" />");
+			html += ("<label for=\"cb" + y + "\" ><div style='margin-right:1rem'><img src=\"/api/user/image/" + y + "\" style=\"width:20px;height:20px;vertical-align:middle;margin-left:1.2rem;\" /> " + storage.user[y].userName + " " + storage.userRank[storage.user[y].rank][0]) + "</div>";
+			// html += ("<div><img src=\"/api/user/image/" + y + "\" style=\"width:20px;height:20px;vertical-align:middle;margin-left:1.2rem;\" /> " + storage.user[y].userName + " " + storage.userRank[storage.user[y].rank][0]) + "</div></label>";
+			html += ("<input type=\"checkbox\" name=\"userNames\" class=\"testClass\"  id=\"cb" + y + "\" value='" + y + "' /></label>");
+		}
+
+		for (x = 0; x < this.children.length; x++) {
+			y = this.children[x];
+			html += y.getGwHtml(empSelectable, deptSelectable);
+		}
+
+		html += ("</div>");
+		return html;
 	} // End of getTreeHtml()
 
 	// 쪽지 조직도 - 세로 선형 리스트
-	getHtml(empSelectable, deptSelectable){
+	getHtml(empSelectable, deptSelectable) {
 		let x, y, html, padding;
 		empSelectable = empSelectable === undefined || empSelectable !== true ? false : empSelectable;
 		deptSelectable = deptSelectable === undefined || deptSelectable !== true ? false : deptSelectable;
 		padding = "0";
-		
+
 		html = "<ul class=\"noteUserUl\">";
 		html += ("<li class=\"noteUserLi\" data-active=\"false\" onclick=\"changeAccIcon(this);\"><h4 class=\"noteUserLiTitle\">" + this.name + "<span class=\"accIcon\">+</span></h4></li>");
 		html += ("<div id=\"noteUserContent\" name=\"noteUserContent\">");
 
-		for(x = 0 ; x < this.employee.length ; x++){
+		for (x = 0; x < this.employee.length; x++) {
 			y = this.employee[x];
-			if(y === undefined) continue;
-			if(storage.user[y] === undefined || storage.user[y].resign) continue;
-			if(storage.my != y){
+			if (y === undefined) continue;
+			if (storage.user[y] === undefined || storage.user[y].resign) continue;
+			if (storage.my != y) {
 				html += ("<div class=\"noteUserContentItem\" data-no=\"" + y + "\" onclick=\"noteUserItemClick(this);\"><img src=\"/api/user/image/" + y + "\"> " + storage.user[y].userName + " " + storage.userRank[storage.user[y].rank][0]);
 				html += ("</div>");
 			}
 		}
 
-		for(x = 0 ; x < this.children.length ; x++){
+		for (x = 0; x < this.children.length; x++) {
 			y = this.children[x];
 			html += y.getHtml(empSelectable, deptSelectable);
 		}
@@ -3018,10 +3054,10 @@ class Department{
 	} // End of getHtml()
 } // End of class === Department
 
-function addNoteContainer(){
+function addNoteContainer() {
 	let noteHtml = "";
 	setDeptTree();
-	
+
 	noteHtml += "<div class=\"noteUserContainer\">";
 	noteHtml += "<div class=\"noteUserAccoordion\">";
 	noteHtml += "<div class=\"noteUserLi\" data-no=\"0\" onclick=\"noteUserItemClick(this);\"><h4 class=\"noteUserLiTitle\">시스템알림</h4></div>";
@@ -3029,18 +3065,18 @@ function addNoteContainer(){
 	noteHtml += "</div>";
 	noteHtml += "</div>";
 	noteHtml += "<div class=\"noteMainContainer\"></div>";
-	
+
 	modal.noteBody.html(noteHtml);
 	modal.noteHeadTitle.text("쪽지");
 }
 
-function noteContentShow(){
+function noteContentShow() {
 	modal.noteShow();
 	addNoteContainer();
 	noteListBadge();
 }
 
-function noteSubmit(){
+function noteSubmit() {
 	let noteSubmitText, data, noteMainContent, html;
 	noteMainContent = $(".noteMainContent");
 	noteSubmitText = $("#noteSubmitText");
@@ -3060,7 +3096,7 @@ function noteSubmit(){
 		dataType: "json",
 		contentType: "text/plain",
 		success: (result) => {
-			if(result.result === "ok"){
+			if (result.result === "ok") {
 				let nowDate = new Date().getTime();
 				nowDate = dateDis(nowDate);
 				nowDate = dateFnc(nowDate, "HH:mm:ss");
@@ -3070,14 +3106,14 @@ function noteSubmit(){
 				noteMainContent.append(html);
 				noteSubmitText.val("");
 				noteMainContent.scrollTop(noteMainContent[0].scrollHeight);
-			}else{
+			} else {
 				msg.set("전송되지 못했습니다\n다시 시도해주세요.");
 			}
 		}
 	});
 }
 
-function changeAccIcon(e){
+function changeAccIcon(e) {
 	let thisLi, thisContent, thisAccIcon, noteUserContent, noteUserLi, accIcon;
 	thisLi = $(e);
 	thisAccIcon = thisLi.find(".accIcon");
@@ -3086,18 +3122,18 @@ function changeAccIcon(e){
 	noteUserLi = $(".noteUserLi");
 	accIcon = $(".noteUserLi .accIcon");
 
-	if(thisLi.data("active")){
+	if (thisLi.data("active")) {
 		thisLi.data("active", false);
 		thisAccIcon.text("+");
 		thisContent.removeClass("active");
-	}else{
+	} else {
 		thisLi.data("active", true);
 		thisAccIcon.text("-");
 		thisContent.attr("class", "active");
 	}
 }
 
-function noteUserItemClick(e){
+function noteUserItemClick(e) {
 	let thisItem, nowLongDate, noteContainer, noteMainContainer, noteMainContent, html = "";
 	thisItem = $(e);
 	nowLongDate = new Date().getTime();
@@ -3112,56 +3148,56 @@ function noteUserItemClick(e){
 		dataType: "json",
 		contentType: "text/plain",
 		success: (result) => {
-			if(result.data !== null){
+			if (result.data !== null) {
 				result = cipher.decAes(result.data);
 				result = JSON.parse(result);
 				noteUserContainer.hide();
 				noteContainer.find(".noteHeadTitle").text(thisItem.text());
-				
+
 				html = "<div class=\"noteMainContent\">";
 				html += "<div class=\"noteMainBtn\"><button type=\"button\" onclick=\"noteUserPage();\"><<쪽지함</button></div><br /><br />";
-	
-				for(let i = (result.length-1); i >= 0; i--){
+
+				for (let i = (result.length - 1); i >= 0; i--) {
 					let disDate, setDate, nowDate, sentDate;
 					nowDate = new Date();
 					sentDate = new Date(result[i].sent);
 					nowDate = nowDate.getFullYear() + nowDate.getMonth() + nowDate.getDate();
 					sentDate = sentDate.getFullYear() + sentDate.getMonth() + sentDate.getDate();
 
-					if(nowDate > sentDate){
+					if (nowDate > sentDate) {
 						disDate = dateDis(result[i].sent);
 						setDate = dateFnc(disDate);
-					}else{
+					} else {
 						disDate = dateDis(result[i].sent);
 						setDate = dateFnc(disDate, "HH:mm:ss");
 					}
-					
-					if(result[i].writer > 0){
-						if(result[i].writer == storage.noteContentNo){
+
+					if (result[i].writer > 0) {
+						if (result[i].writer == storage.noteContentNo) {
 							html += "<div class=\"chatYouInfo\"><img src=\"/api/user/image/" + storage.noteContentNo + "\"><span>" + storage.user[storage.noteContentNo].userName + " " + storage.userRank[storage.user[storage.noteContentNo].rank][0] + "</span></div>";
 							html += "<div class=\"chatYou\">" + result[i].msg + "</div>";
 							html += "<div class=\"chatYouDate\">" + setDate + "</div>";
-						}else{
+						} else {
 							html += "<div class=\"chatMe\">" + result[i].msg + "</div>";
 							html += "<div class=\"chatMeDate\">" + setDate + "</div>";
 						}
-					}else{
+					} else {
 						html += "<div class=\"chatYouInfo\"><img src=\"/api/my/image\"><span>시스템알림</span></div>";
 						html += "<div class=\"chatYou\">" + result[i].msg + "</div>";
 						html += "<div class=\"chatYouDate\">" + setDate + "</div>";
 					}
 
 				}
-	
+
 				html += "</div>";
 				html += "<div class=\"noteMainText\">";
 				html += "<textarea id=\"noteSubmitText\" onkeydown=\"textAreaKeyDown(this)\"></textarea>";
 				html += "<button type=\"button\" onclick=\"noteSubmit();\">전송</button>"
 				html += "</div>";
-			}else{
+			} else {
 				noteUserContainer.hide();
 				noteContainer.find(".noteHeadTitle").text(thisItem.text());
-	
+
 				html = "<div class=\"noteMainContent\">";
 				html += "<div class=\"noteMainBtn\"><button type=\"button\" onclick=\"noteUserPage();\"><<쪽지함</button></div><br /><br />";
 				html += "</div>";
@@ -3182,7 +3218,7 @@ function noteUserItemClick(e){
 	});
 }
 
-function noteUserPage(){
+function noteUserPage() {
 	let noteUserContainer, noteMainContainer;
 
 	noteUserContainer = $(".noteUserContainer");
@@ -3194,31 +3230,31 @@ function noteUserPage(){
 	noteListBadge();
 }
 
-function noteLiveUpdate(){
+function noteLiveUpdate() {
 	let noteMainContainer, noteMainContent, html = "";
 	noteMainContainer = $(".noteMainContainer");
 	noteMainContent = $(".noteMainContent");
 
-	if(noteMainContainer.css("display") === "block"){
+	if (noteMainContainer.css("display") === "block") {
 		$.ajax({
 			url: "/api/note/" + storage.noteContentNo,
 			method: "get",
 			dataType: "json",
 			contentType: "text/plain",
 			success: (resultData) => {
-				if(resultData.result === "ok" && resultData.data !== null){
+				if (resultData.result === "ok" && resultData.data !== null) {
 					resultData = cipher.decAes(resultData.data);
 					resultData = JSON.parse(resultData);
 
-					for(let i = 0; i < resultData.length; i++){
+					for (let i = 0; i < resultData.length; i++) {
 						let disDate = dateDis(resultData[i].sent);
 						let setDate = dateFnc(disDate, "HH:mm:ss");
 
-						if(resultData[i].writer == storage.noteContentNo){
+						if (resultData[i].writer == storage.noteContentNo) {
 							html += "<div class=\"chatYouInfo\"><img src=\"/api/user/image/" + storage.noteContentNo + "\"><span>" + storage.user[storage.noteContentNo].userName + " " + storage.userRank[storage.user[storage.noteContentNo].rank][0] + "</span></div>";
 							html += "<div class=\"chatYou\">" + resultData[i].msg + "</div>";
 							html += "<div class=\"chatYouDate\">" + setDate + "</div>";
-						}else{
+						} else {
 							html += "<div class=\"chatMe\">" + resultData[i].msg + "</div>";
 							html += "<div class=\"chatMeDate\">" + setDate + "</div>";
 						}
@@ -3228,24 +3264,24 @@ function noteLiveUpdate(){
 			}
 		});
 	}
-	
+
 	timer = setTimeout("noteLiveUpdate()", 2000);
 }
 
-function textAreaKeyDown(e){
+function textAreaKeyDown(e) {
 	let key = event.key || event.keyCode;
 
-	if(key === "Enter" && !event.ctrlKey && !event.shiftKey){
+	if (key === "Enter" && !event.ctrlKey && !event.shiftKey) {
 		event.preventDefault();
 		noteSubmit();
-	}else if(key === "Enter" && event.shiftKey){
+	} else if (key === "Enter" && event.shiftKey) {
 		return true;
-	}else if(key === "Enter" && event.ctrlKey){
+	} else if (key === "Enter" && event.ctrlKey) {
 		$(e).val($(e).val() + "\n");
 	}
 }
 
-function spanBadgeLocation(prevElement, badge){
+function spanBadgeLocation(prevElement, badge) {
 	let prevElementX, prevElementY;
 	prevElementX = prevElement.position().left + 18;
 	prevElementY = prevElement.position().top + 12;
@@ -3253,7 +3289,7 @@ function spanBadgeLocation(prevElement, badge){
 	badge.css("bottom", prevElementY);
 }
 
-function noteLiveBadge(){
+function noteLiveBadge() {
 	$.ajax({
 		url: "/api/note",
 		method: "get",
@@ -3262,16 +3298,16 @@ function noteLiveBadge(){
 		success: (result) => {
 			let infoMessageImg, badgeSpan;
 			infoMessageImg = $("#infoMessageImg");
-			
-			if(result.data != null){
+
+			if (result.data != null) {
 				result = cipher.decAes(result.data);
 				result = JSON.parse(result);
 
 				$("#badgeSpan").remove();
-				
-				if(result.all > 0){
+
+				if (result.all > 0) {
 					infoMessageImg.find("img").after("<span class=\"badgeSpan\" id=\"badgeSpan\">" + result.all + "</span>");
-					
+
 					setTimeout(() => {
 						badgeSpan = $("#badgeSpan");
 						spanBadgeLocation($("#myInfoMessageImg"), badgeSpan);
@@ -3285,29 +3321,29 @@ function noteLiveBadge(){
 	badgeTimer = setTimeout("noteLiveBadge()", 60000);
 }
 
-function noteListBadge(){
+function noteListBadge() {
 	$.ajax({
 		url: "/api/note",
 		method: "get",
 		dataType: "json",
 		contentType: "text/plain",
 		success: (result) => {
-			if(result.data != null){
+			if (result.data != null) {
 				let badgeSpan = $("#badgeSpan");
 				result = cipher.decAes(result.data);
 				result = JSON.parse(result);
 				$(".noteItemBadge").remove();
 
-				for(let key in result){
+				for (let key in result) {
 					$(".noteUserLi[data-no=\"" + key + "\"]").css("display", "flex");
 					$(".noteUserLi[data-no=\"" + key + "\"]").css("align-items", "center");
 					$(".noteUserLi[data-no=\"" + key + "\"]").append("<span class=\"noteItemBadge\">" + result[key] + "</span>");
 					$(".noteUserContentItem[data-no=\"" + key + "\"]").append("<span class=\"noteItemBadge\">" + result[key] + "</span>");
 				}
 
-				if(result.all > 0){
+				if (result.all > 0) {
 					badgeSpan.text(result.all);
-				}else{
+				} else {
 					badgeSpan.remove();
 				}
 			}
@@ -3315,58 +3351,58 @@ function noteListBadge(){
 	})
 }
 
-function stringNumberFormat(str){
+function stringNumberFormat(str) {
 	let resultStr;
 
-	if(str.length >= 10){
+	if (str.length >= 10) {
 		resultStr = str.substring(0, 10) + "...";
-	}else{
+	} else {
 		resultStr = str;
 	}
 
 	return resultStr;
 }
 
-function listRangeChange(e, drawList){
+function listRangeChange(e, drawList) {
 	let thisEle;
 	thisEle = $(e);
 	thisEle.next().html(thisEle.val());
-	if(thisEle.val() > 0){
+	if (thisEle.val() > 0) {
 		storage.articlePerPage = thisEle.val();
-	}else{
+	} else {
 		storage.articlePerPage = undefined;
 	}
 	drawList();
 }
 
-function phoneFormat(e, type){
-    let thisEle, thisValue, formatNum = "";
+function phoneFormat(e, type) {
+	let thisEle, thisValue, formatNum = "";
 	thisEle = $(e);
 	thisValue = $(e).val().replaceAll("-", "");
 	thisEle.attr("maxLength", 13);
-    if(thisValue.length == 11){
-        if(type == 0){
-            formatNum = thisValue.replace(/[^0-9]/g,"").replace(/(\d{3})(\d{4})(\d{4})/, '$1-****-$3');
-        }else{
-            formatNum = thisValue.replace(/[^0-9]/g,"").replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
-        }
-    }else if(thisValue.length == 8){
-        formatNum = thisValue.replace(/[^0-9]/g,"").replace(/(\d{4})(\d{4})/, '$1-$2');
-    }else{
-        if(thisValue.indexOf('02') == 0){
-            if(type == 0){
-                formatNum = thisValue.replace(/[^0-9]/g,"").replace(/(\d{2})(\d{4})(\d{4})/, '$1-****-$3');
-            }else{
-                formatNum = thisValue.replace(/[^0-9]/g,"").replace(/(\d{2})(\d{4})(\d{4})/, '$1-$2-$3');
-            }
-        }else{
-            if(type == 0){
-                formatNum = thisValue.replace(/[^0-9]/g,"").replace(/(\d{3})(\d{3})(\d{4})/, '$1-***-$3');
-            }else{
-                formatNum = thisValue.replace(/[^0-9]/g,"").replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
-            }
-        }
-    }
+	if (thisValue.length == 11) {
+		if (type == 0) {
+			formatNum = thisValue.replace(/[^0-9]/g, "").replace(/(\d{3})(\d{4})(\d{4})/, '$1-****-$3');
+		} else {
+			formatNum = thisValue.replace(/[^0-9]/g, "").replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+		}
+	} else if (thisValue.length == 8) {
+		formatNum = thisValue.replace(/[^0-9]/g, "").replace(/(\d{4})(\d{4})/, '$1-$2');
+	} else {
+		if (thisValue.indexOf('02') == 0) {
+			if (type == 0) {
+				formatNum = thisValue.replace(/[^0-9]/g, "").replace(/(\d{2})(\d{4})(\d{4})/, '$1-****-$3');
+			} else {
+				formatNum = thisValue.replace(/[^0-9]/g, "").replace(/(\d{2})(\d{4})(\d{4})/, '$1-$2-$3');
+			}
+		} else {
+			if (type == 0) {
+				formatNum = thisValue.replace(/[^0-9]/g, "").replace(/(\d{3})(\d{3})(\d{4})/, '$1-***-$3');
+			} else {
+				formatNum = thisValue.replace(/[^0-9]/g, "").replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+			}
+		}
+	}
 
 	thisEle.val(formatNum);
 }
@@ -3377,51 +3413,51 @@ function validateEmail(email) {
 
 	if (filter.test(email)) {
 		result = true;
-	}else {
+	} else {
 		result = false;
 	}
 
 	return result;
 }
 
-function formDataSet(storageArr){
-	if(storageArr === undefined){
+function formDataSet(storageArr) {
+	if (storageArr === undefined) {
 		storageArr = storage.formList;
 	}
 
-	for(let key in storageArr){
+	for (let key in storageArr) {
 		let element = "";
-		if($("#" + key).length > 0){
+		if ($("#" + key).length > 0) {
 			element = $("#" + key);
-		}else if($("[name=\"" + key + "\"]").length > 0){
-			if($("[name=\"" + key + "\"]:checked").length > 0){
+		} else if ($("[name=\"" + key + "\"]").length > 0) {
+			if ($("[name=\"" + key + "\"]:checked").length > 0) {
 				element = $("[name=\"" + key + "\"]:checked");
-			}else{
+			} else {
 				element = $("[name=\"" + key + "\"]");
 			}
 		}
-		
-		if(element !== undefined && element !== ""){
-			if(element.prop('tagName') === "TEXTAREA"){
+
+		if (element !== undefined && element !== "") {
+			if (element.prop('tagName') === "TEXTAREA") {
 				storageArr[key] = CKEDITOR.instances[key].getData().replaceAll("\n", "");
-			}else{
-				if(!element.data("change")){
-					if(typeof storageArr[key] === "number"){
-						if(element.attr("type") === "date" || element.attr("type") === "datetime-local"){
+			} else {
+				if (!element.data("change")) {
+					if (typeof storageArr[key] === "number") {
+						if (element.attr("type") === "date" || element.attr("type") === "datetime-local") {
 							let dateTime = new Date(element.val()).getTime();
 							storageArr[key] = dateTime;
-						}else{
-							if(element.val() === ""){
+						} else {
+							if (element.val() === "") {
 								storageArr[key] = 0;
-							}else{
+							} else {
 								storageArr[key] = parseInt(element.val().replaceAll(",", ""));
 							}
 						}
-					}else{
-						if(element.attr("type") === "date" || element.attr("type") === "datetime-local"){
+					} else {
+						if (element.attr("type") === "date" || element.attr("type") === "datetime-local") {
 							let dateTime = new Date(element.val()).getTime();
 							storageArr[key] = dateTime;
-						}else{
+						} else {
 							storageArr[key] = element.val();
 						}
 					}
@@ -3431,43 +3467,43 @@ function formDataSet(storageArr){
 	}
 }
 
-function addAutoComplete(e){
+function addAutoComplete(e) {
 	let thisEle, autoComplete;
 	thisEle = $(e);
-	
-	if(!thisEle.attr("readonly")){
-		if($(".autoComplete") !== undefined){
+
+	if (!thisEle.attr("readonly")) {
+		if ($(".autoComplete") !== undefined) {
 			$(".autoComplete").remove();
 		}
-		
+
 		thisEle.after("<div class=\"autoComplete\"></div>");
 		autoComplete = $(".autoComplete");
 		autoComplete.css("top", thisEle.position().top + thisEle.innerHeight() + 8);
 		autoComplete.css("left", thisEle.position().left);
 		autoComplete.css("width", thisEle.innerWidth() - 5);
-	
-		if(thisEle.val() === ""){
-			for(let key in storage[thisEle.data("complete")]){
-				if(thisEle.data("complete") === "customer" || thisEle.data("complete") === "cip" || thisEle.data("complete") === "product"){
+
+		if (thisEle.val() === "") {
+			for (let key in storage[thisEle.data("complete")]) {
+				if (thisEle.data("complete") === "customer" || thisEle.data("complete") === "cip" || thisEle.data("complete") === "product") {
 					autoComplete.append("<div data-value=\"" + key + "\" onclick=\"autoCompleteClick(this);\">" + storage[thisEle.data("complete")][key].name + "</div>");
-				}else if(thisEle.data("complete") === "user"){
+				} else if (thisEle.data("complete") === "user") {
 					autoComplete.append("<div data-value=\"" + storage[thisEle.data("complete")][key].userNo + "\" onclick=\"autoCompleteClick(this);\">" + storage[thisEle.data("complete")][key].userName + "</div>");
-				}else if(thisEle.data("complete") === "sopp" || thisEle.data("complete") === "contract"){
+				} else if (thisEle.data("complete") === "sopp" || thisEle.data("complete") === "contract") {
 					autoComplete.append("<div data-value=\"" + storage[thisEle.data("complete")][key].no + "\" onclick=\"autoCompleteClick(this);\">" + storage[thisEle.data("complete")][key].title + "</div>");
 				}
 			}
-		}else{
-			for(let key in storage[thisEle.data("complete")]){
-				if(thisEle.data("complete") === "customer" || thisEle.data("complete") === "cip" || thisEle.data("complete") === "product"){
-					if(storage[thisEle.data("complete")][key].name.indexOf(thisEle.val()) > -1){
+		} else {
+			for (let key in storage[thisEle.data("complete")]) {
+				if (thisEle.data("complete") === "customer" || thisEle.data("complete") === "cip" || thisEle.data("complete") === "product") {
+					if (storage[thisEle.data("complete")][key].name.indexOf(thisEle.val()) > -1) {
 						autoComplete.append("<div data-value=\"" + key + "\" onclick=\"autoCompleteClick(this);\">" + storage[thisEle.data("complete")][key].name + "</div>");
 					}
-				}else if(thisEle.data("complete") === "user"){
-					if(storage[thisEle.data("complete")][key].userName.indexOf(thisEle.val()) > -1){
+				} else if (thisEle.data("complete") === "user") {
+					if (storage[thisEle.data("complete")][key].userName.indexOf(thisEle.val()) > -1) {
 						autoComplete.append("<div data-value=\"" + storage[thisEle.data("complete")][key].userNo + "\" onclick=\"autoCompleteClick(this);\">" + storage[thisEle.data("complete")][key].userName + "</div>");
 					}
-				}else if(thisEle.data("complete") === "sopp" || thisEle.data("complete") === "contract"){
-					if(storage[thisEle.data("complete")][key].title.indexOf(thisEle.val()) > -1){
+				} else if (thisEle.data("complete") === "sopp" || thisEle.data("complete") === "contract") {
+					if (storage[thisEle.data("complete")][key].title.indexOf(thisEle.val()) > -1) {
 						autoComplete.append("<div data-value=\"" + storage[thisEle.data("complete")][key].no + "\" onclick=\"autoCompleteClick(this);\">" + storage[thisEle.data("complete")][key].title + "</div>");
 					}
 				}
@@ -3476,7 +3512,7 @@ function addAutoComplete(e){
 	}
 }
 
-function autoCompleteClick(e){
+function autoCompleteClick(e) {
 	let thisEle, input, autoComplete;
 	thisEle = $(e);
 	input = thisEle.parent().prev();
@@ -3484,30 +3520,30 @@ function autoCompleteClick(e){
 	input.val(thisEle.text());
 	input.attr("data-change", true);
 
-	if(storage.formList !== undefined){
-		if(storage.formList[input.attr("id")] !== undefined){
+	if (storage.formList !== undefined) {
+		if (storage.formList[input.attr("id")] !== undefined) {
 			storage.formList[input.attr("id")] = thisEle.data("value");
 		}
 	}
-	
+
 	input.attr("data-value", thisEle.data("value"));
 	autoComplete.remove();
 }
 
-function validateAutoComplete(value, type){
+function validateAutoComplete(value, type) {
 	let result = false;
 
-	for(let key in storage[type]){
-		if(type === "customer" || type === "cip"){
-			if(storage[type][key].name === value){
-				result = true;			
-			}
-		}else if(type === "user"){
-			if(storage[type][key].userName === value){
+	for (let key in storage[type]) {
+		if (type === "customer" || type === "cip") {
+			if (storage[type][key].name === value) {
 				result = true;
 			}
-		}else if(type === "sopp" || type === "contract"){
-			if(storage[type][key].title === value){
+		} else if (type === "user") {
+			if (storage[type][key].userName === value) {
+				result = true;
+			}
+		} else if (type === "sopp" || type === "contract") {
+			if (storage[type][key].title === value) {
 				result = true;
 			}
 		}
@@ -3516,138 +3552,138 @@ function validateAutoComplete(value, type){
 	return result;
 }
 
-function getStorageList(){
-	if(storage.sopp === undefined){
+function getStorageList() {
+	if (storage.sopp === undefined) {
 		$.ajax({
 			url: "/api/sopp",
 			method: "get",
 			dataType: "json",
-			success:(result) => {
-				if(result.result === "ok"){
+			success: (result) => {
+				if (result.result === "ok") {
 					let resultJson;
 					resultJson = cipher.decAes(result.data);
 					resultJson = JSON.parse(resultJson);
 					storage.sopp = resultJson;
 				}
 			},
-			error:() => {
+			error: () => {
 				msg.set("sopp 에러");
 			}
 		});
 	}
-	
-	if(storage.contract === undefined){
+
+	if (storage.contract === undefined) {
 		$.ajax({
 			url: "/api/contract",
 			method: "get",
 			dataType: "json",
-			success:(result) => {
-				if(result.result === "ok"){
+			success: (result) => {
+				if (result.result === "ok") {
 					let resultJson;
 					resultJson = cipher.decAes(result.data);
 					resultJson = JSON.parse(resultJson);
 					storage.contract = resultJson;
 				}
 			},
-			error:() => {
+			error: () => {
 				msg.set("contract 에러");
 			}
 		});
 	}
-	
-	if(storage.cip === undefined){
+
+	if (storage.cip === undefined) {
 		$.ajax({
 			url: "/api/system/cip",
 			method: "get",
 			dataType: "json",
-			success:(result) => {
-				if(result.result === "ok"){
+			success: (result) => {
+				if (result.result === "ok") {
 					let resultJson;
 					resultJson = cipher.decAes(result.data);
 					resultJson = JSON.parse(resultJson);
 					storage.cip = resultJson;
 				}
 			},
-			error:() => {
+			error: () => {
 				msg.set("cip 에러");
 			}
 		});
 	}
 
-	if(storage.product === undefined){
+	if (storage.product === undefined) {
 		$.ajax({
 			url: "/api/product",
 			method: "get",
 			dataType: "json",
-			success:(result) => {
-				if(result.result === "ok"){
+			success: (result) => {
+				if (result.result === "ok") {
 					let resultJson;
 					resultJson = cipher.decAes(result.data);
 					resultJson = JSON.parse(resultJson);
 					storage.product = resultJson;
 				}
 			},
-			error:() => {
+			error: () => {
 				msg.set("product 에러");
 			}
 		});
 	}
 }
 
-function detailSetFormList(result){
+function detailSetFormList(result) {
 	storage.formList = {};
-	for(let key in result){
-		if(key !== "attached" && key !== "schedules" && key !== "trades" && key !== "bills"){
+	for (let key in result) {
+		if (key !== "attached" && key !== "schedules" && key !== "trades" && key !== "bills") {
 			storage.formList[key] = result[key];
 		}
 	}
 }
 
-function detailTrueDatas(datas){
-	for(let i = 0; i < datas.length; i++){
-		if($("#" + datas[i]).length > 0){
+function detailTrueDatas(datas) {
+	for (let i = 0; i < datas.length; i++) {
+		if ($("#" + datas[i]).length > 0) {
 			$("#" + datas[i]).attr("data-change", true);
-		}else if($("[name=\"" + datas[i] + "\"]").length > 0){
+		} else if ($("[name=\"" + datas[i] + "\"]").length > 0) {
 			$("[name=\"" + datas[i] + "\"]").attr("data-change", true);
 		}
 	}
 }
 
-function radioTrueChange(e){
+function radioTrueChange(e) {
 	let thisEle, thisEleName, thisEleId;
 	thisEle = $(e);
 	thisEleName = thisEle.attr("name");
 	thisEleId = thisEle.attr("id");
 
-	for(let key in storage.formList[thisEleName]){
+	for (let key in storage.formList[thisEleName]) {
 		storage.formList[thisEleName][key] = false;
 	}
 
 	storage.formList[thisEleName][thisEleId] = true;
 }
 
-function checkTrueChange(e){
+function checkTrueChange(e) {
 	let thisEle, splitStr, thisEleName, thisEleId;
 	thisEle = $(e);
 	splitStr = thisEle.attr("id").split("_");
 	thisEleName = splitStr[0];
 	thisEleId = splitStr[1];
 
-	if(thisEle.is(":checked")){
+	if (thisEle.is(":checked")) {
 		storage.formList[thisEleName][thisEleId] = true;
-	}else{
+	} else {
 		storage.formList[thisEleName][thisEleId] = false;
 	}
 }
 
-function detailCheckedTrueView(){
-	for(let key in storage.formList){
-		if(typeof storage.formList[key] === "object"){
-			for(let key2 in storage.formList[key]){
-				if(storage.formList[key][key2]){
-					if($("#" + key2) !== undefined){
+function detailCheckedTrueView() {
+	for (let key in storage.formList) {
+		if (typeof storage.formList[key] === "object") {
+			for (let key2 in storage.formList[key]) {
+				if (storage.formList[key][key2]) {
+					if ($("#" + key2) !== undefined) {
 						$("#" + key2).attr("checked", "checked");
-					}else if($("#" + key + "_" + key2) !== undefined){
+					} else if ($("#" + key + "_" + key2) !== undefined) {
 						$("#" + key + "_" + key2).attr("checked", "checked");
 					}
 				}
@@ -3656,27 +3692,27 @@ function detailCheckedTrueView(){
 	}
 }
 
-function setTabsLayOutMenu(){
+function setTabsLayOutMenu() {
 	let tabs, tabItem, tabItemLength, width, temp;
 	tabs = $(".tabs");
 	tabItem = $(".tabItem");
 	tabItemLength = tabItem.length;
 	temp = tabItemLength * 2;
 
-	for(let i = 0; i < tabItemLength; i++){
+	for (let i = 0; i < tabItemLength; i++) {
 		$(tabItem[i]).css("z-index", temp);
 		temp -= 2;
-		if(i > 0){
+		if (i > 0) {
 			$(tabItem[i]).css("width", width + "%");
 			$(tabItem[i]).css("padding-left", (width * i) + "%");
-		}else{
+		} else {
 			width = 100 / tabItemLength;
 			$(tabItem[i]).css("width", width + "%");
 		}
 	}
 }
 
-function popup(e, nWidth, nHeight){
+function popup(e, nWidth, nHeight) {
 	let winObj;
 	let curX = window.screenLeft;
 	let curY = window.screenTop;
@@ -3692,9 +3728,9 @@ function popup(e, nWidth, nHeight){
 	strOption += "toolbar=no,menubar=no,location=no,";
 	strOption += "resizable=yes,status=yes";
 
-	if($(e).attr("href") === undefined){
+	if ($(e).attr("href") === undefined) {
 		winObj = window.open($(e).data("href"), '', strOption);
-	}else{
+	} else {
 		winObj = window.open($(e).attr("href"), '', strOption);
 	}
 
@@ -3704,27 +3740,27 @@ function popup(e, nWidth, nHeight){
 	}
 }
 
-function inputDateFormat(e){
+function inputDateFormat(e) {
 	let thisEle = $(e);
 	thisEle.val(thisEle.val().replace(/(\d\d\d\d)(\d\d)(\d\d)/g, '$1-$2-$3'));
 }
 
-function gridSetRowSpan(className, parentClassName){
+function gridSetRowSpan(className, parentClassName) {
 	let ele = $("." + className);
-	
-	if(parentClassName === undefined){
-		for(let i = 0; i < ele.length; i++){
+
+	if (parentClassName === undefined) {
+		for (let i = 0; i < ele.length; i++) {
 			let rows = $("." + className + ":contains(\"" + $(ele[i]).html() + "\")");
-			if(rows.length > 1){
+			if (rows.length > 1) {
 				rows.eq(0).css("grid-row", "span " + rows.length);
 				rows.not(":eq(0)").remove();
 			}
 		}
-	}else{
-		for(let i = 0; i < parentClassName.length; i++){
-			for(let t = 0; t < ele.length; t++){
+	} else {
+		for (let i = 0; i < parentClassName.length; i++) {
+			for (let t = 0; t < ele.length; t++) {
 				let rows = $("." + parentClassName[i]).find("." + className + ":contains(\"" + $(ele[t]).html() + "\")");
-				if(rows.length > 1){
+				if (rows.length > 1) {
 					rows.eq(0).css("grid-row", "span " + rows.length);
 					rows.not(":eq(0)").remove();
 				}
@@ -3733,19 +3769,19 @@ function gridSetRowSpan(className, parentClassName){
 	}
 }
 
-function setViewContents(hideArr, showArr){
-	for(let i = 0; i < hideArr.length; i++){
+function setViewContents(hideArr, showArr) {
+	for (let i = 0; i < hideArr.length; i++) {
 		let item = $("." + hideArr[i]);
 		item.hide();
 	}
 
-	for(let i = 0; i < showArr.length; i++){
+	for (let i = 0; i < showArr.length; i++) {
 		let item = $("." + showArr[i]);
 		item.show();
 	}
 }
 
-function hideDetailView(func){
+function hideDetailView(func) {
 	let defaultFormContainer, crudUpdateBtn, detailSecondTabs;
 	defaultFormContainer = $(".defaultFormContainer");
 	crudUpdateBtn = $(".crudUpdateBtn");
@@ -3753,15 +3789,15 @@ function hideDetailView(func){
 	defaultFormContainer.remove();
 	crudUpdateBtn.text("수정");
 
-	if(detailSecondTabs !== undefined){
+	if (detailSecondTabs !== undefined) {
 		detailSecondTabs.html("");
 	}
 
 	func();
 }
 
-function getJsonData(url, method, data){
-	if(url !== undefined && method !== undefined){
+function getJsonData(url, method, data) {
+	if (url !== undefined && method !== undefined) {
 		$.ajax({
 			url: url,
 			method: method,
