@@ -662,3 +662,8 @@ input {
    margin: 0;
    float: none;
 }
+
+.dept-tree-cnt>label {
+   display: flex;
+   flex-direction: row;
+}

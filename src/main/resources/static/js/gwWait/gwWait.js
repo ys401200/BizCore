@@ -1034,27 +1034,30 @@ function showGwModal() {
     }
   }
 
-  for (x in storage.user) {
-    if (storage.user[x].resign == false) {
-      userData.push(x);
-    }
-  }
+  // for (x in storage.user) {
+  //   if (storage.user[x].resign == false) {
+  //     userData.push(x);
+  //   }
+  // }
 
-  let innerHtml = "";
-  for (let i = 0; i < userData.length; i++) {
-    innerHtml +=
-      "<div><input class='testClass' type ='checkbox' id='cb" +
-      userData[i] +
-      "' name='userNames' value='" +
-      userData[i] +
-      "'><label for='cb" +
-      userData[i] +
-      "'>" +
-      storage.user[userData[i]].userName +
-      "</label></div>";
-  }
+  // let innerHtml = "";
+  // for (let i = 0; i < userData.length; i++) {
+  //   innerHtml +=
+  //     "<div><input class='testClass' type ='checkbox' id='cb" +
+  //     userData[i] +
+  //     "' name='userNames' value='" +
+  //     userData[i] +
+  //     "'><label for='cb" +
+  //     userData[i] +
+  //     "'>" +
+  //     storage.user[userData[i]].userName +
+  //     "</label></div>";
+  // }
 
-  orgChartTarget.html(innerHtml);
+  // orgChartTarget.html(innerHtml);
+  let gwTreeHtml = storage.dept.tree.getGwHtml();
+
+  orgChartTarget.html(gwTreeHtml);
   $(".modal-wrap").show();
   setDefaultModalData();
 
@@ -1063,15 +1066,20 @@ function showGwModal() {
 function setDefaultModalData() {
   let appLine = storage.reportDetailData.appLine;
   let my = storage.my;
-  let myTurn;
-  let myappType;
+  let myTurn, myappType, cutNum;
   for (let i = 0; i < appLine.length; i++) {
     if (appLine[i].employee == my) {
       myTurn = appLine[i].ordered;
       myappType = appLine[i].appType;
+      cutNum = i;
     }
-  }
+  } 
 
+
+  for(let j = 0 ; j <= cutNum; j++) {
+    $("#cb"+appLine[j].employee).hide();
+  }
+ 
 
   let examineHtml = "";
   let approvalHtml = "";
