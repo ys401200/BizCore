@@ -30,7 +30,8 @@ public interface GwMapper {
         @Insert("INSERT INTO bizcore.doc_app_detail(compId, docNo, ordered, employee, appType, doc, appData, `read`, approved,related) VALUES(#{compId}, #{docNo}, #{ordered}, #{employee}, #{appType}, #{doc}, #{appData}, NOW(), NOW(),#{related})")
         public int addNewDocAppLineForSelf(@Param("compId") String compId, @Param("docNo") String docNo,
                         @Param("ordered") int ordered, @Param("employee") String employee,
-                        @Param("appType") String appType, @Param("doc") String doc, @Param("appData") String appData, @Param("related") String related);
+                        @Param("appType") String appType, @Param("doc") String doc, @Param("appData") String appData,
+                        @Param("related") String related);
 
         // 결재 대기 및 예정문서의 문서 번호를 가져오는 메서드
         @Select("SELECT a.docno, IF(a.apptype=4,'refer',IF(a.ordered=b.ordered,'wait','due')) AS stat FROM bizcore.doc_app_detail a, "
@@ -83,7 +84,8 @@ public interface GwMapper {
         // 결재선에 반려처리를 기록하는 메서드
         @Update("UPDATE bizcore.doc_app_detail SET rejected = NOW(), appData = #{appData}, related = #{related}, doc = (SELECT doc FROM bizcore.doc_app_detail x, (SELECT MAX(ordered) o FROM bizcore.doc_app_detail WHERE compId = #{compId} AND docNo = #{docNo} AND ordered < #{ordered}) y WHERE x.compid = #{compId} AND x.docno = #{docNo} AND x.ordered = y.o) WHERE compId = #{compId} AND docNo = #{docNo} AND ordered = #{ordered}")
         public int setDocAppLineRejected(@Param("compId") String compId, @Param("docNo") String docNo,
-                        @Param("ordered") int ordered, @Param("appData") String appData, @Param("related") String related);
+                        @Param("ordered") int ordered, @Param("appData") String appData,
+                        @Param("related") String related);
 
         // 결재문서를 반려처리하는 메서드
         @Update("UPDATE bizcore.doc_app SET status = -3 WHERE compId = #{compId} AND docNo = #{docNo}")
@@ -124,7 +126,7 @@ public interface GwMapper {
         @Update("UPDATE bizcore.doc_app_detail SET approved = NOW(), comment = #{comment}, appData = #{appData}, related = #{related} WHERE deleted IS NULL AND compId = #{compId} AND docNo = #{docNo} AND ordered = #{ordered} ")
         public int setProceedDocAppStatus(@Param("compId") String compId, @Param("docNo") String docNo,
                         @Param("ordered") int ordered, @Param("comment") String comment,
-                        @Param("appData") String appData ,  @Param("related") String related);
+                        @Param("appData") String appData, @Param("related") String related);
 
         // 이전 결재절차의 본문을 가져오는 메서드
         @Select("SELECT doc FROM bizcore.doc_app_detail WHERE deleted IS NULL AND compId = #{compId} AND docNo = #{docNo} AND ordered = (SELECT MAX(ordered) FROM bizcore.doc_app_detail WHERE deleted IS NULL AND compId = #{compId} AND docNo = #{docNo} AND ordered < #{ordered})")
@@ -216,4 +218,20 @@ public interface GwMapper {
 
         @Select("SELECT formid FROM bizcore.doc_app WHERE deleted IS NULL AND compid = #{compId} AND docNo = #{docNo}")
         public String getFormIdWithDocNo(@Param("compId") String compId, @Param("docNo") String docNo);
+
+        // 일괄 결재하기
+        @Update("update bizcore.doc_app_detail set" +
+                        "`read` = now()," +
+                        "doc = (select doc from bizcore.doc_app_detail where docNo =#{docNo} && ordered = (select (ordered - 10) as prevNo from bizcore.doc_app_detail where docNo = #{docNo} && employee = #{employee} )),"
+                        +
+                        "approved = now()," +
+                        " appData = (select appData from bizcore.doc_app_detail where docNo =#{docNo} && ordered = (select (ordered - 10) as prevNo from bizcore.doc_app_detail where docNo = #{docNo} && employee = #{employee} )),"
+                        +
+                        " related = (select related from bizcore.doc_app_detail where docNo =#{docNo} && ordered = (select (ordered - 10) as prevNo from bizcore.doc_app_detail where docNo =#{docNo} && employee = #{employee} ))"
+                        +
+                        " where docNo = #{docNo} && employee = #{employee} ")
+        public int batchApprove(@Param("docNo") String docNo, @Param("employee") String employee);
+
+        // 일괄결재시 결재 타입이 2인 경우 
+F
 }

@@ -48,6 +48,7 @@ function waitDefault() {
     crud.defaultAjax(url, method, data, type, waitSuccessList, waitErrorList);
 
     $(".listPageDiv").show();
+    $(".crudBtns").show();
   }
 }
 
@@ -101,6 +102,10 @@ function drawNoticeApproval() {
         title: "작성자",
         align: "center",
       },
+      {
+        title: "<input type='checkbox' name='batchBtns' class='allCb'>",
+        align: "center",
+      }
 
     ];
 
@@ -141,6 +146,10 @@ function drawNoticeApproval() {
         title: "작성자",
         align: "center",
       },
+      {
+        title: "<input type='checkbox' onclick='allCbEvent(this)'>",
+        align: "center",
+      }
 
     ];
     for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
@@ -159,6 +168,11 @@ function drawNoticeApproval() {
       } else {
         appType = "참조";
       }
+
+
+
+
+      let check = "<input type='checkbox' name='batchBtns' data-detail='" + jsonData[i].docNo + "'>"
       str = [
 
         {
@@ -181,6 +195,10 @@ function drawNoticeApproval() {
           "setData": userName,
           "align": "center"
         },
+        {
+          "setData": check,
+          "align": "center",
+        }
 
       ];
 
@@ -1073,13 +1091,13 @@ function setDefaultModalData() {
       myappType = appLine[i].appType;
       cutNum = i;
     }
-  } 
-
-
-  for(let j = 0 ; j <= cutNum; j++) {
-    $("#cb"+appLine[j].employee).hide();
   }
- 
+
+
+  for (let j = 0; j <= cutNum; j++) {
+    $("#cb" + appLine[j].employee).hide();
+  }
+
 
   let examineHtml = "";
   let approvalHtml = "";
@@ -2371,9 +2389,59 @@ function getProductList() {
 
 
 
+function allCbEvent(obj) {
 
-// function getGWTreeHtml() {
-//   let department = new Department();
-//   let treeHtml = department.getGWTreeHtml();
-//   $("#lineLeft").html(treeHtml);
-// }
+  if ($(obj).prop("checked")) {
+    $("input[name='batchBtns']").prop("checked", "checked");
+  } else {
+    $("input[name='batchBtns']").prop("checked", "");
+  }
+
+}
+
+
+let batchCount = 0;
+
+function doBatchApproval() {
+  let data = [];
+  let insertData;
+  let batchBtns = $("input[name='batchBtns']:checked");
+  let url = "/api/gw/app/batchApprove"
+
+  for (let i = 0; i < batchBtns.length; i++) {
+    data.push(batchBtns[i].dataset.detail);
+  }
+
+
+  insertData = data[batchCount];
+  insertData = cipher.encAes(insertData);
+
+
+  $.ajax({
+    "url": url,
+    "method": "post",
+    "data": insertData,
+    "dataType": "json",
+    "cache": false,
+    success: (result) => {
+      if (result.result === "ok") {
+        console.log("승인됨")
+        if (batchCount < data.length) {
+          batchCount++;
+          doBatchApproval();
+
+        }
+
+      } else {
+        console.log("실패함");
+        if (batchCount < data.length) {
+          batchCount++;
+          doBatchApproval();
+
+        }
+      }
+    }
+
+  })
+
+}

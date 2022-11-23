@@ -665,7 +665,7 @@ public class GwService extends Svc {
     public String askAppDoc(String compId, String docNo, int ordered, int ask, String comment, String title, String doc,
             String[][] appLine, String[] files, HashMap<String, String> attached, String appData, String userNo,
             String appDoc, String related) {
-        String result = null, revision = null, savedName = null, fileName = null, dept = null, t = null,  formId = null;
+        String result = null, revision = null, savedName = null, fileName = null, dept = null, t = null, formId = null;
         JSONObject json = null;
         int writer = -9999, appType = -9999, no = -9999, x = -1, y = -1;
         List<String> prvFiles = null, tFiles = null, newFiles = null;
@@ -702,16 +702,16 @@ public class GwService extends Svc {
         // 권한 확인
         if (!userNo.equals((x + "")))
             return "permissionDenied";
-       
+
         // 문서 반려 처리
         if (ask == 0) {
             // 결배문서의 반려 처리에 대한 알림 입력
-          
+
             notes.sendNewNotes(compId, 0, writer, "결재문서가 반려되었습니다.", "{\"func\":\"docApp\",\"no\":\"" + docNo + "\"}");
             gwMapper.setDocAppLineRejected(compId, docNo, ordered, appData, related);
             gwMapper.setDocAppRejected(compId, docNo);
             result = "ok";
-           
+
         }
 
         // 결재문서 승인 처리
@@ -736,15 +736,12 @@ public class GwService extends Svc {
                     json.put("doc", false);
                 }
 
-
-               //related에 대한 처리 
-               if (related != null) {
-                json.put("related", true);
-            } else { // 본뭉
-                json.put("related", false);
-            }
-
-
+                // related에 대한 처리
+                if (related != null) {
+                    json.put("related", true);
+                } else { // 본뭉
+                    json.put("related", false);
+                }
 
                 // 수정된 결재선에 대한 처리
                 if (appLine != null) {
@@ -772,11 +769,6 @@ public class GwService extends Svc {
                 } else {
                     json.put("appLine", false);
                 } // 결재선의 수정에 대한 처리 종료
-
-
-               
-
-
 
                 // ============== 수정된 첨부파일에 대한 처리 =======================
                 if (files != null) {
@@ -830,18 +822,22 @@ public class GwService extends Svc {
             gwMapper.updateAppDocContent(compId, docNo, ordered, doc);
 
             // 결재처리를 기록함
-            gwMapper.setProceedDocAppStatus(compId, docNo, ordered, comment, appData ,related);
+            gwMapper.setProceedDocAppStatus(compId, docNo, ordered, comment, appData, related);
 
             // 남아있는 결재 절차가 있는지 확인함
             map = gwMapper.getNextAppData(compId, docNo, ordered);
 
             if (map == null) { // 결재절차가 종료된 경우
                 formId = gwMapper.getFormIdWithDocNo(compId, docNo);
-                if(formId != null && formId.equals("doc_Form_SalesReport")){
-                
-                    notes.sendNewNotes(compId, 0, writer, "결재 완료 되었습니다.<br /><a href=\\u0022/business/contract/" + docNo + "\\u0022>계약 등록하기</a>", "{\"func\":\"docApp\",\"no\":\"" + docNo + "\"}");
-                }else{
-                    notes.sendNewNotes(compId, 0, writer, "결재 완료 되었습니다.<br /><a href=\\u0022/gw/mydraft/" + docNo + "\\u0022>바로가기</a>", "{\"func\":\"docApp\",\"no\":\"" + docNo + "\"}");
+                if (formId != null && formId.equals("doc_Form_SalesReport")) {
+
+                    notes.sendNewNotes(compId, 0, writer,
+                            "결재 완료 되었습니다.<br /><a href=\\u0022/business/contract/" + docNo + "\\u0022>계약 등록하기</a>",
+                            "{\"func\":\"docApp\",\"no\":\"" + docNo + "\"}");
+                } else {
+                    notes.sendNewNotes(compId, 0, writer,
+                            "결재 완료 되었습니다.<br /><a href=\\u0022/gw/mydraft/" + docNo + "\\u0022>바로가기</a>",
+                            "{\"func\":\"docApp\",\"no\":\"" + docNo + "\"}");
                 }
                 gwMapper.setCompleteStatus(compId, docNo, 3);
                 result = "ok";
@@ -1135,6 +1131,12 @@ public class GwService extends Svc {
         int x = 0;
         x = gwMapper.delSavedLine(compId, userNo, no);
         return x;
+    }
+
+    public int doBacth(String docNo, String employee) {
+        int result = 0;
+        result = gwMapper.batchApprove(docNo, employee);
+        return result;
     }
 
 }
