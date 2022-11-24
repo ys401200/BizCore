@@ -971,7 +971,13 @@ function approveBtnEvent() {
     related: related,
   };
 
-
+  console.log(storage.newFileData + " 확인 1")
+  console.log(storage.newAppLine + " 확인 2")
+  console.log(appDoc + " 확인 3")
+  console.log(soppResult + " 확인 4")
+  console.log(cusResult + " 확인 5")
+  console.log(related + " 확인 6")
+  console.log(storage.newDoc + " 확인 7");
   data = JSON.stringify(data);
   data = cipher.encAes(data);
 
@@ -992,7 +998,7 @@ function approveBtnEvent() {
     success: (data) => {
       if (data.result === "ok") {
         alert("결재 완료");
-        location.href = "/gw/wait";
+        // location.href = "/gw/wait";
       } else {
         alert("결재 실패");
       }
@@ -2402,46 +2408,148 @@ function allCbEvent(obj) {
 
 let batchCount = 0;
 
+// function doBatchApproval() {
+//   let data = [];
+//   let insertData;
+//   let batchBtns = $("input[name='batchBtns']:checked");
+//   let url = "/api/gw/app/batchApprove"
+
+//   for (let i = 0; i < batchBtns.length; i++) {
+//     data.push(batchBtns[i].dataset.detail);
+//   }
+
+
+//   insertData = data[batchCount];
+//   insertData = cipher.encAes(insertData);
+
+
+//   $.ajax({
+//     "url": url,
+//     "method": "post",
+//     "data": insertData,
+//     "dataType": "json",
+//     "cache": false,
+//     success: (result) => {
+//       if (result.result === "ok") {
+//         console.log("승인됨")
+//         if (batchCount < data.length) {
+//           batchCount++;
+//           doBatchApproval();
+
+//         }
+
+//       } else {
+//         console.log("실패함");
+//         if (batchCount < data.length) {
+//           batchCount++;
+//           doBatchApproval();
+
+//         }
+//       }
+//     }
+
+//   })
+
+// }
+
+
+
 function doBatchApproval() {
-  let data = [];
+
+  let batchData = [];
   let insertData;
   let batchBtns = $("input[name='batchBtns']:checked");
-  let url = "/api/gw/app/batchApprove"
 
   for (let i = 0; i < batchBtns.length; i++) {
-    data.push(batchBtns[i].dataset.detail);
+    batchData.push(batchBtns[i].dataset.detail);
   }
 
-
-  insertData = data[batchCount];
-  insertData = cipher.encAes(insertData);
-
+  insertData = batchData[batchCount];
 
   $.ajax({
-    "url": url,
-    "method": "post",
-    "data": insertData,
-    "dataType": "json",
-    "cache": false,
-    success: (result) => {
-      if (result.result === "ok") {
-        console.log("승인됨")
-        if (batchCount < data.length) {
-          batchCount++;
-          doBatchApproval();
+    url: apiServer + "/api/gw/app/doc/" + insertData,
+    method: "get",
+    dataType: "json",
+    cache: false,
+    success: (data) => {
+      let detailData;
+      if (data.result === "ok") {
+        detailData = cipher.decAes(data.data);
+        detailData = JSON.parse(detailData);
+        detailData.doc = cipher.decAes(detailData.doc);
+        detailData.doc = detailData.doc.replaceAll('\\"', '"');
+        storage.reportDetailData = detailData;
 
+        let approveData, customer, related, appLine, ordered;
+        customer = (storage.reportDetailData.custmer == "" || storage.reportDetailData.custmer == null || storage.reportDetailData.custmer == undefined) ? "" : storage.reportDetailData.customer;
+        related = storage.reportDetailData.related;
+        related = JSON.stringify(related);
+        appLine = storage.reportDetailData.appLine;
+        for (let i = 0; i < appLine.length; i++) {
+          if (appLine[i].employee == storage.my)
+            ordered = appLine[i].ordered;
         }
+
+
+        approveData = {
+          doc: null,
+          comment: null,
+          files: null,
+          appLine: null,
+          appDoc: null,
+          sopp: storage.reportDetailData.sopp + "",
+          customer: customer + "",
+          title: null,
+          related: related,
+        };
+
+        approveData = JSON.stringify(approveData);
+        approveData = cipher.encAes(approveData);
+        $.ajax({
+          url:
+            apiServer +
+            "/api/gw/app/proceed/" +
+            storage.reportDetailData.docNo +
+            "/" +
+            ordered +
+            "/1",
+          method: "post",
+          dataType: "json",
+          data: approveData,
+          contentType: "text/plain",
+          cache: false,
+          success: (data) => {
+            if (data.result === "ok") {
+
+              batchCount++;
+              if (batchCount < batchData.length) {
+                doBatchApproval();
+              } else {
+                alert("일괄 승인 완료");
+              }
+
+
+            } else {
+              console.log("승인 실패" + batchCount)
+              batchCount++;
+              if (batchCount < batchData.length) {
+                doBatchApproval();
+              }
+
+            }
+          },
+        });
+
 
       } else {
-        console.log("실패함");
-        if (batchCount < data.length) {
-          batchCount++;
+        console.log("상세조회에 실패함" + batchCount)
+        batchCount++;
+        if (batchCount < batchData.length) {
           doBatchApproval();
-
         }
-      }
-    }
 
-  })
+      }
+    },
+  });
 
 }

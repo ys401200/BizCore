@@ -795,6 +795,7 @@ public class ApiGwCtrl extends Ctrl {
         x = gwService.doBacth(docNo, employee);
 
         if (x > 0) {
+            
             result = "{\"result\":\"ok\"}";
         } else {
             result = "{\"result\":\"failure\"}";
