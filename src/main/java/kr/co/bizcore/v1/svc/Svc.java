@@ -20,6 +20,7 @@ import kr.co.bizcore.v1.mapper.GwMapper;
 import kr.co.bizcore.v1.mapper.NotesMapper;
 import kr.co.bizcore.v1.mapper.ProcureMapper;
 import kr.co.bizcore.v1.mapper.ProductMapper;
+import kr.co.bizcore.v1.mapper.ProjectMapper;
 import kr.co.bizcore.v1.mapper.SalesMapper;
 import kr.co.bizcore.v1.mapper.ScheduleMapper;
 import kr.co.bizcore.v1.mapper.SoppMapper;
@@ -114,6 +115,8 @@ public abstract class Svc {
 
     @Autowired 
     protected NotesService notes;
+
+    @Autowired ProjectMapper projectMapper;
 
     @Autowired
     protected SqlSessionTemplate sqlSession;

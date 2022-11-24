@@ -1,0 +1,93 @@
+@charset "UTF-8";
+
+.container{
+	width:calc(100% - 4px);
+	height:calc(100% - 4px);
+	margin:2px;
+	position:relative;
+	background-color: white;
+	display:grid;
+	grid-template-columns: 1fr 400px;
+	grid-template-rows: 35px 1fr;
+
+}
+.content-title{
+	font-size:1rem;
+	font-weight: bold;
+	color: #425da8;
+	border-left:4px solid rgb(62, 62, 158);
+	padding:0.5rem 1rem;
+	grid-column: span 2;
+}
+
+/* .project-list{background-color: rgb(255, 234, 234);} */
+.detail-preview > .empty{
+	display:flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	margin:0.2rem;
+	height: calc(100% - 0.4rem);
+	width: calc(100% - 0.4rem);
+	border:4px dotted #d4d4d4;
+	border-radius: 0.6rem;
+	background-color: #e8e8e8;
+}
+
+.project-box{
+	display:grid;
+	/* display:inline-grid; */
+	/* width:calc(100% - 10rem); */
+	margin:1rem 1rem 0.3rem;
+	border:2px solid #fddeff;
+	padding:0.6rem;
+	border-radius: 0.4rem;
+	grid-template-columns: 1fr 1fr 1fr 1fr 1rem;
+	background-color: #fef7ff;
+}
+.project-box > sopp{grid-column: span 4;}
+.project-box > name{
+	grid-row-start: 1;
+	grid-row-end: 3;
+	display:flex;
+	justify-content: center;
+	align-items: center;
+	font-size:1.3rem;
+}
+.project-box > *:nth-child(2){font-size:1rem;padding:0.4rem;}
+.project-box > *:nth-child(3){font-size:1rem;padding:0.4rem;}
+.project-box > *:nth-child(4){font-size:1rem;padding:0.4rem;}
+.project-box > *:nth-child(5){font-size:1rem;padding:0 0 1.1rem;cursor:pointer;}
+.project-box .count-wrap{display:inline-block}
+.project-box .doing{
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	background-color: #808cff;
+	color:white;
+	padding-bottom:0.1rem;
+	height: 1.3rem;
+	font-size: 0.9rem;
+}
+.project-box .done{
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	background-color: rgb(38, 134, 0);
+	color:white;
+	padding-bottom:0.1rem;
+	height: 1.3rem;
+	font-size: 0.9rem;
+}
+.project-box .fail{
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	background-color: #ff5c5c;
+	color:white;
+	padding-bottom:0.1rem;
+	height: 1.3rem;
+	font-size: 0.9rem;
+}
+
+._hidden{display:none;}

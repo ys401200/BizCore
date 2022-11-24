@@ -49,6 +49,7 @@
 					<span id="slideSpan">+</span>
 				</a>
 				<ul id="panel">
+					<li><a href="/business/project">프로젝트관리</a></li>
 					<li><a href="/business/sopp">영업기회조회</a></li>
 					<li><a href="/business/estimate">견적관리</a></li>
 				</ul>
