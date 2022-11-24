@@ -11,10 +11,7 @@
 
         <div class="container">
             <div class="content-title">영업기회</div>
-            <div class="project-list"></div>
-            <div class="detail-preview">
-                <div class="empty">EMPTY</div>
-            </div>
+            <div class="project-list"></div><div class="detail-preview"><div class="empty">EMPTY</div></div>
         </div>
 
 
