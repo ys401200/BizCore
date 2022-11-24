@@ -2408,51 +2408,6 @@ function allCbEvent(obj) {
 
 let batchCount = 0;
 
-// function doBatchApproval() {
-//   let data = [];
-//   let insertData;
-//   let batchBtns = $("input[name='batchBtns']:checked");
-//   let url = "/api/gw/app/batchApprove"
-
-//   for (let i = 0; i < batchBtns.length; i++) {
-//     data.push(batchBtns[i].dataset.detail);
-//   }
-
-
-//   insertData = data[batchCount];
-//   insertData = cipher.encAes(insertData);
-
-
-//   $.ajax({
-//     "url": url,
-//     "method": "post",
-//     "data": insertData,
-//     "dataType": "json",
-//     "cache": false,
-//     success: (result) => {
-//       if (result.result === "ok") {
-//         console.log("승인됨")
-//         if (batchCount < data.length) {
-//           batchCount++;
-//           doBatchApproval();
-
-//         }
-
-//       } else {
-//         console.log("실패함");
-//         if (batchCount < data.length) {
-//           batchCount++;
-//           doBatchApproval();
-
-//         }
-//       }
-//     }
-
-//   })
-
-// }
-
-
 
 function doBatchApproval() {
 

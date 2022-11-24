@@ -762,47 +762,6 @@ public class ApiGwCtrl extends Ctrl {
         return result;
     }
 
-    @PostMapping("/app/batchApprove")
-    public String doBatchApprove(HttpServletRequest request, @RequestBody String requestBody) {
-        HttpSession session = null;
-        session = request.getSession();
-        String result = null, aesKey = null, aesIv = null, compId = null, userNo = null, title = null;
-        String data = null, lang = null, docNo = null, employee = null;
-        Msg msg = null;
-        int x = -1;
-
-        session = request.getSession();
-        aesKey = (String) session.getAttribute("aesKey");
-        aesIv = (String) session.getAttribute("aesIv");
-        employee = (String) session.getAttribute("userNo");
-        lang = (String) session.getAttribute("lang");
-        msg = getMsg(lang);
-        compId = (String) session.getAttribute("compId");
-        if (compId == null)
-            compId = (String) request.getAttribute("compId");
-
-        if (compId == null) {
-            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
-        } else if (aesKey == null || aesIv == null) {
-            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
-        } else
-            data = decAes(requestBody, aesKey, aesIv);
-        if (data == null) {
-            result = "{\"result\":\"failure\",\"msg\":\"" + msg.dataIsWornFormat + "\"}";
-        } else {
-            docNo = data;
-        }
-        x = gwService.doBacth(docNo, employee);
-
-        if (x > 0) {
-            
-            result = "{\"result\":\"ok\"}";
-        } else {
-            result = "{\"result\":\"failure\"}";
-        }
-
-        return result;
-
-    }
+   
 
 }
