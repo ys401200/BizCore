@@ -76,6 +76,11 @@ public class GwController extends Ctrl {
         return doBox(request);
     }
 
+    @RequestMapping(value = { "/myreturn", "/myrefer/{docNo}" }, method = RequestMethod.GET)
+    public String myreturn(HttpServletRequest request) {
+        return doBox(request);
+    }
+
     private String doList(HttpServletRequest request) {
         doIt(request);
         return "/gw/list";
@@ -86,7 +91,7 @@ public class GwController extends Ctrl {
         return "/gw/box";
     }
 
-    @RequestMapping(value = {  "/estimate/{soppNo}" }, method = RequestMethod.GET)
+    @RequestMapping(value = { "/estimate/{soppNo}" }, method = RequestMethod.GET)
     public String setEstimate(HttpServletRequest request) {
         doIt(request);
         return "/gw/estimate";

@@ -162,6 +162,7 @@
 				</a>
 				<ul id="panel">
 					<li><a href="/gw/mydraft">기안 문서함</a></li>
+					<li><a href="/gw/myreturn">회수 문서함</a></li>
 					<li><a href="/gw/mytemp">임시 저장함</a></li>
 					<li><a href="/gw/myapp">결재 문서함</a></li>
 					<li><a href="/gw/myreceive">수신 문서함</a></li>
