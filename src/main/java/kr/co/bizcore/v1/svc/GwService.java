@@ -402,10 +402,23 @@ public class GwService extends Svc {
         String sql2 = "SELECT ordered, employee, appType, CAST(UNIX_TIMESTAMP(`read`)*1000 AS CHAR) AS `read`, isModify, CAST(UNIX_TIMESTAMP(approved)*1000 AS CHAR) AS approved, CAST(UNIX_TIMESTAMP(rejected)*1000 AS CHAR) AS rejected, comment FROM bizcore.doc_app_detail WHERE deleted IS NULL AND retrieved IS NULL AND compId = ? AND docNo = ? ORDER BY ordered";
         String sql3 = "SELECT doc, appData ,related FROM bizcore.doc_app_detail WHERE deleted IS NULL AND compId = ? AND ordered = (SELECT MAX(ordered) FROM bizcore.doc_app_detail WHERE deleted IS NULL AND compId = ? AND docNo = ? AND (approved IS NOT NULL OR rejected IS NOT NULL)) AND docNo = ?";
         String sql4 = "SELECT COUNT(user_no) x FROM bizcore.user_dept WHERE comp_id = ? AND user_no = ? AND dept_id IN (SELECT dept_id FROM bizcore.user_dept WHERE comp_id = ? AND user_no = ?)";
-        // String sql1 = "SELECT no, docNo, writer, formId, docbox, title, confirmNo, status, readable FROM bizcore.doc_app WHERE deleted IS NULL AND readable <> 'temp' AND compId = ? AND docno = ?";
-        // String sql2 = "SELECT ordered, employee, appType, CAST(UNIX_TIMESTAMP(`read`)*1000 AS CHAR) AS `read`, isModify, CAST(UNIX_TIMESTAMP(approved)*1000 AS CHAR) AS approved, CAST(UNIX_TIMESTAMP(rejected)*1000 AS CHAR) AS rejected, comment FROM bizcore.doc_app_detail WHERE deleted IS NULL AND retrieved IS NULL AND compId = ? AND docNo = ? ORDER BY ordered";
-        // String sql3 = "SELECT doc, appData ,related FROM bizcore.doc_app_detail WHERE deleted IS NULL AND compId = ? AND ordered = (SELECT MAX(ordered) FROM bizcore.doc_app_detail WHERE deleted IS NULL AND compId = ? AND docNo = ? AND retrieved IS NULL AND (approved IS NOT NULL OR rejected IS NOT NULL)) AND docNo = ?";
-        // String sql4 = "SELECT COUNT(user_no) x FROM bizcore.user_dept WHERE comp_id = ? AND user_no = ? AND dept_id IN (SELECT dept_id FROM bizcore.user_dept WHERE comp_id = ? AND user_no = ?)";
+        // String sql1 = "SELECT no, docNo, writer, formId, docbox, title, confirmNo,
+        // status, readable FROM bizcore.doc_app WHERE deleted IS NULL AND readable <>
+        // 'temp' AND compId = ? AND docno = ?";
+        // String sql2 = "SELECT ordered, employee, appType,
+        // CAST(UNIX_TIMESTAMP(`read`)*1000 AS CHAR) AS `read`, isModify,
+        // CAST(UNIX_TIMESTAMP(approved)*1000 AS CHAR) AS approved,
+        // CAST(UNIX_TIMESTAMP(rejected)*1000 AS CHAR) AS rejected, comment FROM
+        // bizcore.doc_app_detail WHERE deleted IS NULL AND retrieved IS NULL AND compId
+        // = ? AND docNo = ? ORDER BY ordered";
+        // String sql3 = "SELECT doc, appData ,related FROM bizcore.doc_app_detail WHERE
+        // deleted IS NULL AND compId = ? AND ordered = (SELECT MAX(ordered) FROM
+        // bizcore.doc_app_detail WHERE deleted IS NULL AND compId = ? AND docNo = ? AND
+        // retrieved IS NULL AND (approved IS NOT NULL OR rejected IS NOT NULL)) AND
+        // docNo = ?";
+        // String sql4 = "SELECT COUNT(user_no) x FROM bizcore.user_dept WHERE comp_id =
+        // ? AND user_no = ? AND dept_id IN (SELECT dept_id FROM bizcore.user_dept WHERE
+        // comp_id = ? AND user_no = ?)";
         String no = null, writer = null, formId = null, docbox = null, title = null, confirmNo = null;
         String ordered = null, employee = null, appType = null, read = null, isModify = null, approved = null,
                 rejected = null, comment = null, appData = null, t = null, doc = null;
@@ -1137,6 +1150,44 @@ public class GwService extends Svc {
         return x;
     }
 
-   
+    public int cancleApproval(String compId, String userNo, String docNo, int ordered) {
+        int result = 0;
+        String sql1 = "UPDATE bizcore.doc_app_detail SET retrieved = now() WHERE compid = ? AND docno = ? AND ordered = ?";
+        String sql2 = "INSERT into bizcore.doc_app_detail (compId, docNo,ordered, employee, appType, `read`, isModify, doc, appData, appResult)"
+                +
+                "select compId, docNo, ordered+1, employee, appType, `read`, isModify, doc, appData, appResult from bizcore.doc_app_detail "
+                +
+                "WHERE compId = ? AND docno = ? AND ordered = ? ";
+
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            conn = sqlSession.getConnection();
+            pstmt = conn.prepareStatement(sql1);
+            pstmt.setString(1, compId);
+            pstmt.setString(2, docNo);
+            pstmt.setInt(3, ordered);
+            result = pstmt.executeUpdate();
+            pstmt.close();
+
+            logger.info("sql1 test :" + result);
+
+            if (result > 0) {
+                pstmt = conn.prepareStatement(sql2);
+                pstmt.setString(1, compId);
+                pstmt.setString(2, docNo);
+                pstmt.setInt(3, ordered);
+                result = pstmt.executeUpdate();
+            }
+
+            logger.info("sql1 test2 :" + result);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
 
 }

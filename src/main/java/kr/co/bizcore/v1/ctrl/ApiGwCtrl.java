@@ -762,6 +762,34 @@ public class ApiGwCtrl extends Ctrl {
         return result;
     }
 
-   
+    // 결재 취소
+    @GetMapping("/app/cancle/{docNo}/{ordered}")
+    public String cancleApproval(HttpServletRequest request, @PathVariable("docNo") String docNo, @PathVariable("ordered") int ordered) {
+        String result = null, compId = null, lang = null, userNo;
+        HttpSession session = null;  
+        Msg msg = null;
+        session = request.getSession(); 
+        compId = (String) session.getAttribute("compId");
+        userNo = (String) session.getAttribute("userNo");
+        lang = (String) session.getAttribute("lang");
+        msg = getMsg(lang);
+
+        if (compId == null)
+            compId = (String) request.getAttribute("compId");
+
+        if (compId == null) {
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        } else {
+            if (gwService.cancleApproval(compId,userNo,docNo,ordered)> 0) {
+                logger.info(gwService.cancleApproval(compId,userNo,docNo,ordered)+"check the gwService Result==========================================");
+                result = "{\"result\":\"ok\"}";
+            } else {
+                result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
+            }
+
+        }
+
+        return result;
+    }
 
 }

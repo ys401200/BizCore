@@ -69,7 +69,6 @@ function drawNoticeApproval() {
         title: "작성자",
         align: "center",
       },
-
       {
         title: "상태",
         align: "center",
@@ -208,31 +207,31 @@ function showReportDetail() {
 
   let detailHtml =
     "<div class='mainBtnDiv crudBtns'><button type='button' onclick='showList()'>목록보기</button>" +
-    "<button  class='printBtn' onclick='openPrintTab();'>인쇄하기</button></div>" +
+    "<button  class='printBtn' onclick='openPrintTab();'>인쇄하기</button><button onclick='cancelApproval()'>결재취소</button></div>" +
     "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
   // "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
 
   $(".listPageDiv").html(detailHtml);
 
-  
+
   $(".seletedForm").html(testForm);
 
   $(":file").css("display", "none"); // 첨부파일 버튼 숨기기
 
   let tabHtml =
-  "<div class='reportInfoTab tabs'>" +
-  "<input type='radio' id='tablineInfo' name='tabItem' data-content-id='tabDetail' onclick='tabItemClick(this)' checked>" +
-  "<label  class='tabItem' for='tablineInfo'  style='z-index:5; width:50% ; padding-left : 0%;'>문서정보</label>" +
-  "<input type='radio' id='tabChangeInfo' name='tabItem' data-content-id='tabDetail2' onclick='tabItemClick(this)' >" +
-  "<label  class='tabItem' for='tabChangeInfo' style='z-index:0; width:50% ; padding-left : 50%;' >변경이력</label></div>" +
-  "<div class='tabDetail'id='tabDetail'></div><div class='tabDetail2' id='tabDetail2'></div>";
-$(".comment").html(tabHtml);
+    "<div class='reportInfoTab tabs'>" +
+    "<input type='radio' id='tablineInfo' name='tabItem' data-content-id='tabDetail' onclick='tabItemClick(this)' checked>" +
+    "<label  class='tabItem' for='tablineInfo'  style='z-index:5; width:50% ; padding-left : 0%;'>문서정보</label>" +
+    "<input type='radio' id='tabChangeInfo' name='tabItem' data-content-id='tabDetail2' onclick='tabItemClick(this)' >" +
+    "<label  class='tabItem' for='tabChangeInfo' style='z-index:0; width:50% ; padding-left : 50%;' >변경이력</label></div>" +
+    "<div class='tabDetail'id='tabDetail'></div><div class='tabDetail2' id='tabDetail2'></div>";
+  $(".comment").html(tabHtml);
 
-toReadMode();
-drawCommentLine();
-drawChangeInfo();
-$(".tabDetail2").hide();
-getFileArr();
+  toReadMode();
+  drawCommentLine();
+  drawChangeInfo();
+  $(".tabDetail2").hide();
+  getFileArr();
 
   // 참조 데이터 추가
   let referArr = new Array();
@@ -498,35 +497,35 @@ function drawCommentLine() {
   }
 
   let html = "<div class='readDiv'><div>열람</div><div><label for='deptRd'><input type='radio' id='deptRd' name='rd' value='dept' disabled/>작성자 소속 부서</label><label for='noneRd'><input type='radio' id='noneRd' name='rd' value='none' disabled/>열람 설정 없음</label></div></div>" +
-  "<div class='readDiv selectedFile'><div>첨부파일</div><div><div class='selectedFileDiv'></div><div><input class='inputFile' multiple='' name='attached[]' type='file' onchange='setSelectedFiles()' style='display: none;'></div></div></div>";
-let detail =
-  "<div class='lineDiv'><div class='tapLine tapLineTitle'><div>타입</div><div>이름</div><div>상태</div><div>일자</div><div>의견</div></div>";
-let lineDetailHtml = "";
+    "<div class='readDiv selectedFile'><div>첨부파일</div><div><div class='selectedFileDiv'></div><div><input class='inputFile' multiple='' name='attached[]' type='file' onchange='setSelectedFiles()' style='display: none;'></div></div></div>";
+  let detail =
+    "<div class='lineDiv'><div class='tapLine tapLineTitle'><div>타입</div><div>이름</div><div>상태</div><div>일자</div><div>의견</div></div>";
+  let lineDetailHtml = "";
 
-for (let i = 0; i < appLineArr.length; i++) {
-  lineDetailHtml +=
-    "<div class='tapLine examineLine'><div>" +
-    appLineArr[i].appType +
-    "</div><div>" +
-    appLineArr[i].name +
-    "</div><div>" +
-    appLineArr[i].status +
-    "</div><div>" +
-    appLineArr[i].date +
-    "</div><div>" +
-    appLineArr[i].comment +
-    "</div></div>";
-}
+  for (let i = 0; i < appLineArr.length; i++) {
+    lineDetailHtml +=
+      "<div class='tapLine examineLine'><div>" +
+      appLineArr[i].appType +
+      "</div><div>" +
+      appLineArr[i].name +
+      "</div><div>" +
+      appLineArr[i].status +
+      "</div><div>" +
+      appLineArr[i].date +
+      "</div><div>" +
+      appLineArr[i].comment +
+      "</div></div>";
+  }
 
-lineDetailHtml += "</div>";
+  lineDetailHtml += "</div>";
 
-detail += lineDetailHtml;
+  detail += lineDetailHtml;
 
-detail += html;
+  detail += html;
 
-$(".tabLine").children(0).css("padding", "5em");
+  $(".tabLine").children(0).css("padding", "5em");
 
-target.html(detail);
+  target.html(detail);
 
 
   // 열람 권한 체크하기
@@ -943,4 +942,37 @@ function getYmdShortSlash(date) {
   );
 }
 
-function quitApp() { }
+function cancelApproval() {
+  let appLine = storage.reportDetailData.appLine;
+  let myIndex, ordered;
+
+
+  for (let i = 0; i < appLine.length; i++) {
+    if (appLine[i].employee == storage.my) {
+      myIndex = i;
+      ordered = appLine[i].ordered;
+    }
+  }
+
+  if ((myIndex != appLine.length - 1) && (appLine[myIndex + 1].approved != null || appLine[myIndex + 1].rejected != null)) {
+    alert("다음 결재자가 결재한 경우 결재 취소할 수 없습니다.")
+  } else {
+
+    $.ajax({
+
+      url: "/api/gw/app/cancle/" + storage.reportDetailData.docNo + "/" + ordered,
+      type: "get",
+      dataType: "json",
+      success: (result) => {
+        if (result.result == "ok") {
+          alert("확인");
+        } else {
+          alert("에러");
+        }
+      },
+
+    });
+  }
+
+
+}

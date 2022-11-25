@@ -227,4 +227,9 @@ public interface GwMapper {
         @Select("SELECT formid FROM bizcore.doc_app WHERE deleted IS NULL AND compid = #{compId} AND docNo = #{docNo}")
         public String getFormIdWithDocNo(@Param("compId") String compId, @Param("docNo") String docNo);
 
+
+
+
+        
+
 }
