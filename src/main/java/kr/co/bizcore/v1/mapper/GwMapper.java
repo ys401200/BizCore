@@ -36,7 +36,7 @@ public interface GwMapper {
         // 결재 대기 및 예정문서의 문서 번호를 가져오는 메서드
         @Select("SELECT a.docno, IF(a.apptype=4,'refer',IF(a.ordered=b.ordered,'wait','due')) AS stat FROM bizcore.doc_app_detail a, "
                         +
-                        "(SELECT compId, docno, MIN(ordered) AS ordered FROM bizcore.doc_app_detail WHERE approved IS NULL AND rejected IS NULL AND compId=#{compId} AND docno IN (SELECT docno FROM bizcore.doc_app WHERE status = 1 AND compid=#{compId}) GROUP BY docno, compId) b "
+                        "(SELECT compId, docno, MIN(ordered) AS ordered FROM bizcore.doc_app_detail WHERE approved IS NULL AND retrieved IS NULL AND rejected IS NULL AND compId=#{compId} AND docno IN (SELECT docno FROM bizcore.doc_app WHERE status = 1 AND compid=#{compId}) GROUP BY docno, compId) b "
                         +
                         "WHERE a.deleted IS NULL AND a.compId=b.compId AND a.docno = b.docno AND a.employee=#{userNo} AND a.approved IS NULL AND a.rejected IS NULL  AND a.apptype IN (0,2,4)")
         public List<HashMap<String, String>> getWaitAndDueDocNo(@Param("compId") String compId,
@@ -154,7 +154,8 @@ public interface GwMapper {
                         @Param("userNo") String userNo);
 
         // 저장된 임시문서를 전달하는 메서드
-        @Select("SELECT a.docNo, a.title, a.formId, b.doc, b.appData FROM bizcore.doc_app a, bizcore.doc_app_detail b WHERE a.compId = b.compId AND a.docNo = b.docNo AND a.deleted IS NULL AND b.deleted IS NULL AND a.readable = 'temp' AND a.compId = #{compId} AND a.writer = #{userNo} AND a.docNo = #{docNo}")
+        // @Select("SELECT a.docNo, a.title, a.formId, b.doc, b.appData FROM bizcore.doc_app a, bizcore.doc_app_detail b WHERE a.compId = b.compId AND a.docNo = b.docNo AND a.deleted IS NULL AND b.deleted IS NULL AND a.readable = 'temp' AND a.compId = #{compId} AND a.writer = #{userNo} AND a.docNo = #{docNo}")
+        @Select("SELECT a.docNo, a.title, a.formId, b.doc, b.appData FROM bizcore.doc_app a, bizcore.doc_app_detail b WHERE a.compId = b.compId AND a.docNo = b.docNo AND a.deleted IS NULL AND b.doc IS NOT NULL AND b.deleted IS NULL AND a.compId = #{compId} AND a.writer = #{userNo} AND a.docNo = #{docNo}")
         public HashMap<String, String> getTempDoc(@Param("compId") String compId, @Param("userNo") String userNo,
                         @Param("docNo") String docNo);
 

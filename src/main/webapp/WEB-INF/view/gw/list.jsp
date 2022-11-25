@@ -9,7 +9,8 @@
 				<div class="container">
 					<hr />
 					<span id="gwSubTabTitle">결재 대기 문서</span>
-					<div class="crudBtns" style="display:none" onclick="doBatchApproval()"><button>일괄 승인</button></div>
+					<div class="crudBtns batchBtn" style="display:none" onclick="doBatchApproval()"><button>일괄
+							승인</button></div>
 					<div class="subContainer">
 						<div class="listPageDiv">
 							<div class="listDiv"></div>

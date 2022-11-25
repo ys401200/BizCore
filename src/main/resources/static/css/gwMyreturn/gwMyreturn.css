@@ -1,6 +1,8 @@
 @charset "UTF-8";
 
-select:read-only, input[type="text"]:read-only, input[type="date"]:read-only {
+select:read-only,
+input[type="text"]:read-only,
+input[type="date"]:read-only {
   background-color: transparent;
 }
 
@@ -24,11 +26,11 @@ select:read-only, input[type="text"]:read-only, input[type="date"]:read-only {
 }
 
 .container span:not(.textNumberFormat) {
-	font-weight: bolder;
-	font-size: 15px;
-	padding-left: 15px;
-	line-height: 40px;
-	color: #406c92;
+  font-weight: bolder;
+  font-size: 15px;
+  padding-left: 15px;
+  line-height: 40px;
+  color: #406c92;
 }
 
 .subContainer .batchBtn {
@@ -54,6 +56,7 @@ select:read-only, input[type="text"]:read-only, input[type="date"]:read-only {
   align-items: center;
   justify-content: center;
 }
+
 .subContainer .listPageDiv .listDiv .noListDefault {
   text-align: center;
   color: gray;
@@ -71,7 +74,7 @@ select:read-only, input[type="text"]:read-only, input[type="date"]:read-only {
 
 .listDiv .gridHeader,
 .listDiv .gridContent {
-  grid-template-columns:  10% 10% 60% 10% 10%  ;
+  grid-template-columns: 10% 10% 70% 10%;
 }
 
 /* .subContainer .listPageDiv .pageContainer {
@@ -95,7 +98,7 @@ select:read-only, input[type="text"]:read-only, input[type="date"]:read-only {
 
 .listDiv>div:first-child {
   border-bottom: 1px solid #425da8;
-  background-color:#f2f5ff;
+  background-color: #f2f5ff;
 }
 
 
@@ -116,7 +119,7 @@ select:read-only, input[type="text"]:read-only, input[type="date"]:read-only {
 
 .listPageDiv .detailReport {
   display: grid;
-  grid-template-columns:  65% 35%;
+  grid-template-columns: 65% 35%;
 }
 
 .listPageDiv .detailReport .selectedReportview>div:first-child {

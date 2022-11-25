@@ -86,7 +86,6 @@ function drawMyDraft() {
 
     pageContainer = document.getElementsByClassName("pageContainer");
     container = $(".listDiv");
-
     header = [
 
       {
@@ -121,78 +120,81 @@ function drawMyDraft() {
     ];
 
     for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
-      disDate = dateDis(jsonData[i].created, jsonData[i].modified);
-      setDate = dateFnc(disDate);
-      let read = jsonData[i].read;
-      let status;
-      if (read == null) {
-        read = "N";
-      } else {
-        read = getYmdSlash(read);
+      if (jsonData[i].status != -1) {
+        disDate = dateDis(jsonData[i].created, jsonData[i].modified);
+        setDate = dateFnc(disDate);
+        let read = jsonData[i].read;
+        let status;
+        if (read == null) {
+          read = "N";
+        } else {
+          read = getYmdSlash(read);
+        }
+
+        let appType = jsonData[i].appType;
+        if (appType == "0") {
+          appType = "검토";
+        } else if (appType == "1") {
+          appType = "합의";
+        } else if (appType == "2") {
+          appType = "결재";
+        } else if (appType == "3") {
+          appType = "수신";
+        } else {
+          appType = "참조";
+        }
+
+        if (jsonData[i].status == 1) {
+          status = "진행 중";
+        } else if (jsonData[i].status == 2) {
+          status = "수신 대기 ";
+        } else if (jsonData[i].status == 3) {
+          status = "승인 완료";
+        } else if (jsonData[i].status == -3) {
+          status = "반려";
+        } else if (jsonData[i].status == -1) {
+          status = "회수";
+        }
+
+        let authority = storage.user[jsonData[i].authority].userName;
+        str = [
+
+          {
+            "setData": setDate,
+            "align": "center"
+          },
+          {
+            "setData": jsonData[i].form,
+            "align": "center"
+          },
+          {
+            "setData": jsonData[i].title,
+            "align": "left",
+          },
+
+          {
+            "setData": appType,
+            "align": "center"
+          },
+          {
+            "setData": authority,
+            "align": "center"
+          },
+          {
+            "setData": read,
+            "align": "center"
+          },
+          {
+            "setData": status,
+            "align": "center"
+          },
+        ];
+
+        fnc = "detailView(this)";
+        ids.push(jsonData[i].docNo);
+        data.push(str);
       }
 
-      let appType = jsonData[i].appType;
-      if (appType == "0") {
-        appType = "검토";
-      } else if (appType == "1") {
-        appType = "합의";
-      } else if (appType == "2") {
-        appType = "결재";
-      } else if (appType == "3") {
-        appType = "수신";
-      } else {
-        appType = "참조";
-      }
-
-      if (jsonData[i].status == 1) {
-        status = "진행 중";
-      } else if (jsonData[i].status == 2) {
-        status = "수신 대기 ";
-      } else if (jsonData[i].status == 3) {
-        status = "승인 완료";
-      } else if (jsonData[i].status == -3) {
-        status = "반려";
-      } else if (jsonData[i].status == -1) {
-        status = "회수";
-      }
-
-      let authority = storage.user[jsonData[i].authority].userName;
-      str = [
-
-        {
-          "setData": setDate,
-          "align": "center"
-        },
-        {
-          "setData": jsonData[i].form,
-          "align": "center"
-        },
-        {
-          "setData": jsonData[i].title,
-          "align": "left",
-        },
-
-        {
-          "setData": appType,
-          "align": "center"
-        },
-        {
-          "setData": authority,
-          "align": "center"
-        },
-        {
-          "setData": read,
-          "align": "center"
-        },
-        {
-          "setData": status,
-          "align": "center"
-        },
-      ];
-
-      fnc = "detailView(this)";
-      ids.push(jsonData[i].docNo);
-      data.push(str);
     }
 
     let pageNation = createPaging(
@@ -542,10 +544,10 @@ function drawCommentLine() {
   }
 
   let html = "<div class='readDiv'><div>열람</div><div><label for='deptRd'><input type='radio' id='deptRd' name='rd' value='dept' disabled/>작성자 소속 부서</label><label for='noneRd'><input type='radio' id='noneRd' name='rd' value='none' disabled/>열람 설정 없음</label></div></div>" +
-  "<div class='readDiv selectedFile'><div>첨부파일</div><div><div class='selectedFileDiv'></div><div><input class='inputFile' multiple='' name='attached[]' type='file' onchange='setSelectedFiles()' style='display: none;'></div></div></div>";
-let detail =
-  "<div class='lineDiv'><div class='tapLine tapLineTitle'><div>타입</div><div>이름</div><div>상태</div><div>일자</div><div>의견</div></div>";
-let lineDetailHtml = "";
+    "<div class='readDiv selectedFile'><div>첨부파일</div><div><div class='selectedFileDiv'></div><div><input class='inputFile' multiple='' name='attached[]' type='file' onchange='setSelectedFiles()' style='display: none;'></div></div></div>";
+  let detail =
+    "<div class='lineDiv'><div class='tapLine tapLineTitle'><div>타입</div><div>이름</div><div>상태</div><div>일자</div><div>의견</div></div>";
+  let lineDetailHtml = "";
   for (let i = 0; i < appLineArr.length; i++) {
     lineDetailHtml +=
       "<div class='tapLine examineLine'><div>" +

@@ -7,6 +7,7 @@ $(document).ready(() => {
   }, 300);
 
   getformList();
+
 });
 
 function getformList() {
@@ -85,18 +86,42 @@ function setTempReport() {
     $(".reportInsertForm").html(storage.reportDetailData.doc);
     $(".insertedDetail").css("border", "1px solid black");
 
+
+    let defaultAppLine = [];
+
+    for (let i = 0; i < $("." + formId + "_examine").length; i++) {
+      defaultAppLine.push([0, $("." + formId + "_examine")[i].dataset.detail]);
+    }
+    for (let i = 0; i < $("." + formId + "_agree").length; i++) {
+      defaultAppLine.push([1, $("." + formId + "_agree")[i].dataset.detail]);
+    }
+    for (let i = 0; i < $("." + formId + "_approval").length; i++) {
+      defaultAppLine.push([2, $("." + formId + "_approval")[i].dataset.detail]);
+    }
+    for (let i = 0; i < $("." + formId + "_conduct").length; i++) {
+      defaultAppLine.push([3, $("." + formId + "_conduct")[i].dataset.detail]);
+    }
+    for (let i = 0; i < $("." + formId + "_refer").length; i++) {
+      defaultAppLine.push([4, $("." + formId + "_refer")[i].dataset.detail]);
+    }
+
+
     // simplAppLine 채우기
-    let appLine = storage.reportDetailData.appLine;
+    let appLine = storage.reportDetailData.appLine == null ? defaultAppLine : storage.reportDetailData.appLine;
     let simpleapp = "";
-    let title = ["[검토]", "[합의]", "[결재]", "[수신]", "[참조]"];
+    console.log(appLine.length + "임시저장문서 appLine 확인");
+    let title = ["[검 토] ", "[합 의] ", "[결 재] ", "[수 신] ", "[참 조] "];
     let newCombine = [[], [], [], [], []];
     for (let j = 0; j < 5; j++) {
       for (let i = 0; i < appLine.length; i++) {
         if (appLine[i][0] == j) {
+          console.log(appLine[i][1]);
           newCombine[j].push(appLine[i][1]);
         }
       }
     }
+
+    console.log(newCombine);
 
     for (let k = 0; k < newCombine.length; k++) {
       if (newCombine[k].length != 0) {
@@ -166,7 +191,60 @@ function setTempReport() {
       }
     }
     $("input[name='" + formId + "_RD']").prop("disabled", false);
+
+
+
+
+    if (formId != "doc_Form_leave" && formId != "doc_Form_extension") {
+      $.ajax({
+        url: "/api/sopp",
+        type: "get",
+        dataType: "json",
+        success: (result) => {
+          if (result.result == "ok") {
+            let jsondata;
+            jsondata = cipher.decAes(result.data);
+            jsondata = JSON.parse(jsondata);
+            storage.soppList = jsondata;
+            setSoppList(formId);
+            setCusDataList();
+          } else {
+            alert("에러");
+          }
+        },
+      });
+
+      // 거래처 데이터 리스트
+
+      let html = $(".infoContentlast")[0].innerHTML;
+      let x;
+      let dataListHtml = "";
+
+      // 거래처 데이터 리스트 만들기
+      dataListHtml = "<datalist id='_infoCustomer'>";
+      for (x in storage.customer) {
+        dataListHtml +=
+          "<option data-value='" +
+          x +
+          "' value='" +
+          storage.customer[x].name +
+          "'></option> ";
+      }
+      dataListHtml += "</datalist>";
+      html += dataListHtml;
+      $(".infoContentlast")[0].innerHTML = html;
+      $("#" + formId + "_infoCustomer").attr("list", "_infoCustomer");
+
+      if (formId == "doc_Form_SalesReport") {
+        $("#" + formId + "_endCustName").attr("list", "_infoCustomer");
+      }
+    }
+    $(".insertbtn").click(setCusDataList);
+    $(".insertbtn").click(setProductData);
+
   }
+
+
 }
 
 function drawFormList() {
@@ -355,17 +433,18 @@ function setSoppList(formId) {
 // 항목 데이터 리스트 가져오는 함수 
 function setProductData() {
   let data = storage.formList;
-  let formId = data[$(".formNumHidden").val()].id;
+
+  let formId = storage.reportDetailData != undefined ? storage.reportDetailData.formId : data[$(".formNumHidden").val()].id;
   let targetHtml = $("." + formId + "_product")[0].innerHTML;
   let y;
   let productListhtml = "";
   productListhtml = "<datalist id='_product'>";
-  for (y in storage.productList) {
+  for (let y = 0; y < storage.product.length; y++) {
     productListhtml +=
       "<option data-value='" +
-      storage.productList[y].no +
+      storage.product[y].no +
       "' value='" +
-      storage.productList[y].product +
+      storage.product[y].name +
       "'></option> ";
   }
 
@@ -381,6 +460,7 @@ function setProductData() {
 function showModal() {
   $(".modal-wrap").show();
   getSavedLine();
+  setModalhtml();
 }
 
 function setModalhtml() {
@@ -961,7 +1041,7 @@ function reportInsert() {
   let title, content, readable, formId, appDoc, dept;
   let appLine = [];
   let selectedFormNo = $(".formSelector").val();
-  formId = storage.formList[selectedFormNo].id;
+  formId = storage.reportDetailData == undefined ? storage.formList[selectedFormNo].id : storage.reportDetailData.formId;
   let detailType = $("input[name='" + formId + "_RD']:checked").attr("id");
 
 
@@ -973,7 +1053,7 @@ function reportInsert() {
     $("#" + formId + "_sopp").attr("data-detail", "영업기회 미등록");
     soppVal = "영업기회 미등록";
   }
-  let customerVal = $("#" + formId + "_infoCustomer").val();
+
   let soppResult = "";
   for (let x in storage.soppList) {
     if (storage.soppList[x].title == soppVal) {
@@ -981,6 +1061,7 @@ function reportInsert() {
     }
   }
 
+  let customerVal = $("#" + formId + "_infoCustomer").val();
   let cusResult = "";
   for (let x in storage.customer) {
     if (customerVal != "" && storage.customer[x].name == customerVal) {
@@ -990,7 +1071,7 @@ function reportInsert() {
 
   title = $("#" + formId + "_title").val();
 
-  content = CKEDITOR.instances[formId + "_content"].getData();
+  content = CKEDITOR.instances[formId + "_content"] != undefined ? CKEDITOR.instances[formId + "_content"].getData() : "";
   $("#" + formId + "_content").attr("data-detail", content);
   // content = $("#" + formId + "_content").val();
   readable = $("input[name=authority]:checked").val();

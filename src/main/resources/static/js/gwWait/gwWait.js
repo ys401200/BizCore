@@ -33,6 +33,7 @@ function waitDefault() {
           detailData.doc = detailData.doc.replaceAll('\\"', '"');
           storage.reportDetailData = detailData;
           showReportDetail();
+
         } else {
           alert("문서 정보를 가져오는 데 실패했습니다");
         }
@@ -48,7 +49,7 @@ function waitDefault() {
     crud.defaultAjax(url, method, data, type, waitSuccessList, waitErrorList);
 
     $(".listPageDiv").show();
-    $(".crudBtns").show();
+    $(".batchBtn").show();
   }
 }
 
@@ -257,6 +258,7 @@ function waitDetailView(obj) {
 
 /* 상세 화면 그리기 */
 function showReportDetail() {
+  $(".batchBtn").hide();
   let formId = storage.reportDetailData.formId;
   let testForm = storage.reportDetailData.doc;
 
@@ -820,16 +822,6 @@ function closeModal(obj) {
 
 //결재하기 모달
 function showAppModal() {
-  // 결재하기 누르면 결재정보 창으로 세팅되어서 추가하는 것
-  // $("#lineInfo").css("background-color", "#332E85");
-  // $("#lineInfo").css("color", "white");
-  // $("#lineInfo").css("border", "none");
-
-  // $("#changeInfo").css("background-color", "white");
-  // $("#changeInfo").css("color", "#332E85");
-  // $("#changeInfo").css("border-bottom", "2px solid #332E85");
-  // $("#tabDetail").show();
-  // $("#tabDetail2").hide();
 
   let setAppModalHtml =
     "<div class='setApprovalModal'>" +
@@ -844,8 +836,7 @@ function showAppModal() {
   $(".modal-wrap").html(setAppModalHtml);
   $(".modal-wrap").show();
 
-  // $(".setApprovalModal").show();
-  // $(".setModifyModal").hide();
+
 }
 
 //결재하기 버튼
@@ -889,12 +880,7 @@ function approveBtnEvent() {
     }
   }
 
-  // if (storage.reportDetailData.sopp == soppResult) {
-  //   soppResult = "";
-  // }
-  // if (storage.reportDetailData.customer == cusResult) {
-  //   cusResult = "";
-  // }
+
 
   if (formId != "doc_Form_leave" && formId != "doc_Form_extension") {
     if (
@@ -1058,27 +1044,7 @@ function showGwModal() {
     }
   }
 
-  // for (x in storage.user) {
-  //   if (storage.user[x].resign == false) {
-  //     userData.push(x);
-  //   }
-  // }
 
-  // let innerHtml = "";
-  // for (let i = 0; i < userData.length; i++) {
-  //   innerHtml +=
-  //     "<div><input class='testClass' type ='checkbox' id='cb" +
-  //     userData[i] +
-  //     "' name='userNames' value='" +
-  //     userData[i] +
-  //     "'><label for='cb" +
-  //     userData[i] +
-  //     "'>" +
-  //     storage.user[userData[i]].userName +
-  //     "</label></div>";
-  // }
-
-  // orgChartTarget.html(innerHtml);
   let gwTreeHtml = storage.dept.tree.getGwHtml();
 
   orgChartTarget.html(gwTreeHtml);
@@ -1237,78 +1203,7 @@ function closeGwModal(obj) {
         }
 
         for (let i = 0; i < appLine.length; i++) {
-          // if (appLine[i].employee == my + "") {
-          //   // 내 결재 순서 
-          //   myOrdered = appLine[i].ordered;
-          //   // 내 결재 순서까지 기존 결재 배열 자름 
-          //   originLine = appLine.slice(0, i + 1);
 
-
-          //   // if (appLine[i].appType == 2) {
-          //   let combineData = [];
-          //   // 기존 데이터 넣기
-          //   // for (let i = 0; i < appLine.length; i++) {
-          //   //   if (appLine[i].ordered < Number(myOrdered)) {
-          //   //     combineData.push([
-          //   //       appLine[i].appType,
-          //   //       appLine[i].employee + "",
-          //   //     ]);
-          //   //   } else if ((appLine[i].ordered = Number(myOrdered))) {
-          //   //     combineData.push([
-          //   //       appLine[i].appType,
-          //   //       appLine[i].employee + "",
-          //   //     ]);
-          //   //   }
-          //   // }
-
-          //   let target = $(".typeContainer");
-
-          //   for (let i = 0; i < target.length; i++) {
-          //     for (let j = 0; j < target[i].children.length; j++) {
-          //       let id = target[i].children[j].id.split("_")[1];
-          //       let targetId = target[i].id;
-
-          //       if (targetId == "examine") {
-          //         targetId = 0;
-          //       } else if (targetId == "agree") {
-          //         targetId = 1;
-          //       } else if (targetId == "approval") {
-          //         targetId = 2;
-          //       } else if (targetId == "conduct") {
-          //         targetId = 3;
-          //       } else if (targetId == "refer") {
-          //         targetId = 4;
-          //       }
-
-          //       combineData.push([targetId, id]);
-          //     }
-          //   }
-
-          //   storage.newAppLine = combineData;
-
-          //   let checkNum;
-          //   for (let i = 0; i < storage.newAppLine.length; i++) {
-          //     if (
-          //       storage.newAppLine[i][0] == 2 &&
-          //       storage.newAppLine[i][1] == my + ""
-          //     ) {
-          //       if (
-          //         i != storage.newAppLine.length - 1 &&
-          //         storage.newAppLine[i + 1][0] == 2
-          //       ) {
-          //         storage.newAppLine[i][0] = 0;
-          //       }
-          //     }
-          //   }
-
-
-          //   $(".modal-wrap").hide();
-          //   $(".inputsAuto").css("background-color", "white");
-          //   createNewLine(); // 문서 안에서 결재선 그리는 것
-          //   // 문서 정보에서 결재선 정보 그리는 것
-          //   // }
-          // } 
-          // else {
           let combineData = [];
 
           combineData.push([appLine[0].appType, appLine[0].employee + ""]);
@@ -1373,72 +1268,7 @@ function closeGwModal(obj) {
         }
 
         for (let i = 0; i < appLine.length; i++) {
-          // if (appLine[i].employee == my + "") {
-          //   myOrdered = appLine[i].ordered;
-          //   originLine = appLine.slice(0, i + 1);
 
-          //   if (appLine[i].appType == 2) {
-          //     let combineData = [];
-          //     // // 기존 데이터 넣기
-          //     // for (let i = 0; i < appLine.length; i++) {
-          //     //   if (appLine[i].ordered < Number(myOrdered)) {
-          //     //     combineData.push([
-          //     //       appLine[i].appType,
-          //     //       appLine[i].employee + "",
-          //     //     ]);
-          //     //   } else if ((appLine[i].ordered = Number(myOrdered))) {
-          //     //     combineData.push([
-          //     //       appLine[i].appType,
-          //     //       appLine[i].employee + "",
-          //     //     ]);
-          //     //   }
-          //     // }
-
-          //     let target = $(".typeContainer");
-
-          //     for (let i = 0; i < target.length; i++) {
-          //       for (let j = 0; j < target[i].children.length; j++) {
-          //         let id = target[i].children[j].id.split("_")[1];
-          //         let targetId = target[i].id;
-
-          //         if (targetId == "examine") {
-          //           targetId = 0;
-          //         } else if (targetId == "agree") {
-          //           targetId = 1;
-          //         } else if (targetId == "approval") {
-          //           targetId = 2;
-          //         } else if (targetId == "conduct") {
-          //           targetId = 3;
-          //         } else if (targetId == "refer") {
-          //           targetId = 4;
-          //         }
-
-          //         combineData.push([targetId, id]);
-          //       }
-          //     }
-          //     console.log(storage.newAppLine + "확인 ++++++++++ㅇㅇㅇㅇㅇㅇ++++++++ㅇ+ㅇ+ㅇ+ㅇ+ㅇ++ㅇ+ㅇ+ ")
-          //     storage.newAppLine = combineData;
-          //     let checkNum;
-          //     for (let i = 0; i < storage.newAppLine.length; i++) {
-          //       if (
-          //         storage.newAppLine[i][0] == 2 &&
-          //         storage.newAppLine[i][1] == my + ""
-          //       ) {
-          //         if (
-          //           i != storage.newAppLine.length - 1 &&
-          //           storage.newAppLine[i + 1][0] == 2
-          //         ) {
-          //           storage.newAppLine[i][0] = 0;
-          //         }
-          //       }
-          //     }
-
-          //     $(".modal-wrap").hide();
-          //     $(".inputsAuto").css("background-color", "white");
-          //     createNewLine(); // 문서 안에서 결재선 그리는 것
-          //     // 문서 정보에서 결재선 정보 그리는 것
-          //   }
-          // } else {
           let combineData = [];
           combineData.push([appLine[0].appType, appLine[0].employee + ""]);
           // 기존 데이터 넣기
@@ -1507,13 +1337,7 @@ function createNewLine() {
     }
   }
   console.log(newAppLine + "확인하기 2 ");
-  // for (let i = 0; i < newAppLine.length; i++) {
-  //   for (let j = 0; j < newCombine.length; j++) {
-  //     if (i > 0 && newAppLine[i][0] == j) {
-  //       newCombine[j].push(newAppLine[i][1]);
-  //     }
-  //   }
-  // }
+
 
 
   for (let i = 0; i < newCombine.length; i++) {
@@ -1527,10 +1351,7 @@ function createNewLine() {
   console.log(newCombine);
 
 
-  // if (newCombine[2].length > 1 && newCombine[2].includes(storage.my + "")) {
-  //   newCombine[2] = newCombine[2].slice(1);
-  //   newCombine[0].push(storage.my + "");
-  // }
+
 
 
   console.log(newCombine + "새 결재선 조합 확인 ");
@@ -1757,7 +1578,7 @@ function check(name) {
 }
 //End of check(name)
 
-//// 조직도 결재 순서
+//// 조직도 결재 순서 관련 함수 ---------------------------------------------------------------------------------------------------------------------------------------------
 function upClick(obj) {
   let appLine = storage.reportDetailData.appLine;
   let orgEmployee = [];
@@ -1897,223 +1718,19 @@ function deleteClick(obj) {
   parent.remove();
 } // End of deleteClign(obj);
 
-function setSavedLine(obj) {
-  let val = obj.value;
-  if (val == "middle") {
-    $("#examine").html(
-      "<div class='lineDataContainer' id='lineContainer_4'><label id='linedata4'>구민주</label><button value='4' onclick='upClick(this)'>▲</button><button  value='4'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
-    );
-    $("#approval").html(
-      "<div class='lineDataContainer' id='lineContainer_0'><label id='linedata0'>이승우</label><button value='0' onclick='upClick(this)'>▲</button><button  value='0'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
-    );
-    $("#agree").html("");
-    $("#conduct").html("");
-    $("#refer").html("");
-  } else if (val == "basic") {
-    $("#approval").html(
-      "<div class='lineDataContainer' id='lineContainer_0'><label id='linedata0'>이승우</label><button value='0' onclick='upClick(this)'>▲</button><button  value='0'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
-    );
-    $("#agree").html("");
-    $("#examine").html("");
-    $("#conduct").html("");
-    $("#refer").html("");
-  }
-}
+
+
+
+
+
 
 // 문서 수정 취소 함수
-function quitModify() {
-  showReportDetail();
+// function quitModify() {
+//   showReportDetail();
 
-}
+// }
 
-function getTotalCount() {
-  let id = stroage.reportDetailData.formId;
-  let totalCount = Number(0);
-  for (let i = 0; i < $("." + id + "_total").length; i++) {
-    if ($("." + id + "_total")[i].dataset.detail != undefined) {
-      totalCount += Number(
-        $("." + id + "_total")
-        [i].dataset.detail.replace(",", "")
-          .replace(",", "")
-          .replace(",", "")
-          .replace(",", "")
-          .replace(",", "")
-          .replace(",", "")
-          .replace(",", "")
-          .replace(",", "")
-      );
-    } else {
-      totalCount += 0;
-    }
-  }
-  $(".insertedTotal").val(Number(totalCount).toLocaleString() + "원");
-  $(".insertedTotal")[0].dataset.detail = Number(totalCount).toLocaleString();
-}
-
-
-
-// 문서 수정시 변경이력에 반영
-function reportModify() {
-  $(".modal-wrap").hide();
-  $("button[name='modConfirm']:last-child").remove();
-  $("button[name='modConfirm']:last-child").remove();
-  let formId = storage.reportDetailData.formId;
-  let content = CKEDITOR.instances[formId + "_content"].getData();
-  $(".cke_editable").remove();
-
-  $("#" + formId + "_content").attr("data-detail", content);
-  $("#" + formId + "_content").val(content);
-  $("#" + formId + "_content").hide();
-  $("." + formId + "_content").html(content);
-  $("." + formId + "_content").show();
-  $(":file").css("display", "none");
-  getFileArr();
-  toReadMode();
-  $("button[name='approvalBtn']")[0].disabled = false;
-}
-
-//문서 수정 버튼 누르면 수정 완료 버튼 생성
-function createConfirmBtn() {
-  let div = document.getElementsByClassName("mainBtnDiv");
-  if (div[0].childElementCount < 6) {
-    $(".mainBtnDiv").append(
-      "<button type='button'name='modConfirm' onclick='reportModify()' >수정완료 </button>" +
-      "<button type='button'name='modConfirm' onclick='quitModify()'>문서 수정 초기화</button>"
-    );
-  }
-  $(":file").css("display", "inline");
-  getFileModArr();
-
-  storage.newFileData = [];
-  for (let i = 0; i < $(".files").length; i++) {
-    storage.newFileData.push($(".files")[i].dataset.detail);
-  }
-
-  ///결재하기 버튼 disabled
-
-  $("button[name='approvalBtn']")[0].disabled = true;
-  let formId = storage.reportDetailData.formId;
-  $("." + formId + "_content").hide();
-  $("#" + formId + "_content").val($("." + formId + "_content").html());
-  $("#" + formId + "_content").attr("data-detail", $("." + formId + "_content").html());
-  storage.editorArray = [formId + "_content"];
-  ckeditor.config.readOnly = false;
-  window.setTimeout(setEditor, 100);
-}
-
-function getYmdSlash(date) {
-  let d = new Date(date);
-  return (
-    (d.getFullYear() % 100) +
-    "/" +
-    (d.getMonth() + 1 > 9
-      ? (d.getMonth() + 1).toString()
-      : "0" + (d.getMonth() + 1)) +
-    "/" +
-    (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString()) +
-    "&nbsp" +
-    (d.getHours() > 9
-      ? d.getHours().toString()
-      : "0" + d.getHours().toString()) +
-    ":" +
-    (d.getMinutes() > 9
-      ? d.getMinutes().toString()
-      : "0" + d.getMinutes().toString()) +
-    ":" +
-    (d.getSeconds() > 9
-      ? d.getSeconds().toString()
-      : "0" + d.getSeconds().toString())
-  );
-}
-
-function getYmdSlashShort(date) {
-  let d = new Date(date);
-  return (
-    (d.getFullYear() % 100) +
-    "/" +
-    (d.getMonth() + 1 > 9
-      ? (d.getMonth() + 1).toString()
-      : "0" + (d.getMonth() + 1)) +
-    "/" +
-    (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
-  );
-}
-
-function setSelectedFiles() {
-  let method, data, type, attached;
-  attached = $(document).find("[name='attached[]']")[0].files;
-
-  if (storage.newFileData === undefined || storage.newFileData <= 0) {
-    storage.newFileData = [];
-  }
-
-  let fileDataArray = storage.newFileData;
-  for (let i = 0; i < attached.length; i++) {
-    let reader = new FileReader();
-    let fileName;
-
-    fileName = attached[i].name;
-
-    // 파일 중복 등록 제거
-    if (!storage.newFileData.includes(fileName)) {
-      storage.newFileData.push(fileName);
-
-      reader.onload = (e) => {
-        let binary,
-          x,
-          fData = e.target.result;
-        const bytes = new Uint8Array(fData);
-        binary = "";
-        for (x = 0; x < bytes.byteLength; x++)
-          binary += String.fromCharCode(bytes[x]);
-        let fileData = cipher.encAes(btoa(binary));
-        let fullData = fileName + "\r\n" + fileData;
-
-        let url = "/api/attached/docapp";
-        url = url;
-        method = "post";
-        data = fullData;
-        type = "insert";
-
-        crud.defaultAjax(
-          url,
-          method,
-          data,
-          type,
-          submitFileSuccess,
-          submitFileError
-        );
-      };
-
-      reader.readAsArrayBuffer(attached[i]);
-    }
-  }
-
-  let html = "";
-
-  for (let i = 0; i < fileDataArray.length; i++) {
-    html +=
-      "<div><div class='files' data-detail='" +
-      fileDataArray[i] +
-      "'>" +
-      fileDataArray[i] +
-      "<button type='button' onclick='fileRemove(this)'>x</button></div></div>";
-  }
-  $(".selectedFileDiv").html(html);
-}
-
-function getSopp() {
-  let formId = storage.reportDetailData.formId;
-  let slistid = "infoSopp";
-  let soppVal = $("#" + formId + "_sopp").val();
-  let soppResult = dataListFormat(slistid, soppVal);
-  storage.sopp = soppResult;
-  let clistid = "infoCustomer";
-  let customerVal = $("#" + formId + "_infoCustomer").val();
-  let customerResult = dataListFormat(clistid, customerVal);
-  storage.customer = customerResult;
-}
-
+// 결재선 정보 관련 함수 -------------------------------------------------------------------------------------------------------------------------------------------------------
 function setAppLineData() {
   let appLine = storage.reportDetailData.appLine;
   let formId = storage.reportDetailData.formId;
@@ -2157,18 +1774,63 @@ function setAppLineData() {
   }
 }
 
-function getYmdShortSlash(date) {
-  let d = new Date(date);
-  return (
-    (d.getFullYear() % 100) +
-    "/" +
-    (d.getMonth() + 1 > 9
-      ? (d.getMonth() + 1).toString()
-      : "0" + (d.getMonth() + 1)) +
-    "/" +
-    (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
-  );
+
+
+
+
+
+
+
+// 상단 버튼 관련 함수 ----------------------------------------------------------------------------------------------------------------------------------------------
+// 문서 수정시 변경이력에 반영
+function reportModify() {
+  $(".modal-wrap").hide();
+  $("button[name='modConfirm']:last-child").remove();
+  $("button[name='modConfirm']:last-child").remove();
+  let formId = storage.reportDetailData.formId;
+  let content = CKEDITOR.instances[formId + "_content"].getData();
+  $(".cke_editable").remove();
+
+  $("#" + formId + "_content").attr("data-detail", content);
+  $("#" + formId + "_content").val(content);
+  $("#" + formId + "_content").hide();
+  $("." + formId + "_content").html(content);
+  $("." + formId + "_content").show();
+  $(":file").css("display", "none");
+  getFileArr();
+  toReadMode();
+  $("button[name='approvalBtn']")[0].disabled = false;
 }
+
+//문서 수정 버튼 누르면 수정 완료 버튼 생성
+function createConfirmBtn() {
+  let div = document.getElementsByClassName("mainBtnDiv");
+  if (div[0].childElementCount < 6) {
+    $(".mainBtnDiv").append(
+      "<button type='button'name='modConfirm' onclick='reportModify()' >수정완료 </button>" +
+      "<button type='button'name='modConfirm' onclick=' showReportDetail()'>문서 수정 초기화</button>"
+    );
+  }
+  $(":file").css("display", "inline");
+  getFileModArr();
+
+  storage.newFileData = [];
+  for (let i = 0; i < $(".files").length; i++) {
+    storage.newFileData.push($(".files")[i].dataset.detail);
+  }
+
+  ///결재하기 버튼 disabled
+
+  $("button[name='approvalBtn']")[0].disabled = true;
+  let formId = storage.reportDetailData.formId;
+  $("." + formId + "_content").hide();
+  $("#" + formId + "_content").val($("." + formId + "_content").html());
+  $("#" + formId + "_content").attr("data-detail", $("." + formId + "_content").html());
+  storage.editorArray = [formId + "_content"];
+  ckeditor.config.readOnly = false;
+  window.setTimeout(setEditor, 100);
+}
+
 
 function reset() {
   let formId = storage.reportDetailData.formId;
@@ -2316,6 +1978,115 @@ function reset() {
 
 
 }
+
+
+
+// 결재선 저장 관련 함수 ---------------------------------------------------------------------------------------------------------------------------------------------------
+function setSavedLine(obj) {
+  let val = obj.value;
+  if (val == "middle") {
+    $("#examine").html(
+      "<div class='lineDataContainer' id='lineContainer_4'><label id='linedata4'>구민주</label><button value='4' onclick='upClick(this)'>▲</button><button  value='4'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
+    );
+    $("#approval").html(
+      "<div class='lineDataContainer' id='lineContainer_0'><label id='linedata0'>이승우</label><button value='0' onclick='upClick(this)'>▲</button><button  value='0'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
+    );
+    $("#agree").html("");
+    $("#conduct").html("");
+    $("#refer").html("");
+  } else if (val == "basic") {
+    $("#approval").html(
+      "<div class='lineDataContainer' id='lineContainer_0'><label id='linedata0'>이승우</label><button value='0' onclick='upClick(this)'>▲</button><button  value='0'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'>✕</button></div>"
+    );
+    $("#agree").html("");
+    $("#examine").html("");
+    $("#conduct").html("");
+    $("#refer").html("");
+  }
+}
+
+
+// 파일 관련 함수 ----------------------------------------------------------------------------------------------------------------------------------------------------------
+function setSelectedFiles() {
+  let method, data, type, attached;
+  attached = $(document).find("[name='attached[]']")[0].files;
+
+  if (storage.newFileData === undefined || storage.newFileData <= 0) {
+    storage.newFileData = [];
+  }
+
+  let fileDataArray = storage.newFileData;
+  for (let i = 0; i < attached.length; i++) {
+    let reader = new FileReader();
+    let fileName;
+
+    fileName = attached[i].name;
+
+    // 파일 중복 등록 제거
+    if (!storage.newFileData.includes(fileName)) {
+      storage.newFileData.push(fileName);
+
+      reader.onload = (e) => {
+        let binary,
+          x,
+          fData = e.target.result;
+        const bytes = new Uint8Array(fData);
+        binary = "";
+        for (x = 0; x < bytes.byteLength; x++)
+          binary += String.fromCharCode(bytes[x]);
+        let fileData = cipher.encAes(btoa(binary));
+        let fullData = fileName + "\r\n" + fileData;
+
+        let url = "/api/attached/docapp";
+        url = url;
+        method = "post";
+        data = fullData;
+        type = "insert";
+
+        crud.defaultAjax(
+          url,
+          method,
+          data,
+          type,
+          submitFileSuccess,
+          submitFileError
+        );
+      };
+
+      reader.readAsArrayBuffer(attached[i]);
+    }
+  }
+
+  let html = "";
+
+  for (let i = 0; i < fileDataArray.length; i++) {
+    html +=
+      "<div><div class='files' data-detail='" +
+      fileDataArray[i] +
+      "'>" +
+      fileDataArray[i] +
+      "<button type='button' onclick='fileRemove(this)'>x</button></div></div>";
+  }
+  $(".selectedFileDiv").html(html);
+}
+
+
+
+
+// 데이터 리스트 관련 함수 ---------------------------------------------------------------------------------------------------------------------------------------------------
+
+function getSopp() {
+  let formId = storage.reportDetailData.formId;
+  let slistid = "infoSopp";
+  let soppVal = $("#" + formId + "_sopp").val();
+  let soppResult = dataListFormat(slistid, soppVal);
+  storage.sopp = soppResult;
+  let clistid = "infoCustomer";
+  let customerVal = $("#" + formId + "_infoCustomer").val();
+  let customerResult = dataListFormat(clistid, customerVal);
+  storage.customer = customerResult;
+}
+
 function setCusDataList() {
 
   let id = storage.reportDetailData.formId;
@@ -2343,30 +2114,8 @@ function setCusDataList() {
 
   }
 }
-// function setLineData() {
-//   let newArr = [[], [], [], [], []];
-// for (let j = 0; j < newArr.length; j++) {
-//   for (let i = 1; i < storage.reportDetailData.appLine.length; i++) {
-//     if (storage.reportDetailData.appLine[i].appType == j) {
-//       if (storage.reportDetailData.appLine[i].approved != null) {
-//         newArr[j].push([
-//           storage.reportDetailData.appLine[i].employee,
-//           "승인",
-//           storage.reportDetailData.appLine[i].approved,
-//         ]);
-//       } else if (storage.reportDetailData.appLine[i].rejected != null ) {
-//         newArr[j].push([
-//           storage.reportDetailData.appLine[i].employee,
-//           "반려",
-//           storage.reportDetailData.appLine[i].approved,
-//         ]);
-//       }
-//     }
-//   }
-// }
 
-// let titles = [""]
-// }
+
 
 
 function getProductList() {
@@ -2391,7 +2140,17 @@ function getProductList() {
       }
     }
   });
-} // End of getEstimateList()
+}
+
+
+
+
+
+
+
+
+
+// 일괄 승인 관련 함수 Start -------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
@@ -2407,8 +2166,6 @@ function allCbEvent(obj) {
 
 
 let batchCount = 0;
-
-
 function doBatchApproval() {
 
   let batchData = [];
@@ -2508,3 +2265,112 @@ function doBatchApproval() {
   });
 
 }
+
+
+
+// 날짜 관련 함수 Start -----------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+function getYmdSlash(date) {
+  let d = new Date(date);
+  return (
+    (d.getFullYear() % 100) +
+    "/" +
+    (d.getMonth() + 1 > 9
+      ? (d.getMonth() + 1).toString()
+      : "0" + (d.getMonth() + 1)) +
+    "/" +
+    (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString()) +
+    "&nbsp" +
+    (d.getHours() > 9
+      ? d.getHours().toString()
+      : "0" + d.getHours().toString()) +
+    ":" +
+    (d.getMinutes() > 9
+      ? d.getMinutes().toString()
+      : "0" + d.getMinutes().toString()) +
+    ":" +
+    (d.getSeconds() > 9
+      ? d.getSeconds().toString()
+      : "0" + d.getSeconds().toString())
+  );
+}
+
+function getYmdSlashShort(date) {
+  let d = new Date(date);
+  return (
+    (d.getFullYear() % 100) +
+    "/" +
+    (d.getMonth() + 1 > 9
+      ? (d.getMonth() + 1).toString()
+      : "0" + (d.getMonth() + 1)) +
+    "/" +
+    (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
+  );
+}
+
+
+
+function getYmdShortSlash(date) {
+  let d = new Date(date);
+  return (
+    (d.getFullYear() % 100) +
+    "/" +
+    (d.getMonth() + 1 > 9
+      ? (d.getMonth() + 1).toString()
+      : "0" + (d.getMonth() + 1)) +
+    "/" +
+    (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
+  );
+}
+
+
+function getTotalCount() {
+  let id = stroage.reportDetailData.formId;
+  let totalCount = Number(0);
+  for (let i = 0; i < $("." + id + "_total").length; i++) {
+    if ($("." + id + "_total")[i].dataset.detail != undefined) {
+      totalCount += Number(
+        $("." + id + "_total")
+        [i].dataset.detail.replace(",", "")
+          .replace(",", "")
+          .replace(",", "")
+          .replace(",", "")
+          .replace(",", "")
+          .replace(",", "")
+          .replace(",", "")
+          .replace(",", "")
+      );
+    } else {
+      totalCount += 0;
+    }
+  }
+  $(".insertedTotal").val(Number(totalCount).toLocaleString() + "원");
+  $(".insertedTotal")[0].dataset.detail = Number(totalCount).toLocaleString();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// function setLineData() {
+//   let newArr = [[], [], [], [], []];
+// for (let j = 0; j < newArr.length; j++) {
+//   for (let i = 1; i < storage.reportDetailData.appLine.length; i++) {
+//     if (storage.reportDetailData.appLine[i].appType == j) {
+//       if (storage.reportDetailData.appLine[i].approved != null) {
+//         newArr[j].push([
+//           storage.reportDetailData.appLine[i].employee,
+//           "승인",
+//           storage.reportDetailData.appLine[i].approved,
+//         ]);
+//       } else if (storage.reportDetailData.appLine[i].rejected != null ) {
+//         newArr[j].push([
+//           storage.reportDetailData.appLine[i].employee,
+//           "반려",
+//           storage.reportDetailData.appLine[i].approved,
+//         ]);
+//       }
+//     }
+//   }
+// }
+
+// let titles = [""]
+// }

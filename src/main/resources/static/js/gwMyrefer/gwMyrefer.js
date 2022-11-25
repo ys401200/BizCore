@@ -47,7 +47,11 @@ function drawMyRefer() {
     {
       title: "기안일",
       align: "center",
+    }, {
+      title: "조회 구분",
+      align: "center",
     },
+
     {
       title: "문서양식",
       align: "center",
@@ -86,6 +90,11 @@ function drawMyRefer() {
       setDate = dateFnc(disDate);
       let read = jsonData[i].read;
       let status;
+      let readType = "열람";
+
+
+
+
       if (read == null) {
         read = "N";
       } else {
@@ -117,6 +126,9 @@ function drawMyRefer() {
         status = "반려";
       }
 
+
+
+
       str = [
         // {
         //   "setData": jsonData[i].docNo,
@@ -124,6 +136,9 @@ function drawMyRefer() {
         // },
         {
           "setData": setDate,
+          "align": "center"
+        }, {
+          "setData": readType,
           "align": "center"
         },
         {
@@ -200,24 +215,24 @@ function getDetailView() {
 
   $(".listPageDiv").html(detailHtml);
 
- 
+
   $(".seletedForm").html(testForm);
   $(":file").css("display", "none"); // 첨부파일 버튼 숨기기
 
   let tabHtml =
-  "<div class='reportInfoTab tabs'>" +
-  "<input type='radio' id='tablineInfo' name='tabItem' data-content-id='tabDetail' onclick='tabItemClick(this)' checked>" +
-  "<label  class='tabItem' for='tablineInfo'  style='z-index:5; width:50% ; padding-left : 0%;'>문서정보</label>" +
-  "<input type='radio' id='tabChangeInfo' name='tabItem' data-content-id='tabDetail2' onclick='tabItemClick(this)' >" +
-  "<label  class='tabItem' for='tabChangeInfo' style='z-index:0; width:50% ; padding-left : 50%;' >변경이력</label></div>" +
-  "<div class='tabDetail'id='tabDetail'></div><div class='tabDetail2' id='tabDetail2'></div>";
-$(".comment").html(tabHtml);
+    "<div class='reportInfoTab tabs'>" +
+    "<input type='radio' id='tablineInfo' name='tabItem' data-content-id='tabDetail' onclick='tabItemClick(this)' checked>" +
+    "<label  class='tabItem' for='tablineInfo'  style='z-index:5; width:50% ; padding-left : 0%;'>문서정보</label>" +
+    "<input type='radio' id='tabChangeInfo' name='tabItem' data-content-id='tabDetail2' onclick='tabItemClick(this)' >" +
+    "<label  class='tabItem' for='tabChangeInfo' style='z-index:0; width:50% ; padding-left : 50%;' >변경이력</label></div>" +
+    "<div class='tabDetail'id='tabDetail'></div><div class='tabDetail2' id='tabDetail2'></div>";
+  $(".comment").html(tabHtml);
 
-toReadMode();
-drawCommentLine();
-drawChangeInfo();
-$(".tabDetail2").hide();
-getFileArr();
+  toReadMode();
+  drawCommentLine();
+  drawChangeInfo();
+  $(".tabDetail2").hide();
+  getFileArr();
 
   $(".printBtn").click(openPrintTab);
 
@@ -659,3 +674,4 @@ function getYmdSlash(date) {
       : "0" + d.getSeconds().toString())
   );
 }
+
