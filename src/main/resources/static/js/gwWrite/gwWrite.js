@@ -67,185 +67,10 @@ function getformList() {
   let tt = $(".stepLabel")[0];
   $(tt).css("color", "black");
   $(".simpleAppLine").hide();
-  // let previewWidth = document.getElementsByClassName("reportInsertForm")[0];
-  // previewWidth = previewWidth.clientWidth;
-  // let target = $(".reportInsertForm");
-  // target.css("height", Math.ceil((previewWidth / 210) * 297));
 }
 
 
-// 임시저장문서 가져옴 
-function setTempReport() {
-  if (storage.reportDetailData != undefined) {
-    let formId = storage.reportDetailData.formId;
-    $(".guide").remove();
-    $(".lineDetail").show();
-    $(".createLineBtn").show();
-    $(".insertedDetail").show();
-    $(".simpleAppLine").show();
-    $(".reportInsertForm").html(storage.reportDetailData.doc);
-    $(".insertedDetail").css("border", "1px solid black");
 
-
-    let defaultAppLine = [];
-
-    for (let i = 0; i < $("." + formId + "_examine").length; i++) {
-      defaultAppLine.push([0, $("." + formId + "_examine")[i].dataset.detail]);
-    }
-    for (let i = 0; i < $("." + formId + "_agree").length; i++) {
-      defaultAppLine.push([1, $("." + formId + "_agree")[i].dataset.detail]);
-    }
-    for (let i = 0; i < $("." + formId + "_approval").length; i++) {
-      defaultAppLine.push([2, $("." + formId + "_approval")[i].dataset.detail]);
-    }
-    for (let i = 0; i < $("." + formId + "_conduct").length; i++) {
-      defaultAppLine.push([3, $("." + formId + "_conduct")[i].dataset.detail]);
-    }
-    for (let i = 0; i < $("." + formId + "_refer").length; i++) {
-      defaultAppLine.push([4, $("." + formId + "_refer")[i].dataset.detail]);
-    }
-
-
-    // simplAppLine 채우기
-    let appLine = storage.reportDetailData.appLine == null ? defaultAppLine : storage.reportDetailData.appLine;
-    let simpleapp = "";
-    console.log(appLine.length + "임시저장문서 appLine 확인");
-    let title = ["[검 토] ", "[합 의] ", "[결 재] ", "[수 신] ", "[참 조] "];
-    let newCombine = [[], [], [], [], []];
-    for (let j = 0; j < 5; j++) {
-      for (let i = 0; i < appLine.length; i++) {
-        if (appLine[i][0] == j) {
-          console.log(appLine[i][1]);
-          newCombine[j].push(appLine[i][1]);
-        }
-      }
-    }
-
-    console.log(newCombine);
-
-    for (let k = 0; k < newCombine.length; k++) {
-      if (newCombine[k].length != 0) {
-        simpleapp += title[k];
-      }
-
-      for (let i = 0; i < newCombine.length; i++) {
-        if (k == i) {
-          for (let j = 0; j < newCombine[i].length; j++) {
-            if (j != newCombine[i].length - 1) {
-              simpleapp += storage.user[newCombine[i][j]].userName + "-";
-            } else {
-              simpleapp += storage.user[newCombine[i][j]].userName + " ";
-            }
-          }
-        }
-      }
-    }
-
-    $(".simpleAppLineData").html(simpleapp);
-
-    //작성자 작성일 자동 입력
-    $(".typeContainer").html("");
-    $(".testClass").prop("checked", false);
-    $(".inputsAuto").prop("disabled", "true");
-    $(".saveBtn").prop("disabled", false);
-    $(".previewBtn").prop("disabled", false);
-    $(".inputsAuto").css("text-align", "center");
-    $(".inputsAuto").eq(0).css("text-align", "left");
-    $(".inputsAuto").eq(1).css("text-align", "left");
-    $(".inputsAuto").eq(2).css("text-align", "left");
-    $(".stepLabel").css("color", "black");
-    $(".lineBtnContainer").css("border-left", "2px solid black");
-
-    let target = $(".reportInsertForm")[0];
-    let inputsArr = target.getElementsByTagName("input");
-
-    for (let i = 0; i < inputsArr.length; i++) {
-      if (inputsArr[i].dataset.detail !== undefined) {
-        inputsArr[i].value = inputsArr[i].dataset.detail;
-      }
-    }
-
-    let textAreaArr = target.getElementsByTagName("textarea")[0];
-    textAreaArr.value = textAreaArr.dataset.detail;
-
-    // 이름 , 직급 한글로 설정하기
-    let subTitlesArr = ["_examine", "_approval", "_agree", "_conduct"];
-    for (let i = 0; i < subTitlesArr.length; i++) {
-      if ($("." + formId + subTitlesArr[i]).val() != undefined) {
-        for (let j = 0; j < $("." + formId + subTitlesArr[i]).length; j++) {
-          $("." + formId + subTitlesArr[i])[j].value =
-            storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
-          $("." + formId + subTitlesArr[i] + "_position")[j].value =
-            storage.userRank[
-            $("." + formId + subTitlesArr[i] + "_position")[j].value
-            ][0];
-        }
-      }
-    }
-
-    // 상세타입 체크하게 하기
-    let rd = $("input[name='" + formId + "_RD']");
-    for (let i = 0; i < rd.length; i++) {
-      if (rd[i].dataset.detail == "on") {
-        $("#" + rd[i].id).prop("checked", true);
-      }
-    }
-    $("input[name='" + formId + "_RD']").prop("disabled", false);
-
-
-
-
-    if (formId != "doc_Form_leave" && formId != "doc_Form_extension") {
-      $.ajax({
-        url: "/api/sopp",
-        type: "get",
-        dataType: "json",
-        success: (result) => {
-          if (result.result == "ok") {
-            let jsondata;
-            jsondata = cipher.decAes(result.data);
-            jsondata = JSON.parse(jsondata);
-            storage.soppList = jsondata;
-            setSoppList(formId);
-            setCusDataList();
-          } else {
-            alert("에러");
-          }
-        },
-      });
-
-      // 거래처 데이터 리스트
-
-      let html = $(".infoContentlast")[0].innerHTML;
-      let x;
-      let dataListHtml = "";
-
-      // 거래처 데이터 리스트 만들기
-      dataListHtml = "<datalist id='_infoCustomer'>";
-      for (x in storage.customer) {
-        dataListHtml +=
-          "<option data-value='" +
-          x +
-          "' value='" +
-          storage.customer[x].name +
-          "'></option> ";
-      }
-      dataListHtml += "</datalist>";
-      html += dataListHtml;
-      $(".infoContentlast")[0].innerHTML = html;
-      $("#" + formId + "_infoCustomer").attr("list", "_infoCustomer");
-
-      if (formId == "doc_Form_SalesReport") {
-        $("#" + formId + "_endCustName").attr("list", "_infoCustomer");
-      }
-    }
-    $(".insertbtn").click(setCusDataList);
-    $(".insertbtn").click(setProductData);
-
-  }
-
-
-}
 
 function drawFormList() {
   let data = storage.formList;
@@ -286,12 +111,9 @@ function selectForm() {
   $(".simpleAppLine").show();
   $(".simpleAppLineData").html("");
   setModalhtml();
-  // let tt = $(".lineBtnContainer");
-  //$(tt[0]).addClass("lineBtnContainerB");
   $(".lineDetail").show();
   $(".createLineBtn").show();
   $(".reportInsertForm").html(data[$(".formNumHidden").val()].form);
-  //$(".insertedDetail").show();
 
   //작성자 작성일 자동 입력
   let my = storage.my;
@@ -970,73 +792,10 @@ function createLine() {
   }
 } // End of createLine();
 
-// 날짜 변환 함수
-function getYmdHyphen() {
-  let d = new Date();
-  return (
-    d.getFullYear() +
-    "-" +
-    (d.getMonth() + 1 > 9
-      ? (d.getMonth() + 1).toString()
-      : "0" + (d.getMonth() + 1)) +
-    "-" +
-    (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
-  );
-}
 
-function getYmdSlash() {
-  let d = new Date();
-  return (
-    (d.getFullYear() % 100) +
-    "/" +
-    (d.getMonth() + 1 > 9
-      ? (d.getMonth() + 1).toString()
-      : "0" + (d.getMonth() + 1)) +
-    "/" +
-    (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
-  );
-}
 
-// 자주쓰는 결재선 선택시 설정
-function setSavedLine() {
-  let val = $("select[name='saveLineSelect']")[0].value;
 
-  if (val != "null") {
-    $("#approval").html("");
-    $("#agree").html("");
-    $("#examine").html("");
-    $("#conduct").html("");
-    $("#refer").html("");
-
-    let appLine = storage.savedLine;
-    let selectedAppLine = [];
-    for (let i = 0; i < appLine.length; i++) {
-      if (appLine[i].no == val) {
-        selectedAppLine = appLine[i].appLine;
-      }
-    }
-
-    let target = $(".typeContainer");
-    for (let k = 0; k < selectedAppLine.length; k++) {
-      let html = target[selectedAppLine[k][0]].innerHTML;
-      html +=
-        "<div class='lineDataContainer' id='lineContainer_" +
-        selectedAppLine[k][1] +
-        "'><label id='linedata_" +
-        selectedAppLine[k][1] +
-        "'>" +
-        storage.user[selectedAppLine[k][1]].userName +
-        "</label><button value='" +
-        selectedAppLine[k][1] +
-        "' onclick='upClick(this)'>▲</button><button  value='" +
-        selectedAppLine[k][1] +
-        "'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'><i class='fa-solid fa-xmark'></i></button></div>";
-      target[selectedAppLine[k][0]].innerHTML = html;
-    }
-  }
-}
-
-//기안하기 버튼 함수
+//기안하기 버튼 함수 reportInsert() =================================================================================================
 function reportInsert() {
   let title, content, readable, formId, appDoc, dept;
   let appLine = [];
@@ -1045,8 +804,6 @@ function reportInsert() {
   let detailType = $("input[name='" + formId + "_RD']:checked").attr("id");
 
 
-
-  ////////// sopp 
   let soppVal = $("#" + formId + "_sopp").val();
   if (soppVal == "") {
     $("#" + formId + "_sopp").val("영업기회 미등록");
@@ -1120,7 +877,7 @@ function reportInsert() {
 
 
 
-  // 문서 양식이 수주판매인 경우 related;  // 
+  // 문서 양식이 수주판매인 경우 related;  
   if (formId == "doc_Form_SalesReport") {
 
     for (let i = 0; i < $(".outProduct").length; i++) {
@@ -1219,7 +976,7 @@ function reportInsert() {
   }
 }
 
-// 파일 첨부 버튼 누를 때 마다 반영
+// 파일 관련 함수 ===========================================================================================================================================================
 function docFileChange() {
   let method, data, type, attached;
   attached = $(document).find("[name='attached[]']")[0].files;
@@ -1322,6 +1079,185 @@ function deleteGap() {
     }
   }
 }
+
+
+// 임시저장 함수 setTempReport() / tempSave()==================================================================================================================================================== 
+function setTempReport() {
+  if (storage.reportDetailData != undefined) {
+    let formId = storage.reportDetailData.formId;
+    $(".guide").remove();
+    $(".lineDetail").show();
+    $(".createLineBtn").show();
+    $(".insertedDetail").show();
+    $(".simpleAppLine").show();
+    $(".reportInsertForm").html(storage.reportDetailData.doc);
+    $(".insertedDetail").css("border", "1px solid black");
+    $("#" + formId + "_created").val(getYmdSlash());
+    $("#" + formId + "_created").attr("data-detail", getYmdSlash());
+
+
+    let defaultAppLine = [];
+
+    for (let i = 0; i < $("." + formId + "_examine").length; i++) {
+      defaultAppLine.push([0, $("." + formId + "_examine")[i].dataset.detail]);
+    }
+    for (let i = 0; i < $("." + formId + "_agree").length; i++) {
+      defaultAppLine.push([1, $("." + formId + "_agree")[i].dataset.detail]);
+    }
+    for (let i = 0; i < $("." + formId + "_approval").length; i++) {
+      defaultAppLine.push([2, $("." + formId + "_approval")[i].dataset.detail]);
+    }
+    for (let i = 0; i < $("." + formId + "_conduct").length; i++) {
+      defaultAppLine.push([3, $("." + formId + "_conduct")[i].dataset.detail]);
+    }
+    for (let i = 0; i < $("." + formId + "_refer").length; i++) {
+      defaultAppLine.push([4, $("." + formId + "_refer")[i].dataset.detail]);
+    }
+
+
+    // simplAppLine 채우기
+    let appLine = storage.reportDetailData.appLine == null ? defaultAppLine : storage.reportDetailData.appLine;
+    let simpleapp = "";
+    console.log(appLine.length + "임시저장문서 appLine 확인");
+    let title = ["[검 토] ", "[합 의] ", "[결 재] ", "[수 신] ", "[참 조] "];
+    let newCombine = [[], [], [], [], []];
+    for (let j = 0; j < 5; j++) {
+      for (let i = 0; i < appLine.length; i++) {
+        if (appLine[i][0] == j) {
+          console.log(appLine[i][1]);
+          newCombine[j].push(appLine[i][1]);
+        }
+      }
+    }
+
+    console.log(newCombine);
+
+    for (let k = 0; k < newCombine.length; k++) {
+      if (newCombine[k].length != 0) {
+        simpleapp += title[k];
+      }
+
+      for (let i = 0; i < newCombine.length; i++) {
+        if (k == i) {
+          for (let j = 0; j < newCombine[i].length; j++) {
+            if (j != newCombine[i].length - 1) {
+              simpleapp += storage.user[newCombine[i][j]].userName + "-";
+            } else {
+              simpleapp += storage.user[newCombine[i][j]].userName + " ";
+            }
+          }
+        }
+      }
+    }
+
+    $(".simpleAppLineData").html(simpleapp);
+
+    //작성자 작성일 자동 입력
+    $(".typeContainer").html("");
+    $(".testClass").prop("checked", false);
+    $(".inputsAuto").prop("disabled", "true");
+    $(".saveBtn").prop("disabled", false);
+    $(".previewBtn").prop("disabled", false);
+    $(".inputsAuto").css("text-align", "center");
+    $(".inputsAuto").eq(0).css("text-align", "left");
+    $(".inputsAuto").eq(1).css("text-align", "left");
+    $(".inputsAuto").eq(2).css("text-align", "left");
+    $(".stepLabel").css("color", "black");
+    $(".lineBtnContainer").css("border-left", "2px solid black");
+
+    let target = $(".reportInsertForm")[0];
+    let inputsArr = target.getElementsByTagName("input");
+
+    for (let i = 0; i < inputsArr.length; i++) {
+      if (inputsArr[i].dataset.detail !== undefined) {
+        inputsArr[i].value = inputsArr[i].dataset.detail;
+      }
+    }
+
+    let textAreaArr = target.getElementsByTagName("textarea")[0];
+    textAreaArr.value = textAreaArr.dataset.detail;
+
+    // 이름 , 직급 한글로 설정하기
+    let subTitlesArr = ["_examine", "_approval", "_agree", "_conduct"];
+    for (let i = 0; i < subTitlesArr.length; i++) {
+      if ($("." + formId + subTitlesArr[i]).val() != undefined) {
+        for (let j = 0; j < $("." + formId + subTitlesArr[i]).length; j++) {
+          $("." + formId + subTitlesArr[i])[j].value =
+            storage.user[$("." + formId + subTitlesArr[i])[j].value].userName;
+          $("." + formId + subTitlesArr[i] + "_position")[j].value =
+            storage.userRank[
+            $("." + formId + subTitlesArr[i] + "_position")[j].value
+            ][0];
+        }
+      }
+    }
+
+    // 상세타입 체크하게 하기
+    let rd = $("input[name='" + formId + "_RD']");
+    for (let i = 0; i < rd.length; i++) {
+      if (rd[i].dataset.detail == "on") {
+        $("#" + rd[i].id).prop("checked", true);
+      }
+    }
+    $("input[name='" + formId + "_RD']").prop("disabled", false);
+
+
+
+
+    if (formId != "doc_Form_leave" && formId != "doc_Form_extension") {
+      $.ajax({
+        url: "/api/sopp",
+        type: "get",
+        dataType: "json",
+        success: (result) => {
+          if (result.result == "ok") {
+            let jsondata;
+            jsondata = cipher.decAes(result.data);
+            jsondata = JSON.parse(jsondata);
+            storage.soppList = jsondata;
+            setSoppList(formId);
+            setCusDataList();
+          } else {
+            alert("에러");
+          }
+        },
+      });
+
+      // 거래처 데이터 리스트
+
+      let html = $(".infoContentlast")[0].innerHTML;
+      let x;
+      let dataListHtml = "";
+
+      // 거래처 데이터 리스트 만들기
+      dataListHtml = "<datalist id='_infoCustomer'>";
+      for (x in storage.customer) {
+        dataListHtml +=
+          "<option data-value='" +
+          x +
+          "' value='" +
+          storage.customer[x].name +
+          "'></option> ";
+      }
+      dataListHtml += "</datalist>";
+      html += dataListHtml;
+      $(".infoContentlast")[0].innerHTML = html;
+      $("#" + formId + "_infoCustomer").attr("list", "_infoCustomer");
+
+      if (formId == "doc_Form_SalesReport") {
+        $("#" + formId + "_endCustName").attr("list", "_infoCustomer");
+      }
+    }
+    $(".insertbtn").click(setCusDataList);
+    $(".insertbtn").click(setProductData);
+
+  }
+
+
+}
+
+
+
 
 function tempSave() {
   let dept,
@@ -1458,6 +1394,49 @@ function tempSave() {
 }
 
 // 결재선 정보 저장하기
+
+// 자주쓰는 결재선 관련 함수 lineSaveFnc()/ getSavedLine() / setSavedLinedata() / delSavedLineData() ===========================================================================================
+
+function setSavedLine() {
+  let val = $("select[name='saveLineSelect']")[0].value;
+
+  if (val != "null") {
+    $("#approval").html("");
+    $("#agree").html("");
+    $("#examine").html("");
+    $("#conduct").html("");
+    $("#refer").html("");
+
+    let appLine = storage.savedLine;
+    let selectedAppLine = [];
+    for (let i = 0; i < appLine.length; i++) {
+      if (appLine[i].no == val) {
+        selectedAppLine = appLine[i].appLine;
+      }
+    }
+
+    let target = $(".typeContainer");
+    for (let k = 0; k < selectedAppLine.length; k++) {
+      let html = target[selectedAppLine[k][0]].innerHTML;
+      html +=
+        "<div class='lineDataContainer' id='lineContainer_" +
+        selectedAppLine[k][1] +
+        "'><label id='linedata_" +
+        selectedAppLine[k][1] +
+        "'>" +
+        storage.user[selectedAppLine[k][1]].userName +
+        "</label><button value='" +
+        selectedAppLine[k][1] +
+        "' onclick='upClick(this)'>▲</button><button  value='" +
+        selectedAppLine[k][1] +
+        "'onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'><i class='fa-solid fa-xmark'></i></button></div>";
+      target[selectedAppLine[k][0]].innerHTML = html;
+    }
+  }
+}
+
+
+
 function lineSaveFnc() {
 
   if ($("#approval").html() == "") {
@@ -1504,7 +1483,9 @@ function lineSaveFnc() {
   }
 }
 
-// 로그인한 사람의 사번으로 저장된 결재선 찾음
+
+
+
 function getSavedLine() {
   $.ajax({
     url: "/api/gw/app/savedLine/" + storage.my,
@@ -1562,6 +1543,11 @@ function delSavedLineData() {
   }
 }
 
+
+
+
+// 지출결의서 작성 시 법인카드 관련 함수 getCardDetails / setCardData() ===================================================================================================================
+
 function getCardDetails() {
   let date = new Date();
   let month = date.getMonth();
@@ -1590,6 +1576,8 @@ function getCardDetails() {
     },
   });
 }
+
+
 
 function setCardData() {
   if (storage.cardData.length == 0) {
@@ -1726,8 +1714,11 @@ function setCardData() {
   }
 }
 
-function setCusDataList() {
 
+
+
+// 거래처 데이터리스트 set하는 함수 setCusDataList() Start =====================================================================================================================
+function setCusDataList() {
 
   let id;
   if ($(".formNumHidden").val() == "") {
@@ -1762,3 +1753,29 @@ function setCusDataList() {
 
 
 
+// 날짜 변환 함수 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function getYmdHyphen() {
+  let d = new Date();
+  return (
+    d.getFullYear() +
+    "-" +
+    (d.getMonth() + 1 > 9
+      ? (d.getMonth() + 1).toString()
+      : "0" + (d.getMonth() + 1)) +
+    "-" +
+    (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
+  );
+}
+
+function getYmdSlash() {
+  let d = new Date();
+  return (
+    (d.getFullYear() % 100) +
+    "/" +
+    (d.getMonth() + 1 > 9
+      ? (d.getMonth() + 1).toString()
+      : "0" + (d.getMonth() + 1)) +
+    "/" +
+    (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
+  );
+}
