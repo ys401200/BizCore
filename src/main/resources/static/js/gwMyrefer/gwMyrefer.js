@@ -5,11 +5,12 @@ $(document).ready(() => {
     $("#loadingDiv").hide();
     $("#loadingDiv").loading("toggle");
   }, 300);
-  defaultMyDraft();
+  drawList();
 });
 
-function defaultMyDraft() {
-  $("#gwSubTabTitle").html("참조/열람 문서함");
+function drawList() {
+  let containerTitle = $("#containerTitle");
+  containerTitle.html("참조/열람 문서함");
   let url, method, data, type;
   url = "/api/gw/app/references";
   method = "get";
@@ -80,7 +81,7 @@ function drawMyRefer() {
   } else {
     jsonData = storage.myReferList;
 
-    result = paging(jsonData.length, storage.currentPage, 19);
+    result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 
     pageContainer = document.getElementsByClassName("pageContainer");
     container = $(".listDiv");
@@ -91,9 +92,6 @@ function drawMyRefer() {
       let read = jsonData[i].read;
       let status;
       let readType = "열람";
-
-
-
 
       if (read == null) {
         read = "N";
@@ -126,14 +124,8 @@ function drawMyRefer() {
         status = "반려";
       }
 
-
-
-
       str = [
-        // {
-        //   "setData": jsonData[i].docNo,
-        //   "align": "center"
-        // },
+
         {
           "setData": setDate,
           "align": "center"
@@ -204,16 +196,18 @@ function detailView(obj) {
 
 ///글 제목 눌렀을때 상세 조회하는 페이지 그리기
 function getDetailView() {
+  $(".pageContainer").hide();
+  $(".listRange").hide();
   let formId = storage.reportDetailData.formId;
   let testForm = storage.reportDetailData.doc;
   console.log(testForm);
 
   let detailHtml =
-    "<div class='mainBtnDiv crudBtns'><button type='button' onclick='showList()'>목록보기</button><button type='button' class='printBtn'>인쇄하기</button></div>" +
-    "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
-  // "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
+    "<div class='listPageDiv'><div class='mainBtnDiv crudBtns'><button type='button' onclick='showList()'>목록보기</button><button type='button' class='printBtn'>인쇄하기</button></div>" +
+    "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div></div>";
 
-  $(".listPageDiv").html(detailHtml);
+
+  $(".listDiv").html(detailHtml);
 
 
   $(".seletedForm").html(testForm);
