@@ -49,6 +49,7 @@ function waitDefault() {
     crud.defaultAjax(url, method, data, type, waitSuccessList, waitErrorList);
 
     $(".listPageDiv").show();
+
     $(".batchBtn").show();
   }
 }
@@ -120,7 +121,7 @@ function drawNoticeApproval() {
     let tt = [];
     for (let i = storage.waitList.wait.length - 1; i >= 0; i--) { tt.push(storage.waitList.wait[i]) };
     jsonData = tt;
-    result = paging(jsonData.length, storage.currentPage, 18);
+    result = paging(jsonData.length, storage.currentPage, 2);
 
     pageContainer = document.getElementsByClassName("pageContainer");
     container = $(".listDiv");
@@ -250,17 +251,19 @@ function waitDetailView(obj) {
 
 /* 상세 화면 그리기 */
 function showReportDetail() {
+
+
   $(".batchBtn").hide();
   let formId = storage.reportDetailData.formId;
   let testForm = storage.reportDetailData.doc;
 
   let detailHtml =
-    "<div class='mainBtnDiv crudBtns'><button onclick='showList()'>목록보기</button><button class='printBtn' onclick='openPrintTab();' >인쇄하기</button><button type='button' name='approvalBtn' onclick='showAppModal()'>결재하기</button>" +
+    "<div class='listPageDiv'><div class='mainBtnDiv crudBtns'><button onclick='showList()'>목록보기</button><button class='printBtn' onclick='openPrintTab();' >인쇄하기</button><button type='button' name='approvalBtn' onclick='showAppModal()'>결재하기</button>" +
     "<button type='button' onclick='showGwModal()'>결재선 수정</button>" +
     "<button type='button' onclick='toWriteMode();createConfirmBtn(this)'>문서 수정</button></div>" +
-    "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
+    "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div></div>";
 
-  $(".listPageDiv").html(detailHtml);
+  $(".listDiv").html(detailHtml);
   $(".seletedForm").html(testForm);
   $(":file").css("display", "none"); // 첨부파일 버튼 숨기기
 
@@ -408,7 +411,8 @@ function showReportDetail() {
     $("#" + formId + "_no").attr("data-detail", storage.reportDetailData.confirmNo);
     $("#" + formId + "_no").css("text-align", "left");
   }
-
+  let btnDiv = $(".listPageDiv").children()[0];
+  $(btnDiv).css("display", "flex");
 }
 
 function showList() {

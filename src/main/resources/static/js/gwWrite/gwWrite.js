@@ -967,7 +967,7 @@ function reportInsert() {
       success: (result) => {
         if (result.result === "ok") {
           alert("기안 완료");
-          location.href = "/gw/mydraft";
+          location.href = "/gw/write";
         } else {
           alert(result.msg);
         }
