@@ -185,12 +185,18 @@ public interface GwMapper {
                         @Param("userNo") String userNo);
 
         // 결재 문서함의 목록을 전달하는 메서드
+        // @Select("SELECT CAST(a.no AS CHAR) AS no, a.docNo, CAST(a.writer AS CHAR) AS writer, b.title AS form, a.title, a.confirmNo, CAST(a.status AS CHAR) AS status, CAST(UNIX_TIMESTAMP(a.created)*1000 AS CHAR) AS created, CAST(UNIX_TIMESTAMP(c.received)*1000 AS CHAR) AS processed "
+        //                 +
+        //                 "FROM bizcore.doc_app a, bizcore.doc_form b, " +
+        //                 "(SELECT docNo, IFNULL(approved, rejected) AS received FROM bizcore.doc_app_detail WHERE  deleted IS NULL AND ordered > 0 AND appType IN (0,1,2) AND (rejected IS NOT NULL OR approved IS NOT NULL) AND compId = #{compId} AND employee = #{userNo}) c "
+        //                 +
+        //                 "WHERE a.deleted IS NULL AND a.formid = b.id AND a.docNo = c.docNo AND a.compId = #{compId}")
         @Select("SELECT CAST(a.no AS CHAR) AS no, a.docNo, CAST(a.writer AS CHAR) AS writer, b.title AS form, a.title, a.confirmNo, CAST(a.status AS CHAR) AS status, CAST(UNIX_TIMESTAMP(a.created)*1000 AS CHAR) AS created, CAST(UNIX_TIMESTAMP(c.received)*1000 AS CHAR) AS processed "
-                        +
-                        "FROM bizcore.doc_app a, bizcore.doc_form b, " +
-                        "(SELECT docNo, IFNULL(approved, rejected) AS received FROM bizcore.doc_app_detail WHERE deleted IS NULL AND ordered > 0 AND appType IN (0,1,2) AND (rejected IS NOT NULL OR approved IS NOT NULL) AND compId = #{compId} AND employee = #{userNo}) c "
-                        +
-                        "WHERE a.deleted IS NULL AND a.formid = b.id AND a.docNo = c.docNo AND a.compId = #{compId}")
+        +
+        "FROM bizcore.doc_app a, bizcore.doc_form b, " +
+        "(SELECT docNo, IFNULL(approved, rejected) AS received FROM bizcore.doc_app_detail WHERE retrieved IS NULL AND deleted IS NULL AND ordered > 0 AND appType IN (0,1,2) AND (rejected IS NOT NULL OR approved IS NOT NULL) AND compId = #{compId} AND employee = #{userNo}) c "
+        +
+        "WHERE a.deleted IS NULL AND a.formid = b.id AND a.docNo = c.docNo AND a.compId = #{compId}")
         public List<HashMap<String, String>> getApprovedList(@Param("compId") String compId,
                         @Param("userNo") String userNo);
 

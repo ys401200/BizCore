@@ -1081,6 +1081,7 @@ function deleteGap() {
 }
 
 
+
 // 임시저장 함수 setTempReport() / tempSave()==================================================================================================================================================== 
 function setTempReport() {
   if (storage.reportDetailData != undefined) {

@@ -1030,7 +1030,10 @@ public class GwService extends Svc {
     private List<HashMap<String, String>> getAppDocList(String compId, String userNo, String sqlIn) {
         List<HashMap<String, String>> result = new ArrayList<>();
         HashMap<String, String> each = null;
-        String sql = "SELECT CAST(a.no AS CHAR) AS no, a.docno AS docno, CAST(a.writer AS CHAR) AS writer, CAST(UNIX_TIMESTAMP(a.created)*1000 AS CHAR) AS created, c.title AS form, a.title AS title, CAST(UNIX_TIMESTAMP(b.`read`)*1000 AS CHAR) AS `read`, CAST(b.apptype AS CHAR) AS appType FROM bizcore.doc_app a, bizcore.doc_app_detail b, bizcore.doc_form c WHERE b.deleted IS NULL AND c.id=a.formid AND a.compid=? AND b.employee=? AND a.docno=b.docno AND b.ordered > 0 AND a.status=1 AND a.docno IN ('"
+        // String sql = "SELECT CAST(a.no AS CHAR) AS no, a.docno AS docno, CAST(a.writer AS CHAR) AS writer, CAST(UNIX_TIMESTAMP(a.created)*1000 AS CHAR) AS created, c.title AS form, a.title AS title, CAST(UNIX_TIMESTAMP(b.`read`)*1000 AS CHAR) AS `read`, CAST(b.apptype AS CHAR) AS appType FROM bizcore.doc_app a, bizcore.doc_app_detail b, bizcore.doc_form c WHERE  b.deleted IS NULL AND c.id=a.formid AND a.compid=? AND b.employee=? AND a.docno=b.docno AND b.ordered > 0 AND a.status=1 AND a.docno IN ('"
+        //         + sqlIn + "')";
+
+                String sql = "SELECT CAST(a.no AS CHAR) AS no, a.docno AS docno, CAST(a.writer AS CHAR) AS writer, CAST(UNIX_TIMESTAMP(a.created)*1000 AS CHAR) AS created, c.title AS form, a.title AS title, CAST(UNIX_TIMESTAMP(b.`read`)*1000 AS CHAR) AS `read`, CAST(b.apptype AS CHAR) AS appType FROM bizcore.doc_app a, bizcore.doc_app_detail b, bizcore.doc_form c WHERE b.retrieved IS NULL AND  b.deleted IS NULL AND c.id=a.formid AND a.compid=? AND b.employee=? AND a.docno=b.docno AND b.ordered > 0 AND a.status=1 AND a.docno IN ('"
                 + sqlIn + "')";
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -1159,6 +1162,8 @@ public class GwService extends Svc {
                 +
                 "WHERE compId = ? AND docno = ? AND ordered = ? ";
 
+        String sql3 = "UPDATE bizcore.doc_app SET status = 1, confirmNo = null WHERE compId = ? AND docNo = ? ";
+
         Connection conn = null;
         PreparedStatement pstmt = null;
 
@@ -1181,7 +1186,16 @@ public class GwService extends Svc {
                 result = pstmt.executeUpdate();
             }
 
-            logger.info("sql1 test2 :" + result);
+            logger.info("sql1 test2 :" + result); 
+
+            pstmt.close();
+
+            if (result > 0) {
+                pstmt = conn.prepareStatement(sql3);
+                pstmt.setString(1, compId);
+                pstmt.setString(2, docNo);
+                pstmt.executeUpdate();
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();
