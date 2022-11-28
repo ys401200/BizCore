@@ -5,12 +5,13 @@ $(document).ready(() => {
     $("#loadingDiv").hide();
     $("#loadingDiv").loading("toggle");
   }, 300);
-  defaultMyDraft();
+  drawList();
 });
 
-function defaultMyDraft() {
+function drawList() {
 
-  $("#gwSubTabTitle").html("임시 저장함");
+  let containerTitle = $("#containerTitle");
+  containerTitle.html("임시 저장함");
   let checkHref = location.href;
   checkHref = checkHref.split("//");
   checkHref = checkHref[1];
@@ -110,7 +111,7 @@ function drawMyDraft() {
     let tt = [];
     for (let i = storage.myTempList.length - 1; i >= 0; i--) { tt.push(storage.myTempList[i]) };
     jsonData = tt;
-    result = paging(jsonData.length, storage.currentPage, 10);
+    result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 
     pageContainer = document.getElementsByClassName("pageContainer");
     container = $(".listDiv");
@@ -213,10 +214,10 @@ function getDetailView() {
   console.log(testForm);
 
   let detailHtml =
-    "<div class='mainBtnDiv crudBtns'><button type='button' onclick='showList()'>목록보기</button><button type='button' onclick='reWriteTemp()'>이어서 작성</button><button type='button' onclick='deleteTemp()'>삭제하기</button></div>" +
-    "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div></div>";
+    "<div class='listPageDiv'><div class='mainBtnDiv crudBtns'><button type='button' onclick='showList()'>목록보기</button><button type='button' onclick='reWriteTemp()'>이어서 작성</button><button type='button' onclick='deleteTemp()'>삭제하기</button></div>" +
+    "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div></div></div>";
 
-  $(".listPageDiv").html(detailHtml);
+  $(".listDiv").html(detailHtml);
 
 
   $(".seletedForm").html(testForm);
