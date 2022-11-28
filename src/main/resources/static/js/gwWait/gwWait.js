@@ -2166,11 +2166,11 @@ function allCbEvent(obj) {
 
 
 let batchCount = 0;
-function doBatchApproval(obj) {
-  let appType;
+function doBatchApproval() {
   let batchData = [];
   let insertData;
   let batchBtns = $("input[name='batchBtns']:checked");
+ 
   if (batchBtns.length == 0) {
     alert("승인/반려할 문서를 선택하세요");
   } else {
@@ -2216,7 +2216,7 @@ function doBatchApproval(obj) {
             title: null,
             related: related,
           };
-          appType = $(obj).html().includes("승인") ? 1 : 2;
+        
           approveData = JSON.stringify(approveData);
           approveData = cipher.encAes(approveData);
           $.ajax({
@@ -2226,7 +2226,7 @@ function doBatchApproval(obj) {
               storage.reportDetailData.docNo +
               "/" +
               ordered +
-              "/" + appType,
+              "/1",
             method: "post",
             dataType: "json",
             data: approveData,
@@ -2239,12 +2239,12 @@ function doBatchApproval(obj) {
                 if (batchCount < batchData.length) {
                   doBatchApproval();
                 } else {
-                  alert("일괄 승인 완료");
+                  alert("일괄 결재 완료");
                 }
 
 
               } else {
-                console.log("승인 실패" + batchCount)
+                console.log("결재 실패" + batchCount)
                 batchCount++;
                 if (batchCount < batchData.length) {
                   doBatchApproval();
@@ -2267,6 +2267,122 @@ function doBatchApproval(obj) {
     });
   }
 }
+
+
+
+
+
+function doBatchReject() {
+  let batchData = [];
+  let insertData;
+  let batchBtns = $("input[name='batchBtns']:checked");
+ 
+  if (batchBtns.length == 0) {
+    alert("승인/반려할 문서를 선택하세요");
+  } else {
+    for (let i = 0; i < batchBtns.length; i++) {
+      batchData.push(batchBtns[i].dataset.detail);
+    }
+
+    insertData = batchData[batchCount];
+
+    $.ajax({
+      url: apiServer + "/api/gw/app/doc/" + insertData,
+      method: "get",
+      dataType: "json",
+      cache: false,
+      success: (data) => {
+        let detailData;
+        if (data.result === "ok") {
+          detailData = cipher.decAes(data.data);
+          detailData = JSON.parse(detailData);
+          detailData.doc = cipher.decAes(detailData.doc);
+          detailData.doc = detailData.doc.replaceAll('\\"', '"');
+          storage.reportDetailData = detailData;
+
+          let approveData, customer, related, appLine, ordered;
+          customer = (storage.reportDetailData.custmer == "" || storage.reportDetailData.custmer == null || storage.reportDetailData.custmer == undefined) ? "" : storage.reportDetailData.customer;
+          related = storage.reportDetailData.related;
+          related = JSON.stringify(related);
+          appLine = storage.reportDetailData.appLine;
+          for (let i = 0; i < appLine.length; i++) {
+            if (appLine[i].employee == storage.my)
+              ordered = appLine[i].ordered;
+          }
+
+
+          approveData = {
+            doc: null,
+            comment: null,
+            files: null,
+            appLine: null,
+            appDoc: null,
+            sopp: storage.reportDetailData.sopp + "",
+            customer: customer + "",
+            title: null,
+            related: related,
+          };
+        
+          approveData = JSON.stringify(approveData);
+          approveData = cipher.encAes(approveData);
+          $.ajax({
+            url:
+              apiServer +
+              "/api/gw/app/proceed/" +
+              storage.reportDetailData.docNo +
+              "/" +
+              ordered +
+              "/0",
+            method: "post",
+            dataType: "json",
+            data: approveData,
+            contentType: "text/plain",
+            cache: false,
+            success: (data) => {
+              if (data.result === "ok") {
+
+                batchCount++;
+                if (batchCount < batchData.length) {
+                  doBatchApproval();
+                } else {
+                  alert("일괄 결재 완료");
+                }
+
+
+              } else {
+                console.log("결재 실패" + batchCount)
+                batchCount++;
+                if (batchCount < batchData.length) {
+                  doBatchApproval();
+                }
+
+              }
+            },
+          });
+
+
+        } else {
+          console.log("상세조회에 실패함" + batchCount)
+          batchCount++;
+          if (batchCount < batchData.length) {
+            doBatchApproval();
+          }
+
+        }
+      },
+    });
+  }
+}
+
+
+
+
+
+
+
+
+
+
 
 
 

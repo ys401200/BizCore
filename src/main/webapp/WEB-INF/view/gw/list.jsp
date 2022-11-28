@@ -10,8 +10,8 @@
 					<hr />
 					<span id="gwSubTabTitle">결재 대기 문서</span>
 					<div class="crudBtns batchBtn" style="display:none" >
-						<button onclick="doBatchApproval(this)">승인</button>
-						<button onclick="doBatchApproval(this)">반려</button>
+						<button onclick="doBatchApproval()">승인</button>
+						<button onclick="doBatchReject()">반려</button>
 					</div>
 					<div class="subContainer">
 						<div class="listPageDiv">
