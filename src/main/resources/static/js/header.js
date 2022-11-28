@@ -2537,7 +2537,7 @@ function calWindowLength() {
 	bodyContent = $("#bodyContent");
 	searchContainer = $(".searchContainer");
 	containerTitle = $("#containerTitle");
-	searchCal = parseInt(bodyContent.innerHeight() - searchContainer.innerHeight());
+	searchCal = searchContainer.innerHeight() === undefined ? parseInt(bodyContent.innerHeight()) : (parseInt(bodyContent.innerHeight()) - searchContainer.innerHeight());
 	titleCal = parseInt(containerTitle.innerHeight() + 70);
 	totalCal = (parseInt(searchCal - titleCal) - parseInt(36)) / parseInt(38);
 

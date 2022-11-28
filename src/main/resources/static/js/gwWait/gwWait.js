@@ -62,9 +62,9 @@ function waitSuccessList(result) {
 function waitErrorList() {
   alert("에러");
 }
-
 // 결재 대기 문서 리스트 그리기 
 function drawNoticeApproval() {
+
   let container,
     result,
     jsonData,
@@ -121,7 +121,8 @@ function drawNoticeApproval() {
     let tt = [];
     for (let i = storage.waitList.wait.length - 1; i >= 0; i--) { tt.push(storage.waitList.wait[i]) };
     jsonData = tt;
-    result = paging(jsonData.length, storage.currentPage, 2);
+
+    result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 
     pageContainer = document.getElementsByClassName("pageContainer");
     container = $(".listDiv");
@@ -218,6 +219,7 @@ function drawNoticeApproval() {
     );
     pageContainer[0].innerHTML = pageNation;
     createCheckGrid(container, header, data, ids, job, fnc);
+
   }
 } // End of drawNoticeApproval()
 

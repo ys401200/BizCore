@@ -6,11 +6,12 @@
 				<jsp:include page="../sideMenu.jsp" />
 			</div>
 			<div id="bodyContent">
+				<!-- <div class="searchContainer"></div> -->
 				<div class="container">
 					<hr />
-					<span id="gwSubTabTitle">결재 대기 문서</span>
+					<span id="containerTitle">결재 대기 문서</span>
 					<div class="listRange">
-						<input type="range" class="listRangeInput" max="100" step="10" value="0">
+						<input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="listRangeChange(this, drawNoticeApproval)">
 						<span class="listRangeSpan">0</span>
 					</div>
 					<div class="crudBtns batchBtn" style="display:none">
