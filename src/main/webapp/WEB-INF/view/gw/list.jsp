@@ -11,7 +11,7 @@
 					<hr />
 					<span id="containerTitle">결재 대기 문서</span>
 					<div class="listRange">
-						<input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="listRangeChange(this, drawNoticeApproval)">
+						<input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="listRangeChange(this, drawList)">
 						<span class="listRangeSpan">0</span>
 					</div>
 					<div class="crudBtns batchBtn" style="display:none">

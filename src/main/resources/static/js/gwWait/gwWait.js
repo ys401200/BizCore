@@ -6,10 +6,10 @@ $(document).ready(() => {
     $("#loadingDiv").loading("toggle");
   }, 300);
 
-  waitDefault();
+  drawList();
 });
 
-function waitDefault() {
+function drawList() {
   $(".modal-wrap").hide();
 
   let checkHref = location.href;
@@ -32,7 +32,7 @@ function waitDefault() {
           detailData.doc = cipher.decAes(detailData.doc);
           detailData.doc = detailData.doc.replaceAll('\\"', '"');
           storage.reportDetailData = detailData;
-          showReportDetail();
+          getDetailView();
 
         } else {
           alert("문서 정보를 가져오는 데 실패했습니다");
@@ -243,7 +243,7 @@ function waitDetailView(obj) {
         detailData.doc = cipher.decAes(detailData.doc);
         detailData.doc = detailData.doc.replaceAll('\\"', '"');
         storage.reportDetailData = detailData;
-        showReportDetail();
+        getDetailView();
       } else {
         alert("문서 정보를 가져오는 데 실패했습니다");
       }
@@ -252,9 +252,10 @@ function waitDetailView(obj) {
 } // End of noticeDetailView();
 
 /* 상세 화면 그리기 */
-function showReportDetail() {
+function getDetailView() {
 
-
+  $(".pageContainer").hide();
+  $(".listRange").hide();
   $(".batchBtn").hide();
   let formId = storage.reportDetailData.formId;
   let testForm = storage.reportDetailData.doc;
@@ -278,13 +279,7 @@ function showReportDetail() {
     "<div class='tabDetail'id='tabDetail'></div><div class='tabDetail2' id='tabDetail2'></div>";
   $(".comment").html(tabHtml);
 
-  toReadMode();
-  drawCommentLine();
-  getFileArr();
-  getProductList();
-  drawChangeInfo();
-  $(".tabDetail2").hide();
-
+ 
 
   let target = $(".seletedForm")[0];
   let inputsArr = target.getElementsByTagName("input");
@@ -415,6 +410,13 @@ function showReportDetail() {
   }
   let btnDiv = $(".listPageDiv").children()[0];
   $(btnDiv).css("display", "flex");
+  toReadMode();
+  drawCommentLine();
+  getFileArr();
+  getProductList();
+  drawChangeInfo();
+  $(".tabDetail2").hide();
+
 }
 
 function showList() {
@@ -1724,7 +1726,7 @@ function deleteClick(obj) {
 
 // 문서 수정 취소 함수
 // function quitModify() {
-//   showReportDetail();
+//   getDetailView();
 
 // }
 
@@ -1806,7 +1808,7 @@ function createConfirmBtn() {
   if (div[0].childElementCount < 6) {
     $(".mainBtnDiv").append(
       "<button type='button'name='modConfirm' onclick='reportModify()' >수정완료 </button>" +
-      "<button type='button'name='modConfirm' onclick=' showReportDetail()'>문서 수정 초기화</button>"
+      "<button type='button'name='modConfirm' onclick=' getDetailView()'>문서 수정 초기화</button>"
     );
   }
   $(":file").css("display", "inline");

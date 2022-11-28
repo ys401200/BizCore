@@ -6,25 +6,17 @@ $(document).ready(() => {
     $("#loadingDiv").loading("toggle");
   }, 300);
 
-  referDefault();
+  drawList();
 });
 
 // 참조 문서는 상세 조회가 가능하고 열람은 결재가 끝난 후에 참조/열람 문서함에서 열람 가능함
-function referDefault() {
-
-
-
-
-
-
-
+function drawList() {
 
 
 
   $(".modal-wrap").hide();
-  $("#gwSubTabTitle").html("결재 수신 문서");
-
-
+  let containerTitle = $("#containerTitle");
+  containerTitle.html("결재 수신 문서");
 
   let checkHref = location.href;
   checkHref = checkHref.split("//");
@@ -257,14 +249,17 @@ function detailView(obj) {
 
 ///글 제목 눌렀을때 상세 조회하는 페이지 그리기
 function getDetailView() {
+  $(".pageContainer").hide();
+  $(".listRange").hide();
+  $(".batchBtn").hide();
   let testForm = storage.reportDetailData.doc;
-  console.log(testForm);
+  
 
   let detailHtml =
-    "<div class='mainBtnDiv crudBtns'><button onclick='showList()'>목록보기</button><button type='button'onclick='showAppModal()'>결재하기</button><button class='printBtn' onclick='openPrintTab();' >인쇄하기</button></div>" +
-    "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
-  //"<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
-  $(".listPageDiv").html(detailHtml);
+    "<div class='listPageDiv'><div class='mainBtnDiv crudBtns'><button onclick='showList()'>목록보기</button><button type='button'onclick='showAppModal()'>결재하기</button><button class='printBtn' onclick='openPrintTab();' >인쇄하기</button></div>" +
+    "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div></div>";
+  
+  $(".listDiv").html(detailHtml);
 
 
   $(".seletedForm").html(testForm);

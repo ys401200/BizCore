@@ -6,14 +6,13 @@ $(document).ready(() => {
     $("#loadingDiv").loading("toggle");
   }, 300);
 
-  dueDefault();
+  drawList();
 });
 
-function dueDefault() {
+function drawList() {
   $(".modal-wrap").hide();
-
-  $("#gwSubTabTitle").html("결재 예정 문서");
-
+  let containerTitle = $("#containerTitle");
+  containerTitle.html("결재 예정 문서");
   let checkHref = location.href;
   checkHref = checkHref.split("//");
   checkHref = checkHref[1];
@@ -49,6 +48,7 @@ function dueDefault() {
     crud.defaultAjax(url, method, data, type, successList, errorList);
 
     $(".listPageDiv").show();
+    // $(".listRangeInput")[0].on("input",listRangeChange(this ,dueDefault));
   }
 }
 
@@ -78,10 +78,7 @@ function drawApproval() {
     container = $(".listDiv");
 
     header = [
-      // {
-      //   title: "번호",
-      //   align: "center",
-      // },
+
       {
         title: "작성일",
         align: "center",
@@ -110,20 +107,17 @@ function drawApproval() {
       "<div class='noListDefault'>결재 예정 문서가 없습니다</div>"
     );
   } else {
-    // jsonData = storage.dueList.due;
+
     let tt = [];
     for (let i = storage.dueList.due.length - 1; i >= 0; i--) { tt.push(storage.dueList.due[i]) };
     jsonData = tt;
-    result = paging(jsonData.length, storage.currentPage, 14);
+    result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 
     pageContainer = document.getElementsByClassName("pageContainer");
     container = $(".listDiv");
 
     header = [
-      // {
-      //   title: "번호",
-      //   align: "center",
-      // },
+
       {
         title: "작성일",
         align: "center",
@@ -164,10 +158,7 @@ function drawApproval() {
         appType = "참조";
       }
       str = [
-        // {
-        //   "setData": jsonData[i].docNo,
-        //   "align" : "center"
-        // },
+
         {
           "setData": setDate,
           "align": "center"
@@ -235,16 +226,18 @@ function detailView(obj) {
 
 ///글 제목 눌렀을때 상세 조회하는 페이지 그리기
 function getDetailView() {
+  $(".pageContainer").hide();
+  $(".listRange").hide();
+  $(".batchBtn").hide();
   let formId = storage.reportDetailData.formId;
   let testForm = storage.reportDetailData.doc;
 
   let detailHtml =
-    "<div class='mainBtnDiv crudBtns'><button type='button'onclick='showList()'>목록보기</button><button class='printBtn' onclick='openPrintTab();' >인쇄하기</button></div>" +
-    "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
-  // "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
+    "<div class='listPageDiv'><div class='mainBtnDiv crudBtns'><button type='button'onclick='showList()'>목록보기</button><button class='printBtn' onclick='openPrintTab();' >인쇄하기</button></div>" +
+    "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div></div>";
+ 
 
-
-  $(".listPageDiv").html(detailHtml);
+  $(".listDiv").html(detailHtml);
   $(".seletedForm").html(testForm);
   $(":file").css("display", "none"); // 첨부파일 버튼 숨기기
 
