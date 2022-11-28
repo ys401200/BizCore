@@ -11,9 +11,6 @@ $(document).ready(() => {
 
 // 참조 문서는 상세 조회가 가능하고 열람은 결재가 끝난 후에 참조/열람 문서함에서 열람 가능함
 function drawList() {
-
-
-
   $(".modal-wrap").hide();
   let containerTitle = $("#containerTitle");
   containerTitle.html("결재 수신 문서");
@@ -89,10 +86,7 @@ function drawApproval() {
     container = $(".listDiv");
 
     header = [
-      // {
-      //   title: "번호",
-      //   align: "center",
-      // },
+     
       {
         title: "작성일",
         align: "center",
@@ -125,15 +119,12 @@ function drawApproval() {
     let tt = [];
     for (let i = storage.receiveList.receive.length - 1; i >= 0; i--) { tt.push(storage.receiveList.receive[i]) };
     jsonData = tt;
-    result = paging(jsonData.length, storage.currentPage, 5);
+    result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 
     pageContainer = document.getElementsByClassName("pageContainer");
     container = $(".listDiv");
     header = [
-      // {
-      //   title: "번호",
-      //   align: "center",
-      // },
+      
       {
         title: "작성일",
         align: "center",
@@ -173,10 +164,7 @@ function drawApproval() {
         appType = "참조";
       }
       str = [
-        // {
-        //   "setData": jsonData[i].docNo,
-        //   "align" : "center"
-        // },
+        
         {
           "setData": setDate,
           "align": "center"

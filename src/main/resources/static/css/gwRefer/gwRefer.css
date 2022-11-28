@@ -1,63 +1,7 @@
 @charset "UTF-8";
 
-.searchContainer {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	/*margin: 2%;*/
-	height: 5rem;
-	background: #FFFFFF;
-	overflow: auto;
-	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
-}
 
-.searchContainer .searchSelect {
-	margin-right: 1%;
-}
 
-.searchContainer .searchSelect select {
-	color: #332E85;
-	padding: 5px;
-	font-size: 1.2rem;
-	font-weight: 500;
-	border: 0;
-	background-color: #EDEDF4;
-}
-
-.searchContainer .searchSelect select:hover {
-	border: 1px solid#332E85;
-}
-
-.searchContainer .searchText {
-	margin-right: 1%;
-}
-
-.searchContainer .searchText input {
-	padding: 5px;
-	font-size: 1.2rem;
-	font-weight: 500;
-	width: 500px;
-	border: 0;
-	background-color: #EDEDF4;
-}
-
-.searchContainer .searchText input:hover {
-	border: 1px solid#332E85;
-}
-
-.searchContainer .searchBtn button {
-	color: #ffffff;
-	padding: 5px;
-	font-size: 1.2rem;
-	font-weight: 500;
-	width: 100px;
-	border: 0;
-	background-color: #332E85;
-}
-
-.searchContainer .searchBtn button:hover {
-	cursor: pointer;
-}
 
 .container {
 	position: relative;
@@ -77,47 +21,27 @@
 	margin: 0;
 }
 
-.container span:not(.textNumberFormat) {
+
+.container #containerTitle {
 	font-weight: bolder;
 	font-size: 15px;
 	padding-left: 15px;
 	line-height: 40px;
 	color: #406c92;
+	float: left;
 }
 
+.container .gridList {
+	display: grid;
+	width: 99%;
+	margin: 0 auto;
+}
 
-.subContainer .batchBtn {
+.container .batchBtn {
 	display: flex;
 	align-items: right;
 	justify-content: right;
 	padding-right: 2em;
-}
-
-
-.subContainer .listPageDiv>div {
-	margin: 0 auto;
-	width: 99%;
-}
-
-.subContainer .listPageDiv>div:last-of-type {
-
-	margin: 1em;
-}
-
-
-
-/* 체크박스만 선택  */
-.subContainer .listPageDiv .listDiv div div:last-child {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-
-.subContainer .listPageDiv .listDiv .noListDefault {
-	text-align: center;
-	color: gray;
-	margin: 8em 0;
-	width: 99%;
 }
 
 
@@ -126,10 +50,15 @@
 
 
 
-.listDiv>div:first-child {
+.listDiv .listPageDiv {
+	display: grid;
+}
+
+.listDiv .gridHeader {
 	border-bottom: 1px solid #425da8;
 	background-color: #f2f5ff;
 }
+
 
 
 .listDiv .grid_default_body_item:nth-child(2n-1) {
