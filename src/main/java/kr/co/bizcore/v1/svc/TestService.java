@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -415,6 +416,47 @@ public class TestService extends Svc{
             // 견적 상세 정보
         }catch(SQLException e){e.printStackTrace();}
         
+        return result;
+    }
+
+    // 조달정보 JSON 변환 테스트 메서드
+    public String convertProcure(){
+        String result = null;
+        List<HashMap<String, Object>> list = null;
+        HashMap<String, Object> each = null;
+        Date dt = null;
+        int x = 0;
+        
+        result = "[";
+        list = testMapper.getProcureInfo();
+        for(x = 0 ; x < list.size() ; x++){
+            if(x > 0)   result += ",";
+            each = list.get(x);
+            result += ("{\"id\":" + each.get("id") + ",");
+            result += ("\"customerCode\":\"" + each.get("customerCode") + "\",");
+            result += ("\"customerName\":\"" + each.get("customerName") + "\",");
+            result += ("\"area\":\"" + each.get("area") + "\",");
+            result += ("\"type\":\"" + each.get("type") + "\",");
+            result += ("\"reqNo\":" + each.get("reqNo") + ",");
+            result += ("\"itemCode\":" + each.get("itemCode") + ",");
+            result += ("\"item\":\"" + each.get("item") + "\",");
+            result += ("\"price\":" + each.get("price") + ",");
+            result += ("\"qty\":" + each.get("qty") + ",");
+            result += ("\"unit\":\"" + each.get("unit") + "\",");
+            result += ("\"amount\":" + each.get("amount") + ",");
+            result += ("\"title\":\"" + each.get("title") + "\",");
+            result += ("\"modQty\":" + each.get("modQty") + ",");
+            result += ("\"modAmount\":" + each.get("modAmount") + ",");
+            dt = each.get("contractDate") == null ? null : (Date)each.get("contractDate");
+            result += ("\"contractDate\":" + (dt == null ? null : dt.getTime()) + ",");
+            result += ("\"deliveryPlace\":\"" + each.get("deliveryPlace") + "\",");
+            result += ("\"sopp\":" + each.get("sopp") + ",");
+            dt = each.get("created") == null ? null : (Date)each.get("created");
+            result += ("\"created\":" + (dt == null ? null : dt.getTime()) + ",");
+            dt = each.get("modified") == null ? null : (Date)each.get("modified");
+            result += ("\"modified\":" + (dt == null ? null : dt.getTime()) + "}");
+        }
+        result += "]";
         return result;
     }
 }

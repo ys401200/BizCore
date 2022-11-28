@@ -43,6 +43,50 @@
 	background-color: #f8f8f8;
 }
 
+.context-menu{
+	position:absolute;
+	width: 6rem;
+	height: 5rem;
+	border:1px solid #cdcdcd;
+	background-color:white;
+	z-index:100;
+	text-align:right;
+	font-size:0.65rem;
+}
+.context-menu > div:nth-child(1){
+	display:inline-block;
+	margin:0;
+	width:1.3rem;
+	height:1.3rem;
+	cursor:pointer;
+	border-radius: 50%;;
+}
+.context-menu > div:nth-child(2),
+.context-menu > div:nth-child(3),
+.context-menu > div:nth-child(4),
+.context-menu > div:nth-child(5){
+	margin:0.1rem;
+	padding:0.1rem;
+	cursor:pointer;
+	text-align:left;
+}
+.context-menu > div:hover{background-color:#e0e0e0}
+
+.project-new{
+	display:flex;
+	align-items: center;
+	justify-content: center;
+	margin:1rem 1rem 0.3rem;
+	border:2px dotted #d8d8d8;
+	padding:0.6rem;
+	border-radius: 0.4rem;
+	background-color: #f8f8f8;
+	height:2.5rem;
+}
+.project-new:hover{background-color: #f3f3f3;}
+
+.project-new > svg{cursor:pointer;}
+
 .project-box{
 	display:grid;
 	/* display:inline-grid; */
@@ -230,3 +274,31 @@ prgbar.fail:before {border-left: 0.5rem solid #ff5c5c;}
     vertical-align: bottom;
 	margin: 0 0.1em 0 0.4em;
 }
+
+
+.deptTree{
+    width:90%;
+    margin:0 auto;
+    border:1px solid #3e3e9e;
+    height:calc(100% - 70px);
+    text-align: initial;
+    padding: 1.5rem;
+    box-sizing: border-box;
+    overflow: auto;
+}
+.deptTree .dept-tree-cnt{
+    display:inline-block;
+    width:calc(100% - 1.5rem);
+    margin-left:1.5rem;
+}
+.deptTree > .deptName{
+    display:block;
+    padding: 0.1rem;
+}
+.deptTree .deptName > label{width:1.2rem;height:1.2rem;display: inline-block;vertical-align: middle;}
+.deptTree .dept-tree-select{
+    width:9px;margin-left:0.5em;
+}
+
+.dept-tree-select:checked + label > div{background-color: #cff9ff;}
+.deptTree label > div{padding:0.25rem 0;}

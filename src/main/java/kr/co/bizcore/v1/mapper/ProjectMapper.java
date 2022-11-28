@@ -13,6 +13,9 @@ public interface ProjectMapper {
     @Select("SELECT no, title, `desc`, owner, related, closed, created, modified FROM bizcore.project WHERE deleted IS NULL AND compId = #{compId}")
     public List<Project> getProjectList(@Param("compId") String compId);
 
+    @Select("SELECT no, title, `desc`, owner, related, closed, created, modified FROM bizcore.project WHERE deleted IS NULL AND compId = #{compId} AND no = #{no}")
+    public Project getProject(@Param("compId") String compId, @Param("no") int no);
+
     @Select("SELECT `no`, stage, title, `desc`, owner, coWorker, customer, picOfCustomer, partner, picOfPartner, expactetSales, expactedDate, related, closed, created, modified FROM bizcore.sopp WHERE deleted IS NULL AND compId = #{compId}")
     public List<Sopp2> getSoppList(@Param("compId") String compId);
 }

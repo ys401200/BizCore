@@ -2,6 +2,7 @@ package kr.co.bizcore.v1.svc;
 
 import java.util.List;
 
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -53,5 +54,24 @@ public class ProjectService extends Svc{
 
         return result;
     } // End of getProjects()
+
+    public int updateProject(String compId, Project prj) {
+        int result = -999, no = -999;
+        String sql = null;
+        Project ogn = null;
+        if(prj == null) return result;
+        no = prj.getNo();
+        if(no == -1){
+            no = getNextNumberFromDB(compId, "bizcore.project");
+            prj.setNo(no);
+            sql = prj.createInsertQuery("bizcore.project", compId);
+        }else{
+            ogn = projectMapper.getProject(compId, no);
+            sql = ogn.createUpdateQuery(prj, "bizcore.project");
+            sql += (" WHERE no = " + no + " AND compId = '" + compId + "'");
+        }
+        result = executeSqlQuery(sql);
+        return result;
+    } // End of updateProject()
     
 }

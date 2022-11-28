@@ -288,4 +288,10 @@ public class SystemCtrl extends Ctrl {
 
         return result;
     }
+
+    @GetMapping("/procure")
+    public String procure(){
+
+        return testService.convertProcure();
+    }
 }

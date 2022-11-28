@@ -51,6 +51,7 @@ public class JobSchedulerSvc extends Svc{
         cleanKeepLoginInfo(); // 만료된 로그인 유지정보 삭제
         copyCustomerInfoFromLegacyDB(); // 고객사 정보 자동 복사
         copyTradeInfoFromLegacyDB(); // 매입매출 자료 복사
+        copyProcure(); // 조달 정보 복사
 
         // 스케줄 작업
     } // End of scheduleJob()
@@ -96,6 +97,13 @@ public class JobSchedulerSvc extends Svc{
         logger.debug("[Job Scheduler] Deleted temp files : " + x);
 
     } // End of cleanTempFiles()
+
+    // 자동수집된 조달 정보를 복사하는 메서드
+    private int copyProcure(){
+        Integer x = null;
+        x = procureMapper.copyProcure();
+        return x == null ? 0 : x;
+    }
 
     // 시간이 경과한 로그인 유지 정보를 정리하는 메서드
     private void cleanKeepLoginInfo(){
