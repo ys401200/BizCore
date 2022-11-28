@@ -667,3 +667,7 @@ input {
    display: flex;
    flex-direction: row;
 }
+
+.crudBtns>button {
+   margin-right: 0.5rem;
+}
