@@ -5,10 +5,10 @@ $(document).ready(() => {
     $("#loadingDiv").hide();
     $("#loadingDiv").loading("toggle");
   }, 300);
-  defaultMyDraft();
+  drawList();
 });
 
-function defaultMyDraft() {
+function drawList() {
   let url, method, data, type;
   url = "/api/gw/app/mydraft";
   method = "get";
@@ -237,15 +237,17 @@ function detailView(obj) {
 
 ///글 제목 눌렀을때 상세 조회하는 페이지 그리기
 function getDetailView() {
+  $(".pageContainer").hide();
+  $(".listRange").hide();
   let formId = storage.reportDetailData.formId;
   let testForm = storage.reportDetailData.doc;
   console.log(testForm);
 
   let detailHtml =
-    "<div class='mainBtnDiv crudBtns'><button type='button' onclick='showList()'>목록보기</button><button type='button' onclick='returnReport()'>회수</button><button class='printBtn'>인쇄하기</button></div>" +
-    "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
+    "<div class='listPageDiv'><div class='mainBtnDiv crudBtns'><button type='button' onclick='showList()'>목록보기</button><button type='button' onclick='returnReport()'>회수</button><button class='printBtn'>인쇄하기</button></div>" +
+    "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div></div>";
 
-  $(".listPageDiv").html(detailHtml);
+  $(".listDiv").html(detailHtml);
   $(".seletedForm").html(testForm);
   $(":file").css("display", "none"); // 첨부파일 버튼 숨기기
 

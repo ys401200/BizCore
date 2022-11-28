@@ -5,11 +5,12 @@ $(document).ready(() => {
     $("#loadingDiv").hide();
     $("#loadingDiv").loading("toggle");
   }, 300);
-  defaultMyDraft();
+  drawList();
 });
 
-function defaultMyDraft() {
-  $("#gwSubTabTitle").html("회수 문서함");
+function drawList() {
+  let containerTitle = $("#containerTitle");
+  containerTitle.html("회수 문서함");
   let url, method, data, type;
   url = "/api/gw/app/mydraft";
   method = "get";
@@ -83,7 +84,7 @@ function drawMyDraft() {
     let tt = [];
     for (let i = storage.myDraftList.length - 1; i >= 0; i--) { tt.push(storage.myDraftList[i]) };
     jsonData = tt;
-    result = paging(jsonData.length, storage.currentPage, 18);
+    result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 
     pageContainer = document.getElementsByClassName("pageContainer");
     container = $(".listDiv");
@@ -212,22 +213,18 @@ function detailView(obj) {
 
 ///글 제목 눌렀을때 상세 조회하는 페이지 그리기
 function getDetailView() {
-
+  $(".pageContainer").hide();
+  $(".listRange").hide();
   let my = storage.my;
-  let formId;
-  formId = storage.reportDetailData.formId;
-
-
-
-  formId = storage.reportDetailData.formId;
+  let formId = storage.reportDetailData.formId;
   let testForm = storage.reportDetailData.doc;
 
 
   let detailHtml =
-    "<div class='mainBtnDiv crudBtns'><button type='button' onclick='showList()'>목록보기</button><button type='button' name='repostBtn' onclick='repostReport()'>기안하기</button></div>" +
-    "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
+    "<div class='listPageDiv'><div class='mainBtnDiv crudBtns'><button type='button' onclick='showList()'>목록보기</button><button type='button' name='repostBtn' onclick='repostReport()'>기안하기</button></div>" +
+    "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div></div>";
 
-  $(".listPageDiv").html(detailHtml);
+  $(".listDiv").html(detailHtml);
   $(".seletedForm").html(testForm);
   $(":file").css("display", "none"); // 첨부파일 버튼 숨기기
 

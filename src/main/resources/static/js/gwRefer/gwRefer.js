@@ -231,6 +231,8 @@ function detailView(obj) {
 
 ///글 제목 눌렀을때 상세 조회하는 페이지 그리기
 function getDetailView() {
+  $(".pageContainer").hide();
+  $(".listRange").hide();
   let formId = storage.reportDetailData.formId;
   let testForm = storage.reportDetailData.doc;
   console.log(testForm);

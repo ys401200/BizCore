@@ -25,43 +25,19 @@ input[type="date"]:read-only {
   margin: 0;
 }
 
-.container span:not(.textNumberFormat) {
-  font-weight: bolder;
-  font-size: 15px;
-  padding-left: 15px;
-  line-height: 40px;
-  color: #406c92;
+.container #containerTitle {
+	font-weight: bolder;
+	font-size: 15px;
+	padding-left: 15px;
+	line-height: 40px;
+	color: #406c92;
+	float: left;
 }
 
-.subContainer .batchBtn {
-  display: flex;
-  align-items: right;
-  justify-content: right;
-  padding-right: 2em;
-}
-
-.subContainer .listPageDiv>div {
-  margin: 0 auto;
-  width: 99%;
-}
-
-.subContainer .listPageDiv>div:last-of-type {
-  width: auto;
-  margin: 1em;
-}
-
-/* 체크박스만 선택  */
-.subContainer .listPageDiv .listDiv div div:last-child {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.subContainer .listPageDiv .listDiv .noListDefault {
-  text-align: center;
-  color: gray;
-  margin: 8em 0;
-  width: 99%;
+.container .gridList {
+	display: grid;
+	width: 99%;
+	margin: 0 auto;
 }
 
 
@@ -69,7 +45,6 @@ input[type="date"]:read-only {
   padding: 0.5% 0.7%;
   text-align: center;
 }
-
 /*-------------------------------- 상세조회 페이지 상단 버튼  */
 
 .listDiv .gridHeader,
@@ -77,28 +52,33 @@ input[type="date"]:read-only {
   grid-template-columns: 10% 10% 70% 10%;
 }
 
-/* .subContainer .listPageDiv .pageContainer {
+/* .container .listPageDiv .pageContainer {
   display: flex;
   float: right;
 } */
 
-.subContainer .listPageDiv .pageContainer .paging_cell_current {
+.container .listPageDiv .pageContainer .paging_cell_current {
   background-color: #eaeff3;
   border: 1px solid #507698;
 }
 
-.subContainer .listPageDiv .pageContainer div:not(.paging_cell_current) {
+.container .listPageDiv .pageContainer div:not(.paging_cell_current) {
   background-color: #fff;
 }
 
-.subContainer .listPageDiv .pageContainer div:hover {
+.container .listPageDiv .pageContainer div:hover {
   background-color: #406c92;
   border: 1px solid #507698;
 }
 
-.listDiv>div:first-child {
-  border-bottom: 1px solid #425da8;
-  background-color: #f2f5ff;
+
+.listDiv .listPageDiv {
+	display: grid;
+}
+
+.listDiv .gridHeader {
+	border-bottom: 1px solid #425da8;
+	background-color: #f2f5ff;
 }
 
 
@@ -107,13 +87,13 @@ input[type="date"]:read-only {
 }
 
 /* 상세조회 페이지 css Start ===============   */
-.subContainer .listPageDiv .mainBtnDiv {
+.container .listPageDiv .mainBtnDiv {
   display: flex;
   align-items: left;
   margin-bottom: 1em;
 }
 
-.subContainer .listPageDiv .mainBtnDiv button {
+.container .listPageDiv .mainBtnDiv button {
   margin: 0 1em 1em 0;
 }
 

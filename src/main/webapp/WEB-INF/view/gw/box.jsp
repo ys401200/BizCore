@@ -8,16 +8,15 @@
 			<div id="bodyContent">
 				<div class="container">
 					<hr />
-					<span id="gwSubTabTitle">기안 문서함</span>
-
-					<div class="subContainer">
-						<div class="listPageDiv">
-							<!-- <div class="batchBtn"><button type="button">일괄 결재 </button></div> -->
-							<div class="listDiv"></div>
-							<div class="pageContainer"></div>
-						</div>
-						<div class="modal-wrap"></div>
+					<span id="containerTitle">기안 문서함</span>
+					<div class="listRange">
+						<input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="listRangeChange(this, drawList)">
+						<span class="listRangeSpan">0</span>
 					</div>
+					<div class="gridList">
+						<div class="listDiv"></div>
+					</div>
+					<div class="pageContainer"></div>
 				</div>
 			</div>
 		</div>

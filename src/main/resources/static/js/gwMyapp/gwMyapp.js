@@ -6,11 +6,12 @@ $(document).ready(() => {
     $("#loadingDiv").loading("toggle");
   }, 300);
 
-  waitDefault();
+  drawList();
 });
 
-function waitDefault() {
-  $("#gwSubTabTitle").html("결재 문서함");
+function drawList() {
+  let containerTitle = $("#containerTitle");
+  containerTitle.html("결재 문서함");
 
   // 리스트 보기
   let url, method, data, type;
@@ -82,16 +83,13 @@ function drawNoticeApproval() {
     let tt = [];
     for (let i = storage.approvedList.length - 1; i >= 0; i--) { tt.push(storage.approvedList[i]) };
     jsonData = tt;
-    result = paging(jsonData.length, storage.currentPage, 8);
+    result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 
     pageContainer = document.getElementsByClassName("pageContainer");
     container = $(".listDiv");
 
     header = [
-      // {
-      //   title: "번호",
-      //   align: "center",
-      // },
+
       {
         title: "작성일",
         align: "center",
@@ -130,10 +128,7 @@ function drawNoticeApproval() {
       }
 
       str = [
-        // {
-        //   "setData": jsonData[i].docNo,
-        //   "align" : "center"
-        // },
+
         {
           "setData": setDate,
           "align": "center"
@@ -202,20 +197,19 @@ function waitDetailView(obj) {
 
 /* 상세 화면 그리기 */
 function showReportDetail() {
+  $(".pageContainer").hide();
+  $(".listRange").hide();
   let formId = storage.reportDetailData.formId;
   let testForm = storage.reportDetailData.doc;
 
   let detailHtml =
-    "<div class='mainBtnDiv crudBtns'><button type='button' onclick='showList()'>목록보기</button>" +
+    "<div class='listPageDiv'><div class='mainBtnDiv crudBtns'><button type='button' onclick='showList()'>목록보기</button>" +
     "<button  class='printBtn' onclick='openPrintTab();'>인쇄하기</button><button onclick='cancelApproval()'>결재취소</button></div>" +
-    "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
+    "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div></div>";
   // "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='referDiv'><label>참조</label><div class='selectedRefer'></div></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
 
-  $(".listPageDiv").html(detailHtml);
-
-
+  $(".listDiv").html(detailHtml);
   $(".seletedForm").html(testForm);
-
   $(":file").css("display", "none"); // 첨부파일 버튼 숨기기
 
   let tabHtml =

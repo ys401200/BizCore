@@ -7,66 +7,6 @@ input[type="date"]:read-only {
 }
 
 
-
-.searchContainer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /*margin: 2%;*/
-  height: 5rem;
-  background: #ffffff;
-  overflow: auto;
-  box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
-}
-
-.searchContainer .searchSelect {
-  margin-right: 1%;
-}
-
-.searchContainer .searchSelect select {
-  color: #332e85;
-  padding: 5px;
-  font-size: 1.2rem;
-  font-weight: 500;
-  border: 0;
-  background-color: #ededf4;
-}
-
-.searchContainer .searchSelect select:hover {
-  border: 1px solid#332E85;
-}
-
-.searchContainer .searchText {
-  margin-right: 1%;
-}
-
-.searchContainer .searchText input {
-  padding: 5px;
-  font-size: 1.2rem;
-  font-weight: 500;
-  width: 500px;
-  border: 0;
-  background-color: #ededf4;
-}
-
-.searchContainer .searchText input:hover {
-  border: 1px solid#332E85;
-}
-
-.searchContainer .searchBtn button {
-  color: #ffffff;
-  padding: 5px;
-  font-size: 1.2rem;
-  font-weight: 500;
-  width: 100px;
-  border: 0;
-  background-color: #332e85;
-}
-
-.searchContainer .searchBtn button:hover {
-  cursor: pointer;
-}
-
 .container {
   position: relative;
   width: 100%;
@@ -85,43 +25,19 @@ input[type="date"]:read-only {
   margin: 0;
 }
 
-.container span:not(.textNumberFormat) {
-  font-weight: bolder;
-  font-size: 15px;
-  padding-left: 15px;
-  line-height: 40px;
-  color: #406c92;
+.container #containerTitle {
+	font-weight: bolder;
+	font-size: 15px;
+	padding-left: 15px;
+	line-height: 40px;
+	color: #406c92;
+	float: left;
 }
 
-.subContainer .batchBtn {
-  display: flex;
-  align-items: right;
-  justify-content: right;
-  padding-right: 2em;
-}
-
-.subContainer .listPageDiv>div {
-  margin: 0 auto;
-  width: 99%;
-}
-
-.subContainer .listPageDiv>div:last-of-type {
-  width: auto;
-  margin: 1em;
-}
-
-/* 체크박스만 선택  */
-.subContainer .listPageDiv .listDiv div div:last-child {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.subContainer .listPageDiv .listDiv .noListDefault {
-  text-align: center;
-  color: gray;
-  margin: 8em 0;
-  width: 99%;
+.container .gridList {
+	display: grid;
+	width: 99%;
+	margin: 0 auto;
 }
 
 
@@ -138,43 +54,46 @@ input[type="date"]:read-only {
   grid-template-columns: 10% 10% 55% 5% 5% 10% 5%;
 }
 
-/* .subContainer .listPageDiv .pageContainer {
+/* .container .listPageDiv .pageContainer {
   display: flex;
   float: right;
 } */
 
-.subContainer .listPageDiv .pageContainer .paging_cell_current {
+.container .listPageDiv .pageContainer .paging_cell_current {
   background-color: #eaeff3;
   border: 1px solid #507698;
 }
 
-.subContainer .listPageDiv .pageContainer div:not(.paging_cell_current) {
+.container .listPageDiv .pageContainer div:not(.paging_cell_current) {
   background-color: #fff;
 }
 
-.subContainer .listPageDiv .pageContainer div:hover {
+.container .listPageDiv .pageContainer div:hover {
   background-color: #406c92;
   border: 1px solid #507698;
 }
 
-.listDiv>div:first-child {
-  border-bottom: 1px solid #425da8;
-  background-color: #f2f5ff;
+.listDiv .listPageDiv {
+	display: grid;
 }
 
+.listDiv .gridHeader {
+	border-bottom: 1px solid #425da8;
+	background-color: #f2f5ff;
+}
 
 .listDiv .grid_default_body_item:nth-chhild(2n-1) {
   background-color: rgba(234, 239, 243, 0.4);
 }
 
 /* 상세조회 페이지 css Start ===============   */
-.subContainer .listPageDiv .mainBtnDiv {
+.container .listPageDiv .mainBtnDiv {
   display: flex;
   align-items: left;
   margin-bottom: 1em;
 }
 
-.subContainer .listPageDiv .mainBtnDiv button {
+.container .listPageDiv .mainBtnDiv button {
   margin: 0 1em 1em 0;
 }
 
