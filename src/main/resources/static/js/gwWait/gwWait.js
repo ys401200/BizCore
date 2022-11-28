@@ -110,7 +110,7 @@ function drawNoticeApproval() {
 
     ];
 
-    createGrid(container, header, data, ids, job, fnc);
+    createCheckGrid(container, header, data, ids, job, fnc);
 
     container.append(
       "<div class='noListDefault'>결재 대기 문서가 없습니다</div>"
@@ -148,7 +148,7 @@ function drawNoticeApproval() {
         align: "center",
       },
       {
-        title: "<input type='checkbox' onclick='allCbEvent(this)'>",
+        title: "<input type='checkbox'  onclick='allCbEvent(this)'>",
         align: "center",
       }
 
@@ -173,7 +173,7 @@ function drawNoticeApproval() {
 
 
 
-      let check = "<input type='checkbox' name='batchBtns' data-detail='" + jsonData[i].docNo + "'>"
+      let check = "<input type='checkbox'  name='batchBtns' data-detail='" + jsonData[i].docNo + "'>"
       str = [
 
         {
@@ -204,7 +204,7 @@ function drawNoticeApproval() {
       ];
 
       fnc = "waitDetailView(this)";
-      ids.push(jsonData[i].no);
+      ids.push(jsonData[i].docNo);
       data.push(str);
     }
 
@@ -216,7 +216,7 @@ function drawNoticeApproval() {
       result[0]
     );
     pageContainer[0].innerHTML = pageNation;
-    createGrid(container, header, data, ids, job, fnc);
+    createCheckGrid(container, header, data, ids, job, fnc);
   }
 } // End of drawNoticeApproval()
 
@@ -224,16 +224,8 @@ function drawNoticeApproval() {
 
 // 결재 대기 문서 상세 조회하기 
 function waitDetailView(obj) {
-  let no = obj.dataset.id;
-  let docNo;
 
-  let searchList = storage.waitList.wait;
-
-  for (let i = 0; i < searchList.length; i++) {
-    if (searchList[i].no == no) {
-      docNo = searchList[i].docNo;
-    }
-  }
+  let docNo = $(obj).parent().attr("data-id");
 
   $.ajax({
     url: apiServer + "/api/gw/app/doc/" + docNo,
@@ -2170,7 +2162,7 @@ function doBatchApproval() {
   let batchData = [];
   let insertData;
   let batchBtns = $("input[name='batchBtns']:checked");
- 
+
   if (batchBtns.length == 0) {
     alert("승인/반려할 문서를 선택하세요");
   } else {
@@ -2216,7 +2208,7 @@ function doBatchApproval() {
             title: null,
             related: related,
           };
-        
+
           approveData = JSON.stringify(approveData);
           approveData = cipher.encAes(approveData);
           $.ajax({
@@ -2276,7 +2268,7 @@ function doBatchReject() {
   let batchData = [];
   let insertData;
   let batchBtns = $("input[name='batchBtns']:checked");
- 
+
   if (batchBtns.length == 0) {
     alert("승인/반려할 문서를 선택하세요");
   } else {
@@ -2322,7 +2314,7 @@ function doBatchReject() {
             title: null,
             related: related,
           };
-        
+
           approveData = JSON.stringify(approveData);
           approveData = cipher.encAes(approveData);
           $.ajax({
@@ -2468,27 +2460,74 @@ function getTotalCount() {
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// function setLineData() {
-//   let newArr = [[], [], [], [], []];
-// for (let j = 0; j < newArr.length; j++) {
-//   for (let i = 1; i < storage.reportDetailData.appLine.length; i++) {
-//     if (storage.reportDetailData.appLine[i].appType == j) {
-//       if (storage.reportDetailData.appLine[i].approved != null) {
-//         newArr[j].push([
-//           storage.reportDetailData.appLine[i].employee,
-//           "승인",
-//           storage.reportDetailData.appLine[i].approved,
-//         ]);
-//       } else if (storage.reportDetailData.appLine[i].rejected != null ) {
-//         newArr[j].push([
-//           storage.reportDetailData.appLine[i].employee,
-//           "반려",
-//           storage.reportDetailData.appLine[i].approved,
-//         ]);
-//       }
-//     }
-//   }
-// }
+function createCheckGrid(gridContainer, headerDataArray, dataArray, ids, job, fnc, idName) {
+  let gridHtml = "", gridContents, idStr;
+  ids = (ids === undefined) ? 0 : ids;
+  fnc = (fnc === undefined) ? "" : fnc;
+  job = (job === undefined) ? "" : job;
 
-// let titles = [""]
-// }
+  if (idName === undefined) {
+    idStr = "gridContent";
+  } else {
+    idStr = idName;
+  }
+
+  gridHtml = "<div class='gridHeader grid_default_header_item'>";
+
+  for (let i = 0; i < headerDataArray.length; i++) {
+    if (headerDataArray[i].align === "center") {
+      gridHtml += "<div class='gridHeaderItem grid_default_text_align_center'>" + headerDataArray[i].title + "</div>";
+    } else if (headerDataArray[i].align === "left") {
+      gridHtml += "<div class='gridHeaderItem grid_default_text_align_left'>" + headerDataArray[i].title + "</div>";
+    } else {
+      gridHtml += "<div class='gridHeaderItem grid_default_text_align_right'>" + headerDataArray[i].title + "</div>";
+    }
+  }
+
+  gridHtml += "</div>";
+
+  for (let i = 0; i < dataArray.length; i++) {
+    gridHtml += "<div id='" + idStr + "_grid_" + i + "' class='gridContent grid_default_body_item' data-drag=\"true\" data-id='" + ids[i] + "' data-job='" + job[i] + "' >";
+    for (let t = 0; t <= dataArray[i].length; t++) {
+      if (dataArray[i][t] !== undefined) {
+        if (dataArray[i][t].setData === undefined) {
+          gridHtml += "<div class='gridContentItem' onclick='" + fnc + "' style=\"grid-column: span " + dataArray[i][t].col + "; text-align: center;\">데이터가 없습니다.</div>";
+        } else if (dataArray[i][t].setData.includes("checkbox")) {
+          gridHtml += "<div class='gridContentItem'><span class=\"textNumberFormat\">" + dataArray[i][t].setData + "</span></div>";
+        } else {
+          gridHtml += "<div class='gridContentItem' onclick='" + fnc + "'><span class=\"textNumberFormat\">" + dataArray[i][t].setData + "</span></div>";
+        }
+      }
+    }
+    gridHtml += "</div>";
+  }
+
+  gridContainer.html(gridHtml);
+
+  if (idName === undefined) {
+    gridContents = $(".gridContent");
+  } else {
+    gridContents = $("#" + idName + " .gridContent");
+  }
+
+  let tempArray = [];
+
+  for (let i = 0; i < dataArray.length; i++) {
+    for (let key in dataArray[i]) {
+      tempArray.push(dataArray[i][key]);
+    }
+  }
+
+  for (let i = 0; i < tempArray.length; i++) {
+    for (let t = 0; t < gridContents.length; t++) {
+      if (tempArray[i].align === "center") {
+        $(gridContents[t]).find(".gridContentItem").eq(i).attr("class", "gridContentItem grid_default_text_align_center");
+      } else if (tempArray[i].align === "left") {
+        $(gridContents[t]).find(".gridContentItem").eq(i).attr("class", "gridContentItem grid_default_text_align_left");
+      } else {
+        $(gridContents[t]).find(".gridContentItem").eq(i).attr("class", "gridContentItem grid_default_text_align_right");
+      }
+    }
+  }
+
+}
