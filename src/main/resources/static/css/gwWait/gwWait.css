@@ -427,7 +427,19 @@
    margin-bottom: 1em;
 }
 
+.setApprovalModal .modal-body .commentContainer {
+   display: flex;
+   flex-direction: column;
+
+}
+
+.setApprovalModal .modal-body .commentContainer>textarea {
+   width: inherit;
+
+}
+
 .setApprovalModal {
+   width: 30%;
    background-color: white;
 }
 
@@ -442,16 +454,6 @@
 }
 
 
-.close-wrap {
-   text-align: right;
-}
-
-.close-wrap>button {
-   margin: 0.3em 0.5em;
-}
-
-
-
 
 /*-------------------------------- 결재선 수정 모달 css  */
 .gwModal {
@@ -460,9 +462,6 @@
    border-radius: 0.3em;
 
 }
-
-
-
 
 .lineDetail {
    display: block;
@@ -629,24 +628,9 @@
    font-weight: normal;
 }
 
-.gwModal .close-wrap #close {
-   background-color: #93adc5;
-   color: #fff;
-}
-
-.gwModal .close-wrap button {
-   box-shadow: none;
-}
-
 
 
 /*-------------------------------- 헤더 float 설정 초기화   */
-button,
-select,
-input {
-   margin: 0;
-   float: none;
-}
 
 .dept-tree-cnt>label {
    display: flex;
@@ -657,6 +641,6 @@ input {
    display: flex;
 } */
 
-/* .crudBtns>button {
+.crudBtns>button {
    margin-right: 0.5rem;
-} */
+}
