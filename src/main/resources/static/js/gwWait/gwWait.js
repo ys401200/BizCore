@@ -1804,13 +1804,15 @@ function setAppLineData() {
 // 상단 버튼 관련 함수 ----------------------------------------------------------------------------------------------------------------------------------------------
 // 문서 수정시 변경이력에 반영
 function reportModify() {
+  let formId = storage.reportDetailData.formId;
+  let content = CKEDITOR.instances[formId + "_content"].getData();
   $(".modal-wrap").hide();
   $("button[name='modConfirm']:last-child").remove();
   $("button[name='modConfirm']:last-child").remove();
-  let formId = storage.reportDetailData.formId;
-  let content = CKEDITOR.instances[formId + "_content"].getData();
   $(".cke_editable").remove();
 
+  $("button[name='approvalBtn']")[0].disabled = false;
+  $("input[name='" + formId + "_RD']").prop("disabled", true);
   $("#" + formId + "_content").attr("data-detail", content);
   $("#" + formId + "_content").val(content);
   $("#" + formId + "_content").hide();
@@ -1819,7 +1821,7 @@ function reportModify() {
   $(":file").css("display", "none");
   getFileArr();
   toReadMode();
-  $("button[name='approvalBtn']")[0].disabled = false;
+
 }
 
 //문서 수정 버튼 누르면 수정 완료 버튼 생성
@@ -1849,6 +1851,10 @@ function createConfirmBtn() {
   storage.editorArray = [formId + "_content"];
   ckeditor.config.readOnly = false;
   window.setTimeout(setEditor, 100);
+
+
+  $("input[name='" + formId + "_RD']").prop("disabled", false);
+
 }
 
 
