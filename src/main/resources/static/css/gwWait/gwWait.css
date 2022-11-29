@@ -305,7 +305,7 @@
 
 .tapLineB {
    grid-template-columns: 10% 15% 35% 40%;
-    margin: 0 1em; 
+   margin: 0 1em;
 }
 
 #tabDetail2>.tapLineB:first-of-type {
@@ -404,23 +404,7 @@
    z-index: 10;
 }
 
-.modal-wrap .setApprovalModal,
-.modal-wrap .setModifyModal {
-   background-color: #332E85;
-   width: 20%;
-   border-radius: 0.3em;
-}
 
-
-.modal-wrap .setModifyModal textarea,
-.modal-wrap .setApprovalModal textarea {
-   border: 1px solid black;
-   height: 5em;
-   overflow-y: scroll;
-   resize: none;
-
-
-}
 
 .modal-title {
    font-weight: 500;
@@ -437,10 +421,18 @@
 }
 
 
-.modal-wrap .setApprovalModal .modal-body .labelContainer {
+.setApprovalModal .modal-body .labelContainer {
    display: grid;
    grid-template-columns: repeat(2, 1fr);
    margin-bottom: 1em;
+}
+
+.setApprovalModal {
+   background-color: white;
+}
+
+.approvalComment {
+   border: 1px solid black;
 }
 
 
@@ -463,11 +455,13 @@
 
 /*-------------------------------- 결재선 수정 모달 css  */
 .gwModal {
-   background-color: #456e95;
+   background-color: white;
    width: 60%;
    border-radius: 0.3em;
-   padding: 0.5em 0.5em 0.9em 0.5em;
+
 }
+
+
 
 
 .lineDetail {
@@ -478,7 +472,7 @@
    color: black;
    height: 25rem;
    display: grid;
-   grid-template-columns: 35% 15% 50%;
+   grid-template-columns: 25% 15% 60%;
    overflow: auto;
 }
 
@@ -494,6 +488,7 @@
    background-color: #ffffff;
    overflow: auto;
    border-radius: 3px;
+   border: 1px solid #B5B2FF;
 }
 
 
@@ -572,9 +567,22 @@
    font-size: 15px;
 }
 
-/* #lineRight label .typeContainer {
-   padding:5px 0;
- } */
+
+
+.lineDetail #lineRight>div:not(:first-of-type)>div:first-of-type {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   border: 1px solid #B5B2FF;
+   background-color: #DAD9FF;
+   color: #000;
+   font-weight: 600;
+}
+
+.lineDetail #lineRight>div:not(:first-of-type)>div:last-of-type {
+   border: 1px solid #B5B2FF;
+   border-left: none;
+}
 
 
 
@@ -612,12 +620,7 @@
 }
 
 /*결재선 모달창 버튼*/
-.gwModal #lineCenter button {
-   height: 25px;
-   font-weight: bolder;
-   box-shadow: 0px 2px 4px #a5b6c1;
-   color: #61829e;
-}
+
 
 .gwModal #lineCenter button:hover,
 .lineDataContainer button:hover {

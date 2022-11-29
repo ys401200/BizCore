@@ -840,12 +840,12 @@ function showAppModal() {
 
   let setAppModalHtml =
     "<div class='setApprovalModal'>" +
-    "<div class='modal-title'>결재하기</div>" +
+    "<div class='modalHead'><span class='modalHeadTitle'>결재하기</span><span class='xClose' onclick='closeModal(this)'><i class='fa-solid fa-xmark'></i></span></div>" +
     "<div class='modal-body'><div class='labelContainer'>" +
     "<label><input type='radio' name='type'  value='approve' checked>승인</label>" +
     "<label><input type='radio' name='type' value='reject'>반려</label></div>" +
     "<label>의견 <textarea class='approvalComment'></textarea></label></div>" +
-    "<div class='close-wrap'>" +
+    "<div class='close-wrap crudBtns'>" +
     "<button id='quit' onclick='closeModal(this)'>취소</button>" +
     "<button id='set' onclick='approveBtnEvent()'>결재</button></div></div>";
   $(".modal-wrap").html(setAppModalHtml);
@@ -1012,29 +1012,29 @@ function approveBtnEvent() {
 function showGwModal() {
   let setGwModalHtml =
     "<div class='gwModal'>" +
-    "<div class='modal-title'>결재선 수정( * 현재 결재 단계 이후만 추가/삭제 가능)</div>" +
+    "<div class='modalHead'><span class='modalHeadTitle'>결재선 수정( * 현재 결재 단계 이후만 추가/삭제 가능)</span><span class='xClose'><i class='fa-solid fa-xmark'></i></span></div>" +
     "<div class='lineDetail'>" +
     "<div class='lineTop'>" +
     "<div class='innerDetail' id='lineLeft'></div>" +
-    "<div class='innerDetail' id='lineCenter'>" +
+    "<div class='innerDetail crudBtns' id='lineCenter'>" +
     "<button class='appTypeBtn'  onclick='check(this.value)' value='examine'>검토 &gt;</button>" +
     "<button class='appTypeBtn'  onclick='check(this.value)' value='approval'>결재 &gt;</button>" +
     "<button class='appTypeBtn'  onclick='check(this.value)' value='conduct'>수신 &gt;</button>" +
     "<button class='appTypeBtn'  onclick='check(this.value)' value='refer'>참조 &gt;</button></div>" +
     "<div class='innerDetail' id='lineRight'>" +
     "<div></div>" +
-    "<div><div>검토</div>" +
+    "<div><div class='defaultFormSpanDiv'>검토</div>" +
     "<div class='typeContainer' id='examine'></div></div>" +
-    "<div><div>결재</div>" +
+    "<div><div class='defaultFormSpanDiv'>결재</div>" +
     "<div class='typeContainer' id='approval'></div></div>" +
-    "<div><div>수신</div>" +
+    "<div><div class='defaultFormSpanDiv'>수신</div>" +
     "<div class='typeContainer' id='conduct'></div></div>" +
-    "<div><div>참조</div>" +
+    "<div><div class='defaultFormSpanDiv'>참조</div>" +
     "<div class='typeContainer' id='refer'></div></div>" +
     "</div>" +
     "</div>" +
     "</div>" +
-    "<div class='close-wrap'>" +
+    "<div class='close-wrap crudBtns'>" +
     " <button id='reset' onclick='closeGwModal(this)'>초기화</button>" +
     " <button id='close' onclick='closeGwModal(this)'>취소</button>" +
     " <button id='modify' onclick='closeGwModal(this)'>수정</button>" +
