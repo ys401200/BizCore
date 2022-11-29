@@ -315,13 +315,7 @@
   border: 1px solid #B5B2FF;
 }
 
-/* .selector .lineDetail .innerDetail>div {
-  padding: 3px 0;
-}
 
-.selector .lineDetail .innerDetail input {
-  margin-right: 6px;
-} */
 
 .dept-tree-cnt>label {
   display: flex;
@@ -352,22 +346,13 @@
   margin: 1em 0;
 }
 
-/* .selector .lineDetail #lineRight>label {
-  border: 1px solid rgb(188, 185, 185);
-  margin: 0.5rem;
-} */
+
 
 .selector .lineDetail #lineRight>div {
   display: grid;
   grid-template-columns: 30% 70%;
 
 }
-
-/* .selector .lineDetail #lineRight>div:first-of-type>div:first-of-type {
-  color: #456e95;
-  font-size: 0.8em;
-  font-weight: 200;
-} */
 
 
 .selector .lineDetail #lineRight>div:first-of-type>div:last-of-type {
@@ -413,9 +398,7 @@
   font-size: 15px;
 }
 
-/* #lineRight label .typeContainer {
-  padding:5px 0;
-} */
+
 
 
 
@@ -451,10 +434,7 @@
   width: 70%;
 }
 
-/* .typeContainer .lineDataContainer>button {
-  float: left;
-  width: 10%;
-} */
+
 
 /*결재선 모달창 버튼*/
 .ContentDiv>div:nth-child(3) .gwModal #lineCenter button {

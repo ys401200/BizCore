@@ -80,10 +80,6 @@ function drawNoticeApproval() {
   if (storage.waitList.wait == undefined || storage.waitList.wait.length == 0) {
     container = $(".listDiv");
     header = [
-      // {
-      //   title: "번호",
-      //   align: "center",
-      // },
       {
         title: "작성일",
         align: "center",
@@ -1018,7 +1014,7 @@ function showGwModal() {
     "<div class='innerDetail' id='lineLeft'></div>" +
     "<div class='innerDetail crudBtns' id='lineCenter'>" +
     "<button class='appTypeBtn'  onclick='check(this.value)' value='examine'>검토 &gt;</button>" +
-    "<button class='appTypeBtn'  onclick='check(this.value)' value='approval'>결재 &gt;</button>" +
+    "<button class='appTypeBtn'  onclick='check(this.value);setExamine();' value='approval'>결재 &gt;</button>" +
     "<button class='appTypeBtn'  onclick='check(this.value)' value='conduct'>수신 &gt;</button>" +
     "<button class='appTypeBtn'  onclick='check(this.value)' value='refer'>참조 &gt;</button></div>" +
     "<div class='innerDetail' id='lineRight'>" +
@@ -1063,6 +1059,26 @@ function showGwModal() {
   orgChartTarget.html(gwTreeHtml);
   $(".modal-wrap").show();
   setDefaultModalData();
+
+
+}
+
+
+
+function setExamine() {
+  let appLine = storage.reportDetailData.appLine;
+  let my = storage.my;
+  let myTurn, myappType, cutNum;
+  for (let i = 0; i < appLine.length; i++) {
+    if (appLine[i].employee == my) {
+      myappType = appLine[i].appType;
+      cutNum = i;
+    }
+  }
+
+  if (myappType == 2) {
+    $(".appTypeBtn")[0].disabled = false;
+  }
 
 
 }
