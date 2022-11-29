@@ -235,7 +235,7 @@ textarea{
 	width: 100% !important;
     padding: 5px;
     border: 0;
-    max-height: 200px;
+    max-height: 300px;
     overflow-y: auto;
     font-size: 11px;
     font-weight: 600;
@@ -244,7 +244,7 @@ textarea{
 .cke_textarea_inline > p,
 .cke_editable_inline > p{
 	margin: 0;
-	/* 11/29일자에 추가함 밑 3개  */
+	/* 11/29일자에 추가함 아래의 3개  */
 	font-family: "NanumSquareRound"; 
 	font-size: 12.8px; 
 	font-weight: 400;

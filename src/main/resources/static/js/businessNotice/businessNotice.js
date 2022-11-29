@@ -250,7 +250,7 @@ function noticeInsertForm() {
 	}, 100);
 
 	setTimeout(() => {
-		document.getElementsByClassName("cke_textarea_inline")[0].style.height = "600px";
+		document.getElementsByClassName("cke_textarea_inline")[0].style.height = "300px";
 	}, 300);
 }
 
