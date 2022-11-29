@@ -92,7 +92,7 @@ function drawMyPage(data) {
 		"<button type='button' class='modifybtn' onclick='modifyPwBtn()'>비밀번호 수정</button></div>";
 
 
-	let rightHtml = "<div><img id='preview'src='/api/my/image' width=80 heigh=100></div><div><input name='attached[]' type='file'class='modPhoto' onchange ='readURL(this)'/></div>";
+	let rightHtml = "<div><img id='preview'src='/api/my/image' width=130 height=130></div><div><input name='attached[]' type='file'class='modPhoto' onchange ='readURL(this)'/></div>";
 
 	target.html(html);
 	$(".forPhoto").html(rightHtml);

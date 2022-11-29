@@ -20,7 +20,8 @@
   display: inline-block;
   /* margin-top: 0.6%; */
   overflow: auto;
-  height: 92vh;
+  /* height: 92vh; */
+  min-height: 100%;
 }
 
 .container hr {
