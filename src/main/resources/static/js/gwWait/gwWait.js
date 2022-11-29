@@ -1008,7 +1008,7 @@ function approveBtnEvent() {
 function showGwModal() {
   let setGwModalHtml =
     "<div class='gwModal'>" +
-    "<div class='modalHead'><span class='modalHeadTitle'>결재선 수정( * 현재 결재 단계 이후만 추가/삭제 가능)</span><span class='xClose'><i class='fa-solid fa-xmark'></i></span></div>" +
+    "<div class='modalHead'><span class='modalHeadTitle'>결재선 수정( * 현재 결재 단계 이후만 추가/삭제 가능)</span><span id='close' onclick='closeGwModal(this)' class='xClose'><i class='fa-solid fa-xmark'></i></span></div>" +
     "<div class='lineDetail'>" +
     "<div class='lineTop'>" +
     "<div class='innerDetail' id='lineLeft'></div>" +
@@ -1030,10 +1030,10 @@ function showGwModal() {
     "</div>" +
     "</div>" +
     "</div>" +
-    "<div class='close-wrap crudBtns'>" +
-    " <button id='reset' onclick='closeGwModal(this)'>초기화</button>" +
-    " <button id='close' onclick='closeGwModal(this)'>취소</button>" +
-    " <button id='modify' onclick='closeGwModal(this)'>수정</button>" +
+    "<div class='modalFoot'>" +
+    " <button class='modalBtns close' id='reset' onclick='closeGwModal(this)'>초기화</button>" +
+    // " <button  class='modalBtns close' id='close' onclick='closeGwModal(this)'>취소</button>" +
+    " <button  class='modalBtns confirm' id='modify' onclick='closeGwModal(this)'>수정</button>" +
     "</div>" +
     "</div>" +
     "</div>";

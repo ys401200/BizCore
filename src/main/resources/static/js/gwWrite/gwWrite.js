@@ -315,9 +315,9 @@ function setModalhtml() {
     "</div>" +
     "</div>" +
     "</div>" +
-    "<div class='close-wrap crudBtns'>" +
-    " <button id='close' onclick='closeGwModal(this)'>취소</button>" +
-    " <button id='create' onclick='closeGwModal(this)'>생성</button>" +
+    "<div class='modalFoot'>" +
+    " <button class='modalBtns close' id='close' onclick='closeGwModal(this)'>취소</button>" +
+    " <button class='modalBtns confirm'id='create' onclick='closeGwModal(this)'>생성</button>" +
     "</div>" +
     "</div>" +
     "</div>";
