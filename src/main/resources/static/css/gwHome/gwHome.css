@@ -63,7 +63,7 @@ button:first-of-type {
 }
 
 .waitCard {
-	width: auto;
+	width: 15em;
 	flex: 0 0 auto;
 	border: 2px solid #EDEDF4;
 	cursor: pointer;
@@ -89,6 +89,10 @@ button:first-of-type {
 }
 
 .waitCard>div:first-of-type {
+	/* width: inherit; */
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 	margin: 1em;
 	color: #406c92;
 	font-weight: 800;
@@ -160,6 +164,7 @@ button:first-of-type {
 	padding: 1em;
 	margin-bottom: 1em;
 	border: 1px solid #D9D9D9;
+	border-radius: 5px;
 }
 
 .gridHeader {

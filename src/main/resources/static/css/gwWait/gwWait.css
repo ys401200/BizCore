@@ -106,14 +106,26 @@
 
 /*-------------------------------- 상세조회 페이지 상단 버튼  */
 
-
-
-
 .listDiv .gridHeader,
 .listDiv .gridContent {
    grid-template-columns: 10% 10% 10% 55% 10% 5%;
 }
 
+.listDiv .gridHeader {
+   border-bottom: 1px solid #425da8;
+   background-color: #f2f5ff;
+}
+
+.listDiv .grid_default_body_item:nth-chhild(2n-1) {
+   background-color: rgba(234, 239, 243, 0.4)
+}
+
+.listDiv .noListDefault {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   padding-top: 1rem;
+}
 
 /* .subContainer .listPageDiv .pageContainer {
    display: flex;
@@ -133,19 +145,6 @@
    background-color: #406c92;
    border: 1px solid #507698;
 }
-
-
-.listDiv .gridHeader {
-   border-bottom: 1px solid #425da8;
-   background-color: #f2f5ff;
-}
-
-.listDiv .grid_default_body_item:nth-chhild(2n-1) {
-   background-color: rgba(234, 239, 243, 0.4)
-}
-
-
-
 
 
 

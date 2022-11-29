@@ -59,7 +59,22 @@
    grid-template-columns: 10% 10% 10% 60% 10%;
 }
 
+.listDiv .gridHeader {
+   border-bottom: 1px solid #425da8;
+   background-color: #f2f5ff;
+}
 
+.listDiv .grid_default_body_item:nth-chhild(2n-1) {
+   background-color: rgba(234, 239, 243, 0.4)
+}
+
+
+.listDiv .noListDefault {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   padding-top: 1rem;
+}
 /* .subContainer .listPageDiv .pageContainer {
    display: flex;
    float: right;
@@ -80,14 +95,6 @@
 }
 
 
-.listDiv .gridHeader {
-   border-bottom: 1px solid #425da8;
-   background-color: #f2f5ff;
-}
-
-.listDiv .grid_default_body_item:nth-chhild(2n-1) {
-   background-color: rgba(234, 239, 243, 0.4)
-}
 
 
 /* 상세조회 페이지 css Start ===============   */

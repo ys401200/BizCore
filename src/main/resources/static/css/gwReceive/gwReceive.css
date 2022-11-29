@@ -59,6 +59,13 @@
 .listDiv .grid_default_body_item:nth-child(2n-1) {
 	background-color: rgba(234, 239, 243, 0.4)
 }
+.listDiv .noListDefault {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding-top: 1rem;
+ }
+
 
 .listPageDiv .detailReport .selectedReportview>div:first-child {
 	border: 1px #D3D3D3 solid;

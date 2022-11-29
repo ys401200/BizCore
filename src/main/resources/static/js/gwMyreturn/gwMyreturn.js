@@ -41,9 +41,17 @@ function drawMyDraft() {
     str,
     fnc;
 
-  if (storage.myDraftList === undefined || storage.myDraftList.length == 0) {
-    container = $(".listDiv");
+  let myDraftList = storage.myDraftList;
+  for (let i = 0; i < myDraftList.length; i++) {
+    if (myDraftList[i].status != -1) {
+      myDraftList.splice(i, 1);
+      i--;
+    }
+  }
 
+
+  if (storage.myDraftList === undefined || storage.myDraftList.length == 0 || myDraftList.length == 0) {
+    container = $(".listDiv");
     header = [
 
       {
@@ -58,19 +66,6 @@ function drawMyDraft() {
         title: "제목",
         align: "left",
       },
-
-      {
-        title: "결재 타입",
-        align: "center",
-      },
-      {
-        title: "결재권자",
-        align: "center",
-      },
-      {
-        title: "조회",
-        align: "center",
-      },
       {
         title: "상태",
         align: "center",
@@ -78,7 +73,7 @@ function drawMyDraft() {
     ];
     createGrid(container, header, data, ids, job, fnc);
 
-    container.append("<div class='noListDefault'>기안 문서가 없습니다</div>");
+    container.append("<div class='noListDefault'>회수 문서가 없습니다</div>");
   } else {
 
     let tt = [];

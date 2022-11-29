@@ -75,6 +75,13 @@
   background-color: rgba(234, 239, 243, 0.4);
 }
 
+.listDiv .noListDefault {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 1rem;
+}
+
 /* 상세조회 페이지 css Start ===============   */
 .container .listPageDiv .mainBtnDiv {
   display: flex;
