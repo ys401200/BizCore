@@ -26,7 +26,7 @@ function showCheckPwForm() {
 
 function checkPw() {
 	let insertedPw = $("#pwInput").val(); // 입력받은 비밀번호 
-	insertedPw = cipher.encAes(insertedPw).replaceAll("/","*");
+	insertedPw = cipher.encAes(insertedPw).replaceAll("/", "*");
 	let url;
 
 	url = apiServer + "/api/my/" + insertedPw;
@@ -81,7 +81,7 @@ function drawMyPage(data) {
 		"<div><div>이메일</div><input type='text' class='change email' value='" + data.email + "'disabled /></div>" +
 		"<div><div>핸드폰번호</div><input type='text' class='change cellPhone' value='" + data.cellPhone + "'disabled/></div>" +
 		"<div><div>전화번호</div><input type='text' class='change homePhone' value='" + data.homePhone + "'disabled/></div>" +
-		"<div class='threeGrid'><div>우편번호</div><input type='text' id='postCode' class='zipCode' value='" + data.zipCode + "'disabled/><button type='button' class='daumBtn' onclick='daumPostCode('postCode', 'mainAddress', 'detailAddress')'>검색</button></div>" +
+		"<div class='threeGrid'><div>우편번호</div><input type='text' id='postCode' class='zipCode' value='" + data.zipCode + "'disabled/><button type='button' class='daumBtn' onclick='doDaumnPostCode()'>검색</button></div>" +
 		"<div><div>주소</div><input type='text' id='mainAddress' class='address' value='" + maindAddress + "'disabled/></div>" +
 		"<div><div>상세 주소</div><input type='text' id='detailAddress' class='change address' value='" + detailAddress + "'disabled/></div>" +
 		"<div><div>생년월일</div><input type='text' value='" + data.birthDay + "'disabled/></div>" +
@@ -98,7 +98,11 @@ function drawMyPage(data) {
 	$(".forPhoto").html(rightHtml);
 	$(".daumBtn").hide();
 	$(".modPhoto").hide();
+  
+}
 
+function doDaumnPostCode() {
+daumPostCode('postCode', 'mainAddress', 'detailAddress');
 }
 
 

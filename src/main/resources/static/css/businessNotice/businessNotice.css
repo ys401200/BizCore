@@ -17,11 +17,11 @@
 }
 
 .noticeContainer {
-	margin-top: 1%;
     background: #FFFFFF;
     overflow: auto;
     box-shadow: 0px 2px 14px rgb(0 0 0 / 12%);
     margin-top: 3px;
+	height: calc(100% - 101px);
 }
 
 .noticeContainer > hr {
