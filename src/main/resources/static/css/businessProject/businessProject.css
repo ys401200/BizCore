@@ -46,7 +46,7 @@
 .context-menu{
 	position:absolute;
 	width: 6rem;
-	height: 5rem;
+	padding: 0.2rem 0;
 	border:1px solid #cdcdcd;
 	background-color:white;
 	z-index:100;

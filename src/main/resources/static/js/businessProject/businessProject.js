@@ -1,4 +1,4 @@
-let R = {}, showProjectMenu, clickedProject, focusProjectName, changeProjectName, focusProjectOwner, changeProjectOwner, focusProjectOwnerStep2;
+let R = {}, showProjectMenu, clickedProject, focusProjectName, changeProjectName, focusProjectOwner, changeProjectOwner, removeContextMenu, removeProject;
 
 $(document).ready(() => {
     init();
@@ -9,9 +9,26 @@ $(document).ready(() => {
 	}, 300);
 
 	R.project = new Projects(location.origin, document.getElementsByClassName("project-list")[0]);
-
+	document.getElementsByClassName("container")[0].addEventListener("click", removeContextMenu);
 	
 });
+
+removeContextMenu = () => {cm = document.getElementsByClassName("context-menu")[0];if(cm !== undefined)	cm.remove();}
+
+removeProject = (el) => {
+	let x, y, v = el.dataset.v * 1;
+	event.stopPropagation();
+	el.remove();
+	for(x = 0 ; x < R.project.list.length ; x++){
+		if(R.project.list[x].no === v){
+			y = R.project.list[x];
+			break;
+		}
+	}
+	if(y === undefined)	return;
+	y.remove();
+
+} // End of removeProject()
 
 clickedProject = (el) => {
 	let id, cnt;
@@ -22,10 +39,14 @@ clickedProject = (el) => {
 } // End of clickedProject()
 
 showProjectMenu = (target, z, v) => {
-	let cnt, html, el, x, y, svg;
+	let cnt, html, el, x, y, svg, dataType, dataNo;
 	y = target.offsetTop - 1;
 	x = target.offsetLeft - 80;
 	event.preventDefault();
+	event.stopPropagation();
+	dataType = target.parentElement.parentElement.dataset.data;
+	dataNo = target.parentElement.parentElement.dataset.no * 1;
+	console.log(dataType + " / " + dataNo);
 	el = document.getElementsByClassName("context-menu")[0];
 	if(el !== undefined)    el.remove();
 	el = document.createElement("div");
@@ -37,8 +58,20 @@ showProjectMenu = (target, z, v) => {
 	el.style.left = x + "px";
 	svg = "<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"20\" width=\"20\"><path fill=\"#bbbbbb\" d=\"M7.125 14 10 11.125 12.875 14 14 12.875 11.125 10 14 7.125 12.875 6 10 8.875 7.125 6 6 7.125 8.875 10 6 12.875ZM10 18.167q-1.688 0-3.177-.636-1.49-.635-2.604-1.75-1.115-1.114-1.75-2.604-.636-1.489-.636-3.177 0-1.708.636-3.187.635-1.48 1.75-2.594 1.114-1.115 2.604-1.75Q8.312 1.833 10 1.833q1.708 0 3.188.636 1.479.635 2.593 1.75 1.115 1.114 1.75 2.594.636 1.479.636 3.187 0 1.688-.636 3.177-.635 1.49-1.75 2.604-1.114 1.115-2.593 1.75-1.48.636-3.188.636Zm0-1.729q2.688 0 4.562-1.876 1.876-1.874 1.876-4.562t-1.876-4.562Q12.688 3.562 10 3.562T5.438 5.438Q3.562 7.312 3.562 10t1.876 4.562Q7.312 16.438 10 16.438ZM10 10Z\" /></svg>";
 	html = "<div onclick='this.parentElement.remove()'>" + svg + "</div>";
-	if(z === 1) html += "<div onclick=\"focusProjectName(this)\">프로젝트명 변경</div><div onclick=\"focusProjectOwner(this)\">관리자 변경</div><div>프로젝트 닫기</div>";
-	if(z === 2) html += "<div>담당자 관리</div><div>프로젝트 이동</div>";
+	if(z === 1){ // 프로젝트의 컨텍스트 메뉴인 경우
+		// SOPP 수를 확인하고 삭제 메뉴 표시여부 확인
+		y = -1;
+		for(x = 0 ; x < R.project.list.length ; x++){
+			if(R.project.list[x].no === dataNo){
+				y = R.project.list[x].sopp.length;
+				break;
+			}
+		}
+		html += "<div onclick=\"focusProjectName(this)\">프로젝트명 변경</div><div onclick=\"focusProjectOwner(this)\">관리자 변경</div>";
+		if(y === 0)	html += "<div onclick=\"removeProject(this.parentElement)\">프로젝트 삭제</div>";
+	}else if(z === 2){ // SOPP의 컨텍스트 메뉴인 경우
+		html += "<div>담당자 관리</div><div>프로젝트 이동</div>";
+	}
 	el.innerHTML = html;
 } // End of showProjectMenu()
 
@@ -382,12 +415,30 @@ class Project{
 					}
 				}
 			});
-
-
-
 		console.log("UPDATE!!");
 		console.log(prj);
 	} // End of update()
+
+	remove(){
+		console.log("remove : " + this.no)
+		fetch(apiServer + "/api/project/" + this.no,{method:"DELETE"})
+		.catch((error) => console.log("error:", error))
+		.then(response => response.json())
+		.then(response => {
+			let x, no, cnt, els;
+			if(response.result === "ok"){
+				no = response.data;
+				els = document.getElementsByClassName("project-wrap");
+				for(x = 0 ; x < els.length ; x++){
+					if(els[x].dataset.data === "project" &&els[x].dataset.no * 1 === no){
+						if(els[x].previousElementSibling != null && els[x].previousElementSibling.className === "_hidden")	els[x].previousElementSibling.remove();
+						els[x].remove();
+						break;
+					}
+				}
+			}else console.log(response.msg);
+		});
+	}
 	
 } // End of Class _ Project
 

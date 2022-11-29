@@ -11,12 +11,12 @@ public class Sopp2 extends Domain{
     private int stage;
     private String title;
     private String desc;
-    private int owner;
+    private Integer owner;
     private String coWorker;
-    private int customer;
-    private int picOfCustomer;
-    private int partner;
-    private int picOfPartner;
+    private Integer customer;
+    private Integer picOfCustomer;
+    private Integer partner;
+    private Integer picOfPartner;
     private long expactetSales;
     private Date expactedDate;
     private String related;

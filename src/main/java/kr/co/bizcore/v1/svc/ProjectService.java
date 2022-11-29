@@ -1,5 +1,9 @@
 package kr.co.bizcore.v1.svc;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 import org.json.JSONObject;
@@ -73,5 +77,57 @@ public class ProjectService extends Svc{
         result = executeSqlQuery(sql);
         return result;
     } // End of updateProject()
+
+    public String removeProject(String compId, int no) {
+        String sql = null;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        int x = 0;
+
+        try{
+            conn = sqlSession.getConnection();
+
+            // 프로젝트가 존재하는지 먼저 검증함
+            x = -1;
+            sql = "SELECT count(*) FROM bizcore.project WHERE deleted IS NULL AND compId = ? AND NO = ?";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, compId);
+            pstmt.setInt(2, no);
+            rs = pstmt.executeQuery();
+            if(rs.next())   x = rs.getInt(1);
+            rs.close();
+            pstmt.close();
+            if(x < 0)   return "an error occurred : step 1";
+            else if(x == 0)   return "request project is not exist";
+
+            // 해당 프로젝트가 비어있는지 확인함
+            x = -1;
+            sql = "SELECT count(*) FROM bizcore.sopp WHERE deleted IS NULL AND compId = ? AND JSON_VALUE(related,'$.parent') = CONCAT('project:',?)";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, compId);
+            pstmt.setInt(2, no);
+            rs = pstmt.executeQuery();
+            if(rs.next())   x = rs.getInt(1);
+            rs.close();
+            pstmt.close();
+            if(x < 0)   return "an error occurred : step 2";
+            else if(x > 0)   return "request project is not empty";
+
+            x = -1;
+            sql = "UPDATE bizcore.project SET deleted = now() WHERE deleted IS NULL AND compId = ? AND NO = ?";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, compId);
+            pstmt.setInt(2, no);
+            x = pstmt.executeUpdate();
+            rs.close();
+            pstmt.close();
+            if(x < 0)   return "an error occurred : step 3";
+            else if(x == 0)   return "fail to remove project : " + no;
+            else return "ok";
+        }catch(SQLException e){e.printStackTrace();}
+        
+        return null;
+    } // End of removeProject()
     
 }

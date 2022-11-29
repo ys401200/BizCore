@@ -3,14 +3,19 @@ package kr.co.bizcore.v1.svc;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import kr.co.bizcore.v1.domain.Sopp2;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -52,6 +57,7 @@ public class JobSchedulerSvc extends Svc{
         copyCustomerInfoFromLegacyDB(); // 고객사 정보 자동 복사
         copyTradeInfoFromLegacyDB(); // 매입매출 자료 복사
         copyProcure(); // 조달 정보 복사
+        generationSoppFromProcure(); // 조달 정보에서 sopp 생성
 
         // 스케줄 작업
     } // End of scheduleJob()
@@ -97,6 +103,86 @@ public class JobSchedulerSvc extends Svc{
         logger.debug("[Job Scheduler] Deleted temp files : " + x);
 
     } // End of cleanTempFiles()
+
+    // 조달정보에 대한 영업기회 자동생성 메서드
+    private int generationSoppFromProcure(){
+        int result = 0;
+        String sql = null;
+        Connection conn = null;
+        ArrayList<JSONObject> list = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        JSONObject json = null;
+        Sopp2 sopp = null;
+        String str = null, procure = null;
+        Integer customer = null;
+        int x = 0, no = 0, r = -1;
+        Date dt = null;
+
+        try{
+            conn = sqlSession.getConnection();
+            list = new ArrayList<>();
+
+            // sopp 등록되지 않은 조달 가져오기
+            sql = "SELECT (SELECT no FROM bizcore.customer x WHERE x.name = a.customerName) no, a.id, a.customerCode, a.customerName, a.area, a.`type`, a.reqNo, a.itemCode, a.item, a.price, a.qty, a.unit, a.amount, a.title, a.modQty, a.modAmount, a.contractDate, a.deliveryPlace, a.created FROM bizcore.procure a WHERE a.deleted IS NULL AND a.sopp IS NULL AND a.compid = 'vtek'";
+            pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+            while(rs.next()){
+                json = new JSONObject();
+                json.put("no", rs.getInt("no"));
+                json.put("id", rs.getInt("id"));
+                json.put("customerCode", rs.getString("customerCode"));
+                json.put("customerName", rs.getString("customerName"));
+                json.put("area", rs.getString("area"));
+                json.put("type", rs.getString("type"));
+                json.put("reqNo", rs.getLong("reqNo"));
+                json.put("itemCode", rs.getInt("itemCode"));
+                json.put("item", rs.getString("item"));
+                json.put("price", rs.getInt("price"));
+                json.put("qty", rs.getInt("qty"));
+                json.put("unit", rs.getString("unit"));
+                json.put("amount", rs.getInt("amount"));
+                json.put("title", rs.getString("title"));
+                json.put("modQty", rs.getInt("modQty"));
+                json.put("modAmount", rs.getInt("modAmount"));
+                json.put("contractDate", rs.getDate("contractDate") == null ? 0L : rs.getDate("contractDate").getTime());
+                json.put("deliveryPlace", rs.getString("deliveryPlace"));
+                json.put("created", rs.getDate("created") == null ? 0L : rs.getDate("created").getTime());
+                list.add(json);
+            }
+            rs.close();
+            pstmt.close();
+
+            // 결과가  없으면 종료
+            if(list.size() == 0)    return result;
+
+            // 조달을 sopp로 등록
+            for(x = 0 ; x < list.size() ; x++){
+                json = list.get(x);
+                customer = json.getInt("no");
+                json.remove("no");
+                procure = json.toString();
+                no = getNextNumberFromDB("vtek", "bizcore.sopp");
+                sopp = new Sopp2();
+                sopp.setNo(no);
+                sopp.setCustomer(customer);
+                sopp.setTitle(json.getString("title"));
+                sopp.setExpactedDate(new Date(json.getLong("contractDate")));
+                sopp.setExpactetSales(json.getLong("amount"));
+                sopp.setCreated(json.getLong("created"));
+                sopp.setRelated("{\"parent\":\"project:2\",\"previous\":\"procure:" + json.getInt("id") + "\",\"procure\":" + procure + "}");
+                sql = sopp.createInsertQuery("bizcore.sopp", "vtek");
+                r = executeSqlQuery(sql);
+                if(r > 0){
+                    sql = "UPDATE bizcore.procure SET sopp = " + no + " WHERE compId = 'vtek' AND id = " + json.getInt("id");
+                    executeSqlQuery(sql);
+                    result += r;
+                }
+            }
+        }catch(SQLException e){e.printStackTrace();}
+        logger.info("Do process generation sopp from procure : " + getDate() + " / " + result);
+        return result;
+    } // End of generationSoppFromProcure()
 
     // 자동수집된 조달 정보를 복사하는 메서드
     private int copyProcure(){

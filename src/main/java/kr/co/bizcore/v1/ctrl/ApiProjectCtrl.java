@@ -6,6 +6,7 @@ import javax.servlet.http.HttpSession;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -60,7 +61,7 @@ public class ApiProjectCtrl extends Ctrl{
     } // End of projectGet()
 
     @PostMapping("")
-    public String projectNoPost(HttpServletRequest request, @RequestBody String requestBody) throws JsonMappingException, JsonProcessingException{
+    public String projectPost(HttpServletRequest request, @RequestBody String requestBody) throws JsonMappingException, JsonProcessingException{
         String result = null;
         String compId = null, aesKey = null, aesIv = null, data = null;
         ObjectMapper mapper = null;
@@ -92,6 +93,30 @@ public class ApiProjectCtrl extends Ctrl{
         
         return result;
     } // End of projectNoGet()
+
+    @DeleteMapping("/{no:\\d+}")
+    public String projectNoDelete(HttpServletRequest request, @PathVariable("no") int no){
+        String result = null;
+        String compId = null, data = null;
+        Msg msg = null;
+        HttpSession session = null;
+
+        session = request.getSession();
+        compId = (String)session.getAttribute("compId");
+        if(compId == null)  compId = (String)session.getAttribute("compId");
+        msg = getMsg((String)session.getAttribute("lang"));
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        }else{
+            data = projSvc.removeProject(compId, no);
+            if(data == null)    result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
+            else if(data.equals("ok"))  result = "{\"result\":\"ok\",\"data\":" + no + "}";
+            else                result = "{\"result\":\"failure\",\"msg\":\"" + data + "\"}";
+        }
+        
+        return result;
+    } // End of projectNoDelete()
 
     @GetMapping("/sopp")
     public String soppGet(HttpServletRequest request){
