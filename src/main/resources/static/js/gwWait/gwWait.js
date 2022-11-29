@@ -279,7 +279,7 @@ function getDetailView() {
     "<div class='tabDetail'id='tabDetail'></div><div class='tabDetail2' id='tabDetail2'></div>";
   $(".comment").html(tabHtml);
 
- 
+
 
   let target = $(".seletedForm")[0];
   let inputsArr = target.getElementsByTagName("input");
@@ -760,6 +760,8 @@ function drawChangeInfo() {
   let target = $("#tabDetail2");
 
   let revisionData = storage.reportDetailData.revisionHistory;
+  let type;
+  let appLine = storage.reportDetailData.appLine;
   let changeData = new Array();
   if (revisionData.length > 0) {
     for (let i = 0; i < revisionData.length; i++) {
@@ -777,8 +779,21 @@ function drawChangeInfo() {
       revisionData[i].content.date;
       revisionData[i].content.content;
 
+
+
+      for (let j = 0; j < appLine.length; j++) {
+        if (appLine[j].employee == revisionData[i].employee) {
+          type = appLine[j].type;
+        }
+      }
+
+      if (type == 0) {
+        type = "검토"
+      } else if (type = 2) {
+        type = "결재"
+      }
       let data = {
-        type: "",
+        type: type,
         name: storage.user[revisionData[i].employee].userName,
         modifyDate: getYmdSlash(revisionData[i].date),
         modCause: modCause,

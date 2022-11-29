@@ -305,6 +305,7 @@
 
 .tapLineB {
    grid-template-columns: 10% 15% 35% 40%;
+    margin: 0 1em; 
 }
 
 #tabDetail2>.tapLineB:first-of-type {
