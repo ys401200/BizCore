@@ -2209,6 +2209,9 @@ function allCbEvent(obj) {
 
 let batchCount = 0;
 function doBatchApproval() {
+  if ($(".loading-overlay").css("display") == 'none') {
+    $("#loadingDiv").loading("toggle");
+  }
   let batchData = [];
   let insertData;
   let batchBtns = $("input[name='batchBtns']:checked");
@@ -2281,7 +2284,10 @@ function doBatchApproval() {
                 if (batchCount < batchData.length) {
                   doBatchApproval();
                 } else {
+                  $(".loading-overlay").hide();
                   alert("일괄 결재 완료");
+                  location.href = "/gw/wait";
+
                 }
 
 
