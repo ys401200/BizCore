@@ -72,22 +72,22 @@ function drawMyPage(data) {
 	data.gender = data.gender == "0" ? "남'" : "여";
 	let created = getYmdHyphen(data.created);
 	let modified = getYmdHyphen(data.modified);
-
+	console.log(data.birthDay + "생일 확인 ==========");
 
 	let html = "<div class='mypageSecondDiv'><div class='forPhoto'></div>" +
-		"<div><div><div>아이디</div><input type='text'  value='" + data.userId + "' disabled/></div>" +
-		"<div><div>이름</div><input type='text' value='" + data.userName + "'disabled/></div>" +
-		"<div><div>직급</div><input type='text' value='" + data.rank + "'disabled/></div>" +
+		"<div><div><div>아이디</div><input type='text' class='fixed'  value='" + data.userId + "' disabled/></div>" +
+		"<div><div>이름</div><input type='text' class='fixed' value='" + data.userName + "'disabled/></div>" +
+		"<div><div>직급</div><input type='text'class='fixed' value='" + data.rank + "'disabled/></div>" +
 		"<div><div>이메일</div><input type='text' class='change email' value='" + data.email + "'disabled /></div>" +
 		"<div><div>핸드폰번호</div><input type='text' class='change cellPhone' value='" + data.cellPhone + "'disabled/></div>" +
 		"<div><div>전화번호</div><input type='text' class='change homePhone' value='" + data.homePhone + "'disabled/></div>" +
 		"<div class='threeGrid'><div>우편번호</div><input type='text' id='postCode' class='zipCode' value='" + data.zipCode + "'disabled/><button type='button' class='daumBtn' onclick='doDaumnPostCode()'>검색</button></div>" +
 		"<div><div>주소</div><input type='text' id='mainAddress' class='address' value='" + maindAddress + "'disabled/></div>" +
 		"<div><div>상세 주소</div><input type='text' id='detailAddress' class='change address' value='" + detailAddress + "'disabled/></div>" +
-		"<div><div>생년월일</div><input type='text' value='" + data.birthDay + "'disabled/></div>" +
-		"<div><div>성별</div><input type='text' value='" + data.gender + "'disabled/></div>" +
-		"<div><div>등록 일자</div><input type='text' value='" + created + "'disabled/></div>" +
-		"<div><div>최근 수정 일자</div><input type='text' value='" + modified + "'disabled/></div>" +
+		"<div><div>생년월일</div><input type='text' class='change' value='" + data.birthDay + "'disabled/></div>" +
+		"<div><div>성별</div><input type='text'class='fixed' value='" + data.gender + "'disabled/></div>" +
+		"<div><div>등록 일자</div><input type='text' class='fixed'  value='" + created + "'disabled/></div>" +
+		"<div><div>최근 수정 일자</div><input type='text'class='fixed' value='" + modified + "'disabled/></div>" +
 		"</div></div><div class='mainModBtnDiv'><button type='button' class='modifybtn' onclick='modifyInfoBtn()'>개인정보 수정</button>" +
 		"<button type='button' class='modifybtn' onclick='modifyPwBtn()'>비밀번호 수정</button></div>";
 
@@ -98,11 +98,11 @@ function drawMyPage(data) {
 	$(".forPhoto").html(rightHtml);
 	$(".daumBtn").hide();
 	$(".modPhoto").hide();
-  
+
 }
 
 function doDaumnPostCode() {
-daumPostCode('postCode', 'mainAddress', 'detailAddress');
+	daumPostCode('postCode', 'mainAddress', 'detailAddress');
 }
 
 
@@ -179,9 +179,7 @@ function modifyInfoBtn() {
 	let target = $(".mainModBtnDiv");
 	target.html("<button type='button' class='modifybtn'  onclick='doMod()'>확인</button><button class='modifybtn' type='button' onclick='quitMod()'>취소</button>");
 	$(".change").attr("disabled", false);
-	$(".change").css("border-bottom", "1px solid #6469e5");
-	$("#postCode").css("border-bottom", "1px solid #6469e5");
-	$("#mainAddress").css("border-bottom", "1px solid #6469e5");
+	$(".fixed").css("background-color", "#e5e5e8");
 	$(".daumBtn").show();
 	$(".modPhoto").show();
 }

@@ -189,7 +189,11 @@ function noticeSuccessView(result) {
 	setTimeout(() => {
 		ckeditor.config.readOnly = true;
 		window.setTimeout(setEditor, 100);
+
 	}, 100);
+
+
+
 }
 
 function noticeErrorView() {
@@ -246,7 +250,7 @@ function noticeInsertForm() {
 	}, 100);
 
 	setTimeout(() => {
-		document.getElementsByClassName("cke_textarea_inline")[0].style.height = "300px";
+		document.getElementsByClassName("cke_textarea_inline")[0].style.height = "600px";
 	}, 300);
 }
 

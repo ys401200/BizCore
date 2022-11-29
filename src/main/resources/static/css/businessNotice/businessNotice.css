@@ -1,39 +1,39 @@
 @charset "UTF-8";
 
-.searchContainer .searchMultiContent .searchTitle{
+.searchContainer .searchMultiContent .searchTitle {
 	grid-column: span 2;
 }
 
-.searchContainer .searchMultiContent .searchCreated > .searchGridItem{
+.searchContainer .searchMultiContent .searchCreated>.searchGridItem {
 	display: grid;
 	grid-template-columns: 45% 10% 45%;
 	text-align: center;
 }
 
-.searchContainer .searchMultiContent .searchCreated > .searchGridItem > span{
+.searchContainer .searchMultiContent .searchCreated>.searchGridItem>span {
 	display: flex;
 	align-items: center;
 	justify-content: center;
 }
 
 .noticeContainer {
-    background: #FFFFFF;
-    overflow: auto;
-    box-shadow: 0px 2px 14px rgb(0 0 0 / 12%);
-    margin-top: 3px;
+	background: #FFFFFF;
+	overflow: auto;
+	box-shadow: 0px 2px 14px rgb(0 0 0 / 12%);
+	margin-top: 3px;
 	height: calc(100% - 101px);
 }
 
-.noticeContainer > hr {
+.noticeContainer>hr {
 	float: left;
-	border:2px solid #182f81;
+	border: 2px solid #182f81;
 	height: 32px;
 	margin: 0;
 }
 
-.noticeContainer > #containerTitle {
+.noticeContainer>#containerTitle {
 	font-weight: 600;
-    font-size: 0.9rem;
+	font-size: 0.9rem;
 	margin-left: 15px;
 	line-height: 40px;
 	color: #182f81;
@@ -46,8 +46,8 @@
 	margin: 0 auto;
 }
 
-.gridNoticeList .gridHeader{
-	border-bottom:1px solid #abb6d5;
+.gridNoticeList .gridHeader {
+	border-bottom: 1px solid #abb6d5;
 }
 
 .gridNoticeList .gridHeader,
@@ -58,8 +58,8 @@
 .noticeContent {
 	border: 2rem;
 	padding: 2rem;
-	display : none;
-	background-color : #EDEDF4;
+	display: none;
+	background-color: #EDEDF4;
 }
 
 .noticeContent .headerDiv {
@@ -69,32 +69,35 @@
 }
 
 .noticeContent .headerDiv .deleteButton {
-	text-align : right;
+	text-align: right;
 	font-weight: 800;
 }
 
-.noticeContent .contentDiv, .noticeContent .headerDiv {
-	margin-left : 1.5rem;
-	margin-right :1.5rem;
+.noticeContent .contentDiv,
+.noticeContent .headerDiv {
+	margin-left: 1.5rem;
+	margin-right: 1.5rem;
 }
 
-.noticeContainer > button{
-	margin:0.7% 0.6% 0 0;
-	box-shadow:0px 1px 2px #bdbfc9;
-	padding:0.3% 0.6%;
-	background-color:#2147b1;
-	color:#fff;
-	float:right;
+.noticeContainer>button {
+	margin: 0.7% 0.6% 0 0;
+	box-shadow: 0px 1px 2px #bdbfc9;
+	padding: 0.3% 0.6%;
+	background-color: #2147b1;
+	color: #fff;
+	float: right;
 	border-radius: 5px;
 }
 
-.noticeContainer > button:hover{
+.noticeContainer>button:hover {
 	box-shadow: 0 1px 2px #bdbfc9;
-	background-color:#0e2b7e;
+	background-color: #0e2b7e;
 }
 
-.noticeContainer .pageContainer .paging_cell_current{
-	color:#2147b1;
-	border:1px solid #2147b1;
-	background-color:#ebefff;
+.noticeContainer .pageContainer .paging_cell_current {
+	color: #2147b1;
+	border: 1px solid #2147b1;
+	background-color: #ebefff;
 }
+
+

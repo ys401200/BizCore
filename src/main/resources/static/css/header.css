@@ -244,6 +244,10 @@ textarea{
 .cke_textarea_inline > p,
 .cke_editable_inline > p{
 	margin: 0;
+	/* 11/29일자에 추가함 밑 3개  */
+	font-family: "NanumSquareRound"; 
+	font-size: 12.8px; 
+	font-weight: 400;
 }
 
 .cke_focus{
