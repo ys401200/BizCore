@@ -1059,12 +1059,11 @@ function showGwModal() {
     }
   }
 
-
   let gwTreeHtml = storage.dept.tree.getGwHtml();
-
   orgChartTarget.html(gwTreeHtml);
   $(".modal-wrap").show();
   setDefaultModalData();
+
 
 }
 
@@ -1179,8 +1178,14 @@ function setDefaultModalData() {
     // } else if (myappType == 2) {
     //   $("#conduct").html(conductHtml);
     //   $("#refer").html(referHtml);
-    // }
+    // } 
 
+
+    if (myappType == 2) {
+      let button = $(".appTypeBtn")[0];
+      $(button).prop("disabled", "disabled");
+
+    }
   }
 }
 
