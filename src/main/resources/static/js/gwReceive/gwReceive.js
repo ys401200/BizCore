@@ -561,17 +561,6 @@ function getFileArr() {
 }
 
 function showAppModal() {
-  // 결재하기 누르면 결재정보 창으로 세팅되어서 추가하는 것
-  // $("#lineInfo").css("background-color", "#332E85");
-  // $("#lineInfo").css("color", "white");
-  // $("#lineInfo").css("border", "none");
-
-  // $("#changeInfo").css("background-color", "white");
-  // $("#changeInfo").css("color", "#332E85");
-  // $("#changeInfo").css("border-bottom", "2px solid #332E85");
-  // $("#tabDetail").show();
-  // $("#tabDetail2").hide();
-
   let setAppModalHtml =
   "<div class='setApprovalModal'>" +
   "<div class='modalHead'><span class='modalHeadTitle'>결재하기</span><span class='xClose' onclick='closeModal(this)'><i class='fa-solid fa-xmark'></i></span></div>" +
@@ -585,8 +574,6 @@ function showAppModal() {
 $(".modal-wrap").html(setAppModalHtml);
 $(".modal-wrap").show();
 
-  // $(".setApprovalModal").show();
-  // $(".setModifyModal").hide();
 }
 
 //결재하기 버튼
@@ -630,12 +617,7 @@ function approveBtnEvent() {
     }
   }
 
-  // if (storage.reportDetailData.sopp == soppResult) {
-  //   soppResult = "";
-  // }
-  // if (storage.reportDetailData.customer == cusResult) {
-  //   cusResult = "";
-  // }
+ 
 
   if (formId != "doc_Form_leave" && formId != "doc_Form_extension") {
     if (
