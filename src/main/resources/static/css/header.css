@@ -1,46 +1,100 @@
 @charset "UTF-8";
+
 @font-face {
-    font-family: 'NanumSquareRound';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/NanumSquareRound.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-}
-@font-face {font-family: 'Noto Sans KR';font-style: normal;font-weight: 100;src: url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Thin.woff2) format('woff2'),url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Thin.woff) format('woff'),url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Thin.otf) format('opentype');}
-@font-face {font-family: 'Noto Sans KR';font-style: normal;font-weight: 300;src: url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Light.woff2) format('woff2'),url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Light.woff) format('woff'),url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Light.otf) format('opentype');}
-@font-face {font-family: 'Noto Sans KR';font-style: normal;font-weight: 400;src: url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Regular.woff2) format('woff2'),url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Regular.woff) format('woff'),url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Regular.otf) format('opentype');}
-@font-face {font-family: 'Noto Sans KR';font-style: normal;font-weight: 500;src: url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Medium.woff2) format('woff2'),url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Medium.woff) format('woff'),url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Medium.otf) format('opentype');}
-@font-face {font-family: 'Noto Sans KR';font-style: normal;font-weight: 700;src: url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Bold.woff2) format('woff2'),url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Bold.woff) format('woff'),url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Bold.otf) format('opentype');}
-@font-face {font-family: 'Noto Sans KR';font-style: normal;font-weight: 900;src: url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Black.woff2) format('woff2'),url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Black.woff) format('woff'),url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Black.otf) format('opentype');}
-@font-face {font-family: 'S-CoreDream-3Light'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-3Light.woff') format('woff'); font-weight: normal; font-style: normal;}
-
-:root{
-	--side-color-fr-11:#ffffff; /* 업무관리 사이드메뉴 포그라운드 컬러 */
-	--side-color-bg-11:#2147b1; /* 업무관리 사이드메뉴 백그라운드 컬러 */
-	--side-color-bg-12:#12338f;
-	--side-color-fr-21:#ffffff; /* 전자결재 사이드메뉴 포그라운드 컬러 */
-	--side-color-bg-21:#ff5377; /* 전자결재 사이드메뉴 백그라운드 컬러 */
-	--side-color-bg-22:#12338f;
-	--side-color-fr-31:#ffffff; /* 회계관리 사이드메뉴 포그라운드 컬러 */
-	--side-color-bg-31:#31cca2; /* 회계관리 사이드메뉴 백그라운드 컬러 */
-	--side-color-bg-32:#12338f;
-	--side-color-fr-41:#ffffff; /* 관리자 사이드메뉴 포그라운드 컬러 */
-	--side-color-bg-41:#31cca2; /* 관리자 사이드메뉴 백그라운드 컬러 */
-	--side-color-bg-42:#12338f;
+	font-family: 'NanumSquareRound';
+	src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/NanumSquareRound.woff') format('woff');
+	font-weight: normal;
+	font-style: normal;
 }
 
-html, body{
-	font-family:'NanumGothic', 'NanumSquareRound', 'NanumGothicLight', 'NanumGothicBold', 'NanumGothicExtraBold', 'Noto Sans KR', 'S-CoreDream-3Light','맑은 고딕';
+@font-face {
+	font-family: 'Noto Sans KR';
+	font-style: normal;
+	font-weight: 100;
+	src: url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Thin.woff2) format('woff2'), url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Thin.woff) format('woff'), url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Thin.otf) format('opentype');
+}
+
+@font-face {
+	font-family: 'Noto Sans KR';
+	font-style: normal;
+	font-weight: 300;
+	src: url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Light.woff2) format('woff2'), url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Light.woff) format('woff'), url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Light.otf) format('opentype');
+}
+
+@font-face {
+	font-family: 'Noto Sans KR';
+	font-style: normal;
+	font-weight: 400;
+	src: url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Regular.woff2) format('woff2'), url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Regular.woff) format('woff'), url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Regular.otf) format('opentype');
+}
+
+@font-face {
+	font-family: 'Noto Sans KR';
+	font-style: normal;
+	font-weight: 500;
+	src: url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Medium.woff2) format('woff2'), url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Medium.woff) format('woff'), url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Medium.otf) format('opentype');
+}
+
+@font-face {
+	font-family: 'Noto Sans KR';
+	font-style: normal;
+	font-weight: 700;
+	src: url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Bold.woff2) format('woff2'), url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Bold.woff) format('woff'), url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Bold.otf) format('opentype');
+}
+
+@font-face {
+	font-family: 'Noto Sans KR';
+	font-style: normal;
+	font-weight: 900;
+	src: url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Black.woff2) format('woff2'), url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Black.woff) format('woff'), url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Black.otf) format('opentype');
+}
+
+@font-face {
+	font-family: 'S-CoreDream-3Light';
+	src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-3Light.woff') format('woff');
+	font-weight: normal;
+	font-style: normal;
+}
+
+:root {
+	--side-color-fr-11: #ffffff;
+	/* 업무관리 사이드메뉴 포그라운드 컬러 */
+	--side-color-bg-11: #2147b1;
+	/* 업무관리 사이드메뉴 백그라운드 컬러 */
+	--side-color-bg-12: #12338f;
+	--side-color-fr-21: #ffffff;
+	/* 전자결재 사이드메뉴 포그라운드 컬러 */
+	--side-color-bg-21: #ff5377;
+	/* 전자결재 사이드메뉴 백그라운드 컬러 */
+	--side-color-bg-22: #12338f;
+	--side-color-fr-31: #ffffff;
+	/* 회계관리 사이드메뉴 포그라운드 컬러 */
+	--side-color-bg-31: #31cca2;
+	/* 회계관리 사이드메뉴 백그라운드 컬러 */
+	--side-color-bg-32: #12338f;
+	--side-color-fr-41: #ffffff;
+	/* 관리자 사이드메뉴 포그라운드 컬러 */
+	--side-color-bg-41: #31cca2;
+	/* 관리자 사이드메뉴 백그라운드 컬러 */
+	--side-color-bg-42: #12338f;
+}
+
+html,
+body {
+	font-family: 'NanumGothic', 'NanumSquareRound', 'NanumGothicLight', 'NanumGothicBold', 'NanumGothicExtraBold', 'Noto Sans KR', 'S-CoreDream-3Light', '맑은 고딕';
 	background-color: #F7F7F9;
 	margin: 0;
 	height: 100%;
 	overflow: hidden;
 }
 
-a{
+a {
 	color: #000;
 }
 
-select:read-only, input[type="text"]:read-only, input[type="date"]:read-only{
+select:read-only,
+input[type="text"]:read-only,
+input[type="date"]:read-only {
 	background-color: #ffffff;
 	color: #000;
 }
@@ -48,25 +102,30 @@ select:read-only, input[type="text"]:read-only, input[type="date"]:read-only{
 /* 라디오버튼 기본 css */
 input[type="radio"]:disabled:checked {
 	border: 3px solid #ffffff;
-    background-color: #8C8C8C;
+	background-color: #8C8C8C;
 }
 
 input[type="radio"]:disabled:not(:checked) {
-    background-color: #ffffff;
+	background-color: #ffffff;
 }
 
 input[type="radio"]:not(:disabled):checked {
-    border: 3px solid #ffffff;
-    background-color: #0054FF;
+	border: 3px solid #ffffff;
+	background-color: #0054FF;
 }
 
 input[type="radio"]:not(:disabled):not(:checked) {
-    background-color: #ffffff;
+	background-color: #ffffff;
 }
+
 /* 라디오버튼 기본 css */
 
 
-button, select, input[type="text"], input[type="date"], input[type="datetime-local"]{
+button,
+select,
+input[type="text"],
+input[type="date"],
+input[type="datetime-local"] {
 	font-family: 'NanumSquareRound';
 	/* padding:0.3% 0.7%; */
 	border: 0;
@@ -74,247 +133,257 @@ button, select, input[type="text"], input[type="date"], input[type="datetime-loc
 }
 
 /* crud 관련 버튼 시작 */
-.crudBtns{
+.crudBtns {
 	display: flex;
 	align-items: center;
 	float: right;
-    padding-top: 9px;
-    padding-right: 5px;
+	padding-top: 9px;
+	padding-right: 5px;
 }
 
-.crudBtns > button{
+.crudBtns>button {
 	height: 25px;
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    background-color: #2147b1;
-    color: #ffffff;
-    border-radius: 5px;
+	padding: 10px;
+	display: flex;
+	align-items: center;
+	background-color: #2147b1;
+	color: #ffffff;
+	border-radius: 5px;
 }
 
-.crudBtns > button:hover{
+.crudBtns>button:hover {
 	background-color: #0e2b7e;
 }
 
-.crudBtns > .crudUpdateBtn{
+.crudBtns>.crudUpdateBtn {
 	display: none;
 	margin-right: 5px;
 }
 
-.crudBtns > .crudDeleteBtn{
+.crudBtns>.crudDeleteBtn {
 	display: none;
 	margin-right: 5px;
 }
 
-.crudBtns > .contractReqBtn{
+.crudBtns>.contractReqBtn {
 	display: none;
 	margin-right: 5px;
 }
 
-.modalDeleteBtn{
+.modalDeleteBtn {
 	display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100px;
-    height: 30px;
-    background-color: #2147b1;
-    color: #ffffff;
-}
-
-.detailBackBtn{
 	align-items: center;
-    display: none;
-    padding-right: 15px;
-    text-decoration: none;
-    background-color: #2147b1;
-    height: 5px;
-    padding: 10px;
-    color: #ffffff;
-    border-radius: 5px;
+	justify-content: center;
+	width: 100px;
+	height: 30px;
+	background-color: #2147b1;
+	color: #ffffff;
 }
 
-.detailBackBtn:hover{
+.detailBackBtn {
+	align-items: center;
+	display: none;
+	padding-right: 15px;
+	text-decoration: none;
+	background-color: #2147b1;
+	height: 5px;
+	padding: 10px;
+	color: #ffffff;
+	border-radius: 5px;
+}
+
+.detailBackBtn:hover {
 	background-color: #0e2b7e;
 	cursor: pointer;
 }
 
-.detailSecondTabs{
+.detailSecondTabs {
 	display: none;
 	background-color: #ffffff;
 	padding: 10px;
 	margin-top: 3px;
 }
+
 /* crud 관련 버튼 끝 */
 
 /* 자동완성 시작 */
-.autoComplete{
+.autoComplete {
 	border: 1px solid #ededed;
-    position: absolute;
-    z-index: 200;
-    background-color: #ffffff;
-    max-height: 200px;
-    overflow-y: auto;
+	position: absolute;
+	z-index: 200;
+	background-color: #ffffff;
+	max-height: 200px;
+	overflow-y: auto;
 	border-radius: 10px;
 }
 
-.autoComplete div{
+.autoComplete div {
 	text-align: center;
 	padding: 5px;
 	font-size: 0.8rem;
 }
 
-.autoComplete div:hover{
+.autoComplete div:hover {
 	background-color: #2147b1;
 	color: #ffffff;
 	cursor: pointer;
 }
+
 /* 자동완성 끝 */
 
 /* 메시징 컨테이너 시작 */
-.msg_cnt{
-	position:fixed;
+.msg_cnt {
+	position: fixed;
 	top: 1%;
-	right:1%;
-	width:400px;
+	right: 1%;
+	width: 400px;
 	z-index: 100;
 }
-.msg_cnt .each_msg{
-	position:relative;
-	margin:7px 0;
+
+.msg_cnt .each_msg {
+	position: relative;
+	margin: 7px 0;
 	background-color: #332E85;
 	color: #fff;
 	border-radius: 15px;
 }
-.msg_cnt .each_msg > .cls_btn{
-	position:absolute;
-	top:0;
-	right:0;
+
+.msg_cnt .each_msg>.cls_btn {
+	position: absolute;
+	top: 0;
+	right: 0;
 	background-color: #332E85;
-	text-align:center;
-	font-size:12px;
-	width:20px;
-	height:20px;
-	color:#fff;
-	cursor:pointer;
+	text-align: center;
+	font-size: 12px;
+	width: 20px;
+	height: 20px;
+	color: #fff;
+	cursor: pointer;
 	font-weight: bold;
 	display: flex;
-    align-items: center;
-    justify-content: center;
+	align-items: center;
+	justify-content: center;
 }
-.msg_cnt .each_msg > .msg_content{
+
+.msg_cnt .each_msg>.msg_content {
 	text-overflow: ellipsis;
-    padding: 13px 0;
-    margin: 0 20px 0 18px;
+	padding: 13px 0;
+	margin: 0 20px 0 18px;
 }
+
 /* 메시징 컨테이너 끝 */
 
 /* 리스트 input range 시작 */
-.listRange{
+.listRange {
 	display: flex;
-    align-items: center;
-    line-height: 40px;
-    padding-left: 1%;
+	align-items: center;
+	line-height: 40px;
+	padding-left: 1%;
 	float: left;
 }
 
-.listRange > span{
+.listRange>span {
 	color: #332E85;
 	font-weight: 600;
 	font-size: 0.9rem;
 }
+
 /* 리스트 input range 끝 */
 
 /* ckeditor 시작 */
-textarea{
+textarea {
 	resize: none;
 	width: 100%;
 }
 
 .cke_textarea_inline,
-.cke_editable_inline{
+.cke_editable_inline {
 	width: 100% !important;
-    padding: 5px;
-    border: 0;
-    max-height: 300px;
-    overflow-y: auto;
-    font-size: 11px;
-    font-weight: 600;
+	padding: 5px;
+	border: 0;
+	max-height: 300px;
+	overflow-y: auto;
+	font-size: 11px;
+	font-weight: 600;
+	/* 11/30일 추가  */
+	min-height: 200px;
 }
 
-.cke_textarea_inline > p,
-.cke_editable_inline > p{
+.cke_textarea_inline>p,
+.cke_editable_inline>p {
 	margin: 0;
-	/* 11/29일자에 추가함 아래의 3개  */
-	font-family: "NanumSquareRound"; 
-	font-size: 12.8px; 
+	/* 11/29일에 추가함 아래의 3개  */
+	font-family: "NanumSquareRound";
+	font-size: 12.8px;
 	font-weight: 400;
 }
 
-.cke_focus{
+.cke_focus {
 	height: 300px;
 }
+
 /* ckeditor 끝 */
 
 /* plus 버튼 시작 */
-.plusContentBtn{
+.plusContentBtn {
 	z-index: 100;
 	width: 48px;
-    position: fixed;
+	position: fixed;
 	bottom: 40px;
-    right: 42px;
+	right: 42px;
 }
 
-.plusContentBtn > button{
+.plusContentBtn>button {
 	width: 48px;
-    height: 48px;
-    background-color: #352f8b80;
-    border-radius: 50%;
-    color: #ffffff;
-    font-size: 1.6rem;
-    line-height: 54px;
-    font-weight: 600;
+	height: 48px;
+	background-color: #352f8b80;
+	border-radius: 50%;
+	color: #ffffff;
+	font-size: 1.6rem;
+	line-height: 54px;
+	font-weight: 600;
 }
 
-.plusContentBtn .plusItems{
+.plusContentBtn .plusItems {
 	text-align: center;
 }
 
-.plusContentBtn .plusItems > button{
+.plusContentBtn .plusItems>button {
 	width: 48px;
-    height: 48px;
-    border-radius: 50%;
+	height: 48px;
+	border-radius: 50%;
 	line-height: 55px;
 	margin-bottom: 10px;
 	display: none;
 	z-index: 99;
 }
 
-.plusContentBtn .plusItems > .plusWidgetItem{
+.plusContentBtn .plusItems>.plusWidgetItem {
 	background-color: #050099;
 	color: #ffffff;
 }
 
-.plusContentBtn .plusItems > .plusSetItem{
+.plusContentBtn .plusItems>.plusSetItem {
 	background-color: #5CD1E5;
 	color: #ffffff;
 }
 
-.plusContentBtn .plusItems > .plusNotesItem{
+.plusContentBtn .plusItems>.plusNotesItem {
 	background-color: #0054FF;
 	color: #ffffff;
 }
 
-.plusContentBtn .plusItems > .plusDeleteItem{
+.plusContentBtn .plusItems>.plusDeleteItem {
 	background-color: #F15F5F;
 	color: #ffffff;
 }
 
-.plusContentBtn .plusItems > .plusEditItem{
+.plusContentBtn .plusItems>.plusEditItem {
 	background-color: #FFE08C;
 	color: #ffffff;
 }
 
-.plusContentBtn .plusItems > .plusAddItem{
+.plusContentBtn .plusItems>.plusAddItem {
 	background-color: #980000;
 	color: #ffffff;
 }
@@ -322,51 +391,51 @@ textarea{
 /* plus 버튼 끝 */
 
 /* 공통 class */
-.textNumberFormat{
+.textNumberFormat {
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
 
-.gridHeader{
-	display: grid; 
+.gridHeader {
+	display: grid;
 }
 
 /* .gridHeader .gridHeaderItem:not(:last-child){
 	border-right: 1px solid #D9D9D9;
 } */
 
-.gridHeader .gridHeaderItem:last-child{
+.gridHeader .gridHeaderItem:last-child {
 	border-right: 0;
 }
 
-.gridContent{
-	display: grid; 
+.gridContent {
+	display: grid;
 }
 
-.gridContent:hover{
+.gridContent:hover {
 	background-color: #EDEDF4;
 	cursor: pointer;
 }
 
-.gridContent .gridContentItem:not(:last-child){
+.gridContent .gridContentItem:not(:last-child) {
 	overflow: hidden;
 	border: 1px solid #e0e4e9;
-	margin:0.5px;
+	margin: 0.5px;
 	/* border-top: 1px solid #e0e4e9; */
 	/* border-right: 1px solid #E0E0E0; */
-	padding:8px;
+	padding: 8px;
 }
 
-.gridContent .gridContentItem:last-child{
+.gridContent .gridContentItem:last-child {
 	overflow: hidden;
 	border: 1px solid #e0e4e9;
-	margin:0.5px;
+	margin: 0.5px;
 	/* border-top: 1px solid #D9D9D9; */
 	/* border-right: 0; */
 }
 
-.grid_default_text_align_center{
+.grid_default_text_align_center {
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -374,10 +443,10 @@ textarea{
 	/* font-size:13px; 중복*/
 }
 
-.grid_default_text_align_left{
+.grid_default_text_align_left {
 	display: flex;
 	align-items: center;
-    justify-content: left;
+	justify-content: left;
 	padding: 0 8px;
 	overflow: hidden;
 	/* font-size:13px; 중복*/
@@ -385,28 +454,28 @@ textarea{
 
 /* #contract_body .contract_container .gridHeader .grid_default_text_align_left{padding: 0 8px; overflow: hidden;} */
 
-.grid_default_text_align_right{
+.grid_default_text_align_right {
 	display: flex;
 	align-items: center;
-    justify-content: right;
+	justify-content: right;
 	padding: 0 8px;
 	overflow: hidden;
 }
 
-.grid_default_header_item{
+.grid_default_header_item {
 	height: 36px;
 	font-size: 0.9rem;
 }
 
-.grid_default_body_item{
+.grid_default_body_item {
 	font-weight: 400;
 	font-size: 0.8rem;
 	line-height: 22px;
 	height: 38px;
 }
 
-.grid_default_body_item:nth-child(2n-1){
-	background-color:#F7F7F9;
+.grid_default_body_item:nth-child(2n-1) {
+	background-color: #F7F7F9;
 }
 
 .dragActive {
@@ -420,23 +489,26 @@ textarea{
 	background-color: azure
 }
 
-.dropZone_dragenter, .dropZone_dragover {
+.dropZone_dragenter,
+.dropZone_dragover {
 	border: 10px solid #302D81;
 }
+
 /* 공통 class 끝*/
 
 /* 페이지네이션 */
-.pageContainer{
+.pageContainer {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	font-size:13px;
-	box-sizing:border-box;
+	font-size: 13px;
+	box-sizing: border-box;
 	padding-top: 20px;
 	padding-bottom: 20px;
 }
 
-.pageContainer div:not(.paging_cell_current), .pageContainer .paging_cell_empty{
+.pageContainer div:not(.paging_cell_current),
+.pageContainer .paging_cell_empty {
 	width: 28px;
 	height: 28px;
 	display: flex;
@@ -447,7 +519,8 @@ textarea{
 	/* background-color: #EDEDF4; */
 }
 
-.pageContainer .paging_cell:hover, .pageContainer .paging_cell_empty:hover{
+.pageContainer .paging_cell:hover,
+.pageContainer .paging_cell_empty:hover {
 	width: 28px;
 	height: 28px;
 	color: #ffffff;
@@ -456,107 +529,108 @@ textarea{
 	cursor: pointer;
 }
 
-.paging_cell_current{
+.paging_cell_current {
 	width: 28px;
 	height: 28px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	color:#2147b1;
-	border:1px solid #2147b1;
-	background-color:#ebefff;
+	color: #2147b1;
+	border: 1px solid #2147b1;
+	background-color: #ebefff;
 }
+
 /* 페이지네이션 끝 */
 
 /* crud 폼 */
-.defaultFormContainer{
+.defaultFormContainer {
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
 	clear: both;
 	padding: 5px;
 }
 
-.defaultFormContainer .defaultFormLine{
+.defaultFormContainer .defaultFormLine {
 	display: flex;
 	border-top: 1px solid #B5B2FF;
 }
 
-.defaultFormContainer .defaultFormLine:last-child{
+.defaultFormContainer .defaultFormLine:last-child {
 	border-bottom: 1px solid #B5B2FF;
 }
 
-.defaultFormContainer .defaultFormLine .defaultFormSpanDiv{
+.defaultFormContainer .defaultFormLine .defaultFormSpanDiv {
 	display: flex;
-    align-items: center;
-    border-right: 1px solid #B5B2FF;
+	align-items: center;
+	border-right: 1px solid #B5B2FF;
 	background-color: #DAD9FF;
 }
 
-.defaultFormContainer .defaultFormLine .defaultFormSpanDiv > span{
+.defaultFormContainer .defaultFormLine .defaultFormSpanDiv>span {
 	color: #000;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    width: 110px;
-    justify-content: center;
+	font-weight: 600;
+	display: flex;
+	align-items: center;
+	width: 110px;
+	justify-content: center;
 	font-size: 0.8rem;
 }
 
-.defaultFormContainer .defaultFormLine .defaultFormContent{
+.defaultFormContainer .defaultFormLine .defaultFormContent {
 	display: flex;
-    align-items: center;
-    justify-content: left;
-    width: 100%;
+	align-items: center;
+	justify-content: left;
+	width: 100%;
 	overflow: hidden;
 }
 
-.defaultFormContainer .defaultFormLine .defaultFormContent .detailRadioBox[data-type="default"]{
+.defaultFormContainer .defaultFormLine .defaultFormContent .detailRadioBox[data-type="default"] {
 	padding-top: 10px;
 	padding-bottom: 10px;
 	padding-left: 5px;
 }
 
-.defaultFormContainer .defaultFormLine .defaultFormContent .detailRadioBox > input[type="radio"][data-type="tab"]{
+.defaultFormContainer .defaultFormLine .defaultFormContent .detailRadioBox>input[type="radio"][data-type="tab"] {
 	display: none;
 }
 
-.defaultFormContainer .defaultFormLine .defaultFormContent .detailRadioBox > input[type="radio"][data-type="default"]{
+.defaultFormContainer .defaultFormLine .defaultFormContent .detailRadioBox>input[type="radio"][data-type="default"] {
 	position: absolute;
-    appearance: none;
-    height: 15px;
-    border-radius: 15px;
-    width: 15px;
-    vertical-align: middle;
+	appearance: none;
+	height: 15px;
+	border-radius: 15px;
+	width: 15px;
+	vertical-align: middle;
 }
 
-.defaultFormContainer .defaultFormLine .defaultFormContent .detailRadioBox > label[data-type="tab"]{
+.defaultFormContainer .defaultFormLine .defaultFormContent .detailRadioBox>label[data-type="tab"] {
 	display: flex;
-    align-items: center;
-    padding: 10px;
-    border-radius: 0 15px 0 0;
+	align-items: center;
+	padding: 10px;
+	border-radius: 0 15px 0 0;
 	background-color: #B5B2FF;
 	color: #ffffff;
 	font-size: 0.8rem;
 }
 
-.defaultFormContainer .defaultFormLine .defaultFormContent .detailRadioBox > label[data-type="tab"]:hover{
+.defaultFormContainer .defaultFormLine .defaultFormContent .detailRadioBox>label[data-type="tab"]:hover {
 	background-color: #2147b1;
 	color: #ffffff;
 	cursor: pointer;
 }
 
-.defaultFormContainer .defaultFormLine .defaultFormContent .detailRadioBox > input[type="radio"][data-type="tab"]:checked + label{
+.defaultFormContainer .defaultFormLine .defaultFormContent .detailRadioBox>input[type="radio"][data-type="tab"]:checked+label {
 	background-color: #2147b1;
 	color: #ffffff;
 }
 
-.defaultFormContainer .defaultFormLine .defaultFormContent .detailRadioBox > label[data-type="default"]{
+.defaultFormContainer .defaultFormLine .defaultFormContent .detailRadioBox>label[data-type="default"] {
 	background-color: #2147b1;
-    padding: 5px;
-    border-radius: 15px;
-    color: #ffffff;
-    padding-left: 25px;
-    padding-right: 10px;
+	padding: 5px;
+	border-radius: 15px;
+	color: #ffffff;
+	padding-left: 25px;
+	padding-right: 10px;
 	line-height: 19px;
 	font-size: 0.8rem;
 }
@@ -564,29 +638,30 @@ textarea{
 .defaultFormContainer .defaultFormLine .defaultFormContent input[type='text'],
 .defaultFormContainer .defaultFormLine .defaultFormContent input[type='date'],
 .defaultFormContainer .defaultFormLine .defaultFormContent input[type='file'],
-.defaultFormContainer .defaultFormLine .defaultFormContent select{
+.defaultFormContainer .defaultFormLine .defaultFormContent select {
 	padding: 5px;
-    width: 100%;
+	width: 100%;
 	font-size: 0.8rem;
 }
+
 /* crud 폼 끝 */
 
 /* detail */
-.detailContents{
+.detailContents {
 	padding: 20px;
 }
 
-.detailBoard .detailContents{
-	padding:0;
+.detailBoard .detailContents {
+	padding: 0;
 }
 
-.detailContents .detailViewContainer{
+.detailContents .detailViewContainer {
 	width: 100%;
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
 }
 
-.detailContents .detailViewContainer > div{
+.detailContents .detailViewContainer>div {
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -594,77 +669,85 @@ textarea{
 	padding: 10px;
 }
 
-.detailContents .detailViewContainer > div > input[type='text'],
-.detailContents .detailViewContainer > div > input[type='date'],
-.detailContents .detailViewContainer > div > select{
+.detailContents .detailViewContainer>div>input[type='text'],
+.detailContents .detailViewContainer>div>input[type='date'],
+.detailContents .detailViewContainer>div>select {
 	width: 100%;
 	height: 100%;
 	font-size: 1.1rem;
 }
 
-.detailBoard{
+.detailBoard {
 	border: 1px solid #E4E5E9;
-	padding:20px;
+	padding: 20px;
 }
 
-.detailBoard .detailContents .detailBoardContainer{
+.detailBoard .detailContents .detailBoardContainer {
 	width: 100%;
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
 }
 
-.detailBoard .detailContents .detailBoardContainer > div{
+.detailBoard .detailContents .detailBoardContainer>div {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	border-bottom:1px solid #7e7e7e;
-	border-right:1px solid #7e7e7e;
+	border-bottom: 1px solid #7e7e7e;
+	border-right: 1px solid #7e7e7e;
 	padding: 10px;
-	font-size:0.9rem;
+	font-size: 0.9rem;
 }
 
-.detailBoard .detailViewFormSpan{border-left:1px solid #7e7e7e;}
-.detailBoardContainer>div:nth-of-type(3){border-left: none;}
-.detailBoardContainer>div:nth-child(-n+4){border-top:1px solid #7e7e7e;}
+.detailBoard .detailViewFormSpan {
+	border-left: 1px solid #7e7e7e;
+}
 
-.detailBoard .detailContents .detailBoardContainer > div > input,
-.detailBoard .detailContents .detailBoardContainer > div > select{
+.detailBoardContainer>div:nth-of-type(3) {
+	border-left: none;
+}
+
+.detailBoardContainer>div:nth-child(-n+4) {
+	border-top: 1px solid #7e7e7e;
+}
+
+.detailBoard .detailContents .detailBoardContainer>div>input,
+.detailBoard .detailContents .detailBoardContainer>div>select {
 	width: 100%;
 	height: 100%;
 	font-size: 0.9rem;
 }
 
-.detailBtns{
+.detailBtns {
 	display: flex;
 	align-items: center;
 	justify-content: right;
 	margin-bottom: 10px;
 }
 
-.detailBtns > button{
+.detailBtns>button {
 	display: flex;
-    align-items: center;
-    justify-content: center;
+	align-items: center;
+	justify-content: center;
 	color: #ebefff;
 	box-shadow: 0 1px 1px #bdbfc9;
-	background-color:#2147b1;
-	padding:0 10px;
-	height:26px;
+	background-color: #2147b1;
+	padding: 0 10px;
+	height: 26px;
 	border-radius: 5px;
-	margin:0 0 5px 10px;
+	margin: 0 0 5px 10px;
 }
 
-.detailBtns > button:hover{
+.detailBtns>button:hover {
 	box-shadow: 0 1px 2px #bdbfc9;
-	background-color:#0e2b7e;
+	background-color: #0e2b7e;
 }
 
-.scheduleContainer .detailBtns{
-	margin:20px;
+.scheduleContainer .detailBtns {
+	margin: 20px;
 }
 
 /* 매입매출 시작 */
-.tradeInput{
+.tradeInput {
 	width: 100%;
 	border-top: 1px solid #D9D9D9;
 	border-left: 1px solid #D9D9D9;
@@ -672,12 +755,12 @@ textarea{
 	margin-bottom: 20px;
 }
 
-.tradeInputAdd{
+.tradeInputAdd {
 	display: grid;
 	grid-template-columns: repeat(7, 1fr);
 }
 
-.tradeInputAdd > div{
+.tradeInputAdd>div {
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -686,23 +769,23 @@ textarea{
 	padding: 5px;
 }
 
-.tradeInputAdd > div > input,
-.tradeInputAdd > div > select{
+.tradeInputAdd>div>input,
+.tradeInputAdd>div>select {
 	width: 100%;
 	border: 1px solid #000;
 }
 
-.tradeList{
+.tradeList {
 	font-size: 0.8rem;
 }
 
 .tradeList input,
-.tradeList select{
+.tradeList select {
 	width: 95%;
 }
 
 .tradeList .tradeFirstTitle,
-.tradeList .tradeSecondFormTitle{
+.tradeList .tradeSecondFormTitle {
 	display: grid;
 	grid-template-columns: repeat(7, 1fr);
 	color: #302D81;
@@ -710,29 +793,26 @@ textarea{
 }
 
 .tradeList .tradeFirstFormContent,
-.tradeList .tradeSecondFormContent
-{
+.tradeList .tradeSecondFormContent {
 	display: grid;
 	grid-template-columns: repeat(7, 1fr);
 }
 
-.tradeList .tradeThirdFormTitle
-{
+.tradeList .tradeThirdFormTitle {
 	display: grid;
 	grid-template-columns: repeat(11, 1fr);
 	color: #302D81;
 	font-weight: 500;
 }
 
-.tradeList .tradeThirdFormContent .tradeThirdFormContentDiv
-{
+.tradeList .tradeThirdFormContent .tradeThirdFormContentDiv {
 	display: grid;
 	grid-template-columns: repeat(11, 1fr);
 	color: #000;
 	font-size: 0.8rem;
 }
 
-.tradeList .tradeThirdFormContent .tradeThirdFormContentTotal{
+.tradeList .tradeThirdFormContent .tradeThirdFormContentTotal {
 	display: flow-root;
 	padding: 10px;
 	border: 1px solid #D9D9D9;
@@ -740,11 +820,11 @@ textarea{
 	font-weight: 500;
 }
 
-.tradeList .tradeThirdFormContent .tradeThirdFormContentTotal > span:first-child{
+.tradeList .tradeThirdFormContent .tradeThirdFormContentTotal>span:first-child {
 	float: left;
 }
 
-.tradeList .tradeThirdFormContent .tradeThirdFormContentTotal > span:last-child{
+.tradeList .tradeThirdFormContent .tradeThirdFormContentTotal>span:last-child {
 	float: right;
 }
 
@@ -753,27 +833,28 @@ textarea{
 .tradeList .tradeSecondFormTitle .tradeSecondTitleItem,
 .tradeList .tradeSecondFormContent .tradeSecondContentItem,
 .tradeList .tradeThirdFormTitle .tradeThirdTitleItem,
-.tradeList .tradeThirdFormContent .tradeThirdFormContentDiv .tradeThirdContentItem{
+.tradeList .tradeThirdFormContent .tradeThirdFormContentDiv .tradeThirdContentItem {
 	padding: 10px;
 	border: 1px solid #D9D9D9;
 	font-size: 0.8rem;
 }
 
-.tradeTotalInfo{
+.tradeTotalInfo {
 	display: grid;
 	grid-template-columns: 5% 20% 5% 20% 5% 20% 5% 20%;
-    border-top: 1px solid #D9D9D9;
-    border-left: 1px solid #D9D9D9;
-    border-bottom: 1px solid #D9D9D9;
+	border-top: 1px solid #D9D9D9;
+	border-left: 1px solid #D9D9D9;
+	border-bottom: 1px solid #D9D9D9;
 	margin-top: 20px;
 }
 
-.tradeTotalInfo > div{
+.tradeTotalInfo>div {
 	border-right: 1px solid #D9D9D9;
-    display: flex;
-    align-items: center;
+	display: flex;
+	align-items: center;
 	padding: 5px;
 }
+
 /* 매입매출 끝 */
 
 /* tab 시작 */
@@ -786,23 +867,23 @@ textarea{
 }
 
 .tabItem {
-    background-color: #DAD9FF;
-    font-size: 1rem;
-    color: #000;
-    display: flex;
-    font-weight: 600;
-    border-radius: 0 20px 0 0;
-    height: 30px;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-    border: 1px solid #ffffff;
+	background-color: #DAD9FF;
+	font-size: 1rem;
+	color: #000;
+	display: flex;
+	font-weight: 600;
+	border-radius: 0 20px 0 0;
+	height: 30px;
+	align-items: center;
+	justify-content: center;
+	position: absolute;
+	border: 1px solid #ffffff;
 	font-size: 0.9rem;
 }
 
-.tabItem:hover{
+.tabItem:hover {
 	background-color: #2147b1;
-    color: #ffffff;
+	color: #ffffff;
 	cursor: pointer;
 }
 
@@ -810,55 +891,56 @@ input[name="tabItem"] {
 	display: none;
 }
 
-.tabContent{
+.tabContent {
 	height: 100%;
-	font-size:0.9375rem;
+	font-size: 0.9375rem;
 }
 
-.tabs input:checked + .tabItem {
+.tabs input:checked+.tabItem {
 	background-color: #2147b1;
-    color: #ffffff;
+	color: #ffffff;
 }
+
 .tabEstList .gridHeader,
-.tabEstList .gridContent{
+.tabEstList .gridContent {
 	display: grid;
-    grid-template-columns: 8% 8% 20% 8% 8% 48%;
+	grid-template-columns: 8% 8% 20% 8% 8% 48%;
 }
 
-.estAddBtn{
+.estAddBtn {
 	display: flex;
-    align-items: center;
-    justify-content: right;
+	align-items: center;
+	justify-content: right;
 }
 
-.estAddBtn > button{
+.estAddBtn>button {
 	background-color: #2147b1;
-    padding: 5px;
-    color: #ffffff;
-    border-radius: 5px;
+	padding: 5px;
+	color: #ffffff;
+	border-radius: 5px;
 }
 
-.tabFileList{
+.tabFileList {
 	max-height: 200px;
 	overflow-y: auto;
 }
 
 .tabFileList .gridHeader,
 .tabFileList .gridContent {
-	grid-template-columns: 90% 10%; 
+	grid-template-columns: 90% 10%;
 }
 
-.tabTechList{
+.tabTechList {
 	max-height: 200px;
 	overflow-y: auto;
 }
 
 .tabTechList .gridHeader,
 .tabTechList .gridContent {
-	grid-template-columns: 10% 10% 10% 10% 60%; 
+	grid-template-columns: 10% 10% 10% 10% 60%;
 }
 
-.tabSalesList{
+.tabSalesList {
 	max-height: 200px;
 	overflow-y: auto;
 }
@@ -867,10 +949,11 @@ input[name="tabItem"] {
 .tabSalesList .gridContent {
 	grid-template-columns: 10% 10% 20% 40% 10% 10%;
 }
+
 /* tab 끝 */
 
 /* 테이블 레이아웃 */
-.defaultTable input{
+.defaultTable input {
 	border: 1px solid #C1C1C1;
 	border-radius: 5px;
 	background-color: #F5F6F8;
@@ -878,86 +961,87 @@ input[name="tabItem"] {
 	width: 100%;
 	margin: 0 auto;
 }
+
 /* 테이블 레이아웃 끝 */
 
 /* 각 페이지 검색 시작 */
-.searchContainer{
+.searchContainer {
 	background: #FFFFFF;
 	overflow: hidden;
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
 }
 
-.searchContainer > hr{
+.searchContainer>hr {
 	float: left;
-	border:2px solid #182f81;
- 	height : 32px;
- 	margin: 0;
+	border: 2px solid #182f81;
+	height: 32px;
+	margin: 0;
 }
 
-.searchContainer .searchBtns{
+.searchContainer .searchBtns {
 	display: flex;
 	align-items: center;
 	justify-content: right;
 	margin-top: 5px;
 }
 
-.searchContainer .searchBtns > button{
+.searchContainer .searchBtns>button {
 	display: flex;
-    align-items: center;
-    justify-content: right;
-    color: #ebefff;
-    box-shadow: 0 1px 1px #bdbfc9;
-    background-color: #2147b1;
-    height: 20px;
-    border-radius: 5px;
-    margin-right: 5px;
-    font-size: 0.6rem;
+	align-items: center;
+	justify-content: right;
+	color: #ebefff;
+	box-shadow: 0 1px 1px #bdbfc9;
+	background-color: #2147b1;
+	height: 20px;
+	border-radius: 5px;
+	margin-right: 5px;
+	font-size: 0.6rem;
 }
 
-.searchContainer .searchBtns > button:hover{
+.searchContainer .searchBtns>button:hover {
 	box-shadow: 0 1px 2px #bdbfc9;
-	background-color:#0e2b7e;
+	background-color: #0e2b7e;
 }
 
-.searchContainer .searchMultiContent{
+.searchContainer .searchMultiContent {
 	display: flex;
-    padding: 10px;
+	padding: 10px;
 	clear: both;
 }
 
-.searchContainer .searchMultiContent div{
+.searchContainer .searchMultiContent div {
 	padding-right: 10px;
-    font-size: 0.8rem;
+	font-size: 0.8rem;
 }
 
-.searchContainer .searchMultiContent div > input,
-.searchContainer .searchMultiContent div > select{
-    font-size: 0.9rem;
-    border: 1px solid #C1C1C1;
-    border-radius: 5px;
-    background-color: #ffffff;
-    display: flex;
+.searchContainer .searchMultiContent div>input,
+.searchContainer .searchMultiContent div>select {
+	font-size: 0.9rem;
+	border: 1px solid #C1C1C1;
+	border-radius: 5px;
+	background-color: #ffffff;
+	display: flex;
 	margin-top: 5px;
 }
 
-.searchContainer > span{
+.searchContainer>span {
 	font-weight: bolder;
-    font-size: 15px;
-    color: #332E85;
-    float: left;
-    padding-left: 10px;
-    padding-top: 10px;
+	font-size: 15px;
+	color: #332E85;
+	float: left;
+	padding-left: 10px;
+	padding-top: 10px;
 }
 
-.listSearchInput{
-    display: flex;
-    align-items: center;
-    float: right;
-    padding-right: 5px;
-    padding-top: 8px;
+.listSearchInput {
+	display: flex;
+	align-items: center;
+	float: right;
+	padding-right: 5px;
+	padding-top: 8px;
 }
 
-.listSearchInput .searchAllInput{
+.listSearchInput .searchAllInput {
 	padding: 0 10px;
 	font-size: 0.9rem;
 	border: 1px solid #C1C1C1 !important;
@@ -965,25 +1049,26 @@ input[name="tabItem"] {
 	background-color: #ffffff;
 	height: 25px;
 }
+
 /* 각 페이지 검색 끝 */
 
-#header{
+#header {
 	position: relative;
 	display: grid;
-    grid-template-columns: 172px 1fr 31%;
+	grid-template-columns: 172px 1fr 31%;
 	height: 54px;
 	box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
 	background: #FFFFFF;
 }
 
-@media(max-width:1920px){
-	#header{
+@media(max-width:1920px) {
+	#header {
 		display: grid;
-    	grid-template-columns: 172px 1fr 31%;
+		grid-template-columns: 172px 1fr 31%;
 	}
 }
 
-#header #mainTopLogo{
+#header #mainTopLogo {
 	display: flex;
 	height: 63px;
 	align-items: center;
@@ -991,19 +1076,19 @@ input[name="tabItem"] {
 	position: relative;
 }
 
-#header #mainTopLogo #mainTopLogoImg{
+#header #mainTopLogo #mainTopLogoImg {
 	width: 98px;
 }
 
-#header #mainTopLogo #mainTopEllipseImg{
+#header #mainTopLogo #mainTopEllipseImg {
 	position: absolute;
 	right: 8px;
-	margin-top:-4px;
-	width:24px;
+	margin-top: -4px;
+	width: 24px;
 	cursor: pointer;
 }
 
-#header #mainTopLogo #mainTopVectorImg{
+#header #mainTopLogo #mainTopVectorImg {
 	position: absolute;
 	width: 7px;
 	height: 14px;
@@ -1015,21 +1100,21 @@ input[name="tabItem"] {
 	padding-left: 1%;
 } */
 
-#header .mainTopMenu ul{
+#header .mainTopMenu ul {
 	list-style: none;
-	height:100%;
+	height: 100%;
 	margin: 0;
 	padding: 0;
 }
 
-#header .mainTopMenu ul li{
+#header .mainTopMenu ul li {
 	float: left;
 	text-align: center;
 	width: 126px;
 	height: 100%;
 }
 
-#header .mainTopMenu ul li button{
+#header .mainTopMenu ul li button {
 	width: 100%;
 	height: 54px;
 	font-weight: 500;
@@ -1039,106 +1124,106 @@ input[name="tabItem"] {
 	background-color: #ffffff;
 }
 
-#header .mainTopMenu ul li button.active{
+#header .mainTopMenu ul li button.active {
 	width: 100%;
 	height: 54px;
 	font-weight: 500;
 	font-size: 15px;
 	color: #332E85;
 	border: 0;
-	background: linear-gradient(to bottom, #ffffff 95%, #302D81 5%); 
+	background: linear-gradient(to bottom, #ffffff 95%, #302D81 5%);
 	cursor: pointer;
 }
 
-#header .mainTopMenu ul li button:not(.active):hover{
+#header .mainTopMenu ul li button:not(.active):hover {
 	width: 100%;
 	height: 54px;
 	font-weight: 500;
 	font-size: 15px;
 	color: #332E85;
 	border: 0;
-	background: linear-gradient(to bottom, #ffffff 95%, #DEDEFF 5%); 
+	background: linear-gradient(to bottom, #ffffff 95%, #DEDEFF 5%);
 	cursor: pointer;
 }
 
-#header #mainInfo{
+#header #mainInfo {
 	display: flex;
 	align-items: center;
 	justify-content: right;
 	padding-right: 15px;
 }
 
-#header #mainInfo > a > #myInfoMessageImg{
-	width:28px;
+#header #mainInfo>a>#myInfoMessageImg {
+	width: 28px;
 	padding-bottom: 10px;
 }
 
-#header #mainInfo > #myInfoImage{
+#header #mainInfo>#myInfoImage {
 	width: 35px;
 	padding-right: 4px;
 	padding-left: 100px;
 	padding-bottom: 5px;
 }
 
-#header #mainInfo a > #myInfoImageLogout{
+#header #mainInfo a>#myInfoImageLogout {
 	padding-left: 16px;
 	padding-bottom: 5px;
 }
 
-#header #mainInfo a{
+#header #mainInfo a {
 	display: contents;
 	font-size: 0.9rem;
 }
 
-.myNoteList{
+.myNoteList {
 	border: 1px solid #182f81;
 	overflow-y: auto;
 	position: absolute;
-    top: 55px;
-    right: 250px;
-    background-color: #ffffff;
+	top: 55px;
+	right: 250px;
+	background-color: #ffffff;
 	display: none;
 	z-index: 1;
 }
 
-.myNoteList::after{
+.myNoteList::after {
 	content: '';
-    position: fixed;
-    border-right: 10px solid transparent;
-    border-left: 10px solid transparent;
-    border-bottom: 15px solid #182f81;
+	position: fixed;
+	border-right: 10px solid transparent;
+	border-left: 10px solid transparent;
+	border-bottom: 15px solid #182f81;
 	top: 40px;
-    right: 275px;
+	right: 275px;
 }
 
-.myNoteList .myNoteListItem{
+.myNoteList .myNoteListItem {
 	border-bottom: 1px solid #ffffff;
 	padding: 10px;
 	background-color: #182f81;
 	color: #ffffff;
 }
 
-.myNoteList .myNoteListItem:hover{
+.myNoteList .myNoteListItem:hover {
 	background-color: #ffffff;
 	color: #182f81;
 	cursor: pointer;
 }
 
-.myNoteList .myNoteListItem > p{
+.myNoteList .myNoteListItem>p {
 	margin: 0;
 }
 
-span.badgeSpan{
+span.badgeSpan {
 	padding: 3px;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-    width: 13px;
-    background-color: #2147b1;
-    color: #fff;
-    border-radius: 10px;
-    font-size: 0.7rem;
+	display: none;
+	align-items: center;
+	justify-content: center;
+	position: absolute;
+	width: 13px;
+	background-color: #2147b1;
+	color: #fff;
+	border-radius: 10px;
+	font-size: 0.7rem;
 }
 
 /* .dept-tree + label + div{display:none;}
