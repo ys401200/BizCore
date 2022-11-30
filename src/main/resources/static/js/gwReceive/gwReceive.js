@@ -573,17 +573,17 @@ function showAppModal() {
   // $("#tabDetail2").hide();
 
   let setAppModalHtml =
-    "<div class='setApprovalModal'>" +
-    "<div class='modal-title'>결재하기</div>" +
-    "<div class='modal-body'><div class='labelContainer'>" +
-    "<label><input type='radio' name='type'  value='approve' checked>승인</label>" +
-    "<label><input type='radio' name='type' value='reject'>반려</label></div>" +
-    "<label>의견 <textarea class='approvalComment'></textarea></label></div>" +
-    "<div class='close-wrap'>" +
-    "<button id='quit' onclick='closeModal(this)'>취소</button>" +
-    "<button id='set' onclick='approveBtnEvent()'>결재</button></div></div>";
-  $(".modal-wrap").html(setAppModalHtml);
-  $(".modal-wrap").show();
+  "<div class='setApprovalModal'>" +
+  "<div class='modalHead'><span class='modalHeadTitle'>결재하기</span><span class='xClose' onclick='closeModal(this)'><i class='fa-solid fa-xmark'></i></span></div>" +
+  "<div class='modal-body'><div class='labelContainer'>" +
+  "<label><input type='radio' name='type'  value='approve' checked>승인</label>" +
+  "<label><input type='radio' name='type' value='reject'>반려</label></div>" +
+  "<div class='commentContainer'><label>의견 </label><textarea class='approvalComment'></textarea></div></div>" +
+  "<div class='modalFoot'>" +
+  "<button class='modalBtns close' id='quit' onclick='closeModal(this)'>취소</button>" +
+  "<button class='modalBtns confirm' id='set' onclick='approveBtnEvent()'>결재</button></div></div>";
+$(".modal-wrap").html(setAppModalHtml);
+$(".modal-wrap").show();
 
   // $(".setApprovalModal").show();
   // $(".setModifyModal").hide();

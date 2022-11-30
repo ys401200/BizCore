@@ -899,8 +899,7 @@ function approveBtnEvent() {
         storage.reportDetailData.sopp == soppResult) &&
       ((storage.reportDetailData.customer == null && cusResult == "") ||
         storage.reportDetailData.customer == cusResult) &&
-      storage.oriCbContainer ==
-      $("input[name='" + formId + "_RD']:checked").attr("id") &&
+      storage.oriCbContainer == $("input[name='" + formId + "_RD']:checked").attr("id") &&
       storage.oriTitle == $("#" + formId + "_title").val() &&
       storage.oriContent == $("#" + formId + "_content").val() &&
       storage.oriInsertedDataList == $(".insertedDataList").html()
@@ -911,7 +910,6 @@ function approveBtnEvent() {
     }
   } else {
     if (
-
       storage.oriTitle == $("#" + formId + "_title").val() &&
       storage.oriContent == $("#" + formId + "_content").val() &&
       storage.oriInsertedData == $(".insertedData").html()
@@ -975,6 +973,7 @@ function approveBtnEvent() {
   console.log(cusResult + " 확인 5")
   console.log(related + " 확인 6")
   console.log(storage.newDoc + " 확인 7");
+  
   data = JSON.stringify(data);
   data = cipher.encAes(data);
 
@@ -995,7 +994,7 @@ function approveBtnEvent() {
     success: (data) => {
       if (data.result === "ok") {
         alert("결재 완료");
-        location.href = "/gw/wait";
+        //location.href = "/gw/wait";
       } else {
         alert("결재 실패");
       }

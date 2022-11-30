@@ -439,14 +439,16 @@
 }
 
 .setApprovalModal {
-   width: 30%;
+   width: 20%;
    background-color: white;
 }
 
-.approvalComment {
-   border: 1px solid black;
+.modal-wrap .setApprovalModal textarea {
+	border: 1px solid black;
+	height: 5em;
+	overflow-y: scroll;
+	resize: none;
 }
-
 
 .modal-body input[type="text"] {
    width: 95%;
