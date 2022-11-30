@@ -18,8 +18,6 @@ function showCheckPwForm() {
 	html = "<div class='mypageFirstDiv'><label for='pwInput'>비밀번호 확인</label><input type='password' id='pwInput'/>"
 		+ "<button type='button' id='pwCheckbtn' onclick='checkPw()'>확인</button><div>"
 	target.html(html);
-
-
 }
 
 
@@ -48,9 +46,7 @@ function checkPw() {
 		}
 	})
 
-
 }
-
 
 
 function drawMyPage(data) {
@@ -77,7 +73,7 @@ function drawMyPage(data) {
 	let html = "<div class='mypageSecondDiv'><div class='forPhoto'></div>" +
 		"<div><div><div>아이디</div><input type='text' class='fixed'  value='" + data.userId + "' disabled/></div>" +
 		"<div><div>이름</div><input type='text' class='fixed' value='" + data.userName + "'disabled/></div>" +
-		"<div><div>직급</div><input type='text'class='fixed' value='" + data.rank + "'disabled/></div>" +
+		"<div><div>직급</div><input type='text'class='fixed' value='" + storage.userRank[data.rank][0] + "'disabled/></div>" +
 		"<div><div>이메일</div><input type='text' class='change email' value='" + data.email + "'disabled /></div>" +
 		"<div><div>핸드폰번호</div><input type='text' class='change cellPhone' value='" + data.cellPhone + "'disabled/></div>" +
 		"<div><div>전화번호</div><input type='text' class='change homePhone' value='" + data.homePhone + "'disabled/></div>" +

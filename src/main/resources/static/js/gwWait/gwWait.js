@@ -2285,7 +2285,7 @@ function doBatchApproval() {
                   doBatchApproval();
                 } else {
                   $(".loading-overlay").hide();
-                  alert("일괄 결재 완료");
+                  msg.set("일괄 결재 완료");
                   location.href = "/gw/wait";
 
                 }
@@ -2321,6 +2321,9 @@ function doBatchApproval() {
 
 
 function doBatchReject() {
+  if ($(".loading-overlay").css("display") == 'none') {
+    $("#loadingDiv").loading("toggle");
+  }
   let batchData = [];
   let insertData;
   let batchBtns = $("input[name='batchBtns']:checked");
@@ -2391,9 +2394,11 @@ function doBatchReject() {
 
                 batchCount++;
                 if (batchCount < batchData.length) {
-                  doBatchApproval();
+                  doBatchReject();
                 } else {
-                  alert("일괄 결재 완료");
+                  $(".loading-overlay").hide();
+                  msg.set("일괄 결재 완료");
+                  location.href = "/gw/wait";
                 }
 
 
@@ -2401,7 +2406,7 @@ function doBatchReject() {
                 console.log("결재 실패" + batchCount)
                 batchCount++;
                 if (batchCount < batchData.length) {
-                  doBatchApproval();
+                  doBatchReject();
                 }
 
               }
@@ -2413,7 +2418,7 @@ function doBatchReject() {
           console.log("상세조회에 실패함" + batchCount)
           batchCount++;
           if (batchCount < batchData.length) {
-            doBatchApproval();
+            doBatchReject();
           }
 
         }
