@@ -80,6 +80,13 @@ function drawMyRefer() {
     );
   } else {
     jsonData = storage.myReferList;
+    let exceptMy = [];
+    for (let i = 0; i < jsonData.length; i++) {
+      if (jsonData[i].writer != storage.my) {
+        exceptMy.push(jsonData[i]);
+      }
+    }
+    jsonData = exceptMy;
 
     result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 
