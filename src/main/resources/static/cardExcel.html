@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="js/jquery.min.js"></script>
     <title>Document</title>
 </head>
 <style>
@@ -22,8 +21,154 @@
     }
 </style>
 
-<body>
-    <input type="file" id="xlsFile" accept=".xls,.xlsx,xlsm" onchange="readFile(this)" />
+<body onload="init()">
+    <script src="js/jquery.min.js"></script>
+    <script src="js/cipher.js"></script>
+    <script>
+
+
+        let apiServer = "", storage = {}, cipher;
+
+        cipher = {
+            // 암호화 모듈
+            encRsa: (message) => {
+                let result, rsa;
+                if (message === undefined || message === null) return message;
+                rsa = new RSAKey();
+                rsa.setPublic(cipher.rsa.public.modulus, cipher.rsa.public.exponent);
+                return btoa(rsa.encrypt(message));
+            },
+            encAes: (message) => {
+                let cp, result;
+                cp = CryptoJS.AES.encrypt(
+                    message,
+                    CryptoJS.enc.Utf8.parse(cipher.aes.key),
+                    {
+                        iv: CryptoJS.enc.Utf8.parse(cipher.aes.iv),
+                        padding: CryptoJS.pad.Pkcs7,
+                        mode: CryptoJS.mode.CBC,
+                    }
+                );
+                result = cp.toString();
+                return result;
+            },
+            decAes: (message) => {
+                let cp, result;
+                cp = CryptoJS.AES.decrypt(
+                    message,
+                    CryptoJS.enc.Utf8.parse(cipher.aes.key),
+                    {
+                        iv: CryptoJS.enc.Utf8.parse(cipher.aes.iv),
+                        padding: CryptoJS.pad.Pkcs7,
+                        mode: CryptoJS.mode.CBC,
+                    }
+                );
+                result = cp.toString(CryptoJS.enc.Utf8);
+                return result;
+            },
+            rsa: {
+                public: {
+                    modulus: undefined,
+                    exponent: undefined,
+                },
+                private: undefined,
+                getKey: () => {
+                    let url = apiServer + "/api/user/rsa";
+                    $.ajax({
+                        url: url,
+                        method: "get",
+                        dataType: "json",
+                        cache: false,
+                        success: (data) => {
+                            let publicKeyExponent,
+                                publicKeyModulus,
+                                aesKey,
+                                aesIv,
+                                url = apiServer + "/api/user/aes";
+                            if (data.result === "ok") {
+                                aesKey = [
+                                    cipher.genKey(8),
+                                    cipher.genKey(8),
+                                    cipher.genKey(8),
+                                    cipher.genKey(8),
+                                ];
+                                aesIv = [cipher.genKey(8), cipher.genKey(8)];
+                                cipher.aes.key =
+                                    aesKey[0] + aesKey[1] + aesKey[2] + aesKey[3];
+                                cipher.aes.iv = aesIv[0] + aesIv[1];
+                                publicKeyExponent = data.data.publicKeyExponent;
+                                publicKeyModulus = data.data.publicKeyModulus;
+                                cipher.rsa.public.modulus = publicKeyModulus;
+                                cipher.rsa.public.exponent = publicKeyExponent;
+                                sessionStorage.setItem("rsaModulus", publicKeyModulus);
+                                sessionStorage.setItem("rsaExponent", publicKeyExponent);
+                                sessionStorage.setItem("aesKey", cipher.aes.key);
+                                sessionStorage.setItem("aesIv", cipher.aes.iv);
+                                $.ajax({
+                                    url: url,
+                                    method: "post",
+                                    data:
+                                        cipher.encRsa(aesKey[0]) +
+                                        "\n" +
+                                        cipher.encRsa(aesKey[1]) +
+                                        "\n" +
+                                        cipher.encRsa(aesKey[2]) +
+                                        "\n" +
+                                        cipher.encRsa(aesKey[3]) +
+                                        "\n" +
+                                        cipher.encRsa(aesIv[0]) +
+                                        "\n" +
+                                        cipher.encRsa(aesIv[1]),
+                                    contentType: "text/plain",
+                                    cache: false,
+                                    success: (data) => { },
+                                });
+                            } else {
+                                //  msg.set(data.msg);
+                            }
+                        },
+                    });
+                },
+            },
+            aes: {
+                iv: undefined,
+                key: undefined,
+            },
+            genKey: (length) => {
+                let x,
+                    t,
+                    result = "",
+                    src = [];
+                if (isNaN(length) || length < 8) length = 32;
+                for (x = 0; x < 69; x++) {
+                    if (x < 10) src[x] = x + 48;
+                    else if (x < 36) src[x] = x + 55;
+                    else if (x < 62) src[x] = x + 61;
+                    else if (x == 63) src[x] = 33;
+                    else if (x == 64) src[x] = 43;
+                    else if (x == 65) src[x] = 126;
+                    else src[x] = x - 31;
+                }
+                for (x = 0; x < length; x++) {
+                    t = Math.floor(Math.random() * src.length);
+                    result += String.fromCharCode(src[t]);
+                }
+                return result;
+            }, // End of getKey()
+        };
+
+        function init() {
+
+            cipher.rsa.getKey();
+
+        } // End of init()
+
+    </script>
+
+
+
+    <input type="file" id="xlsFile" accept=".xls,.xlsx,xlsm" onchange="readFile(this)" /><button
+        onclick="getCheckdData()">insert</button>
     <div class="forCardData">
         <div class="parsedTitle" data-idx="-1">
             <div>일자</div>
@@ -37,8 +182,22 @@
     </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <script src="/js/accountingBankaccount/xlsx.full.min.js"></script>
-    <script src="/js/header.js"></script>
+
     <script>
         let bnkXls = {};
 
@@ -75,6 +234,7 @@
             } // End of Anonymous Function in readExcel()
 
             reader.readAsBinaryString(file);
+            // 읽기 동작이 성공적으로 완료되었을 때 발생 
             reader.onload = evfn;
         } // End of bnkXls.readXlsFile()
 
@@ -216,10 +376,10 @@
             //0-거래일자 1-카드번호 2-승인번호 3-가맹점명 4-승인금액(청구금액) 
             html = "";
             if (data.detail !== undefined && data.detail !== null && data.detail.length > 0) {
-                // html = "<div class=\"parsedTitle\" data-idx=\"-1\"><div>일자</div><div>카드번호</div><div>승인번호</div><div>가맹점명</div><div>승인금액</div><div><input type=\"checkbox\" onclick=\"clickedCheckAll(this)\" checked /></div></div>";
+
                 for (x = 0; x < data.detail.length; x++) {
                     cardNum = data.detail[x][1].slice(-6);
-                    html += ("<div class=\"parsedItem\" data-idx=\"" + x + "\"><div>" + data.detail[x][0] + "</div><div>" + cardNum + "</div><div>" + data.detail[x][2] + "</div><div>" + data.detail[x][3].toLocaleString() + "</div><div>" + data.detail[x][4].toLocaleString() + "</div><div><input type=\"checkbox\" checked /></div></div>");
+                    html += ("<div class=\"parsedItem\" data-idx=\"" + x + "\"><div>" + data.detail[x][0] + "</div><div>" + cardNum + "</div><div>" + data.detail[x][2] + "</div><div>" + data.detail[x][3].toLocaleString() + "</div><div>" + data.detail[x][4].toLocaleString() + "</div><div><input name='cardDataCb' class='cb" + x + "' type=\"checkbox\" checked /></div></div>");
                 }
             }
             console.log("STEP 6 : show modal");
@@ -235,6 +395,58 @@
                 if (els[x] === el || els[x].disabled === true) continue;
                 els[x].checked = el.checked;
             }
+        }
+
+
+
+        function getCheckdData() {
+            let cbs = $("input[name='cardDataCb']:checked");
+            let checkedCN = [];
+            for (let i = 0; i < cbs.length; i++) {
+                checkedCN.push(cbs[i].className);
+            }
+            insertCardData(checkedCN);
+        }
+        let index = 0;
+
+        //카드 내역을 insert하는 함수 
+        function insertCardData(checkedCN) {
+
+            let dataArr = $("." + checkedCN[index]).parent().parent().children();
+            let data = {
+                transactionDate: dataArr[0].innerHTML,
+                cardNo: dataArr[1].innerHTML,
+                permitNo: dataArr[2].innerHTML,
+                storeTitle: dataArr[3].innerHTML,
+                permitAmount: dataArr[4].innerHTML,
+            }
+
+            data = JSON.stringify(data);
+            data = cipher.encAes(data);
+            console.log(data);
+            $.ajax({
+                url: "/api/card/insert",
+                type: "post",
+                data: data,
+                dataType: "json",
+                success: (result) => {
+                    if (result.result == "ok") {
+                        console.log("성공");
+                        if (index < checkedCN.length) {
+                            index++;
+                            insertCardData(checkedCN);
+                        }
+                    } else {
+                        console.log("실패");
+                        if (index < checkedCN.length) {
+                            index++;
+                            insertCardData(checkedCN);
+                        }
+                    }
+                }
+
+            })
+
         }
 
     </script>
