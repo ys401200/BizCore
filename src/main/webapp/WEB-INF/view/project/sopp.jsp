@@ -25,7 +25,7 @@
                             <div>'22.12.31</div>
                         </div>
                     </div>
-                    <div class="sopp-progress"><div class="sopp-done">개설</div><div class="sopp-done">접촉</div><div class="sopp-done">제안</div><div class="sopp-doing">견적</div><div>협상</div><div>계약</div><div>종료</div></div>
+                    <div class="sopp-progress"><div class="sopp-done">개 설</div><div class="sopp-done">접 촉</div><div class="sopp-done">제 안</div><div class="sopp-doing">견 적</div><div>협 상</div><div>계 약</div><div>종 료</div></div>
                     <div class="sopp-tab-cnt">
                         <div onclick="moveToTarget(this)" data-target="sopp-info" class="sopp-tab-select">설명</div>
                         <div onclick="moveToTarget(this)" data-target="sopp-schedule" class="sopp-tab">일정</div>
