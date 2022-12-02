@@ -147,6 +147,39 @@ public class ApiProjectCtrl extends Ctrl{
         return result;
     } // End of projectGet()
 
+    @GetMapping("/sopp/{no:\\d+}")
+    public String soppNoGet(HttpServletRequest request, @PathVariable("no") int no){
+        String result = null;
+        String compId = null;
+        String aesKey = null;
+        String aesIv = null;
+        Msg msg = null;
+        HttpSession session = null;
+
+        session = request.getSession();
+        compId = (String)session.getAttribute("compId");
+        if(compId == null)  compId = (String)session.getAttribute("compId");
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        msg = getMsg((String)session.getAttribute("lang"));
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        }else{
+            result = projSvc.getSopp2(compId, no);
+            if(result != null){
+                result = boardService.encAes(result, aesKey, aesIv);
+                result = "{\"result\":\"ok\",\"data\":\"" + result + "\"}";    
+            }else{
+                result = "{\"result\":\"failure\",\"msg\":\"Requested sopp is not exist\"}";
+            }
+        }
+        
+        return result;
+    } // End of projectGet()
+
 
     
 }

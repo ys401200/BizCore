@@ -8,12 +8,15 @@
 	</div>
 	<div id="bodyContent">
 
-
         <div class="container">
-            <div class="content-title">영업기회 관리</div>
-            <div class="project-list"></div><div class="detail-preview"><div class="empty">EMPTY</div></div>
+            <div class="content-title">영업기회</div>
+            <div class="sopp-content">
+                <div class="sopp-info"></div>
+                <div class="sopp-progress"></div>
+                <div class="sopp-detail"></div>
+            </div>
+            <div class="sopp-summary"></div>
         </div>
-
 
 	</div>
 </div>

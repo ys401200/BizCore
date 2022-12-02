@@ -129,5 +129,19 @@ public class ProjectService extends Svc{
         
         return null;
     } // End of removeProject()
+
+    public String getSopp2(String compId, int no){
+        String result = null;
+        Sopp2 sopp = null;
+        Integer prjOwner = null;
+
+        sopp = projectMapper.getSopp(compId, no);
+        if(sopp != null){
+            prjOwner = projectMapper.getProjectOwnerWithSoppNo(compId, no);
+            result = "{\"sopp\":" + sopp.toJson() + ",\"projectOwner\":" + prjOwner + "}";
+        }
+
+        return result;
+    } // End of getSopp2()
     
 }

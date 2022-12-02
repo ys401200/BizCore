@@ -13,7 +13,7 @@ $(document).ready(() => {
 	
 });
 
-removeContextMenu = () => {cm = document.getElementsByClassName("context-menu")[0];if(cm !== undefined)	cm.remove();}
+removeContextMenu = () => {let cm = document.getElementsByClassName("context-menu")[0];if(cm !== undefined)	cm.remove();}
 
 removeProject = (el) => {
 	let x, y, v = el.dataset.v * 1;
@@ -375,7 +375,7 @@ class Project{
 			child = document.createElement("div");
 			child.className = "sopp-box";
 			el.appendChild(child);
-			sopp.draw(child);
+			sopp.drawList(child);
 		}
 	} // End of draw()
 
@@ -493,12 +493,14 @@ class Sopp2{
 		return html;
 	} // End of ownerName()
 
-	draw(cnt){
+	drawList(cnt){
 		let el, x, z, lb = ["개설", "접촉", "제안", "견적", "협상", "계약", "종료"], html;
 
 		if(this.stage < 6)			cnt.className = cnt.className + " sopp-doing";
 		else if(this.stage === 6)	cnt.className = cnt.className + " sopp-done";
 		else						cnt.className = cnt.className + " sopp-fail";
+
+		cnt.setAttribute("onclick", "location.href='/business/sopp2/" + this.no + "'");
 
 		el = document.createElement("name");
 		cnt.appendChild(el);

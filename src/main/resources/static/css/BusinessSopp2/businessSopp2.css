@@ -1,0 +1,33 @@
+@charset "UTF-8";
+
+.container{
+	width:calc(100% - 4px);
+	height:calc(100% - 4px);
+	margin:2px;
+	background-color: white;
+	overflow:auto;
+	/* display:grid;
+	grid-template-columns: 1fr 400px;
+	grid-template-rows: 35px 1fr; */
+
+}
+.content-title{
+	font-size:1rem;
+	font-weight: bold;
+	color: #425da8;
+	border-left:4px solid rgb(62, 62, 158);
+	padding:0.5rem 1rem;
+	grid-column: span 2;
+}
+
+.not-exist{
+	display:none;
+	height:10rem;
+	border-radius: 0.4rem;
+	border: 2px dotted #d8d8d8;
+	background-color: #f8f8f8;
+}
+
+.sopp-content{
+	position: relative;
+}

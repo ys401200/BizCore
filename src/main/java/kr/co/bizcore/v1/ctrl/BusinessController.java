@@ -37,10 +37,16 @@ public class BusinessController extends Ctrl{
         return "/sopp/list";
     } // End of /business/**
 
-    @RequestMapping(value={"/project","/project/**"})
+    @RequestMapping("/project")
     public String project(HttpServletRequest request) {
         doIt(request);
         return "/project/list";
+    } // End of /business/**
+
+    @RequestMapping("/sopp2/{no:\\d+}")
+    public String projectSopp(HttpServletRequest request) {
+        doIt(request);
+        return "/project/sopp";
     } // End of /business/**
 
     @RequestMapping("/est")

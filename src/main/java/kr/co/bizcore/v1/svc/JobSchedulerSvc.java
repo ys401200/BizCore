@@ -135,7 +135,7 @@ public class JobSchedulerSvc extends Svc{
                 json.put("customerName", rs.getString("customerName"));
                 json.put("area", rs.getString("area"));
                 json.put("type", rs.getString("type"));
-                json.put("reqNo", rs.getLong("reqNo"));
+                json.put("reqNo", rs.getString("reqNo"));
                 json.put("itemCode", rs.getInt("itemCode"));
                 json.put("item", rs.getString("item"));
                 json.put("price", rs.getInt("price"));
