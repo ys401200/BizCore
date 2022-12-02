@@ -1,4 +1,4 @@
-let R = {}, prepareSopp, scrolledSopp;
+let R = {}, prepareSopp, scrolledSopp, moveToTarget;
 
 $(document).ready(() => {
 	let href, no
@@ -42,9 +42,9 @@ prepareSopp = (no) => {
 } // End of prepareSopp()
 
 scrolledSopp = (el) => {
-	let x, v, els, position = [];
+	let x, y, z, v, els, position = [], vr = 60;
 
-	v = el.scrollTop + 60;
+	v = el.scrollTop + vr;
 	els = document.getElementsByClassName("sopp-sub-title");
 	for(x = 0 ; x < els.length ; x++)	position.push(els[x].offsetTop);
 
@@ -53,11 +53,26 @@ scrolledSopp = (el) => {
 	console.log(position);
 	console.log("v : " + v + " / x : " + x);
 	els = document.getElementsByClassName("sopp-tab-cnt")[0].children;
-	for(y = 0 ; y < els.length ; y++){
-		if(y === x) els[y].className = "sopp-tab-select";
-		else    els[y].className = "sopp-tab";
+	z = el.scrollHeight - el.offsetHeight + vr - 2;
+	if(v > z){
+		for(y = 0 ; y < els.length ; y++){
+			if(y < els.length - 1) els[y].className = "sopp-tab";
+			else    els[y].className = "sopp-tab-select";
+		}
+	}else{
+		for(y = 0 ; y < els.length ; y++){
+			if(y === x) els[y].className = "sopp-tab-select";
+			else    els[y].className = "sopp-tab";
+		}
 	}
 } // End of scrolledSopp()
+
+moveToTarget = (el) => {
+	let target, name;
+	name = el.dataset.target;
+	target = document.getElementsByClassName(name)[0];
+	target.scrollIntoView({"behavior":"smooth"});
+} // End of moveToTarget()
 
 
 
