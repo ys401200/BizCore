@@ -17,8 +17,8 @@
 					<div class="crudBtns"><input type="file" id="xlsFile" accept=".xls,.xlsx,.xlsm"
 							onchange="readFile(this)" /><button onclick="getCheckdData()">등록</button></div>
 					<div class="gridList">
-						<div class="parsedData">
-						</div>
+						<div class="cardList"></div>
+						<div class="parsedData"></div>
 					</div>
 					<div class="pageContainer"></div>
 				</div>

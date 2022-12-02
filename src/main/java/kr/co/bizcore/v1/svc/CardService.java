@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 public class CardService extends Svc {
 
      @Autowired
-     private  CardMapper cardMapper;
+     private CardMapper cardMapper;
 
      public int insertCardData(String compId, String transactionDate, String cardNo, String permitNo, String storeTitle,
                String permitAmount) {
@@ -24,13 +24,24 @@ public class CardService extends Svc {
           return result;
      }
 
-    public void getCardList(String compId) {
-     String result = null; 
-     List<CoporateCard> list = null; 
-  
-     list = cardMapper.getcardList(compId);
-     ((CoporateCard) list).toJson();
+     public String getCardList(String compId) {
+          String result = null;
+          CoporateCard each = null;
+          List<CoporateCard> list = null;
 
-   
-    }
+          list = cardMapper.getcardList(compId);
+
+          if (list != null && list.size() > 0) {
+               result = "[";
+               for (int x = 0; x < list.size(); x++) {
+                    each = list.get(x);
+                    if (x > 0) result += ",";
+                    result += each.toJson();
+               }
+               result += "]";
+          }
+
+          return result;
+
+     }
 }

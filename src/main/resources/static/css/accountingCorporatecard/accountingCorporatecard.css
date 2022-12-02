@@ -46,5 +46,6 @@
 .gridHeader,
 .gridContent {
 	display: grid;
-	grid-template-columns: 10% 10% 10% 50% 10% 10%;
+	/* grid-template-columns: 10% 10% 10% 50% 10% 10%; */
+	grid-template-columns: 15% 10% 10% 10% 10% 10% 35%;
 }

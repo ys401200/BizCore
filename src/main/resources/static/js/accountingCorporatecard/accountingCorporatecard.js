@@ -96,7 +96,7 @@ bnkXls.parseXlsFile = function (wb) {
 		if (r[2] >= 0 && data2[x][r[2]] === undefined) break;
 		if (r[3] >= 0 && data2[x][r[3]] === undefined) break;
 		if (r[4] >= 0 && data2[x][r[4]] === undefined) break;
-		y = [data2[x][r[0]].replaceAll("(", "").replaceAll(")", ""), data2[x][r[1]], data2[x][r[2]], data2[x][r[3]], data2[x][r[4]]+""];
+		y = [data2[x][r[0]].replaceAll("(", "").replaceAll(")", ""), data2[x][r[1]], data2[x][r[2]], data2[x][r[3]], data2[x][r[4]] + ""];
 		t.push(y);
 	}
 	t.sort(function (a, b) { let x, y; x = new Date(a[0]); y = new Date(b[0]); return x.getTime() - y.getTime(); })
@@ -154,6 +154,7 @@ $(document).ready(() => {
 		$("#loadingDiv").hide();
 		$("#loadingDiv").loading("toggle");
 	}, 300);
+	getCardListData();
 
 });
 
@@ -167,7 +168,7 @@ function readFile(el) {
 } // End of readFile();
 
 function processAccData(data) {
-	// 파싱된 데터ㄹ 저장함
+	// 파싱된 데이터 저장함
 	storage.parseData = data;
 	// 파일 엘리먼트를 초기화 함
 	document.getElementById("xlsFile").value = "";
@@ -176,6 +177,196 @@ function processAccData(data) {
 	storage.cardDetail = dataDetail;
 	drawCardList();
 } // End of processAccData();
+
+
+
+function getCardListData() {
+	let data = null;
+	$.ajax({
+		url: "/api/card/list",
+		type: "get",
+		dataType: "json",
+		cache: false,
+		success: (result) => {
+			if (result.result == "ok") {
+				data = cipher.decAes(result.data);
+				console.log(result.data);
+				data = JSON.parse(data);
+				storage.cardList = data;
+				drawList();
+			} else {
+				console.log("실패");
+			}
+		}
+
+	});
+
+}
+
+
+
+function drawList() {
+	let container,
+		result,
+		jsonData,
+		job,
+		header = [],
+		data = [],
+		ids = [],
+		disDate,
+		setDate,
+		str,
+		fnc;
+
+	if (
+		storage.cardList === undefined ||
+		storage.cardList == 0
+	) {
+		container = $(".cardList");
+
+		header = [
+
+			{
+				title: "카드번호",
+				align: "center",
+			},
+			{
+				title: "구분",
+				align: "center",
+			},
+			{
+				title: "은행",
+				align: "center",
+			},
+			{
+				title: "상태",
+				align: "center",
+			},
+			{
+				title: "하이패스",
+				align: "center",
+			},
+			{
+				title: "발급일",
+				align: "center",
+			},
+			{
+				title: "비고",
+				align: "left",
+			}
+
+
+
+		];
+		createGrid(container, header, data, ids, job, fnc);
+
+		container.append(
+			"<div class='noListDefault'>결재 수신 문서가 없습니다</div>"
+		);
+	} else {
+		// jsonData = storage.receiveList.receive;
+		let tt = [];
+		let hipass;
+		let bank;
+		for (let i = storage.cardList.length - 1; i >= 0; i--) { tt.push(storage.cardList[i]) };
+		jsonData = tt;
+		result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+
+		pageContainer = document.getElementsByClassName("pageContainer");
+		container = $(".cardList");
+		header = [
+
+			{
+				title: "카드번호",
+				align: "center",
+			},
+			{
+				title: "구분",
+				align: "center",
+			},
+			{
+				title: "은행",
+				align: "center",
+			},
+			{
+				title: "상태",
+				align: "center",
+			},
+			{
+				title: "하이패스",
+				align: "center",
+			},
+			{
+				title: "발급일",
+				align: "center",
+			},
+			{
+				title: "비고",
+				align: "left",
+			}
+
+		];
+		for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+			hipass = jsonData[i].hipass == "0" ? "N" : "Y";
+			bank = jsonData[i].bank + "";
+			if (bank.length == 2) {
+				bank = "0" + bank;
+			} else if (bank.length == 1) {
+				bank = "00" + bank;
+			}
+
+			str = [
+
+				{
+					"setData": jsonData[i].card,
+					"align": "center"
+				},
+				{
+					"setData": jsonData[i].div,
+					"align": "center"
+				},
+				{
+					"setData": bnkXls.code[bank],
+					"align": "center"
+				},
+				{
+					"setData": jsonData[i].status,
+					"align": "center",
+				},
+				{
+					"setData": hipass,
+					"align": "center"
+				},
+				{
+					"setData": jsonData[i].issued,
+					"align": "center"
+				},
+				{
+					"setData": jsonData[i].remark,
+					"align": "left"
+				},
+
+			];
+
+			fnc = "detailView(this)";
+			ids.push(jsonData[i].docNo);
+			data.push(str);
+		}
+
+		let pageNation = createPaging(
+			pageContainer[0],
+			result[3],
+			"pageMove",
+			"drawList",
+			result[0]
+		);
+		pageContainer[0].innerHTML = pageNation;
+		createGrid(container, header, data, ids, job, fnc);
+	}
+} // End of drawNoticeApproval()
+
+
+
 
 
 

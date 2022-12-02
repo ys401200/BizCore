@@ -3,6 +3,7 @@ package kr.co.bizcore.v1.ctrl;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.tomcat.util.json.JSONParser;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,22 +26,25 @@ public class ApiCardCtrl extends Ctrl {
     @Autowired
     private CardService cardService;
 
-    @GetMapping("/")
+    @GetMapping("/list")
     public String getCardList(HttpServletRequest request) {
-        String result = null, compId = null, lang = null;
+        String result = null, compId = null, lang = null, data = null, aesKey = null, aesIv = null;
+        ;
         HttpSession session;
         Msg msg = null;
         session = request.getSession();
         session = request.getSession();
         compId = (String) session.getAttribute("compId");
-
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
         msg = getMsg(lang);
 
         if (compId == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
         } else {
-            cardService.getCardList(compId);
-
+            data = cardService.getCardList(compId);
+            data = encAes(data, aesKey, aesIv);
+            result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
         }
 
         return result;
@@ -49,7 +53,7 @@ public class ApiCardCtrl extends Ctrl {
     // 엑셀 파일 내역 db에 insert
     @PostMapping("/insert")
     public String insertCardData(HttpServletRequest request, @RequestBody String requestBody) {
-        String result = null, compId = null, aesKey = null, aesIv = null, userNo = null;
+        String result = null, compId = null, aesKey = null, aesIv = null;
         String data = null, lang = null;
         String transactionDate = null, cardNo = null, permitNo = null, storeTitle = null, permitAmount = null;
         HttpSession session = null;
@@ -78,11 +82,6 @@ public class ApiCardCtrl extends Ctrl {
                 permitNo = json.getString("permitNo");
                 storeTitle = json.getString("storeTitle");
                 permitAmount = json.getString("permitAmount");
-                logger.info(transactionDate + "확인====0");
-                logger.info(cardNo + "확인====1");
-                logger.info(permitNo + "확인====2");
-                logger.info(storeTitle + "확인====3");
-                logger.info(permitAmount + "확인====4");
 
                 x = cardService.insertCardData(compId, transactionDate, cardNo, permitNo, storeTitle, permitAmount);
 

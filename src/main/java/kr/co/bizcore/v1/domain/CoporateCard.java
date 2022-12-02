@@ -26,19 +26,19 @@ public class CoporateCard extends Domain {
 
     public String toJson() {
         String result = "{";
-        result += ("\"no\":" + no + ",");
-        result += ("\"compId\":" + compId + ",");
-        result += ("\"card\":" + card + ",");
-        result += ("\"alias\":" + alias + ",");
-        result += ("\"div\":" + div + ",");
+        result += ("\"no\":"+ no + ",");
+        result += ("\"compId\":\"" + compId + "\",");
+        result += ("\"card\":\"" + card + "\",");
+        result += ("\"alias\":\"" + alias + "\",");
+        result += ("\"div\":\"" + div + "\",");
         result += ("\"bank\":" + bank + ",");
-        result += ("\"status\":" + status + ",");
+        result += ("\"status\":\"" + status + "\",");
         result += ("\"hipass\":" + hipass + ",");
-        result += ("\"remark\":" + remark + ",");
-        result += ("\"issued\":" + issued + ",");
-        result += ("\"created\":" + (created == null ? "null" : created.getTime()) + ",");
-        result += ("\"modified\":" + (modified == null ? "null" : modified.getTime()) + ",");
-        result += ("\"deleted\":" + (deleted == null ? "null" : deleted.getTime()) + "}");
+        result += ("\"remark\":\"" + remark + "\",");
+        result += ("\"issued\":\"" + issued + "\",");
+        result += ("\"created\":" + (created == null ? "null" :created.getTime()) + ",");
+        result += ("\"modified\":" + (modified == null ? "null" :modified.getTime()) + ",");
+        result += ("\"deleted\":" + (deleted == null ? "null" :deleted.getTime()) + "}");
         return result;
     }
 }
