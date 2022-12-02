@@ -1,4 +1,4 @@
-let R = {}, prepareSopp;
+let R = {}, prepareSopp, scrolledSopp;
 
 $(document).ready(() => {
 	let href, no
@@ -40,6 +40,24 @@ prepareSopp = (no) => {
 	});
 
 } // End of prepareSopp()
+
+scrolledSopp = (el) => {
+	let x, v, els, position = [];
+
+	v = el.scrollTop + 60;
+	els = document.getElementsByClassName("sopp-sub-title");
+	for(x = 0 ; x < els.length ; x++)	position.push(els[x].offsetTop);
+
+	for(x = 0 ; x < position.length ; x++)   if(v < position[x])  break;
+
+	console.log(position);
+	console.log("v : " + v + " / x : " + x);
+	els = document.getElementsByClassName("sopp-tab-cnt")[0].children;
+	for(y = 0 ; y < els.length ; y++){
+		if(y === x) els[y].className = "sopp-tab-select";
+		else    els[y].className = "sopp-tab";
+	}
+} // End of scrolledSopp()
 
 
 
