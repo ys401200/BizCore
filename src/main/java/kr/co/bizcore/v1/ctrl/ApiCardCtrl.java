@@ -4,7 +4,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,10 +21,32 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/card")
 @Slf4j
 public class ApiCardCtrl extends Ctrl {
-
+    private static final Logger logger = LoggerFactory.getLogger(ApiBoardCtrl.class);
     @Autowired
-    CardService cardService;
+    private CardService cardService;
 
+    @GetMapping("/")
+    public String getCardList(HttpServletRequest request) {
+        String result = null, compId = null, lang = null;
+        HttpSession session;
+        Msg msg = null;
+        session = request.getSession();
+        session = request.getSession();
+        compId = (String) session.getAttribute("compId");
+
+        msg = getMsg(lang);
+
+        if (compId == null) {
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        } else {
+            cardService.getCardList(compId);
+
+        }
+
+        return result;
+    }
+
+    // 엑셀 파일 내역 db에 insert
     @PostMapping("/insert")
     public String insertCardData(HttpServletRequest request, @RequestBody String requestBody) {
         String result = null, compId = null, aesKey = null, aesIv = null, userNo = null;
@@ -42,23 +67,30 @@ public class ApiCardCtrl extends Ctrl {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
         } else if (aesKey == null || aesIv == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
-        } else
-            data = decAes(requestBody, aesKey, aesIv);
-        if (data == null) {
-            result = "{\"result\":\"failure\",\"msg\":\"" + msg.dataIsWornFormat + "\"}";
         } else {
-            json = new JSONObject(data);
-            transactionDate = json.getString("transactionDate");
-            cardNo = json.getString("cardNo");
-            permitNo = json.getString("permitNo");
-            storeTitle = json.getString("storeTitle");
-            permitAmount = json.getString("permitAmount");
-            x = cardService.insertCardData(compId, transactionDate, cardNo, permitNo, storeTitle, permitAmount);
-           
-            if(x > 0) {
-                result ="{\"result\":\"ok\"}";
+            data = decAes(requestBody, aesKey, aesIv);
+            if (data == null) {
+                result = "{\"result\":\"failure\",\"msg\":\"" + msg.dataIsWornFormat + "\"}";
             } else {
-                result ="{\"result\":\"failure\"}";
+                json = new JSONObject(data);
+                transactionDate = json.getString("transactionDate");
+                cardNo = json.getString("cardNo");
+                permitNo = json.getString("permitNo");
+                storeTitle = json.getString("storeTitle");
+                permitAmount = json.getString("permitAmount");
+                logger.info(transactionDate + "확인====0");
+                logger.info(cardNo + "확인====1");
+                logger.info(permitNo + "확인====2");
+                logger.info(storeTitle + "확인====3");
+                logger.info(permitAmount + "확인====4");
+
+                x = cardService.insertCardData(compId, transactionDate, cardNo, permitNo, storeTitle, permitAmount);
+
+                if (x > 0) {
+                    result = "{\"result\":\"ok\"}";
+                } else {
+                    result = "{\"result\":\"failure\"}";
+                }
             }
         }
 
