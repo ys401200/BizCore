@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -92,6 +93,35 @@ public class ApiCardCtrl extends Ctrl {
                 }
             }
         }
+
+        return result;
+    }
+
+    @GetMapping("/detail/{alias}")
+    public String getCardDetail(HttpServletRequest request, @PathVariable String alias) {
+        String result = null, compId = null, aesKey = null, aesIv = null;
+        String lang = null, data = null;
+        Msg msg = null;
+        HttpSession session = null;
+
+        session = request.getSession();
+        compId = (String) session.getAttribute("compId");
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        lang = (String) session.getAttribute("lang");
+        msg = getMsg(lang);
+ 
+        if (compId == null) {
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        } else if (aesKey == null || aesIv == null) {
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        } else {
+           data = cardService.getCardDetail(compId, alias); 
+           data = encAes(data, aesKey, aesIv);
+           result = "{\"result\":\"failure\",\"data\":\"" + data + "\"}";
+        }
+
+
 
         return result;
     }

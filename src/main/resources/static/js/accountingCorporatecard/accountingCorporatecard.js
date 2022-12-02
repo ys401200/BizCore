@@ -213,8 +213,6 @@ function drawList() {
 		header = [],
 		data = [],
 		ids = [],
-		disDate,
-		setDate,
 		str,
 		fnc;
 
@@ -349,7 +347,7 @@ function drawList() {
 			];
 
 			fnc = "detailView(this)";
-			ids.push(jsonData[i].docNo);
+			ids.push(jsonData[i].alias);
 			data.push(str);
 		}
 
@@ -368,7 +366,23 @@ function drawList() {
 
 
 
+function detailView(obj) {
+	let alias = $(obj).attr("data-id"); // 카드 뒷번호 6자리 
+	$.ajax({
+		url: "/api/card/detail/" + alias,
+		type: "get",
+		dataType: "json",
+		success: (result) => {
+			if (result.result === "ok") {
 
+			} else {
+				alert("카드 내역 상세 조회에 실패함");
+			}
+
+		}
+
+	})
+}
 
 
 

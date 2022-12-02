@@ -35,7 +35,8 @@ public class CardService extends Svc {
                result = "[";
                for (int x = 0; x < list.size(); x++) {
                     each = list.get(x);
-                    if (x > 0) result += ",";
+                    if (x > 0)
+                         result += ",";
                     result += each.toJson();
                }
                result += "]";
@@ -43,5 +44,11 @@ public class CardService extends Svc {
 
           return result;
 
+     }
+
+     public String getCardDetail(String compId, String alias) {
+          String result = null;
+          
+          return result;
      }
 }
