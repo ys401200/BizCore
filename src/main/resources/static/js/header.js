@@ -1223,11 +1223,11 @@ function inputNumberFormat(e) {
 	let value;
 	value = $(e).val().replaceAll(",", "");
 
-	if (value > 0 && !isNaN(value)) {
-		$(e).val($(e).val().replace(/[^0-9]/g, ""));
-		$(e).val(parseInt(value).toLocaleString("en-US"));
-	} else {
-		$(e).val(0);
+	if(value > 0 && !isNaN(value)){
+		$(e).val($(e).val().replace(/[^0-9]/g,""));
+		$(e).val(parseInt(value).toLocaleString("en-US"));	
+	}else{
+		$(e).val("");
 	}
 }
 
@@ -2766,9 +2766,9 @@ function searchDataFilter(arrayList, searchDatas, type) {
 			let splitStr;
 			splitStr = searchDatas.split("#price");
 
-			for (let key in storage.searchList) {
-				if (splitStr[0] <= storage.searchList[key].split("#price")[1]) {
-					if (storage.searchList[key].split("#price")[1] <= splitStr[1]) {
+			for(let key in storage.searchList){
+				if(parseInt(splitStr[0]) <= parseInt(storage.searchList[key].split("#price")[1])){
+					if(parseInt(storage.searchList[key].split("#price")[1]) <= parseInt(splitStr[1])){
 						dataArray.push(key);
 					}
 				}
@@ -3781,7 +3781,19 @@ function setViewContents(hideArr, showArr) {
 	}
 }
 
-function hideDetailView(func) {
+function setViewContentsCopy(hideArr, showArr){
+	for(let i = 0; i < hideArr.length; i++){
+		let item = document.getElementsByClassName(hideArr[i])[0];
+		item.style.display = "none";
+	}
+
+	for(let i = 0; i < showArr.length; i++){
+		let item = document.getElementsByClassName(showArr[i].element)[0];
+		item.style.display = showArr[i].display;
+	}
+}
+
+function hideDetailView(func){
 	let defaultFormContainer, crudUpdateBtn, detailSecondTabs;
 	defaultFormContainer = $(".defaultFormContainer");
 	crudUpdateBtn = $(".crudUpdateBtn");
@@ -3793,7 +3805,11 @@ function hideDetailView(func) {
 		detailSecondTabs.html("");
 	}
 
-	func();
+	$("input").val("");
+
+	if(func !== undefined){
+		func();
+	}
 }
 
 function getJsonData(url, method, data) {

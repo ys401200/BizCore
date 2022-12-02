@@ -45,11 +45,10 @@
                 <span class="listRangeSpan">0</span>
             </div>
             <div class="crudBtns">
-                <button type="button" class="contractReqBtn" onclick="popup(this);">계약요청</button>
-				<button type="button" class="crudAddBtn" onclick="soppInsertForm();">등록</button>
-				<button type="button" class="crudUpdateBtn">수정</button>
-				<button type="button" class="crudDeleteBtn" onclick="soppDelete();">삭제</button>
-				<a href="#" onclick="hideDetailView(drawSoppList);" class="detailBackBtn">Back</a>
+				<button type="button" class="crudAddBtn">견적추가</button>
+				<button type="button" class="crudUpdateBtn">견적수정</button>
+				<button type="button" class="estimatePdf">pdf 다운로드</button>
+				<a href="#" onclick="hideDetailView(drawBack);" class="detailBackBtn">Back</a>
 			</div>
 			<!-- <span class="bodyTitleFnc">
 				<div style="display: none;"></div>

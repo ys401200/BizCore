@@ -1,103 +1,566 @@
 
 
-$(document).ready(() => {
-
-	// 초기화가 끝난 후 준비단계에서 실행되는 함수
+document.addEventListener("DOMContentLoaded", () => {
 	prepare = function(){
 		getEstimateBasic();
 		getEstimateItem();
-		getEstimateList();
+		Estimate = new Estimate();
+		// getEstimateList();
 	} // End of prepare()
-
+	
     init();
-	storage.estimate = {};
-	storage.ac = {};
-	storage.ac.mouseon = false;
-
-	storage.ac.set = function(el, fncName){
-		let x, html, acCnt = document.getElementsByClassName("ac_cnt")[0];
-
-		if(storage.ac.searched === undefined || storage.ac.searched.length === 0){
-			storage.ac.close();
-			return;
-		}
-
-		storage.ac.fncName = fncName;
-
-		// 자동완성 타겟 저장해두기
-		storage.ac.target = el;
-
-		// 자동완성 컨테이너 위치 잡기
-		acCnt.style.color = "initial";
-		acCnt.style.display = "initial";
-		x = [];
-		x[0] = el.offsetTop; // input 엘리먼트의 세로 위치
-		x[1] = el.offsetLeft; // input 엘리먼트의 가로 위치
-		x[2] = document.defaultView.getComputedStyle(el).getPropertyValue("width"); // input 엘리먼트의 너비
-		x[2] = Math.floor(x[2].replace("px","") * 1) - 5;
-		x[3] = el.offsetHeight; // input 엘리먼트의 높이
-		x[4] = x[0] + x[3] + 5; // ac 컨테이너의 세로 위치
-		x[5] = x[1]; // ac 컨테이너의 가로 위치
-		x[6] = x[2]; // ac 컨테이너의 너비
-		acCnt.style.top = x[4] + "px";
-		acCnt.style.left = x[5] + "px";
-		acCnt.style.width = x[6] + "px";
-
-		// 자동완성 내용 생성
-		html = "";
-		for(x = 0 ; x < storage.ac.searched.length ; x++)	html += ("<div data-value=\"" + storage.ac.searched[x][0] + "\" onclick=\"storage.ac.target.dataset.value=this.dataset.value;storage.ac.confirm(" + storage.ac.fncName + ")\">" + storage.ac.searched[x][1] + "</div>");
-		
-		acCnt.innerHTML = html;
-	} // End of storage.ac.set()
-
-	storage.ac.close = function(){
-		let acCnt = document.getElementsByClassName("ac_cnt")[0];
-		acCnt.style.display = "none";
-		storage.ac.searched = undefined;
-		storage.ac.select = undefined;
-		storage.ac.target = undefined;
-		storage.ac.mouseon = false;
-		storage.ac.idx = undefined;
-		storage.ac.fncName = undefined;
-	} // End of storage.ac.close()
-
-	storage.ac.move = function(v, fnc){
-		let x, color = "#eaeaff", acCnt = document.getElementsByClassName("ac_cnt")[0];
-		if(storage.ac.searched === undefined || storage.ac.searched.length === 0 || isNaN(v) || v === "" || v === 0)	return;
-		storage.ac.select = storage.ac.select === undefined ? storage.ac.searched.length : storage.ac.select;
-		
-		if(v > 0)		storage.ac.select++;
-		else if(v < 0)	storage.ac.select--;
-		
-		storage.ac.select = storage.ac.select < 0 ? storage.ac.searched.length - 1 : storage.ac.select >= storage.ac.searched.length ? 0 : storage.ac.select;
-
-		// 선택된 항목 하이라이트
-		for(x = 0 ; x < acCnt.children.length ; x++){
-			if(x === storage.ac.select){
-				acCnt.children[x].style.backgroundColor = color;
-				acCnt.children[x].scrollIntoViewIfNeeded();
-			}else acCnt.children[x].style.backgroundColor =  "";
-		}
-
-		// 지정된 작업 수행
-		if(fnc !== undefined)	fnc();
-	} // End of storage.ac.move()
-
-	storage.ac.confirm = function(fnc){
-		// 지정된 작업 수행
-		if(fnc !== undefined)	fnc();
-		storage.ac.close();
-		setDataToPreview();
-	}
 
 	setTimeout(() => {
 		$("#loadingDiv").hide();
 		$("#loadingDiv").loading("toggle");
 	}, 300);
-	storage.page = {"max":0,"current":0,"line":0};
-
-	// For Initializing Code . . . . . . .  . . . . 
 });
+
+export default class Estimate{
+	constructor(){
+		axios.get("/api/estimate").then((response) => {
+			if(response.data.result === "ok"){
+				let getList = response.data.data;
+				getList = cipher.decAes(getList);
+				getList = JSON.parse(getList);
+				storage.estimateList = getList;
+				this.list();
+			}
+		}).catch((error) => {
+			alert("메인 리스트 에러입니다.\n" + error);
+		});
+	}
+	
+	list() {
+		let container, result, job, jsonData, header = [], data = [], ids = [], disDate, str, fnc, pageContainer, containerTitle, crudAddBtn, crudUpdateBtn, hideArr, showArr;
+	
+		if (storage.estimateList === undefined) {
+			msg.set("등록된 견적이 없습니다");
+		}
+		else {
+			if(storage.searchDatas === undefined){
+				jsonData = storage.estimateList;
+			}else{
+				jsonData = storage.searchDatas;
+			}
+		}
+
+		result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+		
+		crudAddBtn = document.getElementsByClassName("crudAddBtn")[0];
+		crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
+		hideArr = ["detailBackBtn", "crudUpdateBtn", "estimatePdf", "addPdfForm"];
+		showArr = ["estimateList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "crudAddBtn", "versionPreview", "previewDefault"];
+		containerTitle = $("#containerTitle");
+		pageContainer = document.getElementsByClassName("pageContainer");
+		container = $(".estimateList");
+
+		header = [
+			{
+				"title" : "견적일자",
+				"align" : "center",
+			},
+			{
+				"title" : "견적명",
+				"align" : "center",
+			},
+			{
+				"title" : "버전",
+				"align" : "center",
+			},
+			{
+				"title" : "양식",
+				"align" : "center",
+			},
+			{
+				"title" : "금액",
+				"align" : "center",
+			},
+		];
+
+		if(jsonData === ""){
+			str = [
+				{
+					"setData": undefined,
+					"col": 5,
+					"align": "center",
+				},
+			];
+			
+			data.push(str);
+		}else{
+			for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+				disDate = dateDis(jsonData[i].date);
+				disDate = dateFnc(disDate, "yyyy.mm.dd");
+		
+				str = [
+					{
+						"setData": disDate,
+						"align": "center",
+					},
+					{
+						"setData": jsonData[i].title,
+						"align": "left",
+					},
+					{
+						"setData": jsonData[i].version,
+						"align": "center",
+					},
+					{
+						"setData": jsonData[i].form,
+						"align": "center",
+					},
+					{
+						"setData": numberFormat(jsonData[i].total),
+						"align": "right",
+					},
+				];
+		
+				fnc = "clickedEstimate(this);";
+				ids.push(jsonData[i].no);
+				data.push(str);
+			}
+		
+			let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawEstmList", result[0]);
+			pageContainer[0].innerHTML = pageNation;
+		}
+
+		containerTitle.html("견적목록");
+		createGrid(container, header, data, ids, job, fnc);
+		crudAddBtn.innerText = "견적추가";
+		crudAddBtn.setAttribute("onclick", "clickedAdd();");
+		crudUpdateBtn.innerText = "견적수정";
+		crudUpdateBtn.setAttribute("onclick", "clickedUpdate();");
+		setViewContents(hideArr, showArr);	
+	}
+
+	addForm() {
+		clickedAdd();
+	}
+}
+
+// 견적 목록을 그리는 함수
+function drawEstmList(){
+	let container, result, job, jsonData, header = [], data = [], ids = [], disDate, str, fnc, pageContainer, containerTitle, crudAddBtn, crudUpdateBtn, hideArr, showArr;
+	
+	if (storage.estimateList === undefined) {
+		msg.set("등록된 견적이 없습니다");
+	}
+	else {
+		if(storage.searchDatas === undefined){
+			jsonData = storage.estimateList;
+		}else{
+			jsonData = storage.searchDatas;
+		}
+	}
+
+	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+	
+	crudAddBtn = document.getElementsByClassName("crudAddBtn")[0];
+	crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
+	hideArr = ["detailBackBtn", "crudUpdateBtn", "estimatePdf", "addPdfForm"];
+	showArr = ["estimateList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "crudAddBtn", "versionPreview", "previewDefault"];
+	containerTitle = $("#containerTitle");
+	pageContainer = document.getElementsByClassName("pageContainer");
+	container = $(".estimateList");
+
+	header = [
+		{
+			"title" : "견적일자",
+			"align" : "center",
+		},
+		{
+			"title" : "견적명",
+			"align" : "center",
+		},
+		{
+			"title" : "버전",
+			"align" : "center",
+		},
+		{
+			"title" : "양식",
+			"align" : "center",
+		},
+		{
+			"title" : "금액",
+			"align" : "center",
+		},
+	];
+
+	if(jsonData === ""){
+		str = [
+			{
+				"setData": undefined,
+				"col": 5,
+				"align": "center",
+			},
+		];
+		
+		data.push(str);
+	}else{
+		for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+			disDate = dateDis(jsonData[i].date);
+			disDate = dateFnc(disDate, "yyyy.mm.dd");
+	  
+			str = [
+				{
+					"setData": disDate,
+					"align": "center",
+				},
+				{
+					"setData": jsonData[i].title,
+					"align": "left",
+				},
+				{
+					"setData": jsonData[i].version,
+					"align": "center",
+				},
+				{
+					"setData": jsonData[i].form,
+					"align": "center",
+				},
+				{
+					"setData": numberFormat(jsonData[i].total),
+					"align": "right",
+				},
+			];
+	
+			fnc = "clickedEstimate(this);";
+			ids.push(jsonData[i].no);
+			data.push(str);
+		}
+	
+		let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawEstmList", result[0]);
+		pageContainer[0].innerHTML = pageNation;
+	}
+
+	containerTitle.html("견적목록");
+	createGrid(container, header, data, ids, job, fnc);
+	crudAddBtn.innerText = "견적추가";
+	crudAddBtn.setAttribute("onclick", "clickedAdd();");
+	crudUpdateBtn.innerText = "견적수정";
+	crudUpdateBtn.setAttribute("onclick", "clickedUpdate();");
+	setViewContents(hideArr, showArr);
+}
+
+function drawBack(){
+	let crudAddBtn = document.getElementsByClassName("crudAddBtn")[0];
+	let crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
+	let containerTitle = $("#containerTitle");
+	let hideArr = ["detailBackBtn", "crudUpdateBtn", "estimatePdf", "addPdfForm", "previewDefault"];
+	let showArr = ["estimateList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "crudAddBtn", "versionPreview"];
+	containerTitle.html("견적목록");
+	crudAddBtn.innerText = "견적추가";
+	crudAddBtn.setAttribute("onclick", "clickedAdd();");
+	crudUpdateBtn.innerText = "견적수정";
+	crudUpdateBtn.setAttribute("onclick", "clickedUpdate();");
+	setViewContents(hideArr, showArr);
+}
+
+// 견적 목록 클릭 이벤트 리스너
+function clickedEstimate(el){
+	let x, cnt, els, color = "#2147b1", estmNo, versionList;
+
+	versionList = document.getElementsByClassName("versionList");
+
+	if(versionList.length > 0){
+		for(let i = 0; i < versionList.length; i++){
+			versionList[i].remove();
+		}
+	}
+
+	thisEle = el;
+	versionList = document.createElement("div");
+	versionList.className = "versionList";
+	thisEle.after(versionList);
+	cnt = thisEle.parentElement;
+	els = cnt.children;
+
+	for(x = 1 ; x < els.length ; x++){
+		els[x].style.backgroundColor = "";
+		els[x].style.color = "";
+	}	
+
+	thisEle.style.backgroundColor = color;
+	thisEle.style.color = "#ffffff";
+	estmNo = thisEle.dataset.id;
+	getEstmVerList(estmNo);
+	setTimeout(() => {
+		storage.thisEle = thisEle.nextSibling.getElementsByClassName("versionListBody")[0];
+		thisEle.nextSibling.getElementsByClassName("versionListBody")[0].click();
+	}, 300);
+}
+
+function clickedEstmVer(el){
+	let x, cnt, els, color = "#e1e9ff";
+	els = el.parentElement.children;
+	for(x = 1 ; x < els.length ; x++)	els[x].style.backgroundColor = "";
+	el.style.backgroundColor = color;
+	x = el.dataset.idx * 1;
+	storage.detailIdx = $(el).data("idx");
+	let previewDefault = document.getElementsByClassName("previewDefault")[0];
+	previewDefault.style.display = "none";
+	let versionPreview = document.getElementsByClassName("versionPreview")[0];
+	let versionList = document.getElementsByClassName("versionList")[0];
+	let title = versionList.getElementsByClassName("versionListBody")[0].children[1].innerHTML;
+	let userName = versionList.getElementsByClassName("versionListBody")[0].children[2].innerHTML;
+	let crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
+	let estimatePdf = document.getElementsByClassName("estimatePdf")[0];
+	estimatePdf.setAttribute("onclick", "estimatePdf(\"" + title + "\", \"" + userName + "\");");
+	crudUpdateBtn.style.display = "flex";
+	estimatePdf.style.display = "flex";
+	versionPreview.innerHTML += storage.estimateVerList[x].doc;
+	let indexMain = versionPreview.children;
+	
+	for(let i = 0; i < indexMain.length; i++){
+		if(i > 0 && i != indexMain.length-1){
+			indexMain[i].remove();
+		}
+	}
+	
+	indexMain[indexMain.length-1].setAttribute("class", "mainPreviewPdf");
+	indexMain[indexMain.length-1].setAttribute("id", "estPrintPdf");
+	// cnt.style.height = Math.floor(400 / storage.estmVerList[x].width * storage.estmVerList[x].height) + "px";
+} 
+
+// 견적 버전 목록을 가져오는 함수
+function getEstmVerList(estmNo){
+	axios.get("/api/estimate/" + estmNo).then((response) => {
+		if(response.data.result === "ok"){
+			let getList = response.data.data;
+			getList = cipher.decAes(getList);
+			getList = JSON.parse(getList);
+			
+			for(let i = 0; i < getList.length; i++){
+				getList[i].doc = cipher.decAes(getList[i].doc);
+			}
+
+			storage.estimateVerList = getList;
+			drawEstmVerList();
+		}
+		
+	}).catch((error) => {
+		alert("버전 리스트 에러입니다.\n" + error);
+	});
+} 
+
+// 견적 버전 목록을 그리는 함수
+function drawEstmVerList(){
+	let versionList, html = "", x;
+	versionList = document.getElementsByClassName("versionList")[0];
+	html = "<div class=\"versionListHeader\">";
+	html += "<div>버전</div>";
+	html += "<div>견적명</div>";
+	html += "<div>담당자</div>";
+	html += "<div>견적일자</div>";
+	html += "<div>금액</div>";
+	html += "</div>";
+	
+	for(x = storage.estimateVerList.length-1 ; x >= 0 ; x--){
+		let total = 0;
+
+		for(let i = 0; i < storage.estimateVerList[x].related.estimate.items.length; i++){
+			let item = storage.estimateVerList[x].related.estimate.items[i];
+			total += (item.price * item.quantity) + (item.price * item.quantity * 0.1);
+		}
+
+		html += "<div class=\"versionListBody\" onclick=\"clickedEstmVer(this)\" data-idx=\"" + x + "\">";
+		html += "<div style=\"justify-content: center;\">" + storage.estimateVerList[x].version + "</div>";
+		html += "<div style=\"justify-content: left;\">" + storage.estimateVerList[x].title + "</div>";
+		html += "<div style=\"justify-content: center;\">" + storage.user[storage.estimateVerList[x].writer].userName + "</div>";
+		html += "<div style=\"justify-content: center;\">" + dateFormat(storage.estimateVerList[x].date) + "</div>";
+		html += "<div style=\"justify-content: right;\">" + numberFormat(total) + "</div>";
+		html += "</div>";
+	}
+
+	versionList.innerHTML = html;
+} // End of drawEstmList()
+
+function clickedAdd(){
+	let containerTitle, crudAddBtn, hideArr, showArr;
+	containerTitle = document.getElementById("containerTitle");
+	crudAddBtn = document.getElementsByClassName("crudAddBtn")[0];
+	hideArr = ["estimateList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "versionPreview", "crudUpdateBtn", "estimatePdf"];
+	showArr = [
+		{
+			element: "detailBackBtn",
+			display: "flex",
+		},
+		{
+			element: "crudAddBtn",
+			display: "flex",
+		},
+		{
+			element: "addPdfForm",
+			display: "block",
+		},
+	];
+
+	containerTitle.innerText = "견적추가";
+	crudAddBtn.innerText = "새견적추가";
+	crudAddBtn.setAttribute("onclick", "estimateInsert();");
+	ckeditor.config.readOnly = false;
+	window.setTimeout(setEditor, 100);
+	setViewContentsCopy(hideArr, showArr);
+	estimateFormInit();
+}
+
+function clickedUpdate(){
+	let containerTitle, crudAddBtn, crudUpdateBtn, hideArr, showArr;
+	containerTitle = document.getElementById("containerTitle");
+	crudAddBtn = document.getElementsByClassName("crudAddBtn")[0];
+	crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
+	hideArr = ["estimateList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "versionPreview", "estimatePdf"];
+	showArr = [
+		{
+			element: "detailBackBtn",
+			display: "flex",
+		},
+		{
+			element: "crudAddBtn",
+			display: "flex",
+		},
+		{
+			element: "crudUpdateBtn",
+			display: "flex",
+		},
+		{
+			element: "addPdfForm",
+			display: "block",
+		},
+	];
+	containerTitle.innerText = "견적수정";
+	crudAddBtn.innerText = "새견적추가";
+	crudAddBtn.setAttribute("onclick", "estimateInsert();");
+	crudUpdateBtn.setAttribute("onclick", "estimateUpdate();");
+	setViewContentsCopy(hideArr, showArr);
+	storage.estmDetail = storage.estmVerList[storage.detailIdx];
+	estimateFormInit();
+}
+
+// 견적 추가버튼 클릭시 실행되는 한수
+function closeAdd(){
+	let listContent, addPdfForm, bodyTitle, bodyTitleFnc;
+	listContent = $(".listContent");
+	addPdfForm = $(".addPdfForm");
+	bodyTitle = $(".bodyTitle");
+	bodyTitleFnc = $(".bodyTitleFnc div");
+	bodyTitle.text("견적목록");
+	bodyTitleFnc.eq(0).text("추가");
+	bodyTitleFnc.eq(0).attr("onclick", "clickedAdd();");
+	bodyTitleFnc.eq(0).hide();
+	bodyTitleFnc.eq(1).hide();
+	listContent.show();
+	addPdfForm.hide();
+	storage.estmDetail = undefined;
+
+	if(storage.thisEle !== undefined){
+		clickedEstmVer(storage.thisEle);
+	}
+
+	$(".mainPdf").eq(1).find("input").val("");
+	$(".mainPdf").eq(1).find(".pdfMainContentTitle").remove();
+	$(".mainPdf").eq(1).find(".pdfMainContentItem").remove();
+} 
+
+// $(document).ready(() => {
+
+// 	// 초기화가 끝난 후 준비단계에서 실행되는 함수
+// 	prepare = function(){
+// 		getEstimateBasic();
+// 		getEstimateItem();
+// 		// getEstimateList();
+// 	} // End of prepare()
+
+//     init();
+// 	storage.estimate = {};
+// 	storage.ac = {};
+// 	storage.ac.mouseon = false;
+
+// 	storage.ac.set = function(el, fncName){
+// 		let x, html, acCnt = document.getElementsByClassName("ac_cnt")[0];
+
+// 		if(storage.ac.searched === undefined || storage.ac.searched.length === 0){
+// 			storage.ac.close();
+// 			return;
+// 		}
+
+// 		storage.ac.fncName = fncName;
+
+// 		// 자동완성 타겟 저장해두기
+// 		storage.ac.target = el;
+
+// 		// 자동완성 컨테이너 위치 잡기
+// 		acCnt.style.color = "initial";
+// 		acCnt.style.display = "initial";
+// 		x = [];
+// 		x[0] = el.offsetTop; // input 엘리먼트의 세로 위치
+// 		x[1] = el.offsetLeft; // input 엘리먼트의 가로 위치
+// 		x[2] = document.defaultView.getComputedStyle(el).getPropertyValue("width"); // input 엘리먼트의 너비
+// 		x[2] = Math.floor(x[2].replace("px","") * 1) - 5;
+// 		x[3] = el.offsetHeight; // input 엘리먼트의 높이
+// 		x[4] = x[0] + x[3] + 5; // ac 컨테이너의 세로 위치
+// 		x[5] = x[1]; // ac 컨테이너의 가로 위치
+// 		x[6] = x[2]; // ac 컨테이너의 너비
+// 		acCnt.style.top = x[4] + "px";
+// 		acCnt.style.left = x[5] + "px";
+// 		acCnt.style.width = x[6] + "px";
+
+// 		// 자동완성 내용 생성
+// 		html = "";
+// 		for(x = 0 ; x < storage.ac.searched.length ; x++)	html += ("<div data-value=\"" + storage.ac.searched[x][0] + "\" onclick=\"storage.ac.target.dataset.value=this.dataset.value;storage.ac.confirm(" + storage.ac.fncName + ")\">" + storage.ac.searched[x][1] + "</div>");
+		
+// 		acCnt.innerHTML = html;
+// 	} // End of storage.ac.set()
+
+// 	storage.ac.close = function(){
+// 		let acCnt = document.getElementsByClassName("ac_cnt")[0];
+// 		acCnt.style.display = "none";
+// 		storage.ac.searched = undefined;
+// 		storage.ac.select = undefined;
+// 		storage.ac.target = undefined;
+// 		storage.ac.mouseon = false;
+// 		storage.ac.idx = undefined;
+// 		storage.ac.fncName = undefined;
+// 	} // End of storage.ac.close()
+
+// 	storage.ac.move = function(v, fnc){
+// 		let x, color = "#eaeaff", acCnt = document.getElementsByClassName("ac_cnt")[0];
+// 		if(storage.ac.searched === undefined || storage.ac.searched.length === 0 || isNaN(v) || v === "" || v === 0)	return;
+// 		storage.ac.select = storage.ac.select === undefined ? storage.ac.searched.length : storage.ac.select;
+		
+// 		if(v > 0)		storage.ac.select++;
+// 		else if(v < 0)	storage.ac.select--;
+		
+// 		storage.ac.select = storage.ac.select < 0 ? storage.ac.searched.length - 1 : storage.ac.select >= storage.ac.searched.length ? 0 : storage.ac.select;
+
+// 		// 선택된 항목 하이라이트
+// 		for(x = 0 ; x < acCnt.children.length ; x++){
+// 			if(x === storage.ac.select){
+// 				acCnt.children[x].style.backgroundColor = color;
+// 				acCnt.children[x].scrollIntoViewIfNeeded();
+// 			}else acCnt.children[x].style.backgroundColor =  "";
+// 		}
+
+// 		// 지정된 작업 수행
+// 		if(fnc !== undefined)	fnc();
+// 	} // End of storage.ac.move()
+
+// 	storage.ac.confirm = function(fnc){
+// 		// 지정된 작업 수행
+// 		if(fnc !== undefined)	fnc();
+// 		storage.ac.close();
+// 		setDataToPreview();
+// 	}
+
+// 	setTimeout(() => {
+// 		$("#loadingDiv").hide();
+// 		$("#loadingDiv").loading("toggle");
+// 	}, 300);
+// 	storage.page = {"max":0,"current":0,"line":0};
+
+// 	// For Initializing Code . . . . . . .  . . . . 
+// });
 
 // 기본 정보를 세팅하는 함수
 function selectBasicInfo(n){
@@ -145,78 +608,6 @@ function selectBasicInfo(n){
 // 	cnt.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.innerText = "공개";
 // 	cnt.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.style.textAlign = "center";
 // }
-
-function clickedAdd(){
-	let listContent, addPdfForm, addBtn, bodyTitle, bodyTitleFnc;
-	listContent = $(".listContent");
-	addPdfForm = $(".addPdfForm");
-	bodyTitle = $(".bodyTitle");
-	bodyTitleFnc = $(".bodyTitleFnc div");
-	bodyTitle.text("견적추가");
-	bodyTitleFnc.eq(0).text("새견적추가");
-	bodyTitleFnc.eq(0).attr("onclick", "estimateInsert();");
-	bodyTitleFnc.eq(0).show();
-	bodyTitleFnc.eq(1).hide();
-	bodyTitleFnc.eq(2).show();
-	listContent.hide();
-	addPdfForm.show();
-	ckeditor.config.readOnly = false;
-	window.setTimeout(setEditor, 100);
-	estimateFormInit();
-}
-
-function previewReset(){
-	// <div class="previewDefault">
-	// 	<div>미리보기</div>
-	// </div>
-	let versionPreview = $(".versionPreview");
-	versionPreview.find(".mainPdf").remove();
-}
-
-function clickedUpdate(){
-	let listContent, addPdfForm, bodyTitle, bodyTitleFnc;
-	listContent = $(".listContent");
-	addPdfForm = $(".addPdfForm");
-	bodyTitle = $(".bodyTitle");
-	bodyTitleFnc = $(".bodyTitleFnc div");
-	bodyTitle.text("견적수정");
-	bodyTitleFnc.eq(0).text("새견적추가");
-	bodyTitleFnc.eq(0).attr("onclick", "estimateInsert();");
-	bodyTitleFnc.eq(1).text("견적수정");
-	bodyTitleFnc.eq(1).attr("onclick", "estimateUpdate();");
-	bodyTitleFnc.eq(0).show();
-	bodyTitleFnc.eq(1).show();
-	bodyTitleFnc.eq(2).show();
-	listContent.hide();
-	addPdfForm.show();
-	storage.estmDetail = storage.estmVerList[storage.detailIdx];
-	estimateFormInit();
-}
-
-// 견적 추가버튼 클릭시 실행되는 한수
-function closeAdd(el){
-	let listContent, addPdfForm, bodyTitle, bodyTitleFnc;
-	listContent = $(".listContent");
-	addPdfForm = $(".addPdfForm");
-	bodyTitle = $(".bodyTitle");
-	bodyTitleFnc = $(".bodyTitleFnc div");
-	bodyTitle.text("견적목록");
-	bodyTitleFnc.eq(0).text("추가");
-	bodyTitleFnc.eq(0).attr("onclick", "clickedAdd();");
-	bodyTitleFnc.eq(0).hide();
-	bodyTitleFnc.eq(1).hide();
-	listContent.show();
-	addPdfForm.hide();
-	storage.estmDetail = undefined;
-
-	if(storage.thisEle !== undefined){
-		clickedEstmVer(storage.thisEle);
-	}
-
-	$(".mainPdf").eq(1).find("input").val("");
-	$(".mainPdf").eq(1).find(".pdfMainContentTitle").remove();
-	$(".mainPdf").eq(1).find(".pdfMainContentItem").remove();
-} // End of closeAdd()
 
 // 서버에서 견적 양식을 가져오는 함수
 function getEstimateBasic(){
@@ -784,196 +1175,6 @@ function setDataToInput(estimate){
 	setDataToPreview();
 } // End of setDataToInput()
 
-// 견적 목록 클릭 이벤트 리스너
-function clickedEstimate(el){
-	let x, cnt, els, color = "#2147b1", estmNo, versionList;
-
-	versionList = document.getElementsByClassName("versionList");
-	if(versionList.length > 0){
-		for(let i = 0; i < versionList.length; i++){
-			versionList[i].remove();
-		}
-	}
-
-	thisEle = el;
-	versionList = document.createElement("div");
-	versionList.className = "versionList";
-	thisEle.after(versionList);
-	cnt = thisEle.parentElement;
-	els = cnt.children;
-
-	for(x = 1 ; x < els.length ; x++){
-		els[x].style.backgroundColor = "";
-		els[x].style.color = "";
-	}	
-
-	thisEle.style.backgroundColor = color;
-	thisEle.style.color = "#ffffff";
-	estmNo = thisEle.dataset.id;
-	getEstmVerList(estmNo);
-	setTimeout(() => {
-		storage.thisEle = $(thisEle).next().children(".versionListBody").eq(0);
-		$(thisEle).next().children(".versionListBody").eq(0).trigger("click");
-	}, 500);
-} // End of clickedEstimate()
-
-function clickedEstmVer(el){
-	let x, cnt, els, color = "#e1e9ff";
-	cnt = document.getElementsByClassName("versionPreview")[0];
-	els = el.parentElement.children;
-	for(x = 1 ; x < els.length ; x++)	els[x].style.backgroundColor = "";
-	el.style.backgroundColor = color;
-	x = el.dataset.idx*1;
-	cnt.innerHTML = storage.estmVerList[x].doc;
-	storage.detailIdx = $(el).data("idx");
-	storage.thisEle = el;
-	setTimeout(() => {
-		let versionPreview = $(".versionPreview");
-		versionPreview.find(".mainPdf").attr("id", "estPrintPdf");
-		let versionList = $(".versionList");
-		let title = versionList.find(".versionListBody div").eq(1).html();
-		let userName = versionList.find(".versionListBody div").eq(2).html();
-		versionPreview.prepend("<div class=\"estimatePdfBtn\"><button type=\"button\" onclick=\"estimatePdf('" + title + "', '" + userName + "');\">Pdf 다운로드</button></div><div class=\"estimateUpdateBtns\"><button type=\"button\" onclick=\"clickedUpdate();\">견적수정</button></div>");
-	}, 500);
-	// cnt.style.height = Math.floor(400 / storage.estmVerList[x].width * storage.estmVerList[x].height) + "px";
-} // End of clickedEstmVer()
-
-// 견적 목록을 그리는 함수
-function drawEstmList(){
-	let container, result, job, jsonData, header = [], data = [], ids = [], disDate, setDate, str, fnc, pageContainer, containerTitle, hideArr, showArr;
-	
-	if (storage.estmList === undefined) {
-		msg.set("등록된 견적이 없습니다");
-	}
-	else {
-		if(storage.searchDatas === undefined){
-			jsonData = storage.estmList;
-		}else{
-			jsonData = storage.searchDatas;
-		}
-	}
-
-	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
-	
-	hideArr = ["detailBackBtn", "crudUpdateBtn", "crudDeleteBtn", "contractReqBtn"];
-	showArr = ["gridList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "crudAddBtn", "listSearchInput"];
-	containerTitle = $("#containerTitle");
-	pageContainer = document.getElementsByClassName("pageContainer");
-	container = $(".estimateList");
-
-	header = [
-		{
-			"title" : "견적일자",
-			"align" : "center",
-		},
-		{
-			"title" : "견적명",
-			"align" : "center",
-		},
-		{
-			"title" : "버전",
-			"align" : "center",
-		},
-		{
-			"title" : "양식",
-			"align" : "center",
-		},
-		{
-			"title" : "금액",
-			"align" : "center",
-		},
-	];
-
-	if(jsonData === ""){
-		str = [
-			{
-				"setData": undefined,
-				"col": 5,
-				"align": "center",
-			},
-		];
-		
-		data.push(str);
-	}else{
-		for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
-			disDate = dateDis(jsonData[i].date);
-			disDate = dateFnc(disDate, "yyyy.mm.dd");
-	  
-			str = [
-				{
-					"setData": disDate,
-					"align": "center",
-				},
-				{
-					"setData": jsonData[i].title,
-					"align": "left",
-				},
-				{
-					"setData": jsonData[i].version,
-					"align": "center",
-				},
-				{
-					"setData": jsonData[i].form,
-					"align": "center",
-				},
-				{
-					"setData": numberFormat(jsonData[i].total),
-					"align": "right",
-				},
-			];
-	
-			fnc = "clickedEstimate(this);";
-			ids.push(jsonData[i].no);
-			data.push(str);
-		}
-	
-		let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawEstmList", result[0]);
-		pageContainer[0].innerHTML = pageNation;
-	}
-
-	containerTitle.html("견적목록");
-	createGrid(container, header, data, ids, job, fnc);
-	setViewContents(hideArr, showArr);
-
-	let path = $(location).attr("pathname").split("/");
-	if(path[3] !== undefined && jsonData !== ""){
-		let content = $(".gridContent[data-id=\"" + path[3] + "\"]");
-		soppDetailView(content);
-	}
-}
-
-// 견적 버전 목록을 그리는 함수
-function drawEstmVerList(){
-	let cnt, html = "", x, t, versionPreview;
-	cnt = document.getElementsByClassName("versionList")[0];
-	html = "<div class=\"versionListHeader\">";
-	html += "<div>버전</div>";
-	html += "<div>견적명</div>";
-	html += "<div>담당자</div>";
-	html += "<div>견적일자</div>";
-	html += "<div>금액</div>";
-	html += "</div>";
-	
-	for(x = storage.estmVerList.length-1 ; x >= 0 ; x--){
-		let total = 0;
-
-		for(let i = 0; i < storage.estmVerList[x].related.estimate.items.length; i++){
-			let item = storage.estmVerList[x].related.estimate.items[i];
-			total += (item.price * item.quantity) + (item.price * item.quantity * 0.1);
-		}
-
-		html += "<div class=\"versionListBody\" onclick=\"clickedEstmVer(this)\" data-idx=\"" + x + "\">";
-		html += "<div style=\"justify-content: center;\">" + storage.estmVerList[x].version + "</div>";
-		html += "<div style=\"justify-content: left;\">" + storage.estmVerList[x].title + "</div>";
-		html += "<div style=\"justify-content: center;\">" + storage.user[storage.estmVerList[x].writer].userName + "</div>";
-		html += "<div style=\"justify-content: center;\">" + dateFormat(storage.estmVerList[x].date) + "</div>";
-		html += "<div style=\"justify-content: right;\">" + numberFormat(total) + "</div>";
-		html += "</div>";
-	}
-	
-	cnt.innerHTML = html;
-} // End of drawEstmList()
-
 // 견적 정보를 저장하는 함수
 function saveEstimate(){
 	let url, data, width = 0, height = 0, x;
@@ -1043,31 +1244,7 @@ function getEstimateList(){
 	});
 } // End of getEstimateList()
 
-// 견적 버전 목록을 가져오는 함수
-function getEstmVerList(estmNo){
-	let url;
-	url = apiServer + "/api/estimate/" + estmNo;
-
-	$.ajax({
-		"url": url,
-		"method": "get",
-		"dataType": "json",
-		"cache": false,
-		success: (data) => {
-			let list, x;
-			if (data.result === "ok") {
-				list = data.data;
-				list = cipher.decAes(list);
-				list = JSON.parse(list);
-				for(x = 0 ; x < list.length ; x++)	list[x].doc = cipher.decAes(list[x].doc);
-				storage.estmVerList = list;
-				drawEstmVerList();
-			} else {
-				console.log(data.msg);
-			}
-		}
-	});
-} // End of getEstimateList()
+// End of getEstimateList()
 
 function dateFormat(l){
 	let str = "", dt;
@@ -1406,7 +1583,7 @@ function addSearchList(){
 		version = storage.estmList[i].version;
 		form = storage.estmList[i].form;
 		total = storage.estmList[i].total;
-		storage.searchList.push("#" + title + "#" + version + "#" + form + "#price" + total + "#date" + setDate);
+		storage.searchList.push("#" + title + "#" + version + "#" + form + "#date" + setDate + "#price" + total);
 	}
 }
 
@@ -1590,21 +1767,25 @@ function itemCalKeyup(e){
 
 function estimateFormInit(){
 	let selectAddress, writer, date, pdfMainContentAddBtns;
-	selectAddress = $(".selectAddress select");
-	writer = $("#writer");
-	date = $("#date");
-	pdfMainContentAddBtns = $(".pdfMainContentAddBtns");
+	selectAddress = document.getElementsByClassName("selectAddress")[0].querySelector("select");
+	console.log(selectAddress);
+	writer = document.getElementById("writer");
+	date = document.getElementById("date");
+	pdfMainContentAddBtns = document.getElementsByClassName("pdfMainContentAddBtns")[0];
 
+	let html = "";
 	for(let index in storage.estimateBasic){
-		selectAddress.append("<option value=\"" + index + "\">" + storage.estimateBasic[index].name + "</option>")
+		html += "<option value=\"" + index + "\">" + storage.estimateBasic[index].name + "</option>";
 	}
-	
-	writer.val(storage.user[storage.my].userName);
-	date.val(new Date().toISOString().substring(0, 10));
+
+	selectAddress.innerHTML = html;
+	writer.value = storage.user[storage.my].userName;
+	date.value = new Date().toISOString().substring(0, 10);
 
 	if(storage.estmDetail !== undefined){
 		for(let key in storage.estmDetail.related.estimate){
-			if($("#" + key) !== undefined){
+			let keyId = document.getElementById(key);
+			if(keyId !== undefined){
 				let value = storage.estmDetail.related.estimate[key];
 
 				if(key === "date"){
@@ -1616,11 +1797,11 @@ function estimateFormInit(){
 						value = new Date().toISOString().substring(0, 10);
 					}
 				}else if(key === "customer"){
-					$("#" + key).attr("data-value", value);
+					keyId.dataset.value = value;
 					value = storage.customer[value].name;
 				}
 				
-				$("#" + key).val(value);
+				keyId.value = value;
 			}
 
 		}

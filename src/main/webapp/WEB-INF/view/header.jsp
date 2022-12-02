@@ -21,13 +21,14 @@
 <link rel="stylesheet" type="text/css" href="/css/<%= getPathName %>/<%= getPathName %>.css" />
 
 <script src="/js/jquery.min.js"></script>
+<script src="/js/axios/axios.min.js"></script>
 <script src="/js/jquery-ui.js"></script>
 <script src="/js/jquery.easing.js"></script>
 <script src="/js/html2pdf.bundle.min.js"></script>
 <script src="/js/loading.js"></script>
 <script src="/js/chart.js"></script>
 <script src="/js/editor/ckeditor.js"></script>
-<script src="/js/<%= getPathName %>/<%= getPathName %>.js"></script>
+<script type="module" src="/js/<%= getPathName %>/<%= getPathName %>.js"></script>
 <script src="https://cdn.tiny.cloud/1/kh4eirod6bgv8u2sxlaeikxy5hxfogh0edhzloljxh6zf046/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script src="https://kit.fontawesome.com/a37df9d8b5.js" crossorigin="anonymous"></script>
