@@ -201,10 +201,15 @@
 				</a>
 			</li>
 			<li>
-				<a href="/accounting/corporatecard">
+				<a href="#">
 					<img src="/images/main/icons/mainHomeIcon.png" id="accountingCardIcon" />
 					<span>법인카드</span>
+					<span id="slideSpan">+</span>
 				</a>
+				<ul id="panel">
+					<li><a href="/accounting/corporatecard">법인카드 조회</a></li>
+					<li><a href="/accounting/carddatainsert">카드내역 등록</a></li>
+				</ul>
 			</li>
 			<li>
 				<a href="#">

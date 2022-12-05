@@ -1,4 +1,3 @@
-
 let bnkXls = {};
 
 bnkXls.code = { "002": "KDB산업은행", "003": "IBK기업은행", "004": "KB국민은행", "007": "수협은행", "011": "NH농협은행", "012": "농협중앙회(단위농축협)", "020": "우리은행", "023": "SC제일은행", "027": "한국씨티은행", "031": "대구은행", "032": "부산은행", "034": "광주은행", "035": "제주은행", "037": "전북은행", "039": "경남은행", "045": "새마을금고중앙회", "048": "신협중앙회", "050": "저축은행중앙회", "064": "산림조합중앙회", "071": "우체국", "081": "하나은행", "088": "신한은행", "089": "케이뱅크", "090": "카카오뱅크", "092": "토스뱅크", "218": "KB증권", "238": "미래에셋대우", "240": "삼성증권", "243": "한국투자증권", "247": "NH투자증권", "261": "교보증권", "262": "하이투자증권", "263": "현대차증권", "264": "키움증권", "265": "이베스트투자증권", "266": "SK증권", "267": "대신증권", "269": "한화투자증권", "271": "토스증권", "278": "신한금융투자", "279": "DB금융투자", "280": "유진투자증권", "287": "메리츠증권" };
@@ -145,291 +144,29 @@ bnkXls.charCut = (str) => {
 	else return result;
 } // End of bnkXls.charCut()
 
+function readFile(el) {
+	let file = el.files[0];
+	console.log("STEP 1 : Read xls file");
+	storage.bankHistoryForParse = undefined;
+	if (file === null) return null;
+	else bnkXls.readXlsFile(file);
+} // End of readFile();
 
+function processAccData(data) {
+	// 파싱된 데이터 저장함
+	storage.parseData = data;
+	// 파일 엘리먼트를 초기화 함
+	document.getElementById("xlsFile").value = "";
 
-
-$(document).ready(() => {
-	init();
-
-	setTimeout(() => {
-		$("#loadingDiv").hide();
-		$("#loadingDiv").loading("toggle");
-	}, 300);
-	getCardListData();
-
-});
-
-
-
-
-
-function getCardListData() {
-	let data = null;
-	$.ajax({
-		url: "/api/card/list",
-		type: "get",
-		dataType: "json",
-		cache: false,
-		success: (result) => {
-			if (result.result == "ok") {
-				data = cipher.decAes(result.data);
-				console.log(result.data);
-				data = JSON.parse(data);
-				storage.cardList = data;
-				drawList();
-			} else {
-				console.log("실패");
-			}
-		}
-
-	});
-
-}
-
-
-
-function drawList() {
-	let container,
-		result,
-		jsonData,
-		job,
-		header = [],
-		data = [],
-		ids = [],
-		str,
-		fnc;
-
-	if (
-		storage.cardList === undefined ||
-		storage.cardList == 0
-	) {
-		container = $(".cardList");
-
-		header = [
-
-			{
-				title: "카드번호",
-				align: "center",
-			},
-			{
-				title: "구분",
-				align: "center",
-			},
-			{
-				title: "은행",
-				align: "center",
-			},
-			{
-				title: "상태",
-				align: "center",
-			},
-			{
-				title: "하이패스",
-				align: "center",
-			},
-			{
-				title: "발급일",
-				align: "center",
-			},
-			{
-				title: "비고",
-				align: "left",
-			}
-
-
-
-		];
-		createGrid(container, header, data, ids, job, fnc);
-
-		container.append(
-			"<div class='noListDefault'>결재 수신 문서가 없습니다</div>"
-		);
-	} else {
-		// jsonData = storage.receiveList.receive;
-		let tt = [];
-		let hipass;
-		let bank;
-		for (let i = storage.cardList.length - 1; i >= 0; i--) { tt.push(storage.cardList[i]) };
-		jsonData = tt;
-		result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
-
-		pageContainer = document.getElementsByClassName("pageContainer");
-		container = $(".cardList");
-		header = [
-
-			{
-				title: "카드번호",
-				align: "center",
-			},
-			{
-				title: "구분",
-				align: "center",
-			},
-			{
-				title: "은행",
-				align: "center",
-			},
-			{
-				title: "상태",
-				align: "center",
-			},
-			{
-				title: "하이패스",
-				align: "center",
-			},
-			{
-				title: "발급일",
-				align: "center",
-			},
-			{
-				title: "비고",
-				align: "left",
-			}
-
-		];
-		for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
-			hipass = jsonData[i].hipass == "0" ? "N" : "Y";
-			bank = jsonData[i].bank + "";
-			if (bank.length == 2) {
-				bank = "0" + bank;
-			} else if (bank.length == 1) {
-				bank = "00" + bank;
-			}
-
-			str = [
-
-				{
-					"setData": jsonData[i].card,
-					"align": "center"
-				},
-				{
-					"setData": jsonData[i].div,
-					"align": "center"
-				},
-				{
-					"setData": bnkXls.code[bank],
-					"align": "center"
-				},
-				{
-					"setData": jsonData[i].status,
-					"align": "center",
-				},
-				{
-					"setData": hipass,
-					"align": "center"
-				},
-				{
-					"setData": jsonData[i].issued,
-					"align": "center"
-				},
-				{
-					"setData": jsonData[i].remark,
-					"align": "left"
-				},
-
-			];
-
-			fnc = "detailView(this)";
-			ids.push(jsonData[i].alias);
-			data.push(str);
-		}
-
-		let pageNation = createPaging(
-			pageContainer[0],
-			result[3],
-			"pageMove",
-			"drawList",
-			result[0]
-		);
-		pageContainer[0].innerHTML = pageNation;
-		createGrid(container, header, data, ids, job, fnc);
-	}
-} // End of drawNoticeApproval()
+	let dataDetail = data.detail;
+	storage.cardDetail = dataDetail;
+	drawCardList();
+} // End of processAccData();
 
 
 
 
-
-
-
-
-
-
-function detailView(obj) {
-	let alias = $(obj).attr("data-id"); // 카드 뒷번호 6자리 
-	let data;
-	$.ajax({
-		url: "/api/card/detail/" + alias,
-		type: "get",
-		dataType: "json",
-		success: (result) => {
-			if (result.result === "ok") {
-				data = result.data;
-				data = cipher.decAes(data);
-				data = JSON.parse(data);
-				storage.cardDetail = data;
-				drawCardDetail();
-			} else {
-				alert("카드 내역 상세 조회에 실패함");
-			}
-
-		}
-
-	})
-}
-
-
-
-function drawCardDetail() {
-	let target = $(".cardList");
-	target.html("<div class='cardDetailDiv'><div class='cardTable'></div><div class='detailTable'></div></div>");
-	let cardList = $(".cardTable");
-	let cardDetail = $(".detailTable");
-	// 카드 목록 테이블 간단하게 그림 
-	let cardHtml = "<div class='gridCardHeader'><span>카드번호<span></div>";
-
-	for (let i = 0; i < storage.cardList.length; i++) {
-
-		cardHtml += "<div class='gridCardContent' onclick='showCardDetail(this)' data-detail='" + storage.cardList[i].alias + "'><span class='textNumberFormat' >" + storage.cardList[i].card + "</span></div>";
-	}
-
-	$(cardList).html(cardHtml);
-
-}
-
-
-function showCardDetail(obj) {
-	let alias = $(obj).attr("data-detail");
-	$(obj).css("background-color", "#EDEDF4");
-	for (let i = 0; i < $(".gridCardContent").length; i++) {
-		if ($(".gridCardContent")[i].dataset.detail != alias) {
-			$($(".gridCardContent")[i]).css("background-color", "white");
-		}
-	}
-	$.ajax({
-		url: "/api/card/detail/" + alias,
-		type: "get",
-		dataType: "json",
-		success: (result) => {
-			data = result.data;
-			console.log(data);
-			if (data == null) {
-				storage.cardDetail = null;
-			} else {
-				data = cipher.decAes(data);
-				data = JSON.parse(data);
-				storage.cardDetail = data;
-			}
-
-			drawSelectedDetail();
-		}
-	});
-
-}
-
-function drawSelectedDetail() {
-
-
+function drawCardList() {
 
 	let container,
 		result,
@@ -446,7 +183,7 @@ function drawSelectedDetail() {
 	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 
 	pageContainer = document.getElementsByClassName("pageContainer");
-	container = $(".detailTable");
+	container = $(".parsedData");
 
 	header = [
 		{
@@ -469,37 +206,46 @@ function drawSelectedDetail() {
 		{
 			title: "승인금액",
 			align: "center",
+		},
+		{
+			title: "<input type='checkbox'  onclick='clickedCheckAll(this)'/>",
+			align: "center",
 		}
 
 	];
 	for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
 
+		let check = "<input type='checkbox' name='cardDataCb' class='cb" + i + "' />"
 		str = [
 			{
-				"setData": jsonData[i].cardNo,
+				"setData": jsonData[i][1],
 				"align": "center"
 			},
 			{
-				"setData": getYmdSlash(jsonData[i].transactionDate),
+				"setData": jsonData[i][0],
 				"align": "center"
 			},
 
 			{
-				"setData": jsonData[i].permitNo,
+				"setData": jsonData[i][2],
 				"align": "center"
 			},
 			{
-				"setData": jsonData[i].storeTitle,
+				"setData": jsonData[i][3],
 				"align": "left",
 			},
 			{
-				"setData": jsonData[i].permitAmount.toLocaleString()+"원",
+				"setData": jsonData[i][4],
 				"align": "center"
 			},
+			{
+				"setData": check,
+				"align": "center",
+			}
 
 		];
 
-		fnc = "";
+		fnc = "waitDetailView(this)";
 		ids.push(i);
 		data.push(str);
 	}
@@ -508,20 +254,88 @@ function drawSelectedDetail() {
 		pageContainer[0],
 		result[3],
 		"pageMove",
-		"drawSelectedDetail",
+		"drawCardList",
 		result[0]
 	);
 	pageContainer[0].innerHTML = pageNation;
-	createGrid(container, header, data, ids, job, fnc);
-	$(".gridHeader").css("grid-template-columns", "20% 20% 20% 20% 20%");
-	$(".gridContent").css("grid-template-columns", "20% 20% 20% 20% 20%");
+	createCheckGrid(container, header, data, ids, job, fnc);
 }
 
+function clickedCheckAll(el) {
+	let els, x;
+	els = el.parentElement.parentElement.parentElement.getElementsByTagName("input");
+	for (x = 0; x < els.length; x++) {
+		if (els[x] === el || els[x].disabled === true) continue;
+		els[x].checked = el.checked;
+	}
+}
+
+function getCheckdData() {
+	let cbs = $("input[name='cardDataCb']:checked");
+	let checkedCN = [];
+	for (let i = 0; i < cbs.length; i++) {
+		checkedCN.push(cbs[i].className);
+	}
+	insertCardData(checkedCN);
+}
+
+function insertCardData(checkedCN) {
+
+	let dataArr = $("." + checkedCN[idx]).parent().parent().parent().children();
+	let transactionDate, cardNo, permitNo, storeTitle, permitAmount;
+	let year, month, day;
+	transactionDate = $($("." + checkedCN[idx]).parent().parent().parent().children()[1]).children().html();
+	year = transactionDate.slice(0, 4);
+	month = transactionDate.slice(5, 7);
+	day = transactionDate.slice(8, 10);
+	cardNo = $($("." + checkedCN[idx]).parent().parent().parent().children()[0]).children().html();
+	permitNo = $($("." + checkedCN[idx]).parent().parent().parent().children()[2]).children().html();
+	storeTitle = $($("." + checkedCN[idx]).parent().parent().parent().children()[3]).children().html();
+	permitAmount = $($("." + checkedCN[idx]).parent().parent().parent().children()[4]).children().html();
 
 
-let idx = 0;
+	let data = {
+		transactionDate: year + "-" + month + "-" + day + "",
+		cardNo: cardNo.slice(-6),
+		permitNo: permitNo,
+		storeTitle: storeTitle,
+		permitAmount: permitAmount.replace(",", "").replace(",", "")
+	}
 
-//카드 내역을 insert하는 함수 
+	data = JSON.stringify(data);
+	data = cipher.encAes(data);
+	console.log(data);
+	$.ajax({
+		url: "/api/card/insert",
+		type: "post",
+		data: data,
+		dataType: "json",
+		contentType: "text/plain",
+		success: (result) => {
+			if (result.result == "ok") {
+				console.log("성공");
+				if (idx < checkedCN.length) {
+					idx++;
+					insertCardData(checkedCN);
+				} else {
+					alert("등록되었습니다");
+					location.href = "/accounting/corporatecard";
+				}
+			} else {
+				console.log("실패" + result.msg);
+				if (idx < checkedCN.length) {
+					idx++;
+					insertCardData(checkedCN);
+				} else {
+					alert("등록되었습니다");
+					location.href = "/accounting/corporatecard";
+				}
+			}
+		}
+
+	})
+
+}
 
 
 function createCheckGrid(gridContainer, headerDataArray, dataArray, ids, job, fnc, idName) {
@@ -597,19 +411,3 @@ function createCheckGrid(gridContainer, headerDataArray, dataArray, ids, job, fn
 	}
 
 }
-
-
-// 날짜 관련 함수 
-function getYmdSlash(date) {
-	let d = new Date(date);
-	return (
-	  (d.getFullYear() % 100) +
-	  "/" +
-	  (d.getMonth() + 1 > 9
-		? (d.getMonth() + 1).toString()
-		: "0" + (d.getMonth() + 1)) +
-	  "/" +
-	  (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
-	);
-  }
-

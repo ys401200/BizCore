@@ -9,13 +9,15 @@
 
 				<div class="container">
 					<hr />
-					<span id="containerTitle">법인카드</span>
+					<span id="containerTitle">카드내역 등록</span>
 					<div class="listRange"><input type="range" class="listRangeInput" max="100" step="10" value="0"
 							oninput="listRangeChange(this, drawCardList)">
 						<span class="listRangeSpan">0</span>
 					</div>
+					<div class="crudBtns"><input type="file" id="xlsFile" accept=".xls,.xlsx,.xlsm"
+							onchange="readFile(this)" /><button onclick="getCheckdData()">등록</button></div>
 					<div class="gridList">
-						<div class="cardList"></div>
+						<div class="parsedData"></div>
 					</div>
 					<div class="pageContainer"></div>
 				</div>

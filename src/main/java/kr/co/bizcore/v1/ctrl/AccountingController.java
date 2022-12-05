@@ -64,6 +64,12 @@ public class AccountingController extends Ctrl{
         return "/accounting/corporatecard";
     }
 
+    @GetMapping("/carddatainsert")
+    public String accCarddatainsert(HttpServletRequest request) {
+        doIt(request);
+        return "/accounting/carddatainsert";
+    }
+
     @GetMapping("/purchasebill") // 세금계산서-매입
     public String accBillPurchase(HttpServletRequest request){
         doIt(request);
