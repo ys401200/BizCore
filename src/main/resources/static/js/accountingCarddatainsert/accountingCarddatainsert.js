@@ -163,6 +163,59 @@ function processAccData(data) {
 	drawCardList();
 } // End of processAccData();
 
+$(document).ready(() => {
+	init();
+
+	setTimeout(() => {
+		$("#loadingDiv").hide();
+		$("#loadingDiv").loading("toggle");
+	}, 300);
+	drawDefaultList();
+
+});
+
+
+
+function drawDefaultList() {
+
+	$(".btnsLabel").css("font-size", $(".btnsBtn").css("font-size"));
+	let container, job, header = [], data = [], ids = [], fnc;
+
+	container = $(".parsedData");
+	header = [
+		{
+			title: "카드번호",
+			align: "center",
+		},
+		{
+			title: "승인일자",
+			align: "center",
+		},
+		{
+			title: "승인번호",
+			align: "center",
+		},
+		{
+			title: "가맹점명",
+			align: "left",
+		},
+		{
+			title: "승인금액",
+			align: "center",
+		},
+		{
+			title: "<input type='checkbox' name='batchBtns' class='allCb'>",
+			align: "center",
+		}
+
+	];
+
+	createCheckGrid(container, header, data, ids, job, fnc);
+
+	container.append(
+		"<div class='gridContent'><div class='gridContentItem grid_default_text_align_center' style='grid-column: span 6; text-align: center;'>선택된 파일이 없습니다.</div></div>"
+	);
+}
 
 
 

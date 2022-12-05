@@ -14,9 +14,11 @@
 							oninput="listRangeChange(this, drawCardList)">
 						<span class="listRangeSpan">0</span>
 					</div>
-					<div class="crudBtns"><input type="file" id="xlsFile" accept=".xls,.xlsx,.xlsm"
-							onchange="readFile(this)" /><button onclick="getCheckdData()">등록</button></div>
-					<div class="gridList">
+					<div class="crudBtns"><label class="btnsLabel" for="xlsFile">읽어오기<input style="display: none;"type="file" id="xlsFile" accept=".xls,.xlsx,.xlsm"
+							onchange="readFile(this)" /></label><button class="btnsBtn" onclick="getCheckdData()">등록</button></div>
+
+					<div class="insertDiv">
+						<div class="dataList"></div>
 						<div class="parsedData"></div>
 					</div>
 					<div class="pageContainer"></div>
