@@ -20,11 +20,55 @@
 	grid-area:title;
 }
 
-.sopp-summary{
-	border-radius: 0.4rem;
-	border: 2px dotted #d8d8d8;
-	background-color: #f8f8f8;
+.sopp-history{
 	grid-area:summary;
+	display: grid;
+	grid-template-columns: 1fr;
+	grid-template-rows: 2rem auto;
+}
+.sopp-history > div:nth-child(1){
+	border-top-left-radius: 0.4rem;
+	border-top-right-radius: 0.4rem;
+	border: 1px solid #b6b2ff;
+	border-bottom:none;
+	background-color:#dad9ff;
+	padding:0.3rem 0.8rem;
+}
+.sopp-history > div:nth-child(1) > img{
+	height: 1.2rem;
+    vertical-align: text-bottom;
+}
+.sopp-history > div:nth-child(2){
+	border-bottom-left-radius: 0.4rem;
+	border-bottom-right-radius: 0.4rem;
+	border: 1px solid #d8d8d8;
+	border-top:none;
+	background-color: #f8f8f8;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+.sopp-history > div:nth-child(2) > div{
+	margin:0.5rem;
+	font-size:0.8rem;
+}
+.sopp-history .profile-small{
+	height:0.95rem;
+	vertical-align: text-bottom;
+	margin-right: 0.2rem;
+	display:inline-block;
+}
+.sopp-history .history-employee{
+	display:inline-block;
+	margin: 0 0.2rem;
+	color:#425da8;
+}
+.sopp-history .history-date{
+	display:inline-block;
+	font-size:0.6rem;
+	color:gray;
+}
+.sopp-history .history-comment{
+	margin-left: 1.35rem;
 }
 
 .sopp-content{
@@ -46,7 +90,14 @@
 .sopp-info > div{border-bottom:1px solid #b5b2ff;}
 .sopp-info > div > div{display:inline-block;padding:0.2rem;}
 .sopp-info > div > div:nth-child(1){border-right:1px solid #b5b2ff;width:calc(25% - 1px);background-color:#dad9ff;text-align:center;}
-.sopp-info > div > div:nth-child(2){width:calc(75% - 0.8rem);}
+.sopp-info > div > div:nth-child(2){width:calc(75% - 1.3rem);padding-left:0.5rem;}
+.sopp-info .profile-small{
+	height:0.95rem;
+	vertical-align: text-bottom;
+	height: 0.95rem;
+    vertical-align: text-bottom;
+    margin-right:0.2rem
+}
 .sopp-sticky{
 	position: sticky;
     top: 0;

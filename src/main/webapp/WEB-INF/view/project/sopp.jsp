@@ -8,11 +8,21 @@
 
         <div class="container">
             <div class="content-title">영업기회</div>
-            <div class="sopp-summary">summary</div>
+            <div class="sopp-history">
+                <div><img src="/images/sopp2/history.png" /> 진행상황</div>
+                <div>
+                    <div><img src="/images/sopp2/info_circle.png" class="profile-small" /><div class="history-employee">홍길동</div><div class="history-date">22.10.31 11:11</div><div class="history-comment">&lt;영업기회 개설&gt;</div></div>
+                    <div><img src="/api/user/image/10002" class="profile-small" /><div class="history-employee">홍길동</div><div class="history-date">2022.10.31 11:11</div><div class="history-comment">이 건 담당자 만나서 내용 파악하고 진행하세요.</div></div>
+                    <div><img src="/images/sopp2/info_circle.png" class="profile-small" /><div class="history-employee">홍길동</div><div class="history-date">22.10.31 11:11</div><div class="history-comment">&lt;스테이지 변경 : 접촉&gt;</div></div>
+                    <div><img src="/api/user/image/10002" class="profile-small" /><div class="history-employee">이순신</div><div class="history-date">22.10.31 11:11</div><div class="history-comment">기존 김과장이 퇴사하고 얼마 전, 새로 입사한 이과징이 이 업무 담당합니다.</div></div>
+                    <div><img src="/api/user/image/10002" class="profile-small" /><div class="history-employee">홍길동</div><div class="history-date">2022.10.31 11:11</div><div class="history-comment">김과장이 담당하던 다른 업무는 누가 맡는지도 확인하세요.</div></div>
+                    <div><img src="/images/sopp2/info_circle.png" class="profile-small" /><div class="history-employee">연개소문</div><div class="history-date">22.10.31 11:11</div><div class="history-comment">&lt;스테이지 변경 : 제안&gt;</div></div>
+                </div>
+            </div>
             <div class="sopp-content" onscroll="scrolledSopp(this)">
                 <div class="sopp-info">
-                        <div><div>관리자</div><div>홍길동</div></div>
-                        <div><div>담당자</div><div>이순신 성춘향 연개소문</div></div>
+                        <div><div>관리자</div><div><img src="/api/user/image/10002" class="profile-small" />홍길동</div></div>
+                        <div><div>담당자</div><div><img src="/api/user/image/10002" class="profile-small" />이순신 <img src="/api/user/image/10002" class="profile-small" />성춘향 <img src="/api/user/image/10002" class="profile-small" />연개소문</div></div>
                         <div><div>고객사</div><div>부산정밀(주)</div></div>
                         <div><div>협력사</div><div>(주)아이티원</div></div>
                 </div>
