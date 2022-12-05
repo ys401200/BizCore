@@ -11,7 +11,7 @@
 					<hr />
 					<span id="containerTitle">법인카드</span>
 					<div class="listRange"><input type="range" class="listRangeInput" max="100" step="10" value="0"
-							oninput="listRangeChange(this, drawCardList)">
+							oninput="listRangeChange(this, drawList)">
 						<span class="listRangeSpan">0</span>
 					</div>
 					<div class="gridList">

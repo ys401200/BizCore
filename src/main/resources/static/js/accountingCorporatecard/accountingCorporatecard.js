@@ -186,6 +186,8 @@ function getCardListData() {
 
 // 등록된 카드 내역 리스트 그리는 함수 
 function drawList() {
+	
+
 	let container,
 		result,
 		jsonData,
@@ -356,15 +358,15 @@ function detailView(obj) {
 			if (result.result === "ok") {
 				data = result.data;
 				data = cipher.decAes(data);
-				if(data == null) {
-					storage.selectedCard = []; 
+				if (data == null) {
+					storage.selectedCard = [];
 					storage.selectedCard = alias;
-				}else {
-			    data = JSON.parse(data);
-				storage.cardDetail = data;
-				storage.selectedCard = alias;
+				} else {
+					data = JSON.parse(data);
+					storage.cardDetail = data;
+					storage.selectedCard = alias;
 				}
-			
+
 				drawCardDetail();
 			} else {
 				alert("카드 내역 상세 조회에 실패함");
@@ -378,6 +380,7 @@ function detailView(obj) {
 
 
 function drawCardDetail() {
+	$(".listRange").hide();
 
 	let target = $(".cardList");
 	target.html("<div class='cardDetailDiv'><div class='cardTable'></div><div class='detailTable'></div></div>");
@@ -401,7 +404,7 @@ function drawCardDetail() {
 		}
 	}
 
-	
+
 }
 
 function showCardDetail(obj) {
@@ -436,8 +439,8 @@ function showCardDetail(obj) {
 function drawSelectedDetail() {
 
 
- 
-let container,
+
+	let container,
 		result,
 		jsonData,
 		job,
@@ -448,124 +451,124 @@ let container,
 		fnc;
 
 	jsonData = storage.cardDetail;
-if(jsonData.length == 0) {
+	if (jsonData.length == 0) {
 
 
 
-	container = $(".detailTable");
+		container = $(".detailTable");
 
-	header = [
+		header = [
 
-		{
-			title: "카드번호",
-			align: "center",
-		},
-		{
-			title: "승인일자",
-			align: "center",
-		},
-
-		{
-			title: "승인번호",
-			align: "center",
-		},
-		{
-			title: "가맹점명",
-			align: "left",
-		},
-		{
-			title: "승인금액",
-			align: "center",
-		}
-
-
-
-	];
-	createGrid(container, header, data, ids, job, fnc);
-
-	container.append(
-		"<div class='gridContent'><div class='gridContentItem grid_default_text_align_center' style='grid-column: span 5; text-align: center;'>등록된 내역이 없습니다.</div></div>"
-	);
-	$(".gridHeader").css("grid-template-columns", "20% 20% 20% 20% 20%");
-	$(".gridContent").css("grid-template-columns", "20% 20% 20% 20% 20%");
-
-} else {
-	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
-
-	pageContainer = document.getElementsByClassName("pageContainer");
-	container = $(".detailTable");
-
-	header = [
-		{
-			title: "카드번호",
-			align: "center",
-		},
-		{
-			title: "승인일자",
-			align: "center",
-		},
-
-		{
-			title: "승인번호",
-			align: "center",
-		},
-		{
-			title: "가맹점명",
-			align: "left",
-		},
-		{
-			title: "승인금액",
-			align: "center",
-		}
-
-	];
-	for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
-
-		str = [
 			{
-				"setData": jsonData[i].cardNo,
-				"align": "center"
+				title: "카드번호",
+				align: "center",
 			},
 			{
-				"setData": getYmdSlash(jsonData[i].transactionDate),
-				"align": "center"
+				title: "승인일자",
+				align: "center",
 			},
 
 			{
-				"setData": jsonData[i].permitNo,
-				"align": "center"
+				title: "승인번호",
+				align: "center",
 			},
 			{
-				"setData": jsonData[i].storeTitle,
-				"align": "left",
+				title: "가맹점명",
+				align: "left",
 			},
 			{
-				"setData": jsonData[i].permitAmount.toLocaleString() + "원",
-				"align": "center"
-			},
+				title: "승인금액",
+				align: "center",
+			}
+
+
 
 		];
+		createGrid(container, header, data, ids, job, fnc);
 
-		fnc = "";
-		ids.push(i);
-		data.push(str);
+		container.append(
+			"<div class='gridContent'><div class='gridContentItem grid_default_text_align_center' style='grid-column: span 5; text-align: center;'>등록된 내역이 없습니다.</div></div>"
+		);
+		$(".gridHeader").css("grid-template-columns", "20% 20% 20% 20% 20%");
+		$(".gridContent").css("grid-template-columns", "20% 20% 20% 20% 20%");
+
+	} else {
+		result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+
+		pageContainer = document.getElementsByClassName("pageContainer");
+		container = $(".detailTable");
+
+		header = [
+			{
+				title: "카드번호",
+				align: "center",
+			},
+			{
+				title: "승인일자",
+				align: "center",
+			},
+
+			{
+				title: "승인번호",
+				align: "center",
+			},
+			{
+				title: "가맹점명",
+				align: "left",
+			},
+			{
+				title: "승인금액",
+				align: "center",
+			}
+
+		];
+		for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+
+			str = [
+				{
+					"setData": jsonData[i].cardNo,
+					"align": "center"
+				},
+				{
+					"setData": getYmdSlash(jsonData[i].transactionDate),
+					"align": "center"
+				},
+
+				{
+					"setData": jsonData[i].permitNo,
+					"align": "center"
+				},
+				{
+					"setData": jsonData[i].storeTitle,
+					"align": "left",
+				},
+				{
+					"setData": jsonData[i].permitAmount.toLocaleString() + "원",
+					"align": "center"
+				},
+
+			];
+
+			fnc = "";
+			ids.push(i);
+			data.push(str);
+		}
+
+		let pageNation = createPaging(
+			pageContainer[0],
+			result[3],
+			"pageMove",
+			"drawSelectedDetail",
+			result[0]
+		);
+		pageContainer[0].innerHTML = pageNation;
+		createGrid(container, header, data, ids, job, fnc);
+		$(".gridHeader").css("grid-template-columns", "20% 20% 20% 20% 20%");
+		$(".gridContent").css("grid-template-columns", "20% 20% 20% 20% 20%");
 	}
 
-	let pageNation = createPaging(
-		pageContainer[0],
-		result[3],
-		"pageMove",
-		"drawSelectedDetail",
-		result[0]
-	);
-	pageContainer[0].innerHTML = pageNation;
-	createGrid(container, header, data, ids, job, fnc);
-	$(".gridHeader").css("grid-template-columns", "20% 20% 20% 20% 20%");
-	$(".gridContent").css("grid-template-columns", "20% 20% 20% 20% 20%");
-}
-	
 
-	
+
 }
 
 

@@ -64,10 +64,9 @@
 }
 
 
-
 .gridList .cardList .cardDetailDiv>div:first-of-type {
 	margin-right: 1em;
-	max-height: 60%;
+	max-height: 500px;
 	overflow: auto;
 }
 
@@ -80,8 +79,12 @@
     border-bottom: 1px solid #3e3e9e;
     position: sticky;
     top: 0;
+	text-align: center;
+	overflow: hidden;
+	margin: 0.5px;
+	padding: 8px;
 }
-.gridCardHeader,
+
 .gridCardContent {
 	text-align: center;
 	overflow: hidden;
