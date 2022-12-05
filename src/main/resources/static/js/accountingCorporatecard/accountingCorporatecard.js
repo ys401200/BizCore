@@ -159,10 +159,7 @@ $(document).ready(() => {
 
 });
 
-
-
-
-
+// 등록된 카드 내역 가져오는 함수 
 function getCardListData() {
 	let data = null;
 	$.ajax({
@@ -187,7 +184,7 @@ function getCardListData() {
 }
 
 
-
+// 등록된 카드 내역 리스트 그리는 함수 
 function drawList() {
 	let container,
 		result,
@@ -348,13 +345,6 @@ function drawList() {
 
 
 
-
-
-
-
-
-
-
 function detailView(obj) {
 	let alias = $(obj).attr("data-id"); // 카드 뒷번호 6자리 
 	let data;
@@ -368,6 +358,7 @@ function detailView(obj) {
 				data = cipher.decAes(data);
 				data = JSON.parse(data);
 				storage.cardDetail = data;
+				storage.selectedCard = alias;
 				drawCardDetail();
 			} else {
 				alert("카드 내역 상세 조회에 실패함");
@@ -381,10 +372,11 @@ function detailView(obj) {
 
 
 function drawCardDetail() {
+
 	let target = $(".cardList");
 	target.html("<div class='cardDetailDiv'><div class='cardTable'></div><div class='detailTable'></div></div>");
 	let cardList = $(".cardTable");
-	let cardDetail = $(".detailTable");
+
 	// 카드 목록 테이블 간단하게 그림 
 	let cardHtml = "<div class='gridCardHeader'><span>카드번호<span></div>";
 
@@ -394,6 +386,18 @@ function drawCardDetail() {
 	}
 
 	$(cardList).html(cardHtml);
+
+	for (let i = 0; i < $(".gridCardContent").length; i++) {
+		if ($(".gridCardContent")[i].dataset.detail == storage.selectedCard) {
+			$($(".gridCardContent")[i]).css("background-color", "#EDEDF4");
+			showCardDetail($(".gridCardContent")[i]);
+			break;
+		}
+	}
+
+	
+
+
 
 }
 
@@ -493,7 +497,7 @@ function drawSelectedDetail() {
 				"align": "left",
 			},
 			{
-				"setData": jsonData[i].permitAmount.toLocaleString()+"원",
+				"setData": jsonData[i].permitAmount.toLocaleString() + "원",
 				"align": "center"
 			},
 
@@ -603,13 +607,13 @@ function createCheckGrid(gridContainer, headerDataArray, dataArray, ids, job, fn
 function getYmdSlash(date) {
 	let d = new Date(date);
 	return (
-	  (d.getFullYear() % 100) +
-	  "/" +
-	  (d.getMonth() + 1 > 9
-		? (d.getMonth() + 1).toString()
-		: "0" + (d.getMonth() + 1)) +
-	  "/" +
-	  (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
+		(d.getFullYear() % 100) +
+		"/" +
+		(d.getMonth() + 1 > 9
+			? (d.getMonth() + 1).toString()
+			: "0" + (d.getMonth() + 1)) +
+		"/" +
+		(d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
 	);
-  }
+}
 
