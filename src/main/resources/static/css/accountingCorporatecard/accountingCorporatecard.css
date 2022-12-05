@@ -58,16 +58,41 @@
 .gridList .cardList .cardDetailDiv {
 	padding: 0.5rem 1.5rem 1.5rem;
 	min-width: 1440px;
-	height: calc(100% - 40px - 2rem);
 	display: grid;
 	grid-template-columns: 20% 80%;
 
 }
 
-.gridList .cardList .cardDetailDiv>div {
-	border: 1px solid black;
-}
+
 
 .gridList .cardList .cardDetailDiv>div:first-of-type {
 	margin-right: 1em;
+	max-height: 60%;
+	overflow: auto;
+}
+
+
+.gridCardHeader {
+	font-family: 'NanumSquareRound';
+    background-color: #f2f2ff;
+    border-top-right-radius: 8px;
+    border-top-left-radius: 8px;
+    border-bottom: 1px solid #3e3e9e;
+    position: sticky;
+    top: 0;
+}
+.gridCardHeader,
+.gridCardContent {
+	text-align: center;
+	overflow: hidden;
+	border: 1px solid #e0e4e9;
+	margin: 0.5px;
+	/* border-top: 1px solid #e0e4e9; */
+	/* border-right: 1px solid #E0E0E0; */
+	padding: 8px;
+}
+
+.gridCardContent:hover {
+	cursor: pointer;
+	background-color: #EDEDF4;
 }

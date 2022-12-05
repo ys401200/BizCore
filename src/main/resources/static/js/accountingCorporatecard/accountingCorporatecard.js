@@ -495,7 +495,7 @@ function detailView(obj) {
 				data = result.data;
 				data = cipher.decAes(data);
 				data = JSON.parse(data);
-				storage.cardDetail = data; 
+				storage.cardDetail = data;
 				drawCardDetail();
 			} else {
 				alert("카드 내역 상세 조회에 실패함");
@@ -504,20 +504,146 @@ function detailView(obj) {
 		}
 
 	})
-} 
-
-
-
-function drawCardDetail(){
-	let target = $(".cardList");
-	target.html("<div class='cardDetailDiv'><div class='cardTable'></div><div class='datailTable'></div></div>");
-	let cardList = $(".cardDatailDiv");
-	let cardDetail = $(".detailTable"); 
-    
 }
 
 
 
+function drawCardDetail() {
+	let target = $(".cardList");
+	target.html("<div class='cardDetailDiv'><div class='cardTable'></div><div class='detailTable'></div></div>");
+	let cardList = $(".cardTable");
+	let cardDetail = $(".detailTable");
+	// 카드 목록 테이블 간단하게 그림 
+	let cardHtml = "<div class='gridCardHeader'><span>카드번호<span></div>";
+
+	for (let i = 0; i < storage.cardList.length; i++) {
+
+		cardHtml += "<div class='gridCardContent' onclick='showCardDetail(this)' data-detail='" + storage.cardList[i].alias + "'><span class='textNumberFormat' >" + storage.cardList[i].card + "</span></div>";
+	}
+
+	$(cardList).html(cardHtml);
+
+}
+
+
+function showCardDetail(obj) {
+	let alias = $(obj).attr("data-detail");
+	$(obj).css("background-color", "#EDEDF4");
+	for (let i = 0; i < $(".gridCardContent").length; i++) {
+		if ($(".gridCardContent")[i].dataset.detail != alias) {
+			$($(".gridCardContent")[i]).css("background-color", "white");
+		}
+	}
+	$.ajax({
+		url: "/api/card/detail/" + alias,
+		type: "get",
+		dataType: "json",
+		success: (result) => {
+			data = result.data;
+			console.log(data);
+			if (data == null) {
+				storage.cardDetail = null;
+			} else {
+				data = cipher.decAes(data);
+				data = JSON.parse(data);
+				storage.cardDetail = data;
+			}
+
+			drawSelectedDetail();
+		}
+	});
+
+}
+
+function drawSelectedDetail() {
+
+
+
+	let container,
+		result,
+		jsonData,
+		job,
+		header = [],
+		data = [],
+		ids = [],
+		str,
+		fnc;
+
+	jsonData = storage.cardDetail;
+
+	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+
+	pageContainer = document.getElementsByClassName("pageContainer");
+	container = $(".detailTable");
+
+	header = [
+		{
+			title: "카드번호",
+			align: "center",
+		},
+		{
+			title: "승인일자",
+			align: "center",
+		},
+
+		{
+			title: "승인번호",
+			align: "center",
+		},
+		{
+			title: "가맹점명",
+			align: "left",
+		},
+		{
+			title: "승인금액",
+			align: "center",
+		}
+
+	];
+	for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+
+		str = [
+			{
+				"setData": jsonData[i].cardNo,
+				"align": "center"
+			},
+			{
+				"setData": getYmdSlash(jsonData[i].transactionDate),
+				"align": "center"
+			},
+
+			{
+				"setData": jsonData[i].permitNo,
+				"align": "center"
+			},
+			{
+				"setData": jsonData[i].storeTitle,
+				"align": "left",
+			},
+			{
+				"setData": jsonData[i].permitAmount.toLocaleString()+"원",
+				"align": "center"
+			},
+
+		];
+
+		fnc = "";
+		ids.push(i);
+		data.push(str);
+	}
+
+	let pageNation = createPaging(
+		pageContainer[0],
+		result[3],
+		"pageMove",
+		"drawSelectedDetail",
+		result[0]
+	);
+	pageContainer[0].innerHTML = pageNation;
+	createGrid(container, header, data, ids, job, fnc);
+	$(".gridHeader").css("grid-template-columns", "20% 20% 20% 20% 20%");
+	$(".gridContent").css("grid-template-columns", "20% 20% 20% 20% 20%");
+}
 
 
 
@@ -657,7 +783,17 @@ function createCheckGrid(gridContainer, headerDataArray, dataArray, ids, job, fn
 }
 
 
-
-
-
+// 날짜 관련 함수 
+function getYmdSlash(date) {
+	let d = new Date(date);
+	return (
+	  (d.getFullYear() % 100) +
+	  "/" +
+	  (d.getMonth() + 1 > 9
+		? (d.getMonth() + 1).toString()
+		: "0" + (d.getMonth() + 1)) +
+	  "/" +
+	  (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
+	);
+  }
 
