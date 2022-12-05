@@ -186,7 +186,7 @@ function getCardListData() {
 
 // 등록된 카드 내역 리스트 그리는 함수 
 function drawList() {
-	
+
 
 	let container,
 		result,
@@ -381,19 +381,20 @@ function detailView(obj) {
 
 function drawCardDetail() {
 	$(".listRange").hide();
+	
 
 	let target = $(".cardList");
-	target.html("<div class='cardDetailDiv'><div class='cardTable'></div><div class='detailTable'></div></div>");
+	target.html("<div class='detailDivContainer'><div class='crudBtns'><button onclick='showMain()'>목록보기</button></div><div class='cardDetailDiv'><div class='cardTable'></div><div class='detailTable'></div></div></div>");
 	let cardList = $(".cardTable");
 
 	// 카드 목록 테이블 간단하게 그림 
-	let cardHtml = "<div class='gridCardHeader'><span>카드번호<span></div>";
+	let cardHtml = "<div class='gridCardHeader'><span>카드번호<span></div><div class='contentContainer'>";
 
 	for (let i = 0; i < storage.cardList.length; i++) {
 
 		cardHtml += "<div class='gridCardContent' onclick='showCardDetail(this)' data-detail='" + storage.cardList[i].alias + "'><span class='textNumberFormat' >" + storage.cardList[i].card + "</span></div>";
 	}
-
+	cardHtml += "</div>";
 	$(cardList).html(cardHtml);
 
 	for (let i = 0; i < $(".gridCardContent").length; i++) {
@@ -405,6 +406,10 @@ function drawCardDetail() {
 	}
 
 
+}
+
+function showMain() {
+	location.href = "/accounting/corporatecard";
 }
 
 function showCardDetail(obj) {
@@ -421,8 +426,7 @@ function showCardDetail(obj) {
 		dataType: "json",
 		success: (result) => {
 			data = result.data;
-			console.log(data);
-			if (data == null) {
+			if (data == "[]") {
 				storage.cardDetail = [];
 			} else {
 				data = cipher.decAes(data);
@@ -439,7 +443,7 @@ function showCardDetail(obj) {
 function drawSelectedDetail() {
 
 
-
+	$(".pageContainer").html("");
 	let container,
 		result,
 		jsonData,
