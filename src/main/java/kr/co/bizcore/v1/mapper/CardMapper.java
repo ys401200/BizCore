@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import kr.co.bizcore.v1.domain.CoporateCard;
+import kr.co.bizcore.v1.domain.CoporateCardDetail;
 
 
 public interface CardMapper {
@@ -17,6 +18,10 @@ public interface CardMapper {
             @Param("permitAmount") String permitAmount);
     
     // 카드 리스트 가져오는 쿼리 
-    @Select("select idx, compId, card , alias , `div`, bank, status, hipass, remark, issued, created, modified, deleted from bizcore.corporate_card where compId = #{compId}")
+    @Select("SELECT idx, compId, card , alias , `div`, bank, status, hipass, remark, issued, created, modified, deleted FROM bizcore.corporate_card WHERE compId = #{compId}")
     public List<CoporateCard> getcardList(@Param("compId") String compId);
+    
+    // 카드 상세 내역 가져오는 쿼리 
+    @Select("SELECT `no`, compId, transactionDate, cardNo , permitNo, storeTitle, permitAmount, created, deleted from bizcore.carddata where compId = #{compId} and cardNo =#{cardNo}")
+    public List<CoporateCardDetail> getCardDetail(@Param("compId")String compId, @Param("cardNo") String cardNo); 
 }  

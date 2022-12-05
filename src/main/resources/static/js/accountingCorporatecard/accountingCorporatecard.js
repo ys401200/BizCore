@@ -366,23 +366,6 @@ function drawList() {
 
 
 
-function detailView(obj) {
-	let alias = $(obj).attr("data-id"); // 카드 뒷번호 6자리 
-	$.ajax({
-		url: "/api/card/detail/" + alias,
-		type: "get",
-		dataType: "json",
-		success: (result) => {
-			if (result.result === "ok") {
-
-			} else {
-				alert("카드 내역 상세 조회에 실패함");
-			}
-
-		}
-
-	})
-}
 
 
 
@@ -498,6 +481,46 @@ function getCheckdData() {
 	}
 	insertCardData(checkedCN);
 }
+
+
+function detailView(obj) {
+	let alias = $(obj).attr("data-id"); // 카드 뒷번호 6자리 
+	let data;
+	$.ajax({
+		url: "/api/card/detail/" + alias,
+		type: "get",
+		dataType: "json",
+		success: (result) => {
+			if (result.result === "ok") {
+				data = result.data;
+				data = cipher.decAes(data);
+				data = JSON.parse(data);
+				storage.cardDetail = data; 
+				drawCardDetail();
+			} else {
+				alert("카드 내역 상세 조회에 실패함");
+			}
+
+		}
+
+	})
+} 
+
+
+
+function drawCardDetail(){
+	let target = $(".cardList");
+	target.html("<div class='cardDetailDiv'><div class='cardTable'></div><div class='datailTable'></div></div>");
+	let cardList = $(".cardDatailDiv");
+	let cardDetail = $(".detailTable"); 
+    
+}
+
+
+
+
+
+
 let idx = 0;
 
 //카드 내역을 insert하는 함수 

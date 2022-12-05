@@ -118,9 +118,8 @@ public class ApiCardCtrl extends Ctrl {
         } else {
            data = cardService.getCardDetail(compId, alias); 
            data = encAes(data, aesKey, aesIv);
-           result = "{\"result\":\"failure\",\"data\":\"" + data + "\"}";
+           result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
         }
-
 
 
         return result;
