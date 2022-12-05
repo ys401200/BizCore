@@ -10,7 +10,7 @@
 				<div class="container">
 					<hr />
 					<span id="containerTitle">카드내역 등록</span>
-					<div class="listRange"><input type="range" class="listRangeInput" max="100" step="10" value="0"
+					<div class="listRange"><input type="range" class="listRangeInput" max="1000" step="100" value="0"
 							oninput="listRangeChange(this, drawCardList)">
 						<span class="listRangeSpan">0</span>
 					</div>

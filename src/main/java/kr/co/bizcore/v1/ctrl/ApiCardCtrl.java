@@ -110,17 +110,20 @@ public class ApiCardCtrl extends Ctrl {
         aesIv = (String) session.getAttribute("aesIv");
         lang = (String) session.getAttribute("lang");
         msg = getMsg(lang);
- 
+
         if (compId == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
         } else if (aesKey == null || aesIv == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
         } else {
-           data = cardService.getCardDetail(compId, alias); 
-           data = encAes(data, aesKey, aesIv);
-           result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
+            data = cardService.getCardDetail(compId, alias);
+            if(data =="") {
+                data = "[]";
+            }
+            logger.info("test :" + data + "end ");
+            data = encAes(data, aesKey, aesIv);
+            result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
         }
-
 
         return result;
     }

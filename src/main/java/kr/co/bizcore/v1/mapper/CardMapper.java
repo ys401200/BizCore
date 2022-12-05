@@ -12,8 +12,8 @@ import kr.co.bizcore.v1.domain.CoporateCardDetail;
 public interface CardMapper {
 
     // 읽어온 엑셀 데이터 insert하는 쿼리 
-    @Insert("INSERT INTO bizcore.carddata (compId, transactionDate, cardNo, permitNo, storeTitle, permitAmount, created) VALUES (#{compId},#{transactionDate},#{cardNo},#{permitNo},#{storeTitle},#{permitAmount}, now())")
-    public int insertCardDate(@Param("compId") String compId, @Param("transactionDate") String transactionDate,
+    @Insert("INSERT INTO bizcore.carddata (no, compId, transactionDate, cardNo, permitNo, storeTitle, permitAmount, created) VALUES (#{no},#{compId},#{transactionDate},#{cardNo},#{permitNo},#{storeTitle},#{permitAmount}, now())")
+    public int insertCardData(@Param("no") int no, @Param("compId") String compId, @Param("transactionDate") String transactionDate,
             @Param("cardNo") String cardNo, @Param("permitNo") String permitNo, @Param("storeTitle") String storeTitle,
             @Param("permitAmount") String permitAmount);
     

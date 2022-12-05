@@ -332,6 +332,7 @@ function getCheckdData() {
 	insertCardData(checkedCN);
 }
 
+let idx = 0;
 function insertCardData(checkedCN) {
 
 	let dataArr = $("." + checkedCN[idx]).parent().parent().parent().children();
@@ -367,21 +368,21 @@ function insertCardData(checkedCN) {
 		success: (result) => {
 			if (result.result == "ok") {
 				console.log("성공");
+				idx++;
 				if (idx < checkedCN.length) {
-					idx++;
 					insertCardData(checkedCN);
 				} else {
 					alert("등록되었습니다");
-					location.href = "/accounting/corporatecard";
+					location.href = "/accounting/carddatainsert";
 				}
 			} else {
 				console.log("실패" + result.msg);
+				idx++;
 				if (idx < checkedCN.length) {
-					idx++;
 					insertCardData(checkedCN);
 				} else {
 					alert("등록되었습니다");
-					location.href = "/accounting/corporatecard";
+					location.href = "/accounting/carddatainsert";
 				}
 			}
 		}

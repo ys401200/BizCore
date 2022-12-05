@@ -239,7 +239,7 @@ function drawList() {
 		createGrid(container, header, data, ids, job, fnc);
 
 		container.append(
-			"<div class='noListDefault'>결재 수신 문서가 없습니다</div>"
+			"<div class='noListDefault'>등록된 내역이 없습니다.</div>"
 		);
 	} else {
 		// jsonData = storage.receiveList.receive;
@@ -356,9 +356,15 @@ function detailView(obj) {
 			if (result.result === "ok") {
 				data = result.data;
 				data = cipher.decAes(data);
-				data = JSON.parse(data);
+				if(data == null) {
+					storage.selectedCard = []; 
+					storage.selectedCard = alias;
+				}else {
+			    data = JSON.parse(data);
 				storage.cardDetail = data;
 				storage.selectedCard = alias;
+				}
+			
 				drawCardDetail();
 			} else {
 				alert("카드 내역 상세 조회에 실패함");
@@ -396,11 +402,7 @@ function drawCardDetail() {
 	}
 
 	
-
-
-
 }
-
 
 function showCardDetail(obj) {
 	let alias = $(obj).attr("data-detail");
@@ -418,7 +420,7 @@ function showCardDetail(obj) {
 			data = result.data;
 			console.log(data);
 			if (data == null) {
-				storage.cardDetail = null;
+				storage.cardDetail = [];
 			} else {
 				data = cipher.decAes(data);
 				data = JSON.parse(data);
@@ -434,8 +436,8 @@ function showCardDetail(obj) {
 function drawSelectedDetail() {
 
 
-
-	let container,
+ 
+let container,
 		result,
 		jsonData,
 		job,
@@ -446,7 +448,48 @@ function drawSelectedDetail() {
 		fnc;
 
 	jsonData = storage.cardDetail;
+if(jsonData.length == 0) {
 
+
+
+	container = $(".detailTable");
+
+	header = [
+
+		{
+			title: "카드번호",
+			align: "center",
+		},
+		{
+			title: "승인일자",
+			align: "center",
+		},
+
+		{
+			title: "승인번호",
+			align: "center",
+		},
+		{
+			title: "가맹점명",
+			align: "left",
+		},
+		{
+			title: "승인금액",
+			align: "center",
+		}
+
+
+
+	];
+	createGrid(container, header, data, ids, job, fnc);
+
+	container.append(
+		"<div class='gridContent'><div class='gridContentItem grid_default_text_align_center' style='grid-column: span 5; text-align: center;'>등록된 내역이 없습니다.</div></div>"
+	);
+	$(".gridHeader").css("grid-template-columns", "20% 20% 20% 20% 20%");
+	$(".gridContent").css("grid-template-columns", "20% 20% 20% 20% 20%");
+
+} else {
 	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 
 	pageContainer = document.getElementsByClassName("pageContainer");
@@ -519,6 +562,10 @@ function drawSelectedDetail() {
 	createGrid(container, header, data, ids, job, fnc);
 	$(".gridHeader").css("grid-template-columns", "20% 20% 20% 20% 20%");
 	$(".gridContent").css("grid-template-columns", "20% 20% 20% 20% 20%");
+}
+	
+
+	
 }
 
 

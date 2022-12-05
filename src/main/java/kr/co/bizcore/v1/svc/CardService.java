@@ -28,7 +28,9 @@ public class CardService extends Svc {
      public int insertCardData(String compId, String transactionDate, String cardNo, String permitNo, String storeTitle,
                String permitAmount) {
           int result = 0;
-          result = cardMapper.insertCardDate(compId, transactionDate, cardNo, permitNo, storeTitle, permitAmount);
+          int no = 0;
+          no = getNextNumberFromDB(compId, "bizcore.carddata");
+          result = cardMapper.insertCardData(no,compId, transactionDate, cardNo, permitNo, storeTitle, permitAmount);
           return result;
      }
 
@@ -55,7 +57,7 @@ public class CardService extends Svc {
      }
 
      public String getCardDetail(String compId, String alias) {
-          String result = null;
+          String result = "";
           CoporateCardDetail each = new CoporateCardDetail(); 
           List<CoporateCardDetail> list = null; 
           ObjectMapper mapper = new ObjectMapper();
