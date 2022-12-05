@@ -317,7 +317,7 @@ function contractSuccessView(result) {
 	}
 
 	dataArray = [
-	
+
 		{
 			"title": "영업기회(*)",
 			"elementId": "sopp",
@@ -397,7 +397,7 @@ function contractSuccessView(result) {
 			"keyup": "addAutoComplete(this);",
 			"onClick": "addAutoComplete(this);",
 		},
-		
+
 		{
 			"title": "발주일자",
 			"elementId": "saleDate",
@@ -552,7 +552,7 @@ function contractInsertForm() {
 	let html, dataArray;
 
 	dataArray = [
-		
+
 		{
 			"title": "영업기회(*)",
 			"elementId": "sopp",
@@ -1358,5 +1358,66 @@ function mtncArrSet() {
 	});
 
 
+}
+
+
+
+let R = {};
+class Contracts {
+	// 생성자 
+	constructor(_server, cnt) {
+		this.list = [];
+		this.container = cnt;
+		fetch(_server + "/api/contract")
+			.catch((error) => console.log("error:", error))
+			.then(response => response.json())
+			.then(response => {
+				let data, arr, x;
+				if (response.result !== "ok") console.log(response.msg);
+				else {
+					data = cipher.decAes(response.data);
+					arr = JSON.parse(data);
+					for (x = 0; x < arr.length; x++)	R.contract.addProject(new Contract(arr[x]));
+				}
+			});
+
+	}
+
+	addContract(ctr) {
+		this.list.push(ctr);
+	}
+
+	draw() {
+
+	}
+}
+
+
+class Contract {
+	constructor(each) {
+		this.compId = each.compId;
+		this.employee = each.employee;
+		this.coWorker = each.coWorker;
+		this.customer = each.customer;
+		this.cipOfCustomer = each.cipOfCustomer;
+		this.title = each.title;
+		this.detail = each.detail;
+		this.endUser = each.endUser;
+		this.cipOfendUser = each.cipOfendUser;
+		this.partner = each.partner;
+		this.cipOfPartner = each.cipOfPartner;
+		this.supplier = each.supplier;
+		this.cipOfSupplier = each.cipOfSupplier;
+		this.saleDate = each.saleDate;
+		this.supplied = each.supplied;
+		this.delivered = each.delivered;
+		this.contractAmount = each.contractAmount;
+		this.taxInclude = each.taxInclude;
+		this.profit = each.profit;
+		this.created = each.created === undefined ? null : new Date(each.created);
+		this.modified = each.modified === undefined ? null : new Date(each.modified);
+		this.deleted = each.deleted === undefined ? null : new Date(each.deleted);
+		this.related = each.related === undefined ? null : JSON.parse(each.related);
+	}
 }
 
