@@ -192,6 +192,17 @@
 	border: 4px dotted #c9c9c9;
     background-color: #f8f8f8;
 }
+.sopp-box.sopp-add{
+	grid-column: span 4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: gray;
+	border:2px dotted #d8d8d8;
+	background-color:#F8F8F6;
+	height:1.8rem;
+}
+.sopp-box.sopp-add:hover{background-color: #f3f3f3;}
 .sopp-box > name{
 	grid-row-start: 1;
 	grid-row-end: 3;
@@ -239,43 +250,16 @@ prgbar{
 	width: 5rem;
 	height: 1.5rem;
 	position: relative;
-	padding-left: 0.2rem;
 	font-size:0.8rem;
-	background: rgb(165, 165, 165);
+	background-image: url(/images/sopp2/label_gray.png);
+	background-size: contain;
+    background-repeat: no-repeat;
 	vertical-align: middle;
-	margin-right:0.2rem
+	margin-left:-0.3rem
 }
-prgbar:after {
-	content: "";
-	position: absolute;
-	left: 0;
-	top:0;
-	bottom: 0;
-	width: 0;
-	height: 0;
-	border-left: 0.5rem solid white;
-	border-top: 0.8rem solid transparent;
-	border-bottom: 0.8rem solid transparent;
-}
-prgbar:before {
-	content: "";
-	position: absolute;
-	right: -0.5rem;
-	top:0;
-	bottom: 0;
-	width: 0;
-	height: 0;
-	border-top: 0.8rem solid transparent;
-	border-bottom: 0.8rem solid transparent;
-	border-left: 0.5rem solid rgb(165, 165, 165);
-}
-
-prgbar.done{background: rgb(38, 134, 0);}
-prgbar.done:before {border-left: 0.5rem solid rgb(38, 134, 0);}
-prgbar.doing{background: #808cff;}
-prgbar.doing:before {border-left: 0.5rem solid #808cff;}
-prgbar.fail{background: #ff5c5c;}
-prgbar.fail:before {border-left: 0.5rem solid #ff5c5c;}
+prgbar.done{background-image: url(/images/sopp2/label_green.png);}
+prgbar.doing{background-image: url(/images/sopp2/label_blue.png);}
+prgbar.fail{background-image: url(/images/sopp2/label_red.png);}
 
 ._hidden{display:none;}
 .employee_image{
@@ -312,3 +296,33 @@ prgbar.fail:before {border-left: 0.5rem solid #ff5c5c;}
 
 .dept-tree-select:checked + label > div{background-color: #cff9ff;}
 .deptTree label > div{padding:0.25rem 0;}
+
+/* 모달 창 스타일*/
+.new-sopp{
+	display:grid;
+	grid-template-columns: 1fr 1fr;
+	border:1px solid #b6b2ff;
+	margin:0.2rem;
+	max-width: 800px;
+}
+.new-sopp > div:nth-child(1) > div{
+	display:grid;
+	grid-template-columns: 1fr 3fr;
+	border-bottom:1px solid #b6b2ff;
+}
+.new-sopp > div:nth-child(1) > div:last-child{border-bottom:none;}
+.new-sopp > div:nth-child(1) > div > div:nth-child(1){
+	display:flex;
+	align-items: center;
+	justify-content: space-between;
+	background-color: #dad9ff;
+	padding: 0.3rem 0.5rem;
+}
+.new-sopp > div:nth-child(1) > div > div:nth-child(2),
+.new-sopp > div:nth-child(1) > div > input:nth-child(2){border:none;border-right:1px solid #b6b2ff;padding: 0.3rem 0.5rem;white-space:nowrap;overflow:hidden;text-overflow: ellipsis;background-color:transparent;}
+.new-sopp > div:nth-child(2){overflow: auto;padding: 0.5rem;box-sizing: border-box;}
+
+.new-sopp-customer{cursor:pointer;}
+.new-sopp-customer:hover{background-color:#eeeeee;}
+.new-sopp-customer > span:nth-child(1){display:inline-block;padding:0.2rem;font-size:0.8rem;}
+.new-sopp-customer > span:nth-child(2){display:inline-block;padding:0.2rem;font-size:0.6rem;color:gray}

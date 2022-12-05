@@ -1,4 +1,4 @@
-let R = {}, showProjectMenu, clickedProject, focusProjectName, changeProjectName, focusProjectOwner, changeProjectOwner, removeContextMenu, removeProject;
+let R = {}, showProjectMenu, clickedProject, focusProjectName, changeProjectName, focusProjectOwner, changeProjectOwner, removeContextMenu, removeProject, newSoppSelectEmployee, newSoppSelectCustomer, newSoppSelectPartner, confirmNewSopp, newSoppShowCustomer, searchCustomer, inputExpectedSales;
 
 $(document).ready(() => {
     init();
@@ -152,6 +152,159 @@ changeProjectOwner = () => {
 	}
 } // End of changeProjectOwner()
 
+newSoppShowEmployee = (el) => {
+	let x, els, cnt = document.getElementsByClassName("new-sopp")[0].children[1];
+	x = cnt.clientHeight;
+	cnt.style.height = x + "px";
+	cnt.style.display = "";
+	cnt.style.padding = "";
+	cnt.innerHTML = storage.dept.tree.getTreeHtml();
+	els = cnt.getElementsByTagName("label");
+	for(x = 0 ; x < els.length ; x++)	if(els[x].className !== "deptName")	els[x].setAttribute("onclick", "newSoppSelectEmployee(this,'" + el.dataset.name + "')");
+} // End of newSoppSelectEmployee()
+
+newSoppSelectEmployee = (el, name) => {
+	let x, y, v, target, cnt = document.getElementsByClassName("new-sopp")[0].children[1];
+	x = el.getAttribute("for");
+	x = x.split(":")[1] * 1;
+	if(name === "owner"){
+		target = document.getElementsByClassName("new-sopp")[0].children[0].children[1].children[1];
+		cnt.innerHTML = "";
+		target.dataset.v = x;
+		target.innerText = storage.user[x].userName;
+		// 선택한 owner이 담당자 중에 있는 경우 이를 삭제처리함
+		target = document.getElementsByClassName("new-sopp")[0].children[0].children[2].children[1];
+		v = target.dataset.v;
+		if(v !== undefined){
+			v = v.split(",");
+			for(y = 0 ; y < v.length ; y++)	v[y] = v[y] * 1;
+			if(v.includes(x)){
+				v.splice(v.indexOf(x),1)
+				target = document.getElementsByClassName("new-sopp")[0].children[0].children[2].children[1];
+				name = "";
+				for(x = 0 ; x < v.length ; x++)	name += (storage.user[v[x]].userName + " ");
+				target.innerText = name;
+				target.dataset.v = v.toString();
+			}	
+		}
+	}else{
+		// 이미 선택한 sopp owner을 클릭할 경우 종료함
+		v = document.getElementsByClassName("new-sopp")[0].children[0].children[1].children[1].dataset.v;
+		v = v === undefined ? -1 : v * 1;
+		if(v === x)	return;
+		// 기 저장된 값과 비교 후, 미선택인 경우 추가, 기선택인 경우 삭제
+		target = document.getElementsByClassName("new-sopp")[0].children[0].children[2].children[1];
+		v = target.dataset.v;
+		v = v === "" ? undefined : v;
+		if(v === undefined){
+			target.dataset.v = x;
+			target.innerText = storage.user[x].userName;
+		}else{
+			v = v.split(",");
+			for(y = 0 ; y < v.length ; y++)	v[y] = v[y] * 1;
+			if(v.includes(x))	v.splice(v.indexOf(x),1)
+			else				v.push(x);
+			name = "";
+			for(x = 0 ; x < v.length ; x++)	name += (storage.user[v[x]].userName + " ");
+			target.innerText = name;
+			target.dataset.v = v.toString();
+		}
+	}
+} // End of newSoppSelectEmployee()
+
+newSoppShowCustomer = (el) => {
+	let x, html, name, target, cnt = document.getElementsByClassName("new-sopp")[0].children[1];
+	target = el.dataset.name;
+	x = cnt.clientHeight;
+	cnt.style.height = x + "px";
+	cnt.style.display = "grid";
+	cnt.style.gridTemplateColumns = "1fr";
+	cnt.style.gridTemplateRows = "1.75rem Auto";
+	cnt.style.padding = "0";
+	html = "<div onkeyup=\"searchCustomer(this)\" style=\"border-bottom:1px solid #b6b2ff;font-size:0.8rem;padding:0.3rem;\" contentEditable></div><div data-target=\"" + target + "\" style=\"overflow:auto;padding:0.5rem;\">";
+	for(x in storage.customer){
+		if(x === undefined)	continue;
+		name = "...";
+		name = storage.customer[x] !== undefined ? storage.customer[x].name : name;
+		html += ("<div class=\"new-sopp-customer\" onclick=\"newSoppSelectCustomer(this, " + x + ")\"><span>" + name + "</span>");
+		html += ("<span>" + x + "</span></div>");
+	}
+	html += "</div>";
+	cnt.innerHTML = html;
+	cnt.children[0].focus();
+} // End of newSoppSelectCustomer()
+
+newSoppSelectCustomer = (el, v) => {
+	let target = el.parentElement.dataset.target;
+	if(target === "customer")	target = document.getElementsByClassName("new-sopp")[0].children[0].children[3].children[1];
+	else						target = document.getElementsByClassName("new-sopp")[0].children[0].children[4].children[1];
+	target.dataset.v = v;
+	target.innerText = storage.customer[v].name;
+	el.parentElement.innerHTML = "";
+} // End of newSoppSelectCustomer()
+
+searchCustomer = (el) => {
+	let v, x, y, name, html, cnt = el.nextElementSibling;
+	v = el.innerText.toLowerCase();
+	y = ["", ""];
+	html = "";
+	for(x in storage.customer){
+		if(x === undefined)	continue;
+		name = "...";
+		name = storage.customer[x] !== undefined ? storage.customer[x].name : name;
+		y[0] = x + "";
+		y[1] = name;
+		y[0] = y[0].toLowerCase();
+		y[1] = y[1].toLowerCase();
+		if(v === "" || y[0].includes(v) || y[1].includes(v)){
+			html += ("<div class=\"new-sopp-customer\" onclick=\"newSoppSelectCustomer(this, " + x + ")\"><span>" + name + "</span>");
+			html += ("<span>" + x + "</span></div>");
+		}
+	}
+	cnt.innerHTML = html;
+} // End of searchCustomer()
+
+inputExpectedSales = (el) => {
+	let v;
+	v = el.value;
+	v = v.replaceAll(/[^0-9]/g,"");
+	v = v * 1;
+	el.value = v.toLocaleString();
+
+
+}// End of inputExpectedSales()
+confirmNewSopp = () => {
+	let x, v, target, value;
+	target = [];
+	value = [];
+	for(x = 0 ; x < 7 ; x++){
+		target[x] = document.getElementsByClassName("new-sopp")[0].children[0].children[x].children[1];
+		v = x === 0 ? target[x].innerText : x < 5 ? target[x].dataset.v : target[x].value;
+		if((x !== 2 && x !== 4)  && (v === undefined || v === "")){
+			target[x].style.backgroundColor = "#ffeeee";
+			if(x === 0 || x === 5) target[x].focus();
+			else target[x].onclick();
+			window.setTimeout(function(){target[x].style.backgroundColor = "";},5000);
+			return;
+		}
+		value[x] = v;
+	}
+	value[1] = value[1] * 1;
+	value[2] = value[2] !== undefined ? value[2] * 1 : -1;
+	value[3] = value[3] * 1;
+	value[4] = value[4] !== undefined ? value[4] * 1 : -1;
+	value[5] = value[5].replaceAll(/[^0-9]/g,"") * 1;
+	value[6] = new Date(value[6]);
+	value[6] = value[6].getTime();
+
+	console.log(value);
+
+	// ===================================================
+	// Sopp2 객체 만들고 서버로 post 하는 코드 필요
+	// ===================================================
+	
+} // End of confirmNewSopp()
+
 
 // ================================= C L A S S _ D E C L A R A T I O N =================================
 
@@ -229,6 +382,56 @@ class Projects{
 		cnt.children[0].children[0].contentEditable = true;
 		cnt.children[0].children[0].focus();
 	} // End of newProject()
+
+	newSopp(prjNo){
+		let html, x, title, dt;
+		console.log("--- add sopp  / project number is : " + prjNo);
+		dt = new Date();
+		dt.setMonth(dt.getMonth() + 3);
+		modal.show();
+		modal.headTitle[0].innerText = "영업기회 추가";
+
+		html = "<div class=\"new-sopp\"><div><div><div>";
+		title = "영업기회명";
+		for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+		html += "</div><div contentEditable data-name=\"name\"></div></div>";
+
+		html += "<div><div>";
+		title = "관리자";
+		for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+		html += "</div><div onclick=\"newSoppShowEmployee(this)\" data-name=\"owner\"></div></div>";
+
+		html += "<div><div>";
+		title = "담당자";
+		for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+		html += "</div><div onclick=\"newSoppShowEmployee(this)\" data-name=\"coworker\"></div></div>";
+
+		html += "<div><div>";
+		title = "고객사";
+		for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+		html += "</div><div onclick=\"newSoppShowCustomer(this)\" data-name=\"customer\"></div></div>";
+
+		html += "<div><div>";
+		title = "협력사";
+		for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+		html += "</div><div onclick=\"newSoppShowCustomer(this)\" data-name=\"partner\"></div></div>";
+
+		html += "<div><div>";
+		title = "예상매출액";
+		for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+		html += "</div><input data-name=\"expectedSales\" style=\"text-align:right;\" onkeyup=\"inputExpectedSales(this)\" /></div>";
+
+		html += "<div><div>";
+		title = "예상납기";
+		for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
+		html += "</div><input type=\"date\" value=\"" + dt.toISOString().substring(0,10) + "\" data-name=\"expectedDate\" /></div></div><div></div></div>";
+
+
+		modal.body[0].innerHTML = html;
+		modal.confirm[0].onclick = confirmNewSopp;
+		modal.close[0].onclick = modal.hide;
+		// newSoppSelectEmployee() / newSoppSelectCustomer() / newSoppSelectPartner()
+	} // End of newSopp()
 }
 
 class Project{
@@ -265,7 +468,8 @@ class Project{
 		return true;
 	} // End of addSopp()
 	draw(cnt){
-		let el, child, x, y, z, sopp, arr, name, html, t;
+		let el, child, x, y, z, sopp, arr, name, html, t, svg;
+		svg = "<svg onclick=\"R.project.newSopp(this.parentElement.parentElement.parentElement.parentElement.dataset.no)\" xmlns=\"http://www.w3.org/2000/svg\" height=\"40\" width=\"40\"><path stroke=\"#d1d1d1\" fill=\"#cccccc\" d=\"M18.625 28.417h2.917v-6.834h6.875v-2.916h-6.875v-7.084h-2.917v7.084h-7.042v2.916h7.042ZM20 36.958q-3.5 0-6.583-1.333-3.084-1.333-5.396-3.646-2.313-2.312-3.646-5.396Q3.042 23.5 3.042 20q0-3.542 1.333-6.625T8.021 8q2.312-2.292 5.396-3.625Q16.5 3.042 20 3.042q3.542 0 6.625 1.333T32 8q2.292 2.292 3.625 5.375 1.333 3.083 1.333 6.625 0 3.5-1.333 6.583-1.333 3.084-3.625 5.396-2.292 2.313-5.375 3.646-3.083 1.333-6.625 1.333Zm0-3.166q5.75 0 9.771-4.021Q33.792 25.75 33.792 20q0-5.75-4-9.771-4-4.021-9.792-4.021-5.75 0-9.771 4-4.021 4-4.021 9.792 0 5.75 4.021 9.771Q14.25 33.792 20 33.792ZM20 20Z\" /></svg>";
 
 		if(cnt === undefined && this.cnt !== undefined)	cnt = this.cnt;
 		else if(cnt !== undefined && this.cnt === undefined)	this.cnt = cnt;
@@ -364,7 +568,7 @@ class Project{
 		child = document.createElement("div");
 		child.className = "sopp-summary";
 		el.appendChild(child);
-		if(this.sopp.length === 0){
+		if(this.owner !== storage.my && this.sopp.length === 0){
 			child = document.createElement("div");
 			child.className = "sopp-box sopp-empty";
 			child.innerHTML = "<span style='grid-column:span 4;display:flex;align-items:center;justify-content:center;color:gray;'>내용이 없습니다.</span>";
@@ -376,6 +580,13 @@ class Project{
 			child.className = "sopp-box";
 			el.appendChild(child);
 			sopp.drawList(child);
+		}
+
+		if(this.owner === storage.my){
+			child = document.createElement("div");
+			child.className = "sopp-box sopp-add";
+			child.innerHTML = "<span>" + svg + "</span>";
+			el.appendChild(child);
 		}
 	} // End of draw()
 
@@ -535,8 +746,7 @@ class Sopp2{
 		cnt.appendChild(el);
 		el.className = "progress";
 		html = "";
-		z = 100;
-		for(x = 0 ; x < lb.length ; x++)	html += ("<prgbar " + (this.stage > x ? "class=\"done\"" : (this.stage === x ? "class=\"doing\"" : "")) + " style=\"z-index:" + (z--) + ";\">" + lb[x] + "</prgbar>");
+		for(x = 0 ; x < lb.length ; x++)	html += ("<prgbar " + (this.stage > x ? "class=\"done\"" : (this.stage === x ? "class=\"doing\"" : "")) + ";\">" + lb[x] + "</prgbar>");
 		el.innerHTML = html;
 
 	} // End of draw()
