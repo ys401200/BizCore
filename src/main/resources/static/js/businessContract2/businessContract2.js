@@ -193,6 +193,11 @@ class Sopp2 {
 
 class Contract {
 	constructor(each) {
+
+		this.attached = each.attacher;
+		this.bills = each.bills;
+		this.related = each.related;
+		this.contractAmount = each.contractAmount;
 		this.title = each.title == undefined ? null : each.title;
 		this.employeee = each.employee == undefined ? null : each.employee;
 		this.coWorker = each.coWorker == undefined ? null : each.coWorker;
@@ -337,6 +342,7 @@ class Contract {
 		el = document.createElement("div");
 		cnt.children[cnt.children.length - 1].appendChild(el);
 		el.innerText = this.supplied;
+
 
 
 
