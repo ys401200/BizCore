@@ -200,7 +200,8 @@ function drawContractList() {
 				}
 			];
 
-			fnc = "contractDetailView(this);";
+			//  fnc = "contractDetailView(this);";
+			fnc = "getContract2(this)";
 			ids.push(jsonData[i].no);
 			data.push(str);
 		}
@@ -220,6 +221,13 @@ function drawContractList() {
 	}
 }
 
+function getContract2(e) {
+	let id = $(e).data("id");
+	location.href = "/business/contract2/" + id;
+}
+
+
+
 function contractDetailView(e) {
 	let id, url, method, data, type;
 	contentTopBtn("bodyContent");
@@ -230,9 +238,6 @@ function contractDetailView(e) {
 	type = "detail";
 
 	crud.defaultAjax(url, method, data, type, contractSuccessView, contractErrorView);
-
-
-
 
 
 }
@@ -1381,14 +1386,15 @@ class Contracts {
 					arr = JSON.parse(data);
 					for (x = 0; x < arr.length; x++) {
 						R.contract.addContract(new Contract(arr[x]));
-					} 
+					}
 				}
 			});
 	}
 
 
 
-	addContract(ctr) {this.list.push(ctr);
+	addContract(ctr) {
+		this.list.push(ctr);
 	}
 }
 
