@@ -264,12 +264,82 @@ class Contract {
 		cnt.appendChild(el);
 
 		el = document.createElement("div");
-		cnt.children[0].appendChild(el);
+		cnt.children[cnt.children.length - 1].appendChild(el);
 		el.innerText = "관리자";
 
 		el = document.createElement("div");
-		cnt.children[0].appendChild(el)
+		cnt.children[cnt.children.length - 1].appendChild(el)
 		el.innerText = storage.user[this.employeee].userName;
+
+		el = document.createElement("div");
+		cnt.appendChild(el);
+
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.innerText = "담당자";
+
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.innerText = this.coWorker == null ? "" : this.coWorker;
+
+		el = document.createElement("div");
+		cnt.appendChild(el);
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.innerText = "매출처";
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.innerText = storage.customer[this.customer].name;
+
+		el = document.createElement("div");
+		cnt.appendChild(el);
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.innerText = "매출처 담당자";
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.innerText = this.cipOfCustomer == 0 ? "" : storage.cip[this.cipOfCustomer].name;
+
+		el = document.createElement("div");
+		cnt.appendChild(el);
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.innerText = "엔드유저";
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.innerText = this.endUser == 0 ? "" : storage.customer[this.endUser].name;
+
+		el = document.createElement("div");
+		cnt.appendChild(el);
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.innerText = "엔드유저 담당자";
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.innerText = this.cipOfendUser == 0 ? "" : storage.cip[this.cipOfendUser].name;;
+
+
+
+		el = document.createElement("div");
+		cnt.appendChild(el);
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.innerText = "발주일자";
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.innerText = this.delivered;
+
+		el = document.createElement("div");
+		cnt.appendChild(el);
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.innerText = "검수일자";
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.innerText = this.supplied;
+
+
+
 
 
 	}
