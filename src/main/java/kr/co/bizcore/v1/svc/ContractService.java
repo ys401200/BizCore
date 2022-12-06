@@ -2,6 +2,10 @@ package kr.co.bizcore.v1.svc;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import kr.co.bizcore.v1.domain.Contract;
 import kr.co.bizcore.v1.domain.Maintenance;
 import kr.co.bizcore.v1.domain.Schedule;
@@ -90,8 +94,8 @@ public class ContractService extends Svc {
         int x = 0;
         Integer sopp = null;
         JSONObject json = null;
-        String maintenance = null; 
-    
+        String maintenance = null;
+
         List<Maintenance> list = null;
         Maintenance mEach = null;
         int y = 0;
@@ -101,13 +105,13 @@ public class ContractService extends Svc {
             for (y = 0; y < list.size(); y++) {
                 mEach = list.get(y);
                 if (maintenance == null)
-                maintenance = "[";
+                    maintenance = "[";
                 if (y > 0)
-                maintenance += ",";
-                    maintenance += mEach.toJson();
+                    maintenance += ",";
+                maintenance += mEach.toJson();
             }
         if (maintenance != null)
-        maintenance += "]";
+            maintenance += "]";
 
         Contract cnt = contractMapper.getContract(no, compId);
         String related = cnt.getRelated();
@@ -147,7 +151,7 @@ public class ContractService extends Svc {
             }
         t += "]";
 
-        result = cnt.toJson(files, schedule1, t, bills,maintenance);
+        result = cnt.toJson(files, schedule1, t, bills, maintenance);
         return result;
     } // End of getContract()
 
@@ -180,28 +184,56 @@ public class ContractService extends Svc {
         return count > 0;
     } // End of removeProcure()
 
+    public String getFullContract(String compId) {
+        String result = null;
+        List<Contract> list = null;
+        Contract each = null;
+        ObjectMapper mapper = new ObjectMapper();
+
+        list = contractMapper.getFullContract(compId);
+       
+        result = "[";
+        if (list != null && list.size() > 0) {
+            for (int i = 0; i < list.size(); i++) {
+                each = list.get(i); 
+                if(i > 0)
+                result += ",";
+                try {
+                    result += mapper.writeValueAsString(each);
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        result += "]";
+
+        return result;
+    }
+
     // public String getMtncData(String contract, String compId) {
-    //     String result = null;
-    //     List<Maintenance> list = null;
-    //     Maintenance each = null;
-    //     int x = 0;
+    // String result = null;
+    // List<Maintenance> list = null;
+    // Maintenance each = null;
+    // int x = 0;
 
-    //     list = contractMapper.getMaintenance(contract, compId);
-    //     if (list != null && list.size() > 0)
-    //         for (x = 0; x < list.size(); x++) {
-    //             each = list.get(x);
-    //             if (result == null)
-    //                 result = "[";
-    //             if (x > 0)
-    //                 result += ",";
-    //             result += each.toJson();
-    //         }
-    //     if (result != null)
-    //         result += "]";
+    // list = contractMapper.getMaintenance(contract, compId);
+    // if (list != null && list.size() > 0)
+    // for (x = 0; x < list.size(); x++) {
+    // each = list.get(x);
+    // if (result == null)
+    // result = "[";
+    // if (x > 0)
+    // result += ",";
+    // result += each.toJson();
+    // }
+    // if (result != null)
+    // result += "]";
 
-    //     return result;
+    // return result;
 
     // }
+
     // public String getContract(String compId, int sopp, int customer){
     // String result = null;
     // String sql = null;

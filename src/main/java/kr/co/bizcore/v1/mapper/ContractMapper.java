@@ -69,5 +69,8 @@ public interface ContractMapper {
     // 계약 유지보수 데이터
     @Select("SELECT no, customer, product, contract, startDate,endDate, engineer, coworker, created, modified, deleted, related from bizcore.maintenance WHERE contract = #{contract} and compId = #{compId}")
     public List<Maintenance> getMaintenance(@Param("contract") int no, @Param("compId") String compId);
+    
+    @Select ("SELECT no, compId, employee, coWorker, customer, cipOfCustomer, title, detail, endUser, cipOfendUser,  partner,  cipOfPartner,  supplier,  cipOfSupplier,  saleDate, supplied, delivered, contractAmount, taxInclude, profit,created, modified, deleted, related FROM bizcore.contract WHERE compId = #{compId}")
+    public List<Contract> getFullContract(@Param("compId") String compId); 
 
 }

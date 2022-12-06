@@ -1,3 +1,5 @@
+let R = {};
+
 $(document).ready(() => {
 	init();
 
@@ -5,7 +7,7 @@ $(document).ready(() => {
 		$("#loadingDiv").hide();
 		$("#loadingDiv").loading("toggle");
 	}, 300);
-
+	R.contract = new Contracts(location.origin, document.getElementsByClassName("container")[0]);
 	getContractList();
 });
 
@@ -1362,13 +1364,12 @@ function mtncArrSet() {
 
 
 
-let R = {};
+
 class Contracts {
 	// 생성자 
-	constructor(_server, cnt) {
+	constructor(_server) {
 		this.list = [];
-		this.container = cnt;
-		fetch(_server + "/api/contract")
+		fetch(_server + "/api/contract/fullContract")
 			.catch((error) => console.log("error:", error))
 			.then(response => response.json())
 			.then(response => {
@@ -1376,48 +1377,41 @@ class Contracts {
 				if (response.result !== "ok") console.log(response.msg);
 				else {
 					data = cipher.decAes(response.data);
+					storage.datas = data;
 					arr = JSON.parse(data);
-					for (x = 0; x < arr.length; x++)	R.contract.addProject(new Contract(arr[x]));
+					for (x = 0; x < arr.length; x++) {
+						R.contract.addContract(new Contract(arr[x]));
+					} 
 				}
 			});
-
 	}
 
-	addContract(ctr) {
-		this.list.push(ctr);
-	}
 
-	draw() {
 
+	addContract(ctr) {this.list.push(ctr);
 	}
 }
 
 
 class Contract {
 	constructor(each) {
-		this.compId = each.compId;
-		this.employee = each.employee;
-		this.coWorker = each.coWorker;
-		this.customer = each.customer;
-		this.cipOfCustomer = each.cipOfCustomer;
-		this.title = each.title;
-		this.detail = each.detail;
-		this.endUser = each.endUser;
-		this.cipOfendUser = each.cipOfendUser;
-		this.partner = each.partner;
-		this.cipOfPartner = each.cipOfPartner;
-		this.supplier = each.supplier;
-		this.cipOfSupplier = each.cipOfSupplier;
-		this.saleDate = each.saleDate;
-		this.supplied = each.supplied;
-		this.delivered = each.delivered;
-		this.contractAmount = each.contractAmount;
-		this.taxInclude = each.taxInclude;
-		this.profit = each.profit;
-		this.created = each.created === undefined ? null : new Date(each.created);
-		this.modified = each.modified === undefined ? null : new Date(each.modified);
-		this.deleted = each.deleted === undefined ? null : new Date(each.deleted);
-		this.related = each.related === undefined ? null : JSON.parse(each.related);
+		this.employee = each.employee == undefined ? null : each.employee;
+		this.coWorker = each.coWorker == undefined ? null : each.coWorker;
+		this.customer = each.customer == undefined ? null : each.customer;
+		this.cipOfCustomer = each.cipOfCustomer == undefined ? null : each.cipOfCustomer;
+		this.detail = each.detail == undefined ? null : each.detail;
+		this.endUser = each.endUser == undefined ? null : each.endUser;
+		this.cipOfendUser = each.cipOfendUser == undefined ? null : each.cipOfendUser;
+		this.supplier = each.supplier == undefined ? null : each.supplier;
+		this.cipOfSupplier = each.cipOfSupplier == undefined ? null : each.cipOfSupplie;
+		this.supplied = each.supplied == undefined ? null : each.supplied;
+		this.delivered = each.delivered == undefined ? null : each.delivered;
+		this.taxInclude = each.taxInclude == undefined ? null : each.taxInclude;
+		this.profit = each.profit == undefined ? null : each.profit;
 	}
 }
+
+
+
+
 
