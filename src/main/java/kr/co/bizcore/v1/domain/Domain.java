@@ -519,6 +519,27 @@ public abstract class Domain implements Comparable<Domain>{
                 } else if (field.getType().getName().equals("byte")) {
                     str1 += ("," + fieldName);
                     str2 += ("," + (byte)v);
+                } else if (field.getType().getName().equals(Integer.class.getName())) {
+                    str1 += ("," + fieldName);
+                    str2 += ("," + (Integer)v);
+                } else if (field.getType().getName().equals(Short.class.getName())) {
+                    str1 += ("," + fieldName);
+                    str2 += "," + ((Short)v);
+                } else if (field.getType().getName().equals(Float.class.getName())) {
+                    str1 += ("," + fieldName);
+                    str2 += ("," + (Float)v);
+                } else if (field.getType().getName().equals(Long.class.getName())) {
+                    str1 += ("," + fieldName);
+                    str2 += ("," + (Long)v);
+                } else if (field.getType().getName().equals(Double.class.getName())) {
+                    str1 += ("," + fieldName);
+                    str2 += ("," + (Double)v);
+                } else if (field.getType().getName().equals(Boolean.class.getName())) {
+                    str1 += ("," + fieldName);
+                    str2 += ("," + ((Boolean)v ? 1 : 0));
+                } else if (field.getType().getName().equals(Byte.class.getName())) {
+                    str1 += ("," + fieldName);
+                    str2 += ("," + (Byte)v);
                 } else if (field.getType().getName().equals(Date.class.getName())) {
                     if(className.equals("Sopp") && (fieldName.equals("sopptargetdate") || fieldName.equals("maintenance_s") || fieldName.equals("maintenance_e"))){
                         str1 += ("," + fieldName);

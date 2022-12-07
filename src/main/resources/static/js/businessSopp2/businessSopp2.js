@@ -1,4 +1,4 @@
-let R = {}, prepareSopp, scrolledSopp, moveToTarget;
+let R = {}, prepareSopp, scrolledSopp, moveToTarget, drawChat, inputtedComment;
 
 $(document).ready(() => {
 	let href, no
@@ -32,14 +32,77 @@ prepareSopp = (no) => {
 			data = JSON.parse(data);
 			console.log(data);
 			R.projectOwner = data.projectOwner;
+			R.chat = data.chat;
 			R.sopp = new Sopp2(data.sopp);
 			R.sopp.draw();
+			drawChat();
 		}else{
 			console.log(response.msg);
 		}
 	});
 
 } // End of prepareSopp()
+
+drawChat = () => {
+	let x, y, chat, html, name, dt, cnt = document.getElementsByClassName("sopp-history")[0].children[1];
+	html = "";
+	for(x = 0 ; x < R.chat.length ; x++){
+		chat = R.chat[x];
+		dt = chat.created;
+		if(dt !== undefined){
+			y = new Date(dt);
+			dt = (y.getFullYear() % 100) + ".";
+			dt += (y.getMonth() + 1) + ".";
+			dt += y.getDate() + " ";
+			dt += y.getHours() + ":";
+			dt += y.getMinutes();
+		}else dt = "";
+		chat.message = chat.message.replaceAll("<","&lt;");
+		chat.message = chat.message.replaceAll(">","&gt;");
+		name = "...";
+		if(storage.user[chat.writer] !== undefined && storage.user[chat.writer].userName !== undefined) name = storage.user[chat.writer].userName;
+		html += "<div>";
+		html += ("<img src=\"" + (chat.isNotice > 0 ? "/images/sopp2/info_circle.png" : "/api/user/image/" + chat.writer) + "\" class=\"profile-small\" />");
+		html += ("<div class=\"history-employee\">" + name + "</div>");
+		html += ("<div class=\"history-date\">" + dt + "</div>");
+		html += ("<div class=\"history-comment\">" + chat.message + "</div>");
+		html += "</div>";
+	}
+	cnt.innerHTML = html;
+} // End of drawChat()
+
+// chat 입력 처리 함수
+inputtedComment = (el, event) => {
+	let message, stage, sopp;
+	if(!(el.tagName === "BUTTON" || event.key === "Enter"))	return;
+	if(el.tagName === "BUTTON")	el = el.previousElementSibling;
+	message = el.value;
+	if(message === undefined || message === "") return;
+	stage = R.sopp.stage;
+	sopp = R.sopp.no;
+
+	fetch(apiServer + "/api/project/sopp/chat/" + sopp + "/" + stage, {
+		method: "POST",
+		header: { "Content-Type": "text/plain" },
+		body: cipher.encAes(message)
+	}).catch((error) => console.log("error:", error))
+		.then(response => response.json())
+		.then(response => {
+			let v = {};
+			if(response.result === "ok"){
+				document.getElementsByClassName("sopp-history")[0].children[2].children[0].value = "";
+				v.isNotice = 0;
+				v.writer = storage.my;
+				v.stage = R.sopp.stage;
+				v.message = message;
+				v.created = (new Date()).getTime();
+				R.chat.push(v);
+				drawChat();
+			}else{
+				document.getElementsByClassName("sopp-history")[0].children[2].children[0].focus();
+			}
+		});
+} // End of inputtedComment()
 
 scrolledSopp = (el) => {
 	let x, y, z, v, els, position = [], vr = 60;
@@ -94,9 +157,9 @@ class Sopp2{
 		this.expactetSales = each.expactetSales;
 		this.expactedDate = each.expactedDate === undefined ? null : new Date(each.expactedDate);
 		this.related = each.related == undefined ? {} : JSON.parse(each.related);
-		this.closed = each.closed === undefined ? null : new Date(each.closed);
-		this.created = each.created === undefined ? null : new Date(each.created);
-		this.modified = each.modified === undefined ? null : new Date(each.modified);
+		this.closed = each.closed == undefined ? null : new Date(each.closed);
+		this.created = each.created == undefined ? null : new Date(each.created);
+		this.modified = each.modified == undefined ? null : new Date(each.modified);
 	}
 	isClosed(){return this.closed !== null;}
 
@@ -134,7 +197,7 @@ class Sopp2{
 		let cnt;
 
 		cnt = document.getElementsByClassName("content-title")[0];
-		cnt.innerText = cnt.innerText + " : " + this.title;
+		cnt.innerText = "영업기회 : " + this.title;
 	} // End of draw()
 
 	drawList(cnt){
@@ -179,9 +242,54 @@ class Sopp2{
 		cnt.appendChild(el);
 		el.className = "progress";
 		html = "";
-		z = 100;
-		for(x = 0 ; x < lb.length ; x++)	html += ("<prgbar " + (this.stage > x ? "class=\"done\"" : (this.stage === x ? "class=\"doing\"" : "")) + " style=\"z-index:" + (z--) + ";\">" + lb[x] + "</prgbar>");
+		for(x = 0 ; x < lb.length ; x++)	html += ("<prgbar " + (this.stage > x ? "class=\"done\"" : (this.stage === x ? "class=\"doing\"" : "")) + ">" + lb[x] + "</prgbar>");
 		el.innerHTML = html;
 
 	} // End of draw()
+
+	update(){
+		let json = Object.assign({}, this), data;
+		
+		json.created = (json.created === undefined || json.created === null) ? null : json.created.getTime();
+		json.closed = (json.closed === undefined || json.closed === null) ? null : json.closed.getTime();
+		json.modified = (json.modified === undefined || json.modified === null)	? null : json.modified.getTime();
+		json.expactedDate = (json.expactedDate === undefined || json.expactedDate === null) ? null :  json.expactedDate.getTime();
+		json.coWorker = (json.coWorker === undefined || json.coWorker === null) ? null : JSON.stringify(json.coWorker);
+		json.related = (json.related === undefined || json.related === null) ? null : JSON.stringify(json.related);
+		data = JSON.stringify(json);		
+		data = cipher.encAes(data);
+		fetch(apiServer + "/api/project/sopp", {
+			method: "POST",
+			header: { "Content-Type": "text/plain" },
+			body: data
+		}).catch((error) => console.log("error:", error))
+			.then(response => response.json())
+			.then(response => {
+				let sopp, prjNo, x;
+				console.log(response);
+				if(response.result === "ok"){
+					x = response.data;
+					x = cipher.decAes(x)
+					x = JSON.parse(x);
+					sopp = new Sopp2(x);
+					console.log(sopp);
+					prjNo = sopp.related.parent;
+					if(prjNo !== undefined)	prjNo = prjNo.split(":")[1];
+					if(prjNo !== undefined && R !== undefined && R.project !== undefined && R.project.list !== undefined){
+						prjNo = prjNo * 1;
+						for(x = 0 ; x < R.project.list.length ; x++){
+							if(R.project.list[x].no === prjNo){
+								R.project.list[x].addSopp(sopp);
+								R.project.list[x].draw();
+								break;
+							}
+						}
+					}
+
+				}else{
+					console.log(response.msg);
+				}
+			});
+		console.log("UPDATE SOPP!!");
+	}
 } // End of Class _ Sopp2

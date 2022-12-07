@@ -274,7 +274,7 @@ inputExpectedSales = (el) => {
 
 }// End of inputExpectedSales()
 confirmNewSopp = () => {
-	let x, v, target, value;
+	let x, v, target, value, sopp;
 	target = [];
 	value = [];
 	for (x = 0; x < 7; x++) {
@@ -289,19 +289,39 @@ confirmNewSopp = () => {
 		}
 		value[x] = v;
 	}
+
 	value[1] = value[1] * 1;
-	value[2] = value[2] !== undefined ? value[2] * 1 : -1;
+	v = value[2] === undefined ? [] : value[2].split(",");
+	value[2] = [];
+	for(x = 0 ; x < v.length ; x++)	value[2].push(v[x] * 1);
 	value[3] = value[3] * 1;
 	value[4] = value[4] !== undefined ? value[4] * 1 : -1;
 	value[5] = value[5].replaceAll(/[^0-9]/g, "") * 1;
 	value[6] = new Date(value[6]);
 	value[6] = value[6].getTime();
+	value[7] = document.getElementsByClassName("new-sopp")[0].dataset.project * 1;
 
-	console.log(value);
+	v = {};
+	v.no = -1;
+	v.stage = 0;
+	v.title = value[0];
+	v.desc = null;
+	v.owner = value[1];
+	v.coWorker = JSON.stringify(value[2]);
+	v.customer = value[3];
+	v.picOfCustomer = null;
+	v.partner = value[4] == -1 ? null : value[4];
+	v.picOfPartner = null;
+	v.expactetSales = value[5];
+	v.expactedDate = value[6];
+	v.related = "{\"parent\":\"project:" + value[7] + "\"}";
+	v.closed = null;
+	v.created = null;
+	v.modified = null;
 
-	// ===================================================
-	// Sopp2 객체 만들고 서버로 post 하는 코드 필요
-	// ===================================================
+	sopp = new Sopp2(v);
+	sopp.update();
+	modal.hide();
 
 } // End of confirmNewSopp()
 
@@ -319,7 +339,6 @@ class Projects {
 				let data, arr, x;
 				if (response.result !== "ok") console.log(response.msg);
 				else {
-					console.log(response.data);
 					data = cipher.decAes(response.data);
 					arr = JSON.parse(data);
 					for (x = 0; x < arr.length; x++)	R.project.addProject(new Project(arr[x]));
@@ -392,7 +411,7 @@ class Projects {
 		modal.show();
 		modal.headTitle[0].innerText = "영업기회 추가";
 
-		html = "<div class=\"new-sopp\"><div><div><div>";
+		html = "<div class=\"new-sopp\" data-project=\"" + prjNo + "\"><div><div><div>";
 		title = "영업기회명";
 		for (x = 0; x < title.length; x++)	html += ("<T>" + title[x] + "</T>");
 		html += "</div><div contentEditable data-name=\"name\"></div></div>";
@@ -654,8 +673,8 @@ class Project {
 
 } // End of Class _ Project
 
-class Sopp2 {
-	constructor(each) {
+class Sopp2{
+	constructor(each){
 		this.no = each.no;
 		this.stage = each.stage;
 		this.title = each.title;
@@ -669,35 +688,35 @@ class Sopp2 {
 		this.expactetSales = each.expactetSales;
 		this.expactedDate = each.expactedDate === undefined ? null : new Date(each.expactedDate);
 		this.related = each.related == undefined ? {} : JSON.parse(each.related);
-		this.closed = each.closed === undefined ? null : new Date(each.closed);
-		this.created = each.created === undefined ? null : new Date(each.created);
-		this.modified = each.modified === undefined ? null : new Date(each.modified);
+		this.closed = each.closed == undefined ? null : new Date(each.closed);
+		this.created = each.created == undefined ? null : new Date(each.created);
+		this.modified = each.modified == undefined ? null : new Date(each.modified);
 	}
-	isClosed() { return this.closed !== null; }
+	isClosed(){return this.closed !== null;}
 
-	getEmployee(arr) {
+	getEmployee(arr){
 		let x;
-		if (arr === undefined || arr === null || arr.constructor.name !== "Array") arr = new Array();
-		if (this.owner !== undefined && this.owner !== null && !arr.includes(this.owner)) arr.push(this.owner);
-		if (this.coWorker != null) for (x = 0; x < this.coWorker.length; x++)	if (this.coWorker[x] !== undefined && this.coWorker[x] !== null && !arr.includes(this.coWorker[x])) arr.push(this.coWorker[x]);
+		if(arr === undefined || arr === null || arr.constructor.name !== "Array")	arr = new Array();
+		if(this.owner !== undefined && this.owner !== null && !arr.includes(this.owner))	arr.push(this.owner);
+		if(this.coWorker != null)	for(x = 0 ; x < this.coWorker.length ; x++)	if(this.coWorker[x] !== undefined && this.coWorker[x] !== null && !arr.includes(this.coWorker[x]))	arr.push(this.coWorker[x]);
 		return arr;
 	} // End of getEmployee()
 
-	ownerName() {
+	ownerName(){
 		let owner, name = "...", html, x;
 		owner = storage.user[this.owner];
-		if (owner !== undefined && owner !== null) {
+		if(owner !== undefined && owner !== null){
 			owner = owner.userName;
-			if (owner !== undefined && owner !== null) name = owner;
+			if(owner !== undefined && owner !== null)	name = owner;
 		}
 		html = ("<img src=\"/api/user/image/" + this.owner + "\" class=\"employee_image\" /><span>" + name + "</span>")
 
-		if (this.coWorker != null) for (x = 0; x < this.coWorker.length; x++) {
+		if(this.coWorker != null)	for(x = 0 ; x < this.coWorker.length ; x++){
 			name = "...";
 			owner = storage.user[this.coWorker[x]];
-			if (owner !== undefined && owner !== null) {
+			if(owner !== undefined && owner !== null){
 				owner = owner = owner.userName;
-				if (owner !== undefined && owner !== null) name = owner;
+				if(owner !== undefined && owner !== null)	name = owner;
 			}
 			html += ("<img src=\"/api/user/image/" + this.coWorker[x] + "\" class=\"employee_image\" /><span>" + name + "</span>")
 		}
@@ -705,12 +724,19 @@ class Sopp2 {
 		return html;
 	} // End of ownerName()
 
-	drawList(cnt) {
+	draw(){
+		let cnt;
+
+		cnt = document.getElementsByClassName("content-title")[0];
+		cnt.innerText = cnt.innerText + " : " + this.title;
+	} // End of draw()
+
+	drawList(cnt){
 		let el, x, z, lb = ["개설", "접촉", "제안", "견적", "협상", "계약", "종료"], html;
 
-		if (this.stage < 6) cnt.className = cnt.className + " sopp-doing";
-		else if (this.stage === 6) cnt.className = cnt.className + " sopp-done";
-		else cnt.className = cnt.className + " sopp-fail";
+		if(this.stage < 6)			cnt.className = cnt.className + " sopp-doing";
+		else if(this.stage === 6)	cnt.className = cnt.className + " sopp-done";
+		else						cnt.className = cnt.className + " sopp-fail";
 
 		cnt.setAttribute("onclick", "location.href='/business/sopp2/" + this.no + "'");
 
@@ -728,7 +754,7 @@ class Sopp2 {
 
 		el = document.createElement("div");
 		cnt.appendChild(el);
-		el.innerText = this.created.toISOString().substring(0, 10) + " » " + (this.expactedDate == null ? "미정" : this.expactedDate.toISOString().substring(0, 10));
+		el.innerText = this.created.toISOString().substring(0,10) + " » " +  (this.expactedDate == null ? "미정" :  this.expactedDate.toISOString().substring(0,10));
 
 		el = document.createElement("div");
 		cnt.appendChild(el);
@@ -747,8 +773,54 @@ class Sopp2 {
 		cnt.appendChild(el);
 		el.className = "progress";
 		html = "";
-		for (x = 0; x < lb.length; x++)	html += ("<prgbar " + (this.stage > x ? "class=\"done\"" : (this.stage === x ? "class=\"doing\"" : "")) + ";\">" + lb[x] + "</prgbar>");
+		for(x = 0 ; x < lb.length ; x++)	html += ("<prgbar " + (this.stage > x ? "class=\"done\"" : (this.stage === x ? "class=\"doing\"" : "")) + ">" + lb[x] + "</prgbar>");
 		el.innerHTML = html;
 
 	} // End of draw()
+
+	update(){
+		let json = Object.assign({}, this), data;
+		
+		json.created = (json.created === undefined || json.created === null) ? null : json.created.getTime();
+		json.closed = (json.closed === undefined || json.closed === null) ? null : json.closed.getTime();
+		json.modified = (json.modified === undefined || json.modified === null)	? null : json.modified.getTime();
+		json.expactedDate = (json.expactedDate === undefined || json.expactedDate === null) ? null :  json.expactedDate.getTime();
+		json.coWorker = (json.coWorker === undefined || json.coWorker === null) ? null : JSON.stringify(json.coWorker);
+		json.related = (json.related === undefined || json.related === null) ? null : JSON.stringify(json.related);
+		data = JSON.stringify(json);		
+		data = cipher.encAes(data);
+		fetch(apiServer + "/api/project/sopp", {
+			method: "POST",
+			header: { "Content-Type": "text/plain" },
+			body: data
+		}).catch((error) => console.log("error:", error))
+			.then(response => response.json())
+			.then(response => {
+				let sopp, prjNo, x;
+				console.log(response);
+				if(response.result === "ok"){
+					x = response.data;
+					x = cipher.decAes(x)
+					x = JSON.parse(x);
+					sopp = new Sopp2(x);
+					console.log(sopp);
+					prjNo = sopp.related.parent;
+					if(prjNo !== undefined)	prjNo = prjNo.split(":")[1];
+					if(prjNo !== undefined && R !== undefined && R.project !== undefined && R.project.list !== undefined){
+						prjNo = prjNo * 1;
+						for(x = 0 ; x < R.project.list.length ; x++){
+							if(R.project.list[x].no === prjNo){
+								R.project.list[x].addSopp(sopp);
+								R.project.list[x].draw();
+								break;
+							}
+						}
+					}
+
+				}else{
+					console.log(response.msg);
+				}
+			});
+		console.log("UPDATE SOPP!!");
+	}
 } // End of Class _ Sopp2

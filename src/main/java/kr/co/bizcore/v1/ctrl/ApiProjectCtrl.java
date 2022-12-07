@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import kr.co.bizcore.v1.domain.Project;
+import kr.co.bizcore.v1.domain.Sopp2;
 import kr.co.bizcore.v1.mapper.ProjectMapper;
 import kr.co.bizcore.v1.msg.Msg;
 import kr.co.bizcore.v1.svc.ProjectService;
@@ -180,6 +181,69 @@ public class ApiProjectCtrl extends Ctrl{
         return result;
     } // End of projectGet()
 
+    @PostMapping("/sopp")
+    public String projectSoppPost(HttpServletRequest request, @RequestBody String requestBody) throws JsonMappingException, JsonProcessingException{
+        String result = null;
+        String compId = null, aesKey = null, aesIv = null, data = null, userNo = null;
+        ObjectMapper mapper = null;
+        Sopp2 sopp = null, r = null;
+        Msg msg = null;
+        HttpSession session = null;
 
+        mapper = new ObjectMapper();
+        session = request.getSession();
+        compId = (String)session.getAttribute("compId");
+        if(compId == null)  compId = (String)session.getAttribute("compId");
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        userNo = (String)session.getAttribute("userNo");
+        msg = getMsg((String)session.getAttribute("lang"));
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        }else{
+            data = decAes(requestBody, aesKey, aesIv);
+            sopp = mapper.readValue(data, Sopp2.class);
+            r = projSvc.updateSopp(compId, sopp, userNo);
+            if(r != null){
+                result = r.toJson();
+                result = "{\"result\":\"ok\",\"data\":\"" + encAes(result, aesKey, aesIv) + "\"}";
+            }else            result = "{\"result\":\"failure\",\"msg\":\"update fail.\"}";
+        }
+        
+        return result;
+    } // End of projectSoppPost()
+
+    @PostMapping("/sopp/chat/{sopp:\\d+}/{stage:\\d+}")
+    public String projectSoppChatNoPost(HttpServletRequest request, @RequestBody String requestBody, @PathVariable("sopp") int sopp, @PathVariable("stage") int stage) {
+        String result = null;
+        String compId = null, aesKey = null, aesIv = null, data = null, userNo = null;
+        Msg msg = null;
+        HttpSession session = null;
+        int r = -999;
+
+        session = request.getSession();
+        compId = (String)session.getAttribute("compId");
+        if(compId == null)  compId = (String)session.getAttribute("compId");
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        userNo = (String)session.getAttribute("userNo");
+        msg = getMsg((String)session.getAttribute("lang"));
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        }else{
+            data = decAes(requestBody, aesKey, aesIv);
+            r = projSvc.addSoppChat(compId, sopp, false, strToInt(userNo), stage, data);
+            if(r > 0)   result = "{\"result\":\"ok\"}";
+            else        result = "{\"result\":\"failure\"}";
+        }
+        
+        return result;
+    } // End of projectSoppPost()
     
 }

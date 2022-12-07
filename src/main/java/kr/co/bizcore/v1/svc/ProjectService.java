@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 
 import org.json.JSONObject;
@@ -131,17 +132,78 @@ public class ProjectService extends Svc{
     } // End of removeProject()
 
     public String getSopp2(String compId, int no){
-        String result = null;
+        String result = null, chat = null;
         Sopp2 sopp = null;
         Integer prjOwner = null;
 
         sopp = projectMapper.getSopp(compId, no);
         if(sopp != null){
             prjOwner = projectMapper.getProjectOwnerWithSoppNo(compId, no);
-            result = "{\"sopp\":" + sopp.toJson() + ",\"projectOwner\":" + prjOwner + "}";
+            chat = getSoppChat(compId, no);
+            result = "{\"sopp\":" + sopp.toJson() + ",\"projectOwner\":" + prjOwner + ",\"chat\":" + chat + "}";
         }
 
         return result;
     } // End of getSopp2()
+
+    public Sopp2 updateSopp(String compId, Sopp2 sopp, String userNo) {
+        Sopp2 result = null;
+        int no = -999, r = -999, x = 0;
+        String[] c = {"stage", "title", "desc", "owner", "coWorker", "customer", "partner", "expectedSales", "expectedDate"}, n = {"진행단계", "영업기회명", "설명", "관리자", "담당자", "고객사", "협력사", "예상매출액", "예상매출일"};
+        String sql = null, message = null, t = null;
+        Sopp2 ogn = null;
+        if(sopp == null) return result;
+        no = sopp.getNo();
+        if(no == -1){
+            message = "<영업기회 신규 개설>";
+            no = getNextNumberFromDB(compId, "bizcore.sopp");
+            sopp.setNo(no);
+            sql = sopp.createInsertQuery("bizcore.sopp", compId);
+        }else{
+            message = "<영업기회 수정 : ";
+            ogn = projectMapper.getSopp(compId, no);
+            sql = ogn.createUpdateQuery(sopp, "bizcore.sopp");
+            t = sql.split("VALUES")[0];
+            t = t.substring(12);
+            sql += (" WHERE no = " + no + " AND compId = '" + compId + "'");
+            for(x = 0 ; x < c.length ; x++) if(t.indexOf(c[x]) > 0){
+                if(message.length() > 12)   message += ",";
+                message += n[x];
+            }
+            message +=">";
+        }
+        r = executeSqlQuery(sql);
+        if(r > 0){
+            addSoppChat(compId, sopp.getNo(), true, strToInt(userNo), sopp.getStage(), message);
+            result = projectMapper.getSopp(compId, no);
+        }
+        return result;
+    }
+
+    public int addSoppChat(String compId, int sopp, boolean isNotice, int writer, int stage, String message){
+        return projectMapper.addSoppChat(compId, sopp, isNotice, writer, stage, message);
+    }
+
+    public String getSoppChat(String compId, int soppNo){
+        String result = null;
+        List<HashMap<String, String>> list = null;
+        HashMap<String, String> each = null;
+        int x = 0;
+
+        list = projectMapper.getSoppChat(compId, soppNo);
+        result = "[";
+        if(list != null)    for(x = 0 ; x < list.size() ; x++){
+            each = list.get(x);
+            if(x > 0)   result += ",";
+            result += ("{\"isNotice\":" + each.get("isNotice") + ",");
+            result += ("\"writer\":" + each.get("writer") + ",");
+            result += ("\"stage\":" + each.get("stage") + ",");
+            result += ("\"message\":\"" + each.get("message") + "\",");
+            result += ("\"created\":" + each.get("created") + "}");
+        }
+        result += "]";
+
+        return result;
+    } // End of getSoppChat()
     
 }

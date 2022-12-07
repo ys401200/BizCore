@@ -2,7 +2,7 @@
 
 .container{
 	width:calc(100% - 4px);
-	height:calc(100% - 4px);
+	height:calc(100% - 6px);
 	margin:2px;
 	background-color: white;
 	overflow:hidden;
@@ -24,7 +24,7 @@
 	grid-area:summary;
 	display: grid;
 	grid-template-columns: 1fr;
-	grid-template-rows: 2rem auto;
+	grid-template-rows: 2rem auto 2rem;
 }
 .sopp-history > div:nth-child(1){
 	border-top-left-radius: 0.4rem;
@@ -39,10 +39,9 @@
     vertical-align: text-bottom;
 }
 .sopp-history > div:nth-child(2){
-	border-bottom-left-radius: 0.4rem;
-	border-bottom-right-radius: 0.4rem;
 	border: 1px solid #d8d8d8;
 	border-top:none;
+	border-bottom:none;
 	background-color: #f8f8f8;
 	overflow-x: hidden;
 	overflow-y: auto;
@@ -51,6 +50,38 @@
 	margin:0.5rem;
 	font-size:0.8rem;
 }
+.sopp-history > div:nth-child(3){
+	border: 1px solid #d8d8d8;
+	border-bottom-left-radius: 0.4rem;
+	border-bottom-right-radius: 0.4rem;
+	border-top:none;
+	background-color:#dad9ff;
+	padding:0.3rem 0.8rem;
+	display:grid;
+	grid-template-columns: 8fr 1fr;
+	gap:0.5rem;
+}
+.sopp-history > div:nth-child(3) > input{
+	font-size:0.8rem;
+	border-top:none;
+	border-right:none;
+	border-left:none;
+	border-bottom: 1px solid #9898d5;
+    background-color: #eaeaff;
+	border-radius: 0.2rem;
+}
+.sopp-history > div:nth-child(3) > input:focus{
+	background-color: #ffffff;
+	border-color: #5050a7;
+}
+.sopp-history > div:nth-child(3) > button{
+	font-size: 0.9rem;
+    background-color: #5959bd;
+    border-radius: 0.2rem;
+    color: white;
+}
+.sopp-history > div:nth-child(3) > input:focus + button,
+.sopp-history > div:nth-child(3) > button:hover{background-color:#2f2f91;}
 .sopp-history .profile-small{
 	height:0.95rem;
 	vertical-align: text-bottom;
