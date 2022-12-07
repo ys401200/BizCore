@@ -1,8 +1,7 @@
 
-let R = {}, prepareSopp, scrolledSopp, moveToTarget;
+let R = {}, prepareContract, scrolledSopp, moveToTarget;
 
 $(document).ready(() => {
-	let href, no
 	init();
 
 	setTimeout(() => {
@@ -10,38 +9,12 @@ $(document).ready(() => {
 		$("#loadingDiv").loading("toggle");
 	}, 300);
 
-	href = location.href.split("/contract2/");
-	no = href.length > 1 ? href[href.length - 1] : null;
-	console.log(no);
-	no = no !== null ? no * 1 : null;
-	prepareContract(no);
+
+	R.contracts = new Contracts(location.origin, document.getElementsByClassName("contract-list")[0]);
+
+
 });
 
-prepareContract = (no) => {
-	if (no === null) {
-		console.log("contract no is null!!!");
-		return;
-	}
-	fetch(apiServer + "/api/contract/" + no)
-		.catch((error) => console.log("error:", error))
-		.then(response => response.json())
-		.then(response => {
-			let data, sopp;
-			if (response.result === "ok") {
-				data = response.data;
-				data = cipher.decAes(data);
-				data = JSON.parse(data);
-				console.log(data);
-				R.contract = new Contract(data);
-				R.contract.drawProgress();
-				R.contract.drawDetail();
-
-			} else {
-				console.log(response.msg);
-			}
-		});
-
-} // End of prepareSopp()
 
 scrolledSopp = (el) => {
 	let x, y, z, v, els, position = [], vr = 100;
@@ -81,190 +54,91 @@ moveToTarget = (el) => {
 
 // ================================= C L A S S _ D E C L A R A T I O N =================================
 
-class Sopp2 {
-	constructor(each) {
-		this.no = each.no;
-		this.stage = each.stage;
-		this.title = each.title;
-		this.desc = each.desc;
-		this.owner = each.owner;
-		this.coWorker = each.coWorker == undefined ? null : JSON.parse(each.coWorker);
-		this.customer = each.customer;
-		this.picOfCustomer = each.picOfCustomer;
-		this.partner = each.partner;
-		this.picOfPartner = each.picOfPartner;
-		this.expactetSales = each.expactetSales;
-		this.expactedDate = each.expactedDate === undefined ? null : new Date(each.expactedDate);
-		this.related = each.related == undefined ? {} : JSON.parse(each.related);
-		this.closed = each.closed === undefined ? null : new Date(each.closed);
-		this.created = each.created === undefined ? null : new Date(each.created);
-		this.modified = each.modified === undefined ? null : new Date(each.modified);
+
+
+class Contracts {
+	constructor(_server, cnt) {
+		this.list = [];
+		this.container = cnt;
+		fetch(_server + "/api/contract")
+			.catch((error) => console.log("error:", error))
+			.then(response => response.json())
+			.then(response => {
+				let data, arr, x;
+				if (response.result !== "ok") console.log(response.msg);
+				else {
+					console.log(response.data);
+					data = cipher.decAes(response.data);
+					arr = JSON.parse(data);
+					for (x = 0; x < arr.length; x++)	R.contracts.addContract(new Contract(arr[x]));
+
+				}
+				R.contracts.draw();
+			});
+
 	}
-	isClosed() { return this.closed !== null; }
-
-	getEmployee(arr) {
-		let x;
-		if (arr === undefined || arr === null || arr.constructor.name !== "Array") arr = new Array();
-		if (this.owner !== undefined && this.owner !== null && !arr.includes(this.owner)) arr.push(this.owner);
-		if (this.coWorker != null) for (x = 0; x < this.coWorker.length; x++)	if (this.coWorker[x] !== undefined && this.coWorker[x] !== null && !arr.includes(this.coWorker[x])) arr.push(this.coWorker[x]);
-		return arr;
-	} // End of getEmployee()
-
-	ownerName() {
-		let owner, name = "...", html, x;
-		owner = storage.user[this.owner];
-		if (owner !== undefined && owner !== null) {
-			owner = owner.userName;
-			if (owner !== undefined && owner !== null) name = owner;
-		}
-		html = ("<img src=\"/api/user/image/" + this.owner + "\" class=\"employee_image\" /><span>" + name + "</span>")
-
-		if (this.coWorker != null) for (x = 0; x < this.coWorker.length; x++) {
-			name = "...";
-			owner = storage.user[this.coWorker[x]];
-			if (owner !== undefined && owner !== null) {
-				owner = owner = owner.userName;
-				if (owner !== undefined && owner !== null) name = owner;
-			}
-			html += ("<img src=\"/api/user/image/" + this.coWorker[x] + "\" class=\"employee_image\" /><span>" + name + "</span>")
-		}
-
-		return html;
-	} // End of ownerName()
+	addContract(ctrt) { this.list.push(ctrt); }
 
 	draw() {
-		let cnt;
+		console.log(this.list.length + "함수 실행 확인");
+		let x, ctrt, el, child, svg;
+		svg = "<svg onclick=\"R.project.newProject(this.parentElement.parentElement)\" xmlns=\"http://www.w3.org/2000/svg\" height=\"40\" width=\"40\"><path stroke=\"#d1d1d1\" fill=\"#cccccc\" d=\"M18.625 28.417h2.917v-6.834h6.875v-2.916h-6.875v-7.084h-2.917v7.084h-7.042v2.916h7.042ZM20 36.958q-3.5 0-6.583-1.333-3.084-1.333-5.396-3.646-2.313-2.312-3.646-5.396Q3.042 23.5 3.042 20q0-3.542 1.333-6.625T8.021 8q2.312-2.292 5.396-3.625Q16.5 3.042 20 3.042q3.542 0 6.625 1.333T32 8q2.292 2.292 3.625 5.375 1.333 3.083 1.333 6.625 0 3.5-1.333 6.583-1.333 3.084-3.625 5.396-2.292 2.313-5.375 3.646-3.083 1.333-6.625 1.333Zm0-3.166q5.75 0 9.771-4.021Q33.792 25.75 33.792 20q0-5.75-4-9.771-4-4.021-9.792-4.021-5.75 0-9.771 4-4.021 4-4.021 9.792 0 5.75 4.021 9.771Q14.25 33.792 20 33.792ZM20 20Z\" /></svg>";
+		for (x = 0; x < this.list.length; x++) {
+			ctrt = this.list[x];
+			el = document.createElement("div");
+			this.container.appendChild(el);
+			ctrt.draw(el);
+		}
 
-		cnt = document.getElementsByClassName("content-title")[0];
-		cnt.innerText = cnt.innerText + " : " + this.title;
-	} // End of draw()
-
-	drawList(cnt) {
-		let el, x, z, lb = ["개설", "접촉", "제안", "견적", "협상", "계약", "종료"], html;
-
-		if (this.stage < 6) cnt.className = cnt.className + " sopp-doing";
-		else if (this.stage === 6) cnt.className = cnt.className + " sopp-done";
-		else cnt.className = cnt.className + " sopp-fail";
-
-		cnt.setAttribute("onclick", "location.href='/business/sopp2/" + this.no + "'");
-
-		el = document.createElement("name");
-		cnt.appendChild(el);
-		el.innerText = this.title;
-
+		// 프로젝트 권한 검증 후 신규 프로젝트 생성 엘리먼트 추가
+		// if(!storage.permission.all.project)	return;
 		el = document.createElement("div");
-		cnt.appendChild(el);
-		el.innerText = "예상매출액 : ₩ " + this.expactetSales.toLocaleString();
-
-		el = document.createElement("div");
-		cnt.appendChild(el);
-		el.innerHTML = this.ownerName();
-
-		el = document.createElement("div");
-		cnt.appendChild(el);
-		el.innerText = this.created.toISOString().substring(0, 10) + " » " + (this.expactedDate == null ? "미정" : this.expactedDate.toISOString().substring(0, 10));
-
-		el = document.createElement("div");
-		cnt.appendChild(el);
-		el.innerText = "견적 : 0건";
-
-		el = document.createElement("div");
-		cnt.appendChild(el);
-		el.innerText = "⋮";
-		el.setAttribute("onclick", "showProjectMenu(this,2)");
-
-		el = document.createElement("div");
-		cnt.appendChild(el);
-		el.innerText = "예상마진 : 99%";
-
-		el = document.createElement("div");
-		cnt.appendChild(el);
-		el.className = "progress";
-		html = "";
-		z = 100;
-		for (x = 0; x < lb.length; x++)	html += ("<prgbar " + (this.stage > x ? "class=\"done\"" : (this.stage === x ? "class=\"doing\"" : "")) + " style=\"z-index:" + (z--) + ";\">" + lb[x] + "</prgbar>");
-		el.innerHTML = html;
-
-	} // End of draw()
-} // End of Class _ Sopp2
-
-
+		el.className = "contract-wrap";
+		this.container.prepend(el);
+		child = document.createElement("label");
+		child.setAttribute("for", "contract_new");
+		child.className = "contract-new";
+		child.innerHTML = svg;
+		el.prepend(child);
+	}
+}
 
 
 class Contract {
 	constructor(each) {
 
-		this.attached = each.attacher;
-		this.bills = each.bills;
+		this.no = each.no;
+		this.coWorker = each.coWorker == undefined ? "" : JSON.parse(each.coWorker);
+		this.created = each.created;
+		this.trades = each.trades == undefined ? null : each.trades;
+		this.title = each.title;
+		this.employee = each.employee;
+		this.cipOfendUser = each.cipOfendUser;
+		this.endUser = each.endUser;
 		this.related = each.related;
+		this.cipOfSupplier = each.cipOfSupplier;
+		this.supplier = each.supplier;
+		this.schedules = each.schedules;
+		this.attached = each.attached;
+		this.modified = each.modified;
 		this.contractAmount = each.contractAmount;
-		this.title = each.title == undefined ? null : each.title;
-		this.employeee = each.employee == undefined ? null : each.employee;
-		this.coWorker = each.coWorker == undefined ? null : each.coWorker;
-		this.customer = each.customer == undefined ? null : each.customer;
-		this.cipOfCustomer = each.cipOfCustomer == undefined ? null : each.cipOfCustomer;
-		this.detail = each.detail == undefined ? null : each.detail;
-		this.endUser = each.endUser == undefined ? null : each.endUser;
-		this.cipOfendUser = each.cipOfendUser == undefined ? null : each.cipOfendUser;
-		this.supplier = each.supplier == undefined ? null : each.supplier;
-		this.cipOfSupplier = each.cipOfSupplier == undefined ? null : each.cipOfSupplie;
-		this.supplied = each.supplied == undefined ? null : each.supplied;
-		this.delivered = each.delivered == undefined ? null : each.delivered;
-		this.taxInclude = each.taxInclude == undefined ? null : each.taxInclude;
-		this.profit = each.profit == undefined ? null : each.profit;
-	}
+		this.taxInclude = each.taxInclude;
+		this.bills = each.bills;
+		this.profit = each.profit;
+		this.maintenance = each.maintenance == undefined ? [] : JSON.parse(each.maintenance);
+		this.customer = each.customer;
+		this.cipOfCustomer = each.cipOfCustomer;
 
-	drawProgress() {
-		let el;
-
-		let cnt;
-		cnt = document.getElementsByClassName("content-title")[0];
-		cnt.innerText = cnt.innerText + " : " + this.title;
-
-		let progressCnt;
-		progressCnt = document.getElementsByClassName("sopp-progress")[0];
-
-		el = document.createElement("div");
-		progressCnt.appendChild(el);
-		el.className = "sopp-done";
-		el.innerText = "개 설";
-
-		el = document.createElement("div");
-		progressCnt.appendChild(el);
-		el.className = "sopp-done";
-		el.innerText = "접 촉";
-
-		el = document.createElement("div");
-		progressCnt.appendChild(el);
-		el.className = "sopp-done";
-		el.innerText = "제 안";
-
-		el = document.createElement("div");
-		progressCnt.appendChild(el);
-		el.className = "sopp-done";
-		el.innerText = "견 적";
-
-		el = document.createElement("div");
-		progressCnt.appendChild(el);
-		el.className = "sopp-done";
-		el.innerText = "협 상";
-
-		el = document.createElement("div");
-		progressCnt.appendChild(el);
-		el.className = "sopp-doing";
-		el.innerText = "계 약";
-
-		el = document.createElement("div");
-		progressCnt.appendChild(el);
-		el.innerText = "종 료";
+		this.supplied = each.supplied == undefined ? 0 : each.supplied;
+		this.delivered = each.delivered == undefined ? 0 : each.delivered;
 
 
 	}
-
 
 	drawDetail() {
+
 		let el;
-		let cnt = document.getElementsByClassName("sopp-info")[0];
+		let cnt = document.getElementsByClassName("detail-wrap")[0];
 		el = document.createElement("div");
 		cnt.appendChild(el);
 
@@ -274,7 +148,7 @@ class Contract {
 
 		el = document.createElement("div");
 		cnt.children[cnt.children.length - 1].appendChild(el)
-		el.innerText = storage.user[this.employeee].userName;
+		el.innerText = storage.user[this.employee].userName;
 
 		el = document.createElement("div");
 		cnt.appendChild(el);
@@ -343,12 +217,261 @@ class Contract {
 		cnt.children[cnt.children.length - 1].appendChild(el);
 		el.innerText = this.supplied;
 
+	}
 
+	draw(cnt) {
+		let el, child, x, y, z, sopp, arr, name, html, t, svg;
+		svg = "<svg onclick=\"R.project.newSopp(this.parentElement.parentElement.parentElement.parentElement.dataset.no)\" xmlns=\"http://www.w3.org/2000/svg\" height=\"40\" width=\"40\"><path stroke=\"#d1d1d1\" fill=\"#cccccc\" d=\"M18.625 28.417h2.917v-6.834h6.875v-2.916h-6.875v-7.084h-2.917v7.084h-7.042v2.916h7.042ZM20 36.958q-3.5 0-6.583-1.333-3.084-1.333-5.396-3.646-2.313-2.312-3.646-5.396Q3.042 23.5 3.042 20q0-3.542 1.333-6.625T8.021 8q2.312-2.292 5.396-3.625Q16.5 3.042 20 3.042q3.542 0 6.625 1.333T32 8q2.292 2.292 3.625 5.375 1.333 3.083 1.333 6.625 0 3.5-1.333 6.583-1.333 3.084-3.625 5.396-2.292 2.313-5.375 3.646-3.083 1.333-6.625 1.333Zm0-3.166q5.75 0 9.771-4.021Q33.792 25.75 33.792 20q0-5.75-4-9.771-4-4.021-9.792-4.021-5.75 0-9.771 4-4.021 4-4.021 9.792 0 5.75 4.021 9.771Q14.25 33.792 20 33.792ZM20 20Z\" /></svg>";
 
+		if (cnt === undefined && this.cnt !== undefined) cnt = this.cnt;
+		else if (cnt !== undefined && this.cnt === undefined) this.cnt = cnt;
+		else if (cnt === undefined && this.cnt === undefined) return;
 
+		// 프로젝트 래퍼 클래스명 지정 및 데이터 타입 데이터 번호 세팅
+		cnt.className = "contract-wrap";
+		cnt.dataset.data = "contract";
+		cnt.dataset.no = this.no;
+		cnt.innerHTML = "";
+
+		// 프로젝트 컨테이너 앞에 히든 라디오 삽입
+		if (cnt.previousElementSibling === null || cnt.previousElementSibling.className !== "_hidden") {
+			el = document.createElement("input");
+			el.type = "radio";
+			el.className = "_hidden";
+			el.name = "contract";
+			el.id = "contract" + this.no;
+			cnt.parentElement.insertBefore(el, cnt);
+		}
+
+		// 등록일 / 계약명 / 담당자 / 계약금액 / 계약상태 (판매보고 / 계약서 / 납품 / 검수 ) / 유지보수 기간 
+		// 레이블 엘리먼트 생성
+		el = document.createElement("label");
+		cnt.appendChild(el);
+		el.className = "contract-box";
+		el.setAttribute("for", "contract" + this.no);
+		el.setAttribute("onclick", "drawDetail(this)");
+
+		child = document.createElement("div");
+		el.appendChild(child);
+		child.innerText = "등록일 : " + this.created;
+
+		child = document.createElement("name");
+		el.appendChild(child);
+		child.innerText = this.title;
+
+		child = document.createElement("div");
+		el.appendChild(child);
+		child.innerText = "담당자 : " + this.employee
+
+		child = document.createElement("div");
+		el.appendChild(child);
+		child.innerText = "계약금액 : " + this.contractAmount.toLocaleString() + "원";
 
 
 	}
 
+	drawDetail(parent) {
+		let origin = document.getElementsByClassName("detail-wrap")[0];
+
+		if (origin != undefined) origin.remove();
+
+
+		let cnt, el, el2;
+		el = document.createElement("div");
+		el.className = "detail-wrap";
+		parent.after(el);
+		cnt = document.getElementsByClassName("detail-wrap")[0];
+
+		// contract-progress Div 
+		el = document.createElement("bar");
+		el.className = "contract-progress"
+		cnt.appendChild(el);
+
+
+		el2 = document.createElement("div");
+		el.append(el2);
+		el2.className = "contract-done";
+		el2.innerText = "판매보고";
+
+		el2 = document.createElement("div");
+		el.append(el2);
+		el2.className = "contract-done";
+		el2.innerText = "계약서";
+
+		el2 = document.createElement("div");
+		el.append(el2);
+		el2.className = "contract-doing";
+		el2.innerText = "납품";
+
+		el2 = document.createElement("div");
+		el.append(el2);
+		el2.innerText = "검수";
+
+
+		// 계약금액 
+		el = document.createElement("div");
+		cnt.appendChild(el);
+
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.innerText = "● 계약 금액 : ";
+
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.innerText = this.contractAmount.toLocaleString() + "원";
+
+		// 판매보고
+
+		el = document.createElement("div");
+		cnt.appendChild(el);
+
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.innerText = "● 판매 보고 : ";
+
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.innerText = this.contractAmount.toLocaleString() + "원";
+
+		// 계약서 (첨부파일)
+		if (this.attached.length > 0) {
+
+			el = document.createElement("div");
+			cnt.appendChild(el);
+
+			el = document.createElement("div");
+			cnt.children[cnt.children.length - 1].appendChild(el);
+			el.innerText = "● 계약서 : ";
+
+			el = document.createElement("div");
+			cnt.children[cnt.children.length - 1].appendChild(el);
+
+			let filesList = "";
+			for (let i = 0; i < this.attached.length; i++) {
+
+				filesList += "<div><a href='/api/attached/contract/" +
+					this.no +
+					"/" +
+					encodeURI(this.attached.fileName) +
+					"'>" +
+					this.attached.fileName +
+					"</a></div>";
+			}
+
+			cnt.children[cnt.children.length - 1].children[1].innerHTML = filesList;
+
+
+		}
+
+
+		// 유지보수 
+		if (this.maintenance.length > 0) {
+			el = document.createElement("div");
+			cnt.appendChild(el);
+
+			el = document.createElement("div");
+			cnt.children[cnt.children.length - 1].appendChild(el);
+			el.innerText = "● 유지 보수 : ";
+
+			el = document.createElement("div");
+			cnt.children[cnt.children.length - 1].appendChild(el);
+
+			let mtnc = this.maintenance;
+			let mtncList = "";
+			for (let i = 0; i < mtnc.length; i++) {
+				mtncList += "<div>" +
+					"<div>" + getYmdSlashShort(mtnc[i].startDate) + "</div>" +
+					"&nbsp" + "~" + "&nbsp" +
+					"<div>" + getYmdSlashShort(mtnc[i].endDate) + "</div>" +
+					"</div>";
+
+			}
+			cnt.children[cnt.children.length - 1].children[1].innerHTML = mtncList;
+
+		}
+
+
+		// 납품일
+
+		if (this.supplied != 0) {
+
+			el = document.createElement("div");
+			cnt.appendChild(el);
+
+			el = document.createElement("div");
+			cnt.children[cnt.children.length - 1].appendChild(el);
+			el.innerText = "● 납품일 : ";
+
+			el = document.createElement("div");
+			cnt.children[cnt.children.length - 1].appendChild(el);
+			el.innerText = getYmdSlashShort(this.supplied);
+
+		}
+
+		// 검수일 
+		if (this.supplied != 0) {
+
+			el = document.createElement("div");
+			cnt.appendChild(el);
+
+			el = document.createElement("div");
+			cnt.children[cnt.children.length - 1].appendChild(el);
+			el.innerText = "● 검수일 : ";
+
+			el = document.createElement("div");
+			cnt.children[cnt.children.length - 1].appendChild(el);
+			el.innerText = getYmdSlashShort(this.delivered);
+
+
+		}
+
+	}
+
+
+
 } // End of Class Contract 
 
+
+
+function drawDetail(obj) {
+
+	let no = obj.parentElement.dataset.no;
+	fetch(apiServer + "/api/contract/" + no)
+		.catch((error) => console.log("error:", error))
+		.then(response => response.json())
+		.then(response => {
+			let data;
+			if (response.result === "ok") {
+				data = response.data;
+				data = cipher.decAes(data);
+				data = JSON.parse(data);
+				console.log(data);
+				R.contract = new Contract(data);
+				R.contract.drawDetail(obj);
+
+			} else {
+				console.log(response.msg);
+			}
+		});
+
+
+}
+
+
+
+
+
+
+// 날짜 관련 함수 
+function getYmdSlashShort(date) {
+	let d = new Date(date);
+	return (
+		(d.getFullYear() % 100) +
+		"/" +
+		(d.getMonth() + 1 > 9
+			? (d.getMonth() + 1).toString()
+			: "0" + (d.getMonth() + 1)) +
+		"/" +
+		(d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
+	);
+}

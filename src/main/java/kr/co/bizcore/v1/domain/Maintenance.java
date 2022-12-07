@@ -1,6 +1,6 @@
 package kr.co.bizcore.v1.domain;
 
-import java.sql.Date;
+import java.util.Date;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -17,9 +17,8 @@ public class Maintenance extends Domain {
     private Date endDate;
     private int engineer;
     private String coworker;
-    private Date created;
     private Date modified;
     private Date deleted;
-    private String realted;
+    private String related;
 
 }

@@ -109,6 +109,7 @@ public class ContractService extends Svc {
                 if (y > 0)
                     maintenance += ",";
                 maintenance += mEach.toJson();
+                logger.error("================ Maintenance : " + mEach.toJson());
             }
         if (maintenance != null)
             maintenance += "]";

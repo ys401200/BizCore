@@ -67,7 +67,7 @@
 				</ul>
 			</li> -->
 			<li>
-				<a href="/business/contract">
+				<a href="/business/contract2">
 					<img src="/images/main/icons/mainContIcon.png" id="mainContIcon" />
 					<span>계약관리</span>
 					<!-- <span id="slideSpan">+</span> -->

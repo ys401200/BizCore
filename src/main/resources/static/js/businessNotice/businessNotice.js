@@ -193,7 +193,6 @@ function noticeSuccessView(result) {
 	}, 100);
 
 
-
 }
 
 function noticeErrorView() {
