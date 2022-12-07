@@ -294,17 +294,27 @@ class Contract {
 		el2.innerText = "판매보고";
 
 		el2 = document.createElement("div");
-		el.append(el2);
+		el.append(el2); 
+
 		el2.className = "contract-done";
 		el2.innerText = "계약서";
 
 		el2 = document.createElement("div");
 		el.append(el2);
-		el2.className = "contract-doing";
+		if(this.supplied == 0 ) {
+			el2.className = "contract-doing";
+		} else {
+			el2.className = "contract-done";
+		}
 		el2.innerText = "납품";
 
 		el2 = document.createElement("div");
 		el.append(el2);
+		if(this.supplied != 0 && this.delivered == 0 ) {
+			el2.className = "contract-doing";
+		} else if( this.supplied != 0 && this.delivered !=0 ) {
+			el2.className = "contract-done";
+		}
 		el2.innerText = "검수";
 
 
