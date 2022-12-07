@@ -6,10 +6,12 @@
 	margin: 2px;
 	background-color: white;
 	/* overflow: hidden; */
-	display: grid;
+	/* display: grid;
 	grid-template-areas: "title title" "content summary";
 	grid-template-rows: 35px calc(100% - 35px);
-	grid-template-columns: auto 350px;
+	grid-template-columns: auto 350px; */
+	display: flex;
+	flex-direction: column;
 }
 
 .content-title {
@@ -46,7 +48,7 @@
 	border-radius: 0.6rem;
 	border: 1px solid #bbbbbb;
 	cursor: pointer;
-	
+
 }
 
 .contract-new {
@@ -59,8 +61,9 @@
 	border: 1px solid #bbbbbb;
 	cursor: pointer;
 }
+
 .contract-box:hover {
-	background-color : rgb(237, 237, 244);
+	background-color: rgb(237, 237, 244);
 }
 
 .contract-box>div:last-of-type {
@@ -69,55 +72,67 @@
 }
 
 .detail-wrap {
-	border: 1px solid  #bbbbbb;
+	border: 1px solid #bbbbbb;
 	border-radius: 0.6rem;
 	margin: 0.5rem;
-    padding: 0.5rem;
-	
+	padding: 0.5rem;
+
 }
 
 
 
 .contract-progress {
-	display: flex; 
+	display: flex;
 	align-items: center;
 	justify-content: center;
 }
 
-.contract-progress > div{
-	display:flex;
+.contract-progress>div {
+	display: flex;
 	background-size: contain;
-    background-repeat: no-repeat;
-	width:5rem;
-	height:1.5rem;
+	background-repeat: no-repeat;
+	width: 5rem;
+	height: 1.5rem;
 	align-items: center;
-    justify-content: center;
-	color:white;
+	justify-content: center;
+	color: white;
 	font-weight: bold;
 	background-image: url("/images/sopp2/label_gray.png");
 	background-position: center center;
-	padding :0.5rem 1rem;
+	padding: 0.5rem 1rem;
 }
-.contract-progress > div:first-child{margin-left:0;}
-.contract-progress > .contract-done{background-image: url("/images/sopp2/label_blue.png");}
-.contract-progress > .contract-fail{background-image: url("/images/sopp2/label_red.png");}
-.contract-progress > .contract-doing{background-image: url("/images/sopp2/label_green.png");}
+
+.contract-progress>div:first-child {
+	margin-left: 0;
+}
+
+.contract-progress>.contract-done {
+	background-image: url("/images/sopp2/label_blue.png");
+}
+
+.contract-progress>.contract-fail {
+	background-image: url("/images/sopp2/label_red.png");
+}
+
+.contract-progress>.contract-doing {
+	background-image: url("/images/sopp2/label_green.png");
+}
 
 
-.detail-wrap > div {
+.detail-wrap>div {
 	display: grid;
-	grid-template-columns: 20% 80%;;
-	}
+	grid-template-columns: 20% 80%;
+	;
+}
 
 
-	.detail-wrap > div  {
-		display: grid;
-		grid-template-columns: 20% 80%;;
-		}
-	
-		.detail-wrap > div > div > div {
-			display: flex;
-	
-			}
+.detail-wrap>div {
+	display: grid;
+	grid-template-columns: 20% 80%;
+	;
+}
 
+.detail-wrap>div>div>div {
+	display: flex;
 
+}
