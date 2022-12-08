@@ -146,8 +146,6 @@ scrolledSopp = (el) => {
 
 	for(x = 0 ; x < position.length ; x++)   if(v < position[x])  break;
 
-	console.log(position);
-	console.log("v : " + v + " / x : " + x);
 	els = document.getElementsByClassName("sopp-tab-cnt")[0].children;
 	z = el.scrollHeight - el.offsetHeight + vr - 2;
 	if(v > z){

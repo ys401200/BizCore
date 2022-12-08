@@ -281,36 +281,56 @@
 
 .sopp-tab-cnt{
 	grid-area:sopp-tab;
-	display:grid;
+	position:relative;
 	grid-template-columns: repeat(6, 1fr);
 	text-align: center;
 	border-top: 1px solid #b5b2ff;
 	border-bottom: 2px solid #b5b2ff;
 	margin-top:0.3rem;
 	padding-top:0.3rem;
-	background-color: white;;
+	background-color: white;
+	height:1.9rem;
+	z-index:-7;
 }
-.sopp-tab{
+.sopp-tab-cnt > div{
+	display:inline-block;
+	position:absolute;
 	padding:0.4rem 0 0.4rem;
-	background-color: #dad9ff;
 	cursor:pointer;
+	border-top-right-radius: 1.2rem;
+	box-sizing: border-box;
+	font-size:0.9rem;
+	border-top:1px solid white;
+	border-right:1px solid white;
 }
-.sopp-tab-select{
-	padding:0.4rem 0 0.4rem;
-	background-color: #2247b1;
-	color:white;
-	cursor:pointer;
-}
+.sopp-tab-cnt > div:nth-child(6){z-index:-6;left:0;width:100%;padding-left:calc(100% / 6 * 5);}
+.sopp-tab-cnt > div:nth-child(5){z-index:-5;left:0;width:calc(100% / 6 * 5);padding-left:calc(100% / 6 * 4);}
+.sopp-tab-cnt > div:nth-child(4){z-index:-4;left:0;width:calc(100% / 6 * 4);padding-left:calc(100% / 6 * 3);}
+.sopp-tab-cnt > div:nth-child(3){z-index:-3;left:0;width:calc(100% / 6 * 3);padding-left:calc(100% / 6 * 2);}
+.sopp-tab-cnt > div:nth-child(2){z-index:-2;left:0;width:calc(100% / 6 * 2);padding-left:calc(100% / 6);}
+.sopp-tab-cnt > div:nth-child(1){z-index:-1;left:0;width:calc(100% / 6);}
+.sopp-tab{background-color: #dad9ff;}
+.sopp-tab-select{background-color: #2247b1;color:white;}
 
 .sopp-sub-title{
 	margin:0 0.2rem;
 	padding:0;
 	text-align: center;
 	display:grid;
-	grid-template-columns: repeat(6, 1fr);
-	border-bottom:2px solid #b5b2ff;
+	grid-template-columns: 1fr 5fr;
+	background-color: #e9e9e9;
 }
-.sopp-sub-title > span{display:inline-block;background-color: #f3f3f3;}
+.sopp-sub-title > div:nth-child(1){
+	display:flex;
+	align-items: center;
+	justify-content: center;
+	height:1.8rem;
+	box-sizing: border-box;
+}
+.sopp-sub-title > div:nth-child(2){
+	height:1.8rem;
+	box-sizing: border-box;
+}
 
 .sopp-desc{
 	display:flex;
@@ -318,15 +338,76 @@
 	justify-content: center;
 	margin: 0 0.2rem 0.5rem;
 }
-.sopp-desc > textarea{
-	min-height:8rem;
-	border: none;
-    border-top: 1px solid #b5b2ff;
-    border-bottom: 1px solid #b5b2ff;
-}
+.sopp-desc > div:nth-child(1){min-height: 3rem;max-height: 40rem;overflow-x: hidden;overflow-y: auto;}
+.sopp-desc > textarea{display:none;}
+.sopp-desc > div:nth-child(3){height: 10rem;overflow-x: hidden;overflow-y: auto;margin-top:2rem;}
 
 .sopp-schedule{
-	min-height: 10rem;;
+	display:grid;
+	grid-template-columns: 13fr 5fr;
+	grid-template-rows: 1fr;
+	height:45rem;
+	overflow: hidden;
+	margin:0.2rem;
+}
+.sopp-calendar{
+	overflow-x: hidden;
+	overflow-y: auto;
+	padding-right:2px;
+}
+.sopp-calendar > div{
+	width:100%;
+	height:calc(100% - 1rem);
+	border-bottom:1px solid #929cc5;
+	margin:2px 0;
+}
+.calendar-head{
+	height:15%;
+	display:grid;
+	grid-template-columns: repeat(5, 1fr);
+	grid-template-rows: 2fr 1fr;
+}
+.calendar-head > div:nth-child(2),
+.calendar-head > div:nth-child(3),
+.calendar-head > div:nth-child(4){
+	display:flex;
+	align-items: center;
+	justify-content: center;
+	font-size:1.5rem;
+}
+.calendar-head > div:nth-child(6){
+	grid-column: span 5;
+	display:grid;
+	grid-template-columns: repeat(7, 1fr);
+	border-bottom:2px solid #929cc5;
+}
+.calendar-head > div:nth-child(6) > div{
+	display:flex;
+	align-items: center;
+	justify-content: center;
+	background-color: #edf1ff;
+	font-size: 0.8rem;
+}
+.calendar-head > div:nth-child(6) > div:first-child{border-top-left-radius: 0.5rem;color:#FF0000;}
+.calendar-head > div:nth-child(6) > div:last-child{border-top-right-radius: 0.5rem;color:#0100FF;}
+.calendar-body{
+	display:grid;
+	grid-template-columns: repeat(7, 1fr);
+	height:85%;
+}
+.calendar-week-4{grid-template-rows: repeat(4, 1fr);}
+.calendar-week-5{grid-template-rows: repeat(5, 1fr);}
+.calendar-week-6{grid-template-rows: repeat(6, 1fr);}
+.calendar-body > div{
+	border-bottom:1px solid #929cc5;
+	border-right:1px solid #929cc5;
+}
+.calendar-body > div:nth-child(7n){border-right:none;}
+
+.sopp-schedule-detail{
+	overflow-x: hidden;
+	overflow-y: auto;
+	background-color:#f8f8f8;
 }
 
 .sopp-estimate{

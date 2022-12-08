@@ -34,24 +34,90 @@
                     </div>
                     <div class="sopp-progress"></div>
                     <div class="sopp-tab-cnt">
-                        <div onclick="moveToTarget(this)" data-target="sopp-info" class="sopp-tab-select">설명</div>
-                        <div onclick="moveToTarget(this)" data-target="sopp-schedule" class="sopp-tab">일정</div>
-                        <div onclick="moveToTarget(this)" data-target="sopp-estimate" class="sopp-tab">견적</div>
-                        <div onclick="moveToTarget(this)" data-target="sopp-contract" class="sopp-tab">계약</div>
+                        <div onclick="moveToTarget(this)" data-target="sopp-info" class="sopp-tab-select">설 명</div>
+                        <div onclick="moveToTarget(this)" data-target="sopp-schedule" class="sopp-tab">일 정</div>
+                        <div onclick="moveToTarget(this)" data-target="sopp-estimate" class="sopp-tab">견 적</div>
+                        <div onclick="moveToTarget(this)" data-target="sopp-contract" class="sopp-tab">계 약</div>
                         <div onclick="moveToTarget(this)" data-target="sopp-trade" class="sopp-tab">매입매출</div>
                         <div onclick="moveToTarget(this)" data-target="sopp-attached" class="sopp-tab">관련자료</div>
                     </div>
                 </div>
-                <div class="sopp-desc"><textarea></textarea></div>
-                <div class="sopp-sub-title"><span></span><div class="sopp-tab">일정</div><span></span><span></span><span></span><span></span></div>
-                <div class="sopp-schedule"></div>
-                <div class="sopp-sub-title"><span></span><span></span><div class="sopp-tab">견적</div><span></span><span></span><span></span></div>
+                <div class="sopp-desc"><div></div><textarea id="sopp-desc-edit"></textarea></div>
+                <div class="sopp-sub-title"><div>일 정</div><div></div></div>
+
+
+
+                <div class="sopp-schedule">
+                    <div class="sopp-calendar">
+                        <div>
+                            <div class="calendar-head">
+                                <div></div>
+                                <div>&lt;</div>
+                                <div>2022 / 4</div>
+                                <div>&gt;</div>
+                                <div></div>
+                                <div>
+                                    <div>일</div>
+                                    <div>월</div>
+                                    <div>화</div>
+                                    <div>수</div>
+                                    <div>목</div>
+                                    <div>금</div>
+                                    <div>토</div>
+                                </div>
+                            </div>
+                            <div class="calendar-body calendar-week-5">
+                                <div>일</div>
+                                <div>월</div>
+                                <div>화</div>
+                                <div>수</div>
+                                <div>목</div>
+                                <div>금</div>
+                                <div>토</div>
+                                <div>일</div>
+                                <div>월</div>
+                                <div>화</div>
+                                <div>수</div>
+                                <div>목</div>
+                                <div>금</div>
+                                <div>토</div>
+                                <div>일</div>
+                                <div>월</div>
+                                <div>화</div>
+                                <div>수</div>
+                                <div>목</div>
+                                <div>금</div>
+                                <div>토</div>
+                                <div>일</div>
+                                <div>월</div>
+                                <div>화</div>
+                                <div>수</div>
+                                <div>목</div>
+                                <div>금</div>
+                                <div>토</div>
+                                <div>일</div>
+                                <div>월</div>
+                                <div>화</div>
+                                <div>수</div>
+                                <div>목</div>
+                                <div>금</div>
+                                <div>토</div>
+                            </div>
+                        </div>
+                        <div></div>
+                    </div>
+                    <div class="sopp-schedule-detail"></div>
+                </div>
+                
+                
+                
+                <div class="sopp-sub-title"><div>견 적</div><div></div></div>
                 <div class="sopp-estimate"></div>
-                <div class="sopp-sub-title"><span></span><span></span><span></span><div class="sopp-tab">계약</div><span></span><span></span></div>
+                <div class="sopp-sub-title"><div>계 약</div><div></div></div>
                 <div class="sopp-contract"></div>
-                <div class="sopp-sub-title"><span></span><span></span><span></span><span></span><div class="sopp-tab">매입매출</div><span></span></div>
+                <div class="sopp-sub-title"><div>매입매출</div><div></div></div>
                 <div class="sopp-trade"></div>
-                <div class="sopp-sub-title"><span></span><span></span><span></span><span></span><span></span><div class="sopp-tab">관련자료</div></div>
+                <div class="sopp-sub-title"><div>관련자료</div><div></div></div>
                 <div class="sopp-attached"></div>
             </div>
         </div>
