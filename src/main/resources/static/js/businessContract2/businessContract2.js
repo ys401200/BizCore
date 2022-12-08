@@ -254,6 +254,37 @@ class Contract {
 		}
 
 		// 계약서 (첨부파일)
+		if (this.attached.length > 0) {
+			el = document.createElement("div");
+			cnt.appendChild(el);
+
+			el = document.createElement("div");
+			cnt.children[cnt.children.length - 1].appendChild(el);
+			el.innerText = "● 관련 문서 : ";
+
+			el = document.createElement("div");
+			cnt.children[cnt.children.length - 1].appendChild(el);
+
+
+			let files = "";
+			for (let i = 0; i < this.attached.length; i++) {
+				files +=
+					"<div><a href='/api/attached/contract/" +
+					this.no +
+					"/" +
+					encodeURI(this.attached[i].fileName) +
+					"'>" +
+					this.attached[i].fileName +
+					"</a></div>";
+			}
+
+			cnt.children[cnt.children.length - 1].children[1].innerHTML = files;
+
+
+		}
+
+
+
 
 		// 유지보수 
 		if (this.maintenance.length > 0) {
