@@ -118,13 +118,11 @@
 	background-image: url("/images/sopp2/label_green.png");
 }
 
-
 .detail-wrap>div {
 	display: grid;
 	grid-template-columns: 20% 80%;
 	;
 }
-
 
 .detail-wrap>div {
 	display: grid;

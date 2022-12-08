@@ -1,5 +1,5 @@
 
-let R = {}, prepareContract, scrolledSopp, moveToTarget;
+let R = {};
 
 $(document).ready(() => {
 	init();
@@ -16,44 +16,7 @@ $(document).ready(() => {
 });
 
 
-scrolledSopp = (el) => {
-	let x, y, z, v, els, position = [], vr = 100;
-
-	v = el.scrollTop + vr;
-	els = document.getElementsByClassName("sopp-sub-title");
-	for (x = 0; x < els.length; x++)	position.push(els[x].offsetTop);
-
-	for (x = 0; x < position.length; x++)   if (v < position[x]) break;
-
-	console.log(position);
-	console.log("v : " + v + " / x : " + x);
-	els = document.getElementsByClassName("sopp-tab-cnt")[0].children;
-	z = el.scrollHeight - el.offsetHeight + vr - 2;
-	if (v > z) {
-		for (y = 0; y < els.length; y++) {
-			if (y < els.length - 1) els[y].className = "sopp-tab";
-			else els[y].className = "sopp-tab-select";
-		}
-	} else {
-		for (y = 0; y < els.length; y++) {
-			if (y === x) els[y].className = "sopp-tab-select";
-			else els[y].className = "sopp-tab";
-		}
-	}
-} // End of scrolledSopp()
-
-moveToTarget = (el) => {
-	let target, name;
-	name = el.dataset.target;
-	target = document.getElementsByClassName(name)[0];
-	target.scrollIntoView({ "behavior": "smooth" });
-} // End of moveToTarget()
-
-
-
-
 // ================================= C L A S S _ D E C L A R A T I O N =================================
-
 
 
 class Contracts {
@@ -73,7 +36,7 @@ class Contracts {
 					for (x = 0; x < arr.length; x++)	R.contracts.addContract(new Contract(arr[x]));
 
 				}
-				storage.currentPage =1;
+				storage.currentPage = 1;
 				R.contracts.draw();
 			});
 
@@ -81,30 +44,18 @@ class Contracts {
 	addContract(ctrt) { this.list.push(ctrt); }
 
 	draw() {
-		let page = storage.currentPage * 15;
+		let page = storage.currentPage * 13;
 		console.log(this.list.length + "함수 실행 확인");
 		let x, ctrt, el, svg;
 		svg = "<svg onclick=\"R.project.newProject(this.parentElement.parentElement)\" xmlns=\"http://www.w3.org/2000/svg\" height=\"40\" width=\"40\"><path stroke=\"#d1d1d1\" fill=\"#cccccc\" d=\"M18.625 28.417h2.917v-6.834h6.875v-2.916h-6.875v-7.084h-2.917v7.084h-7.042v2.916h7.042ZM20 36.958q-3.5 0-6.583-1.333-3.084-1.333-5.396-3.646-2.313-2.312-3.646-5.396Q3.042 23.5 3.042 20q0-3.542 1.333-6.625T8.021 8q2.312-2.292 5.396-3.625Q16.5 3.042 20 3.042q3.542 0 6.625 1.333T32 8q2.292 2.292 3.625 5.375 1.333 3.083 1.333 6.625 0 3.5-1.333 6.583-1.333 3.084-3.625 5.396-2.292 2.313-5.375 3.646-3.083 1.333-6.625 1.333Zm0-3.166q5.75 0 9.771-4.021Q33.792 25.75 33.792 20q0-5.75-4-9.771-4-4.021-9.792-4.021-5.75 0-9.771 4-4.021 4-4.021 9.792 0 5.75 4.021 9.771Q14.25 33.792 20 33.792ZM20 20Z\" /></svg>";
-		for (x = (storage.currentPage - 1) * 15; x < page; x++) {
+		for (x = (storage.currentPage - 1) * 13; x < page; x++) {
 			ctrt = this.list[x];
 			el = document.createElement("div");
 			this.container.appendChild(el);
 			ctrt.draw(el);
 		}
 
-		// // 프로젝트 권한 검증 후 신규 프로젝트 생성 엘리먼트 추가
-		// // if(!storage.permission.all.project)	return;
-		// el = document.createElement("div");
-		// el.className = "contract-wrap";
-		// this.container.prepend(el);
-		// child = document.createElement("label");
-		// child.setAttribute("for", "contract_new");
-		// child.className = "contract-new";
-		// child.innerHTML = svg;
-		// el.prepend(child);
-
-
-		let result = paging(this.list.length, storage.currentPage, 15);
+		let result = paging(this.list.length, storage.currentPage, 13);
 		let pageContainer = $(".pageContainer");
 		let pageNation = createPaging(
 			pageContainer[0],
@@ -121,18 +72,13 @@ class Contracts {
 
 
 
-function drawContractList(page) {
-	$(".contract-list").html("");
-	R.contracts.draw(page);
 
-}
 
 
 class Contract {
 	constructor(each) {
-
 		this.no = each.no;
-		this.coWorker = each.coWorker == undefined ? "" : JSON.parse(each.coWorker);
+		this.coWorker = each.coWorker == undefined ? [] : JSON.parse(each.coWorker);
 		this.created = each.created;
 		this.trades = each.trades == undefined ? null : each.trades;
 		this.title = each.title;
@@ -152,15 +98,11 @@ class Contract {
 		this.maintenance = each.maintenance == undefined ? [] : JSON.parse(each.maintenance);
 		this.customer = each.customer;
 		this.cipOfCustomer = each.cipOfCustomer;
-
 		this.supplied = each.supplied == undefined ? 0 : each.supplied;
 		this.delivered = each.delivered == undefined ? 0 : each.delivered;
-
-
 	}
 
 	drawDetail() {
-
 		let el;
 		let cnt = document.getElementsByClassName("detail-wrap")[0];
 		el = document.createElement("div");
@@ -171,7 +113,7 @@ class Contract {
 		el.innerText = "관리자";
 
 		el = document.createElement("div");
-		cnt.children[cnt.children.length - 1].appendChild(el)
+		cnt.children[cnt.children.length - 1].appendChild(el);
 		el.innerText = storage.user[this.employee].userName;
 
 		el = document.createElement("div");
@@ -221,8 +163,6 @@ class Contract {
 		cnt.children[cnt.children.length - 1].appendChild(el);
 		el.innerText = this.cipOfendUser == 0 ? "" : storage.cip[this.cipOfendUser].name;;
 
-
-
 		el = document.createElement("div");
 		cnt.appendChild(el);
 		el = document.createElement("div");
@@ -244,8 +184,7 @@ class Contract {
 	}
 
 	draw(cnt) {
-		let el, child, x, y, z, sopp, arr, name, html, t, svg;
-		svg = "<svg onclick=\"R.project.newSopp(this.parentElement.parentElement.parentElement.parentElement.dataset.no)\" xmlns=\"http://www.w3.org/2000/svg\" height=\"40\" width=\"40\"><path stroke=\"#d1d1d1\" fill=\"#cccccc\" d=\"M18.625 28.417h2.917v-6.834h6.875v-2.916h-6.875v-7.084h-2.917v7.084h-7.042v2.916h7.042ZM20 36.958q-3.5 0-6.583-1.333-3.084-1.333-5.396-3.646-2.313-2.312-3.646-5.396Q3.042 23.5 3.042 20q0-3.542 1.333-6.625T8.021 8q2.312-2.292 5.396-3.625Q16.5 3.042 20 3.042q3.542 0 6.625 1.333T32 8q2.292 2.292 3.625 5.375 1.333 3.083 1.333 6.625 0 3.5-1.333 6.583-1.333 3.084-3.625 5.396-2.292 2.313-5.375 3.646-3.083 1.333-6.625 1.333Zm0-3.166q5.75 0 9.771-4.021Q33.792 25.75 33.792 20q0-5.75-4-9.771-4-4.021-9.792-4.021-5.75 0-9.771 4-4.021 4-4.021 9.792 0 5.75 4.021 9.771Q14.25 33.792 20 33.792ZM20 20Z\" /></svg>";
+		let el, child;
 
 		if (cnt === undefined && this.cnt !== undefined) cnt = this.cnt;
 		else if (cnt !== undefined && this.cnt === undefined) this.cnt = cnt;
@@ -285,7 +224,7 @@ class Contract {
 
 		child = document.createElement("div");
 		el.appendChild(child);
-		child.innerText = "담당자 : " + this.employee
+		child.innerText = "담당자 : " + storage.user[this.employee].userName;
 
 		child = document.createElement("div");
 		el.appendChild(child);
@@ -300,7 +239,6 @@ class Contract {
 
 		if (origin != undefined) origin.remove();
 
-
 		let cnt, el, el2;
 		el = document.createElement("div");
 		el.className = "detail-wrap";
@@ -311,7 +249,6 @@ class Contract {
 		el = document.createElement("bar");
 		el.className = "contract-progress"
 		cnt.appendChild(el);
-
 
 		el2 = document.createElement("div");
 		el.append(el2);
@@ -342,7 +279,6 @@ class Contract {
 		}
 		el2.innerText = "검수";
 
-
 		// 계약금액 
 		el = document.createElement("div");
 		cnt.appendChild(el);
@@ -356,6 +292,32 @@ class Contract {
 		el.innerText = this.contractAmount.toLocaleString() + "원";
 
 		// 판매보고
+
+		fetch(apiServer + "/api//" + no)
+		.catch((error) => console.log("error:", error))
+		.then(response => response.json())
+		.then(response => {
+			let data;
+			if (response.result === "ok") {
+				data = response.data;
+				data = cipher.decAes(data);
+				data = JSON.parse(data);
+				console.log(data);
+				R.contract = new Contract(data);
+				R.contract.drawDetail(obj);
+
+			} else {
+				console.log(response.msg);
+			}
+		});
+
+  
+
+
+
+
+
+
 
 		el = document.createElement("div");
 		cnt.appendChild(el);
@@ -395,9 +357,7 @@ class Contract {
 
 			cnt.children[cnt.children.length - 1].children[1].innerHTML = filesList;
 
-
 		}
-
 
 		// 유지보수 
 		if (this.maintenance.length > 0) {
@@ -425,9 +385,7 @@ class Contract {
 
 		}
 
-
 		// 납품일
-
 		if (this.supplied != 0) {
 
 			el = document.createElement("div");
@@ -457,19 +415,23 @@ class Contract {
 			cnt.children[cnt.children.length - 1].appendChild(el);
 			el.innerText = getYmdSlashShort(this.delivered);
 
-
 		}
 
 	}
 
 
 
-} // End of Class Contract 
+} // 클래스 정의 끝 ==============================================================================================================
 
+
+function drawContractList() {
+	$(".contract-list").html("");
+	R.contracts.draw();
+
+}
 
 
 function drawDetail(obj) {
-
 	let no = obj.parentElement.dataset.no;
 	fetch(apiServer + "/api/contract/" + no)
 		.catch((error) => console.log("error:", error))
@@ -489,12 +451,7 @@ function drawDetail(obj) {
 			}
 		});
 
-
 }
-
-
-
-
 
 
 // 날짜 관련 함수 

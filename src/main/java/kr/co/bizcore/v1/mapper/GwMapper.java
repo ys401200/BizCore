@@ -154,7 +154,11 @@ public interface GwMapper {
                         @Param("userNo") String userNo);
 
         // 저장된 임시문서를 전달하는 메서드
-        // @Select("SELECT a.docNo, a.title, a.formId, b.doc, b.appData FROM bizcore.doc_app a, bizcore.doc_app_detail b WHERE a.compId = b.compId AND a.docNo = b.docNo AND a.deleted IS NULL AND b.deleted IS NULL AND a.readable = 'temp' AND a.compId = #{compId} AND a.writer = #{userNo} AND a.docNo = #{docNo}")
+        // @Select("SELECT a.docNo, a.title, a.formId, b.doc, b.appData FROM
+        // bizcore.doc_app a, bizcore.doc_app_detail b WHERE a.compId = b.compId AND
+        // a.docNo = b.docNo AND a.deleted IS NULL AND b.deleted IS NULL AND a.readable
+        // = 'temp' AND a.compId = #{compId} AND a.writer = #{userNo} AND a.docNo =
+        // #{docNo}")
         @Select("SELECT a.docNo, a.title, a.formId, b.doc, b.appData FROM bizcore.doc_app a, bizcore.doc_app_detail b WHERE a.compId = b.compId AND a.docNo = b.docNo AND a.deleted IS NULL AND b.doc IS NOT NULL AND b.deleted IS NULL AND a.compId = #{compId} AND a.writer = #{userNo} AND a.docNo = #{docNo}")
         public HashMap<String, String> getTempDoc(@Param("compId") String compId, @Param("userNo") String userNo,
                         @Param("docNo") String docNo);
@@ -185,29 +189,47 @@ public interface GwMapper {
                         @Param("userNo") String userNo);
 
         // 결재 문서함의 목록을 전달하는 메서드
-        // @Select("SELECT CAST(a.no AS CHAR) AS no, a.docNo, CAST(a.writer AS CHAR) AS writer, b.title AS form, a.title, a.confirmNo, CAST(a.status AS CHAR) AS status, CAST(UNIX_TIMESTAMP(a.created)*1000 AS CHAR) AS created, CAST(UNIX_TIMESTAMP(c.received)*1000 AS CHAR) AS processed "
-        //                 +
-        //                 "FROM bizcore.doc_app a, bizcore.doc_form b, " +
-        //                 "(SELECT docNo, IFNULL(approved, rejected) AS received FROM bizcore.doc_app_detail WHERE  deleted IS NULL AND ordered > 0 AND appType IN (0,1,2) AND (rejected IS NOT NULL OR approved IS NOT NULL) AND compId = #{compId} AND employee = #{userNo}) c "
-        //                 +
-        //                 "WHERE a.deleted IS NULL AND a.formid = b.id AND a.docNo = c.docNo AND a.compId = #{compId}")
+        // @Select("SELECT CAST(a.no AS CHAR) AS no, a.docNo, CAST(a.writer AS CHAR) AS
+        // writer, b.title AS form, a.title, a.confirmNo, CAST(a.status AS CHAR) AS
+        // status, CAST(UNIX_TIMESTAMP(a.created)*1000 AS CHAR) AS created,
+        // CAST(UNIX_TIMESTAMP(c.received)*1000 AS CHAR) AS processed "
+        // +
+        // "FROM bizcore.doc_app a, bizcore.doc_form b, " +
+        // "(SELECT docNo, IFNULL(approved, rejected) AS received FROM
+        // bizcore.doc_app_detail WHERE deleted IS NULL AND ordered > 0 AND appType IN
+        // (0,1,2) AND (rejected IS NOT NULL OR approved IS NOT NULL) AND compId =
+        // #{compId} AND employee = #{userNo}) c "
+        // +
+        // "WHERE a.deleted IS NULL AND a.formid = b.id AND a.docNo = c.docNo AND
+        // a.compId = #{compId}")
         @Select("SELECT CAST(a.no AS CHAR) AS no, a.docNo, CAST(a.writer AS CHAR) AS writer, b.title AS form, a.title, a.confirmNo, CAST(a.status AS CHAR) AS status, CAST(UNIX_TIMESTAMP(a.created)*1000 AS CHAR) AS created, CAST(UNIX_TIMESTAMP(c.received)*1000 AS CHAR) AS processed "
-        +
-        "FROM bizcore.doc_app a, bizcore.doc_form b, " +
-        "(SELECT docNo, IFNULL(approved, rejected) AS received FROM bizcore.doc_app_detail WHERE retrieved IS NULL AND deleted IS NULL AND ordered > 0 AND appType IN (0,1,2) AND (rejected IS NOT NULL OR approved IS NOT NULL) AND compId = #{compId} AND employee = #{userNo}) c "
-        +
-        "WHERE a.deleted IS NULL AND a.formid = b.id AND a.docNo = c.docNo AND a.compId = #{compId}")
+                        +
+                        "FROM bizcore.doc_app a, bizcore.doc_form b, " +
+                        "(SELECT docNo, IFNULL(approved, rejected) AS received FROM bizcore.doc_app_detail WHERE retrieved IS NULL AND deleted IS NULL AND ordered > 0 AND appType IN (0,1,2) AND (rejected IS NOT NULL OR approved IS NOT NULL) AND compId = #{compId} AND employee = #{userNo}) c "
+                        +
+                        "WHERE a.deleted IS NULL AND a.formid = b.id AND a.docNo = c.docNo AND a.compId = #{compId}")
         public List<HashMap<String, String>> getApprovedList(@Param("compId") String compId,
                         @Param("userNo") String userNo);
 
         // 참조/열람 문서함 목록을 전달하는 메서드
-        //@Select("SELECT CAST(a.no AS CHAR) AS no, a.docNo, CAST(a.writer AS CHAR) AS writer, b.title AS form, a.title, a.confirmNo, CAST(a.status AS CHAR) AS status, CAST(UNIX_TIMESTAMP(a.created)*1000 AS CHAR) AS created, IF(status=3,CAST(UNIX_TIMESTAMP(c.approved)*1000 AS CHAR),NULL) AS processed "
-        //                +
-        //                "FROM bizcore.doc_form b, bizcore.doc_app a " +
-        //                "LEFT OUTER JOIN (SELECT a.docNo, a.approved FROM bizcore.doc_app_detail a, (SELECT docNo, MAX(ordered) AS o FROM bizcore.doc_app_detail WHERE deleted IS NULL AND ordered > 0 AND approved IS NOT NULL AND compId = #{compId} GROUP BY docNo) b WHERE a.docNo = b.docNo AND a.ordered = b.o AND a.compId = #{compId}) c "
-        //                +
-        //                "ON a.docNo = c.docNo " +
-        //                "WHERE a.formId = b.id AND a.deleted IS NULL AND ((a.readable = 'dept' AND a.status IN (1,2)) OR a.status = 3) AND a.docbox in (SELECT dept_id FROM bizcore.user_dept WHERE comp_id = #{compId} AND user_no = #{userNo}) AND a.compId = #{compId}")
+        // @Select("SELECT CAST(a.no AS CHAR) AS no, a.docNo, CAST(a.writer AS CHAR) AS
+        // writer, b.title AS form, a.title, a.confirmNo, CAST(a.status AS CHAR) AS
+        // status, CAST(UNIX_TIMESTAMP(a.created)*1000 AS CHAR) AS created,
+        // IF(status=3,CAST(UNIX_TIMESTAMP(c.approved)*1000 AS CHAR),NULL) AS processed
+        // "
+        // +
+        // "FROM bizcore.doc_form b, bizcore.doc_app a " +
+        // "LEFT OUTER JOIN (SELECT a.docNo, a.approved FROM bizcore.doc_app_detail a,
+        // (SELECT docNo, MAX(ordered) AS o FROM bizcore.doc_app_detail WHERE deleted IS
+        // NULL AND ordered > 0 AND approved IS NOT NULL AND compId = #{compId} GROUP BY
+        // docNo) b WHERE a.docNo = b.docNo AND a.ordered = b.o AND a.compId =
+        // #{compId}) c "
+        // +
+        // "ON a.docNo = c.docNo " +
+        // "WHERE a.formId = b.id AND a.deleted IS NULL AND ((a.readable = 'dept' AND
+        // a.status IN (1,2)) OR a.status = 3) AND a.docbox in (SELECT dept_id FROM
+        // bizcore.user_dept WHERE comp_id = #{compId} AND user_no = #{userNo}) AND
+        // a.compId = #{compId}")
         @Select("SELECT CAST(a.no AS CHAR) AS no, a.docNo, CAST(a.writer AS CHAR) AS writer, b.title AS form, a.title, a.confirmNo, CAST(a.status AS CHAR) AS status, CAST(UNIX_TIMESTAMP(a.created)*1000 AS CHAR) AS created, IF(status=3,CAST(UNIX_TIMESTAMP(c.approved)*1000 AS CHAR),NULL) AS processed "
                         +
                         "FROM bizcore.doc_form b, bizcore.doc_app a " +
@@ -233,9 +255,11 @@ public interface GwMapper {
         @Select("SELECT formid FROM bizcore.doc_app WHERE deleted IS NULL AND compid = #{compId} AND docNo = #{docNo}")
         public String getFormIdWithDocNo(@Param("compId") String compId, @Param("docNo") String docNo);
 
-
-
-
-        
+        // 영업기회에 해당하는 수주판매보고 문서 ( 상태가 승인인 것 )
+        // @Select("select a.docNo from bizcore.doc_app a inner join
+        // bizcore.doc_app_detail b on a.docNo = b.docNo where a.formId =
+        // 'doc_Form_SalesReport' and b.appData = #{soppNo} and a.compId = #{compId}")
+        @Select("select a.docNo from bizcore.doc_app a inner join bizcore.doc_app_detail b on a.docNo = b.docNo where a.formId = 'doc_Form_SalesReport' and b.appData like concat('%',#{soppNo},'%') and a.compId = #{compId}")
+        public String getDocNo(@Param("compId") String compId, @Param("soppNo") String soppNo);
 
 }

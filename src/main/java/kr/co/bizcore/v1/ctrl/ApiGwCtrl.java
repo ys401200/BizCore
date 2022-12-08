@@ -792,4 +792,32 @@ public class ApiGwCtrl extends Ctrl {
         return result;
     }
 
+
+    // 영업기회 번호에 해당되는 수주판매 보고 문서 가져오기
+    @GetMapping("/salesReport/{soppNo}")
+    public String getSalesReportBySoppNo(HttpServletRequest request, @PathVariable("soppNo") String soppNo) {
+        String result = null, lang = null, compId = null;
+        HttpSession session = null;
+        Msg msg = null;
+        session = request.getSession();
+        compId = (String) session.getAttribute("compId");
+        lang = (String) session.getAttribute("lang");
+        msg = getMsg(lang);
+
+        if (compId == null)
+            compId = (String) request.getAttribute("compId");
+
+        if (compId == null) {
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        } else {
+            if (gwService.getSalesReport(compId, soppNo) != null) {
+                result = "{\"result\":\"ok\"}";
+            } else {
+                result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
+            }
+
+        }
+
+        return result;
+    }
 }
