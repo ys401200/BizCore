@@ -132,5 +132,11 @@
 
 .detail-wrap>div>div:last-of-type {
 	display: inline-flex;
+	line-height: 1.5;
 
 }
+
+.detail-wrap>div>div:last-of-type>div {
+	display: inline-flex;
+}
+

@@ -245,6 +245,12 @@ class Contract {
 				}
 
 			}
+			el = document.createElement("div");
+			cnt.children[cnt.children.length - 1].children[1].appendChild(el);
+			el.innerText = "(" + storage.reportDetailData.docNo + ")";
+
+
+
 		}
 
 		// 계약서 (첨부파일)
@@ -264,13 +270,15 @@ class Contract {
 			let mtnc = this.maintenance;
 			let mtncList = "";
 			for (let i = 0; i < mtnc.length; i++) {
+				if (i > 0) {
+					mtncList += ","
+				}
 				mtncList +=
-					"<div>" + getYmdSlashShort(mtnc[i].startDate) + "</div>" +
-					"<div>~</div>" +
+					"<div><input type='checkbox' data-id='" + mtnc[i].no + "'><div>" + getYmdSlashShort(mtnc[i].startDate) + "</div>" +
+					"<div> ~ </div>" +
 					"<div>" + getYmdSlashShort(mtnc[i].endDate) + "</div>";
 
-
-			}
+			} mtncList += "<button>갱신</button></div>"
 			cnt.children[cnt.children.length - 1].children[1].innerHTML = mtncList;
 
 		}
@@ -351,40 +359,6 @@ class Contract {
 					data = JSON.parse(data);
 					storage.reportDetailData = data;
 					this.drawDetail(obj);
-					// let el, cnt;
-					// cnt = document.getElementsByClassName("detail-wrap")[0];
-					// let appLine = storage.reportDetailData.appLine;
-
-					// el = document.createElement("div");
-					// cnt.appendChild(el);
-
-					// el = document.createElement("div");
-					// cnt.children[cnt.children.length - 1].appendChild(el);
-					// el.innerText = "● 수주 판매 보고 : ";
-
-					// el = document.createElement("div");
-					// cnt.children[cnt.children.length - 1].appendChild(el);
-
-					// for (let i = 0; i < appLine.length; i++) {
-					// 	el = document.createElement("div");
-					// 	cnt.children[cnt.children.length - 1].children[1].appendChild(el);
-					// 	if (i == 0) {
-					// 		el.innerText = "작 성" + ":" + storage.user[appLine[i].employee].userName;
-					// 	} else {
-					// 		let appType = appLine[i].appType;
-					// 		if (appType == 0) {
-					// 			appType = "검 토";
-					// 		} else if (appType == 2) {
-					// 			appType = "결 재";
-					// 		} else if (appType == 3) {
-					// 			appType = "수 신";
-					// 		} else if (appType == 4) {
-					// 			appType = "참 조";
-					// 		}
-					// 		el.innerText = "▶" + appType + ":" + storage.user[appLine[i].employee].userName;
-					// 	}
-
-					// }
 				} else {
 					storage.reportDetailData = "";
 					this.drawDetail(obj);
@@ -421,7 +395,6 @@ function drawDetail(obj) {
 				console.log(data);
 				R.contract = new Contract(data);
 				R.contract.getReportNo(obj);
-				// R.contract.drawDetail(obj);
 
 			} else {
 				console.log(response.msg);
