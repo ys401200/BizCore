@@ -2,8 +2,6 @@ init();
 prepareForm();
 
 
-
-
 function prepareForm() {
   let aesKey, aesIv;
   aesKey = localStorage.getItem("aesKey");
@@ -24,7 +22,7 @@ function getSelectedReportData() {
 
   if (splitArr.length > 3) {
     $.ajax({
-      url: apiServer + "/api/gw/app/doc/" + splitArr[3],
+      url: apiServer + "/api/gw/app/doc/" + splitArr[4],
       method: "get",
       dataType: "json",
       cache: false,
@@ -37,13 +35,13 @@ function getSelectedReportData() {
           detailData.doc = detailData.doc.replaceAll('\\"', '"');
           storage.reportDetailData = detailData;
           setSelectedData();
+
         } else {
           alert("문서 정보를 가져오는 데 실패했습니다");
         }
       },
     });
   }
-
 }
 
 
@@ -82,10 +80,6 @@ function setSelectedData() {
     }
 
     $(".inputsTime").css("border", "none");
-
-
-
-
 
   }
 
@@ -158,10 +152,13 @@ function setSelectedData() {
     $("#" + formId + "_no").attr("data-detail", storage.reportDetailData.confirmNo);
     $("#" + formId + "_no").css("text-align", "left");
   }
+
   setAppLineData();
-  window.print();
+
 }
 
+
+// 결재선 데이터에 맞게 세팅해줘야함 
 
 function setAppLineData() {
   let appLine = storage.reportDetailData.appLine;
@@ -220,5 +217,3 @@ function getYmdShortSlash(date) {
     (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
   );
 }
-
-

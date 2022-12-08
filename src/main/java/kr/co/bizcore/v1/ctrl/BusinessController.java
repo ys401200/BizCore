@@ -1,4 +1,5 @@
 package kr.co.bizcore.v1.ctrl;
+
 import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,29 +10,29 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 @RequestMapping("/business")
 @Slf4j
-public class BusinessController extends Ctrl{
+public class BusinessController extends Ctrl {
 
     private static final Logger logger = LoggerFactory.getLogger(BusinessController.class);
 
-    @RequestMapping(value={"/notice","/notice/{no:\\d+}"})
+    @RequestMapping(value = { "/notice", "/notice/{no:\\d+}" })
     public String notice(HttpServletRequest request) {
         doIt(request);
         return "/notice/list";
     } // End of /business/**
 
-    @RequestMapping(value={"/schedule","/schedule/{no:\\d+}"})
+    @RequestMapping(value = { "/schedule", "/schedule/{no:\\d+}" })
     public String schedule(HttpServletRequest request) {
         doIt(request);
         return "/schedule/schedule";
     } // End of /business/**
 
-    @RequestMapping(value={"/sales","/sales/{no:\\d+}"})
+    @RequestMapping(value = { "/sales", "/sales/{no:\\d+}" })
     public String sales(HttpServletRequest request) {
         doIt(request);
         return "/sales/list";
     } // End of /business/**
 
-    @RequestMapping(value={"/sopp","/sopp/{no:\\d+}"})
+    @RequestMapping(value = { "/sopp", "/sopp/{no:\\d+}" })
     public String sopp(HttpServletRequest request) {
         doIt(request);
         return "/sopp/list";
@@ -55,19 +56,25 @@ public class BusinessController extends Ctrl{
         return "/est/list";
     } // End of /business/**
 
-    @RequestMapping(value={"/contract","/contract/{no}"})
+    @RequestMapping(value = { "/contract", "/contract/{no}" })
     public String cont(HttpServletRequest request) {
         doIt(request);
         return "/contract/list";
     } // End of /business/**
 
-    @RequestMapping(value={"/contract2","/contract2/{no:\\d+}"})
-    public String cont2(HttpServletRequest  request){
+    @RequestMapping(value = { "/contract2", "/contract2/{no:\\d+}" })
+    public String cont2(HttpServletRequest request) {
         doIt(request);
         return "/contract/contract2";
     }
 
-    @RequestMapping(value={"/tech","/tech/{no:\\d+}"})
+    @RequestMapping(value = { "/contract/popup/{docNo}" })
+    public String setprint(HttpServletRequest request) {
+        doIt(request);
+        return "/contract/popup";
+    }
+
+    @RequestMapping(value = { "/tech", "/tech/{no:\\d+}" })
     public String tech(HttpServletRequest request) {
         doIt(request);
         return "/tech/list";
@@ -85,7 +92,7 @@ public class BusinessController extends Ctrl{
         return "/workreport/workreport";
     } // End of /business/**
 
-    @RequestMapping(value = {"/estimate", "/estimate/{no}"})
+    @RequestMapping(value = { "/estimate", "/estimate/{no}" })
     public String estimate(HttpServletRequest request) {
         doIt(request);
         return "/business/estimate";
@@ -103,7 +110,7 @@ public class BusinessController extends Ctrl{
         return "/goal/list";
     } // End of /business/**
 
-    @RequestMapping(value={"/customer", "/customer/{no:\\d+}"})
+    @RequestMapping(value = { "/customer", "/customer/{no:\\d+}" })
     public String customer(HttpServletRequest request) {
         doIt(request);
         return "/customer/list";

@@ -68,10 +68,8 @@ class Contracts {
 
 
 	}
+
 }
-
-
-
 
 
 
@@ -148,8 +146,6 @@ class Contract {
 		child = document.createElement("div");
 		el.appendChild(child);
 		child.innerText = "계약금액 : " + this.contractAmount.toLocaleString() + "원";
-
-
 
 	}
 
@@ -248,8 +244,9 @@ class Contract {
 			el = document.createElement("div");
 			cnt.children[cnt.children.length - 1].children[1].appendChild(el);
 			el.innerText = "(" + storage.reportDetailData.docNo + ")";
-
-
+			el.setAttribute("onclick", "openPreviewTab()");
+			el.style.color = "blue";
+			el.style.cursor = "pointer";
 
 		}
 
@@ -280,10 +277,7 @@ class Contract {
 
 			cnt.children[cnt.children.length - 1].children[1].innerHTML = files;
 
-
 		}
-
-
 
 
 		// 유지보수 
@@ -374,9 +368,6 @@ class Contract {
 
 	}
 
-
-
-
 	getReportDetail(docNo, obj) {
 
 		fetch(apiServer + "/api/gw/app/doc/" + docNo)
@@ -398,17 +389,13 @@ class Contract {
 			});
 	}
 
-
-
 } // 클래스 정의 끝 ==============================================================================================================
 
 
 function drawContractList() {
 	$(".contract-list").html("");
 	R.contracts.draw();
-
 }
-
 
 
 function drawDetail(obj) {
@@ -434,7 +421,6 @@ function drawDetail(obj) {
 
 }
 
-
 // 날짜 관련 함수 
 function getYmdSlashShort(date) {
 	let d = new Date(date);
@@ -447,4 +433,9 @@ function getYmdSlashShort(date) {
 		"/" +
 		(d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
 	);
+}
+
+
+function openPreviewTab() {
+	window.open("/business/contract/popup/" + storage.reportDetailData.docNo, "미리보기", "width :210mm");
 }
