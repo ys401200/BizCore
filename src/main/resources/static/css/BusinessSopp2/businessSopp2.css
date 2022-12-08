@@ -7,7 +7,7 @@
 	background-color: white;
 	overflow:hidden;
 	display:grid;
-	grid-template-areas:"title title" "content summary";
+	grid-template-areas:"title summary" "content summary";
 	grid-template-rows: 35px calc(100% - 35px);
 	grid-template-columns: auto 350px;
 }
@@ -101,6 +101,17 @@
 .sopp-history .history-comment{
 	margin-left: 1.35rem;
 }
+.sopp-history .history-delete{
+	display: none;
+    width: 0.75rem;
+	height:0.75rem;
+    margin-left: 0.5rem;
+	cursor:pointer;
+	vertical-align: middle;
+	opacity:0.5;
+}
+.sopp-history > div:nth-child(2) > div:hover .history-delete{display:inline-flex;}
+.sopp-history > div:nth-child(2) > div:hover .history-delete:hover{opacity:1;}
 
 .sopp-content{
 	position: relative;

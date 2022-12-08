@@ -1,4 +1,4 @@
-let R = {}, prepareSopp, scrolledSopp, moveToTarget, drawChat, inputtedComment;
+let R = {}, prepareSopp, scrolledSopp, moveToTarget, drawChat, inputtedComment, deleteChat;
 
 $(document).ready(() => {
 	let href, no
@@ -65,11 +65,34 @@ drawChat = () => {
 		html += ("<img src=\"" + (chat.isNotice > 0 ? "/images/sopp2/info_circle.png" : "/api/user/image/" + chat.writer) + "\" class=\"profile-small\" />");
 		html += ("<div class=\"history-employee\">" + name + "</div>");
 		html += ("<div class=\"history-date\">" + dt + "</div>");
+		if(chat.isNotice === 0 && chat.writer === storage.my) html += ("<img src=\"/images/sopp2/circle_close.png\" class=\"history-delete\" onclick=\"deleteChat(" + x + ")\" />");
 		html += ("<div class=\"history-comment\">" + chat.message + "</div>");
 		html += "</div>";
 	}
 	cnt.innerHTML = html;
 } // End of drawChat()
+
+// chat 삭제 처리 함수
+deleteChat = (no) => {
+	let idx;
+	if(no === undefined || R.chat[no] === undefined)	return;
+	idx = R.chat[no].idx;
+
+	fetch(apiServer + "/api/project/sopp/chat/" + idx, {
+		method: "DELETE",
+		header: { "Content-Type": "text/plain" },
+	}).catch((error) => console.log("error:", error))
+		.then(response => response.json())
+		.then(response => {
+			if(response.result === "ok"){
+				R.chat.splice(no, 1);
+				drawChat();
+			}else{
+				console.log("error on deleteChat(" + no + ")");
+			}
+		});
+
+} // End of deleteChat()
 
 // chat 입력 처리 함수
 inputtedComment = (el, event) => {
@@ -91,6 +114,7 @@ inputtedComment = (el, event) => {
 			let v = {};
 			if(response.result === "ok"){
 				document.getElementsByClassName("sopp-history")[0].children[2].children[0].value = "";
+				v.idx = response.data;
 				v.isNotice = 0;
 				v.writer = storage.my;
 				v.stage = R.sopp.stage;

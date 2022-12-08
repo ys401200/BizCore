@@ -239,11 +239,36 @@ public class ApiProjectCtrl extends Ctrl{
         }else{
             data = decAes(requestBody, aesKey, aesIv);
             r = projSvc.addSoppChat(compId, sopp, false, strToInt(userNo), stage, data);
-            if(r > 0)   result = "{\"result\":\"ok\"}";
+            if(r > 0)   result = "{\"result\":\"ok\",\"data\":" + r + "}";
             else        result = "{\"result\":\"failure\"}";
         }
         
         return result;
     } // End of projectSoppPost()
+
+    @DeleteMapping("/sopp/chat/{idx:\\d+}")
+    public String projectSoppChatIdxDelete(HttpServletRequest request, @PathVariable("idx") int idx) {
+        String result = null;
+        String compId = null, aesKey = null, aesIv = null, userNo = null;
+        Msg msg = null;
+        HttpSession session = null;
+        int r = -999;
+
+        session = request.getSession();
+        compId = (String)session.getAttribute("compId");
+        if(compId == null)  compId = (String)session.getAttribute("compId");
+        userNo = (String)session.getAttribute("userNo");
+        msg = getMsg((String)session.getAttribute("lang"));
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        }else{
+            r = projSvc.removeSoppChat(compId, userNo, idx);
+            if(r > 0)   result = "{\"result\":\"ok\"}";
+            else        result = "{\"result\":\"failure\"}";
+        }
+        
+        return result;
+    } // End of projectSoppChatIdxDelete()
     
 }

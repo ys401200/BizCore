@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import kr.co.bizcore.v1.domain.Project;
 import kr.co.bizcore.v1.domain.Sopp2;
@@ -30,6 +31,12 @@ public interface ProjectMapper {
     @Insert("INSERT INTO bizcore.sopp_chat(compId, sopp, isNotice, writer, stage, message, created) VALUES(#{compId}, #{sopp}, #{isNotice}, #{writer}, #{stage}, #{message}, now())")
     public int addSoppChat(@Param("compId") String compId, @Param("sopp") int sopp, @Param("isNotice") boolean isNotice, @Param("writer") int writer, @Param("stage") int stage, @Param("message") String message);
 
-    @Select("SELECT CAST(isNotice AS CHAR) isNotice, CAST(writer AS CHAR) writer, CAST(stage AS CHAR) stage, message, CAST(UNIX_TIMESTAMP(created)*1000 AS CHAR) created FROM bizcore.sopp_chat WHERE deleted IS NULL AND compId = #{compId} AND sopp = #{sopp} ORDER BY created")
+    @Select("SELECT MAX(idx) FROM bizcore.sopp_chat WHERE deleted IS NULL AND compId = #{compId} AND sopp = #{sopp} AND writer = #{writer}")
+    public int getSoppChatIdx(@Param("compId") String compId, @Param("sopp") int sopp, @Param("writer") int writer);
+
+    @Select("SELECT CAST(idx AS CHAR) idx, CAST(isNotice AS CHAR) isNotice, CAST(writer AS CHAR) writer, CAST(stage AS CHAR) stage, message, CAST(UNIX_TIMESTAMP(created)*1000 AS CHAR) created FROM bizcore.sopp_chat WHERE deleted IS NULL AND compId = #{compId} AND sopp = #{sopp} ORDER BY created")
     public List<HashMap<String, String>> getSoppChat(@Param("compId")String compId, @Param("sopp") int soppNo);
+
+    @Update("UPDATE bizcore.sopp_chat SET deleted = NOW() WHERE deleted IS NULL AND compId = #{compId} AND writer = #{userNo} AND idx = #{idx}")
+    public int removeSoppChat(@Param("compId") String compId, @Param("userNo") String userNo, @Param("idx") int idx);
 }

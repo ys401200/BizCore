@@ -181,7 +181,9 @@ public class ProjectService extends Svc{
     }
 
     public int addSoppChat(String compId, int sopp, boolean isNotice, int writer, int stage, String message){
-        return projectMapper.addSoppChat(compId, sopp, isNotice, writer, stage, message);
+        int idx = -1, r = projectMapper.addSoppChat(compId, sopp, isNotice, writer, stage, message);
+        if(r > 0)   idx = projectMapper.getSoppChatIdx(compId, sopp, writer);
+        return idx;
     }
 
     public String getSoppChat(String compId, int soppNo){
@@ -195,7 +197,8 @@ public class ProjectService extends Svc{
         if(list != null)    for(x = 0 ; x < list.size() ; x++){
             each = list.get(x);
             if(x > 0)   result += ",";
-            result += ("{\"isNotice\":" + each.get("isNotice") + ",");
+            result += ("{\"idx\":" + each.get("idx") + ",");
+            result += ("\"isNotice\":" + each.get("isNotice") + ",");
             result += ("\"writer\":" + each.get("writer") + ",");
             result += ("\"stage\":" + each.get("stage") + ",");
             result += ("\"message\":\"" + each.get("message") + "\",");
@@ -205,5 +208,9 @@ public class ProjectService extends Svc{
 
         return result;
     } // End of getSoppChat()
+
+    public int removeSoppChat(String compId, String userNo, int idx) {
+        return projectMapper.removeSoppChat(compId, userNo, idx);
+    }
     
 }
