@@ -1,4 +1,4 @@
-let R = {}, prepareSopp, scrolledSopp, moveToTarget, drawChat, inputtedComment, deleteChat;
+let R = {}, prepareSopp, scrolledSopp, moveToTarget, drawChat, inputtedComment, deleteChat, cancleEdit;
 
 $(document).ready(() => {
 	let href, no
@@ -43,8 +43,17 @@ prepareSopp = (no) => {
 
 } // End of prepareSopp()
 
+// 편집 취소 함수
+cancleEdit = (el) => {
+	el.parentElement.parentElement.parentElement.className = "sopp-history";
+	el.parentElement.parentElement.nextElementSibling.innerHTML = "";
+	el.parentElement.previousSibling.innerHTML = "";
+} // End of cancleEdit()
+
 drawChat = () => {
-	let x, y, chat, html, name, dt, cnt = document.getElementsByClassName("sopp-history")[0].children[1];
+	let x, y, chat, html, name, dt, cnt;
+
+	cnt = document.getElementsByClassName("sopp-history")[0].children[1];
 	html = "";
 	for(x = 0 ; x < R.chat.length ; x++){
 		chat = R.chat[x];
@@ -218,10 +227,87 @@ class Sopp2{
 	} // End of ownerName()
 
 	draw(){
-		let cnt;
+		let cnt, x, y, name, html;
 
-		cnt = document.getElementsByClassName("content-title")[0];
+		// 제목 설정
+		cnt = document.getElementsByClassName("content-title")[0].children[0];
 		cnt.innerText = "영업기회 : " + this.title;
+
+		// 관리자
+		cnt = document.getElementsByClassName("sopp-info")[0].children[0].children[1].children[0];
+		name = "...";
+		html = "<img src=\"/api/user/image/" + R.sopp.owner + "\" class=\"profile-small\" />";
+		if(storage.user[R.sopp.owner] !== undefined && storage.user[R.sopp.owner].userName !== undefined)	name = storage.user[R.sopp.owner].userName;
+		html += name;
+		cnt.innerHTML = html;
+
+		// 담당자
+		cnt = cnt = document.getElementsByClassName("sopp-info")[0].children[1].children[1].children[0];
+		html = "";
+		if(R.sopp.coWorker !== undefined && R.sopp.coWorker.constructor.name === "Array")	for(x = 0 ; x < R.sopp.coWorker.length ; x++){
+			name = "...";
+			html += ("<img src=\"/api/user/image/" + R.sopp.coWorker[x] + "\" class=\"profile-small\" />");
+			if(storage.user[R.sopp.coWorker[x]] !== undefined && storage.user[R.sopp.coWorker[x]].userName !== undefined)	name = storage.user[R.sopp.coWorker[x]].userName;
+			html += (name + " ");
+		}
+		cnt.innerHTML = html;
+
+		// 고객사
+		cnt = document.getElementsByClassName("sopp-info")[0].children[2].children[1].children[0];
+		name = "...";
+		html = "";
+		if(storage.customer[R.sopp.customer] !== undefined && storage.customer[R.sopp.customer].name !== undefined)	name = storage.customer[R.sopp.customer].name;
+		html += name;
+		cnt.innerHTML = html;
+
+		// 협력사
+		cnt = document.getElementsByClassName("sopp-info")[0].children[3].children[1].children[0];
+		html = "";
+		name = "...";
+		if(R.sopp.partner === undefined)	name = "&lt;없음&gt;";
+		else if(R.sopp.partner != undefined && typeof R.sopp.partner === "number")	if(storage.customer[R.sopp.partner] !== undefined && storage.customer[R.sopp.partner].name !== undefined)	name = storage.customer[R.sopp.partner].name;			
+		html += name;
+		cnt.innerHTML = html;
+
+		// ============= 예상매출
+		// 예상매출액
+		cnt = document.getElementsByClassName("sopp-expected")[0].children[0].children[1];
+		x = 0;
+		if(R.sopp.expactetSales !== undefined && R.sopp.expactetSales !== null && typeof R.sopp.expactetSales === "number")	x = R.sopp.expactetSales.toLocaleString();
+		cnt.innerText = x;
+		// 시작일
+		cnt = document.getElementsByClassName("sopp-expected")[0].children[1].children[0];
+		x = R.sopp.created;
+		y = "'" + (x.getFullYear() % 100) + ".";
+		y += ((x.getMonth() + 1) + ".");
+		y += x.getDate();
+		cnt.innerText = y;
+		// 예상매출일
+		x = R.sopp.expactedDate;
+		if(x !== undefined && x !== null && typeof x === "object" && x.constructor.name === "Date"){
+			cnt = document.getElementsByClassName("sopp-expected")[0].children[1].children[2];
+			y = "'" + (x.getFullYear() % 100) + ".";
+			y += ((x.getMonth() + 1) + ".");
+			y += x.getDate();
+			cnt.innerText = y;
+			// 날짜 진행바
+			cnt = document.getElementsByClassName("sopp-expected")[0].children[1].children[1].children;
+			x = R.sopp.expactedDate.getTime() - R.sopp.created.getTime();
+			y = (new Date()).getTime() - R.sopp.created.getTime();
+			x = Math.floor(y * 1000 / x) / 10;
+			x = x < 0 ? 0 : x > 100 ? 100 : x;
+			cnt[0].style.width = x + "%";
+			cnt[1].style.left = "calc(" + x + "% - 0.3rem)";
+		}
+
+		// 스테이지바
+		html = "";
+		y = ["<T>개</T><T>설</T>", "<T>접</T><T>촉<T>", "<T>제</T><T>안</T>", "<T>견</T><T>적</T>", "<T>협</T><T>상</T>", "<T>계</T><T>약</T>", "<T>종</T><T>료</T>"];
+		cnt = document.getElementsByClassName("sopp-progress")[0];
+		for(x = 0 ; x < y.length ; x++){
+			html += ("<div" + (x < R.sopp.stage ? " class=\"sopp-done\"" : (x === R.sopp.stage ? " class=\"sopp-doing\"" : (x === R.sopp.stage + 1 ? " onclick=\"soppStageUp(" + R.sopp.stage + ")\" style=\"cursor:pointer;\"" : ""))) + ">" + y[x] + "</div>");
+		}
+		cnt.innerHTML = html;
 	} // End of draw()
 
 	drawList(cnt){
