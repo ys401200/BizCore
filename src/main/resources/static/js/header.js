@@ -1425,7 +1425,7 @@ function detailTabHide(notId) {
 // }
 
 //ckeditor
-function setEditor() {
+function setEditor(container) {
 	if (typeof CKEDITOR !== undefined) {
 		if ($(CKEDITOR.instances).length) {
 			for (var key in CKEDITOR.instances) {
@@ -1434,9 +1434,16 @@ function setEditor() {
 		}
 	}
 
-	let textarea = $("textarea");
-	for (let i = 0; i < textarea.length; i++) {
-		CKEDITOR.inline(document.querySelector("#" + $(textarea[i]).attr("id")));
+	if(container === undefined){
+		let textarea = document.querySelectorAll("textarea");
+		for (let i = 0; i < textarea.length; i++) {
+			CKEDITOR.inline(document.querySelector("#" + textarea[i].getAttribute("id")));
+		}
+	}else{
+		let textarea = container.querySelectorAll("textarea");
+		for (let i = 0; i < textarea.length; i++) {
+			CKEDITOR.inline(container.querySelector("#" + textarea[i].getAttribute("id")));
+		}
 	}
 }
 
@@ -3826,5 +3833,20 @@ function getJsonData(url, method, data) {
 				createTabEstList(result.estimate[0].children);
 			}
 		})
+	}
+}
+
+function textReset(content){
+	let inputType = content.querySelectorAll("input");
+	let textareaType = content.querySelectorAll("textarea");
+
+	for(let i = 0; i < inputType.length; i++){
+		let item = inputType[i];
+		item.value = "";
+	}
+
+	for(let i = 0; i < textareaType.length; i++){
+		let item = textareaType[i];
+		item.value = "";
 	}
 }

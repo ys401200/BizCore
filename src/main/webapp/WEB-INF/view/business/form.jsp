@@ -13,7 +13,7 @@
         <div class="titlePdf">QUOTATION</div>
     </div>
     <div class="selectAddress">
-        <select onchange="selectAddressChange(this);"></select>
+        <select onchange="EstimateSet.selectAddressChange(this);"></select>
     </div>
     <div class="pdfHeadInfo">
         <div class="date">
@@ -56,9 +56,9 @@
         <div class="vatInfo">
             <span>견 적 금 액</span><span style="padding-left: 5px; padding-right: 4px; padding-top: 3px;">:</span>
             <input type="text" autocomplete="off" id="price" readonly>
-            <input type="radio" name="vat" data-value="true" id="vatTrue" onclick="setTotalHtml();" checked>
+            <input type="radio" name="vat" data-value="true" id="vatTrue" onclick="EstimateSet.setTotalHtml();" checked>
             <label for="vatTrue">VAT 포함</label>
-            <input type="radio" name="vat" data-value="false" id="vatFalse" onclick="setTotalHtml();">
+            <input type="radio" name="vat" data-value="false" id="vatFalse" onclick="EstimateSet.setTotalHtml();">
             <label for="vatFalse">VAT 비포함</label>
         </div>
         <div class="expInfo">
@@ -79,9 +79,9 @@
             <div>추가/삭제</div>
         </div>
         <div class="pdfMainContentAddBtns">
-            <button type="button" onclick="addEstTitle(this);">타이틀추가</button>
-            <button type="button" onclick="addEstItem(this);">항목추가</button>
-            <button type="button" onclick="removeEstItem(this);">항목제거</button>
+            <button type="button" onclick="EstimateSet.addEstTitle(this);">타이틀추가</button>
+            <button type="button" onclick="EstimateSet.addEstItem(this);">항목추가</button>
+            <button type="button" onclick="EstimateSet.removeEstItem(this);">항목제거</button>
         </div>
         <div class="pdfMainContentAmount">
             <div>공&nbsp;급&nbsp;가&nbsp;합&nbsp;계</div>

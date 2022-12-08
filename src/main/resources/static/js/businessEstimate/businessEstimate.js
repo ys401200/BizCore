@@ -2,11 +2,8 @@
 
 document.addEventListener("DOMContentLoaded", () => {
 	prepare = function(){
-		getEstimateBasic();
-		getEstimateItem();
-		Estimate = new Estimate();
-		// getEstimateList();
-	} // End of prepare()
+		EstimateSet = new EstimateSet();
+	}
 	
     init();
 
@@ -16,24 +13,81 @@ document.addEventListener("DOMContentLoaded", () => {
 	}, 300);
 });
 
-export default class Estimate{
+class EstimateSet{
 	constructor(){
+		this.getEstimateBasic();
+		this.getEstimateItem();
+		this.setList();
+	}
+	
+	getEstimateBasic(){
+		let url;
+		url = apiServer + "/api/estimate/basic";
+		$.ajax({
+			"url": url,
+			"method": "get",
+			"dataType": "json",
+			"cache": false,
+			success: (data) => {
+				let form, info, x;
+				if (data.result === "ok") {
+					x = cipher.decAes(data.data);
+					x = JSON.parse(x);
+					form = x.form;
+					info = x.info;
+					for(x = 0 ; x < form.length ; x++)	form[x].form = cipher.decAes(form[x].form);
+					storage.estimateForm = form;
+					storage.estimateBasic = info;
+				} else {
+					msg.set("[getEstimateForm] Fail to get estimate form(s).");
+				}
+			}
+		});
+	}
+	
+	getEstimateItem(){
+		let url;
+		url = apiServer + "/api/estimate/item/";
+		$.ajax({
+			"url": url,
+			"method": "get",
+			"dataType": "json",
+			"cache": false,
+			success: (data) => {
+				let list;
+				if (data.result === "ok") {
+					list = cipher.decAes(data.data);
+					list = JSON.parse(list);
+					storage.item = list;
+				} else {
+					msg.set("[getEstimateItem] Fail to get item information.");
+				}
+			}
+		});
+	}
+	
+
+	setList() {
 		axios.get("/api/estimate").then((response) => {
 			if(response.data.result === "ok"){
 				let getList = response.data.data;
 				getList = cipher.decAes(getList);
 				getList = JSON.parse(getList);
 				storage.estimateList = getList;
-				this.list();
+				this.drawEstmList();
 			}
 		}).catch((error) => {
-			alert("메인 리스트 에러입니다.\n" + error);
+			msg.set("메인 리스트 에러입니다.\n" + error);
 		});
 	}
-	
-	list() {
+
+	addForm(){
+		this.clickedAdd();
+	}
+
+	drawEstmList(){
 		let container, result, job, jsonData, header = [], data = [], ids = [], disDate, str, fnc, pageContainer, containerTitle, crudAddBtn, crudUpdateBtn, hideArr, showArr;
-	
+		
 		if (storage.estimateList === undefined) {
 			msg.set("등록된 견적이 없습니다");
 		}
@@ -44,7 +98,7 @@ export default class Estimate{
 				jsonData = storage.searchDatas;
 			}
 		}
-
+	
 		result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 		
 		crudAddBtn = document.getElementsByClassName("crudAddBtn")[0];
@@ -54,7 +108,7 @@ export default class Estimate{
 		containerTitle = $("#containerTitle");
 		pageContainer = document.getElementsByClassName("pageContainer");
 		container = $(".estimateList");
-
+	
 		header = [
 			{
 				"title" : "견적일자",
@@ -77,7 +131,7 @@ export default class Estimate{
 				"align" : "center",
 			},
 		];
-
+	
 		if(jsonData === ""){
 			str = [
 				{
@@ -92,7 +146,7 @@ export default class Estimate{
 			for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
 				disDate = dateDis(jsonData[i].date);
 				disDate = dateFnc(disDate, "yyyy.mm.dd");
-		
+		  
 				str = [
 					{
 						"setData": disDate,
@@ -116,1911 +170,1021 @@ export default class Estimate{
 					},
 				];
 		
-				fnc = "clickedEstimate(this);";
+				fnc = "EstimateSet.clickedEstimate(this);";
 				ids.push(jsonData[i].no);
 				data.push(str);
 			}
 		
-			let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawEstmList", result[0]);
+			let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "EstimateSet.drawEstmList", result[0]);
 			pageContainer[0].innerHTML = pageNation;
 		}
-
+	
 		containerTitle.html("견적목록");
 		createGrid(container, header, data, ids, job, fnc);
 		crudAddBtn.innerText = "견적추가";
-		crudAddBtn.setAttribute("onclick", "clickedAdd();");
+		crudAddBtn.setAttribute("onclick", "EstimateSet.clickedAdd();");
 		crudUpdateBtn.innerText = "견적수정";
-		crudUpdateBtn.setAttribute("onclick", "clickedUpdate();");
-		setViewContents(hideArr, showArr);	
+		crudUpdateBtn.setAttribute("onclick", "EstimateSet.clickedUpdate();");
+		setViewContents(hideArr, showArr);
 	}
 
-	addForm() {
-		clickedAdd();
-	}
-}
+	drawBack(){
+		let crudAddBtn = document.getElementsByClassName("crudAddBtn")[0];
+		let crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
+		let estimatePdf = document.getElementsByClassName("estimatePdf")[0];
+		let containerTitle = $("#containerTitle");
+		let hideArr = ["detailBackBtn", "addPdfForm"];
+		let showArr = ["estimateList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "crudAddBtn", "versionPreview"];
+		let versionList = document.getElementsByClassName("versionList");
+		containerTitle.html("견적목록");
+		crudAddBtn.innerText = "견적추가";
+		crudAddBtn.setAttribute("onclick", "EstimateSet.clickedAdd();");
+		crudUpdateBtn.innerText = "견적수정";
+		crudUpdateBtn.setAttribute("onclick", "EstimateSet.clickedUpdate();");
 
-// 견적 목록을 그리는 함수
-function drawEstmList(){
-	let container, result, job, jsonData, header = [], data = [], ids = [], disDate, str, fnc, pageContainer, containerTitle, crudAddBtn, crudUpdateBtn, hideArr, showArr;
-	
-	if (storage.estimateList === undefined) {
-		msg.set("등록된 견적이 없습니다");
-	}
-	else {
-		if(storage.searchDatas === undefined){
-			jsonData = storage.estimateList;
-		}else{
-			jsonData = storage.searchDatas;
+		for(let i = 0; i < versionList.length; i++){
+			let item = versionList[i];
+			if(item.style.display !== "none"){
+				item.querySelector(".versionListBody[data-click-check=\"true\"]").click();
+			}
 		}
+
+		if(crudUpdateBtn.style.display !== "none"){
+			estimatePdf.style.display = "flex";
+		}
+		
+		setViewContents(hideArr, showArr);
+		document.getElementsByClassName("copyMainPdf")[0].remove();
 	}
-
-	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 	
-	crudAddBtn = document.getElementsByClassName("crudAddBtn")[0];
-	crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
-	hideArr = ["detailBackBtn", "crudUpdateBtn", "estimatePdf", "addPdfForm"];
-	showArr = ["estimateList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "crudAddBtn", "versionPreview", "previewDefault"];
-	containerTitle = $("#containerTitle");
-	pageContainer = document.getElementsByClassName("pageContainer");
-	container = $(".estimateList");
+	clickedEstimate(el){
+		let x, cnt, els, color = "#2147b1", estmNo, versionList, thisEle;
+	
+		versionList = document.getElementsByClassName("versionList");
+	
+		if(versionList.length > 0){
+			for(let i = 0; i < versionList.length; i++){
+				versionList[i].remove();
+			}
+		}
+	
+		thisEle = el;
+		versionList = document.createElement("div");
+		versionList.className = "versionList";
+		thisEle.after(versionList);
+		cnt = thisEle.parentElement;
+		els = cnt.children;
+	
+		for(x = 1 ; x < els.length ; x++){
+			els[x].style.backgroundColor = "";
+			els[x].style.color = "";
+		}	
+	
+		thisEle.style.backgroundColor = color;
+		thisEle.style.color = "#ffffff";
+		estmNo = thisEle.dataset.id;
+		this.getEstmVerList(estmNo);
+		setTimeout(() => {
+			storage.thisEle = thisEle.nextSibling.getElementsByClassName("versionListBody")[0];
+			thisEle.nextSibling.getElementsByClassName("versionListBody")[0].click();
+		}, 300);
+	}
+	
+	clickedEstmVer(el){
+		let x, cnt, els, color = "#e1e9ff";
+		els = el.parentElement.children;
+		for(x = 1 ; x < els.length ; x++)	els[x].style.backgroundColor = "";
+		el.style.backgroundColor = color;
+		x = el.dataset.idx * 1;
+		el.dataset.clickCheck = true;
+		storage.detailIdx = $(el).data("idx");
+		let previewDefault = document.getElementsByClassName("previewDefault")[0];
+		previewDefault.style.display = "none";
+		let versionPreview = document.getElementsByClassName("versionPreview")[0];
+		let versionList = document.getElementsByClassName("versionList")[0];
+		let title = versionList.getElementsByClassName("versionListBody")[0].children[1].innerHTML;
+		let userName = versionList.getElementsByClassName("versionListBody")[0].children[2].innerHTML;
+		let crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
+		let estimatePdf = document.getElementsByClassName("estimatePdf")[0];
+		estimatePdf.setAttribute("onclick", "estimatePdf(\"" + title + "\", \"" + userName + "\");");
+		crudUpdateBtn.style.display = "flex";
+		estimatePdf.style.display = "flex";
+		versionPreview.innerHTML += storage.estimateVerList[x].doc;
+		let indexMain = versionPreview.children;
+		
+		for(let i = 0; i < indexMain.length; i++){
+			if(i > 0 && i != indexMain.length-1){
+				indexMain[i].remove();
+			}
+		}
+		
+		indexMain[indexMain.length-1].setAttribute("class", "mainPreviewPdf");
+		indexMain[indexMain.length-1].setAttribute("id", "estPrintPdf");
+	} 
+	
+	getEstmVerList(estmNo){
+		axios.get("/api/estimate/" + estmNo).then((response) => {
+			if(response.data.result === "ok"){
+				let getList = response.data.data;
+				getList = cipher.decAes(getList);
+				getList = JSON.parse(getList);
+				
+				for(let i = 0; i < getList.length; i++){
+					getList[i].doc = cipher.decAes(getList[i].doc);
+				}
+	
+				storage.estimateVerList = getList;
+				this.drawEstmVerList();
+			}
+			
+		}).catch((error) => {
+			alert("버전 리스트 에러입니다.\n" + error);
+		});
+	} 
+	
+	drawEstmVerList(){
+		let versionList, html = "", x;
+		versionList = document.getElementsByClassName("versionList")[0];
+		html = "<div class=\"versionListHeader\">";
+		html += "<div>버전</div>";
+		html += "<div>견적명</div>";
+		html += "<div>담당자</div>";
+		html += "<div>견적일자</div>";
+		html += "<div>금액</div>";
+		html += "</div>";
+		
+		for(x = storage.estimateVerList.length-1 ; x >= 0 ; x--){
+			let total = 0, dateSet;
+	
+			for(let i = 0; i < storage.estimateVerList[x].related.estimate.items.length; i++){
+				let item = storage.estimateVerList[x].related.estimate.items[i];
+				total += (item.price * item.quantity) + (item.price * item.quantity * 0.1);
+			}
+	
+			dateSet = dateDis(storage.estimateVerList[x].date);
+			dateSet = dateFnc(dateSet);
 
-	header = [
-		{
-			"title" : "견적일자",
-			"align" : "center",
-		},
-		{
-			"title" : "견적명",
-			"align" : "center",
-		},
-		{
-			"title" : "버전",
-			"align" : "center",
-		},
-		{
-			"title" : "양식",
-			"align" : "center",
-		},
-		{
-			"title" : "금액",
-			"align" : "center",
-		},
-	];
-
-	if(jsonData === ""){
-		str = [
+			html += "<div class=\"versionListBody\" onclick=\"EstimateSet.clickedEstmVer(this)\" data-idx=\"" + x + "\">";
+			html += "<div style=\"justify-content: center;\">" + storage.estimateVerList[x].version + "</div>";
+			html += "<div style=\"justify-content: left;\">" + storage.estimateVerList[x].title + "</div>";
+			html += "<div style=\"justify-content: center;\">" + storage.user[storage.estimateVerList[x].writer].userName + "</div>";
+			html += "<div style=\"justify-content: center;\">" + dateSet + "</div>";
+			html += "<div style=\"justify-content: right;\">" + numberFormat(total) + "</div>";
+			html += "</div>";
+		}
+	
+		versionList.innerHTML = html;
+	}
+	
+	clickedUpdate(){
+		let containerTitle, crudAddBtn, crudUpdateBtn, hideArr, showArr, mainPdf, copyMainPdf;
+		containerTitle = document.getElementById("containerTitle");
+		mainPdf = document.getElementsByClassName("mainPdf")[0];
+		copyMainPdf = document.createElement("div");
+		copyMainPdf.className = "copyMainPdf";
+		copyMainPdf.innerHTML = mainPdf.innerHTML;
+		crudAddBtn = document.getElementsByClassName("crudAddBtn")[0];
+		mainPdf.after(copyMainPdf);
+		crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
+		hideArr = ["estimateList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "versionPreview", "estimatePdf", "mainPdf"];
+		showArr = [
 			{
-				"setData": undefined,
-				"col": 5,
-				"align": "center",
+				element: "detailBackBtn",
+				display: "flex",
+			},
+			{
+				element: "crudAddBtn",
+				display: "flex",
+			},
+			{
+				element: "crudUpdateBtn",
+				display: "flex",
+			},
+			{
+				element: "addPdfForm",
+				display: "block",
 			},
 		];
-		
-		data.push(str);
-	}else{
-		for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
-			disDate = dateDis(jsonData[i].date);
-			disDate = dateFnc(disDate, "yyyy.mm.dd");
-	  
-			str = [
-				{
-					"setData": disDate,
-					"align": "center",
-				},
-				{
-					"setData": jsonData[i].title,
-					"align": "left",
-				},
-				{
-					"setData": jsonData[i].version,
-					"align": "center",
-				},
-				{
-					"setData": jsonData[i].form,
-					"align": "center",
-				},
-				{
-					"setData": numberFormat(jsonData[i].total),
-					"align": "right",
-				},
-			];
-	
-			fnc = "clickedEstimate(this);";
-			ids.push(jsonData[i].no);
-			data.push(str);
-		}
-	
-		let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawEstmList", result[0]);
-		pageContainer[0].innerHTML = pageNation;
+
+		this.copyContainer = document.getElementsByClassName("copyMainPdf")[0];
+		containerTitle.innerText = "견적수정";
+		crudAddBtn.innerText = "새견적추가";
+		crudAddBtn.setAttribute("onclick", "estimateInsert();");
+		crudUpdateBtn.setAttribute("onclick", "estimateUpdate();");
+		setViewContentsCopy(hideArr, showArr);
+		storage.estmDetail = storage.estimateVerList[storage.detailIdx];
+		this.estimateFormInit();
 	}
 
-	containerTitle.html("견적목록");
-	createGrid(container, header, data, ids, job, fnc);
-	crudAddBtn.innerText = "견적추가";
-	crudAddBtn.setAttribute("onclick", "clickedAdd();");
-	crudUpdateBtn.innerText = "견적수정";
-	crudUpdateBtn.setAttribute("onclick", "clickedUpdate();");
-	setViewContents(hideArr, showArr);
-}
-
-function drawBack(){
-	let crudAddBtn = document.getElementsByClassName("crudAddBtn")[0];
-	let crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
-	let containerTitle = $("#containerTitle");
-	let hideArr = ["detailBackBtn", "crudUpdateBtn", "estimatePdf", "addPdfForm", "previewDefault"];
-	let showArr = ["estimateList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "crudAddBtn", "versionPreview"];
-	containerTitle.html("견적목록");
-	crudAddBtn.innerText = "견적추가";
-	crudAddBtn.setAttribute("onclick", "clickedAdd();");
-	crudUpdateBtn.innerText = "견적수정";
-	crudUpdateBtn.setAttribute("onclick", "clickedUpdate();");
-	setViewContents(hideArr, showArr);
-}
-
-// 견적 목록 클릭 이벤트 리스너
-function clickedEstimate(el){
-	let x, cnt, els, color = "#2147b1", estmNo, versionList;
-
-	versionList = document.getElementsByClassName("versionList");
-
-	if(versionList.length > 0){
-		for(let i = 0; i < versionList.length; i++){
-			versionList[i].remove();
-		}
-	}
-
-	thisEle = el;
-	versionList = document.createElement("div");
-	versionList.className = "versionList";
-	thisEle.after(versionList);
-	cnt = thisEle.parentElement;
-	els = cnt.children;
-
-	for(x = 1 ; x < els.length ; x++){
-		els[x].style.backgroundColor = "";
-		els[x].style.color = "";
-	}	
-
-	thisEle.style.backgroundColor = color;
-	thisEle.style.color = "#ffffff";
-	estmNo = thisEle.dataset.id;
-	getEstmVerList(estmNo);
-	setTimeout(() => {
-		storage.thisEle = thisEle.nextSibling.getElementsByClassName("versionListBody")[0];
-		thisEle.nextSibling.getElementsByClassName("versionListBody")[0].click();
-	}, 300);
-}
-
-function clickedEstmVer(el){
-	let x, cnt, els, color = "#e1e9ff";
-	els = el.parentElement.children;
-	for(x = 1 ; x < els.length ; x++)	els[x].style.backgroundColor = "";
-	el.style.backgroundColor = color;
-	x = el.dataset.idx * 1;
-	storage.detailIdx = $(el).data("idx");
-	let previewDefault = document.getElementsByClassName("previewDefault")[0];
-	previewDefault.style.display = "none";
-	let versionPreview = document.getElementsByClassName("versionPreview")[0];
-	let versionList = document.getElementsByClassName("versionList")[0];
-	let title = versionList.getElementsByClassName("versionListBody")[0].children[1].innerHTML;
-	let userName = versionList.getElementsByClassName("versionListBody")[0].children[2].innerHTML;
-	let crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
-	let estimatePdf = document.getElementsByClassName("estimatePdf")[0];
-	estimatePdf.setAttribute("onclick", "estimatePdf(\"" + title + "\", \"" + userName + "\");");
-	crudUpdateBtn.style.display = "flex";
-	estimatePdf.style.display = "flex";
-	versionPreview.innerHTML += storage.estimateVerList[x].doc;
-	let indexMain = versionPreview.children;
+	clickedAdd(){
+		let containerTitle, crudAddBtn, hideArr, showArr, mainPdf, copyMainPdf;
+		containerTitle = document.getElementById("containerTitle");
+		mainPdf = document.getElementsByClassName("mainPdf")[0];
+		copyMainPdf = document.createElement("div");
+		copyMainPdf.className = "copyMainPdf";
+		copyMainPdf.innerHTML = mainPdf.innerHTML;
+		crudAddBtn = document.getElementsByClassName("crudAddBtn")[0];
+		mainPdf.after(copyMainPdf);
+		hideArr = ["estimateList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "versionPreview", "crudUpdateBtn", "estimatePdf", "mainPdf"];
+		showArr = [
+			{
+				element: "detailBackBtn",
+				display: "flex",
+			},
+			{
+				element: "crudAddBtn",
+				display: "flex",
+			},
+			{
+				element: "copyMainPdf",
+				display: "block",
+			},
+			{
+				element: "addPdfForm",
+				display: "block",
+			},
+		];
 	
-	for(let i = 0; i < indexMain.length; i++){
-		if(i > 0 && i != indexMain.length-1){
-			indexMain[i].remove();
-		}
+		this.copyContainer = document.getElementsByClassName("copyMainPdf")[0];
+		containerTitle.innerText = "견적추가";
+		crudAddBtn.innerText = "새견적추가";
+		crudAddBtn.setAttribute("onclick", "estimateInsert();");
+		setViewContentsCopy(hideArr, showArr);
+		storage.estmDetail = undefined;
+		this.estimateFormInit();
 	}
 	
-	indexMain[indexMain.length-1].setAttribute("class", "mainPreviewPdf");
-	indexMain[indexMain.length-1].setAttribute("id", "estPrintPdf");
-	// cnt.style.height = Math.floor(400 / storage.estmVerList[x].width * storage.estmVerList[x].height) + "px";
-} 
-
-// 견적 버전 목록을 가져오는 함수
-function getEstmVerList(estmNo){
-	axios.get("/api/estimate/" + estmNo).then((response) => {
-		if(response.data.result === "ok"){
-			let getList = response.data.data;
-			getList = cipher.decAes(getList);
-			getList = JSON.parse(getList);
-			
-			for(let i = 0; i < getList.length; i++){
-				getList[i].doc = cipher.decAes(getList[i].doc);
-			}
-
-			storage.estimateVerList = getList;
-			drawEstmVerList();
-		}
-		
-	}).catch((error) => {
-		alert("버전 리스트 에러입니다.\n" + error);
-	});
-} 
-
-// 견적 버전 목록을 그리는 함수
-function drawEstmVerList(){
-	let versionList, html = "", x;
-	versionList = document.getElementsByClassName("versionList")[0];
-	html = "<div class=\"versionListHeader\">";
-	html += "<div>버전</div>";
-	html += "<div>견적명</div>";
-	html += "<div>담당자</div>";
-	html += "<div>견적일자</div>";
-	html += "<div>금액</div>";
-	html += "</div>";
+	estimateFormInit(){
+		let selectAddress, writer, date, pdfMainContentAddBtns;
+		selectAddress = this.copyContainer.getElementsByClassName("selectAddress")[0].querySelector("select");
+		writer = this.copyContainer.querySelector("#writer");
+		date = this.copyContainer.querySelector("#date");
+		pdfMainContentAddBtns = this.copyContainer.getElementsByClassName("pdfMainContentAddBtns")[0];
 	
-	for(x = storage.estimateVerList.length-1 ; x >= 0 ; x--){
-		let total = 0;
-
-		for(let i = 0; i < storage.estimateVerList[x].related.estimate.items.length; i++){
-			let item = storage.estimateVerList[x].related.estimate.items[i];
-			total += (item.price * item.quantity) + (item.price * item.quantity * 0.1);
-		}
-
-		html += "<div class=\"versionListBody\" onclick=\"clickedEstmVer(this)\" data-idx=\"" + x + "\">";
-		html += "<div style=\"justify-content: center;\">" + storage.estimateVerList[x].version + "</div>";
-		html += "<div style=\"justify-content: left;\">" + storage.estimateVerList[x].title + "</div>";
-		html += "<div style=\"justify-content: center;\">" + storage.user[storage.estimateVerList[x].writer].userName + "</div>";
-		html += "<div style=\"justify-content: center;\">" + dateFormat(storage.estimateVerList[x].date) + "</div>";
-		html += "<div style=\"justify-content: right;\">" + numberFormat(total) + "</div>";
-		html += "</div>";
-	}
-
-	versionList.innerHTML = html;
-} // End of drawEstmList()
-
-function clickedAdd(){
-	let containerTitle, crudAddBtn, hideArr, showArr;
-	containerTitle = document.getElementById("containerTitle");
-	crudAddBtn = document.getElementsByClassName("crudAddBtn")[0];
-	hideArr = ["estimateList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "versionPreview", "crudUpdateBtn", "estimatePdf"];
-	showArr = [
-		{
-			element: "detailBackBtn",
-			display: "flex",
-		},
-		{
-			element: "crudAddBtn",
-			display: "flex",
-		},
-		{
-			element: "addPdfForm",
-			display: "block",
-		},
-	];
-
-	containerTitle.innerText = "견적추가";
-	crudAddBtn.innerText = "새견적추가";
-	crudAddBtn.setAttribute("onclick", "estimateInsert();");
-	ckeditor.config.readOnly = false;
-	window.setTimeout(setEditor, 100);
-	setViewContentsCopy(hideArr, showArr);
-	estimateFormInit();
-}
-
-function clickedUpdate(){
-	let containerTitle, crudAddBtn, crudUpdateBtn, hideArr, showArr;
-	containerTitle = document.getElementById("containerTitle");
-	crudAddBtn = document.getElementsByClassName("crudAddBtn")[0];
-	crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
-	hideArr = ["estimateList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "versionPreview", "estimatePdf"];
-	showArr = [
-		{
-			element: "detailBackBtn",
-			display: "flex",
-		},
-		{
-			element: "crudAddBtn",
-			display: "flex",
-		},
-		{
-			element: "crudUpdateBtn",
-			display: "flex",
-		},
-		{
-			element: "addPdfForm",
-			display: "block",
-		},
-	];
-	containerTitle.innerText = "견적수정";
-	crudAddBtn.innerText = "새견적추가";
-	crudAddBtn.setAttribute("onclick", "estimateInsert();");
-	crudUpdateBtn.setAttribute("onclick", "estimateUpdate();");
-	setViewContentsCopy(hideArr, showArr);
-	storage.estmDetail = storage.estmVerList[storage.detailIdx];
-	estimateFormInit();
-}
-
-// 견적 추가버튼 클릭시 실행되는 한수
-function closeAdd(){
-	let listContent, addPdfForm, bodyTitle, bodyTitleFnc;
-	listContent = $(".listContent");
-	addPdfForm = $(".addPdfForm");
-	bodyTitle = $(".bodyTitle");
-	bodyTitleFnc = $(".bodyTitleFnc div");
-	bodyTitle.text("견적목록");
-	bodyTitleFnc.eq(0).text("추가");
-	bodyTitleFnc.eq(0).attr("onclick", "clickedAdd();");
-	bodyTitleFnc.eq(0).hide();
-	bodyTitleFnc.eq(1).hide();
-	listContent.show();
-	addPdfForm.hide();
-	storage.estmDetail = undefined;
-
-	if(storage.thisEle !== undefined){
-		clickedEstmVer(storage.thisEle);
-	}
-
-	$(".mainPdf").eq(1).find("input").val("");
-	$(".mainPdf").eq(1).find(".pdfMainContentTitle").remove();
-	$(".mainPdf").eq(1).find(".pdfMainContentItem").remove();
-} 
-
-// $(document).ready(() => {
-
-// 	// 초기화가 끝난 후 준비단계에서 실행되는 함수
-// 	prepare = function(){
-// 		getEstimateBasic();
-// 		getEstimateItem();
-// 		// getEstimateList();
-// 	} // End of prepare()
-
-//     init();
-// 	storage.estimate = {};
-// 	storage.ac = {};
-// 	storage.ac.mouseon = false;
-
-// 	storage.ac.set = function(el, fncName){
-// 		let x, html, acCnt = document.getElementsByClassName("ac_cnt")[0];
-
-// 		if(storage.ac.searched === undefined || storage.ac.searched.length === 0){
-// 			storage.ac.close();
-// 			return;
-// 		}
-
-// 		storage.ac.fncName = fncName;
-
-// 		// 자동완성 타겟 저장해두기
-// 		storage.ac.target = el;
-
-// 		// 자동완성 컨테이너 위치 잡기
-// 		acCnt.style.color = "initial";
-// 		acCnt.style.display = "initial";
-// 		x = [];
-// 		x[0] = el.offsetTop; // input 엘리먼트의 세로 위치
-// 		x[1] = el.offsetLeft; // input 엘리먼트의 가로 위치
-// 		x[2] = document.defaultView.getComputedStyle(el).getPropertyValue("width"); // input 엘리먼트의 너비
-// 		x[2] = Math.floor(x[2].replace("px","") * 1) - 5;
-// 		x[3] = el.offsetHeight; // input 엘리먼트의 높이
-// 		x[4] = x[0] + x[3] + 5; // ac 컨테이너의 세로 위치
-// 		x[5] = x[1]; // ac 컨테이너의 가로 위치
-// 		x[6] = x[2]; // ac 컨테이너의 너비
-// 		acCnt.style.top = x[4] + "px";
-// 		acCnt.style.left = x[5] + "px";
-// 		acCnt.style.width = x[6] + "px";
-
-// 		// 자동완성 내용 생성
-// 		html = "";
-// 		for(x = 0 ; x < storage.ac.searched.length ; x++)	html += ("<div data-value=\"" + storage.ac.searched[x][0] + "\" onclick=\"storage.ac.target.dataset.value=this.dataset.value;storage.ac.confirm(" + storage.ac.fncName + ")\">" + storage.ac.searched[x][1] + "</div>");
-		
-// 		acCnt.innerHTML = html;
-// 	} // End of storage.ac.set()
-
-// 	storage.ac.close = function(){
-// 		let acCnt = document.getElementsByClassName("ac_cnt")[0];
-// 		acCnt.style.display = "none";
-// 		storage.ac.searched = undefined;
-// 		storage.ac.select = undefined;
-// 		storage.ac.target = undefined;
-// 		storage.ac.mouseon = false;
-// 		storage.ac.idx = undefined;
-// 		storage.ac.fncName = undefined;
-// 	} // End of storage.ac.close()
-
-// 	storage.ac.move = function(v, fnc){
-// 		let x, color = "#eaeaff", acCnt = document.getElementsByClassName("ac_cnt")[0];
-// 		if(storage.ac.searched === undefined || storage.ac.searched.length === 0 || isNaN(v) || v === "" || v === 0)	return;
-// 		storage.ac.select = storage.ac.select === undefined ? storage.ac.searched.length : storage.ac.select;
-		
-// 		if(v > 0)		storage.ac.select++;
-// 		else if(v < 0)	storage.ac.select--;
-		
-// 		storage.ac.select = storage.ac.select < 0 ? storage.ac.searched.length - 1 : storage.ac.select >= storage.ac.searched.length ? 0 : storage.ac.select;
-
-// 		// 선택된 항목 하이라이트
-// 		for(x = 0 ; x < acCnt.children.length ; x++){
-// 			if(x === storage.ac.select){
-// 				acCnt.children[x].style.backgroundColor = color;
-// 				acCnt.children[x].scrollIntoViewIfNeeded();
-// 			}else acCnt.children[x].style.backgroundColor =  "";
-// 		}
-
-// 		// 지정된 작업 수행
-// 		if(fnc !== undefined)	fnc();
-// 	} // End of storage.ac.move()
-
-// 	storage.ac.confirm = function(fnc){
-// 		// 지정된 작업 수행
-// 		if(fnc !== undefined)	fnc();
-// 		storage.ac.close();
-// 		setDataToPreview();
-// 	}
-
-// 	setTimeout(() => {
-// 		$("#loadingDiv").hide();
-// 		$("#loadingDiv").loading("toggle");
-// 	}, 300);
-// 	storage.page = {"max":0,"current":0,"line":0};
-
-// 	// For Initializing Code . . . . . . .  . . . . 
-// });
-
-// 기본 정보를 세팅하는 함수
-function selectBasicInfo(n){
-	let data = storage.estimateBasic[n];
-	storage.estimate.firmName = data.firmName;
-	storage.estimate.representative = data.representative;
-	storage.estimate.phone = data.phone;
-	storage.estimate.fax = data.fax;
-	storage.estimate.address = data.address;
-	setDataToPreview();
-}
-
-// 견적 추가버튼 클릭시 실행되는 한수
-// function clickedAdd(el){
-// 	let x, cnt, html;
-
-// 	storage.estimate = {};
-// 	cnt = document.getElementsByClassName("estimatePreview")[0];
-// 	document.getElementsByClassName("listContainer")[0].style.display = "none";
-// 	document.getElementsByClassName("eachContainer")[0].style.display = "block";
-
-// 	// 양식 목록
-// 	html = "";
-// 	for(x = 0 ; x < storage.estimateForm.length ; x++){
-// 		html += ("<input type=\"radio\" class=\"estimateFormName\" name=\"estimateFormName\" style=\"display:none;\" id=\"estimateFormName" + x + "\" />");
-// 		html += ("<label onclick=\"selectForm(" + x + ")\" for=\"estimateFormName" + x + "\" data-no=\"" + x + "\" style=\"margin:0 0.5em;\">" + storage.estimateForm[x].name + "</label>");
-// 	}
-// 	cnt = document.getElementsByClassName("formNames")[0];
-// 	cnt.innerHTML = html;
-
-// 	// 견적 기본정보
-// 	html = "";
-// 	for(x in storage.estimateBasic){
-// 		if(x === undefined)	continue;
-// 		console.log(x);
-// 		html += ("<input type=\"radio\" class=\"estimateBasInfo\" name=\"estimateBasInfo\" style=\"display:none;\" id=\"estimateBasInfo" + x + "\" />");
-// 		html += ("<label onclick=\"selectBasicInfo(" + x + ")\" for=\"estimateBasInfo" + x + "\" data-no=\"" + x + "\" style=\"margin:0 0.5em;\">" + storage.estimateBasic[x].name + "</label>");
-// 	}
-// 	cnt = document.getElementsByClassName("basicInfo")[0];
-// 	cnt.innerHTML = html;
-
-// 	// 작성자 등 기본 정보
-// 	cnt.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.innerText = storage.user[storage.my].userName;
-// 	cnt.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.style.textAlign = "center";
-// 	cnt.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.innerText = "공개";
-// 	cnt.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.style.textAlign = "center";
-// }
-
-// 서버에서 견적 양식을 가져오는 함수
-function getEstimateBasic(){
-	let url;
-	url = apiServer + "/api/estimate/basic";
-	$.ajax({
-		"url": url,
-		"method": "get",
-		"dataType": "json",
-		"cache": false,
-		success: (data) => {
-			let form, info, x;
-			if (data.result === "ok") {
-				x = cipher.decAes(data.data);
-				x = JSON.parse(x);
-				form = x.form;
-				info = x.info;
-				for(x = 0 ; x < form.length ; x++)	form[x].form = cipher.decAes(form[x].form);
-				storage.estimateForm = form;
-				storage.estimateBasic = info;
-			} else {
-				msg.set("[getEstimateForm] Fail to get estimate form(s).");
-			}
-		}
-	});
-} // End of getEstimateBasic()
-
-// 서버에서 아이템을 가져오는 함수
-function getEstimateItem(){
-	let url;
-	url = apiServer + "/api/estimate/item/";
-	$.ajax({
-		"url": url,
-		"method": "get",
-		"dataType": "json",
-		"cache": false,
-		success: (data) => {
-			let list;
-			if (data.result === "ok") {
-				list = cipher.decAes(data.data);
-				list = JSON.parse(list);
-				storage.item = list;
-			} else {
-				msg.set("[getEstimateItem] Fail to get item information.");
-			}
-		}
-	});
-} // End of getEstimateItem()
-
-// 견적 양식
-function selectForm(no){
-	let x, h, w, cnt = document.getElementsByClassName("estimatePreview")[0];
-
-	cnt.innerHTML = storage.estimateForm[no].form;
-	// ============= 초기화 ================ 미리보기가 활성화 되어 있지 않은 경우 이를 활성화 하고 기초정보를 세팅함 ================
-	if(cnt.style.display === ""){
-		cnt.style.display = "inline-block";
-		w = storage.estimateForm[no].width;
-		h = storage.estimateForm[no].height;
-		x = document.defaultView.getComputedStyle(cnt).getPropertyValue("width"); // 타겟 컨테이너의 너비값을 가지고 옮
-		cnt.style.height = "calc(" + x + " / " + w + " * " + h + ")" // 타겟 컨테이너의 높이값을 성정함
-		cnt.style.width = x;
-		cnt.style.fontSize = "calc(" + x + " / 120)";
-	}
-
-	no = no === undefined ? 0 : no;
-	storage.estimate.form = storage.estimateForm[no].name;	
-	window.setTimeout(function(){setDataToPreview();},100); // 미리보기 활성화
-	window.setTimeout(function(){passed(1);},200); // 다음 단계 진행 스텝 활성화
-} // End of selectForm()
-
-// 견적명
-function setProject(el){
-	storage.estimate.title = el.value;
-	setDataToPreview(); // 미리보기 
-	passed(1);
-} // End of setProject()
-
-// 담당자
-function inputCip(el){
-	storage.estimate.cip = el.value;
-	setDataToPreview();
-	passed(2);
-} // End of inputCip()
-
-// 자동완성에서 고객사 선택시 실행되는 함수
-function acSelectCustomer(){
-	let t;
-	if(storage.ac.target.dataset.value === undefined || storage.ac.target.dataset.value === ""){
-		storage.estimate.customer = storage.ac.target.value;
-	}else{
-		t = storage.ac.target.dataset.value;
-		storage.estimate.customer = t;
-		storage.ac.target.value = storage.customer[t].name;
-	}
-}
-
-// 고객사 정보 입력시 실행되는 함수
-function inputCustomer(el, e){
-	let x, t, typed, custm, searched = [], fnc;
-	typed = el.value;
-
-	// 입력된 값이 없을 때 초기화 및 종료
-	if(typed === undefined || typed === null || typed.length === 0)	storage.ac.close();
-
-	// ====================== 위/아래 방향키 또는 엔터키 처리 ===========================================
-
-	// ↑ , ↓ 또는 ⏎ 일 때의 처리
-	if(e.key === "ArrowUp" || e.key === "ArrowDown" || e.key === "Enter"){
-
-		if(e.key === "ArrowUp" || e.key === "ArrowDown") { // ◀︎ 위 / 아래 방향키일 때
-			t = e.key === "ArrowUp" ? -1 : 1;
-			fnc = ()=>{storage.ac.target.dataset.value = storage.ac.searched[storage.ac.select][0];}
-			storage.ac.move(t, fnc);
-			return;
-		}else{ // ◀︎ 엔터 키 일때
-			storage.ac.confirm(acSelectCustomer);
-			return;
-		}
-	}
-
-	// ================================ 거래처 검색 및 자동완성 ==================================
-
-	// 입력된 키워드를 바탕으로 검색
-	for(x in storage.customer){
-		custm = storage.customer[x];
-		if(custm.name.includes(typed))	searched.push([x, custm.name]);
-	}
-
-	storage.ac.searched = searched;
-	storage.ac.set(el, "acSelectCustomer");
-
-	passed(2);
-} // End of inputCustomer()
-
-// 자동완성에서 매입처 선택시 실행되는 함수
-function acSelectSupplier(){
-	let t;
-	if(storage.ac.target.dataset.value === undefined || storage.ac.target.dataset.value === ""){
-		storage.estimate.items[storage.ac.idx].supplier = storage.ac.target.value;
-	}else{
-		t = storage.ac.target.dataset.value;
-		storage.estimate.items[storage.ac.idx].supplier = t;
-		storage.ac.target.value = storage.customer[t].name;
-	}
-}
-
-// 자동완성에서 아이템 선택시 실행되는 함수
-function acSelectItem(){
-	let t, x;
-	if(storage.ac.target.dataset.value === undefined || storage.ac.target.dataset.value === ""){
-		storage.estimate.items[storage.ac.idx].supplier = storage.ac.target.value;
-	}else{
-		t = storage.ac.target.dataset.value;
-		storage.estimate.items[storage.ac.idx].supplier = t;
-		for(x = 0 ; x < storage.item.length ; x++){
-			if(storage.item[x].no == t)	break;
-		}
-		storage.ac.target.value = storage.item[x].product;
-	}
-}
-
-// 매입처 정보 입력시 실행되는 함수
-function inputSupplier(el, e){
-	let x, t, typed, supplier, searched = [], fnc, idx, els;
-	typed = el.value;
-
-	// 입력된 값이 없을 때 초기화 및 종료
-	if(typed === undefined || typed === null || typed.length === 0)	storage.ac.close();
-
-	// 현재 위치의 인덱스 찾기
-	t = el.parentElement.parentElement;
-	els = document.getElementsByClassName("estimateItem");
-	for(x = 0 ; x < els.length ; x++){
-		if(t === els[x]){
-			idx = x;
-			storage.ac.idx = x;
-		}
-	}	
-
-	// ====================== 위/아래 방향키 또는 엔터키 처리 ===========================================
-
-	// ↑ , ↓ 또는 ⏎ 일 때의 처리
-	if(e.key === "ArrowUp" || e.key === "ArrowDown" || e.key === "Enter"){
-
-		if(e.key === "ArrowUp" || e.key === "ArrowDown") { // ◀︎ 위 / 아래 방향키일 때
-			t = e.key === "ArrowUp" ? -1 : 1;
-			fnc = ()=>{storage.ac.target.dataset.value = storage.ac.searched[storage.ac.select][0];}
-			storage.ac.move(t, fnc);
-			return;
-		}else{ // ◀︎ 엔터 키 일때
-			storage.ac.confirm(acSelectSupplier);
-			return;
-		}
-	}
-
-	// ================================ 거래처 검색 및 자동완성 ==================================
-
-	// 입력된 키워드를 바탕으로 검색
-	for(x in storage.customer){
-		supplier = storage.customer[x];
-		if(supplier.name.includes(typed))	searched.push([x, supplier.name]);
-	}
-
-	storage.ac.searched = searched;
-	storage.ac.set(el, "acSelectSupplier");
-
-	setDataToPreview();
-} // End of inputSupplier()
-
-// 아이템 정보 입력시 실행되는 함수
-function inputItem(el, e){
-	let x, t, typed, item, searched = [], fnc, idx, els;
-	typed = el.value;
-
-	// 입력된 값이 없을 때 초기화 및 종료
-	if(typed === undefined || typed === null || typed.length === 0)	storage.ac.close();
-
-	// 현재 위치의 인덱스 찾기
-	t = el.parentElement.parentElement;
-	els = document.getElementsByClassName("estimateItem");
-	for(x = 0 ; x < els.length ; x++){
-		if(t === els[x]){
-			idx = x;
-			storage.ac.idx = x;
-		}
-	}	
-
-	// ====================== 위/아래 방향키 또는 엔터키 처리 ===========================================
-
-	// ↑ , ↓ 또는 ⏎ 일 때의 처리
-	if(e.key === "ArrowUp" || e.key === "ArrowDown" || e.key === "Enter"){
-
-		if(e.key === "ArrowUp" || e.key === "ArrowDown") { // ◀︎ 위 / 아래 방향키일 때
-			t = e.key === "ArrowUp" ? -1 : 1;
-			fnc = ()=>{storage.ac.target.dataset.value = storage.ac.searched[storage.ac.select][0];}
-			storage.ac.move(t, fnc);
-			return;
-		}else{ // ◀︎ 엔터 키 일때
-			storage.ac.confirm(acSelectItem);
-			return;
-		}
-	}
-
-	// ================================ 거래처 검색 및 자동완성 ==================================
-
-	// 입력된 키워드를 바탕으로 검색
-	for(x = 0 ; x < storage.item.length ; x++){
-		item = storage.item[x];
-		if(item.product.includes(typed))	searched.push([item.no, item.product]);
-	}
-
-	storage.ac.searched = searched;
-	storage.ac.set(el, "acSelectItem");
-
-	setDataToPreview();
-} // End of inputItem()
-
-
-
-// 세팅된 데이터를 미리보기에 반영하는 함수
-function setDataToPreview(){
-	let x, t, items, each, sum, dt, vat = 0, cnt = document.getElementsByClassName("estimatePreview")[0];
-
-	if(cnt === undefined)	return;
-	
-	// =============== 견적일자 =======================
-	if(storage.estimate.date === undefined)	storage.estimate.date = (new Date()).getTime();
-	dt = new Date(storage.estimate.date);
-	x = dt.getFullYear() + "년 ";
-	x += ((dt.getMonth() + 1) + "월 ");
-	x += (dt.getDate() + "일");
-	cnt.getElementsByClassName("estimate_date")[0].innerText = x;
-
-	// =========================== 견적명 =========================
-	t = storage.estimate.title;
-	cnt.getElementsByClassName("estimate_project")[0].innerText = t === undefined ? "" : t;
-
-	// ========================== 담당자 및 고객사 ==========================
-	t = [];
-	t[0] = storage.estimate.cip;
-	if(t[0] === undefined)	t[0] = "";
-	
-	t[1] = storage.estimate.customer;
-	if(t[1] !== undefined){
-		t[1] =  storage.customer[t[1]];
-		t[1] = t[1] !== undefined ? t[1].name : storage.estimate.customer;
-	}else t[1] = "";
-	t[2] = t[1] + " " + t[0];
-	t[2] = t[2].trim();
-	cnt.getElementsByClassName("estimate_receiver")[0].innerText = t === undefined ? "" : t[2];
-
-	// ====================================== 회사정보 및 담당자 정보 ======================================
-	document.getElementsByClassName("company_name")[0].innerText = storage.estimate.firmName === undefined ? "" : storage.estimate.firmName;
-	document.getElementsByClassName("company_ceo")[0].innerText = storage.estimate.representative === undefined ? "" : storage.estimate.representative;
-	document.getElementsByClassName("company_address")[0].innerText = storage.estimate.address === undefined ? "" : storage.estimate.address;
-	document.getElementsByClassName("company_contact")[0].innerText = (storage.estimate.phone === undefined ? "" : storage.estimate.phone) + " / " + (storage.estimate.fax === undefined ? "" : storage.estimate.fax);
-	document.getElementsByClassName("estimate_sender")[0].innerText = storage.user[storage.my].userName + " " + storage.userRank[storage.user[storage.my].rank][0];
-
-	// ====================== 견적 유효기간 ========================
-	t = storage.estimate.exp;
-	t = t === "1w" ? "견적일로 부터 1주일" : t === "2w" ? "견적일로 부터 2주일" : t === "4w" ? "견적일로 부터 4주일" : t === "1m" ? "견적일로 부터 1개월" : "";
-	cnt.getElementsByClassName("estiomate_expiration_period")[0].innerText = t;
-
-	// ====================== 하단 주석 ========================
-	t = storage.estimate.remarks;
-	t = t === undefined ? "" : t;
-	cnt.getElementsByClassName("estimate_remark")[0].innerHTML = t;
-
-	// =========== 개별 아이템들 ============ 저장된 값들을 바탕으로 견적서에 그려 넣음 =============
-	html = "<div style=\"display:grid;border-top:border-top: 1px solid black;\"><div>No</div><div>구 분</div><div>품 명 / 규 격</div><div>수 량</div><div>소비자가</div><div>공급단가</div><div>합계</div><div>비고</div></div>";
-	sum = 0;
-	items = storage.estimate.items === undefined ? [] : storage.estimate.items;
-	if(storage.estimate.form == "기본견적서"){
-		for(x = 0 ; x < items.length ; x++){
-			each = items[x];
-			t = each.quantity * each.price;
-			html += ("<div style=\"display:grid;\"><div>" + (x+1) + "</div>");
-			html += ("<div>" + each.div + "</div>");
-			html += ("<div><span style=\"font-weight:bold;\">" + each.title + "</span><br />" + each.spec + "</div>");
-			html += ("<div>" + each.quantity.toLocaleString() + "</div>");
-			html += ("<div></div>");
-			html += ("<div>" + each.price.toLocaleString() + "</div>");
-			html += ("<div>" + t.toLocaleString() + "</div>");
-			html += ("<div>" + each.remark + "</div></div>");
-			sum += (each.quantity * each.price);
-			vat += (each.vat ? Math.round(each.quantity * each.price / 10) : 0);
-		}
-	}else{
-		for(x = 0 ; x < items.length ; x++){
-			each = items[x];
-			t = each.quantity * each.price;
-			html += ("<div style=\"display:grid;background-color:#feff75;\"><div>" + (x+1) + "</div><div style=\"grid-column-start:2;grid-column-end:4;font-weight:bold;\">" + each.title + "</div><div></div><div></div><div></div><div>" + t.toLocaleString() + "</div><div></div></div>");
-			html += ("<div style=\"display:grid;\"><div>" + (x+1) + "</div>");
-			html += ("<div>" + each.div + "</div>");
-			html += ("<div>" + each.spec + "</div>"); // ===
-			html += ("<div>" + each.quantity.toLocaleString() + "</div>");
-			html += ("<div></div>");
-			html += ("<div>" + each.price.toLocaleString() + "</div>");
-			html += ("<div>" + t.toLocaleString() + "</div>");
-			html += ("<div>" + each.remark + "</div></div>");
-			sum += (each.quantity * each.price);
-			vat += (each.vat ? Math.round(each.quantity * each.price / 10) : 0);
-		}
-	}
-	
-	// ====================== 중간 부분 ===== 견적금액  ========================
-	t = [vat, sum + vat];
-	cnt.getElementsByClassName("estimate_total_amount")[0].innerText = "₩ " + t[1].toLocaleString()
-
-	// ====================== 항목 하단 합계 금액 ========================
-	html += ("<div style=\"display:grid;\"><div style=\"grid-column-start:1;grid-column-end:7;\">공급가합계</div><div style=\"display:initial;text-align:right;\">" + sum.toLocaleString() + "</div><div style=\"border-right:none;\"></div></div>");
-	html += ("<div style=\"display:grid;\"><div style=\"grid-column-start:1;grid-column-end:7;\">부가가치세</div><div style=\"display:initial;text-align:right;\">" + t[0].toLocaleString() + "</div><div style=\"border-right:none;\"></div></div>");
-	html += ("<div style=\"display:grid;\"><div style=\"grid-column-start:1;grid-column-end:7;\">총 금 액</div><div style=\"display:initial;text-align:right;\">" + t[1].toLocaleString() + "</div><div style=\"border-right:none;\"></div></div>");
-
-	document.getElementsByClassName("estimate_content")[0].innerHTML = html;
-} // End of setDataToPreview() /////////////////////////////////////////////////////////////////////////////////
-
-
-// 입력된 항목 정보를 반영하는 함수
-function setItem(el, e){
-	let x, y, items, els, each, sum, t, regex = /[^0-9]/g, vatInclude;
-
-	// 전처리
-	if(el.dataset !== undefined){
-		if(el.dataset.type === "number"){
-			t = el.value;
-			t = t.replaceAll(regex, "");
-			t = t.length > 0 ? t*1 : t;
-			if((typeof t) === "number")	el.value = t.toLocaleString();
-			else 			el.value = t;
-		}else if(el.dataset.type === "customer"){
-			inputSupplier(el, e);
-		}else if(el.dataset.type === "item"){
-			inputItem(el, e);
-		}
-	}
-	
-	// 항목 입력 엘리먼트들의 값을 전역 변수에 저장함 
-	items = [];
-	els = document.getElementsByClassName("estimateItem");
-
-	for(x = 0 ; x < els.length ; x++){
-		t = els[x].children[1].getElementsByTagName("input");
-		each = {};
-		sum = 0;
-		each.div = t[0].value;
-		each.title = t[1].value;
-		each.supplier = t[2].dataset.value;
-		each.item = t[3].dataset.value;
-		each.quantity = t[4].value.replaceAll(",","")*1;
-		each.price = t[5].value.replaceAll(",","")*1;
-		each.vat = t[6].checked;
-		each.spec = els[x].children[1].getElementsByTagName("textarea")[0].value.replaceAll("\n", "<br />");
-		each.remark = els[x].children[1].getElementsByTagName("textarea")[1].value.replaceAll("\n", "<br />");
-		items.push(each);
-		t = each.vat ? [Math.round((each.quantity * each.price) * 0.1), Math.round((each.quantity * each.price) * 1.1)]
-			: [0, each.quantity * each.price];
-		els[x].children[1].children[15].children[2].innerText = t[0].toLocaleString();
-		els[x].children[1].children[17].innerText = t[1].toLocaleString();
-	}
-
-	storage.estimate.items = items;
-	setDataToPreview();
-} // End of setItem();
-
-
-function selectAcCustomer(no, fnc){
-	let acCnt, customer, t;
-	
-	if(no === null || no === undefined || no === "" || isNaN(no) || storage.ac.searched === undefined || storage.ac.searched.length <= no)	return;
-
-	fnc(no);
-} // End of selectAcCustomer()
-
-function passed(step){
-	let x, els, chk;
-	if(step === 1){
-		els = [];
-		els[0] = document.getElementsByClassName("estimateFormName");
-		els[1] = document.getElementsByClassName("estimateProject")[0];
-		chk = false;
-		for(x = 0 ; x < els[0].length ; x++)	if(els[0][x].checked)	chk = true;
-		if(els[1].value !== "" && chk){
-			document.getElementsByClassName("eachContent")[0].children[0].children[1].className = "passed";
-			els = document.getElementsByClassName("eachContent")[0].children[0].children[1].getElementsByTagName("input");
-			for(x = 0 ; x < els.length ; x++)	els[x].disabled = false;
-			els = document.getElementsByClassName("eachContent")[0].children[0].children[1].getElementsByTagName("textarea");
-			for(x = 0 ; x < els.length ; x++)	els[x].disabled = false;
-		}
-	}else if(step === 2){
-		els = document.querySelector("#bodyContent > div.eachContainer > div > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2)").getElementsByTagName("input");
-		if(els[0].value !== "" && els[1].value !== "" && (els[2].checked || els[3].checked || els[4].checked || els[5].checked)){
-			document.querySelector("#bodyContent > div.eachContainer > div > div:nth-child(1) > div:nth-child(3)").className = "passed";
-			els = document.getElementsByClassName("eachContent")[0].children[0].children[2].getElementsByTagName("input");
-			for(x = 0 ; x < els.length ; x++)	els[x].disabled = false;
-			els = document.getElementsByClassName("eachContent")[0].children[0].children[2].getElementsByTagName("textarea");
-			for(x = 0 ; x < els.length ; x++)	els[x].disabled = false;
-			document.getElementsByClassName("bodyTitleFnc")[1].children[0].style = "block";
-		}
-	}
-} // End of passed()
-
-// 견적 항목을 추가하는 한수
-function addEstimateItem(el){
-	let html, t, cnt = el.parentElement.parentElement.parentElement.parentElement, x = storage.estimate.items.length;
-	html = "<div style=\"width:15px;\"></div><div><div>구 분</div><input onkeyup=\"setItem(this)\" /><div>타이틀</div><input onkeyup=\"setItem(this)\" style=\"border-right:1px solid #c3c3c3;\" /><div>매입처</div><input onkeyup=\"setItem(this, event)\" data-type=\"customer\" /><div>아이템</div><input onkeyup=\"setItem(this, event)\" data-type=\"item\" style=\"border-right:1px solid #c3c3c3;\" /><div>스 펙</div><div style=\"grid-column-start: 2;grid-column-end: 5;border-right:1px solid #c3c3c3;\"><textarea  id=\"spec\" onkeyup=\"setItem(this)\" style=\"width:100%;height:100%\"></textarea></div><div>수 량</div><input onkeyup=\"setItem(this)\" data-type=\"number\" /><div>단 가</div><input onkeyup=\"setItem(this)\" data-type=\"number\" style=\"border-right:1px solid #c3c3c3;\" /><div>VAT</div><div><label style=\"width:20%;\"><input type=\"radio\" name=\"vatInclude" + x +"\" checked onchange=\"setItem(this)\" />과세</label><label style=\"width:30%;\"><input type=\"radio\" name=\"vatInclude" + x + "\" onchange=\"setItem(this)\" />비과세</label><div style=\"display:inline-block;width:50%;text-align:right\"></div></div><div>합 계</div><div style=\"border-right:1px solid #c3c3c3;\"></div><div>비 고</div><textarea onkeyup=\"setItem(this)\" style=\"grid-column-start: 2;grid-column-end: 5;border-right:1px solid #c3c3c3;\"></textarea></div>";
-	t = document.createElement("div");
-	t.className = "estimateItem";
-	t.innerHTML = html;
-	cnt.appendChild(t);
-} // End of addEstimateItem()
-
-// 견적 항목을 제거하는 한수
-function removeEstimateItem(el){
-	let els = document.getElementsByClassName("estimateItem");
-	if(els.length > 1){
-		els[els.length - 1].remove();	
-		storage.estimate.items.pop()
-	}
-} // End of removeEstimateItem()
-
-// 견적 데이터를 인풋 엘리먼트에 넣어주는 함수
-function setDataToInput(estimate){
-	let x, t, v, el;
-
-	// 양식 활성화
-	v = estimate.form;
-	el = document.getElementsByClassName("formNames")[0].getElementsByTagName("label");
-	for(x = 0 ; x < el.length ; x++){
-		if(el[x].innerText == v){
-			el[x].click();
-			break;
-		}
-	}
-	// 견적명
-	v = estimate.title;
-	el = document.getElementsByClassName("estimateProject")[0];
-	el.value = v;
-	passed(1);
-
-	// 업체명 
-	v = estimate.title;
-	el = document.getElementsByClassName("estimateInput")[0];
-	el.dataset.value = v;
-	t = storage.customer[v];
-	t = t !== undefined ? t.name : v;
-	el.value = t;
-
-	// 업체 담당자
-	v = estimate.title;
-	el = document.getElementsByClassName("estimateInput")[1];
-	el.value = v;
-
-	// 유효기간
-	v = estimate.exp;
-	el = document.getElementsByName("rExp");
-	for(x = 0 ; x < el.length ; x++)	if(el[x].value == v)	el[x].checked = true;
-
-	// 하단 비고
-	v = estimate.remarks;
-	el = document.getElementsByClassName("formExp")[0].nextElementSibling.nextElementSibling;
-	el.value = v.replaceAll("<br />","\n");
-	passed(2);
-
-	// ======================== 견적 항목 입력 ========================
-
-	// 아이템 수 만큼 엘리먼트 만들어두기
-	el = document.getElementsByClassName("addBtn")[0];
-	for(x = 1 ; x < estimate.items.length ; x++)	addEstimateItem(el);
-
-	// ===== for loop =====
-	el = document.getElementsByClassName("estimateItem");
-	for(x = 0 ; x < estimate.items.length ; x++){
-
-		// 구분
-		v = estimate.items[x].div;
-		el[x].children[1].children[1].value = v;
-
-		// 타이틀
-		v = estimate.items[x].title;
-		el[x].children[1].children[3].value = v;
-
-		// 매입처
-		v = estimate.items[x].supplier;
-		el[x].children[1].children[5].dataset.value = v;
-		t = storage.customer[v];
-		if(t !== undefined && t.name !== undefined)	el[x].children[1].children[5].value = t.name;
-		else										el[x].children[1].children[5].value = v;
-
-		// 아이템
-		v = estimate.items[x].item;
-		el[x].children[1].children[7].dataset.value = v;
-		for(t = 0 ; t < storage.item.length ; t++){
-			if(t === undefined) continue;
-			if(storage.item[t].no = v)	break;
-		}
-		t = storage.item[t];
-		if(t !== undefined && t.no !== undefined)	el[x].children[1].children[7].value = t.product;
-		else										el[x].children[1].children[7].value = v;
-
-		// 스펙
-		v = estimate.items[x].spec;
-		el[x].children[1].children[9].value = v;
-
-		// 수량
-		v = estimate.items[x].quantity;
-		el[x].children[1].children[11].value = v;
-
-		// 가격
-		v = estimate.items[x].price;
-		el[x].children[1].children[13].value = v;
-
-		// 과세여부
-		v = estimate.items[x].vat;
-		if(v)	el[x].children[1].children[15].children[0].children[0].checked;
-		else	el[x].children[1].children[15].children[1].children[0].checked;
-
-		// 비고
-		v = estimate.items[x].remark;
-		el[x].children[1].children[19].value = v.replaceAll("<br />","\n");		
-	}
-
-	storage.estimate = estimate;
-	setDataToPreview();
-} // End of setDataToInput()
-
-// 견적 정보를 저장하는 함수
-function saveEstimate(){
-	let url, data, width = 0, height = 0, x;
-	url = apiServer + "/api/estimate";
-	data = storage.estimate;
-
-	for(x = 0 ; x < storage.estimateForm.length ; x++){
-		if(storage.estimateForm[x].name === storage.estimate.form){
-			height = storage.estimateForm[x].height;
-			width = storage.estimateForm[x].width;
-			break;
-		}
-	}
-
-	data.doc = document.getElementsByClassName("estimatePreview")[0].innerHTML.replaceAll("\r","").replaceAll("\n","");
-	data.width = width;
-	data.height = height;
-	data.no = null;
-	data.version = 1;
-	data.related = {};
-	data.related.parent = "empty:0000";
-	data.related.previous = "empty:0000";
-	data.related.next = ["empty:0000","empty:0000"];
-	data = JSON.stringify(data);
-	data = cipher.encAes(data);
-
-	$.ajax({
-		"url": url,
-		"data":data,
-		"method": "post",
-		"dataType": "json",
-		"contentType":"text/plain",
-		"cache": false,
-		success: (data) => {
-			if (data.result === "ok") {
-				console.log(" = = = O K = = = ");
-			} else {
-				console.log(data.msg);
-			}
-		}
-	});
-} // End of saveEstimate()
-
-
-// 견적 정보를 가져하는 함수
-function getEstimateList(){
-	let url;
-	url = apiServer + "/api/estimate";
-
-	$.ajax({
-		"url": url,
-		"method": "get",
-		"dataType": "json",
-		"cache": false,
-		success: (data) => {
-			let list;
-			if (data.result === "ok") {
-				list = data.data;
-				list = cipher.decAes(list);
-				storage.estmList = JSON.parse(list);
-				drawEstmList();
-				addSearchList();
-			} else {
-				console.log(data.msg);
-			}
-		}
-	});
-} // End of getEstimateList()
-
-// End of getEstimateList()
-
-function dateFormat(l){
-	let str = "", dt;
-	if(l === undefined || l === null || isNaN(l))	return "";
-	dt = new Date(l);
-	str += (dt.getFullYear() + ".");
-	str += ((dt.getMonth()+1) + ".");
-	str += (dt.getDate());
-	return str;
-} // End of dateFormat()
-
-function estimateInsert(){
-	if($("#date").val() === ""){
-		msg.set("견적일자를 입력해주세요.");
-		$("#date").focus();
-		return false;
-	}else if($("#title").val() === ""){
-		msg.set("사업명을 입력해주세요.");
-		$("#title").focus();
-		return false;
-	}else if($("#customer").val() === ""){
-		msg.set("고객사를 입력해주세요.");
-		$("#customer").focus();
-		return false;
-	}else if(!validateAutoComplete($("#customer").val(), "customer")){
-		msg.set("조회된 매출처가 없습니다.\n다시 확인해주세요.");
-		$("#customer").focus();
-		return false;
-	}else if($("#cip").val() === ""){
-		msg.set("고객사 담당자를 입력해주세요.");
-		$("#cip").focus();
-		return false;
-	}else if(!validateAutoComplete($("#cip").val(), "cip")){
-		msg.set("조회된 매출처가 없습니다.\n다시 확인해주세요.");
-		$("#cip").focus();
-		return false;
-	}else if($("#exp").val() === ""){
-		msg.set("유효기간을 입력해주세요.");
-		$("#exp").focus();
-		return false;
-	}else if($(".pdfMainContainer").find(".pdfMainContentItem").length < 1){
-		msg.set("항목을 1개 이상 추가하여 입력해주세요.");
-		return false;
-	}else{
-		let address, cip, customer, date, exp, fax, firmName, phone, representative, title, pdfMainContentTitle, pdfMainContentItem, addPdfForm, items, form, datas;
-		pdfMainContentTitle = $(".pdfMainContainer").find(".pdfMainContentTitle");
-		pdfMainContentItem = $(".pdfMainContainer").find(".pdfMainContentItem");
-		remarks = CKEDITOR.instances.remarks.getData().replaceAll("\n", "");
-		address = $(".address").val();
-		cip = $("#cip").val();
-		customer = $("#customer").data("value").toString();
-		date = new Date($("#date").val()).getTime();
-		exp = $("#exp").val();
-		fax = $("#fax").val();
-		firmName = $("#firmName").val();
-		phone = $("#phone").val();
-		representative = $("#representative").val();
-		title = $("#title").val();
-		items = [];
-		
-		if(pdfMainContentTitle.length > 0){
-			form = "서브타이틀";
-		}else{
-			form = "기본견적서";
+		let html = "";
+		for(let index in storage.estimateBasic){
+			html += "<option value=\"" + index + "\">" + storage.estimateBasic[index].name + "</option>";
 		}
 	
-		for(let i = 0; i < pdfMainContentItem.length; i++){
-			let item = $(pdfMainContentItem[i]);
-			let textareaId = item.find(".itemSpec").children().attr("id");
-			let itemTitle = item.prevAll(".pdfMainContentTitle").eq(0).find(".subTitle").children().val();
-			let price;
+		selectAddress.innerHTML = html;
+		writer.value = storage.user[storage.my].userName;
+		date.value = new Date().toISOString().substring(0, 10);
 	
-			if($("[name=\"vat\"]:checked").data("value")){
-				let tax = parseInt(item.find(".itemTotal").html().replaceAll(",", "") / 10);
-				price = parseInt(item.find(".itemTotal").html().replaceAll(",", "")) + parseInt(tax);
-			}else{
-				price = parseInt(item.find(".itemTotal").html().replaceAll(",", ""));
-			}
-	
-			if(itemTitle === undefined){
-				itemTitle = "";
-			}
-	
-			let itemDatas = {
-				"div": item.find(".itemDivision").children().val(),
-				"price": parseInt(item.find(".itemTotal").html().replaceAll(",", "")), 
-				"quantity": parseInt(item.find(".itemQuantity").children().val()),
-				"remark": item.find(".itemRemarks").children().val(),
-				"spec": CKEDITOR.instances[textareaId].getData().replaceAll("\n", ""),
-				"item": "1100041",
-				"supplier": $("#customer").data("value").toString(),
-				"title": itemTitle,
-				"vat": $("[name=\"vat\"]:checked").data("value"),
-			};
-			items.push(itemDatas);
-		}
-	
-		insertCopyPdf();
-		
-		setTimeout(() => {
-			addPdfForm = $(".addPdfForm");	
-		
-			datas = {
-				"doc": addPdfForm.html().replaceAll("\r","").replaceAll("\n",""),
-				"address": address,
-				"cip": cip,
-				"customer": customer,
-				"date": date,
-				"exp": exp,
-				"fax": fax,
-				"firmName": firmName,
-				"form": form,
-				"items": items,
-				"phone": phone,
-				"representative": representative,
-				"title": title,
-				"width": 210,
-				"height": 297,
-				"no": null,
-				"version": 1,
-				"related": {
-					"parent": null,
-					"previous": null,
-					"next": [null],
-					"estimate": {
-						"doc": addPdfForm.html().replaceAll("\r","").replaceAll("\n",""),
-						"address": address,
-						"cip": cip,
-						"customer": customer,
-						"date": date,
-						"exp": exp,
-						"fax": fax,
-						"firmName": firmName,
-						"form": form,
-						"items": items,
-						"phone": phone,
-						"representative": representative,
-						"title": title,
-						"width": 210,
-						"height": 297,
-						"no": null,
-						"version": 1,
-						"remarks": remarks,
-					}
-				},
-				"remarks": remarks,
-			};
-		
-			datas = JSON.stringify(datas);
-			datas = cipher.encAes(datas);
-		
-			$.ajax({
-				url: "/api/estimate",
-				method: "post",
-				data: datas,
-				dataType: "json",
-				contentType: "text/plain",
-				success: (result) => {
-					location.reload();
-					msg.set("등록되었습니다.");
-				},
-				error: () => {
-					msg.set("에러입니다.");
-				}
-			});
-		}, 300)
-	}
-}
+		if(storage.estmDetail !== undefined){
+			for(let key in storage.estmDetail.related.estimate){
+				let keyId = this.copyContainer.querySelector("#" + key);
 
-function estimateUpdate(){
-	if($("#date").val() === ""){
-		msg.set("견적일자를 입력해주세요.");
-		$("#date").focus();
-		return false;
-	}else if($("#title").val() === ""){
-		msg.set("사업명을 입력해주세요.");
-		$("#title").focus();
-		return false;
-	}else if($("#customer").val() === ""){
-		msg.set("고객사를 입력해주세요.");
-		$("#customer").focus();
-		return false;
-	}else if(!validateAutoComplete($("#customer").val(), "customer")){
-		msg.set("조회된 매출처가 없습니다.\n다시 확인해주세요.");
-		$("#customer").focus();
-		return false;
-	}else if($("#cip").val() === ""){
-		msg.set("고객사 담당자를 입력해주세요.");
-		$("#cip").focus();
-		return false;
-	}else if(!validateAutoComplete($("#cip").val(), "cip")){
-		msg.set("조회된 매출처가 없습니다.\n다시 확인해주세요.");
-		$("#cip").focus();
-		return false;
-	}else if($("#exp").val() === ""){
-		msg.set("유효기간을 입력해주세요.");
-		$("#exp").focus();
-		return false;
-	}else if($(".pdfMainContainer").find(".pdfMainContentItem").length < 1){
-		msg.set("항목을 1개 이상 추가하여 입력해주세요.");
-		return false;
-	}else{
-		let address, cip, customer, date, exp, fax, firmName, phone, representative, title, pdfMainContentTitle, pdfMainContentItem, addPdfForm, items, form, datas;
-		pdfMainContentTitle = $(".pdfMainContainer").find(".pdfMainContentTitle");
-		pdfMainContentItem = $(".pdfMainContainer").find(".pdfMainContentItem");
-		remarks = CKEDITOR.instances.remarks.getData().replaceAll("\n", "");
-		address = $(".address").val();
-		cip = $("#cip").val();
-		customer = $("#customer").data("value").toString();
-		date = new Date($("#date").val()).getTime();
-		exp = $("#exp").val();
-		fax = $("#fax").val();
-		firmName = $("#firmName").val();
-		phone = $("#phone").val();
-		representative = $("#representative").val();
-		title = $("#title").val();
-		items = [];
-		
-		if(pdfMainContentTitle.length > 0){
-			form = "서브타이틀";
-		}else{
-			form = "기본견적서";
-		}
-	
-		for(let i = 0; i < pdfMainContentItem.length; i++){
-			let item = $(pdfMainContentItem[i]);
-			let textareaId = item.find(".itemSpec").children().attr("id");
-			let itemTitle = item.prevAll(".pdfMainContentTitle").eq(0).find(".subTitle").children().val();
-			let price;
-	
-			if($("[name=\"vat\"]:checked").data("value")){
-				let tax = parseInt(item.find(".itemTotal").html().replaceAll(",", "") / 10);
-				price = parseInt(item.find(".itemTotal").html().replaceAll(",", "")) + parseInt(tax);
-			}else{
-				price = parseInt(item.find(".itemTotal").html().replaceAll(",", ""));
-			}
-	
-			if(itemTitle === undefined){
-				itemTitle = "";
-			}
-	
-			let itemDatas = {
-				"div": item.find(".itemDivision").children().val(),
-				"price": parseInt(item.find(".itemTotal").html().replaceAll(",", "")), 
-				"quantity": parseInt(item.find(".itemQuantity").children().val()),
-				"remark": item.find(".itemRemarks").children().val(),
-				"spec": CKEDITOR.instances[textareaId].getData().replaceAll("\n", ""),
-				"item": "1100041",
-				"supplier": $("#customer").data("value").toString(),
-				"title": itemTitle,
-				"vat": $("[name=\"vat\"]:checked").data("value"),
-			};
-			items.push(itemDatas);
-		}
-	
-		insertCopyPdf();
-		
-		setTimeout(() => {
-			addPdfForm = $(".addPdfForm");
-		
-			datas = {
-				"doc": addPdfForm.html().replaceAll("\r","").replaceAll("\n",""),
-				"address": address,
-				"cip": cip,
-				"customer": customer,
-				"date": date,
-				"exp": exp,
-				"fax": fax,
-				"firmName": firmName,
-				"form": form,
-				"items": items,
-				"phone": phone,
-				"representative": representative,
-				"title": title,
-				"width": 210,
-				"height": 297,
-				"no": storage.estmDetail.no,
-				"version": 1,
-				"related": {
-					"parent": null,
-					"previous": null,
-					"next": [null],
-					"estimate": {
-						"doc": addPdfForm.html().replaceAll("\r","").replaceAll("\n",""),
-						"address": address,
-						"cip": cip,
-						"customer": customer,
-						"date": date,
-						"exp": exp,
-						"fax": fax,
-						"firmName": firmName,
-						"form": form,
-						"items": items,
-						"phone": phone,
-						"representative": representative,
-						"title": title,
-						"width": 210,
-						"height": 297,
-						"no": storage.estmDetail.no,
-						"version": 1,
-						"remarks": remarks,
-					}
-				},
-				"remarks": remarks,
-			};
-		
-			datas = JSON.stringify(datas);
-			datas = cipher.encAes(datas);
-		
-			$.ajax({
-				url: "/api/estimate/" + storage.estmDetail.no,
-				method: "post",
-				data: datas,
-				dataType: "json",
-				contentType: "text/plain",
-				success: (result) => {
-					location.reload();
-					msg.set("수정되었습니다.");
-				},
-				error: () => {
-					msg.set("에러입니다.");
-				}
-			});
-		}, 300)
-	}
-}
-
-function addSearchList(){
-	storage.searchList = [];
-
-	for(let i = 0; i < storage.estmList.length; i++){
-		let form, title, version, disDate, setDate;
-		disDate = dateDis(storage.estmList[i].date);
-		setDate = parseInt(dateFnc(disDate).replaceAll("-", ""));
-		title = storage.estmList[i].title;
-		version = storage.estmList[i].version;
-		form = storage.estmList[i].form;
-		total = storage.estmList[i].total;
-		storage.searchList.push("#" + title + "#" + version + "#" + form + "#date" + setDate + "#price" + total);
-	}
-}
-
-function searchSubmit(){
-	let dataArray = [], resultArray, eachIndex = 0, searchTitle, searchVersion, searchForm, searchPriceFrom, searchDateFrom;
-
-	searchTitle = $("#searchTitle").val();
-	searchVersion = $("#searchVersion").val();
-	searchForm = $("#searchForm").val();
-	searchPriceFrom = ($("#searchPriceFrom").val() === "") ? "" : $("#searchPriceFrom").val().replaceAll(",", "") + "#price" + $("#searchPriceTo").val().replaceAll(",", "");
-	searchDateFrom = ($("#searchDateFrom").val() === "") ? "" : $("#searchDateFrom").val().replaceAll("-", "") + "#date" + $("#searchDateTo").val().replaceAll("-", "");
-	
-	let searchValues = [searchTitle, searchVersion, searchForm, searchPriceFrom, searchDateFrom];
-
-	for(let i = 0; i < searchValues.length; i++){
-		if(searchValues[i] !== "" && searchValues[i] !== undefined && searchValues[i] !== null){
-			let tempArray = searchDataFilter(storage.estmList, searchValues[i], "multi");
-			
-			for(let t = 0; t < tempArray.length; t++){
-				dataArray.push(tempArray[t]);
-			}
-
-			eachIndex++;
-		}
-	}
-
-	resultArray = searchMultiFilter(eachIndex, dataArray, storage.estmList);
-	
-	storage.searchDatas = resultArray;
-
-	if(storage.searchDatas.length == 0){
-		msg.set("찾는 데이터가 없습니다.");
-		storage.searchDatas = storage.estmList;
-	}
-	
-	drawEstmList();
-}
-
-function searchInputKeyup(){
-	let searchAllInput, tempArray;
-	searchAllInput = $("#searchAllInput").val();
-	tempArray = searchDataFilter(storage.estmList, searchAllInput, "input");
-
-	if(tempArray.length > 0){
-		storage.searchDatas = tempArray;
-	}else{
-		storage.searchDatas = "";
-	}
-
-	drawEstmList();
-}
-
-function addEstTitle(e){
-	let thisEle, subTitleIndex;
-	thisEle = $(e);
-	thisEle.parent().before("<div class=\"pdfMainContentTitle\"><div class=\"subTitleIndex\"></div><div class=\"subTitle\"><input type=\"text\" placeholder=\"타이틀입력\"></div><div></div><div></div><div></div><div class=\"subTitleTotal\"></div><div></div><div></div></div>");
-	
-	if($(".mainPdf").length > 1){
-		subTitleIndex = $(".mainPdf").eq(1).find(".subTitleIndex");
-	}else{
-		subTitleIndex = $(".mainPdf").eq(0).find(".subTitleIndex");
-	}
-
-	subTitleIndex.eq(subTitleIndex.length - 1).html(romanize(subTitleIndex.length));
-	storage.subItemLength = 0;
-}
-
-function addEstItem(e){
-	let thisEle, findClass;
-	thisEle = $(e);
-	thisEle.parent().before("<div class=\"pdfMainContentItem\"><div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemSpec\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeyup=\"itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"oneEstItemAdd(this);\">+</button><button type=\"button\" onclick=\"oneEstItemRemove(this);\">-</button></div></div>");
-	productNameSet();
-	ckeditor.config.readOnly = false;
-	window.setTimeout(setEditor, 100);
-	addItemIndex();
-}
-
-function oneEstItemAdd(e){
-	let thisEle, parent;
-	thisEle = $(e);
-	parent = thisEle.parents(".pdfMainContentItem");
-	parent.after("<div class=\"pdfMainContentItem\"><div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemSpec\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeyup=\"itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"oneEstItemAdd(this);\">+</button><button type=\"button\" onclick=\"oneEstItemRemove(this);\">-</button></div></div>");
-	productNameSet();
-	ckeditor.config.readOnly = false;
-	window.setTimeout(setEditor, 100);
-	addItemIndex();
-}
-
-function removeEstItem(e){
-	let thisEle;
-	thisEle = $(e);
-
-	if(thisEle.parent().prev().attr("class") !== "pdfMainContentHeader"){
-		thisEle.parent().prev().remove();
-	}
-
-	addItemIndex();
-	setTotalHtml();
-	setTitleTotal();
-}
-
-function oneEstItemRemove(e){
-	let thisEle, parent;
-	thisEle = $(e);
-	parent = thisEle.parents(".pdfMainContentItem");
-	parent.remove();
-	addItemIndex();
-	setTotalHtml();
-	setTitleTotal();
-}
-
-function addItemIndex(){
-	let mainDiv, mainPdf;
-	let index = 0;
-	mainPdf = $(".mainPdf");
-
-	if(mainPdf.length > 1){
-		mainDiv = mainPdf.eq(1).find(".pdfMainContainer").children("div");
-	}else{
-		mainDiv = mainPdf.eq(0).find(".pdfMainContainer").children("div");
-	}
-	
-	for(let i = 0; i < mainDiv.length; i++){
-		if($(mainDiv[i]).attr("class") === "pdfMainContentItem"){
-			index++;
-			$(mainDiv[i]).find(".itemIndex").html(index);
-		}else if($(mainDiv[i]).attr("class") === "pdfMainContentAddBtns"){
-			return false;
-		}else{
-			index = 0;
-		}
-	}
-}
-
-function productNameSet(){
-	let pdfMainContentItem, itemProductName, mainPdf;
-	mainPdf = $(".mainPdf");
-
-	if(mainPdf.length > 1){
-		pdfMainContentItem = mainPdf.eq(1).find(".pdfMainContentItem");
-		itemProductName = mainPdf.eq(1).find(".itemSpec textarea");
-	}else{
-		pdfMainContentItem = mainPdf.eq(0).find(".pdfMainContentItem");
-		itemProductName = mainPdf.eq(0).find(".itemSpec textarea");
-	}
-
-	for(let i = 1; i <= pdfMainContentItem.length; i++){
-		$(itemProductName[i-1]).attr("id", "itemProductName_" + i);
-	}
-}
-
-function romanize(num) {
-    let digits, key, roman, i;
-    if (isNaN(num)) return NaN;
-    digits = String(+num).split("");
-    key = ["","C","CC","CCC","CD","D","DC","DCC","DCCC","CM","","X","XX","XXX","XL","L","LX","LXX","LXXX","XC","","I","II","III","IV","V","VI","VII","VIII","IX"];
-    roman = "";
-    i = 3;
-    while (i--) roman = (key[+digits.pop() + (i * 10)] || "") + roman;
-    return Array(+digits.join("") + 1).join("M") + roman;
-}
-
-function itemCalKeyup(e){
-	let thisEle, itemQuantity, itemAmount, itemTotal, cal;
-	thisEle = $(e);
-	itemQuantity = thisEle.parent().parent().find(".itemQuantity").children();
-	itemAmount = thisEle.parent().parent().find(".itemAmount").children();
-	itemTotal = thisEle.parent().nextAll(".itemTotal");
-	
-	if(itemQuantity.val() === ""){
-		itemQuantity.val(1);
-	}
-	
-	thisEle.val(thisEle.val().replace(/[^0-9]/g,""));
-	cal = parseInt(itemAmount.val().replaceAll(",", "")) * parseInt(itemQuantity.val());
-	itemTotal.html(cal.toLocaleString("en-US"));
-	inputNumberFormat(thisEle);
-	setTotalHtml();
-	setTitleTotal();
-}
-
-function estimateFormInit(){
-	let selectAddress, writer, date, pdfMainContentAddBtns;
-	selectAddress = document.getElementsByClassName("selectAddress")[0].querySelector("select");
-	console.log(selectAddress);
-	writer = document.getElementById("writer");
-	date = document.getElementById("date");
-	pdfMainContentAddBtns = document.getElementsByClassName("pdfMainContentAddBtns")[0];
-
-	let html = "";
-	for(let index in storage.estimateBasic){
-		html += "<option value=\"" + index + "\">" + storage.estimateBasic[index].name + "</option>";
-	}
-
-	selectAddress.innerHTML = html;
-	writer.value = storage.user[storage.my].userName;
-	date.value = new Date().toISOString().substring(0, 10);
-
-	if(storage.estmDetail !== undefined){
-		for(let key in storage.estmDetail.related.estimate){
-			let keyId = document.getElementById(key);
-			if(keyId !== undefined){
-				let value = storage.estmDetail.related.estimate[key];
-
-				if(key === "date"){
-					if(storage.estmDetail.related.estimate[key] !== null){
-						value = new Date(storage.estmDetail.related.estimate[key]);
-						value = dateDis(value);
-						value = dateFnc(value);
+				if(keyId !== undefined && keyId !== null){
+					let value = storage.estmDetail.related.estimate[key];
+					if(key === "date"){
+						if(storage.estmDetail.related.estimate[key] !== null){
+							value = new Date(storage.estmDetail.related.estimate[key]);
+							value = dateDis(value);
+							value = dateFnc(value);
+						}else{
+							value = new Date().toISOString().substring(0, 10);
+						}
+					}else if(key === "customer"){
+						keyId.dataset.value = value;
+						value = storage.customer[value].name;
+						keyId.value = value;
 					}else{
-						value = new Date().toISOString().substring(0, 10);
+						keyId.value = value;
 					}
-				}else if(key === "customer"){
-					keyId.dataset.value = value;
-					value = storage.customer[value].name;
 				}
+	
+			}
+	
+			if(storage.estmDetail.related.estimate.items.length > 0){
+				const Detail = new Estimate(storage.estmDetail.related.estimate);
+				Detail.detail();
+			}
+		}
+	
+		this.selectAddressInit();
+		ckeditor.config.readOnly = false;
+		window.setTimeout(setEditor(this.copyContainer), 100);
+	}
+
+	productNameSet(){
+		let pdfMainContentItem, itemProductName;
+		pdfMainContentItem = this.copyContainer.getElementsByClassName("pdfMainContentItem");
+		itemProductName = this.copyContainer.getElementsByClassName("itemSpec");
+	
+		for(let i = 1; i <= pdfMainContentItem.length; i++){
+			itemProductName[i-1].querySelector("textarea").setAttribute("id", "itemProductName_" + i);
+		}
+	}
+
+	addItemIndex(){
+		let mainDiv;
+		let index = 0;
+		mainDiv = this.copyContainer.getElementsByClassName("pdfMainContainer")[0].querySelectorAll("div");
+		
+		for(let i = 0; i < mainDiv.length; i++){
+			if(mainDiv[i].getAttribute("class") === "pdfMainContentItem"){
+				index++;
+				mainDiv[i].getElementsByClassName("itemIndex")[0].innerHTML = index;
+			}else if(mainDiv[i].getAttribute("class") === "pdfMainContentTitle"){
+				index = 0;
+			}
+		}
+	}
+
+	selectAddressInit(index){
+		let firmName, representative, address, phone, fax;
+		firmName = this.copyContainer.querySelector("#firmName");
+		representative = this.copyContainer.querySelector("#representative");
+		address = this.copyContainer.getElementsByClassName("address")[1];
+		phone = this.copyContainer.querySelector("#phone");
+		fax = this.copyContainer.querySelector("#fax");
+	
+		if(index === undefined){
+			firmName.value = storage.estimateBasic[1].firmName;
+			representative.value = storage.estimateBasic[1].representative;
+			address.value = storage.estimateBasic[1].address;
+			phone.value = storage.estimateBasic[1].phone;
+			fax.value = storage.estimateBasic[1].fax;
+		}else{
+			firmName.value = storage.estimateBasic[index].firmName;
+			representative.value = storage.estimateBasic[index].representative;
+			address.value = storage.estimateBasic[index].address;
+			phone.value = storage.estimateBasic[index].phone;
+			fax.value = storage.estimateBasic[index].fax;
+		}
+	}
+
+	addSearchList(){
+		storage.searchList = [];
+	
+		for(let i = 0; i < storage.estmList.length; i++){
+			let form, title, version, disDate, setDate;
+			disDate = dateDis(storage.estmList[i].date);
+			setDate = parseInt(dateFnc(disDate).replaceAll("-", ""));
+			title = storage.estmList[i].title;
+			version = storage.estmList[i].version;
+			form = storage.estmList[i].form;
+			total = storage.estmList[i].total;
+			storage.searchList.push("#" + title + "#" + version + "#" + form + "#date" + setDate + "#price" + total);
+		}
+	}
+	
+	searchSubmit(){
+		let dataArray = [], resultArray, eachIndex = 0, searchTitle, searchVersion, searchForm, searchPriceFrom, searchDateFrom;
+	
+		searchTitle = $("#searchTitle").val();
+		searchVersion = $("#searchVersion").val();
+		searchForm = $("#searchForm").val();
+		searchPriceFrom = ($("#searchPriceFrom").val() === "") ? "" : $("#searchPriceFrom").val().replaceAll(",", "") + "#price" + $("#searchPriceTo").val().replaceAll(",", "");
+		searchDateFrom = ($("#searchDateFrom").val() === "") ? "" : $("#searchDateFrom").val().replaceAll("-", "") + "#date" + $("#searchDateTo").val().replaceAll("-", "");
+		
+		let searchValues = [searchTitle, searchVersion, searchForm, searchPriceFrom, searchDateFrom];
+	
+		for(let i = 0; i < searchValues.length; i++){
+			if(searchValues[i] !== "" && searchValues[i] !== undefined && searchValues[i] !== null){
+				let tempArray = searchDataFilter(storage.estmList, searchValues[i], "multi");
 				
-				keyId.value = value;
+				for(let t = 0; t < tempArray.length; t++){
+					dataArray.push(tempArray[t]);
+				}
+	
+				eachIndex++;
 			}
-
 		}
-
-		if(storage.estmDetail.related.estimate.items.length > 0){
-			detailItemSet();
+	
+		resultArray = searchMultiFilter(eachIndex, dataArray, storage.estmList);
+		
+		storage.searchDatas = resultArray;
+	
+		if(storage.searchDatas.length == 0){
+			msg.set("찾는 데이터가 없습니다.");
+			storage.searchDatas = storage.estmList;
 		}
+		
+		drawEstmList();
 	}
-
-	selectAddressInit();
-}
-
-function detailItemSet(){
-	let thisBtn;
-	let item = storage.estmDetail.related.estimate;
-	let items = storage.estmDetail.related.estimate.items;
-	$(".pdfMainContentTitle").remove();
-	$(".pdfMainContentItem").remove();
-
-	for(let i = 0; i < items.length; i++){
-		if(item.form === "서브타이틀"){
-			let pdfMainContentTitle = $(".mainPdf").eq(1).find(".pdfMainContentTitle");
+	
+	searchInputKeyup(){
+		let searchAllInput, tempArray;
+		searchAllInput = $("#searchAllInput").val();
+		tempArray = searchDataFilter(storage.estmList, searchAllInput, "input");
+	
+		if(tempArray.length > 0){
+			storage.searchDatas = tempArray;
+		}else{
+			storage.searchDatas = "";
+		}
+	
+		drawEstmList();
+	}
+	
+	addEstTitle(e){
+		let thisEle, subTitleIndex, createDiv;
+		createDiv = document.createElement("div");
+		createDiv.className = "pdfMainContentTitle";
+		createDiv.innerHTML = "<div class=\"subTitleIndex\"></div><div class=\"subTitle\"><input type=\"text\" placeholder=\"타이틀입력\"></div><div></div><div></div><div></div><div class=\"subTitleTotal\"></div><div></div><div></div>";
+		thisEle = e;
+		thisEle.parentElement.before(createDiv);
+		subTitleIndex = this.copyContainer.getElementsByClassName("subTitleIndex");
+		subTitleIndex[subTitleIndex.length - 1].innerHTML = this.romanize(subTitleIndex.length);
+		storage.subItemLength = 0;
+	}
+	
+	addEstItem(e){
+		let thisEle, createDiv;
+		createDiv = document.createElement("div");
+		createDiv.className = "pdfMainContentItem";
+		createDiv.innerHTML = "<div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemSpec\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeyup=\"EstimateSet.itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"EstimateSet.itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"EstimateSet.oneEstItemAdd(this);\">+</button><button type=\"button\" onclick=\"EstimateSet.oneEstItemRemove(this);\">-</button></div>";
+		thisEle = e;
+		thisEle.parentElement.before(createDiv);
+		this.productNameSet();
+		ckeditor.config.readOnly = false;
+		window.setTimeout(setEditor(this.copyContainer), 100);
+		this.addItemIndex();
+	}
+	
+	oneEstItemAdd(e){
+		let thisEle, parent, createDiv;
+		createDiv = document.createElement("div");
+		createDiv.className = "pdfMainContentItem";
+		createDiv.innerHTML = "<div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemSpec\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeyup=\"EstimateSet.itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"EstimateSet.itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"EstimateSet.oneEstItemAdd(this);\">+</button><button type=\"button\" onclick=\"EstimateSet.oneEstItemRemove(this);\">-</button></div>";
+		thisEle = e;
+		parent = thisEle.parentElement.parentElement;
+		parent.after(createDiv);
+		this.productNameSet();
+		ckeditor.config.readOnly = false;
+		window.setTimeout(setEditor(this.copyContainer), 100);
+		this.addItemIndex();
+	}
+	
+	removeEstItem(e){
+		let thisEle;
+		thisEle = e;
+	
+		if(thisEle.parentElement.previousSibling.getAttribute("class") !== "pdfMainContentHeader"){
+			thisEle.parentElement.previousSibling.remove();
+		}
+	
+		this.addItemIndex();
+		this.setTotalHtml();
+		this.setTitleTotal();
+	}
+	
+	oneEstItemRemove(e){
+		let thisEle, parent;
+		thisEle = e;
+		parent = thisEle.parentElement.parentElement;
+		parent.remove();
+		this.addItemIndex();
+		this.setTotalHtml();
+		this.setTitleTotal();
+	}
+	
+	romanize(num) {
+		let digits, key, roman, i;
+		if (isNaN(num)) return NaN;
+		digits = String(+num).split("");
+		key = ["","C","CC","CCC","CD","D","DC","DCC","DCCC","CM","","X","XX","XXX","XL","L","LX","LXX","LXXX","XC","","I","II","III","IV","V","VI","VII","VIII","IX"];
+		roman = "";
+		i = 3;
+		while (i--) roman = (key[+digits.pop() + (i * 10)] || "") + roman;
+		return Array(+digits.join("") + 1).join("M") + roman;
+	}
+	
+	itemCalKeyup(e){
+		let thisEle, itemQuantity, itemAmount, itemTotal, cal;
+		thisEle = e;
+		itemQuantity = thisEle.parentElement.parentElement.getElementsByClassName("itemQuantity")[0].children[0];
+		itemAmount = thisEle.parentElement.parentElement.getElementsByClassName("itemAmount")[0].children[0];
+		itemTotal = thisEle.parentElement.parentElement.getElementsByClassName("itemTotal")[0];
+		
+		if(itemQuantity.value === ""){
+			itemQuantity.value = 1;
+		}
+		
+		thisEle.value = thisEle.value.replace(/[^0-9]/g,"");
+		cal = parseInt(itemAmount.value.replaceAll(",", "")) * parseInt(itemQuantity.value);
+		itemTotal.innerHTML = cal.toLocaleString("en-US");
+		inputNumberFormat($(e));
+		this.setTotalHtml();
+		this.setTitleTotal();
+	}
+	
+	selectAddressChange(e){
+		let thisEle, thisEleIndex;
+		thisEle = e;
+		thisEleIndex = thisEle.value;
+		this.selectAddressInit(thisEleIndex);
+	}
+	
+	setTotalHtml(){
+		let pdfMainContentAmount, pdfMainContentTotal, pdfHeadInfoPrice, pdfMainContentItem, pdfMainContentTax, calAmount = 0;
+		pdfMainContentAmount = this.copyContainer.getElementsByClassName("pdfMainContentAmount")[0].querySelectorAll("div")[1];
+		pdfMainContentTotal = this.copyContainer.getElementsByClassName("pdfMainContentTotal")[0].querySelectorAll("div")[1];
+		pdfHeadInfoPrice = this.copyContainer.getElementsByClassName("pdfHeadInfoPrice")[0].querySelectorAll("div")[0].children[2];
+		pdfMainContentItem = this.copyContainer.getElementsByClassName("pdfMainContentItem");
+		pdfMainContentTax = this.copyContainer.getElementsByClassName("pdfMainContentTax")[0].querySelectorAll("div")[1];
+	
+		for(let i = 0; i < pdfMainContentItem.length; i++){
+			let item = parseInt(pdfMainContentItem[i].getElementsByClassName("itemTotal")[0].innerHTML.replace(/,/g, ""));
 			
-			if(pdfMainContentTitle.length == 0 || pdfMainContentTitle === undefined){
-				thisBtn = $(".mainPdf").eq(1).find(".pdfMainContentAddBtns button").eq(0);
-				addEstTitle(thisBtn);
-				let subTitle = $(".mainPdf").eq(1).find(".subTitle");
-				subTitle.eq(i).find("input").val(items[i].title);
+			if(isNaN(item)){
+				item = 0;
+			}
+			
+			calAmount += item;
+		}
+	
+		pdfMainContentAmount.innerHTML = calAmount.toLocaleString("en-US");
+	
+		if(this.copyContainer.querySelector("#vatTrue").checked){
+			pdfMainContentTax.innerHTML = parseInt(pdfMainContentAmount.innerHTML.replace(/,/g, "") / 10).toLocaleString("en-US");
+		}else{
+			pdfMainContentTax.innerHTML = 0;
+		}
+	
+		pdfMainContentTotal.innerHTML = (calAmount + parseInt(pdfMainContentTax.innerHTML.replace(/,/g, ""))).toLocaleString("en-US");
+		pdfHeadInfoPrice.value = pdfMainContentTotal.innerHTML;
+	}
+	
+	setTitleTotal(){
+		let mainDiv;
+		let calTotal = 0;
+		mainDiv = this.copyContainer.getElementsByClassName("pdfMainContainer")[0].querySelectorAll("div");
+		
+		for(let i = mainDiv.length-1; i >= 0; i--){
+			if(mainDiv[i].getAttribute("class") === "pdfMainContentItem"){
+				if(mainDiv[i].getElementsByClassName("itemTotal")[0].innerHTML !== ""){
+					calTotal += parseInt(mainDiv[i].getElementsByClassName("itemTotal")[0].innerHTML.replace(/,/g, ""));
+				}
+			}else if(mainDiv[i].getAttribute("class") === "pdfMainContentTitle"){
+				mainDiv[i].getElementsByClassName("subTitleTotal")[0].innerHTML = calTotal.toLocaleString("en-Us");
+				calTotal = 0;
+			}
+		}
+	}
+	
+	insertCopyPdf(){
+		let mainPdf, pdfMainContentAddBtns, createDiv, createSpan;
+		pdfMainContentAddBtns = this.copyContainer.getElementsByClassName("pdfMainContentAddBtns")[0];
+		this.copyContainer.getElementsByClassName("selectAddress")[0].remove();
+		pdfMainContentAddBtns.remove();
+		createDiv = document.createElement("div");
+		createSpan = document.createElement("span");
+		createSpan.style.fontSize = "11px";
+		createSpan.style.display = "flex";
+		createSpan.style.alignItems = "center";
+		createSpan.style.paddingLeft = "3px";
+		createSpan.style.paddingRight = "3px";
+		createSpan.innerText = "/";
+		createDiv.className = "afterDiv";
+	
+		if (typeof CKEDITOR !== undefined) {
+			if ($(CKEDITOR.instances).length) {
+				for (var key in CKEDITOR.instances) {
+					CKEDITOR.instances[key].destroy();
+				}
 			}
 		}
 		
-		thisBtn = $(".mainPdf").eq(1).find(".pdfMainContentAddBtns button").eq(1);
-		thisBtn.parent().before("<div class=\"pdfMainContentItem\"><div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemSpec\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeyup=\"itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"oneEstItemAdd(this);\">+</button><button type=\"button\" onclick=\"oneEstItemRemove(this);\">-</button></div></div>");
-		productNameSet();
-		addItemIndex();
-		let pdfMainContentItem = $(".mainPdf").eq(1).find(".pdfMainContentItem").eq(i);
-		pdfMainContentItem.find(".itemDivision input").val(items[i].div);
-		pdfMainContentItem.find(".itemSpec").find("textarea").val(items[i].spec);
-		pdfMainContentItem.find(".itemQuantity").find("input").val(items[i].quantity);
-		pdfMainContentItem.find(".itemAmount").find("input").val(numberFormat(items[i].price));
-		pdfMainContentItem.find(".itemRemarks").find("input").val(items[i].remark);
-		itemCalKeyup(pdfMainContentItem.find(".itemAmount input"));
-	}
-	ckeditor.config.readOnly = false;
-	window.setTimeout(setEditor, 100);
-}
-
-function selectAddressChange(e){
-	let thisEle, thisEleIndex;
-	thisEle = $(e);
-	thisEleIndex = thisEle.val();
-	selectAddressInit(thisEleIndex);
-}
-
-function selectAddressInit(index){
-	let firmName, representative, address, phone, fax;
-	firmName = $("#firmName");
-	representative = $("#representative");
-	address = $(".address");
-	phone = $("#phone");
-	fax = $("#fax");
-
-	if(index === undefined){
-		firmName.val(storage.estimateBasic[1].firmName);
-		representative.val(storage.estimateBasic[1].representative);
-		address.val(storage.estimateBasic[1].address);
-		phone.val(storage.estimateBasic[1].phone);
-		fax.val(storage.estimateBasic[1].fax);
-	}else{
-		firmName.val(storage.estimateBasic[index].firmName);
-		representative.val(storage.estimateBasic[index].representative);
-		address.val(storage.estimateBasic[index].address);
-		phone.val(storage.estimateBasic[index].phone);
-		fax.val(storage.estimateBasic[index].fax);
-	}
+		let mainInput = this.copyContainer.querySelectorAll("input");
+		for(let i = 0; i < mainInput.length; i++){
+			let item = mainInput[i];
+			let parent = item.parentElement;
 	
-	setTimeout(() => {
-		if($(".mainPdf").length > 1){
-			$(".mainPdf").eq(0).remove();
-		}
-	}, 300)
-}
-
-function setTotalHtml(){
-	let pdfMainContentAmount, pdfMainContentTotal, pdfHeadInfoPrice, pdfMainContentItem, pdfMainContentTax, calAmount = 0;
-	if($(".mainPdf").length > 1){
-		pdfMainContentAmount = $(".mainPdf").eq(1).find(".pdfMainContentAmount div").eq(1);
-		pdfMainContentTotal = $(".mainPdf").eq(1).find(".pdfMainContentTotal div").eq(1);
-		pdfHeadInfoPrice = $(".mainPdf").eq(1).find(".pdfHeadInfoPrice div:eq(0) input");
-		pdfMainContentItem = $(".mainPdf").eq(1).find(".pdfMainContentItem .itemTotal");
-		pdfMainContentTax = $(".mainPdf").eq(1).find(".pdfMainContentTax div").eq(1);
-	}else{
-		pdfMainContentAmount = $(".pdfMainContentAmount div").eq(1);
-		pdfMainContentTotal = $(".pdfMainContentTotal div").eq(1);
-		pdfHeadInfoPrice = $(".pdfHeadInfoPrice div:eq(0) input");
-		pdfMainContentItem = $(".pdfMainContentItem .itemTotal");
-		pdfMainContentTax = $(".pdfMainContentTax div").eq(1);
-	}
-
-	for(let i = 0; i < pdfMainContentItem.length; i++){
-		let item = parseInt($(pdfMainContentItem[i]).html().replaceAll(",", ""));
-		
-		if(isNaN(item)){
-			item = 0;
-		}
-		
-		calAmount += item;
-	}
+			if(item.getAttribute("type") === "radio"){
+				if(item.getAttribute("name") === "vat"){
+					if(this.copyContainer.getElementsByName("vat").checked.dataset.value){
+						createDiv.innerText = "(VAT 포함)";
+						item.after(createDiv);
+						parent.children.querySelectorAll("input[type=\"radio\"]").remove();
+					}else{
+						createDiv.innerText = "(VAT 비포함)";
+						item.after(createDiv);
+						parent.children.querySelectorAll("input[type=\"radio\"]").remove();
+					}
 	
-	pdfMainContentAmount.html(calAmount.toLocaleString("en-US"));
-
-	if($("#vatTrue").is(":checked")){
-		
-		pdfMainContentTax.html(parseInt(pdfMainContentAmount.html().replaceAll(",", "") / 10).toLocaleString("en-US"));
-	}else{
-		pdfMainContentTax.html(0);
-	}
-
-	pdfMainContentTotal.html((calAmount + parseInt(pdfMainContentTax.html().replaceAll(",", ""))).toLocaleString("en-US"));
-	pdfHeadInfoPrice.val(pdfMainContentTotal.html());
-}
-
-function setTitleTotal(){
-	let mainDiv;
-	let calTotal = 0;
-	mainDiv = $(".pdfMainContainer").children("div");
-	
-	for(let i = 0; i < mainDiv.length; i++){
-		if($(mainDiv[i]).attr("class") === "pdfMainContentItem"){
-			if($(mainDiv[i]).find(".itemTotal").html() !== ""){
-				calTotal += parseInt($(mainDiv[i]).find(".itemTotal").html().replaceAll(",", ""));
+					parent.children.querySelectorAll("label").remove();
+				}
+			}else{
+				if(parent.getAttribute("class") === "vatInfo"){
+					createDiv.innerText = item.value;
+					parent.children[1].after(createDiv);
+					item.remove();
+				}else{
+					createDiv.innerText = item.value;
+					parent.append(createDiv);
+					item.remove();
+				}
 			}
+		}
+		
+		this.copyContainer.getElementsByClassName("headInfoCustomer").querySelectorAll(".afterDiv")[0].after(createSpan);
+		this.copyContainer.getElementsByClassName("headInfoPhone").querySelectorAll(".afterDiv")[0].after(createSpan);
+	
+		let pdfMainContainer = this.copyContainer.getElementsByClassName("pdfMainContainer")[0].querySelectorAll("div");
+		for(let i = 0; i < pdfMainContainer.length; i++){
+			let item = pdfMainContainer[i];
+			if(item.getAttribute("class") === "pdfMainContentHeader" || item.getAttribute("class") === "pdfMainContentTitle" || item.getAttribute("class") === "pdfMainContentItem"){
+				item.querySelectorAll("div")[item.querySelectorAll("div").length - 1].remove();
+				item.style.gridTemplateColumns = "10% 10% 30% 10% 10% 10% 10% 10%";
+			}
+		}
+		
+		let textarea = this.copyContainer.querySelectorAll("textarea");
+		for(let i = 0; i < textarea.length; i++){
+			let item = textarea[i];
+			let parent = item.parentElement;
+			createDiv.innerText = item.value;
+			parent.appendChild(createDiv);
+			item.remove();
+		}
+	}
+	
+	estimatePdf(title, userName){
+		let element = document.getElementById("estPrintPdf");
+	 
+		html2pdf().from(element).set({
+			margin: 0,
+			filename: title + "_" + userName + ".pdf",
+			html2canvas: { width: 835, height: 1000, scale: 10 },
+			jsPDF: {orientation: 'portrait', unit: 'mm', format: 'a4', compressPDF: true}
+		}).save();
+	}
+}
 
-			$(mainDiv[i]).prevAll(".pdfMainContentTitle").eq(0).find(".subTitleTotal").html(calTotal.toLocaleString("en-Us"));
-		}else if($(mainDiv[i]).attr("class") === "pdfMainContentAddBtns"){
+class Estimate{
+	constructor(getData){
+		if(getData !== undefined){
+			this.doc = getData.doc;
+			this.address = getData.address;
+			this.cip = getData.cip;
+			this.customer = getData.customer;
+			this.date = getData.date;
+			this.fax = getData.fax;
+			this.firmName = getData.firmName;
+			this.form = getData.form;
+			this.items = getData.items;
+			this.phone = getData.phone;
+			this.representative = getData.representative;
+			this.title = getData.title;
+			this.width = getData.width;
+			this.height = getData.height;
+			this.no = getData.no;
+			this.version = getData.version;
+			this.related = getData.related;
+			this.remarks = getData.remarks;
+		}
+		this.copyContainer = document.getElementsByClassName("copyMainPdf")[0];
+	}
+
+	detail(){
+		let thisBtn, createDiv;
+		let items = this.items;
+		createDiv = document.createElement("div");
+		createDiv.className = "pdfMainContentItem";
+	
+		for(let i = 0; i < items.length; i++){
+			if(this.form === "서브타이틀"){
+				let pdfMainContentTitle = this.copyContainer.getElementsByClassName("pdfMainContentTitle");
+				
+				if(pdfMainContentTitle.length == 0 || pdfMainContentTitle === undefined){
+					thisBtn = this.copyContainer.getElementsByClassName("pdfMainContentAddBtns")[0].querySelector("button");
+					EstimateSet.addEstTitle(thisBtn);
+					let subTitle = this.copyContainer.getElementsByClassName("subTitle");
+					subTitle[i].querySelector("input").value = items[i].title;
+				}
+			}
+			
+			createDiv.innerHTML = "<div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemSpec\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeyup=\"EstimateSet.itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"EstimateSet.itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"EstimateSet.oneEstItemAdd(this);\">+</button><button type=\"button\" onclick=\"EstimateSet.oneEstItemRemove(this);\">-</button></div>";
+			thisBtn = this.copyContainer.getElementsByClassName("pdfMainContentAddBtns")[0].querySelectorAll("button")[1];
+			thisBtn.parentElement.before(createDiv);
+			let pdfMainContentItem = this.copyContainer.getElementsByClassName("pdfMainContentItem")[i];
+			pdfMainContentItem.getElementsByClassName("itemDivision")[0].querySelector("input").value = items[i].div;
+			pdfMainContentItem.getElementsByClassName("itemSpec")[0].querySelector("textarea").value = items[i].spec;
+			pdfMainContentItem.getElementsByClassName("itemQuantity")[0].querySelector("input").value = items[i].quantity;
+			pdfMainContentItem.getElementsByClassName("itemAmount")[0].querySelector("input").value = numberFormat(items[i].price);
+			pdfMainContentItem.getElementsByClassName("itemRemarks")[0].querySelector("input").value = items[i].remark;
+			EstimateSet.itemCalKeyup(pdfMainContentItem.getElementsByClassName("itemAmount")[0].querySelector("input"));
+		}
+
+		EstimateSet.productNameSet();
+		EstimateSet.addItemIndex();
+	}
+
+	insert(){
+		if(this.copyContainer.querySelector("#date").value === ""){
+			msg.set("견적일자를 입력해주세요.");
+			this.copyContainer.querySelector("#date").focus();
+			return false;
+		}else if(this.copyContainer.querySelector("#title").value === ""){
+			msg.set("사업명을 입력해주세요.");
+			this.copyContainer.querySelector("#title").focus();
+			return false;
+		}else if(this.copyContainer.querySelector("#customer").value === ""){
+			msg.set("고객사를 입력해주세요.");
+			this.copyContainer.querySelector("#customer").focus();
+			return false;
+		}else if(!validateAutoComplete($("#customer").val(), "customer")){
+			msg.set("조회된 매출처가 없습니다.\n다시 확인해주세요.");
+			this.copyContainer.querySelector("#customer").focus();
+			return false;
+		}else if(this.copyContainer.querySelector("#cip").value === ""){
+			msg.set("고객사 담당자를 입력해주세요.");
+			this.copyContainer.querySelector("#cip").focus();
+			return false;
+		}else if(!validateAutoComplete($("#cip").val(), "cip")){
+			msg.set("조회된 매출처가 없습니다.\n다시 확인해주세요.");
+			this.copyContainer.querySelector("#cip").focus();
+			return false;
+		}else if(this.copyContainer.querySelector("#exp").value === ""){
+			msg.set("유효기간을 입력해주세요.");
+			this.copyContainer.querySelector("#exp").focus();
+			return false;
+		}else if(this.copyContainer.getElementsByClassName("pdfMainContainer")[0].querySelectorAll(".pdfMainContentItem").length < 1){
+			msg.set("항목을 1개 이상 추가하여 입력해주세요.");
 			return false;
 		}else{
-			calTotal = 0;
-		}
-	}
-}
-
-function insertCopyPdf(){
-	let mainPdf, pdfMainContentAddBtns;
-
-	if($(".mainPdf").length > 1){
-		mainPdf = $(".mainPdf").eq(1);
-	}else{
-		mainPdf = $(".mainPdf").eq(0);
-	}
-	
-	pdfMainContentAddBtns = mainPdf.find(".pdfMainContentAddBtns");
-	mainPdf.find(".selectAddress").remove();
-	pdfMainContentAddBtns.remove();
-
-	if (typeof CKEDITOR !== undefined) {
-		if ($(CKEDITOR.instances).length) {
-			for (var key in CKEDITOR.instances) {
-				CKEDITOR.instances[key].destroy();
-			}
-		}
-	}
-	
-	let mainInput = mainPdf.find("input");
-	for(let i = 0; i < mainInput.length; i++){
-		let item = $(mainInput[i]);
-		let parent = item.parent();
-
-		if(item.attr("type") === "radio"){
-			if(item.attr("name") === "vat"){
-				if($(".mainPdf").find("[name=\"vat\"]:checked").data("value")){
-					item.after("<div class=\"afterDiv\">(VAT 포함)</div>");
-					parent.children("input[type=\"radio\"]").remove();
-				}else{
-					item.after("<div class=\"afterDiv\">(VAT 비포함)</div>");
-					parent.children("input[type=\"radio\"]").remove();
-				}
-
-				parent.children("label").remove();
-			}
-		}else{
-			if(parent.attr("class") === "vatInfo"){
-				parent.children().eq(1).after("<div class=\"afterDiv\" style=\"padding-left: 2vw; padding-right: 1vw; font-weight: 600;\">" + item.val() + "</div>");
-				item.remove();
+			let address, cip, customer, date, exp, fax, firmName, phone, representative, title, pdfMainContentTitle, pdfMainContentItem, addPdfForm, items, form, datas;
+			pdfMainContentTitle = this.copyContainer.getElementsByClassName("pdfMainContainer")[0].querySelectorAll(".pdfMainContentTitle");
+			pdfMainContentItem = this.copyContainer.getElementsByClassName(".pdfMainContainer")[0].querySelectorAll(".pdfMainContentItem");
+			remarks = CKEDITOR.instances.remarks.getData().replaceAll("\n", "");
+			address = this.copyContainer.getElementsByClassName("address").value;
+			cip = this.copyContainer.querySelector("#cip").value;
+			customer = this.copyContainer.querySelector("#customer").dataset.value.toString();
+			date = new Date(this.copyContainer.querySelector("#date").value).getTime();
+			exp = this.copyContainer.querySelector("#exp").value;
+			fax = this.copyContainer.querySelector("#fax").value;
+			firmName = this.copyContainer.querySelector("#firmName").value;
+			phone = this.copyContainer.querySelector("#phone").value;
+			representative = this.copyContainer.querySelector("#representative").value;
+			title = this.copyContainer.querySelector("#title").value;
+			items = [];
+			
+			if(pdfMainContentTitle.length > 0){
+				form = "서브타이틀";
 			}else{
-				parent.append("<div class=\"afterDiv\">" + item.val() + "</div>");
-				item.remove();
+				form = "기본견적서";
 			}
+		
+			for(let i = 0; i < pdfMainContentItem.length; i++){
+				let item = pdfMainContentItem[i];
+				let textareaId = item.getElementsByClassName("itemSpec").children[0].getAttribute("id");
+				let itemTitle = item.prevAll(".pdfMainContentTitle").eq(0).find(".subTitle").children().val();
+				let price;
+		
+				if($("[name=\"vat\"]:checked").data("value")){
+					let tax = parseInt(item.find(".itemTotal").html().replaceAll(",", "") / 10);
+					price = parseInt(item.find(".itemTotal").html().replaceAll(",", "")) + parseInt(tax);
+				}else{
+					price = parseInt(item.find(".itemTotal").html().replaceAll(",", ""));
+				}
+		
+				if(itemTitle === undefined){
+					itemTitle = "";
+				}
+		
+				let itemDatas = {
+					"div": item.find(".itemDivision").children().val(),
+					"price": parseInt(item.find(".itemTotal").html().replaceAll(",", "")), 
+					"quantity": parseInt(item.find(".itemQuantity").children().val()),
+					"remark": item.find(".itemRemarks").children().val(),
+					"spec": CKEDITOR.instances[textareaId].getData().replaceAll("\n", ""),
+					"item": "1100041",
+					"supplier": $("#customer").data("value").toString(),
+					"title": itemTitle,
+					"vat": $("[name=\"vat\"]:checked").data("value"),
+				};
+				items.push(itemDatas);
+			}
+		
+			EstimateSet.insertCopyPdf();
+			
+			setTimeout(() => {
+				addPdfForm = $(".addPdfForm");	
+			
+				datas = {
+					"doc": addPdfForm.html().replaceAll("\r","").replaceAll("\n",""),
+					"address": address,
+					"cip": cip,
+					"customer": customer,
+					"date": date,
+					"exp": exp,
+					"fax": fax,
+					"firmName": firmName,
+					"form": form,
+					"items": items,
+					"phone": phone,
+					"representative": representative,
+					"title": title,
+					"width": 210,
+					"height": 297,
+					"no": null,
+					"version": 1,
+					"related": {
+						"parent": null,
+						"previous": null,
+						"next": [null],
+						"estimate": {
+							"doc": addPdfForm.html().replaceAll("\r","").replaceAll("\n",""),
+							"address": address,
+							"cip": cip,
+							"customer": customer,
+							"date": date,
+							"exp": exp,
+							"fax": fax,
+							"firmName": firmName,
+							"form": form,
+							"items": items,
+							"phone": phone,
+							"representative": representative,
+							"title": title,
+							"width": 210,
+							"height": 297,
+							"no": null,
+							"version": 1,
+							"remarks": remarks,
+						}
+					},
+					"remarks": remarks,
+				};
+			
+				datas = JSON.stringify(datas);
+				datas = cipher.encAes(datas);
+			
+				$.ajax({
+					url: "/api/estimate",
+					method: "post",
+					data: datas,
+					dataType: "json",
+					contentType: "text/plain",
+					success: (result) => {
+						location.reload();
+						msg.set("등록되었습니다.");
+					},
+					error: () => {
+						msg.set("에러입니다.");
+					}
+				});
+			}, 300)
+		}
+	}	
+
+	update(){
+		if($("#date").val() === ""){
+			msg.set("견적일자를 입력해주세요.");
+			$("#date").focus();
+			return false;
+		}else if($("#title").val() === ""){
+			msg.set("사업명을 입력해주세요.");
+			$("#title").focus();
+			return false;
+		}else if($("#customer").val() === ""){
+			msg.set("고객사를 입력해주세요.");
+			$("#customer").focus();
+			return false;
+		}else if(!validateAutoComplete($("#customer").val(), "customer")){
+			msg.set("조회된 매출처가 없습니다.\n다시 확인해주세요.");
+			$("#customer").focus();
+			return false;
+		}else if($("#cip").val() === ""){
+			msg.set("고객사 담당자를 입력해주세요.");
+			$("#cip").focus();
+			return false;
+		}else if(!validateAutoComplete($("#cip").val(), "cip")){
+			msg.set("조회된 매출처가 없습니다.\n다시 확인해주세요.");
+			$("#cip").focus();
+			return false;
+		}else if($("#exp").val() === ""){
+			msg.set("유효기간을 입력해주세요.");
+			$("#exp").focus();
+			return false;
+		}else if($(".pdfMainContainer").find(".pdfMainContentItem").length < 1){
+			msg.set("항목을 1개 이상 추가하여 입력해주세요.");
+			return false;
+		}else{
+			let address, cip, customer, date, exp, fax, firmName, phone, representative, title, pdfMainContentTitle, pdfMainContentItem, addPdfForm, items, form, datas;
+			pdfMainContentTitle = $(".pdfMainContainer").find(".pdfMainContentTitle");
+			pdfMainContentItem = $(".pdfMainContainer").find(".pdfMainContentItem");
+			remarks = CKEDITOR.instances.remarks.getData().replaceAll("\n", "");
+			address = $(".address").val();
+			cip = $("#cip").val();
+			customer = $("#customer").data("value").toString();
+			date = new Date($("#date").val()).getTime();
+			exp = $("#exp").val();
+			fax = $("#fax").val();
+			firmName = $("#firmName").val();
+			phone = $("#phone").val();
+			representative = $("#representative").val();
+			title = $("#title").val();
+			items = [];
+			
+			if(pdfMainContentTitle.length > 0){
+				form = "서브타이틀";
+			}else{
+				form = "기본견적서";
+			}
+		
+			for(let i = 0; i < pdfMainContentItem.length; i++){
+				let item = $(pdfMainContentItem[i]);
+				let textareaId = item.find(".itemSpec").children().attr("id");
+				let itemTitle = item.prevAll(".pdfMainContentTitle").eq(0).find(".subTitle").children().val();
+				let price;
+		
+				if($("[name=\"vat\"]:checked").data("value")){
+					let tax = parseInt(item.find(".itemTotal").html().replaceAll(",", "") / 10);
+					price = parseInt(item.find(".itemTotal").html().replaceAll(",", "")) + parseInt(tax);
+				}else{
+					price = parseInt(item.find(".itemTotal").html().replaceAll(",", ""));
+				}
+		
+				if(itemTitle === undefined){
+					itemTitle = "";
+				}
+		
+				let itemDatas = {
+					"div": item.find(".itemDivision").children().val(),
+					"price": parseInt(item.find(".itemTotal").html().replaceAll(",", "")), 
+					"quantity": parseInt(item.find(".itemQuantity").children().val()),
+					"remark": item.find(".itemRemarks").children().val(),
+					"spec": CKEDITOR.instances[textareaId].getData().replaceAll("\n", ""),
+					"item": "1100041",
+					"supplier": $("#customer").data("value").toString(),
+					"title": itemTitle,
+					"vat": $("[name=\"vat\"]:checked").data("value"),
+				};
+				items.push(itemDatas);
+			}
+		
+			insertCopyPdf();
+			
+			setTimeout(() => {
+				addPdfForm = $(".addPdfForm");
+			
+				datas = {
+					"doc": addPdfForm.html().replaceAll("\r","").replaceAll("\n",""),
+					"address": address,
+					"cip": cip,
+					"customer": customer,
+					"date": date,
+					"exp": exp,
+					"fax": fax,
+					"firmName": firmName,
+					"form": form,
+					"items": items,
+					"phone": phone,
+					"representative": representative,
+					"title": title,
+					"width": 210,
+					"height": 297,
+					"no": storage.estmDetail.no,
+					"version": 1,
+					"related": {
+						"parent": null,
+						"previous": null,
+						"next": [null],
+						"estimate": {
+							"doc": addPdfForm.html().replaceAll("\r","").replaceAll("\n",""),
+							"address": address,
+							"cip": cip,
+							"customer": customer,
+							"date": date,
+							"exp": exp,
+							"fax": fax,
+							"firmName": firmName,
+							"form": form,
+							"items": items,
+							"phone": phone,
+							"representative": representative,
+							"title": title,
+							"width": 210,
+							"height": 297,
+							"no": storage.estmDetail.no,
+							"version": 1,
+							"remarks": remarks,
+						}
+					},
+					"remarks": remarks,
+				};
+			
+				datas = JSON.stringify(datas);
+				datas = cipher.encAes(datas);
+			
+				$.ajax({
+					url: "/api/estimate/" + storage.estmDetail.no,
+					method: "post",
+					data: datas,
+					dataType: "json",
+					contentType: "text/plain",
+					success: (result) => {
+						location.reload();
+						msg.set("수정되었습니다.");
+					},
+					error: () => {
+						msg.set("에러입니다.");
+					}
+				});
+			}, 300)
 		}
 	}
-	
-	mainPdf.find(".headInfoCustomer").children(".afterDiv").eq(0).after("<span style=\"font-size: 11px; display: flex; align-items: center; padding-left: 3px; padding-right: 3px;\">/</span>");
-	mainPdf.find(".headInfoPhone").children(".afterDiv").eq(0).after("<span style=\"font-size: 11px; display: flex; align-items: center; padding-left: 3px; padding-right: 3px;\">/</span>");
-
-	let pdfMainContainer = mainPdf.find(".pdfMainContainer").children("div");
-	for(let i = 0; i < pdfMainContainer.length; i++){
-		let item = $(pdfMainContainer[i]);
-		if(item.attr("class") === "pdfMainContentHeader" || item.attr("class") === "pdfMainContentTitle" || item.attr("class") === "pdfMainContentItem"){
-			item.children("div").last().remove();
-			item.css("grid-template-columns", "10% 10% 30% 10% 10% 10% 10% 10%");
-		}
-	}
-	
-	let textarea = mainPdf.find("textarea");
-	for(let i = 0; i < textarea.length; i++){
-		let item = $(textarea[i]);
-		let parent = item.parent();
-		parent.append("<div class=\"afterDiv\">" + item.val() + "</div>");
-		item.remove();
-	}
-}
-
-function estimatePdf(title, userName){
-	let element = document.getElementById("estPrintPdf");
- 
-	html2pdf().from(element).set({
-		margin: 0,
-		filename: title + "_" + userName + ".pdf",
-		html2canvas: { width: 835, height: 1000, scale: 10 },
-		jsPDF: {orientation: 'portrait', unit: 'mm', format: 'a4', compressPDF: true}
-	}).save();
 }
