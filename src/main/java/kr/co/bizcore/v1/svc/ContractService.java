@@ -119,9 +119,8 @@ public class ContractService extends Svc {
         json = new JSONObject(related);
         String parent = json.getString("parent");
         sopp = Integer.valueOf(parent.split(":")[1]);
-        sopp = contractMapper.getSoppNoXXXXX(no + "");
         if (sopp != null && sopp > 0)
-            trades = tradeMapper.getTradeByFunc(compId, "sopp:" + sopp);
+        trades = tradeMapper.getTradeByFunc(compId, "sopp:" + sopp);
         files = systemMapper.getAttachedFileList(compId, "contract", no);
         schedule1 = scheduleMapper.getScheduleListFromSchedWithContrct(compId, no);
         schedule2 = scheduleMapper.getScheduleListFromTechdWithContrct(compId, no);

@@ -259,7 +259,7 @@ public interface GwMapper {
         // @Select("select a.docNo from bizcore.doc_app a inner join
         // bizcore.doc_app_detail b on a.docNo = b.docNo where a.formId =
         // 'doc_Form_SalesReport' and b.appData = #{soppNo} and a.compId = #{compId}")
-        @Select("select a.docNo from bizcore.doc_app a inner join bizcore.doc_app_detail b on a.docNo = b.docNo where a.formId = 'doc_Form_SalesReport' and b.appData like concat('%',#{soppNo},'%') and a.compId = #{compId}")
-        public String getDocNo(@Param("compId") String compId, @Param("soppNo") String soppNo);
+        // @Select("select a.docNo from bizcore.doc_app a inner join bizcore.doc_app_detail b on a.docNo = b.docNo where a.formId = 'doc_Form_SalesReport' and b.appData like concat('%',#{soppNo},'%') and a.compId = #{compId}")
+        // public String getDocNo(@Param("compId") String compId, @Param("soppNo") String soppNo);
 
 }

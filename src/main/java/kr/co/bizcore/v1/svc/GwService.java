@@ -1211,10 +1211,10 @@ public class GwService extends Svc {
         return result;
     }
 
-    public String getSalesReport(String compId, String soppNo) {
-        String result = null;
-        result = gwMapper.getDocNo(compId, soppNo); 
-        return result;
-    }
+    // public String getSalesReport(String compId, String soppNo) {
+    //     String result = null;
+    //     result = gwMapper.getDocNo(compId, soppNo); 
+    //     return result;
+    // }
 
 }

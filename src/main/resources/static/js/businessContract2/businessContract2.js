@@ -293,25 +293,25 @@ class Contract {
 
 		// 판매보고
 
-		fetch(apiServer + "/api//" + no)
-		.catch((error) => console.log("error:", error))
-		.then(response => response.json())
-		.then(response => {
-			let data;
-			if (response.result === "ok") {
-				data = response.data;
-				data = cipher.decAes(data);
-				data = JSON.parse(data);
-				console.log(data);
-				R.contract = new Contract(data);
-				R.contract.drawDetail(obj);
+		// fetch(apiServer + "/api//" + no)
+		// .catch((error) => console.log("error:", error))
+		// .then(response => response.json())
+		// .then(response => {
+		// 	let data;
+		// 	if (response.result === "ok") {
+		// 		data = response.data;
+		// 		data = cipher.decAes(data);
+		// 		data = JSON.parse(data);
+		// 		console.log(data);
+		// 		R.contract = new Contract(data);
+		// 		R.contract.drawDetail(obj);
 
-			} else {
-				console.log(response.msg);
-			}
-		});
+		// 	} else {
+		// 		console.log(response.msg);
+		// 	}
+		// });
 
-  
+
 
 
 
@@ -433,10 +433,11 @@ function drawContractList() {
 
 function drawDetail(obj) {
 	let no = obj.parentElement.dataset.no;
-	fetch(apiServer + "/api/contract/" + no)
+	fetch(location.origin + "/api/contract/" + no)
 		.catch((error) => console.log("error:", error))
 		.then(response => response.json())
 		.then(response => {
+			console.log(response);
 			let data;
 			if (response.result === "ok") {
 				data = response.data;

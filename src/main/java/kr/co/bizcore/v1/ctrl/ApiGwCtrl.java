@@ -2,13 +2,11 @@ package kr.co.bizcore.v1.ctrl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.tomcat.util.json.JSONParser;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -17,7 +15,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -794,30 +791,30 @@ public class ApiGwCtrl extends Ctrl {
 
 
     // 영업기회 번호에 해당되는 수주판매 보고 문서 가져오기
-    @GetMapping("/salesReport/{soppNo}")
-    public String getSalesReportBySoppNo(HttpServletRequest request, @PathVariable("soppNo") String soppNo) {
-        String result = null, lang = null, compId = null;
-        HttpSession session = null;
-        Msg msg = null;
-        session = request.getSession();
-        compId = (String) session.getAttribute("compId");
-        lang = (String) session.getAttribute("lang");
-        msg = getMsg(lang);
+    // @GetMapping("/salesReport/{soppNo}")
+    // public String getSalesReportBySoppNo(HttpServletRequest request, @PathVariable("soppNo") String soppNo) {
+    //     String result = null, lang = null, compId = null;
+    //     HttpSession session = null;
+    //     Msg msg = null;
+    //     session = request.getSession();
+    //     compId = (String) session.getAttribute("compId");
+    //     lang = (String) session.getAttribute("lang");
+    //     msg = getMsg(lang);
 
-        if (compId == null)
-            compId = (String) request.getAttribute("compId");
+    //     if (compId == null)
+    //         compId = (String) request.getAttribute("compId");
 
-        if (compId == null) {
-            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
-        } else {
-            if (gwService.getSalesReport(compId, soppNo) != null) {
-                result = "{\"result\":\"ok\"}";
-            } else {
-                result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
-            }
+    //     if (compId == null) {
+    //         result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+    //     } else {
+    //         if (gwService.getSalesReport(compId, soppNo) != null) {
+    //             result = "{\"result\":\"ok\"}";
+    //         } else {
+    //             result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
+    //         }
 
-        }
+    //     }
 
-        return result;
-    }
+    //     return result;
+    // }
 }
