@@ -130,7 +130,7 @@
 	;
 }
 
-.detail-wrap>div>div>div {
-	display: flex;
+.detail-wrap>div>div:last-of-type {
+	display: inline-flex;
 
 }

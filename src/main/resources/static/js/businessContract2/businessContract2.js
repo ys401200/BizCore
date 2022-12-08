@@ -102,87 +102,6 @@ class Contract {
 		this.delivered = each.delivered == undefined ? 0 : each.delivered;
 	}
 
-	drawDetail() {
-		let el;
-		let cnt = document.getElementsByClassName("detail-wrap")[0];
-		el = document.createElement("div");
-		cnt.appendChild(el);
-
-		el = document.createElement("div");
-		cnt.children[cnt.children.length - 1].appendChild(el);
-		el.innerText = "관리자";
-
-		el = document.createElement("div");
-		cnt.children[cnt.children.length - 1].appendChild(el);
-		el.innerText = storage.user[this.employee].userName;
-
-		el = document.createElement("div");
-		cnt.appendChild(el);
-
-		el = document.createElement("div");
-		cnt.children[cnt.children.length - 1].appendChild(el);
-		el.innerText = "담당자";
-
-		el = document.createElement("div");
-		cnt.children[cnt.children.length - 1].appendChild(el);
-		el.innerText = this.coWorker == null ? "" : this.coWorker;
-
-		el = document.createElement("div");
-		cnt.appendChild(el);
-		el = document.createElement("div");
-		cnt.children[cnt.children.length - 1].appendChild(el);
-		el.innerText = "매출처";
-		el = document.createElement("div");
-		cnt.children[cnt.children.length - 1].appendChild(el);
-		el.innerText = storage.customer[this.customer].name;
-
-		el = document.createElement("div");
-		cnt.appendChild(el);
-		el = document.createElement("div");
-		cnt.children[cnt.children.length - 1].appendChild(el);
-		el.innerText = "매출처 담당자";
-		el = document.createElement("div");
-		cnt.children[cnt.children.length - 1].appendChild(el);
-		el.innerText = this.cipOfCustomer == 0 ? "" : storage.cip[this.cipOfCustomer].name;
-
-		el = document.createElement("div");
-		cnt.appendChild(el);
-		el = document.createElement("div");
-		cnt.children[cnt.children.length - 1].appendChild(el);
-		el.innerText = "엔드유저";
-		el = document.createElement("div");
-		cnt.children[cnt.children.length - 1].appendChild(el);
-		el.innerText = this.endUser == 0 ? "" : storage.customer[this.endUser].name;
-
-		el = document.createElement("div");
-		cnt.appendChild(el);
-		el = document.createElement("div");
-		cnt.children[cnt.children.length - 1].appendChild(el);
-		el.innerText = "엔드유저 담당자";
-		el = document.createElement("div");
-		cnt.children[cnt.children.length - 1].appendChild(el);
-		el.innerText = this.cipOfendUser == 0 ? "" : storage.cip[this.cipOfendUser].name;;
-
-		el = document.createElement("div");
-		cnt.appendChild(el);
-		el = document.createElement("div");
-		cnt.children[cnt.children.length - 1].appendChild(el);
-		el.innerText = "발주일자";
-		el = document.createElement("div");
-		cnt.children[cnt.children.length - 1].appendChild(el);
-		el.innerText = this.delivered;
-
-		el = document.createElement("div");
-		cnt.appendChild(el);
-		el = document.createElement("div");
-		cnt.children[cnt.children.length - 1].appendChild(el);
-		el.innerText = "검수일자";
-		el = document.createElement("div");
-		cnt.children[cnt.children.length - 1].appendChild(el);
-		el.innerText = this.supplied;
-
-	}
-
 	draw(cnt) {
 		let el, child;
 
@@ -291,73 +210,44 @@ class Contract {
 		cnt.children[cnt.children.length - 1].appendChild(el);
 		el.innerText = this.contractAmount.toLocaleString() + "원";
 
-		// 판매보고
-
-		// fetch(apiServer + "/api//" + no)
-		// .catch((error) => console.log("error:", error))
-		// .then(response => response.json())
-		// .then(response => {
-		// 	let data;
-		// 	if (response.result === "ok") {
-		// 		data = response.data;
-		// 		data = cipher.decAes(data);
-		// 		data = JSON.parse(data);
-		// 		console.log(data);
-		// 		R.contract = new Contract(data);
-		// 		R.contract.drawDetail(obj);
-
-		// 	} else {
-		// 		console.log(response.msg);
-		// 	}
-		// });
-
-
-
-
-
-
-
-
-
-		el = document.createElement("div");
-		cnt.appendChild(el);
-
-		el = document.createElement("div");
-		cnt.children[cnt.children.length - 1].appendChild(el);
-		el.innerText = "● 판매 보고 : ";
-
-		el = document.createElement("div");
-		cnt.children[cnt.children.length - 1].appendChild(el);
-		el.innerText = this.contractAmount.toLocaleString() + "원";
-
-		// 계약서 (첨부파일)
-		if (this.attached.length > 0) {
+		//판매보고
+		if (storage.reportDetailData != undefined && storage.reportDetailData != "") {
+			cnt = document.getElementsByClassName("detail-wrap")[0];
+			let appLine = storage.reportDetailData.appLine;
 
 			el = document.createElement("div");
 			cnt.appendChild(el);
 
 			el = document.createElement("div");
 			cnt.children[cnt.children.length - 1].appendChild(el);
-			el.innerText = "● 계약서 : ";
+			el.innerText = "● 수주 판매 보고 : ";
 
 			el = document.createElement("div");
 			cnt.children[cnt.children.length - 1].appendChild(el);
 
-			let filesList = "";
-			for (let i = 0; i < this.attached.length; i++) {
+			for (let i = 0; i < appLine.length; i++) {
+				el = document.createElement("div");
+				cnt.children[cnt.children.length - 1].children[1].appendChild(el);
+				if (i == 0) {
+					el.innerText = "작 성" + ":" + storage.user[appLine[i].employee].userName;
+				} else {
+					let appType = appLine[i].appType;
+					if (appType == 0) {
+						appType = "검 토";
+					} else if (appType == 2) {
+						appType = "결 재";
+					} else if (appType == 3) {
+						appType = "수 신";
+					} else if (appType == 4) {
+						appType = "참 조";
+					}
+					el.innerText = "▶" + appType + ":" + storage.user[appLine[i].employee].userName;
+				}
 
-				filesList += "<div><a href='/api/attached/contract/" +
-					this.no +
-					"/" +
-					encodeURI(this.attached.fileName) +
-					"'>" +
-					this.attached.fileName +
-					"</a></div>";
 			}
-
-			cnt.children[cnt.children.length - 1].children[1].innerHTML = filesList;
-
 		}
+
+		// 계약서 (첨부파일)
 
 		// 유지보수 
 		if (this.maintenance.length > 0) {
@@ -374,11 +264,11 @@ class Contract {
 			let mtnc = this.maintenance;
 			let mtncList = "";
 			for (let i = 0; i < mtnc.length; i++) {
-				mtncList += "<div>" +
+				mtncList +=
 					"<div>" + getYmdSlashShort(mtnc[i].startDate) + "</div>" +
-					"&nbsp" + "~" + "&nbsp" +
-					"<div>" + getYmdSlashShort(mtnc[i].endDate) + "</div>" +
-					"</div>";
+					"<div>~</div>" +
+					"<div>" + getYmdSlashShort(mtnc[i].endDate) + "</div>";
+
 
 			}
 			cnt.children[cnt.children.length - 1].children[1].innerHTML = mtncList;
@@ -420,6 +310,90 @@ class Contract {
 	}
 
 
+	getReportNo(obj) {
+
+		let sopp = JSON.parse(this.related);
+		sopp = sopp.parent.split(":")[1];
+		let docNo;
+
+		fetch(apiServer + "/api/gw/salesReport/" + sopp)
+			.catch((error) => console.log("error:", error))
+			.then(response => response.json())
+			.then(response => {
+
+				if (response.result === "ok") {
+					docNo = response.docNo;
+					docNo = cipher.decAes(docNo);
+					this.getReportDetail(docNo, obj);
+
+				} else {
+					storage.reportDetailData = "";
+					this.drawDetail(obj);
+					console.log(response.msg);
+				}
+			});
+
+	}
+
+
+
+
+	getReportDetail(docNo, obj) {
+
+		fetch(apiServer + "/api/gw/app/doc/" + docNo)
+			.catch((error) => console.log("error:", error))
+			.then(response => response.json())
+			.then(response => {
+				let data;
+				if (response.result === "ok") {
+					data = response.data;
+					data = cipher.decAes(data);
+					data = JSON.parse(data);
+					storage.reportDetailData = data;
+					this.drawDetail(obj);
+					// let el, cnt;
+					// cnt = document.getElementsByClassName("detail-wrap")[0];
+					// let appLine = storage.reportDetailData.appLine;
+
+					// el = document.createElement("div");
+					// cnt.appendChild(el);
+
+					// el = document.createElement("div");
+					// cnt.children[cnt.children.length - 1].appendChild(el);
+					// el.innerText = "● 수주 판매 보고 : ";
+
+					// el = document.createElement("div");
+					// cnt.children[cnt.children.length - 1].appendChild(el);
+
+					// for (let i = 0; i < appLine.length; i++) {
+					// 	el = document.createElement("div");
+					// 	cnt.children[cnt.children.length - 1].children[1].appendChild(el);
+					// 	if (i == 0) {
+					// 		el.innerText = "작 성" + ":" + storage.user[appLine[i].employee].userName;
+					// 	} else {
+					// 		let appType = appLine[i].appType;
+					// 		if (appType == 0) {
+					// 			appType = "검 토";
+					// 		} else if (appType == 2) {
+					// 			appType = "결 재";
+					// 		} else if (appType == 3) {
+					// 			appType = "수 신";
+					// 		} else if (appType == 4) {
+					// 			appType = "참 조";
+					// 		}
+					// 		el.innerText = "▶" + appType + ":" + storage.user[appLine[i].employee].userName;
+					// 	}
+
+					// }
+				} else {
+					storage.reportDetailData = "";
+					this.drawDetail(obj);
+					console.log(response.msg);
+				}
+			});
+	}
+
+
 
 } // 클래스 정의 끝 ==============================================================================================================
 
@@ -429,6 +403,7 @@ function drawContractList() {
 	R.contracts.draw();
 
 }
+
 
 
 function drawDetail(obj) {
@@ -445,7 +420,8 @@ function drawDetail(obj) {
 				data = JSON.parse(data);
 				console.log(data);
 				R.contract = new Contract(data);
-				R.contract.drawDetail(obj);
+				R.contract.getReportNo(obj);
+				// R.contract.drawDetail(obj);
 
 			} else {
 				console.log(response.msg);

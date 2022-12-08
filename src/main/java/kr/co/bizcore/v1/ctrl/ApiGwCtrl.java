@@ -790,31 +790,35 @@ public class ApiGwCtrl extends Ctrl {
     }
 
 
-    // 영업기회 번호에 해당되는 수주판매 보고 문서 가져오기
-    // @GetMapping("/salesReport/{soppNo}")
-    // public String getSalesReportBySoppNo(HttpServletRequest request, @PathVariable("soppNo") String soppNo) {
-    //     String result = null, lang = null, compId = null;
-    //     HttpSession session = null;
-    //     Msg msg = null;
-    //     session = request.getSession();
-    //     compId = (String) session.getAttribute("compId");
-    //     lang = (String) session.getAttribute("lang");
-    //     msg = getMsg(lang);
+    //영업기회 번호에 해당되는 수주판매 보고 문서 가져오기
+    @GetMapping("/salesReport/{soppNo}")
+    public String getSalesReportBySoppNo(HttpServletRequest request, @PathVariable("soppNo") String soppNo) {
+        String result = null, lang = null, compId = null;
+        HttpSession session = null;
+        Msg msg = null;
+        session = request.getSession();
+        compId = (String) session.getAttribute("compId");
+        lang = (String) session.getAttribute("lang");
+        msg = getMsg(lang);
+        String aesKey = (String) session.getAttribute("aesKey");
+        String aesIv = (String) session.getAttribute("aesIv");
+     
+      String docNo = null;
+        if (compId == null)
+            compId = (String) request.getAttribute("compId");
+        if (compId == null) {
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        } else {
+            if (gwService.getSalesReport(compId, soppNo) != null) {
+                docNo = gwService.getSalesReport(compId, soppNo);
+                docNo = encAes(docNo, aesKey, aesIv);
+                result = "{\"result\":\"ok\",\"docNo\":\"" +docNo+ "\"}";
+            } else {
+                result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
+            }
 
-    //     if (compId == null)
-    //         compId = (String) request.getAttribute("compId");
+        }
 
-    //     if (compId == null) {
-    //         result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
-    //     } else {
-    //         if (gwService.getSalesReport(compId, soppNo) != null) {
-    //             result = "{\"result\":\"ok\"}";
-    //         } else {
-    //             result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
-    //         }
-
-    //     }
-
-    //     return result;
-    // }
+        return result;
+    }
 }
