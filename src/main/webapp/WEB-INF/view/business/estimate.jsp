@@ -38,7 +38,7 @@
             <hr />
             <span id="containerTitle">견적목록</span>
 			<div class="listSearchInput">
-                <input type="text" class="searchAllInput" id="searchAllInput" onkeyup="searchInputKeyup();" placeholder="단어를 입력해주세요.">
+                <input type="text" class="searchAllInput" id="searchAllInput" onkeyup="EstimateSet.searchInputKeyup();" placeholder="단어를 입력해주세요.">
             </div>
             <div class="listRange">
                 <input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="listRangeChange(this, drawSoppList);">
@@ -48,7 +48,7 @@
 				<button type="button" class="crudAddBtn">견적추가</button>
 				<button type="button" class="crudUpdateBtn">견적수정</button>
 				<button type="button" class="estimatePdf">pdf 다운로드</button>
-				<a href="#" onclick="hideDetailView(drawBack);" class="detailBackBtn">Back</a>
+				<a href="#" onclick="hideDetailView(EstimateSet.drawBack);" class="detailBackBtn">Back</a>
 			</div>
 			<!-- <span class="bodyTitleFnc">
 				<div style="display: none;"></div>

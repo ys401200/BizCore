@@ -443,16 +443,24 @@
     width: 40%;
 }
 
-.addPdfForm{
-    display: none;
-}
-
 .cke_textarea_inline{
     border: 1px solid #000;
     padding: 0;
+    min-height: 0;
 }
 
 .mainPdf{
+    width: 21cm;
+    min-height: 29.7cm;
+    border: 1px #D3D3D3 solid;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgb(0 0 0 / 10%);
+    padding: 30px 20px 0 20px;
+    clear: both;
+    margin: 0 auto;
+}
+
+.copyMainPdf{
     width: 21cm;
     min-height: 29.7cm;
     border: 1px #D3D3D3 solid;
