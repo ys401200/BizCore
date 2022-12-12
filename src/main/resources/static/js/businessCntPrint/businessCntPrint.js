@@ -204,7 +204,6 @@ function setAppLineData() {
 }
 
 
-
 function getYmdShortSlash(date) {
   let d = new Date(date);
   return (
