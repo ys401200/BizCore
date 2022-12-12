@@ -87,7 +87,6 @@ class Contracts {
 }
 
 
-
 class Contract {
 	constructor(each) {
 		this.no = each.no;
@@ -192,24 +191,42 @@ class Contract {
 
 		el2 = document.createElement("div");
 		el.append(el2);
-		el2.className = "contract-done";
+		if (storage.reportDetailData.status == "proceed") {
+			el2.className = "contract-doing";
+		} else if (storage.reportDetailData.status == "rejected") {
+			el2.className = "contract-fail";
+		} else if (storage.reportDetailData.status == "read") {
+			el2.className = "contract-done";
+		}
+
 		el2.innerText = "판매보고";
 
 		el2 = document.createElement("div");
 		el.append(el2);
 
-		el2.className = "contract-done";
+		if (this.attached.length != 0) {
+			el2.className = "contract-done";
+		} else {
+			if (storage.reportDetailData != undefined) {
+				el2.className = "contract-doing";
+			}
+		}
+
 		el2.innerText = "계약서";
 
+
+		// 납품 
 		el2 = document.createElement("div");
 		el.append(el2);
-		if (this.supplied == 0) {
+		if (this.supplied == 0 && this.attached.length > 0) {
 			el2.className = "contract-doing";
-		} else {
+		} else if (this.attached.length > 0 && this.supplied != 0) {
 			el2.className = "contract-done";
 		}
 		el2.innerText = "납품";
 
+
+		//검수
 		el2 = document.createElement("div");
 		el.append(el2);
 		if (this.supplied != 0 && this.delivered == 0) {
@@ -222,8 +239,7 @@ class Contract {
 		el = document.createElement("div");
 		ctrtTop.appendChild(el);
 		el.className = "crudBtns";
-		el.innerHTML = "<Button data-detail='" + this.no + "'onclick='removeContract()'>삭제</Button>" +
-			"<Button data-detail='" + this.no + "'onclick='this.parentElement.parentElement.parentElement.remove()'><i class='fa-solid fa-xmark'></i></Button>";
+		el.innerHTML = "<Button data-detail='" + this.no + "'onclick='this.parentElement.parentElement.parentElement.remove()'><i class='fa-solid fa-xmark'></i></Button>";
 
 		// 계약명
 		el = document.createElement("div");
@@ -261,81 +277,7 @@ class Contract {
 		cnt.children[cnt.children.length - 1].appendChild(el);
 		el.innerText = this.contractAmount.toLocaleString() + "원";
 
-		//판매보고
-		if (storage.reportDetailData != undefined && storage.reportDetailData != "") {
-			cnt = document.getElementsByClassName("detail-wrap")[0];
-			let appLine = storage.reportDetailData.appLine;
 
-			el = document.createElement("div");
-			cnt.appendChild(el);
-
-			el = document.createElement("div");
-			cnt.children[cnt.children.length - 1].appendChild(el);
-			el.innerText = "수주 판매 보고";
-
-			el = document.createElement("div");
-			cnt.children[cnt.children.length - 1].appendChild(el);
-
-			for (let i = 0; i < appLine.length; i++) {
-				el = document.createElement("div");
-				cnt.children[cnt.children.length - 1].children[1].appendChild(el);
-				if (i == 0) {
-					el.innerText = "작 성" + ":" + storage.user[appLine[i].employee].userName;
-				} else {
-					let appType = appLine[i].appType;
-					if (appType == 0) {
-						appType = "검 토";
-					} else if (appType == 2) {
-						appType = "결 재";
-					} else if (appType == 3) {
-						appType = "수 신";
-					} else if (appType == 4) {
-						appType = "참 조";
-					}
-					el.innerText = "▶" + appType + ":" + storage.user[appLine[i].employee].userName;
-				}
-
-			}
-			el = document.createElement("div");
-			cnt.children[cnt.children.length - 1].children[1].appendChild(el);
-			el.innerText = "(" + storage.reportDetailData.docNo + ")";
-			el.setAttribute("onclick", "openPreviewTab()");
-			el.style.color = "blue";
-			el.style.cursor = "pointer";
-
-		}
-
-		// 계약서 (첨부파일)
-		if (this.attached.length > 0) {
-			el = document.createElement("div");
-			cnt.appendChild(el);
-
-			el = document.createElement("div");
-			cnt.children[cnt.children.length - 1].appendChild(el);
-			el.innerText = "관련 문서";
-
-			el = document.createElement("div");
-			cnt.children[cnt.children.length - 1].appendChild(el);
-
-
-			let files = "";
-			for (let i = 0; i < this.attached.length; i++) {
-				files +=
-					"<div><a href='/api/attached/contract/" +
-					this.no +
-					"/" +
-					encodeURI(this.attached[i].fileName) +
-					"'>" +
-					this.attached[i].fileName +
-					"</a></div>";
-			}
-
-			cnt.children[cnt.children.length - 1].children[1].innerHTML = files;
-
-		}
-
-
-		// 유지보수 
 		if (this.maintenance.length > 0) {
 			el = document.createElement("div");
 			cnt.appendChild(el);
@@ -363,35 +305,207 @@ class Contract {
 
 		}
 
-		// 납품일
-		if (this.supplied != 0) {
+
+		el = document.createElement("div");
+		cnt.appendChild(el);
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.innerText = "판매보고";
+		el.setAttribute("style", "display:flex;justify-content:center;grid-column:span 2;");
+
+
+
+		//판매보고
+		if (storage.reportDetailData != undefined && storage.reportDetailData != "") {
+			cnt = document.getElementsByClassName("detail-wrap")[0];
+			let appLine = storage.reportDetailData.appLine;
 
 			el = document.createElement("div");
 			cnt.appendChild(el);
 
 			el = document.createElement("div");
 			cnt.children[cnt.children.length - 1].appendChild(el);
-			el.innerText = "납품일";
+			el.innerText = "수주 판매 보고";
 
 			el = document.createElement("div");
 			cnt.children[cnt.children.length - 1].appendChild(el);
-			el.innerText = getYmdSlashShort(this.supplied);
+
+			for (let i = 0; i < appLine.length; i++) {
+				el = document.createElement("div");
+				cnt.children[cnt.children.length - 1].children[1].appendChild(el);
+				if (i == 0) {
+					el.innerText = "[작성]" + storage.user[appLine[i].employee].userName;
+				} else {
+					let appType = appLine[i].appType;
+					if (appType == 0) {
+						appType = "검토";
+					} else if (appType == 2) {
+						appType = "결재";
+					} else if (appType == 3) {
+						appType = "수신";
+					} else if (appType == 4) {
+						appType = "참조";
+					}
+					el.innerText = "\u00A0" + "▶" + "\u00A0" + "[" + appType + "]" + storage.user[appLine[i].employee].userName;
+				}
+
+			}
+			el = document.createElement("div");
+			cnt.children[cnt.children.length - 1].children[1].appendChild(el);
+			el.innerText = "(" + storage.reportDetailData.docNo + ")";
+			el.setAttribute("onclick", "openPreviewTab()");
+			el.style.color = "blue";
+			el.style.cursor = "pointer";
 
 		}
 
-		// 검수일 
-		if (this.supplied != 0) {
 
-			el = document.createElement("div");
-			cnt.appendChild(el);
 
-			el = document.createElement("div");
-			cnt.children[cnt.children.length - 1].appendChild(el);
-			el.innerText = "검수일";
 
-			el = document.createElement("div");
-			cnt.children[cnt.children.length - 1].appendChild(el);
-			el.innerText = getYmdSlashShort(this.delivered);
+		// 계약서 타이틀 
+		el = document.createElement("div");
+		cnt.appendChild(el);
+
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.innerText = "계약서";
+		el.setAttribute("style", "display:flex;justify-content:center;grid-column:span 2;");
+
+
+
+
+
+		el = document.createElement("div");
+		cnt.appendChild(el);
+
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.innerText = "계약서";
+
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+
+
+		el = document.createElement("input")
+		el.setAttribute("type", "file");
+		cnt.children[cnt.children.length - 1].children[1].appendChild(el);
+        
+
+
+		// 계약서 (첨부파일)
+		if (this.attached.length > 0) {
+			let files = "";
+			for (let i = 0; i < this.attached.length; i++) {
+				files +=
+					"<div><div><a href='/api/attached/contract/" +
+					this.no +
+					"/" +
+					encodeURI(this.attached[i].fileName) +
+					"'>" +
+					this.attached[i].fileName +
+					"</a></div><div><button>x</button></div></div>";
+			}
+
+			cnt.children[cnt.children.length - 1].children[1].innerHTML = files;
+
+		}
+		// 	// 첨부된 파일이 없는 경우 
+		// } else {
+		// 	el = document.createElement("div");
+		// 	cnt.appendChild(el);
+
+		// 	el = document.createElement("div");
+		// 	cnt.children[cnt.children.length - 1].appendChild(el);
+		// 	el.innerText = "계약서";
+
+		// 	el = document.createElement("div");
+		// 	cnt.children[cnt.children.length - 1].appendChild(el);
+		// 	el.innerHTML = "<div></div><div><input type='file'/></div>";
+		// }
+
+
+
+
+		el = document.createElement("div");
+		cnt.appendChild(el);
+
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.innerText = "납품";
+		el.setAttribute("style", "display:flex;justify-content:center;grid-column:span 2;");
+
+
+		if ($(".contract-progress").children()[2].className == "contract-doing") {
+
+
+			// 납품일
+			if (this.supplied != 0) {
+
+				el = document.createElement("div");
+				cnt.appendChild(el);
+
+				el = document.createElement("div");
+				cnt.children[cnt.children.length - 1].appendChild(el);
+				el.innerText = "납품일";
+
+				el = document.createElement("div");
+				cnt.children[cnt.children.length - 1].appendChild(el);
+				el.innerText = getYmdSlashShort(this.supplied);
+
+			} else {
+				el = document.createElement("div");
+				cnt.appendChild(el);
+
+				el = document.createElement("div");
+				cnt.children[cnt.children.length - 1].appendChild(el);
+				el.innerText = "납품일";
+
+				el = document.createElement("div");
+				cnt.children[cnt.children.length - 1].appendChild(el);
+				el.innerHTML = "<div><input type='date'/></div><div class='suppliedFile'></div><div><input type='file'/></div>";
+
+			}
+
+		}
+
+
+		el = document.createElement("div");
+		cnt.appendChild(el);
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.innerText = "검수";
+		el.setAttribute("style", "display:flex;justify-content:center;grid-column:span 2;");
+
+
+
+		if ($(".contract-progress").children()[3].className == "contract-doing") {
+
+			// 검수일 
+			if (this.delivered != 0) {
+
+				el = document.createElement("div");
+				cnt.appendChild(el);
+
+				el = document.createElement("div");
+				cnt.children[cnt.children.length - 1].appendChild(el);
+				el.innerText = "검수일";
+
+				el = document.createElement("div");
+				cnt.children[cnt.children.length - 1].appendChild(el);
+				el.innerText = getYmdSlashShort(this.delivered);
+
+			} else {
+				el = document.createElement("div");
+				cnt.appendChild(el);
+
+				el = document.createElement("div");
+				cnt.children[cnt.children.length - 1].appendChild(el);
+				el.innerText = "검수일";
+
+				el = document.createElement("div");
+				cnt.children[cnt.children.length - 1].appendChild(el);
+				el.innerHTML = "<div><input type='date'/></div><div class='deliveredFile'></div><div><input type='file'/></div>";
+			}
 
 		}
 
@@ -443,7 +557,6 @@ class Contract {
 				}
 			});
 	}
-
 
 	remove() {
 
@@ -529,6 +642,7 @@ function getYmdSlashShort(date) {
 function openPreviewTab() {
 
 	window.open("/business/contract/popup/" + storage.reportDetailData.docNo, "미리보기", "width :210mm");
+
 }
 
 

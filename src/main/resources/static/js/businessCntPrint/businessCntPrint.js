@@ -154,7 +154,7 @@ function setSelectedData() {
   }
 
   setAppLineData();
-
+  $(".cke_editable").remove();
 }
 
 

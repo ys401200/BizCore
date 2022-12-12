@@ -136,8 +136,7 @@
 }
 
 .contract-top .crudBtns {
-	padding-left: calc(100% - 90px);
-
+	padding-left: calc(100% - 40px);
 }
 
 .contract-top .contract-progress {

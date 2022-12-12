@@ -293,7 +293,7 @@ confirmNewSopp = () => {
 	value[1] = value[1] * 1;
 	v = value[2] === undefined ? [] : value[2].split(",");
 	value[2] = [];
-	for(x = 0 ; x < v.length ; x++)	value[2].push(v[x] * 1);
+	for (x = 0; x < v.length; x++)	value[2].push(v[x] * 1);
 	value[3] = value[3] * 1;
 	value[4] = value[4] !== undefined ? value[4] * 1 : -1;
 	value[5] = value[5].replaceAll(/[^0-9]/g, "") * 1;
@@ -673,8 +673,8 @@ class Project {
 
 } // End of Class _ Project
 
-class Sopp2{
-	constructor(each){
+class Sopp2 {
+	constructor(each) {
 		this.no = each.no;
 		this.stage = each.stage;
 		this.title = each.title;
@@ -692,31 +692,31 @@ class Sopp2{
 		this.created = each.created == undefined ? null : new Date(each.created);
 		this.modified = each.modified == undefined ? null : new Date(each.modified);
 	}
-	isClosed(){return this.closed !== null;}
+	isClosed() { return this.closed !== null; }
 
-	getEmployee(arr){
+	getEmployee(arr) {
 		let x;
-		if(arr === undefined || arr === null || arr.constructor.name !== "Array")	arr = new Array();
-		if(this.owner !== undefined && this.owner !== null && !arr.includes(this.owner))	arr.push(this.owner);
-		if(this.coWorker != null)	for(x = 0 ; x < this.coWorker.length ; x++)	if(this.coWorker[x] !== undefined && this.coWorker[x] !== null && !arr.includes(this.coWorker[x]))	arr.push(this.coWorker[x]);
+		if (arr === undefined || arr === null || arr.constructor.name !== "Array") arr = new Array();
+		if (this.owner !== undefined && this.owner !== null && !arr.includes(this.owner)) arr.push(this.owner);
+		if (this.coWorker != null) for (x = 0; x < this.coWorker.length; x++)	if (this.coWorker[x] !== undefined && this.coWorker[x] !== null && !arr.includes(this.coWorker[x])) arr.push(this.coWorker[x]);
 		return arr;
 	} // End of getEmployee()
 
-	ownerName(){
+	ownerName() {
 		let owner, name = "...", html, x;
 		owner = storage.user[this.owner];
-		if(owner !== undefined && owner !== null){
+		if (owner !== undefined && owner !== null) {
 			owner = owner.userName;
-			if(owner !== undefined && owner !== null)	name = owner;
+			if (owner !== undefined && owner !== null) name = owner;
 		}
 		html = ("<img src=\"/api/user/image/" + this.owner + "\" class=\"employee_image\" /><span>" + name + "</span>")
 
-		if(this.coWorker != null)	for(x = 0 ; x < this.coWorker.length ; x++){
+		if (this.coWorker != null) for (x = 0; x < this.coWorker.length; x++) {
 			name = "...";
 			owner = storage.user[this.coWorker[x]];
-			if(owner !== undefined && owner !== null){
+			if (owner !== undefined && owner !== null) {
 				owner = owner = owner.userName;
-				if(owner !== undefined && owner !== null)	name = owner;
+				if (owner !== undefined && owner !== null) name = owner;
 			}
 			html += ("<img src=\"/api/user/image/" + this.coWorker[x] + "\" class=\"employee_image\" /><span>" + name + "</span>")
 		}
@@ -724,19 +724,19 @@ class Sopp2{
 		return html;
 	} // End of ownerName()
 
-	draw(){
+	draw() {
 		let cnt;
 
 		cnt = document.getElementsByClassName("content-title")[0];
 		cnt.innerText = cnt.innerText + " : " + this.title;
 	} // End of draw()
 
-	drawList(cnt){
+	drawList(cnt) {
 		let el, x, z, lb = ["개설", "접촉", "제안", "견적", "협상", "계약", "종료"], html;
 
-		if(this.stage < 6)			cnt.className = cnt.className + " sopp-doing";
-		else if(this.stage === 6)	cnt.className = cnt.className + " sopp-done";
-		else						cnt.className = cnt.className + " sopp-fail";
+		if (this.stage < 6) cnt.className = cnt.className + " sopp-doing";
+		else if (this.stage === 6) cnt.className = cnt.className + " sopp-done";
+		else cnt.className = cnt.className + " sopp-fail";
 
 		cnt.setAttribute("onclick", "location.href='/business/sopp2/" + this.no + "'");
 
@@ -754,7 +754,7 @@ class Sopp2{
 
 		el = document.createElement("div");
 		cnt.appendChild(el);
-		el.innerText = this.created.toISOString().substring(0,10) + " » " +  (this.expactedDate == null ? "미정" :  this.expactedDate.toISOString().substring(0,10));
+		el.innerText = this.created.toISOString().substring(0, 10) + " » " + (this.expactedDate == null ? "미정" : this.expactedDate.toISOString().substring(0, 10));
 
 		el = document.createElement("div");
 		cnt.appendChild(el);
@@ -773,21 +773,21 @@ class Sopp2{
 		cnt.appendChild(el);
 		el.className = "progress";
 		html = "";
-		for(x = 0 ; x < lb.length ; x++)	html += ("<prgbar " + (this.stage > x ? "class=\"done\"" : (this.stage === x ? "class=\"doing\"" : "")) + ">" + lb[x] + "</prgbar>");
+		for (x = 0; x < lb.length; x++)	html += ("<prgbar " + (this.stage > x ? "class=\"done\"" : (this.stage === x ? "class=\"doing\"" : "")) + ">" + lb[x] + "</prgbar>");
 		el.innerHTML = html;
 
 	} // End of draw()
 
-	update(){
+	update() {
 		let json = Object.assign({}, this), data;
-		
+
 		json.created = (json.created === undefined || json.created === null) ? null : json.created.getTime();
 		json.closed = (json.closed === undefined || json.closed === null) ? null : json.closed.getTime();
-		json.modified = (json.modified === undefined || json.modified === null)	? null : json.modified.getTime();
-		json.expactedDate = (json.expactedDate === undefined || json.expactedDate === null) ? null :  json.expactedDate.getTime();
+		json.modified = (json.modified === undefined || json.modified === null) ? null : json.modified.getTime();
+		json.expactedDate = (json.expactedDate === undefined || json.expactedDate === null) ? null : json.expactedDate.getTime();
 		json.coWorker = (json.coWorker === undefined || json.coWorker === null) ? null : JSON.stringify(json.coWorker);
 		json.related = (json.related === undefined || json.related === null) ? null : JSON.stringify(json.related);
-		data = JSON.stringify(json);		
+		data = JSON.stringify(json);
 		data = cipher.encAes(data);
 		fetch(apiServer + "/api/project/sopp", {
 			method: "POST",
@@ -798,18 +798,18 @@ class Sopp2{
 			.then(response => {
 				let sopp, prjNo, x;
 				console.log(response);
-				if(response.result === "ok"){
+				if (response.result === "ok") {
 					x = response.data;
 					x = cipher.decAes(x)
 					x = JSON.parse(x);
 					sopp = new Sopp2(x);
 					console.log(sopp);
 					prjNo = sopp.related.parent;
-					if(prjNo !== undefined)	prjNo = prjNo.split(":")[1];
-					if(prjNo !== undefined && R !== undefined && R.project !== undefined && R.project.list !== undefined){
+					if (prjNo !== undefined) prjNo = prjNo.split(":")[1];
+					if (prjNo !== undefined && R !== undefined && R.project !== undefined && R.project.list !== undefined) {
 						prjNo = prjNo * 1;
-						for(x = 0 ; x < R.project.list.length ; x++){
-							if(R.project.list[x].no === prjNo){
+						for (x = 0; x < R.project.list.length; x++) {
+							if (R.project.list[x].no === prjNo) {
 								R.project.list[x].addSopp(sopp);
 								R.project.list[x].draw();
 								break;
@@ -817,7 +817,7 @@ class Sopp2{
 						}
 					}
 
-				}else{
+				} else {
 					console.log(response.msg);
 				}
 			});
