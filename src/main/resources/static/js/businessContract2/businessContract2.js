@@ -222,15 +222,16 @@ class Contract {
 		el = document.createElement("div");
 		ctrtTop.appendChild(el);
 		el.className = "crudBtns";
-		el.innerHTML = "<Button data-detail='" + this.no + "'onclick='removeContract()'>삭제</Button>";
-		el.append = "<Button data-detail='" + this.no + "'onclick='this.parentElement.parentElement.remove()'>닫기</Button>";
+		el.innerHTML = "<Button data-detail='" + this.no + "'onclick='removeContract()'>삭제</Button>" +
+			"<Button data-detail='" + this.no + "'onclick='this.parentElement.parentElement.parentElement.remove()'><i class='fa-solid fa-xmark'></i></Button>";
+
 		// 계약명
 		el = document.createElement("div");
 		cnt.appendChild(el);
 
 		el = document.createElement("div");
 		cnt.children[cnt.children.length - 1].appendChild(el);
-		el.innerText = "● 계약명 : ";
+		el.innerText = "계약명";
 
 		el = document.createElement("div");
 		cnt.children[cnt.children.length - 1].appendChild(el);
@@ -242,7 +243,7 @@ class Contract {
 
 		el = document.createElement("div");
 		cnt.children[cnt.children.length - 1].appendChild(el);
-		el.innerText = "● 담당자 : ";
+		el.innerText = "담당자";
 
 		el = document.createElement("div");
 		cnt.children[cnt.children.length - 1].appendChild(el);
@@ -254,7 +255,7 @@ class Contract {
 
 		el = document.createElement("div");
 		cnt.children[cnt.children.length - 1].appendChild(el);
-		el.innerText = "● 계약 금액 : ";
+		el.innerText = "계약 금액";
 
 		el = document.createElement("div");
 		cnt.children[cnt.children.length - 1].appendChild(el);
@@ -270,7 +271,7 @@ class Contract {
 
 			el = document.createElement("div");
 			cnt.children[cnt.children.length - 1].appendChild(el);
-			el.innerText = "● 수주 판매 보고 : ";
+			el.innerText = "수주 판매 보고";
 
 			el = document.createElement("div");
 			cnt.children[cnt.children.length - 1].appendChild(el);
@@ -311,7 +312,7 @@ class Contract {
 
 			el = document.createElement("div");
 			cnt.children[cnt.children.length - 1].appendChild(el);
-			el.innerText = "● 관련 문서 : ";
+			el.innerText = "관련 문서";
 
 			el = document.createElement("div");
 			cnt.children[cnt.children.length - 1].appendChild(el);
@@ -341,7 +342,7 @@ class Contract {
 
 			el = document.createElement("div");
 			cnt.children[cnt.children.length - 1].appendChild(el);
-			el.innerText = "● 유지 보수 : ";
+			el.innerText = "유지 보수";
 
 			el = document.createElement("div");
 			cnt.children[cnt.children.length - 1].appendChild(el);
@@ -370,7 +371,7 @@ class Contract {
 
 			el = document.createElement("div");
 			cnt.children[cnt.children.length - 1].appendChild(el);
-			el.innerText = "● 납품일 : ";
+			el.innerText = "납품일";
 
 			el = document.createElement("div");
 			cnt.children[cnt.children.length - 1].appendChild(el);
@@ -386,7 +387,7 @@ class Contract {
 
 			el = document.createElement("div");
 			cnt.children[cnt.children.length - 1].appendChild(el);
-			el.innerText = "● 검수일 : ";
+			el.innerText = "검수일";
 
 			el = document.createElement("div");
 			cnt.children[cnt.children.length - 1].appendChild(el);
@@ -469,9 +470,6 @@ class Contract {
 				});
 		}
 
-		// 라디오버튼 id - contract+계약번호
-		// contractWrap중에서  data no = 계약번호 없애면 됨 
-		// db에서 contract 지우고 관련 유지보수 있으면 지움 
 
 	}
 
@@ -727,4 +725,9 @@ function contractInsertForm() {
 	setTimeout(() => {
 		document.getElementsByClassName("cke_textarea_inline")[0].style.height = "300px";
 	}, 300);
+
+
+
+
+
 }

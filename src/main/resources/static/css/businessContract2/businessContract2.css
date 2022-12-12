@@ -1,6 +1,7 @@
 @charset "UTF-8";
 
 .contractContainer {
+	font-size: 0.9rem;
 	width: calc(100% - 4px);
 	height: calc(100% - 4px);
 	margin: 2px;
@@ -124,14 +125,18 @@
 
 }
 
+.detail-wrap:hover {
+	background-color: #e7e6e642;
+	cursor: pointer;
+}
+
 .contract-top {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
-
 }
 
-.contract-top .crudBtns>button {
-	margin-left: calc(100% - 50px);
+.contract-top .crudBtns {
+	padding-left: calc(100% - 90px);
 
 }
 
@@ -172,22 +177,29 @@
 	background-image: url("/images/sopp2/label_green.png");
 }
 
-.detail-wrap>div {
-	display: grid;
-	grid-template-columns: 20% 80%;
-	;
-}
 
 .detail-wrap>div {
 	display: grid;
 	grid-template-columns: 20% 80%;
-	;
+}
+.detail-wrap>div>div {
+	border: 1px solid #e0e4e9;
+    margin: 0.5px;
+    padding: 8px;
+    text-align: center;
+}
+
+.detail-wrap>div>div:first-of-type {
+	text-align: center;
+	background-color: #eef1fb;
+    font-weight: 500;
 }
 
 .detail-wrap>div>div:last-of-type {
 	display: inline-flex;
 	line-height: 1.5;
-
+    overflow: hidden;
+  
 }
 
 .detail-wrap>div>div:last-of-type>div {
