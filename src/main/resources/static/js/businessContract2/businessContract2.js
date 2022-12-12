@@ -9,15 +9,12 @@ $(document).ready(() => {
 		$("#loadingDiv").loading("toggle");
 	}, 300);
 
-
 	R.contracts = new Contracts(location.origin, document.getElementsByClassName("contract-list")[0]);
-
 
 });
 
 
 // ================================= C L A S S _ D E C L A R A T I O N =================================
-
 
 class Contracts {
 	constructor(_server, cnt) {
@@ -34,7 +31,6 @@ class Contracts {
 					data = cipher.decAes(response.data);
 					arr = JSON.parse(data);
 					for (x = 0; x < arr.length; x++)	R.contracts.addContract(new Contract(arr[x]));
-
 				}
 				storage.currentPage = 1;
 				R.contracts.draw();
@@ -61,8 +57,6 @@ class Contracts {
 		el = document.createElement("div");
 		cnt.children[0].appendChild(el);
 		el.innerText = "계약금액";
-
-
 
 
 		let page = storage.currentPage * 13;
@@ -128,8 +122,6 @@ class Contract {
 		else if (cnt !== undefined && this.cnt === undefined) this.cnt = cnt;
 		else if (cnt === undefined && this.cnt === undefined) return;
 
-
-
 		// 프로젝트 래퍼 클래스명 지정 및 데이터 타입 데이터 번호 세팅
 		cnt.className = "contract-wrap";
 		cnt.dataset.data = "contract";
@@ -183,10 +175,20 @@ class Contract {
 		parent.after(el);
 		cnt = document.getElementsByClassName("detail-wrap")[0];
 
+
+		el = document.createElement("top");
+		el.className = "contract-top";
+		cnt.appendChild(el);
+
+		let ctrtTop = document.getElementsByClassName("contract-top")[0];
+
+		el = document.createElement("div");
+		ctrtTop.appendChild(el);
+
 		// contract-progress Div 
 		el = document.createElement("bar");
 		el.className = "contract-progress"
-		cnt.appendChild(el);
+		ctrtTop.appendChild(el);
 
 		el2 = document.createElement("div");
 		el.append(el2);
@@ -216,6 +218,35 @@ class Contract {
 			el2.className = "contract-done";
 		}
 		el2.innerText = "검수";
+
+		el = document.createElement("div");
+		ctrtTop.appendChild(el);
+		el.className = "crudBtns";
+		el.innerHTML = "<Button data-detail='" + this.no + "'onclick='removeContract()'>삭제</Button>";
+		el.append = "<Button data-detail='" + this.no + "'onclick='this.parentElement.parentElement.remove()'>닫기</Button>";
+		// 계약명
+		el = document.createElement("div");
+		cnt.appendChild(el);
+
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.innerText = "● 계약명 : ";
+
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.innerText = this.title;
+
+		// 담당자
+		el = document.createElement("div");
+		cnt.appendChild(el);
+
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.innerText = "● 담당자 : ";
+
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.innerText = storage.user[this.employee].userName;
 
 		// 계약금액 
 		el = document.createElement("div");
@@ -412,6 +443,40 @@ class Contract {
 			});
 	}
 
+
+	remove() {
+
+		let contractNo = this.no;
+		if (confirm("삭제하시겠습니까?")) {
+			fetch(apiServer + "/api/contract/" + contractNo, { method: "DELETE" })
+				.catch((error) => console.log("error:", error))
+				.then(response => response.json())
+				.then(response => {
+					let radio, ctrtWrap;
+					if (response.result === "ok") {
+						alert("삭제되었습니다");
+						radio = document.getElementById("contract" + contractNo);
+						radio.remove();
+						ctrtWrap = document.getElementsByClassName("contract-wrap");
+						for (let i = 0; i < ctrtWrap.length; i++) {
+							if (ctrtWrap[i].dataset.no == contractNo) {
+								ctrtWrap[i].remove();
+							}
+						}
+					} else {
+						alert("삭제 실패")
+					}
+				});
+		}
+
+		// 라디오버튼 id - contract+계약번호
+		// contractWrap중에서  data no = 계약번호 없애면 됨 
+		// db에서 contract 지우고 관련 유지보수 있으면 지움 
+
+	}
+
+
+
 } // 클래스 정의 끝 ==============================================================================================================
 
 
@@ -444,6 +509,10 @@ function drawDetail(obj) {
 
 }
 
+function removeContract() {
+	R.contract.remove();
+}
+
 // 날짜 관련 함수 
 function getYmdSlashShort(date) {
 	let d = new Date(date);
@@ -460,5 +529,202 @@ function getYmdSlashShort(date) {
 
 
 function openPreviewTab() {
+
 	window.open("/business/contract/popup/" + storage.reportDetailData.docNo, "미리보기", "width :210mm");
+}
+
+
+// 계약 등록 모달창 띄움 
+function contractInsertForm() {
+	let html, dataArray;
+
+	dataArray = [
+
+		{
+			"title": "영업기회(*)",
+			"elementId": "sopp",
+			"complete": "sopp",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
+			"disabled": false,
+		},
+		{
+			"title": "담당자(*)",
+			"complete": "user",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
+			"elementId": "employee",
+		},
+		{
+			"title": "(부)담당자",
+			"elementId": "employee2",
+			"disabled": false,
+			"complete": "user",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
+		},
+		{
+			"title": "판매방식(*)",
+			"selectValue": [
+				{
+					"key": "10173",
+					"value": "조달직판",
+				},
+				{
+					"key": "10174",
+					"value": "조달간판",
+				},
+				{
+					"key": "10175",
+					"value": "조달대행",
+				},
+				{
+					"key": "10176",
+					"value": "직접판매",
+				}
+			],
+			"elementId": "salesType",
+			"type": "select",
+			"disabled": false,
+		},
+		{
+			"title": "매출처(*)",
+			"elementId": "customer",
+			"disabled": false,
+			"complete": "customer",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
+		},
+		{
+			"title": "매출처 담당자",
+			"elementId": "cipOfCustomer",
+			"disabled": false,
+			"complete": "cip",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
+		},
+		{
+			"title": "엔드유저(*)",
+			"elementId": "endUser",
+			"disabled": false,
+			"complete": "customer",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
+		},
+		{
+			"title": "엔드유저 담당자",
+			"elementId": "cipOfendUser",
+			"disabled": false,
+			"complete": "cip",
+			"keyup": "addAutoComplete(this);",
+			"onClick": "addAutoComplete(this);",
+		},
+		{
+			"title": "발주일자",
+			"elementId": "saleDate",
+			"disabled": false,
+			"type": "date",
+		},
+		{
+			"title": "검수일자",
+			"elementId": "delivered",
+			"disabled": false,
+			"type": "date",
+		},
+		{
+			"title": "계약금액",
+			"elementId": "contractAmount",
+			"disabled": false,
+			"keyup": "inputNumberFormat(this);",
+		},
+		{
+			"title": "VAT 포함여부",
+			"selectValue": [
+				{
+					"key": true,
+					"value": "포함",
+				},
+				{
+					"key": false,
+					"value": "미포함",
+				},
+			],
+			"type": "select",
+			"elementId": "taxInclude",
+			"disabled": false,
+		},
+		{
+			"title": "매출이익",
+			"elementId": "profit",
+			"disabled": false,
+			"keyup": "inputNumberFormat(this);",
+		},
+		{
+			"title": "",
+		},
+		{
+			"title": "계약명(*)",
+			"elementId": "title",
+			"disabled": false,
+			"col": 4,
+		},
+		{
+			"title": "내용",
+			"type": "textarea",
+			"elementId": "detail",
+			"disabled": false,
+			"col": 4,
+		},
+	];
+
+	html = detailViewForm(dataArray, "modal");
+	modal.show();
+	modal.content.css("min-width", "70%");
+	modal.content.css("max-width", "70%");
+	modal.headTitle.text("계약등록");
+	modal.body.html(html);
+	modal.confirm.text("등록");
+	modal.close.text("취소");
+	modal.confirm.attr("onclick", "contractInsert();");
+	modal.close.attr("onclick", "modal.hide();");
+
+	storage.formList = {
+		"contractType": "",
+		"sopp": 0,
+		"employee": storage.my,
+		"salesType": "",
+		"customer": 0,
+		"cipOfCustomer": 0,
+		"endUser": 0,
+		"cipOfendUser": 0,
+		"saleDate": "",
+		"delivered": "",
+		"employee2": 0,
+		"startOfFreeMaintenance": "",
+		"endOfFreeMaintenance": "",
+		"startOfPaidMaintenance": "",
+		"endOfPaidMaintenance": "",
+		"contractAmount": 0,
+		"taxInclude": "",
+		"profit": 0,
+		"title": "",
+		"detail": ""
+	};
+
+	setTimeout(() => {
+		let my = storage.my, nowDate;
+		nowDate = new Date().toISOString().substring(0, 10);
+		$("[name='contractType']").eq(0).prop("checked", true);
+		$("#startOfPaidMaintenance").parents(".defaultFormLine").hide();
+		$("#endOfPaidMaintenance").parents(".defaultFormLine").hide();
+		$("#employee").val(storage.user[my].userName);
+		$("#employee").attr("data-change", true);
+		$("#saleDate, #delivered, #startOfFreeMaintenance, #endOfFreeMaintenance, #startOfPaidMaintenance, #endOfPaidMaintenance").val(nowDate);
+		ckeditor.config.readOnly = false;
+		window.setTimeout(setEditor, 100);
+	}, 100);
+
+	setTimeout(() => {
+		document.getElementsByClassName("cke_textarea_inline")[0].style.height = "300px";
+	}, 300);
 }
