@@ -1,5 +1,4 @@
-/*  
-
+/* 견적 관련 시작 */
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300&family=Outfit:wght@600&display=swap');
 @font-face {font-family:MalgunGothic; src:url(/fonts/malgun.ttf);}
 
@@ -884,4 +883,5 @@
 
 .pdfMainContentItem > .itemSpec > .afterDiv > p{
     margin: 0;
-} */
+}
+/* 견적 관련 끝 */
