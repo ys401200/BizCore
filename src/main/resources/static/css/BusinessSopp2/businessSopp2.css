@@ -318,13 +318,16 @@
 	text-align: center;
 	display:grid;
 	grid-template-columns: 1fr 5fr;
-	background-color: #e9e9e9;
+	border-top: 2px solid #bdbdff;
+    border-bottom: 2px solid #bdbdff;
+	font-size: 0.8rem;
+	height: 1.2rem;
 }
 .sopp-sub-title > div:nth-child(1){
 	display:flex;
 	align-items: center;
 	justify-content: center;
-	height:1.8rem;
+	height:1.2rem;
 	box-sizing: border-box;
 }
 .sopp-sub-title > div:nth-child(2){
@@ -344,7 +347,7 @@
 
 .sopp-schedule{
 	display:grid;
-	grid-template-columns: 13fr 5fr;
+	grid-template-columns: 3fr 1fr;
 	grid-template-rows: 1fr;
 	height:45rem;
 	overflow: hidden;
@@ -364,16 +367,16 @@
 .calendar-head{
 	height:15%;
 	display:grid;
-	grid-template-columns: repeat(5, 1fr);
-	grid-template-rows: 2fr 1fr;
+	grid-template-columns: 1fr 2fr 1fr 7fr;
+	grid-template-rows: 1fr;
 }
+.calendar-head > div:nth-child(1),
 .calendar-head > div:nth-child(2),
-.calendar-head > div:nth-child(3),
-.calendar-head > div:nth-child(4){
+.calendar-head > div:nth-child(3){
 	display:flex;
 	align-items: center;
 	justify-content: center;
-	font-size:1.5rem;
+	font-size:2rem;
 }
 .calendar-head > div:nth-child(6){
 	grid-column: span 5;
@@ -391,19 +394,57 @@
 .calendar-head > div:nth-child(6) > div:first-child{border-top-left-radius: 0.5rem;color:#FF0000;}
 .calendar-head > div:nth-child(6) > div:last-child{border-top-right-radius: 0.5rem;color:#0100FF;}
 .calendar-body{
+	display:flex;
+	flex-direction: column;
+	flex-grow: 1;
+	align-items: stretch;
+	height:calc(85% - 4px);
+	border-top: 2px solid #929cc5;
+	border-bottom: 2px solid #929cc5;
+	font-size: 0.8rem;
+}
+.calendar-week-4 > div{flex-basis: calc(100% / 4);}
+.calendar-week-5 > div{flex-basis: calc(100% / 5);}
+.calendar-week-6 > div{flex-basis: calc(100% / 6);}
+.calendar-body > div{
 	display:grid;
 	grid-template-columns: repeat(7, 1fr);
-	height:85%;
-}
-.calendar-week-4{grid-template-rows: repeat(4, 1fr);}
-.calendar-week-5{grid-template-rows: repeat(5, 1fr);}
-.calendar-week-6{grid-template-rows: repeat(6, 1fr);}
-.calendar-body > div{
 	border-bottom:1px solid #929cc5;
-	border-right:1px solid #929cc5;
+	/* position:relative; */
 }
-.calendar-body > div:nth-child(7n){border-right:none;}
-
+.calendar-body > div:last-child{border-bottom:none;}
+.calendar-body > div > div{border-right:1px solid #929cc5;}
+.calendar-body > div > div:last-child{border-right:none;}
+.calendar-body > div > div > div{
+	display:flex;
+	justify-content: space-around;
+	font-size:0.85rem;
+	width:5em;
+	border-radius: 7.5rem;
+	padding:0.2rem 0.3rem;
+	margin:0.2rem 1rem 0.2rem auto;
+	background-color:pink;
+}
+.calendar-body > div > div > div:first-child{
+	display:block;
+	font-size:0.8rem;
+	width:100%;
+	border-radius: 0;
+	padding:0.1rem 1rem;
+	margin:0;
+	background-color:transparent;
+}
+.other-month > div{color:gray;z-index:-10;}
+.other-month:first-child > div{color:rgb(255, 90, 90);}
+.this-month:first-child > div{color:red;}
+.other-month:last-child > div:last-child{color:#0100ff;}
+.this-month:last-child > div{color:#4f4fff;}
+.calendar-body .profile-small {
+    height: 0.95rem;
+    vertical-align: text-bottom;
+    margin: 0;
+	border-radius: 50%;
+}
 .sopp-schedule-detail{
 	overflow-x: hidden;
 	overflow-y: auto;

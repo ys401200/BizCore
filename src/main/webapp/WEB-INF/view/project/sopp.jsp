@@ -48,64 +48,7 @@
 
 
                 <div class="sopp-schedule">
-                    <div class="sopp-calendar">
-                        <div>
-                            <div class="calendar-head">
-                                <div></div>
-                                <div>&lt;</div>
-                                <div>2022 / 4</div>
-                                <div>&gt;</div>
-                                <div></div>
-                                <div>
-                                    <div>일</div>
-                                    <div>월</div>
-                                    <div>화</div>
-                                    <div>수</div>
-                                    <div>목</div>
-                                    <div>금</div>
-                                    <div>토</div>
-                                </div>
-                            </div>
-                            <div class="calendar-body calendar-week-5">
-                                <div>일</div>
-                                <div>월</div>
-                                <div>화</div>
-                                <div>수</div>
-                                <div>목</div>
-                                <div>금</div>
-                                <div>토</div>
-                                <div>일</div>
-                                <div>월</div>
-                                <div>화</div>
-                                <div>수</div>
-                                <div>목</div>
-                                <div>금</div>
-                                <div>토</div>
-                                <div>일</div>
-                                <div>월</div>
-                                <div>화</div>
-                                <div>수</div>
-                                <div>목</div>
-                                <div>금</div>
-                                <div>토</div>
-                                <div>일</div>
-                                <div>월</div>
-                                <div>화</div>
-                                <div>수</div>
-                                <div>목</div>
-                                <div>금</div>
-                                <div>토</div>
-                                <div>일</div>
-                                <div>월</div>
-                                <div>화</div>
-                                <div>수</div>
-                                <div>목</div>
-                                <div>금</div>
-                                <div>토</div>
-                            </div>
-                        </div>
-                        <div></div>
-                    </div>
+                    <div class="sopp-calendar"></div>
                     <div class="sopp-schedule-detail"></div>
                 </div>
                 

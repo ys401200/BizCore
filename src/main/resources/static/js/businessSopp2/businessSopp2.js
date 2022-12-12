@@ -162,10 +162,14 @@ scrolledSopp = (el) => {
 } // End of scrolledSopp()
 
 moveToTarget = (el) => {
-	let target, name;
+	let target, name, vr = 85;
 	name = el.dataset.target;
 	target = document.getElementsByClassName(name)[0];
-	target.scrollIntoView({"behavior":"smooth"});
+	target.parentElement.scrollTo({
+		top: target.offsetTop - vr,
+		left: 0,
+		behavior: 'smooth'
+	  });
 } // End of moveToTarget()
 
 
@@ -191,6 +195,7 @@ class Sopp2{
 		this.closed = each.closed == undefined ? null : new Date(each.closed);
 		this.created = each.created == undefined ? null : new Date(each.created);
 		this.modified = each.modified == undefined ? null : new Date(each.modified);
+		this.calendar = [];
 	}
 	isClosed(){return this.closed !== null;}
 
@@ -225,7 +230,7 @@ class Sopp2{
 	} // End of ownerName()
 
 	draw(){
-		let cnt, x, y, name, html;
+		let cnt, x, y, name, html, month = [], dt, el, cal;
 
 		// 제목 설정
 		cnt = document.getElementsByClassName("content-title")[0].children[0];
@@ -306,6 +311,35 @@ class Sopp2{
 			html += ("<div" + (x < R.sopp.stage ? " class=\"sopp-done\"" : (x === R.sopp.stage ? " class=\"sopp-doing\"" : (x === R.sopp.stage + 1 ? " onclick=\"soppStageUp(" + R.sopp.stage + ")\" style=\"cursor:pointer;\"" : ""))) + ">" + y[x] + "</div>");
 		}
 		cnt.innerHTML = html;
+
+		// 달력
+		x = 0;
+		y = new Date();
+		y = new Date(y.getFullYear(), y.getMonth() + 1, 1);
+		cnt = document.getElementsByClassName("sopp-calendar")[0];
+		dt = new Date(this.created.getFullYear(), this.created.getMonth(), 1);
+		month.push(dt);
+		while(dt.getTime() < y.getTime()){
+			x++;
+			dt = new Date(dt.getFullYear(), dt.getMonth() + 1, 1);
+			month.push(dt);
+			console.log(month);
+			if(dt.getTime() > (new Date()).getTime())	break;
+			if(x > 100)	break;
+		}
+		month.push(new Date(dt.getFullYear(), dt.getMonth() + 1, 1));
+		month.push(new Date(dt.getFullYear(), dt.getMonth() + 2, 1));
+		month.push(new Date(dt.getFullYear(), dt.getMonth() + 3, 1));
+
+		for(x = 0 ; x < month.length ; x++){
+			el = document.createElement("div");
+			if(x < month.length - 1)	el.style.display = "none";
+			cnt.appendChild(el);
+			dt = month[x];
+			cal = new BizCalendar(dt.getFullYear(), dt.getMonth() + 1, el);
+			this.calendar.push(cal);
+			cal.drawForSopp();
+		}
 	} // End of draw()
 
 	drawList(cnt){
@@ -357,7 +391,8 @@ class Sopp2{
 
 	update(){
 		let json = Object.assign({}, this), data;
-		
+
+		delete json.calendar;
 		json.created = (json.created === undefined || json.created === null) ? null : json.created.getTime();
 		json.closed = (json.closed === undefined || json.closed === null) ? null : json.closed.getTime();
 		json.modified = (json.modified === undefined || json.modified === null)	? null : json.modified.getTime();
@@ -401,3 +436,53 @@ class Sopp2{
 		console.log("UPDATE SOPP!!");
 	}
 } // End of Class _ Sopp2
+
+class BizCalendar{
+	constructor(year, month, container){
+		let startDate, endDate, dt = new Date();
+		if(year === undefined || isNaN(year))	year = dt.getFullYear();
+		if(month === undefined || isNaN(month))	month = dt.getMonth() + 1;
+		startDate = new Date(year, month - 1 , 1);
+    	endDate = new Date(new Date(year, month, 1).getTime() - 86400000);
+		this.year = year;
+		this.month = month;
+		this.container = container === undefined ? null : container;
+		this.startDate = new Date(startDate.getTime() - startDate.getDay() * 86400000); // 달력 시작하는 날짜 잡기
+		this.endDate = new Date(endDate.getTime() + (6 - endDate.getDay()) * 86400000); // 달력 끝나는 날 찾기
+	}
+	drawForSopp(){
+		let headCnt, bodyCnt, x, y, z, w, dt, weeks, html, bColor;
+		if(this.container === null)	return;
+		bColor = ["#fbe4e8", "#cbf6ce", "#e4e3f1", "#ffd890", "#c8edff", "#F5DB02", "#ecc8ff", "#e3e3e3", "#ffdcf3", "#e4f3ca"];
+		headCnt = document.createElement("div");
+		headCnt.className = "calendar-head";
+		bodyCnt = document.createElement("div");
+		bodyCnt.className = "calendar-body";
+		this.container.appendChild(headCnt);
+		this.container.appendChild(bodyCnt);
+
+		// 헤드부분 생성
+		html = "<div><img src=\"/images/sopp2/triangle_left.png\" onclick=\"if(this.parentElement.parentElement.parentElement.previousElementSibling !== null){this.parentElement.parentElement.parentElement.previousElementSibling.style.display='';this.parentElement.parentElement.parentElement.style.display='none'}\"></div>";
+		html += ("<div>" + (this.year + " / " + (this.month)) + "</div>");
+		html += ("<div><img src=\"/images/sopp2/triangle_right.png\" onclick=\"if(this.parentElement.parentElement.parentElement.nextElementSibling !== null){this.parentElement.parentElement.parentElement.nextElementSibling.style.display='';this.parentElement.parentElement.parentElement.style.display='none'}\"></div>");
+		html += ("<div></div>"); // 담당자별 일정 요약
+		headCnt.innerHTML = html;
+
+		// 바디부분 생성
+		weeks = (this.endDate / 86400000 - this.startDate / 86400000 + 1) / 7;
+		bodyCnt.className += (" calendar-week-" + weeks);
+		html = "";
+		for(x = 0 ; x < weeks ; x++){
+			w = "<div>";
+			for(y = 0 ; y < 7 ; y++){
+				dt = new Date(this.startDate.getTime() + (x * 7 + y) * 86400000);
+				w += ("<div class=\"" + (dt.getMonth() + 1 !== this.month ? "other" : "this") + "-month\" data-v=\"" + dt.getTime() + "\"><div>" + dt.getDate() + "</div>");
+				// w += ("<div><img src=\"/api/user/image/10044\" class=\"profile-small\">이장희</div>");
+				w += ("</div>");
+			}
+			w += "</div>";
+			html += w;
+		}
+		bodyCnt.innerHTML = html;
+	} // End of drawForSopp()
+} // End of Class _ BizCalendar
