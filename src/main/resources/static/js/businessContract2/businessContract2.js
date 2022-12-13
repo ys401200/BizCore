@@ -80,10 +80,7 @@ class Contracts {
 			result[0]
 		);
 		pageContainer[0].innerHTML = pageNation;
-
-
 	}
-
 }
 
 
@@ -95,23 +92,19 @@ class Contract {
 		this.trades = each.trades == undefined ? null : each.trades;
 		this.title = each.title;
 		this.employee = each.employee;
-		this.cipOfendUser = each.cipOfendUser;
-		this.endUser = each.endUser;
 		this.related = each.related;
-		this.cipOfSupplier = each.cipOfSupplier;
-		this.supplier = each.supplier;
 		this.schedules = each.schedules;
 		this.attached = each.attached;
 		this.modified = each.modified;
-		this.contractAmount = each.contractAmount;
+		this.amount = each.amount;
 		this.taxInclude = each.taxInclude;
 		this.bills = each.bills;
 		this.profit = each.profit;
 		this.maintenance = each.maintenance == undefined ? [] : JSON.parse(each.maintenance);
 		this.customer = each.customer;
-		this.cipOfCustomer = each.cipOfCustomer;
 		this.supplied = each.supplied == undefined ? 0 : each.supplied;
-		this.delivered = each.delivered == undefined ? 0 : each.delivered;
+		this.approved = each.approved == undefined ? 0 : each.approved;
+		this.saleDate = each.saleDate == undefined ? 0 : each.saleDate;
 	}
 
 	draw(cnt) {
@@ -159,11 +152,13 @@ class Contract {
 
 		child = document.createElement("div");
 		el.appendChild(child);
-		child.innerText = this.contractAmount.toLocaleString() + "원";
+		child.innerText = this.amount.toLocaleString() + "원";
 
 	}
 
 	drawDetail(parent) {
+
+		let filetype;
 		let origin = document.getElementsByClassName("detail-wrap")[0];
 
 		if (origin != undefined) origin.remove();
@@ -229,9 +224,9 @@ class Contract {
 		//검수
 		el2 = document.createElement("div");
 		el.append(el2);
-		if (this.supplied != 0 && this.delivered == 0) {
+		if (this.supplied != 0 && this.approved == 0) {
 			el2.className = "contract-doing";
-		} else if (this.supplied != 0 && this.delivered != 0) {
+		} else if (this.supplied != 0 && this.approved != 0) {
 			el2.className = "contract-done";
 		}
 		el2.innerText = "검수";
@@ -275,7 +270,7 @@ class Contract {
 
 		el = document.createElement("div");
 		cnt.children[cnt.children.length - 1].appendChild(el);
-		el.innerText = this.contractAmount.toLocaleString() + "원";
+		el.innerText = this.amount.toLocaleString() + "원";
 
 
 		if (this.maintenance.length > 0) {
@@ -371,10 +366,6 @@ class Contract {
 		el.innerText = "계약서";
 		el.setAttribute("style", "display:flex;justify-content:center;grid-column:span 2;");
 
-
-
-
-
 		el = document.createElement("div");
 		cnt.appendChild(el);
 
@@ -384,48 +375,39 @@ class Contract {
 
 		el = document.createElement("div");
 		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.setAttribute("style", "flex-direction : column");
+
+		filetype = "contract";
 
 
-		el = document.createElement("input")
-		el.setAttribute("type", "file");
+		let inputHtml = "<input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attached[]' id='attached' onchange='R.contract.fileChange()' multiple=''>";
+
+		cnt.children[cnt.children.length - 1].children[1].innerHTML = inputHtml;
+
+
+		el = document.createElement("div");
+		el.className = "filePreview";
 		cnt.children[cnt.children.length - 1].children[1].appendChild(el);
-        
 
 
 		// 계약서 (첨부파일)
 		if (this.attached.length > 0) {
-			let files = "<div>";
+			let files = "";
 			for (let i = 0; i < this.attached.length; i++) {
 				files +=
-					"<div><div><a href='/api/attached/contract/" +
+					"<div><a href='/api/attached/contract/" +
 					this.no +
 					"/" +
 					encodeURI(this.attached[i].fileName) +
 					"'>" +
 					this.attached[i].fileName +
-					"</a></div><div><button>x</button></div></div>";
+					"</a><button>x</button></div>";
 			}
 
-			files
 
-			cnt.children[cnt.children.length - 1].children[1].innerHTML = files;
+			el.innerHTML = files;
 
 		}
-		// 	// 첨부된 파일이 없는 경우 
-		// } else {
-		// 	el = document.createElement("div");
-		// 	cnt.appendChild(el);
-
-		// 	el = document.createElement("div");
-		// 	cnt.children[cnt.children.length - 1].appendChild(el);
-		// 	el.innerText = "계약서";
-
-		// 	el = document.createElement("div");
-		// 	cnt.children[cnt.children.length - 1].appendChild(el);
-		// 	el.innerHTML = "<div></div><div><input type='file'/></div>";
-		// }
-
-
 
 
 		el = document.createElement("div");
@@ -437,38 +419,38 @@ class Contract {
 		el.setAttribute("style", "display:flex;justify-content:center;grid-column:span 2;");
 
 
-		if ($(".contract-progress").children()[2].className == "contract-doing") {
+		// if ($(".contract-progress").children()[2].className == "contract-doing") {
 
 
-			// 납품일
-			if (this.supplied != 0) {
+		// 	// 납품일
+		// 	if (this.supplied != 0) {
 
-				el = document.createElement("div");
-				cnt.appendChild(el);
+		// 		el = document.createElement("div");
+		// 		cnt.appendChild(el);
 
-				el = document.createElement("div");
-				cnt.children[cnt.children.length - 1].appendChild(el);
-				el.innerText = "납품일";
+		// 		el = document.createElement("div");
+		// 		cnt.children[cnt.children.length - 1].appendChild(el);
+		// 		el.innerText = "납품일";
 
-				el = document.createElement("div");
-				cnt.children[cnt.children.length - 1].appendChild(el);
-				el.innerText = getYmdSlashShort(this.supplied);
+		// 		el = document.createElement("div");
+		// 		cnt.children[cnt.children.length - 1].appendChild(el);
+		// 		el.innerText = getYmdSlashShort(this.supplied);
 
-			} else {
-				el = document.createElement("div");
-				cnt.appendChild(el);
+		// 	} else {
+		// 		el = document.createElement("div");
+		// 		cnt.appendChild(el);
 
-				el = document.createElement("div");
-				cnt.children[cnt.children.length - 1].appendChild(el);
-				el.innerText = "납품일";
+		// 		el = document.createElement("div");
+		// 		cnt.children[cnt.children.length - 1].appendChild(el);
+		// 		el.innerText = "납품일";
 
-				el = document.createElement("div");
-				cnt.children[cnt.children.length - 1].appendChild(el);
-				el.innerHTML = "<div><input type='date'/></div><div class='suppliedFile'></div><div><input type='file'/></div>";
+		// 		el = document.createElement("div");
+		// 		cnt.children[cnt.children.length - 1].appendChild(el);
+		// 		el.innerHTML = "<div><input type='date'/></div><div class='suppliedFile'></div><div><input type='file'/></div>";
 
-			}
+		// 	}
 
-		}
+		// }
 
 
 		el = document.createElement("div");
@@ -483,7 +465,7 @@ class Contract {
 		if ($(".contract-progress").children()[3].className == "contract-doing") {
 
 			// 검수일 
-			if (this.delivered != 0) {
+			if (this.approved != 0) {
 
 				el = document.createElement("div");
 				cnt.appendChild(el);
@@ -494,7 +476,7 @@ class Contract {
 
 				el = document.createElement("div");
 				cnt.children[cnt.children.length - 1].appendChild(el);
-				el.innerText = getYmdSlashShort(this.delivered);
+				el.innerText = getYmdSlashShort(this.approved);
 
 			} else {
 				el = document.createElement("div");
@@ -506,7 +488,7 @@ class Contract {
 
 				el = document.createElement("div");
 				cnt.children[cnt.children.length - 1].appendChild(el);
-				el.innerHTML = "<div><input type='date'/></div><div class='deliveredFile'></div><div><input type='file'/></div>";
+				el.innerHTML = "<div><input type='date'/></div><div class='approvedFile'></div><div><input type='file'/></div>";
 			}
 
 		}
@@ -587,6 +569,113 @@ class Contract {
 
 
 	}
+
+
+
+	fileChange() {
+
+		let method, data, type, attached;
+		attached = $(document).find("[name='attached[]']")[0].files;
+		console.log(attached);
+		if (storage.attachedList === undefined || storage.attachedList <= 0) {
+			storage.attachedList = [];
+		}
+
+		let fileDataArray = storage.attachedList;
+		for (let i = 0; i < attached.length; i++) {
+			let reader = new FileReader();
+			let fileName;
+
+			fileName = attached[i].name;
+			// 파일 중복 등록 제거
+			if (!fileDataArray.includes(fileName)) {
+				storage.attachedList.push(fileName);
+
+				reader.onload = (e) => {
+					let binary,
+						x,
+						fData = e.target.result;
+					const bytes = new Uint8Array(fData);
+					binary = "";
+					for (x = 0; x < bytes.byteLength; x++)
+						binary += String.fromCharCode(bytes[x]);
+					let fileData = cipher.encAes(btoa(binary));
+					let fullData = fileName + "\r\n" + fileData;
+
+					let url = "/api/attached/contract/" + this.no;
+					url = url;
+					method = "post";
+					data = fullData;
+					type = "insert";
+
+					crud.defaultAjax(
+						url,
+						method,
+						data,
+						type,
+						submitFileSuccess,
+						submitFileError
+					);
+				};
+
+				reader.readAsArrayBuffer(attached[i]);
+			}
+		}
+
+
+		let files = "";
+
+
+		for (let i = 0; i < attached.length; i++) {
+			let el = document.createElement("div");
+			document.getElementsByClassName("filePreview")[0].appendChild(el);
+			files = "<a href='/api/attached/contract/" + this.no + "/" +
+				encodeURI(attached[i].name) +
+				"'>" +
+				attached[i].name +
+				"</a><button>x</button>";
+			el.innerHTML = files;
+
+		}
+
+
+		if(filesType == "contract" && document.getElementsByClassName("filePreview")[0].children.length >0) {
+			$(".contract-progress").children()[2].className == "contract-done";
+			$(".contract-progress").children()[2].className == "contract-doing";
+
+				// 납품일
+				if (this.supplied != 0) {
+	
+					el = document.createElement("div");
+					cnt.appendChild(el);
+	
+					el = document.createElement("div");
+					cnt.children[cnt.children.length - 1].appendChild(el);
+					el.innerText = "납품일";
+	
+					el = document.createElement("div");
+					cnt.children[cnt.children.length - 1].appendChild(el);
+					el.innerText = getYmdSlashShort(this.supplied);
+	
+				} else {
+					el = document.createElement("div");
+					cnt.appendChild(el);
+	
+					el = document.createElement("div");
+					cnt.children[cnt.children.length - 1].appendChild(el);
+					el.innerText = "납품일";
+	
+					el = document.createElement("div");
+					cnt.children[cnt.children.length - 1].appendChild(el);
+					el.innerHTML = "<div><input type='date'/></div><div class='suppliedFile'></div><div><input type='file'/></div>";
+	
+				}
+	
+			}
+		}
+
+	
+	
 
 
 
@@ -741,13 +830,13 @@ function contractInsertForm() {
 		},
 		{
 			"title": "검수일자",
-			"elementId": "delivered",
+			"elementId": "approved",
 			"disabled": false,
 			"type": "date",
 		},
 		{
 			"title": "계약금액",
-			"elementId": "contractAmount",
+			"elementId": "amount",
 			"disabled": false,
 			"keyup": "inputNumberFormat(this);",
 		},
@@ -812,13 +901,13 @@ function contractInsertForm() {
 		"endUser": 0,
 		"cipOfendUser": 0,
 		"saleDate": "",
-		"delivered": "",
+		"approved": "",
 		"employee2": 0,
 		"startOfFreeMaintenance": "",
 		"endOfFreeMaintenance": "",
 		"startOfPaidMaintenance": "",
 		"endOfPaidMaintenance": "",
-		"contractAmount": 0,
+		"amount": 0,
 		"taxInclude": "",
 		"profit": 0,
 		"title": "",
@@ -833,7 +922,7 @@ function contractInsertForm() {
 		$("#endOfPaidMaintenance").parents(".defaultFormLine").hide();
 		$("#employee").val(storage.user[my].userName);
 		$("#employee").attr("data-change", true);
-		$("#saleDate, #delivered, #startOfFreeMaintenance, #endOfFreeMaintenance, #startOfPaidMaintenance, #endOfPaidMaintenance").val(nowDate);
+		$("#saleDate, #approved, #startOfFreeMaintenance, #endOfFreeMaintenance, #startOfPaidMaintenance, #endOfPaidMaintenance").val(nowDate);
 		ckeditor.config.readOnly = false;
 		window.setTimeout(setEditor, 100);
 	}, 100);
@@ -842,8 +931,13 @@ function contractInsertForm() {
 		document.getElementsByClassName("cke_textarea_inline")[0].style.height = "300px";
 	}, 300);
 
-
-
-
-
 }
+
+
+// function dofileChange() {
+// 	R.contract.fileChange();
+
+// }
+
+
+

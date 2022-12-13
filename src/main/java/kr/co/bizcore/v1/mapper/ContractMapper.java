@@ -62,18 +62,18 @@ public interface ContractMapper {
     public int removeContract(@Param("no") String no, @Param("compId") String compId);
 
     // 계약 테이블
-    @Select("SELECT  no, title, endUser, contractAmount, profit, employee, saleDate, created, endUser, related from bizcore.contract WHERE compId = #{compId} AND deleted is null ORDER BY created DESC")
+    @Select("SELECT  no, title, amount, profit, employee, saleDate, created, related from bizcore.contract WHERE compId = #{compId} AND deleted is null ORDER BY created DESC")
     public List<SimpleContract> getList(@Param("compId") String compId);
 
     // 계약 데이터 상세
-    @Select("SELECT no, employee , coworker, customer, cipOfCustomer, title, detail, endUser, cipOfendUser, partner, cipOfPartner, supplier, cipOfsupplier, saleDate, supplied, delivered, contractAmount, taxInclude, profit, created, modified, deleted, related  from bizcore.contract WHERE  compId =#{compId} and no = #{no}")
+    @Select("SELECT no, employee , coworker, customer, title, detail, saleDate, supplied, approved, amount, taxInclude, profit, created, modified, deleted, related  from bizcore.contract WHERE  compId =#{compId} and no = #{no}")
     public Contract getContract(@Param("no") int no, @Param("compId") String compId);
 
     // 계약 유지보수 데이터
-    @Select("SELECT no, customer, product, contract, startDate,endDate, engineer, coworker, created, modified, deleted, related from bizcore.maintenance WHERE contract = #{contract} and compId = #{compId}")
+    @Select("SELECT no, customer, product, contract, startDate, endDate, engineer, coworker, created, modified, deleted, related from bizcore.maintenance WHERE contract = #{contract} and compId = #{compId}")
     public List<Maintenance> getMaintenance(@Param("contract") int no, @Param("compId") String compId);
 
-    @Select("SELECT no, compId, employee, coWorker, customer, cipOfCustomer, title, detail, endUser, cipOfendUser,  partner,  cipOfPartner,  supplier,  cipOfSupplier,  saleDate, supplied, delivered, contractAmount, taxInclude, profit,created, modified, deleted, related FROM bizcore.contract WHERE compId = #{compId}")
+    @Select("SELECT no, compId, employee, coWorker, customer,title, detail, saleDate, supplied, approved, amount, taxInclude, profit,created, modified, deleted, related FROM bizcore.contract WHERE compId = #{compId}")
     public List<Contract> getFullContract(@Param("compId") String compId);
 
 }

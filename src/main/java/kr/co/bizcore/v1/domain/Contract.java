@@ -26,33 +26,12 @@ public class Contract extends SimpleContract {
     private int employee;
     private String coworker;
     private int customer;
-    private int cipOfCustomer;
     private String detail;
-    private int cipOfendUser;
-    private int supplier;
-    private int cipOfSupplier;
     private Date supplied;
-    private Date delivered;
+    private Date approved;
     private String taxInclude;
     private int profit;
  
-
-    // private int sopp; //영업기회
-    // private int prvCont;
-    // private int employee2; //(부)담당사원
-    // private int customer; //매출처
-    // private int cipOfCustomer; //매출처 담당자
-    // private String detail; //내용
-    // private int cipOfendUser; //엔드유저 담당자
-    // private int partner;
-    // private int cipOfPartner;
-    // private int supplier;
-    // private int cipOfSupplier;
-    // private Date supplied;
-    // private Date delivered; //검수일자
-    // private String taxInclude; //vat 포함여부
-    // private String area;
-    // private String typeOfBusiness;
 
     public void setTaxInclude(String yn) {
         taxInclude = yn;
@@ -70,12 +49,12 @@ public class Contract extends SimpleContract {
         supplied = new Date(e);
     }
 
-    public void setDelivered(Date e) {
-        delivered = e;
+    public void setApproved(Date e) {
+        approved = e;
     }
 
-    public void setDelivered(long e) {
-        delivered = new Date(e);
+    public void setApproved(long e) {
+        approved = new Date(e);
     }
 
     public void setCreated(Date e) {
