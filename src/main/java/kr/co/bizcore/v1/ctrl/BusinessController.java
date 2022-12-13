@@ -92,6 +92,12 @@ public class BusinessController extends Ctrl {
         return "/workreport/workreport";
     } // End of /business/**
 
+    @RequestMapping("/workreport2")
+    public String workreport2(HttpServletRequest request) {
+        doIt(request);
+        return "/workreport/workreport2";
+    } // End of /business/**
+
     @RequestMapping(value = { "/estimate", "/estimate/{no}" })
     public String estimate(HttpServletRequest request) {
         doIt(request);

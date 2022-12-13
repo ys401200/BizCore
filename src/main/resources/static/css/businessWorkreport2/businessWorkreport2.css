@@ -1,0 +1,71 @@
+.workReportContainer{
+    /* margin-top: 1%; */
+	/* margin-left: 2%; */
+	/* max-width: 1782px; */
+	background: #FFFFFF;
+	overflow: auto;
+	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
+	height:calc(100% - 3px);
+	overflow:hidden;
+}
+
+.workReportTitle{
+	padding: 9px 12px;
+	border-left:4px solid #182f81;
+ 	margin: 0;
+}
+
+.workReportContent{
+	padding: 5px;
+    height: calc(100% - 45px);
+	overflow-x: hidden;
+	overflow-y: auto;
+	display:grid;
+	grid-template-columns: 12rem 15rem auto;
+	gap: 0.7rem;
+}
+
+.month-list{
+	overflow-x:hidden;
+	overflow-y:auto;
+	max-height:100%;
+	border-top:1px solid #c5c5c5;
+}
+.month-list > div:nth-child(odd){
+	font-size:0.9rem;
+	display:flex;
+	justify-content: space-between;
+	padding:0.4rem 3.5rem;
+	cursor:pointer;
+	border-bottom:1px solid #c5c5c5;
+	background-color: #f3f3f3;
+}
+.month-list > div:nth-child(odd) > div:first-child{text-align:left;}
+.month-list > div:nth-child(odd) > div:last-child{text-align:right;}
+.month-list > div:nth-child(even){
+	font-size:0.65rem;
+	text-align:center;
+	box-sizing: border-box;
+	overflow: hidden;
+	padding: 0.8rem 0;
+	border-bottom:1px solid #c5c5c5;
+}
+.month-closed{display:none;}
+.month-opened{border-bottom:none}
+.month-list > div:last-child{border-bottom:1px solid #c5c5c5;}
+.month-list > div:nth-child(even) > div{
+	display:grid;
+	grid-template-columns: repeat(7, 1fr);
+	padding: 0 0.4rem;
+	cursor:pointer;
+}
+.month-list > div:nth-child(even) > div > div{padding:0.4rem 0;color:rgb(60, 60, 60);}
+.month-list > div:nth-child(even) > div > div:first-child{color:rgb(255, 47, 47);}
+.month-list > div:nth-child(even) > div > div:last-child{color:rgb(47, 47, 255);}
+.month-list > div:nth-child(even) > div > span{padding:0.4rem 0;color:#9d9d9d;}
+.month-list > div:nth-child(even) > div > span:first-child{color:#ff8c8c;}
+.month-list > div:nth-child(even) > div > span:last-child{color:#8888ff;}
+
+.dept-tree{
+	border:1px solid #c5c5c5;
+}
