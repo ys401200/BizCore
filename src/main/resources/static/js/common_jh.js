@@ -3,7 +3,6 @@ class EstimateSet{
 	constructor(){
 		this.getEstimateBasic();
 		this.getEstimateItem();
-		this.setList();
 	}
 	
 	getEstimateBasic(){
@@ -64,6 +63,7 @@ class EstimateSet{
 			}
 		}).catch((error) => {
 			msg.set("메인 리스트 에러입니다.\n" + error);
+            console.log(error);
 		});
 	}
 
@@ -84,7 +84,7 @@ class EstimateSet{
 				jsonData = storage.searchDatas;
 			}
 		}
-	
+
 		result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 		
 		crudAddBtn = document.getElementsByClassName("crudAddBtn")[0];
@@ -93,13 +93,8 @@ class EstimateSet{
 		showArr = ["estimateList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "crudAddBtn", "versionPreview", "previewDefault"];
 		containerTitle = $("#containerTitle");
 		pageContainer = document.getElementsByClassName("pageContainer");
+        container = $(".estimateList");
 
-        if($(".sopp-estimate").length > 0){
-            container = $(".sopp-estimate");
-        }else{
-            container = $(".estimateList");
-        }
-	
 		header = [
 			{
 				"title" : "견적일자",
@@ -184,7 +179,7 @@ class EstimateSet{
 		let crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
 		let estimatePdf = document.getElementsByClassName("estimatePdf")[0];
 		let containerTitle = $("#containerTitle");
-		let hideArr = ["detailBackBtn", "addPdfForm"];
+		let hideArr = ["detailBackBtn", "addPdfForm", "mainPdf"];
 		let showArr = ["estimateList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "crudAddBtn", "versionPreview"];
 		let versionList = document.getElementsByClassName("versionList");
 		containerTitle.html("견적목록");
@@ -249,9 +244,6 @@ class EstimateSet{
 		x = el.dataset.idx * 1;
 		el.dataset.clickCheck = true;
 		storage.detailIdx = $(el).data("idx");
-		let previewDefault = document.getElementsByClassName("previewDefault")[0];
-		previewDefault.style.display = "none";
-		let versionPreview = document.getElementsByClassName("versionPreview")[0];
 		let versionList = document.getElementsByClassName("versionList")[0];
 		let title = versionList.getElementsByClassName("versionListBody")[0].children[1].innerHTML;
 		let userName = versionList.getElementsByClassName("versionListBody")[0].children[2].innerHTML;
@@ -260,11 +252,12 @@ class EstimateSet{
 		estimatePdf.setAttribute("onclick", "estimatePdf(\"" + title + "\", \"" + userName + "\");");
 		crudUpdateBtn.style.display = "flex";
 		estimatePdf.style.display = "flex";
-		versionPreview.innerHTML += storage.estimateVerList[x].doc;
-		let indexMain = versionPreview.children;
+		document.getElementsByClassName("versionPreview")[0].innerHTML = storage.estimateVerList[x].doc;
+		let versionPreview = document.getElementsByClassName("versionPreview")[0];
+        let indexMain = versionPreview.children;
 		
 		for(let i = 0; i < indexMain.length; i++){
-			if(i > 0 && i != indexMain.length-1){
+			if(indexMain[i].className === "mainPdf"){
 				indexMain[i].remove();
 			}
 		}
@@ -272,7 +265,7 @@ class EstimateSet{
 		indexMain[indexMain.length-1].setAttribute("class", "mainPreviewPdf");
 		indexMain[indexMain.length-1].setAttribute("id", "estPrintPdf");
 	} 
-	
+
 	getEstmVerList(estmNo){
 		axios.get("/api/estimate/" + estmNo).then((response) => {
 			if(response.data.result === "ok"){
@@ -330,12 +323,12 @@ class EstimateSet{
 	clickedUpdate(){
 		let containerTitle, crudAddBtn, crudUpdateBtn, hideArr, showArr, mainPdf, copyMainPdf;
 		containerTitle = document.getElementById("containerTitle");
-		mainPdf = document.getElementsByClassName("mainPdf")[0];
+        mainPdf = document.getElementsByClassName("addPdfForm")[0].getElementsByClassName("mainPdf")[0];
 		copyMainPdf = document.createElement("div");
 		copyMainPdf.className = "copyMainPdf";
 		copyMainPdf.innerHTML = mainPdf.innerHTML;
 		crudAddBtn = document.getElementsByClassName("crudAddBtn")[0];
-		mainPdf.after(copyMainPdf);
+        mainPdf.after(copyMainPdf);
 		crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
 		hideArr = ["estimateList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "versionPreview", "estimatePdf", "mainPdf"];
 		showArr = [
@@ -350,10 +343,6 @@ class EstimateSet{
 			{
 				element: "crudUpdateBtn",
 				display: "flex",
-			},
-            {
-				element: "copyMainPdf",
-				display: "block",
 			},
 			{
 				element: "addPdfForm",
@@ -374,7 +363,14 @@ class EstimateSet{
 	clickedAdd(){
 		let containerTitle, crudAddBtn, hideArr, showArr, mainPdf, copyMainPdf;
 		containerTitle = document.getElementById("containerTitle");
-		mainPdf = document.getElementsByClassName("mainPdf")[0];
+		mainPdf = document.getElementsByClassName("mainPdf");
+        console.log(mainPdf);
+        if(mainPdf.length > 1){
+            mainPdf = document.getElementsByClassName("mainPdf")[1];
+        }else{
+            mainPdf = document.getElementsByClassName("mainPdf")[0];
+        }
+
 		copyMainPdf = document.createElement("div");
 		copyMainPdf.className = "copyMainPdf";
 		copyMainPdf.innerHTML = mainPdf.innerHTML;
@@ -401,7 +397,6 @@ class EstimateSet{
 		];
 	
 		this.copyContainer = document.getElementsByClassName("copyMainPdf")[0];
-		containerTitle.innerText = "견적추가";
 		crudAddBtn.innerText = "새견적추가";
 		crudAddBtn.setAttribute("onclick", "const InsertClass = new Estimate(); InsertClass.insert();");
 		setViewContentsCopy(hideArr, showArr);

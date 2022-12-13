@@ -1190,7 +1190,11 @@ function paging(total, currentPage, articlePerPage) {
 	}
 
 	if (articlePerPage === undefined) {
-		storage.articlePerPage = getArticle;
+		if(isNaN(getArticle)){
+			storage.articlePerPage = 10;
+		}else{
+			storage.articlePerPage = getArticle;
+		}
 		articlePerPage = storage.articlePerPage;
 	}
 
@@ -3791,12 +3795,16 @@ function setViewContents(hideArr, showArr) {
 function setViewContentsCopy(hideArr, showArr){
 	for(let i = 0; i < hideArr.length; i++){
 		let item = document.getElementsByClassName(hideArr[i])[0];
-		item.style.display = "none";
+		if(item !== undefined){
+			item.style.display = "none";
+		}
 	}
 
 	for(let i = 0; i < showArr.length; i++){
 		let item = document.getElementsByClassName(showArr[i].element)[0];
-		item.style.display = showArr[i].display;
+		if(item !== undefined){
+			item.style.display = showArr[i].display;
+		}
 	}
 }
 

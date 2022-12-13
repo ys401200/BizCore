@@ -36,7 +36,7 @@
         </div>
         <div class="listContainer">
             <hr />
-            <span id="containerTitle">견적목록</span>
+            <span id="containerTitle">견적</span>
 			<div class="listSearchInput">
                 <input type="text" class="searchAllInput" id="searchAllInput" onkeyup="EstimateSet.searchInputKeyup();" placeholder="단어를 입력해주세요.">
             </div>

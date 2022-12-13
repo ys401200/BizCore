@@ -14,7 +14,7 @@
                 <div><input onkeyup="inputtedComment(this, event)" /><button onclick="inputtedComment(this)">⏎</button></div>
                 <div><div>관리자 변경</div><div><img onclick="cancleEdit(this)" src="/images/sopp2/circle_close.png" /><img src="/images/sopp2/confirm_circle.png" /></div></div>
                 <div></div>
-                <div><input onkeyup="editSoppSearch(this)" /></div>
+                <div><input onkeyup="inputtedComment(this, event)" /></div>
             </div>
             <div class="sopp-content" onscroll="scrolledSopp(this)">
                 <div class="sopp-info">
@@ -55,7 +55,24 @@
                 
                 
                 <div class="sopp-sub-title"><div>견 적</div><div></div></div>
-                <div class="sopp-estimate"></div>
+                <div class="sopp-estimate">
+                    <div class="crudBtns">
+                        <button type="button" class="crudAddBtn">견적추가</button>
+                        <button type="button" class="crudUpdateBtn">견적수정</button>
+                        <button type="button" class="estimatePdf">pdf 다운로드</button>
+                        <a href="#" onclick="hideDetailView(EstimateSet.drawBack);" class="detailBackBtn">Back</a>
+                    </div>
+                    <div class="estimateList"></div>
+                    <div class="versionPreview">
+                        <div class="previewDefault">
+                            <div>미리보기</div>
+                        </div>
+                    </div>
+                    <div class="pageContainer"></div>
+                    <div class="addPdfForm">
+                        <jsp:include page="../business/form.jsp" />
+                    </div>
+                </div>
                 <div class="sopp-sub-title"><div>계 약</div><div></div></div>
                 <div class="sopp-contract"></div>
                 <div class="sopp-sub-title"><div>매입매출</div><div></div></div>

@@ -234,6 +234,9 @@ drawChat = () => {
 		html += "</div>";
 	}
 	cnt.innerHTML = html;
+	setTimeout(() => {
+		EstimateSet = new EstimateSet();
+	}, 1000)
 } // End of drawChat()
 
 // chat 삭제 처리 함수

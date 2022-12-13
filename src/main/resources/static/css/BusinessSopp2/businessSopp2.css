@@ -323,6 +323,7 @@
     border-bottom: 2px solid #bdbdff;
 	font-size: 0.8rem;
 	height: 1.2rem;
+	clear: both;
 }
 .sopp-sub-title > div:nth-child(1){
 	display:flex;

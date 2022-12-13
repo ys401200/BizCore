@@ -216,6 +216,28 @@
 	float: left;
 }
 
+.sopp-estimate .estimateList{
+    display: grid; 
+	width: 36%;
+    float: left;
+    clear: both;
+}
+
+.sopp-estimate .estimateList .gridHeader,
+.sopp-estimate .estimateList .gridContent{
+    grid-template-columns: 20% 35% 10% 15% 20%;
+}
+
+.sopp-estimate .estimateList .gridHeader{
+	border-bottom:1px solid #abb6d5;
+}
+
+.sopp-estimate .pageContainer{
+	float: left;
+    clear: left;
+    width: 36%;
+}
+
 .listContainer .estimateList{
     display: grid; 
 	width: 48%;
