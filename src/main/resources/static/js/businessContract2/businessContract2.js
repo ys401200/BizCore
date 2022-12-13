@@ -394,7 +394,7 @@ class Contract {
 
 		// 계약서 (첨부파일)
 		if (this.attached.length > 0) {
-			let files = "";
+			let files = "<div>";
 			for (let i = 0; i < this.attached.length; i++) {
 				files +=
 					"<div><div><a href='/api/attached/contract/" +
@@ -405,6 +405,8 @@ class Contract {
 					this.attached[i].fileName +
 					"</a></div><div><button>x</button></div></div>";
 			}
+
+			files
 
 			cnt.children[cnt.children.length - 1].children[1].innerHTML = files;
 
