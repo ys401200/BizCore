@@ -81,7 +81,7 @@ public class Contract extends SimpleContract {
         saleDate = e;
     }
 
-    public String toJson(List<HashMap<String, String>> fileData, List<Schedule> schedules, String trades,
+    public String toJson(List<HashMap<String, String>> sfileData, List<HashMap<String, String>> afileData,List<HashMap<String, String>> fileData, List<Schedule> schedules, String trades,
             List<TaxBill> bills , String maintenance) {
         ObjectMapper mapper = new ObjectMapper();
         mapper.setSerializationInclusion(Include.NON_NULL);
@@ -104,10 +104,39 @@ public class Contract extends SimpleContract {
                 t2.add(t1);
             }
 
+            if (sfileData != null)
+            for (HashMap<String, String> each : sfileData) {
+                t1 = new HashMap<>();
+                t1.put("fileName", each.get("fileName"));
+                obj = each.get("size");
+                obj = Long.parseLong((String) obj);
+                t1.put("size", obj);
+                obj = each.get("removed");
+                obj = obj == null ? false : obj.equals("1");
+                t1.put("removed", obj);
+                t2.add(t1);
+            }
+
+
+            if (afileData != null)
+            for (HashMap<String, String> each : afileData) {
+                t1 = new HashMap<>();
+                t1.put("fileName", each.get("fileName"));
+                obj = each.get("size");
+                obj = Long.parseLong((String) obj);
+                t1.put("size", obj);
+                obj = each.get("removed");
+                obj = obj == null ? false : obj.equals("1");
+                t1.put("removed", obj);
+                t2.add(t1);
+            }
+
         try {
             result = mapper.writeValueAsString(this);
             json = new JSONObject(result);
             json.put("attached", fileData);
+            json.put("suppliedattached", sfileData);
+            json.put("approvedattached", afileData);
             json.put("schedules", schedules);
             json.put("trades", new JSONArray(trades));
             json.put("bills", bills);

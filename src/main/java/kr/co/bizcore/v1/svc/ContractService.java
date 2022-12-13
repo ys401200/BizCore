@@ -87,6 +87,8 @@ public class ContractService extends Svc {
     public String getContract(int no, String compId) {
         String result = null, t = null;
         List<HashMap<String, String>> files = null, trades = null;
+        List<HashMap<String, String>> sfiles = null;
+        List<HashMap<String, String>> afiles = null;
         List<Schedule> schedule1 = null;
         List<Schedule> schedule2 = null;
         HashMap<String, String> each = null;
@@ -122,6 +124,8 @@ public class ContractService extends Svc {
         if (sopp != null && sopp > 0)
         trades = tradeMapper.getTradeByFunc(compId, "sopp:" + sopp);
         files = systemMapper.getAttachedFileList(compId, "contract", no);
+        sfiles = systemMapper.getAttachedFileList(compId, "supplied", no);
+        afiles = systemMapper.getAttachedFileList(compId, "approved", no);
         schedule1 = scheduleMapper.getScheduleListFromSchedWithContrct(compId, no);
         schedule2 = scheduleMapper.getScheduleListFromTechdWithContrct(compId, no);
         schedule1.addAll(schedule2);
@@ -151,7 +155,7 @@ public class ContractService extends Svc {
             }
         t += "]";
 
-        result = cnt.toJson(files, schedule1, t, bills, maintenance);
+        result = cnt.toJson(sfiles, afiles, files, schedule1, t, bills, maintenance);
         return result;
     } // End of getContract()
 

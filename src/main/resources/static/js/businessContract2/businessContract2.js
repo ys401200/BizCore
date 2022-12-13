@@ -95,6 +95,8 @@ class Contract {
 		this.related = each.related;
 		this.schedules = each.schedules;
 		this.attached = each.attached;
+		this.approvedAttached = each.approvedattached;
+		this.suppliedAttached = each.suppliedattached;
 		this.modified = each.modified;
 		this.amount = each.amount;
 		this.taxInclude = each.taxInclude;
@@ -380,7 +382,7 @@ class Contract {
 		filetype = "contract";
 
 
-		let inputHtml = "<input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attachedcontract' id='attached' onchange='R.contract.fileChange(this)' multiple=''>";
+		let inputHtml = "<input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attachedcontract' id='attached' onchange='R.contract.fileChange(this)'>";
 
 		cnt.children[cnt.children.length - 1].children[1].innerHTML = inputHtml;
 
@@ -401,7 +403,7 @@ class Contract {
 					encodeURI(this.attached[i].fileName) +
 					"'>" +
 					this.attached[i].fileName +
-					"</a><button>x</button></div>";
+					"</a></div>";
 			}
 
 
@@ -419,7 +421,7 @@ class Contract {
 		el.innerText = "납품";
 		el.setAttribute("style", "display:flex;justify-content:center;grid-column:span 2;");
 
-		if (this.attached.length > 0) { this.drawSuppliedData(); }
+
 
 
 		el = document.createElement("div");
@@ -429,7 +431,7 @@ class Contract {
 		el.className = "approvedTitle";
 		el.innerText = "검수";
 		el.setAttribute("style", "display:flex;justify-content:center;grid-column:span 2;");
-
+		if (this.attached.length > 0) { this.drawSuppliedData(); }
 
 		if (this.attached.length > 0 && this.supplied != 0) { this.drawApprovedData(); }
 
@@ -439,13 +441,14 @@ class Contract {
 
 
 	drawSuppliedData() {
-
-
+		$(".contract-progress").children()[1].className = "contract-done";
+		$(".contract-progress").children()[2].className = "contract-doing";
 		let el, cnt;
 		cnt = document.getElementsByClassName("suppliedTitle")[0];
 
 		el = document.createElement("div");
 		cnt.parentElement.after(el);
+		el.className = "suppliedDetail";
 		cnt = el;
 
 		el = document.createElement("div");
@@ -455,24 +458,43 @@ class Contract {
 		el = document.createElement("div");
 		cnt.appendChild(el);
 		el.innerHTML = "<div><input class='suppliedDate'type='date'/></div><div class='filePreview'></div>" +
-			"<div><input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attachedsupplied' id='attached' onchange='R.contract.fileChange(this)' multiple=''></div>";
+			"<div><input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attachedsupplied' id='attached' onchange='R.contract.fileChange(this)' ></div>";
 
+
+		if (this.suppliedAttached.length != 0) {
+			let target = document.getElementsByClassName("filePreview")[1];
+			let files = "";
+			for (let i = 0; i < this.suppliedAttached.length; i++) {
+				files +=
+					"<div><a href='/api/attached/supplied/" +
+					this.no +
+					"/" +
+					encodeURI(this.suppliedAttached[i].fileName) +
+					"'>" +
+					this.suppliedAttached[i].fileName +
+					"</a></div>";
+
+			}
+			target.innerHTML = files;
+
+			this.drawApprovedData();
+		}
 		console.log(this.supplied);
 		if (this.supplied != 0) {
 			document.getElementsByClassName("suppliedDate")[0].value = getYmdHypen(this.supplied);
-
 		}
-
 
 	}
 
 
 	drawApprovedData() {
+		
+		$(".contract-progress").children()[2].className = "contract-done";
 
-		if (this.approved == 0) {
-			$(".contract-progress").children()[3].className == "contract-doing";
+		if (this.approvedAttached.length == 0) {
+			$(".contract-progress").children()[3].className = "contract-doing";
 		} else {
-			$(".contract-progress").children()[3].className == "contract-done";
+			$(".contract-progress").children()[3].className = "contract-done";
 		}
 
 
@@ -481,6 +503,7 @@ class Contract {
 
 		el = document.createElement("div");
 		cnt.parentElement.after(el);
+		el.className = "approvedDetail";
 		cnt = el;
 
 		el = document.createElement("div");
@@ -490,9 +513,30 @@ class Contract {
 		el = document.createElement("div");
 		cnt.appendChild(el);
 		el.innerHTML = "<div><input class='approvedDate'type='date'/></div><div class='filePreview'></div>" +
-			"<div><input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attachedapproved' id='attached' onchange='R.contract.fileChange(this)' multiple=''></div>";
+			"<div><input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attachedapproved' id='attached' onchange='R.contract.fileChange(this)'></div>";
 
-		console.log(this.approved);
+
+
+		if (this.approvedAttached.length != 0) {
+			let target = document.getElementsByClassName("filePreview")[2];
+			let files = "";
+			for (let i = 0; i < this.suppliedAttached.length; i++) {
+				files +=
+					"<div><a href='/api/attached/approved/" +
+					this.no +
+					"/" +
+					encodeURI(this.approvedAttached[i].fileName) +
+					"'>" +
+					this.approvedAttached[i].fileName +
+					"</a></div>";
+
+			}
+			target.innerHTML = files;
+
+			$(".contract-progress").children()[2].className = "contract-done";
+
+		}
+
 		if (this.supplied != 0) {
 			document.getElementsByClassName("suppliedDate")[0].value = getYmdHypen(this.approved);
 
@@ -577,7 +621,6 @@ class Contract {
 	}
 
 
-
 	fileChange(obj) {
 
 
@@ -588,9 +631,40 @@ class Contract {
 		if (storage.attachedList === undefined || storage.attachedList <= 0) {
 			storage.attachedList = [];
 		}
+		let fileName = "";
+		let idx;
+		if (name == "contract") {
+			idx = 0;
+		} else if (name == "supplied") {
+			idx = 1;
+		} else if (name == "approved") {
+			idx = 2;
+		}
+		if (name == "contract") {
+			fileName = document.getElementsByClassName("filePreview")[0].children[0] == undefined ? "" : document.getElementsByClassName("filePreview")[0].children[0].children[0].innerHTML;
+		} else if (name == "supplied") {
+			fileName = document.getElementsByClassName("filePreview")[1].children[0] == undefined ? "" : document.getElementsByClassName("filePreview")[1].children[0].children[0].innerHTML;
+		} else if (name == "approved") {
+			fileName = document.getElementsByClassName("filePreview")[2].children[0] == undefined ? "" : document.getElementsByClassName("filePreview")[2].children[0].children[0].innerHTML;
+		}
 
 		let fileDataArray = storage.attachedList;
+
+		if (fileName != "") {
+			fetch(apiServer + "/api/attached/" + name + "/" + this.no + "/" + fileName, { method: "DELETE" })
+				.catch((error) => console.log("error:", error))
+				.then(response => response.json())
+				.then(response => {
+					if (response.result === "ok") {
+
+					} else console.log(response.msg);
+				});
+		}
+
+		document.getElementsByClassName("filePreview")[idx].innerHTML = "";
 		for (let i = 0; i < attached.length; i++) {
+
+
 			let reader = new FileReader();
 			let fileName;
 
@@ -628,18 +702,10 @@ class Contract {
 
 				reader.readAsArrayBuffer(attached[i]);
 			}
-		}
 
+		}
 
 		let files = "";
-		let idx;
-		if (name == "contract") {
-			idx = 0;
-		} else if (name == "supplied") {
-			idx = 1;
-		} else if (name == "approved") {
-			idx = 2;
-		}
 		for (let i = 0; i < attached.length; i++) {
 			let el = document.createElement("div");
 			document.getElementsByClassName("filePreview")[idx].appendChild(el);
@@ -647,51 +713,27 @@ class Contract {
 				encodeURI(attached[i].name) +
 				"'>" +
 				attached[i].name +
-				"</a><button>x</button>";
+				"</a>";
 			el.innerHTML = files;
 
 		}
 
+		if (name == "contract") {
+			if (document.getElementsByClassName("suppliedDetail").length == 0) {
+				this.drawSuppliedData();
+			}
 
-		// if (filesType == "contract" && document.getElementsByClassName("filePreview")[0].children.length > 0) {
-		// 	$(".contract-progress").children()[2].className == "contract-done";
-		// 	$(".contract-progress").children()[2].className == "contract-doing";
+		} else if (name == "supplied") {
+			if (document.getElementsByClassName("approvedDetail").length == 0) {
+				this.drawApprovedData();
+			}
+		} else if (name == "approved") {
 
-		// 	// 납품일
-		// 	if (this.supplied != 0) {
+			$(".contract-progress").children()[3].className = "contract-done";
 
-		// 		el = document.createElement("div");
-		// 		cnt.appendChild(el);
+		}
 
-		// 		el = document.createElement("div");
-		// 		cnt.children[cnt.children.length - 1].appendChild(el);
-		// 		el.innerText = "납품일";
-
-		// 		el = document.createElement("div");
-		// 		cnt.children[cnt.children.length - 1].appendChild(el);
-		// 		el.innerText = getYmdSlashShort(this.supplied);
-
-		// 	} else {
-		// 		el = document.createElement("div");
-		// 		cnt.appendChild(el);
-
-		// 		el = document.createElement("div");
-		// 		cnt.children[cnt.children.length - 1].appendChild(el);
-		// 		el.innerText = "납품일";
-
-		// 		el = document.createElement("div");
-		// 		cnt.children[cnt.children.length - 1].appendChild(el);
-		// 		el.innerHTML = "<div><input type='date'/></div><div class='suppliedFile'></div><div><input type='file'/></div>";
-
-		// 	}
-
-		// }
 	}
-
-
-
-
-
 
 } // 클래스 정의 끝 ==============================================================================================================
 
@@ -700,7 +742,6 @@ function drawContractList() {
 	$(".contract-list").html("");
 	R.contracts.draw();
 }
-
 
 function drawDetail(obj) {
 	let no = obj.parentElement.dataset.no;
@@ -964,10 +1005,6 @@ function contractInsertForm() {
 }
 
 
-// function dofileChange() {
-// 	R.contract.fileChange();
-
-// }
 
 
 
