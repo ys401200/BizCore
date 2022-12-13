@@ -143,6 +143,14 @@ public class ApiAttachedCtrl extends Ctrl{
     public String apiAttachedContractPost(HttpServletRequest request, @RequestBody String requestBody, @PathVariable int no){
         return proceedAttachedData(request, requestBody, "contract", no);
     }
+    @PostMapping("/supplied/{no:\\d+}")
+    public String apiAttachedSuppliedPost(HttpServletRequest request, @RequestBody String requestBody, @PathVariable int no){
+        return proceedAttachedData(request, requestBody, "supplied", no);
+    }
+    @PostMapping("/approved/{no:\\d+}")
+    public String apiAttachedApprovedPost(HttpServletRequest request, @RequestBody String requestBody, @PathVariable int no){
+        return proceedAttachedData(request, requestBody, "approved", no);
+    }
 
     @PostMapping("/docapp")
     public String apiAttachedDocappPost(HttpServletRequest request, @RequestBody String requestBody){

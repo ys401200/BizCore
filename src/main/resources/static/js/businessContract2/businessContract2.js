@@ -380,7 +380,7 @@ class Contract {
 		filetype = "contract";
 
 
-		let inputHtml = "<input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attached[]' id='attached' onchange='R.contract.fileChange()' multiple=''>";
+		let inputHtml = "<input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attachedcontract' id='attached' onchange='R.contract.fileChange(this)' multiple=''>";
 
 		cnt.children[cnt.children.length - 1].children[1].innerHTML = inputHtml;
 
@@ -415,83 +415,89 @@ class Contract {
 
 		el = document.createElement("div");
 		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.className = "suppliedTitle";
 		el.innerText = "납품";
 		el.setAttribute("style", "display:flex;justify-content:center;grid-column:span 2;");
 
-
-		// if ($(".contract-progress").children()[2].className == "contract-doing") {
-
-
-		// 	// 납품일
-		// 	if (this.supplied != 0) {
-
-		// 		el = document.createElement("div");
-		// 		cnt.appendChild(el);
-
-		// 		el = document.createElement("div");
-		// 		cnt.children[cnt.children.length - 1].appendChild(el);
-		// 		el.innerText = "납품일";
-
-		// 		el = document.createElement("div");
-		// 		cnt.children[cnt.children.length - 1].appendChild(el);
-		// 		el.innerText = getYmdSlashShort(this.supplied);
-
-		// 	} else {
-		// 		el = document.createElement("div");
-		// 		cnt.appendChild(el);
-
-		// 		el = document.createElement("div");
-		// 		cnt.children[cnt.children.length - 1].appendChild(el);
-		// 		el.innerText = "납품일";
-
-		// 		el = document.createElement("div");
-		// 		cnt.children[cnt.children.length - 1].appendChild(el);
-		// 		el.innerHTML = "<div><input type='date'/></div><div class='suppliedFile'></div><div><input type='file'/></div>";
-
-		// 	}
-
-		// }
+		if (this.attached.length > 0) { this.drawSuppliedData(); }
 
 
 		el = document.createElement("div");
 		cnt.appendChild(el);
 		el = document.createElement("div");
 		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.className = "approvedTitle";
 		el.innerText = "검수";
 		el.setAttribute("style", "display:flex;justify-content:center;grid-column:span 2;");
 
 
+		if (this.attached.length > 0 && this.supplied != 0) { this.drawApprovedData(); }
 
-		if ($(".contract-progress").children()[3].className == "contract-doing") {
 
-			// 검수일 
-			if (this.approved != 0) {
+	}
 
-				el = document.createElement("div");
-				cnt.appendChild(el);
 
-				el = document.createElement("div");
-				cnt.children[cnt.children.length - 1].appendChild(el);
-				el.innerText = "검수일";
 
-				el = document.createElement("div");
-				cnt.children[cnt.children.length - 1].appendChild(el);
-				el.innerText = getYmdSlashShort(this.approved);
+	drawSuppliedData() {
 
-			} else {
-				el = document.createElement("div");
-				cnt.appendChild(el);
 
-				el = document.createElement("div");
-				cnt.children[cnt.children.length - 1].appendChild(el);
-				el.innerText = "검수일";
+		let el, cnt;
+		cnt = document.getElementsByClassName("suppliedTitle")[0];
 
-				el = document.createElement("div");
-				cnt.children[cnt.children.length - 1].appendChild(el);
-				el.innerHTML = "<div><input type='date'/></div><div class='approvedFile'></div><div><input type='file'/></div>";
-			}
+		el = document.createElement("div");
+		cnt.parentElement.after(el);
+		cnt = el;
+
+		el = document.createElement("div");
+		cnt.appendChild(el);
+		el.innerText = "납품일 / 납품 관련 문서";
+
+		el = document.createElement("div");
+		cnt.appendChild(el);
+		el.innerHTML = "<div><input class='suppliedDate'type='date'/></div><div class='filePreview'></div>" +
+			"<div><input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attachedsupplied' id='attached' onchange='R.contract.fileChange(this)' multiple=''></div>";
+
+		console.log(this.supplied);
+		if (this.supplied != 0) {
+			document.getElementsByClassName("suppliedDate")[0].value = getYmdHypen(this.supplied);
 
 		}
+
+
+	}
+
+
+	drawApprovedData() {
+
+		if (this.approved == 0) {
+			$(".contract-progress").children()[3].className == "contract-doing";
+		} else {
+			$(".contract-progress").children()[3].className == "contract-done";
+		}
+
+
+		let el, cnt;
+		cnt = document.getElementsByClassName("approvedTitle")[0];
+
+		el = document.createElement("div");
+		cnt.parentElement.after(el);
+		cnt = el;
+
+		el = document.createElement("div");
+		cnt.appendChild(el);
+		el.innerText = "검수일 / 검수 관련 문서";
+
+		el = document.createElement("div");
+		cnt.appendChild(el);
+		el.innerHTML = "<div><input class='approvedDate'type='date'/></div><div class='filePreview'></div>" +
+			"<div><input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attachedapproved' id='attached' onchange='R.contract.fileChange(this)' multiple=''></div>";
+
+		console.log(this.approved);
+		if (this.supplied != 0) {
+			document.getElementsByClassName("suppliedDate")[0].value = getYmdHypen(this.approved);
+
+		}
+
 
 	}
 
@@ -572,11 +578,13 @@ class Contract {
 
 
 
-	fileChange() {
+	fileChange(obj) {
 
-		let method, data, type, attached;
-		attached = $(document).find("[name='attached[]']")[0].files;
-		console.log(attached);
+
+		let method, data, type, attached, name;
+		attached = obj.files;
+		name = obj.name.split("attached")[1];
+		console.log(name);
 		if (storage.attachedList === undefined || storage.attachedList <= 0) {
 			storage.attachedList = [];
 		}
@@ -602,7 +610,7 @@ class Contract {
 					let fileData = cipher.encAes(btoa(binary));
 					let fullData = fileName + "\r\n" + fileData;
 
-					let url = "/api/attached/contract/" + this.no;
+					let url = "/api/attached/" + name + "/" + this.no;
 					url = url;
 					method = "post";
 					data = fullData;
@@ -624,11 +632,17 @@ class Contract {
 
 
 		let files = "";
-
-
+		let idx;
+		if (name == "contract") {
+			idx = 0;
+		} else if (name == "supplied") {
+			idx = 1;
+		} else if (name == "approved") {
+			idx = 2;
+		}
 		for (let i = 0; i < attached.length; i++) {
 			let el = document.createElement("div");
-			document.getElementsByClassName("filePreview")[0].appendChild(el);
+			document.getElementsByClassName("filePreview")[idx].appendChild(el);
 			files = "<a href='/api/attached/contract/" + this.no + "/" +
 				encodeURI(attached[i].name) +
 				"'>" +
@@ -639,43 +653,43 @@ class Contract {
 		}
 
 
-		if(filesType == "contract" && document.getElementsByClassName("filePreview")[0].children.length >0) {
-			$(".contract-progress").children()[2].className == "contract-done";
-			$(".contract-progress").children()[2].className == "contract-doing";
+		// if (filesType == "contract" && document.getElementsByClassName("filePreview")[0].children.length > 0) {
+		// 	$(".contract-progress").children()[2].className == "contract-done";
+		// 	$(".contract-progress").children()[2].className == "contract-doing";
 
-				// 납품일
-				if (this.supplied != 0) {
-	
-					el = document.createElement("div");
-					cnt.appendChild(el);
-	
-					el = document.createElement("div");
-					cnt.children[cnt.children.length - 1].appendChild(el);
-					el.innerText = "납품일";
-	
-					el = document.createElement("div");
-					cnt.children[cnt.children.length - 1].appendChild(el);
-					el.innerText = getYmdSlashShort(this.supplied);
-	
-				} else {
-					el = document.createElement("div");
-					cnt.appendChild(el);
-	
-					el = document.createElement("div");
-					cnt.children[cnt.children.length - 1].appendChild(el);
-					el.innerText = "납품일";
-	
-					el = document.createElement("div");
-					cnt.children[cnt.children.length - 1].appendChild(el);
-					el.innerHTML = "<div><input type='date'/></div><div class='suppliedFile'></div><div><input type='file'/></div>";
-	
-				}
-	
-			}
-		}
+		// 	// 납품일
+		// 	if (this.supplied != 0) {
 
-	
-	
+		// 		el = document.createElement("div");
+		// 		cnt.appendChild(el);
+
+		// 		el = document.createElement("div");
+		// 		cnt.children[cnt.children.length - 1].appendChild(el);
+		// 		el.innerText = "납품일";
+
+		// 		el = document.createElement("div");
+		// 		cnt.children[cnt.children.length - 1].appendChild(el);
+		// 		el.innerText = getYmdSlashShort(this.supplied);
+
+		// 	} else {
+		// 		el = document.createElement("div");
+		// 		cnt.appendChild(el);
+
+		// 		el = document.createElement("div");
+		// 		cnt.children[cnt.children.length - 1].appendChild(el);
+		// 		el.innerText = "납품일";
+
+		// 		el = document.createElement("div");
+		// 		cnt.children[cnt.children.length - 1].appendChild(el);
+		// 		el.innerHTML = "<div><input type='date'/></div><div class='suppliedFile'></div><div><input type='file'/></div>";
+
+		// 	}
+
+		// }
+	}
+
+
+
 
 
 
@@ -728,6 +742,22 @@ function getYmdSlashShort(date) {
 		(d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
 	);
 }
+
+
+
+function getYmdHypen(date) {
+	let d = new Date(date);
+	return (
+		(d.getFullYear()) +
+		"-" +
+		(d.getMonth() + 1 > 9
+			? (d.getMonth() + 1).toString()
+			: "0" + (d.getMonth() + 1)) +
+		"-" +
+		(d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
+	);
+}
+
 
 
 function openPreviewTab() {
