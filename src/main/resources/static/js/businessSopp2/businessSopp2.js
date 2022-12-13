@@ -1,4 +1,4 @@
-let R = {}, prepareSopp, scrolledSopp, moveToTarget, drawChat, inputtedComment, deleteChat, cancleEdit;
+let R = {}, prepareSopp, scrolledSopp, moveToTarget, drawChat, inputtedComment, deleteChat, cancleEdit, editSopp, changeSopp, editSoppSearch;
 
 $(document).ready(() => {
 	let href, no
@@ -49,6 +49,161 @@ cancleEdit = (el) => {
 	el.parentElement.parentElement.nextElementSibling.innerHTML = "";
 	el.parentElement.previousSibling.innerHTML = "";
 } // End of cancleEdit()
+
+editSopp = (n) => {
+	let x, y, dept, arr, el1, el2, cnt = document.getElementsByClassName("container")[0].children[1];
+	if(n === undefined || typeof n !== "string")	return;
+	cnt.className = "sopp-search";
+	document.getElementsByClassName("container")[0].children[1].children[5].children[0].dataset.n = n;
+	
+	switch(n) {
+		case "owner":
+			cnt.children[4].style.padding = "0.7rem";
+			cnt.children[4].innerHTML = storage.dept.tree.getTreeHtml();
+			y = cnt.children[4].getElementsByTagName("label");
+			cnt.children[3].children[0].innerHTML = "관리자 변경";
+			cnt.children[3].children[1].children[1].style.display = "none";
+			arr = [];
+			for(x = 0 ; x < y.length ; x++){
+				if(y[x].getAttribute("for") !== null && y[x].getAttribute("for").substring(0, 4) === "emp:" && R.sopp.owner !== y[x].getAttribute("for").substring(4) * 1){
+					y[x].setAttribute("onclick", "changeSopp('owner'," + y[x].getAttribute("for").substring(4) + ")");
+				}
+			}
+		break;
+
+		case "coWorker":
+			cnt.children[4].style.padding = "0.7rem";
+			cnt.children[4].innerHTML = storage.dept.tree.getTreeHtml();
+			y = cnt.children[4].getElementsByTagName("label");
+			cnt.children[3].children[0].innerHTML = "담당자 변경";
+			cnt.children[3].children[1].children[1].style.display = "";
+			cnt.children[3].children[1].children[1].setAttribute("onclick", "changeSopp('coWorker')");
+			arr = [];
+			for(x = 0 ; x < y.length ; x++){
+				if(y[x].getAttribute("for") !== null && y[x].getAttribute("for").substring(0, 4) === "emp:"){
+					y[x].setAttribute("onclick", "if(this.dataset.s === undefined){this.dataset.s=1;this.children[0].style.backgroundColor='#ffe6e6'}else{delete this.dataset.s;this.children[0].style.backgroundColor=''}");
+				}
+			}
+		break;
+
+		case "partner":
+		case "customer":
+			cnt.children[3].children[0].innerText = (n === "customer" ? "고객사" : "협력사") + " 변경";
+			cnt.children[3].children[1].children[1].style.display = "none";
+			cnt = cnt.children[4];
+			cnt.style.padding = "0.7rem";
+			if(n === "partner"){
+				el1 = document.createElement("div");
+				el1.setAttribute("onclick", "changeSopp('" + n + "', " + -1 + ")");
+				el1.style.cursor = "pointer";
+				cnt.appendChild(el1);
+				el2 = document.createElement("span");
+				el2.style.fontSize = "0.8rem";
+				el2.innerText = "<없음>";
+				el1.appendChild(el2);
+				el2 = document.createElement("span");
+				el2.style.fontSize = "0.8rem";
+				el2.style.color = "gray";
+				el1.appendChild(el2);
+			}
+			for (x in storage.customer) {
+				if (x === undefined) continue;
+				y = "...";
+				y = storage.customer[x] !== undefined ? storage.customer[x].name : y;
+				el1 = document.createElement("div");
+				el1.setAttribute("onclick", "changeSopp('" + n + "', " + x + ")");
+				el1.style.cursor = "pointer";
+				cnt.appendChild(el1);
+				el2 = document.createElement("span");
+				el2.style.fontSize = "0.8rem";
+				el2.innerText = y;
+				el1.appendChild(el2);
+				el2 = document.createElement("span");
+				el2.style.fontSize = "0.8rem";
+				el2.style.color = "gray";
+				el2.innerText = x;
+				el1.appendChild(el2);
+			}
+			cnt.nextElementSibling.children[0].focus();
+		break;
+	}
+} // End of editSopp()
+
+changeSopp = (n, v) => {
+	let x, y, arr, cnt = document.getElementsByClassName("container")[0].children[1];
+
+	switch(n) {
+		case "coWorker":
+			y = cnt.children[4].getElementsByTagName("label");
+			arr = [];
+			for(x = 0 ; x < y.length ; x++)	if(y[x].getAttribute("for") !== null && y[x].getAttribute("for").substring(0, 4) === "emp:" && y[x].dataset.s === "1")	arr.push(y[x].getAttribute("for").substring(4) * 1);
+			cnt.children[3].children[1].children[1].removeAttribute("onclick");
+			R.sopp.coWorker = arr;
+			//R.sopp.update(n);
+		break;
+
+		case "owner":
+		case "partner":
+		case "customer":
+			R.sopp[n] = v === -1 ? undefined : v;
+			//R.sopp.update(n);
+		break;
+	}
+
+	document.getElementsByClassName("container")[0].children[1].className = "sopp-history";
+	document.getElementsByClassName("container")[0].children[1].children[4].innerHTML = "";
+} // End of changeSopp()
+
+editSoppSearch = (el) => {
+	let x, y, cnt, els, el1, el2, v;
+	v = el.value;
+	cnt = el.parentElement.previousElementSibling;
+	if(el.dataset.n === "owner" || el.dataset.n === "coWorker"){
+		els = cnt.getElementsByTagName("label");
+		for(x = 0 ; x < els.length ; x++){
+			if(els[x].getAttribute("for") !== null && els[x].getAttribute("for").substring(0, 4) === "emp:"){
+				if(v === "" || els[x].innerText.includes(v))	els[x].style.display = "";
+				else		els[x].style.display = "none";
+			}
+		}
+	}else if(el.dataset.n === "customer" || el.dataset.n === "partner"){
+		cnt.innerHTML = "";
+		if(el.dataset.n === "partner"){
+			el1 = document.createElement("div");
+			el1.setAttribute("onclick", "changeSopp(" + el.dataset.n + ", " + -1 + ")");
+			el1.style.cursor = "pointer";
+			cnt.appendChild(el1);
+			el2 = document.createElement("span");
+			el2.style.fontSize = "0.8rem";
+			el2.innerText = "<없음>";
+			el1.appendChild(el2);
+			el2 = document.createElement("span");
+			el2.style.fontSize = "0.8rem";
+			el2.style.color = "gray";
+			el1.appendChild(el2);
+		}
+		for (x in storage.customer) {
+			if (x === undefined) continue;
+			y = "...";
+			y = storage.customer[x] !== undefined ? storage.customer[x].name : y;
+			if(v === "" || (y !== "..."  && (x.includes(v) || y.includes(v)))){
+				el1 = document.createElement("div");
+				el1.setAttribute("onclick", "changeSopp(" + el.dataset.n + ", " + x + ")");
+				el1.style.cursor = "pointer";
+				cnt.appendChild(el1);
+				el2 = document.createElement("span");
+				el2.style.fontSize = "0.8rem";
+				el2.innerText = y;
+				el1.appendChild(el2);
+				el2 = document.createElement("span");
+				el2.style.fontSize = "0.8rem";
+				el2.style.color = "gray";
+				el2.innerText = x;
+				el1.appendChild(el2);
+			}
+		}
+	}
+} // End of editSoppSearch()
 
 drawChat = () => {
 	let x, y, chat, html, name, dt, cnt;
