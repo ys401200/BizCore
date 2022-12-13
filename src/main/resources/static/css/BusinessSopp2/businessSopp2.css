@@ -157,6 +157,7 @@
 	overflow-x: hidden;
 	overflow-y: auto;
 }
+.sopp-search > div:nth-child(5) label > div{padding:0.25rem 0;}
 .sopp-search > div:nth-child(6){
 	border: 1px solid #ffb2b2;
 	border-bottom-left-radius: 0.4rem;
