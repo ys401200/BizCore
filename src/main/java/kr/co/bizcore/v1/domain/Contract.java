@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 
+import org.apache.catalina.core.ApplicationSessionCookieConfig;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -81,7 +82,7 @@ public class Contract extends SimpleContract {
         saleDate = e;
     }
 
-    public String toJson(List<HashMap<String, String>> sfileData, List<HashMap<String, String>> afileData,List<HashMap<String, String>> fileData, List<Schedule> schedules, String trades,
+    public String toJson(List<HashMap<String, String>> sfileData, List<HashMap<String, String>> afileData,List<HashMap<String, String>> fileData, List<Schedule> schedules, String trades, String appLine, String docNo,
             List<TaxBill> bills , String maintenance) {
         ObjectMapper mapper = new ObjectMapper();
         mapper.setSerializationInclusion(Include.NON_NULL);
@@ -139,6 +140,8 @@ public class Contract extends SimpleContract {
             json.put("approvedattached", afileData);
             json.put("schedules", schedules);
             json.put("trades", new JSONArray(trades));
+            json.put("appLine",new JSONArray(appLine));
+            json.put("docNo", docNo);
             json.put("bills", bills);
             json.put("maintenance", maintenance);
         } catch (JsonProcessingException e) {

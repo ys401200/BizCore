@@ -56,7 +56,7 @@
 	width: 100%;
 	display: grid;
 	margin: 0 auto;
-	grid-template-columns: 2fr 2fr 4fr 2fr 2fr;
+	grid-template-columns: 1fr 4fr 2fr 1fr 2fr;
 	background-color: #eef1fb;
 	border-top-left-radius: 8px;
 	border-top-right-radius: 8px;
@@ -89,7 +89,7 @@
 .contract-box {
 	display: grid;
 	margin: 0 auto;
-	grid-template-columns: 2fr 2fr 4fr 2fr 2fr;
+	grid-template-columns: 1fr 4fr 2fr 1fr 2fr;
 	cursor: pointer;
 }
 
@@ -181,24 +181,26 @@
 	display: grid;
 	grid-template-columns: 20% 80%;
 }
+
+
 .detail-wrap>div>div {
 	border: 1px solid #e0e4e9;
-    margin: 0.5px;
-    padding: 8px;
-    text-align: center;
+	margin: 0.5px;
+	padding: 8px;
+	text-align: center;
 }
 
 .detail-wrap>div>div:first-of-type {
 	text-align: center;
 	background-color: #eef1fb;
-    font-weight: 500;
+	font-weight: 500;
 }
 
 .detail-wrap>div>div:last-of-type {
 	display: inline-flex;
 	line-height: 1.5;
-    overflow: hidden;
-  
+	overflow: hidden;
+
 }
 
 .detail-wrap>div>div:last-of-type>div {

@@ -1,6 +1,7 @@
 package kr.co.bizcore.v1.svc;
 
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -30,6 +31,9 @@ import org.slf4j.Logger;
 @Service
 @Slf4j
 public class ContractService extends Svc {
+
+    @Autowired
+    GwService gwService;
 
     private static final Logger logger = LoggerFactory.getLogger(ContractService.class);
 
@@ -86,6 +90,9 @@ public class ContractService extends Svc {
 
     public String getContract(int no, String compId) {
         String result = null, t = null;
+        String ordered = null, employee = null, appType = null, read = null, approved = null, rejected = null;
+        String comment = null, docNo = null, isModify = null;
+        String d = "";
         List<HashMap<String, String>> files = null, trades = null;
         List<HashMap<String, String>> sfiles = null;
         List<HashMap<String, String>> afiles = null;
@@ -93,6 +100,7 @@ public class ContractService extends Svc {
         List<Schedule> schedule2 = null;
         HashMap<String, String> each = null;
         List<TaxBill> bills = null;
+        ArrayList<String> appLine = null;
         int x = 0;
         Integer sopp = null;
         JSONObject json = null;
@@ -101,6 +109,11 @@ public class ContractService extends Svc {
         List<Maintenance> list = null;
         Maintenance mEach = null;
         int y = 0;
+
+        String sql = "SELECT ordered, employee, appType, CAST(UNIX_TIMESTAMP(`read`)*1000 AS CHAR) AS `read`, isModify, CAST(UNIX_TIMESTAMP(approved)*1000 AS CHAR) AS approved, CAST(UNIX_TIMESTAMP(rejected)*1000 AS CHAR) AS rejected, comment FROM bizcore.doc_app_detail WHERE deleted IS NULL AND retrieved IS NULL AND compId = ? AND docNo = ? ORDER BY ordered";
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
 
         list = contractMapper.getMaintenance(no, compId);
         if (list != null && list.size() > 0)
@@ -121,8 +134,54 @@ public class ContractService extends Svc {
         json = new JSONObject(related);
         String parent = json.getString("parent");
         sopp = Integer.valueOf(parent.split(":")[1]);
+
+        // 수주판매보고문서
+        docNo = gwService.getSalesReport(compId, sopp + "");
+
+        try {
+            conn = sqlSession.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, compId);
+            pstmt.setString(2, docNo);
+            rs = pstmt.executeQuery();
+            d = "[";
+            while (rs.next()) {
+                
+                ordered = rs.getString("ordered");
+                employee = rs.getString("employee");
+                appType = rs.getString("appType");
+                read = rs.getString("read");
+                isModify = rs.getString("isModify");
+                approved = rs.getString("approved");
+                rejected = rs.getString("rejected");
+                comment = rs.getString("comment");
+
+                d += "{\"ordered\":" + ordered + ",";
+                d += ("\"employee\":" + employee + ",");
+                d += ("\"appType\":" + appType + ",");
+                d += ("\"read\":" + read + ",");
+                d += ("\"isModify\":" + isModify.equals("1") + ",");
+                d += ("\"approved\":" + approved + ",");
+                d += ("\"rejected\":" + rejected + ",");
+                d += ("\"comment\":\"" + comment + "\"}");
+                if(!rs.isLast()) {
+                    d += ",";
+                }
+        
+            }
+
+            d += "]";
+
+
+
+            rs.close();
+            pstmt.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         if (sopp != null && sopp > 0)
-        trades = tradeMapper.getTradeByFunc(compId, "sopp:" + sopp);
+            trades = tradeMapper.getTradeByFunc(compId, "sopp:" + sopp);
         files = systemMapper.getAttachedFileList(compId, "contract", no);
         sfiles = systemMapper.getAttachedFileList(compId, "supplied", no);
         afiles = systemMapper.getAttachedFileList(compId, "approved", no);
@@ -155,7 +214,7 @@ public class ContractService extends Svc {
             }
         t += "]";
 
-        result = cnt.toJson(sfiles, afiles, files, schedule1, t, bills, maintenance);
+        result = cnt.toJson(sfiles, afiles, files, schedule1, t, d, docNo, bills, maintenance);
         return result;
     } // End of getContract()
 
@@ -195,13 +254,13 @@ public class ContractService extends Svc {
         ObjectMapper mapper = new ObjectMapper();
 
         list = contractMapper.getFullContract(compId);
-       
+
         result = "[";
         if (list != null && list.size() > 0) {
             for (int i = 0; i < list.size(); i++) {
-                each = list.get(i); 
-                if(i > 0)
-                result += ",";
+                each = list.get(i);
+                if (i > 0)
+                    result += ",";
                 try {
                     result += mapper.writeValueAsString(each);
                 } catch (JsonProcessingException e) {

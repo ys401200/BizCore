@@ -50,10 +50,10 @@ class Contracts {
 		el.innerText = "등록일";
 		el = document.createElement("div");
 		cnt.children[0].appendChild(el);
-		el.innerText = "거래처";
+		el.innerText = "계약명";
 		el = document.createElement("div");
 		cnt.children[0].appendChild(el);
-		el.innerText = "계약명";
+		el.innerText = "거래처";
 		el = document.createElement("div");
 		cnt.children[0].appendChild(el);
 		el.innerText = "담당자";
@@ -110,6 +110,8 @@ class Contract {
 		this.supplied = each.supplied == undefined ? 0 : each.supplied;
 		this.approved = each.approved == undefined ? 0 : each.approved;
 		this.saleDate = each.saleDate == undefined ? 0 : each.saleDate;
+		this.appLine = each.appLine;
+		this.docNo = each.docNo;
 	}
 
 	draw(cnt) {
@@ -142,18 +144,22 @@ class Contract {
 		el.className = "contract-box";
 		el.setAttribute("for", "contract" + this.no);
 		el.setAttribute("onclick", "drawDetail(this)");
-		console.log(this);
+		// el.addEventListener("click",function(){
+		// 	let contractno = this.getAttribute("for").substring(8);
+
+		// });
+
 		child = document.createElement("div");
 		el.appendChild(child);
 		child.innerText = getYmdSlashShort(this.created);
 
-		child = document.createElement("div");
-		el.appendChild(child);
-		child.innerText = this.customer;
-
 		child = document.createElement("name");
 		el.appendChild(child);
 		child.innerText = this.title;
+
+		child = document.createElement("div");
+		el.appendChild(child);
+		child.innerText = storage.customer[this.customer].name;
 
 		child = document.createElement("div");
 		el.appendChild(child);
@@ -165,9 +171,10 @@ class Contract {
 
 	}
 
+
 	drawDetail(parent) {
 
-		let filetype;
+
 		let origin = document.getElementsByClassName("detail-wrap")[0];
 
 		if (origin != undefined) origin.remove();
@@ -188,7 +195,7 @@ class Contract {
 		el = document.createElement("div");
 		ctrtTop.appendChild(el);
 
-		// contract-progress Div 
+		// 계약 진척도 - 판매보고
 		el = document.createElement("bar");
 		el.className = "contract-progress"
 		ctrtTop.appendChild(el);
@@ -202,9 +209,10 @@ class Contract {
 		} else if (storage.reportDetailData.status == "read") {
 			el2.className = "contract-done";
 		}
-
 		el2.innerText = "판매보고";
 
+
+		// 계약 진척도 - 계약서 
 		el2 = document.createElement("div");
 		el.append(el2);
 
@@ -215,11 +223,10 @@ class Contract {
 				el2.className = "contract-doing";
 			}
 		}
-
 		el2.innerText = "계약서";
 
 
-		// 납품 
+		// 계약 진척도 - 납품 
 		el2 = document.createElement("div");
 		el.append(el2);
 		if (this.supplied == 0 && this.attached.length > 0) {
@@ -230,7 +237,7 @@ class Contract {
 		el2.innerText = "납품";
 
 
-		//검수
+		// 계약 진척도 - 검수
 		el2 = document.createElement("div");
 		el.append(el2);
 		if (this.supplied != 0 && this.approved == 0) {
@@ -245,6 +252,9 @@ class Contract {
 		el.className = "crudBtns";
 		el.innerHTML = "<Button data-detail='" + this.no + "'onclick='this.parentElement.parentElement.parentElement.remove()'><i class='fa-solid fa-xmark'></i></Button>";
 
+
+
+		// 진척도 아래 상세 detail Start --------------------------------------------------------------------------------------------------------------------------------------
 		// 계약명
 		el = document.createElement("div");
 		cnt.appendChild(el);
@@ -256,6 +266,17 @@ class Contract {
 		el = document.createElement("div");
 		cnt.children[cnt.children.length - 1].appendChild(el);
 		el.innerText = this.title;
+		//거래처 
+		el = document.createElement("div");
+		cnt.appendChild(el);
+
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.innerText = "매출처";
+
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.innerText = storage.customer[this.customer].name;
 
 		// 담당자
 		el = document.createElement("div");
@@ -269,6 +290,8 @@ class Contract {
 		cnt.children[cnt.children.length - 1].appendChild(el);
 		el.innerText = storage.user[this.employee].userName;
 
+
+
 		// 계약금액 
 		el = document.createElement("div");
 		cnt.appendChild(el);
@@ -281,7 +304,7 @@ class Contract {
 		cnt.children[cnt.children.length - 1].appendChild(el);
 		el.innerText = this.amount.toLocaleString() + "원";
 
-
+		// 유지보수 
 		if (this.maintenance.length > 0) {
 			el = document.createElement("div");
 			cnt.appendChild(el);
@@ -309,7 +332,7 @@ class Contract {
 
 		}
 
-
+		// 판매보고 분류 타이틀 
 		el = document.createElement("div");
 		cnt.appendChild(el);
 		el = document.createElement("div");
@@ -366,7 +389,7 @@ class Contract {
 
 
 
-		// 계약서 타이틀 
+		// 계약서 분류 타이틀 
 		el = document.createElement("div");
 		cnt.appendChild(el);
 
@@ -378,30 +401,31 @@ class Contract {
 		el = document.createElement("div");
 		cnt.appendChild(el);
 
+		// 계약서 상세 
 		el = document.createElement("div");
 		cnt.children[cnt.children.length - 1].appendChild(el);
 		el.innerText = "계약서";
 
 		el = document.createElement("div");
 		cnt.children[cnt.children.length - 1].appendChild(el);
-		el.setAttribute("style", "flex-direction : column");
-
-		filetype = "contract";
+		// el.setAttribute("style", "flex-direction : column");
 
 
-		let inputHtml = "<input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attachedcontract' id='attached' onchange='R.contract.fileChange(this)'>";
+
+		let inputHtml = "<div class='filePreview'></div><input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attachedcontract' id='attached' onchange='R.contract.fileChange(this)'>";
 
 		cnt.children[cnt.children.length - 1].children[1].innerHTML = inputHtml;
 
 
-		el = document.createElement("div");
-		el.className = "filePreview";
-		cnt.children[cnt.children.length - 1].children[1].appendChild(el);
+		// el = document.createElement("div");
+		// el.className = "filePreview";
+		// cnt.children[cnt.children.length - 1].children[1].appendChild(el);
 
 
 		// 계약서 (첨부파일)
 		if (this.attached.length > 0) {
 			let files = "";
+			el = document.getElementsByClassName("filePreview")[0];
 			for (let i = 0; i < this.attached.length; i++) {
 				files +=
 					"<div><a href='/api/attached/contract/" +
@@ -456,15 +480,27 @@ class Contract {
 		el = document.createElement("div");
 		cnt.parentElement.after(el);
 		el.className = "suppliedDetail";
+		el.setAttribute("style", "display :grid;grid-template-columns: 20% 10% 20% 50% ");
+
 		cnt = el;
 
 		el = document.createElement("div");
 		cnt.appendChild(el);
-		el.innerText = "납품일 / 납품 관련 문서";
+		el.innerText = "납품일자";
+
 
 		el = document.createElement("div");
 		cnt.appendChild(el);
-		el.innerHTML = "<div><input class='suppliedDate'type='date'/></div><div class='filePreview'></div>" +
+		el.innerHTML = "<input class='suppliedDate'type='date'/>";
+
+		el = document.createElement("div");
+		cnt.appendChild(el);
+		el.innerText = "납품 관련 문서";
+		el.setAttribute("style", "background-color: #eef1fb;font-weight: 500;");
+
+		el = document.createElement("div");
+		cnt.appendChild(el);
+		el.innerHTML = "<div class='filePreview'></div>" +
 			"<div><input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attachedsupplied' id='attached' onchange='R.contract.fileChange(this)' ></div>";
 
 
@@ -511,16 +547,28 @@ class Contract {
 		el = document.createElement("div");
 		cnt.parentElement.after(el);
 		el.className = "approvedDetail";
+		el.setAttribute("style", "display :grid;grid-template-columns: 20% 10% 20% 50% ");
+
 		cnt = el;
 
 		el = document.createElement("div");
 		cnt.appendChild(el);
-		el.innerText = "검수일 / 검수 관련 문서";
+		el.innerText = "검수일자";
+
 
 		el = document.createElement("div");
 		cnt.appendChild(el);
-		el.innerHTML = "<div><input class='approvedDate'type='date'/></div><div class='filePreview'></div>" +
-			"<div><input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attachedapproved' id='attached' onchange='R.contract.fileChange(this)'></div>";
+		el.innerHTML = "<input class='approvedDate'type='date'/>";
+
+		el = document.createElement("div");
+		cnt.appendChild(el);
+		el.innerText = "검수 관련 문서";
+		el.setAttribute("style", "background-color: #eef1fb;font-weight: 500;");
+
+		el = document.createElement("div");
+		cnt.appendChild(el);
+		el.innerHTML = "<div class='filePreview'></div>" +
+			"<div><input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attachedapproved id='attached' onchange='R.contract.fileChange(this)' ></div>";
 
 
 
