@@ -196,5 +196,32 @@ public class ApiEstimateCtrl extends Ctrl {
             
         return result;
     } // End of apiEstimateNumberGet
+
+    @GetMapping("/sopp/{sopp:\\d+}")
+    public String apiEstimateSoppNoGet(HttpServletRequest request, @PathVariable("sopp") int sopp){
+        String result = null, aesKey = null, aesIv = null, compId = null, list = null;;
+        HttpSession session = null;
+        Msg msg = null;
+
+        session = request.getSession();
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        msg = getMsg((String)session.getAttribute("lang"));
+        compId = (String) session.getAttribute("compId");
+        if (compId == null)
+            compId = (String) request.getAttribute("compId");
+
+        if (compId == null) {
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        } else
+            list = estimateSvc.getEstimateList(compId, sopp);
+            if (list == null) {
+                result = "{\"result\":\"failure\",\"msg\":\"" + msg.noResult + "\"}";
+            } else {
+                list = encAes(list, aesKey, aesIv);
+                result = "{\"result\":\"ok\",\"data\":\"" + list + "\"}";
+            }
+        return result;
+    } // End of apiEstimateGet
     
 }
