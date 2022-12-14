@@ -36,7 +36,7 @@ public class ContractService extends Svc {
     // 계약 전부
     public String getContractList(String compId) {
         String result = null;
-        List<SimpleContract> list = null;
+        List<Contract> list = null;
         SimpleContract each = null;
         int x = 0;
 
@@ -59,7 +59,7 @@ public class ContractService extends Svc {
     // 계약 일부
     public String getContractList(String compId, int start, int end) {
         String result = null;
-        List<SimpleContract> list = null;
+        List<Contract> list = null;
         SimpleContract each = null;
         int x = 0;
 

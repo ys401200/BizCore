@@ -50,6 +50,9 @@ class Contracts {
 		el.innerText = "등록일";
 		el = document.createElement("div");
 		cnt.children[0].appendChild(el);
+		el.innerText = "거래처";
+		el = document.createElement("div");
+		cnt.children[0].appendChild(el);
 		el.innerText = "계약명";
 		el = document.createElement("div");
 		cnt.children[0].appendChild(el);
@@ -139,10 +142,14 @@ class Contract {
 		el.className = "contract-box";
 		el.setAttribute("for", "contract" + this.no);
 		el.setAttribute("onclick", "drawDetail(this)");
-
+		console.log(this);
 		child = document.createElement("div");
 		el.appendChild(child);
 		child.innerText = getYmdSlashShort(this.created);
+
+		child = document.createElement("div");
+		el.appendChild(child);
+		child.innerText = this.customer;
 
 		child = document.createElement("name");
 		el.appendChild(child);
@@ -488,7 +495,7 @@ class Contract {
 
 
 	drawApprovedData() {
-		
+
 		$(".contract-progress").children()[2].className = "contract-done";
 
 		if (this.approvedAttached.length == 0) {
