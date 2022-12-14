@@ -30,6 +30,7 @@ class Contracts {
 					console.log(response.data);
 					data = cipher.decAes(response.data);
 					arr = JSON.parse(data);
+					console.log(arr);
 					for (x = 0; x < arr.length; x++)	R.contracts.addContract(new Contract(arr[x]));
 				}
 				storage.currentPage = 1;
@@ -97,9 +98,9 @@ class Contract {
 		this.employee = each.employee;
 		this.related = each.related;
 		this.schedules = each.schedules;
-		this.attached = each.attached;
-		this.approvedAttached = each.approvedattached;
-		this.suppliedAttached = each.suppliedattached;
+		this.attached = each.attached == undefined ? [] : each.attached;
+		this.approvedAttached = each.approvedattached == undefined ? [] : each.approvedattached;
+		this.suppliedAttached = each.suppliedattached == undefined ? [] : each.suppliedattached;
 		this.modified = each.modified;
 		this.amount = each.amount;
 		this.taxInclude = each.taxInclude;
@@ -143,10 +144,38 @@ class Contract {
 		cnt.appendChild(el);
 		el.className = "contract-box";
 		el.setAttribute("for", "contract" + this.no);
-		el.setAttribute("onclick", "drawDetail(this)");
-		// el.addEventListener("click",function(){
-		// 	let contractno = this.getAttribute("for").substring(8);
+		//el.setAttribute("onclick", "drawDetail(this)");
+		el.addEventListener("click", function () {
+			let no = this.parentElement.dataset.no;
+			fetch(location.origin + "/api/contract/" + no)
+				.catch((error) => console.log("error:", error))
+				.then(response => response.json())
+				.then(response => {
+					console.log(response);
+					let data;
+					if (response.result === "ok") {
+						data = response.data;
+						data = cipher.decAes(data);
+						data = JSON.parse(data);
+						console.log(data);
+						R.contract = new Contract(data);
+						R.contract.getReportDetail(this);
 
+					} else {
+						console.log(response.msg);
+					}
+				});
+		});
+
+		// el.addEventListener("click", function () {
+		// 	let contractno = this.getAttribute("for").substring(8);
+		// 	// let contracts = R.contracts.list;
+		// 	// for (let i = 0; i < contracts.length; i++) {
+		// 	// 	if (contracts[i].no == contractno) {
+		// 	// 		R.contract = contracts[i];
+		// 	// 		R.contract.getReportDetail(this);
+		// 	// 	}
+		// 	// }
 		// });
 
 		child = document.createElement("div");
@@ -170,6 +199,8 @@ class Contract {
 		child.innerText = this.amount.toLocaleString() + "원";
 
 	}
+
+
 
 
 	drawDetail(parent) {
@@ -342,10 +373,9 @@ class Contract {
 
 
 
-		//판매보고
-		if (storage.reportDetailData != undefined && storage.reportDetailData != "") {
+		if (this.docNo != undefined) {
 			cnt = document.getElementsByClassName("detail-wrap")[0];
-			let appLine = storage.reportDetailData.appLine;
+			let appLine = this.appLine;
 
 			el = document.createElement("div");
 			cnt.appendChild(el);
@@ -379,14 +409,12 @@ class Contract {
 			}
 			el = document.createElement("div");
 			cnt.children[cnt.children.length - 1].children[1].appendChild(el);
-			el.innerText = "(" + storage.reportDetailData.docNo + ")";
+			el.innerText = "(" + this.docNo + ")";
 			el.setAttribute("onclick", "openPreviewTab()");
 			el.style.color = "blue";
 			el.style.cursor = "pointer";
 
 		}
-
-
 
 
 		// 계약서 분류 타이틀 
@@ -417,9 +445,7 @@ class Contract {
 		cnt.children[cnt.children.length - 1].children[1].innerHTML = inputHtml;
 
 
-		// el = document.createElement("div");
-		// el.className = "filePreview";
-		// cnt.children[cnt.children.length - 1].children[1].appendChild(el);
+
 
 
 		// 계약서 (첨부파일)
@@ -464,7 +490,7 @@ class Contract {
 		el.setAttribute("style", "display:flex;justify-content:center;grid-column:span 2;");
 		if (this.attached.length > 0) { this.drawSuppliedData(); }
 
-		if (this.attached.length > 0 && this.supplied != 0) { this.drawApprovedData(); }
+		if (this.suppliedAttached.length > 0 || this.supplied != 0) { this.drawApprovedData(); }
 
 
 	}
@@ -520,7 +546,12 @@ class Contract {
 			}
 			target.innerHTML = files;
 
-			this.drawApprovedData();
+			if (document.getElementsByClassName("approvedDetail") == undefined) {
+
+				this.drawApprovedData();
+			}
+
+
 		}
 		console.log(this.supplied);
 		if (this.supplied != 0) {
@@ -568,14 +599,14 @@ class Contract {
 		el = document.createElement("div");
 		cnt.appendChild(el);
 		el.innerHTML = "<div class='filePreview'></div>" +
-			"<div><input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attachedapproved id='attached' onchange='R.contract.fileChange(this)' ></div>";
+			"<div><input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attachedapproved' id='attached' onchange='R.contract.fileChange(this)' ></div>";
 
 
 
 		if (this.approvedAttached.length != 0) {
 			let target = document.getElementsByClassName("filePreview")[2];
 			let files = "";
-			for (let i = 0; i < this.suppliedAttached.length; i++) {
+			for (let i = 0; i < this.approvedAttached.length; i++) {
 				files +=
 					"<div><a href='/api/attached/approved/" +
 					this.no +
@@ -626,25 +657,30 @@ class Contract {
 
 	}
 
-	getReportDetail(docNo, obj) {
+	getReportDetail(obj) {
 
-		fetch(apiServer + "/api/gw/app/doc/" + docNo)
-			.catch((error) => console.log("error:", error))
-			.then(response => response.json())
-			.then(response => {
-				let data;
-				if (response.result === "ok") {
-					data = response.data;
-					data = cipher.decAes(data);
-					data = JSON.parse(data);
-					storage.reportDetailData = data;
-					this.drawDetail(obj);
-				} else {
-					storage.reportDetailData = "";
-					this.drawDetail(obj);
-					console.log(response.msg);
-				}
-			});
+		if (this.docNo != undefined) {
+			fetch(apiServer + "/api/gw/app/doc/" + this.docNo)
+				.catch((error) => console.log("error:", error))
+				.then(response => response.json())
+				.then(response => {
+					let data;
+					if (response.result === "ok") {
+						data = response.data;
+						data = cipher.decAes(data);
+						data = JSON.parse(data);
+						storage.reportDetailData = data;
+						this.drawDetail(obj);
+					} else {
+						storage.reportDetailData = "";
+						this.drawDetail(obj);
+						console.log(response.msg);
+					}
+				});
+		}
+		storage.reportDetailData = "";
+		this.drawDetail(obj);
+
 	}
 
 	remove() {
@@ -695,6 +731,8 @@ class Contract {
 		} else if (name == "approved") {
 			idx = 2;
 		}
+
+		console.log(name + " 확인!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		if (name == "contract") {
 			fileName = document.getElementsByClassName("filePreview")[0].children[0] == undefined ? "" : document.getElementsByClassName("filePreview")[0].children[0].children[0].innerHTML;
 		} else if (name == "supplied") {
@@ -812,7 +850,7 @@ function drawDetail(obj) {
 				data = JSON.parse(data);
 				console.log(data);
 				R.contract = new Contract(data);
-				R.contract.getReportNo(obj);
+				R.contract.getReportDetail(obj);
 
 			} else {
 				console.log(response.msg);
