@@ -135,6 +135,45 @@ public class EstimateSvc extends Svc{
     } // End of getEstimateForms()
 
     // 견적 목록
+    public String getEstimateList(String compId, int sopp){
+        String result = null, t = null, related = null;
+        List<HashMap<String, String>> list = null;
+        HashMap<String, String> each = null;
+        JSONObject json = null;
+        JSONArray jarr = null;
+        int x = 0, y = 0, total = 0;
+
+        list = estimateMapper.getEstimateWithParent(compId, "sopp:" + sopp);
+        result = "[";
+        if(list != null && list.size() > 0) for(x = 0 ; x < list.size() ; x++){
+            each = list.get(x);
+            related = estimateMapper.getLastEstmData(compId, each.get("no"));
+            total = 0;
+            json = new JSONObject(related);
+            json = json.getJSONObject("estimate");
+            jarr = json.isNull("items") ? null : json.getJSONArray("items");
+            if(jarr != null && jarr.length() > 0)   for(y = 0 ; y < jarr.length() ; y++){
+                json = jarr.getJSONObject(y);
+                if(json.getBoolean("vat")){
+                    total += ((json.isNull("quantity") ? 0 : json.getInt("quantity")) * (json.isNull("price") ? 0 : json.getInt("price")) + (json.getInt("price") * 0.1));
+                }else{
+                    total += ((json.isNull("quantity") ? 0 : json.getInt("quantity")) * (json.isNull("price") ? 0 : json.getInt("price")));
+                }
+            }
+            t = "{\"no\":\"" + each.get("no") + "\",";
+            t += ("\"form\":\"" + each.get("form") + "\",");
+            t += ("\"title\":\"" + each.get("title") + "\",");
+            t += ("\"version\":\"" + each.get("version") + "\",");
+            t += ("\"date\":" + each.get("dt") + ",");
+            t += ("\"total\":" + total + "}");
+            if(x > 0)   result += ",";
+            result += t;
+        }
+        result += "]";
+        return result;
+    } // End of getEstimateForms()
+
+    // 견적 목록
     public String getEstmVersionList(String compId, String estmNo, String aesKey, String aesIv){
         String result = null, t = null, z = null;
         List<HashMap<String, String>> list = null;
