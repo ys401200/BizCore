@@ -232,17 +232,13 @@ public class ApiAttachedCtrl extends Ctrl{
 
     @DeleteMapping("/supplied/{no:\\d+}/{fileName}")
     public String apiAttachedsuppliedPost(HttpServletRequest request, @PathVariable("no") int no, @PathVariable("fileName") String fileName){
-        return deleteAttachedFile(request, "contract", no, fileName);
+        return deleteAttachedFile(request, "supplied", no, fileName);
     }
 
     @DeleteMapping("/approved/{no:\\d+}/{fileName}")
     public String apiAttachedapprovedPost(HttpServletRequest request, @PathVariable("no") int no, @PathVariable("fileName") String fileName){
-        return deleteAttachedFile(request, "contract", no, fileName);
+        return deleteAttachedFile(request, "approved", no, fileName);
     }
-
-
-
-
 
 
     @DeleteMapping("/docapp/{no:\\d+}/{fileName}")

@@ -254,7 +254,7 @@ class Contract {
 				el2.className = "contract-doing";
 			}
 		}
-		el2.innerText = "계약서";
+		el2.innerText = "계약";
 
 
 		// 계약 진척도 - 납품 
@@ -488,7 +488,7 @@ class Contract {
 		el.className = "approvedTitle";
 		el.innerText = "검수";
 		el.setAttribute("style", "display:flex;justify-content:center;grid-column:span 2;");
-		if (this.attached.length > 0) { this.drawSuppliedData(); }
+		if (this.attached.length > 0 || this.supplied != 0) { this.drawSuppliedData(); }
 
 		if (this.suppliedAttached.length > 0 || this.supplied != 0) { this.drawApprovedData(); }
 
@@ -742,14 +742,14 @@ class Contract {
 		}
 
 		let fileDataArray = storage.attachedList;
-
+		
 		if (fileName != "") {
 			fetch(apiServer + "/api/attached/" + name + "/" + this.no + "/" + fileName, { method: "DELETE" })
 				.catch((error) => console.log("error:", error))
 				.then(response => response.json())
 				.then(response => {
 					if (response.result === "ok") {
-
+						console.log("삭제됨");
 					} else console.log(response.msg);
 				});
 		}
