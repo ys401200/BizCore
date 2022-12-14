@@ -1,4 +1,4 @@
-let drawMonthList, clickedMonth, clickedWeek;
+let drawMonthList, clickedMonth, clickedWeek, drawDeptTree, clickedDeptName;
 
 $(document).ready(() => {
     init();
@@ -10,19 +10,93 @@ $(document).ready(() => {
 
 	// getWorkReport();
 	drawMonthList();
+	drawDeptTree();
 });
 
+// 조직도를 그리는 함수
+drawDeptTree = () => {
+	let x, t, cnt, els, arr;
 
+	// dept가 준비되지 않은 경우 종료
+	if(storage.dept === undefined || storage.dept.tree === undefined){
+		window.setTimeout(drawDeptTree, 100);
+		return;
+	}
+
+	// 조직도 그리기
+	cnt = document.getElementsByClassName("dept-tree")[0];
+	cnt.innerHTML = storage.dept.tree.getTreeHtml();
+	els = cnt.getElementsByTagName("img");
+	for(x = 0 ; x < els.length ; x++){
+		// 이미지 크기 조정
+		els[x].style.width = "15px";
+		els[x].style.height = "15px";
+		els[x].style.marginLeft = "";
+	}
+
+	// 퇴시자 숨기기
+	arr = [];
+	for(x in storage.user)	if(x !== undefined && !storage.user[x].resign)	arr.push(x);
+	t = cnt.getElementsByTagName("label");
+	for(x = 0 ; x < t.length ; x++){
+		if(t[x].getAttribute("for") !== null && t[x].getAttribute("for").substring(0,4) === "emp:"){
+			if(!arr.includes(t[x].getAttribute("for").substring(4))){
+				if(t[x].previousElementSibling.tagName === "INPUT" && t[x].previousElementSibling.type === "radio")	t[x].previousElementSibling.remove();
+				t[x].remove();
+			}
+		}
+	}
+
+	// 직원 선택할 수 있도록 준비
+	els = [];
+	arr = cnt.getElementsByClassName("dept-tree-select");
+	for(x = 0 ; x < arr.length ; x++)	els.push(arr[x]);
+	for(x = 0 ; x < els.length ; x++){
+		if(els[x].id.substring(0,4) === "emp:"){
+			els[x].type = "checkbox";
+			els[x].className = "dept-emp-select";
+		}else els[x].remove();
+	}
+
+	// 부서 클릭시 하위 직원/부서 전체 선택/취소 되도록 설정
+	els = cnt.getElementsByClassName("deptName");
+	for(x = 0 ; x < els.length ; x++)	els[x].children[0].setAttribute("onclick", "clickedDeptName(this)");
+
+} // End of drawDeptTree()
+
+// 조직도에서 부서 클릭시 실행되는 함수
+clickedDeptName = (el) => {
+	let x, cnt, els, v = false;
+	cnt = el.parentElement.nextElementSibling;
+	els = cnt.getElementsByClassName("dept-emp-select");
+	for(x = 0 ; x < els.length ; x++){
+		if(!els[x].checked){
+			v = true;
+			break;
+		}
+	}
+	console.log(v);
+	for(x = 0 ; x < els.length ; x++)	els[x].checked = v;
+} // End of clickedDeptName()
+
+// 좌측 달력을 그리는 함수
 drawMonthList = () => {
-	let x, cnt, year, month, dt, el, html, startDate, endDate, today;
+	let x, y, cnt, year, month, dt, el, html, startDate, endDate, today;
 
+	// 달력을 만들기 위한 기초데이터 정리
 	cnt = document.getElementsByClassName("month-list")[0];
 	today = new Date();
 	year = today.getFullYear() - 1;
 	month = today.getMonth() + 1;
 	if(today.getDay() > 3)	today = new Date(today.getTime() + 86400000 * 7);
 
+	// 금주 선택을 위한 일요일 날짜 잡기
+	x = new Date(new Date() - ((new Date()).getDay() * 86400000));
+	x = x.getFullYear() * 10000 + (x.getDate() + 1) * 100 + x.getDate();
+
+	// 달력 그리기
 	while(year * 100 + month <= today.getFullYear() * 100 + today.getMonth() + 2) {
+		// 달력 타이틀
 		el = document.createElement("div");
 		el.innerHTML = "<div>" + year + "</div><div>" + month + "</div>";
 		el.className = "month-title";
@@ -33,14 +107,17 @@ drawMonthList = () => {
 		cnt.appendChild(el);
 		html = "";
 		
+		// 해당 월에서의 시작/끝 날짜 정리
 		startDate = new Date(year, month - 1 , 1);
 		startDate = new Date(startDate.getTime() - startDate.getDay() * 86400000);
 		endDate = new Date(new Date(year, month, 1).getTime() - 86400000);
 		endDate = new Date(endDate.getTime() + (6 - endDate.getDay()) * 86400000);
 		dt = startDate;
 
+		// 달력 본문
 		while(dt.getTime() <= endDate.getTime()) {
-			if(dt.getDay() === 0)	html += "<div onclick=\"clickedWeek(this)\" data-v=\"" + (dt.getFullYear() * 10000 + (dt.getMonth() + 1) * 100 + dt.getDate()) + "\">";
+			y = dt.getFullYear() * 10000 + (dt.getMonth() + 1) * 100 + dt.getDate();
+			if(dt.getDay() === 0)	html += "<div onclick=\"clickedWeek(this)\" class=\"weekly-list\" data-v=\"" + y + "\"" + (x === y ? " style=\"background-color:#eaeaff\"" : "") + ">";
 			
 			if(dt.getMonth() + 1 === month)	html += ("<div>" + dt.getDate() + "</div>");
 			else		html += ("<span>" + dt.getDate() + "</span>");
@@ -49,17 +126,18 @@ drawMonthList = () => {
 
 			if(dt.getDay() === 6)	html += "</div>";
 			dt = new Date(dt.getTime() + 86400000);
-		}
-
+		} // End of while - STEP 2
 		el.innerHTML = html;
 
+		// 연이 빠뀌는 경우 월 변경
 		if(month === 12){
 			month = 1;
 			year++;
-		}else{
-			month++;
-		}
-	}
+		}else	month++;
+		
+	} // End of while - STEP 1
+
+	// 현재 월을 선택처리함
 	cnt.children[cnt.children.length - 1].className = "month-opened";
 } // End of drawMonthList()
 
