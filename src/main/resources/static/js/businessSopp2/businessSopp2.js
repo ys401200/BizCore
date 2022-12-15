@@ -36,6 +36,11 @@ prepareSopp = (no) => {
 			R.sopp = new Sopp2(data.sopp);
 			R.sopp.draw();
 			drawChat();
+			
+			setTimeout(() => {
+				EstimateSet = new EstimateSet();
+				EstimateSet.soppEstimateNo(R.sopp.no);
+			}, 1000);
 		}else{
 			console.log(response.msg);
 		}
@@ -234,9 +239,6 @@ drawChat = () => {
 		html += "</div>";
 	}
 	cnt.innerHTML = html;
-	setTimeout(() => {
-		EstimateSet = new EstimateSet();
-	}, 1000)
 } // End of drawChat()
 
 // chat 삭제 처리 함수

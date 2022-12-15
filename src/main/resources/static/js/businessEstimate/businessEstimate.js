@@ -3,7 +3,7 @@
 document.addEventListener("DOMContentLoaded", () => {
 	prepare = function(){
 		EstimateSet = new EstimateSet();
-		EstimateSet.setList();
+		EstimateSet.list();
 	}
 	
     init();

@@ -8,51 +8,75 @@ class EstimateSet{
 	getEstimateBasic(){
 		let url;
 		url = apiServer + "/api/estimate/basic";
-		$.ajax({
-			"url": url,
-			"method": "get",
-			"dataType": "json",
-			"cache": false,
-			success: (data) => {
-				let form, info, x;
-				if (data.result === "ok") {
-					x = cipher.decAes(data.data);
-					x = JSON.parse(x);
-					form = x.form;
-					info = x.info;
-					for(x = 0 ; x < form.length ; x++)	form[x].form = cipher.decAes(form[x].form);
-					storage.estimateForm = form;
-					storage.estimateBasic = info;
-				} else {
-					msg.set("[getEstimateForm] Fail to get estimate form(s).");
-				}
-			}
+        axios.get(url).then((response) => {
+			if(response.data.result === "ok"){
+                let form, info, x;
+				x = cipher.decAes(response.data.data);
+                x = JSON.parse(x);
+                form = x.form;
+                info = x.info;
+                for(x = 0 ; x < form.length ; x++)	form[x].form = cipher.decAes(form[x].form);
+                storage.estimateForm = form;
+                storage.estimateBasic = info;
+			}else{
+                msg.set("[getEstimateBasic] Fail to get estimate form(s).");
+            }
+		}).catch((error) => {
+			msg.set("getEstimateBasic 통신 에러입니다.\n" + error);
 		});
 	}
 	
 	getEstimateItem(){
 		let url;
 		url = apiServer + "/api/estimate/item/";
-		$.ajax({
-			"url": url,
-			"method": "get",
-			"dataType": "json",
-			"cache": false,
-			success: (data) => {
-				let list;
-				if (data.result === "ok") {
-					list = cipher.decAes(data.data);
-					list = JSON.parse(list);
-					storage.item = list;
-				} else {
-					msg.set("[getEstimateItem] Fail to get item information.");
-				}
-			}
+        axios.get(url).then((response) => {
+			if(response.data.result === "ok"){
+                let list;
+				list = cipher.decAes(response.data.data);
+                list = JSON.parse(list);
+                storage.item = list;
+			}else{
+                msg.set("[getEstimateItem] Fail to get item information.");
+            }
+		}).catch((error) => {
+			msg.set("getEstimateItem 통신 에러입니다.\n" + error);
 		});
 	}
 	
+    soppEstimateNo(soppNo){
+        axios.get("/api/estimate/sopp/" + soppNo).then((response) => {
+			if(response.data.result === "ok"){
+				let getList = response.data.data;
+                getList = cipher.decAes(getList);
+                getList = JSON.parse(getList);
+                this.soppEstimateList(getList[0].no);
+			}
+		});
+    }
 
-	setList() {
+    soppEstimateList(estimateNo){
+        axios.get("/api/estimate/" + estimateNo).then((response) => {
+			if(response.data.result === "ok"){
+				let getList = response.data.data;
+				getList = cipher.decAes(getList);
+				getList = JSON.parse(getList);
+				
+				for(let i = 0; i < getList.length; i++){
+					getList[i].doc = cipher.decAes(getList[i].doc);
+				}
+
+                if(getList.length < 1){
+                    storage.estimateList = "";
+                }else{
+                    storage.estimateList = getList;
+                }
+
+                this.drawEstmVerList();
+			}
+		});
+    }
+
+	list() {
 		axios.get("/api/estimate").then((response) => {
 			if(response.data.result === "ok"){
 				let getList = response.data.data;
@@ -165,7 +189,110 @@ class EstimateSet{
 			pageContainer[0].innerHTML = pageNation;
 		}
 	
-		containerTitle.html("견적목록");
+		containerTitle.html("견적");
+		createGrid(container, header, data, ids, job, fnc);
+		crudAddBtn.innerText = "견적추가";
+		crudAddBtn.setAttribute("onclick", "EstimateSet.clickedAdd();");
+		crudUpdateBtn.innerText = "견적수정";
+		crudUpdateBtn.setAttribute("onclick", "EstimateSet.clickedUpdate();");
+		setViewContents(hideArr, showArr);
+	}
+
+	drawEstmVerList(){
+		let container, result, job, jsonData, header = [], data = [], ids = [], disDate, str, fnc, pageContainer, containerTitle, crudAddBtn, crudUpdateBtn, hideArr, showArr;
+		
+		if (storage.estimateList === undefined) {
+			msg.set("등록된 견적이 없습니다");
+		}
+		else {
+			if(storage.searchDatas === undefined){
+				jsonData = storage.estimateList;
+			}else{
+				jsonData = storage.searchDatas;
+			}
+		}
+
+		result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+		
+		crudAddBtn = document.getElementsByClassName("crudAddBtn")[0];
+		crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
+		hideArr = ["detailBackBtn", "crudUpdateBtn", "estimatePdf", "addPdfForm"];
+		showArr = ["estimateList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "crudAddBtn", "versionPreview", "previewDefault"];
+		containerTitle = $("#containerTitle");
+		pageContainer = document.getElementsByClassName("pageContainer");
+        container = $(".estimateList");
+
+		header = [
+			{
+				"title" : "견적일자",
+				"align" : "center",
+			},
+			{
+				"title" : "견적명",
+				"align" : "center",
+			},
+			{
+				"title" : "버전",
+				"align" : "center",
+			},
+			{
+				"title" : "양식",
+				"align" : "center",
+			},
+			{
+				"title" : "금액",
+				"align" : "center",
+			},
+		];
+	
+		if(jsonData === ""){
+			str = [
+				{
+					"setData": undefined,
+					"col": 5,
+					"align": "center",
+				},
+			];
+			
+			data.push(str);
+		}else{
+			for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+				disDate = dateDis(jsonData[i].date);
+				disDate = dateFnc(disDate, "yyyy.mm.dd");
+		  
+				str = [
+					{
+						"setData": disDate,
+						"align": "center",
+					},
+					{
+						"setData": jsonData[i].title,
+						"align": "left",
+					},
+					{
+						"setData": jsonData[i].version,
+						"align": "center",
+					},
+					{
+						"setData": jsonData[i].form,
+						"align": "center",
+					},
+					{
+						"setData": numberFormat(jsonData[i].total),
+						"align": "right",
+					},
+				];
+		
+				fnc = "EstimateSet.clickedEstmVer(this);";
+				ids.push(i);
+				data.push(str);
+			}
+		
+			let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "EstimateSet.drawEstmVerList", result[0]);
+			pageContainer[0].innerHTML = pageNation;
+		}
+	
+		containerTitle.html("견적");
 		createGrid(container, header, data, ids, job, fnc);
 		crudAddBtn.innerText = "견적추가";
 		crudAddBtn.setAttribute("onclick", "EstimateSet.clickedAdd();");
@@ -182,7 +309,7 @@ class EstimateSet{
 		let hideArr = ["detailBackBtn", "addPdfForm", "mainPdf"];
 		let showArr = ["estimateList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "crudAddBtn", "versionPreview"];
 		let versionList = document.getElementsByClassName("versionList");
-		containerTitle.html("견적목록");
+		containerTitle.html("견적");
 		crudAddBtn.innerText = "견적추가";
 		crudAddBtn.setAttribute("onclick", "EstimateSet.clickedAdd();");
 		crudUpdateBtn.innerText = "견적수정";
@@ -237,22 +364,35 @@ class EstimateSet{
 	}
 	
 	clickedEstmVer(el){
-		let x, cnt, els, color = "#e1e9ff";
+		let x, cnt, els, color = "#e1e9ff", versionList, title, userName;
 		els = el.parentElement.children;
 		for(x = 1 ; x < els.length ; x++)	els[x].style.backgroundColor = "";
 		el.style.backgroundColor = color;
-		x = el.dataset.idx * 1;
+		x = el.dataset.id * 1;
 		el.dataset.clickCheck = true;
-		storage.detailIdx = $(el).data("idx");
-		let versionList = document.getElementsByClassName("versionList")[0];
-		let title = versionList.getElementsByClassName("versionListBody")[0].children[1].innerHTML;
-		let userName = versionList.getElementsByClassName("versionListBody")[0].children[2].innerHTML;
+		storage.detailIdx = x;
+		
+		if(document.getElementsByClassName("versionList")[0] !== undefined){
+			versionList = document.getElementsByClassName("versionList")[0];
+			title = versionList.getElementsByClassName("versionListBody")[0].children[1].innerHTML;
+			userName = versionList.getElementsByClassName("versionListBody")[0].children[2].innerHTML;
+		}else{
+			title = el.children[1].children[0].innerText;
+			userName = storage.user[R.sopp.owner].userName;
+		}
+
 		let crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
 		let estimatePdf = document.getElementsByClassName("estimatePdf")[0];
-		estimatePdf.setAttribute("onclick", "estimatePdf(\"" + title + "\", \"" + userName + "\");");
+		estimatePdf.setAttribute("onclick", "EstimateSet.estimatePdf(\"" + title + "\", \"" + userName + "\");");
 		crudUpdateBtn.style.display = "flex";
 		estimatePdf.style.display = "flex";
-		document.getElementsByClassName("versionPreview")[0].innerHTML = storage.estimateVerList[x].doc;
+
+		if(storage.estimateVerList === undefined){
+			document.getElementsByClassName("versionPreview")[0].innerHTML = storage.estimateList[x].doc;
+		}else{
+			document.getElementsByClassName("versionPreview")[0].innerHTML = storage.estimateVerList[x].doc;
+		}
+
 		let versionPreview = document.getElementsByClassName("versionPreview")[0];
         let indexMain = versionPreview.children;
 		
@@ -278,7 +418,7 @@ class EstimateSet{
 				}
 	
 				storage.estimateVerList = getList;
-				this.drawEstmVerList();
+				this.drawPanelVerList();
 			}
 			
 		}).catch((error) => {
@@ -286,7 +426,7 @@ class EstimateSet{
 		});
 	} 
 	
-	drawEstmVerList(){
+	drawPanelVerList(){
 		let versionList, html = "", x;
 		versionList = document.getElementsByClassName("versionList")[0];
 		html = "<div class=\"versionListHeader\">";
@@ -308,7 +448,7 @@ class EstimateSet{
 			dateSet = dateDis(storage.estimateVerList[x].date);
 			dateSet = dateFnc(dateSet);
 
-			html += "<div class=\"versionListBody\" onclick=\"EstimateSet.clickedEstmVer(this)\" data-idx=\"" + x + "\">";
+			html += "<div class=\"versionListBody\" onclick=\"EstimateSet.clickedEstmVer(this)\" data-id=\"" + x + "\">";
 			html += "<div style=\"justify-content: center;\">" + storage.estimateVerList[x].version + "</div>";
 			html += "<div style=\"justify-content: left;\">" + storage.estimateVerList[x].title + "</div>";
 			html += "<div style=\"justify-content: center;\">" + storage.user[storage.estimateVerList[x].writer].userName + "</div>";
@@ -351,9 +491,14 @@ class EstimateSet{
 		];
 
 		this.copyContainer = document.getElementsByClassName("copyMainPdf")[0];
-		containerTitle.innerText = "견적수정";
 		crudAddBtn.innerText = "새견적추가";
-		storage.estmDetail = storage.estimateVerList[storage.detailIdx];
+
+		if(storage.estimateVerList !== undefined){
+			storage.estmDetail = storage.estimateVerList[storage.detailIdx];
+		}else{
+			storage.estmDetail = storage.estimateList[storage.detailIdx];
+		}
+
 		crudAddBtn.setAttribute("onclick", "const InsertClass = new Estimate(); InsertClass.insert();");
 		crudUpdateBtn.setAttribute("onclick", "const UpdateClass = new Estimate(storage.estmDetail.related.estimate); UpdateClass.update();");
 		setViewContentsCopy(hideArr, showArr);

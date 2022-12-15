@@ -3480,44 +3480,62 @@ function formDataSet(storageArr) {
 
 function addAutoComplete(e) {
 	let thisEle, autoComplete;
-	thisEle = $(e);
+	thisEle = e;
 
-	if (!thisEle.attr("readonly")) {
-		if ($(".autoComplete") !== undefined) {
-			$(".autoComplete").remove();
+	if (!thisEle.readOnly) {
+		if (document.getElementsByClassName("autoComplete")[0] !== undefined) {
+			document.getElementsByClassName("autoComplete")[0].remove();
 		}
 
-		thisEle.after("<div class=\"autoComplete\"></div>");
-		autoComplete = $(".autoComplete");
-		autoComplete.css("top", thisEle.position().top + thisEle.innerHeight() + 8);
-		autoComplete.css("left", thisEle.position().left);
-		autoComplete.css("width", thisEle.innerWidth() - 5);
+		let createDiv = document.createElement("div");
+		createDiv.className = "autoComplete";
+		thisEle.after(createDiv);
+		autoComplete = document.getElementsByClassName("autoComplete")[0];
+		autoComplete.style.top = thisEle.offsetTop + 30 + "px";
+		autoComplete.style.left =  thisEle.offsetLeft + "px";
+		autoComplete.style.width = thisEle.clientWidth + "px";
 
-		if (thisEle.val() === "") {
-			for (let key in storage[thisEle.data("complete")]) {
-				if (thisEle.data("complete") === "customer" || thisEle.data("complete") === "cip" || thisEle.data("complete") === "product") {
-					autoComplete.append("<div data-value=\"" + key + "\" onclick=\"autoCompleteClick(this);\">" + storage[thisEle.data("complete")][key].name + "</div>");
-				} else if (thisEle.data("complete") === "user") {
-					autoComplete.append("<div data-value=\"" + storage[thisEle.data("complete")][key].userNo + "\" onclick=\"autoCompleteClick(this);\">" + storage[thisEle.data("complete")][key].userName + "</div>");
-				} else if (thisEle.data("complete") === "sopp" || thisEle.data("complete") === "contract") {
-					autoComplete.append("<div data-value=\"" + storage[thisEle.data("complete")][key].no + "\" onclick=\"autoCompleteClick(this);\">" + storage[thisEle.data("complete")][key].title + "</div>");
+		if (thisEle.value === "") {
+			for (let key in storage[thisEle.dataset.complete]) {
+				let listDiv = document.createElement("div");
+				listDiv.setAttribute("onclick", "autoCompleteClick(this);");
+
+				if (thisEle.dataset.complete === "customer" || thisEle.dataset.complete === "cip" || thisEle.dataset.complete === "product") {
+					listDiv.dataset.value = key;
+					listDiv.innerHTML = storage[thisEle.dataset.complete][key].name;
+				} else if (thisEle.dataset.complete === "user") {
+					listDiv.dataset.value = storage[thisEle.dataset.complete][key].userNo;
+					listDiv.innerHTML = storage[thisEle.dataset.complete][key].userName;
+				} else if (thisEle.dataset.complete === "sopp" || thisEle.dataset.complete === "contract") {
+					listDiv.dataset.value = storage[thisEle.dataset.complete][key].no;
+					listDiv.innerHTML = storage[thisEle.dataset.complete][key].title;
 				}
+
+				autoComplete.append(listDiv);
 			}
 		} else {
-			for (let key in storage[thisEle.data("complete")]) {
-				if (thisEle.data("complete") === "customer" || thisEle.data("complete") === "cip" || thisEle.data("complete") === "product") {
-					if (storage[thisEle.data("complete")][key].name.indexOf(thisEle.val()) > -1) {
-						autoComplete.append("<div data-value=\"" + key + "\" onclick=\"autoCompleteClick(this);\">" + storage[thisEle.data("complete")][key].name + "</div>");
+			for (let key in storage[thisEle.dataset.complete]) {
+				let listDiv = document.createElement("div");
+				listDiv.setAttribute("onclick", "autoCompleteClick(this);");
+
+				if (thisEle.dataset.complete === "customer" || thisEle.dataset.complete === "cip" || thisEle.dataset.complete === "product") {
+					if (storage[thisEle.dataset.complete][key].name.indexOf(thisEle.value) > -1) {
+						listDiv.dataset.value = key;
+						listDiv.innerHTML = storage[thisEle.dataset.complete][key].name;
 					}
-				} else if (thisEle.data("complete") === "user") {
-					if (storage[thisEle.data("complete")][key].userName.indexOf(thisEle.val()) > -1) {
-						autoComplete.append("<div data-value=\"" + storage[thisEle.data("complete")][key].userNo + "\" onclick=\"autoCompleteClick(this);\">" + storage[thisEle.data("complete")][key].userName + "</div>");
+				} else if (thisEle.dataset.complete === "user") {
+					if (storage[thisEle.dataset.complete][key].userName.indexOf(thisEle.val()) > -1) {
+						listDiv.dataset.value = storage[thisEle.dataset.complete][key].userNo;
+						listDiv.innerHTML = storage[thisEle.dataset.complete][key].userName;
 					}
-				} else if (thisEle.data("complete") === "sopp" || thisEle.data("complete") === "contract") {
-					if (storage[thisEle.data("complete")][key].title.indexOf(thisEle.val()) > -1) {
-						autoComplete.append("<div data-value=\"" + storage[thisEle.data("complete")][key].no + "\" onclick=\"autoCompleteClick(this);\">" + storage[thisEle.data("complete")][key].title + "</div>");
+				} else if (thisEle.dataset.complete === "sopp" || thisEle.dataset.complete === "contract") {
+					if (storage[thisEle.dataset.complete][key].title.indexOf(thisEle.val()) > -1) {
+						listDiv.dataset.value = storage[thisEle.dataset.complete][key].no;
+						listDiv.innerHTML = storage[thisEle.dataset.complete][key].title;
 					}
 				}
+
+				autoComplete.append(listDiv);
 			}
 		}
 	}
@@ -3525,19 +3543,19 @@ function addAutoComplete(e) {
 
 function autoCompleteClick(e) {
 	let thisEle, input, autoComplete;
-	thisEle = $(e);
-	input = thisEle.parent().prev();
-	autoComplete = $(".autoComplete");
-	input.val(thisEle.text());
-	input.attr("data-change", true);
+	thisEle = e;
+	input = thisEle.parentElement.previousSibling;
+	autoComplete = document.getElementsByClassName("autoComplete")[0];
+	input.value = thisEle.innerText;
+	input.setAttribute("data-change", true);
 
 	if (storage.formList !== undefined) {
-		if (storage.formList[input.attr("id")] !== undefined) {
-			storage.formList[input.attr("id")] = thisEle.data("value");
+		if (storage.formList[input.getAttribute("id")] !== undefined) {
+			storage.formList[input.getAttribute("id")] = thisEle.dataset.value;
 		}
 	}
 
-	input.attr("data-value", thisEle.data("value"));
+	input.setAttribute("data-value", thisEle.dataset.value);
 	autoComplete.remove();
 }
 
