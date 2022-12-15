@@ -13,93 +13,11 @@
 				<div class="dept-tree"></div>
 				<div class="month-list"></div>
 				<div class="report-container">
-
-
 					<div>주간 업무 보고</div>
 					<div><div>'22.12.12 ~ '22.12.19</div><div>홍길동</div></div>
 					<div><div>지난 주 진행상황</div><div>이번 주 예정상황</div></div>
-					<div>
-						<div>
-							<div>월</div>
-							<div>
-								<div><div>아리스타</div><input type="checkbox" /></div>
-								<div>조달등록갱신<br />조달등록갱신</div>
-								<div>도둠솔루션</div>
-								<div>조달등록갱신<br />조달등록갱신</div>
-							</div>
-							<div>화</div>
-							<div>
-								<div><div>아리스타</div><input type="checkbox" /></div>
-								<div>조달등록갱신<br />조달등록갱신</div>
-								<div>도둠솔루션</div>
-								<div>조달등록갱신<br />조달등록갱신</div>
-							</div>
-							<div>수</div>
-							<div>
-								<div><div>아리스타</div><input type="checkbox" /></div>
-								<div>조달등록갱신<br />조달등록갱신</div>
-								<div>도둠솔루션</div>
-								<div>조달등록갱신<br />조달등록갱신</div>
-							</div>
-							<div>목</div>
-							<div>
-								<div><div>아리스타</div><input type="checkbox" /></div>
-								<div>조달등록갱신<br />조달등록갱신</div>
-								<div>도둠솔루션</div>
-								<div>조달등록갱신<br />조달등록갱신</div>
-							</div>
-							<div>금</div>
-							<div>
-								<div><div>아리스타</div><input type="checkbox" /></div>
-								<div>조달등록갱신<br />조달등록갱신</div>
-								<div>도둠솔루션</div>
-								<div>조달등록갱신<br />조달등록갱신</div>
-							</div>
-						</div>
-						<div>
-							<div>월</div>
-							<div>
-								<div><div>아리스타</div><input type="checkbox" /></div>
-								<div>조달등록갱신<br />조달등록갱신</div>
-								<div>도둠솔루션</div>
-								<div>조달등록갱신<br />조달등록갱신</div>
-							</div>
-							<div>화</div>
-							<div>
-								<div><div>아리스타</div><input type="checkbox" /></div>
-								<div>조달등록갱신<br />조달등록갱신</div>
-								<div>도둠솔루션</div>
-								<div>조달등록갱신<br />조달등록갱신</div>
-							</div>
-							<div>수</div>
-							<div>
-								<div><div>아리스타</div><input type="checkbox" /></div>
-								<div>조달등록갱신<br />조달등록갱신</div>
-								<div>도둠솔루션</div>
-								<div>조달등록갱신<br />조달등록갱신</div>
-							</div>
-							<div>목</div>
-							<div>
-								<div><div>아리스타</div><input type="checkbox" /></div>
-								<div>조달등록갱신<br />조달등록갱신</div>
-								<div>도둠솔루션</div>
-								<div>조달등록갱신<br />조달등록갱신</div>
-							</div>
-							
-						</div>
-					</div>
-					<div>
-						<div>
-							<div><div>추가 기재사항</div><input type="checkbox" /></div>
-							<div>추가 기재내용</div>
-						</div>
-						<div>
-							<div><div>추가 기재사항</div><input type="checkbox" /></div>
-							<div>추가 기재내용</div>
-						</div>
-					</div>
-
-
+					<div><div></div><div></div></div>
+					<div><div></div><div></div></div>
 				</div>
 			</div>
         </div>

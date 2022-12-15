@@ -1,6 +1,10 @@
-let drawMonthList, clickedMonth, clickedWeek, drawDeptTree, clickedDeptName;
+let drawMonthList, clickedMonth, clickedWeek, drawDeptTree, clickedDeptName, clickedTreeEmployee, drawReport, getReportData, R = {};
 
 $(document).ready(() => {
+
+	R.workReport = {};
+	R.workReport.employee = storage.my;
+
     init();
     
 	setTimeout(() => {
@@ -9,9 +13,129 @@ $(document).ready(() => {
 	}, 300);
 
 	// getWorkReport();
+	getReportData();
 	drawMonthList();
 	drawDeptTree();
 });
+
+// 조직도에서 직원을 클릭할 때 실행되는 함수
+clickedTreeEmployee = (el) => {
+	let x;
+	x = el.getAttribute("for").substring(4) * 1;
+	R.workReport.employee = x;
+	drawReport();
+} // End of clickedTreeEmployee()
+
+// 서버에서 리포트 데이터를 가져오는 함수
+getReportData = (date) => {
+	let url, dt;
+	url = "/api/schedule/workreport/company/";
+	if(date === undefined || isNaN(date)){
+		dt = new Date();
+		dt = dt.getFullYear() * 10000 + (dt.getMonth() + 1) * 100 + dt.getDate();
+	}else dt = date;
+
+	fetch(apiServer + url + dt)
+	.catch((error) => console.log("error:", error))
+	.then(response => response.json())
+	.then(response => {
+		let data, dt;
+		if(response.result === "ok"){
+			data = response.data;
+			data = cipher.decAes(data);
+			data = JSON.parse(data);
+			if(R.workReport === undefined)	R.workReport = {};
+			R.workReport.week = data.week;
+			R.workReport.start = new Date(data.start);
+			R.workReport.end = new Date(data.end);
+			R.workReport.report = data.workReports;
+			dt = new Date(data.start);
+			dt = dt.getFullYear() * 10000 + (dt.getMonth() + 1) * 100 + dt.getDate();
+			R.workReport.date = dt;
+			if(R.workReport.employee === undefined)	R.workReport.employee = storage.my;
+			drawReport();
+		}else{
+			console.log(response.msg);
+		}
+	});
+}
+
+// 주간 업무보고를 그리는 함수
+drawReport = (editable) => {
+	let x, y, z, html, el, cnt, std, sch1, sch2, data, day;
+	day = ["일", "월", "화", "수", "목", "금", "토"];
+	cnt = document.getElementsByClassName("report-container")[0];
+
+	// 본인인 경우 편집할 수 있도록 설정하는 변수
+	if(editable !== true || R.workReport.employee !== storage.my)	editable = false;
+
+	// 기간 설정
+	std = new Date(R.workReport.start.getTime() + 86400000 * 7);
+	x = "'" + (std.getFullYear() % 100) + ". " + (std.getMonth() + 1) + ". " + (std.getDate());
+	y = new Date(R.workReport.end);
+	y = "'" + (y.getFullYear() % 100) + ". " + (y.getMonth() + 1) + ". " + (y.getDate());
+	cnt.children[1].children[0].innerHTML = (x + " ~ " + y);
+
+	// 이름 설정
+	z = "...";
+	if(storage.user[R.workReport.employee] !== undefined && storage.user[R.workReport.employee].userName !== undefined)	z = storage.user[R.workReport.employee].userName;
+	cnt.children[1].children[1].innerHTML = z;
+
+	// 일정을 지난 주와 이번 주로 나누어서 저장
+	sch1 = [[],[],[],[],[],[],[]];
+	sch2 = [[],[],[],[],[],[],[]];
+	z = [];
+	data = R.workReport.report[R.workReport.employee];
+	if(data !== undefined)	z = data.schedules;
+	for(x = 0 ; x < z.length ; x++){
+		y = (new Date(z[x].date)).getDay();
+		if((editable || z[x].report) && z[x].date <= std.getTime())	sch1[y].push(z[x]);
+		if((editable || z[x].report) && z[x].date > std.getTime())	sch2[y].push(z[x]);
+	}
+	
+	// 일정에 따른 데이터를 기반으로 html 생성
+	html = ["", ""]; // 지난 주, 이번 주
+	for(x = 0 ; x < 7 ; x++){
+		// 지난 주
+		if(sch1[x].length > 0){
+			html[0] += ("<div>" + day[x] + "</div><div>");
+			for(y = 0 ; y < sch1[x].length ; y++){
+				html[0] += ("<div><div>" + sch1[x][y].title + "</div>");
+				if(editable)	html[0] += ("<input type=\"checkbox\" " + (sch1[x][y].report ? "checked " : "") + "/>");
+				html[0] += "</div>";
+				html[0] += ("<div>" + sch1[x][y].content + "</div>");
+			}
+			html[0] += "</div>";
+		}
+		// 이번 주
+		if(sch2[x].length > 0){
+			html[1] += ("<div>" + day[x] + "</div><div>");
+			for(y = 0 ; y < sch2[x].length ; y++){
+				html[1] += ("<div><div>" + sch2[x][y].title + "</div>");
+				if(editable)	html[1] += ("<input type=\"checkbox\" " + (sch2[x][y].report ? "checked " : "") + "/>");
+				html[1] += "</div>";
+				html[1] += ("<div>" + sch2[x][y].content + "</div>");
+			}
+			html[1] += "</div>";
+		}
+	} // End of for(x)
+	cnt.children[3].children[0].innerHTML = html[0];
+	cnt.children[3].children[1].innerHTML = html[1];
+
+	// 추가 기재사항
+	if(editable || data.previousWeekCheck){ // 지난 주
+		html = "<div><div>추가 기재 사항</div>";
+		if(editable)	html += ("<input type=\"checkbox\" " + (data.previousWeekCheck ? "checked " : "") + "/>");
+		html += ("</div><div>" + data.previousWeek + "</div>");
+		cnt.children[4].children[0].innerHTML = html;
+	}
+	if(editable || data.currentWeekCheck){ // 지난 주
+		html = "<div><div>추가 기재 사항</div>";
+		if(editable)	html += ("<input type=\"checkbox\" " + (data.currentWeekCheck ? "checked " : "") + "/>");
+		html += ("</div><div>" + data.currentWeek + "</div>");
+		cnt.children[4].children[1].innerHTML = html;
+	}
+} // End of drawReport()
 
 // 조직도를 그리는 함수
 drawDeptTree = () => {
@@ -55,6 +179,7 @@ drawDeptTree = () => {
 		if(els[x].id.substring(0,4) === "emp:"){
 			els[x].type = "checkbox";
 			els[x].className = "dept-emp-select";
+			if(els[x].nextElementSibling.tagName === "LABEL")	els[x].nextElementSibling.setAttribute("onclick", "clickedTreeEmployee(this)");
 		}else els[x].remove();
 	}
 
@@ -154,13 +279,20 @@ clickedWeek = (el) => {
 	els = [];
 	cnt = document.getElementsByClassName("month-list")[0];
 	for(x = 1 ; x < cnt.children.length ; x += 2)	for(y = 0 ; y < cnt.children[x].children.length ; y++)	els.push(cnt.children[x].children[y]);
-	console.log(els);
 	y = el.dataset.v;
+	getReportData(y*1);
 	for(x = 0 ; x < els.length ; x++){
 		if(els[x].dataset.v === y)	els[x].style.backgroundColor = color;
 		else 						els[x].style.backgroundColor = "";
 	}
 } // End of clickedWeek()
+
+
+
+
+
+
+
 
 // 오리지날 함수들 =====================================================================================================
 function getWorkReport() {

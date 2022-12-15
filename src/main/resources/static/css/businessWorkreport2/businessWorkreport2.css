@@ -82,6 +82,7 @@
 .dept-tree .dept-tree-cnt{margin-left:0.7rem;}
 .dept-tree input.dept-emp-select:checked + label{background-color:#eaeaff;}
 
+.report-container p{margin:0;}
 .report-container > div:nth-child(1){
 	text-align:center;
 	border-top:1px solid #c5c5c5;
