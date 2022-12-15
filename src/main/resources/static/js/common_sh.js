@@ -29,7 +29,7 @@ class Contract {
         }
         else {
             this.title = "";
-            this.employee =0;
+            this.employee = 0;
             this.amount = "";
             this.customer = 0;
         }
@@ -131,7 +131,6 @@ class Contract {
 
         el = document.createElement("div");
         cnt.children[cnt.children.length - 1].appendChild(el);
-
 
     }
 
@@ -284,13 +283,14 @@ class Contract {
         el2 = document.createElement("div");
         el.append(el2);
 
-        if (storage.reportDetailData.status == "proceed") {
-            el2.className = "contract-doing";
-        } else if (storage.reportDetailData.status == "rejected") {
-            el2.className = "contract-fail";
-        } else if (storage.reportDetailData.status == "read") {
-            el2.className = "contract-done";
-        }
+        if (this.appLine.length >0 && this.appLine[this.appLine.length -1].rejected != null) {
+			el2.className = "contract-fail";
+		} else if (this.appLine.length >0 && this.appLine[this.appLine.length -1].approved != null) {
+			el2.className = "contract-done";
+		} else  {
+			el2.className = "contract-doing";
+		}
+
         el2.innerText = "판매보고";
 
 
@@ -685,13 +685,11 @@ class Contract {
 
     }
 
-
     getReportNo(obj) {
 
         let sopp = JSON.parse(this.related);
         sopp = sopp.parent.split(":")[1];
         let docNo;
-
         fetch(apiServer + "/api/gw/salesReport/" + sopp)
             .catch((error) => console.log("error:", error))
             .then(response => response.json())

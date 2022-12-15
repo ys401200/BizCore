@@ -245,13 +245,23 @@ class Contract {
 
 		el2 = document.createElement("div");
 		el.append(el2);
-		if (storage.reportDetailData.status == "proceed") {
-			el2.className = "contract-doing";
-		} else if (storage.reportDetailData.status == "rejected") {
+
+		if (this.appLine.length >0 && this.appLine[this.appLine.length -1].rejected != null) {
 			el2.className = "contract-fail";
-		} else if (storage.reportDetailData.status == "read") {
+		} else if (this.appLine.length >0 && this.appLine[this.appLine.length -1].approved != null) {
 			el2.className = "contract-done";
+		} else  {
+			el2.className = "contract-doing";
 		}
+
+
+		// if (storage.reportDetailData.status == "proceed") {
+		// 	el2.className = "contract-doing";
+		// } else if (storage.reportDetailData.status == "rejected") {
+		// 	el2.className = "contract-fail";
+		// } else if (storage.reportDetailData.status == "read") {
+		// 	el2.className = "contract-done";
+		// }
 		el2.innerText = "판매보고";
 
 

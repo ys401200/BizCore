@@ -1,4 +1,4 @@
-let R = {}, prepareSopp, scrolledSopp, moveToTarget, drawChat, inputtedComment, deleteChat, cancleEdit, editSopp, changeSopp, editSoppSearch;
+let R = {}, prepareSopp, scrolledSopp, moveToTarget, drawChat, inputtedComment, deleteChat, cancleEdit, editSopp, changeSopp, editSoppSearch, soppStageUp;
 
 $(document).ready(() => {
 	let href, no
@@ -15,6 +15,18 @@ $(document).ready(() => {
 	no = no !== null ? no * 1 : null;
 	prepareSopp(no);
 });
+
+soppStageUp = () => {
+	href = location.href.split("/sopp2/");
+	no = href.length > 1 ? href[href.length - 1] : null;
+	no = no !== null ? no * 1 : null;
+
+	if (true) {
+		window.open("/gw/estimate/"+no+"", '', 'width:1100px');
+		// gw/extimate/soppNo 넣으면 됨 
+
+	}
+} // End of soppStageUp()
 
 prepareSopp = (no) => {
 	if (no === null) {
@@ -393,7 +405,7 @@ class Sopp2 {
 	} // End of ownerName()
 
 	draw() {
-		let cnt, x, y, name, html, month = [], dt, el, cal;
+		let cnt, x, y, j, name, html, month = [], dt, el, cal;
 
 		// 제목 설정
 		cnt = document.getElementsByClassName("content-title")[0].children[0];
@@ -469,9 +481,10 @@ class Sopp2 {
 		// 스테이지바
 		html = "";
 		y = ["<T>개</T><T>설</T>", "<T>접</T><T>촉<T>", "<T>제</T><T>안</T>", "<T>견</T><T>적</T>", "<T>협</T><T>상</T>", "<T>계</T><T>약</T>", "<T>종</T><T>료</T>"];
+
 		cnt = document.getElementsByClassName("sopp-progress")[0];
 		for (x = 0; x < y.length; x++) {
-			html += ("<div" + (x < R.sopp.stage ? " class=\"sopp-done\"" : (x === R.sopp.stage ? " class=\"sopp-doing\"" : (x === R.sopp.stage + 1 ? " onclick=\"soppStageUp(" + R.sopp.stage + ")\" style=\"cursor:pointer;\"" : ""))) + ">" + y[x] + "</div>");
+			html += ("<div " + (x < R.sopp.stage ? " class=\"sopp-done\"" : (x === R.sopp.stage ? " class=\"sopp-doing\"" : (x === R.sopp.stage + 1 ? " onclick=\"soppStageUp(" + R.sopp.stage + ")\" style=\"cursor:pointer;\"" : ""))) + ">" + y[x] + "</div>");
 		}
 		cnt.innerHTML = html;
 
