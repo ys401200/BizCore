@@ -2,8 +2,8 @@ let R = {}, prepareSopp, scrolledSopp, moveToTarget, drawChat, inputtedComment, 
 
 $(document).ready(() => {
 	let href, no
-    init();
-    
+	init();
+
 	setTimeout(() => {
 		$("#loadingDiv").hide();
 		$("#loadingDiv").loading("toggle");
@@ -12,39 +12,42 @@ $(document).ready(() => {
 	href = location.href.split("/sopp2/");
 	no = href.length > 1 ? href[href.length - 1] : null;
 	console.log(no);
-	no = no !== null ? no * 1 :  null; 
-	prepareSopp(no);	
+	no = no !== null ? no * 1 : null;
+	prepareSopp(no);
 });
 
 prepareSopp = (no) => {
-	if(no === null){
+	if (no === null) {
 		console.log("SOPP no is null!!!");
 		return;
 	}
 	fetch(apiServer + "/api/project/sopp/" + no)
-	.catch((error) => console.log("error:", error))
-	.then(response => response.json())
-	.then(response => {
-		let data, sopp, projectOwner;
-		if(response.result === "ok"){
-			data = response.data;
-			data = cipher.decAes(data);
-			data = JSON.parse(data);
-			console.log(data);
-			R.projectOwner = data.projectOwner;
-			R.chat = data.chat;
-			R.sopp = new Sopp2(data.sopp);
-			R.sopp.draw();
-			drawChat();
-			
-			setTimeout(() => {
-				EstimateSet = new EstimateSet();
-				EstimateSet.soppEstimateNo(R.sopp.no);
-			}, 1000);
-		}else{
-			console.log(response.msg);
-		}
-	});
+		.catch((error) => console.log("error:", error))
+		.then(response => response.json())
+		.then(response => {
+			let data, sopp, projectOwner;
+			if (response.result === "ok") {
+				data = response.data;
+				data = cipher.decAes(data);
+				data = JSON.parse(data);
+				console.log(data);
+				R.projectOwner = data.projectOwner;
+				R.chat = data.chat;
+				R.sopp = new Sopp2(data.sopp);
+				R.sopp.draw();
+				drawChat();
+
+				setTimeout(() => {
+					EstimateSet = new EstimateSet();
+					EstimateSet.soppEstimateNo(R.sopp.no);
+					drawDetail(R.sopp.no);
+				}, 1000);
+
+
+			} else {
+				console.log(response.msg);
+			}
+		});
 
 } // End of prepareSopp()
 
@@ -57,11 +60,11 @@ cancleEdit = (el) => {
 
 editSopp = (n) => {
 	let x, y, dept, arr, el1, el2, cnt = document.getElementsByClassName("container")[0].children[1];
-	if(n === undefined || typeof n !== "string")	return;
+	if (n === undefined || typeof n !== "string") return;
 	cnt.className = "sopp-search";
 	document.getElementsByClassName("container")[0].children[1].children[5].children[0].dataset.n = n;
-	
-	switch(n) {
+
+	switch (n) {
 		case "owner":
 			cnt.children[4].style.padding = "0.7rem";
 			cnt.children[4].innerHTML = storage.dept.tree.getTreeHtml();
@@ -69,12 +72,12 @@ editSopp = (n) => {
 			cnt.children[3].children[0].innerHTML = "관리자 변경";
 			cnt.children[3].children[1].children[1].style.display = "none";
 			arr = [];
-			for(x = 0 ; x < y.length ; x++){
-				if(y[x].getAttribute("for") !== null && y[x].getAttribute("for").substring(0, 4) === "emp:" && R.sopp.owner !== y[x].getAttribute("for").substring(4) * 1){
+			for (x = 0; x < y.length; x++) {
+				if (y[x].getAttribute("for") !== null && y[x].getAttribute("for").substring(0, 4) === "emp:" && R.sopp.owner !== y[x].getAttribute("for").substring(4) * 1) {
 					y[x].setAttribute("onclick", "changeSopp('owner'," + y[x].getAttribute("for").substring(4) + ")");
 				}
 			}
-		break;
+			break;
 
 		case "coWorker":
 			cnt.children[4].style.padding = "0.7rem";
@@ -84,12 +87,12 @@ editSopp = (n) => {
 			cnt.children[3].children[1].children[1].style.display = "";
 			cnt.children[3].children[1].children[1].setAttribute("onclick", "changeSopp('coWorker')");
 			arr = [];
-			for(x = 0 ; x < y.length ; x++){
-				if(y[x].getAttribute("for") !== null && y[x].getAttribute("for").substring(0, 4) === "emp:"){
+			for (x = 0; x < y.length; x++) {
+				if (y[x].getAttribute("for") !== null && y[x].getAttribute("for").substring(0, 4) === "emp:") {
 					y[x].setAttribute("onclick", "if(this.dataset.s === undefined){this.dataset.s=1;this.children[0].style.backgroundColor='#ffe6e6'}else{delete this.dataset.s;this.children[0].style.backgroundColor=''}");
 				}
 			}
-		break;
+			break;
 
 		case "partner":
 		case "customer":
@@ -97,7 +100,7 @@ editSopp = (n) => {
 			cnt.children[3].children[1].children[1].style.display = "none";
 			cnt = cnt.children[4];
 			cnt.style.padding = "0.7rem";
-			if(n === "partner"){
+			if (n === "partner") {
 				el1 = document.createElement("div");
 				el1.setAttribute("onclick", "changeSopp('" + n + "', " + -1 + ")");
 				el1.style.cursor = "pointer";
@@ -130,29 +133,29 @@ editSopp = (n) => {
 				el1.appendChild(el2);
 			}
 			cnt.nextElementSibling.children[0].focus();
-		break;
+			break;
 	}
 } // End of editSopp()
 
 changeSopp = (n, v) => {
 	let x, y, arr, cnt = document.getElementsByClassName("container")[0].children[1];
 
-	switch(n) {
+	switch (n) {
 		case "coWorker":
 			y = cnt.children[4].getElementsByTagName("label");
 			arr = [];
-			for(x = 0 ; x < y.length ; x++)	if(y[x].getAttribute("for") !== null && y[x].getAttribute("for").substring(0, 4) === "emp:" && y[x].dataset.s === "1")	arr.push(y[x].getAttribute("for").substring(4) * 1);
+			for (x = 0; x < y.length; x++)	if (y[x].getAttribute("for") !== null && y[x].getAttribute("for").substring(0, 4) === "emp:" && y[x].dataset.s === "1") arr.push(y[x].getAttribute("for").substring(4) * 1);
 			cnt.children[3].children[1].children[1].removeAttribute("onclick");
 			R.sopp.coWorker = arr;
 			//R.sopp.update(n);
-		break;
+			break;
 
 		case "owner":
 		case "partner":
 		case "customer":
 			R.sopp[n] = v === -1 ? undefined : v;
 			//R.sopp.update(n);
-		break;
+			break;
 	}
 
 	document.getElementsByClassName("container")[0].children[1].className = "sopp-history";
@@ -163,17 +166,17 @@ editSoppSearch = (el) => {
 	let x, y, cnt, els, el1, el2, v;
 	v = el.value;
 	cnt = el.parentElement.previousElementSibling;
-	if(el.dataset.n === "owner" || el.dataset.n === "coWorker"){
+	if (el.dataset.n === "owner" || el.dataset.n === "coWorker") {
 		els = cnt.getElementsByTagName("label");
-		for(x = 0 ; x < els.length ; x++){
-			if(els[x].getAttribute("for") !== null && els[x].getAttribute("for").substring(0, 4) === "emp:"){
-				if(v === "" || els[x].innerText.includes(v))	els[x].style.display = "";
-				else		els[x].style.display = "none";
+		for (x = 0; x < els.length; x++) {
+			if (els[x].getAttribute("for") !== null && els[x].getAttribute("for").substring(0, 4) === "emp:") {
+				if (v === "" || els[x].innerText.includes(v)) els[x].style.display = "";
+				else els[x].style.display = "none";
 			}
 		}
-	}else if(el.dataset.n === "customer" || el.dataset.n === "partner"){
+	} else if (el.dataset.n === "customer" || el.dataset.n === "partner") {
 		cnt.innerHTML = "";
-		if(el.dataset.n === "partner"){
+		if (el.dataset.n === "partner") {
 			el1 = document.createElement("div");
 			el1.setAttribute("onclick", "changeSopp(" + el.dataset.n + ", " + -1 + ")");
 			el1.style.cursor = "pointer";
@@ -191,7 +194,7 @@ editSoppSearch = (el) => {
 			if (x === undefined) continue;
 			y = "...";
 			y = storage.customer[x] !== undefined ? storage.customer[x].name : y;
-			if(v === "" || (y !== "..."  && (x.includes(v) || y.includes(v)))){
+			if (v === "" || (y !== "..." && (x.includes(v) || y.includes(v)))) {
 				el1 = document.createElement("div");
 				el1.setAttribute("onclick", "changeSopp(" + el.dataset.n + ", " + x + ")");
 				el1.style.cursor = "pointer";
@@ -215,26 +218,26 @@ drawChat = () => {
 
 	cnt = document.getElementsByClassName("sopp-history")[0].children[1];
 	html = "";
-	for(x = 0 ; x < R.chat.length ; x++){
+	for (x = 0; x < R.chat.length; x++) {
 		chat = R.chat[x];
 		dt = chat.created;
-		if(dt !== undefined){
+		if (dt !== undefined) {
 			y = new Date(dt);
 			dt = (y.getFullYear() % 100) + ".";
 			dt += (y.getMonth() + 1) + ".";
 			dt += y.getDate() + " ";
 			dt += y.getHours() + ":";
 			dt += y.getMinutes();
-		}else dt = "";
-		chat.message = chat.message.replaceAll("<","&lt;");
-		chat.message = chat.message.replaceAll(">","&gt;");
+		} else dt = "";
+		chat.message = chat.message.replaceAll("<", "&lt;");
+		chat.message = chat.message.replaceAll(">", "&gt;");
 		name = "...";
-		if(storage.user[chat.writer] !== undefined && storage.user[chat.writer].userName !== undefined) name = storage.user[chat.writer].userName;
+		if (storage.user[chat.writer] !== undefined && storage.user[chat.writer].userName !== undefined) name = storage.user[chat.writer].userName;
 		html += "<div>";
 		html += ("<img src=\"" + (chat.isNotice > 0 ? "/images/sopp2/info_circle.png" : "/api/user/image/" + chat.writer) + "\" class=\"profile-small\" />");
 		html += ("<div class=\"history-employee\">" + name + "</div>");
 		html += ("<div class=\"history-date\">" + dt + "</div>");
-		if(chat.isNotice === 0 && chat.writer === storage.my) html += ("<img src=\"/images/sopp2/circle_close.png\" class=\"history-delete\" onclick=\"deleteChat(" + x + ")\" />");
+		if (chat.isNotice === 0 && chat.writer === storage.my) html += ("<img src=\"/images/sopp2/circle_close.png\" class=\"history-delete\" onclick=\"deleteChat(" + x + ")\" />");
 		html += ("<div class=\"history-comment\">" + chat.message + "</div>");
 		html += "</div>";
 	}
@@ -244,7 +247,7 @@ drawChat = () => {
 // chat 삭제 처리 함수
 deleteChat = (no) => {
 	let idx;
-	if(no === undefined || R.chat[no] === undefined)	return;
+	if (no === undefined || R.chat[no] === undefined) return;
 	idx = R.chat[no].idx;
 
 	fetch(apiServer + "/api/project/sopp/chat/" + idx, {
@@ -253,10 +256,10 @@ deleteChat = (no) => {
 	}).catch((error) => console.log("error:", error))
 		.then(response => response.json())
 		.then(response => {
-			if(response.result === "ok"){
+			if (response.result === "ok") {
 				R.chat.splice(no, 1);
 				drawChat();
-			}else{
+			} else {
 				console.log("error on deleteChat(" + no + ")");
 			}
 		});
@@ -266,10 +269,10 @@ deleteChat = (no) => {
 // chat 입력 처리 함수
 inputtedComment = (el, event) => {
 	let message, stage, sopp;
-	if(!(el.tagName === "BUTTON" || event.key === "Enter"))	return;
-	if(el.tagName === "BUTTON")	el = el.previousElementSibling;
+	if (!(el.tagName === "BUTTON" || event.key === "Enter")) return;
+	if (el.tagName === "BUTTON") el = el.previousElementSibling;
 	message = el.value;
-	if(message === undefined || message === "") return;
+	if (message === undefined || message === "") return;
 	stage = R.sopp.stage;
 	sopp = R.sopp.no;
 
@@ -281,7 +284,7 @@ inputtedComment = (el, event) => {
 		.then(response => response.json())
 		.then(response => {
 			let v = {};
-			if(response.result === "ok"){
+			if (response.result === "ok") {
 				document.getElementsByClassName("sopp-history")[0].children[2].children[0].value = "";
 				v.idx = response.data;
 				v.isNotice = 0;
@@ -291,7 +294,7 @@ inputtedComment = (el, event) => {
 				v.created = (new Date()).getTime();
 				R.chat.push(v);
 				drawChat();
-			}else{
+			} else {
 				document.getElementsByClassName("sopp-history")[0].children[2].children[0].focus();
 			}
 		});
@@ -302,21 +305,21 @@ scrolledSopp = (el) => {
 
 	v = el.scrollTop + vr;
 	els = document.getElementsByClassName("sopp-sub-title");
-	for(x = 0 ; x < els.length ; x++)	position.push(els[x].offsetTop);
+	for (x = 0; x < els.length; x++)	position.push(els[x].offsetTop);
 
-	for(x = 0 ; x < position.length ; x++)   if(v < position[x])  break;
+	for (x = 0; x < position.length; x++)   if (v < position[x]) break;
 
 	els = document.getElementsByClassName("sopp-tab-cnt")[0].children;
 	z = el.scrollHeight - el.offsetHeight + vr - 2;
-	if(v > z){
-		for(y = 0 ; y < els.length ; y++){
-			if(y < els.length - 1) els[y].className = "sopp-tab";
-			else    els[y].className = "sopp-tab-select";
+	if (v > z) {
+		for (y = 0; y < els.length; y++) {
+			if (y < els.length - 1) els[y].className = "sopp-tab";
+			else els[y].className = "sopp-tab-select";
 		}
-	}else{
-		for(y = 0 ; y < els.length ; y++){
-			if(y === x) els[y].className = "sopp-tab-select";
-			else    els[y].className = "sopp-tab";
+	} else {
+		for (y = 0; y < els.length; y++) {
+			if (y === x) els[y].className = "sopp-tab-select";
+			else els[y].className = "sopp-tab";
 		}
 	}
 } // End of scrolledSopp()
@@ -329,7 +332,7 @@ moveToTarget = (el) => {
 		top: target.offsetTop - vr,
 		left: 0,
 		behavior: 'smooth'
-	  });
+	});
 } // End of moveToTarget()
 
 
@@ -337,8 +340,8 @@ moveToTarget = (el) => {
 
 // ================================= C L A S S _ D E C L A R A T I O N =================================
 
-class Sopp2{
-	constructor(each){
+class Sopp2 {
+	constructor(each) {
 		this.no = each.no;
 		this.stage = each.stage;
 		this.title = each.title;
@@ -357,31 +360,31 @@ class Sopp2{
 		this.modified = each.modified == undefined ? null : new Date(each.modified);
 		this.calendar = [];
 	}
-	isClosed(){return this.closed !== null;}
+	isClosed() { return this.closed !== null; }
 
-	getEmployee(arr){
+	getEmployee(arr) {
 		let x;
-		if(arr === undefined || arr === null || arr.constructor.name !== "Array")	arr = new Array();
-		if(this.owner !== undefined && this.owner !== null && !arr.includes(this.owner))	arr.push(this.owner);
-		if(this.coWorker != null)	for(x = 0 ; x < this.coWorker.length ; x++)	if(this.coWorker[x] !== undefined && this.coWorker[x] !== null && !arr.includes(this.coWorker[x]))	arr.push(this.coWorker[x]);
+		if (arr === undefined || arr === null || arr.constructor.name !== "Array") arr = new Array();
+		if (this.owner !== undefined && this.owner !== null && !arr.includes(this.owner)) arr.push(this.owner);
+		if (this.coWorker != null) for (x = 0; x < this.coWorker.length; x++)	if (this.coWorker[x] !== undefined && this.coWorker[x] !== null && !arr.includes(this.coWorker[x])) arr.push(this.coWorker[x]);
 		return arr;
 	} // End of getEmployee()
 
-	ownerName(){
+	ownerName() {
 		let owner, name = "...", html, x;
 		owner = storage.user[this.owner];
-		if(owner !== undefined && owner !== null){
+		if (owner !== undefined && owner !== null) {
 			owner = owner.userName;
-			if(owner !== undefined && owner !== null)	name = owner;
+			if (owner !== undefined && owner !== null) name = owner;
 		}
 		html = ("<img src=\"/api/user/image/" + this.owner + "\" class=\"employee_image\" /><span>" + name + "</span>")
 
-		if(this.coWorker != null)	for(x = 0 ; x < this.coWorker.length ; x++){
+		if (this.coWorker != null) for (x = 0; x < this.coWorker.length; x++) {
 			name = "...";
 			owner = storage.user[this.coWorker[x]];
-			if(owner !== undefined && owner !== null){
+			if (owner !== undefined && owner !== null) {
 				owner = owner = owner.userName;
-				if(owner !== undefined && owner !== null)	name = owner;
+				if (owner !== undefined && owner !== null) name = owner;
 			}
 			html += ("<img src=\"/api/user/image/" + this.coWorker[x] + "\" class=\"employee_image\" /><span>" + name + "</span>")
 		}
@@ -389,7 +392,7 @@ class Sopp2{
 		return html;
 	} // End of ownerName()
 
-	draw(){
+	draw() {
 		let cnt, x, y, name, html, month = [], dt, el, cal;
 
 		// 제목 설정
@@ -400,17 +403,17 @@ class Sopp2{
 		cnt = document.getElementsByClassName("sopp-info")[0].children[0].children[1].children[0];
 		name = "...";
 		html = "<img src=\"/api/user/image/" + R.sopp.owner + "\" class=\"profile-small\" />";
-		if(storage.user[R.sopp.owner] !== undefined && storage.user[R.sopp.owner].userName !== undefined)	name = storage.user[R.sopp.owner].userName;
+		if (storage.user[R.sopp.owner] !== undefined && storage.user[R.sopp.owner].userName !== undefined) name = storage.user[R.sopp.owner].userName;
 		html += name;
 		cnt.innerHTML = html;
 
 		// 담당자
 		cnt = cnt = document.getElementsByClassName("sopp-info")[0].children[1].children[1].children[0];
 		html = "";
-		if(R.sopp.coWorker !== undefined && R.sopp.coWorker.constructor.name === "Array")	for(x = 0 ; x < R.sopp.coWorker.length ; x++){
+		if (R.sopp.coWorker !== undefined && R.sopp.coWorker.constructor.name === "Array") for (x = 0; x < R.sopp.coWorker.length; x++) {
 			name = "...";
 			html += ("<img src=\"/api/user/image/" + R.sopp.coWorker[x] + "\" class=\"profile-small\" />");
-			if(storage.user[R.sopp.coWorker[x]] !== undefined && storage.user[R.sopp.coWorker[x]].userName !== undefined)	name = storage.user[R.sopp.coWorker[x]].userName;
+			if (storage.user[R.sopp.coWorker[x]] !== undefined && storage.user[R.sopp.coWorker[x]].userName !== undefined) name = storage.user[R.sopp.coWorker[x]].userName;
 			html += (name + " ");
 		}
 		cnt.innerHTML = html;
@@ -419,7 +422,7 @@ class Sopp2{
 		cnt = document.getElementsByClassName("sopp-info")[0].children[2].children[1].children[0];
 		name = "...";
 		html = "";
-		if(storage.customer[R.sopp.customer] !== undefined && storage.customer[R.sopp.customer].name !== undefined)	name = storage.customer[R.sopp.customer].name;
+		if (storage.customer[R.sopp.customer] !== undefined && storage.customer[R.sopp.customer].name !== undefined) name = storage.customer[R.sopp.customer].name;
 		html += name;
 		cnt.innerHTML = html;
 
@@ -427,8 +430,8 @@ class Sopp2{
 		cnt = document.getElementsByClassName("sopp-info")[0].children[3].children[1].children[0];
 		html = "";
 		name = "...";
-		if(R.sopp.partner === undefined)	name = "&lt;없음&gt;";
-		else if(R.sopp.partner != undefined && typeof R.sopp.partner === "number")	if(storage.customer[R.sopp.partner] !== undefined && storage.customer[R.sopp.partner].name !== undefined)	name = storage.customer[R.sopp.partner].name;			
+		if (R.sopp.partner === undefined) name = "&lt;없음&gt;";
+		else if (R.sopp.partner != undefined && typeof R.sopp.partner === "number") if (storage.customer[R.sopp.partner] !== undefined && storage.customer[R.sopp.partner].name !== undefined) name = storage.customer[R.sopp.partner].name;
 		html += name;
 		cnt.innerHTML = html;
 
@@ -436,7 +439,7 @@ class Sopp2{
 		// 예상매출액
 		cnt = document.getElementsByClassName("sopp-expected")[0].children[0].children[1];
 		x = 0;
-		if(R.sopp.expactetSales !== undefined && R.sopp.expactetSales !== null && typeof R.sopp.expactetSales === "number")	x = R.sopp.expactetSales.toLocaleString();
+		if (R.sopp.expactetSales !== undefined && R.sopp.expactetSales !== null && typeof R.sopp.expactetSales === "number") x = R.sopp.expactetSales.toLocaleString();
 		cnt.innerText = x;
 		// 시작일
 		cnt = document.getElementsByClassName("sopp-expected")[0].children[1].children[0];
@@ -447,7 +450,7 @@ class Sopp2{
 		cnt.innerText = y;
 		// 예상매출일
 		x = R.sopp.expactedDate;
-		if(x !== undefined && x !== null && typeof x === "object" && x.constructor.name === "Date"){
+		if (x !== undefined && x !== null && typeof x === "object" && x.constructor.name === "Date") {
 			cnt = document.getElementsByClassName("sopp-expected")[0].children[1].children[2];
 			y = "'" + (x.getFullYear() % 100) + ".";
 			y += ((x.getMonth() + 1) + ".");
@@ -467,7 +470,7 @@ class Sopp2{
 		html = "";
 		y = ["<T>개</T><T>설</T>", "<T>접</T><T>촉<T>", "<T>제</T><T>안</T>", "<T>견</T><T>적</T>", "<T>협</T><T>상</T>", "<T>계</T><T>약</T>", "<T>종</T><T>료</T>"];
 		cnt = document.getElementsByClassName("sopp-progress")[0];
-		for(x = 0 ; x < y.length ; x++){
+		for (x = 0; x < y.length; x++) {
 			html += ("<div" + (x < R.sopp.stage ? " class=\"sopp-done\"" : (x === R.sopp.stage ? " class=\"sopp-doing\"" : (x === R.sopp.stage + 1 ? " onclick=\"soppStageUp(" + R.sopp.stage + ")\" style=\"cursor:pointer;\"" : ""))) + ">" + y[x] + "</div>");
 		}
 		cnt.innerHTML = html;
@@ -479,21 +482,21 @@ class Sopp2{
 		cnt = document.getElementsByClassName("sopp-calendar")[0];
 		dt = new Date(this.created.getFullYear(), this.created.getMonth(), 1);
 		month.push(dt);
-		while(dt.getTime() < y.getTime()){
+		while (dt.getTime() < y.getTime()) {
 			x++;
 			dt = new Date(dt.getFullYear(), dt.getMonth() + 1, 1);
 			month.push(dt);
 			console.log(month);
-			if(dt.getTime() > (new Date()).getTime())	break;
-			if(x > 100)	break;
+			if (dt.getTime() > (new Date()).getTime()) break;
+			if (x > 100) break;
 		}
 		month.push(new Date(dt.getFullYear(), dt.getMonth() + 1, 1));
 		month.push(new Date(dt.getFullYear(), dt.getMonth() + 2, 1));
 		month.push(new Date(dt.getFullYear(), dt.getMonth() + 3, 1));
 
-		for(x = 0 ; x < month.length ; x++){
+		for (x = 0; x < month.length; x++) {
 			el = document.createElement("div");
-			if(x < month.length - 1)	el.style.display = "none";
+			if (x < month.length - 1) el.style.display = "none";
 			cnt.appendChild(el);
 			dt = month[x];
 			cal = new BizCalendar(dt.getFullYear(), dt.getMonth() + 1, el);
@@ -502,12 +505,12 @@ class Sopp2{
 		}
 	} // End of draw()
 
-	drawList(cnt){
+	drawList(cnt) {
 		let el, x, z, lb = ["개설", "접촉", "제안", "견적", "협상", "계약", "종료"], html;
 
-		if(this.stage < 6)			cnt.className = cnt.className + " sopp-doing";
-		else if(this.stage === 6)	cnt.className = cnt.className + " sopp-done";
-		else						cnt.className = cnt.className + " sopp-fail";
+		if (this.stage < 6) cnt.className = cnt.className + " sopp-doing";
+		else if (this.stage === 6) cnt.className = cnt.className + " sopp-done";
+		else cnt.className = cnt.className + " sopp-fail";
 
 		cnt.setAttribute("onclick", "location.href='/business/sopp2/" + this.no + "'");
 
@@ -525,7 +528,7 @@ class Sopp2{
 
 		el = document.createElement("div");
 		cnt.appendChild(el);
-		el.innerText = this.created.toISOString().substring(0,10) + " » " +  (this.expactedDate == null ? "미정" :  this.expactedDate.toISOString().substring(0,10));
+		el.innerText = this.created.toISOString().substring(0, 10) + " » " + (this.expactedDate == null ? "미정" : this.expactedDate.toISOString().substring(0, 10));
 
 		el = document.createElement("div");
 		cnt.appendChild(el);
@@ -544,22 +547,22 @@ class Sopp2{
 		cnt.appendChild(el);
 		el.className = "progress";
 		html = "";
-		for(x = 0 ; x < lb.length ; x++)	html += ("<prgbar " + (this.stage > x ? "class=\"done\"" : (this.stage === x ? "class=\"doing\"" : "")) + ">" + lb[x] + "</prgbar>");
+		for (x = 0; x < lb.length; x++)	html += ("<prgbar " + (this.stage > x ? "class=\"done\"" : (this.stage === x ? "class=\"doing\"" : "")) + ">" + lb[x] + "</prgbar>");
 		el.innerHTML = html;
 
 	} // End of draw()
 
-	update(){
+	update() {
 		let json = Object.assign({}, this), data;
 
 		delete json.calendar;
 		json.created = (json.created === undefined || json.created === null) ? null : json.created.getTime();
 		json.closed = (json.closed === undefined || json.closed === null) ? null : json.closed.getTime();
-		json.modified = (json.modified === undefined || json.modified === null)	? null : json.modified.getTime();
-		json.expactedDate = (json.expactedDate === undefined || json.expactedDate === null) ? null :  json.expactedDate.getTime();
+		json.modified = (json.modified === undefined || json.modified === null) ? null : json.modified.getTime();
+		json.expactedDate = (json.expactedDate === undefined || json.expactedDate === null) ? null : json.expactedDate.getTime();
 		json.coWorker = (json.coWorker === undefined || json.coWorker === null) ? null : JSON.stringify(json.coWorker);
 		json.related = (json.related === undefined || json.related === null) ? null : JSON.stringify(json.related);
-		data = JSON.stringify(json);		
+		data = JSON.stringify(json);
 		data = cipher.encAes(data);
 		fetch(apiServer + "/api/project/sopp", {
 			method: "POST",
@@ -570,18 +573,18 @@ class Sopp2{
 			.then(response => {
 				let sopp, prjNo, x;
 				console.log(response);
-				if(response.result === "ok"){
+				if (response.result === "ok") {
 					x = response.data;
 					x = cipher.decAes(x)
 					x = JSON.parse(x);
 					sopp = new Sopp2(x);
 					console.log(sopp);
 					prjNo = sopp.related.parent;
-					if(prjNo !== undefined)	prjNo = prjNo.split(":")[1];
-					if(prjNo !== undefined && R !== undefined && R.project !== undefined && R.project.list !== undefined){
+					if (prjNo !== undefined) prjNo = prjNo.split(":")[1];
+					if (prjNo !== undefined && R !== undefined && R.project !== undefined && R.project.list !== undefined) {
 						prjNo = prjNo * 1;
-						for(x = 0 ; x < R.project.list.length ; x++){
-							if(R.project.list[x].no === prjNo){
+						for (x = 0; x < R.project.list.length; x++) {
+							if (R.project.list[x].no === prjNo) {
 								R.project.list[x].addSopp(sopp);
 								R.project.list[x].draw();
 								break;
@@ -589,7 +592,7 @@ class Sopp2{
 						}
 					}
 
-				}else{
+				} else {
 					console.log(response.msg);
 				}
 			});
@@ -597,22 +600,22 @@ class Sopp2{
 	}
 } // End of Class _ Sopp2
 
-class BizCalendar{
-	constructor(year, month, container){
+class BizCalendar {
+	constructor(year, month, container) {
 		let startDate, endDate, dt = new Date();
-		if(year === undefined || isNaN(year))	year = dt.getFullYear();
-		if(month === undefined || isNaN(month))	month = dt.getMonth() + 1;
-		startDate = new Date(year, month - 1 , 1);
-    	endDate = new Date(new Date(year, month, 1).getTime() - 86400000);
+		if (year === undefined || isNaN(year)) year = dt.getFullYear();
+		if (month === undefined || isNaN(month)) month = dt.getMonth() + 1;
+		startDate = new Date(year, month - 1, 1);
+		endDate = new Date(new Date(year, month, 1).getTime() - 86400000);
 		this.year = year;
 		this.month = month;
 		this.container = container === undefined ? null : container;
 		this.startDate = new Date(startDate.getTime() - startDate.getDay() * 86400000); // 달력 시작하는 날짜 잡기
 		this.endDate = new Date(endDate.getTime() + (6 - endDate.getDay()) * 86400000); // 달력 끝나는 날 찾기
 	}
-	drawForSopp(){
+	drawForSopp() {
 		let headCnt, bodyCnt, x, y, z, w, dt, weeks, html, bColor;
-		if(this.container === null)	return;
+		if (this.container === null) return;
 		bColor = ["#fbe4e8", "#cbf6ce", "#e4e3f1", "#ffd890", "#c8edff", "#F5DB02", "#ecc8ff", "#e3e3e3", "#ffdcf3", "#e4f3ca"];
 		headCnt = document.createElement("div");
 		headCnt.className = "calendar-head";
@@ -632,9 +635,9 @@ class BizCalendar{
 		weeks = (this.endDate / 86400000 - this.startDate / 86400000 + 1) / 7;
 		bodyCnt.className += (" calendar-week-" + weeks);
 		html = "";
-		for(x = 0 ; x < weeks ; x++){
+		for (x = 0; x < weeks; x++) {
 			w = "<div>";
-			for(y = 0 ; y < 7 ; y++){
+			for (y = 0; y < 7; y++) {
 				dt = new Date(this.startDate.getTime() + (x * 7 + y) * 86400000);
 				w += ("<div class=\"" + (dt.getMonth() + 1 !== this.month ? "other" : "this") + "-month\" data-v=\"" + dt.getTime() + "\"><div>" + dt.getDate() + "</div>");
 				// w += ("<div><img src=\"/api/user/image/10044\" class=\"profile-small\">이장희</div>");
@@ -646,3 +649,65 @@ class BizCalendar{
 		bodyCnt.innerHTML = html;
 	} // End of drawForSopp()
 } // End of Class _ BizCalendar
+
+function drawDetail(soppNo) {
+	let contNo;
+	for (let i = 0; i < storage.contract.length; i++) {
+		let contSopp = JSON.parse(storage.contract[i].related).parent.split(":");
+		if (contSopp[1] == soppNo) {
+			contNo = storage.contract[i].no;
+		}
+	}
+
+	let cnt = document.getElementsByClassName("sopp-contract")[0];
+	fetch(location.origin + "/api/contract/" + contNo)
+		.catch((error) => console.log("error:", error))
+		.then(response => response.json())
+		.then(response => {
+			console.log(response);
+			let data;
+			if (response.result === "ok") {
+				data = response.data;
+				data = cipher.decAes(data);
+				data = JSON.parse(data);
+				R.contract = new Contract(data);
+				R.contract.getReportDetail(cnt);
+
+			} else {
+				let none;
+				R.contract = new Contract(none);
+				R.contract.drawNone();
+				console.log(response.msg);
+			}
+		});
+
+}
+
+
+function getYmdSlashShort(date) {
+	let d = new Date(date);
+	return (
+		(d.getFullYear() % 100) +
+		"/" +
+		(d.getMonth() + 1 > 9
+			? (d.getMonth() + 1).toString()
+			: "0" + (d.getMonth() + 1)) +
+		"/" +
+		(d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
+	);
+}
+
+
+
+function getYmdHypen(date) {
+	let d = new Date(date);
+	return (
+		(d.getFullYear()) +
+		"-" +
+		(d.getMonth() + 1 > 9
+			? (d.getMonth() + 1).toString()
+			: "0" + (d.getMonth() + 1)) +
+		"-" +
+		(d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
+	);
+}

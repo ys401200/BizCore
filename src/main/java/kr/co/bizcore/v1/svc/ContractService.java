@@ -138,6 +138,8 @@ public class ContractService extends Svc {
         // 수주판매보고문서
         docNo = gwService.getSalesReport(compId, sopp + "");
 
+       
+
         try {
             conn = sqlSession.getConnection();
             pstmt = conn.prepareStatement(sql);
@@ -146,7 +148,7 @@ public class ContractService extends Svc {
             rs = pstmt.executeQuery();
             d = "[";
             while (rs.next()) {
-                
+
                 ordered = rs.getString("ordered");
                 employee = rs.getString("employee");
                 appType = rs.getString("appType");
@@ -164,15 +166,13 @@ public class ContractService extends Svc {
                 d += ("\"approved\":" + approved + ",");
                 d += ("\"rejected\":" + rejected + ",");
                 d += ("\"comment\":\"" + comment + "\"}");
-                if(!rs.isLast()) {
+                if (!rs.isLast()) {
                     d += ",";
                 }
-        
+
             }
 
             d += "]";
-
-
 
             rs.close();
             pstmt.close();
