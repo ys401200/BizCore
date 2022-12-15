@@ -13,15 +13,33 @@
 	padding: 9px 12px;
 	border-left:4px solid #182f81;
  	margin: 0;
+	display:grid;
+	grid-template-columns: 1fr 1fr;
+}
+.workReportTitle > div:nth-child(2){text-align: right;}
+.workReportTitle > div:nth-child(2) > button{
+	margin-right:0.5rem;
+    box-shadow: 0 1px 1px #bdbfc9;
+    color: #ebefff;
+    background-color: #182f81;
+    padding: 0.3% 0.7%;
+    border-radius: 5px;
+	min-width: 3.5rem;
+	display:none;
+}
+.workReportTitle > div:nth-child(2) > button:hover{
+	color:#182f81;
+	background-color:#ebefff;
+	box-shadow: 0 2px 2px #bdbfc9;
 }
 
 .workReportContent{
 	padding: 5px;
     height: calc(100% - 45px);
-	overflow-x: hidden;
-	overflow-y: auto;
+	overflow: hidden;
 	display:grid;
 	grid-template-columns: 10rem 10rem auto;
+	grid-template-rows: calc(100% - 10px);
 	gap: 0.7rem;
 }
 
@@ -68,7 +86,7 @@
 .month-list > div:nth-child(even) > div > span:last-child{color:#8888ff;}
 
 .dept-tree{
-	border: 1px solid #c5c5c5;
+	border: 1px solid #ededed;
     padding: 0.2rem;
     font-size: 0.8rem;
     color: #08084d;
@@ -82,6 +100,7 @@
 .dept-tree .dept-tree-cnt{margin-left:0.7rem;}
 .dept-tree input.dept-emp-select:checked + label{background-color:#eaeaff;}
 
+.report-container{overflow-x:hidden;overflow-y: auto;}
 .report-container p{margin:0;}
 .report-container > div:nth-child(1){
 	text-align:center;
