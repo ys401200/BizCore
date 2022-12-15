@@ -1,4 +1,4 @@
-let drawMonthList, clickedMonth, clickedWeek, drawDeptTree, clickedDeptName, clickedTreeEmployee, drawReport, getReportData, R = {};
+let drawMonthList, clickedMonth, clickedWeek, drawDeptTree, clickedDeptName, clickedTreeEmployee, drawReport, getReportData, clickedButton, R = {};
 
 $(document).ready(() => {
 
@@ -18,12 +18,102 @@ $(document).ready(() => {
 	drawDeptTree();
 });
 
+// 상당 타이틀바의 버튼 클릭시 실행되는 함수
+clickedButton = (el) => {
+	let n, x, y, z, arr, els, cnt;
+	n = el.dataset.n;
+	if(n === "print"){ // 출력 버튼
+		x =  window.open('/printReport.html', 'report', 'left=0,top=0,width=800,height=900,toolbar=0,scrollbars=0,status=0');
+		//x.document.head.innerHTML = "<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/businessWorkreport2/businessWorkreport2.css\" />"
+		x.html = document.getElementsByClassName("report-container")[0].innerHTML;
+		
+	}else if(n === "pdf-s"){ // 개별 다운로드
+		x = document.getElementsByClassName("report-container")[0]; // 엘리먼트
+		y = "employee"; // 파일이름
+		if(storage.user[R.workReport.employee] !== undefined && storage.user[R.workReport.employee].userName !== undefined)	y = storage.user[R.workReport.employee].userName;
+		y = (R.workReport.date + "_" + y + ".pdf");
+		z = { // 옵션설정
+			margin: 10,
+			filename: y,
+			html2canvas: {scale:1},
+			jsPDF: {orientation: "landscape", unit: "mm", format: "A4", compressPDF: true}
+		  };
+		html2pdf().from(x).set(z).save();
+	}else if(n === "pdf-m"){ // 일괄 다운로드
+		arr = [];
+		els = document.getElementsByClassName("dept-tree")[0].getElementsByTagName("input");
+		for(let t = 0 ; t < els.length ; t++)	if(els[t].name === "deptTreeSelectEmp" && els[t].checked)	arr.push(els[t].dataset.select.substring(4) * 1);
+		cnt = document.createElement("div");
+		document.getElementsByClassName("workReportContent")[0].appendChild(cnt);
+		//cnt.style.display = "none";
+		for(x = 0 ; x < arr.length ; x++){
+			z = document.createElement("div");
+			z.className = "report-container";
+			//z.style.display = "none";
+			z.innerHTML = "<div>주간 업무 보고</div><div><div></div><div></div></div><div><div>지난 주 진행상황</div><div>이번 주 예정상황</div></div><div><div></div><div></div></div><div><div></div><div></div></div>";
+			cnt.appendChild(z);
+			drawReport(false, z, arr[x]);
+		}
+		
+		if(storage.user[R.workReport.employee] !== undefined && storage.user[R.workReport.employee].userName !== undefined)	y = storage.user[R.workReport.employee].userName;
+		y = (R.workReport.date + "_주간업무보고.pdf");
+		z = { // 옵션설정
+			margin: 10,
+			filename: y,
+			html2canvas: {scale:1},
+			pagebreak: { mode: "avoid-all", after:".report-container"},
+			jsPDF: {orientation: "landscape", unit: "mm", format: "A4", compressPDF: true}
+		  };
+		html2pdf().from(cnt).set(z).save();
+		  window.setTimeout(function(){
+			let cnt = document.getElementsByClassName("workReportContent")[0].children;
+			if(cnt.length > 3)	cnt[3].remove();
+		  },100)
+	}else if(n === "edit"){ // 수정 버튼
+		if(R.workReport.employee !== storage.my)	return;
+		el.style.display = "none";
+		el.nextElementSibling.style.display = "initial";
+		el.nextElementSibling.nextElementSibling.style.display = "initial";
+		drawReport(true);
+	}else if(n === "save"){ // 저장 버튼
+
+	}else if(n === "cancel"){
+		z = document.getElementsByClassName("workReportTitle")[0].children[1].children;
+		for(x = 0 ; x < z.length ; x++){
+			y = z[x].dataset.n;
+			if(y === "edit" )	z[x].style.display = R.workReport.employee === storage.my ? "initial" : "none";
+			else if(y === "cancel")	z[x].style.display = "none";
+			else if(y === "save")	z[x].style.display = "none";
+		}
+		drawReport();
+	}
+} // End of clickedButton()
+
 // 조직도에서 직원을 클릭할 때 실행되는 함수
 clickedTreeEmployee = (el) => {
-	let x;
+	let x, y, z, els, arr;
 	x = el.getAttribute("for").substring(4) * 1;
 	R.workReport.employee = x;
 	drawReport();
+
+	// 버튼 활성화
+	z = document.getElementsByClassName("workReportTitle")[0].children[1].children;
+	for(x = 0 ; x < z.length ; x++){
+		y = z[x].dataset.n;
+		if(y === "print")	z[x].style.display = "initial";
+		else if(y === "pdf-s")	z[x].style.display = "initial";
+		else if(y === "pdf-m"){
+			window.setTimeout(function(){
+				let t, els, arr = [];
+				els = document.getElementsByClassName("dept-tree")[0].getElementsByTagName("input");
+				for(t = 0 ; t < els.length ; t++)	if(els[t].name === "deptTreeSelectEmp" && els[t].checked)	arr.push(els[t].dataset.select.substring(4));
+				if(arr.length > 1)	document.getElementsByClassName("workReportTitle")[0].children[1].children[2].style.display = "initial";
+				else				document.getElementsByClassName("workReportTitle")[0].children[1].children[2].style.display = "none";
+			},1)
+		}else if(y === "edit" )	z[x].style.display = R.workReport.employee === storage.my ? "initial" : "none";
+		else if(y === "cancel")	z[x].style.display = "none";
+		else if(y === "save")	z[x].style.display = "none";
+	}
 } // End of clickedTreeEmployee()
 
 // 서버에서 리포트 데이터를 가져오는 함수
@@ -61,13 +151,14 @@ getReportData = (date) => {
 }
 
 // 주간 업무보고를 그리는 함수
-drawReport = (editable) => {
+drawReport = (editable, targetElement, employee) => {
 	let x, y, z, html, el, cnt, std, sch1, sch2, data, day;
 	day = ["일", "월", "화", "수", "목", "금", "토"];
-	cnt = document.getElementsByClassName("report-container")[0];
+	cnt = targetElement === undefined ? document.getElementsByClassName("report-container")[0] : targetElement;
+	employee = employee === undefined ? R.workReport.employee : employee;
 
 	// 본인인 경우 편집할 수 있도록 설정하는 변수
-	if(editable !== true || R.workReport.employee !== storage.my)	editable = false;
+	if(editable !== true || employee !== storage.my)	editable = false;
 
 	// 기간 설정
 	std = new Date(R.workReport.start.getTime() + 86400000 * 7);
@@ -78,15 +169,17 @@ drawReport = (editable) => {
 
 	// 이름 설정
 	z = "...";
-	if(storage.user[R.workReport.employee] !== undefined && storage.user[R.workReport.employee].userName !== undefined)	z = storage.user[R.workReport.employee].userName;
+	if(storage.user[employee] !== undefined && storage.user[employee].userName !== undefined)	z = storage.user[R.workReport.employee].userName;
 	cnt.children[1].children[1].innerHTML = z;
 
 	// 일정을 지난 주와 이번 주로 나누어서 저장
 	sch1 = [[],[],[],[],[],[],[]];
 	sch2 = [[],[],[],[],[],[],[]];
 	z = [];
-	data = R.workReport.report[R.workReport.employee];
+	data = R.workReport.report[employee];
 	if(data !== undefined)	z = data.schedules;
+	else	data = {"currentWeek":"","currentWeekCheck":false,"previousWeek":"","previousWeekCheck":"","schedules":[]};
+
 	for(x = 0 ; x < z.length ; x++){
 		y = (new Date(z[x].date)).getDay();
 		if((editable || z[x].report) && z[x].date <= std.getTime())	sch1[y].push(z[x]);
@@ -125,16 +218,25 @@ drawReport = (editable) => {
 	// 추가 기재사항
 	if(editable || data.previousWeekCheck){ // 지난 주
 		html = "<div><div>추가 기재 사항</div>";
-		if(editable)	html += ("<input type=\"checkbox\" " + (data.previousWeekCheck ? "checked " : "") + "/>");
-		html += ("</div><div>" + data.previousWeek + "</div>");
+		if(editable){
+			html += ("<input type=\"checkbox\" " + (data.previousWeekCheck ? "checked " : "") + "/></div>");
+			html += ("<div>" + data.previousWeek + "</div>"); // <=== 웹에디터 부착 필요
+		}else{
+			html += ("</div><div>" + data.previousWeek + "</div>");	
+		}
 		cnt.children[4].children[0].innerHTML = html;
 	}
-	if(editable || data.currentWeekCheck){ // 지난 주
+	if(editable || data.currentWeekCheck){ // 이번 주
 		html = "<div><div>추가 기재 사항</div>";
-		if(editable)	html += ("<input type=\"checkbox\" " + (data.currentWeekCheck ? "checked " : "") + "/>");
-		html += ("</div><div>" + data.currentWeek + "</div>");
+		if(editable){
+			html += ("<input type=\"checkbox\" " + (data.currentWeekCheck ? "checked " : "") + "/></div>");
+			html += ("<div>" + data.currentWeek + "</div>"); // <=== 웹에디터 부착 필요
+		}else{
+			html += ("</div><div>" + data.currentWeek + "</div>");	
+		}
 		cnt.children[4].children[1].innerHTML = html;
 	}
+
 } // End of drawReport()
 
 // 조직도를 그리는 함수
@@ -191,7 +293,7 @@ drawDeptTree = () => {
 
 // 조직도에서 부서 클릭시 실행되는 함수
 clickedDeptName = (el) => {
-	let x, cnt, els, v = false;
+	let x, cnt, els, v = false, arr;
 	cnt = el.parentElement.nextElementSibling;
 	els = cnt.getElementsByClassName("dept-emp-select");
 	for(x = 0 ; x < els.length ; x++){
@@ -200,8 +302,14 @@ clickedDeptName = (el) => {
 			break;
 		}
 	}
-	console.log(v);
 	for(x = 0 ; x < els.length ; x++)	els[x].checked = v;
+
+	// 일괄 출력 버튼 활성/비활성 처리
+	arr = [];
+	els = document.getElementsByClassName("dept-tree")[0].getElementsByTagName("input");
+	for(let t = 0 ; t < els.length ; t++)	if(els[t].name === "deptTreeSelectEmp" && els[t].checked)	arr.push(els[t].dataset.select.substring(4));
+	if(arr.length > 1)	document.getElementsByClassName("workReportTitle")[0].children[1].children[2].style.display = "initial";
+	else				document.getElementsByClassName("workReportTitle")[0].children[1].children[2].style.display = "none";
 } // End of clickedDeptName()
 
 // 좌측 달력을 그리는 함수

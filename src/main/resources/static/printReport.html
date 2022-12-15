@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="/css/businessWorkreport2/businessWorkreport2.css" />
+    <style>
+        @page {
+            size: A4 landscape;
+            margin:10mm;
+        }
+    </style>
+    <script>
+        let start;
+        
+        start = () => {
+            let cnt = document.createElement("div");
+            console.log("!!!!!");
+            cnt.className = "report-container";
+            cnt.innerHTML = html;
+            document.body.appendChild(cnt);
+            window.setTimeout(() => {
+                window.print();
+                window.close();
+            },1000);
+        } // End of start()
+    </script>
+</head>
+<body onload="window.setTimeout(start,1500)">
+
+</body>
+</html>
