@@ -49,7 +49,13 @@ class EstimateSet{
 				let getList = response.data.data;
                 getList = cipher.decAes(getList);
                 getList = JSON.parse(getList);
-                this.soppEstimateList(getList[0].no);
+
+				if(getList.length < 1){
+					storage.estimateList = "";
+					this.drawEstmVerList();
+				}else{
+					this.soppEstimateList(getList[0].no);
+				}
 			}
 		});
     }
@@ -64,13 +70,9 @@ class EstimateSet{
 				for(let i = 0; i < getList.length; i++){
 					getList[i].doc = cipher.decAes(getList[i].doc);
 				}
-
-                if(getList.length < 1){
-                    storage.estimateList = "";
-                }else{
-                    storage.estimateList = getList;
-                }
-
+                
+				console.log(getList);
+				storage.estimateList = getList;
                 this.drawEstmVerList();
 			}
 		});
@@ -257,9 +259,15 @@ class EstimateSet{
 			data.push(str);
 		}else{
 			for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+				let total = 0;
 				disDate = dateDis(jsonData[i].date);
 				disDate = dateFnc(disDate, "yyyy.mm.dd");
-		  
+				
+				for(let t = 0; t < jsonData[i].related.estimate.items.length; t++){
+					let item = jsonData[i].related.estimate.items[t];
+					total += item.price + (item.price * 0.1);
+				}
+
 				str = [
 					{
 						"setData": disDate,
@@ -278,7 +286,7 @@ class EstimateSet{
 						"align": "center",
 					},
 					{
-						"setData": numberFormat(jsonData[i].total),
+						"setData": numberFormat(total),
 						"align": "right",
 					},
 				];
