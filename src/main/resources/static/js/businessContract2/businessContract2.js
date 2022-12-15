@@ -1,4 +1,3 @@
-
 let R = {};
 
 $(document).ready(() => {
@@ -144,7 +143,7 @@ class Contract {
 		cnt.appendChild(el);
 		el.className = "contract-box";
 		el.setAttribute("for", "contract" + this.no);
-	
+
 		el.addEventListener("click", function () {
 			let no = this.parentElement.dataset.no;
 			fetch(location.origin + "/api/contract/" + no)
@@ -246,11 +245,11 @@ class Contract {
 		el2 = document.createElement("div");
 		el.append(el2);
 
-		if (this.appLine.length >0 && this.appLine[this.appLine.length -1].rejected != null) {
+		if (this.appLine.length > 0 && this.appLine[this.appLine.length - 1].rejected != null) {
 			el2.className = "contract-fail";
-		} else if (this.appLine.length >0 && this.appLine[this.appLine.length -1].approved != null) {
+		} else if (this.appLine.length > 0 && this.appLine[this.appLine.length - 1].approved != null) {
 			el2.className = "contract-done";
-		} else  {
+		} else {
 			el2.className = "contract-doing";
 		}
 

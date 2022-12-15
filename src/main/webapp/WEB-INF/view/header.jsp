@@ -36,7 +36,7 @@
 <script src="https://kit.fontawesome.com/a37df9d8b5.js" crossorigin="anonymous"></script>
 <script src="/js/common_jh.js"></script>
 <script src="/js/common_sh.js"></script>
-<script src="/js/gwEstimate/gwEstimate.js"></script>
+
 
 <title>BizCore</title>
 </head>
