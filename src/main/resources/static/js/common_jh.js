@@ -54,6 +54,7 @@ class EstimateSet{
 					storage.estimateList = "";
 					this.drawEstmVerList();
 				}else{
+					storage.estimateVerSoppNo = soppNo;
 					this.soppEstimateList(getList[0].no);
 				}
 			}
@@ -1067,7 +1068,7 @@ class Estimate{
 			msg.set("항목을 1개 이상 추가하여 입력해주세요.");
 			return false;
 		}else{
-			let address, cip, customer, date, exp, fax, firmName, phone, representative, title, pdfMainContentTitle, pdfMainContentItem, addPdfForm, items, form, datas, remarks;
+			let address, cip, customer, date, exp, fax, firmName, phone, representative, title, pdfMainContentTitle, pdfMainContentItem, addPdfForm, items, form, datas, remarks, soppNo;
 			pdfMainContentTitle = this.copyContainer.getElementsByClassName("pdfMainContainer")[0].querySelectorAll(".pdfMainContentTitle");
 			pdfMainContentItem = this.copyContainer.getElementsByClassName("pdfMainContainer")[0].querySelectorAll(".pdfMainContentItem");
 			remarks = CKEDITOR.instances.remarks.getData().replaceAll("\n", "");
@@ -1081,6 +1082,7 @@ class Estimate{
 			phone = this.copyContainer.querySelector("#phone").value;
 			representative = this.copyContainer.querySelector("#representative").value;
 			title = this.copyContainer.querySelector("#title").value;
+			soppNo = (storage.estimateVerSoppNo === undefined) ? null : storage.estimateVerSoppNo;
 			items = [];
 			
 			if(pdfMainContentTitle.length > 0){
@@ -1144,7 +1146,7 @@ class Estimate{
 					"no": null,
 					"version": 1,
 					"related": {
-						"parent": null,
+						"parent": "sopp:" + soppNo + "",
 						"previous": null,
 						"next": [null],
 						"estimate": {
@@ -1219,7 +1221,7 @@ class Estimate{
 			msg.set("항목을 1개 이상 추가하여 입력해주세요.");
 			return false;
 		}else{
-			let address, cip, customer, date, exp, fax, firmName, phone, representative, title, pdfMainContentTitle, pdfMainContentItem, addPdfForm, items, form, datas, remarks;
+			let address, cip, customer, date, exp, fax, firmName, phone, representative, title, pdfMainContentTitle, pdfMainContentItem, addPdfForm, items, form, datas, remarks, soppNo;
 			pdfMainContentTitle = this.copyContainer.getElementsByClassName("pdfMainContainer")[0].getElementsByClassName("pdfMainContentTitle");
 			pdfMainContentItem = this.copyContainer.getElementsByClassName("pdfMainContainer")[0].getElementsByClassName("pdfMainContentItem");
 			remarks = CKEDITOR.instances.remarks.getData().replaceAll("\n", "");
@@ -1233,6 +1235,7 @@ class Estimate{
 			phone = this.copyContainer.querySelector("#phone").value;
 			representative = this.copyContainer.querySelector("#representative").value;
 			title = this.copyContainer.querySelector("#title").value;
+			soppNo = (storage.estimateVerSoppNo === undefined) ? null : storage.estimateVerSoppNo;
 			items = [];
 			
 			if(pdfMainContentTitle.length > 0){
@@ -1296,7 +1299,7 @@ class Estimate{
 					"no": storage.estmDetail.no,
 					"version": 1,
 					"related": {
-						"parent": null,
+						"parent": "sopp:" + soppNo + "",
 						"previous": null,
 						"next": [null],
 						"estimate": {
