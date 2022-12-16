@@ -138,8 +138,6 @@ public class ContractService extends Svc {
         // 수주판매보고문서
         docNo = gwService.getSalesReport(compId, sopp + "");
 
-       
-
         try {
             conn = sqlSession.getConnection();
             pstmt = conn.prepareStatement(sql);
@@ -217,6 +215,26 @@ public class ContractService extends Svc {
         result = cnt.toJson(sfiles, afiles, files, schedule1, t, d, docNo, bills, maintenance);
         return result;
     } // End of getContract()
+
+    // 계약 insert하는 코드 새로 생성함
+
+    public int insertContract(String data, String compId) {
+        int result = 0;
+        String no = null,  title = null,  related = null;
+        int employee =0;
+        int customer = 0;
+        int amount = 0;
+
+        JSONObject json = new JSONObject(data);
+     
+        employee = json.getInt("employee");
+        customer = json.getInt("customer");
+        title = json.getString("title");
+        amount = json.getInt("amount");
+        related = json.getString("related");
+        result = contractMapper.insertContract(compId, employee, customer, title, amount, related);
+        return result;
+    }
 
     public boolean addContract(Contract contract, String compId) {
         int count = -1;

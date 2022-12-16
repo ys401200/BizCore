@@ -62,7 +62,9 @@ public interface ContractMapper {
     public int removeContract(@Param("no") String no, @Param("compId") String compId);
 
     // 계약 테이블
-    // @Select("SELECT  no, title, amount, profit, employee, saleDate, created, related from bizcore.contract WHERE compId = #{compId} AND deleted is null ORDER BY created DESC")
+    // @Select("SELECT no, title, amount, profit, employee, saleDate, created,
+    // related from bizcore.contract WHERE compId = #{compId} AND deleted is null
+    // ORDER BY created DESC")
     @Select("SELECT no, compId, employee, coWorker, customer, title, detail, saleDate, supplied, approved, amount, taxInclude, profit,created, modified, deleted, related from bizcore.contract WHERE compId = #{compId} AND deleted is null ORDER BY created DESC")
     public List<Contract> getList(@Param("compId") String compId);
 
@@ -76,5 +78,10 @@ public interface ContractMapper {
 
     @Select("SELECT no, compId, employee, coWorker, customer,title, detail, saleDate, supplied, approved, amount, taxInclude, profit,created, modified, deleted, related FROM bizcore.contract WHERE compId = #{compId}")
     public List<Contract> getFullContract(@Param("compId") String compId);
+
+    @Insert("Insert bizcore.contract(compId, employee, customer, title, amount, related )  values (#{compId },#{employee},#{customer},#{title},#{amount},#{related})")
+    public int insertContract( @Param("compId") String compId,
+            @Param("employee") int employee, @Param("customer") int customer, @Param("title") String title,
+            @Param("amount") int amount, @Param("related") String related);
 
 }

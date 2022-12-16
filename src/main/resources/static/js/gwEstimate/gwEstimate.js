@@ -19,6 +19,9 @@ function prepareForm() {
   ckeditor.config.readOnly = false;
   window.setTimeout(setEditor(document.getElementsByClassName("sopp-desc")[0]), 100);
   getSavedLine();
+  getEsimateNo();
+  getItem();
+
 } // End of prepare()
 
 
@@ -31,7 +34,7 @@ function getSoppDetailData() {
   let splitArr = checkHref.split("/");
 
   let url;
-  url = apiServer + "/api/sopp/" + splitArr[3];
+  url = apiServer + "/api/project/sopp/" + splitArr[3];
 
   $.ajax({
     "url": url,
@@ -53,35 +56,35 @@ function getSoppDetailData() {
       }
     }
   });
+
+
 }
 
 
 
+function getItem() {
+  let url;
+  url = apiServer + "/api/estimate/item";
 
+  $.ajax({
+    "url": url,
+    "method": "get",
+    "dataType": "json",
+    "cache": false,
+    success: (data) => {
+      let list;
+      if (data.result === "ok") {
+        list = data.data;
+        list = cipher.decAes(list);
+        list = JSON.parse(list);
+        storage.item = list;
 
-// function getProductList() {
-//   let url;
-//   url = apiServer + "/api/estimate/item"
-
-//   $.ajax({
-//     "url": url,
-//     "method": "get",
-//     "dataType": "json",
-//     "cache": false,
-//     success: (data) => {
-//       let list, x;
-//       if (data.result === "ok") {
-//         list = data.data;
-//         list = cipher.decAes(list);
-//         list = JSON.parse(list);
-//         storage.productList = list;
-
-//       } else {
-//         console.log(data.msg);
-//       }
-//     }
-//   });
-// } // End of getEstimateList()
+      } else {
+        console.log(data.msg);
+      }
+    }
+  });
+} // End of getItem();
 
 
 // function getSoppData() {
@@ -148,22 +151,16 @@ function setEstData() {
   //기본 정보 세팅 
   let formId = "doc_Form_SalesReport";
 
-  let soppDetail = storage.soppDetailData;
-  let writer, created, sopp, infoCustomer, title, picOfCustomer, endUser, status, progress, contType, targetDate, soppType, expectedSales;
+  let soppDetail = storage.soppDetailData.sopp;
+  let writer, sopp, infoCustomer, title, expectedDate, expectedSales;
 
   writer = storage.my;
   created = getYmdSlash();
   sopp = (soppDetail.title === null || soppDetail.title === undefined || soppDetail.title === "") ? "" : soppDetail.title;
   infoCustomer = (soppDetail.customer === null || soppDetail.customer === undefined || soppDetail.customer === "" || soppDetail.customer === 0) ? "" : soppDetail.customer;
   title = (soppDetail.title === null || soppDetail.title === undefined || soppDetail.title === "") ? "" : soppDetail.title;
-  picOfCustomer = (soppDetail.picOfCustomer === null || soppDetail.picOfCustomer == 0 || soppDetail.picOfCustomer === "") ? "" : soppDetail.picOfCustomer;
-  endUser = (soppDetail.endUser === null || soppDetail.endUser == 0 || soppDetail.endUser === "") ? "" : storage.customer[soppDetail.endUser].name;
-  status = (soppDetail.status === null || soppDetail.status === "") ? "" : soppDetail.status;
-  progress = (soppDetail.progress === null || soppDetail.progress === "") ? "" : soppDetail.progress + "%";
-  contType = (soppDetail.contType === null || soppDetail.contType === "") ? "" : soppDetail.contType;
-  soppType = (soppDetail.soppType === null || soppDetail.soppType === "") ? "" : soppDetail.soppType;
-  expectedSales = (soppDetail.expectedSales === null || soppDetail.expectedSales === "") ? "" : soppDetail.expectedSales.toLocaleString() + "원"
-  targetDate = (soppDetail.targetDate === undefined || soppDetail.targetDate === "" || soppDetail.targetDate == 0) ? "" : soppDetail.targetDate;
+  expectedSales = (soppDetail.expactetSales === null || soppDetail.expactetSales === "") ? "" : soppDetail.expactetSales.toLocaleString() + "원"
+  expectedDate = (soppDetail.expactedDate === undefined || soppDetail.expactedDate === "" || soppDetail.expactedDate == 0) ? "" : soppDetail.expactedDate;
 
   $("#" + formId + "_writer").val(storage.user[writer].userName);
   $("#" + formId + "_created").val(getYmdSlash());
@@ -171,66 +168,72 @@ function setEstData() {
   $("#" + formId + "_infoCustomer").val(storage.customer[infoCustomer].name);
   $("#" + formId + "_title").val(title + " 수주판매 보고");
 
-  if (picOfCustomer != "") {
-    picOfCustomer = storage.cip[picOfCustomer].name;
-  }
-  $("#" + formId + "_custmemberName").val(picOfCustomer);
-  $("#" + formId + "_endCustName").val(endUser);
-  $("#" + formId + "_soppStatus").val(status);
-  $("#" + formId + "_soppRate").val(progress);
-  $("#" + formId + "_cntrctMtn").val(contType);
-
-
-  if (soppDetail.targetDate != null || soppDetail.targetDate != "" || soppDetail.targetDate != 0) {
-    $("#" + formId + "_targetDate").val(getYmdHypen(soppDetail.targetDate));
+  console.log(soppDetail.expactedDate);
+  if (soppDetail.expactedDate != null && soppDetail.expactedDate != "" && soppDetail.expactedDate != 0 && soppDetail.expactedDate != undefined) {
+    $("#" + formId + "_expectedDate").val(getYmdHypen(soppDetail.expactedDate));
   }
 
-  $("#" + formId + "_soppType").val(soppType);
   $("#" + formId + "_soppTargetAmt").val(expectedSales);
 
+
   // 매입 매출의 항목 세팅 
-  let items = storage.soppDetailData.trades;
+  let items = storage.items;
   let inSumTarget = $(".inSum");
   let outSumTarget = $(".outSum");
   let inHtml = "";
   let outHtml = "";
+  console.log(storage.items);
+  for (let i = 0; i < storage.items.length; i++) {
+    // if (items[i].type == "purchase") {
+    //   inHtml = inSumTarget.html();
+    //   inHtml += "<div class='detailcontentDiv'><input value='매입' disabled style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'  class='inputs doc_Form_SalesReport_type'></input>"
+    //   inHtml += "<input type='date'  onchange='this.dataset.detail=this.value;' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' data-detail='" + getYmdHypen(items[i].created) + "' value='" + getYmdHypen(items[i].created) + "'  class='inputs doc_Form_SalesReport_date'></input>"
+    //   inHtml += "<input type='text'  onkeyup='this.dataset.detail=this.value'  style='text-overflow:ellipsis;padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'  data-detail='" + storage.customer[items[i].customer].name + "' value='" + storage.customer[items[i].customer].name + "' class='inputs inCus doc_Form_SalesReport_customer'></input>"
+    //   inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='" + items[i].title + "' value='" + items[i].title + "' onkeyup='this.dataset.detail=this.value' class='inputs inProduct doc_Form_SalesReport_product'></input>"
+    //   inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='" + items[i].price.toLocaleString() + "' value='" + items[i].price.toLocaleString() + "'onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inputs inPrice doc_Form_SalesReport_price'></input>"
+    //   inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='" + items[i].qty.toLocaleString() + "' value='" + items[i].qty.toLocaleString() + "' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inputs inQuantity doc_Form_SalesReport_quantity'></input>"
+    //   inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='" + (items[i].price * items[i].qty).toLocaleString() + "' value='" + (items[i].price * items[i].qty).toLocaleString() + "' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inAmount inputs doc_Form_SalesReport_amount'></input>"
+    //   inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='" + items[i].vat.toLocaleString() + "' value='" + items[i].vat.toLocaleString() + "' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inputs inTax doc_Form_SalesReport_tax'></input>"
+    //   inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'oninput='setNum(this)' data-detail='" + ((items[i].price * items[i].qty) + items[i].vat).toLocaleString() + "' value='" + ((items[i].price * items[i].qty) + items[i].vat).toLocaleString() + "' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inTotal inputs doc_Form_SalesReport_total'></input>"
+    //   inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='' onkeyup='this.dataset.detail=this.value' class='inputs doc_Form_SalesReport_remark' data-detail='" + items[i].remark + "' value='" + items[i].remark + "'></input>"
+    //   inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='' onkeyup='this.dataset.detail=this.value' class='inputs doc_Form_SalesReport_vatSerial' data-detail='" + items[i].taxbill + "' value='" + items[i].taxbill + "'></input></div>"
+    //   inSumTarget.html(inHtml);
+    // } else {
+    let vat, itemTitle;
+    let itemNos = [];
 
-
-
-  for (let i = 0; i < items.length; i++) {
-    if (items[i].type == "purchase") {
-      inHtml = inSumTarget.html();
-      inHtml += "<div class='detailcontentDiv'><input value='매입' disabled style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'  class='inputs doc_Form_SalesReport_type'></input>"
-      inHtml += "<input type='date'  onchange='this.dataset.detail=this.value;' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' data-detail='" + getYmdHypen(items[i].created) + "' value='" + getYmdHypen(items[i].created) + "'  class='inputs doc_Form_SalesReport_date'></input>"
-      inHtml += "<input type='text'  onkeyup='this.dataset.detail=this.value'  style='text-overflow:ellipsis;padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'  data-detail='" + storage.customer[items[i].customer].name + "' value='" + storage.customer[items[i].customer].name + "' class='inputs inCus doc_Form_SalesReport_customer'></input>"
-      inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='" + items[i].title + "' value='" + items[i].title + "' onkeyup='this.dataset.detail=this.value' class='inputs inProduct doc_Form_SalesReport_product'></input>"
-      inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='" + items[i].price.toLocaleString() + "' value='" + items[i].price.toLocaleString() + "'onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inputs inPrice doc_Form_SalesReport_price'></input>"
-      inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='" + items[i].qty.toLocaleString() + "' value='" + items[i].qty.toLocaleString() + "' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inputs inQuantity doc_Form_SalesReport_quantity'></input>"
-      inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='" + (items[i].price * items[i].qty).toLocaleString() + "' value='" + (items[i].price * items[i].qty).toLocaleString() + "' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inAmount inputs doc_Form_SalesReport_amount'></input>"
-      inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='" + items[i].vat.toLocaleString() + "' value='" + items[i].vat.toLocaleString() + "' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inputs inTax doc_Form_SalesReport_tax'></input>"
-      inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'oninput='setNum(this)' data-detail='" + ((items[i].price * items[i].qty) + items[i].vat).toLocaleString() + "' value='" + ((items[i].price * items[i].qty) + items[i].vat).toLocaleString() + "' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inTotal inputs doc_Form_SalesReport_total'></input>"
-      inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='' onkeyup='this.dataset.detail=this.value' class='inputs doc_Form_SalesReport_remark' data-detail='" + items[i].remark + "' value='" + items[i].remark + "'></input>"
-      inHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='' onkeyup='this.dataset.detail=this.value' class='inputs doc_Form_SalesReport_vatSerial' data-detail='" + items[i].taxbill + "' value='" + items[i].taxbill + "'></input></div>"
-      inSumTarget.html(inHtml);
+    if (items[i].vat == "true") {
+      vat = items[i].price * items[i].quantity * 0.1;
     } else {
-      outHtml = outSumTarget.html();
-      outHtml += "<div class='detailcontentDiv'><input value='매출' disabled style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs doc_Form_SalesReport_type'></input>"
-      outHtml += "<input type='date' onchange='this.dataset.detail=this.value;' data-detail='" + getYmdHypen(items[i].created) + "' value='" + getYmdHypen(items[i].created) + "'  style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs doc_Form_SalesReport_date'></input>"
-      outHtml += "<input type='text' style='text-overflow:ellipsis;padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'  data-detail='" + storage.customer[items[i].customer].name + "' value='" + storage.customer[items[i].customer].name + "' onkeyup='this.dataset.detail=this.value'  class='outCus inputs doc_Form_SalesReport_customer'></input>"
-      outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'  data-detail='" + items[i].title + "' value='" + items[i].title + "' onkeyup='this.dataset.detail=this.value'  data-detail='' value='" + items[i].product + "' class='inputs outProduct doc_Form_SalesReport_product'></input>"
-      outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'oninput='setNum(this)' data-detail='" + items[i].price.toLocaleString() + "' value='" + items[i].price.toLocaleString() + "'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)'  class='inputs outPrice doc_Form_SalesReport_price'></input>"
-      outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='" + items[i].qty.toLocaleString() + "' value='" + items[i].qty.toLocaleString() + "'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inputs outQuantity doc_Form_SalesReport_quantity'></input>"
-      outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)'  data-detail='" + (items[i].price * items[i].qty).toLocaleString() + "' value='" + (items[i].price * items[i].qty).toLocaleString() + "'  class='inputs outAmount doc_Form_SalesReport_amount'></input>"
-      outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' data-detail='" + items[i].vat.toLocaleString() + "' value='" + items[i].vat.toLocaleString() + "'  class='outTax inputs  doc_Form_SalesReport_tax'></input>"
-      outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' data-detail='" + ((items[i].price * items[i].qty) + items[i].vat).toLocaleString() + "' value='" + ((items[i].price * items[i].qty) + items[i].vat).toLocaleString() + "' class='outTotal inputs doc_Form_SalesReport_total'></input>"
-      outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='' onkeyup='this.dataset.detail=this.value' class='inputs doc_Form_SalesReport_remark'  data-detail='" + items[i].remark + "' value='" + items[i].remark + "'></input>"
-      outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='' onkeyup='this.dataset.detail=this.value' class='inputs doc_Form_SalesReport_vatSerial' data-detail='" + items[i].taxbill + "' value='" + items[i].taxbill + "'></input></div>"
-      outSumTarget.html(outHtml);
+      vat = 0;
+    }
+    for (let i = 0; i < storage.item.length; i++) { itemNos.push(storage.item[i].no) }
+    if (isNaN(storage.items[i].item * 0)) {
+      itemTitle = storage.items[i].item;
+    } else {
+      if (itemNos.includes(storage.items[i].item * 0))
+        itemTitle = storage.item[j].product;
     }
 
+
+    outHtml = outSumTarget.html();
+    outHtml += "<div class='detailcontentDiv'><input value='매출' disabled style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs doc_Form_SalesReport_type'></input>"
+    outHtml += "<input type='date' onchange='this.dataset.detail=this.value;' data-detail='" + items[i].remark + "' value='" + items[i].remark + "'  style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs doc_Form_SalesReport_date'></input>"
+    outHtml += "<input type='text' style='text-overflow:ellipsis;padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'  data-detail='" + storage.soppDetailData.sopp.customer + "' value='" + storage.customer[storage.soppDetailData.sopp.customer].name + "' onkeyup='this.dataset.detail=this.value'  class='outCus inputs doc_Form_SalesReport_customer'></input>"
+    outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'  data-detail='" + items[i].item + "' value='" + itemTitle + "' onkeyup='this.dataset.detail=this.value'  data-detail='' value='" + items[i].item + "' class='inputs outProduct doc_Form_SalesReport_product'></input>"
+    outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'oninput='setNum(this)' data-detail='" + items[i].price.toLocaleString() + "' value='" + items[i].price.toLocaleString() + "'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)'  class='inputs outPrice doc_Form_SalesReport_price'></input>"
+    outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='" + items[i].quantity.toLocaleString() + "' value='" + items[i].quantity.toLocaleString() + "'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' class='inputs outQuantity doc_Form_SalesReport_quantity'></input>"
+    outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)'  data-detail='" + (items[i].price * items[i].quantity).toLocaleString() + "' value='" + (items[i].price * items[i].quantity).toLocaleString() + "'  class='inputs outAmount doc_Form_SalesReport_amount'></input>"
+    outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' data-detail='" + vat.toLocaleString() + "' value='" + vat.toLocaleString() + "'  class='outTax inputs  doc_Form_SalesReport_tax'></input>"
+    outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' data-detail='" + ((items[i].price * items[i].quantity) + vat).toLocaleString() + "' value='" + ((items[i].price * items[i].quantity) + vat).toLocaleString() + "' class='outTotal inputs doc_Form_SalesReport_total'></input>"
+    outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='' onkeyup='this.dataset.detail=this.value' class='inputs doc_Form_SalesReport_remark'  data-detail='" + items[i].remark + "' value='" + items[i].remark + "'></input>"
+    outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='' onkeyup='this.dataset.detail=this.value' class='inputs doc_Form_SalesReport_vatSerial' data-detail='' value=''></input></div>"
+    outSumTarget.html(outHtml);
+    // }
+
   }
-  // inSumTarget.html(inHtml);
-  // outSumTarget.html(outHtml);
+  inSumTarget.html(inHtml);
+  outSumTarget.html(outHtml);
 
   let target = $(".mainDiv")[0];
   let inputsArr = target.getElementsByTagName("input");
@@ -254,43 +257,43 @@ function setEstData() {
 
 
 
-  getTotalCount();
+  getTotalCount2();
 
 
-  let schecreated, scheType, scheTitle, scheContent, schePlace;
-  // 일정 데이터 셋팅 
-  let techHtml = $(".techSche").html();
-  let salesHtml = $(".salesSche").html();
-  let sche = storage.soppDetailData.schedules;
-  for (let i = 0; i < sche.length; i++) {
-    schecreated = (sche[i].created === null || sche[i].created === undefined || sche[i].created === "") ? "" : getYmdHypen(sche[i].created);
-    scheType = (sche[i].type === null || sche[i].type === undefined || sche[i].type === "") ? "" : storage.code.etc[sche[i].type];
-    scheTitle = (sche[i].title === null || sche[i].title === undefined || sche[i].title === "") ? "" : sche[i].title;
-    scheContent = (sche[i].content === null || sche[i].content === undefined || sche[i].content === "") ? "" : sche[i].content;
-    schePlace = (sche[i].place === null || sche[i].place === undefined || sche[i].place === "") ? "" : sche[i].place;
+  // let schecreated, scheType, scheTitle, scheContent, schePlace;
+  // // 일정 데이터 셋팅 
+  // let techHtml = $(".techSche").html();
+  // let salesHtml = $(".salesSche").html();
+  // let sche = storage.soppDetailData.schedules;
+  // for (let i = 0; i < sche.length; i++) {
+  //   schecreated = (sche[i].created === null || sche[i].created === undefined || sche[i].created === "") ? "" : getYmdHypen(sche[i].created);
+  //   scheType = (sche[i].type === null || sche[i].type === undefined || sche[i].type === "") ? "" : storage.code.etc[sche[i].type];
+  //   scheTitle = (sche[i].title === null || sche[i].title === undefined || sche[i].title === "") ? "" : sche[i].title;
+  //   scheContent = (sche[i].content === null || sche[i].content === undefined || sche[i].content === "") ? "" : sche[i].content;
+  //   schePlace = (sche[i].place === null || sche[i].place === undefined || sche[i].place === "") ? "" : sche[i].place;
 
 
-    if (sche[i].job == "tech") {
-      techHtml += "<div class='insertedTechSche'>";
-      techHtml += "<input type='date' class='techDate'  data-detail='" + schecreated + "' value='" + schecreated + "' style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
-      techHtml += "<input type='text' class='techType' data-detail='" + scheType + "' value='" + scheType + "' style='text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
-      techHtml += "<input type='text' class='techTitle' data-detail='" + scheTitle + "' value='" + scheTitle + "' style='text-overflow:ellipsis;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
-      techHtml += "<input type='text' class='techContent' data-detail='" + scheContent + "' value='" + scheContent + "'  style='text-overflow:ellipsis;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
-      techHtml += "<input type='text' class='techWriter' data-detail='" + storage.user[sche[i].writer].userName + "' value='" + storage.user[sche[i].writer].userName + "'  style='text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
-      techHtml += "<input type='text' class='techPlace' data-detail='" + schePlace + "' value='" + schePlace + "' style='text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/></div>";
-    } else {
-      salesHtml += "'<div class='insertedSalesSche'>";
-      salesHtml += "<input type='date' class='salesDate'  data-detail='" + schecreated + "' value='" + schecreated + "' style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
-      salesHtml += "<input type='text' class='salesType' data-detail='" + scheType + "' value='" + scheType + "' style='text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
-      salesHtml += "<input type='text' class='salesTitle' data-detail='" + scheTitle + "' value='" + scheTitle + "' style='text-overflow:ellipsis;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
-      salesHtml += "<input type='text' class='salesContent' data-detail='" + scheContent + "' value='" + scheContent + "'  style='text-overflow:ellipsis;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
-      salesHtml += "<input type='text' class='salesWriter' data-detail='" + storage.user[sche[i].writer].userName + "' value='" + storage.user[sche[i].writer].userName + "'  style='text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
-      salesHtml += "<input type='text' class='salesPlace' data-detail='" + schePlace + "' value='" + schePlace + "' style='text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/></div>";
-    }
-  }
+  //   if (sche[i].job == "tech") {
+  //     techHtml += "<div class='insertedTechSche'>";
+  //     techHtml += "<input type='date' class='techDate'  data-detail='" + schecreated + "' value='" + schecreated + "' style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+  //     techHtml += "<input type='text' class='techType' data-detail='" + scheType + "' value='" + scheType + "' style='text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+  //     techHtml += "<input type='text' class='techTitle' data-detail='" + scheTitle + "' value='" + scheTitle + "' style='text-overflow:ellipsis;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+  //     techHtml += "<input type='text' class='techContent' data-detail='" + scheContent + "' value='" + scheContent + "'  style='text-overflow:ellipsis;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+  //     techHtml += "<input type='text' class='techWriter' data-detail='" + storage.user[sche[i].writer].userName + "' value='" + storage.user[sche[i].writer].userName + "'  style='text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+  //     techHtml += "<input type='text' class='techPlace' data-detail='" + schePlace + "' value='" + schePlace + "' style='text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/></div>";
+  //   } else {
+  //     salesHtml += "'<div class='insertedSalesSche'>";
+  //     salesHtml += "<input type='date' class='salesDate'  data-detail='" + schecreated + "' value='" + schecreated + "' style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+  //     salesHtml += "<input type='text' class='salesType' data-detail='" + scheType + "' value='" + scheType + "' style='text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+  //     salesHtml += "<input type='text' class='salesTitle' data-detail='" + scheTitle + "' value='" + scheTitle + "' style='text-overflow:ellipsis;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+  //     salesHtml += "<input type='text' class='salesContent' data-detail='" + scheContent + "' value='" + scheContent + "'  style='text-overflow:ellipsis;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+  //     salesHtml += "<input type='text' class='salesWriter' data-detail='" + storage.user[sche[i].writer].userName + "' value='" + storage.user[sche[i].writer].userName + "'  style='text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+  //     salesHtml += "<input type='text' class='salesPlace' data-detail='" + schePlace + "' value='" + schePlace + "' style='text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/></div>";
+  //   }
+  // }
 
-  $(".techSche").html(techHtml);
-  $(".salesSche").html(salesHtml);
+  // $(".techSche").html(techHtml);
+  // $(".salesSche").html(salesHtml);
 
   // 파일 데이터 셋팅 
 
@@ -316,14 +319,73 @@ function setEstData() {
     $(tt).css("color", "black");
   }
 
-
-
 }
 
 
 
+// sopp번호로 견적에 있는 매출 가져옴 
 
-//기안하기 
+function getEsimateNo() {
+
+
+  let checkHref = location.href;
+  checkHref = checkHref.split("//");
+  checkHref = checkHref[1];
+  let splitArr = checkHref.split("/");
+
+  let url;
+  url = apiServer + "/api/estimate/sopp/" + splitArr[3];
+
+  $.ajax({
+    "url": url,
+    "method": "get",
+    "dataType": "json",
+    "cache": false,
+    success: (data) => {
+      let list, x;
+      if (data.result === "ok") {
+        list = data.data;
+        list = cipher.decAes(list);
+        list = JSON.parse(list);
+        storage.estimate = list;
+        storage.estimateNo = storage.estimate[storage.estimate.length - 1].no;
+        getEstimateItems();
+
+      } else {
+        console.log(data.msg);
+      }
+    }
+  });
+} // End of getEstimateNo();
+
+
+function getEstimateItems() {
+
+  let url;
+  url = apiServer + "/api/estimate/" + storage.estimateNo
+
+  $.ajax({
+    "url": url,
+    "method": "get",
+    "dataType": "json",
+    "cache": false,
+    success: (data) => {
+      let list, x;
+      if (data.result === "ok") {
+        list = data.data;
+        list = cipher.decAes(list);
+        list = JSON.parse(list);
+        storage.estimateDetail = list;
+        storage.items = storage.estimateDetail[storage.estimateDetail.length - 1].related.estimate.items;
+      } else {
+        console.log(data.msg);
+      }
+    }
+  });
+}
+
+
+//기안하기 , 기안 완료되면 바로 계약 생성하기 
 function reportInsert() {
 
   let title, content, readable, formId, appDoc, dept;
@@ -438,7 +500,7 @@ function reportInsert() {
   let related = {
     "next": "",
     "parent": "",
-    "previous": "sopp:" + storage.soppDetailData.no + "",
+    "previous": "sopp:" + storage.soppDetailData.sopp.no + "",
     // "outSumAllTotal": $(".outSumAllTotal").val() * 1,
     // "profit": $("." + formId + "_profit").val() * 1,
     // "outItems": outItems,
@@ -449,9 +511,9 @@ function reportInsert() {
 
   let data = {
     title: title,
-    sopp: storage.soppDetailData.no + "",
+    sopp: storage.soppDetailData.sopp.no + "",
     dept: dept,
-    customer: storage.soppDetailData.customer + "",
+    customer: storage.soppDetailData.sopp.customer + "",
     attached: storage.attachedList === undefined ? [] : storage.attachedList,
     content: content,
     appLine: appLine,
@@ -465,6 +527,31 @@ function reportInsert() {
   console.log(data);
   data = JSON.stringify(data);
   data = cipher.encAes(data);
+
+  let cntrctRelated = {
+    parent: "sopp:" + storage.soppDetailData.sopp.no,
+  }
+
+
+  let ctrtData = {
+    employee: storage.my,
+    customer: storage.soppDetailData.sopp.customer,
+    title: storage.soppDetailData.sopp.title + "계약",
+    amount: storage.soppDetailData.sopp.expactetSales,
+    related: JSON.stringify(cntrctRelated),
+
+  }
+
+
+  ctrtData = JSON.stringify(ctrtData);
+  console.log(ctrtData + "데이터 타입 확인하기");
+  ctrtData = cipher.encAes(ctrtData);
+
+
+
+
+
+
 
   let target = $(".mainDiv")[0];
   let inputsArr = target.getElementsByTagName("input");
@@ -511,6 +598,7 @@ function reportInsert() {
       success: (result) => {
         if (result.result === "ok") {
           alert("기안 완료");
+          createContract(ctrtData);
           window.close('/gw/estimate');
         } else {
           alert(result.msg);
@@ -522,7 +610,32 @@ function reportInsert() {
 
 
 
-function getTotalCount() {
+
+
+
+
+function createContract(ctrtData) {
+  $.ajax({
+    url: "/api/contract",
+    method: "post",
+    data: ctrtData,
+    dataType: "json",
+    contentType: "text/plain",
+    success: (result) => {
+      if (result.result === "ok") {
+        console.log("계약 자동 생성 완료");
+      } else {
+        alert(result.msg);
+      }
+
+    }
+  })
+
+}
+
+
+
+function getTotalCount2() {
 
   let totalCount = Number(0);
   for (let i = 0; i < $(".inTotal").length; i++) {
@@ -551,30 +664,30 @@ function getTotalCount() {
   $(".outSumAllTotal").attr("data-detail", Number(totalCount2).toLocaleString() + "원");
 
 
-  let inAmountCount = Number(0); 
-  let outAmountCount = Number(0); 
+  let inAmountCount = Number(0);
+  let outAmountCount = Number(0);
 
-  for(let i = 0 ; i < $(".inAmount").length; i++) {
-    if($(".inAmount")[i].dataset.detail != undefined) {
-      inAmountCount += Number($(".inAmount")[i].dataset.detail.replace(",","").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", ""));
-    console.log("확인2"); 
-    }else  {
-      console.log("확인3"); 
-      inAmountCount += 0; 
+  for (let i = 0; i < $(".inAmount").length; i++) {
+    if ($(".inAmount")[i].dataset.detail != undefined) {
+      inAmountCount += Number($(".inAmount")[i].dataset.detail.replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", ""));
+      console.log("확인2");
+    } else {
+      console.log("확인3");
+      inAmountCount += 0;
     }
   }
 
-  
- for(let i = 0 ; i < $(".outAmount").length; i++) {
-    if($(".outAmount")[i].dataset.detail != undefined) {
-      outAmountCount += Number($(".outAmount")[i].dataset.detail.replace(",","").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", ""));
-    }else  {
-      outAmountCount += 0; 
+
+  for (let i = 0; i < $(".outAmount").length; i++) {
+    if ($(".outAmount")[i].dataset.detail != undefined) {
+      outAmountCount += Number($(".outAmount")[i].dataset.detail.replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", ""));
+    } else {
+      outAmountCount += 0;
     }
   }
-  $(".inAmountTotal").val(Number(inAmountCount).toLocaleString()+"원"); 
+  $(".inAmountTotal").val(Number(inAmountCount).toLocaleString() + "원");
   $(".inAmountTotal").attr("data-detail", Number(inAmountCount).toLocaleString() + "원");
-  $(".outAmountTotal").val(Number(outAmountCount).toLocaleString()+"원"); 
+  $(".outAmountTotal").val(Number(outAmountCount).toLocaleString() + "원");
   $(".outAmountTotal").attr("data-detail", Number(outAmountCount).toLocaleString() + "원");
 
 
@@ -712,7 +825,6 @@ function setSoppList(formId) {
 
   //영업기회 정보 세팅 
 
-
   $("#" + formId + "_sopp").val(storage.soppDetail.title); // 영업기회 
   $("#" + formId + "_infoCustomer").val(storage.customer[storage.soppDetail.customer].name); // 매출처 
   if (storage.cip[storage.soppDetail.picOfCustomer] != undefined) {
@@ -723,15 +835,13 @@ function setSoppList(formId) {
   $("#" + formId + "_soppStatus").val(storage.soppDetail.status); // 진행단계 
   $("#" + formId + "_soppRate").val(storage.soppDetail.progress + "%"); // 가능성 
   $("#" + formId + "_cntrctMtn").val(storage.soppDetail.contType);//계약 구분 
-  if (storage.cip[storage.soppDetail.targetDate] != undefined) {
-    $("#" + formId + "_targetDate").val(getYmdHypen(storage.soppDetail.targetDate)); // 매출 예정일 
+  if (storage.cip[storage.soppDetail.expectedDate] != undefined) {
+    $("#" + formId + "_expectedDate").val(getYmdHypen(storage.soppDetail.expectedDate)); // 매출 예정일 
   }
   $("#" + formId + "_soppType").val(storage.soppDetail.soppType); // 판매방식 
   $("#" + formId + "_soppTargetAmt").val(storage.soppDetail.expectedSales.toLocaleString() + "원"); // 예상매출 
   $("#" + formId + "_title").val(storage.soppDetail.title + " 수주판매보고");
   $(".outCus").val(storage.customer[storage.soppDetail.customer].name);
-
-
 
 
   let target = $(".mainDiv")[0];
@@ -750,7 +860,6 @@ function setSoppList(formId) {
       selectArr.dataset.detail = selectArr.value;
     }
   }
-
 }
 
 
@@ -774,9 +883,6 @@ function createLine() {
       }
     }
   }
-
-  console.log(typeLine);
-
 
   let writer = storage.my;
 
@@ -814,7 +920,6 @@ function createLine() {
         "<div class='lineGrid'><div class='lineTitle'>" +
         titleArr[i] +
         "</div>";
-
     }
 
     for (let j = 0; j < typeLine[i].length; j++) {

@@ -17,11 +17,12 @@
     margin: 0 0.5em;
     border: none;
     border-radius: 10%;
-    background-color: rgba(220, 218, 218, 0.215);
+    background-color: #dad9ff;
+    font-weight: bolder;
 }
 
 .mainBtnDiv>div:last-of-type>button:hover {
-    background-color: rgba(193, 190, 190, 0.6);
+    background-color:  #b4b3f3;
 }
 
 

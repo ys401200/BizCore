@@ -223,6 +223,7 @@ function detailView(obj) {
       let detailData;
       if (data.result === "ok") {
         detailData = cipher.decAes(data.data);
+        console.log(detailData);
         detailData = JSON.parse(detailData);
         detailData.doc = cipher.decAes(detailData.doc);
         detailData.doc = detailData.doc.replaceAll('\\"', '"');

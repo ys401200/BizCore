@@ -167,13 +167,18 @@ public class ApiContractCtrl extends Ctrl {
                 result = "{\"result\":\"failure\",\"msg\":\"" + msg.failDecrypt + "\"}";
             } else {
                 try {
-                    mapper = new ObjectMapper();
-                    contract = mapper.readValue(data, Contract.class);
-                    contract.setCreated(null);
-                    if (contractService.addContract(contract, compId))
-                        result = "{\"result\":\"ok\"}";
-                    else
-                        result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
+                    if (contractService.insertContract(data, compId) >0 )
+                     result = "{\"result\":\"ok\"}";
+                     else
+                     result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
+
+                    // mapper = new ObjectMapper();
+                    // contract = mapper.readValue(data, Contract.class);
+                    // contract.setCreated(null);
+                    // if (contractService.addContract(contract, compId))
+                    //  result = "{\"result\":\"ok\"}";
+                    // else
+                    //     result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
                 } catch (Exception e) {
                     result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
                     e.printStackTrace();
