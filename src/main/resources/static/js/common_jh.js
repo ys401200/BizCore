@@ -54,9 +54,11 @@ class EstimateSet{
 					storage.estimateList = "";
 					this.drawEstmVerList();
 				}else{
-					storage.estimateVerSoppNo = soppNo;
+					
 					this.soppEstimateList(getList[0].no);
 				}
+
+				storage.estimateVerSoppNo = soppNo;
 			}
 		});
     }
@@ -72,7 +74,6 @@ class EstimateSet{
 					getList[i].doc = cipher.decAes(getList[i].doc);
 				}
                 
-				console.log(getList);
 				storage.estimateList = getList;
                 this.drawEstmVerList();
 			}
@@ -220,7 +221,7 @@ class EstimateSet{
 		crudAddBtn = document.getElementsByClassName("crudAddBtn")[0];
 		crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
 		hideArr = ["detailBackBtn", "crudUpdateBtn", "estimatePdf", "addPdfForm"];
-		showArr = ["estimateList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "crudAddBtn", "versionPreview", "previewDefault"];
+		showArr = ["estimateList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "versionPreview", "previewDefault"];
 		containerTitle = $("#containerTitle");
 		pageContainer = document.getElementsByClassName("pageContainer");
         container = $(".estimateList");
@@ -258,6 +259,8 @@ class EstimateSet{
 			];
 			
 			data.push(str);
+			crudAddBtn.style.display = "flex";
+			crudAddBtn.setAttribute("onclick", "EstimateSet.clickedAdd();");
 		}else{
 			for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
 				let total = 0;
@@ -299,11 +302,11 @@ class EstimateSet{
 		
 			let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "EstimateSet.drawEstmVerList", result[0]);
 			pageContainer[0].innerHTML = pageNation;
+			crudAddBtn.remove();
 		}
 	
 		containerTitle.html("견적");
 		createGrid(container, header, data, ids, job, fnc);
-		crudAddBtn.remove();
 		crudUpdateBtn.innerText = "견적수정";
 		crudUpdateBtn.setAttribute("onclick", "EstimateSet.clickedUpdate();");
 		setViewContents(hideArr, showArr);
@@ -323,7 +326,7 @@ class EstimateSet{
 			crudAddBtn.innerText = "견적추가";
 			crudAddBtn.setAttribute("onclick", "EstimateSet.clickedAdd();");
 		}
-		
+
 		crudUpdateBtn.innerText = "견적수정";
 		crudUpdateBtn.setAttribute("onclick", "EstimateSet.clickedUpdate();");
 
@@ -521,6 +524,8 @@ class EstimateSet{
 		let containerTitle, crudAddBtn, hideArr, showArr, mainPdf, copyMainPdf;
 		containerTitle = document.getElementById("containerTitle");
 		mainPdf = document.getElementsByClassName("mainPdf");
+
+		console.log(mainPdf);
 		
         if(mainPdf.length > 1){
             mainPdf = document.getElementsByClassName("mainPdf")[1];
@@ -1183,7 +1188,7 @@ class Estimate{
 					headers: {"Content-Type": "text/plain"}
 				}).then(() => {
 					location.reload();
-					msg.set("등록되었습니다..");
+					msg.set("등록되었습니다.");
 				}).catch((error) => {
 					msg.set("등록 에러입니다.\n다시 확인해주십시오.\n" + error);
 				});

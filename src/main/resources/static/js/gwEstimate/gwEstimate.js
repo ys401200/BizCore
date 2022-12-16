@@ -17,7 +17,7 @@ function prepareForm() {
   // getEstmVerList(estmNo);
   getSoppDetailData();
   ckeditor.config.readOnly = false;
-  window.setTimeout(setEditor, 100);
+  window.setTimeout(setEditor(document.getElementsByClassName("sopp-desc")[0]), 100);
   getSavedLine();
 } // End of prepare()
 

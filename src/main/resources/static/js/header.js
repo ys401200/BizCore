@@ -2140,7 +2140,6 @@ function tabFileItemListUpdate() {
 
 //견적내역 리스트
 function createTabEstList(result) {
-	console.log(result);
 	let html = "", lengthIndex, tabs, container, header, data = [], str, detailSecondTabs, ids, job, fnc, disDate, idName;
 	detailSecondTabs = $(".detailSecondTabs");
 	if ($(".tabEstList").length > 0) {
