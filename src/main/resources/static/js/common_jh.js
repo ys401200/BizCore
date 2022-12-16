@@ -746,7 +746,7 @@ class EstimateSet{
 		let thisEle, createDiv;
 		createDiv = document.createElement("div");
 		createDiv.className = "pdfMainContentItem";
-		createDiv.innerHTML = "<div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemSpec\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeyup=\"EstimateSet.itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"EstimateSet.itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"EstimateSet.oneEstItemAdd(this);\">+</button><button type=\"button\" onclick=\"EstimateSet.oneEstItemRemove(this);\">-</button></div>";
+		createDiv.innerHTML = "<div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemSpec\"><input type=\"text\" data-complete=\"product\" onclick=\"addAutoComplete(this);\" onkeyup=\"addAutoComplete(this);\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeyup=\"EstimateSet.itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"EstimateSet.itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"EstimateSet.oneEstItemAdd(this);\">+</button><button type=\"button\" onclick=\"EstimateSet.oneEstItemRemove(this);\">-</button></div>";
 		thisEle = e;
 		thisEle.parentElement.before(createDiv);
 		this.productNameSet();
@@ -759,7 +759,7 @@ class EstimateSet{
 		let thisEle, parent, createDiv;
 		createDiv = document.createElement("div");
 		createDiv.className = "pdfMainContentItem";
-		createDiv.innerHTML = "<div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemSpec\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeyup=\"EstimateSet.itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"EstimateSet.itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"EstimateSet.oneEstItemAdd(this);\">+</button><button type=\"button\" onclick=\"EstimateSet.oneEstItemRemove(this);\">-</button></div>";
+		createDiv.innerHTML = "<div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemSpec\"><input type=\"text\" data-complete=\"product\" onclick=\"addAutoComplete(this);\" onkeyup=\"addAutoComplete(this);\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeyup=\"EstimateSet.itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"EstimateSet.itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"EstimateSet.oneEstItemAdd(this);\">+</button><button type=\"button\" onclick=\"EstimateSet.oneEstItemRemove(this);\">-</button></div>";
 		thisEle = e;
 		parent = thisEle.parentElement.parentElement;
 		parent.after(createDiv);
@@ -1010,12 +1010,13 @@ class Estimate{
 	}
 
 	detail(){
-		let thisBtn, createDiv;
+		let thisBtn;
 		let items = this.items;
-		createDiv = document.createElement("div");
-		createDiv.className = "pdfMainContentItem";
-	
+		
 		for(let i = 0; i < items.length; i++){
+			let createDiv = document.createElement("div");
+			createDiv.className = "pdfMainContentItem";
+
 			if(this.form === "서브타이틀"){
 				let pdfMainContentTitle = this.copyContainer.getElementsByClassName("pdfMainContentTitle");
 				
@@ -1027,11 +1028,19 @@ class Estimate{
 				}
 			}
 			
-			createDiv.innerHTML = "<div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemSpec\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeyup=\"EstimateSet.itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"EstimateSet.itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"EstimateSet.oneEstItemAdd(this);\">+</button><button type=\"button\" onclick=\"EstimateSet.oneEstItemRemove(this);\">-</button></div>";
+			createDiv.innerHTML = "<div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemSpec\"><input type=\"text\" data-complete=\"product\" onclick=\"addAutoComplete(this);\" onkeyup=\"addAutoComplete(this);\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeyup=\"EstimateSet.itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"EstimateSet.itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"EstimateSet.oneEstItemAdd(this);\">+</button><button type=\"button\" onclick=\"EstimateSet.oneEstItemRemove(this);\">-</button></div>";
 			thisBtn = this.copyContainer.getElementsByClassName("pdfMainContentAddBtns")[0].querySelectorAll("button")[1];
 			thisBtn.parentElement.before(createDiv);
 			let pdfMainContentItem = this.copyContainer.getElementsByClassName("pdfMainContentItem")[i];
 			pdfMainContentItem.getElementsByClassName("itemDivision")[0].querySelector("input").value = items[i].div;
+			
+			for(let t = 0; t < storage.product.length; t++){
+				if(storage.product[t].no.toString() === items[i].item){
+					pdfMainContentItem.getElementsByClassName("itemSpec")[0].querySelector("input").value = storage.product[t].name;
+					pdfMainContentItem.getElementsByClassName("itemSpec")[0].querySelector("input").dataset.value = storage.product[t].no;
+				}
+			}
+			
 			pdfMainContentItem.getElementsByClassName("itemSpec")[0].querySelector("textarea").value = items[i].spec;
 			pdfMainContentItem.getElementsByClassName("itemQuantity")[0].querySelector("input").value = items[i].quantity;
 			pdfMainContentItem.getElementsByClassName("itemAmount")[0].querySelector("input").value = numberFormat(items[i].price);
@@ -1065,7 +1074,7 @@ class Estimate{
 			this.copyContainer.querySelector("#cip").focus();
 			return false;
 		}else if(!validateAutoComplete($("#cip").val(), "cip")){
-			msg.set("조회된 매출처가 없습니다.\n다시 확인해주세요.");
+			msg.set("조회된 매출처 담당자가 없습니다.\n다시 확인해주세요.");
 			this.copyContainer.querySelector("#cip").focus();
 			return false;
 		}else if(this.copyContainer.querySelector("#exp").value === ""){
@@ -1101,33 +1110,40 @@ class Estimate{
 		
 			for(let i = 0; i < pdfMainContentItem.length; i++){
 				let item = pdfMainContentItem[i];
-				let textareaId = item.getElementsByClassName("itemSpec")[0].children[0].getAttribute("id");
-				let itemTitle = $(item).prevAll(".pdfMainContentTitle").eq(0).find(".subTitle").children().val();
-				let price;
-		
-				if(this.copyContainer.querySelector("[name=\"vat\"]:checked").dataset.value){
-					let tax = parseInt(item.getElementsByClassName("itemTotal")[0].innerHTML.replaceAll(",", "") / 10);
-					price = parseInt(item.getElementsByClassName("itemTotal")[0].innerHTML.replaceAll(",", "")) + parseInt(tax);
+				console.log($(item).find(".itemSpec input").val());
+				if(item.value === "" || !validateAutoComplete($(item).find(".itemSpec input").val(), "product")){
+					msg.set("조회된 항목이 없습니다.\n다시 확인해주세요.");
+					$(item).find(".itemSpec input").focus();
+					return false;
 				}else{
-					price = parseInt(item.getElementsByClassName("itemTotal")[0].innerHTML.replaceAll(",", ""));
+					let textareaId = item.getElementsByClassName("itemSpec")[0].children[1].getAttribute("id");
+					let itemTitle = $(item).prevAll(".pdfMainContentTitle").eq(0).find(".subTitle").children().val();
+					let price;
+			
+					if(this.copyContainer.querySelector("[name=\"vat\"]:checked").dataset.value){
+						let tax = parseInt(item.getElementsByClassName("itemTotal")[0].innerHTML.replaceAll(",", "") / 10);
+						price = parseInt(item.getElementsByClassName("itemTotal")[0].innerHTML.replaceAll(",", "")) + parseInt(tax);
+					}else{
+						price = parseInt(item.getElementsByClassName("itemTotal")[0].innerHTML.replaceAll(",", ""));
+					}
+			
+					if(itemTitle === undefined){
+						itemTitle = "";
+					}
+					
+					let itemDatas = {
+						"div": item.getElementsByClassName("itemDivision")[0].children[0].value,
+						"price": parseInt(item.getElementsByClassName("itemTotal")[0].innerHTML.replaceAll(",", "")), 
+						"quantity": parseInt(item.getElementsByClassName("itemQuantity")[0].children[0].value),
+						"remark": item.getElementsByClassName("itemRemarks")[0].children[0].value,
+						"spec": CKEDITOR.instances[textareaId].getData().replaceAll("\n", ""),
+						"item": item.getElementsByClassName("itemSpec")[0].children[0].dataset.value.toString(),
+						"supplier": this.copyContainer.querySelector("#customer").dataset.value.toString(),
+						"title": itemTitle,
+						"vat": this.copyContainer.querySelector("[name=\"vat\"]:checked").dataset.value,
+					};
+					items.push(itemDatas);
 				}
-		
-				if(itemTitle === undefined){
-					itemTitle = "";
-				}
-		
-				let itemDatas = {
-					"div": item.getElementsByClassName("itemDivision")[0].children[0].value,
-					"price": parseInt(item.getElementsByClassName("itemTotal")[0].innerHTML.replaceAll(",", "")), 
-					"quantity": parseInt(item.getElementsByClassName("itemQuantity")[0].children[0].value),
-					"remark": item.getElementsByClassName("itemRemarks")[0].children[0].value,
-					"spec": CKEDITOR.instances[textareaId].getData().replaceAll("\n", ""),
-					"item": "1100041",
-					"supplier": this.copyContainer.querySelector("#customer").dataset.value.toString(),
-					"title": itemTitle,
-					"vat": this.copyContainer.querySelector("[name=\"vat\"]:checked").dataset.value,
-				};
-				items.push(itemDatas);
 			}
 		
 			EstimateSet.insertCopyPdf();
@@ -1254,33 +1270,41 @@ class Estimate{
 		
 			for(let i = 0; i < pdfMainContentItem.length; i++){
 				let item = pdfMainContentItem[i];
-				let textareaId = item.getElementsByClassName("itemSpec")[0].children[0].getAttribute("id");
-				let itemTitle = $(item).prevAll(".pdfMainContentTitle").eq(0).find(".subTitle").children().val();
-				let price;
-		
-				if(this.copyContainer.querySelector("[name=\"vat\"]:checked").dataset.value){
-					let tax = parseInt(item.getElementsByClassName("itemTotal")[0].innerHTML.replaceAll(",", "") / 10);
-					price = parseInt(item.getElementsByClassName("itemTotal")[0].innerHTML.replaceAll(",", "")) + parseInt(tax);
+
+				if(item.value === "" || !validateAutoComplete($(item).find(".itemSpec input").val(), "product")){
+					msg.set("조회된 항목이 없습니다.\n다시 확인해주세요.");
+					$(item).find(".itemSpec input").focus();
+					return false;
 				}else{
-					price = parseInt(item.getElementsByClassName("itemTotal")[0].innerHTML.replaceAll(",", ""));
+					let textareaId = item.getElementsByClassName("itemSpec")[0].children[1].getAttribute("id");
+					let itemTitle = $(item).prevAll(".pdfMainContentTitle").eq(0).find(".subTitle").children().val();
+					let price;
+			
+					if(this.copyContainer.querySelector("[name=\"vat\"]:checked").dataset.value){
+						let tax = parseInt(item.getElementsByClassName("itemTotal")[0].innerHTML.replaceAll(",", "") / 10);
+						price = parseInt(item.getElementsByClassName("itemTotal")[0].innerHTML.replaceAll(",", "")) + parseInt(tax);
+					}else{
+						price = parseInt(item.getElementsByClassName("itemTotal")[0].innerHTML.replaceAll(",", ""));
+					}
+			
+					if(itemTitle === undefined){
+						itemTitle = "";
+					}
+			
+					let itemDatas = {
+						"div": item.getElementsByClassName("itemDivision")[0].children[0].value,
+						"price": parseInt(item.getElementsByClassName("itemTotal")[0].innerHTML.replaceAll(",", "")), 
+						"quantity": parseInt(item.getElementsByClassName("itemQuantity")[0].children[0].value),
+						"remark": item.getElementsByClassName("itemRemarks")[0].children[0].value,
+						"spec": CKEDITOR.instances[textareaId].getData().replaceAll("\n", ""),
+						"item": item.getElementsByClassName("itemSpec")[0].children[0].dataset.value.toString(),
+						"supplier": this.copyContainer.querySelector("#customer").dataset.value.toString(),
+						"title": itemTitle,
+						"vat": this.copyContainer.querySelector("[name=\"vat\"]:checked").dataset.value,
+					};
+
+					items.push(itemDatas);
 				}
-		
-				if(itemTitle === undefined){
-					itemTitle = "";
-				}
-		
-				let itemDatas = {
-					"div": item.getElementsByClassName("itemDivision")[0].children[0].value,
-					"price": parseInt(item.getElementsByClassName("itemTotal")[0].innerHTML.replaceAll(",", "")), 
-					"quantity": parseInt(item.getElementsByClassName("itemQuantity")[0].children[0].value),
-					"remark": item.getElementsByClassName("itemRemarks")[0].children[0].value,
-					"spec": CKEDITOR.instances[textareaId].getData().replaceAll("\n", ""),
-					"item": "1100041",
-					"supplier": this.copyContainer.querySelector("#customer").dataset.value.toString(),
-					"title": itemTitle,
-					"vat": this.copyContainer.querySelector("[name=\"vat\"]:checked").dataset.value,
-				};
-				items.push(itemDatas);
 			}
 		
 			EstimateSet.insertCopyPdf();

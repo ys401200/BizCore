@@ -409,6 +409,7 @@
     border: 1px solid #000;
     padding: 0;
     min-height: 0;
+    box-sizing: border-box;
 }
 
 .mainPdf{
@@ -700,7 +701,17 @@
     padding: 2px;
 }
 
-.pdfMainContentItem > .itemSpec,
+.pdfMainContentItem > .itemSpec{
+    display: inline-block;
+}
+
+.pdfMainContentItem > .itemSpec > input{
+    margin-bottom: 1px;
+    text-align: left;
+    font-size: 11.5px;
+    font-weight: 600;
+}
+
 .pdfMainContentItem > .itemRemarks{
     justify-content: left;
 }
@@ -709,6 +720,7 @@
     width: 100%;
     text-align: center;
     border: 1px solid #000;
+    box-sizing: border-box;
 }
 
 
@@ -899,8 +911,9 @@
     font-weight: 600;
 }
 
-.pdfMainContentItem > .itemSpec > .afterDiv{
-    display: block;
+.pdfMainContentItem > .itemSpec > .afterDiv:first-child{
+    font-size: 11.5px;
+    font-weight: 600;
 }
 
 .pdfMainContentItem > .itemSpec > .afterDiv > p{

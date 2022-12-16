@@ -3500,8 +3500,13 @@ function addAutoComplete(e) {
 				listDiv.setAttribute("onclick", "autoCompleteClick(this);");
 
 				if (thisEle.dataset.complete === "customer" || thisEle.dataset.complete === "cip" || thisEle.dataset.complete === "product") {
-					listDiv.dataset.value = key;
-					listDiv.innerHTML = storage[thisEle.dataset.complete][key].name;
+					if(thisEle.dataset.complete === "product"){
+						listDiv.dataset.value = storage[thisEle.dataset.complete][key].no;
+						listDiv.innerHTML = storage[thisEle.dataset.complete][key].name;
+					}else{
+						listDiv.dataset.value = key;
+						listDiv.innerHTML = storage[thisEle.dataset.complete][key].name;
+					}
 				} else if (thisEle.dataset.complete === "user") {
 					listDiv.dataset.value = storage[thisEle.dataset.complete][key].userNo;
 					listDiv.innerHTML = storage[thisEle.dataset.complete][key].userName;
@@ -3519,8 +3524,13 @@ function addAutoComplete(e) {
 
 				if (thisEle.dataset.complete === "customer" || thisEle.dataset.complete === "cip" || thisEle.dataset.complete === "product") {
 					if (storage[thisEle.dataset.complete][key].name.indexOf(thisEle.value) > -1) {
-						listDiv.dataset.value = key;
-						listDiv.innerHTML = storage[thisEle.dataset.complete][key].name;
+						if(thisEle.dataset.complete === "product"){
+							listDiv.dataset.value = storage[thisEle.dataset.complete][key].no;
+							listDiv.innerHTML = storage[thisEle.dataset.complete][key].name;
+						}else{
+							listDiv.dataset.value = key;
+							listDiv.innerHTML = storage[thisEle.dataset.complete][key].name;
+						}
 					}
 				} else if (thisEle.dataset.complete === "user") {
 					if (storage[thisEle.dataset.complete][key].userName.indexOf(thisEle.val()) > -1) {
@@ -3562,7 +3572,7 @@ function validateAutoComplete(value, type) {
 	let result = false;
 
 	for (let key in storage[type]) {
-		if (type === "customer" || type === "cip") {
+		if (type === "customer" || type === "cip" || type === "product") {
 			if (storage[type][key].name === value) {
 				result = true;
 			}
