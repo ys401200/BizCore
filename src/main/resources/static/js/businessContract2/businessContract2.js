@@ -254,13 +254,6 @@ class Contract {
 		}
 
 
-		// if (storage.reportDetailData.status == "proceed") {
-		// 	el2.className = "contract-doing";
-		// } else if (storage.reportDetailData.status == "rejected") {
-		// 	el2.className = "contract-fail";
-		// } else if (storage.reportDetailData.status == "read") {
-		// 	el2.className = "contract-done";
-		// }
 		el2.innerText = "판매보고";
 
 
@@ -271,7 +264,7 @@ class Contract {
 		if (this.attached.length != 0) {
 			el2.className = "contract-done";
 		} else {
-			if (storage.reportDetailData != "") {
+			if ($(".contract-progress").children()[0].className == "contract-done") {
 				el2.className = "contract-doing";
 			}
 		}
@@ -398,11 +391,6 @@ class Contract {
 
 		if (this.docNo != undefined) {
 
-
-
-
-
-
 			cnt = document.getElementsByClassName("detail-wrap")[0];
 			let appLine = this.appLine;
 
@@ -461,7 +449,7 @@ class Contract {
 		cnt.appendChild(el);
 
 		// 계약서 상세 
-		if ($(".contract-progress").children()[1].className == "contract-done") {
+		if ($(".contract-progress").children()[1].className == "contract-done" || $(".contract-progress").children()[1].className == "contract-doing") {
 			el = document.createElement("div");
 			cnt.children[cnt.children.length - 1].appendChild(el);
 			el.innerText = "계약서";
@@ -473,9 +461,6 @@ class Contract {
 			let inputHtml = "<div class='filePreview'></div><input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attachedcontract' id='attached' onchange='R.contract.fileChange(this)'>";
 
 			cnt.children[cnt.children.length - 1].children[1].innerHTML = inputHtml;
-
-
-
 
 
 			// 계약서 (첨부파일)
@@ -527,6 +512,7 @@ class Contract {
 
 
 	drawSuppliedData() {
+		$(".contract-progress").children()[0].className = "contract-done";
 		$(".contract-progress").children()[1].className = "contract-done";
 		$(".contract-progress").children()[2].className = "contract-doing";
 		let el, cnt;

@@ -236,7 +236,6 @@ function drawList() {
 			}
 
 
-
 		];
 		createGrid(container, header, data, ids, job, fnc);
 
@@ -381,7 +380,7 @@ function detailView(obj) {
 
 function drawCardDetail() {
 	$(".listRange").hide();
-	
+
 
 	let target = $(".cardList");
 	target.html("<div class='detailDivContainer'><div class='crudBtns'><button onclick='showMain()'>목록보기</button></div><div class='cardDetailDiv'><div class='cardTable'></div><div class='detailTable'></div></div></div>");

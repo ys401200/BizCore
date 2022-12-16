@@ -22,7 +22,7 @@ soppStageUp = () => {
 	no = no !== null ? no * 1 : null;
 
 	if (true) {
-		window.open("/gw/estimate/"+no+"", '', 'width:1100px');
+		window.open("/gw/estimate/"+no+"", '', 'width:60%');
 		// gw/extimate/soppNo 넣으면 됨 
 
 	}
