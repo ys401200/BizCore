@@ -1112,7 +1112,7 @@ class Estimate{
 		
 			for(let i = 0; i < pdfMainContentItem.length; i++){
 				let item = pdfMainContentItem[i];
-				let textareaId = item.getElementsByClassName("itemSpec")[0].children[1].getAttribute("id");
+				let textareaId = item.getElementsByClassName("itemSpec")[0].querySelector("textarea").getAttribute("id");
 				let itemTitle = $(item).prevAll(".pdfMainContentTitle").eq(0).find(".subTitle").children().val();
 				let price;
 		
@@ -1133,7 +1133,7 @@ class Estimate{
 					"quantity": parseInt(item.getElementsByClassName("itemQuantity")[0].children[0].value),
 					"remark": item.getElementsByClassName("itemRemarks")[0].children[0].value,
 					"spec": CKEDITOR.instances[textareaId].getData().replaceAll("\n", ""),
-					"item": (item.getElementsByClassName("itemSpec")[0].children[0].dataset.value.toString() === "0") ? item.getElementsByClassName("itemSpec")[0].children[0].value.toString() : item.getElementsByClassName("itemSpec")[0].children[0].dataset.value.toString(),
+					"item": (item.getElementsByClassName("itemSpec")[0].children[0].dataset.value === undefined || item.getElementsByClassName("itemSpec")[0].children[0].dataset.value.toString() === "0") ? item.getElementsByClassName("itemSpec")[0].children[0].value.toString() : item.getElementsByClassName("itemSpec")[0].children[0].dataset.value.toString(),
 					"supplier": this.copyContainer.querySelector("#customer").dataset.value.toString(),
 					"title": itemTitle,
 					"vat": this.copyContainer.querySelector("[name=\"vat\"]:checked").dataset.value,
@@ -1265,7 +1265,7 @@ class Estimate{
 		
 			for(let i = 0; i < pdfMainContentItem.length; i++){
 				let item = pdfMainContentItem[i];
-				let textareaId = item.getElementsByClassName("itemSpec")[0].children[1].getAttribute("id");
+				let textareaId = item.getElementsByClassName("itemSpec")[0].querySelector("textarea").getAttribute("id");
 				let itemTitle = $(item).prevAll(".pdfMainContentTitle").eq(0).find(".subTitle").children().val();
 				let price;
 		
@@ -1286,7 +1286,7 @@ class Estimate{
 					"quantity": parseInt(item.getElementsByClassName("itemQuantity")[0].children[0].value),
 					"remark": item.getElementsByClassName("itemRemarks")[0].children[0].value,
 					"spec": CKEDITOR.instances[textareaId].getData().replaceAll("\n", ""),
-					"item": (item.getElementsByClassName("itemSpec")[0].children[0].dataset.value.toString() === "0") ? item.getElementsByClassName("itemSpec")[0].children[0].value.toString() : item.getElementsByClassName("itemSpec")[0].children[0].dataset.value.toString(),
+					"item": (item.getElementsByClassName("itemSpec")[0].children[0].dataset.value === undefined || item.getElementsByClassName("itemSpec")[0].children[0].dataset.value.toString() === "0") ? item.getElementsByClassName("itemSpec")[0].children[0].value.toString() : item.getElementsByClassName("itemSpec")[0].children[0].dataset.value.toString(),
 					"supplier": this.copyContainer.querySelector("#customer").dataset.value.toString(),
 					"title": itemTitle,
 					"vat": this.copyContainer.querySelector("[name=\"vat\"]:checked").dataset.value,

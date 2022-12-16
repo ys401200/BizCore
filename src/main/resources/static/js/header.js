@@ -3480,10 +3480,11 @@ function formDataSet(storageArr) {
 function addAutoComplete(e) {
 	let thisEle, autoComplete;
 	thisEle = e;
-
+	
 	if (!thisEle.readOnly) {
 		if (document.getElementsByClassName("autoComplete")[0] !== undefined) {
 			document.getElementsByClassName("autoComplete")[0].remove();
+			thisEle.removeAttribute("data-value");
 		}
 
 		let createDiv = document.createElement("div");
