@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import kr.co.bizcore.v1.domain.Project;
+import kr.co.bizcore.v1.domain.Schedule2;
 import kr.co.bizcore.v1.domain.Sopp2;
 import kr.co.bizcore.v1.mapper.ProjectMapper;
 import kr.co.bizcore.v1.msg.Msg;
@@ -270,5 +271,45 @@ public class ApiProjectCtrl extends Ctrl{
         
         return result;
     } // End of projectSoppChatIdxDelete()
+
+    // ==================================== S C H E D U L E ================================================
+
+    @PostMapping("schedule")
+    public String projectSchedulePost(HttpServletRequest request, @RequestBody String requestBody) throws JsonMappingException, JsonProcessingException{
+        String result = null;
+        String compId = null, aesKey = null, aesIv = null, data = null, userNo = null;
+        ObjectMapper mapper = null;
+        Schedule2 sch = null;
+        String r = null;
+        Msg msg = null;
+        HttpSession session = null;
+
+        mapper = new ObjectMapper();
+        session = request.getSession();
+        compId = (String)session.getAttribute("compId");
+        if(compId == null)  compId = (String)session.getAttribute("compId");
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        userNo = (String)session.getAttribute("userNo");
+        msg = getMsg((String)session.getAttribute("lang"));
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        }else{
+            data = decAes(requestBody, aesKey, aesIv);
+            sch = mapper.readValue(data, Schedule2.class);
+            r = projSvc.updateSchedule2(compId, sch, userNo);
+            if(r != null){
+                //result = r.toJson();
+                result = "{\"result\":\"ok\",\"data\":\"" + encAes(result, aesKey, aesIv) + "\"}";
+            }else            result = "{\"result\":\"failure\",\"msg\":\"update fail.\"}";
+        }
+
+
+
+        return result;
+    } // End of projectSchedulePost()
     
 }

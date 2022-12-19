@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import kr.co.bizcore.v1.domain.Project;
+import kr.co.bizcore.v1.domain.Schedule2;
 import kr.co.bizcore.v1.domain.Sopp2;
 import lombok.extern.slf4j.Slf4j;
 
@@ -212,5 +213,31 @@ public class ProjectService extends Svc{
     public int removeSoppChat(String compId, String userNo, int idx) {
         return projectMapper.removeSoppChat(compId, userNo, idx);
     }
+
+    // ================================ S C H E D U L E =========================================
+
+    // 일정 추가,수정 메서드
+    public String updateSchedule2(String compId, Schedule2 sch, String userNo){
+        String result = null;
+        int no = 0;
+        String sql = null;
+        Schedule2 ogn = null;
+
+        if(sch == null) return "Schedule Data Empty";
+
+        if(sch.getNo() < 0){
+            no = getNextNumberFromDB(compId, "bizcore.schedule");
+            sch.setNo(no);
+            sql = sch.createInsertQuery("bizcore.schedule", compId);
+        }else{
+            ogn = projectMapper.getSchedule(compId, sch.getNo());
+            sql = ogn.createUpdateQuery(sch, "bizcore.schedule");
+            sql = sql + " WHERE no = " + sch.getNo();
+        }
+
+        logger.error("========================================== " + sql);
+
+        return result;
+    } // End of updateSchedule2()
     
 }

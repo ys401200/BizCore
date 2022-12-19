@@ -1,4 +1,4 @@
-let R = {}, prepareSopp, scrolledSopp, moveToTarget, drawChat, inputtedComment, deleteChat, cancleEdit, editSopp, changeSopp, editSoppSearch, soppStageUp;
+let R = {}, prepareSopp, scrolledSopp, moveToTarget, drawChat, inputtedComment, deleteChat, cancleEdit, editSopp, changeSopp, editSoppSearch, soppStageUp, clickedDateInCalendar, newScheduleSelectTime;
 
 $(document).ready(() => {
 	let href, no
@@ -11,10 +11,47 @@ $(document).ready(() => {
 
 	href = location.href.split("/sopp2/");
 	no = href.length > 1 ? href[href.length - 1] : null;
-	console.log(no);
+	no = no !== null && no.substring(no.length - 1) === "#" ? no.substring(0, no.length - 1) : no;
 	no = no !== null ? no * 1 : null;
 	prepareSopp(no);
 });
+
+// 일정 신규 등록에서 시간을 클릭할 때 실행되는 함수
+newScheduleSelectTime = (el) => {
+	let cnt, dts, dte, start, end, x, y, z;
+	cnt = el.parentElement;
+	dts = cnt.dataset.s;
+	dte = cnt.dataset.e;
+
+	if(dte === "x"){ // 두번째 선택일 때
+		start = dts *1;
+		end = (el.dataset.h*100) + (el.dataset.m*1);
+		end = (end % 100 === 30) ? end + 70 : end + 30;
+		cnt.dataset.e = end;
+		for(x = 1 ; x < cnt.children.length - 1 ; x++){
+			z = (cnt.children[x].dataset.h*100) + (cnt.children[x].dataset.m*1)
+			if(z >= start && z < end){
+				cnt.children[x].className = "new-schedule-time-select";
+			}
+		}
+	}else{ // 첫번째 선택일 때
+		start = (el.dataset.h*100) + (el.dataset.m*1);
+		cnt.dataset.s = start;
+		cnt.dataset.e = "x";
+		for(x = 1 ; x < cnt.children.length - 1 ; x++)	cnt.children[x].className = "new-schedule-time-empty";
+		el.className = "new-schedule-time-select";
+	}
+	
+} // End of newScheduleSelectTime()
+
+// 달력의 날짜 클릭 이벤트 핸들러
+clickedDateInCalendar = (el) => {
+	let dt, sch;
+
+	sch = new Schedule();
+	dt = new Date(el.dataset.v * 1);
+	sch.requestDetail(dt);
+} // End of clickedDateInCalendar()
 
 soppStageUp = () => {
 	href = location.href.split("/sopp2/");
@@ -337,7 +374,7 @@ scrolledSopp = (el) => {
 } // End of scrolledSopp()
 
 moveToTarget = (el) => {
-	let target, name, vr = 85;
+	let target, name, vr = 83;
 	name = el.dataset.target;
 	target = document.getElementsByClassName(name)[0];
 	target.parentElement.scrollTo({
@@ -652,7 +689,7 @@ class BizCalendar {
 			w = "<div>";
 			for (y = 0; y < 7; y++) {
 				dt = new Date(this.startDate.getTime() + (x * 7 + y) * 86400000);
-				w += ("<div class=\"" + (dt.getMonth() + 1 !== this.month ? "other" : "this") + "-month\" data-v=\"" + dt.getTime() + "\"><div>" + dt.getDate() + "</div>");
+				w += ("<div class=\"" + (dt.getMonth() + 1 !== this.month ? "other" : "this") + "-month\" data-v=\"" + dt.getTime() + "\" onclick=\"clickedDateInCalendar(this)\" ><div>" + dt.getDate() + "</div>");
 				// w += ("<div><img src=\"/api/user/image/10044\" class=\"profile-small\">이장희</div>");
 				w += ("</div>");
 			}
@@ -662,6 +699,103 @@ class BizCalendar {
 		bodyCnt.innerHTML = html;
 	} // End of drawForSopp()
 } // End of Class _ BizCalendar
+
+class Schedule{
+	constructor(){
+		this.no;
+		this.writer;
+		this.title;
+		this.content;
+		this.report;
+		this.type;
+		this.from;
+		this.to;
+		this.related;
+		this.created;
+		this.modified;
+	}
+	requestDetail(dt){
+		let html, x, start, end, cnt, el, child;
+		modal.show();
+		modal.headTitle[0].innerText = "일정 신규 등록";
+
+		// 날짜 및 시간 초기화 / 입력된 날짜의 오전 9시부터 오후 6시 까지를 기본값으로 함
+		if(dt !== undefined)	this.from = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate(), 9, 0, 0);
+		if(dt !== undefined)	this.to = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate(), 18, 0, 0);
+		this.writer = storage.my;
+		if(this.title === undefined)	this.title = "재목";
+
+		console.log(this.from);
+		console.log(this.to);
+
+
+		// 시간 옵션
+		start = 7;
+		end = 21;
+
+		// 모달 내 컨테이너 생성 및 부착
+		cnt = document.createElement("div");
+		cnt.className = "new-schedule";
+		modal.body[0].appendChild(cnt);
+
+		// 본문 및 제목 엘리먼트 생성 및 부착
+		el = document.createElement("div");
+		cnt.appendChild(el);
+		html = "<input /><textarea></textarea><div></div>";
+		el.innerHTML = html;
+
+		// 날짜/시간 및 상세정보 컨테이너 생성 및 부착
+		el = document.createElement("div");
+		cnt.appendChild(el);
+
+		// 날짜정보 엘리먼트 생성 및 부착
+		child = document.createElement("div");
+		el.appendChild(child);
+		child.innerHTML = this.dateToStr();
+
+
+
+		return;
+
+
+		// ==========================================================
+
+		// 본문
+		html = "<div class=\"new-schedule\">";
+		html += "<div><input placeholder=\"제목\" /><textarea></textarea><div></div></div>"; // 좌측 제목, 본문
+
+		html += "<div><div><date>2022.12.31</date><time>07:30 ~ 15:30</time></div>"; // 일정설정
+
+		html += ("<div style=\"grid-template-columns:1px repeat(" + (end - start) + ",4fr) 1px;\"><div></div>")
+		for(x = start ; x < end ; x++)	html += ("<div>" + x + "</div>");
+		html += "<div></div></div>";
+
+		html += ("<div style=\"grid-template-columns:1px repeat(" + ((end - start) * 2) + ",2fr) 1px;\" data-s=\"x\" data-e=\"0\"><div></div>");
+		for(x = start ; x < end ; x++)	html += ("<div class=\"new-schedule-time-empty\" data-h=\"" + x + "\" data-m=\"0\" onclick=\"newScheduleSelectTime(this)\"></div><div class=\"new-schedule-time-empty\" data-h=\"" + x + "\" data-m=\"30\" onclick=\"newScheduleSelectTime(this)\"></div>");
+		html += "<div></div></div></div>";
+		html += "<div></div>"; // 세부 정보
+		html += "</div>";
+
+		modal.body[0].innerHTML = html; // <-- 내부 채우기
+		//modal.confirm[0].onclick = confirmNewSopp; // <-- 컨펌 버튼
+		//modal.close[0].onclick = modal.hide; // <-- 취소버튼
+	}
+	dateToStr(){ // 시작 및 종료에 대한 문자열을 만들어주는 함수
+		let str, s1, s2, e1, e2;
+		s1 = "'" + (this.from.getFullYear() % 100) + "." + (this.from.getMonth() + 1) + "." + this.from.getDate();
+		e1 = "'" + (this.to.getFullYear() % 100) + "." + (this.to.getMonth() + 1) + "." + this.to.getDate();
+		s2 = (this.from.getHours() < 10 ? "0" + this.from.getHours() : this.from.getHours()) + ":" + (this.from.getMinutes() < 10 ? "0" + this.from.getMinutes() : this.from.getMinutes());
+		e2 = (this.to.getHours() < 10 ? "0" + this.to.getHours() : this.to.getHours()) + ":" + (this.to.getMinutes() < 10 ? "0" + this.to.getMinutes() : this.to.getMinutes());
+		str = "<date>" + s1 + " </date><time>" + s2 + "</time>";
+		if(s1 === e1){
+			str += ("<span> ~ </span><time>" + e2 + "</time>");
+		}else{
+			str = "<span> ~ </span><date>" + e1 + " </date><time>" + e2 + "</time>";
+		}
+		return str;
+	}
+
+} // End of Class _ Schedule
 
 function drawDetail(soppNo) {
 	let contNo;

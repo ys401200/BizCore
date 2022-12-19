@@ -21,7 +21,7 @@
 				</a>
 			</li>
 			<li>
-				<a href="#">
+				<a href="javascript:void(0)">
 					<img src="/images/main/icons/mainSchedIcon.png" id="mainSchedIcon" />
 					<span>일정관리</span>
 					<span id="slideSpan">+</span>
@@ -44,7 +44,7 @@
 				</ul> -->
 			</li>
 			<li>
-				<a href="#">
+				<a href="javascript:void(0)">
 					<img src="/images/main/icons/mainSoppIcon.png" id="mainSoppIcon" />
 					<span>영업기회</span>
 					<span id="slideSpan">+</span>
@@ -56,15 +56,15 @@
 				</ul>
 			</li>
 			<!-- <li>
-				<a href="#">
+				<a href="javascript:void(0)">
 					<img src="/images/main/icons/mainPpsIcon.png" id="mainPpsIcon" />
 					<span>조달업무</span>
 					<span id="slideSpan">+</span>
 				</a>
 				<ul id="panel">
-					<li><a href="#">조달업무할당</a></li>
-					<li><a href="#">조달진행상황</a></li>
-					<li><a href="#">조달계약관리</a></li>
+					<li><a href="javascript:void(0)">조달업무할당</a></li>
+					<li><a href="javascript:void(0)">조달진행상황</a></li>
+					<li><a href="javascript:void(0)">조달계약관리</a></li>
 				</ul>
 			</li> -->
 			<li>
@@ -75,9 +75,9 @@
 				</a>
 				<!-- <ul id="panel">
 					<li><a href="/business/contract">계약조회</a></li>
-					<li><a href="#">계약등록</a></li>
-		  			<li><a href="#">업체정보조회</a></li>
-		  			<li><a href="#">매입/매출 자료등록</a></li>
+					<li><a href="javascript:void(0)">계약등록</a></li>
+		  			<li><a href="javascript:void(0)">업체정보조회</a></li>
+		  			<li><a href="javascript:void(0)">매입/매출 자료등록</a></li>
 				</ul> -->
 			</li>
 			<li>
@@ -91,15 +91,15 @@
 				</ul> -->
 			</li>
 			<!-- <li>
-			<a href="#">
+			<a href="javascript:void(0)">
 				<img src="/images/main/icons/mainTechIcon.png" id="mainTechIcon" />
 				<span>기술지원업무</span>
 				<span id="slideSpan">+</span>
 			</a>
 			<ul id="panel">
 		  		<li><a href="/business/tech">기술지원조회</a></li>
-		  		<li><a href="#">유지보수계약관리</a></li>
-		  		<li><a href="#">유지보수매입관리</a></li>
+		  		<li><a href="javascript:void(0)">유지보수계약관리</a></li>
+		  		<li><a href="javascript:void(0)">유지보수매입관리</a></li>
 		  	</ul>
 		</li> -->
 			<li>
@@ -115,7 +115,7 @@
 				</a>
 			</li> -->
 			<li>
-				<a href="#">
+				<a href="javascript:void(0)">
 					<img src="/images/main/icons/mainSchedIcon.png" id="mainSchedIcon" />
 					<span>설정</span>
 					<span id="slideSpan">+</span>
@@ -143,7 +143,7 @@
 				</a>
 			</li>
 			<li>
-				<a href="#">
+				<a href="javascript:void(0)">
 					<img src="/images/main/icons/mainContIcon.png" id="mainHomeIcon" />
 					<span>진행 중 문서</span>
 					<span id="slideSpan">+</span>
@@ -157,7 +157,7 @@
 				</ul>
 			</li>
 			<li>
-				<a href="#">
+				<a href="javascript:void(0)">
 					<img src="/images/main/icons/mainBoardFileIcon.png" id="mainHomeIcon" />
 					<span>문서함</span>
 					<span id="slideSpan">+</span>
@@ -182,7 +182,7 @@
 				</a>
 			</li>
 			<li>
-				<a href="#">
+				<a href="javascript:void(0)">
 					<img src="/images/main/icons/mainHomeIcon.png" id="accountingTradeIcon" />
 					<span>매입매출</span>
 					<span id="slideSpan">+</span>
@@ -202,7 +202,7 @@
 				</a>
 			</li>
 			<li>
-				<a href="#">
+				<a href="javascript:void(0)">
 					<img src="/images/main/icons/mainHomeIcon.png" id="accountingCardIcon" />
 					<span>법인카드</span>
 					<span id="slideSpan">+</span>
@@ -213,7 +213,7 @@
 				</ul>
 			</li>
 			<li>
-				<a href="#">
+				<a href="javascript:void(0)">
 					<img src="/images/main/icons/mainHomeIcon.png" id="accountingBillIcon" />
 					<span>세금계산서</span>
 					<span id="slideSpan">+</span>
@@ -227,59 +227,59 @@
 
 		<ul id="mis">
 			<li>
-				<a href="#">
+				<a href="javascript:void(0)">
 					<img src="/images/main/icons/mainHomeIcon.png" id="accountingLedgerIcon" />
 					<span>매입매출현황</span>
 					<span id="slideSpan">+</span>
 				</a>
 				<ul id="panel">
-					<li><a href="#">- 매입매출현황</a></li>
-					<li><a href="#">- 미지급현황</a></li>
-					<li><a href="#">- 미수금현황</a></li>
+					<li><a href="javascript:void(0)">- 매입매출현황</a></li>
+					<li><a href="javascript:void(0)">- 미지급현황</a></li>
+					<li><a href="javascript:void(0)">- 미수금현황</a></li>
 				</ul>
 			</li>
 			<li>
-				<a href="#">
+				<a href="javascript:void(0)">
 					<img src="/images/main/icons/mainHomeIcon.png" id="mainHomeIcon" />
 					<span>자금현황</span>
 					<span id="slideSpan">+</span>
 				</a>
 				<ul id="panel">
-					<li><a href="#">- 입출금조회</a></li>
-					<li><a href="#">- 일자별자금일보</a></li>
+					<li><a href="javascript:void(0)">- 입출금조회</a></li>
+					<li><a href="javascript:void(0)">- 일자별자금일보</a></li>
 				</ul>
 			</li>
 			<li>
-				<a href="#">
+				<a href="javascript:void(0)">
 					<img src="/images/main/icons/mainHomeIcon.png" id="mainHomeIcon" />
 					<span>프로젝트현황</span>
 					<span id="slideSpan">+</span>
 				</a>
 				<ul id="panel">
-					<li><a href="#">- 프로젝트진행조회</a></li>
-					<li><a href="#">- 프로젝트별수익분석</a></li>
-					<li><a href="#">- 계약별수익분석</a></li>
+					<li><a href="javascript:void(0)">- 프로젝트진행조회</a></li>
+					<li><a href="javascript:void(0)">- 프로젝트별수익분석</a></li>
+					<li><a href="javascript:void(0)">- 계약별수익분석</a></li>
 				</ul>
 			</li>
 			<li>
-				<a href="#">
+				<a href="javascript:void(0)">
 					<img src="/images/main/icons/mainHomeIcon.png" id="mainHomeIcon" />
 					<span>인사관리현황</span>
 					<span id="slideSpan">+</span>
 				</a>
 				<ul id="panel">
-					<li><a href="#">- 근태현황조회</a></li>
-					<li><a href="#">- 개인별원가분석</a></li>
+					<li><a href="javascript:void(0)">- 근태현황조회</a></li>
+					<li><a href="javascript:void(0)">- 개인별원가분석</a></li>
 				</ul>
 			</li>
 			<li>
-				<a href="#">
+				<a href="javascript:void(0)">
 					<img src="/images/main/icons/mainHomeIcon.png" id="mainHomeIcon" />
 					<span>영업분석</span>
 					<span id="slideSpan">+</span>
 				</a>
 				<ul id="panel">
-					<li><a href="#">- 매출분석</a></li>
+					<li><a href="javascript:void(0)">- 매출분석</a></li>
 				</ul>
 			</li>
 		</ul>
