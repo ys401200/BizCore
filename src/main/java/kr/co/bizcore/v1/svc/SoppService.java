@@ -137,7 +137,7 @@ public class SoppService extends Svc {
         }
         estm += "]";        
 
-        return result.toJson(attached, list1, trade, estm);
+        return result == null ? null : result.toJson(attached, list1, trade, estm);
     }
 
     public String getEstimateList(String compId){
