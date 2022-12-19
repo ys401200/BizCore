@@ -374,8 +374,24 @@ function getDetailView() {
   }
 
   // 영업기회 리스트 가져옴
+  // $.ajax({
+  //   url: "/api/sopp",
+  //   type: "get",
+  //   dataType: "json",
+  //   success: (result) => {
+  //     if (result.result == "ok") {
+  //       let jsondata;
+  //       jsondata = cipher.decAes(result.data);
+  //       jsondata = JSON.parse(jsondata);
+  //       storage.soppList = jsondata;
+  //     } else {
+  //       alert("에러");
+  //     }
+  //   },
+  // });
+
   $.ajax({
-    url: "/api/sopp",
+    url: "/api/project/sopp",
     type: "get",
     dataType: "json",
     success: (result) => {
@@ -389,9 +405,11 @@ function getDetailView() {
       }
     },
   });
+
+
   setAppLineData();
   $(".insertbtn").click(setCusDataList);
-
+  $(".insertbtn").click(setProductData);
 
   $(".cke_editable").remove();
   $("." + formId + "_content").html($("#" + formId + "_content").attr("data-detail"));
@@ -409,7 +427,7 @@ function getDetailView() {
   toReadMode();
   drawCommentLine();
   getFileArr();
-  getProductList();
+  // getProductList();
   drawChangeInfo();
   $(".tabDetail2").hide();
 
@@ -1811,11 +1829,6 @@ function setAppLineData() {
 
 
 
-
-
-
-
-
 // 상단 버튼 관련 함수 ----------------------------------------------------------------------------------------------------------------------------------------------
 // 문서 수정시 변경이력에 반영
 function reportModify() {
@@ -1867,8 +1880,36 @@ function createConfirmBtn() {
   ckeditor.config.readOnly = false;
   window.setTimeout(setEditor, 100);
 
-
   $("input[name='" + formId + "_RD']").prop("disabled", false);
+
+  setSoppList();
+
+  let html = $(".infoContentlast")[0].innerHTML;
+  let x;
+  let dataListHtml = "";
+
+  // 거래처 데이터 리스트 만들기
+  dataListHtml = "<datalist id='_infoCustomer'>";
+  for (x in storage.customer) {
+    dataListHtml +=
+      "<option data-value='" +
+      x +
+      "' value='" +
+      storage.customer[x].name +
+      "'></option> ";
+  }
+  dataListHtml += "</datalist>";
+  html += dataListHtml;
+  $(".infoContentlast")[0].innerHTML = html;
+  $("#" + formId + "_infoCustomer").attr("list", "_infoCustomer");
+
+  if (formId == "doc_Form_SalesReport") {
+    $("#" + formId + "_endCustName").attr("list", "_infoCustomer");
+  }
+
+
+  setCusDataList();
+  setProductData();
 
 }
 
@@ -2128,6 +2169,8 @@ function getSopp() {
   storage.customer = customerResult;
 }
 
+
+// 추가할때.
 function setCusDataList() {
 
   let id = storage.reportDetailData.formId;
@@ -2159,29 +2202,94 @@ function setCusDataList() {
 
 
 
-function getProductList() {
-  let url;
-  url = apiServer + "/api/estimate/item"
 
-  $.ajax({
-    "url": url,
-    "method": "get",
-    "dataType": "json",
-    "cache": false,
-    success: (data) => {
-      let list, x;
-      if (data.result === "ok") {
-        list = data.data;
-        list = cipher.decAes(list);
-        list = JSON.parse(list);
-        storage.productList = list;
 
-      } else {
-        console.log(data.msg);
-      }
-    }
-  });
+
+
+function setSoppList() {
+  let formId = storage.reportDetailData.formId;
+  let soppTarget = $(".infoContent")[3];
+  let soppHtml = soppTarget.innerHTML;
+  let soppListHtml = "";
+
+  soppListHtml = "<datalist id='_infoSopp'>";
+
+  for (let i = 0; i < storage.soppList.length; i++) {
+    soppListHtml +=
+      "<option data-value='" +
+      storage.soppList[i].no +
+      "' value='" +
+      storage.soppList[i].title +
+      "'></option> ";
+  }
+
+  soppListHtml += "</datalist>";
+  soppHtml += soppListHtml;
+  soppTarget.innerHTML = soppHtml;
+  $("#" + formId + "_sopp").attr("list", "_infoSopp");
+
+  //선택 후 수정하는 경우에
+  if (formId == "doc_Form_Resolution" && $(".btnDiv").children.length == 2) {
+    $(".btnDiv").append(
+      "<button onclick='getCardDetails()'>법인카드 내역</button>"
+    );
+  }
 }
+
+
+
+function setProductData() {
+  let data = storage.formList;
+
+  let formId = storage.reportDetailData != undefined ? storage.reportDetailData.formId : data[$(".formNumHidden").val()].id;
+  let targetHtml = $("." + formId + "_product")[0].innerHTML;
+  let y;
+  let productListhtml = "";
+  productListhtml = "<datalist id='_product'>";
+  for (let y = 0; y < storage.product.length; y++) {
+    productListhtml +=
+      "<option data-value='" +
+      storage.product[y].no +
+      "' value='" +
+      storage.product[y].name +
+      "'></option> ";
+  }
+
+  targetHtml += productListhtml;
+  $("." + formId + "_product")[0].innerHTML = targetHtml;
+  $("." + formId + "_product").attr("list", "_product");
+}
+
+
+
+
+
+
+
+
+// function getProductList() {
+//   let url;
+//   url = apiServer + "/api/estimate/item"
+
+//   $.ajax({
+//     "url": url,
+//     "method": "get",
+//     "dataType": "json",
+//     "cache": false,
+//     success: (data) => {
+//       let list, x;
+//       if (data.result === "ok") {
+//         list = data.data;
+//         list = cipher.decAes(list);
+//         list = JSON.parse(list);
+//         storage.productList = list;
+
+//       } else {
+//         console.log(data.msg);
+//       }
+//     }
+//   });
+// }
 
 
 

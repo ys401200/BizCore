@@ -183,7 +183,12 @@ function setEstData() {
   let outSumTarget = $(".outSum");
   let inHtml = "";
   let outHtml = "";
-  console.log(storage.items);
+
+  let itemNos = [];
+  for (let k = 0; k < storage.item.length; k++) {
+    itemNos.push([storage.item[k].no, storage.item[k].product]);
+  }
+
   for (let i = 0; i < storage.items.length; i++) {
     // if (items[i].type == "purchase") {
     //   inHtml = inSumTarget.html();
@@ -201,19 +206,25 @@ function setEstData() {
     //   inSumTarget.html(inHtml);
     // } else {
     let vat, itemTitle;
-    let itemNos = [];
 
     if (items[i].vat == "true") {
       vat = items[i].price * items[i].quantity * 0.1;
     } else {
       vat = 0;
     }
-    for (let i = 0; i < storage.item.length; i++) { itemNos.push(storage.item[i].no) }
-    if (isNaN(storage.items[i].item * 0)) {
+
+
+
+    if (isNaN(storage.items[i].item * 1)) { // NaN인 경우 무조건 텍스트 그대로 입력함 
       itemTitle = storage.items[i].item;
-    } else {
-      if (itemNos.includes(storage.items[i].item * 0))
-        itemTitle = storage.item[j].product;
+    } else {// 문자열인 경우 
+      itemTitle = storage.items[i].item;
+      for (let x = 0; x < itemNos.length; x++) {
+        if (itemNos[x][0] == storage.items[i].item * 1) {
+          itemTitle = itemNos[x][1];
+        }
+
+      }
     }
 
 
@@ -418,11 +429,8 @@ function reportInsert() {
   // content = $("#" + formId + "_content").val();
   readable = "dept";
   appDoc = $(".estDiv").html();
-  appDoc = appDoc
-    .replaceAll("\n", "")
-    .replaceAll("\r", "")
-    .replaceAll("\t", "")
-    .replaceAll('"', '\\"');
+  appDoc = appDoc.replaceAll("\n", "").replaceAll("\r", "").replaceAll("\t", "").replaceAll('\\"', '"',);
+  // appDoc = appDoc.replaceAll("\n", "").replaceAll("\r", "").replaceAll("\t", "").replaceAll('"', '\\"');
   let my = storage.my;
   dept = storage.user[my].deptId[0];
 
@@ -499,7 +507,7 @@ function reportInsert() {
 
 
   let related = {
-    "next": "contract:" + storage.nextContNo + "",
+    "next": "",
     "parent": "",
     "previous": "sopp:" + storage.soppDetailData.sopp.no + "",
     // "outSumAllTotal": $(".outSumAllTotal").val() * 1,
@@ -611,12 +619,6 @@ function reportInsert() {
   }
 }
 
-
-
-
-
-
-
 function createContract(ctrtData) {
   $.ajax({
     url: "/api/contract",
@@ -635,8 +637,6 @@ function createContract(ctrtData) {
   })
 
 }
-
-
 
 function getTotalCount2() {
 

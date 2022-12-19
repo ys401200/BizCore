@@ -138,9 +138,10 @@ function selectForm() {
 
   //영업기회 데이터 리스트 만들기
 
+
   if (formId != "doc_Form_leave" && formId != "doc_Form_extension") {
     $.ajax({
-      url: "/api/sopp",
+      url: "/api/project/sopp",
       type: "get",
       dataType: "json",
       success: (result) => {
@@ -156,6 +157,25 @@ function selectForm() {
         }
       },
     });
+
+    // if (formId != "doc_Form_leave" && formId != "doc_Form_extension") {
+    //   $.ajax({
+    //     url: "/api/sopp",
+    //     type: "get",
+    //     dataType: "json",
+    //     success: (result) => {
+    //       if (result.result == "ok") {
+    //         let jsondata;
+    //         jsondata = cipher.decAes(result.data);
+    //         jsondata = JSON.parse(jsondata);
+    //         storage.soppList = jsondata;
+    //         setSoppList(formId);
+    //         setCusDataList();
+    //       } else {
+    //         alert("에러");
+    //       }
+    //     },
+    //   });
 
     // 거래처 데이터 리스트
 
@@ -1254,10 +1274,7 @@ function setTempReport() {
 
   }
 
-
 }
-
-
 
 
 function tempSave() {
