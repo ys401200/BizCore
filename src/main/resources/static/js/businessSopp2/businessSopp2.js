@@ -1,4 +1,4 @@
-let R = {}, prepareSopp, scrolledSopp, moveToTarget, drawChat, inputtedComment, deleteChat, cancleEdit, editSopp, changeSopp, editSoppSearch, soppStageUp, clickedDateInCalendar, newScheduleSelectTime;
+let R = {}, prepareSopp, scrolledSopp, moveToTarget, drawChat, inputtedComment, deleteChat, cancleEdit, editSopp, changeSopp, editSoppSearch, soppStageUp, clickedDateInCalendar, drawMiniCalendar, clickedDateOnMiniCalendar, clickedTimeOnMiniCalendar, setDateTimeInScheduleDetail;
 
 $(document).ready(() => {
 	let href, no
@@ -16,41 +16,13 @@ $(document).ready(() => {
 	prepareSopp(no);
 });
 
-// 일정 신규 등록에서 시간을 클릭할 때 실행되는 함수
-newScheduleSelectTime = (el) => {
-	let cnt, dts, dte, start, end, x, y, z;
-	cnt = el.parentElement;
-	dts = cnt.dataset.s;
-	dte = cnt.dataset.e;
-
-	if(dte === "x"){ // 두번째 선택일 때
-		start = dts *1;
-		end = (el.dataset.h*100) + (el.dataset.m*1);
-		end = (end % 100 === 30) ? end + 70 : end + 30;
-		cnt.dataset.e = end;
-		for(x = 1 ; x < cnt.children.length - 1 ; x++){
-			z = (cnt.children[x].dataset.h*100) + (cnt.children[x].dataset.m*1)
-			if(z >= start && z < end){
-				cnt.children[x].className = "new-schedule-time-select";
-			}
-		}
-	}else{ // 첫번째 선택일 때
-		start = (el.dataset.h*100) + (el.dataset.m*1);
-		cnt.dataset.s = start;
-		cnt.dataset.e = "x";
-		for(x = 1 ; x < cnt.children.length - 1 ; x++)	cnt.children[x].className = "new-schedule-time-empty";
-		el.className = "new-schedule-time-select";
-	}
-	
-} // End of newScheduleSelectTime()
-
 // 달력의 날짜 클릭 이벤트 핸들러
 clickedDateInCalendar = (el) => {
 	let dt, sch;
 
 	sch = new Schedule();
 	dt = new Date(el.dataset.v * 1);
-	sch.requestDetail(dt);
+	sch.drawForRequestDetail(dt);
 } // End of clickedDateInCalendar()
 
 soppStageUp = () => {
@@ -384,6 +356,68 @@ moveToTarget = (el) => {
 	});
 } // End of moveToTarget()
 
+function drawDetail(soppNo) {
+	let contNo;
+	for (let i = 0; i < storage.contract.length; i++) {
+		let contSopp = JSON.parse(storage.contract[i].related).parent.split(":");
+		if (contSopp[1] == soppNo) {
+			contNo = storage.contract[i].no;
+		}
+	}
+
+	let cnt = document.getElementsByClassName("sopp-contract")[0];
+	fetch(location.origin + "/api/contract/" + contNo)
+		.catch((error) => console.log("error:", error))
+		.then(response => response.json())
+		.then(response => {
+			console.log(response);
+			let data;
+			if (response.result === "ok") {
+				data = response.data;
+				data = cipher.decAes(data);
+				data = JSON.parse(data);
+				R.contract = new Contract(data);
+				R.contract.getReportDetail(cnt);
+
+			} else {
+				let none;
+				R.contract = new Contract(none);
+				R.contract.drawNone();
+				console.log(response.msg);
+			}
+		});
+
+} // End of drawDetail()
+
+
+function getYmdSlashShort(date) {
+	let d = new Date(date);
+	return (
+		(d.getFullYear() % 100) +
+		"/" +
+		(d.getMonth() + 1 > 9
+			? (d.getMonth() + 1).toString()
+			: "0" + (d.getMonth() + 1)) +
+		"/" +
+		(d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
+	);
+} // End of getYmdSlashShort()
+
+
+
+function getYmdHypen(date) {
+	let d = new Date(date);
+	return (
+		(d.getFullYear()) +
+		"-" +
+		(d.getMonth() + 1 > 9
+			? (d.getMonth() + 1).toString()
+			: "0" + (d.getMonth() + 1)) +
+		"-" +
+		(d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
+	);
+} // End of getYmdHypen()
+
 
 
 
@@ -701,33 +735,38 @@ class BizCalendar {
 } // End of Class _ BizCalendar
 
 class Schedule{
-	constructor(){
-		this.no;
-		this.writer;
-		this.title;
-		this.content;
-		this.report;
-		this.type;
-		this.from;
-		this.to;
-		this.related;
-		this.created;
-		this.modified;
+	constructor(data){
+		let v;
+		if(data === null || data === undefined)	v = {
+			no:-1,
+			writer:storage.my,
+			title:"제목",
+			content:"",
+			report:true,
+			type:null,
+			from:new Date((new Date()).getFullYear(),(new Date()).getMonth(),(new Date()).getDate(),9,0,0),
+			to:new Date((new Date()).getFullYear(),(new Date()).getMonth(),(new Date()).getDate(),18,0,0),
+			related:{},
+			created:(new Date()).getTime(),
+			modified:null
+		};
+		else v = data;
+		this.no = v.no;
+		this.writer = v.writer;
+		this.title = v.title;
+		this.content = v.title;
+		this.report = v.report;
+		this.type = v.type;
+		this.from = v.from;
+		this.to = v.to;
+		this.related = v.related;
+		this.created = v.create;
+		this.modified = v.modified;
 	}
-	requestDetail(dt){
-		let html, x, start, end, cnt, el, child;
+	drawForRequestDetail(dt){
+		let html, x, y, start, end, cnt, el, child;
 		modal.show();
 		modal.headTitle[0].innerText = "일정 신규 등록";
-
-		// 날짜 및 시간 초기화 / 입력된 날짜의 오전 9시부터 오후 6시 까지를 기본값으로 함
-		if(dt !== undefined)	this.from = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate(), 9, 0, 0);
-		if(dt !== undefined)	this.to = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate(), 18, 0, 0);
-		this.writer = storage.my;
-		if(this.title === undefined)	this.title = "재목";
-
-		console.log(this.from);
-		console.log(this.to);
-
 
 		// 시간 옵션
 		start = 7;
@@ -735,7 +774,11 @@ class Schedule{
 
 		// 모달 내 컨테이너 생성 및 부착
 		cnt = document.createElement("div");
-		cnt.className = "new-schedule";
+		cnt.className = "schedule-detail";
+		cnt.dataset.ds = "x";
+		cnt.dataset.de = "x";
+		cnt.dataset.ts = "0900";
+		cnt.dataset.te = "1800";
 		modal.body[0].appendChild(cnt);
 
 		// 본문 및 제목 엘리먼트 생성 및 부착
@@ -749,36 +792,76 @@ class Schedule{
 		cnt.appendChild(el);
 
 		// 날짜정보 엘리먼트 생성 및 부착
+		child = document.createElement("label");
+		child.setAttribute("for", "mini-calendar-check");
+		el.appendChild(child);
+		child.innerHTML = "<img src=\"/images/sopp2/icon_calendar.png\" />" + this.dateToStr();
+
+		child = document.createElement("input");
+		child.setAttribute("type", "checkbox");
+		child.setAttribute("id", "mini-calendar-check");
+		child.checked = false;
+		el.appendChild(child);
+
+		// 날짜 선택용 달력 컨테이너 생성 및 부착
 		child = document.createElement("div");
 		el.appendChild(child);
-		child.innerHTML = this.dateToStr();
+		x = document.createElement("div");
+		x.innerHTML = drawMiniCalendar(new Date(dt.getFullYear(), dt.getMonth() - 1, 2));
+		child.appendChild(x);
+		x = document.createElement("div");
+		x.innerHTML = drawMiniCalendar(dt);
+		child.appendChild(x);
+		x = document.createElement("div");
+		x.innerHTML = drawMiniCalendar(new Date(dt.getFullYear(), dt.getMonth() + 1, 1));
+		child.appendChild(x);
+
+		// 타임 바 생성 및 부착
+		child = document.createElement("div");
+		el.appendChild(child);
+		html = ("<div style=\"grid-template-columns:1px 2fr repeat(" + (end - start - 1) + ", 4fr) 2fr 1px;\"><div></div><div></div>")
+		for(x = start + 1 ; x < end ; x++)	html += ("<div>" + x + "</div>");
+		html += "<div></div></div>";
+		html += ("<div style=\"grid-template-columns:1px repeat(" + ((end - start) * 2) + ",2fr) 1px;\" data-s=\"x\" data-e=\"0\"><span></span>");
+		for(x = start ; x < end ; x++)	html += ("<div class=\"schedule-time-empty\" data-h=\"" + (x < 10 ? "0" + x : x) + "\" data-m=\"00\" onclick=\"clickedTimeOnMiniCalendar(this)\"></div><div class=\"schedule-time-empty\" data-h=\"" + (x < 10 ? "0" + x : x) + "\" data-m=\"30\" onclick=\"clickedTimeOnMiniCalendar(this)\"></div>");
+		html += "<span></span></div></div>";
+		child.innerHTML = html;
+
+		// 상세정보 컨테이너 생성 및 부착
+		child = document.createElement("div");
+		el.appendChild(child);
 
 
+
+
+
+
+
+
+
+
+
+		// 달력에 날짜 선택 표시
+		y = (dt.getFullYear() * 10000 + (dt.getMonth() + 1) * 100 + dt.getDate()) + "";
+		cnt.dataset.ds = y;
+		child = document.getElementsByClassName("mini-calendar-cell");
+		for(x = 0 ; x < child.length ; x++){
+			if(child[x].dataset.v === y)	child[x].style.backgroundColor = "#c1eaff";
+		}
+
+		// 타임 바에 시간 선택 표시
+		start = cnt.dataset.ts * 1;
+		end = cnt.dataset.te * 1;
+		child = cnt.children[1].children[3].children[1].children;
+		for(x = 1 ; x < child.length - 1 ; x++){
+			y = (child[x].dataset.h * 100) + (child[x].dataset.m * 1);
+			if(y >= start && y < end)	child[x].className = "schedule-time-select";
+		}
+
+		// 기간 문자열 표시
+		setDateTimeInScheduleDetail();
 
 		return;
-
-
-		// ==========================================================
-
-		// 본문
-		html = "<div class=\"new-schedule\">";
-		html += "<div><input placeholder=\"제목\" /><textarea></textarea><div></div></div>"; // 좌측 제목, 본문
-
-		html += "<div><div><date>2022.12.31</date><time>07:30 ~ 15:30</time></div>"; // 일정설정
-
-		html += ("<div style=\"grid-template-columns:1px repeat(" + (end - start) + ",4fr) 1px;\"><div></div>")
-		for(x = start ; x < end ; x++)	html += ("<div>" + x + "</div>");
-		html += "<div></div></div>";
-
-		html += ("<div style=\"grid-template-columns:1px repeat(" + ((end - start) * 2) + ",2fr) 1px;\" data-s=\"x\" data-e=\"0\"><div></div>");
-		for(x = start ; x < end ; x++)	html += ("<div class=\"new-schedule-time-empty\" data-h=\"" + x + "\" data-m=\"0\" onclick=\"newScheduleSelectTime(this)\"></div><div class=\"new-schedule-time-empty\" data-h=\"" + x + "\" data-m=\"30\" onclick=\"newScheduleSelectTime(this)\"></div>");
-		html += "<div></div></div></div>";
-		html += "<div></div>"; // 세부 정보
-		html += "</div>";
-
-		modal.body[0].innerHTML = html; // <-- 내부 채우기
-		//modal.confirm[0].onclick = confirmNewSopp; // <-- 컨펌 버튼
-		//modal.close[0].onclick = modal.hide; // <-- 취소버튼
 	}
 	dateToStr(){ // 시작 및 종료에 대한 문자열을 만들어주는 함수
 		let str, s1, s2, e1, e2;
@@ -797,64 +880,140 @@ class Schedule{
 
 } // End of Class _ Schedule
 
-function drawDetail(soppNo) {
-	let contNo;
-	for (let i = 0; i < storage.contract.length; i++) {
-		let contSopp = JSON.parse(storage.contract[i].related).parent.split(":");
-		if (contSopp[1] == soppNo) {
-			contNo = storage.contract[i].no;
-		}
+// 미니 달력을 그리는 함수
+drawMiniCalendar = (date) => {
+	let x, y, year, month, dt, html, startDate, endDate;
+	
+	year = date.getFullYear();
+	month = date.getMonth();
+	html = "<div>'" + (year % 100) + " / " + (month + 1) + "</div>";
+	
+	// 해당 월에서의 시작/끝 날짜 정리
+	startDate = new Date(year, month , 1);
+	startDate = new Date(startDate.getTime() - startDate.getDay() * 86400000);
+	endDate = new Date(new Date(year, month + 1, 1).getTime() - 86400000);
+	endDate = new Date(endDate.getTime() + (6 - endDate.getDay()) * 86400000);
+	dt = startDate;
+
+	// 달력 본문
+	while(dt.getTime() <= endDate.getTime()) {
+		x = (year * 10000) + ((month + 1) * 100) + dt.getDate();
+		y = dt.getFullYear() * 10000 + (dt.getMonth() + 1) * 100 + dt.getDate();
+		//if(dt.getDay() === 0)	html += "<div>";
+
+		if(dt.getMonth() !== month)	html += "<span></span>";
+		else	html += ("<span onclick=\"clickedDateOnMiniCalendar(this)\" class=\"mini-calendar-cell\" data-v=\"" + x + "\">" + dt.getDate() + "</span>");
+
+		//if(dt.getDay() === 6)	html += "</div>";
+		dt = new Date(dt.getTime() + 86400000);
+	} // End of while
+	return html;
+} // End of drawMonthList()
+
+clickedDateOnMiniCalendar = (el) => {
+	let x, y, start, end, els, cnt;
+	cnt = document.getElementsByClassName("schedule-detail")[0];
+	els = cnt.getElementsByClassName("mini-calendar-cell");
+	start = cnt.dataset.ds;
+	end = cnt.dataset.de;
+
+	if(start === "x"){ // 최초 클릭인 경우
+		start = el.dataset.v * 1;
+		cnt.dataset.ds = start;
+		end = null;
+		cnt.dataset.de = "x";
+	}else if(end === "x"){ // 짝수번째 클릭인 경우
+		end = el.dataset.v * 1;
+		cnt.dataset.de = end;
+		start = cnt.dataset.ds * 1;
+	}else{ // 홀수번째 클릭인 경우
+		end = null;
+		cnt.dataset.de = "x";
+		start = el.dataset.v * 1;
+		cnt.dataset.ds = start;
 	}
 
-	let cnt = document.getElementsByClassName("sopp-contract")[0];
-	fetch(location.origin + "/api/contract/" + contNo)
-		.catch((error) => console.log("error:", error))
-		.then(response => response.json())
-		.then(response => {
-			console.log(response);
-			let data;
-			if (response.result === "ok") {
-				data = response.data;
-				data = cipher.decAes(data);
-				data = JSON.parse(data);
-				R.contract = new Contract(data);
-				R.contract.getReportDetail(cnt);
+	// 시작 날짜가 종료날짜보다 큰 경우 두가지를 바꿈
+	if(end !== null && start > end){
+		x = start;
+		start = end;
+		end = x;
+		cnt.dataset.ds = start;
+		cnt.dataset.de = end;
+	}
 
-			} else {
-				let none;
-				R.contract = new Contract(none);
-				R.contract.drawNone();
-				console.log(response.msg);
+	if(end === null){ // 첫 번째 클릭인 경우 / 기간의 시작을 클릭
+		for(x = 0 ; x < els.length ; x++)	els[x].style.backgroundColor = "";
+		el.style.backgroundColor = "#c1eaff";
+	}else{ // 두 번째 클릭인 경우 / 기간의 종료를 클릭
+		for(x = 0 ; x < els.length ; x++){
+			y = els[x].dataset.v * 1;
+			if(y < start || y > end)	els[x].style.backgroundColor = "";
+			else if(start === y || end === y)	el.style.backgroundColor = "#c1eaff";
+			else	els[x].style.backgroundColor = "#eef9ff";
+		}
+	}
+	setDateTimeInScheduleDetail();
+} // End of clickedDateOnMiniCalendar()
+
+
+clickedTimeOnMiniCalendar = (el) => {
+	let cnt, dts, dte, start, end, x, y, z, els;
+	cnt = document.getElementsByClassName("schedule-detail")[0];
+	dts = cnt.dataset.ts;
+	dte = cnt.dataset.te;
+	els = el.parentElement.children;
+
+	if(dte === "x"){ // 두번째 선택일 때
+		start = dts;
+		end = el.dataset.h + el.dataset.m;
+		end = (((end * 1) % 100 === 30) ? (end * 1) + 70 : (end * 1) + 30) + "";
+		if(start > end){
+			x = end;
+			end = start;
+			start = x;
+			end = (((end * 1) % 100 === 30) ? (end * 1) + 70 : (end * 1) + 30) + "";
+			start = (((start * 1) % 100 === 30) ? (start * 1) - 30 : (start * 1) - 70) + "";
+			cnt.dataset.ts = start;
+		}
+		cnt.dataset.te = end;
+		for(x = 1 ; x < els.length - 1 ; x++){
+			z = (els[x].dataset.h + els[x].dataset.m) * 1;
+			if(z >= start * 1 && z < end * 1){
+				els[x].className = "schedule-time-select";
 			}
-		});
+		}
+	}else{ // 첫번째 선택일 때
+		start = el.dataset.h + el.dataset.m;
+		cnt.dataset.ts = start;
+		cnt.dataset.te = "x";
+		for(x = 1 ; x < els.length - 1 ; x++)	els[x].className = "schedule-time-empty";
+		el.className = "schedule-time-select";
+	}
+	window.setTimeout(setDateTimeInScheduleDetail,50);
+} // end of clickedTimeOnMiniCalendar()
 
-}
-
-
-function getYmdSlashShort(date) {
-	let d = new Date(date);
-	return (
-		(d.getFullYear() % 100) +
-		"/" +
-		(d.getMonth() + 1 > 9
-			? (d.getMonth() + 1).toString()
-			: "0" + (d.getMonth() + 1)) +
-		"/" +
-		(d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
-	);
-}
-
-
-
-function getYmdHypen(date) {
-	let d = new Date(date);
-	return (
-		(d.getFullYear()) +
-		"-" +
-		(d.getMonth() + 1 > 9
-			? (d.getMonth() + 1).toString()
-			: "0" + (d.getMonth() + 1)) +
-		"-" +
-		(d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
-	);
-}
+setDateTimeInScheduleDetail = () => {
+	let ds, de, ts, te, s1, s2, e1, e2, cnt = document.getElementsByClassName("schedule-detail")[0];
+	ds = cnt.dataset.ds;
+	de = cnt.dataset.de;
+	de = de === "x" ? ds : de;
+	ts = cnt.dataset.ts;
+	te = cnt.dataset.te;
+	if(te === "x"){
+		te = ts * 1;
+		if(te % 100 === 30)	te = (te + 70) + "";
+		else	te = (te + 30) + "";
+	}
+	s1 = "'" + ds.substring(2,4) + "." + ds.substring(4,6) + "." + ds.substring(6,8);
+	e1 = "'" + de.substring(2,4) + "." + de.substring(4,6) + "." + de.substring(6,8);
+	s2 = ts.substring(0,2) + ":" + ts.substring(2,4);
+	e2 = te.substring(0,2) + ":" + te.substring(2,4);
+	str = "<img src=\"/images/sopp2/icon_calendar.png\" />" + "<date>" + s1 + " </date><time>" + s2 + "</time>";
+	if(s1 === e1){
+		str += ("<span> ~ </span><time>" + e2 + "</time>");
+	}else{
+		str += ("<span> ~ </span><date>" + e1 + " </date><time>" + e2 + "</time>");
+	}
+	cnt.children[1].children[0].innerHTML = str;
+} // End of setDateTimeInScheduleDetail()
