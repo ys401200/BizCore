@@ -21,6 +21,7 @@ function prepareForm() {
   getSavedLine();
   getEsimateNo();
   getItem();
+  getNextContNo();
 
 } // End of prepare()
 
@@ -498,7 +499,7 @@ function reportInsert() {
 
 
   let related = {
-    "next": "",
+    "next": "contract:" + storage.nextContNo + "",
     "parent": "",
     "previous": "sopp:" + storage.soppDetailData.sopp.no + "",
     // "outSumAllTotal": $(".outSumAllTotal").val() * 1,
@@ -527,6 +528,8 @@ function reportInsert() {
   console.log(data);
   data = JSON.stringify(data);
   data = cipher.encAes(data);
+
+
 
   let cntrctRelated = {
     parent: "sopp:" + storage.soppDetailData.sopp.no,
@@ -1005,6 +1008,31 @@ function createLine() {
   let lineTarget = $("#" + formId + "_line");
   lineTarget.html(lineData);
 
+
+}
+
+
+
+
+function getNextContNo() {
+
+  $.ajax({
+    url: "/api/contract/nextContNo",
+    method: "get",
+    dataType: "json",
+    contentType: "text/plain",
+    success: (result) => {
+      if (result.result === "ok") {
+        let data;
+        data = cipher.decAes(result.data);
+        storage.nextContNo = data;
+      } else {
+        console.log("다음 계약 번호를 가져오는 것을 실패함")
+      }
+
+    }
+
+  });
 
 }
 
