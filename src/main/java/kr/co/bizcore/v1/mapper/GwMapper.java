@@ -256,8 +256,14 @@ public interface GwMapper {
         public String getFormIdWithDocNo(@Param("compId") String compId, @Param("docNo") String docNo);
 
         // 영업기회에 해당하는 수주판매보고 문서 ( 상태가 승인인 것 )
-        //@Select("select a.docNo from bizcore.doc_app a inner join bizcore.doc_app_detail b on a.docNo = b.docNo where a.formId = 'doc_Form_SalesReport' and b.appData = #{soppNo} and a.compId = #{compId}")
-        @Select("select a.docNo from bizcore.doc_app a inner join bizcore.doc_app_detail b on a.docNo = b.docNo where a.formId = 'doc_Form_SalesReport' and b.appData like concat('%',#{soppNo},'%') and a.compId = #{compId}")
+        // @Select("select a.docNo from bizcore.doc_app a inner join
+        // bizcore.doc_app_detail b on a.docNo = b.docNo where a.formId =
+        // 'doc_Form_SalesReport' and b.appData = #{soppNo} and a.compId = #{compId}")
+        // @Select("select a.docNo from bizcore.doc_app a inner join
+        // bizcore.doc_app_detail b on a.docNo = b.docNo where a.formId =
+        // 'doc_Form_SalesReport' and b.appData like concat('%',#{soppNo},'%') and
+        // a.compId = #{compId}")
+        @Select("select a.docNo from bizcore.doc_app a inner join bizcore.doc_app_detail b on a.docNo = b.docNo where a.formId = 'doc_Form_SalesReport' and b.appData like concat('%','\"sopp\":\"',#{soppNo} ,'%') and a.compId = #{compId}")
         public String getDocNo(@Param("compId") String compId, @Param("soppNo") String soppNo);
 
 }

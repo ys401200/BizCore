@@ -167,18 +167,18 @@ public class ApiContractCtrl extends Ctrl {
                 result = "{\"result\":\"failure\",\"msg\":\"" + msg.failDecrypt + "\"}";
             } else {
                 try {
-                    if (contractService.insertContract(data, compId) >0 )
-                     result = "{\"result\":\"ok\"}";
-                     else
-                     result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
+                    if (contractService.insertContract(data, compId) > 0)
+                        result = "{\"result\":\"ok\"}";
+                    else
+                        result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
 
                     // mapper = new ObjectMapper();
                     // contract = mapper.readValue(data, Contract.class);
                     // contract.setCreated(null);
                     // if (contractService.addContract(contract, compId))
-                    //  result = "{\"result\":\"ok\"}";
+                    // result = "{\"result\":\"ok\"}";
                     // else
-                    //     result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
+                    // result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
                 } catch (Exception e) {
                     result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
                     e.printStackTrace();
@@ -289,14 +289,44 @@ public class ApiContractCtrl extends Ctrl {
         } else if (aesKey == null || aesIv == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
         } else {
-           
+
             data = contractService.getFullContract(compId);
             data = encAes(data, aesKey, aesIv);
             result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
-        } 
-        
+        }
+
         return result;
     }
+
+    // 생성될 계약 번호 가져옴
+    @RequestMapping(value = "/nextContNo", method = RequestMethod.GET)
+    public String getNextContNo(HttpServletRequest request) {
+        String result = null, data = null;
+        String compId = null, lang = null;
+        String aesKey = null, aesIv = null;
+        Msg msg = null;
+        HttpSession session = null;
+
+        session = request.getSession();
+        compId = (String) session.getAttribute("compId");
+        aesIv = (String) session.getAttribute("aesIv");
+        aesKey = (String) session.getAttribute("aesKey");
+        msg = getMsg(lang);
+
+        if (compId == null) {
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        } else if (aesKey == null || aesIv == null) {
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        } else {
+
+            data = contractService.getNextContNo(compId);
+            data = encAes(data, aesKey, aesIv);
+            result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
+        }
+
+        return result;
+    }
+
     // // 계약번호로 유지보수 데이터 가져옴
     // @RequestMapping(value = "/maintenance/{contract}", method =
     // RequestMethod.GET)

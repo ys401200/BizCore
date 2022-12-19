@@ -9,7 +9,7 @@
 				<div class="contractContainer">
 					<hr />
 					<span id="containerTitle">계약</span>
-					<div class="crudBtns"><button onclick="contractInsertForm()">등록</button></div>
+					<!-- <div class="crudBtns"><button onclick="contractInsertForm()">등록</button></div> -->
 					<div class="contract-list"></div>
 					<div class="pageContainer"></div>
 				</div>

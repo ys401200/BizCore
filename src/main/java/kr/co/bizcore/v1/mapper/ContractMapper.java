@@ -79,8 +79,8 @@ public interface ContractMapper {
     @Select("SELECT no, compId, employee, coWorker, customer,title, detail, saleDate, supplied, approved, amount, taxInclude, profit,created, modified, deleted, related FROM bizcore.contract WHERE compId = #{compId}")
     public List<Contract> getFullContract(@Param("compId") String compId);
 
-    @Insert("Insert bizcore.contract(compId, employee, customer, title, amount, related )  values (#{compId },#{employee},#{customer},#{title},#{amount},#{related})")
-    public int insertContract( @Param("compId") String compId,
+    @Insert("Insert bizcore.contract(no,compId, employee, customer, title, amount, related )  values (#{no},#{compId },#{employee},#{customer},#{title},#{amount},#{related})")
+    public int insertContract(@Param("no") int no, @Param("compId") String compId,
             @Param("employee") int employee, @Param("customer") int customer, @Param("title") String title,
             @Param("amount") int amount, @Param("related") String related);
 

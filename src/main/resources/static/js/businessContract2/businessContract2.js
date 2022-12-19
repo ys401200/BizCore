@@ -389,7 +389,7 @@ class Contract {
 
 
 
-		if (this.docNo != undefined) {
+		if (this.docNo != undefined) { 
 
 			cnt = document.getElementsByClassName("detail-wrap")[0];
 			let appLine = this.appLine;

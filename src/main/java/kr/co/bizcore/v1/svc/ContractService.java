@@ -220,19 +220,19 @@ public class ContractService extends Svc {
 
     public int insertContract(String data, String compId) {
         int result = 0;
-        String no = null,  title = null,  related = null;
-        int employee =0;
+        String title = null, related = null;
+        int employee = 0;
         int customer = 0;
         int amount = 0;
-
+        int no = getNextNumberFromDB(compId, "bizcore.contract");
         JSONObject json = new JSONObject(data);
-     
+
         employee = json.getInt("employee");
         customer = json.getInt("customer");
         title = json.getString("title");
         amount = json.getInt("amount");
         related = json.getString("related");
-        result = contractMapper.insertContract(compId, employee, customer, title, amount, related);
+        result = contractMapper.insertContract(no, compId, employee, customer, title, amount, related);
         return result;
     }
 
@@ -290,6 +290,13 @@ public class ContractService extends Svc {
         result += "]";
 
         return result;
+    }
+
+    public String getNextContNo(String compId) {
+        String contNo = null;
+        int no = getNextNumberFromDB(compId, "bizcore.contract");
+        contNo = String.valueOf(no);
+        return contNo;
     }
 
     // public String getMtncData(String contract, String compId) {
