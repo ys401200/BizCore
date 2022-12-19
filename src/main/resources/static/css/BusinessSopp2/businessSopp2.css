@@ -487,7 +487,7 @@
 	display:grid;
 	grid-template-columns: 1fr;
 	grid-template-rows: 1.5rem calc(100% - 2rem);
-	gap:0.5rem;
+	gap:3rem 0.5rem;
 	grid-row: span 2;
 }
 .schedule-detail > div:nth-child(1) > input{ /* 제목 */

@@ -476,7 +476,7 @@ class Sopp2 {
 	} // End of ownerName()
 
 	draw() {
-		let cnt, x, y, j, name, html, month = [], dt, el, cal;
+		let cnt, x, y, z, name, html, month = [], dt, el, cal;
 
 		// 제목 설정
 		cnt = document.getElementsByClassName("content-title")[0].children[0];
@@ -580,10 +580,13 @@ class Sopp2 {
 
 		for (x = 0; x < month.length; x++) {
 			el = document.createElement("div");
-			if (x < month.length - 1) el.style.display = "none";
 			cnt.appendChild(el);
 			dt = month[x];
 			cal = new BizCalendar(dt.getFullYear(), dt.getMonth() + 1, el);
+			y = dt.getFullYear() * 100 + dt.getMonth() + 1;
+			z = (new Date).getFullYear() * 100 + (new Date).getMonth() + 1;
+			if(y === z)	el.style.display = "";
+			else	el.style.display = "none";
 			this.calendar.push(cal);
 			cal.drawForSopp();
 		}
@@ -694,6 +697,7 @@ class BizCalendar {
 		this.year = year;
 		this.month = month;
 		this.container = container === undefined ? null : container;
+		this.container.dataset.v = year * 100 + month;
 		this.startDate = new Date(startDate.getTime() - startDate.getDay() * 86400000); // 달력 시작하는 날짜 잡기
 		this.endDate = new Date(endDate.getTime() + (6 - endDate.getDay()) * 86400000); // 달력 끝나는 날 찾기
 	}
@@ -784,7 +788,7 @@ class Schedule{
 		// 본문 및 제목 엘리먼트 생성 및 부착
 		el = document.createElement("div");
 		cnt.appendChild(el);
-		html = "<input /><textarea></textarea><div></div>";
+		html = "<input /><textarea id=\"schedule-detail-content\"></textarea>";
 		el.innerHTML = html;
 
 		// 날짜/시간 및 상세정보 컨테이너 생성 및 부착
@@ -860,6 +864,12 @@ class Schedule{
 
 		// 기간 문자열 표시
 		setDateTimeInScheduleDetail();
+
+		// 컨텐트에 웹에디터 부착
+		ckeditor.config.readOnly = false;
+		CKEDITOR.inline("schedule-detail-content");
+		cnt.children[0].children[2].style.maxHeight = "20.5rem";
+		cnt.children[0].children[2].style.padding = "0.5rem";
 
 		return;
 	}
