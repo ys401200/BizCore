@@ -1,8 +1,9 @@
 
+
+
+
 init();
-//prepareForm();
-
-
+prepareForm();
 
 
 function prepareForm() {

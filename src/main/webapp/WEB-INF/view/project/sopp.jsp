@@ -85,5 +85,4 @@
 	</div>
 </div>
 
-<script src="/js/gwEstimate/gwEstimate.js"></script>
 <jsp:include page="../bottom.jsp"/>
