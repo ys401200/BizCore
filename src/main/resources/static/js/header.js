@@ -244,7 +244,6 @@ modal = {
 		} else {
 			ckeditor.config.readOnly = true;
 		}
-		window.setTimeout(setEditor, 500);
 	},
 	"clear": () => {
 		modal.headTitle.text("");
