@@ -238,22 +238,31 @@
 .sopp-expected{font-size:0.8rem;grid-area: expected;}
 .sopp-expected > div:nth-child(1){
 	display:grid;
-	grid-template-columns: 6rem auto 2rem;
+	grid-template-columns: 6rem 1rem auto 5rem;
 	margin-bottom:0.2rem;
 }
 .sopp-expected > div:nth-child(1) > div:nth-child(1){display:flex;justify-content: space-evenly;}
-.sopp-expected > div:nth-child(1) > div:nth-child(2):before{content: '₩';}
-.sopp-expected > div:nth-child(1) .edit-sopp-img{width:0.95rem;height:0.95rem;cursor:pointer;opacity:0.4;display:none;margin-top: -0.3rem;}
-.sopp-expected > div:nth-child(1):hover > .edit-sopp-img{display:block;}
+.sopp-expected > div:nth-child(1) .edit-sopp-img{width:0.95rem;height:0.95rem;cursor:pointer;opacity:0.4;display:none;margin: -0.3rem 0.3rem 0;}
+.sopp-expected > div:nth-child(1):hover .edit-sopp-img:nth-child(1){display:initial;}
+.sopp-expected > div:nth-child(1) > div:nth-child(4){text-align:right;}
+.sopp-expected > div:nth-child(1) > input{
+	border:none;
+	background-color:transparent;
+	border-radius: 0;
+	color:black;
+	font-size:0.8rem;
+}
 .sopp-expected > div:nth-child(2){
 	display:grid;
-	grid-template-columns: 60px auto 60px;
+	grid-template-columns: 60px auto 0 60px;
 	text-align:center;
 	gap:0.5rem;
 }
 .sopp-expected > div:nth-child(2) > div:nth-child(2){background-color: #7777ff;text-align: left;height:0.3em;margin-top: 0.6em;position:relative;}
 .sopp-expected > div:nth-child(2) > div:nth-child(2) > span:nth-child(1){display:inline-block;height:100%;background-color:#62a747;vertical-align: top;}
 .sopp-expected > div:nth-child(2) > div:nth-child(2) > span:nth-child(2){display:inline-block;position:absolute;height:0.8rem;width:0.8rem;background-color:#ff7676;top:-0.33rem;border-radius: 50%;;}
+.sopp-expected > div:nth-child(2) > input{width:0px;height:0px;background-color: transparent;border:0;}
+
 .sopp-progress{
 	grid-area: progress;
     text-align: center;
@@ -341,14 +350,28 @@
 }
 
 .sopp-desc{
-	display:flex;
-	align-items: center;
-	justify-content: center;
 	margin: 0 0.2rem 0.5rem;
 }
-.sopp-desc > div:nth-child(1){min-height: 3rem;max-height: 40rem;overflow-x: hidden;overflow-y: auto;}
-.sopp-desc > textarea{display:none;}
-.sopp-desc > div:nth-child(3){height: 10rem;overflow-x: hidden;overflow-y: auto;margin-top:2rem;border-color:#b5b2ff;}
+.sopp-desc > div:nth-child(1){display:grid;grid-template-columns: 2rem auto 10rem;margin: 0.4rem 0;padding: 0.4rem 0;border-bottom: 1px solid #b1d8ff;}
+.sopp-desc > div:nth-child(1) > div:nth-child(1){
+	width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 50%;
+    background-color: #2247b1;
+    margin: 0.55rem;
+}
+.sopp-desc > div:nth-child(1) > div:nth-child(2){
+font-size:1.5rem;
+}
+.sopp-desc > div:nth-child(1) > div:nth-child(3){
+	text-align: right;
+	padding: 0 1rem;
+}
+.sopp-desc > div:nth-child(1) > div:nth-child(3) .edit-sopp-img{width:1.3rem;height:1.3rem;cursor:pointer;opacity:0.4;display:none;    margin: 0 0.5rem;}
+.sopp-desc > div:nth-child(1):hover > div:nth-child(3) .edit-sopp-img:nth-child(1){display:initial;}
+.sopp-desc > div:nth-child(2){min-height: 12rem;max-height: 45rem;overflow-x: hidden;overflow-y: auto;}
+.sopp-desc > textarea:nth-child(3){display:none;}
+.sopp-desc > div:nth-child(4){height: 35rem;overflow-x: hidden;overflow-y: auto;margin:1rem 0;border-color:#b5b2ff;display:none;}
 
 .sopp-schedule{
 	display:grid;
@@ -456,8 +479,8 @@
 	background-color:#f8f8f8;
 }
 
-.sopp-estimate{
-	min-height: 80rem;;
+.sopp-estimate > div:nth-child(3){
+	margin-bottom:1rem;
 }
 
 .sopp-contract{
@@ -475,9 +498,9 @@
 /* ========== 일정 모달 적용 스타일 ========== */
 .schedule-detail{
 	display:grid;
-	grid-template-columns: 2fr 3fr;
+	grid-template-columns: 3fr 4fr;
 	grid-template-rows: 1fr;
-	gap:0 0.5rem;
+	gap:0 1rem;
 	margin:0.5rem;
 	width:60rem;
 	height:25rem;
@@ -487,7 +510,7 @@
 	display:grid;
 	grid-template-columns: 1fr;
 	grid-template-rows: 1.5rem calc(100% - 2rem);
-	gap:3rem 0.5rem;
+	gap:0.5rem;
 	grid-row: span 2;
 }
 .schedule-detail > div:nth-child(1) > input{ /* 제목 */
@@ -552,7 +575,7 @@
 }
 .schedule-detail > div:nth-child(2) > div:nth-child(4){
 	border-top:1px solid #b1d8ff;
-	border-bottom:1px solid #b1d8ff;
+	border-bottom:2px solid #5caeff;
 	padding:0.5rem 0;
 }
 .schedule-detail > div:nth-child(2) > div:nth-child(4) > div{
@@ -574,7 +597,7 @@
 }
 .schedule-detail > div:nth-child(2) > div:nth-child(5){
 	min-height:20.68rem;
-	border-bottom:1px solid #b1d8ff;
+	border-bottom:2px solid #5caeff;
 	overflow-x: hidden;
 	overflow-y: auto;
 	padding:0.3rem 0;

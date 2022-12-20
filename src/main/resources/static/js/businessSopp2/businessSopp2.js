@@ -1,7 +1,7 @@
-let R = {}, prepareSopp, scrolledSopp, moveToTarget, drawChat, inputtedComment, deleteChat, cancleEdit, editSopp, changeSopp, editSoppSearch, soppStageUp, clickedDateInCalendar, drawMiniCalendar, clickedDateOnMiniCalendar, clickedTimeOnMiniCalendar, setDateTimeInScheduleDetail;
+let R = {}, prepareSopp, scrolledSopp, moveToTarget, drawChat, inputtedComment, deleteChat, cancleEdit, editSopp, changeSopp, editSoppSearch, soppStageUp, clickedDateInCalendar, drawMiniCalendar, clickedDateOnMiniCalendar, clickedTimeOnMiniCalendar, setDateTimeInScheduleDetail, clickedScheduleDetailConfirm, inputExpectedSales, changeExpectedDate;
 
 $(document).ready(() => {
-	let href, no
+	let href, no;
 	init();
 
 	setTimeout(() => {
@@ -25,13 +25,14 @@ clickedDateInCalendar = (el) => {
 	sch.drawForRequestDetail(dt);
 } // End of clickedDateInCalendar()
 
-soppStageUp = () => {
-	href = location.href.split("/sopp2/");
-	no = href.length > 1 ? href[href.length - 1] : null;
-	no = no !== null ? no * 1 : null;
+soppStageUp = (v) => {
+	let href, no;
 
-	if (true) {
-		window.open("/gw/estimate/"+no+"", '', 'width:60%');
+	if (v === 4) {
+		href = location.href.split("/sopp2/");
+		no = href.length > 1 ? href[href.length - 1] : null;
+		no = no !== null ? no * 1 : null;
+		window.open("/gw/estimate/" + no, '', 'width:60%');
 		// gw/extimate/soppNo 넣으면 됨 
 
 	}
@@ -73,20 +74,47 @@ prepareSopp = (no) => {
 } // End of prepareSopp()
 
 // 편집 취소 함수
-cancleEdit = (el) => {
-	el.parentElement.parentElement.parentElement.className = "sopp-history";
-	el.parentElement.parentElement.nextElementSibling.innerHTML = "";
-	el.parentElement.previousSibling.innerHTML = "";
-} // End of cancleEdit()
+cancelEdit = (el) => {
+	let x, y;
+	if(el.dataset.n === "1"){
+		el.parentElement.parentElement.parentElement.className = "sopp-history";
+		el.parentElement.parentElement.nextElementSibling.innerHTML = "";
+		el.parentElement.previousSibling.innerHTML = "";
+	}else if(el.dataset.n === "2"){
+		document.getElementsByClassName("sopp-desc")[0].children[0].children[1].contentEditable = false;
+		document.getElementsByClassName("sopp-desc")[0].children[0].children[2].children[0].style.display = "initial";
+		document.getElementsByClassName("sopp-desc")[0].children[0].children[2].children[1].style.display = "none";
+		document.getElementsByClassName("sopp-desc")[0].children[0].children[2].children[2].style.display = "none";
+		document.getElementsByClassName("sopp-desc")[0].children[1].style.display = "block";
+		document.getElementsByClassName("sopp-desc")[0].children[3].style.display = "none";
+		document.getElementsByClassName("sopp-desc")[0].children[1].innerHTML = R.sopp.desc;
+		document.getElementsByClassName("sopp-desc")[0].children[0].children[1].innerText = R.sopp.title;
+	}else if(el.dataset.n === "3"){
+		document.getElementsByClassName("sopp-expected")[0].children[0].children[3].children[0].style = "";
+		document.getElementsByClassName("sopp-expected")[0].children[0].children[3].children[1].style = "";
+		document.getElementsByClassName("sopp-expected")[0].children[0].children[3].children[2].style = "";
+		document.getElementsByClassName("sopp-expected")[0].children[0].children[2].disabled = true;
+		document.getElementsByClassName("sopp-expected")[0].children[0].children[2].value = R.sopp.expactetSales.toLocaleString();
+		document.getElementsByClassName("sopp-expected")[0].children[1].children[3].removeAttribute("onclick");
+		x = R.sopp.expactedDate;
+		if (x !== undefined && x !== null && typeof x === "object" && x.constructor.name === "Date") {
+			y = "'" + (x.getFullYear() % 100) + ".";
+			y += ((x.getMonth() + 1) + ".");
+			y += x.getDate();
+			document.getElementsByClassName("sopp-expected")[0].children[1].children[3].innerText = y;
+		}
+	}
+	
+} // End of cancelEdit()
 
 editSopp = (n) => {
 	let x, y, dept, arr, el1, el2, cnt = document.getElementsByClassName("container")[0].children[1];
 	if (n === undefined || typeof n !== "string") return;
-	cnt.className = "sopp-search";
-	document.getElementsByClassName("container")[0].children[1].children[5].children[0].dataset.n = n;
 
 	switch (n) {
 		case "owner":
+			cnt.className = "sopp-search";
+			document.getElementsByClassName("container")[0].children[1].children[5].children[0].dataset.n = n;
 			cnt.children[4].style.padding = "0.7rem";
 			cnt.children[4].innerHTML = storage.dept.tree.getTreeHtml();
 			y = cnt.children[4].getElementsByTagName("label");
@@ -101,6 +129,8 @@ editSopp = (n) => {
 			break;
 
 		case "coWorker":
+			cnt.className = "sopp-search";
+			document.getElementsByClassName("container")[0].children[1].children[5].children[0].dataset.n = n;
 			cnt.children[4].style.padding = "0.7rem";
 			cnt.children[4].innerHTML = storage.dept.tree.getTreeHtml();
 			y = cnt.children[4].getElementsByTagName("label");
@@ -117,6 +147,8 @@ editSopp = (n) => {
 
 		case "partner":
 		case "customer":
+			cnt.className = "sopp-search";
+			document.getElementsByClassName("container")[0].children[1].children[5].children[0].dataset.n = n;
 			cnt.children[3].children[0].innerText = (n === "customer" ? "고객사" : "협력사") + " 변경";
 			cnt.children[3].children[1].children[1].style.display = "none";
 			cnt = cnt.children[4];
@@ -155,32 +187,91 @@ editSopp = (n) => {
 			}
 			cnt.nextElementSibling.children[0].focus();
 			break;
+		case "content":
+			if(R.sopp.owner === storage.my || R.projectOwner === storage.my)	document.getElementsByClassName("sopp-desc")[0].children[0].children[1].contentEditable = true;
+			document.getElementsByClassName("sopp-desc")[0].children[0].children[2].children[0].style.display = "none";
+			document.getElementsByClassName("sopp-desc")[0].children[0].children[2].children[1].style.display = "initial";
+			document.getElementsByClassName("sopp-desc")[0].children[0].children[2].children[2].style.display = "initial";
+			document.getElementsByClassName("sopp-desc")[0].children[1].style.display = "none";
+			document.getElementsByClassName("sopp-desc")[0].children[3].style.display = "block";
+			CKEDITOR.instances['sopp-desc-edit'].setData(R.sopp.desc);
+			if(R.sopp.owner === storage.my || R.projectOwner === storage.my)	document.getElementsByClassName("sopp-desc")[0].children[0].children[1].focus();
+			break;
+		case "expected":
+			document.getElementsByClassName("sopp-expected")[0].children[0].children[3].children[0].style.display="none";
+			document.getElementsByClassName("sopp-expected")[0].children[0].children[3].children[1].style.display="initial";
+			document.getElementsByClassName("sopp-expected")[0].children[0].children[3].children[2].style.display="initial";
+			document.getElementsByClassName("sopp-expected")[0].children[1].children[2].disabled = false;
+			document.getElementsByClassName("sopp-expected")[0].children[1].children[3].setAttribute("onclick", "this.previousElementSibling.showPicker()");
+			document.getElementsByClassName("sopp-expected")[0].children[0].children[2].disabled = false;
+			document.getElementsByClassName("sopp-expected")[0].children[0].children[2].focus();
+			break;
 	}
 } // End of editSopp()
 
 changeSopp = (n, v) => {
-	let x, y, arr, cnt = document.getElementsByClassName("container")[0].children[1];
+	let x, y, arr, change, cnt = document.getElementsByClassName("container")[0].children[1];
+	change = false;
 
 	switch (n) {
 		case "coWorker":
 			y = cnt.children[4].getElementsByTagName("label");
 			arr = [];
-			for (x = 0; x < y.length; x++)	if (y[x].getAttribute("for") !== null && y[x].getAttribute("for").substring(0, 4) === "emp:" && y[x].dataset.s === "1") arr.push(y[x].getAttribute("for").substring(4) * 1);
+			for (x = 0; x < y.length; x++)	if (y[x].getAttribute("for") !== null && y[x].getAttribute("for").substring(0, 4) === "emp:" && y[x].dataset.s === "1" && y[x].getAttribute("for").substring(4) * 1 !== R.sopp.owner) arr.push(y[x].getAttribute("for").substring(4) * 1);
 			cnt.children[3].children[1].children[1].removeAttribute("onclick");
 			R.sopp.coWorker = arr;
-			//R.sopp.update(n);
+			cnt = document.getElementsByClassName("sopp-info")[0].children[1].children[1].children[0];
+			y = "";
+			for(x = 0 ; x < arr.length ; x++)	y += ("<img src=\"/api/user/image/" + arr[x] + "\" class=\"profile-small\" />" + (storage.user[arr[x]] === undefined || storage.user[arr[x]].userName === undefined ? "" : storage.user[arr[x]].userName + " &nbsp;"));
+			cnt.innerHTML = y;
+			change = true;
 			break;
-
 		case "owner":
+			R.sopp[n] = v === -1 ? undefined : v;
+			document.getElementsByClassName("sopp-info")[0].children[0].children[1].children[0].innerHTML = "<img src=\"/api/user/image/" + v + "\" class=\"profile-small\" />" + (storage.user[v] === undefined || storage.user[v].userName === undefined ? "" : storage.user[v].userName + " ");
+			change = true;
+			break;
 		case "partner":
+			R.sopp[n] = v === -1 ? undefined : v;
+			document.getElementsByClassName("sopp-info")[0].children[3].children[1].children[0].innerHTML = v === -1 ? "<없음>" :  v !== undefined && storage.customer[v] !== undefined && storage.customer[v].name !== undefined ? storage.customer[v].name : "";
+			change = true;
+			break;
 		case "customer":
 			R.sopp[n] = v === -1 ? undefined : v;
-			//R.sopp.update(n);
+			document.getElementsByClassName("sopp-info")[0].children[2].children[1].children[0].innerHTML = storage.customer[v] !== undefined && storage.customer[v].name !== undefined ? storage.customer[v].name : "";
+			change = true;
+			break;
+		case "content":
+			R.sopp.title = document.getElementsByClassName("sopp-desc")[0].children[0].children[1].contentEditable = false;
+			document.getElementsByClassName("sopp-desc")[0].children[0].children[2].children[0].style.display = "initial";
+			document.getElementsByClassName("sopp-desc")[0].children[0].children[2].children[1].style.display = "none";
+			document.getElementsByClassName("sopp-desc")[0].children[0].children[2].children[2].style.display = "none";
+			document.getElementsByClassName("sopp-desc")[0].children[1].style.display = "block";
+			document.getElementsByClassName("sopp-desc")[0].children[3].style.display = "none";
+			x = CKEDITOR.instances['sopp-desc-edit'].getData();
+			CKEDITOR.instances['sopp-desc-edit'].setData("");
+			R.sopp.desc = x.replaceAll("\r", "").replaceAll("\n", "").replaceAll("\t", "");
+			document.getElementsByClassName("sopp-desc")[0].children[1].innerHTML = R.sopp.desc;
+			R.sopp.title = document.getElementsByClassName("sopp-desc")[0].children[0].children[1].innerText;
+			document.getElementsByClassName("content-title")[0].children[0].innerHTML = "영업기회 : " + R.sopp.title;
+			change = true;
+			break;
+		case "expected":
+			document.getElementsByClassName("sopp-expected")[0].children[0].children[3].children[0].style = "";
+			document.getElementsByClassName("sopp-expected")[0].children[0].children[3].children[1].style = "";
+			document.getElementsByClassName("sopp-expected")[0].children[0].children[3].children[2].style = "";
+			document.getElementsByClassName("sopp-expected")[0].children[0].children[2].disabled = true;
+			x = document.getElementsByClassName("sopp-expected")[0].children[0].children[2].value;
+			x.replaceAll(",", "") * 1;
+			if(!isNaN(x))	R.sopp.expactetSales = x;
+			x = document.getElementsByClassName("sopp-expected")[0].children[1].children[2].value;
+			if(x !== "")	R.sopp.expactedDate = new Date(x);
+			change = true;
 			break;
 	}
-
 	document.getElementsByClassName("container")[0].children[1].className = "sopp-history";
 	document.getElementsByClassName("container")[0].children[1].children[4].innerHTML = "";
+	if(change = true)	R.sopp.update();
 } // End of changeSopp()
 
 editSoppSearch = (el) => {
@@ -481,6 +572,21 @@ class Sopp2 {
 		// 제목 설정
 		cnt = document.getElementsByClassName("content-title")[0].children[0];
 		cnt.innerText = "영업기회 : " + this.title;
+		cnt = document.getElementsByClassName("sopp-desc")[0].children[0].children[1];
+		cnt.innerText = this.title;
+
+		// 본문 설정
+		cnt = document.getElementsByClassName("sopp-desc")[0].children[1];
+		cnt.innerHTML = this.desc;
+
+		// 본문 에디터 설정
+		ckeditor.config.readOnly = false;
+		CKEDITOR.replace('sopp-desc-edit',
+			{height:496,
+			contentsCss:['http://cdn.ckeditor.com/4.20.1/full-all/contents.css',
+					'https://ckeditor.com/docs/ckeditor4/4.20.1/examples/assets/css/classic.css'],
+			removeButtons:"Source,Save,Templates,NewPage,Preview,Print,Cut,Copy,Paste,PasteText,PasteFromWord,Find,Replace,SelectAll,Scayt,ImageButton,HiddenField,CopyFormatting,RemoveFormat,Outdent,Indent,Blockquote,CreateDiv,BidiLtr,BidiRtl,Language,Link,Unlink,Anchor,Image,Flash,HorizontalRule,Smiley,SpecialChar,PageBreak,Iframe,Maximize,ShowBlocks,About,Button,Select,Textarea,TextField,Radio,Checkbox,Form"
+		});
 
 		// 관리자
 		cnt = document.getElementsByClassName("sopp-info")[0].children[0].children[1].children[0];
@@ -489,17 +595,21 @@ class Sopp2 {
 		if (storage.user[R.sopp.owner] !== undefined && storage.user[R.sopp.owner].userName !== undefined) name = storage.user[R.sopp.owner].userName;
 		html += name;
 		cnt.innerHTML = html;
+		// 관리자와 프로젝트 오너만 관리자를 변경할 수 있도록 함
+		if(R.sopp.owner !== storage.my && R.projectOwner !== storage.my)	document.getElementsByClassName("sopp-info")[0].children[0].children[1].children[1].style.display = "none";
 
 		// 담당자
-		cnt = cnt = document.getElementsByClassName("sopp-info")[0].children[1].children[1].children[0];
+		cnt = document.getElementsByClassName("sopp-info")[0].children[1].children[1].children[0];
 		html = "";
 		if (R.sopp.coWorker !== undefined && R.sopp.coWorker.constructor.name === "Array") for (x = 0; x < R.sopp.coWorker.length; x++) {
 			name = "...";
 			html += ("<img src=\"/api/user/image/" + R.sopp.coWorker[x] + "\" class=\"profile-small\" />");
 			if (storage.user[R.sopp.coWorker[x]] !== undefined && storage.user[R.sopp.coWorker[x]].userName !== undefined) name = storage.user[R.sopp.coWorker[x]].userName;
-			html += (name + " ");
+			html += (name + " &nbsp;");
 		}
 		cnt.innerHTML = html;
+		// 관리자와 프로젝트 오너만 담당자를 변경할 수 있도록 함
+		if(R.sopp.owner !== storage.my && R.projectOwner !== storage.my)	document.getElementsByClassName("sopp-info")[0].children[1].children[1].children[1].style.display = "none";
 
 		// 고객사
 		cnt = document.getElementsByClassName("sopp-info")[0].children[2].children[1].children[0];
@@ -508,6 +618,8 @@ class Sopp2 {
 		if (storage.customer[R.sopp.customer] !== undefined && storage.customer[R.sopp.customer].name !== undefined) name = storage.customer[R.sopp.customer].name;
 		html += name;
 		cnt.innerHTML = html;
+		// 관리자와 프로젝트 오너만 고객사를 변경할 수 있도록 함
+		if(R.sopp.owner !== storage.my && R.projectOwner !== storage.my)	document.getElementsByClassName("sopp-info")[0].children[2].children[1].children[1].style.display = "none";
 
 		// 협력사
 		cnt = document.getElementsByClassName("sopp-info")[0].children[3].children[1].children[0];
@@ -517,13 +629,15 @@ class Sopp2 {
 		else if (R.sopp.partner != undefined && typeof R.sopp.partner === "number") if (storage.customer[R.sopp.partner] !== undefined && storage.customer[R.sopp.partner].name !== undefined) name = storage.customer[R.sopp.partner].name;
 		html += name;
 		cnt.innerHTML = html;
+		// 관리자와 프로젝트 오너만 협력사를 변경할 수 있도록 함
+		if(R.sopp.owner !== storage.my && R.projectOwner !== storage.my)	document.getElementsByClassName("sopp-info")[0].children[3].children[1].children[1].style.display = "none";
 
 		// ============= 예상매출
 		// 예상매출액
-		cnt = document.getElementsByClassName("sopp-expected")[0].children[0].children[1];
+		cnt = document.getElementsByClassName("sopp-expected")[0].children[0].children[2];
 		x = 0;
 		if (R.sopp.expactetSales !== undefined && R.sopp.expactetSales !== null && typeof R.sopp.expactetSales === "number") x = R.sopp.expactetSales.toLocaleString();
-		cnt.innerText = x;
+		cnt.value = x;
 		// 시작일
 		cnt = document.getElementsByClassName("sopp-expected")[0].children[1].children[0];
 		x = R.sopp.created;
@@ -534,7 +648,7 @@ class Sopp2 {
 		// 예상매출일
 		x = R.sopp.expactedDate;
 		if (x !== undefined && x !== null && typeof x === "object" && x.constructor.name === "Date") {
-			cnt = document.getElementsByClassName("sopp-expected")[0].children[1].children[2];
+			cnt = document.getElementsByClassName("sopp-expected")[0].children[1].children[3];
 			y = "'" + (x.getFullYear() % 100) + ".";
 			y += ((x.getMonth() + 1) + ".");
 			y += x.getDate();
@@ -548,6 +662,8 @@ class Sopp2 {
 			cnt[0].style.width = x + "%";
 			cnt[1].style.left = "calc(" + x + "% - 0.3rem)";
 		}
+		// 관리자와 프로젝트 오너만 예상매출액/일를 변경할 수 있도록 함
+		if(R.sopp.owner !== storage.my && R.projectOwner !== storage.my)	document.getElementsByClassName("sopp-expected")[0].children[0].children[2].style.display = "none";
 
 		// 스테이지바
 		html = "";
@@ -788,7 +904,7 @@ class Schedule{
 		// 본문 및 제목 엘리먼트 생성 및 부착
 		el = document.createElement("div");
 		cnt.appendChild(el);
-		html = "<input /><textarea id=\"schedule-detail-content\"></textarea>";
+		html = "<input placeholder=\"제목\" /><textarea name=\"schedule-detail-content\"></textarea>";
 		el.innerHTML = html;
 
 		// 날짜/시간 및 상세정보 컨테이너 생성 및 부착
@@ -867,9 +983,19 @@ class Schedule{
 
 		// 컨텐트에 웹에디터 부착
 		ckeditor.config.readOnly = false;
-		CKEDITOR.inline("schedule-detail-content");
-		cnt.children[0].children[2].style.maxHeight = "20.5rem";
-		cnt.children[0].children[2].style.padding = "0.5rem";
+		CKEDITOR.replace("schedule-detail-content",
+			{height:245,
+			contentsCss:['http://cdn.ckeditor.com/4.20.1/full-all/contents.css',
+					'https://ckeditor.com/docs/ckeditor4/4.20.1/examples/assets/css/classic.css'],
+			removeButtons:"Source,Save,Templates,NewPage,Preview,Print,Cut,Copy,Paste,PasteText,PasteFromWord,Find,Replace,SelectAll,Scayt,ImageButton,HiddenField,CopyFormatting,RemoveFormat,Outdent,Indent,Blockquote,CreateDiv,BidiLtr,BidiRtl,Language,Link,Unlink,Anchor,Image,Flash,HorizontalRule,Smiley,SpecialChar,PageBreak,Iframe,Maximize,ShowBlocks,About,Button,Select,Textarea,TextField,Radio,Checkbox,Form,Format,Styles"
+		});
+		//cnt.children[0].children[2].style.maxHeight = "20.5rem";
+		//cnt.children[0].children[2].style.padding = "0.5rem";
+
+		// 모달 버튼 설정
+		modal.close[0].onclick = () => {CKEDITOR.instances['schedule-detail-content'].destroy();modal.hide();};
+		modal.confirm[0].onclick = clickedScheduleDetailConfirm
+
 
 		return;
 	}
@@ -1027,3 +1153,28 @@ setDateTimeInScheduleDetail = () => {
 	}
 	cnt.children[1].children[0].innerHTML = str;
 } // End of setDateTimeInScheduleDetail()
+
+inputExpectedSales = (el) => {
+	let v;
+	v = el.value;
+	v = v.replaceAll(/[^0-9]/g, "");
+	v = v * 1;
+	el.value = v.toLocaleString();
+}// End of inputExpectedSales()
+
+changeExpectedDate = (el) => {
+	let x, yy, mm, dd, v = el.value;
+	x = v.split("-");
+	yy = (x[0] * 1) % 100;
+	mm = x[1] * 1;
+	dd = x[2] * 1;
+	x = "'" + yy + "." + mm + "." + dd;
+	el.nextElementSibling.innerText = x;
+} // End of changeExpectedDate()
+
+clickedScheduleDetailConfirm = () => {
+
+
+	// 모달 내 에디터 제거
+	CKEDITOR.instances['schedule-detail-content'].destroy();
+} // End of clickedScheduleDetailConfirm()

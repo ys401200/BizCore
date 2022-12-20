@@ -12,7 +12,7 @@
                 <div><img src="/images/sopp2/history.png" /> 진행상황</div>
                 <div></div>
                 <div><input onkeyup="inputtedComment(this, event)" /><button onclick="inputtedComment(this)">⏎</button></div>
-                <div><div>관리자 변경</div><div><img onclick="cancleEdit(this)" src="/images/sopp2/circle_close.png" /><img src="/images/sopp2/confirm_circle.png" /></div></div>
+                <div><div>관리자 변경</div><div><img onclick="cancelEdit(this)" src="/images/sopp2/circle_close.png" data-n="1" /><img src="/images/sopp2/confirm_circle.png" /></div></div>
                 <div></div>
                 <div><input onkeyup="inputtedComment(this, event)" /></div>
             </div>
@@ -25,10 +25,11 @@
                 </div>
                 <div class="sopp-sticky">
                     <div class="sopp-expected">
-                        <div><div><T>예</T><T>상</T><T>매</T><T>출</T><T>:</T></div><div></div><img onclick="editSopp('expected')" class="edit-sopp-img" src="/images/sopp2/edit_square.png" /></div>
+                        <div><div><T>예</T><T>상</T><T>매</T><T>출</T><T>:</T></div><span>₩</span><input onkeyup="inputExpectedSales(this)" disabled /><div><img onclick="editSopp('expected')" class="edit-sopp-img" src="/images/sopp2/edit_square.png" /><img onclick="cancelEdit(this)" class="edit-sopp-img" src="/images/sopp2/circle_close.png" data-n="3"/><img onclick="changeSopp('expected')" class="edit-sopp-img" src="/images/sopp2/confirm_circle.png" /></div></div>
                         <div>
                             <div></div>
                             <div><span></span><span></span></div>
+                            <input type="date" disabled onchange="changeExpectedDate(this)" />
                             <div></div>
                         </div>
                     </div>
@@ -42,7 +43,11 @@
                         <div onclick="moveToTarget(this)" data-target="sopp-attached" class="sopp-tab">관련자료</div>
                     </div>
                 </div>
-                <div class="sopp-desc"><div></div><textarea id="sopp-desc-edit"></textarea></div>
+                <div class="sopp-desc">
+                    <div><div></div><div>영업기회 제목</div><div><img onclick="editSopp('content')" class="edit-sopp-img" src="/images/sopp2/edit_square.png" /><img onclick="cancelEdit(this)" class="edit-sopp-img" src="/images/sopp2/circle_close.png" data-n="2" /><img onclick="changeSopp('content')" class="edit-sopp-img" src="/images/sopp2/confirm_circle.png" /></div></div>
+                    <div>본문</div>
+                    <textarea name="sopp-desc-edit"></textarea>
+                </div>
                 <div class="sopp-sub-title"><div>일 정</div><div></div></div>
 
 
