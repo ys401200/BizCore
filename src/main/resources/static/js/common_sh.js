@@ -275,58 +275,66 @@ class Contract {
         ctrtTop.appendChild(el);
 
         // 계약 진척도 - 판매보고
-        el = document.createElement("bar");
-        el.className = "contract-progress"
-        ctrtTop.appendChild(el);
+		el = document.createElement("bar");
+		el.className = "contract-progress"
+		ctrtTop.appendChild(el);
 
-        el2 = document.createElement("div");
-        el.append(el2);
+		el2 = document.createElement("div");
+		el.append(el2);
 
-        if (this.appLine.length > 0 && this.appLine[this.appLine.length - 1].rejected != null) {
-            el2.className = "contract-fail";
-        } else if (this.appLine.length > 0 && this.appLine[this.appLine.length - 1].approved != null) {
-            el2.className = "contract-done";
-        } else {
-            el2.className = "contract-doing";
-        }
-
-        el2.innerText = "판매보고";
+		if (this.appLine.length > 0 && this.appLine[this.appLine.length - 1].rejected != null) {
+			el2.className = "contract-fail";
+		} else if (this.appLine.length > 0 && this.appLine[this.appLine.length - 1].approved != null) {
+			el2.className = "contract-done";
+		} else {
+			el2.className = "contract-doing";
+		}
 
 
-        // 계약 진척도 - 계약서 
-        el2 = document.createElement("div");
-        el.append(el2);
-
-        if (this.attached.length != 0) {
-            el2.className = "contract-done";
-        } else {
-            if (storage.reportDetailData != undefined) {
-                el2.className = "contract-doing";
-            }
-        }
-        el2.innerText = "계약";
+		el2.innerText = "판매보고";
 
 
-        // 계약 진척도 - 납품 
-        el2 = document.createElement("div");
-        el.append(el2);
-        if (this.supplied == 0 && this.attached.length > 0) {
-            el2.className = "contract-doing";
-        } else if (this.attached.length > 0 && this.supplied != 0) {
-            el2.className = "contract-done";
-        }
-        el2.innerText = "납품";
+		// 계약 진척도 - 계약서 
+		el2 = document.createElement("div");
+		el.append(el2);
+
+		if (this.attached.length != 0) {
+			el2.className = "contract-done";
+		} else {
+			if ($(".contract-progress").children()[0].className == "contract-done") {
+				el2.className = "contract-doing";
+			}
+		}
+		el2.innerText = "계약";
 
 
-        // 계약 진척도 - 검수
-        el2 = document.createElement("div");
-        el.append(el2);
-        if (this.supplied != 0 && this.approved == 0) {
-            el2.className = "contract-doing";
-        } else if (this.supplied != 0 && this.approved != 0) {
-            el2.className = "contract-done";
-        }
-        el2.innerText = "검수";
+		// 계약 진척도 - 납품 
+		el2 = document.createElement("div");
+		el.append(el2);
+		if (this.supplied == 0 && this.attached.length > 0) {
+			el2.className = "contract-doing";
+		} else if (this.attached.length > 0 && this.supplied != 0) {
+			el2.className = "contract-done";
+		}
+		el2.innerText = "납품";
+
+
+		// 계약 진척도 - 검수
+		el2 = document.createElement("div");
+		el.append(el2);
+		if (this.supplied != 0 && this.approved == 0) {
+			el2.className = "contract-doing";
+		} else if (this.supplied != 0 && this.approved != 0) {
+			el2.className = "contract-done";
+		}
+		el2.innerText = "검수";
+
+		el = document.createElement("div");
+		ctrtTop.appendChild(el);
+		el.className = "crudBtns";
+		el.innerHTML = "<Button data-detail='" + this.no + "'onclick='this.parentElement.parentElement.parentElement.remove()'><i class='fa-solid fa-xmark'></i></Button>";
+
+
 
         // el = document.createElement("div");
         // ctrtTop.appendChild(el);

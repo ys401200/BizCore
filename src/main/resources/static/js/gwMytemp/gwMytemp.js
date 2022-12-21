@@ -63,6 +63,7 @@ function errorList() {
 }
 
 function drawMyDraft() {
+  $(".listRange").show();
   let container,
     result,
     jsonData,
@@ -211,7 +212,7 @@ function detailView(obj) {
 function getDetailView() {
   let formId = storage.reportDetailData.formId;
   let testForm = storage.reportDetailData.doc;
-  console.log(testForm);
+  $(".listRange").hide();
 
   let detailHtml =
     "<div class='listPageDiv'><div class='mainBtnDiv crudBtns'><button type='button' onclick='showList()'>목록보기</button><button type='button' onclick='reWriteTemp()'>이어서 작성</button><button type='button' onclick='deleteTemp()'>삭제하기</button></div>" +

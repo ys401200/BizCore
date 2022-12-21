@@ -44,15 +44,15 @@ select:read-only, input[type="text"]:read-only, input[type="date"]:read-only {
   text-align: center;
 }
 
-.container .listPageDiv > div {
+/* .container .listPageDiv > div {
   margin: 0 auto;
   width: 99%;
-}
+} */
 
-.container .listPageDiv > div:last-of-type {
+/* .container .listPageDiv > div:last-of-type {
   width: auto;
   margin: 1em;
-}
+} */
 
 /* 체크박스만 선택  */
 .container .listPageDiv .listDiv div div:last-child {

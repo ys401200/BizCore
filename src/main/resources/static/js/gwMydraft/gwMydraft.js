@@ -674,7 +674,7 @@ function returnReport() {
         if (result.result == "ok") {
           alert("회수 성공");
         } else {
-          alert("에러");
+          console.log(result.msg);
         }
       },
     });
