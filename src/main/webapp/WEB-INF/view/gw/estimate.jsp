@@ -168,16 +168,26 @@
 					}
 
 
-
-
-
 					.detailDiv,
 					.detailcontentDiv {
 						display: grid;
-						grid-template-columns: 5% 10% 10% 12% 10% 5% 10% 8% 10% 10% 10%;
+						grid-template-columns: 5% 10% 10% 12% 10% 5% 10% 8% 10% 15% 5%;
 						text-align: center;
 						border-left: 1px solid black;
 					}
+
+
+
+					.detailDivHide {
+						border-left: 1px solid black;
+						grid-template-columns: 5% 10% 10% 12% 10% 5% 10% 8% 10% 20%
+					}
+
+					.detailcontentHide {
+						grid-template-columns: 5% 10% 10% 12% 10% 5% 10% 8% 10% 20%
+					}
+
+
 
 					.detailDivSche {
 						display: grid;
@@ -564,17 +574,16 @@
 									placeholder="원" style="text-align:right">
 							</div>
 
-
-
-
-
-
-
-
 						</div>
 
 
 						<div class="insertedData">
+							<div class="btnDiv"><label><input type="radio" name="setType" value="1101"
+										checked>매입</label><label><input type="radio" name="setType"
+										value="1102">매출</label>
+								<button class=" insertbtn" onclick="insertData()">추가</button><button class="deletebtn"
+									onclick="deleteData()">삭제</button>
+							</div>
 							<div class="subTitle">매입매출내역</div>
 							<div class="detailDiv">
 								<div class="datailTitle">구분</div>
@@ -586,8 +595,10 @@
 								<div class="datailTitle">공급가액</div>
 								<div class="datailTitle">부가세액</div>
 								<div class="datailTitle">금액</div>
-								<div class="datailTitle">적요</div>
-								<div class="datailTitlelast">승인번호</div>
+								<div class="datailTitlelast">적요</div>
+								<div class="datailTitlebox">
+									<input type="checkbox" class="checkAll" />
+								</div>
 
 							</div>
 						</div>
@@ -648,8 +659,6 @@
 						</div>
 
 
-
-
 						<div class="soppFileContainer">
 							<label style="border-bottom: 1px solid black; border-right: 1px solid black;">첨부파일</label>
 							<div style="border-bottom: 1px solid black; border-right: 1px solid black;">
@@ -658,17 +667,12 @@
 						</div>
 
 
-
-
-
 					</div>
 					<div class="list_comment" data-tag="writeTag">-이하 여백-</div>
 
 
 					<script>
-
-						$(".inputsAuto").prop("disabled", "true");
-
+					
 						$(".checkAll").change(function () {
 							if ($(".checkAll").prop("checked") == true) {
 								$(".detailBox").prop("checked", true);
@@ -677,27 +681,33 @@
 							}
 						});
 
-						$(".detailDiv").addClass("detailDivHide");
+
 
 						function toReadMode() {
 							$("select").attr("disabled", "disabled");
 							$(".list_comment").attr("data-tag", "readTag");
+							$(".detailDiv").addClass("detailDivHide");
+							$(".detailcontentDiv").addClass("detailcontentHide");
+							$(".datailTitlebox").hide();
+							$(".detailcontentbox").hide();
 							$(".inputs").attr("readonly", true);
 							$(".inputsAuto").attr("readonly", true);
 							$(".datailTitlebox").hide();
-							$("#TRS").prop("disabled", true);
-							$("#BUY").prop("disabled", true);
 							$(".btnDiv").hide();
 						}
 
 						function toWriteMode() {
 							$("select").attr("disabled", "false");
 							$(".list_comment").attr("data-tag", "writeTag");
+							$(".detailDiv").removeClass("detailDivHide");
+							$(".detailcontentDiv").removeClass("detailcontentHide");
+							$(".datailTitlebox").show();
+							$(".detailcontentbox").show();
 							$(".inputs").attr("readonly", false);
-							$("#TRS").prop("disabled", false);
-							$("#BUY").prop("disabled", false);
 							$(".btnDiv").show();
 						}
+
+						
 
 						function insertData() {
 							let val = $("input[name=setType]:checked").val();
@@ -721,12 +731,12 @@
 								"amount",
 								"tax",
 								"total",
-								"remark",
+								"remark"
 							];
 							let reportForm = "SalesReport";
 
 							for (let i = 0; i < title.length; i++) {
-								if (i < title.length - 1) {
+							
 									if (i == 0) {
 										if (val == 1101) {
 											dataNoneForm +=
@@ -786,13 +796,7 @@
 											title[i] +
 											"'/>";
 									}
-								} else
-									dataNoneForm +=
-										"<input type='text' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs  doc_Form_" +
-										reportForm +
-										"_" +
-										title[i] +
-										"'/>";
+								
 							}
 
 
@@ -809,7 +813,8 @@
 									parent.remove();
 								}
 							}
-							getTotalCount(obj);
+							
+							getTotalCount();
 						}
 
 						function setNum(obj) {
@@ -825,19 +830,19 @@
 								let idType = name.split("_");
 								idType = idType[3];
 								if (idType == "price") {
-
-
 									let quantity = $(obj).next();
 									let amount = quantity.next();
 									let tax = amount.next();
 									let total = tax.next();
 									quantity.val(0);
 									amount.val((obj.value.replace(/,/g, "") * quantity.val().replace(/,/g, "")).toLocaleString());
+									amount.attr("data-detail", amount.val());
 									tax.val(Math.round((obj.value.replace(/,/g, "") * quantity.val().replace(/,/g, "") * 0.1)).toLocaleString());
+									tax.attr("data-detail", tax.val());
 									total.val(Number(amount.val().replace(/,/g, "")) + Number(tax.val().replace(/,/g, ""))).toLocaleString();
+									total.attr("data-detail", total.val());
 
 								} else if (idType == "quantity") {
-
 									let price = $(obj).prev();
 									let amount = $(obj).next();
 									let tax = amount.next();
@@ -868,6 +873,7 @@
 									price.attr("data-detail", price.val());
 									quantity.val(1);
 									quantity.attr("data-detail", quantity.val());
+
 								} else if (idType == "tax") {
 									let tax = Number(obj.value.replace(/,/g, ""));
 									let total = $(obj).next();
@@ -876,7 +882,7 @@
 									total.attr("data-detail", total.val());
 								}
 
-								getTotalCount(obj);
+								getTotalCount();
 
 							}
 						}
@@ -898,25 +904,28 @@
 						}
 
 
-						function getTotalCount(obj) {
-							let parent = obj.parentElement.parentElement.className.split(" ")[1];
-							if (parent == "inSum") {
-								let totalCount = Number(0);
+						function getTotalCount() {
+					
+					
+								let intotalCount = Number(0);
 								for (let i = 0; i < $(".inTotal").length; i++) {
 									if ($(".inTotal")[i].dataset.detail != undefined) {
-										totalCount += Number($(".inTotal")[i].dataset.detail.replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", ""));
+										intotalCount += Number($(".inTotal")[i].dataset.detail.replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", ""));
 									} else {
-										totalCount += 0;
+										intotalCount += 0;
 									}
 								}
 
-								$(".inSumAllTotal").val(Number(totalCount).toLocaleString() + "원");
-								$(".inSumAllTotal").attr("data-detail", Number(totalCount).toLocaleString() + "원");
+								$(".inSumAllTotal").val(Number(intotalCount).toLocaleString() + "원");
+								$(".inSumAllTotal").attr("data-detail", Number(intotalCount).toLocaleString() + "원");
+								$(".inAmountTotal").val(Number(intotalCount).toLocaleString() + "원");
+								$(".inAmountTotal").attr("data-detail", Number(intotalCount).toLocaleString() + "원");
 
-							} else {
+
+
 								let totalCount = Number(0);
 								for (let i = 0; i < $(".outTotal").length; i++) {
-									if ($(".inTotal")[i].dataset.detail != undefined) {
+									if ($(".outTotal")[i].dataset.detail != undefined) {
 										totalCount += Number($(".outTotal")[i].dataset.detail.replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", ""));
 									} else {
 										totalCount += 0;
@@ -926,10 +935,14 @@
 
 								$(".outSumAllTotal").val(Number(totalCount).toLocaleString() + "원");
 								$(".outSumAllTotal").attr("data-detail", Number(totalCount).toLocaleString() + "원");
+								$(".outAmountTotal").val(Number(totalCount).toLocaleString() + "원");
+								$(".outAmountTotal").attr("data-detail", Number(totalCount).toLocaleString() + "원");
 
 
 
-							}
+						
+
+
 							let profit, profitper;
 							if ($(".outSumAllTotal").val() != "" && $(".inSumAllTotal").val() != "") {
 								profit = Number($(".outSumAllTotal").val().split("원")[0].replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "")) - Number($(".inSumAllTotal").val().split("원")[0].replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", ""));

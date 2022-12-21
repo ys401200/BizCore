@@ -5,6 +5,10 @@
 
 }
 
+.crudBtns {
+  float: none;
+}
+
 .ContentDiv .paddingBottom {
   border-bottom: 1px solid black;
   padding-bottom: 0.5em;
@@ -86,11 +90,15 @@
 .selector {
   width: 80%;
   height: max-content;
-  display: grid;
+  /* display: grid; */
   padding-left: 1em;
 
 }
 
+/* .selector:nth-child(4) {
+  display: inline;
+}
+ */
 
 .ContentDiv>div:nth-child(n+1):nth-child(-n+2) {
   margin-bottom: 20px;
@@ -572,6 +580,3 @@ input {
 ::-webkit-scrollbar-thumb:hover {
   background: rgb(81, 113, 137);
 }
-
-
-

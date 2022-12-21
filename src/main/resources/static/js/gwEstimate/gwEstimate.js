@@ -1,10 +1,5 @@
-
-
-
-
 init();
 prepareForm();
-
 
 function prepareForm() {
   let aesKey, aesIv;
@@ -24,8 +19,8 @@ function prepareForm() {
   getItem();
   getNextContNo();
 
-} // End of prepare()
 
+} // End of prepare()
 
 
 function getSoppDetailData() {
@@ -61,7 +56,6 @@ function getSoppDetailData() {
 
 
 }
-
 
 
 function getItem() {
@@ -240,7 +234,8 @@ function setEstData() {
     outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' data-detail='" + vat.toLocaleString() + "' value='" + vat.toLocaleString() + "'  class='outTax inputs  doc_Form_SalesReport_tax'></input>"
     outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' oninput='setNum(this)' data-detail='' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' data-detail='" + ((items[i].price * items[i].quantity) + vat).toLocaleString() + "' value='" + ((items[i].price * items[i].quantity) + vat).toLocaleString() + "' class='outTotal inputs doc_Form_SalesReport_total'></input>"
     outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='' onkeyup='this.dataset.detail=this.value' class='inputs doc_Form_SalesReport_remark'  data-detail='" + items[i].remark + "' value='" + items[i].remark + "'></input>"
-    outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='' onkeyup='this.dataset.detail=this.value' class='inputs doc_Form_SalesReport_vatSerial' data-detail='' value=''></input></div>"
+    // outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'   data-detail='' onkeyup='this.dataset.detail=this.value' class='inputs doc_Form_SalesReport_vatSerial' data-detail='' value=''></input>"
+    outHtml += "<div class='detailcontentbox'><input type='checkbox' class='detailBox'></div></div>";
     outSumTarget.html(outHtml);
     // }
 
@@ -318,12 +313,12 @@ function setEstData() {
   // }
 
 
-  $(".inputs").attr("disabled", "disabled");
+  // $(".inputs").attr("disabled", "disabled");
 
   let inputsArrs = target.getElementsByTagName("input");
   for (let i = 0; i < inputsArrs.length; i++) {
     let tt = inputsArrs[i]
-    $(tt).attr("disabled", "disabled");
+    // $(tt).attr("disabled", "disabled");
     $(tt).css("color", "black");
   }
   let selectArrs = target.getElementsByTagName("select");
@@ -332,6 +327,9 @@ function setEstData() {
     $(tt).css("color", "black");
   }
 
+
+  toReadMode();
+  $("select[name='saveLineSelect']").attr("disabled",false);
 }
 
 
@@ -558,11 +556,6 @@ function reportInsert() {
   ctrtData = JSON.stringify(ctrtData);
   console.log(ctrtData + "데이터 타입 확인하기");
   ctrtData = cipher.encAes(ctrtData);
-
-
-
-
-
 
 
   let target = $(".mainDiv")[0];
@@ -1011,8 +1004,6 @@ function createLine() {
 
 
 }
-
-
 
 
 function getNextContNo() {

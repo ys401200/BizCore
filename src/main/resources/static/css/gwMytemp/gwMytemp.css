@@ -163,3 +163,9 @@ input {
   margin: 0;
   float: none;
 }
+
+
+/* 임시로 고정함  */
+.detailReport {
+  width: 1700px;
+}

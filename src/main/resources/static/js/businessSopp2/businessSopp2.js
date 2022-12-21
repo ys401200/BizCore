@@ -28,7 +28,7 @@ clickedDateInCalendar = (el) => {
 soppStageUp = (v) => {
 	let href, no;
 
-	if (v === 4) {
+	if (v === 0) {
 		href = location.href.split("/sopp2/");
 		no = href.length > 1 ? href[href.length - 1] : null;
 		no = no !== null ? no * 1 : null;

@@ -242,6 +242,7 @@ function waitDetailView(obj) {
         getDetailView();
       } else {
         alert("문서 정보를 가져오는 데 실패했습니다");
+        location.href = "/gw/wait";
       }
     },
   });

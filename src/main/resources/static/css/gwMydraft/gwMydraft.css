@@ -59,6 +59,12 @@ input[type="date"]:read-only {
   float: right;
 } */
 
+
+
+.detailReport {
+  width: 1700px;
+}
+
 .container .listPageDiv .pageContainer .paging_cell_current {
   background-color: #eaeff3;
   border: 1px solid #507698;

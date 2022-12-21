@@ -303,3 +303,8 @@
 .close-wrap>button {
 	margin: 0.3em 0.5em;
 }
+
+/* 임시로 고정함  */
+.detailReport {
+	width: 1700px;
+  }
