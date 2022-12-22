@@ -21,6 +21,7 @@ import kr.co.bizcore.v1.svc.ManageSvc;
 import kr.co.bizcore.v1.svc.NotesService;
 import kr.co.bizcore.v1.svc.ProcureService;
 import kr.co.bizcore.v1.svc.SalesService;
+import kr.co.bizcore.v1.svc.Schedule2Svc;
 import kr.co.bizcore.v1.svc.ScheduleSvc;
 import kr.co.bizcore.v1.svc.SoppService;
 import kr.co.bizcore.v1.svc.ProjectService;
@@ -91,6 +92,9 @@ public abstract class Ctrl {
 
     @Autowired 
     protected NotesService notes;
+
+    @Autowired
+    protected Schedule2Svc schedule2Svc;
 
     public int strToInt(String str){
         int result = -1;

@@ -1,9 +1,5 @@
 package kr.co.bizcore.v1.svc;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.security.spec.X509EncodedKeySpec;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,14 +10,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kr.co.bizcore.v1.domain.DocForm;
-import kr.co.bizcore.v1.mapper.GwMapper;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -29,6 +24,9 @@ import lombok.extern.slf4j.Slf4j;
 public class GwService extends Svc {
 
     private static final Logger logger = LoggerFactory.getLogger(GwService.class);
+
+    @Autowired 
+    private NotesService notes;
 
     // 양식 목록 전달
     public String getForms() {
