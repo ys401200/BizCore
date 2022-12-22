@@ -471,7 +471,9 @@ class Contract {
             el = document.createElement("div");
             cnt.children[cnt.children.length - 1].children[1].appendChild(el);
             el.innerText = "(" + this.docNo + ")";
-            el.setAttribute("onclick", "openPreviewTab()");
+            el.addEventListener("click", () => {
+				window.open("/business/contract/popup/" + storage.reportDetailData.docNo, "미리보기", "width :210mm");
+			})
             el.style.color = "blue";
             el.style.cursor = "pointer";
 
@@ -559,138 +561,162 @@ class Contract {
 
 
     drawSuppliedData() {
-        $(".contract-progress").children()[1].className = "contract-done";
-        $(".contract-progress").children()[2].className = "contract-doing";
-        let el, cnt;
-        cnt = document.getElementsByClassName("suppliedTitle")[0];
+		$(".contract-progress").children()[0].className = "contract-done";
+		$(".contract-progress").children()[1].className = "contract-done";
+		$(".contract-progress").children()[2].className = "contract-doing";
+		let el, el2, cnt;
+		cnt = document.getElementsByClassName("suppliedTitle")[0];
 
-        el = document.createElement("div");
-        cnt.parentElement.after(el);
-        el.className = "suppliedDetail";
-        el.setAttribute("style", "display :grid;grid-template-columns: 20% 10% 20% 50% ");
+		el = document.createElement("div");
+		cnt.parentElement.after(el);
+		el.className = "suppliedDetail";
+		el.setAttribute("style", "display :grid;grid-template-columns: 20% 10% 20% 50% ");
 
-        cnt = el;
+		cnt = el;
 
-        el = document.createElement("div");
-        cnt.appendChild(el);
-        el.innerText = "납품일자";
-
-
-        el = document.createElement("div");
-        cnt.appendChild(el);
-        el.innerHTML = "<input class='suppliedDate'type='date'/>";
-
-        el = document.createElement("div");
-        cnt.appendChild(el);
-        el.innerText = "납품 관련 문서";
-        el.setAttribute("style", "background-color: #eef1fb;font-weight: 500;");
-
-        el = document.createElement("div");
-        cnt.appendChild(el);
-        el.innerHTML = "<div class='filePreview'></div>" +
-            "<div><input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attachedsupplied' id='attached' onchange='R.contract.fileChange(this)' ></div>";
+		el = document.createElement("div");
+		cnt.appendChild(el);
+		el.innerText = "납품일자";
 
 
-        if (this.suppliedAttached.length != 0) {
-            let target = document.getElementsByClassName("filePreview")[1];
-            let files = "";
-            for (let i = 0; i < this.suppliedAttached.length; i++) {
-                files +=
-                    "<div><a href='/api/attached/supplied/" +
-                    this.no +
-                    "/" +
-                    encodeURI(this.suppliedAttached[i].fileName) +
-                    "'>" +
-                    this.suppliedAttached[i].fileName +
-                    "</a></div>";
+		el = document.createElement("div");
+		cnt.appendChild(el);
 
-            }
-            target.innerHTML = files;
+		el2 = document.createElement("input");
+		el2.setAttribute("type", "date");
+		el2.setAttribute("class", "suppliedDate");
+		el2.addEventListener("click", () => {
+			R.sche = new Schedule();
+			R.sche.drawForRequestDetail(new Date());
+			document.getElementById("schedule-type-radio8").setAttribute("checked", "checked");
+			document.getElementsByClassName("schedule-detail")[0].children[0].children[0].children[1].value = this.title + "\u00A0" + "납품";
+		})
+		el.appendChild(el2);
 
-            if (document.getElementsByClassName("approvedDetail") == undefined) {
+		el = document.createElement("div");
+		cnt.appendChild(el);
+		el.innerText = "납품 관련 문서";
+		el.setAttribute("style", "background-color: #eef1fb;font-weight: 500;");
 
-                this.drawApprovedData();
-            }
-
-
-        }
-        console.log(this.supplied);
-        if (this.supplied != 0) {
-            document.getElementsByClassName("suppliedDate")[0].value = getYmdHypen(this.supplied);
-        }
-
-    }
+		el = document.createElement("div");
+		cnt.appendChild(el);
+		el.innerHTML = "<div class='filePreview'></div>" +
+			"<div><input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attachedsupplied' id='attached' onchange='R.contract.fileChange(this)' ></div>";
 
 
-    drawApprovedData() {
+		if (this.suppliedAttached.length != 0) {
+			let target = document.getElementsByClassName("filePreview")[1];
+			let files = "";
+			for (let i = 0; i < this.suppliedAttached.length; i++) {
+				files +=
+					"<div><a href='/api/attached/supplied/" +
+					this.no +
+					"/" +
+					encodeURI(this.suppliedAttached[i].fileName) +
+					"'>" +
+					this.suppliedAttached[i].fileName +
+					"</a></div>";
 
-        $(".contract-progress").children()[2].className = "contract-done";
+			}
+			target.innerHTML = files;
 
-        if (this.approvedAttached.length == 0) {
-            $(".contract-progress").children()[3].className = "contract-doing";
-        } else {
-            $(".contract-progress").children()[3].className = "contract-done";
-        }
+			if (document.getElementsByClassName("approvedDetail") == undefined) {
 
-
-        let el, cnt;
-        cnt = document.getElementsByClassName("approvedTitle")[0];
-
-        el = document.createElement("div");
-        cnt.parentElement.after(el);
-        el.className = "approvedDetail";
-        el.setAttribute("style", "display :grid;grid-template-columns: 20% 10% 20% 50% ");
-
-        cnt = el;
-
-        el = document.createElement("div");
-        cnt.appendChild(el);
-        el.innerText = "검수일자";
+				this.drawApprovedData();
+			}
 
 
-        el = document.createElement("div");
-        cnt.appendChild(el);
-        el.innerHTML = "<input class='approvedDate'type='date'/>";
+		}
+		console.log(this.supplied);
+		if (this.supplied != 0) {
+			document.getElementsByClassName("suppliedDate")[0].value = getYmdHypen(this.supplied);
+		}
 
-        el = document.createElement("div");
-        cnt.appendChild(el);
-        el.innerText = "검수 관련 문서";
-        el.setAttribute("style", "background-color: #eef1fb;font-weight: 500;");
-
-        el = document.createElement("div");
-        cnt.appendChild(el);
-        el.innerHTML = "<div class='filePreview'></div>" +
-            "<div><input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attachedapproved' id='attached' onchange='R.contract.fileChange(this)' ></div>";
+	}
 
 
+	drawApprovedData() {
 
-        if (this.approvedAttached.length != 0) {
-            let target = document.getElementsByClassName("filePreview")[2];
-            let files = "";
-            for (let i = 0; i < this.approvedAttached.length; i++) {
-                files +=
-                    "<div><a href='/api/attached/approved/" +
-                    this.no +
-                    "/" +
-                    encodeURI(this.approvedAttached[i].fileName) +
-                    "'>" +
-                    this.approvedAttached[i].fileName +
-                    "</a></div>";
+		$(".contract-progress").children()[2].className = "contract-done";
 
-            }
-            target.innerHTML = files;
-
-            $(".contract-progress").children()[2].className = "contract-done";
-
-        }
-
-        if (this.approved != 0) {
-            document.getElementsByClassName("approvedDate")[0].value = getYmdHypen(this.approved);
-
-        }
+		if (this.approvedAttached.length == 0) {
+			$(".contract-progress").children()[3].className = "contract-doing";
+		} else {
+			$(".contract-progress").children()[3].className = "contract-done";
+		}
 
 
-    }
+		let el, el2, cnt;
+		cnt = document.getElementsByClassName("approvedTitle")[0];
+
+		el = document.createElement("div");
+		cnt.parentElement.after(el);
+		el.className = "approvedDetail";
+		el.setAttribute("style", "display :grid;grid-template-columns: 20% 10% 20% 50% ");
+
+		cnt = el;
+
+		el = document.createElement("div");
+		cnt.appendChild(el);
+		el.innerText = "검수일자";
+
+
+		el = document.createElement("div");
+		cnt.appendChild(el);
+		el2 = document.createElement("input");
+		el2.setAttribute("type", "date");
+		el2.setAttribute("class", "approvedDate");
+		el2.addEventListener("click", () => {
+			R.sche = new Schedule();
+			R.sche.drawForRequestDetail(new Date());
+			document.getElementById("schedule-type-radio9").setAttribute("checked", "checked");
+			document.getElementsByClassName("schedule-detail")[0].children[0].children[0].children[1].value = this.title + "\u00A0" + "검수";
+
+
+		})
+		el.appendChild(el2);
+
+
+		el = document.createElement("div");
+		cnt.appendChild(el);
+		el.innerText = "검수 관련 문서";
+		el.setAttribute("style", "background-color: #eef1fb;font-weight: 500;");
+
+		el = document.createElement("div");
+		cnt.appendChild(el);
+		el.innerHTML = "<div class='filePreview'></div>" +
+			"<div><input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attachedapproved' id='attached' onchange='R.contract.fileChange(this)' ></div>";
+
+
+
+		if (this.approvedAttached.length != 0) {
+			let target = document.getElementsByClassName("filePreview")[2];
+			let files = "";
+			for (let i = 0; i < this.approvedAttached.length; i++) {
+				files +=
+					"<div><a href='/api/attached/approved/" +
+					this.no +
+					"/" +
+					encodeURI(this.approvedAttached[i].fileName) +
+					"'>" +
+					this.approvedAttached[i].fileName +
+					"</a></div>";
+
+			}
+			target.innerHTML = files;
+
+			$(".contract-progress").children()[2].className = "contract-done";
+
+		}
+
+		if (this.approved != 0) {
+			document.getElementsByClassName("approvedDate")[0].value = getYmdHypen(this.approved);
+
+		}
+
+
+	}
+
 
     getReportNo(obj) {
 

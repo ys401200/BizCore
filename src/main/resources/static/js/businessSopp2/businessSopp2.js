@@ -48,11 +48,11 @@ clickedDateInCalendar = (el) => {
 soppStageUp = (v) => {
 	let href, no;
 
-	if (v === 4) {
+	if (v === 0) {
 		href = location.href.split("/sopp2/");
 		no = href.length > 1 ? href[href.length - 1] : null;
 		no = no !== null ? no * 1 : null;
-		window.open("/gw/estimate/" + no, '', 'width:60%');
+		window.open("/gw/estimate/" + no, "", "width=600");
 		// gw/extimate/soppNo 넣으면 됨 
 
 	}

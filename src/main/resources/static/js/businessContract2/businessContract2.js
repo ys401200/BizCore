@@ -389,7 +389,7 @@ class Contract {
 
 
 
-		if (this.docNo != undefined) { 
+		if (this.docNo != undefined) {
 
 			cnt = document.getElementsByClassName("detail-wrap")[0];
 			let appLine = this.appLine;
@@ -427,7 +427,9 @@ class Contract {
 			el = document.createElement("div");
 			cnt.children[cnt.children.length - 1].children[1].appendChild(el);
 			el.innerText = "(" + this.docNo + ")";
-			el.setAttribute("onclick", "openPreviewTab()");
+			el.addEventListener("click", () => {
+				window.open("/business/contract/popup/" + storage.reportDetailData.docNo, "미리보기", "width :210mm");
+			})
 			el.style.color = "blue";
 			el.style.cursor = "pointer";
 
@@ -515,7 +517,7 @@ class Contract {
 		$(".contract-progress").children()[0].className = "contract-done";
 		$(".contract-progress").children()[1].className = "contract-done";
 		$(".contract-progress").children()[2].className = "contract-doing";
-		let el, cnt;
+		let el, el2, cnt;
 		cnt = document.getElementsByClassName("suppliedTitle")[0];
 
 		el = document.createElement("div");
@@ -532,7 +534,17 @@ class Contract {
 
 		el = document.createElement("div");
 		cnt.appendChild(el);
-		el.innerHTML = "<input class='suppliedDate'type='date'/>";
+
+		el2 = document.createElement("input");
+		el2.setAttribute("type", "date");
+		el2.setAttribute("class", "suppliedDate");
+		el2.addEventListener("click", () => {
+			R.sche = new Schedule();
+			R.sche.drawForRequestDetail(new Date());
+			document.getElementById("schedule-type-radio8").setAttribute("checked", "checked");
+			document.getElementsByClassName("schedule-detail")[0].children[0].children[0].children[1].value = this.title + "\u00A0" + "납품";
+		})
+		el.appendChild(el2);
 
 		el = document.createElement("div");
 		cnt.appendChild(el);
@@ -587,7 +599,7 @@ class Contract {
 		}
 
 
-		let el, cnt;
+		let el, el2, cnt;
 		cnt = document.getElementsByClassName("approvedTitle")[0];
 
 		el = document.createElement("div");
@@ -604,7 +616,19 @@ class Contract {
 
 		el = document.createElement("div");
 		cnt.appendChild(el);
-		el.innerHTML = "<input class='approvedDate'type='date'/>";
+		el2 = document.createElement("input");
+		el2.setAttribute("type", "date");
+		el2.setAttribute("class", "approvedDate");
+		el2.addEventListener("click", () => {
+			R.sche = new Schedule();
+			R.sche.drawForRequestDetail(new Date());
+			document.getElementById("schedule-type-radio9").setAttribute("checked", "checked");
+			document.getElementsByClassName("schedule-detail")[0].children[0].children[0].children[1].value = this.title + "\u00A0" + "검수";
+
+
+		})
+		el.appendChild(el2);
+
 
 		el = document.createElement("div");
 		cnt.appendChild(el);
@@ -872,9 +896,6 @@ function drawDetail(obj) {
 
 }
 
-function removeContract() {
-	R.contract.remove();
-}
 
 // 날짜 관련 함수 
 function getYmdSlashShort(date) {
@@ -891,7 +912,6 @@ function getYmdSlashShort(date) {
 }
 
 
-
 function getYmdHypen(date) {
 	let d = new Date(date);
 	return (
@@ -904,213 +924,6 @@ function getYmdHypen(date) {
 		(d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
 	);
 }
-
-
-
-function openPreviewTab() {
-
-	window.open("/business/contract/popup/" + storage.reportDetailData.docNo, "미리보기", "width :210mm");
-
-}
-
-
-// 계약 등록 모달창 띄움 
-function contractInsertForm() {
-	let html, dataArray;
-
-	dataArray = [
-
-		{
-			"title": "영업기회(*)",
-			"elementId": "sopp",
-			"complete": "sopp",
-			"keyup": "addAutoComplete(this);",
-			"onClick": "addAutoComplete(this);",
-			"disabled": false,
-		},
-		{
-			"title": "담당자(*)",
-			"complete": "user",
-			"keyup": "addAutoComplete(this);",
-			"onClick": "addAutoComplete(this);",
-			"elementId": "employee",
-		},
-		{
-			"title": "(부)담당자",
-			"elementId": "employee2",
-			"disabled": false,
-			"complete": "user",
-			"keyup": "addAutoComplete(this);",
-			"onClick": "addAutoComplete(this);",
-		},
-		{
-			"title": "판매방식(*)",
-			"selectValue": [
-				{
-					"key": "10173",
-					"value": "조달직판",
-				},
-				{
-					"key": "10174",
-					"value": "조달간판",
-				},
-				{
-					"key": "10175",
-					"value": "조달대행",
-				},
-				{
-					"key": "10176",
-					"value": "직접판매",
-				}
-			],
-			"elementId": "salesType",
-			"type": "select",
-			"disabled": false,
-		},
-		{
-			"title": "매출처(*)",
-			"elementId": "customer",
-			"disabled": false,
-			"complete": "customer",
-			"keyup": "addAutoComplete(this);",
-			"onClick": "addAutoComplete(this);",
-		},
-		{
-			"title": "매출처 담당자",
-			"elementId": "cipOfCustomer",
-			"disabled": false,
-			"complete": "cip",
-			"keyup": "addAutoComplete(this);",
-			"onClick": "addAutoComplete(this);",
-		},
-		{
-			"title": "엔드유저(*)",
-			"elementId": "endUser",
-			"disabled": false,
-			"complete": "customer",
-			"keyup": "addAutoComplete(this);",
-			"onClick": "addAutoComplete(this);",
-		},
-		{
-			"title": "엔드유저 담당자",
-			"elementId": "cipOfendUser",
-			"disabled": false,
-			"complete": "cip",
-			"keyup": "addAutoComplete(this);",
-			"onClick": "addAutoComplete(this);",
-		},
-		{
-			"title": "발주일자",
-			"elementId": "saleDate",
-			"disabled": false,
-			"type": "date",
-		},
-		{
-			"title": "검수일자",
-			"elementId": "approved",
-			"disabled": false,
-			"type": "date",
-		},
-		{
-			"title": "계약금액",
-			"elementId": "amount",
-			"disabled": false,
-			"keyup": "inputNumberFormat(this);",
-		},
-		{
-			"title": "VAT 포함여부",
-			"selectValue": [
-				{
-					"key": true,
-					"value": "포함",
-				},
-				{
-					"key": false,
-					"value": "미포함",
-				},
-			],
-			"type": "select",
-			"elementId": "taxInclude",
-			"disabled": false,
-		},
-		{
-			"title": "매출이익",
-			"elementId": "profit",
-			"disabled": false,
-			"keyup": "inputNumberFormat(this);",
-		},
-		{
-			"title": "",
-		},
-		{
-			"title": "계약명(*)",
-			"elementId": "title",
-			"disabled": false,
-			"col": 4,
-		},
-		{
-			"title": "내용",
-			"type": "textarea",
-			"elementId": "detail",
-			"disabled": false,
-			"col": 4,
-		},
-	];
-
-	html = detailViewForm(dataArray, "modal");
-	modal.show();
-	modal.content.css("min-width", "70%");
-	modal.content.css("max-width", "70%");
-	modal.headTitle.text("계약등록");
-	modal.body.html(html);
-	modal.confirm.text("등록");
-	modal.close.text("취소");
-	modal.confirm.attr("onclick", "contractInsert();");
-	modal.close.attr("onclick", "modal.hide();");
-
-	storage.formList = {
-		"contractType": "",
-		"sopp": 0,
-		"employee": storage.my,
-		"salesType": "",
-		"customer": 0,
-		"cipOfCustomer": 0,
-		"endUser": 0,
-		"cipOfendUser": 0,
-		"saleDate": "",
-		"approved": "",
-		"employee2": 0,
-		"startOfFreeMaintenance": "",
-		"endOfFreeMaintenance": "",
-		"startOfPaidMaintenance": "",
-		"endOfPaidMaintenance": "",
-		"amount": 0,
-		"taxInclude": "",
-		"profit": 0,
-		"title": "",
-		"detail": ""
-	};
-
-	setTimeout(() => {
-		let my = storage.my, nowDate;
-		nowDate = new Date().toISOString().substring(0, 10);
-		$("[name='contractType']").eq(0).prop("checked", true);
-		$("#startOfPaidMaintenance").parents(".defaultFormLine").hide();
-		$("#endOfPaidMaintenance").parents(".defaultFormLine").hide();
-		$("#employee").val(storage.user[my].userName);
-		$("#employee").attr("data-change", true);
-		$("#saleDate, #approved, #startOfFreeMaintenance, #endOfFreeMaintenance, #startOfPaidMaintenance, #endOfPaidMaintenance").val(nowDate);
-		ckeditor.config.readOnly = false;
-		window.setTimeout(setEditor, 100);
-	}, 100);
-
-	setTimeout(() => {
-		document.getElementsByClassName("cke_textarea_inline")[0].style.height = "300px";
-	}, 300);
-
-}
-
-
 
 
 
