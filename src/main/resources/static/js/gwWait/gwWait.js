@@ -2202,11 +2202,6 @@ function setCusDataList() {
 
 
 
-
-
-
-
-
 function setSoppList() {
   let formId = storage.reportDetailData.formId;
   let soppTarget = $(".infoContent")[3];
@@ -2347,7 +2342,8 @@ function doBatchApproval() {
           detailData.doc = detailData.doc.replaceAll('\\"', '"');
           storage.reportDetailData = detailData;
 
-          let approveData, customer, related, appLine, ordered;
+          let approveData, sopp, customer, related, appLine, ordered;
+          sopp = (storage.reportDetailData.sopp == "" || storage.reportDetailData.sopp == null || storage.reportDetailData.sopp == undefined) ? "" : storage.reportDetailData.sopp;
           customer = (storage.reportDetailData.custmer == "" || storage.reportDetailData.custmer == null || storage.reportDetailData.custmer == undefined) ? "" : storage.reportDetailData.customer;
           related = storage.reportDetailData.related;
           related = JSON.stringify(related);
@@ -2364,13 +2360,14 @@ function doBatchApproval() {
             files: null,
             appLine: null,
             appDoc: null,
-            sopp: storage.reportDetailData.sopp + "",
-            customer: customer + "",
+            sopp: sopp,
+            customer: customer,
             title: null,
             related: related,
           };
 
           approveData = JSON.stringify(approveData);
+          console.log(approveData);
           approveData = cipher.encAes(approveData);
           $.ajax({
             url:
@@ -2477,7 +2474,7 @@ function doBatchReject() {
             appLine: null,
             appDoc: null,
             sopp: storage.reportDetailData.sopp + "",
-            customer: customer + "",
+            customer: storage.reportDetailData.customer + "",
             title: null,
             related: related,
           };
