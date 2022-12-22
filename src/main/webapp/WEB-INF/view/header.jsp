@@ -21,6 +21,7 @@
 <link rel="stylesheet" type="text/css" href="/css/<%= getPathName %>/<%= getPathName %>.css" />
 <link rel="stylesheet" type="text/css" href="/css/common_jh.css" />
 <link rel="stylesheet" type="text/css" href="/css/common_sh.css" />
+<link rel="stylesheet" type="text/css" href="/css/common_bi.css" />
 
 <script src="/js/jquery.min.js"></script>
 <script src="/js/axios/axios.min.js"></script>
@@ -36,6 +37,7 @@
 <script src="https://kit.fontawesome.com/a37df9d8b5.js" crossorigin="anonymous"></script>
 <script src="/js/common_jh.js"></script>
 <script src="/js/common_sh.js"></script>
+<script src="/js/common_bi.js"></script>
 
 
 <title>BizCore</title>
