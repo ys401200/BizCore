@@ -1,5 +1,4 @@
-let R = {}, prepareSopp, scrolledSopp, moveToTarget, drawChat, inputtedComment, deleteChat, cancelEdit, editSopp, changeSopp, editSoppSearch, soppStageUp, clickedDateInCalendar, drawMiniCalendar, clickedDateOnMiniCalendar, clickedTimeOnMiniCalendar, setDateTimeInScheduleDetail, clickedScheduleDetailConfirm, inputExpectedSales, changeExpectedDate, getSavedLine;
-
+let R = {}, prepareSopp, scrolledSopp, moveToTarget, drawChat, inputtedComment, deleteChat, cancelEdit, editSopp, changeSopp, editSoppSearch, soppStageUp, clickedDateInCalendar, getSavedLine;
 $(document).ready(() => {
 	let href, no;
 	init();
@@ -623,7 +622,7 @@ clickedTimeOnMiniCalendar = (el) => {
 				start = x;
 				cnt.dataset.ts = start;
 			}
-			start = (((start * 1) % 100 === 30) ? (start * 1) - 30 : (start * 1) - 70) + "";
+			//start = (((start * 1) % 100 === 30) ? (start * 1) - 30 : (start * 1) - 70) + "";
 			start = start.length < 4 ? "0" + start : start;				
 			end = (((end * 1) % 100 === 30) ? (end * 1) + 70 : (end * 1) + 30) + "";
 			end = end.length < 4 ? "0" + end : end;
@@ -782,6 +781,8 @@ class Sopp2 {
 		// 본문 설정
 		cnt = document.getElementsByClassName("sopp-desc")[0].children[1];
 		cnt.innerHTML = this.desc;
+		// 관리자와 프로젝트 오너만이 본문 및 제목을 수정할 수 있도록 함
+		if(R.sopp.owner !== storage.my && R.projectOwner !== storage.my)	document.getElementsByClassName("sopp-desc")[0].children[0].children[2].children[0].style.display = "none";
 
 		// 본문 에디터 설정
 		ckeditor.config.readOnly = false;
@@ -865,7 +866,7 @@ class Sopp2 {
 			cnt[1].style.left = "calc(" + x + "% - 0.3rem)";
 		}
 		// 관리자와 프로젝트 오너만 예상매출액/일를 변경할 수 있도록 함
-		if(R.sopp.owner !== storage.my && R.projectOwner !== storage.my)	document.getElementsByClassName("sopp-expected")[0].children[0].children[2].style.display = "none";
+		if(R.sopp.owner !== storage.my && R.projectOwner !== storage.my)	document.getElementsByClassName("sopp-expected")[0].children[0].children[3].children[0].style.display = "none";
 
 		// 스테이지바
 		html = "";
@@ -1115,7 +1116,7 @@ class Schedule{
 		// 컨텐트에 웹에디터 부착
 		ckeditor.config.readOnly = false;
 		CKEDITOR.replace("schedule-detail-content",
-			{height:245,
+			{height:273,
 			removeButtons:"Source,Save,Templates,NewPage,Preview,Print,Cut,Copy,Paste,PasteText,PasteFromWord,Find,Replace,SelectAll,Scayt,ImageButton,HiddenField,CopyFormatting,RemoveFormat,Outdent,Indent,Blockquote,CreateDiv,BidiLtr,BidiRtl,Language,Link,Unlink,Anchor,Image,Flash,HorizontalRule,Smiley,SpecialChar,PageBreak,Iframe,Maximize,ShowBlocks,About,Button,Select,Textarea,TextField,Radio,Checkbox,Form,Format,Styles"
 		});
 
@@ -1167,14 +1168,31 @@ class Schedule{
 		html += "<input type=\"radio\" name=\"in-schedule-detail-type\" id=\"in-schedule-detail-type3\" /><label for=\"in-schedule-detail-type3\">교 육</label>";
 		html += "<input type=\"radio\" name=\"in-schedule-detail-type\" id=\"in-schedule-detail-type4\" /><label for=\"in-schedule-detail-type4\">휴 가</label>";
 		child.innerHTML = html;
-		// 영업기회 내부인 경우 휴가 비활성화
+		// 영업기회 내부인 경우 교육/휴가 비활성화
 		child.children[6].remove();
+		child.children[4].remove();
 
 		// 일정 상세내용 부착
 		child = document.createElement("div");
 		el.appendChild(child);
 
-		// 일정 유형 부분
+		// ----- 전자결재 자동상신 부분
+		y = document.createElement("div");
+		y.className = "sub-title";
+		child.appendChild(y);
+		html = "<circle></circle><div>장 소</div><line></line>";
+		y.innerHTML = html;
+		y = document.createElement("div");
+		y.className = "schedule-place";
+		child.appendChild(y);
+		html = "<input type=\"radio\" name=\"schedule-place-radio\" id=\"schedule-place-radio1\" checked value=\"customer\" /><label for=\"schedule-place-radio1\">고객사</label>";
+		html += "<input type=\"radio\" name=\"schedule-place-radio\" id=\"schedule-place-radio2\" value=\"partner\" /><label for=\"schedule-place-radio2\">협력사</label>";
+		html += "<input type=\"radio\" name=\"schedule-place-radio\" id=\"schedule-place-radio3\" value=\"office\" /><label for=\"schedule-place-radio3\">사무실</label>";
+		html += "<input type=\"radio\" name=\"schedule-place-radio\" id=\"schedule-place-radio4\" value=\"etc\" onchange=\"if(this.checked) this.nextElementSibling.nextElementSibling.value=''\"/><label for=\"schedule-place-radio4\">기 타</label>";
+		html += "<input type=\"text\" name=\"schedule-place-etc\" />";
+		y.innerHTML = html;
+
+		// ----- 일정 유형 부분
 		y = document.createElement("div");
 		y.className = "sub-title";
 		child.appendChild(y);
@@ -1183,11 +1201,24 @@ class Schedule{
 		y = document.createElement("div");
 		y.className = "schedule-type";
 		child.appendChild(y);
-		html = "<input type=\"checkbox\" /><div>결재 양식 : 휴가원</div>";
-		// ==================
+		html = "<input type=\"radio\" name=\"schedule-type-radio\" id=\"schedule-type-radio1\" value=\"0\" /><label for=\"schedule-type-radio1\">회사방문</label>";
+		html += "<input type=\"radio\" name=\"schedule-type-radio\" id=\"schedule-type-radio2\" value=\"1\" /><label for=\"schedule-type-radio2\">제안/설명</label>";
+		html += "<input type=\"radio\" name=\"schedule-type-radio\" id=\"schedule-type-radio3\" value=\"2\" /><label for=\"schedule-type-radio3\">견 적</label>";
+		html += "<input type=\"radio\" name=\"schedule-type-radio\" id=\"schedule-type-radio4\" value=\"3\" /><label for=\"schedule-type-radio4\">계 약</label>";
+		html += "<input type=\"radio\" name=\"schedule-type-radio\" id=\"schedule-type-radio5\" value=\"4\" /><label for=\"schedule-type-radio5\">교 육</label>";
+		html += "<input type=\"radio\" name=\"schedule-type-radio\" id=\"schedule-type-radio6\" value=\"5\" /><label for=\"schedule-type-radio6\">기술지원</label>";
+		html += "<input type=\"radio\" name=\"schedule-type-radio\" id=\"schedule-type-radio7\" value=\"6\" /><label for=\"schedule-type-radio7\">시스템데모</label>";
+		html += "<input type=\"radio\" name=\"schedule-type-radio\" id=\"schedule-type-radio8\" value=\"7\" /><label for=\"schedule-type-radio8\">납품/설치</label>";
+		html += "<input type=\"radio\" name=\"schedule-type-radio\" id=\"schedule-type-radio9\" value=\"8\" /><label for=\"schedule-type-radio9\">검수</label>";
+		html += "<input type=\"radio\" name=\"schedule-type-radio\" id=\"schedule-type-radio10\" value=\"9\" /><label for=\"schedule-type-radio10\">....</label>";
+		html += "<input type=\"radio\" name=\"schedule-type-radio\" id=\"schedule-type-radio11\" value=\"10\" /><label for=\"schedule-type-radio11\">....</label>";
+		html += "<input type=\"radio\" name=\"schedule-type-radio\" id=\"schedule-type-radio12\" value=\"11\" /><label for=\"schedule-type-radio12\">....</label>";
+		html += "<input type=\"radio\" name=\"schedule-type-radio\" id=\"schedule-type-radio13\" value=\"12\" /><label for=\"schedule-type-radio13\">....</label>";
+		html += "<input type=\"radio\" name=\"schedule-type-radio\" id=\"schedule-type-radio14\" value=\"13\" /><label for=\"schedule-type-radio14\">....</label>";
+		html += "<input type=\"radio\" name=\"schedule-type-radio\" id=\"schedule-type-radio15\" value=\"14\" /><label for=\"schedule-type-radio15\">....</label>";
 		y.innerHTML = html;
 
-		// 전자결재 자동상신 부분
+		// ----- 전자결재 자동상신 부분
 		y = document.createElement("div");
 		y.className = "sub-title";
 		child.appendChild(y);
