@@ -682,7 +682,7 @@ class Schedule{
 		html += "<input type=\"radio\" name=\"schedule-type-radio\" id=\"schedule-type-radio6\" value=\"5\" /><label for=\"schedule-type-radio6\">기술지원</label>";
 		html += "<input type=\"radio\" name=\"schedule-type-radio\" id=\"schedule-type-radio7\" value=\"6\" /><label for=\"schedule-type-radio7\">시스템데모</label>";
 		html += "<input type=\"radio\" name=\"schedule-type-radio\" id=\"schedule-type-radio8\" value=\"7\" /><label for=\"schedule-type-radio8\">납품/설치</label>";
-		html += "<input type=\"radio\" name=\"schedule-type-radio\" id=\"schedule-type-radio9\" value=\"8\" /><label for=\"schedule-type-radio9\">검수</label>";
+		html += "<input type=\"radio\" name=\"schedule-type-radio\" id=\"schedule-type-radio9\" value=\"8\" /><label for=\"schedule-type-radio9\">검 수</label>";
 		html += "<input type=\"radio\" name=\"schedule-type-radio\" id=\"schedule-type-radio10\" value=\"9\" /><label for=\"schedule-type-radio10\">....</label>";
 		html += "<input type=\"radio\" name=\"schedule-type-radio\" id=\"schedule-type-radio11\" value=\"10\" /><label for=\"schedule-type-radio11\">....</label>";
 		html += "<input type=\"radio\" name=\"schedule-type-radio\" id=\"schedule-type-radio12\" value=\"11\" /><label for=\"schedule-type-radio12\">....</label>";
