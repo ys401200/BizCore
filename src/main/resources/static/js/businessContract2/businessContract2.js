@@ -625,7 +625,6 @@ class Contract {
 			document.getElementById("schedule-type-radio9").setAttribute("checked", "checked");
 			document.getElementsByClassName("schedule-detail")[0].children[0].children[0].children[1].value = this.title + "\u00A0" + "검수";
 
-
 		})
 		el.appendChild(el2);
 
