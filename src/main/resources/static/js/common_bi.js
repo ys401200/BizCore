@@ -1,4 +1,38 @@
-let clickedScheduleDetailConfirm, inputExpectedSales, changeExpectedDate, setDateTimeInScheduleDetail, clickedTimeOnMiniCalendar, clickedDateOnMiniCalendar, drawMiniCalendar;
+let clickedScheduleDetailConfirm, inputExpectedSales, changeExpectedDate, setDateTimeInScheduleDetail, clickedTimeOnMiniCalendar, clickedDateOnMiniCalendar, drawMiniCalendar, showSavedLineInScheduleDetail;
+
+// 자주 쓰는 결재선 선택시 실행되는 함수
+showSavedLineInScheduleDetail = (v) => {
+	let value, x, y, cnt, line, html;
+	if(v === undefined)	return;
+	if(typeof v === "object" && v.constructor.name === "HTMLSelectElement")	value = v.value;
+	else if(typeof v === "string")	value = v * 1;
+	else if(typeof v === "number")	value = v;
+	else							return;
+
+	if(value > 0)	for(x = 0 ; x < R.gwSavedLine.length ; x++){
+		if(R.gwSavedLine[x].no == value){
+			line = R.gwSavedLine[x].appLine;
+			break;
+		}
+	}
+
+	if(value > 0 && line === undefined)	return;
+	html = "";
+	cnt = document.getElementsByClassName("schedule-detail")[0].getElementsByClassName("schedule-gw")[0].children[2];
+	if(value > 0){
+		y = storage.user[storage.my] !== undefined && storage.user[storage.my].userName !== undefined ? "<span> " + storage.user[storage.my].userName + " </span>" : "<span> ... </span>";
+		html += y;
+		for(x = 0 ; x < line.length ; x++){
+			html += "<span style=\"color:#ababab;\"> &gt; </span>";
+			y = storage.user[line[x][1]] !== undefined && storage.user[line[x][1]].userName !== undefined ? "<span> " + storage.user[line[x][1]].userName + " </span>" : "<span> ... </span>";
+			html += y;
+		}
+	}
+	
+
+	cnt.innerHTML = html;
+
+} // End of showSavedLineInScheduleDetail()
 
 // 미니 달력을 그리는 함수
 drawMiniCalendar = (date) => {
@@ -179,10 +213,119 @@ changeExpectedDate = (el) => {
 } // End of changeExpectedDate()
 
 clickedScheduleDetailConfirm = () => {
+	let data, cnt, els, x, y, z;
+	
+	data = {};
+	cnt = document.getElementsByClassName("schedule-detail")[0];
 
+	// 시작 날짜
+	x = cnt.dataset.ds;
+	y = cnt.dataset.ts;
+	data.from = new Date(x.substring(0,4), x.substring(4,6)*1-1, x.substring(6), y.substring(0,2), y.substring(2), 0);
 
-	// 모달 내 에디터 제거
+	// 종료 날짜
+	x = cnt.dataset.de;
+	y = cnt.dataset.te;
+	if(x === "x")	x = cnt.dataset.ds;
+	data.to = new Date(x.substring(0,4), x.substring(4,6)*1-1, x.substring(6), y.substring(0,2), y.substring(2), 0);
+
+	// 제목
+	data.title = cnt.children[0].children[0].children[1].value;
+
+	// 내용
+	x = CKEDITOR.instances["schedule-detail-content"].getData();console.log(x);
+	x = x.replaceAll("\r","").replaceAll("\n","").replaceAll("\t","");
+	data.content = x;
+
+	// 작성자
+	x = cnt.dataset.writer;
+	x = x === undefined || x === null ? storage.my * 1 : x * 1;
+	data.writer = x;
+
+	// 번호
+	x = cnt.dataset.no;
+	x = x === undefined || x === null ? -1 : x * 1;
+	data.no = x;
+
+	// 주간보고 포함 여부
+	els = document.getElementsByName("schedule-report");
+	y = undefined;
+	for(x = 0 ; x < els.length ; x++){
+		if(els[x].checked){
+			y = els[x].value;
+			break;
+		}
+	}
+	data.report = y === "true";
+
+	// 알정 종류 1
+	els = document.getElementsByName("schedule-type1");
+	y = undefined;
+	for(x = 0 ; x < els.length ; x++){
+		if(els[x].checked){
+			y = els[x].value;
+			break;
+		}
+	}
+	data.type1 = y;
+
+	// 알정 종류 1
+	els = document.getElementsByName("schedule-type2");
+	y = undefined;
+	for(x = 0 ; x < els.length ; x++){
+		if(els[x].checked){
+			y = els[x].value;
+			break;
+		}
+	}
+	data.type2 = y;
+
+	// 알정 장소
+	els = document.getElementsByName("schedule-place");
+	y = undefined;
+	for(x = 0 ; x < els.length ; x++){
+		if(els[x].checked){
+			y = els[x].value;
+			break;
+		}
+	}
+	data.place = y;
+
+	// 알정 방법
+	els = document.getElementsByName("schedule-method");
+	y = undefined;
+	for(x = 0 ; x < els.length ; x++){
+		if(els[x].checked){
+			y = els[x].value;
+			break;
+		}
+	}
+	data.method = y;
+
+	// 알정 종류 1
+	els = document.getElementsByName("schedule-type1");
+	y = undefined;
+	for(x = 0 ; x < els.length ; x++){
+		if(els[x].checked){
+			y = els[x].value;
+			break;
+		}
+	}
+	data.type1 = y;
+
+	// 전자결재의 결재선
+	els = document.getElementsByClassName("schedule-app-line")[0];
+	y = els.value;
+	data.appLine = y === undefined || y === null ? null : y * 1;
+	y = cnt.dataset.permitted;
+	data.permitted = y === undefined || y === null ? null : y * 1;
+
+	// 모달 내 에디터 제거, 모달 닫기
 	CKEDITOR.instances['schedule-detail-content'].destroy();
+	modal.hide();
+
+	console.log(data);
+	return data;
 } // End of clickedScheduleDetailConfirm()
 
 
@@ -589,7 +732,7 @@ class Schedule{
 		// 컨텐트에 웹에디터 부착
 		ckeditor.config.readOnly = false;
 		CKEDITOR.replace("schedule-detail-content",
-			{height:273,
+			{height:305,
 			removeButtons:"Source,Save,Templates,NewPage,Preview,Print,Cut,Copy,Paste,PasteText,PasteFromWord,Find,Replace,SelectAll,Scayt,ImageButton,HiddenField,CopyFormatting,RemoveFormat,Outdent,Indent,Blockquote,CreateDiv,BidiLtr,BidiRtl,Language,Link,Unlink,Anchor,Image,Flash,HorizontalRule,Smiley,SpecialChar,PageBreak,Iframe,Maximize,ShowBlocks,About,Button,Select,Textarea,TextField,Radio,Checkbox,Form,Format,Styles"
 		});
 
@@ -652,6 +795,19 @@ class Schedule{
 		child = document.createElement("div");
 		el.appendChild(child);
 
+		// ----- 일정의 소속에 대한 선택
+		y = document.createElement("div");
+		y.className = "sub-title";
+		child.appendChild(y);
+		html = "<circle></circle><div>영업기회/유지보수</div><line></line>";
+		y.innerHTML = html;
+		y = document.createElement("div");
+		y.className = "schedule-belong-to";
+		child.appendChild(y);
+		html = "<input type=\"radio\" data-n=\"belong-to\" name=\"schedule-belong-to\" id=\"schedule-belong-to1\" checked value=\"sopp:0001\" /><label for=\"schedule-belong-to1\">영업기회 : 영업기회 이름</label>";
+		html += "<input type=\"radio\" data-n=\"belong-to\" name=\"schedule-belong-to\" id=\"schedule-belong-to2\" value=\"maintenance:0001\" /><label for=\"schedule-belong-to2\">유지보수 : 유지보수 이름</label>";
+		y.innerHTML = html;
+
 		// ----- 전자결재 자동상신 부분
 		y = document.createElement("div");
 		y.className = "sub-title";
@@ -687,7 +843,33 @@ class Schedule{
 		html += "<input type=\"radio\" data-n=\"type2\" name=\"schedule-type2\" id=\"schedule-type2h\" value=\"납품/설치\" /><label for=\"schedule-type2h\">납품/설치</label>";
 		html += "<input type=\"radio\" data-n=\"type2\" name=\"schedule-type2\" id=\"schedule-type2i\" value=\"검수\" /><label for=\"schedule-type2i\">검 수</label>";
 		html += "<input type=\"radio\" data-n=\"type2\" name=\"schedule-type2\" id=\"schedule-type2j\" value=\"xx\" /><label for=\"schedule-type2j\">....</label>";
-		html += "<input type=\"radio\" data-n=\"type2\" name=\"schedule-type2\" id=\"schedule-type2k\" value=\"xx\" /><label for=\"schedule-type2k\">....</label>";
+		y.innerHTML = html;
+
+		// ----- 방법 부분
+		y = document.createElement("div");
+		y.className = "sub-title";
+		child.appendChild(y);
+		html = "<circle></circle><div>방 법</div><line></line>";
+		y.innerHTML = html;
+		y = document.createElement("div");
+		y.className = "schedule-method";
+		child.appendChild(y);
+		html = "<input type=\"radio\" data-n=\"method\" name=\"schedule-method\" id=\"schedule-method1\" checked value=\"visit\" /><label for=\"schedule-method1\">현장방문</label>";
+		html += "<input type=\"radio\" data-n=\"method\" name=\"schedule-method\" id=\"schedule-method2\" value=\"telephone\" /><label for=\"schedule-method2\">전화상담</label>";
+		html += "<input type=\"radio\" data-n=\"method\" name=\"schedule-method\" id=\"schedule-method3\" value=\"remote\" /><label for=\"schedule-method3\">원격접속</label>";
+		y.innerHTML = html;
+
+		// ----- 주간 업무 보고에 포함하는지 여부
+		y = document.createElement("div");
+		y.className = "sub-title";
+		child.appendChild(y);
+		html = "<circle></circle><div>주간 업무 보고</div><line></line>";
+		y.innerHTML = html;
+		y = document.createElement("div");
+		y.className = "schedule-report";
+		child.appendChild(y);
+		html = "<input type=\"radio\" data-n=\"report\" name=\"schedule-report\" id=\"schedule-report1\" checked value=\"true\" /><label for=\"schedule-report1\">포 함</label>";
+		html += "<input type=\"radio\" data-n=\"report\" name=\"schedule-report\" id=\"schedule-report2\" value=\"false\" /><label for=\"schedule-report2\">미포함</label>";
 		y.innerHTML = html;
 
 		// ----- 전자결재 자동상신 부분
@@ -699,11 +881,11 @@ class Schedule{
 		y = document.createElement("div");
 		y.className = "schedule-gw";
 		child.appendChild(y);
-		html = "<div>결 재 선 : <select class=\"select-app-line-in-schedule\"><option selected value=\"-1\">- - 자주 쓰는 결재선 - -</option>";
+		html = "<div>결 재 선 : </div><select class=\"schedule-app-line\" onchange=\"showSavedLineInScheduleDetail(this)\"><option selected value=\"-1\">- - 자주 쓰는 결재선 - -</option>";
 		if(R.gwSavedLine !== undefined)	for(x = 0 ; x < R.gwSavedLine.length ; x++){
 			html += "<option value=\"" + (R.gwSavedLine[x].no) + "\">" + (R.gwSavedLine[x].title) + "</option>";
 		}
-		html += "<select></div>";
+		html += "</select><div></div>";
 		y.innerHTML = html;
 
 
