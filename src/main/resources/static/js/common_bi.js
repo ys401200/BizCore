@@ -636,14 +636,17 @@ class Schedule{
 		// 일정 종류 라디오버튼 부착
 		child = document.createElement("div");
 		el.appendChild(child);
-		html = "<input type=\"radio\" name=\"in-schedule-detail-type\"  id=\"in-schedule-detail-type1\" checked /><label for=\"in-schedule-detail-type1\">외근/출장</label>";
-		html += "<input type=\"radio\" name=\"in-schedule-detail-type\" id=\"in-schedule-detail-type2\" /><label for=\"in-schedule-detail-type2\">내 근</label>";
-		html += "<input type=\"radio\" name=\"in-schedule-detail-type\" id=\"in-schedule-detail-type3\" /><label for=\"in-schedule-detail-type3\">교 육</label>";
-		html += "<input type=\"radio\" name=\"in-schedule-detail-type\" id=\"in-schedule-detail-type4\" /><label for=\"in-schedule-detail-type4\">휴 가</label>";
+		child.className = "schedule-type1";
+		html = "<input type=\"radio\" data-n=\"type1\" name=\"schedule-type1\"  id=\"schedule-type1a\" checked value=\"outside\" /><label for=\"schedule-type1a\">외근/출장</label>";
+		html += "<input type=\"radio\" data-n=\"type1\" name=\"schedule-type1\" id=\"schedule-type1b\" value=\"inside\" /><label for=\"schedule-type1b\">내 근</label>";
+		html += "<input type=\"radio\" data-n=\"type1\" name=\"schedule-type1\" id=\"schedule-type1c\" value=\"edu\" /><label for=\"schedule-type1c\">교 육</label>";
+		html += "<input type=\"radio\" data-n=\"type1\" name=\"schedule-type1\" id=\"schedule-type1d\" value=\"vacation\" /><label for=\"schedule-type1d\">휴 가</label>";
 		child.innerHTML = html;
 		// 영업기회 내부인 경우 교육/휴가 비활성화
-		child.children[6].remove();
-		child.children[4].remove();
+		if(inSopp){
+			child.children[6].remove();
+			child.children[4].remove();
+		}
 
 		// 일정 상세내용 부착
 		child = document.createElement("div");
@@ -658,11 +661,11 @@ class Schedule{
 		y = document.createElement("div");
 		y.className = "schedule-place";
 		child.appendChild(y);
-		html = "<input type=\"radio\" name=\"schedule-place-radio\" id=\"schedule-place-radio1\" checked value=\"customer\" /><label for=\"schedule-place-radio1\">고객사</label>";
-		html += "<input type=\"radio\" name=\"schedule-place-radio\" id=\"schedule-place-radio2\" value=\"partner\" /><label for=\"schedule-place-radio2\">협력사</label>";
-		html += "<input type=\"radio\" name=\"schedule-place-radio\" id=\"schedule-place-radio3\" value=\"office\" /><label for=\"schedule-place-radio3\">사무실</label>";
-		html += "<input type=\"radio\" name=\"schedule-place-radio\" id=\"schedule-place-radio4\" value=\"etc\" onchange=\"if(this.checked) this.nextElementSibling.nextElementSibling.value=''\"/><label for=\"schedule-place-radio4\">기 타</label>";
-		html += "<input type=\"text\" name=\"schedule-place-etc\" />";
+		html = "<input type=\"radio\" data-n=\"place\" name=\"schedule-place\" id=\"schedule-place1\" checked value=\"customer\" /><label for=\"schedule-place1\">고객사</label>";
+		html += "<input type=\"radio\" data-n=\"place\" name=\"schedule-place\" id=\"schedule-place2\" value=\"partner\" /><label for=\"schedule-place2\">협력사</label>";
+		html += "<input type=\"radio\" data-n=\"place\" name=\"schedule-place\" id=\"schedule-place3\" value=\"office\" /><label for=\"schedule-place3\">사무실</label>";
+		html += "<input type=\"radio\" data-n=\"place\" name=\"schedule-place\" id=\"schedule-place4\" value=\"etc\" onchange=\"if(this.checked) this.nextElementSibling.nextElementSibling.value=''\"/><label for=\"schedule-place4\">기 타</label>";
+		html += "<input type=\"text\" name=\"schedule-place-etc\" onkeyup=\"this.previousElementSibling.previousElementSibling.value='etc:'+this.value;\"/>";
 		y.innerHTML = html;
 
 		// ----- 일정 유형 부분
@@ -672,23 +675,19 @@ class Schedule{
 		html = "<circle></circle><div>종 류</div><line></line>";
 		y.innerHTML = html;
 		y = document.createElement("div");
-		y.className = "schedule-type";
+		y.className = "schedule-type2";
 		child.appendChild(y);
-		html = "<input type=\"radio\" name=\"schedule-type-radio\" id=\"schedule-type-radio1\" value=\"0\" /><label for=\"schedule-type-radio1\">회사방문</label>";
-		html += "<input type=\"radio\" name=\"schedule-type-radio\" id=\"schedule-type-radio2\" value=\"1\" /><label for=\"schedule-type-radio2\">제안/설명</label>";
-		html += "<input type=\"radio\" name=\"schedule-type-radio\" id=\"schedule-type-radio3\" value=\"2\" /><label for=\"schedule-type-radio3\">견 적</label>";
-		html += "<input type=\"radio\" name=\"schedule-type-radio\" id=\"schedule-type-radio4\" value=\"3\" /><label for=\"schedule-type-radio4\">계 약</label>";
-		html += "<input type=\"radio\" name=\"schedule-type-radio\" id=\"schedule-type-radio5\" value=\"4\" /><label for=\"schedule-type-radio5\">교 육</label>";
-		html += "<input type=\"radio\" name=\"schedule-type-radio\" id=\"schedule-type-radio6\" value=\"5\" /><label for=\"schedule-type-radio6\">기술지원</label>";
-		html += "<input type=\"radio\" name=\"schedule-type-radio\" id=\"schedule-type-radio7\" value=\"6\" /><label for=\"schedule-type-radio7\">시스템데모</label>";
-		html += "<input type=\"radio\" name=\"schedule-type-radio\" id=\"schedule-type-radio8\" value=\"7\" /><label for=\"schedule-type-radio8\">납품/설치</label>";
-		html += "<input type=\"radio\" name=\"schedule-type-radio\" id=\"schedule-type-radio9\" value=\"8\" /><label for=\"schedule-type-radio9\">검 수</label>";
-		html += "<input type=\"radio\" name=\"schedule-type-radio\" id=\"schedule-type-radio10\" value=\"9\" /><label for=\"schedule-type-radio10\">....</label>";
-		html += "<input type=\"radio\" name=\"schedule-type-radio\" id=\"schedule-type-radio11\" value=\"10\" /><label for=\"schedule-type-radio11\">....</label>";
-		html += "<input type=\"radio\" name=\"schedule-type-radio\" id=\"schedule-type-radio12\" value=\"11\" /><label for=\"schedule-type-radio12\">....</label>";
-		html += "<input type=\"radio\" name=\"schedule-type-radio\" id=\"schedule-type-radio13\" value=\"12\" /><label for=\"schedule-type-radio13\">....</label>";
-		html += "<input type=\"radio\" name=\"schedule-type-radio\" id=\"schedule-type-radio14\" value=\"13\" /><label for=\"schedule-type-radio14\">....</label>";
-		html += "<input type=\"radio\" name=\"schedule-type-radio\" id=\"schedule-type-radio15\" value=\"14\" /><label for=\"schedule-type-radio15\">....</label>";
+		html = "<input type=\"radio\" data-n=\"type2\" name=\"schedule-type2\" id=\"schedule-type2a\" value=\"회사방문\" /><label for=\"schedule-type2a\">회사방문</label>";
+		html += "<input type=\"radio\" data-n=\"type2\" name=\"schedule-type2\" id=\"schedule-type2b\" value=\"제안/설명\" /><label for=\"schedule-type2b\">제안/설명</label>";
+		html += "<input type=\"radio\" data-n=\"type2\" name=\"schedule-type2\" id=\"schedule-type2c\" value=\"견적\" /><label for=\"schedule-type2c\">견 적</label>";
+		html += "<input type=\"radio\" data-n=\"type2\" name=\"schedule-type2\" id=\"schedule-type2d\" value=\"계약\" /><label for=\"schedule-type2d\">계 약</label>";
+		html += "<input type=\"radio\" data-n=\"type2\" name=\"schedule-type2\" id=\"schedule-type2e\" value=\"교육\" /><label for=\"schedule-type2e\">교 육</label>";
+		html += "<input type=\"radio\" data-n=\"type2\" name=\"schedule-type2\" id=\"schedule-type2f\" value=\"기술지원\" /><label for=\"schedule-type2f\">기술지원</label>";
+		html += "<input type=\"radio\" data-n=\"type2\" name=\"schedule-type2\" id=\"schedule-type2g\" value=\"시스템데모\" /><label for=\"schedule-type2g\">시스템데모</label>";
+		html += "<input type=\"radio\" data-n=\"type2\" name=\"schedule-type2\" id=\"schedule-type2h\" value=\"납품/설치\" /><label for=\"schedule-type2h\">납품/설치</label>";
+		html += "<input type=\"radio\" data-n=\"type2\" name=\"schedule-type2\" id=\"schedule-type2i\" value=\"검수\" /><label for=\"schedule-type2i\">검 수</label>";
+		html += "<input type=\"radio\" data-n=\"type2\" name=\"schedule-type2\" id=\"schedule-type2j\" value=\"xx\" /><label for=\"schedule-type2j\">....</label>";
+		html += "<input type=\"radio\" data-n=\"type2\" name=\"schedule-type2\" id=\"schedule-type2k\" value=\"xx\" /><label for=\"schedule-type2k\">....</label>";
 		y.innerHTML = html;
 
 		// ----- 전자결재 자동상신 부분
@@ -698,10 +697,9 @@ class Schedule{
 		html = "<circle></circle><div>전자결재</div><line></line>";
 		y.innerHTML = html;
 		y = document.createElement("div");
-		y.className = "saved-line";
+		y.className = "schedule-gw";
 		child.appendChild(y);
-		html = "<input type=\"checkbox\" /><div>결재 양식 : 휴가원</div>";
-		html += "<div>결 재 선 : <select class=\"select-app-line-in-schedule\"><option selected value=\"-1\">- - 자주 쓰는 결재선 - -</option>";
+		html = "<div>결 재 선 : <select class=\"select-app-line-in-schedule\"><option selected value=\"-1\">- - 자주 쓰는 결재선 - -</option>";
 		if(R.gwSavedLine !== undefined)	for(x = 0 ; x < R.gwSavedLine.length ; x++){
 			html += "<option value=\"" + (R.gwSavedLine[x].no) + "\">" + (R.gwSavedLine[x].title) + "</option>";
 		}

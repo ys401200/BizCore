@@ -168,15 +168,15 @@
 	margin-top:-0.2rem;
 }
 
-.schedule-detail > div:nth-child(2) > div:nth-child(6) .saved-line{font-size:0.8rem;margin:0 0 0 1.5rem;}
-.schedule-detail > div:nth-child(2) > div:nth-child(6) .saved-line > input{
+.schedule-detail > div:nth-child(2) > div:nth-child(6) .schedule-gw{font-size:0.8rem;margin:0 0 0 1.5rem;}
+.schedule-detail > div:nth-child(2) > div:nth-child(6) .schedule-gw > input{
 	margin: 0 0.3rem;
     vertical-align: middle;
     width: 0.7rem;
     height: 0.7rem;
 }
-.schedule-detail > div:nth-child(2) > div:nth-child(6) .saved-line > div{display:inline-block;margin-right:1.5rem;}
-.schedule-detail > div:nth-child(2) > div:nth-child(6) .saved-line > div > select{border-bottom:2px solid #5caeff;font-size:0.8rem;}
+.schedule-detail > div:nth-child(2) > div:nth-child(6) .schedule-gw > div{display:inline-block;margin-right:1.5rem;}
+.schedule-detail > div:nth-child(2) > div:nth-child(6) .schedule-gw > div > select{border-bottom:2px solid #5caeff;font-size:0.8rem;}
 
 .schedule-detail > div:nth-child(2) > div:nth-child(6) .schedule-place{font-size:0.8rem;margin:0 0 0 1.5rem;}
 .schedule-detail > div:nth-child(2) > div:nth-child(6) .schedule-place > label{
@@ -199,8 +199,8 @@
 }
 .schedule-detail > div:nth-child(2) > div:nth-child(6) .schedule-place > input:checked + label + input[type=text]{display:inline-block;}
 
-.schedule-detail > div:nth-child(2) > div:nth-child(6) .schedule-type{font-size:0.8rem;margin:0 0 0 1.5rem;}
-.schedule-detail > div:nth-child(2) > div:nth-child(6) .schedule-type > label{
+.schedule-detail > div:nth-child(2) > div:nth-child(6) .schedule-type2{font-size:0.8rem;margin:0 0 0 1.5rem;}
+.schedule-detail > div:nth-child(2) > div:nth-child(6) .schedule-type2 > label{
 	display:inline-block;
 	margin-right:0.8rem;
 	box-sizing: border-box;
@@ -210,5 +210,5 @@
 	width:5.4rem;
 	text-align:center;
 }
-.schedule-detail > div:nth-child(2) > div:nth-child(6) .schedule-type > input[type=radio]{display:none;}
-.schedule-detail > div:nth-child(2) > div:nth-child(6) .schedule-type > input:checked + label{background-color: #5876ca;color: white;font-weight: bold;}
+.schedule-detail > div:nth-child(2) > div:nth-child(6) .schedule-type2 > input[type=radio]{display:none;}
+.schedule-detail > div:nth-child(2) > div:nth-child(6) .schedule-type2 > input:checked + label{background-color: #5876ca;color: white;font-weight: bold;}

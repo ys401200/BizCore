@@ -17,7 +17,6 @@ public class Schedule2 extends Domain {
     private Date from;
     private Date to;
     private String related;
-    private Boolean permitted;
-    
+    private Byte permitted;    
     
 }
