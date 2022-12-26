@@ -23,32 +23,5 @@ public class DocForm extends Domain{
     private String form;
     private String defaultJson;
     private String remark;
-
-    public void f(){
-        //XML 파싱
-        DocumentBuilderFactory dbFactoty = DocumentBuilderFactory.newInstance();
-        //DocumentBuilder dBuilder = dbFactoty.newDocumentBuilder();
-        Document doc = null;
-        
-
-        //item이라는 태그의 element들 가져오기
-        NodeList nList = doc.getElementsByTagName("item");
-        Node nNode = nList.item(0);
-
-        if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-            Element eElement = (Element) nNode;
-            
-            getTagValue("so2Value", eElement);
-            
-        }
-        
-
-    }
-
-    private String getTagValue(String tag, Element el){
-        NodeList list = el.getElementsByTagName(tag);
-        Node v = (Node)list.item(0);
-        return v == null ? null : v.getNodeValue();
-    }
     
 }
