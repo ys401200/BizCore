@@ -289,7 +289,8 @@ confirmNewSopp = () => {
 		}
 		value[x] = v;
 	}
-
+console.log(" == 1 ==");
+console.log(value);
 	value[1] = value[1] * 1;
 	v = value[2] === undefined ? [] : value[2].split(",");
 	value[2] = [];
@@ -300,7 +301,8 @@ confirmNewSopp = () => {
 	value[6] = new Date(value[6]);
 	value[6] = value[6].getTime();
 	value[7] = document.getElementsByClassName("new-sopp")[0].dataset.project * 1;
-
+console.log(" == 2 ==");
+console.log(value);
 	v = {};
 	v.no = -1;
 	v.stage = 0;
@@ -312,13 +314,14 @@ confirmNewSopp = () => {
 	v.picOfCustomer = null;
 	v.partner = value[4] == -1 ? null : value[4];
 	v.picOfPartner = null;
-	v.expactetSales = value[5];
-	v.expactedDate = value[6];
+	v.expectedSales = value[5];
+	v.expectedDate = value[6];
 	v.related = "{\"parent\":\"project:" + value[7] + "\"}";
 	v.closed = null;
 	v.created = null;
 	v.modified = null;
-
+console.log(" == 3 ==");
+console.log(v);
 	sopp = new Sopp2(v);
 	sopp.update();
 	modal.hide();
