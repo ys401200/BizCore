@@ -47,6 +47,7 @@ dependencies {
 	implementation 'org.json:json:20220320'
 	implementation 'javax.xml.bind:jaxb-api:2.3.1'
 	implementation 'com.squareup.okhttp3:okhttp:4.10.0'
+	implementation 'com.groupdocs:groupdocs-editor:17.9'
 }
 
 tasks.named('test') {

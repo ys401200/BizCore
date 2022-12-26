@@ -409,11 +409,13 @@ public abstract class Domain implements Comparable<Domain>{
                         if(table.equals("swc_sopp") && (column.equals("sopptargetdate") || column.equals("maintenance_s") || column.equals("maintenance_e"))){
                             if(result == null)  result = "";
                             else                result += ", ";
-                            result += (column + "=" + "'" + (new java.sql.Timestamp(((Date)v2).getTime())).toString().substring(0, 10) + "'");
+                            if(column.equals("from") || column.equals("to")) result += ("`" + column + "`=" + "'" + (new java.sql.Timestamp(((Date)v2).getTime())).toString().substring(0, 10) + "'");
+                            else    result += (column + "=" + "'" + (new java.sql.Timestamp(((Date)v2).getTime())).toString().substring(0, 10) + "'");
                         }else{
                             if(result == null)  result = "";
                             else                result += ", ";
-                            result += (column + "=" + "'" + (new java.sql.Timestamp(((Date)v2).getTime())) + "'");
+                            if(column.equals("from") || column.equals("to")) result += ("`" + column + "`=" + "'" + (new java.sql.Timestamp(((Date)v2).getTime())).toString().substring(0, 10) + "'");
+                            else    result += (column + "=" + "'" + (new java.sql.Timestamp(((Date)v2).getTime())).toString().substring(0, 10) + "'");
                         }
                     } else if (field.getType().getName().equals(java.sql.Date.class.getName())) {
                         if(result == null)  result = "";
@@ -491,24 +493,23 @@ public abstract class Domain implements Comparable<Domain>{
                 if(v == null)   continue;
 
                 if (field.getType().getName().equals(String.class.getName())) {
-                    if(fieldName.equals("desc")){
-                        str1 += ("," + "`" + fieldName + "`");
-                    }else{
-                        str1 += ("," + fieldName);
-                    }
-
+                    if(fieldName.equals("desc")) str1 += ("," + "`" + fieldName + "`");
+                    else                                   str1 += ("," + fieldName);
                     str2 += (",'" + String.class.cast(v) + "'");
                 } else if (field.getType().getName().equals("int")) {
-                    str1 += ("," + fieldName);
+                    if(fieldName.equals("no")) str1 += ("," + "`" + fieldName + "`");
+                    else                                   str1 += ("," + fieldName);
                     str2 += ("," + (int)v);
                 } else if (field.getType().getName().equals("short")) {
-                    str1 += ("," + fieldName);
+                    if(fieldName.equals("no")) str1 += ("," + "`" + fieldName + "`");
+                    else                                   str1 += ("," + fieldName);
                     str2 += "," + ((short)v);
                 } else if (field.getType().getName().equals("float")) {
                     str1 += ("," + fieldName);
                     str2 += ("," + (float)v);
                 } else if (field.getType().getName().equals("long")) {
-                    str1 += ("," + fieldName);
+                    if(fieldName.equals("from") || fieldName.equals("to") || fieldName.equals("no"))    str1 += ("," + "`" + fieldName + "`");
+                    else                        str1 += ("," + fieldName);
                     str2 += ("," + (long)v);
                 } else if (field.getType().getName().equals("double")) {
                     str1 += ("," + fieldName);
@@ -542,20 +543,25 @@ public abstract class Domain implements Comparable<Domain>{
                     str2 += ("," + (Byte)v);
                 } else if (field.getType().getName().equals(Date.class.getName())) {
                     if(className.equals("Sopp") && (fieldName.equals("sopptargetdate") || fieldName.equals("maintenance_s") || fieldName.equals("maintenance_e"))){
-                        str1 += ("," + fieldName);
+                        if(fieldName.equals("to") || fieldName.equals("from")) str1 += (",`" + fieldName + "`");
+                        else str1 += ("," + fieldName);
                         str2 += (",'" +  new java.sql.Timestamp(((Date)v).getTime()).toString().substring(0, 10) + "'");
                     }else{
-                        str1 += ("," + fieldName);
+                        if(fieldName.equals("to") || fieldName.equals("from")) str1 += (",`" + fieldName + "`");
+                        else str1 += ("," + fieldName);
                         str2 += (",'" +  new java.sql.Timestamp(((Date)v).getTime()) + "'");
                     }
                 } else if (field.getType().getName().equals(java.sql.Date.class.getName())) {
-                    str1 += ("," + fieldName);
+                    if(fieldName.equals("to") || fieldName.equals("from")) str1 += (",`" + fieldName + "`");
+                        else str1 += ("," + fieldName);
                     str2 += (",'" +  java.sql.Date.class.cast(v) + "'");
                 } else if (field.getType().getName().equals(java.sql.Time.class.getName())) {
-                    str1 += ("," + fieldName);
+                    if(fieldName.equals("to") || fieldName.equals("from")) str1 += (",`" + fieldName + "`");
+                        else str1 += ("," + fieldName);
                     str2 += (",'" +  java.sql.Time.class.cast(v) + "'");
                 } else if (field.getType().getName().equals(java.sql.Timestamp.class.getName())) {
-                    str1 += ("," + fieldName);
+                    if(fieldName.equals("to") || fieldName.equals("from")) str1 += (",`" + fieldName + "`");
+                        else str1 += ("," + fieldName);
                     str2 += (",'" +  java.sql.Timestamp.class.cast(v) + "'");
                 }
                 

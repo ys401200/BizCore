@@ -1,4 +1,4 @@
-let R = {}, prepareSopp, scrolledSopp, moveToTarget, drawChat, inputtedComment, deleteChat, cancelEdit, editSopp, changeSopp, editSoppSearch, soppStageUp, clickedDateInCalendar, getSavedLine;
+let R = {}, prepareSopp, scrolledSopp, inputExpectedSales, moveToTarget, drawChat, inputtedComment, deleteChat, cancelEdit, editSopp, changeSopp, editSoppSearch, soppStageUp, clickedDateInCalendar, getSavedLine;
 $(document).ready(() => {
 	let href, no;
 	init();
@@ -13,7 +13,6 @@ $(document).ready(() => {
 	no = no !== null && no.substring(no.length - 1) === "#" ? no.substring(0, no.length - 1) : no;
 	no = no !== null ? no * 1 : null;
 	prepareSopp(no);
-	getSavedLine();
 });
 
 // 서버에서 전자결재의 자주쓰는 결재선을 가져오는 함수
@@ -34,15 +33,6 @@ getSavedLine = () => {
 			}
 		});
 } // End of getSavedLine()
-
-// 달력의 날짜 클릭 이벤트 핸들러
-clickedDateInCalendar = (el) => {
-	let dt, sch;
-
-	sch = new Schedule();
-	dt = new Date(el.dataset.v * 1);
-	sch.drawForRequestDetail(dt);
-} // End of clickedDateInCalendar()
 
 soppStageUp = (v) => {
 	let href, no;
@@ -71,12 +61,12 @@ prepareSopp = (no) => {
 				data = response.data;
 				data = cipher.decAes(data);
 				data = JSON.parse(data);
-				console.log(data);
 				R.projectOwner = data.projectOwner;
 				R.chat = data.chat;
 				R.sopp = new Sopp2(data.sopp);
 				R.sopp.draw();
 				drawChat();
+				getSavedLine();
 
 				setTimeout(() => {
 					EstimateSet = new EstimateSet();
@@ -91,6 +81,15 @@ prepareSopp = (no) => {
 		});
 
 } // End of prepareSopp()
+
+// 예상매출액/일 수정 버튼 이벤트 핸들러
+inputExpectedSales = (el) => {
+	let v;
+	v = el.value;
+	v = v.replaceAll(/[^0-9]/g, "");
+	v = v * 1;
+	el.value = v.toLocaleString();
+}// End of inputExpectedSales()
 
 // 편집 취소 함수
 cancelEdit = (el) => {
@@ -281,10 +280,10 @@ changeSopp = (n, v) => {
 			document.getElementsByClassName("sopp-expected")[0].children[0].children[3].children[2].style = "";
 			document.getElementsByClassName("sopp-expected")[0].children[0].children[2].disabled = true;
 			x = document.getElementsByClassName("sopp-expected")[0].children[0].children[2].value;
-			x.replaceAll(",", "") * 1;
-			if(!isNaN(x))	R.sopp.expactetSales = x;
+			x = x.replaceAll(",", "") * 1;
+			if(!isNaN(x))	R.sopp.expectedSales = x;
 			x = document.getElementsByClassName("sopp-expected")[0].children[1].children[2].value;
-			if(x !== "")	R.sopp.expactedDate = new Date(x);
+			if(x !== "")	R.sopp.expectedDate = new Date(x);
 			change = true;
 			break;
 	}

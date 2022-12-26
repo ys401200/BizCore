@@ -17,8 +17,8 @@ public class Sopp2 extends Domain{
     private Integer picOfCustomer;
     private Integer partner;
     private Integer picOfPartner;
-    private long expactetSales;
-    private Date expactedDate;
+    private long expectedSales;
+    private Date expectedDate;
     private String related;
     private Date closed;
 }

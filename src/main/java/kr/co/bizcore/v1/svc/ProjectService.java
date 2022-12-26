@@ -164,6 +164,7 @@ public class ProjectService extends Svc{
             message = "<영업기회 수정 : ";
             ogn = projectMapper.getSopp(compId, no);
             sql = ogn.createUpdateQuery(sopp, "bizcore.sopp");
+            logger.error("============================================================  " + sql);
             t = sql.split("VALUES")[0];
             t = t.substring(12);
             sql += (" WHERE no = " + no + " AND compId = '" + compId + "'");

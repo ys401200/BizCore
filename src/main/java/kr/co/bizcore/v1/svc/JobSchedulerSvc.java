@@ -167,8 +167,8 @@ public class JobSchedulerSvc extends Svc{
                 sopp.setNo(no);
                 sopp.setCustomer(customer);
                 sopp.setTitle(json.getString("title"));
-                sopp.setExpactedDate(new Date(json.getLong("contractDate")));
-                sopp.setExpactetSales(json.getLong("amount"));
+                sopp.setExpectedDate(new Date(json.getLong("contractDate")));
+                sopp.setExpectedSales(json.getLong("amount"));
                 sopp.setCreated(json.getLong("created"));
                 sopp.setRelated("{\"parent\":\"project:2\",\"previous\":\"procure:" + json.getInt("id") + "\",\"procure\":" + procure + "}");
                 sql = sopp.createInsertQuery("bizcore.sopp", "vtek");
