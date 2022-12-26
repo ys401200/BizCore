@@ -352,7 +352,13 @@
 .sopp-desc{
 	margin: 0 0.2rem 0.5rem;
 }
-.sopp-desc > div:nth-child(1){display:grid;grid-template-columns: 2rem auto 10rem;margin: 0.4rem 0;padding: 0.4rem 0;border-bottom: 1px solid #b1d8ff;}
+.sopp-desc > div:nth-child(1){
+	display:grid;grid-template-columns: 2rem auto 10rem;
+	margin: 0.4rem 0;
+	padding: 0.4rem 0;
+	font-family:'Malgun Gothic','맑은 고딕';
+	border-bottom: 1px solid #b1d8ff;
+}
 .sopp-desc > div:nth-child(1) > div:nth-child(1){
 	width: 0.6rem;
     height: 0.6rem;
@@ -369,7 +375,8 @@ font-size:1.5rem;
 }
 .sopp-desc > div:nth-child(1) > div:nth-child(3) .edit-sopp-img{width:1.3rem;height:1.3rem;cursor:pointer;opacity:0.4;display:none;    margin: 0 0.5rem;}
 .sopp-desc > div:nth-child(1):hover > div:nth-child(3) .edit-sopp-img:nth-child(1){display:initial;}
-.sopp-desc > div:nth-child(2){min-height: 12rem;max-height: 45rem;overflow-x: hidden;overflow-y: auto;}
+.sopp-desc > div:nth-child(2){min-height:12rem;max-height:45rem;overflow-x:hidden;overflow-y:auto;font-size:0.8rem;}
+.sopp-desc > div:nth-child(2) p{margin:0.25rem 0;}
 .sopp-desc > textarea:nth-child(3){display:none;}
 .sopp-desc > div:nth-child(4){height: 35rem;overflow-x: hidden;overflow-y: auto;margin:1rem 0;border-color:#b5b2ff;display:none;}
 
