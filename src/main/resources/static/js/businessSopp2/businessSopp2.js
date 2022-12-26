@@ -1,4 +1,4 @@
-let R = {}, prepareSopp, scrolledSopp, inputExpectedSales, moveToTarget, drawChat, inputtedComment, deleteChat, cancelEdit, editSopp, changeSopp, editSoppSearch, soppStageUp, clickedDateInCalendar, getSavedLine;
+let R = {}, prepareSopp, scrolledSopp, inputExpectedSales, moveToTarget, drawChat, inputtedComment, deleteChat, cancelEdit, editSopp, changeSopp, editSoppSearch, soppStageUp, clickedDateInCalendar, getSavedLine, enteredSoppCalendarSchedule, leftSoppCalendarSchedule, clickedSoppCalendarSchedule;
 $(document).ready(() => {
 	let href, no;
 	init();
@@ -48,11 +48,8 @@ soppStageUp = (v) => {
 } // End of soppStageUp()
 
 prepareSopp = (no) => {
-	if (no === null) {
-		console.log("SOPP no is null!!!");
-		return;
-	}
-	fetch(apiServer + "/api/project/sopp/" + no)
+	if (no === null)	console.log("SOPP no is null!!!");
+	else fetch(apiServer + "/api/project/sopp/" + no)
 		.catch((error) => console.log("error:", error))
 		.then(response => response.json())
 		.then(response => {
@@ -64,6 +61,7 @@ prepareSopp = (no) => {
 				R.projectOwner = data.projectOwner;
 				R.chat = data.chat;
 				R.sopp = new Sopp2(data.sopp);
+				R.sopp.getSchedule();
 				R.sopp.draw();
 				drawChat();
 				getSavedLine();
@@ -525,3 +523,15 @@ function getYmdHypen(date) {
 		(d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
 	);
 } // End of getYmdHypen()
+
+enteredSoppCalendarSchedule = (no) => {
+	console.log("entered : " + no);
+} // End of enteredSoppCalendarSchedule()
+
+leftSoppCalendarSchedule = (no) => {
+	console.log("left : " + no);
+} // End of leftSoppCalendarSchedule()
+
+clickedSoppCalendarSchedule = (no) => {
+	console.log(no);
+} // End of clickedSoppCalendarSchedule()

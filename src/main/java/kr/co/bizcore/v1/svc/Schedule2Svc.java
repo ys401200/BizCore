@@ -1,5 +1,7 @@
 package kr.co.bizcore.v1.svc;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,5 +56,26 @@ public class Schedule2Svc extends Svc {
 
         return result;
     } // End of updateSchedule()
+
+    public String getScheduleWithSopp(String compId, String userNo, int sopp) {
+        String result = null;
+        int x = -999;
+        List<Schedule2> list = null;
+        
+        // 권한이 있는지 확인함
+        x = schedule2Mapper.checkPermissionWithSopp(compId, userNo, sopp);
+        if(x == 0)  return "permissionDenied";
+
+        // DB에서 일정정보를 가져옴
+        result = "[";
+        list = schedule2Mapper.getListWithParent(compId, "sopp:" + sopp);
+        if(list != null)    for(x = 0 ; x < list.size() ; x++){
+            if(x > 0)   result += ",";
+            result += list.get(x).toJson();
+        }
+        result += "]";
+        
+        return result;
+    } // End of getScheduleWithSopp()
     
 }

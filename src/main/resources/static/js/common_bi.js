@@ -393,6 +393,7 @@ class Sopp2 {
 		this.created = each.created == undefined ? null : new Date(each.created);
 		this.modified = each.modified == undefined ? null : new Date(each.modified);
 		this.calendar = [];
+		this.colorTable = ["#a688c9", "#88c9a7", "#c9a788", "#c0daad", "#daadc5", "#afadda", "#addac4", "#dac4ad", "#daadb2", "#dad0ad", "#daadd9", "#cddaad", "#adc2da", "#addac0", "#f6ffde", "#defcff", "#fedeff", "#dee7ff", "#e4ffde", "#ffdede"];
 	}
 	isClosed() { return this.closed !== null; }
 
@@ -557,7 +558,7 @@ class Sopp2 {
 			el = document.createElement("div");
 			cnt.appendChild(el);
 			dt = month[x];
-			cal = new BizCalendar(dt.getFullYear(), dt.getMonth() + 1, el);
+			cal = new MonthlyCalendar(dt.getFullYear(), dt.getMonth() + 1, el);
 			y = dt.getFullYear() * 100 + dt.getMonth() + 1;
 			z = (new Date).getFullYear() * 100 + (new Date).getMonth() + 1;
 			if(y === z)	el.style.display = "";
@@ -567,6 +568,41 @@ class Sopp2 {
 		}
 	} // End of draw()
 
+	// 서버에서 일정을 가져오는 메서드
+	getSchedule(){
+		fetch(apiServer + "/api/schedule2/sopp/" + this.no)
+			.catch((error) => console.log("error:", error))
+			.then(response => response.json())
+			.then(response => {
+				let data, schedule, x, y, arr = [], emp = [], color = {};
+				console.log(response);
+				if (response.result === "ok") {
+					data = response.data;
+					data = cipher.decAes(data);
+					data = JSON.parse(data);
+					for(x = 0 ; x < data.length ; x++){
+						schedule = new Schedule(data[x]);
+						arr.push(schedule);
+					}
+					arr.sort(function(a,b){return a.from - b.from});
+					R.sopp.schedules = arr;
+					//직원별 색상 부여
+					emp = this.getEmployee();
+					for(x = 0 ; x < R.sopp.schedules.length ; x++)	if(!emp.includes(R.sopp.schedules[x].writer))	emp.push(R.sopp.schedules[x].writer);
+					for(x = 0 ; x < emp.length ; x++)	color[emp[x]] = this.colorTable[x];
+					this.empColor = color;
+					// 캘린더에 스케줄을 추가해 줌
+					for(x = 0 ; x < R.sopp.calendar.length ; x++)	for(y = 0 ; y < R.sopp.schedules.length ; y++)	R.sopp.calendar[x].addSchedule(R.sopp.schedules[y]);
+					//캘린더에 스케줄을 그려넣어줌
+					for(x = 0 ; x < R.sopp.calendar.length ; x++)	R.sopp.calendar[x].drawScheduleInSopp(color);
+					console.log("Success getting schedule from server.");
+				} else {
+					console.log(response.msg);
+				}
+			});
+	} // End of getSchedule()
+
+	// 프로젝트에서 영업기회 목록을 그리는 메서드
 	drawList(cnt) {
 		let el, x, z, lb = ["개설", "접촉", "제안", "견적", "협상", "계약", "종료"], html;
 
@@ -662,7 +698,7 @@ class Sopp2 {
 	}
 } // End of Class === Sopp2 ===========================================================================
 
-class BizCalendar {
+class MonthlyCalendar {
 	constructor(year, month, container) {
 		let startDate, endDate, dt = new Date();
 		if (year === undefined || isNaN(year)) year = dt.getFullYear();
@@ -675,7 +711,18 @@ class BizCalendar {
 		this.container.dataset.v = year * 100 + month;
 		this.startDate = new Date(startDate.getTime() - startDate.getDay() * 86400000); // 달력 시작하는 날짜 잡기
 		this.endDate = new Date(endDate.getTime() + (6 - endDate.getDay()) * 86400000); // 달력 끝나는 날 찾기
+		this.schedule = [];
+		this.color = {};
 	}
+
+	// 일정을 추가하는 메서드
+	addSchedule(sch){
+		if(sch === undefined || sch === null || !(typeof sch === "object" && sch.constructor.name === "Schedule"))	return;
+		if(sch.from > this.endDate || sch.to < this.from)	return;0
+		this.schedule.push(sch);
+	} // End of addSchedule()
+
+	// 영업기회에 달력을 그리는 메서드
 	drawForSopp() {
 		let headCnt, bodyCnt, x, y, z, w, dt, weeks, html, bColor;
 		if (this.container === null) return;
@@ -712,7 +759,40 @@ class BizCalendar {
 		bodyCnt.innerHTML = html;
 	} // End of drawForSopp()
 
-} // End of Class _ BizCalendar
+	// 그려진 달력에 일정을 표시하는 메서드
+	drawScheduleInSopp(colorTable){
+		let x, y, z, st, et, writer, name, days = [], color = "#dddddd";
+		
+		z = this.container.children[1];
+		for(x = 0 ; x < z.children.length ; x++){
+			for(y = 0 ; y < z.children[x].children.length ; y++){
+				days.push(z.children[x].children[y]);
+			}
+		}
+		
+		for(x = 0 ; x < days.length ; x++){
+			st = days[x].dataset.v * 1;
+			et = st + 86400000;
+			for(y = 0 ; y < this.schedule.length ; y++){
+				if(this.schedule[y].from >= st && this.schedule[y].from < et){
+					name = "...";
+					writer = this.schedule[y].writer;
+					name = storage.user[writer] !== undefined && storage.user[writer].userName !== undefined ? storage.user[writer].userName : name;
+					color = colorTable !== undefined && colorTable[writer] !== undefined ? colorTable[writer] : color;
+					z = document.createElement("div");
+					z.className = "schedule-in-monthly-calendar";
+					z.setAttribute("onclick","event.stopPropagation();clickedSoppCalendarSchedule(" + this.schedule[y].no + ")");
+					z.setAttribute("onmouseenter","enteredSoppCalendarSchedule(" + this.schedule[y].no + ")");
+					z.setAttribute("onmouseleave","leftSoppCalendarSchedule(" + this.schedule[y].no + ")");
+					z.style.backgroundColor = color;
+					z.innerText = name;
+					days[x].appendChild(z);
+				}
+			}
+		}
+	} // End of drawScheduleInSopp()
+
+} // End of Class ========== MonthlyCalendar ==========
 
 class Schedule{
 	constructor(data){
@@ -740,12 +820,12 @@ class Schedule{
 		this.content = v.content;
 		this.report = v.report;
 		this.type = v.type;
-		this.from = v.from;
-		this.to = v.to;
-		this.related = v.related;
+		this.from = new Date(v.from);
+		this.to = new Date(v.to);
+		this.related = JSON.parse(v.related);
 		this.permitted = v.permitted;
-		this.created = v.create;
-		this.modified = v.modified;
+		this.created = new Date(v.created);
+		this.modified = v.modified === undefined ? null : new Date(v.modified);
 	} // End of constructor()
 
 	// ========== 일정 수정 모달을 띄우는 함수 ==========
@@ -753,6 +833,9 @@ class Schedule{
 		let html, x, y, start, end, cnt, el, child, isVacation = false, isOverTime = false, inSopp = false, scheduleFrom, scheduleTo;
 		modal.show();
 		modal.headTitle[0].innerText = "일정 신규 등록";
+
+		// 전역변수에 닐짜 인스턴스를 등록해 둠
+		R.schedule = this;
 
 		// 날짜가 입력된 경우 설정된 일정을 변경함
 		if(dt !== null || dt !== undefined && typeof dt === "object" && dt.constructor.name === "Date"){
@@ -783,9 +866,7 @@ class Schedule{
 		y = ((scheduleTo.getHours() * 100 + scheduleTo.getMinutes() + 10000) + "").substring(1);
 		cnt.dataset.ts = x;
 		cnt.dataset.te = y;
-		cnt.dataset.no = this.no;
-
-		
+		cnt.dataset.no = this.no;		
 
 		// 본문 및 제목 엘리먼트 생성 및 부착
 		el = document.createElement("div");
@@ -954,23 +1035,11 @@ class Schedule{
 			y.innerHTML = html;
 		}
 
-
-
-
-
-
-
-
-
-
-
-		// 달력에 날짜 선택 표시
+		// 달력에 날짜 선택 미니 캘린더 표시
 		y = (dt.getFullYear() * 10000 + (dt.getMonth() + 1) * 100 + dt.getDate()) + "";
 		cnt.dataset.ds = y;
 		child = document.getElementsByClassName("mini-calendar-cell");
-		for(x = 0 ; x < child.length ; x++){
-			if(child[x].dataset.v === y)	child[x].style.backgroundColor = "#c1eaff";
-		}
+		for(x = 0 ; x < child.length ; x++)	if(child[x].dataset.v === y)	child[x].style.backgroundColor = "#c1eaff";
 
 		// 타임 바에 시간 선택 표시
 		start = cnt.dataset.ts * 1;
@@ -981,44 +1050,42 @@ class Schedule{
 			if(y >= start && y < end)	child[x].className = "schedule-time-select";
 		}
 
-		// 기간 문자열 표시
-		setDateTimeInScheduleDetail();
+		// 미니 달력 상단, 선택된 기간에 대한 문자열 표시
+		setDateTimeInScheduleDetail();		
 
-		
-
-		// 모달 버튼 설정
+		// 모달 버튼 이벤트 핸들러 설정
 		modal.close[0].onclick = () => {CKEDITOR.instances['schedule-detail-content'].destroy();modal.hide();};
 		modal.confirm[0].onclick = clickedScheduleDetailConfirm
-
-
-		return;
 	} // End of drawForRequestDetail()
 
-	dateToStr(){ // 시작 및 종료에 대한 문자열을 만들어주는 함수
+	// 기간의 시작 및 종료 날짜/시간 문자열 만드는 메서드
+	dateToStr(){
 		let str, s1, s2, e1, e2;
 		s1 = "'" + (this.from.getFullYear() % 100) + "." + (this.from.getMonth() + 1) + "." + this.from.getDate();
 		e1 = "'" + (this.to.getFullYear() % 100) + "." + (this.to.getMonth() + 1) + "." + this.to.getDate();
 		s2 = (this.from.getHours() < 10 ? "0" + this.from.getHours() : this.from.getHours()) + ":" + (this.from.getMinutes() < 10 ? "0" + this.from.getMinutes() : this.from.getMinutes());
 		e2 = (this.to.getHours() < 10 ? "0" + this.to.getHours() : this.to.getHours()) + ":" + (this.to.getMinutes() < 10 ? "0" + this.to.getMinutes() : this.to.getMinutes());
 		str = "<date>" + s1 + " </date><time>" + s2 + "</time>";
-		if(s1 === e1){
-			str += ("<span> ~ </span><time>" + e2 + "</time>");
-		}else{
-			str = "<span> ~ </span><date>" + e1 + " </date><time>" + e2 + "</time>";
-		}
+		if(s1 === e1)	str += ("<span> ~ </span><time>" + e2 + "</time>");
+		else			str = "<span> ~ </span><date>" + e1 + " </date><time>" + e2 + "</time>";
 		return str;
 	} // End of dateToStr()
 
-	update() {
-		let json = Object.assign({}, this), data;
-
+	// JSON 문자열을 만드는 함수
+	toJson(){
+		let json = Object.assign({}, this);
 		delete json.calendar;
 		json.created = (json.created === undefined || json.created === null) ? null : json.created.getTime();
 		json.modified = (json.modified === undefined || json.modified === null) ? null : json.modified.getTime();
 		json.from = (json.from === undefined || json.from === null) ? null : json.from.getTime();
 		json.to = (json.to === undefined || json.to === null) ? null : json.to.getTime();
 		json.related = (json.related === undefined || json.related === null) ? null : JSON.stringify(json.related);
-		data = JSON.stringify(json);console.log(json);
+		return json;
+	}
+
+	// 스케줄 객체의 변경 내용에 대해에 저장하는 메서드
+	update() {
+		let data = JSON.stringify(this.toJson());
 		data = cipher.encAes(data);
 		fetch(apiServer + "/api/schedule2", {
 			method: "POST",
@@ -1027,7 +1094,6 @@ class Schedule{
 		}).catch((error) => console.log("error:", error))
 			.then(response => response.json())
 			.then(response => {
-				let sopp, prjNo, x;
 				console.log(response);
 				if (response.result === "ok") {
 					

@@ -450,7 +450,7 @@ font-size:1.5rem;
 .calendar-body > div:last-child{border-bottom:none;}
 .calendar-body > div > div{border-right:1px solid #929cc5;}
 .calendar-body > div > div:last-child{border-right:none;}
-.calendar-body > div > div > div{
+.calendar-body .schedule-in-monthly-calendar{
 	display:flex;
 	justify-content: space-around;
 	font-size:0.85rem;
@@ -459,6 +459,7 @@ font-size:1.5rem;
 	padding:0.2rem 0.3rem;
 	margin:0.2rem 1rem 0.2rem auto;
 	background-color:pink;
+	cursor:default;
 }
 .calendar-body > div > div > div:first-child{
 	display:block;
@@ -469,11 +470,11 @@ font-size:1.5rem;
 	margin:0;
 	background-color:transparent;
 }
-.other-month > div{color:gray;z-index:-10;}
-.other-month:first-child > div{color:rgb(255, 90, 90);}
-.this-month:first-child > div{color:red;}
-.other-month:last-child > div:last-child{color:#0100ff;}
-.this-month:last-child > div{color:#4f4fff;}
+.other-month > div:first-child{color:gray;z-index:-10;}
+.other-month:first-child > div:first-child{color:rgb(255, 90, 90);}
+.other-month:last-child > div:first-child{color:#0100ff;}
+.this-month:first-child > div:first-child{color:red;}
+.this-month:last-child > div:first-child{color:#4f4fff;}
 .calendar-body .profile-small {
     height: 0.95rem;
     vertical-align: text-bottom;

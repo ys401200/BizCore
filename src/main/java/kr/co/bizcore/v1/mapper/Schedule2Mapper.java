@@ -15,10 +15,16 @@ public interface Schedule2Mapper {
     @Select("SELECT `no`,writer,title,content,report,`type`,`from`,`to`,related,permitted,created,modified FROM bizcore.schedule WHERE deleted IS NULL AND compId = #{compId}")
     public List<Schedule2> getListAll(@Param("compId") String compId);
 
-    @Select("SELECT `no`,writer,title,content,report,`type`,`from`,`to`,related,permitted,created,modified FROM bizcore.estimate WHERE deleted IS NULL AND compId = #{compId} AND json_value(related,'$.parent') = #{parent}")
+    @Select("SELECT `no`,writer,title,content,report,`type`,`from`,`to`,related,permitted,created,modified FROM bizcore.schedule WHERE deleted IS NULL AND compId = #{compId} AND json_value(related,'$.parent') = #{parent}")
     public List<Schedule2> getListWithParent(@Param("compId") String compId, @Param("parent") String parent);
 
-    @Select("SELECT `no`,writer,title,content,report,`type`,`from`,`to`,related,permitted,created,modified FROM bizcore.estimate WHERE deleted IS NULL AND compId = #{compId} AND json_value(related,'$.parent') IN (#{parents})")
+    @Select("SELECT `no`,writer,title,content,report,`type`,`from`,`to`,related,permitted,created,modified FROM bizcore.schedule WHERE deleted IS NULL AND compId = #{compId} AND json_value(related,'$.parent') IN (#{parents})")
     public List<Schedule2> getListWithParents(@Param("compId") String compId, @Param("parents") String parents);
+
+    // 영업기회 번호와 사용자 번호를 넣고 권한이 있는지 확인하는 메서드
+    @Select("SELECT count(*) FROM bizcore.sopp WHERE deleted IS NULL AND compId = #{compId} AND no = #{sopp} AND ((owner = #{userNo} OR coworker LIKE CONCAT('%', #{userNo}, '%')) OR json_value(related,'$.parent') = (SELECT CONCAT('project:',no) FROM bizcore.project WHERE deleted IS NULL AND compId = #{compId} AND owner = #{userNo}))")
+    public int checkPermissionWithSopp(@Param("compId") String compId, @Param("userNo") String userNo, @Param("sopp") int sopp);
+
+    
     
 }
