@@ -289,8 +289,7 @@ confirmNewSopp = () => {
 		}
 		value[x] = v;
 	}
-console.log(" == 1 ==");
-console.log(value);
+
 	value[1] = value[1] * 1;
 	v = value[2] === undefined ? [] : value[2].split(",");
 	value[2] = [];
@@ -301,8 +300,7 @@ console.log(value);
 	value[6] = new Date(value[6]);
 	value[6] = value[6].getTime();
 	value[7] = document.getElementsByClassName("new-sopp")[0].dataset.project * 1;
-console.log(" == 2 ==");
-console.log(value);
+
 	v = {};
 	v.no = -1;
 	v.stage = 0;
@@ -320,8 +318,7 @@ console.log(value);
 	v.closed = null;
 	v.created = null;
 	v.modified = null;
-console.log(" == 3 ==");
-console.log(v);
+
 	sopp = new Sopp2(v);
 	sopp.update();
 	modal.hide();
