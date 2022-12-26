@@ -401,9 +401,9 @@
 	grid-template-columns: 15% 15% 50% 5% 15%;
 }
 
-.pageContainer{
+/* .pageContainer{
     width: 40%;
-}
+} */
 
 .cke_textarea_inline{
     border: 1px solid #000;

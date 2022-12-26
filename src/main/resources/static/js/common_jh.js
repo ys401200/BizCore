@@ -1,3 +1,275 @@
+//공지사항 셋팅 클래스
+class NoticeSet{
+	constructor(){
+		Common = new Common();
+	}
+
+	//공지사항 리스트 저장 함수
+	list(){
+		axios.get("/api/notice").then((response) => {
+			if(response.data.result === "ok"){
+				let result;
+				result = cipher.decAes(response.data.data);
+				result = JSON.parse(result);
+				storage.noticeList = result;
+
+				if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined) {
+					window.setTimeout(this.drawNoticeList, 600);
+					window.setTimeout(addSearchList, 600);
+					window.setTimeout(searchContainerSet, 600);
+				} else {
+					window.setTimeout(this.drawNoticeList, 200);
+					window.setTimeout(addSearchList, 200);
+					window.setTimeout(searchContainerSet, 200);
+				}
+			}
+		}).catch((error) => {
+			msg.set("공지사항 메인 리스트 에러입니다.\n" + error);
+			console.log(error);
+		})
+	}
+
+	//공지사항 리스트 출력 함수
+	drawNoticeList() {
+		let container, result, jsonData, job, header = [], data = [], ids = [], disDate, setDate, str, fnc, pageContainer;
+
+		if (storage.noticeList === undefined) {
+			msg.set("등록된 공지사항이 없습니다");
+		}
+		else {
+			if (storage.searchDatas === undefined) {
+				jsonData = storage.noticeList;
+			} else {
+				jsonData = storage.searchDatas;
+			}
+		}
+	
+		result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+		pageContainer = document.getElementsByClassName("pageContainer")[0];
+		container = document.getElementsByClassName("gridNoticeList")[0];
+	
+		header = [
+			{
+				"title": "등록일",
+				"align": "center",
+			},
+			{
+				"title": "제목",
+				"align": "center",
+			},
+			{
+				"title": "작성자",
+				"align": "center",
+			},
+		];
+	
+		if (jsonData === "") {
+			str = [
+				{
+					"setData": undefined,
+					"col": 4,
+				},
+			];
+	
+			data.push(str);
+		} else {
+			for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+				disDate = dateDis(jsonData[i].created, jsonData[i].modified);
+				setDate = dateFnc(disDate, "mm-dd");
+				let userName = storage.user[jsonData[i].writer].userName;
+	
+				str = [
+					{
+						"setData": setDate,
+						"align": "center",
+					},
+					{
+						"setData": jsonData[i].title,
+						"align": "left",
+					},
+					{
+						"setData": userName,
+						"align": "center",
+					},
+				]
+	
+				fnc = "noticeDetailView(this)";
+				ids.push(jsonData[i].no);
+				data.push(str);
+			}
+	
+			let pageNation = createPaging(pageContainer, result[3], "pageMove", "drawNoticeList", result[0]);
+			pageContainer.innerHTML = pageNation;
+		}
+	
+		Common.createGrid(container, header, data, ids, job, fnc);
+	
+		let path = $(location).attr("pathname").split("/");
+	
+		if (path[3] !== undefined && jsonData !== null) {
+			let content = document.querySelector(".gridContent[data-id=\"" + path[3] + "\"]");
+			this.noticeDetailView(content);
+		}
+	}
+
+	//메인 화면에서 클릭한 공지사항 가져오는 함수
+	noticeDetailView(e) {
+		storage.gridContent = e;
+
+		axios.get("/api/notice/" + id).then((response) => {
+			if(response.data.result === "ok"){
+				let result;
+				result = cipher.decAes(response.data.data);
+				result = JSON.parse(result);
+				const Detail = new Notice(result);
+				Detail.detail();
+			}
+		}).catch((error) => {
+			msg.set("상세보기 에러 입니다.\n" + error);
+			console.log(error);
+		});
+	}
+
+	//공지사항 등록 폼
+	noticeInsertForm(){
+		let html, dataArray;
+
+		dataArray = [
+			{
+				"title": "담당자",
+				"elementId": "writer",
+				"col": 4,
+			},
+			{
+				"title": "제목(*)",
+				"elementId": "title",
+				"disabled": false,
+				"col": 4,
+			},
+			{
+				"title": "내용(*)",
+				"elementId": "content",
+				"type": "textarea",
+				"disabled": false,
+				"col": 4,
+			},
+		];
+
+		html = detailViewForm(dataArray, "modal");
+		modal.show();
+		modal.content.css("min-width", "70%");
+		modal.content.css("max-width", "70%");
+		modal.headTitle.text("공지사항등록");
+		modal.body.html(html);
+		modal.confirm.text("등록");
+		modal.close.text("취소");
+		modal.confirm.attr("onclick", "const Insert = new Notice(); Insert.insert();");
+		modal.close.attr("onclick", "modal.hide();");
+
+		storage.formList = {
+			"writer": storage.my,
+			"title": "",
+			"content": "",
+		};
+	
+		setTimeout(() => {
+			let my = storage.my;
+			document.getElementById("writer").value = storage.user[my].userName;
+			ckeditor.config.readOnly = false;
+			window.setTimeout(setEditor, 100);
+		}, 100);
+	
+		setTimeout(() => {
+			document.getElementsByClassName("cke_textarea_inline")[0].style.height = "300px";
+		}, 300);
+	}
+}
+
+//공지사항 기능 클래스
+class Notice{
+	constructor(getData){
+		if(getData !== undefined){
+			this.getData = getData;
+			this.title = getData.title;
+			this.content = getData.content;
+			this.writer = getData.writer;
+			this.created = getData.created;
+			this.modified = getData.modified;
+		}else{
+			this.title = "";
+			this.content = "";
+			this.writer = storage.my;
+		}
+	}
+
+	//공지사항 상세보기
+	detail(){
+		let html = "";
+		let btnHtml = "";
+		let setDate, datas, dataArray, createDiv;
+		
+		detailSetFormList(this.getData);
+
+		setDate = dateDis(this.created, this.modified);
+		setDate = dateFnc(setDate);
+		datas = ["writer"];
+		dataArray = [
+			{
+				"title": "작성자",
+				"elementId": "writer",
+				"dataKeyup": "user",
+				"value": this.writer,
+				"col": 2,
+			},
+			{
+				"title": "등록일",
+				"value": setDate,
+				"elementId": "created",
+				"type": "date",
+				"col": 2,
+			},
+			{
+				"title": "제목(*)",
+				"elementId": "title",
+				"value": this.title,
+				"col": 4,
+			},
+			{
+				"title": "내용(*)",
+				"elementId": "content",
+				"value": this.content,
+				"type": "textarea",
+				"col": 4,
+			},
+		];
+		html += detailViewForm(dataArray, "board")
+		detailBoardContainerHide();
+		createDiv = document.createElement("div");
+		createDiv.innerHTML = html;
+		storage.gridContent.after(createDiv);
+		notIdArray = ["writer", "created"];
+		detailTrueDatas(datas);
+		
+		if(storage.my == storage.formList.writer){
+			btnHtml += "<button type=\"button\" class=\"updateBtn\" onclick=\"enableDisabled(this, 'noticeUpdate();', '" + notIdArray + "');\">수정</button>";
+			btnHtml += "<button type=\"button\" onclick=\"noticeDelete();\">삭제</button>";
+		}
+
+		btnHtml += "<button type='button' onclick='detailBoardContainerHide();'><i class=\"fa-solid fa-xmark\"></i></button>";
+		document.getElementsByClassName("detailBtns")[0].innerHTML = btnHtml;
+
+		setTimeout(() => {
+			ckeditor.config.readOnly = true;
+			window.setTimeout(setEditor, 100);
+		}, 100);
+	}
+
+	//공지사항 등록
+	insert(){
+		console.log(this);
+	}
+}
+
 // 견적 초기 세팅해주는 클래스
 class EstimateSet{
 	constructor(){
@@ -5,6 +277,7 @@ class EstimateSet{
 		this.getEstimateItem();
 	}
 	
+	//베이직 견적 storage 저장 함수
 	getEstimateBasic(){
 		let url;
 		url = apiServer + "/api/estimate/basic";
@@ -26,6 +299,7 @@ class EstimateSet{
 		});
 	}
 	
+	//견적 아이템 저장 함수
 	getEstimateItem(){
 		let url;
 		url = apiServer + "/api/estimate/item/";
@@ -43,6 +317,7 @@ class EstimateSet{
 		});
 	}
 	
+	//영업기회 견적번호 및 현재 영업기회 번호 저장 함수
     soppEstimateNo(soppNo){
         axios.get("/api/estimate/sopp/" + soppNo).then((response) => {
 			if(response.data.result === "ok"){
@@ -63,6 +338,7 @@ class EstimateSet{
 		});
     }
 
+	//영업기회 견적리스트를 가져오는 함수
     soppEstimateList(estimateNo){
         axios.get("/api/estimate/" + estimateNo).then((response) => {
 			if(response.data.result === "ok"){
@@ -80,6 +356,7 @@ class EstimateSet{
 		});
     }
 
+	//메인 리스트 데이터 가져오는 함수
 	list() {
 		axios.get("/api/estimate").then((response) => {
 			if(response.data.result === "ok"){
@@ -94,11 +371,13 @@ class EstimateSet{
             console.log(error);
 		});
 	}
-
+	
+	//견적 추가에 대한 폼
 	addForm(){
 		this.clickedAdd();
 	}
 
+	//메인 리스트 출력 함수
 	drawEstmList(){
 		let container, result, job, jsonData, header = [], data = [], ids = [], disDate, str, fnc, pageContainer, containerTitle, crudAddBtn, crudUpdateBtn, hideArr, showArr;
 		
@@ -202,6 +481,7 @@ class EstimateSet{
 		setViewContents(hideArr, showArr);
 	}
 
+	//영업기회 버전리스트만 출력하기 위한 리스트 함수
 	drawEstmVerList(){
 		let container, result, job, jsonData, header = [], data = [], ids = [], disDate, str, fnc, pageContainer, containerTitle, crudAddBtn, crudUpdateBtn, hideArr, showArr;
 		
@@ -312,6 +592,7 @@ class EstimateSet{
 		setViewContents(hideArr, showArr);
 	}
 
+	//상세보기에서 Back 실행 함수
 	drawBack(){
 		let crudAddBtn = document.getElementsByClassName("crudAddBtn")[0];
 		let crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
@@ -345,6 +626,7 @@ class EstimateSet{
 		document.getElementsByClassName("copyMainPdf")[0].remove();
 	}
 	
+	//메인 리스트 클릭 함수
 	clickedEstimate(el){
 		let x, cnt, els, color = "#2147b1", estmNo, versionList, thisEle;
 	
@@ -378,6 +660,7 @@ class EstimateSet{
 		}, 300);
 	}
 	
+	//메인 버전 리스트 클릭 함수
 	clickedEstmVer(el){
 		let x, cnt, els, color = "#e1e9ff", versionList, title, userName;
 		els = el.parentElement.children;
@@ -421,6 +704,7 @@ class EstimateSet{
 		indexMain[indexMain.length-1].setAttribute("id", "estPrintPdf");
 	} 
 
+	//메인 버전리스트 저장 함수
 	getEstmVerList(estmNo){
 		axios.get("/api/estimate/" + estmNo).then((response) => {
 			if(response.data.result === "ok"){
@@ -441,6 +725,7 @@ class EstimateSet{
 		});
 	} 
 	
+	//메인 버전리스트 셋팅 함수
 	drawPanelVerList(){
 		let versionList, html = "", x;
 		versionList = document.getElementsByClassName("versionList")[0];
@@ -475,6 +760,7 @@ class EstimateSet{
 		versionList.innerHTML = html;
 	}
 	
+	//견적 상세보기 셋팅 함수
 	clickedUpdate(){
 		let containerTitle, crudUpdateBtn, hideArr, showArr, mainPdf, copyMainPdf;
 		containerTitle = document.getElementById("containerTitle");
@@ -520,6 +806,7 @@ class EstimateSet{
 		this.estimateFormInit();
 	}
 
+	//견적 추가 셋팅 함수
 	clickedAdd(){
 		let containerTitle, crudAddBtn, hideArr, showArr, mainPdf, copyMainPdf;
 		containerTitle = document.getElementById("containerTitle");
@@ -566,6 +853,7 @@ class EstimateSet{
 		this.estimateFormInit();
 	}
 	
+	//견적 추가 및 상세보기 시 폼안에 value 값들을 설정해주는 함수
 	estimateFormInit(){
 		let selectAddress, writer, date, pdfMainContentAddBtns;
 		selectAddress = this.copyContainer.getElementsByClassName("selectAddress")[0].querySelector("select");
@@ -618,6 +906,7 @@ class EstimateSet{
 		window.setTimeout(setEditor(this.copyContainer), 100);
 	}
 
+	//견적 아이템 항목에 대한 textarea id 값 부여 함수
 	productNameSet(){
 		let pdfMainContentItem, itemProductName;
 		pdfMainContentItem = this.copyContainer.getElementsByClassName("pdfMainContentItem");
@@ -628,6 +917,7 @@ class EstimateSet{
 		}
 	}
 
+	//아이템의 순서를 셋팅해주는 함수
 	addItemIndex(){
 		let mainDiv;
 		let index = 0;
@@ -643,6 +933,7 @@ class EstimateSet{
 		}
 	}
 
+	//회사 주소들을 셋팅해주는 함수
 	selectAddressInit(index){
 		let firmName, representative, address, phone, fax;
 		firmName = this.copyContainer.querySelector("#firmName");
@@ -666,6 +957,7 @@ class EstimateSet{
 		}
 	}
 
+	//메인 검색 리스트 저장 함수
 	addSearchList(){
 		storage.searchList = [];
 	
@@ -681,6 +973,7 @@ class EstimateSet{
 		}
 	}
 	
+	//메인 검색 버튼 실행 함수
 	searchSubmit(){
 		let dataArray = [], resultArray, eachIndex = 0, searchTitle, searchVersion, searchForm, searchPriceFrom, searchDateFrom;
 	
@@ -716,6 +1009,7 @@ class EstimateSet{
 		drawEstmList();
 	}
 	
+	//메인 input 검색 keyup 함수
 	searchInputKeyup(){
 		let searchAllInput, tempArray;
 		searchAllInput = $("#searchAllInput").val();
@@ -730,6 +1024,7 @@ class EstimateSet{
 		drawEstmList();
 	}
 	
+	//견적 타이틀 추가 함수
 	addEstTitle(e){
 		let thisEle, subTitleIndex, createDiv;
 		createDiv = document.createElement("div");
@@ -742,6 +1037,7 @@ class EstimateSet{
 		storage.subItemLength = 0;
 	}
 	
+	//견적 아이템 추가 함수
 	addEstItem(e){
 		let thisEle, createDiv;
 		createDiv = document.createElement("div");
@@ -755,6 +1051,7 @@ class EstimateSet{
 		this.addItemIndex();
 	}
 	
+	//견적 아이템 + 버튼 함수
 	oneEstItemAdd(e){
 		let thisEle, parent, createDiv;
 		createDiv = document.createElement("div");
@@ -769,6 +1066,7 @@ class EstimateSet{
 		this.addItemIndex();
 	}
 	
+	//견적 아이템 제거 함수
 	removeEstItem(e){
 		let thisEle;
 		thisEle = e;
@@ -782,6 +1080,7 @@ class EstimateSet{
 		this.setTitleTotal();
 	}
 	
+	//견적 아이템 - 버튼 함수
 	oneEstItemRemove(e){
 		let thisEle, parent;
 		thisEle = e;
@@ -792,6 +1091,7 @@ class EstimateSet{
 		this.setTitleTotal();
 	}
 	
+	//견적 타이틀 번호 로마 숫자로 변환할때 쓰는 함수
 	romanize(num) {
 		let digits, key, roman, i;
 		if (isNaN(num)) return NaN;
@@ -803,6 +1103,7 @@ class EstimateSet{
 		return Array(+digits.join("") + 1).join("M") + roman;
 	}
 	
+	//견적 현재 아이템 총합 계산 함수
 	itemCalKeyup(e){
 		let thisEle, itemQuantity, itemAmount, itemTotal, cal;
 		thisEle = e;
@@ -822,6 +1123,7 @@ class EstimateSet{
 		this.setTitleTotal();
 	}
 	
+	//주소 변경 함수
 	selectAddressChange(e){
 		let thisEle, thisEleIndex;
 		thisEle = e;
@@ -829,6 +1131,7 @@ class EstimateSet{
 		this.selectAddressInit(thisEleIndex);
 	}
 	
+	//견적 아이템 공급가액, 부가세액, 총합을 계산하는 함수
 	setTotalHtml(){
 		let pdfMainContentAmount, pdfMainContentTotal, pdfHeadInfoPrice, pdfMainContentItem, pdfMainContentTax, calAmount = 0;
 		pdfMainContentAmount = this.copyContainer.getElementsByClassName("pdfMainContentAmount")[0].querySelectorAll("div")[1];
@@ -859,6 +1162,7 @@ class EstimateSet{
 		pdfHeadInfoPrice.value = pdfMainContentTotal.innerHTML;
 	}
 	
+	//견적 타이틀 총합 계산 출력해주는 함수
 	setTitleTotal(){
 		let mainDiv;
 		let calTotal = 0;
@@ -876,6 +1180,7 @@ class EstimateSet{
 		}
 	}
 	
+	//견적 추가/수정 시 모든 input 및 textarea 등을 제거하고 텍스트만 그대로 div로 이동시키는 함수
 	insertCopyPdf(){
 		let mainPdf, pdfMainContentAddBtns;
 		pdfMainContentAddBtns = this.copyContainer.getElementsByClassName("pdfMainContentAddBtns")[0];
@@ -971,6 +1276,7 @@ class EstimateSet{
 		}
 	}
 	
+	//견적 pdf 다운로드 클릭 시 실행되는 함수
 	estimatePdf(title, userName){
 		let element = document.getElementById("estPrintPdf");
 	 
@@ -1009,6 +1315,7 @@ class Estimate{
 		this.copyContainer = document.getElementsByClassName("copyMainPdf")[0];
 	}
 
+	//견적 상세보기 아이템 셋팅 함수
 	detail(){
 		let thisBtn;
 		let items = this.items;
@@ -1054,6 +1361,7 @@ class Estimate{
 		EstimateSet.addItemIndex();
 	}
 
+	//새 견적 추가 실행 함수
 	insert(){
 		if(this.copyContainer.querySelector("#date").value === ""){
 			msg.set("견적일자를 입력해주세요.");
@@ -1207,6 +1515,7 @@ class Estimate{
 		}
 	}	
 
+	//견적 수정 실행 함수
 	update(){
 		if(this.copyContainer.querySelector("#date").value === ""){
 			msg.set("견적일자를 입력해주세요.");
@@ -1359,5 +1668,123 @@ class Estimate{
 				});
 			}, 300)
 		}
+	}
+}
+
+class Common{
+	paging(total, currentPage, articlePerPage) {
+		let getArticle = this.calWindowLength();
+		let lastPage, result = [], max;
+	
+		if (currentPage === undefined) {
+			storage.currentPage = 1;
+			currentPage = storage.currentPage;
+		}
+	
+		if (articlePerPage === undefined) {
+			if(isNaN(getArticle)){
+				storage.articlePerPage = 10;
+			}else{
+				storage.articlePerPage = getArticle;
+			}
+			articlePerPage = storage.articlePerPage;
+		}
+	
+		max = Math.ceil(total / articlePerPage);
+	
+		lastPage = currentPage * articlePerPage;
+	
+		if (currentPage == max && total % articlePerPage !== 0) {
+			lastPage = ((max - 1) * articlePerPage) + (total % articlePerPage);
+		}
+	
+		result.push(currentPage, articlePerPage, lastPage, max);
+	
+		return result;
+	}
+
+	calWindowLength() {
+		let bodyContent, containerTitle, searchContainer, searchCal, titleCal, totalCal;
+	
+		bodyContent = document.getElementById("bodyContent");
+		searchContainer = document.getElementsByClassName("searchContainer")[0];
+		containerTitle = document.getElementById("containerTitle");
+		searchCal = searchContainer.innerHeight() === undefined ? parseInt(bodyContent.innerHeight()) : (parseInt(bodyContent.innerHeight()) - searchContainer.innerHeight());
+		titleCal = parseInt(containerTitle.innerHeight() + 70);
+		totalCal = (parseInt(searchCal - titleCal) - parseInt(36)) / parseInt(38);
+	
+		return parseInt(totalCal);
+	}
+
+	createGrid(gridContainer, headerDataArray, dataArray, ids, job, fnc, idName) {
+		let gridHtml = "", gridContents, idStr;
+		ids = (ids === undefined) ? 0 : ids;
+		fnc = (fnc === undefined) ? "" : fnc;
+		job = (job === undefined) ? "" : job;
+	
+		if (idName === undefined) {
+			idStr = "gridContent";
+		} else {
+			idStr = idName;
+		}
+	
+		gridHtml = "<div class='gridHeader grid_default_header_item'>";
+	
+		for (let i = 0; i < headerDataArray.length; i++) {
+			if (headerDataArray[i].align === "center") {
+				gridHtml += "<div class='gridHeaderItem grid_default_text_align_center'>" + headerDataArray[i].title + "</div>";
+			} else if (headerDataArray[i].align === "left") {
+				gridHtml += "<div class='gridHeaderItem grid_default_text_align_left'>" + headerDataArray[i].title + "</div>";
+			} else {
+				gridHtml += "<div class='gridHeaderItem grid_default_text_align_right'>" + headerDataArray[i].title + "</div>";
+			}
+		}
+	
+		gridHtml += "</div>";
+	
+		for (let i = 0; i < dataArray.length; i++) {
+			gridHtml += "<div id='" + idStr + "_grid_" + i + "' class='gridContent grid_default_body_item' data-drag=\"true\" data-id='" + ids[i] + "' data-job='" + job[i] + "' onclick='" + fnc + "'>";
+			for (let t = 0; t <= dataArray[i].length; t++) {
+				if (dataArray[i][t] !== undefined) {
+					if (dataArray[i][t].setData === undefined) {
+						gridHtml += "<div class='gridContentItem' style=\"grid-column: span " + dataArray[i][t].col + "; text-align: center;\">데이터가 없습니다.</div>";
+					} else {
+						gridHtml += "<div class='gridContentItem'><span class=\"textNumberFormat\">" + dataArray[i][t].setData + "</span></div>";
+					}
+				}
+			}
+			gridHtml += "</div>";
+		}
+	
+		gridContainer.innerHTML = gridHtml;
+	
+		if (idName === undefined) {
+			gridContents = document.getElementsByClassName("gridContent");
+		} else {
+			gridContents = document.querySelector("#" + idName).getElementsByClassName("gridContent");
+		}
+	
+		let tempArray = [];
+	
+		for (let i = 0; i < dataArray.length; i++) {
+			for (let key in dataArray[i]) {
+				tempArray.push(dataArray[i][key]);
+			}
+		}
+	
+		for (let i = 0; i < tempArray.length; i++) {
+			for (let t = 0; t < gridContents.length; t++) {
+				if(gridContents[t].getElementsByClassName("gridContentItem")[i] !== undefined){
+					if (tempArray[i].align === "center") {
+						gridContents[t].getElementsByClassName("gridContentItem")[i].setAttribute("class", "gridContentItem grid_default_text_align_center");
+					} else if (tempArray[i].align === "left") {
+						gridContents[t].getElementsByClassName("gridContentItem")[i].setAttribute("class", "gridContentItem grid_default_text_align_left");
+					} else {
+						gridContents[t].getElementsByClassName("gridContentItem")[i].setAttribute("class", "gridContentItem grid_default_text_align_right");
+					}
+				}
+			}
+		}
+	
 	}
 }

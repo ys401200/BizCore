@@ -1,4 +1,4 @@
-let drawMonthList, clickedMonth, clickedWeek, drawDeptTree, clickedDeptName, clickedTreeEmployee, drawReport, getReportData, clickedButton, R = {};
+let drawMonthList, clickedMonth, clickedWeek, drawDeptTree, clickedDeptName, clickedTreeEmployee, drawReport, editInputSet, getReportData, clickedButton, R = {};
 
 $(document).ready(() => {
 
@@ -75,8 +75,85 @@ clickedButton = (el) => {
 		el.nextElementSibling.style.display = "initial";
 		el.nextElementSibling.nextElementSibling.style.display = "initial";
 		drawReport(true);
+		editInputSet();
 	}else if(n === "save"){ // 저장 버튼
+		let reportContent = document.getElementsByClassName("report-contents")[0];
+		let lastWeekContents = reportContent.getElementsByClassName("lastWeekContents");
+		let thisWeekContents = reportContent.getElementsByClassName("thisWeekContents");
 
+		for(let i = 0; i < lastWeekContents.length; i++){
+			let item = lastWeekContents[i];
+			let input = item.querySelectorAll("input[type=\"text\"]");
+
+			for(let t = 0; t < input.length; t++){
+				let job = input[t].dataset.job;
+				let no = input[t].dataset.no;
+				let checked = input[t].nextSibling.checked ? 1 : 0;
+				let title = input[t].value;
+				let contentId = input[t].parentElement.nextSibling.nextSibling.getAttribute("id");
+				let dataArray = {
+					"job": job,
+					"title": title,
+					"writer": storage.my,
+					"content": CKEDITOR.instances[contentId].getData().replace(/\r/g, "").replace(/\n/g, ""),
+					"report": checked,
+				};
+				
+				dataArray = JSON.stringify(dataArray);
+				dataArray = cipher.encAes(dataArray);
+
+				axios.put("/api/schedule/" + job + "/" + no, dataArray, {
+					headers: {"Content-Type": "text/plain"}
+				}).then((response) => {
+					if(response.data.result !== "ok"){
+						msg.set("지난주 데이터 " + (i+1) + "번째 수정 중 에러 입니다.\n다시 확인해주세요.");
+						return false;
+					}
+				}).catch((error) => {
+					msg.set("지난주 데이터 " + (i+1) + "번째 수정 중 에러 입니다.\n" + error);
+					console.log(error);
+					return false;
+				});
+			}
+		}
+
+		for(let i = 0; i < thisWeekContents.length; i++){
+			let item = thisWeekContents[i];
+			let input = item.querySelectorAll("input[type=\"text\"]");
+
+			for(let t = 0; t < input.length; t++){
+				let job = input[t].dataset.job;
+				let no = input[t].dataset.no;
+				let checked = input[t].nextSibling.checked ? 1 : 0;
+				let title = input[t].value;
+				let contentId = input[t].parentElement.nextSibling.nextSibling.getAttribute("id");
+				let dataArray = {
+					"job": job,
+					"title": title,
+					"writer": storage.my,
+					"content": CKEDITOR.instances[contentId].getData().replace(/\r/g, "").replace(/\n/g, ""),
+					"report": checked,
+				};
+				
+				dataArray = JSON.stringify(dataArray);
+				dataArray = cipher.encAes(dataArray);
+
+				axios.put("/api/schedule/" + job + "/" + no, dataArray, {
+					headers: {"Content-Type": "text/plain"}
+				}).then((response) => {
+					if(response.data.result !== "ok"){
+						msg.set("이번주 데이터 " + (i+1) + "번째 수정 중 에러 입니다.\n다시 확인해주세요.");
+						return false;
+					}
+				}).catch((error) => {
+					msg.set("이번주 데이터 " + (i+1) + "번째 수정 중 에러 입니다.\n" + error);
+					console.log(error);
+					return false;
+				});
+			}
+		}
+		
+		msg.set("수정되었습니다.");
 	}else if(n === "cancel"){
 		z = document.getElementsByClassName("workReportTitle")[0].children[1].children;
 		for(x = 0 ; x < z.length ; x++){
@@ -88,6 +165,67 @@ clickedButton = (el) => {
 		drawReport();
 	}
 } // End of clickedButton()
+
+editInputSet = () => {
+	let container = document.getElementsByClassName("report-contents")[0];
+	let lastWeekContents = container.getElementsByClassName("lastWeekContents");
+	let thisWeekContents = container.getElementsByClassName("thisWeekContents");
+	
+	for(let i = 0; i < lastWeekContents.length; i++){
+		let item = lastWeekContents[i];
+
+		for(let t = 0; t < item.getElementsByClassName("weekContentTitle").length; t++){
+			let title = item.getElementsByClassName("weekContentTitle")[t];
+			let input = document.createElement("input");
+			input.type = "text";
+			input.value = title.innerHTML.replace(/# /g, "").replace(/@ /g, "").replace(/$ /g, "");
+			input.dataset.no = title.dataset.no;
+			input.dataset.job = title.dataset.job;
+			title.after(input);
+			title.style.display = "none";
+		}
+
+		for(let t = 0; t < item.getElementsByClassName("weekContentDesc").length; t++){
+			let content = item.getElementsByClassName("weekContentDesc")[t];
+			let textarea = document.createElement("textarea");
+			textarea.value = content.innerHTML;
+			textarea.id = "lastText_" + i;
+			textarea.dataset.no = content.dataset.no;
+			textarea.dataset.job = content.dataset.job;
+			content.after(textarea);
+			content.style.display = "none";
+		}
+	}
+
+	for(let i = 0; i < thisWeekContents.length; i++){
+		let item = thisWeekContents[i];
+
+		for(let t = 0; t < item.getElementsByClassName("weekContentTitle").length; t++){
+			let title = item.getElementsByClassName("weekContentTitle")[t];
+			let input = document.createElement("input");
+			input.type = "text";
+			input.value = title.innerHTML.replace(/# /g, "").replace(/@ /g, "").replace(/$ /g, "");
+			input.dataset.no = title.dataset.no;
+			input.dataset.job = title.dataset.job;
+			title.after(input);
+			title.style.display = "none";
+		}
+
+		for(let t = 0; t < item.getElementsByClassName("weekContentDesc").length; t++){
+			let content = item.getElementsByClassName("weekContentDesc")[t];
+			let textarea = document.createElement("textarea");
+			textarea.value = content.innerHTML;
+			textarea.id = "thisText_" + i;
+			textarea.dataset.no = content.dataset.no;
+			textarea.dataset.job = content.dataset.job;
+			content.after(textarea);
+			content.style.display = "none";
+		}
+	}
+
+	ckeditor.config.readOnly = false;
+	window.setTimeout(setEditor(container), 200);
+}
 
 // 조직도에서 직원을 클릭할 때 실행되는 함수
 clickedTreeEmployee = (el) => {
@@ -191,23 +329,23 @@ drawReport = (editable, targetElement, employee) => {
 	for(x = 0 ; x < 7 ; x++){
 		// 지난 주
 		if(sch1[x].length > 0){
-			html[0] += ("<div>" + day[x] + "</div><div>");
+			html[0] += ("<div>" + day[x] + "</div><div class=\"lastWeekContents\">");
 			for(y = 0 ; y < sch1[x].length ; y++){
-				html[0] += ("<div><div>" + sch1[x][y].title + "</div>");
+				html[0] += ("<div><div class=\"weekContentTitle\" data-no=\"" + sch1[x][y].no + "\" data-job=\"" + sch1[x][y].job + "\">" + sch1[x][y].title + "</div>");
 				if(editable)	html[0] += ("<input type=\"checkbox\" " + (sch1[x][y].report ? "checked " : "") + "/>");
 				html[0] += "</div>";
-				html[0] += ("<div>" + sch1[x][y].content + "</div>");
+				html[0] += ("<div class=\"weekContentDesc\" data-no=\"" + sch1[x][y].no + "\" data-job=\"" + sch1[x][y].job + "\">" + sch1[x][y].content + "</div>");
 			}
 			html[0] += "</div>";
 		}
 		// 이번 주
 		if(sch2[x].length > 0){
-			html[1] += ("<div>" + day[x] + "</div><div>");
+			html[1] += ("<div>" + day[x] + "</div><div class=\"thisWeekContents\">");
 			for(y = 0 ; y < sch2[x].length ; y++){
-				html[1] += ("<div><div>" + sch2[x][y].title + "</div>");
+				html[1] += ("<div><div class=\"weekContentTitle\" data-no=\"" + sch2[x][y].no + "\" data-job=\"" + sch2[x][y].job + "\">" + sch2[x][y].title + "</div>");
 				if(editable)	html[1] += ("<input type=\"checkbox\" " + (sch2[x][y].report ? "checked " : "") + "/>");
 				html[1] += "</div>";
-				html[1] += ("<div>" + sch2[x][y].content + "</div>");
+				html[1] += ("<div class=\"weekContentDesc\" data-no=\"" + sch2[x][y].no + "\" data-job=\"" + sch2[x][y].job + "\">" + sch2[x][y].content + "</div>");
 			}
 			html[1] += "</div>";
 		}

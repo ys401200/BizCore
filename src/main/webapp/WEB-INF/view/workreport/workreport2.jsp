@@ -16,7 +16,7 @@
 					<div>주간 업무 보고</div>
 					<div><div>'22.12.12 ~ '22.12.19</div><div>홍길동</div></div>
 					<div><div>지난 주 진행상황</div><div>이번 주 예정상황</div></div>
-					<div><div></div><div></div></div>
+					<div class="report-contents"><div></div><div></div></div>
 					<div><div></div><div></div></div>
 				</div>
 			</div>
