@@ -533,5 +533,6 @@ leftSoppCalendarSchedule = (no) => {
 } // End of leftSoppCalendarSchedule()
 
 clickedSoppCalendarSchedule = (no) => {
-	console.log(no);
+	let el = document.getElementById("sopp-schedule-detail-radio" + no);
+	el.checked = true;
 } // End of clickedSoppCalendarSchedule()
