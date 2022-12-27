@@ -1890,6 +1890,7 @@ function scheduleUpdate(){
 
 	formDataSet();
 	data = storage.formList;
+	console.log(data);
 	data = JSON.stringify(data);
 	data = cipher.encAes(data);
 

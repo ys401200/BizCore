@@ -1785,6 +1785,14 @@ class Common{
 				}
 			}
 		}
+	}
 	
+	//객체(오브젝트) empty 체크(비어있을 때 : true)
+	objectCheck(obj) {
+		if(obj.constructor === Object && Object.keys(obj).length === 0){
+			return true;
+		}else{
+			return false;
+		}
 	}
 }

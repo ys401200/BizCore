@@ -8,7 +8,7 @@
 	</div>
 	<div id="bodyContent">
 		<div class="workReportContainer">
-            <div class="workReportTitle"><div>주간 업무보고</div><div><button data-n="print" onclick="clickedButton(this)" style="display:initial;">출력</button><button data-n="pdf-s" onclick="clickedButton(this)" style="display:initial;">개별다운로드</button><button data-n="pdf-m" onclick="clickedButton(this)">일괄다운로드</button><button data-n="edit" onclick="clickedButton(this)" style="display:initial;">수정</button><button data-n="cancel" onclick="clickedButton(this)">취소</button><button data-n="save" onclick="clickedButton(this)">저장</button></div></div>
+            <div class="workReportTitle"><div>주간 업무보고</div><div><button data-n="print" onclick="clickedButton(this)" style="display:initial;">출력</button><button data-n="pdf-s" onclick="clickedButton(this)" style="display:initial;">개별다운로드</button><button data-n="pdf-m" onclick="clickedButton(this)">일괄다운로드</button><button data-n="edit" onclick="clickedButton(this)" style="display:none;">수정</button><button data-n="cancel" onclick="clickedButton(this)">취소</button><button data-n="save" onclick="clickedButton(this)">저장</button></div></div>
             <div class="workReportContent">
 				<div class="dept-tree"></div>
 				<div class="month-list"></div>

@@ -39,7 +39,15 @@ public class WorkReport extends Domain{
             result += ("\"no\":" + e.getNo() + ",");
             result += ("\"report\":" + e.isReport() + ","); 
             result += ("\"content\":" + ( e != null && e.getContent() != null ? "\"" + e.getContent().replaceAll("\"", "\\u0022").replaceAll("\n", "<br />").replaceAll("\r", "").replaceAll("\t", "").replaceAll("\\\\", "\\u005c") + "\"" : "\"\"") + ",");
-            result += ("\"date\":" + (e.getFrom() != null ? e.getFrom().getTime() : null) + "}");
+            result += ("\"date\":" + (e.getFrom() != null ? e.getFrom().getTime() : null) + ",");
+            result += ("\"created\":" + (e.getCreated() != null ? e.getCreated().getTime() : null) + ",");
+            result += ("\"customer\":" + e.getCustomer() + ",");
+            result += ("\"from\":" + (e.getFrom() != null ? e.getFrom().getTime() : null) + ",");
+            result += ("\"modified\":" + (e.getModified() != null ? e.getModified().getTime() : null) + ",");
+            result += ("\"place\":" + (e.getPlace() != null && !e.getPlace().equals("") ? e.getPlace() : null) + ",");
+            result += ("\"sopp\":" + e.getSopp() + ",");
+            result += ("\"type\":" + (e.getType() != null ? e.getType() : null) + ",");
+            result += ("\"to\":" + (e.getTo() != null ? e.getTo().getTime() : null) + "}");
         }
         result += "]}";
         return result;
