@@ -393,7 +393,7 @@ class Sopp2 {
 		this.created = each.created == undefined ? null : new Date(each.created);
 		this.modified = each.modified == undefined ? null : new Date(each.modified);
 		this.calendar = [];
-		this.colorTable = ["#a688c9", "#88c9a7", "#c9a788", "#c0daad", "#daadc5", "#afadda", "#addac4", "#dac4ad", "#daadb2", "#dad0ad", "#daadd9", "#cddaad", "#adc2da", "#addac0", "#f6ffde", "#defcff", "#fedeff", "#dee7ff", "#e4ffde", "#ffdede"];
+		this.colorTable = ["#daadc5", "#afadda", "#addac4", "#dac4ad", "#daadb2", "#dad0ad", "#daadd9", "#cddaad", "#adc2da", "#addac0", "#f6ffde", "#defcff", "#fedeff", "#dee7ff", "#e4ffde", "#ffdede", "#a688c9", "#88c9a7", "#c9a788", "#c0daad"];
 	}
 	isClosed() { return this.closed !== null; }
 
@@ -761,8 +761,9 @@ class MonthlyCalendar {
 
 	// 그려진 달력에 일정을 표시하는 메서드
 	drawScheduleInSopp(colorTable){
-		let x, y, z, st, et, writer, name, days = [], color = "#dddddd";
+		let x, y, z, st, et, writer, name, days = [], color = "#dddddd", emps = {};
 		
+		// 월간 달력 컨테이너에서 일간 컨테이너 찾아서 배열(days)에 담기 
 		z = this.container.children[1];
 		for(x = 0 ; x < z.children.length ; x++){
 			for(y = 0 ; y < z.children[x].children.length ; y++){
@@ -770,12 +771,13 @@ class MonthlyCalendar {
 			}
 		}
 		
-		for(x = 0 ; x < days.length ; x++){
+		// 일간 달력에 스케줄을 표시하기
+		for(x = 0 ; x < days.length ; x++){ // 일간 컨테이너 순회
 			st = days[x].dataset.v * 1;
 			et = st + 86400000;
-			for(y = 0 ; y < this.schedule.length ; y++){
-				if(this.schedule[y].from >= st && this.schedule[y].from < et){
-					name = "...";
+			for(y = 0 ; y < this.schedule.length ; y++){ // 일정 순회
+				if(this.schedule[y].from >= st && this.schedule[y].from < et){ // 일간 컨테이너와 일정이 일치하는 경우, 일정표시 진행
+					name = "..."; // 이름을 못 찾는 경우 undefined 방지
 					writer = this.schedule[y].writer;
 					name = storage.user[writer] !== undefined && storage.user[writer].userName !== undefined ? storage.user[writer].userName : name;
 					color = colorTable !== undefined && colorTable[writer] !== undefined ? colorTable[writer] : color;
@@ -787,8 +789,26 @@ class MonthlyCalendar {
 					z.style.backgroundColor = color;
 					z.innerText = name;
 					days[x].appendChild(z);
+					// 직원별 일정 갯수 저장
+					if(emps[writer] === undefined)	emps[writer] = 1;
+					else							emps[writer]++;
 				}
 			}
+		}
+
+		// 월간 달력 상단에 직원별 일정의 수를 표시하도록 함
+		z = this.container.children[0].children[3];
+		for(x in emps){
+			if(x === undefined)	continue;
+			name = "...";
+			name = storage.user[x] !== undefined && storage.user[x].userName !== undefined ? storage.user[x].userName : name;
+			y = document.createElement("div");
+			//y.style.display = "inline-block";
+			//y.style.width = "48%";
+			//y.style.margin = "0.1rem";
+			//y.style.padding = "0 0.8rem";
+			y.innerHTML = "<span>" + emps[x] + "</span><spn>" + name + "</span>";
+			z.appendChild(y);
 		}
 	} // End of drawScheduleInSopp()
 
@@ -822,7 +842,8 @@ class Schedule{
 		this.type = v.type;
 		this.from = new Date(v.from);
 		this.to = new Date(v.to);
-		this.related = JSON.parse(v.related);
+		this.related = v.related;
+		//this.related = JSON.parse(v.related);
 		this.permitted = v.permitted;
 		this.created = new Date(v.created);
 		this.modified = v.modified === undefined ? null : new Date(v.modified);
