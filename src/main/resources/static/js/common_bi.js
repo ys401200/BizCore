@@ -827,7 +827,7 @@ class Schedule{
 				type:null,
 				from:new Date((new Date()).getFullYear(),(new Date()).getMonth(),(new Date()).getDate(),9,0,0),
 				to:new Date((new Date()).getFullYear(),(new Date()).getMonth(),(new Date()).getDate(),18,0,0),
-				related:{},
+				related:"{}",
 				permitted:null,
 				created:(new Date()).getTime(),
 				modified:null
@@ -842,8 +842,8 @@ class Schedule{
 		this.type = v.type;
 		this.from = new Date(v.from);
 		this.to = new Date(v.to);
-		this.related = v.related;
-		//this.related = JSON.parse(v.related);
+		//this.related = v.related;
+		this.related = JSON.parse(v.related);
 		this.permitted = v.permitted;
 		this.created = new Date(v.created);
 		this.modified = v.modified === undefined ? null : new Date(v.modified);
