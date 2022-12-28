@@ -266,4 +266,10 @@ public interface GwMapper {
         @Select("SELECT distinct a.docNo FROM bizcore.doc_app a inner join bizcore.doc_app_detail b on a.docNo = b.docNo WHERE a.formId = 'doc_Form_SalesReport' and b.appData like concat('%','\"sopp\":\"',#{soppNo},'\"' ,'%') and a.compId = #{compId}")
         public String getDocNo(@Param("compId") String compId, @Param("soppNo") String soppNo);
 
+        @Select("SELECT form FROM bizcore.doc_form where id = #{formId}")
+        public String getForm(@Param("formId") String formId);
+
+        @Select("SELECT appLine FROM bizcore.saved_docapp where compId = #{compId} AND userNo = #{userNo} AND no = #{appLineNum}")
+        public String getSavedLine(@Param("compId") String compId, @Param("userNo") String userNo, @Param("appLineNum") int appLineNum);
+
 }

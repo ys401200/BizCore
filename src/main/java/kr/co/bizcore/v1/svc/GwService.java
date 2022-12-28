@@ -1,5 +1,9 @@
 package kr.co.bizcore.v1.svc;
 
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,12 +13,28 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+
 
 import kr.co.bizcore.v1.domain.DocForm;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +45,7 @@ public class GwService extends Svc {
 
     private static final Logger logger = LoggerFactory.getLogger(GwService.class);
 
-    @Autowired 
+    @Autowired
     private NotesService notes;
 
     // 양식 목록 전달
@@ -713,11 +733,11 @@ public class GwService extends Svc {
         x = t == null ? -1 : strToInt(t);
         t = map.get("appType"); // 결재 유형
         appType = t == null ? -1 : strToInt(t);
-
+        logger.error("================================ ask 1 :" + ask);
         // 권한 확인
         if (!userNo.equals((x + "")))
             return "permissionDenied";
-
+        logger.error("================================ ask 2 :" + ask);
         // 문서 반려 처리
         if (ask == 0) {
             // 결배문서의 반려 처리에 대한 알림 입력
@@ -731,6 +751,7 @@ public class GwService extends Svc {
 
         // 결재문서 승인 처리
         if (ask == 1) {
+            logger.error("================================ ask 3 :" + ask);
 
             // 문서 수정여부 확인 / 수정이 이루어진 경우 수정 이력 반영 필요
             if (title != null || doc != null || appLine != null || files != null) {
@@ -1211,7 +1232,129 @@ public class GwService extends Svc {
 
     public String getSalesReport(String compId, String soppNo) {
         String result = null;
-        result = gwMapper.getDocNo(compId, soppNo); 
+        result = gwMapper.getDocNo(compId, soppNo);
+        return result;
+    }
+
+    public int createScheduleReport(String compId, String dept, String sopp, String customer, String formId,
+            String title, String readable, String related,
+            String content, String from, String to,
+            String[][] appLine, String lineData, String userNo, String writer, String created)
+            throws ParserConfigurationException, SAXException, IOException, TransformerException {
+
+        int result = 0;
+        String form = null;
+        DocumentBuilderFactory documentBuilderFactory = null;
+        DocumentBuilder documentBuilder = null;
+        Document document = null;
+        String[] files = null;
+        HashMap<String, String> attached = null;
+        String fromDate = null, fromTime = null, toDate = null, toTime = null;
+        String docHtml = null;
+        char spc1 = (char)143;
+        char spc2 = (char)143 + (char)143;
+        
+        // docForm html 구하기
+        form = gwMapper.getForm(formId);
+       
+
+        if (form == null) {
+            result = -1;
+        } else { 
+            form = form.replace("&", spc1+"");
+            System.out.print(form);
+            Node node = null;
+
+            fromDate = "20" + from.split("\u00A0")[0];
+            fromTime = from.split("\u00A0")[1];
+            toDate = "20" + to.split("\u00A0")[0];
+            toTime = to.split("\u00A0")[1];
+
+            documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            documentBuilder = documentBuilderFactory.newDocumentBuilder();
+            InputSource is = new InputSource(new StringReader(form));
+            document = documentBuilder.parse(is);
+
+            Element root = document.getDocumentElement();
+
+            NodeList inputNodes = root.getElementsByTagName("input");
+
+            for (int i = 0; i < inputNodes.getLength(); i++) {
+                node = inputNodes.item(i);
+                NamedNodeMap inputsNodeAttrs = node.getAttributes();
+
+                if (inputsNodeAttrs.getNamedItem("id").getNodeValue().equals((formId + "_title"))) {
+                    inputsNodeAttrs.getNamedItem("data-detail").setNodeValue(title);
+                } else if (inputsNodeAttrs.getNamedItem("id").getNodeValue().equals((formId + "_from"))) {
+                    inputsNodeAttrs.getNamedItem("data-detail").setNodeValue(fromDate);
+                } else if (inputsNodeAttrs.getNamedItem("id").getNodeValue().equals((formId + "_fromTime"))) {
+                    inputsNodeAttrs.getNamedItem("data-detail").setNodeValue(fromTime);
+                } else if (inputsNodeAttrs.getNamedItem("id").getNodeValue().equals((formId + "_to"))) {
+                    inputsNodeAttrs.getNamedItem("data-detail").setNodeValue(toDate);
+                } else if (inputsNodeAttrs.getNamedItem("id").getNodeValue().equals((formId + "_toTime"))) {
+                    inputsNodeAttrs.getNamedItem("data-detail").setNodeValue(toTime);
+                } else if (inputsNodeAttrs.getNamedItem("id").getNodeValue().equals((formId + "_writer"))) {
+                    inputsNodeAttrs.getNamedItem("data-detail").setNodeValue(writer);
+                } else if (inputsNodeAttrs.getNamedItem("id").getNodeValue().equals((formId + "_created"))) {
+                    inputsNodeAttrs.getNamedItem("data-detail").setNodeValue(created);
+                }
+
+            }
+
+
+            // 결재선 
+            NodeList divNodes = root.getElementsByTagName("div");
+
+            for (int j = 0; j < divNodes.getLength(); j++) {
+                node = divNodes.item(j);
+                NamedNodeMap divNodeAttrs = node.getAttributes();
+                if (divNodeAttrs.getNamedItem("id") != null) {
+                    if (divNodeAttrs.getNamedItem("id").getNodeValue().equals((formId + "_line"))) {
+                          node.setTextContent(spc2+"");
+                    }
+                }
+            }
+     
+
+            // 내용 
+            NodeList textNodes = root.getElementsByTagName("textarea");
+
+            for (int k = 0; k < textNodes.getLength(); k++) {
+                node = textNodes.item(k);
+                NamedNodeMap textNodeAttrs = node.getAttributes();
+                if (textNodeAttrs.getNamedItem("id") != null) {
+                    if (textNodeAttrs.getNamedItem("id").getNodeValue().equals((formId + "_content"))) {
+                        textNodeAttrs.getNamedItem("data-detail").setNodeValue(content);
+                    }
+
+                }
+            }
+
+
+            // document toString 
+            DOMSource domSource = new DOMSource(document);
+            StringWriter swriter = new StringWriter();
+            StreamResult rs = new StreamResult(swriter);
+            TransformerFactory tf = TransformerFactory.newInstance();
+            Transformer transformer = tf.newTransformer();
+            transformer.transform(domSource, rs);
+            
+            docHtml =swriter.toString();
+
+            docHtml = docHtml.replace((spc1+""), "&").replace((spc2+""), lineData);
+         
+            
+            if (addAppDoc(compId, dept, title, userNo, sopp, customer, formId, readable,
+            docHtml, files, attached,
+                    appLine, related) > 0) {
+                result = 1;
+
+            } else {
+                result = -1;
+            }
+
+        }
+
         return result;
     }
 

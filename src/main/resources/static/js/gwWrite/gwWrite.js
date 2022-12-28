@@ -1,3 +1,6 @@
+
+
+
 $(document).ready(() => {
   init();
 
@@ -37,6 +40,7 @@ function getformList() {
   $(".modal-wrap").hide();
   $(".insertedDetail").hide();
   $(".createLineBtn").hide();
+
   let checkHref = location.href;
   checkHref = checkHref.split("//");
   checkHref = checkHref[1];
@@ -70,8 +74,6 @@ function getformList() {
 }
 
 
-
-
 function drawFormList() {
   let data = storage.formList;
   let titles = new Array();
@@ -98,45 +100,44 @@ function drawFormList() {
   target.html(targetHtml);
 }
 
+
+
+
+
+
+
+
 // 결재양식 선택에서 양식 선택 버튼 눌렀을 때 함수
 function selectForm() {
-  let data = storage.formList;
-  let selectedFormNo = $(".formSelector").val();
+  let data, selectedFormNo, stepLabel, my, writer, formId, date;
+
+  data = storage.formList;
+  selectedFormNo = $(".formSelector").val();
   $(".formNumHidden").val(selectedFormNo);
-  selectedFormTitle = data[$(".formNumHidden").val()].title;
-  let tt = $(".stepLabel")[1];
-  $(tt).css("color", "black");
+
+
+  stepLabel = $(".stepLabel")[1];
+  $(stepLabel).css("color", "black");
   $(".lineBtnContainer").css("border-left", "2px solid black");
   $(".guide").remove();
   $(".simpleAppLine").show();
   $(".simpleAppLineData").html("");
-  setModalhtml();
   $(".lineDetail").show();
   $(".createLineBtn").show();
   $(".reportInsertForm").html(data[$(".formNumHidden").val()].form);
 
   //작성자 작성일 자동 입력
-  let my = storage.my;
-  let writer = storage.user[my].userName;
-  let formId = data[$(".formNumHidden").val()].id;
+  my = storage.my;
+  writer = storage.user[my].userName;
+  formId = data[$(".formNumHidden").val()].id;
   $("#" + formId + "_writer").val(writer);
   $("#" + formId + "_writer").attr("data-detail", writer);
 
-  let date = getYmdSlash();
+  date = getYmdSlash();
   $("#" + formId + "_created").attr("data-detail", date);
   $("#" + formId + "_created").val(date);
   $(".testClass").prop("checked", false);
   $(".typeContainer").html("");
-  $(".inputsAuto").prop("disabled", "true");
-  $(".inputsAuto").css("text-align", "center");
-  $(".inputsAuto").eq(0).css("text-align", "left");
-  $(".inputsAuto").eq(1).css("text-align", "left");
-  $(".inputsAuto").eq(2).css("text-align", "left");
-
-  // $(".saveBtn").prop("disabled", false);
-  $(".previewBtn").prop("disabled", false);
-
-  //영업기회 데이터 리스트 만들기
 
 
   if (formId != "doc_Form_leave" && formId != "doc_Form_extension") {
@@ -150,100 +151,35 @@ function selectForm() {
           jsondata = cipher.decAes(result.data);
           jsondata = JSON.parse(jsondata);
           storage.soppList = jsondata;
-          setSoppList(formId);
-          setCusDataList();
+          setSoppList();
+          setInfoCusDataList();
         } else {
           alert("에러");
         }
       },
     });
 
-    // if (formId != "doc_Form_leave" && formId != "doc_Form_extension") {
-    //   $.ajax({
-    //     url: "/api/sopp",
-    //     type: "get",
-    //     dataType: "json",
-    //     success: (result) => {
-    //       if (result.result == "ok") {
-    //         let jsondata;
-    //         jsondata = cipher.decAes(result.data);
-    //         jsondata = JSON.parse(jsondata);
-    //         storage.soppList = jsondata;
-    //         setSoppList(formId);
-    //         setCusDataList();
-    //       } else {
-    //         alert("에러");
-    //       }
-    //     },
-    //   });
 
-    // 거래처 데이터 리스트
-
-    let html = $(".infoContentlast")[0].innerHTML;
-    let x;
-    let dataListHtml = "";
-
-    // 거래처 데이터 리스트 만들기
-    dataListHtml = "<datalist id='_infoCustomer'>";
-    for (x in storage.customer) {
-      dataListHtml +=
-        "<option data-value='" +
-        x +
-        "' value='" +
-        storage.customer[x].name +
-        "'></option> ";
-    }
-    dataListHtml += "</datalist>";
-    html += dataListHtml;
-    $(".infoContentlast")[0].innerHTML = html;
-    $("#" + formId + "_infoCustomer").attr("list", "_infoCustomer");
-
-    if (formId == "doc_Form_SalesReport") {
-      $("#" + formId + "_endCustName").attr("list", "_infoCustomer");
-    }
   }
+
+
+
 
   // 데이터 추가시 insertbtn에 거래처 항목 리스트 추가하는 함수 
   $(".insertbtn").click(setCusDataList);
   $(".insertbtn").click(setProductData);
 
-  // let previewWidth = document.getElementsByClassName("reportInsertForm")[0];
-  // previewWidth = previewWidth.clientWidth;
-  // let target = $(".reportInsertForm");
-  // target.css("height", Math.ceil((previewWidth / 210) * 297));
+  setModalhtml();
   storage.editorArray = [formId + "_content"];
   ckeditor.config.readOnly = false;
   window.setTimeout(setEditor, 100);
 
-
-  // 항목 데이터 가져오기 
-  let url;
-  url = apiServer + "/api/estimate/item"
-
-  $.ajax({
-    "url": url,
-    "method": "get",
-    "dataType": "json",
-    "cache": false,
-    success: (data) => {
-      let list, x;
-      if (data.result === "ok") {
-        list = data.data;
-        list = cipher.decAes(list);
-        list = JSON.parse(list);
-        storage.productList = list;
-
-      } else {
-        console.log(data.msg);
-      }
-    }
-  });
-
-
 }
 
 // 영업기회 데이터 리스트 가져오는 함수
-function setSoppList(formId) {
+function setSoppList() {
+  let data = storage.formList;
+  let formId = storage.reportDetailData != undefined ? storage.reportDetailData.formId : data[$(".formNumHidden").val()].id;
   let soppTarget = $(".infoContent")[3];
   let soppHtml = soppTarget.innerHTML;
   let soppListHtml = "";
@@ -296,14 +232,13 @@ function setProductData() {
 }
 
 
-
-
 // 결재선 생성 버튼 눌렀을 때 모달 띄움
 function showModal() {
   $(".modal-wrap").show();
   getSavedLine();
   setModalhtml();
 }
+
 
 function setModalhtml() {
   let setGwModalHtml =
@@ -316,7 +251,7 @@ function setModalhtml() {
     "<button onclick='check(this.value)' value='examine'>검토 &gt;</button>" +
     // "<button onclick='check(this.value)' value='agree'>합의 &gt;</button>" +
     "<button onclick='check(this.value)' value='approval'>결재 &gt;</button>" +
-    " <button onclick='check(this.value)' value='conduct'>수신 &gt;</button>" +
+    "<button onclick='check(this.value)' value='conduct'>수신 &gt;</button>" +
     "<button onclick='check(this.value)' value='refer'>참조 &gt;</button></div>" +
     "<div class='innerDetail' id='lineRight'>" +
     "<div ><div class='gwModalTitle'>자주 쓰는 결재선</div><div class='crudBtns'><div class='savedLineContainer'><select name='saveLineSelect'></select></div>" +
@@ -336,40 +271,15 @@ function setModalhtml() {
     "</div>" +
     "</div>" +
     "<div class='modalFoot'>" +
-    " <button class='modalBtns close' id='close' onclick='closeGwModal(this)'>취소</button>" +
-    " <button class='modalBtns confirm'id='create' onclick='closeGwModal(this)'>생성</button>" +
+    "<button class='modalBtns close' id='close' onclick='closeGwModal(this)'>취소</button>" +
+    "<button class='modalBtns confirm'id='create' onclick='closeGwModal(this)'>생성</button>" +
     "</div>" +
     "</div>" +
     "</div>";
   $(".modal-wrap").html(setGwModalHtml);
 
+
   let orgChartTarget = $("#lineLeft");
-  let userData = new Array();
-
-  let x;
-  let my = storage.my;
-  //나는 결재선에 노출 안 되게 함
-  for (x in storage.user) {
-    if (x != my && storage.user[x].resign != true) {
-      userData.push(x);
-    }
-  }
-
-  // let innerHtml = "";
-  // for (let i = 0; i < userData.length; i++) {
-  //   innerHtml +=
-  //     "<div><input class='testClass' type ='checkbox' id='cb" +
-  //     userData[i] +
-  //     "' name='userNames' value='" +
-  //     userData[i] +
-  //     "'><label for='cb" +
-  //     userData[i] +
-  //     "'>" +
-  //     storage.user[userData[i]].userName +
-  //     "</label></div>";
-  // }
-
-  // orgChartTarget.html(innerHtml);
 
   let gwTreeHtml = storage.dept.tree.getGwHtml();
 
@@ -605,6 +515,8 @@ function createLine() {
   lineTarget.html("");
   lineTarget.css("display", "block");
   let my = storage.my;
+  
+
   let testHtml =
     "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작 성</div><div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto' value='" +
     storage.userRank[storage.user[my].rank][0] +
@@ -777,6 +689,7 @@ function createLine() {
 
   testHtml += testHtml2;
   lineTarget.html(testHtml);
+  console.log(testHtml);
   $(".simpleAppLine").show();
   $(".referContainer").html(referHtml);
   $(".simpleAppLineData").html(simpleHtml);
@@ -937,6 +850,7 @@ function reportInsert() {
     temp: temp,
     related: related,
   };
+  console.log(appLine);
   console.log(data);
   data = JSON.stringify(data);
   data = cipher.encAes(data);
@@ -1562,8 +1476,6 @@ function delSavedLineData() {
 }
 
 
-
-
 // 지출결의서 작성 시 법인카드 관련 함수 getCardDetails / setCardData() ===================================================================================================================
 
 function getCardDetails() {
@@ -1733,6 +1645,42 @@ function setCardData() {
 }
 
 
+
+
+function setInfoCusDataList() {
+  let formId;
+  if ($(".formNumHidden").val() == "") {
+    formId = storage.reportDetailData.formId;
+  } else {
+    formId = storage.formList[$(".formNumHidden").val()].id;
+  }
+
+  let html = $(".infoContentlast")[0].innerHTML;
+  let x;
+  let dataListHtml = "";
+
+  // 거래처 데이터 리스트 만들기
+  dataListHtml = "<datalist id='_infoCustomer'>";
+  for (x in storage.customer) {
+    dataListHtml +=
+      "<option data-value='" +
+      x +
+      "' value='" +
+      storage.customer[x].name +
+      "'></option> ";
+  }
+  dataListHtml += "</datalist>";
+  html += dataListHtml;
+  $(".infoContentlast")[0].innerHTML = html;
+  $("#" + formId + "_infoCustomer").attr("list", "_infoCustomer");
+
+  if (formId == "doc_Form_SalesReport") {
+    $("#" + formId + "_endCustName").attr("list", "_infoCustomer");
+  }
+
+
+
+}
 
 
 // 거래처 데이터리스트 set하는 함수 setCusDataList() Start =====================================================================================================================

@@ -275,73 +275,66 @@ class Contract {
         ctrtTop.appendChild(el);
 
         // 계약 진척도 - 판매보고
-		el = document.createElement("bar");
-		el.className = "contract-progress"
-		ctrtTop.appendChild(el);
+        el = document.createElement("bar");
+        el.className = "contract-progress"
+        ctrtTop.appendChild(el);
 
-		el2 = document.createElement("div");
-		el.append(el2);
+        el2 = document.createElement("div");
+        el.append(el2);
 
-		if (this.appLine.length > 0 && this.appLine[this.appLine.length - 1].rejected != null) {
-			el2.className = "contract-fail";
-		} else if (this.appLine.length > 0 && this.appLine[this.appLine.length - 1].approved != null) {
-			el2.className = "contract-done";
-		} else {
-			el2.className = "contract-doing";
-		}
-
-
-		el2.innerText = "판매보고";
+        if (this.appLine.length > 0 && this.appLine[this.appLine.length - 1].rejected != null) {
+            el2.className = "contract-fail";
+        } else if (this.appLine.length > 0 && this.appLine[this.appLine.length - 1].approved != null) {
+            el2.className = "contract-done";
+        } else {
+            el2.className = "contract-doing";
+        }
 
 
-		// 계약 진척도 - 계약서 
-		el2 = document.createElement("div");
-		el.append(el2);
-
-		if (this.attached.length != 0) {
-			el2.className = "contract-done";
-		} else {
-			if ($(".contract-progress").children()[0].className == "contract-done") {
-				el2.className = "contract-doing";
-			}
-		}
-		el2.innerText = "계약";
+        el2.innerText = "판매보고";
 
 
-		// 계약 진척도 - 납품 
-		el2 = document.createElement("div");
-		el.append(el2);
-		if (this.supplied == 0 && this.attached.length > 0) {
-			el2.className = "contract-doing";
-		} else if (this.attached.length > 0 && this.supplied != 0) {
-			el2.className = "contract-done";
-		}
-		el2.innerText = "납품";
+        // 계약 진척도 - 계약서 
+        el2 = document.createElement("div");
+        el.append(el2);
+
+        if (this.attached.length != 0) {
+            el2.className = "contract-done";
+        } else {
+            if ($(".contract-progress").children()[0].className == "contract-done") {
+                el2.className = "contract-doing";
+            }
+        }
+        el2.innerText = "계약";
 
 
-		// 계약 진척도 - 검수
-		el2 = document.createElement("div");
-		el.append(el2);
-		if (this.supplied != 0 && this.approved == 0) {
-			el2.className = "contract-doing";
-		} else if (this.supplied != 0 && this.approved != 0) {
-			el2.className = "contract-done";
-		}
-		el2.innerText = "검수";
-
-		el = document.createElement("div");
-		ctrtTop.appendChild(el);
-		el.className = "crudBtns";
-		el.innerHTML = "<Button data-detail='" + this.no + "'onclick='this.parentElement.parentElement.parentElement.remove()'><i class='fa-solid fa-xmark'></i></Button>";
+        // 계약 진척도 - 납품 
+        el2 = document.createElement("div");
+        el.append(el2);
+        if (this.supplied == 0 && this.attached.length > 0) {
+            el2.className = "contract-doing";
+        } else if (this.attached.length > 0 && this.supplied != 0) {
+            el2.className = "contract-done";
+        }
+        el2.innerText = "납품";
 
 
+        // 계약 진척도 - 검수
+        el2 = document.createElement("div");
+        el.append(el2);
+        if (this.supplied != 0 && this.approved == 0) {
+            el2.className = "contract-doing";
+        } else if (this.supplied != 0 && this.approved != 0) {
+            el2.className = "contract-done";
+        }
+        el2.innerText = "검수";
 
+
+        // 계약에서 상세 조회할 때 x를 지움 
         // el = document.createElement("div");
         // ctrtTop.appendChild(el);
         // el.className = "crudBtns";
         // el.innerHTML = "<Button data-detail='" + this.no + "'onclick='this.parentElement.parentElement.parentElement.remove()'><i class='fa-solid fa-xmark'></i></Button>";
-
-
 
         // 진척도 아래 상세 detail Start --------------------------------------------------------------------------------------------------------------------------------------
         // 계약명
@@ -472,8 +465,8 @@ class Contract {
             cnt.children[cnt.children.length - 1].children[1].appendChild(el);
             el.innerText = "(" + this.docNo + ")";
             el.addEventListener("click", () => {
-				window.open("/business/contract/popup/" + storage.reportDetailData.docNo, "미리보기", "width :210mm");
-			})
+                window.open("/business/contract/popup/" + storage.reportDetailData.docNo, "미리보기", "width :210mm");
+            })
             el.style.color = "blue";
             el.style.cursor = "pointer";
 
@@ -561,161 +554,161 @@ class Contract {
 
 
     drawSuppliedData() {
-		$(".contract-progress").children()[0].className = "contract-done";
-		$(".contract-progress").children()[1].className = "contract-done";
-		$(".contract-progress").children()[2].className = "contract-doing";
-		let el, el2, cnt;
-		cnt = document.getElementsByClassName("suppliedTitle")[0];
+        $(".contract-progress").children()[0].className = "contract-done";
+        $(".contract-progress").children()[1].className = "contract-done";
+        $(".contract-progress").children()[2].className = "contract-doing";
+        let el, el2, cnt;
+        cnt = document.getElementsByClassName("suppliedTitle")[0];
 
-		el = document.createElement("div");
-		cnt.parentElement.after(el);
-		el.className = "suppliedDetail";
-		el.setAttribute("style", "display :grid;grid-template-columns: 20% 10% 20% 50% ");
+        el = document.createElement("div");
+        cnt.parentElement.after(el);
+        el.className = "suppliedDetail";
+        el.setAttribute("style", "display :grid;grid-template-columns: 20% 10% 20% 50% ");
 
-		cnt = el;
+        cnt = el;
 
-		el = document.createElement("div");
-		cnt.appendChild(el);
-		el.innerText = "납품일자";
-
-
-		el = document.createElement("div");
-		cnt.appendChild(el);
-
-		el2 = document.createElement("input");
-		el2.setAttribute("type", "date");
-		el2.setAttribute("class", "suppliedDate");
-		el2.addEventListener("click", () => {
-			R.sche = new Schedule();
-			R.sche.drawForRequestDetail(new Date());
-			document.getElementById("schedule-type-radio8").setAttribute("checked", "checked");
-			document.getElementsByClassName("schedule-detail")[0].children[0].children[0].children[1].value = this.title + "\u00A0" + "납품";
-		})
-		el.appendChild(el2);
-
-		el = document.createElement("div");
-		cnt.appendChild(el);
-		el.innerText = "납품 관련 문서";
-		el.setAttribute("style", "background-color: #eef1fb;font-weight: 500;");
-
-		el = document.createElement("div");
-		cnt.appendChild(el);
-		el.innerHTML = "<div class='filePreview'></div>" +
-			"<div><input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attachedsupplied' id='attached' onchange='R.contract.fileChange(this)' ></div>";
+        el = document.createElement("div");
+        cnt.appendChild(el);
+        el.innerText = "납품일자";
 
 
-		if (this.suppliedAttached.length != 0) {
-			let target = document.getElementsByClassName("filePreview")[1];
-			let files = "";
-			for (let i = 0; i < this.suppliedAttached.length; i++) {
-				files +=
-					"<div><a href='/api/attached/supplied/" +
-					this.no +
-					"/" +
-					encodeURI(this.suppliedAttached[i].fileName) +
-					"'>" +
-					this.suppliedAttached[i].fileName +
-					"</a></div>";
+        el = document.createElement("div");
+        cnt.appendChild(el);
 
-			}
-			target.innerHTML = files;
+        el2 = document.createElement("input");
+        el2.setAttribute("type", "date");
+        el2.setAttribute("class", "suppliedDate");
+        el2.addEventListener("click", () => {
+            R.sche = new Schedule();
+            R.sche.drawForRequestDetail(new Date());
+            document.getElementById("schedule-type-radio8").setAttribute("checked", "checked");
+            document.getElementsByClassName("schedule-detail")[0].children[0].children[0].children[1].value = this.title + "\u00A0" + "납품";
+        })
+        el.appendChild(el2);
 
-			if (document.getElementsByClassName("approvedDetail") == undefined) {
+        el = document.createElement("div");
+        cnt.appendChild(el);
+        el.innerText = "납품 관련 문서";
+        el.setAttribute("style", "background-color: #eef1fb;font-weight: 500;");
 
-				this.drawApprovedData();
-			}
-
-
-		}
-		console.log(this.supplied);
-		if (this.supplied != 0) {
-			document.getElementsByClassName("suppliedDate")[0].value = getYmdHypen(this.supplied);
-		}
-
-	}
+        el = document.createElement("div");
+        cnt.appendChild(el);
+        el.innerHTML = "<div class='filePreview'></div>" +
+            "<div><input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attachedsupplied' id='attached' onchange='R.contract.fileChange(this)' ></div>";
 
 
-	drawApprovedData() {
+        if (this.suppliedAttached.length != 0) {
+            let target = document.getElementsByClassName("filePreview")[1];
+            let files = "";
+            for (let i = 0; i < this.suppliedAttached.length; i++) {
+                files +=
+                    "<div><a href='/api/attached/supplied/" +
+                    this.no +
+                    "/" +
+                    encodeURI(this.suppliedAttached[i].fileName) +
+                    "'>" +
+                    this.suppliedAttached[i].fileName +
+                    "</a></div>";
 
-		$(".contract-progress").children()[2].className = "contract-done";
+            }
+            target.innerHTML = files;
 
-		if (this.approvedAttached.length == 0) {
-			$(".contract-progress").children()[3].className = "contract-doing";
-		} else {
-			$(".contract-progress").children()[3].className = "contract-done";
-		}
+            if (document.getElementsByClassName("approvedDetail") == undefined) {
 
-
-		let el, el2, cnt;
-		cnt = document.getElementsByClassName("approvedTitle")[0];
-
-		el = document.createElement("div");
-		cnt.parentElement.after(el);
-		el.className = "approvedDetail";
-		el.setAttribute("style", "display :grid;grid-template-columns: 20% 10% 20% 50% ");
-
-		cnt = el;
-
-		el = document.createElement("div");
-		cnt.appendChild(el);
-		el.innerText = "검수일자";
+                this.drawApprovedData();
+            }
 
 
-		el = document.createElement("div");
-		cnt.appendChild(el);
-		el2 = document.createElement("input");
-		el2.setAttribute("type", "date");
-		el2.setAttribute("class", "approvedDate");
-		el2.addEventListener("click", () => {
-			R.sche = new Schedule();
-			R.sche.drawForRequestDetail(new Date());
-			document.getElementById("schedule-type-radio9").setAttribute("checked", "checked");
-			document.getElementsByClassName("schedule-detail")[0].children[0].children[0].children[1].value = this.title + "\u00A0" + "검수";
+        }
+        console.log(this.supplied);
+        if (this.supplied != 0) {
+            document.getElementsByClassName("suppliedDate")[0].value = getYmdHypen(this.supplied);
+        }
+
+    }
 
 
-		})
-		el.appendChild(el2);
+    drawApprovedData() {
+
+        $(".contract-progress").children()[2].className = "contract-done";
+
+        if (this.approvedAttached.length == 0) {
+            $(".contract-progress").children()[3].className = "contract-doing";
+        } else {
+            $(".contract-progress").children()[3].className = "contract-done";
+        }
 
 
-		el = document.createElement("div");
-		cnt.appendChild(el);
-		el.innerText = "검수 관련 문서";
-		el.setAttribute("style", "background-color: #eef1fb;font-weight: 500;");
+        let el, el2, cnt;
+        cnt = document.getElementsByClassName("approvedTitle")[0];
 
-		el = document.createElement("div");
-		cnt.appendChild(el);
-		el.innerHTML = "<div class='filePreview'></div>" +
-			"<div><input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attachedapproved' id='attached' onchange='R.contract.fileChange(this)' ></div>";
+        el = document.createElement("div");
+        cnt.parentElement.after(el);
+        el.className = "approvedDetail";
+        el.setAttribute("style", "display :grid;grid-template-columns: 20% 10% 20% 50% ");
 
+        cnt = el;
 
-
-		if (this.approvedAttached.length != 0) {
-			let target = document.getElementsByClassName("filePreview")[2];
-			let files = "";
-			for (let i = 0; i < this.approvedAttached.length; i++) {
-				files +=
-					"<div><a href='/api/attached/approved/" +
-					this.no +
-					"/" +
-					encodeURI(this.approvedAttached[i].fileName) +
-					"'>" +
-					this.approvedAttached[i].fileName +
-					"</a></div>";
-
-			}
-			target.innerHTML = files;
-
-			$(".contract-progress").children()[2].className = "contract-done";
-
-		}
-
-		if (this.approved != 0) {
-			document.getElementsByClassName("approvedDate")[0].value = getYmdHypen(this.approved);
-
-		}
+        el = document.createElement("div");
+        cnt.appendChild(el);
+        el.innerText = "검수일자";
 
 
-	}
+        el = document.createElement("div");
+        cnt.appendChild(el);
+        el2 = document.createElement("input");
+        el2.setAttribute("type", "date");
+        el2.setAttribute("class", "approvedDate");
+        el2.addEventListener("click", () => {
+            R.sche = new Schedule();
+            R.sche.drawForRequestDetail(new Date());
+            document.getElementById("schedule-type-radio9").setAttribute("checked", "checked");
+            document.getElementsByClassName("schedule-detail")[0].children[0].children[0].children[1].value = this.title + "\u00A0" + "검수";
+
+
+        })
+        el.appendChild(el2);
+
+
+        el = document.createElement("div");
+        cnt.appendChild(el);
+        el.innerText = "검수 관련 문서";
+        el.setAttribute("style", "background-color: #eef1fb;font-weight: 500;");
+
+        el = document.createElement("div");
+        cnt.appendChild(el);
+        el.innerHTML = "<div class='filePreview'></div>" +
+            "<div><input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attachedapproved' id='attached' onchange='R.contract.fileChange(this)' ></div>";
+
+
+
+        if (this.approvedAttached.length != 0) {
+            let target = document.getElementsByClassName("filePreview")[2];
+            let files = "";
+            for (let i = 0; i < this.approvedAttached.length; i++) {
+                files +=
+                    "<div><a href='/api/attached/approved/" +
+                    this.no +
+                    "/" +
+                    encodeURI(this.approvedAttached[i].fileName) +
+                    "'>" +
+                    this.approvedAttached[i].fileName +
+                    "</a></div>";
+
+            }
+            target.innerHTML = files;
+
+            $(".contract-progress").children()[2].className = "contract-done";
+
+        }
+
+        if (this.approved != 0) {
+            document.getElementsByClassName("approvedDate")[0].value = getYmdHypen(this.approved);
+
+        }
+
+
+    }
 
 
     getReportNo(obj) {
@@ -911,4 +904,274 @@ class Contract {
 
     }
 
-} 
+}
+
+
+
+
+
+function savedLineSet() {
+
+    let formId = "doc_Form_leave";
+    let appLineNum = document.getElementsByClassName("schedule-app-line")[0].value * 1;
+    $.ajax({
+        url: "/api/gw/app/savedLine/" + storage.my,
+        method: "get",
+        dataType: "json",
+        cache: false,
+        success: (result) => {
+            let savedLine;
+            if (result.result == "ok") {
+                savedLine = cipher.decAes(result.data);
+                savedLine = JSON.parse(savedLine);
+                storage.estsavedLine = savedLine;
+                createLine2(formId, appLineNum);
+            } else {
+                alert("자주쓰는 결재선을 가져오는데 실패함 ");
+            }
+        },
+    });
+}
+
+// 전자결재 자동생성 함수 
+
+function createSchedule(formId, lineData, appLine) {
+
+    let title, content, from, to;
+
+    title = document.getElementsByClassName("schedule-detail")[0].children[0].children[0].children[1].value;
+    content = CKEDITOR.instances["schedule-detail-content"] != undefined ? CKEDITOR.instances["schedule-detail-content"].getData() : "";
+
+    from = document.getElementsByClassName("schedule-detail")[0].children[1].children[0].getElementsByTagName("date")[0].innerText.replaceAll(".", "-").replaceAll("'", "").replaceAll(" ", "") + "\u00A0" +
+        document.getElementsByClassName("schedule-detail")[0].children[1].children[0].getElementsByTagName("time")[0].innerText;
+
+    to = document.getElementsByClassName("schedule-detail")[0].children[1].children[0].getElementsByTagName("date")[1].innerText.replaceAll(".", "-").replaceAll("'", "").replaceAll(" ", "") + "\u00A0" +
+        document.getElementsByClassName("schedule-detail")[0].children[1].children[0].getElementsByTagName("time")[1].innerText;
+
+    let related = {
+        "next": "",
+        "parent": "",
+        "previous": "",
+
+    };
+
+    console.log(appLine);
+    let data = {
+        "sopp": R.sopp.no + "",
+        "customer": R.sopp.customer + "",
+        "formId": formId,
+        "title": title,
+        "content": content,
+        "from": from,
+        "to": to,
+        "lineData": lineData,
+        "appLine": appLine,
+        "dept": storage.user[storage.my].deptId[0],
+        "readable": "dept",
+        "related": JSON.stringify(related),
+        "writer" : storage.user[storage.my].userName,
+        "created" : getYmdSlash2(),
+    }
+
+
+    data = JSON.stringify(data);
+    data = cipher.encAes(data);
+
+
+
+    $.ajax({
+        url: "/api/gw/autoScheduleReport",
+        method: "post",
+        data: data,
+        dataType: "json",
+        contentType: "text/plain",
+        success: (result) => {
+            if (result.result === "ok") {
+                console.log("결재문서 자동 생성 성공");
+            } else {
+                console.log("결재문서 자동 생성 실패");
+            }
+        }
+    });
+
+}
+
+
+
+
+function createLine2(formId, appLineNum) {
+
+
+    let savedLineData = storage.estsavedLine;
+
+    if (storage.estsavedLine != undefined) {
+        let appLine;
+        for (let i = 0; i < savedLineData.length; i++) {
+            if (savedLineData[i].no == appLineNum) {
+                appLine = savedLineData[i].appLine;
+            }
+        }
+
+
+
+        if (appLine.length == 1) {
+            appLine[0][0] = 2;
+        } else {
+            for (let i = 0; i < appLine.length; i++) {
+                if (appLine[i][0] != 0) {
+                    appLine[i][0] = (i + 1);
+                }
+            }
+
+        }
+
+
+
+
+        let typeLine = [[], [], [], [], []];
+
+        for (let i = 0; i < typeLine.length; i++) {
+            for (let j = 0; j < appLine.length; j++) {
+                if (i == appLine[j][0]) {
+                    typeLine[i].push(appLine[j][1]);
+                }
+            }
+        }
+
+        let writer = storage.my;
+
+        // line grid container 안 닫음 
+        let lineData = "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작 성</div>" +
+            "<div class='lineSet'>" +
+            "<div class='twoBorder'><input disabled class='inputsAuto' style='text-align:center' value ='" +
+            storage.userRank[storage.user[storage.my].rank][0] +
+            "'></div>" +
+            "<div class='twoBorder'><input class='inputsAuto " +
+            formId +
+            "_writer' style='text-align:center' disabled type='text'  data-detail='" +
+            storage.user[writer].userName +
+            "' value='" +
+            storage.user[writer].userName +
+            "'></div>" +
+            "<div class='twoBorder'><input disabled class='inputsAuto " +
+            formId +
+            "_writer_status' style='text-align:center'  data-detail='' type='text' ></div>" +
+            "<div class='dateBorder'><input disabled class='inputsAuto " +
+            formId +
+            "_writer_approved'  data-detail='' type='text' value=''></div></div></div>";
+        let titleArr = ["검 토", "결 재", "수 신", "참 조"];
+        let titleId = ["examine", "approval", "conduct", "refer"];
+        let testHtml2 = "<div class='lineGridContainer'>";
+
+        for (let i = 0; i < typeLine.length; i++) {
+            if (typeLine[i].length != 0 && i < 2) {
+                lineData +=
+                    "<div class='lineGrid'><div class='lineTitle'>" +
+                    titleArr[i] +
+                    "</div>";
+            } else if (typeLine[i].length != 0 && i == 2) {
+                testHtml2 +=
+                    "<div class='lineGrid'><div class='lineTitle'>" +
+                    titleArr[i] +
+                    "</div>";
+            }
+
+            for (let j = 0; j < typeLine[i].length; j++) {
+                // 수신인 경우 
+                if (i == 2) {
+                    testHtml2 +=
+                        "<div class='lineSet'><div class='twoBorder'><input type='text' disabled style='text-align:center' class='inputsAuto " +
+                        formId +
+                        "_" +
+                        titleId[i] +
+                        "_position" +
+                        "' value='" +
+                        storage.userRank[storage.user[typeLine[i][j]].rank][0] +
+                        "' data-detail='" +
+                        storage.user[typeLine[i][j]].rank +
+                        "'/></div>" +
+                        "<div class='twoBorder'><input type='text' disabled style='text-align:center' class='inputsAuto " +
+                        formId +
+                        "_" +
+                        titleId[i] +
+                        "' value='" +
+                        storage.user[typeLine[i][j]].userName +
+                        "' data-detail='" +
+                        storage.user[typeLine[i][j]].userNo +
+                        "'/></div>" +
+                        "<div class='twoBorder'><input type='text'  disabled style='text-align:center' class='inputsAuto " +
+                        formId +
+                        "_" +
+                        titleId[i] +
+                        "_status' value='' data-detail=''/></div>" +
+                        "<div class='dateBorder'><input type='text' disabled style='text-align:center' class='inputsAuto " +
+                        formId +
+                        "_" +
+                        titleId[i] +
+                        "_approved" +
+                        "' value='' data-detail=''/></div></div>";
+                } else {
+                    lineData +=
+                        "<div class='lineSet'><div class='twoBorder'><input type='text' disabled  style='text-align:center' class='inputsAuto " +
+                        formId +
+                        "_" +
+                        titleId[i] +
+                        "_position" +
+                        "' value='" +
+                        storage.userRank[storage.user[typeLine[i][j]].rank][0] +
+                        "' data-detail='" +
+                        storage.user[typeLine[i][j]].rank +
+                        "'/></div>" +
+                        "<div class='twoBorder'><input type='text' disabled style='text-align:center' class='inputsAuto " +
+                        formId +
+                        "_" +
+                        titleId[i] +
+                        "' value='" +
+                        storage.user[typeLine[i][j]].userName +
+                        "' data-detail='" +
+                        storage.user[typeLine[i][j]].userNo +
+                        "'/></div>" +
+                        "<div class='twoBorder'><input type='text'disabled style='text-align:center' class='inputsAuto " +
+                        formId +
+                        "_" +
+                        titleId[i] +
+                        "_status' value='' data-detail=''/></div>" +
+                        "<div class='dateBorder'><input type='text' disabled  style='text-align:center' class='inputsAuto " +
+                        formId +
+                        "_" +
+                        titleId[i] +
+                        "_approved" +
+                        "' value='' data-detail=''/></div></div>";
+                }
+            }
+
+            if (typeLine[i].length != 0 && i < 2) {
+                lineData += "</div>";
+            } else if (typeLine[i].length != 0 && i == 2) {
+                testHtml2 += "</div>";
+            }
+        }
+
+        lineData += "</div>";
+        testHtml2 += "</div>";
+
+        lineData += testHtml2;
+
+        createSchedule(formId, lineData, appLine);
+    }
+}
+
+
+function getYmdSlash2() {
+    let d = new Date();
+    return (
+      (d.getFullYear() % 100) +
+      "/" +
+      (d.getMonth() + 1 > 9
+        ? (d.getMonth() + 1).toString()
+        : "0" + (d.getMonth() + 1)) +
+      "/" +
+      (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
+    );
+  }
+  

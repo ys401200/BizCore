@@ -11,6 +11,7 @@ function prepareForm() {
   if (aesIv !== undefined && aesIv !== null) cipher.aes.iv = aesIv;
   // getProductList();
   // getEstmVerList(estmNo);
+  toReadMode();
   getSoppDetailData();
   ckeditor.config.readOnly = false;
   window.setTimeout(setEditor(document.getElementsByClassName("sopp-desc")[0]), 100);
@@ -83,63 +84,6 @@ function getItem() {
 } // End of getItem();
 
 
-// function getSoppData() {
-
-//   let soppNo = storage.estmVerList[storage.estmVerList.length - 1].related.parent.split(":")[1] * 1;
-//   $.ajax({
-//     "url": "/api/sopp/" + soppNo,
-//     "method": "get",
-//     "dataType": "json",
-//     "cache": false,
-//     success: (data) => {
-//       let list, x;
-//       if (data.result === "ok") {
-//         list = data.data;
-//         list = cipher.decAes(list);
-//         list = JSON.parse(list);
-//         storage.soppDetail = list;
-
-//       } else {
-//         console.log(data.msg);
-//       }
-//     }
-
-//   })
-// }
-
-
-
-// // 견적 데이터 가져오는 함수 
-// function getEstmVerList(estmNo) {
-//   let url;
-//   url = apiServer + "/api/estimate/" + estmNo;
-
-//   $.ajax({
-//     "url": url,
-//     "method": "get",
-//     "dataType": "json",
-//     "cache": false,
-//     success: (data) => {
-//       let list, x;
-//       if (data.result === "ok") {
-//         list = data.data;
-//         list = cipher.decAes(list);
-//         list = JSON.parse(list);
-//         for (x = 0; x < list.length; x++)	list[x].doc = cipher.decAes(list[x].doc);
-//         storage.estmVerList = list;
-//         setEstData();
-//         getSavedLine();
-//         getSoppData();
-
-//       } else {
-//         console.log(data.msg);
-//       }
-//     }
-//   });
-
-// } // End of getEstimateList()
-
-
 //데이터 리스트 셋하는 함수 
 function setEstData() {
 
@@ -155,7 +99,7 @@ function setEstData() {
   sopp = (soppDetail.title === null || soppDetail.title === undefined || soppDetail.title === "") ? "" : soppDetail.title;
   infoCustomer = (soppDetail.customer === null || soppDetail.customer === undefined || soppDetail.customer === "" || soppDetail.customer === 0) ? "" : soppDetail.customer;
   title = (soppDetail.title === null || soppDetail.title === undefined || soppDetail.title === "") ? "" : soppDetail.title;
-  expectedSales = (soppDetail.expactetSales === null || soppDetail.expactetSales === "") ? "" : soppDetail.expactetSales.toLocaleString() + "원"
+  expectedSales = (soppDetail.expectedSales === null || soppDetail.expectedSales === "") ? "" : soppDetail.expectedSales.toLocaleString() + "원"
   expectedDate = (soppDetail.expactedDate === undefined || soppDetail.expactedDate === "" || soppDetail.expactedDate == 0) ? "" : soppDetail.expactedDate;
 
   $("#" + formId + "_writer").val(storage.user[writer].userName);
@@ -329,7 +273,7 @@ function setEstData() {
 
 
   toReadMode();
-  $("select[name='saveLineSelect']").attr("disabled",false);
+  $("select[name='saveLineSelect']").attr("disabled", false);
 }
 
 
@@ -547,7 +491,7 @@ function reportInsert() {
     employee: storage.my,
     customer: storage.soppDetailData.sopp.customer,
     title: storage.soppDetailData.sopp.title + "계약",
-    amount: storage.soppDetailData.sopp.expactetSales,
+    amount: storage.soppDetailData.sopp.expectedSales,
     related: JSON.stringify(cntrctRelated),
 
   }
@@ -604,7 +548,7 @@ function reportInsert() {
         if (result.result === "ok") {
           alert("기안 완료");
           createContract(ctrtData);
-          window.close('/gw/estimate');
+          // window.close('/gw/estimate');
         } else {
           alert(result.msg);
         }
@@ -624,7 +568,7 @@ function createContract(ctrtData) {
       if (result.result === "ok") {
         console.log("계약 자동 생성 완료");
       } else {
-        alert(result.msg);
+        console.log("계약 자동 생성 실패");
       }
 
     }

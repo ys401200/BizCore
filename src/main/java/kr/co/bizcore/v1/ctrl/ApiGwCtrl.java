@@ -1,11 +1,14 @@
 package kr.co.bizcore.v1.ctrl;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.xml.sax.SAXException;
 
 import kr.co.bizcore.v1.msg.Msg;
 import lombok.extern.slf4j.Slf4j;
@@ -789,8 +793,7 @@ public class ApiGwCtrl extends Ctrl {
         return result;
     }
 
-
-    //영업기회 번호에 해당되는 수주판매 보고 문서 가져오기
+    // 영업기회 번호에 해당되는 수주판매 보고 문서 가져오기
     @GetMapping("/salesReport/{soppNo}")
     public String getSalesReportBySoppNo(HttpServletRequest request, @PathVariable("soppNo") String soppNo) {
         String result = null, lang = null, compId = null;
@@ -802,8 +805,8 @@ public class ApiGwCtrl extends Ctrl {
         msg = getMsg(lang);
         String aesKey = (String) session.getAttribute("aesKey");
         String aesIv = (String) session.getAttribute("aesIv");
-     
-      String docNo = null;
+
+        String docNo = null;
         if (compId == null)
             compId = (String) request.getAttribute("compId");
         if (compId == null) {
@@ -812,7 +815,7 @@ public class ApiGwCtrl extends Ctrl {
             if (gwService.getSalesReport(compId, soppNo) != null) {
                 docNo = gwService.getSalesReport(compId, soppNo);
                 docNo = encAes(docNo, aesKey, aesIv);
-                result = "{\"result\":\"ok\",\"docNo\":\"" +docNo+ "\"}";
+                result = "{\"result\":\"ok\",\"docNo\":\"" + docNo + "\"}";
             } else {
                 result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
             }
@@ -821,4 +824,79 @@ public class ApiGwCtrl extends Ctrl {
 
         return result;
     }
+
+    @PostMapping("/autoScheduleReport")
+    public String createAutoScheduleReport(HttpServletRequest request, @RequestBody String requestBody)
+            throws ParserConfigurationException, SAXException, IOException, TransformerException {
+        String result = null, lang = null, compId = null, aesIv = null, aesKey = null, data = null;
+        String dept = null, sopp = null, customer = null, formId = null, title = null, content = null, userNo = null,
+                lineData = null, readable =null, related = null , writer = null, created = null;
+        String[][] appLine = null;
+        String from = null, to = null;
+        HttpSession session = null;
+        Msg msg = null;
+        JSONObject json = null;
+        session = request.getSession();
+        compId = (String) session.getAttribute("compId");
+        lang = (String) session.getAttribute("lang");
+        msg = getMsg(lang);
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        userNo = (String) session.getAttribute("userNo");
+        JSONArray jarr = null, tj = null;
+        String[] ts = null;
+
+        if (compId == null)
+            compId = (String) request.getAttribute("compId");
+        if (compId == null) {
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        } else if (aesKey == null || aesIv == null) {
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        } else {
+            data = decAes(requestBody, aesKey, aesIv);
+
+            if (data == null) {
+                result = "{\"result\":\"failure\",\"msg\":\"" + msg.dataIsWornFormat + "\"}";
+            } else {
+                json = new JSONObject(data);
+                sopp = json.getString("sopp");
+                customer = json.getString("customer");
+                formId = json.getString("formId");
+                title = json.getString("title");
+                content = json.getString("content");
+                lineData = json.getString("lineData");
+                from = json.getString("from");
+                to = json.getString("to");
+                readable = json.getString("readable");
+                related = json.getString("related");
+                dept = json.getString("dept");
+                writer = json.getString("writer");
+                created = json.getString("created");
+
+
+                if (!json.isNull("appLine")) {
+                    jarr = json.getJSONArray("appLine");
+                    if (jarr != null && jarr.length() > 0) {
+                        appLine = new String[jarr.length()][];
+                        for (int x = 0; x < jarr.length(); x++) {
+                            tj = jarr.getJSONArray(x);
+                            ts = new String[2];
+                            ts[0] = tj.getInt(0) + "";
+                            ts[1] = tj.getInt(1) + "";
+                            appLine[x] = ts;
+                        }
+                    }
+                }
+
+                if (gwService.createScheduleReport(compId, dept, sopp, customer,  formId, title,readable, related, content, from, to, appLine, lineData, userNo,writer,created) <= 0) {
+                    result = "{\"result\":\"failure\"}";
+                } else {
+                    result = "{\"result\":\"ok\"}";
+                }
+            }
+
+        }
+        return result;
+    }
+
 }
