@@ -42,6 +42,7 @@ class Contracts {
 	draw() {
 		let el, cnt;
 		cnt = this.container;
+		cnt.innerHTML = "";
 
 		el = document.createElement("div");
 		cnt.appendChild(el);
@@ -60,20 +61,22 @@ class Contracts {
 		el = document.createElement("div");
 		cnt.children[0].appendChild(el);
 		el.innerText = "계약금액";
+		if (storage.articlePerPage == undefined) {
+			storage.articlePerPage = (calWindowLength() - 1);
+		}
 
-
-		let page = storage.currentPage * 13;
+		let page = storage.currentPage * storage.articlePerPage;
 		console.log(this.list.length + "함수 실행 확인");
 		let x, ctrt, svg;
 		svg = "<svg onclick=\"R.project.newProject(this.parentElement.parentElement)\" xmlns=\"http://www.w3.org/2000/svg\" height=\"40\" width=\"40\"><path stroke=\"#d1d1d1\" fill=\"#cccccc\" d=\"M18.625 28.417h2.917v-6.834h6.875v-2.916h-6.875v-7.084h-2.917v7.084h-7.042v2.916h7.042ZM20 36.958q-3.5 0-6.583-1.333-3.084-1.333-5.396-3.646-2.313-2.312-3.646-5.396Q3.042 23.5 3.042 20q0-3.542 1.333-6.625T8.021 8q2.312-2.292 5.396-3.625Q16.5 3.042 20 3.042q3.542 0 6.625 1.333T32 8q2.292 2.292 3.625 5.375 1.333 3.083 1.333 6.625 0 3.5-1.333 6.583-1.333 3.084-3.625 5.396-2.292 2.313-5.375 3.646-3.083 1.333-6.625 1.333Zm0-3.166q5.75 0 9.771-4.021Q33.792 25.75 33.792 20q0-5.75-4-9.771-4-4.021-9.792-4.021-5.75 0-9.771 4-4.021 4-4.021 9.792 0 5.75 4.021 9.771Q14.25 33.792 20 33.792ZM20 20Z\" /></svg>";
-		for (x = (storage.currentPage - 1) * 13; x < page; x++) {
+		for (x = (storage.currentPage - 1) * storage.articlePerPage; x < page; x++) {
 			ctrt = this.list[x];
 			el = document.createElement("div");
 			this.container.appendChild(el);
 			ctrt.draw(el);
 		}
 
-		let result = paging(this.list.length, storage.currentPage, 13);
+		let result = paging(this.list.length, storage.currentPage, storage.articlePerPage);
 		let pageContainer = $(".pageContainer");
 		let pageNation = createPaging(
 			pageContainer[0],
@@ -189,28 +192,7 @@ class Contract {
 	}
 
 
-	//다른 곳에 가서 그리는 경우 
-	setCntNum(no) {
-		let cnt = document.getElementsByClassName("sopp-contract")[0];
-		fetch(location.origin + "/api/contract/" + no)
-			.catch((error) => console.log("error:", error))
-			.then(response => response.json())
-			.then(response => {
-				console.log(response);
-				let data;
-				if (response.result === "ok") {
-					data = response.data;
-					data = cipher.decAes(data);
-					data = JSON.parse(data);
-					console.log(data);
-					R.contract = new Contract(data);
-					R.contract.getReportDetail(cnt);
 
-				} else {
-					console.log(response.msg);
-				}
-			});
-	}
 
 
 	drawDetail(parent) {
@@ -925,4 +907,6 @@ function getYmdHypen(date) {
 }
 
 
-
+function drawList() {
+	R.contracts.draw();
+}

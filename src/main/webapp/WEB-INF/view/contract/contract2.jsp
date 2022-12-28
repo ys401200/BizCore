@@ -9,6 +9,10 @@
 				<div class="contractContainer">
 					<hr />
 					<span id="containerTitle">계약</span>
+					<div class="listRange">
+						<input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="listRangeChange(this, drawList)">
+						<span class="listRangeSpan">0</span>
+					</div>
 					<!-- <div class="crudBtns"><button onclick="contractInsertForm()">등록</button></div> -->
 					<div class="contract-list"></div>
 					<div class="pageContainer"></div>
