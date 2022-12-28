@@ -581,7 +581,7 @@ class Sopp2 {
 		for(x = 0 ; x < R.sopp.calendar.length ; x++)	for(y = 0 ; y < R.sopp.schedules.length ; y++)	R.sopp.calendar[x].addSchedule(R.sopp.schedules[y]);
 		//캘린더에 스케줄을 그려넣어줌
 		for(x = 0 ; x < R.sopp.calendar.length ; x++)	R.sopp.calendar[x].drawScheduleInSopp(color);
-		// 전체 일정 리스트를달력 우측에 그려 넣음
+		// 전체 일정 리스트를 달력 우측에 그려 넣음
 		cnt = document.getElementsByClassName("sopp-schedule-detail")[0];
 		for(x = 0 ; x < R.sopp.schedules.length ; x++){
 			z = R.sopp.schedules[x];
@@ -598,7 +598,7 @@ class Sopp2 {
 			y = document.createElement("label");
 			y.setAttribute("for","sopp-schedule-detail-radio" + z.no);
 			// 상단 제목, 날짜 등
-			html = "<circle style=\"background-color:" + c + ";\"></circle><div>" + name + " - "+ z.title + "</div>";
+			html = "<div><circle style=\"background-color:" + c + ";\">✔</circle><title>" + z.title + "</title></div>";
 			html += ("<div><tp>" + (type[z.type]) + "</tp>" + z.dateToStr());
 			// 본인 작성 일정에 대해 편집 버튼 생성
 			if(z.writer == storage.my)	html += ("<img src=\"/images/sopp2/edit_square.png\" onclick=\"editSchedule(" + z.no + ")\" />");
@@ -606,18 +606,18 @@ class Sopp2 {
 			// 장소 등 세부내용
 			html += "<div>";
 			if(z.permitted !== undefined){
-				html += ("<div>- 전자결재 : " + (z.permitted === 0 ? "진행중" : z.permitted === 0 ? "승인" : "미승인") + "</div>");
+				html += ("<scs><sct>전자결재</sct><scd>" + (z.permitted === 0 ? "진행중" : z.permitted === 0 ? "승인" : "미승인") + "</scd></scs>");
 			}
 			if(z.related.place !== undefined){
-				html += "<div>- 장소 : ";
+				html += "<scs><sct>장소</sct><scd>";
 				html +=(z.related.place === "customer" ? "고객사" : z.related.place === "partner" ? "협력사" : z.related.place === "office" ? "사무실" : z.related.place.substring(4));
-				html += "</div>";
+				html += "</scd></scs>";
 			}
 			if(z.related.typeOfDetail !== undefined){
-				html += ("<div>- 종류 : " + z.related.typeOfDetail + "</div>");
+				html += ("<scs><sct>종류</sct><scd>" + z.related.typeOfDetail + "</scd></scs>");
 			}
 			if(z.related.method !== undefined){
-				html += ("<div>- 방법 : " + z.related.method + "</div>");
+				html += ("<scs><sct>방법</sct><scd>" + z.related.method + "</scd><scs>");
 			}
 			html += "</div>";
 			// 본문
@@ -784,10 +784,11 @@ class MonthlyCalendar {
 		this.container.appendChild(bodyCnt);
 
 		// 헤드부분 생성
-		html = "<div><img src=\"/images/sopp2/triangle_left.png\" onclick=\"if(this.parentElement.parentElement.parentElement.previousElementSibling !== null){this.parentElement.parentElement.parentElement.previousElementSibling.style.display='';this.parentElement.parentElement.parentElement.style.display='none'}\"></div>";
-		html += ("<div>" + (this.year + " / " + (this.month)) + "</div>");
-		html += ("<div><img src=\"/images/sopp2/triangle_right.png\" onclick=\"if(this.parentElement.parentElement.parentElement.nextElementSibling !== null){this.parentElement.parentElement.parentElement.nextElementSibling.style.display='';this.parentElement.parentElement.parentElement.style.display='none'}\"></div>");
-		html += ("<div></div>"); // 담당자별 일정 요약
+		html = "<div style=\"grid-area:cal-type;\"><span>연</span><span>월</span><span>주</span></div>";
+		html += "<div style=\"grid-area:prv-month;\"><img src=\"/images/sopp2/triangle_left.png\" onclick=\"if(this.parentElement.parentElement.parentElement.previousElementSibling !== null){this.parentElement.parentElement.parentElement.previousElementSibling.style.display='';this.parentElement.parentElement.parentElement.style.display='none'}\"></div>";
+		html += ("<div style=\"grid-area:crnt-month;\">" + (this.year + " / " + (this.month)) + "</div>");
+		html += ("<div style=\"grid-area:next-month;\"><img src=\"/images/sopp2/triangle_right.png\" onclick=\"if(this.parentElement.parentElement.parentElement.nextElementSibling !== null){this.parentElement.parentElement.parentElement.nextElementSibling.style.display='';this.parentElement.parentElement.parentElement.style.display='none'}\"></div>");
+		html += ("<div style=\"grid-area:emp-list;\"></div>"); // 담당자별 일정 요약
 		headCnt.innerHTML = html;
 
 		// 바디부분 생성
@@ -837,7 +838,8 @@ class MonthlyCalendar {
 					z.setAttribute("onmouseenter","enteredSoppCalendarSchedule(" + this.schedule[y].no + ")");
 					z.setAttribute("onmouseleave","leftSoppCalendarSchedule(" + this.schedule[y].no + ")");
 					z.style.backgroundColor = color;
-					z.innerText = name;
+					//z.innerText = name;
+					z.innerText = this.schedule[y].title;
 					days[x].appendChild(z);
 					// 직원별 일정 갯수 저장
 					if(emps[writer] === undefined)	emps[writer] = 1;
@@ -847,7 +849,7 @@ class MonthlyCalendar {
 		}
 
 		// 월간 달력 상단에 직원별 일정의 수를 표시하도록 함
-		z = this.container.children[0].children[3];
+		z = this.container.children[0].children[4];
 		st = 0;
 		for(x in emps){
 			if(x === undefined)	continue;

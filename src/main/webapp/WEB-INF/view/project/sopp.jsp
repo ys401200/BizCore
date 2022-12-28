@@ -53,8 +53,8 @@
 
 
                 <div class="sopp-schedule">
-                    <div class="sopp-calendar"></div>
                     <div class="sopp-schedule-detail"></div>
+                    <div class="sopp-calendar"></div>
                 </div>
                 
                 

@@ -375,14 +375,14 @@ font-size:1.5rem;
 }
 .sopp-desc > div:nth-child(1) > div:nth-child(3) .edit-sopp-img{width:1.3rem;height:1.3rem;cursor:pointer;opacity:0.4;display:none;    margin: 0 0.5rem;}
 .sopp-desc > div:nth-child(1):hover > div:nth-child(3) .edit-sopp-img:nth-child(1){display:initial;}
-.sopp-desc > div:nth-child(2){min-height:12rem;max-height:45rem;overflow-x:hidden;overflow-y:auto;font-size:0.8rem;}
+.sopp-desc > div:nth-child(2){min-height:12rem;max-height:45rem;overflow-x:hidden;overflow-y:auto;font-size:0.8rem;font-family:sans-serif,Arial,Verdana,"Trebuchet MS","Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";}
 .sopp-desc > div:nth-child(2) p{margin:0.25rem 0;}
 .sopp-desc > textarea:nth-child(3){display:none;}
 .sopp-desc > div:nth-child(4){height: 35rem;overflow-x: hidden;overflow-y: auto;margin:1rem 0;border-color:#b5b2ff;display:none;}
 
 .sopp-schedule{
 	display:grid;
-	grid-template-columns: 3fr 1fr;
+	grid-template-columns: 7fr 13fr;
 	grid-template-rows: 1fr;
 	height:45rem;
 	overflow: hidden;
@@ -401,25 +401,37 @@ font-size:1.5rem;
 .calendar-head{
 	height:15%;
 	display:grid;
-	grid-template-columns: 1fr 2fr 1fr 7fr;
-	grid-template-rows: 1fr;
+	grid-template-columns: 1fr 4fr 1fr 10fr;
+	grid-template-rows: 1fr 3fr;
+	grid-template-areas: "cal-type cal-type cal-type emp-list" "prv-month crnt-month next-month emp-list";
 }
-.calendar-head > div:nth-child(1),
+.calendar-head > div:nth-child(1){display:flex;color:white;font-size:0.8rem;justify-content:space-evenly;align-items:center;}
+.calendar-head > div:nth-child(1) > span{
+	display:inline-block;
+	background-color:#cccccc;
+	border-radius: 1rem;
+	display:flex;
+	justify-content: center;
+	align-items: center;
+	width:1.6rem;
+	height:1.6rem;
+}
 .calendar-head > div:nth-child(2),
-.calendar-head > div:nth-child(3){
+.calendar-head > div:nth-child(3),
+.calendar-head > div:nth-child(4){
 	display:flex;
 	align-items: center;
 	justify-content: center;
 	font-size:2rem;
 }
-.calendar-head > div:nth-child(4){
+.calendar-head > div:nth-child(5){
 	display: grid;
 	grid-template-columns: repeat(7, 1fr);
 	grid-template-rows: repeat(4,1fr);
     grid-template-areas:  "a28 a24 a20 a163 a12 a8 a4" "a27 a23 a19 a15 a11 a7 a3" "a26 a22 a18 a14 a10 a6 a2" "a25 a21 a17 a13 a9 a5 a1";
 	padding-right: 1rem;
 }
-.calendar-head > div:nth-child(4) > div{
+.calendar-head > div:nth-child(5) > div{
 	display : inline-grid;
 	grid-template-columns: 1.2rem auto;
 	height:1.2rem;
@@ -427,12 +439,12 @@ font-size:1.5rem;
 	border-radius: 1rem;
     background-color: #eeeeee;
 }
-.calendar-head > div:nth-child(4) > div > span{
+.calendar-head > div:nth-child(5) > div > span{
 	display:flex;
 	align-items: center;
 	justify-content: center;
 }
-.calendar-head > div:nth-child(4) > div > span:first-child{
+.calendar-head > div:nth-child(5) > div > span:first-child{
 	border-radius: 1rem;
 }
 .calendar-body{
@@ -451,7 +463,7 @@ font-size:1.5rem;
 .calendar-week-6 > div{flex-basis: calc(100% / 6);}
 .calendar-body > div{
 	display:grid;
-	grid-template-columns: repeat(7, 1fr);
+	grid-template-columns: repeat(7, calc(100% / 7 - 1px));
 	border-bottom:1px solid #929cc5;
 	/* position:relative; */
 }
@@ -459,14 +471,17 @@ font-size:1.5rem;
 .calendar-body > div > div{border-right:1px solid #929cc5;cursor:cell;}
 .calendar-body > div > div:last-child{border-right:none;}
 .calendar-body .schedule-in-monthly-calendar{
-	display:flex;
-	justify-content: space-around;
-	font-size:0.85rem;
-	width:5em;
-	border-radius: 7.5rem;
-	padding:0.2rem 0.3rem;
-	margin:0.2rem 1rem 0.2rem auto;
-	cursor:pointer;
+	display: flex;
+    justify-content: space-around;
+    font-size: 0.6rem;
+    width: calc(100% - 0.4rem);
+    border-radius: 1rem;
+    padding: 0.2rem 0.5rem;
+    margin: 0.4rem 0.2rem;
+    cursor: pointer;
+    white-space: nowrap;
+    box-sizing: border-box;
+    text-overflow: ellipsis;
 }
 .calendar-body > div > div > div:first-child{
 	display:block;
@@ -476,6 +491,7 @@ font-size:1.5rem;
 	padding:0.1rem 1rem;
 	margin:0;
 	background-color:transparent;
+	box-sizing: border-box;
 }
 .other-month > div:first-child{color:gray;z-index:-10;}
 .other-month:first-child > div:first-child{color:rgb(255, 90, 90);}
@@ -491,7 +507,7 @@ font-size:1.5rem;
 .sopp-schedule-detail{
 	overflow-x: hidden;
 	overflow-y: auto;
-	background-color:#f8f8f8;
+	background-color:#fafaff;
 	padding: 0.5rem;
 }
 .sopp-schedule-detail > label{display:block;margin-bottom:0.3rem;padding-bottom:0.2rem;border-bottom:1px solid #00b5ff;}
@@ -509,28 +525,37 @@ font-size:1.5rem;
     border-radius: 1rem;
     font-size: 0.55rem;
     padding: 0.1rem 0.4rem;
-    background-color: #6da4bd;
+    background-color: #5f6bbd;
     margin-right: 0.2rem;
     color: white;
     font-weight: bold;
 }
 .sopp-schedule-detail > label circle{
-	width:0.7rem;
-	height:0.7rem;
+	width:1rem;
+	height:1rem;
 	display:inline-block;
 	border-radius: 1rem;
-	margin:0.1rem 0.5rem 0.1rem 0;
-	vertical-align: middle;
+	margin-right:0.3rem;
+	vertical-align:bottom;
+	color:transparent
 }
-.sopp-schedule-detail > label > div:nth-child(2){
+.sopp-schedule-detail > label title{
 	display:inline-block;
 	font-size:0.85rem;
 	color:#000048;
 }
-.sopp-schedule-detail > label > div:nth-child(3){
+.sopp-schedule-detail > label > div:nth-child(2){
 	font-size:0.8rem;
 	margin-left:1rem;
 }
+.sopp-schedule-detail > label > div:nth-child(3){
+	display:none;
+	font-size:0.8rem;
+	margin:0.3rem 0 0.15rem 1rem;
+	overflow:auto;
+	width:calc(100% - 1rem);
+}
+.sopp-schedule-detail > label > div:nth-child(3) > div{display:inline-block;width:48%;}
 .sopp-schedule-detail > label > div:nth-child(4){
 	display:none;
 	font-size:0.8rem;
@@ -539,22 +564,17 @@ font-size:1.5rem;
 	overflow:auto;
 	width:calc(100% - 1rem);
 }
-.sopp-schedule-detail > label > div:nth-child(4) > div{display:inline-block;width:48%;}
-.sopp-schedule-detail > label > div:nth-child(5){
-	display:none;
-	font-size:0.8rem;
-	margin:0.15rem 0 0.15rem 1rem;
-	border-top:1px dotted gray;
-	overflow:auto;
-	width:calc(100% - 1rem);
-}
-.sopp-schedule-detail > label > div:nth-child(3) date{font-size:0.75rem;color:#4a4a4a;}
-.sopp-schedule-detail > label > div:nth-child(3) time{font-size:0.7rem;color:gray;}
-.sopp-schedule-detail > label > div:nth-child(5) p{margin:0.05rem 0;word-wrap: break-word;}
+.sopp-schedule-detail > label > div:nth-child(2) date{font-size:0.75rem;color:#4a4a4a;}
+.sopp-schedule-detail > label > div:nth-child(2) time{font-size:0.7rem;color:gray;}
+.sopp-schedule-detail > label > div:nth-child(4) p{margin:0.05rem 0;word-wrap: break-word;}
 .sopp-schedule-detail .sopp-schedule-detail-radio{display:none;}
+.sopp-schedule-detail .sopp-schedule-detail-radio:checked + label > div:nth-child(3){display:block;}
 .sopp-schedule-detail .sopp-schedule-detail-radio:checked + label > div:nth-child(4){display:block;}
-.sopp-schedule-detail .sopp-schedule-detail-radio:checked + label > div:nth-child(5){display:block;}
 .sopp-schedule-detail .sopp-schedule-detail-radio:checked + label > div > img {display:initial;}
+.sopp-schedule-detail .sopp-schedule-detail-radio:checked + label > div > circle {color:red;}
+.sopp-schedule-detail scs{display:inline-block;padding:0.1rem;font-size:0.75rem;}
+.sopp-schedule-detail sct{display: inline-block;background-color: #aaedd6;padding: 0.1rem 0.3rem;border-radius: 1rem;}
+.sopp-schedule-detail scd{display:inline-block;padding:0.1rem;color:#002633;}
 
 .sopp-estimate > div:nth-child(3){
 	margin-bottom:1rem;

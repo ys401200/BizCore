@@ -429,7 +429,7 @@ inputtedComment = (el, event) => {
 } // End of inputtedComment()
 
 scrolledSopp = (el) => {
-	let x, y, z, v, els, position = [], vr = 60;
+	let x, y, z, v, els, position = [], vr = 64;
 
 	v = el.scrollTop + vr;
 	els = document.getElementsByClassName("sopp-sub-title");
@@ -453,7 +453,7 @@ scrolledSopp = (el) => {
 } // End of scrolledSopp()
 
 moveToTarget = (el) => {
-	let target, name, vr = 83;
+	let target, name, vr = 86;
 	name = el.dataset.target;
 	target = document.getElementsByClassName(name)[0];
 	target.parentElement.scrollTo({
