@@ -1,6 +1,3 @@
-
-
-
 $(document).ready(() => {
   init();
 
@@ -102,11 +99,6 @@ function drawFormList() {
 
 
 
-
-
-
-
-
 // 결재양식 선택에서 양식 선택 버튼 눌렀을 때 함수
 function selectForm() {
   let data, selectedFormNo, stepLabel, my, writer, formId, date;
@@ -161,8 +153,6 @@ function selectForm() {
 
 
   }
-
-
 
 
   // 데이터 추가시 insertbtn에 거래처 항목 리스트 추가하는 함수 

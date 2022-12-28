@@ -552,7 +552,7 @@ class Contract {
     }
 
 
-
+// 납품 일자 스케쥴 모달 체크하기 
     drawSuppliedData() {
         $(".contract-progress").children()[0].className = "contract-done";
         $(".contract-progress").children()[1].className = "contract-done";
@@ -571,7 +571,6 @@ class Contract {
         cnt.appendChild(el);
         el.innerText = "납품일자";
 
-
         el = document.createElement("div");
         cnt.appendChild(el);
 
@@ -581,7 +580,7 @@ class Contract {
         el2.addEventListener("click", () => {
             R.sche = new Schedule();
             R.sche.drawForRequestDetail(new Date());
-            document.getElementById("schedule-type-radio8").setAttribute("checked", "checked");
+            document.getElementById("schedule-type2h").setAttribute("checked", "checked");
             document.getElementsByClassName("schedule-detail")[0].children[0].children[0].children[1].value = this.title + "\u00A0" + "납품";
         })
         el.appendChild(el2);
@@ -662,7 +661,7 @@ class Contract {
         el2.addEventListener("click", () => {
             R.sche = new Schedule();
             R.sche.drawForRequestDetail(new Date());
-            document.getElementById("schedule-type-radio9").setAttribute("checked", "checked");
+            document.getElementById("schedule-type2i").setAttribute("checked", "checked");
             document.getElementsByClassName("schedule-detail")[0].children[0].children[0].children[1].value = this.title + "\u00A0" + "검수";
 
 
@@ -912,7 +911,8 @@ class Contract {
 
 function savedLineSet() {
 
-    let formId = "doc_Form_leave";
+    // let formId = "doc_Form_leave"; 
+    let formId = "doc_Form_extension";
     let appLineNum = document.getElementsByClassName("schedule-app-line")[0].value * 1;
     $.ajax({
         url: "/api/gw/app/savedLine/" + storage.my,
@@ -955,17 +955,17 @@ function createSchedule(formId, lineData, appLine) {
 
     };
 
-  
-        if (appLine.length == 1) {
-            appLine[0][0] = 2;
-        } else {
-            for (let i = 0; i < appLine.length; i++) {
-                if (appLine[i][0] != 0) {
-                    appLine[i][0] = (i + 1);
-                }
-            }
 
+    if (appLine.length == 1) {
+        appLine[0][0] = 2;
+    } else {
+        for (let i = 0; i < appLine.length; i++) {
+            if (appLine[i][0] != 0) {
+                appLine[i][0] = (i + 1);
+            }
         }
+
+    }
 
     let data = {
         "sopp": R.sopp.no + "",
@@ -980,8 +980,8 @@ function createSchedule(formId, lineData, appLine) {
         "dept": storage.user[storage.my].deptId[0],
         "readable": "dept",
         "related": JSON.stringify(related),
-        "writer" : storage.user[storage.my].userName,
-        "created" : getYmdSlash2(),
+        "writer": storage.user[storage.my].userName,
+        "created": getYmdSlash2(),
     }
 
 
@@ -1017,7 +1017,7 @@ function createLine2(formId, appLineNum) {
 
     if (storage.estsavedLine != undefined) {
         let appLine;
-        let toUseAppLine; 
+        let toUseAppLine;
         for (let i = 0; i < savedLineData.length; i++) {
             if (savedLineData[i].no == appLineNum) {
                 appLine = savedLineData[i].appLine;
@@ -1107,7 +1107,7 @@ function createLine2(formId, appLineNum) {
                         titleId[i] +
                         "_approved" +
                         "' value='' data-detail=''/></div></div>";
-                } else if(i != 2 && i != 3){
+                } else if (i != 2 && i != 3) {
                     lineData +=
                         "<div class='lineSet'><div class='twoBorder'><input type='text' disabled  style='text-align:center' class='inputsAuto " +
                         formId +
@@ -1162,13 +1162,12 @@ function createLine2(formId, appLineNum) {
 function getYmdSlash2() {
     let d = new Date();
     return (
-      (d.getFullYear() % 100) +
-      "/" +
-      (d.getMonth() + 1 > 9
-        ? (d.getMonth() + 1).toString()
-        : "0" + (d.getMonth() + 1)) +
-      "/" +
-      (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
+        (d.getFullYear() % 100) +
+        "/" +
+        (d.getMonth() + 1 > 9
+            ? (d.getMonth() + 1).toString()
+            : "0" + (d.getMonth() + 1)) +
+        "/" +
+        (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
     );
-  }
-  
+}

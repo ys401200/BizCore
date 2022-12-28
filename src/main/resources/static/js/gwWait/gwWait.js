@@ -986,13 +986,6 @@ function approveBtnEvent() {
     related: related,
   };
 
-  console.log(storage.newFileData + " 확인 1")
-  console.log(storage.newAppLine + " 확인 2")
-  console.log(appDoc + " 확인 3")
-  console.log(soppResult + " 확인 4")
-  console.log(cusResult + " 확인 5")
-  console.log(related + " 확인 6")
-  console.log(storage.newDoc + " 확인 7");
 
   data = JSON.stringify(data);
   data = cipher.encAes(data);
