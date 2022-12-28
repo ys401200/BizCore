@@ -955,7 +955,18 @@ function createSchedule(formId, lineData, appLine) {
 
     };
 
-    console.log(appLine);
+  
+        if (appLine.length == 1) {
+            appLine[0][0] = 2;
+        } else {
+            for (let i = 0; i < appLine.length; i++) {
+                if (appLine[i][0] != 0) {
+                    appLine[i][0] = (i + 1);
+                }
+            }
+
+        }
+
     let data = {
         "sopp": R.sopp.no + "",
         "customer": R.sopp.customer + "",
@@ -1006,26 +1017,12 @@ function createLine2(formId, appLineNum) {
 
     if (storage.estsavedLine != undefined) {
         let appLine;
+        let toUseAppLine; 
         for (let i = 0; i < savedLineData.length; i++) {
             if (savedLineData[i].no == appLineNum) {
                 appLine = savedLineData[i].appLine;
             }
         }
-
-
-
-        if (appLine.length == 1) {
-            appLine[0][0] = 2;
-        } else {
-            for (let i = 0; i < appLine.length; i++) {
-                if (appLine[i][0] != 0) {
-                    appLine[i][0] = (i + 1);
-                }
-            }
-
-        }
-
-
 
 
         let typeLine = [[], [], [], [], []];
@@ -1110,7 +1107,7 @@ function createLine2(formId, appLineNum) {
                         titleId[i] +
                         "_approved" +
                         "' value='' data-detail=''/></div></div>";
-                } else {
+                } else if(i != 2 && i != 3){
                     lineData +=
                         "<div class='lineSet'><div class='twoBorder'><input type='text' disabled  style='text-align:center' class='inputsAuto " +
                         formId +
