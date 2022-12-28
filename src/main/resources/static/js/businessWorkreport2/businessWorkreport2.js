@@ -205,12 +205,12 @@ editInputSet = () => {
 	
 	for(let i = 0; i < lastWeekContents.length; i++){
 		let item = lastWeekContents[i];
-
+		
 		for(let t = 0; t < item.getElementsByClassName("weekContentTitle").length; t++){
 			let title = item.getElementsByClassName("weekContentTitle")[t];
 			let input = document.createElement("input");
 			input.type = "text";
-			input.value = title.innerHTML.replace(/# /g, "").replace(/@ /g, "").replace(/$ /g, "");
+			input.value = title.innerHTML.replace(/\#/g, "").replace(/\@/g, "").replace(/\$/g, "").trim();
 			input.dataset.no = title.dataset.no;
 			input.dataset.job = title.dataset.job;
 			input.dataset.name = title.dataset.name;
@@ -221,8 +221,9 @@ editInputSet = () => {
 		for(let t = 0; t < item.getElementsByClassName("weekContentDesc").length; t++){
 			let content = item.getElementsByClassName("weekContentDesc")[t];
 			let textarea = document.createElement("textarea");
+			let randomNumber = Math.floor(Math.random() * 100);
 			textarea.value = content.innerHTML;
-			textarea.id = "lastText_" + i;
+			textarea.id = "lastText_" + randomNumber;
 			content.after(textarea);
 			content.style.display = "none";
 		}
@@ -230,24 +231,25 @@ editInputSet = () => {
 
 	for(let i = 0; i < thisWeekContents.length; i++){
 		let item = thisWeekContents[i];
-
+		
 		for(let t = 0; t < item.getElementsByClassName("weekContentTitle").length; t++){
 			let title = item.getElementsByClassName("weekContentTitle")[t];
 			let input = document.createElement("input");
 			input.type = "text";
-			input.value = title.innerHTML.replace(/# /g, "").replace(/@ /g, "").replace(/$ /g, "");
+			input.value = title.innerHTML.replace(/\#/g, "").replace(/\@/g, "").replace(/\$/g, "").trim();
 			input.dataset.no = title.dataset.no;
 			input.dataset.job = title.dataset.job;
 			input.dataset.name = title.dataset.name;
 			title.after(input);
 			title.style.display = "none";
 		}
-
+		
 		for(let t = 0; t < item.getElementsByClassName("weekContentDesc").length; t++){
 			let content = item.getElementsByClassName("weekContentDesc")[t];
 			let textarea = document.createElement("textarea");
+			let randomNumber = Math.floor(Math.random() * 100);
 			textarea.value = content.innerHTML;
-			textarea.id = "thisText_" + i;
+			textarea.id = "thisText_" + randomNumber;
 			content.after(textarea);
 			content.style.display = "none";
 		}
@@ -266,7 +268,7 @@ editInputSet = () => {
 	currentWeek.children[0].style.display = "none";
 
 	ckeditor.config.readOnly = false;
-	window.setTimeout(setEditor, 100);
+	window.setTimeout(setEditor, 200);
 }
 
 // 조직도에서 직원을 클릭할 때 실행되는 함수
@@ -374,41 +376,40 @@ drawReport = (editable, targetElement, employee) => {
 	// 일정에 따른 데이터를 기반으로 html 생성
 	html = ["", ""]; // 지난 주, 이번 주
 	R.formList = {};
+	let index = 0;
 	for(x = 0 ; x < 7 ; x++){
 		// 지난 주
 		if(sch1[x].length > 0){
-			let itemName = "lastWeekData_" + (x + 1);
 			html[0] += ("<div>" + day[x] + "</div><div class=\"lastWeekContents\">");
 			for(y = 0 ; y < sch1[x].length ; y++){
+				let itemName = "lastWeekData_" + index;
 				R.formList[itemName] = sch1[x][y];
-				html[0] += ("<div><div class=\"weekContentTitle\" data-no=\"" + sch1[x][y].no + "\" data-job=\"" + sch1[x][y].job + "\" data-name=\"lastWeekData_" + (x + 1) + "\">" + sch1[x][y].title + "</div>");
+				html[0] += ("<div><div class=\"weekContentTitle\" data-no=\"" + sch1[x][y].no + "\" data-job=\"" + sch1[x][y].job + "\" data-name=\"lastWeekData_" + index + "\">" + sch1[x][y].title + "</div>");
 				if(editable)	html[0] += ("<input type=\"checkbox\" " + (sch1[x][y].report ? "checked " : "") + "/>");
 				html[0] += "</div>";
 				html[0] += ("<div class=\"weekContentDesc\">" + sch1[x][y].content + "</div>");
+				index++;
 			}
 			html[0] += "</div>";
-		}else if(sch1[x].length == 0 && x == 6){
-			html[0] += "<div style=\"grid-column: span 2;\">데이터가 없습니다.</div>";
 		}
 		// 이번 주
 		if(sch2[x].length > 0){
-			let itemName = "thisWeekData_" + (x + 1);
 			html[1] += ("<div>" + day[x] + "</div><div class=\"thisWeekContents\">");
 			for(y = 0 ; y < sch2[x].length ; y++){
+				let itemName = "thisWeekData_" + index;
 				R.formList[itemName] = sch2[x][y];
-				html[1] += ("<div><div class=\"weekContentTitle\" data-no=\"" + sch2[x][y].no + "\" data-job=\"" + sch2[x][y].job + "\" data-name=\"thisWeekData_" + (x + 1) + "\">" + sch2[x][y].title + "</div>");
+				html[1] += ("<div><div class=\"weekContentTitle\" data-no=\"" + sch2[x][y].no + "\" data-job=\"" + sch2[x][y].job + "\" data-name=\"thisWeekData_" + index + "\">" + sch2[x][y].title + "</div>");
 				if(editable)	html[1] += ("<input type=\"checkbox\" " + (sch2[x][y].report ? "checked " : "") + "/>");
 				html[1] += "</div>";
 				html[1] += ("<div class=\"weekContentDesc\">" + sch2[x][y].content + "</div>");
+				index++;
 			}
 			html[1] += "</div>";
-		}else if(sch2[x].length == 0 && x == 6){
-			html[1] += "<div style=\"grid-column: span 2;\">데이터가 없습니다.</div>";
 		}
 	} // End of for(x)
+
 	cnt.children[3].children[0].innerHTML = html[0];
 	cnt.children[3].children[1].innerHTML = html[1];
-
 	// 추가 기재사항
 	if(editable || data.previousWeekCheck){ // 지난 주
 		html = "<div><div>추가 기재 사항</div>";
@@ -420,9 +421,7 @@ drawReport = (editable, targetElement, employee) => {
 		}
 		cnt.children[4].children[0].innerHTML = html;
 	}else{
-		html ="<div><div>추가 기재 사항</div></div>";
-		html += "<div style=\"text-align: center;\">데이터가 없습니다.</div>";
-		cnt.children[4].children[0].innerHTML = html;
+		cnt.children[4].children[0].children[1].innerHTML = "";
 	}
 	
 	if(editable || data.currentWeekCheck){ // 이번 주
@@ -435,11 +434,25 @@ drawReport = (editable, targetElement, employee) => {
 		}
 		cnt.children[4].children[1].innerHTML = html;
 	}else{
-		html ="<div><div>추가 기재 사항</div></div>";
-		html += "<div style=\"text-align: center;\">데이터가 없습니다.</div>";
-		cnt.children[4].children[1].innerHTML = html;
+		cnt.children[4].children[1].children[1].innerHTML = "";
 	}
 
+	let reportContents = document.getElementsByClassName("report-contents")[0];
+	if(reportContents.children[0].children.length == 0){
+		reportContents.children[0].innerHTML = "<div style=\"grid-column: span 2;\">데이터가 없습니다.</div>";
+	}
+
+	if(reportContents.children[1].children.length == 0){
+		reportContents.children[1].innerHTML = "<div style=\"grid-column: span 2;\">데이터가 없습니다.</div>";
+	}
+
+	if(reportContents.nextElementSibling.children[0].children[1].children.length == 0){
+		reportContents.nextElementSibling.children[0].children[1].innerHTML = "<div style=\"text-align: center;\">데이터가 없습니다.</div>";
+	}
+
+	if(reportContents.nextElementSibling.children[1].children[1].children.length == 0){
+		reportContents.nextElementSibling.children[1].children[1].innerHTML = "<div style=\"text-align: center;\">데이터가 없습니다.</div>";
+	}
 } // End of drawReport()
 
 // 조직도를 그리는 함수
