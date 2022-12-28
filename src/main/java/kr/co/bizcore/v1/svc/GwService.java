@@ -21,6 +21,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1253,7 +1254,7 @@ public class GwService extends Svc {
         String docHtml = null;
         char spc1 = (char)143;
         char spc2 = (char)143 + (char)143;
-        
+
         // docForm html 구하기
         form = gwMapper.getForm(formId);
        
@@ -1262,6 +1263,7 @@ public class GwService extends Svc {
             result = -1;
         } else { 
             form = form.replace("&", spc1+"");
+     
             System.out.print(form);
             Node node = null;
 
@@ -1341,8 +1343,7 @@ public class GwService extends Svc {
             
             docHtml =swriter.toString();
 
-            docHtml = docHtml.replace((spc1+""), "&").replace((spc2+""), lineData);
-         
+            docHtml = docHtml.replace((spc2+""), lineData).replace((spc1+""), "&").replace("&#143;","&").replace("&gt;", "<");
             
             if (addAppDoc(compId, dept, title, userNo, sopp, customer, formId, readable,
             docHtml, files, attached,

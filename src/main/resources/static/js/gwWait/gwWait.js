@@ -265,6 +265,7 @@ function getDetailView() {
 
   $(".listDiv").html(detailHtml);
   $(".seletedForm").html(testForm);
+ 
   $(":file").css("display", "none"); // 첨부파일 버튼 숨기기
 
   let tabHtml =
