@@ -1,318 +1,143 @@
 @charset "UTF-8";
 
 .sideMenu{
-	width: 172px;
 	height: 100%;
-	box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+	font-size: 0.9rem;
 }
 
-.sideMenu ul{
+.sideMenu > .business{
+	display: none;
+	background-color: #3e3e9e;
+	height: 100%;
+}
+
+.sideMenu > .gw{
+	display: none;
+	background-color: #425DA8;
+	height: 100%;
+}
+
+.sideMenu > .accounting{
+	display: none;
+	background-color: #3163C9;
+	height: 100%;
+}
+
+.sideMenu > .business.active,
+.sideMenu > .gw.active,
+.sideMenu > .accounting.active{
 	display: block;
-	max-height: calc(100% - 80px);
-	overflow-y: auto;
-	list-style: none;
-	margin: 0;
-	padding: 0;
 }
 
-.sideMenu ul::-webkit-scrollbar{
-	width: 0.1px;
+.menuItem{
+	display: flex;
+    align-items: center;
+    height: 50px;
 }
 
-.sideMenu ul::-webkit-scrollbar-thumb{
-	height: 30%;
-    background-color: #302D81;
-}
-
-.sideMenu ul::-webkit-scrollbar-track{
-	background-color: #302D81;
-}
-
-.sideMenu ul li{
-	line-height: 52px;
-}
-
-.sideMenu ul li a{
-	display: block;
-	color: #ffffff;
+.menuItem > a{
+	display: flex;
+    align-items: center;
+    padding-left: 15px;
+    width: calc(100% - 15px);
+    height: 100%;
 	text-decoration: none;
+	color: #fff;
 }
 
-.sideMenu ul:not(#panel) li a:hover{
+.menuItem > a:hover{
 	background-color: #31318b;
 }
 
-.sideMenu ul li a.active{
+.menuItem > a.active{
+	background-color: #31318b;
+}
+
+.menuItem > a.active{
+	border-left: 3px solid #89ceff;
 	background-color: #4f4fb9;
 }
 
-/*업무관리 active 색상 시작*/
-#business>li>a.active{
-	border-left:3px solid #89ceff;
+img{
+	width: 15px;
 }
 
-#business li #panel li{
-	border-left:3px solid #89ceff;
-}
-/*업무관리 active 색상 끝*/
-
-/* /그룹웨어 active 색상 시작/ */
-#gw>li>a.active{
-	border-left:3px solid #8989ff;
+.menuItem > a > span{
+    padding-left: 10px;
 }
 
-.sideMenu #gw li #panel li{
-	border-left:3px solid #8989ff;
-}
-/* /그룹웨어 active 색상 끝/ */
-
-.sideMenu ul li a.active span{
-	color: #fff;
+input[type="radio"]{
+	display: none;
 }
 
-.sideMenu ul li #panel a.active{
-	color: #fff;
-	background-color:#31318b;
+.panel{
+	display: none;
 }
 
-/* .sideMenu ul li a:hover #mainHomeIcon{
-	content: url("/images/main/icons/mainHomeIcon_hover.png");
-}
-
-.sideMenu ul li a:hover #mainNoticeIcon{
-	content: url("/images/main/icons/mainNoticeIcon_hover.png");
-}
-
-.sideMenu ul li a:hover #mainSchedIcon{
-	content: url("/images/main/icons/mainSchedIcon_hover.png");
-}
-
-.sideMenu ul li a:hover #mainSalesIcon{
-	content: url("/images/main/icons/mainSalesIcon_hover.png");
-}
-
-.sideMenu ul li a:hover #mainSoppIcon{
-	content: url("/images/main/icons/mainSoppIcon_hover.png");
-}
-
-.sideMenu ul li a:hover #mainSoppList2Icon{
-	content: url("/images/main/icons/mainSoppList2Icon_hover.png");
-}
-
-.sideMenu ul li a:hover #mainPpsIcon{
-	content: url("/images/main/icons/mainPpsIcon_hover.png");
-}
-
-.sideMenu ul li a:hover #mainContIcon{
-	content: url("/images/main/icons/mainContIcon_hover.png");
-}
-
-.sideMenu ul li a:hover #mainTechIcon{
-	content: url("/images/main/icons/mainTechIcon_hover.png");
-}
-
-.sideMenu ul li a:hover #mainBoardFileIcon{
-	content: url("/images/main/icons/mainBoardFileIcon_hover.png");
-}
-
-.sideMenu ul li a:hover #mainManualIcon{
-	content: url("/images/main/icons/mainManualIcon_hover.png");
-}
-
-.sideMenu ul li a:hover #mainSettingIcon{
-	content: url("/images/main/icons/mainSettingIcon_hover.png");
-}
-
-.sideMenu ul li a:hover #mainLogOutIcon{
-	content: url("/images/main/icons/mainLogOutIcon_hover.png");
-}
-
-.sideMenu ul li a.active #mainHomeIcon{
-	content: url("/images/main/icons/mainHomeIcon_hover.png");
-}
-
-.sideMenu ul li a.active #mainNoticeIcon{
-	content: url("/images/main/icons/mainNoticeIcon_hover.png");
-}
-
-.sideMenu ul li a.active #mainSchedIcon{
-	content: url("/images/main/icons/mainSchedIcon_hover.png");
-}
-
-.sideMenu ul li a.active #mainSalesIcon{
-	content: url("/images/main/icons/mainSalesIcon_hover.png");
-}
-
-.sideMenu ul li a.active #mainSoppIcon{
-	content: url("/images/main/icons/mainSoppIcon_hover.png");
-}
-
-.sideMenu ul li a.active #mainSoppList2Icon{
-	content: url("/images/main/icons/mainSoppList2Icon_hover.png");
-}
-
-.sideMenu ul li a.active #mainPpsIcon{
-	content: url("/images/main/icons/mainPpsIcon_hover.png");
-}
-
-.sideMenu ul li a.active #mainContIcon{
-	content: url("/images/main/icons/mainContIcon_hover.png");
-}
-
-.sideMenu ul li a.active #mainTechIcon{
-	content: url("/images/main/icons/mainTechIcon_hover.png");
-}
-
-.sideMenu ul li a.active #mainBoardFileIcon{
-	content: url("/images/main/icons/mainBoardFileIcon_hover.png");
-}
-
-.sideMenu ul li a.active #mainManualIcon{
-	content: url("/images/main/icons/mainManualIcon_hover.png");
-}
-
-.sideMenu ul li a.active #mainSettingIcon{
-	content: url("/images/main/icons/mainSettingIcon_hover.png");
-}
-
-.sideMenu ul li a.active #mainLogOutIcon{
-	content: url("/images/main/icons/mainLogOutIcon_hover.png");
-} */
-
-.sideMenu ul li a:hover span:not(#slideSpan){
-	color: #fff;
-	font-weight: 500;
-	opacity:1;
-}
-
-.sideMenu ul li a:hover span{
-	color: #fff;
-	opacity:0.8;
-}
-
-.sideMenu ul li a img{
-	/* width: 20px; */
-	/* height: 27px; */
-	margin-left: 15px;
-	vertical-align: sub;
-}
-
-.sideMenu ul li a span:not(#slideSpan){
-	margin-left: 8px;
-	font-weight: 500;
-	font-size: 14px;
-}
-
-.sideMenu ul li a.active #slideSpan{
-	float: right;
-	margin-right: 15px;
-	font-weight: 400;
-	font-size: 24px;
-	opacity: 0.8;
-}
-
-.sideMenu ul li a:not(.active) #slideSpan{
-	float: right;
-	margin-right: 14px;
-	font-weight: 400;
-	font-size: 17px;
-	opacity: 0.8;
-}
-
-.sideMenu ul li #panel{
-	list-style: none;
-	background-color: #302D81;
+.panel > div{
 	overflow: hidden;
 }
 
-.sideMenu ul li #panel li{
-	width: auto;
-	height: 50px;
-	line-height: 55px;
-	background-color: #4f4fbb;
-	/* border-bottom: 1.5px solid #302D81; */
-	/* border-left:3px solid #89ceff;  */
+.panel > div > a{
+	display: flex;
+    align-items: center;
+    padding-left: 24%;
+    color: #fff;
+    text-decoration: none;
+    width: 100%;
+    height: 50px;
 }
 
-.sideMenu ul li #panel li a{
-	display: block;
-	padding: 0 0 0 25%;
-	text-decoration: none;
-	font-weight: 500;
-	font-size: 13px;
-	color: #ffffff;
-}
-
-.sideMenu ul li #panel li a:hover{
-	color: #fff;
+.panel > div > a:hover{
 	background-color: #31318b;
 }
 
-.sideMenu ul:not(#panel).active{
+.panel > div > a.active{
+	background-color: #31318b;
+}
+
+.sideMenu > .business > .panel.active{
 	display: block;
-	animation: 0.6s ease-in-out ulActive; 
+	border-left: 3px solid #89ceff;
+	background-color: #4f4fb9;
+	color: #fff;
 }
 
-@keyframes ulActive {
-	0%{
-		opacity: 0;
-	}
-	100%{
-		opacity: 1;
-	}
-}
-
-.sideMenu ul:not(#panel):not(.active){ 
-	display: none;
-	content: "+";
-	animation: 0.5s ease-in-out ulUnactive; 
-}
-
-@keyframes ulUnactive {
-	0%{
-		transform: translateX(0px);
-		opacity: 1;
-	}
-	100%{
-		transform: translateX(-30px);
-		opacity: 0;
-	}
-}
-
-.sideMenu ul li #panel.active{ 
+.sideMenu > .gw > .panel.active{
 	display: block;
-	animation: 0.6s ease-in-out panelActive; 
+	color: #fff;
 }
 
-@keyframes panelActive{
-    0%{
-        opacity: 0;
-    }
-    100%{
-        opacity: 1;
-    }
+.sideMenu > .accounting > .panel.active{
+	display: block;
+	color: #fff;
 }
 
-.sideMenu ul li #panel:not(.active){ 
-	display: none;
-	animation: 0.5s ease-in-out panelUnactive; 
+
+.menuItem > label{
+	display: flex;
+    align-items: center;
+    padding-left: 15px;
+    width: calc(100% - 15px);
+    height: 100%;
+	color: #fff;
 }
 
-@keyframes panelUnactive{
-    0%{
-        transform: translateX(0px);
-        opacity: 1;
-    }
-    100%{
-        transform: translateX(-30px);
-        opacity: 0;
-    }
+.sideMenu > .business .menuItem > label.active{
+	border-left: 3px solid #89ceff;
+	background-color: #4f4fb9;
 }
 
-/* #header .mainTopMenu ul li button[data-keyword="gw"] {
-	background-color:#a5a2df;
-	border:1px solid #171460;
+.menuItem > label:hover{
+	background-color: #31318b;
+	cursor: pointer;
 }
 
-.sideMenu[data-keyword="gw"]{background-color:#8989ff;} */
+.menuItem > label > span:nth-child(2){
+	padding-left: 10px;
+	width: 100%;
+}
 
+.menuItem > label > span:nth-child(3){
+	padding-right: 10px;
+}

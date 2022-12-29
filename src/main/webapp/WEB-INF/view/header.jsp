@@ -44,7 +44,7 @@
 </head>
 <body>
 <input type="hidden" id="pathName" value="${getPathName}" />
-<div id="loadingDiv" style="width: 100%; height: 100%;"></div>
+<!-- <div id="loadingDiv" style="width: 100%; height: 100%;"></div> -->
 <div class="msg_cnt"></div>
 <jsp:include page="./modal/modal.jsp"/>
 <jsp:include page="./note/note.jsp"/>
@@ -54,14 +54,17 @@
 		<img src="/images/main/topEllipse.png" id="mainTopEllipseImg" />
 		<%-- <img src="/images/main/topVector.png" id="mainTopVectorImg" /> --%>
 	</div>
-	<div class="mainTopMenu" id="mainTopMenu">
-		<ul>
+	<div class="mainTopMenu">
+		<div data-keyword="business" data-path="/" onclick="CommonDatas.topMenuClick(this)">업무관리</div>
+		<div data-keyword="gw" data-path="/gw/home" onclick="CommonDatas.topMenuClick(this)">전자결재</div>
+		<div data-keyword="accounting" data-path="/accounting/home" onclick="CommonDatas.topMenuClick(this)">회계관리</div>
+		<!-- <ul>
 			<li><button type="button" data-keyword="business" onClick="bodyTopPageClick(this);">업무관리</button></li>
 			<li><button type="button" data-keyword="gw" onClick="bodyTopPageClick(this);">전자결재</button></li>
-			<!-- <li><button type="button" data-keyword="accounting" onClick="bodyTopPageClick(this);">회계관리</button></li> -->
 			<li><button type="button" data-keyword="accounting" onClick="bodyTopPageClick(this);">회계관리</button></li>
-			<!-- <li><button type="button" data-keyword="mis" onClick="bodyTopPageClick(this);">경영정보</button></li> -->
-		</ul>
+			<li><button type="button" data-keyword="accounting" onClick="bodyTopPageClick(this);">회계관리</button></li>
+			<li><button type="button" data-keyword="mis" onClick="bodyTopPageClick(this);">경영정보</button></li>
+		</ul> -->
 	</div>
 	<div id="mainInfo">
 		<a href="#" onclick="noteContentShow();" id="infoMessageImg">

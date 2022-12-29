@@ -1,12 +1,14 @@
 $(document).ready(() => {
 	init();
+	console.log(performance.timing.loadEventEnd - performance.timing.responseEnd);
+	const SetNotice = new NoticeSet();
+	SetNotice.list();
+	// setTimeout(() => {
+	// 	$("#loadingDiv").hide();
+	// 	$("#loadingDiv").loading("toggle");
+	// }, 300);
 
-	setTimeout(() => {
-		$("#loadingDiv").hide();
-		$("#loadingDiv").loading("toggle");
-	}, 300);
-
-	getNoticeList();
+	// getNoticeList();
 });
 
 // API 서버에서 공지사항 리스트를 가져오는 함수

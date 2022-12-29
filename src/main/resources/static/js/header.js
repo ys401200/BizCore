@@ -1,4 +1,5 @@
 let cipher, msg, apiServer, modal, storage, prepare, fileDataArray = [], removeDataArray = [], updateDataArray = [], editor;
+const CommonDatas = new Common();
 storage = {};
 
 function init() {
@@ -9,33 +10,18 @@ function init() {
 	cipher.rsa.public.modulus = localStorage.getItem("rsaModulus");
 	cipher.rsa.public.exponent = localStorage.getItem("rsaExponent")
 
-	setTimeout(() => {
-		$("#loadingDiv").loading({
-			onStart: function (loading) {
-				loading.overlay.fadeIn(1000);
-			},
-			onStop: function (loading) {
-				loading.overlay.fadeOut(1000);
-			}
-		});
-	}, 70);
+	// setTimeout(() => {
+	// 	$("#loadingDiv").loading({
+	// 		onStart: function (loading) {
+	// 			loading.overlay.fadeIn(1000);
+	// 		},
+	// 		onStop: function (loading) {
+	// 			loading.overlay.fadeOut(1000);
+	// 		}
+	// 	});
+	// }, 70);
 
 	msg.cnt = document.getElementsByClassName("msg_cnt")[0];
-
-	$(".sideMenu").find("ul:not(#panel) li a").click(function () {
-		if ($(this).attr("class") !== "active") {
-			$(".sideMenu").find("ul:not(#panel) li a").removeAttr("class");
-			$(".sideMenu").find("ul:not(#panel) li a").next().removeAttr("class");
-			$(".sideMenu").find("ul:not(#panel) li a").find("#slideSpan").text("+");
-			$(this).next().attr("class", "active");
-			$(this).find("#slideSpan").text("-");
-			$(this).attr("class", "active");
-		} else {
-			$(this).removeAttr("class");
-			$(this).next().removeAttr("class");
-			$(this).find("#slideSpan").text("+");
-		}
-	});
 
 	$(document).click((e) => {
 		if (modal.wrap.is($(e.target))) {
@@ -69,8 +55,9 @@ function init() {
 	getUserRank();
 	getPersonalize();
 	noteLiveUpdate();
-	menuActive();
 	getStorageList();
+	CommonDatas.setTopPathActive();
+	CommonDatas.setSidePathActive();
 } // End of init();
 
 apiServer = "";
@@ -534,97 +521,6 @@ function isInit() {
 	if (storage.personalize === undefined) return false;
 	return true;
 } // End of isInit()()
-
-//페이징될 때 header, sideMenu active를 위한 함수
-function menuActive() {
-	let i = null, pathName = null, fullStr = null, firstStr = null, lastStr = null, strLength = null, sideMenu = null, mainTopMenu = null;
-
-	pathName = $("#pathName").val();
-	if (pathName !== undefined) {
-		mainTopMenu = $(".mainTopMenu");
-		sideMenu = $(".sideMenu");
-		strLength = pathName.length;
-		i = 0;
-
-		if (pathName === "root") {
-			mainTopMenu.find("ul li button").removeAttr("class");
-			mainTopMenu.find("ul li button[data-keyword='business']").attr("class", "active");
-			readyTopPageActive();
-			sideMenu.css("background-color", "#3e3e9e;");
-		} else if (pathName === "mypage") {
-			mainTopMenu.find("ul li button").removeAttr("class");
-			mainTopMenu.find("ul li button").eq(0).attr("class", "active");
-			readyTopPageActive();
-			sideMenu.css("background-color", "#3e3e9e;");
-		} else {
-			readyTopPageActive();
-
-			while (i <= strLength) {
-				fullStr = pathName.charAt(i);
-
-				if (fullStr == fullStr.toUpperCase()) {
-					firstStr = pathName.substring(0, i).toLowerCase();
-					lastStr = pathName.substring(i, strLength).toLowerCase();
-
-					mainTopMenu.find("ul li button").removeAttr("class");
-					mainTopMenu.find("ul li button[data-keyword='" + firstStr + "']").attr("class", "active");
-
-					sideMenu.find("ul[id='" + firstStr + "']").attr("class", "active");
-					sideMenu.find("ul[id='" + firstStr + "']").find("a[href='" + "/" + firstStr + "/" + lastStr + "']").parents("#panel").prev().attr("class", "active");
-					sideMenu.find("ul[id='" + firstStr + "']").find("a[href='" + "/" + firstStr + "/" + lastStr + "']").parents("#panel").prev().find("#slideSpan").text("-");
-					sideMenu.find("ul[id='" + firstStr + "']").find("a[href='" + "/" + firstStr + "/" + lastStr + "']").parents("#panel").attr("class", "active");
-					sideMenu.find("ul[id='" + firstStr + "']").find("a[href='" + "/" + firstStr + "/" + lastStr + "']").attr("class", "active");
-
-					if (firstStr === "business") {
-						sideMenu.css("background-color", "#3e3e9e;");
-					} else if (firstStr === "gw") {
-						sideMenu.css("background-color", "#425da8;");
-					} else {
-						sideMenu.css("background-color", "#406c92;");
-					}
-
-					break;
-				}
-
-				i++;
-			}
-		}
-	}
-}
-
-//사이드 메뉴 클릭
-function bodyTopPageClick(e) {
-	let id = $(e).data("keyword");
-
-	$(".mainTopMenu ul li button").removeAttr("class");
-	$(e).attr("class", "active");
-
-	$(".sideMenu").find("ul").not("#panel").removeAttr("class");
-	$(".sideMenu").find("#" + id).attr("class", "active");
-
-	if (id === "business") {
-		location.href = "/";
-	} else if (id === "gw") {
-		location.href = "/gw/home";
-	} else if (id === "accounting") {
-
-	}
-}
-
-//header active 여부에 따라 사이드메뉴 active 적용
-function readyTopPageActive() {
-	let sideMenu = null, mainTopMenu = null;
-
-	mainTopMenu = $(".mainTopMenu").find("ul li button");
-	sideMenu = $(".sideMenu");
-
-	for (let i = 0; i < mainTopMenu.length; i++) {
-		if ($(mainTopMenu[i]).attr("class") === "active") {
-			sideMenu.find("ul").not("[id='" + $(mainTopMenu[i]).attr("data-keyword") + "']").removeAttr("class");
-			sideMenu.find("ul[id='" + $(mainTopMenu[i]).attr("data-keyword") + "']").attr("class", "active");
-		}
-	}
-}
 
 //기본 그리드
 function createGrid(gridContainer, headerDataArray, dataArray, ids, job, fnc, idName) {

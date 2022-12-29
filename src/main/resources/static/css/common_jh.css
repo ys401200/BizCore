@@ -1,3 +1,34 @@
+/* top 메뉴 시작 */
+.mainTopMenu{
+	display: flex;
+	font-size: 1rem;
+}
+
+.mainTopMenu > div{
+	height: 100%;
+}
+
+.mainTopMenu .active{
+	background: linear-gradient(to bottom, #ffffff 95%, #302D81 5%);
+}
+
+.mainTopMenu > div{
+	height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 120px;
+    padding-left: 10px;
+	padding-right: 10px;
+	color: #332E85;
+}
+
+.mainTopMenu > div:hover{
+	background: linear-gradient(to bottom, #ffffff 95%, #DEDEFF 5%);
+	cursor: pointer;
+}
+/* top 메뉴 끝 */
+
 /* 견적 관련 시작 */
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300&family=Outfit:wght@600&display=swap');
 @font-face {font-family:MalgunGothic; src:url(/fonts/malgun.ttf);}

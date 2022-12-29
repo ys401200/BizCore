@@ -1672,6 +1672,151 @@ class Estimate{
 }
 
 class Common{
+	//페이지 로드될 때 top menu active 함수
+	setTopPathActive(){
+		let path = location.pathname.split("/");
+		let container;
+
+		if(path[1] === "" || path[1] === "business"){
+			container = document.getElementsByClassName("mainTopMenu")[0].querySelector("div[data-path=\"/\"]");
+		}else if(path[1] === "gw"){
+			container = document.getElementsByClassName("mainTopMenu")[0].querySelector("div[data-path=\"/gw/home\"]");
+		}else{
+			container = document.getElementsByClassName("mainTopMenu")[0].querySelector("div[data-path=\"/accounting/home\"]");
+		}
+
+		container.classList.add("active");
+	}
+
+	//페이지 로드될 때 side menu active 함수
+	setSidePathActive(){
+		let path = location.pathname.split("/");
+		let menuItem = document.getElementsByClassName("menuItem");
+		let container
+		
+		if(path[1] === "" || path[1] === "business"){
+			container = document.getElementsByClassName("sideMenu")[0].querySelector("div[data-path=\"/\"]");
+		}else if(path[1] === "gw"){
+			container = document.getElementsByClassName("sideMenu")[0].querySelector("div[data-path=\"/gw/home\"]");
+		}else{
+			container = document.getElementsByClassName("sideMenu")[0].querySelector("div[data-path=\"/accounting/home\"]");
+		}
+
+		for(let i = 0; i < menuItem.length; i++){
+			let item = menuItem[i];
+			
+			if(path[1] !== ""){
+				let label = item.querySelector("label");
+
+				if(label === null){
+					let itemA = item.querySelector("a");
+
+					if(itemA.getAttribute("href").indexOf("/" + path[1] + "/" + path[2]) > -1){
+						if(path[2] === "sopp"){
+							if(itemA.getAttribute("href") === "/" + path[1] + "/" + path[2]){
+								itemA.classList.add("active");
+							}
+						}else{
+							itemA.classList.add("active");
+						}
+					}else{
+						if(path[2] === "sopp2"){
+							if(itemA.getAttribute("href") === "/" + path[1] + "/project"){
+								itemA.classList.add("active");
+							}
+						}
+					}
+				}else{
+					let aTarget = item.nextElementSibling.querySelectorAll("div");
+					
+					for(let t = 0; t < aTarget.length; t++){
+						let target = aTarget[t].querySelector("a");
+						let targetLabel = target.parentElement.parentElement.previousElementSibling.children[1];
+						let targetPlus = target.parentElement.parentElement.previousElementSibling.children[1].children[2];
+						let targetPanel = target.parentElement.parentElement;
+	
+						if(target.getAttribute("href").indexOf("/" + path[1] + "/" + path[2]) > -1){
+							if(path[2] === "sopp"){
+								if(target.getAttribute("href") === "/" + path[1] + "/" + path[2]){
+									target.classList.add("active");
+								}
+							}else{
+								target.classList.add("active");
+							}
+
+							targetLabel.classList.add("active");
+							targetPlus.innerText = "-";
+							targetPanel.classList.add("active");
+						}else{
+							if(path[2] === "sopp2"){
+								if(target.getAttribute("href") === "/" + path[1] + "/project"){
+									target.classList.add("active");
+									targetLabel.classList.add("active");
+									targetPlus.innerText = "-";
+									targetPanel.classList.add("active");
+								}
+							}
+						}
+
+					}
+				}
+			}
+		}
+
+		container.classList.add("active");
+	}
+
+	//단일 top menu 클릭 시 실행되는 함수
+	topMenuClick(e){
+		let thisEle = e;
+		let homePath = thisEle.dataset.path;
+		let menus = document.getElementsByClassName("sideMenu")[0].children;
+
+		if(homePath !== undefined){
+			if(homePath !== "/accounting/home"){
+				window.location.href = homePath;
+			}else{
+				for(let i = 0; i < menus.length; i++){
+					if(menus[i].classList.contains("accounting")){
+						menus[i].style.display = "block";
+					}else{
+						menus[i].style.display = "none";
+					}
+				}
+			}
+		}
+	}
+
+	//단일 side menu 클릭 시 실행되는 함수
+	sideMenuItemClick(){
+		let checkedRadio = document.getElementsByClassName("sideMenu")[0].querySelectorAll("input[type=\"radio\"]");
+
+		for(let i = 0; i < checkedRadio.length; i++){
+			let item = checkedRadio[i];
+			console.log(item);
+			let label = item.nextElementSibling;
+			let plusBtn = label.children[2];
+			let panel = label.parentElement.nextElementSibling;
+
+			if(item.checked){
+				if(label.classList.contains("active")){
+					label.classList.remove("active");
+					panel.classList.remove("active");
+					plusBtn.innerText = "+";
+				}else{
+					label.classList.add("active");
+					panel.classList.add("active");
+					plusBtn.innerText = "-";
+				}
+			}else{
+				label.classList.remove("active");
+				panel.classList.remove("active");
+				plusBtn.innerText = "+";
+			}
+		}
+	}
+
+	//페이지네이션 전 페이지 값 계산에 대한 함수
 	paging(total, currentPage, articlePerPage) {
 		let getArticle = this.calWindowLength();
 		let lastPage, result = [], max;
@@ -1703,6 +1848,7 @@ class Common{
 		return result;
 	}
 
+	//페이지의 높이 값 계산 함수
 	calWindowLength() {
 		let bodyContent, containerTitle, searchContainer, searchCal, titleCal, totalCal;
 	
@@ -1716,6 +1862,7 @@ class Common{
 		return parseInt(totalCal);
 	}
 
+	//리스트 그릴 때 그리드 출력 함수
 	createGrid(gridContainer, headerDataArray, dataArray, ids, job, fnc, idName) {
 		let gridHtml = "", gridContents, idStr;
 		ids = (ids === undefined) ? 0 : ids;
