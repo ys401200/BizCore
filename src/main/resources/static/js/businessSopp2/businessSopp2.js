@@ -1,4 +1,4 @@
-let R = {}, prepareSopp, scrolledSopp, inputExpectedSales, moveToTarget, drawChat, inputtedComment, deleteChat, cancelEdit, editSopp, changeSopp, editSoppSearch, soppStageUp, clickedDateInCalendar, getSavedLine, enteredSoppCalendarSchedule, leftSoppCalendarSchedule, clickedSoppCalendarSchedule;
+let R = {}, prepareSopp, scrolledSopp, inputExpectedSales, moveToTarget, drawChat, inputtedComment, deleteChat, cancelEdit, editSopp, changeSopp, editSoppSearch, soppStageUp, clickedDateInCalendar, getSavedLine, enteredSoppCalendarSchedule, leftSoppCalendarSchedule, clickedSoppCalendarSchedule, leftMonthlyCalendarTopEmp, enteredMonthlyCalendarTopEmp, clickedScheduleInSoppCalendar;
 $(document).ready(() => {
 	let href, no;
 	init();
@@ -14,6 +14,40 @@ $(document).ready(() => {
 	no = no !== null ? no * 1 : null;
 	prepareSopp(no);
 });
+
+// 영업기회 내 일정 목록에서 일정 클릭시 싱핼되는 함수
+clickedScheduleInSoppCalendar = (el) => {
+	let x, els, ym, idx;
+	if(!el.checked)	return;
+	idx = el.dataset.idx * 1
+	els = document.getElementsByClassName("sopp-calendar")[0].children;
+	x = R.sopp.schedules[idx];
+	ym = (x.from.getFullYear() * 100 + x.from.getMonth() + 1) + "";
+	for(x = 0 ; x < els.length ; x++){
+		if(els[x].dataset.v === ym)	els[x].style = "";
+		else						els[x].style.display = "none";
+	}
+} // End of clickedScheduleInSoppCalendar()
+
+// 월간 달력 상단 직원의 이름이 포커스 되었을 때의 이벤트 핸들러
+enteredMonthlyCalendarTopEmp = (el) => {
+	let cnt, els, x, emp;
+	emp = el.dataset.emp;
+	cnt = el.parentElement.parentElement.parentElement.children[1];
+	els = cnt.getElementsByClassName("schedule-in-monthly-calendar");
+	for(x = 0 ; x < els.length ; x++){
+		if(els[x].dataset.emp === emp)	els[x].style.backgroundColor = els[x].dataset.color;
+		else							els[x].style.backgroundColor = "#eeeeee";
+	}
+} // End of enteredMonthlyCalendarTopEmp()
+
+// 월간 달력 상단 직원의 이름에서 포커스 해제 되었을 때의 이벤트 핸들러
+leftMonthlyCalendarTopEmp = (el) => {
+	let cnt, els, x;
+	cnt = el.parentElement.parentElement.parentElement.children[1];
+	els = cnt.getElementsByClassName("schedule-in-monthly-calendar");
+	for(x = 0 ; x < els.length ; x++)	els[x].style.backgroundColor = els[x].dataset.color;
+} // End of leftMonthlyCalendarTopEmp()
 
 // 서버에서 전자결재의 자주쓰는 결재선을 가져오는 함수
 getSavedLine = () => {
@@ -524,15 +558,9 @@ function getYmdHypen(date) {
 	);
 } // End of getYmdHypen()
 
-enteredSoppCalendarSchedule = (no) => {
-	console.log("entered : " + no);
-} // End of enteredSoppCalendarSchedule()
-
-leftSoppCalendarSchedule = (no) => {
-	console.log("left : " + no);
-} // End of leftSoppCalendarSchedule()
-
+// 월간 달력 내 일정 클릭시 실행되는 함수
 clickedSoppCalendarSchedule = (no) => {
 	let el = document.getElementById("sopp-schedule-detail-radio" + no);
 	el.checked = true;
+	el.nextElementSibling.scrollIntoViewIfNeeded({behavior:'smooth'});
 } // End of clickedSoppCalendarSchedule()

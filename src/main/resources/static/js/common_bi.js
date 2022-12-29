@@ -1,4 +1,11 @@
-let clickedScheduleDetailConfirm, changeExpectedDate, setDateTimeInScheduleDetail, clickedTimeOnMiniCalendar, clickedDateOnMiniCalendar, drawMiniCalendar, showSavedLineInScheduleDetail;
+let clickedScheduleDetailConfirm, changeExpectedDate, setDateTimeInScheduleDetail, clickedTimeOnMiniCalendar, clickedDateOnMiniCalendar, drawMiniCalendar, showSavedLineInScheduleDetail, clearStorage;
+
+// web storage 정리 함수
+clearStorage = () => {
+	let x;
+	for(x in sessionStorage) sessionStorage.removeItem(x);
+	for(x in localStorage) localStorage.removeItem(x);
+} // end of clearStorage()
 
 // 자주 쓰는 결재선 선택시 실행되는 함수
 showSavedLineInScheduleDetail = (v) => {
@@ -594,12 +601,14 @@ class Sopp2 {
 			y.className = "sopp-schedule-detail-radio";
 			y.name = "sopp-schedule-detail-radio";
 			y.id = "sopp-schedule-detail-radio" + z.no;
+			y.dataset.idx = x;
+			y.setAttribute("onchange", "clickedScheduleInSoppCalendar(this)");
 			cnt.appendChild(y);
 			y = document.createElement("label");
 			y.setAttribute("for","sopp-schedule-detail-radio" + z.no);
 			// 상단 제목, 날짜 등
 			html = "<div><circle style=\"background-color:" + c + ";\">✔</circle><title>" + z.title + "</title></div>";
-			html += ("<div><tp>" + (type[z.type]) + "</tp>" + z.dateToStr());
+			html += ("<div><name>" + name + "</name><tp>" + (type[z.type]) + "</tp>" + z.dateToStr());
 			// 본인 작성 일정에 대해 편집 버튼 생성
 			if(z.writer == storage.my)	html += ("<img src=\"/images/sopp2/edit_square.png\" onclick=\"editSchedule(" + z.no + ")\" />");
 			html += "</div>";
@@ -834,10 +843,10 @@ class MonthlyCalendar {
 					color = colorTable !== undefined && colorTable[writer] !== undefined ? colorTable[writer] : color;
 					z = document.createElement("div");
 					z.className = "schedule-in-monthly-calendar";
+					z.dataset.emp = writer;
 					z.setAttribute("onclick","event.stopPropagation();clickedSoppCalendarSchedule(" + this.schedule[y].no + ")");
-					z.setAttribute("onmouseenter","enteredSoppCalendarSchedule(" + this.schedule[y].no + ")");
-					z.setAttribute("onmouseleave","leftSoppCalendarSchedule(" + this.schedule[y].no + ")");
 					z.style.backgroundColor = color;
+					z.dataset.color = color;
 					//z.innerText = name;
 					z.innerText = this.schedule[y].title;
 					days[x].appendChild(z);
@@ -860,6 +869,9 @@ class MonthlyCalendar {
 			name = storage.user[x] !== undefined && storage.user[x].userName !== undefined ? storage.user[x].userName : name;
 			y = document.createElement("div");
 			y.style.gridArea = "a" + st; // 좌측 하단에서부터 상단으로 하나씩 쌓아가도록 그리드를 이용하여 배치함
+			y.setAttribute("onmouseenter", "enteredMonthlyCalendarTopEmp(this)");
+			y.setAttribute("onmouseleave", "leftMonthlyCalendarTopEmp(this)");
+			y.dataset.emp = x;
 			html = "<span style=\"background-color:" + color + ";\">" + emps[x] + "</span><span>" + name + "</span>";
 			y.innerHTML = html;
 			z.appendChild(y);

@@ -331,23 +331,20 @@
 	text-align: center;
 	display:grid;
 	grid-template-columns: 1fr 5fr;
-	border-top: 2px solid #bdbdff;
-    border-bottom: 2px solid #bdbdff;
 	font-size: 0.8rem;
 	height: 1.2rem;
 	clear: both;
+	background-color: #72a060;
+    color: white;
+	font-weight: bold;
 }
 .sopp-sub-title > div:nth-child(1){
 	display:flex;
 	align-items: center;
 	justify-content: center;
-	height:1.2rem;
 	box-sizing: border-box;
 }
-.sopp-sub-title > div:nth-child(2){
-	height:1.8rem;
-	box-sizing: border-box;
-}
+.sopp-sub-title > div:nth-child(2){box-sizing: border-box;}
 
 .sopp-desc{
 	margin: 0 0.2rem 0.5rem;
@@ -443,9 +440,11 @@ font-size:1.5rem;
 	display:flex;
 	align-items: center;
 	justify-content: center;
+	cursor:default;
 }
 .calendar-head > div:nth-child(5) > div > span:first-child{
 	border-radius: 1rem;
+	cursor:default;
 }
 .calendar-body{
 	display:flex;
@@ -526,7 +525,7 @@ font-size:1.5rem;
     font-size: 0.55rem;
     padding: 0.1rem 0.4rem;
     background-color: #5f6bbd;
-    margin-right: 0.2rem;
+    margin-right: 0.5rem;
     color: white;
     font-weight: bold;
 }
@@ -564,6 +563,7 @@ font-size:1.5rem;
 	overflow:auto;
 	width:calc(100% - 1rem);
 }
+.sopp-schedule-detail > label > div:nth-child(2) name{font-size:0.75rem;color:#4a4a4a;margin-right:0.5rem;}
 .sopp-schedule-detail > label > div:nth-child(2) date{font-size:0.75rem;color:#4a4a4a;}
 .sopp-schedule-detail > label > div:nth-child(2) time{font-size:0.7rem;color:gray;}
 .sopp-schedule-detail > label > div:nth-child(4) p{margin:0.05rem 0;word-wrap: break-word;}
