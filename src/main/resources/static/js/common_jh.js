@@ -1770,12 +1770,14 @@ class Common{
 	topMenuClick(e){
 		let thisEle = e;
 		let homePath = thisEle.dataset.path;
-		let menus = document.getElementsByClassName("sideMenu")[0].children;
-
+		
 		if(homePath !== undefined){
 			if(homePath !== "/accounting/home"){
 				window.location.href = homePath;
 			}else{
+				let menus = document.getElementsByClassName("sideMenu")[0].children;
+				let topMenus = document.getElementsByClassName("mainTopMenu")[0].querySelectorAll("div");
+				
 				for(let i = 0; i < menus.length; i++){
 					if(menus[i].classList.contains("accounting")){
 						menus[i].style.display = "block";
@@ -1783,6 +1785,14 @@ class Common{
 						menus[i].style.display = "none";
 					}
 				}
+
+				for(let i = 0; i < topMenus.length; i++){
+					if(topMenus[i].classList.contains("active")){
+						topMenus[i].classList.remove("active");
+					}
+				}
+
+				thisEle.classList.add("active");
 			}
 		}
 	}

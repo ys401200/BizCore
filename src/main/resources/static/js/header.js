@@ -8,7 +8,7 @@ function init() {
 	cipher.aes.iv = localStorage.getItem("aesIv");
 	cipher.aes.key = localStorage.getItem("aesKey");
 	cipher.rsa.public.modulus = localStorage.getItem("rsaModulus");
-	cipher.rsa.public.exponent = localStorage.getItem("rsaExponent")
+	cipher.rsa.public.exponent = localStorage.getItem("rsaExponent");
 
 	// setTimeout(() => {
 	// 	$("#loadingDiv").loading({
@@ -38,7 +38,6 @@ function init() {
 	} else {
 		window.setTimeout(addNoteContainer, 200);
 	}
-
 
 	nextStep = function () {
 		if (isInit()) prepare();
