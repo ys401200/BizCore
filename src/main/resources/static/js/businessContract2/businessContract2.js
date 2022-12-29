@@ -26,10 +26,8 @@ class Contracts {
 				let data, arr, x;
 				if (response.result !== "ok") console.log(response.msg);
 				else {
-					console.log(response.data);
 					data = cipher.decAes(response.data);
 					arr = JSON.parse(data);
-					console.log(arr);
 					for (x = 0; x < arr.length; x++)	R.contracts.addContract(new Contract(arr[x]));
 				}
 				storage.currentPage = 1;
@@ -62,11 +60,11 @@ class Contracts {
 		cnt.children[0].appendChild(el);
 		el.innerText = "계약금액";
 		if (storage.articlePerPage == undefined) {
-			storage.articlePerPage = (calWindowLength() - 1);
+			storage.articlePerPage = (calWindowLength() - 2);
 		}
 
 		let page = storage.currentPage * storage.articlePerPage;
-		console.log(this.list.length + "함수 실행 확인");
+		
 		let x, ctrt, svg;
 		svg = "<svg onclick=\"R.project.newProject(this.parentElement.parentElement)\" xmlns=\"http://www.w3.org/2000/svg\" height=\"40\" width=\"40\"><path stroke=\"#d1d1d1\" fill=\"#cccccc\" d=\"M18.625 28.417h2.917v-6.834h6.875v-2.916h-6.875v-7.084h-2.917v7.084h-7.042v2.916h7.042ZM20 36.958q-3.5 0-6.583-1.333-3.084-1.333-5.396-3.646-2.313-2.312-3.646-5.396Q3.042 23.5 3.042 20q0-3.542 1.333-6.625T8.021 8q2.312-2.292 5.396-3.625Q16.5 3.042 20 3.042q3.542 0 6.625 1.333T32 8q2.292 2.292 3.625 5.375 1.333 3.083 1.333 6.625 0 3.5-1.333 6.583-1.333 3.084-3.625 5.396-2.292 2.313-5.375 3.646-3.083 1.333-6.625 1.333Zm0-3.166q5.75 0 9.771-4.021Q33.792 25.75 33.792 20q0-5.75-4-9.771-4-4.021-9.792-4.021-5.75 0-9.771 4-4.021 4-4.021 9.792 0 5.75 4.021 9.771Q14.25 33.792 20 33.792ZM20 20Z\" /></svg>";
 		for (x = (storage.currentPage - 1) * storage.articlePerPage; x < page; x++) {
@@ -153,13 +151,12 @@ class Contract {
 				.catch((error) => console.log("error:", error))
 				.then(response => response.json())
 				.then(response => {
-					console.log(response);
+					
 					let data;
 					if (response.result === "ok") {
 						data = response.data;
 						data = cipher.decAes(data);
 						data = JSON.parse(data);
-						console.log(data);
 						R.contract = new Contract(data);
 						R.contract.getReportDetail(this);
 
@@ -562,7 +559,7 @@ class Contract {
 
 
 		}
-		console.log(this.supplied);
+	
 		if (this.supplied != 0) {
 			document.getElementsByClassName("suppliedDate")[0].value = getYmdHypen(this.supplied);
 		}
@@ -737,7 +734,6 @@ class Contract {
 		let method, data, type, attached, name;
 		attached = obj.files;
 		name = obj.name.split("attached")[1];
-		console.log(name);
 		if (storage.attachedList === undefined || storage.attachedList <= 0) {
 			storage.attachedList = [];
 		}
@@ -860,13 +856,11 @@ function drawDetail(obj) {
 		.catch((error) => console.log("error:", error))
 		.then(response => response.json())
 		.then(response => {
-			console.log(response);
 			let data;
 			if (response.result === "ok") {
 				data = response.data;
 				data = cipher.decAes(data);
 				data = JSON.parse(data);
-				console.log(data);
 				R.contract = new Contract(data);
 				R.contract.getReportDetail(obj);
 

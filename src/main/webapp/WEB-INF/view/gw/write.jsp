@@ -82,10 +82,7 @@
 
               <div class="stepLabel">●상세 입력</div>
               <div class='insertedDetail'>
-                <div class='reportInsertForm'></div>
-                <div class='referContainer'>
-                  <div>참조</div>
-                </div>
+
                 <div class='fileDetail'>
                   <div>파일첨부</div>
                   <div class='filebtnContainer'><input type='file' multiple id='attached' name='attached[]'
@@ -93,6 +90,12 @@
                     <div class='filePreview'></div>
                   </div>
                 </div>
+
+                <div class='reportInsertForm'></div>
+                <!-- <div class='referContainer'>
+                  <div>참조</div>
+                </div> -->
+
               </div>
 
             </div>

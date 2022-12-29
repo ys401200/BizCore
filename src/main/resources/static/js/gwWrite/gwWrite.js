@@ -307,7 +307,6 @@ function closeGwModal(obj) {
       $(".saveBtn").prop("disabled", false);
       let tt = $(".stepLabel")[2];
       $(tt).css("color", "black");
-      $(".insertedDetail").css("border", "1px solid black");
       let data = storage.formList;
       let selectedFormNo = $(".formSelector").val();
       $(".formNumHidden").val(selectedFormNo);
@@ -523,7 +522,7 @@ function createLine() {
     formId +
     "_writer_approved''value='' style='background-color: transparent;'></div></div></div>";
   let testHtml2 = "<div class='lineGridContainer'>";
-  let referHtml = "<div>참 조</div>";
+  // let referHtml = "<div>참 조</div>";
   let target = $(".typeContainer"); // 결재선 생성 모달에서 결재 타입 각각의 container
   let titleArr = ["검 토", "결 재", "수 신", "참 조"];
   let titleId = ["examine", "approval", "conduct", "refer"];
@@ -603,23 +602,24 @@ function createLine() {
 
       // 참조
       else if (i == 3) {
-        if (j != 0) {
-          simpleHtml += "-" + storage.user[id].userName;
-        } else {
-          simpleHtml += storage.user[id].userName;
-        }
-        referHtml +=
-          "<div class='appendName " +
-          formId +
-          "_" +
-          titleId[i] +
-          "' data-detail='" +
-          storage.user[id].userNo +
-          "'>" +
-          storage.userRank[storage.user[id].rank][0] +
-          "&nbsp" +
-          storage.user[id].userName +
-          "</div>";
+        console.log("참조");
+        // if (j != 0) {
+        //   simpleHtml += "-" + storage.user[id].userName;
+        // } else {
+        //   simpleHtml += storage.user[id].userName;
+        // }
+        // referHtml +=
+        //   "<div class='appendName " +
+        //   formId +
+        //   "_" +
+        //   titleId[i] +
+        //   "' data-detail='" +
+        //   storage.user[id].userNo +
+        //   "'>" +
+        //   storage.userRank[storage.user[id].rank][0] +
+        //   "&nbsp" +
+        //   storage.user[id].userName +
+        //   "</div>";
       }
 
       // 검토 합의 결재
@@ -681,7 +681,7 @@ function createLine() {
   lineTarget.html(testHtml);
   console.log(testHtml);
   $(".simpleAppLine").show();
-  $(".referContainer").html(referHtml);
+  // $(".referContainer").html(referHtml);
   $(".simpleAppLineData").html(simpleHtml);
 
   let infoLength = document.getElementsByClassName("info")[0];
@@ -1016,7 +1016,6 @@ function setTempReport() {
     $(".insertedDetail").show();
     $(".simpleAppLine").show();
     $(".reportInsertForm").html(storage.reportDetailData.doc);
-    $(".insertedDetail").css("border", "1px solid black");
     $("#" + formId + "_created").val(getYmdSlash());
     $("#" + formId + "_created").attr("data-detail", getYmdSlash());
 
