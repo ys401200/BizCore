@@ -119,8 +119,6 @@ input[type="radio"]:not(:disabled):not(:checked) {
 }
 
 /* 라디오버튼 기본 css */
-
-
 button,
 select,
 input[type="text"],

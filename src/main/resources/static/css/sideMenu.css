@@ -45,7 +45,8 @@
 	color: #fff;
 }
 
-.menuItem > a:hover{
+.menuItem > a:hover,
+.menuItem > a.active:hover{
 	background-color: #31318b;
 }
 
@@ -58,7 +59,7 @@
 	background-color: #4f4fb9;
 }
 
-img{
+.menuItem > img{
 	width: 15px;
 }
 
@@ -88,7 +89,8 @@ input[type="radio"]{
     height: 50px;
 }
 
-.panel > div > a:hover{
+.panel > div > a:hover,
+.panel > div > a.active:hover{
 	background-color: #31318b;
 }
 
@@ -113,7 +115,6 @@ input[type="radio"]{
 	color: #fff;
 }
 
-
 .menuItem > label{
 	display: flex;
     align-items: center;
@@ -128,7 +129,8 @@ input[type="radio"]{
 	background-color: #4f4fb9;
 }
 
-.menuItem > label:hover{
+.menuItem > label:hover,
+.sideMenu > .business .menuItem > label.active:hover{
 	background-color: #31318b;
 	cursor: pointer;
 }

@@ -404,7 +404,7 @@ class EstimateSet{
 
 		header = [
 			{
-				"title" : "견적일자",
+				"title" : "버전",
 				"align" : "center",
 			},
 			{
@@ -412,11 +412,7 @@ class EstimateSet{
 				"align" : "center",
 			},
 			{
-				"title" : "버전",
-				"align" : "center",
-			},
-			{
-				"title" : "양식",
+				"title" : "견적일자",
 				"align" : "center",
 			},
 			{
@@ -429,7 +425,7 @@ class EstimateSet{
 			str = [
 				{
 					"setData": undefined,
-					"col": 5,
+					"col": 4,
 					"align": "center",
 				},
 			];
@@ -442,7 +438,7 @@ class EstimateSet{
 		  
 				str = [
 					{
-						"setData": disDate,
+						"setData": jsonData[i].version,
 						"align": "center",
 					},
 					{
@@ -450,11 +446,7 @@ class EstimateSet{
 						"align": "left",
 					},
 					{
-						"setData": jsonData[i].version,
-						"align": "center",
-					},
-					{
-						"setData": jsonData[i].form,
+						"setData": disDate,
 						"align": "center",
 					},
 					{
@@ -508,7 +500,7 @@ class EstimateSet{
 
 		header = [
 			{
-				"title" : "견적일자",
+				"title" : "버전",
 				"align" : "center",
 			},
 			{
@@ -516,11 +508,7 @@ class EstimateSet{
 				"align" : "center",
 			},
 			{
-				"title" : "버전",
-				"align" : "center",
-			},
-			{
-				"title" : "양식",
+				"title" : "견적일자",
 				"align" : "center",
 			},
 			{
@@ -533,7 +521,7 @@ class EstimateSet{
 			str = [
 				{
 					"setData": undefined,
-					"col": 5,
+					"col": 4,
 					"align": "center",
 				},
 			];
@@ -554,7 +542,7 @@ class EstimateSet{
 
 				str = [
 					{
-						"setData": disDate,
+						"setData": jsonData[i].version,
 						"align": "center",
 					},
 					{
@@ -562,11 +550,7 @@ class EstimateSet{
 						"align": "left",
 					},
 					{
-						"setData": jsonData[i].version,
-						"align": "center",
-					},
-					{
-						"setData": jsonData[i].form,
+						"setData": disDate,
 						"align": "center",
 					},
 					{
@@ -1712,13 +1696,7 @@ class Common{
 					let itemA = item.querySelector("a");
 
 					if(itemA.getAttribute("href").indexOf("/" + path[1] + "/" + path[2]) > -1){
-						if(path[2] === "sopp"){
-							if(itemA.getAttribute("href") === "/" + path[1] + "/" + path[2]){
-								itemA.classList.add("active");
-							}
-						}else{
-							itemA.classList.add("active");
-						}
+						itemA.classList.add("active");
 					}else{
 						if(path[2] === "sopp2"){
 							if(itemA.getAttribute("href") === "/" + path[1] + "/project"){
@@ -1740,6 +1718,10 @@ class Common{
 								if(target.getAttribute("href") === "/" + path[1] + "/" + path[2]){
 									target.classList.add("active");
 								}
+							}else if(path[2] === "workreport"){
+								if(target.getAttribute("href") === "/" + path[1] + "/" + path[2]){
+									target.classList.add("active");
+								}
 							}else{
 								target.classList.add("active");
 							}
@@ -1757,7 +1739,6 @@ class Common{
 								}
 							}
 						}
-
 					}
 				}
 			}

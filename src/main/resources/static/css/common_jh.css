@@ -256,7 +256,8 @@
 
 .sopp-estimate .estimateList .gridHeader,
 .sopp-estimate .estimateList .gridContent{
-    grid-template-columns: 20% 35% 10% 15% 20%;
+    grid-template-columns: 10% 50% 20% 20%;
+    font-size: 0.9rem;
 }
 
 .sopp-estimate .estimateList .gridHeader{
@@ -278,7 +279,7 @@
 
 .listContainer .estimateList .gridHeader,
 .listContainer .estimateList .gridContent{
-    grid-template-columns: 15% 50% 5% 15% 15%;
+    grid-template-columns: 15% 55% 15% 15%;
 }
 
 .listContainer .estimateList .gridHeader{
