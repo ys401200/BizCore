@@ -1,4 +1,4 @@
-let R = {}, prepareSopp, scrolledSopp, inputExpectedSales, moveToTarget, drawChat, inputtedComment, deleteChat, cancelEdit, editSopp, changeSopp, editSoppSearch, soppStageUp, clickedDateInCalendar, getSavedLine, enteredSoppCalendarSchedule, leftSoppCalendarSchedule, clickedSoppCalendarSchedule, leftMonthlyCalendarTopEmp, enteredMonthlyCalendarTopEmp, clickedScheduleInSoppCalendar;
+let R = {}, prepareSopp, scrolledSopp, inputExpectedSales, moveToTarget, drawChat, inputtedComment, deleteChat, cancelEdit, editSopp, changeSopp, editSoppSearch, soppStageUp, clickedDateInCalendar, getSavedLine, enteredSoppCalendarSchedule, leftSoppCalendarSchedule, clickedSoppCalendarSchedule, leftMonthlyCalendarTopEmp, enteredMonthlyCalendarTopEmp, clickedScheduleInSoppCalendar, confirmContracInSopp;
 $(document).ready(() => {
 	let href, no;
 	init();
@@ -14,6 +14,11 @@ $(document).ready(() => {
 	no = no !== null ? no * 1 : null;
 	prepareSopp(no);
 });
+
+// 영업기회 내에서 계약 확인 창을 띄우는 함수
+confirmContracInSopp = () => {
+	
+} // End of confirmContracInSopp()
 
 // 영업기회 내 일정 목록에서 일정 클릭시 싱핼되는 함수
 clickedScheduleInSoppCalendar = (el) => {
@@ -75,9 +80,10 @@ soppStageUp = (v) => {
 		href = location.href.split("/sopp2/");
 		no = href.length > 1 ? href[href.length - 1] : null;
 		no = no !== null ? no * 1 : null;
-		window.open("/gw/estimate/" + no, "", "width=600");
-		// gw/extimate/soppNo 넣으면 됨 
-
+		R.stageUpPopup = window.open("/gw/estimate/" + no, "soppStageUp", "width=1000,height=800,left=100,top=100");
+		window.setTimeout(()=>{
+			R.stageUpPopup.items = storage.estimateList[storage.estimateList.length-1].related.estimate.items;
+		},300);
 	}
 } // End of soppStageUp()
 

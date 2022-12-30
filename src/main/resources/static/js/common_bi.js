@@ -720,7 +720,9 @@ class Sopp2 {
 		let json = Object.assign({}, this), data;
 
 		delete json.calendar;
-		delete json.colorTable;;
+		delete json.colorTable;
+		delete json.schedules;
+		delete json.empColor;
 		json.created = (json.created === undefined || json.created === null) ? null : json.created.getTime();
 		json.closed = (json.closed === undefined || json.closed === null) ? null : json.closed.getTime();
 		json.modified = (json.modified === undefined || json.modified === null) ? null : json.modified.getTime();

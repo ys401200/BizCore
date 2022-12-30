@@ -518,6 +518,7 @@ font-size:1.5rem;
     margin-left: 0.5rem;
     cursor: pointer;
 	display:none;
+	filter: opacity(0.5) drop-shadow(0 0 0 red);
 }
 .sopp-schedule-detail > label tp{
 	display: inline-block;
