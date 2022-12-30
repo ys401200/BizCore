@@ -1,4 +1,12 @@
-let clickedScheduleDetailConfirm, changeExpectedDate, setDateTimeInScheduleDetail, clickedTimeOnMiniCalendar, clickedDateOnMiniCalendar, drawMiniCalendar, showSavedLineInScheduleDetail, clearStorage;
+let clickedScheduleDetailConfirm, changeExpectedDate, setDateTimeInScheduleDetail, clickedTimeOnMiniCalendar, clickedDateOnMiniCalendar, drawMiniCalendar, showSavedLineInScheduleDetail, clearStorage, editSchedule;
+
+// 일정 수정 함수
+editSchedule = (v) => {
+	let x;
+
+	R.schedule = (v === undefined ? new Schedule : v.constructor.name === "Object" ? new Schedule(v) : v.constructor.name === "Schedule" ? v : new Schedule);
+	R.schedule.popupModalForEdit();
+} // End of editSchedule()
 
 // web storage 정리 함수
 clearStorage = () => {
@@ -373,7 +381,7 @@ clickedDateInCalendar = (el) => {
 
 	sch = new Schedule();
 	dt = new Date(el.dataset.v * 1);
-	sch.drawForRequestDetail(dt, true);
+	sch.popupModalForEdit(dt, true);
 } // End of clickedDateInCalendar()
 
 
@@ -712,6 +720,7 @@ class Sopp2 {
 		let json = Object.assign({}, this), data;
 
 		delete json.calendar;
+		delete json.colorTable;;
 		json.created = (json.created === undefined || json.created === null) ? null : json.created.getTime();
 		json.closed = (json.closed === undefined || json.closed === null) ? null : json.closed.getTime();
 		json.modified = (json.modified === undefined || json.modified === null) ? null : json.modified.getTime();
@@ -906,30 +915,31 @@ class Schedule{
 		this.content = v.content;
 		this.report = v.report;
 		this.type = v.type;
-		this.from = new Date(v.from);
-		this.to = new Date(v.to);
-		this.related = JSON.parse(v.related);
+		this.from = (v.from === undefined || v.from === null ? new Date() : v.from.constructor.name === "Number" ? new Date(v.from) : v.from);
+		this.to = (v.to === undefined || v.to === null ? new Date() : v.to.constructor.name === "Number" ? new Date(v.to) : v.to);
+		this.related = (v.related === undefined ? {} : v.related.constructor.name === "String" ? JSON.parse(v.related) : v.related.constructor.name === " Object" ? v.related : {});
 		this.permitted = v.permitted;
-		this.created = new Date(v.created);
-		this.modified = v.modified === undefined ? null : new Date(v.modified);
+		this.created = (v.created === undefined || v.created === null ? null : v.created.constructor.name === "Number" ? new Date(v.created) : v.created);
+		this.modified = (v.modified === undefined || v.modified === null ? null : v.modified.constructor.name === "Number" ? new Date(v.modified) : v.modified);
 	} // End of constructor()
 
 	// ========== 일정 수정 모달을 띄우는 함수 ==========
-	drawForRequestDetail(dt, gw){ // dt : 일정 생성할 날의 Date 객체, 날짜만 사용함 / gw : 전자결재 자동상신, 신규 일정 생성에서만 사용하고 기존 일정 수정에서는 사용하지 말 것!
-		let html, x, y, start, end, cnt, el, child, isVacation = false, isOverTime = false, inSopp = false, scheduleFrom, scheduleTo;
+	popupModalForEdit(dt, gw){ // dt : 일정 생성할 날의 Date 객체, 날짜만 사용함 / gw : 전자결재 자동상신, 신규 일정 생성에서만 사용하고 기존 일정 수정에서는 사용하지 말 것!
+		let html, x, y, start, end, cnt, el, child, isVacation = false, isOverTime = false, inSopp = false;
 		modal.show();
 		modal.headTitle[0].innerText = "일정 신규 등록";
 
-		// 전역변수에 닐짜 인스턴스를 등록해 둠
-		R.schedule = this;
-
-		// 날짜가 입력된 경우 설정된 일정을 변경함
-		if(dt !== null || dt !== undefined && typeof dt === "object" && dt.constructor.name === "Date"){
-			scheduleFrom = new Date(dt.getFullYear(),dt.getMonth(),dt.getDate(),9,0,0);
-			scheduleTo = new Date(dt.getFullYear(),dt.getMonth(),dt.getDate(),18,0,0);
+		// 편집 대상 확인
+		if(dt === undefined || dt === null){
+			if(R.schedule === undefined || R.schedule === null || R.constructor.name !== "Schedule")	R.schedule = new Schedule();
 		}else{
-			scheduleFrom = this.from;
-			scheduleTo = this.to
+			if(dt.constructor.name === "Object")		R.schedule = new Schedule(dt);
+			else if(dt.constructor.name === "Schedule")	R.schedule = dt;
+			else if(dt.constructor.name === "Date"){
+				R.schedule = new Schedule();
+				R.schedule.from = new Date(dt.getFullYear(),dt.getMonth(),dt.getDate(),9,0,0);
+				R.schedule.to = new Date(dt.getFullYear(),dt.getMonth(),dt.getDate(),18,0,0);
+			}
 		}
 
 		//유형 파악
@@ -944,12 +954,12 @@ class Schedule{
 		cnt.className = "schedule-detail";
 		modal.body[0].appendChild(cnt);
 		// --- 일정 시작 및 종료
-		x = (scheduleFrom.getFullYear() * 10000 + (scheduleFrom.getMonth()+1) * 100 + scheduleFrom.getDate()) + "";
-		y = (scheduleTo.getFullYear() * 10000 + (scheduleTo.getMonth()+1) * 100 + scheduleTo.getDate()) + "";
+		x = (R.schedule.from.getFullYear() * 10000 + (R.schedule.from.getMonth()+1) * 100 + R.schedule.from.getDate()) + "";
+		y = (R.schedule.to.getFullYear() * 10000 + (R.schedule.to.getMonth()+1) * 100 + R.schedule.to.getDate()) + "";
 		cnt.dataset.ds = x;
 		cnt.dataset.de = x === y ? "x" : y;
-		x = ((scheduleFrom.getHours() * 100 + scheduleFrom.getMinutes() + 10000) + "").substring(1);
-		y = ((scheduleTo.getHours() * 100 + scheduleTo.getMinutes() + 10000) + "").substring(1);
+		x = ((R.schedule.from.getHours() * 100 + R.schedule.from.getMinutes() + 10000) + "").substring(1);
+		y = ((R.schedule.to.getHours() * 100 + R.schedule.to.getMinutes() + 10000) + "").substring(1);
 		cnt.dataset.ts = x;
 		cnt.dataset.te = y;
 		cnt.dataset.no = this.no;		
@@ -957,7 +967,7 @@ class Schedule{
 		// 본문 및 제목 엘리먼트 생성 및 부착
 		el = document.createElement("div");
 		cnt.appendChild(el);
-		html = "<div><img src=\"/images/sopp2/article.png\" /><input placeholder=\"제목\" /></div><textarea name=\"schedule-detail-content\"></textarea>";
+		html = "<div><img src=\"/images/sopp2/article.png\" /><input placeholder=\"제목\"/></div><textarea name=\"schedule-detail-content\"></textarea>";
 		el.innerHTML = html;
 
 		// 컨텐트에 웹에디터 부착
@@ -1142,7 +1152,7 @@ class Schedule{
 		// 모달 버튼 이벤트 핸들러 설정
 		modal.close[0].onclick = () => {CKEDITOR.instances['schedule-detail-content'].destroy();modal.hide();};
 		modal.confirm[0].onclick = clickedScheduleDetailConfirm
-	} // End of drawForRequestDetail()
+	} // End of popupModalForEdit()
 
 	// 기간의 시작 및 종료 날짜/시간 문자열 만드는 메서드
 	dateToStr(){
@@ -1538,3 +1548,54 @@ class Project {
 	}
 
 } // End of Class _ Project
+
+class Maintenance{
+	constructor(data){
+		let v;
+		if(data === null || data === undefined || !(typeof data === "object" && data.constructor.name === "Maintenance")){
+			if(data.constructor.name === "Object")	v = JSON.parse(data);
+			else	v = {
+						no:-1,
+						contract:null,
+						customer:null,
+						title:"",
+						product:null,
+						startDate:new Date((new Date()).getFullYear(),(new Date()).getMonth(),(new Date()).getDate(),0,0,0),
+						endDate:new Date((new Date()).getFullYear() + 1,(new Date()).getMonth(),(new Date()).getDate(),0,0,0),
+						engineer:null,
+						coworker:[],
+						related:{},
+						created:new Date(),
+						modified:null
+					}
+		}else v = data;
+		this.no = v.no;
+		this.contract = v.contract;
+		this.customer = v.customer;
+		this.product = v.product;
+		this.startDate = (v.startDate === undefined || v.startDate === null ? new Date() : v.startDate.constructor.name === "Number" ? new Date(v.startDate) : v.startDate);
+		this.endDate = (v.endDate === undefined || v.endDate === null ? new Date() : v.endDate.constructor.name === "Number" ? new Date(v.endDate) : v.endDate);
+		this.engineer = v.engineer;
+		this.coworker = (v.coworker === undefined ? [] : v.coworker.constructor.name === "String" ? JSON.parse(v.coworker) : v.coworker.constructor.name === " Array" ? v.related : []);
+		this.related = (v.related === undefined ? {} : v.related.constructor.name === "String" ? JSON.parse(v.related) : v.related.constructor.name === " Object" ? v.related : {});
+		this.created = (v.created === undefined || v.created === null ? new Date() : v.created.constructor.name === "Number" ? new Date(v.tocreated) : v.created);
+		this.modified = (v.modified === undefined || v.modified === null ? new Date() : v.modified.constructor.name === "Number" ? new Date(v.modified) : v.modified);
+
+	}
+
+} // End of Class ========== Maintenance ==========
+
+let maintenance = {
+	no:-1, // int
+	contract:-1, // int
+	customer:-1, // int
+	title:"", // string
+	product:-1, // int
+	startDate:-1, // long or Date
+	endDate:-1, // long or Date
+	engineer:-1, // int
+	coworker:[-1, -1], // Array[int,int]
+	related:{},
+	created:null,
+	modified:null
+}
