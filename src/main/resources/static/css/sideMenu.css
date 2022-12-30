@@ -59,7 +59,7 @@
 	background-color: #4f4fb9;
 }
 
-.menuItem > img{
+.menuItem img{
 	width: 15px;
 }
 
@@ -82,7 +82,7 @@ input[type="radio"]{
 .panel > div > a{
 	display: flex;
     align-items: center;
-    padding-left: 24%;
+    padding-left: 26%;
     color: #fff;
     text-decoration: none;
     width: 100%;
