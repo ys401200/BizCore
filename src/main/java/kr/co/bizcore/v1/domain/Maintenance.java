@@ -17,8 +17,6 @@ public class Maintenance extends Domain {
     private Date endDate;
     private int engineer;
     private String coworker;
-    private Date modified;
-    private Date deleted;
     private String related;
 
 }
