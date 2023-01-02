@@ -32,7 +32,6 @@
 <script src="/js/chart.js"></script>
 <script src="/js/editor/ckeditor.js"></script>
 <script src="/js/<%= getPathName %>/<%= getPathName %>.js"></script>
-<script src="https://cdn.tiny.cloud/1/kh4eirod6bgv8u2sxlaeikxy5hxfogh0edhzloljxh6zf046/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script src="https://kit.fontawesome.com/a37df9d8b5.js" crossorigin="anonymous"></script>
 <script src="/js/common_jh.js"></script>
@@ -48,8 +47,8 @@
 <div class="msg_cnt"></div>
 <jsp:include page="./modal/modal.jsp"/>
 <jsp:include page="./note/note.jsp"/>
-<div id="header">
-	<div id="mainTopLogo">
+<div class="header">
+	<div class="mainTopLogo">
 		<a href="/"><img src="/api/system/logo" id="mainTopLogoImg" /></a>
 		<img src="/images/main/topEllipse.png" id="mainTopEllipseImg" />
 		<%-- <img src="/images/main/topVector.png" id="mainTopVectorImg" /> --%>
@@ -58,26 +57,27 @@
 		<div data-keyword="business" data-path="/" onclick="CommonDatas.topMenuClick(this)">업무관리</div>
 		<div data-keyword="gw" data-path="/gw/home" onclick="CommonDatas.topMenuClick(this)">전자결재</div>
 		<div data-keyword="accounting" data-path="/accounting/home" onclick="CommonDatas.topMenuClick(this)">회계관리</div>
-		<!-- <ul>
-			<li><button type="button" data-keyword="business" onClick="bodyTopPageClick(this);">업무관리</button></li>
-			<li><button type="button" data-keyword="gw" onClick="bodyTopPageClick(this);">전자결재</button></li>
-			<li><button type="button" data-keyword="accounting" onClick="bodyTopPageClick(this);">회계관리</button></li>
-			<li><button type="button" data-keyword="accounting" onClick="bodyTopPageClick(this);">회계관리</button></li>
-			<li><button type="button" data-keyword="mis" onClick="bodyTopPageClick(this);">경영정보</button></li>
-		</ul> -->
 	</div>
-	<div id="mainInfo">
-		<a href="#" onclick="noteContentShow();" id="infoMessageImg">
-			<img id="myInfoMessageImg" src="/images/main/icons/message.png">
-		</a>
-		<img id="myInfoImage" src="/api/my/image" >
-		<a href="/mypage">
-			<span><%= session.getAttribute("userName") %></span>&nbsp;
-			<span><%= session.getAttribute("userRank") %></span>
-		</a>
-		<a href="/api/user/logout" onclick="return confirm('로그아웃 하시겠습니까??');">
-			<img id="myInfoImageLogout" src="/images/main/icons/logout.png" >
-		</a>
+	<div class="mainInfo">
+		<div>
+			<a href="/mypage">
+				<span><%= session.getAttribute("userName") %></span>&nbsp;
+				<span><%= session.getAttribute("userRank") %></span>
+			</a>
+		</div>
+		<div>
+			<img class="myInfoImage" src="/api/my/image" >
+		</div>
+		<div>
+			<a href="#" onclick="noteContentShow();" class="infoMessageImg">
+				<img id="myInfoMessageImg" src="/images/main/icons/message.png">
+			</a>
+		</div>
+		<div>
+			<a href="/api/user/logout" onclick="return confirm('로그아웃 하시겠습니까??');">
+				<img class="myInfoImageLogout" src="/images/main/icons/logout.png" >
+			</a>
+		</div>
 	</div>
 </div>
 <script src="/js/header.js"></script>

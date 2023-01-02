@@ -219,7 +219,7 @@ function chartSuccess_2(result){
 			labels: ["달성률", "미달성률"],
 			datasets: [
 				{
-					data: [100, 0],
+					data: [0, 100],
 					backgroundColor: [
 						"#ff5377",
 						"#95c1e6"
@@ -273,13 +273,16 @@ function chartSuccess_3(result){
 	month = nowDate.getMonth();
 	monthTarget = (result[month] === undefined) ? 0 : result[month].sales;
 
+	let data1 = isNaN((monthTarget / storage.monthTarget[month] * 100).toFixed(2)) ? 0 : (monthTarget / storage.monthTarget[month] * 100).toFixed(2);
+	let data2 = isNaN((100 - (monthTarget / storage.monthTarget[month] * 100).toFixed(2))) ? 100 : (100 - (monthTarget / storage.monthTarget[month] * 100).toFixed(2));
+
 	new Chart(chart_2, {
 		type: "doughnut",
 		data: {
 			labels: ["달성률", "미달성률"],
 			datasets: [
 				{
-					data: [(monthTarget / storage.monthTarget[month] * 100).toFixed(2), (100 - (monthTarget / storage.monthTarget[month] * 100).toFixed(2))],
+					data: [data1, data2],
 					backgroundColor: [
 						"#31cca2",
 						"#95c1e6"
@@ -300,7 +303,13 @@ function chartSuccess_3(result){
 
 	infoHtml = "<div>목표 " + (parseInt(storage.monthTarget[month])).toLocaleString("en-US") + "</div>";
 	infoHtml += "<div>매출 " + parseInt(monthTarget).toLocaleString("en-US") + "</div>";
-	infoHtml += "<div>달성률 " + (monthTarget / storage.monthTarget[month] * 100).toFixed(2) + "%<div>";
+
+	if(isNaN((monthTarget / storage.monthTarget[month] * 100).toFixed(2))){
+		infoHtml += "<div>달성률 0.00%<div>";
+	}else{
+		infoHtml += "<div>달성률 " + (monthTarget / storage.monthTarget[month] * 100).toFixed(2) + "%<div>";
+	}
+
 	infoHtml += "<hr />";
 	infoHtml += "<div>-" + parseInt(storage.monthTarget[month] - monthTarget).toLocaleString("en-US") + "</div>";
 	chart_2.canvas.parentNode.getElementsByClassName("chartInfo")[0].innerHTML = infoHtml;
@@ -342,13 +351,16 @@ function chartSuccess_4(result){
 		monthTarget += dataArray[i];
 	}
 
+	let data1 = isNaN((monthTarget / (storage.accMonthTarget[11] * 10) * 100).toFixed(2)) ? 0 : (monthTarget / (storage.accMonthTarget[11] * 10) * 100).toFixed(2);
+	let data2 = isNaN((100 - (monthTarget / (storage.accMonthTarget[11] * 10) * 100).toFixed(2))) ? 100 : (100 - (monthTarget / (storage.accMonthTarget[11] * 10) * 100).toFixed(2));
+
 	new Chart(chart_3, {
 		type: "doughnut",
 		data: {
 			labels: ["달성률", "미달성률"],
 			datasets: [
 				{
-					data: [(monthTarget / (storage.accMonthTarget[11] * 10) * 100).toFixed(2), (100 - (monthTarget / (storage.accMonthTarget[11] * 10) * 100).toFixed(2))],
+					data: [data1, data2],
 					backgroundColor: [
 						"#31cca2",
 						"#95c1e6"
@@ -369,7 +381,13 @@ function chartSuccess_4(result){
 
 	infoHtml = "<div>목표 " + (parseInt(storage.accMonthTarget[11] * 10)).toLocaleString("en-US") + "</div>";
 	infoHtml += "<div>매출 " + parseInt(monthTarget).toLocaleString("en-US") + "</div>";
-	infoHtml += "<div>달성률 " + (monthTarget / (storage.accMonthTarget[11] * 10) * 100).toFixed(2) + "%<div>";
+
+	if(isNaN((monthTarget / (storage.accMonthTarget[11] * 10) * 100).toFixed(2))){
+		infoHtml += "<div>달성률 0.00%<div>";
+	}else{
+		infoHtml += "<div>달성률 " + (monthTarget / (storage.accMonthTarget[11] * 10) * 100).toFixed(2) + "%<div>";
+	}
+
 	infoHtml += "<hr />";
 	infoHtml += "<div>-" + parseInt((storage.accMonthTarget[11] * 10) - monthTarget).toLocaleString("en-US") + "</div>";
 	chart_3.canvas.parentNode.getElementsByClassName("chartInfo")[0].innerHTML = infoHtml;

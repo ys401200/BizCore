@@ -3201,7 +3201,7 @@ function noteLiveBadge() {
 		contentType: "text/plain",
 		success: (result) => {
 			let infoMessageImg, badgeSpan;
-			infoMessageImg = $("#infoMessageImg");
+			infoMessageImg = $(".infoMessageImg");
 
 			if (result.data != null) {
 				result = cipher.decAes(result.data);

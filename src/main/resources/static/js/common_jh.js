@@ -270,6 +270,14 @@ class Notice{
 	}
 }
 
+//일정조회 클래스
+class ScheduleSet{
+	calendarList(){
+		let html = drawMiniCalendar(new Date());
+		document.getElementsByClassName("calendar_container")[0].innerHTML = html;		
+	}
+}
+
 // 견적 초기 세팅해주는 클래스
 class EstimateSet{
 	constructor(){

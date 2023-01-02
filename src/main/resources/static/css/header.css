@@ -1051,35 +1051,34 @@ input[name="tabItem"] {
 }
 
 /* 각 페이지 검색 끝 */
-
-#header {
+.header {
 	position: relative;
 	display: grid;
+	height: 50px;
 	grid-template-columns: 172px 1fr 31%;
 	box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
 	background: #FFFFFF;
 }
 
 @media(max-width:1920px) {
-	#header {
+	.header {
 		display: grid;
 		grid-template-columns: 172px 1fr 31%;
 	}
 }
 
-#header #mainTopLogo {
+.header .mainTopLogo {
 	display: flex;
-	height: 63px;
 	align-items: center;
 	padding-left: 9%;
 	position: relative;
 }
 
-#header #mainTopLogo #mainTopLogoImg {
+.header .mainTopLogo #mainTopLogoImg {
 	width: 98px;
 }
 
-#header #mainTopLogo #mainTopEllipseImg {
+.header .mainTopLogo #mainTopEllipseImg {
 	position: absolute;
 	right: 8px;
 	margin-top: -4px;
@@ -1087,7 +1086,7 @@ input[name="tabItem"] {
 	cursor: pointer;
 }
 
-#header #mainTopLogo #mainTopVectorImg {
+.header .mainTopLogo #mainTopVectorImg {
 	position: absolute;
 	width: 7px;
 	height: 14px;
@@ -1095,25 +1094,25 @@ input[name="tabItem"] {
 	top: 22px;
 }
 
-/* #header .mainTopMenu{
+/* .header .mainTopMenu{
 	padding-left: 1%;
 } */
 
-#header .mainTopMenu ul {
+.header .mainTopMenu ul {
 	list-style: none;
 	height: 100%;
 	margin: 0;
 	padding: 0;
 }
 
-#header .mainTopMenu ul li {
+.header .mainTopMenu ul li {
 	float: left;
 	text-align: center;
 	width: 126px;
 	height: 100%;
 }
 
-#header .mainTopMenu ul li button {
+.header .mainTopMenu ul li button {
 	width: 100%;
 	height: 54px;
 	font-weight: 500;
@@ -1123,7 +1122,7 @@ input[name="tabItem"] {
 	background-color: #ffffff;
 }
 
-#header .mainTopMenu ul li button.active {
+.header .mainTopMenu ul li button.active {
 	width: 100%;
 	height: 54px;
 	font-weight: 500;
@@ -1134,7 +1133,7 @@ input[name="tabItem"] {
 	cursor: pointer;
 }
 
-#header .mainTopMenu ul li button:not(.active):hover {
+.header .mainTopMenu ul li button:not(.active):hover {
 	width: 100%;
 	height: 54px;
 	font-weight: 500;
@@ -1145,33 +1144,46 @@ input[name="tabItem"] {
 	cursor: pointer;
 }
 
-#header #mainInfo {
+.header > .mainInfo{
 	display: flex;
 	align-items: center;
 	justify-content: right;
-	padding-right: 15px;
 }
 
-#header #mainInfo>a>#myInfoMessageImg {
-	width: 28px;
-	padding-bottom: 10px;
+.header > .mainInfo > div:nth-child(1){
+	padding-right: 0.5vw;
 }
 
-#header #mainInfo>#myInfoImage {
-	width: 35px;
-	padding-right: 4px;
-	padding-left: 100px;
-	padding-bottom: 5px;
-}
-
-#header #mainInfo a>#myInfoImageLogout {
-	padding-left: 16px;
-	padding-bottom: 5px;
-}
-
-#header #mainInfo a {
-	display: contents;
+.header > .mainInfo > div:nth-child(1) > a{
+	text-decoration: none;
 	font-size: 0.9rem;
+}
+
+.header > .mainInfo > div:nth-child(2){
+	padding-right: 1vw;
+    padding-top: 0.5vh;
+}
+
+.header > .mainInfo > div:nth-child(2) > img{
+	width: 30px;
+}
+
+.header > .mainInfo > div:nth-child(3){
+	padding-right: 0.5vw;
+    padding-top: 0.5vh;
+}
+
+.header > .mainInfo > div:nth-child(3) > a > img{
+	width: 25px;
+}
+
+.header > .mainInfo > div:nth-child(4){
+	padding-top: 0.7vh;
+    padding-right: 1vw;
+}
+
+.header > .mainInfo > div:nth-child(4) > a > img{
+	width: 20px;
 }
 
 .myNoteList {
