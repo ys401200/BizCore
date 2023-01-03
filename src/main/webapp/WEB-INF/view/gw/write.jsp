@@ -43,8 +43,8 @@
                 <div>
                   <div>
                     <div>열람권한</div>
-                    <div><label><input type='radio' name='authority' value='dept' checked />기안자 소속 부서
-                        포함</label><label><input type='radio' name='authority' value='none' />권한 설정 없음</label>
+                    <div><label><input type='radio' name='authority' value='dept' checked style="display: inline;" />기안자 소속 부서
+                        포함</label><label><input type='radio' name='authority' value='none' style="display: inline;" />권한 설정 없음</label>
                     </div>
                   </div>
                 </div>
@@ -80,7 +80,7 @@
             <div class='selector'>
 
 
-              <div class="stepLabel">●상세 입력</div>
+              <div class="stepLabel">● 상세 입력</div>
               <div class='insertedDetail'>
 
                 <div class='fileDetail'>

@@ -25,6 +25,32 @@ class Contract {
             this.saleDate = each.saleDate == undefined ? 0 : each.saleDate;
             this.appLine = each.appLine;
             this.docNo = each.docNo;
+        } else if (each === null || each === undefined || !(typeof each === "object" && each.constructor.name === "Contract")) {
+
+            this.no = each.no;
+            this.coWorker = each.coWorker == undefined ? [] : JSON.parse(each.coWorker);
+            this.created = each.created;
+            this.title = each.title;
+            this.employee = each.employee;
+            this.related = each.related;
+            this.customer = each.customer;
+            this.saleDate = each.saleDate == undefined ? 0 : each.saleDate;
+            this.amount = each.amount;
+            this.taxInclude = each.taxInclude;
+            this.profit = each.profit;
+
+
+            this.schedules = [];
+            this.attached = [];
+            this.approvedAttached = [];
+            this.suppliedAttached = [];
+            this.trades = null;
+            this.maintenance = [];
+            this.modified = null;
+            this.supplied = 0;
+            this.approved = 0;
+            this.appLine = undefined;
+            this.docNo = undefined;
         }
         else {
             this.title = "";
@@ -35,6 +61,7 @@ class Contract {
     }
 
     drawNone() {
+        4554
 
         let target = document.getElementsByClassName("sopp-contract")[0];
         let origin = document.getElementsByClassName("detail-wrap")[0];
@@ -552,7 +579,7 @@ class Contract {
     }
 
 
-// 납품 일자 스케쥴 모달 체크하기 
+    // 납품 일자 스케쥴 모달 체크하기 
     drawSuppliedData() {
         $(".contract-progress").children()[0].className = "contract-done";
         $(".contract-progress").children()[1].className = "contract-done";
@@ -1170,4 +1197,259 @@ function getYmdSlash2() {
         "/" +
         (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
     );
+}
+
+
+function setPrevModal() {
+
+    modal.show();
+    let el, el2, cnt;
+    let html = "";
+
+    cnt = document.getElementsByClassName("modalBody")[0];
+
+    el = document.createElement("div");
+    el.setAttribute("class", "report-modal");
+    cnt.appendChild(el);
+
+    el = document.createElement("div");
+    el.setAttribute("class", "sopp-modalData");
+    cnt.children[0].appendChild(el);
+
+    el = document.createElement("div");
+    el.setAttribute("class", "ctrt-modalData");
+    cnt.children[0].appendChild(el);
+
+    // sopp Data 채움 
+    cnt = document.getElementsByClassName("sopp-modalData")[0];
+    el = document.createElement("div");
+    cnt.append(el);
+
+    el = document.createElement("input");
+    el.setAttribute("value", R.sopp.title + "수주판매보고");
+    cnt.children[0].appendChild(el);
+
+
+    el = document.createElement("div");
+    el.setAttribute("class", "sub-title");
+    el.innerHTML = "<circle></circle><div>기본 정보</div><line></line>";
+    cnt.append(el);
+
+    el = document.createElement("div");
+    cnt.append(el);
+    // 조달여부  
+    let type = ["procure", "normal", "customer", "partner", "place", "amount"];
+    let name = ["조달", "일반", "고객사", "협력사", "설치장소", "대금"];
+    for (let i = 0; i < 2; i++) {
+        if (i == 1) {
+            html += "<input type='radio' name='procureRd' value='" + type[i] + "' id='" + type[i] + "' ></input><label for='" + type[i] + "'>" + name[i] + "</label>";
+        } else {
+            html += "<input type='radio' name='procureRd' value='" + type[i] + "' id='" + type[i] + "'></input><label for='" + type[i] + "'>" + name[i] + "</label>";
+        }
+    }
+    el.innerHTML = html;
+
+    if (R.sopp.related.previous != undefined) {
+        document.getElementById("procure").setAttribute("checked", "checked");
+    } else {
+        document.getElementById("normal").setAttribute("checked", "checked");
+    }
+
+
+    for (let i = 2; i < type.length; i++) {
+        let data = "";
+        html = "";
+        el = document.createElement("div");
+        el.setAttribute("class", "sub-title");
+        el.innerHTML = "<circle></circle><div>" + name[i] + "</div>";
+        cnt.append(el);
+
+        if ((type[i] == "customer" || type[i] == "place") && R.sopp.customer != undefined) {
+            data = storage.customer[R.sopp.customer].name;
+        } else if ((type[i] == "partner" || type[i] == "amount") && R.sopp.partner != undefined) {
+            data = storage.customer[R.sopp.partner].name;
+        }
+        el = document.createElement("div");
+        el.innerHTML = "<input type='text' class='info-" + type[i] + "' value='" + data + "'></input>";
+        cnt.appendChild(el);
+
+    }
+
+    cnt = document.getElementsByClassName("ctrt-modalData")[0];
+
+    el = document.createElement("div");
+    el.setAttribute("class", "sub-title");
+    el.innerHTML = "<circle></circle><div>1. 제품 정보</div><line></line>";
+    cnt.append(el);
+
+    let items = storage.estimateList[storage.estimateList.length - 1].related.estimate.items;
+    let item, price, quantity, supplier, vat, remark;
+
+    let prdtTableTitle = [
+        ["항목", "item"],
+        ["고객사", "supplier"],
+        ["단가", "price"],
+        ["수량", "quantity"],
+        ["부가세", "vat"],
+        ["공급가", "amount"],
+    ];
+
+    el = document.createElement("div");
+    el.setAttribute("class", "product-listTitle");
+    for (let i = 0; i < prdtTableTitle.length; i++) {
+        el2 = document.createElement("div");
+        el2.innerHTML = prdtTableTitle[i][0];
+        el.appendChild(el2);
+    }
+
+    cnt.appendChild(el);
+
+    el = document.createElement("div");
+    el.setAttribute("class", "product-list");
+    cnt.appendChild(el);
+
+
+    for (let i = 0; i <= items.length - 1; i++) {
+        el = document.createElement("div");
+        el.setAttribute("class", "product-item");
+        for (let j = 0; j < prdtTableTitle.length; j++) {
+            el2 = document.createElement("div");
+            if (j == 5) {
+                el2.innerHTML = (items[i][prdtTableTitle[2][1]] * items[i][prdtTableTitle[3][1]]).toLocaleString();
+
+            } else if (j == 0) {
+                let name;
+                for (x in storage.product) {
+                    if (storage.product[x].no == items[i][prdtTableTitle[j][1]]) {
+                        name = storage.product[x].name;
+                        el2.setAttribute("data-detail", items[i][prdtTableTitle[j][1]]);
+                    }
+                }
+                el2.innerHTML = name;
+            } else if (j == 1) {
+                el2.innerHTML = storage.customer[items[i][prdtTableTitle[j][1]]].name;
+                el2.setAttribute("data-detail", items[i][prdtTableTitle[j][1]]);
+            } else if (j == 2) {
+                el2.innerHTML = (items[i][prdtTableTitle[j][1]] * 1).toLocaleString();
+            } else if (j == 3) {
+                el2.innerHTML = (items[i][prdtTableTitle[j][1]] * 1).toLocaleString();
+            } else if (j == 4) {
+                if (items[i][prdtTableTitle[j][1]] == "true") {
+                    (el2.innerHTML = (items[i][prdtTableTitle[2][1]] * items[i][prdtTableTitle[3][1]]) * 0.1).toLocaleString();
+                }
+            }
+            el.appendChild(el2); // 기본 데이터 넣음 
+
+
+        }
+
+
+        document.getElementsByClassName("product-list")[0].appendChild(el);
+
+        el2 = document.createElement("div");
+        el2.setAttribute("class", "product-option");
+        let html = "";
+        html += "<div>";
+        html += "<div><circle></circle><div>일자</div><input type='date'></input></div>";
+        html += "<div><circle></circle><div>무상 유지보수</div><input type='radio' name='mtncRd" + i + "' value='mtncY" + i + "' id='mtncY" + i + "' checked onclick='drawDefaultMaintenance(this)'></input><label for='mtncY" + i + "'>Y</label>";
+        html += "<input type='radio' name='mtncRd" + i + "' value='mtncN" + i + "' id='mtncN" + i + "' checked onclick='drawDefaultMaintenance(this)'></input><label for='mtncN" + i + "'>N</label>";
+        html += "</div>";
+        html += "</div><div><circle></circle><div>기간</div><input type='text'></input><span>년</span><input type='text'></input><span>월</span></div>";
+        el2.innerHTML = html;
+
+        document.getElementsByClassName("product-list")[0].appendChild(el2);
+
+    }
+
+    cnt = document.getElementsByClassName("ctrt-modalData")[0];
+
+    el = document.createElement("div");
+    el.setAttribute("class", "sub-title");
+    el.innerHTML = "<circle></circle><div>2. 유지보수</div><line></line>";
+    cnt.append(el);
+
+    el = document.createElement("div");
+    el.setAttribute("class", "crudBtns");
+    cnt.append(el);
+
+
+    // el2 = document.createElement("button");
+    // el2.setAttribute("class", "mtncForm");
+    // el2.innerHTML = "추가";
+    // el.appendChild(el2);
+
+    el = document.createElement("div");
+    el.setAttribute("class", "mtnc-list");
+    cnt.append(el);
+
+    el = document.createElement("div");
+    el.setAttribute("class", "mtnc-listTitle");
+    cnt.append(el);
+
+
+    let mtncTitle = [["항목", "product"], ["고객사", "customer"], ["시작일", "startDate"], ["종료일", "endDate"], ["엔지니어", "engineer"], ["금액", "mtncAmount"]];
+
+    for (let i = 0; i < mtncTitle.length; i++) {
+        el2 = document.createElement("div");
+        el2.innerHTML = mtncTitle[i][0];
+        el.appendChild(el2);
+    }
+
+}
+
+
+function drawDefaultMaintenance(obj) {
+    let mtncTitle = [["항목", "product"], ["고객사", "customer"], ["시작일", "startDate"], ["종료일", "endDate"], ["엔지니어", "engineer"], ["금액", "mtncAmount"]];
+    let rdVal = $(obj).val().substring(4, 5);
+    let productNum;
+    let product, productName, customer, startDate, endDate, engineer, mtncAmount;
+    let year, month;
+    if (rdVal == "Y") {
+        productNum = $(obj).val().substring(5, 6);
+        if (document.getElementsByClassName("mtnc-detail" + productNum).length < 1) {
+            product = $(".product-item")[productNum].children[0].dataset.detail;
+            customer = $(".product-item")[productNum].children[1].dataset.detail;
+            startDate = $(".product-option")[productNum].children[0].children[0].children[2].value;
+            year = $(".product-option")[productNum].children[1].children[2].value;
+            month = $(".product-option")[productNum].children[1].children[4].value;
+            mtncAmount = "0";
+
+
+            let el, cnt, html = "";
+            cnt = document.getElementsByClassName("ctrt-modalData")[0];
+            el = document.createElement("div");
+            el.setAttribute("class", "mtnc-data");
+            cnt.appendChild(el);
+
+            cnt = el;
+
+            el = document.createElement("div");
+            el.setAttribute("class", "mtnc-detail" + productNum);
+            cnt.appendChild(el);
+
+            for (x in storage.product) {
+                if (storage.product[x].no == product) {
+                    productName = storage.product[x].name;
+                }
+            }
+
+
+
+            html += "<div data-detail='" + product + "'>" + productName + "</div>"
+
+            html += "<div data-detail='" + customer + "'></div>"
+
+            html += "<div><input type='date' value='" + startDate + "'disabled></input></div>"
+
+            html += "<div></div>"
+
+            html += "<div></div>"
+            html += "<div>" + mtncAmount + "</div>"
+            el.innerHTML = html;
+        }
+    } else {
+        productNum = $(obj).val().substring(5, 6); $(obj).val().substring(5, 6);
+        document.getElementsByClassName("mtnc-detail" + productNum)[0].remove();
+    }
+  
 }

@@ -29,19 +29,19 @@ function getDetailView() {
     } else if (splitArr[2] == "myreturn") {
         detailHtml += "<div class='listPageDiv'><div class='mainBtnDiv crudBtns'><button onclick='showList()'>목록보기</button><button class='printBtn' onclick='openPrintTab();' >인쇄하기</button>";
         detailHtml += "<button type='button' name='repostBtn' onclick='repostReport()'>기안하기</button></div>";
-    } else if(splitArr[2] == "mytemp") {
-        detailHtml +=  "<div class='listPageDiv'><div class='mainBtnDiv crudBtns'><button type='button' onclick='showList()'>목록보기</button><button type='button' onclick='reWriteTemp()'>이어서 작성</button><button type='button' onclick='deleteTemp()'>삭제하기</button></div>";
+    } else if (splitArr[2] == "mytemp") {
+        detailHtml += "<div class='listPageDiv'><div class='mainBtnDiv crudBtns'><button type='button' onclick='showList()'>목록보기</button><button type='button' onclick='reWriteTemp()'>이어서 작성</button><button type='button' onclick='deleteTemp()'>삭제하기</button></div>";
     }
     else {
         detailHtml += "<div class='listPageDiv'><div class='mainBtnDiv crudBtns'><button onclick='showList()'>목록보기</button><button class='printBtn' onclick='openPrintTab();' >인쇄하기</button></div>";
     }
 
     if (splitArr[2] == "mytemp") {
-        detailHtml +=  "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div></div></div>";
+        detailHtml += "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div></div></div>";
     } else {
         detailHtml += "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div></div>";
     }
-    
+
 
     $(".listDiv").html(detailHtml);
     $(".seletedForm").html(testForm);
@@ -257,7 +257,7 @@ function drawCommentLine() {
         appLineArr.push(data);
     }
 
-    let html = "<div class='readDiv'><div>열람</div><div><label for='deptRd'><input type='radio' id='deptRd' name='rd' value='dept' disabled/>작성자 소속 부서</label><label for='noneRd'><input type='radio' id='noneRd' name='rd' value='none' disabled/>열람 설정 없음</label></div></div>" +
+    let html = "<div class='readDiv'><div>열람</div><div><label for='deptRd'><input type='radio' id='deptRd' name='rd' value='dept' disabled style='display : inline;'/>기안자 소속 부서</label><label for='noneRd'><input type='radio' id='noneRd' name='rd' value='none' disabled style='display:inline;/>열람 설정 없음</label></div></div>" +
         "<div><input class='inputFile' multiple='' name='attached[]' type='file' onchange='setSelectedFiles()' style='display: none;'></div><div class='readDiv selectedFile'><div>첨부파일</div><div><div class='selectedFileDiv'></div></div></div>";
     let detail =
         "<div class='lineDiv'><div class='tapLine tapLineTitle'><div>타입</div><div>이름</div><div>상태</div><div>일자</div><div>의견</div></div>";
@@ -738,3 +738,97 @@ function getYmdShortSlash(date) {
         (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
     );
 }
+
+
+
+function toReadMode() {
+    $(".list_comment").attr("data-tag", "readTag");
+    $(".detailDiv").removeClass("detailDivHide");
+    $(".detailcontentDiv").addClass("detailcontentHide");
+    $(".datailTitlebox").hide();
+    $(".detailcontentbox").hide();
+    $(".inputs").attr("readonly", true);
+    $(".inputsAuto").attr("readonly", true);
+    $(".datailTitlebox").hide();
+    $(".insertbtn").hide();
+    $(".deletebtn").hide();
+    if (storage.reportDetailData.formId == "doc_Form_Consult") {
+        $("#TRS").prop("disabled", true);
+        $("#BUY").prop("disabled", true);
+
+    }
+
+}
+
+function toWriteMode() {
+    $(".list_comment").attr("data-tag", "writeTag");
+    $(".detailDiv").addClass("detailDivHide");
+    $(".detailcontentDiv").removeClass("detailcontentHide");
+    $(".datailTitlebox").show();
+    $(".detailcontentbox").show();
+    $(".inputs").attr("readonly", false);
+    $(".insertbtn").show();
+    $(".deletebtn").show();
+
+    if (storage.reportDetailData.formId == "doc_Form_Consult") {
+        $("#TRS").prop("disabled", false);
+        $("#BUY").prop("disabled", false);
+    }
+
+}
+
+function insertData(reportForm) { // let reportForm = "Consult"; 
+    let target = $(".insertedDataList");
+    let dataNoneForm = "<div class='detailcontentDiv'>";
+    let title = [
+      "date",
+      "customer",
+      "product",
+      "price",
+      "quantity",
+      "amount",
+      "tax",
+      "total",
+      "remark",
+    ];
+
+    for (let i = 0; i < title.length; i++) {
+      if (i < title.length - 1) {
+        if (i == 0) {
+          dataNoneForm +=
+            "<input onchange='this.dataset.detail=this.value;' type='date' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs doc_Form_" +
+            reportForm +
+            "_" +
+            title[i] +
+            "'/>";
+        } else if (i == 3 || i == 4 || i == 5 || i == 6 || i == 7) {
+          dataNoneForm +=
+            "<input type='text' oninput='setNum(this)'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs doc_Form_" +
+            reportForm +
+            "_" +
+            title[i] +
+            "'/>";
+        } else {
+          dataNoneForm +=
+            "<input type='text' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)'  style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs doc_Form_" +
+            reportForm +
+            "_" +
+            title[i] +
+            "'/>";
+        }
+      } else
+        dataNoneForm +=
+          "<input type='text' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs  doc_Form_" +
+          reportForm +
+          "_" +
+          title[i] +
+          "'/>";
+    }
+
+
+    dataNoneForm +=
+      "<div  class ='detailcontentbox'><input type='checkbox' class='detailBox'/></div></div>";
+    target.append(dataNoneForm);
+
+
+  }

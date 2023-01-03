@@ -23,16 +23,17 @@ import lombok.Setter;
 
 public class Contract extends SimpleContract {
 
-    private int no;
-    private int employee;
-    private String coworker;
-    private int customer;
-    private String detail;
-    private Date supplied;
-    private Date approved;
-    private String taxInclude;
-    private int profit;
- 
+
+   private String coWorker;
+   private int customer;
+   private String detail;
+   private Date supplied;
+   private Date approved;
+   private String taxInclude;
+   private Date created;
+   private Date  modified;
+   private Date  deleted;
+
 
     public void setTaxInclude(String yn) {
         taxInclude = yn;

@@ -18,7 +18,6 @@
   padding:  0.5em 0 ;
 }
 
-
 .container {
   position: relative;
   width: 100%;
@@ -26,10 +25,8 @@
   overflow: auto;
   box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
   display: inline-block;
-  /* margin-top: 0.6%; */
   overflow: auto;
-  /* height: 92vh; */
-  min-height: 100%;
+  min-height: calc(100% - 4px);
 }
 
 .container hr {
@@ -68,15 +65,14 @@
 
 }
 
-
 .ContentDiv>div:nth-child(n+1):nth-child(-n+2) {
   margin-bottom: 20px;
 }
 
+
 .selector .stepLabel {
   color: #99989843;
 }
-
 
 .selector .formDetail {
   padding: 1em;
@@ -183,23 +179,7 @@
   justify-content: left;
 }
 
-/* .ContentDiv>div:nth-child(3) button {
 
-  margin-left: 1em;
-
-} */
-
-/* End 결재양식 선택  ====================================================   */
-
-
-/* Start ======================== 결재선 모달 관련 ============================= */
-/* .createLineBtn {
-  font-weight: bolder;
-  font-size: 15px;
-  color: #406c92;
-  background-color: white;
-  border: none;
-} */
 
 
 .modal-wrap {
@@ -215,19 +195,11 @@
 
 }
 
-/* .modalHead {
-  height: 50px;
-  color: #ffffff;
-  background-color: #2147b1;
-  padding-left: 10px;
-  padding-right: 10px;
-} */
-
 .gwModal {
   background-color: white;
   width: 60%;
   border-radius: 0.3em;
-  /* padding: 0.5em 0.5em 0.9em 0.5em; */
+ 
 }
 
 .close-wrap {
@@ -451,20 +423,6 @@
 .selector .insertedDetail .fileInsertContainer {
   border: 1px solid rgb(188, 185, 185);
 }
-
-/* .readContainer div:first-of-type {
-  padding: 0.5em;
-  background-color: rgb(208, 206, 206);
-  text-align: center;
-  border-right: 1px solid rgb(188, 185, 185);
-}
-
-.readContainer div:not(:first-of-type){
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-right: 1px solid rgb(188, 185, 185);
-} */
 
 
 .inputsAuto {
