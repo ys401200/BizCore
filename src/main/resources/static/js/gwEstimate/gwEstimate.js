@@ -1,8 +1,37 @@
-init();
-prepareForm();
+let R = {};
+
+$(document).ready(() => {
+  estInit();
+  prepareForm();
+});
+
+
+function estInit() {
+  cipher.aes.iv = localStorage.getItem("aesIv");
+  cipher.aes.key = localStorage.getItem("aesKey");
+  cipher.rsa.public.modulus = localStorage.getItem("rsaModulus");
+  cipher.rsa.public.exponent = localStorage.getItem("rsaExponent");
+
+  msg.cnt = document.getElementsByClassName("msg_cnt")[0];
+
+  getCommonCode();
+  getUserMap();
+  getDeptMap();
+  getBasicInfo();
+  getCustomer();
+  getUserRank();
+  getPersonalize();
+  noteLiveUpdate();
+  getStorageList();
+
+}
+
+
+
 
 function prepareForm() {
   let aesKey, aesIv;
+
 
   // 보안 키 세팅
   aesKey = localStorage.getItem("aesKey");
@@ -11,7 +40,6 @@ function prepareForm() {
   if (aesIv !== undefined && aesIv !== null) cipher.aes.iv = aesIv;
   // getProductList();
   // getEstmVerList(estmNo);
-  toReadMode();
   getSoppDetailData();
   ckeditor.config.readOnly = false;
   window.setTimeout(setEditor(document.getElementsByClassName("sopp-desc")[0]), 100);
@@ -34,6 +62,7 @@ function getSoppDetailData() {
   let url;
   url = apiServer + "/api/project/sopp/" + splitArr[3];
 
+
   $.ajax({
     "url": url,
     "method": "get",
@@ -55,6 +84,25 @@ function getSoppDetailData() {
     }
   });
 
+
+
+
+
+  fetch(apiServer + "/api/project/sopp/" + splitArr[3])
+    .catch((error) => console.log("error:", error))
+    .then(response => response.json())
+    .then(response => {
+      let data;
+      if (response.result === "ok") {
+        data = response.data;
+        data = cipher.decAes(data);
+        data = JSON.parse(data);
+        R.sopp = new Sopp2(data.sopp);
+        R.sopp.getSchedule();
+      } else {
+        console.log(response.msg);
+      }
+    });
 
 }
 
@@ -169,7 +217,7 @@ function setEstData() {
 
     outHtml = outSumTarget.html();
     outHtml += "<div class='detailcontentDiv'><input value='매출' disabled style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs doc_Form_SalesReport_type'></input>"
-    outHtml += "<input type='date' onchange='this.dataset.detail=this.value;' data-detail='" + items[i].remark + "' value='" + items[i].remark + "'  style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs doc_Form_SalesReport_date'></input>"
+    // outHtml += "<input type='date' onchange='this.dataset.detail=this.value;' data-detail='" + items[i].remark + "' value='" + items[i].remark + "'  style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs doc_Form_SalesReport_date'></input>"
     outHtml += "<input type='text' style='text-overflow:ellipsis;padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'  data-detail='" + storage.soppDetailData.sopp.customer + "' value='" + storage.customer[storage.soppDetailData.sopp.customer].name + "' onkeyup='this.dataset.detail=this.value'  class='outCus inputs doc_Form_SalesReport_customer'></input>"
     outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'  data-detail='" + items[i].item + "' value='" + itemTitle + "' onkeyup='this.dataset.detail=this.value'  data-detail='' value='" + items[i].item + "' class='inputs outProduct doc_Form_SalesReport_product'></input>"
     outHtml += "<input type='text' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;'oninput='setNum(this)' data-detail='" + items[i].price.toLocaleString() + "' value='" + items[i].price.toLocaleString() + "'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)'  class='inputs outPrice doc_Form_SalesReport_price'></input>"
@@ -210,6 +258,56 @@ function setEstData() {
 
 
   getTotalCount2();
+
+
+
+
+
+
+
+
+  let scheduleList = R.sopp.schedules;
+
+  let html = "";
+  for (let i = 0; i <= scheduleList.length - 1; i++) {
+    let from, to, title, content, writer, place, schedule;
+    schedule = scheduleList[i];
+    title = (schedule.title === null || schedule.title === undefined || schedule.title === "") ? "" : schedule.title;
+    from = (schedule.from === null || schedule.from === undefined || schedule.from === "" || schedule.from == "0") ? "" : getYmdHypen(schedule.from);
+    to = (schedule.to === null || schedule.to === undefined || schedule.to === "" || schedule.to == "0") ? "" : schedule.to;
+    content = (schedule.content === null || schedule.content === undefined || schedule.content === "") ? "" : schedule.content;
+    writer = (schedule.writer === null || schedule.writer === undefined || schedule.writer === "") ? "" : schedule.writer;
+    place = (schedule.related.place == null || schedule.related.place == undefined || schedule.related.place == "") ? "" : schedule.related.place;
+
+
+
+    html += "<div class='insertedTechSche'>";
+    html += "<input type='date' class='techDate'  data-detail='" + from + "' value='" + from + "' style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+    html += "<input type='text' class='techType' data-detail='' value='' style='text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+    html += "<input type='text' class='techTitle' data-detail='" + title + "' value='" + title + "' style='text-overflow:ellipsis;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+    html += "<div class='techContent' data-detail='" + content + "' value='" + content + "'  style='text-overflow:ellipsis;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'>" + content + "</div>";
+    html += "<input type='text' class='techWriter' data-detail='" + storage.user[writer].userName + "' value='" + storage.user[writer].userName + "'  style='text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+    html += "<input type='text' class='techPlace' data-detail='" + place + "' value='" + place + "' style='text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/></div>";
+
+
+
+  }
+
+  $(".techSche").html(html);
+
+
+
+  let mtnc = mtncData;
+  console.log(mtnc); 
+
+  let mtnchtml = ""; 
+  
+
+
+
+
+
+
 
 
   // let schecreated, scheType, scheTitle, scheContent, schePlace;
@@ -270,7 +368,6 @@ function setEstData() {
     let tt = selectArrs[i];
     $(tt).css("color", "black");
   }
-
 
   toReadMode();
   $("select[name='saveLineSelect']").attr("disabled", false);
@@ -605,50 +702,50 @@ function getTotalCount2() {
   $(".outSumAllTotal").attr("data-detail", Number(totalCount2).toLocaleString() + "원");
 
 
-  let inAmountCount = Number(0);
-  let outAmountCount = Number(0);
+  // let inAmountCount = Number(0);
+  // let outAmountCount = Number(0);
 
-  for (let i = 0; i < $(".inAmount").length; i++) {
-    if ($(".inAmount")[i].dataset.detail != undefined) {
-      inAmountCount += Number($(".inAmount")[i].dataset.detail.replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", ""));
-      console.log("확인2");
-    } else {
-      console.log("확인3");
-      inAmountCount += 0;
-    }
-  }
-
-
-  for (let i = 0; i < $(".outAmount").length; i++) {
-    if ($(".outAmount")[i].dataset.detail != undefined) {
-      outAmountCount += Number($(".outAmount")[i].dataset.detail.replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", ""));
-    } else {
-      outAmountCount += 0;
-    }
-  }
-  $(".inAmountTotal").val(Number(inAmountCount).toLocaleString() + "원");
-  $(".inAmountTotal").attr("data-detail", Number(inAmountCount).toLocaleString() + "원");
-  $(".outAmountTotal").val(Number(outAmountCount).toLocaleString() + "원");
-  $(".outAmountTotal").attr("data-detail", Number(outAmountCount).toLocaleString() + "원");
+  // for (let i = 0; i < $(".inAmount").length; i++) {
+  //   if ($(".inAmount")[i].dataset.detail != undefined) {
+  //     inAmountCount += Number($(".inAmount")[i].dataset.detail.replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", ""));
+  //     console.log("확인2");
+  //   } else {
+  //     console.log("확인3");
+  //     inAmountCount += 0;
+  //   }
+  // }
 
 
-  let profit, profitper;
-  if ($(".outAmountTotal").val() != "" && $(".inAmountTotal").val() != "") {
-    profit = Number($(".outAmountTotal").val().split("원")[0].replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "")) - Number($(".inAmountTotal").val().split("원")[0].replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", ""));
-    if (Number($(".outAmountTotal").val().split("원")[0].replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "")) != 0) {
-      profitper = (profit / Number($(".outAmountTotal").val().split("원")[0].replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", ""))) * 100;
-      profitper = Math.round(profitper * 10) / 10;
-    } else {
-      profitper = 0;
-    }
+  // for (let i = 0; i < $(".outAmount").length; i++) {
+  //   if ($(".outAmount")[i].dataset.detail != undefined) {
+  //     outAmountCount += Number($(".outAmount")[i].dataset.detail.replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", ""));
+  //   } else {
+  //     outAmountCount += 0;
+  //   }
+  // }
+  // $(".inAmountTotal").val(Number(inAmountCount).toLocaleString() + "원");
+  // $(".inAmountTotal").attr("data-detail", Number(inAmountCount).toLocaleString() + "원");
+  // $(".outAmountTotal").val(Number(outAmountCount).toLocaleString() + "원");
+  // $(".outAmountTotal").attr("data-detail", Number(outAmountCount).toLocaleString() + "원");
 
-    console.log(profit);
-    console.log(profitper + "확인");
-    $(".doc_Form_SalesReport_profit").val(Number(profit).toLocaleString() + "원");
-    $(".doc_Form_SalesReport_profit").attr("data-detail", Number(profit).toLocaleString() + "원");
-    $(".doc_Form_SalesReport_profitper").val(Number(profitper) + "%");
-    $(".doc_Form_SalesReport_profitper").attr("data-detail", Number(profitper) + "%");
-  }
+
+  // let profit, profitper;
+  // if ($(".outAmountTotal").val() != "" && $(".inAmountTotal").val() != "") {
+  //   profit = Number($(".outAmountTotal").val().split("원")[0].replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "")) - Number($(".inAmountTotal").val().split("원")[0].replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", ""));
+  //   if (Number($(".outAmountTotal").val().split("원")[0].replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "")) != 0) {
+  //     profitper = (profit / Number($(".outAmountTotal").val().split("원")[0].replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", ""))) * 100;
+  //     profitper = Math.round(profitper * 10) / 10;
+  //   } else {
+  //     profitper = 0;
+  //   }
+
+  //   console.log(profit);
+  //   console.log(profitper + "확인");
+  //   $(".doc_Form_SalesReport_profit").val(Number(profit).toLocaleString() + "원");
+  //   $(".doc_Form_SalesReport_profit").attr("data-detail", Number(profit).toLocaleString() + "원");
+  //   $(".doc_Form_SalesReport_profitper").val(Number(profitper) + "%");
+  //   $(".doc_Form_SalesReport_profitper").attr("data-detail", Number(profitper) + "%");
+  // }
 
 }
 //거래처 데이더리스트 가져오는 함수 

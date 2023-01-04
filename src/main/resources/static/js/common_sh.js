@@ -25,34 +25,34 @@ class Contract {
             this.saleDate = each.saleDate == undefined ? 0 : each.saleDate;
             this.appLine = each.appLine;
             this.docNo = each.docNo;
-        } else if (each === null || each === undefined || !(typeof each === "object" && each.constructor.name === "Contract")) {
+            // } else if (each === null || each === undefined || !(typeof each === "object" && each.constructor.name === "Contract")) {
 
-            this.no = each.no;
-            this.coWorker = each.coWorker == undefined ? [] : JSON.parse(each.coWorker);
-            this.created = each.created;
-            this.title = each.title;
-            this.employee = each.employee;
-            this.related = each.related;
-            this.customer = each.customer;
-            this.saleDate = each.saleDate == undefined ? 0 : each.saleDate;
-            this.amount = each.amount;
-            this.taxInclude = each.taxInclude;
-            this.profit = each.profit;
+            //     this.no = each.no;
+            //     this.coWorker = each.coWorker == undefined ? [] : JSON.parse(each.coWorker);
+            //     this.created = each.created;
+            //     this.title = each.title;
+            //     this.employee = each.employee;
+            //     this.related = each.related;
+            //     this.customer = each.customer;
+            //     this.saleDate = each.saleDate == undefined ? 0 : each.saleDate;
+            //     this.amount = each.amount;
+            //     this.taxInclude = each.taxInclude;
+            //     this.profit = each.profit;
 
 
-            this.schedules = [];
-            this.attached = [];
-            this.approvedAttached = [];
-            this.suppliedAttached = [];
-            this.trades = null;
-            this.maintenance = [];
-            this.modified = null;
-            this.supplied = 0;
-            this.approved = 0;
-            this.appLine = undefined;
-            this.docNo = undefined;
-        }
-        else {
+            //     this.schedules = [];
+            //     this.attached = [];
+            //     this.approvedAttached = [];
+            //     this.suppliedAttached = [];
+            //     this.trades = null;
+            //     this.maintenance = [];
+            //     this.modified = null;
+            //     this.supplied = 0;
+            //     this.approved = 0;
+            //     this.appLine = undefined;
+            //     this.docNo = undefined;
+            // }
+        } else {
             this.title = "";
             this.employee = 0;
             this.amount = "";
@@ -1199,10 +1199,24 @@ function getYmdSlash2() {
     );
 }
 
+function getYmdSlashFull(date) {
+    let d = new Date(date);
+    return (
+        (d.getFullYear()) +
+        "-" +
+        (d.getMonth() + 1 > 9
+            ? (d.getMonth() + 1).toString()
+            : "0" + (d.getMonth() + 1)) +
+        "-" +
+        (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
+    );
+}
 
-function setPrevModal() {
+
+function setPrevModal(no) {
 
     modal.show();
+    $("#confirm").attr("onclick", "openSaleReport(" + no + ")");
     let el, el2, cnt;
     let html = "";
 
@@ -1242,9 +1256,9 @@ function setPrevModal() {
     let name = ["조달", "일반", "고객사", "협력사", "설치장소", "대금"];
     for (let i = 0; i < 2; i++) {
         if (i == 1) {
-            html += "<input type='radio' name='procureRd' value='" + type[i] + "' id='" + type[i] + "' ></input><label for='" + type[i] + "'>" + name[i] + "</label>";
+            html += "<input type='radio' name='procureRd' value='" + type[i] + "' id='" + type[i] + "' disabled></input><label for='" + type[i] + "'>" + name[i] + "</label>";
         } else {
-            html += "<input type='radio' name='procureRd' value='" + type[i] + "' id='" + type[i] + "'></input><label for='" + type[i] + "'>" + name[i] + "</label>";
+            html += "<input type='radio' name='procureRd' value='" + type[i] + "' id='" + type[i] + "' disabled></input><label for='" + type[i] + "'>" + name[i] + "</label>";
         }
     }
     el.innerHTML = html;
@@ -1270,7 +1284,7 @@ function setPrevModal() {
             data = storage.customer[R.sopp.partner].name;
         }
         el = document.createElement("div");
-        el.innerHTML = "<input type='text' class='info-" + type[i] + "' value='" + data + "'></input>";
+        el.innerHTML = "<input type='text' class='info-" + type[i] + "' value='" + data + "' disabled></input>";
         cnt.appendChild(el);
 
     }
@@ -1283,7 +1297,6 @@ function setPrevModal() {
     cnt.append(el);
 
     let items = storage.estimateList[storage.estimateList.length - 1].related.estimate.items;
-    let item, price, quantity, supplier, vat, remark;
 
     let prdtTableTitle = [
         ["항목", "item"],
@@ -1350,11 +1363,11 @@ function setPrevModal() {
         el2.setAttribute("class", "product-option");
         let html = "";
         html += "<div>";
-        html += "<div><circle></circle><div>일자</div><input type='date'></input></div>";
+        html += "<div><circle></circle><div>개시일</div><input type='date' onchange='dateChange(this)'></input><input type='checkbox' class='examineCb" + i + "' onclick='examineCheck(this)' checked>검수일</input></div>";
         html += "<div><circle></circle><div>무상 유지보수</div><input type='radio' name='mtncRd" + i + "' value='mtncY" + i + "' id='mtncY" + i + "' checked onclick='drawDefaultMaintenance(this)'></input><label for='mtncY" + i + "'>Y</label>";
         html += "<input type='radio' name='mtncRd" + i + "' value='mtncN" + i + "' id='mtncN" + i + "' checked onclick='drawDefaultMaintenance(this)'></input><label for='mtncN" + i + "'>N</label>";
         html += "</div>";
-        html += "</div><div><circle></circle><div>기간</div><input type='text'></input><span>년</span><input type='text'></input><span>월</span></div>";
+        html += "</div><div><circle></circle><div>기간</div><input type='text' onkeyup='lengthChange(this)'></input><span>년</span><input type='text' onkeyup='lengthChange(this)'></input><span>개월</span></div>";
         el2.innerHTML = html;
 
         document.getElementsByClassName("product-list")[0].appendChild(el2);
@@ -1369,14 +1382,14 @@ function setPrevModal() {
     cnt.append(el);
 
     el = document.createElement("div");
-    el.setAttribute("class", "crudBtns");
     cnt.append(el);
 
 
-    // el2 = document.createElement("button");
-    // el2.setAttribute("class", "mtncForm");
-    // el2.innerHTML = "추가";
-    // el.appendChild(el2);
+    el2 = document.createElement("button");
+    el2.setAttribute("class", "mtncForm");
+    el2.innerHTML = "추가";
+    el.setAttribute("onclick", "createMtnc()");
+    el.appendChild(el2);
 
     el = document.createElement("div");
     el.setAttribute("class", "mtnc-list");
@@ -1395,6 +1408,10 @@ function setPrevModal() {
         el.appendChild(el2);
     }
 
+    el = document.createElement("div");
+    el.setAttribute("class", "mtnc-data");
+    cnt.appendChild(el);
+
 }
 
 
@@ -1410,18 +1427,27 @@ function drawDefaultMaintenance(obj) {
             product = $(".product-item")[productNum].children[0].dataset.detail;
             customer = $(".product-item")[productNum].children[1].dataset.detail;
             startDate = $(".product-option")[productNum].children[0].children[0].children[2].value;
-            year = $(".product-option")[productNum].children[1].children[2].value;
-            month = $(".product-option")[productNum].children[1].children[4].value;
+            year = $(".product-option")[productNum].children[1].children[2].value == "" ? 0 : $(".product-option")[productNum].children[1].children[2].value;
+            month = $(".product-option")[productNum].children[1].children[4].value == "" ? 0 : $(".product-option")[productNum].children[1].children[4].value;
             mtncAmount = "0";
+            if (startDate == "") {
+                startDate = "검수일";
+                endDate = "+ " + year + "년 " + month + "개월";
+            } else {
+                endDate = new Date(startDate);
+                endDate = new Date(endDate.setFullYear(endDate.getFullYear() + year * 1));
+                endDate = new Date(endDate.setMonth(endDate.getMonth() + month * 1));
+                endDate = getYmdSlashFull(endDate);
+            }
 
 
             let el, cnt, html = "";
-            cnt = document.getElementsByClassName("ctrt-modalData")[0];
-            el = document.createElement("div");
-            el.setAttribute("class", "mtnc-data");
-            cnt.appendChild(el);
-
-            cnt = el;
+            cnt = document.getElementsByClassName("mtnc-data")[0];
+            // cnt = document.getElementsByClassName("ctrt-modalData")[0];
+            // el = document.createElement("div");
+            // el.setAttribute("class", "mtnc-data");
+            // cnt.appendChild(el);
+            // cnt = el;
 
             el = document.createElement("div");
             el.setAttribute("class", "mtnc-detail" + productNum);
@@ -1433,23 +1459,222 @@ function drawDefaultMaintenance(obj) {
                 }
             }
 
-
-
             html += "<div data-detail='" + product + "'>" + productName + "</div>"
 
-            html += "<div data-detail='" + customer + "'></div>"
+            html += "<div data-detail='" + customer + "'>" + storage.customer[customer].name + "</div>"
 
-            html += "<div><input type='date' value='" + startDate + "'disabled></input></div>"
+            html += "<div>" + startDate + "</div>";
 
-            html += "<div></div>"
+            html += "<div>" + endDate + "</div>";
 
-            html += "<div></div>"
+            html += "<div><select style='width:100%'>";
+
+            for (let i = 0; i <= R.sopp.coWorker.length - 1; i++) {
+                html += "<option value='" + R.sopp.coWorker[i] + "'>" + storage.user[R.sopp.coWorker[i]].userName + "</option>";
+            }
+
+            html += "</select></div>";
+
             html += "<div>" + mtncAmount + "</div>"
             el.innerHTML = html;
         }
     } else {
         productNum = $(obj).val().substring(5, 6); $(obj).val().substring(5, 6);
         document.getElementsByClassName("mtnc-detail" + productNum)[0].remove();
+
     }
-  
+
 }
+
+
+function examineCheck(obj) {
+    let productNum = obj.className;
+    let cnt;
+    productNum = productNum.split("examineCb")[1];
+    obj.previousElementSibling.value = "";
+    let year, month;
+    if (document.getElementsByClassName("mtnc-detail" + productNum).length > 0) {
+        cnt = document.getElementsByClassName("mtnc-detail" + productNum)[0];
+        year = document.getElementsByClassName("product-option")[productNum].children[1].children[2].value == "" ? 0 : document.getElementsByClassName("product-option")[productNum].children[1].children[2].value;
+        month = document.getElementsByClassName("product-option")[productNum].children[1].children[4].value == "" ? 0 : document.getElementsByClassName("product-option")[productNum].children[1].children[4].value;
+        cnt.children[2].innerHTML = "검수일";
+        cnt.children[3].innerHTML = "+" + year + "년 " + month + "개월";
+    }
+}
+
+
+function dateChange(obj) {
+    let year, month, endDate;
+    let productNum = obj.nextElementSibling.className;
+    productNum = productNum.split("examineCb")[1];
+    if (document.getElementsByClassName("mtnc-detail" + productNum).length > 0) {
+        cnt = document.getElementsByClassName("mtnc-detail" + productNum)[0];
+        cnt.children[2].innerHTML = obj.value;
+    }
+    $(obj).next().prop("checked", false);
+
+    year = document.getElementsByClassName("product-option")[productNum].children[1].children[2].value == "" ? 0 : document.getElementsByClassName("product-option")[productNum].children[1].children[2].value;
+    month = document.getElementsByClassName("product-option")[productNum].children[1].children[4].value == "" ? 0 : document.getElementsByClassName("product-option")[productNum].children[1].children[4].value;
+
+    endDate = new Date(obj.value);
+    endDate = new Date(endDate.setFullYear(endDate.getFullYear() + year * 1));
+    endDate = new Date(endDate.setMonth(endDate.getMonth() + month * 1));
+    endDate = getYmdSlashFull(endDate);
+
+    cnt.children[3].innerHTML = endDate;
+
+}
+
+function lengthChange(obj) {
+    let productNum, year, month, cnt, startDate, endDate;
+    let parents = document.getElementsByClassName("product-option");
+    for (let i = 0; i < parents.length; i++) {
+        if (obj.parentElement.parentElement == parents[i]) {
+            productNum = i;
+        }
+    }
+
+    year = document.getElementsByClassName("product-option")[productNum].children[1].children[2].value == "" ? 0 : document.getElementsByClassName("product-option")[productNum].children[1].children[2].value;
+    month = document.getElementsByClassName("product-option")[productNum].children[1].children[4].value == "" ? 0 : document.getElementsByClassName("product-option")[productNum].children[1].children[4].value;
+    startDate = document.getElementsByClassName("product-option")[productNum].children[0].children[0].children[2].value;
+    endDate = new Date(startDate);
+    endDate = new Date(endDate.setFullYear(endDate.getFullYear() + year * 1));
+    endDate = new Date(endDate.setMonth(endDate.getMonth() + month * 1));
+    endDate = getYmdSlashFull(endDate);
+
+    cnt = document.getElementsByClassName("mtnc-detail" + productNum)[0];
+    if (document.getElementsByClassName("examineCb" + productNum)[0].checked) {
+        cnt.children[3].innerHTML = "+" + year + "년 " + month + "개월";
+    } else {
+        cnt.children[2].innerHTML = startDate;
+        cnt.children[3].innerHTML = endDate;
+    }
+
+}
+
+
+function createMtnc() {
+    let el, cnt, length, itemLength, html;
+
+    let custListHtml = "<datalist id='mtnc-customerList'>";
+    for (x in storage.customer) {
+        custListHtml +=
+            "<option data-value='" +
+            x +
+            "' value='" +
+            storage.customer[x].name +
+            "'></option> ";
+    }
+    custListHtml += "</datalist>";
+
+    let productListhtml = "<datalist id='mtnc-productList'>";
+    for (let y = 0; y < storage.product.length; y++) {
+        productListhtml +=
+            "<option data-value='" +
+            storage.product[y].no +
+            "' value='" +
+            storage.product[y].name +
+            "'></option> ";
+    }
+    productListhtml += "</datalist>";
+
+    itemLength = document.getElementsByClassName("product-item").length;
+    cnt = document.getElementsByClassName("mtnc-data")[0];
+    length = cnt.children.length;
+    el = document.createElement("div");
+    el.setAttribute("class", "mtnc-detail");
+    html = "";
+
+    html += "<div data-detail=''><input type='text' list='mtnc-productList' style='width:95%'>" + productListhtml + "</input></div>"
+
+    html += "<div data-detail=''><input type='text' list='mtnc-customerList' style='width:95%'>" + custListHtml + "</input></div>"
+
+    html += "<div><input type='date' style='width:95%'></input></div>";
+
+    html += "<div><input type='date' style='width:95%'></input></div>";
+
+    html += "<div><select style='width:100%'  data-detail='' >";
+
+    for (let i = 0; i <= R.sopp.coWorker.length - 1; i++) {
+        html += "<option value='" + R.sopp.coWorker[i] + "'>" + storage.user[R.sopp.coWorker[i]].userName + "</option>";
+    }
+
+    html += "</select></div>";
+
+    html += "<div><input type='text' style='width:100%; text-align:center;' data-detail='' onkeyup='this.dataset.detail=this.value' ></input></div>";
+
+    html += "<div><button onclick='this.parentElement.parentElement.remove()'>삭제</button></div>"
+    el.innerHTML = html;
+    cnt.appendChild(el);
+
+}
+
+
+function openSaleReport(no) {
+
+    modal.hide();
+
+    R.popup = window.open("/gw/estimate/" + no, "soppStageUp", "width=1000,height=800,left=100,top=100");
+    window.setTimeout(() => {
+        setMtncDate()
+    }, 300);
+
+
+}
+
+
+
+function setMtncDate() {
+
+    // 무상 유지보수 데이터 
+    let productLength = storage.estimateList[storage.estimateList.length - 1].related.estimate.items.length;
+    let data = [];
+    let detail;
+    for (let i = 0; i <= productLength - 1; i++) {
+        let cnt = document.getElementsByClassName("mtnc-detail" + i)[0];
+        if (cnt != undefined) {
+
+            detail = {
+                product: cnt.children[0].dataset.detail,
+                customer: cnt.children[1].dataset.detail,
+                startDate: cnt.children[2].innerHTML,
+                endDate: cnt.children[3].innerHTML,
+                engineer: cnt.children[4].children[0].value,
+                amount: cnt.children[5].innerHTML
+            }
+
+            data.push(detail);
+        }
+    }
+
+    // 임의로 추가한 유지보수 데이터 
+
+    let mtncDetail = document.getElementsByClassName("mtnc-detail");
+    for (let i = 0; i <= mtncDetail.length - 1; i++) {
+        let cnt = mtncDetail[i];
+
+        detail = {
+            product: cnt.children[0].children[0].value,
+            customer: cnt.children[0].children[1].value,
+            startDate: cnt.children[0].children[2].children[0].value,
+            endDate: cnt.children[0].children[3].children[0].value,
+            engineer: cnt.children[0].children[4].value,
+            amount: cnt.children[0].children[5].value,
+        }
+
+        data.push(detail);
+    }
+
+    storage.mtncData = data;
+    R.popup.mtncData = storage.mtncData;
+    
+}
+
+
+
+
+
+
+
+
+

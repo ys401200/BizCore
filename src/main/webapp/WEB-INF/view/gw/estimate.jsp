@@ -103,7 +103,7 @@
 					.subDataDetail>div {
 						text-align: center;
 						display: grid;
-						grid-template-columns: repeat(5, 1fr);
+						grid-template-columns: repeat(4, 1fr);
 						border-left: 1px solid black;
 						border-top: 1px solid black;
 					}
@@ -171,7 +171,7 @@
 					.detailDiv,
 					.detailcontentDiv {
 						display: grid;
-						grid-template-columns: 5% 10% 10% 12% 10% 5% 10% 8% 10% 15% 5%;
+						grid-template-columns: 5% 14% 14% 12% 5% 10% 10% 10% 15% 5%;
 						text-align: center;
 						border-left: 1px solid black;
 					}
@@ -180,21 +180,31 @@
 
 					.detailDivHide {
 						border-left: 1px solid black;
-						grid-template-columns: 5% 10% 10% 12% 10% 5% 10% 8% 10% 20%
+						grid-template-columns: 5% 14% 14% 12% 5% 10% 10% 10% 20%;
 					}
 
 					.detailcontentHide {
-						grid-template-columns: 5% 10% 10% 12% 10% 5% 10% 8% 10% 20%
+						grid-template-columns: 5% 14% 14% 12% 5% 10% 10% 10% 20%;
 					}
 
 
 
 					.detailDivSche {
 						display: grid;
-						grid-template-columns: 10% 10% 20% 45% 5% 10%;
+						grid-template-columns: 10% 10% 20% 40% 10% 10%;
 						text-align: center;
 						border-left: 1px solid black;
 					}
+
+					
+					.detailDivMtnc {
+						display: grid;
+						grid-template-columns: 20% 20%  15% 15%  10% 20%;
+						text-align: center;
+						border-left: 1px solid black;
+					}
+
+
 
 					.insertedData,
 					.detailcontentDiv {
@@ -439,7 +449,7 @@
 
 					.scheData>div {
 						display: grid;
-						grid-template-columns: 10% 10% 20% 45% 5% 10%;
+						grid-template-columns: 10% 10% 20% 40% 10% 10%;
 						border-left: 1px solid black;
 					}
 
@@ -551,7 +561,7 @@
 						<div class="subDataDetail">
 
 							<div>
-								<div>고객사 담당자</div>
+								<!-- <div>고객사 담당자</div> -->
 								<div>협력사</div>
 								<div>가능성</div>
 								<div>매출예정일</div>
@@ -559,9 +569,9 @@
 							</div>
 
 							<div>
-								<input type="text" class="inputs" data-detail=""
+								<!-- <input type="text" class="inputs" data-detail=""
 									onkeyup="this.dataset.detail=this.value" id="doc_Form_SalesReport_custmemberName"
-									style="padding:0.5em;">
+									style="padding:0.5em;"> -->
 								<input type="text" class="inputs" data-detail=""
 									onkeyup="this.dataset.detail=this.value" id="doc_Form_SalesReport_endCustName">
 								<input type=text onkeyup="setText(this)" class="inputs" data-detail=""
@@ -584,10 +594,10 @@
 								<button class=" insertbtn" onclick="insertData()">추가</button><button class="deletebtn"
 									onclick="deleteData()">삭제</button>
 							</div>
-							<div class="subTitle">매입매출내역</div>
+							<div class="subTitle">매출내역</div>
 							<div class="detailDiv">
 								<div class="datailTitle">구분</div>
-								<div class="datailTitle">거래일자</div>
+								<!-- <div class="datailTitle">거래일자</div> -->
 								<div class="datailTitle">거래처</div>
 								<div class="datailTitle">항목</div>
 								<div class="datailTitle">단가</div>
@@ -602,7 +612,7 @@
 
 							</div>
 						</div>
-
+						<!-- 
 						<div class="insertedDataList inSum"></div>
 						<div class="insertedTotalContainer inSumTotal">
 							<div>매입 합계</div>
@@ -610,7 +620,7 @@
 								style="border-right : 1px solid black;padding:0.3em;text-align:right;">
 							<input disabled
 								style="border : none;border-right : 1px solid black;padding:0.3em;text-align:right;" />
-						</div>
+						</div> -->
 						<div class="insertedDataList outSum"></div>
 						<div class="insertedTotalContainer outSumTotal">
 							<div>매출 합계</div>
@@ -620,16 +630,35 @@
 								style="border : none;border-right : 1px solid black;padding:0.3em;text-align:right;" />
 						</div>
 
-						<div class="calculateDiv">
+						<!-- <div class="calculateDiv">
 							<div>매입 합계</div><input type="text" class="inputsAuto inAmountTotal" data-detail="">
 							<div>매출 합계</div><input type="text" class="inputsAuto outAmountTotal" data-detail="">
 							<div>이익 합계</div><input type="text" class="inputsAuto doc_Form_SalesReport_profit"
 								data-detail="">
 							<div>이익률</div><input type="text" class="inputsAuto doc_Form_SalesReport_profitper"
 								data-detail="">
-						</div>
+						</div> -->
+
+
+
 						<div class="insertedData">
-							<div class="subTitle">기술지원내역</div>
+							<div class="subTitle">유지보수 내역</div>
+							<div class="detailDivMtnc">
+								<div class="datailTitle">항목</div>
+								<div class="datailTitle">고객사</div>
+								<div class="datailTitle">시작일</div>
+								<div class="datailTitle">종료일</div>
+								<div class="datailTitle">엔지니어</div>
+								<div class="datailTitle">금액</div>
+							</div>
+						</div>
+						<div class="slaesSche scheData"></div>
+
+
+
+
+						<div class="insertedData">
+							<div class="subTitle">관련 일정내역</div>
 							<div class="detailDivSche">
 								<div class="datailTitle">일자</div>
 								<div class="datailTitle">활동 종류</div>
@@ -643,7 +672,7 @@
 						</div>
 
 
-						<div class="insertedData">
+						<!-- <div class="insertedData">
 							<div class="subTitle">영업활동내역</div>
 							<div class="detailDivSche">
 								<div class="datailTitle">일자</div>
@@ -654,17 +683,20 @@
 								<div class="datailTitle">장소</div>
 							</div>
 						</div>
-						<div class="slaesSche scheData">
-
-						</div>
+						<div class="slaesSche scheData"></div> -->
 
 
-						<div class="soppFileContainer">
+
+
+
+
+
+						<!-- <div class="soppFileContainer">
 							<label style="border-bottom: 1px solid black; border-right: 1px solid black;">첨부파일</label>
 							<div style="border-bottom: 1px solid black; border-right: 1px solid black;">
 								<div class="soppFileData"></div>
 							</div>
-						</div>
+						</div> -->
 
 
 					</div>
@@ -672,7 +704,7 @@
 
 
 					<script>
-					
+
 						$(".checkAll").change(function () {
 							if ($(".checkAll").prop("checked") == true) {
 								$(".detailBox").prop("checked", true);
@@ -707,7 +739,7 @@
 							$(".btnDiv").show();
 						}
 
-						
+
 
 						function insertData() {
 							let val = $("input[name=setType]:checked").val();
@@ -736,67 +768,67 @@
 							let reportForm = "SalesReport";
 
 							for (let i = 0; i < title.length; i++) {
-							
-									if (i == 0) {
-										if (val == 1101) {
-											dataNoneForm +=
-												"<input value='매입' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs doc_Form_" +
-												reportForm +
-												"_" +
-												title[i] +
-												"'/>";
-										} else {
-											dataNoneForm +=
-												"<input value='매출' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs doc_Form_" +
-												reportForm +
-												"_" +
-												title[i] +
-												"'/>";
-										}
 
-									}
-									else if (i == 1) {
+								if (i == 0) {
+									if (val == 1101) {
 										dataNoneForm +=
-											"<input onchange='this.dataset.detail=this.value;' type='date' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs doc_Form_" +
+											"<input value='매입' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs doc_Form_" +
 											reportForm +
 											"_" +
 											title[i] +
 											"'/>";
-									} else if (i == 4 || i == 5 || i == 6 || i == 7) {
-										dataNoneForm +=
-											"<input type='text' oninput='setNum(this)'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs doc_Form_" +
-											reportForm +
-											"_" +
-											title[i] +
-											"'/>";
-
-									} else if (i == 8) {
-
-										if (val == 1101) {
-											dataNoneForm +=
-												"<input type='text' oninput='setNum(this)'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inTotal inputsAuto doc_Form_" +
-												reportForm +
-												"_" +
-												title[i] +
-												"'/>";
-										} else {
-											dataNoneForm +=
-												"<input type='text' oninput='setNum(this)'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='outTotal inputsAuto doc_Form_" +
-												reportForm +
-												"_" +
-												title[i] +
-												"'/>";
-										}
-
 									} else {
 										dataNoneForm +=
-											"<input type='text' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)'  style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs doc_Form_" +
+											"<input value='매출' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs doc_Form_" +
 											reportForm +
 											"_" +
 											title[i] +
 											"'/>";
 									}
-								
+
+								}
+								else if (i == 1) {
+									dataNoneForm +=
+										"<input onchange='this.dataset.detail=this.value;' type='date' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs doc_Form_" +
+										reportForm +
+										"_" +
+										title[i] +
+										"'/>";
+								} else if (i == 4 || i == 5 || i == 6 || i == 7) {
+									dataNoneForm +=
+										"<input type='text' oninput='setNum(this)'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs doc_Form_" +
+										reportForm +
+										"_" +
+										title[i] +
+										"'/>";
+
+								} else if (i == 8) {
+
+									if (val == 1101) {
+										dataNoneForm +=
+											"<input type='text' oninput='setNum(this)'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inTotal inputsAuto doc_Form_" +
+											reportForm +
+											"_" +
+											title[i] +
+											"'/>";
+									} else {
+										dataNoneForm +=
+											"<input type='text' oninput='setNum(this)'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='outTotal inputsAuto doc_Form_" +
+											reportForm +
+											"_" +
+											title[i] +
+											"'/>";
+									}
+
+								} else {
+									dataNoneForm +=
+										"<input type='text' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)'  style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs doc_Form_" +
+										reportForm +
+										"_" +
+										title[i] +
+										"'/>";
+								}
+
 							}
 
 
@@ -813,7 +845,7 @@
 									parent.remove();
 								}
 							}
-							
+
 							getTotalCount();
 						}
 
@@ -905,42 +937,42 @@
 
 
 						function getTotalCount() {
-					
-					
-								let intotalCount = Number(0);
-								for (let i = 0; i < $(".inTotal").length; i++) {
-									if ($(".inTotal")[i].dataset.detail != undefined) {
-										intotalCount += Number($(".inTotal")[i].dataset.detail.replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", ""));
-									} else {
-										intotalCount += 0;
-									}
+
+
+							let intotalCount = Number(0);
+							for (let i = 0; i < $(".inTotal").length; i++) {
+								if ($(".inTotal")[i].dataset.detail != undefined) {
+									intotalCount += Number($(".inTotal")[i].dataset.detail.replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", ""));
+								} else {
+									intotalCount += 0;
+								}
+							}
+
+							$(".inSumAllTotal").val(Number(intotalCount).toLocaleString() + "원");
+							$(".inSumAllTotal").attr("data-detail", Number(intotalCount).toLocaleString() + "원");
+							$(".inAmountTotal").val(Number(intotalCount).toLocaleString() + "원");
+							$(".inAmountTotal").attr("data-detail", Number(intotalCount).toLocaleString() + "원");
+
+
+
+							let totalCount = Number(0);
+							for (let i = 0; i < $(".outTotal").length; i++) {
+								if ($(".outTotal")[i].dataset.detail != undefined) {
+									totalCount += Number($(".outTotal")[i].dataset.detail.replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", ""));
+								} else {
+									totalCount += 0;
 								}
 
-								$(".inSumAllTotal").val(Number(intotalCount).toLocaleString() + "원");
-								$(".inSumAllTotal").attr("data-detail", Number(intotalCount).toLocaleString() + "원");
-								$(".inAmountTotal").val(Number(intotalCount).toLocaleString() + "원");
-								$(".inAmountTotal").attr("data-detail", Number(intotalCount).toLocaleString() + "원");
+							}
+
+							$(".outSumAllTotal").val(Number(totalCount).toLocaleString() + "원");
+							$(".outSumAllTotal").attr("data-detail", Number(totalCount).toLocaleString() + "원");
+							$(".outAmountTotal").val(Number(totalCount).toLocaleString() + "원");
+							$(".outAmountTotal").attr("data-detail", Number(totalCount).toLocaleString() + "원");
 
 
 
-								let totalCount = Number(0);
-								for (let i = 0; i < $(".outTotal").length; i++) {
-									if ($(".outTotal")[i].dataset.detail != undefined) {
-										totalCount += Number($(".outTotal")[i].dataset.detail.replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", "").replace(",", ""));
-									} else {
-										totalCount += 0;
-									}
 
-								}
-
-								$(".outSumAllTotal").val(Number(totalCount).toLocaleString() + "원");
-								$(".outSumAllTotal").attr("data-detail", Number(totalCount).toLocaleString() + "원");
-								$(".outAmountTotal").val(Number(totalCount).toLocaleString() + "원");
-								$(".outAmountTotal").attr("data-detail", Number(totalCount).toLocaleString() + "원");
-
-
-
-						
 
 
 							let profit, profitper;
@@ -961,11 +993,14 @@
 
 
 		</body>
+		<script src="/js/common_bi.js"></script>
+		<script src="/js/common_jh.js"></script>
 		<script src="/js/header.js"></script>
 		<script src="/js/cipher.js"></script>
 		<script src="/js/loading.js"></script>
 		<script src="/js/editor/ckeditor.js"></script>
 		<script src="/js/gwEstimate/gwEstimate.js"></script>
-	
+
+
 
 		</html>
