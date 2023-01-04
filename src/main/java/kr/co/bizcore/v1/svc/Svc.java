@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.bizcore.v1.domain.Dept;
 import kr.co.bizcore.v1.mapper.AccountingMapper;
+import kr.co.bizcore.v1.mapper.AccountingMapper2;
 import kr.co.bizcore.v1.mapper.BoardMapper;
 import kr.co.bizcore.v1.mapper.CommonMapper;
 import kr.co.bizcore.v1.mapper.ContractMapper;
@@ -116,6 +117,9 @@ public abstract class Svc {
 
     @Autowired
     protected Schedule2Mapper schedule2Mapper;
+
+    @Autowired
+    protected AccountingMapper2 accMapper2;
 
     @Autowired ProjectMapper projectMapper;
 
