@@ -381,5 +381,39 @@ public class ApiAccountingCtrl extends Ctrl{
         
         return result;
     }
+
+    // 계정과목을 전달하는 메서드
+    @GetMapping("/subject")
+    public String getSubject(HttpServletRequest request){
+        String result = null;
+        String compId = null;
+        String aesKey = null;
+        String aesIv = null;
+        Msg msg = null;
+        HttpSession session = null;
+
+        session = request.getSession();
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        compId = (String)session.getAttribute("compId");
+        msg = getMsg((String)session.getAttribute("lang"));
+        if(compId == null)  compId = (String)session.getAttribute("compId");
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        }else{
+            result = accService2.getAccountSubject(compId);
+            if(result == null){
+                result = "{\"result\":\"failure\",\"msg\":\"" + msg.noResult + "\"}";
+            }else{
+                result = encAes(result, aesKey, aesIv);
+                result = "{\"result\":\"ok\",\"data\":\"" + result + "\"}";
+            }
+        }
+        
+        return result;
+    }
     
 }
