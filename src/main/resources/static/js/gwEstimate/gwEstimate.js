@@ -282,12 +282,12 @@ function setEstData() {
 
 
     html += "<div class='insertedTechSche'>";
-    html += "<input type='date' class='techDate'  data-detail='" + from + "' value='" + from + "' style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
-    html += "<input type='text' class='techType' data-detail='' value='' style='text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
-    html += "<input type='text' class='techTitle' data-detail='" + title + "' value='" + title + "' style='text-overflow:ellipsis;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+    html += "<input type='date' class='inputs techDate'  data-detail='" + from + "' value='" + from + "' style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+    html += "<input type='text' class='inputs techType' data-detail='' value='' style='text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+    html += "<input type='text' class='inputs techTitle' data-detail='" + title + "' value='" + title + "' style='text-overflow:ellipsis;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
     html += "<div class='techContent' data-detail='" + content + "' value='" + content + "'  style='text-overflow:ellipsis;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'>" + content + "</div>";
-    html += "<input type='text' class='techWriter' data-detail='" + storage.user[writer].userName + "' value='" + storage.user[writer].userName + "'  style='text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
-    html += "<input type='text' class='techPlace' data-detail='" + place + "' value='" + place + "' style='text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/></div>";
+    html += "<input type='text' class='inputs techWriter' data-detail='" + storage.user[writer].userName + "' value='" + storage.user[writer].userName + "'  style='text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+    html += "<input type='text' class='inputs techPlace' data-detail='" + place + "' value='" + place + "' style='text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/></div>";
 
 
 
@@ -297,17 +297,64 @@ function setEstData() {
 
 
 
-  let mtnc = mtncData;
-  console.log(mtnc); 
 
-  let mtnchtml = ""; 
-  
+  let mtnc = [
+    {
+      "product": 1100014,
+      "customer": 103428,
+      "startDate": "검수일",
+      "endDate": "+ 0년 0개월",
+      "engineer": 10002,
+      "amount": 0
+    },
+    {
+      "product": 1100015,
+      "customer": 103428,
+      "startDate": "검수일",
+      "endDate": "+ 0년 0개월",
+      "engineer": 10002,
+      "amount": 0
+    },
+    {
+      "product": 1100036,
+      "customer": 103442,
+      "startDate": "2023-02-01",
+      "endDate": "2023-02-10",
+      "engineer": 10002,
+      "amount": 123456
+    }
+  ];
+
+  let mtncHtml = "";
+  let product, customer, startDate, endDate, engineer, amount, note;
+
+  for (let i = 0; i < mtnc.length; i++) {
+    for (let x in storage.product) {
+      if (storage.product[x].no == mtnc[i].product) {
+        product = storage.product[x].name
+      }
+    }
+
+    customer = storage.customer[mtnc[i].customer].name;
+    engineer = storage.user[mtnc[i].engineer].userName;
+    startDate = mtnc[i].startDate == "검수일" ? "" : mtnc[i].startDate;
+    endDate = mtnc[i].startDate == "검수일" ? "" : mtnc[i].endDate; 
+    amount = mtnc[i].amount.toLocaleString();
+    note =  mtnc[i].startDate == "검수일" ? ( "기간 :" +  mtnc[i].endDate ): ""; 
+
+    mtncHtml += "<div class='insertedMtncData'>";
+    mtncHtml += "<input type='text' class='inputs mtnc-product' data-detail='" + product + "' value='" + product + "' style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+    mtncHtml += "<input type='text' class='inputs mtnc-customer' data-detail='" + customer + "' value='" + customer + "' style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+    mtncHtml += "<input type='date' class='inputs mtnc-startDate' data-detail='" + startDate + "' value='" + startDate + "' style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+    mtncHtml += "<input type='date' class='inputs mtnc-endDate' data-detail='" + endDate + "' value='" + endDate + "' style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+    mtncHtml += "<input type='text' class='inputs mtnc-engineer' data-detail='" + engineer + "' value='" + engineer + "' style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+    mtncHtml += "<input type='text' class='inputs mtnc-amount' data-detail='" + amount + "' value='" + amount + "' style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+    mtncHtml += "<input type='text' class='inputs mtnc-note' data-detail='" + note + "' value='" + note + "' style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/></div>";
+
+  }
 
 
-
-
-
-
+  $(".mtncData").html(mtncHtml);
 
 
   // let schecreated, scheType, scheTitle, scheContent, schePlace;
@@ -550,6 +597,7 @@ function reportInsert() {
     "next": "",
     "parent": "",
     "previous": "sopp:" + storage.soppDetailData.sopp.no + "",
+    "maintenece" : mtncData
     // "outSumAllTotal": $(".outSumAllTotal").val() * 1,
     // "profit": $("." + formId + "_profit").val() * 1,
     // "outItems": outItems,

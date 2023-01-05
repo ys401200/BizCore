@@ -214,11 +214,17 @@ function getDetailView() {
 // 문서 정보 그리는 함수 
 
 function drawCommentLine() {
+    let idx;
+    if (location.href.split("/")[4] == "myreturn") {
+        idx = 0;
+    } else {
+        idx = 1;
+    }
     let target = $("#tabDetail");
     let appLine = storage.reportDetailData.appLine;
     let appLineArr = new Array();
     let appTypeTitle = ["검토", "합의", "결재", "수신", "참조"];
-    for (let i = 1; i < appLine.length; i++) {
+    for (let i = idx; i < appLine.length; i++) {
         let date, status, comment;
 
         if (appLine[i].approved == null && appLine[i].rejected == null) {
@@ -258,7 +264,7 @@ function drawCommentLine() {
     }
 
     let html = "<div class='readDiv'><div>열람</div><div><label for='deptRd'><input type='radio' id='deptRd' name='rd' value='dept' disabled style='display : inline;'/>기안자 소속 부서</label><label for='noneRd'><input type='radio' id='noneRd' name='rd' value='none' disabled style='display:inline;/>열람 설정 없음</label></div></div>" +
-        "<div><input class='inputFile' multiple='' name='attached[]' type='file' onchange='setSelectedFiles()' style='display: none;'></div><div class='readDiv selectedFile'><div>첨부파일</div><div><div class='selectedFileDiv'></div></div></div>";
+        "<div><input class='inputFile' multiple='' name='attached[]' type='file' onchange='setSelectedFiles()' style='display: none;'></div></div><div class='readDiv selectedFile'><div>첨부파일</div><div><div class='selectedFileDiv'></div></div></div>";
     let detail =
         "<div class='lineDiv'><div class='tapLine tapLineTitle'><div>타입</div><div>이름</div><div>상태</div><div>일자</div><div>의견</div></div>";
     let lineDetailHtml = "";
@@ -781,54 +787,54 @@ function insertData(reportForm) { // let reportForm = "Consult";
     let target = $(".insertedDataList");
     let dataNoneForm = "<div class='detailcontentDiv'>";
     let title = [
-      "date",
-      "customer",
-      "product",
-      "price",
-      "quantity",
-      "amount",
-      "tax",
-      "total",
-      "remark",
+        "date",
+        "customer",
+        "product",
+        "price",
+        "quantity",
+        "amount",
+        "tax",
+        "total",
+        "remark",
     ];
 
     for (let i = 0; i < title.length; i++) {
-      if (i < title.length - 1) {
-        if (i == 0) {
-          dataNoneForm +=
-            "<input onchange='this.dataset.detail=this.value;' type='date' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs doc_Form_" +
-            reportForm +
-            "_" +
-            title[i] +
-            "'/>";
-        } else if (i == 3 || i == 4 || i == 5 || i == 6 || i == 7) {
-          dataNoneForm +=
-            "<input type='text' oninput='setNum(this)'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs doc_Form_" +
-            reportForm +
-            "_" +
-            title[i] +
-            "'/>";
-        } else {
-          dataNoneForm +=
-            "<input type='text' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)'  style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs doc_Form_" +
-            reportForm +
-            "_" +
-            title[i] +
-            "'/>";
-        }
-      } else
-        dataNoneForm +=
-          "<input type='text' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs  doc_Form_" +
-          reportForm +
-          "_" +
-          title[i] +
-          "'/>";
+        if (i < title.length - 1) {
+            if (i == 0) {
+                dataNoneForm +=
+                    "<input onchange='this.dataset.detail=this.value;' type='date' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs doc_Form_" +
+                    reportForm +
+                    "_" +
+                    title[i] +
+                    "'/>";
+            } else if (i == 3 || i == 4 || i == 5 || i == 6 || i == 7) {
+                dataNoneForm +=
+                    "<input type='text' oninput='setNum(this)'  onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs doc_Form_" +
+                    reportForm +
+                    "_" +
+                    title[i] +
+                    "'/>";
+            } else {
+                dataNoneForm +=
+                    "<input type='text' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)'  style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs doc_Form_" +
+                    reportForm +
+                    "_" +
+                    title[i] +
+                    "'/>";
+            }
+        } else
+            dataNoneForm +=
+                "<input type='text' onkeyup='this.dataset.detail=this.value;keyUpFunction(this)' style='padding:0.3em;border-right: 1px solid black;border-bottom: 1px solid black;' class='inputs  doc_Form_" +
+                reportForm +
+                "_" +
+                title[i] +
+                "'/>";
     }
 
 
     dataNoneForm +=
-      "<div  class ='detailcontentbox'><input type='checkbox' class='detailBox'/></div></div>";
+        "<div  class ='detailcontentbox'><input type='checkbox' class='detailBox'/></div></div>";
     target.append(dataNoneForm);
 
 
-  }
+}

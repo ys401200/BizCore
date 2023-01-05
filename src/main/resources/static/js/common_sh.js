@@ -1630,17 +1630,18 @@ function setMtncDate() {
     let productLength = storage.estimateList[storage.estimateList.length - 1].related.estimate.items.length;
     let data = [];
     let detail;
+    let product, customer, amount;
     for (let i = 0; i <= productLength - 1; i++) {
         let cnt = document.getElementsByClassName("mtnc-detail" + i)[0];
         if (cnt != undefined) {
 
             detail = {
-                product: cnt.children[0].dataset.detail,
-                customer: cnt.children[1].dataset.detail,
+                product: cnt.children[0].dataset.detail*1,
+                customer: cnt.children[1].dataset.detail*1,
                 startDate: cnt.children[2].innerHTML,
                 endDate: cnt.children[3].innerHTML,
-                engineer: cnt.children[4].children[0].value,
-                amount: cnt.children[5].innerHTML
+                engineer: cnt.children[4].children[0].value*1,
+                amount: cnt.children[5].innerHTML*1
             }
 
             data.push(detail);
@@ -1653,21 +1654,34 @@ function setMtncDate() {
     for (let i = 0; i <= mtncDetail.length - 1; i++) {
         let cnt = mtncDetail[i];
 
+        let x;
+        for (x in storage.product) {
+            if (storage.product[x].name == cnt.children[0].children[0].value) {
+                product = storage.product[x].no;
+            }
+        }
+
+        for (x in storage.customer) {
+            if (cnt.children[1].children[0].value == storage.customer[x].name) {
+                customer = storage.customer[x].no;
+            }
+        }
+
         detail = {
-            product: cnt.children[0].children[0].value,
-            customer: cnt.children[0].children[1].value,
-            startDate: cnt.children[0].children[2].children[0].value,
-            endDate: cnt.children[0].children[3].children[0].value,
-            engineer: cnt.children[0].children[4].value,
-            amount: cnt.children[0].children[5].value,
+            product: product,
+            customer: customer,
+            startDate: cnt.children[2].children[0].value,
+            endDate: cnt.children[3].children[0].value,
+            engineer: cnt.children[4].children[0].value *1,
+            amount: cnt.children[5].children[0].value*1,
         }
 
         data.push(detail);
     }
 
-    storage.mtncData = data;
-    R.popup.mtncData = storage.mtncData;
-    
+
+
+    R.popup.mtncData = data;
 }
 
 

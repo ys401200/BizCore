@@ -199,7 +199,7 @@
 					
 					.detailDivMtnc {
 						display: grid;
-						grid-template-columns: 20% 20%  15% 15%  10% 20%;
+						grid-template-columns: 20% 20%  12% 12%  10% 10% 16%;
 						text-align: center;
 						border-left: 1px solid black;
 					}
@@ -443,7 +443,7 @@
 						margin: 1em;
 					}
 
-					.scheData {
+					.scheData , .mtncData{
 						margin: 0 1em;
 					}
 
@@ -452,6 +452,18 @@
 						grid-template-columns: 10% 10% 20% 40% 10% 10%;
 						border-left: 1px solid black;
 					}
+
+					.mtncData>div {
+						display: grid;
+						grid-template-columns: 20% 20%  12% 12%  10% 10% 16%;
+						border-left: 1px solid black;
+					}
+
+					.mtncData>div> input {
+						border : none;
+					}
+
+
 
 					.scheData>div>* {
 						border-radius: 0;
@@ -650,9 +662,10 @@
 								<div class="datailTitle">종료일</div>
 								<div class="datailTitle">엔지니어</div>
 								<div class="datailTitle">금액</div>
+								<div class="datailTitle">비고</div>
 							</div>
 						</div>
-						<div class="slaesSche scheData"></div>
+						<div class="slaesSche mtncData"></div>
 
 
 

@@ -1,3 +1,5 @@
+let referArr = [];
+
 $(document).ready(() => {
   init();
 
@@ -504,7 +506,7 @@ function createLine() {
   lineTarget.html("");
   lineTarget.css("display", "block");
   let my = storage.my;
-  
+
 
   let testHtml =
     "<div class='lineGridContainer'><div class='lineGrid'><div class='lineTitle'>작 성</div><div class='lineSet'><div class='twoBorder'><input type='text' class='inputsAuto' value='" +
@@ -603,23 +605,14 @@ function createLine() {
       // 참조
       else if (i == 3) {
         console.log("참조");
-        // if (j != 0) {
-        //   simpleHtml += "-" + storage.user[id].userName;
-        // } else {
-        //   simpleHtml += storage.user[id].userName;
-        // }
-        // referHtml +=
-        //   "<div class='appendName " +
-        //   formId +
-        //   "_" +
-        //   titleId[i] +
-        //   "' data-detail='" +
-        //   storage.user[id].userNo +
-        //   "'>" +
-        //   storage.userRank[storage.user[id].rank][0] +
-        //   "&nbsp" +
-        //   storage.user[id].userName +
-        //   "</div>";
+        referArr.push(id);
+
+        if (j != 0) {
+          simpleHtml += "-" + storage.user[id].userName;
+        } else {
+          simpleHtml += storage.user[id].userName;
+        }
+
       }
 
       // 검토 합의 결재
@@ -783,8 +776,11 @@ function reportInsert() {
   for (let i = 0; i < $("." + formId + "_conduct").length; i++) {
     appLine.push([3, $("." + formId + "_conduct")[i].dataset.detail]);
   }
-  for (let i = 0; i < $("." + formId + "_refer").length; i++) {
-    appLine.push([4, $("." + formId + "_refer")[i].dataset.detail]);
+  // for (let i = 0; i < $("." + formId + "_refer").length; i++) {
+  //   appLine.push([4, $("." + formId + "_refer")[i].dataset.detail]);
+  // }
+  for (let i = 0; i < referArr.length; i++) {
+    appLine.push([4, referArr[i]]);
   }
 
 
