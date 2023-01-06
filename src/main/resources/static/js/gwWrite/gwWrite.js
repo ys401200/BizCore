@@ -267,8 +267,8 @@ function showModal() {
     appLine = JSON.stringify(appLine);
     if (appLine == checkAppLine) {
       getSavedLine();
-      setModalhtml();
-      window.setTimeout(setTempLineData(), 1000);
+      window.setTimeout( setModalhtml(),1000)
+      window.setTimeout(setTempLineData(), 2000);
     }
   }
 
@@ -1165,7 +1165,10 @@ function setTempReport() {
     }
     $("input[name='" + formId + "_RD']").prop("disabled", false);
 
-
+    if (target.getElementsByClassName("typeselect").length > 0) {
+      let selectArr = target.getElementsByClassName("typeselect")[0];
+      selectArr.value = selectArr.dataset.detail ;
+  }
 
 
     if (formId != "doc_Form_leave" && formId != "doc_Form_extension") {
@@ -1251,9 +1254,11 @@ function tempSave() {
   appDoc = $(".reportInsertForm").html();
   readable = $("input[name=authority]:checked").val();
 
-  let soppVal = $("#" + formId + "_sopp").val();
-  let customerVal = $("#" + formId + "_infoCustomer").val();
+  let soppVal = $("#" + formId + "_sopp").val() == undefined ? "" : $("#" + formId + "_sopp").val();
+  let customerVal = $("#" + formId + "_infoCustomer").val() == undefined ? "" : $("#" + formId + "_infoCustomer").val();
   let soppResult;
+
+
   for (let x in storage.soppList) {
     if (soppVal != "" || storage.soppList[x].title === soppVal) {
       soppResult = storage.soppList[x].no + "";
@@ -1268,7 +1273,10 @@ function tempSave() {
     } else {
       cusResult = "";
     }
-  }
+  } 
+
+
+
   let temp;
   if (storage.reportDetailData != undefined) {
     temp = storage.reportDetailData.docNo;
