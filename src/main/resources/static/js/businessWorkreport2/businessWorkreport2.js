@@ -421,6 +421,8 @@ drawReport = (editable, targetElement, employee) => {
 		}
 		cnt.children[4].children[0].innerHTML = html;
 	}else{
+		html = "<div><div>추가 기재 사항</div></div><div></div>";
+		cnt.children[4].children[0].innerHTML = html;
 		cnt.children[4].children[0].children[1].innerHTML = "";
 	}
 	
@@ -434,6 +436,8 @@ drawReport = (editable, targetElement, employee) => {
 		}
 		cnt.children[4].children[1].innerHTML = html;
 	}else{
+		html = "<div><div>추가 기재 사항</div></div><div></div>";
+		cnt.children[4].children[1].innerHTML = html;
 		cnt.children[4].children[1].children[1].innerHTML = "";
 	}
 

@@ -44,7 +44,7 @@ public class WorkReport extends Domain{
             result += ("\"customer\":" + e.getCustomer() + ",");
             result += ("\"from\":" + (e.getFrom() != null ? e.getFrom().getTime() : null) + ",");
             result += ("\"modified\":" + (e.getModified() != null ? e.getModified().getTime() : null) + ",");
-            result += ("\"place\":" + (e.getPlace() != null && !e.getPlace().equals("") ? e.getPlace() : null) + ",");
+            result += ("\"place\":" + (e.getPlace() != null && !e.getPlace().equals("") ? "\"" + e.getPlace() + "\"" : null) + ",");
             result += ("\"sopp\":" + e.getSopp() + ",");
             result += ("\"type\":" + (e.getType() != null ? e.getType() : null) + ",");
             result += ("\"to\":" + (e.getTo() != null ? e.getTo().getTime() : null) + "}");

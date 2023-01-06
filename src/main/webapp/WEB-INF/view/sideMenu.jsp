@@ -29,9 +29,9 @@
 				<div>
 					<a href="/business/workreport">업무일지작성</a>
 				</div>
-				<div>
+				<!-- <div>
 					<a href="/business/workjournal">업무일지검토</a>
-				</div>
+				</div> -->
 				<div>
 					<a href="/business/workreport2">주간 업무 보고</a>
 				</div>
