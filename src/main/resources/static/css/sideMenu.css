@@ -67,7 +67,7 @@
     padding-left: 10px;
 }
 
-input[type="radio"]{
+.menuItem > input[type="radio"]{
 	display: none;
 }
 
