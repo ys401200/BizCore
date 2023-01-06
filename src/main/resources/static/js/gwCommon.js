@@ -263,7 +263,7 @@ function drawCommentLine() {
         appLineArr.push(data);
     }
 
-    let html = "<div class='readDiv'><div>열람</div><div><label for='deptRd'><input type='radio' id='deptRd' name='rd' value='dept' disabled style='display : inline;'/>기안자 소속 부서</label><label for='noneRd'><input type='radio' id='noneRd' name='rd' value='none' disabled style='display:inline;/>열람 설정 없음</label></div></div>" +
+    let html = "<div class='readDiv'><div>열람</div><div><label for='deptRd'><input type='radio' id='deptRd' name='rd' value='dept' disabled style='display : inline;'/>기안자 소속 부서</label><label for='noneRd'><input type='radio' id='noneRd' name='rd' value='none' disabled style='display:inline;'/>열람 설정 없음</label></div></div>" +
         "<div><input class='inputFile' multiple='' name='attached[]' type='file' onchange='setSelectedFiles()' style='display: none;'></div></div><div class='readDiv selectedFile'><div>첨부파일</div><div><div class='selectedFileDiv'></div></div></div>";
     let detail =
         "<div class='lineDiv'><div class='tapLine tapLineTitle'><div>타입</div><div>이름</div><div>상태</div><div>일자</div><div>의견</div></div>";
