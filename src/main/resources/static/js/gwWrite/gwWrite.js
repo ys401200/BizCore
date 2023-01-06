@@ -205,50 +205,29 @@ function setProductData() {
   let data = storage.formList;
 
   let formId = storage.reportDetailData != undefined ? storage.reportDetailData.formId : data[$(".formNumHidden").val()].id;
-  let targetHtml = $("." + formId + "_product")[0].innerHTML;
-  let y;
-  let productListhtml = "";
-  productListhtml = "<datalist id='_product'>";
-  for (let y = 0; y < storage.product.length; y++) {
-    productListhtml +=
-      "<option data-value='" +
-      storage.product[y].no +
-      "' value='" +
-      storage.product[y].name +
-      "'></option> ";
-  }
+  if ($("." + formId + "_product").length > 0) {
+    let targetHtml = $("." + formId + "_product")[0].innerHTML;
+    let y;
+    let productListhtml = "";
+    productListhtml = "<datalist id='_product'>";
+    for (let y = 0; y < storage.product.length; y++) {
+      productListhtml +=
+        "<option data-value='" +
+        storage.product[y].no +
+        "' value='" +
+        storage.product[y].name +
+        "'></option> ";
+    }
 
-  targetHtml += productListhtml;
-  $("." + formId + "_product")[0].innerHTML = targetHtml;
-  $("." + formId + "_product").attr("list", "_product");
+    targetHtml += productListhtml;
+    $("." + formId + "_product")[0].innerHTML = targetHtml;
+    $("." + formId + "_product").attr("list", "_product");
+  }
 }
 
 
 // 결재선 생성 버튼 눌렀을 때 모달 띄움
 function showModal() {
-
-  let formId = storage.reportDetailData.formId;
-  let checkAppLine = [];
-  
-  for (let i = 0; i < $("." + formId + "_examine").length; i++) {
-    checkAppLine.push([0, $("." + formId + "_examine")[i].dataset.detail]);
-  }
-  for (let i = 0; i < $("." + formId + "_agree").length; i++) {
-    checkAppLine.push([1, $("." + formId + "_agree")[i].dataset.detail]);
-  }
-  for (let i = 0; i < $("." + formId + "_approval").length; i++) {
-    checkAppLine.push([2, $("." + formId + "_approval")[i].dataset.detail]);
-  }
-  for (let i = 0; i < $("." + formId + "_conduct").length; i++) {
-    checkAppLine.push([3, $("." + formId + "_conduct")[i].dataset.detail]);
-  }
-  // for (let i = 0; i < $("." + formId + "_refer").length; i++) {
-  //   appLine.push([4, $("." + formId + "_refer")[i].dataset.detail]);
-  // }
-  for (let i = 0; i < referArr.length; i++) {
-    checkAppLine.push([4, referArr[i]]);
-  }
-
 
   $(".modal-wrap").show();
   let tt = location.href.split("/");
@@ -261,6 +240,28 @@ function showModal() {
     }
 
   } else if (tt.length == 6) {
+    let formId = storage.reportDetailData.formId;
+    let checkAppLine = [];
+
+    for (let i = 0; i < $("." + formId + "_examine").length; i++) {
+      checkAppLine.push([0, $("." + formId + "_examine")[i].dataset.detail]);
+    }
+    for (let i = 0; i < $("." + formId + "_agree").length; i++) {
+      checkAppLine.push([1, $("." + formId + "_agree")[i].dataset.detail]);
+    }
+    for (let i = 0; i < $("." + formId + "_approval").length; i++) {
+      checkAppLine.push([2, $("." + formId + "_approval")[i].dataset.detail]);
+    }
+    for (let i = 0; i < $("." + formId + "_conduct").length; i++) {
+      checkAppLine.push([3, $("." + formId + "_conduct")[i].dataset.detail]);
+    }
+    // for (let i = 0; i < $("." + formId + "_refer").length; i++) {
+    //   appLine.push([4, $("." + formId + "_refer")[i].dataset.detail]);
+    // }
+    for (let i = 0; i < referArr.length; i++) {
+      checkAppLine.push([4, referArr[i]]);
+    }
+
     checkAppLine = JSON.stringify(checkAppLine);
     let appLine = storage.reportDetailData.appLine;
     appLine = JSON.stringify(appLine);
@@ -322,7 +323,6 @@ function setModalhtml() {
   orgChartTarget.html(gwTreeHtml);
   // 작성자 본인은 선택할 수 없음 
   $("#cb" + storage.my).hide();
-
 
 
 }
@@ -1809,19 +1809,19 @@ function setTempLineData() {
 
   // }
 
-  let html = ""; for( let i = 0 ; i < storage.reportDetailData.appLine.length; i ++) { 
-    let idx =  storage.reportDetailData.appLine[i][0] ; 
-    let num = storage.reportDetailData.appLine[i][1]; 
-       html += "<div class='lineDataContainer' id='lineContainer_" + num + "'><label id='linedata_" + num + "'>" + storage.user[num].userName + "</label><button value='" + num + "'' onclick='upClick(this)'>▲</button><button value='" + num + "'' onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'><i class='fa-solid fa-xmark'></i></button></div>";
-     if (idx > 1) {
-         idx = idx - 1;
-       } else if (idx <= 1) {
-         idx = i;
-       } 
-     html = ($(".typeContainer")[idx].innerHTML += html); 
-     
-      $(".typeContainer")[idx].innerHTML = html;
- }
+  let html = ""; for (let i = 0; i < storage.reportDetailData.appLine.length; i++) {
+    let idx = storage.reportDetailData.appLine[i][0];
+    let num = storage.reportDetailData.appLine[i][1];
+    html += "<div class='lineDataContainer' id='lineContainer_" + num + "'><label id='linedata_" + num + "'>" + storage.user[num].userName + "</label><button value='" + num + "'' onclick='upClick(this)'>▲</button><button value='" + num + "'' onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'><i class='fa-solid fa-xmark'></i></button></div>";
+    if (idx > 1) {
+      idx = idx - 1;
+    } else if (idx <= 1) {
+      idx = i;
+    }
+    html = ($(".typeContainer")[idx].innerHTML += html);
+
+    $(".typeContainer")[idx].innerHTML = html;
+  }
 
 }
 
