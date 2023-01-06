@@ -230,47 +230,47 @@ function setProductData() {
 function showModal() {
 
   $(".modal-wrap").show();
-  let tt = location.href.split("/");
-  if (tt.length != 6) {
-    if (location.href)
+  getSavedLine();
+  // let tt = location.href.split("/");
+  setModalhtml();
+  // if (tt.length != 6 && $(".simpleApplineData").html() == "") {
 
-      getSavedLine();
-    if ($(".simpleApplineData").html() == "" && storage.reportDetailData == undefined) {
-      setModalhtml();
-    }
 
-  } else if (tt.length == 6) {
-    let formId = storage.reportDetailData.formId;
-    let checkAppLine = [];
+  //   setModalhtml();
 
-    for (let i = 0; i < $("." + formId + "_examine").length; i++) {
-      checkAppLine.push([0, $("." + formId + "_examine")[i].dataset.detail]);
-    }
-    for (let i = 0; i < $("." + formId + "_agree").length; i++) {
-      checkAppLine.push([1, $("." + formId + "_agree")[i].dataset.detail]);
-    }
-    for (let i = 0; i < $("." + formId + "_approval").length; i++) {
-      checkAppLine.push([2, $("." + formId + "_approval")[i].dataset.detail]);
-    }
-    for (let i = 0; i < $("." + formId + "_conduct").length; i++) {
-      checkAppLine.push([3, $("." + formId + "_conduct")[i].dataset.detail]);
-    }
-    // for (let i = 0; i < $("." + formId + "_refer").length; i++) {
-    //   appLine.push([4, $("." + formId + "_refer")[i].dataset.detail]);
-    // }
-    for (let i = 0; i < referArr.length; i++) {
-      checkAppLine.push([4, referArr[i]]);
-    }
 
-    checkAppLine = JSON.stringify(checkAppLine);
-    let appLine = storage.reportDetailData.appLine;
-    appLine = JSON.stringify(appLine);
-    if (appLine == checkAppLine) {
-      getSavedLine();
-      window.setTimeout( setModalhtml(),1000)
-      window.setTimeout(setTempLineData(), 2000);
-    }
-  }
+  // } else if (tt.length == 6) {
+  //   let formId = storage.reportDetailData.formId;
+  //   let checkAppLine = [];
+
+  //   for (let i = 0; i < $("." + formId + "_examine").length; i++) {
+  //     checkAppLine.push([0, $("." + formId + "_examine")[i].dataset.detail]);
+  //   }
+  //   for (let i = 0; i < $("." + formId + "_agree").length; i++) {
+  //     checkAppLine.push([1, $("." + formId + "_agree")[i].dataset.detail]);
+  //   }
+  //   for (let i = 0; i < $("." + formId + "_approval").length; i++) {
+  //     checkAppLine.push([2, $("." + formId + "_approval")[i].dataset.detail]);
+  //   }
+  //   for (let i = 0; i < $("." + formId + "_conduct").length; i++) {
+  //     checkAppLine.push([3, $("." + formId + "_conduct")[i].dataset.detail]);
+  //   }
+  //   // for (let i = 0; i < $("." + formId + "_refer").length; i++) {
+  //   //   appLine.push([4, $("." + formId + "_refer")[i].dataset.detail]);
+  //   // }
+  //   for (let i = 0; i < referArr.length; i++) {
+  //     checkAppLine.push([4, referArr[i]]);
+  //   }
+
+  //   checkAppLine = JSON.stringify(checkAppLine);
+  //   let appLine = storage.reportDetailData.appLine;
+  //   appLine = JSON.stringify(appLine);
+  //   if (appLine == checkAppLine) {
+  //     getSavedLine();
+  //    // setModalhtml();
+  //     window.setTimeout(setTempLineData(), 2000);
+  //   }
+  // }
 
 
 
@@ -317,6 +317,7 @@ function setModalhtml() {
 
 
   let orgChartTarget = $("#lineLeft");
+
 
   let gwTreeHtml = storage.dept.tree.getGwHtml();
 
@@ -920,6 +921,10 @@ function reportInsert() {
       $("#" + formId + "_toTime").val() == "")
   ) {
     alert("기간을 설정하세요");
+  } else if ((formId != "doc_Form_leave" && formId != "doc_Form_extension" && formId != "doc_Form_SalesReport" && $(".insertedTotal").val() == "" && $(".detailcontentDiv").length == 0)) {
+    alert("상세 데이터를 입력하세요");
+  } else if (formId == "doc_Form_SalesReport" && ($(".detailcontentDiv").length == 0 || $("." + formId + "_profit").val() == "")) {
+    alert("상세 데이터를 입력하세요");
   } else {
 
     $.ajax({
@@ -1167,8 +1172,8 @@ function setTempReport() {
 
     if (target.getElementsByClassName("typeselect").length > 0) {
       let selectArr = target.getElementsByClassName("typeselect")[0];
-      selectArr.value = selectArr.dataset.detail ;
-  }
+      selectArr.value = selectArr.dataset.detail;
+    }
 
 
     if (formId != "doc_Form_leave" && formId != "doc_Form_extension") {
@@ -1273,7 +1278,7 @@ function tempSave() {
     } else {
       cusResult = "";
     }
-  } 
+  }
 
 
 
