@@ -18,6 +18,7 @@
 
 
         </body>
+        <script src="/js/common_jh.js"></script>
         <script src="/js/header.js"></script>
         <script src="/js/cipher.js"></script>
         <script src="/js/loading.js"></script>

@@ -1,8 +1,34 @@
-init();
+
+let R = {};
+
+printinit();
 prepareForm();
 
 
+$(document).ready(() => {
+  printinit();
+  prepareForm();
+});
 
+
+
+function printinit() {
+  cipher.aes.iv = localStorage.getItem("aesIv");
+  cipher.aes.key = localStorage.getItem("aesKey");
+  cipher.rsa.public.modulus = localStorage.getItem("rsaModulus");
+  cipher.rsa.public.exponent = localStorage.getItem("rsaExponent");
+  
+  getCommonCode();
+  getUserMap();
+  getDeptMap();
+  getBasicInfo();
+  getCustomer();
+  getUserRank();
+  getPersonalize();
+  noteLiveUpdate();
+  getStorageList();
+
+}
 
 function prepareForm() {
   let aesKey, aesIv;

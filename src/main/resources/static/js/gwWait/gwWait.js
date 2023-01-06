@@ -17,7 +17,7 @@ function drawList() {
   checkHref = checkHref[1];
   let splitArr = checkHref.split("/");
 
-  // 전자결재 홈 화면에서 들어오는 경우 , 상세조회
+  // 전자결재 홈 화면에서 들어오는 경우 , 상세조회  
   if (splitArr.length > 3) {
     $.ajax({
       url: apiServer + "/api/gw/app/doc/" + splitArr[3],
@@ -479,7 +479,7 @@ function approveBtnEvent() {
     success: (data) => {
       if (data.result === "ok") {
         alert("결재 완료");
-        //location.href = "/gw/wait";
+        location.href = "/gw/wait";
       } else {
         alert("결재 실패");
       }

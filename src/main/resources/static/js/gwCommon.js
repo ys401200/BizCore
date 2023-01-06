@@ -422,7 +422,7 @@ function drawChangeInfo() {
 
 
 function openPrintTab() {
-    window.open("/gw/print/" + storage.reportDetailData.docNo, "인쇄하기", "width :210mm");
+    window.open("/gw/print/" + storage.reportDetailData.docNo, "인쇄하기", "width=1000,height=800,left=30,top=50");
 }
 
 
@@ -687,7 +687,196 @@ function createCheckGrid(gridContainer, headerDataArray, dataArray, ids, job, fn
 
 }
 
-
+function drawNewCommentLine() {
+    let appTypeTitle = ["검토", "합의", "결재", "수신", "참조"];
+    let appLine = storage.reportDetailData.appLine;
+    let my = storage.my;
+    let originAppLine = [];
+    let appLineArr = [];
+    let newAppLine = storage.newAppLine;
+    let newCombine = [[], [], [], [], []];
+    for (let i = 0; i < newAppLine.length; i++) {
+      for (let j = 0; j < newCombine.length; j++) {
+        if (i > 0 && newAppLine[i][0] == j) {
+          newCombine[j].push(newAppLine[i][1]);
+        }
+      }
+    }
+    if (newCombine[2].length > 1 && newCombine[2].includes(storage.my + "")) {
+      newCombine[2] = newCombine[2].slice(1);
+      newCombine[0].push(storage.my + "");
+    }
+    for (let i = 0; i < appLine.length; i++) {
+      if (appLine[i].employee == my) {
+        originAppLine = appLine.slice(0, i + 1);
+        myIndex = i;
+      }
+    }
+    for (let i = 1; i < originAppLine.length; i++) {
+      let date, status, comment;
+      if (appLine[i].approved == null && appLine[i].rejected == null) {
+        if (appLine[i].read != null) {
+          date = appLine[i].read;
+          date = getYmdSlash(date);
+          status = "조회";
+        } else if (appLine[i].read == null) {
+          date = "";
+          status = "";
+        }
+      } else if (appLine[i].approved != null) {
+        date = appLine[i].approved;
+        date = getYmdSlash(date);
+        status = "승인";
+      } else if (appLine[i].rejected != null) {
+        date = appLine[i].rejected;
+        date = getYmdSlash(date);
+        status = "반려";
+      }
+      if (appLine[i].comment == "null") {
+        comment = "";
+      } else {
+        comment = appLine[i].comment;
+      }
+      let data;
+      if (
+        i == myIndex &&
+        appLine[i].appType == 2 &&
+        newCombine[2][0] != appLine[i].employee
+      ) {
+        data = {
+          appType: appTypeTitle[0],
+          name: storage.user[appLine[i].employee].userName,
+          status: status,
+          date: date,
+          comment: comment,
+        };
+      } else {
+        data = {
+          appType: appTypeTitle[appLine[i].appType],
+          name: storage.user[appLine[i].employee].userName,
+          status: status,
+          date: date,
+          comment: comment,
+        };
+      }
+      appLineArr.push(data);
+    }
+    let newData = storage.newAppLine;
+    for (let i = originAppLine.length; i < newData.length; i++) {
+      let data = {
+        appType: appTypeTitle[newData[i][0]],
+        name: storage.user[newData[i][1]].userName,
+        status: "",
+        date: "",
+        comment: "",
+      };
+      appLineArr.push(data);
+    }
+    /// 첨부파일 변경된 내용 그대로 가져와서 html 넣어햐함 
+    let files = $(".readDiv")[1].innerHTML;
+    files = "<div class='readDiv selectedFile'>" + files + "</div>"
+    let html =
+      "<div class='readDiv'><div>열람</div><div><label for='deptRd'><input type='radio' id='deptRd' name='rd' value='dept' disabled/>작성자 소속 부서</label><label for='noneRd'><input type='radio' id='noneRd' name='rd' value='none' disabled/>열람 설정 없음</label></div></div>";
+    let detail =
+      "<div class='lineDiv'><div class='tapLine tapLineTitle'><div>타입</div><div>이름</div><div>상태</div><div>일자</div><div>의견</div></div>";
+    let lineDetailHtml = "";
+    for (let i = 0; i < appLineArr.length; i++) {
+      lineDetailHtml +=
+        "<div class='tapLine examineLine'><div>" +
+        appLineArr[i].appType +
+        "</div><div>" +
+        appLineArr[i].name +
+        "</div><div>" +
+        appLineArr[i].status +
+        "</div><div>" +
+        appLineArr[i].date +
+        "</div><div>" +
+        appLineArr[i].comment +
+        "</div></div>";
+    }
+    lineDetailHtml += "</div>";
+    detail += lineDetailHtml;
+    html += files;
+    // 열람 권한 체크하기
+    detail += html
+    $("#tabDetail").html(detail);
+    let readable = storage.reportDetailData.readable;
+    if (readable == "dept") {
+      $("#deptRd").prop("checked", true);
+    } else if (readable == "none") {
+      $("#noneRd").prop("checked", true);
+    }
+    for (let i = 0; i < $(".dateBorder").length; i++) {
+      let tt = $(".dateBorder")[i].children;
+      $(tt).css("background-color", "transparent");
+    }
+  }
+  //  변경이력 그리는 함수 ajax로 변경 이력 받아옴
+  function drawChangeInfo() {
+    let target = $("#tabDetail2");
+    let revisionData = storage.reportDetailData.revisionHistory;
+    let type;
+    let appLine = storage.reportDetailData.appLine;
+    let changeData = new Array();
+    if (revisionData.length > 0) {
+      for (let i = 0; i < revisionData.length; i++) {
+        let modCause = "";
+        if (revisionData[i].content.doc == true) {
+          modCause += "문서 수정 ";
+        }
+        if (revisionData[i].content.files == true) {
+          modCause += "첨부 파일 수정 ";
+        }
+        if (revisionData[i].content.appLine == true) {
+          modCause += "결재선 수정 ";
+        }
+        revisionData[i].content.date;
+        revisionData[i].content.content;
+        for (let j = 0; j < appLine.length; j++) {
+          if (appLine[j].employee == revisionData[i].employee) {
+            type = appLine[j].type;
+          }
+        }
+        if (type == 0) {
+          type = "검토"
+        } else if (type = 2) {
+          type = "결재"
+        }
+        let data = {
+          type: type,
+          name: storage.user[revisionData[i].employee].userName,
+          modifyDate: getYmdSlash(revisionData[i].date),
+          modCause: modCause,
+        };
+        changeData.push(data);
+      }
+    }
+    let detail =
+      "<div class='tapLineB'><div>타입</div><div>이름</div><div>변경일자</div><div>변경내용</div></div>";
+    let changeHtml = "";
+    if (changeData.length == 0) {
+      changeHtml += "<div class='tapLineBCenter'>변경 이력이 없습니다</div>";
+    } else {
+      for (let i = 0; i < changeData.length; i++) {
+        changeHtml +=
+          "<div class='tapLineB changeDataLine'>" +
+          "<div class='changeType'>" +
+          changeData[i].type +
+          "</div><div class='changeName' >" +
+          changeData[i].name +
+          "</div><div class='changeDate'>" +
+          changeData[i].modifyDate +
+          "</div><div class='changeCause'>" +
+          changeData[i].modCause +
+          "</div>" +
+          "</div>";
+      }
+    }
+    detail += changeHtml;
+    target.html(detail);
+  }
+  
+  
 
 
 

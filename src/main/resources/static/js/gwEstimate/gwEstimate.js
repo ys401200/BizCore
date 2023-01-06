@@ -338,9 +338,9 @@ function setEstData() {
     customer = storage.customer[mtnc[i].customer].name;
     engineer = storage.user[mtnc[i].engineer].userName;
     startDate = mtnc[i].startDate == "검수일" ? "" : mtnc[i].startDate;
-    endDate = mtnc[i].startDate == "검수일" ? "" : mtnc[i].endDate; 
+    endDate = mtnc[i].startDate == "검수일" ? "" : mtnc[i].endDate;
     amount = mtnc[i].amount.toLocaleString();
-    note =  mtnc[i].startDate == "검수일" ? ( "기간 :" +  mtnc[i].endDate ): ""; 
+    note = mtnc[i].startDate == "검수일" ? ("기간 :" + mtnc[i].endDate) : "";
 
     mtncHtml += "<div class='insertedMtncData'>";
     mtncHtml += "<input type='text' class='inputs mtnc-product' data-detail='" + product + "' value='" + product + "' style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
@@ -597,7 +597,7 @@ function reportInsert() {
     "next": "",
     "parent": "",
     "previous": "sopp:" + storage.soppDetailData.sopp.no + "",
-    "maintenece" : mtncData
+    "maintenece": mtncData
     // "outSumAllTotal": $(".outSumAllTotal").val() * 1,
     // "profit": $("." + formId + "_profit").val() * 1,
     // "outItems": outItems,
@@ -720,6 +720,24 @@ function createContract(ctrtData) {
   })
 
 }
+
+function createMtnc(mtncData) {
+  $.ajax({
+    url: "/api/maintenance",
+    method: "post",
+    data: mtncData,
+    dataType: "json",
+    contentType: "text/plain",
+    success: (result) => {
+      if (result.result === "ok") {
+        console.log("유지보수 생성 완료");
+      } else {
+        console.log("유지보수 생성 실패");
+      }
+    }
+  })
+}
+
 
 function getTotalCount2() {
 

@@ -228,7 +228,9 @@ function setProductData() {
 function showModal() {
   $(".modal-wrap").show();
   getSavedLine();
-  setModalhtml();
+  if ($(".simpleAppLindData").html() == "") {
+    setModalhtml();
+  }
 }
 
 

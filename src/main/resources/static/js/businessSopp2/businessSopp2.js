@@ -80,15 +80,10 @@ soppStageUp = (v) => {
 		href = location.href.split("/sopp2/");
 		no = href.length > 1 ? href[href.length - 1] : null;
 		no = no !== null ? no * 1 : null;
-	
-
 		window.setTimeout(() => {
 			setPrevModal(no)
-		}, 1000);
-		// R.stageUpPopup = window.open("/gw/estimate/" + no, "soppStageUp", "width=1000,height=800,left=100,top=100");
-		// window.setTimeout(()=>{
-		// 	R.stageUpPopup.items = storage.estimateList[storage.estimateList.length-1].related.estimate.items;
-		// },300);
+		}, 2000);
+
 	}
 
 
