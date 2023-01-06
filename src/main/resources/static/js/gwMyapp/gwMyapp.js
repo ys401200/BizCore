@@ -227,6 +227,7 @@ function cancelApproval() {
       success: (result) => {
         if (result.result == "ok") {
           alert("확인");
+          location.href = "/gw/myapp";
         } else {
           alert("에러");
         }

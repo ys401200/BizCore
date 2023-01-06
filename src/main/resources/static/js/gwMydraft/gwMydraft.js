@@ -255,8 +255,10 @@ function returnReport() {
       success: (result) => {
         if (result.result == "ok") {
           alert("회수 성공");
+          location.href = "/gw/mydraft";
         } else {
           console.log(result.msg);
+  
         }
       },
     });
