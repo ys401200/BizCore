@@ -226,11 +226,53 @@ function setProductData() {
 
 // 결재선 생성 버튼 눌렀을 때 모달 띄움
 function showModal() {
-  $(".modal-wrap").show();
-  getSavedLine();
-  if ($(".simpleAppLindData").html() == "") {
-    setModalhtml();
+
+  let formId = storage.reportDetailData.formId;
+  let checkAppLine = [];
+  
+  for (let i = 0; i < $("." + formId + "_examine").length; i++) {
+    checkAppLine.push([0, $("." + formId + "_examine")[i].dataset.detail]);
   }
+  for (let i = 0; i < $("." + formId + "_agree").length; i++) {
+    checkAppLine.push([1, $("." + formId + "_agree")[i].dataset.detail]);
+  }
+  for (let i = 0; i < $("." + formId + "_approval").length; i++) {
+    checkAppLine.push([2, $("." + formId + "_approval")[i].dataset.detail]);
+  }
+  for (let i = 0; i < $("." + formId + "_conduct").length; i++) {
+    checkAppLine.push([3, $("." + formId + "_conduct")[i].dataset.detail]);
+  }
+  // for (let i = 0; i < $("." + formId + "_refer").length; i++) {
+  //   appLine.push([4, $("." + formId + "_refer")[i].dataset.detail]);
+  // }
+  for (let i = 0; i < referArr.length; i++) {
+    checkAppLine.push([4, referArr[i]]);
+  }
+
+
+  $(".modal-wrap").show();
+  let tt = location.href.split("/");
+  if (tt.length != 6) {
+    if (location.href)
+
+      getSavedLine();
+    if ($(".simpleApplineData").html() == "" && storage.reportDetailData == undefined) {
+      setModalhtml();
+    }
+
+  } else if (tt.length == 6) {
+    checkAppLine = JSON.stringify(checkAppLine);
+    let appLine = storage.reportDetailData.appLine;
+    appLine = JSON.stringify(appLine);
+    if (appLine == checkAppLine) {
+      getSavedLine();
+      setModalhtml();
+      window.setTimeout(setTempLineData(), 1000);
+    }
+  }
+
+
+
 }
 
 
@@ -314,10 +356,13 @@ function closeGwModal(obj) {
       let data = storage.formList;
       let selectedFormNo = $(".formSelector").val();
       $(".formNumHidden").val(selectedFormNo);
-      let formId = data[$(".formNumHidden").val()].id;
-      storage.editorArray = [formId + "_content"];
-      ckeditor.config.readOnly = false;
-      window.setTimeout(setEditor, 100);
+      if ($(".cke_editable").length == 0) {
+        let formId = data[$(".formNumHidden").val()].id;
+        storage.editorArray = [formId + "_content"];
+        ckeditor.config.readOnly = false;
+        window.setTimeout(setEditor, 100);
+      }
+
       // if (formId == 'doc_Form_Resolution') {
       //   $(".btnDiv").append("<button onclick='getCardDetails()'>법인카드 내역</button>")
       // }
@@ -877,9 +922,6 @@ function reportInsert() {
     alert("기간을 설정하세요");
   } else {
 
-
-
-
     $.ajax({
       url: "/api/gw/app/doc",
       method: "post",
@@ -1165,14 +1207,26 @@ function setTempReport() {
       html += dataListHtml;
       $(".infoContentlast")[0].innerHTML = html;
       $("#" + formId + "_infoCustomer").attr("list", "_infoCustomer");
+      // $("#" + formId + "_infoCustomer").attr("list", "_infoCustomer");
 
       if (formId == "doc_Form_SalesReport") {
         $("#" + formId + "_endCustName").attr("list", "_infoCustomer");
       }
     }
+
+    setProductData();
+    for (let x in storage.formList) {
+      if (storage.formList[x].id == storage.reportDetailData.formId) {
+        $(".formSelector").val(storage.formList[x].no); $(".formSelector").prop("disabled", true);
+        $(".formSelector").next().prop("disabled", true);
+        $(".formSelector").parent().next().hide();
+      }
+    }
+
     $(".insertbtn").click(setCusDataList);
     $(".insertbtn").click(setProductData);
 
+    setDefaultLineData();
   }
 
 }
@@ -1731,4 +1785,69 @@ function getYmdSlash() {
     "/" +
     (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
   );
+}
+
+
+function setTempLineData() {
+  // let appLine = storage.reportDetailData.appLine;
+  // let html;
+  // let idx;
+
+  // for (let i = 0; i <= appLine.length - 1; i++) {
+  //   html = "";
+  //   if (appLine[i].length > 0) {
+  //     for (let j = 0; j < appLine[i][0].length; j++) {
+  //       let num = appLine[i][j];
+  //       html += "<div class='lineDataContainer' id='lineContainer_" + num + "'><label id='linedata_" + num + "'>" + storage.user[num].userName + "</label><button value='" + num + "'' onclick='upClick(this)'>▲</button><button value='" + num + "'' onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'><i class='fa-solid fa-xmark'></i></button></div>";
+  //     } if (i > 1) {
+  //       idx = i - 1;
+  //     } else if (i <= 1) {
+  //       idx = i;
+  //     }
+  //     $(".typeContainer")[idx].innerHTML = html;
+  //   }
+
+  // }
+
+  let html = ""; for( let i = 0 ; i < storage.reportDetailData.appLine.length; i ++) { 
+    let idx =  storage.reportDetailData.appLine[i][0] ; 
+    let num = storage.reportDetailData.appLine[i][1]; 
+       html += "<div class='lineDataContainer' id='lineContainer_" + num + "'><label id='linedata_" + num + "'>" + storage.user[num].userName + "</label><button value='" + num + "'' onclick='upClick(this)'>▲</button><button value='" + num + "'' onclick='downClick(this)'>▼</button><button onclick='deleteClick(this)'><i class='fa-solid fa-xmark'></i></button></div>";
+     if (idx > 1) {
+         idx = idx - 1;
+       } else if (idx <= 1) {
+         idx = i;
+       } 
+     html = ($(".typeContainer")[idx].innerHTML += html); 
+     
+      $(".typeContainer")[idx].innerHTML = html;
+ }
+
+}
+
+
+
+function setDefaultLineData() {
+  let simplAppLine = [];
+  let formId = storage.reportDetailData.formId;
+
+  for (let i = 0; i < $("." + formId + "_examine").length; i++) {
+    simplAppLine.push([0, $("." + formId + "_examine")[i].dataset.detail]);
+  }
+  for (let i = 0; i < $("." + formId + "_agree").length; i++) {
+    simplAppLine.push([1, $("." + formId + "_agree")[i].dataset.detail]);
+  }
+  for (let i = 0; i < $("." + formId + "_approval").length; i++) {
+    simplAppLine.push([2, $("." + formId + "_approval")[i].dataset.detail]);
+  }
+  for (let i = 0; i < $("." + formId + "_conduct").length; i++) {
+    simplAppLine.push([3, $("." + formId + "_conduct")[i].dataset.detail]);
+  }
+  // for (let i = 0; i < $("." + formId + "_refer").length; i++) {
+  //   appLine.push([4, $("." + formId + "_refer")[i].dataset.detail]);
+  // }
+  for (let i = 0; i < referArr.length; i++) {
+    simplAppLine.push([4, referArr[i]]);
+  }
+  storage.reportDetailData.appLine = simplAppLine;
 }
