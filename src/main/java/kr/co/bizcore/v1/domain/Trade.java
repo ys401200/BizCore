@@ -20,6 +20,7 @@ public class Trade extends Domain{
     protected long price;
     protected long vat;
     protected String remark;
+    protected String pair;
     protected String related;    
     
 }

@@ -1,6 +1,9 @@
 package kr.co.bizcore.v1.ctrl;
 
+import java.util.regex.Pattern;
+
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -18,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import kr.co.bizcore.v1.domain.Project;
 import kr.co.bizcore.v1.domain.Schedule2;
+import kr.co.bizcore.v1.mapper.Schedule2Mapper;
 import kr.co.bizcore.v1.msg.Msg;
 import lombok.extern.slf4j.Slf4j;
 
@@ -90,5 +94,77 @@ public class ApiSchedule2Ctrl extends Ctrl {
         
         return result;
     } // End of projectNoGet()
+
+    @GetMapping("{no:\\d+}")
+    public String scheduleNo(HttpServletRequest request, @PathVariable("no") int no){
+        String result = null, compId = null, aesKey = null, aesIv = null;
+        HttpSession session = null;
+        Msg msg = null;
+
+        session = request.getSession();
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        compId = (String)session.getAttribute("compId");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
+        msg = getMsg((String)session.getAttribute("lang"));
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        }else{
+            result = schedule2Svc.getScheduleWithNo(compId, no);
+            if(result == null)   result = "{\"result\":\"failure\",\"msg\":\"requested schedule is not found.\"}";
+            else    result = "{\"result\":\"ok\",\"data\":\"" + result + "\"}";
+        }
+        return result;
+    } // End of scheduleNo()
+
+    @GetMapping(value = {"company", "company/{from:\\d{8}}", "company/{from:\\d{8}}/{to:\\d{8}}"})
+    public String getScheduleCompany(HttpServletRequest request, HttpServletResponse response, @PathVariable(required = false) String from, @PathVariable(required = false) String to){
+        return getSchedule(request, response, "company", null, from, to);
+    } // End of getScheduleCompany()
+
+    @GetMapping(value = {"dept/{value}", "dept/{value}/{from:\\d{8}}", "dept/{value}/{from:\\d{8}}/{to:\\d{8}}"})
+    public String getScheduleDept(HttpServletRequest request, HttpServletResponse response, @PathVariable(required = true) String value, @PathVariable(required = false) String from, @PathVariable(required = false) String to){
+        return getSchedule(request, response, "dept", value, from, to);
+    } // End of getScheduleDept()
+    @GetMapping(value = {"employee", "employee/{value:\\d+}", "employee/{value:\\d+}/{from:\\d{8}}", "employee/{value:\\d+}/{from:\\d{8}}/{to:\\d{8}}"})
+    public String getScheduleEmployee(HttpServletRequest request, HttpServletResponse response, @PathVariable(required = true) String value, @PathVariable(required = false) String from, @PathVariable(required = false) String to){
+        return getSchedule(request, response, "employee", value, from, to);
+    } // End of getScheduleEmployee()
+
+
+    private String getSchedule(HttpServletRequest request, HttpServletResponse response, String scope, String value, String from, String to){
+        String result = null, compId = null, aesKey = null, aesIv = null, userNo = null;
+        String html404 = "<!DOCTYPE html><html><head><link rel=\"icon\" href=\"/favicon\" type=\"image/x-icon\"><meta charset=\"UTF-8\"><link rel=\"stylesheet\" type=\"text/css\" href=\"/css/error/error.css\" /><title>404 ERROR!</title></head><body><img src=\"/images/errors/404.jpg\"/></body></html>";
+        HttpSession session = null;
+        Msg msg = null;
+
+        session = request.getSession();
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        userNo = (String)session.getAttribute("userNo");
+        compId = (String)session.getAttribute("compId");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
+        msg = getMsg((String)session.getAttribute("lang"));
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        }else{
+            if(scope.equals("employee") || (scope.equals("dept") && value != null && schedule2Svc.verifyDeptId(compId, value)) || scope.equals("company")){
+                result = schedule2Svc.getSchedule(compId, userNo, scope, value, from, to);
+            }else{
+                result = html404;
+                response.setStatus(404);
+            }
+            //result = schedule2Svc.getScheduleWithNo(compId, no);
+            //if(result == null)   result = "{\"result\":\"failure\",\"msg\":\"requested schedule is not found.\"}";
+            //else    result = "{\"result\":\"ok\",\"data\":\"" + result + "\"}";
+        }
+        return result;
+    } // End of scheduleNo()
     
 }

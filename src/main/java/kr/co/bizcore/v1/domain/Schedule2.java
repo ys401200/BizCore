@@ -24,7 +24,7 @@ public class Schedule2 extends Domain {
         result = "no : " + no + "\n";
         result += ("writer : " + writer + "\n");
         result += ("title : " + (title == null ? "null" : "\"" + title + "\"") + "\n");
-        result += ("content : " + (content == null ? "null" : "\"" + content + "\"") + "\n");
+        result += ("content : " + (content == null ? "null" : "\"" + content.replaceAll("\r", "").replaceAll("\n", "").replaceAll("\t", "") + "\"") + "\n");
         result += ("report : " + report + "\n");
         result += ("type : " + (type == null ? "null" : "\"" + type + "\"") + "\n");
         result += ("from : " + (from == null ? "null" : from.getTime()) + "\n");

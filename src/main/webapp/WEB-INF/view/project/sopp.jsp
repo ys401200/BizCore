@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%> <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<jsp:include page="../header.jsp"/>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%> <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %><jsp:include page="../header.jsp"/>
 <div id="bodyContents">
 	<div id="sideContents">
 		<jsp:include page="../sideMenu.jsp" />
@@ -81,7 +80,30 @@
                 <div class="sopp-sub-title"><div>계 약</div><div></div></div>
                 <div class="sopp-contract"></div>
                 <div class="sopp-sub-title"><div>매입매출</div><div></div></div>
-                <div class="sopp-trade"></div>
+                <div class="sopp-trade">
+                    <div><!-- 상단 헤더부분 / 합계 금액 및 항목 추가 버튼 -->
+                        <div><span>매출 합계</span><span>1,000,000</span></div>
+                        <div><span>매입 합계</span><span>1,000,000</span></div>
+                        <div><span>항목 추가</span></div>
+                    </div><!-- End of child 1-->
+                    <div><!-- 테이블 헤더부분 / 테이블 헤더 및 항목 추가 ROW 위치 -->
+                        <div class="sopp-trade-row">
+                            <span>구분</span>
+                            <span>기준일자</span>
+                            <span>거래처</span>
+                            <span>제품</span>
+                            <span>수량</span>
+                            <span>단가</span>
+                            <span>과세</span>
+                            <span>합계</span>
+                            <span>비고</span>
+                        </div>
+                        <div></div>
+                    </div><!-- End of child 2-->
+                    <div><!-- 매입 / 매출 테이블 및 페어링 라인 캔버스 위치 -->
+                        <div class="sopp-trade-table"></div><div class="sopp-trade-pairing"></div>
+                    </div><!-- End of child 3-->
+                </div><!-- End of .sopp-trade -->
                 <div class="sopp-sub-title"><div>관련자료</div><div></div></div>
                 <div class="sopp-attached"></div>
             </div>

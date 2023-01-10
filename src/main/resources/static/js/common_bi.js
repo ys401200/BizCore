@@ -205,7 +205,7 @@ class Sopp2 {
 
 		cnt = document.getElementsByClassName("sopp-progress")[0];
 		for (x = 0; x < y.length; x++) {
-			html += ("<div " + (x < R.sopp.stage ? " class=\"sopp-done\"" : (x === R.sopp.stage ? " class=\"sopp-doing\"" : (x === R.sopp.stage + 1 ? " onclick=\"soppStageUp(" + R.sopp.stage + ")\" style=\"cursor:pointer;\"" : ""))) + ">" + y[x] + "</div>");
+			html += ("<div " + (x < R.sopp.stage ? " class=\"sopp-done\"" : (x === R.sopp.stage ? " class=\"sopp-doing\"" : (x === R.sopp.stage + 1 && (R.sopp.owner === storage.my || R.projectOwner === storage.my) ? " onclick=\"soppStageUp(" + R.sopp.stage + ")\" style=\"cursor:pointer;\"" : ""))) + ">" + y[x] + "</div>");
 		}
 		cnt.innerHTML = html;
 
@@ -1307,7 +1307,7 @@ class Projects {
 		html = "<div class=\"new-sopp\" data-project=\"" + prjNo + "\"><div><div><div>";
 		title = "영업기회명";
 		for (x = 0; x < title.length; x++)	html += ("<T>" + title[x] + "</T>");
-		html += "</div><div contentEditable data-name=\"name\"></div></div>";
+		html += "</div><div contentEditable data-name=\"name\" onfocusin=\"this.parentElement.parentElement.nextElementSibling.innerHTML=''\"></div></div>";
 
 		html += "<div><div>";
 		title = "관리자";
@@ -1332,12 +1332,12 @@ class Projects {
 		html += "<div><div>";
 		title = "예상매출액";
 		for (x = 0; x < title.length; x++)	html += ("<T>" + title[x] + "</T>");
-		html += "</div><input data-name=\"expectedSales\" style=\"text-align:right;\" onkeyup=\"inputExpectedSales(this)\" /></div>";
+		html += "</div><input data-name=\"expectedSales\" style=\"text-align:right;\" onkeyup=\"inputExpectedSales(this)\" onfocusin=\"this.parentElement.parentElement.nextElementSibling.innerHTML=''\" /></div>";
 
 		html += "<div><div>";
 		title = "예상납기";
 		for (x = 0; x < title.length; x++)	html += ("<T>" + title[x] + "</T>");
-		html += "</div><input type=\"date\" value=\"" + dt.toISOString().substring(0, 10) + "\" data-name=\"expectedDate\" /></div></div><div></div></div>";
+		html += "</div><input type=\"date\" value=\"" + dt.toISOString().substring(0, 10) + "\" data-name=\"expectedDate\" onfocusin=\"this.parentElement.parentElement.nextElementSibling.innerHTML=''\" /></div></div><div></div></div>";
 
 
 		modal.body[0].innerHTML = html;
@@ -1602,6 +1602,50 @@ class Maintenance{
 
 } // End of Class === Maintenance =======================================================================================
 
+class Trade{
+	constructor(data){
+		this.no;
+		this.dt;
+		this.belongTo;
+		this.writer;
+		this.type;
+		this.product;
+		this.customer;
+		this.taxbill;
+		this.title;
+		this.qty;
+		this.price;
+		this.vat;
+		this.remark;
+		this.pair;
+		this.related;    
+	} // End of constructor()
+
+	// 영업기회 내 매입매출 컨테이너에 기본 구조를 그려넣는 메서드
+	drawContainerInSopp(){
+		let x, cnt;
+
+		cnt = document.getElementsByClassName("")[0];
+	} // End of drawContainerInSopp()
+	/* ============================================================
+	protected int no;
+    protected Date dt;
+    protected String belongTo;
+    protected int writer;
+    protected String type;
+    protected int product;
+    protected int customer;
+    protected String taxbill;
+    protected String title;
+    protected int qty;
+    protected long price;
+    protected long vat;
+    protected String remark;
+    protected String pair;
+    protected String related;    
+	*/
+}
+/* =======================
 let maintenance = {
 	no:-1, // int
 	contract:-1, // int
@@ -1616,3 +1660,4 @@ let maintenance = {
 	created:null,
 	modified:null
 }
+============================= */

@@ -1,5 +1,9 @@
 package kr.co.bizcore.v1.svc;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -77,5 +81,34 @@ public class Schedule2Svc extends Svc {
         
         return result;
     } // End of getScheduleWithSopp()
+
+    public String getScheduleWithNo(String compId, int no) {
+        Schedule2 result = null;
+        result = schedule2Mapper.getScheduleWithNo(compId, no);
+        return result == null ? null : result.toJson();
+    } // End of getScheduleWithNo()
+
+    public String getSchedule(String compId, String userNo, String scope, String value, String from, String to) {
+        String result = null, t = null;
+        String sql1 = "SELECT no, writer, title, content, report, type, UNIX_TIMESTAMP(`from`)*1000 `from`, UNIX_TIMESTAMP(`to`)*1000 `to`, related, permitted, created, modified FROM bizcore.schedule WHERE deleted IS NULL AND compId = '" + compId + "'";
+        String sql2 = "WITH RECURSIVE CTE AS (SELECT deptid, parent FROM bizcore.department WHERE deptid = :deptId AND compId = :compId UNION ALL SELECT p.deptid, p.parent FROM bizcore.department p INNER JOIN CTE ON p.parent = CTE.deptid) SELECT deptid FROM CTE";
+        Schedule2 sch = null;
+        ArrayList<Schedule2> list = null;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        int x = 0;
+
+        if(scope.equals("employee"))    sql1 += (" AND writer = " + value);
+        else if(scope.equals("dept")){
+            
+        }
+
+
+
+        return result;
+    }
+
+    
     
 }

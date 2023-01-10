@@ -25,6 +25,10 @@ public interface Schedule2Mapper {
     @Select("SELECT count(*) FROM bizcore.sopp WHERE deleted IS NULL AND compId = #{compId} AND no = #{sopp} AND ((owner = #{userNo} OR coworker LIKE CONCAT('%', #{userNo}, '%')) OR json_value(related,'$.parent') = (SELECT CONCAT('project:',no) FROM bizcore.project WHERE deleted IS NULL AND compId = #{compId} AND owner = #{userNo}))")
     public int checkPermissionWithSopp(@Param("compId") String compId, @Param("userNo") String userNo, @Param("sopp") int sopp);
 
+    // 일정의 번호로 일정을 가져오는 메서드
+    @Select("SELECT no, writer, title, content, report, type, `from`, `to`, related, permitted, created, modified FROM bizcore.schedule WHERE deleted IS NULL AND compId = #{compId} AND no = #{no}")
+    public Schedule2 getScheduleWithNo(@Param("compId") String compId, @Param("no") int no);
+
     
     
 }

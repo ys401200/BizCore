@@ -101,4 +101,8 @@ public interface CommonMapper {
         "    WHERE a.vehicle = b.vehicle AND a.issued = b.i) d ON c.vehicle = d.v " +
         "WHERE c.deleted IS NULL AND c.status = '정상' AND c.compId = #{compId}")
     public List<HashMap<String, String>> getCorporateVehicleList(@Param("compId") String compId);
+
+    // 부서코드 존재유무 검증 메서드
+    @Select("SELECT count(*) FROM bizcore.department WHERE deleted IS NULL AND compId = #{compId} AND deptid = #{deptId}")
+    public int verifyDeptId(@Param("compId") String compId, @Param("deptId") String deptId);
 }

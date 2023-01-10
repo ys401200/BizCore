@@ -139,6 +139,11 @@ public abstract class Svc {
 
     public boolean debug(){return DEBUG;}
 
+    // 부서아이디 존재유무 검증 메서드
+    public boolean verifyDeptId(String compId, String deptId){
+        return commonMapper.verifyDeptId(compId, deptId) > 0;
+    }
+
     public int deleteAttachedFile(String compId, String funcName, int no, String fileName) {
         String rootPath = null, path = null, savedName = null, s = File.separator;
         File file = null;
