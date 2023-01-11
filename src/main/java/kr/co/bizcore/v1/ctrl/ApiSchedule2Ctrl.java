@@ -120,16 +120,16 @@ public class ApiSchedule2Ctrl extends Ctrl {
         return result;
     } // End of scheduleNo()
 
-    @GetMapping(value = {"company", "company/{from:\\d{8}}", "company/{from:\\d{8}}/{to:\\d{8}}"})
+    @GetMapping(value = {"company", "company/{from:\\d{13}}", "company/{from:\\d{13}}/{to:\\d{13}}"})
     public String getScheduleCompany(HttpServletRequest request, HttpServletResponse response, @PathVariable(required = false) String from, @PathVariable(required = false) String to){
         return getSchedule(request, response, "company", null, from, to);
     } // End of getScheduleCompany()
 
-    @GetMapping(value = {"dept/{value}", "dept/{value}/{from:\\d{8}}", "dept/{value}/{from:\\d{8}}/{to:\\d{8}}"})
+    @GetMapping(value = {"dept/{value}", "dept/{value}/{from:\\d{13}}", "dept/{value}/{from:\\d{13}}/{to:\\d{13}}"})
     public String getScheduleDept(HttpServletRequest request, HttpServletResponse response, @PathVariable(required = true) String value, @PathVariable(required = false) String from, @PathVariable(required = false) String to){
         return getSchedule(request, response, "dept", value, from, to);
     } // End of getScheduleDept()
-    @GetMapping(value = {"employee", "employee/{value:\\d+}", "employee/{value:\\d+}/{from:\\d{8}}", "employee/{value:\\d+}/{from:\\d{8}}/{to:\\d{8}}"})
+    @GetMapping(value = {"employee", "employee/{value:\\d+}", "employee/{value:\\d+}/{from:\\d{13}}", "employee/{value:\\d+}/{from:\\d{13}}/{to:\\d{13}}"})
     public String getScheduleEmployee(HttpServletRequest request, HttpServletResponse response, @PathVariable(required = true) String value, @PathVariable(required = false) String from, @PathVariable(required = false) String to){
         return getSchedule(request, response, "employee", value, from, to);
     } // End of getScheduleEmployee()
@@ -140,12 +140,14 @@ public class ApiSchedule2Ctrl extends Ctrl {
         String html404 = "<!DOCTYPE html><html><head><link rel=\"icon\" href=\"/favicon\" type=\"image/x-icon\"><meta charset=\"UTF-8\"><link rel=\"stylesheet\" type=\"text/css\" href=\"/css/error/error.css\" /><title>404 ERROR!</title></head><body><img src=\"/images/errors/404.jpg\"/></body></html>";
         HttpSession session = null;
         Msg msg = null;
+        Integer timeCorrect = 0;
 
         session = request.getSession();
         aesKey = (String)session.getAttribute("aesKey");
         aesIv = (String)session.getAttribute("aesIv");
         userNo = (String)session.getAttribute("userNo");
         compId = (String)session.getAttribute("compId");
+        timeCorrect = (Integer)session.getAttribute("timeCorrect");
         if(compId == null)  compId = (String)request.getAttribute("compId");
         msg = getMsg((String)session.getAttribute("lang"));
 
@@ -155,7 +157,12 @@ public class ApiSchedule2Ctrl extends Ctrl {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
         }else{
             if(scope.equals("employee") || (scope.equals("dept") && value != null && schedule2Svc.verifyDeptId(compId, value)) || scope.equals("company")){
-                result = schedule2Svc.getSchedule(compId, userNo, scope, value, from, to);
+                result = schedule2Svc.getSchedule(compId, userNo, scope, value, from, to, timeCorrect);
+                if(result == null)  result = "{\"result\":\"failure\",\"msg\":\"requested schedule is not found.\"}";
+                else{
+                    result = encAes(result, aesKey, aesIv);
+                    result = "{\"result\":\"ok\",\"data\":\"" + result + "\"}";
+                }
             }else{
                 result = html404;
                 response.setStatus(404);

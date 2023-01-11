@@ -3,7 +3,10 @@ package kr.co.bizcore.v1.svc;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -88,26 +91,92 @@ public class Schedule2Svc extends Svc {
         return result == null ? null : result.toJson();
     } // End of getScheduleWithNo()
 
-    public String getSchedule(String compId, String userNo, String scope, String value, String from, String to) {
+    public String getSchedule(String compId, String userNo, String scope, String value, String from, String to, Integer timeCorrect) {
         String result = null, t = null;
-        String sql1 = "SELECT no, writer, title, content, report, type, UNIX_TIMESTAMP(`from`)*1000 `from`, UNIX_TIMESTAMP(`to`)*1000 `to`, related, permitted, created, modified FROM bizcore.schedule WHERE deleted IS NULL AND compId = '" + compId + "'";
+        String sql1 = "SELECT no, writer, title, content, report, type, UNIX_TIMESTAMP(`from`)*1000 `from`, UNIX_TIMESTAMP(`to`)*1000 `to`, related, permitted, UNIX_TIMESTAMP(created)*1000 created, UNIX_TIMESTAMP(modified)*1000 modified FROM bizcore.schedule WHERE deleted IS NULL AND compId = '" + compId + "'";
         String sql2 = "WITH RECURSIVE CTE AS (SELECT deptid, parent FROM bizcore.department WHERE deptid = :deptId AND compId = :compId UNION ALL SELECT p.deptid, p.parent FROM bizcore.department p INNER JOIN CTE ON p.parent = CTE.deptid) SELECT deptid FROM CTE";
+        Calendar cal = Calendar.getInstance();
+        long dtFrom = 0, dtTo = 0;
         Schedule2 sch = null;
         ArrayList<Schedule2> list = null;
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         int x = 0;
+        long tl = 0;
 
-        if(scope.equals("employee"))    sql1 += (" AND writer = " + value);
-        else if(scope.equals("dept")){
-            
+        try{
+            conn = sqlSession.getConnection();
+
+            // scope에 따른 writer 설정 / company인 경우 writer 설정 불필요
+            if(scope.equals("employee"))    sql1 += (" AND writer = " + (value == null ? userNo : value));
+            else if(scope.equals("dept")){
+                pstmt = conn.prepareCall(sql2);
+                rs = pstmt.executeQuery();
+                while(rs.next()){
+                    if(t == null)   t = "";
+                    else            t += ",";
+                    t += ("'" + rs.getString(1) + "'");
+                }
+                rs.close();
+                pstmt.close();
+                sql1 += (" AND writer IN (SELECT DISTINCT user_no FROM bizcore.user_dept WHERE dept_id IN (" + t + "))");
+            }
+
+            // 검색기간 설정 / 시작 날짜가 있고 종료 날짜가 없는 경우 시작하는 날짜의 달 전체 / 시작 및 종료 날짜가 없는 경우는 1년 전의 달 1일 부터 금월 말일까지
+            if(from != null && to != null){
+                dtFrom = Long.parseLong(from);
+                dtTo = Long.parseLong(to);
+            }else if(from != null && to == null){ // 시작 날짜만 있는 경우
+                dtFrom = Long.parseLong(from);
+                cal.setTimeInMillis(dtFrom);
+                cal.set(Calendar.DATE, 1);
+                dtFrom = cal.getTimeInMillis();
+                cal.set(Calendar.MONTH, cal.get(Calendar.MONTH) + 1);
+                dtTo = cal.getTimeInMillis();
+            }else{
+                cal.set(Calendar.MONTH, cal.get(Calendar.MONTH) + 1);
+                cal.set(Calendar.DATE, 1);
+                dtTo = cal.getTimeInMillis() + timeCorrect;
+                cal = Calendar.getInstance();
+                cal.set(Calendar.YEAR, cal.get(Calendar.YEAR) - 1);
+                cal.set(Calendar.DATE, 1);
+                dtFrom = cal.getTimeInMillis() + timeCorrect;
+            }
+            sql1 += (" AND UNIX_TIMESTAMP(`to`)*1000 > " + dtFrom + " AND UNIX_TIMESTAMP(`from`)*1000 < " + dtTo + " ORDER BY `from`");
+
+            list = new ArrayList<>();
+            pstmt = conn.prepareStatement(sql1);
+            rs = pstmt.executeQuery();
+            while(rs.next()){
+                sch = new Schedule2();
+                sch.setNo(rs.getInt("no"));
+                sch.setWriter(rs.getInt("writer"));
+                sch.setTitle(rs.getString("title"));
+                sch.setContent(rs.getString("content"));
+                sch.setReport(rs.getBoolean("report"));
+                sch.setType(rs.getString("type"));
+                sch.setFrom(new Date(rs.getLong("from")));
+                sch.setTo(new Date(rs.getLong("to")));
+                sch.setRelated(rs.getString("related"));
+                sch.setPermitted(rs.getByte("permitted"));
+                sch.setCreated(rs.getLong("created"));
+                sch.setModified(rs.getLong("modified"));
+                list.add(sch);
+            }
+            rs.close();
+            pstmt.close();
+        }catch(SQLException e){e.printStackTrace();}
+
+        result = "[";
+        for(x = 0 ; x < list.size() ; x++){
+            if(x > 0)   result += ",";
+            sch = list.get(x);
+            result += sch.toJson();
         }
-
-
-
+        result += "]";
         return result;
-    }
+    } // End of getSchedule()
 
     
     
