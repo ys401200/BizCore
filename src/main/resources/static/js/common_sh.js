@@ -1216,6 +1216,8 @@ function getYmdSlashFull(date) {
 function setPrevModal(no) {
 
     modal.show();
+    $(".modal").prop("style","width:60%");
+
     $("#confirm").attr("onclick", "openSaleReport(" + no + ")");
     let el, el2, cnt;
     let html = "";
@@ -1636,12 +1638,12 @@ function setMtncDate() {
         if (cnt != undefined) {
 
             detail = {
-                product: cnt.children[0].dataset.detail*1,
-                customer: cnt.children[1].dataset.detail*1,
+                product: cnt.children[0].dataset.detail * 1,
+                customer: cnt.children[1].dataset.detail * 1,
                 startDate: cnt.children[2].innerHTML,
                 endDate: cnt.children[3].innerHTML,
-                engineer: cnt.children[4].children[0].value*1,
-                amount: cnt.children[5].innerHTML*1
+                engineer: cnt.children[4].children[0].value * 1,
+                amount: cnt.children[5].innerHTML * 1
             }
 
             data.push(detail);
@@ -1672,8 +1674,8 @@ function setMtncDate() {
             customer: customer,
             startDate: cnt.children[2].children[0].value,
             endDate: cnt.children[3].children[0].value,
-            engineer: cnt.children[4].children[0].value *1,
-            amount: cnt.children[5].children[0].value*1,
+            engineer: cnt.children[4].children[0].value * 1,
+            amount: cnt.children[5].children[0].value * 1,
         }
 
         data.push(detail);

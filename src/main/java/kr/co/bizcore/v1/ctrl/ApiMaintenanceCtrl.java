@@ -27,16 +27,16 @@ public class ApiMaintenanceCtrl {
         JSONObject json = null;
         JSONArray jarr = new JSONArray(requestbody);
 
-        for (int i = 0; i < jarr.length(); i++) {
-            json = jarr.getJSONObject(i);
-            product = json.getInt("product");
-            customer = json.getInt("customer");
-            engineer = json.getInt("engineer");
-            startDate = json.getString("startDate");
-            endDate = json.getString("endDate");
-            System.out.println("product >>>" + product);
+        // for (int i = 0; i < jarr.length(); i++) {
+        //     json = jarr.getJSONObject(i);
+        //     product = json.getInt("product");
+        //     customer = json.getInt("customer");
+        //     engineer = json.getInt("engineer");
+        //     startDate = json.getString("startDate");
+        //     endDate = json.getString("endDate");
+        // } 
 
-        }
+    
 
         return result;
 

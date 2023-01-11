@@ -1,6 +1,5 @@
 package kr.co.bizcore.v1.svc;
 
-
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -22,6 +21,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,8 +34,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
-
 
 import kr.co.bizcore.v1.domain.DocForm;
 import lombok.extern.slf4j.Slf4j;
@@ -709,6 +707,7 @@ public class GwService extends Svc {
         HashMap<String, String> map = null;
         long size = -1;
         boolean find = false;
+        JSONArray jarr = null;
 
         logger.info("GwService.askAppDoc() : 결재 처리 시작 : " + userNo + " : " + docNo + " : " + ordered);
 
@@ -867,7 +866,12 @@ public class GwService extends Svc {
             if (map == null) { // 결재절차가 종료된 경우
                 formId = gwMapper.getFormIdWithDocNo(compId, docNo);
                 if (formId != null && formId.equals("doc_Form_SalesReport")) {
-
+                    JSONObject job = null;
+                    job = new JSONObject(related); 
+                    job.getString("maintenece");
+                    System.out.print(job + "check 2222222 ");
+                    
+                 
                     notes.sendNewNotes(compId, 0, writer,
                             "결재 완료 되었습니다.<br /><a href=\\u0022/business/contract/" + docNo + "\\u0022>계약 등록하기</a>",
                             "{\"func\":\"docApp\",\"no\":\"" + docNo + "\"}");
@@ -1252,18 +1256,17 @@ public class GwService extends Svc {
         HashMap<String, String> attached = null;
         String fromDate = null, fromTime = null, toDate = null, toTime = null;
         String docHtml = null;
-        char spc1 = (char)143;
-        char spc2 = (char)143 + (char)143;
+        char spc1 = (char) 143;
+        char spc2 = (char) 143 + (char) 143;
 
         // docForm html 구하기
         form = gwMapper.getForm(formId);
-       
 
         if (form == null) {
             result = -1;
-        } else { 
-            form = form.replace("&", spc1+"");
-     
+        } else {
+            form = form.replace("&", spc1 + "");
+
             System.out.print(form);
             Node node = null;
 
@@ -1303,8 +1306,7 @@ public class GwService extends Svc {
 
             }
 
-
-            // 결재선 
+            // 결재선
             NodeList divNodes = root.getElementsByTagName("div");
 
             for (int j = 0; j < divNodes.getLength(); j++) {
@@ -1312,13 +1314,12 @@ public class GwService extends Svc {
                 NamedNodeMap divNodeAttrs = node.getAttributes();
                 if (divNodeAttrs.getNamedItem("id") != null) {
                     if (divNodeAttrs.getNamedItem("id").getNodeValue().equals((formId + "_line"))) {
-                          node.setTextContent(spc2+"");
+                        node.setTextContent(spc2 + "");
                     }
                 }
             }
-     
 
-            // 내용 
+            // 내용
             NodeList textNodes = root.getElementsByTagName("textarea");
 
             for (int k = 0; k < textNodes.getLength(); k++) {
@@ -1332,21 +1333,21 @@ public class GwService extends Svc {
                 }
             }
 
-
-            // document toString 
+            // document toString
             DOMSource domSource = new DOMSource(document);
             StringWriter swriter = new StringWriter();
             StreamResult rs = new StreamResult(swriter);
             TransformerFactory tf = TransformerFactory.newInstance();
             Transformer transformer = tf.newTransformer();
             transformer.transform(domSource, rs);
-            
-            docHtml =swriter.toString();
 
-            docHtml = docHtml.replace((spc2+""), lineData).replace((spc1+""), "&").replace("&#143;","&").replace("&gt;", "<");
-            
+            docHtml = swriter.toString();
+
+            docHtml = docHtml.replace((spc2 + ""), lineData).replace((spc1 + ""), "&").replace("&#143;", "&")
+                    .replace("&gt;", "<");
+
             if (addAppDoc(compId, dept, title, userNo, sopp, customer, formId, readable,
-            docHtml, files, attached,
+                    docHtml, files, attached,
                     appLine, related) > 0) {
                 result = 1;
 

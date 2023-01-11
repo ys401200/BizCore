@@ -282,10 +282,10 @@ function setEstData() {
 
 
     html += "<div class='insertedTechSche'>";
-    html += "<input type='date' class='inputs techDate'  data-detail='" + from + "' value='" + from + "' style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+    html += "<input type='date' class='inputs techDate'  data-detail='" + from + "' value='" + from + "' style='text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
     html += "<input type='text' class='inputs techType' data-detail='' value='' style='text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
     html += "<input type='text' class='inputs techTitle' data-detail='" + title + "' value='" + title + "' style='text-overflow:ellipsis;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
-    html += "<div class='techContent' data-detail='" + content + "' value='" + content + "'  style='text-overflow:ellipsis;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'>" + content + "</div>";
+    html += "<div class='techContent' data-detail='" + content + "' value='" + content + "'  style='overflow:hidden; white-space:nowrap;text-overflow:ellipsis;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'>" + content + "</div>";
     html += "<input type='text' class='inputs techWriter' data-detail='" + storage.user[writer].userName + "' value='" + storage.user[writer].userName + "'  style='text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
     html += "<input type='text' class='inputs techPlace' data-detail='" + place + "' value='" + place + "' style='text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/></div>";
 
@@ -297,33 +297,33 @@ function setEstData() {
 
 
 
-
-  let mtnc = [
-    {
-      "product": 1100014,
-      "customer": 103428,
-      "startDate": "검수일",
-      "endDate": "+ 0년 0개월",
-      "engineer": 10002,
-      "amount": 0
-    },
-    {
-      "product": 1100015,
-      "customer": 103428,
-      "startDate": "검수일",
-      "endDate": "+ 0년 0개월",
-      "engineer": 10002,
-      "amount": 0
-    },
-    {
-      "product": 1100036,
-      "customer": 103442,
-      "startDate": "2023-02-01",
-      "endDate": "2023-02-10",
-      "engineer": 10002,
-      "amount": 123456
-    }
-  ];
+ let mtnc = mtncData;
+  // let mtnc = [
+  //   {
+  //     "product": 1100014,
+  //     "customer": 103428,
+  //     "startDate": "검수일",
+  //     "endDate": "+ 0년 0개월",
+  //     "engineer": 10002,
+  //     "amount": 0
+  //   },
+  //   {
+  //     "product": 1100015,
+  //     "customer": 103428,
+  //     "startDate": "검수일",
+  //     "endDate": "+ 0년 0개월",
+  //     "engineer": 10002,
+  //     "amount": 0
+  //   },
+  //   {
+  //     "product": 1100036,
+  //     "customer": 103442,
+  //     "startDate": "2023-02-01",
+  //     "endDate": "2023-02-10",
+  //     "engineer": 10002,
+  //     "amount": 123456
+  //   }
+  // ];
 
   let mtncHtml = "";
   let product, customer, startDate, endDate, engineer, amount, note;
@@ -712,6 +712,7 @@ function createContract(ctrtData) {
     success: (result) => {
       if (result.result === "ok") {
         console.log("계약 자동 생성 완료");
+    
       } else {
         console.log("계약 자동 생성 실패");
       }
