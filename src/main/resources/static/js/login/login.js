@@ -175,7 +175,7 @@ function checkKeepToken(){
 
 // 로그인 시도 함수
 function loginSubmit(){
-	let t, data = {}, url = apiServer + "/api/user/login/", keepStatus;
+	let t, data = {}, url = apiServer + "/api/user/login/", keepStatus, timeCorrect;
 
 	// 임시변수 및  타겟 엘리먼트 설정
 	t = [];
@@ -200,8 +200,11 @@ function loginSubmit(){
 		return;
 	} // End of loginSubmit()
 
+	// 시간 보정 값 설정
+	timeCorrect = (new Date(1970,0,1)).getTime();
+
 	// 값을 가지고 와서 암호화함(compId는 암호화 제외)
-	data = {"userId":t[1].value, "pw":t[2].value, "keepStatus":keepStatus};
+	data = {"userId":t[1].value, "pw":t[2].value, "keepStatus":keepStatus, "timeCorrect":timeCorrect};
 	if(!(t[0] === undefined || t[0] === null))	url = url + t[0].value;
 	data = cipher.encAes(JSON.stringify(data));
 	//data = btoa(JSON.stringify(data));

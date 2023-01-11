@@ -73,6 +73,7 @@ public class ApiUserCtrl extends Ctrl{
         boolean keep = false;
         JSONObject json = null;
         HttpSession session = null;
+        Integer timeCorrect = 0;
 
         session = request.getSession();
         lang = (String)session.getAttribute("lang");
@@ -115,6 +116,7 @@ public class ApiUserCtrl extends Ctrl{
                 userId = json.getString("userId");
                 pw = json.getString("pw");
                 keep = json.getBoolean("keepStatus");
+                timeCorrect = json.getInt("timeCorrect");
                 if (userId == null || pw == null) {
                     result = "{\"result\":\"failure\",\"msg\":\"" + msg.idPwMisMatch + "\"}";
                 } else {
@@ -131,6 +133,7 @@ public class ApiUserCtrl extends Ctrl{
                         session.setAttribute("userNo", userNo);
                         session.setAttribute("userName", userName);
                         session.setAttribute("userRank", userRank);
+                        session.setAttribute("timeCorrect", timeCorrect);
                         result = "{\"result\":\"ok\",\"data\":\"" + keepToken + "\"}";
                         //로그인 상태 유지를 체크한 경우 세션의 유효시간을 연장하도록 함
                         if(keep)    session.setMaxInactiveInterval(86400);
