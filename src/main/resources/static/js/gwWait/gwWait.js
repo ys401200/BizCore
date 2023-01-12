@@ -1153,7 +1153,7 @@ function createConfirmBtn() {
   window.setTimeout(setEditor, 100);
 
   $("input[name='" + formId + "_RD']").prop("disabled", false);
-
+  if(formId != "doc_Form_leatve" && formId != "doc_Form_extension") {
   setSoppList();
 
   let html = $(".infoContentlast")[0].innerHTML;
@@ -1178,10 +1178,9 @@ function createConfirmBtn() {
   if (formId == "doc_Form_SalesReport") {
     $("#" + formId + "_endCustName").attr("list", "_infoCustomer");
   }
-
-
-  setCusDataList();
-  setProductData();
+    setCusDataList();
+    setProductData();
+  }
 
 }
 
