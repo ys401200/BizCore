@@ -35,11 +35,11 @@ changeExpectedDate = (el) => {
 
 // 달력의 날짜 클릭 이벤트 핸들러
 clickedDateInCalendar = (el) => {
-	let dt, sch;
+	let dt;
 
-	sch = new Schedule();
+	R.schedule = new Schedule();
 	dt = new Date(el.dataset.v * 1);
-	sch.popupModalForEdit(dt, true);
+	R.schedule.popupModalForEdit(dt, true);
 } // End of clickedDateInCalendar()
 
 
@@ -205,7 +205,7 @@ class Sopp2 {
 
 		cnt = document.getElementsByClassName("sopp-progress")[0];
 		for (x = 0; x < y.length; x++) {
-			html += ("<div " + (x < R.sopp.stage ? " class=\"sopp-done\"" : (x === R.sopp.stage ? " class=\"sopp-doing\"" : (x === R.sopp.stage + 1 && (R.sopp.owner === storage.my || R.projectOwner === storage.my) ? " onclick=\"soppStageUp(" + R.sopp.stage + ")\" style=\"cursor:pointer;\"" : ""))) + ">" + y[x] + "</div>");
+			html += ("<div " + (x < R.sopp.stage ? " class=\"sopp-done\"" : (x === R.sopp.stage ? " class=\"sopp-doing\"" : (x === R.sopp.stage + 1 && (R.sopp.owner === storage.my || R.projectOwner === storage.my) ? " onclick=\"R.sopp.stageUp()\" style=\"cursor:pointer;\"" : " style=\"cursor:default;\""))) + ">" + y[x] + "</div>");
 		}
 		cnt.innerHTML = html;
 
@@ -373,6 +373,24 @@ class Sopp2 {
 		el.innerHTML = html;
 
 	} // End of draw()
+
+	stageUp(){
+		let soppNo;
+	
+		if(this.stage < 4){ // 협상 전 단계일 때
+			this.stage += 1;
+			this.update();
+		}else if (this.stage === 4) { // 협상 단계일 때
+			soppNo = this.no;
+			window.setTimeout(() => {
+				setPrevModal(soppNo)
+			}, 2000);
+		}else if (this.stage === 5){ // 계약 단계일 때 / 성공 혹은 실패 선택
+
+		}
+	
+	
+	} // End of stageUp()
 
 	update() {
 		let json = Object.assign({}, this), data;
@@ -568,7 +586,6 @@ class Schedule{
 				created:(new Date()).getTime(),
 				modified:null
 			};
-			console.log(v);
 		}else v = data;
 		this.no = v.no;
 		this.writer = v.writer;
@@ -584,7 +601,7 @@ class Schedule{
 		this.modified = (v.modified === undefined || v.modified === null ? null : v.modified.constructor.name === "Number" ? new Date(v.modified) : v.modified);
 	} // End of constructor()
 
-	drawScheduleList(){
+    drawScheduleList(){
 		const CommonDats = new Common();
 		let container, dataJob = [], result, jsonData, header = [], data = [], ids = [], str, fnc, pageContainer, containerTitle, hideArr, showArr;
 		console.log("v : " + v);
@@ -635,19 +652,19 @@ class Schedule{
 					"col": 5,
 				},
 			];
-			
+
 			data.push(str);
 		}else{
 			for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
 				fromDate = dateDis(jsonData[i].from);
 				fromSetDate = dateFnc(fromDate, "yy.mm.dd");
-				
+
 				toDate = dateDis(jsonData[i].to);
 				toSetDate = dateFnc(toDate, "yy.mm.dd");
-	
+
 				disDate = dateDis(jsonData[i].created, jsonData[i].modified);
 				disDate = dateFnc(disDate, "yy.mm.dd");
-		
+
 				str = [
 					{
 						"setData": disDate,
@@ -670,7 +687,7 @@ class Schedule{
 						"align": "center",
 					},
 				];
-		
+
 				fnc = "scheduleDetailView(this);";
 				ids.push(jsonData[i].no);
 				dataJob.push(jsonData[i].job);
@@ -679,13 +696,13 @@ class Schedule{
 			let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "this.drawScheduleList", result[0]);
 			pageContainer[0].innerHTML = pageNation;
 		}
-	
+
 		containerTitle.innerHTML = "일정조회";
 		CommonDats.createGrid(container, header, data, ids, dataJob, fnc);
 		setViewContents(hideArr, showArr);
-	
+
 		let path = $(location).attr("pathname").split("/");
-	
+
 		if(path[3] !== undefined && jsonData !== ""){
 			$(".calendarList").hide();
 			let content = $(".gridContent[data-id=\"" + path[3] + "\"]");
@@ -976,7 +993,7 @@ class Schedule{
 	// =============================================================================================
 
 	// 모달의 미니 캘린더에서 날짜를 클릭할 때 실행되는 메서드
-	clickedDateOnMiniCalendar = (el) => {
+	clickedDateOnMiniCalendar(el){
 		let x, y, start, end, els, cnt;
 		cnt = document.getElementsByClassName("schedule-detail")[0];
 		els = cnt.getElementsByClassName("mini-calendar-cell");
@@ -1023,7 +1040,7 @@ class Schedule{
 	} // End of clickedDateOnMiniCalendar()
 
 	// 모달의 미니 캘린더에서 타임바를 클릭했을 때 실행되는 메서드
-	clickedTimeOnMiniCalendar = (el) => {
+	clickedTimeOnMiniCalendar(el){
 		let de, cnt, dts, dte, start, end, x, y, z, els;
 		cnt = document.getElementsByClassName("schedule-detail")[0];
 		dts = cnt.dataset.ts;
@@ -1080,7 +1097,7 @@ class Schedule{
 	} // end of clickedTimeOnMiniCalendar()
 
 	// 자주 쓰는 결재선 선택시 실행되는 함수
-	showSavedLineInScheduleDetail = (v) => {
+	showSavedLineInScheduleDetail(v){
 		let value, x, y, cnt, line, html;
 		if(v === undefined)	return;
 		if(typeof v === "object" && v.constructor.name === "HTMLSelectElement")	value = v.value;
@@ -1113,54 +1130,20 @@ class Schedule{
 	} // End of showSavedLineInScheduleDetail()
 
 	// 모달의 확인 버튼 클릭시 실행되는 메서드
-	clickedScheduleModalConfirm = () => {
-		let cnt, els, x, y, schedule;
+	clickedScheduleModalConfirm(){
+		let cnt, els, x, y;
 		
-		data = {};
 		cnt = document.getElementsByClassName("schedule-detail")[0];
-	
-		// 시작 날짜
-		x = cnt.dataset.ds;
-		y = cnt.dataset.ts;
-		this.from = new Date(x.substring(0,4), x.substring(4,6)*1-1, x.substring(6), y.substring(0,2), y.substring(2), 0);
-	
-		// 종료 날짜
-		x = cnt.dataset.de;
-		y = cnt.dataset.te;
-		if(x === "x")	x = cnt.dataset.ds;
-		this.to = new Date(x.substring(0,4), x.substring(4,6)*1-1, x.substring(6), y.substring(0,2), y.substring(2), 0);
+		if(R.schedule.related === undefined || R.schedule.related === null)	R.schedule.related = {};
 	
 		// 제목
-		this.title = cnt.children[0].children[0].children[1].value;
-	
+		R.schedule.title = cnt.children[0].children[0].children[1].value;
+		
 		// 내용
 		x = CKEDITOR.instances["schedule-modal-content"].getData();
 		x = x.replaceAll("\r","").replaceAll("\n","").replaceAll("\t","");
-		this.content = x;
-	
-		/* ===============================================================================
-		// 작성자
-		x = cnt.dataset.writer;
-		x = x === undefined || x === null ? storage.my * 1 : x * 1;
-		this.writer = x;
-	
-		// 번호
-		x = cnt.dataset.no;
-		x = x === undefined || x === null ? -1 : x * 1;
-		data.no = x;
-	
-		// 일정의 소속
-		els = document.getElementsByName("schedule-belong-to");
-		y = undefined;
-		for(x = 0 ; x < els.length ; x++){
-			if(els[x].checked){
-				y = els[x].value;
-				break;
-			}
-		}
-		data.parent = y;
-		=============================================================================== */
-	
+		R.schedule.content = x;
+		
 		// 주간보고 포함 여부
 		els = document.getElementsByName("schedule-report");
 		y = undefined;
@@ -1170,7 +1153,7 @@ class Schedule{
 				break;
 			}
 		}
-		data.report = y === "true";
+		R.schedule.report = y === "true";
 	
 		// 알정 종류 1
 		els = document.getElementsByName("schedule-type1");
@@ -1181,9 +1164,9 @@ class Schedule{
 				break;
 			}
 		}
-		data.type1 = y;
+		R.schedule.type = y;
 	
-		// 알정 종류 1
+		// 알정 종류 2
 		els = document.getElementsByName("schedule-type2");
 		y = undefined;
 		for(x = 0 ; x < els.length ; x++){
@@ -1192,7 +1175,7 @@ class Schedule{
 				break;
 			}
 		}
-		data.type2 = y;
+		R.schedule.related.typeOfDetail = y;
 	
 		// 알정 장소
 		els = document.getElementsByName("schedule-place");
@@ -1203,7 +1186,7 @@ class Schedule{
 				break;
 			}
 		}
-		data.place = y;
+		R.schedule.related.place = y;
 	
 		// 알정 방법
 		els = document.getElementsByName("schedule-method");
@@ -1214,34 +1197,24 @@ class Schedule{
 				break;
 			}
 		}
-		data.method = y;
-	
-		// 알정 종류 1
-		els = document.getElementsByName("schedule-type1");
-		y = undefined;
-		for(x = 0 ; x < els.length ; x++){
-			if(els[x].checked){
-				y = els[x].value;
-				break;
-			}
-		}
-		data.type1 = y;
+		R.schedule.related.method = y;
 	
 		// 전자결재의 결재선
 		els = document.getElementsByClassName("schedule-app-line")[0];
 		y = els.value;
-		data.appLine = y === undefined || y === null ? null : y * 1;
-		y = cnt.dataset.permitted;
-		data.permitted = y === undefined || y === null ? null : y * 1;
+		if(y !== undefined && y !== null){
+			R.schedule.related.appLine = y * 1;
+			R.schedule.permitted = 0;
+		}
 	
 		// ===== 필수 데이터 검증
 		x = document.getElementsByClassName("schedule-gw");
-		if(data.title === ""){
+		if(R.schedule.title === ""){
 			document.getElementsByClassName("schedule-detail")[0].children[0].children[0].children[1].style.animation = "not-enough-warn 7s forwards";
 			document.getElementsByClassName("schedule-detail")[0].children[0].children[0].children[1].focus();
 			window.setTimeout(()=>{document.getElementsByClassName("schedule-detail")[0].children[0].children[0].children[1].style.animation = "";},7000);
 			return;
-		}else if(x.length > 0 && x[0].offsetHeight > 0 && data.appLine === -1){
+		}else if(x.length > 0 && x[0].offsetHeight > 0 && R.schedule.related.appLine === -1){
 			document.getElementsByClassName("schedule-gw")[0].children[1].scrollIntoView({behavior: 'smooth'});
 			document.getElementsByClassName("schedule-gw")[0].children[1].style.animation = "not-enough-warn 7s forwards";
 			document.getElementsByClassName("schedule-gw")[0].children[1].focus();
@@ -1253,25 +1226,13 @@ class Schedule{
 		CKEDITOR.instances['schedule-modal-content'].destroy();
 		modal.hide();
 		
-		// Schedule 객체 만들고 업데이트하기
-		schedule = new Schedule();
-		schedule.no = data.no;
-		schedule.writer = data.writer;
-		schedule.title = data.title;
-		schedule.content = data.content;
-		schedule.report = data.report;
-		schedule.from = data.from;
-		schedule.type = data.type1;
-		schedule.permitted = data.permitted;
-		schedule.related.parent = data.parent;
-		schedule.related.typeOfDetail = data.type2;
-		schedule.related.place = data.place;
-		schedule.update();
+		// Schedule 객체 업데이트하기
+		R.schedule.update();
 		
 	} // End of clickedScheduleModalConfirm()
 
 	// 미니 달력을 그리는 함수
-	drawMiniCalendar = (date) => {
+	drawMiniCalendar(date){
 		let x, y, year, month, dt, html, startDate, endDate;
 		
 		year = date.getFullYear();
@@ -1301,7 +1262,7 @@ class Schedule{
 	} // End of drawMonthList()
 
 	// 미니 캘린더와 타임바의 클릭 이벤트 후 상단에 날짜/시간 표시를 변경하는 메서드
-	setDateTimeInScheduleDetail = () => {
+	setDateTimeInScheduleDetail(){
 		let ds, de, ts, te, s1, s2, e1, e2, str, cnt = document.getElementsByClassName("schedule-detail")[0];
 		ds = cnt.dataset.ds;
 		de = cnt.dataset.de;
@@ -1325,6 +1286,8 @@ class Schedule{
 			str += ("<span> ~ </span><date>" + e1 + " </date><time>" + e2 + "</time>");
 		}
 		cnt.children[1].children[0].innerHTML = str;
+		this.from = new Date("20" + s1.replace("'","") + " " + s2);
+		this.to = new Date("20" + e1.replace("'","") + " " + e2);
 	} // End of setDateTimeInScheduleDetail()
 
 } // End of Class === Schedule =======================================================================================
