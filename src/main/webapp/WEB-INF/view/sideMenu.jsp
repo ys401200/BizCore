@@ -54,9 +54,10 @@
 				<div>
 					<a href="/business/project">프로젝트관리</a>
 				</div>
-				<div>
+				<!-- 영업기회 가림 -->
+				<!-- <div>
 					<a href="/business/sopp">영업기회조회</a>
-				</div>
+				</div> -->
 				<div>
 					<a href="/business/estimate">견적관리</a>
 				</div>

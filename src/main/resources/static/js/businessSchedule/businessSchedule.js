@@ -6,192 +6,192 @@ $(document).ready(() => {
 		$("#loadingDiv").loading("toggle");
 	}, 300);
 
-	// getScheduleList();
 	getSchedule2List();
-	const ScheduleClass = new Schedule(storage.scheduleList);
-	ScheduleClass.drawScheduleList();
 });
 
+//새로운 스케쥴 리스트 통신 함수
 function getSchedule2List(){
 	axios.get("/api/schedule2/company").then((response) => {
 		let result = response.data.data;
 		result = cipher.decAes(result);
 		result = JSON.parse(result);
-		storage.scheduleList = result;
+		storage.schedule2List = result;
+		const ScheduleClass = new Schedule(storage.schedule2List);
+		ScheduleClass.drawScheduleList();
 	})
 }
 
-function getScheduleList() {
-	let url, method, data, type, scheduleRange;
-	scheduleRange = $("#scheduleRange").val();
-	url = "/api/schedule/calendar/" + scheduleRange;
-	method = "get";
-	data = "";
-	type = "list";
+// function getScheduleList() {
+// 	let url, method, data, type, scheduleRange;
+// 	scheduleRange = $("#scheduleRange").val();
+// 	url = "/api/schedule/calendar/" + scheduleRange;
+// 	method = "get";
+// 	data = "";
+// 	type = "list";
 
-	crud.defaultAjax(url, method, data, type, scheduleSuccessList, scheduleErrorList);
-} // End of getScheduleList()
+// 	crud.defaultAjax(url, method, data, type, scheduleSuccessList, scheduleErrorList);
+// } // End of getScheduleList()
 
-function drawScheduleList() {
-	let container, dataJob = [], result, jsonData, header = [], data = [], ids = [], str, fnc, pageContainer, containerTitle, hideArr, showArr;
+// function drawScheduleList() {
+// 	let container, dataJob = [], result, jsonData, header = [], data = [], ids = [], str, fnc, pageContainer, containerTitle, hideArr, showArr;
 	
-	if (storage.scheduleList === undefined) {
-		msg.set("등록된 일정이 없습니다");
-	}
-	else {
-		if(storage.searchDatas === undefined){
-			jsonData = storage.scheduleList.sort(function(a, b){return b.created - a.created;});
-		}else{
-			jsonData = storage.searchDatas.sort(function(a, b){return b.created - a.created;});
-		}
-	}
+// 	if (storage.scheduleList === undefined) {
+// 		msg.set("등록된 일정이 없습니다");
+// 	}
+// 	else {
+// 		if(storage.searchDatas === undefined){
+// 			jsonData = storage.scheduleList.sort(function(a, b){return b.created - a.created;});
+// 		}else{
+// 			jsonData = storage.searchDatas.sort(function(a, b){return b.created - a.created;});
+// 		}
+// 	}
 
-	hideArr = ["calendarList", "detailBackBtn", "crudUpdateBtn", "crudDeleteBtn"];
-	showArr = ["gridList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "crudAddBtn", "listSearchInput", "scheduleRange", "listChangeBtn"];
-	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
-	containerTitle = $("#containerTitle");
-	pageContainer = document.getElementsByClassName("pageContainer");
-	container = $(".gridList");
+// 	hideArr = ["calendarList", "detailBackBtn", "crudUpdateBtn", "crudDeleteBtn"];
+// 	showArr = ["gridList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "crudAddBtn", "listSearchInput", "scheduleRange", "listChangeBtn"];
+// 	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+// 	containerTitle = $("#containerTitle");
+// 	pageContainer = document.getElementsByClassName("pageContainer");
+// 	container = $(".gridList");
 
-	header = [
-		{
-			"title" : "등록일",
-			"align" : "center",
-		},
-		{
-			"title" : "일정",
-			"align" : "center",
-		},
-		{
-			"title" : "일정구분",
-			"align" : "center",
-		},
-		{
-			"title" : "일정제목",
-			"align" : "center",
-		},
-		{
-			"title" : "매출처",
-			"align" : "center",
-		},
-		{
-			"title" : "담당자",
-			"align" : "center",
-		},
-		{
-			"title" : "장소",
-			"align" : "center",
-		},
-		{
-			"title" : "활동형태",
-			"align" : "center",
-		},
-		{
-			"title" : "일정설명",
-			"align" : "center",
-		},
-	];
+// 	header = [
+// 		{
+// 			"title" : "등록일",
+// 			"align" : "center",
+// 		},
+// 		{
+// 			"title" : "일정",
+// 			"align" : "center",
+// 		},
+// 		{
+// 			"title" : "일정구분",
+// 			"align" : "center",
+// 		},
+// 		{
+// 			"title" : "일정제목",
+// 			"align" : "center",
+// 		},
+// 		{
+// 			"title" : "매출처",
+// 			"align" : "center",
+// 		},
+// 		{
+// 			"title" : "담당자",
+// 			"align" : "center",
+// 		},
+// 		{
+// 			"title" : "장소",
+// 			"align" : "center",
+// 		},
+// 		{
+// 			"title" : "활동형태",
+// 			"align" : "center",
+// 		},
+// 		{
+// 			"title" : "일정설명",
+// 			"align" : "center",
+// 		},
+// 	];
 
-	if(jsonData === ""){
-		str = [
-			{
-				"setData": undefined,
-				"col": 9,
-			},
-		];
+// 	if(jsonData === ""){
+// 		str = [
+// 			{
+// 				"setData": undefined,
+// 				"col": 9,
+// 			},
+// 		];
 		
-		data.push(str);
-	}else{
-		for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
-			let job, title, customer, writer, fromDate, fromSetDate, toDate, toSetDate, place, content, type, disDate;
+// 		data.push(str);
+// 	}else{
+// 		for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+// 			let job, title, customer, writer, fromDate, fromSetDate, toDate, toSetDate, place, content, type, disDate;
 			
-			job = (jsonData[i].job === null || jsonData[i].job === "" || jsonData[i].job === undefined) ? "" : jsonData[i].job;
+// 			job = (jsonData[i].job === null || jsonData[i].job === "" || jsonData[i].job === undefined) ? "" : jsonData[i].job;
 			
-			if(job === "sales"){
-				job = "영업일정";
-			}else if(job === "tech"){
-				job = "기술지원";
-			}else{
-				job = "기타일정";
-			}
+// 			if(job === "sales"){
+// 				job = "영업일정";
+// 			}else if(job === "tech"){
+// 				job = "기술지원";
+// 			}else{
+// 				job = "기타일정";
+// 			}
 	
-			title = (jsonData[i].title === null || jsonData[i].title === "" || jsonData[i].title === undefined) ? "" : jsonData[i].title;
-			customer = (jsonData[i].customer == 0 || jsonData[i].customer === null || jsonData[i].customer === undefined) ? "" : storage.customer[jsonData[i].customer].name;
-			writer = (jsonData[i].writer == 0 || jsonData[i].writer === null || jsonData[i].writer === undefined) ? "" : storage.user[jsonData[i].writer].userName;
-			place = (jsonData[i].place === null || jsonData[i].place === "" || jsonData[i].place === undefined) ? "" : jsonData[i].place;
-			content = (jsonData[i].content === null || jsonData[i].content === "" || jsonData[i].content === undefined) ? "" : jsonData[i].content;
-			content = content.replaceAll("<p>", "").replaceAll("</p>", "").replaceAll("<br />", "");
-			type = (jsonData[i].type === null || jsonData[i].type === "" || jsonData[i].type === undefined) ? "" : storage.code.etc[jsonData[i].type];
+// 			title = (jsonData[i].title === null || jsonData[i].title === "" || jsonData[i].title === undefined) ? "" : jsonData[i].title;
+// 			customer = (jsonData[i].customer == 0 || jsonData[i].customer === null || jsonData[i].customer === undefined) ? "" : storage.customer[jsonData[i].customer].name;
+// 			writer = (jsonData[i].writer == 0 || jsonData[i].writer === null || jsonData[i].writer === undefined) ? "" : storage.user[jsonData[i].writer].userName;
+// 			place = (jsonData[i].place === null || jsonData[i].place === "" || jsonData[i].place === undefined) ? "" : jsonData[i].place;
+// 			content = (jsonData[i].content === null || jsonData[i].content === "" || jsonData[i].content === undefined) ? "" : jsonData[i].content;
+// 			content = content.replaceAll("<p>", "").replaceAll("</p>", "").replaceAll("<br />", "");
+// 			type = (jsonData[i].type === null || jsonData[i].type === "" || jsonData[i].type === undefined) ? "" : storage.code.etc[jsonData[i].type];
 			
-			fromDate = dateDis(jsonData[i].from);
-			fromSetDate = dateFnc(fromDate, "mm-dd");
+// 			fromDate = dateDis(jsonData[i].from);
+// 			fromSetDate = dateFnc(fromDate, "mm-dd");
 			
-			toDate = dateDis(jsonData[i].to);
-			toSetDate = dateFnc(toDate, "mm-dd");
+// 			toDate = dateDis(jsonData[i].to);
+// 			toSetDate = dateFnc(toDate, "mm-dd");
 
-			disDate = dateDis(jsonData[i].created, jsonData[i].modified);
-			disDate = dateFnc(disDate, "mm-dd");
+// 			disDate = dateDis(jsonData[i].created, jsonData[i].modified);
+// 			disDate = dateFnc(disDate, "mm-dd");
 	
-			str = [
-				{
-					"setData": disDate,
-					"align": "center",
-				},
-				{
-					"setData": fromSetDate + " ~ " + toSetDate,
-					"align": "center",
-				},
-				{
-					"setData": job,
-					"align": "center",
-				},
-				{
-					"setData": title,
-					"align": "left",
-				},
-				{
-					"setData": customer,
-					"align": "center",
-				},
-				{
-					"setData": writer,
-					"align": "center",
-				},
-				{
-					"setData": place,
-					"align": "center",
-				},
-				{
-					"setData": type,
-					"align": "center",
-				},
-				{
-					"setData": content,
-					"align": "left",
-				},
-			];
+// 			str = [
+// 				{
+// 					"setData": disDate,
+// 					"align": "center",
+// 				},
+// 				{
+// 					"setData": fromSetDate + " ~ " + toSetDate,
+// 					"align": "center",
+// 				},
+// 				{
+// 					"setData": job,
+// 					"align": "center",
+// 				},
+// 				{
+// 					"setData": title,
+// 					"align": "left",
+// 				},
+// 				{
+// 					"setData": customer,
+// 					"align": "center",
+// 				},
+// 				{
+// 					"setData": writer,
+// 					"align": "center",
+// 				},
+// 				{
+// 					"setData": place,
+// 					"align": "center",
+// 				},
+// 				{
+// 					"setData": type,
+// 					"align": "center",
+// 				},
+// 				{
+// 					"setData": content,
+// 					"align": "left",
+// 				},
+// 			];
 	
-			fnc = "scheduleDetailView(this);";
-			ids.push(jsonData[i].no);
-			dataJob.push(jsonData[i].job);
-			data.push(str);
-		}
-		let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawScheduleList", result[0]);
-		pageContainer[0].innerHTML = pageNation;
-	}
+// 			fnc = "scheduleDetailView(this);";
+// 			ids.push(jsonData[i].no);
+// 			dataJob.push(jsonData[i].job);
+// 			data.push(str);
+// 		}
+// 		let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawScheduleList", result[0]);
+// 		pageContainer[0].innerHTML = pageNation;
+// 	}
 
-	containerTitle.html("일정조회");
-	createGrid(container, header, data, ids, dataJob, fnc);
-	setViewContents(hideArr, showArr);
+// 	containerTitle.html("일정조회");
+// 	createGrid(container, header, data, ids, dataJob, fnc);
+// 	setViewContents(hideArr, showArr);
 
-	let path = $(location).attr("pathname").split("/");
+// 	let path = $(location).attr("pathname").split("/");
 
-	if(path[3] !== undefined && jsonData !== ""){
-		$(".calendarList").hide();
-		let content = $(".gridContent[data-id=\"" + path[3] + "\"]");
-		scheduleDetailView(content);
-	}
-}// End of drawNoticeList()
+// 	if(path[3] !== undefined && jsonData !== ""){
+// 		$(".calendarList").hide();
+// 		let content = $(".gridContent[data-id=\"" + path[3] + "\"]");
+// 		scheduleDetailView(content);
+// 	}
+// }// End of drawNoticeList()
 
 // 일정 캘린더를 만드는 함수
 function drawCalendar(container){

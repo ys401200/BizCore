@@ -1839,6 +1839,13 @@ class Common{
 		return result;
 	}
 
+	//페이지 클릭 시 이동 함수
+	pageMove(page, drawFnc) {
+		let selectedPage = parseInt(page);
+		storage.currentPage = selectedPage;
+		drawFnc();
+	}
+
 	//페이지의 높이 값 계산 함수
 	calWindowLength() {
 		let bodyContent, containerTitle, searchContainer, searchCal, titleCal, totalCal;

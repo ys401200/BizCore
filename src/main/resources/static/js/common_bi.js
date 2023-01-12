@@ -587,6 +587,7 @@ class Schedule{
 				modified:null
 			};
 		}else v = data;
+		this.data = data;
 		this.no = v.no;
 		this.writer = v.writer;
 		this.title = v.title;
@@ -601,15 +602,15 @@ class Schedule{
 		this.modified = (v.modified === undefined || v.modified === null ? null : v.modified.constructor.name === "Number" ? new Date(v.modified) : v.modified);
 	} // End of constructor()
 
-    drawScheduleList(){
+	//스케줄 리스트 출력 함수
+	drawScheduleList(){
 		const CommonDats = new Common();
 		let container, dataJob = [], result, jsonData, header = [], data = [], ids = [], str, fnc, pageContainer, containerTitle, hideArr, showArr;
-		console.log("v : " + v);
-		if (v === undefined) {
+		if (this.data === undefined) {
 			msg.set("등록된 일정이 없습니다");
 		} else {
 			if(storage.searchDatas === undefined){
-				jsonData = v.sort(function(a, b){return b.created - a.created;});
+				jsonData = this.data.sort(function(a, b){return b.created - a.created;});
 			}else{
 				jsonData = storage.searchDatas.sort(function(a, b){return b.created - a.created;});
 			}
@@ -655,6 +656,8 @@ class Schedule{
 
 			data.push(str);
 		}else{
+			let fromDate, fromSetDate, toDate, toSetDate, disDate;
+
 			for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
 				fromDate = dateDis(jsonData[i].from);
 				fromSetDate = dateFnc(fromDate, "yy.mm.dd");
@@ -662,7 +665,7 @@ class Schedule{
 				toDate = dateDis(jsonData[i].to);
 				toSetDate = dateFnc(toDate, "yy.mm.dd");
 
-				disDate = dateDis(jsonData[i].created, jsonData[i].modified);
+				disDate = dateDis(jsonData[i].created);
 				disDate = dateFnc(disDate, "yy.mm.dd");
 
 				str = [
@@ -675,15 +678,15 @@ class Schedule{
 						"align": "center",
 					},
 					{
-						"setData": this.title,
+						"setData": jsonData[i].title,
 						"align": "left",
 					},
 					{
-						"setData": this.content,
+						"setData": jsonData[i].content,
 						"align": "left",
 					},
 					{
-						"setData": this.writer,
+						"setData": storage.user[jsonData[i].writer].userName,
 						"align": "center",
 					},
 				];
@@ -693,7 +696,7 @@ class Schedule{
 				dataJob.push(jsonData[i].job);
 				data.push(str);
 			}
-			let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "this.drawScheduleList", result[0]);
+			let pageNation = createPaging(pageContainer[0], result[3], "CommonDatas.pageMove", "drawScheduleList", result[0]);
 			pageContainer[0].innerHTML = pageNation;
 		}
 
