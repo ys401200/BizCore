@@ -73,22 +73,6 @@ getSavedLine = () => {
 		});
 } // End of getSavedLine()
 
-soppStageUp = (v) => {
-	let href, no;
-
-	if (v === 0) {
-		href = location.href.split("/sopp2/");
-		no = href.length > 1 ? href[href.length - 1] : null;
-		no = no !== null ? no * 1 : null;
-		window.setTimeout(() => {
-			setPrevModal(no)
-		}, 2000);
-
-	}
-
-
-} // End of soppStageUp()
-
 prepareSopp = (no) => {
 	if (no === null) console.log("SOPP no is null!!!");
 	else fetch(apiServer + "/api/project/sopp/" + no)
@@ -505,28 +489,18 @@ moveToTarget = (el) => {
 	});
 } // End of moveToTarget()
 function drawDetail(soppNo) {
-	let contNo;
-	for (let i = 0; i < storage.contract.length; i++) {
-		let contSopp = JSON.parse(storage.contract[i].related).parent.split(":");
-		if (contSopp[1] == soppNo) {
-			contNo = storage.contract[i].no;
-		}
-	}
-
-	let cnt = document.getElementsByClassName("sopp-contract")[0];
-	fetch(location.origin + "/api/contract/" + contNo)
+	fetch(location.origin + "/api/contract/parent/sopp:" + soppNo)
 		.catch((error) => console.log("error:", error))
 		.then(response => response.json())
 		.then(response => {
 			console.log(response);
-			let data;
+			let data, cnt = document.getElementsByClassName("sopp-contract")[0];
 			if (response.result === "ok") {
 				data = response.data;
 				data = cipher.decAes(data);
 				data = JSON.parse(data);
 				R.contract = new Contract(data);
 				R.contract.getReportDetail(cnt);
-
 			} else {
 				let none;
 				R.contract = new Contract(none);

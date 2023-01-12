@@ -20,7 +20,6 @@ import lombok.Setter;
 
 @Setter
 @Getter
-
 public class Contract extends SimpleContract {
 
 
@@ -30,9 +29,6 @@ public class Contract extends SimpleContract {
    private Date supplied;
    private Date approved;
    private String taxInclude;
-   private Date created;
-   private Date  modified;
-   private Date  deleted;
 
 
     public void setTaxInclude(String yn) {
