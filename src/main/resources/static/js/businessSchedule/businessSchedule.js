@@ -6,8 +6,20 @@ $(document).ready(() => {
 		$("#loadingDiv").loading("toggle");
 	}, 300);
 
-	getScheduleList();
+	// getScheduleList();
+	getSchedule2List();
+	const ScheduleClass = new Schedule(storage.scheduleList);
+	ScheduleClass.drawScheduleList();
 });
+
+function getSchedule2List(){
+	axios.get("/api/schedule2/company").then((response) => {
+		let result = response.data.data;
+		result = cipher.decAes(result);
+		result = JSON.parse(result);
+		storage.scheduleList = result;
+	})
+}
 
 function getScheduleList() {
 	let url, method, data, type, scheduleRange;

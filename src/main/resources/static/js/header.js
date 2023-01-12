@@ -633,6 +633,8 @@ function dateFnc(dateTimeStr, type) {
 		result = mm + ":" + ss;
 	} else if (type === "yyyy.mm.dd") {
 		result = year + "." + month + "." + day;
+	} else if (type === "yy.mm.dd") {
+		result = year.substring(2, 4) + "." + month + "." + day;
 	} else if (type === "yyyy-mm-dd T HH:mm") {
 		result = year + "-" + month + "-" + day + "T" + hh + ":" + mm;
 	}

@@ -584,6 +584,115 @@ class Schedule{
 		this.modified = (v.modified === undefined || v.modified === null ? null : v.modified.constructor.name === "Number" ? new Date(v.modified) : v.modified);
 	} // End of constructor()
 
+	drawScheduleList(){
+		const CommonDats = new Common();
+		let container, dataJob = [], result, jsonData, header = [], data = [], ids = [], str, fnc, pageContainer, containerTitle, hideArr, showArr;
+		console.log("v : " + v);
+		if (v === undefined) {
+			msg.set("등록된 일정이 없습니다");
+		} else {
+			if(storage.searchDatas === undefined){
+				jsonData = v.sort(function(a, b){return b.created - a.created;});
+			}else{
+				jsonData = storage.searchDatas.sort(function(a, b){return b.created - a.created;});
+			}
+		}
+
+		hideArr = ["calendarList", "detailBackBtn", "crudUpdateBtn", "crudDeleteBtn"];
+		showArr = ["gridList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "crudAddBtn", "listSearchInput", "scheduleRange", "listChangeBtn"];
+		result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+		containerTitle = document.getElementById("containerTitle");
+		pageContainer = document.getElementsByClassName("pageContainer");
+		container = document.getElementsByClassName("gridList")[0];
+
+		header = [
+			{
+				"title" : "등록일",
+				"align" : "center",
+			},
+			{
+				"title" : "일정",
+				"align" : "center",
+			},
+			{
+				"title" : "일정제목",
+				"align" : "center",
+			},
+			{
+				"title" : "일정설명",
+				"align" : "center",
+			},
+			{
+				"title" : "담당자",
+				"align" : "center",
+			},
+		];
+
+		if(jsonData === ""){
+			str = [
+				{
+					"setData": undefined,
+					"col": 5,
+				},
+			];
+			
+			data.push(str);
+		}else{
+			for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+				fromDate = dateDis(jsonData[i].from);
+				fromSetDate = dateFnc(fromDate, "yy.mm.dd");
+				
+				toDate = dateDis(jsonData[i].to);
+				toSetDate = dateFnc(toDate, "yy.mm.dd");
+	
+				disDate = dateDis(jsonData[i].created, jsonData[i].modified);
+				disDate = dateFnc(disDate, "yy.mm.dd");
+		
+				str = [
+					{
+						"setData": disDate,
+						"align": "center",
+					},
+					{
+						"setData": fromSetDate + " ~ " + toSetDate,
+						"align": "center",
+					},
+					{
+						"setData": this.title,
+						"align": "left",
+					},
+					{
+						"setData": this.content,
+						"align": "left",
+					},
+					{
+						"setData": this.writer,
+						"align": "center",
+					},
+				];
+		
+				fnc = "scheduleDetailView(this);";
+				ids.push(jsonData[i].no);
+				dataJob.push(jsonData[i].job);
+				data.push(str);
+			}
+			let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "this.drawScheduleList", result[0]);
+			pageContainer[0].innerHTML = pageNation;
+		}
+	
+		containerTitle.innerHTML = "일정조회";
+		CommonDats.createGrid(container, header, data, ids, dataJob, fnc);
+		setViewContents(hideArr, showArr);
+	
+		let path = $(location).attr("pathname").split("/");
+	
+		if(path[3] !== undefined && jsonData !== ""){
+			$(".calendarList").hide();
+			let content = $(".gridContent[data-id=\"" + path[3] + "\"]");
+			scheduleDetailView(content);
+		}
+	}
+
 	// ========== 일정 수정 모달을 띄우는 함수 ==========
 	popupModalForEdit(dt, gw){ // dt : 일정 생성할 날의 Date 객체, 날짜만 사용함 / gw : 전자결재 자동상신, 신규 일정 생성에서만 사용하고 기존 일정 수정에서는 사용하지 말 것!
 		let html, x, y, start, end, cnt, el, child, isVacation = false, isOverTime = false, inSopp = false;
