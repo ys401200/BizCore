@@ -183,3 +183,8 @@
 	padding:0.5rem;
 	font-size:0.8rem;
 }
+.report-container .empty-cell{
+	grid-column:span 2;
+	text-align:center;
+	color:#5252b8;
+}

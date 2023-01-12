@@ -443,19 +443,19 @@ drawReport = (editable, targetElement, employee) => {
 
 	let reportContents = document.getElementsByClassName("report-contents")[0];
 	if(reportContents.children[0].children.length == 0){
-		reportContents.children[0].innerHTML = "<div style=\"grid-column: span 2;\">데이터가 없습니다.</div>";
+		reportContents.children[0].innerHTML = "<div class=\"empty-cell\">데이터가 없습니다.</div>";
 	}
 
 	if(reportContents.children[1].children.length == 0){
-		reportContents.children[1].innerHTML = "<div style=\"grid-column: span 2;\">데이터가 없습니다.</div>";
+		reportContents.children[1].innerHTML = "<div class=\"empty-cell\">데이터가 없습니다.</div>";
 	}
 
 	if(reportContents.nextElementSibling.children[0].children[1].children.length == 0){
-		reportContents.nextElementSibling.children[0].children[1].innerHTML = "<div style=\"text-align: center;\">데이터가 없습니다.</div>";
+		reportContents.nextElementSibling.children[0].children[1].innerHTML = "<div class=\"empty-cell\">데이터가 없습니다.</div>";
 	}
 
 	if(reportContents.nextElementSibling.children[1].children[1].children.length == 0){
-		reportContents.nextElementSibling.children[1].children[1].innerHTML = "<div style=\"text-align: center;\">데이터가 없습니다.</div>";
+		reportContents.nextElementSibling.children[1].children[1].innerHTML = "<div class=\"empty-cell\">데이터가 없습니다.</div>";
 	}
 } // End of drawReport()
 
