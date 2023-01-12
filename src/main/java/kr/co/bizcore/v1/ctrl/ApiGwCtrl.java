@@ -14,6 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.xml.sax.SAXException;
 
 import kr.co.bizcore.v1.msg.Msg;
+import kr.co.bizcore.v1.svc.ContractService;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
@@ -31,6 +33,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ApiGwCtrl extends Ctrl {
 
+    @Autowired
+    ContractService contractService;
     private static final Logger logger = LoggerFactory.getLogger(ApiGwCtrl.class);
 
     // 결재문서 양식의 리스트를 전달
@@ -228,7 +232,7 @@ public class ApiGwCtrl extends Ctrl {
     public String apiGwAppDocPost(HttpServletRequest request, @RequestBody String requestBody) {
         String result = null, aesKey = null, aesIv = null, compId = null, userNo = null;
         String title = null, sopp = null, customer = null, readable = null, appDoc = null, dept = null, formId = null,
-                temp = null;
+                temp = null, contract=null;
         String[] files = null, ts = null;
         String[][] appLine = null;
         HttpSession session = null;
@@ -269,6 +273,7 @@ public class ApiGwCtrl extends Ctrl {
             customer = json.getString("customer");
             appDoc = json.getString("appDoc");
             related = json.getString("related");
+            contract = json.isNull("contract") ? null : json.getString("contract");
             // 첨부파일명에 대한 배열 전환 처리
             jarr = json.getJSONArray("attached");
             if (jarr != null && jarr.length() > 0) {
@@ -297,6 +302,10 @@ public class ApiGwCtrl extends Ctrl {
             // 결재문서 처리 서비스로직으로 데이터 전달
             docNo = gwService.addAppDoc(compId, dept, title, userNo, sopp, customer, formId, readable, appDoc, files,
                     attached, appLine, related);
+
+            if (contract != null) {
+                contractService.insertContract(contract, compId);
+            }
 
             result = "{\"result\":\"ok\",\"data\":\"" + docNo + "\"}";
         }
@@ -830,7 +839,7 @@ public class ApiGwCtrl extends Ctrl {
             throws ParserConfigurationException, SAXException, IOException, TransformerException {
         String result = null, lang = null, compId = null, aesIv = null, aesKey = null, data = null;
         String dept = null, sopp = null, customer = null, formId = null, title = null, content = null, userNo = null,
-                lineData = null, readable =null, related = null , writer = null, created = null;
+                lineData = null, readable = null, related = null, writer = null, created = null;
         String[][] appLine = null;
         String from = null, to = null;
         HttpSession session = null;
@@ -873,7 +882,6 @@ public class ApiGwCtrl extends Ctrl {
                 writer = json.getString("writer");
                 created = json.getString("created");
 
-
                 if (!json.isNull("appLine")) {
                     jarr = json.getJSONArray("appLine");
                     if (jarr != null && jarr.length() > 0) {
@@ -888,7 +896,8 @@ public class ApiGwCtrl extends Ctrl {
                     }
                 }
 
-                if (gwService.createScheduleReport(compId, dept, sopp, customer,  formId, title,readable, related, content, from, to, appLine, lineData, userNo,writer,created) <= 0) {
+                if (gwService.createScheduleReport(compId, dept, sopp, customer, formId, title, readable, related,
+                        content, from, to, appLine, lineData, userNo, writer, created) <= 0) {
                     result = "{\"result\":\"failure\"}";
                 } else {
                     result = "{\"result\":\"ok\"}";

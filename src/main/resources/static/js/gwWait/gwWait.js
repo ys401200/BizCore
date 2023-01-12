@@ -433,7 +433,8 @@ function approveBtnEvent() {
     appDoc = null;
   }
 
-
+  let maintenance = (storage.reportDetailData.related.maintenance == "" ||
+  storage.reportDetailData.related.maintenance == undefined || storage.reportDetailData.related.maintenance == null) ? "" : storage.reportDetailData.related.maintenance;
 
   let related = null;
 
@@ -441,6 +442,7 @@ function approveBtnEvent() {
     "next": "",
     "parent": "",
     "previous": "",
+    "maintenance": maintenance,
   }
 
   related = JSON.stringify(related);

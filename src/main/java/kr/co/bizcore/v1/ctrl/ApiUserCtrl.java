@@ -116,7 +116,7 @@ public class ApiUserCtrl extends Ctrl{
                 userId = json.getString("userId");
                 pw = json.getString("pw");
                 keep = json.getBoolean("keepStatus");
-                timeCorrect = json.getInt("timeCorrect");
+                // timeCorrect = json.getInt("timeCorrect");
                 if (userId == null || pw == null) {
                     result = "{\"result\":\"failure\",\"msg\":\"" + msg.idPwMisMatch + "\"}";
                 } else {

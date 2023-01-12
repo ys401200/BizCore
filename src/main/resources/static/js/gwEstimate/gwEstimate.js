@@ -597,7 +597,7 @@ function reportInsert() {
     "next": "",
     "parent": "",
     "previous": "sopp:" + storage.soppDetailData.sopp.no + "",
-    "maintenece": mtncData
+    "maintenance": mtncData,
     // "outSumAllTotal": $(".outSumAllTotal").val() * 1,
     // "profit": $("." + formId + "_profit").val() * 1,
     // "outItems": outItems,
@@ -606,27 +606,7 @@ function reportInsert() {
 
   related = JSON.stringify(related);
 
-  let data = {
-    title: title,
-    sopp: storage.soppDetailData.sopp.no + "",
-    dept: dept,
-    customer: storage.soppDetailData.sopp.customer + "",
-    attached: storage.attachedList === undefined ? [] : storage.attachedList,
-    content: content,
-    appLine: appLine,
-    appDoc: appDoc,
-    formId: formId,
-    readable: readable,
-    temp: temp,
-    related: related,
-  };
-
-  console.log(data);
-  data = JSON.stringify(data);
-  data = cipher.encAes(data);
-
-
-
+  
   let cntrctRelated = {
     parent: "sopp:" + storage.soppDetailData.sopp.no,
   }
@@ -641,10 +621,34 @@ function reportInsert() {
 
   }
 
-
   ctrtData = JSON.stringify(ctrtData);
-  console.log(ctrtData + "데이터 타입 확인하기");
-  ctrtData = cipher.encAes(ctrtData);
+
+  let data = {
+    title: title,
+    sopp: storage.soppDetailData.sopp.no + "",
+    dept: dept,
+    customer: storage.soppDetailData.sopp.customer + "",
+    attached: storage.attachedList === undefined ? [] : storage.attachedList,
+    content: content,
+    appLine: appLine,
+    appDoc: appDoc,
+    formId: formId,
+    readable: readable,
+    temp: temp,
+    related: related,
+    contract : ctrtData, 
+  };
+
+  console.log(data);
+  data = JSON.stringify(data);
+  data = cipher.encAes(data);
+
+
+
+
+  // ctrtData = JSON.stringify(ctrtData);
+  // console.log(ctrtData + "데이터 타입 확인하기");
+  // ctrtData = cipher.encAes(ctrtData);
 
 
   let target = $(".mainDiv")[0];
@@ -692,7 +696,7 @@ function reportInsert() {
       success: (result) => {
         if (result.result === "ok") {
           alert("기안 완료");
-          createContract(ctrtData);
+          //createContract(ctrtData);
           // window.close('/gw/estimate');
         } else {
           alert(result.msg);

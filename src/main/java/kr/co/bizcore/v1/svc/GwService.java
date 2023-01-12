@@ -36,6 +36,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import kr.co.bizcore.v1.domain.DocForm;
+import kr.co.bizcore.v1.mapper.MaintenanceMapper;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -45,7 +46,10 @@ public class GwService extends Svc {
     private static final Logger logger = LoggerFactory.getLogger(GwService.class);
 
     @Autowired
-    private NotesService notes;
+    private NotesService notes; 
+
+    @Autowired 
+    private MaintenanceMapper maintenanceMapper;
 
     // 양식 목록 전달
     public String getForms() {
@@ -115,6 +119,12 @@ public class GwService extends Svc {
                 if (size > 0)
                     systemMapper.setAttachedFileData(compId, "appDoc", no, str, savedName, size);
             }
+
+
+
+            
+
+
 
         return no;
     } // End of addAppDoc()
@@ -866,12 +876,8 @@ public class GwService extends Svc {
             if (map == null) { // 결재절차가 종료된 경우
                 formId = gwMapper.getFormIdWithDocNo(compId, docNo);
                 if (formId != null && formId.equals("doc_Form_SalesReport")) {
-                    JSONObject job = null;
-                    job = new JSONObject(related); 
-                    job.getString("maintenece");
-                    System.out.print(job + "check 2222222 ");
-                    
-                 
+                    insertMaintenance(related,compId);
+
                     notes.sendNewNotes(compId, 0, writer,
                             "결재 완료 되었습니다.<br /><a href=\\u0022/business/contract/" + docNo + "\\u0022>계약 등록하기</a>",
                             "{\"func\":\"docApp\",\"no\":\"" + docNo + "\"}");
@@ -1355,6 +1361,34 @@ public class GwService extends Svc {
                 result = -1;
             }
 
+        }
+
+        return result;
+    }
+
+    public int insertMaintenance(String related, String compId) {
+        int result = 0;
+        JSONObject json = null;
+        JSONArray jarr = null;
+        String maintenance = null;
+        int amount, customer, engineer, product = 0;
+        String startDate = null, endDate = null;
+        int contract = 0; 
+        json = new JSONObject(related);
+        System.out.print(json);
+        jarr = json.getJSONArray("maintenance");
+        
+        for (int i = 0; i < jarr.length(); i++) {
+            json = jarr.getJSONObject(i);
+            amount = json.getInt("amount");
+            customer = json.getInt("customer");
+            engineer = json.getInt("engineer");
+            product = json.getInt("product");
+            startDate = json.getString("startDate").equals("검수일") ? null : json.getString("startDate");
+            endDate = startDate == null ? null : json.getString("endDate");
+            related = endDate == null ? json.getString("endDate") : null;
+            result += maintenanceMapper.insertMaintenance( compId, contract, customer, product, startDate, endDate, engineer, related);
+          
         }
 
         return result;
