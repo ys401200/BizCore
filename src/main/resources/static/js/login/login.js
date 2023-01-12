@@ -209,7 +209,6 @@ function loginSubmit(){
 	data = cipher.encAes(JSON.stringify(data));
 	//data = btoa(JSON.stringify(data));
 	
-	
 	// 내용이 확인되고 암호화가 진행된 후 서버에 post를 시도함
 	$.ajax({
 		url: url,

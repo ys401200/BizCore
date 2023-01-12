@@ -94,8 +94,8 @@ public class ApiContractCtrl extends Ctrl {
         return result;
     }
 
-    @RequestMapping(value = "/{no}", method = RequestMethod.GET)
-    public String getDetail(HttpServletRequest request, @PathVariable String no) {
+    @RequestMapping(value = "/{no:\\d+}", method = RequestMethod.GET)
+    public String getDetail(HttpServletRequest request, @PathVariable int no) {
         String result = null;
         String compId = null;
         String aesKey = null;
@@ -103,10 +103,8 @@ public class ApiContractCtrl extends Ctrl {
         String data = null;
         String lang = null;
         Msg msg = null;
-        int number = -1;
         HttpSession session = null;
 
-        number = salesService.strToInt(no);
         session = request.getSession();
         compId = (String) session.getAttribute("compId");
         aesKey = (String) session.getAttribute("aesKey");
@@ -117,12 +115,12 @@ public class ApiContractCtrl extends Ctrl {
             compId = (String) request.getAttribute("compId");
         if (compId == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
-        } else if (number < 0) {
+        } else if (no < 0) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.invalidCondition + "\"}";
         } else if (aesKey == null || aesIv == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
         } else {
-            data = contractService.getContract(number, compId);
+            data = contractService.getContract(no, compId);
             if (data == null) {
                 result = "{\"result\":\"failure\",\"msg\":\"" + msg.noResult + "\"}";
             } else {

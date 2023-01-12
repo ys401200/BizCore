@@ -1275,15 +1275,16 @@ class Projects {
 		}
 
 		// 프로젝트 권한 검증 후 신규 프로젝트 생성 엘리먼트 추가
-		// if(!storage.permission.all.project)	return;
-		el = document.createElement("div");
-		el.className = "project-wrap";
-		this.container.appendChild(el);
-		child = document.createElement("label");
-		child.setAttribute("for", "project_new");
-		child.className = "project-new";
-		child.innerHTML = svg;
-		el.appendChild(child);
+		if(storage.permission._project !== undefined && storage.permission._project === true){
+			el = document.createElement("div");
+			el.className = "project-wrap";
+			this.container.appendChild(el);
+			child = document.createElement("label");
+			child.setAttribute("for", "project_new");
+			child.className = "project-new";
+			child.innerHTML = svg;
+			el.appendChild(child);
+		}
 	} // End of draw()
 
 	newProject(cnt) {
@@ -1495,7 +1496,7 @@ class Project {
 			sopp.drawList(child);
 		}
 
-		if (this.owner === storage.my) {
+		if (this.owner === storage.my && storage.permission._project !== undefined && storage.permission._project === true) {
 			child = document.createElement("div");
 			child.className = "sopp-box sopp-add";
 			child.innerHTML = "<span>" + svg + "</span>";
