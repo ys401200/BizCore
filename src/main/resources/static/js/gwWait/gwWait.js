@@ -437,11 +437,11 @@ function approveBtnEvent() {
   storage.reportDetailData.related.maintenance == undefined || storage.reportDetailData.related.maintenance == null) ? "" : storage.reportDetailData.related.maintenance;
 
   let related = null;
-
+  let previous = storage.reportDetailData.related.previous
   related = {
     "next": "",
     "parent": "",
-    "previous": "",
+    "previous": "sopp:"+storage.reportDetailData.sopp ,
     "maintenance": maintenance,
   }
 
