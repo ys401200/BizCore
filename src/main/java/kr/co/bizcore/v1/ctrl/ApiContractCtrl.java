@@ -147,7 +147,7 @@ public class ApiContractCtrl extends Ctrl {
 
         contNo = contractService.findContNoWithParent(compId, parent);
         return getDetail(request, contNo);
-    }
+    } // End of getContractWithParent()
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     public String apiProcurePost(HttpServletRequest request, @RequestBody String requestBody) {

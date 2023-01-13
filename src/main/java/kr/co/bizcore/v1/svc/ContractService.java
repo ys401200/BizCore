@@ -297,12 +297,12 @@ public class ContractService extends Svc {
         int no = getNextNumberFromDB(compId, "bizcore.contract");
         contNo = String.valueOf(no);
         return contNo;
-    }
+    } // End of getNextContNo()
 
     public int findContNoWithParent(String compId, String parent) {
         Integer result = contractMapper.getContractNoWithParent(parent, compId);
         return result == null ? -1 : result;
-    }
+    } // End of findContNoWithParent()
 
     // public String getMtncData(String contract, String compId) {
     // String result = null;
