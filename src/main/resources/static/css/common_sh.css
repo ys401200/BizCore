@@ -127,6 +127,42 @@
 }
 
 
+.sopp-contract {
+	font-size: 0.8rem;
+	padding : 1rem;
+}
+
+.sopp-contract>div {
+	display: grid;
+	grid-template-columns: 20% 80%;
+}
+
+
+.sopp-contract>div>div {
+	border: 1px solid #e0e4e9;
+	margin: 0.5px;
+	padding: 8px;
+	text-align: center;
+}
+
+.sopp-contract>div>div:first-of-type {
+	text-align: center;
+	background-color: #eef1fb;
+	font-weight: 500;
+}
+
+.sopp-contract>div>div:last-of-type {
+	display: inline-flex;
+	line-height: 1.5;
+	overflow: hidden;
+
+}
+
+.sopp-contract>div>div:last-of-type>div {
+	display: inline-flex;
+}
+
+
 /* prevModal 관련 css */
 
 /* .modal {
