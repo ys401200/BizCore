@@ -364,11 +364,12 @@ class Contract {
         el2.innerText = "검수";
 
 
-        // 계약에서 상세 조회할 때 x를 지움 
-        // el = document.createElement("div");
-        // ctrtTop.appendChild(el);
-        // el.className = "crudBtns";
-        // el.innerHTML = "<Button data-detail='" + this.no + "'onclick='this.parentElement.parentElement.parentElement.remove()'><i class='fa-solid fa-xmark'></i></Button>";
+        if (obj.className != "sopp-contract") {
+            el = document.createElement("div");
+            ctrtTop.appendChild(el);
+            el.className = "crudBtns";
+            el.innerHTML = "<Button data-detail='" + this.no + "'onclick='this.parentElement.parentElement.parentElement.remove()'><i class='fa-solid fa-xmark'></i></Button>";
+        }
 
         // 진척도 아래 상세 detail Start --------------------------------------------------------------------------------------------------------------------------------------
         // 계약명
