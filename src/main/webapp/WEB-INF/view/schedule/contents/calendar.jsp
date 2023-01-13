@@ -6,7 +6,7 @@
     <select class="scheduleRange" id="scheduleRange" onchange="scheduleSelectChange();">
         <option value="company">회사별</option>
         <option value="dept">부서별</option>
-        <option value="personal">개인별</option>
+        <option value="employee">개인별</option>
     </select>
     <jsp:include page="./list.jsp" />
     <div class="calendarList">

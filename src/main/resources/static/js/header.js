@@ -1135,8 +1135,6 @@ function inputNumberFormat(e) {
 function detailViewFormHtml(data) {
 	let html = "";
 
-	html = "<div class='defaultFormContainer'>";
-
 	for (let i = 0; i < data.length; i++) {
 		let dataTitle = (data[i].title === undefined) ? "" : data[i].title;
 		let col = (data[i].col === undefined) ? 1 : data[i].col;
@@ -1156,8 +1154,6 @@ function detailViewFormHtml(data) {
 		html += "</div>";
 		html += "</div>";
 	}
-
-	html += "</div>";
 
 	return html;
 }

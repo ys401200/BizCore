@@ -1852,9 +1852,10 @@ class Common{
 	
 		bodyContent = document.getElementById("bodyContent");
 		searchContainer = document.getElementsByClassName("searchContainer")[0];
+		console.log(searchContainer.offsetHeight);
 		containerTitle = document.getElementById("containerTitle");
-		searchCal = searchContainer.innerHeight() === undefined ? parseInt(bodyContent.innerHeight()) : (parseInt(bodyContent.innerHeight()) - searchContainer.innerHeight());
-		titleCal = parseInt(containerTitle.innerHeight() + 70);
+		searchCal = searchContainer.offsetHeight === undefined ? parseInt(bodyContent.offsetHeight) : (parseInt(bodyContent.offsetHeight) - searchContainer.offsetHeight);
+		titleCal = parseInt(containerTitle.offsetHeight + 70);
 		totalCal = (parseInt(searchCal - titleCal) - parseInt(36)) / parseInt(38);
 	
 		return parseInt(totalCal);
@@ -1930,6 +1931,321 @@ class Common{
 				}
 			}
 		}
+	}
+
+	//날짜 포맷
+	dateFnc(dateTimeStr, type) {
+		let result, year, month, day, hh, mm, ss, date, nowDate, calTime, calTimeHour, calTimeDay;
+		nowDate = new Date();
+		date = new Date(dateTimeStr * 1);
+		calTime = Math.floor((nowDate.getTime() - date.getTime()) / 1000 / 60);
+		calTimeHour = Math.floor(calTime / 60);
+		calTimeDay = Math.floor(calTime / 60 / 24);
+		year = date.getFullYear();
+		month = (date.getMonth() + 1) < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+		day = (date.getDate()) < 10 ? "0" + date.getDate() : date.getDate();
+		hh = (date.getHours()) < 10 ? "0" + date.getHours() : date.getHours();
+		mm = (date.getMinutes()) < 10 ? "0" + date.getMinutes() : date.getMinutes();
+		ss = (date.getSeconds()) < 10 ? "0" + date.getSeconds() : date.getSeconds();
+
+		if (dateTimeStr === undefined || dateTimeStr === null) {
+			return "";
+		}
+
+		if (type === undefined) {
+			type = "yyyy-mm-dd";
+		}
+
+		if (type === "yyyy-mm-dd") {
+			result = year + "-" + month + "-" + day;
+		} else if (type === "yy-mm-dd") {
+			result = year.toString().substring(2, 4) + "-" + month + "-" + day;
+		} else if (type === "yyyy-mm") {
+			result = year + "-" + month;
+		} else if (type === "mm-dd") {
+			result = month + "-" + day;
+		} else if (type === "yyyy-mm-dd HH:mm:ss") {
+			result = year + "-" + month + "-" + day + " " + hh + ":" + mm + ":" + ss;
+		} else if (type === "HH:mm:ss") {
+			result = hh + ":" + mm + ":" + ss;
+		} else if (type === "HH:mm") {
+			result = hh + ":" + mm;
+		} else if (type === "mm:ss") {
+			result = mm + ":" + ss;
+		} else if (type === "yyyy.mm.dd") {
+			result = year + "." + month + "." + day;
+		} else if (type === "yy.mm.dd") {
+			result = year.toString().substring(2, 4) + "." + month + "." + day;
+		} else if (type === "yyyy-mm-dd T HH:mm") {
+			result = year + "-" + month + "-" + day + "T" + hh + ":" + mm;
+		}
+
+		return result;
+	}
+
+	//날짜를 받아와서 modified와 created 결정 함수
+	dateDis(created, modified) {
+		let result;
+
+		if (created === undefined) {
+			created = null;
+		} else if (modified === undefined) {
+			modified = null;
+		}
+
+		if (created !== null && modified !== null) {
+			result = modified;
+		} else if (created === null && modified !== null) {
+			result = modified;
+		} else if (created !== null && modified === null) {
+			result = created;
+		}
+
+		return result;
+	}
+
+	// 페이징 만드는 함수
+	createPaging(container, max, eventListener, fncStr, current, nextCount, forwardStep) {
+		let x = 0, page, html = ["", "", "", ""];
+		if (container == undefined) {
+			console.log("[createPaging] Paging container is Empty.");
+			return false;
+		} else if (!classType(container).includes("Element")) {
+			console.log("[createPaging] Container is Not Html Element.");
+			return false;
+		} else if (isNaN(max) || max === "" || max < 1) {
+			console.log("[createPaging] max value is abnormal.");
+			return false;
+		} else if (eventListener === undefined) {
+			console.log("[createPaging] Click event listener unavailable.");
+			return false;
+		}
+
+		if (current === undefined) current = 1;
+		if (nextCount === undefined) nextCount = 3;
+		if (forwardStep === undefined) forwardStep = 10;
+
+		html[1] = "<div class=\"paging_cell paging_cell_current\">" + current + "</div>";
+
+		for (page = current - 1; page >= current - nextCount && page > 0; page--) {
+			html[1] = "<div class=\"paging_cell\" onclick=\"" + eventListener + "(" + page + ", " + fncStr + ")\">" + page + "</div>" + html[1];
+		}
+
+		if (page === 1) {
+			html[0] = "<div class=\"paging_cell\" onclick=\"" + eventListener + "(" + page + ", " + fncStr + ")\">" + page + "</div>";
+		} else if (page > 1) {
+			if (current - forwardStep > 1) {
+				html[0] = "<div class=\"paging_cell\" onclick=\"" + eventListener + "(" + (current - forwardStep) + ", " + fncStr + ")\">&laquo;</div>";
+			}
+			html[0] = "<div class=\"paging_cell\" onclick=\"" + eventListener + "(1, " + fncStr + ")\">1</div>" + html[0];
+		} else {
+			html[0] = undefined;
+		}
+
+		for (page = current + 1; page <= (current + nextCount) && page <= max; page++) {
+			html[1] = html[1] + "<div class=\"paging_cell\" onclick=\"" + eventListener + "(" + page + ", " + fncStr + ")\">" + page + "</div>";
+		}
+
+		if (page === max) {
+			html[2] = "<div class=\"paging_cell\" onclick=\"" + eventListener + "(" + page + ", " + fncStr + ")\">" + page + "</div>";
+		} else if (page < max) {
+			if (current + forwardStep < max) {
+				html[2] = "<div class=\"paging_cell\" onclick=\"" + eventListener + "(" + (current + forwardStep) + ", " + fncStr + ")\">&raquo;</div>";
+			}
+			html[2] = html[2] + "<div class=\"paging_cell\" onclick=\"" + eventListener + "(" + max + ", " + fncStr + ")\">" + max + "</div>";
+		} else html[2] = undefined;
+
+		html[3] = html[1];
+		if (html[0] !== undefined) html[3] = html[0] + "<div class=\"paging_cell_empty\">...</div>" + html[1];
+		if (html[2] != undefined) html[3] = html[3] + "<div class=\"paging_cell_empty\">...</div>" + html[2];
+
+		return html[3];
+	}
+
+	//뷰에 가리거나 보이게 하고 싶을 때 걸러내는 함수
+	setViewContents(hideArr, showArr){
+		for(let i = 0; i < hideArr.length; i++){
+			let item = document.getElementsByClassName(hideArr[i])[0];
+			if(item !== undefined){
+				item.style.display = "none";
+			}
+		}
+	
+		for(let i = 0; i < showArr.length; i++){
+			let item = document.getElementsByClassName(showArr[i].element)[0];
+			if(item !== undefined){
+				item.style.display = showArr[i].display;
+			}
+		}
+	}
+
+	//상세 폼
+	detailViewFormHtml(data) {
+		let html = "";
+
+		for (let i = 0; i < data.length; i++) {
+			let dataTitle = (data[i].title === undefined) ? "" : data[i].title;
+			let col = (data[i].col === undefined) ? 1 : data[i].col;
+
+			html += "<div class='defaultFormLine' style=\"grid-column: span " + col + ";\">";
+
+			if (dataTitle !== "") {
+				html += "<div class='defaultFormSpanDiv'>";
+				html += "<span class='defaultFormSpan'>" + dataTitle + "</span>";
+				html += "</div>";
+			}
+
+			html += "<div class='defaultFormContent'>";
+
+			html += this.inputSet(data[i]);
+
+			html += "</div>";
+			html += "</div>";
+		}
+
+		return html;
+	}
+
+	// 상세보기 type별 폼 전달
+	detailViewForm(data, type) {
+		let html = "", pageContainer, listChangeBtn, scheduleRange;
+
+		if (type === undefined) {
+			pageContainer = document.getElementsByClassName("pageContainer")[0];
+			listChangeBtn = document.getElementsByClassName("listChangeBtn")[0];
+			scheduleRange = document.getElementById("scheduleRange");
+
+			if (listChangeBtn !== undefined) {
+				listChangeBtn.style.display = "none";
+			}
+
+			if (scheduleRange !== undefined) {
+				scheduleRange.style.display = "none";
+			}
+
+			pageContainer.children[0].style.display = "none";
+
+			html = this.detailViewFormHtml(data);
+		} else if (type === "board") {
+			html = this.detailBoardForm(data);
+		} else if (type === "modal") {
+			html = this.detailViewFormHtml(data);
+		}
+
+		return html;
+	}
+
+	//게시판 상세 폼
+	detailBoardForm(data) {
+		let html = "";
+
+		html = "<div class='detailBoard'>";
+		html += "<div class='detailBtns'></div>";
+		html += "<div class='detailContents'>";
+		html += this.detailViewFormHtml(data);
+		html += "</div>";
+		html += "</div>";
+
+		return html;
+	}
+
+	inputSet(data) {
+		let html = "";
+		let dataValue = (data.value === undefined) ? "" : data.value;
+		let dataDisabled = (data.disabled === undefined) ? true : data.disabled;
+		let dataType = (data.type === undefined) ? "text" : data.type;
+		let dataKeyup = (data.dataKeyup === undefined) ? "" : data.dataKeyup;
+		let dataKeyupEvent = (data.keyup === undefined) ? "" : data.keyup;
+		let elementId = (data.elementId === undefined) ? "" : data.elementId;
+		let elementName = (data.elementName === undefined) ? "" : data.elementName;
+		let dataChangeEvent = (data.onChange === undefined) ? "" : data.onChange;
+		let dataClickEvent = (data.onClick === undefined) ? "" : data.onClick;
+		let dataComplete = (data.complete === undefined) ? "" : data.complete;
+		let autoComplete = (data.autoComplete === undefined) ? "off" : data.autoComplete;
+		let placeHolder = (data.placeHolder === undefined) ? "" : data.placeHolder;
+	
+		if (dataType === "text") {
+			if (dataDisabled == true) {
+				html += "<input type='text' id='" + elementId + "' name='" + elementName + "' autocomplete=\"" + autoComplete + "\" value='" + dataValue + "' data-complete='" + dataComplete + "' data-keyup='" + dataKeyup + "' onchange='" + dataChangeEvent + "' onclick='" + dataClickEvent + "' onkeyup='" + dataKeyupEvent + "' placeholder=\"" + placeHolder + "\" readonly>";
+			} else {
+				html += "<input type='text' id='" + elementId + "' name='" + elementName + "' autocomplete=\"" + autoComplete + "\" value='" + dataValue + "' data-complete='" + dataComplete + "' data-keyup='" + dataKeyup + "' onchange='" + dataChangeEvent + "' onclick='" + dataClickEvent + "' onkeyup='" + dataKeyupEvent + "' placeholder=\"" + placeHolder + "\">";
+			}
+		} else if (dataType === "textarea") {
+			if (dataDisabled == true) {
+				html += "<textarea id=\"" + elementId + "\" readonly>" + dataValue + "</textarea>";
+			} else {
+				html += "<textarea id=\"" + elementId + "\">" + dataValue + "</textarea>";
+			}
+		} else if (dataType === "radio") {
+			for (let t = 0; t < data.radioValue.length; t++) {
+				if (data.radioType !== "tab") {
+					data.radioType = "default";
+				}
+	
+				html += "<div class=\"detailRadioBox\" data-type=\"" + data.radioType + "\">";
+	
+				if (dataDisabled == true) {
+					if (t == 0) {
+						html += "<input type='radio' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.radioValue[t].key + "' disabled='" + dataDisabled + "' data-type=\"" + data.radioType + "\" onclick='" + dataClickEvent + "' onChange=\"" + dataChangeEvent + "\" checked><label data-type=\"" + data.radioType + "\" for=\"" + elementId[t] + "\">" + data.radioValue[t].value + "</label>" + " ";
+					} else {
+						html += "<input type='radio' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.radioValue[t].key + "' disabled='" + dataDisabled + "' data-type=\"" + data.radioType + "\" onclick='" + dataClickEvent + "' onChange=\"" + dataChangeEvent + "\"><label data-type=\"" + data.radioType + "\" for=\"" + elementId[t] + "\">" + data.radioValue[t].value + "</label>" + " ";
+					}
+				} else {
+					if (t == 0) {
+						html += "<input type='radio' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.radioValue[t].key + "' data-type=\"" + data.radioType + "\" onclick='" + dataClickEvent + "' onChange=\"" + dataChangeEvent + "\" checked><label data-type=\"" + data.radioType + "\" for=\"" + elementId[t] + "\">" + data.radioValue[t].value + "</label>" + " ";
+					} else {
+						html += "<input type='radio' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.radioValue[t].key + "' data-type=\"" + data.radioType + "\" onclick='" + dataClickEvent + "' onChange=\"" + dataChangeEvent + "\"><label data-type=\"" + data.radioType + "\" for=\"" + elementId[t] + "\">" + data.radioValue[t].value + "</label>" + " ";
+					}
+				}
+	
+				html += "</div>";
+			}
+		} else if (dataType === "checkbox") {
+			for (let t = 0; t < data.checkValue.length; t++) {
+				if (dataDisabled == true) {
+					if (t == 0) {
+						html += "<input type='checkbox' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.checkValue[t].value + "' disabled='" + dataDisabled + "' onclick='" + dataClickEvent + "' onChange=\"" + dataChangeEvent + "\"><label for=\"" + elementId[t] + "\">" + data.checkValue[t].key + "</label>" + " ";
+					} else {
+						html += "<input type='checkbox' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.checkValue[t].value + "' disabled='" + dataDisabled + "' onclick='" + dataClickEvent + "' onChange=\"" + dataChangeEvent + "\"><label for=\"" + elementId[t] + "\">" + data.checkValue[t].key + "</label>" + " ";
+					}
+				} else {
+					if (t == 0) {
+						html += "<input type='checkbox' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.checkValue[t].value + "' onclick='" + dataClickEvent + "' onChange=\"" + dataChangeEvent + "\"><label for=\"" + elementId[t] + "\">" + data.checkValue[t].key + "</label>" + " ";
+					} else {
+						html += "<input type='checkbox' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.checkValue[t].value + "' onclick='" + dataClickEvent + "' onChange=\"" + dataChangeEvent + "\"><label for=\"" + elementId[t] + "\">" + data.checkValue[t].key + "</label>" + " ";
+					}
+				}
+			}
+		} else if (dataType === "date") {
+			if (dataDisabled == true) {
+				html += "<input type='date' max='9999-12-31' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "' disabled='" + dataDisabled + "'>";
+			} else {
+				html += "<input type='date' max='9999-12-31' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "'>";
+			}
+		} else if (dataType === "datetime") {
+			if (dataDisabled == true) {
+				html += "<input type='datetime-local' max='9999-12-31T23:59:59' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "' disabled='" + dataDisabled + "'>";
+			} else {
+				html += "<input type='datetime-local' max='9999-12-31T23:59:59' id='" + elementId + "' name='" + elementName + "' value='" + dataValue + "'>";
+			}
+		} else if (dataType === "select") {
+			if (dataDisabled == true) {
+				html += "<select id='" + elementId + "' name='" + elementName + "' disabled='" + dataDisabled + "'>";
+			} else {
+				html += "<select id='" + elementId + "' name='" + elementName + "'>";
+			}
+			for (let t = 0; t < data.selectValue.length; t++) {
+				html += "<option value='" + data.selectValue[t].key + "'>" + data.selectValue[t].value + "</option>";
+			}
+	
+			html += "</select>";
+		} else if (dataType === "file") {
+			html += "<input type='file' id='" + elementId + "' name='" + elementName + "' onchange='fileChange();' multiple>";
+		} else if (dataType === "") {
+			html += "";
+		}
+	
+		return html;
 	}
 	
 	//객체(오브젝트) empty 체크(비어있을 때 : true)

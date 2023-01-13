@@ -11,19 +11,26 @@ $(document).ready(() => {
 
 //새로운 스케쥴 리스트 통신 함수
 function getSchedule2List(){
-	axios.get("/api/schedule2/company").then((response) => {
+	let scheduleRange = document.getElementsByClassName("scheduleRange")[0].value;
+	axios.get("/api/schedule2/" + scheduleRange).then((response) => {
 		let result = response.data.data;
 		result = cipher.decAes(result);
 		result = JSON.parse(result);
-		storage.schedule2List = result;
-		const ScheduleClass = new Schedule(storage.schedule2List);
-		ScheduleClass.drawScheduleList();
+		storage.scheduleList = result;
+
+		if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined){
+			window.setTimeout(drawCalendar(document.getElementsByClassName("calendar_container")[0]), 600);
+			window.setTimeout(searchContainerSet, 800);
+		}else{
+			window.setTimeout(drawCalendar(document.getElementsByClassName("calendar_container")[0]), 200);
+			window.setTimeout(searchContainerSet, 400);
+		}
 	})
 }
 
 // function getScheduleList() {
 // 	let url, method, data, type, scheduleRange;
-// 	scheduleRange = $("#scheduleRange").val();
+// 	scheduleRange = document.getElementsByClassName("scheduleRange")[0].value;
 // 	url = "/api/schedule/calendar/" + scheduleRange;
 // 	method = "get";
 // 	data = "";
@@ -32,166 +39,141 @@ function getSchedule2List(){
 // 	crud.defaultAjax(url, method, data, type, scheduleSuccessList, scheduleErrorList);
 // } // End of getScheduleList()
 
-// function drawScheduleList() {
-// 	let container, dataJob = [], result, jsonData, header = [], data = [], ids = [], str, fnc, pageContainer, containerTitle, hideArr, showArr;
+function drawScheduleList() {
+	let container, dataJob = [], result, jsonData, header = [], data = [], ids = [], str, fnc, pageContainer, containerTitle, hideArr, showArr;
 	
-// 	if (storage.scheduleList === undefined) {
-// 		msg.set("등록된 일정이 없습니다");
-// 	}
-// 	else {
-// 		if(storage.searchDatas === undefined){
-// 			jsonData = storage.scheduleList.sort(function(a, b){return b.created - a.created;});
-// 		}else{
-// 			jsonData = storage.searchDatas.sort(function(a, b){return b.created - a.created;});
-// 		}
-// 	}
+	if (storage.scheduleList === undefined) {
+		msg.set("등록된 일정이 없습니다");
+	}
+	else {
+		if(storage.searchDatas === undefined){
+			jsonData = storage.scheduleList.sort(function(a, b){return b.created - a.created;});
+		}else{
+			jsonData = storage.searchDatas.sort(function(a, b){return b.created - a.created;});
+		}
+	}
 
-// 	hideArr = ["calendarList", "detailBackBtn", "crudUpdateBtn", "crudDeleteBtn"];
-// 	showArr = ["gridList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "crudAddBtn", "listSearchInput", "scheduleRange", "listChangeBtn"];
-// 	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
-// 	containerTitle = $("#containerTitle");
-// 	pageContainer = document.getElementsByClassName("pageContainer");
-// 	container = $(".gridList");
+	hideArr = ["calendarList", "detailBackBtn", "crudUpdateBtn", "crudDeleteBtn", "searchContainer", "listSearchInput", "crudAddBtn"];
+	showArr = [
+		{element: "gridList", display: "grid"},
+		{element: "pageContainer", display: "flex"},
+		{element: "listRange", display: "block"},
+		{element: "scheduleRange", display: "block"},
+		{element: "listChangeBtn", display: "block"},
+	];
+	
+	result = CommonDatas.paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+	containerTitle = document.getElementById("containerTitle");
+	pageContainer = document.getElementsByClassName("pageContainer");
+	container = document.getElementsByClassName("gridList")[0];
 
-// 	header = [
-// 		{
-// 			"title" : "등록일",
-// 			"align" : "center",
-// 		},
-// 		{
-// 			"title" : "일정",
-// 			"align" : "center",
-// 		},
-// 		{
-// 			"title" : "일정구분",
-// 			"align" : "center",
-// 		},
-// 		{
-// 			"title" : "일정제목",
-// 			"align" : "center",
-// 		},
-// 		{
-// 			"title" : "매출처",
-// 			"align" : "center",
-// 		},
-// 		{
-// 			"title" : "담당자",
-// 			"align" : "center",
-// 		},
-// 		{
-// 			"title" : "장소",
-// 			"align" : "center",
-// 		},
-// 		{
-// 			"title" : "활동형태",
-// 			"align" : "center",
-// 		},
-// 		{
-// 			"title" : "일정설명",
-// 			"align" : "center",
-// 		},
-// 	];
+	header = [
+		{
+			"title" : "등록일",
+			"align" : "center",
+		},
+		{
+			"title" : "일정",
+			"align" : "center",
+		},
+		{
+			"title" : "일정제목",
+			"align" : "center",
+		},
+		{
+			"title" : "일정설명",
+			"align" : "center",
+		},
+		{
+			"title" : "담당자",
+			"align" : "center",
+		},
+	];
 
-// 	if(jsonData === ""){
-// 		str = [
-// 			{
-// 				"setData": undefined,
-// 				"col": 9,
-// 			},
-// 		];
+	if(jsonData === ""){
+		str = [
+			{
+				"setData": undefined,
+				"col": 5,
+			},
+		];
 		
-// 		data.push(str);
-// 	}else{
-// 		for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
-// 			let job, title, customer, writer, fromDate, fromSetDate, toDate, toSetDate, place, content, type, disDate;
+		data.push(str);
+	}else{
+		for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+			// let job, title, customer, writer, fromDate, fromSetDate, toDate, toSetDate, place, content, type, disDate;
 			
-// 			job = (jsonData[i].job === null || jsonData[i].job === "" || jsonData[i].job === undefined) ? "" : jsonData[i].job;
+			// job = (jsonData[i].job === null || jsonData[i].job === "" || jsonData[i].job === undefined) ? "" : jsonData[i].job;
 			
-// 			if(job === "sales"){
-// 				job = "영업일정";
-// 			}else if(job === "tech"){
-// 				job = "기술지원";
-// 			}else{
-// 				job = "기타일정";
-// 			}
+			// if(job === "sales"){
+			// 	job = "영업일정";
+			// }else if(job === "tech"){
+			// 	job = "기술지원";
+			// }else{
+			// 	job = "기타일정";
+			// }
 	
-// 			title = (jsonData[i].title === null || jsonData[i].title === "" || jsonData[i].title === undefined) ? "" : jsonData[i].title;
-// 			customer = (jsonData[i].customer == 0 || jsonData[i].customer === null || jsonData[i].customer === undefined) ? "" : storage.customer[jsonData[i].customer].name;
-// 			writer = (jsonData[i].writer == 0 || jsonData[i].writer === null || jsonData[i].writer === undefined) ? "" : storage.user[jsonData[i].writer].userName;
-// 			place = (jsonData[i].place === null || jsonData[i].place === "" || jsonData[i].place === undefined) ? "" : jsonData[i].place;
-// 			content = (jsonData[i].content === null || jsonData[i].content === "" || jsonData[i].content === undefined) ? "" : jsonData[i].content;
-// 			content = content.replaceAll("<p>", "").replaceAll("</p>", "").replaceAll("<br />", "");
-// 			type = (jsonData[i].type === null || jsonData[i].type === "" || jsonData[i].type === undefined) ? "" : storage.code.etc[jsonData[i].type];
+			// title = (jsonData[i].title === null || jsonData[i].title === "" || jsonData[i].title === undefined) ? "" : jsonData[i].title;
+			// customer = (jsonData[i].customer == 0 || jsonData[i].customer === null || jsonData[i].customer === undefined) ? "" : storage.customer[jsonData[i].customer].name;
+			// writer = (jsonData[i].writer == 0 || jsonData[i].writer === null || jsonData[i].writer === undefined) ? "" : storage.user[jsonData[i].writer].userName;
+			// place = (jsonData[i].place === null || jsonData[i].place === "" || jsonData[i].place === undefined) ? "" : jsonData[i].place;
+			// content = (jsonData[i].content === null || jsonData[i].content === "" || jsonData[i].content === undefined) ? "" : jsonData[i].content;
+			// content = content.replaceAll("<p>", "").replaceAll("</p>", "").replaceAll("<br />", "");
+			// type = (jsonData[i].type === null || jsonData[i].type === "" || jsonData[i].type === undefined) ? "" : storage.code.etc[jsonData[i].type];
 			
-// 			fromDate = dateDis(jsonData[i].from);
-// 			fromSetDate = dateFnc(fromDate, "mm-dd");
+			fromDate = CommonDatas.dateDis(jsonData[i].from);
+			fromSetDate = CommonDatas.dateFnc(fromDate, "mm-dd");
 			
-// 			toDate = dateDis(jsonData[i].to);
-// 			toSetDate = dateFnc(toDate, "mm-dd");
+			toDate = CommonDatas.dateDis(jsonData[i].to);
+			toSetDate = CommonDatas.dateFnc(toDate, "mm-dd");
 
-// 			disDate = dateDis(jsonData[i].created, jsonData[i].modified);
-// 			disDate = dateFnc(disDate, "mm-dd");
+			disDate = CommonDatas.dateDis(jsonData[i].created, jsonData[i].modified);
+			disDate = CommonDatas.dateFnc(disDate, "mm-dd");
 	
-// 			str = [
-// 				{
-// 					"setData": disDate,
-// 					"align": "center",
-// 				},
-// 				{
-// 					"setData": fromSetDate + " ~ " + toSetDate,
-// 					"align": "center",
-// 				},
-// 				{
-// 					"setData": job,
-// 					"align": "center",
-// 				},
-// 				{
-// 					"setData": title,
-// 					"align": "left",
-// 				},
-// 				{
-// 					"setData": customer,
-// 					"align": "center",
-// 				},
-// 				{
-// 					"setData": writer,
-// 					"align": "center",
-// 				},
-// 				{
-// 					"setData": place,
-// 					"align": "center",
-// 				},
-// 				{
-// 					"setData": type,
-// 					"align": "center",
-// 				},
-// 				{
-// 					"setData": content,
-// 					"align": "left",
-// 				},
-// 			];
+			str = [
+				{
+					"setData": disDate,
+					"align": "center",
+				},
+				{
+					"setData": fromSetDate + " ~ " + toSetDate,
+					"align": "center",
+				},
+				{
+					"setData": jsonData[i].title,
+					"align": "left",
+				},
+				{
+					"setData": jsonData[i].content,
+					"align": "left",
+				},
+				{
+					"setData": storage.user[jsonData[i].writer].userName,
+					"align": "center",
+				},
+			];
 	
-// 			fnc = "scheduleDetailView(this);";
-// 			ids.push(jsonData[i].no);
-// 			dataJob.push(jsonData[i].job);
-// 			data.push(str);
-// 		}
-// 		let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawScheduleList", result[0]);
-// 		pageContainer[0].innerHTML = pageNation;
-// 	}
+			fnc = "scheduleDetailView(this);";
+			ids.push(jsonData[i].no);
+			dataJob.push(jsonData[i].job);
+			data.push(str);
+		}
+		let pageNation = CommonDatas.createPaging(pageContainer[0], result[3], "pageMove", "drawScheduleList", result[0]);
+		pageContainer[0].innerHTML = pageNation;
+	}
 
-// 	containerTitle.html("일정조회");
-// 	createGrid(container, header, data, ids, dataJob, fnc);
-// 	setViewContents(hideArr, showArr);
+	containerTitle.innerHTML = "일정조회";
+	CommonDatas.createGrid(container, header, data, ids, dataJob, fnc);
+	CommonDatas.setViewContents(hideArr, showArr);
 
-// 	let path = $(location).attr("pathname").split("/");
+	let path = $(location).attr("pathname").split("/");
 
-// 	if(path[3] !== undefined && jsonData !== ""){
-// 		$(".calendarList").hide();
-// 		let content = $(".gridContent[data-id=\"" + path[3] + "\"]");
-// 		scheduleDetailView(content);
-// 	}
-// }// End of drawNoticeList()
+	if(path[3] !== undefined && jsonData !== ""){
+		$(".calendarList").hide();
+		let content = $(".gridContent[data-id=\"" + path[3] + "\"]");
+		scheduleDetailView(content);
+	}
+}// End of drawNoticeList()
 
 // 일정 캘린더를 만드는 함수
 function drawCalendar(container){
@@ -201,11 +183,15 @@ function drawCalendar(container){
     if(storage.currentYear === undefined)   storage.currentYear = (new Date()).getFullYear();
     if(storage.currentMonth === undefined)  storage.currentMonth = (new Date()).getMonth() + 1;
 
-	hideArr = ["gridList", "pageContainer", "listRange", "listSearchInput", "searchContainer", "detailBackBtn"];
-	showArr = ["calendarList", "scheduleRange", "listChangeBtn"];
+	hideArr = ["gridList", "pageContainer", "listRange", "listSearchInput", "searchContainer", "detailBackBtn", "crudAddBtn"];
+	showArr = [
+		{element: "calendarList", display: "block"},
+		{element: "scheduleRange", display: "flex"},
+		{element: "listChangeBtn", display: "flex"},
+	];
 
-	$(".calendarYear").text(storage.currentYear);
-	$(".calendarMonth").text(storage.currentMonth);
+	document.getElementsByClassName("calendarYear")[0].innerText = storage.currentYear;
+	document.getElementsByClassName("calendarMonth")[0].innerText = storage.currentMonth;
 	pageContainer = document.getElementsByClassName("pageContainer");
 
     startDate = new Date(storage.currentYear, storage.currentMonth - 1 , 1);
@@ -300,7 +286,7 @@ function drawCalendar(container){
 		}
 
 		now = year + "-" + month + "-" + day;
-        html += "<div class=\"calendar_cell" + (storage.currentMonth === tempDate.getMonth() + 1 ? "" : " calendar_cell_blur") + "\" data-date=\"" + now + "\" onclick='eventStop();scheduleInsertForm(\"" + now + "\");'>"; // start row / 해당월이 아닌 날짜의 경우 calendar_cell_blue 클래스명을 셀에 추가 지정함
+        html += "<div class=\"calendar_cell" + (storage.currentMonth === tempDate.getMonth() + 1 ? "" : " calendar_cell_blur") + "\" data-date=\"" + now + "\">"; // start row / 해당월이 아닌 날짜의 경우 calendar_cell_blue 클래스명을 셀에 추가 지정함
         html += "<div class=\"calendar_date\">" + (calArr[x1].date.getDate()) + "</div>"; // 셀 안 최상단에 날짜 아이템을 추가함
         for(x2 = 0 ; x2 < slot ; x2++){
 			x3 = [];
@@ -313,9 +299,9 @@ function drawCalendar(container){
             t = calArr[x1].slot[x2] === undefined ? undefined : storage.scheduleList[calArr[x1].slot[x2]] ; //임시변수에 스케줄 아이템을 담아둠
 			
 			if(x2 > 2){
-				html += "<div class=\"calendar_item" + (t === undefined ? " calendar_item_empty" : "") + (x3[0] ? " calendar_item_left" : "") + (x3[1] ? " calendar_item_right" : "") + "\"" + (t === undefined ? "" : "") + " data-id=" + (t === undefined ? '' : t.no) + " data-job=" + (t === undefined ? '' : t.job) + " onclick='" + (t === undefined ? 'eventStop();scheduleInsertForm("' + now + '");' : 'eventStop();calendarDetailView(this);') + "' data-sort=" + (t === undefined ? 0 : 1) + " style='display:none;'>" + (t === undefined ? "" : storage.user[t.writer].userName + " : " + t.title) + "</div>";
+				html += "<div class=\"calendar_item" + (t === undefined ? " calendar_item_empty" : "") + (x3[0] ? " calendar_item_left" : "") + (x3[1] ? " calendar_item_right" : "") + "\"" + (t === undefined ? "" : "") + " data-id=" + (t === undefined ? '' : t.no) + " data-job=" + (t === undefined ? '' : t.job) + " onclick='" + (t === undefined ? '' : 'eventStop();calendarDetailView(this);') + "' data-sort=" + (t === undefined ? 0 : 1) + " style='display:none;'>" + (t === undefined ? "" : storage.user[t.writer].userName + " : " + t.title) + "</div>";
 			}else{
-				html += "<div class=\"calendar_item" + (t === undefined ? " calendar_item_empty" : "") + (x3[0] ? " calendar_item_left" : "") + (x3[1] ? " calendar_item_right" : "") + "\"" + (t === undefined ? "" : "") + " data-id=" + (t === undefined ? '' : t.no) + " data-job=" + (t === undefined ? '' : t.job) + " onclick='" + (t === undefined ? 'eventStop();scheduleInsertForm("' + now + '");' : 'eventStop();calendarDetailView(this);') + "' data-sort=" + (t === undefined ? 0 : 1) + "style='display:block;z-index:99;'>" + (t === undefined ? "" : storage.user[t.writer].userName + " : " + t.title) + "</div>";
+				html += "<div class=\"calendar_item" + (t === undefined ? " calendar_item_empty" : "") + (x3[0] ? " calendar_item_left" : "") + (x3[1] ? " calendar_item_right" : "") + "\"" + (t === undefined ? "" : "") + " data-id=" + (t === undefined ? '' : t.no) + " data-job=" + (t === undefined ? '' : t.job) + " onclick='" + (t === undefined ? '' : 'eventStop();calendarDetailView(this);') + "' data-sort=" + (t === undefined ? 0 : 1) + "style='display:block;z-index:99;'>" + (t === undefined ? "" : storage.user[t.writer].userName + " : " + t.title) + "</div>";
 			}
         }
 
@@ -324,177 +310,204 @@ function drawCalendar(container){
     container.innerHTML = html;
 
 	setTimeout(() => {
-		let calendar_cell = $(".calendar_cell");
+		let calendar_cell = document.getElementsByClassName("calendar_cell");
 
 		for(let i = 0; i < calendar_cell.length; i++){
 			if($(calendar_cell[i]).children().not(".calendar_item_empty").length > 4){
-				$(calendar_cell[i]).append("<div class=\"calendar_span_empty\" onclick=\"eventStop();scheduleInsertForm(" + now + ");\"><span data-flag=\"false\" onclick=\"eventStop();calendarMore(this);\">more(" + parseInt($(calendar_cell[i]).children().not(".calendar_item_empty").length-1) + ") →</span></div>");
+				$(calendar_cell[i]).append("<div class=\"calendar_span_empty\"><span data-flag=\"false\" onclick=\"eventStop();calendarMore(this);\">more(" + parseInt($(calendar_cell[i]).children().not(".calendar_item_empty").length-1) + ") →</span></div>");
 			}
 		}
 	}, 100);
 	
-	setViewContents(hideArr, showArr);
+	CommonDatas.setViewContents(hideArr, showArr);
     return true;
 } // End of drawCalendar()
 
 function scheduleDetailView(e){
-	let id, job, url, method, data, type;
+	let thisEle = e;
+	let no = thisEle.dataset.id;
 
-	id = $(e).data("id");
-	job = $(e).data("job");
-	url = "/api/schedule/" + job + "/" + id;
-	method = "get";
-	type = "detail";
+	for(let i = 0; i < storage.scheduleList.length; i++){
+		let item = storage.scheduleList[i];
 
-	crud.defaultAjax(url, method, data, type, scheduleSuccessView, scheduleErrorView);
-}
-
-function scheduleSuccessView(result){
-	let html, dataArray, notIdArray, gridList, containerTitle, datas, crudUpdateBtn, crudDeleteBtn, detailBackBtn, hideArr, showArr;
-	notIdArray = ["writer"];
-	gridList = $(".gridList");
-	containerTitle = $("#containerTitle");
-	crudUpdateBtn = $(".crudUpdateBtn");
-	crudDeleteBtn = $(".crudDeleteBtn");
-	detailBackBtn = $(".detailBackBtn");
-	dataArray = scheduleRadioUpdate(result.job, result);
-	html = detailViewForm(dataArray);
-	containerTitle.html(result.title);
-	gridList.after(html);
-	hideArr = ["gridList", "calendarList", "listRange", "crudAddBtn", "listSearchInput", "searchContainer", "pageContainer"];
-	showArr = ["defaultFormContainer"];
-	setViewContents(hideArr, showArr);
-
-	if(storage.my == result.writer){
-		crudUpdateBtn.attr("onclick", "enableDisabled(this, \"scheduleUpdate();\", \"" + notIdArray + "\");");
-		crudUpdateBtn.css("display", "flex");
-		crudDeleteBtn.css("display", "flex");
-	}else{
-		crudUpdateBtn.css("display", "none");
-		crudDeleteBtn.css("display", "none");
+		if(item.no == no){
+			storage.detailData = item;
+		}
 	}
+
+	const ScheduleClass = new Schedule(storage.detailData);
+	ScheduleClass.scheduleDetailDataSet();
+	// let id, job, url, method, data, type;
+
+	// id = $(e).data("id");
+	// job = $(e).data("job");
+	// url = "/api/schedule/" + job + "/" + id;
+	// method = "get";
+	// type = "detail";
+
+	// crud.defaultAjax(url, method, data, type, scheduleSuccessView, scheduleErrorView);
+}
+
+// function scheduleSuccessView(result){
+// 	let html, dataArray, notIdArray, gridList, containerTitle, datas, crudUpdateBtn, crudDeleteBtn, detailBackBtn, hideArr, showArr;
+// 	notIdArray = ["writer"];
+// 	gridList = $(".gridList");
+// 	containerTitle = $("#containerTitle");
+// 	crudUpdateBtn = $(".crudUpdateBtn");
+// 	crudDeleteBtn = $(".crudDeleteBtn");
+// 	detailBackBtn = $(".detailBackBtn");
+// 	dataArray = scheduleRadioUpdate(result.job, result);
+// 	html = detailViewForm(dataArray);
+// 	containerTitle.html(result.title);
+// 	gridList.after(html);
+// 	hideArr = ["gridList", "calendarList", "listRange", "crudAddBtn", "listSearchInput", "searchContainer", "pageContainer"];
+// 	showArr = ["defaultFormContainer"];
+// 	setViewContents(hideArr, showArr);
+
+// 	if(storage.my == result.writer){
+// 		crudUpdateBtn.attr("onclick", "enableDisabled(this, \"scheduleUpdate();\", \"" + notIdArray + "\");");
+// 		crudUpdateBtn.css("display", "flex");
+// 		crudDeleteBtn.css("display", "flex");
+// 	}else{
+// 		crudUpdateBtn.css("display", "none");
+// 		crudDeleteBtn.css("display", "none");
+// 	}
 	
-	detailBackBtn.css("display", "flex");
+// 	detailBackBtn.css("display", "flex");
 
-	setTimeout(() => {
-		$("[name='job'][value='" + result.job + "']").attr("checked", true).removeAttr("onclick");
-		if(result.job === "sales"){
-			let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;
-			datas = ["sopp", "writer", "customer", "partner"];
+// 	setTimeout(() => {
+// 		$("[name='job'][value='" + result.job + "']").attr("checked", true).removeAttr("onclick");
+// 		if(result.job === "sales"){
+// 			let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;
+// 			datas = ["sopp", "writer", "customer", "partner"];
 
-			$("#type option[value='" + type + "']").attr("selected", true);
-		}else if(result.job === "tech"){
-			let contractMethod = (result.contractMethod === null || result.contractMethod === "" || result.contractMethod === undefined) ? "" : result.contractMethod;
-			let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;
-			let supportStep = (result.supportStep === null || result.supportStep === "" || result.supportStep === undefined) ? "" : result.supportStep;
-			datas = ["sopp", "writer", "customer", "partner", "cipOfCustomer", "contract"];
+// 			$("#type option[value='" + type + "']").attr("selected", true);
+// 		}else if(result.job === "tech"){
+// 			let contractMethod = (result.contractMethod === null || result.contractMethod === "" || result.contractMethod === undefined) ? "" : result.contractMethod;
+// 			let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;
+// 			let supportStep = (result.supportStep === null || result.supportStep === "" || result.supportStep === undefined) ? "" : result.supportStep;
+// 			datas = ["sopp", "writer", "customer", "partner", "cipOfCustomer", "contract"];
 
-			$("[name='contractMethod'][value='" + contractMethod + "']").attr("checked", true);
-			$("#type option[value='" + type + "']").attr("selected", true);
-			$("#supportStep option[value='" + supportStep + "']").attr("selected", true);
-		}else{
-			datas = ["sopp", "writer", "customer"];
-		}
+// 			$("[name='contractMethod'][value='" + contractMethod + "']").attr("checked", true);
+// 			$("#type option[value='" + type + "']").attr("selected", true);
+// 			$("#supportStep option[value='" + supportStep + "']").attr("selected", true);
+// 		}else{
+// 			datas = ["sopp", "writer", "customer"];
+// 		}
 
-		let jobArray = $("input[name=\"job\"]");
+// 		let jobArray = $("input[name=\"job\"]");
 
-		for(let i = 0; i < jobArray.length; i++){
-			if(!$(jobArray[i]).is(":checked")){
-				$(jobArray[i]).hide();
-				$(jobArray[i]).next().hide();
-			}
-		}
+// 		for(let i = 0; i < jobArray.length; i++){
+// 			if(!$(jobArray[i]).is(":checked")){
+// 				$(jobArray[i]).hide();
+// 				$(jobArray[i]).next().hide();
+// 			}
+// 		}
 
-		detailTrueDatas(datas);
-		ckeditor.config.readOnly = true;
-		window.setTimeout(setEditor, 100);
-	}, 100);
-}
+// 		detailTrueDatas(datas);
+// 		ckeditor.config.readOnly = true;
+// 		window.setTimeout(setEditor, 100);
+// 	}, 100);
+// }
 
-function scheduleErrorView(){
-	msg.set("에러");
-}
+// function scheduleErrorView(){
+// 	msg.set("에러");
+// }
 
 function calendarDetailView(e){
-	let id, job, url, method, data, type;
+	let thisEle = e;
+	let no = thisEle.dataset.id;
 
-	id = $(e).data("id");
-	job = $(e).data("job");
-	url = "/api/schedule/" + job + "/" + id;
-	method = "get";
-	type = "detail";
-
-	crud.defaultAjax(url, method, data, type, calendarSuccessView, calendarErrorView);
-}
-
-function calendarSuccessView(result){
-	let html, title, dataArray, notIdArray, datas, defaultFormLine;
-
-	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
-	dataArray = scheduleRadioUpdate(result.job, result);
-	html = detailViewForm(dataArray, "modal");
-	
-	
-	modal.show();
-	modal.content.css("min-width", "70%");
-	modal.content.css("max-width", "70%");
-	modal.headTitle.text(title);
-	modal.body.html(html);
-	notIdArray = ["writer"];
-
-	if(storage.my == result.writer){
-		modal.confirm.text("수정");
-		modal.confirm.attr("onclick", "enableDisabled(this, \"scheduleUpdate();\", \"" + notIdArray + "\");");
-		defaultFormLine = $(".defaultFormLine");
-		defaultFormLine.eq(0).append("<button type=\"button\" class=\"modalDeleteBtn\" onclick=\"scheduleDelete();\">삭제</button>");
-	}else{
-		modal.confirm.hide();
+	for(let i = 0; i < storage.scheduleList.length; i++){
+		let item = storage.scheduleList[i];
+		
+		if(item.no == no){
+			storage.detailData = item;
+		}
 	}
 
-	modal.close.text("취소");
-	modal.close.attr("onclick", "modal.hide();");
+	const ScheduleClass = new Schedule(storage.detailData);
+	ScheduleClass.calendarDetailDataSet();
 
-	setTimeout(() => {
-		$("[name='job'][value='" + result.job + "']").attr("checked", true).removeAttr("onclick");
-		if(result.job === "sales"){
-			let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;
-			datas = ["sopp", "writer", "customer", "partner"];
-			$("#type option[value='" + type + "']").attr("selected", true);
-		}else if(result.job === "tech"){
-			let contractMethod = (result.contractMethod === null || result.contractMethod === "" || result.contractMethod === undefined) ? "" : result.contractMethod;
-			let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;
-			let supportStep = (result.supportStep === null || result.supportStep === "" || result.supportStep === undefined) ? "" : result.supportStep;
-			datas = ["sopp", "writer", "customer", "partner", "cipOfCustomer", "contract"];
+	// let id, job, url, method, data, type;
 
-			$("[name='contractMethod'][value='" + contractMethod + "']").attr("checked", true);
-			$("#type option[value='" + type + "']").attr("selected", true);
-			$("#supportStep option[value='" + supportStep + "']").attr("selected", true);
-		}else{
-			datas = ["sopp", "writer", "customer"];
-		}
+	// id = $(e).data("id");
+	// job = $(e).data("job");
+	// url = "/api/schedule/" + job + "/" + id;
+	// method = "get";
+	// type = "detail";
 
-		let jobArray = $("input[name=\"job\"]");
-
-		for(let i = 0; i < jobArray.length; i++){
-			if(!$(jobArray[i]).is(":checked")){
-				$(jobArray[i]).hide();
-				$(jobArray[i]).next().hide();
-			}
-		}
-
-		detailTrueDatas(datas);
-		ckeditor.config.readOnly = true;
-		window.setTimeout(setEditor, 100);
-	}, 100);
-
-	setTimeout(() => {
-		document.getElementsByClassName("cke_textarea_inline")[0].style.height = "300px";
-	}, 300);
+	// crud.defaultAjax(url, method, data, type, calendarSuccessView, calendarErrorView);
 }
 
-function calendarErrorView(){
-	msg.set("에러");
-}
+// function calendarSuccessView(result){
+// 	let html, title, dataArray, notIdArray, datas, defaultFormLine;
+
+// 	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
+// 	dataArray = scheduleRadioUpdate(result.job, result);
+// 	html = detailViewForm(dataArray, "modal");
+	
+	
+// 	modal.show();
+// 	modal.content.css("min-width", "70%");
+// 	modal.content.css("max-width", "70%");
+// 	modal.headTitle.text(title);
+// 	modal.body.html(html);
+// 	notIdArray = ["writer"];
+
+// 	// if(storage.my == result.writer){
+// 	// 	modal.confirm.text("수정");
+// 	// 	modal.confirm.attr("onclick", "enableDisabled(this, \"scheduleUpdate();\", \"" + notIdArray + "\");");
+// 	// 	defaultFormLine = $(".defaultFormLine");
+// 	// 	defaultFormLine.eq(0).append("<button type=\"button\" class=\"modalDeleteBtn\" onclick=\"scheduleDelete();\">삭제</button>");
+// 	// }else{
+// 	// 	modal.confirm.hide();
+// 	// }
+// 	modal.confirm.hide();
+// 	modal.close.text("취소");
+// 	modal.close.attr("onclick", "modal.hide();");
+
+// 	setTimeout(() => {
+// 		$("[name='job'][value='" + result.job + "']").attr("checked", true).removeAttr("onclick");
+// 		if(result.job === "sales"){
+// 			let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;
+// 			datas = ["sopp", "writer", "customer", "partner"];
+// 			$("#type option[value='" + type + "']").attr("selected", true);
+// 		}else if(result.job === "tech"){
+// 			let contractMethod = (result.contractMethod === null || result.contractMethod === "" || result.contractMethod === undefined) ? "" : result.contractMethod;
+// 			let type = (result.type === null || result.type === "" || result.type === undefined) ? "" : result.type;
+// 			let supportStep = (result.supportStep === null || result.supportStep === "" || result.supportStep === undefined) ? "" : result.supportStep;
+// 			datas = ["sopp", "writer", "customer", "partner", "cipOfCustomer", "contract"];
+
+// 			$("[name='contractMethod'][value='" + contractMethod + "']").attr("checked", true);
+// 			$("#type option[value='" + type + "']").attr("selected", true);
+// 			$("#supportStep option[value='" + supportStep + "']").attr("selected", true);
+// 		}else{
+// 			datas = ["sopp", "writer", "customer"];
+// 		}
+
+// 		let jobArray = $("input[name=\"job\"]");
+
+// 		for(let i = 0; i < jobArray.length; i++){
+// 			if(!$(jobArray[i]).is(":checked")){
+// 				$(jobArray[i]).hide();
+// 				$(jobArray[i]).next().hide();
+// 			}
+// 		}
+
+// 		detailTrueDatas(datas);
+// 		ckeditor.config.readOnly = true;
+// 		window.setTimeout(setEditor, 100);
+// 	}, 100);
+
+// 	setTimeout(() => {
+// 		document.getElementsByClassName("cke_textarea_inline")[0].style.height = "300px";
+// 	}, 300);
+// }
+
+// function calendarErrorView(){
+// 	msg.set("에러");
+// }
 
 function eventStop(){
 	if(event.stopattragation){
@@ -506,10 +519,10 @@ function eventStop(){
 function calendarNext(){
 	let getYear, getMonth, setYear, setMonth;
 
-	getYear = $(".calendarYear");
-	getMonth = $(".calendarMonth");
-	setYear = parseInt(getYear.html());
-	setMonth = parseInt(getMonth.html());
+	getYear = document.getElementsByClassName("calendarYear")[0];
+	getMonth = document.getElementsByClassName("calendarMonth")[0];
+	setYear = parseInt(getYear.innerHTML);
+	setMonth = parseInt(getMonth.innerHTML);
 	
 	if(setMonth == 12){
 		setYear = setYear + 1;
@@ -518,13 +531,14 @@ function calendarNext(){
 	
 	setMonth = setMonth + 1;
 
-	getYear.html(setYear);
-	getMonth.html(setMonth);
+	getYear.innerHTML = setYear;
+	getMonth.innerHTML = setMonth;
 
 	if(setMonth < 10){
 		setMonth = "0" + setMonth;
 	}
 
+	storage.currentlongDate = new Date(setYear + "-" + setMonth + "-01").getTime();
 	storage.currentYear = setYear;
 	storage.currentMonth = setMonth;
 
@@ -534,10 +548,10 @@ function calendarNext(){
 function calendarPrev(){
 	let getYear, getMonth, setYear, setMonth;
 
-	getYear = $(".calendarYear");
-	getMonth = $(".calendarMonth");
-	setYear = parseInt(getYear.html());
-	setMonth = parseInt(getMonth.html());
+	getYear = document.getElementsByClassName("calendarYear")[0];
+	getMonth = document.getElementsByClassName("calendarMonth")[0];
+	setYear = parseInt(getYear.innerHTML);
+	setMonth = parseInt(getMonth.innerHTML);
 	type = "prev";
 
 	if(setMonth == 1){
@@ -547,13 +561,14 @@ function calendarPrev(){
 
 	setMonth = setMonth - 1;
 	
-	getYear.html(setYear);
-	getMonth.html(setMonth);
+	getYear.innerHTML = setYear;
+	getMonth.innerHTML = setMonth;
 
 	if(setMonth < 10){
 		setMonth = "0" + setMonth;
 	}
 
+	storage.currentlongDate = new Date(setYear + "-" + setMonth + "-01").getTime();
 	storage.currentYear = setYear;
 	storage.currentMonth = setMonth;
 
@@ -561,23 +576,14 @@ function calendarPrev(){
 }
 
 function scheduleCalendarAjax(){
-	let url, method, scheduleRange;
+	scheduleRange = document.getElementsByClassName("scheduleRange")[0].value;
 
-	scheduleRange = $("#scheduleRange").val();
-	url = "/api/schedule/calendar/" + scheduleRange + "/" + storage.currentYear + "/" + storage.currentMonth;
-	method = "get",
-
-	$.ajax({
-		url: url,
-		method: method,
-		dataType: "json",
-		success:(result) => {
-			let jsonData;
-			jsonData = cipher.decAes(result.data);
-			jsonData = JSON.parse(jsonData);
-			storage.scheduleList = jsonData;
-			window.setTimeout(drawCalendar(document.getElementsByClassName("calendar_container")[0]), 200);
-		}
+	axios.get("/api/schedule2/" + scheduleRange + "/" + storage.currentlongDate).then((response) => {
+		let jsonData;
+		jsonData = cipher.decAes(response.data.data);
+		jsonData = JSON.parse(jsonData);
+		storage.scheduleList = jsonData;
+		window.setTimeout(drawCalendar(document.getElementsByClassName("calendar_container")[0]), 200);
 	});
 }
 
@@ -1944,8 +1950,8 @@ function scheduleErrorDelete(){
 function scheduleSelectChange(){
     let url, method, data, type, scheduleRange;
 
-    scheduleRange = $("#scheduleRange").val();
-    url = "/api/schedule/calendar/" + scheduleRange;
+    scheduleRange = document.getElementsByClassName("scheduleRange")[0].value;
+    url = "/api/schedule/" + scheduleRange;
     method = "get";
     data = "";
     type = "list";

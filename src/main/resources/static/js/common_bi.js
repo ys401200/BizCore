@@ -602,115 +602,161 @@ class Schedule{
 		this.modified = (v.modified === undefined || v.modified === null ? null : v.modified.constructor.name === "Number" ? new Date(v.modified) : v.modified);
 	} // End of constructor()
 
-	//스케줄 리스트 출력 함수
-	drawScheduleList(){
-		const CommonDats = new Common();
-		let container, dataJob = [], result, jsonData, header = [], data = [], ids = [], str, fnc, pageContainer, containerTitle, hideArr, showArr;
-		if (this.data === undefined) {
-			msg.set("등록된 일정이 없습니다");
-		} else {
-			if(storage.searchDatas === undefined){
-				jsonData = this.data.sort(function(a, b){return b.created - a.created;});
-			}else{
-				jsonData = storage.searchDatas.sort(function(a, b){return b.created - a.created;});
-			}
-		}
-
-		hideArr = ["calendarList", "detailBackBtn", "crudUpdateBtn", "crudDeleteBtn"];
-		showArr = ["gridList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "crudAddBtn", "listSearchInput", "scheduleRange", "listChangeBtn"];
-		result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+	scheduleDetailDataSet() {
+		let html, dataArray, gridList, containerTitle, crudUpdateBtn, crudDeleteBtn, detailBackBtn, hideArr, showArr, createDiv, soppSplit, sopp;
+		gridList = document.getElementsByClassName("gridList")[0];
 		containerTitle = document.getElementById("containerTitle");
-		pageContainer = document.getElementsByClassName("pageContainer");
-		container = document.getElementsByClassName("gridList")[0];
+		crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
+		crudDeleteBtn = document.getElementsByClassName("crudDeleteBtn")[0];
+		detailBackBtn = document.getElementsByClassName("detailBackBtn")[0];
 
-		header = [
+		this.from = CommonDatas.dateDis(this.from);
+		this.from = CommonDatas.dateFnc(this.from, "yyyy-mm-dd T HH:mm");
+		
+		this.to = CommonDatas.dateDis(this.to);
+		this.to = CommonDatas.dateFnc(this.to, "yyyy-mm-dd T HH:mm");
+		soppSplit = this.related.parent.split(":");
+
+		axios.get("/api/schedule2/sopp/" + soppSplit[1]).then((response) => {
+			let result = response.data.data;
+			result = cipher.decAes(result);
+			result = JSON.parse(result);
+			sopp = result.title;
+		});
+
+		dataArray = [
 			{
-				"title" : "등록일",
-				"align" : "center",
+				"title": "일정시작일(*)",
+				"type": "datetime",
+				"elementId": "from",
+				"value": this.from,
 			},
 			{
-				"title" : "일정",
-				"align" : "center",
+				"title": "일정종료일(*)",
+				"type": "datetime",
+				"elementId": "to",
+				"value": this.to,
 			},
 			{
-				"title" : "일정제목",
-				"align" : "center",
+				"title": "영업기회(*)",
+				"elementId": "sopp",
+				"complete": "sopp",
+				"keyup": "addAutoComplete(this);",
+				"onClick": "addAutoComplete(this);",
+				"value": sopp,
 			},
 			{
-				"title" : "일정설명",
-				"align" : "center",
+				"title": "담당자(*)",
+				"elementId": "writer",
+				"complete": "user",
+				"keyup": "addAutoComplete(this);",
+				"onClick": "addAutoComplete(this);",
+				"value": storage.user[this.writer].userName,
 			},
 			{
-				"title" : "담당자",
-				"align" : "center",
+				"title": "제목(*)",
+				"elementId": "title",
+				"value": this.title,
+				"col": 4,
+			},
+			{
+				"title": "내용",
+				"elementId": "content",
+				"value": this.content,
+				"type": "textarea",
+				"col": 4,
 			},
 		];
 
-		if(jsonData === ""){
-			str = [
-				{
-					"setData": undefined,
-					"col": 5,
-				},
-			];
+		html = CommonDatas.detailViewForm(dataArray);
+		containerTitle.innerHTML = this.title;
+		createDiv = document.createElement("div");
+		createDiv.className = "defaultFormContainer";
+		createDiv.innerHTML = html;
+		gridList.after(createDiv);
+		hideArr = ["gridList", "calendarList", "listRange", "crudAddBtn", "listSearchInput", "searchContainer", "pageContainer"];
+		showArr = [
+			{element: "defaultFormContainer", display: "grid"}
+		];
+		CommonDatas.setViewContents(hideArr, showArr);
+		detailBackBtn.style.display = "flex";
+		ckeditor.config.readOnly = true;
+		window.setTimeout(setEditor, 100);
+	}
 
-			data.push(str);
-		}else{
-			let fromDate, fromSetDate, toDate, toSetDate, disDate;
+	calendarDetailDataSet() {
+		let sopp, html, dataArray, soppSplit;
 
-			for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
-				fromDate = dateDis(jsonData[i].from);
-				fromSetDate = dateFnc(fromDate, "yy.mm.dd");
+		this.from = CommonDatas.dateDis(this.from);
+		this.from = CommonDatas.dateFnc(this.from, "yyyy-mm-dd T HH:mm");
+		
+		this.to = CommonDatas.dateDis(this.to);
+		this.to = CommonDatas.dateFnc(this.to, "yyyy-mm-dd T HH:mm");
+		soppSplit = this.related.parent.split(":");
 
-				toDate = dateDis(jsonData[i].to);
-				toSetDate = dateFnc(toDate, "yy.mm.dd");
+		axios.get("/api/schedule2/sopp/" + soppSplit[1]).then((response) => {
+			let result = response.data.data;
+			result = cipher.decAes(result);
+			result = JSON.parse(result);
+			sopp = result.title;
+		});
 
-				disDate = dateDis(jsonData[i].created);
-				disDate = dateFnc(disDate, "yy.mm.dd");
+		dataArray = [
+			{
+				"title": "일정시작일(*)",
+				"type": "datetime",
+				"elementId": "from",
+				"value": this.from,
+			},
+			{
+				"title": "일정종료일(*)",
+				"type": "datetime",
+				"elementId": "to",
+				"value": this.to,
+			},
+			{
+				"title": "영업기회(*)",
+				"elementId": "sopp",
+				"complete": "sopp",
+				"keyup": "addAutoComplete(this);",
+				"onClick": "addAutoComplete(this);",
+				"value": sopp,
+			},
+			{
+				"title": "담당자(*)",
+				"elementId": "writer",
+				"complete": "user",
+				"keyup": "addAutoComplete(this);",
+				"onClick": "addAutoComplete(this);",
+				"value": storage.user[this.writer].userName,
+			},
+			{
+				"title": "제목(*)",
+				"elementId": "title",
+				"value": this.title,
+				"col": 4,
+			},
+			{
+				"title": "내용",
+				"elementId": "content",
+				"value": this.content,
+				"type": "textarea",
+				"col": 4,
+			},
+		];
 
-				str = [
-					{
-						"setData": disDate,
-						"align": "center",
-					},
-					{
-						"setData": fromSetDate + " ~ " + toSetDate,
-						"align": "center",
-					},
-					{
-						"setData": jsonData[i].title,
-						"align": "left",
-					},
-					{
-						"setData": jsonData[i].content,
-						"align": "left",
-					},
-					{
-						"setData": storage.user[jsonData[i].writer].userName,
-						"align": "center",
-					},
-				];
-
-				fnc = "scheduleDetailView(this);";
-				ids.push(jsonData[i].no);
-				dataJob.push(jsonData[i].job);
-				data.push(str);
-			}
-			let pageNation = createPaging(pageContainer[0], result[3], "CommonDatas.pageMove", "drawScheduleList", result[0]);
-			pageContainer[0].innerHTML = pageNation;
-		}
-
-		containerTitle.innerHTML = "일정조회";
-		CommonDats.createGrid(container, header, data, ids, dataJob, fnc);
-		setViewContents(hideArr, showArr);
-
-		let path = $(location).attr("pathname").split("/");
-
-		if(path[3] !== undefined && jsonData !== ""){
-			$(".calendarList").hide();
-			let content = $(".gridContent[data-id=\"" + path[3] + "\"]");
-			scheduleDetailView(content);
-		}
+		html = CommonDatas.detailViewForm(dataArray, "modal");
+	
+		modal.show();
+		modal.content.css("min-width", "70%");
+		modal.content.css("max-width", "70%");
+		modal.headTitle.text(this.title);
+		modal.body.html("<div class=\"defaultFormContainer\">" + html + "</div>");
+		modal.confirm.hide();
+		modal.close.text("취소");
+		modal.close.attr("onclick", "modal.hide();");
+		ckeditor.config.readOnly = true;
+		window.setTimeout(setEditor, 100);
 	}
 
 	// ========== 일정 수정 모달을 띄우는 함수 ==========

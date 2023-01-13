@@ -315,6 +315,6 @@
 /*일정 조회 상세보기 표 끝*/
 
 .detailContents {display: none;}
-.defaultFormContainer .defaultFormLine:first-child{
+/* .defaultFormContainer .defaultFormLine:first-child{
 	border-top: 0;
-}
+} */
