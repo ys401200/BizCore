@@ -299,13 +299,9 @@ public class ContractService extends Svc {
         return contNo;
     }
 
-    public String getContractWithParent(String compId, String parent) {
-        String result = null;
-        Contract cont = null;
-
-        cont = contractMapper.getContractWithParent(parent, compId);
-        result = cont == null ? null : cont.toJson();
-        return result;
+    public int findContNoWithParent(String compId, String parent) {
+        Integer result = contractMapper.getContractNoWithParent(parent, compId);
+        return result == null ? -1 : result;
     }
 
     // public String getMtncData(String contract, String compId) {

@@ -132,6 +132,23 @@ public class ApiContractCtrl extends Ctrl {
         return result;
     }
 
+    // parent를 받아서 계약을 찾아 전달해줌
+    @GetMapping("/parent/{parent:^\\D+:\\d+$}")
+    public String getContractWithParent(HttpServletRequest request, @PathVariable("parent") String parent) {
+        String result = null;
+        String compId = null;
+        HttpSession session = null;
+        int contNo = -1;
+
+        session = request.getSession();
+        compId = (String) session.getAttribute("compId");
+        if (compId == null)
+            compId = (String) request.getAttribute("compId");
+
+        contNo = contractService.findContNoWithParent(compId, parent);
+        return getDetail(request, contNo);
+    }
+
     @RequestMapping(value = "", method = RequestMethod.POST)
     public String apiProcurePost(HttpServletRequest request, @RequestBody String requestBody) {
         String result = null;
@@ -320,42 +337,6 @@ public class ApiContractCtrl extends Ctrl {
             data = contractService.getNextContNo(compId);
             data = encAes(data, aesKey, aesIv);
             result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
-        }
-
-        return result;
-    }
-
-    // parent를 받아서 계약을 찾아 전달해줌
-    @GetMapping("/parent/{parent:^\\D+:\\d+$}")
-    public String getContractWithParent(HttpServletRequest request, @PathVariable("parent") String parent) {
-        String result = null;
-        String compId = null;
-        String aesKey = null;
-        String aesIv = null;
-        String data = null;
-        Msg msg = null;
-        HttpSession session = null;
-
-        session = request.getSession();
-        compId = (String) session.getAttribute("compId");
-        aesKey = (String) session.getAttribute("aesKey");
-        aesIv = (String) session.getAttribute("aesIv");
-        msg = getMsg((String) session.getAttribute("lang"));
-        if (compId == null)
-            compId = (String) request.getAttribute("compId");
-
-        if (compId == null) {
-            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
-        } else if (aesKey == null || aesIv == null) {
-            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
-        } else {
-            data = contractService.getContractWithParent(compId, parent);
-            if (data == null) {
-                result = "{\"result\":\"failure\",\"msg\":\"" + msg.noResult + "\"}";
-            } else {
-                data = encAes(data, aesKey, aesIv);
-                result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
-            }
         }
 
         return result;

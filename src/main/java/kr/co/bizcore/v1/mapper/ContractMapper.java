@@ -74,8 +74,8 @@ public interface ContractMapper {
     public Contract getContract(@Param("no") int no, @Param("compId") String compId);
 
     // 계약 데이터 상세 // + parent
-    @Select("SELECT no, employee , coworker, customer, title, detail, saleDate, supplied, approved, amount, taxInclude, profit, created, modified, deleted, related  from bizcore.contract WHERE deleted IS NULL AND compId = #{compId} AND json_value(related, '$.parent') = #{parent}")
-    public Contract getContractWithParent(@Param("parent") String parent, @Param("compId") String compId);
+    @Select("SELECT no from bizcore.contract WHERE deleted IS NULL AND compId = #{compId} AND json_value(related, '$.parent') = #{parent}")
+    public int getContractNoWithParent(@Param("parent") String parent, @Param("compId") String compId);
 
     // 계약 유지보수 데이터
     @Select("SELECT no, customer, product, contract, startDate, endDate, engineer, coworker, created, modified, deleted, related from bizcore.maintenance WHERE contract = #{contract} and compId = #{compId}")
