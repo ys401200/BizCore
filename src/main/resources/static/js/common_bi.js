@@ -1528,13 +1528,13 @@ class Project {
 		for (z = 0; z < this.sopp.length; z++) {
 			if (this.sopp[z].stage < 6) {
 				x[0]++;
-				y[0] += this.sopp[z].expactetSales;
+				y[0] += this.sopp[z].expectedSales;
 			} else if (this.sopp[z].stage === 6) {
 				x[1]++;
-				y[1] += this.sopp[z].expactetSales;
+				y[1] += this.sopp[z].expectedSales;
 			} else {
 				x[2]++;
-				y[2] += this.sopp[z].expactetSales;
+				y[2] += this.sopp[z].expectedSales;
 			}
 		}
 		z = [0, 0, 0];
