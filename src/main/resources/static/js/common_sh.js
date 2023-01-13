@@ -281,23 +281,23 @@ class Contract {
 
     }
 
-    drawDetail(obj) { 
+    drawDetail(obj) {
 
         let target = document.getElementsByClassName("sopp-contract")[0];
         let origin = document.getElementsByClassName("detail-wrap")[0];
 
         if (origin != undefined) { origin.remove(); }
 
-        let cnt, el, el2; 
+        let cnt, el, el2;
 
-        if (obj.className =="sopp-contract") {
+        if (obj.className == "sopp-contract") {
             cnt = document.getElementsByClassName("sopp-contract")[0];
-           } else {
+        } else {
             el = document.createElement("div");
             el.className = "detail-wrap";
             obj.after(el);
             cnt = document.getElementsByClassName("detail-wrap")[0];
-           }
+        }
 
         el = document.createElement("top");
         el.className = "contract-top";
@@ -438,10 +438,30 @@ class Contract {
                 if (i > 0) {
                     mtncList += ","
                 }
+
+                let product, customer, startDate, endDate, engineer, amount;
+                if (mtnc[i].product != undefined) {
+                    for (let x in storage.product) {
+                        if (mtnc[i].product == storage.product[x].no) {
+                            product = storage.product[x].name;
+                        }
+                    }
+                }
+                customer = mtnc[i].customer != undefined ? storage.customer[mtnc[i].customer].name : "";
+                startDate = (mtnc[i].startDate != null && mtnc[i].startDate != "" && mtnc[i].startDate != undefined) ? getYmdSlashShort(mtnc[i].startDate) : "검수일";
+                endDate = (mtnc[i].endDate != null && mtnc[i].endDate != "" && mtnc[i].endDate != undefined) ? getYmdSlashShort(mtnc[i].endDate) : "검수일";
+                engineer = mtnc[i].engineer != undefined ? storage.user[mtnc[i].engineer].userName : "";
+                amount = mtnc[i].amount != undefined ? mtnc[i].amount + "원" : "";
                 mtncList +=
-                    "<div><div>" + getYmdSlashShort(mtnc[i].startDate) + "</div>" +
+                    "<div>" +
+                    "<div>" + product + "\u00A0" + "</div>" +
+                    "<div>" + customer + "\u00A0" + "</div>" +
+                    "<div>" + startDate + "\u00A0" + "</div>" +
                     "<div>" + "\u00A0" + "~" + "\u00A0" + "</div>" +
-                    "<div>" + getYmdSlashShort(mtnc[i].endDate) + "</div><input type='checkbox' data-id='" + mtnc[i].no + "'>";
+                    "<div>" + endDate + "\u00A0" + "</div>" +
+                    "<div>" + engineer + "\u00A0" + "</div>" +
+                    "<div>" + amount + "\u00A0" + "</div>" +
+                    "<input type='checkbox' data-id='" + mtnc[i].no + "'>";
 
             } mtncList += "(90일 이전 자동 생성)</div>"
             cnt.children[cnt.children.length - 1].children[1].innerHTML = mtncList;
@@ -494,14 +514,15 @@ class Contract {
                 }
 
             }
-            el = document.createElement("div");
+            el = document.createElement("button");
             cnt.children[cnt.children.length - 1].children[1].appendChild(el);
-            el.innerText = "(" + this.docNo + ")";
+            el.innerText = "결재 문서 조회";
             el.addEventListener("click", () => {
                 window.open("/business/contract/popup/" + storage.reportDetailData.docNo, "미리보기", "width :210mm");
             })
             el.style.color = "blue";
             el.style.cursor = "pointer";
+            el.style.margin = "0 0.5rem";
 
         }
 
@@ -520,7 +541,7 @@ class Contract {
         cnt.appendChild(el);
 
         // 계약서 상세 
-        if ($(".contract-progress").children()[1].className == "contract-done") {
+        if ($(".contract-progress").children()[0].className == "contract-done") {
             el = document.createElement("div");
             cnt.children[cnt.children.length - 1].appendChild(el);
             el.innerText = "계약서";
@@ -528,7 +549,6 @@ class Contract {
             el = document.createElement("div");
             cnt.children[cnt.children.length - 1].appendChild(el);
             // el.setAttribute("style", "flex-direction : column");
-
 
 
             let inputHtml = "<div class='filePreview'></div><input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attachedcontract' id='attached' onchange='R.contract.fileChange(this)'>";
@@ -788,9 +808,9 @@ class Contract {
                         data = JSON.parse(data);
                         storage.reportDetailData = data;
 
-    
+
                         this.drawDetail(obj);
-                        
+
                     } else {
                         storage.reportDetailData = "";
                         this.drawDetail(obj);

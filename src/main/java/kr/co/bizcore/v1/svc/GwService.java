@@ -1390,7 +1390,7 @@ public class GwService extends Svc {
             startDate = json.getString("startDate").equals("검수일") ? null : json.getString("startDate");
             endDate = startDate == null ? null : json.getString("endDate");
             related = endDate == null ? json.getString("endDate") : null;
-            result += maintenanceMapper.insertMaintenance(compId, sopp, customer, product, startDate, endDate, engineer, related);
+            result += maintenanceMapper.insertMaintenance(compId, sopp, customer, product, startDate, endDate, engineer, amount, related);
           
         }
 
