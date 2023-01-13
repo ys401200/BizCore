@@ -201,7 +201,7 @@ function loginSubmit(){
 	} // End of loginSubmit()
 
 	// 시간 보정 값 설정
-	timeCorrect = (new Date(1970,0,1)).getTime();
+	timeCorrect = new Date().getTimezoneOffset();
 
 	// 값을 가지고 와서 암호화함(compId는 암호화 제외)
 	data = {"userId":t[1].value, "pw":t[2].value, "keepStatus":keepStatus, "timeCorrect":timeCorrect};

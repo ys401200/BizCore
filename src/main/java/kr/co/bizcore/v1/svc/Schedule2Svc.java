@@ -137,11 +137,11 @@ public class Schedule2Svc extends Svc {
             }else{
                 cal.set(Calendar.MONTH, cal.get(Calendar.MONTH) + 1);
                 cal.set(Calendar.DATE, 1);
-                dtTo = cal.getTimeInMillis() + timeCorrect;
+                dtTo = cal.getTimeInMillis() + timeCorrect * 60000;
                 cal = Calendar.getInstance();
                 cal.set(Calendar.YEAR, cal.get(Calendar.YEAR) - 1);
                 cal.set(Calendar.DATE, 1);
-                dtFrom = cal.getTimeInMillis() + timeCorrect;
+                dtFrom = cal.getTimeInMillis() + timeCorrect * 60000;
             }
             sql1 += (" AND UNIX_TIMESTAMP(`to`)*1000 > " + dtFrom + " AND UNIX_TIMESTAMP(`from`)*1000 < " + dtTo + " ORDER BY `from`");
 
