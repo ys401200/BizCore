@@ -697,7 +697,7 @@ function reportInsert() {
         if (result.result === "ok") {
           alert("기안 완료");
           //createContract(ctrtData);
-          // window.close('/gw/estimate');
+           window.close('/gw/estimate/'+ storage.soppDetailData.sopp.no);
         } else {
           alert(result.msg);
         }

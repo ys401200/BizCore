@@ -249,11 +249,20 @@
 }
 
 
-.report-modal>div:last-of-type .product-list>.product-option {
-	padding: 0.5rem;
-	margin-bottom: 1rem;
+.report-modal>div:last-of-type .product-list>.product-item {
 	background-color: #f2f5ff;
-	border-radius: 1rem;
+}
+
+
+
+
+
+.report-modal>div:last-of-type .product-list>.product-option {
+	padding: 0.5rem 1rem;
+	margin-bottom: 1rem;
+	border : 2px solid #f2f5ff;
+	border-top: 1px solid #425da8;
+	
 }
 
 .report-modal>div:last-of-type .product-list>.product-option:after {

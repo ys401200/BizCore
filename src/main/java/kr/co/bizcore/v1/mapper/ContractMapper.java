@@ -65,7 +65,8 @@ public interface ContractMapper {
     // @Select("SELECT no, title, amount, profit, employee, saleDate, created,
     // related from bizcore.contract WHERE compId = #{compId} AND deleted is null
     // ORDER BY created DESC")
-    @Select("SELECT no, compId, employee, coWorker, customer, title, detail, saleDate, supplied, approved, amount, taxInclude, profit,created, modified, deleted, related from bizcore.contract WHERE deleted IS NULL AND compId = #{compId} AND ORDER BY created DESC")
+    //@Select("SELECT no, compId, employee, coWorker, customer, title, detail, saleDate, supplied, approved, amount, taxInclude, profit,created, modified, deleted, related from bizcore.contract WHERE deleted IS NULL AND compId = #{compId} AND ORDER BY created DESC")
+    @Select("SELECT no, compId, employee, coWorker, customer, title, detail, saleDate, supplied, approved, amount, taxInclude, profit,created, modified, deleted, related from bizcore.contract WHERE deleted IS NULL AND compId = #{compId} ORDER BY created DESC")
     public List<Contract> getList(@Param("compId") String compId);
 
     // 계약 데이터 상세

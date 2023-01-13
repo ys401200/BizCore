@@ -278,305 +278,603 @@ class Contract {
     // }
 
 
-    drawDetail() {
-
-        let target = document.getElementsByClassName("sopp-contract")[0];
-        let origin = document.getElementsByClassName("detail-wrap")[0];
-
-        if (origin != undefined) origin.remove();
-
-        let cnt, el, el2;
-        el = document.createElement("div");
-        el.className = "detail-wrap";
-        target.appendChild(el);
-        cnt = document.getElementsByClassName("detail-wrap")[0];
-
-
-        el = document.createElement("top");
-        el.className = "contract-top";
-        cnt.appendChild(el);
-
-        let ctrtTop = document.getElementsByClassName("contract-top")[0];
-
-        el = document.createElement("div");
-        ctrtTop.appendChild(el);
+    // drawDetail(parent) {
+
+    //     let target = document.getElementsByClassName("sopp-contract")[0];
+    //     let origin = document.getElementsByClassName("detail-wrap")[0];
+
+    //     if (origin != undefined) origin.remove();
+
+    //     let cnt, el, el2;
+    //     el = document.createElement("div");
+    //     el.className = "detail-wrap";
+    //     target.appendChild(el);
+    //     cnt = document.getElementsByClassName("detail-wrap")[0];
+
+
+    //     el = document.createElement("top");
+    //     el.className = "contract-top";
+    //     cnt.appendChild(el);
+
+    //     let ctrtTop = document.getElementsByClassName("contract-top")[0];
+
+    //     el = document.createElement("div");
+    //     ctrtTop.appendChild(el);
 
-        // 계약 진척도 - 판매보고
-        el = document.createElement("bar");
-        el.className = "contract-progress"
-        ctrtTop.appendChild(el);
+    //     // 계약 진척도 - 판매보고
+    //     el = document.createElement("bar");
+    //     el.className = "contract-progress"
+    //     ctrtTop.appendChild(el);
 
-        el2 = document.createElement("div");
-        el.append(el2);
+    //     el2 = document.createElement("div");
+    //     el.append(el2);
 
-        if (this.appLine.length > 0 && this.appLine[this.appLine.length - 1].rejected != null) {
-            el2.className = "contract-fail";
-        } else if (this.appLine.length > 0 && this.appLine[this.appLine.length - 1].approved != null) {
-            el2.className = "contract-done";
-        } else {
-            el2.className = "contract-doing";
-        }
+    //     if (this.appLine.length > 0 && this.appLine[this.appLine.length - 1].rejected != null) {
+    //         el2.className = "contract-fail";
+    //     } else if (this.appLine.length > 0 && this.appLine[this.appLine.length - 1].approved != null) {
+    //         el2.className = "contract-done";
+    //     } else {
+    //         el2.className = "contract-doing";
+    //     }
 
 
-        el2.innerText = "판매보고";
+    //     el2.innerText = "판매보고";
 
 
-        // 계약 진척도 - 계약서 
-        el2 = document.createElement("div");
-        el.append(el2);
+    //     // 계약 진척도 - 계약서 
+    //     el2 = document.createElement("div");
+    //     el.append(el2);
 
-        if (this.attached.length != 0) {
-            el2.className = "contract-done";
-        } else {
-            if ($(".contract-progress").children()[0].className == "contract-done") {
-                el2.className = "contract-doing";
-            }
-        }
-        el2.innerText = "계약";
-
-
-        // 계약 진척도 - 납품 
-        el2 = document.createElement("div");
-        el.append(el2);
-        if (this.supplied == 0 && this.attached.length > 0) {
-            el2.className = "contract-doing";
-        } else if (this.attached.length > 0 && this.supplied != 0) {
-            el2.className = "contract-done";
-        }
-        el2.innerText = "납품";
-
+    //     if (this.attached.length != 0) {
+    //         el2.className = "contract-done";
+    //     } else {
+    //         if ($(".contract-progress").children()[0].className == "contract-done") {
+    //             el2.className = "contract-doing";
+    //         }
+    //     }
+    //     el2.innerText = "계약";
+
+
+    //     // 계약 진척도 - 납품 
+    //     el2 = document.createElement("div");
+    //     el.append(el2);
+    //     if (this.supplied == 0 && this.attached.length > 0) {
+    //         el2.className = "contract-doing";
+    //     } else if (this.attached.length > 0 && this.supplied != 0) {
+    //         el2.className = "contract-done";
+    //     }
+    //     el2.innerText = "납품";
+
 
-        // 계약 진척도 - 검수
-        el2 = document.createElement("div");
-        el.append(el2);
-        if (this.supplied != 0 && this.approved == 0) {
-            el2.className = "contract-doing";
-        } else if (this.supplied != 0 && this.approved != 0) {
-            el2.className = "contract-done";
-        }
-        el2.innerText = "검수";
+    //     // 계약 진척도 - 검수
+    //     el2 = document.createElement("div");
+    //     el.append(el2);
+    //     if (this.supplied != 0 && this.approved == 0) {
+    //         el2.className = "contract-doing";
+    //     } else if (this.supplied != 0 && this.approved != 0) {
+    //         el2.className = "contract-done";
+    //     }
+    //     el2.innerText = "검수";
 
 
-        // 계약에서 상세 조회할 때 x를 지움 
-        // el = document.createElement("div");
-        // ctrtTop.appendChild(el);
-        // el.className = "crudBtns";
-        // el.innerHTML = "<Button data-detail='" + this.no + "'onclick='this.parentElement.parentElement.parentElement.remove()'><i class='fa-solid fa-xmark'></i></Button>";
+    //     // 계약에서 상세 조회할 때 x를 지움 
+    //     // el = document.createElement("div");
+    //     // ctrtTop.appendChild(el);
+    //     // el.className = "crudBtns";
+    //     // el.innerHTML = "<Button data-detail='" + this.no + "'onclick='this.parentElement.parentElement.parentElement.remove()'><i class='fa-solid fa-xmark'></i></Button>";
 
-        // 진척도 아래 상세 detail Start --------------------------------------------------------------------------------------------------------------------------------------
-        // 계약명
-        el = document.createElement("div");
-        cnt.appendChild(el);
+    //     // 진척도 아래 상세 detail Start --------------------------------------------------------------------------------------------------------------------------------------
+    //     // 계약명
+    //     el = document.createElement("div");
+    //     cnt.appendChild(el);
 
-        el = document.createElement("div");
-        cnt.children[cnt.children.length - 1].appendChild(el);
-        el.innerText = "계약명";
+    //     el = document.createElement("div");
+    //     cnt.children[cnt.children.length - 1].appendChild(el);
+    //     el.innerText = "계약명";
 
-        el = document.createElement("div");
-        cnt.children[cnt.children.length - 1].appendChild(el);
-        el.innerText = this.title;
-        //거래처 
-        el = document.createElement("div");
-        cnt.appendChild(el);
+    //     el = document.createElement("div");
+    //     cnt.children[cnt.children.length - 1].appendChild(el);
+    //     el.innerText = this.title;
+    //     //거래처 
+    //     el = document.createElement("div");
+    //     cnt.appendChild(el);
 
-        el = document.createElement("div");
-        cnt.children[cnt.children.length - 1].appendChild(el);
-        el.innerText = "매출처";
+    //     el = document.createElement("div");
+    //     cnt.children[cnt.children.length - 1].appendChild(el);
+    //     el.innerText = "매출처";
 
-        el = document.createElement("div");
-        cnt.children[cnt.children.length - 1].appendChild(el);
-        el.innerText = storage.customer[this.customer].name;
-
-        // 담당자
-        el = document.createElement("div");
-        cnt.appendChild(el);
-
-        el = document.createElement("div");
-        cnt.children[cnt.children.length - 1].appendChild(el);
-        el.innerText = "담당자";
-
-        el = document.createElement("div");
-        cnt.children[cnt.children.length - 1].appendChild(el);
-        el.innerText = storage.user[this.employee].userName;
-
-
-
-        // 계약금액 
-        el = document.createElement("div");
-        cnt.appendChild(el);
-
-        el = document.createElement("div");
-        cnt.children[cnt.children.length - 1].appendChild(el);
-        el.innerText = "계약 금액";
-
-        el = document.createElement("div");
-        cnt.children[cnt.children.length - 1].appendChild(el);
-        el.innerText = this.amount.toLocaleString() + "원";
-
-        // 유지보수 
-        if (this.maintenance.length > 0) {
-            el = document.createElement("div");
-            cnt.appendChild(el);
-
-            el = document.createElement("div");
-            cnt.children[cnt.children.length - 1].appendChild(el);
-            el.innerText = "유지 보수";
-
-            el = document.createElement("div");
-            cnt.children[cnt.children.length - 1].appendChild(el);
-
-            let mtnc = this.maintenance;
-            let mtncList = "";
-            for (let i = 0; i < mtnc.length; i++) {
-                if (i > 0) {
-                    mtncList += ","
-                }
-                mtncList +=
-                    "<div><div>" + getYmdSlashShort(mtnc[i].startDate) + "</div>" +
-                    "<div>" + "\u00A0" + "~" + "\u00A0" + "</div>" +
-                    "<div>" + getYmdSlashShort(mtnc[i].endDate) + "</div><input type='checkbox' data-id='" + mtnc[i].no + "'>";
+    //     el = document.createElement("div");
+    //     cnt.children[cnt.children.length - 1].appendChild(el);
+    //     el.innerText = storage.customer[this.customer].name;
+
+    //     // 담당자
+    //     el = document.createElement("div");
+    //     cnt.appendChild(el);
+
+    //     el = document.createElement("div");
+    //     cnt.children[cnt.children.length - 1].appendChild(el);
+    //     el.innerText = "담당자";
+
+    //     el = document.createElement("div");
+    //     cnt.children[cnt.children.length - 1].appendChild(el);
+    //     el.innerText = storage.user[this.employee].userName;
+
+
+
+    //     // 계약금액 
+    //     el = document.createElement("div");
+    //     cnt.appendChild(el);
+
+    //     el = document.createElement("div");
+    //     cnt.children[cnt.children.length - 1].appendChild(el);
+    //     el.innerText = "계약 금액";
+
+    //     el = document.createElement("div");
+    //     cnt.children[cnt.children.length - 1].appendChild(el);
+    //     el.innerText = this.amount.toLocaleString() + "원";
+
+    //     // 유지보수 
+    //     if (this.maintenance.length > 0) {
+    //         el = document.createElement("div");
+    //         cnt.appendChild(el);
+
+    //         el = document.createElement("div");
+    //         cnt.children[cnt.children.length - 1].appendChild(el);
+    //         el.innerText = "유지 보수";
+
+    //         el = document.createElement("div");
+    //         cnt.children[cnt.children.length - 1].appendChild(el);
+
+    //         let mtnc = this.maintenance;
+    //         let mtncList = "";
+    //         for (let i = 0; i < mtnc.length; i++) {
+    //             if (i > 0) {
+    //                 mtncList += ","
+    //             }
+    //             mtncList +=
+    //                 "<div><div>" + getYmdSlashShort(mtnc[i].startDate) + "</div>" +
+    //                 "<div>" + "\u00A0" + "~" + "\u00A0" + "</div>" +
+    //                 "<div>" + getYmdSlashShort(mtnc[i].endDate) + "</div><input type='checkbox' data-id='" + mtnc[i].no + "'>";
 
-            } mtncList += "(90일 이전 자동 생성)</div>"
-            cnt.children[cnt.children.length - 1].children[1].innerHTML = mtncList;
+    //         } mtncList += "(90일 이전 자동 생성)</div>"
+    //         cnt.children[cnt.children.length - 1].children[1].innerHTML = mtncList;
 
-        }
+    //     }
 
-        // 판매보고 분류 타이틀 
-        el = document.createElement("div");
-        cnt.appendChild(el);
-
-        el = document.createElement("div");
-        cnt.children[cnt.children.length - 1].appendChild(el);
-        el.className = "salesReportTitle";
-        el.innerText = "판매보고";
-        el.setAttribute("style", "display:flex;justify-content:center;grid-column:span 2; padding : 0;background-color : rgb(128,140,255);color:white");
+    //     // 판매보고 분류 타이틀 
+    //     el = document.createElement("div");
+    //     cnt.appendChild(el);
+
+    //     el = document.createElement("div");
+    //     cnt.children[cnt.children.length - 1].appendChild(el);
+    //     el.className = "salesReportTitle";
+    //     el.innerText = "판매보고";
+    //     el.setAttribute("style", "display:flex;justify-content:center;grid-column:span 2; padding : 0;background-color : rgb(128,140,255);color:white");
 
 
 
-        if (this.docNo != undefined) {
+    //     if (this.docNo != undefined) {
 
-            cnt = document.getElementsByClassName("detail-wrap")[0];
-            let appLine = this.appLine;
+    //         cnt = document.getElementsByClassName("detail-wrap")[0];
+    //         let appLine = this.appLine;
 
-            el = document.createElement("div");
-            cnt.appendChild(el);
+    //         el = document.createElement("div");
+    //         cnt.appendChild(el);
 
-            el = document.createElement("div");
-            cnt.children[cnt.children.length - 1].appendChild(el);
-            el.innerText = "수주 판매 보고";
+    //         el = document.createElement("div");
+    //         cnt.children[cnt.children.length - 1].appendChild(el);
+    //         el.innerText = "수주 판매 보고";
 
-            el = document.createElement("div");
-            cnt.children[cnt.children.length - 1].appendChild(el);
+    //         el = document.createElement("div");
+    //         cnt.children[cnt.children.length - 1].appendChild(el);
 
-            for (let i = 0; i < appLine.length; i++) {
-                el = document.createElement("div");
-                cnt.children[cnt.children.length - 1].children[1].appendChild(el);
-                if (i == 0) {
-                    el.innerText = "[작성]" + storage.user[appLine[i].employee].userName;
-                } else {
-                    let appType = appLine[i].appType;
-                    if (appType == 0) {
-                        appType = "검토";
-                    } else if (appType == 2) {
-                        appType = "결재";
-                    } else if (appType == 3) {
-                        appType = "수신";
-                    } else if (appType == 4) {
-                        appType = "참조";
-                    }
-                    el.innerText = "\u00A0" + "▶" + "\u00A0" + "[" + appType + "]" + storage.user[appLine[i].employee].userName;
-                }
+    //         for (let i = 0; i < appLine.length; i++) {
+    //             el = document.createElement("div");
+    //             cnt.children[cnt.children.length - 1].children[1].appendChild(el);
+    //             if (i == 0) {
+    //                 el.innerText = "[작성]" + storage.user[appLine[i].employee].userName;
+    //             } else {
+    //                 let appType = appLine[i].appType;
+    //                 if (appType == 0) {
+    //                     appType = "검토";
+    //                 } else if (appType == 2) {
+    //                     appType = "결재";
+    //                 } else if (appType == 3) {
+    //                     appType = "수신";
+    //                 } else if (appType == 4) {
+    //                     appType = "참조";
+    //                 }
+    //                 el.innerText = "\u00A0" + "▶" + "\u00A0" + "[" + appType + "]" + storage.user[appLine[i].employee].userName;
+    //             }
 
-            }
-            el = document.createElement("div");
-            cnt.children[cnt.children.length - 1].children[1].appendChild(el);
-            el.innerText = "(" + this.docNo + ")";
-            el.addEventListener("click", () => {
-                window.open("/business/contract/popup/" + storage.reportDetailData.docNo, "미리보기", "width :210mm");
-            })
-            el.style.color = "blue";
-            el.style.cursor = "pointer";
+    //         }
+    //         el = document.createElement("div");
+    //         cnt.children[cnt.children.length - 1].children[1].appendChild(el);
+    //         el.innerText = "(" + this.docNo + ")";
+    //         el.addEventListener("click", () => {
+    //             window.open("/business/contract/popup/" + storage.reportDetailData.docNo, "미리보기", "width :210mm");
+    //         })
+    //         el.style.color = "blue";
+    //         el.style.cursor = "pointer";
 
-        }
+    //     }
 
 
-        // 계약서 분류 타이틀 
-        el = document.createElement("div");
-        cnt.appendChild(el);
+    //     // 계약서 분류 타이틀 
+    //     el = document.createElement("div");
+    //     cnt.appendChild(el);
 
-        el = document.createElement("div");
-        cnt.children[cnt.children.length - 1].appendChild(el);
-        el.className = "contractTitle";
-        el.innerText = "계약서";
-        el.setAttribute("style", "display:flex;justify-content:center;grid-column:span 2; padding : 0;background-color : rgb(128,140,255);color:white");
+    //     el = document.createElement("div");
+    //     cnt.children[cnt.children.length - 1].appendChild(el);
+    //     el.className = "contractTitle";
+    //     el.innerText = "계약서";
+    //     el.setAttribute("style", "display:flex;justify-content:center;grid-column:span 2; padding : 0;background-color : rgb(128,140,255);color:white");
 
 
-        el = document.createElement("div");
-        cnt.appendChild(el);
+    //     el = document.createElement("div");
+    //     cnt.appendChild(el);
 
-        // 계약서 상세 
-        if ($(".contract-progress").children()[1].className == "contract-done") {
-            el = document.createElement("div");
-            cnt.children[cnt.children.length - 1].appendChild(el);
-            el.innerText = "계약서";
+    //     // 계약서 상세 
+    //     if ($(".contract-progress").children()[1].className == "contract-done") {
+    //         el = document.createElement("div");
+    //         cnt.children[cnt.children.length - 1].appendChild(el);
+    //         el.innerText = "계약서";
 
-            el = document.createElement("div");
-            cnt.children[cnt.children.length - 1].appendChild(el);
-            // el.setAttribute("style", "flex-direction : column");
+    //         el = document.createElement("div");
+    //         cnt.children[cnt.children.length - 1].appendChild(el);
+    //         // el.setAttribute("style", "flex-direction : column");
 
 
 
-            let inputHtml = "<div class='filePreview'></div><input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attachedcontract' id='attached' onchange='R.contract.fileChange(this)'>";
+    //         let inputHtml = "<div class='filePreview'></div><input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attachedcontract' id='attached' onchange='R.contract.fileChange(this)'>";
 
-            cnt.children[cnt.children.length - 1].children[1].innerHTML = inputHtml;
+    //         cnt.children[cnt.children.length - 1].children[1].innerHTML = inputHtml;
 
 
-            // 계약서 (첨부파일)
-            if (this.attached.length > 0) {
-                let files = "";
-                el = document.getElementsByClassName("filePreview")[0];
-                for (let i = 0; i < this.attached.length; i++) {
-                    files +=
-                        "<div><a href='/api/attached/contract/" +
-                        this.no +
-                        "/" +
-                        encodeURI(this.attached[i].fileName) +
-                        "'>" +
-                        this.attached[i].fileName +
-                        "</a></div>";
-                }
+    //         // 계약서 (첨부파일)
+    //         if (this.attached.length > 0) {
+    //             let files = "";
+    //             el = document.getElementsByClassName("filePreview")[0];
+    //             for (let i = 0; i < this.attached.length; i++) {
+    //                 files +=
+    //                     "<div><a href='/api/attached/contract/" +
+    //                     this.no +
+    //                     "/" +
+    //                     encodeURI(this.attached[i].fileName) +
+    //                     "'>" +
+    //                     this.attached[i].fileName +
+    //                     "</a></div>";
+    //             }
 
 
-                el.innerHTML = files;
+    //             el.innerHTML = files;
 
-            }
-        }
+    //         }
+    //     }
 
 
-        el = document.createElement("div");
-        cnt.appendChild(el);
+    //     el = document.createElement("div");
+    //     cnt.appendChild(el);
 
-        el = document.createElement("div");
-        cnt.children[cnt.children.length - 1].appendChild(el);
-        el.className = "suppliedTitle";
-        el.innerText = "납품";
-        el.setAttribute("style", "display:flex;justify-content:center;grid-column:span 2; padding : 0;background-color : rgb(128,140,255);color:white");
+    //     el = document.createElement("div");
+    //     cnt.children[cnt.children.length - 1].appendChild(el);
+    //     el.className = "suppliedTitle";
+    //     el.innerText = "납품";
+    //     el.setAttribute("style", "display:flex;justify-content:center;grid-column:span 2; padding : 0;background-color : rgb(128,140,255);color:white");
 
 
-        el = document.createElement("div");
-        cnt.appendChild(el);
-        el = document.createElement("div");
-        cnt.children[cnt.children.length - 1].appendChild(el);
-        el.className = "approvedTitle";
-        el.innerText = "검수";
-        el.setAttribute("style", "display:flex;justify-content:center;grid-column:span 2; padding : 0;background-color : rgb(128,140,255);color:white");
+    //     el = document.createElement("div");
+    //     cnt.appendChild(el);
+    //     el = document.createElement("div");
+    //     cnt.children[cnt.children.length - 1].appendChild(el);
+    //     el.className = "approvedTitle";
+    //     el.innerText = "검수";
+    //     el.setAttribute("style", "display:flex;justify-content:center;grid-column:span 2; padding : 0;background-color : rgb(128,140,255);color:white");
 
-        if (this.attached.length > 0 || this.supplied != 0) { this.drawSuppliedData(); }
+    //     if (this.attached.length > 0 || this.supplied != 0) { this.drawSuppliedData(); }
 
-        if (this.suppliedAttached.length > 0 || this.supplied != 0) { this.drawApprovedData(); }
+    //     if (this.suppliedAttached.length > 0 || this.supplied != 0) { this.drawApprovedData(); }
 
 
-    }
+    // }
+
+    drawDetail(parent) {
+
+		//let target = document.getElementsByClassName("sopp-contract")[0];
+		let origin = document.getElementsByClassName("detail-wrap")[0];
+
+		if (origin != undefined) origin.remove();
+
+		let cnt, el, el2;
+		el = document.createElement("div");
+		el.className = "detail-wrap";
+		//target.appendChild(el);
+		parent.after(el);
+		cnt = document.getElementsByClassName("detail-wrap")[0];
+
+
+		el = document.createElement("top");
+		el.className = "contract-top";
+		cnt.appendChild(el);
+
+		let ctrtTop = document.getElementsByClassName("contract-top")[0];
+
+		el = document.createElement("div");
+		ctrtTop.appendChild(el);
+
+		// 계약 진척도 - 판매보고
+		el = document.createElement("bar");
+		el.className = "contract-progress"
+		ctrtTop.appendChild(el);
+
+		el2 = document.createElement("div");
+		el.append(el2);
+
+		if (this.appLine.length > 0 && this.appLine[this.appLine.length - 1].rejected != null) {
+			el2.className = "contract-fail";
+		} else if (this.appLine.length > 0 && this.appLine[this.appLine.length - 1].approved != null) {
+			el2.className = "contract-done";
+		} else {
+			el2.className = "contract-doing";
+		}
+
+
+		el2.innerText = "판매보고";
+
+
+		// 계약 진척도 - 계약서 
+		el2 = document.createElement("div");
+		el.append(el2);
+
+		if (this.attached.length != 0) {
+			el2.className = "contract-done";
+		} else {
+			if ($(".contract-progress").children()[0].className == "contract-done") {
+				el2.className = "contract-doing";
+			}
+		}
+		el2.innerText = "계약";
+
+
+		// 계약 진척도 - 납품 
+		el2 = document.createElement("div");
+		el.append(el2);
+		if (this.supplied == 0 && this.attached.length > 0) {
+			el2.className = "contract-doing";
+		} else if (this.attached.length > 0 && this.supplied != 0) {
+			el2.className = "contract-done";
+		}
+		el2.innerText = "납품";
+
+
+		// 계약 진척도 - 검수
+		el2 = document.createElement("div");
+		el.append(el2);
+		if (this.supplied != 0 && this.approved == 0) {
+			el2.className = "contract-doing";
+		} else if (this.supplied != 0 && this.approved != 0) {
+			el2.className = "contract-done";
+		}
+		el2.innerText = "검수";
+
+		el = document.createElement("div");
+		ctrtTop.appendChild(el);
+		el.className = "crudBtns";
+		el.innerHTML = "<Button data-detail='" + this.no + "'onclick='this.parentElement.parentElement.parentElement.remove()'><i class='fa-solid fa-xmark'></i></Button>";
+
+
+
+		// 진척도 아래 상세 detail Start --------------------------------------------------------------------------------------------------------------------------------------
+		// 계약명
+		el = document.createElement("div");
+		cnt.appendChild(el);
+
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.innerText = "계약명";
+
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.innerText = this.title;
+		//거래처 
+		el = document.createElement("div");
+		cnt.appendChild(el);
+
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.innerText = "매출처";
+
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.innerText = storage.customer[this.customer].name;
+
+		// 담당자
+		el = document.createElement("div");
+		cnt.appendChild(el);
+
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.innerText = "담당자";
+
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.innerText = storage.user[this.employee].userName;
+
+
+
+		// 계약금액 
+		el = document.createElement("div");
+		cnt.appendChild(el);
+
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.innerText = "계약 금액";
+
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.innerText = this.amount.toLocaleString() + "원";
+
+		// 유지보수 
+		if (this.maintenance.length > 0) {
+			el = document.createElement("div");
+			cnt.appendChild(el);
+
+			el = document.createElement("div");
+			cnt.children[cnt.children.length - 1].appendChild(el);
+			el.innerText = "유지 보수";
+
+			el = document.createElement("div");
+			cnt.children[cnt.children.length - 1].appendChild(el);
+
+			let mtnc = this.maintenance;
+			let mtncList = "";
+			for (let i = 0; i < mtnc.length; i++) {
+				if (i > 0) {
+					mtncList += ","
+				}
+				mtncList +=
+					"<div><div>" + getYmdSlashShort(mtnc[i].startDate) + "</div>" +
+					"<div>" + "\u00A0" + "~" + "\u00A0" + "</div>" +
+					"<div>" + getYmdSlashShort(mtnc[i].endDate) + "</div><input type='checkbox' data-id='" + mtnc[i].no + "'>";
+
+			} mtncList += "(90일 이전 자동 생성)</div>"
+			cnt.children[cnt.children.length - 1].children[1].innerHTML = mtncList;
+
+		}
+
+		// 판매보고 분류 타이틀 
+		el = document.createElement("div");
+		cnt.appendChild(el);
+
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.className = "salesReportTitle";
+		el.innerText = "판매보고";
+		el.setAttribute("style", "display:flex;justify-content:center;grid-column:span 2; padding : 0;background-color : rgb(128,140,255);color:white");
+
+
+
+		if (this.docNo != undefined) {
+
+			cnt = document.getElementsByClassName("detail-wrap")[0];
+			let appLine = this.appLine;
+
+			el = document.createElement("div");
+			cnt.appendChild(el);
+
+			el = document.createElement("div");
+			cnt.children[cnt.children.length - 1].appendChild(el);
+			el.innerText = "수주 판매 보고";
+
+			el = document.createElement("div");
+			cnt.children[cnt.children.length - 1].appendChild(el);
+
+			for (let i = 0; i < appLine.length; i++) {
+				el = document.createElement("div");
+				cnt.children[cnt.children.length - 1].children[1].appendChild(el);
+				if (i == 0) {
+					el.innerText = "[작성]" + storage.user[appLine[i].employee].userName;
+				} else {
+					let appType = appLine[i].appType;
+					if (appType == 0) {
+						appType = "검토";
+					} else if (appType == 2) {
+						appType = "결재";
+					} else if (appType == 3) {
+						appType = "수신";
+					} else if (appType == 4) {
+						appType = "참조";
+					}
+					el.innerText = "\u00A0" + "▶" + "\u00A0" + "[" + appType + "]" + storage.user[appLine[i].employee].userName;
+				}
+
+			}
+			el = document.createElement("div");
+			cnt.children[cnt.children.length - 1].children[1].appendChild(el);
+			el.innerText = "(" + this.docNo + ")";
+			el.addEventListener("click", () => {
+				window.open("/business/contract/popup/" + storage.reportDetailData.docNo, "미리보기", "width :210mm");
+			})
+			el.style.color = "blue";
+			el.style.cursor = "pointer";
+
+		}
+
+
+		// 계약서 분류 타이틀 
+		el = document.createElement("div");
+		cnt.appendChild(el);
+
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.className = "contractTitle";
+		el.innerText = "계약서";
+		el.setAttribute("style", "display:flex;justify-content:center;grid-column:span 2; padding : 0;background-color : rgb(128,140,255);color:white");
+
+
+		el = document.createElement("div");
+		cnt.appendChild(el);
+
+		// 계약서 상세 
+		if ($(".contract-progress").children()[1].className == "contract-done" || $(".contract-progress").children()[1].className == "contract-doing") {
+			el = document.createElement("div");
+			cnt.children[cnt.children.length - 1].appendChild(el);
+			el.innerText = "계약서";
+
+			el = document.createElement("div");
+			cnt.children[cnt.children.length - 1].appendChild(el);
+			// el.setAttribute("style", "flex-direction : column");
+
+			let inputHtml = "<div class='filePreview'></div><input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attachedcontract' id='attached' onchange='R.contract.fileChange(this)'>";
+
+			cnt.children[cnt.children.length - 1].children[1].innerHTML = inputHtml;
+
+
+			// 계약서 (첨부파일)
+			if (this.attached.length > 0) {
+				let files = "";
+				el = document.getElementsByClassName("filePreview")[0];
+				for (let i = 0; i < this.attached.length; i++) {
+					files +=
+						"<div><a href='/api/attached/contract/" +
+						this.no +
+						"/" +
+						encodeURI(this.attached[i].fileName) +
+						"'>" +
+						this.attached[i].fileName +
+						"</a></div>";
+				}
+
+
+				el.innerHTML = files;
+
+			}
+		}
+
+		el = document.createElement("div");
+		cnt.appendChild(el);
+
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.className = "suppliedTitle";
+		el.innerText = "납품";
+		el.setAttribute("style", "display:flex;justify-content:center;grid-column:span 2; padding : 0;background-color : rgb(128,140,255);color:white");
+
+
+		el = document.createElement("div");
+		cnt.appendChild(el);
+		el = document.createElement("div");
+		cnt.children[cnt.children.length - 1].appendChild(el);
+		el.className = "approvedTitle";
+		el.innerText = "검수";
+		el.setAttribute("style", "display:flex;justify-content:center;grid-column:span 2; padding : 0;background-color : rgb(128,140,255);color:white");
+
+		if (this.attached.length > 0 || this.supplied != 0) { this.drawSuppliedData(); }
+
+		if (this.suppliedAttached.length > 0 || this.supplied != 0) { this.drawApprovedData(); }
+
+
+	}
 
 
     // 납품 일자 스케쥴 모달 체크하기 
@@ -1216,7 +1514,7 @@ function getYmdSlashFull(date) {
 function setPrevModal(no) {
 
     modal.show();
-    $(".modal").prop("style","width:60%");
+    $(".modal").prop("style", "width:60%");
 
     $("#confirm").attr("onclick", "openSaleReport(" + no + ")");
     let el, el2, cnt;
@@ -1365,8 +1663,9 @@ function setPrevModal(no) {
         el2.setAttribute("class", "product-option");
         let html = "";
         html += "<div>";
-        html += "<div><circle></circle><div>개시일</div><input type='date' onchange='dateChange(this)'></input><input type='checkbox' class='examineCb" + i + "' onclick='examineCheck(this)' checked>검수일</input></div>";
-        html += "<div><circle></circle><div>무상 유지보수</div><input type='radio' name='mtncRd" + i + "' value='mtncY" + i + "' id='mtncY" + i + "' checked onclick='drawDefaultMaintenance(this)'></input><label for='mtncY" + i + "'>Y</label>";
+        html += "<div><circle></circle><div>개시일</div><input type='radio' name='dateRd" + i + "' id='examineCb" + i + "' onclick='examineCheck(this)' checked></input><label for='examineCb" + i + "'>검수일</label><input type='radio' name='dateRd" + i + "'  id='selectCb" + i + "' onclick='insertDateRd(this)'></input><label for='selectCb" + i + "'>선택</label><input type='date' onchange='dateChange(this)' disabled></input></div>";
+        // html += "<div><circle></circle><div>개시일</div><input type='date' onchange='dateChange(this)'></input><input type='checkbox' class='examineCb" + i + "' onclick='examineCheck(this)' checked>검수일</input></div>";
+        html += "<div><circle></circle><div>무상 유지보수</div><input type='radio' name='mtncRd" + i + "' value='mtncY" + i + "' id='mtncY" + i + "' checked onclick='drawDefaultMaintenance(this)'></input><label for='mtncY" + i + "'>Y</label>"
         html += "<input type='radio' name='mtncRd" + i + "' value='mtncN" + i + "' id='mtncN" + i + "' checked onclick='drawDefaultMaintenance(this)'></input><label for='mtncN" + i + "'>N</label>";
         html += "</div>";
         html += "</div><div><circle></circle><div>기간</div><input type='text' onkeyup='lengthChange(this)'></input><span>년</span><input type='text' onkeyup='lengthChange(this)'></input><span>개월</span></div>";
@@ -1423,34 +1722,29 @@ function drawDefaultMaintenance(obj) {
     let productNum;
     let product, productName, customer, startDate, endDate, engineer, mtncAmount;
     let year, month;
+    let dateRd;
+
     if (rdVal == "Y") {
         productNum = $(obj).val().substring(5, 6);
         if (document.getElementsByClassName("mtnc-detail" + productNum).length < 1) {
             product = $(".product-item")[productNum].children[0].dataset.detail;
             customer = $(".product-item")[productNum].children[1].dataset.detail;
-            startDate = $(".product-option")[productNum].children[0].children[0].children[2].value;
             year = $(".product-option")[productNum].children[1].children[2].value == "" ? 0 : $(".product-option")[productNum].children[1].children[2].value;
             month = $(".product-option")[productNum].children[1].children[4].value == "" ? 0 : $(".product-option")[productNum].children[1].children[4].value;
             mtncAmount = "0";
-            if (startDate == "") {
+            if ($("input[name='dateRd" + productNum + "']:checked").attr("id") == ("examineCb" + productNum)) {
                 startDate = "검수일";
                 endDate = "+ " + year + "년 " + month + "개월";
             } else {
+                startDate = $(".product-option")[productNum].children[0].children[0].children[6].value;
                 endDate = new Date(startDate);
                 endDate = new Date(endDate.setFullYear(endDate.getFullYear() + year * 1));
                 endDate = new Date(endDate.setMonth(endDate.getMonth() + month * 1));
                 endDate = getYmdSlashFull(endDate);
             }
 
-
             let el, cnt, html = "";
             cnt = document.getElementsByClassName("mtnc-data")[0];
-            // cnt = document.getElementsByClassName("ctrt-modalData")[0];
-            // el = document.createElement("div");
-            // el.setAttribute("class", "mtnc-data");
-            // cnt.appendChild(el);
-            // cnt = el;
-
             el = document.createElement("div");
             el.setAttribute("class", "mtnc-detail" + productNum);
             cnt.appendChild(el);
@@ -1483,25 +1777,55 @@ function drawDefaultMaintenance(obj) {
     } else {
         productNum = $(obj).val().substring(5, 6); $(obj).val().substring(5, 6);
         document.getElementsByClassName("mtnc-detail" + productNum)[0].remove();
-
     }
 
 }
 
 
 function examineCheck(obj) {
-    let productNum = obj.className;
-    let cnt;
-    productNum = productNum.split("examineCb")[1];
-    obj.previousElementSibling.value = "";
-    let year, month;
+    // let productNum = obj.className;
+
+    let productNum = obj.id;
+    let cnt , year , month;
+    if (productNum.includes("examine")) {
+        productNum = productNum.split("examineCb")[1];
+        obj.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.disabled = true;
+        obj.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.value = "";
+    } 
+    cnt = document.getElementsByClassName("mtnc-detail" + productNum)[0];
+    year = document.getElementsByClassName("product-option")[productNum].children[1].children[2].value == "" ? 0 : document.getElementsByClassName("product-option")[productNum].children[1].children[2].value;
+    month = document.getElementsByClassName("product-option")[productNum].children[1].children[4].value == "" ? 0 : document.getElementsByClassName("product-option")[productNum].children[1].children[4].value;
+
+    if (document.getElementsByClassName("mtnc-detail" + productNum).length > 0) {
+       
+        cnt.children[2].innerHTML = "검수일";
+        cnt.children[3].innerHTML = "+" + year + "년 " + month + "개월";
+    }
+}
+
+
+function insertDateRd(obj) {
+    let startDate, endDate;
+    let productNum;
+    productNum = obj.id.split("selectCb")[1];
+    startDate = obj.nextElementSibling.nextElementSibling;
+    if (startDate.disabled = true) {
+        startDate.disabled = false;
+        startDate.value = "20" + (getYmdSlash2().replaceAll("/", "-"));
+    }
+
     if (document.getElementsByClassName("mtnc-detail" + productNum).length > 0) {
         cnt = document.getElementsByClassName("mtnc-detail" + productNum)[0];
         year = document.getElementsByClassName("product-option")[productNum].children[1].children[2].value == "" ? 0 : document.getElementsByClassName("product-option")[productNum].children[1].children[2].value;
         month = document.getElementsByClassName("product-option")[productNum].children[1].children[4].value == "" ? 0 : document.getElementsByClassName("product-option")[productNum].children[1].children[4].value;
-        cnt.children[2].innerHTML = "검수일";
-        cnt.children[3].innerHTML = "+" + year + "년 " + month + "개월";
+        cnt.children[2].innerHTML = startDate.value;
+        endDate = new Date(startDate.value);
+        endDate = new Date(endDate.setFullYear(endDate.getFullYear() + year * 1));
+        endDate = new Date(endDate.setMonth(endDate.getMonth() + month * 1));
+        endDate = getYmdSlashFull(endDate);
+        cnt.children[3].innerHTML = endDate;
     }
+
 }
 
 
@@ -1517,12 +1841,10 @@ function dateChange(obj) {
 
     year = document.getElementsByClassName("product-option")[productNum].children[1].children[2].value == "" ? 0 : document.getElementsByClassName("product-option")[productNum].children[1].children[2].value;
     month = document.getElementsByClassName("product-option")[productNum].children[1].children[4].value == "" ? 0 : document.getElementsByClassName("product-option")[productNum].children[1].children[4].value;
-
     endDate = new Date(obj.value);
     endDate = new Date(endDate.setFullYear(endDate.getFullYear() + year * 1));
     endDate = new Date(endDate.setMonth(endDate.getMonth() + month * 1));
     endDate = getYmdSlashFull(endDate);
-
     cnt.children[3].innerHTML = endDate;
 
 }
@@ -1535,17 +1857,16 @@ function lengthChange(obj) {
             productNum = i;
         }
     }
-
     year = document.getElementsByClassName("product-option")[productNum].children[1].children[2].value == "" ? 0 : document.getElementsByClassName("product-option")[productNum].children[1].children[2].value;
     month = document.getElementsByClassName("product-option")[productNum].children[1].children[4].value == "" ? 0 : document.getElementsByClassName("product-option")[productNum].children[1].children[4].value;
-    startDate = document.getElementsByClassName("product-option")[productNum].children[0].children[0].children[2].value;
+    startDate = document.getElementsByClassName("product-option")[0].children[0].children[0].children[6].value;
     endDate = new Date(startDate);
     endDate = new Date(endDate.setFullYear(endDate.getFullYear() + year * 1));
     endDate = new Date(endDate.setMonth(endDate.getMonth() + month * 1));
     endDate = getYmdSlashFull(endDate);
 
     cnt = document.getElementsByClassName("mtnc-detail" + productNum)[0];
-    if (document.getElementsByClassName("examineCb" + productNum)[0].checked) {
+    if (document.getElementById("examineCb" + productNum).checked) {
         cnt.children[3].innerHTML = "+" + year + "년 " + month + "개월";
     } else {
         cnt.children[2].innerHTML = startDate;
@@ -1610,6 +1931,9 @@ function createMtnc() {
     cnt.appendChild(el);
 
 }
+
+
+
 
 
 function openSaleReport(no) {
@@ -1685,8 +2009,6 @@ function setMtncDate() {
 
     R.popup.mtncData = data;
 }
-
-
 
 
 
