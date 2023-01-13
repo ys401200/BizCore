@@ -1,6 +1,12 @@
 package kr.co.bizcore.v1.svc;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,11 +15,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import com.zaxxer.hikari.pool.ProxyPreparedStatement;
 
 import kr.co.bizcore.v1.domain.Sopp2;
 import lombok.extern.slf4j.Slf4j;
@@ -69,6 +78,9 @@ public class JobSchedulerSvc extends Svc{
         // 퇴사자 처리 / 사임일자를 미래형으로 기록한 지원에 대한 처리
         count = systemMapper.processResignedEmployee();
         logger.info("Do process resigned employee : " + getDate() + " / " + count);
+
+        // 공공데이터 포탈에서 공휴일 정보 가져오기
+        processHolidayInfo();
     } // End of doDailyJob()
 
     // 매 시간 작업
@@ -245,6 +257,138 @@ public class JobSchedulerSvc extends Svc{
         logger.debug("[Job Scheduler] Copy Trade info : " + result);
         return result;
     }
+
+    // 공휴일 정보를 처리하는 메서드
+    private void processHolidayInfo(){
+        Calendar cal = Calendar.getInstance();
+        int year = -1, month = -1, x = -1, y = -1, z = -1, count = -1, max = 190001;
+        String[] each = null;
+        ArrayList<String[]> list = new ArrayList<>();
+        String str = null;
+        String sql1 = "DELETE FROM bizcore.holiday WHERE CONCAT(YEAR(DATE_ADD(now(), INTERVAL 1 MONTH)),'-',MONTH(DATE_ADD(now(), INTERVAL 1 MONTH)),'-',1) <= `date`";
+        String sql2 = "SELECT YEAR(z.x)*100+MONTH(z.x) y FROM (SELECT IFNULL(MAX(`date`),CAST('1900-1-1' AS DATE)) x FROM bizcore.holiday) z";
+        String sql3 = "INSERT INTO bizcore.holiday(contury, name, `date`, remark) VALUES('ko', ?, CAST(? AS DATE), 'From data.kr By Job scheduler')";
+        JSONObject json = null;
+        JSONArray jarr = null;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        year = cal.get(Calendar.YEAR) - 1;
+        month = cal.get(Calendar.MONTH);
+
+        try{
+            conn = sqlSession.getConnection();
+
+            // 현재월 이후의 공휴일 정보를 삭제처리함
+            pstmt = conn.prepareStatement(sql1);
+            pstmt.executeUpdate();
+            pstmt.close();
+
+            // DB에 저장된 마지막 공휴일의 연월 정보를 가지고 옮
+            pstmt = conn.prepareStatement(sql2);
+            rs = pstmt.executeQuery();
+            if(rs.next())   max = rs.getInt(1);
+            rs.close();
+            pstmt.close();
+
+            // 1년 전 부터 1년 후까지 25개월에 대해 순회처리하되 현재월까지는 데이터가 있는 경우 건너뜀
+            for(count = 0 ; count < 25 ; count++){
+                // 월 하나 증가시키기
+                month++;
+                if(month == 12){
+                    month = 1;
+                    year++;
+                }
+
+                // DB에 저장된 마지막 값과 비교하여 DB에 값이 있는 경우 건너 띔
+                if(year*100+month <= max)   continue;
+
+                // 공공데이터에 공휴일 정보를 요청하도록 함
+                str = getHolydayFromDataKr(year, month);
+                if(str == null) continue;
+
+                json = new JSONObject(str);
+                if(json.isNull("response")) continue;
+
+                json = json.getJSONObject("response");
+                if(json.isNull("body")) continue;
+                
+                json = json.getJSONObject("body");
+                // items 에 값이 없을 경우 빈 객체가 아니라 빈 문자열로 저장되어 있는 문제가 있음. 이를 파히기 위해서 count를 확인 후 0 보타 큰 경우 수행하도록 함
+                if(json.isNull("items") || json.isNull("totalCount") || json.getInt("totalCount") == 0) continue;
+                z = json.getInt("totalCount");
+
+                json = json.getJSONObject("items");
+                if(json.isNull("item")) continue;
+                
+                // item에 하나의 값만 있는 경우 배열리 아닌 그 단일 값이 들이었는 문제가 있음
+                if(z == 1){
+                    json = json.getJSONObject("item");
+                    each = new String[2];
+                    each[0] = json.getString("dateName");
+                    each[1] = json.getInt("locdate") + "";
+                    list.add(each);
+                }else{
+                    jarr = json.getJSONArray("item");
+                    for(x = 0 ; x < jarr.length() ; x++){ // JSONArray 순회하기
+                        json = jarr.getJSONObject(x);
+                        if(!json.isNull("isHoliday") && !json.isNull("dateName") && !json.isNull("locdate") && json.getString("isHoliday").equals("Y")){
+                            each = new String[2];
+                            each[0] = json.getString("dateName");
+                            each[1] = json.getInt("locdate") + "";
+                            list.add(each);
+                        }
+                    } // End of for(x)
+                }
+            } // End of for(count);
+
+            // 수집된 공휴일 정보를 DB에 저장
+            for(x = 0 ; x < list.size() ; x++){
+                each = list.get(x);
+                pstmt = conn.prepareStatement(sql3);
+                pstmt.setString(1, each[0]);
+                pstmt.setString(2, each[1]);
+                pstmt.executeUpdate();
+            }
+        }catch(SQLException e){e.printStackTrace();}
+    } // End of processHolidayInfo()
     
-    
+    // 공공데이터에서 공휴일 정보를 가져오는 메서드
+    private String getHolydayFromDataKr(int year, int month){
+        String result = null, line = null, serviceKey = "pLPvMUbq1ZSf6B3nwMFV0mvd6rOMYxX+wmcX7rwwvjlsXnH5v5OvgEu0ikW8Nux5L2RVG+z51wb5KyDsQTvQ2Q==";
+        StringBuilder urlBuilder = null, sb = null;
+        HttpURLConnection conn = null;
+        BufferedReader rd = null;
+        URL url = null;
+        
+        try{
+            serviceKey = "pLPvMUbq1ZSf6B3nwMFV0mvd6rOMYxX%2BwmcX7rwwvjlsXnH5v5OvgEu0ikW8Nux5L2RVG%2Bz51wb5KyDsQTvQ2Q%3D%3D";
+            urlBuilder = new StringBuilder("http://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getRestDeInfo"); /*URL*/
+            urlBuilder.append("?" + URLEncoder.encode("serviceKey","UTF-8") + "=" + serviceKey); /*Service Key*/
+            urlBuilder.append("&" + URLEncoder.encode("_type","UTF-8") + "=" + URLEncoder.encode("json", "UTF-8"));
+            urlBuilder.append("&" + URLEncoder.encode("numOfRows","UTF-8") + "=" + URLEncoder.encode("100", "UTF-8"));
+            urlBuilder.append("&" + URLEncoder.encode("solYear","UTF-8") + "=" + URLEncoder.encode(year + "", "UTF-8")); /*연*/
+            urlBuilder.append("&" + URLEncoder.encode("solMonth","UTF-8") + "=" + URLEncoder.encode((month < 10 ? "0" + month : month+""), "UTF-8")); /*월*/
+            
+            line = urlBuilder.toString();
+            
+            url = new URL(line);
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Content-type", "application/json");
+            
+            if(conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300)  rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            else                                                                rd = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+            
+            sb = new StringBuilder();
+            while ((line = rd.readLine()) != null)  sb.append(line);
+
+            rd.close();
+            conn.disconnect();
+            result = sb.toString();
+        }catch(IOException e){e.printStackTrace();}
+        
+        return result;
+    } // End of getHolydayFromDataKr()
 }
