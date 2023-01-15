@@ -1,5 +1,6 @@
 package kr.co.bizcore.v1.mapper;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
@@ -28,6 +29,11 @@ public interface Schedule2Mapper {
     // 일정의 번호로 일정을 가져오는 메서드
     @Select("SELECT no, writer, title, content, report, type, `from`, `to`, related, permitted, created, modified FROM bizcore.schedule WHERE deleted IS NULL AND compId = #{compId} AND no = #{no}")
     public Schedule2 getScheduleWithNo(@Param("compId") String compId, @Param("no") int no);
+
+    // 공휴일 정보를 전달하는 메서드
+    @Select("SELECT CAST(`date` AS CHAR) dt, name FROM bizcore.holiday WHERE contury = #{contury} AND YEAR(`date`) >= YEAR(DATE_ADD(now(), INTERVAL -2 YEAR)) ORDER BY `date`")
+    public List<HashMap<String, String>> getHolidayInfo(@Param("contury") String contury);
+
 
     
     

@@ -296,7 +296,7 @@ public class JobSchedulerSvc extends Svc{
             for(count = 0 ; count < 25 ; count++){
                 // 월 하나 증가시키기
                 month++;
-                if(month == 12){
+                if(month > 12){
                     month = 1;
                     year++;
                 }
@@ -306,7 +306,7 @@ public class JobSchedulerSvc extends Svc{
 
                 // 공공데이터에 공휴일 정보를 요청하도록 함
                 str = getHolydayFromDataKr(year, month);
-                if(str == null) continue;
+                if(str == null || !str.trim().substring(0,1).equals("{")) continue;
 
                 json = new JSONObject(str);
                 if(json.isNull("response")) continue;

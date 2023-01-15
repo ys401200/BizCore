@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -178,6 +179,26 @@ public class Schedule2Svc extends Svc {
         return result;
     } // End of getSchedule()
 
-    
-    
+    // 공휴일 정보를 조회/전달하는 메서드
+    public String getHoliday(Integer timeCorrect){
+        String result = null;
+        String contury = "";
+        HashMap<String, String> each = null;
+        List<HashMap<String, String>> list = null;
+        int x = 0;
+
+        if(timeCorrect / 60 == -9) contury = "ko";
+
+        list = schedule2Mapper.getHolidayInfo(contury);
+        result = "[";
+        for(x = 0 ; x < list.size() ; x++){
+            if(x > 0)   result += ",";
+            each = list.get(x);
+            result += ("[\"" + each.get("dt") + "\",\"" + each.get("name") + "\"]");
+        }
+        result += "]";
+
+        return result;
+    } // End of getHoliday()
+
 }

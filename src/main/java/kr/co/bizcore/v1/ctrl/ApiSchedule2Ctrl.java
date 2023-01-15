@@ -173,5 +173,32 @@ public class ApiSchedule2Ctrl extends Ctrl {
         }
         return result;
     } // End of scheduleNo()
+
+    @GetMapping("holiday")
+    public String holiday(HttpServletRequest request){
+        String result = null, compId = null, aesKey = null, aesIv = null;
+        HttpSession session = null;
+        Msg msg = null;
+        Integer timeCorrect = null;
+
+        session = request.getSession();
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        timeCorrect = (Integer)session.getAttribute("timeCorrect");
+        compId = (String)session.getAttribute("compId");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
+        msg = getMsg((String)session.getAttribute("lang"));
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        }else{
+            result = schedule2Svc.getHoliday(timeCorrect == null ? 0 : timeCorrect);
+            if(result == null)   result = "{\"result\":\"failure\",\"msg\":\"requested information was not found.\"}";
+            else    result = "{\"result\":\"ok\",\"data\":\"" + encAes(result, aesKey, aesIv) + "\"}";
+        }
+        return result;
+    } // End of scheduleNo()
     
 }
