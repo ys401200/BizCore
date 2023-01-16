@@ -422,22 +422,22 @@ class Contract {
         el.innerText = this.amount.toLocaleString() + "원";
 
         // 유지보수 
+
+        el = document.createElement("div");
+        cnt.appendChild(el);
+
+        el = document.createElement("div");
+        cnt.children[cnt.children.length - 1].appendChild(el);
+        el.innerText = "유지 보수";
+
+        el = document.createElement("div");
+        cnt.children[cnt.children.length - 1].appendChild(el);
+        el.setAttribute("style", "display:grid");
+
         if (this.maintenance.length > 0) {
-            el = document.createElement("div");
-            cnt.appendChild(el);
-
-            el = document.createElement("div");
-            cnt.children[cnt.children.length - 1].appendChild(el);
-            el.innerText = "유지 보수";
-
-            el = document.createElement("div");
-            cnt.children[cnt.children.length - 1].appendChild(el);
-            el.setAttribute("style","display:grid");
-
-
             let mtnc = this.maintenance;
-        
-            for (let i = 0; i <= mtnc.length -1; i++) {
+
+            for (let i = 0; i <= mtnc.length - 1; i++) {
                 let mtncList = "";
                 // if (i > 0) {
                 //     mtncList += "<div>,</div>"
@@ -458,7 +458,7 @@ class Contract {
                 engineer = mtnc[i].engineer != undefined ? storage.user[mtnc[i].engineer].userName : "";
                 amount = mtnc[i].amount != undefined ? mtnc[i].amount + "원" : "";
                 mtncList +=
-             
+
                     "<div>" + product + "\u00A0" + "</div>" +
                     "<div>" + customer + "\u00A0" + "</div>" +
                     "<div>" + startDate + "\u00A0" + "</div>" +
@@ -467,14 +467,16 @@ class Contract {
                     "<div>" + engineer + "\u00A0" + "</div>" +
                     "<div>" + amount + "\u00A0" + "</div>" +
                     "<input type='checkbox' data-id='" + mtnc[i].no + "'>";
-                     mtncList += "(90일 이전 자동 생성)"
+                mtncList += "(90일 이전 자동 생성)"
 
                 el2.innerHTML = mtncList;
-          
+
             }
 
             // el2.innerHTML = mtncList;
 
+        } else {
+            el.innerText = "-";
         }
 
         // 판매보고 분류 타이틀 
@@ -489,20 +491,20 @@ class Contract {
         // el.setAttribute("style", "display:flex;grid-column:span 2; padding : 0;border:none");
 
 
+
+
+        let appLine = this.appLine;
+
+        el = document.createElement("div");
+        cnt.appendChild(el);
+
+        el = document.createElement("div");
+        cnt.children[cnt.children.length - 1].appendChild(el);
+        el.innerText = "수주 판매 보고";
+
+        el = document.createElement("div");
+        cnt.children[cnt.children.length - 1].appendChild(el);
         if (this.docNo != undefined) {
-
-            let appLine = this.appLine;
-
-            el = document.createElement("div");
-            cnt.appendChild(el);
-
-            el = document.createElement("div");
-            cnt.children[cnt.children.length - 1].appendChild(el);
-            el.innerText = "수주 판매 보고";
-
-            el = document.createElement("div");
-            cnt.children[cnt.children.length - 1].appendChild(el);
-
             for (let i = 0; i < appLine.length; i++) {
                 el = document.createElement("div");
                 cnt.children[cnt.children.length - 1].children[1].appendChild(el);
@@ -533,6 +535,8 @@ class Contract {
             el.style.cursor = "pointer";
             el.style.margin = "0 0.5rem";
 
+        } else {
+            el.innerText = "-";
         }
 
         // 계약서 분류 타이틀 
@@ -635,7 +639,7 @@ class Contract {
         $(".contract-progress").children()[2].className = "contract-doing";
         let el, el2, cnt;
 
-        
+
         if (obj.className == "sopp-contract") {
             cnt = document.getElementsByClassName("sopp-contract")[0];
         } else {
