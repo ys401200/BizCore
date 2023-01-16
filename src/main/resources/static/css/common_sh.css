@@ -98,22 +98,18 @@
 
 .detail-wrap>div {
 	display: grid;
-	grid-template-columns: 20% 80%;
+	grid-template-columns: 10% 90%;
+	padding: 0 10rem;
 }
 
 
 .detail-wrap>div>div {
-	border: 1px solid #e0e4e9;
+	border-bottom: 1px solid #e0e4e9;
 	margin: 0.5px;
-	padding: 8px;
-	text-align: center;
+	padding: 0.2rem;
 }
 
-.detail-wrap>div>div:first-of-type {
-	text-align: center;
-	background-color: #eef1fb;
-	font-weight: 500;
-}
+
 
 .detail-wrap>div>div:last-of-type {
 	display: inline-flex;
@@ -414,4 +410,14 @@ circle {
 	display: inline-block;
 	vertical-align: middle;
 
+}
+
+cateLine {
+	height: 0;
+    border-bottom: 0.2rem solid #dedede;
+    display: inline-block;
+    width: 95%;
+    vertical-align: middle;
+    margin-top: 0.5rem;
+    margin-left: 1rem;
 }

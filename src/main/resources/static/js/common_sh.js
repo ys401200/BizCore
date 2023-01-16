@@ -432,14 +432,18 @@ class Contract {
 
             el = document.createElement("div");
             cnt.children[cnt.children.length - 1].appendChild(el);
+            el.setAttribute("style","display:grid");
+
 
             let mtnc = this.maintenance;
-            let mtncList = "";
-            for (let i = 0; i < mtnc.length; i++) {
-                if (i > 0) {
-                    mtncList += ","
-                }
-
+        
+            for (let i = 0; i <= mtnc.length -1; i++) {
+                let mtncList = "";
+                // if (i > 0) {
+                //     mtncList += "<div>,</div>"
+                // }
+                el2 = document.createElement("div");
+                el.appendChild(el2);
                 let product, customer, startDate, endDate, engineer, amount;
                 if (mtnc[i].product != undefined) {
                     for (let x in storage.product) {
@@ -454,7 +458,7 @@ class Contract {
                 engineer = mtnc[i].engineer != undefined ? storage.user[mtnc[i].engineer].userName : "";
                 amount = mtnc[i].amount != undefined ? mtnc[i].amount + "원" : "";
                 mtncList +=
-                    "<div>" +
+             
                     "<div>" + product + "\u00A0" + "</div>" +
                     "<div>" + customer + "\u00A0" + "</div>" +
                     "<div>" + startDate + "\u00A0" + "</div>" +
@@ -463,22 +467,26 @@ class Contract {
                     "<div>" + engineer + "\u00A0" + "</div>" +
                     "<div>" + amount + "\u00A0" + "</div>" +
                     "<input type='checkbox' data-id='" + mtnc[i].no + "'>";
+                     mtncList += "(90일 이전 자동 생성)"
 
-            } mtncList += "(90일 이전 자동 생성)</div>"
-            cnt.children[cnt.children.length - 1].children[1].innerHTML = mtncList;
+                el2.innerHTML = mtncList;
+          
+            }
+
+            // el2.innerHTML = mtncList;
 
         }
 
         // 판매보고 분류 타이틀 
-        el = document.createElement("div");
-        cnt.appendChild(el);
-
-        el = document.createElement("div");
-        cnt.children[cnt.children.length - 1].appendChild(el);
-        el.className = "salesReportTitle";
-        el.innerText = "판매보고";
-        el.setAttribute("style", "display:flex;justify-content:center;grid-column:span 2; padding : 0;background-color : rgb(128,140,255);color:white");
-
+        // el = document.createElement("div");
+        // cnt.appendChild(el);
+        // el = document.createElement("div");
+        // cnt.children[cnt.children.length - 1].appendChild(el);
+        // el.className = "salesReportTitle";
+        // //el.innerText = "판매보고";
+        // el.innerHTML="<div>판매보고</div><cateLine></cateLine>"
+        // //el.setAttribute("style", "display:flex;justify-content:center;grid-column:span 2; padding : 0;background-color : rgb(128,140,255);color:white");
+        // el.setAttribute("style", "display:flex;grid-column:span 2; padding : 0;border:none");
 
 
         if (this.docNo != undefined) {
@@ -531,75 +539,82 @@ class Contract {
         el = document.createElement("div");
         cnt.appendChild(el);
 
-        el = document.createElement("div");
-        cnt.children[cnt.children.length - 1].appendChild(el);
-        el.className = "contractTitle";
-        el.innerText = "계약서";
-        el.setAttribute("style", "display:flex;justify-content:center;grid-column:span 2; padding : 0;background-color : rgb(128,140,255);color:white");
+        // el = document.createElement("div");
+        // cnt.children[cnt.children.length - 1].appendChild(el);
+        // el.className = "contractTitle";
+        // el.innerHTML="<div>계약  </div><cateLine></cateLine>"
+        // //el.setAttribute("style", "display:flex;justify-content:center;grid-column:span 2; padding : 0;background-color : rgb(128,140,255);color:white");
+        // el.setAttribute("style", "display:flex;grid-column:span 2; padding : 0;border:none");
 
 
         el = document.createElement("div");
         cnt.appendChild(el);
 
         // 계약서 상세 
-        if ($(".contract-progress").children()[0].className == "contract-done") {
-            el = document.createElement("div");
-            cnt.children[cnt.children.length - 1].appendChild(el);
-            el.innerText = "계약서";
+        // if ($(".contract-progress").children()[0].className == "contract-done") {
+        el = document.createElement("div");
+        cnt.children[cnt.children.length - 1].appendChild(el);
+        el.innerText = "계약서";
 
-            el = document.createElement("div");
-            cnt.children[cnt.children.length - 1].appendChild(el);
-            // el.setAttribute("style", "flex-direction : column");
-
-
-            let inputHtml = "<div class='filePreview'></div><input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attachedcontract' id='attached' onchange='R.contract.fileChange(this)'>";
-
-            cnt.children[cnt.children.length - 1].children[1].innerHTML = inputHtml;
+        el = document.createElement("div");
+        cnt.children[cnt.children.length - 1].appendChild(el);
+        // el.setAttribute("style", "flex-direction : column");
 
 
-            // 계약서 (첨부파일)
-            if (this.attached.length > 0) {
-                let files = "";
-                el = document.getElementsByClassName("filePreview")[0];
-                for (let i = 0; i < this.attached.length; i++) {
-                    files +=
-                        "<div><a href='/api/attached/contract/" +
-                        this.no +
-                        "/" +
-                        encodeURI(this.attached[i].fileName) +
-                        "'>" +
-                        this.attached[i].fileName +
-                        "</a></div>";
-                }
+        let inputHtml = "<div class='filePreview'></div><input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attachedcontract' id='attached' onchange='R.contract.fileChange(this)'>";
+
+        cnt.children[cnt.children.length - 1].children[1].innerHTML = inputHtml;
 
 
-                el.innerHTML = files;
-
+        // 계약서 (첨부파일)
+        if (this.attached.length > 0) {
+            let files = "";
+            el = document.getElementsByClassName("filePreview")[0];
+            for (let i = 0; i < this.attached.length; i++) {
+                files +=
+                    "<div><a href='/api/attached/contract/" +
+                    this.no +
+                    "/" +
+                    encodeURI(this.attached[i].fileName) +
+                    "'>" +
+                    this.attached[i].fileName +
+                    "</a></div>";
             }
+
+
+            el.innerHTML = files;
+
         }
+        // }
 
 
         el = document.createElement("div");
         cnt.appendChild(el);
 
-        el = document.createElement("div");
-        cnt.children[cnt.children.length - 1].appendChild(el);
-        el.className = "suppliedTitle";
-        el.innerText = "납품";
-        el.setAttribute("style", "display:flex;justify-content:center;grid-column:span 2; padding : 0;background-color : rgb(128,140,255);color:white");
+        // el = document.createElement("div");
+        // cnt.children[cnt.children.length - 1].appendChild(el);
+        // el.className = "suppliedTitle";
+        // el.innerHTML="<div>납품  </div><cateLine></cateLine>"
+        // //el.setAttribute("style", "display:flex;justify-content:center;grid-column:span 2; padding : 0;background-color : rgb(128,140,255);color:white");
+        // el.setAttribute("style", "display:flex;grid-column:span 2; padding : 0;border:none");
 
 
-        el = document.createElement("div");
-        cnt.appendChild(el);
-        el = document.createElement("div");
-        cnt.children[cnt.children.length - 1].appendChild(el);
-        el.className = "approvedTitle";
-        el.innerText = "검수";
-        el.setAttribute("style", "display:flex;justify-content:center;grid-column:span 2; padding : 0;background-color : rgb(128,140,255);color:white");
+        // el = document.createElement("div");
+        // cnt.appendChild(el);
+        // el = document.createElement("div");
+        // cnt.children[cnt.children.length - 1].appendChild(el);
+        // el.className = "approvedTitle";
+        // el.innerHTML="<div>검수  </div><cateLine></cateLine>"
+        // //el.setAttribute("style", "display:flex;justify-content:center;grid-column:span 2; padding : 0;background-color : rgb(128,140,255);color:white");
+        // el.setAttribute("style", "display:flex;grid-column:span 2; padding : 0;border:none");
 
-        if (this.attached.length > 0 || this.supplied != 0) { this.drawSuppliedData(); }
+        // if (this.attached.length > 0 || this.supplied != 0) { 
+        this.drawSuppliedData(obj);
+        // }
 
-        if (this.suppliedAttached.length > 0 || this.supplied != 0) { this.drawApprovedData(); }
+        // if (this.suppliedAttached.length > 0 || this.supplied != 0) {
+        this.drawApprovedData(obj);
+        //  }
 
 
         for (let i = 1; i < 5; i++) {
@@ -614,17 +629,28 @@ class Contract {
 
 
     // 납품 일자 스케쥴 모달 체크하기 
-    drawSuppliedData() {
+    drawSuppliedData(obj) {
         $(".contract-progress").children()[0].className = "contract-done";
         $(".contract-progress").children()[1].className = "contract-done";
         $(".contract-progress").children()[2].className = "contract-doing";
         let el, el2, cnt;
-        cnt = document.getElementsByClassName("suppliedTitle")[0];
+
+        
+        if (obj.className == "sopp-contract") {
+            cnt = document.getElementsByClassName("sopp-contract")[0];
+        } else {
+            cnt = document.getElementsByClassName("detail-wrap")[0];
+        }
+
+        //cnt = document.getElementsByClassName("suppliedTitle")[0];
+        //cnt = document.getElementsByClassName("detail-wrap")[0];
+
 
         el = document.createElement("div");
-        cnt.parentElement.after(el);
+        //cnt.parentElement.after(el);
+        cnt.appendChild(el);
         el.className = "suppliedDetail";
-        el.setAttribute("style", "display :grid;grid-template-columns: 20% 10% 20% 50% ");
+        el.setAttribute("style", "display :grid;grid-template-columns: 10% 10% 10% 70% ");
 
         cnt = el;
 
@@ -649,7 +675,7 @@ class Contract {
         el = document.createElement("div");
         cnt.appendChild(el);
         el.innerText = "납품 관련 문서";
-        el.setAttribute("style", "background-color: #eef1fb;font-weight: 500;");
+        el.setAttribute("style", "font-weight: 500;");
 
         el = document.createElement("div");
         cnt.appendChild(el);
@@ -688,7 +714,7 @@ class Contract {
     }
 
 
-    drawApprovedData() {
+    drawApprovedData(obj) {
 
         $(".contract-progress").children()[2].className = "contract-done";
 
@@ -699,13 +725,24 @@ class Contract {
         }
 
 
+
+
         let el, el2, cnt;
-        cnt = document.getElementsByClassName("approvedTitle")[0];
+
+
+        if (obj.className == "sopp-contract") {
+            cnt = document.getElementsByClassName("sopp-contract")[0];
+        } else {
+            cnt = document.getElementsByClassName("detail-wrap")[0];
+        }
+
+        // cnt = document.getElementsByClassName("approvedTitle")[0];
 
         el = document.createElement("div");
-        cnt.parentElement.after(el);
+        // cnt.parentElement.after(el);
+        cnt.appendChild(el);
         el.className = "approvedDetail";
-        el.setAttribute("style", "display :grid;grid-template-columns: 20% 10% 20% 50% ");
+        el.setAttribute("style", "display :grid;grid-template-columns: 10% 10% 10% 70% ");
 
         cnt = el;
 
@@ -733,7 +770,7 @@ class Contract {
         el = document.createElement("div");
         cnt.appendChild(el);
         el.innerText = "검수 관련 문서";
-        el.setAttribute("style", "background-color: #eef1fb;font-weight: 500;");
+        el.setAttribute("style", "font-weight: 500;");
 
         el = document.createElement("div");
         cnt.appendChild(el);

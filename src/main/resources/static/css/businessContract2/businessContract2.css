@@ -1,7 +1,7 @@
 @charset "UTF-8";
 
 .contractContainer {
-	font-size: 0.9rem;
+	font-size: 0.8rem;
 	width: calc(100% - 4px);
 	min-height: calc(100% - 4px);
 	margin: 2px;
@@ -118,19 +118,17 @@
 
 .detail-wrap {
 	border: 1px solid #bbbbbb;
-	border-radius: 0.6rem;
-	margin: 0.5rem 1.5rem;
-	padding: 0.5rem;
-	box-shadow: 3px 1px 1px rgba(128, 128, 128, 0.496);
+	background-color: #8a898905;
+	/* box-shadow: 0px 2px 0px 0px #fdf0f0 inset; */
 
 }
 
-/* .detail-wrap:hover {
+/* /* .detail-wrap:hover {
 	background-color: #e7e6e642;
 	cursor: pointer;
 } */
 
-.contract-top {
+/* .contract-top {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
 }
@@ -174,10 +172,10 @@
 
 .contract-top .contract-progress>.contract-doing {
 	background-image: url("/images/sopp2/label_green.png");
-}
+} */
 
 
-.detail-wrap>div {
+/* .detail-wrap>div {
 	display: grid;
 	grid-template-columns: 20% 80%;
 }
@@ -205,4 +203,4 @@
 
 .detail-wrap>div>div:last-of-type>div {
 	display: inline-flex;
-}
+}  */
