@@ -3,7 +3,7 @@
 #bodyContents{
 	display:flex;
 	flex-flow: nowrap;
-	height: calc(100% - 54px);
+	height: calc(100% - 50px);
 }
 
 #bodyContents #sideContents{
