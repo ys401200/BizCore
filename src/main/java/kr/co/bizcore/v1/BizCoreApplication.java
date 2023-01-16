@@ -17,7 +17,6 @@ public class BizCoreApplication extends SpringBootServletInitializer{
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder app){
 		return app.sources(BizCoreApplication.class);
 	}
-	
 	public static void main(String[] args) {
 		SpringApplication app = new SpringApplication(BizCoreApplication.class);
 		app.addListeners(new ApplicationPidFileWriter());

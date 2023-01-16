@@ -1,9 +1,5 @@
 //공지사항 셋팅 클래스
 class NoticeSet{
-	constructor(){
-		Common = new Common();
-	}
-
 	//공지사항 리스트 저장 함수
 	list(){
 		axios.get("/api/notice").then((response) => {
@@ -15,12 +11,10 @@ class NoticeSet{
 
 				if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined) {
 					window.setTimeout(this.drawNoticeList, 600);
-					window.setTimeout(addSearchList, 600);
-					window.setTimeout(searchContainerSet, 600);
+					window.setTimeout(this.addSearchList, 600);
 				} else {
 					window.setTimeout(this.drawNoticeList, 200);
-					window.setTimeout(addSearchList, 200);
-					window.setTimeout(searchContainerSet, 200);
+					window.setTimeout(this.addSearchList, 200);
 				}
 			}
 		}).catch((error) => {
@@ -44,7 +38,7 @@ class NoticeSet{
 			}
 		}
 	
-		result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+		result = CommonDatas.paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 		pageContainer = document.getElementsByClassName("pageContainer")[0];
 		container = document.getElementsByClassName("gridNoticeList")[0];
 	
@@ -74,8 +68,8 @@ class NoticeSet{
 			data.push(str);
 		} else {
 			for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
-				disDate = dateDis(jsonData[i].created, jsonData[i].modified);
-				setDate = dateFnc(disDate, "mm-dd");
+				disDate = CommonDatas.dateDis(jsonData[i].created, jsonData[i].modified);
+				setDate = CommonDatas.dateFnc(disDate, "mm-dd");
 				let userName = storage.user[jsonData[i].writer].userName;
 	
 				str = [
@@ -93,16 +87,16 @@ class NoticeSet{
 					},
 				]
 	
-				fnc = "noticeDetailView(this)";
+				fnc = "const noticeDetail = new NoticeSet(); noticeDetail.noticeDetailView(this)";
 				ids.push(jsonData[i].no);
 				data.push(str);
 			}
 	
-			let pageNation = createPaging(pageContainer, result[3], "pageMove", "drawNoticeList", result[0]);
+			let pageNation = CommonDatas.createPaging(pageContainer, result[3], "pageMove", "drawNoticeList", result[0]);
 			pageContainer.innerHTML = pageNation;
 		}
 	
-		Common.createGrid(container, header, data, ids, job, fnc);
+		CommonDatas.createGrid(container, header, data, ids, job, fnc);
 	
 		let path = $(location).attr("pathname").split("/");
 	
@@ -114,9 +108,10 @@ class NoticeSet{
 
 	//메인 화면에서 클릭한 공지사항 가져오는 함수
 	noticeDetailView(e) {
+		let thisEle = e;
 		storage.gridContent = e;
 
-		axios.get("/api/notice/" + id).then((response) => {
+		axios.get("/api/notice/" + thisEle.dataset.id).then((response) => {
 			if(response.data.result === "ok"){
 				let result;
 				result = cipher.decAes(response.data.data);
@@ -132,7 +127,7 @@ class NoticeSet{
 
 	//공지사항 등록 폼
 	noticeInsertForm(){
-		let html, dataArray;
+		let html, dataArray, datas;
 
 		dataArray = [
 			{
@@ -155,12 +150,13 @@ class NoticeSet{
 			},
 		];
 
-		html = detailViewForm(dataArray, "modal");
+		datas = ["writer"];
+		html = CommonDatas.detailViewForm(dataArray, "modal");
 		modal.show();
 		modal.content.css("min-width", "70%");
 		modal.content.css("max-width", "70%");
 		modal.headTitle.text("공지사항등록");
-		modal.body.html(html);
+		modal.body.html("<div class='defaultFormContainer'>" + html + "</div>");
 		modal.confirm.text("등록");
 		modal.close.text("취소");
 		modal.confirm.attr("onclick", "const Insert = new Notice(); Insert.insert();");
@@ -171,9 +167,10 @@ class NoticeSet{
 			"title": "",
 			"content": "",
 		};
-	
+
 		setTimeout(() => {
 			let my = storage.my;
+			CommonDatas.detailTrueDatas(datas);
 			document.getElementById("writer").value = storage.user[my].userName;
 			ckeditor.config.readOnly = false;
 			window.setTimeout(setEditor, 100);
@@ -182,6 +179,68 @@ class NoticeSet{
 		setTimeout(() => {
 			document.getElementsByClassName("cke_textarea_inline")[0].style.height = "300px";
 		}, 300);
+	}
+
+	//공지사항 메인 검색 리스트 저장 함수
+	addSearchList() {
+		storage.searchList = [];
+	
+		for (let i = 0; i < storage.noticeList.length; i++) {
+			let no, title, writer, disDate, setDate;
+			no = storage.noticeList[i].no;
+			title = storage.noticeList[i].title;
+			writer = (storage.noticeList[i].writer === null || storage.noticeList[i].writer == 0) ? "" : storage.user[storage.noticeList[i].writer].userName;
+			disDate = CommonDatas.dateDis(storage.noticeList[i].created, storage.noticeList[i].modified);
+			setDate = parseInt(CommonDatas.dateFnc(disDate).replaceAll("-", ""));
+			storage.searchList.push("#" + no + "#" + title + "#" + writer + "#created" + setDate);
+		}
+	}
+
+	//공지사항 검색 버튼 클릭 함수
+	searchSubmit() {
+		let dataArray = [], resultArray, eachIndex = 0, searchTitle, searchWriter, searchCreatedFrom;
+		searchTitle = document.getElementById("searchTitle").value;
+		searchWriter = document.getElementById("searchWriter").value;
+		searchCreatedFrom = (document.getElementById("searchCreatedFrom").value === "") ? "" : document.getElementById("searchCreatedFrom").value.replaceAll("-", "") + "#created" + document.getElementById("searchCreatedTo").value.replaceAll("-", "");
+		let searchValues = [searchTitle, searchWriter, searchCreatedFrom];
+
+		for (let i = 0; i < searchValues.length; i++) {
+			if (searchValues[i] !== "" && searchValues[i] !== undefined && searchValues[i] !== null) {
+				let tempArray = CommonDatas.searchDataFilter(storage.noticeList, searchValues[i], "multi");
+
+				for (let t = 0; t < tempArray.length; t++) {
+					dataArray.push(tempArray[t]);
+				}
+
+				eachIndex++;
+			}
+		}
+
+		resultArray = CommonDatas.searchMultiFilter(eachIndex, dataArray, storage.noticeList);
+
+		storage.searchDatas = resultArray;
+
+		if (storage.searchDatas.length == 0) {
+			msg.set("찾는 데이터가 없습니다.");
+			storage.searchDatas = storage.noticeList;
+		}
+
+		this.drawNoticeList();
+	}
+
+	//공지사항 단일 검색 keyup 이벤트
+	searchInputKeyup() {
+		let searchAllInput, tempArray;
+		searchAllInput = document.getElementById("searchAllInput").value;
+		tempArray = CommonDatas.searchDataFilter(storage.noticeList, searchAllInput, "input");
+	
+		if (tempArray.length > 0) {
+			storage.searchDatas = tempArray;
+		} else {
+			storage.searchDatas = "";
+		}
+	
+		this.drawNoticeList();
 	}
 }
 
@@ -206,19 +265,19 @@ class Notice{
 	detail(){
 		let html = "";
 		let btnHtml = "";
-		let setDate, datas, dataArray, createDiv;
+		let setDate, datas, dataArray, createDiv, notIdArray;
 		
-		detailSetFormList(this.getData);
+		CommonDatas.detailSetFormList(this.getData);
 
-		setDate = dateDis(this.created, this.modified);
-		setDate = dateFnc(setDate);
+		setDate = CommonDatas.dateDis(this.created, this.modified);
+		setDate = CommonDatas.dateFnc(setDate);
 		datas = ["writer"];
 		dataArray = [
 			{
 				"title": "작성자",
 				"elementId": "writer",
 				"dataKeyup": "user",
-				"value": this.writer,
+				"value": storage.user[this.writer].userName,
 				"col": 2,
 			},
 			{
@@ -242,20 +301,20 @@ class Notice{
 				"col": 4,
 			},
 		];
-		html += detailViewForm(dataArray, "board")
-		detailBoardContainerHide();
+		html += CommonDatas.detailViewForm(dataArray, "board")
+		CommonDatas.detailBoardContainerHide();
 		createDiv = document.createElement("div");
 		createDiv.innerHTML = html;
 		storage.gridContent.after(createDiv);
 		notIdArray = ["writer", "created"];
-		detailTrueDatas(datas);
+		CommonDatas.detailTrueDatas(datas);
 		
 		if(storage.my == storage.formList.writer){
-			btnHtml += "<button type=\"button\" class=\"updateBtn\" onclick=\"enableDisabled(this, 'noticeUpdate();', '" + notIdArray + "');\">수정</button>";
-			btnHtml += "<button type=\"button\" onclick=\"noticeDelete();\">삭제</button>";
+			btnHtml += "<button type=\"button\" class=\"updateBtn\" onclick=\"enableDisabled(this, 'this.update();', '" + notIdArray + "');\">수정</button>";
+			btnHtml += "<button type=\"button\" onclick=\"this.delete();\">삭제</button>";
 		}
 
-		btnHtml += "<button type='button' onclick='detailBoardContainerHide();'><i class=\"fa-solid fa-xmark\"></i></button>";
+		btnHtml += "<button type='button' onclick='CommonDatas.detailBoardContainerHide();'><i class=\"fa-solid fa-xmark\"></i></button>";
 		document.getElementsByClassName("detailBtns")[0].innerHTML = btnHtml;
 
 		setTimeout(() => {
@@ -266,7 +325,31 @@ class Notice{
 
 	//공지사항 등록
 	insert(){
-		console.log(this);
+		if (document.getElementById("title").value === "") {
+			msg.set("제목을 입력해주세요.");
+			document.getElementById("title").focus();
+			return false;
+		} else {
+			CommonDatas.formDataSet();
+			let data = storage.formList;
+			data = JSON.stringify(data);
+			data = cipher.encAes(data);
+			axios.post("/api/notice", data, {
+				headers: {"Content-Type": "text/plain"}
+			}).then((response) => {
+				if(response.data.result === "ok"){
+					location.reload();
+					msg.set("등록되었습니다.");
+				}else{
+					msg.set("등록 중 에러가 발생하였습니다.");
+					return false;
+				}
+			}).catch((error) => {
+				msg.set("등록 도중 에러가 발생하였습니다.\n" + error);
+				console.log(error);
+				return false;
+			});
+		}
 	}
 }
 
@@ -796,8 +879,6 @@ class EstimateSet{
 		containerTitle = document.getElementById("containerTitle");
 		mainPdf = document.getElementsByClassName("mainPdf");
 
-		console.log(mainPdf);
-		
         if(mainPdf.length > 1){
             mainPdf = document.getElementsByClassName("mainPdf")[1];
         }else{
@@ -941,14 +1022,14 @@ class EstimateSet{
 		}
 	}
 
-	//메인 검색 리스트 저장 함수
+	//견적 메인 검색 리스트 저장 함수
 	addSearchList(){
 		storage.searchList = [];
 	
 		for(let i = 0; i < storage.estmList.length; i++){
 			let form, title, version, disDate, setDate;
-			disDate = dateDis(storage.estmList[i].date);
-			setDate = parseInt(dateFnc(disDate).replaceAll("-", ""));
+			disDate = CommonDatas.dateDis(storage.estmList[i].date);
+			setDate = parseInt(CommonDatas.dateFnc(disDate).replaceAll("-", ""));
 			title = storage.estmList[i].title;
 			version = storage.estmList[i].version;
 			form = storage.estmList[i].form;
@@ -1784,7 +1865,6 @@ class Common{
 
 		for(let i = 0; i < checkedRadio.length; i++){
 			let item = checkedRadio[i];
-			console.log(item);
 			let label = item.nextElementSibling;
 			let plusBtn = label.children[2];
 			let panel = label.parentElement.nextElementSibling;
@@ -1852,7 +1932,6 @@ class Common{
 	
 		bodyContent = document.getElementById("bodyContent");
 		searchContainer = document.getElementsByClassName("searchContainer")[0];
-		console.log(searchContainer.offsetHeight);
 		containerTitle = document.getElementById("containerTitle");
 		searchCal = searchContainer.offsetHeight === undefined ? parseInt(bodyContent.offsetHeight) : (parseInt(bodyContent.offsetHeight) - searchContainer.offsetHeight);
 		titleCal = parseInt(containerTitle.offsetHeight + 70);
@@ -2142,13 +2221,16 @@ class Common{
 		html = "<div class='detailBoard'>";
 		html += "<div class='detailBtns'></div>";
 		html += "<div class='detailContents'>";
+		html += "<div class='defaultFormContainer'>";
 		html += this.detailViewFormHtml(data);
+		html += "</div>";
 		html += "</div>";
 		html += "</div>";
 
 		return html;
 	}
 
+	//상세보기 input이나 textarea 만들어주는 함수
 	inputSet(data) {
 		let html = "";
 		let dataValue = (data.value === undefined) ? "" : data.value;
@@ -2246,6 +2328,398 @@ class Common{
 		}
 	
 		return html;
+	}
+
+	//formList에 데이터를 넣어주는 함수
+	detailSetFormList(result) {
+		storage.formList = {};
+		for (let key in result) {
+			if (key !== "attached" && key !== "schedules" && key !== "trades" && key !== "bills") {
+				storage.formList[key] = result[key];
+			}
+		}
+	}
+
+	//상세보기 컨테이너 감추는 함수
+	detailBoardContainerHide() {
+		let detailBoard = document.getElementsByClassName("detailBoard");
+		
+		for(let i = 0; i < detailBoard.length; i++){
+			detailBoard[i].remove();
+		}
+	}
+
+	//data-change를 true로 변경하는 함수
+	detailTrueDatas(datas) {
+		for (let i = 0; i < datas.length; i++) {
+			if (document.getElementById(datas[i])) {
+				document.getElementById(datas[i]).setAttribute("data-change", true);
+			} else if (document.getElementsByName(datas[i]).length > 0) {
+				document.getElementsByName(datas[i]).setAttribute("data-change", true);
+			}
+		}
+	}
+
+	//formList에 데이터를 세팅해주는 함수
+	formDataSet(storageArr) {
+		if (storageArr === undefined) {
+			storageArr = storage.formList;
+		}
+		
+		for (let key in storageArr) {
+			let element = "";
+			if (document.getElementById(key)) {
+				element = document.getElementById(key);
+			} else if (document.getElementsByName(key).length > 0) {
+				if (document.getElementsByName(key).checked.length > 0) {
+					element = document.getElementsByName(key).checked;
+				} else {
+					element = document.getElementsByName(key);
+				}
+			}
+	
+			if (element !== undefined && element !== "") {
+				if (element.tagName === "TEXTAREA") {
+					storageArr[key] = CKEDITOR.instances[key].getData().replaceAll("\n", "");
+				} else {
+					if (!element.dataset.change) {
+						if (typeof storageArr[key] === "number") {
+							if (element.type === "date" || element.type === "datetime-local") {
+								let dateTime = new Date(element.value).getTime();
+								storageArr[key] = dateTime;
+							} else {
+								if (element.value === "") {
+									storageArr[key] = 0;
+								} else {
+									storageArr[key] = parseInt(element.value.replaceAll(",", ""));
+								}
+							}
+						} else {
+							if (element.type === "date" || element.type === "datetime-local") {
+								let dateTime = new Date(element.value).getTime();
+								storageArr[key] = dateTime;
+							} else {
+								storageArr[key] = element.value;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	//검색 부분 아코디언 함수
+	searchAco(e) {
+		let thisBtn, multiSearchResetBtn, multiSearchBtn, searchMultiContent;
+		thisBtn = e;
+		multiSearchResetBtn = document.getElementById("multiSearchResetBtn");
+		multiSearchBtn = document.getElementById("multiSearchBtn");
+		searchMultiContent = document.getElementsByClassName("searchMultiContent")[0];
+	
+		if (thisBtn.dataset.set) {
+			thisBtn.innerHTML = "<i class=\"fa-solid fa-plus fa-xl\"></i>";
+			thisBtn.dataset.set = false;
+			multiSearchBtn.style.display = "none";
+			searchMultiContent.style.display = "none";
+			multiSearchResetBtn.style.display = "none";
+		} else {
+			thisBtn.innerHTML = "<i class=\"fa-solid fa-minus fa-xl\"></i>";
+			thisBtn.dataset.set = true;
+			multiSearchBtn.style.display = "flex";
+			searchMultiContent.style.display = "flex";
+			multiSearchResetBtn.style.display = "flex";
+		}
+	}
+
+	//검색 리셋 함수
+	searchReset() {
+		let searchMultiContent = document.getElementsByClassName("searchMultiContent")[0];
+		let contents = searchMultiContent.querySelectorAll("div");
+
+		for(let i = 0; i < contents.length; i++){
+			let inputs = contents[i].querySelectorAll("input");
+			let selects = contents[i].querySelectorAll("select");
+
+			for(let t = 0; t < inputs.length; t++){
+				inputs[t].value = "";
+			}
+
+			for(let t = 0; t < selects.length; t++){
+				selects[t].value = "";
+			}
+		}
+	}
+
+	//단일 검색 시 데이터를 걸러주는 함수
+	searchDataFilter(arrayList, searchDatas, type) {
+		let dataArray = [];
+	
+		if (type === "input") {
+			for (let key in storage.searchList) {
+				if (storage.searchList[key].indexOf(searchDatas) > -1) {
+					dataArray.push(arrayList[key]);
+				}
+			}
+		} else {
+			if (searchDatas.indexOf("#created") > -1) {
+				let splitStr;
+				splitStr = searchDatas.split("#created");
+	
+				for (let key in storage.searchList) {
+					if (splitStr[0] <= storage.searchList[key].split("#created")[1]) {
+						if (storage.searchList[key].split("#created")[1] <= splitStr[1]) {
+							dataArray.push(key);
+						}
+					}
+				}
+			} else if (searchDatas.indexOf("#date") > -1) {
+				let splitStr;
+				splitStr = searchDatas.split("#date");
+	
+				for (let key in storage.searchList) {
+					if (splitStr[0] <= storage.searchList[key].split("#date")[1]) {
+						if (storage.searchList[key].split("#date")[1] <= splitStr[1]) {
+							dataArray.push(key);
+						}
+					}
+				}
+			} else if (searchDatas.indexOf("#from") > -1) {
+				let splitStr;
+				splitStr = searchDatas.split("#from");
+	
+				for (let key in storage.searchList) {
+					if (splitStr[0] <= storage.searchList[key].split("#from")[1]) {
+						if (storage.searchList[key].split("#from")[1] <= splitStr[1]) {
+							dataArray.push(key);
+						}
+					}
+				}
+			} else if (searchDatas.indexOf("#startOfFreeMaintenance") > -1) {
+				let splitStr;
+				splitStr = searchDatas.split("#startOfFreeMaintenance");
+	
+				for (let key in storage.searchList) {
+					if (splitStr[0] <= storage.searchList[key].split("#startOfFreeMaintenance")[1]) {
+						if (storage.searchList[key].split("#startOfFreeMaintenance")[1] <= splitStr[1]) {
+							dataArray.push(key);
+						}
+					}
+				}
+			} else if (searchDatas.indexOf("#startOfPaidMaintenance") > -1) {
+				let splitStr;
+				splitStr = searchDatas.split("#startOfPaidMaintenance");
+	
+				for (let key in storage.searchList) {
+					if (splitStr[0] <= storage.searchList[key].split("#startOfPaidMaintenance")[1]) {
+						if (storage.searchList[key].split("#startOfPaidMaintenance")[1] <= splitStr[1]) {
+							dataArray.push(key);
+						}
+					}
+				}
+			} else if (searchDatas.indexOf("#saleDate") > -1) {
+				let splitStr;
+				splitStr = searchDatas.split("#saleDate");
+	
+				for (let key in storage.searchList) {
+					if (splitStr[0] <= storage.searchList[key].split("#saleDate")[1]) {
+						if (storage.searchList[key].split("#saleDate")[1] <= splitStr[1]) {
+							dataArray.push(key);
+						}
+					}
+				}
+			} else if (searchDatas.indexOf("#issueDate") > -1) {
+				let splitStr;
+				splitStr = searchDatas.split("#issueDate");
+	
+				for (let key in storage.searchList) {
+					if (splitStr[0] <= storage.searchList[key].split("#issueDate")[1]) {
+						if (storage.searchList[key].split("#issueDate")[1] <= splitStr[1]) {
+							dataArray.push(key);
+						}
+					}
+				}
+			} else if (searchDatas.indexOf("#price") > -1) {
+				let splitStr;
+				splitStr = searchDatas.split("#price");
+	
+				for(let key in storage.searchList){
+					if(parseInt(splitStr[0]) <= parseInt(storage.searchList[key].split("#price")[1])){
+						if(parseInt(storage.searchList[key].split("#price")[1]) <= parseInt(splitStr[1])){
+							dataArray.push(key);
+						}
+					}
+				}
+			} else {
+				for (let key in storage.searchList) {
+					if (storage.searchList[key].indexOf(searchDatas) > -1) {
+						dataArray.push(key);
+					}
+				}
+			}
+		}
+	
+		return dataArray;
+	}
+
+	//멀티 검색 시 걸러주는 함수
+	searchMultiFilter(index, dataArray, arrayList) {
+		let arr = [], tempResultArray = [], resultArray = [];
+	
+		if (index > 1) {
+			for (let i = 0; i < dataArray.length; i++) {
+				if (arr[dataArray[i]]) {
+					arr[dataArray[i]]++;
+				} else {
+					arr[dataArray[i]] = 1;
+				}
+			}
+	
+			for (let key in arr) {
+				if (index == arr[key]) {
+					tempResultArray.push(key);
+				}
+			}
+	
+			for (let i = 0; i < tempResultArray.length; i++) {
+				resultArray.push(arrayList[tempResultArray[i]]);
+			}
+		} else {
+			for (let i = 0; i < dataArray.length; i++) {
+				resultArray.push(arrayList[dataArray[i]]);
+			}
+		}
+	
+		return resultArray;
+	}
+
+	//자동완성 기능 만들어주는 함수
+	addAutoComplete(e) {
+		let thisEle, autoComplete;
+		thisEle = e;
+		
+		if (!thisEle.readOnly) {
+			if (document.getElementsByClassName("autoComplete")[0] !== undefined) {
+				document.getElementsByClassName("autoComplete")[0].remove();
+				thisEle.removeAttribute("data-value");
+			}
+	
+			let createDiv = document.createElement("div");
+			createDiv.className = "autoComplete";
+			thisEle.after(createDiv);
+			autoComplete = document.getElementsByClassName("autoComplete")[0];
+			autoComplete.style.top = thisEle.offsetTop + 30 + "px";
+			autoComplete.style.left =  thisEle.offsetLeft + "px";
+			autoComplete.style.width = thisEle.clientWidth + "px";
+	
+			if (thisEle.value === "") {
+				for (let key in storage[thisEle.dataset.complete]) {
+					let listDiv = document.createElement("div");
+					listDiv.setAttribute("onclick", "autoCompleteClick(this);");
+	
+					if (thisEle.dataset.complete === "customer" || thisEle.dataset.complete === "cip" || thisEle.dataset.complete === "product") {
+						if(thisEle.dataset.complete === "product"){
+							listDiv.dataset.value = storage[thisEle.dataset.complete][key].no;
+							listDiv.innerHTML = storage[thisEle.dataset.complete][key].name;
+						}else{
+							listDiv.dataset.value = key;
+							listDiv.innerHTML = storage[thisEle.dataset.complete][key].name;
+						}
+					} else if (thisEle.dataset.complete === "user") {
+						listDiv.dataset.value = storage[thisEle.dataset.complete][key].userNo;
+						listDiv.innerHTML = storage[thisEle.dataset.complete][key].userName;
+					} else if (thisEle.dataset.complete === "sopp" || thisEle.dataset.complete === "contract") {
+						listDiv.dataset.value = storage[thisEle.dataset.complete][key].no;
+						listDiv.innerHTML = storage[thisEle.dataset.complete][key].title;
+					}
+	
+					autoComplete.append(listDiv);
+				}
+			} else {
+				for (let key in storage[thisEle.dataset.complete]) {
+					if (thisEle.dataset.complete === "customer" || thisEle.dataset.complete === "cip" || thisEle.dataset.complete === "product") {
+						if (storage[thisEle.dataset.complete][key].name.indexOf(thisEle.value) > -1) {
+							let listDiv = document.createElement("div");
+							listDiv.setAttribute("onclick", "autoCompleteClick(this);");
+							if(thisEle.dataset.complete === "product"){
+								listDiv.dataset.value = storage[thisEle.dataset.complete][key].no;
+								listDiv.innerHTML = storage[thisEle.dataset.complete][key].name;
+							}else{
+								listDiv.dataset.value = key;
+								listDiv.innerHTML = storage[thisEle.dataset.complete][key].name;
+							}
+							autoComplete.append(listDiv);
+						}
+					} else if (thisEle.dataset.complete === "user") {
+						if (storage[thisEle.dataset.complete][key].userName.indexOf(thisEle.value) > -1) {
+							let listDiv = document.createElement("div");
+							listDiv.setAttribute("onclick", "autoCompleteClick(this);");
+							listDiv.dataset.value = storage[thisEle.dataset.complete][key].userNo;
+							listDiv.innerHTML = storage[thisEle.dataset.complete][key].userName;
+							autoComplete.append(listDiv);
+						}
+					} else if (thisEle.dataset.complete === "sopp" || thisEle.dataset.complete === "contract") {
+						if (storage[thisEle.dataset.complete][key].title.indexOf(thisEle.value) > -1) {
+							let listDiv = document.createElement("div");
+							listDiv.setAttribute("onclick", "autoCompleteClick(this);");
+							listDiv.dataset.value = storage[thisEle.dataset.complete][key].no;
+							listDiv.innerHTML = storage[thisEle.dataset.complete][key].title;
+							autoComplete.append(listDiv);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	//from, to 예외처리에 관한 함수
+	searchDateDefaultSet(e) {
+		let thisDateInput = e, matchDateInput, thisDate, year, month, day;
+	
+		if (thisDateInput.getAttribute("data-date-type") === "from") {
+			matchDateInput = thisDateInput.nextElementSibling.nextElementSibling;
+			let splitDate = thisDateInput.value.split("-");
+			thisDate = new Date(splitDate[0], parseInt(splitDate[1] - 1), splitDate[2]);
+			splitDate = matchDateInput.value.split("-");
+			let matchDate = new Date(splitDate[0], parseInt(splitDate[1] - 1), splitDate[2]);
+	
+			if (matchDateInput.value === "") {
+				thisDate.setDate(thisDate.getDate() + 1);
+			} else if (thisDate.getTime() > matchDate.getTime()) {
+				msg.set("시작일이 종료일보다 클 수 없습니다.");
+				thisDate.setDate(thisDate.getDate() + 1);
+			} else {
+				return null;
+			}
+		} else {
+			matchDateInput = thisDateInput.previousElementSibling.previousElementSibling;
+			let splitDate = thisDateInput.value.split("-");
+			thisDate = new Date(splitDate[0], parseInt(splitDate[1] - 1), splitDate[2]);
+			splitDate = matchDateInput.value.split("-");
+			let matchDate = new Date(splitDate[0], parseInt(splitDate[1] - 1), splitDate[2]);
+	
+			if (matchDateInput.value === "") {
+				thisDate.setDate(thisDate.getDate() - 1);
+			} else if (thisDate.getTime() < matchDate.getTime()) {
+				msg.set("종료일이 시작일보다 작을 수 없습니다.");
+				thisDate.setDate(thisDate.getDate() - 1);
+			} else {
+				return null;
+			}
+		}
+	
+		year = thisDate.getFullYear();
+		month = thisDate.getMonth() + 1;
+		day = thisDate.getDate();
+	
+		if (month < 10) {
+			month = "0" + month;
+		}
+	
+		if (day < 10) {
+			day = "0" + day;
+		}
+	
+		matchDateInput.value = year + "-" + month + "-" + day;
 	}
 	
 	//객체(오브젝트) empty 체크(비어있을 때 : true)

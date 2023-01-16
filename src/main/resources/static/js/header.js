@@ -1134,6 +1134,7 @@ function inputNumberFormat(e) {
 //상세 폼
 function detailViewFormHtml(data) {
 	let html = "";
+	html = "<div class='defaultFormContainer'>";
 
 	for (let i = 0; i < data.length; i++) {
 		let dataTitle = (data[i].title === undefined) ? "" : data[i].title;
@@ -1155,6 +1156,7 @@ function detailViewFormHtml(data) {
 		html += "</div>";
 	}
 
+	html += "</div>";
 	return html;
 }
 
