@@ -301,7 +301,7 @@ public class ContractService extends Svc {
 
     public int findContNoWithParent(String compId, String parent) {
         Integer result = contractMapper.getContractNoWithParent(parent, compId);
-        return result == null ? -1 : result;
+        return result == null ? -999999 : result;
     } // End of findContNoWithParent()
 
     // public String getMtncData(String contract, String compId) {

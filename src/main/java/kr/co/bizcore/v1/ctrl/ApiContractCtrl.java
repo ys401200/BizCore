@@ -115,6 +115,8 @@ public class ApiContractCtrl extends Ctrl {
             compId = (String) request.getAttribute("compId");
         if (compId == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        } else if (no == -999999) {
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.noResult + "\"}";
         } else if (no < 0) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.invalidCondition + "\"}";
         } else if (aesKey == null || aesIv == null) {
