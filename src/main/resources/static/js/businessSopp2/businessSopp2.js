@@ -502,8 +502,7 @@ function drawDetail(soppNo) {
 				R.contract = new Contract(data);
 				R.contract.getReportDetail(cnt);
 			} else {
-				let none;
-				R.contract = new Contract(none);
+				R.contract = new Contract(undefined);
 				R.contract.drawNone();
 				console.log(response.msg);
 			}
