@@ -331,37 +331,45 @@ class Contract {
         // 계약 진척도 - 계약서 
         el2 = document.createElement("div");
         el.append(el2);
-
-        if (this.attached.length != 0) {
-            el2.className = "contract-done";
-        } else {
-            if ($(".contract-progress").children()[0].className == "contract-done") {
+        if (el2.previousElementSibling.className == "contract-done") {
+            if (this.attached.length != 0) {
+                el2.className = "contract-done";
+            } else {
                 el2.className = "contract-doing";
+
             }
         }
+
         el2.innerText = "계약";
 
 
         // 계약 진척도 - 납품 
         el2 = document.createElement("div");
         el.append(el2);
-        if (this.supplied == 0 && this.attached.length > 0) {
-            el2.className = "contract-doing";
-        } else if (this.attached.length > 0 && this.supplied != 0) {
-            el2.className = "contract-done";
+
+        if (el2.previousElementSibling.className == "contract-done") {
+            if (this.supplied != 0 || this.suppliedAttached.length > 0) {
+                el2.className = "contract-done";
+            } else {
+                el2.className = "contract-doing";
+            }
         }
+
         el2.innerText = "납품";
 
 
         // 계약 진척도 - 검수
         el2 = document.createElement("div");
         el.append(el2);
-        if (this.supplied != 0 && this.approved == 0) {
-            el2.className = "contract-doing";
-        } else if (this.supplied != 0 && this.approved != 0) {
-            el2.className = "contract-done";
+        if (el2.previousElementSibling.className == "contract-done") {
+            if (this.approved != 0 || this.approvedAttached.length > 0) {
+                el2.className = "contract-done";
+            } else {
+                el2.className = "contract-doing";
+            }
         }
         el2.innerText = "검수";
+
 
 
         if (obj.className != "sopp-contract") {
@@ -465,9 +473,9 @@ class Contract {
                     "<div>" + "\u00A0" + "~" + "\u00A0" + "</div>" +
                     "<div>" + endDate + "\u00A0" + "</div>" +
                     "<div>" + engineer + "\u00A0" + "</div>" +
-                    "<div>" + amount + "\u00A0" + "</div>" +
-                    "<input type='checkbox' data-id='" + mtnc[i].no + "'>";
-                mtncList += "(90일 이전 자동 생성)"
+                    "<div>" + amount + "\u00A0" + "</div>"
+                //     "<input type='checkbox' data-id='" + mtnc[i].no + "'>";
+                // mtncList += "(90일 이전 자동 생성)"
 
                 el2.innerHTML = mtncList;
 
@@ -478,20 +486,6 @@ class Contract {
         } else {
             el.innerText = "-";
         }
-
-        // 판매보고 분류 타이틀 
-        // el = document.createElement("div");
-        // cnt.appendChild(el);
-        // el = document.createElement("div");
-        // cnt.children[cnt.children.length - 1].appendChild(el);
-        // el.className = "salesReportTitle";
-        // //el.innerText = "판매보고";
-        // el.innerHTML="<div>판매보고</div><cateLine></cateLine>"
-        // //el.setAttribute("style", "display:flex;justify-content:center;grid-column:span 2; padding : 0;background-color : rgb(128,140,255);color:white");
-        // el.setAttribute("style", "display:flex;grid-column:span 2; padding : 0;border:none");
-
-
-
 
         let appLine = this.appLine;
 
@@ -531,31 +525,20 @@ class Contract {
             el.addEventListener("click", () => {
                 window.open("/business/contract/popup/" + storage.reportDetailData.docNo, "미리보기", "width :210mm");
             })
-            el.style.color = "blue";
-            el.style.cursor = "pointer";
-            el.style.margin = "0 0.5rem";
+          
+            el.setAttribute("style","background-color: #eef1fb;color:blue;cursor:pointer;margin: 0 0.5rem;");
 
         } else {
             el.innerText = "-";
         }
 
-        // 계약서 분류 타이틀 
-        el = document.createElement("div");
-        cnt.appendChild(el);
-
-        // el = document.createElement("div");
-        // cnt.children[cnt.children.length - 1].appendChild(el);
-        // el.className = "contractTitle";
-        // el.innerHTML="<div>계약  </div><cateLine></cateLine>"
-        // //el.setAttribute("style", "display:flex;justify-content:center;grid-column:span 2; padding : 0;background-color : rgb(128,140,255);color:white");
-        // el.setAttribute("style", "display:flex;grid-column:span 2; padding : 0;border:none");
 
 
         el = document.createElement("div");
         cnt.appendChild(el);
+        let disabledDiv = el;
 
-        // 계약서 상세 
-        // if ($(".contract-progress").children()[0].className == "contract-done") {
+
         el = document.createElement("div");
         cnt.children[cnt.children.length - 1].appendChild(el);
         el.innerText = "계약서";
@@ -565,60 +548,45 @@ class Contract {
         // el.setAttribute("style", "flex-direction : column");
 
 
-        let inputHtml = "<div class='filePreview'></div><input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attachedcontract' id='attached' onchange='R.contract.fileChange(this)'>";
+        let inputHtml = "<div class='filePreview'></div><label>파일첨부<input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attachedcontract' id='attached' onchange='R.contract.fileChange(this)' style='display:none'></input></label>";
 
         cnt.children[cnt.children.length - 1].children[1].innerHTML = inputHtml;
+        if ($(".contract-progress").children()[0].className != "contract-done") {
+            disabledDiv.setAttribute("style", "color : grey");
+            let input = document.getElementsByClassName("dropZone")[0];
+            input.setAttribute("disabled", true);
+            input.parentElement.setAttribute("style","color:grey");
+        } else {
+            let input = document.getElementsByClassName("dropZone")[0];
+            input.parentElement.setAttribute("style", "color:blue;background-color:#eef1fb;cursor:pointer;margin: 0 0.5rem;");
+            // 계약서 (첨부파일)
+            if (this.attached.length > 0) {
+                let files = "";
+                el = document.getElementsByClassName("filePreview")[0];
+                for (let i = 0; i < this.attached.length; i++) {
+                    files +=
+                        "<div><a href='/api/attached/contract/" +
+                        this.no +
+                        "/" +
+                        encodeURI(this.attached[i].fileName) +
+                        "'>" +
+                        this.attached[i].fileName +
+                        "</a></div>";
+                }
 
 
-        // 계약서 (첨부파일)
-        if (this.attached.length > 0) {
-            let files = "";
-            el = document.getElementsByClassName("filePreview")[0];
-            for (let i = 0; i < this.attached.length; i++) {
-                files +=
-                    "<div><a href='/api/attached/contract/" +
-                    this.no +
-                    "/" +
-                    encodeURI(this.attached[i].fileName) +
-                    "'>" +
-                    this.attached[i].fileName +
-                    "</a></div>";
+                el.innerHTML = files;
+
             }
 
-
-            el.innerHTML = files;
-
         }
-        // }
 
 
-        el = document.createElement("div");
-        cnt.appendChild(el);
 
-        // el = document.createElement("div");
-        // cnt.children[cnt.children.length - 1].appendChild(el);
-        // el.className = "suppliedTitle";
-        // el.innerHTML="<div>납품  </div><cateLine></cateLine>"
-        // //el.setAttribute("style", "display:flex;justify-content:center;grid-column:span 2; padding : 0;background-color : rgb(128,140,255);color:white");
-        // el.setAttribute("style", "display:flex;grid-column:span 2; padding : 0;border:none");
-
-
-        // el = document.createElement("div");
-        // cnt.appendChild(el);
-        // el = document.createElement("div");
-        // cnt.children[cnt.children.length - 1].appendChild(el);
-        // el.className = "approvedTitle";
-        // el.innerHTML="<div>검수  </div><cateLine></cateLine>"
-        // //el.setAttribute("style", "display:flex;justify-content:center;grid-column:span 2; padding : 0;background-color : rgb(128,140,255);color:white");
-        // el.setAttribute("style", "display:flex;grid-column:span 2; padding : 0;border:none");
-
-        // if (this.attached.length > 0 || this.supplied != 0) { 
         this.drawSuppliedData(obj);
-        // }
 
-        // if (this.suppliedAttached.length > 0 || this.supplied != 0) {
         this.drawApprovedData(obj);
-        //  }
+
 
 
         for (let i = 1; i < 5; i++) {
@@ -632,13 +600,9 @@ class Contract {
     }
 
 
-    // 납품 일자 스케쥴 모달 체크하기 
+    // 납품 관련 데이터 그리는 함수 
     drawSuppliedData(obj) {
-        $(".contract-progress").children()[0].className = "contract-done";
-        $(".contract-progress").children()[1].className = "contract-done";
-        $(".contract-progress").children()[2].className = "contract-doing";
         let el, el2, cnt;
-
 
         if (obj.className == "sopp-contract") {
             cnt = document.getElementsByClassName("sopp-contract")[0];
@@ -646,15 +610,8 @@ class Contract {
             cnt = document.getElementsByClassName("detail-wrap")[0];
         }
 
-        //cnt = document.getElementsByClassName("suppliedTitle")[0];
-        //cnt = document.getElementsByClassName("detail-wrap")[0];
-
-
         el = document.createElement("div");
-        //cnt.parentElement.after(el);
         cnt.appendChild(el);
-        el.className = "suppliedDetail";
-        el.setAttribute("style", "display :grid;grid-template-columns: 10% 10% 10% 70% ");
 
         cnt = el;
 
@@ -676,6 +633,17 @@ class Contract {
         })
         el.appendChild(el2);
 
+        if (obj.className == "sopp-contract") {
+            cnt = document.getElementsByClassName("sopp-contract")[0];
+        } else {
+            cnt = document.getElementsByClassName("detail-wrap")[0];
+        }
+
+        el = document.createElement("div");
+        cnt.appendChild(el);
+
+        cnt = el;
+
         el = document.createElement("div");
         cnt.appendChild(el);
         el.innerText = "납품 관련 문서";
@@ -684,8 +652,21 @@ class Contract {
         el = document.createElement("div");
         cnt.appendChild(el);
         el.innerHTML = "<div class='filePreview'></div>" +
-            "<div><input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attachedsupplied' id='attached' onchange='R.contract.fileChange(this)' ></div>";
+            "<div><label>파일첨부<input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attachedsupplied' id='attached' onchange='R.contract.fileChange(this)' style='display:none;'></input></div>";
 
+        if ($(".contract-progress").children()[1].className != "contract-done") {
+            cnt.setAttribute("style", "color : grey");
+            let input = document.getElementsByClassName("dropZone")[1];
+            input.setAttribute("disabled", true);
+            let date = document.getElementsByClassName("suppliedDate")[0];
+            date.setAttribute("disabled", true);
+            date.setAttribute("style", "color:grey");
+            date.parentElement.parentElement.setAttribute("style", "color:grey")
+        } else {
+            let input = document.getElementsByClassName("dropZone")[1];
+            input.parentElement.setAttribute("style", "color:blue;background-color:#eef1fb;cursor:pointer;margin: 0 0.5rem;");
+
+        }
 
         if (this.suppliedAttached.length != 0) {
             let target = document.getElementsByClassName("filePreview")[1];
@@ -703,50 +684,25 @@ class Contract {
             }
             target.innerHTML = files;
 
-            if (document.getElementsByClassName("approvedDetail") == undefined) {
-
-                this.drawApprovedData();
-            }
-
-
         }
-        console.log(this.supplied);
+
         if (this.supplied != 0) {
             document.getElementsByClassName("suppliedDate")[0].value = getYmdHypen(this.supplied);
         }
 
     }
 
-
+    // 검수 관련 데이터 그리는 함수 
     drawApprovedData(obj) {
-
-        $(".contract-progress").children()[2].className = "contract-done";
-
-        if (this.approvedAttached.length == 0) {
-            $(".contract-progress").children()[3].className = "contract-doing";
-        } else {
-            $(".contract-progress").children()[3].className = "contract-done";
-        }
-
-
-
-
         let el, el2, cnt;
-
-
         if (obj.className == "sopp-contract") {
             cnt = document.getElementsByClassName("sopp-contract")[0];
         } else {
             cnt = document.getElementsByClassName("detail-wrap")[0];
         }
 
-        // cnt = document.getElementsByClassName("approvedTitle")[0];
-
         el = document.createElement("div");
-        // cnt.parentElement.after(el);
         cnt.appendChild(el);
-        el.className = "approvedDetail";
-        el.setAttribute("style", "display :grid;grid-template-columns: 10% 10% 10% 70% ");
 
         cnt = el;
 
@@ -765,11 +721,19 @@ class Contract {
             R.sche.drawForRequestDetail(new Date());
             document.getElementById("schedule-type2i").setAttribute("checked", "checked");
             document.getElementsByClassName("schedule-detail")[0].children[0].children[0].children[1].value = this.title + "\u00A0" + "검수";
-
-
         })
         el.appendChild(el2);
 
+        if (obj.className == "sopp-contract") {
+            cnt = document.getElementsByClassName("sopp-contract")[0];
+        } else {
+            cnt = document.getElementsByClassName("detail-wrap")[0];
+        }
+
+        el = document.createElement("div");
+        cnt.appendChild(el);
+
+        cnt = el;
 
         el = document.createElement("div");
         cnt.appendChild(el);
@@ -779,7 +743,20 @@ class Contract {
         el = document.createElement("div");
         cnt.appendChild(el);
         el.innerHTML = "<div class='filePreview'></div>" +
-            "<div><input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attachedapproved' id='attached' onchange='R.contract.fileChange(this)' ></div>";
+            "<div><label '>파일첨부<input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attachedapproved' id='attached' onchange='R.contract.fileChange(this)' style='display:none;'></input></label></div>";
+
+        if ($(".contract-progress").children()[2].className != "contract-done") {
+            cnt.setAttribute("style", "color : grey");
+            let input = document.getElementsByClassName("dropZone")[2];
+            input.setAttribute("disabled", true);
+            let date = document.getElementsByClassName("approvedDate")[0];
+            date.setAttribute("disabled", true);
+            date.setAttribute("style", "color:grey");
+            date.parentElement.parentElement.setAttribute("style", "color:grey")
+        } else {
+            let input = document.getElementsByClassName("dropZone")[2];
+            input.parentElement.setAttribute("style", "color:blue;background-color:#eef1fb;cursor:pointer;margin: 0 0.5rem;");
+        }
 
 
 
@@ -807,13 +784,10 @@ class Contract {
             document.getElementsByClassName("approvedDate")[0].value = getYmdHypen(this.approved);
 
         }
-
-
     }
 
 
     getReportNo(obj) {
-
         let sopp = JSON.parse(this.related);
         sopp = sopp.parent.split(":")[1];
         let docNo;
@@ -898,10 +872,9 @@ class Contract {
 
     fileChange(obj) {
 
-        let method, data, type, attached, name;
+        let method, data, type, attached, name , cnt;
         attached = obj.files;
         name = obj.name.split("attached")[1];
-        console.log(name);
         if (storage.attachedList === undefined || storage.attachedList <= 0) {
             storage.attachedList = [];
         }
@@ -952,7 +925,9 @@ class Contract {
                     let binary,
                         x,
                         fData = e.target.result;
+                        console.log(fData);
                     const bytes = new Uint8Array(fData);
+                    
                     binary = "";
                     for (x = 0; x < bytes.byteLength; x++)
                         binary += String.fromCharCode(bytes[x]);
@@ -993,20 +968,41 @@ class Contract {
 
         }
 
+       
         if (name == "contract") {
-            if (document.getElementsByClassName("suppliedDetail").length == 0) {
-                this.drawSuppliedData();
-            }
+            $(".contract-progress").children()[1].className = "contract-done";
+            $(".contract-progress").children()[2].className = "contract-doing";
+            cnt = obj.parentElement.parentElement.parentElement.nextElementSibling;
+            cnt.setAttribute("style", "color : black");
+            let input = document.getElementsByClassName("dropZone")[1];
+            input.disabled = false;
+            input.parentElement.setAttribute("style", "color:blue;background-color:#eef1fb;cursor:pointer;margin: 0 0.5rem;");
+            input.parentElement.parentElement.parentElement.parentElement.setAttribute("style", "color:black");
+            let date = document.getElementsByClassName("suppliedDate")[0];
+            date.disabled = false;
+            date.setAttribute("style", "color:black");
+            date.parentElement.parentElement.parentElement.setAttribute("style", "color:black")
 
         } else if (name == "supplied") {
-            if (document.getElementsByClassName("approvedDetail").length == 0) {
-                this.drawApprovedData();
-            }
-        } else if (name == "approved") {
+            $(".contract-progress").children()[2].className = "contract-done";
+            $(".contract-progress").children()[3].className = "contract-doing";
+           cnt = obj.parentElement.parentElement.parentElement.parentElement.nextElementSibling;
+   
+            cnt.setAttribute("style", "color : black");
+            let input = document.getElementsByClassName("dropZone")[2];
+            input.disabled = false;
+            input.parentElement.setAttribute("style", "color:blue;background-color:#eef1fb;cursor:pointer;margin: 0 0.5rem;");
+            input.parentElement.parentElement.parentElement.parentElement.setAttribute("style", "color:black");
+            let date = document.getElementsByClassName("approvedDate")[0];
+            date.disabled = false;
+            date.setAttribute("style", "color:black");
+            date.parentElement.parentElement.parentElement.setAttribute("style", "color:black");
 
+        } else if (name == "approved") {
             $(".contract-progress").children()[3].className = "contract-done";
 
         }
+
 
     }
 
