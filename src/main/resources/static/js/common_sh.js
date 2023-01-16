@@ -114,11 +114,11 @@ class Contract {
         if (origin != undefined) origin.remove();
 
         let cnt, el, el2;
-        el = document.createElement("div");
-        el.className = "detail-wrap";
-        target.appendChild(el);
-        cnt = document.getElementsByClassName("detail-wrap")[0];
-
+        // el = document.createElement("div");
+        // el.className = "detail-wrap";
+        // target.appendChild(el);
+        //cnt = document.getElementsByClassName("detail-wrap")[0];
+        cnt = target;
 
         el = document.createElement("top");
         el.className = "contract-top";
