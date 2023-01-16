@@ -163,45 +163,46 @@ class Contract {
 
         el = document.createElement("div");
         cnt.children[cnt.children.length - 1].appendChild(el);
-        el.innerText = "계약명";
+        el.setAttribute("style","justify-content: center;background-color:white; text-align:center;grid-column :span 2;");
+        el.innerText = "진행 사항이 없습니다";
 
-        el = document.createElement("div");
-        cnt.children[cnt.children.length - 1].appendChild(el);
+        // el = document.createElement("div");
+        // cnt.children[cnt.children.length - 1].appendChild(el);
 
-        //거래처 
-        el = document.createElement("div");
-        cnt.appendChild(el);
+        // //거래처 
+        // el = document.createElement("div");
+        // cnt.appendChild(el);
 
-        el = document.createElement("div");
-        cnt.children[cnt.children.length - 1].appendChild(el);
-        el.innerText = "매출처";
+        // el = document.createElement("div");
+        // cnt.children[cnt.children.length - 1].appendChild(el);
+        // el.innerText = "매출처";
 
-        el = document.createElement("div");
-        cnt.children[cnt.children.length - 1].appendChild(el);
-
-
-        // 담당자
-        el = document.createElement("div");
-        cnt.appendChild(el);
-
-        el = document.createElement("div");
-        cnt.children[cnt.children.length - 1].appendChild(el);
-        el.innerText = "담당자";
-
-        el = document.createElement("div");
-        cnt.children[cnt.children.length - 1].appendChild(el);
+        // el = document.createElement("div");
+        // cnt.children[cnt.children.length - 1].appendChild(el);
 
 
-        // 계약금액 
-        el = document.createElement("div");
-        cnt.appendChild(el);
+        // // 담당자
+        // el = document.createElement("div");
+        // cnt.appendChild(el);
 
-        el = document.createElement("div");
-        cnt.children[cnt.children.length - 1].appendChild(el);
-        el.innerText = "계약 금액";
+        // el = document.createElement("div");
+        // cnt.children[cnt.children.length - 1].appendChild(el);
+        // el.innerText = "담당자";
 
-        el = document.createElement("div");
-        cnt.children[cnt.children.length - 1].appendChild(el);
+        // el = document.createElement("div");
+        // cnt.children[cnt.children.length - 1].appendChild(el);
+
+
+        // // 계약금액 
+        // el = document.createElement("div");
+        // cnt.appendChild(el);
+
+        // el = document.createElement("div");
+        // cnt.children[cnt.children.length - 1].appendChild(el);
+        // el.innerText = "계약 금액";
+
+        // el = document.createElement("div");
+        // cnt.children[cnt.children.length - 1].appendChild(el);
 
     }
 

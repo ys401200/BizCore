@@ -511,9 +511,12 @@
         url: _server,
         method: "get",
         success: (result) => {
-          let tt = result.replace(/\n+/g, "");
-          tt = tt.replace(/\t+/g, "");
+          let tt = result.replaceAll(/\n+/g, "");
+          tt = tt.replaceAll(/\t+/g, "");  
+          tt = tt.replaceAll("\\","&#8361;");
           tt = JSON.parse(tt);
+         
+       
           if (tt.result === "ok") {
             docList = tt.data;
             storage.docList = docList;
