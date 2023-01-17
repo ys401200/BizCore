@@ -57,6 +57,9 @@ public class Schedule2Svc extends Svc {
 
                 // == 휴가
                 formId = "doc_Form_leave";
+
+                // 성공 결과 전달
+                result = "success";
             }
         }
 
