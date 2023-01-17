@@ -17,13 +17,13 @@ public class DeptService extends Svc {
 
     private static final Logger logger = LoggerFactory.getLogger(DeptService.class);
 
-    public String getDeptJson(String compId){
+    public String getDeptJson(String compId, boolean cache){
         String result = null, name = null;
         Dept root = null;
         HashMap<String, Dept> map = null;
         Object[] keySet = null;
 
-        root = rootDept(compId);
+        root = rootDept(compId, cache);
         map = root.getMap();
         result = "{";
         keySet = map.keySet().toArray();

@@ -26,11 +26,175 @@ $(document).ready(() => {
 		}
 		els = cnt.getElementsByClassName("dept-tree");
 		for(x = 0 ; x < els.length ; x++)	els[x].checked = true;
+		els = cnt.getElementsByTagName("img");
+		for(x = 0 ; x < els.length ; x++){
+			els[x].style.width="1rem";
+			els[x].style.height="1rem";
+		}
 	},1500);
 	
 
 	// For Initializing Code . . . . . . .  . . . . 
 });
+
+// 부서 추가 이미지 클릭시 실행되는 함수
+function clickedDeptAdd(){
+	let cnt, el, x, ids = [], names = [], border = "1px solid #2147b1", padding = "0.4rem", font = "0.9rem";
+	
+	// 부서코드 및 이름 중복 방지를 위한 데이터 수집
+	for(x in storage.dept.dept){
+		if(x !== undefined){
+			ids.push(x);
+			names.push(storage.dept.dept[x].deptName);
+		}
+	}
+	storage.newDept = {};
+	storage.newDept.ids = ids;
+	storage.newDept.names = names;
+
+	// parent 확인
+	el = document.getElementsByClassName("deptTree")[0].getElementsByTagName("input");
+	for(x in el){
+		if(el[x].checked){
+			storage.newDept.parent = el[x].id.substring(10);
+			break;
+		}
+	}
+
+	// 모달 띄우고 엘리먼트 채우기
+	modal.show();
+	modal.head[0].children[0].innerText = "부서 추가";
+	cnt = modal.body[0];
+	el = document.createElement("div");
+	el.style.display = "grid";
+	el.style.gridTemplateColumns = "2fr 3fr 2fr 3fr";
+	el.style.border = border;
+	el.style.fontSize = font;
+	el.style.margin = "1rem 0.2rem";
+	cnt.appendChild(el);
+	el = document.createElement("div");
+	el.style.padding = padding;
+	el.style.textAlign = "center";
+	el.style.borderRight = border;
+	el.style.borderBottom = border;
+	el.style.fontSize = font;
+	el.innerText = "상위부서";
+	cnt.children[0].appendChild(el);
+	el = document.createElement("div");
+	el.style.padding = padding;
+	el.style.textAlign = "center";
+	el.style.borderBottom = border;
+	el.style.gridColumn = "span 3";
+	el.style.fontSize = font;
+	el.innerText = storage.dept.dept[storage.newDept.parent].deptName;
+	cnt.children[0].appendChild(el);
+
+	el = document.createElement("div");
+	el.style.padding = padding;
+	el.style.textAlign = "center";
+	el.style.borderRight = border;
+	el.style.fontSize = font;
+	el.innerText = "부 서 명";
+	cnt.children[0].appendChild(el);
+	el = document.createElement("input");
+	el.setAttribute("onkeyup", "this.value=this.value.replaceAll(' ', '');");
+	el.style.padding = padding;
+	el.style.textAlign = "center";
+	el.style.border = "none";
+	el.style.borderRight = border;
+	el.style.backgroundColor = "#eeeeff";
+	el.style.fontSize = font;
+	el.dataset.name = "name";
+	cnt.children[0].appendChild(el);
+
+	el = document.createElement("div");
+	el.style.padding = "0.2rem";
+	el.style.textAlign = "center";
+	el.style.borderRight = border;
+	el.style.fontSize = font;
+	el.innerText = "부서코드";
+	cnt.children[0].appendChild(el);
+	el = document.createElement("input");
+	el.setAttribute("onkeyup", "this.value=this.value.replaceAll(' ', '');");
+	el.style.padding = "0.2rem";
+	el.style.textAlign = "center";
+	el.style.border = "none";
+	el.style.backgroundColor = "#eeeeff";
+	el.style.fontSize = font;
+	el.dataset.name = "id";
+	cnt.children[0].appendChild(el);
+
+	modal.close[0].onclick = () => {delete storage.newDept;modal.hide();};
+	modal.confirm[0].onclick = () => {
+		let id, name, data, els = document.getElementsByClassName("modalBody")[0].getElementsByTagName("input");
+		name = els[0].value;
+		id = els[1].value;
+		// 부서명/아이디 중복/유효성 검증
+		if(name === undefined || name.length < 3 || storage.newDept.names.includes(name)){
+			els[0].focus();
+			els[0].style.animation = "not-enough-warn 3s forwards";
+			window.setTimeout(function(){els[0].style.animation="";},3000);
+			return;
+		}else if(id === undefined || id.length < 5 || storage.newDept.ids.includes(id)){
+			els[1].focus();
+			els[1].style.animation = "not-enough-warn 3s forwards";
+			window.setTimeout(function(){els[1].style.animation="";},3000);
+			return;
+		}
+		modal.hide();
+		storage.newDept.id = id;
+		data = {"deptId":id, "deptName":name, "parent":storage.newDept.parent};
+		data = JSON.stringify(data);
+		data = cipher.encAes(data);
+		fetch(apiServer + "/api/manage/department", {
+			method: "POST",
+			header: { "Content-Type": "text/plain" },
+			body: data
+		}).catch((error) => console.log("error:", error))
+			.then(response => response.json())
+			.then(response => {
+				if (response.result === "ok") {
+					sessionStorage.removeItem("deptMapData");
+					sessionStorage.removeItem("deptMapTime");
+					getDeptMap();
+					window.setTimeout(function(){
+						let cnt, els, x;
+						setDeptTree();
+						cnt = document.getElementsByClassName("deptTree")[0];
+						cnt.innerHTML = storage.dept.tree.getTreeHtml();
+						els = cnt.getElementsByTagName("label");
+						for(x = 0 ; x < els.length ; x++){
+							if(els[x] === undefined) continue;
+							els[x].onclick = getDetailInfo;
+						}
+						els = cnt.getElementsByClassName("dept-tree");
+						for(x = 0 ; x < els.length ; x++)	els[x].checked = true;
+						els = cnt.getElementsByTagName("img");
+						for(x = 0 ; x < els.length ; x++){
+							els[x].style.width="1rem";
+							els[x].style.height="1rem";
+						}
+						els = cnt.getElementsByClassName("deptName");
+						for(x = 0 ; x < els.length ; x++){
+							if(els[x].getAttribute("for").substring(10) === storage.newDept.id){
+								els[x].click();
+								break;
+							}
+						}
+						delete storage.newDept;
+					},1000);
+				} else {
+					console.log(response.msg);
+				}
+			});
+	}
+	
+} // End of clickedDeptAdd()
+
+// 직원 추가 이미지 클릭시 실행되는 함수
+function clickedUserAdd(){
+
+} // End of clickedUserAdd()
 
 // 부서 혹은 직원 클릭시 실행되는 함수
 function getDetailInfo(){
@@ -536,7 +700,7 @@ function setDeptData(){
 	title = "부서코드";
 	html += "<div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
-	html += ("</div><div class=\"xDeptId\" data-n=\"id\"><input class=\"xEmpInput\" value=\"" + (storage.basic.id !== null ? storage.basic.id : "") + "\" disabled onkeyup=\"collectDeptData(this)\" /></div></div>");
+	html += ("</div><div class=\"xDeptId\" data-n=\"id\"><input class=\"xEmpInput\" value=\"" + (storage.basic.id !== null ? storage.basic.id : "") + "\" " + (storage.basic.id !== null ? "disabled" : "") + " onkeyup=\"collectDeptData(this)\" /></div></div>");
 
 	/*
 	// 부서장

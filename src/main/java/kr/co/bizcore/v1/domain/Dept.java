@@ -21,6 +21,8 @@ public class Dept extends Domain {
     @JsonIgnore
     private ArrayList<Dept> children = new ArrayList<>();
     private ArrayList<Integer> employee = new ArrayList<>();
+
+    public String getColorCode(){return colorCode == null ? "#ffffff" : colorCode;}
     
     public void addChild(Dept child){children.add(child);};
     public void addEmployee(int employeeNo){employee.add(employeeNo);};
@@ -120,6 +122,8 @@ public class Dept extends Domain {
 
     public HashMap<String, Dept> getMap(){
         HashMap<String, Dept> result = new HashMap<>();
+        HashMap<String, Dept> sub = null;
+        Object[] keySet = null;
         Dept dept = null;
         int x = 0;
 
@@ -128,6 +132,11 @@ public class Dept extends Domain {
             for(x = 0 ; x < children.size() ; x++){
                 dept = children.get(x);
                 result.put(dept.getDeptId(), dept);
+                sub = children.get(x).getMap();
+                if(sub != null && sub.size() > 0){
+                    keySet = sub.keySet().toArray();
+                    for(Object o : keySet)  result.put((String)o, sub.get(o));
+                }
             }
         }
 
@@ -160,9 +169,6 @@ public class Dept extends Domain {
 
     public String toJsonSingle() {
         String result = "{";
-        String sub = null;
-        int x = 0;
-
         result += ("\"id\":" + id + ",");
         result += ("\"deptName\":" + (deptName == null ? "null" : "\"" + deptName + "\"") + ",");
         result += ("\"deptId\":" + (deptId == null ? "null" : "\"" + deptId + "\"") + ",");

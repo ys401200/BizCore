@@ -296,4 +296,41 @@ public class ApiManageCtrl extends Ctrl{
 
         return result;
     }
+
+    // 부서추가
+    @PostMapping("/department")
+    public String departmentPost(HttpServletRequest request, @RequestBody String requestBody){
+        String result = null;
+        String compId = null, aesKey = null, aesIv = null, data = null, userNo = null, deptId = null, deptName = null, parent = null;
+        Msg msg = null;
+        HttpSession session = null;
+        JSONObject json = null;
+
+        session = request.getSession();
+        msg = getMsg((String)session.getAttribute("lang"));
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        userNo = (String)session.getAttribute("userNo");
+        compId = (String)session.getAttribute("compId");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
+        
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        }else{
+            data = decAes(requestBody, aesKey, aesIv);
+            json = new JSONObject(data);
+            if(!json.isNull("deptName"))    deptName = json.getString("deptName");
+            if(!json.isNull("deptId"))      deptId = json.getString("deptId");
+            if(!json.isNull("parent"))      parent = json.getString("parent");
+            if(deptName != null && deptId != null && parent != null){
+                result = manageSvc.addNewDept(compId, userNo, deptId, deptName, parent);
+            }else{
+                result = "{\"result\":\"failure\",\"msg\":\"" + msg.dataIsWornFormat + "\"}";    
+            }
+        }
+
+        return result;
+    }
 }

@@ -660,5 +660,17 @@ public class ManageSvc extends Svc{
         result += ("\"deleted\":" + each.get("deleted") + "}");
         return result;
     } // End of getEdptDetilInfo()
+
+    // 신규 부서를 생성하는 메서드
+    public String addNewDept(String compId, String userNo, String deptId, String deptName, String parent){
+        int r = -999;
+
+        r = commonMapper.checkHrPermission(compId, userNo);
+        if(r < 1)   return "{\"result\":\"failure\",\"msg\":\"permissionDenied\"}";
+        
+        r = commonMapper.addNewDept(compId, deptName, deptId, parent);
+        if(r < 1)   return "{\"result\":\"failure\",\"msg\":\"An error occcured\"}";
+        else        return "{\"result\":\"ok\"}";
+    } // End of addNewDept()
     
 } 

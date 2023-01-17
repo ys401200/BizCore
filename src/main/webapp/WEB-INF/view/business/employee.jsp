@@ -6,7 +6,7 @@
                 <span class="bodyTitle">직원 관리</span>
                 <div class="listContent">
                         <div>
-                                <div><div></div><div class="manageSubTitle" style="padding:10px;"><T>조</T><T>직</T><T>도</T></div><div class="image_btns" style="padding: 5px 0;"><img src="/images/manage/user_add.png"><img src="/images/manage/dept_add.png"></div></div>
+                                <div><div></div><div class="manageSubTitle" style="padding:10px;"><T>조</T><T>직</T><T>도</T></div><div class="image_btns" style="padding: 5px 0;"><img src="/images/manage/user_add.png" onclick="clickedUserAdd()" /><img src="/images/manage/dept_add.png" onclick="clickedDeptAdd()" /></div></div>
                                 <div class="deptTree"></div>
                         </div><div></div>
                 </div>

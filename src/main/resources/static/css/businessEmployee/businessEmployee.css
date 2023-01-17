@@ -59,7 +59,9 @@
     padding: 1.5rem;
     box-sizing: border-box;
     overflow: auto;
+    font-size:0.9rem;
 }
+.deptTree img{width:1rem;height:1rem;}
 .deptTree .dept-tree-cnt{
     display:inline-block;
     width:calc(100% - 1.5rem);

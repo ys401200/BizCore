@@ -105,4 +105,12 @@ public interface CommonMapper {
     // 부서코드 존재유무 검증 메서드
     @Select("SELECT count(*) FROM bizcore.department WHERE deleted IS NULL AND compId = #{compId} AND deptid = #{deptId}")
     public int verifyDeptId(@Param("compId") String compId, @Param("deptId") String deptId);
+
+    // 인사 권한(hr 또는 manager) 확인 메서드
+    @Select("SELECT sum(permission) FROM bizcore.permission WHERE comp_id = #{compId} AND dept = 'all' AND func_id IN ('manager', 'hr') AND user_no = #{userNo}")
+    public int checkHrPermission(@Param("compId") String compId, @Param("userNo") String userNo);
+
+    // 부서 추가 메서드
+    @Insert("INSERT INTO bizcore.department(compId, deptName, deptId, parent, created) values(#{compId}, #{deptName}, #{deptId}, #{parent}, now())")
+    public int addNewDept(@Param("compId") String compId, @Param("deptName") String deptName, @Param("deptId") String deptId, @Param("parent") String parent);
 }

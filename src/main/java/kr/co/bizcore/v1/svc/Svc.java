@@ -572,13 +572,19 @@ public abstract class Svc {
 
 
      // 최상위 부서를 가져오는 메서드
-    public Dept rootDept(String compId){
+    public Dept rootDept(String compId, boolean cache){
         Dept result = null;
 
-        result = (Dept)dataFactory.getData(compId, "rootDept");
-        if(result == null && getAndProceedDeptInfo(compId)){
+        if(cache){
+            result = (Dept)dataFactory.getData(compId, "rootDept");
+            if(result == null && getAndProceedDeptInfo(compId)){
+                result = (Dept)dataFactory.getData(compId, "rootDept");
+            }
+        }else{
+            getAndProceedDeptInfo(compId);
             result = (Dept)dataFactory.getData(compId, "rootDept");
         }
+        
         return result;
     } // End of rootDept()
 
