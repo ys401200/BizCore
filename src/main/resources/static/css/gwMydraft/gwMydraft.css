@@ -61,9 +61,6 @@ input[type="date"]:read-only {
 
 
 
-.detailReport {
-  width: 1700px;
-}
 
 .container .listPageDiv .pageContainer .paging_cell_current {
   background-color: #eaeff3;

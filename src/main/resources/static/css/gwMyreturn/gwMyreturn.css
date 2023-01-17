@@ -283,7 +283,3 @@ input[type="date"]:read-only {
   margin-right: 10px;
 }
 
-/* 임시로 고정함  */
-.detailReport {
-  width: 1700px;
-}
