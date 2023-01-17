@@ -3276,13 +3276,7 @@ function listRangeChange(e, drawList) {
 	if (thisEle.val() > 0) {
 		storage.articlePerPage = thisEle.val();
 	} else {
-		storage.articlePerPage = undef
-		
-		
-		
-		
-		
-		ined;
+		storage.articlePerPage = undefined;
 	}
 	drawList();
 }

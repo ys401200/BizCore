@@ -37,7 +37,15 @@ function drawProductList() {
 	result = CommonDatas.paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 
 	hideArr = ["detailBackBtn", "crudUpdateBtn", "crudDeleteBtn"];
-	showArr = ["gridList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "crudAddBtn", "listSearchInput"];
+	showArr = ["gridList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "crudAddBtn"];
+	showArr = [
+		{element: "gridList", display: "grid"},
+		{element: "pageContainer", display: "flex"},
+		{element: "searchContainer", display: "block"},
+		{element: "listRange", display: "flex"},
+		{element: "listSearchInput", display: "flex"},
+		{element: "crudAddBtn", display: "flex"},
+	];
 	containerTitle = document.getElementById("containerTitle");
 	pageContainer = document.getElementsByClassName("pageContainer");
 	container = document.getElementsByClassName("gridList")[0];
@@ -118,6 +126,7 @@ function drawProductList() {
 	containerTitle.innerHTML = "상품조회";
 	CommonDatas.createGrid(container, header, data, ids, job, fnc);
 	document.getElementById("multiSearchBtn").setAttribute("onclick", "searchSubmit();");
+	document.getElementsByClassName("listRangeInput")[0].value = 0;
 	CommonDatas.setViewContents(hideArr, showArr);
 }
 
@@ -173,8 +182,8 @@ function productSuccessView(result){
 			"title": "공급사(*)",
 			"elementId": "vendor",
             "complete": "customer",
-			"keyup": "addAutoComplete(this);",
-			"onClick": "addAutoComplete(this);",
+			"keyup": "CommonDatas.addAutoComplete(this);",
+			"onClick": "CommonDatas.addAutoComplete(this);",
 			"value": vendor,
             "col": 2,
 		},
@@ -236,8 +245,8 @@ function productInsertForm(){
 			"title": "공급사(*)",
 			"elementId": "vendor",
             "complete": "customer",
-			"keyup": "addAutoComplete(this);",
-			"onClick": "addAutoComplete(this);",
+			"keyup": "CommonDatas.addAutoComplete(this);",
+			"onClick": "CommonDatas.addAutoComplete(this);",
             "disabled": false,
             "col": 2,
 		},

@@ -2237,7 +2237,7 @@ class Common{
 				listChangeBtn.style.display = "none";
 			}
 
-			if (scheduleRange !== undefined) {
+			if (scheduleRange !== null) {
 				scheduleRange.style.display = "none";
 			}
 
@@ -2805,6 +2805,61 @@ class Common{
 			setTimeout(() => {
 				document.getElementsByClassName("cke_textarea_inline")[0].style.height = "300px";
 			}, 300);
+		}
+	}
+
+	//tab 레이아웃 적용 함수
+	setTabsLayOutMenu() {
+		let tabs, tabItem, tabItemLength, width, temp;
+		tabs = document.getElementsByClassName("tabs")[0];
+		tabItem = document.getElementsByClassName("tabItem");
+		tabItemLength = tabItem.length;
+		temp = tabItemLength * 2;
+	
+		for (let i = 0; i < tabItemLength; i++) {
+			tabItem[i].style.zIndex = temp;
+			temp -= 2;
+			if (i > 0) {
+				tabItem[i].style.width = width + "%";
+				tabItem[i].style.paddingLeft = (width * i) + "%";
+			} else {
+				width = 100 / tabItemLength;
+				tabItem[i].style.width = width + "%";
+			}
+		}
+	}
+
+	//tab container 중 id값을 받아 해당하는 id값 빼고 전부 숨기는 함수
+	detailTabHide(notId) {
+		let radio, detailSecondTabs;
+		detailSecondTabs = document.getElementsByClassName("detailSecondTabs")[0];
+		radio = document.getElementsByClassName("tabs")[0].querySelectorAll("input[type=\"radio\"]");
+		for (let i = 0; i < radio.length; i++) {
+			let contents = detailSecondTabs.querySelector("." + radio[i].dataset.contentId);
+			
+			if (notId === undefined) {
+				contents.style.display = "none";
+			} else {
+				if(contents.getAttribute("id") !== notId){
+					contents.style.display = "none";
+				}
+			}
+		}
+	}
+
+	detailCheckedTrueView() {
+		for (let key in storage.formList) {
+			if (typeof storage.formList[key] === "object") {
+				for (let key2 in storage.formList[key]) {
+					if (storage.formList[key][key2]) {
+						if (document.getElementById(key2) !== null) {
+							document.getElementById(key2).setAttribute("checked", "checked");
+						} else if (document.getElementById(key + "_" + key2) !== null) {
+							document.getElementById(key + "_" + key2).setAttribute("checked", "checked");
+						}
+					}
+				}
+			}
 		}
 	}
 	
