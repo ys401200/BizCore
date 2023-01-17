@@ -333,7 +333,7 @@ public class ScheduleSvc extends Svc{
                 t += ("\"from\":" + rs.getString(6) + ",");
                 t += ("\"to\":" + rs.getString(7) + ",");
                 t += ("\"title\":" + (rs.getString(8) == null ? null : "\"" + rs.getString(8) + "\"") + ",");
-                t += ("\"content\":" + (rs.getString(9) == null ? null : "\"" + rs.getString(9).replaceAll("\n", "").replaceAll("\r", "").replaceAll("\t", "") + "\"") + ",");
+                t += ("\"content\":" + (rs.getString(9) == null ? null : "\"" + rs.getString(9).replaceAll("\n", "").replaceAll("\r", "").replaceAll("\t", "").replaceAll("\"", "") + "\"") + ",");
                 t += ("\"report\":" + rs.getString(10) + ",");
                 t += ("\"type\":" + (rs.getString(11) == null ? null : "\"" + rs.getString(11) + "\"") + ",");
                 t += ("\"place\":" + (rs.getString(12) == null ? null : "\"" + rs.getString(12) + "\"") + ",");

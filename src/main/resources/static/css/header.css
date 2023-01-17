@@ -678,8 +678,8 @@ textarea {
 }
 
 .detailBoard {
-	border: 1px solid #E4E5E9;
-	padding: 20px;
+	padding: 10px;
+	background-color: #e0e4e9;
 }
 
 .detailBoard .detailContents .detailBoardContainer {

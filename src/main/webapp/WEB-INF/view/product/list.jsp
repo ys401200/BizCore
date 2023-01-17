@@ -12,7 +12,7 @@
             <div class="searchMultiContent">
                 <div class="searchVendor">
                     <span>공급사</span>
-                    <input type="text" data-complete="customer" autocomplete="off" id="searchVendor" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">
+                    <input type="text" data-complete="customer" autocomplete="off" id="searchVendor" onclick="CommonDatas.addAutoComplete(this);" onkeyup="CommonDatas.addAutoComplete(this);">
                 </div>
                 <div class="searchCategoryName">
                     <span>제품그룹</span>

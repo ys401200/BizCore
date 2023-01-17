@@ -20,10 +20,6 @@
                     <span>버전</span>
                     <input type="text" autocomplete="off" id="searchVersion">
                 </div>
-                <div class="searchForm">
-                    <span>양식</span>
-                    <input type="text" autocomplete="off" id="searchForm">
-                </div>
 				<div class="searchPrice">
                     <span>금액</span>
                     <div class="searchGridItem">

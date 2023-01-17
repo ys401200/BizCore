@@ -34,12 +34,12 @@ function drawCustomerList() {
 		}
 	}
 
-	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+	result = CommonDatas.paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 
 	hideArr = ["detailBackBtn", "crudUpdateBtn", "crudDeleteBtn"];
 	showArr = ["gridList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "crudAddBtn", "listSearchInput"];
 	pageContainer = document.getElementsByClassName("pageContainer");
-	container = $(".gridList");
+	container = document.getElementsByClassName("gridList")[0];
 
 	header = [
 		{
@@ -60,7 +60,8 @@ function drawCustomerList() {
 		str = [
 			{
 				"setData": undefined,
-				"col": 10,
+				"align": "center",
+				"col": 3,
 			},
 		];
 		
@@ -93,12 +94,13 @@ function drawCustomerList() {
 			data.push(str);
 		}
 	
-		let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawCustomerList", result[0]);
+		let pageNation = CommonDatas.createPaging(pageContainer[0], result[3], "pageMove", "drawCustomerList", result[0]);
 		pageContainer[0].innerHTML = pageNation;
 	}
 
-	createGrid(container, header, data, ids, job, fnc);
-	setViewContents(hideArr, showArr);
+	CommonDatas.createGrid(container, header, data, ids, job, fnc);
+	document.getElementById("multiSearchBtn").setAttribute("onclick", "searchSubmit();");
+	CommonDatas.setViewContents(hideArr, showArr);
 }
 
 function customerSuccessList(result){
@@ -738,8 +740,8 @@ function customerErrorDelete(){
 
 function searchInputKeyup(){
 	let searchAllInput, tempArray;
-	searchAllInput = $("#searchAllInput").val();
-	tempArray = searchDataFilter(storage.customerList, searchAllInput, "input");
+	searchAllInput = document.getElementById("searchAllInput").value;
+	tempArray = CommonDatas.searchDataFilter(storage.customerList, searchAllInput, "input");
 
 	if(tempArray.length > 0){
 		storage.searchDatas = tempArray;
@@ -765,15 +767,15 @@ function addSearchList(){
 function searchSubmit(){
 	let dataArray = [], resultArray, eachIndex = 0;
 
-	searchName = $("#searchName").val();
-	searchCeoName = $("#searchCeoName").val();
-	searchTaxId = $("#searchTaxId").val();
+	searchName = "#1/" + document.getElementById("searchName").value;
+	searchCeoName = "#2/" + document.getElementById("searchCeoName").value;
+	searchTaxId = "#3/" + document.getElementById("searchTaxId").value;
 	
 	let searchValues = [searchName, searchCeoName, searchTaxId];
 
 	for(let i = 0; i < searchValues.length; i++){
 		if(searchValues[i] !== "" && searchValues[i] !== undefined && searchValues[i] !== null){
-			let tempArray = searchDataFilter(storage.customerList, searchValues[i], "multi");
+			let tempArray = CommonDatas.searchDataFilter(storage.customerList, searchValues[i], "multi");
 			
 			for(let t = 0; t < tempArray.length; t++){
 				dataArray.push(tempArray[t]);
@@ -783,7 +785,7 @@ function searchSubmit(){
 		}
 	}
 
-	resultArray = searchMultiFilter(eachIndex, dataArray, storage.customerList);
+	resultArray = CommonDatas.searchMultiFilter(eachIndex, dataArray, storage.customerList);
 	
 	storage.searchDatas = resultArray;
 

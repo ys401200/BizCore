@@ -15,14 +15,14 @@
                 </div>
                 <div class="searchWriter">
                     <span>담당자</span>
-                    <input type="text" data-complete="user" autocomplete="off" id="searchWriter" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">
+                    <input type="text" data-complete="user" autocomplete="off" id="searchWriter" onclick="CommonDatas.addAutoComplete(this);" onkeyup="CommonDatas.addAutoComplete(this);">
                 </div>
                 <div class="searchCreated">
                     <span>등록일</span>
                     <div class="searchGridItem">
-                        <input type="date" id="searchCreatedFrom" max="9999-12-31" data-date-type="from" onchange="searchDateDefaultSet(this);">
+                        <input type="date" id="searchCreatedFrom" max="9999-12-31" data-date-type="from" onchange="CommonDatas.searchDateDefaultSet(this);">
                         <span>~</span>
-                        <input type="date" id="searchCreatedTo" max="9999-12-31" data-date-type="to" onchange="searchDateDefaultSet(this);">
+                        <input type="date" id="searchCreatedTo" max="9999-12-31" data-date-type="to" onchange="CommonDatas.searchDateDefaultSet(this);">
                     </div>
                 </div>
             </div>

@@ -10,11 +10,11 @@
             <div class="searchMultiContent">
                 <div class="searchName">
                     <span>고객사명</span>
-                    <input type="text" data-complete="customer" id="searchName" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">
+                    <input type="text" data-complete="customer" id="searchName" onclick="CommonDatas.addAutoComplete(this);" onkeyup="CommonDatas.addAutoComplete(this);">
                 </div>
                 <div class="searchCeoName">
                     <span>대표자명</span>
-                    <input type="text" data-complete="cip" id="searchCeoName" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">
+                    <input type="text" data-complete="cip" id="searchCeoName" onclick="CommonDatas.addAutoComplete(this);" onkeyup="CommonDatas.addAutoComplete(this);">
                 </div>
                 <div class="searchTaxId">
                     <span>사업자번호</span>

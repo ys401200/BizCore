@@ -20,7 +20,7 @@ function getFileBoxList() {
 } // End of getFileBoxList()
 
 function drawFileBoxList() {
-	let container, result, jsonData, job, header = [], data = [], ids = [], disDate, setDate, str, fnc;
+	let container, result, jsonData, job, header = [], data = [], ids = [], disDate, setDate, str, fnc, pageContainer;
 	
 	if (storage.fileBoxList === undefined) {
 		msg.set("등록된 자료가 없습니다");
@@ -33,10 +33,10 @@ function drawFileBoxList() {
 		}
 	}
 	
-	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+	result = CommonDatas.paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 
 	pageContainer = document.getElementsByClassName("pageContainer");
-	container = $(".gridFileBoxList");
+	container = document.getElementsByClassName("gridFileBoxList")[0];
 
 	header = [
 		{
@@ -57,6 +57,7 @@ function drawFileBoxList() {
 		str = [
 			{
 				"setData": undefined,
+				"align": "center",
 				"col": 4,
 			},
 		];
@@ -64,8 +65,8 @@ function drawFileBoxList() {
 		data.push(str);
 	}else{
 		for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
-			disDate = dateDis(jsonData[i].created, jsonData[i].modified);
-			setDate = dateFnc(disDate, "mm-dd");
+			disDate = CommonDatas.dateDis(jsonData[i].created, jsonData[i].modified);
+			setDate = CommonDatas.dateFnc(disDate, "mm-dd");
 			let userName = storage.user[jsonData[i].writer].userName;
 	
 			str = [
@@ -88,11 +89,12 @@ function drawFileBoxList() {
 			data.push(str);
 		}
 
-		let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawFileBoxList", result[0]);
+		let pageNation = CommonDatas.createPaging(pageContainer[0], result[3], "pageMove", "drawFileBoxList", result[0]);
 		pageContainer[0].innerHTML = pageNation;
 	}
 
-	createGrid(container, header, data, ids, job, fnc);
+	CommonDatas.createGrid(container, header, data, ids, job, fnc);
+	document.getElementById("multiSearchBtn").setAttribute("onclick", "searchSubmit();");
 }// End of drawFileBoxList()
 
 function fileBoxDetailView(e) {// 선택한 그리드의 글 번호 받아오기 
@@ -442,8 +444,8 @@ function fileBoxErrorDelete(){
 
 function searchInputKeyup(){
 	let searchAllInput, tempArray;
-	searchAllInput = $("#searchAllInput").val();
-	tempArray = searchDataFilter(storage.fileBoxList, searchAllInput, "input");
+	searchAllInput = document.getElementById("searchAllInput").value;
+	tempArray = CommonDatas.searchDataFilter(storage.fileBoxList, searchAllInput, "input");
 
 	if(tempArray.length > 0){
 		storage.searchDatas = tempArray;
@@ -464,22 +466,22 @@ function addSearchList(){
 		writer = (storage.fileBoxList[i].writer === null || storage.fileBoxList[i].writer == 0) ? "" : storage.user[storage.fileBoxList[i].writer].userName;
 		disDate = dateDis(storage.fileBoxList[i].created, storage.fileBoxList[i].modified);
 		setDate = parseInt(dateFnc(disDate).replaceAll("-", ""));
-		storage.searchList.push("#" + no + "#" + title + "#" + writer + "#created" + setDate);
+		storage.searchList.push("#" + title + "#" + writer + "#created" + setDate);
 	}
 }
 
 function searchSubmit(){
 	let dataArray = [], resultArray, eachIndex = 0, searchTitle, searchCreatedFrom;
 
-	searchTitle = $("#searchTitle").val();
-	searchWriter = $("#searchWriter").val();
-	searchCreatedFrom = ($("#searchCreatedFrom").val() === "") ? "" : $("#searchCreatedFrom").val().replaceAll("-", "") + "#created" + $("#searchCreatedTo").val().replaceAll("-", "");
+	searchTitle = "#1/" + document.getElementById("searchTitle").value;
+	searchWriter = "#2/" + document.getElementById("searchWriter").value;
+	searchCreatedFrom = (document.getElementById("searchCreatedFrom").value === "") ? "" : document.getElementById("searchCreatedFrom").value.replaceAll("-", "") + "#created" + document.getElementById("searchCreatedTo").value.replaceAll("-", "");
 	
 	let searchValues = [searchTitle, searchWriter, searchCreatedFrom];
 
 	for(let i = 0; i < searchValues.length; i++){
 		if(searchValues[i] !== "" && searchValues[i] !== undefined && searchValues[i] !== null){
-			let tempArray = searchDataFilter(storage.fileBoxList, searchValues[i], "multi");
+			let tempArray = CommonDatas.searchDataFilter(storage.fileBoxList, searchValues[i], "multi");
 			
 			for(let t = 0; t < tempArray.length; t++){
 				dataArray.push(tempArray[t]);
@@ -489,7 +491,7 @@ function searchSubmit(){
 		}
 	}
 
-	resultArray = searchMultiFilter(eachIndex, dataArray, storage.fileBoxList);
+	resultArray = CommonDatas.searchMultiFilter(eachIndex, dataArray, storage.fileBoxList);
 	
 	storage.searchDatas = resultArray;
 

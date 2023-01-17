@@ -3252,7 +3252,7 @@ function noteListBadge() {
 				} else {
 					badgeSpan.remove();
 				}
-			}
+			}wd
 		}
 	})
 }
@@ -3276,7 +3276,13 @@ function listRangeChange(e, drawList) {
 	if (thisEle.val() > 0) {
 		storage.articlePerPage = thisEle.val();
 	} else {
-		storage.articlePerPage = undefined;
+		storage.articlePerPage = undef
+		
+		
+		
+		
+		
+		ined;
 	}
 	drawList();
 }
@@ -3430,12 +3436,12 @@ function addAutoComplete(e) {
 						}
 					}
 				} else if (thisEle.dataset.complete === "user") {
-					if (storage[thisEle.dataset.complete][key].userName.indexOf(thisEle.val()) > -1) {
+					if (storage[thisEle.dataset.complete][key].userName.indexOf(thisEle.value) > -1) {
 						listDiv.dataset.value = storage[thisEle.dataset.complete][key].userNo;
 						listDiv.innerHTML = storage[thisEle.dataset.complete][key].userName;
 					}
 				} else if (thisEle.dataset.complete === "sopp" || thisEle.dataset.complete === "contract") {
-					if (storage[thisEle.dataset.complete][key].title.indexOf(thisEle.val()) > -1) {
+					if (storage[thisEle.dataset.complete][key].title.indexOf(thisEle.value) > -1) {
 						listDiv.dataset.value = storage[thisEle.dataset.complete][key].no;
 						listDiv.innerHTML = storage[thisEle.dataset.complete][key].title;
 					}

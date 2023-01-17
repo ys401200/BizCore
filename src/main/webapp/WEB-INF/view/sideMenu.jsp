@@ -36,12 +36,12 @@
 					<a href="/business/workreport2">주간 업무 보고</a>
 				</div>
 			</div>
-			<div class="menuItem">
+			<!-- <div class="menuItem">
 				<a href="/business/sales">
 					<img src="/images/main/icons/mainSchedIcon.png" id="mainSalesIcon" />
 					<span>영업활동관리</span>
 				</a>
-			</div>
+			</div> -->
 			<div class="menuItem">
 				<input type="radio" id="sopp" name="sideMenu" onclick="CommonDatas.sideMenuItemClick();">
 				<label for="sopp">
@@ -68,12 +68,12 @@
 					<span>계약관리</span>
 				</a>
 			</div>
-			<div class="menuItem">
+			<!-- <div class="menuItem">
 				<a href="/business/tech">
 					<img src="/images/main/icons/mainSchedIcon.png" id="mainSalesIcon" />
 					<span>기술지원관리</span>
 				</a>
-			</div>
+			</div> -->
 			<div class="menuItem">
 				<a href="/business/filebox">
 					<img src="/images/main/icons/mainBoardFileIcon.png" id="mainBoardFileIcon" />

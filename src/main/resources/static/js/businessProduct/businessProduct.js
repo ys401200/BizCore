@@ -34,13 +34,13 @@ function drawProductList() {
 		}
 	}
 
-	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+	result = CommonDatas.paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 
 	hideArr = ["detailBackBtn", "crudUpdateBtn", "crudDeleteBtn"];
 	showArr = ["gridList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "crudAddBtn", "listSearchInput"];
-	containerTitle = $("#containerTitle");
+	containerTitle = document.getElementById("containerTitle");
 	pageContainer = document.getElementsByClassName("pageContainer");
-	container = $(".gridList");
+	container = document.getElementsByClassName("gridList")[0];
 
 	header = [
 		{
@@ -69,6 +69,7 @@ function drawProductList() {
 		str = [
 			{
 				"setData": undefined,
+				"align": "center",
 				"col": 5,
 			},
 		];
@@ -110,13 +111,14 @@ function drawProductList() {
 			data.push(str);
 		}
 	
-		let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawProductList", result[0]);
+		let pageNation = CommonDatas.createPaging(pageContainer[0], result[3], "pageMove", "drawProductList", result[0]);
 		pageContainer[0].innerHTML = pageNation;
 	}
 
-	containerTitle.html("상품조회");
-	createGrid(container, header, data, ids, job, fnc);
-	setViewContents(hideArr, showArr);
+	containerTitle.innerHTML = "상품조회";
+	CommonDatas.createGrid(container, header, data, ids, job, fnc);
+	document.getElementById("multiSearchBtn").setAttribute("onclick", "searchSubmit();");
+	CommonDatas.setViewContents(hideArr, showArr);
 }
 
 function productSuccessList(result){
@@ -405,8 +407,8 @@ function productErrorDelete(){
 
 function searchInputKeyup(){
 	let searchAllInput, tempArray;
-	searchAllInput = $("#searchAllInput").val();
-	tempArray = searchDataFilter(storage.productList, searchAllInput, "input");
+	searchAllInput = document.getElementById("searchAllInput").value;
+	tempArray = CommonDatas.searchDataFilter(storage.productList, searchAllInput, "input");
 
 	if(tempArray.length > 0){
 		storage.searchDatas = tempArray;
@@ -432,15 +434,15 @@ function addSearchList(){
 function searchSubmit(){
 	let dataArray = [], resultArray, eachIndex = 0, searchVendor, searchCategoryName, searchName;
 
-	searchVendor = $("#searchVendor").val();
-	searchCategoryName = $("#searchCategoryName").val();
-	searchName = $("#searchName").val();
+	searchVendor = "#1/" + document.getElementById("searchVendor").value;
+	searchCategoryName = "#2/" + document.getElementById("searchCategoryName").value;
+	searchName = "#3/" + document.getElementById("searchName").value;
 	
 	let searchValues = [searchVendor, searchCategoryName, searchName];
 
 	for(let i = 0; i < searchValues.length; i++){
 		if(searchValues[i] !== "" && searchValues[i] !== undefined && searchValues[i] !== null){
-			let tempArray = searchDataFilter(storage.productList, searchValues[i], "multi");
+			let tempArray = CommonDatas.searchDataFilter(storage.productList, searchValues[i], "multi");
 			
 			for(let t = 0; t < tempArray.length; t++){
 				dataArray.push(tempArray[t]);
@@ -450,7 +452,7 @@ function searchSubmit(){
 		}
 	}
 
-	resultArray = searchMultiFilter(eachIndex, dataArray, storage.productList);
+	resultArray = CommonDatas.searchMultiFilter(eachIndex, dataArray, storage.productList);
 	
 	storage.searchDatas = resultArray;
 

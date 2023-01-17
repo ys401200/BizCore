@@ -161,6 +161,7 @@ function drawSalesList() {
 
 	containerTitle.html("영업활동조회");
 	createGrid(container, header, data, ids, dataJob, fnc);
+	document.getElementById("multiSearchBtn").setAttribute("onclick", "searchSubmit();");
 	setViewContents(hideArr, showArr);
 
 	let path = $(location).attr("pathname").split("/");
@@ -324,32 +325,32 @@ function salesSuccessView(result){
 			"title": "담당자(*)",
 			"elementId": "writer",
 			"complete": "user",
-			"keyup": "addAutoComplete(this);",
-			"onClick": "addAutoComplete(this);",
+			"keyup": "CommonDatas.addAutoComplete(this);",
+			"onClick": "CommonDatas.addAutoComplete(this);",
 			"value": writer,				
 		},
 		{
 			"title": "영업기회",
 			"elementId": "sopp",
 			"complete": "sopp",
-			"keyup": "addAutoComplete(this);",
-			"onClick": "addAutoComplete(this);",
+			"keyup": "CommonDatas.addAutoComplete(this);",
+			"onClick": "CommonDatas.addAutoComplete(this);",
 			"value": sopp,
 		},
 		{
 			"title": "매출처",
 			"elementId": "customer",
 			"complete": "customer",
-			"keyup": "addAutoComplete(this);",
-			"onClick": "addAutoComplete(this);",
+			"keyup": "CommonDatas.addAutoComplete(this);",
+			"onClick": "CommonDatas.addAutoComplete(this);",
 			"value": customer,
 		},
 		{
 			"title": "엔드유저",
 			"elementId": "partner",
 			"complete": "customer",
-			"keyup": "addAutoComplete(this);",
-			"onClick": "addAutoComplete(this);",
+			"keyup": "CommonDatas.addAutoComplete(this);",
+			"onClick": "CommonDatas.addAutoComplete(this);",
 			"value": partner,
 		},
 		{
@@ -413,11 +414,9 @@ function salesSuccessList(result){
 	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined){
 		window.setTimeout(drawSalesList, 600);
 		window.setTimeout(addSearchList, 600);
-		window.setTimeout(searchContainerSet, 600);
 	}else{
 		window.setTimeout(drawSalesList, 200);
 		window.setTimeout(addSearchList, 200);
-		window.setTimeout(searchContainerSet, 200);
 	}
 }
 
@@ -545,16 +544,16 @@ function salesInsertForm(){
 			"title": "담당자(*)",
 			"elementId": "writer",
 			"complete": "user",
-			"keyup": "addAutoComplete(this);",
-			"onClick": "addAutoComplete(this);",
+			"keyup": "CommonDatas.addAutoComplete(this);",
+			"onClick": "CommonDatas.addAutoComplete(this);",
 			"value": myName,
 		},
 		{
 			"title": "영업기회",
 			"elementId": "sopp",
 			"complete": "sopp",
-			"keyup": "addAutoComplete(this);",
-			"onClick": "addAutoComplete(this);",
+			"keyup": "CommonDatas.addAutoComplete(this);",
+			"onClick": "CommonDatas.addAutoComplete(this);",
 			"disabled": false,
 		},
 		{
@@ -562,16 +561,16 @@ function salesInsertForm(){
 			"disabled": false,
 			"elementId": "customer",
 			"complete": "customer",
-			"keyup": "addAutoComplete(this);",
-			"onClick": "addAutoComplete(this);",
+			"keyup": "CommonDatas.addAutoComplete(this);",
+			"onClick": "CommonDatas.addAutoComplete(this);",
 		},
 		{
 			"title": "엔드유저",
 			"disabled": false,
 			"elementId": "partner",
 			"complete": "customer",
-			"keyup": "addAutoComplete(this);",
-			"onClick": "addAutoComplete(this);",
+			"keyup": "CommonDatas.addAutoComplete(this);",
+			"onClick": "CommonDatas.addAutoComplete(this);",
 		},
 		{
 			"title": "제목(*)",
@@ -758,8 +757,8 @@ function salesErrorDelete(){
 
 function searchInputKeyup(){
 	let searchAllInput;
-	searchAllInput = $("#searchAllInput").val();
-	tempArray = searchDataFilter(storage.scheduleList, searchAllInput, "input");
+	searchAllInput = document.getElementById("searchAllInput").value;
+	tempArray = CommonDatas.searchDataFilter(storage.scheduleList, searchAllInput, "input");
 
 	if(tempArray.length > 0){
 		storage.searchDatas = tempArray;
@@ -778,6 +777,7 @@ function addSearchList(){
 		no = storage.scheduleList[i].no;
 		writer = (storage.scheduleList[i].writer === null || storage.scheduleList[i].writer == 0) ? "" : storage.user[storage.scheduleList[i].writer].userName;
 		customer = (storage.scheduleList[i].customer === null || storage.scheduleList[i].customer == 0) ? "" : storage.customer[storage.scheduleList[i].customer].name;
+		place = (storage.scheduleList[i].place === null || storage.scheduleList[i].place === "") ? "" : storage.scheduleList[i].place;
 		title = storage.scheduleList[i].title;
 		job = "영업일정";
 		type = storage.code.etc[storage.scheduleList[i].type];
@@ -787,24 +787,23 @@ function addSearchList(){
 		to = parseInt(dateFnc(disDate).replaceAll("-", ""));
 		disDate = dateDis(storage.scheduleList[i].created, storage.scheduleList[i].modified);
 		setCreated = parseInt(dateFnc(disDate).replaceAll("-", ""));
-		storage.searchList.push("#" + no + "#" + writer + "#" + customer + "#" + title + "#" + job + "#" + type + "#from" + from + "#to" + to + "#created" + setCreated);
+		storage.searchList.push("#" + writer + "#" + customer + "#" + type + "#from" + from + "#to" + to);
 	}
 }
 
 function searchSubmit(){
 	let dataArray = [], resultArray, eachIndex = 0, searchWriter, searchCustomer, searchJob, searchType, searchDateFrom, searchDateTo, searchCreatedFrom;
 
-	searchWriter = $("#searchWriter").val();
-	searchCustomer = $("#searchCustomer").val();
-	searchJob = $("#searchJob").val();
-	searchType = $("#searchType").val();
-	searchDateFrom = ($("#searchDateFrom").val() === "") ? "" : $("#searchDateFrom").val().replaceAll("-", "") + "#from" + $("#searchDateTo").val().replaceAll("-", "");
+	searchWriter = "#1/" + document.getElementById("searchWriter").value;
+	searchCustomer = "#2/" + document.getElementById("searchCustomer").value;
+	searchType = "#3/" + document.getElementById("searchType").value;
+	searchDateFrom = (document.getElementById("searchDateFrom").value === "") ? "" : document.getElementById("searchDateFrom").value.replaceAll("-", "") + "#from" + document.getElementById("searchDateTo").value.replaceAll("-", "");
 	
 	let searchValues = [searchWriter, searchCustomer, searchJob, searchType, searchDateFrom];
 
 	for(let i = 0; i < searchValues.length; i++){
 		if(searchValues[i] !== "" && searchValues[i] !== undefined && searchValues[i] !== null){
-			let tempArray = searchDataFilter(storage.scheduleList, searchValues[i], "multi");
+			let tempArray = CommonDatas.searchDataFilter(storage.scheduleList, searchValues[i], "multi");
 			
 			for(let t = 0; t < tempArray.length; t++){
 				dataArray.push(tempArray[t]);
@@ -814,7 +813,7 @@ function searchSubmit(){
 		}
 	}
 
-	resultArray = searchMultiFilter(eachIndex, dataArray, storage.scheduleList);
+	resultArray = CommonDatas.searchMultiFilter(eachIndex, dataArray, storage.scheduleList);
 	storage.searchDatas = resultArray;
 
 	if(storage.searchDatas.length == 0){

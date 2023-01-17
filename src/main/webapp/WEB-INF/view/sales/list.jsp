@@ -12,11 +12,11 @@
 			<div class="searchMultiContent">
 				<div class="searchWriter">
 					<span>담당자</span>
-					<input type="text" data-complete="user" autocomplete="off" id="searchWriter" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">
+					<input type="text" data-complete="user" autocomplete="off" id="searchWriter" onclick="CommonDatas.addAutoComplete(this);" onkeyup="CommonDatas.addAutoComplete(this);">
 				</div>
 				<div class="searchCustomer">
 					<span>거래처</span>
-					<input type="text" data-complete="customer" autocomplete="off" id="searchCustomer" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">
+					<input type="text" data-complete="customer" autocomplete="off" id="searchCustomer" onclick="CommonDatas.addAutoComplete(this);" onkeyup="CommonDatas.addAutoComplete(this);">
 				</div>
 				<div class="searchType">
 					<span>활동형태</span>
@@ -46,7 +46,7 @@
 				<div class="searchDate">
 					<span>일정시작일</span>
 					<div class="searchGridItem">
-						<input type="date" id="searchDateFrom" max="9999-12-31" data-date-type="from" onchange="searchDateDefaultSet(this);">
+						<input type="date" id="searchDateFrom" max="9999-12-31" data-date-type="from" onchange="CommonDatas.searchDateDefaultSet(this);">
 						<span>~</span>
 						<input type="date" id="searchDateTo" max="9999-12-31" data-date-type="to" onchange="searchDateDefaultSet(this);">
 					</div>
