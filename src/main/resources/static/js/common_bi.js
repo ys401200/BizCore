@@ -1255,7 +1255,12 @@ class Schedule{
 			R.schedule.related.appLine = y * 1;
 			R.schedule.permitted = 0;
 		}
-	
+		// =============== parent = ===============
+		if(R.sopp !== undefined){
+			if(R.schedule.related === undefined)	R.schedule.related = {};
+			R.schedule.related.parent = "sopp:" + R.sopp.no;
+		}
+
 		// ===== 필수 데이터 검증
 		x = document.getElementsByClassName("schedule-gw");
 		if(R.schedule.title === ""){
