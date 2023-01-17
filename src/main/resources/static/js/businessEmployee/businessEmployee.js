@@ -156,7 +156,7 @@ function clickedDeptAdd(){
 				if (response.result === "ok") {
 					sessionStorage.removeItem("deptMapData");
 					sessionStorage.removeItem("deptMapTime");
-					getDeptMap();
+					getDeptMap(false);
 					window.setTimeout(function(){
 						let cnt, els, x;
 						setDeptTree();
