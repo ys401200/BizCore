@@ -1494,11 +1494,9 @@ function setSoppList() {
   soppTarget.innerHTML = soppHtml;
   $("#" + formId + "_sopp").attr("list", "_infoSopp");
 
-  //선택 후 수정하는 경우에
-  if (formId == "doc_Form_Resolution" && $(".btnDiv").children.length == 2) {
-    $(".btnDiv").append(
-      "<button onclick='getCardDetails()'>법인카드 내역</button>"
-    );
+  // //선택 후 수정하는 경우에
+  if (formId == "doc_Form_Resolution") {
+    $(".deletebtn").next().hide();
   }
 }
 

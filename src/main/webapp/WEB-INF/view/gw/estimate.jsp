@@ -30,9 +30,10 @@
 
 				<style>
 					/* 에디터 체크  */
-					.cke_chrome {
+					.cke_editable {
 						border: none;
-						box-shadow: none;
+						min-height: 300px;
+
 					}
 
 					.inputsAuto,
@@ -68,6 +69,7 @@
 					.infoline {
 						display: grid;
 						grid-template-columns: 50% 50%;
+
 					}
 
 					.infoDiv {
@@ -103,7 +105,7 @@
 					.subDataDetail>div {
 						text-align: center;
 						display: grid;
-						grid-template-columns: repeat(4, 1fr);
+						grid-template-columns: 25%25%25%25%;
 						border-left: 1px solid black;
 						border-top: 1px solid black;
 					}
