@@ -514,9 +514,8 @@
           let tt = result.replaceAll(/\n+/g, "");
           tt = tt.replaceAll(/\t+/g, "");  
           tt = tt.replaceAll("\\","&#8361;");
+          window.aa = tt;
           tt = JSON.parse(tt);
-         
-       
           if (tt.result === "ok") {
             docList = tt.data;
             storage.docList = docList;
@@ -537,9 +536,11 @@
         url: _server + "/" + docNo,
         method: "get",
         success: (result) => {
-          let tt = result.replace(/\n+/g, "");
-          tt = tt.replace(/\t+/g, "");
+          let tt = result.replaceAll(/\n+/g, "");
+          tt = tt.replaceAll(/\t+/g, "");
+          tt = tt.replaceAll("//","	&#8361;");
           tt = JSON.parse(tt);
+        
           if (tt.result === "ok") {
             docInfo = {
               files: tt.files,
@@ -549,10 +550,12 @@
             storage.docInfo = docInfo;
             drawClickedDetail(docNo);
           } else {
+            console.log(docNo +"fail");
             console.log("[ERROR] Failure parse.");
           }
         },
         error: () => {
+          console.log(docNo +"fail");
           console.log("[ERROR] Failure getting document information.");
         },
       });
@@ -930,7 +933,8 @@
                       dataTitles[j] +
                       "' style='border-right:1px solid black; border-bottom:1px solid black;padding:0.3em;'>";
                   } else if (dataTitles[j] == "date") {
-                    let date = getYmdHyphen(info.docData[q][dataTitles[j]]);
+                    let date = info.docData[q][dataTitles[j]] == -1 ? "" : getYmdHyphen(info.docData[q][dataTitles[j]]);
+
                     dataHtml +=
                       "<input class='inputs outlineNonedata " +
                       id +
@@ -1768,7 +1772,7 @@
           contentType: "text/plain",
           success: (result) => {
             if (result.result === "ok") {
-              //  console.log("성공");
+              console.log("성공");
             } else {
               console.log("실패" + result.msg);
             }
@@ -1993,7 +1997,8 @@
                 dataTitles[j] +
                 "'  style='border-right:1px solid black; border-bottom:1px solid black; padding:0.3em;'>";
             } else if (dataTitles[j] == "date") {
-              let date = getYmdHyphen(info.docData[q][dataTitles[j]]);
+
+              let date = info.docData[q][dataTitles[j]] == -1 ? "" : getYmdHyphen(info.docData[q][dataTitles[j]]);
               dataHtml +=
                 "<input class='inputs  " +
                 id +
@@ -2271,20 +2276,19 @@
       insertDataFnc(dataStatus, insertData, num, id, created, appDatas);
     }
 
-    // 10월 31일까지 1153개의 문서 중 결재 완료된 문서만 추가함 
+   
 
-    // for(let r = 0 ; r < storage.docList.length; r++) {
-    //     if(storage.docList[r].no != 1823 && storage.docList[r].no != 1766&& storage.docList[r].no != 2952&& storage.docList[r].no != 3908 && storage.docList[r].no != 4146) {
-    //         getDocData(storage.docList[r].no);
-    //     }
-
-    // }
+    for(let r = 0 ; r < storage.docList.length; r++) {
+        if(storage.docList[r].no != 1766 && storage.docList[r].no != 2952 && storage.docList[r].no != 3908 && storage.docList[r].no != 4146) {
+            getDocData(storage.docList[r].no);
+        }
+    }
 
     function setFile() {
       let no = storage.docList[filecount].no;
       if (storage.docList[filecount].status == 3) {
         if (no === 2952) console.log("===== STEP 1 =====");
-        if (no != 1823 && no != 1766 && no != 2952 && no != 3908 && no != 4146) {
+        if (no != 1766 && no != 2952 && no != 3908 && no != 4146) {
           if (no === 2952) console.log("===== STEP 2 =====");
           $.ajax({
             url: apiServer + "/system/doc/attachedFile/" + no,
@@ -2300,7 +2304,7 @@
                 }
               } else {
                 if (no === 2952) console.log("===== STEP 4 =====");
-                console.log("A / 파일 업로드 실패 : " + filecount + "//////" + no);
+               // console.log("A / 파일 업로드 실패 : " + filecount + "//////" + no);
                 filecount++;
 
                 if (filecount < storage.docList.length) {
@@ -2311,7 +2315,7 @@
             },
             error: () => {
               if (no === 2952) console.log("===== STEP 6 =====");
-              console.log("B / 파일 업로드 실패: " + filecount + "//////" + no);
+              //console.log("B / 파일 업로드 실패: " + filecount + "//////" + no);
               filecount++;
               if (filecount < storage.docList.length) {
                 if (no === 2952) console.log("===== STEP 7 =====");
@@ -2330,7 +2334,7 @@
       } else {
         //let no = storage.docList[filecount].no;
         if (no === 2952) console.log("===== STEP 10 =====");
-        console.log("C : " + filecount + "///////");
+       // console.log("C : " + filecount + "///////");
         filecount++;
         if (filecount < storage.docList.length) {
           if (no === 2952) console.log("===== STEP 11 =====");

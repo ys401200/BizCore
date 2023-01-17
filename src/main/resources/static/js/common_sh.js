@@ -1335,9 +1335,9 @@ function setPrevModal(no) {
     let name = ["조달", "일반", "고객사", "협력사", "설치장소", "대금"];
     for (let i = 0; i < 2; i++) {
         if (i == 1) {
-            html += "<input type='radio' name='procureRd' value='" + type[i] + "' id='" + type[i] + "' disabled></input><label for='" + type[i] + "'>" + name[i] + "</label>";
+            html += "<input style='display:none' type='radio' name='procureRd' value='" + type[i] + "' id='" + type[i] + "' disabled></input><label for='" + type[i] + "'>" + name[i] + "</label>";
         } else {
-            html += "<input type='radio' name='procureRd' value='" + type[i] + "' id='" + type[i] + "' disabled></input><label for='" + type[i] + "'>" + name[i] + "</label>";
+            html += "<input style='display:none' type='radio' name='procureRd' value='" + type[i] + "' id='" + type[i] + "' disabled></input><label for='" + type[i] + "'>" + name[i] + "</label>";
         }
     }
     el.innerHTML = html;
@@ -1442,10 +1442,10 @@ function setPrevModal(no) {
         el2.setAttribute("class", "product-option");
         let html = "";
         html += "<div>";
-        html += "<div><circle></circle><div>개시일</div><input type='radio' name='dateRd" + i + "' id='examineCb" + i + "' onclick='examineCheck(this)' checked></input><label for='examineCb" + i + "'>검수일</label><input type='radio' name='dateRd" + i + "'  id='selectCb" + i + "' onclick='insertDateRd(this)'></input><label for='selectCb" + i + "'>선택</label><input type='date' onchange='dateChange(this)' disabled></input></div>";
+        html += "<div><circle></circle><div>개시일</div><input style='display:none' type='radio' name='dateRd" + i + "' id='examineCb" + i + "' onclick='examineCheck(this)' checked></input><label for='examineCb" + i + "'>검수일</label><input style='display:none' type='radio' name='dateRd" + i + "'  id='selectCb" + i + "' onclick='insertDateRd(this)'></input><label for='selectCb" + i + "'>선택</label><input type='date' onchange='dateChange(this)' disabled></input></div>";
         // html += "<div><circle></circle><div>개시일</div><input type='date' onchange='dateChange(this)'></input><input type='checkbox' class='examineCb" + i + "' onclick='examineCheck(this)' checked>검수일</input></div>";
-        html += "<div><circle></circle><div>무상 유지보수</div><input type='radio' name='mtncRd" + i + "' value='mtncY" + i + "' id='mtncY" + i + "' checked onclick='drawDefaultMaintenance(this)'></input><label for='mtncY" + i + "'>Y</label>"
-        html += "<input type='radio' name='mtncRd" + i + "' value='mtncN" + i + "' id='mtncN" + i + "' checked onclick='drawDefaultMaintenance(this)'></input><label for='mtncN" + i + "'>N</label>";
+        html += "<div><circle></circle><div>무상 유지보수</div><input style='display:none' type='radio' name='mtncRd" + i + "' value='mtncY" + i + "' id='mtncY" + i + "' checked onclick='drawDefaultMaintenance(this)'></input><label for='mtncY" + i + "'>Y</label>"
+        html += "<input type='radio' style='display:none' name='mtncRd" + i + "' value='mtncN" + i + "' id='mtncN" + i + "' checked onclick='drawDefaultMaintenance(this)'></input><label for='mtncN" + i + "'>N</label>";
         html += "</div>";
         html += "</div><div><circle></circle><div>기간</div><input type='text' onkeyup='lengthChange(this)'></input><span>년</span><input type='text' onkeyup='lengthChange(this)'></input><span>개월</span></div>";
         el2.innerHTML = html;

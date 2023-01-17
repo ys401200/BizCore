@@ -270,26 +270,35 @@ function setEstData() {
 
   let html = "";
   for (let i = 0; i <= scheduleList.length - 1; i++) {
-    let from, to, title, content, writer, place, schedule;
+    let from, type, to, title, content, writer, place, schedule;
     schedule = scheduleList[i];
     title = (schedule.title === null || schedule.title === undefined || schedule.title === "") ? "" : schedule.title;
     from = (schedule.from === null || schedule.from === undefined || schedule.from === "" || schedule.from == "0") ? "" : getYmdHypen(schedule.from);
-    to = (schedule.to === null || schedule.to === undefined || schedule.to === "" || schedule.to == "0") ? "" : schedule.to;
+    to = (schedule.to === null || schedule.to === undefined || schedule.to === "" || schedule.to == "0") ? "" : getYmdHypen(schedule.to);
+    type = (schedule.type === null || schedule.type === undefined || schedule.type === "") ? "" : schedule.type;
+    type = (type == "outside") ? "외근" : "내근";
     content = (schedule.content === null || schedule.content === undefined || schedule.content === "") ? "" : schedule.content;
     writer = (schedule.writer === null || schedule.writer === undefined || schedule.writer === "") ? "" : schedule.writer;
     place = (schedule.related.place == null || schedule.related.place == undefined || schedule.related.place == "") ? "" : schedule.related.place;
-
+    if (place == "customer") {
+      place = "고객사";
+    } else if (place == "partner") {
+      place = "협력사";
+    } else if (place == "office") {
+      place = "사무실";
+    } else {
+      place = "기타";
+    }
 
 
     html += "<div class='insertedTechSche'>";
-    html += "<input type='date' class='inputs techDate'  data-detail='" + from + "' value='" + from + "' style='text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
-    html += "<input type='text' class='inputs techType' data-detail='' value='' style='text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+    html += "<div class='techDate'  data-detail='" + from +"~"+ to +"' value='" + from + "~"+ to +"' style='display:flex;align-items:center;justify-content:center;font-size: 0.6rem;text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'>"+ from + "~"+ to +"</div>";
+    //html += "<input type='date' class='inputs techDate'  data-detail='" + from + "' value='" + from + "' style='text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
+    html += "<input type='text' class='inputs techType' data-detail='" + type + "' value='" + type + "' style='text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
     html += "<input type='text' class='inputs techTitle' data-detail='" + title + "' value='" + title + "' style='text-overflow:ellipsis;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
     html += "<div class='techContent' data-detail='" + content + "' value='" + content + "'  style='overflow:hidden; white-space:nowrap;text-overflow:ellipsis;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'>" + content + "</div>";
     html += "<input type='text' class='inputs techWriter' data-detail='" + storage.user[writer].userName + "' value='" + storage.user[writer].userName + "'  style='text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
     html += "<input type='text' class='inputs techPlace' data-detail='" + place + "' value='" + place + "' style='text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/></div>";
-
-
 
   }
 
@@ -297,7 +306,7 @@ function setEstData() {
 
 
 
- let mtnc = mtncData;
+  let mtnc = mtncData;
   // let mtnc = [
   //   {
   //     "product": 1100014,
@@ -606,7 +615,7 @@ function reportInsert() {
 
   related = JSON.stringify(related);
 
-  
+
   let cntrctRelated = {
     parent: "sopp:" + storage.soppDetailData.sopp.no,
   }
@@ -636,7 +645,7 @@ function reportInsert() {
     readable: readable,
     temp: temp,
     related: related,
-    contract : ctrtData, 
+    contract: ctrtData,
   };
 
   console.log(data);
@@ -697,7 +706,7 @@ function reportInsert() {
         if (result.result === "ok") {
           alert("기안 완료");
           //createContract(ctrtData);
-           window.close('/gw/estimate/'+ storage.soppDetailData.sopp.no);
+          window.close('/gw/estimate/' + storage.soppDetailData.sopp.no);
         } else {
           alert(result.msg);
         }
@@ -716,7 +725,7 @@ function createContract(ctrtData) {
     success: (result) => {
       if (result.result === "ok") {
         console.log("계약 자동 생성 완료");
-    
+
       } else {
         console.log("계약 자동 생성 실패");
       }
