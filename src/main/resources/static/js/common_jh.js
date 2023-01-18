@@ -596,7 +596,9 @@ class EstimateSet{
 			pageContainer[0].innerHTML = pageNation;
 		}
 	
-		containerTitle.innerHTML = "견적";
+		if(containerTitle !== null){
+			containerTitle.innerText = "견적";
+		}
 		CommonDatas.createGrid(container, header, data, ids, job, fnc);
 		document.getElementById("multiSearchBtn").setAttribute("onclick", "EstimateSet.searchSubmit();");
 		crudAddBtn.innerText = "견적추가";
@@ -710,7 +712,10 @@ class EstimateSet{
 			crudAddBtn.remove();
 		}
 	
-		containerTitle.innerHTML = "견적";
+		if(containerTitle !== null){
+			containerTitle.innerText = "견적";
+		}
+
 		CommonDatas.createGrid(container, header, data, ids, job, fnc);
 		crudUpdateBtn.innerText = "견적수정";
 		crudUpdateBtn.setAttribute("onclick", "EstimateSet.clickedUpdate();");
@@ -735,7 +740,10 @@ class EstimateSet{
 			{element: "versionPreview", display: "block"},
 		];
 		let versionList = document.getElementsByClassName("versionList");
-		containerTitle.innerHTML = "견적";
+
+		if(containerTitle !== null){
+			containerTitle.innerHTML = "견적";
+		}
 
 		if(crudAddBtn !== undefined){
 			crudAddBtn.innerText = "견적추가";
@@ -1953,8 +1961,13 @@ class Common{
 
 	//페이지네이션 전 페이지 값 계산에 대한 함수
 	paging(total, currentPage, articlePerPage) {
-		let getArticle = this.calWindowLength();
-		let lastPage, result = [], max;
+		let lastPage, result = [], max, getArticle;
+
+		if(document.getElementsByClassName("searchContainer")[0] === undefined){
+			getArticle = 10;
+		}else{
+			getArticle = CommonDatas.calWindowLength();
+		}
 	
 		if (currentPage === undefined) {
 			storage.currentPage = 1;
