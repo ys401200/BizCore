@@ -1,8 +1,3 @@
-
-
-
-
-
 function getDetailView() {
     $(".pageContainer").hide();
     $(".listRange").hide();
@@ -48,11 +43,15 @@ function getDetailView() {
     }
 
 
-    $(".listDiv").html(detailHtml);
+    $(".listDiv").html(detailHtml); 
     $(".seletedForm").html(testForm);
 
+    if ( splitArr[2] == "wait" && formId == 'doc_Form_SalesReport') { $($(".mainBtnDiv").children()[3]).hide(); $($(".mainBtnDiv").children()[4]).hide(); }
+    if ( splitArr[2] == "mydraft" && formId == 'doc_Form_SalesReport') { $($(".mainBtnDiv").children()[2]).hide(); }
+    if ( splitArr[2] == "myapp" && storage.reportDetailData.confirmNo != "null") { $($(".mainBtnDiv").children()[2]).hide(); }
+
     $(":file").css("display", "none"); // 첨부파일 버튼 숨기기
-    let width = $(window).width() - $(".gw").width() - 30;
+    let width = ($(window).width() - $(".gw").width() - 30);
     $(".detailReport").css("width", width);
     let tabHtml =
         "<div class='reportInfoTab tabs'>" +
@@ -152,7 +151,7 @@ function getDetailView() {
     }
 
 
-
+    toReadMode();
     // 문서 변경내역 확인 하기 위한 storage 
     storage.oriCbContainer = $("input[name='" + formId + "_RD']:checked").attr(
         "id"
@@ -204,7 +203,7 @@ function getDetailView() {
     }
     let btnDiv = $(".listPageDiv").children()[0];
     $(btnDiv).css("display", "flex");
-    toReadMode();
+
 
     if (splitArr[2] != "mytemp") {
         drawCommentLine();

@@ -240,6 +240,7 @@ function waitDetailView(obj) {
         detailData.doc = detailData.doc.replaceAll('\\"', '"');
         storage.reportDetailData = detailData;
         getDetailView();
+
       } else {
         alert("문서 정보를 가져오는 데 실패했습니다");
         location.href = "/gw/wait";
@@ -433,18 +434,27 @@ function approveBtnEvent() {
     appDoc = null;
   }
 
+
+
   let maintenance = (storage.reportDetailData.related.maintenance == "" ||
-  storage.reportDetailData.related.maintenance == undefined || storage.reportDetailData.related.maintenance == null) ? "" : storage.reportDetailData.related.maintenance;
+    storage.reportDetailData.related.maintenance == undefined || storage.reportDetailData.related.maintenance == null) ? "" : storage.reportDetailData.related.maintenance;
 
   let related = null;
-  let previous = storage.reportDetailData.related.previous
-  related = {
-    "next": "",
-    "parent": "",
-    "previous": "sopp:"+storage.reportDetailData.sopp ,
-    "maintenance": maintenance,
-  }
+  if (formId == "doc_Form_salesReport") {
+    related = {
+      "next": "",
+      "parent": "",
+      "previous": "sopp:" + storage.reportDetailData.sopp,
+      "maintenance": maintenance,
+    }
 
+  } else {
+    related = {
+      "next": "",
+      "parent": "",
+      "previous": "",
+    }
+  }
   related = JSON.stringify(related);
 
 
@@ -462,6 +472,7 @@ function approveBtnEvent() {
 
 
   data = JSON.stringify(data);
+  window.data = data;
   data = cipher.encAes(data);
 
   $.ajax({
@@ -1153,31 +1164,31 @@ function createConfirmBtn() {
   window.setTimeout(setEditor, 100);
 
   $("input[name='" + formId + "_RD']").prop("disabled", false);
-  if(formId != "doc_Form_leatve" && formId != "doc_Form_extension") {
-  setSoppList();
+  if (formId != "doc_Form_leatve" && formId != "doc_Form_extension") {
+    setSoppList();
 
-  let html = $(".infoContentlast")[0].innerHTML;
-  let x;
-  let dataListHtml = "";
+    let html = $(".infoContentlast")[0].innerHTML;
+    let x;
+    let dataListHtml = "";
 
-  // 거래처 데이터 리스트 만들기
-  dataListHtml = "<datalist id='_infoCustomer'>";
-  for (x in storage.customer) {
-    dataListHtml +=
-      "<option data-value='" +
-      x +
-      "' value='" +
-      storage.customer[x].name +
-      "'></option> ";
-  }
-  dataListHtml += "</datalist>";
-  html += dataListHtml;
-  $(".infoContentlast")[0].innerHTML = html;
-  $("#" + formId + "_infoCustomer").attr("list", "_infoCustomer");
+    // 거래처 데이터 리스트 만들기
+    dataListHtml = "<datalist id='_infoCustomer'>";
+    for (x in storage.customer) {
+      dataListHtml +=
+        "<option data-value='" +
+        x +
+        "' value='" +
+        storage.customer[x].name +
+        "'></option> ";
+    }
+    dataListHtml += "</datalist>";
+    html += dataListHtml;
+    $(".infoContentlast")[0].innerHTML = html;
+    $("#" + formId + "_infoCustomer").attr("list", "_infoCustomer");
 
-  if (formId == "doc_Form_SalesReport") {
-    $("#" + formId + "_endCustName").attr("list", "_infoCustomer");
-  }
+    if (formId == "doc_Form_SalesReport") {
+      $("#" + formId + "_endCustName").attr("list", "_infoCustomer");
+    }
     setCusDataList();
     setProductData();
   }

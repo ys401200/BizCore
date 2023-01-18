@@ -1296,6 +1296,7 @@ function setPrevModal(no) {
     $(".modal").prop("style", "width:60%");
 
     $("#confirm").attr("onclick", "openSaleReport(" + no + ")");
+    $("#close").attr("onclick", "modal.hide();");
     let el, el2, cnt;
     let html = "";
 
