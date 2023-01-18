@@ -140,25 +140,25 @@ function setEstData() {
   let formId = "doc_Form_SalesReport";
 
   let soppDetail = storage.soppDetailData.sopp;
-  let writer, sopp, infoCustomer, title, expectedDate, expectedSales;
+  let writer, sopp, infoCustomer, partner, title, expectedDate, expectedSales;
 
   writer = storage.my;
   created = getYmdSlash();
   sopp = (soppDetail.title === null || soppDetail.title === undefined || soppDetail.title === "") ? "" : soppDetail.title;
-  infoCustomer = (soppDetail.customer === null || soppDetail.customer === undefined || soppDetail.customer === "" || soppDetail.customer === 0) ? "" : soppDetail.customer;
+  infoCustomer = (soppDetail.customer === null || soppDetail.customer === undefined || soppDetail.customer === "" || soppDetail.customer === 0) ? "" : storage.customer[soppDetail.customer].name;
+  partner = R.sopp.partner === undefined ? "" : storage.customer[R.sopp.parter].name;
   title = (soppDetail.title === null || soppDetail.title === undefined || soppDetail.title === "") ? "" : soppDetail.title;
   expectedSales = (soppDetail.expectedSales === null || soppDetail.expectedSales === "") ? "" : soppDetail.expectedSales.toLocaleString() + "원"
-  expectedDate = (soppDetail.expactedDate === undefined || soppDetail.expactedDate === "" || soppDetail.expactedDate == 0) ? "" : soppDetail.expactedDate;
+  expectedDate = (soppDetail.expectedDate === undefined || soppDetail.expectedDate === "" || soppDetail.expectedDate == 0) ? "" : getYmdHypen(soppDetail.expectedDate);
 
   $("#" + formId + "_writer").val(storage.user[writer].userName);
   $("#" + formId + "_created").val(getYmdSlash());
   $("#" + formId + "_sopp").val(sopp);
-  $("#" + formId + "_infoCustomer").val(storage.customer[infoCustomer].name);
+  $("#" + formId + "_infoCustomer").val(infoCustomer);
   $("#" + formId + "_title").val(title + " 수주판매 보고");
 
-  console.log(soppDetail.expactedDate);
-  if (soppDetail.expactedDate != null && soppDetail.expactedDate != "" && soppDetail.expactedDate != 0 && soppDetail.expactedDate != undefined) {
-    $("#" + formId + "_expectedDate").val(getYmdHypen(soppDetail.expactedDate));
+  if (soppDetail.expectedDate != null && soppDetail.expectedDate != "" && soppDetail.expectedDate != 0 && soppDetail.expectedDate != undefined) {
+    $("#" + formId + "_expectedDate").val(expectedDate);
   }
 
   $("#" + formId + "_soppTargetAmt").val(expectedSales);

@@ -3,7 +3,7 @@
 select:read-only,
 input[type="text"]:read-only,
 input[type="date"]:read-only {
-  background-color: none;
+  background-color: transparent;
 }
 
 

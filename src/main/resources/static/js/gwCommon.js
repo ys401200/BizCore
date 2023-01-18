@@ -1035,11 +1035,8 @@ function insertData(reportForm) { // let reportForm = "Consult";
 
 
 window.onresize = function () {
-
     let width = $(window).width() - $(".gw").width() - 30;
-    if (width >= 1700) {
         $(".detailReport").css("width", width);
-    }
 }
 
 

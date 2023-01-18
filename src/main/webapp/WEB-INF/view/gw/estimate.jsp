@@ -68,9 +68,11 @@
 
 					.infoline {
 						display: grid;
-						grid-template-columns: 50% 50%;
-
+						/* grid-template-columns: 50% 50%;*/
+						grid-template-columns: 1fr 1fr;
+						grid-column-gap: 1rem;
 					}
+
 
 					.infoDiv {
 						display: grid;
@@ -105,7 +107,7 @@
 					.subDataDetail>div {
 						text-align: center;
 						display: grid;
-						grid-template-columns: 25%25%25%25%;
+						grid-template-columns: repeat(3, 1fr);
 						border-left: 1px solid black;
 						border-top: 1px solid black;
 					}
@@ -580,7 +582,7 @@
 							<div>
 								<!-- <div>고객사 담당자</div> -->
 								<div>협력사</div>
-								<div>가능성</div>
+								<!-- <div>가능성</div> -->
 								<div>매출예정일</div>
 								<div>매출액</div>
 							</div>
@@ -591,9 +593,9 @@
 									style="padding:0.5em;"> -->
 								<input type="text" class="inputs" data-detail=""
 									onkeyup="this.dataset.detail=this.value" id="doc_Form_SalesReport_endCustName">
-								<input type=text onkeyup="setText(this)" class="inputs" data-detail=""
+								<!-- <input type=text onkeyup="setText(this)" class="inputs" data-detail=""
 									onkeyup="this.dataset.detail=this.value" id="doc_Form_SalesReport_soppRate"
-									placeholder="%" style="text-align:right;">
+									placeholder="%" style="text-align:right;"> -->
 								<input class="inputs" type="date" data-detail=""
 									onchange="this.dataset.detail=this.value" id="doc_Form_SalesReport_expectedDate">
 								<input onkeyup="setText(this)" class="inputs" type="text" data-detail=""
