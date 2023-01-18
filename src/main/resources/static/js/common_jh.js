@@ -520,7 +520,16 @@ class EstimateSet{
 		crudAddBtn = document.getElementsByClassName("crudAddBtn")[0];
 		crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
 		hideArr = ["detailBackBtn", "crudUpdateBtn", "estimatePdf", "addPdfForm"];
-		showArr = ["estimateList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "crudAddBtn", "versionPreview", "previewDefault"];
+		showArr = [
+			{element: "estimateList", display: "grid"},
+			{element: "pageContainer", display: "flex"},
+			{element: "searchContainer", display: "block"},
+			{element: "listRange", display: "flex"},
+			{element: "listSearchInput", display: "flex"},
+			{element: "crudAddBtn", display: "flex"},
+			{element: "versionPreview", display: "block"},
+			{element: "previewDefault", display: "block"},
+		];
 		containerTitle = document.getElementById("containerTitle");
 		pageContainer = document.getElementsByClassName("pageContainer");
         container = document.getElementsByClassName("estimateList")[0];
@@ -617,7 +626,15 @@ class EstimateSet{
 		crudAddBtn = document.getElementsByClassName("crudAddBtn")[0];
 		crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
 		hideArr = ["detailBackBtn", "crudUpdateBtn", "estimatePdf", "addPdfForm"];
-		showArr = ["estimateList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "versionPreview", "previewDefault"];
+		showArr = [
+			{element: "estimateList", display: "grid"},
+			{element: "pageContainer", display: "flex"},
+			{element: "searchContainer", display: "block"},
+			{element: "listRange", display: "flex"},
+			{element: "listSearchInput", display: "flex"},
+			{element: "versionPreview", display: "block"},
+			{element: "previewDefault", display: "block"},
+		];
 		containerTitle = document.getElementById("containerTitle");
 		pageContainer = document.getElementsByClassName("pageContainer");
         container = document.getElementsByClassName("estimateList")[0];
@@ -708,6 +725,15 @@ class EstimateSet{
 		let containerTitle = document.getElementById("containerTitle");
 		let hideArr = ["detailBackBtn", "addPdfForm", "mainPdf"];
 		let showArr = ["estimateList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "crudAddBtn", "versionPreview"];
+		showArr = [
+			{element: "estimateList", display: "grid"},
+			{element: "pageContainer", display: "flex"},
+			{element: "searchContainer", display: "block"},
+			{element: "listRange", display: "flex"},
+			{element: "listSearchInput", display: "flex"},
+			{element: "crudAddBtn", display: "flex"},
+			{element: "versionPreview", display: "block"},
+		];
 		let versionList = document.getElementsByClassName("versionList");
 		containerTitle.innerHTML = "견적";
 
@@ -853,8 +879,8 @@ class EstimateSet{
 				total += (item.price * item.quantity) + (item.price * item.quantity * 0.1);
 			}
 	
-			dateSet = dateDis(storage.estimateVerList[x].date);
-			dateSet = dateFnc(dateSet);
+			dateSet = CommonDatas.dateDis(storage.estimateVerList[x].date);
+			dateSet = CommonDatas.dateFnc(dateSet);
 
 			html += "<div class=\"versionListBody\" onclick=\"EstimateSet.clickedEstmVer(this)\" data-id=\"" + x + "\">";
 			html += "<div style=\"justify-content: center;\">" + storage.estimateVerList[x].version + "</div>";
@@ -910,7 +936,7 @@ class EstimateSet{
 		}
 
 		crudUpdateBtn.setAttribute("onclick", "const UpdateClass = new Estimate(storage.estmDetail.related.estimate); UpdateClass.update();");
-		setViewContentsCopy(hideArr, showArr);
+		CommonDatas.setViewContents(hideArr, showArr);
 		this.estimateFormInit();
 	}
 
@@ -954,7 +980,7 @@ class EstimateSet{
 		this.copyContainer = document.getElementsByClassName("copyMainPdf")[0];
 		crudAddBtn.innerText = "새견적추가";
 		crudAddBtn.setAttribute("onclick", "const InsertClass = new Estimate(); InsertClass.insert();");
-		setViewContentsCopy(hideArr, showArr);
+		CommonDatas.setViewContents(hideArr, showArr);
 		storage.estmDetail = undefined;
 		this.estimateFormInit();
 	}
@@ -984,19 +1010,18 @@ class EstimateSet{
 					let value = storage.estmDetail.related.estimate[key];
 					if(key === "date"){
 						if(storage.estmDetail.related.estimate[key] !== null){
+							console.log(storage.estmDetail.related.estimate);
 							value = new Date(storage.estmDetail.related.estimate[key]);
-							value = dateDis(value);
-							value = dateFnc(value);
+							value = CommonDatas.dateDis(value);
+							value = CommonDatas.dateFnc(value);
 						}else{
 							value = new Date().toISOString().substring(0, 10);
 						}
 					}else if(key === "customer"){
 						keyId.dataset.value = value;
 						value = storage.customer[value].name;
-						keyId.value = value;
-					}else{
-						keyId.value = value;
 					}
+					keyId.value = value;
 				}
 	
 			}
@@ -1146,7 +1171,7 @@ class EstimateSet{
 		let thisEle, createDiv;
 		createDiv = document.createElement("div");
 		createDiv.className = "pdfMainContentItem";
-		createDiv.innerHTML = "<div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemSpec\"><input type=\"text\" data-complete=\"product\" data-value=\"0\" onclick=\"addAutoComplete(this);\" onkeyup=\"addAutoComplete(this);\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeyup=\"EstimateSet.itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"EstimateSet.itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"EstimateSet.oneEstItemAdd(this);\">+</button><button type=\"button\" onclick=\"EstimateSet.oneEstItemRemove(this);\">-</button></div>";
+		createDiv.innerHTML = "<div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemSpec\"><input type=\"text\" data-complete=\"product\" data-value=\"0\" onclick=\"CommonDatas.addAutoComplete(this);\" onkeyup=\"CommonDatas.addAutoComplete(this);\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeyup=\"EstimateSet.itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"EstimateSet.itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"EstimateSet.oneEstItemAdd(this);\">+</button><button type=\"button\" onclick=\"EstimateSet.oneEstItemRemove(this);\">-</button></div>";
 		thisEle = e;
 		thisEle.parentElement.before(createDiv);
 		this.productNameSet();
@@ -1160,7 +1185,7 @@ class EstimateSet{
 		let thisEle, parent, createDiv;
 		createDiv = document.createElement("div");
 		createDiv.className = "pdfMainContentItem";
-		createDiv.innerHTML = "<div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemSpec\"><input type=\"text\" data-complete=\"product\" data-value=\"0\" onclick=\"addAutoComplete(this);\" onkeyup=\"addAutoComplete(this);\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeyup=\"EstimateSet.itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"EstimateSet.itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"EstimateSet.oneEstItemAdd(this);\">+</button><button type=\"button\" onclick=\"EstimateSet.oneEstItemRemove(this);\">-</button></div>";
+		createDiv.innerHTML = "<div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemSpec\"><input type=\"text\" data-complete=\"product\" data-value=\"0\" onclick=\"CommonDatas.addAutoComplete(this);\" onkeyup=\"CommonDatas.addAutoComplete(this);\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeyup=\"EstimateSet.itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"EstimateSet.itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"EstimateSet.oneEstItemAdd(this);\">+</button><button type=\"button\" onclick=\"EstimateSet.oneEstItemRemove(this);\">-</button></div>";
 		thisEle = e;
 		parent = thisEle.parentElement.parentElement;
 		parent.after(createDiv);
@@ -1374,7 +1399,7 @@ class EstimateSet{
 			let parent = item.parentElement;
 			let createDiv = document.createElement("div");
 			createDiv.className = "afterDiv";
-			createDiv.innerHTML = item.value;
+			createDiv.innerText = item.value.replace(/<p>/g, "").replace(/<\/p>/g, "").replace(/\/r/g, "").replace(/\/n/g, "");
 			parent.appendChild(createDiv);
 			item.remove();
 		}
@@ -1439,7 +1464,7 @@ class Estimate{
 				}
 			}
 			
-			createDiv.innerHTML = "<div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemSpec\"><input type=\"text\" data-complete=\"product\" data-value=\"0\" onclick=\"addAutoComplete(this);\" onkeyup=\"addAutoComplete(this);\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeyup=\"EstimateSet.itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"EstimateSet.itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"EstimateSet.oneEstItemAdd(this);\">+</button><button type=\"button\" onclick=\"EstimateSet.oneEstItemRemove(this);\">-</button></div>";
+			createDiv.innerHTML = "<div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemSpec\"><input type=\"text\" data-complete=\"product\" data-value=\"0\" onclick=\"CommonDatas.addAutoComplete(this);\" onkeyup=\"CommonDatas.addAutoComplete(this);\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeyup=\"EstimateSet.itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"EstimateSet.itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"EstimateSet.oneEstItemAdd(this);\">+</button><button type=\"button\" onclick=\"EstimateSet.oneEstItemRemove(this);\">-</button></div>";
 			thisBtn = this.copyContainer.getElementsByClassName("pdfMainContentAddBtns")[0].querySelectorAll("button")[1];
 			thisBtn.parentElement.before(createDiv);
 			let pdfMainContentItem = this.copyContainer.getElementsByClassName("pdfMainContentItem")[i];
@@ -2850,12 +2875,12 @@ class Common{
 	detailCheckedTrueView() {
 		for (let key in storage.formList) {
 			if (typeof storage.formList[key] === "object") {
-				for (let key2 in storage.formList[key]) {
-					if (storage.formList[key][key2]) {
-						if (document.getElementById(key2) !== null) {
-							document.getElementById(key2).setAttribute("checked", "checked");
-						} else if (document.getElementById(key + "_" + key2) !== null) {
-							document.getElementById(key + "_" + key2).setAttribute("checked", "checked");
+				if(key === "companyInformation" || key === "transactionInformation" || key === "typeOfSales"){
+					for (let key2 in storage.formList[key]) {
+						if (storage.formList[key][key2]) {
+							if (document.getElementById(key + "_" + key2) !== null) {
+								document.getElementById(key + "_" + key2).setAttribute("checked", "checked");
+							}
 						}
 					}
 				}

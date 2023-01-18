@@ -187,7 +187,7 @@ function customerSuccessView(result){
 				},
 			],
 			"type": "radio",
-			"elementId": ["manufacturer", "partner", "publicCustomer", "civilianCustomer"],
+			"elementId": ["companyInformation_manufacturer", "companyInformation_partner", "companyInformation_publicCustomer", "companyInformation_civilianCustomer"],
 			"elementName": "companyInformation",
 			"onChange" : "radioTrueChange(this);",
 			"col": 4,
@@ -229,7 +229,7 @@ function customerSuccessView(result){
 				},
 			],
 			"type": "radio",
-			"elementId": ["directProcurement", "indirectProcurement", "agencyProcurement", "maintenance", "generalCompany", "hospital", "finance", "public"],
+			"elementId": ["typeOfSales_directProcument", "typeOfSales_indirectProcument", "typeOfSales_agencyProcument", "typeOfSales_maintenance", "typeOfSales_generalCompany", "typeOfSales_hospital", "typeOfSales_finance", "typeOfSales_public"],
 			"elementName": "typeOfSales",
 			"onChange" : "radioTrueChange(this);",
 			"col": 4,
@@ -409,7 +409,7 @@ function customerInsertForm(){
 				},
 			],
 			"type": "radio",
-			"elementId": ["manufacturer", "partner", "publicCustomer", "civilianCustomer"],
+			"elementId": ["companyInformation_manufacturer", "companyInformation_partner", "companyInformation_publicCustomer", "companyInformation_civilianCustomer"],
 			"elementName": "companyInformation",
 			"disabled": false,
 			"onChange" : "radioTrueChange(this);",
@@ -452,7 +452,7 @@ function customerInsertForm(){
 				},
 			],
 			"type": "radio",
-			"elementId": ["directProcurement", "indirectProcurement", "agencyProcurement", "maintenance", "generalCompany", "hospital", "finance", "public"],
+			"elementId": ["typeOfSales_directProcument", "typeOfSales_indirectProcument", "typeOfSales_agencyProcument", "typeOfSales_maintenance", "typeOfSales_generalCompany", "typeOfSales_hospital", "typeOfSales_finance", "typeOfSales_public"],
 			"elementName": "typeOfSales",
 			"onChange" : "radioTrueChange(this);",
 			"disabled": false,
@@ -570,9 +570,9 @@ function customerInsertForm(){
 			"civilianCustomer" : false,
 		},
 		"typeOfSales" : {
-			"directProcurement" : true,
-		 	"indirectProcurement" : false, 
-			"agencyProcurement" : false, 
+			"directProcument" : true,
+		 	"indirectProcument" : false, 
+			"agencyProcument" : false, 
 			"maintenance" : false, 
 			"generalCompany" : false, 
 			"hospital" : false, 
@@ -652,8 +652,8 @@ function customerInsert(){
 		storage.formList.emailForTaxbill = $("#emailForTaxbill").val();
 		storage.formList.fax = $("#fax").val();
 		storage.formList.phone = $("#phone").val();
-		storage.formList.remark1 = $("#remark1").val();
-		storage.formList.remark2 = $("#remark2").val();
+		storage.formList.remark1 = CKEDITOR.instances.remark1.getData().replaceAll("\n", "");
+		storage.formList.remark2 = CKEDITOR.instances.remark2.getData().replaceAll("\n", "");
 		url = "/api/system/customer";
 		method = "post";
 		data = storage.formList;
@@ -665,7 +665,7 @@ function customerInsert(){
 }
 
 function customerSuccessInsert(){
-	// location.reload();
+	location.reload();
 	msg.set("등록완료");
 }
 
@@ -712,8 +712,8 @@ function customerUpdate(){
 		storage.formList.emailForTaxbill = $("#emailForTaxbill").val();
 		storage.formList.fax = $("#fax").val();
 		storage.formList.phone = $("#phone").val();
-		storage.formList.remark1 = $("#remark1").val();
-		storage.formList.remark2 = $("#remark2").val();
+		storage.formList.remark1 = CKEDITOR.instances.remark1.getData().replaceAll("\n", "");
+		storage.formList.remark2 = CKEDITOR.instances.remark2.getData().replaceAll("\n", "");
 		url = "/api/system/customer/" + storage.formList.no;
 		method = "put";
 		data = storage.formList;

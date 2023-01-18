@@ -3585,10 +3585,11 @@ function detailTrueDatas(datas) {
 }
 
 function radioTrueChange(e) {
-	let thisEle, thisEleName, thisEleId;
+	let thisEle, splitStr, thisEleName, thisEleId;
 	thisEle = $(e);
-	thisEleName = thisEle.attr("name");
-	thisEleId = thisEle.attr("id");
+	splitStr = thisEle.attr("id").split("_");
+	thisEleName = splitStr[0];
+	thisEleId =  splitStr[1];
 
 	for (let key in storage.formList[thisEleName]) {
 		storage.formList[thisEleName][key] = false;

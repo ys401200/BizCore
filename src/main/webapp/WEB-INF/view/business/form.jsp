@@ -34,8 +34,8 @@
         </div>
         <div class="headInfoCustomer">
             <span>수 신</span><span style="padding-left: 5px; padding-right: 4px; padding-top: 3px;">:</span>
-            <input type="text" autocomplete="off" class="headInfoCustomer" placeholder="ex) 부경대학교" id="customer" data-complete="customer" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">
-            <input type="text" autocomplete="off" class="headInfoCip" id="cip" placeholder="ex) 담당자명" data-complete="cip" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">
+            <input type="text" autocomplete="off" class="headInfoCustomer" placeholder="ex) 부경대학교" id="customer" data-complete="customer" onclick="CommonDatas.addAutoComplete(this);" onkeyup="CommonDatas.addAutoComplete(this);">
+            <input type="text" autocomplete="off" class="headInfoCip" id="cip" placeholder="ex) 담당자명" data-complete="cip" onclick="CommonDatas.addAutoComplete(this);" onkeyup="CommonDatas.addAutoComplete(this);">
         </div>
         <div class="address">
             <span>주 소</span><span style="padding-left: 5px; padding-right: 4px; padding-top: 3px;">:</span>

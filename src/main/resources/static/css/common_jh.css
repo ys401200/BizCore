@@ -32,6 +32,8 @@
 /* 견적 관련 시작 */
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300&family=Outfit:wght@600&display=swap');
 @font-face {font-family:MalgunGothic; src:url(/fonts/malgun.ttf);}
+@font-face {font-family:Outfit; src:url(/fonts/Outfit.ttf);}
+
 
 .cke_focus{
 	height: auto;
@@ -445,6 +447,12 @@
     box-sizing: border-box;
 }
 
+.addPdfForm{
+    overflow-y: auto;
+    clear: both;
+    height: 100%;
+}
+
 .mainPdf{
     width: 21cm;
     min-height: 29.7cm;
@@ -531,7 +539,8 @@
     padding-top: 30px;
     padding-bottom: 20px;
     font-size: 2.5rem;
-    font-family: 'Outfit', sans-serif;
+    font-weight: 500;
+    font-family: 'Outfit';
 }
 
 .selectAddress{

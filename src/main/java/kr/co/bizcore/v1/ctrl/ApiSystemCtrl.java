@@ -147,7 +147,7 @@ public class ApiSystemCtrl extends Ctrl{
     } // End of customer
 
     @PostMapping("/customer")
-    public String customerPost(HttpServletRequest request, @RequestBody String requestBody) throws JsonMappingException, JsonProcessingException{
+    public String customerPost(HttpServletRequest request, @RequestBody String requestBody) {
         String result = null;
         String compId = null;
         String aesKey = null;
@@ -173,7 +173,7 @@ public class ApiSystemCtrl extends Ctrl{
         }else{
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.dataIsWornFormat + "\"}";
             data = decAes(requestBody, aesKey, aesIv);
-            json = new JSONObject();
+            json = new JSONObject(data);
             cst = new Customer();
             if(!json.isNull("name"))    cst.setName(json.getString("name"));
             if(!json.isNull("taxId"))   cst.setTaxId(json.getString("taxId"));
@@ -231,8 +231,8 @@ public class ApiSystemCtrl extends Ctrl{
         String aesKey = null;
         String aesIv = null;
         String data = null;
-        ObjectMapper mapper = null;
-        Customer customer = null;
+        JSONObject json = null, jsonSub = null;
+        Customer cst = null;
         Msg msg = null;
         HttpSession session = null;
         int x = 0;
@@ -251,10 +251,53 @@ public class ApiSystemCtrl extends Ctrl{
         }else{
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.dataIsWornFormat + "\"}";
             data = decAes(requestBody, aesKey, aesIv);
-            mapper = new ObjectMapper();
-            customer = mapper.readValue(data, Customer.class);
-            customer.setNo(no);
-            x = systemService.modifyCustomer(compId, customer);
+            
+            cst = new Customer();
+            cst.setNo(no);
+
+            json = new JSONObject(data);
+            if(!json.isNull("name"))    cst.setName(json.getString("name"));
+            if(!json.isNull("taxId"))   cst.setTaxId(json.getString("taxId"));
+            if(!json.isNull("ceoName")) cst.setCeoName(json.getString("ceoName"));
+            if(!json.isNull("email"))   cst.setEmail(json.getString("email"));
+            if(!json.isNull("emailForTaxbill")) cst.setEmailForTaxbill(json.getString("emailForTaxbill"));
+            if(!json.isNull("zipCode"))   cst.setZipCode(json.getInt("zipCode"));
+            if(!json.isNull("address"))   cst.setAddress(json.getJSONArray("address").toString());
+            if(!json.isNull("phone"))   cst.setPhone(json.getString("phone"));
+            if(!json.isNull("fax"))     cst.setFax(json.getString("fax"));
+            if(!json.isNull("remark1")) cst.setRemark1(json.getString("remark1"));
+            if(!json.isNull("remark2")) cst.setRemark2(json.getString("remark2"));
+            if(!json.isNull("related")) cst.setRelated(json.getJSONObject("related").toString());
+
+            if(!json.isNull("companyInformation")){
+                jsonSub = json.getJSONObject("companyInformation");
+                if(!jsonSub.isNull("manufacturer")) cst.setCi_manufacturer(jsonSub.getBoolean("manufacturer"));
+                if(!jsonSub.isNull("partner"))      cst.setCi_partner(jsonSub.getBoolean("partner"));
+                if(!jsonSub.isNull("public"))       cst.setCi_public(jsonSub.getBoolean("public"));
+                if(!jsonSub.isNull("civilian"))     cst.setCi_civilian(jsonSub.getBoolean("civilian"));
+            }
+
+            if(!json.isNull("typeOfSales")){
+                jsonSub = json.getJSONObject("typeOfSales");
+                if(!jsonSub.isNull("directProcument"))      cst.setTos_directProcument(jsonSub.getBoolean("directProcument"));
+                if(!jsonSub.isNull("indirectProcument"))    cst.setTos_indirectProcument(jsonSub.getBoolean("indirectProcument"));
+                if(!jsonSub.isNull("agencyProcument"))      cst.setTos_agencyProcument(jsonSub.getBoolean("agencyProcument"));
+                if(!jsonSub.isNull("maintenance"))          cst.setTos_maintenance(jsonSub.getBoolean("maintenance"));
+                if(!jsonSub.isNull("generalCompany"))       cst.setTos_generalCompany(jsonSub.getBoolean("generalCompany"));
+                if(!jsonSub.isNull("hospital"))             cst.setTos_hospital(jsonSub.getBoolean("hospital"));
+                if(!jsonSub.isNull("finance"))              cst.setTos_finance(jsonSub.getBoolean("finance"));
+                if(!jsonSub.isNull("public"))               cst.setTos_public(jsonSub.getBoolean("public"));
+            }
+
+            if(!json.isNull("transactionInformation")){
+                jsonSub = json.getJSONObject("transactionInformation");
+                if(!jsonSub.isNull("supplier")) cst.setTi_supplier(jsonSub.getBoolean("supplier"));
+                if(!jsonSub.isNull("partner"))  cst.setTi_partner(jsonSub.getBoolean("partner"));
+                if(!jsonSub.isNull("client"))   cst.setTi_client(jsonSub.getBoolean("client"));
+                if(!jsonSub.isNull("notTrade")) cst.setTi_notTrade(jsonSub.getBoolean("notTrade"));
+            }
+            
+            x = systemService.modifyCustomer(compId, cst);
             if(x > 0)  result = "{\"result\":\"ok\",\"data\":" + no + "}";
             else        result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
             
