@@ -173,7 +173,7 @@ public class Schedule2Svc extends Svc {
         }catch(SQLException e){e.printStackTrace();}
 
         result = "[";
-        for(x = 0 ; x < list.size() ; x++){
+        if(list != null)    for(x = 0 ; x < list.size() ; x++){
             if(x > 0)   result += ",";
             sch = list.get(x);
             result += sch.toJson();

@@ -615,14 +615,18 @@ class Schedule{
 		
 		this.to = CommonDatas.dateDis(this.to);
 		this.to = CommonDatas.dateFnc(this.to, "yyyy-mm-dd T HH:mm");
-		soppSplit = this.related.parent.split(":");
 
-		axios.get("/api/schedule2/sopp/" + soppSplit[1]).then((response) => {
-			let result = response.data.data;
-			result = cipher.decAes(result);
-			result = JSON.parse(result);
-			sopp = result.title;
-		});
+		if(this.related.parent !== null){
+			soppSplit = this.related.parent.split(":");
+			if(soppSplit[0] === "sopp"){
+				axios.get("/api/sopp/" + soppSplit[1]).then((response) => {
+					let result = response.data.data;
+					result = cipher.decAes(result);
+					result = JSON.parse(result);
+					sopp = result.title;
+				});
+			}
+		}
 
 		dataArray = [
 			{
@@ -692,14 +696,18 @@ class Schedule{
 		
 		this.to = CommonDatas.dateDis(this.to);
 		this.to = CommonDatas.dateFnc(this.to, "yyyy-mm-dd T HH:mm");
-		soppSplit = this.related.parent.split(":");
 
-		axios.get("/api/schedule2/sopp/" + soppSplit[1]).then((response) => {
-			let result = response.data.data;
-			result = cipher.decAes(result);
-			result = JSON.parse(result);
-			sopp = result.title;
-		});
+		if(this.related.parent !== null){
+			soppSplit = this.related.parent.split(":");
+			if(soppSplit[0] === "sopp"){
+				axios.get("/api/sopp/" + soppSplit[1]).then((response) => {
+					let result = response.data.data;
+					result = cipher.decAes(result);
+					result = JSON.parse(result);
+					sopp = result.title;
+				});
+			}
+		}
 
 		dataArray = [
 			{

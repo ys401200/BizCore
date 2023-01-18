@@ -576,14 +576,26 @@ function calendarPrev(){
 }
 
 function scheduleCalendarAjax(){
+	let scheduleRange, url;
 	scheduleRange = document.getElementsByClassName("scheduleRange")[0].value;
 
-	axios.get("/api/schedule2/" + scheduleRange + "/" + storage.currentlongDate).then((response) => {
+	if(scheduleRange === "dept" || scheduleRange === "employee"){
+		url = "/api/schedule2/" + scheduleRange + "/" + storage.user[storage.my].deptId[0] + "/" + storage.currentlongDate;
+	} else {
+		url = "/api/schedule2/" + scheduleRange + "/" + storage.currentlongDate;
+	}
+
+	axios.get(url).then((response) => {
 		let jsonData;
 		jsonData = cipher.decAes(response.data.data);
 		jsonData = JSON.parse(jsonData);
-		storage.scheduleList = jsonData;
-		window.setTimeout(drawCalendar(document.getElementsByClassName("calendar_container")[0]), 200);
+		
+		if(jsonData.length > 0){
+			storage.scheduleList = jsonData;
+			window.setTimeout(drawCalendar(document.getElementsByClassName("calendar_container")[0]), 200);
+		}else{
+			msg.set("데이터가 없습니다.");
+		}
 	});
 }
 
@@ -1948,15 +1960,34 @@ function scheduleErrorDelete(){
 }
 
 function scheduleSelectChange(){
-    let url, method, data, type, scheduleRange;
-
+    let scheduleRange, url;
     scheduleRange = document.getElementsByClassName("scheduleRange")[0].value;
-    url = "/api/schedule/" + scheduleRange;
-    method = "get";
-    data = "";
-    type = "list";
+	
+	if(scheduleRange === "dept"){
+		url = "/api/schedule2/" + scheduleRange + "/" + storage.user[storage.my].deptId[0];
+	}else{
+		url = "/api/schedule2/" + scheduleRange;
+	}
 
-    crud.defaultAjax(url, method, data, type, scheduleSelectSuccess, scheduleSelectError);
+	axios.get(url).then((response) => {
+		let result = response.data.data;
+		result = cipher.decAes(result);
+		result = JSON.parse(result);
+
+		if(result.length > 0){
+			storage.scheduleList = result;
+	
+			if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined){
+				window.setTimeout(drawCalendar(document.getElementsByClassName("calendar_container")[0]), 600);
+				window.setTimeout(searchContainerSet, 800);
+			}else{
+				window.setTimeout(drawCalendar(document.getElementsByClassName("calendar_container")[0]), 200);
+				window.setTimeout(searchContainerSet, 400);
+			}
+		}else{
+			msg.set("데이터가 없습니다.");
+		}
+	})
 }
 
 function scheduleSelectSuccess(result){

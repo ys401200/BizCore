@@ -1399,7 +1399,7 @@ class EstimateSet{
 			let parent = item.parentElement;
 			let createDiv = document.createElement("div");
 			createDiv.className = "afterDiv";
-			createDiv.innerText = item.value.replace(/<p>/g, "").replace(/<\/p>/g, "").replace(/\/r/g, "").replace(/\/n/g, "");
+			createDiv.innerText = item.value.replace(/<p>/g, "").replace(/<\/p>/g, "").replace(/\/r/g, "").replace(/\/n/g, "").replace(/<br \/>/g, "");
 			parent.appendChild(createDiv);
 			item.remove();
 		}

@@ -130,7 +130,7 @@ public class ApiSchedule2Ctrl extends Ctrl {
         return getSchedule(request, response, "dept", value, from, to);
     } // End of getScheduleDept()
     @GetMapping(value = {"employee", "employee/{value:\\d+}", "employee/{value:\\d+}/{from:\\d{13}}", "employee/{value:\\d+}/{from:\\d{13}}/{to:\\d{13}}"})
-    public String getScheduleEmployee(HttpServletRequest request, HttpServletResponse response, @PathVariable(required = true) String value, @PathVariable(required = false) String from, @PathVariable(required = false) String to){
+    public String getScheduleEmployee(HttpServletRequest request, HttpServletResponse response, @PathVariable(required = false) String value, @PathVariable(required = false) String from, @PathVariable(required = false) String to){
         return getSchedule(request, response, "employee", value, from, to);
     } // End of getScheduleEmployee()
 
