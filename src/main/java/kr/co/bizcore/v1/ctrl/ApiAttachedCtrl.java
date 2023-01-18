@@ -47,7 +47,7 @@ public class ApiAttachedCtrl extends Ctrl {
         return sendFileList(request, "appDoc", no);
     }
 
-    // @GetMapping("/filebox/{no:\\d+}/{fileName}")
+    @GetMapping("/filebox/{no:\\d+}/{fileName}")
     public String apiAttachedFileboxListGet(HttpServletRequest request, HttpServletResponse response,
             @PathVariable("no") int no) {
         return sendFileList(request, "sopp", no);
