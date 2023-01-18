@@ -579,8 +579,10 @@ function scheduleCalendarAjax(){
 	let scheduleRange, url;
 	scheduleRange = document.getElementsByClassName("scheduleRange")[0].value;
 
-	if(scheduleRange === "dept" || scheduleRange === "employee"){
+	if(scheduleRange === "dept"){
 		url = "/api/schedule2/" + scheduleRange + "/" + storage.user[storage.my].deptId[0] + "/" + storage.currentlongDate;
+	} else if(scheduleRange === "employee"){
+		url = "/api/schedule2/" + scheduleRange + "/" + storage.my + "/" + storage.currentlongDate;
 	} else {
 		url = "/api/schedule2/" + scheduleRange + "/" + storage.currentlongDate;
 	}
