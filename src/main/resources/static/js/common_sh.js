@@ -463,17 +463,17 @@ class Contract {
                 }
                 customer = mtnc[i].customer != undefined ? storage.customer[mtnc[i].customer].name : "";
                 startDate = (mtnc[i].startDate != null && mtnc[i].startDate != "" && mtnc[i].startDate != undefined) ? getYmdSlashShort(mtnc[i].startDate) : "검수일";
-                endDate = (mtnc[i].endDate != null && mtnc[i].endDate != "" && mtnc[i].endDate != undefined) ? getYmdSlashShort(mtnc[i].endDate) : "검수일";
+                endDate = (mtnc[i].endDate != null && mtnc[i].endDate != "" && mtnc[i].endDate != undefined) ? getYmdSlashShort(mtnc[i].endDate) : "";
                 engineer = mtnc[i].engineer != undefined ? storage.user[mtnc[i].engineer].userName : "";
-                amount = mtnc[i].amount != undefined ? mtnc[i].amount + "원" : "";
+                amount = mtnc[i].amount != undefined ? mtnc[i].amount + "원" : " 무상";
                 mtncList +=
 
-                    "<div>" + product + "\u00A0" + "</div>" +
-                    "<div>" + customer + "\u00A0" + "</div>" +
-                    "<div>" + startDate + "\u00A0" + "</div>" +
-                    "<div>" + "\u00A0" + "~" + "\u00A0" + "</div>" +
-                    "<div>" + endDate + "\u00A0" + "</div>" +
-                    "<div>" + engineer + "\u00A0" + "</div>" +
+                    "<div>"+ "\u00A0" + product + "\u00A0" + "/</div>" +
+                    "<div>"+ "\u00A0" + customer + "\u00A0" + "/</div>" +
+                    "<div>" + "\u00A0"+ startDate + "\u00A0" + "</div>" +
+                    "<div>"+ "\u00A0" + "\u00A0" + "~" + "\u00A0" + "</div>" +
+                    "<div>"+ "\u00A0" + endDate + "\u00A0" + "/</div>" +
+                    "<div>"+ "\u00A0" + engineer + "\u00A0" + "/</div>" +
                     "<div>" + amount + "\u00A0" + "</div>"
                 //     "<input type='checkbox' data-id='" + mtnc[i].no + "'>";
                 // mtncList += "(90일 이전 자동 생성)"

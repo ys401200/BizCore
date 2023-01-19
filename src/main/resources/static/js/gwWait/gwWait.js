@@ -439,15 +439,14 @@ function approveBtnEvent() {
   let maintenance = (storage.reportDetailData.related.maintenance == "" ||
     storage.reportDetailData.related.maintenance == undefined || storage.reportDetailData.related.maintenance == null) ? "" : storage.reportDetailData.related.maintenance;
 
-  let related = null;
-  if (formId == "doc_Form_salesReport") {
+  let related;
+  if (formId.toString().includes("SalesReport")) {
     related = {
       "next": "",
       "parent": "",
       "previous": "sopp:" + storage.reportDetailData.sopp,
       "maintenance": maintenance,
     }
-
   } else {
     related = {
       "next": "",
@@ -1164,7 +1163,7 @@ function createConfirmBtn() {
   window.setTimeout(setEditor, 100);
 
   $("input[name='" + formId + "_RD']").prop("disabled", false);
-  if (formId != "doc_Form_leatve" && formId != "doc_Form_extension") {
+  if (formId != "doc_Form_leave" && formId != "doc_Form_extension") {
     setSoppList();
 
     let html = $(".infoContentlast")[0].innerHTML;

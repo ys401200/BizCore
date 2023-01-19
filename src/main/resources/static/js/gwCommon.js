@@ -883,9 +883,6 @@ function drawChangeInfo() {
 
 
 
-
-
-
 function getYmdSlash(date) {
     let d = new Date(date);
     return (

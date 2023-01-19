@@ -197,6 +197,7 @@
       storage = {},
       cipher,
       filecount = 0;
+    reportcount = 0;
 
     cipher = {
       // 암호화 모듈
@@ -512,8 +513,8 @@
         method: "get",
         success: (result) => {
           let tt = result.replaceAll(/\n+/g, "");
-          tt = tt.replaceAll(/\t+/g, "");  
-          tt = tt.replaceAll("\\","&#8361;");
+          tt = tt.replaceAll(/\t+/g, "");
+          tt = tt.replaceAll("\\", "&#8361;");
           window.aa = tt;
           tt = JSON.parse(tt);
           if (tt.result === "ok") {
@@ -538,9 +539,9 @@
         success: (result) => {
           let tt = result.replaceAll(/\n+/g, "");
           tt = tt.replaceAll(/\t+/g, "");
-          tt = tt.replaceAll("//","	&#8361;");
+          tt = tt.replaceAll("//", "	&#8361;");
           tt = JSON.parse(tt);
-        
+
           if (tt.result === "ok") {
             docInfo = {
               files: tt.files,
@@ -550,12 +551,12 @@
             storage.docInfo = docInfo;
             drawClickedDetail(docNo);
           } else {
-            console.log(docNo +"fail");
+            console.log(docNo + "fail");
             console.log("[ERROR] Failure parse.");
           }
         },
         error: () => {
-          console.log(docNo +"fail");
+          console.log(docNo + "fail");
           console.log("[ERROR] Failure getting document information.");
         },
       });
@@ -779,6 +780,12 @@
                       storage.customer[storage.docList[i][docListTitle[j]]]
                         .name
                     );
+                    $("#" + id + "_infoCustomer").attr("data-detail",
+                      storage.customer[storage.docList[i][docListTitle[j]]]
+                        .name
+                    );
+
+                    storage.custResult = storage.docList[i][docListTitle[j]];
                   }
                 } else if (docListTitle[j] == "sopp") {
                   if (storage.docList[i][docListTitle[j]] == 0) {
@@ -792,8 +799,7 @@
                         storage.docList[i][docListTitle[j]]
                       ) {
                         sopp = storage.soppList[k].title;
-                        storage.soppResult =
-                          storage.docList[i][docListTitle[j]];
+                        storage.soppResult = storage.docList[i][docListTitle[j]];
                       }
                     }
                     $("#" + id + "_sopp").attr("data-detail", sopp);
@@ -1003,9 +1009,8 @@
 
             $(".list_comment")[0].dataset.detail = "old";
             soppAndCus = {
-              sopp: (storage.soppResult = "" ? null : storage.soppResult + ""),
-              customer: (storage.custResult =
-                "" || undefined ? null : storage.custResult + ""),
+              sopp: (storage.soppResult == "" || storage.soppResult == undefined ? "" : storage.soppResult + ""),
+              customer: ((storage.custResult == "" || storage.custResult == undefined) ? "" : storage.custResult + ""),
             };
 
 
@@ -1731,6 +1736,8 @@
       }
     }
 
+
+
     function insertDataFnc(
       dataStatus,
       insertData,
@@ -1739,6 +1746,10 @@
       created,
       appDatas
     ) {
+
+      storage.soppResult = "";
+      storage.custResult = "";
+
       let confirmNo = "";
       if (dataStatus == 3 || dataStatus == -3) {
         confirmNo = $("#" + id + "_no").val();
@@ -1772,14 +1783,14 @@
           contentType: "text/plain",
           success: (result) => {
             if (result.result === "ok") {
-              console.log("성공");
+              console.log("성공"+ $("#" + id + "_no").val());
             } else {
-              console.log("실패" + result.msg);
+              console.log("실패" + result.msg +  $("#" + id + "_no").val());
             }
           },
         });
 
-        // let count = 0;
+
         for (let i = 0; i < appDatas.length; i++) {
           let ten = appDatas[i][10];
           if (ten != null) {
@@ -1810,42 +1821,20 @@
             contentType: "text/plain",
             success: (result) => {
               if (result.result === "ok") {
-                // console.log("결재선 넣기 성공");
+               
+
               } else {
                 console.log("결재선 넣기 실패" + result.msg);
+                
               }
             },
           });
 
-          // if (count != 2) {
-          //     console.log("실패");
-          // }
         }
 
-        // if (storage.docInfo.files != null) {
-        //     let data = {
 
-        //         "docNo": ($("#" + id + "_no").val() + "").split("2022")[1]
-        //     }
-
-        //     data = JSON.stringify(data);
-        //     data = cipher.encAes(data);
-        //     $.ajax({
-        //         url: apiServer + "/system/doc/attachedFile/" + ($("#" + id + "_no").val() + "").split("2022")[1],
-        //         method: "get",
-        //         contentType: "text/plain",
-        //         success: (result) => {
-
-        //             if (result == "ok") {
-        //                 //  console.log("성공");
-        //             } else {
-
-        //                 console.log("파일 업로드 실패" + $("#" + id + "_no").val());
-        //             }
-
-        //         }
-        //     })
-        // }
+      } else {
+      
       }
     }
 
@@ -2276,13 +2265,14 @@
       insertDataFnc(dataStatus, insertData, num, id, created, appDatas);
     }
 
-   
 
-    for(let r = 0 ; r < storage.docList.length; r++) {
-        if(storage.docList[r].no != 1766 && storage.docList[r].no != 2952 && storage.docList[r].no != 3908 && storage.docList[r].no != 4146) {
-            getDocData(storage.docList[r].no);
-        }
-    }
+
+    // for (let r = 0; r < storage.docList.length; r++) {
+    //   if (storage.docList[r].no != 1766 && storage.docList[r].no != 2952 && storage.docList[r].no != 3908 && storage.docList[r].no != 4146) {
+    //     getDocData(storage.docList[r].no);
+    //   }
+    // }
+
 
     function setFile() {
       let no = storage.docList[filecount].no;
@@ -2304,7 +2294,7 @@
                 }
               } else {
                 if (no === 2952) console.log("===== STEP 4 =====");
-               // console.log("A / 파일 업로드 실패 : " + filecount + "//////" + no);
+                console.log("A / 파일 업로드 실패 : " + filecount + "//////" + no);
                 filecount++;
 
                 if (filecount < storage.docList.length) {
@@ -2315,7 +2305,7 @@
             },
             error: () => {
               if (no === 2952) console.log("===== STEP 6 =====");
-              //console.log("B / 파일 업로드 실패: " + filecount + "//////" + no);
+              console.log("B / 파일 업로드 실패: " + filecount + "//////" + no);
               filecount++;
               if (filecount < storage.docList.length) {
                 if (no === 2952) console.log("===== STEP 7 =====");
@@ -2332,9 +2322,9 @@
           window.setTimeout(setFile, 100);
         }
       } else {
-        //let no = storage.docList[filecount].no;
+        let no = storage.docList[filecount].no;
         if (no === 2952) console.log("===== STEP 10 =====");
-       // console.log("C : " + filecount + "///////");
+        console.log("C : " + filecount + "///////");
         filecount++;
         if (filecount < storage.docList.length) {
           if (no === 2952) console.log("===== STEP 11 =====");
