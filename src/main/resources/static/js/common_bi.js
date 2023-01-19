@@ -890,7 +890,13 @@ class Schedule{
 		y.className = "schedule-belong-to";
 		child.appendChild(y);
 		html = "<input type=\"radio\" data-n=\"belong-to\" name=\"schedule-belong-to\" id=\"schedule-belong-to1\" checked value=\"sopp:" + R.sopp.no + "\" /><label for=\"schedule-belong-to1\">영업기회 : " + R.sopp.title + "</label>";
-		html += "<input type=\"radio\" data-n=\"belong-to\" name=\"schedule-belong-to\" id=\"schedule-belong-to2\" value=\"maintenance:0001\" /><label for=\"schedule-belong-to2\">유지보수 : 유지보수 이름</label>";
+		if(contractData !=undefined) {
+		let mtnc = contractData.maintenance;
+		for(let i = 0 ; i <= mtnc.length -1 ; i++) {
+			html += "<input type=\"radio\" data-n=\"belong-to\" name=\"schedule-belong-to\" id=\"schedule-belong-to2\" value='maintenance:"+mtnc[i].no+"' /><label for=\"schedule-belong-to2\">유지보수 : "+mtnc[i].title+"</label>";
+		}	
+		}
+		
 		y.innerHTML = html;
 
 		// ----- 장소 부분

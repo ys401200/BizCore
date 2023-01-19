@@ -1,4 +1,3 @@
-
 class Contracts {
     constructor(_server, cnt) {
         this.list = [];
@@ -163,7 +162,7 @@ class Contract {
 
         el = document.createElement("div");
         cnt.children[cnt.children.length - 1].appendChild(el);
-        el.setAttribute("style","justify-content: center;background-color:white; text-align:center;grid-column :span 2;");
+        el.setAttribute("style", "justify-content: center;background-color:white; text-align:center;grid-column :span 2;");
         el.innerText = "진행 사항이 없습니다";
 
         // el = document.createElement("div");
@@ -453,27 +452,31 @@ class Contract {
                 // }
                 el2 = document.createElement("div");
                 el.appendChild(el2);
-                let product, customer, startDate, endDate, engineer, amount;
-                if (mtnc[i].product != undefined) {
+                let product, title, customer, startDate, endDate, engineer, amount;
+                if (mtnc[i].product != 0) {
                     for (let x in storage.product) {
                         if (mtnc[i].product == storage.product[x].no) {
                             product = storage.product[x].name;
                         }
                     }
+                } else {
+                    product = "-";
+
                 }
+                title = mtnc[i].title;
                 customer = mtnc[i].customer != undefined ? storage.customer[mtnc[i].customer].name : "";
                 startDate = (mtnc[i].startDate != null && mtnc[i].startDate != "" && mtnc[i].startDate != undefined) ? getYmdSlashShort(mtnc[i].startDate) : "검수일";
                 endDate = (mtnc[i].endDate != null && mtnc[i].endDate != "" && mtnc[i].endDate != undefined) ? getYmdSlashShort(mtnc[i].endDate) : "";
                 engineer = mtnc[i].engineer != undefined ? storage.user[mtnc[i].engineer].userName : "";
-                amount = mtnc[i].amount != undefined ? mtnc[i].amount + "원" : " 무상";
+                amount = (mtnc[i].amount != undefined && mtnc[i].amount != 0) ? mtnc[i].amount.toLocaleString() + "원" : " 무상";
                 mtncList +=
-
-                    "<div>"+ "\u00A0" + product + "\u00A0" + "/</div>" +
-                    "<div>"+ "\u00A0" + customer + "\u00A0" + "/</div>" +
-                    "<div>" + "\u00A0"+ startDate + "\u00A0" + "</div>" +
-                    "<div>"+ "\u00A0" + "\u00A0" + "~" + "\u00A0" + "</div>" +
-                    "<div>"+ "\u00A0" + endDate + "\u00A0" + "/</div>" +
-                    "<div>"+ "\u00A0" + engineer + "\u00A0" + "/</div>" +
+                    "<div>" + title + "\u00A0" + "(</div>" +
+                    "<div>" + "\u00A0" + product + "\u00A0" + "/</div>" +
+                    // "<div>" + "\u00A0" + customer + "\u00A0" + "/</div>" +
+                    "<div>" + "\u00A0" + startDate + "\u00A0" + "</div>" +
+                    "<div>" + "\u00A0" + "\u00A0" + "~" + "\u00A0" + "</div>" +
+                    "<div>" + "\u00A0" + endDate + "\u00A0" + "/</div>" +
+                    "<div>" + "\u00A0" + engineer + "\u00A0" + ")" + "\u00A0" + "</div>" +
                     "<div>" + amount + "\u00A0" + "</div>"
                 //     "<input type='checkbox' data-id='" + mtnc[i].no + "'>";
                 // mtncList += "(90일 이전 자동 생성)"
@@ -526,8 +529,8 @@ class Contract {
             el.addEventListener("click", () => {
                 window.open("/business/contract/popup/" + storage.reportDetailData.docNo, "미리보기", "width :210mm");
             })
-          
-            el.setAttribute("style","background-color: #eef1fb;color:blue;cursor:pointer;margin: 0 0.5rem;");
+
+            el.setAttribute("style", "background-color: #eef1fb;color:blue;cursor:pointer;margin: 0 0.5rem;");
 
         } else {
             el.innerText = "-";
@@ -556,7 +559,7 @@ class Contract {
             disabledDiv.setAttribute("style", "color : grey");
             let input = document.getElementsByClassName("dropZone")[0];
             input.setAttribute("disabled", true);
-            input.parentElement.setAttribute("style","color:grey");
+            input.parentElement.setAttribute("style", "color:grey");
         } else {
             let input = document.getElementsByClassName("dropZone")[0];
             input.parentElement.setAttribute("style", "color:blue;background-color:#eef1fb;cursor:pointer;margin: 0 0.5rem;");
@@ -873,7 +876,7 @@ class Contract {
 
     fileChange(obj) {
 
-        let method, data, type, attached, name , cnt;
+        let method, data, type, attached, name, cnt;
         attached = obj.files;
         name = obj.name.split("attached")[1];
         if (storage.attachedList === undefined || storage.attachedList <= 0) {
@@ -926,9 +929,9 @@ class Contract {
                     let binary,
                         x,
                         fData = e.target.result;
-                        console.log(fData);
+                    console.log(fData);
                     const bytes = new Uint8Array(fData);
-                    
+
                     binary = "";
                     for (x = 0; x < bytes.byteLength; x++)
                         binary += String.fromCharCode(bytes[x]);
@@ -969,7 +972,7 @@ class Contract {
 
         }
 
-       
+
         if (name == "contract") {
             $(".contract-progress").children()[1].className = "contract-done";
             $(".contract-progress").children()[2].className = "contract-doing";
@@ -987,8 +990,8 @@ class Contract {
         } else if (name == "supplied") {
             $(".contract-progress").children()[2].className = "contract-done";
             $(".contract-progress").children()[3].className = "contract-doing";
-           cnt = obj.parentElement.parentElement.parentElement.parentElement.nextElementSibling;
-   
+            cnt = obj.parentElement.parentElement.parentElement.parentElement.nextElementSibling;
+
             cnt.setAttribute("style", "color : black");
             let input = document.getElementsByClassName("dropZone")[2];
             input.disabled = false;
@@ -1481,7 +1484,7 @@ function setPrevModal(no) {
     cnt.append(el);
 
 
-    let mtncTitle = [["항목", "product"], ["고객사", "customer"], ["시작일", "startDate"], ["종료일", "endDate"], ["엔지니어", "engineer"], ["금액", "mtncAmount"]];
+    let mtncTitle = [["유지보수명","title"],["항목", "product"], ["고객사", "customer"], ["시작일", "startDate"], ["종료일", "endDate"], ["엔지니어", "engineer"], ["금액", "mtncAmount"]];
 
     for (let i = 0; i < mtncTitle.length; i++) {
         el2 = document.createElement("div");
@@ -1497,7 +1500,7 @@ function setPrevModal(no) {
 
 
 function drawDefaultMaintenance(obj) {
-    let mtncTitle = [["항목", "product"], ["고객사", "customer"], ["시작일", "startDate"], ["종료일", "endDate"], ["엔지니어", "engineer"], ["금액", "mtncAmount"]];
+    let mtncTitle = [["유지보수명","title"],["항목", "product"], ["고객사", "customer"], ["시작일", "startDate"], ["종료일", "endDate"], ["엔지니어", "engineer"], ["금액", "mtncAmount"]];
     let rdVal = $(obj).val().substring(4, 5);
     let productNum;
     let product, productName, customer, startDate, endDate, engineer, mtncAmount;
@@ -1534,6 +1537,7 @@ function drawDefaultMaintenance(obj) {
                     productName = storage.product[x].name;
                 }
             }
+            html += "<input data-detail='' value="+product+" 유지보수"+"></input>";
 
             html += "<div data-detail='" + product + "'>" + productName + "</div>"
 
