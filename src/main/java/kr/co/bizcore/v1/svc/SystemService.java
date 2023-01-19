@@ -39,10 +39,14 @@ public class SystemService extends Svc {
     } // End of test()
 
     // 404 일 때 리턴하기 위한 내용을 세팅하는ㄴ 메서드
-    public void set404(String html){html404 = html;}
+    public void set404(String html) {
+        html404 = html;
+    }
 
     // 500 일 때 리턴하기 위한 내용을 세팅하는ㄴ 메서드
-    public void set500(String html){html500 = html;}
+    public void set500(String html) {
+        html500 = html;
+    }
 
     public String getConnUrl() {
         List<ConnUrl> data = null;
@@ -166,7 +170,8 @@ public class SystemService extends Svc {
         logger.error("SystemService.modifyCustomer() ::::::: ogn = " + ogn.toJson());
         if (ogn == null)
             return -9999;
-        sql = ogn.createUpdateQuery(customer, "bizcore.customer") + " WHERE deleted IS NULL AND compId = '" + compId + "' AND no = " + customer.getNo();
+        sql = ogn.createUpdateQuery(customer, "bizcore.customer") + " WHERE deleted IS NULL AND compId = '" + compId
+                + "' AND no = " + customer.getNo();
         logger.error("SystemService.modifyCustomer() ::::::: sql = " + sql);
         result = executeSqlQuery(sql) > 0 ? result : -1;
         return result;
@@ -192,7 +197,8 @@ public class SystemService extends Svc {
         if (map != null) {
             company = "{\"name\":\"" + map.get("name") + "\",";
             company += ("\"ceo\":\"" + map.get("ceo") + "\",");
-            company += ("\"corpRegNo\":" + (map.get("corpregno") == null ? null : "\"" + map.get("corpregno") + "\"") + ",");
+            company += ("\"corpRegNo\":" + (map.get("corpregno") == null ? null : "\"" + map.get("corpregno") + "\"")
+                    + ",");
             company += ("\"taxId\":" + (map.get("taxid") == null ? null : "\"" + map.get("taxid") + "\"") + ",");
             company += ("\"zipCode\":" + map.get("zipcode") + ",");
             company += ("\"address\":" + map.get("address") + ",");
@@ -210,27 +216,29 @@ public class SystemService extends Svc {
         map.put("accounting", "0");
         map.put("docmng", "0");
         map.put("manager", "0");
-        if(list != null)    for(x = 0 ; x < list.size() ; x++)  map.put(list.get(x).get("f"), list.get(x).get("p"));
+        if (list != null)
+            for (x = 0; x < list.size(); x++)
+                map.put(list.get(x).get("f"), list.get(x).get("p"));
         keyset = map.keySet().toArray();
         permission = "{";
-        for(Object o : keyset)  permission += ("\"_" + o + "\":" + (map.get(o).equals("1") + ","));
+        for (Object o : keyset)
+            permission += ("\"_" + o + "\":" + (map.get(o).equals("1") + ","));
         // 부서권한
         list = systemMapper.getEmployeeDeptPermission(compId, userNo);
-        for(x = 0 ; x < list.size() ; x++){
+        for (x = 0; x < list.size(); x++) {
             map = list.get(x);
-            if(t == null){
+            if (t == null) {
                 t = map.get("dept");
                 permission += ("\"" + t + "\":{");
-            }else if(!t.equals(map.get("dept"))){
+            } else if (!t.equals(map.get("dept"))) {
                 t = map.get("dept");
                 permission += ("},\"" + t + "\":{");
-            }else   permission += ",";
-            if(map.get("func_id") != null)  permission += ("\"" + map.get("func_id") + "\":true");
+            } else
+                permission += ",";
+            if (map.get("func_id") != null)
+                permission += ("\"" + map.get("func_id") + "\":true");
         }
         permission += "}}";
-
-
-
 
         result = "{\"my\":" + userNo + ",";
         result += ("\"widget\":[\"notice/0\"],");
@@ -644,7 +652,8 @@ public class SystemService extends Svc {
         Product ogn = null;
         ogn = productMapper.getProduct(compId, no);
         if (ogn != null && prod != null) {
-            sql = ogn.createUpdateQuery(prod, "bizcore.product") + " WHERE deleted IS NULL AND compId = '" + compId + "' AND no = " + prod.getNo();
+            sql = ogn.createUpdateQuery(prod, "bizcore.product") + " WHERE deleted IS NULL AND compId = '" + compId
+                    + "' AND no = " + prod.getNo();
             result = executeSqlQuery(sql);
         }
         return result;
@@ -820,7 +829,7 @@ public class SystemService extends Svc {
             barr = new boolean[12];
             pstmt = conn.prepareStatement(sql2);
             pstmt.setString(1, compId);
-            pstmt.setString(2, empNo+"");
+            pstmt.setString(2, empNo + "");
             pstmt.setInt(3, year);
             rs = pstmt.executeQuery();
             while (rs.next())
@@ -834,14 +843,14 @@ public class SystemService extends Svc {
                     pstmt = conn.prepareStatement(sql3);
                     pstmt.setLong(1, goals[x]);
                     pstmt.setString(2, compId);
-                    pstmt.setString(3, empNo+"");
+                    pstmt.setString(3, empNo + "");
                     pstmt.setInt(4, year);
                     pstmt.setInt(5, x + 1);
                     y += pstmt.executeUpdate();
                 } else { // 신규 입력
                     pstmt = conn.prepareStatement(sql4);
                     pstmt.setString(1, compId);
-                    pstmt.setString(2, empNo+"");
+                    pstmt.setString(2, empNo + "");
                     pstmt.setInt(3, year);
                     pstmt.setInt(4, x + 1);
                     pstmt.setLong(5, goals[x]);
@@ -1133,8 +1142,9 @@ public class SystemService extends Svc {
             }
             rs.close();
             pstmt.close();
-
-            if(no == -1)    return -99999;
+            logger.info("file no -1 : " + count);
+            if (no == -1)
+                return -99999;
 
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, docNo);
@@ -1147,13 +1157,19 @@ public class SystemService extends Svc {
                 data = isr.readAllBytes();
                 isr.close();
                 file = new File(path + s + no);
-                if (!file.exists())
-                    file.mkdir();
+                if (!file.exists()) {
+                    logger.info("docFileDownloadAndSave :directory not exist");
+                    if(file.mkdir()) {
+                        logger.info("docFileDownloadAndSave :success");
+                    }
+                    
+                }
                 file = new File(path + s + no + s + savedName);
                 fos = new FileOutputStream(file);
                 fos.write(data);
                 fos.close();
                 saveAttachedData("appDoc", no, fileName, savedName, file.length());
+                logger.info("docFileDownloadAndSave : no , fileName, savedName ,  : " + fileName + "//" + savedName + "//" + file.length());
                 count++;
                 data = null;
             }
@@ -1161,10 +1177,9 @@ public class SystemService extends Svc {
         } catch (SQLException | IOException e) {
             e.printStackTrace();
         }
-        logger.info("file count end " + count);
+        logger.info("docFileDownloadAndSave : file count end " + count);
         return count;
 
     } // End of contractFileDownloadAndSave()
-    
 
 }
