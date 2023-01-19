@@ -125,7 +125,7 @@
 
 .sopp-contract {
 	font-size: 0.8rem;
-	padding : 1rem;
+	padding: 1rem;
 }
 
 .sopp-contract>div {
@@ -286,9 +286,9 @@
 .report-modal>div:last-of-type .product-list>.product-option {
 	padding: 0.5rem 1rem;
 	margin-bottom: 1rem;
-	border : 2px solid #f2f5ff;
+	border: 2px solid #f2f5ff;
 	border-top: 1px solid #425da8;
-	
+
 }
 
 .report-modal>div:last-of-type .product-list>.product-option:after {
@@ -375,14 +375,14 @@
 
 .report-modal>div:last-of-type .mtnc-listTitle {
 	display: grid;
-	grid-template-columns: 15% 15% 15% 15% 15% 15% 10%;
+	grid-template-columns: 19% 15% 15% 13% 13% 8% 11% 6%;
 	border-bottom: 1px solid #425da8;
 	background-color: #f2f5ff;
 }
 
 .report-modal>div:last-of-type .mtnc-data>div {
 	display: grid;
-	grid-template-columns: 15% 15% 15% 15% 15% 15% 10%;
+	grid-template-columns: 19% 15% 15% 13% 13% 8% 11% 6%;
 }
 
 .report-modal>div:last-of-type .mtnc-data>div>div {
@@ -408,10 +408,10 @@ circle {
 
 cateLine {
 	height: 0;
-    border-bottom: 0.2rem solid #dedede;
-    display: inline-block;
-    width: 95%;
-    vertical-align: middle;
-    margin-top: 0.5rem;
-    margin-left: 1rem;
+	border-bottom: 0.2rem solid #dedede;
+	display: inline-block;
+	width: 95%;
+	vertical-align: middle;
+	margin-top: 0.5rem;
+	margin-left: 1rem;
 }

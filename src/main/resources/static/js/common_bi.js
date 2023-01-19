@@ -893,7 +893,7 @@ class Schedule{
 		if(contractData !=undefined) {
 		let mtnc = contractData.maintenance;
 		for(let i = 0 ; i <= mtnc.length -1 ; i++) {
-			html += "<input type=\"radio\" data-n=\"belong-to\" name=\"schedule-belong-to\" id=\"schedule-belong-to2\" value='maintenance:"+mtnc[i].no+"' /><label for=\"schedule-belong-to2\">유지보수 : "+mtnc[i].title+"</label>";
+			html += "<input type=\"radio\" data-n=\"belong-to\" name=\"schedule-belong-to\" id='schedule-belong-to"+(i+2)+"' value='maintenance:"+mtnc[i].no+"' /><label for='schedule-belong-to"+(i+2)+"'>유지보수 : "+mtnc[i].title+"</label>";
 		}	
 		}
 		
