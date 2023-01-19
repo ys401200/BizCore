@@ -1146,11 +1146,14 @@ public class SystemService extends Svc {
             if (no == -1)
                 return -99999;
 
+            logger.info("docFileDownloadAndSave :found files / " + docNo);
+
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, docNo);
             rs = pstmt.executeQuery();
             while (rs.next()) {
                 fileName = rs.getString("name");
+                logger.info("docFileDownloadAndSave :file name / " + fileName + " / count : " + (count+1));
                 savedName = createRandomFileName();
                 blob = rs.getBlob("content");
                 isr = blob.getBinaryStream();
@@ -1161,6 +1164,8 @@ public class SystemService extends Svc {
                     logger.info("docFileDownloadAndSave :directory not exist");
                     if(file.mkdir()) {
                         logger.info("docFileDownloadAndSave :success");
+                    }else{
+                        logger.info("docFileDownloadAndSave :fail");
                     }
                     
                 }
