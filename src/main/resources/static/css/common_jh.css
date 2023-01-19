@@ -89,7 +89,7 @@
 
 .listContainer, .eachContainer{
     background: #FFFFFF;
-    overflow-x: auto;
+    overflow: auto;
     box-shadow: 0px 2px 14px rgb(0 0 0 / 12%);
     height: calc(100% - 8px);
 }
@@ -229,7 +229,7 @@
 .listContainer{
 	margin-top: 3px;
 	background: #FFFFFF;
-	overflow: hidden;
+	/* overflow: hidden; */
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
 }
 
@@ -668,7 +668,7 @@
 
 .pdfMainContentHeader{
     display: grid;
-    grid-template-columns: 10% 10% 20% 10% 10% 10% 10% 10% 10%;
+    grid-template-columns: 3% 7% 30% 4% 4% 8% 9% 35%;
     border-bottom: 1px solid #000;
 }
 
@@ -689,7 +689,7 @@
 
 .pdfMainContentTitle{
     display: grid;
-    grid-template-columns: 10% 10% 20% 10% 10% 10% 10% 10% 10%;
+    grid-template-columns: 3% 7% 30% 4% 4% 8% 9% 35%;
     background-color: #FFFF75;
     border-bottom: 1px solid #000;
 }
@@ -730,7 +730,7 @@
 
 .pdfMainContentItem{
     display: grid;
-    grid-template-columns: 10% 10% 20% 10% 10% 10% 10% 10% 10%;
+    grid-template-columns: 3% 7% 30% 4% 4% 8% 9% 35%;
     border-bottom: 1px solid #000;
 }
 
@@ -827,7 +827,7 @@
 .pdfMainContentAmount{
     border-bottom: 1px solid #000;
     display: grid;
-    grid-template-columns: 10% 10% 30% 10% 10% 10% 10% 10%;
+    grid-template-columns: 3% 7% 30% 4% 4% 8% 9% 35%;
 }
 
 .pdfMainContentAmount > div{
@@ -856,7 +856,7 @@
 .pdfMainContentTax{
     border-bottom: 1px solid #000;
     display: grid;
-    grid-template-columns: 10% 10% 30% 10% 10% 10% 10% 10%;
+    grid-template-columns: 3% 7% 30% 4% 4% 8% 9% 35%;
 }
 
 .pdfMainContentTax > div{
@@ -885,7 +885,7 @@
 .pdfMainContentTotal{
     border-bottom: 2px solid #000;
     display: grid;
-    grid-template-columns: 10% 10% 30% 10% 10% 10% 10% 10%;
+    grid-template-columns: 3% 7% 30% 4% 4% 8% 9% 35%;
 }
 
 .pdfMainContentTotal > div{
@@ -930,7 +930,7 @@
 }
 
 .afterDiv{
-    font-size: 11px;
+    font-size: 10px;
     display: flex;
     align-items: center;
 }
@@ -943,18 +943,25 @@
     width: 14vw;
 }
 
-.pdfHeadInfoPrice > .vatInfo > div:last-child{
+.pdfHeadInfoPrice > .vatInfo > div:first-of-type{
+    height: 28px;
+    padding-left: 50px;
+}
+
+.pdfHeadInfoPrice > .vatInfo > div:last-of-type{
     padding-bottom: 4px;
     font-weight: 600;
+    height: 24px;
+    padding-left: 20px;
 }
 
 .pdfHeadInfoPrice > .expInfo > .afterDiv{
-	height: 23px;
+	height: 23.5px;
     font-weight: 600;
 }
 
 .pdfMainContentItem > .itemSpec > .afterDiv:first-child{
-    font-size: 11.5px;
+    font-size: 10.5px;
     font-weight: 600;
 }
 

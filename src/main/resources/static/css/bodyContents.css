@@ -12,7 +12,8 @@
 
 #bodyContents #bodyContent{
 	width: calc(100% - 172px);
-    overflow-y: auto;
+    /* overflow-y: auto; */
+    overflow: hidden;
     padding-top: 3px;
     padding-left: 3px;
     padding-right: 3px;
