@@ -1009,8 +1009,9 @@ class EstimateSet{
 		selectAddress.innerHTML = html;
 		writer.value = storage.user[storage.my].userName;
 		date.value = new Date().toISOString().substring(0, 10);
-	
+		
 		if(storage.estmDetail !== undefined){
+			writer.value = storage.user[storage.estmDetail.writer].userName;
 			for(let key in storage.estmDetail.related.estimate){
 				let keyId = this.copyContainer.querySelector("#" + key);
 
@@ -1018,7 +1019,6 @@ class EstimateSet{
 					let value = storage.estmDetail.related.estimate[key];
 					if(key === "date"){
 						if(storage.estmDetail.related.estimate[key] !== null){
-							console.log(storage.estmDetail.related.estimate);
 							value = new Date(storage.estmDetail.related.estimate[key]);
 							value = CommonDatas.dateDis(value);
 							value = CommonDatas.dateFnc(value);
@@ -1031,12 +1031,19 @@ class EstimateSet{
 					}
 					keyId.value = value;
 				}
-	
 			}
 	
 			if(storage.estmDetail.related.estimate.items.length > 0){
 				const Detail = new Estimate(storage.estmDetail.related.estimate);
 				Detail.detail();
+			}
+		}
+
+		let detailChild = this.copyContainer.getElementsByClassName("pdfMainContainer")[0].children;
+		for(let i = 0; i < detailChild.length; i++){
+			let item = detailChild[i];
+			if(item.getAttribute("class") !== "pdfMainContentAddBtns"){
+				item.style.gridTemplateColumns = "10% 10% 20% 10% 10% 10% 10% 10% 10%";
 			}
 		}
 	
@@ -1166,6 +1173,7 @@ class EstimateSet{
 		let thisEle, subTitleIndex, createDiv;
 		createDiv = document.createElement("div");
 		createDiv.className = "pdfMainContentTitle";
+		createDiv.style.gridTemplateColumns = "10% 10% 20% 10% 10% 10% 10% 10% 10%";
 		createDiv.innerHTML = "<div class=\"subTitleIndex\"></div><div class=\"subTitle\"><input type=\"text\" placeholder=\"타이틀입력\"></div><div></div><div></div><div></div><div class=\"subTitleTotal\"></div><div></div><div></div>";
 		thisEle = e;
 		thisEle.parentElement.before(createDiv);
@@ -1179,6 +1187,7 @@ class EstimateSet{
 		let thisEle, createDiv;
 		createDiv = document.createElement("div");
 		createDiv.className = "pdfMainContentItem";
+		createDiv.style.gridTemplateColumns = "10% 10% 20% 10% 10% 10% 10% 10% 10%";
 		createDiv.innerHTML = "<div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemSpec\"><input type=\"text\" data-complete=\"product\" data-value=\"0\" onclick=\"CommonDatas.addAutoComplete(this);\" onkeyup=\"CommonDatas.addAutoComplete(this);\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeyup=\"EstimateSet.itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"EstimateSet.itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"EstimateSet.oneEstItemAdd(this);\">+</button><button type=\"button\" onclick=\"EstimateSet.oneEstItemRemove(this);\">-</button></div>";
 		thisEle = e;
 		thisEle.parentElement.before(createDiv);
@@ -1193,6 +1202,7 @@ class EstimateSet{
 		let thisEle, parent, createDiv;
 		createDiv = document.createElement("div");
 		createDiv.className = "pdfMainContentItem";
+		createDiv.style.gridTemplateColumns = "10% 10% 20% 10% 10% 10% 10% 10% 10%";
 		createDiv.innerHTML = "<div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemSpec\"><input type=\"text\" data-complete=\"product\" data-value=\"0\" onclick=\"CommonDatas.addAutoComplete(this);\" onkeyup=\"CommonDatas.addAutoComplete(this);\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeyup=\"EstimateSet.itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"EstimateSet.itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"EstimateSet.oneEstItemAdd(this);\">+</button><button type=\"button\" onclick=\"EstimateSet.oneEstItemRemove(this);\">-</button></div>";
 		thisEle = e;
 		parent = thisEle.parentElement.parentElement;
@@ -1405,11 +1415,13 @@ class EstimateSet{
 		for(let i = 0; i < textarea.length; i++){
 			let item = textarea[i];
 			let parent = item.parentElement;
-			let createDiv = document.createElement("div");
-			createDiv.className = "afterDiv";
-			createDiv.innerText = item.value.replace(/<p>/g, "").replace(/<\/p>/g, "").replace(/\/r/g, "").replace(/\/n/g, "").replace(/<br \/>/g, "");
-			parent.appendChild(createDiv);
-			item.remove();
+			if(item.value !== ""){
+				let createDiv = document.createElement("div");
+				createDiv.className = "afterDiv";
+				createDiv.innerText = item.value.replace(/<p>/g, "").replace(/<\/p>/g, "").replace(/\/r/g, "").replace(/\/n/g, "").replace(/<br \/>/g, "");
+				parent.appendChild(createDiv);
+				item.remove();
+			}
 		}
 	}
 	
