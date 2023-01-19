@@ -11,8 +11,9 @@ $(document).ready(() => {
 
 //새로운 스케쥴 리스트 통신 함수
 function getSchedule2List(){
+	let date = new Date().getTime();
 	let scheduleRange = document.getElementsByClassName("scheduleRange")[0].value;
-	axios.get("/api/schedule2/" + scheduleRange).then((response) => {
+	axios.get("/api/schedule2/" + scheduleRange + "/" + date).then((response) => {
 		let result = response.data.data;
 		result = cipher.decAes(result);
 		result = JSON.parse(result);
@@ -246,7 +247,7 @@ function drawCalendar(container){
             if(t > 0){
                 calArr[x1].slot[t] = tempArr[x2];
                 tempArr[x2] = undefined;
-            }           
+            }
         }
         for(x2 = 0 ; x2 < tempArr.length ; x2++){ // 전일 데이터와 맞추지않은 데이터들에 대해 비어있는 상위 슬롯으로 데이터를 넣어줌
             if(tempArr[x2] === undefined)   continue;
