@@ -258,6 +258,9 @@ public class SystemCtrl extends Ctrl {
         if (serviceAnswer > 1) {
             result = "ok";
             // result = "{\"result\":\"ok\"}";
+        }else if (serviceAnswer == 0) {
+            result = "no file";
+            // result = "{\"result\":\"ok\"}";
         } else {
             result = "failure";
             // result = "{\"result\":\"failure\"}";

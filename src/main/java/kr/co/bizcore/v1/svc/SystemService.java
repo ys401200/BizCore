@@ -1127,7 +1127,7 @@ public class SystemService extends Svc {
         String sql = "SELECT docNo AS no, filename AS name, filecontent AS content FROM swcore.swc_businessfiledata WHERE docNo = ? ";
         String sql1 = "select no from bizcore.doc_app where substring(docNo,10) = ?";
         int no = -1;
-        int count = 1;
+        int count = 0;
 
         path = rootPath + s + "vtek" + s + "appDoc";
 
