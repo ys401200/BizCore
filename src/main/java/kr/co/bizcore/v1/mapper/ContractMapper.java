@@ -78,7 +78,7 @@ public interface ContractMapper {
     public Integer getContractNoWithParent(@Param("parent") String parent, @Param("compId") String compId);
 
     // 계약 유지보수 데이터
-    @Select("SELECT no, customer, product, contract, startDate, endDate, engineer, coworker, created, modified, deleted, related from bizcore.maintenance WHERE contract = #{contract} and compId = #{compId}")
+    @Select("SELECT no, customer, title, amount, product, contract, startDate, endDate, engineer, coworker, created, modified, deleted, related from bizcore.maintenance WHERE contract = #{contract} and compId = #{compId}")
     public List<Maintenance> getMaintenance(@Param("contract") int no, @Param("compId") String compId);
 
     @Select("SELECT no, compId, employee, coWorker, customer,title, detail, saleDate, supplied, approved, amount, taxInclude, profit,created, modified, deleted, related FROM bizcore.contract WHERE compId = #{compId}")
