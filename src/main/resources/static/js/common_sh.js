@@ -1020,6 +1020,21 @@ class Contract {
 
     }
 
+
+    update() {
+       let cont = Object.assign({},this);
+       console.log(cont);
+        // 모달에서 startDate 
+        let target = document.getElementsByClassName("schedule-detail")[0].children[1].children[0];
+        let date = ("20" + target.children[1].innerHTML.substring(1).replaceAll(".", "-")).substring(-1, 10);
+        if (document.getElementById("schedule-type2h").checked) {
+            this.supplied = date;
+        } else if (document.getElementById("schedule-type2i").checked) {
+            this.approved = date;
+        }
+
+    }
+
 }
 
 
