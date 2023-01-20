@@ -13,6 +13,7 @@ $(document).ready(() => {
 	no = no !== null && no.substring(no.length - 1) === "#" ? no.substring(0, no.length - 1) : no;
 	no = no !== null ? no * 1 : null;
 	prepareSopp(no);
+	
 });
 
 // 영업기회 내에서 계약 확인 창을 띄우는 함수
@@ -91,7 +92,7 @@ prepareSopp = (no) => {
 				R.sopp.draw();
 				drawChat();
 				getSavedLine();
-
+		
 				setTimeout(() => {
 					EstimateSet = new EstimateSet();
 					EstimateSet.soppEstimateNo(R.sopp.no);
@@ -502,11 +503,13 @@ function drawDetail(soppNo) {
 				R.contract = new Contract(data);
 				R.contract.getReportDetail(cnt);
 			    window.contractData = R.contract;
+				
 			} else {
 				R.contract = new Contract(undefined);
 				R.contract.drawNone();
 				console.log(response.msg);
 				window.contractData = undefined;
+				
 			}
 		});
 

@@ -203,7 +203,7 @@
 
 					.detailDivMtnc {
 						display: grid;
-						grid-template-columns: 20% 20% 12% 12% 10% 10% 16%;
+						grid-template-columns: 16% 16% 16% 12% 12% 8% 10% 10%;
 						text-align: center;
 						border-left: 1px solid black;
 					}
@@ -462,7 +462,7 @@
 
 					.mtncData>div {
 						display: grid;
-						grid-template-columns: 20% 20% 12% 12% 10% 10% 16%;
+						grid-template-columns: 16% 16% 16% 12% 12% 8% 10% 10%;
 						border-left: 1px solid black;
 					}
 
@@ -663,6 +663,7 @@
 						<div class="insertedData">
 							<div class="subTitle">유지보수 내역</div>
 							<div class="detailDivMtnc">
+								<div class="datailTitle">유지보수명</div>
 								<div class="datailTitle">항목</div>
 								<div class="datailTitle">고객사</div>
 								<div class="datailTitle">시작일</div>

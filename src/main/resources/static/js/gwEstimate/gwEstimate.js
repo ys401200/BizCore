@@ -259,13 +259,6 @@ function setEstData() {
 
   getTotalCount2();
 
-
-
-
-
-
-
-
   let scheduleList = R.sopp.schedules;
 
   let html = "";
@@ -307,35 +300,8 @@ function setEstData() {
 
 
   let mtnc = mtncData;
-  // let mtnc = [
-  //   {
-  //     "product": 1100014,
-  //     "customer": 103428,
-  //     "startDate": "검수일",
-  //     "endDate": "+ 0년 0개월",
-  //     "engineer": 10002,
-  //     "amount": 0
-  //   },
-  //   {
-  //     "product": 1100015,
-  //     "customer": 103428,
-  //     "startDate": "검수일",
-  //     "endDate": "+ 0년 0개월",
-  //     "engineer": 10002,
-  //     "amount": 0
-  //   },
-  //   {
-  //     "product": 1100036,
-  //     "customer": 103442,
-  //     "startDate": "2023-02-01",
-  //     "endDate": "2023-02-10",
-  //     "engineer": 10002,
-  //     "amount": 123456
-  //   }
-  // ];
-
   let mtncHtml = "";
-  let product, customer, startDate, endDate, engineer, amount, note;
+  let mtnctitle ,product, customer, startDate, endDate, engineer, amount, note;
 
   for (let i = 0; i < mtnc.length; i++) {
     for (let x in storage.product) {
@@ -343,7 +309,7 @@ function setEstData() {
         product = storage.product[x].name
       }
     }
-
+    mtnctitle = mtnc[i].title;
     customer = storage.customer[mtnc[i].customer].name;
     engineer = storage.user[mtnc[i].engineer].userName;
     startDate = mtnc[i].startDate == "검수일" ? "" : mtnc[i].startDate;
@@ -352,6 +318,7 @@ function setEstData() {
     note = mtnc[i].startDate == "검수일" ? ("기간 :" + mtnc[i].endDate) : "";
 
     mtncHtml += "<div class='insertedMtncData'>";
+    mtncHtml += "<input type='text' class='inputs mtnc-title' data-detail='" + mtnctitle + "' value='" + mtnctitle + "' style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
     mtncHtml += "<input type='text' class='inputs mtnc-product' data-detail='" + product + "' value='" + product + "' style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
     mtncHtml += "<input type='text' class='inputs mtnc-customer' data-detail='" + customer + "' value='" + customer + "' style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
     mtncHtml += "<input type='date' class='inputs mtnc-startDate' data-detail='" + startDate + "' value='" + startDate + "' style='padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";

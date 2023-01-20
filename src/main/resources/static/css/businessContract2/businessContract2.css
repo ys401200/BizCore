@@ -3,16 +3,10 @@
 .contractContainer {
 	font-size: 0.8rem;
 	width: calc(100% - 4px);
-	min-height: calc(100% - 4px);
+	height: calc(100% - 4px);
 	margin: 2px;
 	background-color: white;
-	/* overflow: hidden; */
-	/* display: grid;
-	grid-template-areas: "title title" "content summary";
-	grid-template-rows: 35px calc(100% - 35px);
-	grid-template-columns: auto 350px; */
-	/* display: flex;
-	flex-direction: column; */
+	overflow: auto;
 }
 
 

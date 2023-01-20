@@ -1370,7 +1370,7 @@ public class GwService extends Svc {
         int result = 0;
         JSONObject json = null;
         JSONArray jarr = null;
-        String maintenance = null;
+        String title= null;
         int amount, customer, engineer, product = 0;
         String startDate = null, endDate = null;
         int contract = 0; 
@@ -1383,6 +1383,7 @@ public class GwService extends Svc {
         
         for (int i = 0; i < jarr.length(); i++) {
             json = jarr.getJSONObject(i);
+            title = json.getString("title");
             amount = json.getInt("amount");
             customer = json.getInt("customer");
             engineer = json.getInt("engineer");
@@ -1390,7 +1391,7 @@ public class GwService extends Svc {
             startDate = json.getString("startDate").equals("검수일") ? null : json.getString("startDate");
             endDate = startDate == null ? null : json.getString("endDate");
             related = endDate == null ? json.getString("endDate") : null;
-            result += maintenanceMapper.insertMaintenance(compId, sopp, customer, product, startDate, endDate, engineer, amount, related);
+            result += maintenanceMapper.insertMaintenance(compId, title, sopp, customer, product, startDate, endDate, engineer, amount, related);
           
         }
 

@@ -1700,9 +1700,9 @@ function createMtnc() {
 
     html += "<div data-detail=''><input type='text' list='mtnc-customerList' style='width:95%'>" + custListHtml + "</input></div>";
 
-    html += "<div><input type='date' style='width:95%'></input></div>";
+    html += "<div><input type='date' onchange='setSdate(this);' style='width:95%'></input></div>";
 
-    html += "<div><input type='date' style='width:95%'></input></div>";
+    html += "<div><input type='date' onchange='setEdate(this);' style='width:95%'></input></div>";
 
     html += "<div><select style='width:100%'  data-detail='' >";
 
@@ -1712,7 +1712,7 @@ function createMtnc() {
 
     html += "</select></div>";
 
-    html += "<div><input type='text' style='width:100%; text-align:center;' data-detail='' onkeyup='this.dataset.detail=this.value;setNum(this);)' ></input></div>";
+    html += "<div><input type='text' style='width:100%; text-align:center;' data-detail='' onkeyup='this.dataset.detail=this.value;setNum(this);' ></input></div>";
 
     html += "<div><button onclick='this.parentElement.parentElement.remove()'>삭제</button></div>"
     el.innerHTML = html;
@@ -1725,15 +1725,14 @@ function createMtnc() {
 
 
 function openSaleReport(no) {
+   let data = setMtncDate(); 
 
+   if(data.length >0) { 
     modal.hide();
-
     R.popup = window.open("/gw/estimate/" + no, "soppStageUp", "width=1000,height=800,left=100,top=100");
-    window.setTimeout(() => {
-        setMtncDate();
-    }, 300);
-
-
+    window.setTimeout(R.popup.mtncData = data,3000);
+   }
+   
 }
 
 
@@ -1759,9 +1758,11 @@ function setMtncDate() {
 
             if (title == "") {
                 alert("유지보수명을 입력하세요");
+                data = [];
                 break;
             } else if (startDate == endDate || endDate == "+ 0년 0개월") {
                 alert("유지보수 기간을 선택하세요");
+                data = [];
                 break;
             } else {
                 detail = {
@@ -1809,18 +1810,23 @@ function setMtncDate() {
 
         if (title == "") {
             alert("유지보수명을 입력하세요");
+            data = [];
             break;
         } else if (customer == undefined) {
             alert("거래처를 입력하세요");
+            data = [];
             break;
         } else if (product == undefined) {
             alert("항목을 입력하세요");
+            data = [];
             break;
         } else if (startDate == "" || endDate == "") {
             alert("유지보수 기간을 선택하세요");
+            data = [];
             break;
         } else if (amount == "") {
             alert("유상 유지보수 금액을 입력하세요");
+            data = [];
             break;
         }
 
@@ -1837,7 +1843,8 @@ function setMtncDate() {
         data.push(detail);
     }
 
-    // R.popup.mtncData = data;
+    //  R.popup.mtncData = data;
+    return  data;
 
 }
 
@@ -1845,7 +1852,30 @@ function setMtncDate() {
 
 
 function setNum(obj) {
-    obj.value = obj.value.replace(/[^0-9.]/g, "");
+    let value = obj.value;
+    value = value.replace(/[^0-9.]/g, "");
+    value = (value * 1).toLocaleString();
+    obj.value = value;
 }
+
+
+function setSdate(obj) {
+    let startDate = obj.value;
+    let endDate = obj.parentElement.nextElementSibling.children[0].value;
+    if ((endDate != "" && startDate > endDate) || endDate == "") {
+        endDate = new Date(new Date(startDate).setFullYear(new Date(startDate).getFullYear() + 1));
+        obj.parentElement.nextElementSibling.children[0].value = getYmdHypen(endDate);
+    }
+}
+
+function setEdate(obj) {
+    let endDate = obj.value;
+    let startDate = obj.parentElement.previousElementSibling.children[0].value;
+    if ((startDate != "" && startDate > endDate) || startDate == "") {
+        startDate = new Date(new Date(endDate).setFullYear(new Date(endDate).getFullYear() - 1));
+        obj.parentElement.previousElementSibling.children[0].value = getYmdHypen(startDate);
+    }
+}
+
 
 
