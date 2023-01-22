@@ -485,13 +485,19 @@ class EstimateSet{
 				let getList = response.data.data;
 				getList = cipher.decAes(getList);
 				getList = JSON.parse(getList);
-				storage.estimateList = getList;
+
+				if(getList.length > 0){
+					storage.estimateList = getList;
+				}else{
+					storage.estimateList = "";
+				}
 				this.drawEstmList();
 				this.addSearchList();
 			}
 		}).catch((error) => {
 			msg.set("메인 리스트 에러입니다.\n" + error);
             console.log(error);
+			return false;
 		});
 	}
 	
