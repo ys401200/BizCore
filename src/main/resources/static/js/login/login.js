@@ -224,6 +224,7 @@ function loginSubmit(){
 				if(document.getElementById("loginSessionBtn").className === "")		localStorage.removeItem("keepToken");
 				location.reload();
 			}else{
+				alert(data.msg);
 				msg.set(data.msg);
 				document.getElementById("userId").focus();
 			}

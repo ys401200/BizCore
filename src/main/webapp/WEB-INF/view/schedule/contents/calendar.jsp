@@ -10,7 +10,7 @@
     </select>
     <jsp:include page="./list.jsp" />
     <div class="calendarList">
-        <div class="calendarMoreContent">
+        <!-- <div class="calendarMoreContent">
             <div class="moreContentHeader">
                 <div class="moreContentTitle"></div>
                 <div class="moreContentClose" onclick="moreContentClose();">
@@ -25,7 +25,7 @@
             <div class="calendarMonth"></div>
             <span class="calendarSpan">월</span>&nbsp;&nbsp;
             <button type="button" onclick="calendarNext(this);"><img src="/images/common/next-btn.png" alt="next"/></button>
-        </div>
+        </div> -->
         <div class="calendar_container"></div>
     </div>
 </div>

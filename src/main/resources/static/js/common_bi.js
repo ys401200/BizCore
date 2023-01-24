@@ -464,7 +464,7 @@ class MonthlyCalendar {
 	// 일정을 추가하는 메서드
 	addSchedule(sch){
 		if(sch === undefined || sch === null || !(typeof sch === "object" && sch.constructor.name === "Schedule"))	return;
-		if(sch.from > this.endDate || sch.to < this.from)	return;0
+		if(sch.from > this.endDate || sch.to < this.from)	return;
 		this.schedule.push(sch);
 	} // End of addSchedule()
 

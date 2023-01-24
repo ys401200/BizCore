@@ -18,14 +18,11 @@ function getSchedule2List(){
 		result = cipher.decAes(result);
 		result = JSON.parse(result);
 		storage.scheduleList = result;
-		const SoppClass = new Sopp2(result);
 		
 		if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined){
 			window.setTimeout(drawCalendar(document.getElementsByClassName("calendar_container")[0]), 600);
-			window.setTimeout(SoppClass.setScheduleToCalendar, 800);
 		}else{
 			window.setTimeout(drawCalendar(document.getElementsByClassName("calendar_container")[0]), 200);
-			window.setTimeout(SoppClass.setScheduleToCalendar, 400);
 		}
 	})
 }
@@ -180,8 +177,13 @@ function drawScheduleList() {
 function drawCalendar(container){
 	if(storage.currentYear === undefined)   storage.currentYear = (new Date()).getFullYear();
     if(storage.currentMonth === undefined)  storage.currentMonth = (new Date()).getMonth() + 1;
-    const Monthly = new MonthlyCalendar(storage.currentYear, storage.currentMonth + 1, container);
+    const Monthly = new MonthlyCalendar(storage.currentYear, storage.currentMonth, container);
 	Monthly.drawForSopp();
+	for(let i = 0; i < storage.scheduleList.length; i++){
+		let item = storage.scheduleList[i];
+		Monthly.addSchedule(item);
+	}
+	Monthly.drawScheduleInSopp();
 } // End of drawCalendar()
 
 // 일정 캘린더를 만드는 함수
