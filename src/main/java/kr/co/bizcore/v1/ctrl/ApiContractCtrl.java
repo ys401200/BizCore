@@ -1,5 +1,7 @@
 package kr.co.bizcore.v1.ctrl;
 
+import java.util.List;
+
 import javax.script.CompiledScript;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -9,14 +11,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import kr.co.bizcore.v1.domain.Contract;
+import kr.co.bizcore.v1.domain.Contract2;
 import kr.co.bizcore.v1.msg.Msg;
 import lombok.extern.slf4j.Slf4j;
 
@@ -162,7 +168,7 @@ public class ApiContractCtrl extends Ctrl {
         Msg msg = null;
         ObjectMapper mapper = null;
         JSONObject json = null;
-        Contract contract = null;
+        Contract2 contract = null;
         HttpSession session = null;
 
         session = request.getSession();
@@ -218,7 +224,7 @@ public class ApiContractCtrl extends Ctrl {
         String lang = null;
         Msg msg = null;
         JSONObject json = null;
-        Contract contract = null;
+        Contract2 contract = null;
         HttpSession session = null;
         ObjectMapper mapper = null;
 
@@ -242,7 +248,7 @@ public class ApiContractCtrl extends Ctrl {
             } else {
                 try {
                     mapper = new ObjectMapper();
-                    contract = mapper.readValue(data, Contract.class);
+                    contract = mapper.readValue(data, Contract2.class);
                     if (contractService.modifyContract(no, contract, compId))
                         result = "{\"result\":\"ok\"}";
                     else
@@ -344,7 +350,6 @@ public class ApiContractCtrl extends Ctrl {
         return result;
     }
 
-
     // // 계약번호로 유지보수 데이터 가져옴
     // @RequestMapping(value = "/maintenance/{contract}", method =
     // RequestMethod.GET)
@@ -403,5 +408,46 @@ public class ApiContractCtrl extends Ctrl {
 
     // return result;
     // }
+
+    @PostMapping("/contractPost")
+    public String contractPost(HttpServletRequest request, @RequestBody String requestBody)
+            throws JsonMappingException, JsonProcessingException {
+        String result = null;
+        String compId = null, aesKey = null, aesIv = null, data = null, userNo = null;
+        ObjectMapper mapper = null;
+        Contract2 contract = null, r = null;
+        Msg msg = null;
+        HttpSession session = null;
+
+        mapper = new ObjectMapper();
+        mapper.enable(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT);
+        session = request.getSession();
+        compId = (String) session.getAttribute("compId");
+        if (compId == null)
+            compId = (String) session.getAttribute("compId");
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        userNo = (String) session.getAttribute("userNo");
+        msg = getMsg((String) session.getAttribute("lang"));
+
+        if (compId == null) {
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        } else if (aesKey == null || aesIv == null) {
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        } else {
+            data = decAes(requestBody, aesKey, aesIv);
+            logger.info("data check : " + data);
+            contract = mapper.readValue(data, Contract2.class);
+            r = contractService.updateContract(compId, contract, userNo);
+            if (r != null) {
+                result = r.toJson();
+                result = "{\"result\":\"ok\",\"data\":\"" + encAes(result, aesKey, aesIv) + "\"}";
+            } else {
+                result = "{\"result\":\"failure\",\"msg\":\"update fail.\"}";
+            }
+        }
+
+        return result;
+    } // End of contractPost();
 
 }

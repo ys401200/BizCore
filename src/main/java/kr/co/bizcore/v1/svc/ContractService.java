@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import kr.co.bizcore.v1.domain.Contract;
+import kr.co.bizcore.v1.domain.Contract2;
 import kr.co.bizcore.v1.domain.Maintenance;
 import kr.co.bizcore.v1.domain.Schedule;
 import kr.co.bizcore.v1.domain.SimpleContract;
@@ -40,8 +40,8 @@ public class ContractService extends Svc {
     // 계약 전부
     public String getContractList(String compId) {
         String result = null;
-        List<Contract> list = null;
-        SimpleContract each = null;
+        List<Contract2> list = null;
+        Contract2 each = null;
         int x = 0;
 
         list = contractMapper.getList(compId);
@@ -63,8 +63,8 @@ public class ContractService extends Svc {
     // 계약 일부
     public String getContractList(String compId, int start, int end) {
         String result = null;
-        List<Contract> list = null;
-        SimpleContract each = null;
+        List<Contract2> list = null;
+        Contract2 each = null;
         int x = 0;
 
         list = contractMapper.getList(compId);
@@ -129,7 +129,7 @@ public class ContractService extends Svc {
         if (maintenance != null)
             maintenance += "]";
 
-        Contract cnt = contractMapper.getContract(no, compId);
+        Contract2 cnt = contractMapper.getContract(no, compId);
         String related = cnt.getRelated();
         json = new JSONObject(related);
         String parent = json.getString("parent");
@@ -236,7 +236,7 @@ public class ContractService extends Svc {
         return result;
     }
 
-    public boolean addContract(Contract contract, String compId) {
+    public boolean addContract(Contract2 contract, String compId) {
         int count = -1;
         String sql = null;
         sql = contract.createInsertQuery(null, compId);
@@ -244,10 +244,10 @@ public class ContractService extends Svc {
         return count > 0;
     } // End of addProcure()
 
-    public boolean modifyContract(String no, Contract contract, String compId) {
+    public boolean modifyContract(String no, Contract2 contract, String compId) {
         int count = -1;
         String sql = null;
-        Contract ogn = null;
+        Contract2 ogn = null;
 
         ogn = contractMapper.getContract(strToInt(no), compId);
         sql = ogn.createUpdateQuery(contract, null);
@@ -267,8 +267,8 @@ public class ContractService extends Svc {
 
     public String getFullContract(String compId) {
         String result = null;
-        List<Contract> list = null;
-        Contract each = null;
+        List<Contract2> list = null;
+        Contract2 each = null;
         ObjectMapper mapper = new ObjectMapper();
 
         list = contractMapper.getFullContract(compId);
@@ -303,6 +303,25 @@ public class ContractService extends Svc {
         Integer result = contractMapper.getContractNoWithParent(parent, compId);
         return result == null ? -999999 : result;
     } // End of findContNoWithParent()
+
+    public Contract2 updateContract(String compId, Contract2 contract, String userNo) {
+      Contract2 result = null;
+      int no = -999, r = -999, x = 0;
+      String sql = null, message = null, t = null;
+      Contract2 ogn = null; 
+      no = contract.getNo();
+      ogn = contractMapper.getContract(no,compId);
+      logger.error("============================================================  " + ogn.toJson());
+      sql = ogn.createUpdateQuery(contract, "bizcore.contract");
+      logger.error("============================================================  " + sql);
+      sql += (" WHERE no = " + no + " AND compId = '" + compId + "'");
+      logger.info(sql);
+      x = executeSqlQuery(sql);
+      if (x >0) {
+        result = contractMapper.getContract(no,compId);
+      }
+      return result;
+    }
 
     // public String getMtncData(String contract, String compId) {
     // String result = null;
