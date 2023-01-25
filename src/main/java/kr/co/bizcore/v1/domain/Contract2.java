@@ -20,11 +20,11 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class Contract extends SimpleContract {
+public class Contract2 extends SimpleContract {
 
 
    private String coWorker;
-   private int customer;
+   private Integer customer;
    private String detail;
    private Date supplied;
    private Date approved;
@@ -148,4 +148,6 @@ public class Contract extends SimpleContract {
         return result;
     } // End of toJson()
 
+
+    
 }

@@ -18,7 +18,7 @@ import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kr.co.bizcore.v1.domain.Contract;
+import kr.co.bizcore.v1.domain.Contract2;
 
 @Service
 @Transactional

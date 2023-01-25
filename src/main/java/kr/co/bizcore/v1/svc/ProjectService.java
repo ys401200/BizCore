@@ -174,7 +174,8 @@ public class ProjectService extends Svc{
             }
             message +=">";
         }
-        r = executeSqlQuery(sql);
+        r = executeSqlQuery(sql); 
+        logger.info(sql + "query check");
         if(r > 0){
             addSoppChat(compId, sopp.getNo(), true, strToInt(userNo), sopp.getStage(), message);
             result = projectMapper.getSopp(compId, no);

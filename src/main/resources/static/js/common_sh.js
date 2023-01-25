@@ -93,16 +93,18 @@ class Contract {
             this.profit = each.profit;
             this.maintenance = each.maintenance == undefined ? [] : JSON.parse(each.maintenance);
             this.customer = each.customer;
-            this.supplied = each.supplied == undefined ? 0 : each.supplied;
-            this.approved = each.approved == undefined ? 0 : each.approved;
-            this.saleDate = each.saleDate == undefined ? 0 : each.saleDate;
+            this.supplied = each.supplied == undefined ? null : each.supplied;
+            this.approved = each.approved == undefined ? null : each.approved;
+            this.saleDate = each.saleDate == undefined ? null : each.saleDate;
             this.appLine = each.appLine;
             this.docNo = each.docNo;
+            this.container = null;
         } else {
             this.title = "";
-            this.employee = 0;
+            this.employee = null;
             this.amount = "";
-            this.customer = 0;
+            this.customer = null;
+            this.container = null;
         }
     }
 
@@ -206,6 +208,7 @@ class Contract {
     }
 
     draw(cnt) {
+       
         let el, child;
 
         if (cnt === undefined && this.cnt !== undefined) cnt = this.cnt;
@@ -292,11 +295,13 @@ class Contract {
 
         if (obj.className == "sopp-contract") {
             cnt = document.getElementsByClassName("sopp-contract")[0];
+            this.container = cnt;
         } else {
             el = document.createElement("div");
             el.className = "detail-wrap";
             obj.after(el);
             cnt = document.getElementsByClassName("detail-wrap")[0];
+            this.container = cnt;
         }
 
         el = document.createElement("top");
@@ -644,6 +649,11 @@ class Contract {
             R.sche.popupModalForEdit(new Date(), true);
             document.getElementById("schedule-type2h").setAttribute("checked", "checked");
             document.getElementsByClassName("schedule-detail")[0].children[0].children[0].children[1].value = this.title + "\u00A0" + "납품";
+            // modal.confirm[0].onclick() = () => {
+            //     R.sche.clickedScheduleModalConfirm;
+
+            // }
+
         })
         el.appendChild(el2);
 
@@ -700,7 +710,7 @@ class Contract {
 
         }
 
-        if (this.supplied != 0) {
+        if (this.supplied !=null) {
             document.getElementsByClassName("suppliedDate")[0].value = getYmdHypen(this.supplied);
         }
 
@@ -794,7 +804,7 @@ class Contract {
 
         }
 
-        if (this.approved != 0) {
+        if (this.approved != null) {
             document.getElementsByClassName("approvedDate")[0].value = getYmdHypen(this.approved);
 
         }
@@ -919,6 +929,8 @@ class Contract {
                 .then(response => {
                     if (response.result === "ok") {
 
+
+
                     } else console.log(response.msg);
                 });
         }
@@ -959,7 +971,7 @@ class Contract {
                         method,
                         data,
                         type,
-                        submitFileSuccess,
+                        submitFile,
                         submitFileError
                     );
                 };
@@ -1022,18 +1034,44 @@ class Contract {
 
 
     update() {
-       let cont = Object.assign({},this);
-       console.log(cont);
-        // 모달에서 startDate 
-        let target = document.getElementsByClassName("schedule-detail")[0].children[1].children[0];
-        let date = ("20" + target.children[1].innerHTML.substring(1).replaceAll(".", "-")).substring(-1, 10);
-        if (document.getElementById("schedule-type2h").checked) {
-            this.supplied = date;
-        } else if (document.getElementById("schedule-type2i").checked) {
-            this.approved = date;
-        }
+        insertDate();
+        let cont = Object.assign({}, this), data;
+       
 
+      delete cont.approvedAttached; 
+      delete cont.suppliedAttached;
+      delete cont.attached;
+      delete cont.bills;
+      delete cont.docNo;
+      delete cont.maintenance;
+      delete cont.trades;
+      delete cont.schedules;
+      delete cont.appLine;
+      delete cont.container;
+        data = JSON.stringify(cont);
+        data = cipher.encAes(data);
+        console.log(this);
+        fetch(apiServer + "/api/contract/contractPost", {
+            method: "POST",
+            header: { "Content-Type": "text/plain" },
+            body: data
+        }).catch((error) => console.log("error:", error))
+            .then(response => response.json())
+            .then(response => {
+                if (response.result !== "ok") console.log(response);
+                else {
+                    this.container.innerHTML = "";
+                    R.contract.getReportDetail(this.container);
+                    window.contractData = R.contract;
+                }
+            });
+        console.log("UPDATE!!");
+        console.log(cont);
     }
+
+
+
+
 
 }
 
@@ -1901,4 +1939,50 @@ function setEdate(obj) {
 }
 
 
+function submitFile() {
 
+    let soppNo = R.contract.related;
+    soppNo = JSON.parse(soppNo);
+    soppNo = soppNo.parent.split(":")[1];
+
+    fetch(location.origin + "/api/contract/parent/sopp:" + soppNo)
+        .catch((error) => console.log("error:", error))
+        .then(response => response.json())
+        .then(response => {
+            console.log(response);
+            let data, cnt = document.getElementsByClassName("sopp-contract")[0];
+            if (response.result === "ok") {
+                data = response.data;
+                data = cipher.decAes(data);
+                data = JSON.parse(data);
+                R.contract = new Contract(data);
+                window.contractData = R.contract;
+            } else {
+                console.log("파일 첨부 오류");
+
+            }
+        });
+
+
+    return false
+
+}
+
+
+function insertDate() {
+    let date = document.getElementsByClassName("modalBody")[0].children[0].children[1].children[0].children[1].innerHTML;
+    date = date.substring(1);
+    date = date.replaceAll(".", "-");
+    date = "20" + date;
+    date = new Date(date);
+    date = date.getTime();
+
+
+    if (document.getElementById("schedule-type2h").getAttribute("checked") === "checked") {
+        R.contract.supplied = date;
+    } else if (document.getElementById("schedule-type2i").getAttribute("checked") === "checked") {
+        R.contract.approved = date;
+
+
+    }
+}
