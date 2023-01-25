@@ -36,7 +36,7 @@
                 <button type="button" class="crudAddBtn" onclick="const InsertForm = new NoticeSet(); InsertForm.noticeInsertForm();">등록</button>
             </div>
             <div class="listRange">
-                <input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="const RangeChange = new NoticeSet(); listRangeChange(this, RangeChange.drawNoticeList);">
+                <input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="const RangeChange = new NoticeSet(); CommonDatas.listRangeChange(this, RangeChange.drawNoticeList);">
                 <span class="listRangeSpan">0</span>
             </div>
 			<div class="noticeContent"></div>

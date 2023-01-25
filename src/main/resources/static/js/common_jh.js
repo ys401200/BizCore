@@ -1421,13 +1421,11 @@ class EstimateSet{
 		for(let i = 0; i < textarea.length; i++){
 			let item = textarea[i];
 			let parent = item.parentElement;
-			if(item.value !== ""){
-				let createDiv = document.createElement("div");
-				createDiv.className = "afterDiv";
-				createDiv.innerText = item.value.replace(/<p>/g, "").replace(/<\/p>/g, "").replace(/\/r/g, "").replace(/\/n/g, "").replace(/<br \/>/g, "");
-				parent.appendChild(createDiv);
-				item.remove();
-			}
+			let createDiv = document.createElement("div");
+			createDiv.className = "afterDiv";
+			createDiv.innerText = item.value.replace(/<p>/g, "").replace(/<\/p>/g, "").replace(/\/r/g, "").replace(/\/n/g, "").replace(/<br \/>/g, "");
+			parent.appendChild(createDiv);
+			item.remove();
 		}
 	}
 	
@@ -2903,6 +2901,7 @@ class Common{
 		}
 	}
 
+	//오브젝트 유무를 확인하여 key 이름과 똑같은 radio, checkbox를 찾아 checked 설정해주는 함수
 	detailCheckedTrueView() {
 		for (let key in storage.formList) {
 			if (typeof storage.formList[key] === "object") {
@@ -2917,6 +2916,21 @@ class Common{
 				}
 			}
 		}
+	}
+
+	//리스트 Range 검색 함수
+	listRangeChange(e, drawList) {
+		let thisEle;
+		thisEle = e;
+		thisEle.nextElementSibling.innerHTML = thisEle.value;
+
+		if (thisEle.value > 0) {
+			storage.articlePerPage = thisEle.value;
+		} else {
+			storage.articlePerPage = undefined;
+		}
+
+		drawList();
 	}
 	
 	//객체(오브젝트) empty 체크(비어있을 때 : true)

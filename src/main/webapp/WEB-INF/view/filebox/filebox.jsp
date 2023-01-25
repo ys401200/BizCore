@@ -37,7 +37,7 @@
                 <button type="button" class="crudAddBtn" onclick="fileBoxInsertForm();">등록</button>
             </div>
             <div class="listRange">
-                <input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="listRangeChange(this, drawFileBoxList);">
+                <input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="CommonDatas.listRangeChange(this, drawFileBoxList);">
                 <span class="listRangeSpan">0</span>
             </div>
 			<div class="fileBoxContent"></div>
