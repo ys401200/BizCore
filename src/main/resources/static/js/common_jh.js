@@ -86,9 +86,9 @@ class NoticeSet{
 						"setData": userName,
 						"align": "center",
 					},
-				]
+				];
 	
-				fnc = "const noticeDetail = new NoticeSet(); noticeDetail.noticeDetailView(this)";
+				fnc = "let noticeSet = new NoticeSet(); noticeSet.noticeDetailView(this)";
 				ids.push(jsonData[i].no);
 				data.push(str);
 			}
@@ -98,13 +98,14 @@ class NoticeSet{
 		}
 	
 		CommonDatas.createGrid(container, header, data, ids, job, fnc);
-		document.getElementById("multiSearchBtn").setAttribute("onclick", "const SearchSubmit = new NoticeSet(); SearchSubmit.searchSubmit();");
+		document.getElementById("multiSearchBtn").setAttribute("onclick", "let noticeSet = new NoticeSet(); noticeSet.searchSubmit();");
 		
-		let path = $(location).attr("pathname").split("/");
+		let path = location.pathname.split("/");
 	
 		if (path[3] !== undefined && jsonData !== null) {
 			let content = document.querySelector(".gridContent[data-id=\"" + path[3] + "\"]");
-			this.noticeDetailView(content);
+			let noticeSet = new NoticeSet();
+			noticeSet.noticeDetailView(content);
 		}
 	}
 
@@ -118,8 +119,8 @@ class NoticeSet{
 				let result;
 				result = cipher.decAes(response.data.data);
 				result = JSON.parse(result);
-				const Detail = new Notice(result);
-				Detail.detail();
+				let notice = new Notice(result);
+				notice.detail();
 			}
 		}).catch((error) => {
 			msg.set("상세보기 에러 입니다.\n" + error);
@@ -161,7 +162,7 @@ class NoticeSet{
 		modal.body.html("<div class='defaultFormContainer'>" + html + "</div>");
 		modal.confirm.text("등록");
 		modal.close.text("취소");
-		modal.confirm.attr("onclick", "const Insert = new Notice(); Insert.insert();");
+		modal.confirm.attr("onclick", "let notice = new Notice(); notice.insert();");
 		modal.close.attr("onclick", "modal.hide();");
 
 		storage.formList = {
@@ -297,8 +298,8 @@ class Notice{
 		CommonDatas.detailTrueDatas(datas);
 		
 		if(storage.my == storage.formList.writer){
-			btnHtml += "<button type=\"button\" class=\"updateBtn\" onclick=\"CommonDatas.enableDisabled(this, 'const Update = new Notice(); Update.update();', '" + notIdArray + "', 'detailBoard');\">수정</button>";
-			btnHtml += "<button type=\"button\" onclick=\"const Delete = new Notice(); Delete.delete();\">삭제</button>";
+			btnHtml += "<button type=\"button\" class=\"updateBtn\" onclick=\"CommonDatas.enableDisabled(this, 'let notice = new Notice(); notice.update();', '" + notIdArray + "', 'detailBoard');\">수정</button>";
+			btnHtml += "<button type=\"button\" onclick=\"let notice = new Notice(); notice.delete();\">삭제</button>";
 		}
 
 		btnHtml += "<button type='button' onclick='CommonDatas.detailBoardContainerHide();'><i class=\"fa-solid fa-xmark\"></i></button>";
@@ -944,12 +945,12 @@ class EstimateSet{
 			storage.estmDetail = storage.estimateVerList[storage.detailIdx];
 			let crudAddBtn = document.getElementsByClassName("crudAddBtn")[0];
 			crudAddBtn.innerText = "새견적추가";
-			crudAddBtn.setAttribute("onclick", "const InsertClass = new Estimate(); InsertClass.insert();");
+			crudAddBtn.setAttribute("onclick", "let estimate = new Estimate(); estimate.insert();");
 		}else{
 			storage.estmDetail = storage.estimateList[storage.detailIdx];
 		}
 
-		crudUpdateBtn.setAttribute("onclick", "const UpdateClass = new Estimate(storage.estmDetail.related.estimate); UpdateClass.update();");
+		crudUpdateBtn.setAttribute("onclick", "let estimate = new Estimate(storage.estmDetail.related.estimate); estimate.update();");
 		CommonDatas.setViewContents(hideArr, showArr);
 		this.estimateFormInit();
 	}
@@ -993,7 +994,7 @@ class EstimateSet{
 	
 		this.copyContainer = document.getElementsByClassName("copyMainPdf")[0];
 		crudAddBtn.innerText = "새견적추가";
-		crudAddBtn.setAttribute("onclick", "const InsertClass = new Estimate(); InsertClass.insert();");
+		crudAddBtn.setAttribute("onclick", "let estimate = new Estimate(); estimate.insert();");
 		CommonDatas.setViewContents(hideArr, showArr);
 		storage.estmDetail = undefined;
 		this.estimateFormInit();
@@ -1040,8 +1041,8 @@ class EstimateSet{
 			}
 	
 			if(storage.estmDetail.related.estimate.items.length > 0){
-				const Detail = new Estimate(storage.estmDetail.related.estimate);
-				Detail.detail();
+				let estimate = new Estimate(storage.estmDetail.related.estimate);
+				estimate.detail();
 			}
 		}
 

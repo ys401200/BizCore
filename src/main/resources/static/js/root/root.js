@@ -506,11 +506,12 @@ function getNoticeList() {
 }
 
 function getScheduleList() {
-	let url, container, idName, gridListLength = 8;
+	let url, container, idName, gridListLength = 8, date;
 	
 	idName = "schedule_body";
 	container = $(".schedule_container");
-	url = "/api/schedule/calendar/company";
+	date = new Date().getTime();
+	url = "/api/schedule2/company/" + date;
 
 	$.ajax({
 		"url": url,

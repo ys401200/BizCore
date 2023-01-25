@@ -196,6 +196,18 @@ clickedButton = (el) => {
 	}
 } // End of clickedButton()
 
+clickUpdateBtn = () => {
+	let updateBtn = document.querySelector("button[data-n=\"edit\"]");
+	let nowDate = new Date().getTime();
+	
+	if(R.workReport.employee == storage.my && nowDate >= R.workReport.startTime && nowDate <= R.workReport.endTime){
+		updateBtn.style.display = "initial";
+	}else{
+		updateBtn.style.display = "none";
+	}
+	
+}
+
 editInputSet = () => {
 	let container = document.getElementsByClassName("report-contents")[0];
 	let lastWeekContents = container.getElementsByClassName("lastWeekContents");
@@ -277,7 +289,6 @@ clickedTreeEmployee = (el) => {
 	x = el.getAttribute("for").substring(4) * 1;
 	R.workReport.employee = x;
 	drawReport();
-
 	// 버튼 활성화
 	z = document.getElementsByClassName("workReportTitle")[0].children[1].children;
 	for(x = 0 ; x < z.length ; x++){
@@ -292,7 +303,7 @@ clickedTreeEmployee = (el) => {
 				if(arr.length > 1)	document.getElementsByClassName("workReportTitle")[0].children[1].children[2].style.display = "initial";
 				else				document.getElementsByClassName("workReportTitle")[0].children[1].children[2].style.display = "none";
 			},1)
-		}else if(y === "edit")	z[x].style.display = R.workReport.employee === storage.my ? "initial" : "none";
+		}else if(y === "edit")	clickUpdateBtn();
 		else if(y === "cancel")	z[x].style.display = "none";
 		else if(y === "save")	z[x].style.display = "none";
 	}
@@ -320,6 +331,7 @@ getReportData = (date) => {
 			R.workReport.week = data.week;
 			R.workReport.start = new Date(data.start);
 			R.workReport.end = new Date(data.end);
+			R.workReport.startTime = data.start;
 			R.workReport.endTime = data.end;
 			R.workReport.report = data.workReports;
 			dt = new Date(data.start);
@@ -457,6 +469,8 @@ drawReport = (editable, targetElement, employee) => {
 	if(reportContents.nextElementSibling.children[1].children[1].children.length == 0){
 		reportContents.nextElementSibling.children[1].children[1].innerHTML = "<div class=\"empty-cell\">데이터가 없습니다.</div>";
 	}
+
+	clickUpdateBtn();
 } // End of drawReport()
 
 // 조직도를 그리는 함수
@@ -548,7 +562,7 @@ drawMonthList = () => {
 	x = x.getFullYear() * 10000 + (x.getDate() + 1) * 100 + x.getDate();
 
 	// 달력 그리기
-	while(year * 100 + month <= today.getFullYear() * 100 + today.getMonth() + 2) {
+	while(year * 100 + month <= today.getFullYear() * 100 + today.getMonth() + 1) {
 		// 달력 타이틀
 		el = document.createElement("div");
 		el.innerHTML = "<div>" + year + "</div><div>" + month + "</div>";
