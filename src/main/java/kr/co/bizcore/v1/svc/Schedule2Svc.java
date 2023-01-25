@@ -204,4 +204,148 @@ public class Schedule2Svc extends Svc {
         return result;
     } // End of getHoliday()
 
+    public String getWeeklyReport(String compId, String userNo, String dt, int tc) {
+        String result = null;
+        String sql1 = "SELECT count(*) FROM bizcore.weekly_report WHERE compId = ? AND dt = ? AND writer = ?";
+        String sql2 = "SELECT prv, prvuse, crnt, crntuse FROM bizcore.weekly_report WHERE compId = ? AND dt = ?AND writer = ? ";
+        String sql3 = "SELECT crnt, crntUse FROM bizcore.weekly_report WHERE compId = ? AND dt = date_add(?, INTERVAL -7 day) AND writer = ?";
+        String sql4 = "SELECT writer, prv, prvuse, crnt, crntuse FROM bizcore.weekly_report WHERE compId = ? AND dt = ? AND writer <> ?";
+        String sql5 = "SELECT writer, title, content, report, `from`,  `to` FROM bizcore.schedule WHERE compId = ? AND (report = 1 OR writer = ?) AND `from` <= date_add(date_add(?, INTERVAL ? HOUR), INTERVAL 7 day) AND `to` > date_add(date_add(?, INTERVAL ? HOUR), INTERVAL -7 day) ORDER BY writer, `from`";
+        String sql = null, writer = null, title = null, report = null, from = null,  to = null, content = null;
+        String[] strArr = null;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        int x = -1;
+
+        try{
+            conn = sqlSession.getConnection();
+
+            // 본인 주간업무보고 존재 여부 확인
+            pstmt = conn.prepareStatement(sql1);
+            pstmt.setString(1, compId);
+            pstmt.setString(2, dt);
+            pstmt.setString(3, userNo);
+            rs = pstmt.executeQuery();
+            if(rs.next())   x = rs.getInt(1);
+            rs.close();
+            pstmt.close();
+
+            // 본인 주간업무보고 데이터 가져오기 / 안만들어져 있는 경우 지난 주 데이터 가져오기
+            strArr = new String[4];
+            strArr[0] = "";
+            strArr[1] = "1";
+            strArr[2] = "";
+            strArr[3] = "1";
+            if(x > 0)   sql = sql2; // 금주 주간업무보고가 만들어져 있는 경우                
+            else        sql = sql3; // 금주 주간업무보고가 만들어져 있지 않은 경우
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, compId);
+            pstmt.setString(2, dt);
+            pstmt.setString(3, userNo);
+            rs = pstmt.executeQuery();
+            if(rs.next()){
+                strArr[0] = rs.getString(1);
+                strArr[1] = rs.getInt(2) + "";
+                strArr[2] = x > 0 ? rs.getString(3) : strArr[2];
+                strArr[3] = x > 0 ? rs.getInt(4) + "" : strArr[3];
+            }
+            rs.close();
+            pstmt.close();
+
+            // 자기 정보를 JSON으로 만들기
+            result = "{\"report\":{\"" + userNo + "\":{\"prv\":\"" +strArr[0] + "\",\"prvUse\":" +strArr[1].equals("1") + ",\"crnt\":\"" +strArr[2] + "\",\"crntUse\":" +strArr[3].equals("1") + "}"; 
+
+            // 본인 외 다른 직원들 주간업무보고 가져오기
+            pstmt = conn.prepareStatement(sql4);
+            pstmt.setString(1, compId);
+            pstmt.setString(2, dt);
+            pstmt.setString(3, userNo);
+            rs = pstmt.executeQuery();
+            while(rs.next()){
+                result += (",\"" + rs.getString(1) + "\":{\"prv\":\"" + rs.getString(2) + "\",\"prvUse\":" + rs.getBoolean(3) + ",\"crnt\":\"" + rs.getString(4) + "\",\"crntUse\":" + rs.getBoolean(5) + "}"); 
+            }
+            result += "},\"schedule\":[";
+            rs.close();
+            pstmt.close();
+
+            // 일정 가져오기
+            x = 0;
+            pstmt = conn.prepareStatement(sql5);
+            pstmt.setString(1, compId);
+            pstmt.setString(2, userNo);
+            pstmt.setString(3, dt);
+            pstmt.setInt(4, tc);
+            pstmt.setString(5, dt);
+            pstmt.setInt(6, tc);
+            rs = pstmt.executeQuery();
+            while(rs.next()){
+                if(x > 0)   result += ",";
+                else        x = 1;
+                writer = rs.getInt(1) + "";
+                title = rs.getString(2);
+                content = rs.getString(3);
+                report = rs.getBoolean(4) + "";
+                from = rs.getString(5);
+                to = rs.getString(6);
+                from = from == null ? null : from.replace(" ", "T") + "Z";
+                to = to == null ? null : to.replace(" ", "T") + "Z";
+                result += ("{\"writer\":" + writer + ","); 
+                result += ("\"title\":" + (title == null ? "null" : "\"" + title + "\"") + ","); 
+                result += ("\"content\":" + (content == null ? "null" : "\"" + content + "\"") + ","); 
+                result += ("\"inUse\":" + report + ","); 
+                result += ("\"from\":" + (from == null ? "null" : "\"" + from + "\"") + ","); 
+                result += ("\"to\":" + (to == null ? "null" : "\"" + to + "\"") + "}"); 
+            }
+            result += "]}";
+            rs.close();
+            pstmt.close();
+        }catch(SQLException e){e.printStackTrace();}
+
+        return result;
+    }
+
+    public boolean updateWeeklyReport(String compId, String userNo, String dt, String prv, boolean prvUse, String crnt, boolean crntUse) {
+        String sql = null;
+        String sql1 = "SELECT no FROM bizcore.weekly_report WHERE compId = ? AND dt = ? AND writer = ?";
+        String sql2 = "INSERT INTO bizcore.weekly_report(prv, prvUse, crnt, crntUse, compId, `no`, writer, dt, created) VALUES(?, ?, ?, ?, ?, ?, ?, ?, now())";
+        String sql3 = "UPDATE bizcore.weekly_report SET prv = ?, prvUse = ?, crnt = ?, crntUse = ?, modified = now() WHERE compId = ?, `no` = ?, writer = ?, dt = ?";
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        int no = -1, x = -01;
+
+        try{
+            conn = sqlSession.getConnection();
+            pstmt = conn.prepareCall(sql1);
+            pstmt.setString(1, compId);
+            pstmt.setString(2, dt);
+            pstmt.setString(3, userNo);
+            rs = pstmt.executeQuery();
+            if(rs.next())   no = rs.getInt(1);
+            rs.close();
+            pstmt.close();
+
+            if(no < 0){
+                no = getNextNumberFromDB(compId, "bizcore.weekly_report");
+                sql = sql2;
+            }else   sql = sql3;
+
+            pstmt = conn.prepareCall(sql);
+            pstmt.setString(1, prv);
+            pstmt.setBoolean(2, prvUse);
+            pstmt.setString(3, crnt);
+            pstmt.setBoolean(4, crntUse);
+            pstmt.setString(5, compId);
+            pstmt.setInt(6, no);
+            pstmt.setString(7, userNo);
+            pstmt.setString(8, dt);                
+            x = pstmt.executeUpdate();
+            rs.close();
+            pstmt.close();
+        }catch(SQLException e){e.printStackTrace();}
+
+        return x > 0;
+    }
+
 }

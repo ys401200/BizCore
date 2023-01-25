@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -197,6 +198,72 @@ public class ApiSchedule2Ctrl extends Ctrl {
             result = schedule2Svc.getHoliday(timeCorrect == null ? 0 : timeCorrect);
             if(result == null)   result = "{\"result\":\"failure\",\"msg\":\"requested information was not found.\"}";
             else    result = "{\"result\":\"ok\",\"data\":\"" + encAes(result, aesKey, aesIv) + "\"}";
+        }
+        return result;
+    } // End of scheduleNo()
+
+    @GetMapping("/report/{dt:^20\\d{2}-[01]{1}\\d{1}-[0-3]{1}\\d{1}$}")
+    public String getWeeklyReport(HttpServletRequest request, @PathVariable String dt){
+        String result = null, compId = null, aesKey = null, aesIv = null, userNo = null;
+        HttpSession session = null;
+        Msg msg = null;
+        Integer tc = null;
+
+        session = request.getSession();
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        userNo = (String)session.getAttribute("userNo");
+        compId = (String)session.getAttribute("compId");
+        tc = (Integer)session.getAttribute("timeCorrect");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
+        if(tc == null)  tc = 0;
+        tc = tc / 60;
+        msg = getMsg((String)session.getAttribute("lang"));
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        }else{
+            result = schedule2Svc.getWeeklyReport(compId, userNo, dt, tc);
+            if(result == null)   result = "{\"result\":\"failure\",\"msg\":\"requested information was not found.\"}";
+            else    result = "{\"result\":\"ok\",\"data\":\"" + encAes(result, aesKey, aesIv) + "\"}";
+        }
+        return result;
+    } // End of scheduleNo()
+
+    @PostMapping("/report/{dt:^20\\d{2}-[01]{1}\\d{1}-[0-3]{1}\\d{1}$}")
+    public String postWeeklyReport(HttpServletRequest request, @PathVariable String dt, @RequestBody String requestBody){
+        String result = null, compId = null, aesKey = null, aesIv = null, userNo = null, data = null;
+        boolean prvUse = false, crntUse = false;
+        String prv = null, crnt = null;
+        HttpSession session = null;
+        JSONObject json = null;
+        boolean r = false;
+        Msg msg = null;
+
+        session = request.getSession();
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        userNo = (String)session.getAttribute("userNo");
+        compId = (String)session.getAttribute("compId");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
+        msg = getMsg((String)session.getAttribute("lang"));
+
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        }else{
+            data = decAes(requestBody, aesKey, aesIv);
+            json = new JSONObject(data);
+            prv = json.getString("prv");
+            crnt = json.getString("crnt");
+            prvUse = json.getBoolean("prvUse");
+            crntUse = json.getBoolean("crntUse");
+            r = schedule2Svc.updateWeeklyReport(compId, userNo, dt, prv, prvUse, crnt, crntUse);
+            if(r)   result = "{\"result\":\"failure\"}";
+            else    result = "{\"result\":\"ok\"}";
         }
         return result;
     } // End of scheduleNo()
