@@ -76,7 +76,7 @@ class Contract {
     constructor(each) {
         if (each != undefined) {
             this.no = each.no;
-            this.coWorker = each.coWorker == undefined ? [] : JSON.parse(each.coWorker);
+            this.coWorker = each.coWorker == undefined ? undefined : JSON.parse(each.coWorker);
             this.created = each.created;
             this.trades = each.trades == undefined ? null : each.trades;
             this.title = each.title;
@@ -93,9 +93,9 @@ class Contract {
             this.profit = each.profit;
             this.maintenance = each.maintenance == undefined ? [] : JSON.parse(each.maintenance);
             this.customer = each.customer;
-            this.supplied = each.supplied == undefined ? null : each.supplied;
-            this.approved = each.approved == undefined ? null : each.approved;
-            this.saleDate = each.saleDate == undefined ? null : each.saleDate;
+            this.supplied = each.supplied;
+            this.approved = each.approved;
+            this.saleDate = each.saleDate;
             this.appLine = each.appLine;
             this.docNo = each.docNo;
             this.container = null;
@@ -208,7 +208,7 @@ class Contract {
     }
 
     draw(cnt) {
-       
+
         let el, child;
 
         if (cnt === undefined && this.cnt !== undefined) cnt = this.cnt;
@@ -353,7 +353,7 @@ class Contract {
         el.append(el2);
 
         if (el2.previousElementSibling.className == "contract-done") {
-            if (this.supplied != 0 || this.suppliedAttached.length > 0) {
+            if (this.supplied != undefined || this.suppliedAttached.length > 0) {
                 el2.className = "contract-done";
             } else {
                 el2.className = "contract-doing";
@@ -367,7 +367,7 @@ class Contract {
         el2 = document.createElement("div");
         el.append(el2);
         if (el2.previousElementSibling.className == "contract-done") {
-            if (this.approved != 0 || this.approvedAttached.length > 0) {
+            if (this.approved != undefined || this.approvedAttached.length > 0) {
                 el2.className = "contract-done";
             } else {
                 el2.className = "contract-doing";
@@ -644,18 +644,27 @@ class Contract {
         el2 = document.createElement("input");
         el2.setAttribute("type", "date");
         el2.setAttribute("class", "suppliedDate");
+        el2.setAttribute("disabled", "disabled");
+
+        el.appendChild(el2);
+
+        el2 = document.createElement("button");
+        el2.innerHTML = "일자 선택";
         el2.addEventListener("click", () => {
             R.sche = new Schedule();
             R.sche.popupModalForEdit(new Date(), true);
             document.getElementById("schedule-type2h").setAttribute("checked", "checked");
             document.getElementsByClassName("schedule-detail")[0].children[0].children[0].children[1].value = this.title + "\u00A0" + "납품";
-            // modal.confirm[0].onclick() = () => {
-            //     R.sche.clickedScheduleModalConfirm;
-
-            // }
+            modal.confirm[0].onclick = () => {
+                R.sche.clickedScheduleModalConfirm();
+                insertDate();
+            }
 
         })
+
         el.appendChild(el2);
+
+
 
         if (obj.className == "sopp-contract") {
             cnt = document.getElementsByClassName("sopp-contract")[0];
@@ -710,7 +719,7 @@ class Contract {
 
         }
 
-        if (this.supplied !=null) {
+        if (this.supplied != undefined) {
             document.getElementsByClassName("suppliedDate")[0].value = getYmdHypen(this.supplied);
         }
 
@@ -740,12 +749,24 @@ class Contract {
         el2 = document.createElement("input");
         el2.setAttribute("type", "date");
         el2.setAttribute("class", "approvedDate");
+        el2.setAttribute("disabled", "disabled");
+        el.appendChild(el2);
+
+
+        el2 = document.createElement("button");
+        el2.innerHTML = "일자 선택";
         el2.addEventListener("click", () => {
             R.sche = new Schedule();
             R.sche.popupModalForEdit(new Date(), true);
             document.getElementById("schedule-type2i").setAttribute("checked", "checked");
             document.getElementsByClassName("schedule-detail")[0].children[0].children[0].children[1].value = this.title + "\u00A0" + "검수";
+            modal.confirm[0].onclick = () => {
+                R.sche.clickedScheduleModalConfirm();
+                insertDate();
+            }
+
         })
+
         el.appendChild(el2);
 
         if (obj.className == "sopp-contract") {
@@ -804,7 +825,7 @@ class Contract {
 
         }
 
-        if (this.approved != null) {
+        if (this.approved != undefined) {
             document.getElementsByClassName("approvedDate")[0].value = getYmdHypen(this.approved);
 
         }
@@ -1034,21 +1055,20 @@ class Contract {
 
 
     update() {
-        insertDate();
         let cont = Object.assign({}, this), data;
-       
+        delete cont.approvedAttached;
+        delete cont.suppliedAttached;
+        delete cont.attached;
+        delete cont.bills;
+        delete cont.docNo;
+        delete cont.maintenance;
+        delete cont.trades;
+        delete cont.schedules;
+        delete cont.appLine;
+        delete cont.container;
 
-      delete cont.approvedAttached; 
-      delete cont.suppliedAttached;
-      delete cont.attached;
-      delete cont.bills;
-      delete cont.docNo;
-      delete cont.maintenance;
-      delete cont.trades;
-      delete cont.schedules;
-      delete cont.appLine;
-      delete cont.container;
         data = JSON.stringify(cont);
+        console.log(this);
         data = cipher.encAes(data);
         console.log(this);
         fetch(apiServer + "/api/contract/contractPost", {
@@ -1069,18 +1089,10 @@ class Contract {
         console.log(cont);
     }
 
-
-
-
-
 }
 
 
-
-
-
 function savedLineSet() {
-
     // let formId = "doc_Form_leave"; 
     let formId = "doc_Form_extension";
     let appLineNum = document.getElementsByClassName("schedule-app-line")[0].value * 1;
@@ -1982,7 +1994,30 @@ function insertDate() {
         R.contract.supplied = date;
     } else if (document.getElementById("schedule-type2i").getAttribute("checked") === "checked") {
         R.contract.approved = date;
-
-
     }
+
+    R.contract.update();
 }
+
+
+
+function setSopp(no) {
+    if (no === null) console.log("SOPP no is null!!!");
+    else fetch(apiServer + "/api/project/sopp/" + no)
+        .catch((error) => console.log("error:", error))
+        .then(response => response.json())
+        .then(response => {
+            let data, sopp, projectOwner;
+            if (response.result === "ok") {
+                data = response.data;
+                data = cipher.decAes(data);
+                data = JSON.parse(data);
+                R.projectOwner = data.projectOwner;
+                R.chat = data.chat;
+                R.sopp = new Sopp2(data.sopp);
+                console.log("sopp 확인");
+            } else {
+                console.log(response.msg);
+            }
+        });
+} 

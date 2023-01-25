@@ -420,7 +420,7 @@ public class ApiContractCtrl extends Ctrl {
         HttpSession session = null;
 
         mapper = new ObjectMapper();
-        mapper.enable(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT);
+       // mapper.enable(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT);
         session = request.getSession();
         compId = (String) session.getAttribute("compId");
         if (compId == null)
