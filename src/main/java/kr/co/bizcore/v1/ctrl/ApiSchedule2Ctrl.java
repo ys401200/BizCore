@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -201,7 +202,7 @@ public class ApiSchedule2Ctrl extends Ctrl {
         }
         return result;
     } // End of scheduleNo()
-
+    
     @GetMapping("/report/{dt:^20\\d{2}-[01]{1}\\d{1}-[0-3]{1}\\d{1}$}")
     public String getWeeklyReport(HttpServletRequest request, @PathVariable String dt){
         String result = null, compId = null, aesKey = null, aesIv = null, userNo = null;
@@ -235,19 +236,23 @@ public class ApiSchedule2Ctrl extends Ctrl {
     @PostMapping("/report/{dt:^20\\d{2}-[01]{1}\\d{1}-[0-3]{1}\\d{1}$}")
     public String postWeeklyReport(HttpServletRequest request, @PathVariable String dt, @RequestBody String requestBody){
         String result = null, compId = null, aesKey = null, aesIv = null, userNo = null, data = null;
-        boolean prvUse = false, crntUse = false;
-        String prv = null, crnt = null;
+        boolean prvUse = false, crntUse = false, r = false;
+        String prv = null, crnt = null, inUse = null, notUse = null;
         HttpSession session = null;
         JSONObject json = null;
-        boolean r = false;
+        JSONArray jarr = null;
         Msg msg = null;
+        Integer tc = null;
+        int x = -1;
 
         session = request.getSession();
         aesKey = (String)session.getAttribute("aesKey");
         aesIv = (String)session.getAttribute("aesIv");
         userNo = (String)session.getAttribute("userNo");
+        tc = (Integer)session.getAttribute("timeCorrect");
         compId = (String)session.getAttribute("compId");
         if(compId == null)  compId = (String)request.getAttribute("compId");
+        tc = tc == null ? 0 : tc;
         msg = getMsg((String)session.getAttribute("lang"));
 
         if(compId == null){
@@ -257,13 +262,35 @@ public class ApiSchedule2Ctrl extends Ctrl {
         }else{
             data = decAes(requestBody, aesKey, aesIv);
             json = new JSONObject(data);
+            if(!json.isNull("inUse")){
+                jarr = json.getJSONArray("inUse");
+                for(x = 0 ; x < jarr.length() ; x++){
+                    if(inUse == null)   inUse = "";
+                    else                inUse += ",";
+                    inUse += jarr.getInt(x);
+                }
+            }
+            if(!json.isNull("notUse")){
+                jarr = json.getJSONArray("notUse");
+                for(x = 0 ; x < jarr.length() ; x++){
+                    if(inUse == null)   notUse = "";
+                    else                notUse += ",";
+                    inUse += jarr.getInt(x);
+                }
+            }
+            
+            json = json.getJSONObject("report");            
             prv = json.getString("prv");
             crnt = json.getString("crnt");
             prvUse = json.getBoolean("prvUse");
             crntUse = json.getBoolean("crntUse");
-            r = schedule2Svc.updateWeeklyReport(compId, userNo, dt, prv, prvUse, crnt, crntUse);
-            if(r)   result = "{\"result\":\"failure\"}";
-            else    result = "{\"result\":\"ok\"}";
+            r = schedule2Svc.updateWeeklyReport(compId, userNo, dt, prv, prvUse, crnt, crntUse, inUse, notUse);
+            if(r){
+                //result = schedule2Svc.getWeeklyReport(compId, userNo, dt, tc);
+                //result = encAes(result, aesKey, aesIv);
+                //result = "{\"result\":\"ok\",\"data\":\"" + result + "\"}";
+                result = "{\"result\":\"ok\"}";
+            }else    result = "{\"result\":\"failure\"}";
         }
         return result;
     } // End of scheduleNo()

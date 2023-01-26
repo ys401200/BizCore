@@ -1,4 +1,4 @@
-let drawMonthList, clickedMonth, clickedWeek, drawDeptTree, clickedDeptName, clickedTreeEmployee, drawReport, editInputSet, getReportData, clickedButton, editBtnDisplay, clickUpdateBtn, R = {};
+let drawMonthList, clickedMonth, clickedWeek, drawDeptTree, clickedDeptName, clickedTreeEmployee, drawReport, getReportData, clickedButton, editBtnDisplay, clickUpdateBtn, R = {};
 
 $(document).ready(() => {
 
@@ -12,8 +12,6 @@ $(document).ready(() => {
 		$("#loadingDiv").loading("toggle");
 	}, 300);
 
-	// getWorkReport();
-	//getReportData();
 	drawMonthList();
 	clickedWeek();
 	drawDeptTree();
@@ -21,7 +19,7 @@ $(document).ready(() => {
 
 // 상당 타이틀바의 버튼 클릭시 실행되는 함수
 clickedButton = (el) => {
-	let n, x, y, z, arr, els, cnt;
+	let n, x, y, z, arr, els, cnt, url, dt;
 	n = el.dataset.n;
 	if(n === "print"){ // 출력 버튼
 		x =  window.open('/printReport.html', 'report', 'left=0,top=0,width=800,height=900,toolbar=0,scrollbars=0,status=0');
@@ -76,116 +74,40 @@ clickedButton = (el) => {
 		el.nextElementSibling.style.display = "initial";
 		el.nextElementSibling.nextElementSibling.style.display = "initial";
 		drawReport(true);
-		editInputSet();
 	}else if(n === "save"){ // 저장 버튼
-		let reportContent = document.getElementsByClassName("report-contents")[0];
-		let lastWeekContents = reportContent.getElementsByClassName("lastWeekContents");
-		let thisWeekContents = reportContent.getElementsByClassName("thisWeekContents");
-
-		for(let i = 0; i < lastWeekContents.length; i++){
-			let item = lastWeekContents[i];
-			let input = item.querySelectorAll("input[type=\"text\"]");
-
-			for(let t = 0; t < input.length; t++){
-				let job = input[t].dataset.job;
-				let no = input[t].dataset.no;
-				let dataName = input[t].dataset.name;
-				let checked = input[t].nextSibling.checked;
-				let title = input[t].value;
-				let contentId = input[t].parentElement.nextSibling.nextSibling.getAttribute("id");
-				let data = R.formList[dataName];
-
-				delete data.date;
-				data.title = title;
-				data.content = CKEDITOR.instances[contentId].getData().replace(/\r/g, "").replace(/\n/g, "");
-				data.writer = storage.my;
-				data.report = checked;
-				data = JSON.stringify(data);
-				data = cipher.encAes(data);
-
-				axios.put("/api/schedule/" + job + "/" + no, data, {
-					headers: {"Content-Type": "text/plain"}
-				}).then((response) => {
-					if(response.data.result !== "ok"){
-						msg.set("지난주 데이터 " + (i+1) + "번째 수정 중 에러 입니다.\n다시 확인해주세요.");
-						return false;
-					}
-				}).catch((error) => {
-					msg.set("지난주 데이터 " + (i+1) + "번째 수정 중 에러 입니다.\n" + error);
-					console.log(error);
-					return false;
-				});
-			}
+		els = document.getElementsByClassName("schedule-in-use");
+		url = "/api/schedule2/report/";
+		z = {"report":{"prv":undefined, prvUse:undefined, crnt:undefined, crntUse:undefined},"inUse":[],"notUse":[]};
+		for(x = 0 ; x < els.length ; x++){
+			if(els[x].dataset.no === "previousWeek")		z.report.prvUse = els[x].checked;
+			else if(els[x].dataset.no === "currentWeek")	z.report.crntUse = els[x].checked;
+			else if(els[x].checked)		z.inUse.push(els[x].dataset.no * 1);
+			else						z.notUse.push(els[x].dataset.no * 1);
 		}
+		z.report.prv = CKEDITOR.instances.previousWeekDummy.getData();
+		z.report.crnt = CKEDITOR.instances.currentWeekDummy.getData();
+		z.report.prv = z.report.prv.replaceAll("\n", "").replaceAll("\r", "").replaceAll("\t", "").replaceAll("\\", "&bsol;");
+		z.report.crnt = z.report.crnt.replaceAll("\n", "").replaceAll("\r", "").replaceAll("\t", "").replaceAll("\\", "&bsol;");
+		z = JSON.stringify(z);
+		z = cipher.encAes(z);
+		dt = R.workReport.date.getFullYear() + "-" + (R.workReport.date.getMonth() < 9 ? "0" + (R.workReport.date.getMonth() + 1) : (R.workReport.date.getMonth() + 1)) + "-" + (R.workReport.date.getDate() < 10 ? "0" + (R.workReport.date.getDate()) : (R.workReport.date.getDate()))
 
-		for(let i = 0; i < thisWeekContents.length; i++){
-			let item = thisWeekContents[i];
-			let input = item.querySelectorAll("input[type=\"text\"]");
-
-			for(let t = 0; t < input.length; t++){
-				let job = input[t].dataset.job;
-				let no = input[t].dataset.no;
-				let dataName = input[t].dataset.name;
-				let checked = input[t].nextSibling.checked;
-				let title = input[t].value;
-				let contentId = input[t].parentElement.nextSibling.nextSibling.getAttribute("id");
-				let data = R.formList[dataName];
-
-				delete data.date;
-				data.title = title;
-				data.content = CKEDITOR.instances[contentId].getData().replace(/\r/g, "").replace(/\n/g, "");
-				data.writer = storage.my;
-				data.report = checked;
-				data = JSON.stringify(data);
-				data = cipher.encAes(data);
-
-				axios.put("/api/schedule/" + job + "/" + no, data, {
-					headers: {"Content-Type": "text/plain"}
-				}).then((response) => {
-					if(response.data.result !== "ok"){
-						msg.set("이번주 데이터 " + (i+1) + "번째 수정 중 에러 입니다.\n다시 확인해주세요.");
-						return false;
-					}
-				}).catch((error) => {
-					msg.set("이번주 데이터 " + (i+1) + "번째 수정 중 에러 입니다.\n" + error);
-					console.log(error);
-					return false;
-				});
+		fetch(apiServer + url + dt, {
+			method: "POST",
+			header: {"Content-Type": "text/plain"},
+			body: z
+		}).catch((error) => console.log("error:", error))
+		.then(response => response.json())
+		.then(response => {
+			let data;
+			if(response.result === "ok"){
+				getReportData(dt);
+			}else{
+				console.log(response.msg);
 			}
-
-			if(i == thisWeekContents.length - 1){
-				let date = new Date(R.workReport.end).toISOString().substring(0, 10).replace(/-/g, "");
-				let data = {
-					"currentWeek": CKEDITOR.instances.currentWeek.getData().replaceAll("\n", ""),
-					"currentWeekCheck": document.getElementsByClassName("currentWeek")[0].previousSibling.querySelector("input[type=\"checkbox\"]").checked ? true : false,
-					"previousWeek": CKEDITOR.instances.previousWeek.getData().replaceAll("\n", ""),
-					"previousWeekCheck": document.getElementsByClassName("previousWeek")[0].previousSibling.querySelector("input[type=\"checkbox\"]").checked ? true : false,
-					"schedule": [],
-				}
-				data = JSON.stringify(data);
-				data = cipher.encAes(data);
-
-				axios.post("/api/schedule/workreport/personal/" + date, data, {
-					headers: {"Content-Type": "text/plain"}
-				}).then((response) => {
-					if(response.data.result !== "ok"){
-						msg.set("추가기재 수정 에러 입니다.\n다시 확인해주세요.");
-						return false;
-					}
-				}).catch((error) => {
-					msg.set("추가기재 수정 에러 입니다.\n" + error);
-					console.log(error);
-					return false;
-				});
-					
-				window.setTimeout(() => {
-					window.location.reload();
-					msg.set("수정되었습니다.");
-				}, 600);
-			}
-		}
-		
+		});
 	}else if(n === "cancel"){
+		if(CKEDITOR.instances !== undefined)	for(x in CKEDITOR.instances)	CKEDITOR.instances[x].destroy();
 		z = document.getElementsByClassName("workReportTitle")[0].children[1].children;
 		for(x = 0 ; x < z.length ; x++){
 			y = z[x].dataset.n;
@@ -204,81 +126,6 @@ clickUpdateBtn = () => {
 	if(R.workReport.employee == storage.my && nowDate >= R.workReport.start && nowDate <= R.workReport.endTime)	updateBtn.style.display = "initial";
 	else	updateBtn.style.display = "none";
 } // End of clickUpdateBtn()
-
-editInputSet = () => {
-	let container = document.getElementsByClassName("report-contents")[0];
-	let lastWeekContents = container.getElementsByClassName("lastWeekContents");
-	let thisWeekContents = container.getElementsByClassName("thisWeekContents");
-	let previousWeek = document.getElementsByClassName("previousWeek")[0];
-	let currentWeek = document.getElementsByClassName("currentWeek")[0];
-	
-	for(let i = 0; i < lastWeekContents.length; i++){
-		let item = lastWeekContents[i];
-		
-		for(let t = 0; t < item.getElementsByClassName("weekContentTitle").length; t++){
-			let title = item.getElementsByClassName("weekContentTitle")[t];
-			let input = document.createElement("input");
-			input.type = "text";
-			input.value = title.innerHTML.replace(/\#/g, "").replace(/\@/g, "").replace(/\$/g, "").trim();
-			input.dataset.no = title.dataset.no;
-			input.dataset.job = title.dataset.job;
-			input.dataset.name = title.dataset.name;
-			title.after(input);
-			title.style.display = "none";
-		}
-
-		for(let t = 0; t < item.getElementsByClassName("weekContentDesc").length; t++){
-			let content = item.getElementsByClassName("weekContentDesc")[t];
-			let textarea = document.createElement("textarea");
-			let randomNumber = Math.floor(Math.random() * 100);
-			textarea.value = content.innerHTML;
-			textarea.id = "lastText_" + randomNumber;
-			content.after(textarea);
-			content.style.display = "none";
-		}
-	}
-
-	for(let i = 0; i < thisWeekContents.length; i++){
-		let item = thisWeekContents[i];
-		
-		for(let t = 0; t < item.getElementsByClassName("weekContentTitle").length; t++){
-			let title = item.getElementsByClassName("weekContentTitle")[t];
-			let input = document.createElement("input");
-			input.type = "text";
-			input.value = title.innerHTML.replace(/\#/g, "").replace(/\@/g, "").replace(/\$/g, "").trim();
-			input.dataset.no = title.dataset.no;
-			input.dataset.job = title.dataset.job;
-			input.dataset.name = title.dataset.name;
-			title.after(input);
-			title.style.display = "none";
-		}
-		
-		for(let t = 0; t < item.getElementsByClassName("weekContentDesc").length; t++){
-			let content = item.getElementsByClassName("weekContentDesc")[t];
-			let textarea = document.createElement("textarea");
-			let randomNumber = Math.floor(Math.random() * 100);
-			textarea.value = content.innerHTML;
-			textarea.id = "thisText_" + randomNumber;
-			content.after(textarea);
-			content.style.display = "none";
-		}
-	}
-
-	let prevTextarea = document.createElement("textarea");
-	prevTextarea.value = previousWeek.innerHTML;
-	prevTextarea.id = "previousWeek";
-	previousWeek.append(prevTextarea);
-	previousWeek.children[0].style.display = "none";
-
-	let currTextarea = document.createElement("textarea");
-	currTextarea.value = currentWeek.innerHTML;
-	currTextarea.id = "currentWeek";
-	currentWeek.append(currTextarea);
-	currentWeek.children[0].style.display = "none";
-
-	ckeditor.config.readOnly = false;
-	window.setTimeout(setEditor, 200);
-}
 
 // 조직도에서 직원을 클릭할 때 실행되는 함수
 clickedTreeEmployee = (el) => {
@@ -301,7 +148,7 @@ clickedTreeEmployee = (el) => {
 				if(arr.length > 1)	document.getElementsByClassName("workReportTitle")[0].children[1].children[2].style.display = "initial";
 				else				document.getElementsByClassName("workReportTitle")[0].children[1].children[2].style.display = "none";
 			},1)
-		}else if(y === "edit")	clickUpdateBtn();
+		}else if(y === "edit")	z[x].style.display = R.workReport.employee === storage.my ? "initial" : "none";
 		else if(y === "cancel")	z[x].style.display = "none";
 		else if(y === "save")	z[x].style.display = "none";
 	}
@@ -334,10 +181,7 @@ getReportData = (date) => {
 			R.workReport.schedule = data.schedule;
 			if(R.workReport.employee === undefined)	R.workReport.employee = storage.my;
 			drawReport();
-			const CommonDatas = new Common();
-			if(!CommonDatas.objectCheck(R.workReport.report)){
-				editBtnDisplay();
-			}
+			if(!(new Common().objectCheck(R.workReport.report)))	editBtnDisplay();
 		}else{
 			console.log(response.msg);
 		}
@@ -346,10 +190,13 @@ getReportData = (date) => {
 
 // 주간 업무보고를 그리는 함수
 drawReport = (editable, targetElement, employee) => {
-	let x, y, z, t, html, el, cnt, std, sch1, sch2, data, day;
+	let x, y, z, t, html, el, cnt, std, sch1, sch2, data, day, reportContents;
 	day = ["일", "월", "화", "수", "목", "금", "토"];
 	cnt = targetElement === undefined ? document.getElementsByClassName("report-container")[0] : targetElement;
 	employee = employee === undefined ? R.workReport.employee : employee;
+
+	// 웹에디터가 있는 경우 먼저 이를 제거함
+	if(CKEDITOR.instances !== undefined)	for(x in CKEDITOR.instances)	CKEDITOR.instances[x].destroy();
 
 	// 본인인 경우 편집할 수 있도록 설정하는 변수
 	if(editable !== true || employee !== storage.my)	editable = false;
@@ -371,30 +218,25 @@ drawReport = (editable, targetElement, employee) => {
 	sch1 = [[],[],[],[],[],[],[]];
 	sch2 = [[],[],[],[],[],[],[]];
 	data = R.workReport.report[employee];
+	if(data === undefined)	data = {prv:"", prvUse:false, crnt:'', crntUse:false};
 	z = R.workReport.schedule;
 	
-	console.log(":::::::::::::::::::: Length of schedule : " + z.length);
 	for(x = 0 ; x < z.length ; x++){
-		if(z[x].writer !== employee){
-			console.log(":::::::::::::::::::: in for() : index of : " + x + " / not my schedule !!");
-			continue;
-		}
-		console.log(":::::::::::::::::::: in for() : index of : " +  x + " / It's my schedule !!");
+		if(z[x].writer !== employee)	continue;
 		t = new Date(z[x].from);
-		console.log(":::::::::::::::::::: in for() : index of : " +  x + " / before while / value of from : " + t);
-		while(t.getTime() <= new Date(z[x].to).getTime()){
+		if(editable){ // 이틀 이상 걸치는 일정에 대해 해당 날짜에 모두 표시되게 함, 단 편집모드일 경우 예외
 			y = t.getDay();
-			console.log(":::::::::::::::::::: in for() : index of : " +  x + " / in while / day of : " + y + " / value of from " + t);
 			if(t <= std)	sch1[y].push(z[x]);
 			if(t > std)		sch2[y].push(z[x]);
-			t = new Date(t.getTime() + 86400000 * 7);
-		} // End of while()
+		}else{
+			while(t.getDate() <= new Date(z[x].to).getDate()){
+				y = t.getDay();
+				if(t <= std)	sch1[y].push(z[x]);
+				if(t > std)		sch2[y].push(z[x]);
+				t = new Date(t.getTime() + 86400000);
+			} // End of while()
+		}
 	} // End of for(x)
-
-	console.log(":::::::::::::::::::: Array of schedule 0 : ");
-	console.log(sch1);
-	console.log(":::::::::::::::::::: Array of schedule 1 : ");
-	console.log(sch2);
 	
 	// 일정에 따른 데이터를 기반으로 html 생성
 	html = ["", ""]; // 지난 주, 이번 주
@@ -408,7 +250,7 @@ drawReport = (editable, targetElement, employee) => {
 				let itemName = "lastWeekData_" + index;
 				R.formList[itemName] = sch1[x][y];
 				html[0] += ("<div><div class=\"weekContentTitle\" data-no=\"" + sch1[x][y].no + "\" data-job=\"" + sch1[x][y].job + "\" data-name=\"lastWeekData_" + index + "\">" + sch1[x][y].title + "</div>");
-				if(editable)	html[0] += ("<input type=\"checkbox\" " + (sch1[x][y].report ? "checked " : "") + "/>");
+				if(editable)	html[0] += ("<input class=\"schedule-in-use\" data-no=\"" + sch1[x][y].no + "\" type=\"checkbox\" " + (sch1[x][y].inUse ? "checked " : "") + "/>");
 				html[0] += "</div>";
 				html[0] += ("<div class=\"weekContentDesc\">" + sch1[x][y].content + "</div>");
 				index++;
@@ -422,7 +264,7 @@ drawReport = (editable, targetElement, employee) => {
 				let itemName = "thisWeekData_" + index;
 				R.formList[itemName] = sch2[x][y];
 				html[1] += ("<div><div class=\"weekContentTitle\" data-no=\"" + sch2[x][y].no + "\" data-job=\"" + sch2[x][y].job + "\" data-name=\"thisWeekData_" + index + "\">" + sch2[x][y].title + "</div>");
-				if(editable)	html[1] += ("<input type=\"checkbox\" " + (sch2[x][y].report ? "checked " : "") + "/>");
+				if(editable)	html[1] += ("<input class=\"schedule-in-use\" data-no=\"" + sch2[x][y].no + "\" type=\"checkbox\" " + (sch2[x][y].inUse ? "checked " : "") + "/>");
 				html[1] += "</div>";
 				html[1] += ("<div class=\"weekContentDesc\">" + sch2[x][y].content + "</div>");
 				index++;
@@ -434,52 +276,85 @@ drawReport = (editable, targetElement, employee) => {
 	cnt.children[3].children[0].innerHTML = html[0];
 	cnt.children[3].children[1].innerHTML = html[1];
 	// 추가 기재사항
-	if(editable || data.previousWeekCheck){ // 지난 주
+	if(data.prvUse){ // 지난 주
 		html = "<div><div>추가 기재 사항</div>";
 		if(editable){
-			html += ("<input type=\"checkbox\" " + (data.previousWeekCheck ? "checked " : "") + "/></div>");
-			html += ("<div class=\"previousWeek\">" + data.previousWeek + "</div>"); // <=== 웹에디터 부착 필요
+			html += ("<input class=\"schedule-in-use\" data-no=\"previousWeek\" type=\"checkbox\" " + (data.prvUse ? "checked " : "") + "/></div>");
+			html += ("<div class=\"previousWeek\">" + data.prv + "</div>"); // <=== 웹에디터 부착 필요
 		}else{
-			html += ("</div><div>" + data.previousWeek + "</div>");	
+			html += "</div><div class=\"previousWeek\">";
+			if(!data.prvUse || data.prv === undefined || data.prv === "")	html += "<div class=\"empty-cell\">데이터가 없습니다.</div></div>";
+			else	html += (data.prv + "</div>");
 		}
 		cnt.children[4].children[0].innerHTML = html;
 	}else{
-		html = "<div><div>추가 기재 사항</div></div><div></div>";
-		cnt.children[4].children[0].innerHTML = html;
-		cnt.children[4].children[0].children[1].innerHTML = "";
+		if(editable){
+			html = "<div><div>추가 기재 사항</div><input  class=\"schedule-in-use\" data-no=\"previousWeek\" type=\"checkbox\" " + (data.prvUse ? "checked " : "") + "/></div><div class=\"previousWeek\"></div>";
+			cnt.children[4].children[0].innerHTML = html;
+		}else{
+			html = "<div><div>추가 기재 사항</div></div><div class=\"previousWeek\"><div class=\"empty-cell\">데이터가 없습니다.</div></div>";
+			cnt.children[4].children[0].innerHTML = html;
+		}
 	}
 	
-	if(editable || data.currentWeekCheck){ // 이번 주
+	if(data.crntUse){ // 이번 주
 		html = "<div><div>추가 기재 사항</div>";
 		if(editable){
-			html += ("<input type=\"checkbox\" " + (data.currentWeekCheck ? "checked " : "") + "/></div>");
-			html += ("<div class=\"currentWeek\">" + data.currentWeek + "</div>"); // <=== 웹에디터 부착 필요
+			html += ("<input class=\"schedule-in-use\" data-no=\"currentWeek\" type=\"checkbox\" " + (data.crntUse ? "checked " : "") + "/></div>");
+			html += ("<div class=\"currentWeek\">" + data.crnt + "</div>"); // <=== 웹에디터 부착 필요
 		}else{
-			html += ("</div><div>" + data.currentWeek + "</div>");	
+			html += "</div><div class=\"currentWeek\">";	
+			if(!data.crntUse || data.crnt === undefined || data.crnt === "")	html += "<div class=\"empty-cell\">데이터가 없습니다.</div></div>";
+			else	html += (data.crnt + "</div>");
 		}
 		cnt.children[4].children[1].innerHTML = html;
 	}else{
-		html = "<div><div>추가 기재 사항</div></div><div></div>";
-		cnt.children[4].children[1].innerHTML = html;
-		cnt.children[4].children[1].children[1].innerHTML = "";
+		if(editable){
+			html = "<div><div>추가 기재 사항</div><input class=\"schedule-in-use\" data-no=\"currentWeek\" type=\"checkbox\" " + (data.crntUse ? "checked " : "") + "/></div><div class=\"currentWeek\"></div>";
+			cnt.children[4].children[1].innerHTML = html;
+		}else{
+			html = "<div><div>추가 기재 사항</div></div><div class=\"currentWeek\"><div class=\"empty-cell\">데이터가 없습니다.</div></div>";
+			cnt.children[4].children[1].innerHTML = html;
+		}
 	}
 
-	let reportContents = document.getElementsByClassName("report-contents")[0];
-	if(reportContents.children[0].children.length == 0){
-		reportContents.children[0].innerHTML = "<div class=\"empty-cell\">데이터가 없습니다.</div>";
+	if(storage.my === R.workReport.employee && editable){ // 본인 보고서일 경우 웹에디터를 미리 부착해 놓음
+		cnt = document.getElementsByClassName("previousWeek")[0];
+		el = document.createElement("textarea");
+		el.style.display = "none";
+		el.id = "previousWeekDummy";
+		cnt.appendChild(el);
+		cnt = document.getElementsByClassName("currentWeek")[0];
+		el = document.createElement("textarea");
+		el.style.display = "none";
+		el.id = "currentWeekDummy";
+		cnt.appendChild(el);
+
+		ckeditor.config.readOnly = false;
+		CKEDITOR.replace("previousWeekDummy",
+			{height:200,
+			removeButtons:"Source,Save,Templates,NewPage,Preview,Print,Cut,Copy,Paste,PasteText,PasteFromWord,Find,Replace,SelectAll,Scayt,ImageButton,HiddenField,CopyFormatting,RemoveFormat,Outdent,Indent,Blockquote,CreateDiv,BidiLtr,BidiRtl,Language,Link,Unlink,Anchor,Image,Flash,HorizontalRule,Smiley,SpecialChar,PageBreak,Iframe,Maximize,ShowBlocks,About,Button,Select,Textarea,TextField,Radio,Checkbox,Form,Format,Styles"
+		});
+		CKEDITOR.replace("currentWeekDummy",
+			{height:200,
+			removeButtons:"Source,Save,Templates,NewPage,Preview,Print,Cut,Copy,Paste,PasteText,PasteFromWord,Find,Replace,SelectAll,Scayt,ImageButton,HiddenField,CopyFormatting,RemoveFormat,Outdent,Indent,Blockquote,CreateDiv,BidiLtr,BidiRtl,Language,Link,Unlink,Anchor,Image,Flash,HorizontalRule,Smiley,SpecialChar,PageBreak,Iframe,Maximize,ShowBlocks,About,Button,Select,Textarea,TextField,Radio,Checkbox,Form,Format,Styles"
+		});
+		CKEDITOR.instances.previousWeekDummy.setData(data.prv);
+		CKEDITOR.instances.currentWeekDummy.setData(data.crnt);
+
+		window.setTimeout(function(){
+			let el = document.getElementById("previousWeekDummy");
+			el.previousElementSibling.style.display = "none";
+			el = document.getElementById("currentWeekDummy");
+			el.previousElementSibling.style.display = "none";
+		},40);
 	}
 
-	if(reportContents.children[1].children.length == 0){
-		reportContents.children[1].innerHTML = "<div class=\"empty-cell\">데이터가 없습니다.</div>";
-	}
-
-	if(reportContents.nextElementSibling.children[0].children[1].children.length == 0){
-		reportContents.nextElementSibling.children[0].children[1].innerHTML = "<div class=\"empty-cell\">데이터가 없습니다.</div>";
-	}
-
-	if(reportContents.nextElementSibling.children[1].children[1].children.length == 0){
-		reportContents.nextElementSibling.children[1].children[1].innerHTML = "<div class=\"empty-cell\">데이터가 없습니다.</div>";
-	}
+	reportContents = document.getElementsByClassName("report-contents")[0];
+	// 지난 주 일정이 없는 경우
+	if(reportContents.children[0].children.length == 0)	reportContents.children[0].innerHTML = "<div class=\"empty-cell\">데이터가 없습니다.</div>";
+	// 이번 주 일정이 없는 경우
+	if(reportContents.children[1].children.length == 0)	reportContents.children[1].innerHTML = "<div class=\"empty-cell\">데이터가 없습니다.</div>";
 } // End of drawReport()
 
 // 조직도를 그리는 함수
@@ -557,7 +432,7 @@ clickedDeptName = (el) => {
 
 // 좌측 달력을 그리는 함수
 drawMonthList = () => {
-	let x, y, cnt, year, month, dt, el, html, startDate, endDate, today;
+	let x, y, cnt, year, month, dt, el, html, startDate, endDate, today, lastMonth;
 
 	// 달력을 만들기 위한 기초데이터 정리
 	cnt = document.getElementsByClassName("month-list")[0];
@@ -566,12 +441,17 @@ drawMonthList = () => {
 	month = today.getMonth() + 1;
 	if(today.getDay() > 3)	today = new Date(today.getTime() + 86400000 * 7);
 
+	// 달력을 그릴 마지막 월 계산 / 다음 주 토요일이 다음달로 넘어가는 경우 다음달까지, 아닌 경우 이번달까지
+	lastMonth = new Date();
+	lastMonth.setDate(lastMonth.getDate() - lastMonth.getDay());
+	lastMonth = new Date(lastMonth.getTime() + 86400000 * 13);
+
 	// 금주 선택을 위한 일요일 날짜 잡기
 	x = new Date(new Date() - ((new Date()).getDay() * 86400000));
 	x = x.getFullYear() * 10000 + (x.getDate() + 1) * 100 + x.getDate();
 
 	// 달력 그리기
-	while(year * 100 + month <= today.getFullYear() * 100 + today.getMonth() + 2) {
+	while(year * 100 + month <= lastMonth.getFullYear() * 100 + lastMonth.getMonth() + 1) {
 		// 달력 타이틀
 		el = document.createElement("div");
 		el.innerHTML = "<div>" + year + "</div><div>" + month + "</div>";
@@ -653,18 +533,12 @@ clickedWeek = (el) => {
 } // End of clickedWeek()
 
 editBtnDisplay = () => {
-	let calDay = new Date().getDay();
 	let date = new Date();
-	date.setDate(date.getDate() - calDay);
+	date.setDate(date.getDate() - date.getDay());
 	let resultDate = new Date(date.toISOString().substring(0, 10) + " " + "00:00:00").getTime();
 	document.querySelector("button[data-n=\"edit\"]").style.display = "none";
-
-	if(resultDate < R.workReport.endTime){
-		if(storage.my === R.workReport.employee){
-			document.querySelector("button[data-n=\"edit\"]").style.display = "initial";
-		}
-	}
-}
+	if(resultDate < R.workReport.end && storage.my === R.workReport.employee)	document.querySelector("button[data-n=\"edit\"]").style.display = "inline-block";
+} // End of editBtnDisplay()
 
 
 

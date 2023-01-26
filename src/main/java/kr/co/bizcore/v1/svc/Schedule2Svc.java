@@ -210,14 +210,14 @@ public class Schedule2Svc extends Svc {
         String sql2 = "SELECT prv, prvuse, crnt, crntuse FROM bizcore.weekly_report WHERE compId = ? AND dt = ?AND writer = ? ";
         String sql3 = "SELECT crnt, crntUse FROM bizcore.weekly_report WHERE compId = ? AND dt = date_add(?, INTERVAL -7 day) AND writer = ?";
         String sql4 = "SELECT writer, prv, prvuse, crnt, crntuse FROM bizcore.weekly_report WHERE compId = ? AND dt = ? AND writer <> ?";
-        String sql5 = "SELECT writer, title, content, report, `from`,  `to` FROM bizcore.schedule WHERE compId = ? AND (report = 1 OR writer = ?) AND `from` <= date_add(date_add(?, INTERVAL ? HOUR), INTERVAL 7 day) AND `to` > date_add(date_add(?, INTERVAL ? HOUR), INTERVAL -7 day) ORDER BY writer, `from`";
+        String sql5 = "SELECT no, writer, title, content, report, `from`,  `to` FROM bizcore.schedule WHERE compId = ? AND (report = 1 OR writer = ?) AND `from` <= date_add(date_add(?, INTERVAL ? HOUR), INTERVAL 7 day) AND `to` > date_add(date_add(?, INTERVAL ? HOUR), INTERVAL -7 day) ORDER BY writer, `from`";
         String sql6 = "SELECT z.d, date_add(z.d, INTERVAL -7 day) s, date_add(z.d, INTERVAL 7 day) e FROM (SELECT date_add(?, INTERVAL ? HOUR) d) z";
         String sql = null, writer = null, title = null, report = null, from = null,  to = null, content = null, d = null, s = null, e = null;
         String[] strArr = null;
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
-        int x = -1;
+        int x = -1, no = -1;
 
         try{
             conn = sqlSession.getConnection();
@@ -299,15 +299,17 @@ public class Schedule2Svc extends Svc {
             while(rs.next()){
                 if(x > 0)   result += ",";
                 else        x = 1;
-                writer = rs.getInt(1) + "";
-                title = rs.getString(2);
-                content = rs.getString(3);
-                report = rs.getBoolean(4) + "";
-                from = rs.getString(5);
-                to = rs.getString(6);
+                no = rs.getInt(1);
+                writer = rs.getInt(2) + "";
+                title = rs.getString(3);
+                content = rs.getString(4);
+                report = rs.getBoolean(5) + "";
+                from = rs.getString(6);
+                to = rs.getString(7);
                 from = from == null ? null : from.replace(" ", "T") + "Z";
                 to = to == null ? null : to.replace(" ", "T") + "Z";
-                result += ("{\"writer\":" + writer + ","); 
+                result += ("{\"no\":" + no + ","); 
+                result += ("\"writer\":" + writer + ","); 
                 result += ("\"title\":" + (title == null ? "null" : "\"" + title + "\"") + ","); 
                 result += ("\"content\":" + (content == null ? "null" : "\"" + content + "\"") + ","); 
                 result += ("\"inUse\":" + report + ","); 
@@ -322,11 +324,12 @@ public class Schedule2Svc extends Svc {
         return result;
     }
 
-    public boolean updateWeeklyReport(String compId, String userNo, String dt, String prv, boolean prvUse, String crnt, boolean crntUse) {
+    public boolean updateWeeklyReport(String compId, String userNo, String dt, String prv, boolean prvUse, String crnt, boolean crntUse, String inUse, String notUse) {
         String sql = null;
         String sql1 = "SELECT no FROM bizcore.weekly_report WHERE compId = ? AND dt = ? AND writer = ?";
         String sql2 = "INSERT INTO bizcore.weekly_report(prv, prvUse, crnt, crntUse, compId, `no`, writer, dt, created) VALUES(?, ?, ?, ?, ?, ?, ?, ?, now())";
-        String sql3 = "UPDATE bizcore.weekly_report SET prv = ?, prvUse = ?, crnt = ?, crntUse = ?, modified = now() WHERE compId = ?, `no` = ?, writer = ?, dt = ?";
+        String sql3 = "UPDATE bizcore.weekly_report SET prv = ?, prvUse = ?, crnt = ?, crntUse = ?, modified = now() WHERE compId = ? AND `no` = ? AND writer = ? AND dt = ?";
+        String sql4 = "UPDATE bizcore.schedule SET report = ? WHERE deleted IS NULL AND compId = ? AND writer = ? AND no IN (";
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -334,7 +337,9 @@ public class Schedule2Svc extends Svc {
 
         try{
             conn = sqlSession.getConnection();
-            pstmt = conn.prepareCall(sql1);
+
+            // 주간업무보고 신규인지 수정인지 판단, 신규인 경우 sql2를, 수정인 경우 sql3을 실행
+            pstmt = conn.prepareStatement(sql1);
             pstmt.setString(1, compId);
             pstmt.setString(2, dt);
             pstmt.setString(3, userNo);
@@ -348,7 +353,8 @@ public class Schedule2Svc extends Svc {
                 sql = sql2;
             }else   sql = sql3;
 
-            pstmt = conn.prepareCall(sql);
+            // 주간 업무보고 DB 저장
+            pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, prv);
             pstmt.setBoolean(2, prvUse);
             pstmt.setString(3, crnt);
@@ -360,9 +366,30 @@ public class Schedule2Svc extends Svc {
             x = pstmt.executeUpdate();
             rs.close();
             pstmt.close();
+
+            // ----- 일정에 대한 주간 업무보고 반영 여부 저장
+            // 사용
+            if(inUse != null){
+                pstmt = conn.prepareStatement(sql4 + inUse + ")");
+                pstmt.setInt(1, 1);
+                pstmt.setString(2, compId);
+                pstmt.setString(3, userNo);
+                pstmt.executeUpdate();
+                pstmt.close();
+            }
+            // 미사용
+            if(notUse != null){
+                pstmt = conn.prepareStatement(sql4 + notUse + ")");
+                pstmt.setInt(1, 0);
+                pstmt.setString(2, compId);
+                pstmt.setString(3, userNo);
+                pstmt.executeUpdate();
+                pstmt.close();
+            }
+            
         }catch(SQLException e){e.printStackTrace();}
 
         return x > 0;
-    }
+    } // End of updateWeeklyReport()
 
 }
