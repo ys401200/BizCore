@@ -285,30 +285,52 @@ class Contract {
     }
 
     drawDetail(obj) {
-
-        let target = document.getElementsByClassName("sopp-contract")[0];
-        let origin = document.getElementsByClassName("detail-wrap")[0];
-
-        if (origin != undefined) { origin.remove(); }
+        console.log(obj);
+        let soppNo;
+        soppNo = this.related;
+        soppNo = JSON.parse(soppNo);
+        soppNo = soppNo.parent.split(":")[1];
+        if (R.sopp == undefined) {
+            window.contractData = R.contract;
+            setSopp(soppNo);
+        }
 
         let cnt, el, el2;
 
+        console.log(obj.className);
         if (obj.className == "sopp-contract") {
             cnt = document.getElementsByClassName("sopp-contract")[0];
             this.container = cnt;
         } else {
-            el = document.createElement("div");
-            el.className = "detail-wrap";
-            obj.after(el);
-            cnt = document.getElementsByClassName("detail-wrap")[0];
-            this.container = cnt;
+            if ($(".detail-wrap")[0] != undefined && $(".detail-wrap")[0].className != "detail-wrap cont" + this.no) {
+                $(".detail-wrap")[0].remove();
+                el = document.createElement("div");
+                el.className = "detail-wrap cont" + this.no;
+                obj.after(el);
+                cnt = el;
+                this.container = cnt;
+            } else if ($(".detail-wrap")[0] != undefined && $(".detail-wrap")[0].className == "detail-wrap cont" + this.no) {
+                $(".detail-wrap")[0].innerHTML = "";
+                cnt =  $(".detail-wrap")[0];
+                this.container = cnt;
+
+            } else if($(".detail-wrap")[0] == undefined) {
+                el = document.createElement("div");
+                el.className = "detail-wrap cont" + this.no;
+                obj.after(el);
+                cnt = el;
+                this.container = cnt;
+
+            }
+
         }
 
+        console.log(cnt);
         el = document.createElement("top");
         el.className = "contract-top";
         cnt.appendChild(el);
 
-        let ctrtTop = document.getElementsByClassName("contract-top")[0];
+        let ctrtTop = el;
 
         el = document.createElement("div");
         ctrtTop.appendChild(el);
@@ -626,7 +648,7 @@ class Contract {
         if (obj.className == "sopp-contract") {
             cnt = document.getElementsByClassName("sopp-contract")[0];
         } else {
-            cnt = document.getElementsByClassName("detail-wrap")[0];
+            cnt = document.getElementsByClassName("detail-wrap cont" + this.no)[0];
         }
 
         el = document.createElement("div");
@@ -648,28 +670,28 @@ class Contract {
 
         el.appendChild(el2);
 
-        el2 = document.createElement("button");
-        el2.innerHTML = "일자 선택";
+        el2 = document.createElement("img");
+        el2.setAttribute("src", "/images/sopp2/edit_square.png");
+        el2.setAttribute("style", "width: 0.95rem; height: 0.95rem;  cursor: pointer; opacity: 0.4;");
         el2.addEventListener("click", () => {
             R.sche = new Schedule();
             R.sche.popupModalForEdit(new Date(), true);
             document.getElementById("schedule-type2h").setAttribute("checked", "checked");
             document.getElementsByClassName("schedule-detail")[0].children[0].children[0].children[1].value = this.title + "\u00A0" + "납품";
             modal.confirm[0].onclick = () => {
-                R.sche.clickedScheduleModalConfirm();
+                // R.sche.clickedScheduleModalConfirm();
                 insertDate();
             }
 
         })
 
+
         el.appendChild(el2);
-
-
 
         if (obj.className == "sopp-contract") {
             cnt = document.getElementsByClassName("sopp-contract")[0];
         } else {
-            cnt = document.getElementsByClassName("detail-wrap")[0];
+            cnt = document.getElementsByClassName("detail-wrap cont" + this.no)[0];
         }
 
         el = document.createElement("div");
@@ -694,10 +716,14 @@ class Contract {
             let date = document.getElementsByClassName("suppliedDate")[0];
             date.setAttribute("disabled", true);
             date.setAttribute("style", "color:grey");
+            let img = document.getElementsByClassName("suppliedDate")[0].nextElementSibling;
+            img.setAttribute("style", "display:none");
             date.parentElement.parentElement.setAttribute("style", "color:grey")
         } else {
             let input = document.getElementsByClassName("dropZone")[1];
             input.parentElement.setAttribute("style", "color:blue;background-color:#eef1fb;cursor:pointer;margin: 0 0.5rem;");
+            let img = document.getElementsByClassName("suppliedDate")[0].nextElementSibling;
+            img.setAttribute("style", "display:inline;width: 0.95rem; height: 0.95rem;  cursor: pointer; opacity: 0.4;");
 
         }
 
@@ -731,7 +757,7 @@ class Contract {
         if (obj.className == "sopp-contract") {
             cnt = document.getElementsByClassName("sopp-contract")[0];
         } else {
-            cnt = document.getElementsByClassName("detail-wrap")[0];
+            cnt = document.getElementsByClassName("detail-wrap cont" + this.no)[0];
         }
 
         el = document.createElement("div");
@@ -753,15 +779,16 @@ class Contract {
         el.appendChild(el2);
 
 
-        el2 = document.createElement("button");
-        el2.innerHTML = "일자 선택";
+        el2 = document.createElement("img");
+        el2.setAttribute("src", "/images/sopp2/edit_square.png");
+        el2.setAttribute("style", "width: 0.95rem; height: 0.95rem;  cursor: pointer; opacity: 0.4;");
         el2.addEventListener("click", () => {
             R.sche = new Schedule();
             R.sche.popupModalForEdit(new Date(), true);
             document.getElementById("schedule-type2i").setAttribute("checked", "checked");
             document.getElementsByClassName("schedule-detail")[0].children[0].children[0].children[1].value = this.title + "\u00A0" + "검수";
             modal.confirm[0].onclick = () => {
-                R.sche.clickedScheduleModalConfirm();
+                //  R.sche.clickedScheduleModalConfirm();
                 insertDate();
             }
 
@@ -772,7 +799,7 @@ class Contract {
         if (obj.className == "sopp-contract") {
             cnt = document.getElementsByClassName("sopp-contract")[0];
         } else {
-            cnt = document.getElementsByClassName("detail-wrap")[0];
+            cnt = document.getElementsByClassName("detail-wrap cont" + this.no)[0];
         }
 
         el = document.createElement("div");
@@ -797,10 +824,14 @@ class Contract {
             let date = document.getElementsByClassName("approvedDate")[0];
             date.setAttribute("disabled", true);
             date.setAttribute("style", "color:grey");
+            let img = document.getElementsByClassName("approvedDate")[0].nextElementSibling;
+            img.setAttribute("style", "display:none");
             date.parentElement.parentElement.setAttribute("style", "color:grey")
         } else {
             let input = document.getElementsByClassName("dropZone")[2];
             input.parentElement.setAttribute("style", "color:blue;background-color:#eef1fb;cursor:pointer;margin: 0 0.5rem;");
+            let img = document.getElementsByClassName("approvedDate")[0].nextElementSibling;
+            img.setAttribute("style", "display:inline;width: 0.95rem; height: 0.95rem;  cursor: pointer; opacity: 0.4;");
         }
 
 
@@ -832,28 +863,28 @@ class Contract {
     }
 
 
-    getReportNo(obj) {
-        let sopp = JSON.parse(this.related);
-        sopp = sopp.parent.split(":")[1];
-        let docNo;
-        fetch(apiServer + "/api/gw/salesReport/" + sopp)
-            .catch((error) => console.log("error:", error))
-            .then(response => response.json())
-            .then(response => {
+    // getReportNo(obj) {
+    //     let sopp = JSON.parse(this.related);
+    //     sopp = sopp.parent.split(":")[1];
+    //     let docNo;
+    //     fetch(apiServer + "/api/gw/salesReport/" + sopp)
+    //         .catch((error) => console.log("error:", error))
+    //         .then(response => response.json())
+    //         .then(response => {
 
-                if (response.result === "ok") {
-                    docNo = response.docNo;
-                    docNo = cipher.decAes(docNo);
-                    this.getReportDetail(docNo, obj);
+    //             if (response.result === "ok") {
+    //                 docNo = response.docNo;
+    //                 docNo = cipher.decAes(docNo);
+    //                 this.getReportDetail(docNo, obj);
 
-                } else {
-                    storage.reportDetailData = "";
-                    this.drawDetail(obj);
-                    console.log(response.msg);
-                }
-            });
+    //             } else {
+    //                 storage.reportDetailData = "";
+    //                 this.drawDetail(obj);
+    //                 console.log(response.msg);
+    //             }
+    //         });
 
-    }
+    // }
 
     getReportDetail(obj) {
 
@@ -868,8 +899,6 @@ class Contract {
                         data = cipher.decAes(data);
                         data = JSON.parse(data);
                         storage.reportDetailData = data;
-
-
                         this.drawDetail(obj);
 
                     } else {
@@ -1026,7 +1055,8 @@ class Contract {
             input.parentElement.setAttribute("style", "color:blue;background-color:#eef1fb;cursor:pointer;margin: 0 0.5rem;");
             input.parentElement.parentElement.parentElement.parentElement.setAttribute("style", "color:black");
             let date = document.getElementsByClassName("suppliedDate")[0];
-            date.disabled = false;
+            let img = date.nextElementSibling;
+            img.setAttribute("style", "display:inline;width: 0.95rem; height: 0.95rem;  cursor: pointer; opacity: 0.4;");
             date.setAttribute("style", "color:black");
             date.parentElement.parentElement.parentElement.setAttribute("style", "color:black")
 
@@ -1034,14 +1064,14 @@ class Contract {
             $(".contract-progress").children()[2].className = "contract-done";
             $(".contract-progress").children()[3].className = "contract-doing";
             cnt = obj.parentElement.parentElement.parentElement.parentElement.nextElementSibling;
-
             cnt.setAttribute("style", "color : black");
             let input = document.getElementsByClassName("dropZone")[2];
             input.disabled = false;
             input.parentElement.setAttribute("style", "color:blue;background-color:#eef1fb;cursor:pointer;margin: 0 0.5rem;");
             input.parentElement.parentElement.parentElement.parentElement.setAttribute("style", "color:black");
             let date = document.getElementsByClassName("approvedDate")[0];
-            date.disabled = false;
+            let img = date.nextElementSibling;
+            img.setAttribute("style", "display:inline;width: 0.95rem; height: 0.95rem;  cursor: pointer; opacity: 0.4;");
             date.setAttribute("style", "color:black");
             date.parentElement.parentElement.parentElement.setAttribute("style", "color:black");
 
@@ -1080,7 +1110,11 @@ class Contract {
             .then(response => {
                 if (response.result !== "ok") console.log(response);
                 else {
-                    this.container.innerHTML = "";
+                    if (this.container.className != "detail-wrap") {
+                        this.container.innerHTML = "";
+                    } else {
+                        this.container = $(".detail-wrap")[0].previousElementSibling;
+                    }
                     R.contract.getReportDetail(this.container);
                     window.contractData = R.contract;
                 }
