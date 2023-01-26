@@ -687,7 +687,7 @@ class EstimateSet{
 				
 				for(let t = 0; t < jsonData[i].related.estimate.items.length; t++){
 					let item = jsonData[i].related.estimate.items[t];
-					total += item.price + (item.price * 0.1);
+					total += (item.price * item.quantity) + (item.price * item.quantity * 0.1);
 				}
 
 				str = [
