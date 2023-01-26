@@ -211,7 +211,8 @@ public class Schedule2Svc extends Svc {
         String sql3 = "SELECT crnt, crntUse FROM bizcore.weekly_report WHERE compId = ? AND dt = date_add(?, INTERVAL -7 day) AND writer = ?";
         String sql4 = "SELECT writer, prv, prvuse, crnt, crntuse FROM bizcore.weekly_report WHERE compId = ? AND dt = ? AND writer <> ?";
         String sql5 = "SELECT writer, title, content, report, `from`,  `to` FROM bizcore.schedule WHERE compId = ? AND (report = 1 OR writer = ?) AND `from` <= date_add(date_add(?, INTERVAL ? HOUR), INTERVAL 7 day) AND `to` > date_add(date_add(?, INTERVAL ? HOUR), INTERVAL -7 day) ORDER BY writer, `from`";
-        String sql = null, writer = null, title = null, report = null, from = null,  to = null, content = null;
+        String sql6 = "SELECT z.d, date_add(z.d, INTERVAL -7 day) s, date_add(z.d, INTERVAL 7 day) e FROM (SELECT date_add(?, INTERVAL ? HOUR) d) z";
+        String sql = null, writer = null, title = null, report = null, from = null,  to = null, content = null, d = null, s = null, e = null;
         String[] strArr = null;
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -220,6 +221,22 @@ public class Schedule2Svc extends Svc {
 
         try{
             conn = sqlSession.getConnection();
+
+            // 기준 시간 조회
+            pstmt = conn.prepareStatement(sql6);
+            pstmt.setString(1, dt);
+            pstmt.setInt(2, tc);
+            rs = pstmt.executeQuery();
+            if(rs.next()){
+                d = rs.getString(1);
+                s = rs.getString(2);
+                e = rs.getString(3);
+            }
+            rs.close();
+            pstmt.close();
+            d = d == null ? null : "\"" + d.replace(" ", "T") + "Z\"";
+            s = s == null ? null : "\"" + s.replace(" ", "T") + "Z\"";
+            e = e == null ? null : "\"" + e.replace(" ", "T") + "Z\"";
 
             // 본인 주간업무보고 존재 여부 확인
             pstmt = conn.prepareStatement(sql1);
@@ -253,8 +270,8 @@ public class Schedule2Svc extends Svc {
             rs.close();
             pstmt.close();
 
-            // 자기 정보를 JSON으로 만들기
-            result = "{\"report\":{\"" + userNo + "\":{\"prv\":\"" +strArr[0] + "\",\"prvUse\":" +strArr[1].equals("1") + ",\"crnt\":\"" +strArr[2] + "\",\"crntUse\":" +strArr[3].equals("1") + "}"; 
+            // JSON으로 만들기
+            result = "{\"date\":" + d + ",\"start\":" + s + ",\"end\":" + e + ",\"report\":{\"" + userNo + "\":{\"prv\":\"" +strArr[0] + "\",\"prvUse\":" +strArr[1].equals("1") + ",\"crnt\":\"" +strArr[2] + "\",\"crntUse\":" +strArr[3].equals("1") + "}"; 
 
             // 본인 외 다른 직원들 주간업무보고 가져오기
             pstmt = conn.prepareStatement(sql4);
@@ -300,7 +317,7 @@ public class Schedule2Svc extends Svc {
             result += "]}";
             rs.close();
             pstmt.close();
-        }catch(SQLException e){e.printStackTrace();}
+        }catch(SQLException ex){ex.printStackTrace();}
 
         return result;
     }
