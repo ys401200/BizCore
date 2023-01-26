@@ -1,4 +1,4 @@
-let drawMonthList, clickedMonth, clickedWeek, drawDeptTree, clickedDeptName, clickedTreeEmployee, drawReport, editInputSet, getReportData, clickedButton, editBtnDisplay, R = {};
+let drawMonthList, clickedMonth, clickedWeek, drawDeptTree, clickedDeptName, clickedTreeEmployee, drawReport, editInputSet, getReportData, clickedButton, editBtnDisplay, clickUpdateBtn, R = {};
 
 $(document).ready(() => {
 
@@ -13,8 +13,9 @@ $(document).ready(() => {
 	}, 300);
 
 	// getWorkReport();
-	getReportData();
+	//getReportData();
 	drawMonthList();
+	clickedWeek();
 	drawDeptTree();
 });
 
@@ -196,6 +197,14 @@ clickedButton = (el) => {
 	}
 } // End of clickedButton()
 
+clickUpdateBtn = () => {
+	let updateBtn = document.querySelector("button[data-n=\"edit\"]");
+	let nowDate = new Date().getTime();
+
+	if(R.workReport.employee == storage.my && nowDate >= R.workReport.start && nowDate <= R.workReport.endTime)	updateBtn.style.display = "initial";
+	else	updateBtn.style.display = "none";
+} // End of clickUpdateBtn()
+
 editInputSet = () => {
 	let container = document.getElementsByClassName("report-contents")[0];
 	let lastWeekContents = container.getElementsByClassName("lastWeekContents");
@@ -292,7 +301,7 @@ clickedTreeEmployee = (el) => {
 				if(arr.length > 1)	document.getElementsByClassName("workReportTitle")[0].children[1].children[2].style.display = "initial";
 				else				document.getElementsByClassName("workReportTitle")[0].children[1].children[2].style.display = "none";
 			},1)
-		}else if(y === "edit")	z[x].style.display = R.workReport.employee === storage.my ? "initial" : "none";
+		}else if(y === "edit")	clickUpdateBtn();
 		else if(y === "cancel")	z[x].style.display = "none";
 		else if(y === "save")	z[x].style.display = "none";
 	}
@@ -301,10 +310,11 @@ clickedTreeEmployee = (el) => {
 // 서버에서 리포트 데이터를 가져오는 함수
 getReportData = (date) => {
 	let url, dt;
-	url = "/api/schedule/workreport/company/";
-	if(date === undefined || isNaN(date)){
+	url = "/api/schedule2/report/";
+	if(date === undefined){
 		dt = new Date();
-		dt = dt.getFullYear() * 10000 + (dt.getMonth() + 1) * 100 + dt.getDate();
+		dt.setDate(dt.getDate() - dt.getDay());
+		dt = dt.toISOString().substring(0, 10);
 	}else dt = date;
 
 	fetch(apiServer + url + dt)
@@ -317,14 +327,11 @@ getReportData = (date) => {
 			data = cipher.decAes(data);
 			data = JSON.parse(data);
 			if(R.workReport === undefined)	R.workReport = {};
-			R.workReport.week = data.week;
+			R.workReport.date = new Date(data.date);
 			R.workReport.start = new Date(data.start);
 			R.workReport.end = new Date(data.end);
-			R.workReport.endTime = data.end;
-			R.workReport.report = data.workReports;
-			dt = new Date(data.start);
-			dt = dt.getFullYear() * 10000 + (dt.getMonth() + 1) * 100 + dt.getDate();
-			R.workReport.date = dt;
+			R.workReport.report = data.report;
+			R.workReport.schedule = data.schedule;
 			if(R.workReport.employee === undefined)	R.workReport.employee = storage.my;
 			drawReport();
 			const CommonDatas = new Common();
@@ -339,18 +346,19 @@ getReportData = (date) => {
 
 // 주간 업무보고를 그리는 함수
 drawReport = (editable, targetElement, employee) => {
-	let x, y, z, html, el, cnt, std, sch1, sch2, data, day;
+	let x, y, z, t, html, el, cnt, std, sch1, sch2, data, day;
 	day = ["일", "월", "화", "수", "목", "금", "토"];
 	cnt = targetElement === undefined ? document.getElementsByClassName("report-container")[0] : targetElement;
 	employee = employee === undefined ? R.workReport.employee : employee;
 
 	// 본인인 경우 편집할 수 있도록 설정하는 변수
 	if(editable !== true || employee !== storage.my)	editable = false;
+	else												editable = true;
 
 	// 기간 설정
-	std = new Date(R.workReport.start.getTime() + 86400000 * 7);
+	std = R.workReport.date;
 	x = "'" + (std.getFullYear() % 100) + ". " + (std.getMonth() + 1) + ". " + (std.getDate());
-	y = new Date(R.workReport.end);
+	y = R.workReport.end;
 	y = "'" + (y.getFullYear() % 100) + ". " + (y.getMonth() + 1) + ". " + (y.getDate());
 	cnt.children[1].children[0].innerHTML = (x + " ~ " + y);
 
@@ -362,16 +370,31 @@ drawReport = (editable, targetElement, employee) => {
 	// 일정을 지난 주와 이번 주로 나누어서 저장
 	sch1 = [[],[],[],[],[],[],[]];
 	sch2 = [[],[],[],[],[],[],[]];
-	z = [];
 	data = R.workReport.report[employee];
-	if(data !== undefined)	z = data.schedules;
-	else	data = {"currentWeek":"","currentWeekCheck":false,"previousWeek":"","previousWeekCheck":"","schedules":[]};
-
+	z = R.workReport.schedule;
+	
+	console.log(":::::::::::::::::::: Length of schedule : " + z.length);
 	for(x = 0 ; x < z.length ; x++){
-		y = (new Date(z[x].date)).getDay();
-		if((editable || z[x].report) && z[x].date <= std.getTime())	sch1[y].push(z[x]);
-		if((editable || z[x].report) && z[x].date > std.getTime())	sch2[y].push(z[x]);
-	}
+		if(z[x].writer !== employee){
+			console.log(":::::::::::::::::::: in for() : index of : " + x + " / not my schedule !!");
+			continue;
+		}
+		console.log(":::::::::::::::::::: in for() : index of : " +  x + " / It's my schedule !!");
+		t = new Date(z[x].from);
+		console.log(":::::::::::::::::::: in for() : index of : " +  x + " / before while / value of from : " + t);
+		while(t.getTime() <= new Date(z[x].to).getTime()){
+			y = t.getDay();
+			console.log(":::::::::::::::::::: in for() : index of : " +  x + " / in while / day of : " + y + " / value of from " + t);
+			if(t <= std)	sch1[y].push(z[x]);
+			if(t > std)		sch2[y].push(z[x]);
+			t = new Date(t.getTime() + 86400000 * 7);
+		} // End of while()
+	} // End of for(x)
+
+	console.log(":::::::::::::::::::: Array of schedule 0 : ");
+	console.log(sch1);
+	console.log(":::::::::::::::::::: Array of schedule 1 : ");
+	console.log(sch2);
 	
 	// 일정에 따른 데이터를 기반으로 html 생성
 	html = ["", ""]; // 지난 주, 이번 주
@@ -556,6 +579,7 @@ drawMonthList = () => {
 		el.setAttribute("onclick", "clickedMonth(this)");
 		cnt.appendChild(el);
 		el = document.createElement("div");
+		el.dataset.v = year * 100 + month;
 		el.className = "month-closed";
 		cnt.appendChild(el);
 		html = "";
@@ -569,7 +593,7 @@ drawMonthList = () => {
 
 		// 달력 본문
 		while(dt.getTime() <= endDate.getTime()) {
-			y = dt.getFullYear() * 10000 + (dt.getMonth() + 1) * 100 + dt.getDate();
+			y = dt.getFullYear() + "-" + (dt.getMonth() < 9 ? "0" + (dt.getMonth() + 1) : dt.getMonth() + 1) + "-" + (dt.getDate() < 10 ? "0" + dt.getDate() : dt.getDate());
 			if(dt.getDay() === 0)	html += "<div onclick=\"clickedWeek(this)\" class=\"weekly-list\" data-v=\"" + y + "\"" + (x === y ? " style=\"background-color:#eaeaff\"" : "") + ">";
 			
 			if(dt.getMonth() + 1 === month)	html += ("<div>" + dt.getDate() + "</div>");
@@ -591,7 +615,15 @@ drawMonthList = () => {
 	} // End of while - STEP 1
 
 	// 현재 월을 선택처리함
-	cnt.children[cnt.children.length - 1].className = "month-opened";
+	el = cnt.getElementsByClassName("month-closed");
+	year = new Date().getFullYear();
+	month = new Date().getMonth() + 1;
+	for(x = 0 ; x < el.length ; x++){
+		if(el[x].dataset.v === (year * 100 + month) + ""){
+			el[x].className = "month-opened";
+			break;
+		}
+	}
 } // End of drawMonthList()
 
 clickedMonth = (el) => {
@@ -607,8 +639,13 @@ clickedWeek = (el) => {
 	els = [];
 	cnt = document.getElementsByClassName("month-list")[0];
 	for(x = 1 ; x < cnt.children.length ; x += 2)	for(y = 0 ; y < cnt.children[x].children.length ; y++)	els.push(cnt.children[x].children[y]);
-	y = el.dataset.v;
-	getReportData(y*1);
+	if(el !== undefined)	y = el.dataset.v;
+	else{
+		y = new Date();
+		y.setDate(y.getDate() - y.getDay());
+		y = y.toISOString().substring(0, 10);
+	}
+	getReportData(y);
 	for(x = 0 ; x < els.length ; x++){
 		if(els[x].dataset.v === y)	els[x].style.backgroundColor = color;
 		else 						els[x].style.backgroundColor = "";

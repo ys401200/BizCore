@@ -116,7 +116,8 @@ public class EstimateSvc extends Svc{
             if(jarr != null && jarr.length() > 0)   for(y = 0 ; y < jarr.length() ; y++){
                 json = jarr.getJSONObject(y);
                 if(json.getBoolean("vat")){
-                    total += ((json.isNull("quantity") ? 0 : json.getInt("quantity")) * (json.isNull("price") ? 0 : json.getInt("price")) + (json.getInt("price") * 0.1));
+                    System.out.println(json.getInt("price") + (json.getInt("price") * 0.1));
+                    total += ((json.isNull("quantity") ? 0 : json.getInt("quantity")) * (json.isNull("price") ? 0 : json.getInt("price") + (json.getInt("price") * 0.1)));
                 }else{
                     total += ((json.isNull("quantity") ? 0 : json.getInt("quantity")) * (json.isNull("price") ? 0 : json.getInt("price")));
                 }
@@ -155,7 +156,7 @@ public class EstimateSvc extends Svc{
             if(jarr != null && jarr.length() > 0)   for(y = 0 ; y < jarr.length() ; y++){
                 json = jarr.getJSONObject(y);
                 if(json.getBoolean("vat")){
-                    total += ((json.isNull("quantity") ? 0 : json.getInt("quantity")) * (json.isNull("price") ? 0 : json.getInt("price")) + (json.getInt("price") * 0.1));
+                    total += ((json.isNull("quantity") ? 0 : json.getInt("quantity")) * (json.isNull("price") ? 0 : json.getInt("price") + (json.getInt("price") * 0.1)));
                 }else{
                     total += ((json.isNull("quantity") ? 0 : json.getInt("quantity")) * (json.isNull("price") ? 0 : json.getInt("price")));
                 }

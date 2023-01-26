@@ -164,14 +164,6 @@ function drawScheduleList() {
 	containerTitle.innerHTML = "일정조회";
 	CommonDatas.createGrid(container, header, data, ids, dataJob, fnc);
 	CommonDatas.setViewContents(hideArr, showArr);
-
-	let path = $(location).attr("pathname").split("/");
-
-	if(path[3] !== undefined && jsonData !== ""){
-		$(".calendarList").hide();
-		let content = $(".gridContent[data-id=\"" + path[3] + "\"]");
-		scheduleDetailView(content);
-	}
 }// End of drawNoticeList()
 
 // function drawCalendar(container){
@@ -331,6 +323,17 @@ function drawCalendar(container){
 	}, 100);
 	
 	CommonDatas.setViewContents(hideArr, showArr);
+
+	let path = location.pathname.split("/");
+
+	if(path[3] !== undefined){
+		drawScheduleList();
+		document.getElementsByClassName("calendarList")[0].style.display = "none";
+		let content = document.querySelector(".gridContent[data-id=\"" + path[3] + "\"]");
+		console.log(content);
+		scheduleDetailView(content);
+	}
+
     return true;
 } // End of drawCalendar()
 
@@ -613,13 +616,13 @@ function scheduleCalendarAjax(){
 }
 
 function listChange(event){
-	if($(event).data("type") === "table"){
-		$(event).data("type", "calendar");
-		$(event).html("<i class=\"fa-solid fa-list-ol fa-xl\"></i>");
+	if(event.dataset.type === "table"){
+		event.dataset.type = "calendar";
+		event.innerHTML = "<i class=\"fa-solid fa-list-ol fa-xl\"></i>";
 		drawCalendar(document.getElementsByClassName("calendar_container")[0]);
 	}else{
-		$(event).data("type", "table");
-		$(event).html("<i class=\"fa-regular fa-calendar-check fa-xl\"></i>");
+		event.dataset.type = "table";
+		event.innerHTML = "<i class=\"fa-regular fa-calendar-check fa-xl\"></i>";
 		drawScheduleList();
 	}
 }
