@@ -40,6 +40,9 @@ public class JobSchedulerSvc extends Svc{
     @Scheduled(fixedDelay = 60000)
     public void scheduleJob(){
 
+        // 개발 모드에서는 스케줄러 작업을 수행하지 않음
+        if(this.DEBUG) return;
+
         // 초기화 작업
 
         // 데일리 작업 처리

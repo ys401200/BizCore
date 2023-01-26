@@ -66,7 +66,8 @@ public class ViewConfig implements WebMvcConfigurer {
         File root = null, each = null;
         long timeCorrection = 0L;
         int x = 0, y = 0;
-        Svc.fileStoragePath = fileSavePath;
+        Svc.fileStoragePath = fileSavePath; // 파일 저장 경로 설정
+        Svc.DEBUG = this.debug != null && this.debug.equals("true"); // 개발 모드 설정
 
         logger.info("[App Initializer] Start Initializing.");
 
