@@ -224,16 +224,17 @@ drawReport = (editable, targetElement, employee) => {
 	for(x = 0 ; x < z.length ; x++){
 		if(z[x].writer !== employee)	continue;
 		t = new Date(z[x].from);
+		count = 0;
 		if(editable){ // 이틀 이상 걸치는 일정에 대해 해당 날짜에 모두 표시되게 함, 단 편집모드일 경우 예외
 			y = t.getDay();
 			if(t <= std)	sch1[y].push(z[x]);
 			if(t > std)		sch2[y].push(z[x]);
 		}else{
-			while(t.getDate() <= new Date(z[x].to).getDate()){
+			while((t.getMonth() * 100 + t.getDate()) <= (new Date(z[x].to).getMonth() * 100 + new Date(z[x].to).getDate())){
 				y = t.getDay();
 				if(t <= std)	sch1[y].push(z[x]);
 				if(t > std)		sch2[y].push(z[x]);
-				t = new Date(t.getTime() + 86400000);
+				t.setDate(t.getDate() + 1);
 			} // End of while()
 		}
 	} // End of for(x)
