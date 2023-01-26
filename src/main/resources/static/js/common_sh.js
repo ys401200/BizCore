@@ -679,7 +679,7 @@ class Contract {
             document.getElementById("schedule-type2h").setAttribute("checked", "checked");
             document.getElementsByClassName("schedule-detail")[0].children[0].children[0].children[1].value = this.title + "\u00A0" + "납품";
             modal.confirm[0].onclick = () => {
-                // R.sche.clickedScheduleModalConfirm();
+                R.sche.clickedScheduleModalConfirm();
                 insertDate();
             }
 
@@ -788,7 +788,7 @@ class Contract {
             document.getElementById("schedule-type2i").setAttribute("checked", "checked");
             document.getElementsByClassName("schedule-detail")[0].children[0].children[0].children[1].value = this.title + "\u00A0" + "검수";
             modal.confirm[0].onclick = () => {
-                //  R.sche.clickedScheduleModalConfirm();
+                R.sche.clickedScheduleModalConfirm();
                 insertDate();
             }
 

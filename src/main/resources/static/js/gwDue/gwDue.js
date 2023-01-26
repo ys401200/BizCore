@@ -103,8 +103,9 @@ function drawApproval() {
     createGrid(container, header, data, ids, job, fnc);
 
     container.append(
-      "<div class='noListDefault'>결재 예정 문서가 없습니다</div>"
+      "<div style='border:1px solid #e0e4e9;padding:8px;justify-content: center;background-color:white; text-align:center;grid-column :span 6'>결재 예정 문서가 없습니다</div>"
     );
+
   } else {
 
     let tt = [];

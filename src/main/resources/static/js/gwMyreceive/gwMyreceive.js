@@ -74,7 +74,10 @@ function drawMyDraft() {
 
     createGrid(container, header, data, ids, job, fnc);
 
-    container.append("<div class='noListDefault'>수신 문서가 없습니다</div>");
+    container.append(
+      "<div style='border:1px solid #e0e4e9;padding:8px;justify-content: center;background-color:white; text-align:center;grid-column :span 6'>수신 문서가 없습니다</div>"
+    );
+
   } else {
     // jsonData = storage.myReceiveList;
     let tt = [];

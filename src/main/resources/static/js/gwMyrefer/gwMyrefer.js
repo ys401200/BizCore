@@ -76,8 +76,9 @@ function drawMyRefer() {
     createGrid(container, header, data, ids, job, fnc);
 
     container.append(
-      "<div class='noListDefault'>참조/열람 문서가 없습니다.</div>"
+      "<div style='border:1px solid #e0e4e9;padding:8px;justify-content: center;background-color:white; text-align:center;grid-column :span 6'>참조/열람 문서가 없습니다</div>"
     );
+
   } else {
     jsonData = storage.myReferList;
     let exceptMy = [];
