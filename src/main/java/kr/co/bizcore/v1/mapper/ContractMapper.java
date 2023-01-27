@@ -36,7 +36,7 @@ public interface ContractMapper {
     public Contract2 getContract(@Param("no") int no, @Param("compId") String compId);
 
     // 계약 데이터 상세 // + parent
-    @Select("SELECT no FROM bizcore.contract WHERE deleted IS NULL AND compId = #{compId} AND json_value(related, '$.parent') = #{parent}")
+    @Select("SELECT MAX(no) FROM bizcore.contract WHERE deleted IS NULL AND compId = #{compId} AND json_value(related, '$.parent') = #{parent}")
     public Integer getContractNoWithParent(@Param("parent") String parent, @Param("compId") String compId);
 
     // 계약 유지보수 데이터
