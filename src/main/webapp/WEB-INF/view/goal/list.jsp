@@ -8,6 +8,7 @@
 		<div class="goalContainer">
             <hr />
 			<span>영업목표설정 </span>
+			<button onclick="goalInsert();">등록</button>
 			<div class="goalContent"></div>
 		</div>
 	</div>

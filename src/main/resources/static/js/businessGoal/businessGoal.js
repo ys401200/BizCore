@@ -58,9 +58,9 @@ function goalSuccessList(result){
                     html += "<div class=\"goalBodyUser\">" + storage.user[key2].userName + "</div>";
                     for(let i = 0; i < result[key1][key2].length; i++){
                         if(result[key1][key2][i] == null){
-                            html += "<input type=\"text\" data-index=\"" + (i+1) + "\" data-key=\"" + key2 + "\" onkeyup=\"goalKeyup(this)\" value=\"0\">";
+                            html += "<div><input type=\"text\" data-index=\"" + (i+1) + "\" data-key=\"" + key2 + "\" onkeyup=\"goalKeyup(this)\" value=\"0\"></div>";
                         }else{
-                            html += "<input type=\"text\" data-index=\"" + (i+1) + "\" data-key=\"" + key2 + "\" onkeyup=\"goalKeyup(this)\" value=\"" + result[key1][key2][i] + "\">";
+                            html += "<div><input type=\"text\" data-index=\"" + (i+1) + "\" data-key=\"" + key2 + "\" onkeyup=\"goalKeyup(this)\" value=\"" + result[key1][key2][i] + "\"></div>";
                         }
                     }
                     html += "<div class=\"goalBodyUserTotal\">0</div>";
@@ -130,7 +130,7 @@ function goalErrorInsert(){
 
 function goalKeyup(e){
     let thisEle = $(e), total, thisParent, temp = 0;
-    thisParent = thisEle.parent();
+    thisParent = thisEle.parent().parent();
     total = thisParent.find(".goalBodyUserTotal");
 
     for(let i = 0; i < thisParent.find("input").length; i++){
