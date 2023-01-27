@@ -58,7 +58,7 @@ class Contracts {
         }
 
         let result = paging(this.list.length, storage.currentPage, storage.articlePerPage);
-        let pageContainer = $(".pageContainer");
+        let pageContainer = $(".pageContainer2");
         let pageNation = createPaging(
             pageContainer[0],
             result[3],
@@ -1188,6 +1188,7 @@ class Contract {
         soppNo = soppNo.split(":")[1];
         R.estimateSet = new EstimateSet();
         R.estimateSet.soppEstimateNo(soppNo);
+        
 
         let width = window.innerWidth - 1080 + "px";
         let estimateList = document.getElementsByClassName("estimateList")[0];
@@ -1217,6 +1218,8 @@ class Contract {
         this.drawDetail(cnt);
         getContractSchedule(soppNo);
         $(".cntBackBtn").show();
+        $(".listRange").hide(); 
+        $(".cntPageCnt").hide();
     }
 
 
@@ -2222,11 +2225,13 @@ function getContractSchedule(no) {
 
 
 function cntBack() {
+    $(".cntPageCnt").show();
     $(".crudBtns")[0].setAttribute("style","display:none");
+    $(".listRange").show();
     $(".crudBtns")[1].innerHTML = "<button type='button' class='crudAddBtn'>견적추가</button><button type='button' class='crudUpdateBtn'>견적수정</button><button type='button' class='estimatePdf'>pdf 다운로드</button><a href='#' onclick='hideDetailView(EstimateSet.drawBack);' class='detailBackBtn'>Back</a> "
     $(".contract-sche").html("");
     $(".contract-main").html("");
-    $(".estimateList").html("");
+    $(".estimateList").html("<div class='pageContainer'></div>");
     $(".versionPreview").html("<div class='previewDefault'><div>미리보기</div></div>");
     $(".contract-container").hide();
     $(".contract-list").show();

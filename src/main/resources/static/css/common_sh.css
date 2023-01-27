@@ -39,7 +39,8 @@
 
 }
 
-.contract-main, .contract-main {
+.contract-main,
+.contract-main {
 	padding: 1rem;
 }
 
@@ -96,7 +97,7 @@
 }
 
 
-.contract-main>div  {
+.contract-main>div {
 	display: grid;
 	grid-template-columns: 10% 90%;
 }
@@ -160,23 +161,23 @@
 
 
 
-/*계약 상세 조회 관련 css start */ 
+/*계약 상세 조회 관련 css start */
 
 
 .contract-container {
 	display: grid;
-    width: 99%;
-    margin: 0 auto;
-} 
-
-.contract-container >div:first-of-type {
-	display: grid; 
+	width: 99%;
+	margin: 0 auto;
 }
 
-.contract-container > .contract-sche>div {
+.contract-container>div:first-of-type {
+	display: grid;
+}
+
+.contract-container>.contract-sche>div {
 	display: grid;
 	grid-template-columns: 15% 10% 10% 10% 10% 45%;
-	text-align : center;
+	text-align: center;
 }
 
 
@@ -450,4 +451,35 @@ cateLine {
 	vertical-align: middle;
 	margin-top: 0.5rem;
 	margin-left: 1rem;
+}
+
+/*pageContainer2 */
+.pageContainer2 {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 13px;
+	box-sizing: border-box;
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+
+.pageContainer2 >div {
+	cursor: pointer;
+}
+.pageContainer2 >div:hover {
+	background-color:#2147b1;
+	border: 1px solid #2147b1 ;
+	color:white;
+}
+
+.pageContainer2 div:not(.paging_cell_current), .pageContainer .paging_cell_empty {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #000;
+    border-color: #D9D9D9;
+    /* background-color: #EDEDF4; */
 }
