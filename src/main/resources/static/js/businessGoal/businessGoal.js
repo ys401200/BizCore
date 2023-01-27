@@ -37,6 +37,7 @@ function gridGoalList(){
 }
 
 function goalSuccessList(result){
+    console.log(result);
     let html = "", goalContent;
     goalContent = $(".goalContent");
     html = "<div class=\"goalGridHeader\">";
@@ -54,16 +55,24 @@ function goalSuccessList(result){
         if(key1 !== "all"){
             for(let key2 in result[key1]){
                 if(!storage.user[key2].resign){
+                    let total = 0;
                     html += "<div class=\"goalBody\" data-key=\"" + key2 + "\">";
                     html += "<div class=\"goalBodyUser\">" + storage.user[key2].userName + "</div>";
                     for(let i = 0; i < result[key1][key2].length; i++){
                         if(result[key1][key2][i] == null){
                             html += "<div><input type=\"text\" data-index=\"" + (i+1) + "\" data-key=\"" + key2 + "\" onkeyup=\"goalKeyup(this)\" value=\"0\"></div>";
                         }else{
+                            total += result[key1][key2][i];
                             html += "<div><input type=\"text\" data-index=\"" + (i+1) + "\" data-key=\"" + key2 + "\" onkeyup=\"goalKeyup(this)\" value=\"" + result[key1][key2][i] + "\"></div>";
                         }
                     }
-                    html += "<div class=\"goalBodyUserTotal\">0</div>";
+
+                    if(total > 0){
+                        html += "<div class=\"goalBodyUserTotal\">" + total.toLocaleString("en-US") + "</div>";
+                    }else{
+                        html += "<div class=\"goalBodyUserTotal\">0</div>";
+                    }
+
                     html += "</div>";
                 }
             }
