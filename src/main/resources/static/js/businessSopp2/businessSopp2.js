@@ -456,16 +456,17 @@ inputtedComment = (el, event) => {
 } // End of inputtedComment()
 
 scrolledSopp = (el) => {
-	let x, y, z, v, els, position = [], vr = 64;
+	let x, y, z, v, els, position = [], sticky, vr = 80;
 
-	v = el.scrollTop + vr;
+	sticky = document.getElementsByClassName("sopp-sticky")[0];
+	v = el.scrollTop + sticky.offsetHeight;
 	els = document.getElementsByClassName("sopp-sub-title");
 	for (x = 0; x < els.length; x++)	position.push(els[x].offsetTop);
 
 	for (x = 0; x < position.length; x++)   if (v < position[x]) break;
 
 	els = document.getElementsByClassName("sopp-tab-cnt")[0].children;
-	z = el.scrollHeight - el.offsetHeight + vr - 2;
+	z = el.scrollHeight - el.offsetHeight;
 	if (v > z) {
 		for (y = 0; y < els.length; y++) {
 			if (y < els.length - 1) els[y].className = "sopp-tab";
@@ -480,11 +481,13 @@ scrolledSopp = (el) => {
 } // End of scrolledSopp()
 
 moveToTarget = (el) => {
-	let target, name, vr = 86;
+	let target, name, sticky, vr = 70;
 	name = el.dataset.target;
 	target = document.getElementsByClassName(name)[0];
+	sticky = document.getElementsByClassName("sopp-sticky")[0];
 	target.parentElement.scrollTo({
-		top: target.offsetTop - vr,
+		// top: target.offsetTop - vr,
+		top: target.offsetTop - sticky.offsetHeight,
 		left: 0,
 		behavior: 'smooth'
 	});

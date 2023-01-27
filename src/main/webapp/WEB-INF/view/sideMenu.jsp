@@ -62,12 +62,6 @@
 					<a href="/business/estimate">견적관리</a>
 				</div>
 			</div>
-			<div class="menuItem">
-				<a href="/business/contract2">
-					<img src="/images/main/icons/mainContIcon.png" id="mainContIcon" />
-					<span>계약관리</span>
-				</a>
-			</div>
 			<!-- <div class="menuItem">
 				<a href="/business/tech">
 					<img src="/images/main/icons/mainSchedIcon.png" id="mainSalesIcon" />
@@ -236,6 +230,12 @@
 				<div>
 					<a href="/accounting/salesbill">매출</a>
 				</div>
+			</div>
+			<div class="menuItem">
+				<a href="/accounting/contract2">
+					<img src="/images/main/icons/mainContIcon.png" id="mainContIcon" />
+					<span>계약관리</span>
+				</a>
 			</div>
 		</div>
 		<!-- 

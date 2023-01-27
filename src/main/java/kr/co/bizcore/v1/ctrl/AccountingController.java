@@ -87,4 +87,10 @@ public class AccountingController extends Ctrl{
         doIt(request);
         return "/accounting/detailTable";
     }
+
+    @RequestMapping(value = { "/contract2", "/contract2/{no:\\d+}" })
+    public String cont2(HttpServletRequest request) {
+        doIt(request);
+        return "/contract/contract2";
+    }
 }
