@@ -285,7 +285,7 @@ function setEstData() {
 
 
     html += "<div class='insertedTechSche'>";
-    html += "<div class='techDate'  data-detail='" + from +"~"+ to +"' value='" + from + "~"+ to +"' style='display:flex;align-items:center;justify-content:center;font-size: 0.6rem;text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'>"+ from + "~"+ to +"</div>";
+    html += "<div class='techDate'  data-detail='" + from + "~" + to + "' value='" + from + "~" + to + "' style='display:flex;align-items:center;justify-content:center;font-size: 0.6rem;text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'>" + from + "~" + to + "</div>";
     //html += "<input type='date' class='inputs techDate'  data-detail='" + from + "' value='" + from + "' style='text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
     html += "<input type='text' class='inputs techType' data-detail='" + type + "' value='" + type + "' style='text-align:center;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
     html += "<input type='text' class='inputs techTitle' data-detail='" + title + "' value='" + title + "' style='text-overflow:ellipsis;padding:0.3em; border-bottom: 1px solid black; border-right: 1px solid black;'/>";
@@ -301,7 +301,7 @@ function setEstData() {
 
   let mtnc = mtncData;
   let mtncHtml = "";
-  let mtnctitle ,product, customer, startDate, endDate, engineer, amount, note;
+  let mtnctitle, product, customer, startDate, endDate, engineer, amount, note;
 
   for (let i = 0; i < mtnc.length; i++) {
     for (let x in storage.product) {
@@ -521,63 +521,11 @@ function reportInsert() {
   }
 
 
-  // let inItems = [];
-  // let outItems = [];
-  // let outProductNo;
-
-
-  // for (let j = 0; j < $(".outProduct").length; j++) {
-
-  //   for (let i = 0; i < storage.productList.length; i++) {
-  //     if (storage.productList[i].product == $(".outProduct")[j].value) {
-  //       outProductNo = storage.productList[i].no;
-  //     }
-  //   }
-
-  //   let tt = {
-  //     "outCustomer": storage.soppDetail.customer,
-  //     "outProduct": outProductNo * 1,
-  //     "outPrice": $(".outPrice")[j].value * 1,
-  //     "outQuantity": $(".outQuantity")[j].value * 1,
-  //     "tax": $(".outTax")[j].value * 1
-  //   };
-  //   outItems.push(tt);
-  // }
-
-  // for (let j = 0; j < $(".inProduct").length; j++) {
-  //   for (let i = 0; i < storage.productList.length; i++) {
-  //     if (storage.productList[i].product == $(".inProduct")[j].value) {
-  //       outProductNo = storage.productList[i].no;
-  //     }
-  //   }
-
-  //   let customer;
-  //   for (let x in storage.customer) {
-  //     if (storage.customer[x].name == storage.estmVerList[3].related.estimate.items[j].supplier) {
-  //       customer = storage.customer[x].no + "";
-  //     }
-  //   }
-
-  //   let tt = {
-  //     "inCustomer": customer,
-  //     "inProduct": outProductNo * 1,
-  //     "inPrice": $(".outPrice")[j].value * 1,
-  //     "inQuantity": $(".inQuantity")[j].value * 1,
-  //     "inTax": $(".outTax")[j].value * 1
-  //   };
-  //   inItems.push(tt);
-  // }
-
-
   let related = {
     "next": "",
     "parent": "",
     "previous": "sopp:" + storage.soppDetailData.sopp.no + "",
     "maintenance": mtncData,
-    // "outSumAllTotal": $(".outSumAllTotal").val() * 1,
-    // "profit": $("." + formId + "_profit").val() * 1,
-    // "outItems": outItems,
-    // "inItems": inItems
   }
 
   related = JSON.stringify(related);
@@ -618,13 +566,6 @@ function reportInsert() {
   console.log(data);
   data = JSON.stringify(data);
   data = cipher.encAes(data);
-
-
-
-
-  // ctrtData = JSON.stringify(ctrtData);
-  // console.log(ctrtData + "데이터 타입 확인하기");
-  // ctrtData = cipher.encAes(ctrtData);
 
 
   let target = $(".mainDiv")[0];
@@ -672,8 +613,11 @@ function reportInsert() {
       success: (result) => {
         if (result.result === "ok") {
           alert("기안 완료");
-          //createContract(ctrtData);
-          window.close('/gw/estimate/' + storage.soppDetailData.sopp.no);
+          console.log(storage.soppDetailData.sopp.no); 
+       
+          drawDetail(storage.soppDetailData.sopp.no);
+  // window.close('/gw/estimate/' + storage.soppDetailData.sopp.no);
+       
         } else {
           alert(result.msg);
         }
@@ -681,6 +625,35 @@ function reportInsert() {
     });
   }
 }
+
+
+function drawDetail(soppNo) {
+	fetch(location.origin + "/api/contract/parent/sopp:" + soppNo)
+		.catch((error) => console.log("error:", error))
+		.then(response => response.json())
+		.then(response => {
+			console.log(response);
+			let data, cnt = opener.document.getElementsByClassName("sopp-contract")[0]
+			opener.document.getElementsByClassName("sopp-contract")[0].innerHTML = "";
+			if (response.result === "ok") {
+				data = response.data;
+				data = cipher.decAes(data);
+				data = JSON.parse(data);
+				R.contract = new Contract(data);
+				R.contract.getReportDetail(cnt);
+        console.log(cnt); 
+				window.contractData = R.contract;
+
+			} else {
+				R.contract = new Contract(undefined);
+				R.contract.drawNone();
+				window.contractData = undefined;
+
+			}
+		});
+
+} // End of drawDetail()
+
 
 function createContract(ctrtData) {
   $.ajax({

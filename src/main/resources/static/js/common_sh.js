@@ -115,10 +115,6 @@ class Contract {
         if (origin != undefined) origin.remove();
 
         let cnt, el, el2;
-        // el = document.createElement("div");
-        // el.className = "detail-wrap";
-        // target.appendChild(el);
-        //cnt = document.getElementsByClassName("detail-wrap")[0];
         cnt = target;
 
         el = document.createElement("top");
@@ -167,44 +163,6 @@ class Contract {
         el.setAttribute("style", "justify-content: center;background-color:white; text-align:center;grid-column :span 2;");
         el.innerText = "진행 사항이 없습니다";
 
-        // el = document.createElement("div");
-        // cnt.children[cnt.children.length - 1].appendChild(el);
-
-        // //거래처 
-        // el = document.createElement("div");
-        // cnt.appendChild(el);
-
-        // el = document.createElement("div");
-        // cnt.children[cnt.children.length - 1].appendChild(el);
-        // el.innerText = "매출처";
-
-        // el = document.createElement("div");
-        // cnt.children[cnt.children.length - 1].appendChild(el);
-
-
-        // // 담당자
-        // el = document.createElement("div");
-        // cnt.appendChild(el);
-
-        // el = document.createElement("div");
-        // cnt.children[cnt.children.length - 1].appendChild(el);
-        // el.innerText = "담당자";
-
-        // el = document.createElement("div");
-        // cnt.children[cnt.children.length - 1].appendChild(el);
-
-
-        // // 계약금액 
-        // el = document.createElement("div");
-        // cnt.appendChild(el);
-
-        // el = document.createElement("div");
-        // cnt.children[cnt.children.length - 1].appendChild(el);
-        // el.innerText = "계약 금액";
-
-        // el = document.createElement("div");
-        // cnt.children[cnt.children.length - 1].appendChild(el);
-
     }
 
     draw(cnt) {
@@ -252,7 +210,7 @@ class Contract {
                         data = JSON.parse(data);
                         console.log(data);
                         R.contract = new Contract(data);
-                        R.contract.getReportDetail(this);
+                        R.contract.drawContractPage(document.getElementsByClassName("contract-list")[0]);
 
                     } else {
                         console.log(response.msg);
@@ -297,10 +255,14 @@ class Contract {
 
         let cnt, el, el2;
 
-        console.log(obj.className);
+
         if (obj.className == "sopp-contract") {
-            cnt = document.getElementsByClassName("sopp-contract")[0];
+            cnt = obj;
             this.container = cnt;
+        } else if (obj.className == "contract-main") {
+            cnt = obj;
+            this.container = cnt;
+
         } else {
             if ($(".detail-wrap")[0] != undefined && $(".detail-wrap")[0].className != "detail-wrap cont" + this.no) {
                 $(".detail-wrap")[0].remove();
@@ -311,10 +273,9 @@ class Contract {
                 this.container = cnt;
             } else if ($(".detail-wrap")[0] != undefined && $(".detail-wrap")[0].className == "detail-wrap cont" + this.no) {
                 $(".detail-wrap")[0].innerHTML = "";
-                cnt =  $(".detail-wrap")[0];
+                cnt = $(".detail-wrap")[0];
                 this.container = cnt;
-
-            } else if($(".detail-wrap")[0] == undefined) {
+            } else if ($(".detail-wrap")[0] == undefined) {
                 el = document.createElement("div");
                 el.className = "detail-wrap cont" + this.no;
                 obj.after(el);
@@ -325,7 +286,6 @@ class Contract {
 
         }
 
-        console.log(cnt);
         el = document.createElement("top");
         el.className = "contract-top";
         cnt.appendChild(el);
@@ -351,9 +311,7 @@ class Contract {
             el2.className = "contract-doing";
         }
 
-
         el2.innerText = "판매보고";
-
 
         // 계약 진척도 - 계약서 
         el2 = document.createElement("div");
@@ -363,12 +321,10 @@ class Contract {
                 el2.className = "contract-done";
             } else {
                 el2.className = "contract-doing";
-
             }
         }
 
         el2.innerText = "계약";
-
 
         // 계약 진척도 - 납품 
         el2 = document.createElement("div");
@@ -399,12 +355,12 @@ class Contract {
 
 
 
-        if (obj.className != "sopp-contract") {
-            el = document.createElement("div");
-            ctrtTop.appendChild(el);
-            el.className = "crudBtns";
-            el.innerHTML = "<Button data-detail='" + this.no + "'onclick='this.parentElement.parentElement.parentElement.remove()'><i class='fa-solid fa-xmark'></i></Button>";
-        }
+        // if (obj.className != "sopp-contract") {
+        //     el = document.createElement("div");
+        //     ctrtTop.appendChild(el);
+        //     el.className = "crudBtns";
+        //     el.innerHTML = "<Button data-detail='" + this.no + "'onclick='this.parentElement.parentElement.parentElement.remove()'><i class='fa-solid fa-xmark'></i></Button>";
+        // }
 
         // 진척도 아래 상세 detail Start --------------------------------------------------------------------------------------------------------------------------------------
         // 계약명
@@ -554,7 +510,6 @@ class Contract {
                 mtncList +=
                     "<div>" + title + "\u00A0" + "(</div>" +
                     "<div>" + "\u00A0" + product + "\u00A0" + "/</div>" +
-                    // "<div>" + "\u00A0" + customer + "\u00A0" + "/</div>" +
                     "<div>" + "\u00A0" + startDate + "\u00A0" + "</div>" +
                     "<div>" + "\u00A0" + "\u00A0" + "~" + "\u00A0" + "</div>" +
                     "<div>" + "\u00A0" + endDate + "\u00A0" + "/</div>" +
@@ -586,7 +541,6 @@ class Contract {
 
         el = document.createElement("div");
         cnt.children[cnt.children.length - 1].appendChild(el);
-        // el.setAttribute("style", "flex-direction : column");
 
 
         let inputHtml = "<div class='filePreview'></div><label>파일첨부<input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attachedcontract' id='attached' onchange='R.contract.fileChange(this)' style='display:none'></input></label>";
@@ -623,11 +577,9 @@ class Contract {
         }
 
 
-
         this.drawSuppliedData(obj);
 
         this.drawApprovedData(obj);
-
 
 
         for (let i = 1; i < 5; i++) {
@@ -646,7 +598,9 @@ class Contract {
         let el, el2, cnt;
 
         if (obj.className == "sopp-contract") {
-            cnt = document.getElementsByClassName("sopp-contract")[0];
+            cnt = obj;
+        } else if (obj.className == "contract-main") {
+            cnt = obj;
         } else {
             cnt = document.getElementsByClassName("detail-wrap cont" + this.no)[0];
         }
@@ -689,7 +643,9 @@ class Contract {
         el.appendChild(el2);
 
         if (obj.className == "sopp-contract") {
-            cnt = document.getElementsByClassName("sopp-contract")[0];
+            cnt = obj;
+        } else if (obj.className == "contract-main") {
+            cnt = obj;
         } else {
             cnt = document.getElementsByClassName("detail-wrap cont" + this.no)[0];
         }
@@ -755,7 +711,9 @@ class Contract {
     drawApprovedData(obj) {
         let el, el2, cnt;
         if (obj.className == "sopp-contract") {
-            cnt = document.getElementsByClassName("sopp-contract")[0];
+            cnt = obj;
+        } else if (obj.className == "contract-main") {
+            cnt = obj;
         } else {
             cnt = document.getElementsByClassName("detail-wrap cont" + this.no)[0];
         }
@@ -768,7 +726,6 @@ class Contract {
         el = document.createElement("div");
         cnt.appendChild(el);
         el.innerText = "검수일자";
-
 
         el = document.createElement("div");
         cnt.appendChild(el);
@@ -797,7 +754,9 @@ class Contract {
         el.appendChild(el2);
 
         if (obj.className == "sopp-contract") {
-            cnt = document.getElementsByClassName("sopp-contract")[0];
+            cnt = obj;
+        } else if (obj.className == "contract-main") {
+            cnt = obj;
         } else {
             cnt = document.getElementsByClassName("detail-wrap cont" + this.no)[0];
         }
@@ -910,34 +869,6 @@ class Contract {
         } else {
             storage.reportDetailData = "";
             this.drawDetail(obj);
-        }
-
-
-    }
-
-    remove() {
-
-        let contractNo = this.no;
-        if (confirm("삭제하시겠습니까?")) {
-            fetch(apiServer + "/api/contract/" + contractNo, { method: "DELETE" })
-                .catch((error) => console.log("error:", error))
-                .then(response => response.json())
-                .then(response => {
-                    let radio, ctrtWrap;
-                    if (response.result === "ok") {
-                        alert("삭제되었습니다");
-                        radio = document.getElementById("contract" + contractNo);
-                        radio.remove();
-                        ctrtWrap = document.getElementsByClassName("contract-wrap");
-                        for (let i = 0; i < ctrtWrap.length; i++) {
-                            if (ctrtWrap[i].dataset.no == contractNo) {
-                                ctrtWrap[i].remove();
-                            }
-                        }
-                    } else {
-                        alert("삭제 실패")
-                    }
-                });
         }
 
 
@@ -1083,6 +1014,173 @@ class Contract {
 
     }
 
+    drawSche() {
+        let container,
+            result,
+            jsonData,
+            job,
+            header = [],
+            data = [],
+            ids = [],
+            disDate,
+            setDate,
+            str,
+            fnc;
+
+
+
+        container = $(".contract-sche");
+
+        header = [
+
+            {
+                title: "일자",
+                align: "center",
+            },
+            {
+                title: "장소",
+                align: "center",
+            },
+            {
+                title: "종류",
+                align: "center",
+            },
+            {
+                title: "방법",
+                align: "center",
+            },
+            {
+                title: "담당자",
+                align: "center",
+            },
+            {
+                title: "비고",
+                align: "center",
+            },
+
+        ];
+        if (
+            R.sopp.schedules === undefined ||
+            R.sopp.schedules.length == 0
+        ) {
+
+            createGrid(container, header, data, ids, job, fnc);
+
+            container.append(
+                "<div style='border:1px solid #e0e4e9;padding:8px;justify-content: center;background-color:white; text-align:center;grid-column :span 6'>등록된 일정이 없습니다</div>"
+            );
+
+        } else {
+
+            jsonData = R.sopp.schedules;
+
+
+            for (let i = 0; i < jsonData.length; i++) {
+                disDate = dateDis(jsonData[i].from);
+                setDate = dateFnc(disDate);
+                let writer = storage.user[jsonData[i].writer].userName;
+                let desc = jsonData[i].data.content;
+                let detail = jsonData[i].data.related;
+                detail = JSON.parse(detail);
+                let method, place, typeOfDetail;
+                method = detail.method;
+                if (method == "visit") {
+                    method = "현장방문";
+                } else if (method == "telephone") {
+                    method = "전화상담";
+                } else {
+                    method = "원격접속";
+                }
+                place = detail.place;
+                if (place == "customer") {
+                    place = "고객사";
+                } else if (place == "partner") {
+                    place = "협력사";
+                } else if (place == "office") {
+                    place = "사무실"
+
+                } else {
+                    place = "기타";
+                }
+
+
+
+
+
+
+                typeOfDetail = detail.typeOfDetail == "xx" ? "기타" : detail.typeOfDetail;
+
+                str = [
+
+                    { // 일자 
+                        "setData": setDate,
+                        "align": "center"
+                    },
+                    { // 장소 
+                        "setData": place,
+                        "align": "center"
+                    },
+                    { // 종류 
+                        "setData": typeOfDetail,
+                        "align": "center"
+                    },
+                    { // 방법 
+                        "setData": method,
+                        "align": "center",
+                    },
+                    { // 담당자 
+                        "setData": writer,
+                        "align": "center"
+                    }, { // 비고 
+                        "setData": desc,
+                        "align": "left"
+                    },
+
+                ];
+
+                fnc;
+                ids.push(jsonData[i].docNo);
+                data.push(str);
+            }
+
+
+            createGrid(container, header, data, ids, job, fnc);
+        }
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+    // 계약 상세 조회 페이지 함수 
+    drawContractPage(obj) {
+        let soppNo = this.related;
+        soppNo = JSON.parse(soppNo);
+        soppNo = soppNo.parent;
+        soppNo = soppNo.split(":")[1];
+
+        let target = obj.parentElement;
+
+        obj.setAttribute("style", "display:none");
+        obj.nextElementSibling.setAttribute("style", "display:inline;")
+
+        let el, el2, cnt, html;
+
+        cnt = document.getElementsByClassName("contract-main")[0];
+         $(".pageContainer").hide();
+        this.drawDetail(cnt);
+        getContractSchedule(soppNo);
+
+
+    }
+
 
     update() {
         let cont = Object.assign({}, this), data;
@@ -1126,9 +1224,10 @@ class Contract {
 }
 
 
-function savedLineSet() {
-    // let formId = "doc_Form_leave"; 
-    let formId = "doc_Form_extension";
+// class END ----------------------------------------------------------------------------------------------------------------------------------------
+
+function savedLineSet(formId) {
+
     let appLineNum = document.getElementsByClassName("schedule-app-line")[0].value * 1;
     $.ajax({
         url: "/api/gw/app/savedLine/" + storage.my,
@@ -1222,8 +1321,6 @@ function createSchedule(formId, lineData, appLine) {
     });
 
 }
-
-
 
 
 function createLine2(formId, appLineNum) {
@@ -1676,8 +1773,6 @@ function drawDefaultMaintenance(obj) {
 
 
 function examineCheck(obj) {
-    // let productNum = obj.className;
-
     let productNum = obj.id;
     let cnt, year, month;
     console.log(productNum);
@@ -1830,9 +1925,6 @@ function createMtnc() {
 }
 
 
-
-
-
 function openSaleReport(no) {
     let data = setMtncDate();
 
@@ -1938,19 +2030,21 @@ function setMtncDate() {
             alert("유상 유지보수 금액을 입력하세요");
             data = [];
             break;
+        } else {
+            detail = {
+                title: title,
+                product: product,
+                customer: customer,
+                startDate: startDate,
+                endDate: endDate,
+                engineer: engineer,
+                amount: amount,
+            }
+
+            data.push(detail);
         }
 
-        detail = {
-            title: title,
-            product: product,
-            customer: customer,
-            startDate: startDate,
-            endDate: endDate,
-            engineer: engineer,
-            amount: amount,
-        }
 
-        data.push(detail);
     }
 
     //  R.popup.mtncData = data;
@@ -2054,4 +2148,37 @@ function setSopp(no) {
                 console.log(response.msg);
             }
         });
-} 
+}
+
+
+
+
+function getContractSchedule(no) {
+    fetch(apiServer + "/api/schedule2/sopp/" + no)
+        .catch((error) => console.log("error:", error))
+        .then(response => response.json())
+        .then(response => {
+            let data, schedule, x, arr = [];
+            if (response.result === "ok") {
+                data = response.data;
+                data = cipher.decAes(data);
+                data = JSON.parse(data);
+                for (x = 0; x < data.length; x++) {
+                    schedule = new Schedule(data[x]);
+                    arr.push(schedule);
+                }
+                arr.sort(function (a, b) { return a.from - b.from });
+                R.sopp.schedules = arr;
+                R.contract.drawSche();
+            } else {
+                console.log(response.msg);
+            }
+        });
+}
+
+
+
+
+
+
+

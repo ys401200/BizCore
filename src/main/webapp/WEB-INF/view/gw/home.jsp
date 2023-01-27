@@ -12,7 +12,6 @@
 
 					<div class="reportContainer">
 						<div class="tabs">
-
 							<input type="radio" id="tabWait" name="tabItem" data-content-id="tabWaitList"
 								onclick="tabItemClick(this)" checked>
 							<label class="tabItem" for="tabWait" style="z-index: 8; width:25%; padding-left:0%;">결재 대기

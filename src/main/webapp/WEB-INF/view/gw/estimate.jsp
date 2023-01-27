@@ -32,7 +32,9 @@
 					/* 에디터 체크  */
 					.cke_editable {
 						border: none;
-						min-height: 300px;
+						min-height: 200px;
+						font-size: 0.8rem;
+						padding: 0 0.3rem;
 
 					}
 
@@ -1014,6 +1016,7 @@
 
 
 		</body>
+		<script src="/js/common_sh.js"></script>
 		<script src="/js/common_bi.js"></script>
 		<script src="/js/common_jh.js"></script>
 		<script src="/js/header.js"></script>

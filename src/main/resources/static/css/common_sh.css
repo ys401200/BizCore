@@ -39,11 +39,11 @@
 
 }
 
-.detail-wrap {
+.contract-main, .contract-main {
 	padding: 1rem;
 }
 
-/* .detail-wrap:hover {
+/* .contract-main:hover {
 	background-color: #e7e6e642;
 	cursor: pointer;
 } */
@@ -96,14 +96,13 @@
 }
 
 
-.detail-wrap>div {
+.contract-main>div  {
 	display: grid;
 	grid-template-columns: 10% 90%;
-	padding: 0 10rem;
 }
 
 
-.detail-wrap>div>div {
+.contract-main>div>div {
 	border-bottom: 1px solid #e0e4e9;
 	margin: 0.5px;
 	padding: 0.2rem;
@@ -111,14 +110,14 @@
 
 
 
-.detail-wrap>div>div:last-of-type {
+.contract-main>div>div:last-of-type {
 	display: inline-flex;
 	line-height: 1.5;
 	overflow: hidden;
 
 }
 
-.detail-wrap>div>div:last-of-type>div {
+.contract-main>div>div:last-of-type>div {
 	display: inline-flex;
 }
 
@@ -157,6 +156,43 @@
 .sopp-contract>div>div:last-of-type>div {
 	display: inline-flex;
 }
+
+
+
+
+/*계약 상세 조회 관련 css start */ 
+
+
+.contract-container {
+	display: grid;
+    width: 99%;
+    margin: 0 auto;
+} 
+
+.contract-container >div:first-of-type {
+	display: grid; 
+}
+
+.contract-container > .contract-sche>div {
+	display: grid;
+	grid-template-columns: 15% 10% 10% 10% 10% 45%;
+	text-align : center;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /* prevModal 관련 css */
