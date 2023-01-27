@@ -74,12 +74,13 @@ public class Schedule2Svc extends Svc {
         List<Schedule2> list = null;
         
         // 권한이 있는지 확인함
-        x = schedule2Mapper.checkPermissionWithSopp(compId, userNo, sopp);
-        if(x == 0)  return "permissionDenied";
+        // 권한 기능 일시 정지 // 병일 // 2023. 1. 27
+        //x = schedule2Mapper.checkPermissionWithSopp(compId, userNo, sopp);
+        //if(x == 0)  return "permissionDenied";
 
         // DB에서 일정정보를 가져옴
         result = "[";
-        list = schedule2Mapper.getListWithParent(compId, "sopp:" + sopp);
+        list = schedule2Mapper.getListWithSopp(compId, "sopp:" + sopp);
         if(list != null)    for(x = 0 ; x < list.size() ; x++){
             if(x > 0)   result += ",";
             result += list.get(x).toJson();

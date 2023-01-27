@@ -19,6 +19,9 @@ public interface Schedule2Mapper {
     @Select("SELECT `no`,writer,title,content,report,`type`,`from`,`to`,related,permitted,created,modified FROM bizcore.schedule WHERE deleted IS NULL AND compId = #{compId} AND json_value(related,'$.parent') = #{parent}")
     public List<Schedule2> getListWithParent(@Param("compId") String compId, @Param("parent") String parent);
 
+    @Select("SELECT `no`,writer,title,content,report,`type`,`from`,`to`,related,permitted,created,modified FROM bizcore.schedule WHERE deleted IS NULL AND compId = #{compId} AND (json_value(related,'$.parent') = #{parent} OR json_value(related,'$.parent') IN (SELECT concat('contract:',no) FROM bizcore.contract WHERE deleted IS NULL AND compId = #{compId} AND json_value(related,'$.parent') = #{parent}) OR json_value(related,'$.parent') IN (SELECT concat('maintenance:',no) FROM bizcore.maintenance WHERE deleted IS NULL AND compId = #{compId} AND contract IN (SELECT no FROM bizcore.contract WHERE deleted IS NULL AND compId = #{compId} AND json_value(related,'$.parent') = #{parent})))")
+    public List<Schedule2> getListWithSopp(@Param("compId") String compId, @Param("parent") String sopp);
+
     @Select("SELECT `no`,writer,title,content,report,`type`,`from`,`to`,related,permitted,created,modified FROM bizcore.schedule WHERE deleted IS NULL AND compId = #{compId} AND json_value(related,'$.parent') IN (#{parents})")
     public List<Schedule2> getListWithParents(@Param("compId") String compId, @Param("parents") String parents);
 
