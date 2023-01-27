@@ -299,6 +299,12 @@ class Sopp2 {
 			html += ("<div>" + z.content + "</div>");
 			y.innerHTML = html;
 			cnt.appendChild(y);
+
+			// 상단 탭에 일정의 수를 표시함
+			x = 0;
+			if(R.sopp !== undefined && R.sopp.schedules !== undefined && R.sopp.schedules.constructor.name === "Array")	x = R.sopp.schedules.length;
+			cnt = document.getElementsByClassName("sopp-tab-cnt")[0].children[1].children[2];
+			cnt.innerHTML = "<span> " + x + " </span>";
 		}
 	} // End of setScheduleToCalendar()
 
@@ -481,7 +487,8 @@ class MonthlyCalendar {
 		this.container.appendChild(bodyCnt);
 
 		// 헤드부분 생성
-		html = "<div style=\"grid-area:cal-type;\"><span>연</span><span>월</span><span>주</span></div>";
+		//html = "<div style=\"grid-area:cal-type;\"><span>연</span><span>월</span><span>주</span></div>";
+		html = "<div style=\"grid-area:cal-type;\"></div>";
 		html += "<div style=\"grid-area:prv-month;\"><img src=\"/images/sopp2/triangle_left.png\" onclick=\"if(this.parentElement.parentElement.parentElement.previousElementSibling !== null){this.parentElement.parentElement.parentElement.previousElementSibling.style.display='';this.parentElement.parentElement.parentElement.style.display='none'}\"></div>";
 		html += ("<div style=\"grid-area:crnt-month;\">" + (this.year + " / " + (this.month)) + "</div>");
 		html += ("<div style=\"grid-area:next-month;\"><img src=\"/images/sopp2/triangle_right.png\" onclick=\"if(this.parentElement.parentElement.parentElement.nextElementSibling !== null){this.parentElement.parentElement.parentElement.nextElementSibling.style.display='';this.parentElement.parentElement.parentElement.style.display='none'}\"></div>");

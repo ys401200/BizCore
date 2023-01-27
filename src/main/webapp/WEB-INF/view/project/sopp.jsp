@@ -34,12 +34,12 @@
                     </div>
                     <div class="sopp-progress"></div>
                     <div class="sopp-tab-cnt">
-                        <div onclick="moveToTarget(this)" data-target="sopp-info" class="sopp-tab-select">설 명</div>
-                        <div onclick="moveToTarget(this)" data-target="sopp-schedule" class="sopp-tab">일 정</div>
-                        <div onclick="moveToTarget(this)" data-target="sopp-estimate" class="sopp-tab">견 적</div>
-                        <div onclick="moveToTarget(this)" data-target="sopp-contract" class="sopp-tab">계 약</div>
-                        <div onclick="moveToTarget(this)" data-target="sopp-trade" class="sopp-tab">매입매출</div>
-                        <div onclick="moveToTarget(this)" data-target="sopp-attached" class="sopp-tab">관련자료</div>
+                        <div onclick="moveToTarget(this)" data-target="sopp-info" class="sopp-tab-select"><div></div><div>설 명</div><div></div></div>
+                        <div onclick="moveToTarget(this)" data-target="sopp-schedule" class="sopp-tab"><div></div><div>일 정</div><div><span> 0 </span></div></div>
+                        <div onclick="moveToTarget(this)" data-target="sopp-estimate" class="sopp-tab"><div></div><div>견 적</div><div><span> 0 </span></div></div>
+                        <div onclick="moveToTarget(this)" data-target="sopp-contract" class="sopp-tab"><div></div><div>계 약</div><div></div></div>
+                        <div onclick="moveToTarget(this)" data-target="sopp-trade" class="sopp-tab"><div></div><div>매입매출</div><div><span> 0 </span></div></div>
+                        <div onclick="moveToTarget(this)" data-target="sopp-attached" class="sopp-tab"><div></div><div>관련자료</div><div></div></div>
                     </div>
                 </div>
                 <div class="sopp-desc">
