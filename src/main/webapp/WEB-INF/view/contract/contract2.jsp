@@ -45,10 +45,23 @@
 						<div class="contract-sche" id="tabScheDiv" style="display: none;">
 
 						</div>
-						<div class="contract-est" id="tabEstDiv" style="display: none;">
-
-
-
+						<div class="sopp-estimate" id="tabEstDiv" style="display: none;">
+							<div class="crudBtns">
+								<button type="button" class="crudAddBtn">견적추가</button>
+								<button type="button" class="crudUpdateBtn">견적수정</button>
+								<button type="button" class="estimatePdf">pdf 다운로드</button>
+								<a href="#" onclick="hideDetailView(EstimateSet.drawBack);" class="detailBackBtn">Back</a>
+							</div>
+							<div class="estimateList"></div>
+							<div class="versionPreview">
+								<div class="previewDefault">
+									<div>미리보기</div>
+								</div>
+							</div>
+							
+							<div class="addPdfForm">
+								<jsp:include page="../business/form.jsp" />
+							</div>
 						</div>
 						<div class="contract-trade" id="tabTradeDiv" style="display: none;">
 

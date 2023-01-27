@@ -1013,7 +1013,7 @@ class Contract {
 
 
     }
-
+    // 계약 상세조회 스케줄 그리는 함수 
     drawSche() {
         let container,
             result,
@@ -1151,13 +1151,24 @@ class Contract {
     }
 
 
+    // 계약 견적 리스트 그리는 함수 
+    drawContractEstimate() {
+        let soppNo = this.related;
+        soppNo = JSON.parse(soppNo);
+        soppNo = soppNo.parent;
+        soppNo = soppNo.split(":")[1];
+        EstimateSet = new EstimateSet();
+        EstimateSet.soppEstimateNo(soppNo);
+        let width = window.innerWidth - 1080 +"px";
+        let estimateList = document.getElementsByClassName("estimateList")[0];
+        estimateList.setAttribute("style","display:grid;width:"+width+";float:left;clear:both;");
+        window.onresize = () => {
+            let width = window.innerWidth - 1080 +"px";
+            let estimateList = document.getElementsByClassName("estimateList")[0];
+            estimateList.setAttribute("style","display:grid;width:"+width+";float:left;clear:both;");
 
-
-
-
-
-
-
+        }
+    }
 
     // 계약 상세 조회 페이지 함수 
     drawContractPage(obj) {
@@ -1169,17 +1180,21 @@ class Contract {
         let target = obj.parentElement;
 
         obj.setAttribute("style", "display:none");
-        obj.nextElementSibling.setAttribute("style", "display:inline;")
+        obj.nextElementSibling.setAttribute("style", "display:grid;")
 
         let el, el2, cnt, html;
 
         cnt = document.getElementsByClassName("contract-main")[0];
-         $(".pageContainer").hide();
+        $(".pageContainer").hide();
         this.drawDetail(cnt);
         getContractSchedule(soppNo);
 
 
+
     }
+
+
+
 
 
     update() {
@@ -2170,6 +2185,8 @@ function getContractSchedule(no) {
                 arr.sort(function (a, b) { return a.from - b.from });
                 R.sopp.schedules = arr;
                 R.contract.drawSche();
+                R.contract.drawContractEstimate();
+                $(".pageContainer").hide();
             } else {
                 console.log(response.msg);
             }
