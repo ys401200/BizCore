@@ -62,12 +62,6 @@ public class BusinessController extends Ctrl {
         return "/contract/list";
     } // End of /business/**
 
-    @RequestMapping(value = { "/contract2", "/contract2/{no:\\d+}" })
-    public String cont2(HttpServletRequest request) {
-        doIt(request);
-        return "/contract/contract2";
-    }
-
     @RequestMapping(value = { "/contract/popup/{docNo}" })
     public String setprint(HttpServletRequest request) {
         doIt(request);
