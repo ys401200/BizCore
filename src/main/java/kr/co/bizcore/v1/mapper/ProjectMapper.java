@@ -24,10 +24,10 @@ public interface ProjectMapper {
 
     // ======================= S O P P  =======================================
 
-    @Select("SELECT `no`, stage, title, `desc`, owner, coWorker, customer, picOfCustomer, partner, picOfPartner, expectedSales, expectedDate, related, closed, created, modified FROM bizcore.sopp WHERE deleted IS NULL AND compId = #{compId}")
+    @Select("SELECT `no`, stage, title, `desc`, owner, coWorker, customer, picOfCustomer, partner, picOfPartner, expectedSales, expectedDate, related, closed, created, modified, v estm FROM bizcore.sopp a LEFT JOIN (SELECT count(`version`) v, json_value(related, '$.parent') p FROM bizcore.estimate WHERE json_value(related, '$.parent') NOT LIKE '%null' GROUP BY p) z ON concat('sopp:',a.no) = z.p WHERE a.deleted IS NULL AND a.compId = #{compId}")
     public List<Sopp2> getSoppList(@Param("compId") String compId);
 
-    @Select("SELECT `no`, stage, title, `desc`, owner, coWorker, customer, picOfCustomer, partner, picOfPartner, expectedSales, expectedDate, related, closed, created, modified FROM bizcore.sopp WHERE deleted IS NULL AND compId = #{compId} AND NO = #{no}")
+    @Select("SELECT `no`, stage, title, `desc`, owner, coWorker, customer, picOfCustomer, partner, picOfPartner, expectedSales, expectedDate, related, closed, created, modified, v estm FROM bizcore.sopp a LEFT JOIN (SELECT count(`version`) v, json_value(related, '$.parent') p FROM bizcore.estimate WHERE json_value(related, '$.parent') NOT LIKE '%null' GROUP BY p) z ON concat('sopp:',a.no) = z.p WHERE a.deleted IS NULL AND a.compId = #{compId} AND no = #{no}")
     public Sopp2 getSopp(@Param("compId") String compId, @Param("no") int no);
 
     // ======================= S O P P _ C H A T  =======================================

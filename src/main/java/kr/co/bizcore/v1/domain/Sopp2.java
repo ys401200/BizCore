@@ -21,4 +21,5 @@ public class Sopp2 extends Domain{
     private Date expectedDate;
     private String related;
     private Date closed;
+    private Integer estm;
 }

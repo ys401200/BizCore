@@ -65,6 +65,7 @@ class Sopp2 {
 		this.closed = each.closed == undefined ? null : new Date(each.closed);
 		this.created = each.created == undefined ? null : new Date(each.created);
 		this.modified = each.modified == undefined ? null : new Date(each.modified);
+		this.estm = each.estm !== undefined ? each.estm : 0;
 		this.calendar = [];
 		this.colorTable = ["#daadc5", "#afadda", "#addac4", "#dac4ad", "#daadb2", "#dad0ad", "#daadd9", "#cddaad", "#adc2da", "#addac0", "#f6ffde", "#defcff", "#fedeff", "#dee7ff", "#e4ffde", "#ffdede", "#a688c9", "#88c9a7", "#c9a788", "#c0daad"];
 	}
@@ -360,7 +361,7 @@ class Sopp2 {
 
 		el = document.createElement("div");
 		cnt.appendChild(el);
-		el.innerText = "견적 : 0건";
+		el.innerText = "견적 : " + this.estm + "건";
 
 		el = document.createElement("div");
 		cnt.appendChild(el);
