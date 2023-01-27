@@ -15,7 +15,7 @@
 						<span class="listRangeSpan">0</span>
 					</div>
 
-					<div class="crudBtns" style="display:none;"><button onclick="cntBack()">Back</button></div>
+					<div class="crudBtns cntBackBtn" style="display:none;"><button onclick="cntBack()">Back</button></div>
 					<div class="contract-list"></div>
 					<div class="contract-container" style="display:none;">
 						<div class="tabs">

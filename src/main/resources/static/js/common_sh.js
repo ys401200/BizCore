@@ -1216,7 +1216,7 @@ class Contract {
         cnt = document.getElementsByClassName("contract-main")[0];
         this.drawDetail(cnt);
         getContractSchedule(soppNo);
-        $(".crudBtns").show();
+        $(".cntBackBtn").show();
     }
 
 
@@ -2222,7 +2222,8 @@ function getContractSchedule(no) {
 
 
 function cntBack() {
-
+    $(".crudBtns")[0].setAttribute("style","display:none");
+    $(".crudBtns")[1].innerHTML = "<button type='button' class='crudAddBtn'>견적추가</button><button type='button' class='crudUpdateBtn'>견적수정</button><button type='button' class='estimatePdf'>pdf 다운로드</button><a href='#' onclick='hideDetailView(EstimateSet.drawBack);' class='detailBackBtn'>Back</a> "
     $(".contract-sche").html("");
     $(".contract-main").html("");
     $(".estimateList").html("");
