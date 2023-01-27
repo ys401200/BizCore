@@ -39,9 +39,9 @@
 
 }
 
-.contract-main,
 .contract-main {
 	padding: 1rem;
+	border: 1px solid #e0e4e9;
 }
 
 /* .contract-main:hover {
@@ -134,27 +134,31 @@
 }
 
 
-.sopp-contract>div>div {
+.sopp-contract>div>div,
+.contract-main>div>div {
 	border: 1px solid #e0e4e9;
 	margin: 0.5px;
 	padding: 8px;
 	text-align: center;
 }
 
-.sopp-contract>div>div:first-of-type {
+.sopp-contract>div>div:first-of-type,
+.contract-main>div>div:first-of-type {
 	text-align: center;
 	background-color: #eef1fb;
 	font-weight: 500;
 }
 
-.sopp-contract>div>div:last-of-type {
+.sopp-contract>div>div:last-of-type,
+.contract-main>div>div:last-of-type {
 	display: inline-flex;
 	line-height: 1.5;
 	overflow: hidden;
 
 }
 
-.sopp-contract>div>div:last-of-type>div {
+.sopp-contract>div>div:last-of-type>div,
+.contract-main>div>div:last-of-type {
 	display: inline-flex;
 }
 
@@ -464,22 +468,24 @@ cateLine {
 	padding-bottom: 20px;
 }
 
-.pageContainer2 >div {
+.pageContainer2>div {
 	cursor: pointer;
 }
-.pageContainer2 >div:hover {
-	background-color:#2147b1;
-	border: 1px solid #2147b1 ;
-	color:white;
+
+.pageContainer2>div:hover {
+	background-color: #2147b1;
+	border: 1px solid #2147b1;
+	color: white;
 }
 
-.pageContainer2 div:not(.paging_cell_current), .pageContainer .paging_cell_empty {
-    width: 28px;
-    height: 28px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 1px solid #000;
-    border-color: #D9D9D9;
-    /* background-color: #EDEDF4; */
+.pageContainer2 div:not(.paging_cell_current),
+.pageContainer .paging_cell_empty {
+	width: 28px;
+	height: 28px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border: 1px solid #000;
+	border-color: #D9D9D9;
+	/* background-color: #EDEDF4; */
 }

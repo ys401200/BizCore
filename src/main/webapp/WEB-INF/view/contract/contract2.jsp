@@ -47,7 +47,7 @@
 
 						</div>
 						<div class="sopp-estimate" id="tabEstDiv" style="display: none;">
-							<div class="crudBtns">
+							<div class="crudBtns estBtns">
 								<button type="button" class="crudAddBtn">견적추가</button>
 								<button type="button" class="crudUpdateBtn">견적수정</button>
 								<button type="button" class="estimatePdf">pdf 다운로드</button>
