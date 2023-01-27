@@ -14,7 +14,8 @@
 							oninput="listRangeChange(this, drawList)">
 						<span class="listRangeSpan">0</span>
 					</div>
-					<!-- <div class="crudBtns"><button onclick="contractInsertForm()">등록</button></div> -->
+
+					<div class="crudBtns" style="display:none;"><button onclick="cntBack()">Back</button></div>
 					<div class="contract-list"></div>
 					<div class="contract-container" style="display:none;">
 						<div class="tabs">

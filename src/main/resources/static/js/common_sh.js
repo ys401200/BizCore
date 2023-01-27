@@ -248,10 +248,9 @@ class Contract {
         soppNo = this.related;
         soppNo = JSON.parse(soppNo);
         soppNo = soppNo.parent.split(":")[1];
-        if (R.sopp == undefined) {
-            window.contractData = R.contract;
-            setSopp(soppNo);
-        }
+        window.contractData = R.contract;
+        setSopp(soppNo);
+
 
         let cnt, el, el2;
 
@@ -1030,6 +1029,7 @@ class Contract {
 
 
         container = $(".contract-sche");
+        container.html("");
 
         header = [
 
@@ -1063,7 +1063,36 @@ class Contract {
             R.sopp.schedules === undefined ||
             R.sopp.schedules.length == 0
         ) {
+            container = $(".contract-sche");
 
+            header = [
+
+                {
+                    title: "일자",
+                    align: "center",
+                },
+                {
+                    title: "장소",
+                    align: "center",
+                },
+                {
+                    title: "종류",
+                    align: "center",
+                },
+                {
+                    title: "방법",
+                    align: "center",
+                },
+                {
+                    title: "담당자",
+                    align: "center",
+                },
+                {
+                    title: "비고",
+                    align: "center",
+                },
+
+            ];
             createGrid(container, header, data, ids, job, fnc);
 
             container.append(
@@ -1157,40 +1186,37 @@ class Contract {
         soppNo = JSON.parse(soppNo);
         soppNo = soppNo.parent;
         soppNo = soppNo.split(":")[1];
-        EstimateSet = new EstimateSet();
-        EstimateSet.soppEstimateNo(soppNo);
-        let width = window.innerWidth - 1080 +"px";
-        let estimateList = document.getElementsByClassName("estimateList")[0];
-        estimateList.setAttribute("style","display:grid;width:"+width+";float:left;clear:both;");
-        window.onresize = () => {
-            let width = window.innerWidth - 1080 +"px";
-            let estimateList = document.getElementsByClassName("estimateList")[0];
-            estimateList.setAttribute("style","display:grid;width:"+width+";float:left;clear:both;");
+        R.estimateSet = new EstimateSet();
+        R.estimateSet.soppEstimateNo(soppNo);
 
+        let width = window.innerWidth - 1080 + "px";
+        let estimateList = document.getElementsByClassName("estimateList")[0];
+        estimateList.setAttribute("style", "display:grid;width:" + width + ";float:left;clear:both;");
+        window.onresize = () => {
+            let width = window.innerWidth - 1080 + "px";
+            let estimateList = document.getElementsByClassName("estimateList")[0];
+            estimateList.setAttribute("style", "display:grid;width:" + width + ";float:left;clear:both;");
         }
+
     }
 
     // 계약 상세 조회 페이지 함수 
     drawContractPage(obj) {
-        let soppNo = this.related;
+        let cnt, soppNo;
+        soppNo = this.related;
         soppNo = JSON.parse(soppNo);
         soppNo = soppNo.parent;
         soppNo = soppNo.split(":")[1];
-
-        let target = obj.parentElement;
+        setSopp(soppNo);
 
         obj.setAttribute("style", "display:none");
-        obj.nextElementSibling.setAttribute("style", "display:grid;")
-
-        let el, el2, cnt, html;
-
+        $("#tabMain").prop("checked", "checked");
+        tabItemClick($("#tabMain"));
+        obj.nextElementSibling.setAttribute("style", "display:grid;");
         cnt = document.getElementsByClassName("contract-main")[0];
-        $(".pageContainer").hide();
         this.drawDetail(cnt);
         getContractSchedule(soppNo);
-
-
-
+        $(".crudBtns").show();
     }
 
 
@@ -2186,7 +2212,6 @@ function getContractSchedule(no) {
                 R.sopp.schedules = arr;
                 R.contract.drawSche();
                 R.contract.drawContractEstimate();
-                $(".pageContainer").hide();
             } else {
                 console.log(response.msg);
             }
@@ -2196,6 +2221,14 @@ function getContractSchedule(no) {
 
 
 
+function cntBack() {
 
+    $(".contract-sche").html("");
+    $(".contract-main").html("");
+    $(".estimateList").html("");
+    $(".versionPreview").html("<div class='previewDefault'><div>미리보기</div></div>");
+    $(".contract-container").hide();
+    $(".contract-list").show();
+}
 
 
