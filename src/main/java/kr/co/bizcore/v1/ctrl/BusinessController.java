@@ -26,6 +26,12 @@ public class BusinessController extends Ctrl {
         return "/schedule/schedule";
     } // End of /business/**
 
+    @RequestMapping(value = { "/schedule2", "/schedule2/{no:\\d+}" })
+    public String schedule2(HttpServletRequest request) {
+        doIt(request);
+        return "/schedule2/schedule";
+    } // End of /business/**
+
     @RequestMapping(value = { "/sales", "/sales/{no:\\d+}" })
     public String sales(HttpServletRequest request) {
         doIt(request);

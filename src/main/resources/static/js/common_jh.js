@@ -398,6 +398,7 @@ class EstimateSet{
 	constructor(){
 		this.getEstimateBasic();
 		this.getEstimateItem();
+		CommonDatas.Temps.estimateSet = this;
 	}
 	
 	//베이직 견적 storage 저장 함수
@@ -603,12 +604,12 @@ class EstimateSet{
 					},
 				];
 		
-				fnc = "EstimateSet.clickedEstimate(this);";
+				fnc = "CommonDatas.Temps.estimateSet.clickedEstimate(this);";
 				ids.push(jsonData[i].no);
 				data.push(str);
 			}
 		
-			let pageNation = CommonDatas.createPaging(pageContainer[0], result[3], "pageMove", "EstimateSet.drawEstmList", result[0]);
+			let pageNation = CommonDatas.createPaging(pageContainer[0], result[3], "pageMove", "CommonDatas.Temps.estimateSet.drawEstmList", result[0]);
 			pageContainer[0].innerHTML = pageNation;
 		}
 	
@@ -616,11 +617,11 @@ class EstimateSet{
 			containerTitle.innerText = "견적";
 		}
 		CommonDatas.createGrid(container, header, data, ids, job, fnc);
-		document.getElementById("multiSearchBtn").setAttribute("onclick", "EstimateSet.searchSubmit();");
+		document.getElementById("multiSearchBtn").setAttribute("onclick", "CommonDatas.Temps.estimateSet.searchSubmit();");
 		crudAddBtn.innerText = "견적추가";
-		crudAddBtn.setAttribute("onclick", "EstimateSet.clickedAdd();");
+		crudAddBtn.setAttribute("onclick", "CommonDatas.Temps.estimateSet.clickedAdd();");
 		crudUpdateBtn.innerText = "견적수정";
-		crudUpdateBtn.setAttribute("onclick", "EstimateSet.clickedUpdate();");
+		crudUpdateBtn.setAttribute("onclick", "CommonDatas.Temps.estimateSet.clickedUpdate();");
 		CommonDatas.setViewContents(hideArr, showArr);
 	}
 
@@ -687,7 +688,7 @@ class EstimateSet{
 			
 			data.push(str);
 			crudAddBtn.style.display = "flex";
-			crudAddBtn.setAttribute("onclick", "EstimateSet.clickedAdd();");
+			crudAddBtn.setAttribute("onclick", "CommonDatas.Temps.estimateSet.clickedAdd();");
 		}else{
 			for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
 				let total = 0;
@@ -718,12 +719,12 @@ class EstimateSet{
 					},
 				];
 		
-				fnc = "EstimateSet.clickedEstmVer(this);";
+				fnc = "CommonDatas.Temps.estimateSet.clickedEstmVer(this);";
 				ids.push(i);
 				data.push(str);
 			}
 		
-			let pageNation = CommonDatas.createPaging(pageContainer[0], result[3], "pageMove", "EstimateSet.drawEstmVerList", result[0]);
+			let pageNation = CommonDatas.createPaging(pageContainer[0], result[3], "pageMove", "CommonDatas.Temps.estimateSet.drawEstmVerList", result[0]);
 			pageContainer[0].innerHTML = pageNation;
 			crudAddBtn.remove();
 		}
@@ -734,7 +735,7 @@ class EstimateSet{
 
 		CommonDatas.createGrid(container, header, data, ids, job, fnc);
 		crudUpdateBtn.innerText = "견적수정";
-		crudUpdateBtn.setAttribute("onclick", "EstimateSet.clickedUpdate();");
+		crudUpdateBtn.setAttribute("onclick", "CommonDatas.Temps.estimateSet.clickedUpdate();");
 		CommonDatas.setViewContents(hideArr, showArr);
 	}
 
@@ -763,11 +764,11 @@ class EstimateSet{
 
 		if(crudAddBtn !== undefined){
 			crudAddBtn.innerText = "견적추가";
-			crudAddBtn.setAttribute("onclick", "EstimateSet.clickedAdd();");
+			crudAddBtn.setAttribute("onclick", "CommonDatas.Temps.estimateSet.clickedAdd();");
 		}
 
 		crudUpdateBtn.innerText = "견적수정";
-		crudUpdateBtn.setAttribute("onclick", "EstimateSet.clickedUpdate();");
+		crudUpdateBtn.setAttribute("onclick", "CommonDatas.Temps.estimateSet.clickedUpdate();");
 
 		for(let i = 0; i < versionList.length; i++){
 			let item = versionList[i];
@@ -839,7 +840,7 @@ class EstimateSet{
 
 		let crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
 		let estimatePdf = document.getElementsByClassName("estimatePdf")[0];
-		estimatePdf.setAttribute("onclick", "EstimateSet.estimatePdf(\"" + title + "\", \"" + userName + "\");");
+		estimatePdf.setAttribute("onclick", "CommonDatas.Temps.estimateSet.estimatePdf(\"" + title + "\", \"" + userName + "\");");
 		crudUpdateBtn.style.display = "flex";
 		estimatePdf.style.display = "flex";
 
@@ -906,7 +907,7 @@ class EstimateSet{
 			dateSet = CommonDatas.dateDis(storage.estimateVerList[x].date);
 			dateSet = CommonDatas.dateFnc(dateSet);
 
-			html += "<div class=\"versionListBody\" onclick=\"EstimateSet.clickedEstmVer(this)\" data-id=\"" + x + "\">";
+			html += "<div class=\"versionListBody\" onclick=\"CommonDatas.Temps.estimateSet.clickedEstmVer(this)\" data-id=\"" + x + "\">";
 			html += "<div style=\"justify-content: center;\">" + storage.estimateVerList[x].version + "</div>";
 			html += "<div style=\"justify-content: left;\">" + storage.estimateVerList[x].title + "</div>";
 			html += "<div style=\"justify-content: center;\">" + storage.user[storage.estimateVerList[x].writer].userName + "</div>";
@@ -1204,7 +1205,7 @@ class EstimateSet{
 		createDiv = document.createElement("div");
 		createDiv.className = "pdfMainContentItem";
 		createDiv.style.gridTemplateColumns = "10% 10% 20% 10% 10% 10% 10% 10% 10%";
-		createDiv.innerHTML = "<div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemSpec\"><input type=\"text\" data-complete=\"product\" data-value=\"0\" onclick=\"CommonDatas.addAutoComplete(this);\" onkeyup=\"CommonDatas.addAutoComplete(this);\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeyup=\"EstimateSet.itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"EstimateSet.itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"EstimateSet.oneEstItemAdd(this);\">+</button><button type=\"button\" onclick=\"EstimateSet.oneEstItemRemove(this);\">-</button></div>";
+		createDiv.innerHTML = "<div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemSpec\"><input type=\"text\" data-complete=\"product\" data-value=\"0\" onclick=\"CommonDatas.addAutoComplete(this);\" onkeyup=\"CommonDatas.addAutoComplete(this);\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeyup=\"CommonDatas.Temps.estimateSet.itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"CommonDatas.Temps.estimateSet.itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"CommonDatas.Temps.estimateSet.oneEstItemAdd(this);\">+</button><button type=\"button\" onclick=\"CommonDatas.Temps.estimateSet.oneEstItemRemove(this);\">-</button></div>";
 		thisEle = e;
 		thisEle.parentElement.before(createDiv);
 		this.productNameSet();
@@ -1219,7 +1220,7 @@ class EstimateSet{
 		createDiv = document.createElement("div");
 		createDiv.className = "pdfMainContentItem";
 		createDiv.style.gridTemplateColumns = "10% 10% 20% 10% 10% 10% 10% 10% 10%";
-		createDiv.innerHTML = "<div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemSpec\"><input type=\"text\" data-complete=\"product\" data-value=\"0\" onclick=\"CommonDatas.addAutoComplete(this);\" onkeyup=\"CommonDatas.addAutoComplete(this);\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeyup=\"EstimateSet.itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"EstimateSet.itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"EstimateSet.oneEstItemAdd(this);\">+</button><button type=\"button\" onclick=\"EstimateSet.oneEstItemRemove(this);\">-</button></div>";
+		createDiv.innerHTML = "<div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemSpec\"><input type=\"text\" data-complete=\"product\" data-value=\"0\" onclick=\"CommonDatas.addAutoComplete(this);\" onkeyup=\"CommonDatas.addAutoComplete(this);\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeyup=\"CommonDatas.Temps.estimateSet.itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"CommonDatas.Temps.estimateSet.itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"CommonDatas.Temps.estimateSet.oneEstItemAdd(this);\">+</button><button type=\"button\" onclick=\"CommonDatas.Temps.estimateSet.oneEstItemRemove(this);\">-</button></div>";
 		thisEle = e;
 		parent = thisEle.parentElement.parentElement;
 		parent.after(createDiv);
@@ -1492,13 +1493,13 @@ class Estimate{
 				
 				if(pdfMainContentTitle.length == 0 || pdfMainContentTitle === undefined){
 					thisBtn = this.copyContainer.getElementsByClassName("pdfMainContentAddBtns")[0].querySelector("button");
-					EstimateSet.addEstTitle(thisBtn);
+					CommonDatas.Temps.estimateSet.addEstTitle(thisBtn);
 					let subTitle = this.copyContainer.getElementsByClassName("subTitle");
 					subTitle[i].querySelector("input").value = items[i].title;
 				}
 			}
 			
-			createDiv.innerHTML = "<div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemSpec\"><input type=\"text\" data-complete=\"product\" data-value=\"0\" onclick=\"CommonDatas.addAutoComplete(this);\" onkeyup=\"CommonDatas.addAutoComplete(this);\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeyup=\"EstimateSet.itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"EstimateSet.itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"EstimateSet.oneEstItemAdd(this);\">+</button><button type=\"button\" onclick=\"EstimateSet.oneEstItemRemove(this);\">-</button></div>";
+			createDiv.innerHTML = "<div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemSpec\"><input type=\"text\" data-complete=\"product\" data-value=\"0\" onclick=\"CommonDatas.addAutoComplete(this);\" onkeyup=\"CommonDatas.addAutoComplete(this);\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeyup=\"CommonDatas.Temps.estimateSet.itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"CommonDatas.Temps.estimateSet.itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"CommonDatas.Temps.estimateSet.oneEstItemAdd(this);\">+</button><button type=\"button\" onclick=\"CommonDatas.Temps.estimateSet.oneEstItemRemove(this);\">-</button></div>";
 			thisBtn = this.copyContainer.getElementsByClassName("pdfMainContentAddBtns")[0].querySelectorAll("button")[1];
 			thisBtn.parentElement.before(createDiv);
 			let pdfMainContentItem = this.copyContainer.getElementsByClassName("pdfMainContentItem")[i];
@@ -1517,11 +1518,11 @@ class Estimate{
 			pdfMainContentItem.getElementsByClassName("itemQuantity")[0].querySelector("input").value = items[i].quantity;
 			pdfMainContentItem.getElementsByClassName("itemAmount")[0].querySelector("input").value = numberFormat(items[i].price);
 			pdfMainContentItem.getElementsByClassName("itemRemarks")[0].querySelector("input").value = items[i].remark;
-			EstimateSet.itemCalKeyup(pdfMainContentItem.getElementsByClassName("itemAmount")[0].querySelector("input"));
+			CommonDatas.Temps.estimateSet.itemCalKeyup(pdfMainContentItem.getElementsByClassName("itemAmount")[0].querySelector("input"));
 		}
 
-		EstimateSet.productNameSet();
-		EstimateSet.addItemIndex();
+		CommonDatas.Temps.estimateSet.productNameSet();
+		CommonDatas.Temps.estimateSet.addItemIndex();
 	}
 
 	//새 견적 추가 실행 함수
@@ -1612,7 +1613,7 @@ class Estimate{
 				items.push(itemDatas);
 			}
 		
-			EstimateSet.insertCopyPdf();
+			CommonDatas.Temps.estimateSet.insertCopyPdf();
 			
 			setTimeout(() => {
 				addPdfForm = document.getElementsByClassName("addPdfForm")[0];	
@@ -1767,7 +1768,7 @@ class Estimate{
 				items.push(itemDatas);
 			}
 		
-			EstimateSet.insertCopyPdf();
+			CommonDatas.Temps.estimateSet.insertCopyPdf();
 			
 			setTimeout(() => {
 				addPdfForm = document.getElementsByClassName("addPdfForm")[0];
@@ -1835,6 +1836,9 @@ class Estimate{
 }
 
 class Common{
+	constructor(){
+		this.Temps = {};
+	}
 	//페이지 로드될 때 top menu active 함수
 	setTopPathActive(){
 		let path = location.pathname.split("/");
