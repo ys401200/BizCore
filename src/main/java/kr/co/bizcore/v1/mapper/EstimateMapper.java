@@ -34,7 +34,7 @@ public interface EstimateMapper {
     @Select("SELECT related FROM bizcore.estimate a WHERE deleted IS NULL AND compId = #{compId} AND estmNo = #{no} AND version = #{version}")
     public String getEstmVerData(@Param("compId") String compId, @Param("no") String estmNo, @Param("version") int version);
 
-    @Select("SELECT estmno no, formname form, title, CAST(UNIX_TIMESTAMP(dt)*1000 AS CHAR) `date`, exp, CAST(height AS CHAR) height, CAST(width AS CHAR) width, CAST(version AS CHAR) version, remarks, CAST(writer AS CHAR) writer, doc, related FROM bizcore.estimate WHERE deleted IS NULL AND estmNo = (SELECT DISTINCT estmno FROM bizcore.estimate WHERE deleted IS NULL AND compId = #{compId} AND json_value(related,'$.parent') = #{parent})")
+    @Select("SELECT estmno no, formname form, title, CAST(UNIX_TIMESTAMP(dt)*1000 AS CHAR) `date`, exp, CAST(height AS CHAR) height, CAST(width AS CHAR) width, CAST(version AS CHAR) version, remarks, CAST(writer AS CHAR) writer, doc, related FROM bizcore.estimate WHERE deleted IS NULL AND estmNo = (SELECT MAX(estmno) FROM bizcore.estimate WHERE deleted IS NULL AND compId = #{compId} AND json_value(related,'$.parent') = #{parent})")
     public List<HashMap<String, String>> getEstimateWithParent(@Param("compId") String compId, @Param("parent") String parent);
 
     
