@@ -53,7 +53,7 @@
 								<button type="button" class="estimatePdf">pdf 다운로드</button>
 								<a href="#" onclick="hideDetailView(EstimateSet.drawBack);" class="detailBackBtn">Back</a>
 							</div>
-							<div class="estimateList"></div>
+							<div class="estimateList">	<div class="pageContainer"></div></div>
 							<div class="versionPreview">
 								<div class="previewDefault">
 									<div>미리보기</div>
@@ -71,7 +71,7 @@
 
 						</div>
 					</div>
-					<div class="pageContainer"></div>
+					<div class="pageContainer2 cntPageCnt"></div>
 				</div>
 
 			</div>
