@@ -206,6 +206,7 @@ drawReport = (editable, targetElement, employee) => {
 	std = R.workReport.date;
 	x = "'" + (std.getFullYear() % 100) + ". " + (std.getMonth() + 1) + ". " + (std.getDate());
 	y = R.workReport.end;
+	y.setDate(y.getDate() - 1);
 	y = "'" + (y.getFullYear() % 100) + ". " + (y.getMonth() + 1) + ". " + (y.getDate());
 	cnt.children[1].children[0].innerHTML = (x + " ~ " + y);
 
@@ -524,7 +525,7 @@ clickedWeek = (el) => {
 	else{
 		y = new Date();
 		y.setDate(y.getDate() - y.getDay());
-		y = y.toISOString().substring(0, 10);
+		y = `${y.getFullYear()}-${y.getMonth() < 9 ? "0" + (y.getMonth() + 1) : (y.getMonth() + 1)}-${y.getDate() < 10 ? "0" + y.getDate() : y.getDate()}`;
 	}
 	getReportData(y);
 	for(x = 0 ; x < els.length ; x++){
