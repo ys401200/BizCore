@@ -1,31 +1,27 @@
 document.addEventListener("DOMContentLoaded", () => {
     init();
-    
-	setTimeout(() => {
-		$("#loadingDiv").hide();
-		$("#loadingDiv").loading("toggle");
-	}, 300);
 
-	getSchedule2List();
+	let schedule2 = new Schedule2Set();
+	schedule2.getScheduleList();
 });
 
 //새로운 스케쥴 리스트 통신 함수
-function getSchedule2List(){
-	let date = new Date().getTime();
-	let scheduleRange = document.getElementsByClassName("scheduleRange")[0].value;
-	axios.get("/api/schedule2/" + scheduleRange + "/" + date).then((response) => {
-		let result = response.data.data;
-		result = cipher.decAes(result);
-		result = JSON.parse(result);
-		storage.scheduleList = result;
+// function getSchedule2List(){
+// 	let date = new Date().getTime();
+// 	let scheduleRange = document.getElementsByClassName("scheduleRange")[0].value;
+// 	axios.get("/api/schedule2/" + scheduleRange + "/" + date).then((response) => {
+// 		let result = response.data.data;
+// 		result = cipher.decAes(result);
+// 		result = JSON.parse(result);
+// 		storage.scheduleList = result;
 		
-		if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined){
-			window.setTimeout(drawCalendar(document.getElementsByClassName("calendar_container")[0]), 600);
-		}else{
-			window.setTimeout(drawCalendar(document.getElementsByClassName("calendar_container")[0]), 200);
-		}
-	});
-}
+// 		if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined){
+// 			window.setTimeout(drawCalendar(document.getElementsByClassName("calendar_container")[0]), 600);
+// 		}else{
+// 			window.setTimeout(drawCalendar(document.getElementsByClassName("calendar_container")[0]), 200);
+// 		}
+// 	});
+// }
 
 // // function getScheduleList() {
 // // 	let url, method, data, type, scheduleRange;

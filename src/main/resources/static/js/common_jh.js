@@ -393,6 +393,188 @@ class Notice{
 	}
 }
 
+class Schedule2Set{
+	//스케줄 리스트를 불러와서 셋팅해주는 함수
+	getScheduleList(){
+		let date = new Date().getTime();
+		let scheduleRange = document.getElementsByClassName("scheduleRange")[0].value;
+		axios.get("/api/schedule2/" + scheduleRange + "/" + date).then((response) => {
+			let result = response.data.data;
+			result = cipher.decAes(result);
+			result = JSON.parse(result);
+			storage.scheduleList = result;
+			
+			if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined){
+				window.setTimeout(this.drawCalendar(document.getElementsByClassName("calendar_container")[0]), 600);
+			}else{
+				window.setTimeout(this.drawCalendar(document.getElementsByClassName("calendar_container")[0]), 200);
+			}
+		});
+	}
+
+	//달력을 출력해주는 함수
+	drawCalendar(container){
+		let calArr, slot, html, startDate, endDate, tempDate, tempArr, current, x1, x2, x3, t, now, pageContainer, hideArr, showArr;
+		calArr = [];
+		tempDate = [];
+		if(storage.currentYear === undefined)   storage.currentYear = (new Date()).getFullYear();
+		if(storage.currentMonth === undefined)  storage.currentMonth = (new Date()).getMonth() + 1;
+	
+		hideArr = ["gridList", "pageContainer", "listRange", "listSearchInput", "searchContainer", "detailBackBtn", "crudAddBtn"];
+		showArr = [
+			{element: "calendarList", display: "block"},
+			{element: "scheduleRange", display: "flex"},
+			{element: "listChangeBtn", display: "flex"},
+			{element: "gridList", display: "block"},
+			{element: "listSearchInput", display: "flex"},
+			{element: "listRange", display: "flex"},
+		];
+	
+		document.getElementsByClassName("calendarYear")[0].innerText = storage.currentYear;
+		document.getElementsByClassName("calendarMonth")[0].innerText = storage.currentMonth;
+		pageContainer = document.getElementsByClassName("pageContainer");
+	
+		startDate = new Date(storage.currentYear, storage.currentMonth - 1 , 1);
+		endDate = new Date(new Date(storage.currentYear, storage.currentMonth, 1).getTime() - 86400000);
+	
+		// 시작하는 날짜 잡기
+		startDate = new Date(startDate.getTime() - startDate.getDay() * 86400000);
+	
+		// 말일 찾기
+		endDate = new Date(endDate.getTime() + (6 - endDate.getDay()) * 86400000);    
+	
+		// 만들어진 달력 날짜에 해당하는 일정이 있는 경우 담아두기
+		for(x1 = 0 ; x1 <= (endDate.getTime() - startDate.getTime()) / 86400000 ; x1++){
+			current = (startDate.getTime() + (86400000 * x1));
+			calArr[x1] = {};
+			calArr[x1].date = new Date(current);
+			calArr[x1].schedule = [];
+			for(x2 = 0 ; x2 < storage.scheduleList.length ; x2++){
+				if(current + 86400000 > storage.scheduleList[x2].from && current <= storage.scheduleList[x2].to)    calArr[x1].schedule.push(x2);
+			}
+		}
+		
+		// 최대 일정 수량 잡기
+		slot = 0;
+		for(x1 = 0 ; x1 < calArr.length ; x1++){
+			if(calArr[x1].schedule.length > slot)   slot = calArr[x1].schedule.length;
+		}
+	
+		// slot 최소값 설정하고 날짜에 slot 미리 설정학
+		slot = slot < 5 ? 5 : slot;
+		for(x1 = 0 ; x1 < calArr.length ; x1++) calArr[x1].slot = new Array(slot);
+	
+		// 슬롯에 일정 추가하기
+		for(x1 = 0 ; x1 < calArr.length ; x1++){
+			for(x2 = 0 ; x2 < calArr[x1].schedule.length ; x2++){
+				for(x3 = 0 ; x3 < slot ; x3++){
+					if(calArr[x1].slot[x3] === undefined){
+						calArr[x1].slot[x3] = calArr[x1].schedule[x2];
+						break;
+					}
+				}
+			}
+		}
+	
+		// 연속된 일정에 대한 슬롯 번호 맞추기
+		for(x1 = 1 ; x1 < calArr.length ; x1++){
+			tempArr = calArr[x1].slot; // 임시 변수에 당일 슬롯 데이터를 옮기고 당일 슬롯을 초기화 함
+			calArr[x1].slot = new Array(slot);
+			for(x2 = 0 ; x2 < tempArr.length ; x2++){ // 당일 데이터를 순회하며 전일 데이터와 맞추고 임시변수에서 지움
+				if(tempArr[x2] === undefined)   break;
+				t = calArr[x1 - 1].slot.indexOf(tempArr[x2]);
+				if(t > 0){
+					calArr[x1].slot[t] = tempArr[x2];
+					tempArr[x2] = undefined;
+				}
+			}
+			for(x2 = 0 ; x2 < tempArr.length ; x2++){ // 전일 데이터와 맞추지않은 데이터들에 대해 비어있는 상위 슬롯으로 데이터를 넣어줌
+				if(tempArr[x2] === undefined)   continue;
+				for(x3 = 0 ; x3 < calArr[x1].slot.length ; x3++){
+					if(calArr[x1].slot[x3] === undefined){
+						calArr[x1].slot[x3] = tempArr[x2];
+						break;
+					}
+				}
+			}
+		}
+		
+		html = "<div class=\"calendar_header\">일</div>";
+		html += "<div class=\"calendar_header\">월</div>";
+		html += "<div class=\"calendar_header\">화</div>";
+		html += "<div class=\"calendar_header\">수</div>";
+		html += "<div class=\"calendar_header\">목</div>";
+		html += "<div class=\"calendar_header\">금</div>";
+		html += "<div class=\"calendar_header\">토</div>";
+		
+		for(x1 = 0 ; x1 < calArr.length ; x1++){
+			tempDate = calArr[x1].date; // 해당 셀의 날짜 객체를 가져 옮
+			t = tempDate.getFullYear();
+			t += (tempDate.getMonth() < 9 ? "0" + (tempDate.getMonth() + 1) : tempDate.getMonth() + 1);
+			t += (tempDate.getDate() < 10 ? "0" + tempDate.getDate() : tempDate.getDate()); // 셀에 저장해 둘 날짜 문자열 생성
+			let year, month, day;
+			year = tempDate.getFullYear();
+			month = tempDate.getMonth()+1;
+			day = tempDate.getDate();
+	
+			if(month < 10){
+				month = "0" + month;
+			}
+	
+			if(day < 10){
+				day = "0" + day;
+			}
+	
+			now = year + "-" + month + "-" + day;
+			html += "<div class=\"calendar_cell" + (storage.currentMonth === tempDate.getMonth() + 1 ? "" : " calendar_cell_blur") + "\" data-date=\"" + now + "\">"; // start row / 해당월이 아닌 날짜의 경우 calendar_cell_blue 클래스명을 셀에 추가 지정함
+			html += "<div class=\"calendar_date\"><span>" + (calArr[x1].date.getDate()) + "</span></div>"; // 셀 안 최상단에 날짜 아이템을 추가함
+			for(x2 = 0 ; x2 < slot ; x2++){
+				x3 = [];
+				if(x1 > 0){ // 전일 데이터와 비교, 일정의 연속성에대해 확인함
+					x3[0] = calArr[x1 - 1].slot[x2] === calArr[x1].slot[x2];
+				}
+				if(x1 < calArr.length - 1){ // 익일 데이터와 비교, 일정의 연속성에대해 확인함
+					x3[1] = calArr[x1 + 1].slot[x2] === calArr[x1].slot[x2];
+				}
+				t = calArr[x1].slot[x2] === undefined ? undefined : storage.scheduleList[calArr[x1].slot[x2]] ; //임시변수에 스케줄 아이템을 담아둠
+				
+				if(x2 > 2){
+					html += "<div class=\"calendar_item" + (t === undefined ? " calendar_item_empty" : "") + (x3[0] ? " calendar_item_left" : "") + (x3[1] ? " calendar_item_right" : "") + "\"" + (t === undefined ? "" : "") + " data-id=" + (t === undefined ? '' : t.no) + " data-job=" + (t === undefined ? '' : t.job) + " onclick='" + (t === undefined ? '' : 'eventStop();calendarDetailView(this);') + "' data-sort=" + (t === undefined ? 0 : 1) + " style='display:none;'>" + (t === undefined ? "" : storage.user[t.writer].userName + " : " + t.title) + "</div>";
+				}else{
+					html += "<div class=\"calendar_item" + (t === undefined ? " calendar_item_empty" : "") + (x3[0] ? " calendar_item_left" : "") + (x3[1] ? " calendar_item_right" : "") + "\"" + (t === undefined ? "" : "") + " data-id=" + (t === undefined ? '' : t.no) + " data-job=" + (t === undefined ? '' : t.job) + " onclick='" + (t === undefined ? '' : 'eventStop();calendarDetailView(this);') + "' data-sort=" + (t === undefined ? 0 : 1) + "style='display:block;z-index:99;'>" + (t === undefined ? "" : storage.user[t.writer].userName + " : " + t.title) + "</div>";
+				}
+			}
+	
+			html += "</div>";
+		}
+		container.innerHTML = html;
+	
+		setTimeout(() => {
+			let calendar_cell = document.getElementsByClassName("calendar_cell");
+	
+			for(let i = 0; i < calendar_cell.length; i++){
+				if($(calendar_cell[i]).children().not(".calendar_item_empty").length > 4){
+					$(calendar_cell[i]).append("<div class=\"calendar_span_empty\"><span data-flag=\"false\" onclick=\"eventStop();calendarMore(this);\">more(" + parseInt($(calendar_cell[i]).children().not(".calendar_item_empty").length-1) + ") →</span></div>");
+				}
+			}
+		}, 100);
+		
+		CommonDatas.setViewContents(hideArr, showArr);
+	
+		let path = location.pathname.split("/");
+	
+		if(path[3] !== undefined){
+			drawScheduleList();
+			document.getElementsByClassName("calendarList")[0].style.display = "none";
+			let content = document.querySelector(".gridContent[data-id=\"" + path[3] + "\"]");
+			console.log(content);
+			scheduleDetailView(content);
+		}
+	
+		return true;
+	}
+}
+
 // 견적 초기 세팅해주는 클래스
 class EstimateSet{
 	constructor(){
