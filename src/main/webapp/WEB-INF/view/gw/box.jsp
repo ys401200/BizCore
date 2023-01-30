@@ -13,10 +13,15 @@
 						<input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="listRangeChange(this, drawList)">
 						<span class="listRangeSpan">0</span>
 					</div>
-					<div class="gridList">
-						<div class="listDiv"></div>
-					</div>
-					<div class="pageContainer"></div>
+					<div class='mainBtnDiv crudBtns'></div>
+						<div class="gridList">
+							<div class="listDiv"></div>
+							<div class="reportDiv"></div>
+							<div class="pageContainer"></div>
+							<div class="modal-wrap"></div>
+						</div>
+					
+				
 				</div>
 			</div>
 		</div>

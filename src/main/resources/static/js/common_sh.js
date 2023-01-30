@@ -1205,6 +1205,8 @@ class Contract {
 
     // 계약 상세 조회 페이지 함수 
     drawContractPage(obj) {
+        history.pushState(null, null, null);
+        locationBlock = true;
         let cnt, soppNo;
         soppNo = this.related;
         soppNo = JSON.parse(soppNo);
@@ -1222,6 +1224,7 @@ class Contract {
         $(".cntBackBtn").show();
         $(".listRange").hide();
         $(".cntPageCnt").hide();
+       
     }
 
 
@@ -2226,17 +2229,17 @@ function getContractSchedule(no) {
 
 
 
-function cntBack() {
-    $(".cntPageCnt").show();
-    $(".crudBtns")[0].setAttribute("style", "display:none");
-    $(".listRange").show();
-    $(".crudBtns")[1].innerHTML = "<button type='button' class='crudAddBtn'>견적추가</button><button type='button' class='crudUpdateBtn'>견적수정</button><button type='button' class='estimatePdf'>pdf 다운로드</button><a href='#' onclick='hideDetailView(EstimateSet.drawBack);' class='detailBackBtn'>Back</a> "
-    $(".contract-sche").html("");
-    $(".contract-main").html("");
-    $(".estimateList").html("<div class='pageContainer'></div>");
-    $(".versionPreview").html("<div class='previewDefault'><div>미리보기</div></div>");
-    $(".contract-container").hide();
-    $(".contract-list").show();
-}
+// function cntBack() {
+//     $(".cntPageCnt").show();
+//     $(".crudBtns")[0].setAttribute("style", "display:none");
+//     $(".listRange").show();
+//     $(".crudBtns")[1].innerHTML = "<button type='button' class='crudAddBtn'>견적추가</button><button type='button' class='crudUpdateBtn'>견적수정</button><button type='button' class='estimatePdf'>pdf 다운로드</button><a href='#' onclick='hideDetailView(EstimateSet.drawBack);' class='detailBackBtn'>Back</a> "
+//     $(".contract-sche").html("");
+//     $(".contract-main").html("");
+//     $(".estimateList").html("<div class='pageContainer'></div>");
+//     $(".versionPreview").html("<div class='previewDefault'><div>미리보기</div></div>");
+//     $(".contract-container").hide();
+//     $(".contract-list").show();
+// }
 
 

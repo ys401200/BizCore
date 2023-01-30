@@ -5,6 +5,8 @@ $(document).ready(() => {
     $("#loadingDiv").hide();
     $("#loadingDiv").loading("toggle");
   }, 300);
+  locationBlock = false;
+  history.pushState(null, null, null);
   drawList();
 });
 
@@ -241,9 +243,9 @@ function detailView(obj) {
 
 
 // 목록보기
-function showList() {
-  location.href = "/gw/mydraft";
-}
+// function showList() {
+//   location.href = "/gw/mydraft";
+// }
 
 function returnReport() {
   if (

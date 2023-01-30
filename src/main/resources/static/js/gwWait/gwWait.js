@@ -5,7 +5,8 @@ $(document).ready(() => {
     $("#loadingDiv").hide();
     $("#loadingDiv").loading("toggle");
   }, 300);
-
+  locationBlock = false;
+  history.pushState(null, null, null);
   drawList();
 });
 
@@ -254,11 +255,6 @@ function waitDetailView(obj) {
   });
 } // End of noticeDetailView();
 
-
-
-function showList() {
-  location.href = "/gw/wait";
-}
 
 
 // 문서 수정시 첨부파일목록 수정

@@ -1,7 +1,11 @@
 function getDetailView() {
+
+    history.pushState(null, null, null);
+    locationBlock = true;
     $(".pageContainer").hide();
     $(".listRange").hide();
     $(".batchBtn").hide();
+
 
     let checkHref = location.href;
     checkHref = checkHref.split("//");
@@ -11,44 +15,85 @@ function getDetailView() {
     let formId = storage.reportDetailData.formId;
     let testForm = storage.reportDetailData.doc;
     let detailHtml = "";
+    let btnsHtml = "";
+
+
 
     if (splitArr[2] == "wait") {
-        detailHtml += "<div class='listPageDiv'><div class='mainBtnDiv crudBtns'><button onclick='showList()'>목록보기</button><button class='printBtn' onclick='openPrintTab();' >인쇄하기</button>";
-        detailHtml += "<button type='button' name='approvalBtn' onclick='showAppModal()'>결재하기</button>";
-        detailHtml += "<button type='button' onclick='showGwModal()'>결재선 수정</button>";
-        detailHtml += "<button type='button' onclick='toWriteMode();createConfirmBtn(this)'>문서 수정</button></div>";
+        btnsHtml += "<button onclick='showList()'>Back</button><button class='printBtn' onclick='openPrintTab();' >인쇄하기</button>";
+        btnsHtml += "<button type='button' name='approvalBtn' onclick='showAppModal()'>결재하기</button>";
+        btnsHtml += "<button type='button' onclick='showGwModal()'>결재선 수정</button>";
+        btnsHtml += "<button type='button' onclick='toWriteMode();createConfirmBtn(this)'>문서 수정</button>";
     } else if (splitArr[2] == "receive") {
-        detailHtml += "<div class='listPageDiv'><div class='mainBtnDiv crudBtns'><button onclick='showList()'>목록보기</button><button class='printBtn' onclick='openPrintTab();' >인쇄하기</button>";
-        detailHtml += "<button type='button' name='approvalBtn' onclick='showAppModal()'>결재하기</button></div>";
+        btnsHtml += "<button onclick='showList()'>Back</button><button class='printBtn' onclick='openPrintTab();' >인쇄하기</button>";
+        btnsHtml += "<button type='button' name='approvalBtn' onclick='showAppModal()'>결재하기</button>";
     } else if (splitArr[2] == "myapp") {
-        detailHtml += "<div class='listPageDiv'><div class='mainBtnDiv crudBtns'><button onclick='showList()'>목록보기</button><button class='printBtn' onclick='openPrintTab();' >인쇄하기</button>";
-        detailHtml += "<button onclick='cancelApproval()'>결재취소</button></div>"
+        btnsHtml += "<button onclick='showList()'>Back</button><button class='printBtn' onclick='openPrintTab();' >인쇄하기</button>";
+        btnsHtml += "<button onclick='cancelApproval()'>결재취소</button>"
     } else if (splitArr[2] == "mydraft") {
-        detailHtml += "<div class='listPageDiv'><div class='mainBtnDiv crudBtns'><button onclick='showList()'>목록보기</button><button class='printBtn' onclick='openPrintTab();' >인쇄하기</button>";
-        detailHtml += "<button type='button' onclick='returnReport()'>회수</button></div>";
+        btnsHtml += "<button onclick='showList()'>Back</button><button class='printBtn' onclick='openPrintTab();' >인쇄하기</button>";
+        btnsHtml += "<button type='button' onclick='returnReport()'>회수</button>";
     } else if (splitArr[2] == "myreturn") {
-        detailHtml += "<div class='listPageDiv'><div class='mainBtnDiv crudBtns'><button onclick='showList()'>목록보기</button><button class='printBtn' onclick='openPrintTab();' >인쇄하기</button>";
-        detailHtml += "<button type='button' name='repostBtn' onclick='repostReport()'>기안하기</button></div>";
+        btnsHtml += "<button onclick='showList()'>Back</button><button class='printBtn' onclick='openPrintTab();' >인쇄하기</button>";
+        btnsHtml += "<button type='button' name='repostBtn' onclick='repostReport()'>기안하기</button>";
     } else if (splitArr[2] == "mytemp") {
-        detailHtml += "<div class='listPageDiv'><div class='mainBtnDiv crudBtns'><button type='button' onclick='showList()'>목록보기</button><button type='button' onclick='reWriteTemp()'>이어서 작성</button><button type='button' onclick='deleteTemp()'>삭제하기</button></div>";
+        btnsHtml += "<button type='button' onclick='showList()'>Back</button><button type='button' onclick='reWriteTemp()'>이어서 작성</button><button type='button' onclick='deleteTemp()'>삭제하기</button>";
     }
     else {
-        detailHtml += "<div class='listPageDiv'><div class='mainBtnDiv crudBtns'><button onclick='showList()'>목록보기</button><button class='printBtn' onclick='openPrintTab();' >인쇄하기</button></div>";
+        btnsHtml += "<button onclick='showList()'>Back</button><button class='printBtn' onclick='openPrintTab();' >인쇄하기</button>";
     }
 
     if (splitArr[2] == "mytemp") {
-        detailHtml += "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div></div></div>";
+        detailHtml += "<div class='detailReport' style='display:grid'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div></div>";
     } else {
-        detailHtml += "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div></div>";
+        detailHtml += "<div class='detailReport' style='display:grid'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div>";
     }
+    $(".mainBtnDiv").html(btnsHtml);
 
 
-    $(".listDiv").html(detailHtml); 
+    // if (splitArr[2] == "wait") {
+    //     detailHtml += "<div class='listPageDiv'><div class='mainBtnDiv crudBtns'><button onclick='showList()'>Back</button><button class='printBtn' onclick='openPrintTab();' >인쇄하기</button>";
+    //     detailHtml += "<button type='button' name='approvalBtn' onclick='showAppModal()'>결재하기</button>";
+    //     detailHtml += "<button type='button' onclick='showGwModal()'>결재선 수정</button>";
+    //     detailHtml += "<button type='button' onclick='toWriteMode();createConfirmBtn(this)'>문서 수정</button></div>";
+    // } else if (splitArr[2] == "receive") {
+    //     detailHtml += "<div class='listPageDiv'><div class='mainBtnDiv crudBtns'><button onclick='showList()'>Back</button><button class='printBtn' onclick='openPrintTab();' >인쇄하기</button>";
+    //     detailHtml += "<button type='button' name='approvalBtn' onclick='showAppModal()'>결재하기</button></div>";
+    // } else if (splitArr[2] == "myapp") {
+    //     detailHtml += "<div class='listPageDiv'><div class='mainBtnDiv crudBtns'><button onclick='showList()'>Back</button><button class='printBtn' onclick='openPrintTab();' >인쇄하기</button>";
+    //     detailHtml += "<button onclick='cancelApproval()'>결재취소</button></div>"
+    // } else if (splitArr[2] == "mydraft") {
+    //     detailHtml += "<div class='listPageDiv'><div class='mainBtnDiv crudBtns'><button onclick='showList()'>Back</button><button class='printBtn' onclick='openPrintTab();' >인쇄하기</button>";
+    //     detailHtml += "<button type='button' onclick='returnReport()'>회수</button></div>";
+    // } else if (splitArr[2] == "myreturn") {
+    //     detailHtml += "<div class='listPageDiv'><div class='mainBtnDiv crudBtns'><button onclick='showList()'>Back</button><button class='printBtn' onclick='openPrintTab();' >인쇄하기</button>";
+    //     detailHtml += "<button type='button' name='repostBtn' onclick='repostReport()'>기안하기</button></div>";
+    // } else if (splitArr[2] == "mytemp") {
+    //     detailHtml += "<div class='listPageDiv'><div class='mainBtnDiv crudBtns'><button type='button' onclick='showList()'>Back</button><button type='button' onclick='reWriteTemp()'>이어서 작성</button><button type='button' onclick='deleteTemp()'>삭제하기</button></div>";
+    // }
+    // else {
+    //     detailHtml += "<div class='listPageDiv'><div class='mainBtnDiv crudBtns'><button onclick='showList()'>Back</button><button class='printBtn' onclick='openPrintTab();' >인쇄하기</button></div>";
+    // }
+
+    // if (splitArr[2] == "mytemp") {
+    //     detailHtml += "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div></div></div>";
+    // } else {
+    //     detailHtml += "<div class='detailReport'><div class='selectedReportview'><div class='seletedForm'></div><div class='selectedFile'></div></div><div class='comment'></div></div></div>";
+    // }
+
+
+    //  $(".listDiv").html(detailHtml); 
+    $(".listDiv").hide();
+    $(".pageContainer").hide();
+
+    $(".reportDiv").show();
+    $(".reportDiv").html(detailHtml);
     $(".seletedForm").html(testForm);
 
-    if ( splitArr[2] == "wait" && formId == 'doc_Form_SalesReport') { $($(".mainBtnDiv").children()[3]).hide(); $($(".mainBtnDiv").children()[4]).hide(); }
-    if ( splitArr[2] == "mydraft" && formId == 'doc_Form_SalesReport') { $($(".mainBtnDiv").children()[2]).hide(); }
-    if ( splitArr[2] == "myapp" && storage.reportDetailData.confirmNo != "null") { $($(".mainBtnDiv").children()[2]).hide(); }
+
+    if (splitArr[2] == "wait" && formId == 'doc_Form_SalesReport') { $($(".mainBtnDiv").children()[3]).hide(); $($(".mainBtnDiv").children()[4]).hide(); }
+    if (splitArr[2] == "mydraft" && formId == 'doc_Form_SalesReport') { $($(".mainBtnDiv").children()[2]).hide(); }
+    if (splitArr[2] == "myapp" && storage.reportDetailData.confirmNo != "null") { $($(".mainBtnDiv").children()[2]).hide(); }
 
     $(":file").css("display", "none"); // 첨부파일 버튼 숨기기
     let width = ($(window).width() - $(".gw").width() - 30);
@@ -1033,8 +1078,32 @@ function insertData(reportForm) { // let reportForm = "Consult";
 
 window.onresize = function () {
     let width = $(window).width() - $(".gw").width() - 30;
-        $(".detailReport").css("width", width);
+    $(".detailReport").css("width", width);
+}
+
+
+function showList() {
+    console.log("clicked backward!!");
+    $(".listDiv").show();
+    $(".reportDiv").html("");
+    $(".reportDiv").hide();
+    $(".pageContainer").show();
+    $(".mainBtnDiv").html("");
+    let target = location.href.split("/")[4];
+    if ($(".batchBtn") != undefined && target === "wait") {
+        $(".batchBtn").show();
+    }
+    window.history.back();
+    locationBlock = false;
 }
 
 
 
+
+window.onpopstate = function (event) { // 브라우저의 백 버튼 이벤트를 감지하는 함수, boolean 상태 값이 true인 경우, 상세->목록 함수 싱행함
+    if (locationBlock) {
+        // 상세 페이지 등에서 리스트로 돌아갈 때 수행할 코드
+        showList();
+        console.log("In event :: go to backward!!");
+    }
+}

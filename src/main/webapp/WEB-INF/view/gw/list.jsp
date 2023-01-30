@@ -18,11 +18,14 @@
 						<button onclick="doBatchApproval()">승인</button>
 						<button onclick="doBatchReject()">반려</button>
 					</div>
+					<div class='mainBtnDiv crudBtns'></div>
 					<div class="gridList">
 						<div class="listDiv"></div>
+						<div class="reportDiv"></div>
+						<div class="pageContainer"></div>
 						<div class="modal-wrap"></div>
 					</div>
-					<div class="pageContainer"></div>
+					
 				</div>
 			</div>
 		</div>

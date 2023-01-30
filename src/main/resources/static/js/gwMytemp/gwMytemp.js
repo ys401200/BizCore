@@ -6,6 +6,8 @@ $(document).ready(() => {
     $("#loadingDiv").loading("toggle");
   }, 300);
   drawList();
+  locationBlock = false;
+  history.pushState(null, null, null);
 });
 
 function drawList() {

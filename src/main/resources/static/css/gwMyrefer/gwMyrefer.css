@@ -6,7 +6,6 @@ input[type="date"]:read-only {
   background-color: transparent;
 }
 
-
 .container {
   height: calc(100% - 4px);
   position: relative;
@@ -54,29 +53,8 @@ input[type="date"]:read-only {
   grid-template-columns: 10% 10% 10% 50% 10% 10%;
 }
 
-/* .container .listPageDiv .pageContainer {
-  display: flex;
-  float: right;
-} */
 
-.container .listPageDiv .pageContainer .paging_cell_current {
-  background-color: #eaeff3;
-  border: 1px solid #507698;
-}
-
-.container .listPageDiv .pageContainer div:not(.paging_cell_current) {
-  background-color: #fff;
-}
-
-.container .listPageDiv .pageContainer div:hover {
-  background-color: #406c92;
-  border: 1px solid #507698;
-}
-
-.listDiv .listPageDiv {
-	display: grid;
-}
-
+/* 
 .listDiv .gridHeader {
 	border-bottom: 1px solid #425da8;
 	background-color: #f2f5ff;
@@ -92,73 +70,71 @@ input[type="date"]:read-only {
   align-items: center;
   justify-content: center;
   padding-top: 1rem;
-}
+} */
 /* 상세조회 페이지 css Start ===============   */
-.container .listPageDiv .mainBtnDiv {
-  display: flex;
-  align-items: left;
-  margin-bottom: 1em;
-}
 
-.container .listPageDiv .mainBtnDiv button {
-  margin: 0 1em 1em 0;
-}
-
-.listPageDiv .detailReport {
+/* .detailReport {
   display: grid;
   grid-template-columns: 65% 35%;
 }
 
-.listPageDiv .detailReport .selectedReportview>div:first-child {
+ .detailReport .selectedReportview>div:first-child {
   border: 1px solid black;
-}
+  border: 1px #D3D3D3 solid;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgb(0 0 0 / 10%);
+  padding: 30px 20px 0 20px;
+  clear: both;
+  margin: 0 auto;
+} */
 
+ 
 /*-------------------------------선택 결재문서양식 첨부파일 목록  조회 탭   */
 
 /* 첨부파일 목록 조회  */
 
-.listPageDiv .detailReport .selectedReportview>div:not(:first-of-type) {
+ /* .detailReport .selectedReportview>div:not(:first-of-type) {
   margin: 1em 0 0 0;
   display: grid;
   grid-template-columns: 15% 85%;
 }
 
-.listPageDiv .detailReport .selectedReportview .referDiv>div,
-.listPageDiv .detailReport .selectedReportview .referDiv>label {
+.detailReport .selectedReportview .referDiv>div,
+.detailReport .selectedReportview .referDiv>label {
   border: 1px solid black;
 }
 
-.listPageDiv .detailReport .selectedReportview .referDiv>div {
+ .detailReport .selectedReportview .referDiv>div {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
 }
 
-.listPageDiv .detailReport .selectedReportview>div:last-of-type>div,
-.listPageDiv .detailReport .selectedReportview>div:last-of-type>label {
+ .detailReport .selectedReportview>div:last-of-type>div,
+ .detailReport .selectedReportview>div:last-of-type>label {
   height: 5em;
   border: 1px solid black;
   display: flex;
   flex-direction: column;
 }
 
-.listPageDiv .detailReport .selectedReportview .selectedFile>div>.inputFile {
+.detailReport .selectedReportview .selectedFile>div>.inputFile {
   margin: 0.5em 0;
 }
 
-.listPageDiv .detailReport .selectedReportview .selectedFile>div {
+.detailReport .selectedReportview .selectedFile>div {
   overflow: auto;
 }
 
-.listPageDiv .detailReport .selectedReportview>div:not(:first-of-type)>label {
+ .detailReport .selectedReportview>div:not(:first-of-type)>label {
   display: flex;
   align-items: center;
   justify-content: center;
   border-right: none;
   background-color: rgb(208, 206, 206);
-}
+} */
 
 /*-------------------------------- 결재정보 변경이력 탭  */
-.listPageDiv .detailReport .comment {
+ /* .detailReport .comment {
   background-color: #e6eff1;
   margin: 0 1em 1em 1em;
   padding-bottom: 1em;
@@ -171,9 +147,9 @@ input[type="date"]:read-only {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   font-size: 15px;
-  border-radius: 20px 20px 0 0;
+  border-radius: 20px 20px 0 0; */
   /* background-color: #62a6ad; */
-  width: inherit;
+  /* width: inherit;
 }
 
 .detailReport .comment .reportInfoTab input[type="radio"] {
@@ -187,10 +163,10 @@ input[type="date"]:read-only {
 
 .tapLine,
 .tapLineB {
-  background-color: white;
+  background-color: white; */
   /* margin: 0.5em 1em; */
   /* margin: 0 1em; */
-  display: grid;
+  /* display: grid;
   grid-template-columns: 10% 15% 10% 35% 30%;
   font-size: 15px;
 }
@@ -282,4 +258,4 @@ input[type="date"]:read-only {
 .readDiv input {
   margin-right: 10px;
 }
-
+ */
