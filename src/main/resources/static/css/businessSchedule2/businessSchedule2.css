@@ -1,6 +1,5 @@
 @charset "UTF-8";
 .scheduleContainer{
-	height: 100%;
     margin-top: 3px;
 	background: #FFFFFF;
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
@@ -22,20 +21,18 @@
 	float: left;
 }
 
-.scheduleContainer > div{
+.listFlexContainer{
 	display: flex;
     clear: both;
-    height: 100vh;
     padding: 10px;
 }
 
-.scheduleContainer > div > .calendarList{
+.calendarList{
 	width: 49vw;
-    height: 100vh;
     margin-right: 1vw;
 }
 
-.scheduleContainer > div > .calendarList > .calendarInfo{
+.calendarList > .infoFlexContainer{
 	display: flex;
     align-items: center;
     border-left: 1px solid #BDBDBD;
@@ -43,50 +40,174 @@
     border-right: 1px solid #BDBDBD;
     border-top-right-radius: 10px;
     border-top-left-radius: 10px;
-    padding: 10px;
+    padding: 5px;
 }
 
-.scheduleContainer > div > .calendarList > .calendar_container{
+.calendarList > .infoFlexContainer > div:first-of-type{
+	padding-right: 15px;
+}
+
+.calendarList > .infoFlexContainer > div:last-of-type{
+	display: grid;
+    grid-template-columns: repeat(8, 1fr);
+	grid-gap: 3px;
+    width: 37vw;
+}
+
+.calendarList > .infoFlexContainer > div:last-of-type > div{
+	display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 2vh;
+    border-radius: 10px;
+    font-size: 0.9rem;
+}
+
+.calendarList > .infoFlexContainer > div > .calendarInfoRadio{
+	display: flex;
+    align-items: center;
+    border-radius: 5px;
+    border-top: 1px solid #BDBDBD;
+    border-left: 1px solid #BDBDBD;
+    border-bottom: 1px solid #BDBDBD;
+}
+
+.calendarList > .infoFlexContainer > div > .calendarInfoRadio > input{
+	display: none;
+}
+
+.calendarList > .infoFlexContainer > div > .calendarInfoRadio > label{
+	display: flex;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid #BDBDBD;
+    width: 100%;
+}
+
+.calendarList > .infoFlexContainer > div > .calendarInfo{
+	display: flex;
+    align-items: center;
+	padding-top: 10px;
+}
+
+.calendarList > .calendar_container{
 	display: grid;
     grid-template-columns: repeat(7, 1fr);
 }
 
-.scheduleContainer > div > .calendarList > .calendar_container > .calendar_header{
+.calendarList > .calendar_container > .calendar_header{
 	display: flex;
     align-items: center;
     justify-content: center;
 	border-left: 1px solid #BDBDBD;
 	border-top: 1px solid #BDBDBD;
+	font-weight: 600;
 }
 
-.scheduleContainer > div > .calendarList > .calendar_container > .calendar_header:nth-child(1){
+.calendarList > .calendar_container > .calendar_header:nth-child(1){
 	color: #FF0000;
 }
 
-.scheduleContainer > div > .calendarList > .calendar_container > .calendar_header:nth-child(7){
+.calendarList > .calendar_container > .calendar_header:nth-child(7){
 	color: #0100FF;
 	border-right: 1px solid #BDBDBD;
 }
 
-.scheduleContainer > div > .calendarList > .calendar_container > .calendar_cell{
+.calendarList > .calendar_container > .calendar_cell{
+	z-index: 1;
 	border-left: 1px solid #BDBDBD;
 	border-top: 1px solid #BDBDBD;
+	width: 6.5vw;
 }
 
-.scheduleContainer > div > .calendarList > .calendar_container > .calendar_cell > .calendar_date{
+.calendarList > .calendar_container > .calendar_cell:hover{
+	cursor: pointer;
+	background-color: #E1E1E1;
+}
+
+.calendar_container > .calendar_cell > .calendar_span_empty{
+	float: right;
+    padding-right: 10px;
+}
+
+.calendar_container > .calendar_cell > .calendar_span_empty > span{
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.calendar_container > .calendar_cell > .calendar_span_empty > span:hover{
+	text-decoration: underline;
+}
+
+.calendarList > .calendar_container > .calendar_cell > .calendar_date{
 	display: flex;
 	align-items: center;
-	justify-content: center;
+	font-size: 0.9rem;
 }
 
-.scheduleContainer > div > .calendarList > .calendar_container > .calendar_cell > .calendar_date > span{
-	background-color: #000;
-	border-radius: 15px;
+.calendarList > .calendar_container > .calendar_cell > .calendar_item{
+	font-size: 0.8rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-radius: 15px;
+    padding-left: 5px;
+    padding-right: 5px;
+    line-height: 2vh;
+    margin-bottom: 0.3vh;
+	z-index: 2;
 }
 
-.scheduleContainer > div > .gridList{
+.calendarList > .calendar_container > .calendar_cell > .calendar_item:hover{
+	color: #ffffff;
+	background-color:#332E85;
+	cursor: pointer;
+}
+
+.calendarList > .calendar_container > .calendar_cell > .calendar_item[data-dept="vtek"]:not(:hover),
+.calendarList > .infoFlexContainer > div:last-of-type > div[data-dept="vtek"]:not(:hover){
+	background-color: #F15F5F;
+	color: #fff;
+}
+
+.calendarList > .calendar_container > .calendar_cell > .calendar_item[data-dept="VTEKMANG"]:not(:hover),
+.calendarList > .infoFlexContainer > div:last-of-type > div[data-dept="VTEKMANG"]:not(:hover){
+	background-color: #F29661;
+	color: #fff;
+}
+
+.calendarList > .calendar_container > .calendar_cell > .calendar_item[data-dept="VTEKGMT"]:not(:hover),
+.calendarList > .infoFlexContainer > div:last-of-type > div[data-dept="VTEKGMT"]:not(:hover){
+	background-color: #BC952B;
+	color: #fff;
+}
+
+.calendarList > .calendar_container > .calendar_cell > .calendar_item[data-dept="VTEKMKT"]:not(:hover),
+.calendarList > .infoFlexContainer > div:last-of-type > div[data-dept="VTEKMKT"]:not(:hover){
+	background-color: #BCE55C;
+	color: #fff;
+}
+
+.calendarList > .calendar_container > .calendar_cell > .calendar_item[data-dept="VTEKSALES"]:not(:hover),
+.calendarList > .infoFlexContainer > div:last-of-type > div[data-dept="VTEKSALES"]:not(:hover){
+	background-color: #6799FF;
+	color: #fff;
+}
+
+.calendarList > .calendar_container > .calendar_cell > .calendar_item[data-dept="VTEKSEOUL"]:not(:hover),
+.calendarList > .infoFlexContainer > div:last-of-type > div[data-dept="VTEKSEOUL"]:not(:hover){
+	background-color: #5CD1E5;	
+	color: #fff;
+}
+
+.calendarList > .calendar_container > .calendar_cell > .calendar_item[data-dept="VTEKTECHD"]:not(:hover),
+.calendarList > .infoFlexContainer > div:last-of-type > div[data-dept="VTEKTECHD"]:not(:hover){
+	background-color: #C15A5A;
+	color: #fff;
+}
+
+.listFlexContainer > .gridList{
 	width: 49vw;
-    height: 100vh;
     border: 1px solid #BDBDBD;
     border-radius: 10px;
 }

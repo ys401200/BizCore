@@ -414,7 +414,7 @@ class Schedule2Set{
 
 	//달력을 출력해주는 함수
 	drawCalendar(container){
-		let calArr, slot, html, startDate, endDate, tempDate, tempArr, current, x1, x2, x3, t, now, pageContainer, hideArr, showArr;
+		let calArr, slot, html, startDate, endDate, tempDate, tempArr, current, x1, x2, x3, t, now, pageContainer, hideArr, showArr, writerArr = [], writerHtml = "";
 		calArr = [];
 		tempDate = [];
 		if(storage.currentYear === undefined)   storage.currentYear = (new Date()).getFullYear();
@@ -527,7 +527,7 @@ class Schedule2Set{
 	
 			now = year + "-" + month + "-" + day;
 			html += "<div class=\"calendar_cell" + (storage.currentMonth === tempDate.getMonth() + 1 ? "" : " calendar_cell_blur") + "\" data-date=\"" + now + "\">"; // start row / 해당월이 아닌 날짜의 경우 calendar_cell_blue 클래스명을 셀에 추가 지정함
-			html += "<div class=\"calendar_date\"><span>" + (calArr[x1].date.getDate()) + "</span></div>"; // 셀 안 최상단에 날짜 아이템을 추가함
+			html += "<div class=\"calendar_date\">" + (calArr[x1].date.getDate()) + "</div>"; // 셀 안 최상단에 날짜 아이템을 추가함
 			for(x2 = 0 ; x2 < slot ; x2++){
 				x3 = [];
 				if(x1 > 0){ // 전일 데이터와 비교, 일정의 연속성에대해 확인함
@@ -537,27 +537,74 @@ class Schedule2Set{
 					x3[1] = calArr[x1 + 1].slot[x2] === calArr[x1].slot[x2];
 				}
 				t = calArr[x1].slot[x2] === undefined ? undefined : storage.scheduleList[calArr[x1].slot[x2]] ; //임시변수에 스케줄 아이템을 담아둠
+				if(storage.scheduleList[calArr[x1].slot[x2]] !== undefined){
+					if(storage.scheduleList[calArr[x1].slot[x2]].writer !== undefined){
+						writerArr.push(storage.user[storage.scheduleList[calArr[x1].slot[x2]].writer].userName + ":" + storage.scheduleList[calArr[x1].slot[x2]].writer + ":" + storage.user[storage.scheduleList[calArr[x1].slot[x2]].writer].deptId[0]);
+					}
+				}
 				
 				if(x2 > 2){
-					html += "<div class=\"calendar_item" + (t === undefined ? " calendar_item_empty" : "") + (x3[0] ? " calendar_item_left" : "") + (x3[1] ? " calendar_item_right" : "") + "\"" + (t === undefined ? "" : "") + " data-id=" + (t === undefined ? '' : t.no) + " data-job=" + (t === undefined ? '' : t.job) + " onclick='" + (t === undefined ? '' : 'eventStop();calendarDetailView(this);') + "' data-sort=" + (t === undefined ? 0 : 1) + " style='display:none;'>" + (t === undefined ? "" : storage.user[t.writer].userName + " : " + t.title) + "</div>";
+					html += "<div class=\"calendar_item" + (t === undefined ? " calendar_item_empty" : "") + (x3[0] ? " calendar_item_left" : "") + (x3[1] ? " calendar_item_right" : "") + "\"" + (t === undefined ? "" : "") + " data-id=" + (t === undefined ? '' : t.no) + " data-job=" + (t === undefined ? '' : t.job) + " onclick='" + (t === undefined ? '' : 'eventStop();calendarDetailView(this);') + "' data-sort=" + (t === undefined ? 0 : 1) + " data-dept=" + (t === undefined ? 'empty' : storage.user[t.writer].deptId[0]) + " style='display:none;'>" + (t === undefined ? "" : storage.user[t.writer].userName + " : " + t.title) + "</div>";
 				}else{
-					html += "<div class=\"calendar_item" + (t === undefined ? " calendar_item_empty" : "") + (x3[0] ? " calendar_item_left" : "") + (x3[1] ? " calendar_item_right" : "") + "\"" + (t === undefined ? "" : "") + " data-id=" + (t === undefined ? '' : t.no) + " data-job=" + (t === undefined ? '' : t.job) + " onclick='" + (t === undefined ? '' : 'eventStop();calendarDetailView(this);') + "' data-sort=" + (t === undefined ? 0 : 1) + "style='display:block;z-index:99;'>" + (t === undefined ? "" : storage.user[t.writer].userName + " : " + t.title) + "</div>";
+					html += "<div class=\"calendar_item" + (t === undefined ? " calendar_item_empty" : "") + (x3[0] ? " calendar_item_left" : "") + (x3[1] ? " calendar_item_right" : "") + "\"" + (t === undefined ? "" : "") + " data-id=" + (t === undefined ? '' : t.no) + " data-job=" + (t === undefined ? '' : t.job) + " onclick='" + (t === undefined ? '' : 'eventStop();calendarDetailView(this);') + "' data-sort=" + (t === undefined ? 0 : 1) + " data-dept=" + (t === undefined ? 'empty' : storage.user[t.writer].deptId[0]) + " style='display:block;z-index:99;'>" + (t === undefined ? "" : storage.user[t.writer].userName + " : " + t.title) + "</div>";
 				}
 			}
 	
 			html += "</div>";
 		}
+
+		writerArr = [...new Set(writerArr)];
 		container.innerHTML = html;
+		
+		let infoFlexContainer = document.getElementsByClassName("infoFlexContainer")[0];		
+		let infoContent = infoFlexContainer.children[1];
+		for(let i = 0; i < writerArr.length; i++){
+			let item = writerArr[i];
+			let	name = item.split(":")[0];
+			let no = item.split(":")[1];
+			let dept = item.split(":")[2];
+			writerHtml += "<div data-no=\"" + no + "\" data-dept=\"" + dept + "\">" + name + "</div>";
+		}
+		infoContent.innerHTML = writerHtml;
 	
 		setTimeout(() => {
 			let calendar_cell = document.getElementsByClassName("calendar_cell");
+			let nowDate = new Date().toISOString().substring(0, 10);
 	
 			for(let i = 0; i < calendar_cell.length; i++){
 				if($(calendar_cell[i]).children().not(".calendar_item_empty").length > 4){
 					$(calendar_cell[i]).append("<div class=\"calendar_span_empty\"><span data-flag=\"false\" onclick=\"eventStop();calendarMore(this);\">more(" + parseInt($(calendar_cell[i]).children().not(".calendar_item_empty").length-1) + ") →</span></div>");
 				}
+
+				if((i+1) % 7 == 0){
+					calendar_cell[i].style.borderRight = "1px solid #BDBDBD";
+					calendar_cell[i].children[0].style.color = "#0100FF";
+				}
+				
+				if((i+1) > 28 && (i+1) < 36){
+					if((i+1) == 29){
+						calendar_cell[i].style.borderBottomLeftRadius = "10px";
+					}else if((i+1) == 35){
+						calendar_cell[i].style.borderBottomRightRadius = "10px";
+					}
+					calendar_cell[i].style.borderBottom = "1px solid #BDBDBD";
+				}
+				
+				if((i+1) == 1 || (i+1) == 8 || (i+1) == 15 || (i+1) == 22 || (i+1) == 29){
+					calendar_cell[i].children[0].style.color = "#FF0000";
+				}
+
+				if(calendar_cell[i].dataset.date === nowDate){
+					calendar_cell[i].style.backgroundColor = "#E1E1E1";
+				}
 			}
+
 		}, 100);
+		
+		let deptContents = document.querySelectorAll(".calendarList div");
+		for(let i = 0; i < deptContents.length; i++){
+
+		}
 		
 		CommonDatas.setViewContents(hideArr, showArr);
 	

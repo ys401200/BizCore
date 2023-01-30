@@ -18,13 +18,26 @@
                     </div>
                 </div>
             </div>
-            <div class="calendarInfo">
-                <button type="button" onclick="calendarPrev(this);">&lt;</button>&nbsp;&nbsp;
-                <div class="calendarYear"></div>
-                <span class="calendarSpan">년</span>&nbsp;&nbsp;
-                <div class="calendarMonth"></div>
-                <span class="calendarSpan">월</span>&nbsp;&nbsp;
-                <button type="button" onclick="calendarNext(this);">&gt;</button>
+            <div class="infoFlexContainer">
+                <div>
+                    <div class="calendarInfoRadio">
+                        <input type="radio" name="infoRadio" id="infoRadioYear">
+                        <label for="infoRadioYear">연</label>
+                        <input type="radio" name="infoRadio" id="infoRadioMonth">
+                        <label for="infoRadioMonth">월</label>
+                        <input type="radio" name="infoRadio" id="infoRadioDay">
+                        <label for="infoRadioDay">일</label>
+                    </div>
+                    <div class="calendarInfo">
+                        <button type="button" onclick="calendarPrev(this);">&lt;</button>&nbsp;&nbsp;
+                        <div class="calendarYear"></div>
+                        <span class="calendarSpan">년</span>&nbsp;&nbsp;
+                        <div class="calendarMonth"></div>
+                        <span class="calendarSpan">월</span>&nbsp;&nbsp;
+                        <button type="button" onclick="calendarNext(this);">&gt;</button>
+                    </div>
+                </div>
+                <div></div>
             </div>
             <div class="calendar_container"></div>
         </div>
