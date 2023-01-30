@@ -660,10 +660,13 @@ class EstimateSet{
 				storage.estimateList = getList;
 
 				// SOPP 내 탭에 견적의 수량을 표시
-				x = 0;
+				x = 0; 
+				if( document.getElementsByClassName("sopp-tab-cnt")[0] != undefined) {
 				cnt = document.getElementsByClassName("sopp-tab-cnt")[0].children[2].children[2];
 				if(storage.estimateList !== undefined && storage.estimateList.constructor.name === "Array")	x = storage.estimateList.length;
 				cnt.innerHTML = "<span> " + x + " </span>";
+				}
+				
 
 				// 견적 그리기
                 this.drawEstmVerList();
