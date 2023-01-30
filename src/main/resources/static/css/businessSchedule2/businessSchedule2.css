@@ -1,4 +1,19 @@
 @charset "UTF-8";
+.scheduleContainer > button,
+.scheduleContainer > select{
+	box-shadow: 0px 1px 2px #bdbfc9;
+	color: #ebefff;
+	background-color: #2147b1;
+	border-radius: 5px;
+	float: right;
+	height: 25px;
+	font-size: 0.8rem;
+	display: flex;
+	align-items: center;
+	margin-right: 5px;
+	margin-top: 8px;
+}
+
 .scheduleContainer{
     margin-top: 3px;
 	background: #FFFFFF;
@@ -25,6 +40,8 @@
 	display: flex;
     clear: both;
     padding: 10px;
+	position: relative;
+    overflow-y: auto;
 }
 
 .calendarList{
@@ -47,11 +64,17 @@
 	padding-right: 15px;
 }
 
+.calendarList > .infoFlexContainer > div:first-of-type > div:first-of-type > button{
+	width: 100%;
+    background-color: #2147b1;
+    color: #fff;
+}
+
 .calendarList > .infoFlexContainer > div:last-of-type{
 	display: grid;
     grid-template-columns: repeat(8, 1fr);
 	grid-gap: 3px;
-    width: 37vw;
+    width: 34vw;
 }
 
 .calendarList > .infoFlexContainer > div:last-of-type > div{
@@ -60,7 +83,7 @@
     justify-content: center;
     height: 2vh;
     border-radius: 10px;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
 }
 
 .calendarList > .infoFlexContainer > div > .calendarInfoRadio{
@@ -120,6 +143,10 @@
 	width: 6.5vw;
 }
 
+.calendarList > .calendar_container > .calendar_cell_blur{
+	color: #BDBDBD !important;
+}
+
 .calendarList > .calendar_container > .calendar_cell:hover{
 	cursor: pointer;
 	background-color: #E1E1E1;
@@ -145,8 +172,18 @@
 	font-size: 0.9rem;
 }
 
+.calendar_container > .calendar_cell > .calendar_item_empty{
+	display: block;
+	background-color:initial;
+	border:initial;
+}
+
+.calendar_container > .calendar_cell > .calendar_item_empty:hover{
+	background-color:#ffffff;
+}
+
 .calendarList > .calendar_container > .calendar_cell > .calendar_item{
-	font-size: 0.8rem;
+	font-size: 0.7rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -164,59 +201,58 @@
 	cursor: pointer;
 }
 
-.calendarList > .calendar_container > .calendar_cell > .calendar_item[data-dept="vtek"]:not(:hover),
-.calendarList > .infoFlexContainer > div:last-of-type > div[data-dept="vtek"]:not(:hover){
+.calendarList > .calendar_container > .calendar_cell_blur > .calendar_item{
+	background-color: #BDBDBD;
+	color: #fff;
+}
+
+.calendarList > .calendar_container > .calendar_cell:not(.calendar_cell_blur) > .calendar_item[data-dept="vtek"]:not(:hover),
+.calendarList > .infoFlexContainer > div:last-of-type > div[data-dept="vtek"]{
 	background-color: #F15F5F;
 	color: #fff;
 }
 
-.calendarList > .calendar_container > .calendar_cell > .calendar_item[data-dept="VTEKMANG"]:not(:hover),
-.calendarList > .infoFlexContainer > div:last-of-type > div[data-dept="VTEKMANG"]:not(:hover){
+.calendarList > .calendar_container > .calendar_cell:not(.calendar_cell_blur) > .calendar_item[data-dept="VTEKMANG"]:not(:hover),
+.calendarList > .infoFlexContainer > div:last-of-type > div[data-dept="VTEKMANG"]{
 	background-color: #F29661;
 	color: #fff;
 }
 
-.calendarList > .calendar_container > .calendar_cell > .calendar_item[data-dept="VTEKGMT"]:not(:hover),
-.calendarList > .infoFlexContainer > div:last-of-type > div[data-dept="VTEKGMT"]:not(:hover){
+.calendarList > .calendar_container > .calendar_cell:not(.calendar_cell_blur) > .calendar_item[data-dept="VTEKGMT"]:not(:hover),
+.calendarList > .infoFlexContainer > div:last-of-type > div[data-dept="VTEKGMT"]{
 	background-color: #BC952B;
 	color: #fff;
 }
 
-.calendarList > .calendar_container > .calendar_cell > .calendar_item[data-dept="VTEKMKT"]:not(:hover),
-.calendarList > .infoFlexContainer > div:last-of-type > div[data-dept="VTEKMKT"]:not(:hover){
+.calendarList > .calendar_container > .calendar_cell:not(.calendar_cell_blur) > .calendar_item[data-dept="VTEKMKT"]:not(:hover),
+.calendarList > .infoFlexContainer > div:last-of-type > div[data-dept="VTEKMKT"]{
 	background-color: #BCE55C;
 	color: #fff;
 }
 
-.calendarList > .calendar_container > .calendar_cell > .calendar_item[data-dept="VTEKSALES"]:not(:hover),
-.calendarList > .infoFlexContainer > div:last-of-type > div[data-dept="VTEKSALES"]:not(:hover){
+.calendarList > .calendar_container > .calendar_cell:not(.calendar_cell_blur) > .calendar_item[data-dept="VTEKSALES"]:not(:hover),
+.calendarList > .infoFlexContainer > div:last-of-type > div[data-dept="VTEKSALES"]{
 	background-color: #6799FF;
 	color: #fff;
 }
 
-.calendarList > .calendar_container > .calendar_cell > .calendar_item[data-dept="VTEKSEOUL"]:not(:hover),
-.calendarList > .infoFlexContainer > div:last-of-type > div[data-dept="VTEKSEOUL"]:not(:hover){
+.calendarList > .calendar_container > .calendar_cell:not(.calendar_cell_blur) > .calendar_item[data-dept="VTEKSEOUL"]:not(:hover),
+.calendarList > .infoFlexContainer > div:last-of-type > div[data-dept="VTEKSEOUL"]{
 	background-color: #5CD1E5;	
 	color: #fff;
 }
 
-.calendarList > .calendar_container > .calendar_cell > .calendar_item[data-dept="VTEKTECHD"]:not(:hover),
-.calendarList > .infoFlexContainer > div:last-of-type > div[data-dept="VTEKTECHD"]:not(:hover){
+.calendarList > .calendar_container > .calendar_cell:not(.calendar_cell_blur) > .calendar_item[data-dept="VTEKTECHD"]:not(:hover),
+.calendarList > .infoFlexContainer > div:last-of-type > div[data-dept="VTEKTECHD"]{
 	background-color: #C15A5A;
 	color: #fff;
-}
-
-.listFlexContainer > .gridList{
-	width: 49vw;
-    border: 1px solid #BDBDBD;
-    border-radius: 10px;
 }
 
 .calendarMoreContent{
 	display: none;
 	position: absolute;
     background-color: #fff;
-    z-index: 1;
+    z-index: 3;
     padding: 10px;
 	font-size: 0.8rem;
 	border: 1px solid #BDBDBD;
@@ -276,4 +312,24 @@
 	color: #ffffff;
 	background-color:#637fef;
 	cursor: pointer;
+}
+
+.listFlexContainer > .gridList{
+	display: grid; 
+	width: 44vw; 
+	margin: 0 auto;
+    border: 1px solid #BDBDBD;
+    border-radius: 10px;
+	padding: 5px;
+	height: 83vh;
+    overflow-y: auto;
+}
+
+.listFlexContainer > .gridList > .gridHeader,
+.listFlexContainer > .gridList > .gridContent{
+    grid-template-columns: 20% 70% 10%;
+}
+
+.listFlexContainer > .gridList > .gridHeader{
+	border-bottom:1px solid #abb6d5;
 }
