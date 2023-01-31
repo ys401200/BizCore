@@ -50,7 +50,7 @@
 	width: 100%;
 	display: grid;
 	margin: 0 auto;
-	grid-template-columns: 1fr 4fr 2fr 1fr 2fr;
+	grid-template-columns: 1fr 4fr 2fr 1fr 1fr 1fr;
 	background-color: #eef1fb;
 	border-top-left-radius: 8px;
 	border-top-right-radius: 8px;
@@ -80,10 +80,10 @@
 	grid-template-columns: 1fr 25rem;
 }
 
-.contract-box {
+/* .contract-box {
 	display: grid;
 	margin: 0 auto;
-	grid-template-columns: 1fr 4fr 2fr 1fr 2fr;
+	grid-template-columns: 1fr 4fr 2fr 1fr 1fr 1fr;
 	cursor: pointer;
 }
 
@@ -113,9 +113,9 @@
 .detail-wrap {
 	border: 1px solid #bbbbbb;
 	background-color: #8a898905;
-	/* box-shadow: 0px 2px 0px 0px #fdf0f0 inset; */
+	
 
-}
+} */
 
 .gridHeader {
 
@@ -123,84 +123,3 @@
 }
 
 
-/* /* .detail-wrap:hover {
-	background-color: #e7e6e642;
-	cursor: pointer;
-} */
-
-/* .contract-top {
-	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-}
-
-.contract-top .crudBtns {
-	padding-left: calc(100% - 40px);
-}
-
-.contract-top .contract-progress {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-
-.contract-top .contract-progress>div {
-	display: flex;
-	background-size: contain;
-	background-repeat: no-repeat;
-	width: 5rem;
-	height: 1.5rem;
-	align-items: center;
-	justify-content: center;
-	color: white;
-	font-weight: bold;
-	background-image: url("/images/sopp2/label_gray.png");
-	background-position: center center;
-	padding: 0.5rem 1rem;
-}
-
-.contract-top .contract-progress>div:first-child {
-	margin-left: 0;
-}
-
-.contract-top .contract-progress>.contract-done {
-	background-image: url("/images/sopp2/label_blue.png");
-}
-
-.contract-top .contract-progress>.contract-fail {
-	background-image: url("/images/sopp2/label_red.png");
-}
-
-.contract-top .contract-progress>.contract-doing {
-	background-image: url("/images/sopp2/label_green.png");
-} */
-
-
-/* .detail-wrap>div {
-	display: grid;
-	grid-template-columns: 20% 80%;
-}
-
-
-.detail-wrap>div>div {
-	border: 1px solid #e0e4e9;
-	margin: 0.5px;
-	padding: 8px;
-	text-align: center;
-}
-
-.detail-wrap>div>div:first-of-type {
-	text-align: center;
-	background-color: #eef1fb;
-	font-weight: 500;
-}
-
-.detail-wrap>div>div:last-of-type {
-	display: inline-flex;
-	line-height: 1.5;
-	overflow: hidden;
-
-}
-
-.detail-wrap>div>div:last-of-type>div {
-	display: inline-flex;
-}  */

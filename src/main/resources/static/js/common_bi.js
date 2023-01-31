@@ -898,8 +898,8 @@ class Schedule{
 		y.className = "schedule-belong-to";
 		child.appendChild(y);
 		html = "<input type=\"radio\" data-n=\"belong-to\" name=\"schedule-belong-to\" id=\"schedule-belong-to1\" checked value=\"sopp:" + R.sopp.no + "\" /><label for=\"schedule-belong-to1\">영업기회 : " + R.sopp.title + "</label>";
-		if(contractData !=undefined) {
-		let mtnc = contractData.maintenance;
+		if(contract !=undefined && contract.maintenance !=undefined) {
+		let mtnc = contract.maintenance; 
 		for(let i = 0 ; i <= mtnc.length -1 ; i++) {
 			html += "<input type=\"radio\" data-n=\"belong-to\" name=\"schedule-belong-to\" id='schedule-belong-to"+(i+2)+"' value='maintenance:"+mtnc[i].no+"' /><label for='schedule-belong-to"+(i+2)+"'>유지보수 : "+mtnc[i].title+"</label>";
 		}	
