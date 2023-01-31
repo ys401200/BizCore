@@ -792,10 +792,9 @@ function getUserMap() {
 } // End of getUserMap()
 
 // API 서버에서 직원 정보를 가져오는 함수
-function getDeptMap(cache) {
+function getDeptMap(cache = false) {
 	let url, deptMapData, deptMapTime;
-	if(cache === undefined)	cache = true;
-	else	cache = false;
+	if(cache !== true)	cache = false;
 
 	url = apiServer + "/api/dept/map" + (cache ? "" : "/nocache");
 	deptMapTime = sessionStorage.getItem("deptMapTime");
