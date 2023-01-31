@@ -117,6 +117,12 @@
 
 }
 
+.gridHeader {
+
+	border-bottom: 1px solid #abb6d5;
+}
+
+
 /* /* .detail-wrap:hover {
 	background-color: #e7e6e642;
 	cursor: pointer;

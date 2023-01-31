@@ -26,18 +26,18 @@
 
 							<input type="radio" id="tabSche" name="tabItem" data-content-id="tabScheDiv"
 								onclick="tabItemClick(this)">
-							<label class="tabItem" for="tabSche"
-								style="z-index: 6; width: 25%; padding-left: 25%;">일정</label>
+							<label class="tabItem scheLabel" for="tabSche"
+								style="z-index: 6; width: 25%; padding-left: 25%;">일정(0)</label>
 
 							<input type="radio" id="tabEst" name="tabItem" data-content-id="tabEstDiv"
 								onclick="tabItemClick(this)">
-							<label class="tabItem" for="tabEst"
-								style="z-index: 4; width:25%; padding-left: 50%;">견적</label>
+							<label class="tabItem estLabel" for="tabEst"
+								style="z-index: 4; width:25%; padding-left: 50%;">견적(0)</label>
 
 							<input type="radio" id="tabTrade" name="tabItem" data-content-id="tabTradeDiv"
 								onclick="tabItemClick(this)">
 							<label class="tabItem" for="tabTrade" style="z-index: 2; width: 25%; padding-left: 75%;">
-								매입매출</label>
+								매입매출(0)</label>
 						</div>
 
 						<div class="contract-main" id="tabMainDiv">

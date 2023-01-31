@@ -180,24 +180,9 @@
 
 .contract-container>.contract-sche>div {
 	display: grid;
-	grid-template-columns: 15% 10% 10% 10% 10% 45%;
+	grid-template-columns: 15% 10% 10% 10% 5% 50%;
 	text-align: center;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 /* prevModal 관련 css */
@@ -578,7 +563,7 @@ cateLine {
 /*-------------------------------- 결재정보 변경이력 탭  */
  .detailReport .comment {
   background-color: #e6eff1;
-  margin: 0 1em 1em 1em;
+  margin: 0 0 1em 1em;
   padding-bottom: 1em;
   border-radius: 20px 20px 0 0;
 }

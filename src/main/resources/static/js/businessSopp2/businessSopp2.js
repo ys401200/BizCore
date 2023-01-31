@@ -505,13 +505,13 @@ function drawDetail(soppNo) {
 				data = JSON.parse(data);
 				R.contract = new Contract(data);
 				R.contract.getReportDetail(cnt);
-				window.contractData = R.contract;
+				window.contract = R.contract;
 
 			} else {
-				R.contract = new Contract(undefined);
+			    R.contract = new Contract(undefined);
 				R.contract.drawNone();
-				window.contractData = undefined;
-
+				window.contract = R.contract;
+				
 			}
 		});
 

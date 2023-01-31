@@ -1,5 +1,4 @@
 let R = {};
-
 $(document).ready(() => {
   estInit();
   prepareForm();
@@ -31,22 +30,19 @@ function estInit() {
 
 function prepareForm() {
   let aesKey, aesIv;
-
-
   // 보안 키 세팅
   aesKey = localStorage.getItem("aesKey");
   aesIv = localStorage.getItem("aesIv");
   if (aesKey !== undefined && aesKey !== null) cipher.aes.key = aesKey;
   if (aesIv !== undefined && aesIv !== null) cipher.aes.iv = aesIv;
-  // getProductList();
-  // getEstmVerList(estmNo);
   getSoppDetailData();
-  ckeditor.config.readOnly = false;
-  window.setTimeout(setEditor(document.getElementsByClassName("sopp-desc")[0]), 100);
   getSavedLine();
   getEsimateNo();
   getItem();
   getNextContNo();
+  ckeditor.config.readOnly = false;
+  window.setTimeout(setEditor(document.getElementsByClassName("sopp-desc")[0]), 100);
+ 
 
 
 } // End of prepare()
@@ -88,21 +84,21 @@ function getSoppDetailData() {
 
 
 
-  fetch(apiServer + "/api/project/sopp/" + splitArr[3])
-    .catch((error) => console.log("error:", error))
-    .then(response => response.json())
-    .then(response => {
-      let data;
-      if (response.result === "ok") {
-        data = response.data;
-        data = cipher.decAes(data);
-        data = JSON.parse(data);
-        R.sopp = new Sopp2(data.sopp);
-        R.sopp.getSchedule();
-      } else {
-        console.log(response.msg);
-      }
-    });
+  // fetch(apiServer + "/api/project/sopp/" + splitArr[3])
+  //   .catch((error) => console.log("error:", error))
+  //   .then(response => response.json())
+  //   .then(response => {
+  //     let data;
+  //     if (response.result === "ok") {
+  //       data = response.data;
+  //       data = cipher.decAes(data);
+  //       data = JSON.parse(data);
+  //       R.sopp = new Sopp2(data.sopp);
+  //       R.sopp.getSchedule();
+  //     } else {
+  //       console.log(response.msg);
+  //     }
+  //   });
 
 }
 
@@ -134,7 +130,7 @@ function getItem() {
 
 //데이터 리스트 셋하는 함수 
 function setEstData() {
-
+ R.sopp = opener.window.sopp;
 
   //기본 정보 세팅 
   let formId = "doc_Form_SalesReport";
@@ -299,7 +295,7 @@ function setEstData() {
 
 
 
-  let mtnc = mtncData;
+  let mtnc = opener.window.mtncData;
   let mtncHtml = "";
   let mtnctitle, product, customer, startDate, endDate, engineer, amount, note;
 
@@ -525,7 +521,7 @@ function reportInsert() {
     "next": "",
     "parent": "",
     "previous": "sopp:" + storage.soppDetailData.sopp.no + "",
-    "maintenance": mtncData,
+    "maintenance": opener.window.mtncData,
   }
 
   related = JSON.stringify(related);
@@ -615,8 +611,8 @@ function reportInsert() {
           alert("기안 완료");
           console.log(storage.soppDetailData.sopp.no); 
        
-          drawDetail(storage.soppDetailData.sopp.no);
-  // window.close('/gw/estimate/' + storage.soppDetailData.sopp.no);
+          drawDetailCont(storage.soppDetailData.sopp.no);
+        
        
         } else {
           alert(result.msg);
@@ -627,27 +623,27 @@ function reportInsert() {
 }
 
 
-function drawDetail(soppNo) {
+function drawDetailCont(soppNo) {
 	fetch(location.origin + "/api/contract/parent/sopp:" + soppNo)
 		.catch((error) => console.log("error:", error))
 		.then(response => response.json())
 		.then(response => {
 			console.log(response);
-			let data, cnt = opener.document.getElementsByClassName("sopp-contract")[0]
-			opener.document.getElementsByClassName("sopp-contract")[0].innerHTML = "";
+			let data, cnt = opener.document.getElementsByClassName("sopp-contract")[0];
 			if (response.result === "ok") {
 				data = response.data;
 				data = cipher.decAes(data);
 				data = JSON.parse(data);
-				R.contract = new Contract(data);
-				R.contract.getReportDetail(cnt);
-        console.log(cnt); 
-				window.contractData = R.contract;
+				// opener.window.R.contract = new Contract(data);
+				// opener.window.R.contract.getReportDetail(cnt);
+        opener.window.contract =new Contract(data); 
+        opener.window.contract.getReportDetail(cnt);
+			  window.close('/gw/estimate/' + storage.soppDetailData.sopp.no); 
+				// opener.window.contractData = R.contract;
+      
 
 			} else {
-				R.contract = new Contract(undefined);
-				R.contract.drawNone();
-				window.contractData = undefined;
+			 console.log("에러");
 
 			}
 		});

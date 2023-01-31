@@ -297,7 +297,7 @@ function approveBtnEvent() {
   }
   let cusResult = "";
   for (let x in storage.customer) {
-    if (storage.customer[storage.customer[x].no].name == customerVal) {
+    if (customerVal != "" && storage.customer[storage.customer[x].no].name == customerVal) {
       cusResult = storage.customer[x].no;
     }
   }

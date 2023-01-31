@@ -16,6 +16,9 @@ $(document).ready(() => {
 
 cntBack = () => { // 상세 내용 등에서 목록으로 돌아갈 때 실행되는 함수, history.back()를 실행해서 더미데이터를 제거하고 상태감지 boolean 값을 false로 세팅함
 	console.log("clicked backward!!");
+	$(".tabItem")[1].innerHTML = "일정(0)";
+	$(".tabItem")[2].innerHTML = "견적(0)";
+	$(".tabItem")[3].innerHTML = "매입매출(0)";
 	$(".cntPageCnt").show();
     $(".crudBtns")[0].setAttribute("style", "display:none");
     $(".listRange").show();
@@ -26,6 +29,7 @@ cntBack = () => { // 상세 내용 등에서 목록으로 돌아갈 때 실행�
     $(".versionPreview").html("<div class='previewDefault'><div>미리보기</div></div>");
     $(".contract-container").hide();
     $(".contract-list").show();
+	
 	window.history.back();
 	locationBlock = false;
 }

@@ -43,7 +43,7 @@ class Contracts {
         cnt.children[0].appendChild(el);
         el.innerText = "계약금액";
         if (storage.articlePerPage == undefined) {
-            storage.articlePerPage = (calWindowLength() - 2);
+            storage.articlePerPage = (calWindowLength() - 1);
         }
 
         let page = storage.currentPage * storage.articlePerPage;
@@ -255,35 +255,18 @@ class Contract {
         let cnt, el, el2;
 
 
-        if (obj.className == "sopp-contract") {
-            cnt = obj;
-            this.container = cnt;
-        } else if (obj.className == "contract-main") {
-            cnt = obj;
-            this.container = cnt;
+        cnt = obj; 
+        cnt.innerHTML = "";
+        this.container = cnt;
 
-        } else {
-            if ($(".detail-wrap")[0] != undefined && $(".detail-wrap")[0].className != "detail-wrap cont" + this.no) {
-                $(".detail-wrap")[0].remove();
-                el = document.createElement("div");
-                el.className = "detail-wrap cont" + this.no;
-                obj.after(el);
-                cnt = el;
-                this.container = cnt;
-            } else if ($(".detail-wrap")[0] != undefined && $(".detail-wrap")[0].className == "detail-wrap cont" + this.no) {
-                $(".detail-wrap")[0].innerHTML = "";
-                cnt = $(".detail-wrap")[0];
-                this.container = cnt;
-            } else if ($(".detail-wrap")[0] == undefined) {
-                el = document.createElement("div");
-                el.className = "detail-wrap cont" + this.no;
-                obj.after(el);
-                cnt = el;
-                this.container = cnt;
 
-            }
-
-        }
+        // if (obj.className == "sopp-contract") {
+        //     cnt = obj;
+        //     this.container = cnt;
+        // } else if (obj.className == "contract-main") {
+        //     cnt = obj;
+        //     this.container = cnt;
+        // }
 
         el = document.createElement("top");
         el.className = "contract-top";
@@ -543,7 +526,7 @@ class Contract {
 
 
         let inputHtml = "<div class='filePreview'></div><label>파일첨부<input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attachedcontract' id='attached' onchange='R.contract.fileChange(this)' style='display:none'></input></label>";
-
+console.log($(".contract-progress"));
         cnt.children[cnt.children.length - 1].children[1].innerHTML = inputHtml;
         if ($(".contract-progress").children()[0].className != "contract-done") {
             disabledDiv.setAttribute("style", "color : grey");
@@ -595,15 +578,9 @@ class Contract {
     // 납품 관련 데이터 그리는 함수 
     drawSuppliedData(obj) {
         let el, el2, cnt;
-
-        if (obj.className == "sopp-contract") {
-            cnt = obj;
-        } else if (obj.className == "contract-main") {
-            cnt = obj;
-        } else {
-            cnt = document.getElementsByClassName("detail-wrap cont" + this.no)[0];
-        }
-
+        
+        cnt = obj;
+      
         el = document.createElement("div");
         cnt.appendChild(el);
 
@@ -641,13 +618,9 @@ class Contract {
 
         el.appendChild(el2);
 
-        if (obj.className == "sopp-contract") {
-            cnt = obj;
-        } else if (obj.className == "contract-main") {
-            cnt = obj;
-        } else {
-            cnt = document.getElementsByClassName("detail-wrap cont" + this.no)[0];
-        }
+    
+     cnt = obj;
+       
 
         el = document.createElement("div");
         cnt.appendChild(el);
@@ -709,13 +682,9 @@ class Contract {
     // 검수 관련 데이터 그리는 함수 
     drawApprovedData(obj) {
         let el, el2, cnt;
-        if (obj.className == "sopp-contract") {
-            cnt = obj;
-        } else if (obj.className == "contract-main") {
-            cnt = obj;
-        } else {
-            cnt = document.getElementsByClassName("detail-wrap cont" + this.no)[0];
-        }
+   
+     cnt = obj;
+      
 
         el = document.createElement("div");
         cnt.appendChild(el);
@@ -739,6 +708,7 @@ class Contract {
         el2.setAttribute("src", "/images/sopp2/edit_square.png");
         el2.setAttribute("style", "width: 0.95rem; height: 0.95rem;  cursor: pointer; opacity: 0.4;");
         el2.addEventListener("click", () => {
+            
             R.sche = new Schedule();
             R.sche.popupModalForEdit(new Date(), true);
             document.getElementById("schedule-type2i").setAttribute("checked", "checked");
@@ -752,14 +722,9 @@ class Contract {
 
         el.appendChild(el2);
 
-        if (obj.className == "sopp-contract") {
-            cnt = obj;
-        } else if (obj.className == "contract-main") {
-            cnt = obj;
-        } else {
-            cnt = document.getElementsByClassName("detail-wrap cont" + this.no)[0];
-        }
-
+       
+        cnt = obj;
+       
         el = document.createElement("div");
         cnt.appendChild(el);
 
@@ -820,29 +785,6 @@ class Contract {
         }
     }
 
-
-    // getReportNo(obj) {
-    //     let sopp = JSON.parse(this.related);
-    //     sopp = sopp.parent.split(":")[1];
-    //     let docNo;
-    //     fetch(apiServer + "/api/gw/salesReport/" + sopp)
-    //         .catch((error) => console.log("error:", error))
-    //         .then(response => response.json())
-    //         .then(response => {
-
-    //             if (response.result === "ok") {
-    //                 docNo = response.docNo;
-    //                 docNo = cipher.decAes(docNo);
-    //                 this.getReportDetail(docNo, obj);
-
-    //             } else {
-    //                 storage.reportDetailData = "";
-    //                 this.drawDetail(obj);
-    //                 console.log(response.msg);
-    //             }
-    //         });
-
-    // }
 
     getReportDetail(obj) {
 
@@ -1096,22 +1038,27 @@ class Contract {
             createGrid(container, header, data, ids, job, fnc);
 
             container.append(
-                "<div style='border:1px solid #e0e4e9;padding:8px;justify-content: center;background-color:white; text-align:center;grid-column :span 6'>등록된 일정이 없습니다</div>"
+                "<div class=\"gridContent\"><div style='border:1px solid #e0e4e9;padding:8px;justify-content: center;background-color:white; text-align:center;grid-column :span 6'>등록된 일정이 없습니다</div></div>"
             );
 
         } else {
 
             jsonData = R.sopp.schedules;
+            if (jsonData.length > 0) {
+                $(".tabItem")[1].innerHTML = "일정(" + jsonData.length + ")";
+            }
+
 
 
             for (let i = 0; i < jsonData.length; i++) {
-                disDate = dateDis(jsonData[i].from);
-                setDate = dateFnc(disDate);
-                let writer = storage.user[jsonData[i].writer].userName;
-                let desc = jsonData[i].data.content;
-                let detail = jsonData[i].data.related;
+                let from, to, writer , desc, detail , method, place, typeOfDetail ; 
+                from = getYmdSlashFull(jsonData[i].from);
+                to = getYmdSlashFull(jsonData[i].to); 
+                writer = storage.user[jsonData[i].writer].userName;
+                desc = jsonData[i].data.content;
+                detail = jsonData[i].data.related;
                 detail = JSON.parse(detail);
-                let method, place, typeOfDetail;
+            
                 method = detail.method;
                 if (method == "visit") {
                     method = "현장방문";
@@ -1127,31 +1074,25 @@ class Contract {
                     place = "협력사";
                 } else if (place == "office") {
                     place = "사무실"
-
                 } else {
                     place = "기타";
                 }
-
-
-
-
-
 
                 typeOfDetail = detail.typeOfDetail == "xx" ? "기타" : detail.typeOfDetail;
 
                 str = [
 
                     { // 일자 
-                        "setData": setDate,
-                        "align": "center"
+                        "setData": from + " ~ " + to,
+                        "align": "center",
                     },
                     { // 장소 
                         "setData": place,
-                        "align": "center"
+                        "align": "center",
                     },
                     { // 종류 
                         "setData": typeOfDetail,
-                        "align": "center"
+                        "align": "center",
                     },
                     { // 방법 
                         "setData": method,
@@ -1159,10 +1100,10 @@ class Contract {
                     },
                     { // 담당자 
                         "setData": writer,
-                        "align": "center"
+                        "align": "center",
                     }, { // 비고 
                         "setData": desc,
-                        "align": "left"
+                        "align": "left",
                     },
 
                 ];
@@ -1189,7 +1130,6 @@ class Contract {
         R.estimateSet = new EstimateSet();
         R.estimateSet.soppEstimateNo(soppNo);
 
-
         let width = window.innerWidth - 1080 + "px";
         let estimateList = document.getElementsByClassName("estimateList")[0];
         estimateList.setAttribute("style", "display:grid;width:" + width + ";float:left;clear:both;");
@@ -1200,11 +1140,40 @@ class Contract {
         }
 
         $(".estBtns").hide();
+       
+
 
     }
 
     // 계약 상세 조회 페이지 함수 
     drawContractPage(obj) {
+
+        getSavedLine();
+        if (this.docNo != undefined) {
+            fetch(apiServer + "/api/gw/app/doc/" + this.docNo)
+                .catch((error) => console.log("error:", error))
+                .then(response => response.json())
+                .then(response => {
+                    let data;
+                    if (response.result === "ok") {
+                        data = response.data;
+                        data = cipher.decAes(data);
+                        data = JSON.parse(data);
+                        storage.reportDetailData = data;
+                      
+
+                    } else {
+                        storage.reportDetailData = "";
+               
+                        console.log(response.msg);
+                    }
+                });
+        } else {
+            storage.reportDetailData = "";
+        }
+
+
+
         history.pushState(null, null, null);
         locationBlock = true;
         let cnt, soppNo;
@@ -1224,11 +1193,10 @@ class Contract {
         $(".cntBackBtn").show();
         $(".listRange").hide();
         $(".cntPageCnt").hide();
-       
+      
+
+
     }
-
-
-
 
 
     update() {
@@ -1257,11 +1225,6 @@ class Contract {
             .then(response => {
                 if (response.result !== "ok") console.log(response);
                 else {
-                    if (this.container.className != "detail-wrap") {
-                        this.container.innerHTML = "";
-                    } else {
-                        this.container = $(".detail-wrap")[0].previousElementSibling;
-                    }
                     R.contract.getReportDetail(this.container);
                     window.contractData = R.contract;
                 }
@@ -1521,45 +1484,21 @@ function createLine2(formId, appLineNum) {
 }
 
 
-function getYmdSlash2() {
-    let d = new Date();
-    return (
-        (d.getFullYear() % 100) +
-        "/" +
-        (d.getMonth() + 1 > 9
-            ? (d.getMonth() + 1).toString()
-            : "0" + (d.getMonth() + 1)) +
-        "/" +
-        (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
-    );
-}
-
-function getYmdSlashFull(date) {
-    let d = new Date(date);
-    return (
-        (d.getFullYear()) +
-        "-" +
-        (d.getMonth() + 1 > 9
-            ? (d.getMonth() + 1).toString()
-            : "0" + (d.getMonth() + 1)) +
-        "-" +
-        (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
-    );
-}
 
 
+
+
+
+// 수주판매 보고 문서 생성 전 모달 
 function setPrevModal(no) {
-
     modal.show();
-    $(".modal").prop("style", "min-width:80%");
-
+    $(".modal").prop("style", "width:80%");
     $("#confirm").attr("onclick", "openSaleReport(" + no + ")");
-    $("#close").attr("onclick", "modal.hide();$('.modal').prop('style', 'min-width:40%');");
+    $("#close").attr("onclick", "$(\".modal\").prop(\"style\", \"min-width:40%\");modal.hide();");
     let el, el2, cnt;
     let html = "";
 
     cnt = document.getElementsByClassName("modalBody")[0];
-
     el = document.createElement("div");
     el.setAttribute("class", "report-modal");
     cnt.appendChild(el);
@@ -1755,12 +1694,12 @@ function setPrevModal(no) {
 
 
 function drawDefaultMaintenance(obj) {
-    let mtncTitle = [["유지보수명", "title"], ["항목", "product"], ["고객사", "customer"], ["시작일", "startDate"], ["종료일", "endDate"], ["엔지니어", "engineer"], ["금액", "mtncAmount"]];
+
     let rdVal = $(obj).val().substring(4, 5);
     let productNum;
-    let product, productName, customer, startDate, endDate, engineer, mtncAmount;
+    let product, productName, customer, startDate, endDate, mtncAmount;
     let year, month;
-    let dateRd;
+
 
     if (rdVal == "Y") {
         productNum = $(obj).val().substring(5, 6);
@@ -1820,7 +1759,7 @@ function drawDefaultMaintenance(obj) {
 
 }
 
-
+// 유지보수 입력 라디오 버튼 함수 1
 function examineCheck(obj) {
     let productNum = obj.id;
     let cnt, year, month;
@@ -1841,7 +1780,7 @@ function examineCheck(obj) {
     }
 }
 
-
+// 유지보수 입력 라디오 버튼 함수 2
 function insertDateRd(obj) {
     let startDate, endDate;
     let productNum;
@@ -1867,6 +1806,7 @@ function insertDateRd(obj) {
 }
 
 
+// 유지보수 시작일 변경 처리 함수 
 function dateChange(obj) {
     let year, month, endDate;
     let productNum = obj.nextElementSibling.className;
@@ -1887,6 +1827,7 @@ function dateChange(obj) {
 
 }
 
+// 유지보수 기간 변경 처리 함수 
 function lengthChange(obj) {
 
     obj.value = obj.value.replace(/[^0-9.]/g, "");
@@ -1917,6 +1858,7 @@ function lengthChange(obj) {
 }
 
 
+// 유지보수 
 function createMtnc() {
     let el, cnt, length, itemLength, html;
 
@@ -1974,18 +1916,19 @@ function createMtnc() {
 }
 
 
+// 수주 판매 보고 문서 팝업 
 function openSaleReport(no) {
     let data = setMtncDate();
-
     if (data.length > 0) {
         modal.hide();
         $(".modal").prop("style", "min-width:40%");
         R.popup = window.open("/gw/estimate/" + no, "soppStageUp", "width=1000,height=800,left=100,top=100");
-        window.setTimeout(R.popup.mtncData = data, 3000);
-    }
+        window.sopp = R.sopp;
+        window.mtncData = data; 
+
+    } 
 
 }
-
 
 
 function setMtncDate() {
@@ -2096,11 +2039,13 @@ function setMtncDate() {
 
     }
 
-    //  R.popup.mtncData = data;
     return data;
 
 }
 
+
+
+// 유지보수 숫자 입력 , 시작일 종료일 관련 함수 
 function setNum(obj) {
     let value = obj.value;
     value = value.replace(/[^0-9.]/g, "");
@@ -2128,6 +2073,7 @@ function setEdate(obj) {
 }
 
 
+// 파일 첨부 함수 
 function submitFile() {
 
     let soppNo = R.contract.related;
@@ -2152,12 +2098,12 @@ function submitFile() {
             }
         });
 
-
-    return false
+    return false;
 
 }
 
 
+// 납품일 검수일 날짜 등록하는 함수 
 function insertDate() {
     let date = document.getElementsByClassName("modalBody")[0].children[0].children[1].children[0].children[1].innerHTML;
     date = date.substring(1);
@@ -2177,7 +2123,7 @@ function insertDate() {
 }
 
 
-
+// R.sopp set 
 function setSopp(no) {
     if (no === null) console.log("SOPP no is null!!!");
     else fetch(apiServer + "/api/project/sopp/" + no)
@@ -2201,7 +2147,7 @@ function setSopp(no) {
 
 
 
-
+// 계약 스케줄 구하는 함수 
 function getContractSchedule(no) {
     fetch(apiServer + "/api/schedule2/sopp/" + no)
         .catch((error) => console.log("error:", error))
@@ -2228,18 +2174,47 @@ function getContractSchedule(no) {
 
 
 
+// 날짜 관련 함수 
+function getYmdSlash2() {
+    let d = new Date();
+    return (
+        (d.getFullYear() % 100) +
+        "/" +
+        (d.getMonth() + 1 > 9
+            ? (d.getMonth() + 1).toString()
+            : "0" + (d.getMonth() + 1)) +
+        "/" +
+        (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
+    );
+}
 
-// function cntBack() {
-//     $(".cntPageCnt").show();
-//     $(".crudBtns")[0].setAttribute("style", "display:none");
-//     $(".listRange").show();
-//     $(".crudBtns")[1].innerHTML = "<button type='button' class='crudAddBtn'>견적추가</button><button type='button' class='crudUpdateBtn'>견적수정</button><button type='button' class='estimatePdf'>pdf 다운로드</button><a href='#' onclick='hideDetailView(EstimateSet.drawBack);' class='detailBackBtn'>Back</a> "
-//     $(".contract-sche").html("");
-//     $(".contract-main").html("");
-//     $(".estimateList").html("<div class='pageContainer'></div>");
-//     $(".versionPreview").html("<div class='previewDefault'><div>미리보기</div></div>");
-//     $(".contract-container").hide();
-//     $(".contract-list").show();
-// }
+function getYmdSlashFull(date) {
+    let d = new Date(date);
+    return (
+        (d.getFullYear()) +
+        "-" +
+        (d.getMonth() + 1 > 9
+            ? (d.getMonth() + 1).toString()
+            : "0" + (d.getMonth() + 1)) +
+        "-" +
+        (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
+    );
+}
 
-
+getSavedLine = () => {
+	let url = "/api/gw/app/savedLine/" + storage.my;
+	fetch(apiServer + url)
+		.catch((error) => console.log("error:", error))
+		.then(response => response.json())
+		.then(response => {
+			let data;
+			if (response.result === "ok") {
+				data = response.data;
+				data = cipher.decAes(data);
+				data = JSON.parse(data);
+				if (R !== undefined) R.gwSavedLine = data;
+			} else {
+				console.log(response.msg);
+			}
+		});
+} // End of getSavedLine()
