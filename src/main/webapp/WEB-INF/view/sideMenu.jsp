@@ -24,7 +24,7 @@
 			</div>
 			<div class="panel">
 				<div>
-					<a href="/business/schedule">일정조회</a>
+					<a href="/business/schedule2">일정조회</a>
 				</div>
 				<div>
 					<a href="/business/workreport">업무일지작성</a>
