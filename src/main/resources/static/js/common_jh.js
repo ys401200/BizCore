@@ -1,5 +1,8 @@
 //공지사항 셋팅 클래스
 class NoticeSet{
+	constructor(){
+		CommonDatas.Temps.noticeSet = this;
+	}
 	//공지사항 리스트 저장 함수
 	list(){
 		axios.get("/api/notice").then((response) => {
@@ -88,17 +91,17 @@ class NoticeSet{
 					},
 				];
 	
-				fnc = "let noticeSet = new NoticeSet(); noticeSet.noticeDetailView(this)";
+				fnc = "CommonDatas.Temps.noticeSet.noticeDetailView(this)";
 				ids.push(jsonData[i].no);
 				data.push(str);
 			}
 	
-			let pageNation = CommonDatas.createPaging(pageContainer, result[3], "CommonDatas.pageMove", "drawNoticeList", result[0]);
+			let pageNation = CommonDatas.createPaging(pageContainer, result[3], "CommonDatas.pageMove", "CommonDatas.Temps.noticeSet.drawNoticeList", result[0]);
 			pageContainer.innerHTML = pageNation;
 		}
 	
 		CommonDatas.createGrid(container, header, data, ids, job, fnc);
-		document.getElementById("multiSearchBtn").setAttribute("onclick", "let noticeSet = new NoticeSet(); noticeSet.searchSubmit();");
+		document.getElementById("multiSearchBtn").setAttribute("onclick", "CommonDatas.Temps.noticeSet.searchSubmit();");
 		
 		let path = location.pathname.split("/");
 	
@@ -396,6 +399,7 @@ class Notice{
 class Schedule2Set{
 	constructor(){
 		CommonDatas.Temps.schedule2Set = this;
+		storage.setFirstButtonFlag = false;
 	}
 	//스케줄 리스트를 불러와서 셋팅해주는 함수
 	getScheduleList(){
@@ -409,10 +413,12 @@ class Schedule2Set{
 			
 			if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined){
 				window.setTimeout(this.drawCalendar(document.getElementsByClassName("calendar_container")[0]), 600);
-				window.setTimeout(this.drawFlexScheduleList, 600);
+				window.setTimeout(this.drawScheduleList, 600);
+				window.setTimeout(this.addSearchList, 600);
 			}else{
 				window.setTimeout(this.drawCalendar(document.getElementsByClassName("calendar_container")[0]), 200);
-				window.setTimeout(this.drawFlexScheduleList, 200);
+				window.setTimeout(this.drawScheduleList, 200);
+				window.setTimeout(this.addSearchList, 200);
 			}
 		});
 	}
@@ -639,7 +645,7 @@ class Schedule2Set{
 	}
 
 	//일정 달력 flex 리스트 출력 함수
-	drawFlexScheduleList() {
+	drawScheduleList() {
 		let container, dataJob = [], result, jsonData, header = [], data = [], ids = [], str, fnc, pageContainer, containerTitle;
 		
 		if (storage.scheduleList === undefined) {
@@ -649,6 +655,7 @@ class Schedule2Set{
 			if(storage.searchDatas === undefined){
 				jsonData = storage.scheduleList.sort(function(a, b){return b.created - a.created;});
 			}else{
+				console.log(storage.searchDatas);
 				jsonData = storage.searchDatas.sort(function(a, b){return b.created - a.created;});
 			}
 		}
@@ -659,11 +666,19 @@ class Schedule2Set{
 	
 		header = [
 			{
+				"title" : "등록일",
+				"align" : "center",
+			},
+			{
 				"title" : "일정",
 				"align" : "center",
 			},
 			{
 				"title" : "일정제목",
+				"align" : "center",
+			},
+			{
+				"title" : "내용",
 				"align" : "center",
 			},
 			{
@@ -676,27 +691,38 @@ class Schedule2Set{
 			str = [
 				{
 					"setData": undefined,
-					"col": 3,
+					"col": 5,
 				},
 			];
 			
 			data.push(str);
 		}else{
-			let fromDate, fromSetDate, toDate, toSetDate;
-			for (let i = (result[0] - 1) * result[1]; i < result[2]-1; i++) {
+			let fromDate, fromSetDate, toDate, toSetDate, disDate;
+			for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
 				fromDate = CommonDatas.dateDis(jsonData[i].from);
-				fromSetDate = CommonDatas.dateFnc(fromDate, "mm-dd");
+				fromSetDate = CommonDatas.dateFnc(fromDate, "mm.dd");
 				
 				toDate = CommonDatas.dateDis(jsonData[i].to);
-				toSetDate = CommonDatas.dateFnc(toDate, "mm-dd");
+				toSetDate = CommonDatas.dateFnc(toDate, "mm.dd");
+
+				disDate = CommonDatas.dateDis(jsonData[i].created, jsonData[i].modified);
+				disDate = CommonDatas.dateFnc(disDate, "yyyy.mm.dd");
 		
 				str = [
+					{
+						"setData": disDate,
+						"align": "center",
+					},
 					{
 						"setData": fromSetDate + " ~ " + toSetDate,
 						"align": "center",
 					},
 					{
 						"setData": jsonData[i].title,
+						"align": "left",
+					},
+					{
+						"setData": jsonData[i].content,
 						"align": "left",
 					},
 					{
@@ -718,15 +744,30 @@ class Schedule2Set{
 		let gridList = document.getElementsByClassName("gridList")[0];
 		let createDiv = document.createElement("div");
 		createDiv.className = "pageContainer";
+		let createButton = document.createElement("button");
+
+		if(!storage.setFirstButtonFlag){
+			createButton.innerHTML = "리스트 확대&nbsp;<i class=\"fa-solid fa-plus\"></i>";
+			createButton.setAttribute("data-type", "list");
+			createButton.setAttribute("data-flag", "false");
+			createButton.setAttribute("onclick", "CommonDatas.Temps.schedule2Set.scheduleDisplaySet(this);");
+		}else{
+			createButton.innerHTML = "리스트 축소&nbsp;<i class=\"fa-solid fa-minus\"></i>";
+			createButton.setAttribute("data-type", "list");
+			createButton.setAttribute("data-flag", "true");
+			createButton.setAttribute("onclick", "CommonDatas.Temps.schedule2Set.scheduleDisplaySet(this);");
+		}
+
+		gridList.prepend(createButton);
 		gridList.append(createDiv);
 		pageContainer = document.getElementsByClassName("pageContainer");
-		let pageNation = CommonDatas.createPaging(pageContainer[0], result[3], "CommonDatas.pageMove", "CommonDatas.Temps.schedule2Set.drawFlexScheduleList", result[0]);
+		let pageNation = CommonDatas.createPaging(pageContainer[0], result[3], "CommonDatas.pageMove", "CommonDatas.Temps.schedule2Set.drawScheduleList", result[0]);
 		pageContainer[0].innerHTML = pageNation;
 
 		let gridContent = document.getElementsByClassName("gridContent");
 		for(let i = 0; i < gridContent.length; i++){
 			let oriColor = gridContent[i].style.backgroundColor;
-			let userName = gridContent[i].children[2].children[0].innerText;
+			let userName = gridContent[i].children[4].children[0].innerText;
 			gridContent[i].addEventListener("mouseover", () => {
 				document.querySelector(".calendar_item[data-id=\"" + gridContent[i].dataset.id + "\"]").style.backgroundColor = "#332E85";
 				for(let key in storage.user){
@@ -743,7 +784,7 @@ class Schedule2Set{
 						document.querySelector(".infoFlexContainer").querySelector("div[data-no=\"" + storage.user[key].userNo + "\"]").style.backgroundColor = oriColor;
 					}
 				}
-			})
+			});
 		}
 	}
 
@@ -829,7 +870,7 @@ class Schedule2Set{
 			if(jsonData.length > 0){
 				storage.scheduleList = jsonData;
 				window.setTimeout(this.drawCalendar(document.getElementsByClassName("calendar_container")[0]), 200);
-				window.setTimeout(this.drawFlexScheduleList(), 200);
+				window.setTimeout(this.drawScheduleList(), 200);
 			}else{
 				msg.set("데이터가 없습니다.");
 			}
@@ -868,8 +909,6 @@ class Schedule2Set{
 		let getMonth = document.getElementsByClassName("calendarMonth")[0];
 		let setYear = getYear.innerText;
 		let setMonth = getMonth.innerText;
-		console.log(setYear);
-		console.log(setMonth);
 		let longDate = new Date(setYear + "-" + setMonth + "-01").getTime();
 		scheduleRange = document.getElementsByClassName("scheduleRange")[0].value;
 		
@@ -891,10 +930,10 @@ class Schedule2Set{
 		
 				if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined){
 					window.setTimeout(this.drawCalendar(document.getElementsByClassName("calendar_container")[0]), 600);
-					window.setTimeout(this.drawFlexScheduleList, 600);
+					window.setTimeout(this.drawScheduleList, 600);
 				}else{
 					window.setTimeout(this.drawCalendar(document.getElementsByClassName("calendar_container")[0]), 200);
-					window.setTimeout(this.drawFlexScheduleList, 200);
+					window.setTimeout(this.drawScheduleList, 200);
 				}
 			}else{
 				msg.set("데이터가 없습니다.");
@@ -911,7 +950,7 @@ class Schedule2Set{
 		calendarMoreContent = $(".calendarMoreContent");
 		moreContentTitle = $(".moreContentTitle");
 		calendarMoreContent.find(".moreContentBody").remove();
-		calendarMoreContent.css("width", parseInt(setItemParents.innerWidth() * 3 - 20) + "px");
+		calendarMoreContent.css("width", parseInt(setItemParents.innerWidth() * 1.5) + "px");
 		calendarMoreContent.css("left", setItemParents.position().left + "px");
 		calendarMoreContent.css("top", setItemParents.position().top + "px");
 		calendarMoreContent.append("<div class=\"moreContentBody\"></div>");
@@ -934,6 +973,7 @@ class Schedule2Set{
 		calendarMoreContent.hide();
 	}
 
+	//달력 및 리스트 확대/축소 함수
 	scheduleDisplaySet(e){
 		let thisEle = e;
 		let type = thisEle.dataset.type;
@@ -943,19 +983,17 @@ class Schedule2Set{
 		let bodyContent = document.getElementById("bodyContent");
 
 		if(type === "calendar" && flag === "false"){
-			thisEle.innerText = "달력 축소 -";
+			thisEle.innerHTML = "달력 축소&nbsp;<i class=\"fa-solid fa-minus\"></i>";
 			thisEle.setAttribute("data-flag", true);
 			bodyContent.style.overflowY = "auto";
 			calendarList.style.display = "block";
 			gridContainer.style.display = "none";
 			calendarList.style.width = "100vw";
 			calendarList.style.overflow = "hidden";
-			calendarList.children[1].children[1].style.width = "100vw";
 			let calendar_cell = calendarList.querySelectorAll(".calendar_cell");
 			for(let i = 0; i < calendar_cell.length; i++){
 				let item = calendar_cell[i];
 				let calendar_items =  item.children;
-				item.style.width = "12.15vw";
 				item.style.height = "21vh";
 
 				if(calendar_items.length < 8){
@@ -978,21 +1016,18 @@ class Schedule2Set{
 				}
 			}
 		}else if(type === "calendar" && flag === "true"){
-			thisEle.innerText = "달력 확대 +";
+			thisEle.innerHTML = "달력 확대&nbsp;<i class=\"fa-solid fa-plus\">";
 			thisEle.setAttribute("data-flag", false);
 			bodyContent.style.overflow = "hidden";
 			calendarList.style.display = "block";
-			gridContainer.style.display = "grid";
+			gridContainer.style.display = "block";
 			calendarList.style.width = "49vw";
 			calendarList.style.overflow = "initial";
-			calendarList.children[1].children[1].style.width = "34vw";
-			
 			let calendar_cell = calendarList.querySelectorAll(".calendar_cell");
 			for(let i = 0; i < calendar_cell.length; i++){
 				let item = calendar_cell[i];
 				let calendar_items =  item.children;
-				item.style.width = "6.5vw";
-				item.style.height = "auto";
+				item.style.height = "11vh";
 
 				for(let t = 0; t < calendar_items.length; t++){
 					let childrenItem = calendar_items[t];
@@ -1006,6 +1041,54 @@ class Schedule2Set{
 					}
 				}
 			}
+		}else if(type === "list" && flag === "false"){
+			thisEle.innerHTML = "리스트 축소&nbsp;<i class=\"fa-solid fa-minus\"></i>";
+			thisEle.setAttribute("data-flag", true);
+			calendarList.style.display = "none";
+			gridContainer.style.width = "100vw";
+			storage.setFirstButtonFlag = true;
+		}else if(type === "list" && flag === "true"){
+			thisEle.innerHTML = "리스트 확대&nbsp;<i class=\"fa-solid fa-plus\">";
+			thisEle.setAttribute("data-flag", false);
+			calendarList.style.display = "block";
+			gridContainer.style.width = "44vw";
+			storage.setFirstButtonFlag = false;
+		}
+	}
+
+	//input 검색 기능 함수
+	searchInputKeyup(){
+		let searchAllInput, pageContainer, tempArray;
+		searchAllInput = document.getElementById("searchAllInput").value;
+		pageContainer = document.getElementsByClassName("pageContainer")[0];
+		tempArray = CommonDatas.searchDataFilter(storage.scheduleList, searchAllInput, "input");
+	
+		if(tempArray.length > 0){
+			storage.searchDatas = tempArray;
+		}else{
+			storage.searchDatas = undefined;
+		}
+	
+		this.drawScheduleList();
+		pageContainer.style.diplay = "flex";
+	}
+
+	//검색에 필요한 리스트 만드는 함수
+	addSearchList(){
+		storage.searchList = [];
+	
+		for(let i = 0; i < storage.scheduleList.length; i++){
+			let writer, from, to, disDate, setCreated, title, content;
+			writer = (storage.scheduleList[i].writer === null || storage.scheduleList[i].writer == 0 || storage.scheduleList[i].writer === undefined) ? "" : storage.user[storage.scheduleList[i].writer].userName;
+			title = storage.scheduleList[i].title;
+			content = storage.scheduleList[i].content;
+			disDate = dateDis(storage.scheduleList[i].from);
+			from = dateFnc(disDate).replaceAll("-", "");
+			disDate = dateDis(storage.scheduleList[i].to);
+			to = dateFnc(disDate).replaceAll("-", "");
+			disDate = dateDis(storage.scheduleList[i].created, storage.scheduleList[i].modified);
+			setCreated = dateFnc(disDate).replaceAll("-", "");
+			storage.searchList.push("#created" + setCreated + "#from" + from + "#to" + to + "#" + title + "#" + content + "#" + writer);
 		}
 	}
 }
@@ -2782,6 +2865,8 @@ class Common{
 			result = year + "." + month + "." + day;
 		} else if (type === "yy.mm.dd") {
 			result = year.toString().substring(2, 4) + "." + month + "." + day;
+		} else if (type === "mm.dd") {
+			result =  month + "." + day;;
 		} else if (type === "yyyy-mm-dd T HH:mm") {
 			result = year + "-" + month + "-" + day + "T" + hh + ":" + mm;
 		}
@@ -3183,7 +3268,7 @@ class Common{
 	
 		if (type === "input") {
 			for (let key in storage.searchList) {
-				if (storage.searchList[key].indexOf(searchDatas) > -1) {
+				if (storage.searchList[key].includes(searchDatas)) {
 					dataArray.push(arrayList[key]);
 				}
 			}
@@ -3296,6 +3381,7 @@ class Common{
 			}
 		}
 		
+		console.log(dataArray);
 		return dataArray;
 	}
 
@@ -3575,4 +3661,27 @@ class Common{
 			return false;
 		}
 	}
+
+	keyupDelay(){
+		if(v !== null){
+			window.clearTimeout(v);
+			v = null;
+		}
+		v = window.setTimeout(hdr,1000);
+	}
+}
+
+
+
+let v = null, hdr, act;
+act = () => {
+	if(v !== null){
+		window.clearTimeout(v);
+		v = null;
+	}
+	v = window.setTimeout(hdr,1000);
+}
+hdr = () => {
+ // 작동 코드
+ v = null;
 }

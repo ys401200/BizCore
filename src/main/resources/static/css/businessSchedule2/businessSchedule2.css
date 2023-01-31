@@ -46,7 +46,7 @@
 
 .calendarList{
 	width: 49vw;
-    margin-right: 1vw;
+    margin-right: 0.3vw;
 }
 
 .calendarList > .infoFlexContainer{
@@ -68,13 +68,15 @@
 	width: 100%;
     background-color: #2147b1;
     color: #fff;
+    line-height: 2.5vh;
+    border-radius: 5px;
 }
 
 .calendarList > .infoFlexContainer > div:last-of-type{
 	display: grid;
     grid-template-columns: repeat(8, 1fr);
 	grid-gap: 3px;
-    width: 34vw;
+    width: 100vw;
 }
 
 .calendarList > .infoFlexContainer > div:last-of-type > div{
@@ -115,7 +117,7 @@
 
 .calendarList > .calendar_container{
 	display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: 14.285% 14.285% 14.285% 14.285% 14.285% 14.285% 14.285%;
 }
 
 .calendarList > .calendar_container > .calendar_header{
@@ -137,10 +139,9 @@
 }
 
 .calendarList > .calendar_container > .calendar_cell{
-	z-index: 1;
 	border-left: 1px solid #BDBDBD;
 	border-top: 1px solid #BDBDBD;
-	width: 6.5vw;
+	height: 11vh;
 }
 
 .calendarList > .calendar_container > .calendar_cell_blur{
@@ -315,19 +316,27 @@
 }
 
 .listFlexContainer > .gridList{
-	display: grid; 
 	width: 44vw; 
 	margin: 0 auto;
     border: 1px solid #BDBDBD;
     border-radius: 10px;
 	padding: 5px;
-	height: 83vh;
+	height: 87vh;
     overflow-y: auto;
+}
+
+.listFlexContainer > .gridList > button{
+	width: 7vw;
+    background-color: #2147b1;
+    color: #fff;
+    line-height: 2vh;
+	height: 2.5vh;
+    border-radius: 5px;
 }
 
 .listFlexContainer > .gridList > .gridHeader,
 .listFlexContainer > .gridList > .gridContent{
-    grid-template-columns: 20% 70% 10%;
+    grid-template-columns: 15% 15% 20% 40% 10%;
 }
 
 .listFlexContainer > .gridList > .gridHeader{
