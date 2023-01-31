@@ -1072,38 +1072,37 @@ function insertData(reportForm) { // let reportForm = "Consult";
         "<div  class ='detailcontentbox'><input type='checkbox' class='detailBox'/></div></div>";
     target.append(dataNoneForm);
 
-
 }
-
 
 window.onresize = function () {
     let width = $(window).width() - $(".gw").width() - 30;
     $(".detailReport").css("width", width);
 }
 
-
 function showList() {
-    console.log("clicked backward!!");
-    $(".listDiv").show();
-    $(".reportDiv").html("");
-    $(".reportDiv").hide();
-    $(".pageContainer").show();
-    $(".mainBtnDiv").html("");
-    let target = location.href.split("/")[4];
-    if ($(".batchBtn") != undefined && target === "wait") {
-        $(".batchBtn").show();
+    let page = location.href.split("/");
+    // 전자결재 홈에서 상세조회 후 리스트로 이동하는 경우
+    if (page.length == 6) {
+        location.href = "/" + page[3] + "/" + page[4];
+    } else {
+        console.log("clicked backward!!");
+        $(".listDiv").show();
+        $(".reportDiv").html("");
+        $(".reportDiv").hide();
+        $(".pageContainer").show();
+        $(".mainBtnDiv").html("");
+        let target = location.href.split("/")[4];
+        if ($(".batchBtn") != undefined && target === "wait") {
+            $(".batchBtn").show();
+        } 
+        window.history.back();
+        locationBlock = false;
     }
-    window.history.back();
-    locationBlock = false;
 }
 
 
-
-
-window.onpopstate = function (event) { // 브라우저의 백 버튼 이벤트를 감지하는 함수, boolean 상태 값이 true인 경우, 상세->목록 함수 싱행함
+window.onpopstate = function () { 
     if (locationBlock) {
-        // 상세 페이지 등에서 리스트로 돌아갈 때 수행할 코드
         showList();
-        console.log("In event :: go to backward!!");
     }
 }
