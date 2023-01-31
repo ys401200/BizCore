@@ -750,6 +750,7 @@ function getUserMap() {
 					list = cipher.decAes(data.data);
 					list = JSON.parse(list);
 					storage.user = list;
+					storage.userMapTime = new Date().getTime();
 				} else {
 					msg.set("직원 정보를 가져오지 못했습니다.");
 				}
