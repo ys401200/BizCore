@@ -957,14 +957,11 @@ console.log($(".contract-progress"));
     // 계약 상세조회 스케줄 그리는 함수 
     drawSche() {
         let container,
-            result,
             jsonData,
             job,
             header = [],
             data = [],
             ids = [],
-            disDate,
-            setDate,
             str,
             fnc;
 

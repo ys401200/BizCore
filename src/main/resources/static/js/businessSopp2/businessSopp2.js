@@ -92,11 +92,10 @@ prepareSopp = (no) => {
 				R.sopp.draw();
 				drawChat();
 				getSavedLine();
-
 				setTimeout(() => {
 					EstimateSet = new EstimateSet();
 					EstimateSet.soppEstimateNo(R.sopp.no);
-					drawDetail(R.sopp.no);
+					window.drawDetail(R.sopp.no);
 				}, 1000);
 
 
@@ -505,11 +504,13 @@ function drawDetail(soppNo) {
 				data = JSON.parse(data);
 				R.contract = new Contract(data);
 				R.contract.getReportDetail(cnt);
+				R.contract.container = cnt; 
 				window.contract = R.contract;
 
 			} else {
 			    R.contract = new Contract(undefined);
 				R.contract.drawNone();
+				R.contract.container = cnt; 
 				window.contract = R.contract;
 				
 			}
@@ -552,3 +553,5 @@ clickedSoppCalendarSchedule = (no) => {
 	el.checked = true;
 	el.nextElementSibling.scrollIntoViewIfNeeded({ behavior: 'smooth' });
 } // End of clickedSoppCalendarSchedule()
+
+
