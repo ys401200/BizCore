@@ -3673,15 +3673,15 @@ class Common{
 
 
 
-let v = null, hdr, act;
-act = () => {
-	if(v !== null){
-		window.clearTimeout(v);
-		v = null;
-	}
-	v = window.setTimeout(hdr,1000);
-}
-hdr = () => {
- // 작동 코드
- v = null;
-}
+// let v = null, hdr, act;
+// act = () => {
+// 	if(v !== null){
+// 		window.clearTimeout(v);
+// 		v = null;
+// 	}
+// 	v = window.setTimeout(hdr,1000);
+// }
+// hdr = () => {
+//  // 작동 코드
+//  v = null;
+// }
