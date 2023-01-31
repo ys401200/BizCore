@@ -42,7 +42,7 @@ function prepareForm() {
   getNextContNo();
   ckeditor.config.readOnly = false;
   window.setTimeout(setEditor(document.getElementsByClassName("sopp-desc")[0]), 100);
- 
+
 
 
 } // End of prepare()
@@ -130,7 +130,7 @@ function getItem() {
 
 //데이터 리스트 셋하는 함수 
 function setEstData() {
- R.sopp = opener.window.sopp;
+  R.sopp = opener.window.sopp;
 
   //기본 정보 세팅 
   let formId = "doc_Form_SalesReport";
@@ -609,11 +609,11 @@ function reportInsert() {
       success: (result) => {
         if (result.result === "ok") {
           alert("기안 완료");
-          console.log(storage.soppDetailData.sopp.no); 
-       
+          console.log(storage.soppDetailData.sopp.no);
+
           drawDetailCont(storage.soppDetailData.sopp.no);
-        
-       
+
+
         } else {
           alert(result.msg);
         }
@@ -624,30 +624,8 @@ function reportInsert() {
 
 
 function drawDetailCont(soppNo) {
-	fetch(location.origin + "/api/contract/parent/sopp:" + soppNo)
-		.catch((error) => console.log("error:", error))
-		.then(response => response.json())
-		.then(response => {
-			console.log(response);
-			let data, cnt = opener.document.getElementsByClassName("sopp-contract")[0];
-			if (response.result === "ok") {
-				data = response.data;
-				data = cipher.decAes(data);
-				data = JSON.parse(data);
-				// opener.window.R.contract = new Contract(data);
-				// opener.window.R.contract.getReportDetail(cnt);
-        opener.window.contract =new Contract(data); 
-        opener.window.contract.getReportDetail(cnt);
-			  window.close('/gw/estimate/' + storage.soppDetailData.sopp.no); 
-				// opener.window.contractData = R.contract;
-      
-
-			} else {
-			 console.log("에러");
-
-			}
-		});
-
+  opener.window.drawDetail(soppNo);
+  window.close('/gw/estimate/' + storage.soppDetailData.sopp.no);
 } // End of drawDetail()
 
 

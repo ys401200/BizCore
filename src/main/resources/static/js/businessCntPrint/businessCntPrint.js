@@ -49,7 +49,7 @@ function setSelectedData() {
   let docHtml = storage.reportDetailData.doc;
   $("body").html(docHtml);
   $("body").css("margin", "20mm");
-  $("html").css("font-size", "12px");
+  $("html").css("font-size", "15px");
 
   toReadMode();
 
