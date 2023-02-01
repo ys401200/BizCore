@@ -928,61 +928,6 @@ function drawChangeInfo() {
 
 
 
-function getYmdSlash(date) {
-    let d = new Date(date);
-    return (
-        (d.getFullYear() % 100) +
-        "/" +
-        (d.getMonth() + 1 > 9
-            ? (d.getMonth() + 1).toString()
-            : "0" + (d.getMonth() + 1)) +
-        "/" +
-        (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString()) +
-        "&nbsp" +
-        (d.getHours() > 9
-            ? d.getHours().toString()
-            : "0" + d.getHours().toString()) +
-        ":" +
-        (d.getMinutes() > 9
-            ? d.getMinutes().toString()
-            : "0" + d.getMinutes().toString()) +
-        ":" +
-        (d.getSeconds() > 9
-            ? d.getSeconds().toString()
-            : "0" + d.getSeconds().toString())
-    );
-}
-
-function getYmdSlashShort(date) {
-    let d = new Date(date);
-    return (
-        (d.getFullYear() % 100) +
-        "/" +
-        (d.getMonth() + 1 > 9
-            ? (d.getMonth() + 1).toString()
-            : "0" + (d.getMonth() + 1)) +
-        "/" +
-        (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
-    );
-}
-
-
-
-function getYmdShortSlash(date) {
-    let d = new Date(date);
-    return (
-        (d.getFullYear() % 100) +
-        "/" +
-        (d.getMonth() + 1 > 9
-            ? (d.getMonth() + 1).toString()
-            : "0" + (d.getMonth() + 1)) +
-        "/" +
-        (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
-    );
-}
-
-
-
 function toReadMode() {
     $(".list_comment").attr("data-tag", "readTag");
     $(".detailDiv").removeClass("detailDivHide");
@@ -1067,9 +1012,8 @@ function insertData(reportForm) { // let reportForm = "Consult";
                 "'/>";
     }
 
-
     dataNoneForm +=
-        "<div  class ='detailcontentbox'><input type='checkbox' class='detailBox'/></div></div>";
+        "<div class ='detailcontentbox'><input type='checkbox' class='detailBox'/></div></div>";
     target.append(dataNoneForm);
 
 }
@@ -1079,9 +1023,9 @@ window.onresize = function () {
     $(".detailReport").css("width", width);
 }
 
+// 뒤로 가기 이벤트 관련 함수들 
 function showList() {
     let page = location.href.split("/");
-    // 전자결재 홈에서 상세조회 후 리스트로 이동하는 경우
     if (page.length == 6) {
         location.href = "/" + page[3] + "/" + page[4];
     } else {
@@ -1105,4 +1049,60 @@ window.onpopstate = function () {
     if (locationBlock) {
         showList();
     }
+}
+
+
+
+//날짜 표기 관련 함수들 
+function getYmdSlash(date) {
+    let d = new Date(date);
+    return (
+        (d.getFullYear() % 100) +
+        "/" +
+        (d.getMonth() + 1 > 9
+            ? (d.getMonth() + 1).toString()
+            : "0" + (d.getMonth() + 1)) +
+        "/" +
+        (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString()) +
+        "&nbsp" +
+        (d.getHours() > 9
+            ? d.getHours().toString()
+            : "0" + d.getHours().toString()) +
+        ":" +
+        (d.getMinutes() > 9
+            ? d.getMinutes().toString()
+            : "0" + d.getMinutes().toString()) +
+        ":" +
+        (d.getSeconds() > 9
+            ? d.getSeconds().toString()
+            : "0" + d.getSeconds().toString())
+    );
+}
+
+function getYmdSlashShort(date) {
+    let d = new Date(date);
+    return (
+        (d.getFullYear() % 100) +
+        "/" +
+        (d.getMonth() + 1 > 9
+            ? (d.getMonth() + 1).toString()
+            : "0" + (d.getMonth() + 1)) +
+        "/" +
+        (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
+    );
+}
+
+
+
+function getYmdShortSlash(date) {
+    let d = new Date(date);
+    return (
+        (d.getFullYear() % 100) +
+        "/" +
+        (d.getMonth() + 1 > 9
+            ? (d.getMonth() + 1).toString()
+            : "0" + (d.getMonth() + 1)) +
+        "/" +
+        (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
+    );
 }

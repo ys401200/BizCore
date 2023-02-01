@@ -40,8 +40,6 @@
 	border: 1px solid #e0e4e9;
 }
 
-
-
 .contract-top {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
