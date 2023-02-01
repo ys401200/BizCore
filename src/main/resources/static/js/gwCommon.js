@@ -1052,13 +1052,11 @@ function showList() {
     }
 }
 
-
 window.onpopstate = function () {
     if (locationBlock) {
         showList();
     }
 }
-
 
 
 //날짜 표기 관련 함수들 
@@ -1099,8 +1097,6 @@ function getYmdSlashShort(date) {
         (d.getDate() > 9 ? d.getDate().toString() : "0" + d.getDate().toString())
     );
 }
-
-
 
 function getYmdShortSlash(date) {
     let d = new Date(date);

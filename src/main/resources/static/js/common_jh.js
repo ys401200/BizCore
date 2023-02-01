@@ -1,12 +1,12 @@
 //공지사항 셋팅 클래스
-class NoticeSet{
-	constructor(){
+class NoticeSet {
+	constructor() {
 		CommonDatas.Temps.noticeSet = this;
 	}
 	//공지사항 리스트 저장 함수
-	list(){
+	list() {
 		axios.get("/api/notice").then((response) => {
-			if(response.data.result === "ok"){
+			if (response.data.result === "ok") {
 				let result;
 				result = cipher.decAes(response.data.data);
 				result = JSON.parse(result);
@@ -40,11 +40,11 @@ class NoticeSet{
 				jsonData = storage.searchDatas;
 			}
 		}
-	
+
 		result = CommonDatas.paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 		pageContainer = document.getElementsByClassName("pageContainer")[0];
 		container = document.getElementsByClassName("gridNoticeList")[0];
-	
+
 		header = [
 			{
 				"title": "등록일",
@@ -59,7 +59,7 @@ class NoticeSet{
 				"align": "center",
 			},
 		];
-	
+
 		if (jsonData === "") {
 			str = [
 				{
@@ -68,14 +68,14 @@ class NoticeSet{
 					"col": 4,
 				},
 			];
-	
+
 			data.push(str);
 		} else {
 			for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
 				disDate = CommonDatas.dateDis(jsonData[i].created, jsonData[i].modified);
 				setDate = CommonDatas.dateFnc(disDate, "mm-dd");
 				let userName = storage.user[jsonData[i].writer].userName;
-	
+
 				str = [
 					{
 						"setData": setDate,
@@ -90,21 +90,21 @@ class NoticeSet{
 						"align": "center",
 					},
 				];
-	
+
 				fnc = "CommonDatas.Temps.noticeSet.noticeDetailView(this)";
 				ids.push(jsonData[i].no);
 				data.push(str);
 			}
-	
+
 			let pageNation = CommonDatas.createPaging(pageContainer, result[3], "CommonDatas.pageMove", "CommonDatas.Temps.noticeSet.drawNoticeList", result[0]);
 			pageContainer.innerHTML = pageNation;
 		}
-	
+
 		CommonDatas.createGrid(container, header, data, ids, job, fnc);
 		document.getElementById("multiSearchBtn").setAttribute("onclick", "CommonDatas.Temps.noticeSet.searchSubmit();");
-		
+
 		let path = location.pathname.split("/");
-	
+
 		if (path[3] !== undefined && jsonData !== null) {
 			let content = document.querySelector(".gridContent[data-id=\"" + path[3] + "\"]");
 			let noticeSet = new NoticeSet();
@@ -118,7 +118,7 @@ class NoticeSet{
 		storage.gridContent = e;
 
 		axios.get("/api/notice/" + thisEle.dataset.id).then((response) => {
-			if(response.data.result === "ok"){
+			if (response.data.result === "ok") {
 				let result;
 				result = cipher.decAes(response.data.data);
 				result = JSON.parse(result);
@@ -132,7 +132,7 @@ class NoticeSet{
 	}
 
 	//공지사항 등록 폼
-	noticeInsertForm(){
+	noticeInsertForm() {
 		let html, dataArray, datas;
 
 		dataArray = [
@@ -181,7 +181,7 @@ class NoticeSet{
 			ckeditor.config.readOnly = false;
 			window.setTimeout(setEditor, 100);
 		}, 100);
-	
+
 		setTimeout(() => {
 			document.getElementsByClassName("cke_textarea_inline")[0].style.height = "300px";
 		}, 300);
@@ -190,7 +190,7 @@ class NoticeSet{
 	//공지사항 메인 검색 리스트 저장 함수
 	addSearchList() {
 		storage.searchList = [];
-	
+
 		for (let i = 0; i < storage.noticeList.length; i++) {
 			let no, title, writer, disDate, setDate;
 			no = storage.noticeList[i].no;
@@ -238,28 +238,28 @@ class NoticeSet{
 		let searchAllInput, tempArray;
 		searchAllInput = document.getElementById("searchAllInput").value;
 		tempArray = CommonDatas.searchDataFilter(storage.noticeList, searchAllInput, "input");
-	
+
 		if (tempArray.length > 0) {
 			storage.searchDatas = tempArray;
 		} else {
 			storage.searchDatas = "";
 		}
-	
+
 		this.drawNoticeList();
 	}
 }
 
 //공지사항 기능 클래스
-class Notice{
-	constructor(getData){
-		if(getData !== undefined){
+class Notice {
+	constructor(getData) {
+		if (getData !== undefined) {
 			this.getData = getData;
 			this.title = getData.title;
 			this.content = getData.content;
 			this.writer = getData.writer;
 			this.created = getData.created;
 			this.modified = getData.modified;
-		}else{
+		} else {
 			this.title = "";
 			this.content = "";
 			this.writer = storage.my;
@@ -267,11 +267,11 @@ class Notice{
 	}
 
 	//공지사항 상세보기
-	detail(){
+	detail() {
 		let html = "";
 		let btnHtml = "";
 		let setDate, datas, dataArray, createDiv, notIdArray;
-		
+
 		CommonDatas.detailSetFormList(this.getData);
 
 		setDate = CommonDatas.dateDis(this.created, this.modified);
@@ -299,8 +299,8 @@ class Notice{
 		storage.gridContent.after(createDiv);
 		notIdArray = ["writer", "created"];
 		CommonDatas.detailTrueDatas(datas);
-		
-		if(storage.my == storage.formList.writer){
+
+		if (storage.my == storage.formList.writer) {
 			btnHtml += "<button type=\"button\" class=\"updateBtn\" onclick=\"CommonDatas.enableDisabled(this, 'let notice = new Notice(); notice.update();', '" + notIdArray + "', 'detailBoard');\">수정</button>";
 			btnHtml += "<button type=\"button\" onclick=\"let notice = new Notice(); notice.delete();\">삭제</button>";
 		}
@@ -315,7 +315,7 @@ class Notice{
 	}
 
 	//공지사항 등록
-	insert(){
+	insert() {
 		if (document.getElementById("title").value === "") {
 			msg.set("제목을 입력해주세요.");
 			document.getElementById("title").focus();
@@ -326,12 +326,12 @@ class Notice{
 			data = JSON.stringify(data);
 			data = cipher.encAes(data);
 			axios.post("/api/notice", data, {
-				headers: {"Content-Type": "text/plain"}
+				headers: { "Content-Type": "text/plain" }
 			}).then((response) => {
-				if(response.data.result === "ok"){
+				if (response.data.result === "ok") {
 					location.reload();
 					msg.set("등록되었습니다.");
-				}else{
+				} else {
 					msg.set("등록 중 에러가 발생하였습니다.");
 					return false;
 				}
@@ -344,7 +344,7 @@ class Notice{
 	}
 
 	//공지사항 수정
-	update(){
+	update() {
 		if (document.getElementById("title").value === "") {
 			msg.set("제목을 입력해주세요.");
 			document.getElementById("title").focus();
@@ -355,12 +355,12 @@ class Notice{
 			data = JSON.stringify(data);
 			data = cipher.encAes(data);
 			axios.put("/api/notice/" + storage.formList.no, data, {
-				headers: {"Content-Type": "text/plain"}
+				headers: { "Content-Type": "text/plain" }
 			}).then((response) => {
-				if(response.data.result === "ok"){
+				if (response.data.result === "ok") {
 					location.reload();
 					msg.set("수정되었습니다.");
-				}else{
+				} else {
 					msg.set("수정 중 에러가 발생하였습니다.");
 					return false;
 				}
@@ -373,15 +373,15 @@ class Notice{
 	}
 
 	//공지사항 삭제
-	delete(){
+	delete() {
 		if (confirm("정말로 삭제하시겠습니까??")) {
 			axios.delete("/api/notice/" + storage.formList.no, {
-				headers: {"Content-Type": "text/plain"}
+				headers: { "Content-Type": "text/plain" }
 			}).then((response) => {
-				if(response.data.result === "ok"){
+				if (response.data.result === "ok") {
 					location.reload();
 					msg.set("삭제되었습니다.");
-				}else{
+				} else {
 					msg.set("삭제 중 에러가 발생하였습니다.");
 					return false;
 				}
@@ -396,13 +396,13 @@ class Notice{
 	}
 }
 
-class Schedule2Set{
-	constructor(){
+class Schedule2Set {
+	constructor() {
 		CommonDatas.Temps.schedule2Set = this;
 		storage.setFirstButtonFlag = false;
 	}
 	//스케줄 리스트를 불러와서 셋팅해주는 함수
-	getScheduleList(){
+	getScheduleList() {
 		let date = new Date().getTime();
 		let scheduleRange = document.getElementsByClassName("scheduleRange")[0].value;
 		axios.get("/api/schedule2/" + scheduleRange + "/" + date).then((response) => {
@@ -410,12 +410,12 @@ class Schedule2Set{
 			result = cipher.decAes(result);
 			result = JSON.parse(result);
 			storage.scheduleList = result;
-			
-			if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined){
+
+			if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined) {
 				window.setTimeout(this.drawCalendar(document.getElementsByClassName("calendar_container")[0]), 600);
 				window.setTimeout(this.drawScheduleList, 600);
 				window.setTimeout(this.addSearchList, 600);
-			}else{
+			} else {
 				window.setTimeout(this.drawCalendar(document.getElementsByClassName("calendar_container")[0]), 200);
 				window.setTimeout(this.drawScheduleList, 200);
 				window.setTimeout(this.addSearchList, 200);
@@ -424,81 +424,81 @@ class Schedule2Set{
 	}
 
 	//달력을 출력해주는 함수
-	drawCalendar(container){
-		let calArr, slot, html, startDate, endDate, tempDate, tempArr, current, x1, x2, x3, t, now,deptArr = [], writerArr = [], writerHtml = "";
+	drawCalendar(container) {
+		let calArr, slot, html, startDate, endDate, tempDate, tempArr, current, x1, x2, x3, t, now, deptArr = [], writerArr = [], writerHtml = "";
 		calArr = [];
 		tempDate = [];
-		if(storage.currentYear === undefined)   storage.currentYear = (new Date()).getFullYear();
-		if(storage.currentMonth === undefined)  storage.currentMonth = (new Date()).getMonth() + 1;
-		
+		if (storage.currentYear === undefined) storage.currentYear = (new Date()).getFullYear();
+		if (storage.currentMonth === undefined) storage.currentMonth = (new Date()).getMonth() + 1;
+
 		document.getElementsByClassName("calendarYear")[0].innerText = storage.currentYear;
 		document.getElementsByClassName("calendarMonth")[0].innerText = storage.currentMonth;
-	
-		startDate = new Date(storage.currentYear, storage.currentMonth - 1 , 1);
+
+		startDate = new Date(storage.currentYear, storage.currentMonth - 1, 1);
 		endDate = new Date(new Date(storage.currentYear, storage.currentMonth, 1).getTime() - 86400000);
-	
+
 		// 시작하는 날짜 잡기
 		startDate = new Date(startDate.getTime() - startDate.getDay() * 86400000);
-	
+
 		// 말일 찾기
-		endDate = new Date(endDate.getTime() + (6 - endDate.getDay()) * 86400000);    
-	
+		endDate = new Date(endDate.getTime() + (6 - endDate.getDay()) * 86400000);
+
 		// 만들어진 달력 날짜에 해당하는 일정이 있는 경우 담아두기
-		for(x1 = 0 ; x1 <= (endDate.getTime() - startDate.getTime()) / 86400000 ; x1++){
+		for (x1 = 0; x1 <= (endDate.getTime() - startDate.getTime()) / 86400000; x1++) {
 			current = (startDate.getTime() + (86400000 * x1));
 			calArr[x1] = {};
 			calArr[x1].date = new Date(current);
 			calArr[x1].schedule = [];
-			for(x2 = 0 ; x2 < storage.scheduleList.length ; x2++){
-				if(current + 86400000 > storage.scheduleList[x2].from && current <= storage.scheduleList[x2].to)    calArr[x1].schedule.push(x2);
+			for (x2 = 0; x2 < storage.scheduleList.length; x2++) {
+				if (current + 86400000 > storage.scheduleList[x2].from && current <= storage.scheduleList[x2].to) calArr[x1].schedule.push(x2);
 			}
 		}
-		
+
 		// 최대 일정 수량 잡기
 		slot = 0;
-		for(x1 = 0 ; x1 < calArr.length ; x1++){
-			if(calArr[x1].schedule.length > slot)   slot = calArr[x1].schedule.length;
+		for (x1 = 0; x1 < calArr.length; x1++) {
+			if (calArr[x1].schedule.length > slot) slot = calArr[x1].schedule.length;
 		}
-	
+
 		// slot 최소값 설정하고 날짜에 slot 미리 설정학
 		slot = slot < 5 ? 5 : slot;
-		for(x1 = 0 ; x1 < calArr.length ; x1++) calArr[x1].slot = new Array(slot);
-	
+		for (x1 = 0; x1 < calArr.length; x1++) calArr[x1].slot = new Array(slot);
+
 		// 슬롯에 일정 추가하기
-		for(x1 = 0 ; x1 < calArr.length ; x1++){
-			for(x2 = 0 ; x2 < calArr[x1].schedule.length ; x2++){
-				for(x3 = 0 ; x3 < slot ; x3++){
-					if(calArr[x1].slot[x3] === undefined){
+		for (x1 = 0; x1 < calArr.length; x1++) {
+			for (x2 = 0; x2 < calArr[x1].schedule.length; x2++) {
+				for (x3 = 0; x3 < slot; x3++) {
+					if (calArr[x1].slot[x3] === undefined) {
 						calArr[x1].slot[x3] = calArr[x1].schedule[x2];
 						break;
 					}
 				}
 			}
 		}
-	
+
 		// 연속된 일정에 대한 슬롯 번호 맞추기
-		for(x1 = 1 ; x1 < calArr.length ; x1++){
+		for (x1 = 1; x1 < calArr.length; x1++) {
 			tempArr = calArr[x1].slot; // 임시 변수에 당일 슬롯 데이터를 옮기고 당일 슬롯을 초기화 함
 			calArr[x1].slot = new Array(slot);
-			for(x2 = 0 ; x2 < tempArr.length ; x2++){ // 당일 데이터를 순회하며 전일 데이터와 맞추고 임시변수에서 지움
-				if(tempArr[x2] === undefined)   break;
+			for (x2 = 0; x2 < tempArr.length; x2++) { // 당일 데이터를 순회하며 전일 데이터와 맞추고 임시변수에서 지움
+				if (tempArr[x2] === undefined) break;
 				t = calArr[x1 - 1].slot.indexOf(tempArr[x2]);
-				if(t > 0){
+				if (t > 0) {
 					calArr[x1].slot[t] = tempArr[x2];
 					tempArr[x2] = undefined;
 				}
 			}
-			for(x2 = 0 ; x2 < tempArr.length ; x2++){ // 전일 데이터와 맞추지않은 데이터들에 대해 비어있는 상위 슬롯으로 데이터를 넣어줌
-				if(tempArr[x2] === undefined)   continue;
-				for(x3 = 0 ; x3 < calArr[x1].slot.length ; x3++){
-					if(calArr[x1].slot[x3] === undefined){
+			for (x2 = 0; x2 < tempArr.length; x2++) { // 전일 데이터와 맞추지않은 데이터들에 대해 비어있는 상위 슬롯으로 데이터를 넣어줌
+				if (tempArr[x2] === undefined) continue;
+				for (x3 = 0; x3 < calArr[x1].slot.length; x3++) {
+					if (calArr[x1].slot[x3] === undefined) {
 						calArr[x1].slot[x3] = tempArr[x2];
 						break;
 					}
 				}
 			}
 		}
-		
+
 		html = "<div class=\"calendar_header\">일</div>";
 		html += "<div class=\"calendar_header\">월</div>";
 		html += "<div class=\"calendar_header\">화</div>";
@@ -506,208 +506,208 @@ class Schedule2Set{
 		html += "<div class=\"calendar_header\">목</div>";
 		html += "<div class=\"calendar_header\">금</div>";
 		html += "<div class=\"calendar_header\">토</div>";
-		
-		for(x1 = 0 ; x1 < calArr.length ; x1++){
+
+		for (x1 = 0; x1 < calArr.length; x1++) {
 			tempDate = calArr[x1].date; // 해당 셀의 날짜 객체를 가져 옮
 			t = tempDate.getFullYear();
 			t += (tempDate.getMonth() < 9 ? "0" + (tempDate.getMonth() + 1) : tempDate.getMonth() + 1);
 			t += (tempDate.getDate() < 10 ? "0" + tempDate.getDate() : tempDate.getDate()); // 셀에 저장해 둘 날짜 문자열 생성
 			let year, month, day;
 			year = tempDate.getFullYear();
-			month = tempDate.getMonth()+1;
+			month = tempDate.getMonth() + 1;
 			day = tempDate.getDate();
-	
-			if(month < 10){
+
+			if (month < 10) {
 				month = "0" + month;
 			}
-	
-			if(day < 10){
+
+			if (day < 10) {
 				day = "0" + day;
 			}
-	
+
 			now = year + "-" + month + "-" + day;
 			html += "<div class=\"calendar_cell" + (storage.currentMonth === tempDate.getMonth() + 1 ? "" : " calendar_cell_blur") + "\" data-date=\"" + now + "\">"; // start row / 해당월이 아닌 날짜의 경우 calendar_cell_blue 클래스명을 셀에 추가 지정함
 			html += "<div class=\"calendar_date\">" + (calArr[x1].date.getDate()) + "</div>"; // 셀 안 최상단에 날짜 아이템을 추가함
-			for(x2 = 0 ; x2 < slot ; x2++){
+			for (x2 = 0; x2 < slot; x2++) {
 				x3 = [];
-				if(x1 > 0){ // 전일 데이터와 비교, 일정의 연속성에대해 확인함
+				if (x1 > 0) { // 전일 데이터와 비교, 일정의 연속성에대해 확인함
 					x3[0] = calArr[x1 - 1].slot[x2] === calArr[x1].slot[x2];
 				}
-				if(x1 < calArr.length - 1){ // 익일 데이터와 비교, 일정의 연속성에대해 확인함
+				if (x1 < calArr.length - 1) { // 익일 데이터와 비교, 일정의 연속성에대해 확인함
 					x3[1] = calArr[x1 + 1].slot[x2] === calArr[x1].slot[x2];
 				}
-				
-				t = calArr[x1].slot[x2] === undefined ? undefined : storage.scheduleList[calArr[x1].slot[x2]] ; //임시변수에 스케줄 아이템을 담아둠
 
-				if(storage.scheduleList[calArr[x1].slot[x2]] !== undefined){
-					if(storage.scheduleList[calArr[x1].slot[x2]].writer !== undefined){
+				t = calArr[x1].slot[x2] === undefined ? undefined : storage.scheduleList[calArr[x1].slot[x2]]; //임시변수에 스케줄 아이템을 담아둠
+
+				if (storage.scheduleList[calArr[x1].slot[x2]] !== undefined) {
+					if (storage.scheduleList[calArr[x1].slot[x2]].writer !== undefined) {
 						writerArr.push(storage.user[storage.scheduleList[calArr[x1].slot[x2]].writer].userName + ":" + storage.scheduleList[calArr[x1].slot[x2]].writer + ":" + storage.user[storage.scheduleList[calArr[x1].slot[x2]].writer].deptId[0]);
-						if(storage.user[storage.scheduleList[calArr[x1].slot[x2]].writer].deptId[0] !== "VTEKSEOUL"){
+						if (storage.user[storage.scheduleList[calArr[x1].slot[x2]].writer].deptId[0] !== "VTEKSEOUL") {
 							deptArr.push(storage.dept.dept[storage.user[storage.scheduleList[calArr[x1].slot[x2]].writer].deptId[0]].deptName + ":" + storage.user[storage.scheduleList[calArr[x1].slot[x2]].writer].deptId[0]);
 						}
 					}
 				}
-				
-				if(x2 > 2){
+
+				if (x2 > 2) {
 					html += "<div class=\"calendar_item" + (t === undefined ? " calendar_item_empty" : "") + (x3[0] ? " calendar_item_left" : "") + (x3[1] ? " calendar_item_right" : "") + "\"" + (t === undefined ? "" : "") + " data-id=" + (t === undefined ? '' : t.no) + " data-job=" + (t === undefined ? '' : t.job) + " onclick='" + (t === undefined ? '' : 'CommonDatas.Temps.schedule2Set.eventStop();CommonDatas.Temps.schedule2Set.calendarDetailView(this);') + "' data-sort=" + (t === undefined ? 0 : 1) + " data-dept=" + (t === undefined ? 'empty' : storage.user[t.writer].deptId[0]) + " style='display:none;'>" + (t === undefined ? "" : storage.user[t.writer].userName + " : " + t.title) + "</div>";
-				}else{
+				} else {
 					html += "<div class=\"calendar_item" + (t === undefined ? " calendar_item_empty" : "") + (x3[0] ? " calendar_item_left" : "") + (x3[1] ? " calendar_item_right" : "") + "\"" + (t === undefined ? "" : "") + " data-id=" + (t === undefined ? '' : t.no) + " data-job=" + (t === undefined ? '' : t.job) + " onclick='" + (t === undefined ? '' : 'CommonDatas.Temps.schedule2Set.eventStop();CommonDatas.Temps.schedule2Set.calendarDetailView(this);') + "' data-sort=" + (t === undefined ? 0 : 1) + " data-dept=" + (t === undefined ? 'empty' : storage.user[t.writer].deptId[0]) + " style='display:block;z-index:99;'>" + (t === undefined ? "" : storage.user[t.writer].userName + " : " + t.title) + "</div>";
 				}
 			}
-	
+
 			html += "</div>";
 		}
 
 		writerArr = [...new Set(writerArr)];
 		container.innerHTML = html;
-		
-		let infoFlexContainer = document.getElementsByClassName("infoFlexContainer")[0];		
+
+		let infoFlexContainer = document.getElementsByClassName("infoFlexContainer")[0];
 		let infoContent = infoFlexContainer.children[1];
-		if(writerArr.length <= 24){
-			for(let i = 0; i < writerArr.length; i++){
+		if (writerArr.length <= 24) {
+			for (let i = 0; i < writerArr.length; i++) {
 				let item = writerArr[i];
-				let	name = item.split(":")[0];
+				let name = item.split(":")[0];
 				let no = item.split(":")[1];
 				let dept = item.split(":")[2];
 				writerHtml += "<div data-no=\"" + no + "\" data-dept=\"" + dept + "\">" + name + "</div>";
 			}
-		}else{
+		} else {
 			deptArr = [...new Set(deptArr)];
-			for(let i = 0; i < deptArr.length; i++){
+			for (let i = 0; i < deptArr.length; i++) {
 				let item = deptArr[i];
 				let deptName = item.split(":")[0];
 				let dept = item.split(":")[1];
-				writerHtml += "<div data-dept=\"" + dept + "\">" + deptName + "</div>"; 
+				writerHtml += "<div data-dept=\"" + dept + "\">" + deptName + "</div>";
 			}
 		}
 		infoContent.innerHTML = writerHtml;
-	
+
 		setTimeout(() => {
 			let calendar_cell = document.getElementsByClassName("calendar_cell");
 			let nowDate = new Date().toISOString().substring(0, 10);
-	
-			for(let i = 0; i < calendar_cell.length; i++){
-				if($(calendar_cell[i]).children().not(".calendar_item_empty").length > 4){
-					$(calendar_cell[i]).append("<div class=\"calendar_span_empty\"><span data-flag=\"false\" onclick=\"CommonDatas.Temps.schedule2Set.eventStop();CommonDatas.Temps.schedule2Set.calendarMore(this);\">more(" + parseInt($(calendar_cell[i]).children().not(".calendar_item_empty").length-1) + ") →</span></div>");
+
+			for (let i = 0; i < calendar_cell.length; i++) {
+				if ($(calendar_cell[i]).children().not(".calendar_item_empty").length > 4) {
+					$(calendar_cell[i]).append("<div class=\"calendar_span_empty\"><span data-flag=\"false\" onclick=\"CommonDatas.Temps.schedule2Set.eventStop();CommonDatas.Temps.schedule2Set.calendarMore(this);\">more(" + parseInt($(calendar_cell[i]).children().not(".calendar_item_empty").length - 1) + ") →</span></div>");
 				}
 
-				if((i+1) % 7 == 0){
+				if ((i + 1) % 7 == 0) {
 					calendar_cell[i].style.borderRight = "1px solid #BDBDBD";
-					if(!calendar_cell[i].classList.contains("calendar_cell_blur")){
+					if (!calendar_cell[i].classList.contains("calendar_cell_blur")) {
 						calendar_cell[i].children[0].style.color = "#0100FF";
 					}
 				}
-				
-				if(calendar_cell.length < 36){
-					if((i+1) > 28 && (i+1) < 36){
-						if((i+1) == 29){
+
+				if (calendar_cell.length < 36) {
+					if ((i + 1) > 28 && (i + 1) < 36) {
+						if ((i + 1) == 29) {
 							calendar_cell[i].style.borderBottomLeftRadius = "10px";
-						}else if((i+1) == 35){
+						} else if ((i + 1) == 35) {
 							calendar_cell[i].style.borderBottomRightRadius = "10px";
 						}
 						calendar_cell[i].style.borderBottom = "1px solid #BDBDBD";
 					}
-				}else{
-					if((i+1) > 35 && (i+1) < 43){
-						if((i+1) == 29){
+				} else {
+					if ((i + 1) > 35 && (i + 1) < 43) {
+						if ((i + 1) == 29) {
 							calendar_cell[i].style.borderBottomLeftRadius = "10px";
-						}else if((i+1) == 35){
+						} else if ((i + 1) == 35) {
 							calendar_cell[i].style.borderBottomRightRadius = "10px";
 						}
 						calendar_cell[i].style.borderBottom = "1px solid #BDBDBD";
 					}
 				}
-				
-				if((i+1) == 1 || (i+1) == 8 || (i+1) == 15 || (i+1) == 22 || (i+1) == 29){
-					if(!calendar_cell[i].classList.contains("calendar_cell_blur")){
+
+				if ((i + 1) == 1 || (i + 1) == 8 || (i + 1) == 15 || (i + 1) == 22 || (i + 1) == 29) {
+					if (!calendar_cell[i].classList.contains("calendar_cell_blur")) {
 						calendar_cell[i].children[0].style.color = "#FF0000";
 					}
 				}
 
-				if(calendar_cell[i].dataset.date === nowDate){
+				if (calendar_cell[i].dataset.date === nowDate) {
 					calendar_cell[i].style.backgroundColor = "#E1E1E1";
 				}
 			}
 
 		}, 100);
-		
+
 		let path = location.pathname.split("/");
-	
-		if(path[3] !== undefined){
+
+		if (path[3] !== undefined) {
 			drawScheduleList();
 			document.getElementsByClassName("calendarList")[0].style.display = "none";
 			let content = document.querySelector(".gridContent[data-id=\"" + path[3] + "\"]");
 			console.log(content);
 			scheduleDetailView(content);
 		}
-	
+
 		return true;
 	}
 
 	//일정 달력 flex 리스트 출력 함수
 	drawScheduleList() {
 		let container, dataJob = [], result, jsonData, header = [], data = [], ids = [], str, fnc, pageContainer, containerTitle;
-		
+
 		if (storage.scheduleList === undefined) {
 			msg.set("등록된 일정이 없습니다");
 		}
 		else {
-			if(storage.searchDatas === undefined){
-				jsonData = storage.scheduleList.sort(function(a, b){return b.created - a.created;});
-			}else{
+			if (storage.searchDatas === undefined) {
+				jsonData = storage.scheduleList.sort(function (a, b) { return b.created - a.created; });
+			} else {
 				console.log(storage.searchDatas);
-				jsonData = storage.searchDatas.sort(function(a, b){return b.created - a.created;});
+				jsonData = storage.searchDatas.sort(function (a, b) { return b.created - a.created; });
 			}
 		}
-	
+
 		result = CommonDatas.paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 		containerTitle = document.getElementById("containerTitle");
 		container = document.getElementsByClassName("gridList")[0];
-	
+
 		header = [
 			{
-				"title" : "등록일",
-				"align" : "center",
+				"title": "등록일",
+				"align": "center",
 			},
 			{
-				"title" : "일정",
-				"align" : "center",
+				"title": "일정",
+				"align": "center",
 			},
 			{
-				"title" : "일정제목",
-				"align" : "center",
+				"title": "일정제목",
+				"align": "center",
 			},
 			{
-				"title" : "내용",
-				"align" : "center",
+				"title": "내용",
+				"align": "center",
 			},
 			{
-				"title" : "담당자",
-				"align" : "center",
+				"title": "담당자",
+				"align": "center",
 			},
 		];
-	
-		if(jsonData === ""){
+
+		if (jsonData === "") {
 			str = [
 				{
 					"setData": undefined,
 					"col": 5,
 				},
 			];
-			
+
 			data.push(str);
-		}else{
+		} else {
 			let fromDate, fromSetDate, toDate, toSetDate, disDate;
 			for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
 				fromDate = CommonDatas.dateDis(jsonData[i].from);
 				fromSetDate = CommonDatas.dateFnc(fromDate, "mm.dd");
-				
+
 				toDate = CommonDatas.dateDis(jsonData[i].to);
 				toSetDate = CommonDatas.dateFnc(toDate, "mm.dd");
 
 				disDate = CommonDatas.dateDis(jsonData[i].created, jsonData[i].modified);
 				disDate = CommonDatas.dateFnc(disDate, "yyyy.mm.dd");
-		
+
 				str = [
 					{
 						"setData": disDate,
@@ -730,15 +730,15 @@ class Schedule2Set{
 						"align": "center",
 					},
 				];
-		
+
 				fnc = "CommonDatas.Temps.schedule2Set.calendarDetailView(this);";
 				ids.push(jsonData[i].no);
 				dataJob.push(jsonData[i].job);
 				data.push(str);
 			}
-			
+
 		}
-	
+
 		containerTitle.innerHTML = "일정조회";
 		CommonDatas.createGrid(container, header, data, ids, dataJob, fnc);
 		let gridList = document.getElementsByClassName("gridList")[0];
@@ -746,12 +746,12 @@ class Schedule2Set{
 		createDiv.className = "pageContainer";
 		let createButton = document.createElement("button");
 
-		if(!storage.setFirstButtonFlag){
+		if (!storage.setFirstButtonFlag) {
 			createButton.innerHTML = "리스트 확대&nbsp;<i class=\"fa-solid fa-plus\"></i>";
 			createButton.setAttribute("data-type", "list");
 			createButton.setAttribute("data-flag", "false");
 			createButton.setAttribute("onclick", "CommonDatas.Temps.schedule2Set.scheduleDisplaySet(this);");
-		}else{
+		} else {
 			createButton.innerHTML = "리스트 축소&nbsp;<i class=\"fa-solid fa-minus\"></i>";
 			createButton.setAttribute("data-type", "list");
 			createButton.setAttribute("data-flag", "true");
@@ -765,13 +765,13 @@ class Schedule2Set{
 		pageContainer[0].innerHTML = pageNation;
 
 		let gridContent = document.getElementsByClassName("gridContent");
-		for(let i = 0; i < gridContent.length; i++){
+		for (let i = 0; i < gridContent.length; i++) {
 			let oriColor = gridContent[i].style.backgroundColor;
 			let userName = gridContent[i].children[4].children[0].innerText;
 			gridContent[i].addEventListener("mouseover", () => {
 				document.querySelector(".calendar_item[data-id=\"" + gridContent[i].dataset.id + "\"]").style.backgroundColor = "#332E85";
-				for(let key in storage.user){
-					if(storage.user[key].userName === userName){
+				for (let key in storage.user) {
+					if (storage.user[key].userName === userName) {
 						document.querySelector(".infoFlexContainer").querySelector("div[data-no=\"" + storage.user[key].userNo + "\"]").style.backgroundColor = "#332E85";
 					}
 				}
@@ -779,8 +779,8 @@ class Schedule2Set{
 
 			gridContent[i].addEventListener("mouseout", () => {
 				document.querySelector(".calendar_item[data-id=\"" + gridContent[i].dataset.id + "\"]").style.backgroundColor = oriColor;
-				for(let key in storage.user){
-					if(storage.user[key].userName === userName){
+				for (let key in storage.user) {
+					if (storage.user[key].userName === userName) {
 						document.querySelector(".infoFlexContainer").querySelector("div[data-no=\"" + storage.user[key].userNo + "\"]").style.backgroundColor = oriColor;
 					}
 				}
@@ -789,121 +789,121 @@ class Schedule2Set{
 	}
 
 	//달력 다음월 셋팅 함수
-	calendarNext(){
+	calendarNext() {
 		let getYear, getMonth, setYear, setMonth;
-	
+
 		getYear = document.getElementsByClassName("calendarYear")[0];
 		getMonth = document.getElementsByClassName("calendarMonth")[0];
 		setYear = parseInt(getYear.innerHTML);
 		setMonth = parseInt(getMonth.innerHTML);
-		
-		if(setMonth == 12){
+
+		if (setMonth == 12) {
 			setYear = setYear + 1;
 			setMonth = 0;
 		}
-		
+
 		setMonth = setMonth + 1;
-	
+
 		getYear.innerHTML = setYear;
 		getMonth.innerHTML = setMonth;
-	
+
 		// if(setMonth < 10){
 		// 	setMonth = "0" + setMonth;
 		// }
-	
+
 		storage.currentlongDate = new Date(setYear + "-" + setMonth + "-01").getTime();
 		storage.currentYear = setYear;
 		storage.currentMonth = setMonth;
-	
+
 		this.scheduleCalendarAjax();
 	}
 
 	//달력 이전월 셋팅 함수
-	calendarPrev(){
+	calendarPrev() {
 		let getYear, getMonth, setYear, setMonth, type;
-	
+
 		getYear = document.getElementsByClassName("calendarYear")[0];
 		getMonth = document.getElementsByClassName("calendarMonth")[0];
 		setYear = parseInt(getYear.innerHTML);
 		setMonth = parseInt(getMonth.innerHTML);
 		type = "prev";
-	
-		if(setMonth == 1){
+
+		if (setMonth == 1) {
 			setYear = setYear - 1;
 			setMonth = 13;
 		}
-	
+
 		setMonth = setMonth - 1;
-		
+
 		getYear.innerHTML = setYear;
 		getMonth.innerHTML = setMonth;
-	
+
 		// if(setMonth < 10){
 		// 	setMonth = "0" + setMonth;
 		// }
-	
+
 		storage.currentlongDate = new Date(setYear + "-" + setMonth + "-01").getTime();
 		storage.currentYear = setYear;
 		storage.currentMonth = setMonth;
-	
+
 		this.scheduleCalendarAjax();
 	}
-	
+
 	//달력 데이터를 새로 가지고 와서 셋팅 후 출력하는 함수
-	scheduleCalendarAjax(){
+	scheduleCalendarAjax() {
 		let scheduleRange, url;
 		scheduleRange = document.getElementsByClassName("scheduleRange")[0].value;
-	
-		if(scheduleRange === "dept"){
+
+		if (scheduleRange === "dept") {
 			url = "/api/schedule2/" + scheduleRange + "/" + storage.user[storage.my].deptId[0] + "/" + storage.currentlongDate;
-		} else if(scheduleRange === "employee"){
+		} else if (scheduleRange === "employee") {
 			url = "/api/schedule2/" + scheduleRange + "/" + storage.my + "/" + storage.currentlongDate;
 		} else {
 			url = "/api/schedule2/" + scheduleRange + "/" + storage.currentlongDate;
 		}
-	
+
 		axios.get(url).then((response) => {
 			let jsonData;
 			jsonData = cipher.decAes(response.data.data);
 			jsonData = JSON.parse(jsonData);
-			
-			if(jsonData.length > 0){
+
+			if (jsonData.length > 0) {
 				storage.scheduleList = jsonData;
 				window.setTimeout(this.drawCalendar(document.getElementsByClassName("calendar_container")[0]), 200);
 				window.setTimeout(this.drawScheduleList(), 200);
-			}else{
+			} else {
 				msg.set("데이터가 없습니다.");
 			}
 		});
 	}
 
 	//두개 이상 이벤트가 실행될때 후순위 멈추는 함수
-	eventStop(){
-		if(event.stopattragation){
+	eventStop() {
+		if (event.stopattragation) {
 			event.stopattragation();
 		}
 		event.cancelBubble = true;
 	}
 
 	//달력 상세보기 함수
-	calendarDetailView(e){
+	calendarDetailView(e) {
 		let thisEle = e;
 		let no = thisEle.dataset.id;
-	
-		for(let i = 0; i < storage.scheduleList.length; i++){
+
+		for (let i = 0; i < storage.scheduleList.length; i++) {
 			let item = storage.scheduleList[i];
-			
-			if(item.no == no){
+
+			if (item.no == no) {
 				storage.detailData = item;
 			}
 		}
-	
+
 		const ScheduleClass = new Schedule(storage.detailData);
 		ScheduleClass.calendarDetailDataSet();
 	}
 
 	//회사별, 부서별, 개인별 select 체인지 함수
-	scheduleSelectChange(){
+	scheduleSelectChange() {
 		let scheduleRange, url;
 		let getYear = document.getElementsByClassName("calendarYear")[0];
 		let getMonth = document.getElementsByClassName("calendarMonth")[0];
@@ -911,38 +911,38 @@ class Schedule2Set{
 		let setMonth = getMonth.innerText;
 		let longDate = new Date(setYear + "-" + setMonth + "-01").getTime();
 		scheduleRange = document.getElementsByClassName("scheduleRange")[0].value;
-		
-		if(scheduleRange === "dept"){
+
+		if (scheduleRange === "dept") {
 			url = "/api/schedule2/" + scheduleRange + "/" + storage.user[storage.my].deptId[0] + "/" + longDate;
-		} else if(scheduleRange === "employee"){
+		} else if (scheduleRange === "employee") {
 			url = "/api/schedule2/" + scheduleRange + "/" + storage.my + "/" + longDate;
 		} else {
 			url = "/api/schedule2/" + scheduleRange + "/" + longDate;
 		}
-	
+
 		axios.get(url).then((response) => {
 			let result = response.data.data;
 			result = cipher.decAes(result);
 			result = JSON.parse(result);
-	
-			if(result.length > 0){
+
+			if (result.length > 0) {
 				storage.scheduleList = result;
-		
-				if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined){
+
+				if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined) {
 					window.setTimeout(this.drawCalendar(document.getElementsByClassName("calendar_container")[0]), 600);
 					window.setTimeout(this.drawScheduleList, 600);
-				}else{
+				} else {
 					window.setTimeout(this.drawCalendar(document.getElementsByClassName("calendar_container")[0]), 200);
 					window.setTimeout(this.drawScheduleList, 200);
 				}
-			}else{
+			} else {
 				msg.set("데이터가 없습니다.");
 			}
 		})
 	}
 
 	//달력 more버튼 클릭 함수
-	calendarMore(e){
+	calendarMore(e) {
 		let thisEle, moreContentBody, html = "", calendarMoreContent, moreContentTitle, setItemParents;
 		thisEle = $(e);
 		console.log(thisEle.parent().parent());
@@ -954,9 +954,9 @@ class Schedule2Set{
 		calendarMoreContent.css("left", setItemParents.position().left + "px");
 		calendarMoreContent.css("top", setItemParents.position().top + "px");
 		calendarMoreContent.append("<div class=\"moreContentBody\"></div>");
-		
+
 		html = setItemParents.html();
-	
+
 		moreContentBody = $(".moreContentBody");
 		moreContentBody.html(html);
 		moreContentBody.children().not(".calendar_item").remove();
@@ -968,13 +968,13 @@ class Schedule2Set{
 	}
 
 	//달력 more container 닫기 함수
-	moreContentClose(){
+	moreContentClose() {
 		let calendarMoreContent = $(".calendarMoreContent");
 		calendarMoreContent.hide();
 	}
 
 	//달력 및 리스트 확대/축소 함수
-	scheduleDisplaySet(e){
+	scheduleDisplaySet(e) {
 		let thisEle = e;
 		let type = thisEle.dataset.type;
 		let flag = thisEle.dataset.flag;
@@ -982,7 +982,7 @@ class Schedule2Set{
 		let gridContainer = document.getElementsByClassName("gridList")[0];
 		let bodyContent = document.getElementById("bodyContent");
 
-		if(type === "calendar" && flag === "false"){
+		if (type === "calendar" && flag === "false") {
 			thisEle.innerHTML = "달력 축소&nbsp;<i class=\"fa-solid fa-minus\"></i>";
 			thisEle.setAttribute("data-flag", true);
 			bodyContent.style.overflowY = "auto";
@@ -991,31 +991,31 @@ class Schedule2Set{
 			calendarList.style.width = "100vw";
 			calendarList.style.overflow = "hidden";
 			let calendar_cell = calendarList.querySelectorAll(".calendar_cell");
-			for(let i = 0; i < calendar_cell.length; i++){
+			for (let i = 0; i < calendar_cell.length; i++) {
 				let item = calendar_cell[i];
-				let calendar_items =  item.children;
+				let calendar_items = item.children;
 				item.style.height = "21vh";
 
-				if(calendar_items.length < 8){
-					for(let t = 0; t < calendar_items.length; t++){
+				if (calendar_items.length < 8) {
+					for (let t = 0; t < calendar_items.length; t++) {
 						let childrenItem = calendar_items[t];
 						childrenItem.style.display = "block";
 					}
-				}else{
-					for(let t = 0; t < calendar_items.length; t++){
+				} else {
+					for (let t = 0; t < calendar_items.length; t++) {
 						let childrenItem = calendar_items[t];
 
-						if(!childrenItem.classList.contains("calendar_span_empty")){
-							if(t < 8){
+						if (!childrenItem.classList.contains("calendar_span_empty")) {
+							if (t < 8) {
 								childrenItem.style.display = "block";
-							}else{
+							} else {
 								childrenItem.style.display = "none";
 							}
 						}
 					}
 				}
 			}
-		}else if(type === "calendar" && flag === "true"){
+		} else if (type === "calendar" && flag === "true") {
 			thisEle.innerHTML = "달력 확대&nbsp;<i class=\"fa-solid fa-plus\">";
 			thisEle.setAttribute("data-flag", false);
 			bodyContent.style.overflow = "hidden";
@@ -1024,30 +1024,30 @@ class Schedule2Set{
 			calendarList.style.width = "49vw";
 			calendarList.style.overflow = "initial";
 			let calendar_cell = calendarList.querySelectorAll(".calendar_cell");
-			for(let i = 0; i < calendar_cell.length; i++){
+			for (let i = 0; i < calendar_cell.length; i++) {
 				let item = calendar_cell[i];
-				let calendar_items =  item.children;
+				let calendar_items = item.children;
 				item.style.height = "11vh";
 
-				for(let t = 0; t < calendar_items.length; t++){
+				for (let t = 0; t < calendar_items.length; t++) {
 					let childrenItem = calendar_items[t];
 
-					if(!childrenItem.classList.contains("calendar_span_empty")){
-						if(t < 4){
+					if (!childrenItem.classList.contains("calendar_span_empty")) {
+						if (t < 4) {
 							childrenItem.style.display = "block";
-						}else{
+						} else {
 							childrenItem.style.display = "none";
 						}
 					}
 				}
 			}
-		}else if(type === "list" && flag === "false"){
+		} else if (type === "list" && flag === "false") {
 			thisEle.innerHTML = "리스트 축소&nbsp;<i class=\"fa-solid fa-minus\"></i>";
 			thisEle.setAttribute("data-flag", true);
 			calendarList.style.display = "none";
 			gridContainer.style.width = "100vw";
 			storage.setFirstButtonFlag = true;
-		}else if(type === "list" && flag === "true"){
+		} else if (type === "list" && flag === "true") {
 			thisEle.innerHTML = "리스트 확대&nbsp;<i class=\"fa-solid fa-plus\">";
 			thisEle.setAttribute("data-flag", false);
 			calendarList.style.display = "block";
@@ -1057,27 +1057,27 @@ class Schedule2Set{
 	}
 
 	//input 검색 기능 함수
-	searchInputKeyup(){
+	searchInputKeyup() {
 		let searchAllInput, pageContainer, tempArray;
 		searchAllInput = document.getElementById("searchAllInput").value;
 		pageContainer = document.getElementsByClassName("pageContainer")[0];
 		tempArray = CommonDatas.searchDataFilter(storage.scheduleList, searchAllInput, "input");
-	
-		if(tempArray.length > 0){
+
+		if (tempArray.length > 0) {
 			storage.searchDatas = tempArray;
-		}else{
+		} else {
 			storage.searchDatas = undefined;
 		}
-	
+
 		this.drawScheduleList();
 		pageContainer.style.diplay = "flex";
 	}
 
 	//검색에 필요한 리스트 만드는 함수
-	addSearchList(){
+	addSearchList() {
 		storage.searchList = [];
-	
-		for(let i = 0; i < storage.scheduleList.length; i++){
+
+		for (let i = 0; i < storage.scheduleList.length; i++) {
 			let writer, from, to, disDate, setCreated, title, content;
 			writer = (storage.scheduleList[i].writer === null || storage.scheduleList[i].writer == 0 || storage.scheduleList[i].writer === undefined) ? "" : storage.user[storage.scheduleList[i].writer].userName;
 			title = storage.scheduleList[i].title;
@@ -1094,115 +1094,115 @@ class Schedule2Set{
 }
 
 // 견적 초기 세팅해주는 클래스
-class EstimateSet{
-	constructor(){
+class EstimateSet {
+	constructor() {
 		this.getEstimateBasic();
 		this.getEstimateItem();
 		CommonDatas.Temps.estimateSet = this;
 	}
-	
+
 	//베이직 견적 storage 저장 함수
-	getEstimateBasic(){
+	getEstimateBasic() {
 		let url;
 		url = apiServer + "/api/estimate/basic";
-        axios.get(url).then((response) => {
-			if(response.data.result === "ok"){
-                let form, info, x;
+		axios.get(url).then((response) => {
+			if (response.data.result === "ok") {
+				let form, info, x;
 				x = cipher.decAes(response.data.data);
-                x = JSON.parse(x);
-                form = x.form;
-                info = x.info;
-                for(x = 0 ; x < form.length ; x++)	form[x].form = cipher.decAes(form[x].form);
-                storage.estimateForm = form;
-                storage.estimateBasic = info;
-			}else{
-                msg.set("[getEstimateBasic] Fail to get estimate form(s).");
-            }
+				x = JSON.parse(x);
+				form = x.form;
+				info = x.info;
+				for (x = 0; x < form.length; x++)	form[x].form = cipher.decAes(form[x].form);
+				storage.estimateForm = form;
+				storage.estimateBasic = info;
+			} else {
+				msg.set("[getEstimateBasic] Fail to get estimate form(s).");
+			}
 		}).catch((error) => {
 			msg.set("getEstimateBasic 통신 에러입니다.\n" + error);
 		});
 	}
-	
+
 	//견적 아이템 저장 함수
-	getEstimateItem(){
+	getEstimateItem() {
 		let url;
 		url = apiServer + "/api/estimate/item/";
-        axios.get(url).then((response) => {
-			if(response.data.result === "ok"){
-                let list;
+		axios.get(url).then((response) => {
+			if (response.data.result === "ok") {
+				let list;
 				list = cipher.decAes(response.data.data);
-                list = JSON.parse(list);
-                storage.item = list;
-			}else{
-                msg.set("[getEstimateItem] Fail to get item information.");
-            }
+				list = JSON.parse(list);
+				storage.item = list;
+			} else {
+				msg.set("[getEstimateItem] Fail to get item information.");
+			}
 		}).catch((error) => {
 			msg.set("getEstimateItem 통신 에러입니다.\n" + error);
 		});
 	}
-	
-	//영업기회 견적번호 및 현재 영업기회 번호 저장 함수
-    soppEstimateNo(soppNo){
-        axios.get("/api/estimate/sopp/" + soppNo).then((response) => {
-			if(response.data.result === "ok"){
-				let getList = response.data.data;
-                getList = cipher.decAes(getList);
-                getList = JSON.parse(getList);
 
-				if(getList.length < 1){
+	//영업기회 견적번호 및 현재 영업기회 번호 저장 함수
+	soppEstimateNo(soppNo) {
+		axios.get("/api/estimate/sopp/" + soppNo).then((response) => {
+			if (response.data.result === "ok") {
+				let getList = response.data.data;
+				getList = cipher.decAes(getList);
+				getList = JSON.parse(getList);
+
+				if (getList.length < 1) {
 					storage.estimateList = "";
 					this.drawEstmVerList();
-				}else{
-					
+				} else {
+
 					this.soppEstimateList(getList[0].no);
 				}
 
 				storage.estimateVerSoppNo = soppNo;
 			}
 		});
-    }
+	}
 
 	//영업기회 견적리스트를 가져오는 함수
-    soppEstimateList(estimateNo){
-        axios.get("/api/estimate/" + estimateNo).then((response) => {
+	soppEstimateList(estimateNo) {
+		axios.get("/api/estimate/" + estimateNo).then((response) => {
 			let cnt, x;
-			if(response.data.result === "ok"){
+			if (response.data.result === "ok") {
 				let getList = response.data.data;
 				getList = cipher.decAes(getList);
 				getList = JSON.parse(getList);
-				
-				for(let i = 0; i < getList.length; i++){
+
+				for (let i = 0; i < getList.length; i++) {
 					getList[i].doc = cipher.decAes(getList[i].doc);
 				}
-                
+
 				storage.estimateList = getList;
 
 				// SOPP 내 탭에 견적의 수량을 표시
-				x = 0; 
-				if( document.getElementsByClassName("sopp-tab-cnt")[0] != undefined) {
-				cnt = document.getElementsByClassName("sopp-tab-cnt")[0].children[2].children[2];
-				if(storage.estimateList !== undefined && storage.estimateList.constructor.name === "Array")	x = storage.estimateList.length;
-				cnt.innerHTML = "<span> " + x + " </span>";
+				x = 0;
+				if (document.getElementsByClassName("sopp-tab-cnt")[0] != undefined) {
+					cnt = document.getElementsByClassName("sopp-tab-cnt")[0].children[2].children[2];
+					if (storage.estimateList !== undefined && storage.estimateList.constructor.name === "Array") x = storage.estimateList.length;
+					cnt.innerHTML = "<span> " + x + " </span>";
 				}
-				
+
 
 				// 견적 그리기
-                this.drawEstmVerList();
+				this.drawEstmVerList();
 			}
 		});
-    }
+	}
 
 	//메인 리스트 데이터 가져오는 함수
 	list() {
 		axios.get("/api/estimate").then((response) => {
-			if(response.data.result === "ok"){
+			if (response.data.result === "ok") {
 				let getList = response.data.data;
 				getList = cipher.decAes(getList);
 				getList = JSON.parse(getList);
 
-				if(getList.length > 0){
+				if (getList.length > 0) {
 					storage.estimateList = getList;
-				}else{
+				} else {
 					storage.estimateList = "";
 				}
 				this.drawEstmList();
@@ -1210,70 +1210,70 @@ class EstimateSet{
 			}
 		}).catch((error) => {
 			msg.set("메인 리스트 에러입니다.\n" + error);
-            console.log(error);
+			console.log(error);
 			return false;
 		});
 	}
-	
+
 	//견적 추가에 대한 폼
-	addForm(){
+	addForm() {
 		this.clickedAdd();
 	}
 
 	//메인 리스트 출력 함수
-	drawEstmList(){
+	drawEstmList() {
 		let container, result, job, jsonData, header = [], data = [], ids = [], disDate, str, fnc, pageContainer, containerTitle, crudAddBtn, crudUpdateBtn, hideArr, showArr;
-		
+
 		if (storage.estimateList === undefined) {
 			msg.set("등록된 견적이 없습니다");
 		}
 		else {
-			if(storage.searchDatas === undefined){
+			if (storage.searchDatas === undefined) {
 				jsonData = storage.estimateList;
-			}else{
+			} else {
 				jsonData = storage.searchDatas;
 			}
 		}
 
 		result = CommonDatas.paging(jsonData.length, storage.currentPage, storage.articlePerPage);
-		
+
 		crudAddBtn = document.getElementsByClassName("crudAddBtn")[0];
 		crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
 		hideArr = ["detailBackBtn", "crudUpdateBtn", "estimatePdf", "addPdfForm"];
 		showArr = [
-			{element: "estimateList", display: "grid"},
-			{element: "pageContainer", display: "flex"},
-			{element: "searchContainer", display: "block"},
-			{element: "listRange", display: "flex"},
-			{element: "listSearchInput", display: "flex"},
-			{element: "crudAddBtn", display: "flex"},
-			{element: "versionPreview", display: "block"},
-			{element: "previewDefault", display: "block"},
+			{ element: "estimateList", display: "grid" },
+			{ element: "pageContainer", display: "flex" },
+			{ element: "searchContainer", display: "block" },
+			{ element: "listRange", display: "flex" },
+			{ element: "listSearchInput", display: "flex" },
+			{ element: "crudAddBtn", display: "flex" },
+			{ element: "versionPreview", display: "block" },
+			{ element: "previewDefault", display: "block" },
 		];
 		containerTitle = document.getElementById("containerTitle");
 		pageContainer = document.getElementsByClassName("pageContainer");
-        container = document.getElementsByClassName("estimateList")[0];
+		container = document.getElementsByClassName("estimateList")[0];
 
 		header = [
 			{
-				"title" : "버전",
-				"align" : "center",
+				"title": "버전",
+				"align": "center",
 			},
 			{
-				"title" : "견적명",
-				"align" : "center",
+				"title": "견적명",
+				"align": "center",
 			},
 			{
-				"title" : "견적일자",
-				"align" : "center",
+				"title": "견적일자",
+				"align": "center",
 			},
 			{
-				"title" : "금액",
-				"align" : "center",
+				"title": "금액",
+				"align": "center",
 			},
 		];
-	
-		if(jsonData === ""){
+
+		if (jsonData === "") {
 			str = [
 				{
 					"setData": undefined,
@@ -1281,13 +1281,13 @@ class EstimateSet{
 					"align": "center",
 				},
 			];
-			
+
 			data.push(str);
-		}else{
+		} else {
 			for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
 				disDate = CommonDatas.dateDis(jsonData[i].date);
 				disDate = CommonDatas.dateFnc(disDate, "yyyy.mm.dd");
-		  
+
 				str = [
 					{
 						"setData": jsonData[i].version,
@@ -1306,17 +1306,17 @@ class EstimateSet{
 						"align": "right",
 					},
 				];
-		
+
 				fnc = "CommonDatas.Temps.estimateSet.clickedEstimate(this);";
 				ids.push(jsonData[i].no);
 				data.push(str);
 			}
-		
+
 			let pageNation = CommonDatas.createPaging(pageContainer[0], result[3], "pageMove", "CommonDatas.Temps.estimateSet.drawEstmList", result[0]);
 			pageContainer[0].innerHTML = pageNation;
 		}
-	
-		if(containerTitle !== null){
+
+		if (containerTitle !== null) {
 			containerTitle.innerText = "견적";
 		}
 		CommonDatas.createGrid(container, header, data, ids, job, fnc);
@@ -1329,58 +1329,58 @@ class EstimateSet{
 	}
 
 	//영업기회 버전리스트만 출력하기 위한 리스트 함수
-	drawEstmVerList(){
+	drawEstmVerList() {
 		let container, result, job, jsonData, header = [], data = [], ids = [], disDate, str, fnc, pageContainer, containerTitle, crudAddBtn, crudUpdateBtn, hideArr, showArr;
-		
+
 		if (storage.estimateList === undefined) {
 			msg.set("등록된 견적이 없습니다");
 		}
 		else {
-			if(storage.searchDatas === undefined){
+			if (storage.searchDatas === undefined) {
 				jsonData = storage.estimateList;
-			}else{
+			} else {
 				jsonData = storage.searchDatas;
 			}
 		}
 
 		result = CommonDatas.paging(jsonData.length, storage.currentPage, storage.articlePerPage);
-		
+
 		crudAddBtn = document.getElementsByClassName("crudAddBtn")[0];
 		crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
 		hideArr = ["detailBackBtn", "crudUpdateBtn", "estimatePdf", "addPdfForm"];
 		showArr = [
-			{element: "estimateList", display: "grid"},
-			{element: "pageContainer", display: "flex"},
-			{element: "searchContainer", display: "block"},
-			{element: "listRange", display: "flex"},
-			{element: "listSearchInput", display: "flex"},
-			{element: "versionPreview", display: "block"},
-			{element: "previewDefault", display: "block"},
+			{ element: "estimateList", display: "grid" },
+			{ element: "pageContainer", display: "flex" },
+			{ element: "searchContainer", display: "block" },
+			{ element: "listRange", display: "flex" },
+			{ element: "listSearchInput", display: "flex" },
+			{ element: "versionPreview", display: "block" },
+			{ element: "previewDefault", display: "block" },
 		];
 		containerTitle = document.getElementById("containerTitle");
 		pageContainer = document.getElementsByClassName("pageContainer");
-        container = document.getElementsByClassName("estimateList")[0];
+		container = document.getElementsByClassName("estimateList")[0];
 
 		header = [
 			{
-				"title" : "버전",
-				"align" : "center",
+				"title": "버전",
+				"align": "center",
 			},
 			{
-				"title" : "견적명",
-				"align" : "center",
+				"title": "견적명",
+				"align": "center",
 			},
 			{
-				"title" : "견적일자",
-				"align" : "center",
+				"title": "견적일자",
+				"align": "center",
 			},
 			{
-				"title" : "금액",
-				"align" : "center",
+				"title": "금액",
+				"align": "center",
 			},
 		];
-	
-		if(jsonData === ""){
+
+		if (jsonData === "") {
 			str = [
 				{
 					"setData": undefined,
@@ -1388,17 +1388,17 @@ class EstimateSet{
 					"align": "center",
 				},
 			];
-			
+
 			data.push(str);
 			crudAddBtn.style.display = "flex";
 			crudAddBtn.setAttribute("onclick", "CommonDatas.Temps.estimateSet.clickedAdd();");
-		}else{
+		} else {
 			for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
 				let total = 0;
 				disDate = CommonDatas.dateDis(jsonData[i].date);
 				disDate = CommonDatas.dateFnc(disDate, "yyyy.mm.dd");
-				
-				for(let t = 0; t < jsonData[i].related.estimate.items.length; t++){
+
+				for (let t = 0; t < jsonData[i].related.estimate.items.length; t++) {
 					let item = jsonData[i].related.estimate.items[t];
 					total += (item.price * item.quantity) + (item.price * item.quantity * 0.1);
 				}
@@ -1421,18 +1421,18 @@ class EstimateSet{
 						"align": "right",
 					},
 				];
-		
+
 				fnc = "CommonDatas.Temps.estimateSet.clickedEstmVer(this);";
 				ids.push(i);
 				data.push(str);
 			}
-		
+
 			let pageNation = CommonDatas.createPaging(pageContainer[0], result[3], "pageMove", "CommonDatas.Temps.estimateSet.drawEstmVerList", result[0]);
 			pageContainer[0].innerHTML = pageNation;
 			crudAddBtn.remove();
 		}
-	
-		if(containerTitle !== null){
+
+		if (containerTitle !== null) {
 			containerTitle.innerText = "견적";
 		}
 
@@ -1443,7 +1443,7 @@ class EstimateSet{
 	}
 
 	//상세보기에서 Back 실행 함수
-	drawBack(){
+	drawBack() {
 		let crudAddBtn = document.getElementsByClassName("crudAddBtn")[0];
 		let crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
 		let estimatePdf = document.getElementsByClassName("estimatePdf")[0];
@@ -1451,21 +1451,21 @@ class EstimateSet{
 		let hideArr = ["detailBackBtn", "addPdfForm", "mainPdf"];
 		let showArr = ["estimateList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "crudAddBtn", "versionPreview"];
 		showArr = [
-			{element: "estimateList", display: "grid"},
-			{element: "pageContainer", display: "flex"},
-			{element: "searchContainer", display: "block"},
-			{element: "listRange", display: "flex"},
-			{element: "listSearchInput", display: "flex"},
-			{element: "crudAddBtn", display: "flex"},
-			{element: "versionPreview", display: "block"},
+			{ element: "estimateList", display: "grid" },
+			{ element: "pageContainer", display: "flex" },
+			{ element: "searchContainer", display: "block" },
+			{ element: "listRange", display: "flex" },
+			{ element: "listSearchInput", display: "flex" },
+			{ element: "crudAddBtn", display: "flex" },
+			{ element: "versionPreview", display: "block" },
 		];
 		let versionList = document.getElementsByClassName("versionList");
 
-		if(containerTitle !== null){
+		if (containerTitle !== null) {
 			containerTitle.innerHTML = "견적";
 		}
 
-		if(crudAddBtn !== undefined){
+		if (crudAddBtn !== undefined) {
 			crudAddBtn.innerText = "견적추가";
 			crudAddBtn.setAttribute("onclick", "CommonDatas.Temps.estimateSet.clickedAdd();");
 		}
@@ -1473,45 +1473,45 @@ class EstimateSet{
 		crudUpdateBtn.innerText = "견적수정";
 		crudUpdateBtn.setAttribute("onclick", "CommonDatas.Temps.estimateSet.clickedUpdate();");
 
-		for(let i = 0; i < versionList.length; i++){
+		for (let i = 0; i < versionList.length; i++) {
 			let item = versionList[i];
-			if(item.style.display !== "none"){
+			if (item.style.display !== "none") {
 				item.querySelector(".versionListBody[data-click-check=\"true\"]").click();
 			}
 		}
 
-		if(crudUpdateBtn.style.display !== "none"){
+		if (crudUpdateBtn.style.display !== "none") {
 			estimatePdf.style.display = "flex";
 		}
-		
+
 		CommonDatas.setViewContents(hideArr, showArr);
 		document.getElementsByClassName("copyMainPdf")[0].remove();
 	}
-	
+
 	//메인 리스트 클릭 함수
-	clickedEstimate(el){
+	clickedEstimate(el) {
 		let x, cnt, els, color = "#2147b1", estmNo, versionList, thisEle;
-	
+
 		versionList = document.getElementsByClassName("versionList");
-	
-		if(versionList.length > 0){
-			for(let i = 0; i < versionList.length; i++){
+
+		if (versionList.length > 0) {
+			for (let i = 0; i < versionList.length; i++) {
 				versionList[i].remove();
 			}
 		}
-	
+
 		thisEle = el;
 		versionList = document.createElement("div");
 		versionList.className = "versionList";
 		thisEle.after(versionList);
 		cnt = thisEle.parentElement;
 		els = cnt.children;
-	
-		for(x = 1 ; x < els.length ; x++){
+
+		for (x = 1; x < els.length; x++) {
 			els[x].style.backgroundColor = "";
 			els[x].style.color = "";
-		}	
-	
+		}
+
 		thisEle.style.backgroundColor = color;
 		thisEle.style.color = "#ffffff";
 		estmNo = thisEle.dataset.id;
@@ -1521,22 +1521,22 @@ class EstimateSet{
 			thisEle.nextSibling.getElementsByClassName("versionListBody")[0].click();
 		}, 300);
 	}
-	
+
 	//메인 버전 리스트 클릭 함수
-	clickedEstmVer(el){
+	clickedEstmVer(el) {
 		let x, cnt, els, color = "#e1e9ff", versionList, title, userName;
 		els = el.parentElement.children;
-		for(x = 1 ; x < els.length ; x++)	els[x].style.backgroundColor = "";
+		for (x = 1; x < els.length; x++)	els[x].style.backgroundColor = "";
 		el.style.backgroundColor = color;
 		x = el.dataset.id * 1;
 		el.dataset.clickCheck = true;
 		storage.detailIdx = x;
-		
-		if(document.getElementsByClassName("versionList")[0] !== undefined){
+
+		if (document.getElementsByClassName("versionList")[0] !== undefined) {
 			versionList = document.getElementsByClassName("versionList")[0];
 			title = versionList.getElementsByClassName("versionListBody")[0].children[1].innerHTML;
 			userName = versionList.getElementsByClassName("versionListBody")[0].children[2].innerHTML;
-		}else{
+		} else {
 			title = el.children[1].children[0].innerText;
 			userName = storage.user[R.sopp.owner].userName;
 		}
@@ -1547,48 +1547,48 @@ class EstimateSet{
 		crudUpdateBtn.style.display = "flex";
 		estimatePdf.style.display = "flex";
 
-		if(storage.estimateVerList === undefined){
+		if (storage.estimateVerList === undefined) {
 			document.getElementsByClassName("versionPreview")[0].innerHTML = storage.estimateList[x].doc;
-		}else{
+		} else {
 			document.getElementsByClassName("versionPreview")[0].innerHTML = storage.estimateVerList[x].doc;
 		}
 
 		let versionPreview = document.getElementsByClassName("versionPreview")[0];
-        let indexMain = versionPreview.children;
-		
-		for(let i = 0; i < indexMain.length; i++){
-			if(indexMain[i].className === "mainPdf"){
+		let indexMain = versionPreview.children;
+
+		for (let i = 0; i < indexMain.length; i++) {
+			if (indexMain[i].className === "mainPdf") {
 				indexMain[i].remove();
 			}
 		}
-		
-		indexMain[indexMain.length-1].setAttribute("class", "mainPreviewPdf");
-		indexMain[indexMain.length-1].setAttribute("id", "estPrintPdf");
-	} 
+
+		indexMain[indexMain.length - 1].setAttribute("class", "mainPreviewPdf");
+		indexMain[indexMain.length - 1].setAttribute("id", "estPrintPdf");
+	}
 
 	//메인 버전리스트 저장 함수
-	getEstmVerList(estmNo){
+	getEstmVerList(estmNo) {
 		axios.get("/api/estimate/" + estmNo).then((response) => {
-			if(response.data.result === "ok"){
+			if (response.data.result === "ok") {
 				let getList = response.data.data;
 				getList = cipher.decAes(getList);
 				getList = JSON.parse(getList);
-				
-				for(let i = 0; i < getList.length; i++){
+
+				for (let i = 0; i < getList.length; i++) {
 					getList[i].doc = cipher.decAes(getList[i].doc);
 				}
-	
+
 				storage.estimateVerList = getList;
 				this.drawPanelVerList();
 			}
-			
+
 		}).catch((error) => {
 			alert("버전 리스트 에러입니다.\n" + error);
 		});
-	} 
-	
+	}
+
 	//메인 버전리스트 셋팅 함수
-	drawPanelVerList(){
+	drawPanelVerList() {
 		let versionList, html = "", x;
 		versionList = document.getElementsByClassName("versionList")[0];
 		html = "<div class=\"versionListHeader\">";
@@ -1598,15 +1598,15 @@ class EstimateSet{
 		html += "<div>견적일자</div>";
 		html += "<div>금액</div>";
 		html += "</div>";
-		
-		for(x = storage.estimateVerList.length-1 ; x >= 0 ; x--){
+
+		for (x = storage.estimateVerList.length - 1; x >= 0; x--) {
 			let total = 0, dateSet;
-	
-			for(let i = 0; i < storage.estimateVerList[x].related.estimate.items.length; i++){
+
+			for (let i = 0; i < storage.estimateVerList[x].related.estimate.items.length; i++) {
 				let item = storage.estimateVerList[x].related.estimate.items[i];
 				total += (item.price * item.quantity) + (item.price * item.quantity * 0.1);
 			}
-	
+
 			dateSet = CommonDatas.dateDis(storage.estimateVerList[x].date);
 			dateSet = CommonDatas.dateFnc(dateSet);
 
@@ -1618,19 +1618,19 @@ class EstimateSet{
 			html += "<div style=\"justify-content: right;\">" + numberFormat(total) + "</div>";
 			html += "</div>";
 		}
-	
+
 		versionList.innerHTML = html;
 	}
-	
+
 	//견적 상세보기 셋팅 함수
-	clickedUpdate(){
+	clickedUpdate() {
 		let containerTitle, crudUpdateBtn, hideArr, showArr, mainPdf, copyMainPdf;
 		containerTitle = document.getElementById("containerTitle");
-        mainPdf = document.getElementsByClassName("addPdfForm")[0].getElementsByClassName("mainPdf")[0];
+		mainPdf = document.getElementsByClassName("addPdfForm")[0].getElementsByClassName("mainPdf")[0];
 		copyMainPdf = document.createElement("div");
 		copyMainPdf.className = "copyMainPdf";
 		copyMainPdf.innerHTML = mainPdf.innerHTML;
-        mainPdf.after(copyMainPdf);
+		mainPdf.after(copyMainPdf);
 		crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
 		hideArr = ["estimateList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "versionPreview", "estimatePdf", "mainPdf"];
 		showArr = [
@@ -1653,13 +1653,13 @@ class EstimateSet{
 		];
 
 		this.copyContainer = document.getElementsByClassName("copyMainPdf")[0];
-		
-		if(storage.estimateVerList !== undefined){
+
+		if (storage.estimateVerList !== undefined) {
 			storage.estmDetail = storage.estimateVerList[storage.detailIdx];
 			let crudAddBtn = document.getElementsByClassName("crudAddBtn")[0];
 			crudAddBtn.innerText = "새견적추가";
 			crudAddBtn.setAttribute("onclick", "let estimate = new Estimate(); estimate.insert();");
-		}else{
+		} else {
 			storage.estmDetail = storage.estimateList[storage.detailIdx];
 		}
 
@@ -1669,16 +1669,16 @@ class EstimateSet{
 	}
 
 	//견적 추가 셋팅 함수
-	clickedAdd(){
+	clickedAdd() {
 		let containerTitle, crudAddBtn, hideArr, showArr, mainPdf, copyMainPdf;
 		containerTitle = document.getElementById("containerTitle");
 		mainPdf = document.getElementsByClassName("mainPdf");
 
-        if(mainPdf.length > 1){
-            mainPdf = document.getElementsByClassName("mainPdf")[1];
-        }else{
-            mainPdf = document.getElementsByClassName("mainPdf")[0];
-        }
+		if (mainPdf.length > 1) {
+			mainPdf = document.getElementsByClassName("mainPdf")[1];
+		} else {
+			mainPdf = document.getElementsByClassName("mainPdf")[0];
+		}
 
 		copyMainPdf = document.createElement("div");
 		copyMainPdf.className = "copyMainPdf";
@@ -1704,7 +1704,7 @@ class EstimateSet{
 				display: "block",
 			},
 		];
-	
+
 		this.copyContainer = document.getElementsByClassName("copyMainPdf")[0];
 		crudAddBtn.innerText = "새견적추가";
 		crudAddBtn.setAttribute("onclick", "let estimate = new Estimate(); estimate.insert();");
@@ -1712,109 +1712,109 @@ class EstimateSet{
 		storage.estmDetail = undefined;
 		this.estimateFormInit();
 	}
-	
+
 	//견적 추가 및 상세보기 시 폼안에 value 값들을 설정해주는 함수
-	estimateFormInit(){
+	estimateFormInit() {
 		let selectAddress, writer, date, pdfMainContentAddBtns;
 		selectAddress = this.copyContainer.getElementsByClassName("selectAddress")[0].querySelector("select");
 		writer = this.copyContainer.querySelector("#writer");
 		date = this.copyContainer.querySelector("#date");
 		pdfMainContentAddBtns = this.copyContainer.getElementsByClassName("pdfMainContentAddBtns")[0];
-	
+
 		let html = "";
-		for(let index in storage.estimateBasic){
+		for (let index in storage.estimateBasic) {
 			html += "<option value=\"" + index + "\">" + storage.estimateBasic[index].name + "</option>";
 		}
-	
+
 		selectAddress.innerHTML = html;
 		writer.value = storage.user[storage.my].userName;
 		date.value = new Date().toISOString().substring(0, 10);
-		
-		if(storage.estmDetail !== undefined){
+
+		if (storage.estmDetail !== undefined) {
 			writer.value = storage.user[storage.estmDetail.writer].userName;
-			for(let key in storage.estmDetail.related.estimate){
+			for (let key in storage.estmDetail.related.estimate) {
 				let keyId = this.copyContainer.querySelector("#" + key);
 
-				if(keyId !== undefined && keyId !== null){
+				if (keyId !== undefined && keyId !== null) {
 					let value = storage.estmDetail.related.estimate[key];
-					if(key === "date"){
-						if(storage.estmDetail.related.estimate[key] !== null){
+					if (key === "date") {
+						if (storage.estmDetail.related.estimate[key] !== null) {
 							value = new Date(storage.estmDetail.related.estimate[key]);
 							value = CommonDatas.dateDis(value);
 							value = CommonDatas.dateFnc(value);
-						}else{
+						} else {
 							value = new Date().toISOString().substring(0, 10);
 						}
-					}else if(key === "customer"){
+					} else if (key === "customer") {
 						keyId.dataset.value = value;
 						value = storage.customer[value].name;
 					}
 					keyId.value = value;
 				}
 			}
-	
-			if(storage.estmDetail.related.estimate.items.length > 0){
+
+			if (storage.estmDetail.related.estimate.items.length > 0) {
 				let estimate = new Estimate(storage.estmDetail.related.estimate);
 				estimate.detail();
 			}
 		}
 
 		let detailChild = this.copyContainer.getElementsByClassName("pdfMainContainer")[0].children;
-		for(let i = 0; i < detailChild.length; i++){
+		for (let i = 0; i < detailChild.length; i++) {
 			let item = detailChild[i];
-			if(item.getAttribute("class") !== "pdfMainContentAddBtns"){
+			if (item.getAttribute("class") !== "pdfMainContentAddBtns") {
 				item.style.gridTemplateColumns = "10% 10% 20% 10% 10% 10% 10% 10% 10%";
 			}
 		}
-	
+
 		this.selectAddressInit();
 		ckeditor.config.readOnly = false;
 		window.setTimeout(setEditor(this.copyContainer), 100);
 	}
 
 	//견적 아이템 항목에 대한 textarea id 값 부여 함수
-	productNameSet(){
+	productNameSet() {
 		let pdfMainContentItem, itemProductName;
 		pdfMainContentItem = this.copyContainer.getElementsByClassName("pdfMainContentItem");
 		itemProductName = this.copyContainer.getElementsByClassName("itemSpec");
-	
-		for(let i = 1; i <= pdfMainContentItem.length; i++){
-			itemProductName[i-1].querySelector("textarea").setAttribute("id", "itemProductName_" + i);
+
+		for (let i = 1; i <= pdfMainContentItem.length; i++) {
+			itemProductName[i - 1].querySelector("textarea").setAttribute("id", "itemProductName_" + i);
 		}
 	}
 
 	//아이템의 순서를 셋팅해주는 함수
-	addItemIndex(){
+	addItemIndex() {
 		let mainDiv;
 		let index = 0;
 		mainDiv = this.copyContainer.getElementsByClassName("pdfMainContainer")[0].querySelectorAll("div");
-		
-		for(let i = 0; i < mainDiv.length; i++){
-			if(mainDiv[i].getAttribute("class") === "pdfMainContentItem"){
+
+		for (let i = 0; i < mainDiv.length; i++) {
+			if (mainDiv[i].getAttribute("class") === "pdfMainContentItem") {
 				index++;
 				mainDiv[i].getElementsByClassName("itemIndex")[0].innerHTML = index;
-			}else if(mainDiv[i].getAttribute("class") === "pdfMainContentTitle"){
+			} else if (mainDiv[i].getAttribute("class") === "pdfMainContentTitle") {
 				index = 0;
 			}
 		}
 	}
 
 	//회사 주소들을 셋팅해주는 함수
-	selectAddressInit(index){
+	selectAddressInit(index) {
 		let firmName, representative, address, phone, fax;
 		firmName = this.copyContainer.querySelector("#firmName");
 		representative = this.copyContainer.querySelector("#representative");
 		address = this.copyContainer.getElementsByClassName("address")[1];
 		phone = this.copyContainer.querySelector("#phone");
 		fax = this.copyContainer.querySelector("#fax");
-	
-		if(index === undefined){
+
+		if (index === undefined) {
 			firmName.value = storage.estimateBasic[1].firmName;
 			representative.value = storage.estimateBasic[1].representative;
 			address.value = storage.estimateBasic[1].address;
 			phone.value = storage.estimateBasic[1].phone;
 			fax.value = storage.estimateBasic[1].fax;
-		}else{
+		} else {
 			firmName.value = storage.estimateBasic[index].firmName;
 			representative.value = storage.estimateBasic[index].representative;
 			address.value = storage.estimateBasic[index].address;
@@ -1824,10 +1824,10 @@ class EstimateSet{
 	}
 
 	//견적 메인 검색 리스트 저장 함수
-	addSearchList(){
+	addSearchList() {
 		storage.searchList = [];
-	
-		for(let i = 0; i < storage.estimateList.length; i++){
+
+		for (let i = 0; i < storage.estimateList.length; i++) {
 			let total, title, version, disDate, setDate;
 			disDate = CommonDatas.dateDis(storage.estimateList[i].date);
 			setDate = parseInt(CommonDatas.dateFnc(disDate).replaceAll("-", ""));
@@ -1837,59 +1837,59 @@ class EstimateSet{
 			storage.searchList.push("#" + title + "#" + version + "#date" + setDate + "#price" + total);
 		}
 	}
-	
+
 	//견적 메인 검색 버튼 실행 함수
-	searchSubmit(){
+	searchSubmit() {
 		let dataArray = [], resultArray, eachIndex = 0, searchTitle, searchVersion, searchPriceFrom, searchDateFrom;
-	
+
 		searchTitle = "#1/" + document.getElementById("searchTitle").value;
 		searchVersion = "#2/" + document.getElementById("searchVersion").value;
 		searchPriceFrom = (document.getElementById("searchPriceFrom").value === "") ? "" : document.getElementById("searchPriceFrom").value.replaceAll(",", "") + "#price" + document.getElementById("searchPriceTo").value.replaceAll(",", "");
 		searchDateFrom = (document.getElementById("searchDateFrom").value === "") ? "" : document.getElementById("searchDateFrom").value.replaceAll("-", "") + "#date" + document.getElementById("searchDateTo").value.replaceAll("-", "");
-		
+
 		let searchValues = [searchTitle, searchVersion, searchPriceFrom, searchDateFrom];
-	
-		for(let i = 0; i < searchValues.length; i++){
-			if(searchValues[i] !== "" && searchValues[i] !== undefined && searchValues[i] !== null){
+
+		for (let i = 0; i < searchValues.length; i++) {
+			if (searchValues[i] !== "" && searchValues[i] !== undefined && searchValues[i] !== null) {
 				let tempArray = CommonDatas.searchDataFilter(storage.estimateList, searchValues[i], "multi");
-				
-				for(let t = 0; t < tempArray.length; t++){
+
+				for (let t = 0; t < tempArray.length; t++) {
 					dataArray.push(tempArray[t]);
 				}
-	
+
 				eachIndex++;
 			}
 		}
-	
+
 		resultArray = CommonDatas.searchMultiFilter(eachIndex, dataArray, storage.estimateList);
-		
+
 		storage.searchDatas = resultArray;
-	
-		if(storage.searchDatas.length == 0){
+
+		if (storage.searchDatas.length == 0) {
 			msg.set("찾는 데이터가 없습니다.");
 			storage.searchDatas = storage.estimateList;
 		}
-		
+
 		this.drawEstmList();
 	}
-	
+
 	//견적 메인 input 검색 keyup 함수
-	searchInputKeyup(){
+	searchInputKeyup() {
 		let searchAllInput, tempArray;
 		searchAllInput = document.getElementById("searchAllInput").value;
 		tempArray = CommonDatas.searchDataFilter(storage.estimateList, searchAllInput, "input");
-	
-		if(tempArray.length > 0){
+
+		if (tempArray.length > 0) {
 			storage.searchDatas = tempArray;
-		}else{
+		} else {
 			storage.searchDatas = "";
 		}
-	
+
 		this.drawEstmList();
 	}
-	
+
 	//견적 타이틀 추가 함수
-	addEstTitle(e){
+	addEstTitle(e) {
 		let thisEle, subTitleIndex, createDiv;
 		createDiv = document.createElement("div");
 		createDiv.className = "pdfMainContentTitle";
@@ -1901,9 +1901,9 @@ class EstimateSet{
 		subTitleIndex[subTitleIndex.length - 1].innerHTML = this.romanize(subTitleIndex.length);
 		storage.subItemLength = 0;
 	}
-	
+
 	//견적 아이템 추가 함수
-	addEstItem(e){
+	addEstItem(e) {
 		let thisEle, createDiv;
 		createDiv = document.createElement("div");
 		createDiv.className = "pdfMainContentItem";
@@ -1916,9 +1916,9 @@ class EstimateSet{
 		window.setTimeout(setEditor(this.copyContainer), 100);
 		this.addItemIndex();
 	}
-	
+
 	//견적 아이템 + 버튼 함수
-	oneEstItemAdd(e){
+	oneEstItemAdd(e) {
 		let thisEle, parent, createDiv;
 		createDiv = document.createElement("div");
 		createDiv.className = "pdfMainContentItem";
@@ -1932,23 +1932,23 @@ class EstimateSet{
 		window.setTimeout(setEditor(this.copyContainer), 100);
 		this.addItemIndex();
 	}
-	
+
 	//견적 아이템 제거 함수
-	removeEstItem(e){
+	removeEstItem(e) {
 		let thisEle;
 		thisEle = e;
-	
-		if(thisEle.parentElement.previousSibling.getAttribute("class") !== "pdfMainContentHeader"){
+
+		if (thisEle.parentElement.previousSibling.getAttribute("class") !== "pdfMainContentHeader") {
 			thisEle.parentElement.previousSibling.remove();
 		}
-	
+
 		this.addItemIndex();
 		this.setTotalHtml();
 		this.setTitleTotal();
 	}
-	
+
 	//견적 아이템 - 버튼 함수
-	oneEstItemRemove(e){
+	oneEstItemRemove(e) {
 		let thisEle, parent;
 		thisEle = e;
 		parent = thisEle.parentElement.parentElement;
@@ -1957,103 +1957,103 @@ class EstimateSet{
 		this.setTotalHtml();
 		this.setTitleTotal();
 	}
-	
+
 	//견적 타이틀 번호 로마 숫자로 변환할때 쓰는 함수
 	romanize(num) {
 		let digits, key, roman, i;
 		if (isNaN(num)) return NaN;
 		digits = String(+num).split("");
-		key = ["","C","CC","CCC","CD","D","DC","DCC","DCCC","CM","","X","XX","XXX","XL","L","LX","LXX","LXXX","XC","","I","II","III","IV","V","VI","VII","VIII","IX"];
+		key = ["", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM", "", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC", "", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"];
 		roman = "";
 		i = 3;
 		while (i--) roman = (key[+digits.pop() + (i * 10)] || "") + roman;
 		return Array(+digits.join("") + 1).join("M") + roman;
 	}
-	
+
 	//견적 현재 아이템 총합 계산 함수
-	itemCalKeyup(e){
+	itemCalKeyup(e) {
 		let thisEle, itemQuantity, itemAmount, itemTotal, cal;
 		thisEle = e;
 		itemQuantity = thisEle.parentElement.parentElement.getElementsByClassName("itemQuantity")[0].children[0];
 		itemAmount = thisEle.parentElement.parentElement.getElementsByClassName("itemAmount")[0].children[0];
 		itemTotal = thisEle.parentElement.parentElement.getElementsByClassName("itemTotal")[0];
-		
-		if(itemQuantity.value === ""){
+
+		if (itemQuantity.value === "") {
 			itemQuantity.value = 1;
 		}
-		
-		thisEle.value = thisEle.value.replace(/[^0-9]/g,"");
+
+		thisEle.value = thisEle.value.replace(/[^0-9]/g, "");
 		cal = parseInt(itemAmount.value.replaceAll(",", "")) * parseInt(itemQuantity.value);
 		itemTotal.innerHTML = cal.toLocaleString("en-US");
 		inputNumberFormat($(e));
 		this.setTotalHtml();
 		this.setTitleTotal();
 	}
-	
+
 	//주소 변경 함수
-	selectAddressChange(e){
+	selectAddressChange(e) {
 		let thisEle, thisEleIndex;
 		thisEle = e;
 		thisEleIndex = thisEle.value;
 		this.selectAddressInit(thisEleIndex);
 	}
-	
+
 	//견적 아이템 공급가액, 부가세액, 총합을 계산하는 함수
-	setTotalHtml(){
+	setTotalHtml() {
 		let pdfMainContentAmount, pdfMainContentTotal, pdfHeadInfoPrice, pdfMainContentItem, pdfMainContentTax, calAmount = 0;
 		pdfMainContentAmount = this.copyContainer.getElementsByClassName("pdfMainContentAmount")[0].querySelectorAll("div")[1];
 		pdfMainContentTotal = this.copyContainer.getElementsByClassName("pdfMainContentTotal")[0].querySelectorAll("div")[1];
 		pdfHeadInfoPrice = this.copyContainer.getElementsByClassName("pdfHeadInfoPrice")[0].querySelectorAll("div")[0].children[2];
 		pdfMainContentItem = this.copyContainer.getElementsByClassName("pdfMainContentItem");
 		pdfMainContentTax = this.copyContainer.getElementsByClassName("pdfMainContentTax")[0].querySelectorAll("div")[1];
-	
-		for(let i = 0; i < pdfMainContentItem.length; i++){
+
+		for (let i = 0; i < pdfMainContentItem.length; i++) {
 			let item = parseInt(pdfMainContentItem[i].getElementsByClassName("itemTotal")[0].innerHTML.replace(/,/g, ""));
-			
-			if(isNaN(item)){
+
+			if (isNaN(item)) {
 				item = 0;
 			}
-			
+
 			calAmount += item;
 		}
-	
+
 		pdfMainContentAmount.innerHTML = calAmount.toLocaleString("en-US");
-	
-		if(this.copyContainer.querySelector("#vatTrue").checked){
+
+		if (this.copyContainer.querySelector("#vatTrue").checked) {
 			pdfMainContentTax.innerHTML = parseInt(pdfMainContentAmount.innerHTML.replace(/,/g, "") / 10).toLocaleString("en-US");
-		}else{
+		} else {
 			pdfMainContentTax.innerHTML = 0;
 		}
-	
+
 		pdfMainContentTotal.innerHTML = (calAmount + parseInt(pdfMainContentTax.innerHTML.replace(/,/g, ""))).toLocaleString("en-US");
 		pdfHeadInfoPrice.value = pdfMainContentTotal.innerHTML;
 	}
-	
+
 	//견적 타이틀 총합 계산 출력해주는 함수
-	setTitleTotal(){
+	setTitleTotal() {
 		let mainDiv;
 		let calTotal = 0;
 		mainDiv = this.copyContainer.getElementsByClassName("pdfMainContainer")[0].querySelectorAll("div");
-		
-		for(let i = mainDiv.length-1; i >= 0; i--){
-			if(mainDiv[i].getAttribute("class") === "pdfMainContentItem"){
-				if(mainDiv[i].getElementsByClassName("itemTotal")[0].innerHTML !== ""){
+
+		for (let i = mainDiv.length - 1; i >= 0; i--) {
+			if (mainDiv[i].getAttribute("class") === "pdfMainContentItem") {
+				if (mainDiv[i].getElementsByClassName("itemTotal")[0].innerHTML !== "") {
 					calTotal += parseInt(mainDiv[i].getElementsByClassName("itemTotal")[0].innerHTML.replace(/,/g, ""));
 				}
-			}else if(mainDiv[i].getAttribute("class") === "pdfMainContentTitle"){
+			} else if (mainDiv[i].getAttribute("class") === "pdfMainContentTitle") {
 				mainDiv[i].getElementsByClassName("subTitleTotal")[0].innerHTML = calTotal.toLocaleString("en-Us");
 				calTotal = 0;
 			}
 		}
 	}
-	
+
 	//견적 추가/수정 시 모든 input 및 textarea 등을 제거하고 텍스트만 그대로 div로 이동시키는 함수
-	insertCopyPdf(){
+	insertCopyPdf() {
 		let mainPdf, pdfMainContentAddBtns;
 		pdfMainContentAddBtns = this.copyContainer.getElementsByClassName("pdfMainContentAddBtns")[0];
 		this.copyContainer.getElementsByClassName("selectAddress")[0].remove();
 		pdfMainContentAddBtns.remove();
-	
+
 		if (typeof CKEDITOR !== undefined) {
 			if ($(CKEDITOR.instances).length) {
 				for (var key in CKEDITOR.instances) {
@@ -2061,49 +2061,49 @@ class EstimateSet{
 				}
 			}
 		}
-		
+
 		let mainInput = this.copyContainer.querySelectorAll("input");
-		for(let i = 0; i < mainInput.length; i++){
+		for (let i = 0; i < mainInput.length; i++) {
 			let item = mainInput[i];
 			let parent = item.parentElement;
-	
-			if(item.getAttribute("type") === "radio"){
-				if(item.getAttribute("name") === "vat"){
+
+			if (item.getAttribute("type") === "radio") {
+				if (item.getAttribute("name") === "vat") {
 					let createDiv = document.createElement("div");
 					createDiv.className = "afterDiv";
 
-					if(this.copyContainer.querySelector("[name=\"vat\"]").checked && this.copyContainer.querySelector("[name=\"vat\"]").dataset.value){
+					if (this.copyContainer.querySelector("[name=\"vat\"]").checked && this.copyContainer.querySelector("[name=\"vat\"]").dataset.value) {
 						createDiv.innerText = " (VAT 포함)";
 						item.after(createDiv);
-					}else if(this.copyContainer.querySelector("[name=\"vat\"]").checked && !this.copyContainer.querySelector("[name=\"vat\"]").dataset.value){
+					} else if (this.copyContainer.querySelector("[name=\"vat\"]").checked && !this.copyContainer.querySelector("[name=\"vat\"]").dataset.value) {
 						createDiv.innerText = " (VAT 비포함)";
 						item.after(createDiv);
 					}
-					
-					for(let i = 0; i < parent.querySelectorAll("input[type=\"radio\"]").length; i++){
+
+					for (let i = 0; i < parent.querySelectorAll("input[type=\"radio\"]").length; i++) {
 						parent.querySelectorAll("input[type=\"radio\"]")[i].remove();
 					}
-					
-					for(let i = 0; i < parent.querySelectorAll("label").length; i++){
+
+					for (let i = 0; i < parent.querySelectorAll("label").length; i++) {
 						parent.querySelectorAll("label")[i].remove();
 					}
 				}
-			}else{
+			} else {
 				let createDiv = document.createElement("div");
 				createDiv.className = "afterDiv";
 
-				if(parent.getAttribute("class") === "vatInfo"){
+				if (parent.getAttribute("class") === "vatInfo") {
 					createDiv.innerText = item.value;
 					parent.children[1].after(createDiv);
 					item.remove();
-				}else{
+				} else {
 					createDiv.innerText = item.value;
 					parent.append(createDiv);
 					item.remove();
 				}
 			}
 		}
-		
+
 		let createSpan = document.createElement("span");
 		createSpan.style.fontSize = "11px";
 		createSpan.style.display = "flex";
@@ -2121,18 +2121,18 @@ class EstimateSet{
 		createSpan.style.paddingRight = "3px";
 		createSpan.innerText = "/";
 		this.copyContainer.getElementsByClassName("headInfoPhone")[0].querySelectorAll(".afterDiv")[0].after(createSpan);
-	
+
 		let pdfMainContainer = this.copyContainer.getElementsByClassName("pdfMainContainer")[0].querySelectorAll("div");
-		for(let i = 0; i < pdfMainContainer.length; i++){
+		for (let i = 0; i < pdfMainContainer.length; i++) {
 			let item = pdfMainContainer[i];
-			if(item.getAttribute("class") === "pdfMainContentHeader" || item.getAttribute("class") === "pdfMainContentTitle" || item.getAttribute("class") === "pdfMainContentItem"){
+			if (item.getAttribute("class") === "pdfMainContentHeader" || item.getAttribute("class") === "pdfMainContentTitle" || item.getAttribute("class") === "pdfMainContentItem") {
 				item.querySelectorAll("div")[item.querySelectorAll("div").length - 1].remove();
 				item.style.gridTemplateColumns = "10% 10% 30% 10% 10% 10% 10% 10%";
 			}
 		}
-		
+
 		let textarea = this.copyContainer.querySelectorAll("textarea");
-		for(let i = 0; i < textarea.length; i++){
+		for (let i = 0; i < textarea.length; i++) {
 			let item = textarea[i];
 			let parent = item.parentElement;
 			let createDiv = document.createElement("div");
@@ -2142,24 +2142,24 @@ class EstimateSet{
 			item.remove();
 		}
 	}
-	
+
 	//견적 pdf 다운로드 클릭 시 실행되는 함수
-	estimatePdf(title, userName){
+	estimatePdf(title, userName) {
 		let element = document.getElementById("estPrintPdf");
-	 
+
 		html2pdf().from(element).set({
 			margin: 0,
 			filename: title + "_" + userName + ".pdf",
 			html2canvas: { width: 835, height: 1000, scale: 10 },
-			jsPDF: {orientation: 'portrait', unit: 'mm', format: 'a4', compressPDF: true}
+			jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4', compressPDF: true }
 		}).save();
 	}
 }
 
 // 견적 등록/상세/수정 기능에 관한 클래스(this 처리에 대한 부분 아직 미적용 추후 수정할 예정(insert와 update도 합칠 예정))
-class Estimate{
-	constructor(getData){
-		if(getData !== undefined){
+class Estimate {
+	constructor(getData) {
+		if (getData !== undefined) {
 			this.doc = getData.doc;
 			this.address = getData.address;
 			this.cip = getData.cip;
@@ -2183,25 +2183,25 @@ class Estimate{
 	}
 
 	//견적 상세보기 아이템 셋팅 함수
-	detail(){
+	detail() {
 		let thisBtn;
 		let items = this.items;
-		
-		for(let i = 0; i < items.length; i++){
+
+		for (let i = 0; i < items.length; i++) {
 			let createDiv = document.createElement("div");
 			createDiv.className = "pdfMainContentItem";
 
-			if(this.form === "서브타이틀"){
+			if (this.form === "서브타이틀") {
 				let pdfMainContentTitle = this.copyContainer.getElementsByClassName("pdfMainContentTitle");
-				
-				if(pdfMainContentTitle.length == 0 || pdfMainContentTitle === undefined){
+
+				if (pdfMainContentTitle.length == 0 || pdfMainContentTitle === undefined) {
 					thisBtn = this.copyContainer.getElementsByClassName("pdfMainContentAddBtns")[0].querySelector("button");
 					CommonDatas.Temps.estimateSet.addEstTitle(thisBtn);
 					let subTitle = this.copyContainer.getElementsByClassName("subTitle");
 					subTitle[i].querySelector("input").value = items[i].title;
 				}
 			}
-			
+
 			createDiv.innerHTML = "<div class=\"itemIndex\"></div><div class=\"itemDivision\"><input type=\"text\" placeholder=\"SW\"></div><div class=\"itemSpec\"><input type=\"text\" data-complete=\"product\" data-value=\"0\" onclick=\"CommonDatas.addAutoComplete(this);\" onkeyup=\"CommonDatas.addAutoComplete(this);\"><textarea placeholder=\"품명\"></textarea></div><div class=\"itemQuantity\"><input type=\"text\" value=\"1\" onkeyup=\"CommonDatas.Temps.estimateSet.itemCalKeyup(this);\"></div><div class=\"itemConsumer\"></div><div class=\"itemAmount\"><input type=\"text\" onkeyup=\"CommonDatas.Temps.estimateSet.itemCalKeyup(this);\" placeholder=\"1,000,000\"></div><div class=\"itemTotal\"></div><div class=\"itemRemarks\"><input type=\"text\" placeholder=\"비고\"></div><div class=\"itemBtns\"><button type=\"button\" onclick=\"CommonDatas.Temps.estimateSet.oneEstItemAdd(this);\">+</button><button type=\"button\" onclick=\"CommonDatas.Temps.estimateSet.oneEstItemRemove(this);\">-</button></div>";
 			thisBtn = this.copyContainer.getElementsByClassName("pdfMainContentAddBtns")[0].querySelectorAll("button")[1];
 			thisBtn.parentElement.before(createDiv);
@@ -2209,14 +2209,14 @@ class Estimate{
 			pdfMainContentItem.getElementsByClassName("itemDivision")[0].querySelector("input").value = items[i].div;
 			pdfMainContentItem.getElementsByClassName("itemSpec")[0].querySelector("input").value = items[i].item;
 			pdfMainContentItem.getElementsByClassName("itemSpec")[0].querySelector("input").dataset.value = 0;
-			
-			for(let t = 0; t < storage.product.length; t++){
-				if(storage.product[t].no.toString() === items[i].item){
+
+			for (let t = 0; t < storage.product.length; t++) {
+				if (storage.product[t].no.toString() === items[i].item) {
 					pdfMainContentItem.getElementsByClassName("itemSpec")[0].querySelector("input").value = storage.product[t].name;
 					pdfMainContentItem.getElementsByClassName("itemSpec")[0].querySelector("input").dataset.value = storage.product[t].no;
 				}
 			}
-			
+
 			pdfMainContentItem.getElementsByClassName("itemSpec")[0].querySelector("textarea").value = items[i].spec;
 			pdfMainContentItem.getElementsByClassName("itemQuantity")[0].querySelector("input").value = items[i].quantity;
 			pdfMainContentItem.getElementsByClassName("itemAmount")[0].querySelector("input").value = numberFormat(items[i].price);
@@ -2229,39 +2229,39 @@ class Estimate{
 	}
 
 	//새 견적 추가 실행 함수
-	insert(){
-		if(this.copyContainer.querySelector("#date").value === ""){
+	insert() {
+		if (this.copyContainer.querySelector("#date").value === "") {
 			msg.set("견적일자를 입력해주세요.");
 			this.copyContainer.querySelector("#date").focus();
 			return false;
-		}else if(this.copyContainer.querySelector("#title").value === ""){
+		} else if (this.copyContainer.querySelector("#title").value === "") {
 			msg.set("사업명을 입력해주세요.");
 			this.copyContainer.querySelector("#title").focus();
 			return false;
-		}else if(this.copyContainer.querySelector("#customer").value === ""){
+		} else if (this.copyContainer.querySelector("#customer").value === "") {
 			msg.set("고객사를 입력해주세요.");
 			this.copyContainer.querySelector("#customer").focus();
 			return false;
-		}else if(!validateAutoComplete($("#customer").val(), "customer")){
+		} else if (!validateAutoComplete($("#customer").val(), "customer")) {
 			msg.set("조회된 매출처가 없습니다.\n다시 확인해주세요.");
 			this.copyContainer.querySelector("#customer").focus();
 			return false;
-		}else if(this.copyContainer.querySelector("#cip").value === ""){
+		} else if (this.copyContainer.querySelector("#cip").value === "") {
 			msg.set("고객사 담당자를 입력해주세요.");
 			this.copyContainer.querySelector("#cip").focus();
 			return false;
-		}else if(!validateAutoComplete($("#cip").val(), "cip")){
+		} else if (!validateAutoComplete($("#cip").val(), "cip")) {
 			msg.set("조회된 매출처 담당자가 없습니다.\n다시 확인해주세요.");
 			this.copyContainer.querySelector("#cip").focus();
 			return false;
-		}else if(this.copyContainer.querySelector("#exp").value === ""){
+		} else if (this.copyContainer.querySelector("#exp").value === "") {
 			msg.set("유효기간을 입력해주세요.");
 			this.copyContainer.querySelector("#exp").focus();
 			return false;
-		}else if(this.copyContainer.getElementsByClassName("pdfMainContainer")[0].querySelectorAll(".pdfMainContentItem").length < 1){
+		} else if (this.copyContainer.getElementsByClassName("pdfMainContainer")[0].querySelectorAll(".pdfMainContentItem").length < 1) {
 			msg.set("항목을 1개 이상 추가하여 입력해주세요.");
 			return false;
-		}else{
+		} else {
 			let address, cip, customer, date, exp, fax, firmName, phone, representative, title, pdfMainContentTitle, pdfMainContentItem, addPdfForm, items, form, datas, remarks, soppNo;
 			pdfMainContentTitle = this.copyContainer.getElementsByClassName("pdfMainContainer")[0].querySelectorAll(".pdfMainContentTitle");
 			pdfMainContentItem = this.copyContainer.getElementsByClassName("pdfMainContainer")[0].querySelectorAll(".pdfMainContentItem");
@@ -2278,33 +2278,33 @@ class Estimate{
 			title = this.copyContainer.querySelector("#title").value;
 			soppNo = (storage.estimateVerSoppNo === undefined) ? null : storage.estimateVerSoppNo;
 			items = [];
-			
-			if(pdfMainContentTitle.length > 0){
+
+			if (pdfMainContentTitle.length > 0) {
 				form = "서브타이틀";
-			}else{
+			} else {
 				form = "기본견적서";
 			}
-		
-			for(let i = 0; i < pdfMainContentItem.length; i++){
+
+			for (let i = 0; i < pdfMainContentItem.length; i++) {
 				let item = pdfMainContentItem[i];
 				let textareaId = item.getElementsByClassName("itemSpec")[0].querySelector("textarea").getAttribute("id");
 				let itemTitle = $(item).prevAll(".pdfMainContentTitle").eq(0).find(".subTitle").children().val();
 				let price;
-		
-				if(this.copyContainer.querySelector("[name=\"vat\"]:checked").dataset.value){
+
+				if (this.copyContainer.querySelector("[name=\"vat\"]:checked").dataset.value) {
 					let tax = parseInt(item.getElementsByClassName("itemTotal")[0].innerHTML.replaceAll(",", "") / 10);
 					price = parseInt(item.getElementsByClassName("itemTotal")[0].innerHTML.replaceAll(",", "")) + parseInt(tax);
-				}else{
+				} else {
 					price = parseInt(item.getElementsByClassName("itemTotal")[0].innerHTML.replaceAll(",", ""));
 				}
-		
-				if(itemTitle === undefined){
+
+				if (itemTitle === undefined) {
 					itemTitle = "";
 				}
-				
+
 				let itemDatas = {
 					"div": item.getElementsByClassName("itemDivision")[0].children[0].value,
-					"price": parseInt(item.getElementsByClassName("itemTotal")[0].innerHTML.replaceAll(",", "")), 
+					"price": parseInt(item.getElementsByClassName("itemTotal")[0].innerHTML.replaceAll(",", "")),
 					"quantity": parseInt(item.getElementsByClassName("itemQuantity")[0].children[0].value),
 					"remark": item.getElementsByClassName("itemRemarks")[0].children[0].value,
 					"spec": CKEDITOR.instances[textareaId].getData().replaceAll("\n", ""),
@@ -2315,14 +2315,14 @@ class Estimate{
 				};
 				items.push(itemDatas);
 			}
-		
+
 			CommonDatas.Temps.estimateSet.insertCopyPdf();
-			
+
 			setTimeout(() => {
-				addPdfForm = document.getElementsByClassName("addPdfForm")[0];	
-			
+				addPdfForm = document.getElementsByClassName("addPdfForm")[0];
+
 				datas = {
-					"doc": addPdfForm.innerHTML.replaceAll("\r","").replaceAll("\n",""),
+					"doc": addPdfForm.innerHTML.replaceAll("\r", "").replaceAll("\n", ""),
 					"address": address,
 					"cip": cip,
 					"customer": customer,
@@ -2344,7 +2344,7 @@ class Estimate{
 						"previous": null,
 						"next": [null],
 						"estimate": {
-							"doc": addPdfForm.innerHTML.replaceAll("\r","").replaceAll("\n",""),
+							"doc": addPdfForm.innerHTML.replaceAll("\r", "").replaceAll("\n", ""),
 							"address": address,
 							"cip": cip,
 							"customer": customer,
@@ -2366,12 +2366,12 @@ class Estimate{
 					},
 					"remarks": remarks,
 				};
-			
+
 				datas = JSON.stringify(datas);
 				datas = cipher.encAes(datas);
-			
+
 				axios.post("/api/estimate", datas, {
-					headers: {"Content-Type": "text/plain"}
+					headers: { "Content-Type": "text/plain" }
 				}).then(() => {
 					location.reload();
 					msg.set("등록되었습니다.");
@@ -2380,42 +2380,42 @@ class Estimate{
 				});
 			}, 300)
 		}
-	}	
+	}
 
 	//견적 수정 실행 함수
-	update(){
-		if(this.copyContainer.querySelector("#date").value === ""){
+	update() {
+		if (this.copyContainer.querySelector("#date").value === "") {
 			msg.set("견적일자를 입력해주세요.");
 			this.copyContainer.querySelector("#date").focus();
 			return false;
-		}else if(this.copyContainer.querySelector("#title").value === ""){
+		} else if (this.copyContainer.querySelector("#title").value === "") {
 			msg.set("사업명을 입력해주세요.");
 			this.copyContainer.querySelector("#title").focus();
 			return false;
-		}else if(this.copyContainer.querySelector("#customer").value === ""){
+		} else if (this.copyContainer.querySelector("#customer").value === "") {
 			msg.set("고객사를 입력해주세요.");
 			this.copyContainer.querySelector("#customer").focus();
 			return false;
-		}else if(!validateAutoComplete($("#customer").val(), "customer")){
+		} else if (!validateAutoComplete($("#customer").val(), "customer")) {
 			msg.set("조회된 매출처가 없습니다.\n다시 확인해주세요.");
 			$("#customer").focus();
 			return false;
-		}else if(this.copyContainer.querySelector("#cip").value === ""){
+		} else if (this.copyContainer.querySelector("#cip").value === "") {
 			msg.set("고객사 담당자를 입력해주세요.");
 			this.copyContainer.querySelector("#cip").focus();
 			return false;
-		}else if(!validateAutoComplete($("#cip").val(), "cip")){
+		} else if (!validateAutoComplete($("#cip").val(), "cip")) {
 			msg.set("조회된 매출처가 없습니다.\n다시 확인해주세요.");
 			this.copyContainer.querySelector("#cip").focus();
 			return false;
-		}else if(this.copyContainer.querySelector("#exp").value === ""){
+		} else if (this.copyContainer.querySelector("#exp").value === "") {
 			msg.set("유효기간을 입력해주세요.");
 			this.copyContainer.querySelector("#exp").focus();
 			return false;
-		}else if(this.copyContainer.getElementsByClassName("pdfMainContainer")[0].getElementsByClassName("pdfMainContentItem").length < 1){
+		} else if (this.copyContainer.getElementsByClassName("pdfMainContainer")[0].getElementsByClassName("pdfMainContentItem").length < 1) {
 			msg.set("항목을 1개 이상 추가하여 입력해주세요.");
 			return false;
-		}else{
+		} else {
 			let address, cip, customer, date, exp, fax, firmName, phone, representative, title, pdfMainContentTitle, pdfMainContentItem, addPdfForm, items, form, datas, remarks, soppNo;
 			pdfMainContentTitle = this.copyContainer.getElementsByClassName("pdfMainContainer")[0].getElementsByClassName("pdfMainContentTitle");
 			pdfMainContentItem = this.copyContainer.getElementsByClassName("pdfMainContainer")[0].getElementsByClassName("pdfMainContentItem");
@@ -2432,33 +2432,33 @@ class Estimate{
 			title = this.copyContainer.querySelector("#title").value;
 			soppNo = (storage.estimateVerSoppNo === undefined) ? null : storage.estimateVerSoppNo;
 			items = [];
-			
-			if(pdfMainContentTitle.length > 0){
+
+			if (pdfMainContentTitle.length > 0) {
 				form = "서브타이틀";
-			}else{
+			} else {
 				form = "기본견적서";
 			}
-		
-			for(let i = 0; i < pdfMainContentItem.length; i++){
+
+			for (let i = 0; i < pdfMainContentItem.length; i++) {
 				let item = pdfMainContentItem[i];
 				let textareaId = item.getElementsByClassName("itemSpec")[0].querySelector("textarea").getAttribute("id");
 				let itemTitle = $(item).prevAll(".pdfMainContentTitle").eq(0).find(".subTitle").children().val();
 				let price;
-		
-				if(this.copyContainer.querySelector("[name=\"vat\"]:checked").dataset.value){
+
+				if (this.copyContainer.querySelector("[name=\"vat\"]:checked").dataset.value) {
 					let tax = parseInt(item.getElementsByClassName("itemTotal")[0].innerHTML.replaceAll(",", "") / 10);
 					price = parseInt(item.getElementsByClassName("itemTotal")[0].innerHTML.replaceAll(",", "")) + parseInt(tax);
-				}else{
+				} else {
 					price = parseInt(item.getElementsByClassName("itemTotal")[0].innerHTML.replaceAll(",", ""));
 				}
-		
-				if(itemTitle === undefined){
+
+				if (itemTitle === undefined) {
 					itemTitle = "";
 				}
-		
+
 				let itemDatas = {
 					"div": item.getElementsByClassName("itemDivision")[0].children[0].value,
-					"price": parseInt(item.getElementsByClassName("itemTotal")[0].innerHTML.replaceAll(",", "")), 
+					"price": parseInt(item.getElementsByClassName("itemTotal")[0].innerHTML.replaceAll(",", "")),
 					"quantity": parseInt(item.getElementsByClassName("itemQuantity")[0].children[0].value),
 					"remark": item.getElementsByClassName("itemRemarks")[0].children[0].value,
 					"spec": CKEDITOR.instances[textareaId].getData().replaceAll("\n", ""),
@@ -2470,14 +2470,14 @@ class Estimate{
 
 				items.push(itemDatas);
 			}
-		
+
 			CommonDatas.Temps.estimateSet.insertCopyPdf();
-			
+
 			setTimeout(() => {
 				addPdfForm = document.getElementsByClassName("addPdfForm")[0];
-			
+
 				datas = {
-					"doc": addPdfForm.innerHTML.replaceAll("\r","").replaceAll("\n",""),
+					"doc": addPdfForm.innerHTML.replaceAll("\r", "").replaceAll("\n", ""),
 					"address": address,
 					"cip": cip,
 					"customer": customer,
@@ -2499,7 +2499,7 @@ class Estimate{
 						"previous": null,
 						"next": [null],
 						"estimate": {
-							"doc": addPdfForm.innerHTML.replaceAll("\r","").replaceAll("\n",""),
+							"doc": addPdfForm.innerHTML.replaceAll("\r", "").replaceAll("\n", ""),
 							"address": address,
 							"cip": cip,
 							"customer": customer,
@@ -2521,12 +2521,12 @@ class Estimate{
 					},
 					"remarks": remarks,
 				};
-			
+
 				datas = JSON.stringify(datas);
 				datas = cipher.encAes(datas);
-			
+
 				axios.post("/api/estimate/" + storage.estmDetail.no, datas, {
-					headers: {"Content-Type": "text/plain"}
+					headers: { "Content-Type": "text/plain" }
 				}).then(() => {
 					location.reload();
 					msg.set("수정되었습니다.");
@@ -2538,86 +2538,92 @@ class Estimate{
 	}
 }
 
-class Common{
-	constructor(){
+class Common {
+	constructor() {
 		this.Temps = {};
 	}
 	//페이지 로드될 때 top menu active 함수
-	setTopPathActive(){
+	setTopPathActive() {
 		let path = location.pathname.split("/");
 		let container;
 
-		if(path[1] === "" || path[1] === "business"){
-			container = document.getElementsByClassName("mainTopMenu")[0].querySelector("div[data-path=\"/\"]");
-		}else if(path[1] === "gw"){
+		if (path[1] === "" || path[1] === "business") {
+			if (path[3] != "popup") {
+				container = document.getElementsByClassName("mainTopMenu")[0].querySelector("div[data-path=\"/\"]");
+			}
+
+		} else if (path[1] === "gw") {
 			container = document.getElementsByClassName("mainTopMenu")[0].querySelector("div[data-path=\"/gw/home\"]");
-		}else{
+		} else {
 			container = document.getElementsByClassName("mainTopMenu")[0].querySelector("div[data-path=\"/accounting/home\"]");
 		}
-
-		container.classList.add("active");
+		if (path[3] != "popup") {
+			container.classList.add("active");
+		}
 	}
 
 	//페이지 로드될 때 side menu active 함수
-	setSidePathActive(){
+	setSidePathActive() {
 		let path = location.pathname.split("/");
 		let menuItem = document.getElementsByClassName("menuItem");
 		let container
-		
-		if(path[1] === "" || path[1] === "business"){
-			container = document.getElementsByClassName("sideMenu")[0].querySelector("div[data-path=\"/\"]");
-		}else if(path[1] === "gw"){
+
+		if (path[1] === "" || path[1] === "business") {
+			if (path[3] != "popup") {
+				container = document.getElementsByClassName("sideMenu")[0].querySelector("div[data-path=\"/\"]");
+			}
+		} else if (path[1] === "gw") {
 			container = document.getElementsByClassName("sideMenu")[0].querySelector("div[data-path=\"/gw/home\"]");
-		}else{
+		} else {
 			container = document.getElementsByClassName("sideMenu")[0].querySelector("div[data-path=\"/accounting/home\"]");
 		}
 
-		for(let i = 0; i < menuItem.length; i++){
+		for (let i = 0; i < menuItem.length; i++) {
 			let item = menuItem[i];
-			
-			if(path[1] !== ""){
+
+			if (path[1] !== "") {
 				let label = item.querySelector("label");
 
-				if(label === null){
+				if (label === null) {
 					let itemA = item.querySelector("a");
 
-					if(itemA.getAttribute("href").indexOf("/" + path[1] + "/" + path[2]) > -1){
+					if (itemA.getAttribute("href").indexOf("/" + path[1] + "/" + path[2]) > -1) {
 						itemA.classList.add("active");
-					}else{
-						if(path[2] === "sopp2"){
-							if(itemA.getAttribute("href") === "/" + path[1] + "/project"){
+					} else {
+						if (path[2] === "sopp2") {
+							if (itemA.getAttribute("href") === "/" + path[1] + "/project") {
 								itemA.classList.add("active");
 							}
 						}
 					}
-				}else{
+				} else {
 					let aTarget = item.nextElementSibling.querySelectorAll("div");
-					
-					for(let t = 0; t < aTarget.length; t++){
+
+					for (let t = 0; t < aTarget.length; t++) {
 						let target = aTarget[t].querySelector("a");
 						let targetLabel = target.parentElement.parentElement.previousElementSibling.children[1];
 						let targetPlus = target.parentElement.parentElement.previousElementSibling.children[1].children[2];
 						let targetPanel = target.parentElement.parentElement;
-	
-						if(target.getAttribute("href").indexOf("/" + path[1] + "/" + path[2]) > -1){
-							if(path[2] === "sopp"){
-								if(target.getAttribute("href") === "/" + path[1] + "/" + path[2]){
+
+						if (target.getAttribute("href").indexOf("/" + path[1] + "/" + path[2]) > -1) {
+							if (path[2] === "sopp") {
+								if (target.getAttribute("href") === "/" + path[1] + "/" + path[2]) {
 									target.classList.add("active");
 								}
-							}else if(path[2] === "workreport"){
-								if(target.getAttribute("href") === "/" + path[1] + "/" + path[2]){
+							} else if (path[2] === "workreport") {
+								if (target.getAttribute("href") === "/" + path[1] + "/" + path[2]) {
 									target.classList.add("active");
 								}
-							}else{
+							} else {
 								target.classList.add("active");
 							}
 
 							targetLabel.classList.add("active");
 							targetPlus.innerText = "-";
 							targetPanel.classList.add("active");
-						}else{
-							if(path[2] === "sopp2"){
-								if(target.getAttribute("href") === "/" + path[1] + "/project"){
+						} else {
+							if (path[2] === "sopp2") {
+								if (target.getAttribute("href") === "/" + path[1] + "/project") {
 									target.classList.add("active");
 									targetLabel.classList.add("active");
 									targetPlus.innerText = "-";
@@ -2629,32 +2635,33 @@ class Common{
 				}
 			}
 		}
-
-		container.classList.add("active");
+		if (path[3] != "popup") {
+			container.classList.add("active");
+		}
 	}
 
 	//단일 top menu 클릭 시 실행되는 함수
-	topMenuClick(e){
+	topMenuClick(e) {
 		let thisEle = e;
 		let homePath = thisEle.dataset.path;
-		
-		if(homePath !== undefined){
-			if(homePath !== "/accounting/home"){
+
+		if (homePath !== undefined) {
+			if (homePath !== "/accounting/home") {
 				window.location.href = homePath;
-			}else{
+			} else {
 				let menus = document.getElementsByClassName("sideMenu")[0].children;
 				let topMenus = document.getElementsByClassName("mainTopMenu")[0].querySelectorAll("div");
-				
-				for(let i = 0; i < menus.length; i++){
-					if(menus[i].classList.contains("accounting")){
+
+				for (let i = 0; i < menus.length; i++) {
+					if (menus[i].classList.contains("accounting")) {
 						menus[i].style.display = "block";
-					}else{
+					} else {
 						menus[i].style.display = "none";
 					}
 				}
 
-				for(let i = 0; i < topMenus.length; i++){
-					if(topMenus[i].classList.contains("active")){
+				for (let i = 0; i < topMenus.length; i++) {
+					if (topMenus[i].classList.contains("active")) {
 						topMenus[i].classList.remove("active");
 					}
 				}
@@ -2665,26 +2672,26 @@ class Common{
 	}
 
 	//단일 side menu 클릭 시 실행되는 함수
-	sideMenuItemClick(){
+	sideMenuItemClick() {
 		let checkedRadio = document.getElementsByClassName("sideMenu")[0].querySelectorAll("input[type=\"radio\"]");
 
-		for(let i = 0; i < checkedRadio.length; i++){
+		for (let i = 0; i < checkedRadio.length; i++) {
 			let item = checkedRadio[i];
 			let label = item.nextElementSibling;
 			let plusBtn = label.children[2];
 			let panel = label.parentElement.nextElementSibling;
 
-			if(item.checked){
-				if(label.classList.contains("active")){
+			if (item.checked) {
+				if (label.classList.contains("active")) {
 					label.classList.remove("active");
 					panel.classList.remove("active");
 					plusBtn.innerText = "+";
-				}else{
+				} else {
 					label.classList.add("active");
 					panel.classList.add("active");
 					plusBtn.innerText = "-";
 				}
-			}else{
+			} else {
 				label.classList.remove("active");
 				panel.classList.remove("active");
 				plusBtn.innerText = "+";
@@ -2696,36 +2703,36 @@ class Common{
 	paging(total, currentPage, articlePerPage) {
 		let lastPage, result = [], max, getArticle;
 
-		if(document.getElementsByClassName("searchContainer")[0] === undefined){
+		if (document.getElementsByClassName("searchContainer")[0] === undefined) {
 			getArticle = 10;
-		}else{
+		} else {
 			getArticle = CommonDatas.calWindowLength();
 		}
-	
+
 		if (currentPage === undefined) {
 			storage.currentPage = 1;
 			currentPage = storage.currentPage;
 		}
-	
+
 		if (articlePerPage === undefined) {
-			if(isNaN(getArticle)){
+			if (isNaN(getArticle)) {
 				storage.articlePerPage = 10;
-			}else{
+			} else {
 				storage.articlePerPage = getArticle;
 			}
 			articlePerPage = storage.articlePerPage;
 		}
-	
+
 		max = Math.ceil(total / articlePerPage);
-	
+
 		lastPage = currentPage * articlePerPage;
-	
+
 		if (currentPage == max && total % articlePerPage !== 0) {
 			lastPage = ((max - 1) * articlePerPage) + (total % articlePerPage);
 		}
-	
+
 		result.push(currentPage, articlePerPage, lastPage, max);
-	
+
 		return result;
 	}
 
@@ -2739,14 +2746,14 @@ class Common{
 	//페이지의 높이 값 계산 함수
 	calWindowLength() {
 		let bodyContent, containerTitle, searchContainer, searchCal, titleCal, totalCal;
-	
+
 		bodyContent = document.getElementById("bodyContent");
 		searchContainer = document.getElementsByClassName("searchContainer")[0];
 		containerTitle = document.getElementById("containerTitle");
 		searchCal = searchContainer.offsetHeight === undefined ? parseInt(bodyContent.offsetHeight) : (parseInt(bodyContent.offsetHeight) - searchContainer.offsetHeight);
 		titleCal = parseInt(containerTitle.offsetHeight + 70);
 		totalCal = (parseInt(searchCal - titleCal) - parseInt(36)) / parseInt(38);
-	
+
 		return parseInt(totalCal);
 	}
 
@@ -2756,15 +2763,15 @@ class Common{
 		ids = (ids === undefined) ? 0 : ids;
 		fnc = (fnc === undefined) ? "" : fnc;
 		job = (job === undefined) ? "" : job;
-	
+
 		if (idName === undefined) {
 			idStr = "gridContent";
 		} else {
 			idStr = idName;
 		}
-	
+
 		gridHtml = "<div class='gridHeader grid_default_header_item'>";
-	
+
 		for (let i = 0; i < headerDataArray.length; i++) {
 			if (headerDataArray[i].align === "center") {
 				gridHtml += "<div class='gridHeaderItem grid_default_text_align_center'>" + headerDataArray[i].title + "</div>";
@@ -2774,9 +2781,9 @@ class Common{
 				gridHtml += "<div class='gridHeaderItem grid_default_text_align_right'>" + headerDataArray[i].title + "</div>";
 			}
 		}
-	
+
 		gridHtml += "</div>";
-	
+
 		for (let i = 0; i < dataArray.length; i++) {
 			gridHtml += "<div id='" + idStr + "_grid_" + i + "' class='gridContent grid_default_body_item' data-drag=\"true\" data-id='" + ids[i] + "' data-job='" + job[i] + "' onclick='" + fnc + "'>";
 			for (let t = 0; t <= dataArray[i].length; t++) {
@@ -2790,26 +2797,26 @@ class Common{
 			}
 			gridHtml += "</div>";
 		}
-	
+
 		gridContainer.innerHTML = gridHtml;
-	
+
 		if (idName === undefined) {
 			gridContents = document.getElementsByClassName("gridContent");
 		} else {
 			gridContents = document.querySelector("#" + idName).getElementsByClassName("gridContent");
 		}
-	
+
 		let tempArray = [];
-	
+
 		for (let i = 0; i < dataArray.length; i++) {
 			for (let key in dataArray[i]) {
 				tempArray.push(dataArray[i][key]);
 			}
 		}
-	
+
 		for (let i = 0; i < tempArray.length; i++) {
 			for (let t = 0; t < gridContents.length; t++) {
-				if(gridContents[t].getElementsByClassName("gridContentItem")[i] !== undefined){
+				if (gridContents[t].getElementsByClassName("gridContentItem")[i] !== undefined) {
 					if (tempArray[i].align === "center") {
 						gridContents[t].getElementsByClassName("gridContentItem")[i].setAttribute("class", "gridContentItem grid_default_text_align_center");
 					} else if (tempArray[i].align === "left") {
@@ -2866,7 +2873,7 @@ class Common{
 		} else if (type === "yy.mm.dd") {
 			result = year.toString().substring(2, 4) + "." + month + "." + day;
 		} else if (type === "mm.dd") {
-			result =  month + "." + day;;
+			result = month + "." + day;;
 		} else if (type === "yyyy-mm-dd T HH:mm") {
 			result = year + "-" + month + "-" + day + "T" + hh + ":" + mm;
 		}
@@ -2954,17 +2961,17 @@ class Common{
 	}
 
 	//뷰에 가리거나 보이게 하고 싶을 때 걸러내는 함수
-	setViewContents(hideArr, showArr){
-		for(let i = 0; i < hideArr.length; i++){
+	setViewContents(hideArr, showArr) {
+		for (let i = 0; i < hideArr.length; i++) {
 			let item = document.getElementsByClassName(hideArr[i])[0];
-			if(item !== undefined){
+			if (item !== undefined) {
 				item.style.display = "none";
 			}
 		}
-	
-		for(let i = 0; i < showArr.length; i++){
+
+		for (let i = 0; i < showArr.length; i++) {
 			let item = document.getElementsByClassName(showArr[i].element)[0];
-			if(item !== undefined){
+			if (item !== undefined) {
 				item.style.display = showArr[i].display;
 			}
 		}
@@ -3057,7 +3064,7 @@ class Common{
 		let dataComplete = (data.complete === undefined) ? "" : data.complete;
 		let autoComplete = (data.autoComplete === undefined) ? "off" : data.autoComplete;
 		let placeHolder = (data.placeHolder === undefined) ? "" : data.placeHolder;
-	
+
 		if (dataType === "text") {
 			if (dataDisabled == true) {
 				html += "<input type='text' id='" + elementId + "' name='" + elementName + "' autocomplete=\"" + autoComplete + "\" value='" + dataValue + "' data-complete='" + dataComplete + "' data-keyup='" + dataKeyup + "' onchange='" + dataChangeEvent + "' onclick='" + dataClickEvent + "' onkeyup='" + dataKeyupEvent + "' placeholder=\"" + placeHolder + "\" readonly>";
@@ -3075,9 +3082,9 @@ class Common{
 				if (data.radioType !== "tab") {
 					data.radioType = "default";
 				}
-	
+
 				html += "<div class=\"detailRadioBox\" data-type=\"" + data.radioType + "\">";
-	
+
 				if (dataDisabled == true) {
 					if (t == 0) {
 						html += "<input type='radio' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.radioValue[t].key + "' disabled='" + dataDisabled + "' data-type=\"" + data.radioType + "\" onclick='" + dataClickEvent + "' onChange=\"" + dataChangeEvent + "\" checked><label data-type=\"" + data.radioType + "\" for=\"" + elementId[t] + "\">" + data.radioValue[t].value + "</label>" + " ";
@@ -3091,7 +3098,7 @@ class Common{
 						html += "<input type='radio' id='" + elementId[t] + "' name='" + elementName + "' value='" + data.radioValue[t].key + "' data-type=\"" + data.radioType + "\" onclick='" + dataClickEvent + "' onChange=\"" + dataChangeEvent + "\"><label data-type=\"" + data.radioType + "\" for=\"" + elementId[t] + "\">" + data.radioValue[t].value + "</label>" + " ";
 					}
 				}
-	
+
 				html += "</div>";
 			}
 		} else if (dataType === "checkbox") {
@@ -3131,14 +3138,14 @@ class Common{
 			for (let t = 0; t < data.selectValue.length; t++) {
 				html += "<option value='" + data.selectValue[t].key + "'>" + data.selectValue[t].value + "</option>";
 			}
-	
+
 			html += "</select>";
 		} else if (dataType === "file") {
 			html += "<input type='file' id='" + elementId + "' name='" + elementName + "' onchange='fileChange();' multiple>";
 		} else if (dataType === "") {
 			html += "";
 		}
-	
+
 		return html;
 	}
 
@@ -3155,8 +3162,8 @@ class Common{
 	//상세보기 컨테이너 감추는 함수
 	detailBoardContainerHide() {
 		let detailBoard = document.getElementsByClassName("detailBoard");
-		
-		for(let i = 0; i < detailBoard.length; i++){
+
+		for (let i = 0; i < detailBoard.length; i++) {
 			detailBoard[i].remove();
 		}
 	}
@@ -3177,7 +3184,7 @@ class Common{
 		if (storageArr === undefined) {
 			storageArr = storage.formList;
 		}
-		
+
 		for (let key in storageArr) {
 			let element = "";
 			if (document.getElementById(key)) {
@@ -3189,7 +3196,7 @@ class Common{
 					element = document.getElementsByName(key);
 				}
 			}
-	
+
 			if (element !== undefined && element !== "") {
 				if (element.tagName === "TEXTAREA") {
 					storageArr[key] = CKEDITOR.instances[key].getData().replaceAll("\n", "");
@@ -3227,7 +3234,7 @@ class Common{
 		multiSearchResetBtn = document.getElementById("multiSearchResetBtn");
 		multiSearchBtn = document.getElementById("multiSearchBtn");
 		searchMultiContent = document.getElementsByClassName("searchMultiContent")[0];
-	
+
 		if (thisBtn.dataset.set) {
 			thisBtn.innerHTML = "<i class=\"fa-solid fa-plus fa-xl\"></i>";
 			thisBtn.dataset.set = false;
@@ -3248,15 +3255,15 @@ class Common{
 		let searchMultiContent = document.getElementsByClassName("searchMultiContent")[0];
 		let contents = searchMultiContent.querySelectorAll("div");
 
-		for(let i = 0; i < contents.length; i++){
+		for (let i = 0; i < contents.length; i++) {
 			let inputs = contents[i].querySelectorAll("input");
 			let selects = contents[i].querySelectorAll("select");
 
-			for(let t = 0; t < inputs.length; t++){
+			for (let t = 0; t < inputs.length; t++) {
 				inputs[t].value = "";
 			}
 
-			for(let t = 0; t < selects.length; t++){
+			for (let t = 0; t < selects.length; t++) {
 				selects[t].value = "";
 			}
 		}
@@ -3265,7 +3272,7 @@ class Common{
 	//단일 검색 시 데이터를 걸러주는 함수
 	searchDataFilter(arrayList, searchDatas, type) {
 		let dataArray = [];
-	
+
 		if (type === "input") {
 			for (let key in storage.searchList) {
 				if (storage.searchList[key].includes(searchDatas)) {
@@ -3276,7 +3283,7 @@ class Common{
 			if (searchDatas.indexOf("#created") > -1) {
 				let splitStr;
 				splitStr = searchDatas.split("#created");
-	
+
 				for (let key in storage.searchList) {
 					if (splitStr[0] <= storage.searchList[key].split("#created")[1]) {
 						if (storage.searchList[key].split("#created")[1] <= splitStr[1]) {
@@ -3287,7 +3294,7 @@ class Common{
 			} else if (searchDatas.indexOf("#date") > -1) {
 				let splitStr;
 				splitStr = searchDatas.split("#date");
-	
+
 				for (let key in storage.searchList) {
 					if (splitStr[0] <= storage.searchList[key].split("#date")[1]) {
 						if (storage.searchList[key].split("#date")[1] <= splitStr[1]) {
@@ -3298,7 +3305,7 @@ class Common{
 			} else if (searchDatas.indexOf("#from") > -1) {
 				let splitStr;
 				splitStr = searchDatas.split("#from");
-	
+
 				for (let key in storage.searchList) {
 					if (splitStr[0] <= storage.searchList[key].split("#from")[1]) {
 						if (storage.searchList[key].split("#from")[1] <= splitStr[1]) {
@@ -3309,7 +3316,7 @@ class Common{
 			} else if (searchDatas.indexOf("#startOfFreeMaintenance") > -1) {
 				let splitStr;
 				splitStr = searchDatas.split("#startOfFreeMaintenance");
-	
+
 				for (let key in storage.searchList) {
 					if (splitStr[0] <= storage.searchList[key].split("#startOfFreeMaintenance")[1]) {
 						if (storage.searchList[key].split("#startOfFreeMaintenance")[1] <= splitStr[1]) {
@@ -3320,7 +3327,7 @@ class Common{
 			} else if (searchDatas.indexOf("#startOfPaidMaintenance") > -1) {
 				let splitStr;
 				splitStr = searchDatas.split("#startOfPaidMaintenance");
-	
+
 				for (let key in storage.searchList) {
 					if (splitStr[0] <= storage.searchList[key].split("#startOfPaidMaintenance")[1]) {
 						if (storage.searchList[key].split("#startOfPaidMaintenance")[1] <= splitStr[1]) {
@@ -3331,7 +3338,7 @@ class Common{
 			} else if (searchDatas.indexOf("#saleDate") > -1) {
 				let splitStr;
 				splitStr = searchDatas.split("#saleDate");
-	
+
 				for (let key in storage.searchList) {
 					if (splitStr[0] <= storage.searchList[key].split("#saleDate")[1]) {
 						if (storage.searchList[key].split("#saleDate")[1] <= splitStr[1]) {
@@ -3342,7 +3349,7 @@ class Common{
 			} else if (searchDatas.indexOf("#issueDate") > -1) {
 				let splitStr;
 				splitStr = searchDatas.split("#issueDate");
-	
+
 				for (let key in storage.searchList) {
 					if (splitStr[0] <= storage.searchList[key].split("#issueDate")[1]) {
 						if (storage.searchList[key].split("#issueDate")[1] <= splitStr[1]) {
@@ -3353,10 +3360,10 @@ class Common{
 			} else if (searchDatas.indexOf("#price") > -1) {
 				let splitStr;
 				splitStr = searchDatas.split("#price");
-	
-				for(let key in storage.searchList){
-					if(parseInt(splitStr[0]) <= parseInt(storage.searchList[key].split("#price")[1])){
-						if(parseInt(storage.searchList[key].split("#price")[1]) <= parseInt(splitStr[1])){
+
+				for (let key in storage.searchList) {
+					if (parseInt(splitStr[0]) <= parseInt(storage.searchList[key].split("#price")[1])) {
+						if (parseInt(storage.searchList[key].split("#price")[1]) <= parseInt(splitStr[1])) {
 							dataArray.push(key);
 						}
 					}
@@ -3365,10 +3372,10 @@ class Common{
 				let splitStr, index = "";
 				splitStr = searchDatas.split("#");
 
-				for(let i = 0; i < splitStr[1].length; i++){
-					if(splitStr[1][i] !== "/"){
+				for (let i = 0; i < splitStr[1].length; i++) {
+					if (splitStr[1][i] !== "/") {
 						index += splitStr[1][i];
-					}else{
+					} else {
 						break;
 					}
 				}
@@ -3380,7 +3387,7 @@ class Common{
 				}
 			}
 		}
-		
+
 		console.log(dataArray);
 		return dataArray;
 	}
@@ -3388,7 +3395,7 @@ class Common{
 	//멀티 검색 시 걸러주는 함수
 	searchMultiFilter(index, dataArray, arrayList) {
 		let arr = [], tempResultArray = [], resultArray = [];
-	
+
 		if (index > 1) {
 			for (let i = 0; i < dataArray.length; i++) {
 				if (arr[dataArray[i]]) {
@@ -3397,13 +3404,13 @@ class Common{
 					arr[dataArray[i]] = 1;
 				}
 			}
-	
+
 			for (let key in arr) {
 				if (index == arr[key]) {
 					tempResultArray.push(key);
 				}
 			}
-	
+
 			for (let i = 0; i < tempResultArray.length; i++) {
 				resultArray.push(arrayList[tempResultArray[i]]);
 			}
@@ -3420,31 +3427,31 @@ class Common{
 	addAutoComplete(e) {
 		let thisEle, autoComplete;
 		thisEle = e;
-		
+
 		if (!thisEle.readOnly) {
 			if (document.getElementsByClassName("autoComplete")[0] !== undefined) {
 				document.getElementsByClassName("autoComplete")[0].remove();
 				thisEle.removeAttribute("data-value");
 			}
-	
+
 			let createDiv = document.createElement("div");
 			createDiv.className = "autoComplete";
 			thisEle.after(createDiv);
 			autoComplete = document.getElementsByClassName("autoComplete")[0];
 			autoComplete.style.top = thisEle.offsetTop + 30 + "px";
-			autoComplete.style.left =  thisEle.offsetLeft + "px";
+			autoComplete.style.left = thisEle.offsetLeft + "px";
 			autoComplete.style.width = thisEle.clientWidth + "px";
-	
+
 			if (thisEle.value === "") {
 				for (let key in storage[thisEle.dataset.complete]) {
 					let listDiv = document.createElement("div");
 					listDiv.setAttribute("onclick", "autoCompleteClick(this);");
-	
+
 					if (thisEle.dataset.complete === "customer" || thisEle.dataset.complete === "cip" || thisEle.dataset.complete === "product") {
-						if(thisEle.dataset.complete === "product"){
+						if (thisEle.dataset.complete === "product") {
 							listDiv.dataset.value = storage[thisEle.dataset.complete][key].no;
 							listDiv.innerHTML = storage[thisEle.dataset.complete][key].name;
-						}else{
+						} else {
 							listDiv.dataset.value = key;
 							listDiv.innerHTML = storage[thisEle.dataset.complete][key].name;
 						}
@@ -3455,7 +3462,7 @@ class Common{
 						listDiv.dataset.value = storage[thisEle.dataset.complete][key].no;
 						listDiv.innerHTML = storage[thisEle.dataset.complete][key].title;
 					}
-	
+
 					autoComplete.append(listDiv);
 				}
 			} else {
@@ -3464,10 +3471,10 @@ class Common{
 						if (storage[thisEle.dataset.complete][key].name.indexOf(thisEle.value) > -1) {
 							let listDiv = document.createElement("div");
 							listDiv.setAttribute("onclick", "autoCompleteClick(this);");
-							if(thisEle.dataset.complete === "product"){
+							if (thisEle.dataset.complete === "product") {
 								listDiv.dataset.value = storage[thisEle.dataset.complete][key].no;
 								listDiv.innerHTML = storage[thisEle.dataset.complete][key].name;
-							}else{
+							} else {
 								listDiv.dataset.value = key;
 								listDiv.innerHTML = storage[thisEle.dataset.complete][key].name;
 							}
@@ -3498,14 +3505,14 @@ class Common{
 	//from, to 예외처리에 관한 함수
 	searchDateDefaultSet(e) {
 		let thisDateInput = e, matchDateInput, thisDate, year, month, day;
-	
+
 		if (thisDateInput.getAttribute("data-date-type") === "from") {
 			matchDateInput = thisDateInput.nextElementSibling.nextElementSibling;
 			let splitDate = thisDateInput.value.split("-");
 			thisDate = new Date(splitDate[0], parseInt(splitDate[1] - 1), splitDate[2]);
 			splitDate = matchDateInput.value.split("-");
 			let matchDate = new Date(splitDate[0], parseInt(splitDate[1] - 1), splitDate[2]);
-	
+
 			if (matchDateInput.value === "") {
 				thisDate.setDate(thisDate.getDate() + 1);
 			} else if (thisDate.getTime() > matchDate.getTime()) {
@@ -3520,7 +3527,7 @@ class Common{
 			thisDate = new Date(splitDate[0], parseInt(splitDate[1] - 1), splitDate[2]);
 			splitDate = matchDateInput.value.split("-");
 			let matchDate = new Date(splitDate[0], parseInt(splitDate[1] - 1), splitDate[2]);
-	
+
 			if (matchDateInput.value === "") {
 				thisDate.setDate(thisDate.getDate() - 1);
 			} else if (thisDate.getTime() < matchDate.getTime()) {
@@ -3530,19 +3537,19 @@ class Common{
 				return null;
 			}
 		}
-	
+
 		year = thisDate.getFullYear();
 		month = thisDate.getMonth() + 1;
 		day = thisDate.getDate();
-	
+
 		if (month < 10) {
 			month = "0" + month;
 		}
-	
+
 		if (day < 10) {
 			day = "0" + day;
 		}
-	
+
 		matchDateInput.value = year + "-" + month + "-" + day;
 	}
 
@@ -3550,13 +3557,13 @@ class Common{
 		let thisEle, box;
 		thisEle = e;
 
-		if(boxClassName === undefined){
+		if (boxClassName === undefined) {
 			box = document.querySelectorAll("input, select, textarea");
-		}else{
+		} else {
 			box = document.getElementsByClassName(boxClassName)[0].querySelectorAll("input, select, textarea");
 		}
 
-	
+
 		for (let i = 0; i < box.length; i++) {
 			if (box[i].type === "radio") {
 				box[i].removeAttribute("readonly");
@@ -3568,13 +3575,13 @@ class Common{
 				}
 			}
 		}
-	
+
 		thisEle.setAttribute("onclick", clickStr);
 		thisEle.setAttribute("data-hide-flag", true);
 		thisEle.innerHTML = "수정완료";
 		ckeditor.config.readOnly = false;
 		window.setTimeout(setEditor, 100);
-	
+
 		if (modal.wrap.css("display") !== "none") {
 			setTimeout(() => {
 				document.getElementsByClassName("cke_textarea_inline")[0].style.height = "300px";
@@ -3589,7 +3596,7 @@ class Common{
 		tabItem = document.getElementsByClassName("tabItem");
 		tabItemLength = tabItem.length;
 		temp = tabItemLength * 2;
-	
+
 		for (let i = 0; i < tabItemLength; i++) {
 			tabItem[i].style.zIndex = temp;
 			temp -= 2;
@@ -3610,11 +3617,11 @@ class Common{
 		radio = document.getElementsByClassName("tabs")[0].querySelectorAll("input[type=\"radio\"]");
 		for (let i = 0; i < radio.length; i++) {
 			let contents = detailSecondTabs.querySelector("." + radio[i].dataset.contentId);
-			
+
 			if (notId === undefined) {
 				contents.style.display = "none";
 			} else {
-				if(contents.getAttribute("id") !== notId){
+				if (contents.getAttribute("id") !== notId) {
 					contents.style.display = "none";
 				}
 			}
@@ -3625,7 +3632,7 @@ class Common{
 	detailCheckedTrueView() {
 		for (let key in storage.formList) {
 			if (typeof storage.formList[key] === "object") {
-				if(key === "companyInformation" || key === "transactionInformation" || key === "typeOfSales"){
+				if (key === "companyInformation" || key === "transactionInformation" || key === "typeOfSales") {
 					for (let key2 in storage.formList[key]) {
 						if (storage.formList[key][key2]) {
 							if (document.getElementById(key + "_" + key2) !== null) {
@@ -3652,22 +3659,22 @@ class Common{
 
 		drawList();
 	}
-	
+
 	//객체(오브젝트) empty 체크(비어있을 때 : true)
 	objectCheck(obj) {
-		if(obj.constructor === Object && Object.keys(obj).length === 0){
+		if (obj.constructor === Object && Object.keys(obj).length === 0) {
 			return true;
-		}else{
+		} else {
 			return false;
 		}
 	}
 
-	keyupDelay(){
-		if(v !== null){
+	keyupDelay() {
+		if (v !== null) {
 			window.clearTimeout(v);
 			v = null;
 		}
-		v = window.setTimeout(hdr,1000);
+		v = window.setTimeout(hdr, 1000);
 	}
 }
 
