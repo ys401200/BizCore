@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -333,4 +334,143 @@ public class ApiManageCtrl extends Ctrl{
 
         return result;
     }
+
+    // 부서정보수정
+    @PutMapping("/department")
+    public String departmentPut(HttpServletRequest request, @RequestBody String requestBody){
+        String result = null;
+        String compId = null, aesKey = null, aesIv = null, data = null, userNo = null;
+        String deptId = null, deptName = null, contact = null, email = null, taxId = null, zipCode = null, address = null, fax = null;
+        boolean bContact = false, bEmail = false, bTaxId = false, bAddress = false, bFax = false;
+        Msg msg = null;
+        HttpSession session = null;
+        JSONObject json = null, inUse = null;
+        int r = -1;
+
+        session = request.getSession();
+        msg = getMsg((String)session.getAttribute("lang"));
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        userNo = (String)session.getAttribute("userNo");
+        compId = (String)session.getAttribute("compId");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
+        
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        }else{
+            data = decAes(requestBody, aesKey, aesIv);
+            json = new JSONObject(data);
+            if(!json.isNull("dept"))    deptId = json.getString("dept");
+            if(!json.isNull("name"))    deptName = json.getString("name");
+            if(!json.isNull("address") && !json.isNull("zipCode")){
+                address = json.getJSONArray("address").toString();
+                zipCode = json.getString("zipCode");
+            }
+            if(!json.isNull("contact")) contact = json.getJSONArray("contact").toString();
+            if(!json.isNull("fax"))     fax = json.getString("fax");
+            if(!json.isNull("email"))   email = json.getString("email");
+            if(!json.isNull("taxId"))   taxId = json.getString("taxId");
+            if(!json.isNull("inUse"))   inUse = json.getJSONObject("inUse");
+            if(inUse != null){
+                bContact = inUse.getBoolean("contact");
+                bEmail = inUse.getBoolean("email");
+                bTaxId = inUse.getBoolean("taxId");
+                bAddress = inUse.getBoolean("address");
+                bFax = inUse.getBoolean("fax");
+            }
+            
+            r = manageSvc.modifyDepartment(compId, userNo, deptId, deptName, contact, email, taxId, zipCode, address, fax, bContact, bEmail, bTaxId, bAddress, bFax);
+            result = r < 0 ? "{\"result\":\"failure\",\"msg\":\"" + msg.permissionDenied + "\"}" : r == 0 ? "{\"result\":\"failure\",\"msg\":\"Not processed\"}" : "{\"result\":\"ok\"}" ;
+        }
+
+        return result;
+    } // End of departmentPut()
+
+    // 회사정보수정
+    @PutMapping("/company")
+    public String companyPut(HttpServletRequest request, @RequestBody String requestBody){
+        String result = null;
+        String compId = null, aesKey = null, aesIv = null, data = null, userNo = null;
+        String compName = null, address = null, zipCode = null, contact = null, fax = null, email = null, taxId = null, corpRegNo = null;
+        Msg msg = null;
+        HttpSession session = null;
+        JSONObject json = null;
+        int r = -999;
+
+        session = request.getSession();
+        msg = getMsg((String)session.getAttribute("lang"));
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        userNo = (String)session.getAttribute("userNo");
+        compId = (String)session.getAttribute("compId");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
+        
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        }else{
+            data = decAes(requestBody, aesKey, aesIv);
+            json = new JSONObject(data);
+            if(!json.isNull("name"))    compName = json.getString("name");
+            if(!json.isNull("address") && !json.isNull("zipCode")){
+                address = json.getJSONArray("address").toString();
+                zipCode = json.getString("zipCode");
+            }
+            if(!json.isNull("contact")) contact = json.getJSONArray("contact").toString();
+            if(!json.isNull("fax"))     fax = json.getString("fax");
+            if(!json.isNull("email"))   email = json.getString("email");
+            if(!json.isNull("taxId"))   taxId = json.getString("taxId");
+            if(!json.isNull("corpRegNo"))   corpRegNo = json.getString("corpRegNo");
+            
+            r = manageSvc.modifyCompany(compId, userNo, compName, address, zipCode, contact, fax, email, taxId, corpRegNo);
+            result = r < 0 ? "{\"result\":\"failure\",\"msg\":\"" + msg.permissionDenied + "\"}" : r == 0 ? "{\"result\":\"failure\",\"msg\":\"Not processed\"}" : "{\"result\":\"ok\"}" ;
+            
+        }
+
+        return result;
+    } // End of companyPut()
+
+    // 부서추가
+    @PostMapping("/employee")
+    public String employeePost(HttpServletRequest request, @RequestBody String requestBody){
+        String result = null;
+        String compId = null, aesKey = null, aesIv = null, data = null, userNo = null;
+        String userName = null, userId = null, dept = null, joined = null;
+        Msg msg = null;
+        HttpSession session = null;
+        JSONObject json = null;
+        int r = -999;
+
+        session = request.getSession();
+        msg = getMsg((String)session.getAttribute("lang"));
+        aesKey = (String)session.getAttribute("aesKey");
+        aesIv = (String)session.getAttribute("aesIv");
+        userNo = (String)session.getAttribute("userNo");
+        compId = (String)session.getAttribute("compId");
+        if(compId == null)  compId = (String)request.getAttribute("compId");
+        
+        if(compId == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        }else{
+            data = decAes(requestBody, aesKey, aesIv);
+            json = new JSONObject(data);
+            if(!json.isNull("userName"))    userName = json.getString("userName");
+            if(!json.isNull("userId"))      userId = json.getString("userId");
+            if(!json.isNull("dept"))        dept = json.getString("dept");
+            if(!json.isNull("joined"))      joined = json.getString("joined");
+            r = manageSvc.addEmployee(compId, userNo, userName, userId, dept, joined); // -10 : 사번 받기 실패 // -5 : 사용자 테이블 추가 실패 // -1 : 소속 부서 설정 실패 // +0 : 사번
+            if(r == -999)       result = "{\"result\":\"failure\",\"msg\":\"" + msg.unknownError + "\"}";
+            else if(r == -10)   result = "{\"result\":\"failure\",\"msg\":\"Failed to get employee number\"}";
+            else if(r == -5)    result = "{\"result\":\"failure\",\"msg\":\"Failed to add new to user DB\"}";
+            else if(r == -1)    result = "{\"result\":\"failure\",\"msg\":\"Failed to add affiliated department information\"}";
+            else                result = "{\"result\":\"ok\",\"data\":" + r + "}";
+        }
+
+        return result;
+    } // End of employeePost()
 }

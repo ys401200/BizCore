@@ -1,7 +1,6 @@
 package kr.co.bizcore.v1;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -17,7 +16,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import ch.qos.logback.classic.Logger;
 import kr.co.bizcore.v1.interceptor.ViewInterceptor;
 import kr.co.bizcore.v1.svc.Svc;
 import kr.co.bizcore.v1.svc.SystemService;

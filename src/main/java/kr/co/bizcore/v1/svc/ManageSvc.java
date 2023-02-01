@@ -650,7 +650,7 @@ public class ManageSvc extends Svc{
         result += ("\"address\":" + each.get("address") + ",");
         result += ("\"contact\":" + each.get("contact") + ",");
         result += ("\"fax\":" + (each.get("fax") == null ? null : "\"" + each.get("fax") + "\"") + ",");
-        result += ("\"email\":" + (each.get("fax") == null ? null : "\"" + each.get("fax") + "\"") + ",");
+        result += ("\"email\":" + (each.get("email") == null ? null : "\"" + each.get("email") + "\"") + ",");
         result += ("\"color\":" + (each.get("colorCode") == null ? null : "\"" + each.get("colorCode") + "\"") + ",");
         result += ("\"isRoot\":" + each.get("isRoot").equals("1") + ",");
         result += ("\"head\":" + each.get("head") + ",");
@@ -672,5 +672,151 @@ public class ManageSvc extends Svc{
         if(r < 1)   return "{\"result\":\"failure\",\"msg\":\"An error occcured\"}";
         else        return "{\"result\":\"ok\"}";
     } // End of addNewDept()
+
+    public int modifyDepartment(String compId, String userNo, String deptId, String deptName, String contact,
+            String email, String taxId, String zipCode, String address, String fax, boolean bContact, boolean bEmail, boolean bTaxId,
+            boolean bAddress, boolean bFax) {
+        int result = -999;
+        String sql1 = "SELECT count(*) FROM bizcore.permission WHERE dept = 'all' AND permission > 0 AND func_id IN ('manager', 'hr') AND comp_id = ? AND user_no = ?";
+        String sql2 = "UPDATE bizcore.department SET modified = NOW()";
+        String sql3 = " WHERE compId = ? AND deptId = ?";
+        
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try{
+            conn = sqlSession.getConnection();
+
+            // 권한 검증
+            pstmt = conn.prepareStatement(sql1);
+            pstmt.setString(1, compId);
+            pstmt.setString(2, userNo);
+            rs = pstmt.executeQuery();
+            if(rs.next())   result = rs.getInt(1);
+            rs.close();
+            pstmt.close();
+            if(result < 1)   return -1;
+
+            // 부서명 변경 처리
+            if(deptName != null)    sql2 += (", deptName='" + deptName + "'");
+
+            // 사업자번호 변경 처리
+            if(!bTaxId) sql2 += (", taxId=null");
+            else if(taxId != null)  sql2 += (", taxId='" + taxId + "'");
+
+            // 주소 변경 처리
+            if(!bAddress)       sql2 += (", address=null, zipCode=null");
+            else if(address != null && zipCode != null){
+                sql2 += (", address='" + address + "'");
+                sql2 += (", zipCode='" + zipCode+ "'");
+            }
+
+            // 연락처 변경 처리
+            if(!bContact) sql2 += (", contact=null");
+            else if(contact != null)  sql2 += (", contact='" + contact + "'");
+
+            // 팩스 변경 처리
+            if(!bFax) sql2 += (", fax=null");
+            else if(fax != null)  sql2 += (", fax='" + fax + "'");
+
+            // 이메일 변경 처리
+            if(!bEmail) sql2 += (", email=null");
+            else if(email != null)  sql2 += (", email='" + email + "'");
+
+            pstmt = conn.prepareStatement(sql2 + sql3);
+            pstmt.setString(1, compId);
+            pstmt.setString(2, deptId);
+            result = pstmt.executeUpdate();
+        }catch(SQLException e){e.printStackTrace();}
+
+        return result;
+    } // End of modifyDepartment()
+
+    public int modifyCompany(String compId, String userNo, String compName, String address, String zipCode,
+            String contact, String fax, String email, String taxId, String corpRegNo) {
+        int result = -999;
+        String sql1 = "SELECT count(*) FROM bizcore.permission WHERE dept = 'all' AND permission > 0 AND func_id IN ('manager', 'hr') AND comp_id = ? AND user_no = ?";
+        String sql2 = "UPDATE bizsys.companies SET modified = NOW()";
+        String sql3 = " WHERE compId = ?";
+        
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try{
+            conn = sqlSession.getConnection();
+
+            // 권한 검증
+            pstmt = conn.prepareStatement(sql1);
+            pstmt.setString(1, compId);
+            pstmt.setString(2, userNo);
+            rs = pstmt.executeQuery();
+            if(rs.next())   result = rs.getInt(1);
+            rs.close();
+            pstmt.close();
+            if(result < 1)   return -1;
+
+            // 회사명 변경 처리
+            if(compName != null)    sql2 += (", name='" + compName + "'");
+
+            // 사업자번호 변경 처리
+            if(taxId != null)  sql2 += (", taxId='" + taxId + "'");
+
+            // 법인번호 변경 처리
+            if(corpRegNo != null)  sql2 += (", corpRegNo='" + corpRegNo + "'");
+
+            // 주소 변경 처리
+            if(address != null && zipCode != null)  sql2 += (", address='" + address + "', zipCode='" + zipCode+ "'");
+
+            // 연락처 변경 처리
+            if(contact != null)  sql2 += (", contact='" + contact + "'");
+
+            // 팩스 변경 처리
+            if(fax != null)  sql2 += (", fax='" + fax + "'");
+
+            // 이메일 변경 처리
+            if(email != null)  sql2 += (", email='" + email + "'");
+
+            pstmt = conn.prepareStatement(sql2 + sql3);
+            pstmt.setString(1, compId);
+            result = pstmt.executeUpdate();
+        }catch(SQLException e){e.printStackTrace();}
+
+        return result;
+    } // End of modifyCompany()
+
+    public int addEmployee(String compId, String userNo, String userName, String userId, String dept, String joined) {
+        int result = -999;
+        String sql1 = "INSERT INTO bizcore.users(compId,`no`,userId,userName,pw,`rank`,prohibited,birthDay,gender,joined,created) VALUES(?,?,?,?,'**',0,0,'1900-01-01',0,?,NOW())";
+        String sql2 = "INSERT INTO bizcore.user_dept(comp_id,user_no,priority,dept_id,modified,permission) VALUES(?,?,0,?,NOW(),9)";
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        int no = getNextNumberFromDB(compId, "bizcore.users");
+        if(no <= 0)  return -10;
+        try{
+            conn = sqlSession.getConnection();
+            pstmt = conn.prepareStatement(sql1);
+            pstmt.setString(1, compId);
+            pstmt.setInt(2, no);
+            pstmt.setString(3, userId);
+            pstmt.setString(4, userName);
+            pstmt.setString(5, joined);
+            result = pstmt.executeUpdate();
+            pstmt.close();
+
+            // 사용자 추가에 대한 결과 검증
+            if(result <= 0) return -5;
+
+            pstmt = conn.prepareStatement(sql2);
+            pstmt.setString(1, compId);
+            pstmt.setInt(2, no);
+            pstmt.setString(3, dept);
+            result = pstmt.executeUpdate();
+
+        }catch(SQLException e){e.printStackTrace();}
+
+        return result > 0 ? no : -1; // -10 : 사번 받기 실패 // -5 : 사용자 테이블 추가 실패 // -1 : 소속 부서 설정 실패 // +0 : 사번
+    } // End of addEmployee()
     
 } 

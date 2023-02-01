@@ -193,6 +193,189 @@ function clickedDeptAdd(){
 
 // 직원 추가 이미지 클릭시 실행되는 함수
 function clickedUserAdd(){
+	let x, el, cnt, ids, border = "1px solid #2147b1", padding = "0.4rem", font = "0.9rem";
+
+	// 부서코드 및 이름 중복 방지를 위한 데이터 수집
+	ids = [];
+	for(x in storage.user){
+		if(x !== undefined || !storage.user[x].resigned)	ids.push(storage.user[x].userId);
+	}
+	storage.newUser = {};
+	storage.newUser.ids = ids;
+
+	// 소속 부서 확인
+	el = document.getElementsByClassName("deptTree")[0].getElementsByTagName("input");
+	for(x in el){
+		if(el[x].checked){
+			storage.newUser.dept = el[x].id.substring(10);
+			break;
+		}
+	}
+
+	// 오늘 날짜 구하기
+	x = new Date();
+	x = `${x.getFullYear()}-${x.getMonth() < 9 ? "0" + (x.getMonth() + 1) : x.getMonth()}-${x.getDate() < 10 ? "0" + x.getDate() : x.getDate()}`;
+	
+	// 모달 띄우고 엘리먼트 채우기
+	modal.show();
+	modal.head[0].children[0].innerText = "직원 추가";
+	cnt = modal.body[0];
+	el = document.createElement("div");
+	el.style.display = "grid";
+	el.style.gridTemplateColumns = "2fr 3fr 2fr 3fr";
+	el.style.gridTemplateRows = "2rem 2rem";
+	el.style.border = border;
+	el.style.fontSize = font;
+	el.style.margin = "1rem 0.2rem";
+	cnt.appendChild(el);
+
+	el = document.createElement("div");
+	el.style.padding = padding;
+	el.style.textAlign = "center";
+	el.style.borderRight = border;
+	el.style.borderBottom = border;
+	el.style.fontSize = font;
+	el.innerText = "소속부서";
+	cnt.children[0].appendChild(el);
+	el = document.createElement("div");
+	el.style.padding = padding;
+	el.style.textAlign = "center";
+	el.style.borderRight = border;
+	el.style.borderBottom = border;
+	el.style.fontSize = font;
+	el.innerText = storage.dept.dept[storage.newUser.dept].deptName;
+	cnt.children[0].appendChild(el);
+
+	el = document.createElement("div");
+	el.style.padding = padding;
+	el.style.textAlign = "center";
+	el.style.borderRight = border;
+	el.style.borderBottom = border;
+	el.style.fontSize = font;
+	el.innerText = "입 사 일";
+	cnt.children[0].appendChild(el);
+	el = document.createElement("input");
+	el.type = "date";
+	el.value = x;
+	el.style.padding = padding;
+	el.style.textAlign = "center";
+	el.style.border = "none";
+	el.style.borderBottom = border;
+	el.style.backgroundColor = "#eeeeff";
+	el.style.fontSize = font;
+	el.dataset.name = "name";
+	cnt.children[0].appendChild(el);
+
+	el = document.createElement("div");
+	el.style.padding = padding;
+	el.style.textAlign = "center";
+	el.style.borderRight = border;
+	el.style.fontSize = font;
+	el.innerText = "직 원 명";
+	cnt.children[0].appendChild(el);
+	el = document.createElement("input");
+	el.setAttribute("onkeyup", "this.value=this.value.replaceAll(' ', '');");
+	el.style.padding = padding;
+	el.style.textAlign = "center";
+	el.style.border = "none";
+	el.style.borderRight = border;
+	el.style.backgroundColor = "#eeeeff";
+	el.style.fontSize = font;
+	el.dataset.name = "name";
+	cnt.children[0].appendChild(el);
+
+	el = document.createElement("div");
+	el.style.padding = padding;
+	el.style.textAlign = "center";
+	el.style.borderRight = border;
+	el.style.fontSize = font;
+	el.innerText = "직원아이디";
+	cnt.children[0].appendChild(el);
+	el = document.createElement("input");
+	el.setAttribute("onkeyup", "this.value=this.value.replaceAll(' ', '');");
+	el.style.padding = padding;
+	el.style.textAlign = "center";
+	el.style.border = "none";
+	el.style.backgroundColor = "#eeeeff";
+	el.style.fontSize = font;
+	el.dataset.name = "id";
+	cnt.children[0].appendChild(el);
+
+	modal.close[0].onclick = () => {delete storage.newDept;modal.hide();};
+	modal.confirm[0].onclick = () => {
+		let id, name, joined, data, els = document.getElementsByClassName("modalBody")[0].getElementsByTagName("input");
+		joined = els[0].value;
+		name = els[1].value;
+		id = els[2].value;
+		// 아이디 중복/유효성 검증
+		if(name === undefined || name.length < 2){
+			els[0].focus();
+			els[0].style.animation = "not-enough-warn 3s forwards";
+			window.setTimeout(function(){els[0].style.animation="";},3000);
+			return;
+		}else if(id === undefined || id.length < 6 || storage.newUser.ids.includes(id)){
+			els[1].focus();
+			els[1].style.animation = "not-enough-warn 3s forwards";
+			window.setTimeout(function(){els[1].style.animation="";},3000);
+			return;
+		}
+		modal.hide();
+		data = {"userId":id, "userName":name, "dept":storage.newUser.dept,"joined":joined};
+		data = JSON.stringify(data);
+		data = cipher.encAes(data);
+		fetch(apiServer + "/api/manage/employee", {
+			method: "POST",
+			header: { "Content-Type": "text/plain" },
+			body: data
+		}).catch((error) => console.log("error:", error))
+			.then(response => response.json())
+			.then(response => {
+				let verify, action;
+				action = () => {
+					console.log("!!!!!");
+					let cnt, els, x;
+					setDeptTree();
+					cnt = document.getElementsByClassName("deptTree")[0];
+					cnt.innerHTML = storage.dept.tree.getTreeHtml();
+					els = cnt.getElementsByTagName("label");
+					for(x = 0 ; x < els.length ; x++){
+						if(els[x] === undefined) continue;
+						els[x].onclick = getDetailInfo;
+					}
+					els = cnt.getElementsByClassName("dept-tree");
+					for(x = 0 ; x < els.length ; x++)	els[x].checked = true;
+					els = cnt.getElementsByTagName("img");
+					for(x = 0 ; x < els.length ; x++){
+						els[x].style.width="1rem";
+						els[x].style.height="1rem";
+					}
+					els = cnt.getElementsByTagName("label");
+					for(x = 0 ; x < els.length ; x++){
+						if(els[x].getAttribute("for").substring(10) === "emp:" + storage.newUser.no){
+							els[x].click();
+							break;
+						}
+					}
+					delete storage.newUser;
+				} // End of action()
+				verify = () => {
+					let c = (new Date().getTime() - 5 * 60000);
+					console.log("!");
+					if(c < storage.userMapTime)	storage.newUser.act();
+					else						window.setTimeout(storage.newUser.verify, 100);
+				} // End of verify()
+
+				if (response.result === "ok") {
+					storage.newUser.no = response.data;
+					storage.newUser.act = action;
+					storage.newUser.verify = verify;
+					getUserMap();
+					window.setTimeout(verify,100);
+				} else {
+					console.log(response.msg);
+				}
+			});
+	}
 
 } // End of clickedUserAdd()
 
@@ -684,7 +867,7 @@ function setDeptData(){
 	title = "기본정보";
 	html += "<div><div class=\"image_btns\"><img src=\"/images/manage/icon_modified.png\" /></div><div class=\"manageSubTitle\">";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
-	html += "</div><div class=\"image_btns\"><img src=\"/images/manage/icon_undo.png\" data-p\"basic\" onclick=\"clickedImgBtn(this, false)\" /><img src=\"/images/manage/icon_confirm.png\" data-p\"basic\" onclick=\"clickedImgBtn(this, true)\" /></div></div>";
+	html += "</div><div class=\"image_btns\"><img src=\"/images/manage/icon_undo.png\" data-p=\"basic\" onclick=\"clickedImgBtn(this, false, true)\" /><img src=\"/images/manage/icon_confirm.png\" data-p=\"basic\" onclick=\"clickedImgBtn(this, true, true)\" /></div></div>";
 
 	html += "<div class=\"employeeDetail\" data-p=\"basic\">";
 
@@ -722,14 +905,14 @@ function setDeptData(){
 	html += "<div><div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
 	html += "</div>";
-	html += ("<div class=\"xDeptAddress\" data-n=\"address\" style=\"grid-column:span 3\"><input type=\"hidden\" id=\"zzAddr1\" /><input type=\"checkbox\" " + (storage.basic.address == null && !root ? "" : "checked") + " class=\"xDeptInuse\" " + (root ? "style=\"display:none;\"" : "") + " onchange=\"if(this.checked){if(storage.basic.address!==null){this.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.value=storage.basic.address[0];this.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.value=storage.basic.address[1];}}else{this.nextElementSibling.nextElementSibling.value='';this.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.value='';}\" /><span style=\"margin-left:2rem;\">기본주소:</span><input class=\"xEmpInput\" id=\"zzAddr2\" style=\"width:38%;\" value=\"" + (storage.basic.address == null ? "" : storage.basic.address[0]) + "\" onclick=\"daumPostCode('zzAddr1', 'zzAddr2', 'zzAddr3')\" /><span style=\"margin-left:2rem;\">상세주소:</span><input class=\"xEmpInput\" id=\"zzAddr3\" style=\"width:38%;\" value=\"" + (storage.basic.address == null ? "" : storage.basic.address[1]) + "\" onkeyup=\"collectDeptData(this)\" /></div></div>");
+	html += ("<div class=\"xDeptAddress\" data-n=\"address\" style=\"grid-column:span 3\"><input type=\"hidden\" id=\"zzAddr1\" /><input type=\"checkbox\" data-n=\"address\" " + (storage.basic.address == null && !root ? "" : "checked") + " class=\"xDeptInuse\" " + (root ? "style=\"display:none;\"" : "") + " onchange=\"if(this.checked){if(storage.basic.address!==null){this.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.value=storage.basic.address[0];this.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.value=storage.basic.address[1];}}else{this.nextElementSibling.nextElementSibling.value='';this.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.value='';}\" /><span style=\"margin-left:2rem;\">기본주소:</span><input class=\"xEmpInput\" id=\"zzAddr2\" style=\"width:38%;\" value=\"" + (storage.basic.address == null ? "" : storage.basic.address[0]) + "\" onclick=\"daumPostCode('zzAddr1', 'zzAddr2', 'zzAddr3')\" /><span style=\"margin-left:2rem;\">상세주소:</span><input class=\"xEmpInput\" id=\"zzAddr3\" style=\"width:38%;\" value=\"" + (storage.basic.address == null ? "" : storage.basic.address[1]) + "\" onkeyup=\"collectDeptData(this)\" /></div></div>");
 
 	// 연락처
 	title = "전화번호";
 	html += "<div><div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
 	html += "</div>";
-	html += ("<div class=\"xDeptContct\" style=\"grid-column:span 3\" data-n=\"contact\"><input type=\"checkbox\" " + (storage.basic.contact == null && !root ? "" : "checked") + " " + (root ? "style=\"display:none;\"" : "") + " class=\"xDeptInuse\" onchange=\"if(this.checked){for(let x=1;x<4;x++){this.parentElement.children[x].style.display='initial';this.parentElement.children[x].value=storage.basic.contact!==null&&storage.basic.contact[x-1]!==undefined?storage.basic.contact[x-1]:'';}}else{for(let x=1;x<4;x++){this.parentElement.children[x].style.display='none';this.parentElement.children[x].value=''};this.nextElementSibling.onkeyup();}\" onkeyup=\"collectDeptData(this)\" />");
+	html += ("<div class=\"xDeptContct\" style=\"grid-column:span 3\" data-n=\"contact\"><input type=\"checkbox\" data-n=\"contact\" " + (storage.basic.contact == null && !root ? "" : "checked") + " " + (root ? "style=\"display:none;\"" : "") + " class=\"xDeptInuse\" onchange=\"if(this.checked){for(let x=1;x<4;x++){this.parentElement.children[x].style.display='initial';this.parentElement.children[x].value=storage.basic.contact!==null&&storage.basic.contact[x-1]!==undefined?storage.basic.contact[x-1]:'';}}else{for(let x=1;x<4;x++){this.parentElement.children[x].style.display='none';this.parentElement.children[x].value=''};this.nextElementSibling.onkeyup();}\" onkeyup=\"collectDeptData(this)\" />");
 	html += "<input class=\"xEmpInput\" style=\"width:16.5rem;\" value = \"" + (storage.basic.contact !== null && storage.basic.contact[0] !== undefined ? storage.basic.contact[0] : "") + "\" onkeyup=\"collectDeptData(this)\" /><input class=\"xEmpInput\" style=\"width:16.5rem;\" value = \"" + (storage.basic.contact !== null && storage.basic.contact[1] !== undefined ? storage.basic.contact[1] : "") + "\" onkeyup=\"collectDeptData(this)\" /><input class=\"xEmpInput\" style=\"width:16.5rem;\" value = \"" + (storage.basic.contact !== null && storage.basic.contact[2] !== undefined ? storage.basic.contact[2] : "") + "\" onkeyup=\"collectDeptData(this)\" /></div></div>";
 
 	// 팩스
@@ -737,13 +920,13 @@ function setDeptData(){
 	html += "<div><div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
 	html += "</div>";
-	html += ("<div class=\"xDeptFax\" data-n=\"fax\"><input type=\"checkbox\" " + (storage.basic.fax == null && !root ? "" : "checked ") + (root ? "style=\"display:none;\"" : "") + " class=\"xDeptInuse\" onchange=\"this.nextElementSibling.value='';this.nextElementSibling.onkeyup()\" /><input class=\"xEmpInput\" value=\"" + (storage.basic.fax == null ? "" : storage.basic.fax) + "\" onkeyup=\"collectDeptData(this)\" /></div>");
+	html += ("<div class=\"xDeptFax\" data-n=\"fax\"><input type=\"checkbox\" data-n=\"fax\" " + (storage.basic.fax == null && !root ? "" : "checked ") + (root ? "style=\"display:none;\"" : "") + " class=\"xDeptInuse\" onchange=\"this.nextElementSibling.value='';this.nextElementSibling.onkeyup()\" /><input class=\"xEmpInput\" value=\"" + (storage.basic.fax == null ? "" : storage.basic.fax) + "\" onkeyup=\"collectDeptData(this)\" /></div>");
 
 	// 이메일
 	title = "email";
 	html += "<div>";
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
-	html += ("</div><div class=\"xDeptEmail\" data-n=\"email\"><input type=\"checkbox\" " + (storage.basic.email == null && !root ? "" : "checked ") + (root ? "style=\"display:none;\"" : "") + " class=\"xDeptInuse\" onchange=\"this.nextElementSibling.value='';this.nextElementSibling.onkeyup()\" /><input class=\"xEmpInput\" value=\"" + (storage.basic.email == null ? "" : storage.basic.email) + "\" onkeyup=\"collectDeptData(this)\" /></div></div>");
+	html += ("</div><div class=\"xDeptEmail\" data-n=\"email\"><input type=\"checkbox\" data-n=\"email\" " + (storage.basic.email == null && !root ? "" : "checked ") + (root ? "style=\"display:none;\"" : "") + " class=\"xDeptInuse\" onchange=\"this.nextElementSibling.value='';this.nextElementSibling.onkeyup()\" /><input class=\"xEmpInput\" value=\"" + (storage.basic.email == null ? "" : storage.basic.email) + "\" onkeyup=\"collectDeptData(this)\" /></div></div>");
 
 	// 사업자번호
 	title = "사업자번호";
@@ -751,7 +934,7 @@ function setDeptData(){
 	for(x = 0 ; x < title.length ; x++)	html += ("<T>" + title[x] + "</T>");
 	html += "</div>";
 	// 루트 부서인 경우 법인번호를 입력할 수 있도록 한다.
-	html += ("<div class=\"xDeptTaxId\" " + (root ? "" : "style=\"grid-column:span 3\"") + " data-n=\"taxId\"><input type=\"checkbox\" " + (storage.basic.taxId == null && !root? "" : "checked ") + (root ? "style=\"display:none;\"" : "") + " class=\"xDeptInuse\" onchange=\"this.nextElementSibling.value='';this.nextElementSibling.onkeyup()\" /><input class=\"xEmpInput\" value=\"" + (storage.basic.taxId == null ? "" : storage.basic.taxId) + "\" onkeyup=\"collectDeptData(this)\" /></div>");
+	html += ("<div class=\"xDeptTaxId\" " + (root ? "" : "style=\"grid-column:span 3\"") + " data-n=\"taxId\"><input type=\"checkbox\" data-n=\"taxId\" " + (storage.basic.taxId == null && !root? "" : "checked ") + (root ? "style=\"display:none;\"" : "") + " class=\"xDeptInuse\" onchange=\"this.nextElementSibling.value='';this.nextElementSibling.onkeyup()\" /><input class=\"xEmpInput\" value=\"" + (storage.basic.taxId == null ? "" : storage.basic.taxId) + "\" onkeyup=\"collectDeptData(this)\" /></div>");
 	if(root){ // 법인번호
 		title = "법인번호";
 		html += "<div>";
@@ -1118,17 +1301,43 @@ function collectDeptData(e){
 
 
 // 입력 된 데이터에 대한 초기화/저장 작업 함수
-function clickedImgBtn(el, status){
-	let cnt, url, p, data;
+function clickedImgBtn(el, status, isDept = false){
+	let x, cnt, url, p, data, els;
 	cnt = el.parentElement.parentElement.nextElementSibling;
 	p = cnt.dataset.p;
-	if(status === false){ // ========== 초기화 작업
+	if(status === false && isDept){// ========== 부서정보 // 초기화 작업
 		el.parentElement.parentElement.className = "";
 		delete storage.collected[p];
-		if(p === "basic")	cnt.innerHTML = getHtmlBasicInfo();
-		if(p === "permission")	cnt.innerHTML = getHtmlPermissionInfo();
-		if(p === "asset")	cnt.innerHTML = getHtmlAssetInfo();
-	}else if(status === true){ // ========== 저장 작업
+		setDeptData();
+	}else if(status === false && !isDept){ // ========== 직원정보 // 초기화 작업
+		el.parentElement.parentElement.className = "";
+		delete storage.collected[p];
+		if(p === "basic")			cnt.innerHTML = getHtmlBasicInfo();
+		else if(p === "permission")	cnt.innerHTML = getHtmlPermissionInfo();
+		else if(p === "asset")		cnt.innerHTML = getHtmlAssetInfo();
+	}else if(status === true && isDept){ // ========== 부서정보 // 저장 작업
+		data = storage.collected;
+		if(storage.basic.isRoot){ // 회사정보
+			url = "/api/manage/company";console.log("is root");
+		}else{ // 부서정보
+			url = "/api/manage/department";console.log("is'nt root");
+			data.inUse = {};
+			els = document.getElementsByClassName("employeeDetail")[0].getElementsByTagName("input");
+			for(x = 0 ; x < els.length ; x++)	if(els[x].type === "checkbox") data.inUse[els[x].dataset.n] = els[x].checked;
+		}
+		data = JSON.stringify(data);
+		data = cipher.encAes(data);
+		fetch(apiServer + url, {
+			method: "PUT",
+			header: {"Content-Type": "text/plain"},
+			body: data
+		}).catch(error => console.log("update : fail"))
+		.then(response => response.json())
+		.then(response => {
+			console.log("update : success");
+		});
+		
+	}else if(status === true && !isDept){ // ========== 직원정보 // 저장 작업
 		url = apiServer + "/api/manage/employee/" + p + "/" + storage.basic.no;
 		data = storage.collected[p];
 		data.dept = storage.collected.dept;
@@ -1150,8 +1359,8 @@ function clickedImgBtn(el, status){
 					console.log("failure / " + data.msg);
 				}
 			}
-		});
-	}
+		}); // End of ajax
+	} // End of if(status, isDept)
 } // End of clickImgBtn()
 
 
