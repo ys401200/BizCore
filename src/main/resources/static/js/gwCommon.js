@@ -1027,7 +1027,15 @@ window.onresize = function () {
 function showList() {
     let page = location.href.split("/");
     if (page.length == 6) {
-        location.href = "/" + page[3] + "/" + page[4];
+      
+        if (location.href.split("/")[2].includes("core")) {
+            location.href = "/gw/" + page[4];
+            console.log("확인");
+        } else {
+            location.href = "/" + page[3] + "/" + page[4];
+            console.log("확인2");
+        }
+
     } else {
         console.log("clicked backward!!");
         $(".listDiv").show();
@@ -1038,14 +1046,14 @@ function showList() {
         let target = location.href.split("/")[4];
         if ($(".batchBtn") != undefined && target === "wait") {
             $(".batchBtn").show();
-        } 
+        }
         window.history.back();
         locationBlock = false;
     }
 }
 
 
-window.onpopstate = function () { 
+window.onpopstate = function () {
     if (locationBlock) {
         showList();
     }
