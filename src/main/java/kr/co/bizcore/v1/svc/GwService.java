@@ -35,6 +35,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import kr.co.bizcore.v1.domain.AppLine;
 import kr.co.bizcore.v1.domain.DocForm;
 import kr.co.bizcore.v1.mapper.MaintenanceMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -46,9 +47,9 @@ public class GwService extends Svc {
     private static final Logger logger = LoggerFactory.getLogger(GwService.class);
 
     @Autowired
-    private NotesService notes; 
+    private NotesService notes;
 
-    @Autowired 
+    @Autowired
     private MaintenanceMapper maintenanceMapper;
 
     // 양식 목록 전달
@@ -119,12 +120,6 @@ public class GwService extends Svc {
                 if (size > 0)
                     systemMapper.setAttachedFileData(compId, "appDoc", no, str, savedName, size);
             }
-
-
-
-
-
-
 
         return no;
     } // End of addAppDoc()
@@ -876,7 +871,7 @@ public class GwService extends Svc {
             if (map == null) { // 결재절차가 종료된 경우
                 formId = gwMapper.getFormIdWithDocNo(compId, docNo);
                 if (formId != null && formId.equals("doc_Form_SalesReport")) {
-                    insertMaintenance(related,compId);
+                    insertMaintenance(related, compId);
 
                     notes.sendNewNotes(compId, 0, writer,
                             "결재 완료 되었습니다.<br /><a href=\\u0022/business/contract/" + docNo + "\\u0022>계약 등록하기</a>",
@@ -1370,17 +1365,17 @@ public class GwService extends Svc {
         int result = 0;
         JSONObject json = null;
         JSONArray jarr = null;
-        String title= null;
+        String title = null;
         int amount, customer, engineer, product = 0;
         String startDate = null, endDate = null;
-        int contract = 0; 
-        String sopp = null; 
+        int contract = 0;
+        String sopp = null;
 
         json = new JSONObject(related);
-        sopp = json.getString("previous"); 
+        sopp = json.getString("previous");
         sopp = sopp.split(":")[1];
         jarr = json.getJSONArray("maintenance");
-        
+
         for (int i = 0; i < jarr.length(); i++) {
             json = jarr.getJSONObject(i);
             title = json.getString("title");
@@ -1391,11 +1386,29 @@ public class GwService extends Svc {
             startDate = json.getString("startDate").equals("검수일") ? null : json.getString("startDate");
             endDate = startDate == null ? null : json.getString("endDate");
             related = endDate == null ? json.getString("endDate") : null;
-            result += maintenanceMapper.insertMaintenance(compId, title, sopp, customer, product, startDate, endDate, engineer, amount, related);
-          
+            result += maintenanceMapper.insertMaintenance(compId, title, sopp, customer, product, startDate, endDate,
+                    engineer, amount, related);
+
         }
 
         return result;
+    }
+
+    public void getAppLineFromSwcore2() {
+        List<HashMap<String, String>> list = null;
+        HashMap<String, String> appLine = null;
+
+        list = gwMapper.getAppLineList();
+        logger.info("HashMap Check +++++++++++++++++++++++++ test : " + list.get(0));
+        logger.info("HashMap Check +++++++++++++++++++++++++ test docNo : " + list.get(0).get("docNo"));
+        logger.info("HashMap Check +++++++++++++++++++++++++ test type : " + list.get(0).get("docNo").getClass().getSimpleName());
+        // String docNo = null;
+        // for (int i = 0; i < list.size(); i++) {
+        //     appLine = list.get(i);
+        //   logger.info("++++++++++++++++++++++++++++++++++++ :" + appLine.get("docNo").getClass().getSimpleName());
+        //     gwMapper.insertTestAppLine(appLine.get("docNo"));
+        // }
+
     }
 
 }

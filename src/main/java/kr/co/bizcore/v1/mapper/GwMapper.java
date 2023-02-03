@@ -8,6 +8,8 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import kr.co.bizcore.v1.domain.AppLine;
+
 public interface GwMapper {
 
         // 부서코드와 연도를 입력받아서 다음 문서번호를 만들어주는 메서드
@@ -273,5 +275,13 @@ public interface GwMapper {
 
         @Select("SELECT appLine FROM bizcore.saved_docapp where compId = #{compId} AND userNo = #{userNo} AND no = #{appLineNum}")
         public String getSavedLine(@Param("compId") String compId, @Param("userNo") String userNo, @Param("appLineNum") int appLineNum);
+
+        @Select("select a.docNo , a.docType , a.docStatus, b.userNoCr , b.userNoIs, b.userNoApp , b.appStatus from swcore2.swc_businessdoc a  left join swcore2.swc_businessdocapp b on (a.docNo = b.docNo)")
+        public List<HashMap<String, String>> getAppLineList();
+
+
+        @Insert("insert into bizcore.testappline (`no`, docNo, employee) values(0, #{docNo}, 0)")
+        public void insertTestAppLine(@Param("docNo") String docNo);
+
 
 }

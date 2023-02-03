@@ -906,6 +906,13 @@ public class ApiGwCtrl extends Ctrl {
 
         }
         return result;
-    }
+    } 
 
+
+    @GetMapping("/testAppLine")
+    public String testAppLineConvert() {
+        String result = null;
+        gwService.getAppLineFromSwcore2(); 
+        return result; 
+    }
 }

@@ -421,7 +421,7 @@ class Contract {
             cnt.children[cnt.children.length - 1].children[1].appendChild(el);
             el.innerText = "결재 문서 조회";
             el.addEventListener("click", () => {
-                window.open("/business/contract/popup/" + storage.reportDetailData.docNo, "width=1000,height=800,left=100,top=100");
+                window.open("/business/contract/popup/" + this.docNo, "width=1000,height=800,left=100,top=100");
             })
 
             el.setAttribute("style", "background-color: #eef1fb;color:blue;cursor:pointer;margin: 0 0.5rem;");
@@ -1227,7 +1227,6 @@ function createSchedule(formId, lineData, appLine) {
         "next": "",
         "parent": "",
         "previous": "",
-
     };
 
 
@@ -1239,7 +1238,6 @@ function createSchedule(formId, lineData, appLine) {
                 appLine[i][0] = (i + 1);
             }
         }
-
     }
 
     let data = {
@@ -1264,7 +1262,6 @@ function createSchedule(formId, lineData, appLine) {
     data = cipher.encAes(data);
 
 
-
     $.ajax({
         url: "/api/gw/autoScheduleReport",
         method: "post",
@@ -1279,12 +1276,10 @@ function createSchedule(formId, lineData, appLine) {
             }
         }
     });
-
 }
 
 
 function createLine2(formId, appLineNum) {
-
 
     let savedLineData = storage.estsavedLine;
 
@@ -1296,7 +1291,6 @@ function createLine2(formId, appLineNum) {
                 appLine = savedLineData[i].appLine;
             }
         }
-
 
         let typeLine = [[], [], [], [], []];
 
