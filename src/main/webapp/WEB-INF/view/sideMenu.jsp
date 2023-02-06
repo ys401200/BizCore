@@ -33,15 +33,15 @@
 					<a href="/business/workjournal">업무일지검토</a>
 				</div> -->
 				<div>
-					<a href="/business/workreport2">주간 업무 보고</a>
+					<a href="/business/workreport2">업무일지검토</a>
 				</div>
 			</div>
-			<!-- <div class="menuItem">
+			<div class="menuItem">
 				<a href="/business/sales">
 					<img src="/images/main/icons/mainSchedIcon.png" id="mainSalesIcon" />
 					<span>영업활동관리</span>
 				</a>
-			</div> -->
+			</div>
 			<div class="menuItem">
 				<input type="radio" id="sopp" name="sideMenu" onclick="CommonDatas.sideMenuItemClick();">
 				<label for="sopp">
@@ -51,23 +51,28 @@
 				</label>
 			</div>
 			<div class="panel">
-				<div>
-					<a href="/business/project">프로젝트관리</a>
-				</div>
-				<!-- 영업기회 가림 -->
 				<!-- <div>
-					<a href="/business/sopp">영업기회조회</a>
+					<a href="/business/project">프로젝트관리</a>
 				</div> -->
+				<div>
+					<a href="/business/sopp">영업기회조회</a>
+				</div>
 				<div>
 					<a href="/business/estimate">견적관리</a>
 				</div>
 			</div>
-			<!-- <div class="menuItem">
+			<div class="menuItem">
+				<a href="/business/contract">
+					<img src="/images/main/icons/mainContIcon.png" id="mainContIcon" />
+					<span>계약관리</span>
+				</a>
+			</div>
+			<div class="menuItem">
 				<a href="/business/tech">
 					<img src="/images/main/icons/mainSchedIcon.png" id="mainSalesIcon" />
 					<span>기술지원관리</span>
 				</a>
-			</div> -->
+			</div>
 			<div class="menuItem">
 				<a href="/business/filebox">
 					<img src="/images/main/icons/mainBoardFileIcon.png" id="mainBoardFileIcon" />
@@ -230,12 +235,6 @@
 				<div>
 					<a href="/accounting/salesbill">매출</a>
 				</div>
-			</div>
-			<div class="menuItem">
-				<a href="/accounting/contract2">
-					<img src="/images/main/icons/mainContIcon.png" id="mainContIcon" />
-					<span>계약관리</span>
-				</a>
 			</div>
 		</div>
 		<!-- 
