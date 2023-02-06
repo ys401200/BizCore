@@ -6,7 +6,7 @@
         <input type="text" class="searchAllInput" id="searchAllInput" onkeyup="CommonDatas.Temps.schedule2Set.searchInputKeyup();" placeholder="단어를 입력해주세요.">
     </div>
     <div class="listRange">
-        <input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="CommonDatas.listRangeChange(this, CommonDatas.Temps.schedule2Set.drawFlexScheduleList);">
+        <input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="CommonDatas.listRangeChange(this, CommonDatas.Temps.schedule2Set.drawScheduleList);">
         <span class="listRangeSpan">0</span>
     </div>
     <select class="scheduleRange" id="scheduleRange" onchange="CommonDatas.Temps.schedule2Set.scheduleSelectChange();">
