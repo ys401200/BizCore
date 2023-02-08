@@ -12,15 +12,15 @@
             <div class="searchMultiContent">
                 <div class="searchEmployee">
                     <span>담당자</span>
-                    <input type="text" data-complete="user" autocomplete="off" id="searchEmployee" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">
+                    <input type="text" data-complete="user" autocomplete="off" id="searchEmployee" onclick="CommonDatas.addAutoComplete(this);" onkeyup="CommonDatas.addAutoComplete(this);">
                 </div>
                 <div class="searchCustomer">
                     <span>거래처</span>
-                    <input type="text" data-complete="customer" autocomplete="off" id="searchCustomer" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">
+                    <input type="text" data-complete="customer" autocomplete="off" id="searchCustomer" onclick="CommonDatas.addAutoComplete(this);" onkeyup="CommonDatas.addAutoComplete(this);">
                 </div>
                 <div class="searchTitle">
                     <span>영업기회명</span>
-                    <input type="text" data-complete="sopp" autocomplete="off" id="searchTitle" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">
+                    <input type="text" data-complete="sopp" autocomplete="off" id="searchTitle" onclick="CommonDatas.addAutoComplete(this);" onkeyup="CommonDatas.addAutoComplete(this);">
                 </div>
                 <div class="searchSoppType">
                     <span>판매방식</span>
@@ -56,9 +56,9 @@
                 <div class="searchCreated">
                     <span>등록일</span>
                     <div class="searchGridItem">
-                        <input type="date" id="searchCreatedFrom" max="9999-12-31" data-date-type="from" onchange="searchDateDefaultSet(this);">
+                        <input type="date" id="searchCreatedFrom" max="9999-12-31" data-date-type="from" onchange="CommonDatas.searchDateDefaultSet(this);">
                         <span>~</span>
-                        <input type="date" id="searchCreatedTo" max="9999-12-31" data-date-type="to" onchange="searchDateDefaultSet(this);">
+                        <input type="date" id="searchCreatedTo" max="9999-12-31" data-date-type="to" onchange="CommonDatas.searchDateDefaultSet(this);">
                     </div>
                 </div>
             </div>
@@ -67,10 +67,10 @@
             <hr />
             <span id="containerTitle">영업기회조회</span>
             <div class="listSearchInput">
-                <input type="text" class="searchAllInput" id="searchAllInput" onkeyup="searchInputKeyup();" placeholder="단어를 입력해주세요.">
+                <input type="text" class="searchAllInput" id="searchAllInput" onkeyup="CommonDatas.searchInputKeyup();" placeholder="단어를 입력해주세요.">
             </div>
             <div class="listRange">
-                <input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="listRangeChange(this, drawSoppList);">
+                <input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="CommonDatas.listRangeChange(this, drawSoppList);">
                 <span class="listRangeSpan">0</span>
             </div>
             <div class="crudBtns">
@@ -78,12 +78,11 @@
 				<button type="button" class="crudAddBtn" onclick="soppInsertForm();">등록</button>
 				<button type="button" class="crudUpdateBtn">수정</button>
 				<button type="button" class="crudDeleteBtn" onclick="soppDelete();">삭제</button>
-				<a href="#" onclick="hideDetailView(drawSoppList);" class="detailBackBtn">Back</a>
+				<a href="#" onclick="CommonDatas.hideDetailView(drawSoppList);" class="detailBackBtn">Back</a>
 			</div>
             <div class="gridList"></div>
             <div class="pageContainer"></div>
         </div>
-        <div class="detailSecondTabs"></div>
 	</div>
 </div>
 <jsp:include page="../bottom.jsp"/>

@@ -1,11 +1,8 @@
 package kr.co.bizcore.v1.ctrl;
 
-import java.util.regex.Pattern;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -16,14 +13,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import kr.co.bizcore.v1.domain.Project;
 import kr.co.bizcore.v1.domain.Schedule2;
-import kr.co.bizcore.v1.mapper.Schedule2Mapper;
 import kr.co.bizcore.v1.msg.Msg;
 import lombok.extern.slf4j.Slf4j;
 

@@ -17,8 +17,8 @@ import kr.co.bizcore.v1.domain.Sopp;
 public interface SoppMapper {
 
     @Select("SELECT soppno AS no, sopptype AS soppType, cntrctmth AS contType, sopptitle AS title, buyrno AS customer, custno AS endUser, userno AS employee, sopptargetamt AS expectedSales, soppstatus AS status, regdatetime AS created, moddatetime AS modified " +
-        "FROM swc_sopp " + 
-        "WHERE attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) ORDER BY created DESC")
+        "FROM swcore.swc_sopp " + 
+        "WHERE attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swcore.swc_company WHERE compid = #{compId}) ORDER BY created DESC")
     public List<SimpleSopp> getSoppList(String compId);
 
     @Select("SELECT soppno AS no, sopptype AS soppType, cntrctMth AS contType, sopptitle AS title, buyrno AS customer, custNo AS enduser, userNo AS employee, sopptargetamt AS expectedSales, soppstatus AS status, " + 
@@ -26,7 +26,7 @@ public interface SoppMapper {
             "ptncno AS ptnc, ptncmemberno AS picOfPtnc, buyrmemberno AS picOfBuyer, soppDesc AS detail,  " + 
             "sopptargetdate AS targetDate, maintenance_s AS startOfMaintenance, maintenance_e AS endOfMaintenance, soppsrate AS progress, soppsource AS source, " + 
             "sopp2desc AS remark, sopp2regdatetime AS remarkDate, businessType, op_priority AS priority, regDatetime AS created, modDatetime AS modified " + 
-            "FROM swc_sopp " + 
+            "FROM swcore.swc_sopp " + 
             "WHERE attrib NOT LIKE 'XXX%' " + 
             "AND soppno = #{soppNo} AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId})")
     public Sopp getSopp(@Param("soppNo") String soppNo, @Param("compId") String compId);

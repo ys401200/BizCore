@@ -3,20 +3,17 @@ package kr.co.bizcore.v1.svc;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-
 import org.slf4j.LoggerFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
-
 import kr.co.bizcore.v1.domain.Estimate;
 import kr.co.bizcore.v1.domain.EstimateItem;
 import kr.co.bizcore.v1.domain.Schedule;
 import kr.co.bizcore.v1.domain.SimpleEstimate;
 import kr.co.bizcore.v1.domain.SimpleSopp;
 import kr.co.bizcore.v1.domain.Sopp;
-import kr.co.bizcore.v1.domain.TradeDetail;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -59,10 +56,10 @@ public class SoppService extends Svc {
         list1.addAll(list2);
         list1.addAll(list3);
         Collections.sort(list1);
-        result = soppMapper.getSopp(soppNo+"", compId);
+        result = soppMapper.getSopp(soppNo + "", compId);
 
         // 매입매출 자료 가져오기 및 변환
-        list = tradeMapper.getTradeByFunc(compId, "sopp:"+soppNo);;
+        list = tradeMapper.getTradeByFunc(compId, "sopp:"+soppNo);
         trade = "[";
         if(list != null && list.size() > 0)    for(x = 0 ; x < list.size() ; x++){
             each = list.get(x);

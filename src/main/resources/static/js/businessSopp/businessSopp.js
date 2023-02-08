@@ -1,4 +1,4 @@
-$(document).ready(() => {
+document.addEventListener("DOMContentLoaded", () => {
     init();
     
 	setTimeout(() => {
@@ -10,14 +10,21 @@ $(document).ready(() => {
 });
 
 function getSoppList() {
-	let url, method, data, type;
+	axios.get("/api/sopp").then((response) => {
+		let result = cipher.decAes(response.data.data);
+		result = JSON.parse(result);
+		storage.soppList = result;
 
-	url = "/api/sopp";
-	method = "get";
-	data = "";
-	type = "list";
-
-	crud.defaultAjax(url, method, data, type, soppSuccessList, soppErrorList);
+		if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined){
+			window.setTimeout(drawSoppList, 600);
+			window.setTimeout(addSearchList, 600);
+			window.setTimeout(searchContainerSet, 600);
+		}else{
+			window.setTimeout(drawSoppList, 200);
+			window.setTimeout(addSearchList, 200);
+			window.setTimeout(searchContainerSet, 200);
+		}
+	})
 }
 
 function drawSoppList() {
@@ -34,13 +41,20 @@ function drawSoppList() {
 		}
 	}
 
-	result = paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+	result = CommonDatas.paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 	
 	hideArr = ["detailBackBtn", "crudUpdateBtn", "crudDeleteBtn", "contractReqBtn"];
-	showArr = ["gridList", "pageContainer", "searchContainer", "listRange", "listSearchInput", "crudAddBtn", "listSearchInput"];
-	containerTitle = $("#containerTitle");
+	showArr = [
+		{ element: "gridList", display: "grid" },
+		{ element: "pageContainer", display: "flex" },
+		{ element: "searchContainer", display: "block" },
+		{ element: "listRange", display: "flex" },
+		{ element: "listSearchInput", display: "flex" },
+		{ element: "crudAddBtn", display: "flex" },
+	];
+	containerTitle = document.getElementById("containerTitle");
 	pageContainer = document.getElementsByClassName("pageContainer");
-	container = $(".gridList");
+	container = document.getElementsByClassName("gridList")[0];
 
 	header = [
 		{
@@ -94,8 +108,8 @@ function drawSoppList() {
 		for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
 			let soppType, contType, title, customer, endUser, employee, expectedSales, status;
 			
-			disDate = dateDis(jsonData[i].created, jsonData[i].modified);
-			setDate = dateFnc(disDate, "mm-dd");
+			disDate = CommonDatas.dateDis(jsonData[i].created, jsonData[i].modified);
+			setDate = CommonDatas.dateFnc(disDate, "mm-dd");
 	
 			soppType = (jsonData[i].soppType === null || jsonData[i].soppType === "") ? "" : storage.code.etc[jsonData[i].soppType];
 			contType = (jsonData[i].contType === null || jsonData[i].contType === "") ? "" : storage.code.etc[jsonData[i].contType];
@@ -150,288 +164,256 @@ function drawSoppList() {
 			data.push(str);
 		}
 	
-		let pageNation = createPaging(pageContainer[0], result[3], "pageMove", "drawSoppList", result[0]);
+		let pageNation = CommonDatas.createPaging(pageContainer[0], result[3], "pageMove", "drawSoppList", result[0]);
 		pageContainer[0].innerHTML = pageNation;
 	}
 
-	containerTitle.html("영업기회조회");
-	createGrid(container, header, data, ids, job, fnc);
-	setViewContents(hideArr, showArr);
+	containerTitle.innerText = "영업기회조회";
+	CommonDatas.createGrid(container, header, data, ids, job, fnc);
+	CommonDatas.setViewContents(hideArr, showArr);
 
-	let path = $(location).attr("pathname").split("/");
+	let path = location.pathname.split("/");
 	if(path[3] !== undefined && jsonData !== ""){
-		let content = $(".gridContent[data-id=\"" + path[3] + "\"]");
+		let content = document.querySelector(".gridContent[data-id=\"" + path[3] + "\"]");
 		soppDetailView(content);
 	}
 }
 
 function soppDetailView(e){
-	let id, url, method, data, type;
+	let thisEle = e;
 
-	id = $(e).data("id");
-	url = "/api/sopp/" + id;
-	method = "get";
-	type = "detail";
-
-	crud.defaultAjax(url, method, data, type, soppSuccessView, soppErrorView);
-}
-
-function soppSuccessList(result){
-	storage.soppList = result;
-
-	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined){
-		window.setTimeout(drawSoppList, 600);
-		window.setTimeout(addSearchList, 600);
-		window.setTimeout(searchContainerSet, 600);
-	}else{
-		window.setTimeout(drawSoppList, 200);
-		window.setTimeout(addSearchList, 200);
-		window.setTimeout(searchContainerSet, 200);
-	}
-}
-
-function soppErrorList(){
-	msg.set("에러");
-}
-
-function soppSuccessView(result){
-	let html, htmlSecond, title, userName, customer, picOfCustomer, endUser, status, progress, contType, disDate, expectedSales, detail, dataArray, gridList, containerTitle, detailBackBtn, datas, crudUpdateBtn, crudDeleteBtn, detailSecondTabs, contractReqBtn;
+	axios.get("/api/sopp/" + thisEle.dataset.id).then((response) => {
+		let result = cipher.decAes(response.data.data);
+		result = JSON.parse(result);
 	
-	detailSetFormList(result);
-	gridList = $(".gridList");
-	containerTitle = $("#containerTitle");
-	detailBackBtn = $(".detailBackBtn");
-	crudUpdateBtn = $(".crudUpdateBtn");
-	crudDeleteBtn = $(".crudDeleteBtn");
-	detailSecondTabs = $(".detailSecondTabs");
-	contractReqBtn = $(".contractReqBtn");
-	datas = ["employee", "customer", "picOfCustomer", "endUser"];
-	notIdArray = ["employee"];
+		CommonDatas.detailSetFormList(result);
+		let gridList = document.getElementsByClassName("gridList")[0];
+		let containerTitle = document.getElementById("containerTitle");
+		let detailBackBtn = document.getElementsByClassName("detailBackBtn")[0];
+		let crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
+		let crudDeleteBtn = document.getElementsByClassName("crudDeleteBtn")[0];
+		let detailSecondTabs = document.getElementsByClassName("detailSecondTabs")[0];
+		let contractReqBtn = document.getElementsByClassName("contractReqBtn");[0];
+		let datas = ["employee", "customer", "picOfCustomer", "endUser"];
+		let notIdArray = ["employee"];
+		let disDate = CommonDatas.dateDis(result.targetDate);
+		let targetDate = CommonDatas.dateFnc(disDate);
+		let picOfCustomer = (result.picOfCustomer == 0 || result.picOfCustomer === undefined || result.picOfCustomer === null) ? "" : storage.cip[result.picOfCustomer].name;
 
-	title = (result.title === null || result.title === "" || result.title === undefined) ? "" : result.title;
-	userName = (result.employee == 0 || result.employee === null || result.employee === undefined) ? "" : storage.user[result.employee].userName;
-	customer = (result.customer == 0 || result.customer === null || result.customer === undefined) ? "" : storage.customer[result.customer].name;
-	picOfCustomer = (result.picOfCustomer == 0 || result.picOfCustomer === null || result.picOfCustomer === undefined) ? "" : storage.cip[result.picOfCustomer].name;
-	endUser = (result.endUser == 0 || result.endUser === null || result.endUser === undefined) ? "" : storage.customer[result.endUser].name;
-	status = (result.status === null || result.status === "" || result.status === undefined) ? "" : storage.code.etc[result.status];
-	progress = (result.progress === null || result.progress === "" || result.progress === undefined) ? "" : result.progress + "%";
-	contType = (result.contType === null || result.contType === "" || result.contType === undefined) ? "" : storage.code.etc[result.contType];
-	soppType = (result.soppType === null || result.soppType === "" || result.soppType === undefined) ? "" : storage.code.etc[result.soppType];
-	expectedSales = (result.expectedSales === null || result.expectedSales === "" || result.expectedSales === undefined) ? "" : numberFormat(result.expectedSales);
-	detail = (result.detail === null || result.detail === "" || result.detail === undefined) ? "" : result.detail;
-	
-	disDate = dateDis(result.targetDate);
-	targetDate = dateFnc(disDate);
+		dataArray = [
+			{
+				"title": "담당자(*)",
+				"elementId": "employee",
+				"complete": "user",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"value": storage.user[result.employee].userName,
+			},
+			{
+				"title": "매출처(*)",
+				"elementId": "customer",
+				"complete": "customer",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"value": storage.customer[result.customer].name,
+			},
+			{
+				"title": "매출처 담당자",
+				"complete": "cip",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"elementId": "picOfCustomer",
+				"value": picOfCustomer,
+			},
+			{
+				"title": "엔드유저(*)",
+				"complete": "customer",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"elementId": "endUser",
+				"value": storage.customer[result.endUser].name,
+			},
+			{
+				"title": "진행단계(*)",
+				"selectValue": [
+					{
+						"key": "10178",
+						"value": "영업정보파악",
+					},
+					{
+						"key": "10179",
+						"value": "초기접촉",
+					},
+					{
+						"key": "10180",
+						"value": "제안서제출 및 PT",
+					},
+					{
+						"key": "10181",
+						"value": "견적서제출",
+					},
+				],
+				"type": "select",
+				"elementId": "status",
+			},
+			{
+				"title": "가능성",
+				"elementId": "progress",
+				"value": result.progress + "%",
+			},
+			{
+				"title": "계약구분(*)",
+				"selectValue": [
+					{
+						"key": "10247",
+						"value": "판매계약",
+					},
+					{
+						"key": "10248",
+						"value": "유지보수",
+					},
+					{
+						"key": "10254",
+						"value": "임대계약",
+					}
+				],
+				"type": "select",
+				"elementId": "contType",
+			},
+			{
+				"title": "매출예정일",
+				"type": "date",
+				"elementId": "targetDate",
+				"value": targetDate,
+			},
+			{
+				"title": "판매방식(*)",
+				"selectValue": [
+					{
+						"key": "10173",
+						"value": "조달직판",
+					},
+					{
+						"key": "10174",
+						"value": "조달간판",
+					},
+					{
+						"key": "10175",
+						"value": "조달대행",
+					},
+					{
+						"key": "10176",
+						"value": "직접판매",
+					},
+					{
+						"key": "10218",
+						"value": "간접판매",
+					},
+					{
+						"key": "10255",
+						"value": "기타",
+					}
+				],
+				"type": "select",
+				"elementId": "soppType",
+			},
+			{
+				"title": "예상매출",
+				"elementId": "expectedSales",
+				"value": CommonDatas.numberFormat(result.expectedSales),
+				"keyup": "inputNumberFormat(this)",
+			},
+			{
+				"title": "",
+			},
+			{
+				"title": "",
+			},
+			{
+				"title": "영업기회명(*)",
+				"elementId": "title",
+				"value": result.title,
+				"col": 4,
+			},
+			{
+				"title": "내용",
+				"elementId": "detail",
+				"value": result.detail,
+				"type": "textarea",
+				"disabled": false,
+				"col": 4,
+			},
+		];
 
-	dataArray = [
-		{
-			"title": "담당자(*)",
-			"elementId": "employee",
-			"complete": "user",
-			"keyup": "addAutoComplete(this);",
-			"onClick": "addAutoComplete(this);",
-			"value": userName,
-		},
-		{
-			"title": "매출처(*)",
-			"elementId": "customer",
-			"complete": "customer",
-			"keyup": "addAutoComplete(this);",
-			"onClick": "addAutoComplete(this);",
-			"value": customer,
-		},
-		{
-			"title": "매출처 담당자",
-			"complete": "cip",
-			"keyup": "addAutoComplete(this);",
-			"onClick": "addAutoComplete(this);",
-			"elementId": "picOfCustomer",
-			"value": picOfCustomer,
-		},
-		{
-			"title": "엔드유저(*)",
-			"complete": "customer",
-			"keyup": "addAutoComplete(this);",
-			"onClick": "addAutoComplete(this);",
-			"elementId": "endUser",
-			"value": endUser,
-		},
-		{
-			"title": "진행단계(*)",
-			"selectValue": [
-				{
-					"key": "10178",
-					"value": "영업정보파악",
-				},
-				{
-					"key": "10179",
-					"value": "초기접촉",
-				},
-				{
-					"key": "10180",
-					"value": "제안서제출 및 PT",
-				},
-				{
-					"key": "10181",
-					"value": "견적서제출",
-				},
-			],
-			"type": "select",
-			"elementId": "status",
-		},
-		{
-			"title": "가능성",
-			"elementId": "progress",
-			"value": progress,
-		},
-		{
-			"title": "계약구분(*)",
-			"selectValue": [
-				{
-					"key": "10247",
-					"value": "판매계약",
-				},
-				{
-					"key": "10248",
-					"value": "유지보수",
-				},
-				{
-					"key": "10254",
-					"value": "임대계약",
-				}
-			],
-			"type": "select",
-			"elementId": "contType",
-		},
-		{
-			"title": "매출예정일",
-			"type": "date",
-			"elementId": "targetDate",
-			"value": targetDate,
-		},
-		{
-			"title": "판매방식(*)",
-			"selectValue": [
-				{
-					"key": "10173",
-					"value": "조달직판",
-				},
-				{
-					"key": "10174",
-					"value": "조달간판",
-				},
-				{
-					"key": "10175",
-					"value": "조달대행",
-				},
-				{
-					"key": "10176",
-					"value": "직접판매",
-				},
-				{
-					"key": "10218",
-					"value": "간접판매",
-				},
-				{
-					"key": "10255",
-					"value": "기타",
-				}
-			],
-			"type": "select",
-			"elementId": "soppType",
-		},
-		{
-			"title": "예상매출",
-			"elementId": "expectedSales",
-			"value": expectedSales,
-			"keyup": "inputNumberFormat(this)",
-		},
-		{
-			"title": "",
-		},
-		{
-			"title": "",
-		},
-		{
-			"title": "영업기회명(*)",
-			"elementId": "title",
-			"value": title,
-			"col": 4,
-		},
-		{
-			"title": "내용",
-			"elementId": "detail",
-			"value": detail,
-			"type": "textarea",
-			"col": 4,
-		},
-	];
+		let html = CommonDatas.detailViewForm(dataArray);
+		let htmlTabs = "<input type='radio' id='tabDefault' name='tabItem' data-content-id='defaultFormContainer' onclick='CommonDatas.tabItemClick(this)' checked>";
+		htmlTabs += "<label class='tabItem' for='tabDefault'>기본정보</label>";
+		htmlTabs += "<input type='radio' id='tabTrade' name='tabItem' data-content-id='tabTradeList' onclick='CommonDatas.tabItemClick(this)'>";
+		htmlTabs += "<label class='tabItem' for='tabTrade'>매입매출내역</label>";
+		htmlTabs += "<input type='radio' id='tabFile' name='tabItem' data-content-id='tabFileList' data-id='" + result.no + "' onclick='CommonDatas.tabItemClick(this)'>";
+		htmlTabs += "<label class='tabItem' for='tabFile'>파일첨부</label>";
+		htmlTabs += "<input type='radio' id='tabEst' name='tabItem' data-content-id='tabEstList' onclick='CommonDatas.tabItemClick(this)'>";
+		htmlTabs += "<label class='tabItem' for='tabEst'>견적내역</label>";
+		htmlTabs += "<input type='radio' id='tabTech' name='tabItem' data-content-id='tabTechList' onclick='CommonDatas.tabItemClick(this)'>";
+		htmlTabs += "<label class='tabItem' for='tabTech'>기술지원내역</label>";
+		htmlTabs += "<input type='radio' id='tabSales' name='tabItem' data-content-id='tabSalesList' onclick='CommonDatas.tabItemClick(this)'>";
+		htmlTabs += "<label class='tabItem' for='tabSales'>영업활동내역</label>";
+		let createGrid = document.createElement("div");
+		createGrid.className = "defaultFormContainer";
+		createGrid.innerHTML = html;
+		gridList.after(createGrid);
+		let createTabs = document.createElement("div");
+		createTabs.className = "tabs";
+		createTabs.innerHTML = htmlTabs;
+		let createTabLists = document.createElement("div");
+		createTabLists.className = "tabLists";
+		gridList.after(createTabLists);
+		gridList.after(createTabs);
+		CommonDatas.setTabsLayOutMenu();
+		containerTitle.innerText = result.title;
+		
+		crudUpdateBtn.setAttribute("onclick", "enableDisabled(this, \"soppUpdate();\", \"" + notIdArray + "\");");
+		crudUpdateBtn.style.display = "flex";
+		crudDeleteBtn.style.display = "flex";
+		
+		detailBackBtn.style.display = "flex";
+		storage.attachedList = result.attached;
+		storage.attachedNo = result.no;
+		storage.attachedType = "sopp";
+		storage.attachedFlag = true;
+		
+		createTabTradeList(result.trades);
+		createTabFileList();
+		detailEstSet(result, "sopp");
 
-	html = detailViewForm(dataArray);
-	htmlSecond = "<div class='tabs'>";
-	htmlSecond += "<input type='radio' id='tabTrade' name='tabItem' data-content-id='tabTradeList' onclick='tabItemClick(this)' checked>";
-	htmlSecond += "<label class='tabItem' for='tabTrade'>매입매출내역</label>";
-	htmlSecond += "<input type='radio' id='tabFile' name='tabItem' data-content-id='tabFileList' data-id='" + result.no + "' onclick='tabItemClick(this)'>";
-	htmlSecond += "<label class='tabItem' for='tabFile'>파일첨부</label>";
-	htmlSecond += "<input type='radio' id='tabEst' name='tabItem' data-content-id='tabEstList' onclick='tabItemClick(this)'>";
-	htmlSecond += "<label class='tabItem' for='tabEst'>견적내역</label>";
-	htmlSecond += "<input type='radio' id='tabTech' name='tabItem' data-content-id='tabTechList' onclick='tabItemClick(this)'>";
-	htmlSecond += "<label class='tabItem' for='tabTech'>기술지원내역</label>";
-	htmlSecond += "<input type='radio' id='tabSales' name='tabItem' data-content-id='tabSalesList' onclick='tabItemClick(this)'>";
-	htmlSecond += "<label class='tabItem' for='tabSales'>영업활동내역</label>";
-	htmlSecond += "</div>";
-	detailSecondTabs.append(htmlSecond);
-	containerTitle.html(title);
-	gridList.after(html);
-	setTabsLayOutMenu();
-	
-	if(storage.my == result.employee){
-		crudUpdateBtn.attr("onclick", "enableDisabled(this, \"soppUpdate();\", \"" + notIdArray + "\");");
-		crudUpdateBtn.css("display", "flex");
-		crudDeleteBtn.css("display", "flex");
-		contractReqBtn.css("display", "flex");
-		contractReqBtn.attr("data-href", "/gw/estimate/" + result.no);
-	}else{
-		crudUpdateBtn.css("display", "none");
-		crudDeleteBtn.css("display", "none");
-		contractReqBtn.css("display", "none");
-	}
-	
-	detailBackBtn.css("display", "flex");
-	storage.attachedList = result.attached;
-	storage.attachedNo = result.no;
-	storage.attachedType = "sopp";
-	storage.attachedFlag = true;
-	
-	createTabTradeList(result.trades);
-	createTabFileList();
-	detailEstSet(result, "sopp");
+		if(result.estimate.length < 1){
+			createTabEstList(result.estimate);
+		}else{
+			createTabEstList(result.estimate[0].children);
+		}
 
-	if(result.estimate.length < 1){
-		createTabEstList(result.estimate);
-	}else{
-		createTabEstList(result.estimate[0].children);
-	}
+		createTabTechList(result.schedules);
+		createTabSalesList(result.schedules);
+		CommonDatas.detailTabHide("defaultFormContainer");
+		CommonDatas.detailTrueDatas(datas);
 
-	createTabTechList(result.schedules);
-	createTabSalesList(result.schedules);
-	detailTabHide("tabTradeList");
-	detailTrueDatas(datas);
-
-	setTimeout(() => {
-		$("#status option[value='" + result.status + "']").prop("selected" ,true);
-		$("#contType option[value='" + result.contType + "']").prop("selected" ,true);
-		$("#soppType option[value='" + result.soppType + "']").prop("selected" ,true);
-		hideArr = ["gridList", "listRange", "crudAddBtn", "listSearchInput", "searchContainer", "pageContainer"];
-		showArr = ["defaultFormContainer", "detailSecondTabs"];
-		setViewContents(hideArr, showArr);
-		ckeditor.config.readOnly = true;
-		window.setTimeout(setEditor, 100);
-	}, 100);
-}
-
-function soppErrorView(){
-	msg.set("에러");
+		setTimeout(() => {
+			document.querySelector("#contType option[value='" + result.contType + "']").setAttribute("selected" ,true);
+			document.querySelector("#soppType option[value='" + result.soppType + "']").setAttribute("selected" ,true);
+			hideArr = ["gridList", "listRange", "crudAddBtn", "listSearchInput", "searchContainer", "pageContainer"];
+			showArr = [
+				{ element: "defaultFormContainer", display: "grid" },"crudUpdateBtn", "crudDeleteBtn",
+				{ element: "detailSecondTabs", display: "block" },
+				{ element: "crudUpdateBtn", display: "flex" },
+				{ element: "crudDeleteBtn", display: "flex" },
+			];
+			CommonDatas.setViewContents(hideArr, showArr);
+			window.setTimeout(setEditor, 100);
+		}, 100);
+	}).catch((error) => {
+		msg.set("상세보기 통신 에러!! \n" + error);
+		console.log(error);
+	});
 }
 
 function detailEstSet(result, pageType){
@@ -592,7 +574,7 @@ function soppInsertForm(){
 		},
 	];
 
-	html = detailViewForm(dataArray, "modal");
+	html = CommonDatas.detailViewForm(dataArray, "modal");
 
 	modal.show();
 	modal.content.css("min-width", "70%");
@@ -623,9 +605,9 @@ function soppInsertForm(){
 		let my = storage.my, nowDate;
 		nowDate = new Date();
 		nowDate = nowDate.toISOString().substring(0, 10);
-		$("#employee").val(storage.user[my].userName);
-		$("#employee").attr("data-change", true);
-		$("#targetDate").val(nowDate);
+		document.getElementById("employee").value = storage.user[my].userName;
+		document.getElementById("employee").setAttribute("data-change", true);
+		document.getElementById("targetDate").value = nowDate;
 		ckeditor.config.readOnly = false;
 		window.setTimeout(setEditor, 100);
 	}, 100);
@@ -636,37 +618,37 @@ function soppInsertForm(){
 }
 
 function soppInsert(){
-	if($("#title").val() === ""){
+	if(document.getElementById("title").value === ""){
 		msg.set("제목을 입력해주세요.");
-		$("#title").focus();
+		document.getElementById("title").focus();
 		return false;
-	}else if($("#employee").val() === ""){
+	}else if(document.getElementById("employee").value === ""){
 		msg.set("담당자를 입력해주세요.");
-		$("#employee").focus();
+		document.getElementById("employee").focus();
 		return false;
-	}else if($("#customer").val() === ""){
+	}else if(document.getElementById("customer").value === ""){
 		msg.set("매출처를 입력해주세요.");
-		$("#customer").focus();
+		document.getElementById("customer").focus();
 		return false;
-	}else if(!validateAutoComplete($("#customer").val(), "customer")){
+	}else if(!CommonDatas.validateAutoComplete(document.getElementById("customer").value, "customer")){
 		msg.set("조회된 매출처가 없습니다.\n다시 확인해주세요.");
-		$("#customer").focus();
+		document.getElementById("customer").focus();
 		return false;
-	}else if($("#picOfCustomer").val() !== "" && !validateAutoComplete($("#picOfCustomer").val(), "cip")){
+	}else if(document.getElementById("picOfCustomer").value !== "" && !CommonDatas.validateAutoComplete($("#picOfCustomer").value, "cip")){
 		msg.set("조회된 매출처 담당자가 없습니다.\n다시 확인해주세요.");
-		$("#picOfCustomer").focus();
+		document.getElementById("picOfCustomer").focus();
 		return false;
-	}else if($("#endUser").val() === ""){
+	}else if(document.getElementById("endUser").value === ""){
 		msg.set("엔드유저를 입력해주세요.");
-		$("#endUser").focus();
+		document.getElementById("endUser").focus();
 		return false;
-	}else if(!validateAutoComplete($("#endUser").val(), "customer")){
+	}else if(!CommonDatas.validateAutoComplete(document.getElementById("endUser").value, "customer")){
 		msg.set("조회된 엔드유저가 없습니다.\n다시 확인해주세요.");
-		$("#endUser").focus();
+		document.getElementById("endUser").focus();
 		return false;
 	}else{
+		CommonDatas.formDataSet();
 		let url, method, data, type;
-		formDataSet();
 		url = "/api/sopp";
 		method = "post";
 		data = storage.formList;

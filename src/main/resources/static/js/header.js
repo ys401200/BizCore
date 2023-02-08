@@ -328,6 +328,7 @@ dragAndDrop = {
 
 	ckeditor = {
 		"config": {
+			"height": "30vh",
 			"readOnly": true,
 			"language": "ko",
 			"toolbarGroups": [
@@ -1337,12 +1338,12 @@ function setEditor(container) {
 	if(container === undefined){
 		let textarea = document.querySelectorAll("textarea");
 		for (let i = 0; i < textarea.length; i++) {
-			CKEDITOR.inline(document.querySelector("#" + textarea[i].getAttribute("id")));
+			CKEDITOR.replace(document.querySelector("#" + textarea[i].getAttribute("id")));
 		}
 	}else{
 		let textarea = container.querySelectorAll("textarea");
 		for (let i = 0; i < textarea.length; i++) {
-			CKEDITOR.inline(container.querySelector("#" + textarea[i].getAttribute("id")));
+			CKEDITOR.replace(container.querySelector("#" + textarea[i].getAttribute("id")));
 		}
 	}
 }
@@ -1371,110 +1372,111 @@ function tabItemClick(e) {
 
 //매입매출내역 리스트
 function createTabTradeList(result) {
-	let html = "", countIndex = 0;
+	let html = "";
 
-	html = "<div class='tradeList' id='tabTradeList'>";
+	html = "<div class=\"tradeInputBtns\"><button type=\"button\" onclick=\"tradeInsert();\">매입매출 추가</button></div>";
 	html += "<div class=\"tradeInput\">";
 	html += "<div class=\"tradeInputAdd\">";
-	html += "<div>구분</div><div>거래일자</div><div>고객사</div><div>항목</div><div style=\"grid-column: span 2;\">적요</div><div>추가</div>";
-	html += "<div><select id=\"type\"><option value=\"purchase\">매입</option><option value=\"sale\">매출</option></select></div><div><input type=\"date\" id=\"dt\"></div><div><input type=\"text\" autocomplete=\"off\" id=\"customer\" data-complete=\"customer\" onclick=\"addAutoComplete(this);\" onkeyup=\"addAutoComplete(this);\"></div><div><input type=\"text\" autocomplete=\"off\" id=\"title\" data-complete=\"product\" onclick=\"addAutoComplete(this);\" onkeyup=\"addAutoComplete(this);\"></div><div style=\"grid-column: span 2;\"><input type=\"text\" id=\"remark\"></div><div style=\"grid-row: span 3;\"><button type=\"button\" onclick=\"tradeInsert();\">추가</button></div>";
-	html += "<div>단가</div><div>수량</div><div>공급가</div><div>부가세</div><div>합계금액</div><div>승인번호</div>";
-	html += "<div data-format=\"netPrice\"><input type=\"text\" class=\"netPrice\" onkeyup=\"inputNetFormat(this, 'tradeInputAdd');\" value=\"0\"></div><div data-format=\"quantity\"><input type=\"text\" id=\"qty\" onkeyup=\"inputQuanFormat(this, 'tradeInputAdd');\" value=\"1\"></div><div data-format=\"amount\"><input type=\"text\" id=\"price\" onkeyup=\"inputVatFormat(this);\" value=\"0\" readonly></div><div data-format=\"vat\"><input type=\"text\" id=\"vat\" onkeyup=\"inputVatFormat(this, 'tradeInputAdd');\" value=\"0\"></div><div data-format=\"total\"><input type=\"text\" class=\"total\" onkeyup=\"inputTotalFormat(this, 'tradeInputAdd');\" value=\"0\"></div><div><input type=\"text\" id=\"taxbill\"></div>";
+	html += "<div class=\"tradeInputTitle1\"><div>구분</div><div>거래일자</div><div>고객사</div><div>항목</div><div style=\"grid-column: span 2;\">적요</div></div>";
+	html += "<div class=\"tradeInputBody1\"><div><select id=\"type\"><option value=\"purchase\">매입</option><option value=\"sale\">매출</option></select></div><div><input type=\"date\" id=\"dt\"></div><div><input type=\"text\" autocomplete=\"off\" id=\"customer\" data-complete=\"customer\" onclick=\"addAutoComplete(this);\" onkeyup=\"addAutoComplete(this);\"></div><div><input type=\"text\" autocomplete=\"off\" id=\"title\" data-complete=\"product\" onclick=\"addAutoComplete(this);\" onkeyup=\"addAutoComplete(this);\"></div><div style=\"grid-column: span 2;\"><input type=\"text\" id=\"remark\"></div></div>";
+	html += "<div class=\"tradeInputTitle2\"><div>단가</div><div>수량</div><div>공급가</div><div>부가세</div><div>합계금액</div><div>승인번호</div></div>";
+	html += "<div class=\"tradeInputBody2\"><div data-format=\"netPrice\"><input type=\"text\" class=\"netPrice\" onkeyup=\"inputNetFormat(this, 'tradeInputAdd');\" value=\"0\"></div><div data-format=\"quantity\"><input type=\"text\" id=\"qty\" onkeyup=\"inputQuanFormat(this, 'tradeInputAdd');\" value=\"1\"></div><div data-format=\"amount\"><input type=\"text\" id=\"price\" onkeyup=\"inputVatFormat(this);\" value=\"0\" readonly></div><div data-format=\"vat\"><input type=\"text\" id=\"vat\" onkeyup=\"inputVatFormat(this, 'tradeInputAdd');\" value=\"0\"></div><div data-format=\"total\"><input type=\"text\" class=\"total\" onkeyup=\"inputTotalFormat(this, 'tradeInputAdd');\" value=\"0\"></div><div><input type=\"text\" id=\"taxbill\"></div></div>";
 	html += "</div>";
 	html += "</div>";
-	html += "<div class='tradeThirdFormTitle'>";
-	html += "<div class='tradeThirdTitleItem'>구분(등록/수정일)</div>";
-	html += "<div class='tradeThirdTitleItem'>거래처(매입/매출처)</div>";
-	html += "<div class='tradeThirdTitleItem'>항목</div>";
-	html += "<div class='tradeThirdTitleItem'>단가</div>";
-	html += "<div class='tradeThirdTitleItem'>수량</div>";
-	html += "<div class='tradeThirdTitleItem'>부가세액</div>";
-	html += "<div class='tradeThirdTitleItem'>공급가액</div>";
-	html += "<div class='tradeThirdTitleItem'>금액</div>";
-	html += "<div class='tradeThirdTitleItem'>비고</div>";
-	html += "<div class='tradeThirdTitleItem'>승인번호</div>";
-	html += "<div class='tradeThirdTitleItem'>삭제</div>";
+	html += "<div class=\"tradeMainContents\">";
+	html += "<div class=\"tradeThirdFormTitle\">";
+	html += "<div class=\"tradeThirdTitleItem\">구분(등록/수정일)</div>";
+	html += "<div class=\"tradeThirdTitleItem\">거래처(매입/매출처)</div>";
+	html += "<div class=\"tradeThirdTitleItem\">항목</div>";
+	html += "<div class=\"tradeThirdTitleItem\">단가</div>";
+	html += "<div class=\"tradeThirdTitleItem\">수량</div>";
+	html += "<div class=\"tradeThirdTitleItem\">부가세액</div>";
+	html += "<div class=\"tradeThirdTitleItem\">공급가액</div>";
+	html += "<div class=\"tradeThirdTitleItem\">금액</div>";
+	html += "<div class=\"tradeThirdTitleItem\">비고</div>";
+	html += "<div class=\"tradeThirdTitleItem\">승인번호</div>";
+	html += "<div class=\"tradeThirdTitleItem\">삭제</div>";
 	html += "</div>";
 
-	html += "<div class='tradeThirdFormContent'>";
+	html += "<div class=\"tradePurchaseContent\">";
 
 	if (result.length > 0) {
-		let disDate, setDate, no, customer, title, netPrice, qty, vat, price, total, remark, taxbill;
+		let disDate, setDate;
+		let purchaseArr = [];
+		let saleArr = [];
+		let purchaseTotal = 0;
+		let saleTotal = 0;
 
+		for(let i = 0; i < result.length; i++){
+			let item = result[i];
+			let total = 0;
+			total = item.price + item.vat;
 
-		for (let i = 0; i < result.length; i++) {
-			if (result[i].type === "purchase") {
-				countIndex++;
-				disDate = dateDis(result[i].created);
-				setDate = dateFnc(disDate);
-				no = result[i].no;
-				customer = (result[i].customer == 0 || result[i].customer === null || result[i].customer === undefined) ? "" : storage.customer[result[i].customer].name;
-				title = (result[i].title === null || result[i].title == 0 || result[i].title === undefined) ? "" : result[i].title;
-				netPrice = (result[i].price == 0 || result[i].price === null || result[i].price === undefined) ? 0 : numberFormat(result[i].price / result[i].qty);
-				qty = (result[i].qty == 0 || result[i].qty === null || result[i].qty === undefined) ? 0 : result[i].qty;
-				vat = (result[i].vat == 0 || result[i].vat === null || result[i].vat === undefined) ? 0 : numberFormat(result[i].vat);
-				price = (result[i].price == 0 || result[i].price === null || result[i].price === undefined) ? 0 : numberFormat(result[i].price);
-				total = (result[i].price == 0 || result[i].price === null || result[i].price === undefined) ? 0 : numberFormat(result[i].price + result[i].vat);
-				remark = (result[i].remark === null || result[i].remark === "" || result[i].remark === undefined) ? "" : result[i].remark;
-				taxbill = (result[i].taxbill === null || result[i].taxbill === "" || result[i].taxbill === undefined) ? "" : result[i].taxbill;
-
-				html += "<div class='tradeThirdFormContentDiv'>";
-				html += "<div class='tradeThirdContentItem'>" + setDate + "</div>";
-				html += "<div class='tradeThirdContentItem'>" + customer + "</div>";
-				html += "<div class='tradeThirdContentItem'>" + title + "</div>";
-				html += "<div class='tradeThirdContentItem'>" + netPrice + "</div>";
-				html += "<div class='tradeThirdContentItem'>" + qty + "</div>";
-				html += "<div class='tradeThirdContentItem'>" + vat + "</div>";
-				html += "<div class='tradeThirdContentItem'>" + price + "</div>";
-				html += "<div class='tradeThirdContentItem' data-type=\"purchase\">" + total + "</div>";
-				html += "<div class='tradeThirdContentItem'>" + remark + "</div>";
-				html += "<div class='tradeThirdContentItem'>" + taxbill + "</div>";
-				html += "<div class='tradeThirdContentItem tradeItemRemoveBtn'><button type=\"button\" data-type=\"" + result[i].type + "\" data-no=\"" + no + "\" onclick=\"tradeItemRemove(this);\">삭제</button></div>";
-				html += "</div>";
+			if(result[i].type === "purchase"){
+				purchaseArr.push(item);
+				purchaseTotal += total;
+			}else{
+				saleArr.push(item);
+				saleTotal += total;
 			}
 		}
 
-		html += "<div class='tradeThirdFormContentTotal'><span>매입합계</span><span></span></div>";
-
-		for (let i = 0; i < result.length; i++) {
-			if (result[i].type === "sale") {
-				countIndex++;
-				disDate = dateDis(result[i].created);
+		if(purchaseArr.length > 0){
+			for(let i = 0; i < purchaseArr.length; i++){
+				let item = purchaseArr[i];
+				disDate = dateDis(item.created);
 				setDate = dateFnc(disDate);
-				no = result[i].no;
-				customer = (result[i].customer == 0 || result[i].customer === null || result[i].customer === undefined) ? "" : storage.customer[result[i].customer].name;
-				title = (result[i].title === null || result[i].title == 0 || result[i].title === undefined) ? "" : result[i].title;
-				netPrice = (result[i].price == 0 || result[i].price === null || result[i].price === undefined) ? 0 : numberFormat(result[i].price / result[i].qty);
-				qty = (result[i].qty == 0 || result[i].qty === null || result[i].qty === undefined) ? 0 : result[i].qty;
-				vat = (result[i].vat == 0 || result[i].vat === null || result[i].vat === undefined) ? 0 : numberFormat(result[i].vat);
-				price = (result[i].price == 0 || result[i].price === null || result[i].price === undefined) ? 0 : numberFormat(result[i].price);
-				total = (result[i].price == 0 || result[i].price === null || result[i].price === undefined) ? 0 : numberFormat(result[i].price + result[i].vat);
-				remark = (result[i].remark === null || result[i].remark === "" || result[i].remark === undefined) ? "" : result[i].remark;
-				taxbill = (result[i].taxbill === null || result[i].taxbill === "" || result[i].taxbill === undefined) ? "" : result[i].taxbill;
-
-				html += "<div class='tradeThirdFormContentDiv'>";
-				html += "<div class='tradeThirdContentItem'>" + setDate + "</div>";
-				html += "<div class='tradeThirdContentItem'>" + customer + "</div>";
-				html += "<div class='tradeThirdContentItem'>" + title + "</div>";
-				html += "<div class='tradeThirdContentItem'>" + netPrice + "</div>";
-				html += "<div class='tradeThirdContentItem'>" + qty + "</div>";
-				html += "<div class='tradeThirdContentItem'>" + vat + "</div>";
-				html += "<div class='tradeThirdContentItem'>" + price + "</div>";
-				html += "<div class='tradeThirdContentItem' data-type=\"sale\">" + total + "</div>";
-				html += "<div class='tradeThirdContentItem'>" + remark + "</div>";
-				html += "<div class='tradeThirdContentItem'>" + taxbill + "</div>";
-				html += "<div class='tradeThirdContentItem tradeItemRemoveBtn'><button type=\"button\" data-type=\"" + result[i].type + "\" data-no=\"" + no + "\" onclick=\"tradeItemRemove(this);\">삭제</button></div>";
-				html += "</div>";
+	
+				html += "<div class=\"tradePurchaseItem\">" + setDate + "</div>";
+				html += "<div class=\"tradePurchaseItem\">" + storage.customer[item.customer].name + "</div>";
+				html += "<div class=\"tradePurchaseItem\">" + item.title + "</div>";
+				html += "<div class=\"tradePurchaseItem\">" + CommonDatas.numberFormat(item.price / item.qty) + "</div>";
+				html += "<div class=\"tradePurchaseItem\">" + item.qty + "</div>";
+				html += "<div class=\"tradePurchaseItem\">" + CommonDatas.numberFormat(item.vat) + "</div>";
+				html += "<div class=\"tradePurchaseItem\">" + CommonDatas.numberFormat(item.price) + "</div>";
+				html += "<div class=\"tradePurchaseItem\" data-type=\"purchase\">" + CommonDatas.numberFormat(item.price + item.vat) + "</div>";
+				html += "<div class=\"tradePurchaseItem\">" + item.remark + "</div>";
+				html += "<div class=\"tradePurchaseItem\">" + item.taxbill + "</div>";
+				html += "<div class=\"tradePurchaseItem tradeItemRemoveBtn\"><button type=\"button\" data-type=\"" + item.type + "\" data-no=\"" + item.no + "\" onclick=\"tradeItemRemove(this);\">삭제</button></div>";
 			}
+		}else{
+			html += "<div class=\"tradePurchaseItem\">데이터가 없습니다.</div>"
 		}
 
-		html += "<div class='tradeThirdFormContentTotal'><span>매출합계</span><span></span></div>";
-	} else {
-		html += "<div class='tradeThirdFormContentDiv'>";
-		html += "<div class='tradeThirdContentItem' style='grid-column: span 12; text-align:center;'>데이터가 없습니다.</div>";
 		html += "</div>";
-	}
+		html += "<div class=\"tradePurchaseTotal\"><span>매입합계</span><span>" + CommonDatas.numberFormat(purchaseTotal) + "</span></div>";
+		html += "<div class=\"tradeSaleContent\">";
 
+		if(saleArr.length > 0){
+			for(let i = 0; i < saleArr.length; i++){
+				let item = saleArr[i];
+				disDate = dateDis(item.created);
+				setDate = dateFnc(disDate);
+	
+				html += "<div class=\"tradeSaleItem\">" + setDate + "</div>";
+				html += "<div class=\"tradeSaleItem\">" + storage.customer[item.customer].name + "</div>";
+				html += "<div class=\"tradeSaleItem\">" + item.title + "</div>";
+				html += "<div class=\"tradeSaleItem\">" + CommonDatas.numberFormat(item.price / item.qty) + "</div>";
+				html += "<div class=\"tradeSaleItem\">" + item.qty + "</div>";
+				html += "<div class=\"tradeSaleItem\">" + CommonDatas.numberFormat(item.vat) + "</div>";
+				html += "<div class=\"tradeSaleItem\">" + CommonDatas.numberFormat(item.price) + "</div>";
+				html += "<div class=\"tradeSaleItem\" data-type=\"purchase\">" + CommonDatas.numberFormat(item.price + item.vat) + "</div>";
+				html += "<div class=\"tradeSaleItem\">" + item.remark + "</div>";
+				html += "<div class=\"tradeSaleItem\">" + item.taxbill + "</div>";
+				html += "<div class=\"tradeSaleItem tradeItemRemoveBtn\"><button type=\"button\" data-type=\"" + item.type + "\" data-no=\"" + item.no + "\" onclick=\"tradeItemRemove(this);\">삭제</button></div>";
+			}
+		}else{
+			html += "<div class=\"tradeSaleItem\">데이터가 없습니다.</div>"
+		}
+
+		html += "</div>";
+		html += "<div class=\"tradeSaleTotal\"><span>매출합계</span><span>" + CommonDatas.numberFormat(saleTotal) + "</span></div>";
+	} else {
+		html += "<div class=\"tradeThirdContentItem\" style=\"grid-column: span 12; text-align:center;\">데이터가 없습니다.</div>";
+	}
+	
+	html += "</div>";
+	html += "</div>";
 	html += "<div class=\"tradeTotalInfo\">";
 	html += "<div>매입합계</div>";
 	html += "<div style=\"justify-content: right;\"></div>";
@@ -1485,15 +1487,19 @@ function createTabTradeList(result) {
 	html += "<div>이익률</div>";
 	html += "<div style=\"justify-content: right;\"></div>";
 	html += "</div>";
-
 	html += "</div>";
-	$(".detailSecondTabs").append(html);
 
-	let tabs = $(".tabs");
-	if (countIndex > 0) {
-		tabs.find("label[for=\"tabTrade\"]").text("매입매출내역(" + countIndex + ")");
+	let tabLists = document.getElementsByClassName("tabLists")[0];
+	let createDiv = document.createElement("div");
+	createDiv.className = "tabTradeList";
+	createDiv.id = "tabTradeList";
+	createDiv.innerHTML = html;
+	tabLists.append(createDiv);
+	let tabs = document.getElementsByClassName("tabs")[0];
+	if (result.length > 0) {
+		tabs.querySelector("label[for=\"tabTrade\"]").innerText = "매입매출내역(" + result.length + ")";
 	} else {
-		tabs.find("label[for=\"tabTrade\"]").text("매입매출내역(0)");
+		tabs.querySelector("label[for=\"tabTrade\"]").innerText = "매입매출내역(0)";
 	}
 
 	tradeTotalSet();
@@ -1734,15 +1740,10 @@ function tradeItemRemove(e) {
 }
 
 function createTabFileList() {
-	let html = "", tabs, container, header = [], data = [], str, detailSecondTabs, ids, job, fnc, url;
-
-	detailSecondTabs = $(".detailSecondTabs");
-
-	html = "<div class='tabFileList' id='tabFileList'>";
-	html += "<input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attached[]' id='attached' onchange='fileChange();' multiple>";
+	let html = "", tabs, container, header = [], data = [], str, ids, job, fnc, url;
+	html = "<input type='file' class='dropZone' ondragenter='dragAndDrop.fileDragEnter(event)' ondragleave='dragAndDrop.fileDragLeave(event)' ondragover='dragAndDrop.fileDragOver(event)' ondrop='dragAndDrop.fileDrop(event)' name='attached[]' id='attached' onchange='fileChange();' multiple>";
 	html += "<div class='fileList'></div>";
-	html += "</div>";
-
+	
 	header = [
 		{
 			"title": "파일명",
@@ -1753,15 +1754,20 @@ function createTabFileList() {
 			"align": "center",
 		},
 	];
-
-	detailSecondTabs.append(html);
-	container = detailSecondTabs.find(".tabFileList .fileList");
-	tabs = $(".tabs");
+	
+	let createDiv = document.createElement("div");
+	createDiv.className = "tabFileList";
+	createDiv.id = "tabFileList";
+	createDiv.innerHTML = html;
+	let tabLists = document.getElementsByClassName("tabLists")[0];
+	tabLists.append(createDiv);
+	container = document.getElementsByClassName("tabFileList")[0].getElementsByClassName("fileList")[0];
+	tabs = document.getElementsByClassName("tabs")[0];
 
 	if (storage.attachedList.length > 0) {
-		tabs.find("label[for=\"tabFile\"]").text("파일첨부(" + storage.attachedList.length + ")");
+		tabs.querySelector("label[for=\"tabFile\"]").innerText = "파일첨부(" + storage.attachedList.length + ")";
 	} else {
-		tabs.find("label[for=\"tabFile\"]").text("파일첨부(0)");
+		tabs.querySelector("label[for=\"tabFile\"]").innerText = "파일첨부(0)";
 	}
 
 	if (storage.attachedList.length > 0) {
@@ -1792,16 +1798,18 @@ function createTabFileList() {
 		str = [
 			{
 				"setData": "<div>데이터가 없습니다.</div>",
+				"align": "center",
 			},
 			{
 				"setData": "<button type='button' disabled>삭제</button>",
+				"align": "center",
 			},
 
 		];
 		data.push(str);
 	}
 
-	createGrid(container, header, data, ids, job, fnc);
+	CommonDatas.createGrid(container, header, data, ids, job, fnc);
 }
 
 function fileChange() {
@@ -2020,7 +2028,7 @@ function tabFileItemListUpdate() {
 	}
 
 	setTimeout(() => {
-		createGrid(container, header, data, ids, job, fnc);
+		CommonDatas.createGrid(container, header, data, ids, job, fnc);
 	}, 100);
 
 	content = $(".tabFileList .fileList .gridContent");
@@ -2036,13 +2044,19 @@ function tabFileItemListUpdate() {
 
 //견적내역 리스트
 function createTabEstList(result) {
-	let html = "", lengthIndex, tabs, container, header, data = [], str, detailSecondTabs, ids, job, fnc, disDate, idName;
-	detailSecondTabs = $(".detailSecondTabs");
-	if ($(".tabEstList").length > 0) {
-		$(".tabEstList").remove();
+	let html = "", lengthIndex, tabs, container, header, data = [], str, ids, job, fnc, disDate, idName;
+	let tabEstListAll = document.getElementsByClassName("tabEstList");
+	if (tabEstListAll.length > 0) {
+		for(let i = 0; i < tabEstListAll.length; i++){
+			let item = tabEstListAll[i];
+			item.remove();
+		}
 	}
 
-	html = "<div class='tabEstList' id='tabEstList'></div>";
+	let tabLists = document.getElementsByClassName("tabLists")[0];
+	let createDiv = document.createElement("div");
+	createDiv.className = "tabEstList";
+	createDiv.id = "tabEstList";
 	lengthIndex = 0;
 	idName = "tabEstList";
 
@@ -2073,9 +2087,9 @@ function createTabEstList(result) {
 		},
 	];
 
-	detailSecondTabs.append(html);
-	container = detailSecondTabs.find(".tabEstList");
-	tabs = $(".tabs");
+	tabLists.append(createDiv);
+	container = tabLists.getElementsByClassName("tabEstList")[0];
+	tabs = document.getElementsByClassName("tabs")[0];
 
 	if (result.length > 0) {
 		for (let i = 0; i < result.length; i++) {
@@ -2133,23 +2147,24 @@ function createTabEstList(result) {
 	}
 
 	if (lengthIndex > 0) {
-		tabs.find("label[for=\"tabEst\"]").text("견적내역(" + lengthIndex + ")");
+		tabs.querySelector("label[for=\"tabEst\"]").innerText = "견적내역(" + lengthIndex + ")";
 	} else {
-		tabs.find("label[for=\"tabEst\"]").text("견적내역(0)");
+		tabs.querySelector("label[for=\"tabEst\"]").innerText = "견적내역(0)";
 	}
 
 	setTimeout(() => {
-		createGrid(container, header, data, ids, job, fnc, idName);
-		container.prepend("<div class=\"estAddBtn\"><button type=\"button\" data-href=\"/business/popupEstForm\" onclick=\"popup(this, 880, 800);\">등록</button></div>");
+		CommonDatas.createGrid(container, header, data, ids, job, fnc, idName);
+		// container.prepend("<div class=\"estAddBtn\"><button type=\"button\" data-href=\"/business/popupEstForm\" onclick=\"popup(this, 880, 800);\">등록</button></div>");
 	}, 100);
 }
 
 //기술지원내역 리스트
 function createTabTechList(result) {
-	let html = "", lengthIndex, tabs, container, header, data = [], str, detailSecondTabs, ids, job, fnc, disDate, idName;
-
-	detailSecondTabs = $(".detailSecondTabs");
-	html = "<div class='tabTechList' id='tabTechList'></div>";
+	let html = "", lengthIndex, tabs, container, header, data = [], str, ids, job, fnc, disDate, idName;
+	let tabLists = document.getElementsByClassName("tabLists")[0];
+	let createDiv = document.createElement("div");
+	createDiv.className = "tabTechList";
+	createDiv.id = "tabTechList";
 	lengthIndex = 0;
 	idName = "tabTechList";
 
@@ -2176,9 +2191,9 @@ function createTabTechList(result) {
 		},
 	];
 
-	detailSecondTabs.append(html);
-	container = detailSecondTabs.find(".tabTechList");
-	tabs = $(".tabs");
+	tabLists.append(createDiv);
+	container = tabLists.getElementsByClassName("tabTechList")[0];
+	tabs = document.getElementsByClassName("tabs")[0];
 
 	if (result.length > 0) {
 		for (let i = 0; i < result.length; i++) {
@@ -2226,22 +2241,23 @@ function createTabTechList(result) {
 	}
 
 	if (lengthIndex > 0) {
-		tabs.find("label[for=\"tabTech\"]").text("기술지원내역(" + lengthIndex + ")");
+		tabs.querySelector("label[for=\"tabTech\"]").innerText = "기술지원내역(" + lengthIndex + ")";
 	} else {
-		tabs.find("label[for=\"tabTech\"]").text("기술지원내역(0)");
+		tabs.querySelector("label[for=\"tabTech\"]").innerText = "기술지원내역(0)";
 	}
 
 	setTimeout(() => {
-		createGrid(container, header, data, ids, job, fnc, idName);
+		CommonDatas.createGrid(container, header, data, ids, job, fnc, idName);
 	}, 100);
 }
 
 //영업활동내역 리스트
 function createTabSalesList(result) {
-	let html = "", lengthIndex, tabs, container, header, data = [], str, detailSecondTabs, ids, job, fnc, disDate, idName;
-
-	detailSecondTabs = $(".detailSecondTabs");
-	html = "<div class='tabSalesList' id='tabSalesList'></div>";
+	let html = "", lengthIndex, tabs, container, header, data = [], str, ids, job, fnc, disDate, idName;
+	let tabLists = document.getElementsByClassName("tabLists")[0];
+	let createDiv = document.createElement("div");
+	createDiv.className = "tabSalesList";
+	createDiv.id = "tabSalesList";
 	lengthIndex = 0;
 	idName = "tabSalesList";
 
@@ -2272,9 +2288,9 @@ function createTabSalesList(result) {
 		},
 	]
 
-	detailSecondTabs.append(html);
-	container = detailSecondTabs.find(".tabSalesList");
-	tabs = $(".tabs");
+	tabLists.append(createDiv);
+	container = tabLists.getElementsByClassName("tabSalesList")[0];
+	tabs = document.getElementsByClassName("tabs")[0];
 
 	if (result.length > 0) {
 		for (let i = 0; i < result.length; i++) {
@@ -2325,13 +2341,13 @@ function createTabSalesList(result) {
 	}
 
 	if (lengthIndex > 0) {
-		tabs.find("label[for=\"tabSales\"]").text("영업활동내역(" + lengthIndex + ")");
+		tabs.querySelector("label[for=\"tabSales\"]").innerText = "영업활동내역(" + lengthIndex + ")";
 	} else {
-		tabs.find("label[for=\"tabSales\"]").text("영업활동내역(0)");
+		tabs.querySelector("label[for=\"tabSales\"]").innerText = "영업활동내역(0)";
 	}
 
 	setTimeout(() => {
-		createGrid(container, header, data, ids, job, fnc, idName);
+		CommonDatas.createGrid(container, header, data, ids, job, fnc, idName);
 	}, 100);
 }
 
@@ -3734,18 +3750,18 @@ function setViewContentsCopy(hideArr, showArr){
 }
 
 function hideDetailView(func){
-	let defaultFormContainer, crudUpdateBtn, detailSecondTabs;
-	defaultFormContainer = $(".defaultFormContainer");
-	crudUpdateBtn = $(".crudUpdateBtn");
-	detailSecondTabs = $(".detailSecondTabs");
+	let defaultFormContainer, crudUpdateBtn, tabs;
+	defaultFormContainer = document.getElementsByClassName("defaultFormContainer")[0];
+	crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
+	tabs = document.getElementsByClassName("tabs")[0];
 	defaultFormContainer.remove();
-	crudUpdateBtn.text("수정");
+	crudUpdateBtn.innerText = "수정";
 
-	if (detailSecondTabs !== undefined) {
-		detailSecondTabs.html("");
+	if (tabs !== undefined) {
+		tabs.remove();
 	}
 
-	$("input").val("");
+	document.querySelector("input").value = "";
 
 	if(func !== undefined){
 		func();

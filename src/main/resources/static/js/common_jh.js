@@ -637,7 +637,6 @@ class Schedule2Set {
 			drawScheduleList();
 			document.getElementsByClassName("calendarList")[0].style.display = "none";
 			let content = document.querySelector(".gridContent[data-id=\"" + path[3] + "\"]");
-			console.log(content);
 			scheduleDetailView(content);
 		}
 
@@ -655,7 +654,6 @@ class Schedule2Set {
 			if (storage.searchDatas === undefined) {
 				jsonData = storage.scheduleList.sort(function (a, b) { return b.created - a.created; });
 			} else {
-				console.log(storage.searchDatas);
 				jsonData = storage.searchDatas.sort(function (a, b) { return b.created - a.created; });
 			}
 		}
@@ -945,7 +943,6 @@ class Schedule2Set {
 	calendarMore(e) {
 		let thisEle, moreContentBody, html = "", calendarMoreContent, moreContentTitle, setItemParents;
 		thisEle = $(e);
-		console.log(thisEle.parent().parent());
 		setItemParents = thisEle.parent().parent();
 		calendarMoreContent = $(".calendarMoreContent");
 		moreContentTitle = $(".moreContentTitle");
@@ -3388,7 +3385,6 @@ class Common {
 			}
 		}
 
-		console.log(dataArray);
 		return dataArray;
 	}
 
@@ -3612,12 +3608,11 @@ class Common {
 
 	//tab container 중 id값을 받아 해당하는 id값 빼고 전부 숨기는 함수
 	detailTabHide(notId) {
-		let radio, detailSecondTabs;
-		detailSecondTabs = document.getElementsByClassName("detailSecondTabs")[0];
-		radio = document.getElementsByClassName("tabs")[0].querySelectorAll("input[type=\"radio\"]");
+		let tabs =  document.getElementsByClassName("tabs")[0];
+		let radio = tabs.querySelectorAll("input[type=\"radio\"]");
 		for (let i = 0; i < radio.length; i++) {
-			let contents = detailSecondTabs.querySelector("." + radio[i].dataset.contentId);
-
+			let contents = document.querySelector("." + radio[i].dataset.contentId);
+			
 			if (notId === undefined) {
 				contents.style.display = "none";
 			} else {
@@ -3625,6 +3620,30 @@ class Common {
 					contents.style.display = "none";
 				}
 			}
+		}
+	}
+
+	//상세 탭 클릭 함수
+	tabItemClick(e) {
+		let thisEle = e;
+		let tabs = document.getElementsByClassName("tabs")[0];
+		let radios = tabs.querySelectorAll("input[type=\"radio\"]");
+
+		for(let i = 0; i < radios.length; i++){
+			let item = radios[i];
+			let contentId = item.dataset.contentId;
+
+			if(document.getElementById(contentId) !== undefined && document.getElementById(contentId) !== null){
+				document.getElementById(contentId).style.display = "none";
+			}else if(document.getElementsByClassName(contentId)[0] !== undefined && document.getElementsByClassName(contentId)[0] !== null){
+				document.getElementsByClassName(contentId)[0].style.display = "none";
+			}
+		}
+
+		if(document.getElementById(thisEle.dataset.contentId) !== undefined && document.getElementById(thisEle.dataset.contentId) !== null){
+			document.getElementById(thisEle.dataset.contentId).style.display = "";
+		}else if(document.getElementsByClassName(thisEle.dataset.contentId)[0] !== undefined && document.getElementsByClassName(thisEle.dataset.contentId)[0] !== null){
+			document.getElementsByClassName(thisEle.dataset.contentId)[0].style.display = "";
 		}
 	}
 
@@ -3669,12 +3688,85 @@ class Common {
 		}
 	}
 
+	//키업 이벤트 딜레이 함수
 	keyupDelay() {
 		if (v !== null) {
 			window.clearTimeout(v);
 			v = null;
 		}
 		v = window.setTimeout(hdr, 1000);
+	}
+
+	//자동완성 기능 유효성 검사 함수
+	validateAutoComplete(value, type) {
+		let result = false;
+	
+		for (let key in storage[type]) {
+			if (type === "customer" || type === "cip" || type === "product") {
+				if (storage[type][key].name === value) {
+					result = true;
+				}
+			} else if (type === "user") {
+				if (storage[type][key].userName === value) {
+					result = true;
+				}
+			} else if (type === "sopp" || type === "contract") {
+				if (storage[type][key].title === value) {
+					result = true;
+				}
+			}
+		}
+	
+		return result;
+	}
+
+	//숫자 콤마 형식으로 변환
+	numberFormat(num) {
+		if (num !== undefined) {
+			let setNumber;
+			setNumber = parseInt(num).toLocaleString("en-US");
+			return setNumber;
+		} else {
+			return 0;
+		}
+	}
+
+	//keyup 숫자 콤마 형식으로 변환
+	inputNumberFormat(e) {
+		let value;
+		value = e.value.replaceAll(",", "");
+	
+		if(value > 0 && !isNaN(value)){
+			e.value = e.value.replace(/[^0-9]/g,"");
+			e.value = parseInt(value).toLocaleString("en-US");	
+		}else{
+			e.value = "";
+		}
+	}
+
+	//상세보기 back 버튼 함수
+	hideDetailView(func){
+		let defaultFormContainer, crudUpdateBtn, tabs;
+		defaultFormContainer = document.getElementsByClassName("defaultFormContainer")[0];
+		crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
+		tabs = document.getElementsByClassName("tabs")[0];
+		let tabLists = document.getElementsByClassName("tabLists")[0];
+		defaultFormContainer.remove();
+		crudUpdateBtn.innerText = "수정";
+	
+		if (tabs !== undefined) {
+			tabs.remove();
+		}
+
+		if(tabLists !== undefined){
+			tabLists.remove();
+		}
+	
+		document.querySelector("input").value = "";
+	
+		if(func !== undefined){
+			func();
+		}
 	}
 }
 
