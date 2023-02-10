@@ -130,8 +130,91 @@ input[type="datetime-local"] {
 	cursor: pointer;
 }
 
+/* 페이지 contentHeader 시작 */
+.contentHeaders{
+	display: flex;
+    align-items: center;
+}
+
+.contentHeaders > hr{
+	border: 2px solid #182f81;
+    height: 4vh;
+    margin: 0;
+}
+
+.contentHeaders > span{
+	font-weight: 600;
+    font-size: 0.9rem;
+    padding-left: 10px;
+    line-height: 40px;
+    color: #332E85;
+    width: 100vw;
+}
+
+.contentHeaders > .listRange{
+	display: none;
+    align-items: center;
+    padding-right: 10px;
+}
+
+.contentHeaders > .listSearchInput{
+	display: none;
+    align-items: center;
+    padding-right: 10px;
+}
+
+.contentHeaders > .listSearchInput > input{
+	padding: 0 10px;
+	font-size: 0.9rem;
+	border: 1px solid #C1C1C1 !important;
+	border-radius: 5px;
+	background-color: #ffffff;
+	height: 2.5vh;
+}
+
+.contentHeaders > .crudBtns{
+	display: none;
+	align-items: center;
+	padding-right: 5px;
+}
+
+.contentHeaders > .crudBtns > button{
+    display: flex;
+    align-items: center;
+	justify-content: center;
+    width: 3vw;
+	height: 2.5vh;
+    padding: 10px;
+    background-color: #2147b1;
+    color: #ffffff;
+    border-radius: 5px;
+	margin-right: 5px;
+}
+
+.contentHeaders > .crudBtns > a{
+	width: 2vw;
+	display: none;
+	align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    background-color: #2147b1;
+    height: 0.3vh;
+    padding: 10px;
+    color: #ffffff;
+    border-radius: 5px;
+}
+/* 페이지 contentHeader 끝 */
+
+/* 그리드리스트 시작 */
+.gridList{
+	display: none;
+    overflow-y: auto;
+    height: 70vh;
+}
+/* 그리드리스트 끝 */
+
 /* crud 관련 버튼 시작 */
-.crudBtns {
+/* .crudBtns {
 	display: flex;
 	align-items: center;
 	float: right;
@@ -153,14 +236,14 @@ input[type="datetime-local"] {
 
 .crudBtns>button:hover {
 	background-color: #0e2b7e;
-}
+} */
 
 /* .crudBtns>.crudUpdateBtn {
 	display: none;
 	margin-right: 5px;
 } */
 
-.crudBtns>.crudDeleteBtn {
+/* .crudBtns>.crudDeleteBtn {
 	display: none;
 	margin-right: 5px;
 }
@@ -195,7 +278,7 @@ input[type="datetime-local"] {
 .detailBackBtn:hover {
 	background-color: #0e2b7e;
 	cursor: pointer;
-}
+} */
 /* crud 관련 버튼 끝 */
 
 /* 자동완성 시작 */
@@ -266,7 +349,7 @@ input[type="datetime-local"] {
 /* 메시징 컨테이너 끝 */
 
 /* 리스트 input range 시작 */
-.listRange {
+/* .listRange {
 	display: flex;
 	align-items: center;
 	line-height: 40px;
@@ -278,7 +361,7 @@ input[type="datetime-local"] {
 	color: #332E85;
 	font-weight: 600;
 	font-size: 0.9rem;
-}
+} */
 
 /* 리스트 input range 끝 */
 
@@ -1154,7 +1237,7 @@ input[name="tabItem"] {
 	margin-top: 5px;
 }
 
-.searchContainer>span {
+.searchContainer > span {
 	font-weight: bolder;
 	font-size: 15px;
 	color: #332E85;
@@ -1163,7 +1246,7 @@ input[name="tabItem"] {
 	padding-top: 10px;
 }
 
-.listSearchInput {
+/* .listSearchInput {
 	display: flex;
 	align-items: center;
 	float: right;
@@ -1178,7 +1261,7 @@ input[name="tabItem"] {
 	border-radius: 5px;
 	background-color: #ffffff;
 	height: 25px;
-}
+} */
 
 /* 각 페이지 검색 끝 */
 .header {

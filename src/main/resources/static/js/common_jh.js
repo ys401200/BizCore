@@ -2991,9 +2991,7 @@ class Common {
 			}
 
 			html += "<div class='defaultFormContent'>";
-
 			html += this.inputSet(data[i]);
-
 			html += "</div>";
 			html += "</div>";
 		}

@@ -49,7 +49,9 @@
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
 }
 
-.soppContainer > hr{
+.soppContainer > .contentHeaders
+
+/* .soppContainer > hr{
 	float: left;
 	border:2px solid #182f81;
  	height : 4vh;
@@ -62,7 +64,8 @@
 	margin-left: 15px;
 	line-height: 40px;
 	color: #332E85;
-}
+	float: left;
+} */
 
 .soppContainer .gridList{
     display: grid; 

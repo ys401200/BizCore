@@ -64,22 +64,24 @@
             </div>
         </div>
         <div class="soppContainer">
-            <hr />
-            <span id="containerTitle">영업기회조회</span>
-            <div class="listSearchInput">
-                <input type="text" class="searchAllInput" id="searchAllInput" onkeyup="CommonDatas.searchInputKeyup();" placeholder="단어를 입력해주세요.">
+            <div class="contentHeaders">
+                <hr />
+                <span id="containerTitle">영업기회조회</span>
+                <div class="listRange">
+                    <input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="CommonDatas.listRangeChange(this, drawSoppList);">
+                    <span class="listRangeSpan">0</span>
+                </div>
+                <div class="listSearchInput">
+                    <input type="text" class="searchAllInput" id="searchAllInput" onkeyup="searchInputKeyup();" placeholder="단어를 입력해주세요.">
+                </div>
+                <div class="crudBtns">
+                    <button type="button" class="contractReqBtn" onclick="popup(this);">계약요청</button>
+                    <button type="button" class="crudAddBtn" onclick="soppInsertForm();">등록</button>
+                    <button type="button" class="crudUpdateBtn">수정</button>
+                    <button type="button" class="crudDeleteBtn" onclick="soppDelete();">삭제</button>
+                    <a href="#" onclick="CommonDatas.hideDetailView(drawSoppList);" class="detailBackBtn">Back</a>
+                </div>
             </div>
-            <div class="listRange">
-                <input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="CommonDatas.listRangeChange(this, drawSoppList);">
-                <span class="listRangeSpan">0</span>
-            </div>
-            <div class="crudBtns">
-                <button type="button" class="contractReqBtn" onclick="popup(this);">계약요청</button>
-				<button type="button" class="crudAddBtn" onclick="soppInsertForm();">등록</button>
-				<button type="button" class="crudUpdateBtn">수정</button>
-				<button type="button" class="crudDeleteBtn" onclick="soppDelete();">삭제</button>
-				<a href="#" onclick="CommonDatas.hideDetailView(drawSoppList);" class="detailBackBtn">Back</a>
-			</div>
             <div class="gridList"></div>
             <div class="pageContainer"></div>
         </div>

@@ -50,6 +50,7 @@ function drawSoppList() {
 		{ element: "searchContainer", display: "block" },
 		{ element: "listRange", display: "flex" },
 		{ element: "listSearchInput", display: "flex" },
+		{ element: "crudBtns", display: "flex" },
 		{ element: "crudAddBtn", display: "flex" },
 	];
 	containerTitle = document.getElementById("containerTitle");
@@ -433,30 +434,30 @@ function soppInsertForm(){
 			"title": "담당자(*)",
 			"elementId": "employee",
 			"complete": "user",
-			"keyup": "addAutoComplete(this);",
-			"onClick": "addAutoComplete(this);",
+			"keyup": "CommonDatas.addAutoComplete(this);",
+			"onClick": "CommonDatas.addAutoComplete(this);",
 		},
 		{
 			"title": "매출처(*)",
 			"elementId": "customer",
 			"complete": "customer",
-			"keyup": "addAutoComplete(this);",
-			"onClick": "addAutoComplete(this);",
+			"keyup": "CommonDatas.addAutoComplete(this);",
+			"onClick": "CommonDatas.addAutoComplete(this);",
 			"disabled": false,
 		},
 		{
 			"title": "매출처 담당자",
 			"complete": "cip",
-			"keyup": "addAutoComplete(this);",
-			"onClick": "addAutoComplete(this);",
+			"keyup": "CommonDatas.addAutoComplete(this);",
+			"onClick": "CommonDatas.addAutoComplete(this);",
 			"elementId": "picOfCustomer",
 			"disabled": false,
 		},
 		{
 			"title": "엔드유저(*)",
 			"complete": "customer",
-			"keyup": "addAutoComplete(this);",
-			"onClick": "addAutoComplete(this);",
+			"keyup": "CommonDatas.addAutoComplete(this);",
+			"onClick": "CommonDatas.addAutoComplete(this);",
 			"elementId": "endUser",
 			"disabled": false,
 		},
@@ -551,7 +552,7 @@ function soppInsertForm(){
 			"title": "예상매출",
 			"disabled": false,
 			"elementId": "expectedSales",
-			"keyup": "inputNumberFormat(this)",
+			"keyup": "CommonDatas.inputNumberFormat(this)",
 		},
 		{
 			"title": "",
@@ -577,14 +578,14 @@ function soppInsertForm(){
 	html = CommonDatas.detailViewForm(dataArray, "modal");
 
 	modal.show();
-	modal.content.css("min-width", "70%");
-	modal.content.css("max-width", "70%");
-	modal.headTitle.text("영업기회등록");
-	modal.body.html(html);
-	modal.confirm.text("등록");
-	modal.close.text("취소");
-	modal.confirm.attr("onclick", "soppInsert();");
-	modal.close.attr("onclick", "modal.hide();");
+	modal.content.style.minWidth = "70vw";
+	modal.content.style.maxWidth = "70vw";
+	modal.headTitle.innerText = "영업기회등록";
+	modal.body.innerHTML = "<div class=\"defaultFormContainer\">" + html + "</div>";
+	modal.confirm.innerText = "등록";
+	modal.close.innerText = "취소";
+	modal.confirm.setAttribute("onclick", "soppInsert();");
+	modal.close.setAttribute("onclick", "modal.hide();");
 
 	storage.formList = {
 		"employee": storage.my,
@@ -611,10 +612,6 @@ function soppInsertForm(){
 		ckeditor.config.readOnly = false;
 		window.setTimeout(setEditor, 100);
 	}, 100);
-
-	setTimeout(() => {
-		document.getElementsByClassName("cke_textarea_inline")[0].style.height = "300px";
-	}, 300);
 }
 
 function soppInsert(){

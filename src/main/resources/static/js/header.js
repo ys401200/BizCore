@@ -24,12 +24,12 @@ function init() {
 	msg.cnt = document.getElementsByClassName("msg_cnt")[0];
 
 	$(document).click((e) => {
-		if (modal.wrap.is($(e.target))) {
+		if (modal.wrap == e.target) {
 			modal.hide();
-		} else if (modal.noteWrap.is($(e.target))) {
+		} else if (modal.noteWrap == e.target) {
 			modal.noteHide();
-		} else if (!$("input").is($(e.target)) || $(e.target).data("complete") === undefined || $(e.target).data("complete") === "" || $(e.target).data("complete") == null) {
-			$(".autoComplete").remove();
+		} else if (!document.querySelector("input") == e.target || e.target.dataset.complete === undefined || e.target.dataset.complete === "" || e.target.dataset.complete == null) {
+			document.getElementsByClassName("autoComplete")[0].remove();
 		}
 	});
 
@@ -190,54 +190,54 @@ msg = { // 메시징 유닛
 
 //모달
 modal = {
-	"container": $(".modalContainer"),
-	"content": $(".modalContainer").find(".modal"),
-	"wrap": $(".modalContainer").find(".modalWrap"),
-	"head": $(".modalContainer").find(".modalWrap .modalHead"),
-	"headTitle": $(".modalContainer").find(".modalWrap").find(".modalHead .modalHeadTitle"),
-	"body": $(".modalContainer").find(".modalWrap .modalBody"),
-	"foot": $(".modalContainer").find(".modalWrap .modalFoot"),
-	"footBtns": $(".modalContainer").find(".modalWrap .modalFoot .modalBtns"),
-	"confirm": $(".modalContainer").find(".modalWrap .modalFoot .confirm"),
-	"close": $(".modalContainer").find(".modalWrap .modalFoot .close"),
-	"noteContainer": $(".noteContainer"),
-	"noteContent": $(".noteContainer").find(".note"),
-	"noteWrap": $(".noteContainer").find(".noteWrap"),
-	"noteHead": $(".noteContainer").find(".noteWrap .noteHead"),
-	"noteHeadTitle": $(".noteContainer").find(".noteWrap").find(".noteHead .noteHeadTitle"),
-	"noteBody": $(".noteContainer").find(".noteWrap .noteBody"),
+	"container": document.getElementsByClassName("modalContainer")[0],
+	"content": document.getElementsByClassName("modalContainer")[0].getElementsByClassName("modal")[0],
+	"wrap": document.getElementsByClassName("modalContainer")[0].getElementsByClassName("modalWrap")[0],
+	"head": document.getElementsByClassName("modalContainer")[0].querySelector(".modalWrap .modalHead"),
+	"headTitle": document.getElementsByClassName("modalContainer")[0].querySelector(".modalWrap .modalHead .modalHeadTitle"),
+	"body": document.getElementsByClassName("modalContainer")[0].querySelector(".modalWrap .modalBody"),
+	"foot": document.getElementsByClassName("modalContainer")[0].querySelector(".modalWrap .modalFoot"),
+	"footBtns": document.getElementsByClassName("modalContainer")[0].querySelector(".modalWrap .modalFoot .modalBtns"),
+	"confirm": document.getElementsByClassName("modalContainer")[0].querySelector(".modalWrap .modalFoot .confirm"),
+	"close": document.getElementsByClassName("modalContainer")[0].querySelector(".modalWrap .modalFoot .close"),
+	"noteContainer": document.getElementsByClassName("noteContainer")[0],
+	"noteContent": document.getElementsByClassName("noteContainer")[0].getElementsByClassName("note")[0],
+	"noteWrap": document.getElementsByClassName("noteContainer")[0].getElementsByClassName("noteWrap")[0],
+	"noteHead": document.getElementsByClassName("noteContainer")[0].querySelector(".noteWrap .noteHead"),
+	"noteHeadTitle": document.getElementsByClassName("noteContainer")[0].getElementsByClassName("noteWrap")[0].querySelector(".noteHead .noteHeadTitle"),
+	"noteBody": document.getElementsByClassName("noteContainer")[0].querySelector(".noteWrap .noteBody"),
 	"xClose": () => {
 		modal.hide();
 	},
 	"alert": (title, content) => {
 		modal.show();
-		modal.content.css("width", "400px");
-		modal.headTitle.text(title);
-		modal.body.html(content);
-		modal.confirm.hide();
-		modal.close.text("확인");
-		modal.close.css("width", "100%");
+		modal.content.style.width = "40vw";
+		modal.headTitle.innerText = title;
+		modal.body.innerHTML = content;
+		modal.confirm.style.display = "none";
+		modal.close.innerText = "확인";
+		modal.close.style.width = "100vw";
 	},
 	"show": () => {
 		modal.clear();
-		modal.wrap.css('display', 'flex').hide().fadeIn();
+		modal.wrap.style.display = "flex";
 	},
 	"hide": () => {
-		modal.wrap.fadeOut();
+		modal.wrap.style.display = "none";
 		window.setTimeout(modal.clear, 500);
-		if ($(".updateBtn").data("hide-flag")) {
-			ckeditor.config.readOnly = false;
-		} else {
-			ckeditor.config.readOnly = true;
-		}
+		// if (document.querySelector(".updateBtn").dataset.hideflag) {
+		// 	ckeditor.config.readOnly = false;
+		// } else {
+		// 	ckeditor.config.readOnly = true;
+		// }
 	},
 	"clear": () => {
-		modal.headTitle.text("");
-		modal.body.html("");
-		modal.confirm.show();
-		modal.close.show();
-		modal.confirm.text("확인");
-		modal.close.text("닫기");
+		modal.headTitle.innerText = "";
+		modal.body.innerHTML = "";
+		modal.confirm.style.display = "";
+		modal.close.style.display = "";
+		modal.confirm.innerText = "확인";
+		modal.close.innerText = "닫기";
 	},
 
 	"noteXClose": () => {
@@ -245,15 +245,15 @@ modal = {
 	},
 	"noteShow": () => {
 		modal.noteClear();
-		modal.noteWrap.css('display', 'flex').hide().fadeIn();
+		modal.noteWrap.style.display = "flex";
 	},
 	"noteHide": () => {
-		modal.noteWrap.fadeOut();
+		modal.noteWrap.style.display = "none";
 		window.setTimeout(modal.noteClear, 500);
 	},
 	"noteClear": () => {
-		modal.noteHeadTitle.text("");
-		modal.noteBody.html("");
+		modal.noteHeadTitle.innerText = "";
+		modal.noteBody.innerHTML = "";
 	},
 }
 
@@ -1373,6 +1373,7 @@ function tabItemClick(e) {
 //매입매출내역 리스트
 function createTabTradeList(result) {
 	let html = "";
+	console.log(result);
 
 	html = "<div class=\"tradeInputBtns\"><button type=\"button\" onclick=\"tradeInsert();\">매입매출 추가</button></div>";
 	html += "<div class=\"tradeInput\">";
@@ -1410,7 +1411,7 @@ function createTabTradeList(result) {
 		for(let i = 0; i < result.length; i++){
 			let item = result[i];
 			let total = 0;
-			total = item.price + item.vat;
+			total = item.price * item.qty + item.vat;
 
 			if(result[i].type === "purchase"){
 				purchaseArr.push(item);
@@ -1433,8 +1434,8 @@ function createTabTradeList(result) {
 				html += "<div class=\"tradePurchaseItem\">" + CommonDatas.numberFormat(item.price / item.qty) + "</div>";
 				html += "<div class=\"tradePurchaseItem\">" + item.qty + "</div>";
 				html += "<div class=\"tradePurchaseItem\">" + CommonDatas.numberFormat(item.vat) + "</div>";
-				html += "<div class=\"tradePurchaseItem\">" + CommonDatas.numberFormat(item.price) + "</div>";
-				html += "<div class=\"tradePurchaseItem\" data-type=\"purchase\">" + CommonDatas.numberFormat(item.price + item.vat) + "</div>";
+				html += "<div class=\"tradePurchaseItem\">" + CommonDatas.numberFormat(item.price * item.qty) + "</div>";
+				html += "<div class=\"tradePurchaseItem\" data-type=\"purchase\">" + CommonDatas.numberFormat(item.price * item.qty + item.vat) + "</div>";
 				html += "<div class=\"tradePurchaseItem\">" + item.remark + "</div>";
 				html += "<div class=\"tradePurchaseItem\">" + item.taxbill + "</div>";
 				html += "<div class=\"tradePurchaseItem tradeItemRemoveBtn\"><button type=\"button\" data-type=\"" + item.type + "\" data-no=\"" + item.no + "\" onclick=\"tradeItemRemove(this);\">삭제</button></div>";
@@ -1459,8 +1460,8 @@ function createTabTradeList(result) {
 				html += "<div class=\"tradeSaleItem\">" + CommonDatas.numberFormat(item.price / item.qty) + "</div>";
 				html += "<div class=\"tradeSaleItem\">" + item.qty + "</div>";
 				html += "<div class=\"tradeSaleItem\">" + CommonDatas.numberFormat(item.vat) + "</div>";
-				html += "<div class=\"tradeSaleItem\">" + CommonDatas.numberFormat(item.price) + "</div>";
-				html += "<div class=\"tradeSaleItem\" data-type=\"purchase\">" + CommonDatas.numberFormat(item.price + item.vat) + "</div>";
+				html += "<div class=\"tradeSaleItem\">" + CommonDatas.numberFormat(item.price * item.qty) + "</div>";
+				html += "<div class=\"tradeSaleItem\" data-type=\"sale\">" + CommonDatas.numberFormat(item.price * item.qty + item.vat) + "</div>";
 				html += "<div class=\"tradeSaleItem\">" + item.remark + "</div>";
 				html += "<div class=\"tradeSaleItem\">" + item.taxbill + "</div>";
 				html += "<div class=\"tradeSaleItem tradeItemRemoveBtn\"><button type=\"button\" data-type=\"" + item.type + "\" data-no=\"" + item.no + "\" onclick=\"tradeItemRemove(this);\">삭제</button></div>";
@@ -1479,13 +1480,13 @@ function createTabTradeList(result) {
 	html += "</div>";
 	html += "<div class=\"tradeTotalInfo\">";
 	html += "<div>매입합계</div>";
-	html += "<div style=\"justify-content: right;\"></div>";
+	html += "<div style=\"justify-content: right;\">0</div>";
 	html += "<div>매출합계</div>";
-	html += "<div style=\"justify-content: right;\"></div>";
+	html += "<div style=\"justify-content: right;\">0</div>";
 	html += "<div>이익합계</div>";
-	html += "<div style=\"justify-content: right;\"></div>";
+	html += "<div style=\"justify-content: right;\">0</div>";
 	html += "<div>이익률</div>";
-	html += "<div style=\"justify-content: right;\"></div>";
+	html += "<div style=\"justify-content: right;\">0%</div>";
 	html += "</div>";
 	html += "</div>";
 
@@ -1502,7 +1503,9 @@ function createTabTradeList(result) {
 		tabs.querySelector("label[for=\"tabTrade\"]").innerText = "매입매출내역(0)";
 	}
 
-	tradeTotalSet();
+	if(result.length > 0){
+		tradeTotalSet();
+	}
 
 	storage.tradeFormList = {
 		dt: 0,
@@ -1527,26 +1530,23 @@ function createTabTradeList(result) {
 
 function tradeTotalSet() {
 	let calSale = 0, calPur = 0, calSaleVat = 0, calPurVat = 0, saleTotal, purTotal, tradeTotalInfo, calMinus = 0, calPercent = 0;
-	purTotal = $(".tradeThirdFormContentDiv .tradeThirdContentItem[data-type=\"purchase\"]");
-	saleTotal = $(".tradeThirdFormContentDiv .tradeThirdContentItem[data-type=\"sale\"]");
-	tradeTotalInfo = $(".tradeTotalInfo div");
+	purTotal = document.getElementsByClassName("tradePurchaseContent")[0].querySelectorAll(".tradePurchaseItem[data-type=\"purchase\"]");
+	saleTotal = document.getElementsByClassName("tradeSaleContent")[0].querySelectorAll(".tradeSaleItem[data-type=\"sale\"]");
+	tradeTotalInfo = document.getElementsByClassName("tradeTotalInfo")[0].querySelectorAll("div");
 
 	for (let i = 0; i < purTotal.length; i++) {
-		calPur += parseInt($(purTotal[i]).html().replace(/,/g, ""));
-		calPurVat += parseInt($(purTotal[i]).prev().prev().html().replace(/,/g, ""));
+		calPur += parseInt(purTotal[i].innerText.replace(/,/g, ""));
+		calPurVat += parseInt(purTotal[i].previousElementSibling.previousElementSibling.innerText.replace(/,/g, ""));
 	}
 
 	for (let i = 0; i < saleTotal.length; i++) {
-		calSale += parseInt($(saleTotal[i]).html().replace(/,/g, ""));
-		calSaleVat += parseInt($(saleTotal[i]).prev().prev().html().replace(/,/g, ""));
+		calSale += parseInt(saleTotal[i].innerText.replace(/,/g, ""));
+		calSaleVat += parseInt(saleTotal[i].previousElementSibling.previousElementSibling.innerText.replace(/,/g, ""));
 	}
-
-	$(".tradeThirdFormContentTotal").eq(0).find("span").eq(1).text(numberFormat(calPur));
-	$(".tradeThirdFormContentTotal").eq(1).find("span").eq(1).text(numberFormat(calSale));
 
 	calPur = calPur - calPurVat;
 	calSale = calSale - calSaleVat;
-	calMinus = calPur - calSale;
+	calMinus = calSale - calPur;
 	calPercent = calMinus / calSale * 100;
 
 	if (isNaN(calPercent)) {
@@ -1561,10 +1561,10 @@ function tradeTotalSet() {
 		calPercent = calPercent.toString().substring(0, 4);
 	}
 
-	tradeTotalInfo.eq(1).html(numberFormat(calPur));
-	tradeTotalInfo.eq(3).html(numberFormat(calSale));
-	tradeTotalInfo.eq(5).html(numberFormat(calMinus * -1));
-	tradeTotalInfo.eq(7).html(calPercent + "%");
+	tradeTotalInfo[1].innerText = numberFormat(calPur);
+	tradeTotalInfo[3].innerText = numberFormat(calSale);
+	tradeTotalInfo[5].innerText = numberFormat(calMinus);
+	tradeTotalInfo[7].innerText = calPercent + "%";
 }
 
 function inputNetFormat(e, parentClass) {
@@ -2988,8 +2988,8 @@ function addNoteContainer() {
 	noteHtml += "</div>";
 	noteHtml += "<div class=\"noteMainContainer\"></div>";
 
-	modal.noteBody.html(noteHtml);
-	modal.noteHeadTitle.text("쪽지");
+	modal.noteBody.innerHTML = noteHtml;
+	modal.noteHeadTitle.innerText = "쪽지";
 }
 
 function noteContentShow() {
