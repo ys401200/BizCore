@@ -28,8 +28,8 @@ function init() {
 			modal.hide();
 		} else if (modal.noteWrap == e.target) {
 			modal.noteHide();
-		} else if (!document.querySelector("input") == e.target || e.target.dataset.complete === undefined || e.target.dataset.complete === "" || e.target.dataset.complete == null) {
-			document.getElementsByClassName("autoComplete")[0].remove();
+		} else if (!document.querySelector("input") == e.target || e.target.getAttribute("complete") === undefined || e.target.getAttribute("complete") === "" || e.target.getAttribute("complete") == null) {
+			document.querySelector("autoComplete").remove();
 		}
 	});
 

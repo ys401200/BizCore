@@ -645,7 +645,7 @@ class Schedule2Set {
 
 	//일정 달력 flex 리스트 출력 함수
 	drawScheduleList() {
-		let container, dataJob = [], result, jsonData, header = [], data = [], ids = [], str, fnc, pageContainer, containerTitle;
+		let container, dataJob = [], result, jsonData, header = [], data = [], ids = [], str, fnc, pageContainer, containerTitle, hideArr, showArr;
 
 		if (storage.scheduleList === undefined) {
 			msg.set("등록된 일정이 없습니다");
@@ -661,6 +661,17 @@ class Schedule2Set {
 		result = CommonDatas.paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 		containerTitle = document.getElementById("containerTitle");
 		container = document.getElementsByClassName("gridList")[0];
+		hideArr = ["detailBackBtn", "crudUpdateBtn", "crudDeleteBtn", "contractReqBtn"];
+		showArr = [
+			{ element: "calendarList", display: "block" },
+			{ element: "gridList", display: "block" },
+			{ element: "pageContainer", display: "flex" },
+			{ element: "searchContainer", display: "block" },
+			{ element: "listRange", display: "flex" },
+			{ element: "listSearchInput", display: "flex" },
+			{ element: "crudBtns", display: "flex" },
+			{ element: "crudAddBtn", display: "flex" },
+		];
 
 		header = [
 			{
@@ -784,6 +795,7 @@ class Schedule2Set {
 				}
 			});
 		}
+		CommonDatas.setViewContents(hideArr, showArr);
 	}
 
 	//달력 다음월 셋팅 함수
