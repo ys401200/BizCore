@@ -4,7 +4,7 @@
         <hr />
         <span id="containerTitle">일정조회</span>
         <div class="listRange">
-            <input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="CommonDatas.listRangeChange(this, drawSoppList);">
+            <input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="CommonDatas.listRangeChange(this, CommonDatas.Temps.schedule2Set.drawScheduleList);">
             <span class="listRangeSpan">0</span>
         </div>
         <div class="listSearchInput">
@@ -18,7 +18,7 @@
             <a href="#" onclick="CommonDatas.hideDetailView(drawSoppList);" class="detailBackBtn">Back</a>
         </div>
         <button type="button" class="listChangeBtn" data-type="calendar" onclick="listChange(this);"><i class="fa-solid fa-list-ol fa-xl"></i></button>
-        <select class="scheduleRange" id="scheduleRange" onchange="scheduleSelectChange();">
+        <select class="scheduleRange" id="scheduleRange" onchange="CommonDatas.Temps.schedule2Set.scheduleSelectChange();">
             <option value="company">회사별</option>
             <option value="dept">부서별</option>
             <option value="employee">개인별</option>
