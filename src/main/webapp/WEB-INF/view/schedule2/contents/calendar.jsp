@@ -12,12 +12,11 @@
         </div>
         <div class="crudBtns">
             <button type="button" class="contractReqBtn" onclick="popup(this);">계약요청</button>
-            <button type="button" class="crudAddBtn" onclick="soppInsertForm();">등록</button>
+            <button type="button" class="crudAddBtn" onclick="CommonDatas.Temps.schedule2Set.scheduleInsertForm();">등록</button>
             <button type="button" class="crudUpdateBtn">수정</button>
-            <button type="button" class="crudDeleteBtn" onclick="soppDelete();">삭제</button>
+            <button type="button" class="crudDeleteBtn" onclick="scheduleDelete();">삭제</button>
             <a href="#" onclick="CommonDatas.hideDetailView(drawSoppList);" class="detailBackBtn">Back</a>
         </div>
-        <button type="button" class="listChangeBtn" data-type="calendar" onclick="listChange(this);"><i class="fa-solid fa-list-ol fa-xl"></i></button>
         <select class="scheduleRange" id="scheduleRange" onchange="CommonDatas.Temps.schedule2Set.scheduleSelectChange();">
             <option value="company">회사별</option>
             <option value="dept">부서별</option>

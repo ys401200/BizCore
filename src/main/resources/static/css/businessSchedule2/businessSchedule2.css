@@ -342,3 +342,7 @@
 .listFlexContainer > .gridList > .gridHeader{
 	border-bottom:1px solid #abb6d5;
 }
+
+.defaultFormContainer > div:first-child{
+	border-top: 0;
+}

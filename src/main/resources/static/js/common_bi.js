@@ -764,13 +764,13 @@ class Schedule{
 		html = CommonDatas.detailViewForm(dataArray, "modal");
 	
 		modal.show();
-		modal.content.css("min-width", "70%");
-		modal.content.css("max-width", "70%");
-		modal.headTitle.text(this.title);
-		modal.body.html("<div class=\"defaultFormContainer\">" + html + "</div>");
-		modal.confirm.hide();
-		modal.close.text("취소");
-		modal.close.attr("onclick", "modal.hide();");
+		modal.content.style.minWidth = "70%";
+		modal.content.style.maxWidth = "70%";
+		modal.headTitle.innerText = this.title;
+		modal.body.innerHTML = "<div class=\"defaultFormContainer\">" + html + "</div>";
+		modal.confirm.style.display = "none";
+		modal.close.innerText = "취소";
+		modal.close.setAttribute("onclick", "modal.hide();");
 		ckeditor.config.readOnly = true;
 		window.setTimeout(setEditor, 100);
 	}

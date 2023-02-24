@@ -159,14 +159,14 @@ class NoticeSet {
 		datas = ["writer"];
 		html = CommonDatas.detailViewForm(dataArray, "modal");
 		modal.show();
-		modal.content.css("min-width", "70%");
-		modal.content.css("max-width", "70%");
-		modal.headTitle.text("공지사항등록");
-		modal.body.html("<div class='defaultFormContainer'>" + html + "</div>");
-		modal.confirm.text("등록");
-		modal.close.text("취소");
-		modal.confirm.attr("onclick", "let notice = new Notice(); notice.insert();");
-		modal.close.attr("onclick", "modal.hide();");
+		modal.content.style.minWidth = "70%";
+		modal.content.style.maxWidth = "70%";
+		modal.headTitle.innerText = "공지사항등록";
+		modal.body.innerHTML = "<div class='defaultFormContainer'>" + html + "</div>";
+		modal.confirm.innerText = "등록";
+		modal.close.innerText = "취소";
+		modal.confirm.setAttribute("onclick", "let notice = new Notice(); notice.insert();");
+		modal.close.setAttribute("onclick", "modal.hide();");
 
 		storage.formList = {
 			"writer": storage.my,
@@ -661,12 +661,11 @@ class Schedule2Set {
 		result = CommonDatas.paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 		containerTitle = document.getElementById("containerTitle");
 		container = document.getElementsByClassName("gridList")[0];
-		hideArr = ["detailBackBtn", "crudUpdateBtn", "crudDeleteBtn", "contractReqBtn"];
+		hideArr = ["detailBackBtn", "crudUpdateBtn", "crudDeleteBtn", "contractReqBtn", "searchContainer"];
 		showArr = [
 			{ element: "calendarList", display: "block" },
 			{ element: "gridList", display: "block" },
 			{ element: "pageContainer", display: "flex" },
-			{ element: "searchContainer", display: "block" },
 			{ element: "listRange", display: "flex" },
 			{ element: "listSearchInput", display: "flex" },
 			{ element: "crudBtns", display: "flex" },
@@ -710,10 +709,8 @@ class Schedule2Set {
 			for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
 				fromDate = CommonDatas.dateDis(jsonData[i].from);
 				fromSetDate = CommonDatas.dateFnc(fromDate, "mm.dd");
-
 				toDate = CommonDatas.dateDis(jsonData[i].to);
 				toSetDate = CommonDatas.dateFnc(toDate, "mm.dd");
-
 				disDate = CommonDatas.dateDis(jsonData[i].created, jsonData[i].modified);
 				disDate = CommonDatas.dateFnc(disDate, "yyyy.mm.dd");
 
@@ -796,6 +793,530 @@ class Schedule2Set {
 			});
 		}
 		CommonDatas.setViewContents(hideArr, showArr);
+	}
+
+	scheduleInsertForm(getDate){
+		let html, dataArray;
+		dataArray = this.scheduleRadioInsert("sales", getDate);
+		html = detailViewForm(dataArray, "modal");
+	
+		modal.show();
+		modal.content.style.minWidth = "70%";
+		modal.content.style.maxWidth = "70%";
+		modal.headTitle.innerText = "일정등록";
+		modal.body.innerHTML = html;
+		modal.confirm.innerText = "등록";
+		modal.close.innerText = "취소";
+		modal.confirm.setAttribute("onclick", "scheduleInsert();");
+		modal.close.setAttribute("onclick", "modal.hide();");
+		document.getElementById("content").style.height = "30vh";
+	
+		setTimeout(() => {
+			document.querySelector("[name='job'][value='sales']").setAttribute("checked", true);
+			document.getElementById("writer").setAttribute("data-change", true);
+	
+			if(getDate === undefined){
+				let nowDate = new Date().toISOString().substring(0, 10);
+				document.getElementById("from").value = nowDate + "T09:00";
+				document.getElementById("to").value = nowDate + "T18:00";
+			}else{
+				document.getElementById("from").value = getDate + "T09:00";
+				document.getElementById("to").value = getDate + "T18:00";
+			}
+			ckeditor.config.readOnly = false;
+			window.setTimeout(setEditor, 100);
+		}, 100);
+
+	}
+
+	scheduleRadioInsert(value, date){
+		let dataArray, myName, my, now;
+	
+		my = storage.my;
+		myName = storage.user[my].userName;
+	
+		if(date === undefined){
+			now = new Date();
+			date = now.toISOString().slice(0, 10);
+		}
+	
+		if(value === "sales"){
+			dataArray = [
+				{
+					"title": undefined,
+					"radioValue": [
+						{
+							"key": "sales",
+							"value": "영업일정",
+						},
+						{
+							"key": "tech",
+							"value": "기술일정",
+						},
+						{
+							"key": "schedule",
+							"value": "기타일정",
+						},
+					],
+					"radioType": "tab",
+					"elementId": ["jobSales", "jobTech", "jobSchedule"],
+					"col": 4,
+					"type": "radio",
+					"elementName": "job",
+					"disabled": false,
+					"onClick": "CommonDatas.Temps.schedule2Set.scheduleRadioClick(this);",
+				},
+				{
+					"title": "활동시작일(*)",
+					"elementId": "from",
+					"value": date,
+					"type": "datetime",
+					"disabled": false,
+				},
+				{
+					"title": "활동종료일(*)",
+					"elementId": "to",
+					"value": date,
+					"type": "datetime",
+					"disabled": false,
+				},
+				{
+					"title": "장소",
+					"elementId": "place",
+					"disabled": false,
+				},
+				{
+					"title": "활동형태(*)",
+					"selectValue": [
+						{
+							"key": "10170",
+							"value": "회사방문",
+						},
+						{
+							"key": "10171",
+							"value": "기술지원",
+						},
+						{
+							"key": "10221",
+							"value": "제품설명",
+						},
+						{
+							"key": "10222",
+							"value": "시스템데모",
+						},
+						{
+							"key": "10223",
+							"value": "제품견적",
+						},
+						{
+							"key": "10224",
+							"value": "계약건 의사결정지원",
+						},
+						{
+							"key": "10225",
+							"value": "계약",
+						},
+						{
+							"key": "10226",
+							"value": "사후처리",
+						},
+						{
+							"key": "10227",
+							"value": "기타",
+						},
+						{
+							"key": "10228",
+							"value": "협력사요청",
+						},
+						{
+							"key": "10229",
+							"value": "협력사문의",
+						},
+						{
+							"key": "10230",
+							"value": "교육",
+						},
+						{
+							"key": "10231",
+							"value": "전화상담",
+						},
+						{
+							"key": "10232",
+							"value": "제조사업무협의",
+						},
+						{
+							"key": "10233",
+							"value": "외부출장",
+						},
+						{
+							"key": "10234",
+							"value": "제안설명회",
+						}
+					],
+					"type": "select",
+					"elementId": "type",
+					"disabled": false,
+				},
+				{
+					"title": "담당자(*)",
+					"elementId": "writer",
+					"complete": "user",
+					"keyup": "CommonDatas.addAutoComplete(this);",
+					"onClick": "CommonDatas.addAutoComplete(this);",
+					"value": myName,
+				},
+				{
+					"title": "영업기회(*)",
+					"elementId": "sopp",
+					"complete": "sopp",
+					"keyup": "CommonDatas.addAutoComplete(this);",
+					"onClick": "CommonDatas.addAutoComplete(this);",
+					"disabled": false,
+				},
+				{
+					"title": "매출처",
+					"disabled": false,
+					"elementId": "customer",
+					"complete": "customer",
+					"keyup": "CommonDatas.addAutoComplete(this);",
+					"onClick": "CommonDatas.addAutoComplete(this);",
+				},
+				{
+					"title": "엔드유저",
+					"disabled": false,
+					"elementId": "partner",
+					"complete": "customer",
+					"keyup": "CommonDatas.addAutoComplete(this);",
+					"onClick": "CommonDatas.addAutoComplete(this);",
+				},
+				{
+					"title": "제목(*)",
+					"elementId": "title",
+					"disabled": false,
+					"col": 4,
+				},
+				{
+					"title": "내용",
+					"elementId": "content",
+					"type": "textarea",
+					"disabled": false,
+					"col": 4,
+				}
+			];
+	
+			storage.formList = {
+				"job" : "",
+				"from" : "",
+				"to" : "",
+				"place" : "",
+				"type" : "",
+				"writer" : storage.my,
+				"sopp" : 0,
+				"customer" : 0,
+				"partner" : 0,
+				"title" : "",
+				"content" : "",
+				"report" : 1,
+			};
+		}else if(value === "tech"){
+			dataArray = [
+				{
+					"title": undefined,
+					"radioValue": [
+						{
+							"key": "sales",
+							"value": "영업일정",
+						},
+						{
+							"key": "tech",
+							"value": "기술일정",
+						},
+						{
+							"key": "schedule",
+							"value": "기타일정",
+						},
+					],
+					"type": "radio",
+					"elementName": "job",
+					"radioType": "tab",
+					"elementId": ["jobSales", "jobTech", "jobSchedule"],
+					"col": 4,
+					"disabled": false,
+					"onClick": "CommonDatas.Temps.schedule2Set.scheduleRadioClick(this);",
+				},
+				{
+					"title": "등록구분(*)",
+					"radioValue": [
+						{
+							"key": "10247",
+							"value": "신규영업지원",
+						},
+						{
+							"key": "10248",
+							"value": "유지보수",
+						},
+					],
+					"type": "radio",
+					"elementName": "contractMethod",
+					"elementId": ["contractMethodNew", "contractMethodOld"],
+					"col": 4,
+					"disabled": false,
+				},
+				{
+					"title": "영업기회(*)",
+					"elementId": "sopp",
+					"complete": "sopp",
+					"keyup": "CommonDatas.addAutoComplete(this);",
+					"onClick": "CommonDatas.addAutoComplete(this);",
+					"disabled": false,
+				},
+				{
+					"title": "계약",
+					"elementId": "contract",
+					"complete": "contract",
+					"keyup": "CommonDatas.addAutoComplete(this);",
+					"onClick": "CommonDatas.addAutoComplete(this);",
+					"disabled": false,
+				},
+				{
+					"title": "매출처",
+					"disabled": false,
+					"elementId": "partner",
+					"complete": "customer",
+					"keyup": "CommonDatas.addAutoComplete(this);",
+					"onClick": "CommonDatas.addAutoComplete(this);",
+				},
+				{
+					"title": "매출처 담당자",
+					"complete": "cip",
+					"keyup": "CommonDatas.addAutoComplete(this);",
+					"onClick": "CommonDatas.addAutoComplete(this);",
+					"elementId": "cipOfCustomer",
+					"disabled": false,
+				},
+				{
+					"title": "엔드유저(*)",
+					"elementId": "customer",
+					"disabled": false,
+					"complete": "customer",
+					"keyup": "CommonDatas.addAutoComplete(this);",
+					"onClick": "CommonDatas.addAutoComplete(this);",
+				},
+				{
+					"title": "모델",
+					"elementId": "supportModel",
+					"disabled": false,
+				},
+				{
+					"title": "버전",
+					"elementId": "supportVersion",
+					"disabled": false,
+				},
+				{
+					"title": "단계",
+					"selectValue": [
+						{
+							"key": "10213",
+							"value": "접수단계",
+						},
+						{
+							"key": "10214",
+							"value": "출동단계",
+						},
+						{
+							"key": "10215",
+							"value": "미계약에 따른 보류",
+						},
+						{
+							"key": "10253",
+							"value": "처리완료",
+						}
+					],
+					"type": "select",
+					"elementId": "supportStep",
+					"disabled": false,
+				},
+				{
+					"title": "지원형태",
+					"selectValue": [
+						{
+							"key": "10187",
+							"value": "전화상담",
+						},
+						{
+							"key": "10208",
+							"value": "현장방문",
+						},
+						{
+							"key": "10209",
+							"value": "원격지원",
+						}
+					],
+					"type": "select",
+					"elementId": "type",
+					"disabled": false,
+				},
+				{
+					"title": "담당자(*)",
+					"complete": "user",
+					"keyup": "CommonDatas.addAutoComplete(this);",
+					"onClick": "CommonDatas.addAutoComplete(this);",
+					"elementId": "writer",
+					"value": myName,
+				},
+				{
+					"title": "지원 시작일(*)",
+					"elementId": "from",
+					"value": date,
+					"disabled": false,
+					"type": "datetime",
+				},
+				{
+					"title": "지원 종료일(*)",
+					"elementId": "to",
+					"value": date,
+					"disabled": false,
+					"type": "datetime",
+				},
+				{
+					"title": "장소",
+					"elementId": "place",
+					"disabled": false,
+				},
+				{
+					"title": "기술지원명(*)",
+					"elementId": "title",
+					"disabled": false,
+					"col": 3,
+				},
+				{
+					"title": "내용",
+					"type": "textarea",
+					"elementId": "content",
+					"disabled": false,
+					"col": 4,
+				},
+			];
+	
+			storage.formList = {
+				"job" : "",
+				"contractMethod" : "",
+				"sopp" : 0,
+				"contract" : 0,
+				"partner" : 0,
+				"cipOfCustomer" : 0,
+				"customer" : 0,
+				"supportModel" : "",
+				"supportVersion" : "",
+				"supportStep" : "",
+				"type" : "",
+				"place" : "",
+				"writer" : storage.my,
+				"from" : "",
+				"to" : "",
+				"title" : "",
+				"content" : "",
+				"report" : 1,
+			};
+		}else{
+			dataArray = [
+				{
+					"title": undefined,
+					"radioValue": [
+						{
+							"key": "sales",
+							"value": "영업일정",
+						},
+						{
+							"key": "tech",
+							"value": "기술일정",
+						},
+						{
+							"key": "schedule",
+							"value": "기타일정",
+						},
+					],
+					"type": "radio",
+					"elementName": "job",
+					"radioType": "tab",
+					"elementId": ["jobSales", "jobTech", "jobSchedule"],
+					"col": 4,
+					"disabled": false,
+					"onClick": "CommonDatas.Temps.schedule2Set.scheduleRadioClick(this);",
+				},
+				{
+					"title": "일정시작일(*)",
+					"type": "datetime",
+					"value": date,
+					"elementId": "from",
+					"disabled": false,
+				},
+				{
+					"title": "일정종료일(*)",
+					"type": "datetime",
+					"value": date,
+					"elementId": "to",
+					"disabled": false,
+				},
+				{
+					"title": "장소",
+					"elementId": "place",
+					"disabled": false,
+				},
+				{
+					"title": "영업기회(*)",
+					"elementId": "sopp",
+					"complete": "sopp",
+					"keyup": "CommonDatas.addAutoComplete(this);",
+					"onClick": "CommonDatas.addAutoComplete(this);",
+					"disabled": false,
+				},
+				{
+					"title": "담당자(*)",
+					"elementId": "writer",
+					"complete": "user",
+					"keyup": "CommonDatas.addAutoComplete(this);",
+					"onClick": "CommonDatas.addAutoComplete(this);",
+					"value": myName,
+				},
+				{
+					"title": "매출처",
+					"disabled": false,
+					"elementId": "customer",
+					"complete": "customer",
+					"keyup": "CommonDatas.addAutoComplete(this);",
+					"onClick": "CommonDatas.addAutoComplete(this);",
+				},
+				{
+					"title": "제목(*)",
+					"elementId": "title",
+					"disabled": false,
+					"col": 2,
+				},
+				{
+					"title": "내용",
+					"elementId": "content",
+					"type": "textarea",
+					"disabled": false,
+					"col": 4,
+				},
+			];
+	
+			storage.formList = {
+				"job" : "",
+				"from" : "",
+				"to" : "",
+				"place" : "",
+				"sopp" : 0,
+				"writer" : storage.my,
+				"customer" : 0,
+				"title" : "",
+				"content" : "",
+				"report" : 1,
+			};
+		}
+	
+		return dataArray;
 	}
 
 	//달력 다음월 셋팅 함수
@@ -949,6 +1470,32 @@ class Schedule2Set {
 				msg.set("데이터가 없습니다.");
 			}
 		})
+	}
+
+	scheduleRadioClick(e){
+		let html, dataArray, tempFrom, tempTo, thisEle = e;
+		tempFrom = document.getElementById("from").value;
+		tempTo = document.getElementById("to").value;
+		dataArray = this.scheduleRadioInsert(thisEle.value);
+		html = CommonDatas.detailViewForm(dataArray, "modal");
+		
+		modal.show();
+		modal.headTitle.innerText = "일정등록";
+		modal.body.innerHTML = "<div class='defaultFormContainer'>" + html + "</div>";
+		modal.confirm.innerText = "등록";
+		modal.close.innerText = "취소";
+		modal.confirm.setAttribute("onclick", "scheduleInsert();");
+		modal.close.setAttribute("onclick", "modal.hide();");
+		document.getElementById("content").style.height = "30vh";
+	
+		setTimeout(() => {
+			document.querySelector("[name='job'][value='" + thisEle.value + "']").setAttribute("checked", true);
+			document.getElementById("from").value = tempFrom;
+			document.getElementById("to").value = tempTo;
+			document.getElementById("writer").setAttribute("data-change", true);
+			ckeditor.config.readOnly = false;
+			window.setTimeout(setEditor, 100);
+		}, 100);
 	}
 
 	//달력 more버튼 클릭 함수
@@ -2760,7 +3307,7 @@ class Common {
 		searchContainer = document.getElementsByClassName("searchContainer")[0];
 		containerTitle = document.getElementById("containerTitle");
 		searchCal = searchContainer.offsetHeight === undefined ? parseInt(bodyContent.offsetHeight) : (parseInt(bodyContent.offsetHeight) - searchContainer.offsetHeight);
-		titleCal = parseInt(containerTitle.offsetHeight + 70);
+		titleCal = parseInt(containerTitle.offsetHeight + 90);
 		totalCal = (parseInt(searchCal - titleCal) - parseInt(36)) / parseInt(38);
 
 		return parseInt(totalCal);
