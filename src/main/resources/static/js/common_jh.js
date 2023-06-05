@@ -28,7 +28,7 @@ class NoticeSet {
 
 	//공지사항 리스트 출력 함수
 	drawNoticeList() {
-		let container, result, jsonData, job, header = [], data = [], ids = [], disDate, setDate, str, fnc, pageContainer;
+		let container, result, jsonData, job, header = [], data = [], ids = [], disDate, setDate, str, fnc, pageContainer, hideArr, showArr;
 
 		if (storage.noticeList === undefined) {
 			msg.set("등록된 공지사항이 없습니다");
@@ -44,6 +44,16 @@ class NoticeSet {
 		result = CommonDatas.paging(jsonData.length, storage.currentPage, storage.articlePerPage);
 		pageContainer = document.getElementsByClassName("pageContainer")[0];
 		container = document.getElementsByClassName("gridNoticeList")[0];
+		hideArr = ["detailBackBtn", "crudUpdateBtn", "crudDeleteBtn", "contractReqBtn"];
+		showArr = [
+			{ element: "gridList", display: "grid" },
+			{ element: "pageContainer", display: "flex" },
+			{ element: "searchContainer", display: "block" },
+			{ element: "listRange", display: "flex" },
+			{ element: "listSearchInput", display: "flex" },
+			{ element: "crudBtns", display: "flex" },
+			{ element: "crudAddBtn", display: "flex" },
+		];
 
 		header = [
 			{
@@ -101,6 +111,7 @@ class NoticeSet {
 		}
 
 		CommonDatas.createGrid(container, header, data, ids, job, fnc);
+		CommonDatas.setViewContents(hideArr, showArr);
 		document.getElementById("multiSearchBtn").setAttribute("onclick", "CommonDatas.Temps.noticeSet.searchSubmit();");
 
 		let path = location.pathname.split("/");
@@ -393,6 +404,12 @@ class Notice {
 		} else {
 			return false;
 		}
+	}
+}
+
+class SalesSet{
+	constructor() {
+		CommonDatas.Temps.salesSet = this;
 	}
 }
 

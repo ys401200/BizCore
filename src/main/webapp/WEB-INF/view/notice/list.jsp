@@ -27,17 +27,19 @@
             </div>
         </div>
 		<div class="noticeContainer">
-			<hr />
-			<span id="containerTitle">공지사항</span>
-            <div class="listSearchInput">
-                <input type="text" class="searchAllInput" id="searchAllInput" onkeyup="const SearchInputKeyup = new NoticeSet(); SearchInputKeyup.searchInputKeyup();" placeholder="단어를 입력해주세요.">
-            </div>
-            <div class="crudBtns">
-                <button type="button" class="crudAddBtn" onclick="const InsertForm = new NoticeSet(); InsertForm.noticeInsertForm();">등록</button>
-            </div>
-            <div class="listRange">
-                <input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="const RangeChange = new NoticeSet(); CommonDatas.listRangeChange(this, RangeChange.drawNoticeList);">
-                <span class="listRangeSpan">0</span>
+            <div class="contentHeaders">
+                <hr />
+                <span id="containerTitle">공지사항</span>
+                <div class="listRange">
+                    <input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="const RangeChange = new NoticeSet(); CommonDatas.listRangeChange(this, RangeChange.drawNoticeList);">
+                    <span class="listRangeSpan">0</span>
+                </div>
+                <div class="listSearchInput">
+                    <input type="text" class="searchAllInput" id="searchAllInput" onkeyup="const SearchInputKeyup = new NoticeSet(); SearchInputKeyup.searchInputKeyup();" placeholder="단어를 입력해주세요.">
+                </div>
+                <div class="crudBtns">
+                    <button type="button" class="crudAddBtn" onclick="const InsertForm = new NoticeSet(); InsertForm.noticeInsertForm();">등록</button>
+                </div>
             </div>
 			<div class="noticeContent"></div>
 			<div class="gridNoticeList"></div>

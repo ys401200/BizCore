@@ -959,7 +959,9 @@ function getCommonCode() {
 	commonCodeTime = commonCodeTime == null ? 0 : commonCodeTime * 1;
 	if ((new Date()).getTime() < commonCodeTime + 600000) {
 		commonCodeData = sessionStorage.getItem("commonCodeData");
-		commonCodeData = JSON.parse(commonCodeData);
+		if(commonCodeData !== ""){
+			commonCodeData = JSON.parse(commonCodeData);
+		}
 		storage.code = commonCodeData;
 		console.log("[getUserMap] set common code from sessionStorage.");
 	} else {

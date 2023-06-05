@@ -43,6 +43,7 @@
     height: 100%;
 	text-decoration: none;
 	color: #fff;
+	font-weight: 600;
 }
 
 .menuItem > a:hover,
@@ -122,6 +123,7 @@
     width: calc(100% - 15px);
     height: 100%;
 	color: #fff;
+	font-weight: 600;
 }
 
 .sideMenu > .business .menuItem > label.active{
