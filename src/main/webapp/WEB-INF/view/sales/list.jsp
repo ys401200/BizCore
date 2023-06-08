@@ -54,20 +54,22 @@
 			</div>
 		</div>
         <div class="salesContainer">
-            <hr />
-            <span id="containerTitle">영업활동조회</span>
-			<div class="listSearchInput">
-				<input type="text" class="searchAllInput" id="searchAllInput" onkeyup="searchInputKeyup();" placeholder="단어를 입력해주세요.">
-            </div>
-			<div class="listRange">
-				<input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="listRangeChange(this, drawSalesList);">
-				<span class="listRangeSpan">0</span>
-			</div>
-			<div class="crudBtns">
-				<button type="button" class="crudAddBtn" onclick="salesInsertForm();">등록</button>
-				<button type="button" class="crudUpdateBtn">수정</button>
-				<button type="button" class="crudDeleteBtn" onclick="salesDelete();">삭제</button>
-				<a href="#" onclick="hideDetailView(drawSalesList);" class="detailBackBtn">Back</a>
+			<div class="contentHeaders">
+				<hr />
+				<span id="containerTitle">영업활동조회</span>
+				<div class="listSearchInput">
+					<input type="text" class="searchAllInput" id="searchAllInput" onkeyup="searchInputKeyup();" placeholder="단어를 입력해주세요.">
+				</div>
+				<div class="listRange">
+					<input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="listRangeChange(this, drawSalesList);">
+					<span class="listRangeSpan">0</span>
+				</div>
+				<div class="crudBtns">
+					<button type="button" class="crudAddBtn" onclick="salesInsertForm();">등록</button>
+					<button type="button" class="crudUpdateBtn">수정</button>
+					<button type="button" class="crudDeleteBtn" onclick="salesDelete();">삭제</button>
+					<a href="#" onclick="hideDetailView(drawSalesList);" class="detailBackBtn">Back</a>
+				</div>
 			</div>
             <div class="gridList"></div>
             <div class="pageContainer"></div>

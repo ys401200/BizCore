@@ -411,6 +411,265 @@ class SalesSet{
 	constructor() {
 		CommonDatas.Temps.salesSet = this;
 	}
+
+	//공지사항 리스트 저장 함수
+	list() {
+		axios.get("/api/sales/").then((response) => {
+			if (response.data.result === "ok") {
+				let result;
+				result = cipher.decAes(response.data.data);
+				result = JSON.parse(result);
+				storage.salesList = result;
+
+				if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.sopp === undefined) {
+					window.setTimeout(this.drawSalesList, 1000);
+				} else {
+					window.setTimeout(this.drawSalesList, 200);
+				}
+			}
+		}).catch((error) => {
+			msg.set("영업활동관리 리스트 에러입니다.\n" + error);
+			console.log(error);
+		})
+	}
+
+	//공지사항 리스트 출력 함수
+	drawSalesList() {
+		let container, result, jsonData, job, header = [], data = [], ids = [], disDate, setDate, str, fnc, pageContainer, hideArr, showArr, salesFrdatetime, salesTodatetime;
+
+		if (storage.salesList === undefined) {
+			msg.set("등록된 영업활동이 없습니다");
+		}
+		else {
+			if (storage.searchDatas === undefined) {
+				jsonData = storage.salesList;
+			} else {
+				jsonData = storage.searchDatas;
+			}
+		}
+
+		result = CommonDatas.paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+		pageContainer = document.getElementsByClassName("pageContainer")[0];
+		container = document.getElementsByClassName("gridList")[0];
+		hideArr = ["detailBackBtn", "crudUpdateBtn", "crudDeleteBtn", "contractReqBtn"];
+		showArr = [
+			{ element: "gridList", display: "block" },
+			{ element: "pageContainer", display: "flex" },
+			{ element: "searchContainer", display: "block" },
+			{ element: "listRange", display: "flex" },
+			{ element: "listSearchInput", display: "flex" },
+			{ element: "crudBtns", display: "flex" },
+			{ element: "crudAddBtn", display: "flex" },
+		];
+
+		header = [
+			{
+				"title": "등록일",
+				"align": "center",
+			},
+			{
+				"title": "영업활동명",
+				"align": "center",
+			},
+			{
+				"title": "영업활동(시작)",
+				"align": "center",
+			},
+			{
+				"title": "영업활동(끝)",
+				"align": "center",
+			},
+			{
+				"title": "영업기회명",
+				"align": "center",
+			},
+			{
+				"title": "담당자",
+				"align": "center",
+			},
+			{
+				"title": "매출처",
+				"align": "center",
+			},
+			{
+				"title": "엔드유저",
+				"align": "center",
+			},
+			{
+				"title": "설명",
+				"align": "center",
+			},
+		];
+
+		if (jsonData === "") {
+			str = [
+				{
+					"setData": undefined,
+					"align": "center",
+					"col": 9,
+				},
+			];
+
+			data.push(str);
+		} else {
+			for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+				disDate = CommonDatas.dateDis(new Date(jsonData[i].regDatetime).getTime(), new Date(jsonData[i].modDatetime).getTime());
+				setDate = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+				disDate = CommonDatas.dateDis(new Date(jsonData[i].salesFrdatetime).getTime());
+				salesFrdatetime = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+				disDate = CommonDatas.dateDis(new Date(jsonData[i].salesTodatetime).getTime());
+				salesTodatetime = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+				let userName = storage.user[jsonData[i].userNo].userName;
+				let sopp = 0;
+
+				for(let t = 0; t < storage.sopp.length; t++){
+					let item = storage.sopp[t];
+
+					if(item.no == jsonData[i].soppNo){
+						sopp = item.title;
+					}
+				}
+
+				str = [
+					{
+						"setData": setDate,
+						"align": "center",
+					},
+					{
+						"setData": jsonData[i].salesTitle,
+						"align": "left",
+					},
+					{
+						"setData": salesFrdatetime,
+						"align": "center",
+					},
+					{
+						"setData": salesTodatetime,
+						"align": "center",
+					},
+					{
+						"setData": (sopp == 0) ? "" : sopp,
+						"align": "center",
+					},
+					{
+						"setData": userName,
+						"align": "center",
+					},
+					{
+						"setData": (jsonData[i].custNo === undefined || jsonData[i].custNo == 0) ? "" : storage.customer[jsonData[i].custNo].name,
+						"align": "center",
+					},
+					{
+						"setData": (jsonData[i].ptncNo === undefined || jsonData[i].ptncNo == 0) ? "" : storage.customer[jsonData[i].ptncNo].name,
+						"align": "center",
+					},
+					{
+						"setData": jsonData[i].salesDesc,
+						"align": "left",
+					},
+				];
+
+				fnc = "CommonDatas.Temps.salesSet.salesDetailView(this)";
+				ids.push(jsonData[i].no);
+				data.push(str);
+			}
+
+			let pageNation = CommonDatas.createPaging(pageContainer, result[3], "CommonDatas.pageMove", "CommonDatas.Temps.salesSet.drawSalesList", result[0]);
+			pageContainer.innerHTML = pageNation;
+		}
+
+		CommonDatas.createGrid(container, header, data, ids, job, fnc);
+		CommonDatas.setViewContents(hideArr, showArr);
+		document.getElementById("multiSearchBtn").setAttribute("onclick", "CommonDatas.Temps.salesSet.searchSubmit();");
+
+		let path = location.pathname.split("/");
+
+		if (path[3] !== undefined && jsonData !== null) {
+			let content = document.querySelector(".gridContent[data-id=\"" + path[3] + "\"]");
+			let salesSet = new SalesSet();
+			salesSet.salesDetailView(content);
+		}
+	}
+
+	//메인 화면에서 클릭한 공지사항 가져오는 함수
+	salesDetailView(e) {
+		let thisEle = e;
+		storage.gridContent = e;
+
+		axios.get("/api/notice/" + thisEle.dataset.id).then((response) => {
+			if (response.data.result === "ok") {
+				let result;
+				result = cipher.decAes(response.data.data);
+				result = JSON.parse(result);
+				// let notice = new Notice(result);
+				// notice.detail();
+			}
+		}).catch((error) => {
+			msg.set("상세보기 에러 입니다.\n" + error);
+			console.log(error);
+		});
+	}
+
+	//공지사항 메인 검색 리스트 저장 함수
+	addSearchList() {
+		storage.searchList = [];
+
+		for (let i = 0; i < storage.salesList.length; i++) {
+			let no, title, writer, disDate, setDate;
+			no = storage.salesList[i].no;
+			title = storage.salesList[i].title;
+			writer = (storage.salesList[i].writer === null || storage.salesList[i].writer == 0) ? "" : storage.user[storage.salesList[i].writer].userName;
+			disDate = CommonDatas.dateDis(storage.salesList[i].created, storage.salesList[i].modified);
+			setDate = parseInt(CommonDatas.dateFnc(disDate).replaceAll("-", ""));
+			storage.searchList.push("#" + title + "#" + writer + "#created" + setDate);
+		}
+	}
+
+	//공지사항 검색 버튼 클릭 함수
+	searchSubmit() {
+		let dataArray = [], resultArray, eachIndex = 0, searchTitle, searchWriter, searchCreatedFrom;
+		searchTitle = "#1/" + document.getElementById("searchTitle").value;
+		searchWriter = "#2/" + document.getElementById("searchWriter").value;
+		searchCreatedFrom = (document.getElementById("searchCreatedFrom").value === "") ? "" : document.getElementById("searchCreatedFrom").value.replaceAll("-", "") + "#created" + document.getElementById("searchCreatedTo").value.replaceAll("-", "");
+		let searchValues = [searchTitle, searchWriter, searchCreatedFrom];
+		for (let i = 0; i < searchValues.length; i++) {
+			if (searchValues[i] !== "" && searchValues[i] !== undefined && searchValues[i] !== null) {
+				let tempArray = CommonDatas.searchDataFilter(storage.noticeList, searchValues[i], "multi");
+
+				for (let t = 0; t < tempArray.length; t++) {
+					dataArray.push(tempArray[t]);
+				}
+
+				eachIndex++;
+			}
+		}
+
+		resultArray = CommonDatas.searchMultiFilter(eachIndex, dataArray, storage.noticeList);
+
+		storage.searchDatas = resultArray;
+
+		if (storage.searchDatas.length == 0) {
+			msg.set("찾는 데이터가 없습니다.");
+			storage.searchDatas = storage.noticeList;
+		}
+
+		this.drawNoticeList();
+	}
+
+	//공지사항 단일 검색 keyup 이벤트
+	searchInputKeyup() {
+		let searchAllInput, tempArray;
+		searchAllInput = document.getElementById("searchAllInput").value;
+		tempArray = CommonDatas.searchDataFilter(storage.noticeList, searchAllInput, "input");
+
+		if (tempArray.length > 0) {
+			storage.searchDatas = tempArray;
+		} else {
+			storage.searchDatas = "";
+		}
+
+		this.drawNoticeList();
+	}
 }
 
 class Schedule2Set {

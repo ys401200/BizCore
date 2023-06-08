@@ -1,13 +1,14 @@
 package kr.co.bizcore.v1.domain;
 
-import java.util.Date;
-
 import javax.xml.bind.annotation.XmlElement;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
-@Getter @Setter
+@Getter 
+@Setter
+@ToString
 public class Sales extends SimpleSales{
 
     @XmlElement(nillable=true)
@@ -18,5 +19,26 @@ public class Sales extends SimpleSales{
     private String type; //활동형태
     private int chk;
     private int schedType;
-    
+
+    // 23.06월 이후 추가
+    private int salesNo;
+    private int soppNo;
+    private int userNo;
+    private int compNo;
+    private int custNo;
+    private String salesFrdatetime;
+    private String salesTodatetime;
+    private String salesPlace;
+    private String salesType;
+    private String salesDesc;
+    private int salesCheck;
+    private String salesTitle;
+    private int ptncNo;
+    private String toDate;
+    private String fromDate;
+    // 중복
+    // private int schedType;
+    private String regDatetime;
+    private String modDatetime;
+    private String attrib;
 }

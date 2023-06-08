@@ -1,14 +1,12 @@
 package kr.co.bizcore.v1.ctrl;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 
 import kr.co.bizcore.v1.msg.Msg;
-import kr.co.bizcore.v1.msg.MsgEng;
 import kr.co.bizcore.v1.msg.MsgKor;
 import kr.co.bizcore.v1.svc.AccountingService;
 import kr.co.bizcore.v1.svc.AccountingService2;
@@ -35,7 +33,6 @@ import kr.co.bizcore.v1.svc.UserService;
 public abstract class Ctrl {
 
     private static Msg msgKor = new MsgKor();
-    private static Msg msgEng = new MsgEng();
 
     @Autowired
     protected ApplicationContext applicationContext;

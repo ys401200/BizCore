@@ -5,6 +5,7 @@ public class MsgKor extends Msg{
         idPwMisMatch = "0000/사용자 아이디 또는 비밀번호가 맞지 않습니다.";
         notLoggedin = "0001/세션이 만료되었거나 로그인하지 않았습니다.";
         compIdNotVerified = "0002/고객사 아이디를 확인할 수 없습니다.";
+        compNoNotVerified = "0002/고객사 number를 확인할 수 없습니다.";
         aesKeyNotFound = "0003/암호화 키를 찾을 수 없습니다.";
         wrongDateFormat = "0004/날짜 포맷이 잘못되었습니다.";
         fileNotFound = "0006/파일이 존재하지 않거나 제거되었습니다.";

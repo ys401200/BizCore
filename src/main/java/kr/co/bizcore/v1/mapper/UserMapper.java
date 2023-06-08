@@ -13,7 +13,9 @@ import kr.co.bizcore.v1.domain.SimpleUser;
 import kr.co.bizcore.v1.domain.User;
 
 public interface UserMapper {
-
+    @Select("SELECT compNo from swc_company WHERE compId = #{compId}")
+    public int getCompNo(@Param("compId") String compId);
+    
     @Select("SELECT no AS userNo, compId, userId, userName, rank, gender, deleted FROM bizcore.users WHERE no = #{userNo} AND compid = #{compId}")
     public SimpleUser getBasicUserInfo(@Param("userNo") String userNo, @Param("compId") String compId);
 

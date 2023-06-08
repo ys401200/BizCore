@@ -21,6 +21,10 @@ public class UserService extends Svc {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(UserService.class);
     public UserService(){super();}
 
+    public int getCompNo(String compId){
+        return userMapper.getCompNo(compId);
+    }
+
     public SimpleUser getBasicUserInfo(String userNo, String compId) {
         SimpleUser result = userMapper.getBasicUserInfo(userNo, compId);
         return result;

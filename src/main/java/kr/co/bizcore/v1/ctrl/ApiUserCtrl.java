@@ -69,6 +69,7 @@ public class ApiUserCtrl extends Ctrl{
         String userId = null, pw = null, userNo = null, compId = null, result = null, uri = null;
         String dec = null, aesKey = null, aesIv = null, lang = null, keepToken = null, userName = null, userRank = null;
         String[] t = null;
+        int compNo = 0;
         Msg msg = null;
         boolean keep = false;
         JSONObject json = null;
@@ -104,7 +105,9 @@ public class ApiUserCtrl extends Ctrl{
         if (compId == null) { // compId NOT Verified, send failure message
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
         } else { // When compId verified, decryption data and verify userId, pw.
+            compNo = userService.getCompNo(compId);
             session.setAttribute("compId", compId); // Set attribute compId to session
+            session.setAttribute("compNo", compNo);
             aesKey = (String) session.getAttribute("aesKey");
             aesIv = (String) session.getAttribute("aesIv");
             if(aesKey == null || aesIv == null){

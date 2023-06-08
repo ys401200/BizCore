@@ -4,6 +4,7 @@ public abstract class Msg {
     public String idPwMisMatch;
     public String notLoggedin;
     public String compIdNotVerified;
+    public String compNoNotVerified;
     public String aesKeyNotFound;
     public String wrongDateFormat;
     public String fileNotFound;

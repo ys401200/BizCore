@@ -19,7 +19,7 @@ public interface SystemMapper {
     public String test();
 
     // 접속주소 기반 compId를 판단하기 위한 장보를 가져옴
-    @Select("SELECT connAddr, compId FROM bizsys.company_url")
+    @Select("SELECT connAddr, compId, compNo FROM bizsys.company_url")
     public List<ConnUrl> getConnUrl();
 
     // 로그인 검증

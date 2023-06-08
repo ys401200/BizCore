@@ -1,12 +1,14 @@
 $(document).ready(() => {
     init();
     
-	setTimeout(() => {
-		$("#loadingDiv").hide();
-		$("#loadingDiv").loading("toggle");
-	}, 300);
+	// setTimeout(() => {
+	// 	$("#loadingDiv").hide();
+	// 	$("#loadingDiv").loading("toggle");
+	// }, 300);
 
-	getSalesList();
+	// getSalesList();
+	const setSales = new SalesSet();
+	setSales.list();
 });
 
 function getSalesList() {

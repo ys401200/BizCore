@@ -9,5 +9,6 @@ public class ConnUrl extends Domain {
 
     private String connAddr;
     private String compId;
+    private int compNo;
 
 }

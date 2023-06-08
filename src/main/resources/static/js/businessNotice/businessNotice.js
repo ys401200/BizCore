@@ -1,7 +1,7 @@
 $(document).ready(() => {
 	init();
-	const SetNotice = new NoticeSet();
-	SetNotice.list();
+	const setNotice = new NoticeSet();
+	setNotice.list();
 	// setTimeout(() => {
 	// 	$("#loadingDiv").hide();
 	// 	$("#loadingDiv").loading("toggle");
