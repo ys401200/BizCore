@@ -14,10 +14,10 @@ class NoticeSet {
 
 				if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined) {
 					window.setTimeout(this.drawNoticeList, 600);
-					window.setTimeout(this.addSearchList, 600);
+					window.setTimeout(CommonDatas.searchListSet("noticeList"), 600);
 				} else {
 					window.setTimeout(this.drawNoticeList, 200);
-					window.setTimeout(this.addSearchList, 200);
+					window.setTimeout(CommonDatas.searchListSet("noticeList"), 200);
 				}
 			}
 		}).catch((error) => {
@@ -82,9 +82,8 @@ class NoticeSet {
 			data.push(str);
 		} else {
 			for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
-				disDate = CommonDatas.dateDis(jsonData[i].created, jsonData[i].modified);
-				setDate = CommonDatas.dateFnc(disDate, "mm-dd");
-				let userName = storage.user[jsonData[i].writer].userName;
+				disDate = CommonDatas.dateDis(new Date(jsonData[i].regDate).getTime(), new Date(jsonData[i].modDate).getTime());
+				setDate = CommonDatas.dateFnc(disDate, "yy.mm.dd");
 
 				str = [
 					{
@@ -92,17 +91,17 @@ class NoticeSet {
 						"align": "center",
 					},
 					{
-						"setData": jsonData[i].title,
+						"setData": jsonData[i].noticeTitle,
 						"align": "left",
 					},
 					{
-						"setData": userName,
+						"setData": (CommonDatas.emptyValusCheck(storage.user[jsonData[i].userNo].userName)) ? "" : storage.user[jsonData[i].userNo].userName,
 						"align": "center",
 					},
 				];
 
 				fnc = "CommonDatas.Temps.noticeSet.noticeDetailView(this)";
-				ids.push(jsonData[i].no);
+				ids.push(jsonData[i].noticeNo);
 				data.push(str);
 			}
 
@@ -118,8 +117,7 @@ class NoticeSet {
 
 		if (path[3] !== undefined && jsonData !== null) {
 			let content = document.querySelector(".gridContent[data-id=\"" + path[3] + "\"]");
-			let noticeSet = new NoticeSet();
-			noticeSet.noticeDetailView(content);
+			CommonDatas.Temps.noticeSet.noticeDetailView(content);
 		}
 	}
 
@@ -149,25 +147,25 @@ class NoticeSet {
 		dataArray = [
 			{
 				"title": "담당자",
-				"elementId": "writer",
+				"elementId": "userNo",
 				"col": 4,
 			},
 			{
 				"title": "제목(*)",
-				"elementId": "title",
+				"elementId": "noticeTitle",
 				"disabled": false,
 				"col": 4,
 			},
 			{
 				"title": "내용(*)",
-				"elementId": "content",
+				"elementId": "noticeContents",
 				"type": "textarea",
 				"disabled": false,
 				"col": 4,
 			},
 		];
 
-		datas = ["writer"];
+		datas = ["userNo"];
 		html = CommonDatas.detailViewForm(dataArray, "modal");
 		modal.show();
 		modal.content.style.minWidth = "70%";
@@ -180,15 +178,15 @@ class NoticeSet {
 		modal.close.setAttribute("onclick", "modal.hide();");
 
 		storage.formList = {
-			"writer": storage.my,
-			"title": "",
-			"content": "",
+			"userNo": storage.my,
+			"noticeTitle": "",
+			"noticeContents": "",
 		};
 
 		setTimeout(() => {
 			let my = storage.my;
 			CommonDatas.detailTrueDatas(datas);
-			document.getElementById("writer").value = storage.user[my].userName;
+			document.getElementById("userNo").value = storage.user[my].userName;
 			ckeditor.config.readOnly = false;
 			window.setTimeout(setEditor, 100);
 		}, 100);
@@ -198,40 +196,33 @@ class NoticeSet {
 		}, 300);
 	}
 
-	//공지사항 메인 검색 리스트 저장 함수
-	addSearchList() {
-		storage.searchList = [];
-
-		for (let i = 0; i < storage.noticeList.length; i++) {
-			let no, title, writer, disDate, setDate;
-			no = storage.noticeList[i].no;
-			title = storage.noticeList[i].title;
-			writer = (storage.noticeList[i].writer === null || storage.noticeList[i].writer == 0) ? "" : storage.user[storage.noticeList[i].writer].userName;
-			disDate = CommonDatas.dateDis(storage.noticeList[i].created, storage.noticeList[i].modified);
-			setDate = parseInt(CommonDatas.dateFnc(disDate).replaceAll("-", ""));
-			storage.searchList.push("#" + title + "#" + writer + "#created" + setDate);
-		}
-	}
-
 	//공지사항 검색 버튼 클릭 함수
 	searchSubmit() {
-		let dataArray = [], resultArray, eachIndex = 0, searchTitle, searchWriter, searchCreatedFrom;
-		searchTitle = "#1/" + document.getElementById("searchTitle").value;
-		searchWriter = "#2/" + document.getElementById("searchWriter").value;
-		searchCreatedFrom = (document.getElementById("searchCreatedFrom").value === "") ? "" : document.getElementById("searchCreatedFrom").value.replaceAll("-", "") + "#created" + document.getElementById("searchCreatedTo").value.replaceAll("-", "");
-		let searchValues = [searchTitle, searchWriter, searchCreatedFrom];
-		for (let i = 0; i < searchValues.length; i++) {
-			if (searchValues[i] !== "" && searchValues[i] !== undefined && searchValues[i] !== null) {
-				let tempArray = CommonDatas.searchDataFilter(storage.noticeList, searchValues[i], "multi");
+		let dataArray = [], resultArray, eachIndex = 0, user, title, searchUser, searchTitle, searchCreatedFrom, keyIndex = 0;
+		searchTitle = document.getElementById("searchTitle");
+		searchUser = document.getElementById("searchUser");
+		searchCreatedFrom = (document.getElementById("searchCreatedFrom").value === "") ? "" : document.getElementById("searchCreatedFrom").value.replaceAll("-", "") + "#regDate" + document.getElementById("searchCreatedTo").value.replaceAll("-", "");
+		
+		for(let key in storage.noticeList[0]){
+			if(key === searchTitle.dataset.key) title = "#" + keyIndex + "/" + searchTitle.value;
+			else if(key === searchUser.dataset.key) user = "#" + keyIndex + "/" + searchUser.value;
+			keyIndex++;
+		}
 
+		let searchValues = [title, user, searchCreatedFrom];
+
+		for (let i = 0; i < searchValues.length; i++) {
+			if(searchValues[i] !== ""){
+				let tempArray = CommonDatas.searchDataFilter(storage.noticeList, searchValues[i], "multi", ["#regDate"]);
+	
 				for (let t = 0; t < tempArray.length; t++) {
 					dataArray.push(tempArray[t]);
 				}
-
+	
 				eachIndex++;
 			}
 		}
-
+		
 		resultArray = CommonDatas.searchMultiFilter(eachIndex, dataArray, storage.noticeList);
 
 		storage.searchDatas = resultArray;
@@ -263,17 +254,19 @@ class NoticeSet {
 //공지사항 기능 클래스
 class Notice {
 	constructor(getData) {
+		CommonDatas.Temps.notice = this;
+
 		if (getData !== undefined) {
 			this.getData = getData;
-			this.title = getData.title;
-			this.content = getData.content;
-			this.writer = getData.writer;
-			this.created = getData.created;
-			this.modified = getData.modified;
+			this.noticeTitle = getData.noticeTitle;
+			this.noticeContents = getData.noticeContents;
+			this.userNo = getData.userNo;
+			this.regDate = getData.regDate;
+			this.modDate = getData.modDate;
 		} else {
-			this.title = "";
-			this.content = "";
-			this.writer = storage.my;
+			this.noticeTitle = "";
+			this.noticeContents = "";
+			this.userNo = storage.my;
 		}
 	}
 
@@ -285,35 +278,36 @@ class Notice {
 
 		CommonDatas.detailSetFormList(this.getData);
 
-		setDate = CommonDatas.dateDis(this.created, this.modified);
+		setDate = CommonDatas.dateDis(new Date(this.regDate).getTime(), new Date(this.modified).getTime());
 		setDate = CommonDatas.dateFnc(setDate);
-		datas = ["writer"];
+		datas = ["userNo"];
 		dataArray = [
 			{
 				"title": "제목(*)",
-				"elementId": "title",
-				"value": this.title,
+				"elementId": "noticeTitle",
+				"value": this.noticeTitle,
 				"col": 4,
 			},
 			{
 				"title": "내용(*)",
-				"elementId": "content",
-				"value": this.content,
+				"elementId": "noticeContents",
+				"value": this.noticeContents,
 				"type": "textarea",
 				"col": 4,
 			},
 		];
+
 		html += CommonDatas.detailViewForm(dataArray, "board");
 		CommonDatas.detailBoardContainerHide();
 		createDiv = document.createElement("div");
 		createDiv.innerHTML = html;
 		storage.gridContent.after(createDiv);
-		notIdArray = ["writer", "created"];
+		notIdArray = ["userNo", "regData"];
 		CommonDatas.detailTrueDatas(datas);
 
-		if (storage.my == storage.formList.writer) {
-			btnHtml += "<button type=\"button\" class=\"updateBtn\" onclick=\"CommonDatas.enableDisabled(this, 'let notice = new Notice(); notice.update();', '" + notIdArray + "', 'detailBoard');\">수정</button>";
-			btnHtml += "<button type=\"button\" onclick=\"let notice = new Notice(); notice.delete();\">삭제</button>";
+		if (storage.my == storage.formList.userNo) {
+			btnHtml += "<button type=\"button\" class=\"updateBtn\" onclick=\"CommonDatas.enableDisabled(this, 'CommonDatas.Temps.notice.update();', '" + notIdArray + "', 'detailBoard');\">수정</button>";
+			btnHtml += "<button type=\"button\" onclick=\"CommonDatas.Temps.notice.delete();\">삭제</button>";
 		}
 
 		btnHtml += "<button type='button' onclick='CommonDatas.detailBoardContainerHide();'><i class=\"fa-solid fa-xmark\"></i></button>";
@@ -327,15 +321,16 @@ class Notice {
 
 	//공지사항 등록
 	insert() {
-		if (document.getElementById("title").value === "") {
+		if (document.getElementById("noticeTitle").value === "") {
 			msg.set("제목을 입력해주세요.");
-			document.getElementById("title").focus();
+			document.getElementById("noticeTitle").focus();
 			return false;
 		} else {
 			CommonDatas.formDataSet();
 			let data = storage.formList;
 			data = JSON.stringify(data);
 			data = cipher.encAes(data);
+
 			axios.post("/api/notice", data, {
 				headers: { "Content-Type": "text/plain" }
 			}).then((response) => {
@@ -356,16 +351,17 @@ class Notice {
 
 	//공지사항 수정
 	update() {
-		if (document.getElementById("title").value === "") {
+		if (document.getElementById("noticeTitle").value === "") {
 			msg.set("제목을 입력해주세요.");
-			document.getElementById("title").focus();
+			document.getElementById("noticeTitle").focus();
 			return false;
 		} else {
 			CommonDatas.formDataSet();
 			let data = storage.formList;
 			data = JSON.stringify(data);
 			data = cipher.encAes(data);
-			axios.put("/api/notice/" + storage.formList.no, data, {
+
+			axios.put("/api/notice/" + storage.formList.noticeNo, data, {
 				headers: { "Content-Type": "text/plain" }
 			}).then((response) => {
 				if (response.data.result === "ok") {
@@ -386,7 +382,7 @@ class Notice {
 	//공지사항 삭제
 	delete() {
 		if (confirm("정말로 삭제하시겠습니까??")) {
-			axios.delete("/api/notice/" + storage.formList.no, {
+			axios.delete("/api/notice/" + storage.formList.noticeNo, {
 				headers: { "Content-Type": "text/plain" }
 			}).then((response) => {
 				if (response.data.result === "ok") {
@@ -412,7 +408,7 @@ class SalesSet{
 		CommonDatas.Temps.salesSet = this;
 	}
 
-	//공지사항 리스트 저장 함수
+	//영업활동 리스트 저장 함수
 	list() {
 		axios.get("/api/sales/").then((response) => {
 			if (response.data.result === "ok") {
@@ -423,8 +419,10 @@ class SalesSet{
 
 				if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.sopp === undefined) {
 					window.setTimeout(this.drawSalesList, 1000);
+					window.setTimeout(CommonDatas.searchListSet("salesList"), 1000);
 				} else {
 					window.setTimeout(this.drawSalesList, 200);
+					window.setTimeout(CommonDatas.searchListSet("salesList"), 200);
 				}
 			}
 		}).catch((error) => {
@@ -433,7 +431,7 @@ class SalesSet{
 		})
 	}
 
-	//공지사항 리스트 출력 함수
+	//영업활동 리스트 출력 함수
 	drawSalesList() {
 		let container, result, jsonData, job, header = [], data = [], ids = [], disDate, setDate, str, fnc, pageContainer, hideArr, showArr, salesFrdatetime, salesTodatetime;
 
@@ -570,7 +568,7 @@ class SalesSet{
 				];
 
 				fnc = "CommonDatas.Temps.salesSet.salesDetailView(this)";
-				ids.push(jsonData[i].no);
+				ids.push(jsonData[i].salesNo);
 				data.push(str);
 			}
 
@@ -586,23 +584,22 @@ class SalesSet{
 
 		if (path[3] !== undefined && jsonData !== null) {
 			let content = document.querySelector(".gridContent[data-id=\"" + path[3] + "\"]");
-			let salesSet = new SalesSet();
-			salesSet.salesDetailView(content);
+			CommonDatas.Temps.salesSet.salesDetailView(content);
 		}
 	}
 
-	//메인 화면에서 클릭한 공지사항 가져오는 함수
+	//메인 화면에서 클릭한 영업활동 가져오는 함수
 	salesDetailView(e) {
 		let thisEle = e;
 		storage.gridContent = e;
 
-		axios.get("/api/notice/" + thisEle.dataset.id).then((response) => {
+		axios.get("/api/sales/" + thisEle.dataset.id).then((response) => {
 			if (response.data.result === "ok") {
 				let result;
 				result = cipher.decAes(response.data.data);
 				result = JSON.parse(result);
-				// let notice = new Notice(result);
-				// notice.detail();
+				let sales = new Sales(result);
+				// sales.detail();
 			}
 		}).catch((error) => {
 			msg.set("상세보기 에러 입니다.\n" + error);
@@ -610,57 +607,54 @@ class SalesSet{
 		});
 	}
 
-	//공지사항 메인 검색 리스트 저장 함수
-	addSearchList() {
-		storage.searchList = [];
-
-		for (let i = 0; i < storage.salesList.length; i++) {
-			let no, title, writer, disDate, setDate;
-			no = storage.salesList[i].no;
-			title = storage.salesList[i].title;
-			writer = (storage.salesList[i].writer === null || storage.salesList[i].writer == 0) ? "" : storage.user[storage.salesList[i].writer].userName;
-			disDate = CommonDatas.dateDis(storage.salesList[i].created, storage.salesList[i].modified);
-			setDate = parseInt(CommonDatas.dateFnc(disDate).replaceAll("-", ""));
-			storage.searchList.push("#" + title + "#" + writer + "#created" + setDate);
-		}
-	}
-
-	//공지사항 검색 버튼 클릭 함수
+	//영업활동 검색 버튼 클릭 함수
 	searchSubmit() {
-		let dataArray = [], resultArray, eachIndex = 0, searchTitle, searchWriter, searchCreatedFrom;
-		searchTitle = "#1/" + document.getElementById("searchTitle").value;
-		searchWriter = "#2/" + document.getElementById("searchWriter").value;
-		searchCreatedFrom = (document.getElementById("searchCreatedFrom").value === "") ? "" : document.getElementById("searchCreatedFrom").value.replaceAll("-", "") + "#created" + document.getElementById("searchCreatedTo").value.replaceAll("-", "");
-		let searchValues = [searchTitle, searchWriter, searchCreatedFrom];
-		for (let i = 0; i < searchValues.length; i++) {
-			if (searchValues[i] !== "" && searchValues[i] !== undefined && searchValues[i] !== null) {
-				let tempArray = CommonDatas.searchDataFilter(storage.noticeList, searchValues[i], "multi");
+		let dataArray = [], resultArray, eachIndex = 0, user, sopp, cust, salesType, searchUser, searchSopp, searchCust, searchSalesType, searchDateFrom, keyIndex = 0;
+		searchUser = document.getElementById("searchUser");
+		searchSopp = document.getElementById("searchSopp");
+		searchCust = document.getElementById("searchCust");
+		searchSalesType = document.getElementById("searchSalesType");
+		searchDateFrom = (document.getElementById("searchDateFrom").value === "") ? "" : document.getElementById("searchDateFrom").value.replaceAll("-", "") + "#regDatetime" + document.getElementById("searchDateTo").value.replaceAll("-", "");
+		
+		for(let key in storage.salesList[0]){
+			if(key === searchUser.dataset.key) user = "#" + keyIndex + "/" + searchUser.value;
+			else if(key === searchSopp.dataset.key) sopp = "#" + keyIndex + "/" + searchSopp.value;
+			else if(key === searchCust.dataset.key) cust = "#" + keyIndex + "/" + searchCust.value;
+			else if(key === searchSalesType.dataset.key) salesType = "#" + keyIndex + "/" + searchSalesType.value;
+			keyIndex++;
+		}
 
+		let searchValues = [user, sopp, cust, salesType, searchDateFrom];
+
+		for (let i = 0; i < searchValues.length; i++) {
+			if(searchValues[i] !== ""){
+				let tempArray = CommonDatas.searchDataFilter(storage.salesList, searchValues[i], "multi", ["#regDatetime"]);
+	
 				for (let t = 0; t < tempArray.length; t++) {
 					dataArray.push(tempArray[t]);
 				}
-
+	
 				eachIndex++;
 			}
 		}
-
-		resultArray = CommonDatas.searchMultiFilter(eachIndex, dataArray, storage.noticeList);
+		
+		resultArray = CommonDatas.searchMultiFilter(eachIndex, dataArray, storage.salesList);
 
 		storage.searchDatas = resultArray;
 
 		if (storage.searchDatas.length == 0) {
 			msg.set("찾는 데이터가 없습니다.");
-			storage.searchDatas = storage.noticeList;
+			storage.searchDatas = storage.salesList;
 		}
 
-		this.drawNoticeList();
+		this.drawSalesList();
 	}
 
 	//공지사항 단일 검색 keyup 이벤트
 	searchInputKeyup() {
 		let searchAllInput, tempArray;
 		searchAllInput = document.getElementById("searchAllInput").value;
-		tempArray = CommonDatas.searchDataFilter(storage.noticeList, searchAllInput, "input");
+		tempArray = CommonDatas.searchDataFilter(storage.salesList, searchAllInput, "input");
 
 		if (tempArray.length > 0) {
 			storage.searchDatas = tempArray;
@@ -668,8 +662,12 @@ class SalesSet{
 			storage.searchDatas = "";
 		}
 
-		this.drawNoticeList();
+		this.drawSalesList();
 	}
+}
+
+class Sales{
+
 }
 
 class Schedule2Set {
@@ -3373,6 +3371,18 @@ class Estimate {
 class Common {
 	constructor() {
 		this.Temps = {};
+
+		document.onmousedown = function leftClick(){
+			let target = window.event.srcElement;
+
+			if(target.dataset.complete === undefined){
+				if(target.parentElement.className !== "autoComplete"){
+					if(document.getElementsByClassName("autoComplete")[0] !== undefined){
+						document.getElementsByClassName("autoComplete")[0].remove();
+					}
+				}
+			}
+		}
 	}
 	//페이지 로드될 때 top menu active 함수
 	setTopPathActive() {
@@ -3717,9 +3727,9 @@ class Common {
 	dateDis(created, modified) {
 		let result;
 
-		if (created === undefined) {
+		if (created === undefined || isNaN(created)) {
 			created = null;
-		} else if (modified === undefined) {
+		} else if (modified === undefined || isNaN(modified)) {
 			modified = null;
 		}
 
@@ -4100,119 +4110,58 @@ class Common {
 	}
 
 	//단일 검색 시 데이터를 걸러주는 함수
-	searchDataFilter(arrayList, searchDatas, type) {
+	searchDataFilter(arrayList, searchValue, type, keywords) {
 		let dataArray = [];
 
 		if (type === "input") {
 			for (let key in storage.searchList) {
-				if (storage.searchList[key].includes(searchDatas)) {
+				if (storage.searchList[key].includes(searchValue)) {
 					dataArray.push(arrayList[key]);
 				}
 			}
 		} else {
-			if (searchDatas.indexOf("#created") > -1) {
+			let keywordFlag = false;
+			let keywordIndex;
+
+			for(let i = 0; i < keywords.length; i++){
+				let item = keywords[i];
+				
+				if(searchValue.indexOf(item) > -1){
+					keywordFlag = true;
+					keywordIndex = i;
+				}
+			}
+
+			if(keywordFlag){
 				let splitStr;
-				splitStr = searchDatas.split("#created");
+				splitStr = searchValue.split(keywords[keywordIndex]);
 
 				for (let key in storage.searchList) {
-					if (splitStr[0] <= storage.searchList[key].split("#created")[1]) {
-						if (storage.searchList[key].split("#created")[1] <= splitStr[1]) {
+					if (splitStr[0] <= storage.searchList[key].split(keywords[keywordIndex])[1]) {
+						if (storage.searchList[key].split(keywords[keywordIndex])[1] <= splitStr[1]) {
 							dataArray.push(key);
 						}
 					}
 				}
-			} else if (searchDatas.indexOf("#date") > -1) {
-				let splitStr;
-				splitStr = searchDatas.split("#date");
-
-				for (let key in storage.searchList) {
-					if (splitStr[0] <= storage.searchList[key].split("#date")[1]) {
-						if (storage.searchList[key].split("#date")[1] <= splitStr[1]) {
-							dataArray.push(key);
-						}
-					}
-				}
-			} else if (searchDatas.indexOf("#from") > -1) {
-				let splitStr;
-				splitStr = searchDatas.split("#from");
-
-				for (let key in storage.searchList) {
-					if (splitStr[0] <= storage.searchList[key].split("#from")[1]) {
-						if (storage.searchList[key].split("#from")[1] <= splitStr[1]) {
-							dataArray.push(key);
-						}
-					}
-				}
-			} else if (searchDatas.indexOf("#startOfFreeMaintenance") > -1) {
-				let splitStr;
-				splitStr = searchDatas.split("#startOfFreeMaintenance");
-
-				for (let key in storage.searchList) {
-					if (splitStr[0] <= storage.searchList[key].split("#startOfFreeMaintenance")[1]) {
-						if (storage.searchList[key].split("#startOfFreeMaintenance")[1] <= splitStr[1]) {
-							dataArray.push(key);
-						}
-					}
-				}
-			} else if (searchDatas.indexOf("#startOfPaidMaintenance") > -1) {
-				let splitStr;
-				splitStr = searchDatas.split("#startOfPaidMaintenance");
-
-				for (let key in storage.searchList) {
-					if (splitStr[0] <= storage.searchList[key].split("#startOfPaidMaintenance")[1]) {
-						if (storage.searchList[key].split("#startOfPaidMaintenance")[1] <= splitStr[1]) {
-							dataArray.push(key);
-						}
-					}
-				}
-			} else if (searchDatas.indexOf("#saleDate") > -1) {
-				let splitStr;
-				splitStr = searchDatas.split("#saleDate");
-
-				for (let key in storage.searchList) {
-					if (splitStr[0] <= storage.searchList[key].split("#saleDate")[1]) {
-						if (storage.searchList[key].split("#saleDate")[1] <= splitStr[1]) {
-							dataArray.push(key);
-						}
-					}
-				}
-			} else if (searchDatas.indexOf("#issueDate") > -1) {
-				let splitStr;
-				splitStr = searchDatas.split("#issueDate");
-
-				for (let key in storage.searchList) {
-					if (splitStr[0] <= storage.searchList[key].split("#issueDate")[1]) {
-						if (storage.searchList[key].split("#issueDate")[1] <= splitStr[1]) {
-							dataArray.push(key);
-						}
-					}
-				}
-			} else if (searchDatas.indexOf("#price") > -1) {
-				let splitStr;
-				splitStr = searchDatas.split("#price");
-
-				for (let key in storage.searchList) {
-					if (parseInt(splitStr[0]) <= parseInt(storage.searchList[key].split("#price")[1])) {
-						if (parseInt(storage.searchList[key].split("#price")[1]) <= parseInt(splitStr[1])) {
-							dataArray.push(key);
-						}
-					}
-				}
-			} else {
+			}else{
 				let splitStr, index = "";
-				splitStr = searchDatas.split("#");
+				splitStr = searchValue.split("#");
 
-				for (let i = 0; i < splitStr[1].length; i++) {
-					if (splitStr[1][i] !== "/") {
-						index += splitStr[1][i];
-					} else {
-						break;
+				if(!CommonDatas.emptyValusCheck(splitStr[1])){
+					for (let i = 0; i < splitStr[1].length; i++) {
+						if (splitStr[1][i] !== "/") {
+							index += splitStr[1][i];
+						} else {
+							break;
+						}
 					}
-				}
 
-				for (let key in storage.searchList) {
-					if (storage.searchList[key].split("#")[index].indexOf(searchDatas.split("/")[1]) > -1) {
-						dataArray.push(key);
+					index = parseInt(index) + parseInt(1);
+	
+					for (let key in storage.searchList) {
+						if (storage.searchList[key].split("#")[index].includes(searchValue.split("/")[1])) {
+							dataArray.push(key);
+						}
 					}
 				}
 			}
@@ -4233,13 +4182,14 @@ class Common {
 					arr[dataArray[i]] = 1;
 				}
 			}
-
+			
+			
 			for (let key in arr) {
 				if (index == arr[key]) {
 					tempResultArray.push(key);
 				}
 			}
-
+			
 			for (let i = 0; i < tempResultArray.length; i++) {
 				resultArray.push(arrayList[tempResultArray[i]]);
 			}
@@ -4411,7 +4361,7 @@ class Common {
 		ckeditor.config.readOnly = false;
 		window.setTimeout(setEditor, 100);
 
-		if (modal.wrap.css("display") !== "none") {
+		if (modal.wrap.style.display !== "none" && modal.wrap.style.display !== "") {
 			setTimeout(() => {
 				document.getElementsByClassName("cke_textarea_inline")[0].style.height = "300px";
 			}, 300);
@@ -4600,6 +4550,68 @@ class Common {
 		if(func !== undefined){
 			func();
 		}
+	}
+
+	//각 페이지별 검색 리스트 셋팅 함수
+	searchListSet(list){
+		storage.searchList = [];
+
+		for(let i = 0; i < storage[list].length; i++){
+			let item = storage[list][i];
+			let str = "";
+
+			for(let key in item){
+				if(typeof item[key] !== "number"){
+					if(CommonDatas.emptyValusCheck(item[key])){
+						str += "#undefined";
+					}else{
+						let dateCheck = new Date(item[key]).getTime();
+						if(!isNaN(dateCheck)){
+							str += "#" + key + item[key].substring(0, 10).replace(/-/g, "");
+						}else{
+							str += "#" + item[key];
+						}
+					}
+				}else{
+					if(CommonDatas.emptyValusCheck(item[key])){
+						str += "#0";
+					}else{
+						if(key === "soppNo"){
+							for(let j = 0; j < storage.sopp.length; j++){
+								let soppItem = storage.sopp[j];
+		
+								if(item[key] == soppItem.no){
+									str += "#" + soppItem.title;
+								}
+							}
+						}else if(key === "userNo"){
+							str += "#" + storage.user[item[key]].userName;
+						}else if(key === "custNo"){
+							str += "#" + storage.customer[item[key]].name;
+						}else if(key === "salestype"){
+							str += "#" + storage.code.etc[item[key]];
+						}else{
+							str += "#" + item[key];
+						}
+					}
+				}
+			}
+
+			storage.searchList.push(str);
+		}
+	}
+
+	// value 값 유효성 체크
+	emptyValusCheck(value){
+		let flag = false;
+
+		if(value === "" || value == 0 || value === undefined || value == null){
+			flag = true;
+		}else{
+			flag = false;
+		}
+
+		return flag;
 	}
 }
 

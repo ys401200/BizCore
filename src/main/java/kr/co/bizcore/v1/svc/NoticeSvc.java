@@ -21,8 +21,8 @@ public class NoticeSvc extends Svc{
     @Autowired
     private NoticeMapper noticeMapper; 
 
-    public List<SimpleNotice> getPostList(String compId) {
-       return noticeMapper.getNotice(compId);
+    public List<SimpleNotice> getPostList(int compNo) {
+       return noticeMapper.getNotice(compNo);
     }
 
     public List<SimpleNotice> getPostList(String compId, int start, int end) {
@@ -33,22 +33,21 @@ public class NoticeSvc extends Svc{
         return noticeMapper.getNoticeCount(compId);
     }
 
-    public int  delete(String compId, String notiNo) {
-        return noticeMapper.delete(compId, notiNo);
+    public int  delete(int compNo, String noticeNo) {
+        return noticeMapper.delete(compNo, noticeNo);
     }
    
 
-    public Notice getNotice(String compId, String notiNo) {
-        return noticeMapper.getSelectedNotice(compId, notiNo);
+    public Notice getNotice(int compNo, String noticeNo) {
+        return noticeMapper.getSelectedNotice(compNo, noticeNo);
     }
    
-    public int insertNotice(String compId, String writer, String title, String content) {
-        return noticeMapper.insert(compId, writer, title, content);
+    public int insertNotice(int compNo, String userNo, String noticeTitle, String noticeContents) {
+        return noticeMapper.insert(compNo, userNo, noticeTitle, noticeContents);
     }
 
-    public int updateNotice(String title, String content, String compId, String notiNo) {
-
-        return noticeMapper.updateNotice(title, content, compId, notiNo);
+    public int updateNotice(String noticeTitle, String noticeContents, int compNo, String noticeNo) {
+        return noticeMapper.updateNotice(noticeTitle, noticeContents, compNo, noticeNo);
     }
 
 

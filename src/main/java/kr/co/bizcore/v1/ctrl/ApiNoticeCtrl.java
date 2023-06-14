@@ -34,6 +34,7 @@ public class ApiNoticeCtrl extends Ctrl {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String getAll(HttpServletRequest request) {
         String result = null, data = null, aesKey = null, aesIv = null, userNo = null, compId = null;
+        int compNo = 0;
         HttpSession session = null;
         Msg msg = null;
         List<SimpleNotice> list = null;
@@ -43,6 +44,7 @@ public class ApiNoticeCtrl extends Ctrl {
         aesKey = (String) session.getAttribute("aesKey");
         aesIv = (String) session.getAttribute("aesIv");
         compId = (String) session.getAttribute("compId");
+        compNo = (int) session.getAttribute("compNo");
         userNo = (String) session.getAttribute("userNo");
         msg = getMsg((String) session.getAttribute("lang"));
         if (compId == null)
@@ -53,7 +55,7 @@ public class ApiNoticeCtrl extends Ctrl {
         }else if(aesKey == null || aesIv == null){
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
         }else{
-            list = noticeSvc.getPostList(compId);
+            list = noticeSvc.getPostList(compNo);
             if (list != null) {
                 data = "[";
                 for (i = 0; i < list.size(); i++) {
@@ -120,6 +122,7 @@ public class ApiNoticeCtrl extends Ctrl {
 
         HttpSession session = null;
         String compId = null;
+        int compNo = 0;
         String result = null;
         String userNo = null;
         String uri = req.getRequestURI();
@@ -133,6 +136,7 @@ public class ApiNoticeCtrl extends Ctrl {
             session = req.getSession();
 
             userNo = (String) session.getAttribute("userNo");
+            compNo = (int) session.getAttribute("compNo");
             compId = (String) session.getAttribute("compId");
             if (compId == null)
                 compId = (String) req.getAttribute("compId");
@@ -142,7 +146,7 @@ public class ApiNoticeCtrl extends Ctrl {
             } else if (userNo == null) {
                 result = "{\"result\":\"failure\",\"msg\":\"Session expired and/or Not logged in.\"}";
             } else { // 회사코드 확인 됨
-                num = noticeSvc.delete(compId, no); // 삭제(update) 카운트를 실제 삭제 여부를 확인함
+                num = noticeSvc.delete(compNo, no); // 삭제(update) 카운트를 실제 삭제 여부를 확인함
                 if (num > 0) { // 처리됨
                     result = "{\"result\":\"ok\"}";
                 } else { // 처리 안됨
@@ -157,6 +161,7 @@ public class ApiNoticeCtrl extends Ctrl {
     public String getDetail(HttpServletRequest req, @PathVariable String no) {
         HttpSession session = null;
         String compId = null;
+        int compNo = 0;
         String result = null;
         String userNo = null;
         Notice notice = null;
@@ -169,6 +174,7 @@ public class ApiNoticeCtrl extends Ctrl {
         } else { // 글 번호 확인 됨
             session = req.getSession();
             compId = (String) session.getAttribute("compId");
+            compNo = (int) session.getAttribute("compNo");
             aesKey = (String) session.getAttribute("aesKey");
             aesIv = (String) session.getAttribute("aesIv");
             if (compId == null)
@@ -180,7 +186,7 @@ public class ApiNoticeCtrl extends Ctrl {
             } else if (userNo == null) {
                 result = "{\"result\":\"failure\",\"msg\":\"Session expired and/or Not logged in.\"}";
             } else { // 회사코드 확인 됨
-                notice = noticeSvc.getNotice(compId, no); // 삭제(update) 카운트를 실제 삭제 여부를 확인함
+                notice = noticeSvc.getNotice(compNo, no); // 삭제(update) 카운트를 실제 삭제 여부를 확인함
 
                 if (notice != null) { // 처리됨
                     data = notice.toJson();
@@ -199,9 +205,10 @@ public class ApiNoticeCtrl extends Ctrl {
     public String insert(HttpServletRequest req, @RequestBody String requestBody) {
 
         String compId = null;
-        String writer = null;
-        String title = null;
-        String content = null;
+        int compNo = 0;
+        String userNo = null;
+        String noticeTitle = null;
+        String noticeContents = null;
         HttpSession session = null;
         String result = null;
         String data = null, aesKey = null, aesIv = null;
@@ -212,6 +219,7 @@ public class ApiNoticeCtrl extends Ctrl {
 
         aesKey = (String) session.getAttribute("aesKey");
         aesIv = (String) session.getAttribute("aesIv");
+        compNo = (int) session.getAttribute("compNo");
         data = noticeSvc.decAes(requestBody, aesKey, aesIv);
         json = new JSONObject(data);
 
@@ -219,18 +227,18 @@ public class ApiNoticeCtrl extends Ctrl {
         if (compId == null)
             compId = (String) req.getAttribute("compId");
 
-        writer = (String) session.getAttribute("userNo");
-        if (writer == null)
-            writer = (String) req.getAttribute("userNo");
+        userNo = (String) session.getAttribute("userNo");
+        if (userNo == null)
+            userNo = (String) req.getAttribute("userNo");
 
-        title = json.getString("title");
-        if (title == null)
+        noticeTitle = json.getString("noticeTitle");
+        if (noticeTitle == null)
             result = "{\"result\":\" failure\" ,\"msg\":\"Title is not entered.\"}";
 
-        content = json.getString("content");
-        if (content == null)
+        noticeContents = json.getString("noticeContents");
+        if (noticeContents == null)
             result = "{\"result\":\" failure\" ,\"msg\":\"Content is not entered.\"}";
-        check = noticeSvc.insertNotice(compId, writer, title, content);
+        check = noticeSvc.insertNotice(compNo, userNo, noticeTitle, noticeContents);
 
         if (check > 0) {// 공지사항 추가 성공
             result = "{\"result\":\"ok\"}";
@@ -249,15 +257,17 @@ public class ApiNoticeCtrl extends Ctrl {
      */
     @RequestMapping(value = "/{no}", method = RequestMethod.PUT)
     public String update(HttpServletRequest req, @RequestBody String requestBody, @PathVariable String no) {
-        String title = null;
-        String content = null;
+        String noticeTitle = null;
+        String noticeContents = null;
         String compId = null;
+        int compNo = 0;
         String result = null;
         HttpSession session = null;
         String data = null, aesKey = null, aesIv = null;
         JSONObject json = null;
 
         session = req.getSession();
+        compNo = (int) session.getAttribute("compNo");
         compId = (String) session.getAttribute("compId");
         if (compId == null) {
             compId = (String) req.getAttribute("compId");
@@ -271,17 +281,17 @@ public class ApiNoticeCtrl extends Ctrl {
         if (no == null)
             result = "{\"result\":\"failure\",\"msg\":\"notiNo is not exist\"}";
 
-        if (json.getString("title") != null)
-            title = json.getString("title");
+        if (json.getString("noticeTitle") != null)
+            noticeTitle = json.getString("noticeTitle");
         else
             result = "{\"result\":\"failure\",\"msg\":\"title is not exist\"}";
 
-        if (json.getString("content") != null)
-            content = json.getString("content");
+        if (json.getString("noticeContents") != null)
+            noticeContents = json.getString("noticeContents");
         else
             result = "{\"result\":\"failure\",\"msg\":\"content is not exist\"}";
 
-        if (noticeSvc.updateNotice(title, content, compId, no) > 0) {
+        if (noticeSvc.updateNotice(noticeTitle, noticeContents, compNo, no) > 0) {
             result = "{\"result\":\"ok\"}";
         }
 

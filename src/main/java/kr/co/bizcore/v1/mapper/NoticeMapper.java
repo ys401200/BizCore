@@ -12,8 +12,8 @@ import kr.co.bizcore.v1.domain.SimpleNotice;
 
 public interface NoticeMapper {
     // 목록 전체 가져오는 쿼리 
-    @Select("SELECT no, writer, title, created, modified FROM bizcore.notice WHERE compid = #{compId} AND deleted IS NULL ORDER BY no DESC")
-    public List<SimpleNotice> getNotice(String compId);
+    @Select("SELECT * FROM swc_notice WHERE compNo = #{compNo} AND attrib not like 'XXX%' ORDER BY noticeNo DESC")
+    public List<SimpleNotice> getNotice(int compNo);
 
     // 목록 일부 가져오는 쿼리 
     @Select("SELECT no, writer, title, created, modified FROM bizcore.notice WHERE compid = #{compId} AND deleted IS NULL  ORDER BY no DESC LIMIT #{start}, #{end}")
@@ -24,20 +24,20 @@ public interface NoticeMapper {
     public int getNoticeCount(@Param("compId") String compId);
 
     // 공지사항 삭제하는 쿼리 
-    @Update("UPDATE bizcore.notice SET deleted = NOW() WHERE compid = #{compId} AND no = #{notiNo}") 
-    public int delete(@Param("compId") String compId, @Param("notiNo") String notiNo);
+    @Update("UPDATE swc_notice SET modDate = NOW(), attrib = 'XXXXX' WHERE compNo = #{compNo} AND noticeNo = #{noticeNo}") 
+    public int delete(@Param("compNo") int compNo, @Param("noticeNo") String noticeNo);
 
     // 본문 가져오는 쿼리 
-    @Select("SELECT a.no, a.compid AS compId, a.writer, b.username AS writerName, a.title, a.content, a.created, a.modified FROM bizcore.notice a, swc_user b WHERE compid = #{compId} and no = #{notiNo} AND a.writer = b.userno AND deleted IS NULL")
-    public Notice getSelectedNotice(@Param("compId")String compId, @Param("notiNo") String notiNo); 
+    @Select("SELECT * FROM swc_notice WHERE compNo = #{compNo} and noticeNo = #{noticeNo}")
+    public Notice getSelectedNotice(@Param("compNo")int compNo, @Param("noticeNo") String noticeNo); 
 
     // 공지사항 추가하는 쿼리 
-    @Insert ("INSERT INTO bizcore.notice(no, compid, writer, title, content) VALUES(bizcore.notice_next_no(#{compId}), #{compId} , #{writer}, #{title}, #{content})")
-    public int insert(@Param("compId") String compId, @Param("writer")String writer, @Param("title")String title, @Param("content")String content);
+    @Insert ("INSERT INTO swc_notice(compNo, userNo, noticeTitle, noticeContents, regDate) VALUES(#{compNo}, #{userNo}, #{noticeTitle}, #{noticeContents}, now())")
+    public int insert(@Param("compNo") int compNo, @Param("userNo")String userNo, @Param("noticeTitle")String noticeTitle, @Param("noticeContents")String noticeContents);
 
     // 공지사항 수정하는 쿼리 
-    @Update ("UPDATE bizcore.notice SET title = #{title}, content = #{content}, modified = NOW() WHERE compid = #{compId} AND no = #{notiNo};")
-    public int updateNotice(@Param("title") String title, @Param("content") String content, @Param("compId") String compId, @Param("notiNo")String notiNo);
+    @Update ("UPDATE swc_notice SET noticeTitle = #{noticeTitle}, noticeContents = #{noticeContents}, modDate = NOW() WHERE compNo = #{compNo} AND noticeNo = #{noticeNo};")
+    public int updateNotice(@Param("noticeTitle") String noticeTitle, @Param("noticeContents") String noticeContents, @Param("compNo") int compNo, @Param("noticeNo")String noticeNo);
     
 
    

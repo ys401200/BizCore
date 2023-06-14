@@ -28,8 +28,6 @@ function init() {
 			modal.hide();
 		} else if (modal.noteWrap == e.target) {
 			modal.noteHide();
-		} else if (document.getElementsByClassName("autoComplete")[0] !== undefined && e.target.dataset.complete === "") {
-			document.getElementsByClassName("autoComplete")[0].remove();
 		}
 	});
 
@@ -46,6 +44,7 @@ function init() {
 
 	if (prepare !== undefined) window.setTimeout(nextStep, 50);
 
+	getStorageList();
 	getCommonCode();
 	getUserMap();
 	getDeptMap();
@@ -54,7 +53,6 @@ function init() {
 	getUserRank();
 	getPersonalize();
 	noteLiveUpdate();
-	getStorageList();
 	CommonDatas.setTopPathActive();
 	CommonDatas.setSidePathActive();
 } // End of init();
@@ -514,6 +512,10 @@ function isInit() {
 	if (storage.code === undefined) return false;
 	if (storage.company === undefined) return false;
 	if (storage.customer === undefined) return false;
+	if (storage.sopp === undefined) return false;
+	if (storage.cont === undefined) return false;
+	if (storage.product === undefined) return false;
+	if (storage.cip === undefined) return false;
 	if (storage.dept === undefined) return false;
 	if (storage.user === undefined) return false;
 	if (storage.userRank === undefined) return false;
@@ -3511,12 +3513,14 @@ function getStorageList() {
 			url: "/api/sopp",
 			method: "get",
 			dataType: "json",
+			cache: false,
 			success: (result) => {
 				if (result.result === "ok") {
 					let resultJson;
 					resultJson = cipher.decAes(result.data);
 					resultJson = JSON.parse(resultJson);
 					storage.sopp = resultJson;
+					console.log("[getSopp] Success getting sopp list.");
 				}
 			},
 			error: () => {
@@ -3530,12 +3534,14 @@ function getStorageList() {
 			url: "/api/contract",
 			method: "get",
 			dataType: "json",
+			cache: false,
 			success: (result) => {
 				if (result.result === "ok") {
 					let resultJson;
 					resultJson = cipher.decAes(result.data);
 					resultJson = JSON.parse(resultJson);
 					storage.contract = resultJson;
+					console.log("[getCont] Success getting cont list.");
 				}
 			},
 			error: () => {
@@ -3549,12 +3555,14 @@ function getStorageList() {
 			url: "/api/system/cip",
 			method: "get",
 			dataType: "json",
+			cache: false,
 			success: (result) => {
 				if (result.result === "ok") {
 					let resultJson;
 					resultJson = cipher.decAes(result.data);
 					resultJson = JSON.parse(resultJson);
 					storage.cip = resultJson;
+					console.log("[getCip] Success getting cip list.");
 				}
 			},
 			error: () => {
@@ -3568,12 +3576,14 @@ function getStorageList() {
 			url: "/api/product",
 			method: "get",
 			dataType: "json",
+			cache: false,
 			success: (result) => {
 				if (result.result === "ok") {
 					let resultJson;
 					resultJson = cipher.decAes(result.data);
 					resultJson = JSON.parse(resultJson);
 					storage.product = resultJson;
+					console.log("[getProduct] Success getting product list.");
 				}
 			},
 			error: () => {

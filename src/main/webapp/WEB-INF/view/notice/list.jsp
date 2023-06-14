@@ -10,11 +10,11 @@
             <div class="searchMultiContent">
                 <div class="searchTitle">
                     <span>제목</span>
-                    <input type="text" autocomplete="off" id="searchTitle">
+                    <input type="text" autocomplete="off" data-key="noticeTitle" id="searchTitle">
                 </div>
                 <div class="searchWriter">
                     <span>담당자</span>
-                    <input type="text" data-complete="user" autocomplete="off" id="searchWriter" onclick="CommonDatas.addAutoComplete(this);" onkeyup="CommonDatas.addAutoComplete(this);">
+                    <input type="text" data-complete="user" data-key="userNo" autocomplete="off" id="searchUser" onclick="CommonDatas.addAutoComplete(this);" onkeyup="CommonDatas.addAutoComplete(this);">
                 </div>
                 <div class="searchCreated">
                     <span>등록일</span>
@@ -31,14 +31,14 @@
                 <hr />
                 <span id="containerTitle">공지사항</span>
                 <div class="listRange">
-                    <input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="const RangeChange = new NoticeSet(); CommonDatas.listRangeChange(this, RangeChange.drawNoticeList);">
+                    <input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="CommonDatas.listRangeChange(this, CommonDatas.Temps.noticeSet.drawNoticeList);">
                     <span class="listRangeSpan">0</span>
                 </div>
                 <div class="listSearchInput">
-                    <input type="text" class="searchAllInput" id="searchAllInput" onkeyup="const SearchInputKeyup = new NoticeSet(); SearchInputKeyup.searchInputKeyup();" placeholder="단어를 입력해주세요.">
+                    <input type="text" class="searchAllInput" id="searchAllInput" onkeyup="CommonDatas.Temps.noticeSet.searchInputKeyup();" placeholder="단어를 입력해주세요.">
                 </div>
                 <div class="crudBtns">
-                    <button type="button" class="crudAddBtn" onclick="const InsertForm = new NoticeSet(); InsertForm.noticeInsertForm();">등록</button>
+                    <button type="button" class="crudAddBtn" onclick="CommonDatas.Temps.noticeSet.noticeInsertForm();">등록</button>
                 </div>
             </div>
 			<div class="noticeContent"></div>
