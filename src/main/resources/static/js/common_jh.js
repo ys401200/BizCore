@@ -599,12 +599,197 @@ class SalesSet{
 				result = cipher.decAes(response.data.data);
 				result = JSON.parse(result);
 				let sales = new Sales(result);
-				// sales.detail();
+				sales.detail();
 			}
 		}).catch((error) => {
 			msg.set("상세보기 에러 입니다.\n" + error);
 			console.log(error);
 		});
+	}
+
+	//영업활동 등록 폼
+	salesInsertForm(){
+		let html, dataArray;
+	
+		dataArray = [
+			{
+				"title": "활동시작일(*)",
+				"elementId": "salesFrdatetime",
+				"type": "datetime",
+				"disabled": false,
+			},
+			{
+				"title": "활동종료일(*)",
+				"elementId": "salesTodatetime",
+				"type": "datetime",
+				"disabled": false,
+			},
+			{
+				"title": "장소",
+				"elementId": "salesPlace",
+				"disabled": false,
+			},
+			{
+				"title": "활동형태(*)",
+				"selectValue": [
+					{
+						"key": "10170",
+						"value": "회사방문",
+					},
+					{
+						"key": "10171",
+						"value": "기술지원",
+					},
+					{
+						"key": "10221",
+						"value": "제품설명",
+					},
+					{
+						"key": "10222",
+						"value": "시스템데모",
+					},
+					{
+						"key": "10223",
+						"value": "제품견적",
+					},
+					{
+						"key": "10224",
+						"value": "계약건 의사결정지원",
+					},
+					{
+						"key": "10225",
+						"value": "계약",
+					},
+					{
+						"key": "10226",
+						"value": "사후처리",
+					},
+					{
+						"key": "10227",
+						"value": "기타",
+					},
+					{
+						"key": "10228",
+						"value": "협력사요청",
+					},
+					{
+						"key": "10229",
+						"value": "협력사문의",
+					},
+					{
+						"key": "10230",
+						"value": "교육",
+					},
+					{
+						"key": "10231",
+						"value": "전화상담",
+					},
+					{
+						"key": "10232",
+						"value": "제조사업무협의",
+					},
+					{
+						"key": "10233",
+						"value": "외부출장",
+					},
+					{
+						"key": "10234",
+						"value": "제안설명회",
+					}
+				],
+				"type": "select",
+				"elementId": "salesType",
+				"disabled": false,
+			},
+			{
+				"title": "담당자(*)",
+				"elementId": "userNo",
+				"complete": "user",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+			},
+			{
+				"title": "영업기회",
+				"elementId": "soppNo",
+				"complete": "sopp",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"disabled": false,
+			},
+			{
+				"title": "매출처",
+				"elementId": "custNo",
+				"complete": "customer",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"disabled": false,
+			},
+			{
+				"title": "엔드유저",
+				"elementId": "ptncNo",
+				"complete": "customer",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"disabled": false,
+			},
+			{
+				"title": "제목(*)",
+				"elementId": "salesTitle",
+				"col": 4,
+				"disabled": false,
+			},
+			{
+				"title": "내용",
+				"elementId": "salesDesc",
+				"type": "textarea",
+				"col": 4,
+				"disabled": false,
+			}
+		];
+	
+		html = CommonDatas.detailViewForm(dataArray, "modal");
+	
+		modal.show();
+		modal.content.style.minWidth = "70vw";
+		modal.content.style.maxWidth = "70vw";
+		modal.headTitle.innerText = "영업활동등록";
+		modal.body.innerHTML = "<div class=\"defaultFormContainer\">" + html + "</div>";
+		modal.confirm.innerText = "등록";
+		modal.close.innerText = "취소";
+		modal.confirm.setAttribute("onclick", "const sales = new Sales(); CommonDatas.Temps.sales.insert();");
+		modal.close.setAttribute("onclick", "modal.hide();");
+
+		storage.formList = {
+			"soppNo": 0,
+			"userNo": storage.my,
+			"compNo": 0,
+			"custNo": 0,
+			"salesFrdatetime": "",
+			"salesTodatetime": "",
+			"salesPlace": "",
+			"salesType": "",
+			"salesDesc": "",
+			"salesCheck": 0,
+			"salesTitle": "",
+			"ptncNo": 0,
+			"schedType": "",
+			"regDatetime": "",
+			"modDatetime": ""
+		};
+		
+		setTimeout(() => {
+			let my = storage.my, nowDate;
+			nowDate = new Date();
+			nowDate = nowDate.toISOString().substring(0, 10);
+			document.getElementById("userNo").value = storage.user[my].userName;
+			document.getElementById("userNo").setAttribute("data-change", true);
+			console.log(document.getElementById("salesFrdatetime"));
+			console.log(nowDate);
+			document.getElementById("salesFrdatetime").value = nowDate + "T09:00:00";
+			document.getElementById("salesTodatetime").value = nowDate + "T18:00:00";
+			ckeditor.config.readOnly = false;
+			window.setTimeout(setEditor, 100);
+		}, 100);
 	}
 
 	//영업활동 검색 버튼 클릭 함수
@@ -667,7 +852,265 @@ class SalesSet{
 }
 
 class Sales{
+	constructor(getData){
+		CommonDatas.Temps.sales = this;
+	
+		if (getData !== undefined) {
+			this.getData = getData;
+			this.soppNo = getData.soppNo;
+			this.userNo = getData.userNo;
+			this.compNo = getData.compNo;
+			this.custNo = getData.custNo;
+			this.salesFrdatetime = getData.salesFrdatetime;
+			this.salesTodatetime = getData.salesTodatetime;
+			this.salesPlace = getData.salesPlace;
+			this.salesType = getData.salesType;
+			this.salesDesc = getData.salesDesc;
+			this.salesCheck = getData.salesCheck;
+			this.salesTitle = getData.salesTitle;
+			this.ptncNo = getData.ptncNo;
+			this.schedType = getData.schedType;
+			this.regDatetime = getData.regDatetime;
+			this.modDatetime = getData.modDatetime;
+		} else {
+			this.salesNo = 0;
+			this.soppNo = 0;
+			this.userNo = storage.my;
+			this.compNo = 0;
+			this.custNo = 0;
+			this.salesFrdatetime = "";
+			this.salesTodatetime = "";
+			this.salesPlace = "";
+			this.salesType = "";
+			this.salesDesc = "";
+			this.salesCheck = 0;
+			this.salesTitle = "";
+			this.ptncNo = 0;
+			this.schedType = 0;
+			this.regDatetime = "";
+			this.modDatetime = "";
+		}
+	}
 
+	detail() {
+		let html = "";
+		let btnHtml = "";
+		let setDate, datas, dataArray, createDiv, notIdArray, sopp;
+
+		CommonDatas.detailSetFormList(this.getData);
+
+		let gridList = document.getElementsByClassName("gridList")[0];
+		let containerTitle = document.getElementById("containerTitle");
+		let detailBackBtn = document.getElementsByClassName("detailBackBtn")[0];
+		let crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
+		let crudDeleteBtn = document.getElementsByClassName("crudDeleteBtn")[0];
+
+		setDate = CommonDatas.dateDis(new Date(this.regDatetime).getTime(), new Date(this.modDatetime).getTime());
+		setDate = CommonDatas.dateFnc(setDate);
+
+		datas = ["soppNo", "userNo", "custNo", "ptncNo"];
+		dataArray = [
+			{
+				"title": "활동시작일(*)",
+				"elementId": "salesFrdatetime",
+				"type": "datetime",
+				"value": this.salesFrdatetime,
+			},
+			{
+				"title": "활동종료일(*)",
+				"elementId": "salesTodatetime",
+				"type": "datetime",
+				"value": this.salesTodatetime,
+			},
+			{
+				"title": "장소",
+				"elementId": "salesPlace",
+				"value": this.salesPlace,
+			},
+			{
+				"title": "활동형태(*)",
+				"selectValue": [
+					{
+						"key": "10170",
+						"value": "회사방문",
+					},
+					{
+						"key": "10171",
+						"value": "기술지원",
+					},
+					{
+						"key": "10221",
+						"value": "제품설명",
+					},
+					{
+						"key": "10222",
+						"value": "시스템데모",
+					},
+					{
+						"key": "10223",
+						"value": "제품견적",
+					},
+					{
+						"key": "10224",
+						"value": "계약건 의사결정지원",
+					},
+					{
+						"key": "10225",
+						"value": "계약",
+					},
+					{
+						"key": "10226",
+						"value": "사후처리",
+					},
+					{
+						"key": "10227",
+						"value": "기타",
+					},
+					{
+						"key": "10228",
+						"value": "협력사요청",
+					},
+					{
+						"key": "10229",
+						"value": "협력사문의",
+					},
+					{
+						"key": "10230",
+						"value": "교육",
+					},
+					{
+						"key": "10231",
+						"value": "전화상담",
+					},
+					{
+						"key": "10232",
+						"value": "제조사업무협의",
+					},
+					{
+						"key": "10233",
+						"value": "외부출장",
+					},
+					{
+						"key": "10234",
+						"value": "제안설명회",
+					}
+				],
+				"type": "select",
+				"elementId": "type",
+				"value": this.salesType
+			},
+			{
+				"title": "담당자(*)",
+				"elementId": "userNo",
+				"complete": "user",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"value": (CommonDatas.emptyValusCheck(this.userNo)) ? "" : storage.user[this.userNo].userName,
+			},
+			{
+				"title": "영업기회",
+				"elementId": "soppNo",
+				"complete": "sopp",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"value": (CommonDatas.emptyValusCheck(this.soppNo)) ? "" : CommonDatas.getSoppFind(this.soppNo, "name"),
+			},
+			{
+				"title": "매출처",
+				"elementId": "custNo",
+				"complete": "customer",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"value": (CommonDatas.emptyValusCheck(this.custNo)) ? "" : storage.customer[this.custNo].name,
+			},
+			{
+				"title": "엔드유저",
+				"elementId": "ptncNo",
+				"complete": "customer",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"value": (CommonDatas.emptyValusCheck(this.ptncNo)) ? "" : storage.customer[this.ptncNo].name,
+			},
+			{
+				"title": "제목(*)",
+				"elementId": "salesTitle",
+				"value": this.salesTitle,
+				"col": 4,
+			},
+			{
+				"title": "내용",
+				"elementId": "salesDesc",
+				"type": "textarea",
+				"value": this.salesDesc,
+				"col": 4,
+			}
+		];
+
+		html = CommonDatas.detailViewForm(dataArray);
+		let createGrid = document.createElement("div");
+		createGrid.className = "defaultFormContainer";
+		createGrid.innerHTML = html;
+		gridList.after(createGrid);
+		containerTitle.innerText = this.salesTitle;
+		let hideArr = ["gridList", "listRange", "crudAddBtn", "listSearchInput", "searchContainer", "pageContainer"];
+		let showArr = ["defaultFormContainer"];
+		CommonDatas.setViewContents(hideArr, showArr);
+	
+		if(storage.my == this.getData.userNo){
+			crudUpdateBtn.setAttribute("onclick", "enableDisabled(this, \"salesUpdate();\", \"" + notIdArray + "\");");
+			crudUpdateBtn.style.display = "flex";
+			crudDeleteBtn.style.display = "flex";
+		}else{
+			crudUpdateBtn.style.display = "none";
+			crudDeleteBtn.style.display = "none";
+		}
+	
+		detailBackBtn.style.display = "flex";
+		CommonDatas.detailTrueDatas(datas);
+	
+		setTimeout(() => {
+			ckeditor.config.readOnly = true;
+			window.setTimeout(setEditor, 100);
+		}, 100);
+	}
+
+	insert(){
+		if(document.getElementById("salesFrdatetime").value === ""){
+			msg.set("활동 시작일을 선택해주세요.");
+			document.getElementById("salesFrdatetime").focus();
+			return false;
+		}else if(document.getElementById("salesTodatetime").value === ""){
+			msg.set("활동 종료일을 선택해주세요.");
+			document.getElementById("salesTodatetime").focus();
+			return false;
+		}else if(document.getElementById("salesTitle").value === ""){
+			msg.set("제목을 입력해주세요.");
+			document.getElementById("salesTitle").focus();
+			return false;
+		}else{
+			CommonDatas.formDataSet();
+			let data = storage.formList;
+			console.log(new Date(data.salesFrdatetime));
+			data = JSON.stringify(data);
+			data = cipher.encAes(data);
+
+			axios.post("/api/sales", data, {
+				headers: { "Content-Type": "text/plain" }
+			}).then((response) => {
+				if (response.data.result === "ok") {
+					location.reload();
+					msg.set("등록되었습니다.");
+				} else {
+					msg.set("등록 중 에러가 발생하였습니다.");
+					return false;
+				}
+			}).catch((error) => {
+				msg.set("등록 도중 에러가 발생하였습니다.\n" + error);
+				console.log(error);
+				return false;
+			});
+		}
+	}
 }
 
 class Schedule2Set {
@@ -3372,10 +3815,10 @@ class Common {
 	constructor() {
 		this.Temps = {};
 
-		document.onmousedown = function leftClick(){
+		window.onmousedown = function leftClick(){
 			let target = window.event.srcElement;
 
-			if(target.dataset.complete === undefined){
+			if(target.dataset.complete === undefined || target.dataset.complete === ""){
 				if(target.parentElement.className !== "autoComplete"){
 					if(document.getElementsByClassName("autoComplete")[0] !== undefined){
 						document.getElementsByClassName("autoComplete")[0].remove();
@@ -4612,6 +5055,34 @@ class Common {
 		}
 
 		return flag;
+	}
+
+	getSoppFind(value, type){
+		let result;
+		let flag = false;
+
+		for(let i = 0; i < storage.sopp.length; i++){
+			let item = storage.sopp[i];
+
+			if(type === "name"){
+				if(value == item.no){
+					result = item.title;
+					flag = true;
+				}
+			}else{
+				if(value.includes(item.title)){
+					result = item.no;
+					flag = true;
+				}
+			}
+		}
+
+		if(!flag){
+			alert("영업기회를 찾지 못했습니다.\n다시 시도해주세요.");
+			result = "";
+		}
+
+		return result;
 	}
 }
 

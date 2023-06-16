@@ -72,7 +72,7 @@
 					<button type="button" class="crudAddBtn" onclick="CommonDatas.Temps.salesSet.salesInsertForm();">등록</button>
 					<button type="button" class="crudUpdateBtn">수정</button>
 					<button type="button" class="crudDeleteBtn" onclick="salesDelete();">삭제</button>
-					<a href="#" onclick="hideDetailView(drawSalesList);" class="detailBackBtn">Back</a>
+					<a href="#" onclick="CommonDatas.hideDetailView(CommonDatas.Temps.salesSet.drawSalesList);" class="detailBackBtn">Back</a>
 				</div>
 			</div>
             <div class="gridList"></div>
