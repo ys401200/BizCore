@@ -783,8 +783,6 @@ class SalesSet{
 			nowDate = nowDate.toISOString().substring(0, 10);
 			document.getElementById("userNo").value = storage.user[my].userName;
 			document.getElementById("userNo").setAttribute("data-change", true);
-			console.log(document.getElementById("salesFrdatetime"));
-			console.log(nowDate);
 			document.getElementById("salesFrdatetime").value = nowDate + "T09:00:00";
 			document.getElementById("salesTodatetime").value = nowDate + "T18:00:00";
 			ckeditor.config.readOnly = false;
@@ -857,6 +855,7 @@ class Sales{
 	
 		if (getData !== undefined) {
 			this.getData = getData;
+			this.salesNo = getData.salesNo;
 			this.soppNo = getData.soppNo;
 			this.userNo = getData.userNo;
 			this.compNo = getData.compNo;
@@ -894,8 +893,7 @@ class Sales{
 
 	detail() {
 		let html = "";
-		let btnHtml = "";
-		let setDate, datas, dataArray, createDiv, notIdArray, sopp;
+		let setDate, datas, dataArray, notIdArray = [];
 
 		CommonDatas.detailSetFormList(this.getData);
 
@@ -1057,7 +1055,8 @@ class Sales{
 		CommonDatas.setViewContents(hideArr, showArr);
 	
 		if(storage.my == this.getData.userNo){
-			crudUpdateBtn.setAttribute("onclick", "enableDisabled(this, \"salesUpdate();\", \"" + notIdArray + "\");");
+			crudUpdateBtn.setAttribute("onclick", "CommonDatas.enableDisabled(this, \"CommonDatas.Temps.sales.update();\", \"" + notIdArray + "\");")
+			crudDeleteBtn.setAttribute("onclick", "CommonDatas.Temps.sales.delete();");
 			crudUpdateBtn.style.display = "flex";
 			crudDeleteBtn.style.display = "flex";
 		}else{
@@ -1079,18 +1078,17 @@ class Sales{
 			msg.set("활동 시작일을 선택해주세요.");
 			document.getElementById("salesFrdatetime").focus();
 			return false;
-		}else if(document.getElementById("salesTodatetime").value === ""){
+		} else if(document.getElementById("salesTodatetime").value === ""){
 			msg.set("활동 종료일을 선택해주세요.");
 			document.getElementById("salesTodatetime").focus();
 			return false;
-		}else if(document.getElementById("salesTitle").value === ""){
+		} else if(document.getElementById("salesTitle").value === ""){
 			msg.set("제목을 입력해주세요.");
 			document.getElementById("salesTitle").focus();
 			return false;
-		}else{
+		} else{
 			CommonDatas.formDataSet();
 			let data = storage.formList;
-			console.log(new Date(data.salesFrdatetime));
 			data = JSON.stringify(data);
 			data = cipher.encAes(data);
 
@@ -1109,6 +1107,67 @@ class Sales{
 				console.log(error);
 				return false;
 			});
+		}
+	}
+
+	//영업활동 수정
+	update() {
+		if(document.getElementById("salesFrdatetime").value === ""){
+			msg.set("활동 시작일을 선택해주세요.");
+			document.getElementById("salesFrdatetime").focus();
+			return false;
+		} else if(document.getElementById("salesTodatetime").value === ""){
+			msg.set("활동 종료일을 선택해주세요.");
+			document.getElementById("salesTodatetime").focus();
+			return false;
+		} else if(document.getElementById("salesTitle").value === ""){
+			msg.set("제목을 입력해주세요.");
+			document.getElementById("salesTitle").focus();
+			return false;
+		} else {
+			CommonDatas.formDataSet();
+			let data = storage.formList;
+			data = JSON.stringify(data);
+			data = cipher.encAes(data);
+
+			axios.put("/api/sales/" + data.salesNo, data, {
+				headers: { "Content-Type": "text/plain" }
+			}).then((response) => {
+				if (response.data.result === "ok") {
+					location.reload();
+					msg.set("수정되었습니다.");
+				} else {
+					msg.set("수정 중 에러가 발생하였습니다.");
+					return false;
+				}
+			}).catch((error) => {
+				msg.set("수정 도중 에러가 발생하였습니다.\n" + error);
+				console.log(error);
+				return false;
+			});
+		}
+	}
+
+	//영업활동 삭제
+	delete() {
+		if (confirm("정말로 삭제하시겠습니까??")) {
+			axios.delete("/api/sales/" + this.salesNo, {
+				headers: { "Content-Type": "text/plain" }
+			}).then((response) => {
+				if (response.data.result === "ok") {
+					location.reload();
+					msg.set("삭제되었습니다.");
+				} else {
+					msg.set("삭제 중 에러가 발생하였습니다.");
+					return false;
+				}
+			}).catch((error) => {
+				msg.set("삭제 도중 에러가 발생하였습니다.\n" + error);
+				console.log(error);
+				return false;
+			});
+		} else {
+			return false;
 		}
 	}
 }
@@ -3811,6 +3870,775 @@ class Estimate {
 	}
 }
 
+class TechSet{
+	constructor() {
+		CommonDatas.Temps.techSet = this;
+	}
+
+	//영업활동 리스트 저장 함수
+	list() {
+		axios.get("/api/tech/").then((response) => {
+			if (response.data.result === "ok") {
+				let result;
+				result = cipher.decAes(response.data.data);
+				result = JSON.parse(result);
+				storage.techList = result;
+
+				if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.sopp === undefined) {
+					window.setTimeout(this.drawTechList, 1000);
+					window.setTimeout(CommonDatas.searchListSet("techList"), 1000);
+				} else {
+					window.setTimeout(this.drawTechList, 200);
+					window.setTimeout(CommonDatas.searchListSet("techList"), 200);
+				}
+			}
+		}).catch((error) => {
+			msg.set("기술지원관리 리스트 에러입니다.\n" + error);
+			console.log(error);
+		})
+	}
+
+	//영업활동 리스트 출력 함수
+	drawTechList() {
+		let container, result, jsonData, job, header = [], data = [], ids = [], disDate, setDate, str, fnc, pageContainer, hideArr, showArr, salesFrdatetime, salesTodatetime;
+
+		if (storage.techList === undefined) {
+			msg.set("등록된 기술지원이 없습니다");
+		}
+		else {
+			if (storage.searchDatas === undefined) {
+				jsonData = storage.techList;
+			} else {
+				jsonData = storage.searchDatas;
+			}
+		}
+
+		result = CommonDatas.paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+		pageContainer = document.getElementsByClassName("pageContainer")[0];
+		container = document.getElementsByClassName("gridList")[0];
+		hideArr = ["detailBackBtn", "crudUpdateBtn", "crudDeleteBtn", "contractReqBtn"];
+		showArr = [
+			{ element: "gridList", display: "block" },
+			{ element: "pageContainer", display: "flex" },
+			{ element: "searchContainer", display: "block" },
+			{ element: "listRange", display: "flex" },
+			{ element: "listSearchInput", display: "flex" },
+			{ element: "crudBtns", display: "flex" },
+			{ element: "crudAddBtn", display: "flex" },
+		];
+
+		header = [
+			{
+				"title": "등록일",
+				"align": "center",
+			},
+			{
+				"title": "영업활동명",
+				"align": "center",
+			},
+			{
+				"title": "영업활동(시작)",
+				"align": "center",
+			},
+			{
+				"title": "영업활동(끝)",
+				"align": "center",
+			},
+			{
+				"title": "영업기회명",
+				"align": "center",
+			},
+			{
+				"title": "담당자",
+				"align": "center",
+			},
+			{
+				"title": "매출처",
+				"align": "center",
+			},
+			{
+				"title": "엔드유저",
+				"align": "center",
+			},
+			{
+				"title": "설명",
+				"align": "center",
+			},
+		];
+
+		if (jsonData === "") {
+			str = [
+				{
+					"setData": undefined,
+					"align": "center",
+					"col": 9,
+				},
+			];
+
+			data.push(str);
+		} else {
+			for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+				disDate = CommonDatas.dateDis(new Date(jsonData[i].regDatetime).getTime(), new Date(jsonData[i].modDatetime).getTime());
+				setDate = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+				disDate = CommonDatas.dateDis(new Date(jsonData[i].salesFrdatetime).getTime());
+				salesFrdatetime = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+				disDate = CommonDatas.dateDis(new Date(jsonData[i].salesTodatetime).getTime());
+				salesTodatetime = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+				let userName = storage.user[jsonData[i].userNo].userName;
+				let sopp = 0;
+
+				for(let t = 0; t < storage.sopp.length; t++){
+					let item = storage.sopp[t];
+
+					if(item.no == jsonData[i].soppNo){
+						sopp = item.title;
+					}
+				}
+
+				str = [
+					{
+						"setData": setDate,
+						"align": "center",
+					},
+					{
+						"setData": jsonData[i].salesTitle,
+						"align": "left",
+					},
+					{
+						"setData": salesFrdatetime,
+						"align": "center",
+					},
+					{
+						"setData": salesTodatetime,
+						"align": "center",
+					},
+					{
+						"setData": (sopp == 0) ? "" : sopp,
+						"align": "center",
+					},
+					{
+						"setData": userName,
+						"align": "center",
+					},
+					{
+						"setData": (jsonData[i].custNo === undefined || jsonData[i].custNo == 0) ? "" : storage.customer[jsonData[i].custNo].name,
+						"align": "center",
+					},
+					{
+						"setData": (jsonData[i].ptncNo === undefined || jsonData[i].ptncNo == 0) ? "" : storage.customer[jsonData[i].ptncNo].name,
+						"align": "center",
+					},
+					{
+						"setData": jsonData[i].salesDesc,
+						"align": "left",
+					},
+				];
+
+				fnc = "CommonDatas.Temps.salesSet.salesDetailView(this)";
+				ids.push(jsonData[i].salesNo);
+				data.push(str);
+			}
+
+			let pageNation = CommonDatas.createPaging(pageContainer, result[3], "CommonDatas.pageMove", "CommonDatas.Temps.salesSet.drawSalesList", result[0]);
+			pageContainer.innerHTML = pageNation;
+		}
+
+		CommonDatas.createGrid(container, header, data, ids, job, fnc);
+		CommonDatas.setViewContents(hideArr, showArr);
+		document.getElementById("multiSearchBtn").setAttribute("onclick", "CommonDatas.Temps.salesSet.searchSubmit();");
+
+		let path = location.pathname.split("/");
+
+		if (path[3] !== undefined && jsonData !== null) {
+			let content = document.querySelector(".gridContent[data-id=\"" + path[3] + "\"]");
+			CommonDatas.Temps.salesSet.salesDetailView(content);
+		}
+	}
+
+	//메인 화면에서 클릭한 영업활동 가져오는 함수
+	salesDetailView(e) {
+		let thisEle = e;
+		storage.gridContent = e;
+
+		axios.get("/api/sales/" + thisEle.dataset.id).then((response) => {
+			if (response.data.result === "ok") {
+				let result;
+				result = cipher.decAes(response.data.data);
+				result = JSON.parse(result);
+				let sales = new Sales(result);
+				sales.detail();
+			}
+		}).catch((error) => {
+			msg.set("상세보기 에러 입니다.\n" + error);
+			console.log(error);
+		});
+	}
+
+	//영업활동 등록 폼
+	salesInsertForm(){
+		let html, dataArray;
+	
+		dataArray = [
+			{
+				"title": "활동시작일(*)",
+				"elementId": "salesFrdatetime",
+				"type": "datetime",
+				"disabled": false,
+			},
+			{
+				"title": "활동종료일(*)",
+				"elementId": "salesTodatetime",
+				"type": "datetime",
+				"disabled": false,
+			},
+			{
+				"title": "장소",
+				"elementId": "salesPlace",
+				"disabled": false,
+			},
+			{
+				"title": "활동형태(*)",
+				"selectValue": [
+					{
+						"key": "10170",
+						"value": "회사방문",
+					},
+					{
+						"key": "10171",
+						"value": "기술지원",
+					},
+					{
+						"key": "10221",
+						"value": "제품설명",
+					},
+					{
+						"key": "10222",
+						"value": "시스템데모",
+					},
+					{
+						"key": "10223",
+						"value": "제품견적",
+					},
+					{
+						"key": "10224",
+						"value": "계약건 의사결정지원",
+					},
+					{
+						"key": "10225",
+						"value": "계약",
+					},
+					{
+						"key": "10226",
+						"value": "사후처리",
+					},
+					{
+						"key": "10227",
+						"value": "기타",
+					},
+					{
+						"key": "10228",
+						"value": "협력사요청",
+					},
+					{
+						"key": "10229",
+						"value": "협력사문의",
+					},
+					{
+						"key": "10230",
+						"value": "교육",
+					},
+					{
+						"key": "10231",
+						"value": "전화상담",
+					},
+					{
+						"key": "10232",
+						"value": "제조사업무협의",
+					},
+					{
+						"key": "10233",
+						"value": "외부출장",
+					},
+					{
+						"key": "10234",
+						"value": "제안설명회",
+					}
+				],
+				"type": "select",
+				"elementId": "salesType",
+				"disabled": false,
+			},
+			{
+				"title": "담당자(*)",
+				"elementId": "userNo",
+				"complete": "user",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+			},
+			{
+				"title": "영업기회",
+				"elementId": "soppNo",
+				"complete": "sopp",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"disabled": false,
+			},
+			{
+				"title": "매출처",
+				"elementId": "custNo",
+				"complete": "customer",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"disabled": false,
+			},
+			{
+				"title": "엔드유저",
+				"elementId": "ptncNo",
+				"complete": "customer",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"disabled": false,
+			},
+			{
+				"title": "제목(*)",
+				"elementId": "salesTitle",
+				"col": 4,
+				"disabled": false,
+			},
+			{
+				"title": "내용",
+				"elementId": "salesDesc",
+				"type": "textarea",
+				"col": 4,
+				"disabled": false,
+			}
+		];
+	
+		html = CommonDatas.detailViewForm(dataArray, "modal");
+	
+		modal.show();
+		modal.content.style.minWidth = "70vw";
+		modal.content.style.maxWidth = "70vw";
+		modal.headTitle.innerText = "영업활동등록";
+		modal.body.innerHTML = "<div class=\"defaultFormContainer\">" + html + "</div>";
+		modal.confirm.innerText = "등록";
+		modal.close.innerText = "취소";
+		modal.confirm.setAttribute("onclick", "const sales = new Sales(); CommonDatas.Temps.sales.insert();");
+		modal.close.setAttribute("onclick", "modal.hide();");
+
+		storage.formList = {
+			"soppNo": 0,
+			"userNo": storage.my,
+			"compNo": 0,
+			"custNo": 0,
+			"salesFrdatetime": "",
+			"salesTodatetime": "",
+			"salesPlace": "",
+			"salesType": "",
+			"salesDesc": "",
+			"salesCheck": 0,
+			"salesTitle": "",
+			"ptncNo": 0,
+			"schedType": "",
+			"regDatetime": "",
+			"modDatetime": ""
+		};
+		
+		setTimeout(() => {
+			let my = storage.my, nowDate;
+			nowDate = new Date();
+			nowDate = nowDate.toISOString().substring(0, 10);
+			document.getElementById("userNo").value = storage.user[my].userName;
+			document.getElementById("userNo").setAttribute("data-change", true);
+			document.getElementById("salesFrdatetime").value = nowDate + "T09:00:00";
+			document.getElementById("salesTodatetime").value = nowDate + "T18:00:00";
+			ckeditor.config.readOnly = false;
+			window.setTimeout(setEditor, 100);
+		}, 100);
+	}
+
+	//영업활동 검색 버튼 클릭 함수
+	searchSubmit() {
+		let dataArray = [], resultArray, eachIndex = 0, user, sopp, cust, salesType, searchUser, searchSopp, searchCust, searchSalesType, searchDateFrom, keyIndex = 0;
+		searchUser = document.getElementById("searchUser");
+		searchSopp = document.getElementById("searchSopp");
+		searchCust = document.getElementById("searchCust");
+		searchSalesType = document.getElementById("searchSalesType");
+		searchDateFrom = (document.getElementById("searchDateFrom").value === "") ? "" : document.getElementById("searchDateFrom").value.replaceAll("-", "") + "#regDatetime" + document.getElementById("searchDateTo").value.replaceAll("-", "");
+		
+		for(let key in storage.salesList[0]){
+			if(key === searchUser.dataset.key) user = "#" + keyIndex + "/" + searchUser.value;
+			else if(key === searchSopp.dataset.key) sopp = "#" + keyIndex + "/" + searchSopp.value;
+			else if(key === searchCust.dataset.key) cust = "#" + keyIndex + "/" + searchCust.value;
+			else if(key === searchSalesType.dataset.key) salesType = "#" + keyIndex + "/" + searchSalesType.value;
+			keyIndex++;
+		}
+
+		let searchValues = [user, sopp, cust, salesType, searchDateFrom];
+
+		for (let i = 0; i < searchValues.length; i++) {
+			if(searchValues[i] !== ""){
+				let tempArray = CommonDatas.searchDataFilter(storage.salesList, searchValues[i], "multi", ["#regDatetime"]);
+	
+				for (let t = 0; t < tempArray.length; t++) {
+					dataArray.push(tempArray[t]);
+				}
+	
+				eachIndex++;
+			}
+		}
+		
+		resultArray = CommonDatas.searchMultiFilter(eachIndex, dataArray, storage.salesList);
+
+		storage.searchDatas = resultArray;
+
+		if (storage.searchDatas.length == 0) {
+			msg.set("찾는 데이터가 없습니다.");
+			storage.searchDatas = storage.salesList;
+		}
+
+		this.drawSalesList();
+	}
+
+	//공지사항 단일 검색 keyup 이벤트
+	searchInputKeyup() {
+		let searchAllInput, tempArray;
+		searchAllInput = document.getElementById("searchAllInput").value;
+		tempArray = CommonDatas.searchDataFilter(storage.salesList, searchAllInput, "input");
+
+		if (tempArray.length > 0) {
+			storage.searchDatas = tempArray;
+		} else {
+			storage.searchDatas = "";
+		}
+
+		this.drawSalesList();
+	}
+}
+
+class Sales{
+	constructor(getData){
+		CommonDatas.Temps.sales = this;
+	
+		if (getData !== undefined) {
+			this.getData = getData;
+			this.salesNo = getData.salesNo;
+			this.soppNo = getData.soppNo;
+			this.userNo = getData.userNo;
+			this.compNo = getData.compNo;
+			this.custNo = getData.custNo;
+			this.salesFrdatetime = getData.salesFrdatetime;
+			this.salesTodatetime = getData.salesTodatetime;
+			this.salesPlace = getData.salesPlace;
+			this.salesType = getData.salesType;
+			this.salesDesc = getData.salesDesc;
+			this.salesCheck = getData.salesCheck;
+			this.salesTitle = getData.salesTitle;
+			this.ptncNo = getData.ptncNo;
+			this.schedType = getData.schedType;
+			this.regDatetime = getData.regDatetime;
+			this.modDatetime = getData.modDatetime;
+		} else {
+			this.salesNo = 0;
+			this.soppNo = 0;
+			this.userNo = storage.my;
+			this.compNo = 0;
+			this.custNo = 0;
+			this.salesFrdatetime = "";
+			this.salesTodatetime = "";
+			this.salesPlace = "";
+			this.salesType = "";
+			this.salesDesc = "";
+			this.salesCheck = 0;
+			this.salesTitle = "";
+			this.ptncNo = 0;
+			this.schedType = 0;
+			this.regDatetime = "";
+			this.modDatetime = "";
+		}
+	}
+
+	detail() {
+		let html = "";
+		let setDate, datas, dataArray, notIdArray = [];
+
+		CommonDatas.detailSetFormList(this.getData);
+
+		let gridList = document.getElementsByClassName("gridList")[0];
+		let containerTitle = document.getElementById("containerTitle");
+		let detailBackBtn = document.getElementsByClassName("detailBackBtn")[0];
+		let crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
+		let crudDeleteBtn = document.getElementsByClassName("crudDeleteBtn")[0];
+
+		setDate = CommonDatas.dateDis(new Date(this.regDatetime).getTime(), new Date(this.modDatetime).getTime());
+		setDate = CommonDatas.dateFnc(setDate);
+
+		datas = ["soppNo", "userNo", "custNo", "ptncNo"];
+		dataArray = [
+			{
+				"title": "활동시작일(*)",
+				"elementId": "salesFrdatetime",
+				"type": "datetime",
+				"value": this.salesFrdatetime,
+			},
+			{
+				"title": "활동종료일(*)",
+				"elementId": "salesTodatetime",
+				"type": "datetime",
+				"value": this.salesTodatetime,
+			},
+			{
+				"title": "장소",
+				"elementId": "salesPlace",
+				"value": this.salesPlace,
+			},
+			{
+				"title": "활동형태(*)",
+				"selectValue": [
+					{
+						"key": "10170",
+						"value": "회사방문",
+					},
+					{
+						"key": "10171",
+						"value": "기술지원",
+					},
+					{
+						"key": "10221",
+						"value": "제품설명",
+					},
+					{
+						"key": "10222",
+						"value": "시스템데모",
+					},
+					{
+						"key": "10223",
+						"value": "제품견적",
+					},
+					{
+						"key": "10224",
+						"value": "계약건 의사결정지원",
+					},
+					{
+						"key": "10225",
+						"value": "계약",
+					},
+					{
+						"key": "10226",
+						"value": "사후처리",
+					},
+					{
+						"key": "10227",
+						"value": "기타",
+					},
+					{
+						"key": "10228",
+						"value": "협력사요청",
+					},
+					{
+						"key": "10229",
+						"value": "협력사문의",
+					},
+					{
+						"key": "10230",
+						"value": "교육",
+					},
+					{
+						"key": "10231",
+						"value": "전화상담",
+					},
+					{
+						"key": "10232",
+						"value": "제조사업무협의",
+					},
+					{
+						"key": "10233",
+						"value": "외부출장",
+					},
+					{
+						"key": "10234",
+						"value": "제안설명회",
+					}
+				],
+				"type": "select",
+				"elementId": "type",
+				"value": this.salesType
+			},
+			{
+				"title": "담당자(*)",
+				"elementId": "userNo",
+				"complete": "user",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"value": (CommonDatas.emptyValusCheck(this.userNo)) ? "" : storage.user[this.userNo].userName,
+			},
+			{
+				"title": "영업기회",
+				"elementId": "soppNo",
+				"complete": "sopp",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"value": (CommonDatas.emptyValusCheck(this.soppNo)) ? "" : CommonDatas.getSoppFind(this.soppNo, "name"),
+			},
+			{
+				"title": "매출처",
+				"elementId": "custNo",
+				"complete": "customer",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"value": (CommonDatas.emptyValusCheck(this.custNo)) ? "" : storage.customer[this.custNo].name,
+			},
+			{
+				"title": "엔드유저",
+				"elementId": "ptncNo",
+				"complete": "customer",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"value": (CommonDatas.emptyValusCheck(this.ptncNo)) ? "" : storage.customer[this.ptncNo].name,
+			},
+			{
+				"title": "제목(*)",
+				"elementId": "salesTitle",
+				"value": this.salesTitle,
+				"col": 4,
+			},
+			{
+				"title": "내용",
+				"elementId": "salesDesc",
+				"type": "textarea",
+				"value": this.salesDesc,
+				"col": 4,
+			}
+		];
+
+		html = CommonDatas.detailViewForm(dataArray);
+		let createGrid = document.createElement("div");
+		createGrid.className = "defaultFormContainer";
+		createGrid.innerHTML = html;
+		gridList.after(createGrid);
+		containerTitle.innerText = this.salesTitle;
+		let hideArr = ["gridList", "listRange", "crudAddBtn", "listSearchInput", "searchContainer", "pageContainer"];
+		let showArr = ["defaultFormContainer"];
+		CommonDatas.setViewContents(hideArr, showArr);
+	
+		if(storage.my == this.getData.userNo){
+			crudUpdateBtn.setAttribute("onclick", "CommonDatas.enableDisabled(this, \"CommonDatas.Temps.sales.update();\", \"" + notIdArray + "\");")
+			crudDeleteBtn.setAttribute("onclick", "CommonDatas.Temps.sales.delete();");
+			crudUpdateBtn.style.display = "flex";
+			crudDeleteBtn.style.display = "flex";
+		}else{
+			crudUpdateBtn.style.display = "none";
+			crudDeleteBtn.style.display = "none";
+		}
+	
+		detailBackBtn.style.display = "flex";
+		CommonDatas.detailTrueDatas(datas);
+	
+		setTimeout(() => {
+			ckeditor.config.readOnly = true;
+			window.setTimeout(setEditor, 100);
+		}, 100);
+	}
+
+	insert(){
+		if(document.getElementById("salesFrdatetime").value === ""){
+			msg.set("활동 시작일을 선택해주세요.");
+			document.getElementById("salesFrdatetime").focus();
+			return false;
+		} else if(document.getElementById("salesTodatetime").value === ""){
+			msg.set("활동 종료일을 선택해주세요.");
+			document.getElementById("salesTodatetime").focus();
+			return false;
+		} else if(document.getElementById("salesTitle").value === ""){
+			msg.set("제목을 입력해주세요.");
+			document.getElementById("salesTitle").focus();
+			return false;
+		} else{
+			CommonDatas.formDataSet();
+			let data = storage.formList;
+			data = JSON.stringify(data);
+			data = cipher.encAes(data);
+
+			axios.post("/api/sales", data, {
+				headers: { "Content-Type": "text/plain" }
+			}).then((response) => {
+				if (response.data.result === "ok") {
+					location.reload();
+					msg.set("등록되었습니다.");
+				} else {
+					msg.set("등록 중 에러가 발생하였습니다.");
+					return false;
+				}
+			}).catch((error) => {
+				msg.set("등록 도중 에러가 발생하였습니다.\n" + error);
+				console.log(error);
+				return false;
+			});
+		}
+	}
+
+	//영업활동 수정
+	update() {
+		if(document.getElementById("salesFrdatetime").value === ""){
+			msg.set("활동 시작일을 선택해주세요.");
+			document.getElementById("salesFrdatetime").focus();
+			return false;
+		} else if(document.getElementById("salesTodatetime").value === ""){
+			msg.set("활동 종료일을 선택해주세요.");
+			document.getElementById("salesTodatetime").focus();
+			return false;
+		} else if(document.getElementById("salesTitle").value === ""){
+			msg.set("제목을 입력해주세요.");
+			document.getElementById("salesTitle").focus();
+			return false;
+		} else {
+			CommonDatas.formDataSet();
+			let data = storage.formList;
+			data = JSON.stringify(data);
+			data = cipher.encAes(data);
+
+			axios.put("/api/sales/" + data.salesNo, data, {
+				headers: { "Content-Type": "text/plain" }
+			}).then((response) => {
+				if (response.data.result === "ok") {
+					location.reload();
+					msg.set("수정되었습니다.");
+				} else {
+					msg.set("수정 중 에러가 발생하였습니다.");
+					return false;
+				}
+			}).catch((error) => {
+				msg.set("수정 도중 에러가 발생하였습니다.\n" + error);
+				console.log(error);
+				return false;
+			});
+		}
+	}
+
+	//영업활동 삭제
+	delete() {
+		if (confirm("정말로 삭제하시겠습니까??")) {
+			axios.delete("/api/sales/" + this.salesNo, {
+				headers: { "Content-Type": "text/plain" }
+			}).then((response) => {
+				if (response.data.result === "ok") {
+					location.reload();
+					msg.set("삭제되었습니다.");
+				} else {
+					msg.set("삭제 중 에러가 발생하였습니다.");
+					return false;
+				}
+			}).catch((error) => {
+				msg.set("삭제 도중 에러가 발생하였습니다.\n" + error);
+				console.log(error);
+				return false;
+			});
+		} else {
+			return false;
+		}
+	}
+}
+
 class Common {
 	constructor() {
 		this.Temps = {};
@@ -4487,7 +5315,8 @@ class Common {
 					if (!element.dataset.change) {
 						if (typeof storageArr[key] === "number") {
 							if (element.type === "date" || element.type === "datetime-local") {
-								let dateTime = new Date(element.value).getTime();
+								// let dateTime = new Date(element.value).getTime();
+								let dateTime = new Date(new Date(element.value).toString().split('GMT')[0]+' UTC').toISOString().slice(0, -5).replace(/T/g, " ");
 								storageArr[key] = dateTime;
 							} else {
 								if (element.value === "") {
@@ -4498,7 +5327,9 @@ class Common {
 							}
 						} else {
 							if (element.type === "date" || element.type === "datetime-local") {
-								let dateTime = new Date(element.value).getTime();
+								// let dateTime = new Date(element.value).getTime();
+								let dateTime = new Date(new Date(element.value).toString().split('GMT')[0]+' UTC').toISOString().slice(0, -5).replace(/T/g, " ");
+								console.log(dateTime);
 								storageArr[key] = dateTime;
 							} else {
 								storageArr[key] = element.value;

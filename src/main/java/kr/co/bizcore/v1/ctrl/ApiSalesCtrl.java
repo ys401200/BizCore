@@ -142,14 +142,84 @@ public class ApiSalesCtrl extends Ctrl{
         data = salesService.decAes(requestBody, aesKey, aesIv);
         Sales sales = mapper.readValue(data, Sales.class);
         sales.setCompNo(compNo);
-        logger.info(sales.toString());
 
-        // check = salesService.insertSales(sales);
+        check = salesService.insertSales(sales);
 
         if (check > 0) {
             result = "{\"result\":\"ok\"}";
         } else {
             result = "{\"result\":\"failure\" ,\"msg\":\"Error occured when write.\"}";
+        }
+
+        return result;
+
+    }
+
+    @RequestMapping(value = "/{no}", method = RequestMethod.DELETE)
+    public String delete(HttpServletRequest req, @PathVariable String no) {
+
+        HttpSession session = null;
+        String compId = null;
+        int compNo = 0;
+        String result = null;
+        String userNo = null;
+        String uri = req.getRequestURI();
+        String[] t = null;
+        int num = 0;
+
+        // 글 번호 확인
+        if (no == null) { // 글 번호 확인 안됨
+            result = "{\"result\":\" failure\",\"msg\":\"notiNo is not exist\"}";
+        } else { // 글 번호 확인 됨
+            session = req.getSession();
+
+            userNo = (String) session.getAttribute("userNo");
+            compNo = (int) session.getAttribute("compNo");
+            compId = (String) session.getAttribute("compId");
+            if (compId == null)
+                compId = (String) req.getAttribute("compId");
+
+            if (compId == null) { // 회사코드 확인 안됨
+                result = "{\"result\":\" failure\",\"msg\":\"Company ID is not verified.\"}";
+            } else if (userNo == null) {
+                result = "{\"result\":\"failure\",\"msg\":\"Session expired and/or Not logged in.\"}";
+            } else { // 회사코드 확인 됨
+                num = salesService.delete(compNo, no); // 삭제(update) 카운트를 실제 삭제 여부를 확인함
+                if (num > 0) { // 처리됨
+                    result = "{\"result\":\"ok\"}";
+                } else { // 처리 안됨
+                    result = "{\"result\":\" failure\",\"msg\":\"Error occured when delete.\"}";
+                } // End of if : 3
+            } // End of if : 2
+        } // End of if : 1
+        return result;
+    }
+    
+    @RequestMapping(value = "/{no}", method = RequestMethod.PUT)
+    public String update(HttpServletRequest req, @RequestBody String requestBody, @PathVariable String no) throws JsonMappingException, JsonProcessingException {
+        String compId = null;
+        int compNo = 0;
+        String result = null;
+        HttpSession session = null;
+        String data = null, aesKey = null, aesIv = null;
+        ObjectMapper mapper = new ObjectMapper();
+
+        session = req.getSession();
+        compNo = (int) session.getAttribute("compNo");
+        compId = (String) session.getAttribute("compId");
+        if (compId == null) {
+            compId = (String) req.getAttribute("compId");
+        }
+
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        data = salesService.decAes(requestBody, aesKey, aesIv);
+        Sales sales = mapper.readValue(data, Sales.class);
+        sales.setCompNo(compNo);
+        logger.info(sales.toString());
+
+        if (salesService.updateSales(sales) > 0) {
+            result = "{\"result\":\"ok\"}";
         }
 
         return result;

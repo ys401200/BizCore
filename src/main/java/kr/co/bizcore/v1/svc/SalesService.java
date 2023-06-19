@@ -48,22 +48,31 @@ public class SalesService extends Svc{
     public int insertSales(Sales sales) {
         return salesMapper.salesInsert(sales);
     }
-    public boolean modifySales(String salesNo, Sales sales, int compNo){
-        int x = -1;
-        Sales ogn = null;
-        String sql = null;
 
-        ogn = getSales(compNo, salesNo);
-        sql = ogn.createUpdateQuery(sales, null);
-        sql = sql + " WHERE salesno = " + salesNo + " AND compno = (SELECT compno FROM swc_company WHERE compNo = '" + compNo + "')";
-        x = executeSqlQuery(sql);
-        return x > 0;
+    public int  delete(int compNo, String salesNo) {
+        return salesMapper.salesDelete(compNo, salesNo);
     }
 
-    public boolean removeSales(String no, String compId){
-        int x = -1;
-        x = salesMapper.removeSales(no, compId);
-        return x > 0;
+    public int updateSales(Sales sales) {
+        return salesMapper.updateSales(sales);
     }
+
+    // public boolean modifySales(String salesNo, Sales sales, int compNo){
+    //     int x = -1;
+    //     Sales ogn = null;
+    //     String sql = null;
+
+    //     ogn = getSales(compNo, salesNo);
+    //     sql = ogn.createUpdateQuery(sales, null);
+    //     sql = sql + " WHERE salesno = " + salesNo + " AND compno = (SELECT compno FROM swc_company WHERE compNo = '" + compNo + "')";
+    //     x = executeSqlQuery(sql);
+    //     return x > 0;
+    // }
+
+    // public boolean removeSales(String no, String compId){
+    //     int x = -1;
+    //     x = salesMapper.removeSales(no, compId);
+    //     return x > 0;
+    // }
     
 }
