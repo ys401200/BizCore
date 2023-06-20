@@ -1,3 +1,4 @@
+//공지사항 시작
 //공지사항 셋팅 클래스
 class NoticeSet {
 	constructor() {
@@ -95,7 +96,7 @@ class NoticeSet {
 						"align": "left",
 					},
 					{
-						"setData": (CommonDatas.emptyValusCheck(storage.user[jsonData[i].userNo].userName)) ? "" : storage.user[jsonData[i].userNo].userName,
+						"setData": (CommonDatas.emptyValuesCheck(storage.user[jsonData[i].userNo].userName)) ? "" : storage.user[jsonData[i].userNo].userName,
 						"align": "center",
 					},
 				];
@@ -251,6 +252,7 @@ class NoticeSet {
 	}
 }
 
+//공지사항 crud
 //공지사항 기능 클래스
 class Notice {
 	constructor(getData) {
@@ -403,6 +405,8 @@ class Notice {
 	}
 }
 
+//영업활동관리 시작
+//영업활동관리 셋팅 함수
 class SalesSet{
 	constructor() {
 		CommonDatas.Temps.salesSet = this;
@@ -849,6 +853,8 @@ class SalesSet{
 	}
 }
 
+
+//영업활동관리 crud
 class Sales{
 	constructor(getData){
 		CommonDatas.Temps.sales = this;
@@ -1003,7 +1009,7 @@ class Sales{
 				"complete": "user",
 				"keyup": "CommonDatas.addAutoComplete(this);",
 				"onClick": "CommonDatas.addAutoComplete(this);",
-				"value": (CommonDatas.emptyValusCheck(this.userNo)) ? "" : storage.user[this.userNo].userName,
+				"value": (CommonDatas.emptyValuesCheck(this.userNo)) ? "" : storage.user[this.userNo].userName,
 			},
 			{
 				"title": "영업기회",
@@ -1011,7 +1017,7 @@ class Sales{
 				"complete": "sopp",
 				"keyup": "CommonDatas.addAutoComplete(this);",
 				"onClick": "CommonDatas.addAutoComplete(this);",
-				"value": (CommonDatas.emptyValusCheck(this.soppNo)) ? "" : CommonDatas.getSoppFind(this.soppNo, "name"),
+				"value": (CommonDatas.emptyValuesCheck(this.soppNo)) ? "" : CommonDatas.getSoppFind(this.soppNo, "name"),
 			},
 			{
 				"title": "매출처",
@@ -1019,7 +1025,7 @@ class Sales{
 				"complete": "customer",
 				"keyup": "CommonDatas.addAutoComplete(this);",
 				"onClick": "CommonDatas.addAutoComplete(this);",
-				"value": (CommonDatas.emptyValusCheck(this.custNo)) ? "" : storage.customer[this.custNo].name,
+				"value": (CommonDatas.emptyValuesCheck(this.custNo)) ? "" : storage.customer[this.custNo].name,
 			},
 			{
 				"title": "엔드유저",
@@ -1027,7 +1033,7 @@ class Sales{
 				"complete": "customer",
 				"keyup": "CommonDatas.addAutoComplete(this);",
 				"onClick": "CommonDatas.addAutoComplete(this);",
-				"value": (CommonDatas.emptyValusCheck(this.ptncNo)) ? "" : storage.customer[this.ptncNo].name,
+				"value": (CommonDatas.emptyValuesCheck(this.ptncNo)) ? "" : storage.customer[this.ptncNo].name,
 			},
 			{
 				"title": "제목(*)",
@@ -1172,6 +1178,9 @@ class Sales{
 	}
 }
 
+
+//일정관리 시작
+//일정관리 셋팅 함수
 class Schedule2Set {
 	constructor() {
 		CommonDatas.Temps.schedule2Set = this;
@@ -2425,6 +2434,7 @@ class Schedule2Set {
 	}
 }
 
+// 견적관리 시작
 // 견적 초기 세팅해주는 클래스
 class EstimateSet {
 	constructor() {
@@ -3488,6 +3498,7 @@ class EstimateSet {
 	}
 }
 
+// 견적관리 crud
 // 견적 등록/상세/수정 기능에 관한 클래스(this 처리에 대한 부분 아직 미적용 추후 수정할 예정(insert와 update도 합칠 예정))
 class Estimate {
 	constructor(getData) {
@@ -3870,12 +3881,14 @@ class Estimate {
 	}
 }
 
+//기술지원 시작
+//기술지원 셋팅 함수
 class TechSet{
 	constructor() {
 		CommonDatas.Temps.techSet = this;
 	}
 
-	//영업활동 리스트 저장 함수
+	//기술지원 리스트 저장 함수
 	list() {
 		axios.get("/api/tech/").then((response) => {
 			if (response.data.result === "ok") {
@@ -3898,9 +3911,9 @@ class TechSet{
 		})
 	}
 
-	//영업활동 리스트 출력 함수
+	//기술지원 리스트 출력 함수
 	drawTechList() {
-		let container, result, jsonData, job, header = [], data = [], ids = [], disDate, setDate, str, fnc, pageContainer, hideArr, showArr, salesFrdatetime, salesTodatetime;
+		let container, result, jsonData, job, header = [], data = [], ids = [], disDate, setDate, str, fnc, pageContainer, hideArr, showArr, techdFrom, techdTo;
 
 		if (storage.techList === undefined) {
 			msg.set("등록된 기술지원이 없습니다");
@@ -3933,23 +3946,15 @@ class TechSet{
 				"align": "center",
 			},
 			{
-				"title": "영업활동명",
+				"title": "등록구분",
 				"align": "center",
 			},
 			{
-				"title": "영업활동(시작)",
+				"title": "요청명",
 				"align": "center",
 			},
 			{
-				"title": "영업활동(끝)",
-				"align": "center",
-			},
-			{
-				"title": "영업기회명",
-				"align": "center",
-			},
-			{
-				"title": "담당자",
+				"title": "요청내용",
 				"align": "center",
 			},
 			{
@@ -3957,11 +3962,19 @@ class TechSet{
 				"align": "center",
 			},
 			{
-				"title": "엔드유저",
+				"title": "진행단계",
 				"align": "center",
 			},
 			{
-				"title": "설명",
+				"title": "담당자",
+				"align": "center",
+			},
+			{
+				"title": "시작일",
+				"align": "center",
+			},
+			{
+				"title": "종료일",
 				"align": "center",
 			},
 		];
@@ -3980,10 +3993,10 @@ class TechSet{
 			for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
 				disDate = CommonDatas.dateDis(new Date(jsonData[i].regDatetime).getTime(), new Date(jsonData[i].modDatetime).getTime());
 				setDate = CommonDatas.dateFnc(disDate, "yy.mm.dd");
-				disDate = CommonDatas.dateDis(new Date(jsonData[i].salesFrdatetime).getTime());
-				salesFrdatetime = CommonDatas.dateFnc(disDate, "yy.mm.dd");
-				disDate = CommonDatas.dateDis(new Date(jsonData[i].salesTodatetime).getTime());
-				salesTodatetime = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+				disDate = CommonDatas.dateDis(new Date(jsonData[i].techdFrom).getTime());
+				techdFrom = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+				disDate = CommonDatas.dateDis(new Date(jsonData[i].techdTo).getTime());
+				techdTo = CommonDatas.dateFnc(disDate, "yy.mm.dd");
 				let userName = storage.user[jsonData[i].userNo].userName;
 				let sopp = 0;
 
@@ -4001,62 +4014,62 @@ class TechSet{
 						"align": "center",
 					},
 					{
-						"setData": jsonData[i].salesTitle,
+						"setData": (jsonData[i].cntrctMth === '10248') ? "유지보수" : "신규영업지원",
+						"align": "center",
+					},
+					{
+						"setData": jsonData[i].techdTitle,
 						"align": "left",
 					},
 					{
-						"setData": salesFrdatetime,
+						"setData": jsonData[i].techdDesc,
+						"align": "left",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].custNo)) ? "" : storage.customer[jsonData[i].custNo].name,
 						"align": "center",
 					},
 					{
-						"setData": salesTodatetime,
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].techdSteps)) ? "" : storage.code.etc[jsonData[i].techdSteps],
 						"align": "center",
 					},
 					{
-						"setData": (sopp == 0) ? "" : sopp,
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].userNo)) ? "" : storage.user[jsonData[i].userNo].userName,
 						"align": "center",
 					},
 					{
-						"setData": userName,
+						"setData": techdFrom,
 						"align": "center",
 					},
 					{
-						"setData": (jsonData[i].custNo === undefined || jsonData[i].custNo == 0) ? "" : storage.customer[jsonData[i].custNo].name,
-						"align": "center",
-					},
-					{
-						"setData": (jsonData[i].ptncNo === undefined || jsonData[i].ptncNo == 0) ? "" : storage.customer[jsonData[i].ptncNo].name,
-						"align": "center",
-					},
-					{
-						"setData": jsonData[i].salesDesc,
+						"setData": techdTo,
 						"align": "left",
 					},
 				];
 
-				fnc = "CommonDatas.Temps.salesSet.salesDetailView(this)";
+				fnc = "CommonDatas.Temps.techSet.techDetailView(this)";
 				ids.push(jsonData[i].salesNo);
 				data.push(str);
 			}
 
-			let pageNation = CommonDatas.createPaging(pageContainer, result[3], "CommonDatas.pageMove", "CommonDatas.Temps.salesSet.drawSalesList", result[0]);
+			let pageNation = CommonDatas.createPaging(pageContainer, result[3], "CommonDatas.pageMove", "CommonDatas.Temps.techSet.drawTechList", result[0]);
 			pageContainer.innerHTML = pageNation;
 		}
 
 		CommonDatas.createGrid(container, header, data, ids, job, fnc);
 		CommonDatas.setViewContents(hideArr, showArr);
-		document.getElementById("multiSearchBtn").setAttribute("onclick", "CommonDatas.Temps.salesSet.searchSubmit();");
+		document.getElementById("multiSearchBtn").setAttribute("onclick", "CommonDatas.Temps.techSet.searchSubmit();");
 
 		let path = location.pathname.split("/");
 
 		if (path[3] !== undefined && jsonData !== null) {
 			let content = document.querySelector(".gridContent[data-id=\"" + path[3] + "\"]");
-			CommonDatas.Temps.salesSet.salesDetailView(content);
+			CommonDatas.Temps.techSet.techDetailView(content);
 		}
 	}
 
 	//메인 화면에서 클릭한 영업활동 가져오는 함수
-	salesDetailView(e) {
+	techDetailView(e) {
 		let thisEle = e;
 		storage.gridContent = e;
 
@@ -4316,9 +4329,10 @@ class TechSet{
 	}
 }
 
-class Sales{
+//기술지원 crud
+class Tech{
 	constructor(getData){
-		CommonDatas.Temps.sales = this;
+		CommonDatas.Temps.tech = this;
 	
 		if (getData !== undefined) {
 			this.getData = getData;
@@ -4470,7 +4484,7 @@ class Sales{
 				"complete": "user",
 				"keyup": "CommonDatas.addAutoComplete(this);",
 				"onClick": "CommonDatas.addAutoComplete(this);",
-				"value": (CommonDatas.emptyValusCheck(this.userNo)) ? "" : storage.user[this.userNo].userName,
+				"value": (CommonDatas.emptyValuesCheck(this.userNo)) ? "" : storage.user[this.userNo].userName,
 			},
 			{
 				"title": "영업기회",
@@ -4478,7 +4492,7 @@ class Sales{
 				"complete": "sopp",
 				"keyup": "CommonDatas.addAutoComplete(this);",
 				"onClick": "CommonDatas.addAutoComplete(this);",
-				"value": (CommonDatas.emptyValusCheck(this.soppNo)) ? "" : CommonDatas.getSoppFind(this.soppNo, "name"),
+				"value": (CommonDatas.emptyValuesCheck(this.soppNo)) ? "" : CommonDatas.getSoppFind(this.soppNo, "name"),
 			},
 			{
 				"title": "매출처",
@@ -4486,7 +4500,7 @@ class Sales{
 				"complete": "customer",
 				"keyup": "CommonDatas.addAutoComplete(this);",
 				"onClick": "CommonDatas.addAutoComplete(this);",
-				"value": (CommonDatas.emptyValusCheck(this.custNo)) ? "" : storage.customer[this.custNo].name,
+				"value": (CommonDatas.emptyValuesCheck(this.custNo)) ? "" : storage.customer[this.custNo].name,
 			},
 			{
 				"title": "엔드유저",
@@ -4494,7 +4508,7 @@ class Sales{
 				"complete": "customer",
 				"keyup": "CommonDatas.addAutoComplete(this);",
 				"onClick": "CommonDatas.addAutoComplete(this);",
-				"value": (CommonDatas.emptyValusCheck(this.ptncNo)) ? "" : storage.customer[this.ptncNo].name,
+				"value": (CommonDatas.emptyValuesCheck(this.ptncNo)) ? "" : storage.customer[this.ptncNo].name,
 			},
 			{
 				"title": "제목(*)",
@@ -5421,7 +5435,7 @@ class Common {
 				let splitStr, index = "";
 				splitStr = searchValue.split("#");
 
-				if(!CommonDatas.emptyValusCheck(splitStr[1])){
+				if(!CommonDatas.emptyValuesCheck(splitStr[1])){
 					for (let i = 0; i < splitStr[1].length; i++) {
 						if (splitStr[1][i] !== "/") {
 							index += splitStr[1][i];
@@ -5836,7 +5850,7 @@ class Common {
 
 			for(let key in item){
 				if(typeof item[key] !== "number"){
-					if(CommonDatas.emptyValusCheck(item[key])){
+					if(CommonDatas.emptyValuesCheck(item[key])){
 						str += "#undefined";
 					}else{
 						let dateCheck = new Date(item[key]).getTime();
@@ -5847,7 +5861,7 @@ class Common {
 						}
 					}
 				}else{
-					if(CommonDatas.emptyValusCheck(item[key])){
+					if(CommonDatas.emptyValuesCheck(item[key])){
 						str += "#0";
 					}else{
 						if(key === "soppNo"){
@@ -5876,7 +5890,7 @@ class Common {
 	}
 
 	// value 값 유효성 체크
-	emptyValusCheck(value){
+	emptyValuesCheck(value){
 		let flag = false;
 
 		if(value === "" || value == 0 || value === undefined || value == null){

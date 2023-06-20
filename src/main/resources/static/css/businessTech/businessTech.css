@@ -42,7 +42,7 @@
 
 .techContainer .gridList .gridHeader,
 .techContainer .gridList .gridContent{
-    grid-template-columns: 5% 10% 5% 16% 10% 5% 10% 5% 34%;
+    grid-template-columns: 5% 10% 20% 35% 10% 5% 5% 5% 5%;
 }
 
 .techContainer .gridList .gridHeader{
