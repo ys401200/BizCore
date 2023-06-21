@@ -20,7 +20,7 @@ public class Tech extends Domain{
     private String techdTitle;
     private String techdDesc;
     private int techdCheck;
-    private String techdItemmodelString;
+    private String techdItemmodel;
     private String techdItemversion;
     private String techdPlace;
     private String techdFrom;

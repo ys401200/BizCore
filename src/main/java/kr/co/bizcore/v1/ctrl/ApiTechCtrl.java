@@ -85,12 +85,12 @@ public class ApiTechCtrl extends Ctrl {
         int compNo = 0;
         String result = null;
         String userNo = null;
-        Sales sales = null;
+        Tech tech = null;
         String data = null;
         String aesKey, aesIv = null;
 
         if (no == null) { // 글 번호 확인 안됨
-            result = "{\"result\":\"failure\",\"msg\":\"salesNo is not exist\"}";
+            result = "{\"result\":\"failure\",\"msg\":\"techdNo is not exist\"}";
         } else { // 글 번호 확인 됨
             session = req.getSession();
             compId = (String) session.getAttribute("compId");
@@ -106,11 +106,11 @@ public class ApiTechCtrl extends Ctrl {
             } else if (userNo == null) {
                 result = "{\"result\":\"failure\",\"msg\":\"Session expired and/or Not logged in.\"}";
             } else { // 회사코드 확인 됨
-                sales = salesService.getSales(compNo, no); // 삭제(update) 카운트를 실제 삭제 여부를 확인함
+                tech = techService.getTech(compNo, no); // 삭제(update) 카운트를 실제 삭제 여부를 확인함
 
-                if (sales != null) { // 처리됨
-                    data = sales.toJson();
-                    data = salesService.encAes(data, aesKey, aesIv);
+                if (tech != null) { // 처리됨
+                    data = tech.toJson();
+                    data = techService.encAes(data, aesKey, aesIv);
                     result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
                     
                 } else { // 처리 안됨

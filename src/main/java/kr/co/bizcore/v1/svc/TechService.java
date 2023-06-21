@@ -39,10 +39,10 @@ public class TechService extends Svc{
         return techMapper.getTechList(tech);
     } // End of getSalesList()
 
-    public Sales getSales(int compNo, String salesNo){
-        Sales sales = null;
-        sales = salesMapper.getSales(salesNo, compNo);
-        return sales;
+    public Tech getTech(int compNo, String techdNo){
+        Tech tech = null;
+        tech = techMapper.getTech(techdNo, compNo);
+        return tech;
     } // End of getSales();
 
     public int insertSales(Sales sales) {

@@ -4048,7 +4048,7 @@ class TechSet{
 				];
 
 				fnc = "CommonDatas.Temps.techSet.techDetailView(this)";
-				ids.push(jsonData[i].salesNo);
+				ids.push(jsonData[i].techdNo);
 				data.push(str);
 			}
 
@@ -4068,18 +4068,18 @@ class TechSet{
 		}
 	}
 
-	//메인 화면에서 클릭한 영업활동 가져오는 함수
+	//기술지원 가져오는 함수
 	techDetailView(e) {
 		let thisEle = e;
 		storage.gridContent = e;
 
-		axios.get("/api/sales/" + thisEle.dataset.id).then((response) => {
+		axios.get("/api/tech/" + thisEle.dataset.id).then((response) => {
 			if (response.data.result === "ok") {
 				let result;
 				result = cipher.decAes(response.data.data);
 				result = JSON.parse(result);
-				let sales = new Sales(result);
-				sales.detail();
+				let tech = new Tech(result);
+				tech.detail();
 			}
 		}).catch((error) => {
 			msg.set("상세보기 에러 입니다.\n" + error);
@@ -4087,109 +4087,33 @@ class TechSet{
 		});
 	}
 
-	//영업활동 등록 폼
-	salesInsertForm(){
-		let html, dataArray;
-	
+	//기술지원 등록 폼
+	techInsertForm(){
+		let html, dataArray, nowDate;
+		nowDate = new Date();
+		nowDate = nowDate.toISOString().substring(0, 10);
+
 		dataArray = [
 			{
-				"title": "활동시작일(*)",
-				"elementId": "salesFrdatetime",
-				"type": "datetime",
-				"disabled": false,
-			},
-			{
-				"title": "활동종료일(*)",
-				"elementId": "salesTodatetime",
-				"type": "datetime",
-				"disabled": false,
-			},
-			{
-				"title": "장소",
-				"elementId": "salesPlace",
-				"disabled": false,
-			},
-			{
-				"title": "활동형태(*)",
-				"selectValue": [
+				"title": "등록구분(*)",
+				"radioValue": [
 					{
-						"key": "10170",
-						"value": "회사방문",
+						"key": "10247",
+						"value": "신규영업지원",
 					},
 					{
-						"key": "10171",
-						"value": "기술지원",
+						"key": "10248",
+						"value": "유지보수",
 					},
-					{
-						"key": "10221",
-						"value": "제품설명",
-					},
-					{
-						"key": "10222",
-						"value": "시스템데모",
-					},
-					{
-						"key": "10223",
-						"value": "제품견적",
-					},
-					{
-						"key": "10224",
-						"value": "계약건 의사결정지원",
-					},
-					{
-						"key": "10225",
-						"value": "계약",
-					},
-					{
-						"key": "10226",
-						"value": "사후처리",
-					},
-					{
-						"key": "10227",
-						"value": "기타",
-					},
-					{
-						"key": "10228",
-						"value": "협력사요청",
-					},
-					{
-						"key": "10229",
-						"value": "협력사문의",
-					},
-					{
-						"key": "10230",
-						"value": "교육",
-					},
-					{
-						"key": "10231",
-						"value": "전화상담",
-					},
-					{
-						"key": "10232",
-						"value": "제조사업무협의",
-					},
-					{
-						"key": "10233",
-						"value": "외부출장",
-					},
-					{
-						"key": "10234",
-						"value": "제안설명회",
-					}
 				],
-				"type": "select",
-				"elementId": "salesType",
+				"type": "radio",
+				"elementName": "cntrctMth",
+				"elementId": ["New", "Old"],
+				"col": 4,
 				"disabled": false,
 			},
 			{
-				"title": "담당자(*)",
-				"elementId": "userNo",
-				"complete": "user",
-				"keyup": "CommonDatas.addAutoComplete(this);",
-				"onClick": "CommonDatas.addAutoComplete(this);",
-			},
-			{
-				"title": "영업기회",
+				"title": "영업기회(*)",
 				"elementId": "soppNo",
 				"complete": "sopp",
 				"keyup": "CommonDatas.addAutoComplete(this);",
@@ -4197,34 +4121,134 @@ class TechSet{
 				"disabled": false,
 			},
 			{
+				"title": "계약",
+				"elementId": "contNo",
+				"complete": "contract",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"disabled": false,
+			},
+			{
 				"title": "매출처",
+				"disabled": false,
 				"elementId": "custNo",
 				"complete": "customer",
 				"keyup": "CommonDatas.addAutoComplete(this);",
 				"onClick": "CommonDatas.addAutoComplete(this);",
+			},
+			{
+				"title": "매출처 담당자",
+				"complete": "cip",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"elementId": "custmemberNo",
 				"disabled": false,
 			},
 			{
-				"title": "엔드유저",
-				"elementId": "ptncNo",
+				"title": "모델",
+				"elementId": "techdItemmodel",
+				"disabled": false,
+				"col": 4,
+			},
+			{
+				"title": "버전",
+				"elementId": "techdItemversion",
+				"disabled": false,
+				"col": 4,
+			},
+			{
+				"title": "단계",
+				"selectValue": [
+					{
+						"key": "10213",
+						"value": "접수단계",
+					},
+					{
+						"key": "10214",
+						"value": "출동단계",
+					},
+					{
+						"key": "10215",
+						"value": "미계약에 따른 보류",
+					},
+					{
+						"key": "10253",
+						"value": "처리완료",
+					}
+				],
+				"type": "select",
+				"elementId": "techdSteps",
+				"disabled": false,
+			},
+			{
+				"title": "지원형태",
+				"selectValue": [
+					{
+						"key": "10187",
+						"value": "전화상담",
+					},
+					{
+						"key": "10208",
+						"value": "현장방문",
+					},
+					{
+						"key": "10209",
+						"value": "원격지원",
+					}
+				],
+				"type": "select",
+				"elementId": "techdType",
+				"disabled": false,
+			},
+			{
+				"title": "담당자(*)",
+				"complete": "user",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"elementId": "userNo",
+				"value": (CommonDatas.emptyValuesCheck(storage.my)) ? "" : storage.user[storage.my].userName,
+			},
+			{
+				"title": "엔드유저(*)",
+				"elementId": "endCustNo",
+				"disabled": false,
 				"complete": "customer",
 				"keyup": "CommonDatas.addAutoComplete(this);",
 				"onClick": "CommonDatas.addAutoComplete(this);",
-				"disabled": false,
 			},
 			{
-				"title": "제목(*)",
-				"elementId": "salesTitle",
-				"col": 4,
+				"title": "지원 시작일(*)",
+				"elementId": "techdFrom",
+				"value": nowDate + "T09:00:00",
 				"disabled": false,
+				"type": "datetime",
+			},
+			{
+				"title": "지원 종료일(*)",
+				"elementId": "techdTo",
+				"value": nowDate + "T18:00:00",
+				"disabled": false,
+				"type": "datetime",
+			},
+			{
+				"title": "장소",
+				"elementId": "techdPlace",
+				"disabled": false,
+				"col": 2,
+			},
+			{
+				"title": "기술지원명(*)",
+				"elementId": "techdTitle",
+				"disabled": false,
+				"col": 4,
 			},
 			{
 				"title": "내용",
-				"elementId": "salesDesc",
 				"type": "textarea",
-				"col": 4,
+				"elementId": "techdDesc",
 				"disabled": false,
-			}
+				"col": 4,
+			},
 		];
 	
 		html = CommonDatas.detailViewForm(dataArray, "modal");
@@ -4232,39 +4256,41 @@ class TechSet{
 		modal.show();
 		modal.content.style.minWidth = "70vw";
 		modal.content.style.maxWidth = "70vw";
-		modal.headTitle.innerText = "영업활동등록";
+		modal.headTitle.innerText = "기술지원등록";
 		modal.body.innerHTML = "<div class=\"defaultFormContainer\">" + html + "</div>";
 		modal.confirm.innerText = "등록";
 		modal.close.innerText = "취소";
-		modal.confirm.setAttribute("onclick", "const sales = new Sales(); CommonDatas.Temps.sales.insert();");
+		modal.confirm.setAttribute("onclick", "const tech = new Tech(); CommonDatas.Temps.tech.insert();");
 		modal.close.setAttribute("onclick", "modal.hide();");
 
 		storage.formList = {
-			"soppNo": 0,
-			"userNo": storage.my,
 			"compNo": 0,
 			"custNo": 0,
-			"salesFrdatetime": "",
-			"salesTodatetime": "",
-			"salesPlace": "",
-			"salesType": "",
-			"salesDesc": "",
-			"salesCheck": 0,
-			"salesTitle": "",
-			"ptncNo": 0,
-			"schedType": "",
+			"soppNo": 0,
+			"contNo": 0,
+			"cntrctMth": "",
+			"endCustNo": 0,
+			"custmemberNo": 0,
+			"techdTitle": "",
+			"techdDesc": "",
+			"techdCheck": 0,
+			"techdItemmodel": "",
+			"techdItemversion": "",
+			"techdPlace": "",
+			"techdFrom": "",
+			"techdTo": "",
+			"techdType": "",
+			"techdSteps": "",
+			"userNo": storage.my,
+			"schedType": 0,
 			"regDatetime": "",
-			"modDatetime": ""
+			"modDatetime": "",
 		};
 		
 		setTimeout(() => {
-			let my = storage.my, nowDate;
-			nowDate = new Date();
-			nowDate = nowDate.toISOString().substring(0, 10);
+			let my = storage.my;
 			document.getElementById("userNo").value = storage.user[my].userName;
 			document.getElementById("userNo").setAttribute("data-change", true);
-			document.getElementById("salesFrdatetime").value = nowDate + "T09:00:00";
-			document.getElementById("salesTodatetime").value = nowDate + "T18:00:00";
 			ckeditor.config.readOnly = false;
 			window.setTimeout(setEditor, 100);
 		}, 100);
@@ -4336,36 +4362,48 @@ class Tech{
 	
 		if (getData !== undefined) {
 			this.getData = getData;
-			this.salesNo = getData.salesNo;
-			this.soppNo = getData.soppNo;
-			this.userNo = getData.userNo;
+			this.techdNo = getData.techdNo;
 			this.compNo = getData.compNo;
 			this.custNo = getData.custNo;
-			this.salesFrdatetime = getData.salesFrdatetime;
-			this.salesTodatetime = getData.salesTodatetime;
-			this.salesPlace = getData.salesPlace;
-			this.salesType = getData.salesType;
-			this.salesDesc = getData.salesDesc;
-			this.salesCheck = getData.salesCheck;
-			this.salesTitle = getData.salesTitle;
-			this.ptncNo = getData.ptncNo;
+			this.soppNo = getData.soppNo;
+			this.contNo = getData.contNo;
+			this.cntrctMth = getData.cntrctMth;
+			this.endCustNo = getData.endCustNo;
+			this.custmemberNo = getData.custmemberNo;
+			this.techdTitle = getData.techdTitle;
+			this.techdDesc = getData.techdDesc;
+			this.techdCheck = getData.techdCheck;
+			this.techdItemmodel = getData.techdItemmodel;
+			this.techdItemversion = getData.techdItemversion;
+			this.techdPlace = getData.techdPlace;
+			this.techdFrom = getData.techdFrom;
+			this.techdTo = getData.techdTo;
+			this.techdType = getData.techdType;
+			this.techdSteps = getData.techdSteps;
+			this.userNo = getData.userNo;
 			this.schedType = getData.schedType;
 			this.regDatetime = getData.regDatetime;
 			this.modDatetime = getData.modDatetime;
 		} else {
-			this.salesNo = 0;
-			this.soppNo = 0;
-			this.userNo = storage.my;
+			this.techdNo = 0;
 			this.compNo = 0;
 			this.custNo = 0;
-			this.salesFrdatetime = "";
-			this.salesTodatetime = "";
-			this.salesPlace = "";
-			this.salesType = "";
-			this.salesDesc = "";
-			this.salesCheck = 0;
-			this.salesTitle = "";
-			this.ptncNo = 0;
+			this.soppNo = 0;
+			this.contNo = 0;
+			this.cntrctMth = "";
+			this.endCustNo = 0;
+			this.custmemberNo = 0;
+			this.techdTitle = "";
+			this.techdDesc = "";
+			this.techdCheck = 0;
+			this.techdItemmodel = "";
+			this.techdItemversion = "";
+			this.techdPlace = "";
+			this.techdFrom = "";
+			this.techdTo = "";
+			this.techdType = "";
+			this.techdSteps = "";
+			this.userNo = 0;
 			this.schedType = 0;
 			this.regDatetime = "";
 			this.modDatetime = "";
@@ -4374,7 +4412,7 @@ class Tech{
 
 	detail() {
 		let html = "";
-		let setDate, datas, dataArray, notIdArray = [];
+		let setDate, datas, dataArray, notIdArray, techdFrom, techdTo;
 
 		CommonDatas.detailSetFormList(this.getData);
 
@@ -4383,146 +4421,168 @@ class Tech{
 		let detailBackBtn = document.getElementsByClassName("detailBackBtn")[0];
 		let crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
 		let crudDeleteBtn = document.getElementsByClassName("crudDeleteBtn")[0];
+		notIdArray = ["userNo"];
 
 		setDate = CommonDatas.dateDis(new Date(this.regDatetime).getTime(), new Date(this.modDatetime).getTime());
 		setDate = CommonDatas.dateFnc(setDate);
 
-		datas = ["soppNo", "userNo", "custNo", "ptncNo"];
+		techdFrom = CommonDatas.dateDis(new Date(this.techdFrom).getTime());
+		techdFrom = CommonDatas.dateFnc(techdFrom);
+
+		techdTo = CommonDatas.dateDis(new Date(this.techdTo).getTime());
+		techdTo = CommonDatas.dateFnc(techdTo);
+
+		datas = ["soppNo", "userNo", "custNo", "endCustNo", "custmemberNo", "contNo"];
 		dataArray = [
 			{
-				"title": "활동시작일(*)",
-				"elementId": "salesFrdatetime",
-				"type": "datetime",
-				"value": this.salesFrdatetime,
-			},
-			{
-				"title": "활동종료일(*)",
-				"elementId": "salesTodatetime",
-				"type": "datetime",
-				"value": this.salesTodatetime,
-			},
-			{
-				"title": "장소",
-				"elementId": "salesPlace",
-				"value": this.salesPlace,
-			},
-			{
-				"title": "활동형태(*)",
-				"selectValue": [
+				"title": "등록구분(*)",
+				"radioValue": [
 					{
-						"key": "10170",
-						"value": "회사방문",
+						"key": "10247",
+						"value": "신규영업지원",
 					},
 					{
-						"key": "10171",
-						"value": "기술지원",
+						"key": "10248",
+						"value": "유지보수",
 					},
-					{
-						"key": "10221",
-						"value": "제품설명",
-					},
-					{
-						"key": "10222",
-						"value": "시스템데모",
-					},
-					{
-						"key": "10223",
-						"value": "제품견적",
-					},
-					{
-						"key": "10224",
-						"value": "계약건 의사결정지원",
-					},
-					{
-						"key": "10225",
-						"value": "계약",
-					},
-					{
-						"key": "10226",
-						"value": "사후처리",
-					},
-					{
-						"key": "10227",
-						"value": "기타",
-					},
-					{
-						"key": "10228",
-						"value": "협력사요청",
-					},
-					{
-						"key": "10229",
-						"value": "협력사문의",
-					},
-					{
-						"key": "10230",
-						"value": "교육",
-					},
-					{
-						"key": "10231",
-						"value": "전화상담",
-					},
-					{
-						"key": "10232",
-						"value": "제조사업무협의",
-					},
-					{
-						"key": "10233",
-						"value": "외부출장",
-					},
-					{
-						"key": "10234",
-						"value": "제안설명회",
-					}
 				],
-				"type": "select",
-				"elementId": "type",
-				"value": this.salesType
+				"type": "radio",
+				"col": 4,
+				"elementName": "cntrctMth",
 			},
 			{
-				"title": "담당자(*)",
-				"elementId": "userNo",
-				"complete": "user",
-				"keyup": "CommonDatas.addAutoComplete(this);",
-				"onClick": "CommonDatas.addAutoComplete(this);",
-				"value": (CommonDatas.emptyValuesCheck(this.userNo)) ? "" : storage.user[this.userNo].userName,
-			},
-			{
-				"title": "영업기회",
+				"title": "영업기회(*)",
 				"elementId": "soppNo",
 				"complete": "sopp",
-				"keyup": "CommonDatas.addAutoComplete(this);",
-				"onClick": "CommonDatas.addAutoComplete(this);",
+				"keyup": "addAutoComplete(this);",
+				"onClick": "addAutoComplete(this);",
 				"value": (CommonDatas.emptyValuesCheck(this.soppNo)) ? "" : CommonDatas.getSoppFind(this.soppNo, "name"),
+			},
+			{
+				"title": "계약",
+				"elementId": "contNo",
+				"complete": "contract",
+				"keyup": "addAutoComplete(this);",
+				"onClick": "addAutoComplete(this);",
+				"value": (CommonDatas.emptyValuesCheck(this.contNo)) ? "" : CommonDatas.getContFind(this.contNo, "name"),
 			},
 			{
 				"title": "매출처",
 				"elementId": "custNo",
 				"complete": "customer",
-				"keyup": "CommonDatas.addAutoComplete(this);",
-				"onClick": "CommonDatas.addAutoComplete(this);",
+				"keyup": "addAutoComplete(this);",
+				"onClick": "addAutoComplete(this);",
 				"value": (CommonDatas.emptyValuesCheck(this.custNo)) ? "" : storage.customer[this.custNo].name,
 			},
 			{
-				"title": "엔드유저",
-				"elementId": "ptncNo",
-				"complete": "customer",
-				"keyup": "CommonDatas.addAutoComplete(this);",
-				"onClick": "CommonDatas.addAutoComplete(this);",
-				"value": (CommonDatas.emptyValuesCheck(this.ptncNo)) ? "" : storage.customer[this.ptncNo].name,
+				"title": "매출처 담당자",
+				"complete": "cip",
+				"keyup": "addAutoComplete(this);",
+				"onClick": "addAutoComplete(this);",
+				"elementId": "custmemberNo",
+				"value": (CommonDatas.emptyValuesCheck(this.custmemberNo)) ? "" : storage.cip[this.custmemberNo].name,
 			},
 			{
-				"title": "제목(*)",
-				"elementId": "salesTitle",
-				"value": this.salesTitle,
+				"title": "모델",
+				"elementId": "techdItemmodel",
+				"value": (CommonDatas.emptyValuesCheck(this.techdItemmodel)) ? "" : this.techdItemmodel,
+				"col": 4,
+			},
+			{
+				"title": "버전",
+				"elementId": "techdItemversion",
+				"value": (CommonDatas.emptyValuesCheck(this.techdItemversion)) ? "" : this.techdItemversion,
+				"col": 4,
+			},
+			{
+				"title": "단계",
+				"selectValue": [
+					{
+						"key": "10213",
+						"value": "접수단계",
+					},
+					{
+						"key": "10214",
+						"value": "출동단계",
+					},
+					{
+						"key": "10215",
+						"value": "미계약에 따른 보류",
+					},
+					{
+						"key": "10253",
+						"value": "처리완료",
+					}
+				],
+				"type": "select",
+				"elementId": "techdType",
+			},
+			{
+				"title": "지원형태",
+				"selectValue": [
+					{
+						"key": "10187",
+						"value": "전화상담",
+					},
+					{
+						"key": "10208",
+						"value": "현장방문",
+					},
+					{
+						"key": "10209",
+						"value": "원격지원",
+					}
+				],
+				"type": "select",
+				"elementId": "type",
+			},
+			{
+				"title": "담당자(*)",
+				"complete": "user",
+				"keyup": "addAutoComplete(this);",
+				"onClick": "addAutoComplete(this);",
+				"elementId": "userNo",
+				"value": (CommonDatas.emptyValuesCheck(this.userNo)) ? "" : storage.user[this.userNo].userName,
+			},
+			{
+				"title": "엔드유저(*)",
+				"elementId": "endCustNo",
+				"complete": "customer",
+				"keyup": "addAutoComplete(this);",
+				"onClick": "addAutoComplete(this);",
+				"value": (CommonDatas.emptyValuesCheck(this.endCustNo)) ? "" : storage.customer[this.endCustNo].name,
+			},
+			{
+				"title": "지원일자 시작일(*)",
+				"elementId": "techdFrom",
+				"type": "datetime",
+				"value": this.techdFrom,
+			},
+			{
+				"title": "지원일자 종료일(*)",
+				"elementId": "techdTo",
+				"type": "datetime",
+				"value": this.techdTo,
+			},
+			{
+				"title": "장소",
+				"elementId": "techdPlace",
+				"value": (CommonDatas.emptyValuesCheck(this.techdPlace)) ? "" : this.techdPlace,
+				"col": 2,
+			},
+			{
+				"title": "기술지원명(*)",
+				"elementId": "techdTitle",
+				"value": (CommonDatas.emptyValuesCheck(this.techdTitle)) ? "" : this.techdTitle,
 				"col": 4,
 			},
 			{
 				"title": "내용",
-				"elementId": "salesDesc",
 				"type": "textarea",
-				"value": this.salesDesc,
+				"elementId": "techdDesc",
+				"value": (CommonDatas.emptyValuesCheck(this.techdDesc)) ? "" : this.techdDesc,
 				"col": 4,
-			}
+			},
 		];
 
 		html = CommonDatas.detailViewForm(dataArray);
@@ -4530,14 +4590,14 @@ class Tech{
 		createGrid.className = "defaultFormContainer";
 		createGrid.innerHTML = html;
 		gridList.after(createGrid);
-		containerTitle.innerText = this.salesTitle;
+		containerTitle.innerText = this.techdTitle;
 		let hideArr = ["gridList", "listRange", "crudAddBtn", "listSearchInput", "searchContainer", "pageContainer"];
 		let showArr = ["defaultFormContainer"];
 		CommonDatas.setViewContents(hideArr, showArr);
 	
 		if(storage.my == this.getData.userNo){
-			crudUpdateBtn.setAttribute("onclick", "CommonDatas.enableDisabled(this, \"CommonDatas.Temps.sales.update();\", \"" + notIdArray + "\");")
-			crudDeleteBtn.setAttribute("onclick", "CommonDatas.Temps.sales.delete();");
+			crudUpdateBtn.setAttribute("onclick", "CommonDatas.enableDisabled(this, \"CommonDatas.Temps.tech.update();\", \"" + notIdArray + "\");")
+			crudDeleteBtn.setAttribute("onclick", "CommonDatas.Temps.tech.delete();");
 			crudUpdateBtn.style.display = "flex";
 			crudDeleteBtn.style.display = "flex";
 		}else{
@@ -5525,9 +5585,12 @@ class Common {
 					} else if (thisEle.dataset.complete === "user") {
 						listDiv.dataset.value = storage[thisEle.dataset.complete][key].userNo;
 						listDiv.innerHTML = storage[thisEle.dataset.complete][key].userName;
-					} else if (thisEle.dataset.complete === "sopp" || thisEle.dataset.complete === "contract") {
+					} else if (thisEle.dataset.complete === "sopp") {
 						listDiv.dataset.value = storage[thisEle.dataset.complete][key].no;
 						listDiv.innerHTML = storage[thisEle.dataset.complete][key].title;
+					} else if (thisEle.dataset.complete === "contract") {
+						listDiv.dataset.value = storage[thisEle.dataset.complete][key].contNo;
+						listDiv.innerHTML = storage[thisEle.dataset.complete][key].contTitle;
 					}
 
 					autoComplete.append(listDiv);
@@ -5555,12 +5618,20 @@ class Common {
 							listDiv.innerHTML = storage[thisEle.dataset.complete][key].userName;
 							autoComplete.append(listDiv);
 						}
-					} else if (thisEle.dataset.complete === "sopp" || thisEle.dataset.complete === "contract") {
+					} else if (thisEle.dataset.complete === "sopp") {
 						if (storage[thisEle.dataset.complete][key].title.indexOf(thisEle.value) > -1) {
 							let listDiv = document.createElement("div");
 							listDiv.setAttribute("onclick", "autoCompleteClick(this);");
 							listDiv.dataset.value = storage[thisEle.dataset.complete][key].no;
 							listDiv.innerHTML = storage[thisEle.dataset.complete][key].title;
+							autoComplete.append(listDiv);
+						}
+					} else if (thisEle.dataset.complete === "contract") {
+						if (storage[thisEle.dataset.complete][key].title.indexOf(thisEle.value) > -1) {
+							let listDiv = document.createElement("div");
+							listDiv.setAttribute("onclick", "autoCompleteClick(this);");
+							listDiv.dataset.value = storage[thisEle.dataset.complete][key].contNo;
+							listDiv.innerHTML = storage[thisEle.dataset.complete][key].contTitle;
 							autoComplete.append(listDiv);
 						}
 					}
@@ -5924,6 +5995,34 @@ class Common {
 
 		if(!flag){
 			alert("영업기회를 찾지 못했습니다.\n다시 시도해주세요.");
+			result = "";
+		}
+
+		return result;
+	}
+
+	getContFind(value, type){
+		let result;
+		let flag = false;
+
+		for(let i = 0; i < storage.contract.length; i++){
+			let item = storage.contract[i];
+			
+			if(type === "name"){
+				if(value == item.contNo){
+					result = item.title;
+					flag = true;
+				}
+			}else{
+				if(value.includes(item.title)){
+					result = item.no;
+					flag = true;
+				}
+			}
+		}
+
+		if(!flag){
+			alert("계약을 찾지 못했습니다.\n다시 시도해주세요.");
 			result = "";
 		}
 

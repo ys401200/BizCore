@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import kr.co.bizcore.v1.domain.Cont;
 import kr.co.bizcore.v1.domain.Contract2;
 import kr.co.bizcore.v1.domain.Maintenance;
 import kr.co.bizcore.v1.domain.SimpleContract;
@@ -20,16 +21,16 @@ public interface ContractMapper {
     public List<SimpleContract> getListWithStartAndEnd(@Param("compId") String compId, @Param("start") int start,
             @Param("end") int end);
 
-    @Select("SELECT count(*) AS ct FROM swc_cont WHERE attrib NOT like 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) ORDER BY regdatetime DESC")
-    public int getCount(String compId);
+    @Select("SELECT count(*) AS ct FROM swc_cont WHERE attrib NOT like 'XXX%' AND compno = #{compNo}")
+    public int getCount(int compNo);
 
     // 계약 삭제
     @Update("UPDATE bizcore.contract SET deleted = now() WHERE no = #{no} AND compId =#{compId}")
     public int removeContract(@Param("no") String no, @Param("compId") String compId);
 
    
-    @Select("SELECT no, compId, employee, coWorker, customer, title, detail, saleDate, supplied, approved, amount, taxInclude, profit,created, modified, deleted, related from bizcore.contract WHERE deleted IS NULL AND compId = #{compId} ORDER BY created DESC")
-    public List<Contract2> getList(@Param("compId") String compId);
+    @Select("SELECT * from swc_cont WHERE compNo = #{compNo} AND attrib not like 'XXX%' ORDER BY regDatetime DESC")
+    public List<Cont> getList(@Param("compNo") int compNo);
 
     // 계약 데이터 상세
     @Select("SELECT no, employee , coworker, customer, title, detail, saleDate, supplied, approved, amount, taxInclude, profit, created, modified, deleted, related  from bizcore.contract WHERE deleted IS NULL AND compId = #{compId} AND no = #{no}")

@@ -46,9 +46,9 @@
 				<div class="searchDate">
 					<span>일정시작일</span>
 					<div class="searchGridItem">
-						<input type="date" id="searchDateFrom" max="9999-12-31" data-date-type="from" onchange="searchDateDefaultSet(this);">
+						<input type="date" id="searchDateFrom" max="9999-12-31" data-date-type="from" onchange="CommonDatas.searchDateDefaultSet(this);">
 						<span>~</span>
-						<input type="date" id="searchDateTo" max="9999-12-31" data-date-type="to" onchange="searchDateDefaultSet(this);">
+						<input type="date" id="searchDateTo" max="9999-12-31" data-date-type="to" onchange="CommonDatas.searchDateDefaultSet(this);">
 					</div>
 				</div>
 			</div>
@@ -58,17 +58,17 @@
 				<hr />
 				<span id="containerTitle">기술일정조회</span>
 				<div class="listRange">
-					<input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="listRangeChange(this, drawTechList);">
+					<input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="CommonDatas.listRangeChange(this, CommonDatas.Temps.techSet.drawTechList);">
 					<span class="listRangeSpan">0</span>
 				</div>
 				<div class="listSearchInput">
-					<input type="text" class="searchAllInput" id="searchAllInput" onkeyup="searchInputKeyup();" placeholder="단어를 입력해주세요.">
+					<input type="text" class="searchAllInput" id="searchAllInput" onkeyup="CommonDatas.Temps.techSet.searchInputKeyup();" placeholder="단어를 입력해주세요.">
 				</div>
 				<div class="crudBtns">
-					<button type="button" class="crudAddBtn" onclick="techInsertForm();">등록</button>
+					<button type="button" class="crudAddBtn" onclick="CommonDatas.Temps.techSet.techInsertForm();">등록</button>
 					<button type="button" class="crudUpdateBtn">수정</button>
-					<button type="button" class="crudDeleteBtn" onclick="techDelete();">삭제</button>
-					<a href="#" onclick="hideDetailView(drawTechList);" class="detailBackBtn" style="display:none;">Back</a>
+					<button type="button" class="crudDeleteBtn">삭제</button>
+					<a href="#" onclick="CommonDatas.hideDetailView(CommonDatas.Temps.techSet.drawTechList);" class="detailBackBtn" style="display:none;">Back</a>
 				</div>
 			</div>
             <div class="gridList"></div>

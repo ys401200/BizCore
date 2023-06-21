@@ -38,12 +38,14 @@ public class ApiContractCtrl extends Ctrl {
     public String apiProcureGetAll(HttpServletRequest request) {
         String result = null, aesKey = null, aesIv = null, compId = null, lang = null;
         Msg msg = null;
+        int compNo = 0;
         HttpSession session = null;
         String list = null;
 
         session = request.getSession();
         aesKey = (String) session.getAttribute("aesKey");
         aesIv = (String) session.getAttribute("aesIv");
+        compNo = (int) session.getAttribute("compNo");
         lang = (String) session.getAttribute("lang");
         msg = getMsg(lang);
         compId = (String) session.getAttribute("compId");
@@ -55,7 +57,8 @@ public class ApiContractCtrl extends Ctrl {
         } else if (aesKey == null || aesIv == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
         } else
-            list = contractService.getContractList(compId);
+            list = contractService.getContractList(compNo);
+            logger.info(list.toString());
         if (list == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.noResult + "\"}";
         } else {
@@ -71,6 +74,7 @@ public class ApiContractCtrl extends Ctrl {
             @PathVariable("end") int end) {
         String result = null, aesKey = null, aesIv = null, compId = null, lang = null;
         Msg msg = null;
+        int compNo = 0;
         int count = -9999;
         HttpSession session = null;
         String list = null;
@@ -78,6 +82,7 @@ public class ApiContractCtrl extends Ctrl {
         session = request.getSession();
         aesKey = (String) session.getAttribute("aesKey");
         aesIv = (String) session.getAttribute("aesIv");
+        compNo = (int) session.getAttribute("compNo");
         lang = (String) session.getAttribute("lang");
         msg = getMsg(lang);
         compId = (String) session.getAttribute("compId");
@@ -88,8 +93,8 @@ public class ApiContractCtrl extends Ctrl {
         } else if (aesKey == null || aesIv == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
         } else
-            list = contractService.getContractList(compId, start, end);
-        count = contractService.getContractCount(compId);
+            list = contractService.getContractList(compNo, start, end);
+        count = contractService.getContractCount(compNo);
         if (list == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.noResult + "\"}";
         } else {

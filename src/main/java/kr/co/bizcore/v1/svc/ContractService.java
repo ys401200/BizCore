@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import kr.co.bizcore.v1.domain.Cont;
 import kr.co.bizcore.v1.domain.Contract2;
 import kr.co.bizcore.v1.domain.Maintenance;
 import kr.co.bizcore.v1.domain.Schedule;
@@ -38,13 +39,13 @@ public class ContractService extends Svc {
     private static final Logger logger = LoggerFactory.getLogger(ContractService.class);
 
     // 계약 전부
-    public String getContractList(String compId) {
+    public String getContractList(int compNo) {
         String result = null;
-        List<Contract2> list = null;
-        Contract2 each = null;
+        List<Cont> list = null;
+        Cont each = null;
         int x = 0;
 
-        list = contractMapper.getList(compId);
+        list = contractMapper.getList(compNo);
         if (list != null && list.size() > 0)
             for (x = 0; x < list.size(); x++) {
                 each = list.get(x);
@@ -61,13 +62,13 @@ public class ContractService extends Svc {
     } // End of getContractList()
 
     // 계약 일부
-    public String getContractList(String compId, int start, int end) {
+    public String getContractList(int compNo, int start, int end) {
         String result = null;
-        List<Contract2> list = null;
-        Contract2 each = null;
+        List<Cont> list = null;
+        Cont each = null;
         int x = 0;
 
-        list = contractMapper.getList(compId);
+        list = contractMapper.getList(compNo);
         if (list != null && list.size() > 0)
             for (x = 0; x < list.size(); x++) {
                 each = list.get(x);
@@ -84,8 +85,8 @@ public class ContractService extends Svc {
     } // End of getContractList()
 
     // 계약 수량 가져오기
-    public int getContractCount(String compId) {
-        return contractMapper.getCount(compId);
+    public int getContractCount(int compNo) {
+        return contractMapper.getCount(compNo);
     }
 
     public String getContract(int no, String compId) {
