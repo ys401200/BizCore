@@ -24,7 +24,7 @@ public interface TechMapper {
     @Select("SELECT * FROM swc_techd WHERE attrib NOT LIKE 'XXX%' AND compNo = #{tech.compNo} and regDatetime between #{tech.fromDate} and #{tech.toDate} ORDER BY regDatetime DESC")
     public List<Tech> getTechList(@Param("tech") Tech tech);
 
-    @Insert("INSERT INTO swc_sales (soppNo, userNo, compNo, custNo, salesFrdatetime, salesTodatetime, salesPlace, salesType, salesDesc, salesTitle, ptncNo, regDatetime) VALUES (#{sales.soppNo}, #{sales.userNo}, #{sales.compNo}, #{sales.custNo}, #{sales.salesFrdatetime}, #{sales.salesTodatetime}, #{sales.salesPlace}, #{sales.salesType}, #{sales.salesDesc}, #{sales.salesTitle}, #{sales.ptncNo}, now())")
+    @Insert("INSERT INTO swc_techd (compNo, custNo, soppNo, contNo, cntrctMth, endCustNo, custmemberNo, techdTitle, techdDesc, techdItemmodel, techdItemversion, techdPlace, techdFrom, techdTo, techdType, techdSteps, userNo, regDatetime) VALUES (#{tech.compNo}, #{tech.endCustNo}, #{tech.soppNo}, #{tech.contNo}, #{tech.cntrctMth}, #{tech.endCustNo}, #{tech.custmemberNo}, #{tech.techdTitle}, #{tech.techdDesc}, #{tech.techdItemmodel}, #{tech.techdItemversion}, #{tech.techdPlace}, #{tech.techdFrom}, #{tech.techdTo}, #{tech.techdType}, #{tech.techdSteps}, #{tech.userNo}, now())")
     public int techInsert(@Param("tech") Tech tech);
 
     @Update("UPDATE swc_sales SET attrib = 'XXXXX' WHERE salesNo = #{salesNo} AND compNo = #{compNo}")

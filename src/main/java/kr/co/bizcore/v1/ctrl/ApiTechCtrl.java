@@ -137,11 +137,11 @@ public class ApiTechCtrl extends Ctrl {
         aesKey = (String) session.getAttribute("aesKey");
         aesIv = (String) session.getAttribute("aesIv");
         compNo = (int) session.getAttribute("compNo");
-        data = salesService.decAes(requestBody, aesKey, aesIv);
-        Sales sales = mapper.readValue(data, Sales.class);
-        sales.setCompNo(compNo);
+        data = techService.decAes(requestBody, aesKey, aesIv);
+        Tech tech = mapper.readValue(data, Tech.class);
+        tech.setCompNo(compNo);
 
-        check = salesService.insertSales(sales);
+        check = techService.insertTech(tech);
 
         if (check > 0) {
             result = "{\"result\":\"ok\"}";

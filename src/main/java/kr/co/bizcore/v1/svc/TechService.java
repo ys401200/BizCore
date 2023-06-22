@@ -45,8 +45,8 @@ public class TechService extends Svc{
         return tech;
     } // End of getSales();
 
-    public int insertSales(Sales sales) {
-        return salesMapper.salesInsert(sales);
+    public int insertTech(Tech tech) {
+        return techMapper.techInsert(tech);
     }
 
     public int  delete(int compNo, String salesNo) {

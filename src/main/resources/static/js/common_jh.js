@@ -4108,7 +4108,8 @@ class TechSet{
 				],
 				"type": "radio",
 				"elementName": "cntrctMth",
-				"elementId": ["New", "Old"],
+				"elementId": ["cntrctMthNew", "cntrctMthOld"],
+				"onChange": "CommonDatas.Temps.techSet.techRadioChange();",
 				"col": 4,
 				"disabled": false,
 			},
@@ -4121,7 +4122,7 @@ class TechSet{
 				"disabled": false,
 			},
 			{
-				"title": "계약",
+				"title": "계약(*)",
 				"elementId": "contNo",
 				"complete": "contract",
 				"keyup": "CommonDatas.addAutoComplete(this);",
@@ -4129,20 +4130,28 @@ class TechSet{
 				"disabled": false,
 			},
 			{
-				"title": "매출처",
+				"title": "엔드유저(*)",
+				"elementId": "endCustNo",
 				"disabled": false,
-				"elementId": "custNo",
 				"complete": "customer",
 				"keyup": "CommonDatas.addAutoComplete(this);",
 				"onClick": "CommonDatas.addAutoComplete(this);",
 			},
 			{
-				"title": "매출처 담당자",
+				"title": "엔드유저 담당자",
 				"complete": "cip",
 				"keyup": "CommonDatas.addAutoComplete(this);",
 				"onClick": "CommonDatas.addAutoComplete(this);",
 				"elementId": "custmemberNo",
 				"disabled": false,
+			},
+			{
+				"title": "담당자(*)",
+				"complete": "user",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"elementId": "userNo",
+				"value": (CommonDatas.emptyValuesCheck(storage.my)) ? "" : storage.user[storage.my].userName,
 			},
 			{
 				"title": "모델",
@@ -4201,22 +4210,6 @@ class TechSet{
 				"disabled": false,
 			},
 			{
-				"title": "담당자(*)",
-				"complete": "user",
-				"keyup": "CommonDatas.addAutoComplete(this);",
-				"onClick": "CommonDatas.addAutoComplete(this);",
-				"elementId": "userNo",
-				"value": (CommonDatas.emptyValuesCheck(storage.my)) ? "" : storage.user[storage.my].userName,
-			},
-			{
-				"title": "엔드유저(*)",
-				"elementId": "endCustNo",
-				"disabled": false,
-				"complete": "customer",
-				"keyup": "CommonDatas.addAutoComplete(this);",
-				"onClick": "CommonDatas.addAutoComplete(this);",
-			},
-			{
 				"title": "지원 시작일(*)",
 				"elementId": "techdFrom",
 				"value": nowDate + "T09:00:00",
@@ -4234,13 +4227,12 @@ class TechSet{
 				"title": "장소",
 				"elementId": "techdPlace",
 				"disabled": false,
-				"col": 2,
 			},
 			{
 				"title": "기술지원명(*)",
 				"elementId": "techdTitle",
 				"disabled": false,
-				"col": 4,
+				"col": 3,
 			},
 			{
 				"title": "내용",
@@ -4291,6 +4283,7 @@ class TechSet{
 			let my = storage.my;
 			document.getElementById("userNo").value = storage.user[my].userName;
 			document.getElementById("userNo").setAttribute("data-change", true);
+			CommonDatas.Temps.techSet.techRadioChange();
 			ckeditor.config.readOnly = false;
 			window.setTimeout(setEditor, 100);
 		}, 100);
@@ -4352,6 +4345,25 @@ class TechSet{
 		}
 
 		this.drawSalesList();
+	}
+
+	techRadioChange(){
+		let cntrctMth = document.querySelector('input[name="cntrctMth"]:checked');
+		let soppNo = document.getElementById("soppNo");
+		let contNo = document.getElementById("contNo");
+
+		if(cntrctMth.id === "cntrctMthNew"){
+			contNo.value = "";
+			contNo.dataset.value = "";
+			contNo.dataset.sopp = "";
+			soppNo.parentElement.parentElement.style.display = "flex";
+			contNo.parentElement.parentElement.style.display = "none";
+		}else{
+			soppNo.value = "";
+			soppNo.dataset.value = "";
+			soppNo.parentElement.parentElement.style.display = "none";
+			contNo.parentElement.parentElement.style.display = "flex";
+		}
 	}
 }
 
@@ -4447,6 +4459,7 @@ class Tech{
 					},
 				],
 				"type": "radio",
+				"elementId": ["cntrctMthNew", "cntrctMthOld"],
 				"col": 4,
 				"elementName": "cntrctMth",
 			},
@@ -4454,33 +4467,41 @@ class Tech{
 				"title": "영업기회(*)",
 				"elementId": "soppNo",
 				"complete": "sopp",
-				"keyup": "addAutoComplete(this);",
-				"onClick": "addAutoComplete(this);",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
 				"value": (CommonDatas.emptyValuesCheck(this.soppNo)) ? "" : CommonDatas.getSoppFind(this.soppNo, "name"),
 			},
 			{
-				"title": "계약",
+				"title": "계약(*)",
 				"elementId": "contNo",
 				"complete": "contract",
-				"keyup": "addAutoComplete(this);",
-				"onClick": "addAutoComplete(this);",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
 				"value": (CommonDatas.emptyValuesCheck(this.contNo)) ? "" : CommonDatas.getContFind(this.contNo, "name"),
 			},
 			{
-				"title": "매출처",
-				"elementId": "custNo",
+				"title": "엔드유저(*)",
+				"elementId": "endCustNo",
 				"complete": "customer",
-				"keyup": "addAutoComplete(this);",
-				"onClick": "addAutoComplete(this);",
-				"value": (CommonDatas.emptyValuesCheck(this.custNo)) ? "" : storage.customer[this.custNo].name,
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"value": (CommonDatas.emptyValuesCheck(this.endCustNo)) ? "" : storage.customer[this.endCustNo].name,
 			},
 			{
-				"title": "매출처 담당자",
+				"title": "엔드유저 담당자",
 				"complete": "cip",
-				"keyup": "addAutoComplete(this);",
-				"onClick": "addAutoComplete(this);",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
 				"elementId": "custmemberNo",
 				"value": (CommonDatas.emptyValuesCheck(this.custmemberNo)) ? "" : storage.cip[this.custmemberNo].name,
+			},
+			{
+				"title": "담당자(*)",
+				"complete": "user",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"elementId": "userNo",
+				"value": (CommonDatas.emptyValuesCheck(this.userNo)) ? "" : storage.user[this.userNo].userName,
 			},
 			{
 				"title": "모델",
@@ -4537,22 +4558,6 @@ class Tech{
 				"elementId": "type",
 			},
 			{
-				"title": "담당자(*)",
-				"complete": "user",
-				"keyup": "addAutoComplete(this);",
-				"onClick": "addAutoComplete(this);",
-				"elementId": "userNo",
-				"value": (CommonDatas.emptyValuesCheck(this.userNo)) ? "" : storage.user[this.userNo].userName,
-			},
-			{
-				"title": "엔드유저(*)",
-				"elementId": "endCustNo",
-				"complete": "customer",
-				"keyup": "addAutoComplete(this);",
-				"onClick": "addAutoComplete(this);",
-				"value": (CommonDatas.emptyValuesCheck(this.endCustNo)) ? "" : storage.customer[this.endCustNo].name,
-			},
-			{
 				"title": "지원일자 시작일(*)",
 				"elementId": "techdFrom",
 				"type": "datetime",
@@ -4568,13 +4573,13 @@ class Tech{
 				"title": "장소",
 				"elementId": "techdPlace",
 				"value": (CommonDatas.emptyValuesCheck(this.techdPlace)) ? "" : this.techdPlace,
-				"col": 2,
+				"col": 1,
 			},
 			{
 				"title": "기술지원명(*)",
 				"elementId": "techdTitle",
 				"value": (CommonDatas.emptyValuesCheck(this.techdTitle)) ? "" : this.techdTitle,
-				"col": 4,
+				"col": 3,
 			},
 			{
 				"title": "내용",
@@ -4609,31 +4614,70 @@ class Tech{
 		CommonDatas.detailTrueDatas(datas);
 	
 		setTimeout(() => {
+			document.querySelector("input[name=\"cntrctMth\"][value=\"" + this.cntrctMth + "\"]").setAttribute("checked", true);
+			CommonDatas.Temps.techSet.techRadioChange();
 			ckeditor.config.readOnly = true;
 			window.setTimeout(setEditor, 100);
 		}, 100);
 	}
 
 	insert(){
-		if(document.getElementById("salesFrdatetime").value === ""){
-			msg.set("활동 시작일을 선택해주세요.");
-			document.getElementById("salesFrdatetime").focus();
+		let cntrctMth = document.querySelector('input[name="cntrctMth"]:checked');
+		
+		if(cntrctMth.id === "cntrctMthNew" && document.getElementById("soppNo").value === ""){
+			msg.set("영업기회를 입력해주세요.");
+			document.getElementById("soppNo").focus();
 			return false;
-		} else if(document.getElementById("salesTodatetime").value === ""){
-			msg.set("활동 종료일을 선택해주세요.");
-			document.getElementById("salesTodatetime").focus();
+		} else if(cntrctMth.id === "cntrctMthNew" && document.getElementById("soppNo").value !== "" && !CommonDatas.validateAutoComplete(document.getElementById("soppNo").value, "sopp")){
+			msg.set("조회된 영업기회가 없습니다.\n다시 확인해주세요.");
+			document.getElementById("soppNo").focus();
 			return false;
-		} else if(document.getElementById("salesTitle").value === ""){
-			msg.set("제목을 입력해주세요.");
-			document.getElementById("salesTitle").focus();
+		} else if(cntrctMth.id === "cntrctMthOld" && document.getElementById("contNo").value === ""){
+			msg.set("계약을 입력해주세요.");
+			document.getElementById("contNo").focus();
+			return false;
+		} else if(cntrctMth.id === "cntrctMthOld" && document.getElementById("contNo").value !== "" && !CommonDatas.validateAutoComplete(document.getElementById("contNo").value, "contract")){
+			msg.set("조회된 계약이 없습니다.\n다시 확인해주세요.");
+			document.getElementById("contNo").focus();
+			return false;
+		} else if(document.getElementById("endCustNo").value === ""){
+			msg.set("엔드유저를 입력해주세요.");
+			document.getElementById("endCustNo").focus();
+			return false;
+		} else if(document.getElementById("endCustNo").value !== "" &&!CommonDatas.validateAutoComplete(document.getElementById("endCustNo").value, "customer")){
+			msg.set("조회된 엔드유저가 없습니다.\n다시 확인해주세요.");
+			document.getElementById("endCustNo").focus();
+			return false;
+		} else if(document.getElementById("techdFrom").value === ""){
+			msg.set("지원시작일을 선택해주세요.");
+			document.getElementById("techdFrom").focus();
+			return false;
+		} else if(document.getElementById("techdFrom").value === ""){
+			msg.set("지원시작일을 선택해주세요.");
+			document.getElementById("techdFrom").focus();
+			return false;
+		} else if(document.getElementById("techdTo").value === ""){
+			msg.set("지원종료일을 선택해주세요.");
+			document.getElementById("techdTo").focus();
+			return false;
+		} else if(document.getElementById("techdTitle").value === ""){
+			msg.set("기술지원명을 입력해주세요.");
+			document.getElementById("techdTitle").focus();
 			return false;
 		} else{
 			CommonDatas.formDataSet();
+
+			if(cntrctMth.id === "cntrctMthNew"){
+				storage.formList.soppNo = document.getElementById("soppNo").dataset.value;
+			}else{
+				storage.formList.soppNo = document.getElementById("contNo").dataset.sopp;
+			}
+
 			let data = storage.formList;
 			data = JSON.stringify(data);
 			data = cipher.encAes(data);
 
-			axios.post("/api/sales", data, {
+			axios.post("/api/tech", data, {
 				headers: { "Content-Type": "text/plain" }
 			}).then((response) => {
 				if (response.data.result === "ok") {
@@ -4713,6 +4757,7 @@ class Tech{
 	}
 }
 
+//Common 시작
 class Common {
 	constructor() {
 		this.Temps = {};
@@ -5372,15 +5417,26 @@ class Common {
 
 		for (let key in storageArr) {
 			let element = "";
+
 			if (document.getElementById(key)) {
 				element = document.getElementById(key);
 			} else if (document.getElementsByName(key).length > 0) {
-				if (document.getElementsByName(key).checked.length > 0) {
-					element = document.getElementsByName(key).checked;
-				} else {
-					element = document.getElementsByName(key);
+				element = document.getElementsByName(key);
+
+				if(element.length > 1){
+					for(let i = 0; i < element.length; i++){
+						let item = element[i];
+						
+						if(item.checked){
+							element = item;
+						}
+					}
+				}else{
+					element = document.getElementsByName(key)[0];
 				}
 			}
+
+			console.log(element);
 
 			if (element !== undefined && element !== "") {
 				if (element.tagName === "TEXTAREA") {
@@ -5572,7 +5628,7 @@ class Common {
 			if (thisEle.value === "") {
 				for (let key in storage[thisEle.dataset.complete]) {
 					let listDiv = document.createElement("div");
-					listDiv.setAttribute("onclick", "autoCompleteClick(this);");
+					listDiv.setAttribute("onclick", "CommonDatas.autoCompleteClick(this);");
 
 					if (thisEle.dataset.complete === "customer" || thisEle.dataset.complete === "cip" || thisEle.dataset.complete === "product") {
 						if (thisEle.dataset.complete === "product") {
@@ -5590,6 +5646,7 @@ class Common {
 						listDiv.innerHTML = storage[thisEle.dataset.complete][key].title;
 					} else if (thisEle.dataset.complete === "contract") {
 						listDiv.dataset.value = storage[thisEle.dataset.complete][key].contNo;
+						listDiv.dataset.sopp = storage[thisEle.dataset.complete][key].soppNo;
 						listDiv.innerHTML = storage[thisEle.dataset.complete][key].contTitle;
 					}
 
@@ -5600,7 +5657,7 @@ class Common {
 					if (thisEle.dataset.complete === "customer" || thisEle.dataset.complete === "cip" || thisEle.dataset.complete === "product") {
 						if (storage[thisEle.dataset.complete][key].name.indexOf(thisEle.value) > -1) {
 							let listDiv = document.createElement("div");
-							listDiv.setAttribute("onclick", "autoCompleteClick(this);");
+							listDiv.setAttribute("onclick", "CommonDatas.autoCompleteClick(this);");
 							if (thisEle.dataset.complete === "product") {
 								listDiv.dataset.value = storage[thisEle.dataset.complete][key].no;
 								listDiv.innerHTML = storage[thisEle.dataset.complete][key].name;
@@ -5613,7 +5670,7 @@ class Common {
 					} else if (thisEle.dataset.complete === "user") {
 						if (storage[thisEle.dataset.complete][key].userName.indexOf(thisEle.value) > -1) {
 							let listDiv = document.createElement("div");
-							listDiv.setAttribute("onclick", "autoCompleteClick(this);");
+							listDiv.setAttribute("onclick", "CommonDatas.autoCompleteClick(this);");
 							listDiv.dataset.value = storage[thisEle.dataset.complete][key].userNo;
 							listDiv.innerHTML = storage[thisEle.dataset.complete][key].userName;
 							autoComplete.append(listDiv);
@@ -5621,16 +5678,17 @@ class Common {
 					} else if (thisEle.dataset.complete === "sopp") {
 						if (storage[thisEle.dataset.complete][key].title.indexOf(thisEle.value) > -1) {
 							let listDiv = document.createElement("div");
-							listDiv.setAttribute("onclick", "autoCompleteClick(this);");
+							listDiv.setAttribute("onclick", "CommonDatas.autoCompleteClick(this);");
 							listDiv.dataset.value = storage[thisEle.dataset.complete][key].no;
 							listDiv.innerHTML = storage[thisEle.dataset.complete][key].title;
 							autoComplete.append(listDiv);
 						}
 					} else if (thisEle.dataset.complete === "contract") {
-						if (storage[thisEle.dataset.complete][key].title.indexOf(thisEle.value) > -1) {
+						if (storage[thisEle.dataset.complete][key].contTitle.indexOf(thisEle.value) > -1) {
 							let listDiv = document.createElement("div");
-							listDiv.setAttribute("onclick", "autoCompleteClick(this);");
+							listDiv.setAttribute("onclick", "CommonDatas.autoCompleteClick(this);");
 							listDiv.dataset.value = storage[thisEle.dataset.complete][key].contNo;
+							listDiv.dataset.sopp = storage[thisEle.dataset.complete][key].soppNo;
 							listDiv.innerHTML = storage[thisEle.dataset.complete][key].contTitle;
 							autoComplete.append(listDiv);
 						}
@@ -5638,6 +5696,29 @@ class Common {
 				}
 			}
 		}
+	}
+
+	//자동완성에서 아이템 클릭 함수
+	autoCompleteClick(e) {
+		let thisEle, input, autoComplete;
+		thisEle = e;
+		input = thisEle.parentElement.previousSibling;
+		autoComplete = document.getElementsByClassName("autoComplete")[0];
+		input.value = thisEle.innerText;
+		input.setAttribute("data-change", true);
+	
+		if (storage.formList !== undefined) {
+			if (storage.formList[input.getAttribute("id")] !== undefined) {
+				storage.formList[input.getAttribute("id")] = thisEle.dataset.value;
+			}
+		}
+
+		if(thisEle.dataset.sopp !== undefined){
+			input.setAttribute("data-sopp", thisEle.dataset.sopp);
+		}
+	
+		input.setAttribute("data-value", thisEle.dataset.value);
+		autoComplete.remove();
 	}
 
 	//from, to 예외처리에 관한 함수
@@ -5852,8 +5933,12 @@ class Common {
 				if (storage[type][key].userName === value) {
 					result = true;
 				}
-			} else if (type === "sopp" || type === "contract") {
+			} else if (type === "sopp") {
 				if (storage[type][key].title === value) {
+					result = true;
+				}
+			} else if(type === "contract"){
+				if (storage[type][key].contTitle === value) {
 					result = true;
 				}
 			}
@@ -6010,11 +6095,11 @@ class Common {
 			
 			if(type === "name"){
 				if(value == item.contNo){
-					result = item.title;
+					result = item.contTitle;
 					flag = true;
 				}
 			}else{
-				if(value.includes(item.title)){
+				if(value.includes(item.contTitle)){
 					result = item.no;
 					flag = true;
 				}

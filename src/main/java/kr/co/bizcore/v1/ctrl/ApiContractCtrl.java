@@ -58,7 +58,6 @@ public class ApiContractCtrl extends Ctrl {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
         } else
             list = contractService.getContractList(compNo);
-            logger.info(list.toString());
         if (list == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.noResult + "\"}";
         } else {
