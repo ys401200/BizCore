@@ -49,11 +49,11 @@ public class TechService extends Svc{
         return techMapper.techInsert(tech);
     }
 
-    public int  delete(int compNo, String salesNo) {
-        return salesMapper.salesDelete(compNo, salesNo);
+    public int  delete(int compNo, String techdNo) {
+        return techMapper.deleteTech(compNo, techdNo);
     }
 
-    public int updateSales(Sales sales) {
-        return salesMapper.updateSales(sales);
+    public int updateTech(Tech tech) {
+        return techMapper.updateTech(tech);
     }
 }

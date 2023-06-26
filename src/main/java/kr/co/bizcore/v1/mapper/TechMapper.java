@@ -27,9 +27,9 @@ public interface TechMapper {
     @Insert("INSERT INTO swc_techd (compNo, custNo, soppNo, contNo, cntrctMth, endCustNo, custmemberNo, techdTitle, techdDesc, techdItemmodel, techdItemversion, techdPlace, techdFrom, techdTo, techdType, techdSteps, userNo, regDatetime) VALUES (#{tech.compNo}, #{tech.endCustNo}, #{tech.soppNo}, #{tech.contNo}, #{tech.cntrctMth}, #{tech.endCustNo}, #{tech.custmemberNo}, #{tech.techdTitle}, #{tech.techdDesc}, #{tech.techdItemmodel}, #{tech.techdItemversion}, #{tech.techdPlace}, #{tech.techdFrom}, #{tech.techdTo}, #{tech.techdType}, #{tech.techdSteps}, #{tech.userNo}, now())")
     public int techInsert(@Param("tech") Tech tech);
 
-    @Update("UPDATE swc_sales SET attrib = 'XXXXX' WHERE salesNo = #{salesNo} AND compNo = #{compNo}")
-    public int techDelete(@Param("compNo") int compNo, @Param("salesNo") String salesNo);
+    @Update("UPDATE swc_techd SET attrib = 'XXXXX' WHERE techdNo = #{techdNo} AND compNo = #{compNo}")
+    public int deleteTech(@Param("compNo") int compNo, @Param("techdNo") String techdNo);
 
-    @Update("UPDATE swc_sales SET soppNo = #{sales.soppNo}, userNo = #{sales.userNo}, custNo = #{sales.custNo}, salesFrdatetime = #{sales.salesFrdatetime}, salesTodatetime = #{sales.salesTodatetime}, salesPlace = #{sales.salesPlace}, salesType = #{sales.salesType}, salesDesc = #{sales.salesDesc}, salesTitle = #{sales.salesTitle}, ptncNo = #{sales.ptncNo}, modDatetime = now() WHERE salesNo = #{sales.salesNo} AND compNo = #{sales.compNo}")
-    public int techUpdate(@Param("tech") Tech tech);
+    @Update("UPDATE swc_techd SET custNo = #{tech.endCustNo}, soppNo = #{tech.soppNo}, contNo = #{tech.contNo}, cntrctMth = #{tech.cntrctMth}, endCustNo = #{tech.endCustNo}, custmemberNo = #{tech.custmemberNo}, techdTitle = #{tech.techdTitle}, techdDesc = #{tech.techdDesc}, techdItemmodel = #{tech.techdItemmodel}, techdItemversion = #{tech.techdItemversion}, techdPlace = #{tech.techdPlace}, techdFrom = #{tech.techdFrom}, techdTo = #{tech.techdTo}, techdType = #{tech.techdType}, techdSteps = #{tech.techdSteps}, userNo = #{tech.userNo}, modDatetime = now() WHERE techdNo = #{tech.techdNo} AND compNo = #{tech.compNo}")
+    public int updateTech(@Param("tech") Tech tech);
 }

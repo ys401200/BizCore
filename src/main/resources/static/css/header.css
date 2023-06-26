@@ -1198,7 +1198,7 @@ input[name="tabItem"] {
 	margin-top: 5px;
 }
 
-.searchContainer .searchBtns>button {
+.searchContainer > .searchBtns>button {
 	display: flex;
 	align-items: center;
 	justify-content: right;
@@ -1211,13 +1211,21 @@ input[name="tabItem"] {
 	font-size: 0.6rem;
 }
 
-.searchContainer .searchBtns>button:hover {
+.searchContainer > .searchBtns>button:hover {
 	box-shadow: 0 1px 2px #bdbfc9;
 	background-color: #0e2b7e;
 }
 
+.searchContainer > .searchBtns > #multiSearchResetBtn {
+	display: none;
+}
+
+.searchContainer > .searchBtns > #multiSearchBtn {
+	display: none;
+}
+
 .searchContainer .searchMultiContent {
-	display: flex;
+	display: none;
 	padding: 10px;
 	clear: both;
 }

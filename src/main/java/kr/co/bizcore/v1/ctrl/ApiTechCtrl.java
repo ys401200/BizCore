@@ -167,7 +167,7 @@ public class ApiTechCtrl extends Ctrl {
 
         // 글 번호 확인
         if (no == null) { // 글 번호 확인 안됨
-            result = "{\"result\":\" failure\",\"msg\":\"notiNo is not exist\"}";
+            result = "{\"result\":\" failure\",\"msg\":\"techdNo is not exist\"}";
         } else { // 글 번호 확인 됨
             session = req.getSession();
 
@@ -182,7 +182,7 @@ public class ApiTechCtrl extends Ctrl {
             } else if (userNo == null) {
                 result = "{\"result\":\"failure\",\"msg\":\"Session expired and/or Not logged in.\"}";
             } else { // 회사코드 확인 됨
-                num = salesService.delete(compNo, no); // 삭제(update) 카운트를 실제 삭제 여부를 확인함
+                num = techService.delete(compNo, no); // 삭제(update) 카운트를 실제 삭제 여부를 확인함
                 if (num > 0) { // 처리됨
                     result = "{\"result\":\"ok\"}";
                 } else { // 처리 안됨
@@ -211,12 +211,12 @@ public class ApiTechCtrl extends Ctrl {
 
         aesKey = (String) session.getAttribute("aesKey");
         aesIv = (String) session.getAttribute("aesIv");
-        data = salesService.decAes(requestBody, aesKey, aesIv);
-        Sales sales = mapper.readValue(data, Sales.class);
-        sales.setCompNo(compNo);
-        logger.info(sales.toString());
+        data = techService.decAes(requestBody, aesKey, aesIv);
+        Tech tech = mapper.readValue(data, Tech.class);
+        tech.setCompNo(compNo);
+        logger.info(tech.toString());
 
-        if (salesService.updateSales(sales) > 0) {
+        if (techService.updateTech(tech) > 0) {
             result = "{\"result\":\"ok\"}";
         }
 

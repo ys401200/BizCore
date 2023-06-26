@@ -10,37 +10,34 @@
         <div class="searchContainer">
 			<jsp:include page="../listSearch.jsp" />
 			<div class="searchMultiContent">
+				<div class="searchTitle">
+					<span>요청명</span>
+					<input type="text" data-key="techdTitle" id="searchTitle">
+				</div>
 				<div class="searchWriter">
 					<span>담당자</span>
-					<input type="text" data-complete="user" autocomplete="off" id="searchWriter" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">
+					<input type="text" data-complete="user" data-key="userNo" autocomplete="off" id="searchUser" onclick="CommonDatas.addAutoComplete(this);" onkeyup="CommonDatas.addAutoComplete(this);">
 				</div>
 				<div class="searchCustomer">
 					<span>거래처</span>
-					<input type="text" data-complete="customer" autocomplete="off" id="searchCustomer" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">
+					<input type="text" data-complete="customer" data-key="endCustNo" autocomplete="off" id="searchCust" onclick="CommonDatas.addAutoComplete(this);" onkeyup="CommonDatas.addAutoComplete(this);">
 				</div>
-				<div class="searchType">
-					<span>활동형태</span>
-					<select id="searchType">
+				<div class="searchCnt">
+					<span>등록구분</span>
+					<select id="searchCnt" data-key="cntrctMth">
 						<option value="">선택</option>
-						<option value="회사방문">회사방문</option>
-						<option value="기술지원">기술지원</option>
-						<option value="전화상담">전화상담</option>
-						<option value="현장방문">현장방문</option>
-						<option value="원격지원">원격지원</option>
-						<option value="제품설명">제품설명</option>
-						<option value="시스템데모">시스템데모</option>
-						<option value="제품견적">제품견적</option>
-						<option value="계약전 의사결정지원">계약전 의사결정지원</option>
-						<option value="계약">계약</option>
-						<option value="사후처리">사후처리</option>
-						<option value="협력사요청">협력사요청</option>
-						<option value="협력사문의">협력사문의</option>
-						<option value="교육">교육</option>
-						<option value="전화상담">전화상담</option>
-						<option value="제조사업무협의">제조사업무협의</option>
-						<option value="외부출장">외부출장</option>
-						<option value="제안설명회">제안설명회</option>
-						<option value="기타">기타</option>
+						<option value="10247">신규영업지원</option>
+						<option value="10248">유지보수</option>
+					</select>
+				</div>
+				<div class="searchSteps">
+					<span>진행단계</span>
+					<select id="searchSteps" data-key="techdSteps">
+						<option value="">선택</option>
+						<option value="10213">접수단계</option>
+						<option value="10214">출동단계</option>
+						<option value="10215">미계약에 따른 보류</option>
+						<option value="10253">처리완료</option>
 					</select>
 				</div>
 				<div class="searchDate">

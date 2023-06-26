@@ -4289,28 +4289,30 @@ class TechSet{
 		}, 100);
 	}
 
-	//영업활동 검색 버튼 클릭 함수
+	//기술지원 검색 버튼 클릭 함수
 	searchSubmit() {
-		let dataArray = [], resultArray, eachIndex = 0, user, sopp, cust, salesType, searchUser, searchSopp, searchCust, searchSalesType, searchDateFrom, keyIndex = 0;
+		let dataArray = [], resultArray, eachIndex = 0, title, user, cust, cnt, steps, searchSteps, searchUser, searchTitle, searchCust, searchCnt, searchDateFrom, keyIndex = 0;
+		searchTitle = document.getElementById("searchTitle");
 		searchUser = document.getElementById("searchUser");
-		searchSopp = document.getElementById("searchSopp");
 		searchCust = document.getElementById("searchCust");
-		searchSalesType = document.getElementById("searchSalesType");
+		searchCnt = document.getElementById("searchCnt");
+		searchSteps = document.getElementById("searchSteps");
 		searchDateFrom = (document.getElementById("searchDateFrom").value === "") ? "" : document.getElementById("searchDateFrom").value.replaceAll("-", "") + "#regDatetime" + document.getElementById("searchDateTo").value.replaceAll("-", "");
 		
-		for(let key in storage.salesList[0]){
-			if(key === searchUser.dataset.key) user = "#" + keyIndex + "/" + searchUser.value;
-			else if(key === searchSopp.dataset.key) sopp = "#" + keyIndex + "/" + searchSopp.value;
+		for(let key in storage.techList[0]){
+			if(key === searchTitle.dataset.key) title = "#" + keyIndex + "/" + searchTitle.value;
+			else if(key === searchUser.dataset.key) user = "#" + keyIndex + "/" + searchUser.value;
 			else if(key === searchCust.dataset.key) cust = "#" + keyIndex + "/" + searchCust.value;
-			else if(key === searchSalesType.dataset.key) salesType = "#" + keyIndex + "/" + searchSalesType.value;
+			else if(key === searchCnt.dataset.key) cnt = "#" + keyIndex + "/" + searchCnt.value;
+			else if(key === searchSteps.dataset.key) steps = "#" + keyIndex + "/" + searchSteps.value;
 			keyIndex++;
 		}
 
-		let searchValues = [user, sopp, cust, salesType, searchDateFrom];
+		let searchValues = [title, user, cust, cnt, steps, searchDateFrom];
 
 		for (let i = 0; i < searchValues.length; i++) {
 			if(searchValues[i] !== ""){
-				let tempArray = CommonDatas.searchDataFilter(storage.salesList, searchValues[i], "multi", ["#regDatetime"]);
+				let tempArray = CommonDatas.searchDataFilter(storage.techList, searchValues[i], "multi", ["#regDatetime"]);
 	
 				for (let t = 0; t < tempArray.length; t++) {
 					dataArray.push(tempArray[t]);
@@ -4320,23 +4322,23 @@ class TechSet{
 			}
 		}
 		
-		resultArray = CommonDatas.searchMultiFilter(eachIndex, dataArray, storage.salesList);
+		resultArray = CommonDatas.searchMultiFilter(eachIndex, dataArray, storage.techList);
 
 		storage.searchDatas = resultArray;
 
 		if (storage.searchDatas.length == 0) {
 			msg.set("찾는 데이터가 없습니다.");
-			storage.searchDatas = storage.salesList;
+			storage.searchDatas = storage.techList;
 		}
 
-		this.drawSalesList();
+		this.drawTechList();
 	}
 
-	//공지사항 단일 검색 keyup 이벤트
+	//기술지원 단일 검색 keyup 이벤트
 	searchInputKeyup() {
 		let searchAllInput, tempArray;
 		searchAllInput = document.getElementById("searchAllInput").value;
-		tempArray = CommonDatas.searchDataFilter(storage.salesList, searchAllInput, "input");
+		tempArray = CommonDatas.searchDataFilter(storage.techList, searchAllInput, "input");
 
 		if (tempArray.length > 0) {
 			storage.searchDatas = tempArray;
@@ -4344,7 +4346,7 @@ class TechSet{
 			storage.searchDatas = "";
 		}
 
-		this.drawSalesList();
+		this.drawTechList();
 	}
 
 	techRadioChange(){
@@ -4422,6 +4424,7 @@ class Tech{
 		}
 	}
 
+	//기술지원 상세
 	detail() {
 		let html = "";
 		let setDate, datas, dataArray, notIdArray, techdFrom, techdTo;
@@ -4460,6 +4463,7 @@ class Tech{
 				],
 				"type": "radio",
 				"elementId": ["cntrctMthNew", "cntrctMthOld"],
+				"onChange": "CommonDatas.Temps.techSet.techRadioChange();",
 				"col": 4,
 				"elementName": "cntrctMth",
 			},
@@ -4536,7 +4540,7 @@ class Tech{
 					}
 				],
 				"type": "select",
-				"elementId": "techdType",
+				"elementId": "techdSteps",
 			},
 			{
 				"title": "지원형태",
@@ -4555,7 +4559,7 @@ class Tech{
 					}
 				],
 				"type": "select",
-				"elementId": "type",
+				"elementId": "techdType",
 			},
 			{
 				"title": "지원일자 시작일(*)",
@@ -4616,11 +4620,14 @@ class Tech{
 		setTimeout(() => {
 			document.querySelector("input[name=\"cntrctMth\"][value=\"" + this.cntrctMth + "\"]").setAttribute("checked", true);
 			CommonDatas.Temps.techSet.techRadioChange();
+			document.getElementById("techdSteps").value = this.techdSteps;
+			document.getElementById("techdType").value = this.techdType;
 			ckeditor.config.readOnly = true;
 			window.setTimeout(setEditor, 100);
 		}, 100);
 	}
 
+	//기술지원 등록
 	insert(){
 		let cntrctMth = document.querySelector('input[name="cntrctMth"]:checked');
 		
@@ -4695,27 +4702,64 @@ class Tech{
 		}
 	}
 
-	//영업활동 수정
+	//기술지원 수정
 	update() {
-		if(document.getElementById("salesFrdatetime").value === ""){
-			msg.set("활동 시작일을 선택해주세요.");
-			document.getElementById("salesFrdatetime").focus();
+		let cntrctMth = document.querySelector('input[name="cntrctMth"]:checked');
+		
+		if(cntrctMth.id === "cntrctMthNew" && document.getElementById("soppNo").value === ""){
+			msg.set("영업기회를 입력해주세요.");
+			document.getElementById("soppNo").focus();
 			return false;
-		} else if(document.getElementById("salesTodatetime").value === ""){
-			msg.set("활동 종료일을 선택해주세요.");
-			document.getElementById("salesTodatetime").focus();
+		} else if(cntrctMth.id === "cntrctMthNew" && document.getElementById("soppNo").value !== "" && !CommonDatas.validateAutoComplete(document.getElementById("soppNo").value, "sopp")){
+			msg.set("조회된 영업기회가 없습니다.\n다시 확인해주세요.");
+			document.getElementById("soppNo").focus();
 			return false;
-		} else if(document.getElementById("salesTitle").value === ""){
-			msg.set("제목을 입력해주세요.");
-			document.getElementById("salesTitle").focus();
+		} else if(cntrctMth.id === "cntrctMthOld" && document.getElementById("contNo").value === ""){
+			msg.set("계약을 입력해주세요.");
+			document.getElementById("contNo").focus();
+			return false;
+		} else if(cntrctMth.id === "cntrctMthOld" && document.getElementById("contNo").value !== "" && !CommonDatas.validateAutoComplete(document.getElementById("contNo").value, "contract")){
+			msg.set("조회된 계약이 없습니다.\n다시 확인해주세요.");
+			document.getElementById("contNo").focus();
+			return false;
+		} else if(document.getElementById("endCustNo").value === ""){
+			msg.set("엔드유저를 입력해주세요.");
+			document.getElementById("endCustNo").focus();
+			return false;
+		} else if(document.getElementById("endCustNo").value !== "" &&!CommonDatas.validateAutoComplete(document.getElementById("endCustNo").value, "customer")){
+			msg.set("조회된 엔드유저가 없습니다.\n다시 확인해주세요.");
+			document.getElementById("endCustNo").focus();
+			return false;
+		} else if(document.getElementById("techdFrom").value === ""){
+			msg.set("지원시작일을 선택해주세요.");
+			document.getElementById("techdFrom").focus();
+			return false;
+		} else if(document.getElementById("techdFrom").value === ""){
+			msg.set("지원시작일을 선택해주세요.");
+			document.getElementById("techdFrom").focus();
+			return false;
+		} else if(document.getElementById("techdTo").value === ""){
+			msg.set("지원종료일을 선택해주세요.");
+			document.getElementById("techdTo").focus();
+			return false;
+		} else if(document.getElementById("techdTitle").value === ""){
+			msg.set("기술지원명을 입력해주세요.");
+			document.getElementById("techdTitle").focus();
 			return false;
 		} else {
 			CommonDatas.formDataSet();
+
+			if(cntrctMth.id === "cntrctMthNew"){
+				storage.formList.soppNo = document.getElementById("soppNo").dataset.value;
+			}else{
+				storage.formList.soppNo = document.getElementById("contNo").dataset.sopp;
+			}
+
 			let data = storage.formList;
 			data = JSON.stringify(data);
 			data = cipher.encAes(data);
 
-			axios.put("/api/sales/" + data.salesNo, data, {
+			axios.put("/api/tech/" + this.techdNo, data, {
 				headers: { "Content-Type": "text/plain" }
 			}).then((response) => {
 				if (response.data.result === "ok") {
@@ -4736,7 +4780,7 @@ class Tech{
 	//영업활동 삭제
 	delete() {
 		if (confirm("정말로 삭제하시겠습니까??")) {
-			axios.delete("/api/sales/" + this.salesNo, {
+			axios.delete("/api/tech/" + this.techdNo, {
 				headers: { "Content-Type": "text/plain" }
 			}).then((response) => {
 				if (response.data.result === "ok") {
@@ -5479,7 +5523,7 @@ class Common {
 		multiSearchBtn = document.getElementById("multiSearchBtn");
 		searchMultiContent = document.getElementsByClassName("searchMultiContent")[0];
 
-		if (thisBtn.dataset.set) {
+		if (thisBtn.dataset.set === "true") {
 			thisBtn.innerHTML = "<i class=\"fa-solid fa-plus fa-xl\"></i>";
 			thisBtn.dataset.set = false;
 			multiSearchBtn.style.display = "none";
