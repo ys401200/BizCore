@@ -24,6 +24,9 @@
 			</div>
 			<div class="panel">
 				<div>
+					<a href="/business/calendar">달력</a>
+				</div>
+				<div>
 					<a href="/business/schedule">일정조회</a>
 				</div>
 				<div>

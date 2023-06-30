@@ -34,6 +34,7 @@
 <script src="/js/<%= getPathName %>/<%= getPathName %>.js"></script>
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script src="https://kit.fontawesome.com/a37df9d8b5.js" crossorigin="anonymous"></script>
+<script src="/js/fullcalendar/index.global.min.js"></script>
 <script src="/js/common_jh.js"></script>
 <script src="/js/common_sh.js"></script>
 <script src="/js/common_bi.js"></script>

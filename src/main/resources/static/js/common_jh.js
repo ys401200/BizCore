@@ -1181,1258 +1181,1377 @@ class Sales{
 
 //일정관리 시작
 //일정관리 셋팅 함수
-class Schedule2Set {
-	constructor() {
-		CommonDatas.Temps.schedule2Set = this;
-		storage.setFirstButtonFlag = false;
+class ScheduleSet{
+	constructor(){
+		CommonDatas.Temps.scheduleSet = this;
 	}
-	//스케줄 리스트를 불러와서 셋팅해주는 함수
-	getScheduleList() {
-		let date = new Date().getTime();
-		let scheduleRange = document.getElementsByClassName("scheduleRange")[0].value;
-		axios.get("/api/schedule2/" + scheduleRange + "/" + date).then((response) => {
-			let result = response.data.data;
-			result = cipher.decAes(result);
-			result = JSON.parse(result);
-			storage.scheduleList = result;
 
-			if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined) {
-				window.setTimeout(this.drawCalendar(document.getElementsByClassName("calendar_container")[0]), 600);
-				window.setTimeout(this.drawScheduleList, 600);
-				window.setTimeout(this.addSearchList, 600);
-			} else {
-				window.setTimeout(this.drawCalendar(document.getElementsByClassName("calendar_container")[0]), 200);
-				window.setTimeout(this.drawScheduleList, 200);
-				window.setTimeout(this.addSearchList, 200);
+	//달력 리스트
+	calendarList() {
+		var calendarEl = document.getElementById('calendar');
+		var calendar = new FullCalendar.Calendar(calendarEl, {
+		headerToolbar: {
+			left: 'prev,next today',
+			center: 'title',
+			right: 'dayGridMonth,timeGridWeek,timeGridDay'
+		},
+		initialDate: '2023-01-12',
+		navLinks: true, // can click day/week names to navigate views
+		selectable: true,
+		selectMirror: true,
+		select: function(arg) {
+			var title = prompt('Event Title:');
+			if (title) {
+			calendar.addEvent({
+				title: title,
+				start: arg.start,
+				end: arg.end,
+				allDay: arg.allDay
+			})
 			}
+			calendar.unselect()
+		},
+		eventClick: function(arg) {
+			if (confirm('Are you sure you want to delete this event?')) {
+			arg.event.remove()
+			}
+		},
+		editable: true,
+		dayMaxEvents: true, // allow "more" link when too many events
+		events: [
+			{
+			title: 'All Day Event',
+			start: '2023-01-01'
+			},
+			{
+			title: 'Long Event',
+			start: '2023-01-07',
+			end: '2023-01-10'
+			},
+			{
+			groupId: 999,
+			title: 'Repeating Event',
+			start: '2023-01-09T16:00:00'
+			},
+			{
+			groupId: 999,
+			title: 'Repeating Event',
+			start: '2023-01-16T16:00:00'
+			},
+			{
+			title: 'Conference',
+			start: '2023-01-11',
+			end: '2023-01-13'
+			},
+			{
+			title: 'Meeting',
+			start: '2023-01-12T10:30:00',
+			end: '2023-01-12T12:30:00'
+			},
+			{
+			title: 'Lunch',
+			start: '2023-01-12T12:00:00'
+			},
+			{
+			title: 'Meeting',
+			start: '2023-01-12T14:30:00'
+			},
+			{
+			title: 'Happy Hour',
+			start: '2023-01-12T17:30:00'
+			},
+			{
+			title: 'Dinner',
+			start: '2023-01-12T20:00:00'
+			},
+			{
+			title: 'Birthday Party',
+			start: '2023-01-13T07:00:00'
+			},
+			{
+			title: 'Click for Google',
+			url: 'http://google.com/',
+			start: '2023-01-28'
+			}
+		]
 		});
-	}
 
-	//달력을 출력해주는 함수
-	drawCalendar(container) {
-		let calArr, slot, html, startDate, endDate, tempDate, tempArr, current, x1, x2, x3, t, now, deptArr = [], writerArr = [], writerHtml = "";
-		calArr = [];
-		tempDate = [];
-		if (storage.currentYear === undefined) storage.currentYear = (new Date()).getFullYear();
-		if (storage.currentMonth === undefined) storage.currentMonth = (new Date()).getMonth() + 1;
-
-		document.getElementsByClassName("calendarYear")[0].innerText = storage.currentYear;
-		document.getElementsByClassName("calendarMonth")[0].innerText = storage.currentMonth;
-
-		startDate = new Date(storage.currentYear, storage.currentMonth - 1, 1);
-		endDate = new Date(new Date(storage.currentYear, storage.currentMonth, 1).getTime() - 86400000);
-
-		// 시작하는 날짜 잡기
-		startDate = new Date(startDate.getTime() - startDate.getDay() * 86400000);
-
-		// 말일 찾기
-		endDate = new Date(endDate.getTime() + (6 - endDate.getDay()) * 86400000);
-
-		// 만들어진 달력 날짜에 해당하는 일정이 있는 경우 담아두기
-		for (x1 = 0; x1 <= (endDate.getTime() - startDate.getTime()) / 86400000; x1++) {
-			current = (startDate.getTime() + (86400000 * x1));
-			calArr[x1] = {};
-			calArr[x1].date = new Date(current);
-			calArr[x1].schedule = [];
-			for (x2 = 0; x2 < storage.scheduleList.length; x2++) {
-				if (current + 86400000 > storage.scheduleList[x2].from && current <= storage.scheduleList[x2].to) calArr[x1].schedule.push(x2);
-			}
-		}
-
-		// 최대 일정 수량 잡기
-		slot = 0;
-		for (x1 = 0; x1 < calArr.length; x1++) {
-			if (calArr[x1].schedule.length > slot) slot = calArr[x1].schedule.length;
-		}
-
-		// slot 최소값 설정하고 날짜에 slot 미리 설정학
-		slot = slot < 5 ? 5 : slot;
-		for (x1 = 0; x1 < calArr.length; x1++) calArr[x1].slot = new Array(slot);
-
-		// 슬롯에 일정 추가하기
-		for (x1 = 0; x1 < calArr.length; x1++) {
-			for (x2 = 0; x2 < calArr[x1].schedule.length; x2++) {
-				for (x3 = 0; x3 < slot; x3++) {
-					if (calArr[x1].slot[x3] === undefined) {
-						calArr[x1].slot[x3] = calArr[x1].schedule[x2];
-						break;
-					}
-				}
-			}
-		}
-
-		// 연속된 일정에 대한 슬롯 번호 맞추기
-		for (x1 = 1; x1 < calArr.length; x1++) {
-			tempArr = calArr[x1].slot; // 임시 변수에 당일 슬롯 데이터를 옮기고 당일 슬롯을 초기화 함
-			calArr[x1].slot = new Array(slot);
-			for (x2 = 0; x2 < tempArr.length; x2++) { // 당일 데이터를 순회하며 전일 데이터와 맞추고 임시변수에서 지움
-				if (tempArr[x2] === undefined) break;
-				t = calArr[x1 - 1].slot.indexOf(tempArr[x2]);
-				if (t > 0) {
-					calArr[x1].slot[t] = tempArr[x2];
-					tempArr[x2] = undefined;
-				}
-			}
-			for (x2 = 0; x2 < tempArr.length; x2++) { // 전일 데이터와 맞추지않은 데이터들에 대해 비어있는 상위 슬롯으로 데이터를 넣어줌
-				if (tempArr[x2] === undefined) continue;
-				for (x3 = 0; x3 < calArr[x1].slot.length; x3++) {
-					if (calArr[x1].slot[x3] === undefined) {
-						calArr[x1].slot[x3] = tempArr[x2];
-						break;
-					}
-				}
-			}
-		}
-
-		html = "<div class=\"calendar_header\">일</div>";
-		html += "<div class=\"calendar_header\">월</div>";
-		html += "<div class=\"calendar_header\">화</div>";
-		html += "<div class=\"calendar_header\">수</div>";
-		html += "<div class=\"calendar_header\">목</div>";
-		html += "<div class=\"calendar_header\">금</div>";
-		html += "<div class=\"calendar_header\">토</div>";
-
-		for (x1 = 0; x1 < calArr.length; x1++) {
-			tempDate = calArr[x1].date; // 해당 셀의 날짜 객체를 가져 옮
-			t = tempDate.getFullYear();
-			t += (tempDate.getMonth() < 9 ? "0" + (tempDate.getMonth() + 1) : tempDate.getMonth() + 1);
-			t += (tempDate.getDate() < 10 ? "0" + tempDate.getDate() : tempDate.getDate()); // 셀에 저장해 둘 날짜 문자열 생성
-			let year, month, day;
-			year = tempDate.getFullYear();
-			month = tempDate.getMonth() + 1;
-			day = tempDate.getDate();
-
-			if (month < 10) {
-				month = "0" + month;
-			}
-
-			if (day < 10) {
-				day = "0" + day;
-			}
-
-			now = year + "-" + month + "-" + day;
-			html += "<div class=\"calendar_cell" + (storage.currentMonth === tempDate.getMonth() + 1 ? "" : " calendar_cell_blur") + "\" data-date=\"" + now + "\">"; // start row / 해당월이 아닌 날짜의 경우 calendar_cell_blue 클래스명을 셀에 추가 지정함
-			html += "<div class=\"calendar_date\">" + (calArr[x1].date.getDate()) + "</div>"; // 셀 안 최상단에 날짜 아이템을 추가함
-			for (x2 = 0; x2 < slot; x2++) {
-				x3 = [];
-				if (x1 > 0) { // 전일 데이터와 비교, 일정의 연속성에대해 확인함
-					x3[0] = calArr[x1 - 1].slot[x2] === calArr[x1].slot[x2];
-				}
-				if (x1 < calArr.length - 1) { // 익일 데이터와 비교, 일정의 연속성에대해 확인함
-					x3[1] = calArr[x1 + 1].slot[x2] === calArr[x1].slot[x2];
-				}
-
-				t = calArr[x1].slot[x2] === undefined ? undefined : storage.scheduleList[calArr[x1].slot[x2]]; //임시변수에 스케줄 아이템을 담아둠
-
-				if (storage.scheduleList[calArr[x1].slot[x2]] !== undefined) {
-					if (storage.scheduleList[calArr[x1].slot[x2]].writer !== undefined) {
-						writerArr.push(storage.user[storage.scheduleList[calArr[x1].slot[x2]].writer].userName + ":" + storage.scheduleList[calArr[x1].slot[x2]].writer + ":" + storage.user[storage.scheduleList[calArr[x1].slot[x2]].writer].deptId[0]);
-						if (storage.user[storage.scheduleList[calArr[x1].slot[x2]].writer].deptId[0] !== "VTEKSEOUL") {
-							deptArr.push(storage.dept.dept[storage.user[storage.scheduleList[calArr[x1].slot[x2]].writer].deptId[0]].deptName + ":" + storage.user[storage.scheduleList[calArr[x1].slot[x2]].writer].deptId[0]);
-						}
-					}
-				}
-
-				if (x2 > 2) {
-					html += "<div class=\"calendar_item" + (t === undefined ? " calendar_item_empty" : "") + (x3[0] ? " calendar_item_left" : "") + (x3[1] ? " calendar_item_right" : "") + "\"" + (t === undefined ? "" : "") + " data-id=" + (t === undefined ? '' : t.no) + " data-job=" + (t === undefined ? '' : t.job) + " onclick='" + (t === undefined ? '' : 'CommonDatas.Temps.schedule2Set.eventStop();CommonDatas.Temps.schedule2Set.calendarDetailView(this);') + "' data-sort=" + (t === undefined ? 0 : 1) + " data-dept=" + (t === undefined ? 'empty' : storage.user[t.writer].deptId[0]) + " style='display:none;'>" + (t === undefined ? "" : storage.user[t.writer].userName + " : " + t.title) + "</div>";
-				} else {
-					html += "<div class=\"calendar_item" + (t === undefined ? " calendar_item_empty" : "") + (x3[0] ? " calendar_item_left" : "") + (x3[1] ? " calendar_item_right" : "") + "\"" + (t === undefined ? "" : "") + " data-id=" + (t === undefined ? '' : t.no) + " data-job=" + (t === undefined ? '' : t.job) + " onclick='" + (t === undefined ? '' : 'CommonDatas.Temps.schedule2Set.eventStop();CommonDatas.Temps.schedule2Set.calendarDetailView(this);') + "' data-sort=" + (t === undefined ? 0 : 1) + " data-dept=" + (t === undefined ? 'empty' : storage.user[t.writer].deptId[0]) + " style='display:block;z-index:99;'>" + (t === undefined ? "" : storage.user[t.writer].userName + " : " + t.title) + "</div>";
-				}
-			}
-
-			html += "</div>";
-		}
-
-		writerArr = [...new Set(writerArr)];
-		container.innerHTML = html;
-
-		let infoFlexContainer = document.getElementsByClassName("infoFlexContainer")[0];
-		let infoContent = infoFlexContainer.children[1];
-		if (writerArr.length <= 24) {
-			for (let i = 0; i < writerArr.length; i++) {
-				let item = writerArr[i];
-				let name = item.split(":")[0];
-				let no = item.split(":")[1];
-				let dept = item.split(":")[2];
-				writerHtml += "<div data-no=\"" + no + "\" data-dept=\"" + dept + "\">" + name + "</div>";
-			}
-		} else {
-			deptArr = [...new Set(deptArr)];
-			for (let i = 0; i < deptArr.length; i++) {
-				let item = deptArr[i];
-				let deptName = item.split(":")[0];
-				let dept = item.split(":")[1];
-				writerHtml += "<div data-dept=\"" + dept + "\">" + deptName + "</div>";
-			}
-		}
-		infoContent.innerHTML = writerHtml;
-
-		setTimeout(() => {
-			let calendar_cell = document.getElementsByClassName("calendar_cell");
-			let nowDate = new Date().toISOString().substring(0, 10);
-
-			for (let i = 0; i < calendar_cell.length; i++) {
-				if ($(calendar_cell[i]).children().not(".calendar_item_empty").length > 4) {
-					$(calendar_cell[i]).append("<div class=\"calendar_span_empty\"><span data-flag=\"false\" onclick=\"CommonDatas.Temps.schedule2Set.eventStop();CommonDatas.Temps.schedule2Set.calendarMore(this);\">more(" + parseInt($(calendar_cell[i]).children().not(".calendar_item_empty").length - 1) + ") →</span></div>");
-				}
-
-				if ((i + 1) % 7 == 0) {
-					calendar_cell[i].style.borderRight = "1px solid #BDBDBD";
-					if (!calendar_cell[i].classList.contains("calendar_cell_blur")) {
-						calendar_cell[i].children[0].style.color = "#0100FF";
-					}
-				}
-
-				if (calendar_cell.length < 36) {
-					if ((i + 1) > 28 && (i + 1) < 36) {
-						if ((i + 1) == 29) {
-							calendar_cell[i].style.borderBottomLeftRadius = "10px";
-						} else if ((i + 1) == 35) {
-							calendar_cell[i].style.borderBottomRightRadius = "10px";
-						}
-						calendar_cell[i].style.borderBottom = "1px solid #BDBDBD";
-					}
-				} else {
-					if ((i + 1) > 35 && (i + 1) < 43) {
-						if ((i + 1) == 29) {
-							calendar_cell[i].style.borderBottomLeftRadius = "10px";
-						} else if ((i + 1) == 35) {
-							calendar_cell[i].style.borderBottomRightRadius = "10px";
-						}
-						calendar_cell[i].style.borderBottom = "1px solid #BDBDBD";
-					}
-				}
-
-				if ((i + 1) == 1 || (i + 1) == 8 || (i + 1) == 15 || (i + 1) == 22 || (i + 1) == 29) {
-					if (!calendar_cell[i].classList.contains("calendar_cell_blur")) {
-						calendar_cell[i].children[0].style.color = "#FF0000";
-					}
-				}
-
-				if (calendar_cell[i].dataset.date === nowDate) {
-					calendar_cell[i].style.backgroundColor = "#E1E1E1";
-				}
-			}
-
-		}, 100);
-
-		let path = location.pathname.split("/");
-
-		if (path[3] !== undefined) {
-			drawScheduleList();
-			document.getElementsByClassName("calendarList")[0].style.display = "none";
-			let content = document.querySelector(".gridContent[data-id=\"" + path[3] + "\"]");
-			scheduleDetailView(content);
-		}
-
-		return true;
-	}
-
-	//일정 달력 flex 리스트 출력 함수
-	drawScheduleList() {
-		let container, dataJob = [], result, jsonData, header = [], data = [], ids = [], str, fnc, pageContainer, containerTitle, hideArr, showArr;
-
-		if (storage.scheduleList === undefined) {
-			msg.set("등록된 일정이 없습니다");
-		}
-		else {
-			if (storage.searchDatas === undefined) {
-				jsonData = storage.scheduleList.sort(function (a, b) { return b.created - a.created; });
-			} else {
-				jsonData = storage.searchDatas.sort(function (a, b) { return b.created - a.created; });
-			}
-		}
-
-		result = CommonDatas.paging(jsonData.length, storage.currentPage, storage.articlePerPage);
-		containerTitle = document.getElementById("containerTitle");
-		container = document.getElementsByClassName("gridList")[0];
-		hideArr = ["detailBackBtn", "crudUpdateBtn", "crudDeleteBtn", "contractReqBtn", "searchContainer"];
-		showArr = [
-			{ element: "calendarList", display: "block" },
-			{ element: "gridList", display: "block" },
-			{ element: "pageContainer", display: "flex" },
-			{ element: "listRange", display: "flex" },
-			{ element: "listSearchInput", display: "flex" },
-			{ element: "crudBtns", display: "flex" },
-			{ element: "crudAddBtn", display: "flex" },
-		];
-
-		header = [
-			{
-				"title": "등록일",
-				"align": "center",
-			},
-			{
-				"title": "일정",
-				"align": "center",
-			},
-			{
-				"title": "일정제목",
-				"align": "center",
-			},
-			{
-				"title": "내용",
-				"align": "center",
-			},
-			{
-				"title": "담당자",
-				"align": "center",
-			},
-		];
-
-		if (jsonData === "") {
-			str = [
-				{
-					"setData": undefined,
-					"col": 5,
-				},
-			];
-
-			data.push(str);
-		} else {
-			let fromDate, fromSetDate, toDate, toSetDate, disDate;
-			for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
-				fromDate = CommonDatas.dateDis(jsonData[i].from);
-				fromSetDate = CommonDatas.dateFnc(fromDate, "mm.dd");
-				toDate = CommonDatas.dateDis(jsonData[i].to);
-				toSetDate = CommonDatas.dateFnc(toDate, "mm.dd");
-				disDate = CommonDatas.dateDis(jsonData[i].created, jsonData[i].modified);
-				disDate = CommonDatas.dateFnc(disDate, "yyyy.mm.dd");
-
-				str = [
-					{
-						"setData": disDate,
-						"align": "center",
-					},
-					{
-						"setData": fromSetDate + " ~ " + toSetDate,
-						"align": "center",
-					},
-					{
-						"setData": jsonData[i].title,
-						"align": "left",
-					},
-					{
-						"setData": jsonData[i].content,
-						"align": "left",
-					},
-					{
-						"setData": storage.user[jsonData[i].writer].userName,
-						"align": "center",
-					},
-				];
-
-				fnc = "CommonDatas.Temps.schedule2Set.calendarDetailView(this);";
-				ids.push(jsonData[i].no);
-				dataJob.push(jsonData[i].job);
-				data.push(str);
-			}
-
-		}
-
-		containerTitle.innerHTML = "일정조회";
-		CommonDatas.createGrid(container, header, data, ids, dataJob, fnc);
-		let gridList = document.getElementsByClassName("gridList")[0];
-		let createDiv = document.createElement("div");
-		createDiv.className = "pageContainer";
-		let createButton = document.createElement("button");
-
-		if (!storage.setFirstButtonFlag) {
-			createButton.innerHTML = "리스트 확대&nbsp;<i class=\"fa-solid fa-plus\"></i>";
-			createButton.setAttribute("data-type", "list");
-			createButton.setAttribute("data-flag", "false");
-			createButton.setAttribute("onclick", "CommonDatas.Temps.schedule2Set.scheduleDisplaySet(this);");
-		} else {
-			createButton.innerHTML = "리스트 축소&nbsp;<i class=\"fa-solid fa-minus\"></i>";
-			createButton.setAttribute("data-type", "list");
-			createButton.setAttribute("data-flag", "true");
-			createButton.setAttribute("onclick", "CommonDatas.Temps.schedule2Set.scheduleDisplaySet(this);");
-		}
-
-		gridList.prepend(createButton);
-		gridList.append(createDiv);
-		pageContainer = document.getElementsByClassName("pageContainer");
-		let pageNation = CommonDatas.createPaging(pageContainer[0], result[3], "CommonDatas.pageMove", "CommonDatas.Temps.schedule2Set.drawScheduleList", result[0]);
-		pageContainer[0].innerHTML = pageNation;
-
-		let gridContent = document.getElementsByClassName("gridContent");
-		for (let i = 0; i < gridContent.length; i++) {
-			let oriColor = gridContent[i].style.backgroundColor;
-			let userName = gridContent[i].children[4].children[0].innerText;
-			gridContent[i].addEventListener("mouseover", () => {
-				document.querySelector(".calendar_item[data-id=\"" + gridContent[i].dataset.id + "\"]").style.backgroundColor = "#332E85";
-				for (let key in storage.user) {
-					if (storage.user[key].userName === userName) {
-						document.querySelector(".infoFlexContainer").querySelector("div[data-no=\"" + storage.user[key].userNo + "\"]").style.backgroundColor = "#332E85";
-					}
-				}
-			});
-
-			gridContent[i].addEventListener("mouseout", () => {
-				document.querySelector(".calendar_item[data-id=\"" + gridContent[i].dataset.id + "\"]").style.backgroundColor = oriColor;
-				for (let key in storage.user) {
-					if (storage.user[key].userName === userName) {
-						document.querySelector(".infoFlexContainer").querySelector("div[data-no=\"" + storage.user[key].userNo + "\"]").style.backgroundColor = oriColor;
-					}
-				}
-			});
-		}
-		CommonDatas.setViewContents(hideArr, showArr);
-	}
-
-	scheduleInsertForm(getDate){
-		let html, dataArray;
-		dataArray = this.scheduleRadioInsert("sales", getDate);
-		html = detailViewForm(dataArray, "modal");
-	
-		modal.show();
-		modal.content.style.minWidth = "70%";
-		modal.content.style.maxWidth = "70%";
-		modal.headTitle.innerText = "일정등록";
-		modal.body.innerHTML = html;
-		modal.confirm.innerText = "등록";
-		modal.close.innerText = "취소";
-		modal.confirm.setAttribute("onclick", "scheduleInsert();");
-		modal.close.setAttribute("onclick", "modal.hide();");
-		document.getElementById("content").style.height = "30vh";
-	
-		setTimeout(() => {
-			document.querySelector("[name='job'][value='sales']").setAttribute("checked", true);
-			document.getElementById("writer").setAttribute("data-change", true);
-	
-			if(getDate === undefined){
-				let nowDate = new Date().toISOString().substring(0, 10);
-				document.getElementById("from").value = nowDate + "T09:00";
-				document.getElementById("to").value = nowDate + "T18:00";
-			}else{
-				document.getElementById("from").value = getDate + "T09:00";
-				document.getElementById("to").value = getDate + "T18:00";
-			}
-			ckeditor.config.readOnly = false;
-			window.setTimeout(setEditor, 100);
-		}, 100);
-
-	}
-
-	scheduleRadioInsert(value, date){
-		let dataArray, myName, my, now;
-	
-		my = storage.my;
-		myName = storage.user[my].userName;
-	
-		if(date === undefined){
-			now = new Date();
-			date = now.toISOString().slice(0, 10);
-		}
-	
-		if(value === "sales"){
-			dataArray = [
-				{
-					"title": undefined,
-					"radioValue": [
-						{
-							"key": "sales",
-							"value": "영업일정",
-						},
-						{
-							"key": "tech",
-							"value": "기술일정",
-						},
-						{
-							"key": "schedule",
-							"value": "기타일정",
-						},
-					],
-					"radioType": "tab",
-					"elementId": ["jobSales", "jobTech", "jobSchedule"],
-					"col": 4,
-					"type": "radio",
-					"elementName": "job",
-					"disabled": false,
-					"onClick": "CommonDatas.Temps.schedule2Set.scheduleRadioClick(this);",
-				},
-				{
-					"title": "활동시작일(*)",
-					"elementId": "from",
-					"value": date,
-					"type": "datetime",
-					"disabled": false,
-				},
-				{
-					"title": "활동종료일(*)",
-					"elementId": "to",
-					"value": date,
-					"type": "datetime",
-					"disabled": false,
-				},
-				{
-					"title": "장소",
-					"elementId": "place",
-					"disabled": false,
-				},
-				{
-					"title": "활동형태(*)",
-					"selectValue": [
-						{
-							"key": "10170",
-							"value": "회사방문",
-						},
-						{
-							"key": "10171",
-							"value": "기술지원",
-						},
-						{
-							"key": "10221",
-							"value": "제품설명",
-						},
-						{
-							"key": "10222",
-							"value": "시스템데모",
-						},
-						{
-							"key": "10223",
-							"value": "제품견적",
-						},
-						{
-							"key": "10224",
-							"value": "계약건 의사결정지원",
-						},
-						{
-							"key": "10225",
-							"value": "계약",
-						},
-						{
-							"key": "10226",
-							"value": "사후처리",
-						},
-						{
-							"key": "10227",
-							"value": "기타",
-						},
-						{
-							"key": "10228",
-							"value": "협력사요청",
-						},
-						{
-							"key": "10229",
-							"value": "협력사문의",
-						},
-						{
-							"key": "10230",
-							"value": "교육",
-						},
-						{
-							"key": "10231",
-							"value": "전화상담",
-						},
-						{
-							"key": "10232",
-							"value": "제조사업무협의",
-						},
-						{
-							"key": "10233",
-							"value": "외부출장",
-						},
-						{
-							"key": "10234",
-							"value": "제안설명회",
-						}
-					],
-					"type": "select",
-					"elementId": "type",
-					"disabled": false,
-				},
-				{
-					"title": "담당자(*)",
-					"elementId": "writer",
-					"complete": "user",
-					"keyup": "CommonDatas.addAutoComplete(this);",
-					"onClick": "CommonDatas.addAutoComplete(this);",
-					"value": myName,
-				},
-				{
-					"title": "영업기회(*)",
-					"elementId": "sopp",
-					"complete": "sopp",
-					"keyup": "CommonDatas.addAutoComplete(this);",
-					"onClick": "CommonDatas.addAutoComplete(this);",
-					"disabled": false,
-				},
-				{
-					"title": "매출처",
-					"disabled": false,
-					"elementId": "customer",
-					"complete": "customer",
-					"keyup": "CommonDatas.addAutoComplete(this);",
-					"onClick": "CommonDatas.addAutoComplete(this);",
-				},
-				{
-					"title": "엔드유저",
-					"disabled": false,
-					"elementId": "partner",
-					"complete": "customer",
-					"keyup": "CommonDatas.addAutoComplete(this);",
-					"onClick": "CommonDatas.addAutoComplete(this);",
-				},
-				{
-					"title": "제목(*)",
-					"elementId": "title",
-					"disabled": false,
-					"col": 4,
-				},
-				{
-					"title": "내용",
-					"elementId": "content",
-					"type": "textarea",
-					"disabled": false,
-					"col": 4,
-				}
-			];
-	
-			storage.formList = {
-				"job" : "",
-				"from" : "",
-				"to" : "",
-				"place" : "",
-				"type" : "",
-				"writer" : storage.my,
-				"sopp" : 0,
-				"customer" : 0,
-				"partner" : 0,
-				"title" : "",
-				"content" : "",
-				"report" : 1,
-			};
-		}else if(value === "tech"){
-			dataArray = [
-				{
-					"title": undefined,
-					"radioValue": [
-						{
-							"key": "sales",
-							"value": "영업일정",
-						},
-						{
-							"key": "tech",
-							"value": "기술일정",
-						},
-						{
-							"key": "schedule",
-							"value": "기타일정",
-						},
-					],
-					"type": "radio",
-					"elementName": "job",
-					"radioType": "tab",
-					"elementId": ["jobSales", "jobTech", "jobSchedule"],
-					"col": 4,
-					"disabled": false,
-					"onClick": "CommonDatas.Temps.schedule2Set.scheduleRadioClick(this);",
-				},
-				{
-					"title": "등록구분(*)",
-					"radioValue": [
-						{
-							"key": "10247",
-							"value": "신규영업지원",
-						},
-						{
-							"key": "10248",
-							"value": "유지보수",
-						},
-					],
-					"type": "radio",
-					"elementName": "contractMethod",
-					"elementId": ["contractMethodNew", "contractMethodOld"],
-					"col": 4,
-					"disabled": false,
-				},
-				{
-					"title": "영업기회(*)",
-					"elementId": "sopp",
-					"complete": "sopp",
-					"keyup": "CommonDatas.addAutoComplete(this);",
-					"onClick": "CommonDatas.addAutoComplete(this);",
-					"disabled": false,
-				},
-				{
-					"title": "계약",
-					"elementId": "contract",
-					"complete": "contract",
-					"keyup": "CommonDatas.addAutoComplete(this);",
-					"onClick": "CommonDatas.addAutoComplete(this);",
-					"disabled": false,
-				},
-				{
-					"title": "매출처",
-					"disabled": false,
-					"elementId": "partner",
-					"complete": "customer",
-					"keyup": "CommonDatas.addAutoComplete(this);",
-					"onClick": "CommonDatas.addAutoComplete(this);",
-				},
-				{
-					"title": "매출처 담당자",
-					"complete": "cip",
-					"keyup": "CommonDatas.addAutoComplete(this);",
-					"onClick": "CommonDatas.addAutoComplete(this);",
-					"elementId": "cipOfCustomer",
-					"disabled": false,
-				},
-				{
-					"title": "엔드유저(*)",
-					"elementId": "customer",
-					"disabled": false,
-					"complete": "customer",
-					"keyup": "CommonDatas.addAutoComplete(this);",
-					"onClick": "CommonDatas.addAutoComplete(this);",
-				},
-				{
-					"title": "모델",
-					"elementId": "supportModel",
-					"disabled": false,
-				},
-				{
-					"title": "버전",
-					"elementId": "supportVersion",
-					"disabled": false,
-				},
-				{
-					"title": "단계",
-					"selectValue": [
-						{
-							"key": "10213",
-							"value": "접수단계",
-						},
-						{
-							"key": "10214",
-							"value": "출동단계",
-						},
-						{
-							"key": "10215",
-							"value": "미계약에 따른 보류",
-						},
-						{
-							"key": "10253",
-							"value": "처리완료",
-						}
-					],
-					"type": "select",
-					"elementId": "supportStep",
-					"disabled": false,
-				},
-				{
-					"title": "지원형태",
-					"selectValue": [
-						{
-							"key": "10187",
-							"value": "전화상담",
-						},
-						{
-							"key": "10208",
-							"value": "현장방문",
-						},
-						{
-							"key": "10209",
-							"value": "원격지원",
-						}
-					],
-					"type": "select",
-					"elementId": "type",
-					"disabled": false,
-				},
-				{
-					"title": "담당자(*)",
-					"complete": "user",
-					"keyup": "CommonDatas.addAutoComplete(this);",
-					"onClick": "CommonDatas.addAutoComplete(this);",
-					"elementId": "writer",
-					"value": myName,
-				},
-				{
-					"title": "지원 시작일(*)",
-					"elementId": "from",
-					"value": date,
-					"disabled": false,
-					"type": "datetime",
-				},
-				{
-					"title": "지원 종료일(*)",
-					"elementId": "to",
-					"value": date,
-					"disabled": false,
-					"type": "datetime",
-				},
-				{
-					"title": "장소",
-					"elementId": "place",
-					"disabled": false,
-				},
-				{
-					"title": "기술지원명(*)",
-					"elementId": "title",
-					"disabled": false,
-					"col": 3,
-				},
-				{
-					"title": "내용",
-					"type": "textarea",
-					"elementId": "content",
-					"disabled": false,
-					"col": 4,
-				},
-			];
-	
-			storage.formList = {
-				"job" : "",
-				"contractMethod" : "",
-				"sopp" : 0,
-				"contract" : 0,
-				"partner" : 0,
-				"cipOfCustomer" : 0,
-				"customer" : 0,
-				"supportModel" : "",
-				"supportVersion" : "",
-				"supportStep" : "",
-				"type" : "",
-				"place" : "",
-				"writer" : storage.my,
-				"from" : "",
-				"to" : "",
-				"title" : "",
-				"content" : "",
-				"report" : 1,
-			};
-		}else{
-			dataArray = [
-				{
-					"title": undefined,
-					"radioValue": [
-						{
-							"key": "sales",
-							"value": "영업일정",
-						},
-						{
-							"key": "tech",
-							"value": "기술일정",
-						},
-						{
-							"key": "schedule",
-							"value": "기타일정",
-						},
-					],
-					"type": "radio",
-					"elementName": "job",
-					"radioType": "tab",
-					"elementId": ["jobSales", "jobTech", "jobSchedule"],
-					"col": 4,
-					"disabled": false,
-					"onClick": "CommonDatas.Temps.schedule2Set.scheduleRadioClick(this);",
-				},
-				{
-					"title": "일정시작일(*)",
-					"type": "datetime",
-					"value": date,
-					"elementId": "from",
-					"disabled": false,
-				},
-				{
-					"title": "일정종료일(*)",
-					"type": "datetime",
-					"value": date,
-					"elementId": "to",
-					"disabled": false,
-				},
-				{
-					"title": "장소",
-					"elementId": "place",
-					"disabled": false,
-				},
-				{
-					"title": "영업기회(*)",
-					"elementId": "sopp",
-					"complete": "sopp",
-					"keyup": "CommonDatas.addAutoComplete(this);",
-					"onClick": "CommonDatas.addAutoComplete(this);",
-					"disabled": false,
-				},
-				{
-					"title": "담당자(*)",
-					"elementId": "writer",
-					"complete": "user",
-					"keyup": "CommonDatas.addAutoComplete(this);",
-					"onClick": "CommonDatas.addAutoComplete(this);",
-					"value": myName,
-				},
-				{
-					"title": "매출처",
-					"disabled": false,
-					"elementId": "customer",
-					"complete": "customer",
-					"keyup": "CommonDatas.addAutoComplete(this);",
-					"onClick": "CommonDatas.addAutoComplete(this);",
-				},
-				{
-					"title": "제목(*)",
-					"elementId": "title",
-					"disabled": false,
-					"col": 2,
-				},
-				{
-					"title": "내용",
-					"elementId": "content",
-					"type": "textarea",
-					"disabled": false,
-					"col": 4,
-				},
-			];
-	
-			storage.formList = {
-				"job" : "",
-				"from" : "",
-				"to" : "",
-				"place" : "",
-				"sopp" : 0,
-				"writer" : storage.my,
-				"customer" : 0,
-				"title" : "",
-				"content" : "",
-				"report" : 1,
-			};
-		}
-	
-		return dataArray;
-	}
-
-	//달력 다음월 셋팅 함수
-	calendarNext() {
-		let getYear, getMonth, setYear, setMonth;
-
-		getYear = document.getElementsByClassName("calendarYear")[0];
-		getMonth = document.getElementsByClassName("calendarMonth")[0];
-		setYear = parseInt(getYear.innerHTML);
-		setMonth = parseInt(getMonth.innerHTML);
-
-		if (setMonth == 12) {
-			setYear = setYear + 1;
-			setMonth = 0;
-		}
-
-		setMonth = setMonth + 1;
-
-		getYear.innerHTML = setYear;
-		getMonth.innerHTML = setMonth;
-
-		// if(setMonth < 10){
-		// 	setMonth = "0" + setMonth;
-		// }
-
-		storage.currentlongDate = new Date(setYear + "-" + setMonth + "-01").getTime();
-		storage.currentYear = setYear;
-		storage.currentMonth = setMonth;
-
-		this.scheduleCalendarAjax();
-	}
-
-	//달력 이전월 셋팅 함수
-	calendarPrev() {
-		let getYear, getMonth, setYear, setMonth, type;
-
-		getYear = document.getElementsByClassName("calendarYear")[0];
-		getMonth = document.getElementsByClassName("calendarMonth")[0];
-		setYear = parseInt(getYear.innerHTML);
-		setMonth = parseInt(getMonth.innerHTML);
-		type = "prev";
-
-		if (setMonth == 1) {
-			setYear = setYear - 1;
-			setMonth = 13;
-		}
-
-		setMonth = setMonth - 1;
-
-		getYear.innerHTML = setYear;
-		getMonth.innerHTML = setMonth;
-
-		// if(setMonth < 10){
-		// 	setMonth = "0" + setMonth;
-		// }
-
-		storage.currentlongDate = new Date(setYear + "-" + setMonth + "-01").getTime();
-		storage.currentYear = setYear;
-		storage.currentMonth = setMonth;
-
-		this.scheduleCalendarAjax();
-	}
-
-	//달력 데이터를 새로 가지고 와서 셋팅 후 출력하는 함수
-	scheduleCalendarAjax() {
-		let scheduleRange, url;
-		scheduleRange = document.getElementsByClassName("scheduleRange")[0].value;
-
-		if (scheduleRange === "dept") {
-			url = "/api/schedule2/" + scheduleRange + "/" + storage.user[storage.my].deptId[0] + "/" + storage.currentlongDate;
-		} else if (scheduleRange === "employee") {
-			url = "/api/schedule2/" + scheduleRange + "/" + storage.my + "/" + storage.currentlongDate;
-		} else {
-			url = "/api/schedule2/" + scheduleRange + "/" + storage.currentlongDate;
-		}
-
-		axios.get(url).then((response) => {
-			let jsonData;
-			jsonData = cipher.decAes(response.data.data);
-			jsonData = JSON.parse(jsonData);
-
-			if (jsonData.length > 0) {
-				storage.scheduleList = jsonData;
-				window.setTimeout(this.drawCalendar(document.getElementsByClassName("calendar_container")[0]), 200);
-				window.setTimeout(this.drawScheduleList(), 200);
-			} else {
-				msg.set("데이터가 없습니다.");
-			}
-		});
-	}
-
-	//두개 이상 이벤트가 실행될때 후순위 멈추는 함수
-	eventStop() {
-		if (event.stopattragation) {
-			event.stopattragation();
-		}
-		event.cancelBubble = true;
-	}
-
-	//달력 상세보기 함수
-	calendarDetailView(e) {
-		let thisEle = e;
-		let no = thisEle.dataset.id;
-
-		for (let i = 0; i < storage.scheduleList.length; i++) {
-			let item = storage.scheduleList[i];
-
-			if (item.no == no) {
-				storage.detailData = item;
-			}
-		}
-
-		const ScheduleClass = new Schedule(storage.detailData);
-		ScheduleClass.calendarDetailDataSet();
-	}
-
-	//회사별, 부서별, 개인별 select 체인지 함수
-	scheduleSelectChange() {
-		let scheduleRange, url;
-		let getYear = document.getElementsByClassName("calendarYear")[0];
-		let getMonth = document.getElementsByClassName("calendarMonth")[0];
-		let setYear = getYear.innerText;
-		let setMonth = getMonth.innerText;
-		let longDate = new Date(setYear + "-" + setMonth + "-01").getTime();
-		scheduleRange = document.getElementsByClassName("scheduleRange")[0].value;
-
-		if (scheduleRange === "dept") {
-			url = "/api/schedule2/" + scheduleRange + "/" + storage.user[storage.my].deptId[0] + "/" + longDate;
-		} else if (scheduleRange === "employee") {
-			url = "/api/schedule2/" + scheduleRange + "/" + storage.my + "/" + longDate;
-		} else {
-			url = "/api/schedule2/" + scheduleRange + "/" + longDate;
-		}
-
-		axios.get(url).then((response) => {
-			let result = response.data.data;
-			result = cipher.decAes(result);
-			result = JSON.parse(result);
-
-			if (result.length > 0) {
-				storage.scheduleList = result;
-
-				if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined) {
-					window.setTimeout(this.drawCalendar(document.getElementsByClassName("calendar_container")[0]), 600);
-					window.setTimeout(this.drawScheduleList, 600);
-				} else {
-					window.setTimeout(this.drawCalendar(document.getElementsByClassName("calendar_container")[0]), 200);
-					window.setTimeout(this.drawScheduleList, 200);
-				}
-			} else {
-				msg.set("데이터가 없습니다.");
-			}
-		})
-	}
-
-	scheduleRadioClick(e){
-		let html, dataArray, tempFrom, tempTo, thisEle = e;
-		tempFrom = document.getElementById("from").value;
-		tempTo = document.getElementById("to").value;
-		dataArray = this.scheduleRadioInsert(thisEle.value);
-		html = CommonDatas.detailViewForm(dataArray, "modal");
-		
-		modal.show();
-		modal.headTitle.innerText = "일정등록";
-		modal.body.innerHTML = "<div class='defaultFormContainer'>" + html + "</div>";
-		modal.confirm.innerText = "등록";
-		modal.close.innerText = "취소";
-		modal.confirm.setAttribute("onclick", "scheduleInsert();");
-		modal.close.setAttribute("onclick", "modal.hide();");
-		document.getElementById("content").style.height = "30vh";
-	
-		setTimeout(() => {
-			document.querySelector("[name='job'][value='" + thisEle.value + "']").setAttribute("checked", true);
-			document.getElementById("from").value = tempFrom;
-			document.getElementById("to").value = tempTo;
-			document.getElementById("writer").setAttribute("data-change", true);
-			ckeditor.config.readOnly = false;
-			window.setTimeout(setEditor, 100);
-		}, 100);
-	}
-
-	//달력 more버튼 클릭 함수
-	calendarMore(e) {
-		let thisEle, moreContentBody, html = "", calendarMoreContent, moreContentTitle, setItemParents;
-		thisEle = $(e);
-		setItemParents = thisEle.parent().parent();
-		calendarMoreContent = $(".calendarMoreContent");
-		moreContentTitle = $(".moreContentTitle");
-		calendarMoreContent.find(".moreContentBody").remove();
-		calendarMoreContent.css("width", parseInt(setItemParents.innerWidth() * 1.5) + "px");
-		calendarMoreContent.css("left", setItemParents.position().left + "px");
-		calendarMoreContent.css("top", setItemParents.position().top + "px");
-		calendarMoreContent.append("<div class=\"moreContentBody\"></div>");
-
-		html = setItemParents.html();
-
-		moreContentBody = $(".moreContentBody");
-		moreContentBody.html(html);
-		moreContentBody.children().not(".calendar_item").remove();
-		moreContentBody.find(".calendar_item_empty").remove();
-		moreContentBody.children().show();
-		moreContentTitle.html(thisEle.parents(".calendar_cell").data("date"));
-		calendarMoreContent.show();
-		calendarMoreContent.draggable();
-	}
-
-	//달력 more container 닫기 함수
-	moreContentClose() {
-		let calendarMoreContent = $(".calendarMoreContent");
-		calendarMoreContent.hide();
-	}
-
-	//달력 및 리스트 확대/축소 함수
-	scheduleDisplaySet(e) {
-		let thisEle = e;
-		let type = thisEle.dataset.type;
-		let flag = thisEle.dataset.flag;
-		let calendarList = document.getElementsByClassName("calendarList")[0];
-		let gridContainer = document.getElementsByClassName("gridList")[0];
-		let bodyContent = document.getElementById("bodyContent");
-
-		if (type === "calendar" && flag === "false") {
-			thisEle.innerHTML = "달력 축소&nbsp;<i class=\"fa-solid fa-minus\"></i>";
-			thisEle.setAttribute("data-flag", true);
-			bodyContent.style.overflowY = "auto";
-			calendarList.style.display = "block";
-			gridContainer.style.display = "none";
-			calendarList.style.width = "100vw";
-			calendarList.style.overflow = "hidden";
-			let calendar_cell = calendarList.querySelectorAll(".calendar_cell");
-			for (let i = 0; i < calendar_cell.length; i++) {
-				let item = calendar_cell[i];
-				let calendar_items = item.children;
-				item.style.height = "21vh";
-
-				if (calendar_items.length < 8) {
-					for (let t = 0; t < calendar_items.length; t++) {
-						let childrenItem = calendar_items[t];
-						childrenItem.style.display = "block";
-					}
-				} else {
-					for (let t = 0; t < calendar_items.length; t++) {
-						let childrenItem = calendar_items[t];
-
-						if (!childrenItem.classList.contains("calendar_span_empty")) {
-							if (t < 8) {
-								childrenItem.style.display = "block";
-							} else {
-								childrenItem.style.display = "none";
-							}
-						}
-					}
-				}
-			}
-		} else if (type === "calendar" && flag === "true") {
-			thisEle.innerHTML = "달력 확대&nbsp;<i class=\"fa-solid fa-plus\">";
-			thisEle.setAttribute("data-flag", false);
-			bodyContent.style.overflow = "hidden";
-			calendarList.style.display = "block";
-			gridContainer.style.display = "block";
-			calendarList.style.width = "49vw";
-			calendarList.style.overflow = "initial";
-			let calendar_cell = calendarList.querySelectorAll(".calendar_cell");
-			for (let i = 0; i < calendar_cell.length; i++) {
-				let item = calendar_cell[i];
-				let calendar_items = item.children;
-				item.style.height = "11vh";
-
-				for (let t = 0; t < calendar_items.length; t++) {
-					let childrenItem = calendar_items[t];
-
-					if (!childrenItem.classList.contains("calendar_span_empty")) {
-						if (t < 4) {
-							childrenItem.style.display = "block";
-						} else {
-							childrenItem.style.display = "none";
-						}
-					}
-				}
-			}
-		} else if (type === "list" && flag === "false") {
-			thisEle.innerHTML = "리스트 축소&nbsp;<i class=\"fa-solid fa-minus\"></i>";
-			thisEle.setAttribute("data-flag", true);
-			calendarList.style.display = "none";
-			gridContainer.style.width = "100vw";
-			storage.setFirstButtonFlag = true;
-		} else if (type === "list" && flag === "true") {
-			thisEle.innerHTML = "리스트 확대&nbsp;<i class=\"fa-solid fa-plus\">";
-			thisEle.setAttribute("data-flag", false);
-			calendarList.style.display = "block";
-			gridContainer.style.width = "44vw";
-			storage.setFirstButtonFlag = false;
-		}
-	}
-
-	//input 검색 기능 함수
-	searchInputKeyup() {
-		let searchAllInput, pageContainer, tempArray;
-		searchAllInput = document.getElementById("searchAllInput").value;
-		pageContainer = document.getElementsByClassName("pageContainer")[0];
-		tempArray = CommonDatas.searchDataFilter(storage.scheduleList, searchAllInput, "input");
-
-		if (tempArray.length > 0) {
-			storage.searchDatas = tempArray;
-		} else {
-			storage.searchDatas = undefined;
-		}
-
-		this.drawScheduleList();
-		pageContainer.style.diplay = "flex";
-	}
-
-	//검색에 필요한 리스트 만드는 함수
-	addSearchList() {
-		storage.searchList = [];
-
-		for (let i = 0; i < storage.scheduleList.length; i++) {
-			let writer, from, to, disDate, setCreated, title, content;
-			writer = (storage.scheduleList[i].writer === null || storage.scheduleList[i].writer == 0 || storage.scheduleList[i].writer === undefined) ? "" : storage.user[storage.scheduleList[i].writer].userName;
-			title = storage.scheduleList[i].title;
-			content = storage.scheduleList[i].content;
-			disDate = dateDis(storage.scheduleList[i].from);
-			from = dateFnc(disDate).replaceAll("-", "");
-			disDate = dateDis(storage.scheduleList[i].to);
-			to = dateFnc(disDate).replaceAll("-", "");
-			disDate = dateDis(storage.scheduleList[i].created, storage.scheduleList[i].modified);
-			setCreated = dateFnc(disDate).replaceAll("-", "");
-			storage.searchList.push("#created" + setCreated + "#from" + from + "#to" + to + "#" + title + "#" + content + "#" + writer);
-		}
+		calendar.render();
+
+		// axios.get("/api/sales/").then((response) => {
+		// 	if (response.data.result === "ok") {
+		// 		let result;
+		// 		result = cipher.decAes(response.data.data);
+		// 		result = JSON.parse(result);
+		// 		storage.salesList = result;
+
+		// 		if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.sopp === undefined) {
+		// 			window.setTimeout(this.drawSalesList, 1000);
+		// 			window.setTimeout(CommonDatas.searchListSet("salesList"), 1000);
+		// 		} else {
+		// 			window.setTimeout(this.drawSalesList, 200);
+		// 			window.setTimeout(CommonDatas.searchListSet("salesList"), 200);
+		// 		}
+		// 	}
+		// }).catch((error) => {
+		// 	msg.set("영업활동관리 리스트 에러입니다.\n" + error);
+		// 	console.log(error);
+		// })
 	}
 }
+
+// class Schedule2Set {
+// 	constructor() {
+// 		CommonDatas.Temps.schedule2Set = this;
+// 		storage.setFirstButtonFlag = false;
+// 	}
+// 	//스케줄 리스트를 불러와서 셋팅해주는 함수
+// 	getScheduleList() {
+// 		let date = new Date().getTime();
+// 		let scheduleRange = document.getElementsByClassName("scheduleRange")[0].value;
+// 		axios.get("/api/schedule2/" + scheduleRange + "/" + date).then((response) => {
+// 			let result = response.data.data;
+// 			result = cipher.decAes(result);
+// 			result = JSON.parse(result);
+// 			storage.scheduleList = result;
+
+// 			if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined) {
+// 				window.setTimeout(this.drawCalendar(document.getElementsByClassName("calendar_container")[0]), 600);
+// 				window.setTimeout(this.drawScheduleList, 600);
+// 				window.setTimeout(this.addSearchList, 600);
+// 			} else {
+// 				window.setTimeout(this.drawCalendar(document.getElementsByClassName("calendar_container")[0]), 200);
+// 				window.setTimeout(this.drawScheduleList, 200);
+// 				window.setTimeout(this.addSearchList, 200);
+// 			}
+// 		});
+// 	}
+
+// 	//달력을 출력해주는 함수
+// 	drawCalendar(container) {
+// 		let calArr, slot, html, startDate, endDate, tempDate, tempArr, current, x1, x2, x3, t, now, deptArr = [], writerArr = [], writerHtml = "";
+// 		calArr = [];
+// 		tempDate = [];
+// 		if (storage.currentYear === undefined) storage.currentYear = (new Date()).getFullYear();
+// 		if (storage.currentMonth === undefined) storage.currentMonth = (new Date()).getMonth() + 1;
+
+// 		document.getElementsByClassName("calendarYear")[0].innerText = storage.currentYear;
+// 		document.getElementsByClassName("calendarMonth")[0].innerText = storage.currentMonth;
+
+// 		startDate = new Date(storage.currentYear, storage.currentMonth - 1, 1);
+// 		endDate = new Date(new Date(storage.currentYear, storage.currentMonth, 1).getTime() - 86400000);
+
+// 		// 시작하는 날짜 잡기
+// 		startDate = new Date(startDate.getTime() - startDate.getDay() * 86400000);
+
+// 		// 말일 찾기
+// 		endDate = new Date(endDate.getTime() + (6 - endDate.getDay()) * 86400000);
+
+// 		// 만들어진 달력 날짜에 해당하는 일정이 있는 경우 담아두기
+// 		for (x1 = 0; x1 <= (endDate.getTime() - startDate.getTime()) / 86400000; x1++) {
+// 			current = (startDate.getTime() + (86400000 * x1));
+// 			calArr[x1] = {};
+// 			calArr[x1].date = new Date(current);
+// 			calArr[x1].schedule = [];
+// 			for (x2 = 0; x2 < storage.scheduleList.length; x2++) {
+// 				if (current + 86400000 > storage.scheduleList[x2].from && current <= storage.scheduleList[x2].to) calArr[x1].schedule.push(x2);
+// 			}
+// 		}
+
+// 		// 최대 일정 수량 잡기
+// 		slot = 0;
+// 		for (x1 = 0; x1 < calArr.length; x1++) {
+// 			if (calArr[x1].schedule.length > slot) slot = calArr[x1].schedule.length;
+// 		}
+
+// 		// slot 최소값 설정하고 날짜에 slot 미리 설정학
+// 		slot = slot < 5 ? 5 : slot;
+// 		for (x1 = 0; x1 < calArr.length; x1++) calArr[x1].slot = new Array(slot);
+
+// 		// 슬롯에 일정 추가하기
+// 		for (x1 = 0; x1 < calArr.length; x1++) {
+// 			for (x2 = 0; x2 < calArr[x1].schedule.length; x2++) {
+// 				for (x3 = 0; x3 < slot; x3++) {
+// 					if (calArr[x1].slot[x3] === undefined) {
+// 						calArr[x1].slot[x3] = calArr[x1].schedule[x2];
+// 						break;
+// 					}
+// 				}
+// 			}
+// 		}
+
+// 		// 연속된 일정에 대한 슬롯 번호 맞추기
+// 		for (x1 = 1; x1 < calArr.length; x1++) {
+// 			tempArr = calArr[x1].slot; // 임시 변수에 당일 슬롯 데이터를 옮기고 당일 슬롯을 초기화 함
+// 			calArr[x1].slot = new Array(slot);
+// 			for (x2 = 0; x2 < tempArr.length; x2++) { // 당일 데이터를 순회하며 전일 데이터와 맞추고 임시변수에서 지움
+// 				if (tempArr[x2] === undefined) break;
+// 				t = calArr[x1 - 1].slot.indexOf(tempArr[x2]);
+// 				if (t > 0) {
+// 					calArr[x1].slot[t] = tempArr[x2];
+// 					tempArr[x2] = undefined;
+// 				}
+// 			}
+// 			for (x2 = 0; x2 < tempArr.length; x2++) { // 전일 데이터와 맞추지않은 데이터들에 대해 비어있는 상위 슬롯으로 데이터를 넣어줌
+// 				if (tempArr[x2] === undefined) continue;
+// 				for (x3 = 0; x3 < calArr[x1].slot.length; x3++) {
+// 					if (calArr[x1].slot[x3] === undefined) {
+// 						calArr[x1].slot[x3] = tempArr[x2];
+// 						break;
+// 					}
+// 				}
+// 			}
+// 		}
+
+// 		html = "<div class=\"calendar_header\">일</div>";
+// 		html += "<div class=\"calendar_header\">월</div>";
+// 		html += "<div class=\"calendar_header\">화</div>";
+// 		html += "<div class=\"calendar_header\">수</div>";
+// 		html += "<div class=\"calendar_header\">목</div>";
+// 		html += "<div class=\"calendar_header\">금</div>";
+// 		html += "<div class=\"calendar_header\">토</div>";
+
+// 		for (x1 = 0; x1 < calArr.length; x1++) {
+// 			tempDate = calArr[x1].date; // 해당 셀의 날짜 객체를 가져 옮
+// 			t = tempDate.getFullYear();
+// 			t += (tempDate.getMonth() < 9 ? "0" + (tempDate.getMonth() + 1) : tempDate.getMonth() + 1);
+// 			t += (tempDate.getDate() < 10 ? "0" + tempDate.getDate() : tempDate.getDate()); // 셀에 저장해 둘 날짜 문자열 생성
+// 			let year, month, day;
+// 			year = tempDate.getFullYear();
+// 			month = tempDate.getMonth() + 1;
+// 			day = tempDate.getDate();
+
+// 			if (month < 10) {
+// 				month = "0" + month;
+// 			}
+
+// 			if (day < 10) {
+// 				day = "0" + day;
+// 			}
+
+// 			now = year + "-" + month + "-" + day;
+// 			html += "<div class=\"calendar_cell" + (storage.currentMonth === tempDate.getMonth() + 1 ? "" : " calendar_cell_blur") + "\" data-date=\"" + now + "\">"; // start row / 해당월이 아닌 날짜의 경우 calendar_cell_blue 클래스명을 셀에 추가 지정함
+// 			html += "<div class=\"calendar_date\">" + (calArr[x1].date.getDate()) + "</div>"; // 셀 안 최상단에 날짜 아이템을 추가함
+// 			for (x2 = 0; x2 < slot; x2++) {
+// 				x3 = [];
+// 				if (x1 > 0) { // 전일 데이터와 비교, 일정의 연속성에대해 확인함
+// 					x3[0] = calArr[x1 - 1].slot[x2] === calArr[x1].slot[x2];
+// 				}
+// 				if (x1 < calArr.length - 1) { // 익일 데이터와 비교, 일정의 연속성에대해 확인함
+// 					x3[1] = calArr[x1 + 1].slot[x2] === calArr[x1].slot[x2];
+// 				}
+
+// 				t = calArr[x1].slot[x2] === undefined ? undefined : storage.scheduleList[calArr[x1].slot[x2]]; //임시변수에 스케줄 아이템을 담아둠
+
+// 				if (storage.scheduleList[calArr[x1].slot[x2]] !== undefined) {
+// 					if (storage.scheduleList[calArr[x1].slot[x2]].writer !== undefined) {
+// 						writerArr.push(storage.user[storage.scheduleList[calArr[x1].slot[x2]].writer].userName + ":" + storage.scheduleList[calArr[x1].slot[x2]].writer + ":" + storage.user[storage.scheduleList[calArr[x1].slot[x2]].writer].deptId[0]);
+// 						if (storage.user[storage.scheduleList[calArr[x1].slot[x2]].writer].deptId[0] !== "VTEKSEOUL") {
+// 							deptArr.push(storage.dept.dept[storage.user[storage.scheduleList[calArr[x1].slot[x2]].writer].deptId[0]].deptName + ":" + storage.user[storage.scheduleList[calArr[x1].slot[x2]].writer].deptId[0]);
+// 						}
+// 					}
+// 				}
+
+// 				if (x2 > 2) {
+// 					html += "<div class=\"calendar_item" + (t === undefined ? " calendar_item_empty" : "") + (x3[0] ? " calendar_item_left" : "") + (x3[1] ? " calendar_item_right" : "") + "\"" + (t === undefined ? "" : "") + " data-id=" + (t === undefined ? '' : t.no) + " data-job=" + (t === undefined ? '' : t.job) + " onclick='" + (t === undefined ? '' : 'CommonDatas.Temps.schedule2Set.eventStop();CommonDatas.Temps.schedule2Set.calendarDetailView(this);') + "' data-sort=" + (t === undefined ? 0 : 1) + " data-dept=" + (t === undefined ? 'empty' : storage.user[t.writer].deptId[0]) + " style='display:none;'>" + (t === undefined ? "" : storage.user[t.writer].userName + " : " + t.title) + "</div>";
+// 				} else {
+// 					html += "<div class=\"calendar_item" + (t === undefined ? " calendar_item_empty" : "") + (x3[0] ? " calendar_item_left" : "") + (x3[1] ? " calendar_item_right" : "") + "\"" + (t === undefined ? "" : "") + " data-id=" + (t === undefined ? '' : t.no) + " data-job=" + (t === undefined ? '' : t.job) + " onclick='" + (t === undefined ? '' : 'CommonDatas.Temps.schedule2Set.eventStop();CommonDatas.Temps.schedule2Set.calendarDetailView(this);') + "' data-sort=" + (t === undefined ? 0 : 1) + " data-dept=" + (t === undefined ? 'empty' : storage.user[t.writer].deptId[0]) + " style='display:block;z-index:99;'>" + (t === undefined ? "" : storage.user[t.writer].userName + " : " + t.title) + "</div>";
+// 				}
+// 			}
+
+// 			html += "</div>";
+// 		}
+
+// 		writerArr = [...new Set(writerArr)];
+// 		container.innerHTML = html;
+
+// 		let infoFlexContainer = document.getElementsByClassName("infoFlexContainer")[0];
+// 		let infoContent = infoFlexContainer.children[1];
+// 		if (writerArr.length <= 24) {
+// 			for (let i = 0; i < writerArr.length; i++) {
+// 				let item = writerArr[i];
+// 				let name = item.split(":")[0];
+// 				let no = item.split(":")[1];
+// 				let dept = item.split(":")[2];
+// 				writerHtml += "<div data-no=\"" + no + "\" data-dept=\"" + dept + "\">" + name + "</div>";
+// 			}
+// 		} else {
+// 			deptArr = [...new Set(deptArr)];
+// 			for (let i = 0; i < deptArr.length; i++) {
+// 				let item = deptArr[i];
+// 				let deptName = item.split(":")[0];
+// 				let dept = item.split(":")[1];
+// 				writerHtml += "<div data-dept=\"" + dept + "\">" + deptName + "</div>";
+// 			}
+// 		}
+// 		infoContent.innerHTML = writerHtml;
+
+// 		setTimeout(() => {
+// 			let calendar_cell = document.getElementsByClassName("calendar_cell");
+// 			let nowDate = new Date().toISOString().substring(0, 10);
+
+// 			for (let i = 0; i < calendar_cell.length; i++) {
+// 				if ($(calendar_cell[i]).children().not(".calendar_item_empty").length > 4) {
+// 					$(calendar_cell[i]).append("<div class=\"calendar_span_empty\"><span data-flag=\"false\" onclick=\"CommonDatas.Temps.schedule2Set.eventStop();CommonDatas.Temps.schedule2Set.calendarMore(this);\">more(" + parseInt($(calendar_cell[i]).children().not(".calendar_item_empty").length - 1) + ") →</span></div>");
+// 				}
+
+// 				if ((i + 1) % 7 == 0) {
+// 					calendar_cell[i].style.borderRight = "1px solid #BDBDBD";
+// 					if (!calendar_cell[i].classList.contains("calendar_cell_blur")) {
+// 						calendar_cell[i].children[0].style.color = "#0100FF";
+// 					}
+// 				}
+
+// 				if (calendar_cell.length < 36) {
+// 					if ((i + 1) > 28 && (i + 1) < 36) {
+// 						if ((i + 1) == 29) {
+// 							calendar_cell[i].style.borderBottomLeftRadius = "10px";
+// 						} else if ((i + 1) == 35) {
+// 							calendar_cell[i].style.borderBottomRightRadius = "10px";
+// 						}
+// 						calendar_cell[i].style.borderBottom = "1px solid #BDBDBD";
+// 					}
+// 				} else {
+// 					if ((i + 1) > 35 && (i + 1) < 43) {
+// 						if ((i + 1) == 29) {
+// 							calendar_cell[i].style.borderBottomLeftRadius = "10px";
+// 						} else if ((i + 1) == 35) {
+// 							calendar_cell[i].style.borderBottomRightRadius = "10px";
+// 						}
+// 						calendar_cell[i].style.borderBottom = "1px solid #BDBDBD";
+// 					}
+// 				}
+
+// 				if ((i + 1) == 1 || (i + 1) == 8 || (i + 1) == 15 || (i + 1) == 22 || (i + 1) == 29) {
+// 					if (!calendar_cell[i].classList.contains("calendar_cell_blur")) {
+// 						calendar_cell[i].children[0].style.color = "#FF0000";
+// 					}
+// 				}
+
+// 				if (calendar_cell[i].dataset.date === nowDate) {
+// 					calendar_cell[i].style.backgroundColor = "#E1E1E1";
+// 				}
+// 			}
+
+// 		}, 100);
+
+// 		let path = location.pathname.split("/");
+
+// 		if (path[3] !== undefined) {
+// 			drawScheduleList();
+// 			document.getElementsByClassName("calendarList")[0].style.display = "none";
+// 			let content = document.querySelector(".gridContent[data-id=\"" + path[3] + "\"]");
+// 			scheduleDetailView(content);
+// 		}
+
+// 		return true;
+// 	}
+
+// 	//일정 달력 flex 리스트 출력 함수
+// 	drawScheduleList() {
+// 		let container, dataJob = [], result, jsonData, header = [], data = [], ids = [], str, fnc, pageContainer, containerTitle, hideArr, showArr;
+
+// 		if (storage.scheduleList === undefined) {
+// 			msg.set("등록된 일정이 없습니다");
+// 		}
+// 		else {
+// 			if (storage.searchDatas === undefined) {
+// 				jsonData = storage.scheduleList.sort(function (a, b) { return b.created - a.created; });
+// 			} else {
+// 				jsonData = storage.searchDatas.sort(function (a, b) { return b.created - a.created; });
+// 			}
+// 		}
+
+// 		result = CommonDatas.paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+// 		containerTitle = document.getElementById("containerTitle");
+// 		container = document.getElementsByClassName("gridList")[0];
+// 		hideArr = ["detailBackBtn", "crudUpdateBtn", "crudDeleteBtn", "contractReqBtn", "searchContainer"];
+// 		showArr = [
+// 			{ element: "calendarList", display: "block" },
+// 			{ element: "gridList", display: "block" },
+// 			{ element: "pageContainer", display: "flex" },
+// 			{ element: "listRange", display: "flex" },
+// 			{ element: "listSearchInput", display: "flex" },
+// 			{ element: "crudBtns", display: "flex" },
+// 			{ element: "crudAddBtn", display: "flex" },
+// 		];
+
+// 		header = [
+// 			{
+// 				"title": "등록일",
+// 				"align": "center",
+// 			},
+// 			{
+// 				"title": "일정",
+// 				"align": "center",
+// 			},
+// 			{
+// 				"title": "일정제목",
+// 				"align": "center",
+// 			},
+// 			{
+// 				"title": "내용",
+// 				"align": "center",
+// 			},
+// 			{
+// 				"title": "담당자",
+// 				"align": "center",
+// 			},
+// 		];
+
+// 		if (jsonData === "") {
+// 			str = [
+// 				{
+// 					"setData": undefined,
+// 					"col": 5,
+// 				},
+// 			];
+
+// 			data.push(str);
+// 		} else {
+// 			let fromDate, fromSetDate, toDate, toSetDate, disDate;
+// 			for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+// 				fromDate = CommonDatas.dateDis(jsonData[i].from);
+// 				fromSetDate = CommonDatas.dateFnc(fromDate, "mm.dd");
+// 				toDate = CommonDatas.dateDis(jsonData[i].to);
+// 				toSetDate = CommonDatas.dateFnc(toDate, "mm.dd");
+// 				disDate = CommonDatas.dateDis(jsonData[i].created, jsonData[i].modified);
+// 				disDate = CommonDatas.dateFnc(disDate, "yyyy.mm.dd");
+
+// 				str = [
+// 					{
+// 						"setData": disDate,
+// 						"align": "center",
+// 					},
+// 					{
+// 						"setData": fromSetDate + " ~ " + toSetDate,
+// 						"align": "center",
+// 					},
+// 					{
+// 						"setData": jsonData[i].title,
+// 						"align": "left",
+// 					},
+// 					{
+// 						"setData": jsonData[i].content,
+// 						"align": "left",
+// 					},
+// 					{
+// 						"setData": storage.user[jsonData[i].writer].userName,
+// 						"align": "center",
+// 					},
+// 				];
+
+// 				fnc = "CommonDatas.Temps.schedule2Set.calendarDetailView(this);";
+// 				ids.push(jsonData[i].no);
+// 				dataJob.push(jsonData[i].job);
+// 				data.push(str);
+// 			}
+
+// 		}
+
+// 		containerTitle.innerHTML = "일정조회";
+// 		CommonDatas.createGrid(container, header, data, ids, dataJob, fnc);
+// 		let gridList = document.getElementsByClassName("gridList")[0];
+// 		let createDiv = document.createElement("div");
+// 		createDiv.className = "pageContainer";
+// 		let createButton = document.createElement("button");
+
+// 		if (!storage.setFirstButtonFlag) {
+// 			createButton.innerHTML = "리스트 확대&nbsp;<i class=\"fa-solid fa-plus\"></i>";
+// 			createButton.setAttribute("data-type", "list");
+// 			createButton.setAttribute("data-flag", "false");
+// 			createButton.setAttribute("onclick", "CommonDatas.Temps.schedule2Set.scheduleDisplaySet(this);");
+// 		} else {
+// 			createButton.innerHTML = "리스트 축소&nbsp;<i class=\"fa-solid fa-minus\"></i>";
+// 			createButton.setAttribute("data-type", "list");
+// 			createButton.setAttribute("data-flag", "true");
+// 			createButton.setAttribute("onclick", "CommonDatas.Temps.schedule2Set.scheduleDisplaySet(this);");
+// 		}
+
+// 		gridList.prepend(createButton);
+// 		gridList.append(createDiv);
+// 		pageContainer = document.getElementsByClassName("pageContainer");
+// 		let pageNation = CommonDatas.createPaging(pageContainer[0], result[3], "CommonDatas.pageMove", "CommonDatas.Temps.schedule2Set.drawScheduleList", result[0]);
+// 		pageContainer[0].innerHTML = pageNation;
+
+// 		let gridContent = document.getElementsByClassName("gridContent");
+// 		for (let i = 0; i < gridContent.length; i++) {
+// 			let oriColor = gridContent[i].style.backgroundColor;
+// 			let userName = gridContent[i].children[4].children[0].innerText;
+// 			gridContent[i].addEventListener("mouseover", () => {
+// 				document.querySelector(".calendar_item[data-id=\"" + gridContent[i].dataset.id + "\"]").style.backgroundColor = "#332E85";
+// 				for (let key in storage.user) {
+// 					if (storage.user[key].userName === userName) {
+// 						document.querySelector(".infoFlexContainer").querySelector("div[data-no=\"" + storage.user[key].userNo + "\"]").style.backgroundColor = "#332E85";
+// 					}
+// 				}
+// 			});
+
+// 			gridContent[i].addEventListener("mouseout", () => {
+// 				document.querySelector(".calendar_item[data-id=\"" + gridContent[i].dataset.id + "\"]").style.backgroundColor = oriColor;
+// 				for (let key in storage.user) {
+// 					if (storage.user[key].userName === userName) {
+// 						document.querySelector(".infoFlexContainer").querySelector("div[data-no=\"" + storage.user[key].userNo + "\"]").style.backgroundColor = oriColor;
+// 					}
+// 				}
+// 			});
+// 		}
+// 		CommonDatas.setViewContents(hideArr, showArr);
+// 	}
+
+// 	scheduleInsertForm(getDate){
+// 		let html, dataArray;
+// 		dataArray = this.scheduleRadioInsert("sales", getDate);
+// 		html = detailViewForm(dataArray, "modal");
+	
+// 		modal.show();
+// 		modal.content.style.minWidth = "70%";
+// 		modal.content.style.maxWidth = "70%";
+// 		modal.headTitle.innerText = "일정등록";
+// 		modal.body.innerHTML = html;
+// 		modal.confirm.innerText = "등록";
+// 		modal.close.innerText = "취소";
+// 		modal.confirm.setAttribute("onclick", "scheduleInsert();");
+// 		modal.close.setAttribute("onclick", "modal.hide();");
+// 		document.getElementById("content").style.height = "30vh";
+	
+// 		setTimeout(() => {
+// 			document.querySelector("[name='job'][value='sales']").setAttribute("checked", true);
+// 			document.getElementById("writer").setAttribute("data-change", true);
+	
+// 			if(getDate === undefined){
+// 				let nowDate = new Date().toISOString().substring(0, 10);
+// 				document.getElementById("from").value = nowDate + "T09:00";
+// 				document.getElementById("to").value = nowDate + "T18:00";
+// 			}else{
+// 				document.getElementById("from").value = getDate + "T09:00";
+// 				document.getElementById("to").value = getDate + "T18:00";
+// 			}
+// 			ckeditor.config.readOnly = false;
+// 			window.setTimeout(setEditor, 100);
+// 		}, 100);
+
+// 	}
+
+// 	scheduleRadioInsert(value, date){
+// 		let dataArray, myName, my, now;
+	
+// 		my = storage.my;
+// 		myName = storage.user[my].userName;
+	
+// 		if(date === undefined){
+// 			now = new Date();
+// 			date = now.toISOString().slice(0, 10);
+// 		}
+	
+// 		if(value === "sales"){
+// 			dataArray = [
+// 				{
+// 					"title": undefined,
+// 					"radioValue": [
+// 						{
+// 							"key": "sales",
+// 							"value": "영업일정",
+// 						},
+// 						{
+// 							"key": "tech",
+// 							"value": "기술일정",
+// 						},
+// 						{
+// 							"key": "schedule",
+// 							"value": "기타일정",
+// 						},
+// 					],
+// 					"radioType": "tab",
+// 					"elementId": ["jobSales", "jobTech", "jobSchedule"],
+// 					"col": 4,
+// 					"type": "radio",
+// 					"elementName": "job",
+// 					"disabled": false,
+// 					"onClick": "CommonDatas.Temps.schedule2Set.scheduleRadioClick(this);",
+// 				},
+// 				{
+// 					"title": "활동시작일(*)",
+// 					"elementId": "from",
+// 					"value": date,
+// 					"type": "datetime",
+// 					"disabled": false,
+// 				},
+// 				{
+// 					"title": "활동종료일(*)",
+// 					"elementId": "to",
+// 					"value": date,
+// 					"type": "datetime",
+// 					"disabled": false,
+// 				},
+// 				{
+// 					"title": "장소",
+// 					"elementId": "place",
+// 					"disabled": false,
+// 				},
+// 				{
+// 					"title": "활동형태(*)",
+// 					"selectValue": [
+// 						{
+// 							"key": "10170",
+// 							"value": "회사방문",
+// 						},
+// 						{
+// 							"key": "10171",
+// 							"value": "기술지원",
+// 						},
+// 						{
+// 							"key": "10221",
+// 							"value": "제품설명",
+// 						},
+// 						{
+// 							"key": "10222",
+// 							"value": "시스템데모",
+// 						},
+// 						{
+// 							"key": "10223",
+// 							"value": "제품견적",
+// 						},
+// 						{
+// 							"key": "10224",
+// 							"value": "계약건 의사결정지원",
+// 						},
+// 						{
+// 							"key": "10225",
+// 							"value": "계약",
+// 						},
+// 						{
+// 							"key": "10226",
+// 							"value": "사후처리",
+// 						},
+// 						{
+// 							"key": "10227",
+// 							"value": "기타",
+// 						},
+// 						{
+// 							"key": "10228",
+// 							"value": "협력사요청",
+// 						},
+// 						{
+// 							"key": "10229",
+// 							"value": "협력사문의",
+// 						},
+// 						{
+// 							"key": "10230",
+// 							"value": "교육",
+// 						},
+// 						{
+// 							"key": "10231",
+// 							"value": "전화상담",
+// 						},
+// 						{
+// 							"key": "10232",
+// 							"value": "제조사업무협의",
+// 						},
+// 						{
+// 							"key": "10233",
+// 							"value": "외부출장",
+// 						},
+// 						{
+// 							"key": "10234",
+// 							"value": "제안설명회",
+// 						}
+// 					],
+// 					"type": "select",
+// 					"elementId": "type",
+// 					"disabled": false,
+// 				},
+// 				{
+// 					"title": "담당자(*)",
+// 					"elementId": "writer",
+// 					"complete": "user",
+// 					"keyup": "CommonDatas.addAutoComplete(this);",
+// 					"onClick": "CommonDatas.addAutoComplete(this);",
+// 					"value": myName,
+// 				},
+// 				{
+// 					"title": "영업기회(*)",
+// 					"elementId": "sopp",
+// 					"complete": "sopp",
+// 					"keyup": "CommonDatas.addAutoComplete(this);",
+// 					"onClick": "CommonDatas.addAutoComplete(this);",
+// 					"disabled": false,
+// 				},
+// 				{
+// 					"title": "매출처",
+// 					"disabled": false,
+// 					"elementId": "customer",
+// 					"complete": "customer",
+// 					"keyup": "CommonDatas.addAutoComplete(this);",
+// 					"onClick": "CommonDatas.addAutoComplete(this);",
+// 				},
+// 				{
+// 					"title": "엔드유저",
+// 					"disabled": false,
+// 					"elementId": "partner",
+// 					"complete": "customer",
+// 					"keyup": "CommonDatas.addAutoComplete(this);",
+// 					"onClick": "CommonDatas.addAutoComplete(this);",
+// 				},
+// 				{
+// 					"title": "제목(*)",
+// 					"elementId": "title",
+// 					"disabled": false,
+// 					"col": 4,
+// 				},
+// 				{
+// 					"title": "내용",
+// 					"elementId": "content",
+// 					"type": "textarea",
+// 					"disabled": false,
+// 					"col": 4,
+// 				}
+// 			];
+	
+// 			storage.formList = {
+// 				"job" : "",
+// 				"from" : "",
+// 				"to" : "",
+// 				"place" : "",
+// 				"type" : "",
+// 				"writer" : storage.my,
+// 				"sopp" : 0,
+// 				"customer" : 0,
+// 				"partner" : 0,
+// 				"title" : "",
+// 				"content" : "",
+// 				"report" : 1,
+// 			};
+// 		}else if(value === "tech"){
+// 			dataArray = [
+// 				{
+// 					"title": undefined,
+// 					"radioValue": [
+// 						{
+// 							"key": "sales",
+// 							"value": "영업일정",
+// 						},
+// 						{
+// 							"key": "tech",
+// 							"value": "기술일정",
+// 						},
+// 						{
+// 							"key": "schedule",
+// 							"value": "기타일정",
+// 						},
+// 					],
+// 					"type": "radio",
+// 					"elementName": "job",
+// 					"radioType": "tab",
+// 					"elementId": ["jobSales", "jobTech", "jobSchedule"],
+// 					"col": 4,
+// 					"disabled": false,
+// 					"onClick": "CommonDatas.Temps.schedule2Set.scheduleRadioClick(this);",
+// 				},
+// 				{
+// 					"title": "등록구분(*)",
+// 					"radioValue": [
+// 						{
+// 							"key": "10247",
+// 							"value": "신규영업지원",
+// 						},
+// 						{
+// 							"key": "10248",
+// 							"value": "유지보수",
+// 						},
+// 					],
+// 					"type": "radio",
+// 					"elementName": "contractMethod",
+// 					"elementId": ["contractMethodNew", "contractMethodOld"],
+// 					"col": 4,
+// 					"disabled": false,
+// 				},
+// 				{
+// 					"title": "영업기회(*)",
+// 					"elementId": "sopp",
+// 					"complete": "sopp",
+// 					"keyup": "CommonDatas.addAutoComplete(this);",
+// 					"onClick": "CommonDatas.addAutoComplete(this);",
+// 					"disabled": false,
+// 				},
+// 				{
+// 					"title": "계약",
+// 					"elementId": "contract",
+// 					"complete": "contract",
+// 					"keyup": "CommonDatas.addAutoComplete(this);",
+// 					"onClick": "CommonDatas.addAutoComplete(this);",
+// 					"disabled": false,
+// 				},
+// 				{
+// 					"title": "매출처",
+// 					"disabled": false,
+// 					"elementId": "partner",
+// 					"complete": "customer",
+// 					"keyup": "CommonDatas.addAutoComplete(this);",
+// 					"onClick": "CommonDatas.addAutoComplete(this);",
+// 				},
+// 				{
+// 					"title": "매출처 담당자",
+// 					"complete": "cip",
+// 					"keyup": "CommonDatas.addAutoComplete(this);",
+// 					"onClick": "CommonDatas.addAutoComplete(this);",
+// 					"elementId": "cipOfCustomer",
+// 					"disabled": false,
+// 				},
+// 				{
+// 					"title": "엔드유저(*)",
+// 					"elementId": "customer",
+// 					"disabled": false,
+// 					"complete": "customer",
+// 					"keyup": "CommonDatas.addAutoComplete(this);",
+// 					"onClick": "CommonDatas.addAutoComplete(this);",
+// 				},
+// 				{
+// 					"title": "모델",
+// 					"elementId": "supportModel",
+// 					"disabled": false,
+// 				},
+// 				{
+// 					"title": "버전",
+// 					"elementId": "supportVersion",
+// 					"disabled": false,
+// 				},
+// 				{
+// 					"title": "단계",
+// 					"selectValue": [
+// 						{
+// 							"key": "10213",
+// 							"value": "접수단계",
+// 						},
+// 						{
+// 							"key": "10214",
+// 							"value": "출동단계",
+// 						},
+// 						{
+// 							"key": "10215",
+// 							"value": "미계약에 따른 보류",
+// 						},
+// 						{
+// 							"key": "10253",
+// 							"value": "처리완료",
+// 						}
+// 					],
+// 					"type": "select",
+// 					"elementId": "supportStep",
+// 					"disabled": false,
+// 				},
+// 				{
+// 					"title": "지원형태",
+// 					"selectValue": [
+// 						{
+// 							"key": "10187",
+// 							"value": "전화상담",
+// 						},
+// 						{
+// 							"key": "10208",
+// 							"value": "현장방문",
+// 						},
+// 						{
+// 							"key": "10209",
+// 							"value": "원격지원",
+// 						}
+// 					],
+// 					"type": "select",
+// 					"elementId": "type",
+// 					"disabled": false,
+// 				},
+// 				{
+// 					"title": "담당자(*)",
+// 					"complete": "user",
+// 					"keyup": "CommonDatas.addAutoComplete(this);",
+// 					"onClick": "CommonDatas.addAutoComplete(this);",
+// 					"elementId": "writer",
+// 					"value": myName,
+// 				},
+// 				{
+// 					"title": "지원 시작일(*)",
+// 					"elementId": "from",
+// 					"value": date,
+// 					"disabled": false,
+// 					"type": "datetime",
+// 				},
+// 				{
+// 					"title": "지원 종료일(*)",
+// 					"elementId": "to",
+// 					"value": date,
+// 					"disabled": false,
+// 					"type": "datetime",
+// 				},
+// 				{
+// 					"title": "장소",
+// 					"elementId": "place",
+// 					"disabled": false,
+// 				},
+// 				{
+// 					"title": "기술지원명(*)",
+// 					"elementId": "title",
+// 					"disabled": false,
+// 					"col": 3,
+// 				},
+// 				{
+// 					"title": "내용",
+// 					"type": "textarea",
+// 					"elementId": "content",
+// 					"disabled": false,
+// 					"col": 4,
+// 				},
+// 			];
+	
+// 			storage.formList = {
+// 				"job" : "",
+// 				"contractMethod" : "",
+// 				"sopp" : 0,
+// 				"contract" : 0,
+// 				"partner" : 0,
+// 				"cipOfCustomer" : 0,
+// 				"customer" : 0,
+// 				"supportModel" : "",
+// 				"supportVersion" : "",
+// 				"supportStep" : "",
+// 				"type" : "",
+// 				"place" : "",
+// 				"writer" : storage.my,
+// 				"from" : "",
+// 				"to" : "",
+// 				"title" : "",
+// 				"content" : "",
+// 				"report" : 1,
+// 			};
+// 		}else{
+// 			dataArray = [
+// 				{
+// 					"title": undefined,
+// 					"radioValue": [
+// 						{
+// 							"key": "sales",
+// 							"value": "영업일정",
+// 						},
+// 						{
+// 							"key": "tech",
+// 							"value": "기술일정",
+// 						},
+// 						{
+// 							"key": "schedule",
+// 							"value": "기타일정",
+// 						},
+// 					],
+// 					"type": "radio",
+// 					"elementName": "job",
+// 					"radioType": "tab",
+// 					"elementId": ["jobSales", "jobTech", "jobSchedule"],
+// 					"col": 4,
+// 					"disabled": false,
+// 					"onClick": "CommonDatas.Temps.schedule2Set.scheduleRadioClick(this);",
+// 				},
+// 				{
+// 					"title": "일정시작일(*)",
+// 					"type": "datetime",
+// 					"value": date,
+// 					"elementId": "from",
+// 					"disabled": false,
+// 				},
+// 				{
+// 					"title": "일정종료일(*)",
+// 					"type": "datetime",
+// 					"value": date,
+// 					"elementId": "to",
+// 					"disabled": false,
+// 				},
+// 				{
+// 					"title": "장소",
+// 					"elementId": "place",
+// 					"disabled": false,
+// 				},
+// 				{
+// 					"title": "영업기회(*)",
+// 					"elementId": "sopp",
+// 					"complete": "sopp",
+// 					"keyup": "CommonDatas.addAutoComplete(this);",
+// 					"onClick": "CommonDatas.addAutoComplete(this);",
+// 					"disabled": false,
+// 				},
+// 				{
+// 					"title": "담당자(*)",
+// 					"elementId": "writer",
+// 					"complete": "user",
+// 					"keyup": "CommonDatas.addAutoComplete(this);",
+// 					"onClick": "CommonDatas.addAutoComplete(this);",
+// 					"value": myName,
+// 				},
+// 				{
+// 					"title": "매출처",
+// 					"disabled": false,
+// 					"elementId": "customer",
+// 					"complete": "customer",
+// 					"keyup": "CommonDatas.addAutoComplete(this);",
+// 					"onClick": "CommonDatas.addAutoComplete(this);",
+// 				},
+// 				{
+// 					"title": "제목(*)",
+// 					"elementId": "title",
+// 					"disabled": false,
+// 					"col": 2,
+// 				},
+// 				{
+// 					"title": "내용",
+// 					"elementId": "content",
+// 					"type": "textarea",
+// 					"disabled": false,
+// 					"col": 4,
+// 				},
+// 			];
+	
+// 			storage.formList = {
+// 				"job" : "",
+// 				"from" : "",
+// 				"to" : "",
+// 				"place" : "",
+// 				"sopp" : 0,
+// 				"writer" : storage.my,
+// 				"customer" : 0,
+// 				"title" : "",
+// 				"content" : "",
+// 				"report" : 1,
+// 			};
+// 		}
+	
+// 		return dataArray;
+// 	}
+
+// 	//달력 다음월 셋팅 함수
+// 	calendarNext() {
+// 		let getYear, getMonth, setYear, setMonth;
+
+// 		getYear = document.getElementsByClassName("calendarYear")[0];
+// 		getMonth = document.getElementsByClassName("calendarMonth")[0];
+// 		setYear = parseInt(getYear.innerHTML);
+// 		setMonth = parseInt(getMonth.innerHTML);
+
+// 		if (setMonth == 12) {
+// 			setYear = setYear + 1;
+// 			setMonth = 0;
+// 		}
+
+// 		setMonth = setMonth + 1;
+
+// 		getYear.innerHTML = setYear;
+// 		getMonth.innerHTML = setMonth;
+
+// 		// if(setMonth < 10){
+// 		// 	setMonth = "0" + setMonth;
+// 		// }
+
+// 		storage.currentlongDate = new Date(setYear + "-" + setMonth + "-01").getTime();
+// 		storage.currentYear = setYear;
+// 		storage.currentMonth = setMonth;
+
+// 		this.scheduleCalendarAjax();
+// 	}
+
+// 	//달력 이전월 셋팅 함수
+// 	calendarPrev() {
+// 		let getYear, getMonth, setYear, setMonth, type;
+
+// 		getYear = document.getElementsByClassName("calendarYear")[0];
+// 		getMonth = document.getElementsByClassName("calendarMonth")[0];
+// 		setYear = parseInt(getYear.innerHTML);
+// 		setMonth = parseInt(getMonth.innerHTML);
+// 		type = "prev";
+
+// 		if (setMonth == 1) {
+// 			setYear = setYear - 1;
+// 			setMonth = 13;
+// 		}
+
+// 		setMonth = setMonth - 1;
+
+// 		getYear.innerHTML = setYear;
+// 		getMonth.innerHTML = setMonth;
+
+// 		// if(setMonth < 10){
+// 		// 	setMonth = "0" + setMonth;
+// 		// }
+
+// 		storage.currentlongDate = new Date(setYear + "-" + setMonth + "-01").getTime();
+// 		storage.currentYear = setYear;
+// 		storage.currentMonth = setMonth;
+
+// 		this.scheduleCalendarAjax();
+// 	}
+
+// 	//달력 데이터를 새로 가지고 와서 셋팅 후 출력하는 함수
+// 	scheduleCalendarAjax() {
+// 		let scheduleRange, url;
+// 		scheduleRange = document.getElementsByClassName("scheduleRange")[0].value;
+
+// 		if (scheduleRange === "dept") {
+// 			url = "/api/schedule2/" + scheduleRange + "/" + storage.user[storage.my].deptId[0] + "/" + storage.currentlongDate;
+// 		} else if (scheduleRange === "employee") {
+// 			url = "/api/schedule2/" + scheduleRange + "/" + storage.my + "/" + storage.currentlongDate;
+// 		} else {
+// 			url = "/api/schedule2/" + scheduleRange + "/" + storage.currentlongDate;
+// 		}
+
+// 		axios.get(url).then((response) => {
+// 			let jsonData;
+// 			jsonData = cipher.decAes(response.data.data);
+// 			jsonData = JSON.parse(jsonData);
+
+// 			if (jsonData.length > 0) {
+// 				storage.scheduleList = jsonData;
+// 				window.setTimeout(this.drawCalendar(document.getElementsByClassName("calendar_container")[0]), 200);
+// 				window.setTimeout(this.drawScheduleList(), 200);
+// 			} else {
+// 				msg.set("데이터가 없습니다.");
+// 			}
+// 		});
+// 	}
+
+// 	//두개 이상 이벤트가 실행될때 후순위 멈추는 함수
+// 	eventStop() {
+// 		if (event.stopattragation) {
+// 			event.stopattragation();
+// 		}
+// 		event.cancelBubble = true;
+// 	}
+
+// 	//달력 상세보기 함수
+// 	calendarDetailView(e) {
+// 		let thisEle = e;
+// 		let no = thisEle.dataset.id;
+
+// 		for (let i = 0; i < storage.scheduleList.length; i++) {
+// 			let item = storage.scheduleList[i];
+
+// 			if (item.no == no) {
+// 				storage.detailData = item;
+// 			}
+// 		}
+
+// 		const ScheduleClass = new Schedule(storage.detailData);
+// 		ScheduleClass.calendarDetailDataSet();
+// 	}
+
+// 	//회사별, 부서별, 개인별 select 체인지 함수
+// 	scheduleSelectChange() {
+// 		let scheduleRange, url;
+// 		let getYear = document.getElementsByClassName("calendarYear")[0];
+// 		let getMonth = document.getElementsByClassName("calendarMonth")[0];
+// 		let setYear = getYear.innerText;
+// 		let setMonth = getMonth.innerText;
+// 		let longDate = new Date(setYear + "-" + setMonth + "-01").getTime();
+// 		scheduleRange = document.getElementsByClassName("scheduleRange")[0].value;
+
+// 		if (scheduleRange === "dept") {
+// 			url = "/api/schedule2/" + scheduleRange + "/" + storage.user[storage.my].deptId[0] + "/" + longDate;
+// 		} else if (scheduleRange === "employee") {
+// 			url = "/api/schedule2/" + scheduleRange + "/" + storage.my + "/" + longDate;
+// 		} else {
+// 			url = "/api/schedule2/" + scheduleRange + "/" + longDate;
+// 		}
+
+// 		axios.get(url).then((response) => {
+// 			let result = response.data.data;
+// 			result = cipher.decAes(result);
+// 			result = JSON.parse(result);
+
+// 			if (result.length > 0) {
+// 				storage.scheduleList = result;
+
+// 				if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined) {
+// 					window.setTimeout(this.drawCalendar(document.getElementsByClassName("calendar_container")[0]), 600);
+// 					window.setTimeout(this.drawScheduleList, 600);
+// 				} else {
+// 					window.setTimeout(this.drawCalendar(document.getElementsByClassName("calendar_container")[0]), 200);
+// 					window.setTimeout(this.drawScheduleList, 200);
+// 				}
+// 			} else {
+// 				msg.set("데이터가 없습니다.");
+// 			}
+// 		})
+// 	}
+
+// 	scheduleRadioClick(e){
+// 		let html, dataArray, tempFrom, tempTo, thisEle = e;
+// 		tempFrom = document.getElementById("from").value;
+// 		tempTo = document.getElementById("to").value;
+// 		dataArray = this.scheduleRadioInsert(thisEle.value);
+// 		html = CommonDatas.detailViewForm(dataArray, "modal");
+		
+// 		modal.show();
+// 		modal.headTitle.innerText = "일정등록";
+// 		modal.body.innerHTML = "<div class='defaultFormContainer'>" + html + "</div>";
+// 		modal.confirm.innerText = "등록";
+// 		modal.close.innerText = "취소";
+// 		modal.confirm.setAttribute("onclick", "scheduleInsert();");
+// 		modal.close.setAttribute("onclick", "modal.hide();");
+// 		document.getElementById("content").style.height = "30vh";
+	
+// 		setTimeout(() => {
+// 			document.querySelector("[name='job'][value='" + thisEle.value + "']").setAttribute("checked", true);
+// 			document.getElementById("from").value = tempFrom;
+// 			document.getElementById("to").value = tempTo;
+// 			document.getElementById("writer").setAttribute("data-change", true);
+// 			ckeditor.config.readOnly = false;
+// 			window.setTimeout(setEditor, 100);
+// 		}, 100);
+// 	}
+
+// 	//달력 more버튼 클릭 함수
+// 	calendarMore(e) {
+// 		let thisEle, moreContentBody, html = "", calendarMoreContent, moreContentTitle, setItemParents;
+// 		thisEle = $(e);
+// 		setItemParents = thisEle.parent().parent();
+// 		calendarMoreContent = $(".calendarMoreContent");
+// 		moreContentTitle = $(".moreContentTitle");
+// 		calendarMoreContent.find(".moreContentBody").remove();
+// 		calendarMoreContent.css("width", parseInt(setItemParents.innerWidth() * 1.5) + "px");
+// 		calendarMoreContent.css("left", setItemParents.position().left + "px");
+// 		calendarMoreContent.css("top", setItemParents.position().top + "px");
+// 		calendarMoreContent.append("<div class=\"moreContentBody\"></div>");
+
+// 		html = setItemParents.html();
+
+// 		moreContentBody = $(".moreContentBody");
+// 		moreContentBody.html(html);
+// 		moreContentBody.children().not(".calendar_item").remove();
+// 		moreContentBody.find(".calendar_item_empty").remove();
+// 		moreContentBody.children().show();
+// 		moreContentTitle.html(thisEle.parents(".calendar_cell").data("date"));
+// 		calendarMoreContent.show();
+// 		calendarMoreContent.draggable();
+// 	}
+
+// 	//달력 more container 닫기 함수
+// 	moreContentClose() {
+// 		let calendarMoreContent = $(".calendarMoreContent");
+// 		calendarMoreContent.hide();
+// 	}
+
+// 	//달력 및 리스트 확대/축소 함수
+// 	scheduleDisplaySet(e) {
+// 		let thisEle = e;
+// 		let type = thisEle.dataset.type;
+// 		let flag = thisEle.dataset.flag;
+// 		let calendarList = document.getElementsByClassName("calendarList")[0];
+// 		let gridContainer = document.getElementsByClassName("gridList")[0];
+// 		let bodyContent = document.getElementById("bodyContent");
+
+// 		if (type === "calendar" && flag === "false") {
+// 			thisEle.innerHTML = "달력 축소&nbsp;<i class=\"fa-solid fa-minus\"></i>";
+// 			thisEle.setAttribute("data-flag", true);
+// 			bodyContent.style.overflowY = "auto";
+// 			calendarList.style.display = "block";
+// 			gridContainer.style.display = "none";
+// 			calendarList.style.width = "100vw";
+// 			calendarList.style.overflow = "hidden";
+// 			let calendar_cell = calendarList.querySelectorAll(".calendar_cell");
+// 			for (let i = 0; i < calendar_cell.length; i++) {
+// 				let item = calendar_cell[i];
+// 				let calendar_items = item.children;
+// 				item.style.height = "21vh";
+
+// 				if (calendar_items.length < 8) {
+// 					for (let t = 0; t < calendar_items.length; t++) {
+// 						let childrenItem = calendar_items[t];
+// 						childrenItem.style.display = "block";
+// 					}
+// 				} else {
+// 					for (let t = 0; t < calendar_items.length; t++) {
+// 						let childrenItem = calendar_items[t];
+
+// 						if (!childrenItem.classList.contains("calendar_span_empty")) {
+// 							if (t < 8) {
+// 								childrenItem.style.display = "block";
+// 							} else {
+// 								childrenItem.style.display = "none";
+// 							}
+// 						}
+// 					}
+// 				}
+// 			}
+// 		} else if (type === "calendar" && flag === "true") {
+// 			thisEle.innerHTML = "달력 확대&nbsp;<i class=\"fa-solid fa-plus\">";
+// 			thisEle.setAttribute("data-flag", false);
+// 			bodyContent.style.overflow = "hidden";
+// 			calendarList.style.display = "block";
+// 			gridContainer.style.display = "block";
+// 			calendarList.style.width = "49vw";
+// 			calendarList.style.overflow = "initial";
+// 			let calendar_cell = calendarList.querySelectorAll(".calendar_cell");
+// 			for (let i = 0; i < calendar_cell.length; i++) {
+// 				let item = calendar_cell[i];
+// 				let calendar_items = item.children;
+// 				item.style.height = "11vh";
+
+// 				for (let t = 0; t < calendar_items.length; t++) {
+// 					let childrenItem = calendar_items[t];
+
+// 					if (!childrenItem.classList.contains("calendar_span_empty")) {
+// 						if (t < 4) {
+// 							childrenItem.style.display = "block";
+// 						} else {
+// 							childrenItem.style.display = "none";
+// 						}
+// 					}
+// 				}
+// 			}
+// 		} else if (type === "list" && flag === "false") {
+// 			thisEle.innerHTML = "리스트 축소&nbsp;<i class=\"fa-solid fa-minus\"></i>";
+// 			thisEle.setAttribute("data-flag", true);
+// 			calendarList.style.display = "none";
+// 			gridContainer.style.width = "100vw";
+// 			storage.setFirstButtonFlag = true;
+// 		} else if (type === "list" && flag === "true") {
+// 			thisEle.innerHTML = "리스트 확대&nbsp;<i class=\"fa-solid fa-plus\">";
+// 			thisEle.setAttribute("data-flag", false);
+// 			calendarList.style.display = "block";
+// 			gridContainer.style.width = "44vw";
+// 			storage.setFirstButtonFlag = false;
+// 		}
+// 	}
+
+// 	//input 검색 기능 함수
+// 	searchInputKeyup() {
+// 		let searchAllInput, pageContainer, tempArray;
+// 		searchAllInput = document.getElementById("searchAllInput").value;
+// 		pageContainer = document.getElementsByClassName("pageContainer")[0];
+// 		tempArray = CommonDatas.searchDataFilter(storage.scheduleList, searchAllInput, "input");
+
+// 		if (tempArray.length > 0) {
+// 			storage.searchDatas = tempArray;
+// 		} else {
+// 			storage.searchDatas = undefined;
+// 		}
+
+// 		this.drawScheduleList();
+// 		pageContainer.style.diplay = "flex";
+// 	}
+
+// 	//검색에 필요한 리스트 만드는 함수
+// 	addSearchList() {
+// 		storage.searchList = [];
+
+// 		for (let i = 0; i < storage.scheduleList.length; i++) {
+// 			let writer, from, to, disDate, setCreated, title, content;
+// 			writer = (storage.scheduleList[i].writer === null || storage.scheduleList[i].writer == 0 || storage.scheduleList[i].writer === undefined) ? "" : storage.user[storage.scheduleList[i].writer].userName;
+// 			title = storage.scheduleList[i].title;
+// 			content = storage.scheduleList[i].content;
+// 			disDate = dateDis(storage.scheduleList[i].from);
+// 			from = dateFnc(disDate).replaceAll("-", "");
+// 			disDate = dateDis(storage.scheduleList[i].to);
+// 			to = dateFnc(disDate).replaceAll("-", "");
+// 			disDate = dateDis(storage.scheduleList[i].created, storage.scheduleList[i].modified);
+// 			setCreated = dateFnc(disDate).replaceAll("-", "");
+// 			storage.searchList.push("#created" + setCreated + "#from" + from + "#to" + to + "#" + title + "#" + content + "#" + writer);
+// 		}
+// 	}
+// }
 
 // 견적관리 시작
 // 견적 초기 세팅해주는 클래스

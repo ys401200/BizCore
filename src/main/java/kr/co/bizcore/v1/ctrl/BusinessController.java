@@ -20,6 +20,13 @@ public class BusinessController extends Ctrl {
         return "/notice/list";
     } // End of /business/**
 
+    @RequestMapping(value = { "/calendar", "/calendar/{no:\\d+}" })
+    public String calendar(HttpServletRequest request) {
+        logger.info("tttt");
+        doIt(request);
+        return "/schedule/calendar/list";
+    } // End of /business/**
+
     @RequestMapping(value = { "/schedule", "/schedule/{no:\\d+}" })
     public String schedule(HttpServletRequest request) {
         doIt(request);
