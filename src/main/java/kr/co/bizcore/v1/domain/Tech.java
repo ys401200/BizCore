@@ -17,14 +17,14 @@ public class Tech extends Domain{
     private String cntrctMth;
     private int endCustNo;
     private int custmemberNo;
-    private String techdTitle;
-    private String techdDesc;
+    private String title;
+    private String desc;
     private int techdCheck;
     private String techdItemmodel;
     private String techdItemversion;
     private String techdPlace;
-    private String techdFrom;
-    private String techdTo;
+    private String schedFrom;
+    private String schedTo;
     private String techdType;
     private String techdSteps;
     private int userNo;

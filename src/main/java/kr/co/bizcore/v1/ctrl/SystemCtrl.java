@@ -115,8 +115,8 @@ public class SystemCtrl extends Ctrl {
         Schedule sch = null, sch2 = null;
 
         response.setContentType("application/json;charset=utf-8");
-        sch = scheduleService.getSchedule("vtek", "schedule", docNo);
-        sch2 = scheduleService.getSchedule("vtek", "schedule", "10064972");
+        sch = scheduleSvc.getSchedule("vtek", "schedule", docNo);
+        sch2 = scheduleSvc.getSchedule("vtek", "schedule", "10064972");
 
         logger.info("[TEST] :::::::::::::::::::::::::: schedule 1 : " + sch.toJson());
         logger.info("[TEST] :::::::::::::::::::::::::: schedule 2 : " + sch.toJson());

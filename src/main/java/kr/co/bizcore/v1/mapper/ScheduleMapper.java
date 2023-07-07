@@ -8,7 +8,9 @@ import org.apache.ibatis.annotations.Update;
 import kr.co.bizcore.v1.domain.Schedule;
 import kr.co.bizcore.v1.domain.WorkReport;
 
-public interface ScheduleMapper {    
+public interface ScheduleMapper {
+    @Select("SELECT 'schedule' AS job, schedNo AS no, userNo AS writer, soppNo AS sopp, custNo AS customer, schedFrom AS `from`, schedTo AS `to`, schedTitle AS title, schedDesc AS content, schedCheck AS report, schedType AS type, schedPlace AS place, regdatetime AS created, moddatetime AS modified FROM swc_sched WHERE attrib NOT LIKE 'XXX%' AND compno = (SELECT compno FROM swc_company WHERE compid = #{compId}) AND schedno = #{no}")
+    public List<Schedule> getList(@Param("compNo") int compNo);
 
     //@Select("SELECT a.* FROM (" + 
     //    "SELECT 'etc' AS job, schedno AS no, userno AS user, custno AS cust, soppno AS sopp, schedtitle AS title, scheddesc AS detail, schedfrom AS \"from\", schedto AS \"to\", schedplace AS place, regdatetime AS created, modDatetime AS modified FROM swc_sched WHERE schedfrom < DATE_ADD(#{ymd}, INTERVAL 1 MONTH) AND schedto >= #{ymd} AND compno = (SELECT compno FROM swc_company WHERE compid =#{compId}) " +

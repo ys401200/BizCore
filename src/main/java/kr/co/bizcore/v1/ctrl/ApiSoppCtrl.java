@@ -99,7 +99,7 @@ public class ApiSoppCtrl extends Ctrl{
         }else if(aesKey == null || aesIv == null){
             result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
         }else{
-            data = scheduleService.getScheduleRelatedSopp(compId, soppNo);
+            data = scheduleSvc.getScheduleRelatedSopp(compId, soppNo);
             if(data == null){
                 result = "{\"result\":\"failure\",\"msg\":\"Sopp not exist.\"}";
             }else{

@@ -437,7 +437,7 @@ class SalesSet{
 
 	//영업활동 리스트 출력 함수
 	drawSalesList() {
-		let container, result, jsonData, job, header = [], data = [], ids = [], disDate, setDate, str, fnc, pageContainer, hideArr, showArr, salesFrdatetime, salesTodatetime;
+		let container, result, jsonData, job, header = [], data = [], ids = [], disDate, setDate, str, fnc, pageContainer, hideArr, showArr, schedFrom, schedTo;
 
 		if (storage.salesList === undefined) {
 			msg.set("등록된 영업활동이 없습니다");
@@ -517,10 +517,10 @@ class SalesSet{
 			for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
 				disDate = CommonDatas.dateDis(new Date(jsonData[i].regDatetime).getTime(), new Date(jsonData[i].modDatetime).getTime());
 				setDate = CommonDatas.dateFnc(disDate, "yy.mm.dd");
-				disDate = CommonDatas.dateDis(new Date(jsonData[i].salesFrdatetime).getTime());
-				salesFrdatetime = CommonDatas.dateFnc(disDate, "yy.mm.dd");
-				disDate = CommonDatas.dateDis(new Date(jsonData[i].salesTodatetime).getTime());
-				salesTodatetime = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+				disDate = CommonDatas.dateDis(new Date(jsonData[i].schedFrom).getTime());
+				schedFrom = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+				disDate = CommonDatas.dateDis(new Date(jsonData[i].schedTo).getTime());
+				schedTo = CommonDatas.dateFnc(disDate, "yy.mm.dd");
 				let userName = storage.user[jsonData[i].userNo].userName;
 				let sopp = 0;
 
@@ -538,15 +538,15 @@ class SalesSet{
 						"align": "center",
 					},
 					{
-						"setData": jsonData[i].salesTitle,
+						"setData": jsonData[i].title,
 						"align": "left",
 					},
 					{
-						"setData": salesFrdatetime,
+						"setData": schedFrom,
 						"align": "center",
 					},
 					{
-						"setData": salesTodatetime,
+						"setData": schedTo,
 						"align": "center",
 					},
 					{
@@ -566,7 +566,7 @@ class SalesSet{
 						"align": "center",
 					},
 					{
-						"setData": jsonData[i].salesDesc,
+						"setData": jsonData[i].desc,
 						"align": "left",
 					},
 				];
@@ -618,13 +618,13 @@ class SalesSet{
 		dataArray = [
 			{
 				"title": "활동시작일(*)",
-				"elementId": "salesFrdatetime",
+				"elementId": "schedFrom",
 				"type": "datetime",
 				"disabled": false,
 			},
 			{
 				"title": "활동종료일(*)",
-				"elementId": "salesTodatetime",
+				"elementId": "schedTo",
 				"type": "datetime",
 				"disabled": false,
 			},
@@ -738,13 +738,13 @@ class SalesSet{
 			},
 			{
 				"title": "제목(*)",
-				"elementId": "salesTitle",
+				"elementId": "title",
 				"col": 4,
 				"disabled": false,
 			},
 			{
 				"title": "내용",
-				"elementId": "salesDesc",
+				"elementId": "desc",
 				"type": "textarea",
 				"col": 4,
 				"disabled": false,
@@ -768,13 +768,13 @@ class SalesSet{
 			"userNo": storage.my,
 			"compNo": 0,
 			"custNo": 0,
-			"salesFrdatetime": "",
-			"salesTodatetime": "",
+			"schedFrom": "",
+			"schedTo": "",
 			"salesPlace": "",
 			"salesType": "",
-			"salesDesc": "",
+			"desc": "",
 			"salesCheck": 0,
-			"salesTitle": "",
+			"title": "",
 			"ptncNo": 0,
 			"schedType": "",
 			"regDatetime": "",
@@ -787,8 +787,8 @@ class SalesSet{
 			nowDate = nowDate.toISOString().substring(0, 10);
 			document.getElementById("userNo").value = storage.user[my].userName;
 			document.getElementById("userNo").setAttribute("data-change", true);
-			document.getElementById("salesFrdatetime").value = nowDate + "T09:00:00";
-			document.getElementById("salesTodatetime").value = nowDate + "T18:00:00";
+			document.getElementById("schedFrom").value = nowDate + "T09:00:00";
+			document.getElementById("schedTo").value = nowDate + "T18:00:00";
 			ckeditor.config.readOnly = false;
 			window.setTimeout(setEditor, 100);
 		}, 100);
@@ -866,13 +866,13 @@ class Sales{
 			this.userNo = getData.userNo;
 			this.compNo = getData.compNo;
 			this.custNo = getData.custNo;
-			this.salesFrdatetime = getData.salesFrdatetime;
-			this.salesTodatetime = getData.salesTodatetime;
+			this.schedFrom = getData.schedFrom;
+			this.schedTo = getData.schedTo;
 			this.salesPlace = getData.salesPlace;
 			this.salesType = getData.salesType;
-			this.salesDesc = getData.salesDesc;
+			this.desc = getData.desc;
 			this.salesCheck = getData.salesCheck;
-			this.salesTitle = getData.salesTitle;
+			this.title = getData.title;
 			this.ptncNo = getData.ptncNo;
 			this.schedType = getData.schedType;
 			this.regDatetime = getData.regDatetime;
@@ -883,13 +883,13 @@ class Sales{
 			this.userNo = storage.my;
 			this.compNo = 0;
 			this.custNo = 0;
-			this.salesFrdatetime = "";
-			this.salesTodatetime = "";
+			this.schedFrom = "";
+			this.schedTo = "";
 			this.salesPlace = "";
 			this.salesType = "";
-			this.salesDesc = "";
+			this.desc = "";
 			this.salesCheck = 0;
-			this.salesTitle = "";
+			this.title = "";
 			this.ptncNo = 0;
 			this.schedType = 0;
 			this.regDatetime = "";
@@ -916,15 +916,15 @@ class Sales{
 		dataArray = [
 			{
 				"title": "활동시작일(*)",
-				"elementId": "salesFrdatetime",
+				"elementId": "schedFrom",
 				"type": "datetime",
-				"value": this.salesFrdatetime,
+				"value": this.schedFrom,
 			},
 			{
 				"title": "활동종료일(*)",
-				"elementId": "salesTodatetime",
+				"elementId": "schedTo",
 				"type": "datetime",
-				"value": this.salesTodatetime,
+				"value": this.schedTo,
 			},
 			{
 				"title": "장소",
@@ -1037,15 +1037,15 @@ class Sales{
 			},
 			{
 				"title": "제목(*)",
-				"elementId": "salesTitle",
-				"value": this.salesTitle,
+				"elementId": "title",
+				"value": this.title,
 				"col": 4,
 			},
 			{
 				"title": "내용",
-				"elementId": "salesDesc",
+				"elementId": "desc",
 				"type": "textarea",
-				"value": this.salesDesc,
+				"value": this.desc,
 				"col": 4,
 			}
 		];
@@ -1055,7 +1055,7 @@ class Sales{
 		createGrid.className = "defaultFormContainer";
 		createGrid.innerHTML = html;
 		gridList.after(createGrid);
-		containerTitle.innerText = this.salesTitle;
+		containerTitle.innerText = this.title;
 		let hideArr = ["gridList", "listRange", "crudAddBtn", "listSearchInput", "searchContainer", "pageContainer"];
 		let showArr = ["defaultFormContainer"];
 		CommonDatas.setViewContents(hideArr, showArr);
@@ -1080,17 +1080,17 @@ class Sales{
 	}
 
 	insert(){
-		if(document.getElementById("salesFrdatetime").value === ""){
+		if(document.getElementById("schedFrom").value === ""){
 			msg.set("활동 시작일을 선택해주세요.");
-			document.getElementById("salesFrdatetime").focus();
+			document.getElementById("schedFrom").focus();
 			return false;
-		} else if(document.getElementById("salesTodatetime").value === ""){
+		} else if(document.getElementById("schedTo").value === ""){
 			msg.set("활동 종료일을 선택해주세요.");
-			document.getElementById("salesTodatetime").focus();
+			document.getElementById("schedTo").focus();
 			return false;
-		} else if(document.getElementById("salesTitle").value === ""){
+		} else if(document.getElementById("title").value === ""){
 			msg.set("제목을 입력해주세요.");
-			document.getElementById("salesTitle").focus();
+			document.getElementById("title").focus();
 			return false;
 		} else{
 			CommonDatas.formDataSet();
@@ -1118,17 +1118,17 @@ class Sales{
 
 	//영업활동 수정
 	update() {
-		if(document.getElementById("salesFrdatetime").value === ""){
+		if(document.getElementById("schedFrom").value === ""){
 			msg.set("활동 시작일을 선택해주세요.");
-			document.getElementById("salesFrdatetime").focus();
+			document.getElementById("schedFrom").focus();
 			return false;
-		} else if(document.getElementById("salesTodatetime").value === ""){
+		} else if(document.getElementById("schedTo").value === ""){
 			msg.set("활동 종료일을 선택해주세요.");
-			document.getElementById("salesTodatetime").focus();
+			document.getElementById("schedTo").focus();
 			return false;
-		} else if(document.getElementById("salesTitle").value === ""){
+		} else if(document.getElementById("title").value === ""){
 			msg.set("제목을 입력해주세요.");
-			document.getElementById("salesTitle").focus();
+			document.getElementById("title").focus();
 			return false;
 		} else {
 			CommonDatas.formDataSet();
@@ -1188,32 +1188,49 @@ class ScheduleSet{
 
 	//달력 리스트
 	calendarList() {
-		var calendarEl = document.getElementById('calendar');
-		var calendar = new FullCalendar.Calendar(calendarEl, {
+		axios.get("/api/sched/").then((response) => {
+			if (response.data.result === "ok") {
+				let result;
+				result = cipher.decAes(response.data.data);
+				result = JSON.parse(result);
+				storage.salesList = result;
+
+				if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.sopp === undefined) {
+					window.setTimeout(this.drawSalesList, 1000);
+					window.setTimeout(CommonDatas.searchListSet("salesList"), 1000);
+				} else {
+					window.setTimeout(this.drawSalesList, 200);
+					window.setTimeout(CommonDatas.searchListSet("salesList"), 200);
+				}
+			}
+		}).catch((error) => {
+			msg.set("영업활동관리 리스트 에러입니다.\n" + error);
+			console.log(error);
+		})
+
+		let calendarEl = document.getElementById('calendar');
+		let calendar = new FullCalendar.Calendar(calendarEl, {
 		headerToolbar: {
-			left: 'prev,next today',
 			center: 'title',
-			right: 'dayGridMonth,timeGridWeek,timeGridDay'
 		},
-		initialDate: '2023-01-12',
-		navLinks: true, // can click day/week names to navigate views
+		navLinks: true,
 		selectable: true,
 		selectMirror: true,
 		select: function(arg) {
-			var title = prompt('Event Title:');
+			let title = prompt('Event Title:');
 			if (title) {
-			calendar.addEvent({
-				title: title,
-				start: arg.start,
-				end: arg.end,
-				allDay: arg.allDay
-			})
+				calendar.addEvent({
+					title: title,
+					start: arg.start,
+					end: arg.end,
+					allDay: arg.allDay
+				})
 			}
 			calendar.unselect()
 		},
 		eventClick: function(arg) {
 			if (confirm('Are you sure you want to delete this event?')) {
-			arg.event.remove()
+				arg.event.remove()
 			}
 		},
 		editable: true,
@@ -1298,6 +1315,8 @@ class ScheduleSet{
 		// 	console.log(error);
 		// })
 	}
+	
+
 }
 
 // class Schedule2Set {
@@ -4032,7 +4051,7 @@ class TechSet{
 
 	//기술지원 리스트 출력 함수
 	drawTechList() {
-		let container, result, jsonData, job, header = [], data = [], ids = [], disDate, setDate, str, fnc, pageContainer, hideArr, showArr, techdFrom, techdTo;
+		let container, result, jsonData, job, header = [], data = [], ids = [], disDate, setDate, str, fnc, pageContainer, hideArr, showArr, schedFrom, schedTo;
 
 		if (storage.techList === undefined) {
 			msg.set("등록된 기술지원이 없습니다");
@@ -4112,10 +4131,10 @@ class TechSet{
 			for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
 				disDate = CommonDatas.dateDis(new Date(jsonData[i].regDatetime).getTime(), new Date(jsonData[i].modDatetime).getTime());
 				setDate = CommonDatas.dateFnc(disDate, "yy.mm.dd");
-				disDate = CommonDatas.dateDis(new Date(jsonData[i].techdFrom).getTime());
-				techdFrom = CommonDatas.dateFnc(disDate, "yy.mm.dd");
-				disDate = CommonDatas.dateDis(new Date(jsonData[i].techdTo).getTime());
-				techdTo = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+				disDate = CommonDatas.dateDis(new Date(jsonData[i].schedFrom).getTime());
+				schedFrom = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+				disDate = CommonDatas.dateDis(new Date(jsonData[i].schedTo).getTime());
+				schedTo = CommonDatas.dateFnc(disDate, "yy.mm.dd");
 				let userName = storage.user[jsonData[i].userNo].userName;
 				let sopp = 0;
 
@@ -4137,11 +4156,11 @@ class TechSet{
 						"align": "center",
 					},
 					{
-						"setData": jsonData[i].techdTitle,
+						"setData": jsonData[i].title,
 						"align": "left",
 					},
 					{
-						"setData": jsonData[i].techdDesc,
+						"setData": jsonData[i].desc,
 						"align": "left",
 					},
 					{
@@ -4157,11 +4176,11 @@ class TechSet{
 						"align": "center",
 					},
 					{
-						"setData": techdFrom,
+						"setData": schedFrom,
 						"align": "center",
 					},
 					{
-						"setData": techdTo,
+						"setData": schedTo,
 						"align": "left",
 					},
 				];
@@ -4330,14 +4349,14 @@ class TechSet{
 			},
 			{
 				"title": "지원 시작일(*)",
-				"elementId": "techdFrom",
+				"elementId": "schedFrom",
 				"value": nowDate + "T09:00:00",
 				"disabled": false,
 				"type": "datetime",
 			},
 			{
 				"title": "지원 종료일(*)",
-				"elementId": "techdTo",
+				"elementId": "schedTo",
 				"value": nowDate + "T18:00:00",
 				"disabled": false,
 				"type": "datetime",
@@ -4349,14 +4368,14 @@ class TechSet{
 			},
 			{
 				"title": "기술지원명(*)",
-				"elementId": "techdTitle",
+				"elementId": "title",
 				"disabled": false,
 				"col": 3,
 			},
 			{
 				"title": "내용",
 				"type": "textarea",
-				"elementId": "techdDesc",
+				"elementId": "desc",
 				"disabled": false,
 				"col": 4,
 			},
@@ -4382,14 +4401,14 @@ class TechSet{
 			"cntrctMth": "",
 			"endCustNo": 0,
 			"custmemberNo": 0,
-			"techdTitle": "",
-			"techdDesc": "",
+			"title": "",
+			"desc": "",
 			"techdCheck": 0,
 			"techdItemmodel": "",
 			"techdItemversion": "",
 			"techdPlace": "",
-			"techdFrom": "",
-			"techdTo": "",
+			"schedFrom": "",
+			"schedTo": "",
 			"techdType": "",
 			"techdSteps": "",
 			"userNo": storage.my,
@@ -4503,14 +4522,14 @@ class Tech{
 			this.cntrctMth = getData.cntrctMth;
 			this.endCustNo = getData.endCustNo;
 			this.custmemberNo = getData.custmemberNo;
-			this.techdTitle = getData.techdTitle;
-			this.techdDesc = getData.techdDesc;
+			this.title = getData.title;
+			this.desc = getData.desc;
 			this.techdCheck = getData.techdCheck;
 			this.techdItemmodel = getData.techdItemmodel;
 			this.techdItemversion = getData.techdItemversion;
 			this.techdPlace = getData.techdPlace;
-			this.techdFrom = getData.techdFrom;
-			this.techdTo = getData.techdTo;
+			this.schedFrom = getData.schedFrom;
+			this.schedTo = getData.schedTo;
 			this.techdType = getData.techdType;
 			this.techdSteps = getData.techdSteps;
 			this.userNo = getData.userNo;
@@ -4526,14 +4545,14 @@ class Tech{
 			this.cntrctMth = "";
 			this.endCustNo = 0;
 			this.custmemberNo = 0;
-			this.techdTitle = "";
-			this.techdDesc = "";
+			this.title = "";
+			this.desc = "";
 			this.techdCheck = 0;
 			this.techdItemmodel = "";
 			this.techdItemversion = "";
 			this.techdPlace = "";
-			this.techdFrom = "";
-			this.techdTo = "";
+			this.schedFrom = "";
+			this.schedTo = "";
 			this.techdType = "";
 			this.techdSteps = "";
 			this.userNo = 0;
@@ -4546,7 +4565,7 @@ class Tech{
 	//기술지원 상세
 	detail() {
 		let html = "";
-		let setDate, datas, dataArray, notIdArray, techdFrom, techdTo;
+		let setDate, datas, dataArray, notIdArray, schedFrom, schedTo;
 
 		CommonDatas.detailSetFormList(this.getData);
 
@@ -4560,11 +4579,11 @@ class Tech{
 		setDate = CommonDatas.dateDis(new Date(this.regDatetime).getTime(), new Date(this.modDatetime).getTime());
 		setDate = CommonDatas.dateFnc(setDate);
 
-		techdFrom = CommonDatas.dateDis(new Date(this.techdFrom).getTime());
-		techdFrom = CommonDatas.dateFnc(techdFrom);
+		schedFrom = CommonDatas.dateDis(new Date(this.schedFrom).getTime());
+		schedFrom = CommonDatas.dateFnc(schedFrom);
 
-		techdTo = CommonDatas.dateDis(new Date(this.techdTo).getTime());
-		techdTo = CommonDatas.dateFnc(techdTo);
+		schedTo = CommonDatas.dateDis(new Date(this.schedTo).getTime());
+		schedTo = CommonDatas.dateFnc(schedTo);
 
 		datas = ["soppNo", "userNo", "custNo", "endCustNo", "custmemberNo", "contNo"];
 		dataArray = [
@@ -4682,15 +4701,15 @@ class Tech{
 			},
 			{
 				"title": "지원일자 시작일(*)",
-				"elementId": "techdFrom",
+				"elementId": "schedFrom",
 				"type": "datetime",
-				"value": this.techdFrom,
+				"value": this.schedFrom,
 			},
 			{
 				"title": "지원일자 종료일(*)",
-				"elementId": "techdTo",
+				"elementId": "schedTo",
 				"type": "datetime",
-				"value": this.techdTo,
+				"value": this.schedTo,
 			},
 			{
 				"title": "장소",
@@ -4700,15 +4719,15 @@ class Tech{
 			},
 			{
 				"title": "기술지원명(*)",
-				"elementId": "techdTitle",
-				"value": (CommonDatas.emptyValuesCheck(this.techdTitle)) ? "" : this.techdTitle,
+				"elementId": "title",
+				"value": (CommonDatas.emptyValuesCheck(this.title)) ? "" : this.title,
 				"col": 3,
 			},
 			{
 				"title": "내용",
 				"type": "textarea",
-				"elementId": "techdDesc",
-				"value": (CommonDatas.emptyValuesCheck(this.techdDesc)) ? "" : this.techdDesc,
+				"elementId": "desc",
+				"value": (CommonDatas.emptyValuesCheck(this.desc)) ? "" : this.desc,
 				"col": 4,
 			},
 		];
@@ -4718,7 +4737,7 @@ class Tech{
 		createGrid.className = "defaultFormContainer";
 		createGrid.innerHTML = html;
 		gridList.after(createGrid);
-		containerTitle.innerText = this.techdTitle;
+		containerTitle.innerText = this.title;
 		let hideArr = ["gridList", "listRange", "crudAddBtn", "listSearchInput", "searchContainer", "pageContainer"];
 		let showArr = ["defaultFormContainer"];
 		CommonDatas.setViewContents(hideArr, showArr);
@@ -4774,21 +4793,21 @@ class Tech{
 			msg.set("조회된 엔드유저가 없습니다.\n다시 확인해주세요.");
 			document.getElementById("endCustNo").focus();
 			return false;
-		} else if(document.getElementById("techdFrom").value === ""){
+		} else if(document.getElementById("schedFrom").value === ""){
 			msg.set("지원시작일을 선택해주세요.");
-			document.getElementById("techdFrom").focus();
+			document.getElementById("schedFrom").focus();
 			return false;
-		} else if(document.getElementById("techdFrom").value === ""){
+		} else if(document.getElementById("schedFrom").value === ""){
 			msg.set("지원시작일을 선택해주세요.");
-			document.getElementById("techdFrom").focus();
+			document.getElementById("schedFrom").focus();
 			return false;
-		} else if(document.getElementById("techdTo").value === ""){
+		} else if(document.getElementById("schedTo").value === ""){
 			msg.set("지원종료일을 선택해주세요.");
-			document.getElementById("techdTo").focus();
+			document.getElementById("schedTo").focus();
 			return false;
-		} else if(document.getElementById("techdTitle").value === ""){
+		} else if(document.getElementById("title").value === ""){
 			msg.set("기술지원명을 입력해주세요.");
-			document.getElementById("techdTitle").focus();
+			document.getElementById("title").focus();
 			return false;
 		} else{
 			CommonDatas.formDataSet();
@@ -4849,21 +4868,21 @@ class Tech{
 			msg.set("조회된 엔드유저가 없습니다.\n다시 확인해주세요.");
 			document.getElementById("endCustNo").focus();
 			return false;
-		} else if(document.getElementById("techdFrom").value === ""){
+		} else if(document.getElementById("schedFrom").value === ""){
 			msg.set("지원시작일을 선택해주세요.");
-			document.getElementById("techdFrom").focus();
+			document.getElementById("schedFrom").focus();
 			return false;
-		} else if(document.getElementById("techdFrom").value === ""){
+		} else if(document.getElementById("schedFrom").value === ""){
 			msg.set("지원시작일을 선택해주세요.");
-			document.getElementById("techdFrom").focus();
+			document.getElementById("schedFrom").focus();
 			return false;
-		} else if(document.getElementById("techdTo").value === ""){
+		} else if(document.getElementById("schedTo").value === ""){
 			msg.set("지원종료일을 선택해주세요.");
-			document.getElementById("techdTo").focus();
+			document.getElementById("schedTo").focus();
 			return false;
-		} else if(document.getElementById("techdTitle").value === ""){
+		} else if(document.getElementById("title").value === ""){
 			msg.set("기술지원명을 입력해주세요.");
-			document.getElementById("techdTitle").focus();
+			document.getElementById("title").focus();
 			return false;
 		} else {
 			CommonDatas.formDataSet();

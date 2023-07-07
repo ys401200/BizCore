@@ -26,13 +26,13 @@ public class Sales extends SimpleSales{
     private int userNo;
     private int compNo;
     private int custNo;
-    private String salesFrdatetime;
-    private String salesTodatetime;
+    private String schedFrom;
+    private String schedTo;
     private String salesPlace;
     private String salesType;
-    private String salesDesc;
+    private String desc;
     private int salesCheck;
-    private String salesTitle;
+    private String title;
     private int ptncNo;
     private String toDate;
     private String fromDate;

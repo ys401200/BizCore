@@ -21,6 +21,7 @@ import kr.co.bizcore.v1.svc.NotesService;
 import kr.co.bizcore.v1.svc.ProcureService;
 import kr.co.bizcore.v1.svc.SalesService;
 import kr.co.bizcore.v1.svc.Schedule2Svc;
+import kr.co.bizcore.v1.svc.ScheduleService;
 import kr.co.bizcore.v1.svc.ScheduleSvc;
 import kr.co.bizcore.v1.svc.SoppService;
 import kr.co.bizcore.v1.svc.ProjectService;
@@ -47,7 +48,10 @@ public abstract class Ctrl {
     protected DeptService deptService;
 
     @Autowired
-    protected ScheduleSvc scheduleService;
+    protected ScheduleSvc scheduleSvc;
+
+    @Autowired
+    protected ScheduleService scheduleService;
 
     @Autowired
     protected BoardService boardService;

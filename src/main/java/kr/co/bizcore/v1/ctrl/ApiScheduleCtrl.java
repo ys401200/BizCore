@@ -2,6 +2,7 @@ package kr.co.bizcore.v1.ctrl;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -17,19 +18,63 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.co.bizcore.v1.domain.Schedule;
 import kr.co.bizcore.v1.domain.SimpleUser;
+import kr.co.bizcore.v1.msg.Msg;
 import lombok.extern.slf4j.Slf4j;
 
 @RequestMapping("/api/schedule")
 @RestController
 @Slf4j
 public class ApiScheduleCtrl extends Ctrl {
-
     private static final Logger logger = LoggerFactory.getLogger(AccountingController.class);
+
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public String getAll(HttpServletRequest request) {
+        String result = null, data = null, aesKey = null, aesIv = null, userNo = null, compId = null;
+        int compNo = 0;
+        HttpSession session = null;
+        Msg msg = null;
+        List<Schedule> list = null;
+        int i = 0;
+
+        session = request.getSession();
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        compId = (String) session.getAttribute("compId");
+        compNo = (int) session.getAttribute("compNo");
+        userNo = (String) session.getAttribute("userNo");
+        msg = getMsg((String) session.getAttribute("lang"));
+        if (compId == null)
+            compId = (String) request.getAttribute("compId");
+
+        if (compId == null) {
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        }else{
+            list = scheduleService.getList(compNo);
+            if (list != null) {
+                data = "[";
+                for (i = 0; i < list.size(); i++) {
+                    if (i > 0)
+                        data += ",";
+                    data += list.get(i).toJson();
+                }
+                data += "]";
+            } else {
+                data = "[]";
+            }
+            data = scheduleService.encAes(data, aesKey, aesIv);
+            result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";            
+        }
+
+        return result;
+    }
 
     // ============================== 캘린더 ============================================= / 기간은 기본적으로 월단위
 
@@ -81,7 +126,7 @@ public class ApiScheduleCtrl extends Ctrl {
         }else if(year < minYear || year > maxYear){
             result = "{\"result\":\"failure\",\"msg\":\"Date Exceeded.\"}";
         }else{
-            data = scheduleService.getScheduleListForCalendar(compId, scope, user.getDeptIdSqlIn(), userNo, year, month);
+            data = scheduleSvc.getScheduleListForCalendar(compId, scope, user.getDeptIdSqlIn(), userNo, year, month);
             if(data != null){
                 data = userService.encAes(data, aesKey, aesIv);
                 result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
@@ -113,7 +158,7 @@ public class ApiScheduleCtrl extends Ctrl {
         }else if(aesKey == null || aesIv == null){
             result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
         }else{
-            data = scheduleService.getSchedule(compId, type, no + "");
+            data = scheduleSvc.getSchedule(compId, type, no + "");
             if(data != null){
                 result = encAes(data.toJson(), aesKey, aesIv);
                 result = "{\"result\":\"ok\",\"data\":\"" + result + "\"}";
@@ -152,7 +197,7 @@ public class ApiScheduleCtrl extends Ctrl {
             json = salesService.decAes(requestBody, aesKey, aesIv);
             try {
                 schedule = mapper.readValue(json, Schedule.class);
-                if(scheduleService.addSchedule(compId, schedule) > 0)   result = "{\"result\":\"ok\"}";
+                if(scheduleSvc.addSchedule(compId, schedule) > 0)   result = "{\"result\":\"ok\"}";
                 else                                                    result = "{\"result\":\"failure\",\"msg\":\"An error occurred.\"}";
             } catch (Exception e) {
                 result = "{\"result\":\"failure\",\"msg\":\"Data is wrong.\"}";
@@ -189,7 +234,7 @@ public class ApiScheduleCtrl extends Ctrl {
             try {
                 schedule = mapper.readValue(json, Schedule.class);
                 schedule.setNo(no);
-                if(scheduleService.modifySchedule(compId, schedule) > 0)    result = "{\"result\":\"ok\"}";
+                if(scheduleSvc.modifySchedule(compId, schedule) > 0)    result = "{\"result\":\"ok\"}";
                 else                                                        result = "{\"result\":\"failure\",\"msg\":\"An error occurred.\"}";
             } catch (Exception e) {
                 e.printStackTrace();
@@ -215,7 +260,7 @@ public class ApiScheduleCtrl extends Ctrl {
             result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
         }else{
             if(type.equals("sales") || type.equals("tech") || type.equals("schedule")){
-                count = scheduleService.deleteSchedule(compId, type, no + "");
+                count = scheduleSvc.deleteSchedule(compId, type, no + "");
                 if(count > 0)   result = "{\"result\":\"ok\"}";
                 else            result = "{\"result\":\"failure\",\"msg\":\"Error occured.\"}";
             }else   result = "{\"result\":\"failure\",\"msg\":\"Schedule type mismatch..\"}";
@@ -284,7 +329,7 @@ public class ApiScheduleCtrl extends Ctrl {
         }else if(aesKey == null || aesIv == null){
             result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
         }else{
-            data = scheduleService.getWorkReport(compId, scope, date, user);
+            data = scheduleSvc.getWorkReport(compId, scope, date, user);
             if(data == null){
                 result = "{\"result\":\"failure\",\"msg\":\"Error occured.\"}";
             }else{
@@ -337,7 +382,7 @@ public class ApiScheduleCtrl extends Ctrl {
                 checked.add(item);
             }
 
-            if(scheduleService.addWorkReport(compId, userNo, date, previousWeek, previousWeekCheck, currentWeek, currentWeekCheck, checked)){
+            if(scheduleSvc.addWorkReport(compId, userNo, date, previousWeek, previousWeekCheck, currentWeek, currentWeekCheck, checked)){
                 result = "{\"result\":\"ok\"}";
             }else{
                 result = "{\"result\":\"failure\",\"msg\":\"Error occured.\"}";
@@ -361,7 +406,7 @@ public class ApiScheduleCtrl extends Ctrl {
         if(compId == null){
             result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
         }else{
-            if(scheduleService.deleteWorkReport(compId, userNo, date)){
+            if(scheduleSvc.deleteWorkReport(compId, userNo, date)){
                 result = "{\"result\":\"ok\"}";
             }else{
                 result = "{\"result\":\"failure\",\"msg\":\"Error occured.\"}";
@@ -388,7 +433,7 @@ public class ApiScheduleCtrl extends Ctrl {
         }else if(aesKey == null || aesIv == null){
             result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
         }else{
-            data = scheduleService.getTechDetil(compId, sopp, customer, contract);
+            data = scheduleSvc.getTechDetil(compId, sopp, customer, contract);
             if(data != null){
                 data = encAes(data, aesKey, aesIv);
                 result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
@@ -417,7 +462,7 @@ public class ApiScheduleCtrl extends Ctrl {
         }else if(aesKey == null || aesIv == null){
             result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
         }else{
-            data = scheduleService.getSalesDetil(compId, sopp, customer);
+            data = scheduleSvc.getSalesDetil(compId, sopp, customer);
             if(data != null){
                 data = encAes(data, aesKey, aesIv);
                 result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
