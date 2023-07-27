@@ -1,0 +1,19 @@
+IP: 192.168.1.73
+root 계정: root/vTek87!@Xq
+
+bizcore 2.0 ver 배포 순서
+
+1. vscode 터미널에서 ./gradlew bootWar 명령어 입력 실행
+2. 폴더경로 build/libs/BizCore-v1.0.0.1.war(이름 다를 수 있음) 만들어진 war 파일을
+ftp 서버 접속 후 home/(자신의 아이디) 경로에 복사
+3. putty에 접속하여 자신의 아이디와 비밀번호로 접속
+4. su 명령어 입력 후 실행
+5. root 비밀번호 입력 후 접속
+6. 아까 복사해놓은 home/(자신의 아이디) 경로로 이동해서 mv BizCore-v1.0.0.1.war(복사한 war파일 이름) ROOT.war
+명령어를 실행하여 이름 변경
+7. cd /srv/web_root 명령어를 통해 이동 후 rm ROOT.war 명령어를 실행해서 기존 ROOT.war 파일을 제거
+8. 다시 아까 복사해서 이름 변경해놓은 home/(자신의 아이디) 경로로 들어가 ROOT.war 파일을 기존 war 파일이 있던
+/srv/web_root 경로로 복사 또는 이동
+9. 기존 war 파일이 있던 경로 상태에서 새로고침하여 ROOT 폴더가 나왔는지 확인
+10. 다시 설정을 바꾸기 위해 cp /srv/archive/logback-spring.xml /srv/web_root/ROOT/WEB-INF/classes/ 명령어와 cp /srv/archive/application.yml /srv/web_root/ROOT/WEB-INF/classes/ 명령어를 실행
+11. 마지막으로 service tomcat restart 명령어를 실행하여 톰캣을 재실행 한 후 웹에서 잘 나오는지 확인

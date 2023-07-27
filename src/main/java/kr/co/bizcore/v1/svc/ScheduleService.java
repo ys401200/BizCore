@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kr.co.bizcore.v1.domain.Schedule;
-import kr.co.bizcore.v1.domain.SimpleNotice;
 import kr.co.bizcore.v1.mapper.ScheduleMapper;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,5 +21,23 @@ public class ScheduleService extends Svc {
 
     public List<Schedule> getList(int compNo) {
        return scheduleMapper.getList(compNo);
+    }
+
+    public Schedule getScheduleOne(int compNo, String schedNo){
+        Schedule schedule = null;
+        schedule = scheduleMapper.getScheduleOne(schedNo, compNo);
+        return schedule;
+    }
+
+    public int insertSchedule(Schedule schedule) {
+        return scheduleMapper.scheduleInsert(schedule);
+    }
+
+    public int updateSchedule(Schedule schedule) {
+        return scheduleMapper.updateSchedule(schedule);
+    }
+    
+    public int delete(int compNo, String schedNo) {
+        return scheduleMapper.deleteSchedule(compNo, schedNo);
     }
 }

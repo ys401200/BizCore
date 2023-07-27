@@ -25,12 +25,12 @@ public interface SalesMapper {
     @Select("SELECT * FROM swc_sales WHERE attrib NOT LIKE 'XXX%' AND compNo = #{sales.compNo} and regDatetime between #{sales.fromDate} and #{sales.toDate} ORDER BY regDatetime DESC")
     public List<Sales> getSalesList(@Param("sales") Sales sales);
 
-    @Insert("INSERT INTO swc_sales (soppNo, userNo, compNo, custNo, salesFrdatetime, salesTodatetime, salesPlace, salesType, salesDesc, salesTitle, ptncNo, regDatetime) VALUES (#{sales.soppNo}, #{sales.userNo}, #{sales.compNo}, #{sales.custNo}, #{sales.salesFrdatetime}, #{sales.salesTodatetime}, #{sales.salesPlace}, #{sales.salesType}, #{sales.salesDesc}, #{sales.salesTitle}, #{sales.ptncNo}, now())")
+    @Insert("INSERT INTO swc_sales (soppNo, userNo, compNo, custNo, schedFrom, schedTo, salesPlace, salesType, `desc`, `title`, ptncNo, regDatetime) VALUES (#{sales.soppNo}, #{sales.userNo}, #{sales.compNo}, #{sales.custNo}, #{sales.schedFrom}, #{sales.schedTo}, #{sales.salesPlace}, #{sales.salesType}, #{sales.desc}, #{sales.title}, #{sales.ptncNo}, now())")
     public int salesInsert(@Param("sales") Sales sales);
 
     @Update("UPDATE swc_sales SET attrib = 'XXXXX' WHERE salesNo = #{salesNo} AND compNo = #{compNo}")
     public int salesDelete(@Param("compNo") int compNo, @Param("salesNo") String salesNo);
 
-    @Update("UPDATE swc_sales SET soppNo = #{sales.soppNo}, userNo = #{sales.userNo}, custNo = #{sales.custNo}, salesFrdatetime = #{sales.salesFrdatetime}, salesTodatetime = #{sales.salesTodatetime}, salesPlace = #{sales.salesPlace}, salesType = #{sales.salesType}, salesDesc = #{sales.salesDesc}, salesTitle = #{sales.salesTitle}, ptncNo = #{sales.ptncNo}, modDatetime = now() WHERE salesNo = #{sales.salesNo} AND compNo = #{sales.compNo}")
+    @Update("UPDATE swc_sales SET soppNo = #{sales.soppNo}, userNo = #{sales.userNo}, custNo = #{sales.custNo}, schedFrom = #{sales.schedFrom}, schedTo = #{sales.schedTo}, salesPlace = #{sales.salesPlace}, salesType = #{sales.salesType}, `desc` = #{sales.desc}, `title` = #{sales.title}, ptncNo = #{sales.ptncNo}, modDatetime = now() WHERE salesNo = #{sales.salesNo} AND compNo = #{sales.compNo}")
     public int updateSales(@Param("sales") Sales sales);
 }

@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import kr.co.bizcore.v1.domain.Schedule;
+import kr.co.bizcore.v1.domain.Schedule3;
 import kr.co.bizcore.v1.domain.SimpleUser;
 import kr.co.bizcore.v1.domain.WorkReport;
 import lombok.extern.slf4j.Slf4j;
@@ -59,7 +60,7 @@ public class ScheduleSvc extends Svc{
     }
 
     // 단일 일정에 대한 수정 메서드
-    public int modifySchedule(String compId, Schedule schedule){
+    public int modifySchedule(String compId, Schedule3 schedule){
         int result = -1;
         Schedule sch = null;
         sch = getSchedule(compId, schedule.getJob(), schedule.getNo() + "");
@@ -129,8 +130,8 @@ public class ScheduleSvc extends Svc{
         String t = null;
         List<WorkReport> reports = null;
         WorkReport report = null;
-        List<Schedule> schedules = null;
-        Schedule schedule = null;
+        List<Schedule3> schedules = null;
+        Schedule3 schedule = null;
         Date start = null, end = null;
         Calendar cal = Calendar.getInstance();
 

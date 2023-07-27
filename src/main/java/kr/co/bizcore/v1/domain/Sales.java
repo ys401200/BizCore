@@ -18,8 +18,7 @@ public class Sales extends SimpleSales{
     @XmlElement(nillable=true)
     private String type; //활동형태
     private int chk;
-    private int schedType;
-
+    
     // 23.06월 이후 추가
     private int salesNo;
     private int soppNo;
@@ -35,9 +34,8 @@ public class Sales extends SimpleSales{
     private String title;
     private int ptncNo;
     private String toDate;
+    private int schedType;
     private String fromDate;
-    // 중복
-    // private int schedType;
     private String regDatetime;
     private String modDatetime;
     private String attrib;

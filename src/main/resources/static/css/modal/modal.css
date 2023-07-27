@@ -68,8 +68,9 @@
     font-size:0.9rem;
     box-shadow:0 3px 4px rgba(33, 71, 177, 0.184);        
 }
-.modalBtns:nth-child(1){background-color:#2147b1; margin-right:1%;}
-.modalBtns:nth-child(2){background-color:#fff; color:#212121; border:1px solid #2147b1; box-sizing: border-box;}
+.modalBtns:first-child{background-color:#2147b1; margin-right:1%;}
+.modalBtns:nth-child(2){margin-right:1%; box-sizing: border-box;}
+.modalBtns:last-child{background-color:#fff; color:#212121; border:1px solid #2147b1; box-sizing: border-box;}
 .modalBtns.confirm{                 
     border-right:1px solid #302D81; box-sizing: border-box;
 }

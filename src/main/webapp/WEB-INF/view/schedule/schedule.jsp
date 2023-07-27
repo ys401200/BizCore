@@ -7,29 +7,24 @@
 		<jsp:include page="../sideMenu.jsp" />
 	</div>
 	<div id="bodyContent">
-		<div class="searchContainer" style="display:none;">
+        <div class="searchContainer">
 			<jsp:include page="../listSearch.jsp" />
 			<div class="searchMultiContent">
 				<div class="searchWriter">
 					<span>담당자</span>
-					<input type="text" data-complete="user" autocomplete="off" id="searchWriter" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">
+					<input type="text" data-complete="user" data-key="userNo" autocomplete="off" id="searchUser" onclick="CommonDatas.addAutoComplete(this);" onkeyup="CommonDatas.addAutoComplete(this);">
 				</div>
 				<div class="searchCustomer">
-					<span>거래처</span>
-					<input type="text" data-complete="customer" autocomplete="off" id="searchCustomer" onclick="addAutoComplete(this);" onkeyup="addAutoComplete(this);">
+					<span>영업기회</span>
+					<input type="text" data-complete="sopp" data-key="soppNo" autocomplete="off" id="searchSopp" onclick="CommonDatas.addAutoComplete(this);" onkeyup="CommonDatas.addAutoComplete(this);">
 				</div>
-				<div class="searchJob">
-					<span>일정구분</span>
-					<select id="searchJob">
-						<option value="">선택</option>
-						<option value="영업일정">영업일정</option>
-						<option value="기술지원">기술지원</option>
-						<option value="기타일정">기타일정</option>
-					</select>
+				<div class="searchCustomer">
+					<span>매출처</span>
+					<input type="text" data-complete="customer" data-key="custNo" autocomplete="off" id="searchCust" onclick="CommonDatas.addAutoComplete(this);" onkeyup="CommonDatas.addAutoComplete(this);">
 				</div>
-				<div class="searchType">
+				<div class="searchSalesType">
 					<span>활동형태</span>
-					<select id="searchType">
+					<select id="searchSalesType" data-key="salesType">
 						<option value="">선택</option>
 						<option value="회사방문">회사방문</option>
 						<option value="기술지원">기술지원</option>
@@ -53,16 +48,36 @@
 					</select>
 				</div>
 				<div class="searchDate">
-					<span>일정시작일</span>
+					<span>등록일</span>
 					<div class="searchGridItem">
-						<input type="date" id="searchDateFrom" max="9999-12-31" data-date-type="from" onchange="searchDateDefaultSet(this);">
+						<input type="date" id="searchDateFrom" max="9999-12-31" data-date-type="from" onchange="CommonDatas.searchDateDefaultSet(this);">
 						<span>~</span>
-						<input type="date" id="searchDateTo" max="9999-12-31" data-date-type="to" onchange="searchDateDefaultSet(this);">
+						<input type="date" id="searchDateTo" max="9999-12-31" data-date-type="to" onchange="CommonDatas.searchDateDefaultSet(this);">
 					</div>
 				</div>
 			</div>
 		</div>
-		<jsp:include page="./contents/calendar.jsp" />
+        <div class="salesContainer">
+			<div class="contentHeaders">
+				<hr />
+				<span id="containerTitle">일정조회</span>
+				<div class="listRange">
+					<input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="CommonDatas.listRangeChange(this, CommonDatas.Temps.salesSet.drawSalesList);">
+					<span class="listRangeSpan">0</span>
+				</div>
+				<div class="listSearchInput">
+					<input type="text" class="searchAllInput" id="searchAllInput" onkeyup="CommonDatas.Temps.salesSet.searchInputKeyup();" placeholder="단어를 입력해주세요.">
+				</div>
+				<div class="crudBtns">
+					<button type="button" class="crudAddBtn" onclick="CommonDatas.Temps.scheduleSet.scheduleInsertForm();">등록</button>
+					<button type="button" class="crudUpdateBtn">수정</button>
+					<button type="button" class="crudDeleteBtn">삭제</button>
+					<a href="#" onclick="CommonDatas.hideDetailView(CommonDatas.Temps.salesSet.drawSalesList);" class="detailBackBtn">Back</a>
+				</div>
+			</div>
+            <div class="gridList"></div>
+            <div class="pageContainer"></div>
+        </div>
 	</div>
 </div>
 <jsp:include page="../bottom.jsp"/>

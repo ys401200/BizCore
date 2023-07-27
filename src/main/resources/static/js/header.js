@@ -329,6 +329,7 @@ dragAndDrop = {
 			"height": "30vh",
 			"readOnly": true,
 			"language": "ko",
+			"enterMode": CKEDITOR.ENTER_BR,
 			"toolbarGroups": [
 				{ name: 'document', groups: ['mode', 'document', 'doctools'] },
 				{ name: 'clipboard', groups: ['clipboard', 'undo'] },

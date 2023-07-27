@@ -12,9 +12,9 @@
 
 #bodyContents #bodyContent{
 	width: calc(100% - 172px);
-    overflow: hidden;
+    /* overflow: hidden; */
     padding: 3px;
-    position: relative;
+    /* position: relative; */
 }
 
 #bodyContents #widgetContainer{

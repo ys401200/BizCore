@@ -5,7 +5,9 @@
 		<jsp:include page="../../sideMenu.jsp" />
 	</div>
 	<div id="bodyContent">
-        <div id="calendar"></div>
+		<div class="calendarContainer">
+			<div id="calendar"></div>
+		</div>
 	</div>
 </div>
 <jsp:include page="../../bottom.jsp" />

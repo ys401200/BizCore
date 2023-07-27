@@ -21,8 +21,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import kr.co.bizcore.v1.domain.Sales;
 import kr.co.bizcore.v1.domain.Schedule;
+import kr.co.bizcore.v1.domain.Schedule3;
 import kr.co.bizcore.v1.domain.SimpleUser;
 import kr.co.bizcore.v1.msg.Msg;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ApiScheduleCtrl extends Ctrl {
     private static final Logger logger = LoggerFactory.getLogger(AccountingController.class);
 
-    @RequestMapping(value = "", method = RequestMethod.GET)
+    @RequestMapping(value = "/calendar", method = RequestMethod.GET)
     public String getAll(HttpServletRequest request) {
         String result = null, data = null, aesKey = null, aesIv = null, userNo = null, compId = null;
         int compNo = 0;
@@ -76,66 +81,209 @@ public class ApiScheduleCtrl extends Ctrl {
         return result;
     }
 
+    @RequestMapping(value = "/{no}", method = RequestMethod.GET)
+    public String getScheduleOne(HttpServletRequest request, @PathVariable String no) {
+        HttpSession session = null;
+        String compId = null;
+        int compNo = 0;
+        String result = null;
+        String userNo = null;
+        Schedule schedule = null;
+        String data = null;
+        String aesKey, aesIv = null;
+
+        if (no == null) { // 글 번호 확인 안됨
+            result = "{\"result\":\"failure\",\"msg\":\"salesNo is not exist\"}";
+        } else { // 글 번호 확인 됨
+            session = request.getSession();
+            compId = (String) session.getAttribute("compId");
+            compNo = (int) session.getAttribute("compNo");
+            aesKey = (String) session.getAttribute("aesKey");
+            aesIv = (String) session.getAttribute("aesIv");
+            if (compId == null)
+                compId = (String) request.getAttribute("compId");
+            userNo = (String) session.getAttribute("userNo");
+
+            if (compId == null) { // 회사코드 확인 안됨
+                result = "{\"result\":\"failure\",\"msg\":\"Company ID is not verified.\"}";
+            } else if (userNo == null) {
+                result = "{\"result\":\"failure\",\"msg\":\"Session expired and/or Not logged in.\"}";
+            } else { // 회사코드 확인 됨
+                schedule = scheduleService.getScheduleOne(compNo, no); // 삭제(update) 카운트를 실제 삭제 여부를 확인함
+
+                if (schedule != null) { // 처리됨
+                    data = schedule.toJson();
+                    data = salesService.encAes(data, aesKey, aesIv);
+                    result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
+                    
+                } else { // 처리 안됨
+                    result = "{\"result\":\"failure\",\"msg\":\"Error occured when read.\"}";
+                } // End of if : 3
+            } // End of if : 2
+        } // End of if : 1
+        return result;
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    public String insert(HttpServletRequest req, @RequestBody String requestBody) throws JsonMappingException, JsonProcessingException {
+
+        int compNo = 0;
+        HttpSession session = null;
+        String result = null;
+        String data = null, aesKey = null, aesIv = null;
+        ObjectMapper mapper = new ObjectMapper();
+        int check = 0;
+
+        session = req.getSession();
+
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        compNo = (int) session.getAttribute("compNo");
+        data = salesService.decAes(requestBody, aesKey, aesIv);
+        Schedule schedule = mapper.readValue(data, Schedule.class);
+        schedule.setCompNo(compNo);
+
+        check = scheduleService.insertSchedule(schedule);
+
+        if (check > 0) {
+            result = "{\"result\":\"ok\"}";
+        } else {
+            result = "{\"result\":\"failure\" ,\"msg\":\"Error occured when write.\"}";
+        }
+
+        return result;
+    }
+
+    @RequestMapping(value = "/{no}", method = RequestMethod.PUT)
+    public String update(HttpServletRequest req, @RequestBody String requestBody, @PathVariable String no) throws JsonMappingException, JsonProcessingException {
+        String compId = null;
+        int compNo = 0;
+        String result = null;
+        HttpSession session = null;
+        String data = null, aesKey = null, aesIv = null;
+        ObjectMapper mapper = new ObjectMapper();
+
+        session = req.getSession();
+        compNo = (int) session.getAttribute("compNo");
+        compId = (String) session.getAttribute("compId");
+        if (compId == null) {
+            compId = (String) req.getAttribute("compId");
+        }
+
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        data = salesService.decAes(requestBody, aesKey, aesIv);
+        Schedule schedule = mapper.readValue(data, Schedule.class);
+        schedule.setCompNo(compNo);
+
+        if (scheduleService.updateSchedule(schedule) > 0) {
+            result = "{\"result\":\"ok\"}";
+        }
+
+        return result;
+
+    }
+
+    @RequestMapping(value = "/{no}", method = RequestMethod.DELETE)
+    public String delete(HttpServletRequest req, @PathVariable String no) {
+
+        HttpSession session = null;
+        String compId = null;
+        int compNo = 0;
+        String result = null;
+        String userNo = null;
+        String uri = req.getRequestURI();
+        String[] t = null;
+        int num = 0;
+
+        // 글 번호 확인
+        if (no == null) { // 글 번호 확인 안됨
+            result = "{\"result\":\" failure\",\"msg\":\"notiNo is not exist\"}";
+        } else { // 글 번호 확인 됨
+            session = req.getSession();
+
+            userNo = (String) session.getAttribute("userNo");
+            compNo = (int) session.getAttribute("compNo");
+            compId = (String) session.getAttribute("compId");
+            if (compId == null)
+                compId = (String) req.getAttribute("compId");
+
+            if (compId == null) { // 회사코드 확인 안됨
+                result = "{\"result\":\" failure\",\"msg\":\"Company ID is not verified.\"}";
+            } else if (userNo == null) {
+                result = "{\"result\":\"failure\",\"msg\":\"Session expired and/or Not logged in.\"}";
+            } else { // 회사코드 확인 됨
+                num = scheduleService.delete(compNo, no); // 삭제(update) 카운트를 실제 삭제 여부를 확인함
+                if (num > 0) { // 처리됨
+                    result = "{\"result\":\"ok\"}";
+                } else { // 처리 안됨
+                    result = "{\"result\":\" failure\",\"msg\":\"Error occured when delete.\"}";
+                } // End of if : 3
+            } // End of if : 2
+        } // End of if : 1
+        return result;
+    }
+
     // ============================== 캘린더 ============================================= / 기간은 기본적으로 월단위
 
     // 캘린더 정보 요청에 대한 처리 / 연월 정보 없음 / 현재 연월
-    @GetMapping("/calendar/{scope}")
-    public String apiScheduleCalendar(HttpServletRequest request, @PathVariable("scope") String scope){
-        String result = null;
-        int yy = 0, mm = 0;
-        Calendar cal = Calendar.getInstance();
+    // @GetMapping("/calendar/{scope}")
+    // public String apiScheduleCalendar(HttpServletRequest request, @PathVariable("scope") String scope){
+    //     String result = null;
+    //     int yy = 0, mm = 0;
+    //     Calendar cal = Calendar.getInstance();
         
-        if(scope != null && (scope.equals("company") || scope.equals("dept") || scope.equals("personal"))){
-            yy = cal.get(Calendar.YEAR);
-            mm = cal.get(Calendar.MONTH) + 1;
-            result = apiScheduleCalendar(request, scope, yy, mm);
-        }else{
-            result = "{\"result\":\"failure\",\"msg\":\"Requested scope wrong or not exist.\"}";
-        }
+    //     if(scope != null && (scope.equals("company") || scope.equals("dept") || scope.equals("personal"))){
+    //         yy = cal.get(Calendar.YEAR);
+    //         mm = cal.get(Calendar.MONTH) + 1;
+    //         result = apiScheduleCalendar(request, scope, yy, mm);
+    //     }else{
+    //         result = "{\"result\":\"failure\",\"msg\":\"Requested scope wrong or not exist.\"}";
+    //     }
         
-        return result;
-    } // End of apiScheduleCalendar()
+    //     return result;
+    // } // End of apiScheduleCalendar()
 
     // 캘린더 정보 요청에 대한 처리 / 요청 연월에 대한 처리
-    @GetMapping("/calendar/{scope:\\D+}/{year:\\d+}/{month:\\d+}")
-    public String apiScheduleCalendar(HttpServletRequest request, @PathVariable("scope") String scope, @PathVariable("year") int year, @PathVariable("month") int month){
-        String result = null;
-        String compId = null, aesKey = null, aesIv = null, data = null, userNo = null;
-        int maxYear = 0, minYear = 0;
-        Calendar cal = Calendar.getInstance();
-        HttpSession session = null;
-        SimpleUser user = null;
+    // @GetMapping("/calendar/{scope:\\D+}/{year:\\d+}/{month:\\d+}")
+    // public String apiScheduleCalendar(HttpServletRequest request, @PathVariable("scope") String scope, @PathVariable("year") int year, @PathVariable("month") int month){
+    //     String result = null;
+    //     String compId = null, aesKey = null, aesIv = null, data = null, userNo = null;
+    //     int maxYear = 0, minYear = 0;
+    //     Calendar cal = Calendar.getInstance();
+    //     HttpSession session = null;
+    //     SimpleUser user = null;
 
-        minYear = cal.get(Calendar.YEAR) - 5;
-        maxYear = cal.get(Calendar.YEAR) + 1;
-        session = request.getSession();
-        aesKey = (String)session.getAttribute("aesKey");
-        aesIv = (String)session.getAttribute("aesIv");
-        compId = (String)session.getAttribute("compId");
-        userNo = (String)session.getAttribute("userNo");
-        if(compId == null)  compId = (String)request.getAttribute("compId");
+    //     minYear = cal.get(Calendar.YEAR) - 5;
+    //     maxYear = cal.get(Calendar.YEAR) + 1;
+    //     session = request.getSession();
+    //     aesKey = (String)session.getAttribute("aesKey");
+    //     aesIv = (String)session.getAttribute("aesIv");
+    //     compId = (String)session.getAttribute("compId");
+    //     userNo = (String)session.getAttribute("userNo");
+    //     if(compId == null)  compId = (String)request.getAttribute("compId");
 
-        user = userService.getUserMap(compId).get(userNo);
+    //     user = userService.getUserMap(compId).get(userNo);
 
-        if(compId == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
-        }else if(scope == null || !(scope.equals("company") || scope.equals("dept") || scope.equals("personal"))){
-            result = "{\"result\":\"failure\",\"msg\":\"Requested scope wrong or not exist.\"}";
-        }else if(aesKey == null || aesIv == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
-        }else if(year < minYear || year > maxYear){
-            result = "{\"result\":\"failure\",\"msg\":\"Date Exceeded.\"}";
-        }else{
-            data = scheduleSvc.getScheduleListForCalendar(compId, scope, user.getDeptIdSqlIn(), userNo, year, month);
-            if(data != null){
-                data = userService.encAes(data, aesKey, aesIv);
-                result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
-            }else{
-                result = "{\"result\":\"failure\",\"msg\":\"Error occured.\"}";
-            }
-        }
-        return result;
-    } // End of apiScheduleCalendar()
+    //     if(compId == null){
+    //         result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+    //     }else if(scope == null || !(scope.equals("company") || scope.equals("dept") || scope.equals("personal"))){
+    //         result = "{\"result\":\"failure\",\"msg\":\"Requested scope wrong or not exist.\"}";
+    //     }else if(aesKey == null || aesIv == null){
+    //         result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
+    //     }else if(year < minYear || year > maxYear){
+    //         result = "{\"result\":\"failure\",\"msg\":\"Date Exceeded.\"}";
+    //     }else{
+    //         data = scheduleSvc.getScheduleListForCalendar(compId, scope, user.getDeptIdSqlIn(), userNo, year, month);
+    //         if(data != null){
+    //             data = userService.encAes(data, aesKey, aesIv);
+    //             result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
+    //         }else{
+    //             result = "{\"result\":\"failure\",\"msg\":\"Error occured.\"}";
+    //         }
+    //     }
+    //     return result;
+    // } // End of apiScheduleCalendar()
 
     // =========================================== 일정 Detail / 신규, 수정, 삭제, 조회 ====================================
 
@@ -215,7 +363,7 @@ public class ApiScheduleCtrl extends Ctrl {
         String aesIv = null;
         String json = null;
         ObjectMapper mapper = null;
-        Schedule schedule = null;
+        Schedule3 schedule = null;
         HttpSession session = null;
 
         mapper = new ObjectMapper();
@@ -232,7 +380,7 @@ public class ApiScheduleCtrl extends Ctrl {
         }else{
             json = salesService.decAes(requestBody, aesKey, aesIv);
             try {
-                schedule = mapper.readValue(json, Schedule.class);
+                schedule = mapper.readValue(json, Schedule3.class);
                 schedule.setNo(no);
                 if(scheduleSvc.modifySchedule(compId, schedule) > 0)    result = "{\"result\":\"ok\"}";
                 else                                                        result = "{\"result\":\"failure\",\"msg\":\"An error occurred.\"}";

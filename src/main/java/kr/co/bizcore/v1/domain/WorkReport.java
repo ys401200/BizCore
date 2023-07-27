@@ -14,14 +14,14 @@ public class WorkReport extends Domain{
     private String currentWeek;
     private boolean previousWeekCheck;
     private String previousWeek;
-    private ArrayList<Schedule> schedules = new ArrayList<>();
+    private ArrayList<Schedule3> schedules = new ArrayList<>();
 
-    public void addSchedule(Schedule e){schedules.add(e);}
+    public void addSchedule(Schedule3 schedule){schedules.add(schedule);}
 
     public String toJson(){
         String result = "{", t = null;
         int x = 0;
-        Schedule e = null;
+        Schedule3 e = null;
         if(schedules.size() > 2)    Collections.sort(schedules);
         result += ("\"currentWeekCheck\":" + currentWeekCheck + ",");
         result += ("\"currentWeek\":" + (currentWeek == null ? "\"\"" : "\"" + currentWeek.replaceAll("\"", "\\u0022").replaceAll("\n", "").replaceAll("\r", "").replaceAll("\t", "").replaceAll("\\\\", "\\u005c") + "\"") + ",");
