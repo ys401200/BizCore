@@ -14,21 +14,21 @@ import kr.co.bizcore.v1.domain.WorkReport;
 
 public interface ScheduleMapper {
     @Select(
-        "select salesNo as `no`, compNo, custNo, userNo, schedFrom, schedTo, `title`, `desc`, salesPlace as place, schedType, salesType as `type`, regDatetime from swc_sales where schedFrom between '2023-01-01' and '2023-12-31' and schedTo between '2023-01-01' and '2023-12-31' and compNo = #{compNo} and attrib not like 'XXX%'\r\n" +
+        "select salesNo as `no`, compNo, custNo, userNo, schedFrom, schedTo, `title`, `desc`, salesPlace as place, schedType, `type`, regDatetime from swc_sales where schedFrom between '2023-01-01' and '2023-12-31' and schedTo between '2023-01-01' and '2023-12-31' and compNo = #{compNo} and attrib not like 'XXX%'\r\n" +
         " union " + 
-        "select schedNo as `no`, compNo, custNo, userNo, schedFrom, schedTo, `title`, `desc`, schedPlace as place, schedType, schedCat as `type`, regDatetime from swc_sched where schedFrom between '2023-01-01' and '2023-12-31' and schedTo between '2023-01-01' and '2023-12-31' and compNo = #{compNo} and attrib not like 'XXX%'\r\n" +
+        "select schedNo as `no`, compNo, custNo, userNo, schedFrom, schedTo, `title`, `desc`, schedPlace as place, schedType, `type`, regDatetime from swc_sched where schedFrom between '2023-01-01' and '2023-12-31' and schedTo between '2023-01-01' and '2023-12-31' and compNo = #{compNo} and attrib not like 'XXX%'\r\n" +
         " union " +
-        "select techdNo as `no`, compNo, custNo, userNo, schedFrom, schedTo, `title`, `desc`, techdPlace as place, schedType, techdType as `type`, regDatetime from swc_techd where schedFrom between '2023-01-01' and '2023-12-31' and schedTo between '2023-01-01' and '2023-12-31' and compNo = #{compNo} and attrib not like 'XXX%'"
+        "select techdNo as `no`, compNo, custNo, userNo, schedFrom, schedTo, `title`, `desc`, techdPlace as place, schedType, `type`, regDatetime from swc_techd where schedFrom between '2023-01-01' and '2023-12-31' and schedTo between '2023-01-01' and '2023-12-31' and compNo = #{compNo} and attrib not like 'XXX%'"
     )
     public List<Schedule> getList(@Param("compNo") int compNo);
 
     @Select("SELECT * FROM swc_sched WHERE attrib NOT LIKE 'XXX%' AND schedNo = #{schedNo} AND compNo = #{compNo}")
     public Schedule getScheduleOne(@Param("schedNo") String schedNo, @Param("compNo") int compNo);
 
-    @Insert("INSERT INTO swc_sched (userNo, compNo, soppNo, custNo, schedFrom, schedTo, `title`, `desc`, schedType, schedPlace, schedCat, regDatetime) VALUES (#{schedule.userNo}, #{schedule.compNo}, #{schedule.soppNo}, #{schedule.custNo}, #{schedule.schedFrom}, #{schedule.schedTo}, #{schedule.title}, #{schedule.desc}, #{schedule.schedType}, #{schedule.schedPlace}, #{schedule.schedCat}, now())")
+    @Insert("INSERT INTO swc_sched (userNo, compNo, soppNo, custNo, schedFrom, schedTo, `title`, `desc`, schedType, schedPlace, `type`, regDatetime) VALUES (#{schedule.userNo}, #{schedule.compNo}, #{schedule.soppNo}, #{schedule.custNo}, #{schedule.schedFrom}, #{schedule.schedTo}, #{schedule.title}, #{schedule.desc}, #{schedule.schedType}, #{schedule.schedPlace}, #{schedule.type}, now())")
     public int scheduleInsert(@Param("schedule") Schedule schedule);
 
-    @Update("UPDATE swc_sched SET userNo = #{schedule.userNo}, soppNo = #{schedule.soppNo}, custNo = #{schedule.custNo}, schedFrom = #{schedule.schedFrom}, schedTo = #{schedule.schedTo}, schedPlace = #{schedule.schedPlace}, schedType = #{schedule.schedType}, `desc` = #{schedule.desc}, `title` = #{schedule.title}, schedCat = #{schedule.schedCat}, modDatetime = now() WHERE schedNo = #{schedule.schedNo} AND compNo = #{schedule.compNo}")
+    @Update("UPDATE swc_sched SET userNo = #{schedule.userNo}, soppNo = #{schedule.soppNo}, custNo = #{schedule.custNo}, schedFrom = #{schedule.schedFrom}, schedTo = #{schedule.schedTo}, schedPlace = #{schedule.schedPlace}, schedType = #{schedule.schedType}, `desc` = #{schedule.desc}, `title` = #{schedule.title}, `type` = #{schedule.type}, modDatetime = now() WHERE schedNo = #{schedule.schedNo} AND compNo = #{schedule.compNo}")
     public int updateSchedule(@Param("schedule") Schedule schedule);
 
     @Update("UPDATE swc_sched SET attrib = 'XXXXX' WHERE schedNo = #{schedNo} AND compNo = #{compNo}")

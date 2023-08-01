@@ -65,10 +65,10 @@ function gridWidget(){
 	widgetContainer.html(html);
 
 	addChart();
-	getNoticeList();
-	getScheduleList();
-	getSoppList();
-	getContractList();
+	// getNoticeList();
+	// getScheduleList();
+	// getSoppList();
+	// getContractList();
 }
 
 function addChart(){

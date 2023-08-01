@@ -25,7 +25,7 @@ public class Tech extends Domain{
     private String techdPlace;
     private String schedFrom;
     private String schedTo;
-    private String techdType;
+    private String type;
     private String techdSteps;
     private int userNo;
     private int schedType;

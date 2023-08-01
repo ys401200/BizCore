@@ -12,7 +12,7 @@
 			<div class="searchMultiContent">
 				<div class="searchTitle">
 					<span>요청명</span>
-					<input type="text" data-key="techdTitle" id="searchTitle">
+					<input type="text" data-key="title" id="searchTitle">
 				</div>
 				<div class="searchWriter">
 					<span>담당자</span>
@@ -20,7 +20,7 @@
 				</div>
 				<div class="searchCustomer">
 					<span>거래처</span>
-					<input type="text" data-complete="customer" data-key="endCustNo" autocomplete="off" id="searchCust" onclick="CommonDatas.addAutoComplete(this);" onkeyup="CommonDatas.addAutoComplete(this);">
+					<input type="text" data-complete="customer" data-key="custNo" autocomplete="off" id="searchCust" onclick="CommonDatas.addAutoComplete(this);" onkeyup="CommonDatas.addAutoComplete(this);">
 				</div>
 				<div class="searchCnt">
 					<span>등록구분</span>

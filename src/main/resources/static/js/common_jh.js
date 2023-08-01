@@ -540,7 +540,7 @@ class SalesSet{
 						"align": "center",
 					},
 					{
-						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].soppNo)) ? "" : CommonDatas.getSoppFind(this.soppNo, "name"),
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].soppNo)) ? "" : CommonDatas.getSoppFind(jsonData[i].soppNo, "name"),
 						"align": "center",
 					},
 					{
@@ -691,7 +691,7 @@ class SalesSet{
 					}
 				],
 				"type": "select",
-				"elementId": "salesType",
+				"elementId": "type",
 				"disabled": false,
 			},
 			{
@@ -760,7 +760,7 @@ class SalesSet{
 			"schedFrom": "",
 			"schedTo": "",
 			"salesPlace": "",
-			"salesType": "",
+			"type": "",
 			"desc": "",
 			"salesCheck": 0,
 			"title": "",
@@ -785,22 +785,22 @@ class SalesSet{
 
 	//영업활동 검색 버튼 클릭 함수
 	searchSubmit() {
-		let dataArray = [], resultArray, eachIndex = 0, user, sopp, cust, salesType, searchUser, searchSopp, searchCust, searchSalesType, searchDateFrom, keyIndex = 0;
+		let dataArray = [], resultArray, eachIndex = 0, user, sopp, cust, type, searchUser, searchSopp, searchCust, searchType, searchDateFrom, keyIndex = 0;
 		searchUser = document.getElementById("searchUser");
 		searchSopp = document.getElementById("searchSopp");
 		searchCust = document.getElementById("searchCust");
-		searchSalesType = document.getElementById("searchSalesType");
+		searchType = document.getElementById("searchType");
 		searchDateFrom = (document.getElementById("searchDateFrom").value === "") ? "" : document.getElementById("searchDateFrom").value.replaceAll("-", "") + "#regDatetime" + document.getElementById("searchDateTo").value.replaceAll("-", "");
 		
 		for(let key in storage.salesList[0]){
 			if(key === searchUser.dataset.key) user = "#" + keyIndex + "/" + searchUser.value;
 			else if(key === searchSopp.dataset.key) sopp = "#" + keyIndex + "/" + searchSopp.value;
 			else if(key === searchCust.dataset.key) cust = "#" + keyIndex + "/" + searchCust.value;
-			else if(key === searchSalesType.dataset.key) salesType = "#" + keyIndex + "/" + searchSalesType.value;
+			else if(key === searchType.dataset.key) type = "#" + keyIndex + "/" + searchType.value;
 			keyIndex++;
 		}
 
-		let searchValues = [user, sopp, cust, salesType, searchDateFrom];
+		let searchValues = [user, sopp, cust, type, searchDateFrom];
 
 		for (let i = 0; i < searchValues.length; i++) {
 			if(searchValues[i] !== ""){
@@ -858,7 +858,7 @@ class Sales{
 			this.schedFrom = getData.schedFrom;
 			this.schedTo = getData.schedTo;
 			this.salesPlace = getData.salesPlace;
-			this.salesType = getData.salesType;
+			this.type = getData.type;
 			this.desc = getData.desc;
 			this.salesCheck = getData.salesCheck;
 			this.title = getData.title;
@@ -875,7 +875,7 @@ class Sales{
 			this.schedFrom = "";
 			this.schedTo = "";
 			this.salesPlace = "";
-			this.salesType = "";
+			this.type = "";
 			this.desc = "";
 			this.salesCheck = 0;
 			this.title = "";
@@ -991,7 +991,7 @@ class Sales{
 					}
 				],
 				"type": "select",
-				"elementId": "salesType"
+				"elementId": "type"
 			},
 			{
 				"title": "담당자(*)",
@@ -1064,7 +1064,7 @@ class Sales{
 		CommonDatas.detailTrueDatas(datas);
 	
 		setTimeout(() => {
-			document.getElementById("salesType").value = this.salesType;
+			document.getElementById("type").value = this.type;
 			ckeditor.config.readOnly = true;
 			window.setTimeout(setEditor, 100);
 		}, 200);
@@ -1178,8 +1178,22 @@ class ScheduleSet{
 	}
 
 	//달력 리스트
-	calendarList() {
-		axios.get("/api/schedule/calendar").then((response) => {
+	calendarList(searchDatas) {
+		let dataResult = {};
+
+		if(!CommonDatas.emptyValuesCheck(searchDatas)){
+			searchDatas = JSON.parse(searchDatas);
+			
+			for(let key in searchDatas[0]){
+				dataResult[key] = searchDatas[0][key];
+			}
+		}
+
+		axios({
+			method: "get",
+			url: "/api/schedule/calendar",
+			params: dataResult,
+		}).then((response) => {
 			if (response.data.result === "ok") {
 				let result;
 				result = cipher.decAes(response.data.data);
@@ -1199,9 +1213,20 @@ class ScheduleSet{
 						}
 	
 						storage.calendarList.push(setDatas);
+					}else{
+						if(!CommonDatas.emptyValuesCheck(searchDatas)){
+							let setDatas = {
+								"no": item.no,
+								"title": item.title,
+								"start": item.schedFrom,
+								"end": item.schedTo,
+								"schedType": item.schedType
+							}
+		
+							storage.calendarList.push(setDatas);
+						}
 					}
 				}
-
 
 				if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.sopp === undefined) {
 					window.setTimeout(this.drawCalendarList, 1000);
@@ -1280,11 +1305,26 @@ class ScheduleSet{
 		});
 
 		calendar.render();
+		document.getElementById("multiSearchBtn").setAttribute("onclick", "CommonDatas.Temps.scheduleSet.searchSetItem(\"calendar\");");
 	}
 
 	//일정조회 리스트 저장 함수
-	list() {
-		axios.get("/api/schedule/calendar").then((response) => {
+	list(searchDatas) {
+		let dataResult = {};
+
+		if(!CommonDatas.emptyValuesCheck(searchDatas)){
+			searchDatas = JSON.parse(searchDatas);
+			
+			for(let key in searchDatas[0]){
+				dataResult[key] = searchDatas[0][key];
+			}
+		}
+
+		axios({
+			method: "get",
+			url: "/api/schedule/calendar",
+			params: dataResult,
+		}).then((response) => {
 			if (response.data.result === "ok") {
 				let result;
 				result = cipher.decAes(response.data.data);
@@ -1462,7 +1502,7 @@ class ScheduleSet{
 
 		CommonDatas.createGrid(container, header, data, ids, job, fnc);
 		CommonDatas.setViewContents(hideArr, showArr);
-		document.getElementById("multiSearchBtn").setAttribute("onclick", "CommonDatas.Temps.salesSet.searchSubmit();");
+		document.getElementById("multiSearchBtn").setAttribute("onclick", "CommonDatas.Temps.scheduleSet.searchSetItem(\"list\");");
 
 		let path = location.pathname.split("/");
 
@@ -1568,7 +1608,7 @@ class ScheduleSet{
 					}
 				],
 				"type": "select",
-				"elementId": "schedCat",
+				"elementId": "type",
 				"disabled": false,
 			},
 			{
@@ -1633,7 +1673,7 @@ class ScheduleSet{
 			"desc": "",
 			"schedType": 0,
 			"schedPlace": "",
-			"schedCat": 0,
+			"type": 0,
 			"regDatetime": "",
 			"modDatetime": "",
 		};
@@ -1760,6 +1800,21 @@ class ScheduleSet{
 		document.getElementById("schedFrom").value = storage.calendarSelectArg.startStr + "T09:00:00";
 		document.getElementById("schedTo").value = storage.calendarSelectArg.endStr + "T18:00:00";
 	}
+
+	searchSetItem(viewType){
+		let datas = [];
+		let searchDatas = {};
+		searchDatas.userNo = (CommonDatas.emptyValuesCheck(document.getElementById("searchUser")) || CommonDatas.emptyValuesCheck(document.getElementById("searchUser").dataset.value)) ? "" : document.getElementById("searchUser").dataset.value;
+		searchDatas.soppNo = (CommonDatas.emptyValuesCheck(document.getElementById("searchSopp")) || CommonDatas.emptyValuesCheck(document.getElementById("searchSopp").dataset.value)) ? "" : document.getElementById("searchSopp").dataset.value;
+		searchDatas.custNo = (CommonDatas.emptyValuesCheck(document.getElementById("searchCust")) || CommonDatas.emptyValuesCheck(document.getElementById("searchCust").dataset.value)) ? "" : document.getElementById("searchCust").dataset.value;
+		searchDatas.type = (CommonDatas.emptyValuesCheck(document.getElementById("searchType")) || CommonDatas.emptyValuesCheck(document.getElementById("searchType").options[document.getElementById("searchType").selectedIndex].dataset.value)) ? "" : document.getElementById("searchType").options[document.getElementById("searchType").selectedIndex].dataset.value;
+		searchDatas.regDatetimeFrom = (CommonDatas.emptyValuesCheck(document.getElementById("searchDateFrom")) || CommonDatas.emptyValuesCheck(document.getElementById("searchDateFrom").value)) ? "" : document.getElementById("searchDateFrom").value;
+		searchDatas.regDatetimeTo = (CommonDatas.emptyValuesCheck(document.getElementById("searchDateTo")) || CommonDatas.emptyValuesCheck(document.getElementById("searchDateTo").value)) ? "" : document.getElementById("searchDateTo").value;
+		datas.push(searchDatas);
+
+		if(viewType === "calendar") CommonDatas.Temps.scheduleSet.calendarList(JSON.stringify(datas));
+		else CommonDatas.Temps.scheduleSet.list(JSON.stringify(datas));
+	}
 }
 
 //일정관리 crud
@@ -1779,7 +1834,7 @@ class Schedule{
 				this.schedFrom = getData.schedFrom;
 				this.schedTo = getData.schedTo;
 				this.salesPlace = getData.salesPlace;
-				this.salesType = getData.salesType;
+				this.type = getData.type;
 				this.desc = getData.desc;
 				this.salesCheck = getData.salesCheck;
 				this.title = getData.title;
@@ -1807,7 +1862,7 @@ class Schedule{
 				this.schedType = getData.schedType;
 				this.schedPlace = getData.schedPlace;
 				this.schedColor = getData.schedColor;
-				this.schedCat = getData.schedCat;
+				this.type = getData.type;
 				this.contNo = getData.contNo;
 				this.regDatetime = getData.regDatetime;
 				this.modDatetime = getData.modDatetime;
@@ -1829,7 +1884,7 @@ class Schedule{
 				this.techdPlace = getData.techdPlace;
 				this.schedFrom = getData.schedFrom;
 				this.schedTo = getData.schedTo;
-				this.techdType = getData.techdType;
+				this.type = getData.type;
 				this.techdSteps = getData.techdSteps;
 				this.schedType = getData.schedType;
 				this.regDatetime = getData.regDatetime;
@@ -1949,7 +2004,7 @@ class Schedule{
 					}
 				],
 				"type": "select",
-				"elementId": "schedCat",
+				"elementId": "type",
 			},
 			{
 				"title": "장소",
@@ -2113,7 +2168,7 @@ class Schedule{
 					}
 				],
 				"type": "select",
-				"elementId": "salesType",
+				"elementId": "type",
 			},
 			{
 				"title": "담당자(*)",
@@ -2178,7 +2233,7 @@ class Schedule{
 		CommonDatas.detailTrueDatas(datas);
 		
 		setTimeout(() => {
-			document.getElementById("salesType").value = this.salesType;
+			document.getElementById("type").value = this.type;
 			let modalFootSpan = document.querySelectorAll(".modalFoot span");
 
 			if(this.userNo == storage.my){
@@ -2322,7 +2377,7 @@ class Schedule{
 					}
 				],
 				"type": "select",
-				"elementId": "techdType",
+				"elementId": "type",
 			},
 			{
 				"title": "지원일자 시작일(*)",
@@ -2397,7 +2452,7 @@ class Schedule{
 			let techSet = new TechSet();
 			techSet.techRadioChange();
 			document.getElementById("techdSteps").value = this.techdSteps;
-			document.getElementById("techdType").value = this.techdType;
+			document.getElementById("type").value = this.type;
 			document.getElementById("userNo").setAttribute("data-change", true);
 			ckeditor.config.readOnly = false;
 			window.setTimeout(setEditor, 100);
@@ -2503,7 +2558,7 @@ class Schedule{
 					}
 				],
 				"type": "select",
-				"elementId": "schedCat",
+				"elementId": "type",
 			},
 			{
 				"title": "장소",
@@ -2580,7 +2635,7 @@ class Schedule{
 			}
 
 			CommonDatas.detailTrueDatas(datas);
-			document.getElementById("schedCat").value = this.schedCat;
+			document.getElementById("type").value = this.type;
 			ckeditor.config.readOnly = false;
 			window.setTimeout(setEditor, 100);
 		}, 100);
@@ -4152,7 +4207,7 @@ class TechSet{
 
 				if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.sopp === undefined) {
 					window.setTimeout(this.drawTechList, 1000);
-					window.setTimeout(CommonDatas.searchListSet("techList"), 1000);
+					window.setTimeout(() => {CommonDatas.searchListSet("techList");}, 1000);
 				} else {
 					window.setTimeout(this.drawTechList, 200);
 					window.setTimeout(CommonDatas.searchListSet("techList"), 200);
@@ -4250,16 +4305,6 @@ class TechSet{
 				schedFrom = CommonDatas.dateFnc(disDate, "yy.mm.dd");
 				disDate = CommonDatas.dateDis(new Date(jsonData[i].schedTo).getTime());
 				schedTo = CommonDatas.dateFnc(disDate, "yy.mm.dd");
-				let userName = storage.user[jsonData[i].userNo].userName;
-				let sopp = 0;
-
-				for(let t = 0; t < storage.sopp.length; t++){
-					let item = storage.sopp[t];
-
-					if(item.no == jsonData[i].soppNo){
-						sopp = item.title;
-					}
-				}
 
 				str = [
 					{
@@ -4458,7 +4503,7 @@ class TechSet{
 					}
 				],
 				"type": "select",
-				"elementId": "techdType",
+				"elementId": "type",
 				"disabled": false,
 			},
 			{
@@ -4523,7 +4568,7 @@ class TechSet{
 			"techdPlace": "",
 			"schedFrom": "",
 			"schedTo": "",
-			"techdType": "",
+			"type": "",
 			"techdSteps": "",
 			"userNo": storage.my,
 			"schedType": 0,
@@ -4644,7 +4689,7 @@ class Tech{
 			this.techdPlace = getData.techdPlace;
 			this.schedFrom = getData.schedFrom;
 			this.schedTo = getData.schedTo;
-			this.techdType = getData.techdType;
+			this.type = getData.type;
 			this.techdSteps = getData.techdSteps;
 			this.userNo = getData.userNo;
 			this.schedType = getData.schedType;
@@ -4667,7 +4712,7 @@ class Tech{
 			this.techdPlace = "";
 			this.schedFrom = "";
 			this.schedTo = "";
-			this.techdType = "";
+			this.type = "";
 			this.techdSteps = "";
 			this.userNo = 0;
 			this.schedType = 0;
@@ -4810,7 +4855,7 @@ class Tech{
 					}
 				],
 				"type": "select",
-				"elementId": "techdType",
+				"elementId": "type",
 			},
 			{
 				"title": "지원일자 시작일(*)",
@@ -4872,7 +4917,7 @@ class Tech{
 			document.querySelector("input[name=\"cntrctMth\"][value=\"" + this.cntrctMth + "\"]").setAttribute("checked", true);
 			CommonDatas.Temps.techSet.techRadioChange();
 			document.getElementById("techdSteps").value = this.techdSteps;
-			document.getElementById("techdType").value = this.techdType;
+			document.getElementById("type").value = this.type;
 			ckeditor.config.readOnly = true;
 			window.setTimeout(setEditor, 100);
 		}, 100);
@@ -6093,11 +6138,7 @@ class Common {
 		ckeditor.config.readOnly = false;
 		window.setTimeout(setEditor, 100);
 
-		if (modal.wrap.style.display !== "none" && modal.wrap.style.display !== "") {
-			setTimeout(() => {
-				document.getElementsByClassName("cke_textarea_inline")[0].style.height = "300px";
-			}, 300);
-		}
+		
 	}
 
 	//tab 레이아웃 적용 함수
@@ -6324,7 +6365,7 @@ class Common {
 							str += "#" + storage.user[item[key]].userName;
 						}else if(key === "custNo"){
 							str += "#" + storage.customer[item[key]].name;
-						}else if(key === "salestype"){
+						}else if(key === "type"){
 							str += "#" + storage.code.etc[item[key]];
 						}else{
 							str += "#" + item[key];
@@ -6350,6 +6391,7 @@ class Common {
 		return flag;
 	}
 
+	//영업기회 값 찾는 함수
 	getSoppFind(value, type){
 		let result;
 		let flag = false;
@@ -6371,13 +6413,14 @@ class Common {
 		}
 
 		if(!flag){
-			alert("영업기회를 찾지 못했습니다.\n다시 시도해주세요.");
+			// alert("영업기회를 찾지 못했습니다.\n다시 시도해주세요.");
 			result = "";
 		}
 
 		return result;
 	}
 
+	//계약 값 찾는 함수
 	getContFind(value, type){
 		let result;
 		let flag = false;

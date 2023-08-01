@@ -22,9 +22,9 @@
 					<span>거래처</span>
 					<input type="text" data-complete="customer" data-key="custNo" autocomplete="off" id="searchCust" onclick="CommonDatas.addAutoComplete(this);" onkeyup="CommonDatas.addAutoComplete(this);">
 				</div>
-				<div class="searchSalesType">
+				<div class="searchType">
 					<span>활동형태</span>
-					<select id="searchSalesType" data-key="salesType">
+					<select id="searchType" data-key="type">
 						<option value="">선택</option>
 						<option value="회사방문">회사방문</option>
 						<option value="기술지원">기술지원</option>

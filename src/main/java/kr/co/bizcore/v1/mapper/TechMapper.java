@@ -24,12 +24,12 @@ public interface TechMapper {
     @Select("SELECT * FROM swc_techd WHERE attrib NOT LIKE 'XXX%' AND compNo = #{tech.compNo} and regDatetime between #{tech.fromDate} and #{tech.toDate} ORDER BY regDatetime DESC")
     public List<Tech> getTechList(@Param("tech") Tech tech);
 
-    @Insert("INSERT INTO swc_techd (compNo, custNo, soppNo, contNo, cntrctMth, endCustNo, custmemberNo, `title`, `desc`, techdItemmodel, techdItemversion, techdPlace, schedFrom, schedTo, techdType, techdSteps, userNo, regDatetime) VALUES (#{tech.compNo}, #{tech.endCustNo}, #{tech.soppNo}, #{tech.contNo}, #{tech.cntrctMth}, #{tech.endCustNo}, #{tech.custmemberNo}, #{tech.title}, #{tech.desc}, #{tech.techdItemmodel}, #{tech.techdItemversion}, #{tech.techdPlace}, #{tech.schedFrom}, #{tech.schedTo}, #{tech.techdType}, #{tech.techdSteps}, #{tech.userNo}, now())")
+    @Insert("INSERT INTO swc_techd (compNo, custNo, soppNo, contNo, cntrctMth, endCustNo, custmemberNo, `title`, `desc`, techdItemmodel, techdItemversion, techdPlace, schedFrom, schedTo, `type`, techdSteps, userNo, regDatetime) VALUES (#{tech.compNo}, #{tech.endCustNo}, #{tech.soppNo}, #{tech.contNo}, #{tech.cntrctMth}, #{tech.endCustNo}, #{tech.custmemberNo}, #{tech.title}, #{tech.desc}, #{tech.techdItemmodel}, #{tech.techdItemversion}, #{tech.techdPlace}, #{tech.schedFrom}, #{tech.schedTo}, #{tech.type}, #{tech.techdSteps}, #{tech.userNo}, now())")
     public int techInsert(@Param("tech") Tech tech);
 
     @Update("UPDATE swc_techd SET attrib = 'XXXXX' WHERE techdNo = #{techdNo} AND compNo = #{compNo}")
     public int deleteTech(@Param("compNo") int compNo, @Param("techdNo") String techdNo);
 
-    @Update("UPDATE swc_techd SET custNo = #{tech.endCustNo}, soppNo = #{tech.soppNo}, contNo = #{tech.contNo}, cntrctMth = #{tech.cntrctMth}, endCustNo = #{tech.endCustNo}, custmemberNo = #{tech.custmemberNo}, `title` = #{tech.title}, `desc` = #{tech.desc}, techdItemmodel = #{tech.techdItemmodel}, techdItemversion = #{tech.techdItemversion}, techdPlace = #{tech.techdPlace}, schedFrom = #{tech.schedFrom}, schedTo = #{tech.schedTo}, techdType = #{tech.techdType}, techdSteps = #{tech.techdSteps}, userNo = #{tech.userNo}, modDatetime = now() WHERE techdNo = #{tech.techdNo} AND compNo = #{tech.compNo}")
+    @Update("UPDATE swc_techd SET custNo = #{tech.endCustNo}, soppNo = #{tech.soppNo}, contNo = #{tech.contNo}, cntrctMth = #{tech.cntrctMth}, endCustNo = #{tech.endCustNo}, custmemberNo = #{tech.custmemberNo}, `title` = #{tech.title}, `desc` = #{tech.desc}, techdItemmodel = #{tech.techdItemmodel}, techdItemversion = #{tech.techdItemversion}, techdPlace = #{tech.techdPlace}, schedFrom = #{tech.schedFrom}, schedTo = #{tech.schedTo}, `type` = #{tech.type}, techdSteps = #{tech.techdSteps}, userNo = #{tech.userNo}, modDatetime = now() WHERE techdNo = #{tech.techdNo} AND compNo = #{tech.compNo}")
     public int updateTech(@Param("tech") Tech tech);
 }

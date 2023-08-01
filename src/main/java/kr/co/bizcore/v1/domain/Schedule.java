@@ -32,5 +32,7 @@ public class Schedule extends Domain{
     private String attrib;
     private String type;
     private String place;
+    private String regDatetimeFrom;
+    private String regDatetimeTo;
     //2023.07.15
 }

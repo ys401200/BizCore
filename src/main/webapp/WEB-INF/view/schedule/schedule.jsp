@@ -22,29 +22,29 @@
 					<span>매출처</span>
 					<input type="text" data-complete="customer" data-key="custNo" autocomplete="off" id="searchCust" onclick="CommonDatas.addAutoComplete(this);" onkeyup="CommonDatas.addAutoComplete(this);">
 				</div>
-				<div class="searchSalesType">
+				<div class="searchType">
 					<span>활동형태</span>
-					<select id="searchSalesType" data-key="salesType">
+					<select id="searchType" data-key="type">
 						<option value="">선택</option>
-						<option value="회사방문">회사방문</option>
-						<option value="기술지원">기술지원</option>
-						<option value="전화상담">전화상담</option>
-						<option value="현장방문">현장방문</option>
-						<option value="원격지원">원격지원</option>
-						<option value="제품설명">제품설명</option>
-						<option value="시스템데모">시스템데모</option>
-						<option value="제품견적">제품견적</option>
-						<option value="계약전 의사결정지원">계약전 의사결정지원</option>
-						<option value="계약">계약</option>
-						<option value="사후처리">사후처리</option>
-						<option value="협력사요청">협력사요청</option>
-						<option value="협력사문의">협력사문의</option>
-						<option value="교육">교육</option>
-						<option value="전화상담">전화상담</option>
-						<option value="제조사업무협의">제조사업무협의</option>
-						<option value="외부출장">외부출장</option>
-						<option value="제안설명회">제안설명회</option>
-						<option value="기타">기타</option>
+						<option data-value="10170" value="회사방문">회사방문</option>
+						<option data-value="10171" value="기술지원">기술지원</option>
+						<option data-value="10187" value="전화상담">전화상담</option>
+						<option data-value="10208" value="현장방문">현장방문</option>
+						<option data-value="10209" value="원격지원">원격지원</option>
+						<option data-value="10221" value="제품설명">제품설명</option>
+						<option data-value="10222" value="시스템데모">시스템데모</option>
+						<option data-value="10223" value="제품견적">제품견적</option>
+						<option data-value="10224" value="계약전 의사결정지원">계약전 의사결정지원</option>
+						<option data-value="10225" value="계약">계약</option>
+						<option data-value="10226" value="사후처리">사후처리</option>
+						<option data-value="10227" value="기타">기타</option>
+						<option data-value="10228" value="협력사요청">협력사요청</option>
+						<option data-value="10229" value="협력사문의">협력사문의</option>
+						<option data-value="10230" value="교육">교육</option>
+						<option data-value="10231" value="전화상담">전화상담</option>
+						<option data-value="10232" value="제조사업무협의">제조사업무협의</option>
+						<option data-value="10233" value="외부출장">외부출장</option>
+						<option data-value="10234" value="제안설명회">제안설명회</option>
 					</select>
 				</div>
 				<div class="searchDate">

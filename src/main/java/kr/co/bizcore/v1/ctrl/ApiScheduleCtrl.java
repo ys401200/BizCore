@@ -25,7 +25,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import kr.co.bizcore.v1.domain.Sales;
 import kr.co.bizcore.v1.domain.Schedule;
 import kr.co.bizcore.v1.domain.Schedule3;
 import kr.co.bizcore.v1.domain.SimpleUser;
@@ -62,7 +61,20 @@ public class ApiScheduleCtrl extends Ctrl {
         }else if(aesKey == null || aesIv == null){
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
         }else{
-            list = scheduleService.getList(compNo);
+            String searchUserNo = request.getParameter("userNo");
+            String searchSoppNo = request.getParameter("soppNo");
+            String searchCustNo = request.getParameter("custNo");
+            String searchType = request.getParameter("type");
+            String regDatetimeFrom = request.getParameter("regDatetimeFrom");
+            String regDatetimeTo = request.getParameter("regDatetimeTo");
+            String searchResult = null;
+
+            if(searchUserNo != null || searchSoppNo != null || searchCustNo != null || searchType != null || regDatetimeFrom != null || regDatetimeTo != null){
+                list = scheduleService.getSearchList(compNo, searchUserNo, searchSoppNo, searchCustNo, searchType, regDatetimeFrom, regDatetimeTo);
+            }else{
+                list = scheduleService.getList(compNo);
+            }
+
             if (list != null) {
                 data = "[";
                 for (i = 0; i < list.size(); i++) {
