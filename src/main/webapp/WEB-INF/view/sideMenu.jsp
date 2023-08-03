@@ -30,7 +30,7 @@
 					<a href="/business/schedule">일정조회</a>
 				</div>
 				<div>
-					<a href="/business/workreport">업무일지작성</a>
+					<a href="/business/workreport">개인업무일지</a>
 				</div>
 				<!-- <div>
 					<a href="/business/workjournal">업무일지검토</a>
