@@ -1,12 +1,9 @@
 $(document).ready(() => {
     init();
-    
-	setTimeout(() => {
-		$("#loadingDiv").hide();
-		$("#loadingDiv").loading("toggle");
-	}, 300);
-
-	getWorkReport();
+    let workReportSet = new WorkReportSet();
+	workReportSet.getWorkReportDatas("last");
+	workReportSet.getWorkReportDatas("this");
+	workReportSet.getWorkReportDatas("next");
 });
 
 function getWorkReport() {

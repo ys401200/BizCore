@@ -236,6 +236,51 @@ public class ApiScheduleCtrl extends Ctrl {
         return result;
     }
 
+    @RequestMapping(value = "/workReport", method = RequestMethod.GET)
+    public String getWorkReport(HttpServletRequest request) {
+        String result = null, data = null, aesKey = null, aesIv = null, userNo = null, compId = null;
+        int compNo = 0;
+        HttpSession session = null;
+        Msg msg = null;
+        List<Schedule> list = null;
+        int i = 0;
+
+        session = request.getSession();
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        compId = (String) session.getAttribute("compId");
+        compNo = (int) session.getAttribute("compNo");
+        userNo = (String) session.getAttribute("userNo");
+        msg = getMsg((String) session.getAttribute("lang"));
+        if (compId == null)
+            compId = (String) request.getAttribute("compId");
+
+        if (compId == null) {
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        }else{
+            String setDate = request.getParameter("setDate");
+            list = scheduleService.getWorkReport(setDate, compNo);
+
+            if (list != null) {
+                data = "[";
+                for (i = 0; i < list.size(); i++) {
+                    if (i > 0)
+                        data += ",";
+                    data += list.get(i).toJson();
+                }
+                data += "]";
+            } else {
+                data = "[]";
+            }
+            data = scheduleService.encAes(data, aesKey, aesIv);
+            result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";            
+        }
+
+        return result;
+    }
+
     // ============================== 캘린더 ============================================= / 기간은 기본적으로 월단위
 
     // 캘린더 정보 요청에 대한 처리 / 연월 정보 없음 / 현재 연월
@@ -300,349 +345,349 @@ public class ApiScheduleCtrl extends Ctrl {
     // =========================================== 일정 Detail / 신규, 수정, 삭제, 조회 ====================================
 
     // 단일 일정에 대한 조회 요청
-    @GetMapping("/{type:\\D+}/{no:\\d+}")
-    public String apiScheduleTypeNoGet(HttpServletRequest request, @PathVariable String type, @PathVariable int no){
-        String result = null;
-        String compId = null, aesKey = null, aesIv = null;
-        Schedule data = null;
-        HttpSession session = null;
+    // @GetMapping("/{type:\\D+}/{no:\\d+}")
+    // public String apiScheduleTypeNoGet(HttpServletRequest request, @PathVariable String type, @PathVariable int no){
+    //     String result = null;
+    //     String compId = null, aesKey = null, aesIv = null;
+    //     Schedule data = null;
+    //     HttpSession session = null;
 
-        session = request.getSession();
-        aesKey = (String)session.getAttribute("aesKey");
-        aesIv = (String)session.getAttribute("aesIv");
-        compId = (String)session.getAttribute("compId");
-        if(compId == null)  compId = (String)request.getAttribute("compId");
+    //     session = request.getSession();
+    //     aesKey = (String)session.getAttribute("aesKey");
+    //     aesIv = (String)session.getAttribute("aesIv");
+    //     compId = (String)session.getAttribute("compId");
+    //     if(compId == null)  compId = (String)request.getAttribute("compId");
 
-        if(compId == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
-        }else if(aesKey == null || aesIv == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
-        }else{
-            data = scheduleSvc.getSchedule(compId, type, no + "");
-            if(data != null){
-                result = encAes(data.toJson(), aesKey, aesIv);
-                result = "{\"result\":\"ok\",\"data\":\"" + result + "\"}";
-            }else{
-                result = "{\"result\":\"failure\",\"msg\":\"Error occured.\"}";
-            }
-        }
+    //     if(compId == null){
+    //         result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+    //     }else if(aesKey == null || aesIv == null){
+    //         result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
+    //     }else{
+    //         data = scheduleSvc.getSchedule(compId, type, no + "");
+    //         if(data != null){
+    //             result = encAes(data.toJson(), aesKey, aesIv);
+    //             result = "{\"result\":\"ok\",\"data\":\"" + result + "\"}";
+    //         }else{
+    //             result = "{\"result\":\"failure\",\"msg\":\"Error occured.\"}";
+    //         }
+    //     }
 
-        return result;
-    }
+    //     return result;
+    // }
 
-    // 단일 일정에 대한 신규  요청
-    @PostMapping("{type:\\D+}")
-    public String apiScheduleTypePost(HttpServletRequest request, @RequestBody String requestBody, @PathVariable String type){
-        String result = null;
-        String compId = null;
-        String aesKey = null;
-        String aesIv = null;
-        String json = null;
-        ObjectMapper mapper = null;
-        Schedule schedule = null;
-        HttpSession session = null;
+    // // 단일 일정에 대한 신규  요청
+    // @PostMapping("{type:\\D+}")
+    // public String apiScheduleTypePost(HttpServletRequest request, @RequestBody String requestBody, @PathVariable String type){
+    //     String result = null;
+    //     String compId = null;
+    //     String aesKey = null;
+    //     String aesIv = null;
+    //     String json = null;
+    //     ObjectMapper mapper = null;
+    //     Schedule schedule = null;
+    //     HttpSession session = null;
 
-        mapper = new ObjectMapper();
-        session = request.getSession();
-        compId = (String)session.getAttribute("compId");
-        aesKey = (String)session.getAttribute("aesKey");
-        aesIv = (String)session.getAttribute("aesIv");
-        if(compId == null)  compId = (String)request.getAttribute("compId");
+    //     mapper = new ObjectMapper();
+    //     session = request.getSession();
+    //     compId = (String)session.getAttribute("compId");
+    //     aesKey = (String)session.getAttribute("aesKey");
+    //     aesIv = (String)session.getAttribute("aesIv");
+    //     if(compId == null)  compId = (String)request.getAttribute("compId");
 
-        if(compId == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
-        }else if(aesKey == null || aesIv == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
-        }else{
-            json = salesService.decAes(requestBody, aesKey, aesIv);
-            try {
-                schedule = mapper.readValue(json, Schedule.class);
-                if(scheduleSvc.addSchedule(compId, schedule) > 0)   result = "{\"result\":\"ok\"}";
-                else                                                    result = "{\"result\":\"failure\",\"msg\":\"An error occurred.\"}";
-            } catch (Exception e) {
-                result = "{\"result\":\"failure\",\"msg\":\"Data is wrong.\"}";
-            }
-        }
-        return result;
-    }
+    //     if(compId == null){
+    //         result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+    //     }else if(aesKey == null || aesIv == null){
+    //         result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
+    //     }else{
+    //         json = salesService.decAes(requestBody, aesKey, aesIv);
+    //         try {
+    //             schedule = mapper.readValue(json, Schedule.class);
+    //             if(scheduleSvc.addSchedule(compId, schedule) > 0)   result = "{\"result\":\"ok\"}";
+    //             else                                                    result = "{\"result\":\"failure\",\"msg\":\"An error occurred.\"}";
+    //         } catch (Exception e) {
+    //             result = "{\"result\":\"failure\",\"msg\":\"Data is wrong.\"}";
+    //         }
+    //     }
+    //     return result;
+    // }
 
-    // 단일 일정에 대한 수정 요청
-    @PutMapping("/{type:\\D+}/{no:\\d+}")
-    public String apiScheduleTypeNoPut(HttpServletRequest request, @RequestBody String requestBody, @PathVariable String type, @PathVariable int no){
-        String result = null;
-        String compId = null;
-        String aesKey = null;
-        String aesIv = null;
-        String json = null;
-        ObjectMapper mapper = null;
-        Schedule3 schedule = null;
-        HttpSession session = null;
+    // // 단일 일정에 대한 수정 요청
+    // @PutMapping("/{type:\\D+}/{no:\\d+}")
+    // public String apiScheduleTypeNoPut(HttpServletRequest request, @RequestBody String requestBody, @PathVariable String type, @PathVariable int no){
+    //     String result = null;
+    //     String compId = null;
+    //     String aesKey = null;
+    //     String aesIv = null;
+    //     String json = null;
+    //     ObjectMapper mapper = null;
+    //     Schedule3 schedule = null;
+    //     HttpSession session = null;
 
-        mapper = new ObjectMapper();
-        session = request.getSession();
-        compId = (String)session.getAttribute("compId");
-        aesKey = (String)session.getAttribute("aesKey");
-        aesIv = (String)session.getAttribute("aesIv");
-        if(compId == null)  compId = (String)request.getAttribute("compId");
+    //     mapper = new ObjectMapper();
+    //     session = request.getSession();
+    //     compId = (String)session.getAttribute("compId");
+    //     aesKey = (String)session.getAttribute("aesKey");
+    //     aesIv = (String)session.getAttribute("aesIv");
+    //     if(compId == null)  compId = (String)request.getAttribute("compId");
 
-        if(compId == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
-        }else if(aesKey == null || aesIv == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
-        }else{
-            json = salesService.decAes(requestBody, aesKey, aesIv);
-            try {
-                schedule = mapper.readValue(json, Schedule3.class);
-                schedule.setNo(no);
-                if(scheduleSvc.modifySchedule(compId, schedule) > 0)    result = "{\"result\":\"ok\"}";
-                else                                                        result = "{\"result\":\"failure\",\"msg\":\"An error occurred.\"}";
-            } catch (Exception e) {
-                e.printStackTrace();
-                result = "{\"result\":\"failure\",\"msg\":\"Data is wrong.\"}";
-            }
-        }
-        return result;
-    }
+    //     if(compId == null){
+    //         result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+    //     }else if(aesKey == null || aesIv == null){
+    //         result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
+    //     }else{
+    //         json = salesService.decAes(requestBody, aesKey, aesIv);
+    //         try {
+    //             schedule = mapper.readValue(json, Schedule3.class);
+    //             schedule.setNo(no);
+    //             if(scheduleSvc.modifySchedule(compId, schedule) > 0)    result = "{\"result\":\"ok\"}";
+    //             else                                                        result = "{\"result\":\"failure\",\"msg\":\"An error occurred.\"}";
+    //         } catch (Exception e) {
+    //             e.printStackTrace();
+    //             result = "{\"result\":\"failure\",\"msg\":\"Data is wrong.\"}";
+    //         }
+    //     }
+    //     return result;
+    // }
 
-    // 단일 일정에 대한 삭제 요청
-    @DeleteMapping("/{type:\\D+}/{no:\\d+}")
-    public String apiScheduleTypeNoDelete(HttpServletRequest request, @PathVariable String type, @PathVariable int no){
-        String result = null;
-        String compId = null;
-        int count = -1;
-        HttpSession session = null;
+    // // 단일 일정에 대한 삭제 요청
+    // @DeleteMapping("/{type:\\D+}/{no:\\d+}")
+    // public String apiScheduleTypeNoDelete(HttpServletRequest request, @PathVariable String type, @PathVariable int no){
+    //     String result = null;
+    //     String compId = null;
+    //     int count = -1;
+    //     HttpSession session = null;
 
-        session = request.getSession();
-        compId = (String)session.getAttribute("compId");
-        if(compId == null)  compId = (String)request.getAttribute("compId");
+    //     session = request.getSession();
+    //     compId = (String)session.getAttribute("compId");
+    //     if(compId == null)  compId = (String)request.getAttribute("compId");
 
-        if(compId == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
-        }else{
-            if(type.equals("sales") || type.equals("tech") || type.equals("schedule")){
-                count = scheduleSvc.deleteSchedule(compId, type, no + "");
-                if(count > 0)   result = "{\"result\":\"ok\"}";
-                else            result = "{\"result\":\"failure\",\"msg\":\"Error occured.\"}";
-            }else   result = "{\"result\":\"failure\",\"msg\":\"Schedule type mismatch..\"}";
-        }
-        return result;
-    }
+    //     if(compId == null){
+    //         result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+    //     }else{
+    //         if(type.equals("sales") || type.equals("tech") || type.equals("schedule")){
+    //             count = scheduleSvc.deleteSchedule(compId, type, no + "");
+    //             if(count > 0)   result = "{\"result\":\"ok\"}";
+    //             else            result = "{\"result\":\"failure\",\"msg\":\"Error occured.\"}";
+    //         }else   result = "{\"result\":\"failure\",\"msg\":\"Schedule type mismatch..\"}";
+    //     }
+    //     return result;
+    // }
 
-    // ============================== 업무보고 ============================================= / 기간은 기본적으로 주단위
+    // // ============================== 업무보고 ============================================= / 기간은 기본적으로 주단위
 
-    @GetMapping("/workreport")
-    public String apiScheduleReport(HttpServletRequest request){
-        int date = getCurrentDate();
-        return apiScheduleReportDeptDate(request, date);
-    }
+    // @GetMapping("/workreport")
+    // public String apiScheduleReport(HttpServletRequest request){
+    //     int date = getCurrentDate();
+    //     return apiScheduleReportDeptDate(request, date);
+    // }
 
-    @GetMapping("/workreport/company")
-    public String apiScheduleReportCompany(HttpServletRequest request){
-        int date = getCurrentDate();
-        return apiScheduleReportCompanyDate(request, date);
-    }
+    // @GetMapping("/workreport/company")
+    // public String apiScheduleReportCompany(HttpServletRequest request){
+    //     int date = getCurrentDate();
+    //     return apiScheduleReportCompanyDate(request, date);
+    // }
 
-    @GetMapping("/workreport/company/{date:\\d+}")
-    public String apiScheduleReportCompanyDate(HttpServletRequest request, @PathVariable("date") int date){
-        return getWorkReport(request, "company", date);
-    }
+    // @GetMapping("/workreport/company/{date:\\d+}")
+    // public String apiScheduleReportCompanyDate(HttpServletRequest request, @PathVariable("date") int date){
+    //     return getWorkReport(request, "company", date);
+    // }
 
-    @GetMapping("/workreport/dept")
-    public String apiScheduleReportDept(HttpServletRequest request){
-        int date = getCurrentDate();
-        return apiScheduleReportDeptDate(request, date);
-    }
+    // @GetMapping("/workreport/dept")
+    // public String apiScheduleReportDept(HttpServletRequest request){
+    //     int date = getCurrentDate();
+    //     return apiScheduleReportDeptDate(request, date);
+    // }
 
-    @GetMapping("/workreport/dept/{date:\\d+}")
-    public String apiScheduleReportDeptDate(HttpServletRequest request, @PathVariable("date") int date){
-        return getWorkReport(request, "dept", date);
-    }
+    // @GetMapping("/workreport/dept/{date:\\d+}")
+    // public String apiScheduleReportDeptDate(HttpServletRequest request, @PathVariable("date") int date){
+    //     return getWorkReport(request, "dept", date);
+    // }
 
-    @GetMapping("/workreport/personal")
-    public String apiScheduleReportPersonal(HttpServletRequest request){
-        int date = getCurrentDate();
-        return apiScheduleReportPersonalDate(request, date);
-    }
+    // @GetMapping("/workreport/personal")
+    // public String apiScheduleReportPersonal(HttpServletRequest request){
+    //     int date = getCurrentDate();
+    //     return apiScheduleReportPersonalDate(request, date);
+    // }
 
-    @GetMapping("/workreport/personal/{date:\\d+}")
-    public String apiScheduleReportPersonalDate(HttpServletRequest request, @PathVariable("date") int date){
-        return getWorkReport(request, "personal", date);
-    }
+    // @GetMapping("/workreport/personal/{date:\\d+}")
+    // public String apiScheduleReportPersonalDate(HttpServletRequest request, @PathVariable("date") int date){
+    //     return getWorkReport(request, "personal", date);
+    // }
 
-    private String getWorkReport(HttpServletRequest request, String scope, int date){
-        String result = null;
-        String compId = null, aesKey = null, aesIv = null, userNo = null, data = null;
-        HttpSession session = null;
-        SimpleUser user = null;
+    // private String getWorkReport(HttpServletRequest request, String scope, int date){
+    //     String result = null;
+    //     String compId = null, aesKey = null, aesIv = null, userNo = null, data = null;
+    //     HttpSession session = null;
+    //     SimpleUser user = null;
 
-        session = request.getSession();
-        aesKey = (String)session.getAttribute("aesKey");
-        aesIv = (String)session.getAttribute("aesIv");
-        userNo = (String)session.getAttribute("userNo");
-        compId = (String)session.getAttribute("compId");
-        if(compId == null)  compId = (String)request.getAttribute("compId");
+    //     session = request.getSession();
+    //     aesKey = (String)session.getAttribute("aesKey");
+    //     aesIv = (String)session.getAttribute("aesIv");
+    //     userNo = (String)session.getAttribute("userNo");
+    //     compId = (String)session.getAttribute("compId");
+    //     if(compId == null)  compId = (String)request.getAttribute("compId");
 
-        user = userService.getUserMap(compId).get(userNo);
+    //     user = userService.getUserMap(compId).get(userNo);
 
-        if(compId == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
-        }else if(aesKey == null || aesIv == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
-        }else{
-            data = scheduleSvc.getWorkReport(compId, scope, date, user);
-            if(data == null){
-                result = "{\"result\":\"failure\",\"msg\":\"Error occured.\"}";
-            }else{
-                data = encAes(data, aesKey, aesIv);
-                result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
-            }
-        }
+    //     if(compId == null){
+    //         result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+    //     }else if(aesKey == null || aesIv == null){
+    //         result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
+    //     }else{
+    //         data = scheduleSvc.getWorkReport(compId, scope, date, user);
+    //         if(data == null){
+    //             result = "{\"result\":\"failure\",\"msg\":\"Error occured.\"}";
+    //         }else{
+    //             data = encAes(data, aesKey, aesIv);
+    //             result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
+    //         }
+    //     }
 
-        return result;
-    }
+    //     return result;
+    // }
 
-    @PostMapping("/workreport/personal/{date:\\d+}")
-    public String apiWorkreportPersonalDatePost(HttpServletRequest request, @PathVariable("date") int date, @RequestBody String requestBody){
-        String result = null;
-        String compId = null, aesKey = null, aesIv = null, userNo = null, data = null, previousWeek = null, currentWeek = null;
-        boolean previousWeekCheck = false, currentWeekCheck = false;
-        HttpSession session = null;
-        JSONObject json = null, schedule = null;;
-        JSONArray jarr = null;
-        String[] item = null;
-        ArrayList<String[]> checked = new ArrayList<>();
-        int x = 0;
+    // @PostMapping("/workreport/personal/{date:\\d+}")
+    // public String apiWorkreportPersonalDatePost(HttpServletRequest request, @PathVariable("date") int date, @RequestBody String requestBody){
+    //     String result = null;
+    //     String compId = null, aesKey = null, aesIv = null, userNo = null, data = null, previousWeek = null, currentWeek = null;
+    //     boolean previousWeekCheck = false, currentWeekCheck = false;
+    //     HttpSession session = null;
+    //     JSONObject json = null, schedule = null;;
+    //     JSONArray jarr = null;
+    //     String[] item = null;
+    //     ArrayList<String[]> checked = new ArrayList<>();
+    //     int x = 0;
 
-        session = request.getSession();
-        aesKey = (String)session.getAttribute("aesKey");
-        aesIv = (String)session.getAttribute("aesIv");
-        userNo = (String)session.getAttribute("userNo");
-        compId = (String)session.getAttribute("compId");
-        if(compId == null)  compId = (String)request.getAttribute("compId");
+    //     session = request.getSession();
+    //     aesKey = (String)session.getAttribute("aesKey");
+    //     aesIv = (String)session.getAttribute("aesIv");
+    //     userNo = (String)session.getAttribute("userNo");
+    //     compId = (String)session.getAttribute("compId");
+    //     if(compId == null)  compId = (String)request.getAttribute("compId");
 
-        if(compId == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
-        }else if(aesKey == null || aesIv == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
-        }else{
-            data = decAes(requestBody, aesKey, aesIv);
-            json = new JSONObject(data);
-            currentWeek = json.getString("currentWeek");
-            previousWeek = json.getString("previousWeek");
-            currentWeekCheck = json.getBoolean("currentWeekCheck");
-            previousWeekCheck = json.getBoolean("previousWeekCheck");
+    //     if(compId == null){
+    //         result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+    //     }else if(aesKey == null || aesIv == null){
+    //         result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
+    //     }else{
+    //         data = decAes(requestBody, aesKey, aesIv);
+    //         json = new JSONObject(data);
+    //         currentWeek = json.getString("currentWeek");
+    //         previousWeek = json.getString("previousWeek");
+    //         currentWeekCheck = json.getBoolean("currentWeekCheck");
+    //         previousWeekCheck = json.getBoolean("previousWeekCheck");
 
-            jarr = json.getJSONArray("schedule");
-            if(jarr != null)    for(x = 0 ; x < jarr.length() ; x++){
-                schedule = jarr.getJSONObject(x);
-                item = new String[3];
-                item[0] = schedule.getString("job");
-                item[1] = schedule.getString("no");
-                item[2] = schedule.getBoolean("report") ? "1" : "0";
-                checked.add(item);
-            }
+    //         jarr = json.getJSONArray("schedule");
+    //         if(jarr != null)    for(x = 0 ; x < jarr.length() ; x++){
+    //             schedule = jarr.getJSONObject(x);
+    //             item = new String[3];
+    //             item[0] = schedule.getString("job");
+    //             item[1] = schedule.getString("no");
+    //             item[2] = schedule.getBoolean("report") ? "1" : "0";
+    //             checked.add(item);
+    //         }
 
-            if(scheduleSvc.addWorkReport(compId, userNo, date, previousWeek, previousWeekCheck, currentWeek, currentWeekCheck, checked)){
-                result = "{\"result\":\"ok\"}";
-            }else{
-                result = "{\"result\":\"failure\",\"msg\":\"Error occured.\"}";
-            }
-        }
+    //         if(scheduleSvc.addWorkReport(compId, userNo, date, previousWeek, previousWeekCheck, currentWeek, currentWeekCheck, checked)){
+    //             result = "{\"result\":\"ok\"}";
+    //         }else{
+    //             result = "{\"result\":\"failure\",\"msg\":\"Error occured.\"}";
+    //         }
+    //     }
 
-        return result;
-    }
+    //     return result;
+    // }
 
-    @DeleteMapping("/workreport/personal/{date:\\d+}")
-    public String apiWorkreportPersonalDateDelete(HttpServletRequest request, @PathVariable("date") int date){
-        String result = null;
-        HttpSession session = null;
-        String compId = null, userNo = null;
+    // @DeleteMapping("/workreport/personal/{date:\\d+}")
+    // public String apiWorkreportPersonalDateDelete(HttpServletRequest request, @PathVariable("date") int date){
+    //     String result = null;
+    //     HttpSession session = null;
+    //     String compId = null, userNo = null;
 
-        session = request.getSession();
-        compId = (String)session.getAttribute("compId");
-        userNo = (String)session.getAttribute("userNo");
-        if(compId == null)  compId = (String)request.getAttribute("compId");
+    //     session = request.getSession();
+    //     compId = (String)session.getAttribute("compId");
+    //     userNo = (String)session.getAttribute("userNo");
+    //     if(compId == null)  compId = (String)request.getAttribute("compId");
 
-        if(compId == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
-        }else{
-            if(scheduleSvc.deleteWorkReport(compId, userNo, date)){
-                result = "{\"result\":\"ok\"}";
-            }else{
-                result = "{\"result\":\"failure\",\"msg\":\"Error occured.\"}";
-            }
-        }
+    //     if(compId == null){
+    //         result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+    //     }else{
+    //         if(scheduleSvc.deleteWorkReport(compId, userNo, date)){
+    //             result = "{\"result\":\"ok\"}";
+    //         }else{
+    //             result = "{\"result\":\"failure\",\"msg\":\"Error occured.\"}";
+    //         }
+    //     }
 
-        return result;
-    }
+    //     return result;
+    // }
 
-    @GetMapping("/tech/sopp/{sopp:\\d+}/customer/{customer:\\d+}/contract/{contract:\\d+}")
-    public String apiTechDetailSchedule(HttpServletRequest request, @PathVariable("sopp") int sopp, @PathVariable("customer") int customer, @PathVariable("contract") int contract){
-        String result = null, data = null;
-        HttpSession session = null;
-        String compId = null, aesKey = null, aesIv = null;
+    // @GetMapping("/tech/sopp/{sopp:\\d+}/customer/{customer:\\d+}/contract/{contract:\\d+}")
+    // public String apiTechDetailSchedule(HttpServletRequest request, @PathVariable("sopp") int sopp, @PathVariable("customer") int customer, @PathVariable("contract") int contract){
+    //     String result = null, data = null;
+    //     HttpSession session = null;
+    //     String compId = null, aesKey = null, aesIv = null;
 
-        session = request.getSession();
-        compId = (String)session.getAttribute("compId");
-        aesKey = (String)session.getAttribute("aesKey");
-        aesIv = (String)session.getAttribute("aesIv");
-        if(compId == null)  compId = (String)request.getAttribute("compId");
+    //     session = request.getSession();
+    //     compId = (String)session.getAttribute("compId");
+    //     aesKey = (String)session.getAttribute("aesKey");
+    //     aesIv = (String)session.getAttribute("aesIv");
+    //     if(compId == null)  compId = (String)request.getAttribute("compId");
 
-        if(compId == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
-        }else if(aesKey == null || aesIv == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
-        }else{
-            data = scheduleSvc.getTechDetil(compId, sopp, customer, contract);
-            if(data != null){
-                data = encAes(data, aesKey, aesIv);
-                result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
-            }else{
-                result = "{\"result\":\"failure\",\"msg\":\"Error occured.\"}";
-            }
-        }
+    //     if(compId == null){
+    //         result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+    //     }else if(aesKey == null || aesIv == null){
+    //         result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
+    //     }else{
+    //         data = scheduleSvc.getTechDetil(compId, sopp, customer, contract);
+    //         if(data != null){
+    //             data = encAes(data, aesKey, aesIv);
+    //             result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
+    //         }else{
+    //             result = "{\"result\":\"failure\",\"msg\":\"Error occured.\"}";
+    //         }
+    //     }
 
-        return result;
-    }
+    //     return result;
+    // }
 
-    @GetMapping("/sales/sopp/{sopp:\\d+}/customer/{customer:\\d+}")
-    public String apiSalesDetailSchedule(HttpServletRequest request, @PathVariable("sopp") int sopp, @PathVariable("customer") int customer){
-        String result = null, data = null;
-        HttpSession session = null;
-        String compId = null, aesKey = null, aesIv = null;
+    // @GetMapping("/sales/sopp/{sopp:\\d+}/customer/{customer:\\d+}")
+    // public String apiSalesDetailSchedule(HttpServletRequest request, @PathVariable("sopp") int sopp, @PathVariable("customer") int customer){
+    //     String result = null, data = null;
+    //     HttpSession session = null;
+    //     String compId = null, aesKey = null, aesIv = null;
 
-        session = request.getSession();
-        compId = (String)session.getAttribute("compId");
-        aesKey = (String)session.getAttribute("aesKey");
-        aesIv = (String)session.getAttribute("aesIv");
-        if(compId == null)  compId = (String)request.getAttribute("compId");
+    //     session = request.getSession();
+    //     compId = (String)session.getAttribute("compId");
+    //     aesKey = (String)session.getAttribute("aesKey");
+    //     aesIv = (String)session.getAttribute("aesIv");
+    //     if(compId == null)  compId = (String)request.getAttribute("compId");
 
-        if(compId == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
-        }else if(aesKey == null || aesIv == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
-        }else{
-            data = scheduleSvc.getSalesDetil(compId, sopp, customer);
-            if(data != null){
-                data = encAes(data, aesKey, aesIv);
-                result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
-            }else{
-                result = "{\"result\":\"failure\",\"msg\":\"Error occured.\"}";
-            }
-        }
+    //     if(compId == null){
+    //         result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+    //     }else if(aesKey == null || aesIv == null){
+    //         result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
+    //     }else{
+    //         data = scheduleSvc.getSalesDetil(compId, sopp, customer);
+    //         if(data != null){
+    //             data = encAes(data, aesKey, aesIv);
+    //             result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
+    //         }else{
+    //             result = "{\"result\":\"failure\",\"msg\":\"Error occured.\"}";
+    //         }
+    //     }
 
-        return result;
-    }
+    //     return result;
+    // }
 
-    // ===================== P R I V A T E _ M E T H O D =========================
-    private int getCurrentDate(){
-        int result = 0;
-        Calendar cal = Calendar.getInstance();
-        result += (cal.get(Calendar.YEAR) * 10000);
-        result += ((cal.get(Calendar.MONTH) + 1) * 100);
-        result += cal.get(Calendar.DATE);
-        return result;
-    }    
+    // // ===================== P R I V A T E _ M E T H O D =========================
+    // private int getCurrentDate(){
+    //     int result = 0;
+    //     Calendar cal = Calendar.getInstance();
+    //     result += (cal.get(Calendar.YEAR) * 10000);
+    //     result += ((cal.get(Calendar.MONTH) + 1) * 100);
+    //     result += cal.get(Calendar.DATE);
+    //     return result;
+    // }    
 
 
     

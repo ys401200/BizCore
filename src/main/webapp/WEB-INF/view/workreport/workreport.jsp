@@ -8,9 +8,13 @@
 	</div>
 	<div id="bodyContent">
 		<div class="workReportContainer">
-            <hr />
-            <span>개인업무일지</span>
-			<button type="button" id="reportInsertBtn">업무일지등록</button>
+			<div class="contentHeaders">
+				<hr />
+            	<span>개인업무일지</span>
+				<div class="crudBtns">
+					<button type="button">업무일지등록</button>
+				</div>
+			</div>
             <div class="workReportContent"></div>
         </div>
 	</div>

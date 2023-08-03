@@ -2742,6 +2742,176 @@ class Schedule{
 	}
 }
 
+// 개인업무일지 시작
+class WorkReportSet{
+	constructor(){
+		CommonDatas.Temps.workReportSet = this;
+	}
+
+	//개인업무일지 들고오는 함수
+	getWorkReportDatas(setType) {
+		let setDate;
+		let calDay = 0;
+		let nowDate = new Date();
+
+		if(nowDate.getDay() > 0 && nowDate.getDay() < 7){
+			calDay = 6 - nowDate.getDay()
+		}
+
+		if(setType === "last"){
+			nowDate.setDate((nowDate.getDate() + calDay) - 7);
+		}else if(setType === "this" || setType === undefined){
+			nowDate.setDate(nowDate.getDate() + calDay);
+		}else{
+			nowDate.setDate((nowDate.getDate() + calDay) + 7);
+		}
+
+		setDate = nowDate.toISOString().substring(0, 10);
+
+		axios({
+			method: "get",
+			url: "/api/schedule/workReport",
+			params: {
+				"setDate": setDate,
+			},
+		}).then((response) => {
+			if (response.data.result === "ok") {
+				let result;
+				result = cipher.decAes(response.data.data);
+				result = JSON.parse(result);
+
+				if(setType === "last"){
+					storage.lastWorkReport = result;
+				}else if(setType === "this" || setType === undefined){
+					storage.thisWorkReport = result;
+				}else{
+					storage.nextWorkReport = result;
+				}
+				
+				if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.sopp === undefined) {
+					window.setTimeout(this.drawWorkReport(setType), 1000);
+				} else {
+					window.setTimeout(this.drawWorkReport(setType), 200);
+				}
+			}
+		}).catch((error) => {
+			msg.set("개인업무일지 에러입니다.\n" + error);
+			console.log(error);
+		})
+	}
+
+	//개인업무일지 레이아웃 셋팅 함수
+	drawWorkReport(setType){
+		let workReportContent = document.getElementsByClassName("workReportContent")[0];
+		let gridHtml;
+		
+		if(setType === "last"){
+			let othersHtml = "<div class=\"othersContents\">";
+			othersHtml += "<div class=\"othersTitle\">추가기재</div><div class=\"othersContent\"><textarea id=\"lastOthers\"></textarea></div>";
+			othersHtml += "<div><input type=\"checkbox\" /></div>";
+			othersHtml += "</div>";
+
+			gridHtml = CommonDatas.Temps.workReportSet.setWorkReportGrid(storage.lastWorkReport);
+
+			let lastCreateDiv = document.createElement("div");
+			lastCreateDiv.className = "lastWorkReport";
+			lastCreateDiv.innerHTML = "<span>지난주 업무일지</span>" + gridHtml + othersHtml;
+			workReportContent.append(lastCreateDiv);
+		}else if(setType === "this"){
+			let othersHtml = "<div class=\"othersContents\">";
+			othersHtml += "<div class=\"othersTitle\">추가기재</div><div class=\"othersContent\"><textarea id=\"thisOthers\"></textarea></div>";
+			othersHtml += "<div><input type=\"checkbox\" /></div>";
+			othersHtml += "</div>";
+
+			gridHtml = CommonDatas.Temps.workReportSet.setWorkReportGrid(storage.thisWorkReport);
+
+			let thisCreateDiv = document.createElement("div");
+			thisCreateDiv.className = "thisWorkReport";
+			thisCreateDiv.innerHTML = "<span>이번주 업무일지</span>" + gridHtml + othersHtml;
+			workReportContent.append(thisCreateDiv);
+		}else{
+			let othersHtml = "<div class=\"othersContents\">";
+			othersHtml += "<div class=\"othersTitle\">추가기재</div><div class=\"othersContent\"><textarea id=\"nextOthers\"></textarea></div>";
+			othersHtml += "<div><input type=\"checkbox\" /></div>";
+			othersHtml += "</div>";
+
+			gridHtml = CommonDatas.Temps.workReportSet.setWorkReportGrid(storage.nextWorkReport);
+
+			let nextCreateDiv = document.createElement("div");
+			nextCreateDiv.className = "nextWorkReport";
+			nextCreateDiv.innerHTML = "<span>다음주 업무일지</span>" + gridHtml + othersHtml;
+			workReportContent.append(nextCreateDiv);
+		}
+
+		ckeditor.config.readOnly = false;
+		window.setTimeout(setEditor, 100);
+	}
+
+	getWeekOfYear(date){
+		let oneJan = new Date(date.getFullYear(),0,1);
+		let numberOfDays = Math.floor((date - oneJan) / (24 * 60 * 60 * 1000));
+		return Math.ceil((date.getDay() + 1 + numberOfDays) / 7);
+	};
+
+	setWorkReportGrid(datas){
+		let nowDate = new Date();
+		let nowYear = nowDate.getFullYear();
+		let allHtml = "";
+		let headerHtml = "";
+		let bodyHtml = "";
+
+		headerHtml = "<div class=\"workReportHeader\"><div>주차</div><div>요일</div><div>일정제목</div><div>일정내용</div><div>일정시작</div><div>일정종료</div><div>업무일지반영</div></div>";
+		bodyHtml += "<div class=\"workReportBody\">";
+
+		if(datas.length > 0){
+			for(let i = 0; i < datas.length; i++){
+				let item = datas[i];
+				let getDay = new Date(item.schedFrom).getDay();
+				let month;
+	
+				if(getDay == 0) month = "일";
+				else if(getDay == 1) month = "월";
+				else if(getDay == 2) month = "화";
+				else if(getDay == 3) month = "수";
+				else if(getDay == 4) month = "목";
+				else if(getDay == 5) month = "금";
+				else if(getDay == 6) month = "토";
+	
+				bodyHtml += "<div>";
+				bodyHtml += "<div style=\"justify-content: center;\">" + nowYear + CommonDatas.Temps.workReportSet.getWeekOfYear(new Date(item.schedFrom)) + "</div>";
+				bodyHtml += "<div style=\"justify-content: center;\">" + month + "</div>";
+	
+				if(item.schedType === 10165){
+					bodyHtml += "<div>" + "$ " + item.title + "</div>";
+				}else if(item.schedType === 10168 || item.schedType === 10262){
+					bodyHtml += "<div>" + "# " + item.title + "</div>";
+				}else{
+					bodyHtml += "<div>" + "@ " + item.title + "</div>";
+				}
+	
+				bodyHtml += "<div>" + item.desc + "</div>";
+				bodyHtml += "<div style=\"justify-content: center;\">" + item.schedFrom + "</div>";
+				bodyHtml += "<div style=\"justify-content: center;\">" + item.schedTo + "</div>";
+				
+				if(item.check > 0){
+					bodyHtml += "<div style=\"justify-content: center;\"><input type=\"checkbox\" checked/></div>";
+				}else{
+					bodyHtml += "<div style=\"justify-content: center;\"><input type=\"checkbox\" /></div>";
+				}
+	
+				bodyHtml += "</div>";
+			}
+		}else{
+			bodyHtml += "<div><div style=\"grid-column: span 7; justify-content: center;\">데이터가 없습니다.</div></div>";
+		}
+
+		bodyHtml += "</div>";
+		allHtml = headerHtml + bodyHtml;
+
+		return allHtml;
+	}
+}
+
 // 견적관리 시작
 // 견적 초기 세팅해주는 클래스
 class EstimateSet {

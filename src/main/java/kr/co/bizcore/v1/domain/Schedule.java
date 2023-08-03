@@ -18,6 +18,7 @@ public class Schedule extends Domain{
     private String title;
     private String desc;
     private int schedCheck;
+    private int check;
     private int subschedNo;
     private String schedActive;
     private String schedAllday;
@@ -34,5 +35,7 @@ public class Schedule extends Domain{
     private String place;
     private String regDatetimeFrom;
     private String regDatetimeTo;
+    private String from;
+    private String to;
     //2023.07.15
 }

@@ -34,6 +34,15 @@ public interface ScheduleMapper {
     @Update("UPDATE swc_sched SET attrib = 'XXXXX' WHERE schedNo = #{schedNo} AND compNo = #{compNo}")
     public int deleteSchedule(@Param("compNo") int compNo, @Param("schedNo") String schedNo);
 
+    @Select(
+        "select salesNo as `no`, compNo, custNo, userNo, schedFrom, schedTo, `title`, `desc`, salesPlace as place, schedType, `type`, salesCheck as `check`, regDatetime from swc_sales where YEARWEEK(schedFrom) = YEARWEEK(#{schedule.from}) and compNo = #{schedule.compNo} and attrib not like 'XXX%'\r\n" +
+        " union " + 
+        "select schedNo as `no`, compNo, custNo, userNo, schedFrom, schedTo, `title`, `desc`, schedPlace as place, schedType, `type`, schedCheck as `check`, regDatetime from swc_sched where YEARWEEK(schedFrom) = YEARWEEK(#{schedule.from}) and compNo = #{schedule.compNo} and attrib not like 'XXX%'\r\n" +
+        " union " +
+        "select techdNo as `no`, compNo, custNo, userNo, schedFrom, schedTo, `title`, `desc`, techdPlace as place, schedType, `type`, techdCheck as `check`, regDatetime from swc_techd where YEARWEEK(schedFrom) = YEARWEEK(#{schedule.from}) and compNo = #{schedule.compNo} and attrib not like 'XXX%'"
+    )
+    public List<Schedule> getWorkReport(@Param("schedule") Schedule schedule);
+
     //@Select("SELECT a.* FROM (" + 
     //    "SELECT 'etc' AS job, schedno AS no, userno AS user, custno AS cust, soppno AS sopp, schedtitle AS title, scheddesc AS detail, schedfrom AS \"from\", schedto AS \"to\", schedplace AS place, regdatetime AS created, modDatetime AS modified FROM swc_sched WHERE schedfrom < DATE_ADD(#{ymd}, INTERVAL 1 MONTH) AND schedto >= #{ymd} AND compno = (SELECT compno FROM swc_company WHERE compid =#{compId}) " +
     //    "UNION ALL " +
