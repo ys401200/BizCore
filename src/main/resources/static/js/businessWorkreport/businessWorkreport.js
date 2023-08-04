@@ -2,8 +2,8 @@ $(document).ready(() => {
     init();
     let workReportSet = new WorkReportSet();
 	workReportSet.getWorkReportDatas("last")
-	.then(() =>  workReportSet.getWorkReportDatas("this"))
-	.then(() => workReportSet.getWorkReportDatas("next"));
+	.then(() => setTimeout(() => {workReportSet.getWorkReportDatas("this");}, 500))
+	.then(() => setTimeout(() => {workReportSet.getWorkReportDatas("next");}, 1000));
 });
 
 function getWorkReport() {
