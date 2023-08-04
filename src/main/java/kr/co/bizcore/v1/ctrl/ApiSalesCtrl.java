@@ -223,6 +223,5 @@ public class ApiSalesCtrl extends Ctrl{
         }
 
         return result;
-
     }
 }

@@ -21,6 +21,7 @@ public class Sales extends SimpleSales{
     
     // 23.06월 이후 추가
     private int salesNo;
+    private int no;
     private int soppNo;
     private int userNo;
     private int compNo;
@@ -31,6 +32,7 @@ public class Sales extends SimpleSales{
     private String salesType;
     private String desc;
     private int salesCheck;
+    private int check;
     private String title;
     private int ptncNo;
     private String toDate;

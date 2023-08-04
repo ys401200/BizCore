@@ -12,7 +12,8 @@
 				<hr />
             	<span>개인업무일지</span>
 				<div class="crudBtns">
-					<button type="button">업무일지등록</button>
+					<button type="button">업무일지등록(금주)</button>
+					<button type="button">업무일지등록(차주)</button>
 				</div>
 			</div>
             <div class="workReportContent"></div>

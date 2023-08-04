@@ -13,8 +13,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import kr.co.bizcore.v1.domain.Sales;
 import kr.co.bizcore.v1.domain.Schedule;
 import kr.co.bizcore.v1.domain.Schedule2;
+import kr.co.bizcore.v1.domain.Tech;
 import kr.co.bizcore.v1.mapper.ScheduleMapper;
 import lombok.extern.slf4j.Slf4j;
 
@@ -80,9 +82,7 @@ public class ScheduleService extends Svc {
     }
 
     public Schedule getScheduleOne(int compNo, String schedNo){
-        Schedule schedule = null;
-        schedule = scheduleMapper.getScheduleOne(schedNo, compNo);
-        return schedule;
+        return scheduleMapper.getScheduleOne(schedNo, compNo);
     }
 
     public int insertSchedule(Schedule schedule) {
@@ -102,5 +102,25 @@ public class ScheduleService extends Svc {
         schedule.setFrom(setDate);
         schedule.setCompNo(compNo);
        return scheduleMapper.getWorkReport(schedule);
+    }
+
+    public Schedule getSreport(String weekNum, String userNo, int compNo) {
+       return scheduleMapper.getSreport(weekNum, userNo, compNo);
+    }
+
+    public int salesReportUpdate(Sales sales) {
+        return scheduleMapper.salesReportUpdate(sales);
+    }
+
+    public int scheduleReportUpdate(Schedule schedule) {
+        return scheduleMapper.scheduleReportUpdate(schedule);
+    }
+
+    public int techReportUpdate(Tech tech) {
+        return scheduleMapper.techReportUpdate(tech);
+    }
+
+    public int reportOtherInsert(Schedule schedule) {
+        return scheduleMapper.reportOtherInsert(schedule);
     }
 }

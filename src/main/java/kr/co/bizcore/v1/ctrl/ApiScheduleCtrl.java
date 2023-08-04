@@ -1,21 +1,13 @@
 package kr.co.bizcore.v1.ctrl;
 
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -25,9 +17,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import kr.co.bizcore.v1.domain.Sales;
 import kr.co.bizcore.v1.domain.Schedule;
-import kr.co.bizcore.v1.domain.Schedule3;
-import kr.co.bizcore.v1.domain.SimpleUser;
+import kr.co.bizcore.v1.domain.Tech;
 import kr.co.bizcore.v1.msg.Msg;
 import lombok.extern.slf4j.Slf4j;
 
@@ -67,7 +59,6 @@ public class ApiScheduleCtrl extends Ctrl {
             String searchType = request.getParameter("type");
             String regDatetimeFrom = request.getParameter("regDatetimeFrom");
             String regDatetimeTo = request.getParameter("regDatetimeTo");
-            String searchResult = null;
 
             if(searchUserNo != null || searchSoppNo != null || searchCustNo != null || searchType != null || regDatetimeFrom != null || regDatetimeTo != null){
                 list = scheduleService.getSearchList(compNo, searchUserNo, searchSoppNo, searchCustNo, searchType, regDatetimeFrom, regDatetimeTo);
@@ -125,7 +116,7 @@ public class ApiScheduleCtrl extends Ctrl {
 
                 if (schedule != null) { // 처리됨
                     data = schedule.toJson();
-                    data = salesService.encAes(data, aesKey, aesIv);
+                    data = scheduleService.encAes(data, aesKey, aesIv);
                     result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
                     
                 } else { // 처리 안됨
@@ -276,6 +267,122 @@ public class ApiScheduleCtrl extends Ctrl {
             }
             data = scheduleService.encAes(data, aesKey, aesIv);
             result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";            
+        }
+
+        return result;
+    }
+
+    @RequestMapping(value = "/sreport", method = RequestMethod.GET)
+    public String getSreport(HttpServletRequest request) {
+        String result = null, data = null, aesKey = null, aesIv = null, userNo = null, compId = null;
+        int compNo = 0;
+        HttpSession session = null;
+        Msg msg = null;
+        Schedule schedule = null;
+        int i = 0;
+
+        session = request.getSession();
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        compId = (String) session.getAttribute("compId");
+        compNo = (int) session.getAttribute("compNo");
+        userNo = (String) session.getAttribute("userNo");
+        msg = getMsg((String) session.getAttribute("lang"));
+        if (compId == null)
+            compId = (String) request.getAttribute("compId");
+
+        if (compId == null) {
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        }else{
+            String weekNum = request.getParameter("weekNum");
+            schedule = scheduleService.getSreport(weekNum, userNo, compNo);
+
+            if (schedule != null) {
+                data = schedule.toJson();
+                data = scheduleService.encAes(data, aesKey, aesIv);
+                result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
+                
+            } else { // 처리 안됨
+                result = "{\"result\":\"failure\",\"msg\":\"Error occured when read.\"}";
+            } // End of if : 3
+        }
+
+        return result;
+    }
+
+    @RequestMapping(value = "/reportUpdate/{no}/{type}", method = RequestMethod.PUT)
+    public String reportUpdate(HttpServletRequest req, @RequestBody String requestBody, @PathVariable String no, @PathVariable String type) throws JsonMappingException, JsonProcessingException {
+        String compId = null;
+        int compNo = 0;
+        String result = null;
+        HttpSession session = null;
+        String data = null, aesKey = null, aesIv = null;
+        ObjectMapper mapper = new ObjectMapper();
+
+        session = req.getSession();
+        compNo = (int) session.getAttribute("compNo");
+        compId = (String) session.getAttribute("compId");
+        if (compId == null) {
+            compId = (String) req.getAttribute("compId");
+        }
+
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        data = scheduleService.decAes(requestBody, aesKey, aesIv);
+
+        if(type.equals("sales")){
+            Sales sales = mapper.readValue(data, Sales.class);
+            sales.setCompNo(compNo);
+
+            if (scheduleService.salesReportUpdate(sales) > 0) {
+                result = "{\"result\":\"ok\"}";
+            }
+        }else if(type.equals("schedule")){
+            Schedule schedule = mapper.readValue(data, Schedule.class);
+            schedule.setCompNo(compNo);
+
+            if (scheduleService.scheduleReportUpdate(schedule) > 0) {
+                result = "{\"result\":\"ok\"}";
+            }
+        }else{
+            Tech tech = mapper.readValue(data, Tech.class);
+            tech.setCompNo(compNo);
+
+            if (scheduleService.techReportUpdate(tech) > 0) {
+                result = "{\"result\":\"ok\"}";
+            }
+        }
+
+        return result;
+    }
+
+    @RequestMapping(value = "/reportOtherInsert", method = RequestMethod.POST)
+    public String reportOtherInsert(HttpServletRequest req, @RequestBody String requestBody) throws JsonMappingException, JsonProcessingException {
+
+        int compNo = 0;
+        HttpSession session = null;
+        String result = null;
+        String data = null, aesKey = null, aesIv = null;
+        ObjectMapper mapper = new ObjectMapper();
+        int check = 0;
+
+        session = req.getSession();
+
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        compNo = (int) session.getAttribute("compNo");
+        data = salesService.decAes(requestBody, aesKey, aesIv);
+        Schedule schedule = mapper.readValue(data, Schedule.class);
+        schedule.setCompNo(compNo);
+
+        check = scheduleService.reportOtherInsert(schedule);
+
+        if (check > 0) {
+            result = "{\"result\":\"ok\"}";
+        } else {
+            result = "{\"result\":\"failure\" ,\"msg\":\"Error occured when write.\"}";
         }
 
         return result;

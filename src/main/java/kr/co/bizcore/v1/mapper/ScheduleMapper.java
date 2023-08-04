@@ -8,8 +8,10 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import kr.co.bizcore.v1.domain.Sales;
 import kr.co.bizcore.v1.domain.Schedule;
 import kr.co.bizcore.v1.domain.Schedule3;
+import kr.co.bizcore.v1.domain.Tech;
 import kr.co.bizcore.v1.domain.WorkReport;
 
 public interface ScheduleMapper {
@@ -42,6 +44,21 @@ public interface ScheduleMapper {
         "select techdNo as `no`, compNo, custNo, userNo, schedFrom, schedTo, `title`, `desc`, techdPlace as place, schedType, `type`, techdCheck as `check`, regDatetime from swc_techd where YEARWEEK(schedFrom) = YEARWEEK(#{schedule.from}) and compNo = #{schedule.compNo} and attrib not like 'XXX%' order by schedFrom asc"
     )
     public List<Schedule> getWorkReport(@Param("schedule") Schedule schedule);
+
+    @Select("select * from swc_sreport where userNo = #{userNo} and compNo = #{compNo} and weekNum = #{weekNum} order by regDate desc limit 1")
+    public Schedule getSreport(@Param("weekNum") String weekNum, @Param("userNo") String userNo, @Param("compNo") int compNo);
+
+    @Update("UPDATE swc_sales SET salesCheck = #{sales.check}, modDatetime = now() WHERE salesNo = #{sales.no} AND compNo = #{sales.compNo}")
+    public int salesReportUpdate(@Param("sales") Sales sales);
+
+    @Update("UPDATE swc_sched SET schedCheck = #{schedule.check}, modDatetime = now() WHERE schedNo = #{schedule.no} AND compNo = #{schedule.compNo}")
+    public int scheduleReportUpdate(@Param("schedule") Schedule schedule);
+    
+    @Update("UPDATE swc_techd SET techdCheck = #{tech.check}, modDatetime = now() WHERE techdNo = #{tech.no} AND compNo = #{tech.compNo}")
+    public int techReportUpdate(@Param("tech") Tech tech);
+
+    @Insert("INSERT INTO swc_sreport (userNo, compNo, weekNum, prComment, prCheck, thComment, thCheck, regDate) VALUES (#{schedule.userNo}, #{schedule.compNo}, #{schedule.weekNum}, #{schedule.prComment}, #{schedule.prCheck}, #{schedule.thComment}, #{schedule.thCheck}, now())")
+    public int reportOtherInsert(@Param("schedule") Schedule schedule);
 
     //@Select("SELECT a.* FROM (" + 
     //    "SELECT 'etc' AS job, schedno AS no, userno AS user, custno AS cust, soppno AS sopp, schedtitle AS title, scheddesc AS detail, schedfrom AS \"from\", schedto AS \"to\", schedplace AS place, regdatetime AS created, modDatetime AS modified FROM swc_sched WHERE schedfrom < DATE_ADD(#{ymd}, INTERVAL 1 MONTH) AND schedto >= #{ymd} AND compno = (SELECT compno FROM swc_company WHERE compid =#{compId}) " +

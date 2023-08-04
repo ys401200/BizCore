@@ -37,5 +37,15 @@ public class Schedule extends Domain{
     private String regDatetimeTo;
     private String from;
     private String to;
+
+    //sreReport
+    private int sreportno;
+    private int weekNum;
+    private String prComment;
+    private int prCheck;
+    private String thComment;
+    private int thCheck;
+    private String nxComment;
+    private String srepMemo;
     //2023.07.15
 }

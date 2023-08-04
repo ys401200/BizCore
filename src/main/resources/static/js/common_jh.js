@@ -2746,33 +2746,86 @@ class Schedule{
 class WorkReportSet{
 	constructor(){
 		CommonDatas.Temps.workReportSet = this;
+		this.getSreportDatas("this");
+		this.getSreportDatas("next");
 	}
 
 	//개인업무일지 들고오는 함수
 	getWorkReportDatas(setType) {
-		let setDate;
-		let calDay = 0;
+		return new Promise((resolve, reject) => {
+			if(setType === "last") resolve("last");
+			else if(setType === "this") resolve("this");
+			else resolve("next");
+
+			let setDate;
+			let calDay = 0;
+			let nowDate = new Date();
+	
+			if(nowDate.getDay() > 0 && nowDate.getDay() < 7){
+				calDay = 6 - nowDate.getDay()
+			}
+	
+			if(setType === "last"){
+				nowDate.setDate((nowDate.getDate() + calDay) - 7);
+			}else if(setType === "this" || setType === undefined){
+				nowDate.setDate(nowDate.getDate() + calDay);
+			}else{
+				nowDate.setDate((nowDate.getDate() + calDay) + 7);
+			}
+	
+			setDate = nowDate.toISOString().substring(0, 10);
+	
+			axios({
+				method: "get",
+				url: "/api/schedule/workReport",
+				params: {
+					"setDate": setDate,
+				},
+			}).then((response) => {
+				if (response.data.result === "ok") {
+					let result;
+					result = cipher.decAes(response.data.data);
+					result = JSON.parse(result);
+	
+					if(setType === "last"){
+						storage.lastWorkReport = result;
+					}else if(setType === "this" || setType === undefined){
+						storage.thisWorkReport = result;
+					}else{
+						storage.nextWorkReport = result;
+					}
+					
+					if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.sopp === undefined) {
+						window.setTimeout(this.drawWorkReport(setType), 1000);
+					} else {
+						window.setTimeout(this.drawWorkReport(setType), 200);
+					}
+				}
+			}).catch((error) => {
+				msg.set("개인업무일지 에러입니다.\n" + error);
+				console.log(error);
+			});
+		})
+	}
+
+	//개인업무일지 추가기재 들고오는 함수
+	getSreportDatas(setType) {
+		let weekNum;
 		let nowDate = new Date();
+		let getYear = nowDate.getFullYear();
 
-		if(nowDate.getDay() > 0 && nowDate.getDay() < 7){
-			calDay = 6 - nowDate.getDay()
-		}
-
-		if(setType === "last"){
-			nowDate.setDate((nowDate.getDate() + calDay) - 7);
-		}else if(setType === "this" || setType === undefined){
-			nowDate.setDate(nowDate.getDate() + calDay);
+		if(setType === "this" || setType === undefined || setType === ""){
+			weekNum = getYear.toString() + CommonDatas.Temps.workReportSet.getWeekOfYear(nowDate);
 		}else{
-			nowDate.setDate((nowDate.getDate() + calDay) + 7);
+			nowDate.setDate(nowDate.getDate() + 7);
+			weekNum = getYear.toString() + CommonDatas.Temps.workReportSet.getWeekOfYear(nowDate);
 		}
-
-		setDate = nowDate.toISOString().substring(0, 10);
 
 		axios({
 			method: "get",
-			url: "/api/schedule/workReport",
+			url: "/api/schedule/sreport",
 			params: {
-				"setDate": setDate,
+				"weekNum": weekNum,
 			},
 		}).then((response) => {
 			if (response.data.result === "ok") {
@@ -2780,24 +2833,16 @@ class WorkReportSet{
 				result = cipher.decAes(response.data.data);
 				result = JSON.parse(result);
 
-				if(setType === "last"){
-					storage.lastWorkReport = result;
-				}else if(setType === "this" || setType === undefined){
-					storage.thisWorkReport = result;
+				if(setType === "this" || setType === undefined || setType === ""){
+					storage.thisSreport = result;
 				}else{
-					storage.nextWorkReport = result;
-				}
-				
-				if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.sopp === undefined) {
-					window.setTimeout(this.drawWorkReport(setType), 1000);
-				} else {
-					window.setTimeout(this.drawWorkReport(setType), 200);
+					storage.nextSreport = result;
 				}
 			}
 		}).catch((error) => {
-			msg.set("개인업무일지 에러입니다.\n" + error);
+			msg.set("개인업무일지 추가기재 에러입니다.\n" + error);
 			console.log(error);
-		})
+		});
 	}
 
 	//개인업무일지 레이아웃 셋팅 함수
@@ -2807,8 +2852,15 @@ class WorkReportSet{
 		
 		if(setType === "last"){
 			let othersHtml = "<div class=\"othersContents\">";
-			othersHtml += "<div class=\"othersTitle\">추가기재</div><div class=\"othersContent\"><textarea id=\"lastOthers\"></textarea></div>";
-			othersHtml += "<div><input type=\"checkbox\" /></div>";
+			othersHtml += "<div class=\"othersTitle\">추가기재</div>";
+			othersHtml += "<div class=\"othersContent\"><textarea id=\"lastOthers\">" + storage.thisSreport.prComment + "</textarea></div>";
+
+			if(storage.thisSreport.prCheck > 0){
+				othersHtml += "<div><input type=\"checkbox\" checked/></div>";
+			}else{
+				othersHtml += "<div><input type=\"checkbox\" /></div>";
+			}
+
 			othersHtml += "</div>";
 
 			gridHtml = CommonDatas.Temps.workReportSet.setWorkReportGrid(storage.lastWorkReport);
@@ -2822,8 +2874,15 @@ class WorkReportSet{
 			CommonDatas.Temps.workReportSet.gridRowSort(lastWorkReport);
 		}else if(setType === "this"){
 			let othersHtml = "<div class=\"othersContents\">";
-			othersHtml += "<div class=\"othersTitle\">추가기재</div><div class=\"othersContent\"><textarea id=\"thisOthers\"></textarea></div>";
-			othersHtml += "<div><input type=\"checkbox\" /></div>";
+			othersHtml += "<div class=\"othersTitle\">추가기재</div>";
+			othersHtml += "<div class=\"othersContent\"><textarea id=\"thisOthers\">" + storage.thisSreport.thComment + "</textarea></div>";
+
+			if(storage.thisSreport.thCheck > 0){
+				othersHtml += "<div><input type=\"checkbox\" checked/></div>";
+			}else{
+				othersHtml += "<div><input type=\"checkbox\" /></div>";
+			}
+
 			othersHtml += "</div>";
 
 			gridHtml = CommonDatas.Temps.workReportSet.setWorkReportGrid(storage.thisWorkReport);
@@ -2837,8 +2896,15 @@ class WorkReportSet{
 			CommonDatas.Temps.workReportSet.gridRowSort(thisWorkReport);
 		}else{
 			let othersHtml = "<div class=\"othersContents\">";
-			othersHtml += "<div class=\"othersTitle\">추가기재</div><div class=\"othersContent\"><textarea id=\"nextOthers\"></textarea></div>";
-			othersHtml += "<div><input type=\"checkbox\" /></div>";
+			othersHtml += "<div class=\"othersTitle\">추가기재</div>";
+			othersHtml += "<div class=\"othersContent\"><textarea id=\"nextOthers\">" + storage.nextSreport.thComment + "</textarea></div>";
+
+			if(storage.nextSreport.thCheck > 0){
+				othersHtml += "<div><input type=\"checkbox\" checked/></div>";
+			}else{
+				othersHtml += "<div><input type=\"checkbox\" /></div>";
+			}
+
 			othersHtml += "</div>";
 
 			gridHtml = CommonDatas.Temps.workReportSet.setWorkReportGrid(storage.nextWorkReport);
@@ -2852,6 +2918,8 @@ class WorkReportSet{
 			CommonDatas.Temps.workReportSet.gridRowSort(nextWorkReport);
 		}
 
+		document.getElementsByClassName("crudBtns")[0].children[0].setAttribute("onclick", "let workReport = new WorkReport(); workReport.update(\"this\")");
+		document.getElementsByClassName("crudBtns")[0].children[1].setAttribute("onclick", "let workReport = new WorkReport(); workReport.update(\"next\")");
 		ckeditor.config.readOnly = false;
 		window.setTimeout(setEditor, 100);
 	}
@@ -2909,7 +2977,7 @@ class WorkReportSet{
 			for(let i = 0; i < datas.length; i++){
 				let item = datas[i];
 				let getDay = new Date(item.schedFrom).getDay();
-				let month;
+				let month, type;
 	
 				if(getDay == 0) month = "일";
 				else if(getDay == 1) month = "월";
@@ -2924,10 +2992,13 @@ class WorkReportSet{
 	
 				if(item.schedType === 10165){
 					bodyHtml += "<div>" + "$ " + item.title + "</div>";
+					type = "sales";
 				}else if(item.schedType === 10168 || item.schedType === 10262){
 					bodyHtml += "<div>" + "# " + item.title + "</div>";
+					type = "schedule";
 				}else{
 					bodyHtml += "<div>" + "@ " + item.title + "</div>";
+					type = "tech";
 				}
 	
 				bodyHtml += "<div>" + item.desc + "</div>";
@@ -2935,9 +3006,9 @@ class WorkReportSet{
 				bodyHtml += "<div style=\"justify-content: center;\">" + item.schedTo + "</div>";
 				
 				if(item.check > 0){
-					bodyHtml += "<div style=\"justify-content: center;\"><input type=\"checkbox\" checked/></div>";
+					bodyHtml += "<div class=\"reportCheck\" style=\"justify-content: center;\"><input type=\"checkbox\" data-no=\"" + item.no + "\" data-type=\"" + type + "\" checked/></div>";
 				}else{
-					bodyHtml += "<div style=\"justify-content: center;\"><input type=\"checkbox\" /></div>";
+					bodyHtml += "<div class=\"reportCheck\" style=\"justify-content: center;\"><input type=\"checkbox\" data-no=\"" + item.no + "\" data-type=\"" + type + "\" /></div>";
 				}
 			}
 		}else{
@@ -2948,6 +3019,203 @@ class WorkReportSet{
 		allHtml = headerHtml + bodyHtml;
 
 		return allHtml;
+	}
+}
+
+//개인업무일지 crud
+class WorkReport{
+	update(buttonType) {
+		let indexCheck = false;
+		let nowDate = new Date();
+		let nowYear = nowDate.getFullYear();
+
+		if(buttonType === "this"){
+			let otherDatas = {};
+			let weekNum = nowYear.toString() + CommonDatas.Temps.workReportSet.getWeekOfYear(nowDate);
+			let lastWorkReport = document.getElementsByClassName("lastWorkReport")[0];
+			let thisWorkReport = document.getElementsByClassName("thisWorkReport")[0];
+			let lastCheckboxDiv = lastWorkReport.getElementsByClassName("workReportBody")[0].querySelectorAll(".reportCheck");
+			let thisCheckboxDiv = thisWorkReport.getElementsByClassName("workReportBody")[0].querySelectorAll(".reportCheck");
+			let lastOtherComment = CKEDITOR.instances["lastOthers"].getData().replaceAll("\n", "");
+			let thisOtherComment = CKEDITOR.instances["thisOthers"].getData().replaceAll("\n", "");
+			let lastCheckbox = lastWorkReport.getElementsByClassName("othersContents")[0].children[2].children[0];
+			let thisCheckbox = thisWorkReport.getElementsByClassName("othersContents")[0].children[2].children[0];
+
+			otherDatas.userNo = storage.my;
+			otherDatas.weekNum = weekNum;
+			otherDatas.prComment = lastOtherComment;
+			otherDatas.prCheck = (lastCheckbox.checked) ? 1 : 0;
+			otherDatas.thComment = thisOtherComment;
+			otherDatas.thCheck = (thisCheckbox.checked) ? 1 : 0;
+			otherDatas = JSON.stringify(otherDatas);
+			otherDatas = cipher.encAes(otherDatas);
+
+			axios.post("/api/schedule/reportOtherInsert", otherDatas, {
+				headers: { "Content-Type": "text/plain" }
+			}).catch((error) => {
+				msg.set("등록 도중 에러가 발생하였습니다.\n" + error);
+				console.log(error);
+				return false;
+			});
+
+			for(let i = 0; i < lastCheckboxDiv.length; i++){
+				let datas = {};
+				let item = lastCheckboxDiv[i];
+				let checkbox = item.children[0];
+				let no = checkbox.dataset.no;
+				let type = checkbox.dataset.type;
+				let checkFlag = 1;
+
+				if(checkbox.checked){
+					checkFlag = 1;
+				}else{
+					checkFlag = 0;
+				}
+
+				datas.no = no;
+				datas.type = type;
+				datas.check = checkFlag;
+				datas = JSON.stringify(datas);
+				datas = cipher.encAes(datas);
+
+				axios.put("/api/schedule/reportUpdate/" + no + "/" + type, datas, {
+					headers: { "Content-Type": "text/plain" }
+				}).catch((error) => {
+					msg.set(no + " " + type + " 수정 도중 에러가 발생하였습니다.\n" + error);
+					console.log(error);
+					return false;
+				});
+			}
+
+			for(let i = 0; i < thisCheckboxDiv.length; i++){
+				let datas = {};
+				let item = thisCheckboxDiv[i];
+				let checkbox = item.children[0];
+				let no = checkbox.dataset.no;
+				let type = checkbox.dataset.type;
+				let checkFlag = 1;
+
+				if(checkbox.checked){
+					checkFlag = 1;
+				}else{
+					checkFlag = 0;
+				}
+
+				datas.no = no;
+				datas.type = type;
+				datas.check = checkFlag;
+				datas = JSON.stringify(datas);
+				datas = cipher.encAes(datas);
+
+				axios.put("/api/schedule/reportUpdate/" + no + "/" + type, datas, {
+					headers: { "Content-Type": "text/plain" }
+				}).catch((error) => {
+					msg.set(no + " " + type + " 수정 도중 에러가 발생하였습니다.\n" + error);
+					console.log(error);
+					return false;
+				});
+
+				if(i == (thisCheckboxDiv.length - 1)){
+					indexCheck = true;
+				}
+			}
+		}else{
+			nowDate.setDate(nowDate.getDate() + 7);
+			let otherDatas = {};
+			let weekNum = nowYear.toString() + CommonDatas.Temps.workReportSet.getWeekOfYear(nowDate);
+			let thisWorkReport = document.getElementsByClassName("thisWorkReport")[0];
+			let nextWorkReport = document.getElementsByClassName("nextWorkReport")[0];
+			let thisCheckboxDiv = thisWorkReport.getElementsByClassName("workReportBody")[0].querySelectorAll(".reportCheck");
+			let nextCheckboxDiv = nextWorkReport.getElementsByClassName("workReportBody")[0].querySelectorAll(".reportCheck");
+			let thisOtherComment = CKEDITOR.instances["thisOthers"].getData().replaceAll("\n", "");
+			let nextOtherComment = CKEDITOR.instances["nextOthers"].getData().replaceAll("\n", "");
+			let thisCheckbox = thisWorkReport.getElementsByClassName("othersContents")[0].children[2].children[0];
+			let nextCheckbox = nextWorkReport.getElementsByClassName("othersContents")[0].children[2].children[0];
+
+			otherDatas.userNo = storage.my;
+			otherDatas.weekNum = weekNum;
+			otherDatas.prComment = thisOtherComment;
+			otherDatas.prCheck = (thisCheckbox.checked) ? 1 : 0;
+			otherDatas.thComment = nextOtherComment;
+			otherDatas.thCheck = (nextCheckbox.checked) ? 1 : 0;
+			otherDatas = JSON.stringify(otherDatas);
+			otherDatas = cipher.encAes(otherDatas);
+
+			axios.post("/api/schedule/reportOtherInsert", otherDatas, {
+				headers: { "Content-Type": "text/plain" }
+			}).catch((error) => {
+				msg.set("등록 도중 에러가 발생하였습니다.\n" + error);
+				console.log(error);
+				return false;
+			});
+
+			for(let i = 0; i < thisCheckboxDiv.length; i++){
+				let datas = {};
+				let item = thisCheckboxDiv[i];
+				let checkbox = item.children[0];
+				let no = checkbox.dataset.no;
+				let type = checkbox.dataset.type;
+				let checkFlag = 1;
+
+				if(checkbox.checked){
+					checkFlag = 1;
+				}else{
+					checkFlag = 0;
+				}
+
+				datas.no = no;
+				datas.type = type;
+				datas.check = checkFlag;
+				datas = JSON.stringify(datas);
+				datas = cipher.encAes(datas);
+
+				axios.put("/api/schedule/reportUpdate/" + no + "/" + type, datas, {
+					headers: { "Content-Type": "text/plain" }
+				}).catch((error) => {
+					msg.set(no + " " + type + " 수정 도중 에러가 발생하였습니다.\n" + error);
+					console.log(error);
+					return false;
+				});
+			}
+
+			for(let i = 0; i < nextCheckboxDiv.length; i++){
+				let datas = {};
+				let item = nextCheckboxDiv[i];
+				let checkbox = item.children[0];
+				let no = checkbox.dataset.no;
+				let type = checkbox.dataset.type;
+				let checkFlag = 1;
+
+				if(checkbox.checked){
+					checkFlag = 1;
+				}else{
+					checkFlag = 0;
+				}
+
+				datas.no = no;
+				datas.type = type;
+				datas.check = checkFlag;
+				datas = JSON.stringify(datas);
+				datas = cipher.encAes(datas);
+
+				axios.put("/api/schedule/reportUpdate/" + no + "/" + type, datas, {
+					headers: { "Content-Type": "text/plain" }
+				}).catch((error) => {
+					msg.set(no + " " + type + " 수정 도중 에러가 발생하였습니다.\n" + error);
+					console.log(error);
+					return false;
+				});
+
+				if(i == (nextCheckboxDiv.length - 1)){
+					indexCheck = true;
+				}
+			}
+		}
+
+		if(indexCheck){
+			alert("수정이 완료되었습니다.");
+			location.reload();
+		}
 	}
 }
 

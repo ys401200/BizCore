@@ -10,6 +10,7 @@ import lombok.ToString;
 public class Tech extends Domain{
     // 23.06월 이후 추가
     private int techdNo;
+    private int no;
     private int compNo;
     private int custNo;
     private int soppNo;
@@ -20,6 +21,7 @@ public class Tech extends Domain{
     private String title;
     private String desc;
     private int techdCheck;
+    private int check;
     private String techdItemmodel;
     private String techdItemversion;
     private String techdPlace;

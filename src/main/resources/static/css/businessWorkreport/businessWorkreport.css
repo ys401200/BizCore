@@ -130,11 +130,11 @@
 }
 
 .contentHeaders > .crudBtns{
-	display: none;
+	display: flex;
 }
 
 .contentHeaders > .crudBtns > button{
-	width: 5.6vw;
+	width: 6.6vw;
 }
 
 .lastWorkReport, .thisWorkReport, .nextWorkReport{
@@ -187,7 +187,7 @@
 
 .workReportHeader, .workReportBody{
 	display: grid;
-	grid-template-columns: 5% 5% 20% 45% 10% 10% 5%;
+	grid-template-columns: 5% 5% 25% 40% 10% 10% 5%;
 }
 
 .workReportHeader{
@@ -220,6 +220,6 @@
 	padding: 5px;
 }
 
-.workReportBody > div:last-of-type{
+.workReportBody > div.reportCheck{
 	border-right: 1px solid #c2c5c7;
 }
