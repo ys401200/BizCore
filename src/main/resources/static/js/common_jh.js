@@ -2817,6 +2817,9 @@ class WorkReportSet{
 			lastCreateDiv.className = "lastWorkReport";
 			lastCreateDiv.innerHTML = "<span>지난주 업무일지</span>" + gridHtml + othersHtml;
 			workReportContent.append(lastCreateDiv);
+
+			let lastWorkReport = document.getElementsByClassName("lastWorkReport")[0];
+			CommonDatas.Temps.workReportSet.gridRowSort(lastWorkReport);
 		}else if(setType === "this"){
 			let othersHtml = "<div class=\"othersContents\">";
 			othersHtml += "<div class=\"othersTitle\">추가기재</div><div class=\"othersContent\"><textarea id=\"thisOthers\"></textarea></div>";
@@ -2829,6 +2832,9 @@ class WorkReportSet{
 			thisCreateDiv.className = "thisWorkReport";
 			thisCreateDiv.innerHTML = "<span>이번주 업무일지</span>" + gridHtml + othersHtml;
 			workReportContent.append(thisCreateDiv);
+
+			let thisWorkReport = document.getElementsByClassName("thisWorkReport")[0];
+			CommonDatas.Temps.workReportSet.gridRowSort(thisWorkReport);
 		}else{
 			let othersHtml = "<div class=\"othersContents\">";
 			othersHtml += "<div class=\"othersTitle\">추가기재</div><div class=\"othersContent\"><textarea id=\"nextOthers\"></textarea></div>";
@@ -2841,16 +2847,52 @@ class WorkReportSet{
 			nextCreateDiv.className = "nextWorkReport";
 			nextCreateDiv.innerHTML = "<span>다음주 업무일지</span>" + gridHtml + othersHtml;
 			workReportContent.append(nextCreateDiv);
+
+			let nextWorkReport = document.getElementsByClassName("nextWorkReport")[0];
+			CommonDatas.Temps.workReportSet.gridRowSort(nextWorkReport);
 		}
 
 		ckeditor.config.readOnly = false;
 		window.setTimeout(setEditor, 100);
 	}
 
+	gridRowSort(gridContainer){
+		let week = gridContainer.getElementsByClassName("workReportBody")[0].querySelectorAll(".gridWeek");
+		let month = gridContainer.getElementsByClassName("workReportBody")[0].querySelectorAll(".gridMonth");
+		
+		for(let i = 0; i < week.length; i++){
+			let weekItem = gridContainer.getElementsByClassName("workReportBody")[0].querySelectorAll(".gridWeek[data-value*=\"" + week[i].dataset.value + "\"]");
+			
+			if(weekItem.length > 1){
+				weekItem[0].style.gridRow = "span " + weekItem.length;
+			}
+
+			for(let j = 0; j < weekItem.length; j++){
+				if(j > 0){
+					weekItem[j].remove();
+				}
+			}
+		}
+
+		for(let i = 0; i < month.length; i++){
+			let monthItem = gridContainer.getElementsByClassName("workReportBody")[0].querySelectorAll(".gridMonth[data-value*=\"" + month[i].dataset.value + "\"]");
+			
+			if(monthItem.length > 1){
+				monthItem[0].style.gridRow = "span " + monthItem.length;
+			}
+
+			for(let j = 0; j < monthItem.length; j++){
+				if(j > 0){
+					monthItem[j].remove();
+				}
+			}
+		}
+	}
+
 	getWeekOfYear(date){
-		let oneJan = new Date(date.getFullYear(),0,1);
+		let oneJan = new Date(date.getFullYear(), 0, 0);
 		let numberOfDays = Math.floor((date - oneJan) / (24 * 60 * 60 * 1000));
-		return Math.ceil((date.getDay() + 1 + numberOfDays) / 7);
+		return Math.ceil(numberOfDays / 7);
 	};
 
 	setWorkReportGrid(datas){
@@ -2877,9 +2919,8 @@ class WorkReportSet{
 				else if(getDay == 5) month = "금";
 				else if(getDay == 6) month = "토";
 	
-				bodyHtml += "<div>";
-				bodyHtml += "<div style=\"justify-content: center;\">" + nowYear + CommonDatas.Temps.workReportSet.getWeekOfYear(new Date(item.schedFrom)) + "</div>";
-				bodyHtml += "<div style=\"justify-content: center;\">" + month + "</div>";
+				bodyHtml += "<div class=\"gridWeek\" data-value=\"" + nowYear + CommonDatas.Temps.workReportSet.getWeekOfYear(new Date(item.schedFrom)) + "\" style=\"justify-content: center;\">" + nowYear + CommonDatas.Temps.workReportSet.getWeekOfYear(new Date(item.schedFrom)) + "</div>";
+				bodyHtml += "<div class=\"gridMonth\" data-value=\"" + month + "\" style=\"justify-content: center;\">" + month + "</div>";
 	
 				if(item.schedType === 10165){
 					bodyHtml += "<div>" + "$ " + item.title + "</div>";
@@ -2898,8 +2939,6 @@ class WorkReportSet{
 				}else{
 					bodyHtml += "<div style=\"justify-content: center;\"><input type=\"checkbox\" /></div>";
 				}
-	
-				bodyHtml += "</div>";
 			}
 		}else{
 			bodyHtml += "<div><div style=\"grid-column: span 7; justify-content: center;\">데이터가 없습니다.</div></div>";

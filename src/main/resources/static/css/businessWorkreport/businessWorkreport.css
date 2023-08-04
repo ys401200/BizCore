@@ -185,7 +185,7 @@
 }
 
 
-.workReportHeader, .workReportBody > div{
+.workReportHeader, .workReportBody{
 	display: grid;
 	grid-template-columns: 5% 5% 20% 45% 10% 10% 5%;
 }
@@ -211,7 +211,7 @@
 	border-right: 1px solid #c2c5c7;
 }
 
-.workReportBody > div > div{
+.workReportBody > div{
 	display: flex;
 	align-items: center;
 	font-size: 0.8rem;
@@ -220,6 +220,6 @@
 	padding: 5px;
 }
 
-.workReportBody > div > div:last-child{
+.workReportBody > div:last-of-type{
 	border-right: 1px solid #c2c5c7;
 }

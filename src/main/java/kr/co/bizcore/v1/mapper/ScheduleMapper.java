@@ -18,7 +18,7 @@ public interface ScheduleMapper {
         " union " + 
         "select schedNo as `no`, compNo, custNo, userNo, schedFrom, schedTo, `title`, `desc`, schedPlace as place, schedType, `type`, regDatetime from swc_sched where schedFrom between '2023-01-01' and '2023-12-31' and schedTo between '2023-01-01' and '2023-12-31' and compNo = #{compNo} and attrib not like 'XXX%'\r\n" +
         " union " +
-        "select techdNo as `no`, compNo, custNo, userNo, schedFrom, schedTo, `title`, `desc`, techdPlace as place, schedType, `type`, regDatetime from swc_techd where schedFrom between '2023-01-01' and '2023-12-31' and schedTo between '2023-01-01' and '2023-12-31' and compNo = #{compNo} and attrib not like 'XXX%'"
+        "select techdNo as `no`, compNo, custNo, userNo, schedFrom, schedTo, `title`, `desc`, techdPlace as place, schedType, `type`, regDatetime from swc_techd where schedFrom between '2023-01-01' and '2023-12-31' and schedTo between '2023-01-01' and '2023-12-31' and compNo = #{compNo} and attrib not like 'XXX%' order by schedFrom asc"
     )
     public List<Schedule> getList(@Param("compNo") int compNo);
 
@@ -39,7 +39,7 @@ public interface ScheduleMapper {
         " union " + 
         "select schedNo as `no`, compNo, custNo, userNo, schedFrom, schedTo, `title`, `desc`, schedPlace as place, schedType, `type`, schedCheck as `check`, regDatetime from swc_sched where YEARWEEK(schedFrom) = YEARWEEK(#{schedule.from}) and compNo = #{schedule.compNo} and attrib not like 'XXX%'\r\n" +
         " union " +
-        "select techdNo as `no`, compNo, custNo, userNo, schedFrom, schedTo, `title`, `desc`, techdPlace as place, schedType, `type`, techdCheck as `check`, regDatetime from swc_techd where YEARWEEK(schedFrom) = YEARWEEK(#{schedule.from}) and compNo = #{schedule.compNo} and attrib not like 'XXX%'"
+        "select techdNo as `no`, compNo, custNo, userNo, schedFrom, schedTo, `title`, `desc`, techdPlace as place, schedType, `type`, techdCheck as `check`, regDatetime from swc_techd where YEARWEEK(schedFrom) = YEARWEEK(#{schedule.from}) and compNo = #{schedule.compNo} and attrib not like 'XXX%' order by schedFrom asc"
     )
     public List<Schedule> getWorkReport(@Param("schedule") Schedule schedule);
 

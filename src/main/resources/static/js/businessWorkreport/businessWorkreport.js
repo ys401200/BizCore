@@ -1,9 +1,18 @@
 $(document).ready(() => {
     init();
     let workReportSet = new WorkReportSet();
-	workReportSet.getWorkReportDatas("last");
-	workReportSet.getWorkReportDatas("this");
-	workReportSet.getWorkReportDatas("next");
+
+	setTimeout(() => {
+		workReportSet.getWorkReportDatas("last");
+	}, 100);
+
+	setTimeout(() => {
+		workReportSet.getWorkReportDatas("this");
+	}, 500);
+
+	setTimeout(() => {
+		workReportSet.getWorkReportDatas("next");
+	}, 1000);
 });
 
 function getWorkReport() {
