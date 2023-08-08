@@ -2774,7 +2774,7 @@ class WorkReportSet{
 			}
 	
 			setDate = nowDate.toISOString().substring(0, 10);
-	
+
 			axios({
 				method: "get",
 				url: "/api/schedule/workReport",
@@ -2853,12 +2853,19 @@ class WorkReportSet{
 		if(setType === "last"){
 			let othersHtml = "<div class=\"othersContents\">";
 			othersHtml += "<div class=\"othersTitle\">추가기재</div>";
-			othersHtml += "<div class=\"othersContent\"><textarea id=\"lastOthers\">" + storage.thisSreport.prComment + "</textarea></div>";
 
-			if(storage.thisSreport.prCheck > 0){
-				othersHtml += "<div><input type=\"checkbox\" checked/></div>";
-			}else{
+			if(storage.thisSreport === undefined){
+				othersHtml += "<div class=\"othersContent\"><textarea id=\"lastOthers\"></textarea></div>";
 				othersHtml += "<div><input type=\"checkbox\" /></div>";
+			}else{
+				console.log(storage.thisSreport.prComment);
+				othersHtml += "<div class=\"othersContent\"><textarea id=\"lastOthers\">" + storage.thisSreport.prComment + "</textarea></div>";
+
+				if(storage.thisSreport.prCheck > 0){
+					othersHtml += "<div><input type=\"checkbox\" checked/></div>";
+				}else{
+					othersHtml += "<div><input type=\"checkbox\" /></div>";
+				}
 			}
 
 			othersHtml += "</div>";
@@ -2875,12 +2882,19 @@ class WorkReportSet{
 		}else if(setType === "this"){
 			let othersHtml = "<div class=\"othersContents\">";
 			othersHtml += "<div class=\"othersTitle\">추가기재</div>";
-			othersHtml += "<div class=\"othersContent\"><textarea id=\"thisOthers\">" + storage.thisSreport.thComment + "</textarea></div>";
 
-			if(storage.thisSreport.thCheck > 0){
-				othersHtml += "<div><input type=\"checkbox\" checked/></div>";
-			}else{
+			console.log(storage.thisSreport);
+			if(storage.thisSreport === undefined){
+				othersHtml += "<div class=\"othersContent\"><textarea id=\"thisOthers\"></textarea></div>";
 				othersHtml += "<div><input type=\"checkbox\" /></div>";
+			}else{
+				othersHtml += "<div class=\"othersContent\"><textarea id=\"thisOthers\">" + storage.thisSreport.thComment + "</textarea></div>";
+
+				if(storage.thisSreport.thCheck > 0){
+					othersHtml += "<div><input type=\"checkbox\" checked/></div>";
+				}else{
+					othersHtml += "<div><input type=\"checkbox\" /></div>";
+				}
 			}
 
 			othersHtml += "</div>";
@@ -2897,12 +2911,18 @@ class WorkReportSet{
 		}else{
 			let othersHtml = "<div class=\"othersContents\">";
 			othersHtml += "<div class=\"othersTitle\">추가기재</div>";
-			othersHtml += "<div class=\"othersContent\"><textarea id=\"nextOthers\">" + storage.nextSreport.thComment + "</textarea></div>";
 
-			if(storage.nextSreport.thCheck > 0){
-				othersHtml += "<div><input type=\"checkbox\" checked/></div>";
-			}else{
+			if(storage.nextSreport === undefined){
+				othersHtml += "<div class=\"othersContent\"><textarea id=\"nextOthers\"></textarea></div>";
 				othersHtml += "<div><input type=\"checkbox\" /></div>";
+			}else{
+				othersHtml += "<div class=\"othersContent\"><textarea id=\"nextOthers\">" + storage.nextSreport.thComment + "</textarea></div>";
+
+				if(storage.nextSreport.thCheck > 0){
+					othersHtml += "<div><input type=\"checkbox\" checked/></div>";
+				}else{
+					othersHtml += "<div><input type=\"checkbox\" /></div>";
+				}
 			}
 
 			othersHtml += "</div>";
@@ -3012,7 +3032,7 @@ class WorkReportSet{
 				}
 			}
 		}else{
-			bodyHtml += "<div><div style=\"grid-column: span 7; justify-content: center;\">데이터가 없습니다.</div></div>";
+			bodyHtml += "<div style=\"grid-column: span 7; justify-content: center;\"><div>데이터가 없습니다.</div></div>";
 		}
 
 		bodyHtml += "</div>";
