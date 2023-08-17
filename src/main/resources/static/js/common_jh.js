@@ -2780,6 +2780,7 @@ class WorkReportSet{
 				url: "/api/schedule/workReport",
 				params: {
 					"setDate": setDate,
+					"userNo": storage.my,
 				},
 			}).then((response) => {
 				if (response.data.result === "ok") {
@@ -2858,7 +2859,6 @@ class WorkReportSet{
 				othersHtml += "<div class=\"othersContent\"><textarea id=\"lastOthers\"></textarea></div>";
 				othersHtml += "<div><input type=\"checkbox\" /></div>";
 			}else{
-				console.log(storage.thisSreport.prComment);
 				othersHtml += "<div class=\"othersContent\"><textarea id=\"lastOthers\">" + storage.thisSreport.prComment + "</textarea></div>";
 
 				if(storage.thisSreport.prCheck > 0){
@@ -2883,7 +2883,6 @@ class WorkReportSet{
 			let othersHtml = "<div class=\"othersContents\">";
 			othersHtml += "<div class=\"othersTitle\">추가기재</div>";
 
-			console.log(storage.thisSreport);
 			if(storage.thisSreport === undefined){
 				othersHtml += "<div class=\"othersContent\"><textarea id=\"thisOthers\"></textarea></div>";
 				othersHtml += "<div><input type=\"checkbox\" /></div>";
@@ -3236,6 +3235,54 @@ class WorkReport{
 			alert("수정이 완료되었습니다.");
 			location.reload();
 		}
+	}
+}
+
+//업무일지검토 시작
+class WorkJournalSet{
+	constructor(){
+		CommonDatas.Temps.workJournalSet = this;
+	}
+
+	getWorkJournalUsers(){
+		axios.get("/api/schedule/getWorkJournalUser").then((res) => {
+			if(res.data.result === "ok"){
+				let result = cipher.decAes(res.data.data);
+				result = JSON.parse(result);
+				storage.workJournalUsers = result;
+
+				if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.sopp === undefined) {
+					window.setTimeout(this.drawWorkJournalUsers(), 1000);
+				} else {
+					window.setTimeout(this.drawWorkJournalUsers(), 200);
+				}
+			}
+		})
+	}
+
+	drawWorkJournalUsers(){
+		let createDiv = document.createElement("div");
+		let workJournalContent = document.getElementsByClassName("workJournalContent")[0];
+		let html = "";
+
+		html = "<div>";
+		html += "<div>성명</div>";
+		html += "<div>선택</div>";
+		html += "</div>";
+		html += "<div>";
+
+		for(let i = 0; i < storage.workJournalUsers.length; i++){
+			let item = storage.workJournalUsers[i];
+
+			if(item.sreportNo > 0){
+				html += "<div>" + item.userName + "</div>";
+				html += "<div><input type=\"checkbox\" checked/></div>";
+			}
+		}
+		
+		html += "</div>";
+		createDiv.innerHTML = html;
+		workJournalContent.append(createDiv);
 	}
 }
 

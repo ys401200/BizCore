@@ -97,9 +97,10 @@ public class ScheduleService extends Svc {
         return scheduleMapper.deleteSchedule(compNo, schedNo);
     }
 
-    public List<Schedule> getWorkReport(String setDate, int compNo) {
+    public List<Schedule> getWorkReport(String setDate, int userNo, int compNo) {
         Schedule schedule = new Schedule();
         schedule.setFrom(setDate);
+        schedule.setUserNo(userNo);
         schedule.setCompNo(compNo);
        return scheduleMapper.getWorkReport(schedule);
     }
@@ -122,5 +123,9 @@ public class ScheduleService extends Svc {
 
     public int reportOtherInsert(Schedule schedule) {
         return scheduleMapper.reportOtherInsert(schedule);
+    }
+
+    public List<Schedule> getWorkJournalUser(int compNo){
+        return scheduleMapper.getWorkJournalUser(compNo);
     }
 }

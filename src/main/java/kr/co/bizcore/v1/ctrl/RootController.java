@@ -24,7 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping(value = "/", method = RequestMethod.GET)
 @Slf4j
 public class RootController extends Ctrl {
-
     private static final Logger logger = LoggerFactory.getLogger(RootController.class);
     private static final String VIEW_PATH = null;
     private static final String VIEW_ERROR_PATH = "/error/";

@@ -39,7 +39,7 @@ public class Schedule extends Domain{
     private String to;
 
     //sreReport
-    private int sreportno;
+    private int sreportNo;
     private int weekNum;
     private String prComment;
     private int prCheck;
@@ -47,5 +47,9 @@ public class Schedule extends Domain{
     private int thCheck;
     private String nxComment;
     private String srepMemo;
+
+    private String org_title;
+    private String userName;
+    private int org_id;
     //2023.07.15
 }

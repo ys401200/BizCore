@@ -229,7 +229,7 @@ public class ApiScheduleCtrl extends Ctrl {
 
     @RequestMapping(value = "/workReport", method = RequestMethod.GET)
     public String getWorkReport(HttpServletRequest request) {
-        String result = null, data = null, aesKey = null, aesIv = null, userNo = null, compId = null;
+        String result = null, data = null, aesKey = null, aesIv = null, compId = null;
         int compNo = 0;
         HttpSession session = null;
         Msg msg = null;
@@ -241,7 +241,6 @@ public class ApiScheduleCtrl extends Ctrl {
         aesIv = (String) session.getAttribute("aesIv");
         compId = (String) session.getAttribute("compId");
         compNo = (int) session.getAttribute("compNo");
-        userNo = (String) session.getAttribute("userNo");
         msg = getMsg((String) session.getAttribute("lang"));
         if (compId == null)
             compId = (String) request.getAttribute("compId");
@@ -252,7 +251,8 @@ public class ApiScheduleCtrl extends Ctrl {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
         }else{
             String setDate = request.getParameter("setDate");
-            list = scheduleService.getWorkReport(setDate, compNo);
+            int userNo = Integer.parseInt(request.getParameter("userNo"));
+            list = scheduleService.getWorkReport(setDate, userNo, compNo);
 
             if (list != null) {
                 data = "[";
@@ -383,6 +383,50 @@ public class ApiScheduleCtrl extends Ctrl {
             result = "{\"result\":\"ok\"}";
         } else {
             result = "{\"result\":\"failure\" ,\"msg\":\"Error occured when write.\"}";
+        }
+
+        return result;
+    }
+
+    @RequestMapping(value = "/getWorkJournalUser", method = RequestMethod.GET)
+    public String getWorkJournalUser(HttpServletRequest request) {
+        String result = null, data = null, aesKey = null, aesIv = null, userNo = null, compId = null;
+        int compNo = 0;
+        HttpSession session = null;
+        Msg msg = null;
+        List<Schedule> list = null;
+        int i = 0;
+
+        session = request.getSession();
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        compId = (String) session.getAttribute("compId");
+        compNo = (int) session.getAttribute("compNo");
+        userNo = (String) session.getAttribute("userNo");
+        msg = getMsg((String) session.getAttribute("lang"));
+        if (compId == null)
+            compId = (String) request.getAttribute("compId");
+
+        if (compId == null) {
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        }else{
+            list = scheduleService.getWorkJournalUser(compNo);
+
+            if (list != null) {
+                data = "[";
+                for (i = 0; i < list.size(); i++) {
+                    if (i > 0)
+                        data += ",";
+                    data += list.get(i).toJson();
+                }
+                data += "]";
+            } else {
+                data = "[]";
+            }
+            data = scheduleService.encAes(data, aesKey, aesIv);
+            result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";            
         }
 
         return result;

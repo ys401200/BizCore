@@ -4,11 +4,13 @@ import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.PublicKey;
 import java.security.spec.RSAPublicKeySpec;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,12 +23,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
 import kr.co.bizcore.v1.domain.SimpleUser;
-import kr.co.bizcore.v1.msg.Msg;
+import kr.co.bizcore.v1.domain.User;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
@@ -36,18 +42,47 @@ public class ApiUserCtrl extends Ctrl{
 
     private static final Logger logger = LoggerFactory.getLogger(ApiUserCtrl.class);
 
+    // @RequestMapping(value = "", method = RequestMethod.GET)
+    // public String user(HttpServletRequest request) {
+    //     String result = null, aesKey = null, aesIv = null;
+    //     SimpleUser user = null;
+    //     HttpSession session = null;
+
+    //     session = request.getSession();
+    //     if(session == null){ // 유효한 세션이 있는지 검증
+    //         result = "{\"result\":\"failure\",\"msg\":\"Session is expired.\"}";
+    //     }else{ // 세션이 유효한 경우 user 객체를 가지고 옴
+    //         user = (SimpleUser)session.getAttribute("user");
+    //         if(user == null){ // user객체가 있는지 검증
+    //             result = "{\"result\":\"failure\",\"msg\":\"login is expired.\"}";
+    //         }else{ //  user 객체를 json으로 변환하고 AES256으로 암호화 함
+    //             aesKey = (String)session.getAttribute("aesKey");
+    //             aesIv = (String)session.getAttribute("aesIv");
+    //             if(aesKey == null || aesIv == null){ // AES 암호화를 할 수 있는 키가 있는지 검증함
+    //                 result = "{\"result\":\"failure\",\"msg\":\"AES Key is invalid..\"}";
+    //             }else{
+    //                 result = userService.encAes(user.toJson(), aesKey, aesIv);
+    //                 result = "{\"result\":\"ok\",\"data\":\"" + result + "\"}";
+    //             }
+    //         }
+    //     }
+    //     return result;
+    // } // End of api/user == get
+
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String user(HttpServletRequest request) {
         String result = null, aesKey = null, aesIv = null;
-        SimpleUser user = null;
+        List<User> userList = null;
+        String userNo = null;
         HttpSession session = null;
+        int i = 0;
 
         session = request.getSession();
         if(session == null){ // 유효한 세션이 있는지 검증
             result = "{\"result\":\"failure\",\"msg\":\"Session is expired.\"}";
         }else{ // 세션이 유효한 경우 user 객체를 가지고 옴
-            user = (SimpleUser)session.getAttribute("user");
-            if(user == null){ // user객체가 있는지 검증
+            userNo = (String)session.getAttribute("userNo");
+            if(userNo == null){ // user객체가 있는지 검증
                 result = "{\"result\":\"failure\",\"msg\":\"login is expired.\"}";
             }else{ //  user 객체를 json으로 변환하고 AES256으로 암호화 함
                 aesKey = (String)session.getAttribute("aesKey");
@@ -55,7 +90,21 @@ public class ApiUserCtrl extends Ctrl{
                 if(aesKey == null || aesIv == null){ // AES 암호화를 할 수 있는 키가 있는지 검증함
                     result = "{\"result\":\"failure\",\"msg\":\"AES Key is invalid..\"}";
                 }else{
-                    result = userService.encAes(user.toJson(), aesKey, aesIv);
+                    userList = userService.getUserList();
+
+                    if (userList != null) {
+                        result = "[";
+                        for (i = 0; i < userList.size(); i++) {
+                            if (i > 0)
+                            result += ",";
+                            result += userList.get(i).toJson();
+                        }
+                        result += "]";
+                    } else {
+                        result = "[]";
+                    }
+
+                    result = userService.encAes(result, aesKey, aesIv);
                     result = "{\"result\":\"ok\",\"data\":\"" + result + "\"}";
                 }
             }
@@ -63,91 +112,132 @@ public class ApiUserCtrl extends Ctrl{
         return result;
     } // End of api/user == get
 
-    // Login process API
-    @RequestMapping(value = "/login/*", method = RequestMethod.POST)
-    public String userLogin(HttpServletRequest request, @RequestBody String requestBody) {
-        String userId = null, pw = null, userNo = null, compId = null, result = null, uri = null;
-        String dec = null, aesKey = null, aesIv = null, lang = null, keepToken = null, userName = null, userRank = null;
-        String[] t = null;
-        int compNo = 0;
-        Msg msg = null;
-        boolean keep = false;
-        JSONObject json = null;
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public int userLogin(HttpServletRequest request, @RequestBody String requestBody) throws JsonMappingException, JsonProcessingException {
         HttpSession session = null;
-        Integer timeCorrect = 0;
+        int result = 0;
+        String data = null, aesKey = null, aesIv = null;
+        ObjectMapper mapper = new ObjectMapper();
+        Integer compCheck;
+        User resultCheck = null;
 
         session = request.getSession();
-        lang = (String)session.getAttribute("lang");
-        msg = getMsg(lang);
 
-        // 경로에서 compId를 찾을 수 있도록 준비함
-        uri = request.getRequestURI();
-        if (uri.substring(0, 1).equals("/"))
-            uri = uri.substring(1);
-        if (uri.substring(uri.length() - 1).equals("/"))
-            uri = uri.substring(0, uri.length() - 1);
-        t = uri.split("/");
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        data = userService.decAes(requestBody, aesKey, aesIv);
+        User user = mapper.readValue(data, User.class);
 
-        // session과 request에서 compId를 찾아봄
-        session = request.getSession();
-        if (session != null)
-            compId = (String) session.getAttribute("compId"); // First, verify compId from session(it's login process
-                                                              // base)
-        if (compId == null)
-            compId = (String) request.getAttribute("compId"); // Second, verify compId from request(it's url base, Not
-                                                              // user input)
-        if (compId == null)
-            compId = (String) request.getParameter("compId"); // Third, verify compId from post parameter(it's post
-                                                              // base, user inputed)
-        if (compId == null && t.length > 3)
-            compId = t[3];
+        compCheck = userService.getCompNo(user.getCompId());
 
-        if (compId == null) { // compId NOT Verified, send failure message
-            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
-        } else { // When compId verified, decryption data and verify userId, pw.
-            compNo = userService.getCompNo(compId);
-            session.setAttribute("compId", compId); // Set attribute compId to session
-            session.setAttribute("compNo", compNo);
-            aesKey = (String) session.getAttribute("aesKey");
-            aesIv = (String) session.getAttribute("aesIv");
-            if(aesKey == null || aesIv == null){
-                result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        if(compCheck == null){
+            result = 0;
+        }else{
+            user.setCompNo(compCheck);
+            resultCheck = userService.loginCheck(user);
+
+            if(resultCheck.getGetCount() > 0){
+                session.setAttribute("userNo", String.valueOf(resultCheck.getUserNo()));
+                session.setAttribute("userId", resultCheck.getUserId());
+                session.setAttribute("userName", resultCheck.getUserName());
+                session.setAttribute("compNo", compCheck);
+                session.setAttribute("compId", user.getCompId());
+                session.setMaxInactiveInterval(3600);
+                result = resultCheck.getUserNo();
             }else{
-                dec = userService.decAes(requestBody, aesKey, aesIv);
-                json = new JSONObject(dec);
-
-                userId = json.getString("userId");
-                pw = json.getString("pw");
-                keep = json.getBoolean("keepStatus");
-                timeCorrect = json.getInt("timeCorrect");
-                if (userId == null || pw == null) {
-                    result = "{\"result\":\"failure\",\"msg\":\"" + msg.idPwMisMatch + "\"}";
-                } else {
-                    t = userService.verifyLoginTemp(compId, userId, pw, keep);
-                    userNo = t[0];
-                    userName = t[2];
-                    userRank = t[3];
-                    keepToken = t[1];
-                    if (userNo == null){
-                        result = "{\"result\":\"failure\",\"msg\":\"" + msg.idPwMisMatch + "\"}";
-                    }else if(t[4] != null){
-                        result = "{\"result\":\"failure\",\"msg\":\"" + msg.permissionDenied + "\"}";
-                    }else {
-                        session.setAttribute("userNo", userNo);
-                        session.setAttribute("userName", userName);
-                        session.setAttribute("userRank", userRank);
-                        session.setAttribute("timeCorrect", timeCorrect);
-                        result = "{\"result\":\"ok\",\"data\":\"" + keepToken + "\"}";
-                        //로그인 상태 유지를 체크한 경우 세션의 유효시간을 연장하도록 함
-                        if(keep)    session.setMaxInactiveInterval(86400);
-                        else        session.setMaxInactiveInterval(3600);
-                    }
-                }
+                result = 1;
             }
         }
 
         return result;
     } // End of userLogin()
+
+    // Login process API
+    // @RequestMapping(value = "/login/*", method = RequestMethod.POST)
+    // public String userLogin(HttpServletRequest request, @RequestBody String requestBody) {
+    //     String userId = null, pw = null, userNo = null, compId = null, result = null, uri = null;
+    //     String dec = null, aesKey = null, aesIv = null, lang = null, keepToken = null, userName = null, userRank = null;
+    //     String[] t = null;
+    //     int compNo = 0;
+    //     Msg msg = null;
+    //     boolean keep = false;
+    //     JSONObject json = null;
+    //     HttpSession session = null;
+    //     Integer timeCorrect = 0;
+
+    //     session = request.getSession();
+    //     lang = (String)session.getAttribute("lang");
+    //     msg = getMsg(lang);
+
+    //     // 경로에서 compId를 찾을 수 있도록 준비함
+    //     uri = request.getRequestURI();
+    //     if (uri.substring(0, 1).equals("/"))
+    //         uri = uri.substring(1);
+    //     if (uri.substring(uri.length() - 1).equals("/"))
+    //         uri = uri.substring(0, uri.length() - 1);
+    //     t = uri.split("/");
+
+    //     // session과 request에서 compId를 찾아봄
+    //     session = request.getSession();
+    //     if (session != null)
+    //         compId = (String) session.getAttribute("compId"); // First, verify compId from session(it's login process
+    //                                                           // base)
+    //     if (compId == null)
+    //         compId = (String) request.getAttribute("compId"); // Second, verify compId from request(it's url base, Not
+    //                                                           // user input)
+    //     if (compId == null)
+    //         compId = (String) request.getParameter("compId"); // Third, verify compId from post parameter(it's post
+    //                                                           // base, user inputed)
+    //     if (compId == null && t.length > 3)
+    //         compId = t[3];
+
+    //     if (compId == null) { // compId NOT Verified, send failure message
+    //         result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+    //     } else { // When compId verified, decryption data and verify userId, pw.
+    //         compNo = userService.getCompNo(compId);
+    //         session.setAttribute("compId", compId); // Set attribute compId to session
+    //         session.setAttribute("compNo", compNo);
+    //         aesKey = (String) session.getAttribute("aesKey");
+    //         aesIv = (String) session.getAttribute("aesIv");
+    //         if(aesKey == null || aesIv == null){
+    //             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+    //         }else{
+    //             dec = userService.decAes(requestBody, aesKey, aesIv);
+    //             json = new JSONObject(dec);
+
+    //             userId = json.getString("userId");
+    //             pw = json.getString("pw");
+    //             // keep = json.getBoolean("keepStatus");
+    //             keep = false;
+    //             timeCorrect = json.getInt("timeCorrect");
+    //             if (userId == null || pw == null) {
+    //                 result = "{\"result\":\"failure\",\"msg\":\"" + msg.idPwMisMatch + "\"}";
+    //             } else {
+    //                 t = userService.verifyLoginTemp(compId, userId, pw, keep);
+    //                 userNo = t[0];
+    //                 userName = t[2];
+    //                 userRank = t[3];
+    //                 keepToken = t[1];
+    //                 if (userNo == null){
+    //                     result = "{\"result\":\"failure\",\"msg\":\"" + msg.idPwMisMatch + "\"}";
+    //                 }else if(t[4] != null){
+    //                     result = "{\"result\":\"failure\",\"msg\":\"" + msg.permissionDenied + "\"}";
+    //                 }else {
+    //                     session.setAttribute("userNo", userNo);
+    //                     session.setAttribute("userName", userName);
+    //                     session.setAttribute("userRank", userRank);
+    //                     session.setAttribute("timeCorrect", timeCorrect);
+    //                     result = "{\"result\":\"ok\",\"data\":\"" + keepToken + "\"}";
+    //                     //로그인 상태 유지를 체크한 경우 세션의 유효시간을 연장하도록 함
+    //                     if(keep)    session.setMaxInactiveInterval(86400);
+    //                     else        session.setMaxInactiveInterval(3600);
+    //                 }
+    //             }
+    //         }
+    //     }
+
+    //     return result;
+    // } // End of userLogin()
 
 
     // 로그인 상태 확인 메서드

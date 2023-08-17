@@ -14,8 +14,14 @@ import kr.co.bizcore.v1.domain.User;
 
 public interface UserMapper {
     @Select("SELECT compNo from swc_company WHERE compId = #{compId}")
-    public int getCompNo(@Param("compId") String compId);
-    
+    public Integer getCompNo(@Param("compId") String compId);
+
+    @Select("SELECT *, count(*) as getCount from swc_user WHERE compNo = #{user.compNo} AND userId = #{user.userId} AND userPasswd = PASSWORD(#{user.userPasswd}) AND attrib not like 'XXX%'")
+    public User loginCheck(@Param("user") User user);
+
+    @Select("SELECT * FROM swc_user")
+    public List<User> getUserList();
+
     @Select("SELECT no AS userNo, compId, userId, userName, rank, gender, deleted FROM bizcore.users WHERE no = #{userNo} AND compid = #{compId}")
     public SimpleUser getBasicUserInfo(@Param("userNo") String userNo, @Param("compId") String compId);
 

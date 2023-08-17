@@ -31,11 +31,11 @@ function init() {
 		}
 	});
 
-	if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined) {
-		window.setTimeout(addNoteContainer, 1500);
-	} else {
-		window.setTimeout(addNoteContainer, 200);
-	}
+	// if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined) {
+	// 	window.setTimeout(addNoteContainer, 1500);
+	// } else {
+	// 	window.setTimeout(addNoteContainer, 200);
+	// }
 
 	nextStep = function () {
 		if (isInit()) prepare();
@@ -47,8 +47,8 @@ function init() {
 	getStorageList();
 	getCommonCode();
 	getUserMap();
-	getDeptMap();
-	getBasicInfo();
+	// getDeptMap();
+	// getBasicInfo();
 	getCustomer();
 	getUserRank();
 	getPersonalize();
@@ -736,65 +736,81 @@ function classType(obj) {
 } // End of classType()
 
 // API 서버에서 직원 정보를 가져오는 함수
-function getUserMap() {
-	let url, userMapTime, userMapData, arr, adminMode = false;
+// function getUserMap() {
+// 	let url, userMapTime, userMapData, arr, adminMode = false;
 
-	arr = location.href.split("/");
-	adminMode = arr[arr.length - 2] === "business" && arr[arr.length - 1] === "employee";
-	if (adminMode) {
-		url = apiServer + "/api/user/map/admin";
-		$.ajax({
-			"url": url,
-			"method": "get",
-			"dataType": "json",
-			"cache": false,
-			success: (data) => {
-				let list;
-				if (data.result === "ok") {
-					list = cipher.decAes(data.data);
-					list = JSON.parse(list);
-					storage.user = list;
-					storage.userMapTime = new Date().getTime();
-				} else {
-					msg.set("직원 정보를 가져오지 못했습니다.");
-				}
+// 	arr = location.href.split("/");
+// 	adminMode = arr[arr.length - 2] === "business" && arr[arr.length - 1] === "employee";
+// 	if (adminMode) {
+// 		url = apiServer + "/api/user/map/admin";
+// 		$.ajax({
+// 			"url": url,
+// 			"method": "get",
+// 			"dataType": "json",
+// 			"cache": false,
+// 			success: (data) => {
+// 				let list;
+// 				if (data.result === "ok") {
+// 					list = cipher.decAes(data.data);
+// 					list = JSON.parse(list);
+// 					storage.user = list;
+// 					storage.userMapTime = new Date().getTime();
+// 				} else {
+// 					msg.set("직원 정보를 가져오지 못했습니다.");
+// 				}
+// 			}
+// 		});
+// 	} else {
+// 		url = apiServer + "/api/user/map";
+// 		userMapTime = sessionStorage.getItem("userMapTime");
+// 		userMapTime = userMapTime == null ? 0 : userMapTime * 1;
+
+// 		if ((new Date()).getTime() < userMapTime + 600000) {
+// 			userMapData = sessionStorage.getItem("userMapData");
+// 			userMapData = JSON.parse(userMapData);
+// 			storage.user = userMapData;
+// 			console.log("[getUserMap] set user data from sessionStorage.");
+// 		} else {
+// 			$.ajax({
+// 				"url": url,
+// 				"method": "get",
+// 				"dataType": "json",
+// 				"cache": false,
+// 				success: (data) => {
+// 					let list;
+
+// 					if (data.result === "ok") {
+// 						list = cipher.decAes(data.data);
+// 						sessionStorage.setItem("userMapData", list);
+// 						sessionStorage.setItem("userMapTime", (new Date()).getTime() + "");
+// 						list = JSON.parse(list);
+// 						storage.user = list;
+// 						console.log("[getUserMap] Success getting employee information.");
+// 					} else {
+// 						msg.set("직원 정보를 가져오지 못했습니다.");
+// 					}
+// 				}
+// 			});
+// 		}
+// 	}
+// } // End of getUserMap()
+
+function getUserMap(){
+	axios.get("/api/user").then((res) => {
+		if(res.data.result === "ok"){
+			let obj = {};
+			let result = cipher.decAes(res.data.data);
+			result = JSON.parse(result);
+
+			for(let i = 0; i < result.length; i++){
+				obj[result[i].userNo] = result[i];
 			}
-		});
-	} else {
-		url = apiServer + "/api/user/map";
-		userMapTime = sessionStorage.getItem("userMapTime");
-		userMapTime = userMapTime == null ? 0 : userMapTime * 1;
 
-		if ((new Date()).getTime() < userMapTime + 600000) {
-			userMapData = sessionStorage.getItem("userMapData");
-			userMapData = JSON.parse(userMapData);
-			storage.user = userMapData;
-			console.log("[getUserMap] set user data from sessionStorage.");
-		} else {
-			$.ajax({
-				"url": url,
-				"method": "get",
-				"dataType": "json",
-				"cache": false,
-				success: (data) => {
-					let list;
-
-					if (data.result === "ok") {
-						list = cipher.decAes(data.data);
-						sessionStorage.setItem("userMapData", list);
-						sessionStorage.setItem("userMapTime", (new Date()).getTime() + "");
-						list = JSON.parse(list);
-						storage.user = list;
-						console.log("[getUserMap] Success getting employee information.");
-					} else {
-						msg.set("직원 정보를 가져오지 못했습니다.");
-					}
-				}
-			});
+			storage.user = obj;
+			storage.my = sessionStorage.getItem("getUserNo");
 		}
-	}
-
-} // End of getUserMap()
+	})
+}
 
 // API 서버에서 직원 정보를 가져오는 함수
 function getDeptMap(cache = false) {
@@ -2981,27 +2997,27 @@ class Department {
 	} // End of getHtml()
 } // End of class === Department
 
-function addNoteContainer() {
-	let noteHtml = "";
-	setDeptTree();
+// function addNoteContainer() {
+// 	let noteHtml = "";
+// 	setDeptTree();
 
-	noteHtml += "<div class=\"noteUserContainer\">";
-	noteHtml += "<div class=\"noteUserAccoordion\">";
-	noteHtml += "<div class=\"noteUserLi\" data-no=\"0\" onclick=\"noteUserItemClick(this);\"><h4 class=\"noteUserLiTitle\">시스템알림</h4></div>";
-	noteHtml += storage.dept.tree.getHtml();
-	noteHtml += "</div>";
-	noteHtml += "</div>";
-	noteHtml += "<div class=\"noteMainContainer\"></div>";
+// 	noteHtml += "<div class=\"noteUserContainer\">";
+// 	noteHtml += "<div class=\"noteUserAccoordion\">";
+// 	noteHtml += "<div class=\"noteUserLi\" data-no=\"0\" onclick=\"noteUserItemClick(this);\"><h4 class=\"noteUserLiTitle\">시스템알림</h4></div>";
+// 	noteHtml += storage.dept.tree.getHtml();
+// 	noteHtml += "</div>";
+// 	noteHtml += "</div>";
+// 	noteHtml += "<div class=\"noteMainContainer\"></div>";
 
-	modal.noteBody.innerHTML = noteHtml;
-	modal.noteHeadTitle.innerText = "쪽지";
-}
+// 	modal.noteBody.innerHTML = noteHtml;
+// 	modal.noteHeadTitle.innerText = "쪽지";
+// }
 
-function noteContentShow() {
-	modal.noteShow();
-	addNoteContainer();
-	noteListBadge();
-}
+// function noteContentShow() {
+// 	modal.noteShow();
+// 	addNoteContainer();
+// 	noteListBadge();
+// }
 
 function noteSubmit() {
 	let noteSubmitText, data, noteMainContent, html;

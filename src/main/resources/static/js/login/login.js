@@ -174,63 +174,103 @@ function checkKeepToken(){
 } // End of checkKeepToken()
 
 // 로그인 시도 함수
-function loginSubmit(){
-	let t, data = {}, url = apiServer + "/api/user/login/", keepStatus, timeCorrect;
+// function loginSubmit(){
+// 	let t, data = {}, url = apiServer + "/api/user/login/", keepStatus, timeCorrect;
 
-	// 임시변수 및  타겟 엘리먼트 설정
-	t = [];
-	t[0] = document.getElementById("compId");
-	t[1] = document.getElementById("userId");
-	t[2] = document.getElementById("pw");
-	t[3] = document.getElementById("loginSessionBtn");
-	keepStatus = document.getElementById("loginSessionBtn").className === "active";
+// 	// 임시변수 및  타겟 엘리먼트 설정
+// 	t = [];
+// 	t[0] = document.getElementById("compId");
+// 	t[1] = document.getElementById("userId");
+// 	t[2] = document.getElementById("pw");
+// 	t[3] = document.getElementById("loginSessionBtn");
+// 	// keepStatus = document.getElementById("loginSessionBtn").className === "active";
 
-	// 값이 있는지 먼저 검증 / 값이 없는 엘리먼트가 있는 경우 포커스를 주고 종료함
-	if(!(t[0] === undefined || t[0] === null) && t[0].value.length === 0){
-		msg.set("회사 ID를 입력하세요");
-		t[0].focus();
-		return;
-	}else if(t[1].value.length === 0){
-		msg.set("사용자 ID를 입력하세요");
-		t[1].focus();
-		return;
-	}else if(t[2].value.length === 0){
-		msg.set("비밀번호를 입력하세요");
-		t[2].focus();
-		return;
-	} // End of loginSubmit()
+// 	// 값이 있는지 먼저 검증 / 값이 없는 엘리먼트가 있는 경우 포커스를 주고 종료함
+// 	if(!(t[0] === undefined || t[0] === null) && t[0].value.length === 0){
+// 		msg.set("회사 ID를 입력하세요");
+// 		t[0].focus();
+// 		return;
+// 	}else if(t[1].value.length === 0){
+// 		msg.set("사용자 ID를 입력하세요");
+// 		t[1].focus();
+// 		return;
+// 	}else if(t[2].value.length === 0){
+// 		msg.set("비밀번호를 입력하세요");
+// 		t[2].focus();
+// 		return;
+// 	} // End of loginSubmit()
 
-	// 시간 보정 값 설정
-	timeCorrect = new Date().getTimezoneOffset();
+// 	// 시간 보정 값 설정
+// 	timeCorrect = new Date().getTimezoneOffset();
 
-	// 값을 가지고 와서 암호화함(compId는 암호화 제외)
-	data = {"userId":t[1].value, "pw":t[2].value, "keepStatus":keepStatus, "timeCorrect":timeCorrect};
-	if(!(t[0] === undefined || t[0] === null))	url = url + t[0].value;
-	data = cipher.encAes(JSON.stringify(data));
-	//data = btoa(JSON.stringify(data));
+// 	// 값을 가지고 와서 암호화함(compId는 암호화 제외)
+// 	data = {"userId":t[1].value, "pw":t[2].value, "keepStatus":keepStatus, "timeCorrect":timeCorrect};
+// 	if(!(t[0] === undefined || t[0] === null))	url = url + t[0].value;
+// 	data = cipher.encAes(JSON.stringify(data));
+// 	//data = btoa(JSON.stringify(data));
 	
-	// 내용이 확인되고 암호화가 진행된 후 서버에 post를 시도함
-	$.ajax({
-		url: url,
-		method: "post",
-		data: data,
-		dataType: "json",
-		contentType: "text/plain",
-		cache: false,
-		processData: false,
-		success:function(data){
-			if(data.result === "ok"){
-				if(document.getElementById("loginSessionBtn").className === "active" && data.data !== undefined)	localStorage.setItem("keepToken",data.data);
-				if(document.getElementById("loginSessionBtn").className === "")		localStorage.removeItem("keepToken");
-				location.reload();
+// 	// 내용이 확인되고 암호화가 진행된 후 서버에 post를 시도함
+// 	$.ajax({
+// 		url: url,
+// 		method: "post",
+// 		data: data,
+// 		dataType: "json",
+// 		contentType: "text/plain",
+// 		cache: false,
+// 		processData: false,
+// 		success:function(data){
+// 			if(data.result === "ok"){
+// 				// if(document.getElementById("loginSessionBtn").className === "active" && data.data !== undefined)	localStorage.setItem("keepToken",data.data);
+// 				// if(document.getElementById("loginSessionBtn").className === "")		localStorage.removeItem("keepToken");
+// 				location.reload();
+// 			}else{
+// 				alert(data.msg);
+// 				msg.set(data.msg);
+// 				document.getElementById("userId").focus();
+// 			}
+// 		},
+// 		error:function(){
+// 			msg.set("정보를 다시 확인하여주십시오.");
+// 		}
+// 	});
+// }
+
+function loginSubmit(){
+	let datas = {};
+	let compId = document.getElementById("compId");
+	let userId = document.getElementById("userId");
+	let pw = document.getElementById("pw");
+
+	if(compId.value === ""){
+		alert("회사 이름을 입력해주세요.");
+		return false;
+	}else if(userId.value === ""){
+		alert("유저 아이디를 입력해주세요.");
+		return false;
+	}else if(pw.value === ""){
+		alert("비밀번호를 입력해주세요.");
+		return false;
+	}else{
+		datas.compId = compId.value;
+		datas.userId = userId.value;
+		datas.userPasswd = pw.value;
+		datas = JSON.stringify(datas);
+		datas = cipher.encAes(datas);
+
+		axios.post("/api/user/login", datas, {
+			headers: { "Content-Type": "text/plain" }
+		}).then((res) => {
+			if(res.data == 0){
+				alert("조회된 회사 이름이 없습니다.\n다시 입력해주세요.");
+				return false;
+			}else if(res.data == 1){
+				alert("탈퇴된 회원이거나 조회된 아이디/비밀번호가 없습니다.\n다시 입력해주세요.");
+				return false;
 			}else{
-				alert(data.msg);
-				msg.set(data.msg);
-				document.getElementById("userId").focus();
+				sessionStorage.setItem("getUserNo", res.data);
+				location.href = "";
 			}
-		},
-		error:function(){
-			msg.set("정보를 다시 확인하여주십시오.");
-		}
-	});
+		})
+	}
+
 }

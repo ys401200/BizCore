@@ -36,7 +36,7 @@
 					<a href="/business/workjournal">업무일지검토</a>
 				</div> -->
 				<div>
-					<a href="/business/workreport2">업무일지검토</a>
+					<a href="/business/workjournal">업무일지검토</a>
 				</div>
 			</div>
 			<div class="menuItem">

@@ -4,7 +4,7 @@ $(document).ready(() => {
 	
 	setTimeout(() => {
 		workReportSet.getWorkReportDatas("last");
-	}, 100);
+	}, 500);
 
 	setTimeout(() => {
 		workReportSet.getWorkReportDatas("this");

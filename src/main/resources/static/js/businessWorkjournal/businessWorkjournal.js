@@ -1,12 +1,14 @@
 $(document).ready(() => {
     init();
-    prevReportAjax();
+    // prevReportAjax();
     
-	setTimeout(() => {
-		$("#loadingDiv").hide();
-		$("#loadingDiv").loading("toggle");
-        getworkJournal();
-	}, 300);
+	// setTimeout(() => {
+	// 	$("#loadingDiv").hide();
+	// 	$("#loadingDiv").loading("toggle");
+    //     getworkJournal();
+	// }, 300);
+    let workJournalSet = new WorkJournalSet();
+    workJournalSet.getWorkJournalUsers();
 });
 
 function prevReportAjax(){

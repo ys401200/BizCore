@@ -37,11 +37,11 @@ public interface ScheduleMapper {
     public int deleteSchedule(@Param("compNo") int compNo, @Param("schedNo") String schedNo);
 
     @Select(
-        "select salesNo as `no`, compNo, custNo, userNo, schedFrom, schedTo, `title`, `desc`, salesPlace as place, schedType, `type`, salesCheck as `check`, regDatetime from swc_sales where YEARWEEK(schedFrom) = YEARWEEK(#{schedule.from}) and compNo = #{schedule.compNo} and attrib not like 'XXX%'\r\n" +
+        "select salesNo as `no`, compNo, custNo, userNo, schedFrom, schedTo, `title`, `desc`, salesPlace as place, schedType, `type`, salesCheck as `check`, regDatetime from swc_sales where YEARWEEK(schedFrom) = YEARWEEK(#{schedule.from}) and compNo = #{schedule.compNo} and userNo = #{schedule.userNo} and attrib not like 'XXX%'\r\n" +
         " union " + 
-        "select schedNo as `no`, compNo, custNo, userNo, schedFrom, schedTo, `title`, `desc`, schedPlace as place, schedType, `type`, schedCheck as `check`, regDatetime from swc_sched where YEARWEEK(schedFrom) = YEARWEEK(#{schedule.from}) and compNo = #{schedule.compNo} and attrib not like 'XXX%'\r\n" +
+        "select schedNo as `no`, compNo, custNo, userNo, schedFrom, schedTo, `title`, `desc`, schedPlace as place, schedType, `type`, schedCheck as `check`, regDatetime from swc_sched where YEARWEEK(schedFrom) = YEARWEEK(#{schedule.from}) and compNo = #{schedule.compNo} and userNo = #{schedule.userNo} and attrib not like 'XXX%'\r\n" +
         " union " +
-        "select techdNo as `no`, compNo, custNo, userNo, schedFrom, schedTo, `title`, `desc`, techdPlace as place, schedType, `type`, techdCheck as `check`, regDatetime from swc_techd where YEARWEEK(schedFrom) = YEARWEEK(#{schedule.from}) and compNo = #{schedule.compNo} and attrib not like 'XXX%' order by schedFrom asc"
+        "select techdNo as `no`, compNo, custNo, userNo, schedFrom, schedTo, `title`, `desc`, techdPlace as place, schedType, `type`, techdCheck as `check`, regDatetime from swc_techd where YEARWEEK(schedFrom) = YEARWEEK(#{schedule.from}) and compNo = #{schedule.compNo} and userNo = #{schedule.userNo} and attrib not like 'XXX%' order by schedFrom asc"
     )
     public List<Schedule> getWorkReport(@Param("schedule") Schedule schedule);
 
@@ -59,6 +59,18 @@ public interface ScheduleMapper {
 
     @Insert("INSERT INTO swc_sreport (userNo, compNo, weekNum, prComment, prCheck, thComment, thCheck, regDate) VALUES (#{schedule.userNo}, #{schedule.compNo}, #{schedule.weekNum}, #{schedule.prComment}, #{schedule.prCheck}, #{schedule.thComment}, #{schedule.thCheck}, now())")
     public int reportOtherInsert(@Param("schedule") Schedule schedule);
+
+    @Select("select swc_organiz.org_title, swc_user.userNo, swc_user.userName, swc_user.org_id ,max(swc_sreport.sreportNo) sreportNo, swc_sreport.weekNum from swc_user \r\n" + 
+            "left join swc_sreport on swc_user.userNo = swc_sreport.userNo and swc_sreport.weekNum = yearweek(curdate()) \r\n" + 
+            "left join swc_organiz on swc_user.org_id = swc_organiz.org_id \r\n" + 
+            "where swc_user.compNo = #{compNo} and swc_user.attrib not like 'XXX%' group by swc_user.userNo order by swc_user.userOtp asc")
+    public List<Schedule> getWorkJournalUser(@Param("compNo") int compNo);
+
+
+
+
+
+
 
     //@Select("SELECT a.* FROM (" + 
     //    "SELECT 'etc' AS job, schedno AS no, userno AS user, custno AS cust, soppno AS sopp, schedtitle AS title, scheddesc AS detail, schedfrom AS \"from\", schedto AS \"to\", schedplace AS place, regdatetime AS created, modDatetime AS modified FROM swc_sched WHERE schedfrom < DATE_ADD(#{ymd}, INTERVAL 1 MONTH) AND schedto >= #{ymd} AND compno = (SELECT compno FROM swc_company WHERE compid =#{compId}) " +
