@@ -8,7 +8,13 @@ $(document).ready(() => {
     //     getworkJournal();
 	// }, 300);
     let workJournalSet = new WorkJournalSet();
-    workJournalSet.getWorkJournalUsers();
+    workJournalSet.getWorkJournalUsers("this");
+    workJournalSet.getWorkJournalDatas("last");
+    workJournalSet.getWorkJournalDatas("this");
+    workJournalSet.getWorkJournalDatas("next");
+    setTimeout(() => {
+        workJournalSet.drawWorkJournalContent("this");
+    }, 1500);
 });
 
 function prevReportAjax(){

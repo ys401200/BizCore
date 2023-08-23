@@ -62,8 +62,8 @@
 	<div class="mainInfo">
 		<div>
 			<a href="/mypage">
-				<span><%= session.getAttribute("userName") %></span>&nbsp;
-				<span><%= session.getAttribute("userRank") %></span>
+				<span><%= session.getAttribute("userName") %></span>
+				<!-- <span><%= session.getAttribute("userRank") %></span> -->
 			</a>
 		</div>
 		<div>

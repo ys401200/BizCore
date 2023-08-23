@@ -3244,26 +3244,84 @@ class WorkJournalSet{
 		CommonDatas.Temps.workJournalSet = this;
 	}
 
-	getWorkJournalUsers(){
-		axios.get("/api/schedule/getWorkJournalUser").then((res) => {
-			if(res.data.result === "ok"){
-				let result = cipher.decAes(res.data.data);
-				result = JSON.parse(result);
-				storage.workJournalUsers = result;
+	getWorkJournalUsers(type){
+		if(type === "this" || type === undefined || type === ""){
+			axios.get("/api/schedule/getWorkJournalUser").then((res) => {
+				if(res.data.result === "ok"){
+					let result = cipher.decAes(res.data.data);
+					result = JSON.parse(result);
+					storage.workJournalUsers = result;
 
-				if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.sopp === undefined) {
-					window.setTimeout(this.drawWorkJournalUsers(), 1000);
-				} else {
-					window.setTimeout(this.drawWorkJournalUsers(), 200);
+					if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.sopp === undefined) {
+						window.setTimeout(this.drawWorkJournalUsers(), 1000);
+					} else {
+						window.setTimeout(this.drawWorkJournalUsers(), 200);
+					}
+				}
+			});
+		}else{
+
+		}
+	}
+
+	getWorkJournalDatas(type){
+		let setDate;
+		let calDay = 0;
+		let nowDate = new Date();
+
+		if(nowDate.getDay() > 0 && nowDate.getDay() < 7){
+			calDay = 6 - nowDate.getDay()
+		}
+
+		if(type === "this" || type === undefined){
+			nowDate.setDate(nowDate.getDate() + calDay);
+		}else{
+			nowDate.setDate((nowDate.getDate() + calDay) + 7);
+		}
+
+		setDate = nowDate.toISOString().substring(0, 10);
+		storage.lastWorkJournalDatas = {};
+		storage.thisWorkJournalDatas = {};
+		storage.nextWorkJournalDatas = {};
+
+		setTimeout(() => {
+			for(let i = 0; i < storage.workJournalUsers.length; i++){
+				let item = storage.workJournalUsers[i];
+
+				if(item.sreportNo > 0){
+					axios({
+						method: "get",
+						url: "/api/schedule/workReport",
+						params: {
+							"setDate": setDate,
+							"userNo": item.userNo,
+						},
+					}).then((res) => {
+						if(res.data.result === "ok"){
+							let result = cipher.decAes(res.data.data);
+							result = JSON.parse(result);
+
+							if(type === "last"){
+								storage.lastWorkJournalDatas[result[0].userNo] = result;
+							}else if(type === "this" || type === undefined){
+								storage.thisWorkJournalDatas[result[0].userNo] = result;
+							}else{
+								storage.nextWorkJournalDatas[result[0].userNo] = result;
+							}
+
+						}
+					})
 				}
 			}
-		})
+		}, 1000);
 	}
 
 	drawWorkJournalUsers(){
 		let createDiv = document.createElement("div");
+		let contentsDiv = document.createElement("div");
 		let workJournalContent = document.getElementsByClassName("workJournalContent")[0];
 		let html = "";
+		let datasHtml = "";
 
 		html = "<div>";
 		html += "<div>성명</div>";
@@ -3275,14 +3333,121 @@ class WorkJournalSet{
 			let item = storage.workJournalUsers[i];
 
 			if(item.sreportNo > 0){
+				datasHtml += "<div class=\"workJournalUserContent\" data-no=\"" + item.userNo + "\"></div>";
 				html += "<div>" + item.userName + "</div>";
 				html += "<div><input type=\"checkbox\" checked/></div>";
 			}
 		}
 		
 		html += "</div>";
+
 		createDiv.innerHTML = html;
+		contentsDiv.innerHTML = datasHtml;
 		workJournalContent.append(createDiv);
+		workJournalContent.append(contentsDiv);
+	}
+
+	drawWorkJournalContent(type){
+		let workJournalUserContent = document.getElementsByClassName("workJournalUserContent");
+		
+		if(type === "last" || type === "this" || type === undefined || type === ""){
+			for(let i = 0; i < workJournalUserContent.length; i++){
+				let item = workJournalUserContent[i];
+				let createDiv = document.createElement("div");
+				createDiv.innerHTML = CommonDatas.Temps.workJournalSet.setWorkJournalGrid(storage.lastWorkJournalDatas[item.dataset.no], storage.thisWorkJournalDatas[item.dataset.no], item.dataset.no);
+				item.append(createDiv);
+			}
+		}else{
+			for(let i = 0; i < workJournalUserContent.length; i++){
+				let item = workJournalUserContent[i];
+				let createDiv = document.createElement("div");
+				createDiv.innerHTML = CommonDatas.Temps.workJournalSet.setWorkJournalGrid(storage.thisWorkJournalDatas[item.dataset.no], storage.nextWorkJournalDatas[item.dataset.no], item.dataset.no);
+				item.append(createDiv);
+			}
+		}
+	}
+
+	setWorkJournalGrid(lastDatas, thisDatas, userNo){
+		let html = "";
+		let nowDate = new Date();
+		let calMonday = 0;
+
+		nowDate.setMonth(nowDate.getMonth() + 1);
+
+		if(nowDate.getDay() > 0 && nowDate.getDay() < 7){
+			calMonday = 4 - nowDate.getDay()
+		}
+
+		nowDate.setDate((nowDate.getDate() + calMonday));
+		
+		html = "<div>";
+		html += "<div><span>일자 : " +  nowDate.getMonth() + "/" + nowDate.getDate() + " ~ ";
+
+		nowDate.setDate((nowDate.getDate() + calMonday) + 6);
+
+		html += nowDate.getMonth() + "/" + nowDate.getDate() + "</span></div>";
+		html += "<div><span>담당 : " + storage.user[userNo].userName + "</span></div>";
+		html += "</div>";
+		html += "<div>";
+		html += "<div><span>지난주 진행사항</span></div>";
+		html += "<div><span>이번주 진행사항</span></div>";
+		html += "</div>";
+		html += "<div>";
+
+		for(let i = 0; i < lastDatas.length; i++){
+			let item = lastDatas[i];
+			let date;
+			let getDay = new Date(item.schedFrom).getDay();
+
+			if(getDay == 0) date = "일";
+			else if(getDay == 1) date = "월";
+			else if(getDay == 2) date = "화";
+			else if(getDay == 3) date = "수";
+			else if(getDay == 4) date = "목";
+			else if(getDay == 5) date = "금";
+			else if(getDay == 6) date = "토";
+
+			html += "<div>" + date + "</div>";
+			html += "<div>";
+
+			if(item.schedType === 10165) html += "<div>" + "$ " + item.title + "</div>";
+			else if(item.schedType === 10168 || item.schedType === 10262) html += "<div>" + "# " + item.title + "</div>";
+			else html += "<div>" + "@ " + item.title + "</div>";
+
+			html += "<div>" + item.desc + "</div>";
+			html += "</div>";
+		}
+
+		html += "</div>";
+		html += "<div>";
+
+		for(let i = 0; i < thisDatas.length; i++){
+			let item = thisDatas[i];
+			let date;
+			let getDay = new Date(item.schedFrom).getDay();
+
+			if(getDay == 0) date = "일";
+			else if(getDay == 1) date = "월";
+			else if(getDay == 2) date = "화";
+			else if(getDay == 3) date = "수";
+			else if(getDay == 4) date = "목";
+			else if(getDay == 5) date = "금";
+			else if(getDay == 6) date = "토";
+
+			html += "<div>" + date + "</div>";
+			html += "<div>";
+
+			if(item.schedType === 10165) html += "<div>" + "$ " + item.title + "</div>";
+			else if(item.schedType === 10168 || item.schedType === 10262) html += "<div>" + "# " + item.title + "</div>";
+			else html += "<div>" + "@ " + item.title + "</div>";
+
+			html += "<div>" + item.desc + "</div>";
+			html += "</div>";
+		}
+
+		html += "</div>";
+
+		return html;
 	}
 }
 

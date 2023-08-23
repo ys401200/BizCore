@@ -71,7 +71,6 @@ public interface ScheduleMapper {
 
 
 
-
     //@Select("SELECT a.* FROM (" + 
     //    "SELECT 'etc' AS job, schedno AS no, userno AS user, custno AS cust, soppno AS sopp, schedtitle AS title, scheddesc AS detail, schedfrom AS \"from\", schedto AS \"to\", schedplace AS place, regdatetime AS created, modDatetime AS modified FROM swc_sched WHERE schedfrom < DATE_ADD(#{ymd}, INTERVAL 1 MONTH) AND schedto >= #{ymd} AND compno = (SELECT compno FROM swc_company WHERE compid =#{compId}) " +
     //    "UNION ALL " +
