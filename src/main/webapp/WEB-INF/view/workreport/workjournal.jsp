@@ -12,10 +12,10 @@
 				<hr />
 				<span>업무일지검토</span>
 				<div class="crudBtns">
-					<button type="button" data-change="bor" onclick="journalChangeBtn(this);">업무일지(차주)</button>
-					<button type="button" onclick="print_pdf();">일괄다운로드(PDF)</button>
-					<button type="button" id="solPdf">개별다운로드(PDF)</button>
-					<button type="button" onclick="solPrint();">출력</button>
+					<button type="button" class="journalChangeBtn" data-type="next" onclick="CommonDatas.Temps.workJournalSet.journalChange(this);">업무일지(차주)</button>
+					<button type="button" onclick="CommonDatas.Temps.workJournalSet.print_pdf();">일괄다운로드(PDF)</button>
+					<button type="button" onclick="CommonDatas.Temps.workJournalSet.onePdf();">개별다운로드(PDF)</button>
+					<!-- <button type="button" onclick="CommonDatas.Temps.workJournalSet.solPrint();">출력</button> -->
 				</div>
 			</div>
             <div class="workJournalContent"></div>

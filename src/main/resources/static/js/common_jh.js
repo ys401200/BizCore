@@ -2762,7 +2762,7 @@ class WorkReportSet{
 			let nowDate = new Date();
 	
 			if(nowDate.getDay() > 0 && nowDate.getDay() < 7){
-				calDay = 6 - nowDate.getDay()
+				calDay = 6 - nowDate.getDay();
 			}
 	
 			if(setType === "last"){
@@ -3244,26 +3244,30 @@ class WorkJournalSet{
 		CommonDatas.Temps.workJournalSet = this;
 	}
 
+	//업무일지검토 유저목록 데이터 불러오는 함수
 	getWorkJournalUsers(type){
-		if(type === "this" || type === undefined || type === ""){
-			axios.get("/api/schedule/getWorkJournalUser").then((res) => {
-				if(res.data.result === "ok"){
-					let result = cipher.decAes(res.data.data);
-					result = JSON.parse(result);
-					storage.workJournalUsers = result;
+		axios({
+			method: "get",
+			url: "/api/schedule/getWorkJournalUser",
+			params: {
+				"type": type,
+			},
+		}).then((res) => {
+			if(res.data.result === "ok"){
+				let result = cipher.decAes(res.data.data);
+				result = JSON.parse(result);
+				storage.workJournalUsers = result;
 
-					if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.sopp === undefined) {
-						window.setTimeout(this.drawWorkJournalUsers(), 1000);
-					} else {
-						window.setTimeout(this.drawWorkJournalUsers(), 200);
-					}
+				if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.sopp === undefined) {
+					window.setTimeout(this.drawWorkJournalUsers(), 1000);
+				} else {
+					window.setTimeout(this.drawWorkJournalUsers(), 200);
 				}
-			});
-		}else{
-
-		}
+			}
+		});
 	}
 
+	//업무일지검토 지난주/이번주/다음주 데이터 불러와 셋팅 함수
 	getWorkJournalDatas(type){
 		let setDate;
 		let calDay = 0;
@@ -3273,7 +3277,9 @@ class WorkJournalSet{
 			calDay = 6 - nowDate.getDay()
 		}
 
-		if(type === "this" || type === undefined){
+		if(type === "last"){
+			nowDate.setDate((nowDate.getDate() + calDay) - 7);
+		}else if(type === "this" || type === undefined){
 			nowDate.setDate(nowDate.getDate() + calDay);
 		}else{
 			nowDate.setDate((nowDate.getDate() + calDay) + 7);
@@ -3316,12 +3322,14 @@ class WorkJournalSet{
 		}, 1000);
 	}
 
+	//업무일지검토 유저목록 레이아웃 그려주는 함수
 	drawWorkJournalUsers(){
 		let createDiv = document.createElement("div");
 		let contentsDiv = document.createElement("div");
 		let workJournalContent = document.getElementsByClassName("workJournalContent")[0];
 		let html = "";
 		let datasHtml = "";
+		let forIndex = 0;
 
 		html = "<div>";
 		html += "<div>성명</div>";
@@ -3333,121 +3341,341 @@ class WorkJournalSet{
 			let item = storage.workJournalUsers[i];
 
 			if(item.sreportNo > 0){
-				datasHtml += "<div class=\"workJournalUserContent\" data-no=\"" + item.userNo + "\"></div>";
-				html += "<div>" + item.userName + "</div>";
-				html += "<div><input type=\"checkbox\" checked/></div>";
+				forIndex++;
 			}
+		}
+
+		if(forIndex > 0){
+			for(let i = 0; i < storage.workJournalUsers.length; i++){
+				let item = storage.workJournalUsers[i];
+	
+				if(item.sreportNo > 0){
+					datasHtml += "<div class=\"workJournalUserContent\" data-no=\"" + item.userNo + "\"></div>";
+					html += "<div><a href=\"#\" data-no=\"" + item.userNo + "\" onclick=\"CommonDatas.Temps.workJournalSet.getUserHtml(this);\">" + item.userName + "</a></div>";
+					html += "<div><input type=\"checkbox\" class=\"journalUserCheck\" data-no=\"" + item.userNo + "\" checked/></div>";
+				}
+			}
+		}else{
+			datasHtml += "<div class=\"workJournalUserContent\"></div>";
 		}
 		
 		html += "</div>";
 
 		createDiv.innerHTML = html;
 		contentsDiv.innerHTML = datasHtml;
+		contentsDiv.className = "workJournalHtmlContent";
 		workJournalContent.append(createDiv);
 		workJournalContent.append(contentsDiv);
 	}
 
+	//업무일지검토 표 그리는 함수
 	drawWorkJournalContent(type){
 		let workJournalUserContent = document.getElementsByClassName("workJournalUserContent");
-		
-		if(type === "last" || type === "this" || type === undefined || type === ""){
-			for(let i = 0; i < workJournalUserContent.length; i++){
-				let item = workJournalUserContent[i];
-				let createDiv = document.createElement("div");
-				createDiv.innerHTML = CommonDatas.Temps.workJournalSet.setWorkJournalGrid(storage.lastWorkJournalDatas[item.dataset.no], storage.thisWorkJournalDatas[item.dataset.no], item.dataset.no);
-				item.append(createDiv);
+
+		for(let i = 0; i < workJournalUserContent.length; i++){
+			let item = workJournalUserContent[i];
+			let createDiv = document.createElement("div");
+
+			if(type === "last" || type === "this" || type === undefined || type === ""){
+				createDiv.innerHTML = CommonDatas.Temps.workJournalSet.setWorkJournalGrid(storage.lastWorkJournalDatas[item.dataset.no], storage.thisWorkJournalDatas[item.dataset.no], item.dataset.no, type);
+			}else{
+				createDiv.innerHTML = CommonDatas.Temps.workJournalSet.setWorkJournalGrid(storage.thisWorkJournalDatas[item.dataset.no], storage.nextWorkJournalDatas[item.dataset.no], item.dataset.no, type);
 			}
+
+			item.append(createDiv);
+			CommonDatas.Temps.workJournalSet.gridRowSort(item);
+		}
+
+		workJournalUserContent[0].style.display = "block";
+	}
+
+	//업무일지검토 표 html 셋팅 함수
+	setWorkJournalGrid(lastDatas, thisDatas, userNo, type){
+		let html = "";
+		let nowDate = new Date();
+		let calcDate = new Date(nowDate.setDate(nowDate.getDate() + 1 - nowDate.getDay()));
+		nowDate.setMonth(nowDate.getMonth() + 1);
+
+		html = "<div class=\"gridFirstHeader\">";
+		html += "<div><span>일자 : " +  nowDate.getMonth() + "/" + calcDate.getDate() + " ~ ";
+
+		calcDate.setDate(calcDate.getDate() + 4);
+
+		html += nowDate.getMonth() + "/" + calcDate.getDate() + "</span></div>";
+		
+		if(userNo === undefined) html += "<div><span>담당 : </span></div>";
+		else html += "<div><span>담당 : " + storage.user[userNo].userName + "</span></div>";
+
+		html += "</div>";
+		html += "<div class=\"gridLastHeader\">";
+
+		if(type === "last" || type === "this" || type === undefined || type === ""){
+			html += "<div><span>지난주 진행사항</span></div>";
+			html += "<div><span>이번주 진행사항</span></div>";
 		}else{
-			for(let i = 0; i < workJournalUserContent.length; i++){
-				let item = workJournalUserContent[i];
-				let createDiv = document.createElement("div");
-				createDiv.innerHTML = CommonDatas.Temps.workJournalSet.setWorkJournalGrid(storage.thisWorkJournalDatas[item.dataset.no], storage.nextWorkJournalDatas[item.dataset.no], item.dataset.no);
-				item.append(createDiv);
+			html += "<div><span>이번주 진행사항</span></div>";
+			html += "<div><span>다음주 진행사항</span></div>";
+		}
+
+		html += "</div>";
+		html += "<div><div class=\"gridFirstBody\">";
+
+		if(lastDatas === undefined){
+			html += "<div class=\"emptyDataContent\">데이터가 없습니다.</div>";
+		}else{
+			for(let i = 0; i < lastDatas.length; i++){
+				let item = lastDatas[i];
+				let date;
+				let getDay = new Date(item.schedFrom).getDay();
+	
+				if(getDay == 0) date = "일";
+				else if(getDay == 1) date = "월";
+				else if(getDay == 2) date = "화";
+				else if(getDay == 3) date = "수";
+				else if(getDay == 4) date = "목";
+				else if(getDay == 5) date = "금";
+				else if(getDay == 6) date = "토";
+	
+				html += "<div class=\"gridWeek\" data-value=\"" + date + "\">" + date + "</div>";
+				html += "<div class=\"gridDescContent\">";
+	
+				if(item.schedType === 10165) html += "<div>" + "$ " + item.title + "</div>";
+				else if(item.schedType === 10168 || item.schedType === 10262) html += "<div>" + "# " + item.title + "</div>";
+				else html += "<div>" + "@ " + item.title + "</div>";
+	
+				html += "<div>" + item.desc + "</div>";
+				html += "</div>";
+			}
+		}
+
+		html += "</div>";
+		html += "<div class=\"gridLastBody\">";
+
+		if(thisDatas === undefined){
+			html += "<div class=\"emptyDataContent\">데이터가 없습니다.</div>";
+		}else{
+			for(let i = 0; i < thisDatas.length; i++){
+				let item = thisDatas[i];
+				let date;
+				let getDay = new Date(item.schedFrom).getDay();
+	
+				if(getDay == 0) date = "일";
+				else if(getDay == 1) date = "월";
+				else if(getDay == 2) date = "화";
+				else if(getDay == 3) date = "수";
+				else if(getDay == 4) date = "목";
+				else if(getDay == 5) date = "금";
+				else if(getDay == 6) date = "토";
+	
+				html += "<div class=\"gridWeek\" data-value=\"" + date + "\">" + date + "</div>";
+				html += "<div class=\"gridDescContent\">";
+	
+				if(item.schedType === 10165) html += "<div>" + "$ " + item.title + "</div>";
+				else if(item.schedType === 10168 || item.schedType === 10262) html += "<div>" + "# " + item.title + "</div>";
+				else html += "<div>" + "@ " + item.title + "</div>";
+	
+				html += "<div>" + item.desc + "</div>";
+				html += "</div>";
+			}
+		}
+
+		html += "</div></div>";
+
+		return html;
+	}
+
+	//그리드 같은 글자 row span 적용 함수
+	gridRowSort(gridContainer){
+		let firstWeek = gridContainer.getElementsByClassName("gridFirstBody")[0].querySelectorAll(".gridWeek");
+		let lastWeek = gridContainer.getElementsByClassName("gridLastBody")[0].querySelectorAll(".gridWeek");
+		
+		for(let i = 0; i < firstWeek.length; i++){
+			let weekItem = gridContainer.getElementsByClassName("gridFirstBody")[0].querySelectorAll(".gridWeek[data-value*=\"" + firstWeek[i].dataset.value + "\"]");
+			
+			if(weekItem.length > 1){
+				weekItem[0].style.gridRow = "span " + weekItem.length;
+
+				for(let j = 0; j < weekItem.length; j++){
+					if(j != weekItem.length - 1){
+						console.log(weekItem[j].nextSibling);
+						weekItem[j].nextSibling.style.borderBottom = 0;
+					}
+				}
+			}
+
+			for(let j = 0; j < weekItem.length; j++){
+				if(j > 0){
+					weekItem[j].remove();
+				}
+			}
+		}
+
+		for(let i = 0; i < lastWeek.length; i++){
+			let weekItem = gridContainer.getElementsByClassName("gridLastBody")[0].querySelectorAll(".gridWeek[data-value*=\"" + lastWeek[i].dataset.value + "\"]");
+			
+			if(weekItem.length > 1){
+				weekItem[0].style.gridRow = "span " + weekItem.length;
+
+				for(let j = 0; j < weekItem.length; j++){
+					if(j != weekItem.length - 1){
+						console.log(weekItem[j].nextSibling);
+						weekItem[j].nextSibling.style.borderBottom = 0;
+					}
+				}
+			}
+
+			for(let j = 0; j < weekItem.length; j++){
+				if(j > 0){
+					weekItem[j].remove();
+				}
 			}
 		}
 	}
 
-	setWorkJournalGrid(lastDatas, thisDatas, userNo){
-		let html = "";
-		let nowDate = new Date();
-		let calMonday = 0;
+	//업무일지검토 일괄다운로드 pdf 실행 함수
+	print_pdf(){
+		let journalUserCheck = document.getElementsByClassName("journalUserCheck");
+		let element = document.getElementsByClassName("workJournalContent")[0].getElementsByClassName("workJournalHtmlContent")[0];
 
-		nowDate.setMonth(nowDate.getMonth() + 1);
-
-		if(nowDate.getDay() > 0 && nowDate.getDay() < 7){
-			calMonday = 4 - nowDate.getDay()
+		for(let i = 0; i < journalUserCheck.length; i++){
+			let item = journalUserCheck[i];
+			let workJournalUserContent = document.querySelector(".workJournalUserContent[data-no=\"" + item.dataset.no + "\"]");
+			
+			if(item.checked){
+				workJournalUserContent.style.display = "block";
+			}else{
+				workJournalUserContent.style.display = "none";
+			}
 		}
-
-		nowDate.setDate((nowDate.getDate() + calMonday));
 		
-		html = "<div>";
-		html += "<div><span>일자 : " +  nowDate.getMonth() + "/" + nowDate.getDate() + " ~ ";
+		html2pdf().from(element).set({
+		  margin: 10,
+		  filename: '주간업무일지.pdf',
+		  html2canvas: { scale: 3 },
+		  jsPDF: {orientation: 'landscape', unit: 'mm', format: 'a4', compressPDF: true}
+		}).save();
+		
+		setTimeout(() => {
+			if(localStorage.getItem("selectUser") !== null){
+				let selectUser = localStorage.getItem("selectUser");
+				let workJournalUserContent = document.getElementsByClassName("workJournalUserContent");
+	
+				for(let i = 0; i < workJournalUserContent.length; i++){
+					let item = workJournalUserContent[i];
+	
+					if(item.dataset.no === selectUser){
+						item.style.display = "block";
+					}else{
+						item.style.display = "none";
+					}
+				}
+	
+				localStorage.removeItem("selectUser");
+			}else{
+				let workJournalUserContent = document.getElementsByClassName("workJournalUserContent");
+	
+				for(let i = 0; i < workJournalUserContent.length; i++){
+					let item = workJournalUserContent[i];
+	
+					if(i == 0){
+						item.style.display = "block";
+					}else{
+						item.style.display = "none";
+					}
+				}
+			}
+		}, 500);
+	}
 
-		nowDate.setDate((nowDate.getDate() + calMonday) + 6);
+	//업무일지검토 개별다운로드 pdf 실행 함수
+	onePdf(){
+		let element;
 
-		html += nowDate.getMonth() + "/" + nowDate.getDate() + "</span></div>";
-		html += "<div><span>담당 : " + storage.user[userNo].userName + "</span></div>";
-		html += "</div>";
-		html += "<div>";
-		html += "<div><span>지난주 진행사항</span></div>";
-		html += "<div><span>이번주 진행사항</span></div>";
-		html += "</div>";
-		html += "<div>";
-
-		for(let i = 0; i < lastDatas.length; i++){
-			let item = lastDatas[i];
-			let date;
-			let getDay = new Date(item.schedFrom).getDay();
-
-			if(getDay == 0) date = "일";
-			else if(getDay == 1) date = "월";
-			else if(getDay == 2) date = "화";
-			else if(getDay == 3) date = "수";
-			else if(getDay == 4) date = "목";
-			else if(getDay == 5) date = "금";
-			else if(getDay == 6) date = "토";
-
-			html += "<div>" + date + "</div>";
-			html += "<div>";
-
-			if(item.schedType === 10165) html += "<div>" + "$ " + item.title + "</div>";
-			else if(item.schedType === 10168 || item.schedType === 10262) html += "<div>" + "# " + item.title + "</div>";
-			else html += "<div>" + "@ " + item.title + "</div>";
-
-			html += "<div>" + item.desc + "</div>";
-			html += "</div>";
+		if(localStorage.getItem("selectUser") == null){
+			element = document.getElementsByClassName("workJournalUserContent")[0];
+		}else{
+			element = document.querySelector(".workJournalUserContent[data-no=\"" + localStorage.getItem("selectUser") + "\"]");
 		}
 
-		html += "</div>";
-		html += "<div>";
+		let now = new Date();
+		
+		html2pdf().from(element).set({
+		  margin: 10,
+		  filename: localStorage.getItem("selectUserName") + '(' + now.toISOString().substring(0, 10) + ')' + '.pdf',
+		  html2canvas: { scale: 10 },
+		  jsPDF: {orientation: 'landscape', unit: 'mm', format: 'a4', compressPDF: true}
+		}).save();
+	}
 
-		for(let i = 0; i < thisDatas.length; i++){
-			let item = thisDatas[i];
-			let date;
-			let getDay = new Date(item.schedFrom).getDay();
+	solPrint(){
+		window.onbeforeprint = function(){
+			document.body.innerHTML = document.querySelector(".workJournalUserContent[data-no=\"" + localStorage.getItem("selectUser") + "\"]").innerHTML;
+		}
+		
+		window.onafterprint = function(){
+			location.href="/business/workjournal";
+		}
+		
+		window.print();
+	}
 
-			if(getDay == 0) date = "일";
-			else if(getDay == 1) date = "월";
-			else if(getDay == 2) date = "화";
-			else if(getDay == 3) date = "수";
-			else if(getDay == 4) date = "목";
-			else if(getDay == 5) date = "금";
-			else if(getDay == 6) date = "토";
-
-			html += "<div>" + date + "</div>";
-			html += "<div>";
-
-			if(item.schedType === 10165) html += "<div>" + "$ " + item.title + "</div>";
-			else if(item.schedType === 10168 || item.schedType === 10262) html += "<div>" + "# " + item.title + "</div>";
-			else html += "<div>" + "@ " + item.title + "</div>";
-
-			html += "<div>" + item.desc + "</div>";
-			html += "</div>";
+	//업무일지검토 유저 목록에서 유저 이름 클릭 시 실행 함수
+	getUserHtml(thisEle){
+		if(localStorage.getItem("selectUser") !== null){
+			localStorage.removeItem("selectUser");
 		}
 
-		html += "</div>";
+		if(localStorage.getItem("selectUserName") !== null){
+			localStorage.removeItem("selectUserName");
+		}
 
-		return html;
+		let workJournalUserContent = document.getElementsByClassName("workJournalUserContent");
+	
+		for(let i = 0; i < workJournalUserContent.length; i++){
+			let item = workJournalUserContent[i];
+
+			if(item.dataset.no === thisEle.dataset.no){
+				item.style.display = "block";
+			}else{
+				item.style.display = "none";
+			}
+		}
+
+		localStorage.setItem("selectUser", thisEle.dataset.no);
+		localStorage.setItem("selectUserName", thisEle.innerText);
+	}
+
+	//업무일지검토 금주/차주 조건에 따른 셋팅 함수
+	journalChange(thisEle){
+		let journalChangeBtn = document.getElementsByClassName("journalChangeBtn")[0];
+		let workJournalContent = document.getElementsByClassName("workJournalContent")[0];
+		workJournalContent.innerHTML = "";
+
+		if(thisEle === undefined || thisEle.dataset.type === "last" || thisEle.dataset.type === "this"){
+			CommonDatas.Temps.workJournalSet.getWorkJournalUsers("this");
+			CommonDatas.Temps.workJournalSet.getWorkJournalDatas("last");
+			CommonDatas.Temps.workJournalSet.getWorkJournalDatas("this");
+			CommonDatas.Temps.workJournalSet.getWorkJournalDatas("next");
+			
+			setTimeout(() => {
+				CommonDatas.Temps.workJournalSet.drawWorkJournalContent("this");
+			}, 1600);
+
+			journalChangeBtn.dataset.type = "next";
+			journalChangeBtn.innerText = "업무일지(차주)";			
+		}else{
+			CommonDatas.Temps.workJournalSet.getWorkJournalUsers("next");
+			CommonDatas.Temps.workJournalSet.getWorkJournalDatas("last");
+			CommonDatas.Temps.workJournalSet.getWorkJournalDatas("this");
+			CommonDatas.Temps.workJournalSet.getWorkJournalDatas("next");
+			
+			setTimeout(() => {
+				CommonDatas.Temps.workJournalSet.drawWorkJournalContent("next");
+			}, 1600);
+
+			journalChangeBtn.dataset.type = "this";
+			journalChangeBtn.innerText = "업무일지(금주)";
+		}
 	}
 }
 

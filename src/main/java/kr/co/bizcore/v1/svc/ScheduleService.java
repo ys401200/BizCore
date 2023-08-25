@@ -125,7 +125,11 @@ public class ScheduleService extends Svc {
         return scheduleMapper.reportOtherInsert(schedule);
     }
 
-    public List<Schedule> getWorkJournalUser(int compNo){
-        return scheduleMapper.getWorkJournalUser(compNo);
+    public List<Schedule> getWorkJournalThisUser(int compNo){
+        return scheduleMapper.getWorkJournalThisUser(compNo);
+    }
+
+    public List<Schedule> getWorkJournalNextUser(int compNo){
+        return scheduleMapper.getWorkJournalNextUser(compNo);
     }
 }

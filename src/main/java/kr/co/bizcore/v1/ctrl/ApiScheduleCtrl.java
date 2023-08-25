@@ -412,7 +412,13 @@ public class ApiScheduleCtrl extends Ctrl {
         }else if(aesKey == null || aesIv == null){
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
         }else{
-            list = scheduleService.getWorkJournalUser(compNo);
+            String type = request.getParameter("type");
+
+            if(type.equals("this") || type.equals("last")){
+                list = scheduleService.getWorkJournalThisUser(compNo);
+            }else{
+                list = scheduleService.getWorkJournalNextUser(compNo);
+            }
 
             if (list != null) {
                 data = "[";
