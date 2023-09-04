@@ -71,10 +71,20 @@
 				</a>
 			</div>
 			<div class="menuItem">
-				<a href="/business/tech">
-					<img src="/images/main/icons/mainSchedIcon.png" id="mainSalesIcon" />
+				<input type="radio" id="tech" name="sideMenu" onclick="CommonDatas.sideMenuItemClick();">
+				<label for="tech">
+					<img src="/images/main/icons/mainSchedIcon.png" id="mainSchedIcon" />
 					<span>기술지원관리</span>
-				</a>
+					<span>+</span>
+				</label>
+			</div>
+			<div class="panel">
+				<div>
+					<a href="/business/tech">기술지원조회</a>
+				</div>
+				<div>
+					<a href="/business/store">재고 조회</a>
+				</div>
 			</div>
 			<div class="menuItem">
 				<a href="/business/filebox">

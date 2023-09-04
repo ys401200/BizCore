@@ -6034,6 +6034,351 @@ class Tech{
 	}
 }
 
+//재고현황 시작
+class StoreSet{
+	constructor() {
+		CommonDatas.Temps.storeSet = this;
+	}
+
+	//재고조회 리스트 저장 함수
+	list() {
+		axios.get("/api/store").then((response) => {
+			if (response.data.result === "ok") {
+				let result;
+				result = cipher.decAes(response.data.data);
+				result = JSON.parse(result);
+				storage.storeList = result;
+
+				if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.sopp === undefined) {
+					window.setTimeout(this.drawStoreList, 1000);
+					//window.setTimeout(CommonDatas.searchListSet("storeList"), 1000);
+				} else {
+					window.setTimeout(this.drawStoreList, 200);
+					//window.setTimeout(CommonDatas.searchListSet("storeList"), 200);
+				}
+			}
+		}).catch((error) => {
+			msg.set("재고조회 리스트 에러입니다.\n" + error);
+			console.log(error);
+		})
+	}
+
+	//영업활동 리스트 출력 함수
+	drawStoreList() {
+		let container, result, jsonData, job, header = [], data = [], ids = [], disDate, setDate, str, fnc = [], pageContainer, hideArr, showArr, releaseDate, orderDate;
+
+		if (storage.storeList === undefined) {
+			msg.set("등록된 재고가 없습니다");
+		}
+		else {
+			if (storage.searchDatas === undefined) {
+				jsonData = storage.storeList;
+			} else {
+				jsonData = storage.searchDatas;
+			}
+		}
+
+		result = CommonDatas.paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+		pageContainer = document.getElementsByClassName("pageContainer")[0];
+		container = document.getElementsByClassName("gridList")[0];
+		hideArr = ["detailBackBtn", "crudUpdateBtn", "crudDeleteBtn", "contractReqBtn"];
+		showArr = [
+			{ element: "gridList", display: "block" },
+			{ element: "pageContainer", display: "flex" },
+			{ element: "searchContainer", display: "block" },
+			{ element: "listRange", display: "flex" },
+			{ element: "listSearchInput", display: "flex" },
+			{ element: "crudBtns", display: "flex" },
+			{ element: "crudAddBtn", display: "flex" },
+		];
+
+		header = [
+			{
+				"title": "장비명",
+				"align": "center",
+			},
+			{
+				"title": "계약명",
+				"align": "center",
+			},
+			{
+				"title": "시리얼",
+				"align": "center",
+			},
+			{
+				"title": "입고일",
+				"align": "center",
+			},
+			{
+				"title": "출고일",
+				"align": "center",
+			},
+			{
+				"title": "납품처",
+				"align": "center",
+			},
+			{
+				"title": "발주일",
+				"align": "center",
+			},
+			{
+				"title": "장비위치",
+				"align": "center",
+			},
+			{
+				"title": "옵션사항",
+				"align": "center",
+			},
+			{
+				"title": "매입단가",
+				"align": "center",
+			},
+			{
+				"title": "비고",
+				"align": "center",
+			},
+		];
+
+		if (jsonData === "") {
+			str = [
+				{
+					"setData": undefined,
+					"align": "center",
+					"col": 11,
+				},
+			];
+
+			data.push(str);
+		} else {
+			for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+				disDate = CommonDatas.dateDis(new Date(jsonData[i].storeDate).getTime());
+				setDate = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+				disDate = CommonDatas.dateDis(new Date(jsonData[i].releaseDate).getTime());
+				releaseDate = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+				disDate = CommonDatas.dateDis(new Date(jsonData[i].orderDate).getTime());
+				orderDate = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+
+				str = [
+					{
+						"setData": jsonData[i].productName,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].contNo)) ? "" : CommonDatas.getContFind(jsonData[i].contNo, "name"),
+						"align": "center",
+					},
+					{
+						"setData": jsonData[i].serial,
+						"align": "center",
+					},
+					{
+						"setData": setDate,
+						"align": "center",
+					},
+					{
+						"setData": releaseDate,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].custNo)) ? "" : storage.customer[jsonData[i].custNo].name,
+						"align": "center",
+					},
+					{
+						"setData": orderDate,
+						"align": "center",
+					},
+					{
+						"setData": jsonData[i].locationName,
+						"align": "center",
+					},
+					{
+						"setData": jsonData[i].options,
+						"align": "center",
+					},
+					{
+						"setData": jsonData[i].purchaseNet.toLocaleString("en-US"),
+						"align": "right",
+					},
+					{
+						"setData": jsonData[i].firstDetail,
+						"align": "left",
+					},
+				];
+
+				fnc.push("CommonDatas.Temps.storeSet.storeDetailView(this)");
+				ids.push(jsonData[i].storeNo);
+				data.push(str);
+			}
+
+			let pageNation = CommonDatas.createPaging(pageContainer, result[3], "CommonDatas.pageMove", "CommonDatas.Temps.storeSet.drawStoreList", result[0]);
+			pageContainer.innerHTML = pageNation;
+		}
+
+		CommonDatas.createGrid(container, header, data, ids, job, fnc);
+		CommonDatas.setViewContents(hideArr, showArr);
+		// document.getElementById("multiSearchBtn").setAttribute("onclick", "CommonDatas.Temps.storeSet.searchSubmit();");
+	}
+
+	//재고현황 상세보기
+	storeDetailView(e) {
+		let thisEle = e;
+
+		axios.get("/api/store/" + thisEle.dataset.id).then((response) => {
+			if (response.data.result === "ok") {
+				let result;
+				result = cipher.decAes(response.data.data);
+				result = JSON.parse(result);
+				// let store = new Store(result);
+				// sales.detail();
+			}
+		}).catch((error) => {
+			msg.set("상세보기 에러 입니다.\n" + error);
+			console.log(error);
+		});
+	}
+
+	//재고현황 등록 폼
+	storeInsertForm(){
+		let html, dataArray;
+	
+		dataArray = [
+			{
+				"title": "장비명(*)",
+				"elementId": "productNo",
+				"complete": "product",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"disabled": false,
+			},
+			{
+				"title": "계약명(*)",
+				"elementId": "contNo",
+				"complete": "contract",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"disabled": false,
+			},
+			{
+				"title": "매출처",
+				"elementId": "custNo",
+				"complete": "customer",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"disabled": false,
+			},
+			{
+				"title": "위치(*)",
+				"elementId": "locationName",
+				"disabled": false,
+			},
+			{
+				"title": "입고일(*)",
+				"elementId": "storeDate",
+				"type": "datetime",
+				"disabled": false,
+			},
+			{
+				"title": "출고일(*)",
+				"elementId": "releaseDate",
+				"type": "datetime",
+				"disabled": false,
+			},
+			{
+				"title": "발주일(*)",
+				"elementId": "orderDate",
+				"type": "datetime",
+				"disabled": false,
+			},
+			{
+				"title": "BKLN 시작일(*)",
+				"elementId": "bklnDate",
+				"type": "datetime",
+				"disabled": false,
+			},
+			{
+				"title": "비고",
+				"elementId": "firstDetail",
+				"col": 4,
+				"disabled": false,
+			},
+			{
+				"title": "재고수량(*)",
+				"elementId": "inventoryQty",
+				"disabled": false,
+			},
+			{
+				"title": "매입단가(*)",
+				"elementId": "purchaseNet",
+				"disabled": false,
+			},
+			{
+				"title": "시리얼(*)",
+				"elementId": "serial",
+				"disabled": false,
+			},
+			{
+				"title": "Auth Code(*)",
+				"elementId": "authCode",
+				"disabled": false,
+			},
+			{
+				"title": "옵션사항",
+				"elementId": "options",
+				"col": 4,
+				"disabled": false,
+			},
+			{
+				"title": "비고",
+				"elementId": "secondDetail",
+				"col": 4,
+				"disabled": false,
+			},
+		];
+	
+		html = CommonDatas.detailViewForm(dataArray, "modal");
+	
+		modal.show();
+		modal.content.style.minWidth = "70vw";
+		modal.content.style.maxWidth = "70vw";
+		modal.headTitle.innerText = "재고등록";
+		modal.body.innerHTML = "<div class=\"defaultFormContainer\">" + html + "</div>";
+		modal.confirm.innerText = "등록";
+		modal.close.innerText = "취소";
+		modal.confirm.setAttribute("onclick", "const store = new Store(); CommonDatas.Temps.store.insert();");
+		modal.close.setAttribute("onclick", "modal.hide();");
+		CommonDatas.Temps.storeSet.addModalFirstRadio();
+
+		storage.formList = {
+			"storeType": "",
+			"userNo": storage.my,
+			"productName": "",
+			"custNo": 0,
+			"contNo": 0,
+			"locationName": "",
+			"firstDetail": "",
+			"inventoryQty": "",
+			"purchaseNet": 0,
+			"serial": "",
+			"authCode": "",
+			"options": "",
+			"secondDetail": "",
+			"storeDate": "",
+			"releaseDate": "",
+			"orderDate": "",
+			"bklnDate": ""
+		};
+	}
+
+	addModalFirstRadio(){
+		let modalBody = document.getElementsByClassName("modalBody")[0];
+		let createDiv = document.createElement("div");
+		createDiv.className = "storeType";
+		createDiv.innerHTML = "<label><input type=\"radio\" name=\"storeType\" value=\"IN\" checked/>입고</label>"
+		+ "<label><input type=\"radio\" name=\"storeType\"  value=\"OUT\" />출고</label>";
+		modalBody.prepend(createDiv);
+	}
+}
+
 //Common 시작
 class Common {
 	constructor() {
