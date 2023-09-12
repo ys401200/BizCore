@@ -10,9 +10,9 @@
         <div class="storeContainer">
 			<div class="contentHeaders">
 				<hr />
-				<span id="containerTitle">재고 조회</span>
+				<span id="containerTitle">재고조회</span>
 				<div class="listRange">
-					<input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="CommonDatas.listRangeChange(this, CommonDatas.Temps.storeSet.drawSalesList);">
+					<input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="CommonDatas.listRangeChange(this, CommonDatas.Temps.storeSet.drawStoreList);">
 					<span class="listRangeSpan">0</span>
 				</div>
 				<div class="listSearchInput">

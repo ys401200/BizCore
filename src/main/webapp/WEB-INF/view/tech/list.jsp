@@ -53,7 +53,7 @@
         <div class="techContainer">
 			<div class="contentHeaders">
 				<hr />
-				<span id="containerTitle">기술일정조회</span>
+				<span id="containerTitle">기술지원조회</span>
 				<div class="listRange">
 					<input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="CommonDatas.listRangeChange(this, CommonDatas.Temps.techSet.drawTechList);">
 					<span class="listRangeSpan">0</span>

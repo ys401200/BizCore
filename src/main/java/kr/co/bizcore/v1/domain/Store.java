@@ -10,7 +10,7 @@ import lombok.ToString;
 public class Store extends Domain{
     private int storeNo;
     private String storeType;
-    private String productName;
+    private int productNo;
     private int compNo;
     private int contNo;
     private int custNo;

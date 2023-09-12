@@ -437,7 +437,7 @@ class SalesSet{
 
 	//영업활동 리스트 출력 함수
 	drawSalesList() {
-		let container, result, jsonData, job, header = [], data = [], ids = [], disDate, setDate, str, fnc = [], pageContainer, hideArr, showArr, schedFrom, schedTo;
+		let container, result, jsonData, containerTitle, job, header = [], data = [], ids = [], disDate, setDate, str, fnc = [], pageContainer, hideArr, showArr, schedFrom, schedTo;
 
 		if (storage.salesList === undefined) {
 			msg.set("등록된 영업활동이 없습니다");
@@ -451,6 +451,7 @@ class SalesSet{
 		}
 
 		result = CommonDatas.paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+		containerTitle = document.getElementById("containerTitle");
 		pageContainer = document.getElementsByClassName("pageContainer")[0];
 		container = document.getElementsByClassName("gridList")[0];
 		hideArr = ["detailBackBtn", "crudUpdateBtn", "crudDeleteBtn", "contractReqBtn"];
@@ -573,6 +574,7 @@ class SalesSet{
 		CommonDatas.createGrid(container, header, data, ids, job, fnc);
 		CommonDatas.setViewContents(hideArr, showArr);
 		document.getElementById("multiSearchBtn").setAttribute("onclick", "CommonDatas.Temps.salesSet.searchSubmit();");
+		containerTitle.innerText = "영업활동조회";
 
 		let path = location.pathname.split("/");
 
@@ -1347,7 +1349,7 @@ class ScheduleSet{
 
 	//일정조회 리스트 출력 함수
 	drawScheduleList() {
-		let container, result, jsonData, job, header = [], data = [], ids = [], disDate, setDate, str, fnc = [], pageContainer, hideArr, showArr, schedFrom, schedTo;
+		let container, result, jsonData, containerTitle, job, header = [], data = [], ids = [], disDate, setDate, str, fnc = [], pageContainer, hideArr, showArr, schedFrom, schedTo;
 
 		if (storage.scheduleList === undefined) {
 			msg.set("등록된 일정조회가 없습니다");
@@ -1361,6 +1363,7 @@ class ScheduleSet{
 		}
 
 		result = CommonDatas.paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+		containerTitle = document.getElementById("containerTitle");
 		pageContainer = document.getElementsByClassName("pageContainer")[0];
 		container = document.getElementsByClassName("gridList")[0];
 		hideArr = ["detailBackBtn", "crudUpdateBtn", "crudDeleteBtn", "contractReqBtn"];
@@ -1503,6 +1506,7 @@ class ScheduleSet{
 		CommonDatas.createGrid(container, header, data, ids, job, fnc);
 		CommonDatas.setViewContents(hideArr, showArr);
 		document.getElementById("multiSearchBtn").setAttribute("onclick", "CommonDatas.Temps.scheduleSet.searchSetItem(\"list\");");
+		containerTitle.innerText = "일정조회";
 
 		let path = location.pathname.split("/");
 
@@ -5158,7 +5162,7 @@ class TechSet{
 
 	//기술지원 리스트 출력 함수
 	drawTechList() {
-		let container, result, jsonData, job, header = [], data = [], ids = [], disDate, setDate, str, fnc = [], pageContainer, hideArr, showArr, schedFrom, schedTo;
+		let container, result, jsonData, containerTitle, job, header = [], data = [], ids = [], disDate, setDate, str, fnc = [], pageContainer, hideArr, showArr, schedFrom, schedTo;
 
 		if (storage.techList === undefined) {
 			msg.set("등록된 기술지원이 없습니다");
@@ -5172,6 +5176,7 @@ class TechSet{
 		}
 
 		result = CommonDatas.paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+		containerTitle = document.getElementById("containerTitle");
 		pageContainer = document.getElementsByClassName("pageContainer")[0];
 		container = document.getElementsByClassName("gridList")[0];
 		hideArr = ["detailBackBtn", "crudUpdateBtn", "crudDeleteBtn", "contractReqBtn"];
@@ -5294,6 +5299,7 @@ class TechSet{
 		CommonDatas.createGrid(container, header, data, ids, job, fnc);
 		CommonDatas.setViewContents(hideArr, showArr);
 		document.getElementById("multiSearchBtn").setAttribute("onclick", "CommonDatas.Temps.techSet.searchSubmit();");
+		containerTitle.innerText = "기술지원조회"
 
 		let path = location.pathname.split("/");
 
@@ -6065,7 +6071,7 @@ class StoreSet{
 
 	//영업활동 리스트 출력 함수
 	drawStoreList() {
-		let container, result, jsonData, job, header = [], data = [], ids = [], disDate, setDate, str, fnc = [], pageContainer, hideArr, showArr, releaseDate, orderDate;
+		let container, result, jsonData, containerTitle, job, header = [], data = [], ids = [], disDate, setDate, str, fnc = [], pageContainer, hideArr, showArr, releaseDate, orderDate;
 
 		if (storage.storeList === undefined) {
 			msg.set("등록된 재고가 없습니다");
@@ -6079,6 +6085,7 @@ class StoreSet{
 		}
 
 		result = CommonDatas.paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+		containerTitle = document.getElementById("containerTitle");
 		pageContainer = document.getElementsByClassName("pageContainer")[0];
 		container = document.getElementsByClassName("gridList")[0];
 		hideArr = ["detailBackBtn", "crudUpdateBtn", "crudDeleteBtn", "contractReqBtn"];
@@ -6160,7 +6167,7 @@ class StoreSet{
 
 				str = [
 					{
-						"setData": jsonData[i].productName,
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].productNo)) ? "" : CommonDatas.getProductFind(jsonData[i].productNo, "name"),
 						"align": "center",
 					},
 					{
@@ -6216,6 +6223,7 @@ class StoreSet{
 
 		CommonDatas.createGrid(container, header, data, ids, job, fnc);
 		CommonDatas.setViewContents(hideArr, showArr);
+		containerTitle.innerText = "재고조회";
 		// document.getElementById("multiSearchBtn").setAttribute("onclick", "CommonDatas.Temps.storeSet.searchSubmit();");
 	}
 
@@ -6228,8 +6236,8 @@ class StoreSet{
 				let result;
 				result = cipher.decAes(response.data.data);
 				result = JSON.parse(result);
-				// let store = new Store(result);
-				// sales.detail();
+				let store = new Store(result);
+				store.detail();
 			}
 		}).catch((error) => {
 			msg.set("상세보기 에러 입니다.\n" + error);
@@ -6243,7 +6251,7 @@ class StoreSet{
 	
 		dataArray = [
 			{
-				"title": "장비명(*)",
+				"title": "장비명",
 				"elementId": "productNo",
 				"complete": "product",
 				"keyup": "CommonDatas.addAutoComplete(this);",
@@ -6251,7 +6259,7 @@ class StoreSet{
 				"disabled": false,
 			},
 			{
-				"title": "계약명(*)",
+				"title": "계약명",
 				"elementId": "contNo",
 				"complete": "contract",
 				"keyup": "CommonDatas.addAutoComplete(this);",
@@ -6267,32 +6275,32 @@ class StoreSet{
 				"disabled": false,
 			},
 			{
-				"title": "위치(*)",
+				"title": "위치",
 				"elementId": "locationName",
 				"disabled": false,
 			},
 			{
-				"title": "입고일(*)",
+				"title": "입고일",
 				"elementId": "storeDate",
-				"type": "datetime",
+				"type": "date",
 				"disabled": false,
 			},
 			{
-				"title": "출고일(*)",
+				"title": "출고일",
 				"elementId": "releaseDate",
-				"type": "datetime",
+				"type": "date",
 				"disabled": false,
 			},
 			{
-				"title": "발주일(*)",
+				"title": "발주일",
 				"elementId": "orderDate",
-				"type": "datetime",
+				"type": "date",
 				"disabled": false,
 			},
 			{
-				"title": "BKLN 시작일(*)",
+				"title": "BKLN 시작일",
 				"elementId": "bklnDate",
-				"type": "datetime",
+				"type": "date",
 				"disabled": false,
 			},
 			{
@@ -6302,22 +6310,22 @@ class StoreSet{
 				"disabled": false,
 			},
 			{
-				"title": "재고수량(*)",
+				"title": "재고수량",
 				"elementId": "inventoryQty",
 				"disabled": false,
 			},
 			{
-				"title": "매입단가(*)",
+				"title": "매입단가",
 				"elementId": "purchaseNet",
 				"disabled": false,
 			},
 			{
-				"title": "시리얼(*)",
+				"title": "시리얼",
 				"elementId": "serial",
 				"disabled": false,
 			},
 			{
-				"title": "Auth Code(*)",
+				"title": "Auth Code",
 				"elementId": "authCode",
 				"disabled": false,
 			},
@@ -6344,14 +6352,14 @@ class StoreSet{
 		modal.body.innerHTML = "<div class=\"defaultFormContainer\">" + html + "</div>";
 		modal.confirm.innerText = "등록";
 		modal.close.innerText = "취소";
-		modal.confirm.setAttribute("onclick", "const store = new Store(); CommonDatas.Temps.store.insert();");
+		modal.confirm.setAttribute("onclick", "const store = new Store(); store.insert();");
 		modal.close.setAttribute("onclick", "modal.hide();");
 		CommonDatas.Temps.storeSet.addModalFirstRadio();
 
 		storage.formList = {
 			"storeType": "",
 			"userNo": storage.my,
-			"productName": "",
+			"productNo": 0,
 			"custNo": 0,
 			"contNo": 0,
 			"locationName": "",
@@ -6370,12 +6378,287 @@ class StoreSet{
 	}
 
 	addModalFirstRadio(){
-		let modalBody = document.getElementsByClassName("modalBody")[0];
+		let defaultFormContainer = document.getElementsByClassName("defaultFormContainer")[0];
 		let createDiv = document.createElement("div");
 		createDiv.className = "storeType";
 		createDiv.innerHTML = "<label><input type=\"radio\" name=\"storeType\" value=\"IN\" checked/>입고</label>"
 		+ "<label><input type=\"radio\" name=\"storeType\"  value=\"OUT\" />출고</label>";
-		modalBody.prepend(createDiv);
+		defaultFormContainer.before(createDiv);
+	}
+}
+
+//재고현황 crud
+class Store{
+	constructor(getData){
+		CommonDatas.Temps.store = this;
+	
+		if (getData !== undefined) {
+			this.getData = getData;
+			this.storeNo = getData.storeNo;
+			this.storeType = getData.storeType;
+			this.productNo = getData.productNo;
+			this.compNo = getData.compNo;
+			this.contNo = getData.contNo;
+			this.custNo = getData.custNo;
+			this.userNo = getData.userNo;
+			this.locationName = getData.locationName;
+			this.firstDetail = getData.firstDetail;
+			this.inventoryQty = getData.inventoryQty;
+			this.purchaseNet = getData.purchaseNet;
+			this.serial = getData.serial;
+			this.authCode = getData.authCode;
+			this.options = getData.options;
+			this.secondDetail = getData.secondDetail;
+			this.storeDate = getData.storeDate;
+			this.releaseDate = getData.releaseDate;
+			this.orderDate = getData.orderDate;
+			this.bklnDate = getData.bklnDate;
+			this.regDate = getData.regDate;
+			this.modDate = getData.modDate;
+			this.attrib = getData.attrib;
+		} else {
+			this.storeNo = 0;
+			this.storeType = "";
+			this.productNo = 0;
+			this.compNo = 0;
+			this.contNo = 0;
+			this.custNo = 0;
+			this.userNo = 0;
+			this.locationName = "";
+			this.firstDetail = "";
+			this.inventoryQty = "";
+			this.purchaseNet = 0;
+			this.serial = "";
+			this.authCode = "";
+			this.options = "";
+			this.secondDetail = "";
+			this.storeDate = "";
+			this.releaseDate = "";
+			this.orderDate = "";
+			this.bklnDate = "";
+			this.regDate = "";
+			this.modDate = "";
+			this.attrib = "";
+		}
+	}
+
+	//재고현황 상세보기
+	detail() {
+		let html = "";
+		let storeDate, releaseDate, orderDate, bklnDate, datas, dataArray, notIdArray;
+
+		CommonDatas.detailSetFormList(this.getData);
+
+		let gridList = document.getElementsByClassName("gridList")[0];
+		let containerTitle = document.getElementById("containerTitle");
+		let detailBackBtn = document.getElementsByClassName("detailBackBtn")[0];
+		let crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
+		let crudDeleteBtn = document.getElementsByClassName("crudDeleteBtn")[0];
+
+		storeDate = CommonDatas.dateDis(new Date(this.storeDate).getTime());
+		storeDate = CommonDatas.dateFnc(storeDate);
+
+		releaseDate = CommonDatas.dateDis(new Date(this.releaseDate).getTime());
+		releaseDate = CommonDatas.dateFnc(releaseDate);
+
+		orderDate = CommonDatas.dateDis(new Date(this.orderDate).getTime());
+		orderDate = CommonDatas.dateFnc(orderDate);
+
+		bklnDate = CommonDatas.dateDis(new Date(this.bklnDate).getTime());
+		bklnDate = CommonDatas.dateFnc(bklnDate);
+
+		notIdArray = ["userNo"];
+		datas = ["custNo", "contNo", "productNo", "userNo"];
+
+		dataArray = [
+			{
+				"title": "장비명",
+				"elementId": "productNo",
+				"complete": "product",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"value": (CommonDatas.emptyValuesCheck(this.productNo)) ? "" : CommonDatas.getProductFind(this.productNo, "name"),
+			},
+			{
+				"title": "계약명",
+				"elementId": "contNo",
+				"complete": "contract",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"value": (CommonDatas.emptyValuesCheck(this.contNo)) ? "" : CommonDatas.getContFind(this.contNo, "name"),
+			},
+			{
+				"title": "매출처",
+				"elementId": "custNo",
+				"complete": "customer",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"value": (CommonDatas.emptyValuesCheck(this.custNo)) ? "" : storage.customer[this.custNo].name,
+			},
+			{
+				"title": "위치",
+				"elementId": "locationName",
+				"value": this.locationName,
+			},
+			{
+				"title": "입고일",
+				"elementId": "storeDate",
+				"type": "date",
+				"value": storeDate,
+			},
+			{
+				"title": "출고일",
+				"elementId": "releaseDate",
+				"type": "date",
+				"value": releaseDate,
+			},
+			{
+				"title": "발주일",
+				"elementId": "orderDate",
+				"type": "date",
+				"value": orderDate,
+			},
+			{
+				"title": "BKLN 시작일",
+				"elementId": "bklnDate",
+				"type": "date",
+				"value": bklnDate,
+			},
+			{
+				"title": "비고",
+				"elementId": "firstDetail",
+				"col": 4,
+				"value": this.firstDetail,
+			},
+			{
+				"title": "재고수량",
+				"elementId": "inventoryQty",
+				"value": this.inventoryQty,
+			},
+			{
+				"title": "매입단가",
+				"elementId": "purchaseNet",
+				"value": this.purchaseNet.toLocaleString("en-US"),
+			},
+			{
+				"title": "시리얼",
+				"elementId": "serial",
+				"value": this.serial,
+			},
+			{
+				"title": "Auth Code",
+				"elementId": "authCode",
+				"value": this.authCode,
+			},
+			{
+				"title": "옵션사항",
+				"elementId": "options",
+				"col": 4,
+				"value": this.options,
+			},
+			{
+				"title": "비고",
+				"elementId": "secondDetail",
+				"col": 4,
+				"value": this.secondDetail,
+			},
+		];
+
+		html = CommonDatas.detailViewForm(dataArray);
+		let createGrid = document.createElement("div");
+		createGrid.className = "defaultFormContainer";
+		createGrid.innerHTML = html;
+		gridList.after(createGrid);
+		containerTitle.innerText = (CommonDatas.emptyValuesCheck(this.productNo)) ? "" : CommonDatas.getProductFind(this.productNo, "name");
+		let hideArr = ["gridList", "listRange", "crudAddBtn", "listSearchInput", "searchContainer", "pageContainer"];
+		let showArr = ["defaultFormContainer"];
+		CommonDatas.setViewContents(hideArr, showArr);
+	
+		if(storage.my == this.getData.userNo){
+			crudUpdateBtn.setAttribute("onclick", "CommonDatas.enableDisabled(this, \"CommonDatas.Temps.store.update();\", \"" + notIdArray + "\");")
+			crudDeleteBtn.setAttribute("onclick", "CommonDatas.Temps.store.delete();");
+			crudUpdateBtn.style.display = "flex";
+			crudDeleteBtn.style.display = "flex";
+		}else{
+			crudUpdateBtn.style.display = "none";
+			crudDeleteBtn.style.display = "none";
+		}
+	
+		detailBackBtn.style.display = "flex";
+		CommonDatas.detailTrueDatas(datas);
+		CommonDatas.Temps.storeSet.addModalFirstRadio();
+		document.querySelector("[name=\"storeType\"][value=\"" + this.storeType + "\"]").checked = true;
+	}
+
+	//재고현황 등록
+	insert(){
+		CommonDatas.formDataSet();
+		let data = storage.formList;
+		data = JSON.stringify(data);
+		data = cipher.encAes(data);
+
+		axios.post("/api/store", data, {
+			headers: { "Content-Type": "text/plain" }
+		}).then((response) => {
+			if (response.data.result === "ok") {
+				location.reload();
+				msg.set("등록되었습니다.");
+			} else {
+				msg.set("등록 중 에러가 발생하였습니다.");
+				return false;
+			}
+		}).catch((error) => {
+			msg.set("등록 도중 에러가 발생하였습니다.\n" + error);
+			console.log(error);
+			return false;
+		});
+	}
+
+	//재고현황 수정
+	update() {
+		CommonDatas.formDataSet();
+		let data = storage.formList;
+		data = JSON.stringify(data);
+		data = cipher.encAes(data);
+
+		axios.put("/api/store/" + data.storeNo, data, {
+			headers: { "Content-Type": "text/plain" }
+		}).then((response) => {
+			if (response.data.result === "ok") {
+				location.reload();
+				msg.set("수정되었습니다.");
+			} else {
+				msg.set("수정 중 에러가 발생하였습니다.");
+				return false;
+			}
+		}).catch((error) => {
+			msg.set("수정 도중 에러가 발생하였습니다.\n" + error);
+			console.log(error);
+			return false;
+		});
+	}
+
+	//재고현황 삭제
+	delete() {
+		if (confirm("정말로 삭제하시겠습니까??")) {
+			axios.delete("/api/store/" + storage.formList.storeNo, {
+				headers: { "Content-Type": "text/plain" }
+			}).then((response) => {
+				if (response.data.result === "ok") {
+					location.reload();
+					msg.set("삭제되었습니다.");
+				} else {
+					msg.set("삭제 중 에러가 발생하였습니다.");
+					return false;
+				}
+			}).catch((error) => {
+				msg.set("삭제 도중 에러가 발생하였습니다.\n" + error);
+				console.log(error);
+				return false;
+			});
+		} else {
+			return false;
+		}
 	}
 }
 
@@ -7588,13 +7871,14 @@ class Common {
 
 	//상세보기 back 버튼 함수
 	hideDetailView(func){
-		let defaultFormContainer, crudUpdateBtn, tabs;
+		let defaultFormContainer, crudUpdateBtn, tabs, storeType;
 		defaultFormContainer = document.getElementsByClassName("defaultFormContainer")[0];
 		crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
 		tabs = document.getElementsByClassName("tabs")[0];
 		let tabLists = document.getElementsByClassName("tabLists")[0];
 		defaultFormContainer.remove();
 		crudUpdateBtn.innerText = "수정";
+		storeType = document.getElementsByClassName("storeType")[0];
 	
 		if (tabs !== undefined) {
 			tabs.remove();
@@ -7602,6 +7886,10 @@ class Common {
 
 		if(tabLists !== undefined){
 			tabLists.remove();
+		}
+
+		if(storeType !== undefined){
+			storeType.remove();
 		}
 	
 		document.querySelector("input").value = "";
@@ -7695,7 +7983,6 @@ class Common {
 		}
 
 		if(!flag){
-			// alert("영업기회를 찾지 못했습니다.\n다시 시도해주세요.");
 			result = "";
 		}
 
@@ -7724,7 +8011,34 @@ class Common {
 		}
 
 		if(!flag){
-			alert("계약을 찾지 못했습니다.\n다시 시도해주세요.");
+			result = "";
+		}
+
+		return result;
+	}
+
+	//상품 값 찾는 함수
+	getProductFind(value, type){
+		let result;
+		let flag = false;
+
+		for(let i = 0; i < storage.product.length; i++){
+			let item = storage.product[i];
+
+			if(type === "name"){
+				if(value == item.no){
+					result = item.name;
+					flag = true;
+				}
+			}else{
+				if(value.includes(item.name)){
+					result = item.no;
+					flag = true;
+				}
+			}
+		}
+
+		if(!flag){
 			result = "";
 		}
 
