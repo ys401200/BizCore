@@ -2791,6 +2791,7 @@ class WorkReportSet{
 					let result;
 					result = cipher.decAes(response.data.data);
 					result = JSON.parse(result);
+					result = this.setWorkLongDate(result);
 	
 					if(setType === "last"){
 						storage.lastWorkReport = result;
@@ -2811,6 +2812,59 @@ class WorkReportSet{
 				console.log(error);
 			});
 		})
+	}
+
+	setWorkLongDate(datas) {
+		let result = [];
+		
+		for(let i = 0; i < datas.length; i++){
+			let item = datas[i];
+			let setFromDate = new Date(item.schedFrom);
+			let setToDate = new Date(item.schedTo);
+			let calTime = setToDate.getTime() - setFromDate.getTime();
+			let calDay = Math.floor(calTime / (1000 * 60 * 60 * 24) + 1);
+
+			if(calDay > 1){
+				for(let t = 0; t < calDay; t++){
+					let formatResult = {};
+					let year, month, day, hours, minutes, seconds;
+					let calFromDate = new Date(item.schedFrom);
+					calFromDate.setDate(calFromDate.getDate() + t);
+					year = calFromDate.getFullYear();
+					month = CommonDatas.Temps.workReportSet.dateFirstZeroCheck(calFromDate.getMonth() + 1);
+					day = CommonDatas.Temps.workReportSet.dateFirstZeroCheck(calFromDate.getDate());
+					hours = CommonDatas.Temps.workReportSet.dateFirstZeroCheck(calFromDate.getHours());
+					minutes = CommonDatas.Temps.workReportSet.dateFirstZeroCheck(calFromDate.getMinutes());
+					seconds = CommonDatas.Temps.workReportSet.dateFirstZeroCheck(calFromDate.getSeconds());
+
+					for(let key in datas[i]){
+						if(key === "schedFrom" || key === "schedTo"){
+							formatResult[key] = year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds;	
+						}else{
+							formatResult[key] = datas[i][key];
+						}
+					}
+
+					result.push(formatResult);
+				}
+			}else{
+				result.push(item);
+			}
+		}
+
+		return result;
+	}
+
+	dateFirstZeroCheck(value){
+		let result = "";
+
+		if(value < 10){
+			result = "0" + value;
+		}else{
+			result = value;
+		}
+
+		return result;
 	}
 
 	//개인업무일지 추가기재 들고오는 함수
@@ -3282,19 +3336,21 @@ class WorkJournalSet{
 		}
 
 		if(type === "last"){
+			storage.lastWorkJournalDatas = {};
 			nowDate.setDate((nowDate.getDate() + calDay) - 7);
 		}else if(type === "this" || type === undefined){
+			storage.thisWorkJournalDatas = {};
 			nowDate.setDate(nowDate.getDate() + calDay);
 		}else{
+			storage.nextWorkJournalDatas = {};
 			nowDate.setDate((nowDate.getDate() + calDay) + 7);
 		}
 
 		setDate = nowDate.toISOString().substring(0, 10);
-		storage.lastWorkJournalDatas = {};
-		storage.thisWorkJournalDatas = {};
-		storage.nextWorkJournalDatas = {};
 
 		setTimeout(() => {
+			const workReportSet = new WorkReportSet();
+
 			for(let i = 0; i < storage.workJournalUsers.length; i++){
 				let item = storage.workJournalUsers[i];
 
@@ -3310,6 +3366,7 @@ class WorkJournalSet{
 						if(res.data.result === "ok"){
 							let result = cipher.decAes(res.data.data);
 							result = JSON.parse(result);
+							result = workReportSet.setWorkLongDate(result);
 
 							if(type === "last"){
 								storage.lastWorkJournalDatas[result[0].userNo] = result;
@@ -3663,7 +3720,7 @@ class WorkJournalSet{
 			
 			setTimeout(() => {
 				CommonDatas.Temps.workJournalSet.drawWorkJournalContent("this");
-			}, 1600);
+			}, 1900);
 
 			journalChangeBtn.dataset.type = "next";
 			journalChangeBtn.innerText = "업무일지(차주)";			
@@ -3675,7 +3732,7 @@ class WorkJournalSet{
 			
 			setTimeout(() => {
 				CommonDatas.Temps.workJournalSet.drawWorkJournalContent("next");
-			}, 1600);
+			}, 1900);
 
 			journalChangeBtn.dataset.type = "this";
 			journalChangeBtn.innerText = "업무일지(금주)";
@@ -6055,13 +6112,10 @@ class StoreSet{
 				result = JSON.parse(result);
 				storage.storeList = result;
 
-				if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.sopp === undefined) {
-					window.setTimeout(this.drawStoreList, 1000);
-					//window.setTimeout(CommonDatas.searchListSet("storeList"), 1000);
-				} else {
-					window.setTimeout(this.drawStoreList, 200);
-					//window.setTimeout(CommonDatas.searchListSet("storeList"), 200);
-				}
+				setTimeout(() => {
+					this.drawStoreList();
+					CommonDatas.searchListSet("storeList");
+				}, 1000)
 			}
 		}).catch((error) => {
 			msg.set("재고조회 리스트 에러입니다.\n" + error);
@@ -6224,7 +6278,7 @@ class StoreSet{
 		CommonDatas.createGrid(container, header, data, ids, job, fnc);
 		CommonDatas.setViewContents(hideArr, showArr);
 		containerTitle.innerText = "재고조회";
-		// document.getElementById("multiSearchBtn").setAttribute("onclick", "CommonDatas.Temps.storeSet.searchSubmit();");
+		document.getElementById("multiSearchBtn").setAttribute("onclick", "CommonDatas.Temps.storeSet.searchSubmit();");
 	}
 
 	//재고현황 상세보기
@@ -6375,6 +6429,61 @@ class StoreSet{
 			"orderDate": "",
 			"bklnDate": ""
 		};
+	}
+
+	//재고조회 검색 버튼 클릭 함수
+	searchSubmit() {
+		let dataArray = [], resultArray, eachIndex = 0, product, cont, cust, type, searchProduct, searchCont, searchCust, searchType, searchDateFrom, keyIndex = 0;
+		searchProduct = document.getElementById("searchProduct");
+		searchCont = document.getElementById("searchCont");
+		searchCust = document.getElementById("searchCust");
+		
+		for(let key in storage.storeList[0]){
+			if(key === searchProduct.dataset.key) product = "#" + keyIndex + "/" + searchProduct.value;
+			else if(key === searchCont.dataset.key) cont = "#" + keyIndex + "/" + searchCont.value;
+			else if(key === searchCust.dataset.key) cust = "#" + keyIndex + "/" + searchCust.value;
+			keyIndex++;
+		}
+
+		let searchValues = [product, cont, cust];
+
+		for (let i = 0; i < searchValues.length; i++) {
+			if(searchValues[i] !== ""){
+				let tempArray = CommonDatas.searchDataFilter(storage.storeList, searchValues[i], "multi", []);
+	
+				for (let t = 0; t < tempArray.length; t++) {
+					dataArray.push(tempArray[t]);
+				}
+	
+				eachIndex++;
+			}
+		}
+		
+		resultArray = CommonDatas.searchMultiFilter(eachIndex, dataArray, storage.storeList);
+
+		storage.searchDatas = resultArray;
+
+		if (storage.searchDatas.length == 0) {
+			msg.set("찾는 데이터가 없습니다.");
+			storage.searchDatas = storage.storeList;
+		}
+
+		this.drawStoreList();
+	}
+
+	//재고조회 단일 검색 keyup 이벤트
+	searchInputKeyup() {
+		let searchAllInput, tempArray;
+		searchAllInput = document.getElementById("searchAllInput").value;
+		tempArray = CommonDatas.searchDataFilter(storage.storeList, searchAllInput, "input");
+
+		if (tempArray.length > 0) {
+			storage.searchDatas = tempArray;
+		} else {
+			storage.searchDatas = "";
+		}
+
+		this.drawStoreList();
 	}
 
 	addModalFirstRadio(){
@@ -7924,13 +8033,11 @@ class Common {
 						str += "#0";
 					}else{
 						if(key === "soppNo"){
-							for(let j = 0; j < storage.sopp.length; j++){
-								let soppItem = storage.sopp[j];
-		
-								if(item[key] == soppItem.no){
-									str += "#" + soppItem.title;
-								}
-							}
+							str += "#" + CommonDatas.getSoppFind(item[key], "name");
+						}else if(key === "contNo"){
+							str += "#" + CommonDatas.getContFind(item[key], "name");
+						}else if(key === "productNo"){
+							str += "#" + CommonDatas.getProductFind(item[key], "name");
 						}else if(key === "userNo"){
 							str += "#" + storage.user[item[key]].userName;
 						}else if(key === "custNo"){
