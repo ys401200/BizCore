@@ -16,9 +16,11 @@ class NoticeSet {
 				if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined) {
 					window.setTimeout(this.drawNoticeList, 600);
 					window.setTimeout(CommonDatas.searchListSet("noticeList"), 600);
+					$('.theme-loader').delay(1000).fadeOut("slow");
 				} else {
 					window.setTimeout(this.drawNoticeList, 200);
 					window.setTimeout(CommonDatas.searchListSet("noticeList"), 200);
+					$('.theme-loader').delay(1000).fadeOut("slow");
 				}
 			}
 		}).catch((error) => {
@@ -428,6 +430,8 @@ class SalesSet{
 					window.setTimeout(this.drawSalesList, 200);
 					window.setTimeout(CommonDatas.searchListSet("salesList"), 200);
 				}
+
+				$('.theme-loader').delay(1000).fadeOut("slow");
 			}
 		}).catch((error) => {
 			msg.set("영업활동관리 리스트 에러입니다.\n" + error);
@@ -595,6 +599,8 @@ class SalesSet{
 				result = JSON.parse(result);
 				let sales = new Sales(result);
 				sales.detail();
+
+				localStorage.setItem("loadSetPage", window.location.pathname);
 			}
 		}).catch((error) => {
 			msg.set("상세보기 에러 입니다.\n" + error);
@@ -1171,6 +1177,191 @@ class Sales{
 	}
 }
 
+//영업기회 시작
+class SoppSet{
+	constructor() {
+		CommonDatas.Temps.soppSet = this;
+	}
+
+	//영업활동 리스트 저장 함수
+	list() {
+		axios.get("/api/sopp/").then((response) => {
+			if (response.data.result === "ok") {
+				let result;
+				result = cipher.decAes(response.data.data);
+				result = JSON.parse(result);
+				storage.soppList = result;
+
+				// if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.sopp === undefined) {
+				// 	window.setTimeout(this.drawSalesList, 1000);
+				// 	window.setTimeout(CommonDatas.searchListSet("salesList"), 1000);
+				// } else {
+				// 	window.setTimeout(this.drawSalesList, 200);
+				// 	window.setTimeout(CommonDatas.searchListSet("salesList"), 200);
+				// }
+
+				$('.theme-loader').delay(1000).fadeOut("slow");
+			}
+		}).catch((error) => {
+			msg.set("영업기회 리스트 에러입니다.\n" + error);
+			console.log(error);
+		})
+	}
+
+	//영업활동 리스트 출력 함수
+	drawSoppList() {
+		let container, result, jsonData, containerTitle, job, header = [], data = [], ids = [], disDate, setDate, str, fnc = [], pageContainer, hideArr, showArr, schedFrom, schedTo;
+
+		if (storage.salesList === undefined) {
+			msg.set("등록된 영업기회가 없습니다");
+		}
+		else {
+			if (storage.searchDatas === undefined) {
+				jsonData = storage.salesList;
+			} else {
+				jsonData = storage.searchDatas;
+			}
+		}
+
+		result = CommonDatas.paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+		containerTitle = document.getElementById("containerTitle");
+		pageContainer = document.getElementsByClassName("pageContainer")[0];
+		container = document.getElementsByClassName("gridList")[0];
+		hideArr = ["detailBackBtn", "crudUpdateBtn", "crudDeleteBtn", "contractReqBtn"];
+		showArr = [
+			{ element: "gridList", display: "block" },
+			{ element: "pageContainer", display: "flex" },
+			{ element: "searchContainer", display: "block" },
+			{ element: "listRange", display: "flex" },
+			{ element: "listSearchInput", display: "flex" },
+			{ element: "crudBtns", display: "flex" },
+			{ element: "crudAddBtn", display: "flex" },
+		];
+
+		header = [
+			{
+				"title": "등록일",
+				"align": "center",
+			},
+			{
+				"title": "판매방식",
+				"align": "center",
+			},
+			{
+				"title": "영업기회명",
+				"align": "center",
+			},
+			{
+				"title": "매출처",
+				"align": "center",
+			},
+			{
+				"title": "엔드유저",
+				"align": "center",
+			},
+			{
+				"title": "카테고리(제품회사명)",
+				"align": "center",
+			},
+			{
+				"title": "담당사원",
+				"align": "center",
+			},
+			{
+				"title": "예상매출액",
+				"align": "center",
+			},
+			{
+				"title": "진행단계",
+				"align": "center",
+			},
+			{
+				"title": "매출예정일",
+				"align": "center",
+			},
+		];
+
+		if (jsonData === "") {
+			str = [
+				{
+					"setData": undefined,
+					"align": "center",
+					"col": 10,
+				},
+			];
+
+			data.push(str);
+		} else {
+			for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+				disDate = CommonDatas.dateDis(new Date(jsonData[i].regDatetime).getTime(), new Date(jsonData[i].modDatetime).getTime());
+				setDate = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+				disDate = CommonDatas.dateDis(new Date(jsonData[i].schedFrom).getTime());
+				schedFrom = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+				disDate = CommonDatas.dateDis(new Date(jsonData[i].schedTo).getTime());
+				schedTo = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+
+				str = [
+					{
+						"setData": setDate,
+						"align": "center",
+					},
+					{
+						"setData": jsonData[i].title,
+						"align": "left",
+					},
+					{
+						"setData": schedFrom,
+						"align": "center",
+					},
+					{
+						"setData": schedTo,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].soppNo)) ? "" : CommonDatas.getSoppFind(jsonData[i].soppNo, "name"),
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].userNo)) ? "" : storage.user[jsonData[i].userNo].userName,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].custNo)) ? "" : storage.customer[jsonData[i].custNo].name,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].ptncNo)) ? "" : storage.customer[jsonData[i].ptncNo].name,
+						"align": "center",
+					},
+					{
+						"setData": jsonData[i].desc,
+						"align": "left",
+					},
+				];
+
+				fnc.push("CommonDatas.Temps.salesSet.salesDetailView(this)");
+				ids.push(jsonData[i].salesNo);
+				data.push(str);
+			}
+
+			let pageNation = CommonDatas.createPaging(pageContainer, result[3], "CommonDatas.pageMove", "CommonDatas.Temps.salesSet.drawSalesList", result[0]);
+			pageContainer.innerHTML = pageNation;
+		}
+
+		CommonDatas.createGrid(container, header, data, ids, job, fnc);
+		CommonDatas.setViewContents(hideArr, showArr);
+		document.getElementById("multiSearchBtn").setAttribute("onclick", "CommonDatas.Temps.salesSet.searchSubmit();");
+		containerTitle.innerText = "영업활동조회";
+
+		let path = location.pathname.split("/");
+
+		if (path[3] !== undefined && jsonData !== null) {
+			let content = document.querySelector(".gridContent[data-id=\"" + path[3] + "\"]");
+			CommonDatas.Temps.salesSet.salesDetailView(content);
+		}
+	}
+}
+
 
 //일정관리 시작
 //일정관리 셋팅 함수
@@ -1237,6 +1428,8 @@ class ScheduleSet{
 					window.setTimeout(this.drawCalendarList, 200);
 					window.setTimeout(CommonDatas.searchListSet("calendarList"), 200);
 				}
+
+				$('.theme-loader').delay(1000).fadeOut("slow");
 			}
 		}).catch((error) => {
 			msg.set("달력 리스트 에러입니다.\n" + error);
@@ -1340,6 +1533,8 @@ class ScheduleSet{
 					window.setTimeout(this.drawScheduleList, 200);
 					window.setTimeout(CommonDatas.searchListSet("scheduleList"), 200);
 				}
+
+				$('.theme-loader').delay(1000).fadeOut("slow");
 			}
 		}).catch((error) => {
 			msg.set("일정조회 리스트 에러입니다.\n" + error);
@@ -1722,6 +1917,8 @@ class ScheduleSet{
 				result = JSON.parse(result);
 				let schedule = new Schedule(result);
 				schedule.scheduleDetail();
+
+				localStorage.setItem("loadSetPage", window.location.pathname);
 			}
 		}).catch((error) => {
 			msg.set("상세보기 에러 입니다.\n" + error);
@@ -2814,6 +3011,7 @@ class WorkReportSet{
 		})
 	}
 
+	//주간별 긴 일정 json 포맷 함수
 	setWorkLongDate(datas) {
 		let result = [];
 		
@@ -2855,6 +3053,7 @@ class WorkReportSet{
 		return result;
 	}
 
+	//숫자 형식 10보다 작을 시 앞에 0 붙여주는 함수
 	dateFirstZeroCheck(value){
 		let result = "";
 
@@ -3708,6 +3907,8 @@ class WorkJournalSet{
 
 	//업무일지검토 금주/차주 조건에 따른 셋팅 함수
 	journalChange(thisEle){
+		$('.theme-loader').show();
+
 		let journalChangeBtn = document.getElementsByClassName("journalChangeBtn")[0];
 		let workJournalContent = document.getElementsByClassName("workJournalContent")[0];
 		workJournalContent.innerHTML = "";
@@ -3737,6 +3938,8 @@ class WorkJournalSet{
 			journalChangeBtn.dataset.type = "this";
 			journalChangeBtn.innerText = "업무일지(금주)";
 		}
+
+		$('.theme-loader').delay(2000).fadeOut("slow");
 	}
 }
 
@@ -5210,6 +5413,8 @@ class TechSet{
 					window.setTimeout(this.drawTechList, 200);
 					window.setTimeout(CommonDatas.searchListSet("techList"), 200);
 				}
+
+				$('.theme-loader').delay(1000).fadeOut("slow");
 			}
 		}).catch((error) => {
 			msg.set("기술지원관리 리스트 에러입니다.\n" + error);
@@ -5377,6 +5582,8 @@ class TechSet{
 				result = JSON.parse(result);
 				let tech = new Tech(result);
 				tech.detail();
+
+				localStorage.setItem("loadSetPage", window.location.pathname);
 			}
 		}).catch((error) => {
 			msg.set("상세보기 에러 입니다.\n" + error);
@@ -6115,6 +6322,7 @@ class StoreSet{
 				setTimeout(() => {
 					this.drawStoreList();
 					CommonDatas.searchListSet("storeList");
+					$('.theme-loader').delay(1000).fadeOut("slow");
 				}, 1000)
 			}
 		}).catch((error) => {
@@ -6292,6 +6500,8 @@ class StoreSet{
 				result = JSON.parse(result);
 				let store = new Store(result);
 				store.detail();
+
+				localStorage.setItem("loadSetPage", window.location.pathname);
 			}
 		}).catch((error) => {
 			msg.set("상세보기 에러 입니다.\n" + error);

@@ -1,5 +1,6 @@
 package kr.co.bizcore.v1.svc;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +11,7 @@ import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 import kr.co.bizcore.v1.domain.Estimate;
 import kr.co.bizcore.v1.domain.EstimateItem;
+import kr.co.bizcore.v1.domain.Sales;
 import kr.co.bizcore.v1.domain.Schedule;
 import kr.co.bizcore.v1.domain.SimpleEstimate;
 import kr.co.bizcore.v1.domain.SimpleSopp;
@@ -22,23 +24,9 @@ public class SoppService extends Svc {
 
     private static final Logger logger = LoggerFactory.getLogger(SoppService.class);
     
-    public String getSoppList(String compId){
-        String result = null;
-        List<SimpleSopp> list = null;
-        int x = 0;
-
-        list = soppMapper.getSoppList(compId);
-        if(list != null && list.size() > 0){
-            for(x = 0 ; x < list.size() ; x++){
-                if(x == 0)  result = "[";
-                else        result += ",";
-                result += list.get(x).toJson();
-            }
-            result += "]";
-        }
-
-        return result;
-    } // End of getSoppList()
+    public List<Sales> getSoppList(Sopp sopp){
+        return soppMapper.getSoppList(sopp);
+    }
     
     public String getSopp(int soppNo, String compId, String aesKey, String aesIv){
         Sopp result = null;

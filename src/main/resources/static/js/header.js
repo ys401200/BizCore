@@ -31,6 +31,15 @@ function init() {
 		}
 	});
 
+	window.onpageshow = function(event) {
+		if ( event.persisted || (window.performance && window.performance.navigation.type == 2)) {
+			if(localStorage.getItem("loadSetPage") != null){
+				location.href = localStorage.getItem("loadSetPage");
+				localStorage.removeItem("loadSetPage");
+			}
+		}
+  }
+
 	// if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined) {
 	// 	window.setTimeout(addNoteContainer, 1500);
 	// } else {

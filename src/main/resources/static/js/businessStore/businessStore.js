@@ -1,6 +1,8 @@
 $(document).ready(() => {
     init();
     
-    const setStore = new StoreSet();
-    setStore.list();
+    setTimeout(() => {
+        const setStore = new StoreSet();
+        setStore.list();
+    }, 300);
 });

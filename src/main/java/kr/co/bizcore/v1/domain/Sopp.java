@@ -1,6 +1,5 @@
 package kr.co.bizcore.v1.domain;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -21,6 +20,40 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Sopp extends SimpleSopp{
+    //=================== 23.09.14 이후 추가 ============================
+    private int soppNo;
+    private int compNo;
+    private int userNo;
+    private int custNo;
+    private int contNo;
+    private int custMemberNo;
+    private int ptncNo;
+    private int ptncMemberNo;
+    private int buyrNo;
+    private int buyrMemberNo;
+    private int cntrctMth;
+    private String soppTitle;
+    private String soppDesc;
+    private int soppTargetAmt;
+    private String soppTargetDate;
+    private String maintenance_S;
+    private String maintenance_E;
+    private int soppType;
+    private String soppStatus;
+    private int soppSrate;
+    private int soppSource;
+    private String sopp2Desc;
+    private String sopp2regDatetime;
+    private String businessType;
+    private String op_priority;
+    private String regDatetime;
+    private String modDatetime;
+    private String attrib;
+    private int productNo;
+    private String maintenaceTarget;
+    private int secondUserNo;
+    private String categories;
+    //==================================================================
 
     private int contract;
     @XmlElement(nillable=true)
@@ -42,8 +75,8 @@ public class Sopp extends SimpleSopp{
     @XmlElement(nillable=true)
     private Date remarkDate;
     @XmlElement(nillable=true)
-    private String businessType;
-    @XmlElement(nillable=true)
+    // private String businessType;
+    // @XmlElement(nillable=true)
     private String priority;
 
     public String toJson(List<HashMap<String, String>> fileData, List<Schedule> schedules, String trades, String estimate) {

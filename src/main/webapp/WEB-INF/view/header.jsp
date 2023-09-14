@@ -48,6 +48,22 @@
 <div class="msg_cnt"></div>
 <jsp:include page="./modal/modal.jsp"/>
 <jsp:include page="./note/note.jsp"/>
+<div class="theme-loader">
+	<div class="ball-scale-loader">
+		<div class='contain'>
+			<div class="ring"></div>
+			<div class="ring"></div>
+			<div class="ring"></div>
+			<div class="ring"></div>
+			<div class="ring"></div>
+			<div class="ring"></div>
+			<div class="ring"></div>
+			<div class="ring"></div>
+			<div class="ring"></div>
+			<div class="ring"></div>
+		</div>
+	</div>
+</div>
 <div class="header">
 	<div class="mainTopLogo">
 		<a href="/"><img src="/api/system/logo" id="mainTopLogoImg" /></a>

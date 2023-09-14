@@ -1,10 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
     init();
-    
-	setTimeout(() => {
-		$("#loadingDiv").hide();
-		$("#loadingDiv").loading("toggle");
-	}, 300);
 
 	getSoppList();
 });

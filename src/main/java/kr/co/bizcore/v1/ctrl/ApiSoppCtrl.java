@@ -1,16 +1,22 @@
 package kr.co.bizcore.v1.ctrl;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import kr.co.bizcore.v1.domain.Sales;
 import kr.co.bizcore.v1.domain.Sopp;
+import kr.co.bizcore.v1.msg.Msg;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
@@ -20,32 +26,49 @@ public class ApiSoppCtrl extends Ctrl{
 
     private static final Logger logger = LoggerFactory.getLogger(ApiSoppCtrl.class);
 
-    @RequestMapping(value = "", method = RequestMethod.GET)
-    public String apiSopp(HttpServletRequest request){
-        String result = null;
-        String compId = null;
-        String aesKey = null;
-        String aesIv = null;
+    @GetMapping("")
+    public String soppList(HttpServletRequest request) {
+        String result = null, data = null, aesKey = null, aesIv = null, userNo = null, compId = null;
+        int compNo = 0;
         HttpSession session = null;
-
+        Msg msg = null;
+        List<Sales> list = null;
+        int i = 0;
+        
         session = request.getSession();
-        compId = (String)session.getAttribute("compId");
-        aesKey = (String)session.getAttribute("aesKey");
-        aesIv = (String)session.getAttribute("aesIv");
-        if(compId == null)  compId = (String)request.getAttribute("compId");
-
-        if(compId == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Company ID is Not verified.\"}";
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        compNo = (int) session.getAttribute("compNo");
+        userNo = (String) session.getAttribute("userNo");
+        msg = getMsg((String) session.getAttribute("lang"));
+        if (compNo == 0)
+        compNo = (int) request.getAttribute("compNo");
+            
+        if (compNo == 0) {
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compNoNotVerified + "\"}";
         }else if(aesKey == null || aesIv == null){
-            result = "{\"result\":\"failure\",\"msg\":\"Encryption key is not set.\"}";
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
         }else{
-            result = soppService.getSoppList(compId);
-            result = soppService.encAes(result, aesKey, aesIv);
-            result = "{\"result\":\"ok\",\"data\":\"" + result + "\"}";
+            Sopp sopp = new Sopp();
+            sopp.setCompNo(compNo);
+            list = soppService.getSoppList(sopp);
+            if (list != null) {
+                data = "[";
+                for (i = 0; i < list.size(); i++) {
+                    if (i > 0)
+                    data += ",";
+                    data += list.get(i).toJson();
+                }
+                data += "]";
+            } else {
+                data = "[]";
+            }
+            data = soppService.encAes(data, aesKey, aesIv);
+            result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";            
         }
 
         return result;
-    } // End of apiSopp
+    }
 
     @RequestMapping(value = "/{no:\\d+}", method = RequestMethod.GET)
     public String apiSoppNumber(HttpServletRequest request, @PathVariable int no){

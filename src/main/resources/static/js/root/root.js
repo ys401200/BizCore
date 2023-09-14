@@ -2,17 +2,16 @@ $(document).ready(() => {
 	init();
 	goalList();
 
-	setTimeout(() => {
-		$("#loadingDiv").hide();
-		$("#loadingDiv").loading("toggle");
-	}, 300);
-
 	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined || storage.monthTarget === undefined){
 		window.setTimeout(gridWidget, 1000);
 	}else{
 		window.setTimeout(gridWidget, 200);
 	}
 });
+
+window.onload = () => {
+	$('.theme-loader').delay(2300).fadeOut("slow");
+}
 
 function gridWidget(){
 	let widgetContainer, html = "";
