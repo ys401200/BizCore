@@ -9,14 +9,13 @@ import org.apache.ibatis.annotations.Update;
 
 import kr.co.bizcore.v1.domain.Estimate;
 import kr.co.bizcore.v1.domain.EstimateItem;
-import kr.co.bizcore.v1.domain.Sales;
 import kr.co.bizcore.v1.domain.SimpleEstimate;
 import kr.co.bizcore.v1.domain.Sopp;
 
 public interface SoppMapper {
 
     @Select("SELECT * FROM swc_sopp WHERE attrib NOT LIKE 'XXX%' AND compNo = #{sopp.compNo} ORDER BY regDatetime DESC")
-    public List<Sales> getSoppList(@Param("sopp") Sopp sopp);
+    public List<Sopp> getSoppList(@Param("sopp") Sopp sopp);
 
     @Select("SELECT soppno AS no, sopptype AS soppType, cntrctMth AS contType, sopptitle AS title, buyrno AS customer, custNo AS enduser, userNo AS employee, sopptargetamt AS expectedSales, soppstatus AS status, " + 
             "contno AS contract, custMemberNo AS picOfCustomer, " + 

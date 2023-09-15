@@ -1,60 +1,27 @@
 @charset "UTF-8";
-
-.searchContainer .searchMultiContent .searchTitle{
-	grid-column: span 2;
-}
-
-.searchContainer .searchMultiContent .searchCreated > .searchGridItem{
+.searchContainer .searchMultiContent .searchDate > .searchGridItem{
 	display: grid;
 	grid-template-columns: 45% 10% 45%;
 	text-align: center;
 }
 
-.searchContainer .searchMultiContent .searchCreated > .searchGridItem > span{
+.searchContainer .searchMultiContent .searchDate > .searchGridItem > span{
 	display: flex;
 	align-items: center;
 	justify-content: center;
 }
 
-.soppContainer > button{
-	color: #ebefff;
-	box-shadow: 0 1px 1px #bdbfc9;
-	background-color:#182f81;
-	padding:0 14px;
-	height:30px;
-	border-radius: 5px;
-	float: right;
-	margin-top: 5px;
-	margin-right: 5px;
-	margin-bottom: 10px;
-}
-
-.soppContainer > button:hover{
-	color: #182f81;
-	box-shadow: 0 1px 2px #bdbfc9;
-	background-color:#ebefff;
-}
-
-.soppSearchContainer .soppSearchBtn button img{
-	width:18px;
-}
-
-.soppSearchContainer .soppSearchBtn button:hover{
-	cursor: pointer;
-}
-
 .soppContainer{
+    margin-top: 3px;
 	background: #FFFFFF;
-	overflow: hidden;
+	overflow: auto;
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
 }
 
-.soppContainer > .contentHeaders
-
-/* .soppContainer > hr{
+.soppContainer > hr{
 	float: left;
 	border:2px solid #182f81;
- 	height : 4vh;
+ 	height : 32px;
  	margin: 0;
 }
 
@@ -65,30 +32,35 @@
 	line-height: 40px;
 	color: #332E85;
 	float: left;
-} */
+}
 
 .soppContainer .gridList{
-    display: grid; 
+    display: block; 
 	width: 99%; 
+	/* height: auto; */
 	margin: 0 auto;
 }
 
 .soppContainer .gridList .gridHeader,
 .soppContainer .gridList .gridContent{
-    grid-template-columns: 5% 40% 5% 5% 5% 10% 10% 10% 10%;
+    grid-template-columns: 5% 5% 5% 25% 10% 10% 10% 5% 10% 10% 5%;
 }
 
 .soppContainer .gridList .gridHeader{
 	border-bottom:1px solid #abb6d5;
 }
 
-.soppContainer .pageContainer{
-	box-sizing: border-box;
-	margin:20px 0.5% 20px 0.5%;
+.soppContainer > button{
+	margin:0.4% 0.5% 0 0;
+	box-shadow:0px 1px 2px #bdbfc9;
+	color:#ebefff;
+	background-color:#182f81;
+	padding:0 0.7%;
+	height:30px;
+	border-radius:5px;
+	float: right;
 }
 
-.soppContainer .pageContainer .paging_cell_current{
-	color:#182f81;
-	border:1px solid #182f81;
-	background-color:#ebefff;
-}
+/* .defaultFormContainer .defaultFormLine:first-child{
+	border-top: 0;
+} */

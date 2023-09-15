@@ -32,7 +32,7 @@ public class ApiSoppCtrl extends Ctrl{
         int compNo = 0;
         HttpSession session = null;
         Msg msg = null;
-        List<Sales> list = null;
+        List<Sopp> list = null;
         int i = 0;
         
         session = request.getSession();

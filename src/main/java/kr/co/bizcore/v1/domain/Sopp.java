@@ -1,5 +1,6 @@
 package kr.co.bizcore.v1.domain;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -34,7 +35,7 @@ public class Sopp extends SimpleSopp{
     private int cntrctMth;
     private String soppTitle;
     private String soppDesc;
-    private int soppTargetAmt;
+    private BigDecimal soppTargetAmt;
     private String soppTargetDate;
     private String maintenance_S;
     private String maintenance_E;

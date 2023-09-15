@@ -14,7 +14,6 @@ import kr.co.bizcore.v1.domain.EstimateItem;
 import kr.co.bizcore.v1.domain.Sales;
 import kr.co.bizcore.v1.domain.Schedule;
 import kr.co.bizcore.v1.domain.SimpleEstimate;
-import kr.co.bizcore.v1.domain.SimpleSopp;
 import kr.co.bizcore.v1.domain.Sopp;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,7 +23,7 @@ public class SoppService extends Svc {
 
     private static final Logger logger = LoggerFactory.getLogger(SoppService.class);
     
-    public List<Sales> getSoppList(Sopp sopp){
+    public List<Sopp> getSoppList(Sopp sopp){
         return soppMapper.getSoppList(sopp);
     }
     

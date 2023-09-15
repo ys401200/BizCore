@@ -1183,22 +1183,22 @@ class SoppSet{
 		CommonDatas.Temps.soppSet = this;
 	}
 
-	//영업활동 리스트 저장 함수
+	//영업기회 리스트 저장 함수
 	list() {
-		axios.get("/api/sopp/").then((response) => {
+		axios.get("/api/sopp").then((response) => {
 			if (response.data.result === "ok") {
 				let result;
 				result = cipher.decAes(response.data.data);
 				result = JSON.parse(result);
 				storage.soppList = result;
 
-				// if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.sopp === undefined) {
-				// 	window.setTimeout(this.drawSalesList, 1000);
-				// 	window.setTimeout(CommonDatas.searchListSet("salesList"), 1000);
-				// } else {
-				// 	window.setTimeout(this.drawSalesList, 200);
-				// 	window.setTimeout(CommonDatas.searchListSet("salesList"), 200);
-				// }
+				if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.sopp === undefined) {
+					window.setTimeout(this.drawSoppList, 1000);
+					// window.setTimeout(CommonDatas.searchListSet("salesList"), 1000);
+				} else {
+					window.setTimeout(this.drawSoppList, 200);
+					// window.setTimeout(CommonDatas.searchListSet("salesList"), 200);
+				}
 
 				$('.theme-loader').delay(1000).fadeOut("slow");
 			}
@@ -1208,16 +1208,16 @@ class SoppSet{
 		})
 	}
 
-	//영업활동 리스트 출력 함수
+	//영업기회 리스트 출력 함수
 	drawSoppList() {
-		let container, result, jsonData, containerTitle, job, header = [], data = [], ids = [], disDate, setDate, str, fnc = [], pageContainer, hideArr, showArr, schedFrom, schedTo;
+		let container, result, jsonData, containerTitle, job, header = [], data = [], ids = [], disDate, setDate, str, fnc = [], pageContainer, hideArr, showArr, soppTargetDate;
 
-		if (storage.salesList === undefined) {
+		if (storage.soppList === undefined) {
 			msg.set("등록된 영업기회가 없습니다");
 		}
 		else {
 			if (storage.searchDatas === undefined) {
-				jsonData = storage.salesList;
+				jsonData = storage.soppList;
 			} else {
 				jsonData = storage.searchDatas;
 			}
@@ -1248,6 +1248,10 @@ class SoppSet{
 				"align": "center",
 			},
 			{
+				"title": "계약구분",
+				"align": "center",
+			},
+			{
 				"title": "영업기회명",
 				"align": "center",
 			},
@@ -1264,7 +1268,7 @@ class SoppSet{
 				"align": "center",
 			},
 			{
-				"title": "담당사원",
+				"title": "담당자",
 				"align": "center",
 			},
 			{
@@ -1286,7 +1290,7 @@ class SoppSet{
 				{
 					"setData": undefined,
 					"align": "center",
-					"col": 10,
+					"col": 11,
 				},
 			];
 
@@ -1295,10 +1299,8 @@ class SoppSet{
 			for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
 				disDate = CommonDatas.dateDis(new Date(jsonData[i].regDatetime).getTime(), new Date(jsonData[i].modDatetime).getTime());
 				setDate = CommonDatas.dateFnc(disDate, "yy.mm.dd");
-				disDate = CommonDatas.dateDis(new Date(jsonData[i].schedFrom).getTime());
-				schedFrom = CommonDatas.dateFnc(disDate, "yy.mm.dd");
-				disDate = CommonDatas.dateDis(new Date(jsonData[i].schedTo).getTime());
-				schedTo = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+				disDate = CommonDatas.dateDis(new Date(jsonData[i].soppTargetDate).getTime());
+				soppTargetDate = CommonDatas.dateFnc(disDate, "yy.mm.dd");
 
 				str = [
 					{
@@ -1306,19 +1308,27 @@ class SoppSet{
 						"align": "center",
 					},
 					{
-						"setData": jsonData[i].title,
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].soppType)) ? "" : storage.code.etc[jsonData[i].soppType],
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].cntrctMth)) ? "" : storage.code.etc[jsonData[i].cntrctMth],
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].soppTitle)) ? "" : jsonData[i].soppTitle,
 						"align": "left",
 					},
 					{
-						"setData": schedFrom,
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].custNo)) ? "" : storage.customer[jsonData[i].custNo].name,
 						"align": "center",
 					},
 					{
-						"setData": schedTo,
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].buyrNo)) ? "" : storage.customer[jsonData[i].buyrNo].name,
 						"align": "center",
 					},
 					{
-						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].soppNo)) ? "" : CommonDatas.getSoppFind(jsonData[i].soppNo, "name"),
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].productNo)) ? "" : CommonDatas.getProductFind(jsonData[i].productNo, "name"),
 						"align": "center",
 					},
 					{
@@ -1326,32 +1336,32 @@ class SoppSet{
 						"align": "center",
 					},
 					{
-						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].custNo)) ? "" : storage.customer[jsonData[i].custNo].name,
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].soppTargetAmt)) ? 0 : jsonData[i].soppTargetAmt.toLocaleString("en-US"),
+						"align": "right",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].soppStatus)) ? "" : storage.code.etc[jsonData[i].soppStatus],
 						"align": "center",
 					},
 					{
-						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].ptncNo)) ? "" : storage.customer[jsonData[i].ptncNo].name,
+						"setData": soppTargetDate,
 						"align": "center",
-					},
-					{
-						"setData": jsonData[i].desc,
-						"align": "left",
 					},
 				];
 
-				fnc.push("CommonDatas.Temps.salesSet.salesDetailView(this)");
-				ids.push(jsonData[i].salesNo);
+				fnc.push("CommonDatas.Temps.soppSet.soppDetailView(this)");
+				ids.push(jsonData[i].soppNo);
 				data.push(str);
 			}
 
-			let pageNation = CommonDatas.createPaging(pageContainer, result[3], "CommonDatas.pageMove", "CommonDatas.Temps.salesSet.drawSalesList", result[0]);
+			let pageNation = CommonDatas.createPaging(pageContainer, result[3], "CommonDatas.pageMove", "CommonDatas.Temps.soppSet.drawSoppList", result[0]);
 			pageContainer.innerHTML = pageNation;
 		}
 
 		CommonDatas.createGrid(container, header, data, ids, job, fnc);
 		CommonDatas.setViewContents(hideArr, showArr);
-		document.getElementById("multiSearchBtn").setAttribute("onclick", "CommonDatas.Temps.salesSet.searchSubmit();");
-		containerTitle.innerText = "영업활동조회";
+		document.getElementById("multiSearchBtn").setAttribute("onclick", "CommonDatas.Temps.soppSet.searchSubmit();");
+		containerTitle.innerText = "영업기회조회";
 
 		let path = location.pathname.split("/");
 
@@ -1359,6 +1369,189 @@ class SoppSet{
 			let content = document.querySelector(".gridContent[data-id=\"" + path[3] + "\"]");
 			CommonDatas.Temps.salesSet.salesDetailView(content);
 		}
+	}
+
+	//영업기회 등록 폼
+	soppInsertForm(){
+		let html, dataArray;
+	
+		dataArray = [
+			{
+				"title": "담당자(*)",
+				"elementId": "schedFrom",
+				"type": "datetime",
+				"disabled": false,
+			},
+			{
+				"title": "(부)담당자(*)",
+				"elementId": "schedTo",
+				"type": "datetime",
+				"disabled": false,
+			},
+			{
+				"title": "매출처",
+				"elementId": "salesPlace",
+				"disabled": false,
+			},
+			{
+				"title": "매출처 담당자(*)",
+				"selectValue": [
+					{
+						"key": "10170",
+						"value": "회사방문",
+					},
+					{
+						"key": "10171",
+						"value": "기술지원",
+					},
+					{
+						"key": "10221",
+						"value": "제품설명",
+					},
+					{
+						"key": "10222",
+						"value": "시스템데모",
+					},
+					{
+						"key": "10223",
+						"value": "제품견적",
+					},
+					{
+						"key": "10224",
+						"value": "계약건 의사결정지원",
+					},
+					{
+						"key": "10225",
+						"value": "계약",
+					},
+					{
+						"key": "10226",
+						"value": "사후처리",
+					},
+					{
+						"key": "10227",
+						"value": "기타",
+					},
+					{
+						"key": "10228",
+						"value": "협력사요청",
+					},
+					{
+						"key": "10229",
+						"value": "협력사문의",
+					},
+					{
+						"key": "10230",
+						"value": "교육",
+					},
+					{
+						"key": "10231",
+						"value": "전화상담",
+					},
+					{
+						"key": "10232",
+						"value": "제조사업무협의",
+					},
+					{
+						"key": "10233",
+						"value": "외부출장",
+					},
+					{
+						"key": "10234",
+						"value": "제안설명회",
+					}
+				],
+				"type": "select",
+				"elementId": "type",
+				"disabled": false,
+			},
+			{
+				"title": "엔드유저(*)",
+				"elementId": "userNo",
+				"complete": "user",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+			},
+			{
+				"title": "진행단계",
+				"elementId": "soppNo",
+				"complete": "sopp",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"disabled": false,
+			},
+			{
+				"title": "가능성",
+				"elementId": "custNo",
+				"complete": "customer",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"disabled": false,
+			},
+			{
+				"title": "계약구분",
+				"elementId": "ptncNo",
+				"complete": "customer",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"disabled": false,
+			},
+			{
+				"title": "매출예정일(*)",
+				"elementId": "title",
+				"col": 4,
+				"disabled": false,
+			},
+			{
+				"title": "내용",
+				"elementId": "desc",
+				"type": "textarea",
+				"col": 4,
+				"disabled": false,
+			}
+		];
+	
+		html = CommonDatas.detailViewForm(dataArray, "modal");
+	
+		modal.show();
+		modal.content.style.minWidth = "70vw";
+		modal.content.style.maxWidth = "70vw";
+		modal.headTitle.innerText = "영업활동등록";
+		modal.body.innerHTML = "<div class=\"defaultFormContainer\">" + html + "</div>";
+		modal.confirm.innerText = "등록";
+		modal.close.innerText = "취소";
+		modal.confirm.setAttribute("onclick", "const sales = new Sales(); CommonDatas.Temps.sales.insert();");
+		modal.close.setAttribute("onclick", "modal.hide();");
+
+		storage.formList = {
+			"soppNo": 0,
+			"userNo": storage.my,
+			"compNo": 0,
+			"custNo": 0,
+			"schedFrom": "",
+			"schedTo": "",
+			"salesPlace": "",
+			"type": "",
+			"desc": "",
+			"salesCheck": 0,
+			"title": "",
+			"ptncNo": 0,
+			"schedType": "",
+			"regDatetime": "",
+			"modDatetime": ""
+		};
+		
+		setTimeout(() => {
+			let my = storage.my, nowDate;
+			nowDate = new Date();
+			nowDate = nowDate.toISOString().substring(0, 10);
+			document.getElementById("userNo").value = storage.user[my].userName;
+			document.getElementById("userNo").setAttribute("data-change", true);
+			document.getElementById("schedFrom").value = nowDate + "T09:00:00";
+			document.getElementById("schedTo").value = nowDate + "T18:00:00";
+			ckeditor.config.readOnly = false;
+			window.setTimeout(setEditor, 100);
+		}, 100);
 	}
 }
 
