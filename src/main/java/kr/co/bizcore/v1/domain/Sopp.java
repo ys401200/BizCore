@@ -51,7 +51,7 @@ public class Sopp extends SimpleSopp{
     private String modDatetime;
     private String attrib;
     private int productNo;
-    private String maintenaceTarget;
+    private String maintenanceTarget;
     private int secondUserNo;
     private String categories;
     //==================================================================

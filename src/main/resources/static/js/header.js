@@ -53,13 +53,13 @@ function init() {
 
 	if (prepare !== undefined) window.setTimeout(nextStep, 50);
 
-	getStorageList();
+	getCustomer();
 	getCommonCode();
 	getUserMap();
 	// getDeptMap();
 	// getBasicInfo();
-	getCustomer();
 	getUserRank();
+	getStorageList();
 	getPersonalize();
 	noteLiveUpdate();
 	CommonDatas.setTopPathActive();
@@ -3606,9 +3606,21 @@ function getStorageList() {
 			success: (result) => {
 				if (result.result === "ok") {
 					let resultJson;
+					storage.productCust = [];
 					resultJson = cipher.decAes(result.data);
 					resultJson = JSON.parse(resultJson);
 					storage.product = resultJson;
+
+					for(let i = 0; i < resultJson.length; i++){
+						let item = resultJson[i];
+						let datas = {};
+
+						datas = item;
+						datas.productName = item.productName + " : " + storage.customer[item.custNo].name;
+
+						storage.productCust.push(datas);
+					}
+
 					console.log("[getProduct] Success getting product list.");
 				}
 			},

@@ -10,8 +10,11 @@ import kr.co.bizcore.v1.domain.Product;
 
 public interface ProductMapper {
     
-    @Select("SELECT compId, no, categoryName, vendor, writer, name, `desc`, price, image, created, modified FROM bizcore.product WHERE deleted IS NULL AND compId = #{compId}")
-    public List<Product> getProductList(@Param("compId") String compId);
+    @Select("SELECT * FROM swc_product WHERE attrib NOT LIKE 'XXX%' AND compNo = #{product.compNo}")
+    public List<Product> getProductList(@Param("product") Product product);
+
+    // @Select("SELECT compId, no, categoryName, vendor, writer, name, `desc`, price, image, created, modified FROM bizcore.product WHERE deleted IS NULL AND compId = #{compId}")
+    // public List<Product> getProductList(@Param("compId") String compId);
 
     @Select("SELECT compId, no, categoryName, vendor, writer, name, `desc`, price, image, created, modified FROM bizcore.swc_product WHERE compId = (SELECT compId FROM swcore2.swc_company WHERE compId = #{compId}) LIMIT #{start}, #{end}")
     public List<Product> getProductListWithStartAndEnd(@Param("compId") String compId, @Param("start") int start, @Param("end") int end);

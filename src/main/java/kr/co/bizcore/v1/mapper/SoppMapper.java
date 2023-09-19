@@ -3,6 +3,7 @@ package kr.co.bizcore.v1.mapper;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
@@ -16,6 +17,11 @@ public interface SoppMapper {
 
     @Select("SELECT * FROM swc_sopp WHERE attrib NOT LIKE 'XXX%' AND compNo = #{sopp.compNo} ORDER BY regDatetime DESC")
     public List<Sopp> getSoppList(@Param("sopp") Sopp sopp);
+
+    @Insert("INSERT INTO swc_sopp (userNo, compNo, custNo, contNo, custMemberNo, buyrNo, cntrctMth, soppTitle, soppDesc, soppTargetAmt, soppTargetDate, maintenance_S, maintenance_E, soppType, soppStatus, soppSrate, maintenanceTarget, secondUserNo, categories, regDatetime) VALUES (#{sopp.userNo}, #{sopp.compNo}, #{sopp.custNo}, #{sopp.contNo}, #{sopp.custMemberNo}, #{sopp.buyrNo}, #{sopp.cntrctMth}, #{sopp.soppTitle}, #{sopp.soppDesc}, #{sopp.soppTargetAmt}, #{sopp.soppTargetDate}, #{sopp.maintenance_S}, #{sopp.maintenance_E}, #{sopp.soppType}, #{sopp.soppStatus}, #{sopp.soppSrate}, #{sopp.maintenanceTarget}, #{sopp.secondUserNo}, #{sopp.categories}, now())")
+    public int soppInsert(@Param("sopp") Sopp sopp);
+
+
 
     @Select("SELECT soppno AS no, sopptype AS soppType, cntrctMth AS contType, sopptitle AS title, buyrno AS customer, custNo AS enduser, userNo AS employee, sopptargetamt AS expectedSales, soppstatus AS status, " + 
             "contno AS contract, custMemberNo AS picOfCustomer, " + 

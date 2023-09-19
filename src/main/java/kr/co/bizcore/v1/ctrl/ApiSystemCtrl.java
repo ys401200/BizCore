@@ -561,36 +561,36 @@ public class ApiSystemCtrl extends Ctrl{
     }
 
     // 제품 전체 조회
-    @GetMapping("/product")
-    public String productGet(HttpServletRequest request){
-        String result = null;
-        String compId = null;
-        String aesKey = null;
-        String aesIv = null;
-        String userNo = null;
-        Msg msg = null;
-        HttpSession session = null;
+    // @GetMapping("/product")
+    // public String productGet(HttpServletRequest request){
+    //     String result = null;
+    //     String compId = null;
+    //     String aesKey = null;
+    //     String aesIv = null;
+    //     String userNo = null;
+    //     Msg msg = null;
+    //     HttpSession session = null;
 
-        session = request.getSession();
-        msg = getMsg((String)session.getAttribute("lang"));
-        aesKey = (String)session.getAttribute("aesKey");
-        aesIv = (String)session.getAttribute("aesIv");
-        compId = (String)session.getAttribute("compId");
-        userNo = (String)session.getAttribute("userNo");
-        if(compId == null)  compId = (String)request.getAttribute("compId");
+    //     session = request.getSession();
+    //     msg = getMsg((String)session.getAttribute("lang"));
+    //     aesKey = (String)session.getAttribute("aesKey");
+    //     aesIv = (String)session.getAttribute("aesIv");
+    //     compId = (String)session.getAttribute("compId");
+    //     userNo = (String)session.getAttribute("userNo");
+    //     if(compId == null)  compId = (String)request.getAttribute("compId");
         
-        if(compId == null){
-            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
-        }else if(aesKey == null || aesIv == null){
-            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
-        }else{
-            result = systemService.getProductList(compId);
-            result = encAes(result, aesKey, aesIv);
-            result = "{\"result\":\"ok\",\"data\":\"" + result + "\"}";
-        }
+    //     if(compId == null){
+    //         result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+    //     }else if(aesKey == null || aesIv == null){
+    //         result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+    //     }else{
+    //         result = systemService.getProductList(compId);
+    //         result = encAes(result, aesKey, aesIv);
+    //         result = "{\"result\":\"ok\",\"data\":\"" + result + "\"}";
+    //     }
 
-        return result;
-    } // End of productGet()
+    //     return result;
+    // } // End of productGet()
 
     // 회사 로고를 전달하는 메서드
     @RequestMapping(value = "/logo", method = RequestMethod.GET)

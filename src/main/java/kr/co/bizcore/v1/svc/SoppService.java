@@ -26,6 +26,10 @@ public class SoppService extends Svc {
     public List<Sopp> getSoppList(Sopp sopp){
         return soppMapper.getSoppList(sopp);
     }
+
+    public int insertSopp(Sopp sopp) {
+        return soppMapper.soppInsert(sopp);
+    }
     
     public String getSopp(int soppNo, String compId, String aesKey, String aesIv){
         Sopp result = null;

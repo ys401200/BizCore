@@ -1328,7 +1328,7 @@ class SoppSet{
 						"align": "center",
 					},
 					{
-						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].productNo)) ? "" : CommonDatas.getProductFind(jsonData[i].productNo, "name"),
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].categories)) ? "" : jsonData[i].categories,
 						"align": "center",
 					},
 					{
@@ -1378,110 +1378,21 @@ class SoppSet{
 		dataArray = [
 			{
 				"title": "담당자(*)",
-				"elementId": "schedFrom",
-				"type": "datetime",
-				"disabled": false,
-			},
-			{
-				"title": "(부)담당자(*)",
-				"elementId": "schedTo",
-				"type": "datetime",
-				"disabled": false,
-			},
-			{
-				"title": "매출처",
-				"elementId": "salesPlace",
-				"disabled": false,
-			},
-			{
-				"title": "매출처 담당자(*)",
-				"selectValue": [
-					{
-						"key": "10170",
-						"value": "회사방문",
-					},
-					{
-						"key": "10171",
-						"value": "기술지원",
-					},
-					{
-						"key": "10221",
-						"value": "제품설명",
-					},
-					{
-						"key": "10222",
-						"value": "시스템데모",
-					},
-					{
-						"key": "10223",
-						"value": "제품견적",
-					},
-					{
-						"key": "10224",
-						"value": "계약건 의사결정지원",
-					},
-					{
-						"key": "10225",
-						"value": "계약",
-					},
-					{
-						"key": "10226",
-						"value": "사후처리",
-					},
-					{
-						"key": "10227",
-						"value": "기타",
-					},
-					{
-						"key": "10228",
-						"value": "협력사요청",
-					},
-					{
-						"key": "10229",
-						"value": "협력사문의",
-					},
-					{
-						"key": "10230",
-						"value": "교육",
-					},
-					{
-						"key": "10231",
-						"value": "전화상담",
-					},
-					{
-						"key": "10232",
-						"value": "제조사업무협의",
-					},
-					{
-						"key": "10233",
-						"value": "외부출장",
-					},
-					{
-						"key": "10234",
-						"value": "제안설명회",
-					}
-				],
-				"type": "select",
-				"elementId": "type",
-				"disabled": false,
-			},
-			{
-				"title": "엔드유저(*)",
 				"elementId": "userNo",
 				"complete": "user",
 				"keyup": "CommonDatas.addAutoComplete(this);",
 				"onClick": "CommonDatas.addAutoComplete(this);",
 			},
 			{
-				"title": "진행단계",
-				"elementId": "soppNo",
-				"complete": "sopp",
+				"title": "(부)담당자(*)",
+				"elementId": "secondUserNo",
+				"complete": "user",
 				"keyup": "CommonDatas.addAutoComplete(this);",
 				"onClick": "CommonDatas.addAutoComplete(this);",
 				"disabled": false,
 			},
 			{
-				"title": "가능성",
+				"title": "매출처(*)",
 				"elementId": "custNo",
 				"complete": "customer",
 				"keyup": "CommonDatas.addAutoComplete(this);",
@@ -1489,22 +1400,173 @@ class SoppSet{
 				"disabled": false,
 			},
 			{
-				"title": "계약구분",
-				"elementId": "ptncNo",
+				"title": "매출처 담당자",
+				"complete": "cip",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"elementId": "custMemberNo",
+				"disabled": false,
+			},
+			{
+				"title": "엔드유저(*)",
+				"elementId": "buyrNo",
 				"complete": "customer",
 				"keyup": "CommonDatas.addAutoComplete(this);",
 				"onClick": "CommonDatas.addAutoComplete(this);",
 				"disabled": false,
 			},
 			{
-				"title": "매출예정일(*)",
-				"elementId": "title",
+				"title": "진행단계(*)",
+				"selectValue": [
+					{
+						"key": "10178",
+						"value": "영업정보파악",
+					},
+					{
+						"key": "10179",
+						"value": "초기접촉",
+					},
+					{
+						"key": "10180",
+						"value": "제안서제출 및 PT",
+					},
+					{
+						"key": "10181",
+						"value": "견적서 제출",
+					},
+				],
+				"type": "select",
+				"elementId": "soppStatus",
+				"disabled": false,
+			},
+			{
+				"title": "가능성",
+				"elementId": "soppSrate",
+				"disabled": false,
+			},
+			{
+				"title": "계약구분(*)",
+				"selectValue": [
+					{
+						"key": "",
+						"value": "선택",
+					},
+					{
+						"key": "10247",
+						"value": "판매계약",
+					},
+					{
+						"key": "10248",
+						"value": "유지보수",
+					},
+					{
+						"key": "10254",
+						"value": "임대계약",
+					},
+				],
+				"type": "select",
+				"elementId": "cntrctMth",
+				"onChange": "CommonDatas.Temps.soppSet.cntrctMthChange(this);",
+				"disabled": false,
+			},
+			{
+				"title": "매출예정일",
+				"elementId": "soppTargetDate",
+				"type": "date",
+				"disabled": false,
+			},
+			{
+				"title": "판매방식(*)",
+				"selectValue": [
+					{
+						"key": "",
+						"value": "선택",
+					},
+					{
+						"key": "10173",
+						"value": "조달직판",
+					},
+					{
+						"key": "10174",
+						"value": "조달간판",
+					},
+					{
+						"key": "10175",
+						"value": "조달대행",
+					},
+					{
+						"key": "10176",
+						"value": "직접판매",
+					},
+					{
+						"key": "10218",
+						"value": "간접판매",
+					},
+					{
+						"key": "10255",
+						"value": "기타",
+					},
+				],
+				"type": "select",
+				"elementId": "soppType",
+				"disabled": false,
+			},
+			{
+				"title": "예상매출액",
+				"elementId": "soppTargetAmt",
+				"keyup": "CommonDatas.inputNumberFormat(this);",
+				"col": 2,
+				"disabled": false,
+			},
+			{
+				"title": "카테고리<br />(제품회사명)",
+				"complete": "productCust",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"disabled": false,
+			},
+			{
+				"title": "카테고리 선택 시<br />자동 입력(*)",
+				"elementId": "categories",
+				"col": 3,
+				"disabled": true,
+			},
+			{
+				"title": "유지보수대상(*)",
+				"selectValue": [
+					{
+						"key": "N",
+						"value": "No",
+					},
+					{
+						"key": "Y",
+						"value": "Yes",
+					},
+				],
+				"type": "select",
+				"elementId": "maintenanceTarget",
+				"col": 2,
+				"disabled": false,
+			},
+			{
+				"title": "유지보수 시작일<br />유지보수 계약 시(*)",
+				"elementId": "maintenance_S",
+				"type": "date",
+			},
+			{
+				"title": "유지보수 종료일<br />유지보수 계약 시(*)",
+				"elementId": "maintenance_E",
+				"type": "date",
+			},
+			{
+				"title": "영업기회명(*)",
+				"elementId": "soppTitle",
 				"col": 4,
 				"disabled": false,
 			},
 			{
 				"title": "내용",
-				"elementId": "desc",
+				"elementId": "soppDesc",
 				"type": "textarea",
 				"col": 4,
 				"disabled": false,
@@ -1516,42 +1578,218 @@ class SoppSet{
 		modal.show();
 		modal.content.style.minWidth = "70vw";
 		modal.content.style.maxWidth = "70vw";
-		modal.headTitle.innerText = "영업활동등록";
+		modal.headTitle.innerText = "영업기회등록";
 		modal.body.innerHTML = "<div class=\"defaultFormContainer\">" + html + "</div>";
 		modal.confirm.innerText = "등록";
 		modal.close.innerText = "취소";
-		modal.confirm.setAttribute("onclick", "const sales = new Sales(); CommonDatas.Temps.sales.insert();");
+		modal.confirm.setAttribute("onclick", "const sopp = new Sopp(); CommonDatas.Temps.sopp.insert();");
 		modal.close.setAttribute("onclick", "modal.hide();");
 
 		storage.formList = {
 			"soppNo": 0,
-			"userNo": storage.my,
 			"compNo": 0,
+			"userNo": storage.my,
 			"custNo": 0,
-			"schedFrom": "",
-			"schedTo": "",
-			"salesPlace": "",
-			"type": "",
-			"desc": "",
-			"salesCheck": 0,
-			"title": "",
+			"contNo": 0,
+			"custMemberNo": 0,
 			"ptncNo": 0,
-			"schedType": "",
+			"ptncMemberNo": 0,
+			"buyrNo": 0,
+			"buyrMemberNo": 0,
+			"cntrctMth": 0,
+			"soppTitle": "",
+			"soppDesc": "",
+			"soppTargetAmt": 0,
+			"soppTargetDate": "",
+			"maintenance_S": "",
+			"maintenance_E": "",
+			"soppType": 0,
+			"soppStatus": "",
+			"soppSrate": "",
+			"soppSource": 0,
+			"sopp2Desc": "",
+			"sopp2regDatetime": "",
+			"businessType": "",
+			"op_priority": "",
 			"regDatetime": "",
-			"modDatetime": ""
+			"modDatetime": "",
+			"attrib": "",
+			"productNo": 0,
+			"maintenanceTarget": "",
+			"secondUserNo": 0,
+			"categories": "",
 		};
 		
 		setTimeout(() => {
-			let my = storage.my, nowDate;
-			nowDate = new Date();
-			nowDate = nowDate.toISOString().substring(0, 10);
-			document.getElementById("userNo").value = storage.user[my].userName;
+			document.getElementById("userNo").value = storage.user[storage.my].userName;
 			document.getElementById("userNo").setAttribute("data-change", true);
-			document.getElementById("schedFrom").value = nowDate + "T09:00:00";
-			document.getElementById("schedTo").value = nowDate + "T18:00:00";
 			ckeditor.config.readOnly = false;
 			window.setTimeout(setEditor, 100);
 		}, 100);
+	}
+
+	cntrctMthChange(thisEle){
+		let maintenance_S = document.getElementById("maintenance_S");
+		let maintenance_E = document.getElementById("maintenance_E");
+
+		if(thisEle.value === "10248"){
+			let nowDate = new Date();
+
+			maintenance_S.value = nowDate.toISOString().substring(0, 10);
+			maintenance_S.disabled = false;
+
+			nowDate.setFullYear(nowDate.getFullYear() + 1);
+			maintenance_E.value = nowDate.toISOString().substring(0, 10);
+			maintenance_E.disabled = false;
+		} else{
+			maintenance_S.value = "";
+			maintenance_S.disabled = true;
+			maintenance_E.value = "";
+			maintenance_E.disabled = true;
+		}
+	}
+}
+
+//영업기회 crud
+class Sopp{
+	constructor(getData){
+		CommonDatas.Temps.sopp = this;
+
+		if (getData !== undefined) {
+			this.getData = getData;
+			this.soppNo = getData.soppNo;
+			this.compNo = getData.compNo;
+			this.userNo = getData.userNo;
+			this.custNo = getData.custNo;
+			this.contNo = getData.contNo;
+			this.custMemberNo = getData.custMemberNo;
+			this.ptncNo = getData.ptncNo;
+			this.ptncMemberNo = getData.ptncMemberNo;
+			this.buyrNo = getData.buyrNo;
+			this.buyrMemberNo = getData.buyrMemberNo;
+			this.cntrctMth = getData.cntrctMth;
+			this.soppTitle = getData.soppTitle;
+			this.soppDesc = getData.soppDesc;
+			this.soppTargetAmt = getData.soppTargetAmt;
+			this.soppTargetDate = getData.soppTargetDate;
+			this.maintenance_S = getData.maintenance_S;
+			this.maintenance_E = getData.maintenance_E;
+			this.soppType = getData.soppType;
+			this.soppStatus = getData.soppStatus;
+			this.soppSrate = getData.soppSrate;
+			this.soppSource = getData.soppSource;
+			this.sopp2Desc = getData.sopp2Desc;
+			this.sopp2regDatetime = getData.sopp2regDatetime;
+			this.businessType = getData.businessType;
+			this.op_priority = getData.op_priority;
+			this.regDatetime = getData.regDatetime;
+			this.modDatetime = getData.modDatetime;
+			this.attrib = getData.attrib;
+			this.productNo = getData.productNo;
+			this.maintenanceTarget = getData.maintenanceTarget;
+			this.secondUserNo = getData.secondUserNo;
+			this.categories = getData.categories;
+		} else {
+			this.soppNo = 0;
+			this.compNo = 0;
+			this.userNo = 0;
+			this.custNo = 0;
+			this.contNo = 0;
+			this.custMemberNo = 0;
+			this.ptncNo = 0;
+			this.ptncMemberNo = 0;
+			this.buyrNo = 0;
+			this.buyrMemberNo = 0;
+			this.cntrctMth = 0;
+			this.soppTitle = "";
+			this.soppDesc = "";
+			this.soppTargetAmt = 0;
+			this.soppTargetDate = "";
+			this.maintenance_S = "";
+			this.maintenance_E = "";
+			this.soppType = 0;
+			this.soppStatus = "";
+			this.soppSrate = "";
+			this.soppSource = 0;
+			this.sopp2Desc = "";
+			this.sopp2regDatetime = "";
+			this.businessType = "";
+			this.op_priority = "";
+			this.regDatetime = "";
+			this.modDatetime = "";
+			this.attrib = "";
+			this.productNo = 0;
+			this.maintenanceTarget = "";
+			this.secondUserNo = 0;
+			this.categories = "";
+		}
+	}
+
+	insert(){
+		let cntrctMth = document.getElementById("cntrctMth");
+
+		if(document.getElementById("secondUserNo").value === ""){
+			msg.set("부담당자를 선택해주세요.");
+			document.getElementById("secondUserNo").focus();
+			return false;
+		} else if(document.getElementById("secondUserNo").value !== "" && !CommonDatas.validateAutoComplete(document.getElementById("secondUserNo").value, "user")){
+			msg.set("조회된 부담당자가 없습니다.\n다시 확인해주세요.");
+			document.getElementById("secondUserNo").focus();
+			return false;
+		} else if(document.getElementById("custNo").value === ""){
+			msg.set("매출처를 선택해주세요.");
+			document.getElementById("custNo").focus();
+			return false;
+		} else if(document.getElementById("custNo").value !== "" && !CommonDatas.validateAutoComplete(document.getElementById("custNo").value, "customer")){
+			msg.set("조회된 매출처가 없습니다.\n다시 확인해주세요.");
+			document.getElementById("custNo").focus();
+			return false;
+		} else if(document.getElementById("buyrNo").value === ""){
+			msg.set("엔드유저를 입력해주세요.");
+			document.getElementById("buyrNo").focus();
+			return false;
+		} else if(document.getElementById("buyrNo").value !== "" && !CommonDatas.validateAutoComplete(document.getElementById("buyrNo").value, "customer")){
+			msg.set("조회된 엔드유저가 없습니다.\n다시 확인해주세요.");
+			document.getElementById("buyrNo").focus();
+			return false;
+		} else if(cntrctMth.value === ""){
+			msg.set("계약구분을 선택해주세요.");
+			return false;
+		} else if(document.getElementById("soppType").value === ""){
+			msg.set("판매방식을 선택해주세요.");
+			return false;
+		} else if(document.getElementById("categories").value === ""){
+			msg.set("카테고리(제품회사명)를 선택해주세요.");
+			return false;
+		} else if(cntrctMth.value === "10248" && (document.getElementById("maintenance_S").value === "" || document.getElementById("maintenance_E").value === "")){
+			msg.set("계약구분이 유지보수일 경우 유지보수 시작일과 유지보수 종료일을 선택하여야 합니다.\n유지보수 시작일과 종료일을 선택해주세요.");
+			return false;
+		} else if(document.getElementById("soppTitle").value === ""){
+			msg.set("영업기회명을 입력해주세요.");
+			document.getElementById("soppTitle").focus();
+			return false;
+		} else{
+			CommonDatas.formDataSet();
+			let data = storage.formList;
+			data = JSON.stringify(data);
+			data = cipher.encAes(data);
+
+			axios.post("/api/sopp", data, {
+				headers: { "Content-Type": "text/plain" }
+			}).then((response) => {
+				if (response.data.result === "ok") {
+					location.reload();
+					msg.set("등록되었습니다.");
+				} else {
+					msg.set("등록 중 에러가 발생하였습니다.");
+					return false;
+				}
+			}).catch((error) => {
+				msg.set("등록 도중 에러가 발생하였습니다.\n" + error);
+				console.log(error);
+				return false;
+			});
+		}
 	}
 }
 
@@ -5256,9 +5494,9 @@ class Estimate {
 			pdfMainContentItem.getElementsByClassName("itemSpec")[0].querySelector("input").dataset.value = 0;
 
 			for (let t = 0; t < storage.product.length; t++) {
-				if (storage.product[t].no.toString() === items[i].item) {
-					pdfMainContentItem.getElementsByClassName("itemSpec")[0].querySelector("input").value = storage.product[t].name;
-					pdfMainContentItem.getElementsByClassName("itemSpec")[0].querySelector("input").dataset.value = storage.product[t].no;
+				if (storage.product[t].productNo.toString() === items[i].item) {
+					pdfMainContentItem.getElementsByClassName("itemSpec")[0].querySelector("input").value = storage.product[t].productName;
+					pdfMainContentItem.getElementsByClassName("itemSpec")[0].querySelector("input").dataset.value = storage.product[t].productNo;
 				}
 			}
 
@@ -7778,9 +8016,9 @@ class Common {
 			}
 		} else if (dataType === "select") {
 			if (dataDisabled == true) {
-				html += "<select id='" + elementId + "' name='" + elementName + "' disabled='" + dataDisabled + "'>";
+				html += "<select id='" + elementId + "' name='" + elementName + "' disabled='" + dataDisabled + "' onChange=\"" + dataChangeEvent + "\">";
 			} else {
-				html += "<select id='" + elementId + "' name='" + elementName + "'>";
+				html += "<select id='" + elementId + "' name='" + elementName + "' onChange=\"" + dataChangeEvent + "\">";
 			}
 			for (let t = 0; t < data.selectValue.length; t++) {
 				html += "<option value='" + data.selectValue[t].key + "'>" + data.selectValue[t].value + "</option>";
@@ -7873,8 +8111,10 @@ class Common {
 						} else {
 							if (element.type === "date" || element.type === "datetime-local") {
 								// let dateTime = new Date(element.value).getTime();
-								let dateTime = new Date(new Date(element.value).toString().split('GMT')[0]+' UTC').toISOString().slice(0, -5).replace(/T/g, " ");
-								storageArr[key] = dateTime;
+								if(element.value !== ""){
+									let dateTime = new Date(new Date(element.value).toString().split('GMT')[0]+' UTC').toISOString().slice(0, -5).replace(/T/g, " ");
+									storageArr[key] = dateTime;
+								}
 							} else {
 								storageArr[key] = element.value;
 							}
@@ -8046,12 +8286,15 @@ class Common {
 
 					if (thisEle.dataset.complete === "customer" || thisEle.dataset.complete === "cip" || thisEle.dataset.complete === "product") {
 						if (thisEle.dataset.complete === "product") {
-							listDiv.dataset.value = storage[thisEle.dataset.complete][key].no;
-							listDiv.innerHTML = storage[thisEle.dataset.complete][key].name;
+							listDiv.dataset.value = storage[thisEle.dataset.complete][key].productNo;
+							listDiv.innerHTML = storage[thisEle.dataset.complete][key].productName;
 						} else {
 							listDiv.dataset.value = key;
 							listDiv.innerHTML = storage[thisEle.dataset.complete][key].name;
 						}
+					} else if(thisEle.dataset.complete === "productCust"){
+						listDiv.dataset.value = storage.customer[storage[thisEle.dataset.complete][key].custNo].name;
+						listDiv.innerHTML = storage[thisEle.dataset.complete][key].productName;
 					} else if (thisEle.dataset.complete === "user") {
 						listDiv.dataset.value = storage[thisEle.dataset.complete][key].userNo;
 						listDiv.innerHTML = storage[thisEle.dataset.complete][key].userName;
@@ -8073,12 +8316,20 @@ class Common {
 							let listDiv = document.createElement("div");
 							listDiv.setAttribute("onclick", "CommonDatas.autoCompleteClick(this);");
 							if (thisEle.dataset.complete === "product") {
-								listDiv.dataset.value = storage[thisEle.dataset.complete][key].no;
-								listDiv.innerHTML = storage[thisEle.dataset.complete][key].name;
+								listDiv.dataset.value = storage[thisEle.dataset.complete][key].productNo;
+								listDiv.innerHTML = storage[thisEle.dataset.complete][key].productName;
 							} else {
 								listDiv.dataset.value = key;
 								listDiv.innerHTML = storage[thisEle.dataset.complete][key].name;
 							}
+							autoComplete.append(listDiv);
+						}
+					} else if(thisEle.dataset.complete === "productCust"){
+						if (storage[thisEle.dataset.complete][key].productName.indexOf(thisEle.value) > -1) {
+							let listDiv = document.createElement("div");
+							listDiv.setAttribute("onclick", "CommonDatas.autoCompleteClick(this);");
+							listDiv.dataset.value = storage.customer[storage[thisEle.dataset.complete][key].custNo].name;
+							listDiv.innerHTML = storage[thisEle.dataset.complete][key].productName;
 							autoComplete.append(listDiv);
 						}
 					} else if (thisEle.dataset.complete === "user") {
@@ -8120,18 +8371,35 @@ class Common {
 		autoComplete = document.getElementsByClassName("autoComplete")[0];
 		input.value = thisEle.innerText;
 		input.setAttribute("data-change", true);
-	
-		if (storage.formList !== undefined) {
-			if (storage.formList[input.getAttribute("id")] !== undefined) {
-				storage.formList[input.getAttribute("id")] = thisEle.dataset.value;
-			}
-		}
 
-		if(thisEle.dataset.sopp !== undefined){
-			input.setAttribute("data-sopp", thisEle.dataset.sopp);
+		if(input.dataset.complete === "productCust"){
+			let categories = document.getElementById("categories");
+			
+			if(categories !== undefined){
+				if(categories.value.length > 0){
+					if(!categories.value.includes(thisEle.dataset.value)){
+						categories.value = categories.value + ", " + thisEle.dataset.value;
+					}
+				}else{
+					categories.value = thisEle.dataset.value;
+				}
+			}
+
+			thisEle.parentElement.previousElementSibling.value = "";
+		}else{
+			if (storage.formList !== undefined) {
+				if (storage.formList[input.getAttribute("id")] !== undefined) {
+					storage.formList[input.getAttribute("id")] = thisEle.dataset.value;
+				}
+			}
+	
+			if(thisEle.dataset.sopp !== undefined){
+				input.setAttribute("data-sopp", thisEle.dataset.sopp);
+			}
+		
+			input.setAttribute("data-value", thisEle.dataset.value);
 		}
 	
-		input.setAttribute("data-value", thisEle.dataset.value);
 		autoComplete.remove();
 	}
 
@@ -8537,12 +8805,12 @@ class Common {
 
 			if(type === "name"){
 				if(value == item.no){
-					result = item.name;
+					result = item.productName;
 					flag = true;
 				}
 			}else{
-				if(value.includes(item.name)){
-					result = item.no;
+				if(value.includes(item.productName)){
+					result = item.productNo;
 					flag = true;
 				}
 			}
