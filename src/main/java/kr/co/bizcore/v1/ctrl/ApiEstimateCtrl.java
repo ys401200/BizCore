@@ -138,34 +138,34 @@ public class ApiEstimateCtrl extends Ctrl {
     } // End of apiEstimateNumberGet
 
     //@GetMapping("/{no}")
-    public String apiEstimateNumberGet(HttpServletRequest request, @PathVariable String no){
-        String result = null, aesKey = null, aesIv = null, compId = null;
-        HttpSession session = null;
-        Estimate estimate = null;
-        String list = null, lang = null;
-        Msg msg = null;
+    // public String apiEstimateNumberGet(HttpServletRequest request, @PathVariable String no){
+    //     String result = null, aesKey = null, aesIv = null, compId = null;
+    //     HttpSession session = null;
+    //     Estimate estimate = null;
+    //     String list = null, lang = null;
+    //     Msg msg = null;
 
-        session = request.getSession();
-        aesKey = (String) session.getAttribute("aesKey");
-        aesIv = (String) session.getAttribute("aesIv");
-        lang = (String)session.getAttribute("lang");
-        msg = getMsg(lang);
-        compId = (String) session.getAttribute("compId");
-        if (compId == null)
-            compId = (String) request.getAttribute("compId");
+    //     session = request.getSession();
+    //     aesKey = (String) session.getAttribute("aesKey");
+    //     aesIv = (String) session.getAttribute("aesIv");
+    //     lang = (String)session.getAttribute("lang");
+    //     msg = getMsg(lang);
+    //     compId = (String) session.getAttribute("compId");
+    //     if (compId == null)
+    //         compId = (String) request.getAttribute("compId");
 
-        if (compId == null) {
-            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
-        } else
-            estimate = soppService.getEstimate(no, compId);
-            if (estimate == null) {
-                result = "{\"result\":\"failure\",\"msg\":\"" + msg.noResult + "\"}";
-            } else {
-                list = soppService.encAes(estimate.toJson(), aesKey, aesIv);
-                result = "{\"result\":\"ok\",\"data\":\"" + list + "\"}";
-            }
-        return result;
-    } // End of apiEstimateNumberGet
+    //     if (compId == null) {
+    //         result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
+    //     } else
+    //         estimate = soppService.getEstimate(no, compId);
+    //         if (estimate == null) {
+    //             result = "{\"result\":\"failure\",\"msg\":\"" + msg.noResult + "\"}";
+    //         } else {
+    //             list = soppService.encAes(estimate.toJson(), aesKey, aesIv);
+    //             result = "{\"result\":\"ok\",\"data\":\"" + list + "\"}";
+    //         }
+    //     return result;
+    // } // End of apiEstimateNumberGet
 
     @PostMapping({"","/{estmNo}"})
     public String apiEstimatePost(HttpServletRequest request, @RequestBody String requestBody, @PathVariable(required = false) String estmNo){

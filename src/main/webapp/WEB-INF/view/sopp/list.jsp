@@ -10,21 +10,25 @@
         <div class="searchContainer">
             <jsp:include page="../listSearch.jsp" />
             <div class="searchMultiContent">
-                <div class="searchEmployee">
+                <div class="searchUser">
                     <span>담당자</span>
-                    <input type="text" data-complete="user" autocomplete="off" id="searchEmployee" onclick="CommonDatas.addAutoComplete(this);" onkeyup="CommonDatas.addAutoComplete(this);">
+                    <input type="text" data-complete="user" data-key="userNo" autocomplete="off" id="searchUser" onclick="CommonDatas.addAutoComplete(this);" onkeyup="CommonDatas.addAutoComplete(this);">
                 </div>
-                <div class="searchCustomer">
+                <div class="searchCust">
                     <span>거래처</span>
-                    <input type="text" data-complete="customer" autocomplete="off" id="searchCustomer" onclick="CommonDatas.addAutoComplete(this);" onkeyup="CommonDatas.addAutoComplete(this);">
+                    <input type="text" data-complete="customer" data-key="custNo" autocomplete="off" id="searchCust" onclick="CommonDatas.addAutoComplete(this);" onkeyup="CommonDatas.addAutoComplete(this);">
                 </div>
                 <div class="searchTitle">
                     <span>영업기회명</span>
-                    <input type="text" data-complete="sopp" autocomplete="off" id="searchTitle" onclick="CommonDatas.addAutoComplete(this);" onkeyup="CommonDatas.addAutoComplete(this);">
+                    <input type="text" data-complete="sopp" data-key="soppTitle" autocomplete="off" id="searchTitle" onclick="CommonDatas.addAutoComplete(this);" onkeyup="CommonDatas.addAutoComplete(this);">
+                </div>
+                <div class="searchCategories">
+                    <span>카테고리(제품회사명)</span>
+                    <input type="text" data-complete="categories" data-key="categories" autocomplete="off" id="searchCategories" onclick="CommonDatas.addAutoComplete(this);" onkeyup="CommonDatas.addAutoComplete(this);">
                 </div>
                 <div class="searchSoppType">
                     <span>판매방식</span>
-                    <select id="searchSoppType">
+                    <select id="searchSoppType" data-key="soppType">
                         <option value="">선택</option>
                         <option value="조달직판">조달직판</option>
                         <option value="조달간판">조달간판</option>
@@ -34,18 +38,18 @@
                         <option value="기타">기타</option>
                     </select>
                 </div>
-                <div class="searchContType">
+                <div class="searchCntrctMth">
                     <span>계약구분</span>
-                    <select id="searchContType">
+                    <select id="searchCntrctMth" data-key="cntrctMth">
                         <option value="">선택</option>
                         <option value="판매계약">판매계약</option>
                         <option value="유지보수">유지보수</option>
                         <option value="임대계약">임대계약</option>
                     </select>
                 </div>
-                <div class="searchStatus">
+                <div class="searchSoppStatus">
                     <span>진행단계</span>
-                    <select id="searchStatus">
+                    <select id="searchSoppStatus" data-key="soppStatus">
                         <option value="">선택</option>
                         <option value="영업정보파악">영업정보파악</option>
                         <option value="초기접촉">초기접촉</option>
@@ -53,14 +57,14 @@
                         <option value="견적서제출">견적서제출</option>
                     </select>
                 </div>
-                <div class="searchCreated">
-                    <span>등록일</span>
-                    <div class="searchGridItem">
-                        <input type="date" id="searchCreatedFrom" max="9999-12-31" data-date-type="from" onchange="CommonDatas.searchDateDefaultSet(this);">
-                        <span>~</span>
-                        <input type="date" id="searchCreatedTo" max="9999-12-31" data-date-type="to" onchange="CommonDatas.searchDateDefaultSet(this);">
-                    </div>
-                </div>
+                <div class="searchDate">
+					<span>등록일</span>
+					<div class="searchGridItem">
+						<input type="date" id="searchDateFrom" max="9999-12-31" data-date-type="from" onchange="CommonDatas.searchDateDefaultSet(this);">
+						<span>~</span>
+						<input type="date" id="searchDateTo" max="9999-12-31" data-date-type="to" onchange="CommonDatas.searchDateDefaultSet(this);">
+					</div>
+				</div>
             </div>
         </div>
         <div class="soppContainer">

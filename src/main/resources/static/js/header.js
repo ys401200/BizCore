@@ -53,13 +53,13 @@ function init() {
 
 	if (prepare !== undefined) window.setTimeout(nextStep, 50);
 
-	getCustomer();
+	// getCustomer();
 	getCommonCode();
 	getUserMap();
 	// getDeptMap();
 	// getBasicInfo();
-	getUserRank();
 	getStorageList();
+	getUserRank();
 	getPersonalize();
 	noteLiveUpdate();
 	CommonDatas.setTopPathActive();
@@ -859,36 +859,65 @@ function getDeptMap(cache = false) {
 
 // API 서버에서 고객사 정보를 가져오는 함수
 function getCustomer() {
-	let url, customerTime, customerData;
+	// let url, customerTime, customerData;
 
-	url = apiServer + "/api/system/customer";
-	customerTime = sessionStorage.getItem("customerTime");
-	customerTime = customerTime == null ? 0 : customerTime * 1;
-	if ((new Date()).getTime() < customerTime + 600000) {
-		customerData = sessionStorage.getItem("customerData");
-		customerData = JSON.parse(customerData);
-		storage.customer = customerData;
-		console.log("[getUserMap] set customer data from sessionStorage.");
-	} else {
+	// url = apiServer + "/api/system/customer";
+	// customerTime = sessionStorage.getItem("customerTime");
+	// customerTime = customerTime == null ? 0 : customerTime * 1;
+	// if ((new Date()).getTime() < customerTime + 600000) {
+	// 	customerData = sessionStorage.getItem("customerData");
+	// 	customerData = JSON.parse(customerData);
+	// 	storage.customer = customerData;
+	// 	console.log("[getUserMap] set customer data from sessionStorage.");
+	// } else {
+	// 	$.ajax({
+	// 		"url": url,
+	// 		"method": "get",
+	// 		"dataType": "json",
+	// 		"cache": false,
+	// 		success: (data) => {
+	// 			let list;
+	// 			if (data.result === "ok") {
+	// 				list = cipher.decAes(data.data);
+	// 				sessionStorage.setItem("customerData", list);
+	// 				sessionStorage.setItem("customerTime", (new Date()).getTime() + "");
+	// 				list = JSON.parse(list);
+	// 				console.log(list);
+	// 				storage.customer = list;
+	// 				console.log("[getCustomer] Success getting customer information.");
+	// 			} else {
+	// 				msg.set("고객 정보를 가져오지 못했습니다.");
+	// 			}
+	// 		}
+	// 	})
+	// }
+
+	if (storage.customer === undefined) {
 		$.ajax({
-			"url": url,
-			"method": "get",
-			"dataType": "json",
-			"cache": false,
-			success: (data) => {
-				let list;
-				if (data.result === "ok") {
-					list = cipher.decAes(data.data);
-					sessionStorage.setItem("customerData", list);
-					sessionStorage.setItem("customerTime", (new Date()).getTime() + "");
-					list = JSON.parse(list);
-					storage.customer = list;
-					console.log("[getCustomer] Success getting customer information.");
-				} else {
-					msg.set("고객 정보를 가져오지 못했습니다.");
+			url: "/api/cust",
+			method: "get",
+			dataType: "json",
+			cache: false,
+			success: (result) => {
+				if (result.result === "ok") {
+					let resultJson;
+					let formatDatas = {};
+
+					resultJson = cipher.decAes(result.data);
+					resultJson = JSON.parse(resultJson);
+
+					for(let i = 0; i < resultJson.length; i++){
+						formatDatas[resultJson[i].custNo] = resultJson[i];
+					}
+					
+					storage.customer = formatDatas;
+					console.log("[getCust] Success getting cust list.");
 				}
+			},
+			error: () => {
+				msg.set("cust 에러");
 			}
-		})
+		});
 	}
 } // End of getCustomer()
 
@@ -3534,6 +3563,35 @@ function validateAutoComplete(value, type) {
 }
 
 function getStorageList() {
+	if (storage.customer === undefined) {
+		$.ajax({
+			url: "/api/cust",
+			method: "get",
+			dataType: "json",
+			async: false,
+			cache: false,
+			success: (result) => {
+				if (result.result === "ok") {
+					let resultJson;
+					let formatDatas = {};
+
+					resultJson = cipher.decAes(result.data);
+					resultJson = JSON.parse(resultJson);
+
+					for(let i = 0; i < resultJson.length; i++){
+						formatDatas[resultJson[i].custNo] = resultJson[i];
+					}
+					
+					storage.customer = formatDatas;
+					console.log("[getCust] Success getting cust list.");
+				}
+			},
+			error: () => {
+				msg.set("cust 에러");
+			}
+		});
+	}
+
 	if (storage.sopp === undefined) {
 		$.ajax({
 			url: "/api/sopp",
@@ -3602,6 +3660,7 @@ function getStorageList() {
 			url: "/api/product",
 			method: "get",
 			dataType: "json",
+			async: false,
 			cache: false,
 			success: (result) => {
 				if (result.result === "ok") {
@@ -3616,7 +3675,7 @@ function getStorageList() {
 						let datas = {};
 
 						datas = item;
-						datas.productName = item.productName + " : " + storage.customer[item.custNo].name;
+						datas.productName = item.productName + " : " + storage.customer[item.custNo].custName;
 
 						storage.productCust.push(datas);
 					}

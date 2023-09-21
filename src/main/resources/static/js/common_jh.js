@@ -553,11 +553,11 @@ class SalesSet{
 						"align": "center",
 					},
 					{
-						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].custNo)) ? "" : storage.customer[jsonData[i].custNo].name,
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].custNo)) ? "" : storage.customer[jsonData[i].custNo].custName,
 						"align": "center",
 					},
 					{
-						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].ptncNo)) ? "" : storage.customer[jsonData[i].ptncNo].name,
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].ptncNo)) ? "" : storage.customer[jsonData[i].ptncNo].custName,
 						"align": "center",
 					},
 					{
@@ -1023,7 +1023,7 @@ class Sales{
 				"complete": "customer",
 				"keyup": "CommonDatas.addAutoComplete(this);",
 				"onClick": "CommonDatas.addAutoComplete(this);",
-				"value": (CommonDatas.emptyValuesCheck(this.custNo)) ? "" : storage.customer[this.custNo].name,
+				"value": (CommonDatas.emptyValuesCheck(this.custNo)) ? "" : storage.customer[this.custNo].custName,
 			},
 			{
 				"title": "엔드유저",
@@ -1031,7 +1031,7 @@ class Sales{
 				"complete": "customer",
 				"keyup": "CommonDatas.addAutoComplete(this);",
 				"onClick": "CommonDatas.addAutoComplete(this);",
-				"value": (CommonDatas.emptyValuesCheck(this.ptncNo)) ? "" : storage.customer[this.ptncNo].name,
+				"value": (CommonDatas.emptyValuesCheck(this.ptncNo)) ? "" : storage.customer[this.ptncNo].custName,
 			},
 			{
 				"title": "제목(*)",
@@ -1190,14 +1190,26 @@ class SoppSet{
 				let result;
 				result = cipher.decAes(response.data.data);
 				result = JSON.parse(result);
+
+				for(let i = 0; i < result.length; i++){
+					let item = result[i];
+
+					for(let key in item){
+						if(key === "soppStatus"){
+							item[key] = Number(item[key])
+						}
+					}
+				}
+
 				storage.soppList = result;
+				CommonDatas.setCategories(result);
 
 				if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.sopp === undefined) {
 					window.setTimeout(this.drawSoppList, 1000);
-					// window.setTimeout(CommonDatas.searchListSet("salesList"), 1000);
+					window.setTimeout(CommonDatas.searchListSet("soppList"), 1000);
 				} else {
 					window.setTimeout(this.drawSoppList, 200);
-					// window.setTimeout(CommonDatas.searchListSet("salesList"), 200);
+					window.setTimeout(CommonDatas.searchListSet("soppList"), 200);
 				}
 
 				$('.theme-loader').delay(1000).fadeOut("slow");
@@ -1320,11 +1332,11 @@ class SoppSet{
 						"align": "left",
 					},
 					{
-						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].custNo)) ? "" : storage.customer[jsonData[i].custNo].name,
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].custNo)) ? "" : storage.customer[jsonData[i].custNo].custName,
 						"align": "center",
 					},
 					{
-						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].buyrNo)) ? "" : storage.customer[jsonData[i].buyrNo].name,
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].buyrNo)) ? "" : storage.customer[jsonData[i].buyrNo].custName,
 						"align": "center",
 					},
 					{
@@ -1369,6 +1381,26 @@ class SoppSet{
 			let content = document.querySelector(".gridContent[data-id=\"" + path[3] + "\"]");
 			CommonDatas.Temps.salesSet.salesDetailView(content);
 		}
+	}
+
+	//영업기회 상세보기
+	soppDetailView(e) {
+		let thisEle = e;
+
+		axios.get("/api/sopp/" + thisEle.dataset.id).then((response) => {
+			if (response.data.result === "ok") {
+				let result;
+				result = cipher.decAes(response.data.data);
+				result = JSON.parse(result);
+				let sopp = new Sopp(result);
+				sopp.detail();
+
+				localStorage.setItem("loadSetPage", window.location.pathname);
+			}
+		}).catch((error) => {
+			msg.set("상세보기 에러 입니다.\n" + error);
+			console.log(error);
+		});
 	}
 
 	//영업기회 등록 폼
@@ -1528,8 +1560,19 @@ class SoppSet{
 			{
 				"title": "카테고리 선택 시<br />자동 입력(*)",
 				"elementId": "categories",
-				"col": 3,
+				"col": 2,
 				"disabled": true,
+			},
+			{
+				"title": "카테고리 삭제<br />선택 시 삭제",
+				"selectValue": [
+					{
+						"key": "",
+						"value": "선택",
+					},
+				],
+				"type": "select",
+				"disabled": false,
 			},
 			{
 				"title": "유지보수대상(*)",
@@ -1628,25 +1671,104 @@ class SoppSet{
 		}, 100);
 	}
 
-	cntrctMthChange(thisEle){
+	cntrctMthChange(thisEle, getDatas){
 		let maintenance_S = document.getElementById("maintenance_S");
 		let maintenance_E = document.getElementById("maintenance_E");
 
-		if(thisEle.value === "10248"){
-			let nowDate = new Date();
-
-			maintenance_S.value = nowDate.toISOString().substring(0, 10);
-			maintenance_S.disabled = false;
-
-			nowDate.setFullYear(nowDate.getFullYear() + 1);
-			maintenance_E.value = nowDate.toISOString().substring(0, 10);
-			maintenance_E.disabled = false;
-		} else{
-			maintenance_S.value = "";
-			maintenance_S.disabled = true;
-			maintenance_E.value = "";
-			maintenance_E.disabled = true;
+		if(getDatas === undefined){
+			if(thisEle.value === "10248"){
+				let nowDate = new Date();
+	
+				maintenance_S.value = nowDate.toISOString().substring(0, 10);
+				maintenance_S.disabled = false;
+	
+				nowDate.setFullYear(nowDate.getFullYear() + 1);
+				maintenance_E.value = nowDate.toISOString().substring(0, 10);
+				maintenance_E.disabled = false;
+			} else{
+				maintenance_S.value = "";
+				maintenance_S.disabled = true;
+				maintenance_E.value = "";
+				maintenance_E.disabled = true;
+			}
+		}else{
+			if(thisEle.value === "10248"){
+				maintenance_S.value = getDatas.maintenance_S;
+				maintenance_S.disabled = false;
+	
+				maintenance_E.value = getDatas.maintenance_E;
+				maintenance_E.disabled = false;
+			} else{
+				maintenance_S.value = "";
+				maintenance_S.disabled = true;
+				maintenance_E.value = "";
+				maintenance_E.disabled = true;
+			}
 		}
+	}
+
+	//영업기회 검색 버튼 클릭 함수
+	searchSubmit() {
+		let dataArray = [], resultArray, eachIndex = 0, user, title, cust, categories, soppType, cntrctMth, soppStatus, searchUser, searchTitle, searchCust, searchCategories, searchSoppType, searchCntrctMth, searchSoppStatus, searchDateFrom, keyIndex = 0;
+		searchUser = document.getElementById("searchUser");
+		searchTitle = document.getElementById("searchTitle");
+		searchCust = document.getElementById("searchCust");
+		searchCategories = document.getElementById("searchCategories");
+		searchSoppType = document.getElementById("searchSoppType");
+		searchCntrctMth = document.getElementById("searchCntrctMth");
+		searchSoppStatus = document.getElementById("searchSoppStatus");
+		searchDateFrom = (document.getElementById("searchDateFrom").value === "") ? "" : document.getElementById("searchDateFrom").value.replaceAll("-", "") + "#regDatetime" + document.getElementById("searchDateTo").value.replaceAll("-", "");
+		
+		for(let key in storage.soppList[0]){
+			if(key === searchUser.dataset.key) user = "#" + keyIndex + "/" + searchUser.value;
+			else if(key === searchTitle.dataset.key) title = "#" + keyIndex + "/" + searchTitle.value;
+			else if(key === searchCust.dataset.key) cust = "#" + keyIndex + "/" + searchCust.value;
+			else if(key === searchCategories.dataset.key) categories = "#" + keyIndex + "/" + searchCategories.value;
+			else if(key === searchSoppType.dataset.key) soppType = "#" + keyIndex + "/" + searchSoppType.value;
+			else if(key === searchCntrctMth.dataset.key) cntrctMth = "#" + keyIndex + "/" + searchCntrctMth.value;
+			else if(key === searchSoppStatus.dataset.key) soppStatus = "#" + keyIndex + "/" + searchSoppStatus.value;
+			keyIndex++;
+		}
+
+		let searchValues = [user, title, cust, categories, soppType, cntrctMth, soppStatus, searchDateFrom];
+
+		for (let i = 0; i < searchValues.length; i++) {
+			if(searchValues[i] !== ""){
+				let tempArray = CommonDatas.searchDataFilter(storage.soppList, searchValues[i], "multi", ["#regDatetime"]);
+	
+				for (let t = 0; t < tempArray.length; t++) {
+					dataArray.push(tempArray[t]);
+				}
+	
+				eachIndex++;
+			}
+		}
+		
+		resultArray = CommonDatas.searchMultiFilter(eachIndex, dataArray, storage.soppList);
+
+		storage.searchDatas = resultArray;
+
+		if (storage.searchDatas.length == 0) {
+			msg.set("찾는 데이터가 없습니다.");
+			storage.searchDatas = storage.soppList;
+		}
+
+		this.drawSoppList();
+	}
+
+	//영업기회 단일 검색 keyup 이벤트
+	searchInputKeyup() {
+		let searchAllInput, tempArray;
+		searchAllInput = document.getElementById("searchAllInput").value;
+		tempArray = CommonDatas.searchDataFilter(storage.soppList, searchAllInput, "input");
+
+		if (tempArray.length > 0) {
+			storage.searchDatas = tempArray;
+		} else {
+			storage.searchDatas = "";
+		}
+
+		this.drawSoppList();
 	}
 }
 
@@ -1725,6 +1847,279 @@ class Sopp{
 		}
 	}
 
+	//영업기회 상세보기
+	detail() {
+		let html = "";
+		let setDate, soppTargetDate, maintenance_S, maintenance_E, datas, dataArray, notIdArray;
+		let splitCategories = this.categories.split(",");
+
+		for(let i = 0; i < splitCategories.length; i++){
+			CommonDatas.makeCategories(splitCategories[i]);
+		}
+
+		CommonDatas.detailSetFormList(this.getData);
+
+		let gridList = document.getElementsByClassName("gridList")[0];
+		let containerTitle = document.getElementById("containerTitle");
+		let detailBackBtn = document.getElementsByClassName("detailBackBtn")[0];
+		let crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
+		let crudDeleteBtn = document.getElementsByClassName("crudDeleteBtn")[0];
+
+		setDate = CommonDatas.dateDis(new Date(this.soppTargetDate).getTime());
+		soppTargetDate = CommonDatas.dateFnc(setDate);
+
+		setDate = CommonDatas.dateDis(new Date(this.maintenance_S).getTime());
+		maintenance_S = CommonDatas.dateFnc(setDate);
+
+		setDate = CommonDatas.dateDis(new Date(this.maintenance_E).getTime());
+		maintenance_E = CommonDatas.dateFnc(setDate);
+
+		notIdArray = ["userNo"];
+		datas = ["userNo", "secondUserNo", "custNo", "cip", "buyrNo"];
+
+		dataArray = [
+			{
+				"title": "담당자(*)",
+				"elementId": "userNo",
+				"complete": "user",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"value": (CommonDatas.emptyValuesCheck(this.userNo)) ? "" : storage.user[this.userNo].userName,
+			},
+			{
+				"title": "(부)담당자(*)",
+				"elementId": "secondUserNo",
+				"complete": "user",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"value": (CommonDatas.emptyValuesCheck(this.secondUserNo)) ? "" : storage.user[this.secondUserNo].userName,
+			},
+			{
+				"title": "매출처(*)",
+				"elementId": "custNo",
+				"complete": "customer",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"value": (CommonDatas.emptyValuesCheck(this.custNo)) ? "" : storage.customer[this.custNo].custName,
+			},
+			{
+				"title": "매출처 담당자",
+				"complete": "cip",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"elementId": "custMemberNo",
+				"value": (CommonDatas.emptyValuesCheck(this.custMemberNo)) ? "" : storage.cip[this.custMemberNo].name,
+			},
+			{
+				"title": "엔드유저(*)",
+				"elementId": "buyrNo",
+				"complete": "customer",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"value": (CommonDatas.emptyValuesCheck(this.buyrNo)) ? "" : storage.customer[this.buyrNo].custName,
+			},
+			{
+				"title": "진행단계(*)",
+				"selectValue": [
+					{
+						"key": "10178",
+						"value": "영업정보파악",
+					},
+					{
+						"key": "10179",
+						"value": "초기접촉",
+					},
+					{
+						"key": "10180",
+						"value": "제안서제출 및 PT",
+					},
+					{
+						"key": "10181",
+						"value": "견적서 제출",
+					},
+				],
+				"type": "select",
+				"elementId": "soppStatus",
+			},
+			{
+				"title": "가능성",
+				"elementId": "soppSrate",
+				"value": (CommonDatas.emptyValuesCheck(this.soppSrate)) ? "" : this.soppSrate,
+			},
+			{
+				"title": "계약구분(*)",
+				"selectValue": [
+					{
+						"key": "",
+						"value": "선택",
+					},
+					{
+						"key": "10247",
+						"value": "판매계약",
+					},
+					{
+						"key": "10248",
+						"value": "유지보수",
+					},
+					{
+						"key": "10254",
+						"value": "임대계약",
+					},
+				],
+				"type": "select",
+				"elementId": "cntrctMth",
+				"onChange": "CommonDatas.Temps.soppSet.cntrctMthChange(this);",
+			},
+			{
+				"title": "매출예정일",
+				"elementId": "soppTargetDate",
+				"type": "date",
+				"value": soppTargetDate,
+			},
+			{
+				"title": "판매방식(*)",
+				"selectValue": [
+					{
+						"key": "",
+						"value": "선택",
+					},
+					{
+						"key": "10173",
+						"value": "조달직판",
+					},
+					{
+						"key": "10174",
+						"value": "조달간판",
+					},
+					{
+						"key": "10175",
+						"value": "조달대행",
+					},
+					{
+						"key": "10176",
+						"value": "직접판매",
+					},
+					{
+						"key": "10218",
+						"value": "간접판매",
+					},
+					{
+						"key": "10255",
+						"value": "기타",
+					},
+				],
+				"type": "select",
+				"elementId": "soppType",
+			},
+			{
+				"title": "예상매출액",
+				"elementId": "soppTargetAmt",
+				"keyup": "CommonDatas.inputNumberFormat(this);",
+				"col": 2,
+				"value": (CommonDatas.emptyValuesCheck(this.soppTargetAmt)) ? "" : this.soppTargetAmt.toLocaleString("en-US"),
+			},
+			{
+				"title": "카테고리<br />(제품회사명)",
+				"complete": "productCust",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+			},
+			{
+				"title": "카테고리 선택 시<br />자동 입력(*)",
+				"elementId": "categories",
+				"col": 2,
+				"value": (CommonDatas.emptyValuesCheck(this.categories)) ? "" : this.categories,
+			},
+			{
+				"title": "카테고리 삭제<br />선택 시 삭제",
+				"selectValue": [
+					{
+						"key": "",
+						"value": "선택",
+					},
+				],
+				"type": "select",
+			},
+			{
+				"title": "유지보수대상(*)",
+				"selectValue": [
+					{
+						"key": "N",
+						"value": "No",
+					},
+					{
+						"key": "Y",
+						"value": "Yes",
+					},
+				],
+				"type": "select",
+				"elementId": "maintenanceTarget",
+				"col": 2,
+			},
+			{
+				"title": "유지보수 시작일<br />유지보수 계약 시(*)",
+				"elementId": "maintenance_S",
+				"type": "date",
+				"value": maintenance_S,
+			},
+			{
+				"title": "유지보수 종료일<br />유지보수 계약 시(*)",
+				"elementId": "maintenance_E",
+				"type": "date",
+				"value": maintenance_E,
+			},
+			{
+				"title": "영업기회명(*)",
+				"elementId": "soppTitle",
+				"col": 4,
+				"value": (CommonDatas.emptyValuesCheck(this.soppTitle)) ? "" : this.soppTitle,
+			},
+			{
+				"title": "내용",
+				"elementId": "soppDesc",
+				"type": "textarea",
+				"col": 4,
+				"value": (CommonDatas.emptyValuesCheck(this.soppDesc)) ? "" : this.soppTitle,
+			}
+		];
+
+		html = CommonDatas.detailViewForm(dataArray);
+		let createGrid = document.createElement("div");
+		createGrid.className = "defaultFormContainer";
+		createGrid.innerHTML = html;
+		gridList.after(createGrid);
+		containerTitle.innerText = this.soppTitle;
+		let hideArr = ["gridList", "listRange", "crudAddBtn", "listSearchInput", "searchContainer", "pageContainer"];
+		let showArr = ["defaultFormContainer"];
+		CommonDatas.setViewContents(hideArr, showArr);
+	
+		if(storage.my == this.getData.userNo){
+			crudUpdateBtn.setAttribute("onclick", "CommonDatas.enableDisabled(this, \"CommonDatas.Temps.sopp.update();\", \"" + notIdArray + "\");");
+			crudDeleteBtn.setAttribute("onclick", "CommonDatas.Temps.sopp.delete();");
+			crudUpdateBtn.style.display = "flex";
+			crudDeleteBtn.style.display = "flex";
+		}else{
+			crudUpdateBtn.style.display = "none";
+			crudDeleteBtn.style.display = "none";
+		}
+	
+		detailBackBtn.style.display = "flex";
+		CommonDatas.detailTrueDatas(datas);
+	
+		setTimeout(() => {
+			let categories = document.getElementById("categories");
+			let categorySelect = categories.parentElement.parentElement.nextElementSibling.children[1].children[0];
+			CommonDatas.makeCategoryOptions(categorySelect, "categories");
+			document.getElementById("soppStatus").value = this.soppStatus;
+			document.getElementById("cntrctMth").value = this.cntrctMth;
+			document.getElementById("soppType").value = this.soppType;
+			document.getElementById("maintenanceTarget").value = this.maintenanceTarget;
+			CommonDatas.Temps.soppSet.cntrctMthChange(document.getElementById("cntrctMth"), this.getData);
+			ckeditor.config.readOnly = true;
+			window.setTimeout(setEditor, 100);
+		}, 200);
+	}
+
 	insert(){
 		let cntrctMth = document.getElementById("cntrctMth");
 
@@ -1789,6 +2184,95 @@ class Sopp{
 				console.log(error);
 				return false;
 			});
+		}
+	}
+
+	//영업기회 수정
+	update() {
+		if(document.getElementById("secondUserNo").value === ""){
+			msg.set("부담당자를 선택해주세요.");
+			document.getElementById("secondUserNo").focus();
+			return false;
+		} else if(document.getElementById("secondUserNo").value !== "" && !CommonDatas.validateAutoComplete(document.getElementById("secondUserNo").value, "user")){
+			msg.set("조회된 부담당자가 없습니다.\n다시 확인해주세요.");
+			document.getElementById("secondUserNo").focus();
+			return false;
+		} else if(document.getElementById("custNo").value === ""){
+			msg.set("매출처를 선택해주세요.");
+			document.getElementById("custNo").focus();
+			return false;
+		} else if(document.getElementById("custNo").value !== "" && !CommonDatas.validateAutoComplete(document.getElementById("custNo").value, "customer")){
+			msg.set("조회된 매출처가 없습니다.\n다시 확인해주세요.");
+			document.getElementById("custNo").focus();
+			return false;
+		} else if(document.getElementById("buyrNo").value === ""){
+			msg.set("엔드유저를 입력해주세요.");
+			document.getElementById("buyrNo").focus();
+			return false;
+		} else if(document.getElementById("buyrNo").value !== "" && !CommonDatas.validateAutoComplete(document.getElementById("buyrNo").value, "customer")){
+			msg.set("조회된 엔드유저가 없습니다.\n다시 확인해주세요.");
+			document.getElementById("buyrNo").focus();
+			return false;
+		} else if(cntrctMth.value === ""){
+			msg.set("계약구분을 선택해주세요.");
+			return false;
+		} else if(document.getElementById("soppType").value === ""){
+			msg.set("판매방식을 선택해주세요.");
+			return false;
+		} else if(document.getElementById("categories").value === ""){
+			msg.set("카테고리(제품회사명)를 선택해주세요.");
+			return false;
+		} else if(cntrctMth.value === "10248" && (document.getElementById("maintenance_S").value === "" || document.getElementById("maintenance_E").value === "")){
+			msg.set("계약구분이 유지보수일 경우 유지보수 시작일과 유지보수 종료일을 선택하여야 합니다.\n유지보수 시작일과 종료일을 선택해주세요.");
+			return false;
+		} else if(document.getElementById("soppTitle").value === ""){
+			msg.set("영업기회명을 입력해주세요.");
+			document.getElementById("soppTitle").focus();
+			return false;
+		} else {
+			CommonDatas.formDataSet();
+			let data = storage.formList;
+			data = JSON.stringify(data);
+			data = cipher.encAes(data);
+
+			axios.put("/api/sopp/" + data.soppNo, data, {
+				headers: { "Content-Type": "text/plain" }
+			}).then((response) => {
+				if (response.data.result === "ok") {
+					location.reload();
+					msg.set("수정되었습니다.");
+				} else {
+					msg.set("수정 중 에러가 발생하였습니다.");
+					return false;
+				}
+			}).catch((error) => {
+				msg.set("수정 도중 에러가 발생하였습니다.\n" + error);
+				console.log(error);
+				return false;
+			});
+		}
+	}
+
+	//영업기회 삭제
+	delete() {
+		if (confirm("정말로 삭제하시겠습니까??")) {
+			axios.delete("/api/sopp/" + storage.formList.soppNo, {
+				headers: { "Content-Type": "text/plain" }
+			}).then((response) => {
+				if (response.data.result === "ok") {
+					location.reload();
+					msg.set("삭제되었습니다.");
+				} else {
+					msg.set("삭제 중 에러가 발생하였습니다.");
+					return false;
+				}
+			}).catch((error) => {
+				msg.set("삭제 도중 에러가 발생하였습니다.\n" + error);
+				console.log(error);
+				return false;
+			});
+		} else {
+			return false;
 		}
 	}
 }
@@ -2100,7 +2584,7 @@ class ScheduleSet{
 						"align": "center",
 					},
 					{
-						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].custNo)) ? "" : storage.customer[jsonData[i].custNo].name,
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].custNo)) ? "" : storage.customer[jsonData[i].custNo].custName,
 						"align": "center",
 					},
 					{
@@ -2659,7 +3143,7 @@ class Schedule{
 				"complete": "customer",
 				"keyup": "CommonDatas.addAutoComplete(this);",
 				"onClick": "CommonDatas.addAutoComplete(this);",
-				"value": (CommonDatas.emptyValuesCheck(this.custNo)) ? "" : storage.customer[this.custNo].name,
+				"value": (CommonDatas.emptyValuesCheck(this.custNo)) ? "" : storage.customer[this.custNo].custName,
 				"col": 2,
 			},
 			{
@@ -2824,7 +3308,7 @@ class Schedule{
 				"complete": "customer",
 				"keyup": "CommonDatas.addAutoComplete(this);",
 				"onClick": "CommonDatas.addAutoComplete(this);",
-				"value": (CommonDatas.emptyValuesCheck(this.custNo)) ? "" : storage.customer[this.custNo].name,
+				"value": (CommonDatas.emptyValuesCheck(this.custNo)) ? "" : storage.customer[this.custNo].custName,
 			},
 			{
 				"title": "엔드유저",
@@ -2832,7 +3316,7 @@ class Schedule{
 				"complete": "customer",
 				"keyup": "CommonDatas.addAutoComplete(this);",
 				"onClick": "CommonDatas.addAutoComplete(this);",
-				"value": (CommonDatas.emptyValuesCheck(this.ptncNo)) ? "" : storage.customer[this.ptncNo].name,
+				"value": (CommonDatas.emptyValuesCheck(this.ptncNo)) ? "" : storage.customer[this.ptncNo].custName,
 			},
 			{
 				"title": "제목(*)",
@@ -2939,7 +3423,7 @@ class Schedule{
 				"complete": "customer",
 				"keyup": "CommonDatas.addAutoComplete(this);",
 				"onClick": "CommonDatas.addAutoComplete(this);",
-				"value": (CommonDatas.emptyValuesCheck(this.endCustNo)) ? "" : storage.customer[this.endCustNo].name,
+				"value": (CommonDatas.emptyValuesCheck(this.endCustNo)) ? "" : storage.customer[this.endCustNo].custName,
 			},
 			{
 				"title": "엔드유저 담당자",
@@ -3213,7 +3697,7 @@ class Schedule{
 				"complete": "customer",
 				"keyup": "CommonDatas.addAutoComplete(this);",
 				"onClick": "CommonDatas.addAutoComplete(this);",
-				"value": (CommonDatas.emptyValuesCheck(this.custNo)) ? "" : storage.customer[this.custNo].name,
+				"value": (CommonDatas.emptyValuesCheck(this.custNo)) ? "" : storage.customer[this.custNo].custName,
 				"col": 2,
 			},
 			{
@@ -3997,15 +4481,17 @@ class WorkJournalSet{
 							let result = cipher.decAes(res.data.data);
 							result = JSON.parse(result);
 							result = workReportSet.setWorkLongDate(result);
+							console.log();
 
-							if(type === "last"){
-								storage.lastWorkJournalDatas[result[0].userNo] = result;
-							}else if(type === "this" || type === undefined){
-								storage.thisWorkJournalDatas[result[0].userNo] = result;
-							}else{
-								storage.nextWorkJournalDatas[result[0].userNo] = result;
+							if(result[0] !== undefined){
+								if(type === "last"){
+									storage.lastWorkJournalDatas[result[0].userNo] = result;
+								}else if(type === "this" || type === undefined){
+									storage.thisWorkJournalDatas[result[0].userNo] = result;
+								}else{
+									storage.nextWorkJournalDatas[result[0].userNo] = result;
+								}
 							}
-
 						}
 					})
 				}
@@ -5029,7 +5515,7 @@ class EstimateSet {
 						}
 					} else if (key === "customer") {
 						keyId.dataset.value = value;
-						value = storage.customer[value].name;
+						value = storage.customer[value].custName;
 					}
 					keyId.value = value;
 				}
@@ -5959,7 +6445,7 @@ class TechSet{
 						"align": "left",
 					},
 					{
-						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].custNo)) ? "" : storage.customer[jsonData[i].custNo].name,
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].custNo)) ? "" : storage.customer[jsonData[i].custNo].custName,
 						"align": "center",
 					},
 					{
@@ -6423,7 +6909,7 @@ class Tech{
 				"complete": "customer",
 				"keyup": "CommonDatas.addAutoComplete(this);",
 				"onClick": "CommonDatas.addAutoComplete(this);",
-				"value": (CommonDatas.emptyValuesCheck(this.endCustNo)) ? "" : storage.customer[this.endCustNo].name,
+				"value": (CommonDatas.emptyValuesCheck(this.endCustNo)) ? "" : storage.customer[this.endCustNo].custName,
 			},
 			{
 				"title": "엔드유저 담당자",
@@ -6880,7 +7366,7 @@ class StoreSet{
 						"align": "center",
 					},
 					{
-						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].custNo)) ? "" : storage.customer[jsonData[i].custNo].name,
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].custNo)) ? "" : storage.customer[jsonData[i].custNo].custName,
 						"align": "center",
 					},
 					{
@@ -7243,7 +7729,7 @@ class Store{
 				"complete": "customer",
 				"keyup": "CommonDatas.addAutoComplete(this);",
 				"onClick": "CommonDatas.addAutoComplete(this);",
-				"value": (CommonDatas.emptyValuesCheck(this.custNo)) ? "" : storage.customer[this.custNo].name,
+				"value": (CommonDatas.emptyValuesCheck(this.custNo)) ? "" : storage.customer[this.custNo].custName,
 			},
 			{
 				"title": "위치",
@@ -8284,43 +8770,49 @@ class Common {
 					let listDiv = document.createElement("div");
 					listDiv.setAttribute("onclick", "CommonDatas.autoCompleteClick(this);");
 
-					if (thisEle.dataset.complete === "customer" || thisEle.dataset.complete === "cip" || thisEle.dataset.complete === "product") {
+					if (thisEle.dataset.complete === "cip" || thisEle.dataset.complete === "product") {
 						if (thisEle.dataset.complete === "product") {
 							listDiv.dataset.value = storage[thisEle.dataset.complete][key].productNo;
-							listDiv.innerHTML = storage[thisEle.dataset.complete][key].productName;
+							listDiv.innerText = storage[thisEle.dataset.complete][key].productName;
 						} else {
 							listDiv.dataset.value = key;
-							listDiv.innerHTML = storage[thisEle.dataset.complete][key].name;
+							listDiv.innerText = storage[thisEle.dataset.complete][key].name;
 						}
 					} else if(thisEle.dataset.complete === "productCust"){
-						listDiv.dataset.value = storage.customer[storage[thisEle.dataset.complete][key].custNo].name;
-						listDiv.innerHTML = storage[thisEle.dataset.complete][key].productName;
+						listDiv.dataset.value = storage.customer[storage[thisEle.dataset.complete][key].custNo].custName;
+						listDiv.innerText = storage[thisEle.dataset.complete][key].productName;
 					} else if (thisEle.dataset.complete === "user") {
 						listDiv.dataset.value = storage[thisEle.dataset.complete][key].userNo;
-						listDiv.innerHTML = storage[thisEle.dataset.complete][key].userName;
+						listDiv.innerText = storage[thisEle.dataset.complete][key].userName;
+					} else if (thisEle.dataset.complete === "customer") {
+						listDiv.dataset.value = key;
+						listDiv.innerText = storage[thisEle.dataset.complete][key].custName;
 					} else if (thisEle.dataset.complete === "sopp") {
-						listDiv.dataset.value = storage[thisEle.dataset.complete][key].no;
-						listDiv.innerHTML = storage[thisEle.dataset.complete][key].title;
+						listDiv.dataset.value = storage[thisEle.dataset.complete][key].soppNo;
+						listDiv.innerText = storage[thisEle.dataset.complete][key].soppTitle;
 					} else if (thisEle.dataset.complete === "contract") {
 						listDiv.dataset.value = storage[thisEle.dataset.complete][key].contNo;
 						listDiv.dataset.sopp = storage[thisEle.dataset.complete][key].soppNo;
-						listDiv.innerHTML = storage[thisEle.dataset.complete][key].contTitle;
-					}
+						listDiv.innerText = storage[thisEle.dataset.complete][key].contTitle;
+					} else if (thisEle.dataset.complete === "categories") {
+						listDiv.dataset.value = storage[thisEle.dataset.complete][key].category;
+						listDiv.innerText = storage[thisEle.dataset.complete][key].category;
+					} 
 
 					autoComplete.append(listDiv);
 				}
 			} else {
 				for (let key in storage[thisEle.dataset.complete]) {
-					if (thisEle.dataset.complete === "customer" || thisEle.dataset.complete === "cip" || thisEle.dataset.complete === "product") {
+					if (thisEle.dataset.complete === "cip" || thisEle.dataset.complete === "product") {
 						if (storage[thisEle.dataset.complete][key].name.indexOf(thisEle.value) > -1) {
 							let listDiv = document.createElement("div");
 							listDiv.setAttribute("onclick", "CommonDatas.autoCompleteClick(this);");
 							if (thisEle.dataset.complete === "product") {
 								listDiv.dataset.value = storage[thisEle.dataset.complete][key].productNo;
-								listDiv.innerHTML = storage[thisEle.dataset.complete][key].productName;
+								listDiv.innerText = storage[thisEle.dataset.complete][key].productName;
 							} else {
 								listDiv.dataset.value = key;
-								listDiv.innerHTML = storage[thisEle.dataset.complete][key].name;
+								listDiv.innerText = storage[thisEle.dataset.complete][key].name;
 							}
 							autoComplete.append(listDiv);
 						}
@@ -8328,8 +8820,8 @@ class Common {
 						if (storage[thisEle.dataset.complete][key].productName.indexOf(thisEle.value) > -1) {
 							let listDiv = document.createElement("div");
 							listDiv.setAttribute("onclick", "CommonDatas.autoCompleteClick(this);");
-							listDiv.dataset.value = storage.customer[storage[thisEle.dataset.complete][key].custNo].name;
-							listDiv.innerHTML = storage[thisEle.dataset.complete][key].productName;
+							listDiv.dataset.value = storage.customer[storage[thisEle.dataset.complete][key].custNo].custName;
+							listDiv.innerText = storage[thisEle.dataset.complete][key].productName;
 							autoComplete.append(listDiv);
 						}
 					} else if (thisEle.dataset.complete === "user") {
@@ -8337,15 +8829,23 @@ class Common {
 							let listDiv = document.createElement("div");
 							listDiv.setAttribute("onclick", "CommonDatas.autoCompleteClick(this);");
 							listDiv.dataset.value = storage[thisEle.dataset.complete][key].userNo;
-							listDiv.innerHTML = storage[thisEle.dataset.complete][key].userName;
+							listDiv.innerText = storage[thisEle.dataset.complete][key].userName;
+							autoComplete.append(listDiv);
+						}
+					} else if (thisEle.dataset.complete === "customer") {
+						if (storage[thisEle.dataset.complete][key].custName.indexOf(thisEle.value) > -1) {
+							let listDiv = document.createElement("div");
+							listDiv.setAttribute("onclick", "CommonDatas.autoCompleteClick(this);");
+							listDiv.dataset.value = storage[thisEle.dataset.complete][key].custNo;
+							listDiv.innerText = storage[thisEle.dataset.complete][key].custName;
 							autoComplete.append(listDiv);
 						}
 					} else if (thisEle.dataset.complete === "sopp") {
-						if (storage[thisEle.dataset.complete][key].title.indexOf(thisEle.value) > -1) {
+						if (storage[thisEle.dataset.complete][key].soppTitle.indexOf(thisEle.value) > -1) {
 							let listDiv = document.createElement("div");
 							listDiv.setAttribute("onclick", "CommonDatas.autoCompleteClick(this);");
-							listDiv.dataset.value = storage[thisEle.dataset.complete][key].no;
-							listDiv.innerHTML = storage[thisEle.dataset.complete][key].title;
+							listDiv.dataset.value = storage[thisEle.dataset.complete][key].soppNo;
+							listDiv.innerText = storage[thisEle.dataset.complete][key].soppTitle;
 							autoComplete.append(listDiv);
 						}
 					} else if (thisEle.dataset.complete === "contract") {
@@ -8354,10 +8854,18 @@ class Common {
 							listDiv.setAttribute("onclick", "CommonDatas.autoCompleteClick(this);");
 							listDiv.dataset.value = storage[thisEle.dataset.complete][key].contNo;
 							listDiv.dataset.sopp = storage[thisEle.dataset.complete][key].soppNo;
-							listDiv.innerHTML = storage[thisEle.dataset.complete][key].contTitle;
+							listDiv.innerText = storage[thisEle.dataset.complete][key].contTitle;
 							autoComplete.append(listDiv);
 						}
-					}
+					} else if (thisEle.dataset.complete === "categories") {
+						if (storage[thisEle.dataset.complete][key].category.indexOf(thisEle.value) > -1) {
+							let listDiv = document.createElement("div");
+							listDiv.setAttribute("onclick", "CommonDatas.autoCompleteClick(this);");
+							listDiv.dataset.value = storage[thisEle.dataset.complete][key].category;
+							listDiv.innerText = storage[thisEle.dataset.complete][key].category;
+							autoComplete.append(listDiv);
+						}
+					} 
 				}
 			}
 		}
@@ -8374,17 +8882,9 @@ class Common {
 
 		if(input.dataset.complete === "productCust"){
 			let categories = document.getElementById("categories");
-			
-			if(categories !== undefined){
-				if(categories.value.length > 0){
-					if(!categories.value.includes(thisEle.dataset.value)){
-						categories.value = categories.value + ", " + thisEle.dataset.value;
-					}
-				}else{
-					categories.value = thisEle.dataset.value;
-				}
-			}
-
+			let categorySelect = categories.parentElement.parentElement.nextElementSibling.children[1].children[0];
+			CommonDatas.makeCategories(thisEle.dataset.value);
+			CommonDatas.makeCategoryOptions(categorySelect, "categories");
 			thisEle.parentElement.previousElementSibling.value = "";
 		}else{
 			if (storage.formList !== undefined) {
@@ -8470,7 +8970,12 @@ class Common {
 				box[i].removeAttribute("readonly");
 				box[i].removeAttribute("disabled");
 			} else {
-				if (notIdArray.indexOf(box[i].getAttribute("id")) == -1) {
+				if(box[i].getAttribute("id") !== ""){
+					if (notIdArray.indexOf(box[i].getAttribute("id")) == -1) {
+						box[i].removeAttribute("readonly");
+						box[i].removeAttribute("disabled");
+					}
+				}else{
 					box[i].removeAttribute("readonly");
 					box[i].removeAttribute("disabled");
 				}
@@ -8712,8 +9217,16 @@ class Common {
 						}else if(key === "userNo"){
 							str += "#" + storage.user[item[key]].userName;
 						}else if(key === "custNo"){
-							str += "#" + storage.customer[item[key]].name;
+							if(storage.customer[item[key]] !== undefined){
+								str += "#" + storage.customer[item[key]].custName;
+							}
 						}else if(key === "type"){
+							str += "#" + storage.code.etc[item[key]];
+						}else if(key === "soppType"){
+							str += "#" + storage.code.etc[item[key]];
+						}else if(key === "cntrctMth"){
+							str += "#" + storage.code.etc[item[key]];
+						}else if(key === "soppStatus"){
 							str += "#" + storage.code.etc[item[key]];
 						}else{
 							str += "#" + item[key];
@@ -8748,13 +9261,13 @@ class Common {
 			let item = storage.sopp[i];
 
 			if(type === "name"){
-				if(value == item.no){
-					result = item.title;
+				if(value == item.soppNo){
+					result = item.soppTitle;
 					flag = true;
 				}
 			}else{
-				if(value.includes(item.title)){
-					result = item.no;
+				if(value.includes(item.soppTitle)){
+					result = item.soppNo;
 					flag = true;
 				}
 			}
@@ -8782,7 +9295,7 @@ class Common {
 				}
 			}else{
 				if(value.includes(item.contTitle)){
-					result = item.no;
+					result = item.contNo;
 					flag = true;
 				}
 			}
@@ -8804,7 +9317,7 @@ class Common {
 			let item = storage.product[i];
 
 			if(type === "name"){
-				if(value == item.no){
+				if(value == item.productNo){
 					result = item.productName;
 					flag = true;
 				}
@@ -8821,6 +9334,87 @@ class Common {
 		}
 
 		return result;
+	}
+
+	//카테고리 배열 생성 함수
+	makeCategories(value){
+		if(storage.categoryArr === undefined){
+			storage.categoryArr = [];
+		}
+
+		if(storage.categoryArr.length > 0){
+			for(let i = 0; i < storage.categoryArr.length; i++){
+				if(!storage.categoryArr.toString().includes(value)){
+					storage.categoryArr.push(value);
+				}
+			}
+		}else{
+			storage.categoryArr.push(value);
+		}
+	}
+
+	//카테고리 select option 생성 함수
+	makeCategoryOptions(selectContent, categoryContentStr){
+		let categoryContent;
+		let firstOption = document.createElement("option");
+		firstOption.value = "";
+		firstOption.innerText = "선택";
+		
+		if(selectContent.options.length > 0){
+			selectContent.options.length = 0;
+		}
+
+		selectContent.append(firstOption);
+
+		if(document.getElementById(categoryContentStr) !== undefined) categoryContent = document.getElementById(categoryContentStr);
+		else if(document.getElementsByClassName(categoryContentStr)[0] !== undefined) categoryContent = document.getElementsByClassName(categoryContentStr)[0];
+
+		if(storage.categoryArr.length > 0){
+			for(let i = 0; i < storage.categoryArr.length; i++){
+				let item = storage.categoryArr[i];
+				let createOption = document.createElement("option");
+				createOption.value = item;
+				createOption.innerText = item
+				selectContent.append(createOption);
+			}
+		}
+
+		categoryContent.value = storage.categoryArr.toString();
+		selectContent.setAttribute("onChange", "CommonDatas.deleteCategory(this, \"" + categoryContentStr + "\");");
+	}
+
+	//category 아이템 삭제 함수
+	deleteCategory(thisEle, categoryContentStr){
+		if(confirm("카테고리 [" + thisEle.value + "] 삭제하시겠습니까??")){
+			for(let i = 0; i < storage.categoryArr.length; i++){
+				let item = storage.categoryArr[i];
+
+				if(item === thisEle.value){
+					storage.categoryArr.splice(i, 1);
+					i--;
+				}
+			}
+
+			CommonDatas.makeCategoryOptions(thisEle, categoryContentStr);
+		}else{
+			return false;
+		}
+	}
+
+	//카테고리 셋팅 함수
+	setCategories(result){
+		if(storage.categories === undefined){
+			storage.categories = {};
+		}
+
+		for(let i = 0; i < result.length; i++){
+			let item = result[i];
+
+			if(item.categories !== undefined){
+				storage.categories[i] = {};
+				storage.categories[i]["category"] = item.categories;
+			}
+		}
 	}
 }
 

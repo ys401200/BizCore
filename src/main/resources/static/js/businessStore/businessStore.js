@@ -4,5 +4,5 @@ $(document).ready(() => {
     setTimeout(() => {
         const setStore = new StoreSet();
         setStore.list();
-    }, 300);
+    }, 1000);
 });

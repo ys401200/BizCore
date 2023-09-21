@@ -4,5 +4,5 @@ $(document).ready(() => {
 	setTimeout(() => {
 		const setSales = new SalesSet();
 		setSales.list();
-	}, 1000);
+	}, 2000);
 });

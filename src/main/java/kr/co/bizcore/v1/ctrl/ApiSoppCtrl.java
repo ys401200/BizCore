@@ -73,6 +73,49 @@ public class ApiSoppCtrl extends Ctrl{
         return result;
     }
 
+    @RequestMapping(value = "/{no}", method = RequestMethod.GET)
+    public String getDetail(HttpServletRequest req, @PathVariable String no) {
+        HttpSession session = null;
+        String compId = null;
+        int compNo = 0;
+        String result = null;
+        String userNo = null;
+        Sopp sopp = null;
+        String data = null;
+        String aesKey, aesIv = null;
+
+        if (no == null) { // 글 번호 확인 안됨
+            result = "{\"result\":\"failure\",\"msg\":\"salesNo is not exist\"}";
+        } else { // 글 번호 확인 됨
+            session = req.getSession();
+            compId = (String) session.getAttribute("compId");
+            compNo = (int) session.getAttribute("compNo");
+            aesKey = (String) session.getAttribute("aesKey");
+            aesIv = (String) session.getAttribute("aesIv");
+            if (compId == null)
+                compId = (String) req.getAttribute("compId");
+            userNo = (String) session.getAttribute("userNo");
+
+            if (compId == null) { // 회사코드 확인 안됨
+                result = "{\"result\":\"failure\",\"msg\":\"Company ID is not verified.\"}";
+            } else if (userNo == null) {
+                result = "{\"result\":\"failure\",\"msg\":\"Session expired and/or Not logged in.\"}";
+            } else { // 회사코드 확인 됨
+                sopp = soppService.getSopp(compNo, no); // 삭제(update) 카운트를 실제 삭제 여부를 확인함
+
+                if (sopp != null) { // 처리됨
+                    data = sopp.toJson();
+                    data = soppService.encAes(data, aesKey, aesIv);
+                    result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
+                    
+                } else { // 처리 안됨
+                    result = "{\"result\":\"failure\",\"msg\":\"Error occured when read.\"}";
+                } // End of if : 3
+            } // End of if : 2
+        } // End of if : 1
+        return result;
+    }
+
     @RequestMapping(value = "", method = RequestMethod.POST)
     public String insert(HttpServletRequest req, @RequestBody String requestBody) throws JsonMappingException, JsonProcessingException {
 
@@ -91,7 +134,6 @@ public class ApiSoppCtrl extends Ctrl{
         data = soppService.decAes(requestBody, aesKey, aesIv);
         Sopp sopp = mapper.readValue(data, Sopp.class);
         sopp.setCompNo(compNo);
-        logger.info("yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy: " + sopp.getSoppTargetDate());
         
         if(sopp.getSoppTargetDate().equals("")){
             sopp.setSoppTargetDate(null);
@@ -111,6 +153,75 @@ public class ApiSoppCtrl extends Ctrl{
             result = "{\"result\":\"ok\"}";
         } else {
             result = "{\"result\":\"failure\" ,\"msg\":\"Error occured when write.\"}";
+        }
+
+        return result;
+    }
+
+    @RequestMapping(value = "/{no}", method = RequestMethod.DELETE)
+    public String delete(HttpServletRequest req, @PathVariable String no) {
+
+        HttpSession session = null;
+        String compId = null;
+        int compNo = 0;
+        String result = null;
+        String userNo = null;
+        String uri = req.getRequestURI();
+        String[] t = null;
+        int num = 0;
+
+        // 글 번호 확인
+        if (no == null) { // 글 번호 확인 안됨
+            result = "{\"result\":\" failure\",\"msg\":\"notiNo is not exist\"}";
+        } else { // 글 번호 확인 됨
+            session = req.getSession();
+
+            userNo = (String) session.getAttribute("userNo");
+            compNo = (int) session.getAttribute("compNo");
+            compId = (String) session.getAttribute("compId");
+            if (compId == null)
+                compId = (String) req.getAttribute("compId");
+
+            if (compId == null) { // 회사코드 확인 안됨
+                result = "{\"result\":\" failure\",\"msg\":\"Company ID is not verified.\"}";
+            } else if (userNo == null) {
+                result = "{\"result\":\"failure\",\"msg\":\"Session expired and/or Not logged in.\"}";
+            } else { // 회사코드 확인 됨
+                num = soppService.delete(compNo, no); // 삭제(update) 카운트를 실제 삭제 여부를 확인함
+                if (num > 0) { // 처리됨
+                    result = "{\"result\":\"ok\"}";
+                } else { // 처리 안됨
+                    result = "{\"result\":\" failure\",\"msg\":\"Error occured when delete.\"}";
+                } // End of if : 3
+            } // End of if : 2
+        } // End of if : 1
+        return result;
+    }
+    
+    @RequestMapping(value = "/{no}", method = RequestMethod.PUT)
+    public String update(HttpServletRequest req, @RequestBody String requestBody, @PathVariable String no) throws JsonMappingException, JsonProcessingException {
+        String compId = null;
+        int compNo = 0;
+        String result = null;
+        HttpSession session = null;
+        String data = null, aesKey = null, aesIv = null;
+        ObjectMapper mapper = new ObjectMapper();
+
+        session = req.getSession();
+        compNo = (int) session.getAttribute("compNo");
+        compId = (String) session.getAttribute("compId");
+        if (compId == null) {
+            compId = (String) req.getAttribute("compId");
+        }
+
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        data = soppService.decAes(requestBody, aesKey, aesIv);
+        Sopp sopp = mapper.readValue(data, Sopp.class);
+        sopp.setCompNo(compNo);
+
+        if (soppService.updateSopp(sopp) > 0) {
+            result = "{\"result\":\"ok\"}";
         }
 
         return result;
