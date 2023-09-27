@@ -10,8 +10,11 @@ import org.apache.ibatis.annotations.Update;
 
 import kr.co.bizcore.v1.domain.Estimate;
 import kr.co.bizcore.v1.domain.EstimateItem;
+import kr.co.bizcore.v1.domain.Sales;
 import kr.co.bizcore.v1.domain.SimpleEstimate;
 import kr.co.bizcore.v1.domain.Sopp;
+import kr.co.bizcore.v1.domain.SoppFileData;
+import kr.co.bizcore.v1.domain.Tech;
 
 public interface SoppMapper {
 
@@ -24,12 +27,26 @@ public interface SoppMapper {
     @Insert("INSERT INTO swc_sopp (userNo, compNo, custNo, contNo, custMemberNo, buyrNo, cntrctMth, soppTitle, soppDesc, soppTargetAmt, soppTargetDate, maintenance_S, maintenance_E, soppType, soppStatus, soppSrate, maintenanceTarget, secondUserNo, categories, regDatetime) VALUES (#{sopp.userNo}, #{sopp.compNo}, #{sopp.custNo}, #{sopp.contNo}, #{sopp.custMemberNo}, #{sopp.buyrNo}, #{sopp.cntrctMth}, #{sopp.soppTitle}, #{sopp.soppDesc}, #{sopp.soppTargetAmt}, #{sopp.soppTargetDate}, #{sopp.maintenance_S}, #{sopp.maintenance_E}, #{sopp.soppType}, #{sopp.soppStatus}, #{sopp.soppSrate}, #{sopp.maintenanceTarget}, #{sopp.secondUserNo}, #{sopp.categories}, now())")
     public int soppInsert(@Param("sopp") Sopp sopp);
 
+    @Insert("INSERT INTO swc_soppfiledata (fileId, fileName, fileDesc, uploadDate, fileContent, fileSize, fileExtention, soppNo, userNo, regDatetime, attrib) VALUES (#{soppFileData.fileId}, #{soppFileData.fileName}, #{soppFileData.fileDesc}, now(), #{soppFileData.fileContent}, #{soppFileData.fileSize}, #{soppFileData.fileExtention}, #{soppFileData.soppNo}, #{soppFileData.userNo}, now(), '10000')")
+    public int soppFileInsert(@Param("soppFileData") SoppFileData soppFileData);
+
     @Update("UPDATE swc_sopp SET attrib = 'XXXXX' WHERE soppNo = #{soppNo} AND compNo = #{compNo}")
     public int soppDelete(@Param("compNo") int compNo, @Param("soppNo") String soppNo);
 
     @Update("UPDATE swc_sopp SET custNo = #{sopp.custNo}, custMemberNo = #{sopp.custMemberNo}, buyrNo = #{sopp.buyrNo}, cntrctMth = #{sopp.cntrctMth}, soppTitle = #{sopp.soppTitle}, soppDesc = #{sopp.soppTitle}, soppTargetAmt = #{sopp.soppTargetAmt}, soppTargetDate = #{sopp.soppTargetDate}, maintenance_S = #{sopp.maintenance_S}, maintenance_E = #{sopp.maintenance_E}, soppType = #{sopp.soppType}, soppStatus = #{sopp.soppStatus}, soppSrate = #{sopp.soppSrate}, maintenanceTarget = #{sopp.maintenanceTarget}, secondUserNo = #{sopp.secondUserNo}, categories = #{sopp.categories}, modDatetime = now() WHERE soppNo = #{sopp.soppNo} AND compNo = #{sopp.compNo}")
     public int updateSopp(@Param("sopp") Sopp sopp);
 
+    @Select("SELECT * FROM swc_soppfiledata WHERE attrib NOT LIKE 'XXX%' AND soppNo = #{soppFileData.soppNo} ORDER BY regDatetime DESC")
+    public List<SoppFileData> getSoppFileList(@Param("soppFileData") SoppFileData soppFileData);
+
+    @Select("SELECT * FROM swc_techd WHERE attrib NOT LIKE 'XXX%' AND soppNo = #{tech.soppNo} AND compNo = #{tech.compNo} ORDER BY regDatetime DESC")
+    public List<Tech> getSoppTechList(@Param("tech") Tech tech);
+
+    @Select("SELECT * FROM swc_Sales WHERE attrib NOT LIKE 'XXX%' AND soppNo = #{sales.soppNo} AND compNo = #{sales.compNo} ORDER BY regDatetime DESC")
+    public List<Sales> getSoppSalesList(@Param("sales") Sales sales);
+
+    @Select("SELECT * FROM swc_soppFileData WHERE fileId = #{soppFileData.fileId} AND soppNo = #{soppFileData.soppNo}")
+    public SoppFileData downloadFile(@Param("soppFileData") SoppFileData soppFileData);
 
     // @Select("SELECT soppno AS no, sopptype AS soppType, cntrctMth AS contType, sopptitle AS title, buyrno AS customer, custNo AS enduser, userNo AS employee, sopptargetamt AS expectedSales, soppstatus AS status, " + 
     //         "contno AS contract, custMemberNo AS picOfCustomer, " + 

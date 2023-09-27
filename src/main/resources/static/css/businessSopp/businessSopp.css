@@ -1,11 +1,11 @@
 @charset "UTF-8";
-.searchContainer .searchMultiContent .searchDate > .searchGridItem{
+.searchContainer > .searchMultiContent > .searchDate > .searchGridItem{
 	display: grid;
 	grid-template-columns: 45% 10% 45%;
 	text-align: center;
 }
 
-.searchContainer .searchMultiContent .searchDate > .searchGridItem > span{
+.searchContainer > .searchMultiContent > .searchDate > .searchGridItem > span{
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -34,19 +34,19 @@
 	float: left;
 }
 
-.soppContainer .gridList{
+.soppContainer > .gridList{
     display: block; 
 	width: 99%; 
 	/* height: auto; */
 	margin: 0 auto;
 }
 
-.soppContainer .gridList .gridHeader,
-.soppContainer .gridList .gridContent{
+.soppContainer > .gridList > .gridHeader,
+.soppContainer > .gridList > .gridContent{
     grid-template-columns: 5% 5% 5% 25% 10% 10% 15% 5% 7.5% 7.5% 5%;
 }
 
-.soppContainer .gridList .gridHeader{
+.soppContainer > .gridList > .gridHeader{
 	border-bottom:1px solid #abb6d5;
 }
 
@@ -59,6 +59,83 @@
 	height:30px;
 	border-radius:5px;
 	float: right;
+}
+
+.soppContainer > #tabFileUpload{
+    display: none; 
+	width: 99%; 
+	/* height: auto; */
+	margin: 0 auto;
+	padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.soppContainer > #tabFileUpload > .fileUploadButtons{
+	display: flex;
+    align-items: center;
+	justify-content: right;
+}
+
+.soppContainer > #tabFileUpload > .fileUploadButtons > button{
+	width: 5%;
+    color: #ffffff;
+    border-radius: 5px;
+    height: 2.5vh;
+    margin-right: 5px;
+}
+
+.soppContainer > #tabFileUpload > .fileUploadButtons > button:nth-child(1){
+	background-color: #50AF49;
+    margin-right: 5px;
+}
+
+.soppContainer > #tabFileUpload > .fileUploadButtons > button:nth-child(2){
+	background-color: #F15F5F;
+}
+
+.soppContainer > #tabFileUpload > .gridHeader,
+.soppContainer > #tabFileUpload > .gridContent{
+    grid-template-columns: 20% 20% 20% 20% 20%;
+}
+
+.soppContainer > #tabFileUpload > .gridHeader{
+	border-bottom:1px solid #abb6d5;
+}
+
+.soppContainer > #tabTech{
+    display: none; 
+	width: 99%; 
+	/* height: auto; */
+	margin: 0 auto;
+	padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.soppContainer > #tabTech > .gridHeader,
+.soppContainer > #tabTech > .gridContent{
+    grid-template-columns: 20% 20% 20% 20% 20%;
+}
+
+.soppContainer > #tabTech > .gridHeader{
+	border-bottom:1px solid #abb6d5;
+}
+
+.soppContainer > #tabSales{
+    display: none; 
+	width: 99%; 
+	/* height: auto; */
+	margin: 0 auto;
+	padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.soppContainer > #tabSales > .gridHeader,
+.soppContainer > #tabSales > .gridContent{
+    grid-template-columns: 20% 20% 20% 20% 20%;
+}
+
+.soppContainer > #tabSales > .gridHeader{
+	border-bottom:1px solid #abb6d5;
 }
 
 /* .defaultFormContainer .defaultFormLine:first-child{

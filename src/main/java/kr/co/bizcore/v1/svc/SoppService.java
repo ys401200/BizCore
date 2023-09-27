@@ -15,6 +15,8 @@ import kr.co.bizcore.v1.domain.Sales;
 import kr.co.bizcore.v1.domain.Schedule;
 import kr.co.bizcore.v1.domain.SimpleEstimate;
 import kr.co.bizcore.v1.domain.Sopp;
+import kr.co.bizcore.v1.domain.SoppFileData;
+import kr.co.bizcore.v1.domain.Tech;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -37,6 +39,10 @@ public class SoppService extends Svc {
         return soppMapper.soppInsert(sopp);
     }
 
+    public int soppFileInsert(SoppFileData soppFileData){
+        return soppMapper.soppFileInsert(soppFileData);
+    }
+
     public int  delete(int compNo, String soppNo) {
         return soppMapper.soppDelete(compNo, soppNo);
     }
@@ -44,6 +50,22 @@ public class SoppService extends Svc {
     public int updateSopp(Sopp sopp) {
         return soppMapper.updateSopp(sopp);
     }
+
+    public List<SoppFileData> getSoppFileList(SoppFileData soppFileData){
+        return soppMapper.getSoppFileList(soppFileData);
+    }
+
+    public List<Tech> getSoppTechList(Tech tech){
+        return soppMapper.getSoppTechList(tech);
+    }
+
+    public List<Sales> getSoppSalesList(Sales sales){
+        return soppMapper.getSoppSalesList(sales);
+    }
+
+    public SoppFileData downloadFile(SoppFileData soppFileData) {
+		return soppMapper.downloadFile(soppFileData);
+	}
     
     // public String getSopp(int soppNo, String compId, String aesKey, String aesIv){
     //     Sopp result = null;

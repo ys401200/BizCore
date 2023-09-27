@@ -125,6 +125,16 @@
 }
 /* 로딩 관련 끝 */
 
+/* 상세보기 Tab 메뉴 시작 */
+/* .tabContent > input{
+    display: none;
+}
+
+.tabContent > label{
+    display: none;
+} */
+/* 상세보기 Tab 메뉴 끝 */
+
 /* top 메뉴 시작 */
 .mainTopMenu{
 	display: flex;

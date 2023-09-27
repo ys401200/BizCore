@@ -1,17 +1,31 @@
 package kr.co.bizcore.v1.ctrl;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -19,6 +33,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import kr.co.bizcore.v1.domain.Sales;
 import kr.co.bizcore.v1.domain.Sopp;
+import kr.co.bizcore.v1.domain.SoppFileData;
+import kr.co.bizcore.v1.domain.Tech;
 import kr.co.bizcore.v1.msg.Msg;
 import lombok.extern.slf4j.Slf4j;
 
@@ -222,6 +238,202 @@ public class ApiSoppCtrl extends Ctrl{
 
         if (soppService.updateSopp(sopp) > 0) {
             result = "{\"result\":\"ok\"}";
+        }
+
+        return result;
+    }
+
+    @RequestMapping(value = "/soppFile/{no}", method = RequestMethod.GET)
+    public String getSoppFile(HttpServletRequest req, @PathVariable String no) {
+        HttpSession session = null;
+        String compId = null;
+        int compNo = 0;
+        String result = null;
+        String userNo = null;
+        List<SoppFileData> list = null;
+        String data = null;
+        String aesKey, aesIv = null;
+        int i = 0;
+
+        if (no == null) { // 글 번호 확인 안됨
+            result = "{\"result\":\"failure\",\"msg\":\"salesNo is not exist\"}";
+        } else { // 글 번호 확인 됨
+            session = req.getSession();
+            compId = (String) session.getAttribute("compId");
+            compNo = (int) session.getAttribute("compNo");
+            aesKey = (String) session.getAttribute("aesKey");
+            aesIv = (String) session.getAttribute("aesIv");
+            if (compId == null)
+                compId = (String) req.getAttribute("compId");
+            userNo = (String) session.getAttribute("userNo");
+
+            if (compId == null) { // 회사코드 확인 안됨
+                result = "{\"result\":\"failure\",\"msg\":\"Company ID is not verified.\"}";
+            } else if (userNo == null) {
+                result = "{\"result\":\"failure\",\"msg\":\"Session expired and/or Not logged in.\"}";
+            } else { // 회사코드 확인 됨
+                SoppFileData soppFileData = new SoppFileData();
+                soppFileData.setSoppNo(Integer.parseInt(no));
+                list = soppService.getSoppFileList(soppFileData);
+                if (list != null) {
+                    data = "[";
+                    for (i = 0; i < list.size(); i++) {
+                        if (i > 0)
+                        data += ",";
+                        data += list.get(i).toJson();
+                    }
+                    data += "]";
+                } else {
+                    data = "[]";
+                }
+                data = soppService.encAes(data, aesKey, aesIv);
+                result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";     
+            } // End of if : 2
+        } // End of if : 1
+        return result;
+    }
+
+    @RequestMapping(value = "/soppTech/{no}", method = RequestMethod.GET)
+    public String getSoppTech(HttpServletRequest req, @PathVariable String no) {
+        HttpSession session = null;
+        String compId = null;
+        int compNo = 0;
+        String result = null;
+        String userNo = null;
+        List<Tech> list = null;
+        String data = null;
+        String aesKey, aesIv = null;
+        int i = 0;
+
+        if (no == null) { // 글 번호 확인 안됨
+            result = "{\"result\":\"failure\",\"msg\":\"salesNo is not exist\"}";
+        } else { // 글 번호 확인 됨
+            session = req.getSession();
+            compId = (String) session.getAttribute("compId");
+            compNo = (int) session.getAttribute("compNo");
+            aesKey = (String) session.getAttribute("aesKey");
+            aesIv = (String) session.getAttribute("aesIv");
+            if (compId == null)
+                compId = (String) req.getAttribute("compId");
+            userNo = (String) session.getAttribute("userNo");
+
+            if (compId == null) { // 회사코드 확인 안됨
+                result = "{\"result\":\"failure\",\"msg\":\"Company ID is not verified.\"}";
+            } else if (userNo == null) {
+                result = "{\"result\":\"failure\",\"msg\":\"Session expired and/or Not logged in.\"}";
+            } else { // 회사코드 확인 됨
+                Tech tech = new Tech();
+                tech.setSoppNo(Integer.parseInt(no));
+                tech.setCompNo(compNo);
+                list = soppService.getSoppTechList(tech);
+                if (list != null) {
+                    data = "[";
+                    for (i = 0; i < list.size(); i++) {
+                        if (i > 0)
+                        data += ",";
+                        data += list.get(i).toJson();
+                    }
+                    data += "]";
+                } else {
+                    data = "[]";
+                }
+                data = soppService.encAes(data, aesKey, aesIv);
+                result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";     
+            } // End of if : 2
+        } // End of if : 1
+        return result;
+    }
+
+    @RequestMapping(value = "/soppSales/{no}", method = RequestMethod.GET)
+    public String getSoppSales(HttpServletRequest req, @PathVariable String no) {
+        HttpSession session = null;
+        String compId = null;
+        int compNo = 0;
+        String result = null;
+        String userNo = null;
+        List<Sales> list = null;
+        String data = null;
+        String aesKey, aesIv = null;
+        int i = 0;
+
+        if (no == null) { // 글 번호 확인 안됨
+            result = "{\"result\":\"failure\",\"msg\":\"salesNo is not exist\"}";
+        } else { // 글 번호 확인 됨
+            session = req.getSession();
+            compId = (String) session.getAttribute("compId");
+            compNo = (int) session.getAttribute("compNo");
+            aesKey = (String) session.getAttribute("aesKey");
+            aesIv = (String) session.getAttribute("aesIv");
+            if (compId == null)
+                compId = (String) req.getAttribute("compId");
+            userNo = (String) session.getAttribute("userNo");
+
+            if (compId == null) { // 회사코드 확인 안됨
+                result = "{\"result\":\"failure\",\"msg\":\"Company ID is not verified.\"}";
+            } else if (userNo == null) {
+                result = "{\"result\":\"failure\",\"msg\":\"Session expired and/or Not logged in.\"}";
+            } else { // 회사코드 확인 됨
+                Sales sales = new Sales();
+                sales.setSoppNo(Integer.parseInt(no));
+                sales.setCompNo(compNo);
+                list = soppService.getSoppSalesList(sales);
+                if (list != null) {
+                    data = "[";
+                    for (i = 0; i < list.size(); i++) {
+                        if (i > 0)
+                        data += ",";
+                        data += list.get(i).toJson();
+                    }
+                    data += "]";
+                } else {
+                    data = "[]";
+                }
+                data = soppService.encAes(data, aesKey, aesIv);
+                result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}"; 
+            } // End of if : 2
+        } // End of if : 1
+        return result;
+    }
+
+    @RequestMapping(value = "/downloadFile", method = RequestMethod.POST)
+	public ResponseEntity<?> downloadFile(HttpServletRequest request) throws IOException {
+        SoppFileData newSoppFileData = new SoppFileData();
+        String fileId = request.getParameter("fileId");
+        String soppNo = request.getParameter("soppNo");
+        newSoppFileData.setFileId(fileId);
+        newSoppFileData.setSoppNo(Integer.parseInt(soppNo));
+
+		SoppFileData soppFile = soppService.downloadFile(newSoppFileData);
+		String fileName = soppFile.getFileName();
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+		headers.add("Content-Disposition", new String(fileName.getBytes("utf-8"), "ISO-8859-1"));
+		ResponseEntity<byte[]> entity = new ResponseEntity<byte[]>(soppFile.getFileContent(), headers, HttpStatus.OK);
+		
+		return entity;
+	}
+
+    @RequestMapping(value = "/soppFileInsert", method = RequestMethod.POST)
+    public String soppFileInsert(MultipartHttpServletRequest fileList) throws IOException{
+        MultipartFile file = fileList.getFile("file");
+		SoppFileData soppFileData = new SoppFileData();
+        int check = 0;
+        String result = null;
+		soppFileData.setFileId(UUID.randomUUID().toString());
+		soppFileData.setFileName(file.getOriginalFilename());
+		soppFileData.setFileContent(file.getBytes());
+		soppFileData.setFileSize(String.valueOf(file.getSize()));
+		soppFileData.setFileExtention(fileList.getParameter("fileExtention"));
+		soppFileData.setFileDesc(fileList.getParameter("fileDesc"));
+		soppFileData.setSoppNo(Integer.parseInt(fileList.getParameter("soppNo")));
+		soppFileData.setUserNo(Integer.parseInt(fileList.getParameter("userNo")));
+        
+        check = soppService.soppFileInsert(soppFileData);
+
+        if (check > 0) {
+            result = "{\"result\":\"ok\"}";
+        } else {
+            result = "{\"result\":\"failure\" ,\"msg\":\"Error occured when write.\"}";
         }
 
         return result;

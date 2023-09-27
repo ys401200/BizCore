@@ -73,7 +73,7 @@ class NoticeSet {
 			},
 		];
 
-		if (jsonData === "") {
+		if (jsonData === "" || jsonData.length == 0) {
 			str = [
 				{
 					"setData": undefined,
@@ -508,7 +508,7 @@ class SalesSet{
 			},
 		];
 
-		if (jsonData === "") {
+		if (jsonData === "" || jsonData.length == 0) {
 			str = [
 				{
 					"setData": undefined,
@@ -1297,7 +1297,7 @@ class SoppSet{
 			},
 		];
 
-		if (jsonData === "") {
+		if (jsonData === "" || jsonData.length == 0) {
 			str = [
 				{
 					"setData": undefined,
@@ -1383,9 +1383,52 @@ class SoppSet{
 		}
 	}
 
+	soppDetailFileListSet(id){
+		axios.get("/api/sopp/soppFile/" + id).then((response) => {
+			if (response.data.result === "ok") {
+				let result;
+				result = cipher.decAes(response.data.data);
+				result = JSON.parse(result);
+				console.log(result);
+				storage.soppFileList = result;
+			}
+		}).catch((error) => {
+			msg.set("첨부파일내역 에러 입니다.\n" + error);
+			console.log(error);
+		});
+	}
+
 	//영업기회 상세보기
 	soppDetailView(e) {
 		let thisEle = e;
+
+		CommonDatas.Temps.soppSet.soppDetailFileListSet(thisEle.dataset.id);
+
+		axios.get("/api/sopp/soppTech/" + thisEle.dataset.id).then((response) => {
+			if (response.data.result === "ok") {
+				let result;
+				result = cipher.decAes(response.data.data);
+				result = JSON.parse(result);
+				console.log(result);
+				storage.soppTechList = result;
+			}
+		}).catch((error) => {
+			msg.set("기술지원내역 에러 입니다.\n" + error);
+			console.log(error);
+		});
+
+		axios.get("/api/sopp/soppSales/" + thisEle.dataset.id).then((response) => {
+			if (response.data.result === "ok") {
+				let result;
+				result = cipher.decAes(response.data.data);
+				result = JSON.parse(result);
+				console.log(result);
+				storage.soppSalesList = result;
+			}
+		}).catch((error) => {
+			msg.set("영업활동내역 에러 입니다.\n" + error);
+			console.log(error);
+		});
 
 		axios.get("/api/sopp/" + thisEle.dataset.id).then((response) => {
 			if (response.data.result === "ok") {
@@ -1401,6 +1444,7 @@ class SoppSet{
 			msg.set("상세보기 에러 입니다.\n" + error);
 			console.log(error);
 		});
+
 	}
 
 	//영업기회 등록 폼
@@ -1671,6 +1715,45 @@ class SoppSet{
 		}, 100);
 	}
 
+	//영업기회 파일 등록 폼
+	soppFileInsertForm(){
+		let html, dataArray;
+	
+		dataArray = [
+			{
+				"title": "파일 선택(*)",
+				"elementId": "soppFileUpload",
+				"type": "file",
+				"col": 4,
+				"disabled": false,
+			},
+			{
+				"title": "내용",
+				"elementId": "soppFileUploadDesc",
+				"type": "textarea",
+				"col": 4,
+				"disabled": false,
+			}
+		];
+	
+		html = CommonDatas.detailViewForm(dataArray, "modal");
+	
+		modal.show();
+		modal.content.style.minWidth = "70vw";
+		modal.content.style.maxWidth = "70vw";
+		modal.headTitle.innerText = "파일 등록";
+		modal.body.innerHTML = "<div class=\"defaultFormContainer\">" + html + "</div>";
+		modal.confirm.innerText = "등록";
+		modal.close.innerText = "취소";
+		modal.confirm.setAttribute("onclick", "let sopp = new Sopp(); sopp.soppFileInsert();");
+		modal.close.setAttribute("onclick", "modal.hide();");
+		
+		setTimeout(() => {
+			ckeditor.config.readOnly = false;
+			window.setTimeout(setEditor, 100);
+		}, 100);
+	}
+
 	cntrctMthChange(thisEle, getDatas){
 		let maintenance_S = document.getElementById("maintenance_S");
 		let maintenance_E = document.getElementById("maintenance_E");
@@ -1769,6 +1852,289 @@ class SoppSet{
 		}
 
 		this.drawSoppList();
+	}
+
+	//영업기회 탭 파일첨부 페이지 출력 함수
+	drawSoppFileUpload() {
+		let container, soppContainer, jsonData, createDiv, job, header = [], data = [], ids = [], disDate, setDate, str, fnc = [], createInputDiv, inputHtml = "";
+		jsonData = storage.soppFileList;
+		soppContainer = document.getElementsByClassName("soppContainer")[0];
+		createDiv = document.createElement("div");
+		createDiv.id = "tabFileUpload";
+		createDiv.className = "tabPage";
+		soppContainer.append(createDiv);
+		container = document.getElementById("tabFileUpload");
+
+		createInputDiv = document.createElement("div");
+		createInputDiv.className = "fileUploadButtons";
+		inputHtml += "<button type=\"button\" onclick=\"CommonDatas.Temps.soppSet.soppFileInsertForm();\">파일등록</button>";
+		inputHtml += "<button type=\"button\">선택삭제</button>";
+		createInputDiv.innerHTML = inputHtml;
+
+		header = [
+			{
+				"title": "선택",
+				"align": "center",
+			},
+			{
+				"title": "일자",
+				"align": "center",
+			},
+			{
+				"title": "파일명",
+				"align": "center",
+			},
+			{
+				"title": "파일설명",
+				"align": "center",
+			},
+			{
+				"title": "담당자",
+				"align": "center",
+			},
+		];
+
+		if (jsonData === "" || jsonData.length == 0) {
+			str = [
+				{
+					"setData": undefined,
+					"align": "center",
+					"col": 5,
+				},
+			];
+
+			data.push(str);
+		} else {
+			for (let i = 0; i < jsonData.length; i++) {
+				let item = jsonData[i];
+
+				disDate = CommonDatas.dateDis(new Date(item.regDatetime).getTime(), new Date(item.modDatetime).getTime());
+				setDate = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+
+				str = [
+					{
+						"setData": "<input type=\"checkbox\">",
+						"align": "center",
+					},
+					{
+						"setData": setDate,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.fileName)) ? "" : item.fileName,
+						"align": "left",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.fileDesc)) ? "" : item.fileDesc,
+						"align": "left",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.userNo)) ? "" : storage.user[item.userNo].userName,
+						"align": "center",
+					},
+				];
+
+				fnc.push("let sopp = new Sopp(); sopp.soppDownloadFile(this);");
+				ids.push(jsonData[i].fileId);
+				data.push(str);
+			}
+		}
+
+		CommonDatas.createGrid(container, header, data, ids, job, fnc);
+		container.prepend(createInputDiv);
+	}
+
+	//영업기회 탭 기술지원리스트 출력 함수
+	drawSoppTechList() {
+		let container, soppContainer, jsonData, createDiv, job, header = [], data = [], ids = [], disDate, setDate, str, fnc = [];
+
+		jsonData = storage.soppTechList;
+
+		soppContainer = document.getElementsByClassName("soppContainer")[0];
+		createDiv = document.createElement("div");
+		createDiv.id = "tabTech";
+		createDiv.className = "tabPage";
+		soppContainer.append(createDiv);
+
+		container = document.getElementById("tabTech");
+
+		header = [
+			{
+				"title": "일자",
+				"align": "center",
+			},
+			{
+				"title": "지원형태",
+				"align": "center",
+			},
+			{
+				"title": "장소",
+				"align": "center",
+			},
+			{
+				"title": "담당자",
+				"align": "center",
+			},
+			{
+				"title": "비고",
+				"align": "center",
+			},
+		];
+
+		if (jsonData === "" || jsonData.length == 0) {
+			str = [
+				{
+					"setData": undefined,
+					"align": "center",
+					"col": 5,
+				},
+			];
+
+			data.push(str);
+		} else {
+			for (let i = 0; i < jsonData.length; i++) {
+				let item = jsonData[i];
+
+				disDate = CommonDatas.dateDis(new Date(item.regDatetime).getTime(), new Date(item.modDatetime).getTime());
+				setDate = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+
+				str = [
+					{
+						"setData": setDate,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.type)) ? "" : storage.code.etc[item.type],
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.techdPlace)) ? "" : item.techdPlace,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.userNo)) ? "" : storage.user[item.userNo].userName,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.desc)) ? "" : item.desc,
+						"align": "left",
+					},
+				];
+
+				fnc.push("");
+				ids.push("");
+				data.push(str);
+			}
+		}
+
+		CommonDatas.createGrid(container, header, data, ids, job, fnc);
+	}
+
+	//영업기회 탭 영업활동내역 출력 함수
+	drawSoppSalesList() {
+		let container, soppContainer, jsonData, createDiv, job, header = [], data = [], ids = [], disDate, setDate, str, fnc = [];
+
+		jsonData = storage.soppSalesList;
+
+		soppContainer = document.getElementsByClassName("soppContainer")[0];
+		createDiv = document.createElement("div");
+		createDiv.id = "tabSales";
+		createDiv.className = "tabPage";
+		soppContainer.append(createDiv);
+
+		container = document.getElementById("tabSales");
+
+		header = [
+			{
+				"title": "일자",
+				"align": "center",
+			},
+			{
+				"title": "활동종류",
+				"align": "center",
+			},
+			{
+				"title": "장소",
+				"align": "center",
+			},
+			{
+				"title": "담당자",
+				"align": "center",
+			},
+			{
+				"title": "비고",
+				"align": "center",
+			},
+		];
+
+		if (jsonData === "" || jsonData.length == 0) {
+			str = [
+				{
+					"setData": undefined,
+					"align": "center",
+					"col": 6,
+				},
+			];
+
+			data.push(str);
+		} else {
+			for (let i = 0; i < jsonData.length; i++) {
+				let item = jsonData[i];
+
+				disDate = CommonDatas.dateDis(new Date(item.regDatetime).getTime(), new Date(item.modDatetime).getTime());
+				setDate = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+
+				str = [
+					{
+						"setData": setDate,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.type)) ? "" : storage.code.etc[item.type],
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.salesPlace)) ? "" : item.salesPlace,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.userNo)) ? "" : storage.user[item.userNo].userName,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.desc)) ? "" : item.desc,
+						"align": "left",
+					},
+				];
+
+				fnc.push("");
+				ids.push("");
+				data.push(str);
+			}
+		}
+
+		CommonDatas.createGrid(container, header, data, ids, job, fnc);
+	}
+
+	//탭 radio 버튼 클릭 함수
+	detailRadioChange(thisEle){
+		let tabPage = document.getElementsByClassName("tabPage");
+		let defaultFormContainer = document.getElementsByClassName("defaultFormContainer")[0];
+		let dataKey;
+
+		if(thisEle === undefined){
+			dataKey = document.querySelector(".tabRadio:checked").dataset.key;
+		}else{
+			dataKey = thisEle.dataset.key;
+		}
+		
+		for(let i = 0; i < tabPage.length; i++){
+			defaultFormContainer.style.display = "none";
+			tabPage[i].style.display = "none";
+		}
+
+		if(dataKey === "tabDefault") defaultFormContainer.style.display = "grid";
+		else document.getElementById(dataKey).style.display = "block";
 	}
 }
 
@@ -2105,6 +2471,53 @@ class Sopp{
 	
 		detailBackBtn.style.display = "flex";
 		CommonDatas.detailTrueDatas(datas);
+
+		let tabArrays = [
+			{
+				"text": "기본정보",
+				"id": "tabDefaultPage",
+				"key": "tabDefault",
+				"class": "tabRadio",
+				"onChange": "let soppSet = new SoppSet(); soppSet.detailRadioChange(this);",
+			},
+			{
+				"text": "매입매출내역",
+				"id": "tabInOutComePage",
+				"key": "tabInOutCome",
+				"class": "tabRadio",
+				"onChange": "let soppSet = new SoppSet(); soppSet.detailRadioChange(this);",
+			},
+			{
+				"text": "견적내역",
+				"id": "tabEstimatePage",
+				"key": "tabEstimate",
+				"class": "tabRadio",
+				"onChange": "let soppSet = new SoppSet(); soppSet.detailRadioChange(this);",
+			},
+			{
+				"text": "파일첨부",
+				"id": "tabFileUploadPage",
+				"key": "tabFileUpload",
+				"class": "tabRadio",
+				"onChange": "let soppSet = new SoppSet(); soppSet.detailRadioChange(this);",
+			},
+			{
+				"text": "기술지원내역",
+				"id": "tabTechPage",
+				"key": "tabTech",
+				"class": "tabRadio",
+				"onChange": "let soppSet = new SoppSet(); soppSet.detailRadioChange(this);",
+			},
+			{
+				"text": "영업활동내역",
+				"id": "tabSalesPage",
+				"key": "tabSales",
+				"class": "tabRadio",
+				"onChange": "let soppSet = new SoppSet(); soppSet.detailRadioChange(this);",
+			}
+		];
+
+		CommonDatas.setDetailTabs(tabArrays);
 	
 		setTimeout(() => {
 			let categories = document.getElementById("categories");
@@ -2118,6 +2531,13 @@ class Sopp{
 			ckeditor.config.readOnly = true;
 			window.setTimeout(setEditor, 100);
 		}, 200);
+
+		setTimeout(() => {
+			let soppSet = new SoppSet();
+			soppSet.drawSoppFileUpload();
+			soppSet.drawSoppTechList();
+			soppSet.drawSoppSalesList();
+		}, 500);
 	}
 
 	insert(){
@@ -2185,6 +2605,83 @@ class Sopp{
 				return false;
 			});
 		}
+	}
+
+	soppFileInsert(){
+		let formData = new FormData();
+		let soppFileUpload = document.getElementById("soppFileUpload");
+		let soppFileUploadDesc = CKEDITOR.instances["soppFileUploadDesc"].getData().replaceAll("\n", "")
+		let files = soppFileUpload.files;
+		let fileArrays = Array.prototype.slice.call(files);
+		console.log(fileArrays);
+
+		formData.append("file", fileArrays[0]);
+		formData.append("fileDesc", soppFileUploadDesc);
+		formData.append("fileExtention", fileArrays[0].type);
+		formData.append("soppNo", storage.formList.soppNo);
+		formData.append("userNo", storage.my);
+
+		// formData.append("file", item[0]);
+		// formData.fileName = item.name;
+		// formData.fileSize = item.size;
+		// formData.fileDesc = soppFileUploadDesc;
+
+		// formData = JSON.stringify(formData);
+		// formData = cipher.encAes(formData);
+
+		// for (let value of formData.values()) {
+		// 	console.log(value);
+		// }
+
+		axios.post("/api/sopp/soppFileInsert", formData).then((response) => {
+			if (response.data.result === "ok") {
+				msg.set("등록되었습니다.");
+				let soppSet = new SoppSet();
+				modal.hide();
+				setTimeout(() => {
+					soppSet.soppDetailFileListSet();
+					soppSet.drawSoppFileUpload();
+				}, 300);
+			} else {
+				msg.set("등록 중 에러가 발생하였습니다.");
+				return false;
+			}
+		}).catch((error) => {
+			msg.set("등록 도중 에러가 발생하였습니다.\n" + error);
+			console.log(error);
+			return false;
+		});
+
+		// if(document.getElementById("soppFileUpload").value === ""){
+		// 	msg.set("부담당자를 선택해주세요.");
+		// 	document.getElementById("soppFileUpload").focus();
+		// 	return false;
+		// } else if(document.getElementById("secondUserNo").value !== "" && !CommonDatas.validateAutoComplete(document.getElementById("secondUserNo").value, "user")){
+		// 	msg.set("조회된 부담당자가 없습니다.\n다시 확인해주세요.");
+		// 	document.getElementById("secondUserNo").focus();
+		// 	return false;
+		// } else{
+		// 	CommonDatas.formDataSet();
+		// 	let data = storage.formList;
+		// 	data = JSON.stringify(data);
+		// 	data = cipher.encAes(data);
+
+		// 	axios.post("/api/sopp", data, {
+		// 		headers: { "Content-Type": "text/plain" }
+		// 	}).then((response) => {
+		// 		if (response.data.result === "ok") {
+		// 			location.reload();
+		// 			msg.set("등록되었습니다.");
+		// 		} else {
+		// 			msg.set("등록 중 에러가 발생하였습니다.");
+		// 			return false;
+		// 		}
+		// 	}).catch((error) => {
+		// 		msg.set("등록 도중 에러가 발생하였습니다.\n" + error);
+		// 		console.log(error);
+		// 		return false;
+		// 	});
+		// }
 	}
 
 	//영업기회 수정
@@ -2274,6 +2771,31 @@ class Sopp{
 		} else {
 			return false;
 		}
+	}
+
+	//영업기회 파일 다운로드 함수
+	soppDownloadFile(thisEle) {
+		let soppNo = storage.formList.soppNo;
+		let fileId = thisEle.dataset.id;
+
+		axios({
+			method: "POST",
+			url: "/api/sopp/downloadFile",
+			params: {
+				"soppNo": soppNo,
+				"fileId": fileId,
+			},
+			responseType: "blob",
+		}).then((response) => {
+			let link = document.createElement('a');
+			link.href = window.URL.createObjectURL(response.data);
+			link.download = thisEle.children[2].children[0].innerText;
+			link.click();
+		}).catch((error) => {
+			msg.set("다운로드 도중 에러가 발생하였습니다.\n" + error);
+			console.log(error);
+			return false;
+		});
 	}
 }
 
@@ -2530,7 +3052,7 @@ class ScheduleSet{
 			},
 		];
 
-		if (jsonData === "") {
+		if (jsonData === "" || jsonData.length == 0) {
 			str = [
 				{
 					"setData": undefined,
@@ -5041,7 +5563,7 @@ class EstimateSet {
 			},
 		];
 
-		if (jsonData === "") {
+		if (jsonData === "" || jsonData.length == 0) {
 			str = [
 				{
 					"setData": undefined,
@@ -5148,7 +5670,7 @@ class EstimateSet {
 			},
 		];
 
-		if (jsonData === "") {
+		if (jsonData === "" || jsonData.length == 0) {
 			str = [
 				{
 					"setData": undefined,
@@ -6408,7 +6930,7 @@ class TechSet{
 			},
 		];
 
-		if (jsonData === "") {
+		if (jsonData === "" || jsonData.length == 0) {
 			str = [
 				{
 					"setData": undefined,
@@ -7325,7 +7847,7 @@ class StoreSet{
 			},
 		];
 
-		if (jsonData === "") {
+		if (jsonData === "" || jsonData.length == 0) {
 			str = [
 				{
 					"setData": undefined,
@@ -8512,7 +9034,7 @@ class Common {
 
 			html += "</select>";
 		} else if (dataType === "file") {
-			html += "<input type='file' id='" + elementId + "' name='" + elementName + "' onchange='fileChange();' multiple>";
+			html += "<input type='file' id='" + elementId + "' name='" + elementName + "' onchange='" + dataChangeEvent + "'>";
 		} else if (dataType === "") {
 			html += "";
 		}
@@ -9108,8 +9630,16 @@ class Common {
 		let result = false;
 	
 		for (let key in storage[type]) {
-			if (type === "customer" || type === "cip" || type === "product") {
+			if (type === "cip") {
 				if (storage[type][key].name === value) {
+					result = true;
+				}
+			} else if (type === "customer") {
+				if (storage[type][key].custName === value) {
+					result = true;
+				}
+			} else if (type === "product") {
+				if (storage[type][key].productName === value) {
 					result = true;
 				}
 			} else if (type === "user") {
@@ -9117,7 +9647,7 @@ class Common {
 					result = true;
 				}
 			} else if (type === "sopp") {
-				if (storage[type][key].title === value) {
+				if (storage[type][key].soppTitle === value) {
 					result = true;
 				}
 			} else if(type === "contract"){
@@ -9156,21 +9686,21 @@ class Common {
 
 	//상세보기 back 버튼 함수
 	hideDetailView(func){
-		let defaultFormContainer, crudUpdateBtn, tabs, storeType;
+		let defaultFormContainer, crudUpdateBtn, tabContent, storeType;
 		defaultFormContainer = document.getElementsByClassName("defaultFormContainer")[0];
 		crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
-		tabs = document.getElementsByClassName("tabs")[0];
-		let tabLists = document.getElementsByClassName("tabLists")[0];
+		tabContent = document.getElementsByClassName("tabContent")[0];
+		let tabPage = document.getElementsByClassName("tabPage")[0];
 		defaultFormContainer.remove();
 		crudUpdateBtn.innerText = "수정";
 		storeType = document.getElementsByClassName("storeType")[0];
 	
-		if (tabs !== undefined) {
-			tabs.remove();
+		if (tabContent !== undefined) {
+			tabContent.remove();
 		}
 
-		if(tabLists !== undefined){
-			tabLists.remove();
+		if(tabPage !== undefined){
+			tabPage.remove();
 		}
 
 		if(storeType !== undefined){
@@ -9415,6 +9945,30 @@ class Common {
 				storage.categories[i]["category"] = item.categories;
 			}
 		}
+	}
+
+	//tab 셋팅 함수
+	setDetailTabs(datas){
+		let tabHtml = "", contentKey = "", contentId = "", contentClass = "", contentChange = "";
+		let createDiv = document.createElement("div");
+		createDiv.className = "tabContent";
+		let defaultFormContainer = document.getElementsByClassName("defaultFormContainer")[0];
+
+		for(let i = 0; i < datas.length; i++){
+			let item = datas[i];
+			
+			if(item.key !== undefined && item.key !== "") contentKey = " data-key=\"" + item.key + "\"";
+			if(item.id !== undefined && item.id !== "") contentId = " id=\"" + item.id + "\"";
+			if(item.class !== undefined && item.class !== "") contentClass = " class=\"" + item.class + "\"";
+			if(item.onChange !== undefined && item.onChange !== "") contentChange = " onChange=\"" + item.onChange + "\"";
+
+			if(i == 0) tabHtml += "<input type=\"radio\" name=\"detailTabs\"" + contentId + contentKey + contentClass + contentChange + " checked/>";
+			else tabHtml += "<input type=\"radio\" name=\"detailTabs\"" + contentId + contentKey + contentClass + contentChange + "/>";
+			tabHtml += "<label for=\"" + item.id + "\">" + item.text + "</label>";
+		}
+
+		createDiv.innerHTML = tabHtml;
+		defaultFormContainer.before(createDiv);
 	}
 }
 

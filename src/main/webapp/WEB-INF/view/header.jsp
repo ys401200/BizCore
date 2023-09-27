@@ -40,7 +40,7 @@
 <script src="/js/common_bi.js"></script>
 
 
-<title>BizCore</title>
+<title>BizCore 23.09.25</title>
 </head>
 <body>
 <input type="hidden" id="pathName" value="${getPathName}" />
