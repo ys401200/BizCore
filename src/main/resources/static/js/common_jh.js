@@ -1754,6 +1754,7 @@ class SoppSet{
 		}, 100);
 	}
 
+	//영업기회 형식이 유지보수일 때 유지보수 일자 변경 함수
 	cntrctMthChange(thisEle, getDatas){
 		let maintenance_S = document.getElementById("maintenance_S");
 		let maintenance_E = document.getElementById("maintenance_E");
@@ -1856,8 +1857,13 @@ class SoppSet{
 
 	//영업기회 탭 파일첨부 페이지 출력 함수
 	drawSoppFileUpload() {
-		let container, soppContainer, jsonData, createDiv, job, header = [], data = [], ids = [], disDate, setDate, str, fnc = [], createInputDiv, inputHtml = "";
+		let container, soppContainer, jsonData, createDiv, job, header = [], data = [], ids = [], disDate, setDate, str, fnc = [], createInputDiv, inputHtml = "", fileName;
 		jsonData = storage.soppFileList;
+
+		if(document.getElementById("tabFileUpload") !== null){
+			document.getElementById("tabFileUpload").remove();
+		}
+		
 		soppContainer = document.getElementsByClassName("soppContainer")[0];
 		createDiv = document.createElement("div");
 		createDiv.id = "tabFileUpload";
@@ -1868,7 +1874,7 @@ class SoppSet{
 		createInputDiv = document.createElement("div");
 		createInputDiv.className = "fileUploadButtons";
 		inputHtml += "<button type=\"button\" onclick=\"CommonDatas.Temps.soppSet.soppFileInsertForm();\">파일등록</button>";
-		inputHtml += "<button type=\"button\">선택삭제</button>";
+		inputHtml += "<button type=\"button\" onclick=\"let sopp = new Sopp('" + jsonData + "'); sopp.soppFileDelete();\">선택삭제</button>";
 		createInputDiv.innerHTML = inputHtml;
 
 		header = [
@@ -1910,10 +1916,11 @@ class SoppSet{
 
 				disDate = CommonDatas.dateDis(new Date(item.regDatetime).getTime(), new Date(item.modDatetime).getTime());
 				setDate = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+				fileName = (CommonDatas.emptyValuesCheck(item.fileName)) ? "" : item.fileName;
 
 				str = [
 					{
-						"setData": "<input type=\"checkbox\">",
+						"setData": "<input type=\"checkbox\" class=\"soppFileCheck\" data-id=\"" + item.fileId + "\">",
 						"align": "center",
 					},
 					{
@@ -1921,7 +1928,7 @@ class SoppSet{
 						"align": "center",
 					},
 					{
-						"setData": (CommonDatas.emptyValuesCheck(item.fileName)) ? "" : item.fileName,
+						"setData": "<a href=\"#\" data-id=\"" + item.fileId + "\" onclick=\"let sopp = new Sopp(); sopp.soppDownloadFile(this);\">" + fileName + "</a>",
 						"align": "left",
 					},
 					{
@@ -1934,7 +1941,7 @@ class SoppSet{
 					},
 				];
 
-				fnc.push("let sopp = new Sopp(); sopp.soppDownloadFile(this);");
+				fnc.push("");
 				ids.push(jsonData[i].fileId);
 				data.push(str);
 			}
@@ -2537,7 +2544,7 @@ class Sopp{
 			soppSet.drawSoppFileUpload();
 			soppSet.drawSoppTechList();
 			soppSet.drawSoppSalesList();
-		}, 500);
+		}, 700);
 	}
 
 	insert(){
@@ -2613,44 +2620,42 @@ class Sopp{
 		let soppFileUploadDesc = CKEDITOR.instances["soppFileUploadDesc"].getData().replaceAll("\n", "")
 		let files = soppFileUpload.files;
 		let fileArrays = Array.prototype.slice.call(files);
-		console.log(fileArrays);
 
-		formData.append("file", fileArrays[0]);
-		formData.append("fileDesc", soppFileUploadDesc);
-		formData.append("fileExtention", fileArrays[0].type);
-		formData.append("soppNo", storage.formList.soppNo);
-		formData.append("userNo", storage.my);
-
-		// formData.append("file", item[0]);
-		// formData.fileName = item.name;
-		// formData.fileSize = item.size;
-		// formData.fileDesc = soppFileUploadDesc;
-
-		// formData = JSON.stringify(formData);
-		// formData = cipher.encAes(formData);
-
-		// for (let value of formData.values()) {
-		// 	console.log(value);
-		// }
-
-		axios.post("/api/sopp/soppFileInsert", formData).then((response) => {
-			if (response.data.result === "ok") {
-				msg.set("등록되었습니다.");
-				let soppSet = new SoppSet();
-				modal.hide();
-				setTimeout(() => {
-					soppSet.soppDetailFileListSet();
-					soppSet.drawSoppFileUpload();
-				}, 300);
-			} else {
-				msg.set("등록 중 에러가 발생하였습니다.");
-				return false;
-			}
-		}).catch((error) => {
-			msg.set("등록 도중 에러가 발생하였습니다.\n" + error);
-			console.log(error);
+		if(fileArrays.length < 1){
+			msg.set("파일을 선택해주세요.");
 			return false;
-		});
+		}else{
+			$('.theme-loader').fadeIn();
+	
+			formData.append("file", fileArrays[0]);
+			formData.append("fileDesc", soppFileUploadDesc);
+			formData.append("fileExtention", fileArrays[0].type);
+			formData.append("soppNo", storage.formList.soppNo);
+			formData.append("userNo", storage.my);
+	
+			axios.post("/api/sopp/soppFileInsert", formData).then((response) => {
+				if (response.data.result === "ok") {
+					msg.set("등록되었습니다.");
+					let soppSet = new SoppSet();
+					modal.hide();
+					soppSet.soppDetailFileListSet(storage.formList.soppNo);
+	
+					setTimeout(() => {
+						soppSet.drawSoppFileUpload();
+						soppSet.detailRadioChange();
+						$('.theme-loader').delay(1000).fadeOut("slow");
+					}, 1200);
+				} else {
+					msg.set("등록 중 에러가 발생하였습니다.");
+					return false;
+				}
+			}).catch((error) => {
+				msg.set("등록 도중 에러가 발생하였습니다.\n" + error);
+				console.log(error);
+				return false;
+			});
+		}
+
 
 		// if(document.getElementById("soppFileUpload").value === ""){
 		// 	msg.set("부담당자를 선택해주세요.");
@@ -2773,6 +2778,51 @@ class Sopp{
 		}
 	}
 
+	//영업기회 파일 삭제 함수
+	soppFileDelete(){
+		if(confirm("선택한 파일들을 삭제하시겠습니까??")){
+			let soppFileCheck = document.getElementsByClassName("soppFileCheck");
+			$('.theme-loader').fadeIn();
+	
+			for(let i = 0; i < soppFileCheck.length; i++){
+				let item = soppFileCheck[i];
+
+				if(item.checked){
+					axios.delete("/api/sopp/soppFileDelete/" + item.dataset.id, {
+						headers: { "Content-Type": "text/plain" }
+					}).then((response) => {
+						if (response.data.result !== "ok") {
+							msg.set("삭제 중 에러가 발생하였습니다.");
+							return false;
+						}
+					}).catch((error) => {
+						msg.set("삭제 도중 에러가 발생하였습니다.\n" + error);
+						console.log(error);
+						return false;
+					});
+				}
+
+				if(i == (soppFileCheck.length - 1)){
+					let soppSet = new SoppSet();
+
+					setTimeout(() => {
+						$('.theme-loader').delay(1000).fadeOut("slow");
+						soppSet.soppDetailFileListSet(storage.formList.soppNo);
+					}, 500);
+			
+					setTimeout(() => {
+						soppSet.drawSoppFileUpload();
+						soppSet.detailRadioChange();
+						msg.set("삭제 되었습니다.");
+					}, 1200);
+				}
+			}
+
+		}else{
+			return false;
+		}
+	}
+
 	//영업기회 파일 다운로드 함수
 	soppDownloadFile(thisEle) {
 		let soppNo = storage.formList.soppNo;
@@ -2789,7 +2839,7 @@ class Sopp{
 		}).then((response) => {
 			let link = document.createElement('a');
 			link.href = window.URL.createObjectURL(response.data);
-			link.download = thisEle.children[2].children[0].innerText;
+			link.download = thisEle.innerText;
 			link.click();
 		}).catch((error) => {
 			msg.set("다운로드 도중 에러가 발생하였습니다.\n" + error);

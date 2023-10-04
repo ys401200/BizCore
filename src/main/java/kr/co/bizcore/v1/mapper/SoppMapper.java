@@ -30,6 +30,9 @@ public interface SoppMapper {
     @Insert("INSERT INTO swc_soppfiledata (fileId, fileName, fileDesc, uploadDate, fileContent, fileSize, fileExtention, soppNo, userNo, regDatetime, attrib) VALUES (#{soppFileData.fileId}, #{soppFileData.fileName}, #{soppFileData.fileDesc}, now(), #{soppFileData.fileContent}, #{soppFileData.fileSize}, #{soppFileData.fileExtention}, #{soppFileData.soppNo}, #{soppFileData.userNo}, now(), '10000')")
     public int soppFileInsert(@Param("soppFileData") SoppFileData soppFileData);
 
+    @Update("UPDATE swc_soppfiledata SET attrib = 'XXXXX' WHERE fileId = #{fileId}")
+    public int soppFileDelete(@Param("fileId") String fileId);
+
     @Update("UPDATE swc_sopp SET attrib = 'XXXXX' WHERE soppNo = #{soppNo} AND compNo = #{compNo}")
     public int soppDelete(@Param("compNo") int compNo, @Param("soppNo") String soppNo);
 

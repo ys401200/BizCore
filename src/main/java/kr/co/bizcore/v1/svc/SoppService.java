@@ -43,6 +43,10 @@ public class SoppService extends Svc {
         return soppMapper.soppFileInsert(soppFileData);
     }
 
+    public int  soppFileDelete(String FileId) {
+        return soppMapper.soppFileDelete(FileId);
+    }
+
     public int  delete(int compNo, String soppNo) {
         return soppMapper.soppDelete(compNo, soppNo);
     }
