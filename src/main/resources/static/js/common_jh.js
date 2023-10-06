@@ -1328,7 +1328,7 @@ class SoppSet{
 						"align": "center",
 					},
 					{
-						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].soppTitle)) ? "" : jsonData[i].soppTitle,
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].soppTitle)) ? "" : jsonData[i].soppTitle + " <a href=\"#\" class=\"rightDetailShowBtn\" data-id=\"" + jsonData[i].soppNo + "\" onclick=\"CommonDatas.Temps.soppSet.rightDetailShow(this);\" style=\"color: blue;\">열기</a>",
 						"align": "left",
 					},
 					{
@@ -1361,7 +1361,7 @@ class SoppSet{
 					},
 				];
 
-				fnc.push("CommonDatas.Temps.soppSet.soppDetailView(this)");
+				fnc.push("CommonDatas.Temps.soppSet.soppDetailView(this, \"page\")");
 				ids.push(jsonData[i].soppNo);
 				data.push(str);
 			}
@@ -1374,6 +1374,7 @@ class SoppSet{
 		CommonDatas.setViewContents(hideArr, showArr);
 		document.getElementById("multiSearchBtn").setAttribute("onclick", "CommonDatas.Temps.soppSet.searchSubmit();");
 		containerTitle.innerText = "영업기회조회";
+		CommonDatas.multiEventStopSet("rightDetailShowBtn");
 
 		let path = location.pathname.split("/");
 
@@ -1389,7 +1390,6 @@ class SoppSet{
 				let result;
 				result = cipher.decAes(response.data.data);
 				result = JSON.parse(result);
-				console.log(result);
 				storage.soppFileList = result;
 			}
 		}).catch((error) => {
@@ -1399,7 +1399,7 @@ class SoppSet{
 	}
 
 	//영업기회 상세보기
-	soppDetailView(e) {
+	soppDetailView(e, type) {
 		let thisEle = e;
 
 		CommonDatas.Temps.soppSet.soppDetailFileListSet(thisEle.dataset.id);
@@ -1409,7 +1409,6 @@ class SoppSet{
 				let result;
 				result = cipher.decAes(response.data.data);
 				result = JSON.parse(result);
-				console.log(result);
 				storage.soppTechList = result;
 			}
 		}).catch((error) => {
@@ -1422,7 +1421,6 @@ class SoppSet{
 				let result;
 				result = cipher.decAes(response.data.data);
 				result = JSON.parse(result);
-				console.log(result);
 				storage.soppSalesList = result;
 			}
 		}).catch((error) => {
@@ -1435,10 +1433,15 @@ class SoppSet{
 				let result;
 				result = cipher.decAes(response.data.data);
 				result = JSON.parse(result);
-				let sopp = new Sopp(result);
-				sopp.detail();
 
-				localStorage.setItem("loadSetPage", window.location.pathname);
+				if(type === "page"){
+					let sopp = new Sopp(result);
+					sopp.detail();
+	
+					localStorage.setItem("loadSetPage", window.location.pathname);
+				}else{
+					CommonDatas.detailSetFormList(result);
+				}
 			}
 		}).catch((error) => {
 			msg.set("상세보기 에러 입니다.\n" + error);
@@ -2143,6 +2146,269 @@ class SoppSet{
 		if(dataKey === "tabDefault") defaultFormContainer.style.display = "grid";
 		else document.getElementById(dataKey).style.display = "block";
 	}
+
+	rightDetailShow(thisEle){
+		$('.theme-loader').fadeIn();
+		
+		CommonDatas.Temps.soppSet.soppDetailView(thisEle, "right");
+		
+		setTimeout(() => {
+			let header = document.getElementsByClassName("header")[0];
+			let bodyContent = document.getElementById("bodyContent");
+			let createDiv = document.createElement("div");
+			let calHeight = (document.body.clientHeight - header.offsetHeight) - 10;
+			let calBodyHeight = calHeight - 70;
+			let divHtml = "";
+			let bodyHtml = "";
+			
+			if(document.getElementById("rightDetailParent") !== null){
+				document.getElementById("rightDetailParent").remove();
+			}
+			
+			bodyHtml = CommonDatas.Temps.soppSet.soppRightDetailHtmlSet();
+
+			createDiv.id = "rightDetailParent";
+			divHtml = "<div id=\"rightDetail\" style=\"top: " + bodyContent.offsetTop + "px; height: " + calHeight + "px;" + "\">";
+			divHtml += "<div class=\"rightDetailTop\">";
+			divHtml += "<div class=\"rightDetailTopTitle\">" + storage.formList.soppTitle + "</div>";
+			divHtml += "<div class=\"rightDetailTopClose\" onclick=\"CommonDatas.Temps.soppSet.rightDetailClose();\">X</div>";
+			divHtml += "</div>";
+			divHtml += "<div class=\"rightDetailBody\" style=\"height: " + calBodyHeight + "px;" + "\">";
+			divHtml += "<div class=\"rightDetailBodyTitle\">1. 기본정보</div>";
+			divHtml += "<div class=\"rightDetailBodyDefaultInfo\">" + bodyHtml + "</div>";
+			divHtml += "</div>";
+			divHtml += "</div>";
+			createDiv.innerHTML = divHtml;
+	
+			bodyContent.append(createDiv);
+		}, 600);
+
+		setTimeout(() => {
+			document.getElementById("soppStatus").value = storage.formList.soppStatus;
+			document.getElementById("cntrctMth").value = storage.formList.cntrctMth;
+			document.getElementById("soppType").value = storage.formList.soppType;
+			ckeditor.config.readOnly = true;
+			window.setTimeout(setEditor, 100);
+			$('.theme-loader').delay(500).fadeOut("slow");
+		}, 800);
+
+		// setTimeout(() => {
+		// 	let soppSet = new SoppSet();
+		// 	soppSet.drawSoppFileUpload();
+		// 	soppSet.drawSoppTechList();
+		// 	soppSet.drawSoppSalesList();
+		// }, 700);
+	}
+
+	rightDetailClose(){
+		if(document.getElementById("rightDetailParent").style.display !== "none"){
+			document.getElementById("rightDetailParent").remove();
+		}
+	}
+
+	soppRightDetailHtmlSet(){
+		let html = "", dataArray, setDate, soppTargetDate, maintenance_S, maintenance_E;
+
+		setDate = CommonDatas.dateDis(new Date(storage.formList.soppTargetDate).getTime());
+		soppTargetDate = CommonDatas.dateFnc(setDate);
+
+		setDate = CommonDatas.dateDis(new Date(storage.formList.maintenance_S).getTime());
+		maintenance_S = CommonDatas.dateFnc(setDate);
+
+		setDate = CommonDatas.dateDis(new Date(storage.formList.maintenance_E).getTime());
+		maintenance_E = CommonDatas.dateFnc(setDate);
+
+		dataArray = [
+			{
+				"title": "담당자(*)",
+				"elementId": "userNo",
+				"complete": "user",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"value": (CommonDatas.emptyValuesCheck(storage.formList.userNo)) ? "" : storage.user[storage.formList.userNo].userName,
+			},
+			{
+				"title": "(부)담당자",
+				"elementId": "secondUserNo",
+				"complete": "user",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"value": (CommonDatas.emptyValuesCheck(storage.formList.secondUserNo)) ? "" : storage.user[storage.formList.secondUserNo].userName,
+			},
+			{
+				"title": "매출처",
+				"elementId": "custNo",
+				"complete": "customer",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"value": (CommonDatas.emptyValuesCheck(storage.formList.custNo)) ? "" : storage.customer[storage.formList.custNo].custName,
+			},
+			{
+				"title": "매출처 담당자",
+				"complete": "cip",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"elementId": "custMemberNo",
+				"value": (CommonDatas.emptyValuesCheck(storage.formList.custMemberNo)) ? "" : storage.cip[storage.formList.custMemberNo].name,
+			},
+			{
+				"title": "엔드유저",
+				"elementId": "buyrNo",
+				"complete": "customer",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"value": (CommonDatas.emptyValuesCheck(storage.formList.buyrNo)) ? "" : storage.customer[storage.formList.buyrNo].custName,
+			},
+			{
+				"title": "진행단계(*)",
+				"selectValue": [
+					{
+						"key": "10178",
+						"value": "영업정보파악",
+					},
+					{
+						"key": "10179",
+						"value": "초기접촉",
+					},
+					{
+						"key": "10180",
+						"value": "제안서제출 및 PT",
+					},
+					{
+						"key": "10181",
+						"value": "견적서 제출",
+					},
+				],
+				"type": "select",
+				"elementId": "soppStatus",
+			},
+			{
+				"title": "가능성",
+				"elementId": "soppSrate",
+				"value": (CommonDatas.emptyValuesCheck(storage.formList.soppSrate)) ? "" : storage.formList.soppSrate,
+			},
+			{
+				"title": "계약구분",
+				"selectValue": [
+					{
+						"key": "",
+						"value": "선택",
+					},
+					{
+						"key": "10247",
+						"value": "판매계약",
+					},
+					{
+						"key": "10248",
+						"value": "유지보수",
+					},
+					{
+						"key": "10254",
+						"value": "임대계약",
+					},
+				],
+				"type": "select",
+				"elementId": "cntrctMth",
+				"onChange": "CommonDatas.Temps.soppSet.cntrctMthChange(this);",
+			},
+			{
+				"title": "매출예정일",
+				"elementId": "soppTargetDate",
+				"type": "date",
+				"value": soppTargetDate,
+			},
+			{
+				"title": "판매방식",
+				"selectValue": [
+					{
+						"key": "",
+						"value": "선택",
+					},
+					{
+						"key": "10173",
+						"value": "조달직판",
+					},
+					{
+						"key": "10174",
+						"value": "조달간판",
+					},
+					{
+						"key": "10175",
+						"value": "조달대행",
+					},
+					{
+						"key": "10176",
+						"value": "직접판매",
+					},
+					{
+						"key": "10218",
+						"value": "간접판매",
+					},
+					{
+						"key": "10255",
+						"value": "기타",
+					},
+				],
+				"type": "select",
+				"elementId": "soppType",
+			},
+			{
+				"title": "예상매출액",
+				"elementId": "soppTargetAmt",
+				"keyup": "CommonDatas.inputNumberFormat(this);",
+				"value": (CommonDatas.emptyValuesCheck(storage.formList.soppTargetAmt)) ? "" : storage.formList.soppTargetAmt.toLocaleString("en-US"),
+			},
+			{
+				"title": "카테고리<br />(제품회사명)",
+				"complete": "productCust",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"value": (CommonDatas.emptyValuesCheck(storage.formList.categories)) ? "" : storage.formList.categories,
+			},
+			{
+				"title": "유지보수대상",
+				"selectValue": [
+					{
+						"key": "N",
+						"value": "No",
+					},
+					{
+						"key": "Y",
+						"value": "Yes",
+					},
+				],
+				"type": "select",
+				"elementId": "maintenanceTarget",
+			},
+			{
+				"title": "유지보수 시작일",
+				"elementId": "maintenance_S",
+				"type": "date",
+				"value": maintenance_S,
+			},
+			{
+				"title": "유지보수 종료일",
+				"elementId": "maintenance_E",
+				"type": "date",
+				"value": maintenance_E,
+			},
+			{
+				"title": "영업기회명",
+				"elementId": "soppTitle",
+				"value": (CommonDatas.emptyValuesCheck(storage.formList.soppTitle)) ? "" : storage.formList.soppTitle,
+			},
+			{
+				"title": "내용",
+				"elementId": "soppDesc",
+				"type": "textarea",
+				"value": (CommonDatas.emptyValuesCheck(storage.formList.soppDesc)) ? "" : storage.formList.soppTitle,
+			}
+		];
+
+		html = CommonDatas.detailViewForm(dataArray, "right");
+
+		return html;
+	}
 }
 
 //영업기회 crud
@@ -2225,6 +2491,10 @@ class Sopp{
 		let html = "";
 		let setDate, soppTargetDate, maintenance_S, maintenance_E, datas, dataArray, notIdArray;
 		let splitCategories = this.categories.split(",");
+
+		if(document.getElementById("rightDetailParent") !== null){
+			document.getElementById("rightDetailParent").remove();
+		}
 
 		for(let i = 0; i < splitCategories.length; i++){
 			CommonDatas.makeCategories(splitCategories[i]);
@@ -2533,8 +2803,6 @@ class Sopp{
 			document.getElementById("soppStatus").value = this.soppStatus;
 			document.getElementById("cntrctMth").value = this.cntrctMth;
 			document.getElementById("soppType").value = this.soppType;
-			document.getElementById("maintenanceTarget").value = this.maintenanceTarget;
-			CommonDatas.Temps.soppSet.cntrctMthChange(document.getElementById("cntrctMth"), this.getData);
 			ckeditor.config.readOnly = true;
 			window.setTimeout(setEditor, 100);
 		}, 200);
@@ -8971,6 +9239,8 @@ class Common {
 			html = this.detailBoardForm(data);
 		} else if (type === "modal") {
 			html = this.detailViewFormHtml(data);
+		} else {
+			html = this.detailViewFormHtml(data);
 		}
 
 		return html;
@@ -10019,6 +10289,20 @@ class Common {
 
 		createDiv.innerHTML = tabHtml;
 		defaultFormContainer.before(createDiv);
+	}
+
+	multiEventStopSet(className){
+		let classElements = document.getElementsByClassName(className);
+
+		if(classElements.length > 0){
+			for(let i = 0; i < classElements.length; i++){
+				let item = classElements[i];
+	
+				item.addEventListener("click", e => {
+					e.stopPropagation();
+				});
+			}
+		}
 	}
 }
 

@@ -138,6 +138,150 @@
 	border-bottom:1px solid #abb6d5;
 }
 
-/* .defaultFormContainer .defaultFormLine:first-child{
+#bodyContent > #rightDetailParent{
+	display: flex;
+	align-items: center;
+	justify-content: right;
+	width: 100%;
+}
+
+#bodyContent > #rightDetailParent > #rightDetail{
+	position: absolute;
+	width: 33.333%;
+	background-color: #fff;
+	border: 1px solid #BDBDBD;
+	border-radius: 10px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+#bodyContent > #rightDetailParent > #rightDetail > div:first-child{
+	display: flex;
+    align-items: center;
+	border-bottom: 1px solid #BDBDBD;
+	padding: 10px;
+}
+
+#bodyContent > #rightDetailParent > #rightDetail > div:first-child > div{
+	font-size: 1.2rem;
+    font-weight: 500;
+}
+
+#bodyContent > #rightDetailParent > #rightDetail > div:first-child > div:first-child{
+	width: 100%;
+}
+
+#bodyContent > #rightDetailParent > #rightDetail > div:first-child > div:last-child{
+	cursor: pointer;
+}
+
+#bodyContent > #rightDetailParent > #rightDetail > div:last-child{
+	overflow-y: auto;
+	padding: 10px;
+}
+
+.rightDetailBodyDefaultInfo{
+	padding-top: 10px;
+}
+
+.rightDetailBodyDefaultInfo > .defaultFormLine {
+	display: flex;
+	border-top: 1px solid #B5B2FF;
+}
+
+.rightDetailBodyDefaultInfo > .defaultFormLine:last-child {
+	border-bottom: 1px solid #B5B2FF;
+}
+
+.rightDetailBodyDefaultInfo > .defaultFormLine > .defaultFormSpanDiv {
+	display: flex;
+	align-items: center;
+	border-right: 1px solid #B5B2FF;
+	background-color: #DAD9FF;
+}
+
+.rightDetailBodyDefaultInfo > .defaultFormLine > .defaultFormSpanDiv>span {
+	color: #000;
+	font-weight: 600;
+	display: flex;
+	align-items: center;
+	width: 110px;
+	justify-content: center;
+	font-size: 0.8rem;
+}
+
+.rightDetailBodyDefaultInfo > .defaultFormLine > .defaultFormContent {
+	display: flex;
+	align-items: center;
+	justify-content: left;
+	width: 100%;
+	overflow: hidden;
+}
+
+.rightDetailBodyDefaultInfo > .defaultFormLine > .defaultFormContent > .detailRadioBox[data-type="default"] {
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-left: 5px;
+}
+
+.rightDetailBodyDefaultInfo > .defaultFormLine > .defaultFormContent > .detailRadioBox>input[type="radio"][data-type="tab"] {
+	display: none;
+}
+
+.rightDetailBodyDefaultInfo > .defaultFormLine > .defaultFormContent > .detailRadioBox>input[type="radio"][data-type="default"] {
+	position: absolute;
+	appearance: none;
+	height: 15px;
+	border-radius: 15px;
+	width: 15px;
+	vertical-align: middle;
+}
+
+.rightDetailBodyDefaultInfo > .defaultFormLine > .defaultFormContent > .detailRadioBox>label[data-type="tab"] {
+	display: flex;
+	align-items: center;
+	padding: 10px;
+	border-radius: 0 15px 0 0;
+	background-color: #B5B2FF;
+	color: #ffffff;
+	font-size: 0.8rem;
+}
+
+.rightDetailBodyDefaultInfo > .defaultFormLine > .defaultFormContent > .detailRadioBox>label[data-type="tab"]:hover {
+	background-color: #2147b1;
+	color: #ffffff;
+	cursor: pointer;
+}
+
+.rightDetailBodyDefaultInfo > .defaultFormLine > .defaultFormContent > .detailRadioBox>input[type="radio"][data-type="tab"]:checked+label {
+	background-color: #2147b1;
+	color: #ffffff;
+}
+
+.rightDetailBodyDefaultInfo > .defaultFormLine > .defaultFormContent > .detailRadioBox>label[data-type="default"] {
+	background-color: #2147b1;
+	padding: 5px;
+	border-radius: 15px;
+	color: #ffffff;
+	padding-left: 25px;
+	padding-right: 10px;
+	line-height: 19px;
+	font-size: 0.8rem;
+}
+
+.rightDetailBodyDefaultInfo > .defaultFormLine > .defaultFormContent > input[type='text'],
+.rightDetailBodyDefaultInfo > .defaultFormLine > .defaultFormContent > input[type='date'],
+.rightDetailBodyDefaultInfo > .defaultFormLine > .defaultFormContent > input[type='file'],
+.rightDetailBodyDefaultInfo > .defaultFormLine > .defaultFormContent > select {
+	padding: 5px;
+	width: 100%;
+	font-size: 0.8rem;
+}
+
+.rightDetailBodyDefaultInfo > div > div > textarea{
+	border: 0;
+}
+
+/* .rightDetailBodyDefaultInfo > .defaultFormLine:first-child{
 	border-top: 0;
 } */
