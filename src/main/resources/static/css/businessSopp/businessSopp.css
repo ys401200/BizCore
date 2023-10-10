@@ -102,6 +102,15 @@
 	border-bottom:1px solid #abb6d5;
 }
 
+.rightDetailBodyFileContents > #rightDetailFileList > .gridHeader,
+.rightDetailBodyFileContents > #rightDetailFileList > .gridContent{
+    grid-template-columns: 15% 45% 25% 15%;
+}
+
+.rightDetailBodyFileContents > #rightDetailFileList > .gridHeader{
+	border-bottom:1px solid #abb6d5;
+}
+
 .soppContainer > #tabTech{
     display: none; 
 	width: 99%; 
@@ -117,6 +126,15 @@
 }
 
 .soppContainer > #tabTech > .gridHeader{
+	border-bottom:1px solid #abb6d5;
+}
+
+.rightDetailBodyTechContents > #rightDetailBodyTechList > .gridHeader,
+.rightDetailBodyTechContents > #rightDetailBodyTechList > .gridContent{
+    grid-template-columns: 20% 20% 20% 20% 20%;
+}
+
+.rightDetailBodyTechContents > #rightDetailBodyTechList > .gridHeader{
 	border-bottom:1px solid #abb6d5;
 }
 
@@ -138,6 +156,15 @@
 	border-bottom:1px solid #abb6d5;
 }
 
+.rightDetailBodySalesContents > #rightDetailBodySalesList > .gridHeader,
+.rightDetailBodySalesContents > #rightDetailBodySalesList > .gridContent{
+    grid-template-columns: 20% 20% 20% 20% 20%;
+}
+
+.rightDetailBodySalesContents > #rightDetailBodySalesList > .gridHeader{
+	border-bottom:1px solid #abb6d5;
+}
+
 #bodyContent > #rightDetailParent{
 	display: flex;
 	align-items: center;
@@ -147,7 +174,7 @@
 
 #bodyContent > #rightDetailParent > #rightDetail{
 	position: absolute;
-	width: 33.333%;
+	width: 50%;
 	background-color: #fff;
 	border: 1px solid #BDBDBD;
 	border-radius: 10px;
@@ -178,6 +205,10 @@
 #bodyContent > #rightDetailParent > #rightDetail > div:last-child{
 	overflow-y: auto;
 	padding: 10px;
+}
+
+#bodyContent > #rightDetailParent > #rightDetail > div:last-child > .rightDetailBodyTitle{
+	padding-top: 10px;
 }
 
 .rightDetailBodyDefaultInfo{

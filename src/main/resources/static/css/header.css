@@ -529,9 +529,157 @@ textarea {
 	/* font-size:13px; 중복*/
 }
 
-/* #contract_body .contract_container .gridHeader .grid_default_text_align_left{padding: 0 8px; overflow: hidden;} */
-
 .grid_default_text_align_right {
+	display: flex;
+	align-items: center;
+	justify-content: right;
+	padding: 0 8px;
+	overflow: hidden;
+}
+
+.tabFileUpload_grid_default_text_align_center {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+	/* font-size:13px; 중복*/
+}
+
+.tabFileUpload_grid_default_text_align_left {
+	display: flex;
+	align-items: center;
+	justify-content: left;
+	padding: 0 8px;
+	overflow: hidden;
+	/* font-size:13px; 중복*/
+}
+
+.tabFileUpload_grid_default_text_align_right {
+	display: flex;
+	align-items: center;
+	justify-content: right;
+	padding: 0 8px;
+	overflow: hidden;
+}
+
+.tabTech_grid_default_text_align_center {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+	/* font-size:13px; 중복*/
+}
+
+.tabTech_grid_default_text_align_left {
+	display: flex;
+	align-items: center;
+	justify-content: left;
+	padding: 0 8px;
+	overflow: hidden;
+	/* font-size:13px; 중복*/
+}
+
+.tabTech_grid_default_text_align_right {
+	display: flex;
+	align-items: center;
+	justify-content: right;
+	padding: 0 8px;
+	overflow: hidden;
+}
+
+.tabSales_grid_default_text_align_center {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+	/* font-size:13px; 중복*/
+}
+
+.tabSales_grid_default_text_align_left {
+	display: flex;
+	align-items: center;
+	justify-content: left;
+	padding: 0 8px;
+	overflow: hidden;
+	/* font-size:13px; 중복*/
+}
+
+.tabSales_grid_default_text_align_right {
+	display: flex;
+	align-items: center;
+	justify-content: right;
+	padding: 0 8px;
+	overflow: hidden;
+}
+
+.rightDetailFileList_grid_default_text_align_center {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+	/* font-size:13px; 중복*/
+}
+
+.rightDetailFileList_grid_default_text_align_left {
+	display: flex;
+	align-items: center;
+	justify-content: left;
+	padding: 0 8px;
+	overflow: hidden;
+	/* font-size:13px; 중복*/
+}
+
+.rightDetailFileList_grid_default_text_align_right {
+	display: flex;
+	align-items: center;
+	justify-content: right;
+	padding: 0 8px;
+	overflow: hidden;
+}
+
+.rightDetailBodyTechList_grid_default_text_align_center {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+	/* font-size:13px; 중복*/
+}
+
+.rightDetailBodyTechList_grid_default_text_align_left {
+	display: flex;
+	align-items: center;
+	justify-content: left;
+	padding: 0 8px;
+	overflow: hidden;
+	/* font-size:13px; 중복*/
+}
+
+.rightDetailBodyTechList_grid_default_text_align_right {
+	display: flex;
+	align-items: center;
+	justify-content: right;
+	padding: 0 8px;
+	overflow: hidden;
+}
+
+.rightDetailBodySalesList_grid_default_text_align_center {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+	/* font-size:13px; 중복*/
+}
+
+.rightDetailBodySalesList_grid_default_text_align_left {
+	display: flex;
+	align-items: center;
+	justify-content: left;
+	padding: 0 8px;
+	overflow: hidden;
+	/* font-size:13px; 중복*/
+}
+
+.rightDetailBodySalesList_grid_default_text_align_right {
 	display: flex;
 	align-items: center;
 	justify-content: right;

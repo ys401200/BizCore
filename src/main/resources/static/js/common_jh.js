@@ -1950,7 +1950,7 @@ class SoppSet{
 			}
 		}
 
-		CommonDatas.createGrid(container, header, data, ids, job, fnc);
+		CommonDatas.createGrid(container, header, data, ids, job, fnc, "tabFileUpload");
 		container.prepend(createInputDiv);
 	}
 
@@ -2037,7 +2037,7 @@ class SoppSet{
 			}
 		}
 
-		CommonDatas.createGrid(container, header, data, ids, job, fnc);
+		CommonDatas.createGrid(container, header, data, ids, job, fnc, "tabTech");
 	}
 
 	//영업기회 탭 영업활동내역 출력 함수
@@ -2123,7 +2123,7 @@ class SoppSet{
 			}
 		}
 
-		CommonDatas.createGrid(container, header, data, ids, job, fnc);
+		CommonDatas.createGrid(container, header, data, ids, job, fnc, "tabSales");
 	}
 
 	//탭 radio 버튼 클릭 함수
@@ -2174,8 +2174,14 @@ class SoppSet{
 			divHtml += "<div class=\"rightDetailTopClose\" onclick=\"CommonDatas.Temps.soppSet.rightDetailClose();\">X</div>";
 			divHtml += "</div>";
 			divHtml += "<div class=\"rightDetailBody\" style=\"height: " + calBodyHeight + "px;" + "\">";
-			divHtml += "<div class=\"rightDetailBodyTitle\">1. 기본정보</div>";
+			divHtml += "<div class=\"rightDetailBodyTitle\">기본정보</div>";
 			divHtml += "<div class=\"rightDetailBodyDefaultInfo\">" + bodyHtml + "</div>";
+			divHtml += "<div class=\"rightDetailBodyTitle\">파일첨부</div>";
+			divHtml += "<div class=\"rightDetailBodyFileContents\"></div>";
+			divHtml += "<div class=\"rightDetailBodyTitle\">기술지원내역</div>";
+			divHtml += "<div class=\"rightDetailBodyTechContents\"></div>";
+			divHtml += "<div class=\"rightDetailBodyTitle\">영업활동내역</div>";
+			divHtml += "<div class=\"rightDetailBodySalesContents\"></div>";
 			divHtml += "</div>";
 			divHtml += "</div>";
 			createDiv.innerHTML = divHtml;
@@ -2191,6 +2197,12 @@ class SoppSet{
 			window.setTimeout(setEditor, 100);
 			$('.theme-loader').delay(500).fadeOut("slow");
 		}, 800);
+
+		setTimeout(() => {
+			CommonDatas.Temps.soppSet.rightDetailFileList();
+			CommonDatas.Temps.soppSet.rightDetailTechList();
+			CommonDatas.Temps.soppSet.rightDetailSalesList();
+		}, 1000);
 
 		// setTimeout(() => {
 		// 	let soppSet = new SoppSet();
@@ -2408,6 +2420,247 @@ class SoppSet{
 		html = CommonDatas.detailViewForm(dataArray, "right");
 
 		return html;
+	}
+
+	rightDetailFileList(){
+		let container, rightDetailBodyFileContents, jsonData, createDiv, job, header = [], data = [], ids = [], disDate, setDate, str, fnc = [], fileName;
+		jsonData = storage.soppFileList;
+		
+		rightDetailBodyFileContents = document.getElementsByClassName("rightDetailBodyFileContents")[0];
+		createDiv = document.createElement("div");
+		createDiv.id = "rightDetailFileList";
+		rightDetailBodyFileContents.append(createDiv);
+		container = document.getElementById("rightDetailFileList");
+
+		header = [
+			{
+				"title": "일자",
+				"align": "center",
+			},
+			{
+				"title": "파일명",
+				"align": "center",
+			},
+			{
+				"title": "파일설명",
+				"align": "center",
+			},
+			{
+				"title": "담당자",
+				"align": "center",
+			},
+		];
+
+		if (jsonData === "" || jsonData.length == 0) {
+			str = [
+				{
+					"setData": undefined,
+					"align": "center",
+					"col": 5,
+				},
+			];
+
+			data.push(str);
+		} else {
+			for (let i = 0; i < jsonData.length; i++) {
+				let item = jsonData[i];
+
+				disDate = CommonDatas.dateDis(new Date(item.regDatetime).getTime(), new Date(item.modDatetime).getTime());
+				setDate = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+				fileName = (CommonDatas.emptyValuesCheck(item.fileName)) ? "" : item.fileName;
+
+				str = [
+					{
+						"setData": setDate,
+						"align": "center",
+					},
+					{
+						"setData": "<a href=\"#\" data-id=\"" + item.fileId + "\" onclick=\"let sopp = new Sopp(); sopp.soppDownloadFile(this);\">" + fileName + "</a>",
+						"align": "left",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.fileDesc)) ? "" : item.fileDesc,
+						"align": "left",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.userNo)) ? "" : storage.user[item.userNo].userName,
+						"align": "center",
+					},
+				];
+
+				fnc.push("");
+				ids.push(jsonData[i].fileId);
+				data.push(str);
+			}
+		}
+
+		CommonDatas.createGrid(container, header, data, ids, job, fnc, "rightDetailFileList");
+	}
+
+	rightDetailTechList(){
+		let container, rightDetailBodyTechContents, jsonData, createDiv, job, header = [], data = [], ids = [], disDate, setDate, str, fnc = [];
+
+		jsonData = storage.soppTechList;
+
+		rightDetailBodyTechContents = document.getElementsByClassName("rightDetailBodyTechContents")[0];
+		createDiv = document.createElement("div");
+		createDiv.id = "rightDetailBodyTechList";
+		rightDetailBodyTechContents.append(createDiv);
+		container = document.getElementById("rightDetailBodyTechList");
+
+		header = [
+			{
+				"title": "일자",
+				"align": "center",
+			},
+			{
+				"title": "지원형태",
+				"align": "center",
+			},
+			{
+				"title": "장소",
+				"align": "center",
+			},
+			{
+				"title": "담당자",
+				"align": "center",
+			},
+			{
+				"title": "비고",
+				"align": "center",
+			},
+		];
+
+		if (jsonData === "" || jsonData.length == 0) {
+			str = [
+				{
+					"setData": undefined,
+					"align": "center",
+					"col": 5,
+				},
+			];
+
+			data.push(str);
+		} else {
+			for (let i = 0; i < jsonData.length; i++) {
+				let item = jsonData[i];
+
+				disDate = CommonDatas.dateDis(new Date(item.regDatetime).getTime(), new Date(item.modDatetime).getTime());
+				setDate = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+
+				str = [
+					{
+						"setData": setDate,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.type)) ? "" : storage.code.etc[item.type],
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.techdPlace)) ? "" : item.techdPlace,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.userNo)) ? "" : storage.user[item.userNo].userName,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.desc)) ? "" : item.desc,
+						"align": "left",
+					},
+				];
+
+				fnc.push("");
+				ids.push("");
+				data.push(str);
+			}
+		}
+
+		CommonDatas.createGrid(container, header, data, ids, job, fnc, "rightDetailBodyTechList");
+	}
+
+	rightDetailSalesList(){
+		let container, rightDetailBodySalesContents, jsonData, createDiv, job, header = [], data = [], ids = [], disDate, setDate, str, fnc = [];
+
+		jsonData = storage.soppSalesList;
+
+		rightDetailBodySalesContents = document.getElementsByClassName("rightDetailBodySalesContents")[0];
+		createDiv = document.createElement("div");
+		createDiv.id = "rightDetailBodySalesList";
+		rightDetailBodySalesContents.append(createDiv);
+		container = document.getElementById("rightDetailBodySalesList");
+
+		header = [
+			{
+				"title": "일자",
+				"align": "center",
+			},
+			{
+				"title": "활동종류",
+				"align": "center",
+			},
+			{
+				"title": "장소",
+				"align": "center",
+			},
+			{
+				"title": "담당자",
+				"align": "center",
+			},
+			{
+				"title": "비고",
+				"align": "center",
+			},
+		];
+
+		if (jsonData === "" || jsonData.length == 0) {
+			str = [
+				{
+					"setData": undefined,
+					"align": "center",
+					"col": 6,
+				},
+			];
+
+			data.push(str);
+		} else {
+			for (let i = 0; i < jsonData.length; i++) {
+				let item = jsonData[i];
+
+				disDate = CommonDatas.dateDis(new Date(item.regDatetime).getTime(), new Date(item.modDatetime).getTime());
+				setDate = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+
+				str = [
+					{
+						"setData": setDate,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.type)) ? "" : storage.code.etc[item.type],
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.salesPlace)) ? "" : item.salesPlace,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.userNo)) ? "" : storage.user[item.userNo].userName,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.desc)) ? "" : item.desc,
+						"align": "left",
+					},
+				];
+
+				fnc.push("");
+				ids.push("");
+				data.push(str);
+			}
+		}
+
+		CommonDatas.createGrid(container, header, data, ids, job, fnc, "rightDetailBodySalesList");
 	}
 }
 
@@ -8971,7 +9224,7 @@ class Common {
 	}
 
 	//리스트 그릴 때 그리드 출력 함수
-	createGrid(gridContainer, headerDataArray, dataArray, ids, job, fnc = [], idName) {
+	createGrid(gridContainer, headerDataArray, dataArray, ids, job, fnc = [], idName, className) {
 		let gridHtml = "", gridContents, idStr;
 		ids = (ids === undefined) ? 0 : ids;
 		fnc = (fnc.length == 0) ? "" : fnc;
@@ -8986,12 +9239,22 @@ class Common {
 		gridHtml = "<div class='gridHeader grid_default_header_item'>";
 
 		for (let i = 0; i < headerDataArray.length; i++) {
-			if (headerDataArray[i].align === "center") {
-				gridHtml += "<div class='gridHeaderItem grid_default_text_align_center'>" + headerDataArray[i].title + "</div>";
-			} else if (headerDataArray[i].align === "left") {
-				gridHtml += "<div class='gridHeaderItem grid_default_text_align_left'>" + headerDataArray[i].title + "</div>";
-			} else {
-				gridHtml += "<div class='gridHeaderItem grid_default_text_align_right'>" + headerDataArray[i].title + "</div>";
+			if(className === undefined){
+				if (headerDataArray[i].align === "center") {
+					gridHtml += "<div class=\"gridHeaderItem grid_default_text_align_center\">" + headerDataArray[i].title + "</div>";
+				} else if (headerDataArray[i].align === "left") {
+					gridHtml += "<div class=\"gridHeaderItem grid_default_text_align_left\">" + headerDataArray[i].title + "</div>";
+				} else {
+					gridHtml += "<div class=\"gridHeaderItem grid_default_text_align_right\">" + headerDataArray[i].title + "</div>";
+				}
+			}else{
+				if (headerDataArray[i].align === "center") {
+					gridHtml += "<div class=\"gridHeaderItem " + className + "_grid_default_text_align_center\">" + headerDataArray[i].title + "</div>";
+				} else if (headerDataArray[i].align === "left") {
+					gridHtml += "<div class=\"gridHeaderItem " + className + "_grid_default_text_align_left\">" + headerDataArray[i].title + "</div>";
+				} else {
+					gridHtml += "<div class=\"gridHeaderItem " + className + "_grid_default_text_align_right\">" + headerDataArray[i].title + "</div>";
+				}
 			}
 		}
 
