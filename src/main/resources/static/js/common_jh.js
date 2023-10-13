@@ -1400,7 +1400,41 @@ class SoppSet{
 
 	//영업기회 상세보기
 	soppDetailView(e, type) {
-		let thisEle = e;
+		let thisEle = e, dataObjects = {};
+
+		axios.get("/api/sopp/soppInout/" + thisEle.dataset.id).then((response) => {
+			if (response.data.result === "ok") {
+				storage.inoutInSoppList = [];
+				storage.inoutOutSoppList = [];
+				storage.inoutContList = [];
+				let result;
+				result = cipher.decAes(response.data.data);
+				result = JSON.parse(result);
+				storage.soppInoutAllList = result;
+
+				for(let i = 0; i < result.length; i++){
+					if(result[i].contNo == 100){
+						if(result[i].dataType === "1101"){
+							storage.inoutInSoppList.push(result[i]);
+						}else{
+							storage.inoutOutSoppList.push(result[i]);
+						}
+					}else{
+						if(dataObjects[result[i].contNo] === undefined){
+							dataObjects[result[i].contNo] = {};
+							dataObjects[result[i].contNo][Object.keys(dataObjects[result[i].contNo]).length] = result[i];
+						}else{
+							dataObjects[result[i].contNo][Object.keys(dataObjects[result[i].contNo]).length] = result[i];
+						}
+					}
+				}
+
+				storage.inoutContList.push(dataObjects);
+			}
+		}).catch((error) => {
+			msg.set("매입매출내역 에러 입니다.\n" + error);
+			console.log(error);
+		});
 
 		CommonDatas.Temps.soppSet.soppDetailFileListSet(thisEle.dataset.id);
 
@@ -1858,6 +1892,255 @@ class SoppSet{
 		this.drawSoppList();
 	}
 
+	//영업기회 탭 매입매출내역 출력 함수
+	drawInoutSoppList() {
+		let soppContainer, createDiv, divHtml = "", calInTotal = 0, calOutTotal = 0;
+
+		if(document.getElementById("tabInoutSopp") !== null){
+			document.getElementById("tabInoutSopp").remove();
+		}
+
+		divHtml += "<div class=\"inoutSoppListHeader\">";
+		divHtml += "<div>선택</div>";
+		divHtml += "<div>구분(등록/수정일)</div>";
+		divHtml += "<div>거래처(매입/매출처)</div>";
+		divHtml += "<div>상품</div>";
+		divHtml += "<div>단가</div>";
+		divHtml += "<div>수량</div>";
+		divHtml += "<div>부가세액</div>";
+		divHtml += "<div>공급가액</div>";
+		divHtml += "<div>금액</div>";
+		divHtml += "<div>비고</div>";
+		divHtml += "<div>계약선택</div>";
+		divHtml += "<div>할당</div>";
+		divHtml += "<div>수정</div>";
+		divHtml += "</div>";
+			
+		if(storage.inoutInSoppList.length > 0){
+			for(let i = 0; i < storage.inoutInSoppList.length; i++){
+				let item = storage.inoutInSoppList[i];
+				let custName = (CommonDatas.emptyValuesCheck(item.salesCustNo)) ? "" : storage.customer[item.salesCustNo].custName;
+				let productName = (CommonDatas.emptyValuesCheck(item.productNo)) ? "" : CommonDatas.getProductFind(item.productNo, "name");
+				calInTotal += item.dataTotal;
+	
+				divHtml += "<div class=\"inoutSoppListItem\">";
+				divHtml += "<div style=\"text-align: center;\"><input type=\"checkbox\" data-id=\"" + item.soppdataNo + "\" /></div>";
+				
+				if(item.vatDate !== undefined){
+					divHtml += "<div style=\"text-align: center;\">매입(" + item.vatDate.substring(0, 10) + ")</div>";
+				}else{
+					divHtml += "<div style=\"text-align: center;\">매입(" + item.regDatetime.substring(0, 10) + ")</div>";
+				}
+
+				divHtml += "<div style=\"text-align: center;\">" + custName + "</div>";
+				divHtml += "<div style=\"text-align: center;\">" + productName + "</div>";
+				divHtml += "<div style=\"text-align: right;\">" + item.dataNetprice.toLocaleString("en-US") + "</div>";
+				divHtml += "<div style=\"text-align: center;\">" + item.dataQuanty + "</div>";
+				divHtml += "<div style=\"text-align: right;\">" + item.dataVat.toLocaleString("en-US") + "</div>";
+				divHtml += "<div style=\"text-align: right;\">" + item.dataAmt.toLocaleString("en-US") + "</div>";
+				divHtml += "<div style=\"text-align: right;\">" + item.dataTotal.toLocaleString("en-US") + "</div>";
+				divHtml += "<div>" + item.dataRemark + "</div>";
+				divHtml += "<div style=\"text-align: right;\"><select></select></div>";
+				divHtml += "<div style=\"text-align: center;\"><button type=\"button\">할당</button></div>";
+				divHtml += "<div style=\"text-align: center;\"><button type=\"button\">수정</button></div>";
+				divHtml += "</div>";
+			}
+		}else{
+			divHtml += "<div class=\"emptyInData\">데이터가 없습니다.</div>";
+		}
+
+		divHtml += "<div class=\"inSoppListTotal\">";
+		divHtml += "<div>매입합계</div>";
+		divHtml += "<div>" + calInTotal.toLocaleString("en-US") + "</div>";
+		divHtml += "</div>";
+
+		if(storage.inoutOutSoppList.length > 0){
+			for(let i = 0; i < storage.inoutOutSoppList.length; i++){
+				let item = storage.inoutOutSoppList[i];
+				let custName = (CommonDatas.emptyValuesCheck(item.salesCustNo)) ? "" : storage.customer[item.salesCustNo].custName;
+				let productName = (CommonDatas.emptyValuesCheck(item.productNo)) ? "" : CommonDatas.getProductFind(item.productNo, "name");
+				calOutTotal += item.dataTotal;
+	
+				divHtml += "<div class=\"inoutSoppListItem\">";
+				divHtml += "<div style=\"text-align: center;\"><input type=\"checkbox\" data-id=\"" + item.soppdataNo + "\" /></div>";
+				
+				if(item.vatDate !== undefined){
+					if(item.endvataDate !== undefined){
+						divHtml += "<div style=\"text-align: center;\">유지보수(" + item.vatDate.substring(0, 10) + " ~ " + item.endvataDate.substring(0, 10) + ")</div>";
+					}else{
+						divHtml += "<div style=\"text-align: center;\">매출(" + item.vatDate.substring(0, 10) + ")</div>";
+					}
+				}else{
+					divHtml += "<div style=\"text-align: center;\">매출(" + item.regDatetime.substring(0, 10) + ")</div>";
+				}
+
+				divHtml += "<div style=\"text-align: center;\">" + custName + "</div>";
+				divHtml += "<div style=\"text-align: center;\">" + productName + "</div>";
+				divHtml += "<div style=\"text-align: right;\">" + item.dataNetprice.toLocaleString("en-US") + "</div>";
+				divHtml += "<div style=\"text-align: center;\">" + item.dataQuanty + "</div>";
+				divHtml += "<div style=\"text-align: right;\">" + item.dataVat.toLocaleString("en-US") + "</div>";
+				divHtml += "<div style=\"text-align: right;\">" + item.dataAmt.toLocaleString("en-US") + "</div>";
+				divHtml += "<div style=\"text-align: right;\">" + item.dataTotal.toLocaleString("en-US") + "</div>";
+				divHtml += "<div>" + item.dataRemark + "</div>";
+				divHtml += "<div style=\"text-align: right;\"><select></select></div>";
+				divHtml += "<div style=\"text-align: center;\"><button type=\"button\">할당</button></div>";
+				divHtml += "<div style=\"text-align: center;\"><button type=\"button\">수정</button></div>";
+				divHtml += "</div>";
+			}
+		}else{
+			divHtml += "<div class=\"emptyInData\">데이터가 없습니다.</div>";
+		}
+
+		divHtml += "<div class=\"outSoppListTotal\">";
+		divHtml += "<div>매출합계</div>";
+		divHtml += "<div>" + calOutTotal.toLocaleString("en-US") + "</div>";
+		divHtml += "</div>";
+		
+		soppContainer = document.getElementsByClassName("soppContainer")[0];
+		createDiv = document.createElement("div");
+		createDiv.innerHTML = "<div class=\"tabInoutSoppTitle\"><div>영업기회명</div><div onclick=\"CommonDatas.Temps.soppSet.inoutTitleClick(this);\">" + storage.formList.soppTitle + " (※ 클릭하여 상세보기)" + "</div></div><div class=\"tabInoutTableList\" id=\"tabInoutSoppList\">" + divHtml + "</div>";
+		createDiv.id = "tabInoutSopp";
+		createDiv.className = "tabPage";
+		soppContainer.append(createDiv);
+	}
+
+	//영업기회 탭 매입매출내역 출력 함수
+	drawInoutContList() {
+		let soppContainer, createDiv, divHtml = "", inDatas = {}, outDatas = {};
+
+		if(document.getElementsByClassName("tabInoutCont").length > 0){
+			document.getElementsByClassName("tabInoutCont").remove();
+		}
+
+		if(storage.inoutContList !== undefined && Object.keys(storage.inoutContList[0]).length > 0){
+			for(let key in storage.inoutContList[0]){
+				let item = storage.inoutContList[0][key];
+				
+				if(inDatas[key] === undefined) inDatas[key] = {};
+				if(outDatas[key] === undefined) outDatas[key] = {};
+
+				for(let i = 0; i < Object.keys(item).length; i++){
+					let secondItem = item[i];
+
+					if(secondItem.dataType === "1101"){
+						if(Object.keys(inDatas[key]).length == 0){
+							inDatas[key][0] = secondItem;
+						}else{
+							inDatas[key][Object.keys(inDatas[key]).length] = secondItem;
+						}
+					}else{
+						if(Object.keys(outDatas[key]).length == 0){
+							outDatas[key][0] = secondItem;
+						}else{
+							outDatas[key][Object.keys(outDatas[key]).length] = secondItem;
+						}
+					}
+				}
+			}
+
+			for(let key in inDatas){
+				for(let outKey in outDatas){
+					let outItem = outDatas[outKey];
+					if(key == outKey){
+						for(let i = 0; i < Object.keys(outItem).length; i++){
+							inDatas[key][Object.keys(inDatas[key]).length] = outItem[i];
+						}
+					}
+				}
+			}
+
+			for(let key in inDatas){
+				let calInTotal = 0, calOutTotal = 0;
+				let item = inDatas[key];
+				let contTitle = (CommonDatas.emptyValuesCheck(item[0].contNo)) ? "" : CommonDatas.getContFind(item[0].contNo, "name");
+
+				divHtml += "<div class=\"tabInoutContTitle\"><div>계약명</div><div onclick=\"CommonDatas.Temps.soppSet.inoutTitleClick(this);\">" + contTitle + " (※ 클릭하여 상세보기, 수정 또는 삭제는 계약페이지에서 진행해주십시오.)" + "</div></div>";
+				divHtml += "<div class=\"tabInoutTableList\" id=\"tabInoutContList\">";
+				divHtml += "<div class=\"inoutContListHeader\">";
+				divHtml += "<div>선택</div>";
+				divHtml += "<div>구분(등록/수정일)</div>";
+				divHtml += "<div>거래처(매입/매출처)</div>";
+				divHtml += "<div>상품</div>";
+				divHtml += "<div>단가</div>";
+				divHtml += "<div>수량</div>";
+				divHtml += "<div>부가세액</div>";
+				divHtml += "<div>공급가액</div>";
+				divHtml += "<div>금액</div>";
+				divHtml += "<div>비고</div>";
+				divHtml += "</div>";
+
+				for(let i = 0; i < Object.keys(item).length; i++){
+					let secondItem = item[i];
+					let custName = (CommonDatas.emptyValuesCheck(secondItem.custNo)) ? "" : storage.customer[secondItem.custNo].custName;
+					let productName = (CommonDatas.emptyValuesCheck(secondItem.productNo)) ? "" : CommonDatas.getProductFind(secondItem.productNo, "name");
+					
+					divHtml += "<div class=\"inoutContListItem\">";
+					divHtml += "<div style=\"text-align: center;\"><input type=\"checkbox\" data-id=\"" + secondItem.soppdataNo + "\" disabled/></div>";
+					
+					if(secondItem.dataType === "1101"){
+						calInTotal += secondItem.dataTotal;
+
+						if(secondItem.vatDate !== undefined){
+							divHtml += "<div style=\"text-align: center;\">매입(" + secondItem.vatDate.substring(0, 10) + ")</div>";
+						}else{
+							divHtml += "<div style=\"text-align: center;\">매입(" + secondItem.regDatetime.substring(0, 10) + ")</div>";
+						}
+					}else{
+						calOutTotal += secondItem.dataTotal;
+
+						if(secondItem.vatDate !== undefined){
+							if(secondItem.endvataDate !== undefined){
+								divHtml += "<div style=\"text-align: center;\">유지보수(" + secondItem.vatDate.substring(0, 10) + " ~ " + secondItem.endvataDate.substring(0, 10) + ")</div>";
+							}else{
+								divHtml += "<div style=\"text-align: center;\">매출(" + secondItem.regDatetime.substring(0, 10) + ")</div>";
+							}
+						}else{
+							divHtml += "<div style=\"text-align: center;\">매출(" + secondItem.regDatetime.substring(0, 10) + ")</div>";
+						}
+					}
+
+					divHtml += "<div style=\"text-align: center;\">" + custName + "</div>";
+					divHtml += "<div style=\"text-align: center;\">" + productName + "</div>";
+					divHtml += "<div style=\"text-align: right;\">" + secondItem.dataNetprice.toLocaleString("en-US") + "</div>";
+					divHtml += "<div style=\"text-align: center;\">" + secondItem.dataQuanty + "</div>";
+					divHtml += "<div style=\"text-align: right;\">" + secondItem.dataVat.toLocaleString("en-US") + "</div>";
+					divHtml += "<div style=\"text-align: right;\">" + secondItem.dataAmt.toLocaleString("en-US") + "</div>";
+					divHtml += "<div style=\"text-align: right;\">" + secondItem.dataTotal.toLocaleString("en-US") + "</div>";
+					divHtml += "<div>" + secondItem.dataRemark + "</div>";
+					divHtml += "</div>";
+
+					if((secondItem.dataType === "1101" && item[i + 1] === undefined) || (secondItem.dataType === "1101" && item[i + 1].dataType === "1102")){
+						divHtml += "<div class=\"inContListTotal\">";
+						divHtml += "<div>매입합계</div>";
+						divHtml += "<div>" + calInTotal.toLocaleString("en-US") + "</div>";
+						divHtml += "</div>";
+					}
+
+					if(secondItem.dataType === "1102" && item[i + 1] === undefined){
+						divHtml += "<div class=\"outContListTotal\">";
+						divHtml += "<div>매출합계</div>";
+						divHtml += "<div>" + calOutTotal.toLocaleString("en-US") + "</div>";
+						divHtml += "</div>";
+					}
+				}
+
+				divHtml += "</div>";
+			}
+		}
+		
+		soppContainer = document.getElementsByClassName("soppContainer")[0];
+		createDiv = document.createElement("div");
+		createDiv.innerHTML = divHtml;
+		createDiv.className = "tabInoutCont tabPage";
+		soppContainer.append(createDiv);
+
+		// createInputDiv = document.createElement("div");
+		// createInputDiv.className = "fileUploadButtons";
+		// inputHtml += "<button type=\"button\" onclick=\"CommonDatas.Temps.soppSet.soppFileInsertForm();\">파일등록</button>";
+		// inputHtml += "<button type=\"button\" onclick=\"let sopp = new Sopp('" + jsonData + "'); sopp.soppFileDelete();\">선택삭제</button>";
+		// createInputDiv.innerHTML = inputHtml;
+	}
+
 	//영업기회 탭 파일첨부 페이지 출력 함수
 	drawSoppFileUpload() {
 		let container, soppContainer, jsonData, createDiv, job, header = [], data = [], ids = [], disDate, setDate, str, fnc = [], createInputDiv, inputHtml = "", fileName;
@@ -2144,7 +2427,111 @@ class SoppSet{
 		}
 
 		if(dataKey === "tabDefault") defaultFormContainer.style.display = "grid";
-		else document.getElementById(dataKey).style.display = "block";
+		else {
+			if(dataKey === "tabInoutSopp"){
+				let tabInoutCont = document.getElementsByClassName("tabInoutCont");
+				let inoutTotalContents = document.getElementsByClassName("inoutTotalContents")[0];
+
+				for(let i = 0; i < tabInoutCont.length; i++){
+					tabInoutCont[i].style.display = "block";
+				}
+
+				inoutTotalContents.style.display = "block";
+			}
+
+			document.getElementById(dataKey).style.display = "block";
+		}
+	}
+
+	inoutTitleClick(thisEle){
+		let tabInoutTableList = document.getElementsByClassName("tabInoutTableList");
+
+		for(let i = 0; i < tabInoutTableList.length; i++){
+			tabInoutTableList[i].style.display = "none";
+		}
+
+		thisEle.parentElement.nextElementSibling.style.display = "block";
+	}
+
+	inoutTotalSet(){
+		let soppContainer = document.getElementsByClassName("soppContainer")[0];
+		let inSoppListTotal = document.getElementById("tabInoutSopp").children[1].querySelector(".inSoppListTotal");
+		let outSoppListTotal = document.getElementById("tabInoutSopp").children[1].querySelector(".outSoppListTotal");
+		let inSoppTotal = (inSoppListTotal === undefined || inSoppListTotal === null) ? 0 : parseInt(inSoppListTotal.children[1].innerText.replace(/,/g, ""));
+		let outSoppTotal = (outSoppListTotal === undefined|| outSoppListTotal === null) ? 0 : parseInt(outSoppListTotal.children[1].innerText.replace(/,/g, ""));
+		let calInSoppTotal = parseInt(inSoppTotal - (inSoppTotal/11));
+		let calOutSoppTotal = parseInt(outSoppTotal - (outSoppTotal/11));
+		let calInoutProfitSoppTotal = parseInt(outSoppTotal - inSoppTotal - ((outSoppTotal - inSoppTotal)/11));
+		let calInoutprofitSoppPersent = (calInoutProfitSoppTotal / calOutSoppTotal * 100).toFixed(2);
+		let inContTotal = 0;
+		let outContTotal = 0;
+		let createDiv = document.createElement("div");
+		let html = "", contTableList, inContListTotal, outContListTotal, calInContTotal = 0, calOutContTotal = 0, calInoutProfitContTotal = 0, calInoutprofitContPersent = 0;
+		
+		if(document.getElementsByClassName("tabInoutCont")[0] !== undefined){
+			contTableList = document.getElementsByClassName("tabInoutCont")[0].querySelectorAll(".tabInoutTableList");
+			
+			for(let i = 0; i < contTableList.length; i++){
+				let item = contTableList[i];
+				inContListTotal = item.querySelectorAll(".inContListTotal");
+				outContListTotal = item.querySelectorAll(".outContListTotal");
+
+				for(let i = 0; i < inContListTotal.length; i++){
+					let item = inContListTotal[i];
+					inContTotal += (inContListTotal === undefined || inContListTotal === null) ? 0 : parseInt(item.children[1].innerText.replace(/,/g, ""));
+				}
+		
+				for(let i = 0; i < outContListTotal.length; i++){
+					let item = outContListTotal[i];
+					outContTotal += (outContListTotal === undefined || outContListTotal === null) ? 0 : parseInt(item.children[1].innerText.replace(/,/g, ""));
+				}
+			}
+		}
+
+		if(calInoutProfitSoppTotal >= 0) calInoutProfitSoppTotal = "+" + calInoutProfitSoppTotal.toLocaleString("en-Us");
+		else calInoutProfitSoppTotal = calInoutProfitSoppTotal.toLocaleString("en-US");
+
+		if(calInoutprofitSoppPersent >= 0) calInoutprofitSoppPersent = "+" + calInoutprofitSoppPersent + "%";
+		else calInoutprofitSoppPersent = (isNaN(calInoutprofitSoppPersent)) ? "0%" : calInoutprofitSoppPersent + "%";
+
+		calInContTotal = parseInt(inContTotal - (inContTotal/11));
+		calOutContTotal = parseInt(outContTotal - (outContTotal/11));
+		calInoutProfitContTotal = parseInt(outContTotal - inContTotal - ((outContTotal - inContTotal)/11));
+		calInoutprofitContPersent = (calInoutProfitContTotal / calOutContTotal * 100).toFixed(2);
+
+		if(calInoutProfitContTotal >= 0) calInoutProfitContTotal = "+" + calInoutProfitContTotal.toLocaleString("en-Us");
+		else calInoutProfitContTotal = calInoutProfitContTotal.toLocaleString("en-US");
+
+		if(calInoutprofitContPersent >= 0) calInoutprofitContPersent = "+" + calInoutprofitContPersent + "%";
+		else calInoutprofitContPersent = (isNaN(calInoutprofitContPersent)) ? "0%" : calInoutprofitContPersent + "%";
+
+		html += "<div>영업기회 총 계</div>";
+		html += "<div class=\"inoutSoppTotal\">";
+		html += "<div style=\"text-align: center;\">매입 합계</div>";
+		html += "<div style=\"text-align: right;\">" + calInSoppTotal.toLocaleString("en-US") + "</div>";
+		html += "<div style=\"text-align: center;\">매출 합계</div>";
+		html += "<div style=\"text-align: right;\">" + calOutSoppTotal.toLocaleString("en-US") + "</div>";
+		html += "<div style=\"text-align: center;\">이익 합계</div>";
+		html += "<div style=\"text-align: right;\">" + calInoutProfitSoppTotal + "</div>";
+		html += "<div style=\"text-align: center;\">이익률</div>";
+		html += "<div style=\"text-align: right;\">" + calInoutprofitSoppPersent + "</div>";
+		html += "</div>";
+
+		html += "<div>계약 총 계</div>";
+		html += "<div class=\"inoutContTotal\">";
+		html += "<div style=\"text-align: center;\">매입 합계</div>";
+		html += "<div style=\"text-align: right;\">" + calInContTotal.toLocaleString("en-US") + "</div>";
+		html += "<div style=\"text-align: center;\">매출 합계</div>";
+		html += "<div style=\"text-align: right;\">" + calOutContTotal.toLocaleString("en-US") + "</div>";
+		html += "<div style=\"text-align: center;\">이익 합계</div>";
+		html += "<div style=\"text-align: right;\">" + calInoutProfitContTotal + "</div>";
+		html += "<div style=\"text-align: center;\">이익률</div>";
+		html += "<div style=\"text-align: right;\">" + calInoutprofitContPersent + "</div>";
+		html += "</div>";
+
+		createDiv.innerHTML = html;
+		createDiv.className = "inoutTotalContents tabPage";
+		soppContainer.append(createDiv);
 	}
 
 	rightDetailShow(thisEle){
@@ -2742,15 +3129,18 @@ class Sopp{
 	//영업기회 상세보기
 	detail() {
 		let html = "";
-		let setDate, soppTargetDate, maintenance_S, maintenance_E, datas, dataArray, notIdArray;
-		let splitCategories = this.categories.split(",");
-
+		let setDate, soppTargetDate, maintenance_S, maintenance_E, datas, dataArray, notIdArray, splitCategories;
+		
 		if(document.getElementById("rightDetailParent") !== null){
 			document.getElementById("rightDetailParent").remove();
 		}
+		
+		if(this.categories !== undefined){
+			splitCategories = this.categories.split(",");
 
-		for(let i = 0; i < splitCategories.length; i++){
-			CommonDatas.makeCategories(splitCategories[i]);
+			for(let i = 0; i < splitCategories.length; i++){
+				CommonDatas.makeCategories(splitCategories[i]);
+			}
 		}
 
 		CommonDatas.detailSetFormList(this.getData);
@@ -3012,8 +3402,8 @@ class Sopp{
 			},
 			{
 				"text": "매입매출내역",
-				"id": "tabInOutComePage",
-				"key": "tabInOutCome",
+				"id": "tabInoutSoppPage",
+				"key": "tabInoutSopp",
 				"class": "tabRadio",
 				"onChange": "let soppSet = new SoppSet(); soppSet.detailRadioChange(this);",
 			},
@@ -3052,7 +3442,11 @@ class Sopp{
 		setTimeout(() => {
 			let categories = document.getElementById("categories");
 			let categorySelect = categories.parentElement.parentElement.nextElementSibling.children[1].children[0];
-			CommonDatas.makeCategoryOptions(categorySelect, "categories");
+
+			if(this.categories !== undefined){
+				CommonDatas.makeCategoryOptions(categorySelect, "categories");
+			}
+			
 			document.getElementById("soppStatus").value = this.soppStatus;
 			document.getElementById("cntrctMth").value = this.cntrctMth;
 			document.getElementById("soppType").value = this.soppType;
@@ -3062,9 +3456,12 @@ class Sopp{
 
 		setTimeout(() => {
 			let soppSet = new SoppSet();
+			soppSet.drawInoutSoppList();
+			soppSet.drawInoutContList();
 			soppSet.drawSoppFileUpload();
 			soppSet.drawSoppTechList();
 			soppSet.drawSoppSalesList();
+			soppSet.inoutTotalSet();
 		}, 700);
 	}
 

@@ -10,6 +10,7 @@ import org.apache.ibatis.annotations.Update;
 
 import kr.co.bizcore.v1.domain.Estimate;
 import kr.co.bizcore.v1.domain.EstimateItem;
+import kr.co.bizcore.v1.domain.Inout;
 import kr.co.bizcore.v1.domain.Sales;
 import kr.co.bizcore.v1.domain.SimpleEstimate;
 import kr.co.bizcore.v1.domain.Sopp;
@@ -38,6 +39,9 @@ public interface SoppMapper {
 
     @Update("UPDATE swc_sopp SET custNo = #{sopp.custNo}, custMemberNo = #{sopp.custMemberNo}, buyrNo = #{sopp.buyrNo}, cntrctMth = #{sopp.cntrctMth}, soppTitle = #{sopp.soppTitle}, soppDesc = #{sopp.soppTitle}, soppTargetAmt = #{sopp.soppTargetAmt}, soppTargetDate = #{sopp.soppTargetDate}, maintenance_S = #{sopp.maintenance_S}, maintenance_E = #{sopp.maintenance_E}, soppType = #{sopp.soppType}, soppStatus = #{sopp.soppStatus}, soppSrate = #{sopp.soppSrate}, maintenanceTarget = #{sopp.maintenanceTarget}, secondUserNo = #{sopp.secondUserNo}, categories = #{sopp.categories}, modDatetime = now() WHERE soppNo = #{sopp.soppNo} AND compNo = #{sopp.compNo}")
     public int updateSopp(@Param("sopp") Sopp sopp);
+
+    @Select("SELECT * FROM swc_soppdata01 WHERE attrib NOT LIKE 'XXX%' AND soppNo = #{inout.soppNo} ORDER BY regDatetime DESC")
+    public List<Inout> getSoppInoutList(@Param("inout") Inout inout);
 
     @Select("SELECT * FROM swc_soppfiledata WHERE attrib NOT LIKE 'XXX%' AND soppNo = #{soppFileData.soppNo} ORDER BY regDatetime DESC")
     public List<SoppFileData> getSoppFileList(@Param("soppFileData") SoppFileData soppFileData);

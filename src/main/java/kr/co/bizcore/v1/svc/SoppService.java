@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 import kr.co.bizcore.v1.domain.Estimate;
 import kr.co.bizcore.v1.domain.EstimateItem;
+import kr.co.bizcore.v1.domain.Inout;
 import kr.co.bizcore.v1.domain.Sales;
 import kr.co.bizcore.v1.domain.Schedule;
 import kr.co.bizcore.v1.domain.SimpleEstimate;
@@ -53,6 +54,10 @@ public class SoppService extends Svc {
 
     public int updateSopp(Sopp sopp) {
         return soppMapper.updateSopp(sopp);
+    }
+
+    public List<Inout> getSoppInoutList(Inout inout){
+        return soppMapper.getSoppInoutList(inout);
     }
 
     public List<SoppFileData> getSoppFileList(SoppFileData soppFileData){

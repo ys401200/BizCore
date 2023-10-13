@@ -61,6 +61,212 @@
 	float: right;
 }
 
+.soppContainer > #tabInoutSopp{
+	display: none;
+	padding: 10px;
+	padding-bottom: 0;
+}
+
+.soppContainer > #tabInoutSopp > .tabInoutSoppTitle{
+	display: flex;
+    align-items: center;
+    border: 1px solid #BDBDBD;
+}
+
+.soppContainer > #tabInoutSopp > .tabInoutSoppTitle > div:first-child{
+	width: 10%;
+    text-align: center;
+    border-right: 1px solid #BDBDBD;
+}
+
+.soppContainer > #tabInoutSopp > .tabInoutSoppTitle > div:last-child{
+	width: 100%;
+    padding-left: 10px;
+}
+
+.soppContainer > #tabInoutSopp > .tabInoutSoppTitle > div:last-child:hover{
+	background-color: #BDBDBD;
+	cursor: pointer;
+}
+
+/* .soppContainer > #tabInoutSopp > .tabInoutTableList{
+	display: none;
+} */
+
+.soppContainer > #tabInoutSopp > .tabInoutTableList > .inoutSoppListHeader{
+	display: grid;
+    grid-template-columns: 5% 10% 11% 11% 6% 4% 6% 6% 6% 15% 10% 5% 5%;
+    border-left: 1px solid #BDBDBD;
+    border-bottom: 1px solid #BDBDBD;
+}
+
+.soppContainer > #tabInoutSopp > .tabInoutTableList > .inoutSoppListHeader > div{
+	text-align: center;
+	border-right: 1px solid #BDBDBD;
+}
+
+.soppContainer > #tabInoutSopp > .tabInoutTableList > .inoutSoppListItem{
+	display: grid;
+    grid-template-columns: 5% 10% 11% 11% 6% 4% 6% 6% 6% 15% 10% 5% 5%;
+    border-left: 1px solid #BDBDBD;
+	border-bottom: 1px solid #BDBDBD;
+}
+
+.soppContainer > #tabInoutSopp > .tabInoutTableList > .emptyInData{
+	text-align: center;
+	border-left: 1px solid #BDBDBD;
+	border-right: 1px solid #BDBDBD;
+	border-bottom: 1px solid #BDBDBD;
+}
+
+.soppContainer > #tabInoutSopp > .tabInoutTableList > .inoutSoppListItem > div{
+	border-right: 1px solid #BDBDBD;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+.soppContainer > #tabInoutSopp > .tabInoutTableList > .inSoppListTotal,
+.soppContainer > #tabInoutSopp > .tabInoutTableList > .outSoppListTotal{
+	display: flex;
+    align-items: center;
+    border-left: 1px solid #BDBDBD;
+	border-right: 1px solid #BDBDBD;
+	border-bottom: 1px solid #BDBDBD;
+}
+
+.soppContainer > #tabInoutSopp > .tabInoutTableList > .inSoppListTotal > div:first-child,
+.soppContainer > #tabInoutSopp > .tabInoutTableList > .outSoppListTotal > div:first-child{
+	width: 10%;
+    text-align: center;
+    border-right: 1px solid #BDBDBD;
+}
+
+.soppContainer > #tabInoutSopp > .tabInoutTableList > .inSoppListTotal > div:last-child,
+.soppContainer > #tabInoutSopp > .tabInoutTableList > .outSoppListTotal > div:last-child{
+	width: 100%;
+    padding-right: 10px;
+	text-align: right;
+}
+
+.soppContainer > .tabInoutCont{
+	display: none;
+	padding: 10px;
+	padding-top: 0;
+}
+
+.soppContainer > .tabInoutCont > .tabInoutContTitle{
+	display: flex;
+    align-items: center;
+	border-left: 1px solid #BDBDBD;
+	border-right: 1px solid #BDBDBD;
+	border-bottom: 1px solid #BDBDBD;
+}
+
+.soppContainer > .tabInoutCont > .tabInoutContTitle > div:first-child{
+	width: 10%;
+    text-align: center;
+    border-right: 1px solid #BDBDBD;
+}
+
+.soppContainer > .tabInoutCont > .tabInoutContTitle > div:last-child{
+	width: 100%;
+    padding-left: 10px;
+}
+
+.soppContainer > .tabInoutCont > .tabInoutContTitle > div:last-child:hover{
+	background-color: #BDBDBD;
+	cursor: pointer;
+}
+
+.soppContainer > .tabInoutCont > .tabInoutTableList{
+	display: none;
+}
+
+.soppContainer > .tabInoutCont > .tabInoutTableList > .inoutContListHeader{
+	display: grid;
+    grid-template-columns: 5% 10% 10% 10% 5% 5% 10% 5% 5% 35%;
+    border-left: 1px solid #BDBDBD;
+    border-bottom: 1px solid #BDBDBD;
+}
+
+.soppContainer > .tabInoutCont > .tabInoutTableList > .inoutContListHeader > div{
+	text-align: center;
+	border-right: 1px solid #BDBDBD;
+}
+
+.soppContainer > .tabInoutCont > .tabInoutTableList > .inoutContListItem{
+	display: grid;
+    grid-template-columns: 5% 10% 10% 10% 5% 5% 10% 5% 5% 35%;
+    border-left: 1px solid #BDBDBD;
+	border-bottom: 1px solid #BDBDBD;
+}
+
+.soppContainer > .tabInoutCont > .tabInoutTableList > .emptyInData{
+	text-align: center;
+	border-left: 1px solid #BDBDBD;
+	border-right: 1px solid #BDBDBD;
+	border-bottom: 1px solid #BDBDBD;
+}
+
+.soppContainer > .tabInoutCont > .tabInoutTableList > .inoutContListItem > div{
+	border-right: 1px solid #BDBDBD;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+.soppContainer > .tabInoutCont > .tabInoutTableList > .inContListTotal,
+.soppContainer > .tabInoutCont > .tabInoutTableList > .outContListTotal{
+	display: flex;
+    align-items: center;
+    border-left: 1px solid #BDBDBD;
+	border-right: 1px solid #BDBDBD;
+	border-bottom: 1px solid #BDBDBD;
+}
+
+.soppContainer > .tabInoutCont > .tabInoutTableList > .inContListTotal > div:first-child,
+.soppContainer > .tabInoutCont > .tabInoutTableList > .outContListTotal > div:first-child{
+	width: 10%;
+    text-align: center;
+    border-right: 1px solid #BDBDBD;
+}
+
+.soppContainer > .tabInoutCont > .tabInoutTableList > .inContListTotal > div:last-child,
+.soppContainer > .tabInoutCont > .tabInoutTableList > .outContListTotal > div:last-child{
+	width: 100%;
+    padding-right: 10px;
+	text-align: right;
+}
+
+.soppContainer > .inoutTotalContents{
+	display: none;
+	padding: 10px;
+}
+
+.soppContainer > .inoutTotalContents > div:nth-child(1),
+.soppContainer > .inoutTotalContents > div:nth-child(3){
+	margin-top: 10px;
+	padding: 5px;
+    border-top: 1px solid #BDBDBD;
+    border-left: 1px solid #BDBDBD;
+    border-right: 1px solid #BDBDBD;
+}
+
+.soppContainer > .inoutTotalContents > div:nth-child(2),
+.soppContainer > .inoutTotalContents > div:nth-child(4){
+	display: grid;
+    grid-template-columns: 10% 15% 10% 15% 10% 15% 10% 15%;
+    border-top: 1px solid #BDBDBD;
+    border-left: 1px solid #BDBDBD;
+    border-bottom: 1px solid #BDBDBD;
+}
+
+.soppContainer > .inoutTotalContents > div:nth-child(2) > div,
+.soppContainer > .inoutTotalContents > div:nth-child(4) > div{
+    border-right: 1px solid #BDBDBD;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
 .soppContainer > #tabFileUpload{
     display: none; 
 	width: 99%; 

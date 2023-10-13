@@ -3668,15 +3668,18 @@ function getStorageList() {
 					storage.productCust = [];
 					resultJson = cipher.decAes(result.data);
 					resultJson = JSON.parse(resultJson);
+					console.log(resultJson);
 					storage.product = resultJson;
 
 					for(let i = 0; i < resultJson.length; i++){
 						let item = resultJson[i];
 						let datas = {};
 
-						datas = item;
-						datas.productName = item.productName + " : " + storage.customer[item.custNo].custName;
+						for(let key in item){
+							datas[key] = item[key];
+						}
 
+						datas.productName = item.productName + " : " + storage.customer[item.custNo].custName;
 						storage.productCust.push(datas);
 					}
 

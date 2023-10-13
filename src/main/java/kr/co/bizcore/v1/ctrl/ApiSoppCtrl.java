@@ -31,6 +31,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import kr.co.bizcore.v1.domain.Inout;
 import kr.co.bizcore.v1.domain.Sales;
 import kr.co.bizcore.v1.domain.Sopp;
 import kr.co.bizcore.v1.domain.SoppFileData;
@@ -240,6 +241,56 @@ public class ApiSoppCtrl extends Ctrl{
             result = "{\"result\":\"ok\"}";
         }
 
+        return result;
+    }
+
+    @RequestMapping(value = "/soppInout/{no}", method = RequestMethod.GET)
+    public String getSoppInout(HttpServletRequest req, @PathVariable String no) {
+        HttpSession session = null;
+        String compId = null;
+        int compNo = 0;
+        String result = null;
+        String userNo = null;
+        List<Inout> list = null;
+        String data = null;
+        String aesKey, aesIv = null;
+        int i = 0;
+
+        if (no == null) { // 글 번호 확인 안됨
+            result = "{\"result\":\"failure\",\"msg\":\"salesNo is not exist\"}";
+        } else { // 글 번호 확인 됨
+            session = req.getSession();
+            compId = (String) session.getAttribute("compId");
+            compNo = (int) session.getAttribute("compNo");
+            aesKey = (String) session.getAttribute("aesKey");
+            aesIv = (String) session.getAttribute("aesIv");
+            if (compId == null)
+                compId = (String) req.getAttribute("compId");
+            userNo = (String) session.getAttribute("userNo");
+
+            if (compId == null) { // 회사코드 확인 안됨
+                result = "{\"result\":\"failure\",\"msg\":\"Company ID is not verified.\"}";
+            } else if (userNo == null) {
+                result = "{\"result\":\"failure\",\"msg\":\"Session expired and/or Not logged in.\"}";
+            } else { // 회사코드 확인 됨
+                Inout inout = new Inout();
+                inout.setSoppNo(Integer.parseInt(no));
+                list = soppService.getSoppInoutList(inout);
+                if (list != null) {
+                    data = "[";
+                    for (i = 0; i < list.size(); i++) {
+                        if (i > 0)
+                        data += ",";
+                        data += list.get(i).toJson();
+                    }
+                    data += "]";
+                } else {
+                    data = "[]";
+                }
+                data = soppService.encAes(data, aesKey, aesIv);
+                result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}"; 
+            } // End of if : 2
+        } // End of if : 1
         return result;
     }
 
