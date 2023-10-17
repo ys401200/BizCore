@@ -1892,7 +1892,62 @@ class SoppSet{
 		this.drawSoppList();
 	}
 
-	//영업기회 탭 매입매출내역 출력 함수
+	drawInoutForm(){
+		let soppContainer = document.getElementsByClassName("soppContainer")[0];
+		let createDiv = document.createElement("div");
+		let nowDate = new Date();
+		createDiv.className = "inoutSoppForm tabPage";
+		let html = "";
+
+		html += "<div>";
+		html += "<button type=\"button\" />분할추가</button>";
+		html += "<button type=\"button\" onclick=\"let sopp = new Sopp(); sopp.inoutSingleInsert();\"/>추가</button>";
+		html += "<button type=\"button\" />선택삭제</button>";
+		html += "</div>";
+
+		html += "<div>";
+		html += "<div>구분</div>";
+		html += "<div>거래일자</div>";
+		html += "<div>분할횟수</div>";
+		html += "<div>단위(개월)</div>";
+		html += "<div>계약금액</div>";
+		html += "<div>상품</div>";
+		html += "<div>거래처(매입/매출처)</div>";
+		html += "</div>";
+
+		html += "<div>";
+		html += "<div><select><option value=\"1101\">매입</option><option value=\"1102\">매출</option></select></div>";
+		html += "<div><input type=\"date\" id=\"inoutSoppVatDate\" value=\"" + nowDate.toISOString().substring(0, 10) + "\" /></div>";
+		html += "<div><input type=\"text\" id=\"inoutSoppDivisionNum\" value=\"0\"/></div>";
+		html += "<div><input type=\"text\" id=\"inoutSoppDivisionMonth\" value=\"0\"/></div>";
+		html += "<div><input type=\"text\" id=\"inoutSoppDivisionContAmt\" onkeyup=\"CommonDatas.inputNumberFormat(this);\" style=\"text-align: right;\"/></div>";
+		html += "<div><input type=\"text\" data-complete=\"product\" data-key=\"productNo\" autocomplete=\"off\" id=\"inoutSoppProductNo\" onclick=\"CommonDatas.addAutoComplete(this);\" onkeyup=\"CommonDatas.addAutoComplete(this);\" style=\"text-align: center;\"></div>";
+		html += "<div><input type=\"text\" data-complete=\"customer\" data-key=\"productNo\" autocomplete=\"off\" id=\"inoutSoppCustNo\" onclick=\"CommonDatas.addAutoComplete(this);\" onkeyup=\"CommonDatas.addAutoComplete(this);\" style=\"text-align: center;\"></div>";
+		html += "</div>";
+
+		html += "<div>";
+		html += "<div>단가</div>";
+		html += "<div>수량</div>";
+		html += "<div>공급가</div>";
+		html += "<div>부가세</div>";
+		html += "<div>합계금액</div>";
+		html += "<div style=\"grid-column: span 2;\">비고</div>";
+		html += "</div>";
+
+		html += "<div>";
+		html += "<div><input type=\"text\" style=\"text-align: right;\" id=\"inoutSoppNetprice\" onkeyup=\"CommonDatas.Temps.soppSet.inoutSoppCalNetprice(this);\" value=\"0\" /></div>";
+		html += "<div><input type=\"text\" style=\"text-align: right;\" id=\"inoutSoppQuanty\" onkeyup=\"CommonDatas.Temps.soppSet.inoutSoppCalQuanty(this);\" value=\"1\" /></div>";
+		html += "<div><input type=\"text\" style=\"text-align: right;\" id=\"inoutSoppAmt\" placeholder=\"자동으로 계산 됩니다.\" value=\"0\" disabled/></div>";
+		html += "<div><input type=\"text\" style=\"text-align: right;\" id=\"inoutSoppVat\" onkeyup=\"CommonDatas.Temps.soppSet.inoutSoppCalVat(this);\" value=\"0\" /></div>";
+		html += "<div><input type=\"text\" style=\"text-align: right;\" id=\"inoutSoppTotal\" onkeyup=\"CommonDatas.Temps.soppSet.inoutSoppCalTotal(this);\" value=\"0\" /></div>";
+		html += "<div style=\"grid-column: span 2;\"><input type=\"text\" id=\"inoutSoppRemark\"></div>";
+		html += "</div>";
+
+		createDiv.innerHTML = html;
+		soppContainer.append(createDiv);
+	}
+
+	//영업기회 탭 매입매출내역 영업기회 출력 함수
 	drawInoutSoppList() {
 		let soppContainer, createDiv, divHtml = "", calInTotal = 0, calOutTotal = 0;
 
@@ -2004,7 +2059,7 @@ class SoppSet{
 		soppContainer.append(createDiv);
 	}
 
-	//영업기회 탭 매입매출내역 출력 함수
+	//영업기회 탭 매입매출내역 계약 출력 함수
 	drawInoutContList() {
 		let soppContainer, createDiv, divHtml = "", inDatas = {}, outDatas = {};
 
@@ -2429,8 +2484,11 @@ class SoppSet{
 		if(dataKey === "tabDefault") defaultFormContainer.style.display = "grid";
 		else {
 			if(dataKey === "tabInoutSopp"){
+				let inoutSoppForm = document.getElementsByClassName("inoutSoppForm")[0];
 				let tabInoutCont = document.getElementsByClassName("tabInoutCont");
 				let inoutTotalContents = document.getElementsByClassName("inoutTotalContents")[0];
+
+				inoutSoppForm.style.display = "block";
 
 				for(let i = 0; i < tabInoutCont.length; i++){
 					tabInoutCont[i].style.display = "block";
@@ -2443,6 +2501,7 @@ class SoppSet{
 		}
 	}
 
+	//매입매출내역 제목 부분 클릭 시 실행 함수
 	inoutTitleClick(thisEle){
 		let tabInoutTableList = document.getElementsByClassName("tabInoutTableList");
 
@@ -2453,6 +2512,7 @@ class SoppSet{
 		thisEle.parentElement.nextElementSibling.style.display = "block";
 	}
 
+	//매입매출내역 총 계 계산 후 세팅 함수
 	inoutTotalSet(){
 		let soppContainer = document.getElementsByClassName("soppContainer")[0];
 		let inSoppListTotal = document.getElementById("tabInoutSopp").children[1].querySelector(".inSoppListTotal");
@@ -2534,9 +2594,8 @@ class SoppSet{
 		soppContainer.append(createDiv);
 	}
 
+	//영업기회 우측 상세보기 실행 함수
 	rightDetailShow(thisEle){
-		$('.theme-loader').fadeIn();
-		
 		CommonDatas.Temps.soppSet.soppDetailView(thisEle, "right");
 		
 		setTimeout(() => {
@@ -2554,6 +2613,7 @@ class SoppSet{
 			
 			bodyHtml = CommonDatas.Temps.soppSet.soppRightDetailHtmlSet();
 
+			createDiv.style.display = "none";
 			createDiv.id = "rightDetailParent";
 			divHtml = "<div id=\"rightDetail\" style=\"top: " + bodyContent.offsetTop + "px; height: " + calHeight + "px;" + "\">";
 			divHtml += "<div class=\"rightDetailTop\">";
@@ -2582,13 +2642,13 @@ class SoppSet{
 			document.getElementById("soppType").value = storage.formList.soppType;
 			ckeditor.config.readOnly = true;
 			window.setTimeout(setEditor, 100);
-			$('.theme-loader').delay(500).fadeOut("slow");
 		}, 800);
 
 		setTimeout(() => {
 			CommonDatas.Temps.soppSet.rightDetailFileList();
 			CommonDatas.Temps.soppSet.rightDetailTechList();
 			CommonDatas.Temps.soppSet.rightDetailSalesList();
+			document.getElementById("rightDetailParent").style.display = "flex";
 		}, 1000);
 
 		// setTimeout(() => {
@@ -2599,12 +2659,14 @@ class SoppSet{
 		// }, 700);
 	}
 
+	//영업기회 우측 상세 닫기 함수
 	rightDetailClose(){
 		if(document.getElementById("rightDetailParent").style.display !== "none"){
 			document.getElementById("rightDetailParent").remove();
 		}
 	}
 
+	//영업기회 우측 상세 html 세팅 함수
 	soppRightDetailHtmlSet(){
 		let html = "", dataArray, setDate, soppTargetDate, maintenance_S, maintenance_E;
 
@@ -2809,6 +2871,7 @@ class SoppSet{
 		return html;
 	}
 
+	//영업기회 우측 상세 파일 리스트 출력 함수
 	rightDetailFileList(){
 		let container, rightDetailBodyFileContents, jsonData, createDiv, job, header = [], data = [], ids = [], disDate, setDate, str, fnc = [], fileName;
 		jsonData = storage.soppFileList;
@@ -2884,6 +2947,7 @@ class SoppSet{
 		CommonDatas.createGrid(container, header, data, ids, job, fnc, "rightDetailFileList");
 	}
 
+	//영업기회 우측 상세 기술지원 리스트 출력 함수
 	rightDetailTechList(){
 		let container, rightDetailBodyTechContents, jsonData, createDiv, job, header = [], data = [], ids = [], disDate, setDate, str, fnc = [];
 
@@ -2967,6 +3031,7 @@ class SoppSet{
 		CommonDatas.createGrid(container, header, data, ids, job, fnc, "rightDetailBodyTechList");
 	}
 
+	//영업기회 우측 상세 영업활동 리스트 출력 함수
 	rightDetailSalesList(){
 		let container, rightDetailBodySalesContents, jsonData, createDiv, job, header = [], data = [], ids = [], disDate, setDate, str, fnc = [];
 
@@ -3048,6 +3113,98 @@ class SoppSet{
 		}
 
 		CommonDatas.createGrid(container, header, data, ids, job, fnc, "rightDetailBodySalesList");
+	}
+
+	//영업기회 매입매출내역 단가 keyup 이벤트
+	inoutSoppCalNetprice(thisEle){
+		let netPrice = parseInt(thisEle.value.replace(/,/g, ""));
+		let inoutSoppQuanty = document.getElementById("inoutSoppQuanty");
+		let inoutSoppAmt = document.getElementById("inoutSoppAmt");
+		let inoutSoppVat = document.getElementById("inoutSoppVat");
+		let inoutSoppTotal = document.getElementById("inoutSoppTotal");
+		
+		if(thisEle.value !== ""){
+			let calAmount = netPrice * parseInt(inoutSoppQuanty.value);
+			let calVat = calAmount * 0.1;
+			let calTotal = calAmount + calVat;
+	
+			inoutSoppAmt.value = CommonDatas.numberFormat(calAmount);
+			inoutSoppVat.value = CommonDatas.numberFormat(calVat);
+			inoutSoppTotal.value = CommonDatas.numberFormat(calTotal);
+	
+			CommonDatas.inputNumberFormat(thisEle);
+		}else{
+			thisEle.value = 0;
+			inoutSoppAmt.value = 0;
+			inoutSoppVat.value = 0;
+			inoutSoppTotal.value = 0;
+		}
+	}
+
+	//영업기회 매입매출내역 수량 keyup 이벤트
+	inoutSoppCalQuanty(thisEle){
+		let quanty = parseInt(thisEle.value);
+		let inoutSoppNetprice = document.getElementById("inoutSoppNetprice");
+		let inoutSoppAmt = document.getElementById("inoutSoppAmt");
+		let inoutSoppVat = document.getElementById("inoutSoppVat");
+		let inoutSoppTotal = document.getElementById("inoutSoppTotal");
+		
+		if(thisEle.value !== ""){
+			let calAmount = parseInt(inoutSoppNetprice.value.replace(/,/g, "")) * quanty;
+			let calVat = calAmount * 0.1;
+			let calTotal = calAmount + calVat;
+	
+			inoutSoppAmt.value = CommonDatas.numberFormat(calAmount);
+			inoutSoppVat.value = CommonDatas.numberFormat(calVat);
+			inoutSoppTotal.value = CommonDatas.numberFormat(calTotal);
+		}else{
+			thisEle.value = 0;
+			inoutSoppAmt.value = 0;
+			inoutSoppVat.value = 0;
+			inoutSoppTotal.value = 0;
+		}
+	}
+
+	//영업기회 매입매출내역 부가세 keyup 이벤트
+	inoutSoppCalVat(thisEle){
+		let vat = parseInt(thisEle.value.replace(/,/g, ""));
+		let inoutSoppAmt = document.getElementById("inoutSoppAmt");
+		let inoutSoppTotal = document.getElementById("inoutSoppTotal");
+		
+		if(thisEle.value !== ""){
+			let calTotal = vat + parseInt(inoutSoppAmt.value.replace(/,/g, ""));
+			inoutSoppTotal.value = CommonDatas.numberFormat(calTotal);
+	
+			CommonDatas.inputNumberFormat(thisEle);
+		}else{
+			thisEle.value = 0;
+		}
+	}
+
+	//영업기회 매입매출내역 단가 keyup 이벤트
+	inoutSoppCalTotal(thisEle){
+		let total = parseInt(thisEle.value.replace(/,/g, ""));
+		let inoutSoppQuanty = document.getElementById("inoutSoppQuanty");
+		let inoutSoppAmt = document.getElementById("inoutSoppAmt");
+		let inoutSoppVat = document.getElementById("inoutSoppVat");
+		let inoutSoppNetprice = document.getElementById("inoutSoppNetprice");
+		
+		if(thisEle.value !== ""){
+			let calNetprice = Math.round(total / 11 * 10 / parseInt(inoutSoppQuanty.value));
+			let calAmount = Math.round(total / 11 * 10);
+			let calVat = Math.round(total / 11);
+			
+			inoutSoppNetprice.value = CommonDatas.numberFormat(calNetprice)
+			inoutSoppAmt.value = CommonDatas.numberFormat(calAmount);
+			inoutSoppVat.value = CommonDatas.numberFormat(calVat);
+	
+			CommonDatas.inputNumberFormat(thisEle);
+		}else{
+			thisEle.value = 0;
+			inoutSoppNetprice.value = 0;
+			inoutSoppAmt.value = 0;
+			inoutSoppVat.value = 0;
+		}
 	}
 }
 
@@ -3456,6 +3613,7 @@ class Sopp{
 
 		setTimeout(() => {
 			let soppSet = new SoppSet();
+			soppSet.drawInoutForm();
 			soppSet.drawInoutSoppList();
 			soppSet.drawInoutContList();
 			soppSet.drawSoppFileUpload();
@@ -10660,7 +10818,7 @@ class Common {
 			e.value = e.value.replace(/[^0-9]/g,"");
 			e.value = parseInt(value).toLocaleString("en-US");	
 		}else{
-			e.value = "";
+			e.value = 0;
 		}
 	}
 

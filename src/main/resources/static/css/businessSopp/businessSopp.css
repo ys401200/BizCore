@@ -61,6 +61,72 @@
 	float: right;
 }
 
+.soppContainer > .inoutSoppForm{
+	display: none;
+	padding: 10px;
+}
+
+.soppContainer > .inoutSoppForm > div:nth-child(1){
+	display: flex;
+	align-items: center;
+	justify-content: right;
+	padding-bottom: 10px;
+}
+
+.soppContainer > .inoutSoppForm > div:nth-child(1) > button{
+	width: 5%;
+    color: #ffffff;
+    border-radius: 5px;
+    height: 2.5vh;
+	margin-left: 5px;
+}
+
+.soppContainer > .inoutSoppForm > div:nth-child(1) > button:nth-child(1){
+	background-color: #4374D9;
+}
+
+.soppContainer > .inoutSoppForm > div:nth-child(1) > button:nth-child(2){
+	background-color: #50AF49;
+}
+
+.soppContainer > .inoutSoppForm > div:nth-child(1) > button:nth-child(3){
+	background-color: #F15F5F;
+}
+
+.soppContainer > .inoutSoppForm > div:nth-child(2),
+.soppContainer > .inoutSoppForm > div:nth-child(3),
+.soppContainer > .inoutSoppForm > div:nth-child(4),
+.soppContainer > .inoutSoppForm > div:nth-child(5){
+	display: grid;
+	grid-template-columns: 10% 20% 10% 10% 10% 20% 20%;
+	border-top: 1px solid #BDBDBD;
+	border-left: 1px solid #BDBDBD;
+}
+
+.soppContainer > .inoutSoppForm > div:last-child{
+	border-bottom: 1px solid #BDBDBD;
+}
+
+.soppContainer > .inoutSoppForm > div > div{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 5px;
+	border-right: 1px solid #BDBDBD;
+	font-size: 0.9rem;
+	font-weight: 500;
+}
+
+.soppContainer > .inoutSoppForm > div > div > input,
+.soppContainer > .inoutSoppForm > div > div > select{
+	border: 1px solid #000;
+	width: 100%;
+	border-radius: 5px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+
 .soppContainer > #tabInoutSopp{
 	display: none;
 	padding: 10px;
@@ -184,7 +250,7 @@
 
 .soppContainer > .tabInoutCont > .tabInoutTableList > .inoutContListHeader{
 	display: grid;
-    grid-template-columns: 5% 10% 10% 10% 5% 5% 10% 5% 5% 35%;
+    grid-template-columns: 5% 10% 10% 10% 5% 5% 5% 10% 10% 30%;
     border-left: 1px solid #BDBDBD;
     border-bottom: 1px solid #BDBDBD;
 }
@@ -196,7 +262,7 @@
 
 .soppContainer > .tabInoutCont > .tabInoutTableList > .inoutContListItem{
 	display: grid;
-    grid-template-columns: 5% 10% 10% 10% 5% 5% 10% 5% 5% 35%;
+    grid-template-columns: 5% 10% 10% 10% 5% 5% 5% 10% 10% 30%;
     border-left: 1px solid #BDBDBD;
 	border-bottom: 1px solid #BDBDBD;
 }
