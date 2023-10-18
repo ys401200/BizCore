@@ -43,6 +43,12 @@ public interface SoppMapper {
     @Select("SELECT * FROM swc_soppdata01 WHERE attrib NOT LIKE 'XXX%' AND soppNo = #{inout.soppNo} ORDER BY regDatetime DESC")
     public List<Inout> getSoppInoutList(@Param("inout") Inout inout);
 
+    @Insert("INSERT INTO swc_soppdata01 (soppNo, userNo, catNo, productNo, salesCustNo, dataTitle, dataType, dataQuanty, dataAmt, dataNetprice, dataVat, dataTotal, dataRemark, vatDate, regDatetime, attrib, contNo) VALUES (#{inout.soppNo}, #{inout.userNo}, #{inout.catNo}, #{inout.productNo}, #{inout.salesCustNo}, #{inout.dataTitle}, #{inout.dataType}, #{inout.dataQuanty}, #{inout.dataAmt}, #{inout.dataNetprice}, #{inout.dataVat}, #{inout.dataTotal}, #{inout.dataRemark}, #{inout.vatDate}, now(), 10000, #{inout.contNo})")
+    public int soppInoutSingleInsert(@Param("inout") Inout inout);
+
+    @Update("UPDATE swc_soppdata01 SET attrib = 'XXXXX' WHERE soppdataNo = #{soppdataNo}")
+    public int soppInoutCheckDelete(@Param("soppdataNo") String soppdataNo);
+
     @Select("SELECT * FROM swc_soppfiledata WHERE attrib NOT LIKE 'XXX%' AND soppNo = #{soppFileData.soppNo} ORDER BY regDatetime DESC")
     public List<SoppFileData> getSoppFileList(@Param("soppFileData") SoppFileData soppFileData);
 

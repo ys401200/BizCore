@@ -60,6 +60,14 @@ public class SoppService extends Svc {
         return soppMapper.getSoppInoutList(inout);
     }
 
+    public int soppInoutSingleInsert(Inout inout){
+        return soppMapper.soppInoutSingleInsert(inout);
+    }
+
+    public int  soppInoutCheckDelete(String soppdataNo) {
+        return soppMapper.soppInoutCheckDelete(soppdataNo);
+    }
+
     public List<SoppFileData> getSoppFileList(SoppFileData soppFileData){
         return soppMapper.getSoppFileList(soppFileData);
     }

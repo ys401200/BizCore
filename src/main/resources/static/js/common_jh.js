@@ -1384,25 +1384,11 @@ class SoppSet{
 		}
 	}
 
-	soppDetailFileListSet(id){
-		axios.get("/api/sopp/soppFile/" + id).then((response) => {
-			if (response.data.result === "ok") {
-				let result;
-				result = cipher.decAes(response.data.data);
-				result = JSON.parse(result);
-				storage.soppFileList = result;
-			}
-		}).catch((error) => {
-			msg.set("첨부파일내역 에러 입니다.\n" + error);
-			console.log(error);
-		});
-	}
+	//영업기회 매입매출내역 데이터 세팅 함수
+	soppDetailInoutSet(id){
+		let dataObjects = {};
 
-	//영업기회 상세보기
-	soppDetailView(e, type) {
-		let thisEle = e, dataObjects = {};
-
-		axios.get("/api/sopp/soppInout/" + thisEle.dataset.id).then((response) => {
+		axios.get("/api/sopp/soppInout/" + id).then((response) => {
 			if (response.data.result === "ok") {
 				storage.inoutInSoppList = [];
 				storage.inoutOutSoppList = [];
@@ -1435,7 +1421,28 @@ class SoppSet{
 			msg.set("매입매출내역 에러 입니다.\n" + error);
 			console.log(error);
 		});
+	}
 
+	//영업기회 파일 내역 데이터 세팅 함수
+	soppDetailFileListSet(id){
+		axios.get("/api/sopp/soppFile/" + id).then((response) => {
+			if (response.data.result === "ok") {
+				let result;
+				result = cipher.decAes(response.data.data);
+				result = JSON.parse(result);
+				storage.soppFileList = result;
+			}
+		}).catch((error) => {
+			msg.set("첨부파일내역 에러 입니다.\n" + error);
+			console.log(error);
+		});
+	}
+
+	//영업기회 상세보기
+	soppDetailView(e, type) {
+		let thisEle = e;
+
+		CommonDatas.Temps.soppSet.soppDetailInoutSet(thisEle.dataset.id);
 		CommonDatas.Temps.soppSet.soppDetailFileListSet(thisEle.dataset.id);
 
 		axios.get("/api/sopp/soppTech/" + thisEle.dataset.id).then((response) => {
@@ -1892,8 +1899,19 @@ class SoppSet{
 		this.drawSoppList();
 	}
 
+	//영업기회 매입매출내역 등록 폼 세팅 함수
 	drawInoutForm(){
 		let soppContainer = document.getElementsByClassName("soppContainer")[0];
+
+		if(document.getElementsByClassName("inoutSoppForm").length > 0){
+			let inoutSoppForm = document.getElementsByClassName("inoutSoppForm");
+
+			for(let i = 0; i < inoutSoppForm.length; i++){
+				let item = inoutSoppForm[i];
+				item.remove();
+			}
+		}
+
 		let createDiv = document.createElement("div");
 		let nowDate = new Date();
 		createDiv.className = "inoutSoppForm tabPage";
@@ -1901,8 +1919,8 @@ class SoppSet{
 
 		html += "<div>";
 		html += "<button type=\"button\" />분할추가</button>";
-		html += "<button type=\"button\" onclick=\"let sopp = new Sopp(); sopp.inoutSingleInsert();\"/>추가</button>";
-		html += "<button type=\"button\" />선택삭제</button>";
+		html += "<button type=\"button\" onclick=\"let sopp = new Sopp(); sopp.soppInoutSingleInsert();\"/>추가</button>";
+		html += "<button type=\"button\" onclick=\"let sopp = new Sopp(); sopp.soppInoutCheckDelete();\"/>선택삭제</button>";
 		html += "</div>";
 
 		html += "<div>";
@@ -1916,11 +1934,11 @@ class SoppSet{
 		html += "</div>";
 
 		html += "<div>";
-		html += "<div><select><option value=\"1101\">매입</option><option value=\"1102\">매출</option></select></div>";
+		html += "<div><select id=\"inoutSoppDataType\"><option value=\"1101\" selected>매입</option><option value=\"1102\">매출</option></select></div>";
 		html += "<div><input type=\"date\" id=\"inoutSoppVatDate\" value=\"" + nowDate.toISOString().substring(0, 10) + "\" /></div>";
-		html += "<div><input type=\"text\" id=\"inoutSoppDivisionNum\" value=\"0\"/></div>";
-		html += "<div><input type=\"text\" id=\"inoutSoppDivisionMonth\" value=\"0\"/></div>";
-		html += "<div><input type=\"text\" id=\"inoutSoppDivisionContAmt\" onkeyup=\"CommonDatas.inputNumberFormat(this);\" style=\"text-align: right;\"/></div>";
+		html += "<div><input type=\"text\" id=\"inoutSoppDivisionNum\" value=\"1\"/></div>";
+		html += "<div><input type=\"text\" id=\"inoutSoppDivisionMonth\" value=\"1\"/></div>";
+		html += "<div><input type=\"text\" id=\"inoutSoppDivisionContAmt\" onkeyup=\"CommonDatas.inputNumberFormat(this);\" style=\"text-align: right;\" value=\"0\"/></div>";
 		html += "<div><input type=\"text\" data-complete=\"product\" data-key=\"productNo\" autocomplete=\"off\" id=\"inoutSoppProductNo\" onclick=\"CommonDatas.addAutoComplete(this);\" onkeyup=\"CommonDatas.addAutoComplete(this);\" style=\"text-align: center;\"></div>";
 		html += "<div><input type=\"text\" data-complete=\"customer\" data-key=\"productNo\" autocomplete=\"off\" id=\"inoutSoppCustNo\" onclick=\"CommonDatas.addAutoComplete(this);\" onkeyup=\"CommonDatas.addAutoComplete(this);\" style=\"text-align: center;\"></div>";
 		html += "</div>";
@@ -2064,7 +2082,12 @@ class SoppSet{
 		let soppContainer, createDiv, divHtml = "", inDatas = {}, outDatas = {};
 
 		if(document.getElementsByClassName("tabInoutCont").length > 0){
-			document.getElementsByClassName("tabInoutCont").remove();
+			let tabInoutCont = document.getElementsByClassName("tabInoutCont");
+
+			for(let i = 0; i < tabInoutCont.length; i++){
+				let item = tabInoutCont[i];
+				item.remove();
+			}
 		}
 
 		if(storage.inoutContList !== undefined && Object.keys(storage.inoutContList[0]).length > 0){
@@ -2515,6 +2538,16 @@ class SoppSet{
 	//매입매출내역 총 계 계산 후 세팅 함수
 	inoutTotalSet(){
 		let soppContainer = document.getElementsByClassName("soppContainer")[0];
+
+		if(document.getElementsByClassName("inoutTotalContents").length > 0){
+			let inoutTotalContents = document.getElementsByClassName("inoutTotalContents");
+
+			for(let i = 0; i < inoutTotalContents.length; i++){
+				let item = inoutTotalContents[i];
+				item.remove();
+			}
+		}
+
 		let inSoppListTotal = document.getElementById("tabInoutSopp").children[1].querySelector(".inSoppListTotal");
 		let outSoppListTotal = document.getElementById("tabInoutSopp").children[1].querySelector(".outSoppListTotal");
 		let inSoppTotal = (inSoppListTotal === undefined || inSoppListTotal === null) ? 0 : parseInt(inSoppListTotal.children[1].innerText.replace(/,/g, ""));
@@ -3623,6 +3656,7 @@ class Sopp{
 		}, 700);
 	}
 
+	//영업기회 등록
 	insert(){
 		let cntrctMth = document.getElementById("cntrctMth");
 
@@ -3690,6 +3724,7 @@ class Sopp{
 		}
 	}
 
+	//영업기회 파일 등록
 	soppFileInsert(){
 		let formData = new FormData();
 		let soppFileUpload = document.getElementById("soppFileUpload");
@@ -3701,8 +3736,6 @@ class Sopp{
 			msg.set("파일을 선택해주세요.");
 			return false;
 		}else{
-			$('.theme-loader').fadeIn();
-	
 			formData.append("file", fileArrays[0]);
 			formData.append("fileDesc", soppFileUploadDesc);
 			formData.append("fileExtention", fileArrays[0].type);
@@ -3719,7 +3752,6 @@ class Sopp{
 					setTimeout(() => {
 						soppSet.drawSoppFileUpload();
 						soppSet.detailRadioChange();
-						$('.theme-loader').delay(1000).fadeOut("slow");
 					}, 1200);
 				} else {
 					msg.set("등록 중 에러가 발생하였습니다.");
@@ -3858,7 +3890,6 @@ class Sopp{
 	soppFileDelete(){
 		if(confirm("선택한 파일들을 삭제하시겠습니까??")){
 			let soppFileCheck = document.getElementsByClassName("soppFileCheck");
-			$('.theme-loader').fadeIn();
 	
 			for(let i = 0; i < soppFileCheck.length; i++){
 				let item = soppFileCheck[i];
@@ -3882,7 +3913,6 @@ class Sopp{
 					let soppSet = new SoppSet();
 
 					setTimeout(() => {
-						$('.theme-loader').delay(1000).fadeOut("slow");
 						soppSet.soppDetailFileListSet(storage.formList.soppNo);
 					}, 500);
 			
@@ -3922,6 +3952,121 @@ class Sopp{
 			console.log(error);
 			return false;
 		});
+	}
+
+	//영업기회 매입매출 단일 추가 함수
+	soppInoutSingleInsert(){
+		if(document.getElementById("inoutSoppVatDate").value === ""){
+			msg.set("거래일자를 선택해주세요.");
+			return false;
+		} else if(document.getElementById("inoutSoppProductNo").value === ""){
+			msg.set("상품을 선택해주세요.");
+			document.getElementById("inoutSoppProductNo").focus();
+			return false;
+		} else if(document.getElementById("inoutSoppProductNo").value !== "" && !CommonDatas.validateAutoComplete(document.getElementById("inoutSoppProductNo").value, "product")){
+			msg.set("조회된 상품이 없습니다.\n다시 확인해주세요.");
+			document.getElementById("inoutSoppProductNo").focus();
+			return false;
+		} else if(document.getElementById("inoutSoppCustNo").value === ""){
+			msg.set("매출처를 선택해주세요.");
+			document.getElementById("inoutSoppCustNo").focus();
+			return false;
+		} else if(document.getElementById("inoutSoppCustNo").value !== "" && !CommonDatas.validateAutoComplete(document.getElementById("inoutSoppCustNo").value, "customer")){
+			msg.set("조회된 매출처가 없습니다.\n다시 확인해주세요.");
+			document.getElementById("inoutSoppCustNo").focus();
+			return false;
+		}else{
+			let datas = {};
+			datas.soppNo = storage.formList.soppNo;
+			datas.userNo = storage.my;
+			datas.catNo = 100001;
+			datas.productNo = document.getElementById("inoutSoppProductNo").dataset.value;
+			datas.salesCustNo = document.getElementById("inoutSoppCustNo").dataset.value;
+			datas.dataTitle = document.getElementById("inoutSoppProductNo").value;
+			datas.dataType = document.getElementById("inoutSoppDataType").value;
+			datas.dataQuanty = document.getElementById("inoutSoppQuanty").value;
+			datas.dataAmt = parseInt(document.getElementById("inoutSoppAmt").value.replace(/,/g, ""));
+			datas.dataDiscount = 0;
+			datas.dataNetprice = parseInt(document.getElementById("inoutSoppNetprice").value.replace(/,/g, ""));
+			datas.dataVat = parseInt(document.getElementById("inoutSoppVat").value.replace(/,/g, ""));
+			datas.dataTotal = parseInt(document.getElementById("inoutSoppTotal").value.replace(/,/g, ""));
+			datas.vatDate = document.getElementById("inoutSoppVatDate").value;
+			datas.dataRemark = document.getElementById("inoutSoppRemark").value;
+			datas.contNo = 100;
+			datas = JSON.stringify(datas);
+			datas = cipher.encAes(datas);
+
+			axios.post("/api/sopp/soppInoutSingleInsert", datas, {
+				headers: { "Content-Type": "text/plain" }
+			}).then((response) => {
+				if (response.data.result === "ok") {
+					let soppSet = new SoppSet();
+					soppSet.soppDetailInoutSet(storage.formList.soppNo);
+					
+					setTimeout(() => {
+						soppSet.drawInoutForm();
+						soppSet.drawInoutSoppList();
+						soppSet.drawInoutContList();
+						soppSet.inoutTotalSet();
+						soppSet.detailRadioChange();
+						msg.set("등록되었습니다.");
+					}, 300);
+				} else {
+					msg.set("등록 중 에러가 발생하였습니다.");
+					return false;
+				}
+			}).catch((error) => {
+				msg.set("등록 도중 에러가 발생하였습니다.\n" + error);
+				console.log(error);
+				return false;
+			});
+		}
+	}
+
+	soppInoutCheckDelete(){
+		if(confirm("선택하신 내역들을 삭제하시겠습니까??")){
+			let inoutSoppListItem = document.getElementById("tabInoutSopp").children[1].querySelectorAll(".inoutSoppListItem");
+	
+			for(let i = 0; i < inoutSoppListItem.length; i++){
+				let item = inoutSoppListItem[i];
+				let checkbox = item.children[0].children[0];
+	
+				if(checkbox.checked){
+					axios.delete("/api/sopp/soppInoutCheckDelete/" + checkbox.dataset.id, {
+						headers: { "Content-Type": "text/plain" }
+					}).then((response) => {
+						if (response.data.result !== "ok") {
+							msg.set("삭제 중 에러가 발생하였습니다.");
+							return false;
+						}else{
+						}
+					}).catch((error) => {
+						msg.set("삭제 도중 에러가 발생하였습니다.\n" + error);
+						console.log(error);
+						return false;
+					});
+				}
+
+				if(i == (inoutSoppListItem.length - 1)){
+					let soppSet = new SoppSet();
+
+					setTimeout(() => {
+						soppSet.soppDetailInoutSet(storage.formList.soppNo);
+					}, 500);
+			
+					setTimeout(() => {
+						soppSet.drawInoutForm();
+						soppSet.drawInoutSoppList();
+						soppSet.drawInoutContList();
+						soppSet.inoutTotalSet();
+						soppSet.detailRadioChange();
+						msg.set("삭제되었습니다.");
+					}, 1200);
+				}
+			}
+		}else{
+			return false;
+		}
 	}
 }
 
@@ -10463,7 +10608,7 @@ class Common {
 				}
 			} else {
 				for (let key in storage[thisEle.dataset.complete]) {
-					if (thisEle.dataset.complete === "cip" || thisEle.dataset.complete === "product") {
+					if (thisEle.dataset.complete === "cip") {
 						if (storage[thisEle.dataset.complete][key].name.indexOf(thisEle.value) > -1) {
 							let listDiv = document.createElement("div");
 							listDiv.setAttribute("onclick", "CommonDatas.autoCompleteClick(this);");
@@ -10476,7 +10621,15 @@ class Common {
 							}
 							autoComplete.append(listDiv);
 						}
-					} else if(thisEle.dataset.complete === "productCust"){
+					}else if(thisEle.dataset.complete === "product"){
+						if (storage[thisEle.dataset.complete][key].productName.indexOf(thisEle.value) > -1) {
+							let listDiv = document.createElement("div");
+							listDiv.setAttribute("onclick", "CommonDatas.autoCompleteClick(this);");
+							listDiv.dataset.value = storage.customer[storage[thisEle.dataset.complete][key].custNo].custName;
+							listDiv.innerText = storage[thisEle.dataset.complete][key].productName;
+							autoComplete.append(listDiv);
+						}
+					}else if(thisEle.dataset.complete === "productCust"){
 						if (storage[thisEle.dataset.complete][key].productName.indexOf(thisEle.value) > -1) {
 							let listDiv = document.createElement("div");
 							listDiv.setAttribute("onclick", "CommonDatas.autoCompleteClick(this);");

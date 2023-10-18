@@ -1432,7 +1432,6 @@ function tabItemClick(e) {
 //매입매출내역 리스트
 function createTabTradeList(result) {
 	let html = "";
-	console.log(result);
 
 	html = "<div class=\"tradeInputBtns\"><button type=\"button\" onclick=\"tradeInsert();\">매입매출 추가</button></div>";
 	html += "<div class=\"tradeInput\">";
@@ -3668,7 +3667,6 @@ function getStorageList() {
 					storage.productCust = [];
 					resultJson = cipher.decAes(result.data);
 					resultJson = JSON.parse(resultJson);
-					console.log(resultJson);
 					storage.product = resultJson;
 
 					for(let i = 0; i < resultJson.length; i++){

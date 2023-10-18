@@ -98,7 +98,7 @@
 .soppContainer > .inoutSoppForm > div:nth-child(4),
 .soppContainer > .inoutSoppForm > div:nth-child(5){
 	display: grid;
-	grid-template-columns: 10% 20% 10% 10% 10% 20% 20%;
+	grid-template-columns: 10% 10% 10% 10% 10% 25% 25%;
 	border-top: 1px solid #BDBDBD;
 	border-left: 1px solid #BDBDBD;
 }
