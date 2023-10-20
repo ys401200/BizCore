@@ -3191,6 +3191,7 @@ class SoppSet{
 		rightDetailBodyInoutContents.append(createDiv);
 	}
 
+	//영업기회 우측 상세 매입매출내역 총 계 출력 함수
 	rightDetailInoutTotalSet(){
 		let rightDetailBodyInoutContents = document.getElementsByClassName("rightDetailBodyInoutContents")[0];
 
@@ -3618,6 +3619,7 @@ class SoppSet{
 		}
 	}
 
+	//영업기회 매입매출내역 수정 버튼 클릭 시 실행되는 함수
 	soppInoutUpdateButtonSet(thisEle){
 		let soppdataNo = thisEle.dataset.id;
 		let inoutSoppListItem = document.getElementById("tabInoutSopp").querySelector(".tabInoutTableList").querySelectorAll(".inoutSoppListItem");
@@ -3662,7 +3664,6 @@ class SoppSet{
 			thisEle.innerText = "수정";
 			thisEle.style.backgroundColor = "#6B66FF";
 		}else{
-			let productName, custName;
 			updateButton.style.display = "block";
 			updateButton.setAttribute("data-id", thisEle.dataset.id);
 			thisEle.setAttribute("data-status", true);
@@ -4228,38 +4229,6 @@ class Sopp{
 				return false;
 			});
 		}
-
-
-		// if(document.getElementById("soppFileUpload").value === ""){
-		// 	msg.set("부담당자를 선택해주세요.");
-		// 	document.getElementById("soppFileUpload").focus();
-		// 	return false;
-		// } else if(document.getElementById("secondUserNo").value !== "" && !CommonDatas.validateAutoComplete(document.getElementById("secondUserNo").value, "user")){
-		// 	msg.set("조회된 부담당자가 없습니다.\n다시 확인해주세요.");
-		// 	document.getElementById("secondUserNo").focus();
-		// 	return false;
-		// } else{
-		// 	CommonDatas.formDataSet();
-		// 	let data = storage.formList;
-		// 	data = JSON.stringify(data);
-		// 	data = cipher.encAes(data);
-
-		// 	axios.post("/api/sopp", data, {
-		// 		headers: { "Content-Type": "text/plain" }
-		// 	}).then((response) => {
-		// 		if (response.data.result === "ok") {
-		// 			location.reload();
-		// 			msg.set("등록되었습니다.");
-		// 		} else {
-		// 			msg.set("등록 중 에러가 발생하였습니다.");
-		// 			return false;
-		// 		}
-		// 	}).catch((error) => {
-		// 		msg.set("등록 도중 에러가 발생하였습니다.\n" + error);
-		// 		console.log(error);
-		// 		return false;
-		// 	});
-		// }
 	}
 
 	//영업기회 수정
@@ -4614,6 +4583,7 @@ class Sopp{
 		}
 	}
 
+	//영업기회 매입매출내역 계약 할당 함수
 	assignUpdate(thisEle){
 		let contSelect = thisEle.parentElement.previousElementSibling.children[0];
 
@@ -4653,6 +4623,7 @@ class Sopp{
 		}
 	}
 
+	//영업기회 매입매출수정 버튼 클릭 시 실행 함수
 	soppInoutUpdate(thisEle){
 		if(document.getElementById("inoutSoppVatDate").value === ""){
 			msg.set("거래일자를 선택해주세요.");
