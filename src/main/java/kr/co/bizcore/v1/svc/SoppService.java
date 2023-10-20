@@ -68,6 +68,10 @@ public class SoppService extends Svc {
         return soppMapper.soppInoutCheckDelete(soppdataNo);
     }
 
+    public int soppInoutDivisionInsert(Inout inout){
+        return soppMapper.soppInoutDivisionInsert(inout);
+    }
+
     public List<SoppFileData> getSoppFileList(SoppFileData soppFileData){
         return soppMapper.getSoppFileList(soppFileData);
     }
@@ -83,6 +87,14 @@ public class SoppService extends Svc {
     public SoppFileData downloadFile(SoppFileData soppFileData) {
 		return soppMapper.downloadFile(soppFileData);
 	}
+
+    public int assignUpdate(Inout inout) {
+        return soppMapper.assignUpdate(inout);
+    }
+
+    public int soppInoutUpdate(Inout inout) {
+        return soppMapper.soppInoutUpdate(inout);
+    }
     
     // public String getSopp(int soppNo, String compId, String aesKey, String aesIv){
     //     Sopp result = null;

@@ -49,6 +49,9 @@ public interface SoppMapper {
     @Update("UPDATE swc_soppdata01 SET attrib = 'XXXXX' WHERE soppdataNo = #{soppdataNo}")
     public int soppInoutCheckDelete(@Param("soppdataNo") String soppdataNo);
 
+    @Insert("INSERT INTO swc_soppdata01 (soppNo, userNo, catNo, productNo, salesCustNo, dataTitle, dataType, dataQuanty, dataAmt, dataNetprice, dataVat, dataTotal, dataRemark, vatDate, endvataDate, regDatetime, attrib, contNo) VALUES (#{inout.soppNo}, #{inout.userNo}, #{inout.catNo}, #{inout.productNo}, #{inout.salesCustNo}, #{inout.dataTitle}, #{inout.dataType}, #{inout.dataQuanty}, #{inout.dataAmt}, #{inout.dataNetprice}, #{inout.dataVat}, #{inout.dataTotal}, #{inout.dataRemark}, #{inout.vatDate}, DATE_SUB(DATE_ADD(#{inout.vatDate}, interval #{inout.divisionMonth} MONTH), interval 1 day), now(), 10000, #{inout.contNo})")
+    public int soppInoutDivisionInsert(@Param("inout") Inout inout);
+
     @Select("SELECT * FROM swc_soppfiledata WHERE attrib NOT LIKE 'XXX%' AND soppNo = #{soppFileData.soppNo} ORDER BY regDatetime DESC")
     public List<SoppFileData> getSoppFileList(@Param("soppFileData") SoppFileData soppFileData);
 
@@ -60,6 +63,12 @@ public interface SoppMapper {
 
     @Select("SELECT * FROM swc_soppFileData WHERE fileId = #{soppFileData.fileId} AND soppNo = #{soppFileData.soppNo}")
     public SoppFileData downloadFile(@Param("soppFileData") SoppFileData soppFileData);
+
+    @Update("UPDATE swc_soppdata01 SET contNo = #{inout.contNo} WHERE soppdataNo = #{inout.soppdataNo}")
+    public int assignUpdate(@Param("inout") Inout inout);
+
+    @Update("UPDATE swc_soppdata01 SET userNo = #{inout.userNo}, productNo = #{inout.productNo}, salesCustNo = #{inout.salesCustNo}, dataTitle = #{inout.dataTitle}, dataType = #{inout.dataType}, dataQuanty = #{inout.dataQuanty}, dataAmt = #{inout.dataAmt}, dataNetprice = #{inout.dataNetprice}, dataVat = #{inout.dataVat}, dataTotal = #{inout.dataTotal}, vatDate = #{inout.vatDate}, dataRemark = #{inout.dataRemark} WHERE soppdataNo = #{inout.soppdataNo}")
+    public int soppInoutUpdate(@Param("inout") Inout inout);
 
     // @Select("SELECT soppno AS no, sopptype AS soppType, cntrctMth AS contType, sopptitle AS title, buyrno AS customer, custNo AS enduser, userNo AS employee, sopptargetamt AS expectedSales, soppstatus AS status, " + 
     //         "contno AS contract, custMemberNo AS picOfCustomer, " + 

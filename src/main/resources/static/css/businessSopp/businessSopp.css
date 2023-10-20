@@ -61,6 +61,8 @@
 	float: right;
 }
 
+
+/* 영업기회 매입매출내역 폼 시작 */
 .soppContainer > .inoutSoppForm{
 	display: none;
 	padding: 10px;
@@ -90,6 +92,11 @@
 }
 
 .soppContainer > .inoutSoppForm > div:nth-child(1) > button:nth-child(3){
+	display: none;
+	background-color: #6B66FF;
+}
+
+.soppContainer > .inoutSoppForm > div:nth-child(1) > button:nth-child(4){
 	background-color: #F15F5F;
 }
 
@@ -125,8 +132,9 @@
 	padding-left: 5px;
 	padding-right: 5px;
 }
+/* 영업기회 매입매출내역 폼 끝 */
 
-
+/* 영업기회 매입매출내역 영업기회 리스트 시작 */
 .soppContainer > #tabInoutSopp{
 	display: none;
 	padding: 10px;
@@ -154,10 +162,6 @@
 	background-color: #BDBDBD;
 	cursor: pointer;
 }
-
-/* .soppContainer > #tabInoutSopp > .tabInoutTableList{
-	display: none;
-} */
 
 .soppContainer > #tabInoutSopp > .tabInoutTableList > .inoutSoppListHeader{
 	display: grid;
@@ -191,6 +195,28 @@
 	padding-right: 5px;
 }
 
+.soppContainer > #tabInoutSopp > .tabInoutTableList > .inoutSoppListItem > div > select{
+	width: 100%;
+    text-align: center;
+    border: 1px solid #000;
+    border-radius: 5px;
+}
+
+.soppContainer > #tabInoutSopp > .tabInoutTableList > .inoutSoppListItem > div > button{
+	width: 100%;
+    color: #ffffff;
+    border-radius: 5px;
+    height: 2vh;
+}
+
+.soppContainer > #tabInoutSopp > .tabInoutTableList > .inoutSoppListItem > div > .assignButton{
+	background-color: #50AF49;
+}
+
+.soppContainer > #tabInoutSopp > .tabInoutTableList > .inoutSoppListItem > div > .updateButton{
+	background-color: #6B66FF;
+}
+
 .soppContainer > #tabInoutSopp > .tabInoutTableList > .inSoppListTotal,
 .soppContainer > #tabInoutSopp > .tabInoutTableList > .outSoppListTotal{
 	display: flex;
@@ -213,7 +239,114 @@
     padding-right: 10px;
 	text-align: right;
 }
+/* 영업기회 매입매출내역 영업기회 리스트 끝 */
 
+/* 영업기회 우측 상세 매입매출내역 영업기회 리스트 시작 */
+.rightDetailBodyInoutContents > #rightDetailInoutSopp{
+	padding-bottom: 0;
+}
+
+.rightDetailBodyInoutContents > #rightDetailInoutSopp > .rightDetailInoutSoppTitle{
+	display: flex;
+    align-items: center;
+    border: 1px solid #BDBDBD;
+}
+
+.rightDetailBodyInoutContents > #rightDetailInoutSopp > .rightDetailInoutSoppTitle > div:first-child{
+	width: 10%;
+    text-align: center;
+    border-right: 1px solid #BDBDBD;
+}
+
+.rightDetailBodyInoutContents > #rightDetailInoutSopp > .rightDetailInoutSoppTitle > div:last-child{
+	width: 100%;
+    padding-left: 10px;
+}
+
+.rightDetailBodyInoutContents > #rightDetailInoutSopp > .rightDetailInoutSoppTitle > div:last-child:hover{
+	background-color: #BDBDBD;
+	cursor: pointer;
+}
+
+.rightDetailBodyInoutContents > #rightDetailInoutSopp > .rightDetailInoutTableList > .inoutSoppListHeader{
+	display: grid;
+    grid-template-columns: 20% 20% 20% 10% 30%;
+    border-left: 1px solid #BDBDBD;
+    border-bottom: 1px solid #BDBDBD;
+}
+
+.rightDetailBodyInoutContents > #rightDetailInoutSopp > .rightDetailInoutTableList > .inoutSoppListHeader > div{
+	text-align: center;
+	border-right: 1px solid #BDBDBD;
+}
+
+.rightDetailBodyInoutContents > #rightDetailInoutSopp > .rightDetailInoutTableList > .inoutSoppListItem{
+	display: grid;
+    grid-template-columns: 20% 20% 20% 10% 30%;
+    border-left: 1px solid #BDBDBD;
+	border-bottom: 1px solid #BDBDBD;
+}
+
+.rightDetailBodyInoutContents > #rightDetailInoutSopp > .rightDetailInoutTableList > .emptyInData{
+	text-align: center;
+	border-left: 1px solid #BDBDBD;
+	border-right: 1px solid #BDBDBD;
+	border-bottom: 1px solid #BDBDBD;
+}
+
+.rightDetailBodyInoutContents > #rightDetailInoutSopp > .rightDetailInoutTableList > .inoutSoppListItem > div{
+	border-right: 1px solid #BDBDBD;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+.rightDetailBodyInoutContents > #rightDetailInoutSopp > .rightDetailInoutTableList > .inoutSoppListItem > div > select{
+	width: 100%;
+    text-align: center;
+    border: 1px solid #000;
+    border-radius: 5px;
+}
+
+.rightDetailBodyInoutContents > #rightDetailInoutSopp > .rightDetailInoutTableList > .inoutSoppListItem > div > button{
+	width: 100%;
+    color: #ffffff;
+    border-radius: 5px;
+    height: 2vh;
+}
+
+.rightDetailBodyInoutContents > #rightDetailInoutSopp > .rightDetailInoutTableList > .inoutSoppListItem > div > .assignButton{
+	background-color: #50AF49;
+}
+
+.rightDetailBodyInoutContents > #rightDetailInoutSopp > .rightDetailInoutTableList > .inoutSoppListItem > div > .updateButton{
+	background-color: #4374D9;
+}
+
+.rightDetailBodyInoutContents > #rightDetailInoutSopp > .rightDetailInoutTableList > .inSoppListTotal,
+.rightDetailBodyInoutContents > #rightDetailInoutSopp > .rightDetailInoutTableList > .outSoppListTotal{
+	display: flex;
+    align-items: center;
+    border-left: 1px solid #BDBDBD;
+	border-right: 1px solid #BDBDBD;
+	border-bottom: 1px solid #BDBDBD;
+}
+
+.rightDetailBodyInoutContents > #rightDetailInoutSopp > .rightDetailInoutTableList > .inSoppListTotal > div:first-child,
+.rightDetailBodyInoutContents > #rightDetailInoutSopp > .rightDetailInoutTableList > .outSoppListTotal > div:first-child{
+	width: 10%;
+    text-align: center;
+    border-right: 1px solid #BDBDBD;
+}
+
+.rightDetailBodyInoutContents > #rightDetailInoutSopp > .rightDetailInoutTableList > .inSoppListTotal > div:last-child,
+.rightDetailBodyInoutContents > #rightDetailInoutSopp > .rightDetailInoutTableList > .outSoppListTotal > div:last-child{
+	width: 100%;
+    padding-right: 10px;
+	text-align: right;
+}
+/* 영업기회 우측 상세 매입매출내역 영업기회 리스트 끝 */
+
+/* 영업기회 매입매출내역 계약 리스트 시작 */
 .soppContainer > .tabInoutCont{
 	display: none;
 	padding: 10px;
@@ -302,7 +435,98 @@
     padding-right: 10px;
 	text-align: right;
 }
+/* 영업기회 매입매출내역 계약 리스트 끝 */
 
+/* 영업기회 우측 상세 매입매출내역 계약 리스트 시작 */
+.rightDetailBodyInoutContents > .rightDetailInoutCont{
+	padding-top: 0;
+}
+
+.rightDetailBodyInoutContents > .rightDetailInoutCont > .rightDetailInoutContTitle{
+	display: flex;
+    align-items: center;
+	border-left: 1px solid #BDBDBD;
+	border-right: 1px solid #BDBDBD;
+	border-bottom: 1px solid #BDBDBD;
+}
+
+.rightDetailBodyInoutContents > .rightDetailInoutCont > .rightDetailInoutContTitle > div:first-child{
+	width: 10%;
+    text-align: center;
+    border-right: 1px solid #BDBDBD;
+}
+
+.rightDetailBodyInoutContents > .rightDetailInoutCont > .rightDetailInoutContTitle > div:last-child{
+	width: 100%;
+    padding-left: 10px;
+}
+
+.rightDetailBodyInoutContents > .rightDetailInoutCont > .rightDetailInoutContTitle > div:last-child:hover{
+	background-color: #BDBDBD;
+	cursor: pointer;
+}
+
+.rightDetailBodyInoutContents > .rightDetailInoutCont > .rightDetailInoutTableList{
+	display: none;
+}
+
+.rightDetailBodyInoutContents > .rightDetailInoutCont > .rightDetailInoutTableList > .inoutContListHeader{
+	display: grid;
+    grid-template-columns: 20% 20% 20% 10% 30%;
+    border-left: 1px solid #BDBDBD;
+    border-bottom: 1px solid #BDBDBD;
+}
+
+.rightDetailBodyInoutContents > .rightDetailInoutCont > .rightDetailInoutTableList > .inoutContListHeader > div{
+	text-align: center;
+	border-right: 1px solid #BDBDBD;
+}
+
+.rightDetailBodyInoutContents > .rightDetailInoutCont > .rightDetailInoutTableList > .inoutContListItem{
+	display: grid;
+    grid-template-columns: 20% 20% 20% 10% 30%;
+    border-left: 1px solid #BDBDBD;
+	border-bottom: 1px solid #BDBDBD;
+}
+
+.rightDetailBodyInoutContents > .rightDetailInoutCont > .rightDetailInoutTableList > .emptyInData{
+	text-align: center;
+	border-left: 1px solid #BDBDBD;
+	border-right: 1px solid #BDBDBD;
+	border-bottom: 1px solid #BDBDBD;
+}
+
+.rightDetailBodyInoutContents > .rightDetailInoutCont > .rightDetailInoutTableList > .inoutContListItem > div{
+	border-right: 1px solid #BDBDBD;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+.rightDetailBodyInoutContents > .rightDetailInoutCont > .rightDetailInoutTableList > .inContListTotal,
+.rightDetailBodyInoutContents > .rightDetailInoutCont > .rightDetailInoutTableList > .outContListTotal{
+	display: flex;
+    align-items: center;
+    border-left: 1px solid #BDBDBD;
+	border-right: 1px solid #BDBDBD;
+	border-bottom: 1px solid #BDBDBD;
+}
+
+.rightDetailBodyInoutContents > .rightDetailInoutCont > .rightDetailInoutTableList > .inContListTotal > div:first-child,
+.rightDetailBodyInoutContents > .rightDetailInoutCont > .rightDetailInoutTableList > .outContListTotal > div:first-child{
+	width: 10%;
+    text-align: center;
+    border-right: 1px solid #BDBDBD;
+}
+
+.rightDetailBodyInoutContents > .rightDetailInoutCont > .rightDetailInoutTableList > .inContListTotal > div:last-child,
+.rightDetailBodyInoutContents > .rightDetailInoutCont > .rightDetailInoutTableList > .outContListTotal > div:last-child{
+	width: 100%;
+    padding-right: 10px;
+	text-align: right;
+}
+/* 영업기회 우측 상세 매입매출내역 계약 리스트 끝 */
+
+/* 영업기회 매입매출내역 총 계 시작 */
 .soppContainer > .inoutTotalContents{
 	display: none;
 	padding: 10px;
@@ -332,6 +556,35 @@
 	padding-left: 5px;
 	padding-right: 5px;
 }
+/* 영업기회 매입매출내역 총 계 끝 */
+
+/* 영업기회 우측 상세 매입매출내역 총 계 시작 */
+
+.rightDetailBodyInoutContents > .rightDetailInoutTotalContents > div:nth-child(1),
+.rightDetailBodyInoutContents > .rightDetailInoutTotalContents > div:nth-child(3){
+	margin-top: 10px;
+	padding: 5px;
+    border-top: 1px solid #BDBDBD;
+    border-left: 1px solid #BDBDBD;
+    border-right: 1px solid #BDBDBD;
+}
+
+.rightDetailBodyInoutContents > .rightDetailInoutTotalContents > div:nth-child(2),
+.rightDetailBodyInoutContents > .rightDetailInoutTotalContents > div:nth-child(4){
+	display: grid;
+    grid-template-columns: 10% 15% 10% 15% 10% 15% 10% 15%;
+    border-top: 1px solid #BDBDBD;
+    border-left: 1px solid #BDBDBD;
+    border-bottom: 1px solid #BDBDBD;
+}
+
+.rightDetailBodyInoutContents > .rightDetailInoutTotalContents > div:nth-child(2) > div,
+.rightDetailBodyInoutContents > .rightDetailInoutTotalContents > div:nth-child(4) > div{
+    border-right: 1px solid #BDBDBD;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+/* 영업기회 우측 상세 매입매출내역 총 계 끝 */
 
 .soppContainer > #tabFileUpload{
     display: none; 

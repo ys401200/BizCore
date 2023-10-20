@@ -39,7 +39,6 @@
 <script src="/js/common_sh.js"></script>
 <script src="/js/common_bi.js"></script>
 
-
 <title>BizCore</title>
 </head>
 <body>

@@ -362,6 +362,34 @@ public class ApiSoppCtrl extends Ctrl{
         return result;
     }
 
+    @RequestMapping(value = "/soppInoutDivisionInsert", method = RequestMethod.POST)
+    public String soppInoutDivisionInsert(HttpServletRequest req, @RequestBody String requestBody) throws JsonMappingException, JsonProcessingException {
+
+        int compNo = 0;
+        HttpSession session = null;
+        String result = null;
+        String data = null, aesKey = null, aesIv = null;
+        ObjectMapper mapper = new ObjectMapper();
+        int check = 0;
+
+        session = req.getSession();
+
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        compNo = (int) session.getAttribute("compNo");
+        data = soppService.decAes(requestBody, aesKey, aesIv);
+        Inout inout = mapper.readValue(data, Inout.class);
+        check = soppService.soppInoutDivisionInsert(inout);
+
+        if (check > 0) {
+            result = "{\"result\":\"ok\"}";
+        } else {
+            result = "{\"result\":\"failure\" ,\"msg\":\"Error occured when write.\"}";
+        }
+
+        return result;
+    }
+
     @RequestMapping(value = "/soppFile/{no}", method = RequestMethod.GET)
     public String getSoppFile(HttpServletRequest req, @PathVariable String no) {
         HttpSession session = null;
@@ -595,6 +623,60 @@ public class ApiSoppCtrl extends Ctrl{
                 } // End of if : 3
             } // End of if : 2
         } // End of if : 1
+        return result;
+    }
+
+    @RequestMapping(value = "/assignUpdate", method = RequestMethod.PUT)
+    public String assignUpdate(HttpServletRequest req, @RequestBody String requestBody) throws JsonMappingException, JsonProcessingException {
+        String compId = null;
+        String result = null;
+        HttpSession session = null;
+        String data = null, aesKey = null, aesIv = null;
+        ObjectMapper mapper = new ObjectMapper();
+
+        session = req.getSession();
+        compId = (String) session.getAttribute("compId");
+        if (compId == null) {
+            compId = (String) req.getAttribute("compId");
+        }
+
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        data = soppService.decAes(requestBody, aesKey, aesIv);
+        Inout inout = mapper.readValue(data, Inout.class);
+
+        if (soppService.assignUpdate(inout) > 0) {
+            result = "{\"result\":\"ok\"}";
+        }
+
+        return result;
+    }
+
+    @RequestMapping(value = "/soppInoutUpdate", method = RequestMethod.PUT)
+    public String soppInoutUpdate(HttpServletRequest req, @RequestBody String requestBody) throws JsonMappingException, JsonProcessingException {
+        String compId = null;
+        int compNo = 0;
+        String result = null;
+        HttpSession session = null;
+        String data = null, aesKey = null, aesIv = null;
+        ObjectMapper mapper = new ObjectMapper();
+
+        session = req.getSession();
+        compNo = (int) session.getAttribute("compNo");
+        compId = (String) session.getAttribute("compId");
+        if (compId == null) {
+            compId = (String) req.getAttribute("compId");
+        }
+
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        data = soppService.decAes(requestBody, aesKey, aesIv);
+        Inout inout = mapper.readValue(data, Inout.class);
+
+        if (soppService.soppInoutUpdate(inout) > 0) {
+            result = "{\"result\":\"ok\"}";
+        }
+
         return result;
     }
 

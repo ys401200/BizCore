@@ -33,6 +33,7 @@ public class Inout extends Domain{
     private String regDatetime;
     private String modDatetime;
     private String attrib;
+    private int divisionMonth;
     private int contNo;
     private int inoutNo;
 }
