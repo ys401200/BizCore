@@ -12,6 +12,7 @@ import kr.co.bizcore.v1.svc.AccountingService;
 import kr.co.bizcore.v1.svc.AccountingService2;
 import kr.co.bizcore.v1.svc.AttachedService;
 import kr.co.bizcore.v1.svc.BoardService;
+import kr.co.bizcore.v1.svc.ContService;
 import kr.co.bizcore.v1.svc.ContractService;
 import kr.co.bizcore.v1.svc.CustService;
 import kr.co.bizcore.v1.svc.DeptService;
@@ -63,6 +64,9 @@ public abstract class Ctrl {
 
     @Autowired
     protected SoppService soppService;
+
+    @Autowired
+    protected ContService contService;
 
     @Autowired
     protected SalesService salesService;

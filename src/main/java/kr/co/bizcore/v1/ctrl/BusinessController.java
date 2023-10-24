@@ -63,6 +63,12 @@ public class BusinessController extends Ctrl {
         return "/project/sopp";
     } // End of /business/**
 
+    @RequestMapping(value = { "/cont", "/cont/{no:\\d+}" })
+    public String cont(HttpServletRequest request) {
+        doIt(request);
+        return "/cont/list";
+    } // End of /business/**
+
     @RequestMapping("/est")
     public String est(HttpServletRequest request) {
         doIt(request);
@@ -70,7 +76,7 @@ public class BusinessController extends Ctrl {
     } // End of /business/**
 
     @RequestMapping(value = { "/contract", "/contract/{no}" })
-    public String cont(HttpServletRequest request) {
+    public String contract(HttpServletRequest request) {
         doIt(request);
         return "/contract/list";
     } // End of /business/**

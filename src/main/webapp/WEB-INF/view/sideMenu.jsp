@@ -65,10 +65,17 @@
 				</div>
 			</div>
 			<div class="menuItem">
-				<a href="/business/contract">
+				<input type="radio" id="cont" name="sideMenu" onclick="CommonDatas.sideMenuItemClick();">
+				<label for="cont">
 					<img src="/images/main/icons/mainContIcon.png" id="mainContIcon" />
 					<span>계약관리</span>
-				</a>
+					<span>+</span>
+				</label>
+			</div>
+			<div class="panel">
+				<div>
+					<a href="/business/cont">계약조회</a>
+				</div>
 			</div>
 			<div class="menuItem">
 				<input type="radio" id="tech" name="sideMenu" onclick="CommonDatas.sideMenuItemClick();">

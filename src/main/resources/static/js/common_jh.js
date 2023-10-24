@@ -1523,7 +1523,6 @@ class SoppSet{
 			msg.set("상세보기 에러 입니다.\n" + error);
 			console.log(error);
 		});
-
 	}
 
 	//영업기회 등록 폼
@@ -4682,6 +4681,1215 @@ class Sopp{
 	}
 }
 
+//계약 시작
+class ContSet{
+	constructor() {
+		CommonDatas.Temps.contSet = this;
+	}
+
+	//계약 리스트 저장 함수
+	list() {
+		axios.get("/api/cont").then((response) => {
+			if (response.data.result === "ok") {
+				let result;
+				result = cipher.decAes(response.data.data);
+				result = JSON.parse(result);
+				storage.contList = result;
+				
+				for(let i = 0; i < storage.sopp.length; i++){
+					let item = storage.sopp[i];
+					
+					if(item.contNo != 100){
+						for(let t = 0; t < storage.contList.length; t++){
+							let secondItem = storage.contList[t];
+							secondItem.maintenanceTarget = item.maintenanceTarget;
+						}
+					}
+				}
+				
+				CommonDatas.setCategories(result);
+
+				if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.sopp === undefined) {
+					window.setTimeout(this.drawContList, 1000);
+					window.setTimeout(CommonDatas.searchListSet("contList"), 1000);
+				} else {
+					window.setTimeout(this.drawContList, 200);
+					window.setTimeout(CommonDatas.searchListSet("contList"), 200);
+				}
+
+				$('.theme-loader').delay(1000).fadeOut("slow");
+			}
+		}).catch((error) => {
+			msg.set("계약 리스트 에러입니다.\n" + error);
+			console.log(error);
+		})
+	}
+
+	//계약 리스트 출력 함수
+	drawContList() {
+		let container, result, jsonData, containerTitle, job, header = [], data = [], ids = [], disDate, setDate, str, fnc = [], pageContainer, hideArr, showArr, paymaintSdate, paymaintEdate;
+
+		if (storage.contList === undefined) {
+			msg.set("등록된 계약이 없습니다");
+		}
+		else {
+			if (storage.searchDatas === undefined) {
+				jsonData = storage.contList;
+			} else {
+				jsonData = storage.searchDatas;
+			}
+		}
+
+		result = CommonDatas.paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+		containerTitle = document.getElementById("containerTitle");
+		pageContainer = document.getElementsByClassName("pageContainer")[0];
+		container = document.getElementsByClassName("gridList")[0];
+		hideArr = ["detailBackBtn", "crudUpdateBtn", "crudDeleteBtn", "contractReqBtn"];
+		showArr = [
+			{ element: "gridList", display: "block" },
+			{ element: "pageContainer", display: "flex" },
+			{ element: "searchContainer", display: "block" },
+			{ element: "listRange", display: "flex" },
+			{ element: "listSearchInput", display: "flex" },
+			{ element: "crudBtns", display: "flex" },
+			{ element: "crudAddBtn", display: "flex" },
+		];
+
+		header = [
+			{
+				"title": "등록일",
+				"align": "center",
+			},
+			{
+				"title": "판매방식",
+				"align": "center",
+			},
+			{
+				"title": "계약방식",
+				"align": "center",
+			},
+			{
+				"title": "계약명",
+				"align": "center",
+			},
+			{
+				"title": "매출처",
+				"align": "center",
+			},
+			{
+				"title": "계약금액",
+				"align": "center",
+			},
+			{
+				"title": "매출이익",
+				"align": "center",
+			},
+			{
+				"title": "담당자",
+				"align": "center",
+			},
+			{
+				"title": "카테고리(제품회사명)",
+				"align": "center",
+			},
+			{
+				"title": "유지보수 시작일",
+				"align": "center",
+			},
+			{
+				"title": "유지보수 만료일",
+				"align": "center",
+			},
+		];
+
+		if (jsonData === "" || jsonData.length == 0) {
+			str = [
+				{
+					"setData": undefined,
+					"align": "center",
+					"col": 11,
+				},
+			];
+
+			data.push(str);
+		} else {
+			for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+				disDate = CommonDatas.dateDis(new Date(jsonData[i].regDatetime).getTime(), new Date(jsonData[i].modDatetime).getTime());
+				setDate = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+				disDate = CommonDatas.dateDis(new Date(jsonData[i].paymaintSdate).getTime());
+				paymaintSdate = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+				disDate = CommonDatas.dateDis(new Date(jsonData[i].paymaintEdate).getTime());
+				paymaintEdate = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+
+				str = [
+					{
+						"setData": setDate,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].contType)) ? "" : storage.code.etc[jsonData[i].contType],
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].cntrctMth)) ? "" : storage.code.etc[jsonData[i].cntrctMth],
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].contTitle)) ? "" : jsonData[i].contTitle + " <a href=\"#\" class=\"rightDetailShowBtn\" data-id=\"" + jsonData[i].contNo + "\" onclick=\"CommonDatas.Temps.soppSet.rightDetailShow(this);\" style=\"color: blue;\">열기</a>",
+						"align": "left",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].custNo)) ? "" : storage.customer[jsonData[i].custNo].custName,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].contAmt)) ? 0 : jsonData[i].contAmt.toLocaleString("en-US"),
+						"align": "right",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].net_profit)) ? 0 : jsonData[i].net_profit.toLocaleString("en-US"),
+						"align": "right",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].userNo)) ? "" : storage.user[jsonData[i].userNo].userName,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].categories)) ? "" : jsonData[i].categories,
+						"align": "center",
+					},
+					{
+						"setData": paymaintSdate,
+						"align": "center",
+					},
+					{
+						"setData": paymaintEdate,
+						"align": "center",
+					},
+				];
+
+				fnc.push("CommonDatas.Temps.contSet.contDetailView(this, \"page\")");
+				ids.push(jsonData[i].contNo);
+				data.push(str);
+			}
+
+			let pageNation = CommonDatas.createPaging(pageContainer, result[3], "CommonDatas.pageMove", "CommonDatas.Temps.contSet.drawContList", result[0]);
+			pageContainer.innerHTML = pageNation;
+		}
+
+		CommonDatas.createGrid(container, header, data, ids, job, fnc);
+		CommonDatas.setViewContents(hideArr, showArr);
+		document.getElementById("multiSearchBtn").setAttribute("onclick", "CommonDatas.Temps.contSet.searchSubmit();");
+		containerTitle.innerText = "계약조회";
+		CommonDatas.multiEventStopSet("rightDetailShowBtn");
+
+		let path = location.pathname.split("/");
+
+		if (path[3] !== undefined && jsonData !== null) {
+			let content = document.querySelector(".gridContent[data-id=\"" + path[3] + "\"]");
+			CommonDatas.Temps.salesSet.salesDetailView(content);
+		}
+	}
+
+	//계약 상세보기
+	contDetailView(e, type) {
+		let thisEle = e;
+
+		// CommonDatas.Temps.soppSet.soppDetailInoutSet(thisEle.dataset.id);
+		// CommonDatas.Temps.soppSet.soppDetailFileListSet(thisEle.dataset.id);
+
+		// axios.get("/api/sopp/soppTech/" + thisEle.dataset.id).then((response) => {
+		// 	if (response.data.result === "ok") {
+		// 		let result;
+		// 		result = cipher.decAes(response.data.data);
+		// 		result = JSON.parse(result);
+		// 		storage.soppTechList = result;
+		// 	}
+		// }).catch((error) => {
+		// 	msg.set("기술지원내역 에러 입니다.\n" + error);
+		// 	console.log(error);
+		// });
+
+		// axios.get("/api/sopp/soppSales/" + thisEle.dataset.id).then((response) => {
+		// 	if (response.data.result === "ok") {
+		// 		let result;
+		// 		result = cipher.decAes(response.data.data);
+		// 		result = JSON.parse(result);
+		// 		storage.soppSalesList = result;
+		// 	}
+		// }).catch((error) => {
+		// 	msg.set("영업활동내역 에러 입니다.\n" + error);
+		// 	console.log(error);
+		// });
+
+		axios.get("/api/cont/" + thisEle.dataset.id).then((response) => {
+			if (response.data.result === "ok") {
+				let result;
+				result = cipher.decAes(response.data.data);
+				result = JSON.parse(result);
+
+				if(type === "page"){
+					let cont = new Cont(result);
+					cont.detail();
+	
+					localStorage.setItem("loadSetPage", window.location.pathname);
+				}else{
+					CommonDatas.detailSetFormList(result);
+				}
+			}
+		}).catch((error) => {
+			msg.set("상세보기 에러 입니다.\n" + error);
+			console.log(error);
+		});
+
+	}
+
+	//계약 등록 폼
+	contInsertForm(){
+		let html, dataArray;
+	
+		dataArray = [
+			{
+				"title": "등록구분(*)",
+				"radioValue": [
+					{
+						"key": "10247",
+						"value": "판매계약",
+					},
+					{
+						"key": "10248",
+						"value": "유지보수",
+					},
+				],
+				"type": "radio",
+				"elementName": "cntrctMth",
+				"elementId": ["cntrctMthNew", "cntrctMthOld"],
+				"onChange": "CommonDatas.Temps.contSet.contRadioChange();",
+				"col": 4,
+				"disabled": false,
+			},
+			{
+				"title": "영업기회(*)",
+				"elementId": "soppNo",
+				"complete": "sopp",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"disabled": false,
+			},
+			{
+				"title": "매출처(*)",
+				"elementId": "custNo",
+				"complete": "customer",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"disabled": false,
+			},
+			{
+				"title": "매출처 담당자",
+				"elementId": "custMemberNo",
+				"complete": "cip",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"disabled": false,
+			},
+			{
+				"title": "담당자",
+				"elementId": "userNo",
+				"complete": "user",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"disabled": false,
+			},
+			{
+				"title": "판매방식(*)",
+				"selectValue": [
+					{
+						"key": "",
+						"value": "선택",
+					},
+					{
+						"key": "10173",
+						"value": "조달직판",
+					},
+					{
+						"key": "10174",
+						"value": "조달간판",
+					},
+					{
+						"key": "10175",
+						"value": "조달대행",
+					},
+					{
+						"key": "10176",
+						"value": "직접판매",
+					},
+					{
+						"key": "10218",
+						"value": "간접판매",
+					},
+					{
+						"key": "10255",
+						"value": "기타",
+					},
+				],
+				"type": "select",
+				"elementId": "contType",
+				"disabled": false,
+			},
+			{
+				"title": "엔드유저(*)",
+				"elementId": "buyrNo",
+				"complete": "customer",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"disabled": false,
+			},
+			{
+				"title": "엔드유저 담당자",
+				"elementId": "buyrMemberNo",
+				"complete": "cip",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"disabled": false,
+			},
+			{
+				"title": "(부)담당사원",
+				"elementId": "contSecondUserNo",
+				"complete": "user",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"disabled": false,
+			},
+			{
+				"title": "발주일자",
+				"elementId": "contOrddate",
+				"type": "date",
+				"disabled": false,
+			},
+			{
+				"title": "검수일자",
+				"elementId": "delivDate",
+				"type": "date",
+				"disabled": false,
+			},
+			{
+				"title": "무상 유지보수<br />시작일",
+				"elementId": "freemaintSdate",
+				"type": "date",
+				"disabled": false,
+			},
+			{
+				"title": "무상 유지보수<br />종료일",
+				"elementId": "freemaintEdate",
+				"type": "date",
+				"disabled": false,
+			},
+			{
+				"title": "유상 유지보수<br />시작일",
+				"elementId": "paymaintSdate",
+				"type": "date",
+				"disabled": false,
+			},
+			{
+				"title": "유상 유지보수<br />종료일",
+				"elementId": "paymaintEdate",
+				"type": "date",
+				"disabled": false,
+			},
+			{
+				"title": "계약금액",
+				"elementId": "contAmt",
+				"disabled": false,
+			},
+			{
+				"title": "VAT 포함여부",
+				"selectValue": [
+					{
+						"key": "N",
+						"value": "No",
+					},
+					{
+						"key": "Y",
+						"value": "Yes",
+					},
+				],
+				"type": "select",
+				"elementId": "vatYn",
+				"disabled": false,
+			},
+			{
+				"title": "매출이익",
+				"selectValue": [
+					{
+						"key": "N",
+						"value": "No",
+					},
+					{
+						"key": "Y",
+						"value": "Yes",
+					},
+				],
+				"type": "select",
+				"elementId": "net_profit",
+				"col": 2,
+				"disabled": false,
+			},
+			{
+				"title": "카테고리<br />(제품회사명)",
+				"complete": "productCust",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"disabled": false,
+			},
+			{
+				"title": "카테고리 선택 시<br />자동 입력(*)",
+				"elementId": "categories",
+				"col": 2,
+				"disabled": true,
+			},
+			{
+				"title": "카테고리 삭제<br />선택 시 삭제",
+				"selectValue": [
+					{
+						"key": "",
+						"value": "선택",
+					},
+				],
+				"type": "select",
+				"disabled": false,
+			},
+			{
+				"title": "계약명(*)",
+				"elementId": "contTitle",
+				"col": 4,
+				"disabled": false,
+			},
+			{
+				"title": "내용",
+				"elementId": "contDesc",
+				"type": "textarea",
+				"col": 4,
+				"disabled": false,
+			}
+		];
+	
+		html = CommonDatas.detailViewForm(dataArray, "modal");
+	
+		modal.show();
+		modal.content.style.minWidth = "70vw";
+		modal.content.style.maxWidth = "70vw";
+		modal.headTitle.innerText = "계약등록";
+		modal.body.innerHTML = "<div class=\"defaultFormContainer\">" + html + "</div>";
+		modal.confirm.innerText = "등록";
+		modal.close.innerText = "취소";
+		modal.confirm.setAttribute("onclick", "const cont = new Cont(); cont.insert();");
+		modal.close.setAttribute("onclick", "modal.hide();");
+
+		storage.formList = {
+			"contNo": 0,
+			"compNo": 0,
+			"soppNo": 0,
+			"cntrctMth": "",
+			"contType": "",
+			"userNo": storage.my,
+			"contSecondUserNo": 0,
+			"custNo": 0,
+			"custMemberNo": 0,
+			"contTitle": "",
+			"contDesc": "",
+			"buyrNo": 0,
+			"buyrMemberNo": 0,
+			"contOrddate": "",
+			"delivDate": "",
+			"contAmt": 0,
+			"vatYn": "",
+			"net_profit": 0,
+			"freemaintSdate": "",
+			"freemaintEdate": "",
+			"paymaintSdate": "",
+			"paymaintEdate": "",
+			"contArea": "",
+			"businessType": "",
+			"regDatetime": "",
+			"modDatetime": "",
+			"attrib": "",
+			"categories": "",
+		};
+		
+		setTimeout(() => {
+			document.getElementById("userNo").value = storage.user[storage.my].userName;
+			document.getElementById("userNo").setAttribute("data-change", true);
+			CommonDatas.Temps.contSet.contRadioChange();
+			ckeditor.config.readOnly = false;
+			window.setTimeout(setEditor, 100);
+		}, 100);
+	}
+
+	//계약 검색 버튼 클릭 함수
+	searchSubmit() {
+		let dataArray = [], resultArray, eachIndex = 0, cust, buyr, title, categories, cntrctMth, user, contType, maintenanceTarget, searchCust, searchBuyr, searchTitle, searchCategories, searchCntrctMth, searchUser, searchContType, searchMaintenanceTarget, searchDateFrom, keyIndex = 0;
+		searchCust = document.getElementById("searchCust");
+		searchBuyr = document.getElementById("searchBuyr");
+		searchTitle = document.getElementById("searchTitle");
+		searchCategories = document.getElementById("searchCategories");
+		searchCntrctMth = document.getElementById("searchCntrctMth");
+		searchUser = document.getElementById("searchUser");
+		searchContType = document.getElementById("searchContType");
+		searchMaintenanceTarget = document.getElementById("searchMaintenanceTarget");
+		searchDateFrom = (document.getElementById("searchDateFrom").value === "") ? "" : document.getElementById("searchDateFrom").value.replaceAll("-", "") + "#regDatetime" + document.getElementById("searchDateTo").value.replaceAll("-", "");
+		
+		for(let key in storage.contList[0]){
+			if(key === searchCust.dataset.key) cust = "#" + keyIndex + "/" + searchCust.value;
+			else if(key === searchBuyr.dataset.key) buyr = "#" + keyIndex + "/" + searchBuyr.value;
+			else if(key === searchTitle.dataset.key) title = "#" + keyIndex + "/" + searchTitle.value;
+			else if(key === searchCategories.dataset.key) categories = "#" + keyIndex + "/" + searchCategories.value;
+			else if(key === searchCntrctMth.dataset.key) cntrctMth = "#" + keyIndex + "/" + searchCntrctMth.value;
+			else if(key === searchUser.dataset.key) user = "#" + keyIndex + "/" + searchUser.value;
+			else if(key === searchContType.dataset.key) contType = "#" + keyIndex + "/" + searchContType.value;
+			else if(key === searchMaintenanceTarget.dataset.key) maintenanceTarget = "#" + keyIndex + "/" + searchMaintenanceTarget.value;
+			keyIndex++;
+		}
+
+		let searchValues = [cust, buyr, title, categories, cntrctMth, user, contType, maintenanceTarget, searchDateFrom];
+
+		for (let i = 0; i < searchValues.length; i++) {
+			if(searchValues[i] !== ""){
+				let tempArray = CommonDatas.searchDataFilter(storage.contList, searchValues[i], "multi", ["#regDatetime"]);
+	
+				for (let t = 0; t < tempArray.length; t++) {
+					dataArray.push(tempArray[t]);
+				}
+	
+				eachIndex++;
+			}
+		}
+		
+		resultArray = CommonDatas.searchMultiFilter(eachIndex, dataArray, storage.contList);
+
+		storage.searchDatas = resultArray;
+
+		if (storage.searchDatas.length == 0) {
+			msg.set("찾는 데이터가 없습니다.");
+			storage.searchDatas = storage.contList;
+		}
+
+		this.drawContList();
+	}
+
+	//계약 단일 검색 keyup 이벤트
+	searchInputKeyup() {
+		let searchAllInput, tempArray;
+		searchAllInput = document.getElementById("searchAllInput").value;
+		tempArray = CommonDatas.searchDataFilter(storage.contList, searchAllInput, "input");
+
+		if (tempArray.length > 0) {
+			storage.searchDatas = tempArray;
+		} else {
+			storage.searchDatas = "";
+		}
+
+		this.drawContList();
+	}
+
+	contRadioChange(){
+		let cntrctMthNew = document.getElementById("cntrctMthNew");
+		let freemaintSdate = document.getElementById("freemaintSdate");
+		let freemaintEdate = document.getElementById("freemaintEdate");
+		let paymaintSdate = document.getElementById("paymaintSdate");
+		let paymaintEdate = document.getElementById("paymaintEdate");
+		
+		if(cntrctMthNew.checked){
+			freemaintSdate.parentElement.parentElement.style.display = "flex";
+			freemaintEdate.parentElement.parentElement.style.display = "flex";
+			paymaintSdate.parentElement.parentElement.style.display = "none";
+			paymaintEdate.parentElement.parentElement.style.display = "none";
+		}else{
+			freemaintSdate.parentElement.parentElement.style.display = "none";
+			freemaintEdate.parentElement.parentElement.style.display = "none";
+			paymaintSdate.parentElement.parentElement.style.display = "flex";
+			paymaintEdate.parentElement.parentElement.style.display = "flex";
+		}
+	}
+}
+
+//계약 crud
+class Cont{
+	constructor(getData){
+		CommonDatas.Temps.cont = this;
+
+		if (getData !== undefined) {
+			this.getData = getData;
+			this.contNo = getData.contNo;
+			this.compNo = getData.compNo;
+			this.soppNo = getData.soppNo;
+			this.cntrctMth = getData.cntrctMth;
+			this.contType = getData.contType;
+			this.exContNo = getData.exContNo;
+			this.userNo = getData.userNo;
+			this.contSecondUserNo = getData.contSecondUserNo;
+			this.custNo = getData.custNo;
+			this.custMemberNo = getData.custMemberNo;
+			this.contTitle = getData.contTitle;
+			this.contDesc = getData.contDesc;
+			this.buyrNo = getData.buyrNo;
+			this.buyrMemberNo = getData.buyrMemberNo;
+			this.ptncNo = getData.ptncNo;
+			this.ptncMemberNo = getData.ptncMemberNo;
+			this.supplyNo = getData.supplyNo;
+			this.supplyMemberNo = getData.supplyMemberNo;
+			this.contOrddate = getData.contOrddate;
+			this.supplyDate = getData.supplyDate;
+			this.delivDate = getData.delivDate;
+			this.contAmt = getData.contAmt;
+			this.vatYn = getData.vatYn;
+			this.net_profit = getData.net_profit;
+			this.freemaintSdate = getData.freemaintSdate;
+			this.freemaintEdate = getData.freemaintEdate;
+			this.paymaintSdate = getData.paymaintSdate;
+			this.paymaintEdate = getData.paymaintEdate;
+			this.contArea = getData.contArea;
+			this.businessType = getData.businessType;
+			this.regDatetime = getData.regDatetime;
+			this.modDatetime = getData.modDatetime;
+			this.attrib = getData.attrib;
+			this.categories = getData.categories;
+		} else {
+			this.contNo = 0;
+			this.compNo = 0;
+			this.soppNo = 0;
+			this.cntrctMth = "";
+			this.contType = "";
+			this.exContNo = 0;
+			this.userNo = 0;
+			this.contSecondUserNo = 0;
+			this.custNo = 0;
+			this.custMemberNo = 0;
+			this.contTitle = "";
+			this.contDesc = "";
+			this.buyrNo = 0;
+			this.buyrMemberNo = 0;
+			this.ptncNo = 0;
+			this.ptncMemberNo = 0;
+			this.supplyNo = 0;
+			this.supplyMemberNo = 0;
+			this.contOrddate = "";
+			this.supplyDate = "";
+			this.delivDate = "";
+			this.contAmt = 0;
+			this.vatYn = "";
+			this.net_profit = 0;
+			this.freemaintSdate = "";
+			this.freemaintEdate = "";
+			this.paymaintSdate = "";
+			this.paymaintEdate = "";
+			this.contArea = "";
+			this.businessType = "";
+			this.regDatetime = "";
+			this.modDatetime = "";
+			this.attrib = "";
+			this.categories = "";
+		}
+	}
+
+	//계약 상세보기
+	detail() {
+		let html = "";
+		let setDate, contOrddate, delivDate, freemaintSdate, freemaintEdate, paymaintSdate, paymaintEdate, datas, dataArray, notIdArray, splitCategories;
+		
+		if(document.getElementById("rightDetailParent") !== null){
+			document.getElementById("rightDetailParent").remove();
+		}
+		
+		if(this.categories !== undefined){
+			splitCategories = this.categories.split(",");
+
+			for(let i = 0; i < splitCategories.length; i++){
+				CommonDatas.makeCategories(splitCategories[i]);
+			}
+		}
+
+		CommonDatas.detailSetFormList(this.getData);
+
+		let gridList = document.getElementsByClassName("gridList")[0];
+		let containerTitle = document.getElementById("containerTitle");
+		let detailBackBtn = document.getElementsByClassName("detailBackBtn")[0];
+		let crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
+		let crudDeleteBtn = document.getElementsByClassName("crudDeleteBtn")[0];
+
+		setDate = CommonDatas.dateDis(new Date(this.contOrddate).getTime());
+		contOrddate = CommonDatas.dateFnc(setDate);
+
+		setDate = CommonDatas.dateDis(new Date(this.delivDate).getTime());
+		delivDate = CommonDatas.dateFnc(setDate);
+
+		setDate = CommonDatas.dateDis(new Date(this.freemaintSdate).getTime());
+		freemaintSdate = CommonDatas.dateFnc(setDate);
+
+		setDate = CommonDatas.dateDis(new Date(this.freemaintEdate).getTime());
+		freemaintEdate = CommonDatas.dateFnc(setDate);
+
+		setDate = CommonDatas.dateDis(new Date(this.paymaintSdate).getTime());
+		paymaintSdate = CommonDatas.dateFnc(setDate);
+
+		setDate = CommonDatas.dateDis(new Date(this.paymaintEdate).getTime());
+		paymaintEdate = CommonDatas.dateFnc(setDate);
+
+		notIdArray = ["userNo", "categories"];
+		datas = ["soppNo", "userNo", "secondUserNo", "custNo", "custMemberNo", "buyrNo", "buyrMemberNo"];
+
+		dataArray = [
+			{
+				"title": "등록구분(*)",
+				"radioValue": [
+					{
+						"key": "10247",
+						"value": "판매계약",
+					},
+					{
+						"key": "10248",
+						"value": "유지보수",
+					},
+				],
+				"type": "radio",
+				"elementName": "cntrctMth",
+				"elementId": ["cntrctMthNew", "cntrctMthOld"],
+				"onChange": "let contSet = new ContSet(); contSet.contRadioChange();",
+				"col": 4,
+			},
+			{
+				"title": "영업기회(*)",
+				"elementId": "soppNo",
+				"complete": "sopp",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"value": (CommonDatas.emptyValuesCheck(this.soppNo)) ? "" : CommonDatas.getSoppFind(this.soppNo, "name"),
+			},
+			{
+				"title": "매출처(*)",
+				"elementId": "custNo",
+				"complete": "customer",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"value": (CommonDatas.emptyValuesCheck(this.custNo)) ? "" : storage.customer[this.custNo].custName,
+			},
+			{
+				"title": "매출처 담당자",
+				"elementId": "custMemberNo",
+				"complete": "cip",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"value": (CommonDatas.emptyValuesCheck(this.custMemberNo)) ? "" : storage.cip[this.custMemberNo].name,
+			},
+			{
+				"title": "담당자",
+				"elementId": "userNo",
+				"complete": "user",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"value": (CommonDatas.emptyValuesCheck(this.userNo)) ? "" : storage.user[this.userNo].userName,
+			},
+			{
+				"title": "판매방식(*)",
+				"selectValue": [
+					{
+						"key": "",
+						"value": "선택",
+					},
+					{
+						"key": "10173",
+						"value": "조달직판",
+					},
+					{
+						"key": "10174",
+						"value": "조달간판",
+					},
+					{
+						"key": "10175",
+						"value": "조달대행",
+					},
+					{
+						"key": "10176",
+						"value": "직접판매",
+					},
+					{
+						"key": "10218",
+						"value": "간접판매",
+					},
+					{
+						"key": "10255",
+						"value": "기타",
+					},
+				],
+				"type": "select",
+				"elementId": "contType",
+				"value": (CommonDatas.emptyValuesCheck(this.contType)) ? "" : this.contType,
+			},
+			{
+				"title": "엔드유저(*)",
+				"elementId": "buyrNo",
+				"complete": "customer",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"value": (CommonDatas.emptyValuesCheck(this.buyrNo)) ? "" : storage.customer[this.buyrNo].custName,
+			},
+			{
+				"title": "엔드유저 담당자",
+				"elementId": "buyrMemberNo",
+				"complete": "cip",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"value": (CommonDatas.emptyValuesCheck(this.buyrMemberNo)) ? "" : storage.cip[this.buyrMemberNo].name,
+			},
+			{
+				"title": "(부)담당사원",
+				"elementId": "contSecondUserNo",
+				"complete": "user",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"value": (CommonDatas.emptyValuesCheck(this.contSecondUserNo)) ? "" : storage.user[this.contSecondUserNo].userName,
+			},
+			{
+				"title": "발주일자",
+				"elementId": "contOrddate",
+				"type": "date",
+				"value": contOrddate,
+			},
+			{
+				"title": "검수일자",
+				"elementId": "delivDate",
+				"type": "date",
+				"value": delivDate,
+			},
+			{
+				"title": "무상 유지보수<br />시작일",
+				"elementId": "freemaintSdate",
+				"type": "date",
+				"value": freemaintSdate,
+			},
+			{
+				"title": "무상 유지보수<br />종료일",
+				"elementId": "freemaintEdate",
+				"type": "date",
+				"value": freemaintEdate,
+			},
+			{
+				"title": "유상 유지보수<br />시작일",
+				"elementId": "paymaintSdate",
+				"type": "date",
+				"value": paymaintSdate,
+			},
+			{
+				"title": "유상 유지보수<br />종료일",
+				"elementId": "paymaintEdate",
+				"type": "date",
+				"value": paymaintEdate,
+			},
+			{
+				"title": "계약금액",
+				"elementId": "contAmt",
+				"value": (CommonDatas.emptyValuesCheck(this.contAmt)) ? 0 : this.contAmt.toLocaleString("en-US"),
+			},
+			{
+				"title": "VAT 포함여부",
+				"selectValue": [
+					{
+						"key": "N",
+						"value": "No",
+					},
+					{
+						"key": "Y",
+						"value": "Yes",
+					},
+				],
+				"type": "select",
+				"elementId": "vatYn",
+				"value": this.vatYn,
+			},
+			{
+				"title": "매출이익",
+				"elementId": "net_profit",
+				"col": 2,
+				"value": (CommonDatas.emptyValuesCheck(this.net_profit)) ? 0 : this.net_profit.toLocaleString("en-US"),
+			},
+			{
+				"title": "카테고리<br />(제품회사명)",
+				"complete": "productCust",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+			},
+			{
+				"title": "카테고리 선택 시<br />자동 입력(*)",
+				"elementId": "categories",
+				"col": 2,
+				"value": (CommonDatas.emptyValuesCheck(this.categories)) ? "" : this.categories,
+			},
+			{
+				"title": "카테고리 삭제<br />선택 시 삭제",
+				"selectValue": [
+					{
+						"key": "",
+						"value": "선택",
+					},
+				],
+				"type": "select",
+			},
+			{
+				"title": "계약명(*)",
+				"elementId": "contTitle",
+				"col": 4,
+				"value": (CommonDatas.emptyValuesCheck(this.contTitle)) ? "" : this.contTitle,
+			},
+			{
+				"title": "내용",
+				"elementId": "contDesc",
+				"type": "textarea",
+				"col": 4,
+				"value": (CommonDatas.emptyValuesCheck(this.contDesc)) ? "" : this.contDesc,
+			}
+		];
+
+		html = CommonDatas.detailViewForm(dataArray);
+		let createGrid = document.createElement("div");
+		createGrid.className = "defaultFormContainer";
+		createGrid.innerHTML = html;
+		gridList.after(createGrid);
+		containerTitle.innerText = this.contTitle;
+		let hideArr = ["gridList", "listRange", "crudAddBtn", "listSearchInput", "searchContainer", "pageContainer"];
+		let showArr = ["defaultFormContainer"];
+		CommonDatas.setViewContents(hideArr, showArr);
+	
+		if(storage.my == this.userNo){
+			crudUpdateBtn.setAttribute("onclick", "CommonDatas.enableDisabled(this, \"CommonDatas.Temps.cont.update();\", \"" + notIdArray + "\");");
+			crudDeleteBtn.setAttribute("onclick", "CommonDatas.Temps.cont.delete();");
+			crudUpdateBtn.style.display = "flex";
+			crudDeleteBtn.style.display = "flex";
+		}else{
+			crudUpdateBtn.style.display = "none";
+			crudDeleteBtn.style.display = "none";
+		}
+	
+		detailBackBtn.style.display = "flex";
+		CommonDatas.detailTrueDatas(datas);
+
+		let tabArrays = [
+			{
+				"text": "기본정보",
+				"id": "tabDefaultPage",
+				"key": "tabDefault",
+				"class": "tabRadio",
+				"onChange": "let soppSet = new SoppSet(); soppSet.detailRadioChange(this);",
+			},
+			{
+				"text": "매입매출내역",
+				"id": "tabInoutSoppPage",
+				"key": "tabInoutSopp",
+				"class": "tabRadio",
+				"onChange": "let soppSet = new SoppSet(); soppSet.detailRadioChange(this);",
+			},
+			{
+				"text": "견적내역",
+				"id": "tabEstimatePage",
+				"key": "tabEstimate",
+				"class": "tabRadio",
+				"onChange": "let soppSet = new SoppSet(); soppSet.detailRadioChange(this);",
+			},
+			{
+				"text": "파일첨부",
+				"id": "tabFileUploadPage",
+				"key": "tabFileUpload",
+				"class": "tabRadio",
+				"onChange": "let soppSet = new SoppSet(); soppSet.detailRadioChange(this);",
+			},
+			{
+				"text": "기술지원내역",
+				"id": "tabTechPage",
+				"key": "tabTech",
+				"class": "tabRadio",
+				"onChange": "let soppSet = new SoppSet(); soppSet.detailRadioChange(this);",
+			},
+			{
+				"text": "영업활동내역",
+				"id": "tabSalesPage",
+				"key": "tabSales",
+				"class": "tabRadio",
+				"onChange": "let soppSet = new SoppSet(); soppSet.detailRadioChange(this);",
+			}
+		];
+
+		CommonDatas.setDetailTabs(tabArrays);
+	
+		setTimeout(() => {
+			let contSet = new ContSet();
+			let categories = document.getElementById("categories");
+			let categorySelect = categories.parentElement.parentElement.nextElementSibling.children[1].children[0];
+			
+			if(this.categories !== undefined){
+				CommonDatas.makeCategoryOptions(categorySelect, "categories");
+			}
+
+			document.querySelector("[name=\"cntrctMth\"][value=\"" + this.cntrctMth + "\"]").checked = true;
+			document.getElementById("contType").value = this.contType;
+			document.getElementById("vatYn").value = this.vatYn;
+			contSet.contRadioChange();
+			ckeditor.config.readOnly = true;
+			window.setTimeout(setEditor, 100);
+		}, 200);
+
+		setTimeout(() => {
+			// let soppSet = new SoppSet();
+			// soppSet.drawInoutForm();
+			// soppSet.drawInoutSoppList();
+			// soppSet.drawInoutContList();
+			// soppSet.drawSoppFileUpload();
+			// soppSet.drawSoppTechList();
+			// soppSet.drawSoppSalesList();
+			// soppSet.inoutTotalSet();
+		}, 700);
+	}
+
+	//계약 등록
+	insert(){
+		if(document.getElementById("soppNo").value === ""){
+			msg.set("영업기회를 선택해주세요.");
+			document.getElementById("soppNo").focus();
+			return false;
+		} else if(document.getElementById("soppNo").value !== "" && !CommonDatas.validateAutoComplete(document.getElementById("soppNo").value, "sopp")){
+			msg.set("조회된 영업기회가 없습니다.\n다시 확인해주세요.");
+			document.getElementById("soppNo").focus();
+			return false;
+		} else if(document.getElementById("contType").value === ""){
+			msg.set("판매방식을 선택해주세요.");
+			return false;
+		} else if(document.getElementById("custNo").value === ""){
+			msg.set("매출처를 선택해주세요.");
+			document.getElementById("custNo").focus();
+			return false;
+		} else if(document.getElementById("custNo").value !== "" && !CommonDatas.validateAutoComplete(document.getElementById("custNo").value, "customer")){
+			msg.set("조회된 매출처가 없습니다.\n다시 확인해주세요.");
+			document.getElementById("custNo").focus();
+			return false;
+		} else if(document.getElementById("buyrNo").value === ""){
+			msg.set("엔드유저를 입력해주세요.");
+			document.getElementById("buyrNo").focus();
+			return false;
+		} else if(document.getElementById("buyrNo").value !== "" && !CommonDatas.validateAutoComplete(document.getElementById("buyrNo").value, "customer")){
+			msg.set("조회된 엔드유저가 없습니다.\n다시 확인해주세요.");
+			document.getElementById("buyrNo").focus();
+			return false;
+		} else if(document.getElementById("categories").value === ""){
+			msg.set("카테고리(제품회사명)를 선택해주세요.");
+			return false;
+		} else if(document.getElementById("contTitle").value === ""){
+			msg.set("계약명을 입력해주세요.");
+			document.getElementById("contTitle").focus();
+			return false;
+		} else{
+			CommonDatas.formDataSet();
+			let data = storage.formList;
+			data = JSON.stringify(data);
+			data = cipher.encAes(data);
+
+			axios.post("/api/cont", data, {
+				headers: { "Content-Type": "text/plain" }
+			}).then((response) => {
+				if (response.data.result === "ok") {
+					location.reload();
+					msg.set("등록되었습니다.");
+				} else {
+					msg.set("등록 중 에러가 발생하였습니다.");
+					return false;
+				}
+			}).catch((error) => {
+				msg.set("등록 도중 에러가 발생하였습니다.\n" + error);
+				console.log(error);
+				return false;
+			});
+		}
+	}
+
+	//계약 수정
+	update() {
+		if(document.getElementById("soppNo").value === ""){
+			msg.set("영업기회를 선택해주세요.");
+			document.getElementById("soppNo").focus();
+			return false;
+		} else if(document.getElementById("soppNo").value !== "" && !CommonDatas.validateAutoComplete(document.getElementById("soppNo").value, "sopp")){
+			msg.set("조회된 영업기회가 없습니다.\n다시 확인해주세요.");
+			document.getElementById("soppNo").focus();
+			return false;
+		} else if(document.getElementById("contType").value === ""){
+			msg.set("판매방식을 선택해주세요.");
+			return false;
+		} else if(document.getElementById("custNo").value === ""){
+			msg.set("매출처를 선택해주세요.");
+			document.getElementById("custNo").focus();
+			return false;
+		} else if(document.getElementById("custNo").value !== "" && !CommonDatas.validateAutoComplete(document.getElementById("custNo").value, "customer")){
+			msg.set("조회된 매출처가 없습니다.\n다시 확인해주세요.");
+			document.getElementById("custNo").focus();
+			return false;
+		} else if(document.getElementById("buyrNo").value === ""){
+			msg.set("엔드유저를 입력해주세요.");
+			document.getElementById("buyrNo").focus();
+			return false;
+		} else if(document.getElementById("buyrNo").value !== "" && !CommonDatas.validateAutoComplete(document.getElementById("buyrNo").value, "customer")){
+			msg.set("조회된 엔드유저가 없습니다.\n다시 확인해주세요.");
+			document.getElementById("buyrNo").focus();
+			return false;
+		} else if(document.getElementById("categories").value === ""){
+			msg.set("카테고리(제품회사명)를 선택해주세요.");
+			return false;
+		} else if(document.getElementById("contTitle").value === ""){
+			msg.set("계약명을 입력해주세요.");
+			document.getElementById("contTitle").focus();
+			return false;
+		} else {
+			CommonDatas.formDataSet();
+			let data = storage.formList;
+			data = JSON.stringify(data);
+			data = cipher.encAes(data);
+
+			axios.put("/api/cont/" + storage.formList.contNo, data, {
+				headers: { "Content-Type": "text/plain" }
+			}).then((response) => {
+				if (response.data.result === "ok") {
+					location.reload();
+					msg.set("수정되었습니다.");
+				} else {
+					msg.set("수정 중 에러가 발생하였습니다.");
+					return false;
+				}
+			}).catch((error) => {
+				msg.set("수정 도중 에러가 발생하였습니다.\n" + error);
+				console.log(error);
+				return false;
+			});
+		}
+	}
+
+	//계약 삭제
+	delete() {
+		if (confirm("정말로 삭제하시겠습니까??")) {
+			axios.delete("/api/cont/" + storage.formList.contNo, {
+				headers: { "Content-Type": "text/plain" }
+			}).then((response) => {
+				if (response.data.result === "ok") {
+					location.reload();
+					msg.set("삭제되었습니다.");
+				} else {
+					msg.set("삭제 중 에러가 발생하였습니다.");
+					return false;
+				}
+			}).catch((error) => {
+				msg.set("삭제 도중 에러가 발생하였습니다.\n" + error);
+				console.log(error);
+				return false;
+			});
+		} else {
+			return false;
+		}
+	}
+}
 
 //일정관리 시작
 //일정관리 셋팅 함수
@@ -11105,8 +12313,10 @@ class Common {
 					}
 
 					index = parseInt(index) + parseInt(1);
-	
+					
 					for (let key in storage.searchList) {
+						console.log(index);
+						console.log(storage.searchList[key].split("#"));
 						if (storage.searchList[key].split("#")[index].includes(searchValue.split("/")[1])) {
 							dataArray.push(key);
 						}
@@ -11640,9 +12850,15 @@ class Common {
 							if(storage.customer[item[key]] !== undefined){
 								str += "#" + storage.customer[item[key]].custName;
 							}
+						}else if(key === "buyrNo"){
+							if(storage.customer[item[key]] !== undefined){
+								str += "#" + storage.customer[item[key]].custName;
+							}
 						}else if(key === "type"){
 							str += "#" + storage.code.etc[item[key]];
 						}else if(key === "soppType"){
+							str += "#" + storage.code.etc[item[key]];
+						}else if(key === "contType"){
 							str += "#" + storage.code.etc[item[key]];
 						}else if(key === "cntrctMth"){
 							str += "#" + storage.code.etc[item[key]];

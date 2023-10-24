@@ -13,6 +13,7 @@ import kr.co.bizcore.v1.mapper.AccountingMapper;
 import kr.co.bizcore.v1.mapper.AccountingMapper2;
 import kr.co.bizcore.v1.mapper.BoardMapper;
 import kr.co.bizcore.v1.mapper.CommonMapper;
+import kr.co.bizcore.v1.mapper.ContMapper;
 import kr.co.bizcore.v1.mapper.ContractMapper;
 import kr.co.bizcore.v1.mapper.CustMapper;
 import kr.co.bizcore.v1.mapper.DeptMapper;
@@ -87,6 +88,9 @@ public abstract class Svc {
 
     @Autowired
     protected SoppMapper soppMapper;
+
+    @Autowired
+    protected ContMapper contMapper;
 
     @Autowired
     protected SalesMapper salesMapper;
