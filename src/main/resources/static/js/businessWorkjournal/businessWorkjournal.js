@@ -1,6 +1,9 @@
-$(document).ready(() => {
-    init();
-    
-    let workJournalSet = new WorkJournalSet();
-    workJournalSet.journalChange();
+document.addEventListener("DOMContentLoaded", () => {
+	callerFun();
 });
+
+async function callerFun(){
+	await promiseInit();
+	let workJournalSet = new WorkJournalSet();
+    workJournalSet.journalChange();
+}

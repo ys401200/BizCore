@@ -1,5 +1,12 @@
-$(document).ready(() => {
-	init();
+document.addEventListener("DOMContentLoaded", () => {
+	callerFun();
+});
+
+async function callerFun(){
+	await promiseInit();
+	let soppSet = new SoppSet();
+	soppSet.list();
+
 	goalList();
 
 	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined || storage.monthTarget === undefined){
@@ -7,7 +14,7 @@ $(document).ready(() => {
 	}else{
 		window.setTimeout(gridWidget, 200);
 	}
-});
+}
 
 window.onload = () => {
 	$('.theme-loader').delay(2300).fadeOut("slow");

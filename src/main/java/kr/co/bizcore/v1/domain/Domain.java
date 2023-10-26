@@ -345,7 +345,7 @@ public abstract class Domain implements Comparable<Domain> {
 
     public String toJson() {
         ObjectMapper mapper = new ObjectMapper();
-        mapper.setSerializationInclusion(Include.NON_NULL);
+        mapper.setSerializationInclusion(Include.ALWAYS);
         String result = null;
         try {
             result = mapper.writeValueAsString(this);

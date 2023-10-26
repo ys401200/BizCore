@@ -7,7 +7,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import kr.co.bizcore.v1.domain.Cont;
+import kr.co.bizcore.v1.domain.ContFileData;
+import kr.co.bizcore.v1.domain.Inout;
 import kr.co.bizcore.v1.domain.Sopp;
+import kr.co.bizcore.v1.domain.SoppFileData;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -35,5 +38,25 @@ public class ContService extends Svc{
 
     public int updateCont(Cont cont) {
         return contMapper.updateCont(cont);
+    }
+
+    public List<Inout> getContInoutList(Inout inout){
+        return contMapper.getContInoutList(inout);
+    }
+
+    public List<ContFileData> getContFileList(ContFileData contFileData){
+        return contMapper.getContFileList(contFileData);
+    }
+
+    public int contFileInsert(ContFileData contFileData){
+        return contMapper.contFileInsert(contFileData);
+    }
+
+    public ContFileData downloadFile(ContFileData contFileData) {
+		return contMapper.downloadFile(contFileData);
+	}
+
+    public int  contFileDelete(String FileId) {
+        return contMapper.contFileDelete(FileId);
     }
 }

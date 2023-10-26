@@ -1,69 +1,75 @@
-let cipher, msg, apiServer, modal, storage, prepare, fileDataArray = [], removeDataArray = [], updateDataArray = [], editor;
+let cipher, msg, apiServer, modal, storage, prepare, fileDataArray = [], removeDataArray = [], updateDataArray = [], editor, resolveFlag = true;
 const CommonDatas = new Common();
 storage = {};
 
-function init() {
-	let nextStep;
-
-	cipher.aes.iv = localStorage.getItem("aesIv");
-	cipher.aes.key = localStorage.getItem("aesKey");
-	cipher.rsa.public.modulus = localStorage.getItem("rsaModulus");
-	cipher.rsa.public.exponent = localStorage.getItem("rsaExponent");
-
-	// setTimeout(() => {
-	// 	$("#loadingDiv").loading({
-	// 		onStart: function (loading) {
-	// 			loading.overlay.fadeIn(1000);
-	// 		},
-	// 		onStop: function (loading) {
-	// 			loading.overlay.fadeOut(1000);
-	// 		}
-	// 	});
-	// }, 70);
-
-	msg.cnt = document.getElementsByClassName("msg_cnt")[0];
-
-	$(document).click((e) => {
-		if (modal.wrap == e.target) {
-			modal.hide();
-		} else if (modal.noteWrap == e.target) {
-			modal.noteHide();
-		}
-	});
-
-	window.onpageshow = function(event) {
-		if ( event.persisted || (window.performance && window.performance.navigation.type == 2)) {
-			if(localStorage.getItem("loadSetPage") != null){
-				location.href = localStorage.getItem("loadSetPage");
-				localStorage.removeItem("loadSetPage");
+let promiseInit = function init() {
+	return new Promise((resolve, reject) => {
+			let nextStep;
+		
+			cipher.aes.iv = localStorage.getItem("aesIv");
+			cipher.aes.key = localStorage.getItem("aesKey");
+			cipher.rsa.public.modulus = localStorage.getItem("rsaModulus");
+			cipher.rsa.public.exponent = localStorage.getItem("rsaExponent");
+		
+			// setTimeout(() => {
+			// 	$("#loadingDiv").loading({
+			// 		onStart: function (loading) {
+			// 			loading.overlay.fadeIn(1000);
+			// 		},
+			// 		onStop: function (loading) {
+			// 			loading.overlay.fadeOut(1000);
+			// 		}
+			// 	});
+			// }, 70);
+		
+			msg.cnt = document.getElementsByClassName("msg_cnt")[0];
+		
+			$(document).click((e) => {
+				if (modal.wrap == e.target) {
+					modal.hide();
+				} else if (modal.noteWrap == e.target) {
+					modal.noteHide();
+				}
+			});
+		
+			window.onpageshow = function(event) {
+				if ( event.persisted || (window.performance && window.performance.navigation.type == 2)) {
+					if(localStorage.getItem("loadSetPage") != null){
+						location.href = localStorage.getItem("loadSetPage");
+						localStorage.removeItem("loadSetPage");
+					}
+				}
+		  }
+		
+			// if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined) {
+			// 	window.setTimeout(addNoteContainer, 1500);
+			// } else {
+			// 	window.setTimeout(addNoteContainer, 200);
+			// }
+		
+			nextStep = function () {
+				if (isInit()) prepare();
+				else window.setTimeout(nextStep, 50);
 			}
-		}
-  }
-
-	// if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined) {
-	// 	window.setTimeout(addNoteContainer, 1500);
-	// } else {
-	// 	window.setTimeout(addNoteContainer, 200);
-	// }
-
-	nextStep = function () {
-		if (isInit()) prepare();
-		else window.setTimeout(nextStep, 50);
-	}
-
-	if (prepare !== undefined) window.setTimeout(nextStep, 50);
-
-	// getCustomer();
-	getCommonCode();
-	getUserMap();
-	// getDeptMap();
-	// getBasicInfo();
-	getStorageList();
-	getUserRank();
-	getPersonalize();
-	noteLiveUpdate();
-	CommonDatas.setTopPathActive();
-	CommonDatas.setSidePathActive();
+		
+			if (prepare !== undefined) window.setTimeout(nextStep, 50);
+		
+			// getCustomer();
+			getCommonCode();
+			getUserMap();
+			// getDeptMap();
+			// getBasicInfo();
+			getUserRank();
+			getStorageList();
+			getPersonalize();
+			noteLiveUpdate();
+			CommonDatas.setTopPathActive();
+			CommonDatas.setSidePathActive();
+			
+			setTimeout(() => {
+				resolve();
+			}, 300);
+	})
 } // End of init();
 
 apiServer = "";

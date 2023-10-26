@@ -43,7 +43,7 @@
 
 .contContainer > .gridList > .gridHeader,
 .contContainer > .gridList > .gridContent{
-    grid-template-columns: 5% 5% 5% 25% 10% 7% 7% 5% 15% 8% 8%;
+    grid-template-columns: 5% 5% 5% 25% 10% 7% 7% 5% 15% 6% 6% 4%;
 }
 
 .contContainer > .gridList > .gridHeader{
@@ -135,74 +135,47 @@
 /* 영업기회 매입매출내역 폼 끝 */
 
 /* 영업기회 매입매출내역 계약 리스트 시작 */
-.contContainer > .tabInoutCont{
+.contContainer > #tabInoutCont{
 	display: none;
 	padding: 10px;
 	padding-top: 0;
 }
 
-.contContainer > .tabInoutCont > .tabInoutContTitle{
-	display: flex;
-    align-items: center;
-	border-left: 1px solid #BDBDBD;
-	border-right: 1px solid #BDBDBD;
-	border-bottom: 1px solid #BDBDBD;
-}
-
-.contContainer > .tabInoutCont > .tabInoutContTitle > div:first-child{
-	width: 10%;
-    text-align: center;
-    border-right: 1px solid #BDBDBD;
-}
-
-.contContainer > .tabInoutCont > .tabInoutContTitle > div:last-child{
-	width: 100%;
-    padding-left: 10px;
-}
-
-.contContainer > .tabInoutCont > .tabInoutContTitle > div:last-child:hover{
-	background-color: #BDBDBD;
-	cursor: pointer;
-}
-
-.contContainer > .tabInoutCont > .tabInoutTableList{
-	display: none;
-}
-
-.contContainer > .tabInoutCont > .tabInoutTableList > .inoutContListHeader{
+.contContainer > #tabInoutCont > .tabInoutTableList > .inoutContListHeader{
 	display: grid;
-    grid-template-columns: 5% 10% 10% 10% 5% 5% 5% 10% 10% 30%;
+    grid-template-columns: 5% 10% 10% 10% 5% 5% 5% 10% 10% 20% 10%;
+	border-top: 1px solid #BDBDBD;
     border-left: 1px solid #BDBDBD;
     border-bottom: 1px solid #BDBDBD;
 }
 
-.contContainer > .tabInoutCont > .tabInoutTableList > .inoutContListHeader > div{
+.contContainer > #tabInoutCont > .tabInoutTableList > .inoutContListHeader > div{
 	text-align: center;
 	border-right: 1px solid #BDBDBD;
 }
 
-.contContainer > .tabInoutCont > .tabInoutTableList > .inoutContListItem{
+.contContainer > #tabInoutCont > .tabInoutTableList > .inoutContListItem{
 	display: grid;
-    grid-template-columns: 5% 10% 10% 10% 5% 5% 5% 10% 10% 30%;
+    grid-template-columns: 5% 10% 10% 10% 5% 5% 5% 10% 10% 20% 10%;
     border-left: 1px solid #BDBDBD;
 	border-bottom: 1px solid #BDBDBD;
 }
 
-.contContainer > .tabInoutCont > .tabInoutTableList > .emptyInData{
+.contContainer > #tabInoutCont > .tabInoutTableList > .emptyInData{
 	text-align: center;
 	border-left: 1px solid #BDBDBD;
 	border-right: 1px solid #BDBDBD;
 	border-bottom: 1px solid #BDBDBD;
 }
 
-.contContainer > .tabInoutCont > .tabInoutTableList > .inoutContListItem > div{
+.contContainer > #tabInoutCont > .tabInoutTableList > .inoutContListItem > div{
 	border-right: 1px solid #BDBDBD;
 	padding-left: 5px;
 	padding-right: 5px;
 }
 
-.contContainer > .tabInoutCont > .tabInoutTableList > .inContListTotal,
-.contContainer > .tabInoutCont > .tabInoutTableList > .outContListTotal{
+.contContainer > #tabInoutCont > .tabInoutTableList > .inContListTotal,
+.contContainer > #tabInoutCont > .tabInoutTableList > .outContListTotal{
 	display: flex;
     align-items: center;
     border-left: 1px solid #BDBDBD;
@@ -210,15 +183,15 @@
 	border-bottom: 1px solid #BDBDBD;
 }
 
-.contContainer > .tabInoutCont > .tabInoutTableList > .inContListTotal > div:first-child,
-.contContainer > .tabInoutCont > .tabInoutTableList > .outContListTotal > div:first-child{
+.contContainer > #tabInoutCont > .tabInoutTableList > .inContListTotal > div:first-child,
+.contContainer > #tabInoutCont > .tabInoutTableList > .outContListTotal > div:first-child{
 	width: 10%;
     text-align: center;
     border-right: 1px solid #BDBDBD;
 }
 
-.contContainer > .tabInoutCont > .tabInoutTableList > .inContListTotal > div:last-child,
-.contContainer > .tabInoutCont > .tabInoutTableList > .outContListTotal > div:last-child{
+.contContainer > #tabInoutCont > .tabInoutTableList > .inContListTotal > div:last-child,
+.contContainer > #tabInoutCont > .tabInoutTableList > .outContListTotal > div:last-child{
 	width: 100%;
     padding-right: 10px;
 	text-align: right;
@@ -320,17 +293,14 @@
 	padding: 10px;
 }
 
-.contContainer > .inoutTotalContents > div:nth-child(1),
-.contContainer > .inoutTotalContents > div:nth-child(3){
+.contContainer > .inoutTotalContents > div{
 	margin-top: 10px;
-	padding: 5px;
     border-top: 1px solid #BDBDBD;
     border-left: 1px solid #BDBDBD;
     border-right: 1px solid #BDBDBD;
 }
 
-.contContainer > .inoutTotalContents > div:nth-child(2),
-.contContainer > .inoutTotalContents > div:nth-child(4){
+.contContainer > .inoutTotalContents > div{
 	display: grid;
     grid-template-columns: 10% 15% 10% 15% 10% 15% 10% 15%;
     border-top: 1px solid #BDBDBD;
@@ -338,8 +308,7 @@
     border-bottom: 1px solid #BDBDBD;
 }
 
-.contContainer > .inoutTotalContents > div:nth-child(2) > div,
-.contContainer > .inoutTotalContents > div:nth-child(4) > div{
+.contContainer > .inoutTotalContents > div > div{
     border-right: 1px solid #BDBDBD;
 	padding-left: 5px;
 	padding-right: 5px;

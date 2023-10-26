@@ -1,7 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
-    init();
+	callerFun();
+});
 
+async function callerFun(){
+	await promiseInit();
 	let soppSet = new SoppSet();
 	soppSet.list();
-	// getSoppList();
-});
+}

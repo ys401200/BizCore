@@ -1,6 +1,10 @@
-$(document).ready(() => {
-    init();
-    let workReportSet = new WorkReportSet();
+document.addEventListener("DOMContentLoaded", () => {
+	callerFun();
+});
+
+async function callerFun(){
+	await promiseInit();
+	let workReportSet = new WorkReportSet();
 	
 	setTimeout(() => {
 		workReportSet.getWorkReportDatas("last");
@@ -14,4 +18,4 @@ $(document).ready(() => {
 		workReportSet.getWorkReportDatas("next");
 		$('.theme-loader').delay(1000).fadeOut("slow");
 	}, 1500);
-});
+}
