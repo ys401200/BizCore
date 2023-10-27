@@ -433,4 +433,128 @@ public class ApiContCtrl extends Ctrl{
         } // End of if : 1
         return result;
     }
+
+    @RequestMapping(value = "/contInoutSingleInsert", method = RequestMethod.POST)
+    public String contInoutSingleInsert(HttpServletRequest req, @RequestBody String requestBody) throws JsonMappingException, JsonProcessingException {
+
+        int compNo = 0;
+        HttpSession session = null;
+        String result = null;
+        String data = null, aesKey = null, aesIv = null;
+        ObjectMapper mapper = new ObjectMapper();
+        int check = 0;
+
+        session = req.getSession();
+
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        compNo = (int) session.getAttribute("compNo");
+        data = contService.decAes(requestBody, aesKey, aesIv);
+        Inout inout = mapper.readValue(data, Inout.class);
+        check = contService.contInoutSingleInsert(inout);
+
+        if (check > 0) {
+            result = "{\"result\":\"ok\"}";
+        } else {
+            result = "{\"result\":\"failure\" ,\"msg\":\"Error occured when write.\"}";
+        }
+
+        return result;
+    }
+
+    @RequestMapping(value = "/contInoutCheckDelete/{soppdataNo}", method = RequestMethod.DELETE)
+    public String contInoutCheckDelete(HttpServletRequest req, @PathVariable String soppdataNo) {
+
+        HttpSession session = null;
+        String compId = null;
+        int compNo = 0;
+        String result = null;
+        String userNo = null;
+        String uri = req.getRequestURI();
+        String[] t = null;
+        int num = 0;
+
+        // 글 번호 확인
+        if (soppdataNo == null) { // 글 번호 확인 안됨
+            result = "{\"result\":\" failure\",\"msg\":\"soppdataNo is not exist\"}";
+        } else { // 글 번호 확인 됨
+            session = req.getSession();
+
+            userNo = (String) session.getAttribute("userNo");
+            compNo = (int) session.getAttribute("compNo");
+            compId = (String) session.getAttribute("compId");
+            if (compId == null)
+                compId = (String) req.getAttribute("compId");
+
+            if (compId == null) { // 회사코드 확인 안됨
+                result = "{\"result\":\" failure\",\"msg\":\"Company ID is not verified.\"}";
+            } else if (userNo == null) {
+                result = "{\"result\":\"failure\",\"msg\":\"Session expired and/or Not logged in.\"}";
+            } else { // 회사코드 확인 됨
+                num = contService.contInoutCheckDelete(soppdataNo); // 삭제(update) 카운트를 실제 삭제 여부를 확인함
+                if (num > 0) { // 처리됨
+                    result = "{\"result\":\"ok\"}";
+                } else { // 처리 안됨
+                    result = "{\"result\":\" failure\",\"msg\":\"Error occured when delete.\"}";
+                } // End of if : 3
+            } // End of if : 2
+        } // End of if : 1
+        return result;
+    }
+
+    @RequestMapping(value = "/contInoutDivisionInsert", method = RequestMethod.POST)
+    public String contInoutDivisionInsert(HttpServletRequest req, @RequestBody String requestBody) throws JsonMappingException, JsonProcessingException {
+
+        int compNo = 0;
+        HttpSession session = null;
+        String result = null;
+        String data = null, aesKey = null, aesIv = null;
+        ObjectMapper mapper = new ObjectMapper();
+        int check = 0;
+
+        session = req.getSession();
+
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        compNo = (int) session.getAttribute("compNo");
+        data = contService.decAes(requestBody, aesKey, aesIv);
+        Inout inout = mapper.readValue(data, Inout.class);
+        check = contService.contInoutDivisionInsert(inout);
+
+        if (check > 0) {
+            result = "{\"result\":\"ok\"}";
+        } else {
+            result = "{\"result\":\"failure\" ,\"msg\":\"Error occured when write.\"}";
+        }
+
+        return result;
+    }
+
+    @RequestMapping(value = "/contInoutUpdate", method = RequestMethod.PUT)
+    public String contInoutUpdate(HttpServletRequest req, @RequestBody String requestBody) throws JsonMappingException, JsonProcessingException {
+        String compId = null;
+        int compNo = 0;
+        String result = null;
+        HttpSession session = null;
+        String data = null, aesKey = null, aesIv = null;
+        ObjectMapper mapper = new ObjectMapper();
+
+        session = req.getSession();
+        compNo = (int) session.getAttribute("compNo");
+        compId = (String) session.getAttribute("compId");
+        if (compId == null) {
+            compId = (String) req.getAttribute("compId");
+        }
+
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        data = contService.decAes(requestBody, aesKey, aesIv);
+        Inout inout = mapper.readValue(data, Inout.class);
+
+        if (contService.contInoutUpdate(inout) > 0) {
+            result = "{\"result\":\"ok\"}";
+        }
+
+        return result;
+    }
 }

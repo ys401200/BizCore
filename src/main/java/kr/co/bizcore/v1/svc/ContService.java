@@ -44,6 +44,21 @@ public class ContService extends Svc{
         return contMapper.getContInoutList(inout);
     }
 
+    public int contInoutSingleInsert(Inout inout){
+        return contMapper.contInoutSingleInsert(inout);
+    }
+
+    public int  contInoutCheckDelete(String soppdataNo) {
+        return contMapper.contInoutCheckDelete(soppdataNo);
+    }
+
+    public int contInoutDivisionInsert(Inout inout){
+        return contMapper.contInoutDivisionInsert(inout);
+    }
+    public int contInoutUpdate(Inout inout) {
+        return contMapper.contInoutUpdate(inout);
+    }
+
     public List<ContFileData> getContFileList(ContFileData contFileData){
         return contMapper.getContFileList(contFileData);
     }

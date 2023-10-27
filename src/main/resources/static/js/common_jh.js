@@ -1952,10 +1952,10 @@ class SoppSet{
 		let html = "";
 
 		html += "<div>";
-		html += "<button type=\"button\" onclick=\"let sopp = new Sopp(); sopp.soppInoutDivisionInsert();\"/>분할추가</button>";
-		html += "<button type=\"button\" onclick=\"let sopp = new Sopp(); sopp.soppInoutSingleInsert();\"/>매입매출추가</button>";
-		html += "<button type=\"button\" onclick=\"let sopp = new Sopp(); sopp.soppInoutUpdate(this);\"/>매입매출수정</button>";
-		html += "<button type=\"button\" onclick=\"let sopp = new Sopp(); sopp.soppInoutCheckDelete();\"/>선택삭제</button>";
+		html += "<button type=\"button\" onclick=\"CommonDatas.Temps.sopp.soppInoutDivisionInsert();\"/>분할추가</button>";
+		html += "<button type=\"button\" onclick=\"CommonDatas.Temps.sopp.soppInoutSingleInsert();\"/>매입매출추가</button>";
+		html += "<button type=\"button\" onclick=\"CommonDatas.Temps.sopp.soppInoutUpdate(this);\"/>매입매출수정</button>";
+		html += "<button type=\"button\" onclick=\"CommonDatas.Temps.sopp.soppInoutCheckDelete();\"/>선택삭제</button>";
 		html += "</div>";
 
 		html += "<div>";
@@ -5015,10 +5015,10 @@ class ContSet{
 		let html = "";
 
 		html += "<div>";
-		html += "<button type=\"button\" onclick=\"let cont = new Cont(); cont.contInoutDivisionInsert();\"/>분할추가</button>";
-		html += "<button type=\"button\" onclick=\"let cont = new Cont(); cont.contInoutSingleInsert();\"/>매입매출추가</button>";
-		html += "<button type=\"button\" onclick=\"let cont = new Cont(); cont.contInoutUpdate(this);\"/>매입매출수정</button>";
-		html += "<button type=\"button\" onclick=\"let cont = new Cont(); cont.contInoutCheckDelete();\"/>선택삭제</button>";
+		html += "<button type=\"button\" onclick=\"CommonDatas.Temps.cont.contInoutDivisionInsert();\"/>분할추가</button>";
+		html += "<button type=\"button\" onclick=\"CommonDatas.Temps.cont.contInoutSingleInsert();\"/>매입매출추가</button>";
+		html += "<button type=\"button\" onclick=\"CommonDatas.Temps.cont.contInoutUpdate(this);\"/>매입매출수정</button>";
+		html += "<button type=\"button\" onclick=\"CommonDatas.Temps.cont.contInoutCheckDelete();\"/>선택삭제</button>";
 		html += "</div>";
 
 		html += "<div>";
@@ -5132,7 +5132,7 @@ class ContSet{
 				divHtml += "<div style=\"text-align: center;\"><input type=\"checkbox\" data-id=\"" + item.soppdataNo + "\" /></div>";
 				
 				if(item.vatDate !== undefined){
-					if(item.endvataDate !== undefined){
+					if(item.endvataDate !== undefined && item.endvataDate != null){
 						divHtml += "<div style=\"text-align: center;\">유지보수(" + item.vatDate.substring(0, 10) + " ~ " + item.endvataDate.substring(0, 10) + ")</div>";
 					}else{
 						divHtml += "<div style=\"text-align: center;\">매출(" + item.vatDate.substring(0, 10) + ")</div>";
@@ -5940,6 +5940,185 @@ class ContSet{
 			document.getElementById(dataKey).style.display = "block";
 		}
 	}
+
+	//계약 매입매출내역 단가 keyup 이벤트
+	inoutContCalNetprice(thisEle){
+		let netPrice = parseInt(thisEle.value.replace(/,/g, ""));
+		let inoutContQuanty = document.getElementById("inoutContQuanty");
+		let inoutContAmt = document.getElementById("inoutContAmt");
+		let inoutContVat = document.getElementById("inoutContVat");
+		let inoutContTotal = document.getElementById("inoutContTotal");
+		
+		if(thisEle.value !== ""){
+			let calAmount = netPrice * parseInt(inoutContQuanty.value);
+			let calVat = calAmount * 0.1;
+			let calTotal = calAmount + calVat;
+	
+			inoutContAmt.value = CommonDatas.numberFormat(calAmount);
+			inoutContVat.value = CommonDatas.numberFormat(calVat);
+			inoutContTotal.value = CommonDatas.numberFormat(calTotal);
+	
+			CommonDatas.inputNumberFormat(thisEle);
+		}else{
+			thisEle.value = 0;
+			inoutContAmt.value = 0;
+			inoutContVat.value = 0;
+			inoutContTotal.value = 0;
+		}
+	}
+
+	//계약 매입매출내역 수량 keyup 이벤트
+	inoutContCalQuanty(thisEle){
+		let quanty = parseInt(thisEle.value);
+		let inoutContNetprice = document.getElementById("inoutContNetprice");
+		let inoutContAmt = document.getElementById("inoutContAmt");
+		let inoutContVat = document.getElementById("inoutContVat");
+		let inoutContTotal = document.getElementById("inoutContTotal");
+		
+		if(thisEle.value !== ""){
+			let calAmount = parseInt(inoutContNetprice.value.replace(/,/g, "")) * quanty;
+			let calVat = calAmount * 0.1;
+			let calTotal = calAmount + calVat;
+	
+			inoutContAmt.value = CommonDatas.numberFormat(calAmount);
+			inoutContVat.value = CommonDatas.numberFormat(calVat);
+			inoutContTotal.value = CommonDatas.numberFormat(calTotal);
+		}else{
+			thisEle.value = 0;
+			inoutContAmt.value = 0;
+			inoutContVat.value = 0;
+			inoutContTotal.value = 0;
+		}
+	}
+
+	//계약 매입매출내역 부가세 keyup 이벤트
+	inoutContCalVat(thisEle){
+		let vat = parseInt(thisEle.value.replace(/,/g, ""));
+		let inoutContAmt = document.getElementById("inoutContAmt");
+		let inoutContTotal = document.getElementById("inoutContTotal");
+		
+		if(thisEle.value !== ""){
+			let calTotal = vat + parseInt(inoutContAmt.value.replace(/,/g, ""));
+			inoutContTotal.value = CommonDatas.numberFormat(calTotal);
+	
+			CommonDatas.inputNumberFormat(thisEle);
+		}else{
+			thisEle.value = 0;
+		}
+	}
+
+	//계약 매입매출내역 단가 keyup 이벤트
+	inoutContCalTotal(thisEle){
+		let total = parseInt(thisEle.value.replace(/,/g, ""));
+		let inoutContQuanty = document.getElementById("inoutContQuanty");
+		let inoutContAmt = document.getElementById("inoutContAmt");
+		let inoutContVat = document.getElementById("inoutContVat");
+		let inoutContNetprice = document.getElementById("inoutContNetprice");
+		
+		if(thisEle.value !== ""){
+			let calNetprice = Math.round(total / 11 * 10 / parseInt(inoutContQuanty.value));
+			let calAmount = Math.round(total / 11 * 10);
+			let calVat = Math.round(total / 11);
+			
+			inoutContNetprice.value = CommonDatas.numberFormat(calNetprice)
+			inoutContAmt.value = CommonDatas.numberFormat(calAmount);
+			inoutContVat.value = CommonDatas.numberFormat(calVat);
+	
+			CommonDatas.inputNumberFormat(thisEle);
+		}else{
+			thisEle.value = 0;
+			inoutContNetprice.value = 0;
+			inoutContAmt.value = 0;
+			inoutContVat.value = 0;
+		}
+	}
+
+	//계약 매입매출내역 수정 버튼 클릭 시 실행되는 함수
+	contInoutUpdateButtonSet(thisEle){
+		let soppdataNo = thisEle.dataset.id;
+		let inoutContListItem = document.getElementById("tabInoutCont").querySelector(".tabInoutTableList").querySelectorAll(".inoutContListItem");
+		let updateButton = document.getElementsByClassName("inoutContForm")[0].children[0].children[2];
+		let nowDate = new Date();
+		let thisStatus = thisEle.dataset.status;
+		let setDatas;
+		
+		for(let i = 0; i < inoutContListItem.length; i++){
+			let div = inoutContListItem[i].querySelectorAll("div");
+			for(let t = 0; t < div.length; t++){
+				let button = div[t].children[0];
+
+				if(button !== undefined && button.className === "updateButton"){
+					updateButton.style.display = "none";
+					updateButton.removeAttribute("data-id");
+					button.setAttribute("data-status", false);
+					button.innerText = "수정";
+					button.style.backgroundColor = "#6B66FF";
+				}
+			}
+		}
+
+		document.getElementById("inoutContDataType").value = "1101";
+		document.getElementById("inoutContVatDate").value = nowDate.toISOString().substring(0, 10);
+		document.getElementById("inoutContProductNo").removeAttribute("data-value");
+		document.getElementById("inoutContProductNo").value = "";
+		document.getElementById("inoutContCustNo").removeAttribute("data-value");
+		document.getElementById("inoutContCustNo").value = "";
+		document.getElementById("inoutContNetprice").value = 0;
+		document.getElementById("inoutContQuanty").value = 1;
+		document.getElementById("inoutContAmt").value = 0;
+		document.getElementById("inoutContVat").value = 0;
+		document.getElementById("inoutContTotal").value = 0;
+		document.getElementById("inoutContRemark").value = "";
+		thisEle.setAttribute("data-status", thisStatus);
+
+		if(JSON.parse(thisEle.dataset.status)){
+			updateButton.style.display = "none";
+			updateButton.removeAttribute("data-id");
+			thisEle.setAttribute("data-status", false);
+			thisEle.innerText = "수정";
+			thisEle.style.backgroundColor = "#6B66FF";
+		}else{
+			updateButton.style.display = "block";
+			updateButton.setAttribute("data-id", thisEle.dataset.id);
+			thisEle.setAttribute("data-status", true);
+			thisEle.innerText = "취소";
+			thisEle.style.backgroundColor = "#353535";
+
+			for(let i = 0; i < storage.contInoutAllList.length; i++){
+				let item = storage.contInoutAllList[i];
+				
+				if(item.soppdataNo == soppdataNo){
+					setDatas = item;
+				}
+			}
+
+			document.getElementById("inoutContDataType").value = setDatas.dataType;
+			document.getElementById("inoutContVatDate").value = setDatas.vatDate;
+			
+			if(!CommonDatas.emptyValuesCheck(setDatas.productNo)){
+				document.getElementById("inoutContProductNo").dataset.value = setDatas.productNo;
+				document.getElementById("inoutContProductNo").value = CommonDatas.getProductFind(setDatas.productNo, "name");
+			}else{
+				document.getElementById("inoutContProductNo").removeAttribute("data-value");
+				document.getElementById("inoutContProductNo").value = "";
+			}
+
+			if(!CommonDatas.emptyValuesCheck(setDatas.salesCustNo)){
+				document.getElementById("inoutContCustNo").dataset.value = setDatas.salesCustNo;
+				document.getElementById("inoutContCustNo").value = storage.customer[setDatas.salesCustNo].custName;
+			}else{
+				document.getElementById("inoutContCustNo").removeAttribute("data-value");
+				document.getElementById("inoutContCustNo").value = "";
+			}
+
+			document.getElementById("inoutContNetprice").value = setDatas.dataNetprice.toLocaleString("en-US");
+			document.getElementById("inoutContQuanty").value = setDatas.dataQuanty;
+			document.getElementById("inoutContAmt").value = setDatas.dataAmt.toLocaleString("en-US");
+			document.getElementById("inoutContVat").value = setDatas.dataVat.toLocaleString("en-US");
+			document.getElementById("inoutContTotal").value = setDatas.dataTotal.toLocaleString("en-US");
+			document.getElementById("inoutContRemark").value = setDatas.dataRemark;
+		}
+	}
 }
 
 //계약 crud
@@ -6625,6 +6804,255 @@ class Cont{
 			});
 		} else {
 			return false;
+		}
+	}
+
+	//계약 매입매출 단일 추가 함수
+	contInoutSingleInsert(){
+		if(document.getElementById("inoutContVatDate").value === ""){
+			msg.set("거래일자를 선택해주세요.");
+			return false;
+		} else if(document.getElementById("inoutContProductNo").value === ""){
+			msg.set("상품을 선택해주세요.");
+			document.getElementById("inoutContProductNo").focus();
+			return false;
+		} else if(document.getElementById("inoutContProductNo").value !== "" && !CommonDatas.validateAutoComplete(document.getElementById("inoutContProductNo").value, "product")){
+			msg.set("조회된 상품이 없습니다.\n다시 확인해주세요.");
+			document.getElementById("inoutContProductNo").focus();
+			return false;
+		} else{
+			let datas = {};
+			datas.soppNo = this.soppNo;
+			datas.userNo = storage.my;
+			datas.catNo = 100001;
+			datas.productNo = document.getElementById("inoutContProductNo").dataset.value;
+			datas.salesCustNo = document.getElementById("inoutContCustNo").dataset.value;
+			datas.dataTitle = document.getElementById("inoutContProductNo").value;
+			datas.dataType = document.getElementById("inoutContDataType").value;
+			datas.dataQuanty = document.getElementById("inoutContQuanty").value;
+			datas.dataAmt = parseInt(document.getElementById("inoutContAmt").value.replace(/,/g, ""));
+			datas.dataDiscount = 0;
+			datas.dataNetprice = parseInt(document.getElementById("inoutContNetprice").value.replace(/,/g, ""));
+			datas.dataVat = parseInt(document.getElementById("inoutContVat").value.replace(/,/g, ""));
+			datas.dataTotal = parseInt(document.getElementById("inoutContTotal").value.replace(/,/g, ""));
+			datas.vatDate = document.getElementById("inoutContVatDate").value;
+			datas.dataRemark = document.getElementById("inoutContRemark").value;
+			datas.contNo = this.contNo;
+			datas = JSON.stringify(datas);
+			datas = cipher.encAes(datas);
+
+			axios.post("/api/cont/contInoutSingleInsert", datas, {
+				headers: { "Content-Type": "text/plain" }
+			}).then((response) => {
+				if (response.data.result === "ok") {
+					let contSet = new ContSet();
+					contSet.contDetailInoutSet(this.contNo);
+					
+					setTimeout(() => {
+						contSet.drawInoutForm();
+						contSet.drawInoutContList();
+						contSet.inoutTotalSet();
+						contSet.detailRadioChange();
+						msg.set("등록되었습니다.");
+					}, 300);
+				} else {
+					msg.set("등록 중 에러가 발생하였습니다.");
+					return false;
+				}
+			}).catch((error) => {
+				msg.set("등록 도중 에러가 발생하였습니다.\n" + error);
+				console.log(error);
+				return false;
+			});
+		}
+	}
+
+	//계약 매입매출 선택삭제 함수
+	contInoutCheckDelete(){
+		if(confirm("선택하신 내역들을 삭제하시겠습니까??")){
+			let inoutContListItem = document.getElementById("tabInoutCont").querySelectorAll(".inoutContListItem");
+	
+			for(let i = 0; i < inoutContListItem.length; i++){
+				let item = inoutContListItem[i];
+				let checkbox = item.children[0].children[0];
+	
+				if(checkbox.checked){
+					axios.delete("/api/cont/contInoutCheckDelete/" + checkbox.dataset.id, {
+						headers: { "Content-Type": "text/plain" }
+					}).then((response) => {
+						if (response.data.result !== "ok") {
+							msg.set("삭제 중 에러가 발생하였습니다.");
+							return false;
+						}
+					}).catch((error) => {
+						msg.set("삭제 도중 에러가 발생하였습니다.\n" + error);
+						console.log(error);
+						return false;
+					});
+				}
+
+				if(i == (inoutContListItem.length - 1)){
+					let contSet = new ContSet();
+
+					setTimeout(() => {
+						contSet.contDetailInoutSet(this.contNo);
+					}, 500);
+			
+					setTimeout(() => {
+						contSet.drawInoutForm();
+						contSet.drawInoutContList();
+						contSet.inoutTotalSet();
+						contSet.detailRadioChange();
+						msg.set("삭제되었습니다.");
+					}, 1200);
+				}
+			}
+		}else{
+			return false;
+		}
+	}
+
+	//계약 매입매출 분할추가 함수
+	contInoutDivisionInsert(){
+		if(confirm("분할추가를 진행하시겠습니까??")){
+			if(document.getElementById("inoutContVatDate").value === ""){
+				msg.set("거래일자를 선택해주세요.");
+				return false;
+			} else if(document.getElementById("inoutContProductNo").value === ""){
+				msg.set("상품을 선택해주세요.");
+				document.getElementById("inoutContProductNo").focus();
+				return false;
+			} else if(document.getElementById("inoutContProductNo").value !== "" && !CommonDatas.validateAutoComplete(document.getElementById("inoutContProductNo").value, "product")){
+				msg.set("조회된 상품이 없습니다.\n다시 확인해주세요.");
+				document.getElementById("inoutContProductNo").focus();
+				return false;
+			} else{
+				let inoutContDivisionNum = document.getElementById("inoutContDivisionNum");
+				let inoutContDivisionMonth = document.getElementById("inoutContDivisionMonth");
+				let inoutContDivisionContAmt = document.getElementById("inoutContDivisionContAmt");
+				let divisionTotal = Math.round(inoutContDivisionContAmt.value.replace(/,/g, "") / inoutContDivisionNum.value);
+				let divisionAmt = Math.round(divisionTotal / 11 * 10);
+				let divisionVat = Math.round(divisionTotal / 11);
+				let divisionNet = Math.round(divisionTotal / 11 * 10 / 1);
+	
+				for(let i = 0; i < inoutContDivisionNum.value; i++){
+					let datas = {};
+		
+					datas.soppNo = this.soppNo;
+					datas.catNo = 100001;
+					datas.salesCustNo = document.getElementById("inoutContCustNo").dataset.value;
+					datas.productNo = document.getElementById("inoutContProductNo").dataset.value;
+					datas.dataTitle = document.getElementById("inoutContProductNo").value;
+					datas.dataType = document.getElementById("inoutContDataType").value;
+					datas.dataQuanty = document.getElementById("inoutContQuanty").value;
+					datas.dataAmt = divisionAmt;
+					datas.dataVat = divisionVat;
+					datas.dataTotal = divisionTotal;
+					datas.dataNetprice = divisionNet;
+					datas.dataRemark = document.getElementById("inoutContRemark").value;
+					datas.divisionMonth = inoutContDivisionMonth.value;
+					datas.userNo = storage.my;
+	
+					if(i == 0){
+						datas.vatDate = document.getElementById("inoutContVatDate").value
+					}else{
+						let dateSet = new Date(document.getElementById("inoutContVatDate").value);
+						dateSet.setMonth(dateSet.getMonth() + parseInt(parseInt(i) * parseInt(inoutContDivisionMonth.value)));
+						let getDate = dateSet.toISOString();
+						datas.vatDate = getDate.substring(0, 10);
+					}
+	
+					datas.contNo = this.contNo;
+					datas = JSON.stringify(datas);
+					datas = cipher.encAes(datas);
+	
+					axios.post("/api/cont/contInoutDivisionInsert", datas, {
+						headers: { "Content-Type": "text/plain" }
+					}).then((response) => {
+						if (response.data.result !== "ok") {
+							msg.set("등록 중 에러가 발생하였습니다.");
+							return false;
+						}
+					}).catch((error) => {
+						msg.set("등록 도중 에러가 발생하였습니다.\n" + error);
+						console.log(error);
+						return false;
+					});
+
+					if(i == (inoutContDivisionNum.value - 1)){
+						let contSet = new ContSet();
+
+						setTimeout(() => {
+							contSet.contDetailInoutSet(this.contNo);
+						}, 500);
+				
+						setTimeout(() => {
+							contSet.drawInoutForm();
+							contSet.drawInoutContList();
+							contSet.inoutTotalSet();
+							contSet.detailRadioChange();
+							msg.set("등록되었습니다.");
+						}, 1200);
+					}
+				}
+			}
+		}
+	}
+
+	//계약 매입매출수정 버튼 클릭 시 실행 함수
+	contInoutUpdate(thisEle){
+		if(document.getElementById("inoutContVatDate").value === ""){
+		msg.set("거래일자를 선택해주세요.");
+			return false;
+		} else if(document.getElementById("inoutContProductNo").value === ""){
+			msg.set("상품을 선택해주세요.");
+			document.getElementById("inoutContProductNo").focus();
+			return false;
+		} else if(document.getElementById("inoutContProductNo").value !== "" && !CommonDatas.validateAutoComplete(document.getElementById("inoutContProductNo").value, "product")){
+			msg.set("조회된 상품이 없습니다.\n다시 확인해주세요.");
+			document.getElementById("inoutContProductNo").focus();
+			return false;
+		} else{
+			let datas = {};
+			datas.soppdataNo = thisEle.dataset.id;
+			datas.userNo = storage.my;
+			datas.productNo = document.getElementById("inoutContProductNo").dataset.value;
+			datas.salesCustNo = document.getElementById("inoutContCustNo").dataset.value;
+			datas.dataTitle = document.getElementById("inoutContProductNo").value;
+			datas.dataType = document.getElementById("inoutContDataType").value;
+			datas.dataQuanty = document.getElementById("inoutContQuanty").value;
+			datas.dataAmt = parseInt(document.getElementById("inoutContAmt").value.replace(/,/g, ""));
+			datas.dataNetprice = parseInt(document.getElementById("inoutContNetprice").value.replace(/,/g, ""));
+			datas.dataVat = parseInt(document.getElementById("inoutContVat").value.replace(/,/g, ""));
+			datas.dataTotal = parseInt(document.getElementById("inoutContTotal").value.replace(/,/g, ""));
+			datas.vatDate = document.getElementById("inoutContVatDate").value;
+			datas.dataRemark = document.getElementById("inoutContRemark").value;
+			datas = JSON.stringify(datas);
+			datas = cipher.encAes(datas);
+
+			axios.put("/api/cont/contInoutUpdate", datas, {
+				headers: { "Content-Type": "text/plain" }
+			}).then((response) => {
+				if (response.data.result === "ok") {
+					let contSet = new ContSet();
+					contSet.contDetailInoutSet(this.contNo);
+					
+					setTimeout(() => {
+						contSet.drawInoutForm();
+						contSet.drawInoutContList();
+						contSet.inoutTotalSet();
+						contSet.detailRadioChange();
+						msg.set("수정 되었습니다.");
+					}, 300);
+				} else {
+					msg.set("수정 중 에러가 발생하였습니다.");
+					return false;
+				}
+			}).catch((error) => {
+				msg.set("수정 도중 에러가 발생하였습니다.\n" + error);
+				console.log(error);
+				return false;
+			});
 		}
 	}
 }

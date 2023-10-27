@@ -30,6 +30,18 @@ public interface ContMapper {
     @Select("SELECT * FROM swc_soppdata01 WHERE attrib NOT LIKE 'XXX%' AND contNo = #{inout.contNo} ORDER BY regDatetime DESC")
     public List<Inout> getContInoutList(@Param("inout") Inout inout);
 
+    @Insert("INSERT INTO swc_soppdata01 (soppNo, userNo, catNo, productNo, salesCustNo, dataTitle, dataType, dataQuanty, dataAmt, dataNetprice, dataVat, dataTotal, dataRemark, vatDate, regDatetime, attrib, contNo) VALUES (#{inout.soppNo}, #{inout.userNo}, #{inout.catNo}, #{inout.productNo}, #{inout.salesCustNo}, #{inout.dataTitle}, #{inout.dataType}, #{inout.dataQuanty}, #{inout.dataAmt}, #{inout.dataNetprice}, #{inout.dataVat}, #{inout.dataTotal}, #{inout.dataRemark}, #{inout.vatDate}, now(), 10000, #{inout.contNo})")
+    public int contInoutSingleInsert(@Param("inout") Inout inout);
+
+    @Update("UPDATE swc_soppdata01 SET attrib = 'XXXXX' WHERE soppdataNo = #{soppdataNo}")
+    public int contInoutCheckDelete(@Param("soppdataNo") String soppdataNo);
+
+    @Insert("INSERT INTO swc_soppdata01 (soppNo, userNo, catNo, productNo, salesCustNo, dataTitle, dataType, dataQuanty, dataAmt, dataNetprice, dataVat, dataTotal, dataRemark, vatDate, endvataDate, regDatetime, attrib, contNo) VALUES (#{inout.soppNo}, #{inout.userNo}, #{inout.catNo}, #{inout.productNo}, #{inout.salesCustNo}, #{inout.dataTitle}, #{inout.dataType}, #{inout.dataQuanty}, #{inout.dataAmt}, #{inout.dataNetprice}, #{inout.dataVat}, #{inout.dataTotal}, #{inout.dataRemark}, #{inout.vatDate}, DATE_SUB(DATE_ADD(#{inout.vatDate}, interval #{inout.divisionMonth} MONTH), interval 1 day), now(), 10000, #{inout.contNo})")
+    public int contInoutDivisionInsert(@Param("inout") Inout inout);
+
+    @Update("UPDATE swc_soppdata01 SET userNo = #{inout.userNo}, productNo = #{inout.productNo}, salesCustNo = #{inout.salesCustNo}, dataTitle = #{inout.dataTitle}, dataType = #{inout.dataType}, dataQuanty = #{inout.dataQuanty}, dataAmt = #{inout.dataAmt}, dataNetprice = #{inout.dataNetprice}, dataVat = #{inout.dataVat}, dataTotal = #{inout.dataTotal}, vatDate = #{inout.vatDate}, dataRemark = #{inout.dataRemark} WHERE soppdataNo = #{inout.soppdataNo}")
+    public int contInoutUpdate(@Param("inout") Inout inout);
+
     @Select("SELECT * FROM swc_contfiledata WHERE attrib NOT LIKE 'XXX%' AND contNo = #{contFileData.contNo} ORDER BY regDatetime DESC")
     public List<ContFileData> getContFileList(@Param("contFileData") ContFileData contFileData);
 
