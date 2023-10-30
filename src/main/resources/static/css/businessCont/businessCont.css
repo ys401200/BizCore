@@ -210,72 +210,45 @@
 /* 영업기회 매입매출내역 계약 리스트 끝 */
 
 /* 영업기회 우측 상세 매입매출내역 계약 리스트 시작 */
-.rightDetailBodyInoutContents > .rightDetailInoutCont{
+.rightDetailBodyInoutContents > #rightDetailInoutCont{
 	padding-top: 0;
 }
 
-.rightDetailBodyInoutContents > .rightDetailInoutCont > .rightDetailInoutContTitle{
-	display: flex;
-    align-items: center;
-	border-left: 1px solid #BDBDBD;
-	border-right: 1px solid #BDBDBD;
-	border-bottom: 1px solid #BDBDBD;
-}
-
-.rightDetailBodyInoutContents > .rightDetailInoutCont > .rightDetailInoutContTitle > div:first-child{
-	width: 10%;
-    text-align: center;
-    border-right: 1px solid #BDBDBD;
-}
-
-.rightDetailBodyInoutContents > .rightDetailInoutCont > .rightDetailInoutContTitle > div:last-child{
-	width: 100%;
-    padding-left: 10px;
-}
-
-.rightDetailBodyInoutContents > .rightDetailInoutCont > .rightDetailInoutContTitle > div:last-child:hover{
-	background-color: #BDBDBD;
-	cursor: pointer;
-}
-
-.rightDetailBodyInoutContents > .rightDetailInoutCont > .rightDetailInoutTableList{
-	display: none;
-}
-
-.rightDetailBodyInoutContents > .rightDetailInoutCont > .rightDetailInoutTableList > .inoutContListHeader{
+.rightDetailBodyInoutContents > #rightDetailInoutCont > .rightDetailInoutTableList > .inoutContListHeader{
 	display: grid;
     grid-template-columns: 20% 20% 20% 10% 30%;
+	border-top: 1px solid #BDBDBD;
     border-left: 1px solid #BDBDBD;
     border-bottom: 1px solid #BDBDBD;
 }
 
-.rightDetailBodyInoutContents > .rightDetailInoutCont > .rightDetailInoutTableList > .inoutContListHeader > div{
+.rightDetailBodyInoutContents > #rightDetailInoutCont > .rightDetailInoutTableList > .inoutContListHeader > div{
 	text-align: center;
 	border-right: 1px solid #BDBDBD;
 }
 
-.rightDetailBodyInoutContents > .rightDetailInoutCont > .rightDetailInoutTableList > .inoutContListItem{
+.rightDetailBodyInoutContents > #rightDetailInoutCont > .rightDetailInoutTableList > .inoutContListItem{
 	display: grid;
     grid-template-columns: 20% 20% 20% 10% 30%;
     border-left: 1px solid #BDBDBD;
 	border-bottom: 1px solid #BDBDBD;
 }
 
-.rightDetailBodyInoutContents > .rightDetailInoutCont > .rightDetailInoutTableList > .emptyInData{
+.rightDetailBodyInoutContents > #rightDetailInoutCont > .rightDetailInoutTableList > .emptyInData{
 	text-align: center;
 	border-left: 1px solid #BDBDBD;
 	border-right: 1px solid #BDBDBD;
 	border-bottom: 1px solid #BDBDBD;
 }
 
-.rightDetailBodyInoutContents > .rightDetailInoutCont > .rightDetailInoutTableList > .inoutContListItem > div{
+.rightDetailBodyInoutContents > #rightDetailInoutCont > .rightDetailInoutTableList > .inoutContListItem > div{
 	border-right: 1px solid #BDBDBD;
 	padding-left: 5px;
 	padding-right: 5px;
 }
 
-.rightDetailBodyInoutContents > .rightDetailInoutCont > .rightDetailInoutTableList > .inContListTotal,
-.rightDetailBodyInoutContents > .rightDetailInoutCont > .rightDetailInoutTableList > .outContListTotal{
+.rightDetailBodyInoutContents > #rightDetailInoutCont > .rightDetailInoutTableList > .inContListTotal,
+.rightDetailBodyInoutContents > #rightDetailInoutCont > .rightDetailInoutTableList > .outContListTotal{
 	display: flex;
     align-items: center;
     border-left: 1px solid #BDBDBD;
@@ -283,15 +256,15 @@
 	border-bottom: 1px solid #BDBDBD;
 }
 
-.rightDetailBodyInoutContents > .rightDetailInoutCont > .rightDetailInoutTableList > .inContListTotal > div:first-child,
-.rightDetailBodyInoutContents > .rightDetailInoutCont > .rightDetailInoutTableList > .outContListTotal > div:first-child{
+.rightDetailBodyInoutContents > #rightDetailInoutCont > .rightDetailInoutTableList > .inContListTotal > div:first-child,
+.rightDetailBodyInoutContents > #rightDetailInoutCont > .rightDetailInoutTableList > .outContListTotal > div:first-child{
 	width: 10%;
     text-align: center;
     border-right: 1px solid #BDBDBD;
 }
 
-.rightDetailBodyInoutContents > .rightDetailInoutCont > .rightDetailInoutTableList > .inContListTotal > div:last-child,
-.rightDetailBodyInoutContents > .rightDetailInoutCont > .rightDetailInoutTableList > .outContListTotal > div:last-child{
+.rightDetailBodyInoutContents > #rightDetailInoutCont > .rightDetailInoutTableList > .inContListTotal > div:last-child,
+.rightDetailBodyInoutContents > #rightDetailInoutCont > .rightDetailInoutTableList > .outContListTotal > div:last-child{
 	width: 100%;
     padding-right: 10px;
 	text-align: right;
@@ -327,27 +300,24 @@
 /* 영업기회 매입매출내역 총 계 끝 */
 
 /* 영업기회 우측 상세 매입매출내역 총 계 시작 */
-
-.rightDetailBodyInoutContents > .rightDetailInoutTotalContents > div:nth-child(1),
-.rightDetailBodyInoutContents > .rightDetailInoutTotalContents > div:nth-child(3){
+/* .rightDetailBodyInoutContents > .rightDetailInoutTotalContents > div{
 	margin-top: 10px;
 	padding: 5px;
     border-top: 1px solid #BDBDBD;
     border-left: 1px solid #BDBDBD;
     border-right: 1px solid #BDBDBD;
-}
+} */
 
-.rightDetailBodyInoutContents > .rightDetailInoutTotalContents > div:nth-child(2),
-.rightDetailBodyInoutContents > .rightDetailInoutTotalContents > div:nth-child(4){
+.rightDetailBodyInoutContents > .rightDetailInoutTotalContents > div{
 	display: grid;
     grid-template-columns: 10% 15% 10% 15% 10% 15% 10% 15%;
+	margin-top: 10px;
     border-top: 1px solid #BDBDBD;
     border-left: 1px solid #BDBDBD;
     border-bottom: 1px solid #BDBDBD;
 }
 
-.rightDetailBodyInoutContents > .rightDetailInoutTotalContents > div:nth-child(2) > div,
-.rightDetailBodyInoutContents > .rightDetailInoutTotalContents > div:nth-child(4) > div{
+.rightDetailBodyInoutContents > .rightDetailInoutTotalContents > div > div{
     border-right: 1px solid #BDBDBD;
 	padding-left: 5px;
 	padding-right: 5px;
@@ -546,6 +516,7 @@
 	padding-top: 10px;
 	padding-bottom: 10px;
 	padding-left: 5px;
+	position: sticky;
 }
 
 .rightDetailBodyDefaultInfo > .defaultFormLine > .defaultFormContent > .detailRadioBox>input[type="radio"][data-type="tab"] {

@@ -1,8 +1,9 @@
-$(document).ready(() => {
-    init();
-    
-    setTimeout(() => {
-        const setStore = new StoreSet();
-        setStore.list();
-    }, 1000);
+document.addEventListener("DOMContentLoaded", () => {
+	callerFun();
 });
+
+async function callerFun(){
+	await promiseInit();
+	const setStore = new StoreSet();
+    setStore.list();
+}
