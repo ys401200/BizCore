@@ -99,6 +99,12 @@ public class BusinessController extends Ctrl {
         return "/store/list";
     } // End of /business/**
 
+    @RequestMapping(value = { "/reference", "/reference/{no:\\d+}" })
+    public String reference(HttpServletRequest request) {
+        doIt(request);
+        return "/reference/list";
+    } // End of /business/**
+
     @RequestMapping("/filebox")
     public String filebox(HttpServletRequest request) {
         doIt(request);

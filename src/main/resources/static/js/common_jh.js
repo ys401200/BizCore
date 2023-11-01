@@ -13,15 +13,9 @@ class NoticeSet {
 				result = JSON.parse(result);
 				storage.noticeList = result;
 
-				if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined) {
-					window.setTimeout(this.drawNoticeList, 600);
-					window.setTimeout(CommonDatas.searchListSet("noticeList"), 600);
-					$('.theme-loader').delay(1000).fadeOut("slow");
-				} else {
-					window.setTimeout(this.drawNoticeList, 200);
-					window.setTimeout(CommonDatas.searchListSet("noticeList"), 200);
-					$('.theme-loader').delay(1000).fadeOut("slow");
-				}
+				this.drawNoticeList();
+				CommonDatas.searchListSet("noticeList");
+				$('.theme-loader').fadeOut("slow");
 			}
 		}).catch((error) => {
 			msg.set("공지사항 메인 리스트 에러입니다.\n" + error);
@@ -423,15 +417,11 @@ class SalesSet{
 				result = JSON.parse(result);
 				storage.salesList = result;
 
-				if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.sopp === undefined) {
-					window.setTimeout(this.drawSalesList, 1000);
-					window.setTimeout(CommonDatas.searchListSet("salesList"), 1000);
-				} else {
-					window.setTimeout(this.drawSalesList, 200);
-					window.setTimeout(CommonDatas.searchListSet("salesList"), 200);
-				}
-
-				$('.theme-loader').delay(1000).fadeOut("slow");
+				setTimeout(() => {
+					this.drawSalesList();
+					CommonDatas.searchListSet("salesList");
+					$('.theme-loader').fadeOut("slow");
+				}, 500);
 			}
 		}).catch((error) => {
 			msg.set("영업활동관리 리스트 에러입니다.\n" + error);
@@ -1204,15 +1194,9 @@ class SoppSet{
 				storage.soppList = result;
 				CommonDatas.setCategories(result);
 
-				if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.sopp === undefined) {
-					window.setTimeout(this.drawSoppList, 1000);
-					window.setTimeout(CommonDatas.searchListSet("soppList"), 1000);
-				} else {
-					window.setTimeout(this.drawSoppList, 200);
-					window.setTimeout(CommonDatas.searchListSet("soppList"), 200);
-				}
-
-				$('.theme-loader').delay(1000).fadeOut("slow");
+				this.drawSoppList();
+				CommonDatas.searchListSet("soppList");
+				$('.theme-loader').fadeOut("slow");
 			}
 		}).catch((error) => {
 			msg.set("영업기회 리스트 에러입니다.\n" + error);
@@ -1802,16 +1786,11 @@ class SoppSet{
 				"title": "파일 선택(*)",
 				"elementId": "soppFileUpload",
 				"type": "file",
-				"col": 4,
+				"multiple": true,
 				"disabled": false,
+				"onChange": "CommonDatas.Temps.soppSet.fileSelectChange(this);",
+				"col": 4,
 			},
-			{
-				"title": "내용",
-				"elementId": "soppFileUploadDesc",
-				"type": "textarea",
-				"col": 4,
-				"disabled": false,
-			}
 		];
 	
 		html = CommonDatas.detailViewForm(dataArray, "modal");
@@ -1830,6 +1809,36 @@ class SoppSet{
 			ckeditor.config.readOnly = false;
 			window.setTimeout(setEditor, 100);
 		}, 100);
+	}
+
+	//파일 등록 파일 선택 시 실행되는 함수
+	fileSelectChange(thisEle){
+		let html = "";
+		let defaultFormContainer = thisEle.parentElement.parentElement.parentElement;
+		let soppFileUpload = document.getElementById("soppFileUpload");
+		let files = soppFileUpload.files;
+		let fileArrays = Array.prototype.slice.call(files);
+		let createDiv = document.createElement("div");
+		
+		html += "<div class=\"filePreviewHeader\">";
+		html += "<div>파일명</div>";
+		html += "<div>내용</div>";
+		html += "</div>";
+
+		html += "<div class=\"filePreviewBody\">";
+
+		for(let i = 0; i < fileArrays.length; i++){
+			let item = fileArrays[i];
+
+			html += "<div>" + item.name + "</div>";
+			html += "<div><input type=\"text\" class=\"fileUploadDesc\"/></div>";
+		}
+
+		html += "</div>";
+
+		createDiv.innerHTML = html;
+		createDiv.className = "filePreview";
+		defaultFormContainer.after(createDiv);
 	}
 
 	//영업기회 형식이 유지보수일 때 유지보수 일자 변경 함수
@@ -2434,7 +2443,6 @@ class SoppSet{
 			for (let i = 0; i < jsonData.length; i++) {
 				let item = jsonData[i];
 
-				console.log("기술지원");
 				disDate = CommonDatas.dateDis(new Date(item.regDatetime).getTime(), new Date(item.modDatetime).getTime());
 				setDate = CommonDatas.dateFnc(disDate, "yy.mm.dd");
 
@@ -4205,42 +4213,57 @@ class Sopp{
 
 	//영업기회 파일 등록
 	soppFileInsert(){
-		let formData = new FormData();
 		let soppFileUpload = document.getElementById("soppFileUpload");
-		let soppFileUploadDesc = CKEDITOR.instances["soppFileUploadDesc"].getData().replaceAll("\n", "");
 		let files = soppFileUpload.files;
 		let fileArrays = Array.prototype.slice.call(files);
-
+		
 		if(fileArrays.length < 1){
 			msg.set("파일을 선택해주세요.");
 			return false;
 		}else{
-			formData.append("file", fileArrays[0]);
-			formData.append("fileDesc", soppFileUploadDesc);
-			formData.append("fileExtention", fileArrays[0].type);
-			formData.append("soppNo", storage.formList.soppNo);
-			formData.append("userNo", storage.my);
-	
-			axios.post("/api/sopp/soppFileInsert", formData).then((response) => {
-				if (response.data.result === "ok") {
+			let fileUploadDesc = document.getElementsByClassName("fileUploadDesc");
+			let successFlag = false;
+			
+			for(let i = 0; i < fileArrays.length; i++){
+				let formData = new FormData();
+				let item = fileArrays[i];
+
+				formData.append("file", item);
+				formData.append("fileDesc", fileUploadDesc[i].value);
+				formData.append("fileExtention", item.type);
+				formData.append("soppNo", storage.formList.soppNo);
+				formData.append("userNo", storage.my);
+		
+				axios.post("/api/sopp/soppFileInsert", formData).then((response) => {
+					if (response.data.result !== "ok") {
+						msg.set("등록 중 에러가 발생하였습니다.");
+						return false;
+					}
+				}).catch((error) => {
+					msg.set("등록 도중 에러가 발생하였습니다.\n" + error);
+					console.log(error);
+					return false;
+				});
+
+				if(i == fileArrays.length - 1){
+					successFlag = true
+				}
+			}
+
+			if(successFlag){
+				let soppSet = new SoppSet();
+
+				setTimeout(() => {
 					msg.set("등록되었습니다.");
-					let soppSet = new SoppSet();
 					modal.hide();
 					soppSet.soppDetailFileListSet(storage.formList.soppNo);
-	
-					setTimeout(() => {
-						soppSet.drawSoppFileUpload();
-						soppSet.detailRadioChange();
-					}, 1200);
-				} else {
-					msg.set("등록 중 에러가 발생하였습니다.");
-					return false;
-				}
-			}).catch((error) => {
-				msg.set("등록 도중 에러가 발생하였습니다.\n" + error);
-				console.log(error);
-				return false;
-			});
+				}, 700);
+
+				setTimeout(() => {
+					soppSet.drawSoppFileUpload();
+					soppSet.detailRadioChange();
+				}, 1500);
+			}
 		}
 	}
 
@@ -4712,18 +4735,9 @@ class ContSet{
 				
 				CommonDatas.setCategories(result);
 
-				CommonDatas.Temps.contSet.drawContList();
+				this.drawContList();
 				CommonDatas.searchListSet("contList");
-				$('.theme-loader').delay(1000).fadeOut("slow");
-
-				// if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.sopp === undefined) {
-				// 	window.setTimeout(this.drawContList, 1000);
-				// 	window.setTimeout(CommonDatas.searchListSet("contList"), 1000);
-				// } else {
-				// 	window.setTimeout(this.drawContList, 200);
-				// 	window.setTimeout(CommonDatas.searchListSet("contList"), 200);
-				// }
-
+				$('.theme-loader').fadeOut("slow");
 			}
 		}).catch((error) => {
 			msg.set("계약 리스트 에러입니다.\n" + error);
@@ -5720,16 +5734,11 @@ class ContSet{
 				"title": "파일 선택(*)",
 				"elementId": "contFileUpload",
 				"type": "file",
-				"col": 4,
+				"multiple": true,
 				"disabled": false,
+				"onChange": "CommonDatas.Temps.contSet.fileSelectChange(this);",
+				"col": 4,
 			},
-			{
-				"title": "내용",
-				"elementId": "contFileUploadDesc",
-				"type": "textarea",
-				"col": 4,
-				"disabled": false,
-			}
 		];
 	
 		html = CommonDatas.detailViewForm(dataArray, "modal");
@@ -5748,6 +5757,36 @@ class ContSet{
 			ckeditor.config.readOnly = false;
 			window.setTimeout(setEditor, 100);
 		}, 100);
+	}
+
+	//파일 등록 파일 선택 시 실행되는 함수
+	fileSelectChange(thisEle){
+		let html = "";
+		let defaultFormContainer = thisEle.parentElement.parentElement.parentElement;
+		let contFileUpload = document.getElementById("contFileUpload");
+		let files = contFileUpload.files;
+		let fileArrays = Array.prototype.slice.call(files);
+		let createDiv = document.createElement("div");
+		
+		html += "<div class=\"filePreviewHeader\">";
+		html += "<div>파일명</div>";
+		html += "<div>내용</div>";
+		html += "</div>";
+
+		html += "<div class=\"filePreviewBody\">";
+
+		for(let i = 0; i < fileArrays.length; i++){
+			let item = fileArrays[i];
+
+			html += "<div>" + item.name + "</div>";
+			html += "<div><input type=\"text\" class=\"fileUploadDesc\"/></div>";
+		}
+
+		html += "</div>";
+
+		createDiv.innerHTML = html;
+		createDiv.className = "filePreview";
+		defaultFormContainer.after(createDiv);
 	}
 
 	//계약 탭 기술지원리스트 출력 함수
@@ -7342,42 +7381,57 @@ class Cont{
 
 	//계약 파일 등록
 	contFileInsert(){
-		let formData = new FormData();
-		let soppFileUpload = document.getElementById("contFileUpload");
-		let soppFileUploadDesc = CKEDITOR.instances["contFileUploadDesc"].getData().replaceAll("\n", "");
-		let files = soppFileUpload.files;
+		let contFileUpload = document.getElementById("contFileUpload");
+		let files = contFileUpload.files;
 		let fileArrays = Array.prototype.slice.call(files);
-
+		
 		if(fileArrays.length < 1){
 			msg.set("파일을 선택해주세요.");
 			return false;
 		}else{
-			formData.append("file", fileArrays[0]);
-			formData.append("fileDesc", soppFileUploadDesc);
-			formData.append("fileExtention", fileArrays[0].type);
-			formData.append("contNo", storage.formList.contNo);
-			formData.append("userNo", storage.my);
-	
-			axios.post("/api/cont/contFileInsert", formData).then((response) => {
-				if (response.data.result === "ok") {
+			let fileUploadDesc = document.getElementsByClassName("fileUploadDesc");
+			let successFlag = false;
+			
+			for(let i = 0; i < fileArrays.length; i++){
+				let formData = new FormData();
+				let item = fileArrays[i];
+
+				formData.append("file", item);
+				formData.append("fileDesc", fileUploadDesc[i].value);
+				formData.append("fileExtention", item.type);
+				formData.append("contNo", storage.formList.contNo);
+				formData.append("userNo", storage.my);
+		
+				axios.post("/api/cont/contFileInsert", formData).then((response) => {
+					if (response.data.result !== "ok") {
+						msg.set("등록 중 에러가 발생하였습니다.");
+						return false;
+					}
+				}).catch((error) => {
+					msg.set("등록 도중 에러가 발생하였습니다.\n" + error);
+					console.log(error);
+					return false;
+				});
+
+				if(i == fileArrays.length - 1){
+					successFlag = true
+				}
+			}
+
+			if(successFlag){
+				let contSet = new ContSet();
+
+				setTimeout(() => {
 					msg.set("등록되었습니다.");
-					let contSet = new ContSet();
 					modal.hide();
 					contSet.contDetailFileListSet(storage.formList.contNo);
-	
-					setTimeout(() => {
-						contSet.drawContFileUpload();
-						contSet.detailRadioChange();
-					}, 1200);
-				} else {
-					msg.set("등록 중 에러가 발생하였습니다.");
-					return false;
-				}
-			}).catch((error) => {
-				msg.set("등록 도중 에러가 발생하였습니다.\n" + error);
-				console.log(error);
-				return false;
-			});
+				}, 700);
+
+				setTimeout(() => {
+					contSet.drawContFileUpload();
+					contSet.detailRadioChange();
+				}, 1500);
+			}
 		}
 	}
 
@@ -7840,15 +7894,9 @@ class ScheduleSet{
 					}
 				}
 
-				if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.sopp === undefined) {
-					window.setTimeout(this.drawCalendarList, 1000);
-					window.setTimeout(CommonDatas.searchListSet("calendarList"), 1000);
-				} else {
-					window.setTimeout(this.drawCalendarList, 200);
-					window.setTimeout(CommonDatas.searchListSet("calendarList"), 200);
-				}
-
-				$('.theme-loader').delay(1000).fadeOut("slow");
+				this.drawCalendarList();
+				CommonDatas.searchListSet("calendarList");
+				$('.theme-loader').fadeOut("slow");
 			}
 		}).catch((error) => {
 			msg.set("달력 리스트 에러입니다.\n" + error);
@@ -7880,16 +7928,6 @@ class ScheduleSet{
 				let salesSet = new SalesSet();
 				salesSet.salesInsertForm();
 				CommonDatas.Temps.scheduleSet.addModalFirstRadio();
-				// let title = prompt('Event Title:');
-				// if (title) {
-				// 	calendar.addEvent({
-				// 		title: title,
-				// 		start: arg.start,
-				// 		end: arg.end,
-				// 		allDay: arg.allDay
-				// 	})
-				// }
-				// calendar.unselect()
 			},
 			eventClick: function(arg) {
 				if(arg.event._def.extendedProps.schedType == 10165){
@@ -7931,16 +7969,10 @@ class ScheduleSet{
 				result = cipher.decAes(response.data.data);
 				result = JSON.parse(result);
 				storage.scheduleList = result;
-
-				if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.sopp === undefined) {
-					window.setTimeout(this.drawScheduleList, 1000);
-					window.setTimeout(CommonDatas.searchListSet("scheduleList"), 1000);
-				} else {
-					window.setTimeout(this.drawScheduleList, 200);
-					window.setTimeout(CommonDatas.searchListSet("scheduleList"), 200);
-				}
-
-				$('.theme-loader').delay(1000).fadeOut("slow");
+				
+				this.drawScheduleList();
+				CommonDatas.searchListSet("scheduleList");
+				$('.theme-loader').fadeOut("slow");
 			}
 		}).catch((error) => {
 			msg.set("일정조회 리스트 에러입니다.\n" + error);
@@ -9403,12 +9435,8 @@ class WorkReportSet{
 					}else{
 						storage.nextWorkReport = result;
 					}
-					
-					if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.sopp === undefined) {
-						window.setTimeout(this.drawWorkReport(setType), 1000);
-					} else {
-						window.setTimeout(this.drawWorkReport(setType), 200);
-					}
+
+					this.drawWorkReport(setType);
 				}
 			}).catch((error) => {
 				msg.set("개인업무일지 에러입니다.\n" + error);
@@ -9921,11 +9949,7 @@ class WorkJournalSet{
 				result = JSON.parse(result);
 				storage.workJournalUsers = result;
 
-				if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.sopp === undefined) {
-					window.setTimeout(this.drawWorkJournalUsers(), 1000);
-				} else {
-					window.setTimeout(this.drawWorkJournalUsers(), 200);
-				}
+				this.drawWorkJournalUsers()
 			}
 		});
 	}
@@ -9972,7 +9996,6 @@ class WorkJournalSet{
 							let result = cipher.decAes(res.data.data);
 							result = JSON.parse(result);
 							result = workReportSet.setWorkLongDate(result);
-							console.log();
 
 							if(result[0] !== undefined){
 								if(type === "last"){
@@ -10185,7 +10208,6 @@ class WorkJournalSet{
 
 				for(let j = 0; j < weekItem.length; j++){
 					if(j != weekItem.length - 1){
-						console.log(weekItem[j].nextSibling);
 						weekItem[j].nextSibling.style.borderBottom = 0;
 					}
 				}
@@ -11813,15 +11835,11 @@ class TechSet{
 				result = JSON.parse(result);
 				storage.techList = result;
 
-				if (storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.sopp === undefined) {
-					window.setTimeout(this.drawTechList, 1000);
-					window.setTimeout(() => {CommonDatas.searchListSet("techList");}, 1000);
-				} else {
-					window.setTimeout(this.drawTechList, 200);
-					window.setTimeout(CommonDatas.searchListSet("techList"), 200);
-				}
-
-				$('.theme-loader').delay(1000).fadeOut("slow");
+				setTimeout(() => {
+					this.drawTechList();
+					CommonDatas.searchListSet("techList");
+					$('.theme-loader').fadeOut("slow");
+				}, 500);
 			}
 		}).catch((error) => {
 			msg.set("기술지원관리 리스트 에러입니다.\n" + error);
@@ -12729,8 +12747,8 @@ class StoreSet{
 				setTimeout(() => {
 					this.drawStoreList();
 					CommonDatas.searchListSet("storeList");
-					$('.theme-loader').delay(1000).fadeOut("slow");
-				}, 1000)
+					$('.theme-loader').fadeOut("slow");
+				}, 1200);
 			}
 		}).catch((error) => {
 			msg.set("재고조회 리스트 에러입니다.\n" + error);
@@ -13388,6 +13406,697 @@ class Store{
 	}
 }
 
+//자료실 시작
+class ReferenceSet{
+	constructor() {
+		CommonDatas.Temps.referenceSet = this;
+	}
+
+	//자료실 리스트 저장 함수
+	list() {
+		axios.get("/api/reference").then((response) => {
+			if (response.data.result === "ok") {
+				let result;
+				result = cipher.decAes(response.data.data);
+				result = JSON.parse(result);
+				storage.referenceList = result;
+
+				this.drawReferenceList();
+				CommonDatas.searchListSet("referenceList");
+				$('.theme-loader').fadeOut("slow");
+			}
+		}).catch((error) => {
+			msg.set("자료실 리스트 에러입니다.\n" + error);
+			console.log(error);
+		})
+	}
+
+	//자료실 리스트 출력 함수
+	drawReferenceList() {
+		let container, result, jsonData, containerTitle, job, header = [], data = [], ids = [], disDate, setDate, str, fnc = [], pageContainer, hideArr, showArr, releaseDate, orderDate;
+
+		if (storage.referenceList === undefined) {
+			msg.set("등록된 자료실 데이터가 없습니다");
+		}
+		else {
+			if (storage.searchDatas === undefined) {
+				jsonData = storage.referenceList;
+			} else {
+				jsonData = storage.searchDatas;
+			}
+		}
+
+		result = CommonDatas.paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+		containerTitle = document.getElementById("containerTitle");
+		pageContainer = document.getElementsByClassName("pageContainer")[0];
+		container = document.getElementsByClassName("gridList")[0];
+		hideArr = ["detailBackBtn", "crudUpdateBtn", "crudDeleteBtn", "contractReqBtn"];
+		showArr = [
+			{ element: "gridList", display: "block" },
+			{ element: "pageContainer", display: "flex" },
+			{ element: "searchContainer", display: "block" },
+			{ element: "listRange", display: "flex" },
+			{ element: "listSearchInput", display: "flex" },
+			{ element: "crudBtns", display: "flex" },
+			{ element: "crudAddBtn", display: "flex" },
+		];
+
+		header = [
+			{
+				"title": "등록일",
+				"align": "center",
+			},
+			{
+				"title": "제목",
+				"align": "center",
+			},
+			{
+				"title": "내용",
+				"align": "center",
+			},
+			{
+				"title": "작성자",
+				"align": "center",
+			},
+		];
+
+		if (jsonData === "" || jsonData.length == 0) {
+			str = [
+				{
+					"setData": undefined,
+					"align": "center",
+					"col": 4,
+				},
+			];
+
+			data.push(str);
+		} else {
+			for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+				disDate = CommonDatas.dateDis(new Date(jsonData[i].regDatetime).getTime());
+				setDate = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+
+				str = [
+					{
+						"setData": setDate,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].bf_Title)) ? "" : jsonData[i].bf_Title,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].bf_Contents)) ? "" : jsonData[i].bf_Contents,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].userNo)) ? "" : storage.user[jsonData[i].userNo].userName,
+						"align": "center",
+					},
+				];
+
+				fnc.push("CommonDatas.Temps.referenceSet.referenceDetailView(this)");
+				ids.push(jsonData[i].bf_pk);
+				data.push(str);
+			}
+
+			let pageNation = CommonDatas.createPaging(pageContainer, result[3], "CommonDatas.pageMove", "CommonDatas.Temps.referenceSet.drawReferenceList", result[0]);
+			pageContainer.innerHTML = pageNation;
+		}
+
+		CommonDatas.createGrid(container, header, data, ids, job, fnc);
+		CommonDatas.setViewContents(hideArr, showArr);
+		containerTitle.innerText = "자료실";
+		document.getElementById("multiSearchBtn").setAttribute("onclick", "CommonDatas.Temps.referenceSet.searchSubmit();");
+	}
+
+	//자료실 상세보기
+	referenceDetailView(e) {
+		let thisEle = e;
+		
+		CommonDatas.Temps.referenceSet.referenceDetailFileView(thisEle.dataset.id);
+
+		axios.get("/api/reference/" + thisEle.dataset.id).then((response) => {
+			if (response.data.result === "ok") {
+				let result;
+				result = cipher.decAes(response.data.data);
+				result = JSON.parse(result);
+				let reference = new Reference(result);
+				reference.detail();
+
+				localStorage.setItem("loadSetPage", window.location.pathname);
+			}
+		}).catch((error) => {
+			msg.set("상세보기 에러 입니다.\n" + error);
+			console.log(error);
+		});
+	}
+
+	referenceDetailFileView(id){
+		axios.get("/api/reference/noticeFileData/" + id).then((response) => {
+			if (response.data.result === "ok") {
+				let result;
+				result = cipher.decAes(response.data.data);
+				result = JSON.parse(result);
+				storage.noticeFileList = result;
+			}
+		}).catch((error) => {
+			msg.set("파일 데이터 에러 입니다.\n" + error);
+			console.log(error);
+		});
+	}
+
+	//자료실 등록 폼
+	referenceInsertForm(){
+		let html, dataArray;
+	
+		dataArray = [
+			{
+				"title": "제목(*)",
+				"elementId": "bf_Title",
+				"col": 4,
+				"disabled": false,
+			},
+			{
+				"title": "내용",
+				"elementId": "bf_Contents",
+				"type": "textarea",
+				"col": 4,
+				"disabled": false,
+			}
+		];
+	
+		html = CommonDatas.detailViewForm(dataArray, "modal");
+	
+		modal.show();
+		modal.content.style.minWidth = "70vw";
+		modal.content.style.maxWidth = "70vw";
+		modal.headTitle.innerText = "자료실등록";
+		modal.body.innerHTML = "<div class=\"defaultFormContainer\">" + html + "</div>";
+		modal.confirm.innerText = "등록";
+		modal.close.innerText = "취소";
+		modal.confirm.setAttribute("onclick", "const reference = new Reference(); CommonDatas.Temps.reference.insert();");
+		modal.close.setAttribute("onclick", "modal.hide();");
+
+		storage.formList = {
+			"bf_pk": 0,
+			"bf_Title": "",
+			"bf_Contents": "",
+			"userNo": storage.my,
+			"regDatetime": "",
+			"bf_delflag": "",
+		};
+		
+		setTimeout(() => {
+			ckeditor.config.readOnly = false;
+			window.setTimeout(setEditor, 100);
+		}, 100);
+	}
+
+	//파일 등록 파일 선택 시 실행되는 함수
+	fileSelectChange(thisEle){
+		let html = "";
+		let defaultFormContainer = thisEle.parentElement.parentElement.parentElement;
+		let referenceFileUpload = document.getElementById("referenceFileUpload");
+		let files = referenceFileUpload.files;
+		let fileArrays = Array.prototype.slice.call(files);
+		let createDiv = document.createElement("div");
+		
+		html += "<div class=\"filePreviewHeader\">";
+		html += "<div>파일명</div>";
+		html += "<div>내용</div>";
+		html += "</div>";
+
+		html += "<div class=\"filePreviewBody\">";
+
+		for(let i = 0; i < fileArrays.length; i++){
+			let item = fileArrays[i];
+
+			html += "<div>" + item.name + "</div>";
+			html += "<div><input type=\"text\" class=\"fileUploadDesc\"/></div>";
+		}
+
+		html += "</div>";
+
+		createDiv.innerHTML = html;
+		createDiv.className = "filePreview";
+		defaultFormContainer.after(createDiv);
+	}
+
+	//자료실 파일 등록 폼
+	referenceFileInsertForm(){
+		let html, dataArray;
+	
+		dataArray = [
+			{
+				"title": "파일 선택(*)",
+				"elementId": "referenceFileUpload",
+				"type": "file",
+				"multiple": true,
+				"disabled": false,
+				"onChange": "CommonDatas.Temps.referenceSet.fileSelectChange(this);",
+				"col": 4,
+			},
+		];
+	
+		html = CommonDatas.detailViewForm(dataArray, "modal");
+	
+		modal.show();
+		modal.content.style.minWidth = "70vw";
+		modal.content.style.maxWidth = "70vw";
+		modal.headTitle.innerText = "파일 등록";
+		modal.body.innerHTML = "<div class=\"defaultFormContainer\">" + html + "</div>";
+		modal.confirm.innerText = "등록";
+		modal.close.innerText = "취소";
+		modal.confirm.setAttribute("onclick", "let reference = new Reference(); reference.referenceFileInsert();");
+		modal.close.setAttribute("onclick", "modal.hide();");
+		
+		setTimeout(() => {
+			ckeditor.config.readOnly = false;
+			window.setTimeout(setEditor, 100);
+		}, 100);
+	}
+
+	//자료실 상세보기 파일첨부 페이지 출력 함수
+	drawReferenceFileUpload() {
+		let container, bodyContent, referenceContainer, contentHeaders, defaultFormContainer, jsonData, createDiv, job, header = [], data = [], ids = [], disDate, setDate, str, fnc = [], createInputDiv, inputHtml = "", fileName, calHeight = 0;
+
+		if(storage.noticeFileList !== undefined){
+			jsonData = storage.noticeFileList;
+		}else{
+			jsonData = "";
+		}
+
+		if(document.getElementById("referenceFileUpload") !== null){
+			document.getElementById("referenceFileUpload").remove();
+		}
+		
+		referenceContainer = document.getElementsByClassName("referenceContainer")[0];
+		createDiv = document.createElement("div");
+		createDiv.id = "referenceFileUpload";
+		referenceContainer.append(createDiv);
+		container = document.getElementById("referenceFileUpload");
+
+		createInputDiv = document.createElement("div");
+		createInputDiv.className = "fileUploadButtons";
+		inputHtml += "<button type=\"button\" onclick=\"CommonDatas.Temps.referenceSet.referenceFileInsertForm();\">파일등록</button>";
+		inputHtml += "<button type=\"button\" onclick=\"let reference = new Reference('" + jsonData + "'); reference.referenceFileDelete();\">선택삭제</button>";
+		createInputDiv.innerHTML = inputHtml;
+
+		header = [
+			{
+				"title": "선택",
+				"align": "center",
+			},
+			{
+				"title": "일자",
+				"align": "center",
+			},
+			{
+				"title": "파일명",
+				"align": "center",
+			},
+			{
+				"title": "파일설명",
+				"align": "center",
+			},
+			{
+				"title": "담당자",
+				"align": "center",
+			},
+		];
+
+		if (jsonData === "" || jsonData.length == 0) {
+			str = [
+				{
+					"setData": undefined,
+					"align": "center",
+					"col": 5,
+				},
+			];
+
+			data.push(str);
+		} else {
+			for (let i = 0; i < jsonData.length; i++) {
+				let item = jsonData[i];
+
+				disDate = CommonDatas.dateDis(new Date(item.regDatetime).getTime(), new Date(item.modDatetime).getTime());
+				setDate = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+				fileName = (CommonDatas.emptyValuesCheck(item.fileName)) ? "" : item.fileName;
+
+				str = [
+					{
+						"setData": "<input type=\"checkbox\" class=\"referenceFileCheck\" data-id=\"" + item.fileId + "\">",
+						"align": "center",
+					},
+					{
+						"setData": setDate,
+						"align": "center",
+					},
+					{
+						"setData": "<a href=\"#\" data-id=\"" + item.fileId + "\" onclick=\"let reference = new Reference(); reference.referenceDownloadFile(this);\">" + fileName + "</a>",
+						"align": "left",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.fileDesc)) ? "" : item.fileDesc,
+						"align": "left",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.userNo)) ? "" : storage.user[item.userNo].userName,
+						"align": "center",
+					},
+				];
+
+				fnc.push("");
+				ids.push(jsonData[i].fileId);
+				data.push(str);
+			}
+		}
+
+		bodyContent = document.getElementById("bodyContent");
+		contentHeaders = document.getElementsByClassName("contentHeaders")[0];
+		defaultFormContainer = document.getElementsByClassName("defaultFormContainer")[0];
+		calHeight = bodyContent.clientHeight - (contentHeaders.offsetHeight + defaultFormContainer.offsetHeight) - 50;
+		container.style.height = calHeight + "px";
+		CommonDatas.createGrid(container, header, data, ids, job, fnc, "referenceFileUpload");
+		container.prepend(createInputDiv);
+	}
+
+}
+
+//자료실 crud
+class Reference {
+	constructor(getData) {
+		CommonDatas.Temps.reference = this;
+		
+		if (getData !== undefined) {
+			this.getData = getData;
+			this.bf_pk = getData.bf_pk;
+			this.bf_Title = getData.bf_Title;
+			this.bf_Contents = getData.bf_Contents;
+			this.userNo = getData.userNo;
+			this.regDatetime = getData.regDatetime;
+			this.bf_delflag = getData.bf_delflag;
+		} else {
+			this.bf_pk = 0;
+			this.bf_Title = "";
+			this.bf_Contents = "";
+			this.userNo = 0;
+			this.regDatetime = "";
+			this.bf_delflag = "";
+		}
+	}
+
+	//자료실 상세보기
+	detail() {
+		let html = "";
+		let regDatetime, datas, dataArray, notIdArray;
+
+		CommonDatas.detailSetFormList(this.getData);
+
+		let gridList = document.getElementsByClassName("gridList")[0];
+		let containerTitle = document.getElementById("containerTitle");
+		let detailBackBtn = document.getElementsByClassName("detailBackBtn")[0];
+		let crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
+		let crudDeleteBtn = document.getElementsByClassName("crudDeleteBtn")[0];
+
+		regDatetime = CommonDatas.dateDis(new Date(this.regDatetime).getTime());
+		regDatetime = CommonDatas.dateFnc(regDatetime);
+
+		notIdArray = ["userNo", "regDatetime"];
+		datas = ["userNo"];
+
+		dataArray = [
+			{
+				"title": "작성자(*)",
+				"elementId": "userNo",
+				"complete": "user",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"value": (CommonDatas.emptyValuesCheck(this.userNo)) ? "" : storage.user[this.userNo].userName,
+				"col": 2,
+			},
+			{
+				"title": "등록일",
+				"elementId": "regDatetime",
+				"type": "date",
+				"value": regDatetime,
+				"col": 2,
+			},
+			{
+				"title": "제목(*)",
+				"elementId": "bf_Title",
+				"col": 4,
+				"value": (CommonDatas.emptyValuesCheck(this.bf_Title)) ? "" : this.bf_Title,
+			},
+			{
+				"title": "내용",
+				"elementId": "bf_Contents",
+				"type": "textarea",
+				"col": 4,
+				"value": (CommonDatas.emptyValuesCheck(this.bf_Contents)) ? "" : this.bf_Contents,
+			},
+		];
+
+		html = CommonDatas.detailViewForm(dataArray);
+		let createGrid = document.createElement("div");
+		createGrid.className = "defaultFormContainer";
+		createGrid.innerHTML = html;
+		gridList.after(createGrid);
+		containerTitle.innerText = (CommonDatas.emptyValuesCheck(this.bf_Title)) ? "" : this.bf_Title;
+		let hideArr = ["gridList", "listRange", "crudAddBtn", "listSearchInput", "searchContainer", "pageContainer"];
+		let showArr = ["defaultFormContainer"];
+		CommonDatas.setViewContents(hideArr, showArr);
+	
+		if(storage.my == this.getData.userNo){
+			crudUpdateBtn.setAttribute("onclick", "CommonDatas.enableDisabled(this, \"CommonDatas.Temps.reference.update();\", \"" + notIdArray + "\");")
+			crudDeleteBtn.setAttribute("onclick", "CommonDatas.Temps.reference.delete();");
+			crudUpdateBtn.style.display = "flex";
+			crudDeleteBtn.style.display = "flex";
+		}else{
+			crudUpdateBtn.style.display = "none";
+			crudDeleteBtn.style.display = "none";
+		}
+	
+		detailBackBtn.style.display = "flex";
+		CommonDatas.detailTrueDatas(datas);
+
+		setTimeout(() => {
+			ckeditor.config.readOnly = true;
+			window.setTimeout(setEditor, 100);
+		}, 200);
+		
+		setTimeout(() => {
+			let referenceSet = new ReferenceSet();
+			referenceSet.drawReferenceFileUpload();
+		}, 500);
+	}
+
+	//자료실 등록
+	insert(){
+		if(document.getElementById("bf_Title").value === ""){
+			msg.set("제목을 입력해주세요.");
+			document.getElementById("bf_Title").focus();
+			return false;
+		} else {
+			CommonDatas.formDataSet();
+			let data = storage.formList;
+			data = JSON.stringify(data);
+			data = cipher.encAes(data);
+
+			axios.post("/api/reference", data, {
+				headers: { "Content-Type": "text/plain" }
+			}).then((response) => {
+				if (response.data.result === "ok") {
+					location.reload();
+					msg.set("등록되었습니다.");
+				} else {
+					msg.set("등록 중 에러가 발생하였습니다.");
+					return false;
+				}
+			}).catch((error) => {
+				msg.set("등록 도중 에러가 발생하였습니다.\n" + error);
+				console.log(error);
+				return false;
+			});
+		}
+	}
+
+	//자료실 수정
+	update() {
+		if(document.getElementById("bf_Title").value === ""){
+			msg.set("제목을 입력해주세요.");
+			document.getElementById("bf_Title").focus();
+			return false;
+		} else {
+			CommonDatas.formDataSet();
+			let data = storage.formList;
+			data = JSON.stringify(data);
+			data = cipher.encAes(data);
+
+			axios.put("/api/reference/" + storage.formList.bf_bk, data, {
+				headers: { "Content-Type": "text/plain" }
+			}).then((response) => {
+				if (response.data.result === "ok") {
+					location.reload();
+					msg.set("수정되었습니다.");
+				} else {
+					msg.set("수정 중 에러가 발생하였습니다.");
+					return false;
+				}
+			}).catch((error) => {
+				msg.set("수정 도중 에러가 발생하였습니다.\n" + error);
+				console.log(error);
+				return false;
+			});
+		}
+	}
+
+	//자료실 삭제
+	delete() {
+		if (confirm("정말로 삭제하시겠습니까??")) {
+			axios.delete("/api/reference/" + storage.formList.bf_pk, {
+				headers: { "Content-Type": "text/plain" }
+			}).then((response) => {
+				if (response.data.result === "ok") {
+					location.reload();
+					msg.set("삭제되었습니다.");
+				} else {
+					msg.set("삭제 중 에러가 발생하였습니다.");
+					return false;
+				}
+			}).catch((error) => {
+				msg.set("삭제 도중 에러가 발생하였습니다.\n" + error);
+				console.log(error);
+				return false;
+			});
+		} else {
+			return false;
+		}
+	}
+
+	//자료실 파일 등록
+	referenceFileInsert(){
+		let referenceFileUpload = document.getElementById("referenceFileUpload");
+		let files = referenceFileUpload.files;
+		let fileArrays = Array.prototype.slice.call(files);
+		
+		if(fileArrays.length < 1){
+			msg.set("파일을 선택해주세요.");
+			return false;
+		}else{
+			let fileUploadDesc = document.getElementsByClassName("fileUploadDesc");
+			let successFlag = false;
+			
+			for(let i = 0; i < fileArrays.length; i++){
+				let formData = new FormData();
+				let item = fileArrays[i];
+
+				formData.append("file", item);
+				formData.append("fileDesc", fileUploadDesc[i].value);
+				formData.append("fileExtention", item.type);
+				formData.append("bf_pk", storage.formList.bf_pk);
+				formData.append("userNo", storage.my);
+		
+				axios.post("/api/reference/referenceFileInsert", formData).then((response) => {
+					if (response.data.result !== "ok") {
+						msg.set("등록 중 에러가 발생하였습니다.");
+						return false;
+					}
+				}).catch((error) => {
+					msg.set("등록 도중 에러가 발생하였습니다.\n" + error);
+					console.log(error);
+					return false;
+				});
+
+				if(i == fileArrays.length - 1){
+					successFlag = true;
+				}
+			}
+
+			if(successFlag){
+				let referenceSet = new ReferenceSet();
+
+				setTimeout(() => {
+					msg.set("등록되었습니다.");
+					modal.hide();
+					referenceSet.referenceDetailFileView(storage.formList.bf_pk);
+				}, 700);
+
+				setTimeout(() => {
+					referenceSet.drawReferenceFileUpload();
+				}, 1500);
+			}
+		}
+	}
+
+	//자료실 파일 삭제 함수
+	referenceFileDelete(){
+		if(confirm("선택한 파일들을 삭제하시겠습니까??")){
+			let referenceFileCheck = document.getElementsByClassName("referenceFileCheck");
+	
+			for(let i = 0; i < referenceFileCheck.length; i++){
+				let item = referenceFileCheck[i];
+
+				if(item.checked){
+					axios.delete("/api/reference/referenceFileDelete/" + item.dataset.id, {
+						headers: { "Content-Type": "text/plain" }
+					}).then((response) => {
+						if (response.data.result !== "ok") {
+							msg.set("삭제 중 에러가 발생하였습니다.");
+							return false;
+						}
+					}).catch((error) => {
+						msg.set("삭제 도중 에러가 발생하였습니다.\n" + error);
+						console.log(error);
+						return false;
+					});
+				}
+
+				if(i == (referenceFileCheck.length - 1)){
+					let referenceSet = new ReferenceSet();
+
+					setTimeout(() => {
+						referenceSet.referenceDetailFileView(storage.formList.bf_pk);
+					}, 500);
+			
+					setTimeout(() => {
+						referenceSet.drawReferenceFileUpload();
+						msg.set("삭제 되었습니다.");
+					}, 1200);
+				}
+			}
+
+		}else{
+			return false;
+		}
+	}
+
+	//자료실 파일 다운로드 함수
+	referenceDownloadFile(thisEle) {
+		let bf_pk = storage.formList.bf_pk;
+		let fileId = thisEle.dataset.id;
+
+		axios({
+			method: "POST",
+			url: "/api/reference/downloadFile",
+			params: {
+				"bf_pk": bf_pk,
+				"fileId": fileId,
+			},
+			responseType: "blob",
+		}).then((response) => {
+			let link = document.createElement('a');
+			link.href = window.URL.createObjectURL(response.data);
+			link.download = thisEle.innerText;
+			link.click();
+		}).catch((error) => {
+			msg.set("다운로드 도중 에러가 발생하였습니다.\n" + error);
+			console.log(error);
+			return false;
+		});
+	}
+}
+
 //Common 시작
 class Common {
 	constructor() {
@@ -13937,6 +14646,7 @@ class Common {
 		let dataComplete = (data.complete === undefined) ? "" : data.complete;
 		let autoComplete = (data.autoComplete === undefined) ? "off" : data.autoComplete;
 		let placeHolder = (data.placeHolder === undefined) ? "" : data.placeHolder;
+		let	dataMultiple = (data.multiple === undefined) ? false : true;
 
 		if (dataType === "text") {
 			if (dataDisabled == true) {
@@ -14014,7 +14724,11 @@ class Common {
 
 			html += "</select>";
 		} else if (dataType === "file") {
-			html += "<input type='file' id='" + elementId + "' name='" + elementName + "' onchange='" + dataChangeEvent + "'>";
+			if(dataMultiple){
+				html += "<input type='file' id='" + elementId + "' name='" + elementName + "' onchange='" + dataChangeEvent + "' multiple>";
+			}else{
+				html += "<input type='file' id='" + elementId + "' name='" + elementName + "' onchange='" + dataChangeEvent + "'>";
+			}
 		} else if (dataType === "") {
 			html += "";
 		}
@@ -14674,10 +15388,11 @@ class Common {
 
 	//상세보기 back 버튼 함수
 	hideDetailView(func){
-		let defaultFormContainer, crudUpdateBtn, tabContent, storeType;
+		let defaultFormContainer, referenceFileUpload, crudUpdateBtn, tabContent, storeType;
 		defaultFormContainer = document.getElementsByClassName("defaultFormContainer")[0];
 		crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
 		tabContent = document.getElementsByClassName("tabContent")[0];
+		referenceFileUpload = document.getElementById("referenceFileUpload");
 		let tabPage = document.getElementsByClassName("tabPage")[0];
 		defaultFormContainer.remove();
 		crudUpdateBtn.innerText = "수정";
@@ -14693,6 +15408,10 @@ class Common {
 
 		if(storeType !== undefined){
 			storeType.remove();
+		}
+
+		if(referenceFileUpload !== undefined){
+			referenceFileUpload.remove();
 		}
 	
 		document.querySelector("input").value = "";

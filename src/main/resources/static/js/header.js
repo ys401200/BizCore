@@ -56,13 +56,13 @@ let promiseInit = function init() {
 		
 			// getCustomer();
 			getCommonCode();
-			getUserMap();
+			// getUserMap();
 			// getDeptMap();
 			// getBasicInfo();
-			getUserRank();
+			// getUserRank();
 			getStorageList();
-			getPersonalize();
-			noteLiveUpdate();
+			// getPersonalize();
+			// noteLiveUpdate();
 			CommonDatas.setTopPathActive();
 			CommonDatas.setSidePathActive();
 			
@@ -3568,6 +3568,35 @@ function validateAutoComplete(value, type) {
 }
 
 function getStorageList() {
+	if(storage.user === undefined){
+		$.ajax({
+			url: "/api/user",
+			method: "get",
+			dataType: "json",
+			cache: false,
+			success: (result) => {
+				if (result.result === "ok") {
+					let resultJson;
+					let formatDatas = {};
+
+					resultJson = cipher.decAes(result.data);
+					resultJson = JSON.parse(resultJson);
+
+					for(let i = 0; i < resultJson.length; i++){
+						formatDatas[resultJson[i].userNo] = resultJson[i];
+					}
+
+					storage.user = formatDatas;
+					storage.my = sessionStorage.getItem("getUserNo");
+					console.log("[getUser] Success getting user list.");
+				}
+			},
+			error: () => {
+				msg.set("user 에러");
+			}
+		});
+	}
+
 	if (storage.customer === undefined) {
 		$.ajax({
 			url: "/api/cust",

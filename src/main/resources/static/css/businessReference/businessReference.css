@@ -1,0 +1,146 @@
+@charset "UTF-8";
+.searchContainer .searchMultiContent .searchDate > .searchGridItem{
+	display: grid;
+	grid-template-columns: 45% 10% 45%;
+	text-align: center;
+}
+
+.searchContainer .searchMultiContent .searchDate > .searchGridItem > span{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.referenceContainer{
+    margin-top: 3px;
+	background: #FFFFFF;
+	overflow: auto;
+	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
+}
+
+.referenceContainer > hr{
+	float: left;
+	border:2px solid #182f81;
+ 	height : 32px;
+ 	margin: 0;
+}
+
+.referenceContainer > #containerTitle {
+	font-weight: 600;
+    font-size: 0.9rem;
+	margin-left: 15px;
+	line-height: 40px;
+	color: #332E85;
+	float: left;
+}
+
+.referenceContainer .gridList{
+    display: block; 
+	width: 99%; 
+	/* height: auto; */
+	margin: 0 auto;
+}
+
+.referenceContainer .gridList .gridHeader,
+.referenceContainer .gridList .gridContent{
+    grid-template-columns: 10% 30% 50% 10%;
+}
+
+.referenceContainer .gridList .gridHeader{
+	border-bottom:1px solid #abb6d5;
+}
+
+.referenceContainer > button{
+	margin:0.4% 0.5% 0 0;
+	box-shadow:0px 1px 2px #bdbfc9;
+	color:#ebefff;
+	background-color:#182f81;
+	padding:0 0.7%;
+	height:30px;
+	border-radius:5px;
+	float: right;
+}
+
+.referenceContainer > #referenceFileUpload{
+	width: 99%; 
+	/* height: auto; */
+	margin: 0 auto;
+	padding-top: 10px;
+    padding-bottom: 10px;
+    overflow-y: auto;
+}
+
+.referenceContainer > #referenceFileUpload > .fileUploadButtons{
+	display: flex;
+    align-items: center;
+	justify-content: right;
+}
+
+.referenceContainer > #referenceFileUpload > .fileUploadButtons > button{
+	width: 5%;
+    color: #ffffff;
+    border-radius: 5px;
+    height: 2.5vh;
+    margin-right: 5px;
+}
+
+.referenceContainer > #referenceFileUpload > .fileUploadButtons > button:nth-child(1){
+	background-color: #50AF49;
+    margin-right: 5px;
+}
+
+.referenceContainer > #referenceFileUpload > .fileUploadButtons > button:nth-child(2){
+	background-color: #F15F5F;
+}
+
+.referenceContainer > #referenceFileUpload > .gridHeader,
+.referenceContainer > #referenceFileUpload > .gridContent{
+    grid-template-columns: 20% 20% 20% 20% 20%;
+}
+
+.referenceContainer > #referenceFileUpload > .gridHeader{
+	border-bottom:1px solid #abb6d5;
+}
+
+.filePreview {
+	padding: 5px;
+}
+
+.filePreview > div{
+	display: grid;
+    grid-template-columns: 20% 80%;
+}
+
+.filePreview > div > div{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 5px;
+	font-size: 0.8rem;
+}
+
+.filePreview > div > div > input{
+	width: 100%;
+	border: 1px solid #BDBDBD;
+	padding: 5px;
+	border-radius: 5px;
+}
+
+.filePreview > .filePreviewHeader > div{
+	background-color: #DAD9FF;
+	color: #000;
+    font-weight: 600;
+}
+
+.filePreview > .filePreviewBody{
+	border-left: 1px solid #BDBDBD;
+}
+
+.filePreview > .filePreviewBody > div{
+	border-right: 1px solid #BDBDBD;
+	border-bottom: 1px solid #BDBDBD;
+}
+
+/* .defaultFormContainer .defaultFormLine:first-child{
+	border-top: 0;
+} */

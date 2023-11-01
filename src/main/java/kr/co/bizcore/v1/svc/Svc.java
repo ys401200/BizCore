@@ -24,6 +24,7 @@ import kr.co.bizcore.v1.mapper.NotesMapper;
 import kr.co.bizcore.v1.mapper.ProcureMapper;
 import kr.co.bizcore.v1.mapper.ProductMapper;
 import kr.co.bizcore.v1.mapper.ProjectMapper;
+import kr.co.bizcore.v1.mapper.ReferenceMapper;
 import kr.co.bizcore.v1.mapper.SalesMapper;
 import kr.co.bizcore.v1.mapper.Schedule2Mapper;
 import kr.co.bizcore.v1.mapper.ScheduleMapper;
@@ -106,6 +107,9 @@ public abstract class Svc {
 
     @Autowired
     protected ContractMapper contractMapper;
+
+    @Autowired
+    protected ReferenceMapper referenceMapper;
 
     @Autowired 
     protected TestMapper testMapper;

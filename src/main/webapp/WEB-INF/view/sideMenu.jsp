@@ -94,7 +94,7 @@
 				</div>
 			</div>
 			<div class="menuItem">
-				<a href="/business/filebox">
+				<a href="/business/reference">
 					<img src="/images/main/icons/mainBoardFileIcon.png" id="mainBoardFileIcon" />
 					<span>자료실</span>
 				</a>

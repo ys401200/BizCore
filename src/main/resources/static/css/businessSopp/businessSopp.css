@@ -636,6 +636,45 @@
 	border-bottom:1px solid #abb6d5;
 }
 
+.filePreview {
+	padding: 5px;
+}
+
+.filePreview > div{
+	display: grid;
+    grid-template-columns: 20% 80%;
+}
+
+.filePreview > div > div{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 5px;
+	font-size: 0.8rem;
+}
+
+.filePreview > div > div > input{
+	width: 100%;
+	border: 1px solid #BDBDBD;
+	padding: 5px;
+	border-radius: 5px;
+}
+
+.filePreview > .filePreviewHeader > div{
+	background-color: #DAD9FF;
+	color: #000;
+    font-weight: 600;
+}
+
+.filePreview > .filePreviewBody{
+	border-left: 1px solid #BDBDBD;
+}
+
+.filePreview > .filePreviewBody > div{
+	border-right: 1px solid #BDBDBD;
+	border-bottom: 1px solid #BDBDBD;
+}
+
 .soppContainer > #tabTech{
     display: none; 
 	width: 99%; 

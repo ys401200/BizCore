@@ -28,6 +28,7 @@ import kr.co.bizcore.v1.svc.ScheduleService;
 import kr.co.bizcore.v1.svc.ScheduleSvc;
 import kr.co.bizcore.v1.svc.SoppService;
 import kr.co.bizcore.v1.svc.ProjectService;
+import kr.co.bizcore.v1.svc.ReferenceService;
 import kr.co.bizcore.v1.svc.SystemService;
 import kr.co.bizcore.v1.svc.TestService;
 import kr.co.bizcore.v1.svc.TradeService;
@@ -73,6 +74,9 @@ public abstract class Ctrl {
 
     @Autowired
     protected ProductService productService;
+
+    @Autowired
+    protected ReferenceService referenceService;
 
     @Autowired
     protected ProcureService procureService;
