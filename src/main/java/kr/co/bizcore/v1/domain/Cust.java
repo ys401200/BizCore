@@ -6,21 +6,21 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Cust extends Domain{
-    private int custNo;
-    private int compNo;
-    private int custCompNo;
-    private String custName;
-    private String custVatno;
-    private String custEmail;
-    private String custVatemail;
-    private String custBossname;
-    private String custYn;
-    private String buyrYn;
-    private String ptncYn;
-    private String suppYn;
-    private String saleType;
-    private String compType;
-    private String regDatetime;
-    private String modDatetime;
-    private String attrib;
+    protected int custNo;
+    protected int compNo;
+    protected int custCompNo;
+    protected String custName;
+    protected String custVatno;
+    protected String custEmail;
+    protected String custVatemail;
+    protected String custBossname;
+    protected String custYn;
+    protected String buyrYn;
+    protected String ptncYn;
+    protected String suppYn;
+    protected String saleType;
+    protected String compType;
+    protected String regDatetime;
+    protected String modDatetime;
+    protected String attrib;
 }

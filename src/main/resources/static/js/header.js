@@ -3568,6 +3568,48 @@ function validateAutoComplete(value, type) {
 }
 
 function getStorageList() {
+	if (storage.sopp === undefined) {
+		$.ajax({
+			url: "/api/sopp",
+			method: "get",
+			dataType: "json",
+			cache: false,
+			success: (result) => {
+				if (result.result === "ok") {
+					let resultJson;
+					resultJson = cipher.decAes(result.data);
+					resultJson = JSON.parse(resultJson);
+					storage.sopp = resultJson;
+					console.log("[getSopp] Success getting sopp list.");
+				}
+			},
+			error: () => {
+				msg.set("sopp 에러");
+			}
+		});
+	}
+
+	if (storage.contract === undefined) {
+		$.ajax({
+			url: "/api/contract",
+			method: "get",
+			dataType: "json",
+			cache: false,
+			success: (result) => {
+				if (result.result === "ok") {
+					let resultJson;
+					resultJson = cipher.decAes(result.data);
+					resultJson = JSON.parse(resultJson);
+					storage.contract = resultJson;
+					console.log("[getCont] Success getting cont list.");
+				}
+			},
+			error: () => {
+				msg.set("contract 에러");
+			}
+		});
+	}
+	
 	if(storage.user === undefined){
 		$.ajax({
 			url: "/api/user",
@@ -3622,48 +3664,6 @@ function getStorageList() {
 			},
 			error: () => {
 				msg.set("cust 에러");
-			}
-		});
-	}
-
-	if (storage.sopp === undefined) {
-		$.ajax({
-			url: "/api/sopp",
-			method: "get",
-			dataType: "json",
-			cache: false,
-			success: (result) => {
-				if (result.result === "ok") {
-					let resultJson;
-					resultJson = cipher.decAes(result.data);
-					resultJson = JSON.parse(resultJson);
-					storage.sopp = resultJson;
-					console.log("[getSopp] Success getting sopp list.");
-				}
-			},
-			error: () => {
-				msg.set("sopp 에러");
-			}
-		});
-	}
-
-	if (storage.contract === undefined) {
-		$.ajax({
-			url: "/api/contract",
-			method: "get",
-			dataType: "json",
-			cache: false,
-			success: (result) => {
-				if (result.result === "ok") {
-					let resultJson;
-					resultJson = cipher.decAes(result.data);
-					resultJson = JSON.parse(resultJson);
-					storage.contract = resultJson;
-					console.log("[getCont] Success getting cont list.");
-				}
-			},
-			error: () => {
-				msg.set("contract 에러");
 			}
 		});
 	}

@@ -5,7 +5,7 @@
 	text-align: center;
 }
 
-.searchContainer .searchMultiContent .searchDate > .searchGridItem > span{
+.searchContainer > .searchMultiContent > .searchDate > .searchGridItem > span{
 	display: flex;
 	align-items: center;
 	justify-content: center;

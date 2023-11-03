@@ -12,20 +12,20 @@
 			<div class="searchMultiContent">
 				<div class="searchTitle">
                     <span>제목</span>
-                    <input type="text" autocomplete="off" data-key="noticeTitle" id="searchTitle">
+                    <input type="text" autocomplete="off" data-key="bf_Title" id="searchTitle">
                 </div>
-                <div class="searchWriter">
-                    <span>담당자</span>
-                    <input type="text" data-complete="user" data-key="userNo" autocomplete="off" id="searchUser" onclick="CommonDatas.addAutoComplete(this);" onkeyup="CommonDatas.addAutoComplete(this);">
+				<div class="searchContents">
+                    <span>내용</span>
+                    <input type="text" autocomplete="off" data-key="bf_Contents" id="searchContents">
                 </div>
-                <div class="searchCreated">
-                    <span>등록일</span>
-                    <div class="searchGridItem">
-                        <input type="date" id="searchCreatedFrom" max="9999-12-31" data-date-type="from" onchange="CommonDatas.searchDateDefaultSet(this);">
-                        <span>~</span>
-                        <input type="date" id="searchCreatedTo" max="9999-12-31" data-date-type="to" onchange="CommonDatas.searchDateDefaultSet(this);">
-                    </div>
-                </div>
+                <div class="searchDate">
+					<span>등록일</span>
+					<div class="searchGridItem">
+						<input type="date" id="searchDateFrom" max="9999-12-31" data-date-type="from" onchange="CommonDatas.searchDateDefaultSet(this);">
+						<span>~</span>
+						<input type="date" id="searchDateTo" max="9999-12-31" data-date-type="to" onchange="CommonDatas.searchDateDefaultSet(this);">
+					</div>
+				</div>
 			</div>
 		</div>
         <div class="referenceContainer">

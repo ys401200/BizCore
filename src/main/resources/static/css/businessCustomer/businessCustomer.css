@@ -1,15 +1,28 @@
-.customerContainer {
-	margin-top: 3px;
+@charset "UTF-8";
+.searchContainer .searchMultiContent .searchDate > .searchGridItem{
+	display: grid;
+	grid-template-columns: 45% 10% 45%;
+	text-align: center;
+}
+
+.searchContainer > .searchMultiContent > .searchDate > .searchGridItem > span{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.customerContainer{
+    margin-top: 3px;
 	background: #FFFFFF;
 	overflow: auto;
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
 }
 
-.customerContainer > hr {
+.customerContainer > hr{
 	float: left;
 	border:2px solid #182f81;
-	height: 32px;
-	margin: 0;
+ 	height : 32px;
+ 	margin: 0;
 }
 
 .customerContainer > #containerTitle {
@@ -17,57 +30,221 @@
     font-size: 0.9rem;
 	margin-left: 15px;
 	line-height: 40px;
-	color: #182f81;
+	color: #332E85;
 	float: left;
 }
 
-.gridList {
-	display: grid;
-	width: 99%;
+.customerContainer .gridList{
+    display: block; 
+	width: 99%; 
+	/* height: auto; */
 	margin: 0 auto;
 }
 
-.gridList .gridHeader{
+.customerContainer .gridList .gridHeader,
+.customerContainer .gridList .gridContent{
+    grid-template-columns: 20% 20% 20% 20% 20%;
+}
+
+.customerContainer .gridList .gridHeader{
 	border-bottom:1px solid #abb6d5;
 }
 
-.gridList .gridHeader,
-.gridList .gridContent {
-	grid-template-columns: repeat(3, 1fr);
+.customerContainer > button{
+	margin:0.4% 0.5% 0 0;
+	box-shadow:0px 1px 2px #bdbfc9;
+	color:#ebefff;
+	background-color:#182f81;
+	padding:0 0.7%;
+	height:30px;
+	border-radius:5px;
+	float: right;
 }
 
-.customerTabSalesList{
+.customerContainer > #referenceFileUpload{
+	width: 99%; 
+	/* height: auto; */
+	margin: 0 auto;
+	padding-top: 10px;
+    padding-bottom: 10px;
+    overflow-y: auto;
+}
+
+.customerContainer > #referenceFileUpload > .fileUploadButtons{
+	display: flex;
+    align-items: center;
+	justify-content: right;
+}
+
+.customerContainer > #referenceFileUpload > .fileUploadButtons > button{
+	width: 5%;
+    color: #ffffff;
+    border-radius: 5px;
+    height: 2.5vh;
+    margin-right: 5px;
+}
+
+.customerContainer > #referenceFileUpload > .fileUploadButtons > button:nth-child(1){
+	background-color: #50AF49;
+    margin-right: 5px;
+}
+
+.customerContainer > #referenceFileUpload > .fileUploadButtons > button:nth-child(2){
+	background-color: #F15F5F;
+}
+
+.customerContainer > #referenceFileUpload > .gridHeader,
+.customerContainer > #referenceFileUpload > .gridContent{
+    grid-template-columns: 20% 20% 20% 20% 20%;
+}
+
+.customerContainer > #referenceFileUpload > .gridHeader{
+	border-bottom:1px solid #abb6d5;
+}
+
+.customerContainer > #tabAddress{
+	display: none;
+	padding: 5px;
+}
+
+.customerContainer > #tabAddress > div{
 	display: grid;
+    grid-template-columns: 10% 90%;
+	border-top: 1px solid #BDBDBD;
+	border-left: 1px solid #BDBDBD;
+}
+
+.customerContainer > #tabAddress > div > div{
+	display: flex;
+	align-items: center;
+	padding: 5px;
+	border-right: 1px solid #BDBDBD;
+	border-bottom: 1px solid #BDBDBD;
+}
+
+.customerContainer > #tabAddress > div > .tabAdressTitle{
+	justify-content: center;
+}
+
+.customerContainer > #tabAddress > div > div > input{
 	width: 100%;
-	max-height: 200px;
-	overflow-y: auto;
+	border: 1px solid #BDBDBD;
+	border-radius: 5px;
+	padding: 3px;
 }
 
-.customerTabSalesList .gridHeader,
-.customerTabSalesList .gridContent{
-	grid-template-columns: 10% 30% 50% 10%;
+.customerContainer > #tabUser{
+	display: none;
+	padding: 5px;
 }
 
-.customerTabContractList{
+.customerContainer > #tabUser > div{
 	display: grid;
+    grid-template-columns: 10% 90%;
+	border-top: 1px solid #BDBDBD;
+	border-left: 1px solid #BDBDBD;
+}
+
+.customerContainer > #tabUser > div > div{
+	display: flex;
+	align-items: center;
+	padding: 5px;
+	border-right: 1px solid #BDBDBD;
+	border-bottom: 1px solid #BDBDBD;
+}
+
+.customerContainer > #tabUser > div > .tabUserTitle{
+	justify-content: center;
+}
+
+.customerContainer > #tabUser > div > div > input{
 	width: 100%;
-	max-height: 200px;
-	overflow-y: auto;
+	border: 1px solid #BDBDBD;
+	border-radius: 5px;
+	padding: 3px;
 }
 
-.customerTabContractList .gridHeader,
-.customerTabContractList .gridContent{
-	grid-template-columns: 10% 30% 50% 10%;
+.customerContainer > #tabTax{
+	display: none;
+	padding: 5px;
 }
 
-.customerTabTechList{
+.customerContainer > #tabTax > div{
 	display: grid;
-	width: 100%;
-	max-height: 200px;
-	overflow-y: auto;
+    grid-template-columns: 10% 90%;
+	border-top: 1px solid #BDBDBD;
+	border-left: 1px solid #BDBDBD;
 }
 
-.customerTabTechList .gridHeader,
-.customerTabTechList .gridContent{
-	grid-template-columns: 10% 30% 50% 10%;
+.customerContainer > #tabTax > div > div{
+	display: flex;
+	align-items: center;
+	padding: 5px;
+	border-right: 1px solid #BDBDBD;
+	border-bottom: 1px solid #BDBDBD;
+}
+
+.customerContainer > #tabTax > div > .tabTaxTitle{
+	justify-content: center;
+}
+
+.customerContainer > #tabTax > div > div > input{
+	width: 100%;
+	border: 1px solid #BDBDBD;
+	border-radius: 5px;
+	padding: 3px;
+}
+
+.customerContainer > #tabSales{
+    display: none; 
+	width: 99%; 
+	/* height: auto; */
+	margin: 0 auto;
+	padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.customerContainer > #tabSales > .gridHeader,
+.customerContainer > #tabSales > .gridContent{
+    grid-template-columns: 15% 30% 15% 40%;
+}
+
+.customerContainer > #tabSales > .gridHeader{
+	border-bottom:1px solid #abb6d5;
+}
+
+.customerContainer > #tabCont{
+    display: none; 
+	width: 99%; 
+	/* height: auto; */
+	margin: 0 auto;
+	padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.customerContainer > #tabCont > .gridHeader,
+.customerContainer > #tabCont > .gridContent{
+    grid-template-columns: 15% 30% 15% 40%;
+}
+
+.customerContainer > #tabCont > .gridHeader{
+	border-bottom:1px solid #abb6d5;
+}
+
+.customerContainer > #tabTech{
+    display: none; 
+	width: 99%; 
+	/* height: auto; */
+	margin: 0 auto;
+	padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.customerContainer > #tabTech > .gridHeader,
+.customerContainer > #tabTech > .gridContent{
+    grid-template-columns: 15% 30% 15% 40%;
+}
+
+.customerContainer > #tabTech > .gridHeader{
+	border-bottom:1px solid #abb6d5;
 }

@@ -13781,6 +13781,60 @@ class ReferenceSet{
 		container.prepend(createInputDiv);
 	}
 
+	//자료실 검색 버튼 클릭 함수
+	searchSubmit() {
+		let dataArray = [], resultArray, eachIndex = 0, title, contents, searchTitle, searchContents, searchDateFrom, keyIndex = 0;
+		searchTitle = document.getElementById("searchTitle");
+		searchContents = document.getElementById("searchContents");
+		searchDateFrom = (document.getElementById("searchDateFrom").value === "") ? "" : document.getElementById("searchDateFrom").value.replaceAll("-", "") + "#regDatetime" + document.getElementById("searchDateTo").value.replaceAll("-", "");
+		
+		for(let key in storage.referenceList[0]){
+			if(key === searchTitle.dataset.key) title = "#" + keyIndex + "/" + searchTitle.value;
+			else if(key === searchContents.dataset.key) contents = "#" + keyIndex + "/" + searchContents.value;
+			keyIndex++;
+		}
+
+		let searchValues = [title, contents, searchDateFrom];
+
+		for (let i = 0; i < searchValues.length; i++) {
+			if(searchValues[i] !== ""){
+				let tempArray = CommonDatas.searchDataFilter(storage.referenceList, searchValues[i], "multi", ["#regDatetime"]);
+	
+				for (let t = 0; t < tempArray.length; t++) {
+					dataArray.push(tempArray[t]);
+				}
+	
+				eachIndex++;
+			}
+		}
+		
+		resultArray = CommonDatas.searchMultiFilter(eachIndex, dataArray, storage.referenceList);
+
+		storage.searchDatas = resultArray;
+
+		if (storage.searchDatas.length == 0) {
+			msg.set("찾는 데이터가 없습니다.");
+			storage.searchDatas = storage.referenceList;
+		}
+
+		this.drawReferenceList();
+	}
+
+	//자료실 단일 검색 keyup 이벤트
+	searchInputKeyup() {
+		let searchAllInput, tempArray;
+		searchAllInput = document.getElementById("searchAllInput").value;
+		tempArray = CommonDatas.searchDataFilter(storage.referenceList, searchAllInput, "input");
+
+		if (tempArray.length > 0) {
+			storage.searchDatas = tempArray;
+		} else {
+			storage.searchDatas = "";
+		}
+
+		this.drawReferenceList();
+	}
+
 }
 
 //자료실 crud
@@ -14094,6 +14148,970 @@ class Reference {
 			console.log(error);
 			return false;
 		});
+	}
+}
+
+//거래처 설정 시작
+class CustomerSet{
+	constructor() {
+		CommonDatas.Temps.customerSet = this;
+	}
+
+	//거래처 리스트 저장 함수
+	list() {
+		let datas = [];
+
+		if(storage.customer !== undefined && storage.customer !== null){
+			for(let key in storage.customer){
+				datas.push(storage.customer[key]);
+			}
+
+			storage.customerList = datas;
+
+			this.drawCustomerList();
+			CommonDatas.searchListSet("customerList");
+			$('.theme-loader').fadeOut("slow");
+		}
+	}
+
+	//거래처 리스트 출력 함수
+	drawCustomerList() {
+		let container, result, jsonData, containerTitle, job, header = [], data = [], ids = [], str, fnc = [], pageContainer, hideArr, showArr;
+
+		if (storage.customerList === undefined) {
+			msg.set("등록된 자료실 데이터가 없습니다");
+		}
+		else {
+			if (storage.searchDatas === undefined) {
+				jsonData = storage.customerList;
+			} else {
+				jsonData = storage.searchDatas;
+			}
+		}
+
+		result = CommonDatas.paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+		containerTitle = document.getElementById("containerTitle");
+		pageContainer = document.getElementsByClassName("pageContainer")[0];
+		container = document.getElementsByClassName("gridList")[0];
+		hideArr = ["detailBackBtn", "crudUpdateBtn", "crudDeleteBtn", "contractReqBtn"];
+		showArr = [
+			{ element: "gridList", display: "block" },
+			{ element: "pageContainer", display: "flex" },
+			{ element: "searchContainer", display: "block" },
+			{ element: "listRange", display: "flex" },
+			{ element: "listSearchInput", display: "flex" },
+			{ element: "crudBtns", display: "flex" },
+			{ element: "crudAddBtn", display: "flex" },
+		];
+
+		header = [
+			{
+				"title": "거래처명",
+				"align": "center",
+			},
+			{
+				"title": "대표자명",
+				"align": "center",
+			},
+			{
+				"title": "사업자번호",
+				"align": "center",
+			},
+			{
+				"title": "거래처이메일",
+				"align": "center",
+			},
+			{
+				"title": "계산서이메일",
+				"align": "center",
+			},
+		];
+
+		if (jsonData === "" || jsonData.length == 0) {
+			str = [
+				{
+					"setData": undefined,
+					"align": "center",
+					"col": 5,
+				},
+			];
+
+			data.push(str);
+		} else {
+			for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+				str = [
+					{
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].custName)) ? "" : jsonData[i].custName,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].custBossname)) ? "" : jsonData[i].custBossname,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].custVatno)) ? "" : jsonData[i].custVatno,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].custEmail)) ? "" : jsonData[i].custEmail,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].custVatemail)) ? "" : jsonData[i].custVatemail,
+						"align": "center",
+					},
+				];
+
+				fnc.push("CommonDatas.Temps.customerSet.customerDetailView(this)");
+				ids.push(jsonData[i].custNo);
+				data.push(str);
+			}
+
+			let pageNation = CommonDatas.createPaging(pageContainer, result[3], "CommonDatas.pageMove", "CommonDatas.Temps.customerSet.drawCustomerList", result[0]);
+			pageContainer.innerHTML = pageNation;
+		}
+
+		CommonDatas.createGrid(container, header, data, ids, job, fnc);
+		CommonDatas.setViewContents(hideArr, showArr);
+		containerTitle.innerText = "거래처";
+		document.getElementById("multiSearchBtn").setAttribute("onclick", "CommonDatas.Temps.customerSet.searchSubmit();");
+	}
+
+	//거래처 상세보기
+	customerDetailView(e) {
+		let thisEle = e;
+
+		CommonDatas.Temps.customerSet.custDetailData02(thisEle.dataset.id);
+		CommonDatas.Temps.customerSet.custDetailData03(thisEle.dataset.id);
+		CommonDatas.Temps.customerSet.custDetailData01(thisEle.dataset.id);
+		
+		axios.get("/api/cust/" + thisEle.dataset.id).then((response) => {
+			if (response.data.result === "ok") {
+				let result;
+				result = cipher.decAes(response.data.data);
+				result = JSON.parse(result);
+				let customer = new Customer(result);
+				customer.detail();
+
+				localStorage.setItem("loadSetPage", window.location.pathname);
+			}
+		}).catch((error) => {
+			msg.set("상세보기 에러 입니다.\n" + error);
+			console.log(error);
+		});
+
+		axios.get("/api/cust/custSales/" + thisEle.dataset.id).then((response) => {
+			if (response.data.result === "ok") {
+				let result;
+				result = cipher.decAes(response.data.data);
+				result = JSON.parse(result);
+				storage.custSalesList = result;
+			}
+		}).catch((error) => {
+			msg.set("상세보기 에러 입니다.\n" + error);
+			console.log(error);
+		});
+
+		axios.get("/api/cust/custTech/" + thisEle.dataset.id).then((response) => {
+			if (response.data.result === "ok") {
+				let result;
+				result = cipher.decAes(response.data.data);
+				result = JSON.parse(result);
+				storage.custTechList = result;
+			}
+		}).catch((error) => {
+			msg.set("상세보기 에러 입니다.\n" + error);
+			console.log(error);
+		});
+	}
+
+	custDetailData01(id){
+		axios.get("/api/cust/custdata01/" + id).then((response) => {
+			if (response.data.result === "ok") {
+				let result;
+				result = cipher.decAes(response.data.data);
+				result = JSON.parse(result);
+				storage.custdata01 = result;
+
+				setTimeout(() => {
+					CommonDatas.Temps.customerSet.drawCustData01();
+				}, 500);
+			}
+		}).catch((error) => {
+			msg.set("상세보기 에러 입니다.\n" + error);
+			console.log(error);
+		});
+	}
+
+	custDetailData02(id){
+		axios.get("/api/cust/custdata02/" + id).then((response) => {
+			if (response.data.result === "ok") {
+				let result;
+				result = cipher.decAes(response.data.data);
+				result = JSON.parse(result);
+				storage.custdata02 = result;
+
+				setTimeout(() => {
+					CommonDatas.Temps.customerSet.drawCustData02();
+				}, 500);
+			}
+		}).catch((error) => {
+			msg.set("상세보기 에러 입니다.\n" + error);
+			console.log(error);
+		});
+	}
+
+	custDetailData03(id){
+		axios.get("/api/cust/custdata03/" + id).then((response) => {
+			if (response.data.result === "ok") {
+				let result;
+				result = cipher.decAes(response.data.data);
+				result = JSON.parse(result);
+				storage.custdata03 = result;
+
+				setTimeout(() => {
+					CommonDatas.Temps.customerSet.drawCustData03();
+				}, 500);
+			}
+		}).catch((error) => {
+			msg.set("상세보기 에러 입니다.\n" + error);
+			console.log(error);
+		});
+	}
+
+	//거래처설정 탭 세무/거래정보 페이지 출력 함수
+	drawCustData01() {
+		let customerContainer, jsonData, createDiv, html = "";
+
+		if(storage.custdata01 !== undefined){
+			jsonData = storage.custdata01;
+		}else{
+			jsonData = "";
+		}
+
+		if(document.getElementById("tabTax") !== null){
+			document.getElementById("tabTax").remove();
+		}
+
+		html += "<div>";
+		html += "<div class=\"tabTaxTitle\">기준연도</div>";
+		html += "<div><input type=\"text\" id=\"custByear\" value=\"" + storage.custdata01.custByear + "\" disabled/></div>";
+		html += "<div class=\"tabTaxTitle\">줄돈</div>";
+		html += "<div><input type=\"text\"  id=\"custDRbalance\"value=\"" + storage.custdata01.custDRbalance + "\" disabled/></div>";
+		html += "<div class=\"tabTaxTitle\">받을돈</div>";
+		html += "<div><input type=\"text\" id=\"custCRbalance\" value=\"" + storage.custdata01.custCRbalance + "\" disabled/></div>";
+		html += "<div class=\"tabTaxTitle\">계산서 이메일</div>";
+		html += "<div><input type=\"text\" id=\"custVatemail\" value=\"" + storage.custdata01.custVatemail + "\" disabled/></div>";
+		html += "<div class=\"tabTaxTitle\">업종</div>";
+		html += "<div><input type=\"text\" id=\"custVattype\" value=\"" + storage.custdata01.custVattype + "\" disabled/></div>";
+		html += "<div class=\"tabTaxTitle\">업태</div>";
+		html += "<div><input type=\"text\" id=\"custVatbiz\" value=\"" + storage.custdata01.custVatbiz + "\" disabled/></div>";
+		html += "<div class=\"tabTaxTitle\">세무 메모</div>";
+		html += "<div><textarea id=\"custVatmemo\" disabled>" + storage.custdata01.custVetmemo + "</textarea></div>";
+		html += "</div>";
+		
+		customerContainer = document.getElementsByClassName("customerContainer")[0];
+		createDiv = document.createElement("div");
+		createDiv.id = "tabTax";
+		createDiv.className = "tabPage";
+		createDiv.innerHTML = html;
+		customerContainer.append(createDiv);
+	}
+
+	//거래처설정 탭 주소/연락처 페이지 출력 함수
+	drawCustData02() {
+		let customerContainer, jsonData, createDiv, html = "";
+
+		if(storage.custdata02 !== undefined){
+			jsonData = storage.custdata02;
+		}else{
+			jsonData = "";
+		}
+
+		if(document.getElementById("tabAddress") !== null){
+			document.getElementById("tabAddress").remove();
+		}
+
+		html += "<div>";
+		html += "<div class=\"tabAdressTitle\">우편번호</div>";
+		html += "<div><input type=\"text\" id=\"custPostno\" value=\"" + storage.custdata02.custPostno + "\" disabled/></div>";
+		html += "<div class=\"tabAdressTitle\">주소</div>";
+		html += "<div><input type=\"text\" id=\"custAddr\" value=\"" + storage.custdata02.custAddr + "\" disabled/></div>";
+		html += "<div class=\"tabAdressTitle\">상세주소</div>";
+		html += "<div><input type=\"text\"  id=\"custAddr2\"value=\"" + storage.custdata02.custAddr2 + "\" disabled/></div>";
+		html += "<div class=\"tabAdressTitle\">대표전화</div>";
+		html += "<div><input type=\"text\" id=\"custTel\" value=\"" + storage.custdata02.custTel + "\" disabled/></div>";
+		html += "<div class=\"tabAdressTitle\">FAX</div>";
+		html += "<div><input type=\"text\" id=\"custFax\" value=\"" + storage.custdata02.custFax + "\" disabled/></div>";
+		html += "<div class=\"tabAdressTitle\">메모</div>";
+		html += "<div><textarea id=\"custMemo\" disabled>" + storage.custdata02.custMemo + "</textarea></div>";
+		html += "</div>";
+		
+		customerContainer = document.getElementsByClassName("customerContainer")[0];
+		createDiv = document.createElement("div");
+		createDiv.id = "tabAddress";
+		createDiv.className = "tabPage";
+		createDiv.innerHTML = html;
+		customerContainer.append(createDiv);
+	}
+
+	//거래처설정 탭 담당자 정보 페이지 출력 함수
+	drawCustData03() {
+		let customerContainer, jsonData, createDiv, html = "";
+
+		if(storage.custdata03 !== undefined){
+			jsonData = storage.custdata03;
+		}else{
+			jsonData = "";
+		}
+
+		if(document.getElementById("tabUser") !== null){
+			document.getElementById("tabUser").remove();
+		}
+
+		html += "<div>";
+		html += "<div class=\"tabUserTitle\">담당자 성명</div>";
+		html += "<div><input type=\"text\" id=\"custMname\" value=\"" + storage.custdata03.custMname + "\" disabled/></div>";
+		html += "<div class=\"tabUserTitle\">담당자 직급</div>";
+		html += "<div><input type=\"text\" id=\"custMrank\" value=\"" + storage.custdata03.custMrank + "\" disabled/></div>";
+		html += "<div class=\"tabUserTitle\">담당자 연락처</div>";
+		html += "<div><input type=\"text\"  id=\"custMtel\"value=\"" + storage.custdata03.custMtel + "\" disabled/></div>";
+		html += "<div class=\"tabUserTitle\">담당자 핸드폰</div>";
+		html += "<div><input type=\"text\" id=\"custMmobile\" value=\"" + storage.custdata03.custMmobile + "\" disabled/></div>";
+		html += "<div class=\"tabUserTitle\">담당자 이메일</div>";
+		html += "<div><input type=\"text\" id=\"custMemail\" value=\"" + storage.custdata03.custMemail + "\" disabled/></div>";
+		html += "<div class=\"tabUserTitle\">담당자 메모</div>";
+		html += "<div><textarea id=\"custMmemo\" disabled>" + storage.custdata03.custMmemo + "</textarea></div>";
+		html += "</div>";
+		
+		customerContainer = document.getElementsByClassName("customerContainer")[0];
+		createDiv = document.createElement("div");
+		createDiv.id = "tabUser";
+		createDiv.className = "tabPage";
+		createDiv.innerHTML = html;
+		customerContainer.append(createDiv);
+	}
+
+	//거래처 탭 영업 정보 페이지 출력 함수
+	drawCustSales() {
+		let container, customerContainer, jsonData, createDiv, job, header = [], data = [], ids = [], disDate, setDate, str, fnc = [];
+
+		if(storage.custSalesList !== undefined){
+			jsonData = storage.custSalesList;
+		}else{
+			jsonData = "";
+		}
+
+		if(document.getElementById("tabSales") !== null){
+			document.getElementById("tabSales").remove();
+		}
+		
+		customerContainer = document.getElementsByClassName("customerContainer")[0];
+		createDiv = document.createElement("div");
+		createDiv.id = "tabSales";
+		createDiv.className = "tabPage";
+		customerContainer.append(createDiv);
+		container = document.getElementById("tabSales");
+
+		header = [
+			{
+				"title": "등록일",
+				"align": "center",
+			},
+			{
+				"title": "영업명",
+				"align": "center",
+			},
+			{
+				"title": "담당자",
+				"align": "center",
+			},
+			{
+				"title": "영업상세",
+				"align": "center",
+			},
+		];
+
+		if (jsonData === "" || jsonData.length == 0) {
+			str = [
+				{
+					"setData": undefined,
+					"align": "center",
+					"col": 4,
+				},
+			];
+
+			data.push(str);
+		} else {
+			for (let i = 0; i < jsonData.length; i++) {
+				let item = jsonData[i];
+
+				disDate = CommonDatas.dateDis(new Date(item.regDatetime).getTime(), new Date(item.modDatetime).getTime());
+				setDate = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+
+				str = [
+					{
+						"setData": setDate,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.title)) ? "" : item.title,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.userNo)) ? "" : storage.user[item.userNo].userName,
+						"align": "left",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.desc)) ? "" : item.desc,
+						"align": "left",
+					},
+				];
+
+				fnc.push("");
+				ids.push(jsonData[i].salesNo);
+				data.push(str);
+			}
+		}
+
+		CommonDatas.createGrid(container, header, data, ids, job, fnc, "tabSales");
+	}
+
+	//거래처 탭 계약 정보 페이지 출력 함수
+	drawCustCont() {
+		let container, customerContainer, jsonData, createDiv, job, header = [], data = [], ids = [], disDate, setDate, str, fnc = [];
+
+		if(storage.custContList !== undefined){
+			jsonData = storage.custContList;
+		}else{
+			jsonData = "";
+		}
+
+		if(document.getElementById("tabCont") !== null){
+			document.getElementById("tabCont").remove();
+		}
+		
+		customerContainer = document.getElementsByClassName("customerContainer")[0];
+		createDiv = document.createElement("div");
+		createDiv.id = "tabCont";
+		createDiv.className = "tabPage";
+		customerContainer.append(createDiv);
+		container = document.getElementById("tabCont");
+
+		header = [
+			{
+				"title": "등록일",
+				"align": "center",
+			},
+			{
+				"title": "계약명",
+				"align": "center",
+			},
+			{
+				"title": "계약금액",
+				"align": "center",
+			},
+			{
+				"title": "계약상세",
+				"align": "center",
+			},
+		];
+
+		if (jsonData === "" || jsonData.length == 0) {
+			str = [
+				{
+					"setData": undefined,
+					"align": "center",
+					"col": 4,
+				},
+			];
+
+			data.push(str);
+		} else {
+			for (let i = 0; i < jsonData.length; i++) {
+				let item = jsonData[i];
+
+				disDate = CommonDatas.dateDis(new Date(item.regDatetime).getTime(), new Date(item.modDatetime).getTime());
+				setDate = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+
+				str = [
+					{
+						"setData": setDate,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.contTitle)) ? "" : item.contTitle,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.net_profit)) ? "" : item.net_profit.toLocaleString("en-US"),
+						"align": "left",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.contDesc)) ? "" : item.contDesc,
+						"align": "left",
+					},
+				];
+
+				fnc.push("");
+				ids.push(jsonData[i].contNo);
+				data.push(str);
+			}
+		}
+
+		CommonDatas.createGrid(container, header, data, ids, job, fnc, "tabCont");
+	}
+
+	//거래처 탭 기술 지원 정보 페이지 출력 함수
+	drawCustTech() {
+		let container, customerContainer, jsonData, createDiv, job, header = [], data = [], ids = [], disDate, setDate, str, fnc = [];
+
+		if(storage.custTechList !== undefined){
+			jsonData = storage.custTechList;
+		}else{
+			jsonData = "";
+		}
+
+		if(document.getElementById("tabTech") !== null){
+			document.getElementById("tabTech").remove();
+		}
+		
+		customerContainer = document.getElementsByClassName("customerContainer")[0];
+		createDiv = document.createElement("div");
+		createDiv.id = "tabTech";
+		createDiv.className = "tabPage";
+		customerContainer.append(createDiv);
+		container = document.getElementById("tabTech");
+
+		header = [
+			{
+				"title": "등록일",
+				"align": "center",
+			},
+			{
+				"title": "기술지원명",
+				"align": "center",
+			},
+			{
+				"title": "담당자",
+				"align": "center",
+			},
+			{
+				"title": "기술지원상세",
+				"align": "center",
+			},
+		];
+
+		if (jsonData === "" || jsonData.length == 0) {
+			str = [
+				{
+					"setData": undefined,
+					"align": "center",
+					"col": 4,
+				},
+			];
+
+			data.push(str);
+		} else {
+			for (let i = 0; i < jsonData.length; i++) {
+				let item = jsonData[i];
+
+				disDate = CommonDatas.dateDis(new Date(item.regDatetime).getTime(), new Date(item.modDatetime).getTime());
+				setDate = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+
+				str = [
+					{
+						"setData": setDate,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.title)) ? "" : item.title,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.userNo)) ? "" : storage.user[item.userNo].userName,
+						"align": "left",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(item.desc)) ? "" : item.desc,
+						"align": "left",
+					},
+				];
+
+				fnc.push("");
+				ids.push(jsonData[i].techdNo);
+				data.push(str);
+			}
+		}
+
+		CommonDatas.createGrid(container, header, data, ids, job, fnc, "tabTech");
+	}
+
+	//거래처 등록 폼
+	customerInsertForm(){
+		let html, dataArray;
+	
+		dataArray = [
+			{
+				"title": "거래처명(*)",
+				"elementId": "custName",
+				"col": 4,
+				"disabled": false,
+			},
+			{
+				"title": "대표자명(*)",
+				"elementId": "custBossname",
+				"col": 4,
+				"disabled": false,
+			},
+			{
+				"title": "사업자번호(*)",
+				"elementId": "custVatno",
+				"keyup": "CommonDatas.custVatNoFormat(this);",
+				"col": 4,
+				"disabled": false,
+			},
+			{
+				"title": "거래처이메일",
+				"elementId": "custEmail",
+				"col": 4,
+				"disabled": false,
+			},
+			{
+				"title": "계산서이메일",
+				"elementId": "custVatemail",
+				"col": 4,
+				"disabled": false,
+			},
+		];
+	
+		html = CommonDatas.detailViewForm(dataArray, "modal");
+	
+		modal.show();
+		modal.content.style.minWidth = "70vw";
+		modal.content.style.maxWidth = "70vw";
+		modal.headTitle.innerText = "거래처등록";
+		modal.body.innerHTML = "<div class=\"defaultFormContainer\">" + html + "</div>";
+		modal.confirm.innerText = "등록";
+		modal.close.innerText = "취소";
+		modal.confirm.setAttribute("onclick", "const customer = new Customer(); CommonDatas.Temps.customer.insert();");
+		modal.close.setAttribute("onclick", "modal.hide();");
+
+		storage.formList = {
+			"compNo": 0,
+			"custCompNo": 0,
+			"custName": "",
+			"custVatno": "",
+			"custEmail": "",
+			"custVatemail": "",
+			"custBossname": "",
+			"custYn": "",
+			"buyrYn": "",
+			"ptncYn": "",
+			"suppYn": "",
+			"saleType": "",
+			"compType": "",
+			"regDatetime": "",
+			"modDatetime": "",
+			"attrib": "",
+		};
+		
+		setTimeout(() => {
+			ckeditor.config.readOnly = false;
+			window.setTimeout(setEditor, 100);
+		}, 100);
+	}
+
+	//탭 radio 버튼 클릭 함수
+	detailRadioChange(thisEle){
+		let tabPage = document.getElementsByClassName("tabPage");
+		let defaultFormContainer = document.getElementsByClassName("defaultFormContainer")[0];
+		let dataKey;
+
+		if(thisEle === undefined){
+			dataKey = document.querySelector(".tabRadio:checked").dataset.key;
+		}else{
+			dataKey = thisEle.dataset.key;
+		}
+		
+		for(let i = 0; i < tabPage.length; i++){
+			defaultFormContainer.style.display = "none";
+			tabPage[i].style.display = "none";
+		}
+
+		if(dataKey === "tabDefault") defaultFormContainer.style.display = "grid";
+		else {
+			// if(dataKey === "tabInoutSopp"){
+			// 	let inoutSoppForm = document.getElementsByClassName("inoutSoppForm")[0];
+			// 	let tabInoutCont = document.getElementsByClassName("tabInoutCont");
+			// 	let inoutTotalContents = document.getElementsByClassName("inoutTotalContents")[0];
+
+			// 	inoutSoppForm.style.display = "block";
+
+			// 	for(let i = 0; i < tabInoutCont.length; i++){
+			// 		tabInoutCont[i].style.display = "block";
+			// 	}
+
+			// 	inoutTotalContents.style.display = "block";
+			// }
+
+			document.getElementById(dataKey).style.display = "block";
+		}
+	}
+}
+
+//거래처 crud
+class Customer {
+	constructor(getData) {
+		CommonDatas.Temps.customer = this;
+
+		if (getData !== undefined) {
+			this.getData = getData;
+			this.custNo = getData.custNo;
+			this.compNo = getData.compNo;
+			this.custCompNo = getData.custCompNo;
+			this.custName = getData.custName;
+			this.custVatno = getData.custVatno;
+			this.custEmail = getData.custEmail;
+			this.custVatemail = getData.custVatemail;
+			this.custBossname = getData.custBossname;
+			this.custYn = getData.custYn;
+			this.buyrYn = getData.buyrYn;
+			this.ptncYn = getData.ptncYn;
+			this.suppYn = getData.suppYn;
+			this.saleType = getData.saleType;
+			this.compType = getData.compType;
+			this.regDatetime = getData.regDatetime;
+			this.modDatetime = getData.modDatetime;
+			this.attrib = getData.attrib;
+		} else {
+			this.custNo = 0;
+			this.compNo = 0;
+			this.custCompNo = 0;
+			this.custName = "";
+			this.custVatno = "";
+			this.custEmail = "";
+			this.custVatemail = "";
+			this.custBossname = "";
+			this.custYn = "";
+			this.buyrYn = "";
+			this.ptncYn = "";
+			this.suppYn = "";
+			this.saleType = "";
+			this.compType = "";
+			this.regDatetime = "";
+			this.modDatetime = "";
+			this.attrib = "";
+		}
+	}
+
+	//거래처 상세보기
+	detail() {
+		let html = "";
+		let regDatetime, datas, dataArray, notIdArray;
+
+		CommonDatas.detailSetFormList(this.getData);
+
+		let gridList = document.getElementsByClassName("gridList")[0];
+		let containerTitle = document.getElementById("containerTitle");
+		let detailBackBtn = document.getElementsByClassName("detailBackBtn")[0];
+		let crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
+		let crudDeleteBtn = document.getElementsByClassName("crudDeleteBtn")[0];
+
+		regDatetime = CommonDatas.dateDis(new Date(this.regDatetime).getTime());
+		regDatetime = CommonDatas.dateFnc(regDatetime);
+
+		notIdArray = ["userNo", "regDatetime"];
+		datas = ["userNo"];
+
+		dataArray = [
+			{
+				"title": "거래처명(*)",
+				"elementId": "custName",
+				"col": 4,
+				"value": (CommonDatas.emptyValuesCheck(this.custName)) ? "" : this.custName,
+			},
+			{
+				"title": "대표자명(*)",
+				"elementId": "custBossname",
+				"col": 4,
+				"value": (CommonDatas.emptyValuesCheck(this.custBossname)) ? "" : this.custBossname,
+			},
+			{
+				"title": "사업자번호(*)",
+				"elementId": "custVatno",
+				"col": 4,
+				"value": (CommonDatas.emptyValuesCheck(this.custVatno)) ? "" : this.custVatno,
+			},
+			{
+				"title": "거래처이메일",
+				"elementId": "custEmail",
+				"col": 4,
+				"value": (CommonDatas.emptyValuesCheck(this.custEmail)) ? "" : this.custEmail,
+			},
+			{
+				"title": "계산서이메일",
+				"elementId": "custVatemail",
+				"col": 4,
+				"value": (CommonDatas.emptyValuesCheck(this.custVatemail)) ? "" : this.custVatemail,
+			},
+		];
+
+		html = CommonDatas.detailViewForm(dataArray);
+		let createGrid = document.createElement("div");
+		createGrid.className = "defaultFormContainer";
+		createGrid.innerHTML = html;
+		gridList.after(createGrid);
+		containerTitle.innerText = (CommonDatas.emptyValuesCheck(this.custName)) ? "" : this.custName;
+		let hideArr = ["gridList", "listRange", "crudAddBtn", "listSearchInput", "searchContainer", "pageContainer"];
+		let showArr = ["defaultFormContainer"];
+		CommonDatas.setViewContents(hideArr, showArr);
+	
+		if(storage.my == this.getData.userNo){
+			crudUpdateBtn.setAttribute("onclick", "CommonDatas.enableDisabled(this, \"CommonDatas.Temps.customer.update();\", \"" + notIdArray + "\");");
+			crudDeleteBtn.setAttribute("onclick", "CommonDatas.Temps.customer.delete();");
+			crudUpdateBtn.style.display = "flex";
+			crudDeleteBtn.style.display = "flex";
+		}else{
+			crudUpdateBtn.style.display = "none";
+			crudDeleteBtn.style.display = "none";
+		}
+	
+		detailBackBtn.style.display = "flex";
+		CommonDatas.detailTrueDatas(datas);
+
+		let tabArrays = [
+			{
+				"text": "기본정보",
+				"id": "tabDefaultPage",
+				"key": "tabDefault",
+				"class": "tabRadio",
+				"onChange": "let customerSet = new CustomerSet(); customerSet.detailRadioChange(this);",
+			},
+			{
+				"text": "주소/연락처",
+				"id": "tabAddressPage",
+				"key": "tabAddress",
+				"class": "tabRadio",
+				"onChange": "let customerSet = new CustomerSet(); customerSet.detailRadioChange(this);",
+			},
+			{
+				"text": "담당자 정보",
+				"id": "tabUserPage",
+				"key": "tabUser",
+				"class": "tabRadio",
+				"onChange": "let customerSet = new CustomerSet(); customerSet.detailRadioChange(this);",
+			},
+			{
+				"text": "세무/거래 정보",
+				"id": "tabTaxPage",
+				"key": "tabTax",
+				"class": "tabRadio",
+				"onChange": "let customerSet = new CustomerSet(); customerSet.detailRadioChange(this);",
+			},
+			{
+				"text": "업체 업종 정보",
+				"id": "tabCustPage",
+				"key": "tabCust",
+				"class": "tabRadio",
+				"onChange": "let customerSet = new CustomerSet(); customerSet.detailRadioChange(this);",
+			},
+			{
+				"text": "영업 정보",
+				"id": "tabSalesPage",
+				"key": "tabSales",
+				"class": "tabRadio",
+				"onChange": "let customerSet = new CustomerSet(); customerSet.detailRadioChange(this);",
+			},
+			{
+				"text": "계약 정보",
+				"id": "tabContPage",
+				"key": "tabCont",
+				"class": "tabRadio",
+				"onChange": "let customerSet = new CustomerSet(); customerSet.detailRadioChange(this);",
+			},
+			{
+				"text": "기술 지원 정보",
+				"id": "tabTechPage",
+				"key": "tabTech",
+				"class": "tabRadio",
+				"onChange": "let customerSet = new CustomerSet(); customerSet.detailRadioChange(this);",
+			}
+		];
+
+		CommonDatas.setDetailTabs(tabArrays);
+		storage.custContList = [];
+
+		for(let i = 0; i < storage.contract.length; i++){
+			let item = storage.contract[i];
+
+			if(storage.formList.custNo === item.custNo){
+				storage.custContList.push(item);
+			}
+		}
+
+		setTimeout(() => {
+			let customerSet = new CustomerSet();
+			customerSet.drawCustSales();
+			customerSet.drawCustCont();
+			customerSet.drawCustTech();
+		}, 1000);
+	}
+
+	//거래처 등록
+	insert(){
+		if(CommonDatas.Temps.customer.customerVatNoCheck(document.getElementById("custVatno").value)){
+			msg.set("중복된 사업자번호가 있거나 사업자번호를 입력하지 않았습니다.<br />다시 확인해주세요.");
+			document.getElementById("custVatno").focus();
+			return false;
+		} else if(document.getElementById("custName").value === ""){
+			msg.set("거래처명을 입력해주세요.");
+			document.getElementById("custName").focus();
+			return false;
+		} else if(document.getElementById("custBossname").value === ""){
+			msg.set("대표자명을 입력해주세요.");
+			document.getElementById("custBossname").focus();
+			return false;
+		} else {
+			CommonDatas.formDataSet();
+			let data = storage.formList;
+			data = JSON.stringify(data);
+			data = cipher.encAes(data);
+
+			axios.post("/api/cust", data, {
+				headers: { "Content-Type": "text/plain" }
+			}).then((response) => {
+				if (response.data.result === "ok") {
+					location.reload();
+					msg.set("등록되었습니다.");
+				} else {
+					msg.set("등록 중 에러가 발생하였습니다.");
+					return false;
+				}
+			}).catch((error) => {
+				msg.set("등록 도중 에러가 발생하였습니다.\n" + error);
+				console.log(error);
+				return false;
+			});
+		}
+	}
+
+	customerVatNoCheck(custVatNo){
+		let result = false;
+
+		if(custVatNo === ""){
+			result = true;
+		}else{
+			for(let i = 0; i < storage.customerList.length; i++){
+				let item = storage.customerList[i];
+
+				if(custVatNo === item.custVatno){
+					result = true;
+				}
+			}
+		}
+
+		return result;
 	}
 }
 
@@ -15724,6 +16742,24 @@ class Common {
 		}
 
 		return resultDatas;
+	}
+
+	custVatNoFormat(thisEle){
+		let regexp = /[0-9]/;
+		let replaceStr = [];
+		
+		for(let i = 0; i < thisEle.value.length; i++){
+			if(thisEle.value[i] !== " " && !regexp.test(thisEle.value[i])){
+				replaceStr.push(thisEle.value[i]);
+			}
+		}
+		
+		for(let i = 0; i < replaceStr.length; i++){
+			thisEle.value = thisEle.value.replaceAll(replaceStr[i], "");
+		}
+		
+		thisEle.value = thisEle.value.replace(/(\d{3})(\d{2})(\d{5})/, '$1-$2-$3');
+		thisEle.setAttribute("maxlength", 11);
 	}
 }
 
