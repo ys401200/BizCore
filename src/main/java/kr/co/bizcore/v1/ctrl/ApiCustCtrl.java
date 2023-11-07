@@ -23,6 +23,7 @@ import kr.co.bizcore.v1.domain.CustData01;
 import kr.co.bizcore.v1.domain.CustData02;
 import kr.co.bizcore.v1.domain.CustData03;
 import kr.co.bizcore.v1.domain.Sales;
+import kr.co.bizcore.v1.domain.Sopp;
 import kr.co.bizcore.v1.domain.Tech;
 import kr.co.bizcore.v1.msg.Msg;
 import lombok.extern.slf4j.Slf4j;
@@ -150,6 +151,103 @@ public class ApiCustCtrl extends Ctrl{
         return result;
     }
 
+    @RequestMapping(value = "/{no}", method = RequestMethod.PUT)
+    public String update(HttpServletRequest req, @RequestBody String requestBody, @PathVariable String no) throws JsonMappingException, JsonProcessingException {
+        String compId = null;
+        int compNo = 0;
+        String result = null;
+        HttpSession session = null;
+        String data = null, aesKey = null, aesIv = null;
+        ObjectMapper mapper = new ObjectMapper();
+
+        session = req.getSession();
+        compNo = (int) session.getAttribute("compNo");
+        compId = (String) session.getAttribute("compId");
+        if (compId == null) {
+            compId = (String) req.getAttribute("compId");
+        }
+
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        data = soppService.decAes(requestBody, aesKey, aesIv);
+        Cust cust = mapper.readValue(data, Cust.class);
+        cust.setCompNo(compNo);
+
+        if (custService.updateCust(cust) > 0) {
+            result = "{\"result\":\"ok\"}";
+        }
+
+        return result;
+    }
+
+    @RequestMapping(value = "/{no}", method = RequestMethod.DELETE)
+    public String delete(HttpServletRequest req, @PathVariable String no) {
+
+        HttpSession session = null;
+        String compId = null;
+        int compNo = 0;
+        String result = null;
+        String userNo = null;
+        String uri = req.getRequestURI();
+        String[] t = null;
+        int num = 0;
+
+        // 글 번호 확인
+        if (no == null) { // 글 번호 확인 안됨
+            result = "{\"result\":\" failure\",\"msg\":\"notiNo is not exist\"}";
+        } else { // 글 번호 확인 됨
+            session = req.getSession();
+
+            userNo = (String) session.getAttribute("userNo");
+            compNo = (int) session.getAttribute("compNo");
+            compId = (String) session.getAttribute("compId");
+            if (compId == null)
+                compId = (String) req.getAttribute("compId");
+
+            if (compId == null) { // 회사코드 확인 안됨
+                result = "{\"result\":\" failure\",\"msg\":\"Company ID is not verified.\"}";
+            } else if (userNo == null) {
+                result = "{\"result\":\"failure\",\"msg\":\"Session expired and/or Not logged in.\"}";
+            } else { // 회사코드 확인 됨
+                num = custService.delete(compNo, no); // 삭제(update) 카운트를 실제 삭제 여부를 확인함
+                custService.deleteCustData01(compNo, no);
+                custService.deleteCustData02(compNo, no);
+                custService.deleteCustData03(compNo, no);
+                if (num > 0) { // 처리됨
+                    result = "{\"result\":\"ok\"}";
+                } else { // 처리 안됨
+                    result = "{\"result\":\" failure\",\"msg\":\"Error occured when delete.\"}";
+                } // End of if : 3
+            } // End of if : 2
+        } // End of if : 1
+        return result;
+    }
+
+    @RequestMapping(value = "/customerAddChange/{no}", method = RequestMethod.PUT)
+    public String customerAddChange(HttpServletRequest req, @PathVariable String no) {
+        String compId = null;
+        int compNo = 0;
+        String result = null;
+        HttpSession session = null;
+
+        session = req.getSession();
+        compNo = (int) session.getAttribute("compNo");
+        compId = (String) session.getAttribute("compId");
+        if (compId == null) {
+            compId = (String) req.getAttribute("compId");
+        }
+
+        Cust cust = new Cust();
+        cust.setCustNo(Integer.parseInt(no));
+        cust.setCompNo(compNo);
+
+        if (custService.customerAddChange(cust) > 0) {
+            result = "{\"result\":\"ok\"}";
+        }
+
+        return result;
+    }
+
     @RequestMapping(value = "/custdata01/{no}", method = RequestMethod.GET)
     public String getCustDataList01(HttpServletRequest req, @PathVariable String no) {
         HttpSession session = null;
@@ -190,6 +288,65 @@ public class ApiCustCtrl extends Ctrl{
                 } // End of if : 3
             } // End of if : 2
         } // End of if : 1
+        return result;
+    }
+
+    @RequestMapping(value = "/insertCustData01", method = RequestMethod.POST)
+    public String insertCustData01(HttpServletRequest req, @RequestBody String requestBody) throws JsonMappingException, JsonProcessingException {
+
+        int compNo = 0;
+        HttpSession session = null;
+        String result = null;
+        String data = null, aesKey = null, aesIv = null;
+        ObjectMapper mapper = new ObjectMapper();
+        int check = 0;
+
+        session = req.getSession();
+
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        compNo = (int) session.getAttribute("compNo");
+        data = custService.decAes(requestBody, aesKey, aesIv);
+        CustData01 custData01 = mapper.readValue(data, CustData01.class);
+        custData01.setCompNo(compNo);
+        
+        check = custService.insertCustData01(custData01);
+
+        if (check > 0) {
+            result = "{\"result\":\"ok\"}";
+        } else {
+            result = "{\"result\":\"failure\" ,\"msg\":\"Error occured when write.\"}";
+        }
+
+        return result;
+    }
+
+    @RequestMapping(value = "/updateCustData01/{no}", method = RequestMethod.PUT)
+    public String updateCustData01(HttpServletRequest req, @RequestBody String requestBody, @PathVariable String no) throws JsonMappingException, JsonProcessingException {
+        String compId = null;
+        int compNo = 0;
+        String result = null;
+        HttpSession session = null;
+        String data = null, aesKey = null, aesIv = null;
+        ObjectMapper mapper = new ObjectMapper();
+
+        session = req.getSession();
+        compNo = (int) session.getAttribute("compNo");
+        compId = (String) session.getAttribute("compId");
+        if (compId == null) {
+            compId = (String) req.getAttribute("compId");
+        }
+
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        data = soppService.decAes(requestBody, aesKey, aesIv);
+        CustData01 custData01 = mapper.readValue(data, CustData01.class);
+        custData01.setCompNo(compNo);
+
+        if (custService.updateCustData01(custData01) > 0) {
+            result = "{\"result\":\"ok\"}";
+        }
+
         return result;
     }
 
@@ -236,6 +393,65 @@ public class ApiCustCtrl extends Ctrl{
         return result;
     }
 
+    @RequestMapping(value = "/insertCustData02", method = RequestMethod.POST)
+    public String insertCustData02(HttpServletRequest req, @RequestBody String requestBody) throws JsonMappingException, JsonProcessingException {
+
+        int compNo = 0;
+        HttpSession session = null;
+        String result = null;
+        String data = null, aesKey = null, aesIv = null;
+        ObjectMapper mapper = new ObjectMapper();
+        int check = 0;
+
+        session = req.getSession();
+
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        compNo = (int) session.getAttribute("compNo");
+        data = custService.decAes(requestBody, aesKey, aesIv);
+        CustData02 custData02 = mapper.readValue(data, CustData02.class);
+        custData02.setCompNo(compNo);
+        
+        check = custService.insertCustData02(custData02);
+
+        if (check > 0) {
+            result = "{\"result\":\"ok\"}";
+        } else {
+            result = "{\"result\":\"failure\" ,\"msg\":\"Error occured when write.\"}";
+        }
+
+        return result;
+    }
+
+    @RequestMapping(value = "/updateCustData02/{no}", method = RequestMethod.PUT)
+    public String updateCustData02(HttpServletRequest req, @RequestBody String requestBody, @PathVariable String no) throws JsonMappingException, JsonProcessingException {
+        String compId = null;
+        int compNo = 0;
+        String result = null;
+        HttpSession session = null;
+        String data = null, aesKey = null, aesIv = null;
+        ObjectMapper mapper = new ObjectMapper();
+
+        session = req.getSession();
+        compNo = (int) session.getAttribute("compNo");
+        compId = (String) session.getAttribute("compId");
+        if (compId == null) {
+            compId = (String) req.getAttribute("compId");
+        }
+
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        data = soppService.decAes(requestBody, aesKey, aesIv);
+        CustData02 custData02 = mapper.readValue(data, CustData02.class);
+        custData02.setCompNo(compNo);
+
+        if (custService.updateCustData02(custData02) > 0) {
+            result = "{\"result\":\"ok\"}";
+        }
+
+        return result;
+    }
+
     @RequestMapping(value = "/custdata03/{no}", method = RequestMethod.GET)
     public String getCustDataList03(HttpServletRequest req, @PathVariable String no) {
         HttpSession session = null;
@@ -276,6 +492,65 @@ public class ApiCustCtrl extends Ctrl{
                 } // End of if : 3
             } // End of if : 2
         } // End of if : 1
+        return result;
+    }
+
+    @RequestMapping(value = "/insertCustData03", method = RequestMethod.POST)
+    public String insertCustData03(HttpServletRequest req, @RequestBody String requestBody) throws JsonMappingException, JsonProcessingException {
+
+        int compNo = 0;
+        HttpSession session = null;
+        String result = null;
+        String data = null, aesKey = null, aesIv = null;
+        ObjectMapper mapper = new ObjectMapper();
+        int check = 0;
+
+        session = req.getSession();
+
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        compNo = (int) session.getAttribute("compNo");
+        data = custService.decAes(requestBody, aesKey, aesIv);
+        CustData03 custData03 = mapper.readValue(data, CustData03.class);
+        custData03.setCompNo(compNo);
+        
+        check = custService.insertCustData03(custData03);
+
+        if (check > 0) {
+            result = "{\"result\":\"ok\"}";
+        } else {
+            result = "{\"result\":\"failure\" ,\"msg\":\"Error occured when write.\"}";
+        }
+
+        return result;
+    }
+
+    @RequestMapping(value = "/updateCustData03/{no}", method = RequestMethod.PUT)
+    public String updateCustData03(HttpServletRequest req, @RequestBody String requestBody, @PathVariable String no) throws JsonMappingException, JsonProcessingException {
+        String compId = null;
+        int compNo = 0;
+        String result = null;
+        HttpSession session = null;
+        String data = null, aesKey = null, aesIv = null;
+        ObjectMapper mapper = new ObjectMapper();
+
+        session = req.getSession();
+        compNo = (int) session.getAttribute("compNo");
+        compId = (String) session.getAttribute("compId");
+        if (compId == null) {
+            compId = (String) req.getAttribute("compId");
+        }
+
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        data = soppService.decAes(requestBody, aesKey, aesIv);
+        CustData03 custData03 = mapper.readValue(data, CustData03.class);
+        custData03.setCompNo(compNo);
+
+        if (custService.updateCustData03(custData03) > 0) {
+            result = "{\"result\":\"ok\"}";
+        }
+
         return result;
     }
 

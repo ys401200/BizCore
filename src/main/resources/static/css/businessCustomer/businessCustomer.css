@@ -61,6 +61,16 @@
 	float: right;
 }
 
+.customerContainer > .contentHeaders > .crudBtns > .addChangeBtn{
+	display: none;
+	width: 95px;
+}
+
+.customerContainer > .contentHeaders > .crudBtns > .addListBtn{
+	background-color:#47C83E;
+	width: 95px;
+}
+
 .customerContainer > #referenceFileUpload{
 	width: 99%; 
 	/* height: auto; */

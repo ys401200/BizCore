@@ -11,7 +11,7 @@ public class CustData01 extends Cust {
     private int custdataNo;
     private String custVattype;
     private String custVatbiz;
-    private String custVetmemo;
+    private String custVatmemo;
     private String custByear;
     private BigDecimal custCRbalance;
     private BigDecimal custDRbalance;
