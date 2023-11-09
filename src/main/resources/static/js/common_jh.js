@@ -15848,9 +15848,8 @@ class Customer {
 						console.log(error);
 						return false;
 					});
-	
 				}
-				
+
 				if(i == shamCustomerCheck.length - 1){
 					location.reload();
 					msg.set("전환 되었습니다.");
@@ -15890,6 +15889,500 @@ class Customer {
 		return result;
 	}
 }
+
+class ProductSet{
+	constructor() {
+		CommonDatas.Temps.productSet = this;
+	}
+
+	//상품설정 리스트 저장 함수
+	list() {
+		if(storage.product !== undefined && storage.product !== null){
+			storage.productList = storage.product;
+
+			this.drawProductList();
+			CommonDatas.searchListSet("productList");
+			$('.theme-loader').fadeOut("slow");
+		}
+	}
+
+	//상품설정 리스트 출력 함수
+	drawProductList() {
+		let container, result, jsonData, containerTitle, job, header = [], data = [], ids = [], str, fnc = [], pageContainer, hideArr, showArr;
+
+		if (storage.productList === undefined) {
+			msg.set("등록된 상품 데이터가 없습니다");
+		}
+		else {
+			if (storage.searchDatas === undefined) {
+				jsonData = storage.productList;
+			} else {
+				jsonData = storage.searchDatas;
+			}
+		}
+
+		result = CommonDatas.paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+		containerTitle = document.getElementById("containerTitle");
+		pageContainer = document.getElementsByClassName("pageContainer")[0];
+		container = document.getElementsByClassName("gridList")[0];
+		hideArr = ["detailBackBtn", "crudUpdateBtn", "crudDeleteBtn", "contractReqBtn"];
+		showArr = [
+			{ element: "gridList", display: "block" },
+			{ element: "pageContainer", display: "flex" },
+			{ element: "searchContainer", display: "block" },
+			{ element: "listRange", display: "flex" },
+			{ element: "listSearchInput", display: "flex" },
+			{ element: "crudBtns", display: "flex" },
+			{ element: "crudAddBtn", display: "flex" },
+		];
+
+		header = [
+			{
+				"title": "공급사",
+				"align": "center",
+			},
+			{
+				"title": "제품그룹",
+				"align": "center",
+			},
+			{
+				"title": "상품명",
+				"align": "center",
+			},
+			{
+				"title": "상품설명",
+				"align": "center",
+			},
+		];
+
+		if (jsonData === "" || jsonData.length == 0) {
+			str = [
+				{
+					"setData": undefined,
+					"align": "center",
+					"col": 4,
+				},
+			];
+
+			data.push(str);
+		} else {
+			for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+				str = [
+					{
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].custNo)) ? "" : storage.customer[jsonData[i].custNo].custName,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].productCategoryName)) ? "" : jsonData[i].productCategoryName,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].productName)) ? "" : jsonData[i].productName,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].productDesc)) ? "" : jsonData[i].productDesc,
+						"align": "center",
+					},
+				];
+
+				fnc.push("CommonDatas.Temps.productSet.productDetailView(this)");
+				ids.push(jsonData[i].productNo);
+				data.push(str);
+			}
+
+			let pageNation = CommonDatas.createPaging(pageContainer, result[3], "CommonDatas.pageMove", "CommonDatas.Temps.productSet.drawProductList", result[0]);
+			pageContainer.innerHTML = pageNation;
+		}
+
+		CommonDatas.createGrid(container, header, data, ids, job, fnc);
+		CommonDatas.setViewContents(hideArr, showArr);
+		containerTitle.innerText = "상품";
+	}
+
+	//상품 상세보기
+	productDetailView(e) {
+		let thisEle = e;
+
+		axios.get("/api/product/" + thisEle.dataset.id).then((response) => {
+			if (response.data.result === "ok") {
+				let result;
+				result = cipher.decAes(response.data.data);
+				result = JSON.parse(result);
+				let product = new Product(result);
+				product.detail();
+
+				localStorage.setItem("loadSetPage", window.location.pathname);
+			}
+		}).catch((error) => {
+			msg.set("상세보기 에러 입니다.\n" + error);
+			console.log(error);
+		});
+	}
+
+	//상품 등록 폼
+	productInsertForm(){
+		let html, dataArray;
+	
+		dataArray = [
+			{
+				"title": "고객사(*)",
+				"elementId": "custNo",
+				"complete": "customer",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"col": 2,
+				"disabled": false,
+			},
+			{
+				"title": "제품그룹(*)",
+				"selectValue": [
+					{
+						"key": "1",
+						"value": "클라우드",
+					},
+					{
+						"key": "2",
+						"value": "보안",
+					},
+					{
+						"key": "3",
+						"value": "NI",
+					},
+					{
+						"key": "4",
+						"value": "네트워크",
+					},
+					{
+						"key": "5",
+						"value": "기타",
+					},
+				],
+				"type": "select",
+				"elementId": "productCategoryNo",
+				"col": 2,
+				"disabled": false,
+			},
+			{
+				"title": "상품명(*)",
+				"elementId": "productName",
+				"col": 2,
+				"disabled": false,
+			},
+			{
+				"title": "기본가격(*)",
+				"elementId": "productDefaultPrice",
+				"keyup": "CommonDatas.inputNumberFormat(this);",
+				"col": 2,
+				"disabled": false,
+			},
+			{
+				"title": "상품설명",
+				"elementId": "productDesc",
+				"type": "textarea",
+				"col": 4,
+				"disabled": false,
+			},
+		];
+	
+		html = CommonDatas.detailViewForm(dataArray, "modal");
+	
+		modal.show();
+		modal.content.style.minWidth = "70vw";
+		modal.content.style.maxWidth = "70vw";
+		modal.headTitle.innerText = "상품 등록";
+		modal.body.innerHTML = "<div class=\"defaultFormContainer\">" + html + "</div>";
+		modal.confirm.innerText = "등록";
+		modal.close.innerText = "취소";
+		modal.confirm.setAttribute("onclick", "const product = new Product(); CommonDatas.Temps.product.insert();");
+		modal.close.setAttribute("onclick", "modal.hide();");
+
+		storage.formList = {
+			"productCategoryNo": 0,
+			"productCategoryName": "",
+			"compNo": 0,
+			"custNo": 0,
+			"userNo": storage.my,
+			"productName": "",
+			"productDesc": "",
+			"productDefaultPrice": 0,
+			"regDatetime": "",
+			"modDatetime": "",
+			"attrib": "",
+		};
+		
+		setTimeout(() => {
+			ckeditor.config.readOnly = false;
+			window.setTimeout(setEditor, 100);
+		}, 100);
+	}
+
+	//상품 단일 검색 keyup 이벤트
+	searchInputKeyup() {
+		let searchAllInput, tempArray;
+		searchAllInput = document.getElementById("searchAllInput").value;
+		tempArray = CommonDatas.searchDataFilter(storage.productList, searchAllInput, "input");
+
+		if (tempArray.length > 0) {
+			storage.searchDatas = tempArray;
+		} else {
+			storage.searchDatas = "";
+		}
+
+		this.drawProductList();
+	}
+}
+
+class Product {
+	constructor(getData) {
+		CommonDatas.Temps.product = this;
+
+		if (getData !== undefined) {
+			this.getData = getData;
+			this.productNo = getData.productNo;
+			this.productCategoryNo = getData.productCategoryNo;
+			this.productCategoryName = getData.productCategoryName;
+			this.compNo = getData.compNo;
+			this.custNo = getData.custNo;
+			this.userNo = getData.userNo;
+			this.productName = getData.productName;
+			this.productDesc = getData.productDesc;
+			this.productDefaultPrice = getData.productDefaultPrice;
+			this.productImageNo = getData.productImageNo;
+			this.regDatetime = getData.regDatetime;
+			this.modDatetime = getData.modDatetime;
+			this.attrib = getData.attrib;
+		} else {
+			this.productNo = 0;
+			this.productCategoryNo = 0;
+			this.productCategoryName = "";
+			this.compNo = 0;
+			this.custNo = 0;
+			this.userNo = 0;
+			this.productName = "";
+			this.productDesc = "";
+			this.productDefaultPrice = 0;
+			this.productImageNo = 0;
+			this.regDatetime = "";
+			this.modDatetime = "";
+			this.attrib = "";
+		}
+	}
+
+	//상품 상세보기
+	detail() {
+		let html = "";
+		let regDatetime, datas, dataArray, notIdArray;
+
+		CommonDatas.detailSetFormList(this.getData);
+
+		let gridList = document.getElementsByClassName("gridList")[0];
+		let containerTitle = document.getElementById("containerTitle");
+		let detailBackBtn = document.getElementsByClassName("detailBackBtn")[0];
+		let crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
+		let crudDeleteBtn = document.getElementsByClassName("crudDeleteBtn")[0];
+
+		regDatetime = CommonDatas.dateDis(new Date(this.regDatetime).getTime());
+		regDatetime = CommonDatas.dateFnc(regDatetime);
+
+		notIdArray = ["userNo", "regDatetime"];
+		datas = ["userNo"];
+
+		dataArray = [
+			{
+				"title": "고객사(*)",
+				"elementId": "custNo",
+				"complete": "customer",
+				"keyup": "CommonDatas.addAutoComplete(this);",
+				"onClick": "CommonDatas.addAutoComplete(this);",
+				"col": 2,
+				"value": (CommonDatas.emptyValuesCheck(this.custNo)) ? "" : storage.customer[this.custNo].custName,
+			},
+			{
+				"title": "제품그룹(*)",
+				"selectValue": [
+					{
+						"key": "1",
+						"value": "클라우드",
+					},
+					{
+						"key": "2",
+						"value": "보안",
+					},
+					{
+						"key": "3",
+						"value": "NI",
+					},
+					{
+						"key": "4",
+						"value": "네트워크",
+					},
+					{
+						"key": "5",
+						"value": "기타",
+					},
+				],
+				"type": "select",
+				"elementId": "productCategoryNo",
+				"col": 2,
+			},
+			{
+				"title": "상품명(*)",
+				"elementId": "productName",
+				"col": 2,
+				"value": (CommonDatas.emptyValuesCheck(this.productName)) ? "" : this.productName,
+			},
+			{
+				"title": "기본가격(*)",
+				"elementId": "productDefaultPrice",
+				"keyup": "CommonDatas.inputNumberFormat(this);",
+				"col": 2,
+				"value": (CommonDatas.emptyValuesCheck(this.productDefaultPrice)) ? "" : this.productDefaultPrice.toLocaleString("en-US"),
+			},
+			{
+				"title": "상품설명",
+				"elementId": "productDesc",
+				"type": "textarea",
+				"col": 4,
+				"value": (CommonDatas.emptyValuesCheck(this.productDesc)) ? "" : this.productDesc,
+			},
+		];
+
+		html = CommonDatas.detailViewForm(dataArray);
+		let createGrid = document.createElement("div");
+		createGrid.className = "defaultFormContainer";
+		createGrid.innerHTML = html;
+		gridList.after(createGrid);
+		containerTitle.innerText = (CommonDatas.emptyValuesCheck(this.productName)) ? "" : this.productName;
+		let hideArr = ["gridList", "listRange", "crudAddBtn", "listSearchInput", "searchContainer", "pageContainer"];
+		let showArr = ["defaultFormContainer"];
+		CommonDatas.setViewContents(hideArr, showArr);
+	
+		crudUpdateBtn.setAttribute("onclick", "CommonDatas.enableDisabled(this, \"CommonDatas.Temps.product.update();\", \"" + notIdArray + "\");");
+		crudDeleteBtn.setAttribute("onclick", "CommonDatas.Temps.product.delete();");
+		crudUpdateBtn.style.display = "flex";
+		crudDeleteBtn.style.display = "flex";
+		detailBackBtn.style.display = "flex";
+		CommonDatas.detailTrueDatas(datas);
+
+		setTimeout(() => {
+			document.getElementById("productCategoryNo").value = this.productCategoryNo;
+			ckeditor.config.readOnly = true;
+			window.setTimeout(setEditor, 100);
+		}, 300);
+	}
+
+	//상품 등록
+	insert(){
+		if(document.getElementById("custNo").value === ""){
+			msg.set("고객사 입력해주세요.");
+			document.getElementById("custNo").focus();
+			return false;
+		} else if(document.getElementById("custNo").value !== "" && !CommonDatas.validateAutoComplete(document.getElementById("custNo").value, "customer")){
+			msg.set("조회된 고객사가 없습니다.\n다시 확인해주세요.");
+			document.getElementById("custNo").focus();
+			return false;
+		} else if(document.getElementById("productName").value === ""){
+			msg.set("상품명을 입력해주세요.");
+			document.getElementById("productName").focus();
+			return false;
+		} else if(document.getElementById("productDefaultPrice").value === ""){
+			msg.set("가격을 입력해주세요.");
+			document.getElementById("productDefaultPrice").focus();
+			return false;
+		} else {
+			let productCategoryNo = document.getElementById("productCategoryNo");
+			CommonDatas.formDataSet();
+			let data = storage.formList;
+			data.productCategoryName = productCategoryNo.options[productCategoryNo.selectedIndex].innerText;
+			data = JSON.stringify(data);
+			data = cipher.encAes(data);
+
+			axios.post("/api/product", data, {
+				headers: { "Content-Type": "text/plain" }
+			}).then((response) => {
+				if (response.data.result === "ok") {
+					location.reload();
+					msg.set("등록되었습니다.");
+				} else {
+					msg.set("등록 중 에러가 발생하였습니다.");
+					return false;
+				}
+			}).catch((error) => {
+				msg.set("등록 도중 에러가 발생하였습니다.\n" + error);
+				console.log(error);
+				return false;
+			});
+		}
+	}
+
+	//상품 수정
+	update() {
+		if(document.getElementById("custNo").value === ""){
+			msg.set("고객사 입력해주세요.");
+			document.getElementById("custNo").focus();
+			return false;
+		} else if(document.getElementById("custNo").value !== "" && !CommonDatas.validateAutoComplete(document.getElementById("custNo").value, "customer")){
+			msg.set("조회된 고객사가 없습니다.\n다시 확인해주세요.");
+			document.getElementById("custNo").focus();
+			return false;
+		} else if(document.getElementById("productName").value === ""){
+			msg.set("상품명을 입력해주세요.");
+			document.getElementById("productName").focus();
+			return false;
+		} else if(document.getElementById("productDefaultPrice").value === ""){
+			msg.set("가격을 입력해주세요.");
+			document.getElementById("productDefaultPrice").focus();
+			return false;
+		} else {
+			CommonDatas.formDataSet();
+			let data = storage.formList;
+			data.productCategoryName = productCategoryNo.options[productCategoryNo.selectedIndex].innerText;
+			data = JSON.stringify(data);
+			data = cipher.encAes(data);
+
+			axios.put("/api/product/" + storage.formList.productNo, data, {
+				headers: { "Content-Type": "text/plain" }
+			}).then((response) => {
+				if (response.data.result === "ok") {
+					location.reload();
+					msg.set("수정되었습니다.");
+				} else {
+					msg.set("수정 중 에러가 발생하였습니다.");
+					return false;
+				}
+			}).catch((error) => {
+				msg.set("수정 도중 에러가 발생하였습니다.\n" + error);
+				console.log(error);
+				return false;
+			});
+		}
+	}
+
+	//상품 삭제
+	delete() {
+		if (confirm("정말로 삭제하시겠습니까??")) {
+			axios.delete("/api/product/" + storage.formList.productNo, {
+				headers: { "Content-Type": "text/plain" }
+			}).then((response) => {
+				if (response.data.result === "ok") {
+					location.reload();
+					msg.set("삭제되었습니다.");
+				} else {
+					msg.set("삭제 중 에러가 발생하였습니다.");
+					return false;
+				}
+			}).catch((error) => {
+				msg.set("삭제 도중 에러가 발생하였습니다.\n" + error);
+				console.log(error);
+				return false;
+			});
+		} else {
+			return false;
+		}
+	}
+}
+
 
 //Common 시작
 class Common {

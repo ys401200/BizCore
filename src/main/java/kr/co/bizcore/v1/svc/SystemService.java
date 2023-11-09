@@ -608,27 +608,27 @@ public class SystemService extends Svc {
     //     return result;
     // } // End of getProductList()
 
-    public String getProductList(String compId, int start, int end) {
-        String result = null;
-        List<Product> list = null;
-        int x = 0;
+    // public String getProductList(String compId, int start, int end) {
+    //     String result = null;
+    //     List<Product> list = null;
+    //     int x = 0;
 
-        list = productMapper.getProductListWithStartAndEnd(compId, start, end);
-        result = "[";
-        if (list != null && list.size() > 0)
-            for (x = 0; x < list.size(); x++) {
-                if (x > 0)
-                    result += ",";
-                result += list.get(x).toJson();
-            }
-        result = "]";
+    //     list = productMapper.getProductListWithStartAndEnd(compId, start, end);
+    //     result = "[";
+    //     if (list != null && list.size() > 0)
+    //         for (x = 0; x < list.size(); x++) {
+    //             if (x > 0)
+    //                 result += ",";
+    //             result += list.get(x).toJson();
+    //         }
+    //     result = "]";
 
-        return result;
-    } // End of getProductList()
+    //     return result;
+    // } // End of getProductList()
 
-    public int getProductCount(String compId) {
-        return productMapper.getProductCount(compId);
-    }
+    // public int getProductCount(String compId) {
+    //     return productMapper.getProductCount(compId);
+    // }
 
     public Product getProduct(String compId, int no) {
         Product result = null;
@@ -659,11 +659,11 @@ public class SystemService extends Svc {
         return result;
     } // End of modifyProduct()
 
-    public int removeProduct(String compId, int no) {
-        int result = -1;
-        result = productMapper.removeProduct(compId, no);
-        return result;
-    } // End of removeProduct()
+    // public int removeProduct(String compId, int no) {
+    //     int result = -1;
+    //     result = productMapper.removeProduct(compId, no);
+    //     return result;
+    // } // End of removeProduct()
 
     // 영업목표 가져오는 메서드
     public String getSalesGoals(String compId, String userNo, int year) {

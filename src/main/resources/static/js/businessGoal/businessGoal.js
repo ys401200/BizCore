@@ -1,13 +1,12 @@
-$(document).ready(() => {
-    init();
-    
-	setTimeout(() => {
-		$("#loadingDiv").hide();
-		$("#loadingDiv").loading("toggle");
-	}, 300);
-
-    gridGoalList();
+document.addEventListener("DOMContentLoaded", () => {
+	callerFun();
 });
+
+async function callerFun(){
+	await promiseInit();
+	const setGoal = new GoalSet();
+	setGoal.list();
+}
 
 function gridGoalList(){
     let nowYear, url, method, data, type;

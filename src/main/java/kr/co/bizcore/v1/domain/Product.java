@@ -16,6 +16,7 @@ public class Product extends Domain{
     private int userNo;
     private String productName;
     private String productDesc;
+    private int productDefaultPrice;
     private int productImageNo;
     private String regDatetime;
     private String modDatetime;
