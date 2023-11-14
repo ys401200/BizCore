@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 
 import kr.co.bizcore.v1.domain.Sales;
+import kr.co.bizcore.v1.domain.SalesTarget;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -43,6 +44,10 @@ public class SalesService extends Svc{
     public int updateSales(Sales sales) {
         return salesMapper.updateSales(sales);
     }
+
+    public List<SalesTarget> getGoalList(SalesTarget salesTarget){
+        return salesMapper.getGoalList(salesTarget);
+    } 
 
     // public boolean modifySales(String salesNo, Sales sales, int compNo){
     //     int x = -1;

@@ -1,131 +1,80 @@
-.goalContainer {
+@charset "UTF-8";
+.goalContainer{
+    margin-top: 3px;
 	background: #FFFFFF;
+	overflow: auto;
 	box-shadow: 0px 2px 14px rgba(0, 0, 0, 0.12);
-    max-height: 80%;
 }
 
-.goalContainer > hr {
+.goalContainer > hr{
 	float: left;
 	border:2px solid #182f81;
-	height: 32px;
-	margin: 0;
+ 	height : 32px;
+ 	margin: 0;
 }
 
-.goalContainer > span {
+.goalContainer > #containerTitle {
 	font-weight: 600;
     font-size: 0.9rem;
 	margin-left: 15px;
 	line-height: 40px;
-	color: #182f81;
+	color: #332E85;
+	float: left;
 }
 
-.goalContainer > button{
-    margin: 0.5% 0.6% 0 0;
-    box-shadow: 0px 1px 2px #bdbfc9;
-    padding: 0.3% 0.6%;
-    background-color: #182f81;
-    color: #fff;
-    float: right;
-    border-radius: 5px;
+.goalContainer > .contentHeaders > .crudBtns{
+    display: flex;
 }
 
-.goalContent{
-    padding: 10px;
-    overflow: hidden;
+.goalContainer > .goalContent{
+    width: 99%;
+    padding: 5px;
 }
 
-.goalGridHeader,
-.goalBody,
-.goalBodyMonthContents{
-	display: grid;
+.goalContainer > .goalContent > .goalHeader,
+.goalContainer > .goalContent > .goalBody{
+    display: grid;
     grid-template-columns: repeat(14, 1fr);
-    font-size: 0.9rem;
 }
 
-.goalGridHeader{
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-    border-left: 1px solid #e9ecef;
-    border-right: 1px solid #e9ecef;
-    height: 3.3vh;
-    color: #fff;
-    background-color: #182f81;
+.goalContainer > .goalContent > .goalHeader{
+    border-top: 1px solid #BDBDBD;
+    border-left: 1px solid #BDBDBD;
 }
 
-.goalGridHeader > div{
+.goalContainer > .goalContent > .goalBody{
+    border-left: 1px solid #BDBDBD;
+}
+
+.goalContainer > .goalContent > .goalHeader > div,
+.goalContainer > .goalContent > .goalBody > div{
     display: flex;
     align-items: center;
-    justify-content: center;
+    border-right: 1px solid #BDBDBD;
+    border-bottom: 1px solid #BDBDBD;
+    padding: 5px;
+}
+
+.goalContainer > .goalContent > .goalHeader > div{
     font-size: 0.9rem;
+    font-weight: 600;
+    justify-content: center;
+
+}
+
+.goalContainer > .goalContent > .goalBody > div{
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.goalContainer > .goalContent > .goalBody > div > input{
     width: 100%;
-}
-
-.goalGridBody{
-    border-bottom: 1px solid #e9ecef;
-    border-left: 1px solid #e9ecef;
-    border-right: 1px solid #e9ecef;
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
-}
-
-.goalGridBody > .goalBody{
-    border-bottom: 1px solid #e9ecef;
-    background-color: #BDBDBD;
-}
-
-.goalGridBody > .goalBody > div{
-    word-break: break-all;
-    padding: 5px;
-    display: flex;
-    align-items: center;
-}
-
-.goalGridBody > .goalBody .goalBodyUserTotal{
-    display: flex;
-    align-items: center;
-    justify-content: right;
-    font-weight: 600;
-}
-
-.goalGridBody > div[class^="goalBody"] .goalBodyUser{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600;
-}
-
-.goalGridBody > .goalBody > div:not(.goalBodyUser){
-    border: 1px solid #e9ecef;
-}
-
-.goalGridBody > .goalBody > div > input{
     text-align: right;
-    border: 1px solid #e9ecef;
-    font-size: 0.9rem;
-    width: 100%
+    border: 1px solid #BDBDBD;
+    border-radius: 5px;
+    padding: 3px;
 }
 
-.goalBodyMonthContents{
-    background-color: #182f81;
-    color: #fff;
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
-    height: 3vh;
-}
-
-.goalBodyMonthContents > div{
-    word-break: break-all;
-    padding: 5px;
-}
-
-.goalBodyMonthContents > div:first-child{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.goalBodyMonthContents > div:not(:first-child){
-    display: flex;
-    align-items: center;
-    justify-content: right;
+.goalContainer > .goalContent > .goalBody > div > input:read-only{
+    background-color: #f4f4f4;
 }

@@ -187,10 +187,6 @@ class NoticeSet {
 			ckeditor.config.readOnly = false;
 			window.setTimeout(setEditor, 100);
 		}, 100);
-
-		setTimeout(() => {
-			document.getElementsByClassName("cke_textarea_inline")[0].style.height = "300px";
-		}, 300);
 	}
 
 	//공지사항 검색 버튼 클릭 함수
@@ -1192,7 +1188,6 @@ class SoppSet{
 				}
 
 				storage.soppList = result;
-				CommonDatas.setCategories(result);
 
 				this.drawSoppList();
 				CommonDatas.searchListSet("soppList");
@@ -1514,6 +1509,7 @@ class SoppSet{
 	//영업기회 등록 폼
 	soppInsertForm(){
 		let html, dataArray;
+		storage.categoryArr = [];
 	
 		dataArray = [
 			{
@@ -1660,7 +1656,7 @@ class SoppSet{
 			},
 			{
 				"title": "카테고리<br />(제품회사명)",
-				"complete": "productCust",
+				"complete": "categories",
 				"keyup": "CommonDatas.addAutoComplete(this);",
 				"onClick": "CommonDatas.addAutoComplete(this);",
 				"disabled": false,
@@ -3809,6 +3805,7 @@ class Sopp{
 	detail() {
 		let html = "";
 		let setDate, soppTargetDate, maintenance_S, maintenance_E, datas, dataArray, notIdArray, splitCategories;
+		storage.categoryArr = [];
 		
 		if(document.getElementById("rightDetailParent") !== null){
 			document.getElementById("rightDetailParent").remove();
@@ -3816,7 +3813,7 @@ class Sopp{
 		
 		if(this.categories !== undefined && this.categories !== null){
 			splitCategories = this.categories.split(",");
-
+			
 			for(let i = 0; i < splitCategories.length; i++){
 				CommonDatas.makeCategories(splitCategories[i]);
 			}
@@ -3839,7 +3836,7 @@ class Sopp{
 		setDate = CommonDatas.dateDis(new Date(this.maintenance_E).getTime());
 		maintenance_E = CommonDatas.dateFnc(setDate);
 
-		notIdArray = ["userNo"];
+		notIdArray = ["userNo", "categories"];
 		datas = ["userNo", "secondUserNo", "custNo", "cip", "buyrNo"];
 
 		dataArray = [
@@ -3985,7 +3982,7 @@ class Sopp{
 			},
 			{
 				"title": "카테고리<br />(제품회사명)",
-				"complete": "productCust",
+				"complete": "categories",
 				"keyup": "CommonDatas.addAutoComplete(this);",
 				"onClick": "CommonDatas.addAutoComplete(this);",
 			},
@@ -4735,8 +4732,6 @@ class ContSet{
 				result = JSON.parse(result);
 				storage.contList = result;
 				
-				CommonDatas.setCategories(result);
-
 				this.drawContList();
 				CommonDatas.searchListSet("contList");
 				$('.theme-loader').fadeOut("slow");
@@ -5249,7 +5244,8 @@ class ContSet{
 	//계약 등록 폼
 	contInsertForm(){
 		let html, dataArray;
-	
+		storage.categoryArr = [];
+
 		dataArray = [
 			{
 				"title": "등록구분(*)",
@@ -5438,7 +5434,7 @@ class ContSet{
 			},
 			{
 				"title": "카테고리<br />(제품회사명)",
-				"complete": "productCust",
+				"complete": "categories",
 				"keyup": "CommonDatas.addAutoComplete(this);",
 				"onClick": "CommonDatas.addAutoComplete(this);",
 				"disabled": false,
@@ -5447,7 +5443,6 @@ class ContSet{
 				"title": "카테고리 선택 시<br />자동 입력(*)",
 				"elementId": "categories",
 				"col": 2,
-				"disabled": true,
 			},
 			{
 				"title": "카테고리 삭제<br />선택 시 삭제",
@@ -6972,7 +6967,8 @@ class Cont{
 	detail() {
 		let html = "";
 		let setDate, contOrddate, delivDate, freemaintSdate, freemaintEdate, paymaintSdate, paymaintEdate, datas, dataArray, notIdArray, splitCategories;
-		
+		storage.categoryArr = [];
+
 		if(document.getElementById("rightDetailParent") !== null){
 			document.getElementById("rightDetailParent").remove();
 		}
@@ -7190,7 +7186,7 @@ class Cont{
 			},
 			{
 				"title": "카테고리<br />(제품회사명)",
-				"complete": "productCust",
+				"complete": "categories",
 				"keyup": "CommonDatas.addAutoComplete(this);",
 				"onClick": "CommonDatas.addAutoComplete(this);",
 			},
@@ -15890,6 +15886,7 @@ class Customer {
 	}
 }
 
+//상품 설정 시작
 class ProductSet{
 	constructor() {
 		CommonDatas.Temps.productSet = this;
@@ -16380,6 +16377,644 @@ class Product {
 		} else {
 			return false;
 		}
+	}
+}
+
+//카테고리 설정 시작
+class CategorySet{
+	constructor() {
+		CommonDatas.Temps.categorySet = this;
+	}
+
+	//카테고리 리스트 저장 함수
+	list() {
+		axios.get("/api/category").then((response) => {
+			if (response.data.result === "ok") {
+				let result;
+				result = cipher.decAes(response.data.data);
+				result = JSON.parse(result);
+				storage.categoryList = result;
+
+				this.drawCategoryList();
+				CommonDatas.searchListSet("categoryList");
+				$('.theme-loader').fadeOut("slow");
+			}
+		}).catch((error) => {
+			msg.set("카테고리 리스트 에러입니다.\n" + error);
+			console.log(error);
+		})
+	}
+
+	//카테고리 리스트 출력 함수
+	drawCategoryList() {
+		let container, result, jsonData, containerTitle, job, header = [], data = [], ids = [], disDate, setDate, str, fnc = [], pageContainer, hideArr, showArr;
+
+		if (storage.categoryList === undefined) {
+			msg.set("등록된 카테고리 데이터가 없습니다");
+		}
+		else {
+			if (storage.searchDatas === undefined) {
+				jsonData = storage.categoryList;
+			} else {
+				jsonData = storage.searchDatas;
+			}
+		}
+
+		result = CommonDatas.paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+		containerTitle = document.getElementById("containerTitle");
+		pageContainer = document.getElementsByClassName("pageContainer")[0];
+		container = document.getElementsByClassName("gridList")[0];
+		hideArr = ["detailBackBtn", "crudUpdateBtn", "crudDeleteBtn", "contractReqBtn"];
+		showArr = [
+			{ element: "gridList", display: "block" },
+			{ element: "pageContainer", display: "flex" },
+			{ element: "searchContainer", display: "block" },
+			{ element: "listRange", display: "flex" },
+			{ element: "listSearchInput", display: "flex" },
+			{ element: "crudBtns", display: "flex" },
+			{ element: "crudAddBtn", display: "flex" },
+		];
+
+		header = [
+			{
+				"title": "등록일",
+				"align": "center",
+			},
+			{
+				"title": "카테고리명",
+				"align": "center",
+			},
+			{
+				"title": "작성자",
+				"align": "center",
+			},
+		];
+
+		if (jsonData === "" || jsonData.length == 0) {
+			str = [
+				{
+					"setData": undefined,
+					"align": "center",
+					"col": 3,
+				},
+			];
+
+			data.push(str);
+		} else {
+			for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+				disDate = CommonDatas.dateDis(new Date(jsonData[i].regDatetime).getTime());
+				setDate = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+
+				str = [
+					{
+						"setData": setDate,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].custCategoryName)) ? "" : jsonData[i].custCategoryName,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].userNo)) ? "" : storage.user[jsonData[i].userNo].userName,
+						"align": "center",
+					},
+				];
+
+				fnc.push("CommonDatas.Temps.categorySet.categoryDetailView(this)");
+				ids.push(jsonData[i].custCategoryNo);
+				data.push(str);
+			}
+
+			let pageNation = CommonDatas.createPaging(pageContainer, result[3], "CommonDatas.pageMove", "CommonDatas.Temps.categorySet.drawCategoryList", result[0]);
+			pageContainer.innerHTML = pageNation;
+		}
+
+		CommonDatas.createGrid(container, header, data, ids, job, fnc);
+		CommonDatas.setViewContents(hideArr, showArr);
+		containerTitle.innerText = "카테고리";
+		document.getElementById("multiSearchBtn").setAttribute("onclick", "CommonDatas.Temps.categorySet.searchSubmit();");
+	}
+
+	//카테고리 상세보기
+	categoryDetailView(e) {
+		let thisEle = e;
+		
+		axios.get("/api/category/" + thisEle.dataset.id).then((response) => {
+			if (response.data.result === "ok") {
+				let result;
+				result = cipher.decAes(response.data.data);
+				result = JSON.parse(result);
+				let category = new Category(result);
+				category.detail();
+
+				localStorage.setItem("loadSetPage", window.location.pathname);
+			}
+		}).catch((error) => {
+			msg.set("상세보기 에러 입니다.\n" + error);
+			console.log(error);
+		});
+	}
+
+	//카테고리 등록 폼
+	categoryInsertForm(){
+		let html, dataArray, datas;
+	
+		dataArray = [
+			{
+				"title": "등록일",
+				"elementId": "regDatetime",
+				"col": 2,
+				"value": new Date().toISOString().substring(0, 10),
+			},
+			{
+				"title": "작성자",
+				"elementId": "userNo",
+				"col": 2,
+				"value": storage.user[storage.my].userName,
+			},
+			{
+				"title": "카테고리명",
+				"elementId": "custCategoryName",
+				"col": 4,
+				"disabled": false,
+			}
+		];
+	
+		datas = ["userNo", "regDatetime"];
+		html = CommonDatas.detailViewForm(dataArray, "modal");
+	
+		modal.show();
+		modal.content.style.minWidth = "70vw";
+		modal.content.style.maxWidth = "70vw";
+		modal.headTitle.innerText = "카테고리 등록";
+		modal.body.innerHTML = "<div class=\"defaultFormContainer\">" + html + "</div>";
+		modal.confirm.innerText = "등록";
+		modal.close.innerText = "취소";
+		modal.confirm.setAttribute("onclick", "const category = new Category(); CommonDatas.Temps.category.insert();");
+		modal.close.setAttribute("onclick", "modal.hide();");
+
+		storage.formList = {
+			"custCategoryNo": 0,
+			"compNo": 0,
+			"userNo": storage.my,
+			"custCategoryName": "",
+			"regDatetime": "",
+			"modDatetime": "",
+			"attrib": "",
+		};
+		
+		setTimeout(() => {
+			CommonDatas.detailTrueDatas(datas);
+		}, 100);
+	}
+
+	//카테고리 검색 버튼 클릭 함수
+	searchSubmit() {
+		let dataArray = [], resultArray, eachIndex = 0, user, title, searchUser, searchTitle, searchDateFrom, keyIndex = 0;
+		searchUser = document.getElementById("searchUser");
+		searchTitle = document.getElementById("searchTitle");
+		searchDateFrom = (document.getElementById("searchDateFrom").value === "") ? "" : document.getElementById("searchDateFrom").value.replaceAll("-", "") + "#regDatetime" + document.getElementById("searchDateTo").value.replaceAll("-", "");
+		
+		for(let key in storage.categoryList[0]){
+			if(key === searchUser.dataset.key) user = "#" + keyIndex + "/" + searchUser.value;
+			else if(key === searchTitle.dataset.key) title = "#" + keyIndex + "/" + searchTitle.value;
+			keyIndex++;
+		}
+
+		let searchValues = [user, title, searchDateFrom];
+
+		for (let i = 0; i < searchValues.length; i++) {
+			if(searchValues[i] !== ""){
+				let tempArray = CommonDatas.searchDataFilter(storage.categoryList, searchValues[i], "multi", ["#regDatetime"]);
+	
+				for (let t = 0; t < tempArray.length; t++) {
+					dataArray.push(tempArray[t]);
+				}
+	
+				eachIndex++;
+			}
+		}
+		
+		resultArray = CommonDatas.searchMultiFilter(eachIndex, dataArray, storage.categoryList);
+
+		storage.searchDatas = resultArray;
+
+		if (storage.searchDatas.length == 0) {
+			msg.set("찾는 데이터가 없습니다.");
+			storage.searchDatas = storage.categoryList;
+		}
+
+		this.drawCategoryList();
+	}
+
+	//카테고리 단일 검색 keyup 이벤트
+	searchInputKeyup() {
+		let searchAllInput, tempArray;
+		searchAllInput = document.getElementById("searchAllInput").value;
+		tempArray = CommonDatas.searchDataFilter(storage.categoryList, searchAllInput, "input");
+
+		if (tempArray.length > 0) {
+			storage.searchDatas = tempArray;
+		} else {
+			storage.searchDatas = "";
+		}
+
+		this.drawCategoryList();
+	}
+}
+
+//카테고리 설정 crud
+class Category{
+	constructor(getData) {
+		CommonDatas.Temps.category = this;
+
+		if (getData !== undefined) {
+			this.getData = getData;
+			this.custCategoryNo = getData.custCategoryNo;
+			this.compNo = getData.compNo;
+			this.userNo = getData.userNo;
+			this.custCategoryName = getData.custCategoryName;
+			this.regDatetime = getData.regDatetime;
+			this.modDatetime = getData.modDatetime;
+			this.attrib = getData.attrib;
+		} else {
+			this.custCategoryNo = 0;
+			this.compNo = 0;
+			this.userNo = 0;
+			this.custCategoryName = "";
+			this.regDatetime = "";
+			this.modDatetime = "";
+			this.attrib = "";
+		}
+	}
+
+	//카테고리 상세보기
+	detail() {
+		let html, dataArray, setDate;
+		let notIdArray = ["userNo", "regDatetime"];
+		let datas = ["userNo", "regDatetime"];
+		CommonDatas.detailSetFormList(this.getData);
+
+		setDate = CommonDatas.dateDis(new Date(this.regDatetime).getTime());
+		setDate = CommonDatas.dateFnc(setDate);
+	
+		dataArray = [
+			{
+				"title": "등록일",
+				"elementId": "regDatetime",
+				"col": 2,
+				"value": setDate,
+			},
+			{
+				"title": "작성자",
+				"elementId": "userNo",
+				"col": 2,
+				"value": (CommonDatas.emptyValuesCheck(this.userNo)) ? "" : storage.user[this.userNo].userName,
+			},
+			{
+				"title": "카테고리명",
+				"elementId": "custCategoryName",
+				"col": 4,
+				"value": (CommonDatas.emptyValuesCheck(this.custCategoryName)) ? "" : this.custCategoryName,
+			}
+		];
+
+		html = CommonDatas.detailViewForm(dataArray, "modal");
+	
+		modal.show();
+		modal.content.style.minWidth = "70vw";
+		modal.content.style.maxWidth = "70vw";
+		modal.headTitle.innerText = this.custCategoryName;
+		modal.body.innerHTML = "<div class=\"defaultFormContainer\">" + html + "</div>";
+		modal.confirm.style.display = "none";
+		modal.close.style.display = "none";
+		modal.confirm.innerText = "수정";
+		modal.close.innerText = "취소";
+		modal.confirm.setAttribute("onclick", "CommonDatas.enableDisabled(this, \"let category = new Category('" + this.getData + "'); category.update();\", \"" + notIdArray + "\");");
+		modal.close.setAttribute("onclick", "modal.hide();");
+		
+		setTimeout(() => {
+			let modalFootSpan = document.querySelectorAll(".modalFoot span");
+
+			if(this.userNo == storage.my){
+				if(modalFootSpan[1].id === "delete"){
+					modalFootSpan[1].remove();
+				}
+				
+				let createSpan = document.createElement("span");
+				createSpan.innerText = "삭제";
+				createSpan.className = "modalBtns";
+				createSpan.id = "delete";
+				createSpan.style.border = "1px solid #CC3D3D";
+				createSpan.style.backgroundColor = "#CC3D3D";
+				createSpan.style.color = "#fff";
+				createSpan.setAttribute("onclick", "let category = new Category('" + this.getData + "'); category.delete();");
+				modalFootSpan[0].after(createSpan);
+				modal.confirm.style.display = "flex";
+				modal.close.style.display = "flex";
+			}
+
+			CommonDatas.detailTrueDatas(datas);
+		}, 100);
+	}
+
+	//카테고리 등록
+	insert() {
+		if (document.getElementById("custCategoryName").value === "") {
+			msg.set("카테고리명을 입력해주세요.");
+			document.getElementById("custCategoryName").focus();
+			return false;
+		} else {
+			CommonDatas.formDataSet();
+			let data = storage.formList;
+			data = JSON.stringify(data);
+			data = cipher.encAes(data);
+
+			axios.post("/api/category", data, {
+				headers: { "Content-Type": "text/plain" }
+			}).then((response) => {
+				if (response.data.result === "ok") {
+					location.reload();
+					msg.set("등록되었습니다.");
+				} else {
+					msg.set("등록 중 에러가 발생하였습니다.");
+					return false;
+				}
+			}).catch((error) => {
+				msg.set("등록 도중 에러가 발생하였습니다.\n" + error);
+				console.log(error);
+				return false;
+			});
+		}
+	}
+
+	//카테고리 수정
+	update() {
+		if (document.getElementById("custCategoryName").value === "") {
+			msg.set("카테고리명을 입력해주세요.");
+			document.getElementById("custCategoryName").focus();
+			return false;
+		} else {
+			CommonDatas.formDataSet();
+			let data = storage.formList;
+			data = JSON.stringify(data);
+			data = cipher.encAes(data);
+
+			axios.put("/api/category/" + storage.formList.custCategoryNo, data, {
+				headers: { "Content-Type": "text/plain" }
+			}).then((response) => {
+				if (response.data.result === "ok") {
+					location.reload();
+					msg.set("수정되었습니다.");
+				} else {
+					msg.set("수정 중 에러가 발생하였습니다.");
+					return false;
+				}
+			}).catch((error) => {
+				msg.set("수정 도중 에러가 발생하였습니다.\n" + error);
+				console.log(error);
+				return false;
+			});
+		}
+	}
+
+	//카테고리 삭제
+	delete() {
+		if (confirm("정말로 삭제하시겠습니까??")) {
+			axios.delete("/api/category/" + storage.formList.custCategoryNo, {
+				headers: { "Content-Type": "text/plain" }
+			}).then((response) => {
+				if (response.data.result === "ok") {
+					location.reload();
+					msg.set("삭제되었습니다.");
+				} else {
+					msg.set("삭제 중 에러가 발생하였습니다.");
+					return false;
+				}
+			}).catch((error) => {
+				msg.set("삭제 도중 에러가 발생하였습니다.\n" + error);
+				console.log(error);
+				return false;
+			});
+		} else {
+			return false;
+		}
+	}
+}
+
+//영업목표 시작
+class GoalSet{
+	constructor() {
+		CommonDatas.Temps.goalSet = this;
+	}
+
+	//영업목표 리스트 저장 함수
+	list() {
+		axios.get("/api/sales/goal").then((response) => {
+			if (response.data.result === "ok") {
+				let nowYear = new Date().getFullYear();
+				storage.goalList = [];
+				let result;
+				result = cipher.decAes(response.data.data);
+				result = JSON.parse(result);
+
+				for(let i = 0; i < result.length; i++){
+					let item = result[i];
+
+					if(2022 == item.targetYear && storage.user[item.userNo].attrib.indexOf("XXX") == -1){
+						storage.goalList.push(item);
+					}
+				}
+
+				this.drawGoalList();
+				CommonDatas.searchListSet("goalList");
+				$('.theme-loader').fadeOut("slow");
+			}
+		}).catch((error) => {
+			msg.set("카테고리 리스트 에러입니다.\n" + error);
+			console.log(error);
+		})
+	}
+
+	//영업목표 리스트 출력 함수
+	drawGoalList() {
+		let calmm1 = 0, calmm2 = 0, calmm3 = 0, calmm4 = 0, calmm5 = 0, calmm6 = 0, calmm7 = 0, calmm8 = 0, calmm9 = 0, calmm10 = 0, calmm11 = 0, calmm12 = 0, calTotal = 0, htmlHeader = "", htmlBody = "", jsonData;
+
+		if (storage.goalList === undefined) {
+			msg.set("등록된 카테고리 데이터가 없습니다");
+		}
+		else {
+			if (storage.searchDatas === undefined) {
+				jsonData = storage.goalList;
+			} else {
+				jsonData = storage.searchDatas;
+			}
+		}
+
+		let container = document.getElementsByClassName("goalContent")[0];
+		let createHeader = document.createElement("div");
+		createHeader.className = "goalHeader";
+		let createBody = document.createElement("div");
+		createBody.className = "goalBody";
+
+		htmlHeader += "<div>담당사원</div>";
+		htmlHeader += "<div>1월</div>";
+		htmlHeader += "<div>2월</div>";
+		htmlHeader += "<div>3월</div>";
+		htmlHeader += "<div>4월</div>";
+		htmlHeader += "<div>5월</div>";
+		htmlHeader += "<div>6월</div>";
+		htmlHeader += "<div>7월</div>";
+		htmlHeader += "<div>8월</div>";
+		htmlHeader += "<div>9월</div>";
+		htmlHeader += "<div>10월</div>";
+		htmlHeader += "<div>11월</div>";
+		htmlHeader += "<div>12월</div>";
+		htmlHeader += "<div>합계</div>";
+		createHeader.innerHTML = htmlHeader;
+
+		for(let i = 0; i < jsonData.length; i++){
+			let item = jsonData[i];
+			let oneCalTotal = item.mm01 + item.mm02 + item.mm03 + item.mm04 + item.mm05 + item.mm06 + item.mm07 + item.mm08 + item.mm09 + item.mm10 + item.mm11 + item.mm12;
+			calmm1 += item.mm01;
+			calmm2 += item.mm02;
+			calmm3 += item.mm03;
+			calmm4 += item.mm04;
+			calmm5 += item.mm05;
+			calmm6 += item.mm06;
+			calmm7 += item.mm07;
+			calmm8 += item.mm08;
+			calmm9 += item.mm09;
+			calmm10 += item.mm10;
+			calmm11 += item.mm11;
+			calmm12 += item.mm12;
+			calTotal += oneCalTotal;
+
+			if(item.userNo == storage.my){
+				htmlBody += "<div style=\"justify-content: center;\">" + storage.user[item.userNo].userName + "</div>";
+				htmlBody += "<div><input type=\"text\" value=\"" + item.mm01.toLocaleString("en-US") + "\"></div>";
+				htmlBody += "<div><input type=\"text\" value=\"" + item.mm02.toLocaleString("en-US") + "\"></div>";
+				htmlBody += "<div><input type=\"text\" value=\"" + item.mm03.toLocaleString("en-US") + "\"></div>";
+				htmlBody += "<div><input type=\"text\" value=\"" + item.mm04.toLocaleString("en-US") + "\"></div>";
+				htmlBody += "<div><input type=\"text\" value=\"" + item.mm05.toLocaleString("en-US") + "\"></div>";
+				htmlBody += "<div><input type=\"text\" value=\"" + item.mm06.toLocaleString("en-US") + "\"></div>";
+				htmlBody += "<div><input type=\"text\" value=\"" + item.mm07.toLocaleString("en-US") + "\"></div>";
+				htmlBody += "<div><input type=\"text\" value=\"" + item.mm08.toLocaleString("en-US") + "\"></div>";
+				htmlBody += "<div><input type=\"text\" value=\"" + item.mm09.toLocaleString("en-US") + "\"></div>";
+				htmlBody += "<div><input type=\"text\" value=\"" + item.mm10.toLocaleString("en-US") + "\"></div>";
+				htmlBody += "<div><input type=\"text\" value=\"" + item.mm11.toLocaleString("en-US") + "\"></div>";
+				htmlBody += "<div><input type=\"text\" value=\"" + item.mm12.toLocaleString("en-US") + "\"></div>";
+				htmlBody += "<div style=\"justify-content: right;\">" + oneCalTotal.toLocaleString("en-US") + "</div>";
+			}else{
+				htmlBody += "<div style=\"justify-content: center;\">" + storage.user[item.userNo].userName + "</div>";
+				htmlBody += "<div><input type=\"text\" value=\"" + item.mm01.toLocaleString("en-US") + "\" readonly></div>";
+				htmlBody += "<div><input type=\"text\" value=\"" + item.mm02.toLocaleString("en-US") + "\" readonly></div>";
+				htmlBody += "<div><input type=\"text\" value=\"" + item.mm03.toLocaleString("en-US") + "\" readonly></div>";
+				htmlBody += "<div><input type=\"text\" value=\"" + item.mm04.toLocaleString("en-US") + "\" readonly></div>";
+				htmlBody += "<div><input type=\"text\" value=\"" + item.mm05.toLocaleString("en-US") + "\" readonly></div>";
+				htmlBody += "<div><input type=\"text\" value=\"" + item.mm06.toLocaleString("en-US") + "\" readonly></div>";
+				htmlBody += "<div><input type=\"text\" value=\"" + item.mm07.toLocaleString("en-US") + "\" readonly></div>";
+				htmlBody += "<div><input type=\"text\" value=\"" + item.mm08.toLocaleString("en-US") + "\" readonly></div>";
+				htmlBody += "<div><input type=\"text\" value=\"" + item.mm09.toLocaleString("en-US") + "\" readonly></div>";
+				htmlBody += "<div><input type=\"text\" value=\"" + item.mm10.toLocaleString("en-US") + "\" readonly></div>";
+				htmlBody += "<div><input type=\"text\" value=\"" + item.mm11.toLocaleString("en-US") + "\" readonly></div>";
+				htmlBody += "<div><input type=\"text\" value=\"" + item.mm12.toLocaleString("en-US") + "\" readonly></div>";
+				htmlBody += "<div style=\"justify-content: right;\">" + oneCalTotal.toLocaleString("en-US") + "</div>";
+			}
+		}
+
+		htmlBody += "<div style=\"justify-content: center;\">합계</div>";
+		htmlBody += "<div style=\"justify-content: right;\">" + calmm1.toLocaleString("en-US") + "</div>";
+		htmlBody += "<div style=\"justify-content: right;\">" + calmm2.toLocaleString("en-US") + "</div>";
+		htmlBody += "<div style=\"justify-content: right;\">" + calmm3.toLocaleString("en-US") + "</div>";
+		htmlBody += "<div style=\"justify-content: right;\">" + calmm4.toLocaleString("en-US") + "</div>";
+		htmlBody += "<div style=\"justify-content: right;\">" + calmm5.toLocaleString("en-US") + "</div>";
+		htmlBody += "<div style=\"justify-content: right;\">" + calmm6.toLocaleString("en-US") + "</div>";
+		htmlBody += "<div style=\"justify-content: right;\">" + calmm7.toLocaleString("en-US") + "</div>";
+		htmlBody += "<div style=\"justify-content: right;\">" + calmm8.toLocaleString("en-US") + "</div>";
+		htmlBody += "<div style=\"justify-content: right;\">" + calmm9.toLocaleString("en-US") + "</div>";
+		htmlBody += "<div style=\"justify-content: right;\">" + calmm10.toLocaleString("en-US") + "</div>";
+		htmlBody += "<div style=\"justify-content: right;\">" + calmm11.toLocaleString("en-US") + "</div>";
+		htmlBody += "<div style=\"justify-content: right;\">" + calmm12.toLocaleString("en-US") + "</div>";
+		htmlBody += "<div style=\"justify-content: right;\">" + calTotal.toLocaleString("en-US") + "</div>";
+		createBody.innerHTML = htmlBody;
+
+		container.append(createHeader);
+		container.append(createBody);
+
+		// result = CommonDatas.paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+		// containerTitle = document.getElementById("containerTitle");
+		// pageContainer = document.getElementsByClassName("pageContainer")[0];
+		// container = document.getElementsByClassName("gridList")[0];
+		// hideArr = ["detailBackBtn", "crudUpdateBtn", "crudDeleteBtn", "contractReqBtn"];
+		// showArr = [
+		// 	{ element: "gridList", display: "block" },
+		// 	{ element: "pageContainer", display: "flex" },
+		// 	{ element: "searchContainer", display: "block" },
+		// 	{ element: "listRange", display: "flex" },
+		// 	{ element: "listSearchInput", display: "flex" },
+		// 	{ element: "crudBtns", display: "flex" },
+		// 	{ element: "crudAddBtn", display: "flex" },
+		// ];
+
+		// header = [
+		// 	{
+		// 		"title": "등록일",
+		// 		"align": "center",
+		// 	},
+		// 	{
+		// 		"title": "카테고리명",
+		// 		"align": "center",
+		// 	},
+		// 	{
+		// 		"title": "작성자",
+		// 		"align": "center",
+		// 	},
+		// ];
+
+		// if (jsonData === "" || jsonData.length == 0) {
+		// 	str = [
+		// 		{
+		// 			"setData": undefined,
+		// 			"align": "center",
+		// 			"col": 3,
+		// 		},
+		// 	];
+
+		// 	data.push(str);
+		// } else {
+		// 	for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+		// 		disDate = CommonDatas.dateDis(new Date(jsonData[i].regDatetime).getTime());
+		// 		setDate = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+
+		// 		str = [
+		// 			{
+		// 				"setData": setDate,
+		// 				"align": "center",
+		// 			},
+		// 			{
+		// 				"setData": (CommonDatas.emptyValuesCheck(jsonData[i].custCategoryName)) ? "" : jsonData[i].custCategoryName,
+		// 				"align": "center",
+		// 			},
+		// 			{
+		// 				"setData": (CommonDatas.emptyValuesCheck(jsonData[i].userNo)) ? "" : storage.user[jsonData[i].userNo].userName,
+		// 				"align": "center",
+		// 			},
+		// 		];
+
+		// 		fnc.push("CommonDatas.Temps.categorySet.categoryDetailView(this)");
+		// 		ids.push(jsonData[i].custCategoryNo);
+		// 		data.push(str);
+		// 	}
+
+		// 	let pageNation = CommonDatas.createPaging(pageContainer, result[3], "CommonDatas.pageMove", "CommonDatas.Temps.categorySet.drawCategoryList", result[0]);
+		// 	pageContainer.innerHTML = pageNation;
+		// }
+
+		// CommonDatas.createGrid(container, header, data, ids, job, fnc);
+		// CommonDatas.setViewContents(hideArr, showArr);
+		// containerTitle.innerText = "카테고리";
+		// document.getElementById("multiSearchBtn").setAttribute("onclick", "CommonDatas.Temps.categorySet.searchSubmit();");
 	}
 }
 
@@ -17303,8 +17938,8 @@ class Common {
 						listDiv.dataset.sopp = storage[thisEle.dataset.complete][key].soppNo;
 						listDiv.innerText = storage[thisEle.dataset.complete][key].contTitle;
 					} else if (thisEle.dataset.complete === "categories") {
-						listDiv.dataset.value = storage[thisEle.dataset.complete][key].category;
-						listDiv.innerText = storage[thisEle.dataset.complete][key].category;
+						listDiv.dataset.value = storage[thisEle.dataset.complete][key].custCategoryName;
+						listDiv.innerText = storage[thisEle.dataset.complete][key].custCategoryName;
 					} 
 
 					autoComplete.append(listDiv);
@@ -17377,8 +18012,8 @@ class Common {
 						if (storage[thisEle.dataset.complete][key].category.indexOf(thisEle.value) > -1) {
 							let listDiv = document.createElement("div");
 							listDiv.setAttribute("onclick", "CommonDatas.autoCompleteClick(this);");
-							listDiv.dataset.value = storage[thisEle.dataset.complete][key].category;
-							listDiv.innerText = storage[thisEle.dataset.complete][key].category;
+							listDiv.dataset.value = storage[thisEle.dataset.complete][key].custCategoryName;
+							listDiv.innerText = storage[thisEle.dataset.complete][key].custCategoryName;
 							autoComplete.append(listDiv);
 						}
 					} 
@@ -17396,7 +18031,7 @@ class Common {
 		input.value = thisEle.innerText;
 		input.setAttribute("data-change", true);
 
-		if(input.dataset.complete === "productCust"){
+		if(input.dataset.complete === "categories"){
 			let categories = document.getElementById("categories");
 			let categorySelect = categories.parentElement.parentElement.nextElementSibling.children[1].children[0];
 			CommonDatas.makeCategories(thisEle.dataset.value);
@@ -17734,6 +18369,8 @@ class Common {
 							str += "#" + storage.code.etc[item[key]];
 						}else if(key === "soppStatus"){
 							str += "#" + storage.code.etc[item[key]];
+						}else if(key === "custCategoryName"){
+							str += "#" + item[key].replaceAll("  ", " ");
 						}else{
 							let dateCheck = new Date(item[key]).getTime();
 							if(!isNaN(dateCheck)){
@@ -17883,10 +18520,6 @@ class Common {
 
 	//카테고리 배열 생성 함수
 	makeCategories(value){
-		if(storage.categoryArr === undefined){
-			storage.categoryArr = [];
-		}
-
 		if(storage.categoryArr.length > 0){
 			for(let i = 0; i < storage.categoryArr.length; i++){
 				if(!storage.categoryArr.toString().includes(value)){

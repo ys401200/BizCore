@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import kr.co.bizcore.v1.domain.Sales;
+import kr.co.bizcore.v1.domain.SalesTarget;
 
 public interface SalesMapper {
     
@@ -33,4 +34,7 @@ public interface SalesMapper {
 
     @Update("UPDATE swc_sales SET soppNo = #{sales.soppNo}, userNo = #{sales.userNo}, custNo = #{sales.custNo}, schedFrom = #{sales.schedFrom}, schedTo = #{sales.schedTo}, salesPlace = #{sales.salesPlace}, `type` = #{sales.type}, `desc` = #{sales.desc}, `title` = #{sales.title}, ptncNo = #{sales.ptncNo}, modDatetime = now() WHERE salesNo = #{sales.salesNo} AND compNo = #{sales.compNo}")
     public int updateSales(@Param("sales") Sales sales);
+
+    @Select("SELECT * FROM swc_sales_target WHERE attrib NOT LIKE 'XXX%' AND compNo = #{salesTarget.compNo}")
+    public List<SalesTarget> getGoalList(@Param("salesTarget") SalesTarget salesTarget);
 }

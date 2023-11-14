@@ -12,6 +12,7 @@ import kr.co.bizcore.v1.svc.AccountingService;
 import kr.co.bizcore.v1.svc.AccountingService2;
 import kr.co.bizcore.v1.svc.AttachedService;
 import kr.co.bizcore.v1.svc.BoardService;
+import kr.co.bizcore.v1.svc.CategoryService;
 import kr.co.bizcore.v1.svc.ContService;
 import kr.co.bizcore.v1.svc.ContractService;
 import kr.co.bizcore.v1.svc.CustService;
@@ -116,6 +117,9 @@ public abstract class Ctrl {
 
     @Autowired
     protected Schedule2Svc schedule2Svc;
+
+    @Autowired
+    protected CategoryService categoryService;
 
     public int strToInt(String str){
         int result = -1;

@@ -1,6 +1,5 @@
 package kr.co.bizcore.v1.mapper;
 
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Insert;
@@ -8,11 +7,8 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
-import kr.co.bizcore.v1.domain.Estimate;
-import kr.co.bizcore.v1.domain.EstimateItem;
 import kr.co.bizcore.v1.domain.Inout;
 import kr.co.bizcore.v1.domain.Sales;
-import kr.co.bizcore.v1.domain.SimpleEstimate;
 import kr.co.bizcore.v1.domain.Sopp;
 import kr.co.bizcore.v1.domain.SoppFileData;
 import kr.co.bizcore.v1.domain.Tech;

@@ -115,6 +115,9 @@
 					<a href="/business/product">상품설정</a>
 				</div>
 				<div>
+					<a href="/business/category">카테고리설정</a>
+				</div>
+				<div>
 					<a href="/business/goal">영업목표설정</a>
 				</div>
 				<div>

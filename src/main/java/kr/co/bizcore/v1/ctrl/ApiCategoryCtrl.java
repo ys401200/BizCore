@@ -7,7 +7,6 @@ import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,28 +18,23 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import kr.co.bizcore.v1.domain.Sales;
-import kr.co.bizcore.v1.domain.SalesTarget;
+import kr.co.bizcore.v1.domain.Category;
 import kr.co.bizcore.v1.msg.Msg;
-import kr.co.bizcore.v1.svc.SalesService;
 import lombok.extern.slf4j.Slf4j;
 
-@RequestMapping("/api/sales")
 @RestController
+@RequestMapping("/api/category")
 @Slf4j
-public class ApiSalesCtrl extends Ctrl{
-    private static final Logger logger = LoggerFactory.getLogger(ApiSalesCtrl.class);
-
-    @Autowired
-    private SalesService salesService;
+public class ApiCategoryCtrl extends Ctrl{
+    private static final Logger logger = LoggerFactory.getLogger(ApiCategoryCtrl.class);
 
     @GetMapping("")
-    public String salesList(HttpServletRequest request) {
+    public String categoryList(HttpServletRequest request) {
         String result = null, data = null, aesKey = null, aesIv = null, userNo = null, compId = null;
         int compNo = 0;
         HttpSession session = null;
         Msg msg = null;
-        List<Sales> list = null;
+        List<Category> list = null;
         int i = 0;
         
         session = request.getSession();
@@ -57,9 +51,9 @@ public class ApiSalesCtrl extends Ctrl{
         }else if(aesKey == null || aesIv == null){
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
         }else{
-            Sales sales = new Sales();
-            sales.setCompNo(compNo);
-            list = salesService.getSalesList(sales);
+            Category category = new Category();
+            category.setCompNo(compNo);
+            list = categoryService.getCategoryList(category);
             if (list != null) {
                 data = "[";
                 for (i = 0; i < list.size(); i++) {
@@ -71,7 +65,7 @@ public class ApiSalesCtrl extends Ctrl{
             } else {
                 data = "[]";
             }
-            data = salesService.encAes(data, aesKey, aesIv);
+            data = categoryService.encAes(data, aesKey, aesIv);
             result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";            
         }
 
@@ -85,7 +79,7 @@ public class ApiSalesCtrl extends Ctrl{
         int compNo = 0;
         String result = null;
         String userNo = null;
-        Sales sales = null;
+        Category category = null;
         String data = null;
         String aesKey, aesIv = null;
 
@@ -106,11 +100,11 @@ public class ApiSalesCtrl extends Ctrl{
             } else if (userNo == null) {
                 result = "{\"result\":\"failure\",\"msg\":\"Session expired and/or Not logged in.\"}";
             } else { // 회사코드 확인 됨
-                sales = salesService.getSales(compNo, no); // 삭제(update) 카운트를 실제 삭제 여부를 확인함
+                category = categoryService.getCategory(compNo, no); // 삭제(update) 카운트를 실제 삭제 여부를 확인함
 
-                if (sales != null) { // 처리됨
-                    data = sales.toJson();
-                    data = salesService.encAes(data, aesKey, aesIv);
+                if (category != null) { // 처리됨
+                    data = category.toJson();
+                    data = categoryService.encAes(data, aesKey, aesIv);
                     result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";
                     
                 } else { // 처리 안됨
@@ -120,7 +114,6 @@ public class ApiSalesCtrl extends Ctrl{
         } // End of if : 1
         return result;
     }
-
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     public String insert(HttpServletRequest req, @RequestBody String requestBody) throws JsonMappingException, JsonProcessingException {
@@ -137,11 +130,11 @@ public class ApiSalesCtrl extends Ctrl{
         aesKey = (String) session.getAttribute("aesKey");
         aesIv = (String) session.getAttribute("aesIv");
         compNo = (int) session.getAttribute("compNo");
-        data = salesService.decAes(requestBody, aesKey, aesIv);
-        Sales sales = mapper.readValue(data, Sales.class);
-        sales.setCompNo(compNo);
+        data = categoryService.decAes(requestBody, aesKey, aesIv);
+        Category category = mapper.readValue(data, Category.class);
+        category.setCompNo(compNo);
 
-        check = salesService.insertSales(sales);
+        check = categoryService.insertCategory(category);
 
         if (check > 0) {
             result = "{\"result\":\"ok\"}";
@@ -150,7 +143,6 @@ public class ApiSalesCtrl extends Ctrl{
         }
 
         return result;
-
     }
 
     @RequestMapping(value = "/{no}", method = RequestMethod.DELETE)
@@ -182,7 +174,7 @@ public class ApiSalesCtrl extends Ctrl{
             } else if (userNo == null) {
                 result = "{\"result\":\"failure\",\"msg\":\"Session expired and/or Not logged in.\"}";
             } else { // 회사코드 확인 됨
-                num = salesService.delete(compNo, no); // 삭제(update) 카운트를 실제 삭제 여부를 확인함
+                num = categoryService.delete(compNo, no); // 삭제(update) 카운트를 실제 삭제 여부를 확인함
                 if (num > 0) { // 처리됨
                     result = "{\"result\":\"ok\"}";
                 } else { // 처리 안됨
@@ -211,58 +203,12 @@ public class ApiSalesCtrl extends Ctrl{
 
         aesKey = (String) session.getAttribute("aesKey");
         aesIv = (String) session.getAttribute("aesIv");
-        data = salesService.decAes(requestBody, aesKey, aesIv);
-        Sales sales = mapper.readValue(data, Sales.class);
-        sales.setCompNo(compNo);
-        logger.info(sales.toString());
+        data = categoryService.decAes(requestBody, aesKey, aesIv);
+        Category category = mapper.readValue(data, Category.class);
+        category.setCompNo(compNo);
 
-        if (salesService.updateSales(sales) > 0) {
+        if (categoryService.updateCategory(category) > 0) {
             result = "{\"result\":\"ok\"}";
-        }
-
-        return result;
-    }
-
-    @GetMapping("/goal")
-    public String goalList(HttpServletRequest request) {
-        String result = null, data = null, aesKey = null, aesIv = null, userNo = null, compId = null;
-        int compNo = 0;
-        HttpSession session = null;
-        Msg msg = null;
-        List<SalesTarget> list = null;
-        int i = 0;
-        
-        session = request.getSession();
-        aesKey = (String) session.getAttribute("aesKey");
-        aesIv = (String) session.getAttribute("aesIv");
-        compNo = (int) session.getAttribute("compNo");
-        userNo = (String) session.getAttribute("userNo");
-        msg = getMsg((String) session.getAttribute("lang"));
-        if (compNo == 0)
-        compNo = (int) request.getAttribute("compNo");
-            
-        if (compNo == 0) {
-            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compNoNotVerified + "\"}";
-        }else if(aesKey == null || aesIv == null){
-            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
-        }else{
-            SalesTarget salesTarget = new SalesTarget();
-            salesTarget.setCompNo(compNo);
-            list = salesService.getGoalList(salesTarget);
-            
-            if (list != null) {
-                data = "[";
-                for (i = 0; i < list.size(); i++) {
-                    if (i > 0)
-                    data += ",";
-                    data += list.get(i).toJson();
-                }
-                data += "]";
-            } else {
-                data = "[]";
-            }
-            data = salesService.encAes(data, aesKey, aesIv);
-            result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";            
         }
 
         return result;

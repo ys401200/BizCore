@@ -3609,6 +3609,27 @@ function getStorageList() {
 			}
 		});
 	}
+
+	if (storage.categories === undefined) {
+		$.ajax({
+			url: "/api/category",
+			method: "get",
+			dataType: "json",
+			cache: false,
+			success: (result) => {
+				if (result.result === "ok") {
+					let resultJson;
+					resultJson = cipher.decAes(result.data);
+					resultJson = JSON.parse(resultJson);
+					storage.categories = resultJson;
+					console.log("[getCategory] Success getting category list.");
+				}
+			},
+			error: () => {
+				msg.set("category 에러");
+			}
+		});
+	}
 	
 	if(storage.user === undefined){
 		$.ajax({
