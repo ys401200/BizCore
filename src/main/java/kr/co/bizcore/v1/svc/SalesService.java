@@ -49,6 +49,14 @@ public class SalesService extends Svc{
         return salesMapper.getGoalList(salesTarget);
     } 
 
+    public int goalInsert(SalesTarget salesTarget) {
+        return salesMapper.goalInsert(salesTarget);
+    }
+
+    public int goalUpdate(SalesTarget salesTarget) {
+        return salesMapper.goalUpdate(salesTarget);
+    }
+
     // public boolean modifySales(String salesNo, Sales sales, int compNo){
     //     int x = -1;
     //     Sales ogn = null;

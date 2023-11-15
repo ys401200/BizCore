@@ -16814,15 +16814,41 @@ class GoalSet{
 			if (response.data.result === "ok") {
 				let nowYear = new Date().getFullYear();
 				storage.goalList = [];
+				storage.goalNotUsers = [];
 				let result;
 				result = cipher.decAes(response.data.data);
 				result = JSON.parse(result);
+				console.log(result);
 
 				for(let i = 0; i < result.length; i++){
 					let item = result[i];
 
-					if(2022 == item.targetYear && storage.user[item.userNo].attrib.indexOf("XXX") == -1){
+					if(item.targetYear != null){
+						if(nowYear == item.targetYear){
+							storage.goalList.push(item);
+						}else{
+							let datas = {
+								"userNo": item.userNo,
+								"compNo": item.compNo,
+								"mm01": 0,
+								"mm02": 0,
+								"mm03": 0,
+								"mm04": 0,
+								"mm05": 0,
+								"mm06": 0,
+								"mm07": 0,
+								"mm08": 0,
+								"mm09": 0,
+								"mm10": 0,
+								"mm11": 0,
+								"mm12": 0,
+							}
+
+							storage.goalList.push(datas);
+						}
+					}else{
 						storage.goalList.push(item);
+						storage.goalNotUsers.push(item.userNo);
 					}
 				}
 
@@ -16890,134 +16916,191 @@ class GoalSet{
 			calmm12 += item.mm12;
 			calTotal += oneCalTotal;
 
+			
 			if(item.userNo == storage.my){
+				htmlBody += "<div class=\"goalBodyContent\" data-readonly=\"false\" data-userno=\"" + item.userNo + "\">";
 				htmlBody += "<div style=\"justify-content: center;\">" + storage.user[item.userNo].userName + "</div>";
-				htmlBody += "<div><input type=\"text\" value=\"" + item.mm01.toLocaleString("en-US") + "\"></div>";
-				htmlBody += "<div><input type=\"text\" value=\"" + item.mm02.toLocaleString("en-US") + "\"></div>";
-				htmlBody += "<div><input type=\"text\" value=\"" + item.mm03.toLocaleString("en-US") + "\"></div>";
-				htmlBody += "<div><input type=\"text\" value=\"" + item.mm04.toLocaleString("en-US") + "\"></div>";
-				htmlBody += "<div><input type=\"text\" value=\"" + item.mm05.toLocaleString("en-US") + "\"></div>";
-				htmlBody += "<div><input type=\"text\" value=\"" + item.mm06.toLocaleString("en-US") + "\"></div>";
-				htmlBody += "<div><input type=\"text\" value=\"" + item.mm07.toLocaleString("en-US") + "\"></div>";
-				htmlBody += "<div><input type=\"text\" value=\"" + item.mm08.toLocaleString("en-US") + "\"></div>";
-				htmlBody += "<div><input type=\"text\" value=\"" + item.mm09.toLocaleString("en-US") + "\"></div>";
-				htmlBody += "<div><input type=\"text\" value=\"" + item.mm10.toLocaleString("en-US") + "\"></div>";
-				htmlBody += "<div><input type=\"text\" value=\"" + item.mm11.toLocaleString("en-US") + "\"></div>";
-				htmlBody += "<div><input type=\"text\" value=\"" + item.mm12.toLocaleString("en-US") + "\"></div>";
-				htmlBody += "<div style=\"justify-content: right;\">" + oneCalTotal.toLocaleString("en-US") + "</div>";
+				htmlBody += "<div><input type=\"text\" class=\"input01\" data-key=\"mm01\" onkeyup=\"CommonDatas.Temps.goalSet.calInputKeyup(this);\" value=\"" + item.mm01.toLocaleString("en-US") + "\"></div>";
+				htmlBody += "<div><input type=\"text\" class=\"input02\" data-key=\"mm02\" onkeyup=\"CommonDatas.Temps.goalSet.calInputKeyup(this);\" value=\"" + item.mm02.toLocaleString("en-US") + "\"></div>";
+				htmlBody += "<div><input type=\"text\" class=\"input03\" data-key=\"mm03\" onkeyup=\"CommonDatas.Temps.goalSet.calInputKeyup(this);\" value=\"" + item.mm03.toLocaleString("en-US") + "\"></div>";
+				htmlBody += "<div><input type=\"text\" class=\"input04\" data-key=\"mm04\" onkeyup=\"CommonDatas.Temps.goalSet.calInputKeyup(this);\" value=\"" + item.mm04.toLocaleString("en-US") + "\"></div>";
+				htmlBody += "<div><input type=\"text\" class=\"input05\" data-key=\"mm05\" onkeyup=\"CommonDatas.Temps.goalSet.calInputKeyup(this);\" value=\"" + item.mm05.toLocaleString("en-US") + "\"></div>";
+				htmlBody += "<div><input type=\"text\" class=\"input06\" data-key=\"mm06\" onkeyup=\"CommonDatas.Temps.goalSet.calInputKeyup(this);\" value=\"" + item.mm06.toLocaleString("en-US") + "\"></div>";
+				htmlBody += "<div><input type=\"text\" class=\"input07\" data-key=\"mm07\" onkeyup=\"CommonDatas.Temps.goalSet.calInputKeyup(this);\" value=\"" + item.mm07.toLocaleString("en-US") + "\"></div>";
+				htmlBody += "<div><input type=\"text\" class=\"input08\" data-key=\"mm08\" onkeyup=\"CommonDatas.Temps.goalSet.calInputKeyup(this);\" value=\"" + item.mm08.toLocaleString("en-US") + "\"></div>";
+				htmlBody += "<div><input type=\"text\" class=\"input09\" data-key=\"mm09\" onkeyup=\"CommonDatas.Temps.goalSet.calInputKeyup(this);\" value=\"" + item.mm09.toLocaleString("en-US") + "\"></div>";
+				htmlBody += "<div><input type=\"text\" class=\"input10\" data-key=\"mm10\" onkeyup=\"CommonDatas.Temps.goalSet.calInputKeyup(this);\" value=\"" + item.mm10.toLocaleString("en-US") + "\"></div>";
+				htmlBody += "<div><input type=\"text\" class=\"input11\" data-key=\"mm11\" onkeyup=\"CommonDatas.Temps.goalSet.calInputKeyup(this);\" value=\"" + item.mm11.toLocaleString("en-US") + "\"></div>";
+				htmlBody += "<div><input type=\"text\" class=\"input12\" data-key=\"mm12\" onkeyup=\"CommonDatas.Temps.goalSet.calInputKeyup(this);\" value=\"" + item.mm12.toLocaleString("en-US") + "\"></div>";
+				htmlBody += "<div class=\"inputContentTotal\" style=\"justify-content: right;\">" + oneCalTotal.toLocaleString("en-US") + "</div>";
+				htmlBody += "</div>";
 			}else{
+				htmlBody += "<div class=\"goalBodyContent\" data-readonly=\"true\">";
 				htmlBody += "<div style=\"justify-content: center;\">" + storage.user[item.userNo].userName + "</div>";
-				htmlBody += "<div><input type=\"text\" value=\"" + item.mm01.toLocaleString("en-US") + "\" readonly></div>";
-				htmlBody += "<div><input type=\"text\" value=\"" + item.mm02.toLocaleString("en-US") + "\" readonly></div>";
-				htmlBody += "<div><input type=\"text\" value=\"" + item.mm03.toLocaleString("en-US") + "\" readonly></div>";
-				htmlBody += "<div><input type=\"text\" value=\"" + item.mm04.toLocaleString("en-US") + "\" readonly></div>";
-				htmlBody += "<div><input type=\"text\" value=\"" + item.mm05.toLocaleString("en-US") + "\" readonly></div>";
-				htmlBody += "<div><input type=\"text\" value=\"" + item.mm06.toLocaleString("en-US") + "\" readonly></div>";
-				htmlBody += "<div><input type=\"text\" value=\"" + item.mm07.toLocaleString("en-US") + "\" readonly></div>";
-				htmlBody += "<div><input type=\"text\" value=\"" + item.mm08.toLocaleString("en-US") + "\" readonly></div>";
-				htmlBody += "<div><input type=\"text\" value=\"" + item.mm09.toLocaleString("en-US") + "\" readonly></div>";
-				htmlBody += "<div><input type=\"text\" value=\"" + item.mm10.toLocaleString("en-US") + "\" readonly></div>";
-				htmlBody += "<div><input type=\"text\" value=\"" + item.mm11.toLocaleString("en-US") + "\" readonly></div>";
-				htmlBody += "<div><input type=\"text\" value=\"" + item.mm12.toLocaleString("en-US") + "\" readonly></div>";
-				htmlBody += "<div style=\"justify-content: right;\">" + oneCalTotal.toLocaleString("en-US") + "</div>";
+				htmlBody += "<div><input type=\"text\" class=\"input01\" onkeyup=\"CommonDatas.Temps.goalSet.calInputKeyup(this);\" value=\"" + item.mm01.toLocaleString("en-US") + "\" readonly></div>";
+				htmlBody += "<div><input type=\"text\" class=\"input02\" onkeyup=\"CommonDatas.Temps.goalSet.calInputKeyup(this);\" value=\"" + item.mm02.toLocaleString("en-US") + "\" readonly></div>";
+				htmlBody += "<div><input type=\"text\" class=\"input03\" onkeyup=\"CommonDatas.Temps.goalSet.calInputKeyup(this);\" value=\"" + item.mm03.toLocaleString("en-US") + "\" readonly></div>";
+				htmlBody += "<div><input type=\"text\" class=\"input04\" onkeyup=\"CommonDatas.Temps.goalSet.calInputKeyup(this);\" value=\"" + item.mm04.toLocaleString("en-US") + "\" readonly></div>";
+				htmlBody += "<div><input type=\"text\" class=\"input05\" onkeyup=\"CommonDatas.Temps.goalSet.calInputKeyup(this);\" value=\"" + item.mm05.toLocaleString("en-US") + "\" readonly></div>";
+				htmlBody += "<div><input type=\"text\" class=\"input06\" onkeyup=\"CommonDatas.Temps.goalSet.calInputKeyup(this);\" value=\"" + item.mm06.toLocaleString("en-US") + "\" readonly></div>";
+				htmlBody += "<div><input type=\"text\" class=\"input07\" onkeyup=\"CommonDatas.Temps.goalSet.calInputKeyup(this);\" value=\"" + item.mm07.toLocaleString("en-US") + "\" readonly></div>";
+				htmlBody += "<div><input type=\"text\" class=\"input08\" onkeyup=\"CommonDatas.Temps.goalSet.calInputKeyup(this);\" value=\"" + item.mm08.toLocaleString("en-US") + "\" readonly></div>";
+				htmlBody += "<div><input type=\"text\" class=\"input09\" onkeyup=\"CommonDatas.Temps.goalSet.calInputKeyup(this);\" value=\"" + item.mm09.toLocaleString("en-US") + "\" readonly></div>";
+				htmlBody += "<div><input type=\"text\" class=\"input10\" onkeyup=\"CommonDatas.Temps.goalSet.calInputKeyup(this);\" value=\"" + item.mm10.toLocaleString("en-US") + "\" readonly></div>";
+				htmlBody += "<div><input type=\"text\" class=\"input11\" onkeyup=\"CommonDatas.Temps.goalSet.calInputKeyup(this);\" value=\"" + item.mm11.toLocaleString("en-US") + "\" readonly></div>";
+				htmlBody += "<div><input type=\"text\" class=\"input12\" onkeyup=\"CommonDatas.Temps.goalSet.calInputKeyup(this);\" value=\"" + item.mm12.toLocaleString("en-US") + "\" readonly></div>";
+				htmlBody += "<div class=\"inputContentTotal\" style=\"justify-content: right;\">" + oneCalTotal.toLocaleString("en-US") + "</div>";
+				htmlBody += "</div>";
 			}
+
 		}
 
+		htmlBody += "<div class=\"goalBodyTotalContent\">";
 		htmlBody += "<div style=\"justify-content: center;\">합계</div>";
-		htmlBody += "<div style=\"justify-content: right;\">" + calmm1.toLocaleString("en-US") + "</div>";
-		htmlBody += "<div style=\"justify-content: right;\">" + calmm2.toLocaleString("en-US") + "</div>";
-		htmlBody += "<div style=\"justify-content: right;\">" + calmm3.toLocaleString("en-US") + "</div>";
-		htmlBody += "<div style=\"justify-content: right;\">" + calmm4.toLocaleString("en-US") + "</div>";
-		htmlBody += "<div style=\"justify-content: right;\">" + calmm5.toLocaleString("en-US") + "</div>";
-		htmlBody += "<div style=\"justify-content: right;\">" + calmm6.toLocaleString("en-US") + "</div>";
-		htmlBody += "<div style=\"justify-content: right;\">" + calmm7.toLocaleString("en-US") + "</div>";
-		htmlBody += "<div style=\"justify-content: right;\">" + calmm8.toLocaleString("en-US") + "</div>";
-		htmlBody += "<div style=\"justify-content: right;\">" + calmm9.toLocaleString("en-US") + "</div>";
-		htmlBody += "<div style=\"justify-content: right;\">" + calmm10.toLocaleString("en-US") + "</div>";
-		htmlBody += "<div style=\"justify-content: right;\">" + calmm11.toLocaleString("en-US") + "</div>";
-		htmlBody += "<div style=\"justify-content: right;\">" + calmm12.toLocaleString("en-US") + "</div>";
+		htmlBody += "<div class=\"input01_total\" style=\"justify-content: right;\">" + calmm1.toLocaleString("en-US") + "</div>";
+		htmlBody += "<div class=\"input02_total\" style=\"justify-content: right;\">" + calmm2.toLocaleString("en-US") + "</div>";
+		htmlBody += "<div class=\"input03_total\" style=\"justify-content: right;\">" + calmm3.toLocaleString("en-US") + "</div>";
+		htmlBody += "<div class=\"input04_total\" style=\"justify-content: right;\">" + calmm4.toLocaleString("en-US") + "</div>";
+		htmlBody += "<div class=\"input05_total\" style=\"justify-content: right;\">" + calmm5.toLocaleString("en-US") + "</div>";
+		htmlBody += "<div class=\"input06_total\" style=\"justify-content: right;\">" + calmm6.toLocaleString("en-US") + "</div>";
+		htmlBody += "<div class=\"input07_total\" style=\"justify-content: right;\">" + calmm7.toLocaleString("en-US") + "</div>";
+		htmlBody += "<div class=\"input08_total\" style=\"justify-content: right;\">" + calmm8.toLocaleString("en-US") + "</div>";
+		htmlBody += "<div class=\"input09_total\" style=\"justify-content: right;\">" + calmm9.toLocaleString("en-US") + "</div>";
+		htmlBody += "<div class=\"input10_total\" style=\"justify-content: right;\">" + calmm10.toLocaleString("en-US") + "</div>";
+		htmlBody += "<div class=\"input11_total\" style=\"justify-content: right;\">" + calmm11.toLocaleString("en-US") + "</div>";
+		htmlBody += "<div class=\"input12_total\" style=\"justify-content: right;\">" + calmm12.toLocaleString("en-US") + "</div>";
 		htmlBody += "<div style=\"justify-content: right;\">" + calTotal.toLocaleString("en-US") + "</div>";
+		htmlBody += "</div>";
 		createBody.innerHTML = htmlBody;
 
 		container.append(createHeader);
 		container.append(createBody);
+	}
 
-		// result = CommonDatas.paging(jsonData.length, storage.currentPage, storage.articlePerPage);
-		// containerTitle = document.getElementById("containerTitle");
-		// pageContainer = document.getElementsByClassName("pageContainer")[0];
-		// container = document.getElementsByClassName("gridList")[0];
-		// hideArr = ["detailBackBtn", "crudUpdateBtn", "crudDeleteBtn", "contractReqBtn"];
-		// showArr = [
-		// 	{ element: "gridList", display: "block" },
-		// 	{ element: "pageContainer", display: "flex" },
-		// 	{ element: "searchContainer", display: "block" },
-		// 	{ element: "listRange", display: "flex" },
-		// 	{ element: "listSearchInput", display: "flex" },
-		// 	{ element: "crudBtns", display: "flex" },
-		// 	{ element: "crudAddBtn", display: "flex" },
-		// ];
+	calInputKeyup(thisEle) {
+		CommonDatas.inputNumberFormat(thisEle);
 
-		// header = [
-		// 	{
-		// 		"title": "등록일",
-		// 		"align": "center",
-		// 	},
-		// 	{
-		// 		"title": "카테고리명",
-		// 		"align": "center",
-		// 	},
-		// 	{
-		// 		"title": "작성자",
-		// 		"align": "center",
-		// 	},
-		// ];
+		let thisEleContent = thisEle.parentElement.parentElement;
+		let thisClassName = thisEle.getAttribute("class");
+		let thisClass = document.getElementsByClassName(thisClassName);
+		let inputContentTotal = document.getElementsByClassName("inputContentTotal");
+		let thisClassTotal = document.getElementsByClassName(thisClassName + "_total")[0];
+		let inputAllTotal = document.getElementsByClassName("goalBodyTotalContent")[0].children[13];
+		let thisContentTotal = 0;
+		let classTotal = 0;
+		let contentTotal = 0;
+		
+		for(let i = 0; i < thisEleContent.children.length; i++){
+			let item = thisEleContent.children[i];
 
-		// if (jsonData === "" || jsonData.length == 0) {
-		// 	str = [
-		// 		{
-		// 			"setData": undefined,
-		// 			"align": "center",
-		// 			"col": 3,
-		// 		},
-		// 	];
+			if(i > 0 && i < 13){
+				thisContentTotal += parseInt(item.children[0].value.replace(/,/g, ""));
+			}
+		}
 
-		// 	data.push(str);
-		// } else {
-		// 	for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
-		// 		disDate = CommonDatas.dateDis(new Date(jsonData[i].regDatetime).getTime());
-		// 		setDate = CommonDatas.dateFnc(disDate, "yy.mm.dd");
+		for(let i = 0; i < thisClass.length; i++){
+			let item = thisClass[i];
 
-		// 		str = [
-		// 			{
-		// 				"setData": setDate,
-		// 				"align": "center",
-		// 			},
-		// 			{
-		// 				"setData": (CommonDatas.emptyValuesCheck(jsonData[i].custCategoryName)) ? "" : jsonData[i].custCategoryName,
-		// 				"align": "center",
-		// 			},
-		// 			{
-		// 				"setData": (CommonDatas.emptyValuesCheck(jsonData[i].userNo)) ? "" : storage.user[jsonData[i].userNo].userName,
-		// 				"align": "center",
-		// 			},
-		// 		];
+			classTotal += parseInt(item.value.replace(/,/g, ""));
+		}
 
-		// 		fnc.push("CommonDatas.Temps.categorySet.categoryDetailView(this)");
-		// 		ids.push(jsonData[i].custCategoryNo);
-		// 		data.push(str);
-		// 	}
+		thisEleContent.children[13].innerText = isNaN(thisContentTotal) ? 0 : thisContentTotal.toLocaleString("en-US");
+		thisClassTotal.innerText = isNaN(classTotal) ? 0 : classTotal.toLocaleString("en-US");
 
-		// 	let pageNation = CommonDatas.createPaging(pageContainer, result[3], "CommonDatas.pageMove", "CommonDatas.Temps.categorySet.drawCategoryList", result[0]);
-		// 	pageContainer.innerHTML = pageNation;
-		// }
+		for(let i = 0; i < inputContentTotal.length; i++){
+			let item = inputContentTotal[i];
+			contentTotal += parseInt(item.innerText.replace(/,/g, ""));
+		}
 
-		// CommonDatas.createGrid(container, header, data, ids, job, fnc);
-		// CommonDatas.setViewContents(hideArr, showArr);
-		// containerTitle.innerText = "카테고리";
-		// document.getElementById("multiSearchBtn").setAttribute("onclick", "CommonDatas.Temps.categorySet.searchSubmit();");
+		inputAllTotal.innerText = isNaN(contentTotal) ? 0 : contentTotal.toLocaleString("en-US");
+
 	}
 }
 
+//영업목표설정 crud
+class Goal{
+	constructor() {
+		CommonDatas.Temps.goal = this;
+	}
+
+	insert() {
+		if(confirm("등록하시겠습니까??")){
+			let nowYear = new Date().getFullYear();
+			let goalBodyContent = document.getElementsByClassName("goalBodyContent");
+
+			for(let i = 0; i < goalBodyContent.length; i++){
+				let item = goalBodyContent[i];
+				let itemChildren = item.children;
+				let userFlag = false;
+				
+				if(!JSON.parse(item.dataset.readonly)){
+					let itemUserNo = item.dataset.userno;
+					let data = {};
+	
+					data["userNo"] = itemUserNo;
+					data["deptNo"] = 2;
+					data["targetYear"] = nowYear;
+
+					for(let t = 1; t < itemChildren.length - 1; t++){
+						let secondItem = itemChildren[t];
+						let input = secondItem.children[0];
+
+						data[input.dataset.key] = parseInt(input.value.replace(/,/g, ""));
+					}
+					
+					data["targetType"] = "PROFIT";
+					data = JSON.stringify(data);
+					data = cipher.encAes(data);
+
+					for(let t = 0; t < storage.goalNotUsers.length; t++){
+						let secondItem = storage.goalNotUsers[t];
+						
+						if(secondItem == parseInt(itemUserNo)){
+							userFlag = true;
+						}
+					}
+
+					if(!userFlag){
+						axios.put("/api/sales/goalUpdate", data, {
+							headers: { "Content-Type": "text/plain" }
+						}).then((response) => {
+							if (response.data.result !== "ok") {
+								msg.set("수정 중 에러가 발생하였습니다.");
+								return false;
+							}
+						}).catch((error) => {
+							msg.set("수정 도중 에러가 발생하였습니다.\n" + error);
+							console.log(error);
+							return false;
+						});
+					}else{
+						axios.post("/api/sales/goalInsert", data, {
+							headers: { "Content-Type": "text/plain" }
+						}).then((response) => {
+							if (response.data.result !== "ok") {
+								msg.set("등록 중 에러가 발생하였습니다.");
+								return false;
+							}
+						}).catch((error) => {
+							msg.set("등록 도중 에러가 발생하였습니다.\n" + error);
+							console.log(error);
+							return false;
+						});
+					}
+				}
+
+				if(i == goalBodyContent.length - 1){
+					setTimeout(() => {
+						location.reload();
+						msg.set("등록되었습니다.");
+					}, 300);
+				}
+			}
+		}else{
+			return false;
+		}
+	}
+}
 
 //Common 시작
 class Common {

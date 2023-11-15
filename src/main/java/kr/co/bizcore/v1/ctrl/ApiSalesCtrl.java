@@ -249,7 +249,7 @@ public class ApiSalesCtrl extends Ctrl{
             SalesTarget salesTarget = new SalesTarget();
             salesTarget.setCompNo(compNo);
             list = salesService.getGoalList(salesTarget);
-            
+
             if (list != null) {
                 data = "[";
                 for (i = 0; i < list.size(); i++) {
@@ -263,6 +263,66 @@ public class ApiSalesCtrl extends Ctrl{
             }
             data = salesService.encAes(data, aesKey, aesIv);
             result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";            
+        }
+
+        return result;
+    }
+
+    @RequestMapping(value = "/goalInsert", method = RequestMethod.POST)
+    public String goalInsert(HttpServletRequest req, @RequestBody String requestBody) throws JsonMappingException, JsonProcessingException {
+
+        int compNo = 0;
+        HttpSession session = null;
+        String result = null;
+        String data = null, aesKey = null, aesIv = null;
+        ObjectMapper mapper = new ObjectMapper();
+        int check = 0;
+
+        session = req.getSession();
+
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        compNo = (int) session.getAttribute("compNo");
+        data = salesService.decAes(requestBody, aesKey, aesIv);
+        SalesTarget salesTarget = mapper.readValue(data, SalesTarget.class);
+        salesTarget.setCompNo(compNo);
+
+        check = salesService.goalInsert(salesTarget);
+
+        if (check > 0) {
+            result = "{\"result\":\"ok\"}";
+        } else {
+            result = "{\"result\":\"failure\" ,\"msg\":\"Error occured when write.\"}";
+        }
+
+        return result;
+
+    }
+
+    @RequestMapping(value = "/goalUpdate", method = RequestMethod.PUT)
+    public String goalUpdate(HttpServletRequest req, @RequestBody String requestBody) throws JsonMappingException, JsonProcessingException {
+        String compId = null;
+        int compNo = 0;
+        String result = null;
+        HttpSession session = null;
+        String data = null, aesKey = null, aesIv = null;
+        ObjectMapper mapper = new ObjectMapper();
+
+        session = req.getSession();
+        compNo = (int) session.getAttribute("compNo");
+        compId = (String) session.getAttribute("compId");
+        if (compId == null) {
+            compId = (String) req.getAttribute("compId");
+        }
+
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        data = salesService.decAes(requestBody, aesKey, aesIv);
+        SalesTarget salesTarget = mapper.readValue(data, SalesTarget.class);
+        salesTarget.setCompNo(compNo);
+
+        if (salesService.goalUpdate(salesTarget) > 0) {
+            result = "{\"result\":\"ok\"}";
         }
 
         return result;

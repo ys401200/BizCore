@@ -12,7 +12,7 @@
                 <hr />
                 <span id="containerTitle">영업목표설정</span>
 				<div class="crudBtns">
-                    <button type="button" class="crudAddBtn" onclick="CommonDatas.Temps.goal.insert();">등록</button>
+                    <button type="button" class="crudAddBtn" onclick="let goal = new Goal(); CommonDatas.Temps.goal.insert();">등록</button>
                 </div>
             </div>
 			<div class="goalContent"></div>
