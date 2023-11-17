@@ -58,6 +58,7 @@ let promiseInit = function init() {
 			getCommonCode();
 			// getUserMap();
 			// getDeptMap();
+			setDeptTree();
 			// getBasicInfo();
 			// getUserRank();
 			getStorageList();

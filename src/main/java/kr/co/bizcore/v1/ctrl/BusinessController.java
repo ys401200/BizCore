@@ -141,6 +141,12 @@ public class BusinessController extends Ctrl {
         return "/goal/list";
     } // End of /business/**
 
+    @RequestMapping("/user")
+    public String user(HttpServletRequest request) {
+        doIt(request);
+        return "/user/list";
+    } // End of /business/**
+
     @RequestMapping(value = { "/customer", "/customer/{no:\\d+}" })
     public String customer(HttpServletRequest request) {
         doIt(request);

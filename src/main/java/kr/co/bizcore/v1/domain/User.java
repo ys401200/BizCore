@@ -4,9 +4,11 @@ import java.util.Date;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 public class User extends Domain {
     private int no;
     private String id;
@@ -41,4 +43,7 @@ public class User extends Domain {
     private String attrib;
 
     private int getCount;
+
+    private String userRank;
+    private String userDept;
 }

@@ -16,6 +16,15 @@ public interface UserMapper {
     @Select("SELECT compNo from swc_company WHERE compId = #{compId}")
     public Integer getCompNo(@Param("compId") String compId);
 
+    @Insert("INSERT INTO swc_user (compNo, userId, userPasswd, userName, userRole, userRank, userDept, regDatetime) VALUES (#{user.compNo}, #{user.userId}, PASSWORD(#{user.userPasswd}), #{user.userName}, #{user.userRole}, #{user.userRank}, #{user.userDept}, now())")
+    public int userInsert(@Param("user") User user);
+
+    @Update("UPDATE swc_user SET attrib = 'XXXXX' WHERE userNo = #{userNo} AND compNo = #{compNo}")
+    public int userDelete(@Param("compNo") int compNo, @Param("userNo") String userNo);
+
+    @Update("UPDATE swc_user SET userName = #{user.userName}, userTel = #{user.userTel}, userEmail = #{user.userEmail}, userRole = #{user.userRole}, userRank = #{user.userRank}, userDept = #{user.userDept}, userOtp = #{user.userOtp}, modDatetime = now(), attrib = #{user.attrib} WHERE userNo = #{user.userNo} AND compNo = #{user.compNo}")
+    public int updateUser(@Param("user") User user);
+
     @Select("SELECT *, count(*) as getCount from swc_user WHERE compNo = #{user.compNo} AND userId = #{user.userId} AND userPasswd = PASSWORD(#{user.userPasswd}) AND attrib not like 'XXX%'")
     public User loginCheck(@Param("user") User user);
 

@@ -1,20 +1,50 @@
 
 
-$(document).ready(() => {
+// $(document).ready(() => {
 
-	// 초기화가 끝난 후 준비단계에서 실행되는 함수
-	prepare = function(){
+// 	// 초기화가 끝난 후 준비단계에서 실행되는 함수
+// 	prepare = function(){
 		
-	} // End of prepare()
+// 	} // End of prepare()
 
-    init();
-    getCorporateAssetInfo();
+//     init();
+//     getCorporateAssetInfo();
 
-	setTimeout(() => {
-		$("#loadingDiv").hide();
-		$("#loadingDiv").loading("toggle");
-	}, 300);
+// 	setTimeout(() => {
+// 		$("#loadingDiv").hide();
+// 		$("#loadingDiv").loading("toggle");
+// 	}, 300);
 
+// 	window.setTimeout(() => {
+// 		let cnt, els, x;
+// 		cnt = document.getElementsByClassName("deptTree")[0];
+// 		cnt.innerHTML = storage.dept.tree.getTreeHtml();
+// 		els = cnt.getElementsByTagName("label");
+// 		for(x = 0 ; x < els.length ; x++){
+// 			if(els[x] === undefined) continue;
+// 			els[x].onclick = getDetailInfo;
+// 		}
+// 		els = cnt.getElementsByClassName("dept-tree");
+// 		for(x = 0 ; x < els.length ; x++)	els[x].checked = true;
+// 		els = cnt.getElementsByTagName("img");
+// 		for(x = 0 ; x < els.length ; x++){
+// 			els[x].style.width="1rem";
+// 			els[x].style.height="1rem";
+// 		}
+// 	},1500);
+	
+
+// 	// For Initializing Code . . . . . . .  . . . . 
+// });
+
+document.addEventListener("DOMContentLoaded", () => {
+	callerFun();
+});
+
+async function callerFun(){
+	await promiseInit();
+
+	getCorporateAssetInfo();
 	window.setTimeout(() => {
 		let cnt, els, x;
 		cnt = document.getElementsByClassName("deptTree")[0];
@@ -32,10 +62,7 @@ $(document).ready(() => {
 			els[x].style.height="1rem";
 		}
 	},1500);
-	
-
-	// For Initializing Code . . . . . . .  . . . . 
-});
+}
 
 // 부서 추가 이미지 클릭시 실행되는 함수
 function clickedDeptAdd(){

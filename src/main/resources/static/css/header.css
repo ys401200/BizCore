@@ -122,6 +122,7 @@ input[type="radio"]:not(:disabled):not(:checked) {
 button,
 select,
 input[type="text"],
+input[type="password"],
 input[type="date"],
 input[type="datetime-local"] {
 	font-family: 'NanumSquareRound';
@@ -861,6 +862,7 @@ textarea {
 }
 
 .defaultFormContainer .defaultFormLine .defaultFormContent input[type='text'],
+.defaultFormContainer .defaultFormLine .defaultFormContent input[type='password'],
 .defaultFormContainer .defaultFormLine .defaultFormContent input[type='date'],
 .defaultFormContainer .defaultFormLine .defaultFormContent input[type='file'],
 .defaultFormContainer .defaultFormLine .defaultFormContent select {
@@ -895,6 +897,7 @@ textarea {
 }
 
 .detailContents .detailViewContainer>div>input[type='text'],
+.detailContents .detailViewContainer>div>input[type='password'],
 .detailContents .detailViewContainer>div>input[type='date'],
 .detailContents .detailViewContainer>div>select {
 	width: 100%;

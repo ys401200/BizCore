@@ -121,6 +121,9 @@
 					<a href="/business/goal">영업목표설정</a>
 				</div>
 				<div>
+					<a href="/business/user">사용자설정</a>
+				</div>
+				<div>
 					<a href="/business/employee">조직 관리</a>
 				</div>
 			</div>

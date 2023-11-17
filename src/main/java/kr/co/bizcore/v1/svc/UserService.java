@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import kr.co.bizcore.v1.domain.SimpleUser;
+import kr.co.bizcore.v1.domain.Sopp;
 import kr.co.bizcore.v1.domain.User;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,6 +25,18 @@ public class UserService extends Svc {
 
     public Integer getCompNo(String compId){
         return userMapper.getCompNo(compId);
+    }
+
+    public int insertUser(User user) {
+        return userMapper.userInsert(user);
+    }
+
+    public int  delete(int compNo, String userNo) {
+        return userMapper.userDelete(compNo, userNo);
+    }
+
+    public int updateUser(User user) {
+        return userMapper.updateUser(user);
     }
 
     public User loginCheck(User user){

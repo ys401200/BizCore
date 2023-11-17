@@ -16977,6 +16977,7 @@ class GoalSet{
 		container.append(createBody);
 	}
 
+	//숫자 입력 시 합계 계산 함수
 	calInputKeyup(thisEle) {
 		CommonDatas.inputNumberFormat(thisEle);
 
@@ -17014,6 +17015,717 @@ class GoalSet{
 
 		inputAllTotal.innerText = isNaN(contentTotal) ? 0 : contentTotal.toLocaleString("en-US");
 
+	}
+}
+
+//사용자 설정 시작
+class UserSet{
+	constructor() {
+		CommonDatas.Temps.userSet = this;
+	}
+
+	//사용자설정 리스트 저장 함수
+	list() {
+		axios.get("/api/user").then((response) => {
+			if (response.data.result === "ok") {
+				let result;
+				result = cipher.decAes(response.data.data);
+				result = JSON.parse(result);
+				storage.userList = [];
+
+				for(let key in storage.user){	
+					let item = storage.user[key];
+					storage.userList.push(item);
+				}
+
+				this.drawUserList();
+				CommonDatas.searchListSet("userList");
+				$('.theme-loader').fadeOut("slow");
+			}
+		}).catch((error) => {
+			msg.set("사용자 설정 리스트 에러입니다.\n" + error);
+			console.log(error);
+		})
+	}
+
+	//사용자 설정 상세보기
+	userDetailView(e) {
+		let thisEle = e;
+		let result;
+
+		for(let key in storage.user){
+			let item = storage.user[key];
+
+			if(key == thisEle.dataset.id){
+				result = item;
+			}
+		}
+
+		let user = new User(result);
+		user.detail();
+	}
+
+	//사용자설정 리스트 출력 함수
+	drawUserList() {
+		let container, result, jsonData, containerTitle, job, header = [], data = [], ids = [], disDate, setDate, str, fnc = [], pageContainer, hideArr, showArr, soppTargetDate;
+
+		if (storage.userList === undefined) {
+			msg.set("등록된 유저가 없습니다");
+		}
+		else {
+			if (storage.searchDatas === undefined) {
+				jsonData = storage.userList;
+			} else {
+				jsonData = storage.searchDatas;
+			}
+		}
+
+		result = CommonDatas.paging(jsonData.length, storage.currentPage, storage.articlePerPage);
+		containerTitle = document.getElementById("containerTitle");
+		pageContainer = document.getElementsByClassName("pageContainer")[0];
+		container = document.getElementsByClassName("gridList")[0];
+		hideArr = ["detailBackBtn", "crudUpdateBtn", "crudDeleteBtn", "contractReqBtn"];
+		showArr = [
+			{ element: "gridList", display: "block" },
+			{ element: "pageContainer", display: "flex" },
+			{ element: "searchContainer", display: "block" },
+			{ element: "listRange", display: "flex" },
+			{ element: "listSearchInput", display: "flex" },
+			{ element: "crudBtns", display: "flex" },
+			{ element: "crudAddBtn", display: "flex" },
+		];
+
+		header = [
+			{
+				"title": "아이디",
+				"align": "center",
+			},
+			{
+				"title": "이름",
+				"align": "center",
+			},
+			{
+				"title": "권한",
+				"align": "center",
+			},
+		];
+
+		if (jsonData === "" || jsonData.length == 0) {
+			str = [
+				{
+					"setData": undefined,
+					"align": "center",
+					"col": 3,
+				},
+			];
+
+			data.push(str);
+		} else {
+			for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
+				let role;
+
+				if(jsonData[i].userRole === "ADMIN"){
+					role = "시스템관리자"
+				}else if(jsonData[i].userRole === "PUSER"){
+					role = "부서관리자";
+				}else{
+					role = "일반사용자";
+				}
+
+				str = [
+					{
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].userId)) ? "" : jsonData[i].userId,
+						"align": "center",
+					},
+					{
+						"setData": (CommonDatas.emptyValuesCheck(jsonData[i].userName)) ? "" : jsonData[i].userName,
+						"align": "center",
+					},
+					{
+						"setData": role,
+						"align": "center",
+					},
+				];
+
+				fnc.push("CommonDatas.Temps.userSet.userDetailView(this, \"page\")");
+				ids.push(jsonData[i].userNo);
+				data.push(str);
+			}
+
+			let pageNation = CommonDatas.createPaging(pageContainer, result[3], "CommonDatas.pageMove", "CommonDatas.Temps.userSet.drawUserList", result[0]);
+			pageContainer.innerHTML = pageNation;
+		}
+
+		CommonDatas.createGrid(container, header, data, ids, job, fnc);
+		CommonDatas.setViewContents(hideArr, showArr);
+		document.getElementById("multiSearchBtn").setAttribute("onclick", "CommonDatas.Temps.userSet.searchSubmit();");
+		containerTitle.innerText = "사용자 조회";
+	}
+
+	//사용자 설정 등록 폼
+	userInsertForm(){
+		let html, dataArray;
+		storage.categoryArr = [];
+	
+		dataArray = [
+			{
+				"title": "회사코드(*)",
+				"elementId": "compNo",
+				"value": storage.user[storage.my].compNo,
+			},
+			{
+				"title": "사용자 권한(*)",
+				"selectValue": [
+					{
+						"key": "CUSER",
+						"value": "일반사용자",
+					},
+					{
+						"key": "PUSER",
+						"value": "부서관리자",
+					},
+					{
+						"key": "ADMIN",
+						"value": "시스템관리자",
+					},
+				],
+				"type": "select",
+				"elementId": "userRole",
+				"disabled": false,
+			},
+			{
+				"title": "직위(*)",
+				"selectValue": [
+					{
+						"key": "사원",
+						"value": "사원",
+					},
+					{
+						"key": "주임",
+						"value": "주임",
+					},
+					{
+						"key": "대리",
+						"value": "대리",
+					},
+					{
+						"key": "과장",
+						"value": "과장",
+					},
+					{
+						"key": "차장",
+						"value": "차장",
+					},
+					{
+						"key": "부장",
+						"value": "부장",
+					},
+					{
+						"key": "이사",
+						"value": "이사",
+					},
+					{
+						"key": "상무이사",
+						"value": "상무이사",
+					},
+					{
+						"key": "전무이사",
+						"value": "전무이사",
+					},
+					{
+						"key": "부사장",
+						"value": "부사장",
+					},
+					{
+						"key": "대표이사",
+						"value": "대표이사",
+					},
+				],
+				"type": "select",
+				"elementId": "userRank",
+				"disabled": false,
+			},
+			{
+				"title": "부서(*)",
+				"selectValue": [
+					{
+						"key": "개발팀",
+						"value": "개발팀",
+					},
+					{
+						"key": "영업팀",
+						"value": "영업팀",
+					},
+					{
+						"key": "기술팀",
+						"value": "기술팀",
+					},
+					{
+						"key": "서울팀",
+						"value": "서울팀",
+					},
+					{
+						"key": "관리팀",
+						"value": "관리팀",
+					},
+					{
+						"key": "마케팅팀",
+						"value": "마케팅팀",
+					},
+				],
+				"type": "select",
+				"elementId": "userDept",
+				"disabled": false,
+			},
+			{
+				"title": "아이디(*)",
+				"elementId": "userId",
+				"col": 4,
+				"disabled": false,
+			},
+			{
+				"title": "비밀번호(*)",
+				"elementId": "userPasswd",
+				"type": "password",
+				"col": 4,
+				"disabled": false,
+			},
+			{
+				"title": "이름(*)",
+				"elementId": "userName",
+				"col": 4,
+				"disabled": false,
+			},
+		];
+	
+		html = CommonDatas.detailViewForm(dataArray, "modal");
+	
+		modal.show();
+		modal.content.style.minWidth = "70vw";
+		modal.content.style.maxWidth = "70vw";
+		modal.headTitle.innerText = "사용자 등록";
+		modal.body.innerHTML = "<div class=\"defaultFormContainer\">" + html + "</div>";
+		modal.confirm.innerText = "등록";
+		modal.close.innerText = "취소";
+		modal.confirm.setAttribute("onclick", "const user = new User(); CommonDatas.Temps.user.insert();");
+		modal.close.setAttribute("onclick", "modal.hide();");
+
+		storage.formList = {
+			"userNo": 0,
+			"compNo": 0,
+			"userId": "",
+			"userName": "",
+			"userPasswd": "",
+			"userTel": "",
+			"userEmail": "",
+			"userOtp": 0,
+			"userRole": "",
+			"userCode": 0,
+			"docRole": "",
+			"userKey": "",
+			"org_id": 0,
+			"listDateFrom": "",
+			"regDatetime": "",
+			"modDatetime": "",
+			"attrib": "",
+			"userRank": "",
+			"userDept": "",
+		};
+	}
+
+	//유저 검색 버튼 클릭 함수
+	searchSubmit() {
+		let dataArray = [], resultArray, eachIndex = 0, user, searchUser, keyIndex = 0;
+		searchUser = document.getElementById("searchUser");
+		
+		for(let key in storage.userList[0]){
+			if(key === searchUser.dataset.key) user = "#" + keyIndex + "/" + searchUser.value;
+			keyIndex++;
+		}
+
+		let searchValues = [user];
+
+		for (let i = 0; i < searchValues.length; i++) {
+			if(searchValues[i] !== ""){
+				let tempArray = CommonDatas.searchDataFilter(storage.userList, searchValues[i], "multi", []);
+	
+				for (let t = 0; t < tempArray.length; t++) {
+					dataArray.push(tempArray[t]);
+				}
+	
+				eachIndex++;
+			}
+		}
+		
+		resultArray = CommonDatas.searchMultiFilter(eachIndex, dataArray, storage.userList);
+
+		storage.searchDatas = resultArray;
+
+		if (storage.searchDatas.length == 0) {
+			msg.set("찾는 데이터가 없습니다.");
+			storage.searchDatas = storage.userList;
+		}
+
+		this.drawUserList();
+	}
+
+	//유저 단일 검색 keyup 이벤트
+	searchInputKeyup() {
+		let searchAllInput, tempArray;
+		searchAllInput = document.getElementById("searchAllInput").value;
+		tempArray = CommonDatas.searchDataFilter(storage.userList, searchAllInput, "input");
+
+		if (tempArray.length > 0) {
+			storage.searchDatas = tempArray;
+		} else {
+			storage.searchDatas = "";
+		}
+
+		this.drawUserList();
+	}
+}
+
+class User{
+	constructor(getData) {
+		CommonDatas.Temps.user = this;
+
+		if (getData !== undefined) {
+			this.getData = getData;
+			this.userNo = getData.userNo;
+			this.compNo = getData.compNo;
+			this.userId = getData.userId;
+			this.userName = getData.userName;
+			this.userTel = getData.userTel;
+			this.userEmail = getData.userEmail;
+			this.userOtp = getData.userOtp;
+			this.userRole = getData.userRole;
+			this.userCode = getData.userCode;
+			this.docRole = getData.docRole;
+			this.userKey = getData.userKey;
+			this.org_id = getData.org_id;
+			this.listDateFrom = getData.listDateFrom;
+			this.userRank = getData.userRank;
+			this.userDept = getData.userDept;
+			this.regDatetime = getData.regDatetime;
+			this.modDatetime = getData.modDatetime;
+			this.attrib = getData.attrib;
+		} else {
+			this.userNo = 0;
+			this.compNo = 0;
+			this.userId = "";
+			this.userName = "";
+			this.userTel = "";
+			this.userEmail = "";
+			this.userOtp = 0;
+			this.userRole = "";
+			this.userCode = 0;
+			this.docRole = "";
+			this.userKey = "";
+			this.org_id = 0;
+			this.listDateFrom = "";
+			this.userRank = "";
+			this.userDept = "";
+			this.regDatetime = "";
+			this.modDatetime = "";
+			this.attrib = "";
+		}
+	}
+
+	//유저 상세보기
+	detail() {
+		let html = "";
+		let dataArray, notIdArray;
+		
+		CommonDatas.detailSetFormList(this.getData);
+
+		notIdArray = ["userId", "compNo"];
+
+		let gridList = document.getElementsByClassName("gridList")[0];
+		let containerTitle = document.getElementById("containerTitle");
+		let detailBackBtn = document.getElementsByClassName("detailBackBtn")[0];
+		let crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
+		let crudDeleteBtn = document.getElementsByClassName("crudDeleteBtn")[0];
+		dataArray = [
+			{
+				"title": "회사코드(*)",
+				"elementId": "compNo",
+				"value": storage.user[this.userNo].compNo,
+			},
+			{
+				"title": "사용자 권한(*)",
+				"selectValue": [
+					{
+						"key": "CUSER",
+						"value": "일반사용자",
+					},
+					{
+						"key": "PUSER",
+						"value": "부서관리자",
+					},
+					{
+						"key": "ADMIN",
+						"value": "시스템관리자",
+					},
+				],
+				"type": "select",
+				"elementId": "userRole",
+			},
+			{
+				"title": "직위(*)",
+				"selectValue": [
+					{
+						"key": "사원",
+						"value": "사원",
+					},
+					{
+						"key": "주임",
+						"value": "주임",
+					},
+					{
+						"key": "대리",
+						"value": "대리",
+					},
+					{
+						"key": "과장",
+						"value": "과장",
+					},
+					{
+						"key": "차장",
+						"value": "차장",
+					},
+					{
+						"key": "부장",
+						"value": "부장",
+					},
+					{
+						"key": "이사",
+						"value": "이사",
+					},
+					{
+						"key": "상무이사",
+						"value": "상무이사",
+					},
+					{
+						"key": "전무이사",
+						"value": "전무이사",
+					},
+					{
+						"key": "부사장",
+						"value": "부사장",
+					},
+					{
+						"key": "대표이사",
+						"value": "대표이사",
+					},
+				],
+				"type": "select",
+				"elementId": "userRank",
+			},
+			{
+				"title": "부서(*)",
+				"selectValue": [
+					{
+						"key": "개발팀",
+						"value": "개발팀",
+					},
+					{
+						"key": "영업팀",
+						"value": "영업팀",
+					},
+					{
+						"key": "기술팀",
+						"value": "기술팀",
+					},
+					{
+						"key": "서울팀",
+						"value": "서울팀",
+					},
+					{
+						"key": "관리팀",
+						"value": "관리팀",
+					},
+					{
+						"key": "마케팅팀",
+						"value": "마케팅팀",
+					},
+				],
+				"type": "select",
+				"elementId": "userDept",
+			},
+			{
+				"title": "표시순서",
+				"elementId": "userOtp",
+				"col": 2,
+				"value": (CommonDatas.emptyValuesCheck(this.userOtp)) ? "" : this.userOtp,
+			},
+			{
+				"title": "로그인 설정",
+				"selectValue": [
+					{
+						"key": "10000",
+						"value": "로그인 가능",
+					},
+					{
+						"key": "XXXXX",
+						"value": "로그인 금지",
+					},
+				],
+				"type": "select",
+				"col": 2,
+				"elementId": "attrib",
+			},
+			{
+				"title": "아이디(*)",
+				"elementId": "userId",
+				"col": 4,
+				"value": (CommonDatas.emptyValuesCheck(this.userId)) ? "" : this.userId,
+			},
+			{
+				"title": "이름(*)",
+				"elementId": "userName",
+				"col": 4,
+				"value": (CommonDatas.emptyValuesCheck(this.userName)) ? "" : this.userName,
+			},
+			{
+				"title": "전화번호",
+				"elementId": "userTel",
+				"col": 4,
+				"value": (CommonDatas.emptyValuesCheck(this.userTel)) ? "" : this.userTel,
+			},
+			{
+				"title": "이메일",
+				"elementId": "userEmail",
+				"col": 4,
+				"value": (CommonDatas.emptyValuesCheck(this.userEmail)) ? "" : this.userEmail,
+			},
+		];
+
+		html = CommonDatas.detailViewForm(dataArray);
+		let createGrid = document.createElement("div");
+		createGrid.className = "defaultFormContainer";
+		createGrid.innerHTML = html;
+		gridList.after(createGrid);
+		containerTitle.innerText = this.userName;
+		let hideArr = ["gridList", "listRange", "crudAddBtn", "listSearchInput", "searchContainer", "pageContainer"];
+		let showArr = ["defaultFormContainer"];
+		CommonDatas.setViewContents(hideArr, showArr);
+		crudUpdateBtn.setAttribute("onclick", "CommonDatas.enableDisabled(this, \"CommonDatas.Temps.user.update();\", \"" + notIdArray + "\");");
+		crudDeleteBtn.setAttribute("onclick", "CommonDatas.Temps.user.delete();");
+		crudUpdateBtn.style.display = "flex";
+		crudDeleteBtn.style.display = "flex";
+		detailBackBtn.style.display = "flex";
+		
+		setTimeout(() => {
+			document.getElementById("userRole").value = this.userRole;
+			document.getElementById("userRank").value = this.userRank;
+			document.getElementById("userDept").value = this.userDept;
+			document.getElementById("attrib").value = this.attrib;
+		}, 200);
+	}
+
+	//유저 등록
+	insert(){
+		if(CommonDatas.Temps.user.userIdCheck(document.getElementById("userId").value)){
+			msg.set("중복된 아이디가 있습니다.\n다시 입력해주세요.");
+			document.getElementById("userId").focus();
+			return false;
+		} else if(document.getElementById("userPasswd").value === ""){
+			msg.set("비밀번호를 입력해주세요.");
+			document.getElementById("userPasswd").focus();
+			return false;
+		} else if(document.getElementById("userName").value === ""){
+			msg.set("이름을 입력해주세요.");
+			document.getElementById("userName").focus();
+			return false;
+		} else{
+			CommonDatas.formDataSet();
+			let data = storage.formList;
+			data = JSON.stringify(data);
+			data = cipher.encAes(data);
+
+			axios.post("/api/user", data, {
+				headers: { "Content-Type": "text/plain" }
+			}).then((response) => {
+				if (response.data.result === "ok") {
+					location.reload();
+					msg.set("등록되었습니다.");
+				} else {
+					msg.set("등록 중 에러가 발생하였습니다.");
+					return false;
+				}
+			}).catch((error) => {
+				msg.set("등록 도중 에러가 발생하였습니다.\n" + error);
+				console.log(error);
+				return false;
+			});
+		}
+	}
+
+	//유저 수정
+	update() {
+		if(document.getElementById("userName").value === ""){
+			msg.set("이름을 입력해주세요.");
+			document.getElementById("userName").focus();
+			return false;
+		} else {
+			CommonDatas.formDataSet();
+			let data = storage.formList;
+			data = JSON.stringify(data);
+			data = cipher.encAes(data);
+
+			axios.put("/api/user/" + storage.formList.userNo, data, {
+				headers: { "Content-Type": "text/plain" }
+			}).then((response) => {
+				if (response.data.result === "ok") {
+					location.reload();
+					msg.set("수정되었습니다.");
+				} else {
+					msg.set("수정 중 에러가 발생하였습니다.");
+					return false;
+				}
+			}).catch((error) => {
+				msg.set("수정 도중 에러가 발생하였습니다.\n" + error);
+				console.log(error);
+				return false;
+			});
+		}
+	}
+
+	//영업기회 삭제
+	delete() {
+		if (confirm("정말로 삭제하시겠습니까??")) {
+			axios.delete("/api/user/" + storage.formList.userNo, {
+				headers: { "Content-Type": "text/plain" }
+			}).then((response) => {
+				if (response.data.result === "ok") {
+					location.reload();
+					msg.set("삭제되었습니다.");
+				} else {
+					msg.set("삭제 중 에러가 발생하였습니다.");
+					return false;
+				}
+			}).catch((error) => {
+				msg.set("삭제 도중 에러가 발생하였습니다.\n" + error);
+				console.log(error);
+				return false;
+			});
+		} else {
+			return false;
+		}
+	}
+
+	userIdCheck(value) {
+		let result = false;
+
+		for(let key in storage.user){
+			let item = storage.user[key];
+
+			if(item.userId === value){
+				result = true;
+			}
+		}
+
+		return result;
 	}
 }
 
@@ -17654,6 +18366,12 @@ class Common {
 				html += "<input type='text' id='" + elementId + "' name='" + elementName + "' autocomplete=\"" + autoComplete + "\" value='" + dataValue + "' data-complete='" + dataComplete + "' data-keyup='" + dataKeyup + "' onchange='" + dataChangeEvent + "' onclick='" + dataClickEvent + "' onkeyup='" + dataKeyupEvent + "' placeholder=\"" + placeHolder + "\" readonly>";
 			} else {
 				html += "<input type='text' id='" + elementId + "' name='" + elementName + "' autocomplete=\"" + autoComplete + "\" value='" + dataValue + "' data-complete='" + dataComplete + "' data-keyup='" + dataKeyup + "' onchange='" + dataChangeEvent + "' onclick='" + dataClickEvent + "' onkeyup='" + dataKeyupEvent + "' placeholder=\"" + placeHolder + "\">";
+			}
+		} else if(dataType === "password"){
+			if (dataDisabled == true) {
+				html += "<input type='password' id='" + elementId + "' name='" + elementName + "' autocomplete=\"" + autoComplete + "\" value='" + dataValue + "' data-complete='" + dataComplete + "' data-keyup='" + dataKeyup + "' onchange='" + dataChangeEvent + "' onclick='" + dataClickEvent + "' onkeyup='" + dataKeyupEvent + "' placeholder=\"" + placeHolder + "\" readonly>";
+			} else {
+				html += "<input type='password' id='" + elementId + "' name='" + elementName + "' autocomplete=\"" + autoComplete + "\" value='" + dataValue + "' data-complete='" + dataComplete + "' data-keyup='" + dataKeyup + "' onchange='" + dataChangeEvent + "' onclick='" + dataClickEvent + "' onkeyup='" + dataKeyupEvent + "' placeholder=\"" + placeHolder + "\">";
 			}
 		} else if (dataType === "textarea") {
 			if (dataDisabled == true) {
