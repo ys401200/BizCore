@@ -71,12 +71,12 @@
 	</div>
 	<div class="mainTopMenu">
 		<div data-keyword="business" data-path="/" onclick="CommonDatas.topMenuClick(this)">업무관리</div>
-		<div data-keyword="gw" data-path="/gw/home" onclick="CommonDatas.topMenuClick(this)">전자결재</div>
-		<div data-keyword="accounting" data-path="/accounting/home" onclick="CommonDatas.topMenuClick(this)">회계관리</div>
+		<!-- <div data-keyword="gw" data-path="/gw/home" onclick="CommonDatas.topMenuClick(this)">전자결재</div> -->
+		<!-- <div data-keyword="accounting" data-path="/accounting/home" onclick="CommonDatas.topMenuClick(this)">회계관리</div> -->
 	</div>
 	<div class="mainInfo">
 		<div>
-			<a href="/mypage">
+			<a href="#" onclick="let userSet = new UserSet(); userSet.userSetting();">
 				<span><%= session.getAttribute("userName") %></span>
 				<!-- <span><%= session.getAttribute("userRank") %></span> -->
 			</a>
@@ -84,11 +84,11 @@
 		<div>
 			<img class="myInfoImage" src="/api/my/image" >
 		</div>
-		<div>
+		<!-- <div>
 			<a href="#" onclick="noteContentShow();" class="infoMessageImg">
 				<img id="myInfoMessageImg" src="/images/main/icons/message.png">
 			</a>
-		</div>
+		</div> -->
 		<div>
 			<a href="/api/user/logout" onclick="return confirm('로그아웃 하시겠습니까??');">
 				<img class="myInfoImageLogout" src="/images/main/icons/logout.png" >

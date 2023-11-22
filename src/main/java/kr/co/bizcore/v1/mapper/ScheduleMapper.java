@@ -16,13 +16,13 @@ import kr.co.bizcore.v1.domain.WorkReport;
 
 public interface ScheduleMapper {
     @Select(
-        "select salesNo as `no`, compNo, custNo, userNo, schedFrom, schedTo, `title`, `desc`, salesPlace as place, schedType, `type`, regDatetime from swc_sales where schedFrom between '2023-01-01' and '2023-12-31' and schedTo between '2023-01-01' and '2023-12-31' and compNo = #{compNo} and attrib not like 'XXX%'\r\n" +
-        " union " + 
-        "select schedNo as `no`, compNo, custNo, userNo, schedFrom, schedTo, `title`, `desc`, schedPlace as place, schedType, `type`, regDatetime from swc_sched where schedFrom between '2023-01-01' and '2023-12-31' and schedTo between '2023-01-01' and '2023-12-31' and compNo = #{compNo} and attrib not like 'XXX%'\r\n" +
-        " union " +
-        "select techdNo as `no`, compNo, custNo, userNo, schedFrom, schedTo, `title`, `desc`, techdPlace as place, schedType, `type`, regDatetime from swc_techd where schedFrom between '2023-01-01' and '2023-12-31' and schedTo between '2023-01-01' and '2023-12-31' and compNo = #{compNo} and attrib not like 'XXX%' order by schedFrom asc"
+        "select salesNo as `no`, compNo, custNo, userNo, schedFrom, schedTo, `title`, `desc`, salesPlace as place, schedType, `type`, regDatetime from swc_sales where schedFrom between #{calDate} and #{nowDate} and schedTo between #{calDate} and #{nowDate} and compNo = #{compNo} and attrib not like 'XXX%'\r\n" +
+        " union all " + 
+        "select schedNo as `no`, compNo, custNo, userNo, schedFrom, schedTo, `title`, `desc`, schedPlace as place, schedType, `type`, regDatetime from swc_sched where schedFrom between #{calDate} and #{nowDate} and schedTo between #{calDate} and #{nowDate} and compNo = #{compNo} and attrib not like 'XXX%'\r\n" +
+        " union all " +
+        "select techdNo as `no`, compNo, custNo, userNo, schedFrom, schedTo, `title`, `desc`, techdPlace as place, schedType, `type`, regDatetime from swc_techd where schedFrom between #{calDate} and #{nowDate} and schedTo between #{calDate} and #{nowDate} and compNo = #{compNo} and attrib not like 'XXX%' order by schedFrom asc"
     )
-    public List<Schedule> getList(@Param("compNo") int compNo);
+    public List<Schedule> getList(@Param("compNo") int compNo, @Param("nowDate") String nowDate, @Param("calDate") String calDate);
 
     @Select("SELECT * FROM swc_sched WHERE attrib NOT LIKE 'XXX%' AND schedNo = #{schedNo} AND compNo = #{compNo}")
     public Schedule getScheduleOne(@Param("schedNo") String schedNo, @Param("compNo") int compNo);

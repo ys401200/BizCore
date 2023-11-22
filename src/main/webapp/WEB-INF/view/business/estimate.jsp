@@ -31,7 +31,7 @@
             </div>
         </div>
         <div class="listContainer">
-            <hr />
+            <!-- <hr />
             <span id="containerTitle">견적</span>
 			<div class="listSearchInput">
                 <input type="text" class="searchAllInput" id="searchAllInput" onkeyup="EstimateSet.searchInputKeyup();" placeholder="단어를 입력해주세요.">
@@ -45,12 +45,36 @@
 				<button type="button" class="crudUpdateBtn">견적수정</button>
 				<button type="button" class="estimatePdf">pdf 다운로드</button>
 				<a href="#" onclick="hideDetailView(EstimateSet.drawBack);" class="detailBackBtn">Back</a>
-			</div>
+			</div> -->
 			<!-- <span class="bodyTitleFnc">
 				<div style="display: none;"></div>
 				<div style="display: none;">추가</div>
 				<div onclick="closeAdd()">닫기</div>
 			</span> -->
+			<div class="contentHeaders">
+                <hr />
+                <span id="containerTitle">견적조회</span>
+                <div class="listRange">
+                    <input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="CommonDatas.listRangeChange(this, CommonDatas.Temps.estimateSet.drawSoppList);">
+                    <span class="listRangeSpan">0</span>
+                </div>
+                <div class="listSearchInput">
+                    <input type="text" class="searchAllInput" id="searchAllInput" onkeyup="CommonDatas.Temps.estimateSet.searchInputKeyup();" placeholder="단어를 입력해주세요.">
+                </div>
+				<div class="crudBtns">
+					<button type="button" class="crudAddBtn">견적추가</button>
+					<button type="button" class="crudUpdateBtn">견적수정</button>
+					<button type="button" class="estimatePdf">pdf 다운로드</button>
+					<a href="#" onclick="hideDetailView(EstimateSet.drawBack);" class="detailBackBtn">Back</a>
+				</div>
+                <!-- <div class="crudBtns">
+                    <button type="button" class="contractReqBtn" onclick="popup(this);">계약요청</button>
+                    <button type="button" class="crudAddBtn" onclick="CommonDatas.Temps.soppSet.soppInsertForm();">등록</button>
+                    <button type="button" class="crudUpdateBtn">수정</button>
+                    <button type="button" class="crudDeleteBtn">삭제</button>
+                    <a href="#" onclick="CommonDatas.hideDetailView(CommonDatas.Temps.soppSet.drawSoppList);" class="detailBackBtn">Back</a>
+                </div> -->
+            </div>
 			<div class="estimateList"></div>
 			<div class="versionPreview">
 				<div class="previewDefault">

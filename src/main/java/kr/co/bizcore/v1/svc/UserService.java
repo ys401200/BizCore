@@ -39,8 +39,20 @@ public class UserService extends Svc {
         return userMapper.updateUser(user);
     }
 
+    public int passwordReset(User user) {
+        return userMapper.passwordReset(user);
+    }
+
     public User loginCheck(User user){
         return userMapper.loginCheck(user);
+    }
+
+    public int passwordCheck(User user) {
+        return userMapper.passwordCheck(user);
+    }
+
+    public int settingUserUpdate(User user) {
+        return userMapper.settingUserUpdate(user);
     }
 
     public List<User> getUserList(){

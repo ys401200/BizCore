@@ -37,6 +37,7 @@ public class Schedule extends Domain{
     private String regDatetimeTo;
     private String from;
     private String to;
+    private String userDept;
 
     //sreReport
     private int sreportNo;

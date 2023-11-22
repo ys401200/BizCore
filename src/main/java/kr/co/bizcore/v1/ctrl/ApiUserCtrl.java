@@ -248,6 +248,87 @@ public class ApiUserCtrl extends Ctrl{
         return result;
     } // End of userLogin()
 
+    @RequestMapping(value = "/passwordReset/{no}", method = RequestMethod.PUT)
+    public String passwordReset(HttpServletRequest req, @RequestBody String requestBody, @PathVariable String no) throws JsonMappingException, JsonProcessingException {
+        String compId = null;
+        int compNo = 0;
+        String result = null;
+        HttpSession session = null;
+        String data = null, aesKey = null, aesIv = null;
+        ObjectMapper mapper = new ObjectMapper();
+
+        session = req.getSession();
+        compNo = (int) session.getAttribute("compNo");
+        compId = (String) session.getAttribute("compId");
+        if (compId == null) {
+            compId = (String) req.getAttribute("compId");
+        }
+
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        data = soppService.decAes(requestBody, aesKey, aesIv);
+        User user = mapper.readValue(data, User.class);
+        user.setCompNo(compNo);
+
+        if (userService.passwordReset(user) > 0) {
+            result = "{\"result\":\"ok\"}";
+        }
+
+        return result;
+    }
+
+    @RequestMapping(value = "/passwordCheck", method = RequestMethod.POST)
+    public int passwordCheck(HttpServletRequest req, @RequestBody String requestBody) throws JsonMappingException, JsonProcessingException {
+
+        int compNo = 0;
+        HttpSession session = null;
+        int result = 0;
+        String data = null, aesKey = null, aesIv = null;
+        ObjectMapper mapper = new ObjectMapper();
+
+        session = req.getSession();
+
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        compNo = (int) session.getAttribute("compNo");
+        data = userService.decAes(requestBody, aesKey, aesIv);
+        User user = mapper.readValue(data, User.class);
+        user.setCompNo(compNo);
+        
+        result = userService.passwordCheck(user);
+
+        return result;
+    }
+
+    @RequestMapping(value = "/settingUserUpdate", method = RequestMethod.PUT)
+    public String settingUserUpdate(HttpServletRequest req, @RequestBody String requestBody) throws JsonMappingException, JsonProcessingException {
+        String compId = null;
+        int compNo = 0;
+        String result = null;
+        HttpSession session = null;
+        String data = null, aesKey = null, aesIv = null;
+        ObjectMapper mapper = new ObjectMapper();
+
+        session = req.getSession();
+        compNo = (int) session.getAttribute("compNo");
+        compId = (String) session.getAttribute("compId");
+        if (compId == null) {
+            compId = (String) req.getAttribute("compId");
+        }
+
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        data = soppService.decAes(requestBody, aesKey, aesIv);
+        User user = mapper.readValue(data, User.class);
+        user.setCompNo(compNo);
+
+        if (userService.settingUserUpdate(user) > 0) {
+            result = "{\"result\":\"ok\"}";
+        }
+
+        return result;
+    }
+
     // Login process API
     // @RequestMapping(value = "/login/*", method = RequestMethod.POST)
     // public String userLogin(HttpServletRequest request, @RequestBody String requestBody) {

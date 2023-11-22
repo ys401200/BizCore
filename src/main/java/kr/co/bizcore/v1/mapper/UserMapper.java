@@ -22,11 +22,20 @@ public interface UserMapper {
     @Update("UPDATE swc_user SET attrib = 'XXXXX' WHERE userNo = #{userNo} AND compNo = #{compNo}")
     public int userDelete(@Param("compNo") int compNo, @Param("userNo") String userNo);
 
-    @Update("UPDATE swc_user SET userName = #{user.userName}, userTel = #{user.userTel}, userEmail = #{user.userEmail}, userRole = #{user.userRole}, userRank = #{user.userRank}, userDept = #{user.userDept}, userOtp = #{user.userOtp}, modDatetime = now(), attrib = #{user.attrib} WHERE userNo = #{user.userNo} AND compNo = #{user.compNo}")
+    @Update("UPDATE swc_user SET userName = #{user.userName}, userTel = #{user.userTel}, userEmail = #{user.userEmail}, userRole = #{user.userRole}, userKey = #{user.userKey}, userRank = #{user.userRank}, userDept = #{user.userDept}, userOtp = #{user.userOtp}, modDatetime = now(), attrib = #{user.attrib} WHERE userNo = #{user.userNo} AND compNo = #{user.compNo}")
     public int updateUser(@Param("user") User user);
+
+    @Update("UPDATE swc_user SET userPasswd = PASSWORD(1234), modDatetime = now() WHERE userNo = #{user.userNo} AND compNo = #{user.compNo}")
+    public int passwordReset(@Param("user") User user);
 
     @Select("SELECT *, count(*) as getCount from swc_user WHERE compNo = #{user.compNo} AND userId = #{user.userId} AND userPasswd = PASSWORD(#{user.userPasswd}) AND attrib not like 'XXX%'")
     public User loginCheck(@Param("user") User user);
+
+    @Select("SELECT count(*) from swc_user WHERE userId = #{user.userId} AND userPasswd = PASSWORD(#{user.userPasswd}) AND compNo = #{user.compNo}")
+    public Integer passwordCheck(@Param("user") User user);
+
+    @Update("UPDATE swc_user SET userPasswd = PASSWORD(#{user.userPasswd}), modDatetime = now() WHERE userId = #{user.userId} AND compNo = #{user.compNo}")
+    public int settingUserUpdate(@Param("user") User user);
 
     @Select("SELECT * FROM swc_user")
     public List<User> getUserList();

@@ -58,7 +58,7 @@ let promiseInit = function init() {
 			getCommonCode();
 			// getUserMap();
 			// getDeptMap();
-			setDeptTree();
+			// setDeptTree();
 			// getBasicInfo();
 			// getUserRank();
 			getStorageList();
@@ -68,6 +68,8 @@ let promiseInit = function init() {
 			CommonDatas.setSidePathActive();
 			
 			setTimeout(() => {
+				CommonDatas.pageAuthSet();
+				CommonDatas.sideMenuAuthSet();
 				resolve();
 			}, 300);
 	})
@@ -3652,6 +3654,8 @@ function getStorageList() {
 
 					storage.user = formatDatas;
 					storage.my = sessionStorage.getItem("getUserNo");
+					storage.myUserKey = storage.user[storage.my].userKey;
+					storage.myUserRole = storage.user[storage.my].userRole;
 					console.log("[getUser] Success getting user list.");
 				}
 			},

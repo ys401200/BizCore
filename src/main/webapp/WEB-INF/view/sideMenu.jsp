@@ -14,7 +14,7 @@
 					<span>공지사항</span>
 				</a>
 			</div>
-			<div class="menuItem">
+			<div class="menuItem" data-key="schedule">
 				<input type="radio" id="schedule" name="sideMenu" onclick="CommonDatas.sideMenuItemClick();">
 				<label for="schedule">
 					<img src="/images/main/icons/mainSchedIcon.png" id="mainSchedIcon" />
@@ -39,13 +39,13 @@
 					<a href="/business/workjournal">업무일지검토</a>
 				</div>
 			</div>
-			<div class="menuItem">
+			<div class="menuItem" data-key="sales">
 				<a href="/business/sales">
 					<img src="/images/main/icons/mainSchedIcon.png" id="mainSalesIcon" />
 					<span>영업활동관리</span>
 				</a>
 			</div>
-			<div class="menuItem">
+			<div class="menuItem" data-key="sopp">
 				<input type="radio" id="sopp" name="sideMenu" onclick="CommonDatas.sideMenuItemClick();">
 				<label for="sopp">
 					<img src="/images/main/icons/mainSoppIcon.png" id="mainSoppIcon" />
@@ -64,7 +64,7 @@
 					<a href="/business/estimate">견적관리</a>
 				</div>
 			</div>
-			<div class="menuItem">
+			<div class="menuItem" data-key="cont">
 				<input type="radio" id="cont" name="sideMenu" onclick="CommonDatas.sideMenuItemClick();">
 				<label for="cont">
 					<img src="/images/main/icons/mainContIcon.png" id="mainContIcon" />
@@ -77,7 +77,7 @@
 					<a href="/business/cont">계약조회</a>
 				</div>
 			</div>
-			<div class="menuItem">
+			<div class="menuItem" data-key="tech">
 				<input type="radio" id="tech" name="sideMenu" onclick="CommonDatas.sideMenuItemClick();">
 				<label for="tech">
 					<img src="/images/main/icons/mainSchedIcon.png" id="mainSchedIcon" />
@@ -99,7 +99,7 @@
 					<span>자료실</span>
 				</a>
 			</div>
-			<div class="menuItem">
+			<div class="menuItem" data-key="setting">
 				<input type="radio" id="setting" name="sideMenu" onclick="CommonDatas.sideMenuItemClick();">
 				<label for="setting">
 					<img src="/images/main/icons/mainSoppIcon.png" id="mainSoppIcon" />

@@ -60,3 +60,8 @@
 	border-radius:5px;
 	float: right;
 }
+
+.contentHeaders > .crudBtns > button:nth-child(2){
+	width: 4.6vw;
+	background-color: #74D36D;
+}

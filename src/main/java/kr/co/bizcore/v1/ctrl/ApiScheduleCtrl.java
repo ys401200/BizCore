@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 
 import kr.co.bizcore.v1.domain.Sales;
 import kr.co.bizcore.v1.domain.Schedule;
@@ -57,26 +58,17 @@ public class ApiScheduleCtrl extends Ctrl {
             String searchSoppNo = request.getParameter("soppNo");
             String searchCustNo = request.getParameter("custNo");
             String searchType = request.getParameter("type");
+            String searchUserDept = request.getParameter("userDept");
             String regDatetimeFrom = request.getParameter("regDatetimeFrom");
             String regDatetimeTo = request.getParameter("regDatetimeTo");
 
-            if(searchUserNo != null || searchSoppNo != null || searchCustNo != null || searchType != null || regDatetimeFrom != null || regDatetimeTo != null){
-                list = scheduleService.getSearchList(compNo, searchUserNo, searchSoppNo, searchCustNo, searchType, regDatetimeFrom, regDatetimeTo);
+            if(searchUserNo != null || searchSoppNo != null || searchCustNo != null || searchType != null || searchUserDept != null || regDatetimeFrom != null || regDatetimeTo != null){
+                list = scheduleService.getSearchList(compNo, searchUserNo, searchSoppNo, searchCustNo, searchType, searchUserDept, regDatetimeFrom, regDatetimeTo);
             }else{
                 list = scheduleService.getList(compNo);
             }
-
-            if (list != null) {
-                data = "[";
-                for (i = 0; i < list.size(); i++) {
-                    if (i > 0)
-                        data += ",";
-                    data += list.get(i).toJson();
-                }
-                data += "]";
-            } else {
-                data = "[]";
-            }
+            
+            data = new Gson().toJson(list).toString();
             data = scheduleService.encAes(data, aesKey, aesIv);
             result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";            
         }

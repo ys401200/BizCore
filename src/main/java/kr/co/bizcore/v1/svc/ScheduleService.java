@@ -4,7 +4,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -29,10 +32,16 @@ public class ScheduleService extends Svc {
     private ScheduleMapper scheduleMapper;
 
     public List<Schedule> getList(int compNo) {
-       return scheduleMapper.getList(compNo);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        LocalDate nowDate = LocalDate.now();
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH, -3);
+        String calDate = simpleDateFormat.format(calendar.getTime());
+        
+        return scheduleMapper.getList(compNo, nowDate.toString(), calDate.toString());
     }
 
-    public List<Schedule> getSearchList(int compNo, String userNo, String soppNo, String custNo, String type, String regDatetimeFrom, String regDatetimeTo) {
+    public List<Schedule> getSearchList(int compNo, String userNo, String soppNo, String custNo, String type, String userDept, String regDatetimeFrom, String regDatetimeTo) {
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -42,17 +51,18 @@ public class ScheduleService extends Svc {
         String subSql = "";
 
         try{
-            if(userNo != null && userNo != "") subSql += " and userNo = '" + userNo + "'";
-            if(soppNo != null && soppNo != "") subSql += " and soppNo = '" + soppNo + "'";
-            if(custNo != null && custNo != "") subSql += " and custNo = '" + custNo + "'";
-            if(type != null && type != "") subSql += " and `type` = '" + type + "'";
-            if(regDatetimeFrom != null && regDatetimeFrom != "") subSql += " and regDatetime between '" + regDatetimeFrom + "' and '" + regDatetimeTo + "'";
+            if(userNo != null && userNo != "") subSql += " and schedule.userNo = '" + userNo + "'";
+            if(soppNo != null && soppNo != "") subSql += " and schedule.soppNo = '" + soppNo + "'";
+            if(custNo != null && custNo != "") subSql += " and schedule.custNo = '" + custNo + "'";
+            if(type != null && type != "") subSql += " and schedule.type = '" + type + "'";
+            if(userDept != null && userDept != "") subSql += " and swc_user.userDept = '" + userDept + "'";
+            if(regDatetimeFrom != null && regDatetimeFrom != "") subSql += " and schedule.regDatetime between '" + regDatetimeFrom + "' and '" + regDatetimeTo + "'";
 
-            sql = "select salesNo as `no`, compNo, custNo, userNo, schedFrom, schedTo, `title`, `desc`, salesPlace as place, schedType, `type`, regDatetime from swc_sales where compNo = " + compNo + subSql + " and attrib not like 'XXX%'" +
+            sql = "select schedule.salesNo as `no`, schedule.compNo, schedule.custNo, schedule.userNo, schedule.schedFrom, schedule.schedTo, schedule.title as `title`, schedule.desc as `desc`, schedule.salesPlace as place, schedule.schedType, schedule.type as `type`, swc_user.userDept, schedule.regDatetime from swc_sales as schedule left join swc_user on schedule.userNo = swc_user.userNo where schedule.compNo = " + compNo + subSql + " and schedule.attrib not like 'XXX%'" +
             " union " + 
-            "select schedNo as `no`, compNo, custNo, userNo, schedFrom, schedTo, `title`, `desc`, schedPlace as place, schedType, `type`, regDatetime from swc_sched where compNo = " + compNo + subSql + " and attrib not like 'XXX%'" +
+            "select schedule.schedNo as `no`, schedule.compNo as compNo, schedule.custNo, schedule.userNo, schedule.schedFrom, schedule.schedTo, schedule.title as `title`, schedule.desc as `desc`, schedule.schedPlace as place, schedule.schedType, schedule.type as `type`, swc_user.userDept, schedule.regDatetime from swc_sched as schedule left join swc_user on schedule.userNo = swc_user.userNo where schedule.compNo = " + compNo + subSql + " and schedule.attrib not like 'XXX%'" +
             " union " +
-            "select techdNo as `no`, compNo, custNo, userNo, schedFrom, schedTo, `title`, `desc`, techdPlace as place, schedType, `type`, regDatetime from swc_techd where compNo = " + compNo + subSql + " and attrib not like 'XXX%'";
+            "select schedule.techdNo as `no`, schedule.compNo, schedule.custNo, schedule.userNo, schedule.schedFrom, schedule.schedTo, schedule.title as `title`, schedule.desc as `desc`, schedule.techdPlace as place, schedule.schedType, schedule.type as `type`, swc_user.userDept, schedule.regDatetime from swc_techd as schedule left join swc_user on schedule.userNo = swc_user.userNo where schedule.compNo = " + compNo + subSql + " and schedule.attrib not like 'XXX%'";
 
             conn = sqlSession.getConnection();
             pstmt = conn.prepareStatement(sql);
@@ -71,6 +81,7 @@ public class ScheduleService extends Svc {
                 schedule.setPlace(rs.getString("place"));
                 schedule.setSchedType(rs.getInt("schedType"));
                 schedule.setType(rs.getString("type"));
+                schedule.setUserDept(rs.getString("userDept"));
                 schedule.setRegDatetime(rs.getString("regDatetime"));
                 list.add(schedule);
             }
