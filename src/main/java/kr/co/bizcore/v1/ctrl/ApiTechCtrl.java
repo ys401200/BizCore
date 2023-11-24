@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 
 import kr.co.bizcore.v1.domain.Sales;
 import kr.co.bizcore.v1.domain.Tech;
@@ -60,17 +61,13 @@ public class ApiTechCtrl extends Ctrl {
             Tech tech = new Tech();
             tech.setCompNo(compNo);
             list = techService.getTechList(tech);
+           
             if (list != null) {
-                data = "[";
-                for (i = 0; i < list.size(); i++) {
-                    if (i > 0)
-                    data += ",";
-                    data += list.get(i).toJson();
-                }
-                data += "]";
+                data = new Gson().toJson(list).toString();
             } else {
                 data = "[]";
             }
+            
             data = techService.encAes(data, aesKey, aesIv);
             result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";            
         }

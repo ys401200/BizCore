@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 
 import kr.co.bizcore.v1.domain.NoticeFileData;
 import kr.co.bizcore.v1.domain.Reference;
@@ -65,17 +66,13 @@ public class ApiReferenceCtrl extends Ctrl {
         }else{
             Reference reference = new Reference();
             list = referenceService.getReferenceList(reference);
+            
             if (list != null) {
-                data = "[";
-                for (i = 0; i < list.size(); i++) {
-                    if (i > 0)
-                    data += ",";
-                    data += list.get(i).toJson();
-                }
-                data += "]";
+                data = new Gson().toJson(list).toString();
             } else {
                 data = "[]";
             }
+            
             data = referenceService.encAes(data, aesKey, aesIv);
             result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";            
         }

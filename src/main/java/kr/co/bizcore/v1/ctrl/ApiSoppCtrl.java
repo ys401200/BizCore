@@ -30,6 +30,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 
 import kr.co.bizcore.v1.domain.Inout;
 import kr.co.bizcore.v1.domain.Sales;
@@ -72,17 +73,13 @@ public class ApiSoppCtrl extends Ctrl{
             Sopp sopp = new Sopp();
             sopp.setCompNo(compNo);
             list = soppService.getSoppList(sopp);
+            
             if (list != null) {
-                data = "[";
-                for (i = 0; i < list.size(); i++) {
-                    if (i > 0)
-                    data += ",";
-                    data += list.get(i).toJson();
-                }
-                data += "]";
+                data = new Gson().toJson(list).toString();
             } else {
                 data = "[]";
             }
+            
             data = soppService.encAes(data, aesKey, aesIv);
             result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";            
         }

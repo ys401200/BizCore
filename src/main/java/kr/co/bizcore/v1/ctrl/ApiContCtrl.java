@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 
 import kr.co.bizcore.v1.domain.Cont;
 import kr.co.bizcore.v1.domain.ContFileData;
@@ -282,17 +283,13 @@ public class ApiContCtrl extends Ctrl{
                 Inout inout = new Inout();
                 inout.setContNo(Integer.parseInt(no));
                 list = contService.getContInoutList(inout);
+                
                 if (list != null) {
-                    data = "[";
-                    for (i = 0; i < list.size(); i++) {
-                        if (i > 0)
-                        data += ",";
-                        data += list.get(i).toJson();
-                    }
-                    data += "]";
+                    data = new Gson().toJson(list).toString();
                 } else {
                     data = "[]";
                 }
+
                 data = contService.encAes(data, aesKey, aesIv);
                 result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}"; 
             } // End of if : 2

@@ -78,6 +78,50 @@ public class ApiCustCtrl extends Ctrl{
         return result;
     }
 
+    @GetMapping("/custAllList")
+    public String custAllList(HttpServletRequest request) {
+        String result = null, data = null, aesKey = null, aesIv = null, userNo = null, compId = null;
+        int compNo = 0;
+        HttpSession session = null;
+        Msg msg = null;
+        List<Cust> list = null;
+        int i = 0;
+        
+        session = request.getSession();
+        aesKey = (String) session.getAttribute("aesKey");
+        aesIv = (String) session.getAttribute("aesIv");
+        compNo = (int) session.getAttribute("compNo");
+        userNo = (String) session.getAttribute("userNo");
+        msg = getMsg((String) session.getAttribute("lang"));
+        if (compNo == 0)
+        compNo = (int) request.getAttribute("compNo");
+            
+        if (compNo == 0) {
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.compNoNotVerified + "\"}";
+        }else if(aesKey == null || aesIv == null){
+            result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
+        }else{
+            Cust cust = new Cust();
+            cust.setCompNo(compNo);
+            list = custService.custAllList(cust);
+            if (list != null) {
+                data = "[";
+                for (i = 0; i < list.size(); i++) {
+                    if (i > 0)
+                    data += ",";
+                    data += list.get(i).toJson();
+                }
+                data += "]";
+            } else {
+                data = "[]";
+            }
+            data = custService.encAes(data, aesKey, aesIv);
+            result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";            
+        }
+
+        return result;
+    }
+
     @RequestMapping(value = "/{no}", method = RequestMethod.GET)
     public String getDetail(HttpServletRequest req, @PathVariable String no) {
         HttpSession session = null;

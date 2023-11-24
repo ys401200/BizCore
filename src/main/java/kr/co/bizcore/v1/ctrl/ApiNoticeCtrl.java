@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.gson.Gson;
+
 import kr.co.bizcore.v1.domain.Notice;
 import kr.co.bizcore.v1.domain.SimpleNotice;
 import kr.co.bizcore.v1.msg.Msg;
@@ -56,17 +58,13 @@ public class ApiNoticeCtrl extends Ctrl {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.aesKeyNotFound + "\"}";
         }else{
             list = noticeSvc.getPostList(compNo);
+            
             if (list != null) {
-                data = "[";
-                for (i = 0; i < list.size(); i++) {
-                    if (i > 0)
-                        data += ",";
-                    data += list.get(i).toJson();
-                }
-                data += "]";
+                data = new Gson().toJson(list).toString();
             } else {
                 data = "[]";
             }
+            
             data = noticeSvc.encAes(data, aesKey, aesIv);
             result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";            
         }

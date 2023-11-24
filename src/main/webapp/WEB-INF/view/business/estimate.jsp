@@ -7,9 +7,9 @@
 				<div class="searchDate">
                     <span>견적일자</span>
                     <div class="searchGridItem">
-                        <input type="date" id="searchDateFrom" max="9999-12-31" data-date-type="from" onchange="searchDateDefaultSet(this);">
+                        <input type="date" id="searchDateFrom" max="9999-12-31" data-date-type="from" onchange="CommonDats.searchDateDefaultSet(this);">
                         <span>~</span>
-                        <input type="date" id="searchDateTo" max="9999-12-31" data-date-type="to" onchange="searchDateDefaultSet(this);">
+                        <input type="date" id="searchDateTo" max="9999-12-31" data-date-type="to" onchange="CommonDats.searchDateDefaultSet(this);">
                     </div>
                 </div>
                 <div class="searchTitle">
@@ -23,9 +23,9 @@
 				<div class="searchPrice">
                     <span>금액</span>
                     <div class="searchGridItem">
-                        <input type="text" id="searchPriceFrom" onkeyup="inputNumberFormat(this);">
+                        <input type="text" id="searchPriceFrom" onkeyup="CommonDats.inputNumberFormat(this);">
                         <span>~</span>
-                        <input type="text" id="searchPriceTo" onkeyup="inputNumberFormat(this);">
+                        <input type="text" id="searchPriceTo" onkeyup="CommonDats.inputNumberFormat(this);">
                     </div>
                 </div>
             </div>
@@ -55,7 +55,7 @@
                 <hr />
                 <span id="containerTitle">견적조회</span>
                 <div class="listRange">
-                    <input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="CommonDatas.listRangeChange(this, CommonDatas.Temps.estimateSet.drawSoppList);">
+                    <input type="range" class="listRangeInput" max="100" step="10" value="0" oninput="CommonDatas.listRangeChange(this, CommonDatas.Temps.estimateSet.drawEstmList);">
                     <span class="listRangeSpan">0</span>
                 </div>
                 <div class="listSearchInput">
@@ -64,8 +64,8 @@
 				<div class="crudBtns">
 					<button type="button" class="crudAddBtn">견적추가</button>
 					<button type="button" class="crudUpdateBtn">견적수정</button>
-					<button type="button" class="estimatePdf">pdf 다운로드</button>
-					<a href="#" onclick="hideDetailView(EstimateSet.drawBack);" class="detailBackBtn">Back</a>
+					<button type="button" class="estimatePdf">PDF 다운로드</button>
+					<a href="#" onclick="CommonDatas.hideDetailView(CommonDatas.Temps.estimateSet.drawBack);" class="detailBackBtn">Back</a>
 				</div>
                 <!-- <div class="crudBtns">
                     <button type="button" class="contractReqBtn" onclick="popup(this);">계약요청</button>

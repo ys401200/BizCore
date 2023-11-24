@@ -9,7 +9,7 @@ import lombok.ToString;
 @Getter 
 @Setter
 @ToString
-public class Sales extends SimpleSales{
+public class Sales extends Domain{
 
     @XmlElement(nillable=true)
     private String detail; //내용

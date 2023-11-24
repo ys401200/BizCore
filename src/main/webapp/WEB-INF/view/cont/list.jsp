@@ -24,7 +24,7 @@
                 </div>
                 <div class="searchCategories">
                     <span>카테고리(제품회사명)</span>
-                    <input type="text" data-complete="categories" data-key="categories" autocomplete="off" id="searchCategories" onclick="CommonDatas.addAutoComplete(this);" onkeyup="CommonDatas.addAutoComplete(this);">
+                    <input type="text" data-complete="categories" data-key="categories" data-type="search" autocomplete="off" id="searchCategories" onclick="CommonDatas.addAutoComplete(this);" onkeyup="CommonDatas.addAutoComplete(this);">
                 </div>
                 <div class="searchCntrctMth">
                     <span>계약방식</span>

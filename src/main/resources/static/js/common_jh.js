@@ -11,12 +11,10 @@ class NoticeSet {
 				let result;
 				result = cipher.decAes(response.data.data);
 				result = JSON.parse(result);
-				storage.noticeAllList = result;
-				storage.noticeList = [];
-
-				CommonDatas.disListSet(storage.noticeAllList, storage.noticeList, 3, "regDate");
+				storage.noticeList = result;
 
 				this.drawNoticeList();
+				CommonDatas.searchListSet("noticeList");
 				$('.theme-loader').fadeOut("slow");
 			}
 		}).catch((error) => {
@@ -204,14 +202,7 @@ class NoticeSet {
 		searchTitle = document.getElementById("searchTitle");
 		searchUser = document.getElementById("searchUser");
 		searchCreatedFrom = (document.getElementById("searchCreatedFrom").value === "") ? "" : document.getElementById("searchCreatedFrom").value.replaceAll("-", "") + "#regDate" + document.getElementById("searchCreatedTo").value.replaceAll("-", "");
-
-		if(searchTitle.value === "" && searchUser.value === "" && searchCreatedFrom === "") {
-			CommonDatas.searchListSet("noticeList");
-			targetList = storage.noticeList;
-		} else{
-			CommonDatas.searchListSet("noticeAllList");
-			targetList = storage.noticeAllList;
-		}
+		targetList = storage.noticeList;
 
 		for(let key in targetList[0]){
 			if(key === searchTitle.dataset.key) title = "#" + keyIndex + "/" + searchTitle.value;
@@ -249,14 +240,7 @@ class NoticeSet {
 	searchInputKeyup() {
 		let searchAllInput, tempArray, targetList;
 		searchAllInput = document.getElementById("searchAllInput").value;
-
-		if(searchAllInput === "") {
-			CommonDatas.searchListSet("noticeList");
-			targetList = storage.noticeList;
-		} else{
-			CommonDatas.searchListSet("noticeAllList");
-			targetList = storage.noticeAllList;
-		}
+		targetList = storage.noticeList;
 
 		tempArray = CommonDatas.searchDataFilter(targetList, searchAllInput, "input");
 
@@ -856,7 +840,7 @@ class SalesSet{
 
 		if (storage.searchDatas.length == 0) {
 			msg.set("찾는 데이터가 없습니다.");
-			storage.searchDatas = targetList;
+			storage.searchDatas = storage.salesList;
 		}
 
 		this.drawSalesList();
@@ -1238,10 +1222,12 @@ class SoppSet{
 					}
 				}
 
-				storage.soppList = result;
+				storage.soppAllList = result;
+				storage.soppList = [];
+				
+				CommonDatas.disListSet(storage.soppAllList, storage.soppList, 3, "regDatetime");
 
 				this.drawSoppList();
-				CommonDatas.searchListSet("soppList");
 				$('.theme-loader').fadeOut("slow");
 			}
 		}).catch((error) => {
@@ -1412,13 +1398,6 @@ class SoppSet{
 			crudAddBtn.style.display = "flex";
 		}else{
 			crudAddBtn.style.display = "none";
-		}
-
-		let path = location.pathname.split("/");
-
-		if (path[3] !== undefined && jsonData !== null) {
-			let content = document.querySelector(".gridContent[data-id=\"" + path[3] + "\"]");
-			CommonDatas.Temps.salesSet.salesDetailView(content);
 		}
 	}
 
@@ -1937,7 +1916,7 @@ class SoppSet{
 
 	//영업기회 검색 버튼 클릭 함수
 	searchSubmit() {
-		let dataArray = [], resultArray, eachIndex = 0, user, title, cust, categories, soppType, cntrctMth, soppStatus, searchUser, searchTitle, searchCust, searchCategories, searchSoppType, searchCntrctMth, searchSoppStatus, searchDateFrom, keyIndex = 0;
+		let dataArray = [], resultArray, eachIndex = 0, user, title, cust, categories, soppType, cntrctMth, soppStatus, searchUser, searchTitle, searchCust, searchCategories, searchSoppType, searchCntrctMth, searchSoppStatus, searchDateFrom, keyIndex = 0, targetList;
 		searchUser = document.getElementById("searchUser");
 		searchTitle = document.getElementById("searchTitle");
 		searchCust = document.getElementById("searchCust");
@@ -1947,7 +1926,15 @@ class SoppSet{
 		searchSoppStatus = document.getElementById("searchSoppStatus");
 		searchDateFrom = (document.getElementById("searchDateFrom").value === "") ? "" : document.getElementById("searchDateFrom").value.replaceAll("-", "") + "#regDatetime" + document.getElementById("searchDateTo").value.replaceAll("-", "");
 		
-		for(let key in storage.soppList[0]){
+		if(searchUser.value === "" && searchTitle.value === ""  && searchCust.value === "" && searchCategories.value === "" && searchSoppType.value === "" && searchCntrctMth.value === "" && searchSoppStatus.value === "" && searchDateFrom === "") {
+			CommonDatas.searchListSet("soppList");
+			targetList = storage.soppList;
+		} else{
+			CommonDatas.searchListSet("soppAllList");
+			targetList = storage.soppAllList;
+		}
+
+		for(let key in targetList[0]){
 			if(key === searchUser.dataset.key) user = "#" + keyIndex + "/" + searchUser.value;
 			else if(key === searchTitle.dataset.key) title = "#" + keyIndex + "/" + searchTitle.value;
 			else if(key === searchCust.dataset.key) cust = "#" + keyIndex + "/" + searchCust.value;
@@ -1962,7 +1949,7 @@ class SoppSet{
 
 		for (let i = 0; i < searchValues.length; i++) {
 			if(searchValues[i] !== ""){
-				let tempArray = CommonDatas.searchDataFilter(storage.soppList, searchValues[i], "multi", ["#regDatetime"]);
+				let tempArray = CommonDatas.searchDataFilter(targetList, searchValues[i], "multi", ["#regDatetime"]);
 	
 				for (let t = 0; t < tempArray.length; t++) {
 					dataArray.push(tempArray[t]);
@@ -1972,7 +1959,7 @@ class SoppSet{
 			}
 		}
 		
-		resultArray = CommonDatas.searchMultiFilter(eachIndex, dataArray, storage.soppList);
+		resultArray = CommonDatas.searchMultiFilter(eachIndex, dataArray, targetList);
 
 		storage.searchDatas = resultArray;
 
@@ -1986,9 +1973,18 @@ class SoppSet{
 
 	//영업기회 단일 검색 keyup 이벤트
 	searchInputKeyup() {
-		let searchAllInput, tempArray;
+		let searchAllInput, tempArray, targetList;
 		searchAllInput = document.getElementById("searchAllInput").value;
-		tempArray = CommonDatas.searchDataFilter(storage.soppList, searchAllInput, "input");
+
+		if(searchAllInput === "") {
+			CommonDatas.searchListSet("soppList");
+			targetList = storage.soppList;
+		} else{
+			CommonDatas.searchListSet("soppAllList");
+			targetList = storage.soppAllList;
+		}
+
+		tempArray = CommonDatas.searchDataFilter(targetList, searchAllInput, "input");
 
 		if (tempArray.length > 0) {
 			storage.searchDatas = tempArray;
@@ -4789,10 +4785,12 @@ class ContSet{
 				let result;
 				result = cipher.decAes(response.data.data);
 				result = JSON.parse(result);
-				storage.contList = result;
+				storage.contAllList = result;
+				storage.contList = [];
 				
+				CommonDatas.disListSet(storage.contAllList, storage.contList, 3, "regDatetime");
+
 				this.drawContList();
-				CommonDatas.searchListSet("contList");
 				$('.theme-loader').fadeOut("slow");
 			}
 		}).catch((error) => {
@@ -5591,7 +5589,7 @@ class ContSet{
 
 	//계약 검색 버튼 클릭 함수
 	searchSubmit() {
-		let dataArray = [], resultArray, eachIndex = 0, cust, buyr, title, categories, cntrctMth, user, contType, maintenanceTarget, searchCust, searchBuyr, searchTitle, searchCategories, searchCntrctMth, searchUser, searchContType, searchMaintenanceTarget, searchDateFrom, keyIndex = 0;
+		let dataArray = [], resultArray, eachIndex = 0, cust, buyr, title, categories, cntrctMth, user, contType, maintenanceTarget, searchCust, searchBuyr, searchTitle, searchCategories, searchCntrctMth, searchUser, searchContType, searchMaintenanceTarget, searchDateFrom, keyIndex = 0, targetList;
 		searchCust = document.getElementById("searchCust");
 		searchBuyr = document.getElementById("searchBuyr");
 		searchTitle = document.getElementById("searchTitle");
@@ -5601,8 +5599,16 @@ class ContSet{
 		searchContType = document.getElementById("searchContType");
 		searchMaintenanceTarget = document.getElementById("searchMaintenanceTarget");
 		searchDateFrom = (document.getElementById("searchDateFrom").value === "") ? "" : document.getElementById("searchDateFrom").value.replaceAll("-", "") + "#regDatetime" + document.getElementById("searchDateTo").value.replaceAll("-", "");
+
+		if(searchCust.value === "" && searchBuyr.value === ""  && searchTitle.value === "" && searchCategories.value === "" && searchCntrctMth.value === "" && searchUser.value === "" && searchContType.value === "" && searchMaintenanceTarget.value === "" && searchDateFrom === "") {
+			CommonDatas.searchListSet("contList");
+			targetList = storage.contList;
+		} else{
+			CommonDatas.searchListSet("contAllList");
+			targetList = storage.contAllList;
+		}
 		
-		for(let key in storage.contList[0]){
+		for(let key in targetList[0]){
 			if(key === searchCust.dataset.key) cust = "#" + keyIndex + "/" + searchCust.value;
 			else if(key === searchBuyr.dataset.key) buyr = "#" + keyIndex + "/" + searchBuyr.value;
 			else if(key === searchTitle.dataset.key) title = "#" + keyIndex + "/" + searchTitle.value;
@@ -5618,7 +5624,7 @@ class ContSet{
 
 		for (let i = 0; i < searchValues.length; i++) {
 			if(searchValues[i] !== ""){
-				let tempArray = CommonDatas.searchDataFilter(storage.contList, searchValues[i], "multi", ["#regDatetime"]);
+				let tempArray = CommonDatas.searchDataFilter(targetList, searchValues[i], "multi", ["#regDatetime"]);
 	
 				for (let t = 0; t < tempArray.length; t++) {
 					dataArray.push(tempArray[t]);
@@ -5628,7 +5634,7 @@ class ContSet{
 			}
 		}
 		
-		resultArray = CommonDatas.searchMultiFilter(eachIndex, dataArray, storage.contList);
+		resultArray = CommonDatas.searchMultiFilter(eachIndex, dataArray, targetList);
 
 		storage.searchDatas = resultArray;
 
@@ -5642,9 +5648,18 @@ class ContSet{
 
 	//계약 단일 검색 keyup 이벤트
 	searchInputKeyup() {
-		let searchAllInput, tempArray;
+		let searchAllInput, tempArray, targetList;
 		searchAllInput = document.getElementById("searchAllInput").value;
-		tempArray = CommonDatas.searchDataFilter(storage.contList, searchAllInput, "input");
+
+		if(searchAllInput === "") {
+			CommonDatas.searchListSet("contList");
+			targetList = storage.contList;
+		} else{
+			CommonDatas.searchListSet("contAllList");
+			targetList = storage.contAllList;
+		}
+
+		tempArray = CommonDatas.searchDataFilter(targetList, searchAllInput, "input");
 
 		if (tempArray.length > 0) {
 			storage.searchDatas = tempArray;
@@ -10679,6 +10694,7 @@ class EstimateSet {
 			{ element: "searchContainer", display: "block" },
 			{ element: "listRange", display: "flex" },
 			{ element: "listSearchInput", display: "flex" },
+			{ element: "crudBtns", display: "flex" },
 			{ element: "crudAddBtn", display: "flex" },
 			{ element: "versionPreview", display: "block" },
 			{ element: "previewDefault", display: "block" },
@@ -10717,6 +10733,7 @@ class EstimateSet {
 
 			data.push(str);
 		} else {
+			console.log(jsonData)
 			for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
 				disDate = CommonDatas.dateDis(jsonData[i].date);
 				disDate = CommonDatas.dateFnc(disDate, "yyyy.mm.dd");
@@ -10752,6 +10769,7 @@ class EstimateSet {
 		if (containerTitle !== null) {
 			containerTitle.innerText = "견적조회";
 		}
+
 		CommonDatas.createGrid(container, header, data, ids, job, fnc);
 		document.getElementById("multiSearchBtn").setAttribute("onclick", "CommonDatas.Temps.estimateSet.searchSubmit();");
 		crudAddBtn.innerText = "견적추가";
@@ -11097,12 +11115,13 @@ class EstimateSet {
 			storage.estmDetail = storage.estimateVerList[storage.detailIdx];
 			let crudAddBtn = document.getElementsByClassName("crudAddBtn")[0];
 			crudAddBtn.innerText = "새견적추가";
+			crudAddBtn.style.width = "4.6vw";
 			crudAddBtn.setAttribute("onclick", "let estimate = new Estimate(); estimate.insert();");
 		} else {
 			storage.estmDetail = storage.estimateList[storage.detailIdx];
 		}
 
-		if(storage.my == this.getData.userNo && storage.myUserKey.indexOf("CC7") > -1){
+		if(storage.my == storage.estmDetail.writer && storage.myUserKey.indexOf("CC7") > -1){
 			crudUpdateBtn.style.display = "flex";
 		}else{
 			crudUpdateBtn.style.display = "none";
@@ -11152,6 +11171,7 @@ class EstimateSet {
 
 		this.copyContainer = document.getElementsByClassName("copyMainPdf")[0];
 		crudAddBtn.innerText = "새견적추가";
+		crudAddBtn.style.width = "4.6vw";
 		crudAddBtn.setAttribute("onclick", "let estimate = new Estimate(); estimate.insert();");
 		CommonDatas.setViewContents(hideArr, showArr);
 		storage.estmDetail = undefined;
@@ -11998,13 +12018,13 @@ class TechSet{
 				let result;
 				result = cipher.decAes(response.data.data);
 				result = JSON.parse(result);
-				storage.techList = result;
+				storage.techAllList = result;
+				storage.techList = [];
+				
+				CommonDatas.disListSet(storage.techAllList, storage.techList, 3, "regDatetime");
 
-				setTimeout(() => {
-					this.drawTechList();
-					CommonDatas.searchListSet("techList");
-					$('.theme-loader').fadeOut("slow");
-				}, 500);
+				this.drawTechList();
+				$('.theme-loader').fadeOut("slow");
 			}
 		}).catch((error) => {
 			msg.set("기술지원관리 리스트 에러입니다.\n" + error);
@@ -12393,7 +12413,7 @@ class TechSet{
 
 	//기술지원 검색 버튼 클릭 함수
 	searchSubmit() {
-		let dataArray = [], resultArray, eachIndex = 0, title, user, cust, cnt, steps, searchSteps, searchUser, searchTitle, searchCust, searchCnt, searchDateFrom, keyIndex = 0;
+		let dataArray = [], resultArray, eachIndex = 0, title, user, cust, cnt, steps, searchSteps, searchUser, searchTitle, searchCust, searchCnt, searchDateFrom, keyIndex = 0, targetList;
 		searchTitle = document.getElementById("searchTitle");
 		searchUser = document.getElementById("searchUser");
 		searchCust = document.getElementById("searchCust");
@@ -12401,7 +12421,15 @@ class TechSet{
 		searchSteps = document.getElementById("searchSteps");
 		searchDateFrom = (document.getElementById("searchDateFrom").value === "") ? "" : document.getElementById("searchDateFrom").value.replaceAll("-", "") + "#regDatetime" + document.getElementById("searchDateTo").value.replaceAll("-", "");
 		
-		for(let key in storage.techList[0]){
+		if(searchTitle.value === "" && searchUser.value === ""  && searchCust.value === "" && searchCnt.value === "" && searchSteps.value === "" && searchDateFrom === "") {
+			CommonDatas.searchListSet("techList");
+			targetList = storage.techList;
+		} else{
+			CommonDatas.searchListSet("techAllList");
+			targetList = storage.techAllList;
+		}
+
+		for(let key in targetList[0]){
 			if(key === searchTitle.dataset.key) title = "#" + keyIndex + "/" + searchTitle.value;
 			else if(key === searchUser.dataset.key) user = "#" + keyIndex + "/" + searchUser.value;
 			else if(key === searchCust.dataset.key) cust = "#" + keyIndex + "/" + searchCust.value;
@@ -12414,7 +12442,7 @@ class TechSet{
 
 		for (let i = 0; i < searchValues.length; i++) {
 			if(searchValues[i] !== ""){
-				let tempArray = CommonDatas.searchDataFilter(storage.techList, searchValues[i], "multi", ["#regDatetime"]);
+				let tempArray = CommonDatas.searchDataFilter(targetList, searchValues[i], "multi", ["#regDatetime"]);
 	
 				for (let t = 0; t < tempArray.length; t++) {
 					dataArray.push(tempArray[t]);
@@ -12424,7 +12452,7 @@ class TechSet{
 			}
 		}
 		
-		resultArray = CommonDatas.searchMultiFilter(eachIndex, dataArray, storage.techList);
+		resultArray = CommonDatas.searchMultiFilter(eachIndex, dataArray, targetList);
 
 		storage.searchDatas = resultArray;
 
@@ -12438,9 +12466,18 @@ class TechSet{
 
 	//기술지원 단일 검색 keyup 이벤트
 	searchInputKeyup() {
-		let searchAllInput, tempArray;
+		let searchAllInput, tempArray, targetList;
 		searchAllInput = document.getElementById("searchAllInput").value;
-		tempArray = CommonDatas.searchDataFilter(storage.techList, searchAllInput, "input");
+
+		if(searchAllInput === "") {
+			CommonDatas.searchListSet("techList");
+			targetList = storage.techList;
+		} else{
+			CommonDatas.searchListSet("techAllList");
+			targetList = storage.techAllList;
+		}
+
+		tempArray = CommonDatas.searchDataFilter(targetList, searchAllInput, "input");
 
 		if (tempArray.length > 0) {
 			storage.searchDatas = tempArray;
@@ -12915,13 +12952,13 @@ class StoreSet{
 				let result;
 				result = cipher.decAes(response.data.data);
 				result = JSON.parse(result);
-				storage.storeList = result;
+				storage.storeAllList = result;
+				storage.storeList = [];
+				
+				CommonDatas.disListSet(storage.storeAllList, storage.storeList, 3, "regDate");
 
-				setTimeout(() => {
-					this.drawStoreList();
-					CommonDatas.searchListSet("storeList");
-					$('.theme-loader').fadeOut("slow");
-				}, 1200);
+				this.drawStoreList();
+				$('.theme-loader').fadeOut("slow");
 			}
 		}).catch((error) => {
 			msg.set("재고조회 리스트 에러입니다.\n" + error);
@@ -13249,12 +13286,20 @@ class StoreSet{
 
 	//재고조회 검색 버튼 클릭 함수
 	searchSubmit() {
-		let dataArray = [], resultArray, eachIndex = 0, product, cont, cust, type, searchProduct, searchCont, searchCust, searchType, searchDateFrom, keyIndex = 0;
+		let dataArray = [], resultArray, eachIndex = 0, product, cont, cust, searchProduct, searchCont, searchCust, keyIndex = 0, targetList;
 		searchProduct = document.getElementById("searchProduct");
 		searchCont = document.getElementById("searchCont");
 		searchCust = document.getElementById("searchCust");
+
+		if(searchProduct.value === "" && searchCont.value === ""  && searchCust.value === "") {
+			CommonDatas.searchListSet("storeList");
+			targetList = storage.storeList;
+		} else{
+			CommonDatas.searchListSet("storeAllList");
+			targetList = storage.storeAllList;
+		}
 		
-		for(let key in storage.storeList[0]){
+		for(let key in targetList[0]){
 			if(key === searchProduct.dataset.key) product = "#" + keyIndex + "/" + searchProduct.value;
 			else if(key === searchCont.dataset.key) cont = "#" + keyIndex + "/" + searchCont.value;
 			else if(key === searchCust.dataset.key) cust = "#" + keyIndex + "/" + searchCust.value;
@@ -13265,7 +13310,7 @@ class StoreSet{
 
 		for (let i = 0; i < searchValues.length; i++) {
 			if(searchValues[i] !== ""){
-				let tempArray = CommonDatas.searchDataFilter(storage.storeList, searchValues[i], "multi", []);
+				let tempArray = CommonDatas.searchDataFilter(targetList, searchValues[i], "multi", []);
 	
 				for (let t = 0; t < tempArray.length; t++) {
 					dataArray.push(tempArray[t]);
@@ -13275,7 +13320,7 @@ class StoreSet{
 			}
 		}
 		
-		resultArray = CommonDatas.searchMultiFilter(eachIndex, dataArray, storage.storeList);
+		resultArray = CommonDatas.searchMultiFilter(eachIndex, dataArray, targetList);
 
 		storage.searchDatas = resultArray;
 
@@ -13289,9 +13334,18 @@ class StoreSet{
 
 	//재고조회 단일 검색 keyup 이벤트
 	searchInputKeyup() {
-		let searchAllInput, tempArray;
+		let searchAllInput, tempArray, targetList;
 		searchAllInput = document.getElementById("searchAllInput").value;
-		tempArray = CommonDatas.searchDataFilter(storage.storeList, searchAllInput, "input");
+
+		if(searchAllInput === "") {
+			CommonDatas.searchListSet("storeList");
+			targetList = storage.storeList;
+		} else{
+			CommonDatas.searchListSet("storeAllList");
+			targetList = storage.storeAllList;
+		}
+
+		tempArray = CommonDatas.searchDataFilter(targetList, searchAllInput, "input");
 
 		if (tempArray.length > 0) {
 			storage.searchDatas = tempArray;
@@ -19388,7 +19442,7 @@ class Common {
 							autoComplete.append(listDiv);
 						}
 					} else if (thisEle.dataset.complete === "categories") {
-						if (storage[thisEle.dataset.complete][key].category.indexOf(thisEle.value) > -1) {
+						if (storage[thisEle.dataset.complete][key].custCategoryName.indexOf(thisEle.value) > -1) {
 							let listDiv = document.createElement("div");
 							listDiv.setAttribute("onclick", "CommonDatas.autoCompleteClick(this);");
 							listDiv.dataset.value = storage[thisEle.dataset.complete][key].custCategoryName;
@@ -19410,7 +19464,7 @@ class Common {
 		input.value = thisEle.innerText;
 		input.setAttribute("data-change", true);
 
-		if(input.dataset.complete === "categories"){
+		if(input.dataset.complete === "categories" && input.dataset.type !== "search"){
 			let categories = document.getElementById("categories");
 			let categorySelect = categories.parentElement.parentElement.nextElementSibling.children[1].children[0];
 			CommonDatas.makeCategories(thisEle.dataset.value);
@@ -19700,17 +19754,17 @@ class Common {
 	//상세보기 back 버튼 함수
 	hideDetailView(func){
 		let defaultFormContainer, referenceFileUpload, crudUpdateBtn, tabContent, storeType;
-		defaultFormContainer = document.getElementsByClassName("defaultFormContainer")[0];
+		console.log(defaultFormContainer);
 		crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
 		tabContent = document.getElementsByClassName("tabContent")[0];
 		referenceFileUpload = document.getElementById("referenceFileUpload");
 		let tabPage = document.getElementsByClassName("tabPage")[0];
-		defaultFormContainer.remove();
-		crudUpdateBtn.innerText = "수정";
 		storeType = document.getElementsByClassName("storeType")[0];
 		let addChangeBtn = document.getElementsByClassName("addChangeBtn")[0];
 		let addListBtn = document.getElementsByClassName("addListBtn")[0];
-	
+		
+		if(defaultFormContainer !== undefined) defaultFormContainer.remove();
+		if(crudUpdateBtn !== undefined) crudUpdateBtn.innerText = "수정";
 		if (tabContent !== undefined) tabContent.remove();
 		if(tabPage !== undefined) tabPage.remove();
 		if(storeType !== undefined) storeType.remove();
@@ -19749,6 +19803,8 @@ class Common {
 						}else if(key === "soppStatus"){
 							str += "#" + storage.code.etc[item[key]];
 						}else if(key === "custCategoryName"){
+							str += "#" + item[key].replaceAll("  ", " ");
+						}else if(key === "categories"){
 							str += "#" + item[key].replaceAll("  ", " ");
 						}else{
 							let dateCheck = new Date(item[key]).getTime();

@@ -29,6 +29,10 @@ public class CustService extends Svc{
         return custMapper.getCust(custNo, compNo);
     }
 
+    public List<Cust> custAllList(Cust cust){
+        return custMapper.custAllList(cust);
+    }
+
     public int insertCust(Cust cust) {
         return custMapper.custInsert(cust);
     }

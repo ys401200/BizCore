@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 
 import kr.co.bizcore.v1.domain.Store;
 import kr.co.bizcore.v1.msg.Msg;
@@ -57,17 +58,13 @@ public class ApiStoreCtrl extends Ctrl {
             Store store = new Store();
             store.setCompNo(compNo);
             list = storeService.getStoreList(store);
+            
             if (list != null) {
-                data = "[";
-                for (i = 0; i < list.size(); i++) {
-                    if (i > 0)
-                    data += ",";
-                    data += list.get(i).toJson();
-                }
-                data += "]";
+                data = new Gson().toJson(list).toString();
             } else {
                 data = "[]";
             }
+            
             data = storeService.encAes(data, aesKey, aesIv);
             result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";            
         }

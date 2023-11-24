@@ -3667,7 +3667,7 @@ function getStorageList() {
 
 	if (storage.customer === undefined) {
 		$.ajax({
-			url: "/api/cust",
+			url: "/api/cust/custAllList",
 			method: "get",
 			dataType: "json",
 			async: false,

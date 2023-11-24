@@ -20,7 +20,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class Sopp extends SimpleSopp{
+public class Sopp extends Domain{
     //=================== 23.09.14 이후 추가 ============================
     private int soppNo;
     private int compNo;

@@ -21,6 +21,9 @@ public interface CustMapper {
     @Select("SELECT * FROM swc_cust WHERE (attrib = '10000' OR attrib = 'XXXX1') AND custNo = #{custNo} AND compNo = #{compNo}")
     public Cust getCust(@Param("custNo") String custNo, @Param("compNo") int compNo);
 
+    @Select("SELECT * FROM swc_cust WHERE compNo = #{cust.compNo}")
+    public List<Cust> custAllList(@Param("cust") Cust cust);
+
     @Insert("INSERT INTO swc_cust (compNo, custName, custVatno, custEmail, custVatemail, custBossname, custYn, buyrYn, ptncYn, suppYn, saleType, compType, regDatetime, attrib) VALUES (#{cust.compNo}, #{cust.custName}, #{cust.custVatno}, #{cust.custEmail}, #{cust.custVatemail}, #{cust.custBossname}, #{cust.custYn}, #{cust.buyrYn}, #{cust.ptncYn}, #{cust.suppYn}, #{cust.saleType}, #{cust.compType}, now(), 'XXXX1')")
     public int custInsert(@Param("cust") Cust cust);
 

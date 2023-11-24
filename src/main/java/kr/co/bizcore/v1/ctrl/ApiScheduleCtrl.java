@@ -68,7 +68,12 @@ public class ApiScheduleCtrl extends Ctrl {
                 list = scheduleService.getList(compNo);
             }
             
-            data = new Gson().toJson(list).toString();
+            if (list != null) {
+                data = new Gson().toJson(list).toString();
+            } else {
+                data = "[]";
+            }
+            
             data = scheduleService.encAes(data, aesKey, aesIv);
             result = "{\"result\":\"ok\",\"data\":\"" + data + "\"}";            
         }

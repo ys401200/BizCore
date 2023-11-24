@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter @Getter
 public class SimpleEstimate extends Domain{
 
-    protected int no;
+    protected String no;
     @XmlElement(nillable=true)
     protected Date date;
     protected int writer;
