@@ -13,12 +13,12 @@
         <div class="titlePdf">QUOTATION</div>
     </div>
     <div class="selectAddress">
-        <select onchange="EstimateSet.selectAddressChange(this);"></select>
+        <select onchange="CommonDatas.Temps.estimateSet.selectAddressChange(this);"></select>
     </div>
     <div class="pdfHeadInfo">
         <div class="date">
             <span>견 적 일 자</span><span style="padding-left: 5px; padding-right: 4px; padding-top: 3px;">:</span>
-            <input type="text" autocomplete="off" placeholder="숫자만 입력" onkeyup="inputDateFormat(this)" maxlength="10" id="date">
+            <input type="text" autocomplete="off" placeholder="숫자만 입력" onkeyup="CommonDatas.inputDateFormat(this)" maxlength="10" id="date">
         </div>
         <div class="firmName">
             <span>상 호</span><span style="padding-left: 5px; padding-right: 4px; padding-top: 3px;">:</span>
@@ -48,17 +48,17 @@
         </div>
         <div class="headInfoPhone">
             <span>전 화 / 팩 스</span><span style="padding-left: 5px; padding-right: 4px; padding-top: 3px;">:</span>
-            <input type="text" autocomplete="off" id="phone" class="headInfoPhone" onkeyup="phoneFormat(this);" readonly>
-            <input type="text" autocomplete="off" id="fax" class="headInfoFax" onkeyup="phoneFormat(this);" readonly>
+            <input type="text" autocomplete="off" id="phone" class="headInfoPhone" onkeyup="CommonDatas.phoneFormat(this);" readonly>
+            <input type="text" autocomplete="off" id="fax" class="headInfoFax" onkeyup="CommonDatas.phoneFormat(this);" readonly>
         </div>
     </div>
     <div class="pdfHeadInfoPrice">
         <div class="vatInfo">
             <span>견 적 금 액</span><span style="padding-left: 5px; padding-right: 4px; padding-top: 3px;">:</span>
             <input type="text" autocomplete="off" id="price" readonly>
-            <input type="radio" name="vat" data-value="true" id="vatTrue" onclick="EstimateSet.setTotalHtml();" checked>
+            <input type="radio" name="vat" data-value="true" id="vatTrue" onclick="CommonDatas.Temps.estimateSet.setTotalHtml();" checked>
             <label for="vatTrue">VAT 포함</label>
-            <input type="radio" name="vat" data-value="false" id="vatFalse" onclick="EstimateSet.setTotalHtml();">
+            <input type="radio" name="vat" data-value="false" id="vatFalse" onclick="CommonDatas.Temps.estimateSet.setTotalHtml();">
             <label for="vatFalse">VAT 비포함</label>
         </div>
         <div class="expInfo">
@@ -79,9 +79,9 @@
             <div>추가/삭제</div>
         </div>
         <div class="pdfMainContentAddBtns">
-            <button type="button" onclick="EstimateSet.addEstTitle(this);">타이틀추가</button>
-            <button type="button" onclick="EstimateSet.addEstItem(this);">항목추가</button>
-            <button type="button" onclick="EstimateSet.removeEstItem(this);">항목제거</button>
+            <button type="button" onclick="CommonDatas.Temps.estimateSet.addEstTitle(this);">타이틀추가</button>
+            <button type="button" onclick="CommonDatas.Temps.estimateSet.addEstItem(this);">항목추가</button>
+            <button type="button" onclick="CommonDatas.Temps.estimateSet.removeEstItem(this);">항목제거</button>
         </div>
         <div class="pdfMainContentAmount">
             <div>공&nbsp;급&nbsp;가&nbsp;합&nbsp;계</div>

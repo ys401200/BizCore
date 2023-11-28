@@ -23,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/estimate")
 @Slf4j
 public class ApiEstimateCtrl extends Ctrl {
-
     private static final Logger logger = LoggerFactory.getLogger(ApiEstimateCtrl.class);
 
     @GetMapping("")

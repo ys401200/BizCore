@@ -7,25 +7,25 @@
 				<div class="searchDate">
                     <span>견적일자</span>
                     <div class="searchGridItem">
-                        <input type="date" id="searchDateFrom" max="9999-12-31" data-date-type="from" onchange="CommonDats.searchDateDefaultSet(this);">
+                        <input type="date" id="searchDateFrom" max="9999-12-31" data-date-type="from" onchange="CommonDatas.searchDateDefaultSet(this);">
                         <span>~</span>
-                        <input type="date" id="searchDateTo" max="9999-12-31" data-date-type="to" onchange="CommonDats.searchDateDefaultSet(this);">
+                        <input type="date" id="searchDateTo" max="9999-12-31" data-date-type="to" onchange="CommonDatas.searchDateDefaultSet(this);">
                     </div>
                 </div>
                 <div class="searchTitle">
                     <span>견적명</span>
-                    <input type="text" autocomplete="off" id="searchTitle">
+                    <input type="text" autocomplete="off" id="searchTitle" data-key="title" >
                 </div>
                 <div class="searchVersion">
                     <span>버전</span>
-                    <input type="text" autocomplete="off" id="searchVersion">
+                    <input type="text" autocomplete="off" id="searchVersion" data-key="version" >
                 </div>
 				<div class="searchPrice">
                     <span>금액</span>
                     <div class="searchGridItem">
-                        <input type="text" id="searchPriceFrom" onkeyup="CommonDats.inputNumberFormat(this);">
+                        <input type="text" id="searchPriceFrom" onkeyup="CommonDatas.inputNumberFormat(this);">
                         <span>~</span>
-                        <input type="text" id="searchPriceTo" onkeyup="CommonDats.inputNumberFormat(this);">
+                        <input type="text" id="searchPriceTo" onkeyup="CommonDatas.inputNumberFormat(this);">
                     </div>
                 </div>
             </div>
@@ -63,8 +63,8 @@
                 </div>
 				<div class="crudBtns">
 					<button type="button" class="crudAddBtn">견적추가</button>
-					<button type="button" class="crudUpdateBtn">견적수정</button>
-					<button type="button" class="estimatePdf">PDF 다운로드</button>
+					<button type="button" class="crudUpdateBtn" style="display:none;">견적수정</button>
+					<button type="button" class="estimatePdf" style="display:none;">PDF 다운로드</button>
 					<a href="#" onclick="CommonDatas.hideDetailView(CommonDatas.Temps.estimateSet.drawBack);" class="detailBackBtn">Back</a>
 				</div>
                 <!-- <div class="crudBtns">

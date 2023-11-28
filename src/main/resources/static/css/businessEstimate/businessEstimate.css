@@ -5,6 +5,15 @@
 .contentHeaders > .crudBtns > .estimatePdf{
     width: 5.6vw;
 }
+
+.itemSpec .cke_toolbox{
+    display: none;
+}
+
+.itemSpec .cke_contents{
+    height: 20vh !important;
+}
+
 /*  
 
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300&family=Outfit:wght@600&display=swap');

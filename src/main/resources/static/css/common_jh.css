@@ -883,6 +883,7 @@
 
 .pdfMainContentItem > .itemSpec{
     display: inline-block;
+    position: relative;
 }
 
 .pdfMainContentItem > .itemSpec > input{
@@ -1075,6 +1076,10 @@
 
 .pdfHeadInfo > .firmName > .afterDiv{
     height: 23px;
+}
+
+.pdfHeadInfo > .headInfoCustomer{
+    position: relative;
 }
 
 .pdfHeadInfo > .address > .afterDiv{

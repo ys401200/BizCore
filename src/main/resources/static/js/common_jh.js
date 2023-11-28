@@ -10632,14 +10632,13 @@ class EstimateSet {
 					cnt.innerHTML = "<span> " + x + " </span>";
 				}
 
-
 				// 견적 그리기
 				this.drawEstmVerList();
 			}
 		});
 	}
 
-	//메인 리스트 데이터 가져오는 함수
+	//견적 리스트 데이터 가져오는 함수
 	list() {
 		axios.get("/api/estimate").then((response) => {
 			if (response.data.result === "ok") {
@@ -10647,13 +10646,19 @@ class EstimateSet {
 				getList = cipher.decAes(getList);
 				getList = JSON.parse(getList);
 
-				if (getList.length > 0) {
-					storage.estimateList = getList;
-				} else {
-					storage.estimateList = "";
+				for(let i = 0; i < getList.length; i++){
+					let item = getList[i];
+					let date = new Date(item.date).toISOString().substring(0, 10);
+					
+					item.date = date;
 				}
+
+				storage.estimateAllList = getList;
+				storage.estimateList = [];
+				
+				CommonDatas.disListSet(storage.estimateAllList, storage.estimateList, 3, "date");
+
 				this.drawEstmList();
-				this.addSearchList();
 				$('.theme-loader').fadeOut("slow");
 			}
 		}).catch((error) => {
@@ -10687,7 +10692,7 @@ class EstimateSet {
 
 		crudAddBtn = document.getElementsByClassName("crudAddBtn")[0];
 		crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
-		hideArr = ["detailBackBtn", "crudUpdateBtn", "estimatePdf", "addPdfForm"];
+		hideArr = ["detailBackBtn", "addPdfForm"];
 		showArr = [
 			{ element: "estimateList", display: "grid" },
 			{ element: "pageContainer", display: "flex" },
@@ -10733,9 +10738,8 @@ class EstimateSet {
 
 			data.push(str);
 		} else {
-			console.log(jsonData)
 			for (let i = (result[0] - 1) * result[1]; i < result[2]; i++) {
-				disDate = CommonDatas.dateDis(jsonData[i].date);
+				disDate = CommonDatas.dateDis(new Date(jsonData[i].date).getTime());
 				disDate = CommonDatas.dateFnc(disDate, "yyyy.mm.dd");
 
 				str = [
@@ -10777,6 +10781,14 @@ class EstimateSet {
 		crudUpdateBtn.innerText = "견적수정";
 		crudUpdateBtn.setAttribute("onclick", "CommonDatas.Temps.estimateSet.clickedUpdate();");
 		CommonDatas.setViewContents(hideArr, showArr);
+
+		let estimatePdf = document.getElementsByClassName("estimatePdf")[0];
+
+		if(crudUpdateBtn.style.display === "none") crudUpdateBtn.style.display = "none";
+		else crudUpdateBtn.style.display = "flex";
+
+		if(estimatePdf.style.display === "none") estimatePdf.style.display = "none";
+		else estimatePdf.style.display = "flex";
 		
 		if(storage.myUserKey.indexOf("CC7") > -1){
 			crudAddBtn.style.display = "flex";
@@ -10918,9 +10930,7 @@ class EstimateSet {
 		];
 		let versionList = document.getElementsByClassName("versionList");
 
-		if (containerTitle !== null) {
-			containerTitle.innerHTML = "견적";
-		}
+		if (containerTitle !== null) containerTitle.innerHTML = "견적";
 
 		if (crudAddBtn !== undefined) {
 			crudAddBtn.innerText = "견적추가";
@@ -10937,12 +10947,11 @@ class EstimateSet {
 			}
 		}
 
-		if (crudUpdateBtn.style.display !== "none") {
-			estimatePdf.style.display = "flex";
-		}
+		if (crudUpdateBtn.style.display !== "none") estimatePdf.style.display = "flex";
 
 		CommonDatas.setViewContents(hideArr, showArr);
-		document.getElementsByClassName("copyMainPdf")[0].remove();
+
+		if(document.getElementsByClassName("copyMainPdf")[0] !== undefined) document.getElementsByClassName("copyMainPdf")[0].remove();
 	}
 
 	//메인 리스트 클릭 함수
@@ -11001,6 +11010,7 @@ class EstimateSet {
 		let crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
 		let estimatePdf = document.getElementsByClassName("estimatePdf")[0];
 		estimatePdf.setAttribute("onclick", "CommonDatas.Temps.estimateSet.estimatePdf(\"" + title + "\", \"" + userName + "\");");
+		console.log(crudUpdateBtn);
 		crudUpdateBtn.style.display = "flex";
 		estimatePdf.style.display = "flex";
 
@@ -11288,7 +11298,7 @@ class EstimateSet {
 		}
 	}
 
-	//견적 메인 검색 리스트 저장 함수
+	//견적 검색 리스트 저장 함수
 	addSearchList() {
 		storage.searchList = [];
 
@@ -11303,20 +11313,34 @@ class EstimateSet {
 		}
 	}
 
-	//견적 메인 검색 버튼 실행 함수
+	//견적 검색 버튼 실행 함수
 	searchSubmit() {
-		let dataArray = [], resultArray, eachIndex = 0, searchTitle, searchVersion, searchPriceFrom, searchDateFrom;
+		let dataArray = [], resultArray, eachIndex = 0, searchTitle, searchVersion, searchPriceFrom, searchDateFrom, title, version, targetList, keyIndex = 0;
 
-		searchTitle = "#1/" + document.getElementById("searchTitle").value;
-		searchVersion = "#2/" + document.getElementById("searchVersion").value;
-		searchPriceFrom = (document.getElementById("searchPriceFrom").value === "") ? "" : document.getElementById("searchPriceFrom").value.replaceAll(",", "") + "#price" + document.getElementById("searchPriceTo").value.replaceAll(",", "");
-		searchDateFrom = (document.getElementById("searchDateFrom").value === "") ? "" : document.getElementById("searchDateFrom").value.replaceAll("-", "") + "#date" + document.getElementById("searchDateTo").value.replaceAll("-", "");
+		searchTitle = document.getElementById("searchTitle");
+		searchVersion = document.getElementById("searchVersion");
+		searchPriceFrom = (document.getElementById("searchPriceFrom").value === "" || document.getElementById("searchPriceFrom").value == 0) ? "" : document.getElementById("searchPriceFrom").value.replaceAll(",", "") + "total" + document.getElementById("searchPriceTo").value.replaceAll(",", "");
+		searchDateFrom = (document.getElementById("searchDateFrom").value === "") ? "" : document.getElementById("searchDateFrom").value.replaceAll("-", "") + "#date" + document.getElementById("searchDateTo").value.replaceAll("-", "")
+		
+		if(searchTitle.value === "" && searchVersion.value === ""  && searchPriceFrom === "" && searchDateFrom === "") {
+			CommonDatas.searchListSet("estimateList");
+			targetList = storage.estimateList;
+		} else{
+			CommonDatas.searchListSet("estimateAllList");
+			targetList = storage.estimateAllList;
+		}
 
-		let searchValues = [searchTitle, searchVersion, searchPriceFrom, searchDateFrom];
+		for(let key in targetList[0]){
+			if(key === searchTitle.dataset.key) title = "#" + keyIndex + "/" + searchTitle.value;
+			else if(key === searchVersion.dataset.key) version = "#" + keyIndex + "/" + searchVersion.value;
+			keyIndex++;
+		}
+
+		let searchValues = [title, version, searchPriceFrom, searchDateFrom];
 
 		for (let i = 0; i < searchValues.length; i++) {
 			if (searchValues[i] !== "" && searchValues[i] !== undefined && searchValues[i] !== null) {
-				let tempArray = CommonDatas.searchDataFilter(storage.estimateList, searchValues[i], "multi");
+				let tempArray = CommonDatas.searchDataFilter(targetList, searchValues[i], "multi", ["date", "total"]);
 
 				for (let t = 0; t < tempArray.length; t++) {
 					dataArray.push(tempArray[t]);
@@ -11326,7 +11350,7 @@ class EstimateSet {
 			}
 		}
 
-		resultArray = CommonDatas.searchMultiFilter(eachIndex, dataArray, storage.estimateList);
+		resultArray = CommonDatas.searchMultiFilter(eachIndex, dataArray, targetList);
 
 		storage.searchDatas = resultArray;
 
@@ -11338,11 +11362,20 @@ class EstimateSet {
 		this.drawEstmList();
 	}
 
-	//견적 메인 input 검색 keyup 함수
+	//견적 input 검색 keyup 함수
 	searchInputKeyup() {
-		let searchAllInput, tempArray;
+		let searchAllInput, tempArray, targetList;
 		searchAllInput = document.getElementById("searchAllInput").value;
-		tempArray = CommonDatas.searchDataFilter(storage.estimateList, searchAllInput, "input");
+
+		if(searchAllInput === "") {
+			CommonDatas.searchListSet("estimateList");
+			targetList = storage.estimateList;
+		} else{
+			CommonDatas.searchListSet("estimateAllList");
+			targetList = storage.estimateAllList;
+		}
+
+		tempArray = CommonDatas.searchDataFilter(targetList, searchAllInput, "input");
 
 		if (tempArray.length > 0) {
 			storage.searchDatas = tempArray;
@@ -11708,7 +11741,7 @@ class Estimate {
 			msg.set("고객사를 입력해주세요.");
 			this.copyContainer.querySelector("#customer").focus();
 			return false;
-		} else if (!validateAutoComplete($("#customer").val(), "customer")) {
+		} else if (!CommonDatas.validateAutoComplete($("#customer").val(), "customer")) {
 			msg.set("조회된 매출처가 없습니다.\n다시 확인해주세요.");
 			this.copyContainer.querySelector("#customer").focus();
 			return false;
@@ -11716,7 +11749,7 @@ class Estimate {
 			msg.set("고객사 담당자를 입력해주세요.");
 			this.copyContainer.querySelector("#cip").focus();
 			return false;
-		} else if (!validateAutoComplete($("#cip").val(), "cip")) {
+		} else if (!CommonDatas.validateAutoComplete($("#cip").val(), "cip")) {
 			msg.set("조회된 매출처 담당자가 없습니다.\n다시 확인해주세요.");
 			this.copyContainer.querySelector("#cip").focus();
 			return false;
@@ -11862,7 +11895,7 @@ class Estimate {
 			msg.set("고객사를 입력해주세요.");
 			this.copyContainer.querySelector("#customer").focus();
 			return false;
-		} else if (!validateAutoComplete($("#customer").val(), "customer")) {
+		} else if (!CommonDatas.validateAutoComplete($("#customer").val(), "customer")) {
 			msg.set("조회된 매출처가 없습니다.\n다시 확인해주세요.");
 			$("#customer").focus();
 			return false;
@@ -11870,7 +11903,7 @@ class Estimate {
 			msg.set("고객사 담당자를 입력해주세요.");
 			this.copyContainer.querySelector("#cip").focus();
 			return false;
-		} else if (!validateAutoComplete($("#cip").val(), "cip")) {
+		} else if (!CommonDatas.validateAutoComplete($("#cip").val(), "cip")) {
 			msg.set("조회된 매출처가 없습니다.\n다시 확인해주세요.");
 			this.copyContainer.querySelector("#cip").focus();
 			return false;
@@ -19245,7 +19278,6 @@ class Common {
 
 			for(let i = 0; i < keywords.length; i++){
 				let item = keywords[i];
-				
 				if(searchValue.indexOf(item) > -1){
 					keywordFlag = true;
 					keywordIndex = i;
@@ -19257,12 +19289,11 @@ class Common {
 				splitStr = searchValue.split(keywords[keywordIndex]);
 
 				for (let key in storage.searchList) {
-					if (splitStr[0] <= storage.searchList[key].split(keywords[keywordIndex])[1]) {
-						if (storage.searchList[key].split(keywords[keywordIndex])[1] <= splitStr[1]) {
-							dataArray.push(key);
-						}
+					if (parseInt(splitStr[0]) <= parseInt(storage.searchList[key].split(keywords[keywordIndex])[1]) && parseInt(storage.searchList[key].split(keywords[keywordIndex])[1]) <= parseInt(splitStr[1])) {
+						dataArray.push(key);
 					}
 				}
+				console.log(dataArray)
 			}else{
 				let splitStr, index = "";
 				splitStr = searchValue.split("#");
@@ -19845,6 +19876,8 @@ class Common {
 							str += "#" + storage.code.etc[item[key]];
 						}else if(key === "soppStatus"){
 							str += "#" + storage.code.etc[item[key]];
+						}else if(key === "total"){
+							str += "#total" + item[key];
 						}else{
 							str += "#" + item[key];
 						}
