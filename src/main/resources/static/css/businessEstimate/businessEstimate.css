@@ -6,7 +6,8 @@
     width: 5.6vw;
 }
 
-.itemSpec .cke_toolbox{
+.itemSpec .cke_toolbox,
+.itemSpec .cke_top {
     display: none;
 }
 

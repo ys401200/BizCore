@@ -213,7 +213,7 @@ public class ApiEstimateCtrl extends Ctrl {
         if (compId == null) {
             result = "{\"result\":\"failure\",\"msg\":\"" + msg.compIdNotVerified + "\"}";
         } else
-            list = estimateSvc.getEstimateList(compId, sopp);
+            list = estimateSvc.getEstimateList(compId, sopp, aesKey, aesIv);
             if (list == null) {
                 result = "{\"result\":\"failure\",\"msg\":\"" + msg.noResult + "\"}";
             } else {

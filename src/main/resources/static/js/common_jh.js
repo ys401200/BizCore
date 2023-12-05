@@ -188,9 +188,8 @@ class NoticeSet {
 		};
 
 		setTimeout(() => {
-			let my = storage.my;
 			CommonDatas.detailTrueDatas(datas);
-			document.getElementById("userNo").value = storage.user[my].userName;
+			document.getElementById("userNo").value = storage.user[storage.my].userName;
 			ckeditor.config.readOnly = false;
 			window.setTimeout(setEditor, 100);
 		}, 100);
@@ -1490,11 +1489,347 @@ class SoppSet{
 		});
 	}
 
+	//베이직 견적 storage 저장 함수
+	soppDetailEstimateBasic() {
+		axios.get("/api/estimate/basic").then((response) => {
+			if (response.data.result === "ok") {
+				let form, info, x;
+				x = cipher.decAes(response.data.data);
+				x = JSON.parse(x);
+				form = x.form;
+				info = x.info;
+				for (x = 0; x < form.length; x++)	form[x].form = cipher.decAes(form[x].form);
+				storage.estimateForm = form;
+				storage.estimateBasic = info;
+			} else {
+				msg.set("[getEstimateBasic] Fail to get estimate form(s).");
+			}
+		}).catch((error) => {
+			msg.set("getEstimateBasic 통신 에러입니다.\n" + error);
+		});
+	}
+
+	//영업기회 견적번호 및 현재 영업기회 번호 저장 함수
+	soppDetailEstimateNo(soppNo) {
+		axios.get("/api/estimate/sopp/" + soppNo).then((response) => {
+			if (response.data.result === "ok") {
+				storage.soppEstimateList = [];
+				let getList = response.data.data;
+				getList = cipher.decAes(getList);
+				getList = JSON.parse(getList);
+
+				for (let i = 0; i < getList.length; i++) {
+					getList[i].doc = cipher.decAes(getList[i].doc);
+					storage.soppEstimateList.push(getList[i]);
+				}
+				
+				storage.estimateVerSoppNo = soppNo;
+			}
+		});
+	}
+
+	//영업기회 버전리스트만 출력하기 위한 리스트 함수
+	drawEstmVerList() {
+		let container, result, job, jsonData, header = [], data = [], ids = [], disDate, str, fnc = [], pageContainer, containerTitle, crudAddBtn, crudUpdateBtn, hideArr, showArr;
+
+		if (storage.soppEstimateList !== undefined) jsonData = storage.soppEstimateList.sort(function(a, b){return new Date(b.date) - new Date(a.date);});
+		else jsonData = undefined
+
+		if(document.getElementById("tabEstimate") !== null){
+			document.getElementById("tabEstimate").remove();
+		}
+
+		let addPdfForm = document.getElementsByClassName("addPdfForm")[0];
+		let createDiv = document.createElement("div");
+		let createBtns = document.createElement("div");
+		let createHtml = "", createBtnsHtml = "";
+		createBtnsHtml += "<button type=\"button\" class=\"tabEstimateAdd\" onclick=\"let sopp = new Sopp(); sopp.soppEstimateInsert();\">새견적추가</button>";
+		createBtnsHtml += "<button type=\"button\" class=\"tabEstimateAddForm\" onclick=\"CommonDatas.Temps.soppSet.clickedAdd();\">견적추가</button>";
+		createBtnsHtml += "<button type=\"button\" class=\"tabEstimateUpdateForm\" onclick=\"let estimateSet = new EstimateSet(); estimateSet.clickedUpdate();\">견적수정</button>";
+		createBtnsHtml += "<button type=\"button\" class=\"tabEstimateUpdate\" onclick=\"CommonDatas.Temps.soppSet.clickedAdd();\">견적추가</button>";
+		createBtnsHtml += "<button type=\"button\" class=\"tabEstimateListGet\" onclick=\"CommonDatas.Temps.soppSet.tabEstimateListGet();\">견적리스트</button>";
+		createBtns.className = "tabEstimateBtns";
+		createBtns.innerHTML = createBtnsHtml;
+
+		createDiv.id = "tabEstimate";
+		createDiv.className = "tabPage";
+		createHtml += "<div class=\"tabEstimateContents\">";
+		createHtml += "<div class=\"tabEstimateList\"></div>";
+		createHtml += "<div class=\"versionPreview\">";
+		createHtml += "<div class=\"previewDefault\">";
+		createHtml += "<div>미리보기</div>";
+		createHtml += "</div>";
+		createHtml += "</div>";
+		createHtml += "</div>";
+		createDiv.innerHTML = createHtml;
+
+		addPdfForm.before(createBtns);
+		addPdfForm.before(createDiv);
+
+		hideArr = ["estimatePdf", "addPdfForm", "versionPreview", "tabEstimateBtns"];
+		showArr = [
+			{ element: "tabEstimateList", display: "block" },
+		];
+		
+		header = [
+			{
+				"title": "버전",
+				"align": "center",
+			},
+			{
+				"title": "견적명",
+				"align": "center",
+			},
+			{
+				"title": "견적일자",
+				"align": "center",
+			},
+			{
+				"title": "금액",
+				"align": "center",
+			},
+		];
+		
+		if (jsonData === undefined || jsonData.length == 0) {
+			str = [
+				{
+					"setData": undefined,
+					"col": 4,
+					"align": "center",
+				},
+			];
+			
+			data.push(str);
+		} else {
+			for (let i = 0; i < jsonData.length; i++) {
+				let total = 0;
+				disDate = CommonDatas.dateDis(jsonData[i].date);
+				disDate = CommonDatas.dateFnc(disDate, "yyyy.mm.dd");
+				
+				for (let t = 0; t < jsonData[i].related.estimate.items.length; t++) {
+					let item = jsonData[i].related.estimate.items[t];
+					total += (item.price * item.quantity) + (item.price * item.quantity * 0.1);
+				}
+
+				str = [
+					{
+						"setData": jsonData[i].version,
+						"align": "center",
+					},
+					{
+						"setData": jsonData[i].title,
+						"align": "left",
+					},
+					{
+						"setData": disDate,
+						"align": "center",
+					},
+					{
+						"setData": CommonDatas.numberFormat(total),
+						"align": "right",
+					},
+				];
+
+				fnc.push("CommonDatas.Temps.soppSet.clickedEstmVer(this);");
+				ids.push(i);
+				data.push(str);
+			}
+		}
+		
+		container = document.getElementsByClassName("tabEstimateList")[0];
+		CommonDatas.createGrid(container, header, data, ids, job, fnc);
+		CommonDatas.setViewContents(hideArr, showArr);
+	}
+
+	tabEstimateListGet(){
+		let copyMainPdf = document.getElementsByClassName("copyMainPdf")[0];
+		let hideArr = ["addPdfForm", "tabEstimateAdd", "tabEstimateListGet"];
+		let showArr = [
+			{ element: "tabEstimate", display: "block" },
+			{ element: "tabEstimateList", display: "block" },
+			{ element: "versionPreview", display: "block" },
+			{ element: "tabEstimateBtns", display: "flex" },
+			{ element: "tabEstimateAddForm", display: "flex" },
+		];
+		
+		if(copyMainPdf !== undefined) copyMainPdf.remove();
+
+		CommonDatas.setViewContents(hideArr, showArr);
+	}
+
+	//메인 버전 리스트 클릭 함수
+	clickedEstmVer(el) {
+		let x, cnt, els, color = "#e1e9ff", versionList, title, userName;
+		els = el.parentElement.children;
+		for (x = 1; x < els.length; x++)	els[x].style.backgroundColor = "";
+		el.style.backgroundColor = color;
+		x = el.dataset.id * 1;
+		el.dataset.clickCheck = true;
+		storage.detailIdx = x;
+		title = el.children[1].children[0].innerText;
+		userName = storage.user[storage.soppEstimateList[x].writer].userName;
+
+		// let crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
+		// crudUpdateBtn.style.display = "flex";
+
+		if (storage.soppEstimateList === undefined) {
+			document.getElementsByClassName("versionPreview")[0].innerHTML = storage.soppEstimateList[x].doc;
+		} else {
+			document.getElementsByClassName("versionPreview")[0].innerHTML = storage.soppEstimateList[x].doc;
+		}
+
+		let versionPreview = document.getElementsByClassName("versionPreview")[0];
+		let indexMain = versionPreview.children;
+
+		for (let i = 0; i < indexMain.length; i++) {
+			if (indexMain[i].className === "mainPdf") {
+				indexMain[i].remove();
+			}
+		}
+
+		indexMain[indexMain.length - 1].setAttribute("class", "mainPreviewPdf");
+		indexMain[indexMain.length - 1].setAttribute("id", "estPrintPdf");
+	}
+
+	//영업기회 견적 추가 셋팅 함수
+	clickedAdd() {
+		let containerTitle, crudAddBtn, hideArr, showArr, mainPdf, copyMainPdf;
+		containerTitle = document.getElementById("containerTitle");
+		mainPdf = document.getElementsByClassName("mainPdf");
+
+		if (mainPdf.length > 1) {
+			mainPdf = document.getElementsByClassName("mainPdf")[1];
+		} else {
+			mainPdf = document.getElementsByClassName("mainPdf")[0];
+		}
+
+		copyMainPdf = document.createElement("div");
+		copyMainPdf.className = "copyMainPdf";
+		copyMainPdf.innerHTML = mainPdf.innerHTML;
+		crudAddBtn = document.getElementsByClassName("crudAddBtn")[0];
+		mainPdf.after(copyMainPdf);
+		hideArr = ["tabEstimate", "versionPreview", "mainPdf", "tabEstimateAddForm", "tabEstimateUpdateForm", "tabEstimateUpdate"];
+		showArr = [
+			{
+				element: "tabEstimateAdd",
+				display: "flex",
+			},
+			{
+				element: "tabEstimateListGet",
+				display: "flex",
+			},
+			{
+				element: "copyMainPdf",
+				display: "block",
+			},
+			{
+				element: "addPdfForm",
+				display: "block",
+			},
+		];
+
+		this.copyContainer = document.getElementsByClassName("copyMainPdf")[0];
+		crudAddBtn.style.display = "none";
+		CommonDatas.setViewContents(hideArr, showArr);
+		storage.estmDetail = undefined;
+		let tabEstimateAdd = document.getElementsByClassName("tabEstimateAdd")[0];
+		tabEstimateAdd.style.width = "4.6vw";
+		let tabEstimateListGet = document.getElementsByClassName("tabEstimateListGet")[0];
+		tabEstimateListGet.style.width = "4.6vw";
+		this.estimateFormInit();
+	}
+
+	//영업기회 견적 추가 및 상세보기 시 폼안에 value 값들을 설정해주는 함수
+	estimateFormInit() {
+		let selectAddress, writer, date, pdfMainContentAddBtns;
+		selectAddress = this.copyContainer.getElementsByClassName("selectAddress")[0].querySelector("select");
+		writer = this.copyContainer.querySelector("#writer");
+		date = this.copyContainer.querySelector("#date");
+		pdfMainContentAddBtns = this.copyContainer.getElementsByClassName("pdfMainContentAddBtns")[0];
+
+		let html = "";
+		for (let index in storage.estimateBasic) {
+			html += "<option value=\"" + index + "\">" + storage.estimateBasic[index].name + "</option>";
+		}
+
+		selectAddress.innerHTML = html;
+		writer.value = storage.user[storage.my].userName;
+		date.value = new Date().toISOString().substring(0, 10);
+
+		if (storage.estmDetail !== undefined) {
+			writer.value = storage.user[storage.estmDetail.writer].userName;
+			for (let key in storage.estmDetail.related.estimate) {
+				let keyId = this.copyContainer.querySelector("#" + key);
+
+				if (keyId !== undefined && keyId !== null) {
+					let value = storage.estmDetail.related.estimate[key];
+					if (key === "date") {
+						if (storage.estmDetail.related.estimate[key] !== null) {
+							value = new Date(storage.estmDetail.related.estimate[key]);
+							value = CommonDatas.dateDis(value);
+							value = CommonDatas.dateFnc(value);
+						} else {
+							value = new Date().toISOString().substring(0, 10);
+						}
+					} else if (key === "customer") {
+						keyId.dataset.value = value;
+						value = storage.customer[value].custName;
+					}
+					keyId.value = value;
+				}
+			}
+
+			if (storage.estmDetail.related.estimate.items.length > 0) {
+				let estimate = new Estimate(storage.estmDetail.related.estimate);
+				estimate.detail();
+			}
+		}
+
+		let detailChild = this.copyContainer.getElementsByClassName("pdfMainContainer")[0].children;
+		for (let i = 0; i < detailChild.length; i++) {
+			let item = detailChild[i];
+			if (item.getAttribute("class") !== "pdfMainContentAddBtns") {
+				item.style.gridTemplateColumns = "10% 10% 20% 10% 10% 10% 10% 10% 10%";
+			}
+		}
+
+		this.selectAddressInit();
+		ckeditor.config.readOnly = false;
+		window.setTimeout(setEditor(this.copyContainer), 100);
+	}
+
+	//영업기회 견적 회사 주소들을 셋팅해주는 함수
+	selectAddressInit(index) {
+		let firmName, representative, address, phone, fax;
+		firmName = this.copyContainer.querySelector("#firmName");
+		representative = this.copyContainer.querySelector("#representative");
+		address = this.copyContainer.getElementsByClassName("address")[1];
+		phone = this.copyContainer.querySelector("#phone");
+		fax = this.copyContainer.querySelector("#fax");
+
+		if (index === undefined) {
+			firmName.value = storage.estimateBasic[1].firmName;
+			representative.value = storage.estimateBasic[1].representative;
+			address.value = storage.estimateBasic[1].address;
+			phone.value = storage.estimateBasic[1].phone;
+			fax.value = storage.estimateBasic[1].fax;
+		} else {
+			firmName.value = storage.estimateBasic[index].firmName;
+			representative.value = storage.estimateBasic[index].representative;
+			address.value = storage.estimateBasic[index].address;
+			phone.value = storage.estimateBasic[index].phone;
+			fax.value = storage.estimateBasic[index].fax;
+		}
+	}
+
+	
 	//영업기회 상세보기
 	soppDetailView(e, type) {
 		let thisEle = e;
 
 		CommonDatas.Temps.soppSet.soppDetailInoutSet(thisEle.dataset.id);
+		CommonDatas.Temps.soppSet.soppDetailEstimateBasic();
+		CommonDatas.Temps.soppSet.soppDetailEstimateNo(thisEle.dataset.id);
 		CommonDatas.Temps.soppSet.soppDetailFileListSet(thisEle.dataset.id);
 
 		axios.get("/api/sopp/soppTech/" + thisEle.dataset.id).then((response) => {
@@ -1531,7 +1866,7 @@ class SoppSet{
 					if(type === "page"){
 						let sopp = new Sopp(result);
 						sopp.detail();
-		
+						
 						localStorage.setItem("loadSetPage", window.location.pathname);
 					}else{
 						CommonDatas.detailSetFormList(result);
@@ -2625,35 +2960,38 @@ class SoppSet{
 	detailRadioChange(thisEle){
 		let tabPage = document.getElementsByClassName("tabPage");
 		let defaultFormContainer = document.getElementsByClassName("defaultFormContainer")[0];
+		let versionPreview = document.getElementsByClassName("versionPreview")[0];
+		let addPdfForm = document.getElementsByClassName("addPdfForm")[0];
+		let tabEstimateBtns = document.getElementsByClassName("tabEstimateBtns")[0]
 		let dataKey;
 
-		if(thisEle === undefined){
-			dataKey = document.querySelector(".tabRadio:checked").dataset.key;
-		}else{
-			dataKey = thisEle.dataset.key;
-		}
+		if(versionPreview !== undefined) versionPreview.style.display = "none";
+		if(addPdfForm !== undefined) addPdfForm.style.display = "none";
+		if(tabEstimateBtns !== undefined) tabEstimateBtns.style.display = "none";
+		if(thisEle === undefined) dataKey = document.querySelector(".tabRadio:checked").dataset.key;
+		else dataKey = thisEle.dataset.key;
 		
 		for(let i = 0; i < tabPage.length; i++){
 			defaultFormContainer.style.display = "none";
 			tabPage[i].style.display = "none";
 		}
-
+		
 		if(dataKey === "tabDefault") defaultFormContainer.style.display = "grid";
-		else {
-			if(dataKey === "tabInoutSopp"){
-				let inoutSoppForm = document.getElementsByClassName("inoutSoppForm")[0];
-				let tabInoutCont = document.getElementsByClassName("tabInoutCont");
-				let inoutTotalContents = document.getElementsByClassName("inoutTotalContents")[0];
+		else if(dataKey === "tabEstimate") {
+			CommonDatas.Temps.soppSet.tabEstimateListGet();
+		}else if(dataKey === "tabInoutSopp"){
+			let inoutSoppForm = document.getElementsByClassName("inoutSoppForm")[0];
+			let tabInoutCont = document.getElementsByClassName("tabInoutCont");
+			let inoutTotalContents = document.getElementsByClassName("inoutTotalContents")[0];
 
-				inoutSoppForm.style.display = "block";
+			inoutSoppForm.style.display = "block";
 
-				for(let i = 0; i < tabInoutCont.length; i++){
-					tabInoutCont[i].style.display = "block";
-				}
-
-				inoutTotalContents.style.display = "block";
+			for(let i = 0; i < tabInoutCont.length; i++){
+				tabInoutCont[i].style.display = "block";
 			}
 
+			inoutTotalContents.style.display = "block";
+		} else {
 			document.getElementById(dataKey).style.display = "block";
 		}
 	}
@@ -3861,6 +4199,7 @@ class Sopp{
 		let html = "";
 		let setDate, soppTargetDate, maintenance_S, maintenance_E, datas, dataArray, notIdArray, splitCategories;
 		storage.categoryArr = [];
+		let estimateSet = new EstimateSet();
 		
 		if(document.getElementById("rightDetailParent") !== null){
 			document.getElementById("rightDetailParent").remove();
@@ -4106,7 +4445,7 @@ class Sopp{
 		createGrid.innerHTML = html;
 		gridList.after(createGrid);
 		containerTitle.innerText = this.soppTitle;
-		let hideArr = ["gridList", "listRange", "crudAddBtn", "listSearchInput", "searchContainer", "pageContainer"];
+		let hideArr = ["gridList", "listRange", "crudAddBtn", "listSearchInput", "searchContainer", "pageContainer", "addPdfForm"];
 		let showArr = ["defaultFormContainer"];
 		CommonDatas.setViewContents(hideArr, showArr);
 	
@@ -4173,6 +4512,7 @@ class Sopp{
 		setTimeout(() => {
 			let categories = document.getElementById("categories");
 			let categorySelect = categories.parentElement.parentElement.nextElementSibling.children[1].children[0];
+			let defaultFormContainer = document.getElementsByClassName("defaultFormContainer")[0];
 
 			if(this.categories !== undefined && this.categories !== null){
 				CommonDatas.makeCategoryOptions(categorySelect, "categories");
@@ -4182,14 +4522,16 @@ class Sopp{
 			document.getElementById("cntrctMth").value = this.cntrctMth;
 			document.getElementById("soppType").value = this.soppType;
 			ckeditor.config.readOnly = true;
-			window.setTimeout(setEditor, 100);
+			window.setTimeout(setEditor(defaultFormContainer), 100);
 		}, 200);
 
+		let soppSet = new SoppSet();
+		
 		setTimeout(() => {
-			let soppSet = new SoppSet();
 			soppSet.drawInoutForm();
 			soppSet.drawInoutSoppList();
 			soppSet.drawInoutContList();
+			soppSet.drawEstmVerList();
 			soppSet.drawSoppFileUpload();
 			soppSet.drawSoppTechList();
 			soppSet.drawSoppSalesList();
@@ -4262,6 +4604,169 @@ class Sopp{
 				console.log(error);
 				return false;
 			});
+		}
+	}
+
+	//영업기회 새 견적 추가 실행 함수
+	soppEstimateInsert() {
+		this.copyContainer = document.getElementsByClassName("copyMainPdf")[0];
+
+		if (this.copyContainer.querySelector("#date").value === "") {
+			msg.set("견적일자를 입력해주세요.");
+			this.copyContainer.querySelector("#date").focus();
+			return false;
+		} else if (this.copyContainer.querySelector("#title").value === "") {
+			msg.set("사업명을 입력해주세요.");
+			this.copyContainer.querySelector("#title").focus();
+			return false;
+		} else if (this.copyContainer.querySelector("#customer").value === "") {
+			msg.set("고객사를 입력해주세요.");
+			this.copyContainer.querySelector("#customer").focus();
+			return false;
+		} else if (!CommonDatas.validateAutoComplete($("#customer").val(), "customer")) {
+			msg.set("조회된 매출처가 없습니다.\n다시 확인해주세요.");
+			this.copyContainer.querySelector("#customer").focus();
+			return false;
+		} else if (this.copyContainer.querySelector("#cip").value === "") {
+			msg.set("고객사 담당자를 입력해주세요.");
+			this.copyContainer.querySelector("#cip").focus();
+			return false;
+		} else if (!CommonDatas.validateAutoComplete($("#cip").val(), "cip")) {
+			msg.set("조회된 매출처 담당자가 없습니다.\n다시 확인해주세요.");
+			this.copyContainer.querySelector("#cip").focus();
+			return false;
+		} else if (this.copyContainer.querySelector("#exp").value === "") {
+			msg.set("유효기간을 입력해주세요.");
+			this.copyContainer.querySelector("#exp").focus();
+			return false;
+		} else if (this.copyContainer.getElementsByClassName("pdfMainContainer")[0].querySelectorAll(".pdfMainContentItem").length < 1) {
+			msg.set("항목을 1개 이상 추가하여 입력해주세요.");
+			return false;
+		} else {
+			let address, cip, customer, date, exp, fax, firmName, phone, representative, title, pdfMainContentTitle, pdfMainContentItem, addPdfForm, items, form, datas, remarks, soppNo;
+			pdfMainContentTitle = this.copyContainer.getElementsByClassName("pdfMainContainer")[0].querySelectorAll(".pdfMainContentTitle");
+			pdfMainContentItem = this.copyContainer.getElementsByClassName("pdfMainContainer")[0].querySelectorAll(".pdfMainContentItem");
+			remarks = CKEDITOR.instances.remarks.getData().replaceAll("\n", "");
+			address = this.copyContainer.getElementsByClassName("address")[1].value;
+			cip = this.copyContainer.querySelector("#cip").value;
+			customer = this.copyContainer.querySelector("#customer").dataset.value.toString();
+			date = new Date(this.copyContainer.querySelector("#date").value).getTime();
+			exp = this.copyContainer.querySelector("#exp").value;
+			fax = this.copyContainer.querySelector("#fax").value;
+			firmName = this.copyContainer.querySelector("#firmName").value;
+			phone = this.copyContainer.querySelector("#phone").value;
+			representative = this.copyContainer.querySelector("#representative").value;
+			title = this.copyContainer.querySelector("#title").value;
+			soppNo = storage.estimateVerSoppNo;
+			items = [];
+
+			if (pdfMainContentTitle.length > 0) {
+				form = "서브타이틀";
+			} else {
+				form = "기본견적서";
+			}
+
+			for (let i = 0; i < pdfMainContentItem.length; i++) {
+				let item = pdfMainContentItem[i];
+				let textareaId = item.getElementsByClassName("itemSpec")[0].querySelector("textarea").getAttribute("id");
+				let itemTitle = $(item).prevAll(".pdfMainContentTitle").eq(0).find(".subTitle").children().val();
+				let price;
+
+				if (this.copyContainer.querySelector("[name=\"vat\"]:checked").dataset.value) {
+					let tax = parseInt(item.getElementsByClassName("itemTotal")[0].innerHTML.replaceAll(",", "") / 10);
+					price = parseInt(item.getElementsByClassName("itemTotal")[0].innerHTML.replaceAll(",", "")) + parseInt(tax);
+				} else {
+					price = parseInt(item.getElementsByClassName("itemTotal")[0].innerHTML.replaceAll(",", ""));
+				}
+
+				if (itemTitle === undefined) {
+					itemTitle = "";
+				}
+
+				let itemDatas = {
+					"div": item.getElementsByClassName("itemDivision")[0].children[0].value,
+					"price": parseInt(item.getElementsByClassName("itemTotal")[0].innerHTML.replaceAll(",", "")),
+					"quantity": parseInt(item.getElementsByClassName("itemQuantity")[0].children[0].value),
+					"remark": item.getElementsByClassName("itemRemarks")[0].children[0].value,
+					"spec": CKEDITOR.instances[textareaId].getData().replaceAll("\n", ""),
+					"item": (item.getElementsByClassName("itemSpec")[0].children[0].dataset.value === undefined || item.getElementsByClassName("itemSpec")[0].children[0].dataset.value.toString() === "0") ? item.getElementsByClassName("itemSpec")[0].children[0].value.toString() : item.getElementsByClassName("itemSpec")[0].children[0].dataset.value.toString(),
+					"supplier": this.copyContainer.querySelector("#customer").dataset.value.toString(),
+					"title": itemTitle,
+					"vat": this.copyContainer.querySelector("[name=\"vat\"]:checked").dataset.value,
+				};
+				items.push(itemDatas);
+			}
+
+			CommonDatas.Temps.estimateSet.insertCopyPdf();
+
+			setTimeout(() => {
+				addPdfForm = document.getElementsByClassName("addPdfForm")[0];
+
+				datas = {
+					"doc": addPdfForm.innerHTML.replaceAll("\r", "").replaceAll("\n", ""),
+					"address": address,
+					"cip": cip,
+					"customer": customer,
+					"date": date,
+					"exp": exp,
+					"fax": fax,
+					"firmName": firmName,
+					"form": form,
+					"items": items,
+					"phone": phone,
+					"representative": representative,
+					"title": title,
+					"width": 210,
+					"height": 297,
+					"no": null,
+					"version": 1,
+					"related": {
+						"parent": "sopp:" + soppNo + "",
+						"previous": null,
+						"next": [null],
+						"estimate": {
+							"doc": addPdfForm.innerHTML.replaceAll("\r", "").replaceAll("\n", ""),
+							"address": address,
+							"cip": cip,
+							"customer": customer,
+							"date": date,
+							"exp": exp,
+							"fax": fax,
+							"firmName": firmName,
+							"form": form,
+							"items": items,
+							"phone": phone,
+							"representative": representative,
+							"title": title,
+							"width": 210,
+							"height": 297,
+							"no": null,
+							"version": 1,
+							"remarks": remarks,
+						}
+					},
+					"remarks": remarks,
+				};
+
+				datas = JSON.stringify(datas);
+				datas = cipher.encAes(datas);
+
+				axios.post("/api/estimate", datas, {
+					headers: { "Content-Type": "text/plain" }
+				}).then(() => {
+					let soppSet = new SoppSet();
+					soppSet.soppDetailEstimateBasic();
+					soppSet.soppDetailEstimateNo(soppNo);
+
+					setTimeout(() => {
+						soppSet.drawEstmVerList();
+						soppSet.tabEstimateListGet();
+					}, 500);
+					msg.set("등록되었습니다.");
+				}).catch((error) => {
+					msg.set("등록 에러입니다.\n다시 확인해주십시오.\n" + error);
+				});
+			}, 300)
 		}
 	}
 
@@ -9253,7 +9758,6 @@ class Schedule{
 			}
 
 			CommonDatas.detailTrueDatas(datas);
-			console.log(this.cntrctMth);
 			document.querySelector("[name=\"cntrctMth\"][value=\"" + this.cntrctMth + "\"]").setAttribute("checked", true);
 			let techSet = new TechSet();
 			techSet.techRadioChange();
@@ -10600,7 +11104,6 @@ class EstimateSet {
 					storage.estimateList = "";
 					this.drawEstmVerList();
 				} else {
-
 					this.soppEstimateList(getList[0].no);
 				}
 
@@ -11010,7 +11513,6 @@ class EstimateSet {
 		let crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
 		let estimatePdf = document.getElementsByClassName("estimatePdf")[0];
 		estimatePdf.setAttribute("onclick", "CommonDatas.Temps.estimateSet.estimatePdf(\"" + title + "\", \"" + userName + "\");");
-		console.log(crudUpdateBtn);
 		crudUpdateBtn.style.display = "flex";
 		estimatePdf.style.display = "flex";
 
@@ -11250,6 +11752,9 @@ class EstimateSet {
 	//견적 아이템 항목에 대한 textarea id 값 부여 함수
 	productNameSet() {
 		let pdfMainContentItem, itemProductName;
+
+		if(this.copyContainer === undefined) this.copyContainer = document.getElementsByClassName("copyMainPdf")[0];
+
 		pdfMainContentItem = this.copyContainer.getElementsByClassName("pdfMainContentItem");
 		itemProductName = this.copyContainer.getElementsByClassName("itemSpec");
 
@@ -11389,6 +11894,7 @@ class EstimateSet {
 	//견적 타이틀 추가 함수
 	addEstTitle(e) {
 		let thisEle, subTitleIndex, createDiv;
+		if(this.copyContainer === undefined) this.copyContainer = document.getElementsByClassName("copyMainPdf")[0];
 		createDiv = document.createElement("div");
 		createDiv.className = "pdfMainContentTitle";
 		createDiv.style.gridTemplateColumns = "10% 10% 20% 10% 10% 10% 10% 10% 10%";
@@ -12435,8 +12941,7 @@ class TechSet{
 		};
 		
 		setTimeout(() => {
-			let my = storage.my;
-			document.getElementById("userNo").value = storage.user[my].userName;
+			document.getElementById("userNo").value = storage.user[storage.my].userName;
 			document.getElementById("userNo").setAttribute("data-change", true);
 			CommonDatas.Temps.techSet.techRadioChange();
 			ckeditor.config.readOnly = false;
@@ -15403,7 +15908,6 @@ class CustomerSet{
 		let searchAllInput, tempArray;
 		searchAllInput = document.getElementById("searchAllInput").value;
 		tempArray = CommonDatas.searchDataFilter(storage.shamCustomerList, searchAllInput, "input");
-		console.log(tempArray);
 
 		if (tempArray.length > 0) {
 			storage.searchShamDatas = tempArray;
@@ -17136,7 +17640,6 @@ class GoalSet{
 				let result;
 				result = cipher.decAes(response.data.data);
 				result = JSON.parse(result);
-				console.log(result);
 
 				for(let i = 0; i < result.length; i++){
 					let item = result[i];
@@ -18919,14 +19422,14 @@ class Common {
 	//뷰에 가리거나 보이게 하고 싶을 때 걸러내는 함수
 	setViewContents(hideArr, showArr) {
 		for (let i = 0; i < hideArr.length; i++) {
-			let item = document.getElementsByClassName(hideArr[i])[0];
+			let item = (document.getElementById(hideArr[i]) === null) ? document.getElementsByClassName(hideArr[i])[0] : document.getElementById(hideArr[i]);
 			if (item !== undefined) {
 				item.style.display = "none";
 			}
 		}
 
 		for (let i = 0; i < showArr.length; i++) {
-			let item = document.getElementsByClassName(showArr[i].element)[0];
+			let item = (document.getElementById(showArr[i].element) === null) ? document.getElementsByClassName(showArr[i].element)[0] : document.getElementById(showArr[i].element);
 			if (item !== undefined) {
 				item.style.display = showArr[i].display;
 			}
@@ -19293,7 +19796,6 @@ class Common {
 						dataArray.push(key);
 					}
 				}
-				console.log(dataArray)
 			}else{
 				let splitStr, index = "";
 				splitStr = searchValue.split("#");
@@ -19785,7 +20287,6 @@ class Common {
 	//상세보기 back 버튼 함수
 	hideDetailView(func){
 		let defaultFormContainer, referenceFileUpload, crudUpdateBtn, tabContent, storeType;
-		console.log(defaultFormContainer);
 		crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
 		tabContent = document.getElementsByClassName("tabContent")[0];
 		referenceFileUpload = document.getElementById("referenceFileUpload");
