@@ -108,7 +108,8 @@ public class EstimateSvc extends Svc{
         result = "[";
         if(list != null && list.size() > 0) for(x = 0 ; x < list.size() ; x++){
             each = list.get(x);
-            related = estimateMapper.getLastEstmData(compId, each.get("no"));
+            // related = estimateMapper.getLastEstmData(compId, each.get("no"));
+            related = each.get("related");
             total = 0;
             json = new JSONObject(related);
             json = json.getJSONObject("estimate");

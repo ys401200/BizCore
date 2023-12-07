@@ -1545,8 +1545,8 @@ class SoppSet{
 		let createHtml = "", createBtnsHtml = "";
 		createBtnsHtml += "<button type=\"button\" class=\"tabEstimateAdd\" onclick=\"let sopp = new Sopp(); sopp.soppEstimateInsert();\">새견적추가</button>";
 		createBtnsHtml += "<button type=\"button\" class=\"tabEstimateAddForm\" onclick=\"CommonDatas.Temps.soppSet.clickedAdd();\">견적추가</button>";
-		createBtnsHtml += "<button type=\"button\" class=\"tabEstimateUpdateForm\" onclick=\"let estimateSet = new EstimateSet(); estimateSet.clickedUpdate();\">견적수정</button>";
-		createBtnsHtml += "<button type=\"button\" class=\"tabEstimateUpdate\" onclick=\"CommonDatas.Temps.soppSet.clickedAdd();\">견적추가</button>";
+		createBtnsHtml += "<button type=\"button\" class=\"tabEstimateUpdateForm\" onclick=\"CommonDatas.Temps.soppSet.clickedUpdate();\">견적수정</button>";
+		createBtnsHtml += "<button type=\"button\" class=\"tabEstimateUpdate\" onclick=\"let sopp = new Sopp(); sopp.soppEstimateUpdate();\">버전추가</button>";
 		createBtnsHtml += "<button type=\"button\" class=\"tabEstimateListGet\" onclick=\"CommonDatas.Temps.soppSet.tabEstimateListGet();\">견적리스트</button>";
 		createBtns.className = "tabEstimateBtns";
 		createBtns.innerHTML = createBtnsHtml;
@@ -1643,18 +1643,22 @@ class SoppSet{
 
 	tabEstimateListGet(){
 		let copyMainPdf = document.getElementsByClassName("copyMainPdf")[0];
-		let hideArr = ["addPdfForm", "tabEstimateAdd", "tabEstimateListGet"];
+		let hideArr = ["addPdfForm", "tabEstimateAdd", "tabEstimateListGet", "tabEstimateUpdate"];
 		let showArr = [
 			{ element: "tabEstimate", display: "block" },
 			{ element: "tabEstimateList", display: "block" },
 			{ element: "versionPreview", display: "block" },
 			{ element: "tabEstimateBtns", display: "flex" },
 			{ element: "tabEstimateAddForm", display: "flex" },
+			{ element: "mainPdf", display: "block" },
 		];
 		
 		if(copyMainPdf !== undefined) copyMainPdf.remove();
 
 		CommonDatas.setViewContents(hideArr, showArr);
+
+		if(storage.detailIdx !== undefined) document.getElementsByClassName("tabEstimateUpdateForm")[0].style.display = "flex";
+		else document.getElementsByClassName("tabEstimateUpdateForm")[0].style.display = "none";
 	}
 
 	//메인 버전 리스트 클릭 함수
@@ -1686,6 +1690,9 @@ class SoppSet{
 				indexMain[i].remove();
 			}
 		}
+		
+		let tabEstimateUpdateForm = document.getElementsByClassName("tabEstimateUpdateForm")[0];
+		tabEstimateUpdateForm.style.display = "flex";
 
 		indexMain[indexMain.length - 1].setAttribute("class", "mainPreviewPdf");
 		indexMain[indexMain.length - 1].setAttribute("id", "estPrintPdf");
@@ -1732,6 +1739,49 @@ class SoppSet{
 		crudAddBtn.style.display = "none";
 		CommonDatas.setViewContents(hideArr, showArr);
 		storage.estmDetail = undefined;
+		let tabEstimateAdd = document.getElementsByClassName("tabEstimateAdd")[0];
+		tabEstimateAdd.style.width = "4.6vw";
+		let tabEstimateListGet = document.getElementsByClassName("tabEstimateListGet")[0];
+		tabEstimateListGet.style.width = "4.6vw";
+		this.estimateFormInit();
+	}
+
+	//영업기회 견적 상세보기 셋팅 함수
+	clickedUpdate() {
+		let hideArr, showArr, mainPdf, copyMainPdf;
+		mainPdf = document.getElementsByClassName("addPdfForm")[0].getElementsByClassName("mainPdf")[0];
+		copyMainPdf = document.createElement("div");
+		copyMainPdf.className = "copyMainPdf";
+		copyMainPdf.innerHTML = mainPdf.innerHTML;
+		mainPdf.after(copyMainPdf);
+		hideArr = ["tabEstimate", "versionPreview", "mainPdf", "tabEstimateAddForm", "tabEstimateUpdateForm", "versionPreview"];
+		showArr = [
+			{
+				element: "tabEstimateAdd",
+				display: "flex",
+			},
+			{
+				element: "tabEstimateUpdate",
+				display: "flex",
+			},
+			{
+				element: "tabEstimateListGet",
+				display: "flex",
+			},
+			{
+				element: "copyMainPdf",
+				display: "block",
+			},
+			{
+				element: "addPdfForm",
+				display: "block",
+			},
+		];
+
+		this.copyContainer = document.getElementsByClassName("copyMainPdf")[0];
+		storage.estmDetail = storage.soppEstimateList[storage.detailIdx];
+
+		CommonDatas.setViewContents(hideArr, showArr);
 		let tabEstimateAdd = document.getElementsByClassName("tabEstimateAdd")[0];
 		tabEstimateAdd.style.width = "4.6vw";
 		let tabEstimateListGet = document.getElementsByClassName("tabEstimateListGet")[0];
@@ -4524,10 +4574,9 @@ class Sopp{
 			ckeditor.config.readOnly = true;
 			window.setTimeout(setEditor(defaultFormContainer), 100);
 		}, 200);
-
-		let soppSet = new SoppSet();
 		
 		setTimeout(() => {
+			let soppSet = new SoppSet();
 			soppSet.drawInoutForm();
 			soppSet.drawInoutSoppList();
 			soppSet.drawInoutContList();
@@ -4757,14 +4806,178 @@ class Sopp{
 					let soppSet = new SoppSet();
 					soppSet.soppDetailEstimateBasic();
 					soppSet.soppDetailEstimateNo(soppNo);
-
+					
 					setTimeout(() => {
 						soppSet.drawEstmVerList();
 						soppSet.tabEstimateListGet();
-					}, 500);
+					}, 700);
 					msg.set("등록되었습니다.");
 				}).catch((error) => {
 					msg.set("등록 에러입니다.\n다시 확인해주십시오.\n" + error);
+				});
+			}, 300)
+		}
+	}
+
+	//영업기회 견적 버전추가 실행 함수
+	soppEstimateUpdate() {
+		this.copyContainer = document.getElementsByClassName("copyMainPdf")[0];
+
+		if (this.copyContainer.querySelector("#date").value === "") {
+			msg.set("견적일자를 입력해주세요.");
+			this.copyContainer.querySelector("#date").focus();
+			return false;
+		} else if (this.copyContainer.querySelector("#title").value === "") {
+			msg.set("사업명을 입력해주세요.");
+			this.copyContainer.querySelector("#title").focus();
+			return false;
+		} else if (this.copyContainer.querySelector("#customer").value === "") {
+			msg.set("고객사를 입력해주세요.");
+			this.copyContainer.querySelector("#customer").focus();
+			return false;
+		} else if (!CommonDatas.validateAutoComplete($("#customer").val(), "customer")) {
+			msg.set("조회된 매출처가 없습니다.\n다시 확인해주세요.");
+			$("#customer").focus();
+			return false;
+		} else if (this.copyContainer.querySelector("#cip").value === "") {
+			msg.set("고객사 담당자를 입력해주세요.");
+			this.copyContainer.querySelector("#cip").focus();
+			return false;
+		} else if (!CommonDatas.validateAutoComplete($("#cip").val(), "cip")) {
+			msg.set("조회된 매출처가 없습니다.\n다시 확인해주세요.");
+			this.copyContainer.querySelector("#cip").focus();
+			return false;
+		} else if (this.copyContainer.querySelector("#exp").value === "") {
+			msg.set("유효기간을 입력해주세요.");
+			this.copyContainer.querySelector("#exp").focus();
+			return false;
+		} else if (this.copyContainer.getElementsByClassName("pdfMainContainer")[0].getElementsByClassName("pdfMainContentItem").length < 1) {
+			msg.set("항목을 1개 이상 추가하여 입력해주세요.");
+			return false;
+		} else {
+			let address, cip, customer, date, exp, fax, firmName, phone, representative, title, pdfMainContentTitle, pdfMainContentItem, addPdfForm, items, form, datas, remarks, soppNo;
+			pdfMainContentTitle = this.copyContainer.getElementsByClassName("pdfMainContainer")[0].getElementsByClassName("pdfMainContentTitle");
+			pdfMainContentItem = this.copyContainer.getElementsByClassName("pdfMainContainer")[0].getElementsByClassName("pdfMainContentItem");
+			remarks = CKEDITOR.instances.remarks.getData().replaceAll("\n", "");
+			address = this.copyContainer.getElementsByClassName("address")[1].value;
+			cip = this.copyContainer.querySelector("#cip").value;
+			customer = this.copyContainer.querySelector("#customer").dataset.value.toString();
+			date = new Date(this.copyContainer.querySelector("#date").value).getTime();
+			exp = this.copyContainer.querySelector("#exp").value;
+			fax = this.copyContainer.querySelector("#fax").value;
+			firmName = this.copyContainer.querySelector("#firmName").value;
+			phone = this.copyContainer.querySelector("#phone").value;
+			representative = this.copyContainer.querySelector("#representative").value;
+			title = this.copyContainer.querySelector("#title").value;
+			soppNo = storage.estimateVerSoppNo;
+			items = [];
+
+			if (pdfMainContentTitle.length > 0) {
+				form = "서브타이틀";
+			} else {
+				form = "기본견적서";
+			}
+
+			for (let i = 0; i < pdfMainContentItem.length; i++) {
+				let item = pdfMainContentItem[i];
+				let textareaId = item.getElementsByClassName("itemSpec")[0].querySelector("textarea").getAttribute("id");
+				let itemTitle = $(item).prevAll(".pdfMainContentTitle").eq(0).find(".subTitle").children().val();
+				let price;
+
+				if (this.copyContainer.querySelector("[name=\"vat\"]:checked").dataset.value) {
+					let tax = parseInt(item.getElementsByClassName("itemTotal")[0].innerHTML.replaceAll(",", "") / 10);
+					price = parseInt(item.getElementsByClassName("itemTotal")[0].innerHTML.replaceAll(",", "")) + parseInt(tax);
+				} else {
+					price = parseInt(item.getElementsByClassName("itemTotal")[0].innerHTML.replaceAll(",", ""));
+				}
+
+				if (itemTitle === undefined) {
+					itemTitle = "";
+				}
+
+				let itemDatas = {
+					"div": item.getElementsByClassName("itemDivision")[0].children[0].value,
+					"price": parseInt(item.getElementsByClassName("itemTotal")[0].innerHTML.replaceAll(",", "")),
+					"quantity": parseInt(item.getElementsByClassName("itemQuantity")[0].children[0].value),
+					"remark": item.getElementsByClassName("itemRemarks")[0].children[0].value,
+					"spec": CKEDITOR.instances[textareaId].getData().replaceAll("\n", ""),
+					"item": (item.getElementsByClassName("itemSpec")[0].children[0].dataset.value === undefined || item.getElementsByClassName("itemSpec")[0].children[0].dataset.value.toString() === "0") ? item.getElementsByClassName("itemSpec")[0].children[0].value.toString() : item.getElementsByClassName("itemSpec")[0].children[0].dataset.value.toString(),
+					"supplier": this.copyContainer.querySelector("#customer").dataset.value.toString(),
+					"title": itemTitle,
+					"vat": this.copyContainer.querySelector("[name=\"vat\"]:checked").dataset.value,
+				};
+
+				items.push(itemDatas);
+			}
+
+			CommonDatas.Temps.estimateSet.insertCopyPdf();
+
+			setTimeout(() => {
+				addPdfForm = document.getElementsByClassName("addPdfForm")[0];
+
+				datas = {
+					"doc": addPdfForm.innerHTML.replaceAll("\r", "").replaceAll("\n", ""),
+					"address": address,
+					"cip": cip,
+					"customer": customer,
+					"date": date,
+					"exp": exp,
+					"fax": fax,
+					"firmName": firmName,
+					"form": form,
+					"items": items,
+					"phone": phone,
+					"representative": representative,
+					"title": title,
+					"width": 210,
+					"height": 297,
+					"no": storage.estmDetail.no,
+					"version": 1,
+					"related": {
+						"parent": "sopp:" + soppNo + "",
+						"previous": null,
+						"next": [null],
+						"estimate": {
+							"doc": addPdfForm.innerHTML.replaceAll("\r", "").replaceAll("\n", ""),
+							"address": address,
+							"cip": cip,
+							"customer": customer,
+							"date": date,
+							"exp": exp,
+							"fax": fax,
+							"firmName": firmName,
+							"form": form,
+							"items": items,
+							"phone": phone,
+							"representative": representative,
+							"title": title,
+							"width": 210,
+							"height": 297,
+							"no": storage.estmDetail.no,
+							"version": 1,
+							"remarks": remarks,
+						}
+					},
+					"remarks": remarks,
+				};
+
+				datas = JSON.stringify(datas);
+				datas = cipher.encAes(datas);
+
+				axios.post("/api/estimate/" + storage.estmDetail.no, datas, {
+					headers: { "Content-Type": "text/plain" }
+				}).then(() => {
+					let soppSet = new SoppSet();
+					soppSet.soppDetailEstimateBasic();
+					soppSet.soppDetailEstimateNo(soppNo);
+					
+					setTimeout(() => {
+						soppSet.drawEstmVerList();
+						soppSet.tabEstimateListGet();
+					}, 700);
+					msg.set("수정되었습니다.");
+				}).catch((error) => {
+					msg.set("수정 에러입니다.\n다시 확인해주십시오.\n" + error);
 				});
 			}, 300)
 		}
@@ -11148,6 +11361,7 @@ class EstimateSet {
 				let getList = response.data.data;
 				getList = cipher.decAes(getList);
 				getList = JSON.parse(getList);
+				console.log(getList);
 
 				for(let i = 0; i < getList.length; i++){
 					let item = getList[i];
@@ -11757,7 +11971,6 @@ class EstimateSet {
 
 		pdfMainContentItem = this.copyContainer.getElementsByClassName("pdfMainContentItem");
 		itemProductName = this.copyContainer.getElementsByClassName("itemSpec");
-
 		for (let i = 1; i <= pdfMainContentItem.length; i++) {
 			itemProductName[i - 1].querySelector("textarea").setAttribute("id", "itemProductName_" + i);
 		}
