@@ -324,6 +324,78 @@
 }
 /* 영업기회 우측 상세 매입매출내역 총 계 끝 */
 
+.addPdfForm{
+	display: none;
+    overflow-y: auto;
+    height: 100vh !important;
+}
+
+.pdfBottomRemarks > #cke_remarks{
+	width: 100% !important;
+}
+
+.cke_chrome{
+    width: 100% !important;
+}
+
+.itemSpec .cke_toolbox,
+.itemSpec .cke_top {
+    display: none;
+}
+
+.itemSpec .cke_contents{
+    height: 20vh !important;
+}
+
+.contContainer > #tabEstimate{
+    display: none; 
+	width: 99%; 
+	margin: 0 auto;
+	padding-top: 10px;
+    padding-bottom: 10px;
+	overflow-y: auto;
+    height: 78vh;
+}
+
+.contContainer > .tabEstimateBtns{
+	display: flex;
+    align-items: center;
+    justify-content: right;
+    padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+.contContainer > .tabEstimateBtns > button{
+	display: none;
+	align-items: center;
+    justify-content: center;
+    width: 3.6vw;
+    height: 2.5vh;
+    padding: 10px;
+    background-color: #2147b1;
+    color: #ffffff;
+    border-radius: 5px;
+    margin-right: 5px;
+}
+
+.contContainer > #tabEstimate > .tabEstimateContents{
+	display: flex;
+}
+
+.contContainer > #tabEstimate > .tabEstimateContents > .tabEstimateList{
+    width: 100%;
+    padding: 5px;
+}
+
+.contContainer > #tabEstimate > .tabEstimateContents > .tabEstimateList > .gridHeader,
+.contContainer > #tabEstimate > .tabEstimateContents > .tabEstimateList > .gridContent{
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.contContainer > #tabEstimate > .tabEstimateContents > .tabEstimateList > .gridHeader{
+	border-bottom:1px solid #abb6d5;
+}
+
 .contContainer > #tabFileUpload{
     display: none; 
 	width: 99%; 

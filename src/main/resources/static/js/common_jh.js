@@ -1528,7 +1528,7 @@ class SoppSet{
 		});
 	}
 
-	//영업기회 버전리스트만 출력하기 위한 리스트 함수
+	//영업기회 견적 버전리스트만 출력하기 위한 리스트 함수
 	drawEstmVerList() {
 		let container, result, job, jsonData, header = [], data = [], ids = [], disDate, str, fnc = [], pageContainer, containerTitle, crudAddBtn, crudUpdateBtn, hideArr, showArr;
 
@@ -1704,17 +1704,15 @@ class SoppSet{
 		containerTitle = document.getElementById("containerTitle");
 		mainPdf = document.getElementsByClassName("mainPdf");
 
-		if (mainPdf.length > 1) {
-			mainPdf = document.getElementsByClassName("mainPdf")[1];
-		} else {
-			mainPdf = document.getElementsByClassName("mainPdf")[0];
-		}
+		if (mainPdf.length > 1) mainPdf = document.getElementsByClassName("mainPdf")[1];
+		else mainPdf = document.getElementsByClassName("mainPdf")[0];
 
 		copyMainPdf = document.createElement("div");
 		copyMainPdf.className = "copyMainPdf";
 		copyMainPdf.innerHTML = mainPdf.innerHTML;
 		crudAddBtn = document.getElementsByClassName("crudAddBtn")[0];
 		mainPdf.after(copyMainPdf);
+		console.log(document.getElementsByClassName("copyMainPdf"));
 		hideArr = ["tabEstimate", "versionPreview", "mainPdf", "tabEstimateAddForm", "tabEstimateUpdateForm", "tabEstimateUpdate"];
 		showArr = [
 			{
@@ -3012,7 +3010,7 @@ class SoppSet{
 		let defaultFormContainer = document.getElementsByClassName("defaultFormContainer")[0];
 		let versionPreview = document.getElementsByClassName("versionPreview")[0];
 		let addPdfForm = document.getElementsByClassName("addPdfForm")[0];
-		let tabEstimateBtns = document.getElementsByClassName("tabEstimateBtns")[0]
+		let tabEstimateBtns = document.getElementsByClassName("tabEstimateBtns")[0];
 		let dataKey;
 
 		if(versionPreview !== undefined) versionPreview.style.display = "none";
@@ -4734,7 +4732,7 @@ class Sopp{
 
 				let itemDatas = {
 					"div": item.getElementsByClassName("itemDivision")[0].children[0].value,
-					"price": parseInt(item.getElementsByClassName("itemTotal")[0].innerHTML.replaceAll(",", "")),
+					"price": parseInt(item.getElementsByClassName("itemAmount")[0].children[0].value.replaceAll(",", "")),
 					"quantity": parseInt(item.getElementsByClassName("itemQuantity")[0].children[0].value),
 					"remark": item.getElementsByClassName("itemRemarks")[0].children[0].value,
 					"spec": CKEDITOR.instances[textareaId].getData().replaceAll("\n", ""),
@@ -4897,7 +4895,7 @@ class Sopp{
 
 				let itemDatas = {
 					"div": item.getElementsByClassName("itemDivision")[0].children[0].value,
-					"price": parseInt(item.getElementsByClassName("itemTotal")[0].innerHTML.replaceAll(",", "")),
+					"price": parseInt(item.getElementsByClassName("itemAmount")[0].children[0].value.replaceAll(",", "")),
 					"quantity": parseInt(item.getElementsByClassName("itemQuantity")[0].children[0].value),
 					"remark": item.getElementsByClassName("itemRemarks")[0].children[0].value,
 					"spec": CKEDITOR.instances[textareaId].getData().replaceAll("\n", ""),
@@ -5702,21 +5700,22 @@ class ContSet{
 	//계약 상세보기
 	contDetailView(e, type) {
 		let thisEle = e;
+		let soppSet = new SoppSet();
 
 		CommonDatas.Temps.contSet.contDetailInoutSet(thisEle.dataset.id);
 		CommonDatas.Temps.contSet.contDetailFileListSet(thisEle.dataset.id);
-
+		
 		setTimeout(() => {
 			axios.get("/api/cont/" + thisEle.dataset.id).then((response) => {
 				if (response.data.result === "ok") {
 					let result;
 					result = cipher.decAes(response.data.data);
 					result = JSON.parse(result);
-	
+					
 					if(type === "page"){
 						let cont = new Cont(result);
 						cont.detail();
-		
+						
 						localStorage.setItem("loadSetPage", window.location.pathname);
 					}else{
 						CommonDatas.detailSetFormList(result);
@@ -5727,8 +5726,11 @@ class ContSet{
 				console.log(error);
 			});
 		}, 300);
-
+		
 		setTimeout(() => {
+			soppSet.soppDetailEstimateBasic();
+			soppSet.soppDetailEstimateNo(storage.formList.soppNo);
+			
 			axios.get("/api/sopp/soppTech/" + storage.formList.soppNo).then((response) => {
 				if (response.data.result === "ok") {
 					let result;
@@ -5740,7 +5742,7 @@ class ContSet{
 				msg.set("기술지원내역 에러 입니다.\n" + error);
 				console.log(error);
 			});
-	
+			
 			axios.get("/api/sopp/soppSales/" + storage.formList.soppNo).then((response) => {
 				if (response.data.result === "ok") {
 					let result;
@@ -5752,7 +5754,7 @@ class ContSet{
 				msg.set("영업활동내역 에러 입니다.\n" + error);
 				console.log(error);
 			});
-		}, 700)
+		}, 800)
 
 	}
 
@@ -7471,13 +7473,16 @@ class ContSet{
 	detailRadioChange(thisEle){
 		let tabPage = document.getElementsByClassName("tabPage");
 		let defaultFormContainer = document.getElementsByClassName("defaultFormContainer")[0];
+		let versionPreview = document.getElementsByClassName("versionPreview")[0];
+		let addPdfForm = document.getElementsByClassName("addPdfForm")[0];
+		let tabEstimateBtns = document.getElementsByClassName("tabEstimateBtns")[0];
 		let dataKey;
 
-		if(thisEle === undefined){
-			dataKey = document.querySelector(".tabRadio:checked").dataset.key;
-		}else{
-			dataKey = thisEle.dataset.key;
-		}
+		if(versionPreview !== undefined) versionPreview.style.display = "none";
+		if(addPdfForm !== undefined) addPdfForm.style.display = "none";
+		if(tabEstimateBtns !== undefined) tabEstimateBtns.style.display = "none";
+		if(thisEle === undefined) dataKey = document.querySelector(".tabRadio:checked").dataset.key;
+		else dataKey = thisEle.dataset.key;
 		
 		for(let i = 0; i < tabPage.length; i++){
 			defaultFormContainer.style.display = "none";
@@ -7485,7 +7490,10 @@ class ContSet{
 		}
 
 		if(dataKey === "tabDefault") defaultFormContainer.style.display = "grid";
-		else {
+		else if(dataKey === "tabEstimate") {
+			let soppSet = new SoppSet();
+			soppSet.tabEstimateListGet();
+		}else {
 			if(dataKey === "tabInoutCont"){
 				let inoutContForm = document.getElementsByClassName("inoutContForm")[0];
 				let tabInoutCont = document.getElementsByClassName("tabInoutCont");
@@ -7768,6 +7776,8 @@ class Cont{
 		let html = "";
 		let setDate, contOrddate, delivDate, freemaintSdate, freemaintEdate, paymaintSdate, paymaintEdate, datas, dataArray, notIdArray, splitCategories;
 		storage.categoryArr = [];
+		let contSet = new ContSet();
+		let soppSet = new SoppSet();
 
 		if(document.getElementById("rightDetailParent") !== null){
 			document.getElementById("rightDetailParent").remove();
@@ -8092,7 +8102,6 @@ class Cont{
 		CommonDatas.setDetailTabs(tabArrays);
 	
 		setTimeout(() => {
-			let contSet = new ContSet();
 			let categories = document.getElementById("categories");
 			let categorySelect = categories.parentElement.parentElement.nextElementSibling.children[1].children[0];
 			
@@ -8109,9 +8118,9 @@ class Cont{
 		}, 200);
 
 		setTimeout(() => {
-			let contSet = new ContSet();
 			contSet.drawInoutForm();
 			contSet.drawInoutContList();
+			soppSet.drawEstmVerList();
 			contSet.drawContFileUpload();
 			contSet.drawContTechList();
 			contSet.drawContSalesList();
@@ -11361,7 +11370,6 @@ class EstimateSet {
 				let getList = response.data.data;
 				getList = cipher.decAes(getList);
 				getList = JSON.parse(getList);
-				console.log(getList);
 
 				for(let i = 0; i < getList.length; i++){
 					let item = getList[i];
@@ -11971,6 +11979,7 @@ class EstimateSet {
 
 		pdfMainContentItem = this.copyContainer.getElementsByClassName("pdfMainContentItem");
 		itemProductName = this.copyContainer.getElementsByClassName("itemSpec");
+
 		for (let i = 1; i <= pdfMainContentItem.length; i++) {
 			itemProductName[i - 1].querySelector("textarea").setAttribute("id", "itemProductName_" + i);
 		}
@@ -12107,7 +12116,7 @@ class EstimateSet {
 	//견적 타이틀 추가 함수
 	addEstTitle(e) {
 		let thisEle, subTitleIndex, createDiv;
-		if(this.copyContainer === undefined) this.copyContainer = document.getElementsByClassName("copyMainPdf")[0];
+		this.copyContainer = document.getElementsByClassName("copyMainPdf")[0];
 		createDiv = document.createElement("div");
 		createDiv.className = "pdfMainContentTitle";
 		createDiv.style.gridTemplateColumns = "10% 10% 20% 10% 10% 10% 10% 10% 10%";
@@ -12122,6 +12131,7 @@ class EstimateSet {
 	//견적 아이템 추가 함수
 	addEstItem(e) {
 		let thisEle, createDiv;
+		this.copyContainer = document.getElementsByClassName("copyMainPdf")[0];
 		createDiv = document.createElement("div");
 		createDiv.className = "pdfMainContentItem";
 		createDiv.style.gridTemplateColumns = "10% 10% 20% 10% 10% 10% 10% 10% 10%";
@@ -12129,9 +12139,9 @@ class EstimateSet {
 		thisEle = e;
 		thisEle.parentElement.before(createDiv);
 		this.productNameSet();
-		ckeditor.config.readOnly = false;
-		window.setTimeout(setEditor(this.copyContainer), 100);
 		this.addItemIndex();
+		ckeditor.config.readOnly = false;
+		window.setTimeout(setEditor(this.copyContainer, 100));
 	}
 
 	//견적 아이템 + 버튼 함수
@@ -12522,7 +12532,7 @@ class Estimate {
 
 				let itemDatas = {
 					"div": item.getElementsByClassName("itemDivision")[0].children[0].value,
-					"price": parseInt(item.getElementsByClassName("itemTotal")[0].innerHTML.replaceAll(",", "")),
+					"price": parseInt(item.getElementsByClassName("itemAmount")[0].children[0].value.replaceAll(",", "")),
 					"quantity": parseInt(item.getElementsByClassName("itemQuantity")[0].children[0].value),
 					"remark": item.getElementsByClassName("itemRemarks")[0].children[0].value,
 					"spec": CKEDITOR.instances[textareaId].getData().replaceAll("\n", ""),
@@ -12676,7 +12686,7 @@ class Estimate {
 
 				let itemDatas = {
 					"div": item.getElementsByClassName("itemDivision")[0].children[0].value,
-					"price": parseInt(item.getElementsByClassName("itemTotal")[0].innerHTML.replaceAll(",", "")),
+					"price": parseInt(item.getElementsByClassName("itemAmount")[0].children[0].value.replaceAll(",", "")),
 					"quantity": parseInt(item.getElementsByClassName("itemQuantity")[0].children[0].value),
 					"remark": item.getElementsByClassName("itemRemarks")[0].children[0].value,
 					"spec": CKEDITOR.instances[textareaId].getData().replaceAll("\n", ""),
@@ -20500,28 +20510,40 @@ class Common {
 	//상세보기 back 버튼 함수
 	hideDetailView(func){
 		let defaultFormContainer, referenceFileUpload, crudUpdateBtn, tabContent, storeType;
+		
+		for(let i = 0; i < document.getElementsByClassName("tabPage").length; i++){
+			let item = document.getElementsByClassName("tabPage")[i];
+
+			setTimeout(() => {
+				console.log(item);
+				item.remove();
+			}, 100)
+		}	
+		
+		document.querySelector("input").value = "";
+		defaultFormContainer = document.getElementsByClassName("defaultFormContainer")[0];
 		crudUpdateBtn = document.getElementsByClassName("crudUpdateBtn")[0];
 		tabContent = document.getElementsByClassName("tabContent")[0];
 		referenceFileUpload = document.getElementById("referenceFileUpload");
-		let tabPage = document.getElementsByClassName("tabPage")[0];
 		storeType = document.getElementsByClassName("storeType")[0];
 		let addChangeBtn = document.getElementsByClassName("addChangeBtn")[0];
 		let addListBtn = document.getElementsByClassName("addListBtn")[0];
+		let addPdfForm = document.getElementsByClassName("addPdfForm")[0];
+		let tabEstimateBtns = document.getElementsByClassName("tabEstimateBtns")[0];
 		
 		if(defaultFormContainer !== undefined) defaultFormContainer.remove();
 		if(crudUpdateBtn !== undefined) crudUpdateBtn.innerText = "수정";
-		if (tabContent !== undefined) tabContent.remove();
-		if(tabPage !== undefined) tabPage.remove();
+		if(tabContent !== undefined) tabContent.remove();
+		if(addPdfForm !== undefined) addPdfForm.style.display = "none";
 		if(storeType !== undefined) storeType.remove();
 		if(referenceFileUpload !== null) referenceFileUpload.remove();
+		if(tabEstimateBtns !== undefined) tabEstimateBtns.remove();
 		if(addChangeBtn !== undefined) addChangeBtn.style.display = "flex";
 		if(addListBtn !== undefined) addListBtn.style.display = "flex";
-	
-		document.querySelector("input").value = "";
-	
-		if(func !== undefined){
-			func();
-		}
+
+		setTimeout(() => {
+			if(func !== undefined) func();
+		}, 100);
 	}
 
 	//각 페이지별 검색 리스트 셋팅 함수
