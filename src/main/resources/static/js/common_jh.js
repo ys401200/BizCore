@@ -1543,14 +1543,16 @@ class SoppSet{
 		let createDiv = document.createElement("div");
 		let createBtns = document.createElement("div");
 		let createHtml = "", createBtnsHtml = "";
+
 		createBtnsHtml += "<button type=\"button\" class=\"tabEstimateAdd\" onclick=\"let sopp = new Sopp(); sopp.soppEstimateInsert();\">새견적추가</button>";
-		createBtnsHtml += "<button type=\"button\" class=\"tabEstimateAddForm\" onclick=\"CommonDatas.Temps.soppSet.clickedAdd();\">견적추가</button>";
-		createBtnsHtml += "<button type=\"button\" class=\"tabEstimateUpdateForm\" onclick=\"CommonDatas.Temps.soppSet.clickedUpdate();\">견적수정</button>";
 		createBtnsHtml += "<button type=\"button\" class=\"tabEstimateUpdate\" onclick=\"let sopp = new Sopp(); sopp.soppEstimateUpdate();\">버전추가</button>";
+
+		if(storage.my == storage.formList.userNo && storage.myUserKey.indexOf("CC7") > -1) createBtnsHtml += "<button type=\"button\" class=\"tabEstimateAddForm\" onclick=\"CommonDatas.Temps.soppSet.clickedAdd();\">견적추가</button>";
+		
+		createBtnsHtml += "<button type=\"button\" class=\"tabEstimateUpdateForm\" onclick=\"CommonDatas.Temps.soppSet.clickedUpdate();\">견적수정</button>";
 		createBtnsHtml += "<button type=\"button\" class=\"tabEstimateListGet\" onclick=\"CommonDatas.Temps.soppSet.tabEstimateListGet();\">견적리스트</button>";
 		createBtns.className = "tabEstimateBtns";
 		createBtns.innerHTML = createBtnsHtml;
-
 		createDiv.id = "tabEstimate";
 		createDiv.className = "tabPage";
 		createHtml += "<div class=\"tabEstimateContents\">";
@@ -1712,7 +1714,6 @@ class SoppSet{
 		copyMainPdf.innerHTML = mainPdf.innerHTML;
 		crudAddBtn = document.getElementsByClassName("crudAddBtn")[0];
 		mainPdf.after(copyMainPdf);
-		console.log(document.getElementsByClassName("copyMainPdf"));
 		hideArr = ["tabEstimate", "versionPreview", "mainPdf", "tabEstimateAddForm", "tabEstimateUpdateForm", "tabEstimateUpdate"];
 		showArr = [
 			{
@@ -1738,7 +1739,12 @@ class SoppSet{
 		CommonDatas.setViewContents(hideArr, showArr);
 		storage.estmDetail = undefined;
 		let tabEstimateAdd = document.getElementsByClassName("tabEstimateAdd")[0];
-		tabEstimateAdd.style.width = "4.6vw";
+
+		if(storage.my == storage.formList.userNo && storage.myUserKey.indexOf("CC7") > -1){
+			tabEstimateAdd.style.display = "flex";
+			tabEstimateAdd.style.width = "4.6vw";
+		} else tabEstimateAdd.style.display = "none";
+
 		let tabEstimateListGet = document.getElementsByClassName("tabEstimateListGet")[0];
 		tabEstimateListGet.style.width = "4.6vw";
 		this.estimateFormInit();
@@ -1781,7 +1787,17 @@ class SoppSet{
 
 		CommonDatas.setViewContents(hideArr, showArr);
 		let tabEstimateAdd = document.getElementsByClassName("tabEstimateAdd")[0];
-		tabEstimateAdd.style.width = "4.6vw";
+		let tabEstimateUpdate = document.getElementsByClassName("tabEstimateUpdate")[0];
+
+		if(storage.my == storage.formList.userNo && storage.myUserKey.indexOf("CC7") > -1){
+			tabEstimateAdd.style.display = "flex";
+			tabEstimateAdd.style.width = "4.6vw";
+			tabEstimateUpdate.style.display = "flex";
+		} else {
+			tabEstimateAdd.style.display = "none";
+			tabEstimateUpdate.style.display = "none";
+		}
+
 		let tabEstimateListGet = document.getElementsByClassName("tabEstimateListGet")[0];
 		tabEstimateListGet.style.width = "4.6vw";
 		this.estimateFormInit();
@@ -1790,17 +1806,19 @@ class SoppSet{
 	//영업기회 견적 추가 및 상세보기 시 폼안에 value 값들을 설정해주는 함수
 	estimateFormInit() {
 		let selectAddress, writer, date, pdfMainContentAddBtns;
-		selectAddress = this.copyContainer.getElementsByClassName("selectAddress")[0].querySelector("select");
+		selectAddress = this.copyContainer.getElementsByClassName("selectAddress")[0];
 		writer = this.copyContainer.querySelector("#writer");
 		date = this.copyContainer.querySelector("#date");
 		pdfMainContentAddBtns = this.copyContainer.getElementsByClassName("pdfMainContentAddBtns")[0];
+		selectAddress.children[0].remove();
 
 		let html = "";
 		for (let index in storage.estimateBasic) {
 			html += "<option value=\"" + index + "\">" + storage.estimateBasic[index].name + "</option>";
 		}
 
-		selectAddress.innerHTML = html;
+		selectAddress.children[0].setAttribute("onchange", "CommonDatas.Temps.estimateSet.selectAddressChange(this);");
+		selectAddress.children[0].innerHTML = html;
 		writer.value = storage.user[storage.my].userName;
 		date.value = new Date().toISOString().substring(0, 10);
 
@@ -5701,6 +5719,7 @@ class ContSet{
 	contDetailView(e, type) {
 		let thisEle = e;
 		let soppSet = new SoppSet();
+		let estimateSet = new EstimateSet();
 
 		CommonDatas.Temps.contSet.contDetailInoutSet(thisEle.dataset.id);
 		CommonDatas.Temps.contSet.contDetailFileListSet(thisEle.dataset.id);
@@ -8104,6 +8123,7 @@ class Cont{
 		setTimeout(() => {
 			let categories = document.getElementById("categories");
 			let categorySelect = categories.parentElement.parentElement.nextElementSibling.children[1].children[0];
+			let defaultFormContainer = document.getElementsByClassName("defaultFormContainer")[0];
 			
 			if(this.categories !== undefined && this.categories !== null){
 				CommonDatas.makeCategoryOptions(categorySelect, "categories");
@@ -8114,7 +8134,7 @@ class Cont{
 			document.getElementById("vatYn").value = this.vatYn;
 			contSet.contRadioChange();
 			ckeditor.config.readOnly = true;
-			window.setTimeout(setEditor, 100);
+			window.setTimeout(setEditor(defaultFormContainer), 100);
 		}, 200);
 
 		setTimeout(() => {
@@ -11856,8 +11876,10 @@ class EstimateSet {
 		}
 
 		if(storage.my == storage.estmDetail.writer && storage.myUserKey.indexOf("CC7") > -1){
+			crudUpdateBtn.innerText = "버전추가";
 			crudUpdateBtn.style.display = "flex";
 		}else{
+			crudUpdateBtn.innerText = "견적수정";
 			crudUpdateBtn.style.display = "none";
 		}
 
@@ -11915,17 +11937,25 @@ class EstimateSet {
 	//견적 추가 및 상세보기 시 폼안에 value 값들을 설정해주는 함수
 	estimateFormInit() {
 		let selectAddress, writer, date, pdfMainContentAddBtns;
-		selectAddress = this.copyContainer.getElementsByClassName("selectAddress")[0].querySelector("select");
+		selectAddress = this.copyContainer.getElementsByClassName("selectAddress")[0];
 		writer = this.copyContainer.querySelector("#writer");
 		date = this.copyContainer.querySelector("#date");
 		pdfMainContentAddBtns = this.copyContainer.getElementsByClassName("pdfMainContentAddBtns")[0];
+		
+		let addressHtml = "", soppHtml = "";
 
-		let html = "";
-		for (let index in storage.estimateBasic) {
-			html += "<option value=\"" + index + "\">" + storage.estimateBasic[index].name + "</option>";
+		soppHtml += "<option value=\"\">영업기회 선택(없음)</option>";
+		for(let i = 0; i < storage.sopp.length; i++){
+			let item = storage.sopp[i];
+			soppHtml += "<option value=\"" + item.soppNo + "\">" + item.soppTitle + "</option>";
 		}
 
-		selectAddress.innerHTML = html;
+		for (let index in storage.estimateBasic) {
+			addressHtml += "<option value=\"" + index + "\">" + storage.estimateBasic[index].name + "</option>";
+		}
+
+		selectAddress.children[0].innerHTML = soppHtml;
+		selectAddress.children[1].innerHTML = addressHtml;
 		writer.value = storage.user[storage.my].userName;
 		date.value = new Date().toISOString().substring(0, 10);
 
@@ -12004,6 +12034,7 @@ class EstimateSet {
 	//회사 주소들을 셋팅해주는 함수
 	selectAddressInit(index) {
 		let firmName, representative, address, phone, fax;
+		this.copyContainer = document.getElementsByClassName("copyMainPdf")[0];
 		firmName = this.copyContainer.querySelector("#firmName");
 		representative = this.copyContainer.querySelector("#representative");
 		address = this.copyContainer.getElementsByClassName("address")[1];
@@ -12493,6 +12524,7 @@ class Estimate {
 			let address, cip, customer, date, exp, fax, firmName, phone, representative, title, pdfMainContentTitle, pdfMainContentItem, addPdfForm, items, form, datas, remarks, soppNo;
 			pdfMainContentTitle = this.copyContainer.getElementsByClassName("pdfMainContainer")[0].querySelectorAll(".pdfMainContentTitle");
 			pdfMainContentItem = this.copyContainer.getElementsByClassName("pdfMainContainer")[0].querySelectorAll(".pdfMainContentItem");
+			soppNo = this.copyContainer.getElementsByClassName("estimateSelectSoppNo")[0];
 			remarks = CKEDITOR.instances.remarks.getData().replaceAll("\n", "");
 			address = this.copyContainer.getElementsByClassName("address")[1].value;
 			cip = this.copyContainer.querySelector("#cip").value;
@@ -12504,14 +12536,14 @@ class Estimate {
 			phone = this.copyContainer.querySelector("#phone").value;
 			representative = this.copyContainer.querySelector("#representative").value;
 			title = this.copyContainer.querySelector("#title").value;
-			soppNo = (storage.estimateVerSoppNo === undefined) ? null : storage.estimateVerSoppNo;
+
+			if(soppNo.value === "") soppNo = null;
+			else soppNo = soppNo.value;
+
 			items = [];
 
-			if (pdfMainContentTitle.length > 0) {
-				form = "서브타이틀";
-			} else {
-				form = "기본견적서";
-			}
+			if (pdfMainContentTitle.length > 0) form = "서브타이틀";
+			else form = "기본견적서";
 
 			for (let i = 0; i < pdfMainContentItem.length; i++) {
 				let item = pdfMainContentItem[i];
@@ -12647,6 +12679,7 @@ class Estimate {
 			let address, cip, customer, date, exp, fax, firmName, phone, representative, title, pdfMainContentTitle, pdfMainContentItem, addPdfForm, items, form, datas, remarks, soppNo;
 			pdfMainContentTitle = this.copyContainer.getElementsByClassName("pdfMainContainer")[0].getElementsByClassName("pdfMainContentTitle");
 			pdfMainContentItem = this.copyContainer.getElementsByClassName("pdfMainContainer")[0].getElementsByClassName("pdfMainContentItem");
+			soppNo = this.copyContainer.getElementsByClassName("estimateSelectSoppNo")[0];
 			remarks = CKEDITOR.instances.remarks.getData().replaceAll("\n", "");
 			address = this.copyContainer.getElementsByClassName("address")[1].value;
 			cip = this.copyContainer.querySelector("#cip").value;
@@ -12658,14 +12691,14 @@ class Estimate {
 			phone = this.copyContainer.querySelector("#phone").value;
 			representative = this.copyContainer.querySelector("#representative").value;
 			title = this.copyContainer.querySelector("#title").value;
-			soppNo = (storage.estimateVerSoppNo === undefined) ? null : storage.estimateVerSoppNo;
+
+			if(soppNo.value === "") soppNo = null;
+			else soppNo = soppNo.value;
+
 			items = [];
 
-			if (pdfMainContentTitle.length > 0) {
-				form = "서브타이틀";
-			} else {
-				form = "기본견적서";
-			}
+			if (pdfMainContentTitle.length > 0) form = "서브타이틀";
+			else form = "기본견적서";
 
 			for (let i = 0; i < pdfMainContentItem.length; i++) {
 				let item = pdfMainContentItem[i];

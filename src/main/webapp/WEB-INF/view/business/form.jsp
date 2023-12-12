@@ -13,6 +13,7 @@
         <div class="titlePdf">QUOTATION</div>
     </div>
     <div class="selectAddress">
+        <select id="estimateSelectSoppNo" class="estimateSelectSoppNo"></select>
         <select onchange="CommonDatas.Temps.estimateSet.selectAddressChange(this);"></select>
     </div>
     <div class="pdfHeadInfo">

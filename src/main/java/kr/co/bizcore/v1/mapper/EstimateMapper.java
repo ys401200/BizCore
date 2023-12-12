@@ -6,6 +6,8 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
+import com.groupdocs.editor.internal.a.AS;
+
 public interface EstimateMapper {
     
     // 견적 양식을 가져오는 메서드
@@ -21,7 +23,11 @@ public interface EstimateMapper {
     // public List<HashMap<String, String>> getEstmList(@Param("compId") String compId);
 
     //견적 최종버전 기준 목록을 가져오는 메서드(변경 후)
-    @Select("SELECT estmno AS no, formName AS form, title, CAST(max(version) AS CHAR) AS version, CAST(UNIX_TIMESTAMP(dt) * 1000 AS CHAR) AS dt, related FROM bizcore.estimate WHERE deleted IS NULL AND compId = #{compId} group by estmNo ORDER BY created desc")
+    // @Select("SELECT estmno AS no, formName AS form, max(title) AS title, CAST(max(version) AS CHAR) AS version, CAST(UNIX_TIMESTAMP(dt) * 1000 AS CHAR) AS dt, max(related) as related FROM bizcore.estimate WHERE deleted IS NULL AND compId = #{compId} group by estmNo ORDER BY created desc")
+    // public List<HashMap<String, String>> getEstmList(@Param("compId") String compId);
+
+    //견적 최종버전 기준 목록을 가져오는 메서드(변경 후 최종)
+    @Select("SELECT estmno AS no, formName AS form, title, CAST(version AS CHAR) AS version, CAST(UNIX_TIMESTAMP(dt) * 1000 AS CHAR) AS dt, related FROM bizcore.estimate WHERE (estmNo, created) in (select estmNo, max(created) from bizcore.estimate where deleted IS NULL AND compId = #{compId} group by estmNo) group by estmNo ORDER BY created desc")
     public List<HashMap<String, String>> getEstmList(@Param("compId") String compId);
 
     // 견적 버전 목록을 가져오는 메서드

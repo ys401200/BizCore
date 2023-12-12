@@ -687,7 +687,13 @@
     padding: 10px;
 }
 
-.selectAddress > select{
+.selectAddress > select:first-child{
+    border: 1px solid #000;
+    width: 30%;
+    margin-right: 10px;
+}
+
+.selectAddress > select:last-child{
     border: 1px solid #000;
     width: 10%;
 }
