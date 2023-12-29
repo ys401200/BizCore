@@ -46,7 +46,9 @@ public class SalesService extends Svc{
     }
 
     public List<SalesTarget> getGoalList(SalesTarget salesTarget){
-        return salesMapper.getGoalList(salesTarget);
+        LocalDate nowDate = LocalDate.now();
+        int getYear = nowDate.getYear();
+        return salesMapper.getGoalList(salesTarget, getYear);
     } 
 
     public int goalInsert(SalesTarget salesTarget) {

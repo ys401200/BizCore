@@ -74,11 +74,11 @@
 
 #notice_body .notice_container .gridHeader{
     grid-template-columns: 15% 70% 15%;
-	background-color:#eef1fb;
-	border-top-left-radius:8px;
+	font-family: 'NanumSquareRound';
+	background-color:#f2f2ff;
 	border-top-right-radius: 8px;
-    /* grid-template-columns: 15% 55% 15% 15%; */
-	border-bottom:1px solid #566d9b;
+	border-top-left-radius: 8px;
+	border-bottom:1px solid #3e3e9e;
 	position:sticky;
 	top:0;
 }
@@ -228,6 +228,7 @@
 #sopp_body .sopp_container .gridHeader{
     grid-template-columns: 5% 40% 5% 5% 5% 10% 10% 10% 10%;
 	background-color:#f2f2ff;
+	font-family: 'NanumSquareRound';
 	border-top-right-radius: 8px;
 	border-top-left-radius: 8px;
 	border-bottom:1px solid #3e3e9e;
@@ -257,6 +258,7 @@
 #contract_body .contract_container .gridHeader{
     grid-template-columns: 5% 10% 40% 5% 5% 5% 10% 8% 8% 4%;
 	background-color:#f2f2ff;
+	font-family: 'NanumSquareRound';
 	border-top-right-radius: 8px;
 	border-top-left-radius: 8px;
 	border-bottom:1px solid #3e3e9e;

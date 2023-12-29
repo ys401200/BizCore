@@ -33,7 +33,7 @@ public interface SoppMapper {
     @Update("UPDATE swc_sopp SET attrib = 'XXXXX' WHERE soppNo = #{soppNo} AND compNo = #{compNo}")
     public int soppDelete(@Param("compNo") int compNo, @Param("soppNo") String soppNo);
 
-    @Update("UPDATE swc_sopp SET custNo = #{sopp.custNo}, custMemberNo = #{sopp.custMemberNo}, buyrNo = #{sopp.buyrNo}, cntrctMth = #{sopp.cntrctMth}, soppTitle = #{sopp.soppTitle}, soppDesc = #{sopp.soppTitle}, soppTargetAmt = #{sopp.soppTargetAmt}, soppTargetDate = #{sopp.soppTargetDate}, maintenance_S = #{sopp.maintenance_S}, maintenance_E = #{sopp.maintenance_E}, soppType = #{sopp.soppType}, soppStatus = #{sopp.soppStatus}, soppSrate = #{sopp.soppSrate}, maintenanceTarget = #{sopp.maintenanceTarget}, secondUserNo = #{sopp.secondUserNo}, categories = #{sopp.categories}, modDatetime = now() WHERE soppNo = #{sopp.soppNo} AND compNo = #{sopp.compNo}")
+    @Update("UPDATE swc_sopp SET custNo = #{sopp.custNo}, custMemberNo = #{sopp.custMemberNo}, buyrNo = #{sopp.buyrNo}, cntrctMth = #{sopp.cntrctMth}, soppTitle = #{sopp.soppTitle}, soppDesc = #{sopp.soppDesc}, soppTargetAmt = #{sopp.soppTargetAmt}, soppTargetDate = #{sopp.soppTargetDate}, maintenance_S = #{sopp.maintenance_S}, maintenance_E = #{sopp.maintenance_E}, soppType = #{sopp.soppType}, soppStatus = #{sopp.soppStatus}, soppSrate = #{sopp.soppSrate}, maintenanceTarget = #{sopp.maintenanceTarget}, secondUserNo = #{sopp.secondUserNo}, categories = #{sopp.categories}, modDatetime = now() WHERE soppNo = #{sopp.soppNo} AND compNo = #{sopp.compNo}")
     public int updateSopp(@Param("sopp") Sopp sopp);
 
     @Select("SELECT * FROM swc_soppdata01 WHERE attrib NOT LIKE 'XXX%' AND soppNo = #{inout.soppNo} ORDER BY regDatetime DESC")

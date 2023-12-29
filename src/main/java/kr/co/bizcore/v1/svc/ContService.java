@@ -1,5 +1,6 @@
 package kr.co.bizcore.v1.svc;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -73,5 +74,17 @@ public class ContService extends Svc{
 
     public int  contFileDelete(String FileId) {
         return contMapper.contFileDelete(FileId);
+    }
+
+    public List<Cont> calMonthTotal(Cont cont){
+        LocalDate nowDate = LocalDate.now();
+        int getYear = nowDate.getYear();
+        return contMapper.calMonthTotal(cont, getYear);
+    }
+
+    public List<Cont> calContTypeTotal(Cont cont){
+        LocalDate nowDate = LocalDate.now();
+        int getYear = nowDate.getYear();
+        return contMapper.calContTypeTotal(cont, getYear);
     }
 }

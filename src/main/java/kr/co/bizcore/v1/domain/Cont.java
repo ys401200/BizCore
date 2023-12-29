@@ -46,4 +46,7 @@ public class Cont extends Domain{
     private String attrib;
     private String categories;
     private String maintenanceTarget;
+    private String calDateMonth;
+    private int calAmtTotal;
+    private int getCount;
 }

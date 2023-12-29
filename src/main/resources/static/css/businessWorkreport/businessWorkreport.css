@@ -190,6 +190,16 @@
 	grid-template-columns: 5% 5% 25% 40% 10% 10% 5%;
 }
 
+
+.workReportBody > .workReportDesc{
+	overflow: hidden;
+}
+
+.workReportBody > .workReportDesc > img{
+	width: 100% !important;
+	height: 100% !important;
+}
+
 .workReportHeader{
 	border-bottom: 2px solid #c2c5c7;
 }

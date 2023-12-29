@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -33,7 +34,8 @@ public class ScheduleService extends Svc {
 
     public List<Schedule> getList(int compNo) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        LocalDate nowDate = LocalDate.now();
+        YearMonth nowMonth = YearMonth.now(); 
+        LocalDate nowDate = nowMonth.atEndOfMonth();
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MONTH, -3);
         String calDate = simpleDateFormat.format(calendar.getTime());

@@ -29,6 +29,8 @@
 .goalContainer > .goalContent{
     width: 99%;
     padding: 5px;
+    height: 88vh;
+    overflow-y: auto;
 }
 
 .goalContainer > .goalContent > .goalHeader,

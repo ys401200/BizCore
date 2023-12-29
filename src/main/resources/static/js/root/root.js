@@ -4,9 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function callerFun(){
 	await promiseInit();
-	let soppSet = new SoppSet();
-	soppSet.list();
-
+	contMonthTotal();
 	goalList();
 
 	if(storage.customer === undefined || storage.code === undefined || storage.dept === undefined || storage.user === undefined || storage.monthTarget === undefined){
@@ -50,7 +48,7 @@ function gridWidget(){
 			if(splitStr[1] == 0){
 				html += "<canvas id=\"" + splitStr[0] + "_" + splitStr[1] + "\" height=\"400\" width=\"550\"></canvas>";
 			}else if(splitStr[1] == 4){
-				html += "<canvas id=\"" + splitStr[0] + "_" + splitStr[1] + "\" height=\"100\" width=\"100\"></canvas>";
+				html += "<canvas id=\"" + splitStr[0] + "_" + splitStr[1] + "\" height=\"370\" width=\"280\"></canvas>";
 			}else{
 				html += "<canvas id=\"" + splitStr[0] + "_" + splitStr[1] + "\" width=\"200\" height=\"200\"></canvas>";
 			}
@@ -70,53 +68,230 @@ function gridWidget(){
 
 	widgetContainer.html(html);
 
+	getNoticeList();
+	getScheduleList();
+	getSoppList();
+	getContractList();
+	chartDefaultTotalSet();
 	addChart();
-	// getNoticeList();
-	// getScheduleList();
-	// getSoppList();
-	// getContractList();
 }
 
 function addChart(){
 	addChart_1();
-	addChart_2();
+	// addChart_2();
 	addChart_3();
 	addChart_4();
 	addChart_5();
 }
 
-function addChart_1(){
-	let now, url, method, data, type, chart_0_body;
-	chart_0_body = document.getElementsByClassName("chart_0_body");
+function contMonthTotal(){
+	axios.get("/api/cont/calMonthTotal").then((response) => {
+		if (response.data.result === "ok") {
+			let result;
+			result = cipher.decAes(response.data.data);
+			result = JSON.parse(result);
+			storage.contMonthTotal = result;
+		}
+	}).catch((error) => {
+		msg.set("계약별 집계 데이터를 가져오는 중 에러가 발생했습니다.\n" + error);
+		console.log(error);
+	});
 
-	if(chart_0_body !== undefined){
-		now = new Date();
-		now = now.toISOString().substring(0, 10).replaceAll("-", "");
-	
-		url = "/api/accounting/statistics/sales/" + now;
-		method = "get";
-		type = "detail";
-	
-		crud.defaultAjax(url, method, data, type, chartSuccess_1, chartError_1);
-	}
+	axios.get("/api/cont/calContTypeTotal").then((response) => {
+		if (response.data.result === "ok") {
+			storage.contTypeTotal = [];
+			let result;
+			result = cipher.decAes(response.data.data);
+			result = JSON.parse(result);
+
+			for(let i = 0; i < result.length; i++){
+				let item = result[i];
+				let setDatas = {};
+				setDatas.contType = storage.code.etc[result[i].contType];
+				setDatas.getCount = result[i].getCount;
+				storage.contTypeTotal.push(setDatas);
+			}
+
+		}
+	}).catch((error) => {
+		msg.set("계약별 집계 데이터를 가져오는 중 에러가 발생했습니다.\n" + error);
+		console.log(error);
+	});
 }
 
-function chartSuccess_1(result){
-	let chart_0, dataArray = [], temp = 0, salesArray = [];
+function chartDefaultTotalSet(){
+	let goalList = storage.rootGoalList;
+	let contList = storage.contMonthTotal;
+	let goalMonthTotal = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+	let goalMonthCalTotal = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+	let contMonthTotal = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+	let contMonthCalTotal = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+	for(let i = 0; i < goalList.length; i++){
+		let item = goalList[i];
+		goalMonthTotal[0] += item.mm01;
+		goalMonthTotal[1] += item.mm02;
+		goalMonthTotal[2] += item.mm03;
+		goalMonthTotal[3] += item.mm04;
+		goalMonthTotal[4] += item.mm05;
+		goalMonthTotal[5] += item.mm06;
+		goalMonthTotal[6] += item.mm07;
+		goalMonthTotal[7] += item.mm08;
+		goalMonthTotal[8] += item.mm09;
+		goalMonthTotal[9] += item.mm10;
+		goalMonthTotal[10] += item.mm11;
+		goalMonthTotal[11] += item.mm12;
+	}
+
+	for(let i = 0; i < goalMonthTotal.length; i++){
+		let item = goalMonthTotal[i];
+		
+		if(i == 0) goalMonthCalTotal[i] = item;
+		else goalMonthCalTotal[i] = goalMonthCalTotal[i - 1] + item;
+	}
+
+	for(let i = 0; i < contList.length; i++){
+		let item = contList[i];
+		let splitDate = item.calDateMonth.split("-");
+
+		contMonthTotal[parseInt(splitDate[1]) - 1] = item.calAmtTotal;
+	}
+
+	for(let i = 0; i < contMonthTotal.length; i++){
+		let item = contMonthTotal[i];
+		
+		if(i == 0) contMonthCalTotal[i] = item;
+		else contMonthCalTotal[i] = contMonthCalTotal[i - 1] + item;
+	}
+
+	storage.goalMonthTotal = goalMonthTotal;
+	storage.goalMonthCalTotal = goalMonthCalTotal;
+	storage.contMonthTotal = contMonthTotal;
+	storage.contMonthCalTotal = contMonthCalTotal;
+}
+
+// function addChart_1(){
+// 	let now, url, method, data, type, chart_0_body;
+// 	chart_0_body = document.getElementsByClassName("chart_0_body");
+
+// 	if(chart_0_body !== undefined){
+// 		now = new Date();
+// 		now = now.toISOString().substring(0, 10).replaceAll("-", "");
+	
+// 		url = "/api/accounting/statistics/sales/" + now;
+// 		method = "get";
+// 		type = "detail";
+	
+// 		crud.defaultAjax(url, method, data, type, chartSuccess_1, chartError_1);
+// 	}
+// }
+
+// function chartSuccess_1(result){
+// 	let chart_0, dataArray = [], temp = 0, salesArray = [];
+// 	chart_0 = document.getElementById('chart_0').getContext('2d');
+
+// 	for(let i = 0; i < 12; i++){
+// 		if(result[i] === undefined){
+// 			dataArray.push(0);
+// 		}else{
+// 			dataArray.push(result[i].sales);
+// 		}
+// 	}
+
+// 	for(let i = 0; i < dataArray.length; i++){
+// 		temp += dataArray[i] / 10;
+// 		salesArray.push(temp);
+// 	}
+
+// 	new Chart(chart_0, {
+// 		type: "bar",
+// 		data: {
+// 			labels: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
+// 			datasets: [
+// 				{
+// 					type: "line",
+// 					label: "누적목표",
+// 					data: storage.accMonthTarget,
+// 					fill: false,
+// 					lineTension: 0,
+// 					backgroundColor: "#A566FF",
+// 					borderColor: "#A566FF",
+// 				},
+// 				{
+// 					type: "line",
+// 					label: "누적매출",
+// 					data: salesArray,
+// 					fill: false,
+// 					lineTension: 0,
+// 					backgroundColor: "#F15F5F",
+// 					borderColor: "#F15F5F",
+// 				},
+// 				{
+// 					label: "월별목표",
+// 					data: storage.monthTarget,
+// 					backgroundColor: "#5f46c6", 
+// 					borderColor: "#5f46c6",
+// 					borderWidth: 3,
+// 					radius: 0,
+// 				},
+// 				{
+// 					label: "월별매출",
+// 					data: dataArray,
+// 					backgroundColor: "#76e3f1",
+// 					borderColor: "#76e3f1",
+// 					borderWidth: 3,
+// 					radius: 0,
+// 				},
+// 			],
+// 		},
+// 		options: {	
+// 			responsive: false,
+// 			scales: {
+// 			  	yAxes: [{
+// 					ticks: {
+// 						beginAtZero: true,
+// 						callback: function(value, index) {
+// 							if(value.toString().length > 8){
+// 								return (Math.floor(value / 100000000)).toLocaleString("ko-KR") + " (억원)";
+// 							}else if(value.toString().length > 4){
+// 								return (Math.floor(value / 10000)).toLocaleString("ko-KR") + " (만원)";
+// 							}else{
+// 								return value.toLocaleString("ko-KR"); 
+// 							}
+// 						}
+// 					},
+// 				}]
+// 		  	},
+// 			tooltips: { 
+// 				callbacks: { 
+// 					label: function(tooltipItem, data) {
+// 						if(tooltipItem.datasetIndex == 2 || tooltipItem.datasetIndex == 3){
+// 							return " " + (tooltipItem.yLabel * 10).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "원"; 
+// 						}else{
+// 							return " " + tooltipItem.yLabel.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "원"; 
+// 						}
+// 					} 
+// 				 },
+// 			},
+// 		}
+// 	});
+// }
+
+function addChart_1(){
+	let chart_0;
 	chart_0 = document.getElementById('chart_0').getContext('2d');
+	// for(let i = 0; i < 12; i++){
+	// 	if(result[i] === undefined){
+	// 		dataArray.push(0);
+	// 	}else{
+	// 		dataArray.push(result[i].sales);
+	// 	}
+	// }
 
-	for(let i = 0; i < 12; i++){
-		if(result[i] === undefined){
-			dataArray.push(0);
-		}else{
-			dataArray.push(result[i].sales);
-		}
-	}
-
-	for(let i = 0; i < dataArray.length; i++){
-		temp += dataArray[i] / 10;
-		salesArray.push(temp);
-	}
+	// for(let i = 0; i < dataArray.length; i++){
+	// 	temp += dataArray[i] / 10;
+	// 	salesArray.push(temp);
+	// }
 
 	new Chart(chart_0, {
 		type: "bar",
@@ -126,7 +301,7 @@ function chartSuccess_1(result){
 				{
 					type: "line",
 					label: "누적목표",
-					data: storage.accMonthTarget,
+					data: storage.goalMonthCalTotal,
 					fill: false,
 					lineTension: 0,
 					backgroundColor: "#A566FF",
@@ -135,7 +310,7 @@ function chartSuccess_1(result){
 				{
 					type: "line",
 					label: "누적매출",
-					data: salesArray,
+					data: storage.contMonthCalTotal,
 					fill: false,
 					lineTension: 0,
 					backgroundColor: "#F15F5F",
@@ -143,7 +318,7 @@ function chartSuccess_1(result){
 				},
 				{
 					label: "월별목표",
-					data: storage.monthTarget,
+					data: storage.goalMonthTotal,
 					backgroundColor: "#5f46c6", 
 					borderColor: "#5f46c6",
 					borderWidth: 3,
@@ -151,7 +326,7 @@ function chartSuccess_1(result){
 				},
 				{
 					label: "월별매출",
-					data: dataArray,
+					data: storage.contMonthTotal,
 					backgroundColor: "#76e3f1",
 					borderColor: "#76e3f1",
 					borderWidth: 3,
@@ -159,32 +334,53 @@ function chartSuccess_1(result){
 				},
 			],
 		},
-		options: {	
+		options: {
 			responsive: false,
 			scales: {
-			  	yAxes: [{
-					ticks: {
-						beginAtZero: true,
-						callback: function(value, index) {
-							if(value.toString().length > 8){
-								return (Math.floor(value / 100000000)).toLocaleString("ko-KR") + " (억원)";
-							}else if(value.toString().length > 4){
-								return (Math.floor(value / 10000)).toLocaleString("ko-KR") + " (만원)";
-							}else{
-								return value.toLocaleString("ko-KR"); 
+			  	yAxes: [
+					{
+						position: "left",
+						ticks: {
+							beginAtZero: true,
+							callback: function(value, index) {
+								console.log(value);
+								if(value.toString().length > 8){
+									return (Math.floor(value / 100000000)).toLocaleString("ko-KR") + " (억원)";
+								}else if(value.toString().length > 4){
+									return (Math.floor(value / 10000)).toLocaleString("ko-KR") + " (만원)";
+								}else{
+									return value.toLocaleString("ko-KR"); 
+								}
 							}
-						}
+						},
 					},
-				}]
+					{
+						position: "right",
+						ticks: {
+							beginAtZero: true,
+							callback: function(value, index) {
+								if(value.toString().length > 8){
+									return (Math.floor(value / 100000000)).toLocaleString("ko-KR") + " (억원)";
+								}else if(value.toString().length > 4){
+									return (Math.floor(value / 10000)).toLocaleString("ko-KR") + " (만원)";
+								}else{
+									return value.toLocaleString("ko-KR"); 
+								}
+							}
+						},
+					},
+				]
 		  	},
 			tooltips: { 
 				callbacks: { 
 					label: function(tooltipItem, data) {
-						if(tooltipItem.datasetIndex == 2 || tooltipItem.datasetIndex == 3){
-							return " " + (tooltipItem.yLabel * 10).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "원"; 
-						}else{
-							return " " + tooltipItem.yLabel.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "원"; 
-						}
+						// if(tooltipItem.datasetIndex == 2 || tooltipItem.datasetIndex == 3){
+						// 	return " " + (tooltipItem.yLabel * 10).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "원"; 
+						// }else{
+						// 	return " " + tooltipItem.yLabel.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "원"; 
+						// }
+
+						return " " + (tooltipItem.yLabel).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "원"; 
 					} 
 				 },
 			},
@@ -196,28 +392,68 @@ function chartError_1(){
 	alert("첫번째 차트에 에러가 있습니다.\n다시 확인해주세요.");
 }
 
-function addChart_2(){
-	let now, url, method, data, type, chart_1_body;
-	chart_1_body = document.getElementsByClassName("chart_1_body");
+// function addChart_2(){
+// 	let now, url, method, data, type, chart_1_body;
+// 	chart_1_body = document.getElementsByClassName("chart_1_body");
 	
-	if(chart_1_body !== undefined){
-		now = new Date();
-		now = now.toISOString().substring(0, 10).replaceAll("-", "");
+// 	if(chart_1_body !== undefined){
+// 		now = new Date();
+// 		now = now.toISOString().substring(0, 10).replaceAll("-", "");
 	
-		url = "/api/accounting/statistics/sales/" + now;
-		method = "get";
-		type = "detail";
+// 		url = "/api/accounting/statistics/sales/" + now;
+// 		method = "get";
+// 		type = "detail";
 	
-		crud.defaultAjax(url, method, data, type, chartSuccess_2, chartError_2);
-	}
-}
+// 		crud.defaultAjax(url, method, data, type, chartSuccess_2, chartError_2);
+// 	}
+// }
 
-function chartSuccess_2(result){
-	let chart_1, infoHtml = "", nowDate, month, monthTarget;
+// function chartSuccess_2(result){
+// 	let chart_1, infoHtml = "", nowDate, month, monthTarget;
+// 	chart_1 = document.getElementById('chart_1').getContext('2d');
+// 	nowDate = new Date();
+// 	month = nowDate.getMonth();
+// 	monthTarget = (result[month] === undefined) ? 0 : result[month].sales;
+
+// 	new Chart(chart_1, {
+// 		type: "doughnut",
+// 		data: {
+// 			labels: ["달성률", "미달성률"],
+// 			datasets: [
+// 				{
+// 					data: [0, 100],
+// 					backgroundColor: [
+// 						"#ff5377",
+// 						"#95c1e6"
+// 					],
+// 					radius:0,
+// 					borderWidth: 1,
+// 				},
+// 			],
+// 		},
+// 		options: {
+// 			scales: {
+// 				y: {
+// 					beginAtZero: true
+// 				}
+// 			},
+// 		},
+// 	});
+
+// 	infoHtml = "<div>목표 0</div>";
+// 	infoHtml += "<div>매출 0</div>";
+// 	infoHtml += "<div>달성률 0.00%<div>";
+// 	infoHtml += "<hr />";
+// 	infoHtml += "<div>-0</div>";
+// 	chart_1.canvas.parentNode.getElementsByClassName("chartInfo")[0].innerHTML = infoHtml;
+// }
+
+function addChart_2(){
+	let chart_1, infoHtml = "", nowMonth, month, monthTarget;
 	chart_1 = document.getElementById('chart_1').getContext('2d');
-	nowDate = new Date();
-	month = nowDate.getMonth();
-	monthTarget = (result[month] === undefined) ? 0 : result[month].sales;
+	nowMonth = new Date().getMonth();
+	let attainPercent = (storage.contMainMonthTotal[nowMonth] / storage.goalMonthTotal[nowMonth] * 100).toFixed(2);
+	let notAttainPercent = (100 - attainPercent).toFixed(2);
 
 	new Chart(chart_1, {
 		type: "doughnut",
@@ -225,7 +461,7 @@ function chartSuccess_2(result){
 			labels: ["달성률", "미달성률"],
 			datasets: [
 				{
-					data: [0, 100],
+					data: [attainPercent, notAttainPercent],
 					backgroundColor: [
 						"#ff5377",
 						"#95c1e6"
@@ -256,31 +492,77 @@ function chartError_2(){
 	alert("두번째 차트에 에러가 있습니다.\n다시 확인해주세요.");
 }
 
-function addChart_3(){
-	let now, url, method, data, type, chart_2_body;
-	chart_2_body = document.getElementsByClassName("chart_2_body");
+// function addChart_3(){
+// 	let now, url, method, data, type, chart_2_body;
+// 	chart_2_body = document.getElementsByClassName("chart_2_body");
 	
-	if(chart_2_body !== undefined){
-		now = new Date();
-		now = now.toISOString().substring(0, 10).replaceAll("-", "");
+// 	if(chart_2_body !== undefined){
+// 		now = new Date();
+// 		now = now.toISOString().substring(0, 10).replaceAll("-", "");
 	
-		url = "/api/accounting/statistics/sales/" + now;
-		method = "get";
-		type = "detail";
+// 		url = "/api/accounting/statistics/sales/" + now;
+// 		method = "get";
+// 		type = "detail";
 	
-		crud.defaultAjax(url, method, data, type, chartSuccess_3, chartError_3);
-	}
-}
+// 		crud.defaultAjax(url, method, data, type, chartSuccess_3, chartError_3);
+// 	}
+// }
 
-function chartSuccess_3(result){
+// function chartSuccess_3(result){
+// 	let chart_2, infoHtml = "", nowDate, month, monthTarget;
+// 	chart_2 = document.getElementById('chart_2').getContext('2d');
+// 	nowDate = new Date();
+// 	month = nowDate.getMonth();
+// 	monthTarget = (result[month] === undefined) ? 0 : result[month].sales;
+
+// 	let data1 = isNaN((monthTarget / storage.monthTarget[month] * 100).toFixed(2)) ? 0 : (monthTarget / storage.monthTarget[month] * 100).toFixed(2);
+// 	let data2 = isNaN((100 - (monthTarget / storage.monthTarget[month] * 100).toFixed(2))) ? 100 : (100 - (monthTarget / storage.monthTarget[month] * 100).toFixed(2));
+
+// 	new Chart(chart_2, {
+// 		type: "doughnut",
+// 		data: {
+// 			labels: ["달성률", "미달성률"],
+// 			datasets: [
+// 				{
+// 					data: [data1, data2],
+// 					backgroundColor: [
+// 						"#31cca2",
+// 						"#95c1e6"
+// 					],
+// 					radius:0,
+// 					borderWidth: 1,
+// 				},
+// 			],
+// 		},
+// 		options: {
+// 			scales: {
+// 				y: {
+// 					beginAtZero: true
+// 				}
+// 			},
+// 		},
+// 	});
+
+// 	infoHtml = "<div>목표 " + (parseInt(storage.monthTarget[month])).toLocaleString("en-US") + "</div>";
+// 	infoHtml += "<div>매출 " + parseInt(monthTarget).toLocaleString("en-US") + "</div>";
+
+// 	if(isNaN((monthTarget / storage.monthTarget[month] * 100).toFixed(2))){
+// 		infoHtml += "<div>달성률 0.00%<div>";
+// 	}else{
+// 		infoHtml += "<div>달성률 " + (monthTarget / storage.monthTarget[month] * 100).toFixed(2) + "%<div>";
+// 	}
+
+// 	infoHtml += "<hr />";
+// 	infoHtml += "<div>-" + parseInt(storage.monthTarget[month] - monthTarget).toLocaleString("en-US") + "</div>";
+// 	chart_2.canvas.parentNode.getElementsByClassName("chartInfo")[0].innerHTML = infoHtml;
+// }
+
+function addChart_3(){
 	let chart_2, infoHtml = "", nowDate, month, monthTarget;
 	chart_2 = document.getElementById('chart_2').getContext('2d');
-	nowDate = new Date();
-	month = nowDate.getMonth();
-	monthTarget = (result[month] === undefined) ? 0 : result[month].sales;
-
-	let data1 = isNaN((monthTarget / storage.monthTarget[month] * 100).toFixed(2)) ? 0 : (monthTarget / storage.monthTarget[month] * 100).toFixed(2);
-	let data2 = isNaN((100 - (monthTarget / storage.monthTarget[month] * 100).toFixed(2))) ? 100 : (100 - (monthTarget / storage.monthTarget[month] * 100).toFixed(2));
+	nowMonth = new Date().getMonth();
+	let attainPercent = (storage.contMonthTotal[nowMonth] / storage.goalMonthTotal[nowMonth] * 100).toFixed(2);
+	let notAttainPercent = (100 - attainPercent).toFixed(2);
 
 	new Chart(chart_2, {
 		type: "doughnut",
@@ -288,7 +570,7 @@ function chartSuccess_3(result){
 			labels: ["달성률", "미달성률"],
 			datasets: [
 				{
-					data: [data1, data2],
+					data: [attainPercent, notAttainPercent],
 					backgroundColor: [
 						"#31cca2",
 						"#95c1e6"
@@ -307,17 +589,11 @@ function chartSuccess_3(result){
 		},
 	});
 
-	infoHtml = "<div>목표 " + (parseInt(storage.monthTarget[month])).toLocaleString("en-US") + "</div>";
-	infoHtml += "<div>매출 " + parseInt(monthTarget).toLocaleString("en-US") + "</div>";
-
-	if(isNaN((monthTarget / storage.monthTarget[month] * 100).toFixed(2))){
-		infoHtml += "<div>달성률 0.00%<div>";
-	}else{
-		infoHtml += "<div>달성률 " + (monthTarget / storage.monthTarget[month] * 100).toFixed(2) + "%<div>";
-	}
-
+	infoHtml = "<div>목표 " + (parseInt(storage.goalMonthTotal[nowMonth])).toLocaleString("en-US") + "</div>";
+	infoHtml += "<div>매출 " + parseInt(storage.contMonthTotal[nowMonth]).toLocaleString("en-US") + "</div>";
+	infoHtml += "<div>달성률 " + attainPercent + "%<div>";
 	infoHtml += "<hr />";
-	infoHtml += "<div>-" + parseInt(storage.monthTarget[month] - monthTarget).toLocaleString("en-US") + "</div>";
+	infoHtml += "<div>-" + parseInt(storage.goalMonthTotal[nowMonth] - storage.contMonthTotal[nowMonth]).toLocaleString("en-US") + "</div>";
 	chart_2.canvas.parentNode.getElementsByClassName("chartInfo")[0].innerHTML = infoHtml;
 }
 
@@ -325,40 +601,102 @@ function chartError_3(){
 	alert("세번째 차트에 에러가 있습니다.\n다시 확인해주세요.");
 }
 
-function addChart_4(){
-	let now, url, method, data, type, chart_3_body;
-	chart_3_body = document.getElementsByClassName("chart_3_body");
+// function addChart_4(){
+// 	let now, url, method, data, type, chart_3_body;
+// 	chart_3_body = document.getElementsByClassName("chart_3_body");
 	
-	if(chart_3_body !== undefined){
-		now = new Date();
-		now = now.toISOString().substring(0, 10).replaceAll("-", "");
+// 	if(chart_3_body !== undefined){
+// 		now = new Date();
+// 		now = now.toISOString().substring(0, 10).replaceAll("-", "");
 	
-		url = "/api/accounting/statistics/sales/" + now;
-		method = "get";
-		type = "detail";
+// 		url = "/api/accounting/statistics/sales/" + now;
+// 		method = "get";
+// 		type = "detail";
 	
-		crud.defaultAjax(url, method, data, type, chartSuccess_4, chartError_4);
-	}
-}
+// 		crud.defaultAjax(url, method, data, type, chartSuccess_4, chartError_4);
+// 	}
+// }
 
-function chartSuccess_4(result){
+// function chartSuccess_4(result){
+// 	let chart_3, infoHtml = "", dataArray = [], monthTarget = 0;
+// 	chart_3 = document.getElementById('chart_3').getContext('2d');
+
+// 	for(let i = 0; i < 12; i++){
+// 		if(result[i] === undefined){
+// 			dataArray.push(0);
+// 		}else{
+// 			dataArray.push(result[i].sales);
+// 		}
+// 	}
+
+// 	for(let i = 0; i < dataArray.length; i++){
+// 		monthTarget += dataArray[i];
+// 	}
+
+// 	let data1 = isNaN((monthTarget / (storage.accMonthTarget[11] * 10) * 100).toFixed(2)) ? 0 : (monthTarget / (storage.accMonthTarget[11] * 10) * 100).toFixed(2);
+// 	let data2 = isNaN((100 - (monthTarget / (storage.accMonthTarget[11] * 10) * 100).toFixed(2))) ? 100 : (100 - (monthTarget / (storage.accMonthTarget[11] * 10) * 100).toFixed(2));
+
+// 	new Chart(chart_3, {
+// 		type: "doughnut",
+// 		data: {
+// 			labels: ["달성률", "미달성률"],
+// 			datasets: [
+// 				{
+// 					data: [data1, data2],
+// 					backgroundColor: [
+// 						"#31cca2",
+// 						"#95c1e6"
+// 					],
+// 					radius:0,
+// 					borderWidth: 1,
+// 				},
+// 			],
+// 		},
+// 		options: {
+// 			scales: {
+// 				y: {
+// 					beginAtZero: true
+// 				}
+// 			},
+// 		},
+// 	});
+
+// 	infoHtml = "<div>목표 " + (parseInt(storage.accMonthTarget[11] * 10)).toLocaleString("en-US") + "</div>";
+// 	infoHtml += "<div>매출 " + parseInt(monthTarget).toLocaleString("en-US") + "</div>";
+
+// 	if(isNaN((monthTarget / (storage.accMonthTarget[11] * 10) * 100).toFixed(2))){
+// 		infoHtml += "<div>달성률 0.00%<div>";
+// 	}else{
+// 		infoHtml += "<div>달성률 " + (monthTarget / (storage.accMonthTarget[11] * 10) * 100).toFixed(2) + "%<div>";
+// 	}
+
+// 	infoHtml += "<hr />";
+// 	infoHtml += "<div>-" + parseInt((storage.accMonthTarget[11] * 10) - monthTarget).toLocaleString("en-US") + "</div>";
+// 	chart_3.canvas.parentNode.getElementsByClassName("chartInfo")[0].innerHTML = infoHtml;
+// }
+
+// function addChart_4(){
+// 	let now, url, method, data, type, chart_3_body;
+// 	chart_3_body = document.getElementsByClassName("chart_3_body");
+	
+// 	if(chart_3_body !== undefined){
+// 		now = new Date();
+// 		now = now.toISOString().substring(0, 10).replaceAll("-", "");
+	
+// 		url = "/api/accounting/statistics/sales/" + now;
+// 		method = "get";
+// 		type = "detail";
+	
+// 		crud.defaultAjax(url, method, data, type, chartSuccess_4, chartError_4);
+// 	}
+// }
+
+function addChart_4(){
 	let chart_3, infoHtml = "", dataArray = [], monthTarget = 0;
 	chart_3 = document.getElementById('chart_3').getContext('2d');
-
-	for(let i = 0; i < 12; i++){
-		if(result[i] === undefined){
-			dataArray.push(0);
-		}else{
-			dataArray.push(result[i].sales);
-		}
-	}
-
-	for(let i = 0; i < dataArray.length; i++){
-		monthTarget += dataArray[i];
-	}
-
-	let data1 = isNaN((monthTarget / (storage.accMonthTarget[11] * 10) * 100).toFixed(2)) ? 0 : (monthTarget / (storage.accMonthTarget[11] * 10) * 100).toFixed(2);
-	let data2 = isNaN((100 - (monthTarget / (storage.accMonthTarget[11] * 10) * 100).toFixed(2))) ? 100 : (100 - (monthTarget / (storage.accMonthTarget[11] * 10) * 100).toFixed(2));
+	nowMonth = new Date().getMonth();
+	let attainPercent = (storage.contMonthCalTotal[nowMonth] / storage.goalMonthCalTotal[nowMonth] * 100).toFixed(2);
+	let notAttainPercent = (100 - attainPercent).toFixed(2);
 
 	new Chart(chart_3, {
 		type: "doughnut",
@@ -366,7 +704,7 @@ function chartSuccess_4(result){
 			labels: ["달성률", "미달성률"],
 			datasets: [
 				{
-					data: [data1, data2],
+					data: [attainPercent, notAttainPercent],
 					backgroundColor: [
 						"#31cca2",
 						"#95c1e6"
@@ -385,17 +723,11 @@ function chartSuccess_4(result){
 		},
 	});
 
-	infoHtml = "<div>목표 " + (parseInt(storage.accMonthTarget[11] * 10)).toLocaleString("en-US") + "</div>";
-	infoHtml += "<div>매출 " + parseInt(monthTarget).toLocaleString("en-US") + "</div>";
-
-	if(isNaN((monthTarget / (storage.accMonthTarget[11] * 10) * 100).toFixed(2))){
-		infoHtml += "<div>달성률 0.00%<div>";
-	}else{
-		infoHtml += "<div>달성률 " + (monthTarget / (storage.accMonthTarget[11] * 10) * 100).toFixed(2) + "%<div>";
-	}
-
+	infoHtml = "<div>목표 " + (parseInt(storage.goalMonthCalTotal[nowMonth])).toLocaleString("en-US") + "</div>";
+	infoHtml += "<div>매출 " + parseInt(storage.contMonthCalTotal[nowMonth]).toLocaleString("en-US") + "</div>";
+	infoHtml += "<div>달성률 " + attainPercent + "%<div>";
 	infoHtml += "<hr />";
-	infoHtml += "<div>-" + parseInt((storage.accMonthTarget[11] * 10) - monthTarget).toLocaleString("en-US") + "</div>";
+	infoHtml += "<div>-" + parseInt(storage.goalMonthCalTotal[nowMonth] - storage.contMonthCalTotal[nowMonth]).toLocaleString("en-US") + "</div>";
 	chart_3.canvas.parentNode.getElementsByClassName("chartInfo")[0].innerHTML = infoHtml;
 }
 
@@ -406,14 +738,22 @@ function chartError_4(){
 function addChart_5(){
 	let chart_4;
 	chart_4 = document.getElementById('chart_4').getContext('2d');
+	let labelDatas = [];
+	let datas = [];
+
+	for(let i = 0; i < storage.contTypeTotal.length; i++){
+		let item = storage.contTypeTotal[i];
+		labelDatas.push(item.contType);
+		datas.push(item.getCount);
+	}
 
 	new Chart(chart_4, {
 		type: "pie",
 		data: {
-			labels: ["조달직판", "조달간판", "조달대행", "직접판매", "간접판매", "기타"],
+			labels: labelDatas,
 			datasets: [
 				{
-					data: [310, 200, 110, 220, 100, 50],
+					data: datas,
 					backgroundColor: [
 						"#29cea6",
 						"#2795f7",
@@ -426,6 +766,7 @@ function addChart_5(){
 			],
 		},
 		options: {
+			responsive: false,
 			layout:{
 				padding: {
 					top: 50,
@@ -444,7 +785,7 @@ function getNoticeList() {
 	let url, container, idName, gridListLength = 8;
 	
 	idName = "notice_body";
-	container = $(".notice_container");
+	container = document.getElementsByClassName("notice_container")[0];
 	url = apiServer + "/api/notice";
 
 	$.ajax({
@@ -453,7 +794,7 @@ function getNoticeList() {
 		"dataType": "json",
 		"cache": false,
 		success: (result) => {
-			let header, str, ids = [], fnc = "", dataJob, data = [], disDate, setDate;
+			let header, str, ids = [], fnc = "", dataJob, data = [], disDate, setDate, dataFunc = [];
 			if (result.result === "ok") {
 				result = cipher.decAes(result.data);
 				result = JSON.parse(result);
@@ -478,8 +819,8 @@ function getNoticeList() {
 				}
 			
 				for (let i = 0; i < gridListLength; i++) {
-					disDate = dateDis(result[i].created, result[i].modified);
-					setDate = dateFnc(disDate, "mm-dd");
+					disDate = CommonDatas.dateDis(new Date(result[i].regDate).getTime());
+					setDate = CommonDatas.dateFnc(disDate, "mm-dd");
 
 					str = [
 						{
@@ -487,22 +828,22 @@ function getNoticeList() {
 							"align" : "center",
 						},
 						{
-							"setData": result[i].title,
+							"setData": result[i].noticeTitle,
 							"align" : "left",
 						},
 						{
-							"setData": storage.user[result[i].writer].userName,
+							"setData": storage.user[result[i].userNo].userName,
 							"align" : "center",
 						},
 					];
 
-					fnc = "rootDetailView(\"notice\", this);";
-					ids.push(result[i].no);
+					dataFunc.push("rootDetailView(\"notice\", this);");
+					ids.push(result[i].noticeNo);
 					data.push(str);
 				}
 
 				if(data.length > 0){
-					createGrid(container, header, data, ids, dataJob, fnc, idName);
+					CommonDatas.createGrid(container, header, data, ids, dataJob, dataFunc, idName);
 				}
 			} else {
 				msg.set("등록된 공지사항이 없습니다");
@@ -515,9 +856,9 @@ function getScheduleList() {
 	let url, container, idName, gridListLength = 8, date;
 	
 	idName = "schedule_body";
-	container = $(".schedule_container");
+	container = document.getElementsByClassName("schedule_container")[0];
 	date = new Date().getTime();
-	url = "/api/schedule2/company/" + date;
+	url = "/api/schedule/calendar";
 
 	$.ajax({
 		"url": url,
@@ -525,11 +866,11 @@ function getScheduleList() {
 		"dataType": "json",
 		"cache": false,
 		success: (result) => {
-			let header, str, ids = [], fnc, dataJob = [], data = [];
+			let header, str, ids = [], fnc, dataJob = [], data = [], dataFunc = [];
 			if (result.result === "ok") {
 				result = cipher.decAes(result.data);
 				result = JSON.parse(result);
-				result = result.sort(function(a, b){return b.created - a.created;});
+				result = result.sort(function(a, b){return new Date(b.regDatetime).getTime() - new Date(a.regDatetime).getTime();});
 
 				header = [
 					{
@@ -563,31 +904,21 @@ function getScheduleList() {
 				}
 
 				for (let i = 0; i < gridListLength; i++) {
-					let job, title, writer, fromDate, fromSetDate, toDate, toSetDate, content, disDate;
+					let title, userName, fromDate, fromSetDate, toDate, toSetDate, desc, disDate;
 					
-					job = (result[i].job === null || result[i].job === "" || result[i].job === undefined) ? "" : result[i].job;
+					title = (result[i].title === null || result[i].title === "" || result[i].title === undefined) ? "없음" : result[i].title;
+					userName = (result[i].userNo == 0 || result[i].userNo === null || result[i].userNo === undefined) ? "없음" : storage.user[result[i].userNo].userName;
+					desc = (result[i].desc === null || result[i].desc === "" || result[i].desc === undefined) ? "없음" : result[i].desc;
+					desc = desc.replaceAll("<p>", "").replaceAll("</p>", "").replaceAll("<br />", "");
 
-					if(job === "sales"){
-						job = "영업일정";
-					}else if(job === "tech"){
-						job = "기술지원";
-					}else{
-						job = "기타일정";
-					}
-
-					title = (result[i].title === null || result[i].title === "" || result[i].title === undefined) ? "제목 없음" : result[i].title;
-					writer = (result[i].writer == 0 || result[i].writer === null || result[i].writer === undefined) ? "없음" : storage.user[result[i].writer].userName;
-					content = (result[i].content === null || result[i].content === "" || result[i].content === undefined) ? "내용 없음" : result[i].content;
-					content = content.replaceAll("<p>", "").replaceAll("</p>", "").replaceAll("<br />", "");
-
-					disDate = dateDis(result[i].created, result[i].created);
-					disDate = dateFnc(disDate, "mm-dd");
+					disDate = CommonDatas.dateDis(new Date(result[i].regDatetime).getTime());
+					disDate = CommonDatas.dateFnc(disDate, "mm-dd");
 					
-					fromDate = dateDis(result[i].from);
-					fromSetDate = dateFnc(fromDate, "mm-dd");
+					fromDate = CommonDatas.dateDis(new Date(result[i].schedFrom).getTime());
+					fromSetDate = CommonDatas.dateFnc(fromDate, "mm-dd");
 					
-					toDate = dateDis(result[i].to);
-					toSetDate = dateFnc(toDate, "mm-dd");
+					toDate = CommonDatas.dateDis(new Date(result[i].schedTo).getTime());
+					toSetDate = CommonDatas.dateFnc(toDate, "mm-dd");
 			
 					str = [
 						{
@@ -599,7 +930,7 @@ function getScheduleList() {
 							"align" : "center",
 						},
 						{
-							"setData": job,
+							"setData": storage.code.etc[result[i].schedType],
 							"align" : "center",
 						},
 						{
@@ -607,23 +938,23 @@ function getScheduleList() {
 							"align" : "left",
 						},
 						{
-							"setData": content,
+							"setData": desc,
 							"align" : "left",
 						},
 						{
-							"setData": writer,
+							"setData": userName,
 							"align" : "center",
 						},
 					];
-
-					fnc = "rootDetailView(\"schedule\", this);";
+					
+					dataFunc.push("rootDetailView(\"schedule\", this);");
 					ids.push(result[i].no);
-					dataJob.push(result[i].job);
+					dataJob.push(storage.code.etc[result[i].schedType]);
 					data.push(str);
 				}
 
 				if(data.length > 0){
-					createGrid(container, header, data, ids, dataJob, fnc, idName);
+					CommonDatas.createGrid(container, header, data, ids, dataJob, dataFunc, idName);
 				}
 			} else {
 				msg.set("등록된 일정이 없습니다");
@@ -683,12 +1014,12 @@ function getScheduleList() {
 			
 // 				for (let i = 0; i < gridListLength; i++) {
 // 					if(result[i].job === "sales"){
-// 						let job, title, writer, fromDate, fromSetDate, toDate, toSetDate, content;
+// 						let job, title, userNo, fromDate, fromSetDate, toDate, toSetDate, content;
 						
 // 						job = (result[i].job === null || result[i].job === "" || result[i].job === undefined) ? "sales" : "영업일정";
 						
 // 						title = (result[i].title === null || result[i].title === "" || result[i].title === undefined) ? "제목 없음" : result[i].title;
-// 						writer = (result[i].writer == 0 || result[i].writer === null || result[i].writer === undefined) ? "없음" : storage.user[result[i].writer].userName;
+// 						userNo = (result[i].userNo == 0 || result[i].userNo === null || result[i].userNo === undefined) ? "없음" : storage.user[result[i].userNo].userName;
 // 						content = (result[i].content === null || result[i].content === "" || result[i].content === undefined) ? "내용 없음" : result[i].content;
 						
 // 						fromDate = dateDis(result[i].from);
@@ -711,7 +1042,7 @@ function getScheduleList() {
 // 								"setData": fromSetDate + " ~ " + toSetDate,
 // 							},
 // 							{
-// 								"setData": writer,
+// 								"setData": userNo,
 // 							},
 // 							{
 // 								"setData": content,
@@ -783,12 +1114,12 @@ function getScheduleList() {
 			
 // 				for (let i = 0; i < gridListLength; i++) {
 // 					if(result[i].job === "tech"){
-// 						let job, title, writer, fromDate, fromSetDate, toDate, toSetDate, content;
+// 						let job, title, userNo, fromDate, fromSetDate, toDate, toSetDate, content;
 						
 // 						job = (result[i].job === null || result[i].job === "" || result[i].job === undefined) ? "tech" : "기술지원";
 						
 // 						title = (result[i].title === null || result[i].title === "" || result[i].title === undefined) ? "제목 없음" : result[i].title;
-// 						writer = (result[i].writer == 0 || result[i].writer === null || result[i].writer === undefined) ? "없음" : storage.user[result[i].writer].userName;
+// 						userNo = (result[i].userNo == 0 || result[i].userNo === null || result[i].userNo === undefined) ? "없음" : storage.user[result[i].userNo].userName;
 // 						content = (result[i].content === null || result[i].content === "" || result[i].content === undefined) ? "내용 없음" : result[i].content;
 						
 // 						fromDate = dateDis(result[i].from);
@@ -811,7 +1142,7 @@ function getScheduleList() {
 // 								"setData": fromSetDate + " ~ " + toSetDate,
 // 							},
 // 							{
-// 								"setData": writer,
+// 								"setData": userNo,
 // 							},
 // 							{
 // 								"setData": content,
@@ -836,7 +1167,7 @@ function getSoppList() {
 	let url, container, idName, gridListLength = 8;
 	
 	idName = "sopp_body";
-	container = $(".sopp_container");
+	container = document.getElementsByClassName("sopp_container")[0];
 	url = "/api/sopp";
 
 	$.ajax({
@@ -845,10 +1176,25 @@ function getSoppList() {
 		"dataType": "json",
 		"cache": false,
 		success: (result) => {
-			let header, str, ids = [], fnc, dataJob = [], data = [];
+			let header, str, ids = [], fnc, dataJob = [], data = [], dataFunc = [];
 			if (result.result === "ok") {
 				result = cipher.decAes(result.data);
 				result = JSON.parse(result);
+				
+				for(let i = 0; i < result.length; i++){
+					let item = result[i];
+
+					for(let key in item){
+						if(key === "soppStatus"){
+							item[key] = Number(item[key])
+						}
+					}
+				}
+
+				storage.rootSoppAllList = result;
+				storage.rootSoppList = [];
+				
+				CommonDatas.disListSet(storage.rootSoppAllList, storage.rootSoppList, 3, "regDatetime");
 
 				header = [
 					{
@@ -889,24 +1235,24 @@ function getSoppList() {
 					},
 				];
 
-				if(result.length < gridListLength){
-					gridListLength = result.length;
+				if(storage.rootSoppList.length < gridListLength){
+					gridListLength = storage.rootSoppList.length;
 				}
 
 				for (let i = 0; i < gridListLength; i++) {
-					let soppType, contType, title, customer, endUser, employee, expectedSales, status;
+					let soppType, cntrctMth, soppTitle, custName, endUser, userName, soppTargetAmt, soppStatus;
 					
-					disDate = dateDis(result[i].created, result[i].modified);
-					setDate = dateFnc(disDate, "mm-dd");
+					disDate = CommonDatas.dateDis(new Date(storage.rootSoppList[i].regDatetime).getTime());
+					setDate = CommonDatas.dateFnc(disDate, "mm-dd");
 
-					soppType = (result[i].soppType === null || result[i].soppType === "") ? "없음" : storage.code.etc[result[i].soppType];
-					contType = (result[i].contType === null || result[i].contType === "") ? "없음" : storage.code.etc[result[i].contType];
-					title = (result[i].title === null || result[i].title === "") ? "제목 없음" : result[i].title;
-					customer = (result[i].customer === null || result[i].customer == 0) ? "없음" : storage.customer[result[i].customer].name;
-					endUser = (result[i].endUser === null || result[i].endUser == 0) ? "없음" : storage.customer[result[i].endUser].name;
-					employee = (result[i].employee === null || result[i].employee == 0) ? "없음" : storage.user[result[i].employee].userName;
-					expectedSales = (result[i].expectedSales === null || result[i].expectedSales == 0) ? 0 : numberFormat(result[i].expectedSales);
-					status = (result[i].status === null || result[i].status === "") ? "없음" : storage.code.etc[result[i].status];
+					soppType = (storage.rootSoppList[i].soppType === null || storage.rootSoppList[i].soppType === "") ? "없음" : storage.code.etc[storage.rootSoppList[i].soppType];
+					cntrctMth = (storage.rootSoppList[i].cntrctMth === null || storage.rootSoppList[i].cntrctMth === "") ? "없음" : storage.code.etc[storage.rootSoppList[i].cntrctMth];
+					soppTitle = (storage.rootSoppList[i].soppTitle === null || storage.rootSoppList[i].soppTitle === "") ? "제목 없음" : storage.rootSoppList[i].soppTitle;
+					custName = (storage.rootSoppList[i].custNo === null || storage.rootSoppList[i].custNo == 0) ? "없음" : storage.customer[storage.rootSoppList[i].custNo].custName;
+					buyrName = (storage.rootSoppList[i].buyrNo === null || storage.rootSoppList[i].buyrNo == 0) ? "없음" : storage.customer[storage.rootSoppList[i].buyrNo].custName;
+					userName = (storage.rootSoppList[i].userNo === null || storage.rootSoppList[i].userNo == 0) ? "없음" : storage.user[storage.rootSoppList[i].userNo].userName;
+					soppTargetAmt = (storage.rootSoppList[i].soppTargetAmt === null || storage.rootSoppList[i].soppTargetAmt == 0) ? 0 : CommonDatas.numberFormat(storage.rootSoppList[i].soppTargetAmt);
+					soppStatus = (storage.rootSoppList[i].soppStatus === null || storage.rootSoppList[i].soppStatus === "") ? "없음" : storage.code.etc[storage.rootSoppList[i].soppStatus];
 			
 					str = [
 						{
@@ -914,11 +1260,11 @@ function getSoppList() {
 							"align" : "center",
 						},
 						{
-							"setData": title,
+							"setData": soppTitle,
 							"align" : "left",
 						},
 						{
-							"setData": employee,
+							"setData": userName,
 							"align" : "center",
 						},
 						{
@@ -926,32 +1272,32 @@ function getSoppList() {
 							"align" : "center",
 						},
 						{
-							"setData": contType,
+							"setData": cntrctMth,
 							"align" : "center",
 						},
 						{
-							"setData": customer,
+							"setData": custName,
 							"align" : "center",
 						},
 						{
-							"setData": endUser,
+							"setData": buyrName,
 							"align" : "center",
 						},
 						{
-							"setData": expectedSales,
+							"setData": soppTargetAmt,
 							"align" : "right",
 						},
 						{
-							"setData": status,
+							"setData": soppStatus,
 							"align" : "center",
 						},
 					];
 
-					fnc = "rootDetailView(\"sopp\", this);";
-					ids.push(result[i].no);
+					dataFunc.push("rootDetailView(\"sopp\", this);");
+					ids.push(storage.rootSoppList[i].soppNo);
 					data.push(str);
 				}
-				createGrid(container, header, data, ids, dataJob, fnc, idName);
+				CommonDatas.createGrid(container, header, data, ids, dataJob, dataFunc, idName);
 			} else {
 				msg.set("등록된 영업기회가 없습니다");
 			}
@@ -963,8 +1309,8 @@ function getContractList() {
 	let url, container, idName, gridListLength = 8;
 	
 	idName = "contract_body";
-	container = $(".contract_container");
-	url = "/api/contract";
+	container = document.getElementsByClassName("contract_container")[0];
+	url = "/api/cont";
 
 	$.ajax({
 		"url": url,
@@ -972,10 +1318,14 @@ function getContractList() {
 		"dataType": "json",
 		"cache": false,
 		success: (result) => {
-			let header, str, ids = [], fnc, dataJob = [], data = [];
+			let header, str, ids = [], fnc, dataJob = [], data = [], dataFunc = [];
 			if (result.result === "ok") {
 				result = cipher.decAes(result.data);
 				result = JSON.parse(result);
+				storage.rootContAllList = result;
+				storage.rootContList = [];
+				
+				CommonDatas.disListSet(storage.rootContAllList, storage.rootContList, 3, "regDatetime");
 
 				header = [
 					{
@@ -1020,44 +1370,44 @@ function getContractList() {
 					},
 				];
 
-				if(result.length < gridListLength){
-					gridListLength = result.length;
+				if(storage.rootContList.length < gridListLength){
+					gridListLength = storage.rootContList.length;
 				}
 			
 				for (let i = 0; i < gridListLength; i++) {
-					let salesType, contractType, title, endUser, contractAmount, profit, employee, startMaintenance, endMaintenance, saleDate, setCreated;
+					let contType, cntrctMth, contTitle, buyrName, contAmt, net_profit, userName, startMaintenance, endMaintenance, contOrddate, setDate;
 		
-					salesType = (result[i].salesType === null || result[i].salesType === "") ? "없음" : storage.code.etc[result[i].salesType];
-					contractType = (result[i].contractType === null || result[i].contractType === "") ? "없음" : storage.code.etc[result[i].contractType];
-					title = (result[i].title === null || result[i].title === "") ? "제목 없음" : result[i].title;
-					endUser = (result[i].endUser === null || result[i].endUser == 0) ? "없음" : storage.customer[result[i].endUser].name;
-					contractAmount = (result[i].contractAmount == 0 || result[i].contractAmount === null) ? 0 : numberFormat(result[i].contractAmount);
-					profit = (result[i].profit == 0 || result[i].profit === null) ? 0 : numberFormat(result[i].profit);
-					employee = (result[i].employee === null || result[i].employee == 0) ? "없음" : storage.user[result[i].employee].userName;
+					contType = (storage.rootContList[i].contType === null || storage.rootContList[i].contType === "") ? "없음" : storage.code.etc[storage.rootContList[i].contType];
+					cntrctMth = (storage.rootContList[i].cntrctMth === null || storage.rootContList[i].cntrctMth === "") ? "없음" : storage.code.etc[storage.rootContList[i].cntrctMth];
+					contTitle = (storage.rootContList[i].contTitle === null || storage.rootContList[i].contTitle === "") ? "제목 없음" : storage.rootContList[i].contTitle;
+					buyrName = (storage.rootContList[i].buyrNo === null || storage.rootContList[i].buyrNo == 0) ? "없음" : storage.customer[storage.rootContList[i].buyrNo].custName;
+					contAmt = (storage.rootContList[i].contAmt == 0 || storage.rootContList[i].contAmt === null) ? 0 : CommonDatas.numberFormat(storage.rootContList[i].contAmt);
+					net_profit = (storage.rootContList[i].net_profit == 0 || storage.rootContList[i].net_profit === null) ? 0 : CommonDatas.numberFormat(storage.rootContList[i].net_profit);
+					userName = (storage.rootContList[i].userName === null || storage.rootContList[i].userName == 0) ? "없음" : storage.user[storage.rootContList[i].userNo].userName;
 					
-					if(contractType === "유지보수"){
-						disDate = dateDis(result[i].startOfPaidMaintenance);
-						startMaintenance = dateFnc(disDate, "yy-mm-dd");
+					if(cntrctMth === "유지보수"){
+						disDate = CommonDatas.dateDis(new Date(storage.rootContList[i].paymaintSdate).getTime());
+						startMaintenance = (storage.rootContList[i].paymaintSdate === null || storage.rootContList[i].paymaintSdate === "") ? "" : CommonDatas.dateFnc(disDate, "yy-mm-dd");
 				
-						disDate = dateDis(result[i].endOfPaidMaintenance);
-						endMaintenance = dateFnc(disDate, "yy-mm-dd");
+						disDate = CommonDatas.dateDis(new Date(storage.rootContList[i].paymaintEdate).getTime());
+						endMaintenance = (storage.rootContList[i].paymaintEdate === null || storage.rootContList[i].paymaintEdate === "") ? "" : CommonDatas.dateFnc(disDate, "yy-mm-dd");
 					}else{
-						disDate = dateDis(result[i].startOfFreeMaintenance);
-						startMaintenance = dateFnc(disDate, "yy-mm-dd");
+						disDate = CommonDatas.dateDis(new Date(storage.rootContList[i].freemaintSdate).getTime());
+						startMaintenance = (storage.rootContList[i].freemaintSdate === null || storage.rootContList[i].freemaintSdate === "") ? "" : CommonDatas.dateFnc(disDate, "yy-mm-dd");
 				
-						disDate = dateDis(result[i].endOfFreeMaintenance);
-						endMaintenance = dateFnc(disDate, "yy-mm-dd");
+						disDate = CommonDatas.dateDis(new Date(storage.rootContList[i].freemaintEdate).getTime());
+						endMaintenance = (storage.rootContList[i].freemaintEdate === null || storage.rootContList[i].freemaintEdate === "") ? "" : CommonDatas.dateFnc(disDate, "yy-mm-dd");
 					}
 					
-					disDate = dateDis(result[i].saleDate);
-					saleDate = dateFnc(disDate, "mm-dd");
+					disDate = CommonDatas.dateDis(storage.rootContList[i].contOrddate);
+					contOrddate = CommonDatas.dateFnc(disDate, "mm-dd");
 
-					disDate = dateDis(result[i].created, result[i].modified);
-					setCreated = dateFnc(disDate, "mm-dd");
+					disDate = CommonDatas.dateDis(new Date(storage.rootContList[i].regDatetime).getTime());
+					setDate = CommonDatas.dateFnc(disDate, "mm-dd");
 
 					str = [
 						{
-							"setData": setCreated,
+							"setData": setDate,
 							"align" : "center",
 						},
 						{
@@ -1065,44 +1415,44 @@ function getContractList() {
 							"align" : "center",
 						},
 						{
-							"setData": title,
+							"setData": contTitle,
 							"align" : "left",
 						},
 						{
-							"setData": employee,
+							"setData": userName,
 							"align" : "center",
 						},
 						{
-							"setData": salesType,
+							"setData": contType,
 							"align" : "center",
 						},
 						{
-							"setData": contractType,
+							"setData": cntrctMth,
 							"align" : "center",
 						},
 						{
-							"setData": endUser,
+							"setData": buyrName,
 							"align" : "center",
 						},
 						{
-							"setData": contractAmount,
+							"setData": contAmt,
 							"align" : "right",
 						},
 						{
-							"setData": profit,
+							"setData": net_profit,
 							"align" : "right",
 						},
 						{
-							"setData": saleDate,
+							"setData": contOrddate,
 							"align" : "center",
 						},
 					];
 
-					fnc = "rootDetailView(\"contract\", this);";
-					ids.push(result[i].no);
+					dataFunc.push("rootDetailView(\"cont\", this);");
+					ids.push(storage.rootContList[i].contNo);
 					data.push(str);
 				}
-				createGrid(container, header, data, ids, dataJob, fnc, idName);
+				CommonDatas.createGrid(container, header, data, ids, dataJob, dataFunc, idName);
 			} else {
 				msg.set("등록된 계약이 없습니다");
 			}
@@ -1116,26 +1466,65 @@ function rootDetailView(page, e){
 }
 
 function goalList(){
-	let nowDate, nowYear;
-	nowDate = new Date();
-	nowYear = nowDate.getFullYear();
+	// let nowDate, nowYear;
+	// nowDate = new Date();
+	// nowYear = nowDate.getFullYear();
 
-	$.ajax({
-		url: "/api/system/goal/" + nowYear,
-		method: "get",
-		dataType: "json",
-		contentType: "text/plain",
-		success: (result) => {
-			let temp = 0;
-			result = cipher.decAes(result.data);
+	// $.ajax({
+	// 	url: "/api/system/goal/" + nowYear,
+	// 	method: "get",
+	// 	dataType: "json",
+	// 	contentType: "text/plain",
+	// 	success: (result) => {
+	// 		let temp = 0;
+	// 		result = cipher.decAes(result.data);
+	// 		result = JSON.parse(result);
+	// 		storage.monthTarget = result.all;
+	// 		storage.accMonthTarget = [];
+
+	// 		for(let i = 0; i < storage.monthTarget.length; i++){
+	// 			temp += storage.monthTarget[i] / 10;
+	// 			storage.accMonthTarget.push(temp);
+	// 		}
+	// 	}
+	// });
+
+	axios.get("/api/sales/goal").then((response) => {
+		if (response.data.result === "ok") {
+			storage.rootGoalList = [];
+			let result;
+			result = cipher.decAes(response.data.data);
 			result = JSON.parse(result);
-			storage.monthTarget = result.all;
-			storage.accMonthTarget = [];
 
-			for(let i = 0; i < storage.monthTarget.length; i++){
-				temp += storage.monthTarget[i] / 10;
-				storage.accMonthTarget.push(temp);
+			for(let i = 0; i < result.length; i++){
+				let item = result[i];
+
+				if(item.targetYear != null){
+					storage.rootGoalList.push(item);
+				}else{
+					let datas = {
+						"userNo": item.userNo,
+						"compNo": item.compNo,
+						"mm01": 0,
+						"mm02": 0,
+						"mm03": 0,
+						"mm04": 0,
+						"mm05": 0,
+						"mm06": 0,
+						"mm07": 0,
+						"mm08": 0,
+						"mm09": 0,
+						"mm10": 0,
+						"mm11": 0,
+						"mm12": 0,
+					}
+
+					storage.rootGoalList.push(datas);
+				}
 			}
 		}
-	});
+	}).catch((error) => {
+		msg.set("영업목표 데이터 에러 입니다.\n" + error);
+		console.log(error);
+	})
 }

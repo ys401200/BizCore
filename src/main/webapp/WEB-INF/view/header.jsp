@@ -71,8 +71,8 @@
 	</div>
 	<div class="mainTopMenu">
 		<div data-keyword="business" data-path="/" onclick="CommonDatas.topMenuClick(this)">업무관리</div>
-		<!-- <div data-keyword="gw" data-path="/gw/home" onclick="CommonDatas.topMenuClick(this)">전자결재</div> -->
-		<!-- <div data-keyword="accounting" data-path="/accounting/home" onclick="CommonDatas.topMenuClick(this)">회계관리</div> -->
+		<div data-keyword="gw" data-path="/gw/home" onclick="CommonDatas.topMenuClick(this)">전자결재</div>
+		<div data-keyword="accounting" data-path="/accounting/home" onclick="CommonDatas.topMenuClick(this)">회계관리</div>
 	</div>
 	<div class="mainInfo">
 		<div>

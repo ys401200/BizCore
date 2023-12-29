@@ -294,7 +294,7 @@ class Notice {
 			{
 				"title": "내용(*)",
 				"elementId": "noticeContents",
-				"value": this.noticeContents,
+				"value": this.noticeContents.replaceAll("\"", "'"),
 				"type": "textarea",
 				"col": 4,
 			},
@@ -1056,14 +1056,14 @@ class Sales{
 			{
 				"title": "제목(*)",
 				"elementId": "title",
-				"value": this.title,
+				"value": (CommonDatas.emptyValuesCheck(this.title)) ? "" : this.title,
 				"col": 4,
 			},
 			{
 				"title": "내용",
 				"elementId": "desc",
 				"type": "textarea",
-				"value": this.desc,
+				"value": (CommonDatas.emptyValuesCheck(this.desc)) ? "" : this.desc.replaceAll("\"", "'"),
 				"col": 4,
 			}
 		];
@@ -1398,6 +1398,13 @@ class SoppSet{
 		}else{
 			crudAddBtn.style.display = "none";
 		}
+
+		let path = location.pathname.split("/");
+
+		if (path[3] !== undefined && jsonData !== null) {
+			let content = document.querySelector(".gridContent[data-id=\"" + path[3] + "\"]");
+			CommonDatas.Temps.soppSet.soppDetailView(content, "page");
+		}
 	}
 
 	//영업기회 매입매출내역 데이터 세팅 함수
@@ -1548,7 +1555,7 @@ class SoppSet{
 		createBtnsHtml += "<button type=\"button\" class=\"tabEstimateUpdate\" onclick=\"let sopp = new Sopp(); sopp.soppEstimateUpdate();\">버전추가</button>";
 
 		if(storage.my == storage.formList.userNo && storage.myUserKey.indexOf("CC7") > -1) createBtnsHtml += "<button type=\"button\" class=\"tabEstimateAddForm\" onclick=\"CommonDatas.Temps.soppSet.clickedAdd();\">견적추가</button>";
-		
+
 		createBtnsHtml += "<button type=\"button\" class=\"tabEstimateUpdateForm\" onclick=\"CommonDatas.Temps.soppSet.clickedUpdate();\">견적수정</button>";
 		createBtnsHtml += "<button type=\"button\" class=\"tabEstimateListGet\" onclick=\"CommonDatas.Temps.soppSet.tabEstimateListGet();\">견적리스트</button>";
 		createBtns.className = "tabEstimateBtns";
@@ -4501,7 +4508,7 @@ class Sopp{
 				"elementId": "soppDesc",
 				"type": "textarea",
 				"col": 4,
-				"value": (CommonDatas.emptyValuesCheck(this.soppDesc)) ? "" : this.soppTitle,
+				"value": (CommonDatas.emptyValuesCheck(this.soppDesc)) ? "" : this.soppDesc.replaceAll("\"", "'"),
 			}
 		];
 
@@ -5711,7 +5718,7 @@ class ContSet{
 
 		if (path[3] !== undefined && jsonData !== null) {
 			let content = document.querySelector(".gridContent[data-id=\"" + path[3] + "\"]");
-			CommonDatas.Temps.salesSet.salesDetailView(content);
+			CommonDatas.Temps.contSet.contDetailView(content, "page");
 		}
 	}
 
@@ -8046,7 +8053,7 @@ class Cont{
 				"elementId": "contDesc",
 				"type": "textarea",
 				"col": 4,
-				"value": (CommonDatas.emptyValuesCheck(this.contDesc)) ? "" : this.contDesc,
+				"value": (CommonDatas.emptyValuesCheck(this.contDesc)) ? "" : this.contDesc.replaceAll("\"", "'"),
 			}
 		];
 
@@ -9054,7 +9061,8 @@ class ScheduleSet{
 
 		if (path[3] !== undefined && jsonData !== null) {
 			let content = document.querySelector(".gridContent[data-id=\"" + path[3] + "\"]");
-			CommonDatas.Temps.salesSet.salesDetailView(content);
+			content.click();
+			// CommonDatas.Temps.scheduleSet.schedDetailView(content);
 		}
 	}
 
@@ -9586,14 +9594,14 @@ class Schedule{
 				"title": "제목(*)",
 				"elementId": "title",
 				"col": 4,
-				"value": this.title
+				"value": (CommonDatas.emptyValuesCheck(this.title)) ? "" : this.title,
 			},
 			{
 				"title": "내용",
 				"elementId": "desc",
 				"type": "textarea",
 				"col": 4,
-				"value": this.desc.replaceAll("\n", "<br />")
+				"value": (CommonDatas.emptyValuesCheck(this.desc)) ? "" : this.desc.replaceAll("\"", "'"),
 			}
 		];
 
@@ -9758,14 +9766,14 @@ class Schedule{
 				"title": "제목(*)",
 				"elementId": "title",
 				"col": 4,
-				"value": this.title
+				"value": (CommonDatas.emptyValuesCheck(this.title)) ? "" : this.title,
 			},
 			{
 				"title": "내용",
 				"elementId": "desc",
 				"type": "textarea",
 				"col": 4,
-				"value": this.desc
+				"value": (CommonDatas.emptyValuesCheck(this.desc)) ? "" : this.desc.replaceAll("\"", "'")
 			}
 		];
 	
@@ -9959,7 +9967,7 @@ class Schedule{
 				"title": "내용",
 				"type": "textarea",
 				"elementId": "desc",
-				"value": (CommonDatas.emptyValuesCheck(this.desc)) ? "" : this.desc,
+				"value": (CommonDatas.emptyValuesCheck(this.desc)) ? "" : this.desc.replaceAll("\"", "'"),
 				"col": 4,
 			},
 		];
@@ -10140,14 +10148,14 @@ class Schedule{
 				"title": "제목(*)",
 				"elementId": "title",
 				"col": 4,
-				"value": this.title
+				"value": (CommonDatas.emptyValuesCheck(this.title)) ? "" : this.title,
 			},
 			{
 				"title": "내용",
 				"elementId": "desc",
 				"type": "textarea",
 				"col": 4,
-				"value": this.desc.replaceAll("\n", "<br />")
+				"value": (CommonDatas.emptyValuesCheck(this.desc)) ? "" : this.desc.replaceAll("\"", "'"),
 			}
 		];
 
@@ -10623,8 +10631,8 @@ class WorkReportSet{
 					bodyHtml += "<div>" + "@ " + item.title + "</div>";
 					type = "tech";
 				}
-	
-				bodyHtml += "<div>" + item.desc + "</div>";
+				
+				bodyHtml += "<div class=\"workReportDesc\">" + item.desc + "</div>";
 				bodyHtml += "<div style=\"justify-content: center;\">" + item.schedFrom + "</div>";
 				bodyHtml += "<div style=\"justify-content: center;\">" + item.schedTo + "</div>";
 				
@@ -13521,7 +13529,7 @@ class Tech{
 				"title": "내용",
 				"type": "textarea",
 				"elementId": "desc",
-				"value": (CommonDatas.emptyValuesCheck(this.desc)) ? "" : this.desc,
+				"value": (CommonDatas.emptyValuesCheck(this.desc)) ? "" : this.desc.replaceAll("\"", "'"),
 				"col": 4,
 			},
 		];
@@ -14936,7 +14944,7 @@ class Reference {
 				"elementId": "bf_Contents",
 				"type": "textarea",
 				"col": 4,
-				"value": (CommonDatas.emptyValuesCheck(this.bf_Contents)) ? "" : this.bf_Contents,
+				"value": (CommonDatas.emptyValuesCheck(this.bf_Contents)) ? "" : this.bf_Contents.replaceAll("\"", "'"),
 			},
 		];
 
@@ -17247,7 +17255,7 @@ class Product {
 		regDatetime = CommonDatas.dateFnc(regDatetime);
 
 		notIdArray = ["userNo", "regDatetime"];
-		datas = ["userNo"];
+		datas = ["userNo", "custNo"];
 
 		dataArray = [
 			{
@@ -17305,7 +17313,7 @@ class Product {
 				"elementId": "productDesc",
 				"type": "textarea",
 				"col": 4,
-				"value": (CommonDatas.emptyValuesCheck(this.productDesc)) ? "" : this.productDesc,
+				"value": (CommonDatas.emptyValuesCheck(this.productDesc)) ? "" : this.productDesc.replaceAll("\"", "'"),
 			},
 		];
 
@@ -17928,6 +17936,8 @@ class GoalSet{
 						storage.goalNotUsers.push(item.userNo);
 					}
 				}
+
+				console.log(storage.goalList);
 
 				this.drawGoalList();
 				CommonDatas.searchListSet("goalList");
@@ -19506,7 +19516,10 @@ class Common {
 					if (dataArray[i][t].setData === undefined) {
 						gridHtml += "<div class='gridContentItem' style=\"grid-column: span " + dataArray[i][t].col + "; text-align: center;\">데이터가 없습니다.</div>";
 					} else {
-						gridHtml += "<div class='gridContentItem'><span class=\"textNumberFormat\">" + dataArray[i][t].setData + "</span></div>";
+						if(dataArray[i][t].setData.toString().indexOf("<img") > -1) {
+							let splitStr = dataArray[i][t].setData.split("<img");
+							gridHtml += "<div class='gridContentItem'><span class=\"textNumberFormat\">" + splitStr[0].replaceAll("<br />", "") + "</span></div>";
+						} else gridHtml += "<div class='gridContentItem'><span class=\"textNumberFormat\">" + dataArray[i][t].setData + "</span></div>";
 					}
 				}
 			}
@@ -19798,10 +19811,12 @@ class Common {
 				html += "<input type=\"password\"" + attributeHtml + ">";
 			}
 		} else if (dataType === "textarea") {
+			let setValue = (data.value === undefined) ? "" : data.value;
+
 			if (dataDisabled == true) {
-				html += "<textarea " + attributeHtml + " readonly></textarea>";
+				html += "<textarea " + attributeHtml + " readonly>" + setValue + "</textarea>";
 			} else {
-				html += "<textarea" + attributeHtml + "></textarea>";
+				html += "<textarea" + attributeHtml + ">" + setValue + "</textarea>";
 			}
 		} else if (dataType === "radio") {
 			for (let t = 0; t < data.radioValue.length; t++) {
@@ -20548,7 +20563,6 @@ class Common {
 			let item = document.getElementsByClassName("tabPage")[i];
 
 			setTimeout(() => {
-				console.log(item);
 				item.remove();
 			}, 100)
 		}	
