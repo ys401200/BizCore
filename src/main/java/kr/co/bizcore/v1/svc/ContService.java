@@ -87,4 +87,10 @@ public class ContService extends Svc{
         int getYear = nowDate.getYear();
         return contMapper.calContTypeTotal(cont, getYear);
     }
+
+    public List<Cont> calContractTypeTotal(Cont cont){
+        LocalDate nowDate = LocalDate.now();
+        int getYear = nowDate.getYear();
+        return contMapper.calContractTypeTotal(cont, getYear);
+    }
 }

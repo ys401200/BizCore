@@ -381,7 +381,7 @@ storage.widget.chart = [
 	{
 		"size": [1, 2],
 		"title": "월간 유지보수 실적",
-		"info": true,
+		"info": false,
 	},
 	{
 		"size": [1, 2],
@@ -395,7 +395,7 @@ storage.widget.chart = [
 	},
 	{
 		"size": [1, 2],
-		"title": "누적 판매방식 실적",
+		"title": "누적 카테고리 실적",
 		"info": false,
 	},
 ];

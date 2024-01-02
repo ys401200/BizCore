@@ -44,6 +44,15 @@
 	font-family: 'NanumSquareRound';
 }
 
+/* #widgetContainer > div:nth-child(1),
+#widgetContainer > div:nth-child(2){
+	width: 70%;
+} */
+
+#widgetContainer > div:nth-child(2) > div > canvas{
+	padding-right: 15px;
+}
+
 .chart_container{
 	padding-left: 10px;
 	padding-right: 10px;

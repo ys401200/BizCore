@@ -59,4 +59,7 @@ public interface ContMapper {
     
     @Select("SELECT contType, count(*) as getCount from swc_cont WHERE compNo = 100002 AND attrib not like 'XXX%' AND contType is not NULL group by contType")
     public List<Cont> calContTypeTotal(@Param("cont") Cont cont, @Param("getYear") int getYear);
+
+    @Select("SELECT concat(year(regDatetime), '-', MONTH(regDatetime)) as calDateMonth, sum(contAmt) as calAmtTotal from swc_cont WHERE compNo = #{cont.compNo} and year(regDatetime) = #{getYear} and cntrctMth = 10248 AND attrib not like 'XXX%' group by calDateMonth")
+    public List<Cont> calContractTypeTotal(@Param("cont") Cont cont, @Param("getYear") int getYear);
 }

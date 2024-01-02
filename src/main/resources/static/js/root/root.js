@@ -46,9 +46,11 @@ function gridWidget(){
 			html += "<div class=\"" + splitStr[0] + "_container" + "\">";
 
 			if(splitStr[1] == 0){
-				html += "<canvas id=\"" + splitStr[0] + "_" + splitStr[1] + "\" height=\"400\" width=\"550\"></canvas>";
+				html += "<canvas id=\"" + splitStr[0] + "_" + splitStr[1] + "\" height=\"370\" width=\"465\"></canvas>";
+			}else if(splitStr[1] == 1){
+				html += "<canvas id=\"" + splitStr[0] + "_" + splitStr[1] + "\" height=\"370\" width=\"400\"></canvas>";
 			}else if(splitStr[1] == 4){
-				html += "<canvas id=\"" + splitStr[0] + "_" + splitStr[1] + "\" height=\"370\" width=\"280\"></canvas>";
+				html += "<canvas id=\"" + splitStr[0] + "_" + splitStr[1] + "\" height=\"300\" width=\"280\"></canvas>";
 			}else{
 				html += "<canvas id=\"" + splitStr[0] + "_" + splitStr[1] + "\" width=\"200\" height=\"200\"></canvas>";
 			}
@@ -78,13 +80,25 @@ function gridWidget(){
 
 function addChart(){
 	addChart_1();
-	// addChart_2();
+	addChart_2();
 	addChart_3();
 	addChart_4();
 	addChart_5();
 }
 
 function contMonthTotal(){
+	axios.get("/api/category").then((response) => {
+		if (response.data.result === "ok") {
+			let result;
+			result = cipher.decAes(response.data.data);
+			result = JSON.parse(result);
+			storage.custCategoryList = result;
+		}
+	}).catch((error) => {
+		msg.set("카테고리 데이터 에러입니다.\n" + error);
+		console.log(error);
+	});
+
 	axios.get("/api/cont/calMonthTotal").then((response) => {
 		if (response.data.result === "ok") {
 			let result;
@@ -107,11 +121,24 @@ function contMonthTotal(){
 			for(let i = 0; i < result.length; i++){
 				let item = result[i];
 				let setDatas = {};
-				setDatas.contType = storage.code.etc[result[i].contType];
-				setDatas.getCount = result[i].getCount;
+				setDatas.contType = storage.code.etc[item.contType];
+				setDatas.getCount = item.getCount;
 				storage.contTypeTotal.push(setDatas);
 			}
 
+		}
+	}).catch((error) => {
+		msg.set("계약별 집계 데이터를 가져오는 중 에러가 발생했습니다.\n" + error);
+		console.log(error);
+	});
+
+	axios.get("/api/cont/calContractTypeTotal").then((response) => {
+		if (response.data.result === "ok") {
+			let result;
+			result = cipher.decAes(response.data.data);
+			result = JSON.parse(result);
+			console.log(result);
+			storage.contractTypeTotal = result;
 		}
 	}).catch((error) => {
 		msg.set("계약별 집계 데이터를 가져오는 중 에러가 발생했습니다.\n" + error);
@@ -122,10 +149,35 @@ function contMonthTotal(){
 function chartDefaultTotalSet(){
 	let goalList = storage.rootGoalList;
 	let contList = storage.contMonthTotal;
+	let contTypeList = storage.contractTypeTotal;
 	let goalMonthTotal = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 	let goalMonthCalTotal = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 	let contMonthTotal = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 	let contMonthCalTotal = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+	let contTypeMonthTotal = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+	storage.contCategoryList = [];
+
+	for(let i = 0; i < storage.custCategoryList.length; i++){
+		let item = storage.custCategoryList[i];
+		let total = 0;
+		let datas = {};
+		let nowDate = new Date().getFullYear();
+		nowDate = new Date(nowDate + "-01-01").getTime();
+
+		for(let t = 0; t < storage.contract.length; t++){
+			let secondItem = storage.contract[t];
+			let dateTime = new Date(secondItem.regDatetime).getTime();
+
+			if(secondItem.categories !== null && secondItem.categories.indexOf(item.custCategoryName) > -1 && nowDate <= dateTime){
+				total += secondItem.contAmt;
+			}
+		}
+		
+		datas.label = item.custCategoryName;
+		datas.value = total;
+
+		storage.contCategoryList.push(datas);
+	}
 
 	for(let i = 0; i < goalList.length; i++){
 		let item = goalList[i];
@@ -164,10 +216,18 @@ function chartDefaultTotalSet(){
 		else contMonthCalTotal[i] = contMonthCalTotal[i - 1] + item;
 	}
 
+	for(let i = 0; i < contTypeList.length; i++){
+		let item = contTypeList[i];
+		let splitDate = item.calDateMonth.split("-");
+
+		contTypeMonthTotal[parseInt(splitDate[1]) - 1] = item.calAmtTotal;
+	}
+
 	storage.goalMonthTotal = goalMonthTotal;
 	storage.goalMonthCalTotal = goalMonthCalTotal;
 	storage.contMonthTotal = contMonthTotal;
 	storage.contMonthCalTotal = contMonthCalTotal;
+	storage.contTypeMonthTotal = contTypeMonthTotal;
 }
 
 // function addChart_1(){
@@ -302,6 +362,7 @@ function addChart_1(){
 					type: "line",
 					label: "누적목표",
 					data: storage.goalMonthCalTotal,
+					yAxisID: "y-left",
 					fill: false,
 					lineTension: 0,
 					backgroundColor: "#A566FF",
@@ -311,6 +372,7 @@ function addChart_1(){
 					type: "line",
 					label: "누적매출",
 					data: storage.contMonthCalTotal,
+					yAxisID: "y-left",
 					fill: false,
 					lineTension: 0,
 					backgroundColor: "#F15F5F",
@@ -319,6 +381,7 @@ function addChart_1(){
 				{
 					label: "월별목표",
 					data: storage.goalMonthTotal,
+					yAxisID: "y-right",
 					backgroundColor: "#5f46c6", 
 					borderColor: "#5f46c6",
 					borderWidth: 3,
@@ -327,6 +390,7 @@ function addChart_1(){
 				{
 					label: "월별매출",
 					data: storage.contMonthTotal,
+					yAxisID: "y-right",
 					backgroundColor: "#76e3f1",
 					borderColor: "#76e3f1",
 					borderWidth: 3,
@@ -339,11 +403,11 @@ function addChart_1(){
 			scales: {
 			  	yAxes: [
 					{
-						position: "left",
+						id: "y-left",
+						position: "right",
 						ticks: {
 							beginAtZero: true,
 							callback: function(value, index) {
-								console.log(value);
 								if(value.toString().length > 8){
 									return (Math.floor(value / 100000000)).toLocaleString("ko-KR") + " (억원)";
 								}else if(value.toString().length > 4){
@@ -355,7 +419,8 @@ function addChart_1(){
 						},
 					},
 					{
-						position: "right",
+						id: "y-right",
+						position: "left",
 						ticks: {
 							beginAtZero: true,
 							callback: function(value, index) {
@@ -372,6 +437,7 @@ function addChart_1(){
 				]
 		  	},
 			tooltips: { 
+				mode: 'index',
 				callbacks: { 
 					label: function(tooltipItem, data) {
 						// if(tooltipItem.datasetIndex == 2 || tooltipItem.datasetIndex == 3){
@@ -448,44 +514,113 @@ function chartError_1(){
 // 	chart_1.canvas.parentNode.getElementsByClassName("chartInfo")[0].innerHTML = infoHtml;
 // }
 
+// function addChart_2(){
+// 	let chart_1, infoHtml = "", nowMonth;
+// 	chart_1 = document.getElementById('chart_1').getContext('2d');
+// 	nowMonth = new Date().getMonth();
+// 	let attainPercent = (storage.contMainMonthTotal[nowMonth] / storage.goalMonthTotal[nowMonth] * 100).toFixed(2);
+// 	let notAttainPercent = (100 - attainPercent).toFixed(2);
+
+// 	new Chart(chart_1, {
+// 		type: "doughnut",
+// 		data: {
+// 			labels: ["달성률", "미달성률"],
+// 			datasets: [
+// 				{
+// 					data: [attainPercent, notAttainPercent],
+// 					backgroundColor: [
+// 						"#ff5377",
+// 						"#95c1e6"
+// 					],
+// 					radius:0,
+// 					borderWidth: 1,
+// 				},
+// 			],
+// 		},
+// 		options: {
+// 			scales: {
+// 				y: {
+// 					beginAtZero: true
+// 				}
+// 			},
+// 		},
+// 	});
+
+// 	infoHtml = "<div>목표 0</div>";
+// 	infoHtml += "<div>매출 0</div>";
+// 	infoHtml += "<div>달성률 0.00%<div>";
+// 	infoHtml += "<hr />";
+// 	infoHtml += "<div>-0</div>";
+// 	chart_1.canvas.parentNode.getElementsByClassName("chartInfo")[0].innerHTML = infoHtml;
+// }
+
 function addChart_2(){
-	let chart_1, infoHtml = "", nowMonth, month, monthTarget;
+	let chart_1;
 	chart_1 = document.getElementById('chart_1').getContext('2d');
-	nowMonth = new Date().getMonth();
-	let attainPercent = (storage.contMainMonthTotal[nowMonth] / storage.goalMonthTotal[nowMonth] * 100).toFixed(2);
-	let notAttainPercent = (100 - attainPercent).toFixed(2);
+	// for(let i = 0; i < 12; i++){
+	// 	if(result[i] === undefined){
+	// 		dataArray.push(0);
+	// 	}else{
+	// 		dataArray.push(result[i].sales);
+	// 	}
+	// }
+
+	// for(let i = 0; i < dataArray.length; i++){
+	// 	temp += dataArray[i] / 10;
+	// 	salesArray.push(temp);
+	// }
 
 	new Chart(chart_1, {
-		type: "doughnut",
+		type: "horizontalBar",
 		data: {
-			labels: ["달성률", "미달성률"],
+			labels: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
 			datasets: [
 				{
-					data: [attainPercent, notAttainPercent],
-					backgroundColor: [
-						"#ff5377",
-						"#95c1e6"
-					],
-					radius:0,
-					borderWidth: 1,
+					label: "월별 유지보수 매출",
+					data: storage.contTypeMonthTotal,
+					backgroundColor: "#5f46c6",
+					borderColor: "#5f46c6",
+					borderWidth: 3,
+					radius: 0,
 				},
 			],
 		},
 		options: {
+			responsive: false,
 			scales: {
-				y: {
-					beginAtZero: true
-				}
-			},
-		},
-	});
+			  	xAxes: [
+					{
+						position: "bottom",
+						ticks: {
+							beginAtZero: true,
+							callback: function(value, index) {
+								if(value.toString().length > 8){
+									return (Math.floor(value / 100000000)).toLocaleString("ko-KR") + " (억원)";
+								}else if(value.toString().length > 4){
+									return (Math.floor(value / 10000)).toLocaleString("ko-KR") + " (만원)";
+								}else{
+									return value.toLocaleString("ko-KR"); 
+								}
+							}
+						},
+					}
+				]
+		  	},
+			tooltips: { 
+				callbacks: { 
+					label: function(tooltipItem, data) {
+						// if(tooltipItem.datasetIndex == 2 || tooltipItem.datasetIndex == 3){
+						// 	return " " + (tooltipItem.yLabel * 10).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "원"; 
+						// }else{
+						// 	return " " + tooltipItem.yLabel.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "원"; 
+						// }
 
-	infoHtml = "<div>목표 0</div>";
-	infoHtml += "<div>매출 0</div>";
-	infoHtml += "<div>달성률 0.00%<div>";
-	infoHtml += "<hr />";
-	infoHtml += "<div>-0</div>";
-	chart_1.canvas.parentNode.getElementsByClassName("chartInfo")[0].innerHTML = infoHtml;
+						return " " + (tooltipItem.xLabel).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "원"; 
+					} 
+				 },
+			},
+		}
+	});
 }
 
 function chartError_2(){
@@ -561,8 +696,11 @@ function addChart_3(){
 	let chart_2, infoHtml = "", nowDate, month, monthTarget;
 	chart_2 = document.getElementById('chart_2').getContext('2d');
 	nowMonth = new Date().getMonth();
-	let attainPercent = (storage.contMonthTotal[nowMonth] / storage.goalMonthTotal[nowMonth] * 100).toFixed(2);
+	// nowMonth = 11;
+	
+	let attainPercent = isNaN((storage.contMonthTotal[nowMonth] / storage.goalMonthTotal[nowMonth] * 100).toFixed(2)) ? 0 : (storage.contMonthTotal[nowMonth] / storage.goalMonthTotal[nowMonth] * 100).toFixed(2);
 	let notAttainPercent = (100 - attainPercent).toFixed(2);
+	notAttainPercent = (notAttainPercent > 100) ? 100 : notAttainPercent;
 
 	new Chart(chart_2, {
 		type: "doughnut",
@@ -589,11 +727,13 @@ function addChart_3(){
 		},
 	});
 
+	attainPercent = isNaN(attainPercent) ? 0 : attainPercent;
+
 	infoHtml = "<div>목표 " + (parseInt(storage.goalMonthTotal[nowMonth])).toLocaleString("en-US") + "</div>";
 	infoHtml += "<div>매출 " + parseInt(storage.contMonthTotal[nowMonth]).toLocaleString("en-US") + "</div>";
 	infoHtml += "<div>달성률 " + attainPercent + "%<div>";
 	infoHtml += "<hr />";
-	infoHtml += "<div>-" + parseInt(storage.goalMonthTotal[nowMonth] - storage.contMonthTotal[nowMonth]).toLocaleString("en-US") + "</div>";
+	infoHtml += "<div>" + parseInt(storage.contMonthTotal[nowMonth] - storage.goalMonthTotal[nowMonth]).toLocaleString("en-US") + "</div>";
 	chart_2.canvas.parentNode.getElementsByClassName("chartInfo")[0].innerHTML = infoHtml;
 }
 
@@ -695,8 +835,10 @@ function addChart_4(){
 	let chart_3, infoHtml = "", dataArray = [], monthTarget = 0;
 	chart_3 = document.getElementById('chart_3').getContext('2d');
 	nowMonth = new Date().getMonth();
-	let attainPercent = (storage.contMonthCalTotal[nowMonth] / storage.goalMonthCalTotal[nowMonth] * 100).toFixed(2);
+	// nowMonth = 11;
+	let attainPercent = isNaN((storage.contMonthCalTotal[nowMonth] / storage.goalMonthCalTotal[nowMonth] * 100).toFixed(2)) ? 0 : (storage.contMonthCalTotal[nowMonth] / storage.goalMonthCalTotal[nowMonth] * 100).toFixed(2);
 	let notAttainPercent = (100 - attainPercent).toFixed(2);
+	notAttainPercent = (notAttainPercent > 100) ? 100 : notAttainPercent;
 
 	new Chart(chart_3, {
 		type: "doughnut",
@@ -723,11 +865,13 @@ function addChart_4(){
 		},
 	});
 
-	infoHtml = "<div>목표 " + (parseInt(storage.goalMonthCalTotal[nowMonth])).toLocaleString("en-US") + "</div>";
+	attainPercent = isNaN(attainPercent) ? 0 : attainPercent;
+
+	infoHtml = "<div>목표 " + parseInt(storage.goalMonthCalTotal[nowMonth]).toLocaleString("en-US") + "</div>";
 	infoHtml += "<div>매출 " + parseInt(storage.contMonthCalTotal[nowMonth]).toLocaleString("en-US") + "</div>";
 	infoHtml += "<div>달성률 " + attainPercent + "%<div>";
 	infoHtml += "<hr />";
-	infoHtml += "<div>-" + parseInt(storage.goalMonthCalTotal[nowMonth] - storage.contMonthCalTotal[nowMonth]).toLocaleString("en-US") + "</div>";
+	infoHtml += "<div>" + parseInt(storage.contMonthCalTotal[nowMonth] - storage.goalMonthCalTotal[nowMonth]).toLocaleString("en-US") + "</div>";
 	chart_3.canvas.parentNode.getElementsByClassName("chartInfo")[0].innerHTML = infoHtml;
 }
 
@@ -735,16 +879,76 @@ function chartError_4(){
 	alert("네번째 차트에 에러가 있습니다.\n다시 확인해주세요.");
 }
 
+// function addChart_5(){
+// 	let chart_4;
+// 	chart_4 = document.getElementById('chart_4').getContext('2d');
+// 	let labelDatas = [];
+// 	let datas = [];
+
+// 	for(let i = 0; i < storage.contTypeTotal.length; i++){
+// 		let item = storage.contTypeTotal[i];
+// 		labelDatas.push(item.contType);
+// 		datas.push(item.getCount);
+// 	}
+
+// 	new Chart(chart_4, {
+// 		type: "pie",
+// 		data: {
+// 			labels: labelDatas,
+// 			datasets: [
+// 				{
+// 					data: datas,
+// 					backgroundColor: [
+// 						"#29cea6",
+// 						"#2795f7",
+// 						"#f7d766",
+// 						"#ff5377",
+// 						"#7952e9",
+// 						"#d9d9d9",
+// 					]
+// 				},
+// 			],
+// 		},
+// 		options: {
+// 			responsive: false,
+// 			layout:{
+// 				padding: {
+// 					top: 50,
+// 				}
+// 			},
+// 			scales: {
+// 				y: {
+// 					beginAtZero: true
+// 				}
+// 			}
+// 		},
+// 	});
+// }
+
 function addChart_5(){
 	let chart_4;
 	chart_4 = document.getElementById('chart_4').getContext('2d');
 	let labelDatas = [];
 	let datas = [];
+	let colors = [];
 
-	for(let i = 0; i < storage.contTypeTotal.length; i++){
-		let item = storage.contTypeTotal[i];
-		labelDatas.push(item.contType);
-		datas.push(item.getCount);
+	for(let i = 0; i < storage.contCategoryList.length; i++){
+		let item = storage.contCategoryList[i];
+		
+		if(item.value > 0) {
+			labelDatas.push(item.label);
+			datas.push(item.value)
+		}
+	}
+
+	for(let i = 0; i < labelDatas.length; i++){
+		let randomColor = "#" + Math.round(Math.random() * 0xffffff).toString(16);
+		colors.push(randomColor);
+	}
+
+	if(labelDatas.length == 0){
+		labelDatas.push("조회된 데이터 없음");
+		datas.push(1);
 	}
 
 	new Chart(chart_4, {
@@ -754,24 +958,12 @@ function addChart_5(){
 			datasets: [
 				{
 					data: datas,
-					backgroundColor: [
-						"#29cea6",
-						"#2795f7",
-						"#f7d766",
-						"#ff5377",
-						"#7952e9",
-						"#d9d9d9",
-					]
+					backgroundColor: colors,
 				},
 			],
 		},
 		options: {
 			responsive: false,
-			layout:{
-				padding: {
-					top: 50,
-				}
-			},
 			scales: {
 				y: {
 					beginAtZero: true
